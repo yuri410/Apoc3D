@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apoc.Input", "Apoc.Input\Apoc.Input.csproj", "{3FBFF99F-A3CF-4ACA-8BCC-55DF1E40D5AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apoc.Core", "Apoc.Core\Apoc.Core.csproj", "{2E9C57F3-078D-4216-8C2E-EAC0F2A308FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apoc.Graphic", "Apoc.Graphic\Apoc.Graphic.csproj", "{947348F4-C1E6-4C5F-865A-A140C753A05D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apoc.Network", "Apoc.Network\Apoc.Network.csproj", "{60D4C7EF-F55B-4F3C-9D8C-0648EDEEB885}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apoc.Gui", "Apoc.Gui\Apoc.Gui.csproj", "{CE529123-540A-42AB-ACB5-B3E852C5C3FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apoc.Sound", "Apoc.Sound\Apoc.Sound.csproj", "{92094BED-DC9C-4463-AE06-65FD3CFDCC4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apoc.Engine", "Apoc.Engine\Apoc.Engine.csproj", "{F2980A1B-EDDC-4CBD-8774-F77AA919CAA5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3FBFF99F-A3CF-4ACA-8BCC-55DF1E40D5AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FBFF99F-A3CF-4ACA-8BCC-55DF1E40D5AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FBFF99F-A3CF-4ACA-8BCC-55DF1E40D5AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FBFF99F-A3CF-4ACA-8BCC-55DF1E40D5AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E9C57F3-078D-4216-8C2E-EAC0F2A308FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E9C57F3-078D-4216-8C2E-EAC0F2A308FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E9C57F3-078D-4216-8C2E-EAC0F2A308FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E9C57F3-078D-4216-8C2E-EAC0F2A308FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{947348F4-C1E6-4C5F-865A-A140C753A05D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{947348F4-C1E6-4C5F-865A-A140C753A05D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{947348F4-C1E6-4C5F-865A-A140C753A05D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{947348F4-C1E6-4C5F-865A-A140C753A05D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60D4C7EF-F55B-4F3C-9D8C-0648EDEEB885}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60D4C7EF-F55B-4F3C-9D8C-0648EDEEB885}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60D4C7EF-F55B-4F3C-9D8C-0648EDEEB885}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60D4C7EF-F55B-4F3C-9D8C-0648EDEEB885}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE529123-540A-42AB-ACB5-B3E852C5C3FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE529123-540A-42AB-ACB5-B3E852C5C3FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE529123-540A-42AB-ACB5-B3E852C5C3FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE529123-540A-42AB-ACB5-B3E852C5C3FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92094BED-DC9C-4463-AE06-65FD3CFDCC4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92094BED-DC9C-4463-AE06-65FD3CFDCC4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92094BED-DC9C-4463-AE06-65FD3CFDCC4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92094BED-DC9C-4463-AE06-65FD3CFDCC4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2980A1B-EDDC-4CBD-8774-F77AA919CAA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2980A1B-EDDC-4CBD-8774-F77AA919CAA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2980A1B-EDDC-4CBD-8774-F77AA919CAA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2980A1B-EDDC-4CBD-8774-F77AA919CAA5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

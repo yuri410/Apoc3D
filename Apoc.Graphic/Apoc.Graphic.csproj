@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{947348F4-C1E6-4C5F-865A-A140C753A05D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Apoc.Graphic</RootNamespace>
+    <AssemblyName>Apoc.Graphic</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Animation\Animation.cs" />
+    <Compile Include="Animation\Bone.cs" />
+    <Compile Include="Animation\EntityNode.cs" />
+    <Compile Include="Animation\KeyFrame.cs" />
+    <Compile Include="Animation\MaterialAnimation.cs" />
+    <Compile Include="Animation\SkinAnimation.cs" />
+    <Compile Include="Animation\TransformAnimation.cs" />
+    <Compile Include="Atmosphere.cs" />
+    <Compile Include="Camera.cs" />
+    <Compile Include="MeshMaterial.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RenderSystem\Enums.cs" />
+    <Compile Include="RenderSystem\DeviceContent.cs" />
+    <Compile Include="Effects\DefaultSMGenEffect.cs" />
+    <Compile Include="Effects\Effect.cs" />
+    <Compile Include="Effects\EffectManager.cs" />
+    <Compile Include="Effects\EffectParams.cs" />
+    <Compile Include="Effects\IncludeLoader.cs" />
+    <Compile Include="Effects\RoadEffect.cs" />
+    <Compile Include="Effects\StandardEffect.cs" />
+    <Compile Include="Effects\TerrainRenderingEffect.cs" />
+    <Compile Include="RenderSystem\Font.cs" />
+    <Compile Include="RenderSystem\FontManager.cs" />
+    <Compile Include="Geometry\Box.cs" />
+    <Compile Include="Geometry\Capsule.cs" />
+    <Compile Include="Geometry\ChamferCylinder.cs" />
+    <Compile Include="Geometry\Cylinder.cs" />
+    <Compile Include="Geometry\Disk.cs" />
+    <Compile Include="Geometry\PartialDisk.cs" />
+    <Compile Include="Geometry\Sphere.cs" />
+    <Compile Include="Geometry\Torus.cs" />
+    <Compile Include="IRenderable.cs" />
+    <Compile Include="Mesh.cs" />
+    <Compile Include="MeshSimplifier.cs" />
+    <Compile Include="Model.cs" />
+    <Compile Include="ModelHelper.cs" />
+    <Compile Include="ModelManager.cs" />
+    <Compile Include="ParticleSystem\Emitters\CircleEmitter.cs" />
+    <Compile Include="ParticleSystem\Emitters\Emitter.cs" />
+    <Compile Include="ParticleSystem\Emitters\ShapeEmitter.cs" />
+    <Compile Include="ParticleSystem\Emitters\SprayEmitter.cs" />
+    <Compile Include="ParticleSystem\IParticle.cs" />
+    <Compile Include="ParticleSystem\Modifiers\ColorModifier.cs" />
+    <Compile Include="ParticleSystem\Modifiers\DampingModifier.cs" />
+    <Compile Include="ParticleSystem\Modifiers\LinearGravityModifier.cs" />
+    <Compile Include="ParticleSystem\Modifiers\Modifier.cs" />
+    <Compile Include="ParticleSystem\Modifiers\OpacityModifier.cs" />
+    <Compile Include="ParticleSystem\Modifiers\RadialGravityModifier.cs" />
+    <Compile Include="ParticleSystem\Modifiers\RandomOpacityModifier.cs" />
+    <Compile Include="ParticleSystem\Modifiers\ScaleModifier.cs" />
+    <Compile Include="ParticleSystem\Modifiers\VortexModifier.cs" />
+    <Compile Include="ParticleSystem\Particle.cs" />
+    <Compile Include="ParticleSystem\ParticlePool.cs" />
+    <Compile Include="ParticleSystem\PreCalcCurve.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RenderSystem\Line.cs" />
+    <Compile Include="RenderSystem\Material.cs" />
+    <Compile Include="RenderSystem\RenderControl.cs" />
+    <Compile Include="RenderOperation.cs" />
+    <Compile Include="RenderSystem.cs" />
+    <Compile Include="RenderSystem\BufferStream.cs" />
+    <Compile Include="RenderSystem\Light.cs" />
+    <Compile Include="RenderSystem\RenderStateManager.cs" />
+    <Compile Include="RenderSystem\RenderTarget.cs" />
+    <Compile Include="RenderSystem\SamplerState.cs" />
+    <Compile Include="RenderSystem\Shader.cs" />
+    <Compile Include="RenderSystem\Sprite.cs" />
+    <Compile Include="RenderSystem\StateBlock.cs" />
+    <Compile Include="RenderSystem\Texture.cs" />
+    <Compile Include="RenderSystem\Vertex.cs" />
+    <Compile Include="RenderSystem\VertexDeclaration.cs" />
+    <Compile Include="RenderSystem\VertexElement.cs" />
+    <Compile Include="Scene\Cluster.cs" />
+    <Compile Include="Scene\ClusterTable.cs" />
+    <Compile Include="Scene\ClusterTableBase.cs" />
+    <Compile Include="Scene\DynamicObject.cs" />
+    <Compile Include="Scene\Entity.cs" />
+    <Compile Include="Scene\FixedJointManager.cs" />
+    <Compile Include="Scene\GameScene.cs" />
+    <Compile Include="Scene\GameSceneBase.cs" />
+    <Compile Include="Scene\IFindObjectCallBack.cs" />
+    <Compile Include="Scene\Instancing.cs" />
+    <Compile Include="Scene\OctreeSceneManager.cs" />
+    <Compile Include="Scene\OctreeSceneNode.cs" />
+    <Compile Include="Scene\PassInfo.cs" />
+    <Compile Include="Scene\PostRenderer.cs" />
+    <Compile Include="Scene\SceneData.cs" />
+    <Compile Include="Scene\SceneDataBase.cs" />
+    <Compile Include="Scene\SceneManager.cs" />
+    <Compile Include="Scene\SceneNode.cs" />
+    <Compile Include="Scene\SceneObject.cs" />
+    <Compile Include="Scene\StaticObject.cs" />
+    <Compile Include="Scene\Terrain.cs" />
+    <Compile Include="Scene\TerrainFactory.cs" />
+    <Compile Include="Scene\TerrainTexture.cs" />
+    <Compile Include="Scene\TerrainTextureManager.cs" />
+    <Compile Include="Scene\TerrainTreeNode.cs" />
+    <Compile Include="ShadowMap.cs" />
+    <Compile Include="SkyBox.cs" />
+    <Compile Include="Sprite3D.cs" />
+    <Compile Include="TextureLibrary.cs" />
+    <Compile Include="TextureLoader.cs" />
+    <Compile Include="TextureManager.cs" />
+    <Compile Include="VertexFormats.cs" />
+    <Compile Include="WaterSurface.cs" />
+    <Compile Include="WeatherType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Apoc.Core\Apoc.Core.csproj">
+      <Project>{2E9C57F3-078D-4216-8C2E-EAC0F2A308FC}</Project>
+      <Name>Apoc.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="EffectSystem\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
