@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 10
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc", "Apoc\Apoc.vcxproj", "{7CFE004D-45E8-46FD-8635-329B3C571FFC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SlimDotNet", "SlimDotNet\SlimDotNet.vcxproj", "{044F8610-C289-4829-84DF-9307F9B57233}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,10 +13,6 @@ Global
 		{7CFE004D-45E8-46FD-8635-329B3C571FFC}.Debug|Win32.Build.0 = Debug|Win32
 		{7CFE004D-45E8-46FD-8635-329B3C571FFC}.Release|Win32.ActiveCfg = Release|Win32
 		{7CFE004D-45E8-46FD-8635-329B3C571FFC}.Release|Win32.Build.0 = Release|Win32
-		{044F8610-C289-4829-84DF-9307F9B57233}.Debug|Win32.ActiveCfg = Debug|Win32
-		{044F8610-C289-4829-84DF-9307F9B57233}.Debug|Win32.Build.0 = Debug|Win32
-		{044F8610-C289-4829-84DF-9307F9B57233}.Release|Win32.ActiveCfg = Release|Win32
-		{044F8610-C289-4829-84DF-9307F9B57233}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
