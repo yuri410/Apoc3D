@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc", "Apoc\Apoc.vcproj", "{301C244D-109C-4AD6-B6B9-89B437F82296}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{301C244D-109C-4AD6-B6B9-89B437F82296}.Debug|Win32.ActiveCfg = Debug|Win32
+		{301C244D-109C-4AD6-B6B9-89B437F82296}.Debug|Win32.Build.0 = Debug|Win32
+		{301C244D-109C-4AD6-B6B9-89B437F82296}.Release|Win32.ActiveCfg = Release|Win32
+		{301C244D-109C-4AD6-B6B9-89B437F82296}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
