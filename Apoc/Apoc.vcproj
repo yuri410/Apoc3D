@@ -149,19 +149,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\List.cpp"
+				RelativePath=".\Core\Collections\List.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Math\Math.cpp"
+				RelativePath=".\Core\Math\Math.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Math\Matrix.cpp"
+				RelativePath=".\Core\Math\Matrix.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Math\Plane.cpp"
+				RelativePath=".\Core\Math\Plane.cpp"
 				>
 			</File>
 			<File
@@ -179,19 +179,23 @@
 				>
 			</File>
 			<File
-				RelativePath=".\List.h"
+				RelativePath=".\Core\Exception.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Math\Math.h"
+				RelativePath=".\Core\Collections\List.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Math\Matrix.h"
+				RelativePath=".\Core\Math\Math.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Math\Plane.h"
+				RelativePath=".\Core\Math\Matrix.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Core\Math\Plane.h"
 				>
 			</File>
 			<File
@@ -199,11 +203,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Property.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Core\String.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Math\Vector3.h"
+				RelativePath=".\Core\Math\Vector3.h"
 				>
 			</File>
 		</Filter>
