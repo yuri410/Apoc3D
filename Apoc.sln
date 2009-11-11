@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc", "Apoc\Apoc.vcproj", "{301C244D-109C-4AD6-B6B9-89B437F82296}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 10
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc", "Apoc\Apoc.vcxproj", "{301C244D-109C-4AD6-B6B9-89B437F82296}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

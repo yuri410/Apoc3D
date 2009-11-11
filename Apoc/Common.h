@@ -1,3 +1,7 @@
+#ifndef COMMON_H
+#define COMMON_H
+
+#pragma once
 
 #include "Platform.h"
 
@@ -37,9 +41,12 @@ namespace Apoc{
 #include <iomanip>
 #include <sstream>
 
+#include "Property.h"
+
 extern "C" {
 
 #   include <sys/types.h>
 #   include <sys/stat.h>
 
 }
+#endif

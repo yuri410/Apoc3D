@@ -149,6 +149,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\List.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Math\Math.cpp"
 				>
 			</File>
@@ -160,6 +164,10 @@
 				RelativePath=".\Math\Plane.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\Core\String.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Í·ÎÄ¼þ"
@@ -168,6 +176,10 @@
 			>
 			<File
 				RelativePath=".\Common.h"
+				>
+			</File>
+			<File
+				RelativePath=".\List.h"
 				>
 			</File>
 			<File
@@ -184,6 +196,10 @@
 			</File>
 			<File
 				RelativePath=".\Platform.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Core\String.h"
 				>
 			</File>
 			<File
