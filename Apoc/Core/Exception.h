@@ -11,13 +11,16 @@ namespace Apoc
 	{
 		class Exception
 		{
-		private:
+		protected:
 			String message;
 		public:
 			Exception()
 			{
 			}
-
+			Exception(String message)
+			{
+				this->message = message;
+			}
 		};
 
 		class ArgumentException : public Exception
@@ -27,7 +30,12 @@ namespace Apoc
 
 		class ArgumentOutOfRangeException : public ArgumentException
 		{
-
+		private:
+		public:
+			ArgumentOutOfRangeException(String argument)
+			{
+				
+			}
 		}
 	}
 }

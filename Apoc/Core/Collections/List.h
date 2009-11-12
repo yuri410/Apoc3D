@@ -117,7 +117,7 @@ namespace Apoc
 
 				T operator [](int index)
 				{
-	#if DEBUG_MODE
+#if DEBUG_MODE
 					if (index < 0)
 					{
 
@@ -126,7 +126,7 @@ namespace Apoc
 					{
 
 					}
-	#endif
+#endif
 					return elements[index];
 				}
 			};
