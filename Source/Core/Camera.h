@@ -2,6 +2,8 @@
 
 #include "..\Common.h"
 
+class GameTime;
+
 class Camera
 {
 private:
@@ -15,6 +17,8 @@ public:
 
 	void setViewMatrix(const D3DMATRIX& value) { m_view = value; }
 	void setProjMatrix(const D3DMATRIX& value) { m_proj = value; }
+
+	void Update(GameTime* time);
 
 
 	Camera(void);
