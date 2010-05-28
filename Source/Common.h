@@ -1,10 +1,11 @@
-const static int MaxTextureLayers = 10;
 
 typedef unsigned int uint;
 typedef unsigned short ushort;
 
 #include "Include\d3d9.h"
 #include "Include\d3dx9.h"
+
+#include <windows.h>
 
 //struct IDirect3DBaseTexture9;
 //struct IDirect3DVertexBuffer9;
