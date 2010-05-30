@@ -12,6 +12,23 @@ typedef unsigned short ushort;
 #define _Export __declspec( dllexport )
 
 
+// Forward Declarations
+namespace Apoc3D
+{
+	class Material;
+	class SceneRenderer;
+	class GameTime;
+
+	namespace Core
+	{
+		class IRenderable;
+		class Camera;
+		class RenderOperation;
+		class RenderOperationBuffer;
+		class SceneManager;
+	}
+
+}
 //struct IDirect3DBaseTexture9;
 //struct IDirect3DVertexBuffer9;
 //struct IDirect3DIndexBuffer9;

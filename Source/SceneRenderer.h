@@ -1,8 +1,15 @@
 #pragma once
-class SceneRenderer
-{
-public:
-	SceneRenderer(void);
-	~SceneRenderer(void);
-};
 
+namespace Apoc3D
+{
+	/*
+
+	*/
+	class SceneRenderer
+	{
+	public:
+		SceneRenderer(void);
+		~SceneRenderer(void);
+	};
+
+};

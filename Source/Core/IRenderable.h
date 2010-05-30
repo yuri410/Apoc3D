@@ -2,21 +2,33 @@
 
 #include "..\Common.h"
 
-class RenderOperationBuffer;
-
-class IRenderable
+namespace Apoc3D
 {
-public:
-	virtual RenderOperationBuffer* GetRenderOperation(int level);
-	virtual RenderOperationBuffer* GetRenderOperation() { return GetRenderOperation(0); }
-
-protected:
-	IRenderable(void)
+	namespace Core
 	{
-	}
+		/*
+		  Represents drawable object in the scene.
+		*/
+		class _Export IRenderable
+		{
+		public:
+			/*
+			  Gets the render operation of this renderable object at a ceratin LOD level
+			*/
+			virtual RenderOperationBuffer* GetRenderOperation(int level);
+			/*
+			  Gets the render operation of this renderable object at the default LOD level
+			*/
+			virtual RenderOperationBuffer* GetRenderOperation() { return GetRenderOperation(0); }
 
-	~IRenderable(void)
-	{
-	}
-};
+		protected:
+			IRenderable(void)
+			{
+			}
 
+			~IRenderable(void)
+			{
+			}
+		};
+	}
+}

@@ -4,24 +4,49 @@
 
 class GameTime;
 
-class Camera
+namespace Apoc3D
 {
-private:
+	namespace Core
+	{
+		/*
+		  Represents a view into a 3D scene. 
+
+		*/
+		class Camera
+		{
+		private:
 	
-	D3DMATRIX m_view;
-	D3DMATRIX m_proj;
-public:
+			D3DMATRIX m_view;
+			D3DMATRIX m_proj;
+		public:
 	
-	const D3DMATRIX& getViewMatrix() { return m_view; }
-	const D3DMATRIX& getProjMatrix() { return m_proj; }
+			/*
+			  Gets the view transform matrix
+			*/
+			const D3DMATRIX& getViewMatrix() { return m_view; }
+			/*
+			  Gets the projection matrix
+			*/
+			const D3DMATRIX& getProjMatrix() { return m_proj; }
 
-	void setViewMatrix(const D3DMATRIX& value) { m_view = value; }
-	void setProjMatrix(const D3DMATRIX& value) { m_proj = value; }
+			/*
+			  Sets the view transform matrix
+			*/
+			void setViewMatrix(const D3DMATRIX& value) { m_view = value; }
+			/*
+			  Sets the projection transform matrix
+			*/
+			void setProjMatrix(const D3DMATRIX& value) { m_proj = value; }
 
-	void Update(GameTime* time);
+			/*
+			  Update the camera's state. 
+			*/
+			void Update(GameTime* time);
 
 
-	Camera(void);
-	~Camera(void);
-};
+			Camera(void);
+			~Camera(void);
+		};
 
+	}
+}

@@ -1,6 +1,5 @@
 
 #include "Camera.h"
-#include "..\Common.h"
 #include "..\GameTime.h"
 
 Camera::Camera(void)
