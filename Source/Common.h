@@ -1,4 +1,6 @@
 
+#pragma once
+
 typedef unsigned int uint;
 typedef unsigned short ushort;
 
@@ -6,6 +8,9 @@ typedef unsigned short ushort;
 #include "Include\d3dx9.h"
 
 #include <windows.h>
+
+#define _Export __declspec( dllexport )
+
 
 //struct IDirect3DBaseTexture9;
 //struct IDirect3DVertexBuffer9;
