@@ -1,3 +1,6 @@
+#ifndef GAMETIME_H
+#define GAMETIME_H
+
 #pragma once
 
 namespace Apoc3D
@@ -22,6 +25,8 @@ namespace Apoc3D
 		const float getElapsedTime() { return m_elapsedTime; }
 	
 
+
+
 		GameTime(const float elapsedTime, const float totalTime)
 		{
 			m_totalTime = totalTime;
@@ -33,3 +38,5 @@ namespace Apoc3D
 		}
 	};
 };
+
+#endif

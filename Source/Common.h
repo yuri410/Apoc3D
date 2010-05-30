@@ -1,4 +1,5 @@
-
+#ifndef COMMON_H
+#define COMMON_H
 #pragma once
 
 typedef unsigned int uint;
@@ -38,3 +39,5 @@ namespace Apoc3D
 //void memcpyf(void* src, void* dst, uint size);
 //int memcmpf(void* src, void* dst, uint size);
 //void memsetf(void* dst, int value, uint count);
+
+#endif

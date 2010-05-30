@@ -1,3 +1,6 @@
+#ifndef SCENEMANAGER_H
+#define SCENEMANAGER_H
+
 #pragma once
 
 namespace Apoc3D
@@ -12,4 +15,6 @@ namespace Apoc3D
 		};
 
 	}
-}
+};
+
+#endif
