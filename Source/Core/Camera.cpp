@@ -2,16 +2,22 @@
 #include "Camera.h"
 #include "..\GameTime.h"
 
-Camera::Camera(void)
+namespace Apoc3D
 {
-}
+	namespace Core
+	{
+		Camera::Camera(void)
+		{
+		}
 
 
-Camera::~Camera(void)
-{
-}
+		Camera::~Camera(void)
+		{
+		}
 
-void Camera::Update(GameTime* time)
-{
+		void Camera::Update(GameTime* time)
+		{
 	
-}
+		}
+	};
+};

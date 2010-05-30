@@ -1,17 +1,18 @@
 
 #include "Material.h"
 
-
-Material::Material()
-{	
-	memset(m_tex, 0, sizeof(m_tex));
-
-	
-	ZeroMemory(&m_mtrlColor, sizeof(m_mtrlColor));
-}
-
-
-Material::~Material(void)
+namespace Apoc3D
 {
+	Material::Material()
+	{	
+		std::memset(m_tex, 0, sizeof(m_tex));
 
-}
+		std::memset(&m_mtrlColor, 0,  sizeof(m_mtrlColor));	
+	}
+
+
+	Material::~Material(void)
+	{
+
+	}
+};

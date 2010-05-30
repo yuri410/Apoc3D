@@ -5,8 +5,7 @@
 
 namespace Apoc3D
 {
-	/*
-	 Contains the current timing state of the game.
+	/* Contains the current timing state of the game.
 	*/
 	class _Export GameTime
 	{
@@ -15,17 +14,13 @@ namespace Apoc3D
 		float m_elapsedTime;
 
 	public:
-		/*
-		 Gets the total game time, in seconds.
+		/*  Gets the total game time, in seconds.
 		*/
 		const float getTotalTime() { return m_totalTime; }
-		/*
-		 Gets the elapsed game time, in seconds.
+		/* Gets the elapsed game time, in seconds.
 		*/
 		const float getElapsedTime() { return m_elapsedTime; }
 	
-
-
 
 		GameTime(const float elapsedTime, const float totalTime)
 		{

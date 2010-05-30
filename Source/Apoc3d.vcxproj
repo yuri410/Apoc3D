@@ -79,10 +79,14 @@
     <ClInclude Include="Core\RenderOperation.h" />
     <ClInclude Include="Core\RenderOperationBuffer.h" />
     <ClInclude Include="Core\SceneManager.h" />
+    <ClInclude Include="Core\SceneObject.h" />
+    <ClInclude Include="EffectSystem\EffectManager.h" />
+    <ClInclude Include="EffectSystem\EffectAtom.h" />
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="nedmalloc\malloc.c" />
     <ClInclude Include="ObjectBase.h" />
+    <ClInclude Include="Core\SceneNode.h" />
     <ClInclude Include="SceneRenderer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +94,7 @@
     <ClCompile Include="Core\Camera.cpp" />
     <ClCompile Include="Core\RenderOperationBuffer.cpp" />
     <ClCompile Include="Core\SceneManager.cpp" />
+    <ClCompile Include="Core\SceneObject.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -98,8 +103,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="EffectSystem\EffectAtom.cpp" />
+    <ClCompile Include="EffectSystem\EffectManager.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="ObjectBase.cpp" />
+    <ClCompile Include="Core\SceneNode.cpp" />
     <ClCompile Include="SceneRenderer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

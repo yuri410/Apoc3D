@@ -2,8 +2,7 @@
 
 namespace Apoc3D
 {
-	/*
-	  A renderer renders a scene with a particular render script.
+	/* A renderer renders a scene with a particular render script.
 	*/
 	class _Export SceneRenderer
 	{
