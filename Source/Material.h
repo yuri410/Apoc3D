@@ -7,7 +7,7 @@
 
 namespace Apoc3D
 {
-	class Material
+	class _Export Material
 	{
 	public:
 		/*

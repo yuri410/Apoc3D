@@ -5,7 +5,7 @@ namespace Apoc3D
 	/*
 	  A renderer renders a scene with a particular render script.
 	*/
-	class SceneRenderer
+	class _Export SceneRenderer
 	{
 	public:
 		SceneRenderer(void);

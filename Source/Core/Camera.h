@@ -2,8 +2,6 @@
 
 #include "..\Common.h"
 
-class GameTime;
-
 namespace Apoc3D
 {
 	namespace Core
@@ -12,7 +10,7 @@ namespace Apoc3D
 		  Represents a view into a 3D scene. 
 
 		*/
-		class Camera
+		class _Export Camera
 		{
 		private:
 	

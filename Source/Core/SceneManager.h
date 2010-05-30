@@ -7,11 +7,18 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		class SceneManager
+		/*
+		  SceneManager keeps tracks of all
+		*/
+		class _Export SceneManager
 		{
+		
+
 		public:
 			SceneManager(void);
 			~SceneManager(void);
+		
+
 		};
 
 	}

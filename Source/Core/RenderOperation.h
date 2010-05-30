@@ -10,7 +10,7 @@ namespace Apoc3D
 		  Represents an operation to render a mesh part in the scene.
 		  RenderOperation is used by the engine to manage the scene rendering pipeline.
 		*/
-		class RenderOperation
+		class _Export RenderOperation
 		{
 		private:
 			IDirect3DVertexBuffer9* m_vtxBuffer;
