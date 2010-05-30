@@ -4,6 +4,8 @@
 
 typedef unsigned int uint;
 typedef unsigned short ushort;
+typedef unsigned char uchar;
+typedef unsigned long ulong;
 
 #include "Include\d3d9.h"
 #include "Include\d3dx9.h"
@@ -48,7 +50,7 @@ namespace Apoc3D
 		class RenderOperationBuffer;
 		class SceneManager;
 		class SceneObject;
-
+		class Resource;
 	}
 
 }

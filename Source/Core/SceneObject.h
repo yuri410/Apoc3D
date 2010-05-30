@@ -1,3 +1,6 @@
+#ifndef SCENEOBJECT_H
+#define SCENEOBJECT_H
+
 #pragma once
 
 #include "..\Common.h"
@@ -23,3 +26,4 @@ namespace Apoc3D
 		};
 	};
 };
+#endif

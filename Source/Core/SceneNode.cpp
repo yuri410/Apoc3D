@@ -1,11 +1,15 @@
 #include "SceneNode.h"
 
-
-SceneNode::SceneNode(void)
+namespace Apoc3D
 {
-}
+	namespace Core
+	{
+		SceneNode::SceneNode(void)
+		{
+		}
 
-
-SceneNode::~SceneNode(void)
-{
-}
+		SceneNode::~SceneNode(void)
+		{
+		}
+	};
+};

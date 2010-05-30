@@ -1,7 +1,20 @@
 
-class EffectAtom
+namespace Apoc3D
 {
-public:
-	EffectAtom(void);
-	~EffectAtom(void);
+	namespace EffectSystem
+	{
+		/* Represents a small effect that cannot be divided into sub effects.
+		   This is usually a piece of shader fragement.
+		   eg. position transform, normal mapping
+		*/
+		class EffectAtom
+		{
+		private:
+
+		public:
+			EffectAtom(void);
+			~EffectAtom(void);
+
+		};
+	};
 };

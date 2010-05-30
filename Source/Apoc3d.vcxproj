@@ -82,17 +82,21 @@
     <ClInclude Include="Core\SceneObject.h" />
     <ClInclude Include="EffectSystem\EffectManager.h" />
     <ClInclude Include="EffectSystem\EffectAtom.h" />
+    <ClInclude Include="Core\Frustum.h" />
     <ClInclude Include="GameTime.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="nedmalloc\malloc.c" />
     <ClInclude Include="ObjectBase.h" />
     <ClInclude Include="Core\SceneNode.h" />
+    <ClInclude Include="Core\Resource.h" />
+    <ClInclude Include="Core\ResourceHandle.h" />
     <ClInclude Include="SceneRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Core\Camera.cpp" />
     <ClCompile Include="Core\RenderOperationBuffer.cpp" />
+    <ClCompile Include="Core\ResourceHandle.cpp" />
     <ClCompile Include="Core\SceneManager.cpp" />
     <ClCompile Include="Core\SceneObject.cpp" />
     <ClCompile Include="dllmain.cpp">
@@ -105,9 +109,11 @@
     </ClCompile>
     <ClCompile Include="EffectSystem\EffectAtom.cpp" />
     <ClCompile Include="EffectSystem\EffectManager.cpp" />
+    <ClCompile Include="Core\Frustum.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="ObjectBase.cpp" />
     <ClCompile Include="Core\SceneNode.cpp" />
+    <ClCompile Include="Core\Resource.cpp" />
     <ClCompile Include="SceneRenderer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

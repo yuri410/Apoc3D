@@ -1,11 +1,16 @@
 #include "EffectAtom.h"
 
-
-EffectAtom::EffectAtom(void)
+namespace Apoc3D
 {
-}
+	namespace EffectSystem
+	{
+		EffectAtom::EffectAtom(void)
+		{
+		}
 
 
-EffectAtom::~EffectAtom(void)
-{
-}
+		EffectAtom::~EffectAtom(void)
+		{
+		}
+	};
+};
