@@ -16,12 +16,14 @@ namespace Apoc3D
 			void _Ref(Resource* res);
 			void _Unref(Resource* res);
 
-		public:
+		protected:
 			ResourceHandle(ResType* res)
 			{
 				m_resource = res;
 				_Ref(res);
 			}
+			
+		public:
 			~ResourceHandle(void)
 			{
 				m_resource = 0;
