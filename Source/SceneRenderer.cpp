@@ -1,12 +1,14 @@
-#include "Common.h"
+
 #include "SceneRenderer.h"
 
-
-SceneRenderer::SceneRenderer(void)
+namespace Apoc3D
 {
-}
+	SceneRenderer::SceneRenderer(void)
+	{
+	}
 
 
-SceneRenderer::~SceneRenderer(void)
-{
-}
+	SceneRenderer::~SceneRenderer(void)
+	{
+	}
+};

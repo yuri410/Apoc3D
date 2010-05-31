@@ -6,6 +6,8 @@
 namespace Apoc3D
 {
 	/* Contains the current timing state of the game.
+
+	   
 	*/
 	class _Export GameTime
 	{

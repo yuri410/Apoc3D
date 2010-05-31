@@ -1,3 +1,4 @@
+#include "..\Common.h"
 
 namespace Apoc3D
 {
@@ -7,7 +8,7 @@ namespace Apoc3D
 		   This is usually a piece of shader fragement.
 		   eg. position transform, normal mapping
 		*/
-		class EffectAtom
+		class _Export EffectAtom
 		{
 		private:
 

@@ -39,6 +39,7 @@ namespace Apoc3D
 	typedef _Export IDirect3DVertexShader9 VertexShader;
 	typedef _Export IDirect3DPixelShader9 PixelShader;
 	typedef _Export IDirect3DVertexDeclaration9 VertexDeclaration;
+	typedef D3DCOLORVALUE Color4;
 
 	typedef std::string String;
 	
@@ -46,6 +47,7 @@ namespace Apoc3D
 	{
 		class IRenderable;
 		class Camera;
+		class GeomentryData;
 		class RenderOperation;
 		class RenderOperationBuffer;
 		class SceneManager;

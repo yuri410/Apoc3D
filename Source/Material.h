@@ -7,10 +7,18 @@
 
 namespace Apoc3D
 {
+	/* Defines colors, textures and effect info for a geomentry
+
+	   Material have some Effects. Each Effect is a set of Effect Atoms. 
+	   It is an indicator that tells the batching system all passes 
+	   this Material supports.
+
+	   The other parameters are auto mapped with parameters in atom effects.
+	*/
 	class _Export Material
 	{
 	public:
-		/* The maximum textures used in a material
+		/* The maximum textures can used in a material
 		*/
 		const static int MaxTextureLayers = 10;
 
@@ -28,24 +36,24 @@ namespace Apoc3D
 
 		/* Gets the ambient component of this material
 		*/
-		const D3DCOLORVALUE& getAmbient() { return m_mtrlColor.Ambient; }
+		const Color4& getAmbient() { return m_mtrlColor.Ambient; }
 		/* Gets the diffuse component of this material
 		*/
-		const D3DCOLORVALUE& getDiffuse() { return m_mtrlColor.Diffuse; }
+		const Color4& getDiffuse() { return m_mtrlColor.Diffuse; }
 		/* Gets the emissive component of this material
 		*/
-		const D3DCOLORVALUE& getEmissive() { return m_mtrlColor.Emissive; }
+		const Color4& getEmissive() { return m_mtrlColor.Emissive; }
 		/* Gets the specular component of this material
 		*/
-		const D3DCOLORVALUE& getSpecular() { return m_mtrlColor.Specular; }
+		const Color4& getSpecular() { return m_mtrlColor.Specular; }
 		/* Gets the specular shineness
 		*/
 		const float getPower() { return m_mtrlColor.Power; }
 
-		void setAmbient(const D3DCOLORVALUE& value) { m_mtrlColor.Ambient = value; }
-		void setDiffuse(const D3DCOLORVALUE& value) { m_mtrlColor.Diffuse = value; }
-		void setEmissive(const D3DCOLORVALUE& value) { m_mtrlColor.Emissive = value; }
-		void setSpecular(const D3DCOLORVALUE& value) { m_mtrlColor.Specular = value; }
+		void setAmbient(const Color4& value) { m_mtrlColor.Ambient = value; }
+		void setDiffuse(const Color4& value) { m_mtrlColor.Diffuse = value; }
+		void setEmissive(const Color4& value) { m_mtrlColor.Emissive = value; }
+		void setSpecular(const Color4& value) { m_mtrlColor.Specular = value; }
 		void setPower(const float value) { m_mtrlColor.Power = value; }
 	
 		Material();

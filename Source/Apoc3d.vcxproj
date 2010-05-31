@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DB9F1707-9349-4171-B670-CC5AC4EE4170}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Apoc3d</RootNamespace>
+    <RootNamespace>Apoc3D</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -80,17 +80,24 @@
     <ClInclude Include="Core\RenderOperationBuffer.h" />
     <ClInclude Include="Core\SceneManager.h" />
     <ClInclude Include="Core\SceneObject.h" />
+    <ClInclude Include="EffectSystem\Effect.h" />
+    <ClInclude Include="EffectSystem\EffectAtomCodeParser.h" />
+    <ClInclude Include="EffectSystem\EffectParameter.h" />
+    <ClInclude Include="Rendering\EffectDescription.h" />
     <ClInclude Include="EffectSystem\EffectManager.h" />
     <ClInclude Include="EffectSystem\EffectAtom.h" />
     <ClInclude Include="Core\Frustum.h" />
     <ClInclude Include="GameTime.h" />
+    <ClInclude Include="Core\GeomentryData.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="nedmalloc\malloc.c" />
     <ClInclude Include="ObjectBase.h" />
     <ClInclude Include="Core\SceneNode.h" />
     <ClInclude Include="Core\Resource.h" />
     <ClInclude Include="Core\ResourceHandle.h" />
+    <ClInclude Include="Rendering\ScenePass.h" />
     <ClInclude Include="SceneRenderer.h" />
+    <ClInclude Include="Rendering\SceneProcedure.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
@@ -107,14 +114,21 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="EffectSystem\Effect.cpp" />
+    <ClCompile Include="EffectSystem\EffectAtomCodeParser.cpp" />
+    <ClCompile Include="EffectSystem\EffectParameter.cpp" />
+    <ClCompile Include="Rendering\EffectDescription.cpp" />
     <ClCompile Include="EffectSystem\EffectAtom.cpp" />
     <ClCompile Include="EffectSystem\EffectManager.cpp" />
     <ClCompile Include="Core\Frustum.cpp" />
+    <ClCompile Include="Core\GeomentryData.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="ObjectBase.cpp" />
     <ClCompile Include="Core\SceneNode.cpp" />
     <ClCompile Include="Core\Resource.cpp" />
+    <ClCompile Include="Rendering\ScenePass.cpp" />
     <ClCompile Include="SceneRenderer.cpp" />
+    <ClCompile Include="Rendering\SceneProcedure.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
