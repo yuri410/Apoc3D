@@ -11,13 +11,13 @@ namespace Apoc3D
 			typedef typename ResType::ResTempHelper CF_XXX; 
 
 		private:
-			ResType* m_resource;
+			const ResType* m_resource;
 
-			void _Ref(Resource* res);
-			void _Unref(Resource* res);
+			void _Ref(const Resource* res);
+			void _Unref(const Resource* res);
 
 		protected:
-			ResourceHandle(ResType* res)
+			ResourceHandle(const ResType* res)
 			{
 				m_resource = res;
 				_Ref(res);
@@ -32,7 +32,7 @@ namespace Apoc3D
 
 			void Touch();
 
-			ResType* getWeakRef() { return m_resource; }
+			ResType* getWeakRef() const { return m_resource; }
 
 			ResType* operator ->()
 			{

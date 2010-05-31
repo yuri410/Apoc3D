@@ -19,15 +19,15 @@ namespace Apoc3D
 			/*
 			  Gets the vertex buffer of this GeomentryData object
 			*/
-			const IDirect3DVertexBuffer9* getVertexBuffer() { return m_vtxBuffer; }
+			IDirect3DVertexBuffer9* getVertexBuffer() const { return m_vtxBuffer; }
 			/*
 			  Gets the index buffer of this GeomentryData object
 			*/
-			const IDirect3DIndexBuffer9* getIndexBuffer() { return m_idxBuffer; }
+			IDirect3DIndexBuffer9* getIndexBuffer() const { return m_idxBuffer; }
 			/*
 			  Gets the vertex declaration of this GeomentryData object
 			*/
-			const IDirect3DVertexDeclaration9* getVertexDecl() { return m_vtxDecl; }
+			IDirect3DVertexDeclaration9* getVertexDecl() const { return m_vtxDecl; }
 
 			void setVertexBuffer(IDirect3DVertexBuffer9* value) { m_vtxBuffer = value; }
 			void setIndexBuffer(IDirect3DIndexBuffer9* value) { m_idxBuffer = value; }

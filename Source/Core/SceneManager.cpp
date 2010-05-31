@@ -15,13 +15,13 @@ namespace Apoc3D
 		{
 		}
 
-		void SceneManager::AddObject(SceneObject* obj)
+		void SceneManager::AddObject(const SceneObject* obj)
 		{
 			m_objects.push_back(obj);
-		}
-		bool SceneManager::RemoveObject(SceneObject* obj)
+		} 
+		bool SceneManager::RemoveObject(const SceneObject* obj)
 		{
-			m_objects.erase(std::find(m_objects.begin(), m_objects.end, obj));
+			m_objects.erase(std::find(m_objects.begin(), m_objects.end(), obj));
 		}
 	};
 };

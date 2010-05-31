@@ -16,7 +16,7 @@ namespace Apoc3D
 		public:
 			/* Gets the render operation of this renderable object at a ceratin LOD level
 			*/
-			virtual RenderOperationBuffer* GetRenderOperation(int level) = 0;
+			virtual RenderOperationBuffer* GetRenderOperation(int level) const = 0;
 			/* Gets the render operation of this renderable object at the default LOD level
 			*/
 			virtual RenderOperationBuffer* GetRenderOperation() { return GetRenderOperation(0); }

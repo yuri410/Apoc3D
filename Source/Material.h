@@ -21,34 +21,35 @@ namespace Apoc3D
 		/* The maximum textures can used in a material
 		*/
 		const static int MaxTextureLayers = 10;
-
+		const static int MaxEffects = 4;
 	private:
+		Effect* m_eff[MaxEffects];
 		BaseTexture* m_tex[MaxTextureLayers];
 		D3DMATERIAL9 m_mtrlColor;
 
 	public:
 		/* Gets the texture at texture layer idx
 		*/
-		BaseTexture* getTexture(int idx) { return m_tex[idx]; }
+		BaseTexture* getTexture(int idx) const { return m_tex[idx]; }
 		/* Sets the texture at texture layer idx
 		*/
 		void setTexture(int idx, BaseTexture* value) { m_tex[idx] = value; }
 
 		/* Gets the ambient component of this material
 		*/
-		const Color4& getAmbient() { return m_mtrlColor.Ambient; }
+		const Color4& getAmbient() const { return m_mtrlColor.Ambient; }
 		/* Gets the diffuse component of this material
 		*/
-		const Color4& getDiffuse() { return m_mtrlColor.Diffuse; }
+		const Color4& getDiffuse() const { return m_mtrlColor.Diffuse; }
 		/* Gets the emissive component of this material
 		*/
-		const Color4& getEmissive() { return m_mtrlColor.Emissive; }
+		const Color4& getEmissive() const { return m_mtrlColor.Emissive; }
 		/* Gets the specular component of this material
 		*/
-		const Color4& getSpecular() { return m_mtrlColor.Specular; }
+		const Color4& getSpecular() const { return m_mtrlColor.Specular; }
 		/* Gets the specular shineness
 		*/
-		const float getPower() { return m_mtrlColor.Power; }
+		const float getPower() const { return m_mtrlColor.Power; }
 
 		void setAmbient(const Color4& value) { m_mtrlColor.Ambient = value; }
 		void setDiffuse(const Color4& value) { m_mtrlColor.Diffuse = value; }

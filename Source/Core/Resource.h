@@ -1,10 +1,10 @@
-
+#include "..\Common.h"
 
 namespace Apoc3D
 {
 	namespace Core
 	{
-		class Resource
+		class _Export Resource
 		{
 		public:   
 			typedef Resource ResTempHelper;   

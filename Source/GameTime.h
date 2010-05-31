@@ -2,6 +2,7 @@
 #define GAMETIME_H
 
 #pragma once
+#include "Common.h"
 
 namespace Apoc3D
 {
@@ -18,10 +19,10 @@ namespace Apoc3D
 	public:
 		/*  Gets the total game time, in seconds.
 		*/
-		const float getTotalTime() { return m_totalTime; }
+		float getTotalTime() const { return m_totalTime; }
 		/* Gets the elapsed game time, in seconds.
 		*/
-		const float getElapsedTime() { return m_elapsedTime; }
+		float getElapsedTime() const { return m_elapsedTime; }
 	
 
 		GameTime(const float elapsedTime, const float totalTime)

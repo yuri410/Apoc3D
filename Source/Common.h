@@ -24,11 +24,19 @@ namespace Apoc3D
 	class SceneRenderer;
 	class GameTime;
 	
-	typedef _Export D3DMATRIX Matrix;
-	typedef _Export D3DXVECTOR2 Vector2;
-	typedef _Export D3DXVECTOR3 Vector3;
-	typedef _Export D3DXVECTOR4 Vector4;
-	typedef _Export D3DXPLANE Plane;
+	#define Matrix D3DXMATRIX
+	#define Vector2 D3DXVECTOR2
+	#define Vector3 D3DXVECTOR3
+	#define Vector4 D3DXVECTOR4
+	#define Plane D3DXPLANE
+
+
+
+	//typedef _Export D3DMATRIX Matrix;
+	//typedef _Export D3DXVECTOR2 Vector2;
+	//typedef _Export D3DXVECTOR3 Vector3;
+	//typedef _Export D3DXVECTOR4 Vector4;
+	//typedef _Export D3DXPLANE Plane;
 	typedef _Export D3DXQUATERNION Quaternion;
 	typedef _Export IDirect3DDevice9 Device;
 	typedef _Export IDirect3DBaseTexture9 BaseTexture;
@@ -53,9 +61,20 @@ namespace Apoc3D
 		class SceneManager;
 		class SceneObject;
 		class Resource;
-	}
+	};
 
-}
+	namespace EffectSystem
+	{
+		class Effect;
+		class EffectManager;
+		class EffectAtom;
+	};
+	namespace Rendering
+	{
+		class ScenePass;
+		class SceneProcedure;
+	};
+};
 //struct IDirect3DBaseTexture9;
 //struct IDirect3DVertexBuffer9;
 //struct IDirect3DIndexBuffer9;

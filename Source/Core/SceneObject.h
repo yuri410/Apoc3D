@@ -15,9 +15,9 @@ namespace Apoc3D
 			bool m_hasSubObjects;
 
 		public:
-			bool hasSubObjects() { return m_hasSubObjects; }
+			bool hasSubObjects() const { return m_hasSubObjects; }
 
-			SceneObject(bool hasSubObjs) 
+			SceneObject(const bool hasSubObjs) 
 				: m_hasSubObjects(hasSubObjs)
 			{
 			}

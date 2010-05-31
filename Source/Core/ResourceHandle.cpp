@@ -7,15 +7,15 @@ namespace Apoc3D
 	namespace Core
 	{
 		template<class ResType>
-		void ResourceHandle<ResType>::_Ref(Resource* res)
+		void ResourceHandle<ResType>::_Ref(const Resource* res)
 		{
-			(static_cast<Resource*>(res))->_Ref();
+			res->_Ref();
 		}
 
 		template<class ResType>
-		void ResourceHandle<ResType>::_Unref(Resource* res)
+		void ResourceHandle<ResType>::_Unref(const Resource* res)
 		{
-			(static_cast<Resource*>(res))->_Unref();
+			res->_Unref();
 		}
 
 		template<class ResType>
