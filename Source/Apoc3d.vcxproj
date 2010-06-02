@@ -83,6 +83,7 @@
     <ClInclude Include="EffectSystem\Effect.h" />
     <ClInclude Include="EffectSystem\EffectAtomCodeParser.h" />
     <ClInclude Include="EffectSystem\EffectParameter.h" />
+    <ClInclude Include="IO\Stream.h" />
     <ClInclude Include="Rendering\EffectDescription.h" />
     <ClInclude Include="EffectSystem\EffectManager.h" />
     <ClInclude Include="EffectSystem\EffectAtom.h" />
@@ -117,6 +118,7 @@
     <ClCompile Include="EffectSystem\Effect.cpp" />
     <ClCompile Include="EffectSystem\EffectAtomCodeParser.cpp" />
     <ClCompile Include="EffectSystem\EffectParameter.cpp" />
+    <ClCompile Include="IO\FileStream.cpp" />
     <ClCompile Include="Rendering\EffectDescription.cpp" />
     <ClCompile Include="EffectSystem\EffectAtom.cpp" />
     <ClCompile Include="EffectSystem\EffectManager.cpp" />

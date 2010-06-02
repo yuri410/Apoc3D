@@ -1,3 +1,27 @@
+/*
+-----------------------------------------------------------------------------
+This source file is part of Apoc3D Engine
+
+Copyright (c) 2009+ Tao Games
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  if not, write to the Free Software Foundation, 
+Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/lesser.txt.
+
+-----------------------------------------------------------------------------
+*/
+
 #pragma once
 
 #include "..\Common.h"
@@ -14,29 +38,29 @@ namespace Apoc3D
 		{
 		private:
 	
-			D3DMATRIX m_view;
-			D3DMATRIX m_proj;
+			Matrix m_view;
+			Matrix m_proj;
 
 			Frustum frustum;
 		public:
 	
 			/* Gets the view transform matrix
 			*/
-			const D3DMATRIX& getViewMatrix() { return m_view; }
+			const Matrix& getViewMatrix() const { return m_view; }
 			/* Gets the projection matrix
 			*/
-			const D3DMATRIX& getProjMatrix() { return m_proj; }
+			const Matrix& getProjMatrix() const { return m_proj; }
 
 			/* Sets the view transform matrix
 			*/
-			void setViewMatrix(const D3DMATRIX& value) { m_view = value; }
+			void setViewMatrix(const Matrix& value) { m_view = value; }
 			/* Sets the projection transform matrix
 			*/
-			void setProjMatrix(const D3DMATRIX& value) { m_proj = value; }
+			void setProjMatrix(const Matrix& value) { m_proj = value; }
 
 			/* Update the camera's state. 
 			*/
-			void Update(GameTime* time);
+			void Update(const GameTime* time);
 
 
 			Camera(void);

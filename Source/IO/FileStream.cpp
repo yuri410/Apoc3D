@@ -21,31 +21,23 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef FILESTREAM_H
+#define FILESTREAM_H
 
+#pragma once
 
-#include "RenderOperationBuffer.h"
-#include "RenderOperation.h"
+#include "..\Common.h"
 
 namespace Apoc3D
 {
 	namespace Core
 	{
-		void RenderOperationBuffer::Add(const RenderOperation& op)
+		class _Export FileStream : public Stream
 		{
-			m_oplist[m_internalPointer++] = op;
+		public:
+
 		}
-		void RenderOperationBuffer::Add(const RenderOperation* op, int count)
-		{
-			for (int i=0;i<count;i++)
-			{
-				m_oplist[m_internalPointer++] = *(op+i);
-			}
-		}
-		
-		void RenderOperationBuffer::Clear()
-		{ 
-			m_oplist.erase(m_oplist.begin(), m_oplist.end());
-			m_internalPointer = 0;
-		}
-	};
-};
+	}
+}
+
+#endif
