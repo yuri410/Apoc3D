@@ -118,7 +118,7 @@
     <ClCompile Include="EffectSystem\Effect.cpp" />
     <ClCompile Include="EffectSystem\EffectAtomCodeParser.cpp" />
     <ClCompile Include="EffectSystem\EffectParameter.cpp" />
-    <ClCompile Include="IO\FileStream.cpp" />
+    <ClCompile Include="IO\FileStream.h" />
     <ClCompile Include="Rendering\EffectDescription.cpp" />
     <ClCompile Include="EffectSystem\EffectAtom.cpp" />
     <ClCompile Include="EffectSystem\EffectManager.cpp" />

@@ -21,19 +21,24 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "Effect.h"
+#ifndef FILESTREAM_H
+#define FILESTREAM_H
+
+#pragma once
+
+#include "..\Common.h"
+#include "Stream.h"
 
 namespace Apoc3D
 {
-	namespace EffectSystem
+	namespace Core
 	{
-		Effect::Effect(void)
+		class _Export FileStream : public Stream
 		{
-		}
+		public:
 
-
-		Effect::~Effect(void)
-		{
 		}
-	};
-};
+	}
+}
+
+#endif

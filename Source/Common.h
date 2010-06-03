@@ -17,7 +17,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  if not, write to the Free Software Foundation, 
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
-http://www.gnu.org/copyleft/lesser.txt.
+http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
@@ -45,10 +45,10 @@ typedef unsigned long ulong;
 // Forward Declarations
 namespace Apoc3D
 {
+	class GameTime;
 	class Material;
 	class SceneRenderer;
-	class GameTime;
-	
+
 	#define Matrix D3DXMATRIX
 	#define Vector2 D3DXVECTOR2
 	#define Vector3 D3DXVECTOR3
@@ -87,7 +87,11 @@ namespace Apoc3D
 		class SceneObject;
 		class Resource;
 	};
-
+	namespace IO
+	{
+		class Stream;
+		class FileStream;
+	};
 	namespace EffectSystem
 	{
 		class Effect;
@@ -100,14 +104,5 @@ namespace Apoc3D
 		class SceneProcedure;
 	};
 };
-//struct IDirect3DBaseTexture9;
-//struct IDirect3DVertexBuffer9;
-//struct IDirect3DIndexBuffer9;
-//struct IDirect3DIndexBuffer9;
-//struct IDirect3DDevice9;
-//
-//void memcpyf(void* src, void* dst, uint size);
-//int memcmpf(void* src, void* dst, uint size);
-//void memsetf(void* dst, int value, uint count);
 
 #endif
