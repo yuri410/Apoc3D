@@ -84,6 +84,7 @@
     <ClInclude Include="EffectSystem\Effect.h" />
     <ClInclude Include="EffectSystem\EffectAtomCodeParser.h" />
     <ClInclude Include="EffectSystem\EffectParameter.h" />
+    <ClInclude Include="Core\FpsCamera.h" />
     <ClInclude Include="IO\Stream.h" />
     <ClInclude Include="Rendering\EffectDescription.h" />
     <ClInclude Include="EffectSystem\EffectManager.h" />
@@ -102,7 +103,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
-    <ClCompile Include="Core\Camera.cpp" />
     <ClCompile Include="Core\RenderOperationBuffer.cpp" />
     <ClCompile Include="Core\ResourceHandle.cpp" />
     <ClCompile Include="Core\SceneManager.cpp" />
@@ -118,6 +118,7 @@
     <ClCompile Include="EffectSystem\Effect.cpp" />
     <ClCompile Include="EffectSystem\EffectAtomCodeParser.cpp" />
     <ClCompile Include="EffectSystem\EffectParameter.cpp" />
+    <ClCompile Include="Core\FpsCamera.cpp" />
     <ClCompile Include="IO\FileStream.cpp" />
     <ClCompile Include="IO\FileStream.h" />
     <ClCompile Include="Rendering\EffectDescription.cpp" />
