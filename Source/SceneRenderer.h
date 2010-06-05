@@ -21,7 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
+#ifndef SCENERENDERER_H
+#define SCENERENDERER_H
 #pragma once
 
 #include "Common.h"
@@ -41,3 +42,4 @@ namespace Apoc3D
 	};
 
 };
+#endif

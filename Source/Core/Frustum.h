@@ -21,8 +21,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef FRUSTUM_H
+#define FRUSTUM_H
+#pragma once
 
 #include "..\Common.h"
+#include "BoundingSphere.h"
 
 namespace Apoc3D
 {
@@ -52,12 +56,17 @@ namespace Apoc3D
 			Frustum(void);
 			~Frustum(void);
 
-			bool Intersects() const
+			bool Intersects(const BoundingSphere& sp) const
 			{
 				for (int i=0;i<ClipPlaneCount;i++)
 				{
-
+					float d = D3DXPlaneDotCoord(&m_planes[i], &sp.Center);
+					if (d<=-sp.Radius)
+					{
+						return false;
+					}
 				}
+				return true;
 			}
 
 			/* Update the frustum with new view and projection matrix.
@@ -70,3 +79,4 @@ namespace Apoc3D
 		};
 	};
 };
+#endif
