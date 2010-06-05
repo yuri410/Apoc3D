@@ -92,6 +92,13 @@ namespace Apoc3D
 
 	typedef std::string String;
 	
+	const Vector3 UnitX3(1,0,0);
+	const Vector3 UnitY3(0,1,0);
+	const Vector3 UnitZ3(0,0,1);
+	const Vector3 One3(1,1,1);
+	const Vector3 Zero3(0,0,0);
+
+
 	namespace Core
 	{
 		class IRenderable;
