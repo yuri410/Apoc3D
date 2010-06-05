@@ -60,11 +60,11 @@ namespace Apoc3D
 
 			/* Update the camera's state. 
 			*/
-			void Update(const GameTime* time);
+			virtual void Update(const GameTime* time) = 0;
 
 
-			Camera(void);
-			~Camera(void);
+			Camera(void) {}
+			~Camera(void) {}
 		};
 
 	}

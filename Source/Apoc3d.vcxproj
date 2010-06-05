@@ -90,7 +90,7 @@
     <ClInclude Include="EffectSystem\EffectAtom.h" />
     <ClInclude Include="Core\Frustum.h" />
     <ClInclude Include="GameTime.h" />
-    <ClInclude Include="Core\GeomentryData.h" />
+    <ClInclude Include="Core\GeometryData.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="nedmalloc\malloc.c" />
     <ClInclude Include="Core\SceneNode.h" />
