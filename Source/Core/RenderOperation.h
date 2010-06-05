@@ -21,7 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
+#ifndef RENDER_OPERATION_H
+#define RENDER_OPERATION_H
 #pragma once
 
 #include "..\Common.h"
@@ -45,5 +46,6 @@ namespace Apoc3D
 			RenderOperation(void) { }
 			~RenderOperation(void) { }
 		};
-	}
-}
+	};
+};
+#endif

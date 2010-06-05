@@ -21,6 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#pragma once
 #include "..\Common.h"
 
 namespace Apoc3D

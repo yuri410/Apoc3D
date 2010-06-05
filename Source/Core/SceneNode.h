@@ -21,6 +21,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef SCENENODE_H
+#define SCENENODE_H
+#pragma once
 #include "..\Common.h"
 #include <vector>
 
@@ -44,3 +47,4 @@ namespace Apoc3D
 		};
 	};
 };
+#endif

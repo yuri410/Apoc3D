@@ -21,6 +21,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef EFFECTATOM_H
+#define EFFECTATOM_H
+#pragma once
+
 #include "..\Common.h"
 
 namespace Apoc3D
@@ -42,3 +46,4 @@ namespace Apoc3D
 		};
 	};
 };
+#endif

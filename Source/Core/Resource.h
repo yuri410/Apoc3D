@@ -21,6 +21,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef RESOURCE_H
+#define RESOURCE_H
+
+#pragma once
+
 #include "..\Common.h"
 
 namespace Apoc3D
@@ -40,3 +45,4 @@ namespace Apoc3D
 		};
 	};
 };
+#endif

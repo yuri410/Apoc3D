@@ -36,8 +36,7 @@ namespace Apoc3D
 	namespace Core
 	{
 		typedef std::vector<const SceneObject*> ObjectList;
-		/*
-		  SceneManager keeps tracks of all scene objects.
+		/* SceneManager keeps tracks of all scene objects.
 		*/
 		class _Export SceneManager
 		{
@@ -54,6 +53,8 @@ namespace Apoc3D
 			/* Removes a scene obejct from scene
 			*/
 			virtual bool RemoveObject(const SceneObject* obj);
+
+
 		};
 	};
 };
