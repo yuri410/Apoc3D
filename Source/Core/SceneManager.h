@@ -48,12 +48,10 @@ namespace Apoc3D
 			SceneManager(void);
 			~SceneManager(void);
 		
-			/*
-			  Adds a new scene object into scene
+			/* Adds a new scene object into scene
 			*/
 			virtual void AddObject(const SceneObject* obj);
-			/*
-			  Removes a scene obejct from scene
+			/* Removes a scene obejct from scene
 			*/
 			virtual bool RemoveObject(const SceneObject* obj);
 		};

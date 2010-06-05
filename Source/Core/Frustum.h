@@ -56,6 +56,8 @@ namespace Apoc3D
 			Frustum(void);
 			~Frustum(void);
 
+			/* Check if a bouding sphere is intersecting the frustum
+			*/
 			bool Intersects(const BoundingSphere& sp) const
 			{
 				for (int i=0;i<ClipPlaneCount;i++)
