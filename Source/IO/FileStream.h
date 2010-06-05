@@ -29,17 +29,44 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "..\Common.h"
 #include "Stream.h"
 
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
 namespace Apoc3D
 {
-	namespace Core
+	namespace IO
 	{
+
+		enum _Export FileMode
+		{
+			FM_Open,
+			FM_OpenCreate,
+			FM_Append
+		};
+		enum _Export FileAccess
+		{
+			FA_Read,
+			FA_Write,
+			FA_ReadWrite
+		};
+
 		class _Export FileStream : public Stream
 		{
+		private:
+			ofstream* m_out;
+			ifstream* m_in;
+			fstream* m_io;
+
 		public:
-			FileStream(const String& filename);
+			FileStream(const String& filename, FileMode mode, FileAccess access);
+			~FileStream();
 
 			int Read(const byte* dest, int count);
 			void Write(const byte* src, int count);
+
+			void Seek(int offset, SeekMode mode);
 		};
 	};
 };

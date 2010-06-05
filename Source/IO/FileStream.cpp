@@ -28,6 +28,48 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		FileStream::FileStream(const String& filename, FileMode mode, FileAccess access)
+		{
+			m_io = 0; 
+			m_in = 0;
+			m_out = 0;
+
+			ios::openmode omode;
+
+
+			switch (mode)
+			{
+			case FM_Open:
+
+				break;
+			case FM_Append:
+
+				break;
+			}
+
+			switch (access)
+			{
+			case FA_Read:
+				m_in = new std::ifstream();
+				break;
+			case FA_Write:
+				m_out = new std::ofstream(filename.c_str());
+				break;
+			case FA_ReadWrite:
+				m_io = new std::fstream();
+				break;
+			}
+		}
+		FileStream::~FileStream()
+		{
+			if (m_out)
+				delete m_out;
+			if (m_in)
+				delete m_in;
+			if (m_io)
+				delete m_io;
+		}
+
 		int FileStream::Read(const byte* dest, int count)
 		{
 
@@ -36,6 +78,33 @@ namespace Apoc3D
 		void FileStream::Write(const byte* src, int count)
 		{
 
+		}
+
+		void FileStream::Seek(int offset, SeekMode mode)
+		{
+			ios::seekdir dir;
+			switch (mode)
+			{
+			case SM_Begin:
+				dir = ios::beg;
+				break;
+			case SM_End:
+				dir = ios::end;
+				break;
+			default:
+				dir = ios::cur;
+				break;
+			}
+
+			if (m_out)
+				m_out->seekp(offset, dir);
+			if (m_in)
+				m_in->seekg(offset, dir);
+			if (m_io)
+			{
+				m_io->seekg(offset, dir);
+				m_io->seekp(offset, dir);
+			}
 		}
 	};
 };

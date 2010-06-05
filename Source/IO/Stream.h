@@ -33,6 +33,12 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		enum _Export SeekMode
+		{
+			SM_Begin,
+			SM_Current,
+			SM_End
+		};
 		/* 
 		*/
 		class _Export Stream
@@ -42,6 +48,7 @@ namespace Apoc3D
 			~Stream() {}
 
 		public:
+
 			virtual int Read(const byte* dest, int count) = 0;
 			virtual int ReadByte()
 			{
@@ -53,12 +60,14 @@ namespace Apoc3D
 				return buffer;
 			}
 
- 
+			
 			virtual void Write(const byte* src, int count) = 0;
 			virtual void WriteByte(byte value)
 			{
 				Write(&value, 1);
 			}
+
+			virtual void Seek(int offset, SeekMode mode) = 0;
 		};
 	};
 }
