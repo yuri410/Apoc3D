@@ -21,7 +21,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef GEOMETRYDATA_H
+#define GEOMETRYDATA_H
 
+#pragma once
 #include "..\Common.h"
 
 namespace Apoc3D
@@ -30,7 +33,7 @@ namespace Apoc3D
 	{
 		/* Define buffers and information used to render a geomentry
 		*/
-		class _Export GeomentryData
+		class _Export GeometryData
 		{
 		private:
 			VertexBuffer* m_vtxBuffer;
@@ -58,8 +61,9 @@ namespace Apoc3D
 			void setVertexDecl(IDirect3DVertexDeclaration9* value) { m_vtxDecl = value; }
 
 
-			GeomentryData(void){}
-			~GeomentryData(void){}
+			GeometryData(void){}
+			~GeometryData(void){}
 		};
 	};
 };
+#endif
