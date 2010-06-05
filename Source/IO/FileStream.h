@@ -36,9 +36,12 @@ namespace Apoc3D
 		class _Export FileStream : public Stream
 		{
 		public:
+			FileStream(const String& filename);
 
-		}
-	}
-}
+			int Read(const byte* dest, int count);
+			void Write(const byte* src, int count);
+		};
+	};
+};
 
 #endif

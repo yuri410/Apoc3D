@@ -29,7 +29,7 @@ namespace Apoc3D
 	namespace Core
 	{
 		template <class ResType>
-		class ResourceHandle
+		class _Export ResourceHandle
 		{
 			typedef typename ResType::ResTempHelper CF_XXX; 
 

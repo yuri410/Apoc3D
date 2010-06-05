@@ -21,26 +21,21 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "..\Common.h"
-#include <vector>
+
+#include "FileStream.h"
 
 namespace Apoc3D
 {
-	namespace Core
+	namespace IO
 	{
-		typedef std::vector<SceneObject*> ObjectList;
-
-		/* Represents a collection of scene objects in the scene
-		*/
-		class _Export SceneNode
+		int FileStream::Read(const byte* dest, int count)
 		{
-		private:
-			ObjectList m_attached;
 
-		public:
-			
-			SceneNode(void);
-			~SceneNode(void);
-		};
+		}
+
+		void FileStream::Write(const byte* src, int count)
+		{
+
+		}
 	};
 };

@@ -21,3 +21,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#include "..\Common.h"
+
+namespace Apoc3D
+{
+	namespace EffectSystem
+	{
+		class _Export EffectManager
+		{
+		private:
+			EffectManager(){}
+			
+		public:
+
+		};
+	};
+};
