@@ -29,6 +29,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
+using namespace Apoc3D::EffectSystem;
+
 namespace Apoc3D
 {
 	/* Defines colors, textures and effect info for a geomentry

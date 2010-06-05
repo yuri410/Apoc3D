@@ -58,8 +58,8 @@ namespace Apoc3D
 			void setVertexDecl(IDirect3DVertexDeclaration9* value) { m_vtxDecl = value; }
 
 
-			GeomentryData(void);
-			~GeomentryData(void);
+			GeomentryData(void){}
+			~GeomentryData(void){}
 		};
 	};
 };

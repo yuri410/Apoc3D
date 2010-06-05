@@ -54,7 +54,10 @@ namespace Apoc3D
 
 			bool Intersects() const
 			{
+				for (int i=0;i<ClipPlaneCount;i++)
+				{
 
+				}
 			}
 
 			/* Update the frustum with new view and projection matrix.

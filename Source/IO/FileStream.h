@@ -43,6 +43,7 @@ namespace Apoc3D
 		{
 			FM_Open,
 			FM_OpenCreate,
+			FM_OpenTruncate,
 			FM_Append
 		};
 		enum _Export FileAccess

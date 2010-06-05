@@ -73,6 +73,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\BoundingSphere.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Core\Camera.h" />
     <ClInclude Include="Core\IRenderable.h" />
@@ -92,7 +93,6 @@
     <ClInclude Include="Core\GeomentryData.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="nedmalloc\malloc.c" />
-    <ClInclude Include="ObjectBase.h" />
     <ClInclude Include="Core\SceneNode.h" />
     <ClInclude Include="Core\Resource.h" />
     <ClInclude Include="Core\ResourceHandle.h" />
@@ -124,9 +124,7 @@
     <ClCompile Include="EffectSystem\EffectAtom.cpp" />
     <ClCompile Include="EffectSystem\EffectManager.cpp" />
     <ClCompile Include="Core\Frustum.cpp" />
-    <ClCompile Include="Core\GeomentryData.cpp" />
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="ObjectBase.cpp" />
     <ClCompile Include="Core\SceneNode.cpp" />
     <ClCompile Include="Core\Resource.cpp" />
     <ClCompile Include="Rendering\ScenePass.cpp" />

@@ -36,27 +36,16 @@ namespace Apoc3D
 
 			ios::openmode omode;
 
-
-			switch (mode)
-			{
-			case FM_Open:
-
-				break;
-			case FM_Append:
-
-				break;
-			}
-
 			switch (access)
 			{
 			case FA_Read:
-				m_in = new std::ifstream();
+				m_in = new std::ifstream(filename.c_str());
 				break;
 			case FA_Write:
 				m_out = new std::ofstream(filename.c_str());
 				break;
 			case FA_ReadWrite:
-				m_io = new std::fstream();
+				m_io = new std::fstream(filename.c_str());
 				break;
 			}
 		}

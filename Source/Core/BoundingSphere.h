@@ -21,20 +21,40 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef BOUNDING_SPHERE_H
+#define BOUNDING_SPHERE_H
 
-#include "GeomentryData.h"
+#pragma once
+
+#include "..\Common.h"
 
 namespace Apoc3D
 {
 	namespace Core
 	{
-		GeomentryData::GeomentryData(void)
+		class BoundingSphere
 		{
-		}
+
+		public:
+			/* The center position of the bounding sphere.
+			*/
+			Vector3 Center;
+
+			float Radius;
 
 
-		GeomentryData::~GeomentryData(void)
-		{
-}
+			BoundingSphere(const Vector3& c, float r)
+			{
+				Center = c;
+				Radius = r;
+			}
+			~BoundingSphere(void)
+			{
+
+			}
+
+
+		};
 	};
 };
+#endif
