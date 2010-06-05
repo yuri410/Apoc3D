@@ -31,6 +31,7 @@ typedef unsigned int uint;
 typedef unsigned short ushort;
 typedef unsigned char uchar;
 typedef unsigned long ulong;
+typedef unsigned long long BatchHandle;
 
 #if APOC3D_DLLEX
 	#define _Export __declspec( dllexport )
@@ -103,7 +104,7 @@ namespace Apoc3D
 	{
 		class IRenderable;
 		class Camera;
-		class GeomentryData;
+		class GeometryData;
 		class RenderOperation;
 		class RenderOperationBuffer;
 		class SceneManager;

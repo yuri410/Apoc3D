@@ -30,12 +30,33 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 
 #include <vector>
+#include <map>
+
+using namespace std;
 
 namespace Apoc3D
 {
 	namespace Core
 	{
-		typedef std::vector<const SceneObject*> ObjectList;
+		typedef vector<const SceneObject*> ObjectList;
+
+		typedef map<BatchHandle, GeometryData*> GeometryTable;
+		typedef map<BatchHandle, GeometryTable*> MaterialTable;
+		typedef map<int, MaterialTable*> PriorityTable;
+
+		typedef map<BatchHandle, Material*> MaterialList;
+		
+		class _Export BatchData
+		{
+		private:
+			PriorityTable priTable;
+			MaterialList mtrlTable;
+
+		public:
+			BatchData(){}
+			
+		};
+
 		/* SceneManager keeps tracks of all scene objects.
 		*/
 		class _Export SceneManager
@@ -54,7 +75,7 @@ namespace Apoc3D
 			*/
 			virtual bool RemoveObject(const SceneObject* obj);
 
-
+			void RenderScene();
 		};
 	};
 };
