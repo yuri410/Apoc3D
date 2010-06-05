@@ -32,14 +32,37 @@ typedef unsigned short ushort;
 typedef unsigned char uchar;
 typedef unsigned long ulong;
 
+#if APOC3D_DLLEX
+	#define _Export __declspec( dllexport )
+#else
+	#define _Export 
+#endif
+
+
+struct _Export D3DXPLANE;
+struct _Export D3DXVECTOR2;
+struct _Export D3DXVECTOR3;
+struct _Export D3DXVECTOR4;
+struct _Export D3DXMATRIX;
+struct _Export D3DXQUATERNION;
+struct _Export _D3DCOLORVALUE;
+
+struct _Export IDirect3DDevice9;
+struct _Export IDirect3DBaseTexture9;
+struct _Export IDirect3DTexture9;
+struct _Export ID3DXSprite;
+struct _Export IDirect3DIndexBuffer9;
+struct _Export IDirect3DVertexBuffer9;
+struct _Export IDirect3DVertexShader9;
+struct _Export IDirect3DPixelShader9;
+struct _Export IDirect3DVertexDeclaration9;
+
 #include "Include\d3d9.h"
 #include "Include\d3dx9.h"
 
 #include <windows.h>
 #include <algorithm>
 #include <string>
-
-#define _Export __declspec( dllexport )
 
 
 // Forward Declarations
@@ -49,30 +72,23 @@ namespace Apoc3D
 	class Material;
 	class SceneRenderer;
 
-	#define Matrix D3DXMATRIX
-	#define Vector2 D3DXVECTOR2
-	#define Vector3 D3DXVECTOR3
-	#define Vector4 D3DXVECTOR4
-	#define Plane D3DXPLANE
-
-
-
-	//typedef _Export D3DMATRIX Matrix;
-	//typedef _Export D3DXVECTOR2 Vector2;
-	//typedef _Export D3DXVECTOR3 Vector3;
-	//typedef _Export D3DXVECTOR4 Vector4;
-	//typedef _Export D3DXPLANE Plane;
-	typedef _Export D3DXQUATERNION Quaternion;
-	typedef _Export IDirect3DDevice9 Device;
-	typedef _Export IDirect3DBaseTexture9 BaseTexture;
-	typedef _Export IDirect3DTexture9 Texture;
-	typedef _Export ID3DXSprite Sprite;
-	typedef _Export IDirect3DIndexBuffer9 IndexBuffer;
-	typedef _Export IDirect3DVertexBuffer9 VertexBuffer;
-	typedef _Export IDirect3DVertexShader9 VertexShader;
-	typedef _Export IDirect3DPixelShader9 PixelShader;
-	typedef _Export IDirect3DVertexDeclaration9 VertexDeclaration;
+	typedef D3DXMATRIX Matrix;
+	typedef D3DXPLANE Plane;
+	typedef D3DXVECTOR2 Vector2;
+	typedef D3DXVECTOR3 Vector3;
+	typedef D3DXVECTOR4 Vector4;
+	typedef D3DXQUATERNION Quaternion;
 	typedef D3DCOLORVALUE Color4;
+	
+	typedef IDirect3DDevice9 Device;
+	typedef IDirect3DBaseTexture9 BaseTexture;
+	typedef IDirect3DTexture9 Texture;
+	typedef ID3DXSprite Sprite;
+	typedef IDirect3DIndexBuffer9 IndexBuffer;
+	typedef IDirect3DVertexBuffer9 VertexBuffer;
+	typedef IDirect3DVertexShader9 VertexShader;
+	typedef IDirect3DPixelShader9 PixelShader;
+	typedef IDirect3DVertexDeclaration9 VertexDeclaration;
 
 	typedef std::string String;
 	

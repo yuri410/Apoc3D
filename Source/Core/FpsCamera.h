@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma once
 
 #include "..\Common.h"
+#include "Camera.h"
 
 namespace Apoc3D
 {
@@ -33,9 +34,24 @@ namespace Apoc3D
 	{
 		class _Export FpsCamera : public Camera
 		{
+		private:
+			float m_aspectRatio;
+			float m_velocity;
 		public:
-			FpsCamera(void);
+			FpsCamera(float aspectRatio);
 			~FpsCamera(void);
+
+
+			float getAspectRatio() const { return m_aspectRatio; }
+			float getVelocity() const { return m_velocity; } 
+
+			void MoveForward() {}
+			void MoveBackward(){}
+			void MoveLeft(){}
+			void MoveRight(){}
+			void MoveUp(){}
+			void MoveDown(){}
+			void Move(const Vector3& dir){}
 
 			void Update(const GameTime* time);
 		};

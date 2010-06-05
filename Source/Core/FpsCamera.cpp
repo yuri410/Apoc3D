@@ -28,8 +28,10 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		FpsCamera::FpsCamera(void)
+		FpsCamera::FpsCamera(float aspectRatio)
+			: m_aspectRatio(aspectRatio)
 		{
+
 		}
 
 
@@ -37,6 +39,9 @@ namespace Apoc3D
 		{
 		}
 
-		void Update(const GameTime* time){}
+		void Update(const GameTime* time)
+		{
+
+		}
 	};
 };
