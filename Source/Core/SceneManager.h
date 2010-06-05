@@ -48,13 +48,22 @@ namespace Apoc3D
 		
 		class _Export BatchData
 		{
+		public:
+			static const int MaxPriority = 10;
+
 		private:
-			PriorityTable priTable;
-			MaterialList mtrlTable;
+			PriorityTable m_priTable;
+			MaterialList m_mtrlTable;
+
+			int m_objectCount;
 
 		public:
-			BatchData(){}
+			BatchData() { }
 			
+			int getObjectCount() const { return m_objectCount; }
+
+			void Add(const RenderOperation* op, int count);
+			void Clear();
 		};
 
 		/* SceneManager keeps tracks of all scene objects.

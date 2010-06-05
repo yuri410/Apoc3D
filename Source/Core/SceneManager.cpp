@@ -29,6 +29,15 @@ namespace Apoc3D
 {
 	namespace Core
 	{
+		void BatchData::Add(const RenderOperation* op, int count)
+		{
+
+		}
+		void BatchData::Clear()
+		{
+
+		}
+
 		SceneManager::SceneManager(void)
 		{
 		}
