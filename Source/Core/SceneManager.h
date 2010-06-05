@@ -40,12 +40,11 @@ namespace Apoc3D
 	{
 		typedef vector<const SceneObject*> ObjectList;
 
-		typedef map<BatchHandle, GeometryData*> GeometryTable;
-		typedef map<BatchHandle, GeometryTable*> MaterialTable;
-		typedef map<int, MaterialTable*> PriorityTable;
-
-		typedef map<BatchHandle, Material*> MaterialList;
-		
+		class _Export GeometryTable : public map<BatchHandle, GeometryData*> { };
+		class _Export MaterialTable : public map<BatchHandle, GeometryTable*> { };
+		class _Export PriorityTable : public map<int, MaterialTable*> { };
+		class _Export MaterialList : public map<BatchHandle, Material*> { };
+				
 		class _Export BatchData
 		{
 		public:
@@ -53,7 +52,7 @@ namespace Apoc3D
 
 		private:
 			PriorityTable m_priTable;
-			MaterialList m_mtrlTable;
+			MaterialList m_mtrlList;
 
 			int m_objectCount;
 
@@ -62,7 +61,7 @@ namespace Apoc3D
 			
 			int getObjectCount() const { return m_objectCount; }
 
-			void Add(const RenderOperation* op, int count);
+			void Add(const RenderOperationBuffer* op);
 			void Clear();
 		};
 
