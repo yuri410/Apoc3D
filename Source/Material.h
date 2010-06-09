@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma once
 
 #include "Common.h"
+#include "HashHandleObject.h"
 
 using namespace Apoc3D::EffectSystem;
 
@@ -41,7 +42,7 @@ namespace Apoc3D
 
 	   The other parameters are auto mapped with parameters in atom effects.
 	*/
-	class _Export Material
+	class _Export Material : public HashHandleObject
 	{
 	public:
 		/* The maximum textures can used in a material
@@ -52,6 +53,7 @@ namespace Apoc3D
 		Effect* m_eff[MaxEffects];
 		BaseTexture* m_tex[MaxTextureLayers];
 		D3DMATERIAL9 m_mtrlColor;
+
 
 	public:
 		/* Gets the texture at texture layer idx

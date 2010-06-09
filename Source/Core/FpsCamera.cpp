@@ -29,9 +29,9 @@ namespace Apoc3D
 	namespace Core
 	{
 		FpsCamera::FpsCamera(float aspectRatio)
-			: m_aspectRatio(aspectRatio)
+			: m_aspectRatio(aspectRatio), m_velocity(0), m_position(Vector3())
 		{
-
+			
 		}
 
 

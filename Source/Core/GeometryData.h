@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 #include "..\Common.h"
+#include "..\HashHandleObject.h"
 
 namespace Apoc3D
 {
@@ -33,7 +34,7 @@ namespace Apoc3D
 	{
 		/* Define buffers and information used to render a geomentry
 		*/
-		class _Export GeometryData
+		class _Export GeometryData : public HashHandleObject
 		{
 		private:
 			VertexBuffer* m_vtxBuffer;
@@ -42,26 +43,34 @@ namespace Apoc3D
 			int m_primCount;
 			int m_baseVertex;
 
+			PrimitiveType m_primType;
+			SceneObject* m_sender;
+
 		public:
-			/*
-			  Gets the vertex buffer of this GeomentryData object
+			/* Gets the vertex buffer of this GeomentryData object
 			*/
 			IDirect3DVertexBuffer9* getVertexBuffer() const { return m_vtxBuffer; }
-			/*
-			  Gets the index buffer of this GeomentryData object
+			/* Gets the index buffer of this GeomentryData object
 			*/
 			IDirect3DIndexBuffer9* getIndexBuffer() const { return m_idxBuffer; }
-			/*
-			  Gets the vertex declaration of this GeomentryData object
+			/* Gets the vertex declaration of this GeomentryData object
 			*/
 			IDirect3DVertexDeclaration9* getVertexDecl() const { return m_vtxDecl; }
+			/* 
+			*/
+			PrimitiveType getPrimitiveType() const { return m_primType; }
 
 			void setVertexBuffer(IDirect3DVertexBuffer9* value) { m_vtxBuffer = value; }
 			void setIndexBuffer(IDirect3DIndexBuffer9* value) { m_idxBuffer = value; }
 			void setVertexDecl(IDirect3DVertexDeclaration9* value) { m_vtxDecl = value; }
+			void setPrimitiveType(PrimitiveType value) { m_primType = value; }
 
 
-			GeometryData(void){}
+			GeometryData(void)
+				: m_sender(0), m_baseVertex(0), m_primCount(0), 
+				m_vtxDecl(0), m_idxBuffer(0), m_vtxBuffer(0),
+				m_primType(D3DPT_POINTLIST)
+			{ }
 			~GeometryData(void){}
 		};
 	};

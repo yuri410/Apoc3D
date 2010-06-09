@@ -22,23 +22,31 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
+#ifndef BINARYREADER_H
+#define BINARYREADER_H
 
-#include "Material.h"
+#pragma once
+
+#include "..\Common.h"
+#include "Stream.h"
 
 namespace Apoc3D
 {
-	Material::Material()
-	{	
-		std::memset(m_tex, 0, sizeof(m_tex));
-
-		std::memset(&m_mtrlColor, 0,  sizeof(m_mtrlColor));	
-
-
-	}
-
-
-	Material::~Material(void)
+	namespace IO
 	{
+		class _Export BinaryReader
+		{
+		private:
+			Stream* m_baseStream;
+		public:
+			BinaryReader(Stream* baseStream)
+				: m_baseStream(baseStream)
+			{
+			}
 
-	}
+			__int32 ReadInt32(){}
+		};
+	};
 };
+
+#endif

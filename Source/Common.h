@@ -27,6 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define COMMON_H
 #pragma once
 
+typedef __int16 int16;
+typedef __int32 int32;
+typedef __int64 int64;
+
 typedef unsigned int uint;
 typedef unsigned short ushort;
 typedef unsigned char uchar;
@@ -57,6 +61,8 @@ struct _Export IDirect3DVertexBuffer9;
 struct _Export IDirect3DVertexShader9;
 struct _Export IDirect3DPixelShader9;
 struct _Export IDirect3DVertexDeclaration9;
+
+enum _Export D3DPRIMITIVETYPE;
 
 #include "Include\d3d9.h"
 #include "Include\d3dx9.h"
@@ -91,6 +97,7 @@ namespace Apoc3D
 	typedef IDirect3DPixelShader9 PixelShader;
 	typedef IDirect3DVertexDeclaration9 VertexDeclaration;
 
+	typedef D3DPRIMITIVETYPE PrimitiveType;
 	typedef std::string String;
 	
 	const Vector3 UnitX3(1,0,0);

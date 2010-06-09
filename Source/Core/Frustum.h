@@ -71,6 +71,8 @@ namespace Apoc3D
 				return true;
 			}
 
+			
+
 			/* Update the frustum with new view and projection matrix.
 			*/
 			void Update(const Matrix& view, const Matrix& proj);

@@ -85,6 +85,8 @@
     <ClInclude Include="EffectSystem\EffectAtomCodeParser.h" />
     <ClInclude Include="EffectSystem\EffectParameter.h" />
     <ClInclude Include="Core\FpsCamera.h" />
+    <ClInclude Include="HashHandleObject.h" />
+    <ClInclude Include="IO\BinaryReader.h" />
     <ClInclude Include="IO\Stream.h" />
     <ClInclude Include="Rendering\EffectDescription.h" />
     <ClInclude Include="EffectSystem\EffectManager.h" />

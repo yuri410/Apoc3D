@@ -50,9 +50,9 @@ namespace Apoc3D
 			void MoveForward() { m_position += UnitZ3 * m_velocity; }
 			void MoveBackward() { m_position -= UnitZ3 * m_velocity; }
 			void MoveLeft() { m_position += UnitX3 * m_velocity; }
-			void MoveRight() { m_position += UnitX3 * m_velocity; }
+			void MoveRight() { m_position -= UnitX3 * m_velocity; }
 			void MoveUp() { m_position += UnitY3 * m_velocity;}
-			void MoveDown() { m_position += UnitY3 * m_velocity; }
+			void MoveDown() { m_position -= UnitY3 * m_velocity; }
 			void Move(const Vector3& dir) { m_position += dir * m_velocity; }
 
 			void Update(const GameTime* time);

@@ -21,24 +21,34 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef HASHHANDLEOBJECT_H
+#define HASHHANDLEOBJECT_H
 
+#pragma once
 
-#include "Material.h"
+#include "Common.h"
 
 namespace Apoc3D
 {
-	Material::Material()
-	{	
-		std::memset(m_tex, 0, sizeof(m_tex));
-
-		std::memset(&m_mtrlColor, 0,  sizeof(m_mtrlColor));	
-
-
-	}
-
-
-	Material::~Material(void)
+	class _Export HashHandleObject
 	{
+	private:
+		static BatchHandle Counter = 0;
+	protected:
+		
+		BatchHandle m_handle;
 
-	}
+	public:
+		HashHandleObject()
+		{
+			m_handle = ++Counter;
+		}
+
+		BatchHandle getBatchHandle() const 
+		{
+			return m_handle;
+		}
+	};
 };
+
+#endif
