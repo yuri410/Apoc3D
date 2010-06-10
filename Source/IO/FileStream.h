@@ -64,24 +64,24 @@ namespace Apoc3D
 			FileStream(const String& filename, FileMode mode, FileAccess access);
 			~FileStream();
 
-			int Read(char* dest, int count);
-			void Write(const char* src, int count);
+			int32 Read(char* dest, int32 count);
+			void Write(const char* src, int32 count);
 
-			void setPosition(int offset)
+			void setPosition(int64 offset)
 			{
 				if (m_in) m_in->seekg(offset); 
 				else if (m_out) m_out->seekp(offset);
 				else if (m_io) m_io->seekg(offset);
 			}
-			int getPosition()
+			int64 getPosition()
 			{ 
-				if (m_in) m_in->tellg(); 
-				else if (m_out) m_out->tellp();
-				else if (m_io) m_io->tellg();
+				if (m_in) return m_in->tellg(); 
+				if (m_out) return m_out->tellp();
+				return m_io->tellg();
 			}
 
 
-			void Seek(int offset, SeekMode mode);
+			void Seek(int64 offset, SeekMode mode);
 			void Close();
 		};
 	};

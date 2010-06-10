@@ -47,13 +47,32 @@ namespace Apoc3D
 			{
 			}
 
+			void FillBuffer(int32 len)
+			{
+				m_baseStream->Read(&m_buffer[0], len); 
+			}
 
+			float ReadSingle()
+			{
+				FillBuffer(sizeof(float));
+				return convr32(&m_buffer[0]);
+			}
 
-			float ReadSingle() { }
-
-			int16 ReadInt16() { }
-			int32 ReadInt32() { }
-			int64 ReadInt64() { }
+			int16 ReadInt16() 
+			{
+				FillBuffer(sizeof(int16));
+				return convint16(&m_buffer[0]);
+			}
+			int32 ReadInt32() 
+			{
+				FillBuffer(sizeof(int32));
+				return convint32(&m_buffer[0]);
+			}
+			int64 ReadInt64() 
+			{
+				FillBuffer(sizeof(int64));
+				return convint64(&m_buffer[0]);
+			}
 		};
 	};
 };

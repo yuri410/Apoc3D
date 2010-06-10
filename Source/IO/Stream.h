@@ -49,10 +49,10 @@ namespace Apoc3D
 
 		public:
 
-			virtual int Read(char* dest, int count) = 0;
-			virtual int ReadByte()
+			virtual int32 Read(char* dest, int32 count) = 0;
+			virtual int32 ReadChar()
 			{
-				byte buffer;
+				char buffer;
 				if (Read(&buffer, 1) == 0)
 				{
 					return -1;
@@ -61,13 +61,13 @@ namespace Apoc3D
 			}
 
 			
-			virtual void Write(const char* src, int count) = 0;
-			virtual void WriteByte(byte value)
+			virtual void Write(const char* src, int32 count) = 0;
+			virtual void WriteChar(char value)
 			{
 				Write(&value, 1);
 			}
 
-			virtual void Seek(int offset, SeekMode mode) = 0;
+			virtual void Seek(int64 offset, SeekMode mode) = 0;
 		};
 	};
 }

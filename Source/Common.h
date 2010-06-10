@@ -37,6 +37,8 @@ typedef unsigned char uchar;
 typedef unsigned long ulong;
 typedef unsigned long long BatchHandle;
 
+
+
 #if APOC3D_DLLEX
 	#define _Export __declspec( dllexport )
 #else
@@ -62,15 +64,14 @@ struct _Export IDirect3DVertexShader9;
 struct _Export IDirect3DPixelShader9;
 struct _Export IDirect3DVertexDeclaration9;
 
-enum _Export D3DPRIMITIVETYPE;
-
 #include "Include\d3d9.h"
 #include "Include\d3dx9.h"
+
+#include <cassert>
 
 #include <windows.h>
 #include <algorithm>
 #include <string>
-
 
 // Forward Declarations
 namespace Apoc3D
@@ -131,7 +132,7 @@ namespace Apoc3D
 			(src[4] << 24) | (src[5] << 16) | (src[6] << 8) | src[7];
 #endif
 	}
-	float convfloat(const char* src)
+	float convr32(const char* src)
 	{
 #if LITTLE_INDIAN
 		return *reinterpret_cast<const float*>(src);
@@ -139,7 +140,7 @@ namespace Apoc3D
 		return reinterpret_cast<float>((src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3]);		
 #endif
 	}
-	float convdouble(const char* src)
+	double convr64(const char* src)
 	{
 #if LITTLE_INDIAN
 		return *reinterpret_cast<const double*>(src);
@@ -149,7 +150,7 @@ namespace Apoc3D
 			(src[4] << 24) | (src[5] << 16) | (src[6] << 8) | src[7]);
 #endif
 	}
-
+	
 	namespace Core
 	{
 		class IRenderable;

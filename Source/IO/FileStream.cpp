@@ -34,7 +34,7 @@ namespace Apoc3D
 			m_in = 0;
 			m_out = 0;
 
-			ios::openmode omode;
+			//ios::openmode omode;
 
 			switch (access)
 			{
@@ -59,15 +59,16 @@ namespace Apoc3D
 				delete m_io;
 		}
 
-		int FileStream::Read(char* dest, int count)
+		int FileStream::Read(char* dest, int32 count)
 		{
 			if (m_in)
 				m_in->read(reinterpret_cast<char*>(dest), count);
 			else if (m_io)
 				m_io->read(reinterpret_cast<char*>(dest), count);
+			return 0;
 		}
 
-		void FileStream::Write(const char* src, int count)
+		void FileStream::Write(const char* src, int32 count)
 		{
 			if (m_out)
 				m_out->write(reinterpret_cast<const char*>(src), count);
@@ -75,7 +76,7 @@ namespace Apoc3D
 				m_io->write(reinterpret_cast<const char*>(src), count);
 		}
 
-		void FileStream::Seek(int offset, SeekMode mode)
+		void FileStream::Seek(int64 offset, SeekMode mode)
 		{
 			ios::seekdir dir;
 			switch (mode)
