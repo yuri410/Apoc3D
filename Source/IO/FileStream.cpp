@@ -59,14 +59,20 @@ namespace Apoc3D
 				delete m_io;
 		}
 
-		int FileStream::Read(const byte* dest, int count)
+		int FileStream::Read(char* dest, int count)
 		{
-
+			if (m_in)
+				m_in->read(reinterpret_cast<char*>(dest), count);
+			else if (m_io)
+				m_io->read(reinterpret_cast<char*>(dest), count);
 		}
 
-		void FileStream::Write(const byte* src, int count)
+		void FileStream::Write(const char* src, int count)
 		{
-
+			if (m_out)
+				m_out->write(reinterpret_cast<const char*>(src), count);
+			else if (m_io)
+				m_io->write(reinterpret_cast<const char*>(src), count);
 		}
 
 		void FileStream::Seek(int offset, SeekMode mode)
@@ -94,6 +100,16 @@ namespace Apoc3D
 				m_io->seekg(offset, dir);
 				m_io->seekp(offset, dir);
 			}
+		}
+
+		void FileStream::Close()
+		{
+			if (m_out)
+				m_out->close();
+			if (m_in)
+				m_in->close();
+			if (m_io)
+				m_io->close();
 		}
 	};
 };

@@ -106,6 +106,49 @@ namespace Apoc3D
 	const Vector3 One3(1,1,1);
 	const Vector3 Zero3(0,0,0);
 
+	int32 convint32(const char* src)
+	{
+#if LITTLE_INDIAN
+		return *reinterpret_cast<const int32*>(src);
+#else
+		return (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
+#endif
+	}
+	int16 convint16(const char* src)
+	{
+#if LITTLE_INDIAN
+		return *reinterpret_cast<const int16*>(src);
+#else
+		return (src[0] << 8) | src[1];
+#endif
+	}
+	int64 convint64(const char* src)
+	{
+#if LITTLE_INDIAN
+		return *reinterpret_cast<const int64*>(src);
+#else
+		return (src[0] << 56) | (src[1] << 48) | (src[2] << 40) | (src[3] << 32) | 
+			(src[4] << 24) | (src[5] << 16) | (src[6] << 8) | src[7];
+#endif
+	}
+	float convfloat(const char* src)
+	{
+#if LITTLE_INDIAN
+		return *reinterpret_cast<const float*>(src);
+#else
+		return reinterpret_cast<float>((src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3]);		
+#endif
+	}
+	float convdouble(const char* src)
+	{
+#if LITTLE_INDIAN
+		return *reinterpret_cast<const double*>(src);
+#else
+		return reinterpret_cast<double>(
+			(src[0] << 56) | (src[1] << 48) | (src[2] << 40) | (src[3] << 32) | 
+			(src[4] << 24) | (src[5] << 16) | (src[6] << 8) | src[7]);
+#endif
+	}
 
 	namespace Core
 	{
@@ -122,6 +165,8 @@ namespace Apoc3D
 	{
 		class Stream;
 		class FileStream;
+		class BinaryReader;
+
 	};
 	namespace EffectSystem
 	{

@@ -38,13 +38,22 @@ namespace Apoc3D
 		{
 		private:
 			Stream* m_baseStream;
+
+			char m_buffer[32];
+
 		public:
 			BinaryReader(Stream* baseStream)
 				: m_baseStream(baseStream)
 			{
 			}
 
-			__int32 ReadInt32(){}
+
+
+			float ReadSingle() { }
+
+			int16 ReadInt16() { }
+			int32 ReadInt32() { }
+			int64 ReadInt64() { }
 		};
 	};
 };

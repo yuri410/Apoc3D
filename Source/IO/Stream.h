@@ -49,7 +49,7 @@ namespace Apoc3D
 
 		public:
 
-			virtual int Read(const byte* dest, int count) = 0;
+			virtual int Read(char* dest, int count) = 0;
 			virtual int ReadByte()
 			{
 				byte buffer;
@@ -61,7 +61,7 @@ namespace Apoc3D
 			}
 
 			
-			virtual void Write(const byte* src, int count) = 0;
+			virtual void Write(const char* src, int count) = 0;
 			virtual void WriteByte(byte value)
 			{
 				Write(&value, 1);
