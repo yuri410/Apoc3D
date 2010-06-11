@@ -99,7 +99,7 @@ namespace Apoc3D
 	typedef IDirect3DVertexDeclaration9 VertexDeclaration;
 
 	typedef D3DPRIMITIVETYPE PrimitiveType;
-	typedef std::string String;
+	typedef std::wstring String;
 	
 	const Vector3 UnitX3(1,0,0);
 	const Vector3 UnitY3(0,1,0);

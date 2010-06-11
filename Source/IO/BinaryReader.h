@@ -47,6 +47,7 @@ namespace Apoc3D
 			{
 			}
 
+			
 			void FillBuffer(int32 len)
 			{
 				m_baseStream->Read(&m_buffer[0], len); 
@@ -56,6 +57,21 @@ namespace Apoc3D
 			{
 				FillBuffer(sizeof(float));
 				return convr32(&m_buffer[0]);
+			}
+			String* ReadString()
+			{
+				int32 len = ReadInt32();
+				
+				wchar_t* const chars = new wchar_t[len];
+
+				for (int i=0;i<len;i++)
+				{
+					chars[i] = ReadInt16();
+				}
+				String* str = new String(chars, len);
+				
+				delete chars;
+				return str;
 			}
 
 			int16 ReadInt16() 
