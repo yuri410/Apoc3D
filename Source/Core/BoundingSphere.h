@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		class BoundingSphere
+		class _Export BoundingSphere
 		{
 
 		public:
