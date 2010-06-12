@@ -78,9 +78,8 @@ namespace Apoc3D
 {
 	class Game;
 	class GameTime;
-	class Material;
-	class SceneRenderer;
-	
+	class GameWindow;
+
 	typedef D3DXMATRIX Matrix;
 	typedef D3DXPLANE Plane;
 	typedef D3DXVECTOR2 Vector2;
@@ -154,13 +153,7 @@ namespace Apoc3D
 	
 	namespace Core
 	{
-		class IRenderable;
 		class Camera;
-		class GeometryData;
-		class RenderOperation;
-		class RenderOperationBuffer;
-		class SceneManager;
-		class SceneObject;
 		class Resource;
 	};
 	namespace IO
@@ -176,10 +169,24 @@ namespace Apoc3D
 		class EffectManager;
 		class EffectAtom;
 	};
-	namespace Rendering
+	namespace Scene
 	{
+		class SceneManager;
+		class SceneNode;
+		class SceneObject;
+	};
+	namespace Graphics
+	{
+		class IRenderable;
+		class GeometryData;
+		class RenderOperation;
+		class RenderOperationBuffer;
+		class Material;
+		class SceneRenderer;
+		class GraphicsDeviceManager;
 		class ScenePass;
 		class SceneProcedure;
+		class SceneRenderer;
 	};
 };
 

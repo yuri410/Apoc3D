@@ -11,19 +11,19 @@ namespace Apoc3D
 	class _Export Game
 	{
 	private:
-		const GameTime* time;
-		
-		HINSTANCE hInst;
+		HINSTANCE m_inst;
 
+		float m_maxElapsedTime;
+		float m_totalGameTime;
+		float m_accumulatedElapsedGameTime;
+		float m_lastFrameElapsedGameTime;
+		float m_lastFrameElapsedRealTime;
 
-		float maxElapsedTime;
-		float totalGameTime;
-		float accumulatedElapsedGameTime;
-		float lastFrameElapsedGameTime;
-		float lastFrameElapsedRealTime;
+		GraphicsDeviceManager* m_graphicsDeviceManager;
+		GameWindow* m_gameWindow;
 
 	public:
-		Game(HINSTANCE instance);
+		Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name);
 		~Game(void);
 	};
 

@@ -1,9 +1,80 @@
 #include "GameWindow.h"
+#include "Resource.h"
 
 namespace Apoc3D
 {
-	GameWindow::GameWindow(void)
+	//
+	//  函数: MyRegisterClass()
+	//
+	//  目的: 注册窗口类。
+	//
+	//  注释:
+	//
+	//    仅当希望
+	//    此代码与添加到 Windows 95 中的“RegisterClassEx”
+	//    函数之前的 Win32 系统兼容时，才需要此函数及其用法。调用此函数十分重要，
+	//    这样应用程序就可以获得关联的
+	//    “格式正确的”小图标。
+	//
+	ATOM GameWindow::MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass)
 	{
+		WNDCLASSEX wcex;
+
+		wcex.cbSize = sizeof(WNDCLASSEX);
+
+		wcex.style			= CS_HREDRAW | CS_VREDRAW;
+		wcex.lpfnWndProc	= GameWindow::WndProc;
+		wcex.cbClsExtra		= 0;
+		wcex.cbWndExtra		= 0;
+		wcex.hInstance		= hInstance;
+		wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_LABTD));
+		wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+		wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+		wcex.lpszMenuName	= 0;
+		wcex.lpszClassName	= wndClass;
+		wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+
+		return RegisterClassEx(&wcex);
+	}
+	
+	//
+	//   函数: InitInstance(HINSTANCE, int)
+	//
+	//   目的: 保存实例句柄并创建主窗口
+	//
+	//   注释:
+	//
+	//        在此函数中，我们在全局变量中保存实例句柄并
+	//        创建和显示主程序窗口。
+	//
+	BOOL GameWindow::InitInstance(HINSTANCE hInstance, int nCmdShow,
+		const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
+	{
+	   HWND hWnd;
+
+	   hWnd = CreateWindow(wndClass, wndTitle, WS_OVERLAPPEDWINDOW,
+		  CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+
+	   if (!hWnd)
+	   {
+		  return FALSE;
+	   }
+
+	   ShowWindow(hWnd, nCmdShow);
+	   UpdateWindow(hWnd);
+
+	   return TRUE;
+	}
+
+	GameWindow::GameWindow(HINSTANCE hInstance, int nCmdShow, 
+		const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
+	{
+		MyRegisterClass(hInstance, wndClass);
+
+		if (!InitInstance (hInstance, nCmdShow, wndClass, wndTitle))
+		{
+			
+		}
 	}
 
 

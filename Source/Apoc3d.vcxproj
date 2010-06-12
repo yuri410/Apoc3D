@@ -80,6 +80,7 @@
     <ClInclude Include="Graphics\IRenderable.h" />
     <ClInclude Include="Graphics\RenderOperation.h" />
     <ClInclude Include="Graphics\RenderOperationBuffer.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneObject.h" />
     <ClInclude Include="Graphics\DeviceSettings.h" />
@@ -141,6 +142,13 @@
     <ClCompile Include="Graphics\ScenePass.cpp" />
     <ClCompile Include="Graphics\SceneRenderer.cpp" />
     <ClCompile Include="Graphics\SceneProcedure.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="apoc3d.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="apoc3d.ico" />
+    <None Include="small.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
