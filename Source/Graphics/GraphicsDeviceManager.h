@@ -33,8 +33,6 @@ namespace Apoc3D
 			bool m_savedTopmost;
 
 
-
-
 			bool CanResetDevice(const DeviceSettings const *oldset, const DeviceSettings const *newset) const;
 			void CreateDevice(const DeviceSettings const &settings);
 			void game_FrameStart(bool* cancel);
