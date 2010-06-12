@@ -76,10 +76,11 @@ struct _Export IDirect3DVertexDeclaration9;
 // Forward Declarations
 namespace Apoc3D
 {
+	class Game;
 	class GameTime;
 	class Material;
 	class SceneRenderer;
-
+	
 	typedef D3DXMATRIX Matrix;
 	typedef D3DXPLANE Plane;
 	typedef D3DXVECTOR2 Vector2;
@@ -107,7 +108,7 @@ namespace Apoc3D
 	const Vector3 One3(1,1,1);
 	const Vector3 Zero3(0,0,0);
 
-	int32 convint32(const char* src)
+	int32 convint32(const char* const src)
 	{
 #if LITTLE_INDIAN
 		return *reinterpret_cast<const int32*>(src);
@@ -115,7 +116,7 @@ namespace Apoc3D
 		return (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
 #endif
 	}
-	int16 convint16(const char* src)
+	int16 convint16(const char* const src)
 	{
 #if LITTLE_INDIAN
 		return *reinterpret_cast<const int16*>(src);
@@ -123,7 +124,7 @@ namespace Apoc3D
 		return (src[0] << 8) | src[1];
 #endif
 	}
-	int64 convint64(const char* src)
+	int64 convint64(const char* const src)
 	{
 #if LITTLE_INDIAN
 		return *reinterpret_cast<const int64*>(src);
@@ -132,7 +133,7 @@ namespace Apoc3D
 			(src[4] << 24) | (src[5] << 16) | (src[6] << 8) | src[7];
 #endif
 	}
-	float convr32(const char* src)
+	const float convr32(const char* const src)
 	{
 #if LITTLE_INDIAN
 		return *reinterpret_cast<const float*>(src);
@@ -140,7 +141,7 @@ namespace Apoc3D
 		return reinterpret_cast<float>((src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3]);		
 #endif
 	}
-	double convr64(const char* src)
+	const double convr64(const char* const src)
 	{
 #if LITTLE_INDIAN
 		return *reinterpret_cast<const double*>(src);

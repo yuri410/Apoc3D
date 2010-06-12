@@ -43,9 +43,12 @@ namespace Apoc3D
 			FpsCamera(float aspectRatio);
 			~FpsCamera(void);
 
-
-			float getAspectRatio() const { return m_aspectRatio; }
-			float getVelocity() const { return m_velocity; } 
+			/* Gets the position of the view point
+			*/
+			const Vector3 &getPosition() const { return m_position; }
+			
+			const float getAspectRatio() const { return m_aspectRatio; }
+			const float getVelocity() const { return m_velocity; } 
 
 			void MoveForward() { m_position += UnitZ3 * m_velocity; }
 			void MoveBackward() { m_position -= UnitZ3 * m_velocity; }
@@ -53,9 +56,9 @@ namespace Apoc3D
 			void MoveRight() { m_position -= UnitX3 * m_velocity; }
 			void MoveUp() { m_position += UnitY3 * m_velocity;}
 			void MoveDown() { m_position -= UnitY3 * m_velocity; }
-			void Move(const Vector3& dir) { m_position += dir * m_velocity; }
-
-			void Update(const GameTime* time);
+			void Move(const Vector3 &dir) { m_position += dir * m_velocity; }
+			
+			void Update(const GameTime* const time);
 		};
 	};
 };

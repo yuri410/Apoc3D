@@ -21,31 +21,32 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef SCENEOBJECT_H
+#define SCENEOBJECT_H
 
+#pragma once
 
-#include "RenderOperationBuffer.h"
-#include "RenderOperation.h"
+#include "..\Common.h"
 
 namespace Apoc3D
 {
-	namespace Core
+	namespace Scene
 	{
-		void RenderOperationBuffer::Add(const RenderOperation& op)
+		class _Export SceneObject
 		{
-			m_oplist[m_internalPointer++] = op;
-		}
-		void RenderOperationBuffer::Add(const RenderOperation* op, int count)
-		{
-			for (int i=0;i<count;i++)
+		private:
+			bool m_hasSubObjects;
+
+		public:
+			bool hasSubObjects() const { return m_hasSubObjects; }
+
+			SceneObject(const bool hasSubObjs) 
+				: m_hasSubObjects(hasSubObjs)
 			{
-				m_oplist[m_internalPointer++] = *(op+i);
 			}
-		}
-		
-		void RenderOperationBuffer::Clear()
-		{ 
-			m_oplist.erase(m_oplist.begin(), m_oplist.end());
-			m_internalPointer = 0;
-		}
+
+			~SceneObject(){}
+		};
 	};
 };
+#endif

@@ -34,14 +34,12 @@ namespace Apoc3D
 	{
 		class _Export BoundingSphere
 		{
-
 		public:
 			/* The center position of the bounding sphere.
 			*/
 			Vector3 Center;
 
 			float Radius;
-
 
 			BoundingSphere(const Vector3& c, float r)
 			{
@@ -52,7 +50,6 @@ namespace Apoc3D
 			{
 
 			}
-
 
 		};
 	};

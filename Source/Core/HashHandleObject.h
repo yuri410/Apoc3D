@@ -21,17 +21,37 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef HASHHANDLEOBJECT_H
+#define HASHHANDLEOBJECT_H
 
-#include "SceneRenderer.h"
+#pragma once
+
+#include "Common.h"
 
 namespace Apoc3D
 {
-	SceneRenderer::SceneRenderer(void)
+	namespace Core
 	{
-	}
+		class _Export HashHandleObject
+		{
+		private:
+			static BatchHandle Counter;
+		protected:
+		
+			BatchHandle m_handle;
 
+		public:
+			HashHandleObject()
+			{
+				m_handle = ++Counter;
+			}
 
-	SceneRenderer::~SceneRenderer(void)
-	{
-	}
+			BatchHandle getBatchHandle() const 
+			{
+				return m_handle;
+			}
+		};
+	};
 };
+
+#endif

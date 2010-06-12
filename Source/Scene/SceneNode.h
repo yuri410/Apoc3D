@@ -21,24 +21,30 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-
-#include "Material.h"
+#ifndef SCENENODE_H
+#define SCENENODE_H
+#pragma once
+#include "..\Common.h"
+#include <vector>
 
 namespace Apoc3D
 {
-	Material::Material()
-	{	
-		std::memset(m_tex, 0, sizeof(m_tex));
-
-		std::memset(&m_mtrlColor, 0,  sizeof(m_mtrlColor));	
-
-
-	}
-
-
-	Material::~Material(void)
+	namespace Scene
 	{
+		typedef std::vector<SceneObject*> ObjectList;
 
-	}
+		/* Represents a collection of scene objects in the scene
+		*/
+		class _Export SceneNode
+		{
+		private:
+			ObjectList m_attached;
+
+		public:
+			
+			SceneNode(void);
+			~SceneNode(void);
+		};
+	};
 };
+#endif

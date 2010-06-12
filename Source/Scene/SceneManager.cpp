@@ -21,18 +21,59 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "SceneNode.h"
+
+#include "SceneManager.h"
+
 
 namespace Apoc3D
 {
-	namespace Core
+	namespace Scene
 	{
-		SceneNode::SceneNode(void)
+		void BatchData::Add(const RenderOperationBuffer* op)
+		{
+			m_objectCount++;
+
+		}
+		void BatchData::Clear()
+		{
+			for (PriorityTable::iterator i = m_priTable.begin();i!=m_priTable.end();++i)
+			{
+				MaterialTable* mtrlTbl = i->second;
+				for (MaterialTable::iterator j = mtrlTbl->begin(); j!=mtrlTbl->end();j++)
+				{
+					//Material* mtrl = m_mtrlList[j->first];
+					GeometryTable* geoTbl = j->second;
+
+					geoTbl->clear();
+				}
+				mtrlTbl->clear();
+			}
+			m_priTable.clear();
+		}
+
+		SceneManager::SceneManager(void)
 		{
 		}
 
-		SceneNode::~SceneNode(void)
+
+		SceneManager::~SceneManager(void)
 		{
+		}
+
+		void SceneManager::AddObject(const SceneObject* obj)
+		{
+			m_objects.push_back(obj);
+		} 
+		bool SceneManager::RemoveObject(const SceneObject* obj)
+		{
+			ObjectList::const_iterator pos = std::find(m_objects.begin(), m_objects.end(), obj);
+
+			if (pos != m_objects.end())
+			{
+				m_objects.erase(pos);
+				return true;
+			}
+			return false;
 		}
 	};
 };

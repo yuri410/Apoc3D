@@ -36,7 +36,7 @@ using namespace std;
 
 namespace Apoc3D
 {
-	namespace Core
+	namespace Scene
 	{
 		typedef vector<const SceneObject*> ObjectList;
 
