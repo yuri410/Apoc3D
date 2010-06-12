@@ -36,17 +36,28 @@ namespace Apoc3D
 		bool m_maximized;
 		bool m_inSizeMove;
 		HINSTANCE m_hInst;
+		HWND m_hWnd;
 
 		BOOL InitInstance(HINSTANCE hInstance, int nCmdShow,
 			const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
 		ATOM MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass);
 
+
+
+
 		LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-		
 	public:
+		HWND getHandle() const { return m_hWnd; }
+		void setTopMost(bool value)
+		{
+			SetWindowPos(m_hWnd, value ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, 3);
+		}
+
+
+
 		GameWindow(HINSTANCE hInstance, int nCmdShow, 
 			const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
 		~GameWindow(void);
 	};
-}
+};
 #endif

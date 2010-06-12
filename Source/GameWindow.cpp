@@ -46,7 +46,7 @@ namespace Apoc3D
 		wcex.cbSize = sizeof(WNDCLASSEX);
 
 		wcex.style			= CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc	= GameWindow::WndProc;
+		wcex.lpfnWndProc	= (&GameWindow::WndProc);
 		wcex.cbClsExtra		= 0;
 		wcex.cbWndExtra		= 0;
 		wcex.hInstance		= hInstance;
@@ -82,6 +82,7 @@ namespace Apoc3D
 	   {
 		  return FALSE;
 	   }
+	   m_hWnd = hWnd;
 
 	   ShowWindow(hWnd, nCmdShow);
 	   UpdateWindow(hWnd);

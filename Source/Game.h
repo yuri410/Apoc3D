@@ -45,6 +45,12 @@ namespace Apoc3D
 		GameWindow* m_gameWindow;
 
 	public:
+		GameWindow* getWindow() const { return m_gameWindow; }
+
+		virtual void Initialize() = 0;
+		virtual void LoadContent() = 0;
+		virtual void UnloadContent() = 0;
+
 		Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name);
 		~Game(void);
 	};

@@ -30,11 +30,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 typedef __int16 int16;
 typedef __int32 int32;
 typedef __int64 int64;
+typedef unsigned __int16 uint16;
+typedef unsigned __int32 uint32;
+typedef unsigned __int64 uint64;
 
-typedef unsigned int uint;
-typedef unsigned short ushort;
-typedef unsigned char uchar;
-typedef unsigned long ulong;
+typedef uint16 ushort;
+typedef uint32 uint;
+typedef uint64 ulong;
 typedef unsigned long long BatchHandle;
 
 
@@ -99,6 +101,9 @@ namespace Apoc3D
 	typedef IDirect3DVertexDeclaration9 VertexDeclaration;
 
 	typedef D3DPRIMITIVETYPE PrimitiveType;
+	typedef D3DFORMAT Format;
+	typedef D3DMULTISAMPLE_TYPE MSAAType;
+	typedef D3DDEVTYPE DeviceType;
 	typedef std::wstring String;
 	
 	const Vector3 UnitX3(1,0,0);
