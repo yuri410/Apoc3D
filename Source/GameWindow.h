@@ -46,6 +46,8 @@ namespace Apoc3D
 		LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	public:
 		HWND getHandle() const { return m_hWnd; }
+		bool getIsMinimized() const { return m_minimized; }
+		bool getIsMaximized() const { return m_maximized; }
 		void setTopMost(bool value)
 		{
 			SetWindowPos(m_hWnd, value ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, 3);

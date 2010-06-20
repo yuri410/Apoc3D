@@ -46,7 +46,7 @@ namespace Apoc3D
 	{
 		try
         {
-			if (!m_exiting && 1)
+			if (!m_exiting && !m_gameWindow->getIsMinimized())
 			{
 				if (OnFrameStart())
 				{
