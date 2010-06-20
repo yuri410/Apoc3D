@@ -35,6 +35,8 @@ namespace Apoc3D
 	private:
 		HINSTANCE m_inst;
 
+		GameClock* m_gameClock;
+		//GameTime* m_gameTime;
 		float m_maxElapsedTime;
 		float m_totalGameTime;
 		float m_accumulatedElapsedGameTime;
@@ -48,6 +50,7 @@ namespace Apoc3D
 		bool m_drawRunningSlowly;
 		int64 m_lastUpdateFrame;
 		float m_lastUpdateTime;
+		float m_fps;
 
 		bool m_exiting;
 		bool m_active;

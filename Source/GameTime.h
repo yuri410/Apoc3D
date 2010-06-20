@@ -31,8 +31,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 namespace Apoc3D
 {
 	/* Contains the current timing state of the game.
-
-	   
 	*/
 	class _Export GameTime
 	{
@@ -40,6 +38,11 @@ namespace Apoc3D
 		float m_totalTime;
 		float m_elapsedTime;
 
+		float m_totalRealTime;
+		float m_elapsedRealTime;
+		float m_fps;
+
+		bool m_slowly;
 	public:
 		/*  Gets the total game time, in seconds.
 		*/
@@ -48,11 +51,25 @@ namespace Apoc3D
 		*/
 		float getElapsedTime() const { return m_elapsedTime; }
 	
+		float getTotalRealTime() const { return m_totalRealTime; }
 
-		GameTime(const float elapsedTime, const float totalTime)
+		float getElapsedRealTime() const { return m_elapsedRealTime; }
+
+		float getFPS() const { return m_fps; }
+
+		bool getIsRunningSlowly() const { return m_slowly; }
+
+		GameTime(const float elapsedTime, const float totalTime,
+			const float elapsedRTime, const float totalRTime,
+			const float fps, const bool isRunningSlowly)
 		{
 			m_totalTime = totalTime;
 			m_elapsedTime = elapsedTime;
+			m_totalRealTime = totalRTime;
+			m_elapsedRealTime = elapsedRTime;
+		
+			m_fps = fps;
+			m_slowly = isRunningSlowly;
 		}
 
 		~GameTime(void)

@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Game.h"
 #include "GameTime.h"
+#include "GameClock.h"
 #include "Graphics\GraphicsDeviceManager.h"
 #include "GameWindow.h"
 
@@ -32,8 +33,11 @@ namespace Apoc3D
 {
 	Game::Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name)
 		: m_maxElapsedTime(0.5f), m_targetElapsedTime(1/60.0f), m_inactiveSleepTime(20),
-		  m_updatesSinceRunningSlowly1(0x7fffffff), m_updatesSinceRunningSlowly2(0x7fffffff)
+		  m_updatesSinceRunningSlowly1(MaxInt32), m_updatesSinceRunningSlowly2(MaxInt32)
 	{
+		//m_gameTime = new GameTime(0,0);
+		m_gameClock = new GameClock();
+
 		m_gameWindow = new GameWindow(instance, nCmdShow, name, name);
 		m_graphicsDeviceManager = new GraphicsDeviceManager(this);		
 	}
@@ -69,9 +73,78 @@ namespace Apoc3D
 		if (m_active)
 			Sleep(m_inactiveSleepTime);
 
-		// step clock
+		m_gameClock->Step();
 
+		float elapsedRealTime = (float)m_gameClock->getElapsedTime();
+		float totalRealTime = (float)m_gameClock->getCurrentTime();
 		
+		m_lastFrameElapsedRealTime += (float)m_gameClock->getElapsedTime();
+
+		float elapsedAdjustedTime = m_gameClock->getElapsedAdjustedTime();
+		if (elapsedAdjustedTime < 0)
+			elapsedAdjustedTime = 0;
+
+		if (m_forceElapsedTimeToZero)
+		{
+			elapsedRealTime = 0;
+			m_lastFrameElapsedRealTime = elapsedAdjustedTime = 0;
+			m_forceElapsedTimeToZero = false;
+		}
+
+		m_accumulatedElapsedGameTime += elapsedAdjustedTime;
+		
+		float targetElapsedTime = m_targetElapsedTime;
+		float ratio = m_accumulatedElapsedGameTime / m_targetElapsedTime;
+
+		m_accumulatedElapsedGameTime = m_accumulatedElapsedGameTime % targetElapsedTime;
+		m_lastFrameElapsedGameTime = 0;
+
+		if (ratio == 0)
+			return;
+		
+
+		if (ratio > 1)
+		{
+			m_updatesSinceRunningSlowly2 = m_updatesSinceRunningSlowly1;
+			m_updatesSinceRunningSlowly1 = 0;
+		}
+		else
+		{
+			if (m_updatesSinceRunningSlowly1 < MaxInt32)
+				m_updatesSinceRunningSlowly1++;
+			if (m_updatesSinceRunningSlowly2 < MaxInt32)
+				m_updatesSinceRunningSlowly2++;
+		}
+
+		m_drawRunningSlowly = m_updatesSinceRunningSlowly2 < 20;
+
+		// update until it's time to draw the next frame
+		while (ratio > 0 && !getIsExiting())
+		{
+			ratio -= 1;
+
+			try
+			{
+				GameTime gt(m_targetElapsedTime, m_totalGameTime,elapsedRealTime,totalRealTime);
+				Update(&gt);
+			}
+			finally
+			{
+				lastFrameElapsedGameTime += targetElapsedTime;
+				totalGameTime += targetElapsedTime;
+			}
+		}
+
+		DrawFrame();
+
+        // refresh the FPS counter once per second
+        m_lastUpdateFrame++;
+        if (totalRealTime - m_lastUpdateTime > 1.0f)
+        {
+            m_fps = (float)m_lastUpdateFrame / (float)(totalRealTime - m_lastUpdateTime);
+            m_lastUpdateTime = totalRealTime;
+            m_lastUpdateFrame = 0;
+        }
 	}
 
 

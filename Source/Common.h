@@ -79,6 +79,7 @@ struct _Export IDirect3DVertexDeclaration9;
 namespace Apoc3D
 {
 	class Game;
+	class GameClock;
 	class GameTime;
 	class GameWindow;
 
@@ -106,6 +107,8 @@ namespace Apoc3D
 	typedef D3DDEVTYPE DeviceType;
 	typedef std::wstring String;
 	
+	const int32 MaxInt32 = 0x7fffffff;
+
 	const Vector3 UnitX3(1,0,0);
 	const Vector3 UnitY3(0,1,0);
 	const Vector3 UnitZ3(0,0,1);

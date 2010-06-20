@@ -47,7 +47,10 @@ namespace Apoc3D
 
 		uint64 m_frequency;
 	public:
-		
+		float getElapsedTime() const { return m_elapsedTime; }
+		float getElapsedAdjustedTime() const { return m_elapsedAdjustedTime; }
+		float getCurrentTime() const { return m_currentTimeBase + m_currentTimeOffset; }
+
 		uint64 GetCounter()
 		{
 			LARGE_INTEGER counter;
