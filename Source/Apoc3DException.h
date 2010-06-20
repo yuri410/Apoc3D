@@ -31,14 +31,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace Apoc3D
 {
-	//class Apoc3DException : public std::exception
-	//{
-	//public:
-	//	Apoc3DException(const char* msg)
-	//	{
+	class Apoc3DException : public std::exception
+	{
+	public:
+		Apoc3DException(const char* const &msg)
+		{
 
-	//	}
-	//};
+		}
+	};
 
 	//class ArgumentException : public Apoc3DException
 	//{

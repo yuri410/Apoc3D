@@ -90,9 +90,8 @@ namespace Apoc3D
                 m_suspendStartTime = GetCounter();
         }
 
-        /// <summary>
-        /// Resumes a previously suspended clock.
-        /// </summary>
+        /* Resumes a previously suspended clock.
+        */
         void Resume()
         {
             m_suspendCount--;

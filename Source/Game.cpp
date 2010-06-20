@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GameClock.h"
 #include "Graphics\GraphicsDeviceManager.h"
 #include "GameWindow.h"
+#include "Apoc3DException.h"
 
 using namespace Apoc3D::Graphics;
 
@@ -35,7 +36,6 @@ namespace Apoc3D
 		: m_maxElapsedTime(0.5f), m_targetElapsedTime(1/60.0f), m_inactiveSleepTime(20),
 		  m_updatesSinceRunningSlowly1(MaxInt32), m_updatesSinceRunningSlowly2(MaxInt32)
 	{
-		//m_gameTime = new GameTime(0,0);
 		m_gameClock = new GameClock();
 
 		m_gameWindow = new GameWindow(instance, nCmdShow, name, name);
@@ -44,7 +44,24 @@ namespace Apoc3D
 
 	void Game::DrawFrame()
 	{
-
+		try
+        {
+			if (!m_exiting && 1)
+			{
+				if (OnFrameStart())
+				{
+					Render();
+					OnFrameEnd();
+				}				
+			}
+		}
+		catch (Apoc3DException &e)
+		{
+			m_lastFrameElapsedGameTime = 0;
+			m_lastFrameElapsedRealTime = 0;
+		}
+		m_lastFrameElapsedGameTime = 0;
+		m_lastFrameElapsedRealTime = 0;
 	}
 
 	void Game::Run()
@@ -130,11 +147,15 @@ namespace Apoc3D
 					elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
 				Update(&gt);
 			}
-			finally
+			catch (Apoc3DException &e)
 			{
-				lastFrameElapsedGameTime += targetElapsedTime;
-				totalGameTime += targetElapsedTime;
+				m_lastFrameElapsedGameTime += targetElapsedTime;
+				m_totalGameTime += targetElapsedTime;
 			}
+			
+			m_lastFrameElapsedGameTime += targetElapsedTime;
+			m_totalGameTime += targetElapsedTime;
+			
 		}
 
 		DrawFrame();

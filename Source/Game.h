@@ -67,6 +67,9 @@ namespace Apoc3D
 		bool getIsActive() const { return m_active; }
 
 
+		virtual bool OnFrameStart() = 0;
+		virtual bool OnFrameEnd();
+
 		virtual void Initialize() = 0;
 		virtual void LoadContent() = 0;
 		virtual void UnloadContent() = 0;
