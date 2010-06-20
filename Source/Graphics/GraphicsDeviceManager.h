@@ -1,4 +1,26 @@
+/*
+-----------------------------------------------------------------------------
+This source file is part of Apoc3D Engine
 
+Copyright (c) 2009+ Tao Games
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  if not, write to the Free Software Foundation, 
+Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/gpl.txt.
+
+-----------------------------------------------------------------------------
+*/
 #ifndef GRAPHICSDEVICEMANAGER_H
 #define GRAPHICSDEVICEMANAGER_H
 
@@ -24,12 +46,12 @@ namespace Apoc3D
 			bool m_doNotStoreBufferSize;
 			bool m_renderingOccluded;
 
-			int m_fullscreenWindowWidth;
-			int m_fullscreenWindowHeight;
-			int m_windowedWindowWidth;
-			int m_windowedWindowHeight;
+			int32 m_fullscreenWindowWidth;
+			int32 m_fullscreenWindowHeight;
+			int32 m_windowedWindowWidth;
+			int32 m_windowedWindowHeight;
 			WINDOWPLACEMENT m_windowedPlacement;
-			long m_windowedStyle;
+			int64 m_windowedStyle;
 			bool m_savedTopmost;
 
 
@@ -42,8 +64,6 @@ namespace Apoc3D
 
 			void InitializeDevice();
 			int64 ResetDevice();
-
-			void ReleaseDevice();
 
 			void UpdateDeviceInformation();
 
@@ -66,6 +86,8 @@ namespace Apoc3D
 			/* Toggles between full screen and windowed mode.
 			*/
 			void ToggleFullScreen();
+			void ReleaseDevice();
+
 			
 
 			

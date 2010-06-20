@@ -27,8 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 
-#include "Common.h"
-#include "HashHandleObject.h"
+#include "..\Common.h"
+#include "..\Core\HashHandleObject.h"
 
 using namespace Apoc3D::EffectSystem;
 

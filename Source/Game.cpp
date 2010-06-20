@@ -31,12 +31,47 @@ using namespace Apoc3D::Graphics;
 namespace Apoc3D
 {
 	Game::Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name)
-		: m_maxElapsedTime(0.5f)
+		: m_maxElapsedTime(0.5f), m_targetElapsedTime(1/60.0f), m_inactiveSleepTime(20),
+		  m_updatesSinceRunningSlowly1(0x7fffffff), m_updatesSinceRunningSlowly2(0x7fffffff)
 	{
-		
-		m_graphicsDeviceManager = new GraphicsDeviceManager(this);
-	
 		m_gameWindow = new GameWindow(instance, nCmdShow, name, name);
+		m_graphicsDeviceManager = new GraphicsDeviceManager(this);		
+	}
+
+	void Game::DrawFrame()
+	{
+
+	}
+
+	void Game::Run()
+	{
+		MSG msg;
+		ZeroMemory( &msg, sizeof( msg ) );
+		while( msg.message != WM_QUIT )
+		{
+			if( PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE ) )
+			{
+				TranslateMessage( &msg );
+				DispatchMessage( &msg );
+			}
+			else
+			{
+				Tick();
+			}
+		}
+	}
+
+	void Game::Tick()
+	{
+		if (m_exiting)
+			return;
+
+		if (m_active)
+			Sleep(m_inactiveSleepTime);
+
+		// step clock
+
+		
 	}
 
 

@@ -40,16 +40,37 @@ namespace Apoc3D
 		float m_accumulatedElapsedGameTime;
 		float m_lastFrameElapsedGameTime;
 		float m_lastFrameElapsedRealTime;
+		float m_targetElapsedTime;
+		float m_inactiveSleepTime;
+		int32 m_updatesSinceRunningSlowly1;
+		int32 m_updatesSinceRunningSlowly2;
+		bool m_forceElapsedTimeToZero;
+		bool m_drawRunningSlowly;
+		int64 m_lastUpdateFrame;
+		float m_lastUpdateTime;
+
+		bool m_exiting;
+		bool m_active;
 
 		GraphicsDeviceManager* m_graphicsDeviceManager;
 		GameWindow* m_gameWindow;
 
+		void DrawFrame();
+
 	public:
+		GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
 		GameWindow* getWindow() const { return m_gameWindow; }
+		bool getIsExiting() const { return m_exiting; }
+		bool getIsActive() const { return m_active; }
+
 
 		virtual void Initialize() = 0;
 		virtual void LoadContent() = 0;
 		virtual void UnloadContent() = 0;
+		virtual void Render() = 0;
+		virtual void Update(const GameTime* time) = 0;
+		void Run();
+		void Tick();
 
 		Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name);
 		~Game(void);

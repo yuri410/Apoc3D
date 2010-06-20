@@ -43,8 +43,6 @@ namespace Apoc3D
 		ATOM MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass);
 
 
-
-
 		LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	public:
 		HWND getHandle() const { return m_hWnd; }
