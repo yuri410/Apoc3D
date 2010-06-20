@@ -33,29 +33,58 @@ namespace Apoc3D
 	class _Export GameClock
 	{
 	private:
-		LARGE_INTEGER m_baseRealTime;
-        LARGE_INTEGER m_lastRealTime;
+		uint64 m_baseRealTime;
+        uint64 m_lastRealTime;
         bool m_lastRealTimeValid;
-        int32 m_suspendCount;
-        LARGE_INTEGER m_suspendStartTime;
-        LARGE_INTEGER m_timeLostToSuspension;
+        uint32 m_suspendCount;
+        uint64 m_suspendStartTime;
+        uint64 m_timeLostToSuspension;
         float m_currentTimeBase;
         float m_currentTimeOffset;
 
+		float m_elapsedTime;
+		float m_elapsedAdjustedTime;
+
+		uint64 m_frequency;
 	public:
+		
+		uint64 GetCounter()
+		{
+			LARGE_INTEGER counter;
+			assert(!QueryPerformanceCounter(&counter));
+			return counter.QuadPart;
+		}
+
+		uint64 GetFrequency()
+		{
+			LARGE_INTEGER freq;
+			assert(!QueryPerformanceFrequency(&freq));
+
+			return freq.QuadPart;
+		}
+
+		bool CounterToTimeSpan(uint64 counter, uint64 base, float* result) const
+		{
+			if (base > counter)
+				return false;
+			*result = (counter - base) / (float)m_frequency;
+			return true;
+		}
+
         void Reset()
         {
             m_currentTimeBase = 0;
             m_currentTimeOffset = 0;
-            m_baseRealTime = Stopwatch.GetTimestamp();
+            m_baseRealTime = GetCounter();
             m_lastRealTimeValid = false;
+			m_frequency = GetFrequency();
         }
 
         void Suspend()
         {
             m_suspendCount++;
             if (m_suspendCount == 1)
-                m_suspendStartTime = Stopwatch.GetTimestamp();
+                m_suspendStartTime = GetCounter();
         }
 
         /// <summary>
@@ -66,15 +95,16 @@ namespace Apoc3D
             m_suspendCount--;
             if (m_suspendCount <= 0)
             {
-                m_timeLostToSuspension += Stopwatch.GetTimestamp() - m_suspendStartTime;
+                m_timeLostToSuspension += GetCounter() - m_suspendStartTime;
                 m_suspendStartTime = 0;
             }
         }
 
+
         void Step()
         {
-            LARGE_INTEGER counter;
-			QueryPerformanceCounter(&counter);//Stopwatch.GetTimestamp();
+			uint64 counter = GetCounter();
+			
 
             if (!m_lastRealTimeValid)
             {
@@ -82,48 +112,35 @@ namespace Apoc3D
                 m_lastRealTimeValid = true;
             }
 
-            try
-            {
-                m_currentTimeOffset = CounterToTimeSpan(counter - m_baseRealTime);
-            }
-            catch (OverflowException)
-            {
-                // update the base value and try again to adjust for overflow
-                m_currentTimeBase += m_currentTimeOffset;
-                m_baseRealTime = m_lastRealTime;
+            
 
-                try
-                {
-                    // get the current offset
-                    m_currentTimeOffset = CounterToTimeSpan(counter - m_baseRealTime);
-                }
-                catch (OverflowException)
-                {
-                    // account for overflow
-                    m_baseRealTime = counter;
-                    m_currentTimeOffset = 0;
-                }
-            }
+			if (!CounterToTimeSpan(counter, m_baseRealTime, &m_currentTimeOffset))
+			{
+				// update the base value and try again to adjust for overflow
+				m_currentTimeBase += m_currentTimeOffset;
+				m_baseRealTime = m_lastRealTime;
 
-            try
-            {
-                ElapsedTime = CounterToTimeSpan(counter - lastRealTime);
-            }
-            catch (OverflowException)
-            {
-                ElapsedTime = 0;
-            }
+				if (!CounterToTimeSpan(counter, m_baseRealTime, &m_currentTimeOffset))
+				{
+					m_baseRealTime = counter;
+					m_currentTimeOffset = 0;
+				}
+			}
+            
+			if (!CounterToTimeSpan(counter, m_lastRealTime, &m_elapsedTime))
+			{
+				m_elapsedTime = 0;
+			}
 
-            try
-            {
-                ElapsedAdjustedTime = CounterToTimeSpan(counter - (m_lastRealTime + m_timeLostToSuspension));
-                m_timeLostToSuspension = 0;
-            }
-            catch (OverflowException)
-            {
-                ElapsedAdjustedTime = 0;
-            }
-
+			if (CounterToTimeSpan(counter, (m_lastRealTime + m_timeLostToSuspension), &m_elapsedAdjustedTime))
+			{
+				m_timeLostToSuspension = 0;
+			}
+			else
+			{
+				m_elapsedAdjustedTime = 0;
+			}
+            
             m_lastRealTime = counter;
         }
 

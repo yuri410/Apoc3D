@@ -24,6 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GRAPHICSDEVICEMANAGER_H
 #define GRAPHICSDEVICEMANAGER_H
 
+#pragma once
+
 #include "..\Common.h"
 #include "DeviceSettings.h"
 
