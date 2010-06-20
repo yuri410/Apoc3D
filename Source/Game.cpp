@@ -96,7 +96,8 @@ namespace Apoc3D
 		float targetElapsedTime = m_targetElapsedTime;
 		float ratio = m_accumulatedElapsedGameTime / m_targetElapsedTime;
 
-		m_accumulatedElapsedGameTime = m_accumulatedElapsedGameTime % targetElapsedTime;
+		
+		m_accumulatedElapsedGameTime = fmod(m_accumulatedElapsedGameTime, targetElapsedTime);
 		m_lastFrameElapsedGameTime = 0;
 
 		if (ratio == 0)
@@ -119,13 +120,14 @@ namespace Apoc3D
 		m_drawRunningSlowly = m_updatesSinceRunningSlowly2 < 20;
 
 		// update until it's time to draw the next frame
-		while (ratio > 0 && !getIsExiting())
+		while (ratio > 0 && !m_exiting)
 		{
 			ratio -= 1;
-
+			
 			try
 			{
-				GameTime gt(m_targetElapsedTime, m_totalGameTime,elapsedRealTime,totalRealTime);
+				GameTime gt(m_targetElapsedTime, m_totalGameTime,
+					elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
 				Update(&gt);
 			}
 			finally
