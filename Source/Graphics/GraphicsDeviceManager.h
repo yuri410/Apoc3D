@@ -91,8 +91,10 @@ namespace Apoc3D
 			void ReleaseDevice();
 
 			
-
-			
+			void NotifyFrameStart(bool * cancel) { game_FrameStart(cancel); }
+			void NotifyFrameEnd() { game_FrameEnd(); }
+			void NofityWindowUserResized() { Window_UserResized(); }
+			void NotifyWindowScreenChanged() { Window_ScreenChanged(); }
 		};
 	}
 };

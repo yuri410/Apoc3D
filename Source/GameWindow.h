@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace Apoc3D
 {
-	class GameWindow
+	class _Export GameWindow
 	{
 	private:
 		bool m_minimized;
@@ -44,6 +44,17 @@ namespace Apoc3D
 
 
 		LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	protected:
+		virtual void OnUserResized();
+		virtual void OnSuspend();
+		virtual void OnApplicationActivated();
+		virtual void OnApplicationDeactivated();
+		virtual void OnSystemSuspend();
+		virtual void OnSystemResume();
+		virtual void OnSystemResume(bool * cancel);
+
+
 	public:
 		HWND getHandle() const { return m_hWnd; }
 		bool getIsMinimized() const { return m_minimized; }

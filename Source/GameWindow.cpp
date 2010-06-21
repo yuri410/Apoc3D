@@ -95,10 +95,7 @@ namespace Apoc3D
 	{
 		MyRegisterClass(hInstance, wndClass);
 
-		if (!InitInstance (hInstance, nCmdShow, wndClass, wndTitle))
-		{
-			
-		}
+		assert (!InitInstance (hInstance, nCmdShow, wndClass, wndTitle));							
 	}
 
 
@@ -114,6 +111,8 @@ namespace Apoc3D
             {
 				m_minimized = true;
 				m_maximized = false;
+
+				
 			}
 			else
 			{
@@ -132,15 +131,23 @@ namespace Apoc3D
 				{
 					m_minimized = false;
 					m_maximized = true;
+
+					OnUserResized();
+					UpdateScreen();
 				}
 				else if (wParam == SIZE_RESTORED)
 				{
+					if (m_minimized)
+						OnResume();
+
 					m_minimized = false;
 					m_maximized = false;
 
 					if (!m_inSizeMove)
 					{
-
+						OnUserResized();
+						UpdateScreen();
+						m_cachedSize = Size;
 					}
 				}
 			}
@@ -149,19 +156,24 @@ namespace Apoc3D
 		{
 			if (wParam)
 			{
+				OnApplicationActivated();
 			}
 			else
-			{}
+			{
+				OnApplicationDeactivated();
+			}
 		}
 		else if (message == WM_POWERBROADCAST)
 		{
 			if (wParam == PBT_APMQUERYSUSPEND)
 			{
-				
+				OnSystemSuspend();	
+				return 1;
 			}
 			else if (wParam == PBT_APMRESUMESUSPEND)
 			{
-
+				OnSystemResume();
+				return 1;
 			}
 		}
 		else if (message == WM_SYSCOMMAND)
@@ -169,7 +181,12 @@ namespace Apoc3D
 			long wp = wParam & 0xFFF0;
 			if (wp == SC_MONITORPOWER || wp == SC_SCREENSAVE)
 			{
-
+				bool cancel;
+				OnScreensaver(&cancel);
+				if (cancel)
+				{
+					return 0;
+				}
 			}
 		}
 

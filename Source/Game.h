@@ -60,6 +60,12 @@ namespace Apoc3D
 
 		void DrawFrame();
 
+		void Window_ApplicationActivated();
+		void Window_ApplicationDeactivated();
+		void Window_Suspend();
+		void Window_Resume();
+		void Window_Paint();
+		void Window_Closing();
 	public:
 		GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
 		GameWindow* getWindow() const { return m_gameWindow; }
@@ -80,6 +86,14 @@ namespace Apoc3D
 
 		Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name);
 		~Game(void);
+
+		void NotifyApplicationActivated() { Window_ApplicationActivated(); }
+		void NotifyApplicationDeactivated() { Window_ApplicationDeactivated(); }
+		void NotifySuspend() { Window_Suspend(); } 
+		void NotifyResume() { Window_Resume(); }
+		void NotifyPaint() { Window_Paint(); }
+		void NotifyWindowClosing() { Window_Closing(); }
+
 	};
 
 }
