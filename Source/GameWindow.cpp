@@ -103,6 +103,35 @@ namespace Apoc3D
 	{
 	}
 
+	void GameWindow::OnUserResized()
+	{
+		INVOKE(m_eUserResized)();
+	}
+	void GameWindow::OnSuspend()
+	{
+		INVOKE(m_eSuspend)();
+	}
+	void GameWindow::OnApplicationActivated()
+	{
+		INVOKE(m_eApplicationActivated)();
+	}
+	void GameWindow::OnApplicationDeactivated()
+	{
+		INVOKE(m_eApplicationDeactivated)();
+	}
+	void GameWindow::OnSystemSuspend()
+	{
+		INVOKE(m_eSystemSuspend)();
+	}
+	void GameWindow::OnSystemResume()
+	{
+		INVOKE(m_eSystemResume)();
+	}
+	void GameWindow::OnScreensaver(bool * cancel)
+	{
+		INVOKE(m_eScreensaver)(cancel);
+	}
+
 	LRESULT CALLBACK GameWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		if (message == WM_SIZE)

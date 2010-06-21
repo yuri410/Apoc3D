@@ -25,10 +25,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GAMEWINDOW_H
 
 #pragma once
+
 #include "Common.h"
 
 namespace Apoc3D
 {
+	
 	class _Export GameWindow
 	{
 	private:
@@ -37,6 +39,15 @@ namespace Apoc3D
 		bool m_inSizeMove;
 		HINSTANCE m_hInst;
 		HWND m_hWnd;
+
+		DelegateEvent<EventHandler> m_eUserResized;
+		DelegateEvent<EventHandler> m_eSuspend;
+		DelegateEvent<EventHandler> m_eApplicationActivated;
+		DelegateEvent<EventHandler> m_eApplicationDeactivated;
+		DelegateEvent<EventHandler> m_eSystemSuspend;
+		DelegateEvent<EventHandler> m_eSystemResume;
+		DelegateEvent<CancellableEventHandler> m_eScreensaver;
+
 
 		BOOL InitInstance(HINSTANCE hInstance, int nCmdShow,
 			const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
@@ -52,7 +63,7 @@ namespace Apoc3D
 		virtual void OnApplicationDeactivated();
 		virtual void OnSystemSuspend();
 		virtual void OnSystemResume();
-		virtual void OnSystemResume(bool * cancel);
+		virtual void OnScreensaver(bool * cancel);
 
 
 	public:
@@ -64,6 +75,13 @@ namespace Apoc3D
 			SetWindowPos(m_hWnd, value ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, 3);
 		}
 
+		const DelegateEvent<EventHandler> &getUserResized() const { return m_eUserResized; }
+		const DelegateEvent<EventHandler> &getSuspend() const { return m_eSuspend; }
+		const DelegateEvent<EventHandler> &getApplicationActivated() const { return m_eApplicationActivated; }
+		const DelegateEvent<EventHandler> &getApplicationDeactivated() const { return m_eApplicationDeactivated; }
+		const DelegateEvent<EventHandler> &getSystemSuspend() const { return m_eSystemSuspend; }
+		const DelegateEvent<EventHandler> &getSystemResume() const { return m_eSystemResume; }
+		const DelegateEvent<CancellableEventHandler> &getScreensaver() const { return m_eScreensaver; }
 
 
 		GameWindow(HINSTANCE hInstance, int nCmdShow, 

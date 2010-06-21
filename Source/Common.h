@@ -74,14 +74,43 @@ struct _Export IDirect3DVertexDeclaration9;
 #include <windows.h>
 #include <algorithm>
 #include <string>
+#include <vector>
+
 
 // Forward Declarations
 namespace Apoc3D
 {
+	#define DELEGATE(name, retn) typedef retn (CALLBACK *name)
+
+	DELEGATE(EventHandler, void)();
+	DELEGATE(CancellableEventHandler, void)(bool* cancel);
+
+	template<typename T>
+	class _Export DelegateEvent
+	{
+	private:
+		std::vector<T> m_funcList;
+	public:
+		const DelegateEvent<T>& operator +=(const& T value)
+		{
+			m_funcList.push_back(value);
+			return *this;
+		}
+
+		int32 count() const { return m_funcList.size(); }
+		const T& operator[](int i) const { return m_funcList[i]; }
+		
+	};
+
+	#define INVOKE(de) for (int32 i=0;i<de.count();i++) de[i]
+
 	class Game;
 	class GameClock;
 	class GameTime;
 	class GameWindow;
+
+
+
 
 	typedef D3DXMATRIX Matrix;
 	typedef D3DXPLANE Plane;
