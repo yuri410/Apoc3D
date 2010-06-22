@@ -34,7 +34,10 @@ namespace Apoc3D
 			assert(!game);
 
 			m_game = game;
-			
+			m_game->eventFrameStart() += game_FrameStart;
+			m_game->eventFrameEnd() += game_FrameEnd;
+			m_game->getWindow()->eventUserResized() += Window_UserResized;
+			m_game->getWindow()->eventMonitorChanged() += Window_MonitorChanged;
 		}
 
 

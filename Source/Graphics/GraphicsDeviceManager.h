@@ -62,7 +62,7 @@ namespace Apoc3D
 			void game_FrameStart(bool* cancel);
 			void game_FrameEnd();
 			void Window_UserResized();
-			void Window_ScreenChanged();
+			void Window_MonitorChanged();
 
 			void InitializeDevice();
 			int64 ResetDevice();

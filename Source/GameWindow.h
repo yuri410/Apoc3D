@@ -43,6 +43,8 @@ namespace Apoc3D
 
 		HWND m_hWnd;
 		
+		HMONITOR m_currentMonitor;
+
 		DelegateEvent<EventHandler> m_ePaint;
 		DelegateEvent<EventHandler> m_eResume;
 		DelegateEvent<EventHandler> m_eUserResized;
@@ -51,6 +53,7 @@ namespace Apoc3D
 		DelegateEvent<EventHandler> m_eApplicationDeactivated;
 		DelegateEvent<EventHandler> m_eSystemSuspend;
 		DelegateEvent<EventHandler> m_eSystemResume;
+		DelegateEvent<EventHandler> m_eMonitorChanged;
 		DelegateEvent<CancellableEventHandler> m_eScreensaver;
 
 
@@ -61,6 +64,7 @@ namespace Apoc3D
 
 		LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+		void UpdateMonitor();
 	protected:
 		virtual void OnUserResized();
 		virtual void OnSuspend();
@@ -71,6 +75,9 @@ namespace Apoc3D
 		virtual void OnScreensaver(bool * cancel);
 		virtual void OnResume();
 		virtual void OnPaint();
+
+		virtual void OnMonitorChanged();
+
 	public:
 		HWND getHandle() const { return m_hWnd; }
 		bool getIsMinimized() const { return m_minimized; }
@@ -90,6 +97,7 @@ namespace Apoc3D
 		const DelegateEvent<EventHandler> &eventSystemResume() const { return m_eSystemResume; }
 		const DelegateEvent<CancellableEventHandler> &eventScreensaver() const { return m_eScreensaver; }
 		const DelegateEvent<EventHandler> &eventPaint() const { return m_ePaint; }
+		const DelegateEvent<EventHandler> &eventMonitorChanged() const { return m_eMonitorChanged; }
 
 		GameWindow(HINSTANCE hInstance, int nCmdShow, 
 			const TCHAR* const &wndClass, const TCHAR* const &wndTitle);

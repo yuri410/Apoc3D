@@ -98,9 +98,19 @@ namespace Apoc3D
 		assert (!InitInstance (hInstance, nCmdShow, wndClass, wndTitle));							
 	}
 
-
 	GameWindow::~GameWindow(void)
 	{
+	}
+	
+	void GameWindow::UpdateMonitor()
+	{
+		HMONITOR windowMonitor = MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY);
+		if (!m_currentMonitor || windowMonitor!=m_currentMonitor)
+		{
+			m_currentMonitor=windowMonitor;
+			if (m_currentMonitor)
+				OnMonitorChanged();
+		}
 	}
 
 	void GameWindow::OnUserResized()
@@ -134,6 +144,10 @@ namespace Apoc3D
 	void GameWindow::OnPaint()
 	{
 		INVOKE(m_ePaint)();
+	}
+	void GameWindow::OnMonitorChanged()
+	{
+		INVOKE(m_eMonitorChanged)();
 	}
 
 	Size GameWindow::getCurrentSize()
@@ -179,6 +193,7 @@ namespace Apoc3D
 					m_maximized = true;
 
 					OnUserResized();
+					UpdateMonitor();
 				}
 				else if (wParam == SIZE_RESTORED)
 				{
@@ -188,11 +203,13 @@ namespace Apoc3D
 					m_minimized = false;
 					m_maximized = false;
 
-					if (!m_inSizeMove)
+					Size newSize = getCurrentSize();
+					if (!m_inSizeMove && m_cachedSize != newSize)
 					{
 						OnUserResized();
 
-						m_cachedSize = getCurrentSize();
+						UpdateMonitor();
+						m_cachedSize = newSize;
 					}
 				}
 			}
@@ -220,6 +237,7 @@ namespace Apoc3D
 			}
 			break;
 		case WM_SYSCOMMAND:
+		{
 			long wp = wParam & 0xFFF0;
 			if (wp == SC_MONITORPOWER || wp == SC_SCREENSAVE)
 			{
@@ -231,7 +249,7 @@ namespace Apoc3D
 				}
 			}
 			break;
-
+		}
 		case WM_ENTERSIZEMOVE:
 			m_inSizeMove = true;
             m_cachedSize = getCurrentSize();
@@ -240,7 +258,7 @@ namespace Apoc3D
 		case WM_EXITSIZEMOVE:
 			 // check for screen and size changes
             OnUserResized();
-
+			UpdateMonitor();
             m_inSizeMove = false;
 
             // resume application processing

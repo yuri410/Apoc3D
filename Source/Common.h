@@ -91,7 +91,10 @@ namespace Apoc3D
 	private:
 		std::vector<T> m_funcList;
 	public:
-		const DelegateEvent<T>& operator +=(const& T value)
+		DelegateEvent(){}
+		~DelegateEvent(){}
+
+		inline DelegateEvent<T> &operator +=(const T &value) 
 		{
 			m_funcList.push_back(value);
 			return *this;
@@ -155,6 +158,16 @@ namespace Apoc3D
 		int32 Width, Height;
 		Size(){}
 		Size(const int32 width, const int height) { Width = width; Height = height; }
+	
+		inline bool operator == ( const Size& value ) const
+        {
+            return ( Width == value.Width && Height == value.Height );
+        }
+
+        inline bool operator != ( const Size& value ) const
+        {
+            return ( Width != value.Width || Height != value.Height );
+        }
 	};
 
 	int32 convint32(const char* const src)
