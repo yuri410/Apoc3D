@@ -206,7 +206,7 @@ namespace Apoc3D
             m_game->Initialize();
             m_game->LoadContent();
 		}
-		void GraphicsDeviceManager::CreateDevice(const DeviceSettings const &settings)
+		void GraphicsDeviceManager::CreateDevice(const DeviceSettings &settings)
 		{
 			DeviceSettings* oldSettings = m_currentSetting;
 			m_currentSetting = new DeviceSettings(settings);
@@ -273,7 +273,7 @@ namespace Apoc3D
             }
             else
             {
-                if (oldSettings && oldSettings->getWindowed());
+                if (oldSettings && oldSettings->getWindowed())
                 {
                     m_windowedWindowWidth = oldSettings->getBackBufferWidth();
                     m_windowedWindowHeight = oldSettings->getBackBufferHeight();
@@ -367,7 +367,7 @@ namespace Apoc3D
                     SetWindowPos(wnd->getHandle(), 0, 0, 0, rect.right - rect.left,
                         rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE);
 
-                    RECT r ;
+                    RECT r;
 					GetClientRect(wnd->getHandle(), &rect);
 
 					int clientWidth = r.right - r.left;
@@ -410,7 +410,7 @@ namespace Apoc3D
 
             ChangeDevice(desiredSettings);
 		}
-		void GraphicsDeviceManager::ChangeDevice(const DeviceSettings const &prefer)
+		void GraphicsDeviceManager::ChangeDevice(const DeviceSettings &prefer)
 		{
 			CreateDevice(prefer);
 		}

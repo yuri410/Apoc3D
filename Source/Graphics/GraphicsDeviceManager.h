@@ -58,7 +58,7 @@ namespace Apoc3D
 
 
 			bool CanResetDevice(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
-			void CreateDevice(const DeviceSettings const &settings);
+			void CreateDevice(const DeviceSettings &settings);
 			void game_FrameStart(bool* cancel);
 			void game_FrameEnd();
 			void Window_UserResized();
@@ -85,7 +85,7 @@ namespace Apoc3D
         
 			/* Changes the device.
 			*/
-			void ChangeDevice(const DeviceSettings const &prefer);
+			void ChangeDevice(const DeviceSettings &prefer);
 			/* Toggles between full screen and windowed mode.
 			*/
 			void ToggleFullScreen();

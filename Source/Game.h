@@ -60,6 +60,9 @@ namespace Apoc3D
 		GraphicsDeviceManager* m_graphicsDeviceManager;
 		GameWindow* m_gameWindow;
 
+		
+		
+
 		CancellableEventHandler m_eFrameStart;
 		EventHandler m_eFrameEnd;
 
@@ -77,6 +80,7 @@ namespace Apoc3D
 		virtual void OnFrameEnd();
 
 	public:
+		
 		CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
 		EventHandler* eventFrameEnd() { return &m_eFrameEnd; }
 
