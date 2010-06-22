@@ -56,13 +56,16 @@ namespace Apoc3D
 		DelegateEvent<EventHandler> m_eMonitorChanged;
 		DelegateEvent<CancellableEventHandler> m_eScreensaver;
 
+		static GameWindow* s_Window;
 
 		BOOL InitInstance(HINSTANCE hInstance, int nCmdShow,
 			const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
 		ATOM MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass);
 
+		
+		static LRESULT CALLBACK WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-		LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 		void UpdateMonitor();
 	protected:

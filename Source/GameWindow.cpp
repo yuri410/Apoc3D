@@ -46,7 +46,7 @@ namespace Apoc3D
 		wcex.cbSize = sizeof(WNDCLASSEX);
 
 		wcex.style			= CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc	= (&GameWindow::WndProc);
+		wcex.lpfnWndProc	= (GameWindow::WndProcStatic);
 		wcex.cbClsExtra		= 0;
 		wcex.cbWndExtra		= 0;
 		wcex.hInstance		= hInstance;
@@ -93,13 +93,15 @@ namespace Apoc3D
 	GameWindow::GameWindow(HINSTANCE hInstance, int nCmdShow, 
 		const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
 	{
+		s_Window = this;
 		MyRegisterClass(hInstance, wndClass);
 
-		assert (!InitInstance (hInstance, nCmdShow, wndClass, wndTitle));							
+		assert (!InitInstance (hInstance, nCmdShow, wndClass, wndTitle));
 	}
 
 	GameWindow::~GameWindow(void)
 	{
+		s_Window = NULL;
 	}
 	
 	void GameWindow::UpdateMonitor()
@@ -162,7 +164,16 @@ namespace Apoc3D
 		return Size(rect.right - rect.left, rect.bottom - rect.top);
 	}
 
-	LRESULT CALLBACK GameWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+	LRESULT CALLBACK GameWindow::WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+	{
+		if (s_Window)
+		{
+			return s_Window->WndProc(hWnd, message, wParam, lParam);
+		}
+		return 0;
+	}
+
+	LRESULT GameWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		switch (message)
 		{
