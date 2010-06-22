@@ -77,6 +77,8 @@
     <ClInclude Include="Core\BoundingSphere.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Core\Camera.h" />
+    <ClInclude Include="FastDelegate\FastDelegate.h" />
+    <ClInclude Include="FastDelegate\FastDelegateBind.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="Graphics\IRenderable.h" />
     <ClInclude Include="Graphics\RenderOperation.h" />
@@ -112,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="FastDelegate\Demo.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Core\ResourceHandle.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />

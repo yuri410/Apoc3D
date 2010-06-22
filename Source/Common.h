@@ -100,6 +100,11 @@ namespace Apoc3D
 			return *this;
 		}
 
+		void add(T value)
+		{
+			m_funcList.push_back(value);
+		}
+
 		int32 count() const { return m_funcList.size(); }
 		const T& operator[](int i) const { return m_funcList[i]; }
 		

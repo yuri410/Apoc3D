@@ -34,8 +34,10 @@ namespace Apoc3D
 			assert(!game);
 
 			m_game = game;
-			m_game->eventFrameStart() += game_FrameStart;
-			m_game->eventFrameEnd() += game_FrameEnd;
+
+			CancellableEventHandler e = game_FrameStart;
+			m_game->eventFrameStart().add(e);
+			m_game->eventFrameEnd().add(game_FrameEnd);
 			m_game->getWindow()->eventUserResized() += Window_UserResized;
 			m_game->getWindow()->eventMonitorChanged() += Window_MonitorChanged;
 		}
@@ -44,8 +46,8 @@ namespace Apoc3D
 		GraphicsDeviceManager::~GraphicsDeviceManager(void)
 		{
 		}
-		bool GraphicsDeviceManager::CanResetDevice(const DeviceSettings const *oldset, 
-			const DeviceSettings const *newset) const
+		bool GraphicsDeviceManager::CanResetDevice(const DeviceSettings* const oldset, 
+			const DeviceSettings* const newset) const
 		{
 			if (!oldset)
 				return false;
@@ -56,7 +58,7 @@ namespace Apoc3D
                 oldset->CreationFlags == newset->CreationFlags;
 		}
 			
-		int64 GraphicsDeviceManager::ResetDevice()
+		HRESULT GraphicsDeviceManager::ResetDevice()
 		{
 			m_game->UnloadContent();
 
@@ -166,7 +168,7 @@ namespace Apoc3D
                 CreateDevice(newSettings);
             }
 		}
-		void GraphicsDeviceManager::Window_ScreenChanged()
+		void GraphicsDeviceManager::Window_MonitorChanged()
 		{
 			if (!EnsureDevice() || !m_currentSetting->getWindowed() || m_ignoreSizeChanges)
                 return;

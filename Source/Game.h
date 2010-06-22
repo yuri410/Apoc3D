@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
+using namespace Apoc3D::Graphics;
+
 namespace Apoc3D
 {
 	class _Export Game
@@ -74,7 +76,7 @@ namespace Apoc3D
 		virtual void OnFrameEnd();
 
 	public:
-		const DelegateEvent<CancellableEventHandler> &eventFrameStart() const { return m_eFrameStart; }
+		DelegateEvent<CancellableEventHandler> &eventFrameStart() const { return m_eFrameStart; }
 		const DelegateEvent<EventHandler> &eventFrameEnd() const { return m_eFrameEnd; }
 
 		GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }

@@ -30,7 +30,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace Apoc3D
 {
-	
+	/* Implements a specialized window for games and rendering.
+	*/
 	class _Export GameWindow
 	{
 	private:

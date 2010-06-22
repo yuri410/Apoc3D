@@ -37,7 +37,7 @@ namespace Apoc3D
 		  m_updatesSinceRunningSlowly1(MaxInt32), m_updatesSinceRunningSlowly2(MaxInt32)
 	{
 		m_gameClock = new GameClock();
-
+		
 		m_gameWindow = new GameWindow(instance, nCmdShow, name, name);
 		m_gameWindow->eventApplicationActivated() += (Window_ApplicationActivated);
 		m_gameWindow->eventApplicationDeactivated() += (Window_ApplicationDeactivated);
@@ -105,7 +105,7 @@ namespace Apoc3D
 	//		return;
 
 		if (m_active)
-			Sleep(m_inactiveSleepTime);
+			Sleep(static_cast<int>(m_inactiveSleepTime*1000));
 
 		m_gameClock->Step();
 

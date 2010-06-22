@@ -57,7 +57,7 @@ namespace Apoc3D
 			//bool m_savedTopmost;
 
 
-			bool CanResetDevice(const DeviceSettings const *oldset, const DeviceSettings const *newset) const;
+			bool CanResetDevice(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
 			void CreateDevice(const DeviceSettings const &settings);
 			void game_FrameStart(bool* cancel);
 			void game_FrameEnd();
@@ -65,7 +65,7 @@ namespace Apoc3D
 			void Window_MonitorChanged();
 
 			void InitializeDevice();
-			int64 ResetDevice();
+			HRESULT ResetDevice();
 
 			int32 GetAdapterOrdinal(HMONITOR mon);
 			void UpdateDeviceInformation();

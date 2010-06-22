@@ -75,7 +75,7 @@ namespace Apoc3D
 			*/
 			bool getWindowed() const
 			{
-				return PresentParams.Windowed;
+				return !!(PresentParams.Windowed);
 			}
 			void setWindowed(bool value)
 			{
@@ -85,7 +85,7 @@ namespace Apoc3D
 			*/
 			bool getMultithreaded() const
 			{
-				return CreationFlags & D3DCREATE_MULTITHREADED;
+				return !!(CreationFlags & D3DCREATE_MULTITHREADED);
 			}
 			/* the multisample type
 			*/
