@@ -39,22 +39,25 @@ namespace Apoc3D
 		m_gameClock = new GameClock();
 		
 		m_gameWindow = new GameWindow(instance, nCmdShow, name, name);
-		m_gameWindow->eventApplicationActivated() += (Window_ApplicationActivated);
-		m_gameWindow->eventApplicationDeactivated() += (Window_ApplicationDeactivated);
-
+		m_gameWindow->eventApplicationActivated()->bind(this, &Game::Window_ApplicationActivated);
+		m_gameWindow->eventApplicationDeactivated()->bind(this, &Game::Window_ApplicationDeactivated);
+		m_gameWindow->eventPaint()->bind(this, &Game::Window_Paint);
+		m_gameWindow->eventResume()->bind(this, &Game::Window_Resume);
+		m_gameWindow->eventSuspend()->bind(this, &Game::Window_Suspend);
+		
 		m_graphicsDeviceManager = new GraphicsDeviceManager(this);		
 	}
 
 	bool Game::OnFrameStart()
 	{
 		bool re;
-		INVOKE(m_eFrameStart)(&re);
+		m_eFrameStart(&re);
 		return re;
 	}
 
 	void Game::OnFrameEnd()
 	{
-		INVOKE(m_eFrameEnd)();
+		m_eFrameEnd();
 	}
 
 	void Game::DrawFrame()

@@ -35,11 +35,11 @@ namespace Apoc3D
 
 			m_game = game;
 
-			CancellableEventHandler e = game_FrameStart;
-			m_game->eventFrameStart().add(e);
-			m_game->eventFrameEnd().add(game_FrameEnd);
-			m_game->getWindow()->eventUserResized() += Window_UserResized;
-			m_game->getWindow()->eventMonitorChanged() += Window_MonitorChanged;
+			
+			m_game->eventFrameStart()->bind(this, &GraphicsDeviceManager::game_FrameStart);
+			m_game->eventFrameEnd()->bind(this, &GraphicsDeviceManager::game_FrameEnd);
+			m_game->getWindow()->eventUserResized()->bind(this, &GraphicsDeviceManager::Window_UserResized);
+			m_game->getWindow()->eventMonitorChanged()->bind(this, &GraphicsDeviceManager::Window_MonitorChanged);
 		}
 
 
@@ -381,12 +381,6 @@ namespace Apoc3D
                         newSettings.setBackBufferWidth(0);
                         newSettings.setBackBufferHeight(0);
                         
-						/*
-                            newSettings.PresentParameters.BackBufferWidth = 0;
-                            newSettings.PresentParameters.BackBufferHeight = 0;
-                        */
-                        
-
                         CreateDevice(newSettings);
                     }
                 }

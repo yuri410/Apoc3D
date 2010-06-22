@@ -46,16 +46,16 @@ namespace Apoc3D
 		
 		HMONITOR m_currentMonitor;
 
-		DelegateEvent<EventHandler> m_ePaint;
-		DelegateEvent<EventHandler> m_eResume;
-		DelegateEvent<EventHandler> m_eUserResized;
-		DelegateEvent<EventHandler> m_eSuspend;
-		DelegateEvent<EventHandler> m_eApplicationActivated;
-		DelegateEvent<EventHandler> m_eApplicationDeactivated;
-		DelegateEvent<EventHandler> m_eSystemSuspend;
-		DelegateEvent<EventHandler> m_eSystemResume;
-		DelegateEvent<EventHandler> m_eMonitorChanged;
-		DelegateEvent<CancellableEventHandler> m_eScreensaver;
+		EventHandler m_ePaint;
+		EventHandler m_eResume;
+		EventHandler m_eUserResized;
+		EventHandler m_eSuspend;
+		EventHandler m_eApplicationActivated;
+		EventHandler m_eApplicationDeactivated;
+		EventHandler m_eSystemSuspend;
+		EventHandler m_eSystemResume;
+		EventHandler m_eMonitorChanged;
+		CancellableEventHandler m_eScreensaver;
 
 		static GameWindow* s_Window;
 
@@ -92,16 +92,16 @@ namespace Apoc3D
 		//}
 		Size getCurrentSize();
 
-		const DelegateEvent<EventHandler> &eventResume() const { return m_eResume; }
-		const DelegateEvent<EventHandler> &eventUserResized() const { return m_eUserResized; }
-		const DelegateEvent<EventHandler> &eventSuspend() const { return m_eSuspend; }
-		const DelegateEvent<EventHandler> &eventApplicationActivated() const { return m_eApplicationActivated; }
-		const DelegateEvent<EventHandler> &eventApplicationDeactivated() const { return m_eApplicationDeactivated; }
-		const DelegateEvent<EventHandler> &eventSystemSuspend() const { return m_eSystemSuspend; }
-		const DelegateEvent<EventHandler> &eventSystemResume() const { return m_eSystemResume; }
-		const DelegateEvent<CancellableEventHandler> &eventScreensaver() const { return m_eScreensaver; }
-		const DelegateEvent<EventHandler> &eventPaint() const { return m_ePaint; }
-		const DelegateEvent<EventHandler> &eventMonitorChanged() const { return m_eMonitorChanged; }
+		EventHandler* eventResume() { return &m_eResume; }
+		EventHandler* eventUserResized() { return &m_eUserResized; }
+		EventHandler* eventSuspend() { return &m_eSuspend; }
+		EventHandler* eventApplicationActivated() { return &m_eApplicationActivated; }
+		EventHandler* eventApplicationDeactivated() { return &m_eApplicationDeactivated; }
+		EventHandler* eventSystemSuspend() { return &m_eSystemSuspend; }
+		EventHandler* eventSystemResume() { return &m_eSystemResume; }
+		CancellableEventHandler* eventScreensaver() { return &m_eScreensaver; }
+		EventHandler* eventPaint() { return &m_ePaint; }
+		EventHandler* eventMonitorChanged() { return &m_eMonitorChanged; }
 
 		GameWindow(HINSTANCE hInstance, int nCmdShow, 
 			const TCHAR* const &wndClass, const TCHAR* const &wndTitle);

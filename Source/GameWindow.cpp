@@ -117,39 +117,39 @@ namespace Apoc3D
 
 	void GameWindow::OnUserResized()
 	{
-		INVOKE(m_eUserResized)();
+		m_eUserResized();
 	}
 	void GameWindow::OnSuspend()
 	{
-		INVOKE(m_eSuspend)();
+		m_eSuspend();
 	}
 	void GameWindow::OnApplicationActivated()
 	{
-		INVOKE(m_eApplicationActivated)();
+		m_eApplicationActivated();
 	}
 	void GameWindow::OnApplicationDeactivated()
 	{
-		INVOKE(m_eApplicationDeactivated)();
+		m_eApplicationDeactivated();
 	}
 	void GameWindow::OnSystemSuspend()
 	{
-		INVOKE(m_eSystemSuspend)();
+		m_eSystemSuspend();
 	}
 	void GameWindow::OnSystemResume()
 	{
-		INVOKE(m_eSystemResume)();
+		m_eSystemResume();
 	}
 	void GameWindow::OnScreensaver(bool * cancel)
 	{
-		INVOKE(m_eScreensaver)(cancel);
+		m_eScreensaver(cancel);
 	}
 	void GameWindow::OnPaint()
 	{
-		INVOKE(m_ePaint)();
+		m_ePaint();
 	}
 	void GameWindow::OnMonitorChanged()
 	{
-		INVOKE(m_eMonitorChanged)();
+		m_eMonitorChanged();
 	}
 
 	Size GameWindow::getCurrentSize()

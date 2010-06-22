@@ -74,49 +74,52 @@ struct _Export IDirect3DVertexDeclaration9;
 #include <windows.h>
 #include <algorithm>
 #include <string>
-#include <vector>
+//#include <vector>
 
+#include "FastDelegate\FastDelegate.h"
 
 // Forward Declarations
 namespace Apoc3D
 {
-	#define DELEGATE(name, retn) typedef retn (CALLBACK *name)
+	typedef fastdelegate::FastDelegate0<> EventHandler;
+	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
+	//#define DELEGATE(name, retn) typedef retn (CALLBACK *name)
 
-	DELEGATE(EventHandler, void)();
-	DELEGATE(CancellableEventHandler, void)(bool* cancel);
+	//DELEGATE(EventHandler, void)();
+	//DELEGATE(CancellableEventHandler, void)(bool* cancel);
 
-	template<typename T>
-	class _Export DelegateEvent
-	{
-	private:
-		std::vector<T> m_funcList;
-	public:
-		DelegateEvent(){}
-		~DelegateEvent(){}
+	//template<typename T>
+	//class _Export DelegateEvent
+	//{
+	//private:
+	//	std::vector<T> m_funcList;
+	//public:
+	//	DelegateEvent(){}
+	//	~DelegateEvent(){}
 
-		inline DelegateEvent<T> &operator +=(const T &value) 
-		{
-			m_funcList.push_back(value);
-			return *this;
-		}
+	//	inline DelegateEvent<T> &operator +=(const T &value) 
+	//	{
+	//		m_funcList.push_back(value);
+	//		return *this;
+	//	}
 
-		void add(T value)
-		{
-			m_funcList.push_back(value);
-		}
+	//	void add(T value)
+	//	{
+	//		m_funcList.push_back(value);
+	//	}
 
-		int32 count() const { return m_funcList.size(); }
-		const T& operator[](int i) const { return m_funcList[i]; }
-		
-		void reset() { m_funcList.clear(); }
-	private:
-		void* operator new(size_t sz)
-		{
-			return 0;
-		}
-	};
+	//	int32 count() const { return m_funcList.size(); }
+	//	const T& operator[](int i) const { return m_funcList[i]; }
+	//	
+	//	void reset() { m_funcList.clear(); }
+	//private:
+	//	void* operator new(size_t sz)
+	//	{
+	//		return 0;
+	//	}
+	//};
 
-	#define INVOKE(de) for (int32 i=0;i<de.count();i++) de[i]
+	//#define INVOKE(de) for (int32 i=0;i<de.count();i++) de[i]
 
 	class Game;
 	class GameClock;

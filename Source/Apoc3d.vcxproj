@@ -114,7 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
-    <ClCompile Include="FastDelegate\Demo.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Core\ResourceHandle.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />

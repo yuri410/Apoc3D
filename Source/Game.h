@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 
 using namespace Apoc3D::Graphics;
+using namespace fastdelegate;
 
 namespace Apoc3D
 {
@@ -59,8 +60,8 @@ namespace Apoc3D
 		GraphicsDeviceManager* m_graphicsDeviceManager;
 		GameWindow* m_gameWindow;
 
-		DelegateEvent<CancellableEventHandler> m_eFrameStart;
-		DelegateEvent<EventHandler> m_eFrameEnd;
+		CancellableEventHandler m_eFrameStart;
+		EventHandler m_eFrameEnd;
 
 		void DrawFrame();
 
@@ -76,8 +77,8 @@ namespace Apoc3D
 		virtual void OnFrameEnd();
 
 	public:
-		DelegateEvent<CancellableEventHandler> &eventFrameStart() const { return m_eFrameStart; }
-		const DelegateEvent<EventHandler> &eventFrameEnd() const { return m_eFrameEnd; }
+		CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
+		EventHandler* eventFrameEnd() { return &m_eFrameEnd; }
 
 		GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
 		GameWindow* getWindow() const { return m_gameWindow; }
