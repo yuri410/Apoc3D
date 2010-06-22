@@ -44,7 +44,7 @@ typedef unsigned long long BatchHandle;
 #if APOC3D_DLLEX
 	#define _Export __declspec( dllexport )
 #else
-	#define _Export 
+	#define _Export __declspec( dllimport )
 #endif
 
 

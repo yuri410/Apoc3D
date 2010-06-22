@@ -84,6 +84,18 @@ namespace Apoc3D
 
 		}
 		
+		int32 GraphicsDeviceManager::GetAdapterOrdinal(HMONITOR mon)
+		{
+			UINT count = m_direct3D9->GetAdapterCount();
+			for (UINT i = 0;i<count;i++)
+			{
+				if (mon == m_direct3D9->GetAdapterMonitor(i))
+				{
+					return static_cast<int32>(i);
+				}
+			}
+			return -1;
+		}
 
 		void GraphicsDeviceManager::game_FrameStart(bool* cancel)
 		{
@@ -160,6 +172,13 @@ namespace Apoc3D
 
             DeviceSettings newSettings = *m_currentSetting;
             int adapterOrdinal = GetAdapterOrdinal(windowMonitor);
+
+			if (adapterOrdinal == -1)
+                return;
+
+			newSettings.AdapterOrdinal = adapterOrdinal;
+			
+			CreateDevice(newSettings);
 		}
 
 		void GraphicsDeviceManager::InitializeDevice()
@@ -209,7 +228,7 @@ namespace Apoc3D
             {
                 if (!oldSettings || oldSettings->getWindowed())
                 {
-                    m_savedTopmost = wnd->getTopMost();
+                    //m_savedTopmost = wnd->getTopMost();
                     long style = GetWindowLong(wnd->getHandle(), GWL_STYLE);
                     style &= ~WS_MAXIMIZE & ~WS_MINIMIZE;
                     m_windowedStyle = style;
@@ -265,7 +284,7 @@ namespace Apoc3D
 
             if (result == D3DERR_DEVICELOST)
                 m_deviceLost = true;
-            else if (!canReset || result)
+            else if (!canReset || result != D3D_OK)
             {
                 if (oldSettings)
                     ReleaseDevice();
@@ -279,7 +298,7 @@ namespace Apoc3D
             if (oldSettings && !oldSettings->getWindowed() && settings.getWindowed())
             {
                 SetWindowPlacement(wnd->getHandle(), &m_windowedPlacement);
-                wnd->setTopMost(m_savedTopmost);
+                //wnd->setTopMost(m_savedTopmost);
             }
 
             // check if we need to resize
@@ -369,7 +388,7 @@ namespace Apoc3D
             }
 
             // if the window is still hidden, make sure it is shown
-            if (!wnd->getVisible())
+			if (!IsWindowVisible(wnd->getHandle()))
                 ShowWindow(wnd->getHandle(), SW_SHOW);
 
             // set the execution state of the thread

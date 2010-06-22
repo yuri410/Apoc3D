@@ -54,7 +54,7 @@ namespace Apoc3D
 			int32 m_windowedWindowHeight;
 			WINDOWPLACEMENT m_windowedPlacement;
 			int64 m_windowedStyle;
-			bool m_savedTopmost;
+			//bool m_savedTopmost;
 
 
 			bool CanResetDevice(const DeviceSettings const *oldset, const DeviceSettings const *newset) const;
@@ -67,6 +67,7 @@ namespace Apoc3D
 			void InitializeDevice();
 			int64 ResetDevice();
 
+			int32 GetAdapterOrdinal(HMONITOR mon);
 			void UpdateDeviceInformation();
 
 		public:
