@@ -100,6 +100,12 @@ namespace Apoc3D
 		int32 count() const { return m_funcList.size(); }
 		const T& operator[](int i) const { return m_funcList[i]; }
 		
+		void reset() { m_funcList.clear(); }
+	private:
+		void* operator new(size_t sz)
+		{
+			return 0;
+		}
 	};
 
 	#define INVOKE(de) for (int32 i=0;i<de.count();i++) de[i]
@@ -143,6 +149,13 @@ namespace Apoc3D
 	const Vector3 UnitZ3(0,0,1);
 	const Vector3 One3(1,1,1);
 	const Vector3 Zero3(0,0,0);
+
+	struct _Export Size 
+	{
+		int32 Width, Height;
+		Size(){}
+		Size(const int32 width, const int height) { Width = width; Height = height; }
+	};
 
 	int32 convint32(const char* const src)
 	{

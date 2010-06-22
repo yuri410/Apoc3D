@@ -37,9 +37,14 @@ namespace Apoc3D
 		bool m_minimized;
 		bool m_maximized;
 		bool m_inSizeMove;
+		
+		Size m_cachedSize;
 		HINSTANCE m_hInst;
-		HWND m_hWnd;
 
+		HWND m_hWnd;
+		
+		DelegateEvent<EventHandler> m_ePaint;
+		DelegateEvent<EventHandler> m_eResume;
 		DelegateEvent<EventHandler> m_eUserResized;
 		DelegateEvent<EventHandler> m_eSuspend;
 		DelegateEvent<EventHandler> m_eApplicationActivated;
@@ -64,8 +69,8 @@ namespace Apoc3D
 		virtual void OnSystemSuspend();
 		virtual void OnSystemResume();
 		virtual void OnScreensaver(bool * cancel);
-
-
+		virtual void OnResume();
+		virtual void OnPaint();
 	public:
 		HWND getHandle() const { return m_hWnd; }
 		bool getIsMinimized() const { return m_minimized; }
@@ -74,15 +79,17 @@ namespace Apoc3D
 		{
 			SetWindowPos(m_hWnd, value ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, 3);
 		}
+		Size getCurrentSize();
 
-		const DelegateEvent<EventHandler> &getUserResized() const { return m_eUserResized; }
-		const DelegateEvent<EventHandler> &getSuspend() const { return m_eSuspend; }
-		const DelegateEvent<EventHandler> &getApplicationActivated() const { return m_eApplicationActivated; }
-		const DelegateEvent<EventHandler> &getApplicationDeactivated() const { return m_eApplicationDeactivated; }
-		const DelegateEvent<EventHandler> &getSystemSuspend() const { return m_eSystemSuspend; }
-		const DelegateEvent<EventHandler> &getSystemResume() const { return m_eSystemResume; }
-		const DelegateEvent<CancellableEventHandler> &getScreensaver() const { return m_eScreensaver; }
-
+		const DelegateEvent<EventHandler> &eventResume() const { return m_eResume; }
+		const DelegateEvent<EventHandler> &eventUserResized() const { return m_eUserResized; }
+		const DelegateEvent<EventHandler> &eventSuspend() const { return m_eSuspend; }
+		const DelegateEvent<EventHandler> &eventApplicationActivated() const { return m_eApplicationActivated; }
+		const DelegateEvent<EventHandler> &eventApplicationDeactivated() const { return m_eApplicationDeactivated; }
+		const DelegateEvent<EventHandler> &eventSystemSuspend() const { return m_eSystemSuspend; }
+		const DelegateEvent<EventHandler> &eventSystemResume() const { return m_eSystemResume; }
+		const DelegateEvent<CancellableEventHandler> &eventScreensaver() const { return m_eScreensaver; }
+		const DelegateEvent<EventHandler> &eventPaint() const { return m_ePaint; }
 
 		GameWindow(HINSTANCE hInstance, int nCmdShow, 
 			const TCHAR* const &wndClass, const TCHAR* const &wndTitle);

@@ -131,17 +131,34 @@ namespace Apoc3D
 	{
 		INVOKE(m_eScreensaver)(cancel);
 	}
+	void GameWindow::OnPaint()
+	{
+		INVOKE(m_ePaint)();
+	}
+
+	Size GameWindow::getCurrentSize()
+	{
+		RECT rect;
+		if (!GetClientRect(m_hWnd, &rect))
+		{
+			rect.left = 0; rect.right = 0;
+			rect.bottom = 0;
+			rect.top = 0;
+		}
+		return Size(rect.right - rect.left, rect.bottom - rect.top);
+	}
 
 	LRESULT CALLBACK GameWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		if (message == WM_SIZE)
-        {
+		switch (message)
+		{
+		case WM_SIZE:
 			if (wParam == SIZE_MINIMIZED)
             {
 				m_minimized = true;
 				m_maximized = false;
 
-				
+				OnSuspend();
 			}
 			else
 			{
@@ -162,7 +179,6 @@ namespace Apoc3D
 					m_maximized = true;
 
 					OnUserResized();
-					UpdateScreen();
 				}
 				else if (wParam == SIZE_RESTORED)
 				{
@@ -175,14 +191,13 @@ namespace Apoc3D
 					if (!m_inSizeMove)
 					{
 						OnUserResized();
-						UpdateScreen();
-						m_cachedSize = Size;
+
+						m_cachedSize = getCurrentSize();
 					}
 				}
 			}
-		}
-		else if (message == WM_ACTIVATEAPP)
-		{
+			break;
+		case WM_ACTIVATEAPP:
 			if (wParam)
 			{
 				OnApplicationActivated();
@@ -191,9 +206,8 @@ namespace Apoc3D
 			{
 				OnApplicationDeactivated();
 			}
-		}
-		else if (message == WM_POWERBROADCAST)
-		{
+			break;
+		case WM_POWERBROADCAST:
 			if (wParam == PBT_APMQUERYSUSPEND)
 			{
 				OnSystemSuspend();	
@@ -204,9 +218,8 @@ namespace Apoc3D
 				OnSystemResume();
 				return 1;
 			}
-		}
-		else if (message == WM_SYSCOMMAND)
-		{
+			break;
+		case WM_SYSCOMMAND:
 			long wp = wParam & 0xFFF0;
 			if (wp == SC_MONITORPOWER || wp == SC_SCREENSAVE)
 			{
@@ -217,8 +230,26 @@ namespace Apoc3D
 					return 0;
 				}
 			}
-		}
+			break;
 
+		case WM_ENTERSIZEMOVE:
+			m_inSizeMove = true;
+            m_cachedSize = getCurrentSize();
+            OnSuspend();
+			break;
+		case WM_EXITSIZEMOVE:
+			 // check for screen and size changes
+            OnUserResized();
+
+            m_inSizeMove = false;
+
+            // resume application processing
+            OnResume();
+			break;
+		case WM_PAINT:
+			OnPaint();
+			break;
+		}
 	
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}

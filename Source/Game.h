@@ -36,7 +36,6 @@ namespace Apoc3D
 		HINSTANCE m_inst;
 
 		GameClock* m_gameClock;
-		//GameTime* m_gameTime;
 		float m_maxElapsedTime;
 		float m_totalGameTime;
 		float m_accumulatedElapsedGameTime;
@@ -52,11 +51,14 @@ namespace Apoc3D
 		float m_lastUpdateTime;
 		float m_fps;
 
-		bool m_exiting;
+		//bool m_exiting;
 		bool m_active;
 
 		GraphicsDeviceManager* m_graphicsDeviceManager;
 		GameWindow* m_gameWindow;
+
+		DelegateEvent<CancellableEventHandler> m_eFrameStart;
+		DelegateEvent<EventHandler> m_eFrameEnd;
 
 		void DrawFrame();
 
@@ -65,16 +67,20 @@ namespace Apoc3D
 		void Window_Suspend();
 		void Window_Resume();
 		void Window_Paint();
-		void Window_Closing();
+
+	protected:
+		
+		virtual bool OnFrameStart();
+		virtual void OnFrameEnd();
+
 	public:
+		const DelegateEvent<CancellableEventHandler> &eventFrameStart() const { return m_eFrameStart; }
+		const DelegateEvent<EventHandler> &eventFrameEnd() const { return m_eFrameEnd; }
+
 		GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
 		GameWindow* getWindow() const { return m_gameWindow; }
-		bool getIsExiting() const { return m_exiting; }
+		//bool getIsExiting() const { return m_exiting; }
 		bool getIsActive() const { return m_active; }
-
-
-		virtual bool OnFrameStart() = 0;
-		virtual bool OnFrameEnd();
 
 		virtual void Initialize() = 0;
 		virtual void LoadContent() = 0;
@@ -86,14 +92,6 @@ namespace Apoc3D
 
 		Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name);
 		~Game(void);
-
-		void NotifyApplicationActivated() { Window_ApplicationActivated(); }
-		void NotifyApplicationDeactivated() { Window_ApplicationDeactivated(); }
-		void NotifySuspend() { Window_Suspend(); } 
-		void NotifyResume() { Window_Resume(); }
-		void NotifyPaint() { Window_Paint(); }
-		void NotifyWindowClosing() { Window_Closing(); }
-
 	};
 
 }

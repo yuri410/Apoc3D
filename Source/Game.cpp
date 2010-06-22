@@ -39,14 +39,29 @@ namespace Apoc3D
 		m_gameClock = new GameClock();
 
 		m_gameWindow = new GameWindow(instance, nCmdShow, name, name);
+		m_gameWindow->eventApplicationActivated() += (Window_ApplicationActivated);
+		m_gameWindow->eventApplicationDeactivated() += (Window_ApplicationDeactivated);
+
 		m_graphicsDeviceManager = new GraphicsDeviceManager(this);		
+	}
+
+	bool Game::OnFrameStart()
+	{
+		bool re;
+		INVOKE(m_eFrameStart)(&re);
+		return re;
+	}
+
+	void Game::OnFrameEnd()
+	{
+		INVOKE(m_eFrameEnd)();
 	}
 
 	void Game::DrawFrame()
 	{
 		try
         {
-			if (!m_exiting && !m_gameWindow->getIsMinimized())
+			if (!m_gameWindow->getIsMinimized())
 			{
 				if (OnFrameStart())
 				{
@@ -80,12 +95,14 @@ namespace Apoc3D
 				Tick();
 			}
 		}
+
+
 	}
 
 	void Game::Tick()
 	{
-		if (m_exiting)
-			return;
+	//	if (m_exiting)
+	//		return;
 
 		if (m_active)
 			Sleep(m_inactiveSleepTime);
@@ -137,7 +154,7 @@ namespace Apoc3D
 		m_drawRunningSlowly = m_updatesSinceRunningSlowly2 < 20;
 
 		// update until it's time to draw the next frame
-		while (ratio > 0 && !m_exiting)
+		while (ratio > 0)
 		{
 			ratio -= 1;
 			
@@ -170,7 +187,27 @@ namespace Apoc3D
         }
 	}
 
-
+	void Game::Window_ApplicationActivated()
+	{
+		m_active = true;
+	}
+	void Game::Window_ApplicationDeactivated()
+	{
+		m_active = false;
+	}
+	void Game::Window_Suspend()
+	{
+		m_gameClock->Suspend();
+	}
+	void Game::Window_Resume()
+	{
+		m_gameClock->Resume();
+	}
+	void Game::Window_Paint()
+	{
+		DrawFrame();
+	}
+	
 	Game::~Game(void)
 	{
 	}

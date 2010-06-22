@@ -63,6 +63,7 @@ namespace Apoc3D
 				return hr;
 
 			m_game->LoadContent();
+			return hr;
 		}
 		void GraphicsDeviceManager::ReleaseDevice()
 		{
@@ -86,19 +87,79 @@ namespace Apoc3D
 
 		void GraphicsDeviceManager::game_FrameStart(bool* cancel)
 		{
+			if (!m_game->getIsActive() || m_deviceLost)
+                Sleep(50);
 
+			if (m_deviceLost)
+			{
+				HRESULT hr = m_device->TestCooperativeLevel();
+				if (hr = D3DERR_DEVICELOST)
+				{
+					*cancel = true;
+					return;
+				}
+
+
+				if (m_currentSetting && m_currentSetting->getWindowed())
+				{
+					D3DDISPLAYMODE mode;
+					m_direct3D9->GetAdapterDisplayMode(m_currentSetting->AdapterOrdinal, &mode);
+					if (m_currentSetting->getBackBufferFormat() != mode.Format)
+					{
+						DeviceSettings newSettings = *m_currentSetting;
+						ChangeDevice(newSettings);
+                        *cancel = true;
+                        return;
+					}
+				}
+
+				hr = ResetDevice();
+				if (hr != D3D_OK)
+				{
+					*cancel = true;
+					return;
+				}
+				m_deviceLost = false;
+			}
 		}
 		void GraphicsDeviceManager::game_FrameEnd()
 		{
-
+			HRESULT hr = m_device->Present(NULL, NULL, NULL, NULL);
+			if (hr = D3DERR_DEVICELOST)
+			{
+				m_deviceLost = true;
+			}
 		}
 		void GraphicsDeviceManager::Window_UserResized()
 		{
+			if (m_ignoreSizeChanges || !EnsureDevice() ||
+               (m_currentSetting->getWindowed()))
+                return;
 
+			DeviceSettings newSettings = *m_currentSetting;
+
+			RECT rect;
+			GetClientRect(m_game->getWindow()->getHandle(), &rect);
+
+			int32 width = rect.right - rect.left;
+			int32 height = rect.bottom - rect.top;
+
+			if (width != newSettings.getBackBufferWidth() || height != newSettings.getBackBufferHeight())
+            {
+                newSettings.setBackBufferWidth(0);
+                newSettings.setBackBufferHeight(0);
+                CreateDevice(newSettings);
+            }
 		}
 		void GraphicsDeviceManager::Window_ScreenChanged()
 		{
+			if (!EnsureDevice() || !m_currentSetting->getWindowed() || m_ignoreSizeChanges)
+                return;
 
+            HMONITOR windowMonitor = MonitorFromWindow(m_game->getWindow()->getHandle(), MONITOR_DEFAULTTOPRIMARY);
+
+            DeviceSettings newSettings = *m_currentSetting;
+            int adapterOrdinal = GetAdapterOrdinal(windowMonitor);
 		}
 
 		void GraphicsDeviceManager::InitializeDevice()
