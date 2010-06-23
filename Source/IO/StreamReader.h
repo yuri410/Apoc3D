@@ -24,6 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef STREAMREADER_H
 #define STREAMREADER_H
 #include "..\Common.h"
+#include "Stream.h"
 
 namespace Apoc3D
 {
@@ -39,7 +40,11 @@ namespace Apoc3D
 
 			StreamReader() { }
 
-			String* ReadLine() {  }
+			String* ReadLine()
+			{
+				
+				
+			}
 
 			String* ReadToEnd() {  }
 		};

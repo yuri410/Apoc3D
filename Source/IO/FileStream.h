@@ -64,6 +64,11 @@ namespace Apoc3D
 			FileStream(const String& filename, FileMode mode, FileAccess access);
 			~FileStream();
 
+			int64 getLength() 
+			{
+				
+			}
+
 			int32 Read(char* dest, int32 count);
 			void Write(const char* src, int32 count);
 

@@ -48,6 +48,7 @@ namespace Apoc3D
 			~Stream() {}
 
 		public:
+			virtual int64 getLength() = 0;
 
 			virtual int32 Read(char* dest, int32 count) = 0;
 			virtual int32 ReadChar()
