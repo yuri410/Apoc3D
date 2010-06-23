@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		class SimpleSceneNode : public SceneNode
+		class _Export SimpleSceneNode : public SceneNode
 		{
 		public:
 			SimpleSceneNode(void);

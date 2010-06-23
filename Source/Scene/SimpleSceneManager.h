@@ -34,7 +34,7 @@ namespace Apoc3D
 	{
 		class SimpleSceneNode;
 
-		class SimpleSceneManager : public SceneManager
+		class _Export SimpleSceneManager : public SceneManager
 		{
 		private:
 			SimpleSceneNode* m_defaultNode;

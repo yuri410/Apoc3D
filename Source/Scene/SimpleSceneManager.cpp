@@ -25,7 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SimpleSceneManager.h"
 
 #include "SimpleSceneNode.h"
+#include "SceneObject.h"
 
+#include "..\Graphics\RenderOperation.h"
+using namespace Apoc3D::Graphics;
 
 namespace Apoc3D
 {
@@ -55,7 +58,17 @@ namespace Apoc3D
 
 		void SimpleSceneManager::PrepareVisibleObjects(Camera* camera, BatchData* batchData)
 		{
+			batchData->Clear();
+			for (int i =0; i<m_defaultNode->getCount();i++)
+			{
+				SceneObject* obj = m_defaultNode->operator[](i);
+				if (obj->hasSubObjects())
+				{
+					obj->PrepareVisibleObjects(camera, 0, batchData);
+				}
 
+				batchData->AddVisisbleObject(obj, 0);
+			}
 		}
 	}
 }

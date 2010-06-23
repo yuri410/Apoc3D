@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "..\Graphics\IRenderable.h"
 
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {
@@ -56,6 +57,8 @@ namespace Apoc3D
 			{
 				m_parentNode = node;
 			}
+
+			virtual void PrepareVisibleObjects(Camera* camera, int32 level, BatchData* data) {}
 
 			virtual void Update(const GameTime* const &time) = 0;
 		};
