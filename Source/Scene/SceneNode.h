@@ -31,6 +31,7 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
+		template class _Export std::vector<SceneObject*>;
 		typedef std::vector<SceneObject*> ObjectList;
 
 		/* Represents a collection of scene objects in the scene
@@ -39,11 +40,16 @@ namespace Apoc3D
 		{
 		private:
 			ObjectList m_attached;
-
+		
 		public:
-			
 			SceneNode(void);
 			~SceneNode(void);
+
+			int32 getCount() { return m_attached.size(); }
+			SceneObject* operator [](int i) { return m_attached[i]; }
+
+			virtual void AddObject(SceneObject* sceObj);
+			virtual void RemoveObject(SceneObject* sceObj);
 		};
 	};
 };

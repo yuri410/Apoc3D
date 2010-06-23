@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "..\Core\HashHandleObject.h"
 
 using namespace Apoc3D::EffectSystem;
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {
@@ -49,14 +50,14 @@ namespace Apoc3D
 		public:
 			/* The maximum textures can used in a material
 			*/
-			const static int MaxTextureLayers = 10;
-			const static int MaxEffects = 4;
+			const static int32 MaxTextureLayers = 10;
+			const static int32 MaxEffects = 4;
 		private:
 			Effect* m_eff[MaxEffects];
 			BaseTexture* m_tex[MaxTextureLayers];
 			D3DMATERIAL9 m_mtrlColor;
 
-
+			int32 m_priority;
 		public:
 			/* Gets the texture at texture layer idx
 			*/
@@ -80,6 +81,11 @@ namespace Apoc3D
 			/* Gets the specular shineness
 			*/
 			const float getPower() const { return m_mtrlColor.Power; }
+
+			const uint32 getPriority() const { return m_priority; }
+
+			void setPriority(uint32 value) { m_priority = value; }
+
 
 			void setAmbient(const Color4& value) { m_mtrlColor.Ambient = value; }
 			void setDiffuse(const Color4& value) { m_mtrlColor.Diffuse = value; }

@@ -28,21 +28,32 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "..\Common.h"
 
-
-#include <vector>
-#include <map>
-
 using namespace std;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
-		typedef vector<const SceneObject*> ObjectList;
+		template class _Export vector<SceneObject*>;
+		typedef vector<SceneObject*> ObjectList;
+		class OperationList;
+		class GeometryTable;
+		class MaterialTable;
+		class PriorityTable;
+		class MaterialList;
+		
+		template class _Export vector<RenderOperation>;
+		template class _Export map<BatchHandle, OperationList*>;
+		template class _Export map<BatchHandle, GeometryTable*>;
+		template class _Export map<uint32, MaterialTable*>;
+		template class _Export map<BatchHandle, Material*>;
 
-		class _Export GeometryTable : public map<BatchHandle, GeometryData*> { };
+		class _Export OperationList : public vector<RenderOperation> { };
+		class _Export GeometryTable : public map<BatchHandle, OperationList*> { };
 		class _Export MaterialTable : public map<BatchHandle, GeometryTable*> { };
-		class _Export PriorityTable : public map<int, MaterialTable*> { };
+		class _Export PriorityTable : public map<uint32, MaterialTable*> { };
 		class _Export MaterialList : public map<BatchHandle, Material*> { };
 				
 		class _Export BatchData
@@ -52,7 +63,7 @@ namespace Apoc3D
 
 		private:
 			PriorityTable m_priTable;
-			MaterialList m_mtrlList;
+			MaterialList m_mtrlList;			
 
 			int m_objectCount;
 
@@ -60,8 +71,9 @@ namespace Apoc3D
 			BatchData() { }
 			
 			int getObjectCount() const { return m_objectCount; }
+			
+			void AddVisisbleObject(SceneObject* obj, int level);
 
-			void Add(const RenderOperationBuffer* op);
 			void Clear();
 		};
 
@@ -71,19 +83,22 @@ namespace Apoc3D
 		{
 		private:
 			ObjectList m_objects;
-
+		protected:
+			
 		public:
 			SceneManager(void);
 			~SceneManager(void);
 		
 			/* Adds a new scene object into scene
 			*/
-			virtual void AddObject(const SceneObject* obj);
+			virtual void AddObject(SceneObject* const obj);
 			/* Removes a scene obejct from scene
 			*/
-			virtual bool RemoveObject(const SceneObject* obj);
+			virtual bool RemoveObject(SceneObject* const obj);
 
-			void RenderScene();
+			virtual void PrepareVisibleObjects(Camera* camera, BatchData* batchData) = 0;
+
+			virtual void Update(const GameTime* const &time);
 		};
 	};
 };

@@ -23,3 +23,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "SceneObject.h"
 
+#include "SceneNode.h"
+
+namespace Apoc3D
+{
+	namespace Scene
+	{
+
+	}
+}

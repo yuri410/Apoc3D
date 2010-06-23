@@ -27,25 +27,37 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma once
 
 #include "..\Common.h"
+#include "..\Graphics\IRenderable.h"
+
+using namespace Apoc3D::Graphics;
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
-		class _Export SceneObject
+		class _Export SceneObject : public IRenderable
 		{
 		private:
 			bool m_hasSubObjects;
+			SceneNode* m_parentNode;
 
 		public:
 			bool hasSubObjects() const { return m_hasSubObjects; }
+			SceneNode* getParentNode() const { return m_parentNode; }
 
-			SceneObject(const bool hasSubObjs) 
-				: m_hasSubObjects(hasSubObjs)
+			SceneObject(const bool hasSubObjs = false) 
+				: m_hasSubObjects(hasSubObjs), m_parentNode(0)
 			{
 			}
 
 			~SceneObject(){}
+
+			void NotifyParentNode(SceneNode* node)
+			{
+				m_parentNode = node;
+			}
+
+			virtual void Update(const GameTime* const &time) = 0;
 		};
 	};
 };

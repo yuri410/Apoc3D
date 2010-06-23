@@ -53,20 +53,25 @@ namespace Apoc3D
 			}
 			/* Adds a new RenderOperation to the buffer
 			*/
-			void RenderOperationBuffer::Add(const RenderOperation& op);
+			void Add(const RenderOperation& op);
 			/* Adds some new RenderOperation to the buffer
 			*/
-			void RenderOperationBuffer::Add(const RenderOperation* op, int count);
+			void Add(const RenderOperation* op, int count);
 			void Clear();
 			
 			void FastClear()
 			{
 				m_internalPointer = 0;
 			}
-			const RenderOperation& get(int i)
+			const RenderOperation& get(int i) const
 			{
 				return m_oplist[i];
 			}
+			const RenderOperation& operator[](int i) const
+			{
+				return m_oplist[i];
+			}
+				
 
 			int getCount(){ return m_internalPointer; }
 		};

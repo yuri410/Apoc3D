@@ -26,7 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 #include "..\Common.h"
-#include "..\HashHandleObject.h"
+#include "..\Core\HashHandleObject.h"
+
+using namespace Apoc3D::Scene;
 
 namespace Apoc3D
 {

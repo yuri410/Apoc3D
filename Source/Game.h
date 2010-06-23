@@ -60,8 +60,6 @@ namespace Apoc3D
 		GraphicsDeviceManager* m_graphicsDeviceManager;
 		GameWindow* m_gameWindow;
 
-		
-		
 
 		CancellableEventHandler m_eFrameStart;
 		EventHandler m_eFrameEnd;

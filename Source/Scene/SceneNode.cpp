@@ -22,6 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "SceneNode.h"
+#include "SceneObject.h"
 
 namespace Apoc3D
 {
@@ -33,6 +34,17 @@ namespace Apoc3D
 
 		SceneNode::~SceneNode(void)
 		{
+		}
+
+		void SceneNode::AddObject(SceneObject* sceObj)
+		{
+			m_attached.push_back(sceObj);
+			sceObj->NotifyParentNode(this);
+		}
+		void SceneNode::RemoveObject(SceneObject* sceObj)
+		{
+			m_attached.erase(std::find(m_attached.begin(), m_attached.end(), sceObj));
+			sceObj->NotifyParentNode(0);
 		}
 	};
 };

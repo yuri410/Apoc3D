@@ -38,10 +38,19 @@ namespace Apoc3D
 		class _Export RenderOperation
 		{
 		private:
-			GeomentryData* m_data;
+			GeometryData* m_data;
+			Material* m_mtrl;
+			Matrix m_transform;
 		public:
-			GeomentryData* getGeomentryData() const { return m_data; }
-			void setGeomentryData(GeomentryData* data) { m_data = data; }
+
+			Material* getMaterial() const { return m_mtrl; }
+			void setMaterial(Material* mtrl) { m_mtrl = mtrl; }
+
+			Matrix& getTransform() { return m_transform; }
+			void setTransform(const Matrix& value) { m_transform = value; }
+
+			GeometryData* getGeomentryData() const { return m_data; }
+			void setGeomentryData(GeometryData* data) { m_data = data; }
 
 			RenderOperation(void) { }
 			~RenderOperation(void) { }

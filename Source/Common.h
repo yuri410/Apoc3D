@@ -73,11 +73,15 @@ struct _Export IDirect3DVertexDeclaration9;
 
 #include <windows.h>
 #include <algorithm>
-#include <string>
-//#include <vector>
+
 
 #pragma warning(push)
 #pragma warning(disable:4251)
+#include <string>
+#include <vector>
+#include <list>
+#include <map>
+
 #include "FastDelegate\FastDelegate.h"
 #pragma warning(pop)
 

@@ -24,15 +24,44 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "SceneManager.h"
 
+#include "SceneObject.h"
+#include "..\Graphics\RenderOperationBuffer.h"
+#include "..\Graphics\RenderOperation.h"
+#include "..\Graphics\Material.h"
+#include "..\Graphics\GeometryData.h"
+#include "..\GameTime.h"
+
+using namespace Apoc3D::Graphics;
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
-		void BatchData::Add(const RenderOperationBuffer* op)
+		void BatchData::AddVisisbleObject(SceneObject* obj, int level)
 		{
 			m_objectCount++;
+			RenderOperationBuffer* buffer = obj->GetRenderOperation(level);
 
+			if (buffer)
+			{
+				for (int k=0;k<buffer->getCount();k++)
+				{
+					RenderOperation op = buffer->get(k);
+
+					Material* mtrl = op.getMaterial();
+					GeometryData* geoData = op.getGeomentryData();
+
+					if (mtrl)
+					{
+						BatchHandle mtrlHandle = mtrl->getBatchHandle();
+						m_mtrlList[mtrlHandle] = mtrl;
+						m_priTable[mtrl->getPriority()]->
+							operator[](mtrlHandle)->
+							operator[](geoData->getBatchHandle())->push_back(op);
+
+					}
+				}
+			}
 		}
 		void BatchData::Clear()
 		{
@@ -51,6 +80,8 @@ namespace Apoc3D
 			m_priTable.clear();
 		}
 
+
+
 		SceneManager::SceneManager(void)
 		{
 		}
@@ -60,11 +91,11 @@ namespace Apoc3D
 		{
 		}
 
-		void SceneManager::AddObject(const SceneObject* obj)
+		void SceneManager::AddObject(SceneObject* const obj)
 		{
 			m_objects.push_back(obj);
 		} 
-		bool SceneManager::RemoveObject(const SceneObject* obj)
+		bool SceneManager::RemoveObject(SceneObject* const obj)
 		{
 			ObjectList::const_iterator pos = std::find(m_objects.begin(), m_objects.end(), obj);
 
@@ -74,6 +105,14 @@ namespace Apoc3D
 				return true;
 			}
 			return false;
+		}
+
+		void SceneManager::Update(const GameTime* const &time)
+		{
+			for (uint32 i = 0;i<m_objects.size();i++)
+			{
+				m_objects[i]->Update(time);
+			}
 		}
 	};
 };
