@@ -79,12 +79,10 @@
     <ClInclude Include="Core\Camera.h" />
     <ClInclude Include="FastDelegate\FastDelegate.h" />
     <ClInclude Include="FastDelegate\FastDelegateBind.h" />
-    <ClInclude Include="IO\FileSystem.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="Graphics\IRenderable.h" />
     <ClInclude Include="Graphics\RenderOperation.h" />
     <ClInclude Include="Graphics\RenderOperationBuffer.h" />
-    <ClInclude Include="IO\StreamReader.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneObject.h" />
@@ -97,8 +95,6 @@
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="Graphics\GraphicsDeviceManager.h" />
     <ClInclude Include="Core\HashHandleObject.h" />
-    <ClInclude Include="IO\BinaryReader.h" />
-    <ClInclude Include="IO\Stream.h" />
     <ClInclude Include="Graphics\EffectDescription.h" />
     <ClInclude Include="EffectSystem\EffectManager.h" />
     <ClInclude Include="EffectSystem\EffectAtom.h" />
@@ -119,7 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
-    <ClCompile Include="IO\FileSystem.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Core\ResourceHandle.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -139,8 +134,6 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="Graphics\GraphicsDeviceManager.cpp" />
-    <ClCompile Include="IO\FileStream.cpp" />
-    <ClCompile Include="IO\FileStream.h" />
     <ClCompile Include="Graphics\EffectDescription.cpp" />
     <ClCompile Include="EffectSystem\EffectAtom.cpp" />
     <ClCompile Include="EffectSystem\EffectManager.cpp" />
