@@ -94,7 +94,7 @@ namespace Apoc3D
 			virtual void AddObject(SceneObject* const obj);
 			/* Removes a scene obejct from scene
 			*/
-			virtual bool RemoveObject(SceneObject* const obj);
+			virtual void RemoveObject(SceneObject* const obj);
 
 			virtual void PrepareVisibleObjects(Camera* camera, BatchData* batchData) = 0;
 

@@ -95,7 +95,7 @@ namespace Apoc3D
 		{
 			m_objects.push_back(obj);
 		} 
-		bool SceneManager::RemoveObject(SceneObject* const obj)
+		void SceneManager::RemoveObject(SceneObject* const obj)
 		{
 			ObjectList::const_iterator pos = std::find(m_objects.begin(), m_objects.end(), obj);
 
