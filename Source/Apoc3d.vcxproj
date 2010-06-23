@@ -79,10 +79,12 @@
     <ClInclude Include="Core\Camera.h" />
     <ClInclude Include="FastDelegate\FastDelegate.h" />
     <ClInclude Include="FastDelegate\FastDelegateBind.h" />
+    <ClInclude Include="IO\FileSystem.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="Graphics\IRenderable.h" />
     <ClInclude Include="Graphics\RenderOperation.h" />
     <ClInclude Include="Graphics\RenderOperationBuffer.h" />
+    <ClInclude Include="IO\StreamReader.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneObject.h" />
@@ -113,10 +115,11 @@
     <ClInclude Include="Graphics\SceneProcedure.h" />
     <ClInclude Include="Scene\SimpleSceneManager.h" />
     <ClInclude Include="Graphics\Texture.h" />
-    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Graphics\TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="IO\FileSystem.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Core\ResourceHandle.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -150,7 +153,7 @@
     <ClCompile Include="Graphics\SceneProcedure.cpp" />
     <ClCompile Include="Scene\SimpleSceneManager.cpp" />
     <ClCompile Include="Graphics\Texture.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Graphics\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="apoc3d.rc" />
