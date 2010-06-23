@@ -21,24 +21,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SIMPLESCENENODE_H
-#define SIMPLESCENENODE_H
-
-#pragma once
-
-#include "..\Common.h"
-#include "SceneNode.h"
+#include "TextureManager.h"
 
 namespace Apoc3D
 {
-	namespace Scene
+	namespace Graphics
 	{
-		class _Export SimpleSceneNode : public SceneNode
+		TextureManager::TextureManager(void)
 		{
-		public:
-			SimpleSceneNode(void);
-			~SimpleSceneNode(void);
-		};
+		}
+
+
+		TextureManager::~TextureManager(void)
+		{
+		}
 	}
 }
-#endif

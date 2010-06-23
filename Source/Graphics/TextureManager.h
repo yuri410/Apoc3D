@@ -21,27 +21,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EFFECTDESCRIPTION_H
-#define EFFECTDESCRIPTION_H
-#pragma once
-#include "..\Common.h"
-
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Defines a set of effect atoms. 
-
-		   It is a filter used to select objects by effects when 
-		   rendering a ScenePass.
-		*/
-		class _Export EffectDescription
+		class TextureManager
 		{
 		public:
-			EffectDescription(void);
-			~EffectDescription(void);
+			TextureManager(void);
+			~TextureManager(void);
 		};
-	};
-};
-
-#endif
+	}
+}

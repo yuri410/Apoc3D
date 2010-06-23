@@ -30,7 +30,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Define a sequence of operation for rendering a scene pass.
+		/* Define a sequence of operation for a rendering result.
 
 		   A scene pass is a scene rendering operation that usually 
 		   renders objects to a RenderTarget (or the like) which can 

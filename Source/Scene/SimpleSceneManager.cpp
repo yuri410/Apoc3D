@@ -24,7 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "SimpleSceneManager.h"
 
-#include "SimpleSceneNode.h"
 #include "SceneObject.h"
 
 #include "..\Graphics\RenderOperation.h"

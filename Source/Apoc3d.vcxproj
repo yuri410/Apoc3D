@@ -112,7 +112,8 @@
     <ClInclude Include="Graphics\SceneRenderer.h" />
     <ClInclude Include="Graphics\SceneProcedure.h" />
     <ClInclude Include="Scene\SimpleSceneManager.h" />
-    <ClInclude Include="Scene\SimpleSceneNode.h" />
+    <ClInclude Include="Graphics\Texture.h" />
+    <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
@@ -148,7 +149,8 @@
     <ClCompile Include="Graphics\SceneRenderer.cpp" />
     <ClCompile Include="Graphics\SceneProcedure.cpp" />
     <ClCompile Include="Scene\SimpleSceneManager.cpp" />
-    <ClCompile Include="Scene\SimpleSceneNode.cpp" />
+    <ClCompile Include="Graphics\Texture.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="apoc3d.rc" />

@@ -107,8 +107,8 @@ namespace Apoc3D
 	typedef D3DCOLORVALUE Color4;
 	
 	typedef IDirect3DDevice9 Device;
-	typedef IDirect3DBaseTexture9 BaseTexture;
-	typedef IDirect3DTexture9 Texture;
+	//typedef IDirect3DBaseTexture9 BaseTexture;
+	//typedef IDirect3DTexture9 Texture;
 	typedef ID3DXSprite Sprite;
 	typedef IDirect3DIndexBuffer9 IndexBuffer;
 	typedef IDirect3DVertexBuffer9 VertexBuffer;

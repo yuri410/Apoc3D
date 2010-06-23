@@ -21,19 +21,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#include "SimpleSceneNode.h"
+#include "Texture.h"
 
 namespace Apoc3D
 {
-	namespace Scene
+	namespace Graphics
 	{
-		SimpleSceneNode::SimpleSceneNode(void)
+		Texture::Texture(void)
 		{
 		}
 
 
-		SimpleSceneNode::~SimpleSceneNode(void)
+		Texture::~Texture(void)
 		{
 		}
 	}

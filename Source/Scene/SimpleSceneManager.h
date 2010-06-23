@@ -27,12 +27,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "..\Common.h"
 #include "SceneManager.h"
+#include "SceneNode.h"
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
-		class SimpleSceneNode;
+		class _Export SimpleSceneNode : public SceneNode
+		{
+		public:
+			SimpleSceneNode(void){}
+			~SimpleSceneNode(void){}
+		};
 
 		class _Export SimpleSceneManager : public SceneManager
 		{

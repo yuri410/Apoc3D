@@ -25,14 +25,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define SCENERENDERER_H
 #pragma once
 
-#include "Common.h"
+#include "..\Common.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* A renderer renders a scene with a particular render script.
-		   Renders scene in a particular procedure for specific effect.
+		/* Renders a scene with a particular render script.
 		*/
 		class _Export SceneRenderer
 		{
