@@ -39,10 +39,10 @@ typedef uint32 uint;
 typedef uint64 ulong;
 typedef unsigned long long BatchHandle;
 
-#include <..\lib\boost\thread\tss.hpp>
-#include <..\lib\thread\recursive_mutex.hpp>
-#include <..\lib\boost\thread\condition.hpp>
-#include <..\lib\boost\thread\thread.hpp>
+#include "..\lib\boost\thread\tss.hpp"
+#include "..\lib\boost\thread\recursive_mutex.hpp"
+#include "..\lib\boost\thread\condition.hpp"
+#include "..\lib\boost\thread\thread.hpp"
 
 #define DEFAULT_MUTEX_NAME mutex
 #define MUTEX mutable boost::recursive_mutex DEFAULT_MUTEX_NAME;
@@ -95,8 +95,8 @@ struct _Export IDirect3DVertexShader9;
 struct _Export IDirect3DPixelShader9;
 struct _Export IDirect3DVertexDeclaration9;
 
-#include "..\Include\d3d9.h"
-#include "..\Include\d3dx9.h"
+#include "..lib\dxsdk\Include\d3d9.h"
+#include "..lib\dxsdk\Include\d3dx9.h"
 
 #include <cassert>
 
@@ -111,7 +111,7 @@ struct _Export IDirect3DVertexDeclaration9;
 #include <list>
 #include <map>
 
-#include "FastDelegate\FastDelegate.h"
+#include "..\lib\FastDelegate\FastDelegate.h"
 #pragma warning(pop)
 
 // Forward Declarations
