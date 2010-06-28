@@ -39,10 +39,10 @@ typedef uint32 uint;
 typedef uint64 ulong;
 typedef unsigned long long BatchHandle;
 
-#include <../lib/boost/thread/tss.hpp>
-#include <../lib/boost/thread/recursive_mutex.hpp>
-#include <../lib/boost/thread/condition.hpp>
-#include <../lib/boost/thread/thread.hpp>
+#include <..\lib\boost\thread\tss.hpp>
+#include <..\lib\thread\recursive_mutex.hpp>
+#include <..\lib\boost\thread\condition.hpp>
+#include <..\lib\boost\thread\thread.hpp>
 
 #define DEFAULT_MUTEX_NAME mutex
 #define MUTEX mutable boost::recursive_mutex DEFAULT_MUTEX_NAME;
