@@ -78,12 +78,16 @@
     <ClInclude Include="Core\BoundingSphere.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Core\Camera.h" />
+    <ClInclude Include="Core\ResourceManager.h" />
     <ClInclude Include="FastDelegate\FastDelegate.h" />
     <ClInclude Include="FastDelegate\FastDelegateBind.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="Graphics\IRenderable.h" />
     <ClInclude Include="Graphics\RenderOperation.h" />
     <ClInclude Include="Graphics\RenderOperationBuffer.h" />
+    <ClInclude Include="Graphics\ModelManager.h" />
+    <ClInclude Include="Graphics\Mesh.h" />
+    <ClInclude Include="Graphics\Model.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneObject.h" />
@@ -116,8 +120,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Core\ResourceManager.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Core\ResourceHandle.cpp" />
+    <ClCompile Include="Graphics\ModelManager.cpp" />
+    <ClCompile Include="Graphics\Mesh.cpp" />
+    <ClCompile Include="Graphics\Model.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\SceneObject.cpp" />
     <ClCompile Include="dllmain.cpp">

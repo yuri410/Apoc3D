@@ -28,7 +28,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma once
 
 #include "..\Common.h"
-#include "..\Core\ResourceManager.h"
 
 namespace Apoc3D
 {
