@@ -40,3 +40,4 @@ namespace Apoc3D
 		};
 	}
 }
+#endif

@@ -32,11 +32,19 @@ namespace Apoc3D
 {
 	namespace Core
 	{
+		class _Export ResourceLoader
+		{
+
+		};
+
 		class _Export Resource
 		{
 		private:
 			int m_refCount;
 
+		protected:
+			virtual void load();
+			virtual void unload();
 		public:   
 			typedef Resource ResTempHelper;   
 

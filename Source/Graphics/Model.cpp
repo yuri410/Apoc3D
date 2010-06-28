@@ -21,27 +21,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef TEXTURE_H
-#define TEXTURE_H
-
-#include "..\Common.h"
-#include "..\Core\Resource.h"
-
-using namespace Apoc3D::Core;
+#include "Model.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class _Export Texture : public Resource
+		Model::Model(void)
 		{
-		private:
-			IDirect3DBaseTexture9* m_baseTexture;
+		}
 
-		public:
-			Texture(void);
-			~Texture(void);
-		};
+
+		Model::~Model(void)
+		{
+		}
 	}
 }
-#endif
