@@ -21,3 +21,41 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+
+#include "Resource.h"
+
+namespace Apoc3D
+{
+	namespace Core
+	{
+		void ResourceLoader::Process(Resource* res) const
+		{
+
+		}
+
+		Resource::Resource(ResourceLoader* loader)
+			: m_resLoader(loader)
+		{
+		}
+
+		void Resource::load()
+		{
+			if (m_resLoader)
+				m_resLoader->Process(this);
+		}
+
+		void Resource::Load()
+		{
+			assert(m_loaded);
+			load();
+			m_loaded = true;
+		}
+
+		void Resource::Unload()
+		{
+			assert(!m_loaded);
+			unload();
+			m_loaded = false;
+		}
+	}
+}

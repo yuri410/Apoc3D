@@ -32,21 +32,43 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		class _Export ResourceLoader
+		enum _Export ResourceState
 		{
+			RS_Loaded,
+			RS_Loading,
+			RS_Unloaded,
+			RS_Unloading
+		};
 
+		class _Export ResourceProcessor
+		{
+		public:
+			virtual void Process(Resource* res) const;
+		};
+		class _Export ResourceLoader : ResourceProcessor
+		{
+		public:
+			void Process(Resource* res) const;
 		};
 
 		class _Export Resource
 		{
 		private:
 			int m_refCount;
+			bool m_loaded;
+			ResourceLoader* m_resLoader;
+
 
 		protected:
 			virtual void load();
-			virtual void unload();
-		public:   
+			virtual void unload() = 0;
+
+			void Load();
+			void Unload();
+		public: 
 			typedef Resource ResTempHelper;   
+
+			Resource(ResourceLoader* loader);
 
 			void _Ref() { }
 			void _Unref() { }

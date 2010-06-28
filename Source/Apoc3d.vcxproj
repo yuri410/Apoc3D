@@ -79,6 +79,7 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="Core\Camera.h" />
     <ClInclude Include="Core\ResourceManager.h" />
+    <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="FastDelegate\FastDelegate.h" />
     <ClInclude Include="FastDelegate\FastDelegateBind.h" />
     <ClInclude Include="GameClock.h" />

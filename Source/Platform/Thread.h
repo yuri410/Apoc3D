@@ -6,6 +6,7 @@
 #pragma once
 
 #include "..\Common.h"
+#include <process.h>
 
 namespace Apoc3D
 {
@@ -13,6 +14,11 @@ namespace Apoc3D
 	{
 		class _Export Thread		
 		{
+		public:
+			Thread()
+			{
+				
+			}
 		};
 
 		class _Export Mutex
