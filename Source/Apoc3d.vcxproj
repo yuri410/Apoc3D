@@ -75,6 +75,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Apoc3DException.h" />
+    <ClInclude Include="AsyncProcessor.h" />
     <ClInclude Include="Core\BoundingSphere.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Core\Camera.h" />
@@ -120,6 +121,7 @@
     <ClInclude Include="Graphics\TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AsyncProcessor.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Core\ResourceManager.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />

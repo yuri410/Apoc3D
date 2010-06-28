@@ -43,12 +43,12 @@ namespace Apoc3D
 		class _Export ResourceProcessor
 		{
 		public:
-			virtual void Process(Resource* res) const;
+			virtual void Process(Resource* res) const = 0;
 		};
 		class _Export ResourceLoader : ResourceProcessor
 		{
 		public:
-			void Process(Resource* res) const;
+			virtual void Process(Resource* res) const = 0;
 		};
 
 		class _Export Resource

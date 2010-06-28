@@ -28,11 +28,6 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		void ResourceLoader::Process(Resource* res) const
-		{
-
-		}
-
 		Resource::Resource(ResourceLoader* loader)
 			: m_resLoader(loader)
 		{
