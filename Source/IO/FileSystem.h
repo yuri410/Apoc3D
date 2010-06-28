@@ -25,11 +25,21 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define FILESYSTEM_H
 
 #include "..\Common.h"
+#include <fstream>
 
 namespace Apoc3D
 {
 	namespace IO
 	{
+		class _Export FileLocation
+		{
+		private:
+			String m_FilePath;
+
+		public:			
+			std::wfstream* Open();			
+		};
+		
 		class _Export FileSystem
 		{
 		public:
