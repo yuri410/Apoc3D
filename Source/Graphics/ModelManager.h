@@ -21,20 +21,25 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef TEXTUREMANAGER_H
-#define TEXTUREMANAGER_H
+
+#ifndef MODELMANAGER_H
+#define MODELMANAGER_H
+
+#pragma once
+
 #include "..\Common.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class _Export TextureManager
+		class _Export ModelManager
 		{
 		public:
-			TextureManager(void);
-			~TextureManager(void);
+			ModelManager(void);
+			~ModelManager(void);
 		};
 	}
 }
+
 #endif
