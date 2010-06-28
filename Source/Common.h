@@ -95,8 +95,8 @@ struct _Export IDirect3DVertexShader9;
 struct _Export IDirect3DPixelShader9;
 struct _Export IDirect3DVertexDeclaration9;
 
-#include "..lib\dxsdk\Include\d3d9.h"
-#include "..lib\dxsdk\Include\d3dx9.h"
+#include "..\lib\dxsdk\Include\d3d9.h"
+#include "..\lib\dxsdk\Include\d3dx9.h"
 
 #include <cassert>
 
