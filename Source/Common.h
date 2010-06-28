@@ -39,7 +39,36 @@ typedef uint32 uint;
 typedef uint64 ulong;
 typedef unsigned long long BatchHandle;
 
+#include <../lib/boost/thread/tss.hpp>
+#include <../lib/boost/thread/recursive_mutex.hpp>
+#include <../lib/boost/thread/condition.hpp>
+#include <../lib/boost/thread/thread.hpp>
 
+#define DEFAULT_MUTEX_NAME mutex
+#define MUTEX mutable boost::recursive_mutex DEFAULT_MUTEX_NAME;
+#define LOCK_MUTEX boost::recursive_mutex::scoped_lock ogreAutoMutexLock(DEFAULT_MUTEX_NAME);
+#define MUTEX(name) mutable boost::recursive_mutex name;
+#define STATIC_MUTEX(name) static boost::recursive_mutex name;
+#define STATIC_MUTEX_INSTANCE(name) boost::recursive_mutex name;
+#define LOCK_MUTEX(name) boost::recursive_mutex::scoped_lock ogrenameLock(name);
+#define LOCK_MUTEX_NAMED(mutexName, lockName) boost::recursive_mutex::scoped_lock lockName(mutexName);
+
+#define SHARED_MUTEX mutable boost::recursive_mutex *DEFAULT_MUTEX_NAME;
+#define LOCK_SHARED_MUTEX assert(DEFAULT_MUTEX_NAME); boost::recursive_mutex::scoped_lock ogreAutoMutexLock(*DEFAULT_MUTEX_NAME);
+#define NEW_SHARED_MUTEX assert(!DEFAULT_MUTEX_NAME); DEFAULT_MUTEX_NAME = new boost::recursive_mutex();
+#define DELETE_SHARED_MUTEX assert(DEFAULT_MUTEX_NAME); delete OGRE_AUTO_MUTEX_NAME;
+#define COPY_SHARED_MUTEX(from) assert(!DEFAULT_MUTEX_NAME); DEFAULT_MUTEX_NAME = from;
+#define SET_SHARED_MUTEX_NULL DEFAULT_MUTEX_NAME = 0;
+#define MUTEX_CONDITIONAL(mutex) if (mutex)
+#define THREAD_SYNCHRONISER(sync) boost::condition sync;
+#define THREAD_WAIT(sync, lock) sync.wait(lock);
+#define THREAD_NOTIFY_ONE(sync) sync.notify_one(); 
+#define THREAD_NOTIFY_ALL(sync) sync.notify_all(); 
+// Thread-local pointer
+#define THREAD_POINTER(T, var) boost::thread_specific_ptr<T> var
+#define THREAD_POINTER_SET(var, expr) var.reset(expr)
+#define THREAD_POINTER_DELETE(var) var.reset(0)
+#define THREAD_POINTER_GET(var) var.get()
 
 #if APOC3D_DLLEX
 	#define _Export __declspec( dllexport )
@@ -66,8 +95,8 @@ struct _Export IDirect3DVertexShader9;
 struct _Export IDirect3DPixelShader9;
 struct _Export IDirect3DVertexDeclaration9;
 
-#include "Include\d3d9.h"
-#include "Include\d3dx9.h"
+#include "..\Include\d3d9.h"
+#include "..\Include\d3dx9.h"
 
 #include <cassert>
 

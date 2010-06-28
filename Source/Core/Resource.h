@@ -40,11 +40,13 @@ namespace Apoc3D
 			RS_Unloading
 		};
 
+		/* Represent the implementation for resource loading/unloading */
 		class _Export ResourceProcessor
 		{
 		public:
 			virtual void Process(Resource* res) const = 0;
 		};
+		/* Implements a resource loading algorithm */
 		class _Export ResourceLoader : ResourceProcessor
 		{
 		public:
