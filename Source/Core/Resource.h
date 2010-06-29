@@ -37,10 +37,11 @@ namespace Apoc3D
 	{
 		enum _Export ResourceState
 		{
-			RS_Loaded,
-			RS_Loading,
-			RS_Unloaded,
-			RS_Unloading
+			RS_Unloaded = 0,
+			RS_Loaded = 1,
+			RS_Loading = 2,			
+			RS_Unloading = 3,
+			RS_Pending = 4
 		};
 
 		/* Represent the implementation for resource loading/unloading */
@@ -71,7 +72,11 @@ namespace Apoc3D
 				void Process()
 				{ 
 					Resource* res = getResource();
-					res->load();					
+					if (res->m_state != RS_Pending)
+						return;
+					res->m_state = RS_Loading;
+					res->load();
+					res->m_state = RS_Loaded;
 				}
 			};
 			class ResourceUnloadOperation : public ResourceOperation
@@ -86,30 +91,57 @@ namespace Apoc3D
 				void Process()
 				{ 
 					Resource* res = getResource();
-					res->unload();					
+					if (res->m_state != RS_Pending)
+						return;
+					res->m_state = RS_Unloading;
+					res->unload();
+					res->m_state = RS_Unloaded;
 				}
 			};
 
 			int m_refCount;
-			bool m_loaded;
+
 			ResourceLoader* m_resLoader;
-			ResourceState m_state;
+			uint32 m_state;
+
+			String m_hashString;
+
+			ResourceLoadOperation* m_loadOp;
+			ResourceUnloadOperation* m_unloadOp;
+
+			ResourceManager* m_manager;
 
 
-
+			ResourceEventHandler me_Loaded;
+			ResourceEventHandler me_Unloaded;
 		protected:
 			virtual void load();
 			virtual void unload() = 0;
 
-			void Load();
-			void Unload();
 		public: 
 			typedef Resource ResTempHelper;   
 
-			Resource(ResourceLoader* loader);
+			ResourceEventHandler* eventLoaded();
+			ResourceEventHandler* eventUnloaded();
 
-			void _Ref() { }
-			void _Unref() { }
+			Resource();
+			Resource(ResourceManager* manager, String& hashString);
+			Resource(ResourceManager* manager, String& hashString, ResourceLoader* loader);
+
+
+			virtual uint32 getSize() = 0;
+
+			void Use();
+			
+			void Load();
+			void Unload();
+
+
+			uint32 getState() const { return m_state; }
+			bool getIsManaged() const { return m_manager; }
+
+			void _Ref() { assert(!getIsManaged()); m_refCount++; }
+			void _Unref() { assert(!getIsManaged()); m_refCount--; }
 		};
 	};
 };

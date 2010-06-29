@@ -99,10 +99,7 @@ struct _Export IDirect3DVertexDeclaration9;
 #include "..\lib\dxsdk\Include\d3dx9.h"
 
 #include <cassert>
-
 #include <windows.h>
-#include <algorithm>
-
 
 #pragma warning(push)
 #pragma warning(disable:4251)
@@ -110,6 +107,20 @@ struct _Export IDirect3DVertexDeclaration9;
 #include <vector>
 #include <list>
 #include <map>
+
+#include <queue>
+#include <deque>
+#include <unordered_set>
+#include <unordered_map>
+
+#include <algorithm>
+#include <functional>
+#include <limits>
+
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
 
 #include "..\lib\FastDelegate\FastDelegate.h"
 #pragma warning(pop)
@@ -119,6 +130,7 @@ namespace Apoc3D
 {
 	template class _Export fastdelegate::FastDelegate0<void>;
 	template class _Export fastdelegate::FastDelegate1<bool*, void>;
+	
 	typedef fastdelegate::FastDelegate0<void> EventHandler;
 	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
 
@@ -224,6 +236,15 @@ namespace Apoc3D
 	{
 		class Camera;
 		class Resource;
+		class ResourceManager;
+		
+		template class _Export fastdelegate::FastDelegate1<Resource*, void>;
+		typedef fastdelegate::FastDelegate0<void> ResourceEventHandler;
+
+		namespace Streaming
+		{
+			class AsyncProcessor;
+		};
 	};
 	namespace IO
 	{

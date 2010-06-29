@@ -5,8 +5,6 @@
 #include "..\Common.h"
 #include "Singleton.h"
 
-#include <unordered_map>
-
 namespace Apoc3D
 {
 	namespace Core
@@ -18,7 +16,7 @@ namespace Apoc3D
 		private:
 			ResHashTable m_hashTable;
 
-
+			
 		};
 	}
 }

@@ -28,29 +28,59 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		Resource::Resource(ResourceLoader* loader)
-			: m_resLoader(loader)
+		Resource::Resource(ResourceManager* manager, String& hashString, ResourceLoader* loader)
+			: m_resLoader(loader), m_manager(manager)
 		{
+			m_loadOp = new ResourceLoadOperation(this);
+			m_unloadOp = new ResourceUnloadOperation(this);
+
+		}
+		Resource::Resource()
+		{
+			m_loadOp = new ResourceLoadOperation(this);
+			m_unloadOp = new ResourceUnloadOperation(this);
 		}
 
 		void Resource::load()
 		{
 			if (m_resLoader)
 				m_resLoader->Process(this);
+		
+			m_state = RS_Loaded;
+		}
+
+		void Resource::Use()		
+		{
+			assert(!getIsManaged());
+			
+			if (m_state == RS_Unloaded)
+				Load();
 		}
 
 		void Resource::Load()
 		{
-			assert(m_loaded);
+			assert(!getIsManaged());
+			
+			assert((m_state & RS_Unloaded) == RS_Unloaded);
+
+			//m_state = RS_Pending;
+			m_state = RS_Loading;
 			load();
-			m_loaded = true;
+			m_state = RS_Loaded;
+			//load();	
 		}
 
 		void Resource::Unload()
 		{
-			assert(!m_loaded);
+			assert(!getIsManaged());
+			
+			assert((m_state & RS_Loaded) == RS_Loaded);
+
+			//m_state = RS_Pending;
+
+			m_state = RS_Unloading;
 			unload();
-			m_loaded = false;
+			m_state = RS_Unloaded;
 		}
 	}
 }
