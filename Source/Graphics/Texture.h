@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class _Export Texture : public Resource
+		class _Export Texture// : public Resource
 		{
 		private:
 			IDirect3DBaseTexture9* m_baseTexture;

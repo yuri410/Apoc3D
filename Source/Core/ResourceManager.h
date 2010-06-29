@@ -16,11 +16,24 @@ namespace Apoc3D
 		private:
 			ResHashTable m_hashTable;
 
+			int64 m_totalCacheSize;
+			int64 m_curUsedCache;
+
+
+
 		protected:
 			Resource* Exists(const String& name);
 
 			void NotifyNewResource(Resource* res);
+
+
 			void NotifyReleaseResource(Resource* res);
+
+		public:
+			int64 getTotalCacheSize() const { return m_totalCacheSize; }
+			int64 getUsedCacheSize() const { return m_curUsedCache; }
+
+
 		};
 	}
 }

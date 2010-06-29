@@ -35,6 +35,7 @@ namespace Apoc3D
 {
 	namespace Core
 	{
+		/*
 		enum _Export ResourceState
 		{
 			RS_Unloaded = 0,
@@ -43,24 +44,25 @@ namespace Apoc3D
 			RS_Unloading = 3,
 			RS_Pending = 4
 		};
-
+		*/
 		/* Represent the implementation for resource loading/unloading */
-		class _Export ResourceProcessor
+		/*class _Export ResourceProcessor
 		{
 		public:
 			virtual void Process(Resource* res) const = 0;
 		};
+		*/
 		/* Implements a resource loading algorithm */
-		class _Export ResourceLoader : ResourceProcessor
+		/*class _Export ResourceLoader : ResourceProcessor
 		{
 		public:
 			virtual void Process(Resource* res) const = 0;
 		};
-
+		*/
 		class _Export Resource
 		{
 		private:
-			class ResourceLoadOperation : public ResourceOperation
+			/*class ResourceLoadOperation : public ResourceOperation
 			{
 			public:
 				ResourceLoadOperation(Resource* resource)
@@ -98,50 +100,51 @@ namespace Apoc3D
 					res->m_state = RS_Unloaded;
 				}
 			};
+			*/
 
-			int m_refCount;
+			//int m_refCount;
 
-			ResourceLoader* m_resLoader;
-			uint32 m_state;
+			//ResourceLoader* m_resLoader;
+			//uint32 m_state;
 
 			const String m_hashString;
 
-			ResourceLoadOperation* m_loadOp;
-			ResourceUnloadOperation* m_unloadOp;
+			//ResourceLoadOperation* m_loadOp;
+			//ResourceUnloadOperation* m_unloadOp;
 
 			ResourceManager* m_manager;
 
-
-			ResourceEventHandler me_Loaded;
-			ResourceEventHandler me_Unloaded;
+			//ResourceEventHandler me_Loaded;
+			//ResourceEventHandler me_Unloaded;
 		protected:
-			virtual void load();
-			virtual void unload() = 0;
+			//virtual void load();
+			//virtual void unload() = 0;
 
 		public: 
 			typedef Resource ResTempHelper;   
 
-			ResourceEventHandler* eventLoaded();
-			ResourceEventHandler* eventUnloaded();
+			//ResourceEventHandler* eventLoaded();
+			//ResourceEventHandler* eventUnloaded();
 
-			Resource();
+			Resource() {}
 			Resource(ResourceManager* manager, const String& hashString);
-			Resource(ResourceManager* manager, const String& hashString, ResourceLoader* loader);
+			//Resource(ResourceManager* manager, const String& hashString, ResourceLoader* loader);
 
+			~Resource();
 
 			virtual uint32 getSize() = 0;
 
-			void Use();
-			
-			void Load();
-			void Unload();
+			//void Use();
+			//
+			//void Load();
+			//void Unload();
 
 			const String& getHashString() const { return m_hashString; }
 			uint32 getState() const { return m_state; }
 			bool getIsManaged() const { return m_manager; }
 
-			void _Ref() { assert(!getIsManaged()); m_refCount++; }
-			void _Unref() { assert(!getIsManaged()); m_refCount--; }
+			//void _Ref() { assert(!getIsManaged()); m_refCount++; }
+			//void _Unref() { assert(!getIsManaged()); if (--m_refCount == 0) delete this; }
 		};
 	};
 };

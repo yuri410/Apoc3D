@@ -76,11 +76,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Apoc3DException.h" />
-    <ClInclude Include="Core\Streaming\AsyncProcessor.h" />
     <ClInclude Include="Core\BoundingSphere.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Core\Camera.h" />
-    <ClInclude Include="Core\ResourceManager.h" />
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="FastDelegate\FastDelegate.h" />
     <ClInclude Include="FastDelegate\FastDelegateBind.h" />
@@ -88,7 +86,6 @@
     <ClInclude Include="Graphics\IRenderable.h" />
     <ClInclude Include="Graphics\RenderOperation.h" />
     <ClInclude Include="Graphics\RenderOperationBuffer.h" />
-    <ClInclude Include="Graphics\ModelManager.h" />
     <ClInclude Include="Graphics\Mesh.h" />
     <ClInclude Include="Graphics\Model.h" />
     <ClInclude Include="Resource.h" />
@@ -112,22 +109,15 @@
     <ClInclude Include="Graphics\Material.h" />
     <ClInclude Include="nedmalloc\malloc.c" />
     <ClInclude Include="Scene\SceneNode.h" />
-    <ClInclude Include="Core\Resource.h" />
-    <ClInclude Include="Core\ResourceHandle.h" />
     <ClInclude Include="Graphics\ScenePass.h" />
     <ClInclude Include="Graphics\SceneRenderer.h" />
     <ClInclude Include="Graphics\SceneProcedure.h" />
     <ClInclude Include="Scene\SimpleSceneManager.h" />
     <ClInclude Include="Graphics\Texture.h" />
-    <ClInclude Include="Graphics\TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
     <ClCompile Include="Common.cpp" />
-    <ClCompile Include="Core\ResourceManager.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
-    <ClCompile Include="Core\ResourceHandle.cpp" />
-    <ClCompile Include="Graphics\ModelManager.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />
     <ClCompile Include="Graphics\Model.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -153,13 +143,11 @@
     <ClCompile Include="Core\Frustum.cpp" />
     <ClCompile Include="Graphics\Material.cpp" />
     <ClCompile Include="Scene\SceneNode.cpp" />
-    <ClCompile Include="Core\Resource.cpp" />
     <ClCompile Include="Graphics\ScenePass.cpp" />
     <ClCompile Include="Graphics\SceneRenderer.cpp" />
     <ClCompile Include="Graphics\SceneProcedure.cpp" />
     <ClCompile Include="Scene\SimpleSceneManager.cpp" />
     <ClCompile Include="Graphics\Texture.cpp" />
-    <ClCompile Include="Graphics\TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="apoc3d.rc" />
