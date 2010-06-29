@@ -28,8 +28,15 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		Resource::Resource(ResourceManager* manager, String& hashString, ResourceLoader* loader)
-			: m_resLoader(loader), m_manager(manager)
+		Resource::Resource(ResourceManager* manager, const String& hashString)
+			: m_resLoader(0), m_manager(manager), m_hashString(hashString)
+		{
+			m_loadOp = new ResourceLoadOperation(this);
+			m_unloadOp = new ResourceUnloadOperation(this);
+
+		}
+		Resource::Resource(ResourceManager* manager, const String& hashString, ResourceLoader* loader)
+			: m_resLoader(loader), m_manager(manager), m_hashString(hashString)
 		{
 			m_loadOp = new ResourceLoadOperation(this);
 			m_unloadOp = new ResourceUnloadOperation(this);

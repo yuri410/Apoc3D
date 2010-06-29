@@ -104,7 +104,7 @@ namespace Apoc3D
 			ResourceLoader* m_resLoader;
 			uint32 m_state;
 
-			String m_hashString;
+			const String m_hashString;
 
 			ResourceLoadOperation* m_loadOp;
 			ResourceUnloadOperation* m_unloadOp;
@@ -125,8 +125,8 @@ namespace Apoc3D
 			ResourceEventHandler* eventUnloaded();
 
 			Resource();
-			Resource(ResourceManager* manager, String& hashString);
-			Resource(ResourceManager* manager, String& hashString, ResourceLoader* loader);
+			Resource(ResourceManager* manager, const String& hashString);
+			Resource(ResourceManager* manager, const String& hashString, ResourceLoader* loader);
 
 
 			virtual uint32 getSize() = 0;
@@ -136,7 +136,7 @@ namespace Apoc3D
 			void Load();
 			void Unload();
 
-
+			const String& getHashString() const { return m_hashString; }
 			uint32 getState() const { return m_state; }
 			bool getIsManaged() const { return m_manager; }
 
