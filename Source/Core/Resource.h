@@ -27,6 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma once
 
 #include "..\Common.h"
+#include "Streaming\AsyncProcessor.h"
+
+using namespace Apoc3D::Core::Streaming;
 
 namespace Apoc3D
 {
@@ -56,9 +59,42 @@ namespace Apoc3D
 		class _Export Resource
 		{
 		private:
+			class ResourceLoadOperation : public ResourceOperation
+			{
+			public:
+				ResourceLoadOperation(Resource* resource)
+					: ResourceOperation(resource)
+				{
+					
+				}
+
+				void Process()
+				{ 
+					Resource* res = getResource();
+					res->load();					
+				}
+			};
+			class ResourceUnloadOperation : public ResourceOperation
+			{
+			public:
+				ResourceUnloadOperation(Resource* resource)
+					: ResourceOperation(resource)
+				{
+					
+				}
+
+				void Process()
+				{ 
+					Resource* res = getResource();
+					res->unload();					
+				}
+			};
+
 			int m_refCount;
 			bool m_loaded;
 			ResourceLoader* m_resLoader;
+			ResourceState m_state;
+
 
 
 		protected:
