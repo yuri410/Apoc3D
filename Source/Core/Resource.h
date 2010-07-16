@@ -105,7 +105,7 @@ namespace Apoc3D
 			//int m_refCount;
 
 			//ResourceLoader* m_resLoader;
-			//uint32 m_state;
+			uint32 m_state;
 
 			const String m_hashString;
 

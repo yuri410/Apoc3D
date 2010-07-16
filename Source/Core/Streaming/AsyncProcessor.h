@@ -53,7 +53,7 @@ namespace Apoc3D
 			class _Export AsyncProcessor
 			{
 			private:
-				MUTEX;
+				//MUTEX;
 
 			public:
 				AsyncProcessor(void);

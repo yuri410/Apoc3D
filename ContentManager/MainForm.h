@@ -96,7 +96,7 @@ namespace ContentManager {
 			// 
 			this->splitContainer1->Panel2->Controls->Add(this->propertyGrid1);
 			this->splitContainer1->Size = System::Drawing::Size(721, 412);
-			this->splitContainer1->SplitterDistance = 240;
+			this->splitContainer1->SplitterDistance = 239;
 			this->splitContainer1->TabIndex = 0;
 			// 
 			// treeView1
@@ -104,7 +104,7 @@ namespace ContentManager {
 			this->treeView1->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->treeView1->Location = System::Drawing::Point(0, 0);
 			this->treeView1->Name = L"treeView1";
-			this->treeView1->Size = System::Drawing::Size(240, 412);
+			this->treeView1->Size = System::Drawing::Size(239, 412);
 			this->treeView1->TabIndex = 0;
 			// 
 			// propertyGrid1
@@ -112,7 +112,7 @@ namespace ContentManager {
 			this->propertyGrid1->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->propertyGrid1->Location = System::Drawing::Point(0, 0);
 			this->propertyGrid1->Name = L"propertyGrid1";
-			this->propertyGrid1->Size = System::Drawing::Size(477, 412);
+			this->propertyGrid1->Size = System::Drawing::Size(478, 412);
 			this->propertyGrid1->TabIndex = 0;
 			// 
 			// menuStrip1
@@ -136,13 +136,13 @@ namespace ContentManager {
 			// openProjectToolStripMenuItem
 			// 
 			this->openProjectToolStripMenuItem->Name = L"openProjectToolStripMenuItem";
-			this->openProjectToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->openProjectToolStripMenuItem->Size = System::Drawing::Size(142, 22);
 			this->openProjectToolStripMenuItem->Text = L"Open Project";
 			// 
 			// saveToolStripMenuItem
 			// 
 			this->saveToolStripMenuItem->Name = L"saveToolStripMenuItem";
-			this->saveToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->saveToolStripMenuItem->Size = System::Drawing::Size(142, 22);
 			this->saveToolStripMenuItem->Text = L"Save";
 			// 
 			// insertToolStripMenuItem
@@ -156,13 +156,13 @@ namespace ContentManager {
 			// filesToolStripMenuItem
 			// 
 			this->filesToolStripMenuItem->Name = L"filesToolStripMenuItem";
-			this->filesToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->filesToolStripMenuItem->Size = System::Drawing::Size(106, 22);
 			this->filesToolStripMenuItem->Text = L"Files";
 			// 
 			// folderToolStripMenuItem
 			// 
 			this->folderToolStripMenuItem->Name = L"folderToolStripMenuItem";
-			this->folderToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->folderToolStripMenuItem->Size = System::Drawing::Size(106, 22);
 			this->folderToolStripMenuItem->Text = L"Folder";
 			// 
 			// removeToolStripMenuItem
