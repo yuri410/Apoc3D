@@ -33,24 +33,48 @@ using namespace Apoc3D::Graphics;
 namespace Apoc3D
 {
 	Game::Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name)
-		: m_maxElapsedTime(0.5f), m_targetElapsedTime(1/60.0f), m_inactiveSleepTime(20),
-		  m_updatesSinceRunningSlowly1(MaxInt32), m_updatesSinceRunningSlowly2(MaxInt32)
+		: m_maxElapsedTime(0.5f), m_targetElapsedTime(1.0f / 60.0f), m_inactiveSleepTime(20),
+		m_updatesSinceRunningSlowly1(MaxInt32), m_updatesSinceRunningSlowly2(MaxInt32),
+		m_exiting(false),
+		m_accumulatedElapsedGameTime(0), m_lastFrameElapsedGameTime(0), m_lastFrameElapsedRealTime(0),
+		m_totalGameTime(0), m_forceElapsedTimeToZero(false), m_drawRunningSlowly(false), m_lastUpdateFrame(0),
+		m_lastUpdateTime(0), m_fps(0), m_inst(instance)
 	{
 		m_gameClock = new GameClock();
-		
+
 		m_gameWindow = new GameWindow(instance, nCmdShow, name, name);
 		m_gameWindow->eventApplicationActivated()->bind(this, &Game::Window_ApplicationActivated);
 		m_gameWindow->eventApplicationDeactivated()->bind(this, &Game::Window_ApplicationDeactivated);
 		m_gameWindow->eventPaint()->bind(this, &Game::Window_Paint);
 		m_gameWindow->eventResume()->bind(this, &Game::Window_Resume);
 		m_gameWindow->eventSuspend()->bind(this, &Game::Window_Suspend);
-		
-		m_graphicsDeviceManager = new GraphicsDeviceManager(this);		
+
+		m_graphicsDeviceManager = new GraphicsDeviceManager(this);
+	}
+	void Game::Release()
+	{
+		m_graphicsDeviceManager->ReleaseDevice();
+	}
+	void Game::Create()
+	{
+		m_gameWindow->Load();
+	}
+	Game::~Game()
+	{		
+		delete m_graphicsDeviceManager;
+		delete m_gameWindow;
+
+		delete m_gameClock;
+	}
+
+	Device* Game::getDevice() const
+	{
+		return m_graphicsDeviceManager->getDevice();
 	}
 
 	bool Game::OnFrameStart()
 	{
-		bool re;
+		bool re = false;
 		m_eFrameStart(&re);
 		return re;
 	}
@@ -63,17 +87,17 @@ namespace Apoc3D
 	void Game::DrawFrame()
 	{
 		try
-        {
+		{
 			if (!m_gameWindow->getIsMinimized())
 			{
-				if (OnFrameStart())
+				if (!OnFrameStart())
 				{
 					Render();
 					OnFrameEnd();
-				}				
+				}
 			}
 		}
-		catch (Apoc3DException &e)
+		catch (GameException &e)
 		{
 			m_lastFrameElapsedGameTime = 0;
 			m_lastFrameElapsedRealTime = 0;
@@ -81,13 +105,17 @@ namespace Apoc3D
 		m_lastFrameElapsedGameTime = 0;
 		m_lastFrameElapsedRealTime = 0;
 	}
+	void Game::Exit()
+	{
+		m_gameWindow->Close();
+	}
 
 	void Game::Run()
 	{
 		MSG msg;
 		ZeroMemory( &msg, sizeof( msg ) );
-		while( msg.message != WM_QUIT )
-		{
+		while( msg.message != WM_QUIT)
+		{			
 			if( PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE ) )
 			{
 				TranslateMessage( &msg );
@@ -104,17 +132,17 @@ namespace Apoc3D
 
 	void Game::Tick()
 	{
-	//	if (m_exiting)
-	//		return;
+		if (m_exiting)
+			return;
 
-		if (m_active)
-			Sleep(static_cast<int>(m_inactiveSleepTime*1000));
+		if (!m_active)
+			Sleep(static_cast<int>(m_inactiveSleepTime));
 
 		m_gameClock->Step();
 
 		float elapsedRealTime = (float)m_gameClock->getElapsedTime();
 		float totalRealTime = (float)m_gameClock->getCurrentTime();
-		
+
 		m_lastFrameElapsedRealTime += (float)m_gameClock->getElapsedTime();
 
 		float elapsedAdjustedTime = m_gameClock->getElapsedAdjustedTime();
@@ -129,17 +157,17 @@ namespace Apoc3D
 		}
 
 		m_accumulatedElapsedGameTime += elapsedAdjustedTime;
-		
+
 		float targetElapsedTime = m_targetElapsedTime;
 		float ratio = m_accumulatedElapsedGameTime / m_targetElapsedTime;
 
-		
+
 		m_accumulatedElapsedGameTime = fmod(m_accumulatedElapsedGameTime, targetElapsedTime);
 		m_lastFrameElapsedGameTime = 0;
 
 		if (ratio == 0)
 			return;
-		
+
 
 		if (ratio > 1)
 		{
@@ -156,38 +184,43 @@ namespace Apoc3D
 
 		m_drawRunningSlowly = m_updatesSinceRunningSlowly2 < 20;
 
+#if _DEBUG
+		if (ratio>10)
+			ratio=0;
+#endif
+
 		// update until it's time to draw the next frame
-		while (ratio > 0)
+		while (ratio > 1)
 		{
 			ratio -= 1;
-			
+
 			try
 			{
 				GameTime gt(m_targetElapsedTime, m_totalGameTime,
 					elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
 				Update(&gt);
 			}
-			catch (Apoc3DException &e)
+			catch (GameException &e)
 			{
 				m_lastFrameElapsedGameTime += targetElapsedTime;
 				m_totalGameTime += targetElapsedTime;
 			}
-			
+
 			m_lastFrameElapsedGameTime += targetElapsedTime;
 			m_totalGameTime += targetElapsedTime;
-			
+
 		}
 
 		DrawFrame();
 
-        // refresh the FPS counter once per second
-        m_lastUpdateFrame++;
-        if (totalRealTime - m_lastUpdateTime > 1.0f)
-        {
-            m_fps = (float)m_lastUpdateFrame / (float)(totalRealTime - m_lastUpdateTime);
-            m_lastUpdateTime = totalRealTime;
-            m_lastUpdateFrame = 0;
-        }
+		// refresh the FPS counter once per second
+		m_lastUpdateFrame++;
+		if (totalRealTime - m_lastUpdateTime > 1.0f)
+		{
+			m_fps = (float)m_lastUpdateFrame / (float)(totalRealTime - m_lastUpdateTime);
+			m_lastUpdateTime = totalRealTime;
+			m_lastUpdateFrame = 0;
+		}
 	}
 
 	void Game::Window_ApplicationActivated()
@@ -208,10 +241,11 @@ namespace Apoc3D
 	}
 	void Game::Window_Paint()
 	{
-		DrawFrame();
+		// the paint event may be raised before device init -- just created wnd class
+		if (getDevice())
+		{
+			DrawFrame();
+		}		
 	}
-	
-	Game::~Game(void)
-	{
-	}
+
 }

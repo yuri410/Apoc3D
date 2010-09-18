@@ -21,30 +21,39 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EFFECTDESCRIPTION_H
-#define EFFECTDESCRIPTION_H
+
+#ifndef IRENDERABLE_H
+#define IRENDERABLE_H
+
 #pragma once
 
 #include "Common.h"
-
-using namespace std;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Defines a set of effect atoms. 
+		/* Represents drawable object in the scene.
 		*/
-		class _Export EffectDescription
+		class _Export Renderable
 		{
-		private:
-			vector<String> m_effectAtom;
-
 		public:
-			EffectDescription(void);
-			~EffectDescription(void);
+			/* Gets the render operation of this renderable object at a ceratin LOD level
+			*/
+			virtual const RenderOperationBuffer* GetRenderOperation(int level) const = 0;
+			/* Gets the render operation of this renderable object at the default LOD level
+			*/
+			virtual const RenderOperationBuffer* GetRenderOperation() const { return GetRenderOperation(0); }
+
+		protected:
+			Renderable(void)
+			{
+			}
+
+			~Renderable(void)
+			{
+			}
 		};
 	};
 };
-
 #endif

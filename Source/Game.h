@@ -54,7 +54,7 @@ namespace Apoc3D
 		float m_lastUpdateTime;
 		float m_fps;
 
-		//bool m_exiting;
+		bool m_exiting;
 		bool m_active;
 
 		GraphicsDeviceManager* m_graphicsDeviceManager;
@@ -73,30 +73,39 @@ namespace Apoc3D
 		void Window_Paint();
 
 	protected:
-		
+
+		Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name);
+		virtual ~Game(void);
 		virtual bool OnFrameStart();
 		virtual void OnFrameEnd();
 
 	public:
-		
+		virtual void Release();
+		virtual void Create();
+
 		CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
-		EventHandler* eventFrameEnd() { return &m_eFrameEnd; }
+		EventHandler* eventFrameEnd() { return &m_eFrameEnd; }		
 
 		GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
 		GameWindow* getWindow() const { return m_gameWindow; }
-		//bool getIsExiting() const { return m_exiting; }
+		Device* getDevice() const;
+		bool getIsExiting() const { return m_exiting; }
 		bool getIsActive() const { return m_active; }
+		HINSTANCE getInstance() const { return m_inst; }
 
 		virtual void Initialize() = 0;
 		virtual void LoadContent() = 0;
+		virtual void OnDeviceLost() = 0;
 		virtual void UnloadContent() = 0;
+		virtual void OnDeviceReset() = 0;
 		virtual void Render() = 0;
-		virtual void Update(const GameTime* time) = 0;
+		virtual void Update(const GameTime* const time) = 0;
 		void Run();
 		void Tick();
+		void Exit();
 
-		Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name);
-		~Game(void);
+
+
 	};
 
 }

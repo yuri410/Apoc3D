@@ -38,13 +38,17 @@ namespace Apoc3D
 		bool m_minimized;
 		bool m_maximized;
 		bool m_inSizeMove;
-		
+
 		Size m_cachedSize;
 		HINSTANCE m_hInst;
 
 		HWND m_hWnd;
-		
+		HINSTANCE m_hInstance;
+		int m_nCmdShow;
 		HMONITOR m_currentMonitor;
+
+		const wchar_t* m_className;
+		const wchar_t* m_wndTitle;
 
 		EventHandler m_ePaint;
 		EventHandler m_eResume;
@@ -57,13 +61,15 @@ namespace Apoc3D
 		EventHandler m_eMonitorChanged;
 		CancellableEventHandler m_eScreensaver;
 
-		static GameWindow* s_Window;
+		int32 m_mouseWheel;
+
+		static GameWindow* ms_Window;
 
 		BOOL InitInstance(HINSTANCE hInstance, int nCmdShow,
 			const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
 		ATOM MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass);
 
-		
+
 		static LRESULT CALLBACK WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 		LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -84,13 +90,17 @@ namespace Apoc3D
 
 	public:
 		HWND getHandle() const { return m_hWnd; }
+		int32 getMouseWheel() const { return m_mouseWheel; }
 		bool getIsMinimized() const { return m_minimized; }
 		bool getIsMaximized() const { return m_maximized; }
+		void Close();
 		//void setTopMost(bool value)
 		//{
 		//	SetWindowPos(m_hWnd, value ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, 3);
 		//}
 		Size getCurrentSize();
+
+		void Load();
 
 		EventHandler* eventResume() { return &m_eResume; }
 		EventHandler* eventUserResized() { return &m_eUserResized; }
@@ -103,7 +113,7 @@ namespace Apoc3D
 		EventHandler* eventPaint() { return &m_ePaint; }
 		EventHandler* eventMonitorChanged() { return &m_eMonitorChanged; }
 
-		GameWindow(HINSTANCE hInstance, int nCmdShow, 
+		GameWindow(HINSTANCE hInstance, int nCmdShow,
 			const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
 		~GameWindow(void);
 	};

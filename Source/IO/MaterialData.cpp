@@ -22,38 +22,28 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef IRENDERABLE_H
-#define IRENDERABLE_H
-
-#pragma once
-
-#include "..\Common.h"
+#include "MaterialData.h"
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace IO
 	{
-		/* Represents drawable object in the scene.
-		*/
-		class _Export IRenderable
+		MaterialData::MaterialData(void)
 		{
-		public:
-			/* Gets the render operation of this renderable object at a ceratin LOD level
-			*/
-			virtual RenderOperationBuffer* GetRenderOperation(int level) const = 0;
-			/* Gets the render operation of this renderable object at the default LOD level
-			*/
-			virtual RenderOperationBuffer* GetRenderOperation() { return GetRenderOperation(0); }
+		}
 
-		protected:
-			IRenderable(void)
-			{
-			}
 
-			~IRenderable(void)
-			{
-			}
-		};
-	};
-};
-#endif
+		MaterialData::~MaterialData(void)
+		{
+		}
+
+		void MaterialData::Read(istream &strm)
+		{
+
+		}
+		void MaterialData::Write(ostream &strm)
+		{
+
+		}
+	}
+}

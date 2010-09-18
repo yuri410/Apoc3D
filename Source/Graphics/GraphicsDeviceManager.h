@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 
-#include "..\Common.h"
+#include "Common.h"
 #include "DeviceSettings.h"
 
 namespace Apoc3D
@@ -41,10 +41,10 @@ namespace Apoc3D
 			Device* m_device;
 
 			Game* m_game;
-			
+
 			bool m_ignoreSizeChanges;
 			bool m_deviceLost;
-			
+
 			bool m_doNotStoreBufferSize;
 			bool m_renderingOccluded;
 
@@ -74,6 +74,10 @@ namespace Apoc3D
 			GraphicsDeviceManager(Game* game);
 			~GraphicsDeviceManager(void);
 
+			Device* getDevice() const { return m_device; }
+			IDirect3D9* getDirect3D() const { return m_direct3D9; }
+
+
 			/* Ensures that the device is properly initialized and ready to render.
 			*/
 			bool EnsureDevice() const
@@ -82,7 +86,7 @@ namespace Apoc3D
 			}
 
 			void ChangeDevice(bool windowed, int desiredWidth, int desiredHeight);
-        
+
 			/* Changes the device.
 			*/
 			void ChangeDevice(const DeviceSettings &prefer);

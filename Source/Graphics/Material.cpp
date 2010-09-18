@@ -30,9 +30,11 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		Material::Material()
-		{	
-			std::memset(m_tex, 0, sizeof(m_tex));
-
+			: m_passFlags(0), m_priority(0), 
+			m_blendOperation(D3DBLENDOP_ADD), m_alphaBlendEnable(false), m_srcBlend(D3DBLEND_SRCALPHA), m_dstBlend(D3DBLEND_INVSRCALPHA),
+			m_alphaTestEnable(false),
+			m_zWriteEnable(true), m_zTestEnable(true)
+		{				
 			std::memset(&m_mtrlColor, 0,  sizeof(m_mtrlColor));	
 
 
@@ -40,6 +42,15 @@ namespace Apoc3D
 
 
 		Material::~Material(void)
+		{
+
+		}
+
+		void Material::Load(istream &strm)
+		{
+
+		}
+		void Material::Save(ostream &strm)
 		{
 
 		}

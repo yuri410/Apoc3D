@@ -54,14 +54,16 @@ namespace Apoc3D
 		uint64 GetCounter()
 		{
 			LARGE_INTEGER counter;
-			assert(!QueryPerformanceCounter(&counter));
+			BOOL res = QueryPerformanceCounter(&counter);
+			assert(res);
 			return counter.QuadPart;
 		}
 
 		uint64 GetFrequency()
 		{
 			LARGE_INTEGER freq;
-			assert(!QueryPerformanceFrequency(&freq));
+			BOOL res = QueryPerformanceFrequency(&freq); 
+			assert(res);
 
 			return freq.QuadPart;
 		}
@@ -76,6 +78,15 @@ namespace Apoc3D
 
         void Reset()
         {
+			m_timeLostToSuspension = 0;
+			m_suspendStartTime = 0;
+			m_suspendCount = 0;
+			m_baseRealTime = 0;
+			m_lastRealTime = 0;
+
+		
+
+
             m_currentTimeBase = 0;
             m_currentTimeOffset = 0;
             m_baseRealTime = GetCounter();
@@ -106,7 +117,7 @@ namespace Apoc3D
         void Step()
         {
 			uint64 counter = GetCounter();
-			
+
 
             if (!m_lastRealTimeValid)
             {
@@ -114,7 +125,7 @@ namespace Apoc3D
                 m_lastRealTimeValid = true;
             }
 
-            
+
 
 			if (!CounterToTimeSpan(counter, m_baseRealTime, &m_currentTimeOffset))
 			{
@@ -128,7 +139,7 @@ namespace Apoc3D
 					m_currentTimeOffset = 0;
 				}
 			}
-            
+
 			if (!CounterToTimeSpan(counter, m_lastRealTime, &m_elapsedTime))
 			{
 				m_elapsedTime = 0;
@@ -142,7 +153,7 @@ namespace Apoc3D
 			{
 				m_elapsedAdjustedTime = 0;
 			}
-            
+
             m_lastRealTime = counter;
         }
 

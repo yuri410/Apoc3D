@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define DEVICESETTINGS_H
 #pragma once
 
-#include "..\Common.h"
+#include "Common.h"
 
 namespace Apoc3D
 {
@@ -40,7 +40,7 @@ namespace Apoc3D
 			{
 				return PresentParams.BackBufferWidth;
 			}
-			void setBackBufferWidth(uint32 value) 
+			void setBackBufferWidth(uint32 value)
 			{
 				PresentParams.BackBufferWidth = value;
 			}
@@ -99,14 +99,21 @@ namespace Apoc3D
 				return PresentParams.MultiSampleQuality;
 			}
 
-			Format DepthStencilFormat;
-
 			int32 AdapterOrdinal;
 
 			DeviceType DeviceType;
 			int32 CreationFlags;
 
 			D3DPRESENT_PARAMETERS PresentParams;
+
+			DeviceSettings()
+			{
+                memset(&this->PresentParams, '\0', sizeof(PresentParams));
+                AdapterOrdinal = 0;
+                DeviceType = D3DDEVTYPE_HAL;
+                CreationFlags = 0;
+
+			}
 		};
 	};
 };

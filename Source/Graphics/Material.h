@@ -33,11 +33,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::EffectSystem;
 using namespace Apoc3D::Core;
 
+using namespace std;
+
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Defines colors, textures and effect info for a geomentry
+		/* Defines colors, textures and effect info for a geometry
 
 		   Material have some Effects. Each Effect is a set of Effect Atoms. 
 		   It is an indicator that tells the batching system all passes 
@@ -48,23 +50,32 @@ namespace Apoc3D
 		class _Export Material : public HashHandleObject
 		{
 		public:
-			/* The maximum textures can used in a material
-			*/
-			const static int32 MaxTextureLayers = 10;
-			const static int32 MaxEffects = 4;
+			
 		private:
-			Effect* m_eff[MaxEffects];
-			BaseTexture* m_tex[MaxTextureLayers];
+			unordered_map<uint64, Effect*> m_eff;
+			vector<Texture*> m_tex;
 			D3DMATERIAL9 m_mtrlColor;
+
+			D3DBLEND m_srcBlend;
+			D3DBLEND m_dstBlend;
+			D3DBLENDOP m_blendOperation;
+			bool m_alphaBlendEnable;
+
+			bool m_alphaTestEnable;
+
+			bool m_zWriteEnable;
+			bool m_zTestEnable;
+
+			uint64 m_passFlags;
 
 			int32 m_priority;
 		public:
 			/* Gets the texture at texture layer idx
 			*/
-			BaseTexture* getTexture(int idx) const { return m_tex[idx]; }
+			Texture* getTexture(int idx) const { return m_tex[idx]; }
 			/* Sets the texture at texture layer idx
 			*/
-			void setTexture(int idx, BaseTexture* value) { m_tex[idx] = value; }
+			void setTexture(int idx, Texture* value) { m_tex[idx] = value; }
 
 			/* Gets the ambient component of this material
 			*/
@@ -83,9 +94,10 @@ namespace Apoc3D
 			const float getPower() const { return m_mtrlColor.Power; }
 
 			const uint32 getPriority() const { return m_priority; }
-
 			void setPriority(uint32 value) { m_priority = value; }
 
+			uint64 getPassFlags() const { return m_passFlags; }
+			void setPassFlags(uint64 val) { m_passFlags = val; }
 
 			void setAmbient(const Color4& value) { m_mtrlColor.Ambient = value; }
 			void setDiffuse(const Color4& value) { m_mtrlColor.Diffuse = value; }
@@ -93,6 +105,9 @@ namespace Apoc3D
 			void setSpecular(const Color4& value) { m_mtrlColor.Specular = value; }
 			void setPower(const float value) { m_mtrlColor.Power = value; }
 	
+			void Load(istream &strm);
+			void Save(ostream &strm);
+
 			Material();
 			~Material(void);
 

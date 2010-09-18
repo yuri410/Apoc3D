@@ -21,30 +21,33 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EFFECTDESCRIPTION_H
-#define EFFECTDESCRIPTION_H
-#pragma once
 
-#include "Common.h"
+#ifndef MATERIALDATA_H
+#define MATERIALDATA_H
+
+#pragma once
 
 using namespace std;
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace IO
 	{
-		/* Defines a set of effect atoms. 
-		*/
-		class _Export EffectDescription
+		class _Export MaterialData
 		{
 		private:
-			vector<String> m_effectAtom;
+			vector<String> m_textures;
+			
+			vector<EffectDescription> m_effects;
 
 		public:
-			EffectDescription(void);
-			~EffectDescription(void);
-		};
-	};
-};
+			MaterialData(void);
+			~MaterialData(void);
 
+			void Read(istream &strm);
+			void Write(ostream &strm);
+		};
+
+	}
+}
 #endif

@@ -77,6 +77,11 @@ typedef unsigned long long BatchHandle;
 #endif
 
 
+#define VER(x,y,z,w) D3DCOLOR_ARGB(x,y,z,w);
+#define ToDegree(x) D3DXToDegree(x)
+#define ToRadian(x) D3DXToRadian(x)
+#define MakeColor4(r, g, b, a) {  r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f }
+
 struct _Export D3DXPLANE;
 struct _Export D3DXVECTOR2;
 struct _Export D3DXVECTOR3;
@@ -95,8 +100,8 @@ struct _Export IDirect3DVertexShader9;
 struct _Export IDirect3DPixelShader9;
 struct _Export IDirect3DVertexDeclaration9;
 
-#include "..\lib\dxsdk\Include\d3d9.h"
-#include "..\lib\dxsdk\Include\d3dx9.h"
+#include <d3d9.h>
+#include <d3dx9.h>
 
 #include <cassert>
 #include <windows.h>
@@ -248,7 +253,6 @@ namespace Apoc3D
 	};
 	namespace IO
 	{
-		class Stream;
 		class FileStream;
 		class BinaryReader;
 
@@ -277,6 +281,7 @@ namespace Apoc3D
 		class ScenePass;
 		class SceneProcedure;
 		class SceneRenderer;
+		class Texture;
 	};
 };
 

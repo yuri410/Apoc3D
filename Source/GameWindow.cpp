@@ -26,19 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace Apoc3D
 {
-	//
-	//  函数: MyRegisterClass()
-	//
-	//  目的: 注册窗口类。
-	//
-	//  注释:
-	//
-	//    仅当希望
-	//    此代码与添加到 Windows 95 中的“RegisterClassEx”
-	//    函数之前的 Win32 系统兼容时，才需要此函数及其用法。调用此函数十分重要，
-	//    这样应用程序就可以获得关联的
-	//    “格式正确的”小图标。
-	//
+	GameWindow* GameWindow::ms_Window = 0;
+
 	ATOM GameWindow::MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass)
 	{
 		WNDCLASSEX wcex;
@@ -59,7 +48,7 @@ namespace Apoc3D
 
 		return RegisterClassEx(&wcex);
 	}
-	
+
 	//
 	//   函数: InitInstance(HINSTANCE, int)
 	//
@@ -73,37 +62,63 @@ namespace Apoc3D
 	BOOL GameWindow::InitInstance(HINSTANCE hInstance, int nCmdShow,
 		const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
 	{
-	   HWND hWnd;
+		HWND hWnd;
 
-	   hWnd = CreateWindow(wndClass, wndTitle, WS_OVERLAPPEDWINDOW,
-		  CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
+		hWnd = CreateWindow(wndClass, wndTitle, WS_OVERLAPPEDWINDOW,
+			CW_USEDEFAULT, 0, 1280, 720, NULL, NULL, hInstance, NULL);
 
-	   if (!hWnd)
-	   {
-		  return FALSE;
-	   }
-	   m_hWnd = hWnd;
+		if (!hWnd)
+		{
+			return FALSE;
+		}
+		m_hWnd = hWnd;
 
-	   ShowWindow(hWnd, nCmdShow);
-	   UpdateWindow(hWnd);
+		ShowWindow(hWnd, nCmdShow);
+		UpdateWindow(hWnd);
 
-	   return TRUE;
+		RECT rect;
+		GetClientRect(hWnd, &rect);
+		int clientWidth = rect.right - rect.left;
+		int clientHeight = rect.bottom - rect.top;
+
+		int scrnWidth = GetSystemMetrics(SM_CXFULLSCREEN);   
+		int scrnHeight = GetSystemMetrics(SM_CYFULLSCREEN);
+
+		SetWindowPos(hWnd, 0, 
+			(scrnWidth - clientWidth)>>1, (scrnHeight - clientHeight)>>1, 
+			clientWidth, clientHeight, SWP_NOZORDER);
+
+
+
+		return TRUE;
 	}
 
-	GameWindow::GameWindow(HINSTANCE hInstance, int nCmdShow, 
+	GameWindow::GameWindow(HINSTANCE hInstance, int nCmdShow,
 		const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
+		: m_mouseWheel(0), m_hInstance(hInstance), m_nCmdShow(nCmdShow)
 	{
-		s_Window = this;
-		MyRegisterClass(hInstance, wndClass);
+		ms_Window = this;
 
-		assert (!InitInstance (hInstance, nCmdShow, wndClass, wndTitle));
+		m_className = wndClass;
+		m_wndTitle = wndTitle;
 	}
 
 	GameWindow::~GameWindow(void)
 	{
-		s_Window = NULL;
+		if (ms_Window == this)
+			ms_Window = NULL;
 	}
-	
+
+	void GameWindow::Load()
+	{
+		MyRegisterClass(m_hInstance, m_className);
+
+		if (!InitInstance (m_hInstance, m_nCmdShow, m_className, m_wndTitle))
+		{
+			assert(TRUE);
+		}
+	}
+
 	void GameWindow::UpdateMonitor()
 	{
 		HMONITOR windowMonitor = MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY);
@@ -117,39 +132,54 @@ namespace Apoc3D
 
 	void GameWindow::OnUserResized()
 	{
-		m_eUserResized();
+		if (!m_eUserResized.empty())
+			m_eUserResized();
 	}
 	void GameWindow::OnSuspend()
 	{
-		m_eSuspend();
+		if (!m_eSuspend.empty())
+			m_eSuspend();
+	}
+	void GameWindow::OnResume()
+	{
+		if (!m_eResume.empty())
+			m_eResume();
 	}
 	void GameWindow::OnApplicationActivated()
 	{
-		m_eApplicationActivated();
+		if (!m_eApplicationActivated.empty())
+			m_eApplicationActivated();
 	}
 	void GameWindow::OnApplicationDeactivated()
 	{
-		m_eApplicationDeactivated();
+		if (!m_eApplicationDeactivated.empty())
+			m_eApplicationDeactivated();
 	}
 	void GameWindow::OnSystemSuspend()
 	{
-		m_eSystemSuspend();
+		if (!m_eSystemSuspend.empty())
+			m_eSystemSuspend();
 	}
 	void GameWindow::OnSystemResume()
 	{
-		m_eSystemResume();
+		if (!m_eSystemResume.empty())
+			m_eSystemResume();
 	}
 	void GameWindow::OnScreensaver(bool * cancel)
 	{
-		m_eScreensaver(cancel);
+		if (!m_eScreensaver.empty())
+			m_eScreensaver(cancel);
 	}
+
 	void GameWindow::OnPaint()
 	{
-		m_ePaint();
+		if (!m_ePaint.empty())
+			m_ePaint();
 	}
 	void GameWindow::OnMonitorChanged()
 	{
-		m_eMonitorChanged();
+		if (!m_eMonitorChanged.empty())
+			m_eMonitorChanged();
 	}
 
 	Size GameWindow::getCurrentSize()
@@ -163,23 +193,29 @@ namespace Apoc3D
 		}
 		return Size(rect.right - rect.left, rect.bottom - rect.top);
 	}
+	void GameWindow::Close()
+	{
+
+		DestroyWindow(m_hWnd);
+	}
 
 	LRESULT CALLBACK GameWindow::WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-		if (s_Window)
+		if (ms_Window)
 		{
-			return s_Window->WndProc(hWnd, message, wParam, lParam);
+			return ms_Window->WndProc(hWnd, message, wParam, lParam);
 		}
 		return 0;
 	}
 
 	LRESULT GameWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
+		//return DefWindowProc(hWnd, message, wParam, lParam);
 		switch (message)
 		{
 		case WM_SIZE:
 			if (wParam == SIZE_MINIMIZED)
-            {
+			{
 				m_minimized = true;
 				m_maximized = false;
 
@@ -194,7 +230,7 @@ namespace Apoc3D
 					rect.bottom = 0;
 					rect.top = 0;
 				}
-				
+
 				if (rect.bottom - rect.top == 0)
 				{
 				}
@@ -205,6 +241,9 @@ namespace Apoc3D
 
 					OnUserResized();
 					UpdateMonitor();
+
+
+					//RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
 				}
 				else if (wParam == SIZE_RESTORED)
 				{
@@ -221,9 +260,18 @@ namespace Apoc3D
 
 						UpdateMonitor();
 						m_cachedSize = newSize;
+
+						//RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
 					}
 				}
 			}
+			break;
+		case WM_MOVE:
+
+			//RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
+			break;
+		case WM_PAINT:
+			OnPaint();
 			break;
 		case WM_ACTIVATEAPP:
 			if (wParam)
@@ -238,7 +286,7 @@ namespace Apoc3D
 		case WM_POWERBROADCAST:
 			if (wParam == PBT_APMQUERYSUSPEND)
 			{
-				OnSystemSuspend();	
+				OnSystemSuspend();
 				return 1;
 			}
 			else if (wParam == PBT_APMRESUMESUSPEND)
@@ -248,38 +296,46 @@ namespace Apoc3D
 			}
 			break;
 		case WM_SYSCOMMAND:
-		{
-			long wp = wParam & 0xFFF0;
-			if (wp == SC_MONITORPOWER || wp == SC_SCREENSAVE)
 			{
-				bool cancel;
-				OnScreensaver(&cancel);
-				if (cancel)
+				long wp = wParam & 0xFFF0;
+				if (wp == SC_MONITORPOWER || wp == SC_SCREENSAVE)
 				{
-					return 0;
+					bool cancel;
+					OnScreensaver(&cancel);
+					if (cancel)
+					{
+						return 0;
+					}
 				}
+				break;
 			}
-			break;
-		}
 		case WM_ENTERSIZEMOVE:
 			m_inSizeMove = true;
-            m_cachedSize = getCurrentSize();
-            OnSuspend();
+			m_cachedSize = getCurrentSize();
+			OnSuspend();
 			break;
 		case WM_EXITSIZEMOVE:
-			 // check for screen and size changes
-            OnUserResized();
+			// check for screen and size changes
+			OnUserResized();
 			UpdateMonitor();
-            m_inSizeMove = false;
+			m_inSizeMove = false;
 
-            // resume application processing
-            OnResume();
+			// resume application processing
+			OnResume();
 			break;
-		case WM_PAINT:
-			OnPaint();
+		case WM_DESTROY:
+			UnregisterClass(m_className, m_hInstance);
+
+			PostQuitMessage(0);
+			break;
+			//case WM_MOUSELEAVE:
+			//	ShowCursor(TRUE);
+			//	break;
+		case WM_MOUSEWHEEL:
+			m_mouseWheel += (int16) (wParam >> 0x10);
 			break;
 		}
-	
+
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 }
