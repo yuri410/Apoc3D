@@ -97,7 +97,7 @@ namespace Apoc3D
 				}
 			}
 		}
-		catch (GameException &e)
+		catch (Apoc3DException &e)
 		{
 			m_lastFrameElapsedGameTime = 0;
 			m_lastFrameElapsedRealTime = 0;
