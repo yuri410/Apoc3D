@@ -47,12 +47,7 @@ namespace Apoc3D
 		class Matrix
 		{
 		private:
-
-			const static __m128 _MASKSIGN_;	// - - - -
-			const static __m128 _ZERONE_;		// 1 0 0 1
-			const static __m128 _0FFF_;		// 0 * * *
-			const static __m128 Sign_PNPN;	// + - + -
-			const static __m128 Sign_NPNP;	// - + - +
+			
 
 		public:
 			const static Matrix Identity;
@@ -90,6 +85,17 @@ namespace Apoc3D
 				M44 = elements[15];
 
 			}
+			Matrix(const Matrix &m) : _L1(m._L1), _L2(m._L2), _L3(m._L3), _L4(m._L4) {}
+			Matrix(float f11, float f12, float f13, float f14,
+				float f21, float f22, float f23, float f24,
+				float f31, float f32, float f33, float f34,
+				float f41, float f42, float f43, float f44)
+			{
+				_L1 = _mm_set_ps(f14, f13, f12, f11);
+				_L2 = _mm_set_ps(f24, f23, f22, f21);
+				_L3 = _mm_set_ps(f34, f33, f32, f31);
+				_L4 = _mm_set_ps(f44, f43, f42, f41);
+			}
 
 
 			void LoadIdentity() { memcpy(this, &Identity, sizeof(Identity)); }
@@ -99,105 +105,8 @@ namespace Apoc3D
 			void Transpose() { _MM_TRANSPOSE4_PS(_L1, _L2, _L3, _L4); }
 			/* Inverts the matrix.
 			*/
-			float Inverse()
-			{
-				__m128 Va,Vb,Vc;
-				__m128 r1,r2,r3,tt,tt2;
-				__m128 sum,Det,RDet;
-				Matrix Minterms;
-				__m128 trns0,trns1,trns2,trns3;
-
-				// Calculating the minterms for the first line.
-
-				// _mm_ror_ps is just a macro using _mm_shuffle_ps().
-				tt = _L4; tt2 = _mm_ror_ps(_L3,1); 
-				Vc = _mm_mul_ps(tt2,_mm_ror_ps(tt,0));					// V3'·V4
-				Va = _mm_mul_ps(tt2,_mm_ror_ps(tt,2));					// V3'·V4"
-				Vb = _mm_mul_ps(tt2,_mm_ror_ps(tt,3));					// V3'·V4^
-
-				r1 = _mm_sub_ps(_mm_ror_ps(Va,1),_mm_ror_ps(Vc,2));		// V3"·V4^ - V3^·V4"
-				r2 = _mm_sub_ps(_mm_ror_ps(Vb,2),_mm_ror_ps(Vb,0));		// V3^·V4' - V3'·V4^
-				r3 = _mm_sub_ps(_mm_ror_ps(Va,0),_mm_ror_ps(Vc,1));		// V3'·V4" - V3"·V4'
-
-				tt = _L2;
-				Va = _mm_ror_ps(tt,1);		sum = _mm_mul_ps(Va,r1);
-				Vb = _mm_ror_ps(tt,2);		sum = _mm_add_ps(sum,_mm_mul_ps(Vb,r2));
-				Vc = _mm_ror_ps(tt,3);		sum = _mm_add_ps(sum,_mm_mul_ps(Vc,r3));
-
-				// Calculating the determinant.
-				Det = _mm_mul_ps(sum,_L1);
-				Det = _mm_add_ps(Det,_mm_movehl_ps(Det,Det));
-
-				Minterms._L1 = _mm_xor_ps(sum, Sign_PNPN);
-
-				// Calculating the minterms of the second line (using previous results).
-				tt = _mm_ror_ps(_L1,1);		sum = _mm_mul_ps(tt,r1);
-				tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r2));
-				tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r3));
-				Minterms._L2 = _mm_xor_ps(sum, Sign_NPNP);
-
-				// Testing the determinant.
-				Det = _mm_sub_ss(Det,_mm_shuffle_ps(Det,Det,1));
-#ifdef ZERO_SINGULAR
-				int flag = _mm_comieq_ss(Det,_mm_sub_ss(tt,tt));
-				// Using _mm_sub_ss, as only the first element has to be zeroed.
-#endif
-
-				// Calculating the minterms of the third line.
-				tt = _mm_ror_ps(_L1,1);
-				Va = _mm_mul_ps(tt,Vb);									// V1'·V2"
-				Vb = _mm_mul_ps(tt,Vc);									// V1'·V2^
-				Vc = _mm_mul_ps(tt,_L2);								// V1'·V2
-
-				r1 = _mm_sub_ps(_mm_ror_ps(Va,1),_mm_ror_ps(Vc,2));		// V1"·V2^ - V1^·V2"
-				r2 = _mm_sub_ps(_mm_ror_ps(Vb,2),_mm_ror_ps(Vb,0));		// V1^·V2' - V1'·V2^
-				r3 = _mm_sub_ps(_mm_ror_ps(Va,0),_mm_ror_ps(Vc,1));		// V1'·V2" - V1"·V2'
-
-				tt = _mm_ror_ps(_L4,1);		sum = _mm_mul_ps(tt,r1);
-				tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r2));
-				tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r3));
-				Minterms._L3 = _mm_xor_ps(sum,Sign_PNPN);
-
-				// Dividing is FASTER than rcp_nr! (Because rcp_nr causes many register-memory RWs).
-				RDet = _mm_div_ss(_mm_load_ss((float *)&_ZERONE_), Det);
-				RDet = _mm_shuffle_ps(RDet,RDet,0x00);
-
-				// Devide the first 12 minterms with the determinant.
-				Minterms._L1 = _mm_mul_ps(Minterms._L1, RDet);
-				Minterms._L2 = _mm_mul_ps(Minterms._L2, RDet);
-				Minterms._L3 = _mm_mul_ps(Minterms._L3, RDet);
-
-				// Calculate the minterms of the forth line and devide by the determinant.
-				tt = _mm_ror_ps(_L3,1);		sum = _mm_mul_ps(tt,r1);
-				tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r2));
-				tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r3));
-				Minterms._L4 = _mm_xor_ps(sum,Sign_NPNP);
-				Minterms._L4 = _mm_mul_ps(Minterms._L4, RDet);
-
-#ifdef ZERO_SINGULAR
-				// Check if the matrix is inversable.
-				// Uses a delayed branch here, so the test would not interfere the calculations.
-				// Assuming most of the matrices are inversable, the previous calculations are 
-				// not wasted. It is faster this way.
-				if (flag) {
-					ZeroMatrix();
-					return 0.0f;
-				}
-#endif
-
-				// Now we just have to transpose the minterms matrix.
-				trns0 = _mm_unpacklo_ps(Minterms._L1,Minterms._L2);
-				trns1 = _mm_unpacklo_ps(Minterms._L3,Minterms._L4);
-				trns2 = _mm_unpackhi_ps(Minterms._L1,Minterms._L2);
-				trns3 = _mm_unpackhi_ps(Minterms._L3,Minterms._L4);
-				_L1 = _mm_movelh_ps(trns0,trns1);
-				_L2 = _mm_movehl_ps(trns1,trns0);
-				_L3 = _mm_movelh_ps(trns2,trns3);
-				_L4 = _mm_movehl_ps(trns3,trns2);
-
-				// That's all folks!
-				return *(float *)&Det;	// Det[0]
-			}
+			float Inverse();
+			
 
 			/* Calculates the determinant of the matrix.
 			*/
@@ -225,11 +134,16 @@ namespace Apoc3D
 				Det = _mm_mul_ps(sum,_L1);
 				Det = _mm_add_ps(Det,_mm_movehl_ps(Det,Det));
 				Det = _mm_sub_ss(Det,_mm_shuffle_ps(Det,Det,1));
-				return Det[0];
+
+				float result;
+				_mm_store_ss(&result, Det);
+				return result;
 			}
 
 			void ZeroMatrix() { _L1 = _L2 = _L3 = _L4 = _mm_setzero_ps(); }
 
+			/* Determines the product of two matrices.
+			*/
 			static void Multiply(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
 				__m128 Result;
@@ -313,6 +227,9 @@ namespace Apoc3D
 				res._L4 = Result;
 
 			}
+
+			/* Scales a matrix by the given value.
+			*/
 			static void Multiply(Matrix& res, const Matrix& ma, float mb)
 			{
 				__m128 b = _mm_set_ps(mb,mb,mb,mb);
@@ -322,7 +239,8 @@ namespace Apoc3D
 				res._L4 = _mm_mul_ps(ma._L4,b);
 			}
 
-
+			/* Determines the sum of two matrices.
+			*/
 			static void Add(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
 				res._L1 = _mm_add_ps(ma._L1,  mb._L1);
@@ -330,6 +248,9 @@ namespace Apoc3D
 				res._L3 = _mm_add_ps(ma._L3,  mb._L3);
 				res._L4 = _mm_add_ps(ma._L4,  mb._L4);
 			}
+
+			/* Determines the difference between two matrices.
+			*/
 			static void Subtract(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
 				res._L1 = _mm_sub_ps(ma._L1,  mb._L1);
