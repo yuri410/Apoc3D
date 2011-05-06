@@ -82,29 +82,29 @@ typedef unsigned long long BatchHandle;
 #define ToRadian(x) D3DXToRadian(x)
 #define MakeColor4(r, g, b, a) {  r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f }
 
-struct _Export D3DXPLANE;
-struct _Export D3DXVECTOR2;
-struct _Export D3DXVECTOR3;
-struct _Export D3DXVECTOR4;
-struct _Export D3DXMATRIX;
-struct _Export D3DXQUATERNION;
-struct _Export _D3DCOLORVALUE;
+//struct _Export D3DXPLANE;
+//struct _Export D3DXVECTOR2;
+//struct _Export D3DXVECTOR3;
+//struct _Export D3DXVECTOR4;
+//struct _Export D3DXMATRIX;
+//struct _Export D3DXQUATERNION;
+//struct _Export _D3DCOLORVALUE;
+//
+//struct _Export IDirect3DDevice9;
+//struct _Export IDirect3DBaseTexture9;
+//struct _Export IDirect3DTexture9;
+//struct _Export ID3DXSprite;
+//struct _Export IDirect3DIndexBuffer9;
+//struct _Export IDirect3DVertexBuffer9;
+//struct _Export IDirect3DVertexShader9;
+//struct _Export IDirect3DPixelShader9;
+//struct _Export IDirect3DVertexDeclaration9;
 
-struct _Export IDirect3DDevice9;
-struct _Export IDirect3DBaseTexture9;
-struct _Export IDirect3DTexture9;
-struct _Export ID3DXSprite;
-struct _Export IDirect3DIndexBuffer9;
-struct _Export IDirect3DVertexBuffer9;
-struct _Export IDirect3DVertexShader9;
-struct _Export IDirect3DPixelShader9;
-struct _Export IDirect3DVertexDeclaration9;
-
-#include <d3d9.h>
-#include <d3dx9.h>
+//#include <d3d9.h>
+//#include <d3dx9.h>
 
 #include <cassert>
-#include <windows.h>
+//#include <windows.h>
 
 #pragma warning(push)
 #pragma warning(disable:4251)
@@ -144,37 +144,37 @@ namespace Apoc3D
 	class GameTime;
 	class GameWindow;
 
-	typedef D3DXMATRIX Matrix;
-	typedef D3DXPLANE Plane;
-	typedef D3DXVECTOR2 Vector2;
-	typedef D3DXVECTOR3 Vector3;
-	typedef D3DXVECTOR4 Vector4;
-	typedef D3DXQUATERNION Quaternion;
-	typedef D3DCOLORVALUE Color4;
+	//typedef D3DXMATRIX Matrix;
+	//typedef D3DXPLANE Plane;
+	//typedef D3DXVECTOR2 Vector2;
+	//typedef D3DXVECTOR3 Vector3;
+	//typedef D3DXVECTOR4 Vector4;
+	//typedef D3DXQUATERNION Quaternion;
+	//typedef D3DCOLORVALUE Color4;
 	
-	typedef IDirect3DDevice9 Device;
+	//typedef IDirect3DDevice9 Device;
 	//typedef IDirect3DBaseTexture9 BaseTexture;
-	//typedef IDirect3DTexture9 Texture;
-	typedef ID3DXSprite Sprite;
-	typedef IDirect3DIndexBuffer9 IndexBuffer;
-	typedef IDirect3DVertexBuffer9 VertexBuffer;
-	typedef IDirect3DVertexShader9 VertexShader;
-	typedef IDirect3DPixelShader9 PixelShader;
-	typedef IDirect3DVertexDeclaration9 VertexDeclaration;
+	////typedef IDirect3DTexture9 Texture;
+	//typedef ID3DXSprite Sprite;
+	//typedef IDirect3DIndexBuffer9 IndexBuffer;
+	////typedef IDirect3DVertexBuffer9 VertexBuffer;
+	//typedef IDirect3DVertexShader9 VertexShader;
+	//typedef IDirect3DPixelShader9 PixelShader;
+	//typedef IDirect3DVertexDeclaration9 VertexDeclaration;
 
-	typedef D3DPRIMITIVETYPE PrimitiveType;
-	typedef D3DFORMAT Format;
-	typedef D3DMULTISAMPLE_TYPE MSAAType;
-	typedef D3DDEVTYPE DeviceType;
+	//typedef D3DPRIMITIVETYPE PrimitiveType;
+	//typedef D3DFORMAT Format;
+	//typedef D3DMULTISAMPLE_TYPE MSAAType;
+	//typedef D3DDEVTYPE DeviceType;
 	typedef std::wstring String;
 	
 	const int32 MaxInt32 = 0x7fffffff;
 
-	const Vector3 UnitX3(1,0,0);
-	const Vector3 UnitY3(0,1,0);
-	const Vector3 UnitZ3(0,0,1);
-	const Vector3 One3(1,1,1);
-	const Vector3 Zero3(0,0,0);
+	//const Vector3 UnitX3(1,0,0);
+	//const Vector3 UnitY3(0,1,0);
+	//const Vector3 UnitZ3(0,0,1);
+	//const Vector3 One3(1,1,1);
+	//const Vector3 Zero3(0,0,0);
 
 	struct _Export Size 
 	{

@@ -143,6 +143,7 @@
     <ClCompile Include="Graphics\TextureManager.cpp" />
     <ClCompile Include="IO\MaterialData.cpp" />
     <ClCompile Include="Math\Matrix.cpp" />
+    <ClCompile Include="Math\Vector.cpp" />
     <ClCompile Include="ResourceCompiler\Compiler.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\SceneObject.cpp" />

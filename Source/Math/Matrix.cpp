@@ -1,10 +1,33 @@
+/*
+-----------------------------------------------------------------------------
+This source file is part of labtd
+
+Copyright (c) 2009+ Tao Games
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  if not, write to the Free Software Foundation,
+Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/gpl.txt.
+
+-----------------------------------------------------------------------------
+*/
 #include "Matrix.h"
 
 namespace Apoc3D
 {
 	namespace Math
 	{
-		const __m128 _MASKSIGN_;	// - - - -
+		//const __m128 _MASKSIGN_;	// - - - -
 		const __m128 _ZERONE_;	// 1 0 0 1
 		const __m128 _0FFF_;		// 0 * * *
 		const __m128 Sign_PNPN;	// + - + -
@@ -21,8 +44,8 @@ namespace Apoc3D
 				uint Data1[4] = {0x80000000, 0x00000000, 0x80000000, 0x00000000};
 				memcpy((void*)&Sign_NPNP, Data1, sizeof(Data1));
 
-				uint Data2[4] = {0x80000000, 0x80000000, 0x80000000, 0x80000000};
-				memcpy((void*)&_MASKSIGN_, Data2, sizeof(Data2));
+				//uint Data2[4] = {0x80000000, 0x80000000, 0x80000000, 0x80000000};
+				//memcpy((void*)&_MASKSIGN_, Data2, sizeof(Data2));
 
 
 				float Data3[4] = {1.0f, 0.0f, 0.0f, 1.0f};
@@ -135,6 +158,33 @@ namespace Apoc3D
 
 			// That's all folks!
 			return *(float *)&Det;	// Det[0]
+		}
+
+
+		void Matrix::CreateBillboard(Matrix& res, Vector objectPosition, Vector cameraPosition, Vector cameraUpVector, Vector cameraForwardVector)
+		{
+			Vector difference = VecSub( objectPosition , cameraPosition);
+			Vector crossed;
+			Vector final;
+
+			float len =  VecLength(difference);
+			if (len < 0.0001f)				
+				difference = VecNegate(cameraForwardVector);
+			else
+				difference = VecDiv(difference, len);
+
+			crossed = VecCross(cameraUpVector, difference);
+			crossed = VecNormalize(crossed);
+			//Vector3.Cross(ref cameraUpVector, ref difference, out crossed);
+			//crossed.Normalize();
+			//Vector3.Cross(ref difference, ref crossed, out final);
+			final = VecCross(difference,crossed);
+			
+			
+			res._L1 = final;
+			res._L2 = crossed;
+			res._L3 = difference;
+			res._L4 = objectPosition;			
 		}
 	}
 }

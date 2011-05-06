@@ -26,10 +26,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 
 
+#include "Common.h"
+
 namespace Apoc3D
 {
 	namespace Math
 	{
+		const __m128 _MASKSIGN_;
+
 		/* Defines a four component vector.
 		*/
 		typedef __m128 Vector;
@@ -77,26 +81,17 @@ namespace Apoc3D
 		{
 			return _mm_div_ps(va, vb);
 		};
+		
+		inline Vector VecDiv(Vector va, float vb)
+		{
+			__m128 dd = _mm_set_ps1(vb);
+			return _mm_div_ps(va, dd);
+		};
 
 		inline Vector VecStore(float* pVec, Vector v)
 		{
 			_mm_store_ps(pVec, v);
 		};
-
-		/* Calculates the distance between two vectors.
-		*/
-		inline Vector VecDistance(Vector va, Vector vb)
-		{
-			Vector d = _mm_sub_ps(va, vb);
-			return Length(d);
-		}
-		/* Calculates the squared distance between two vectors.
-		*/
-		inline Vector VecDistanceSquared(Vector va, Vector vb)
-		{
-			Vector d = _mm_sub_ps(va, vb);
-			return LengthSquared(d);
-		}
 
 		/* Reverses the direction of a given vector.
 		*/
@@ -115,14 +110,14 @@ namespace Apoc3D
 		*/
 		inline Vector VecCross(Vector va, Vector vb)
 		{
-			F32vec4 l1, l2, m1, m2;
+			Vector l1, l2, m1, m2;
 			l1 = _mm_shuffle_ps(va,va, _MM_SHUFFLE(3,1,0,2));
 			l2 = _mm_shuffle_ps(vb,vb, _MM_SHUFFLE(3,0,2,1));
-			m2 = l1*l2;
+			m2 = _mm_mul_ps(l1,l2);
 			l1 = _mm_shuffle_ps(va,va, _MM_SHUFFLE(3,0,2,1));
 			l2 = _mm_shuffle_ps(vb,vb, _MM_SHUFFLE(3,1,0,2));
-			m1 = l1*l2;
-			return m1-m2;
+			m1 = _mm_mul_ps(l1,l2);
+			return _mm_sub_ps( m1,m2);
 		}
 
 		/*  Calculates the dot product of two vectors.
@@ -146,10 +141,18 @@ namespace Apoc3D
 #pragma warning(disable : 4640)
 		inline Vector rsqrt_nr(Vector a)
 		{
-			static const Vector fvecf0pt5(0.5f);
-			static const Vector fvecf3pt0(3.0f);
+			static const Vector fvecf0pt5 = VecLoad(0.5f);
+			static const Vector fvecf3pt0 = VecLoad(3.0f);
 			Vector Ra0 = _mm_rsqrt_ps(a);
-			return (fvecf0pt5 * Ra0) * (fvecf3pt0 - (a * Ra0) * Ra0);
+
+			Vector l = _mm_mul_ps(fvecf0pt5 , Ra0);
+			
+			Vector r = _mm_mul_ps(a , Ra0);
+			r = _mm_mul_ps(r , Ra0);
+
+			r = _mm_sub_ps(fvecf3pt0, r);
+
+			return _mm_sub_ps(l,r);// (fvecf0pt5 * Ra0) * (fvecf3pt0 - (a * Ra0) * Ra0);
 		}
 #pragma warning(pop)
 
@@ -157,19 +160,22 @@ namespace Apoc3D
 
 		/* Calculates the squared length of a specified vector.
 		*/
-		inline Vector VecLengthSquared(Vector va)
+		inline float VecLengthSquared(Vector va)
 		{
 			Vector t0 = _mm_mul_ps(va, va);
 			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(1,0,3,2));
 			Vector t2 = _mm_add_ps(t0, t1);
 			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(2,3,0,1));
 			Vector dot = _mm_add_ps(t3, t2);
-			return (dot);
+
+			float result;
+			_mm_store_ss(&result, dot);
+			return result;
 		};
 
 		/* Calculates the length of a specified vector.
 		*/
-		inline Vector VecLength(Vector va)
+		inline float VecLength(Vector va)
 		{
 			Vector t0 = _mm_mul_ps(va, va);
 			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(1,0,3,2));
@@ -177,10 +183,28 @@ namespace Apoc3D
 			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(2,3,0,1));
 			Vector dot = _mm_add_ps(t3, t2);
 			dot = _mm_sqrt_ps(dot);
-			return (dot);
+
+			float result;
+			_mm_store_ss(&result, dot);
+			return result;
 		};
 
 
+		
+		/* Calculates the distance between two vectors.
+		*/
+		inline float VecDistance(Vector va, Vector vb)
+		{
+			Vector d = _mm_sub_ps(va, vb);
+			return VecLength(d);
+		}
+		/* Calculates the squared distance between two vectors.
+		*/
+		inline float VecDistanceSquared(Vector va, Vector vb)
+		{
+			Vector d = _mm_sub_ps(va, vb);
+			return VecLengthSquared(d);
+		}
 
 
 		/* Converts a specified vector into a unit vector.
@@ -193,7 +217,7 @@ namespace Apoc3D
 			r = _mm_add_ps(t0,r);
 
 			Vector t1 = _mm_shuffle_ps(r,r, 1);
-			F32vec1 t = _mm_add_ss(t1, r);
+			Vector t = _mm_add_ss(t1, r);
 #ifdef ZERO_VECTOR
 
 			static const Vector vecZero = _mm_setzero_ps();
@@ -225,7 +249,7 @@ namespace Apoc3D
 		inline Vector VecReflect(Vector Incident, Vector Normal)
 		{
 			// Result = Incident - (2 * dot(Incident, Normal)) * Normal
-			Vector Result = Dot(Incident,Normal);
+			Vector Result = VecDot(Incident,Normal);
 			Result = _mm_add_ps(Result,Result);
 			Result = _mm_mul_ps(Result,Normal);
 			Result = _mm_sub_ps(Incident,Result);

@@ -24,7 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MATRIX_H
 #define MATRIX_H
 
+
 #include "Common.h"
+
+#include "Vector.h"
 
 #pragma pack(push,16)
 
@@ -338,6 +341,7 @@ namespace Apoc3D
 				res.M33 = z;
 			}
 
+			static void CreateBillboard(Matrix& res, Vector objectPosition, Vector cameraPosition, Vector cameraUpVector, Vector cameraForwardVector);
 
 
 		};
