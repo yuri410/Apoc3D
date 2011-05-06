@@ -53,6 +53,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;APOC3D_DLLEX;LITTLE_INDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>Common.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)\lib;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -82,16 +83,24 @@
     <ClInclude Include="Core\BoundingSphere.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Core\Camera.h" />
+    <ClInclude Include="Core\CoreCommon.h" />
+    <ClInclude Include="Core\RandomUtils.h" />
     <ClInclude Include="Core\Singleton.h" />
+    <ClInclude Include="Core\StringUtils.h" />
+    <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\Vector.h" />
+    <ClInclude Include="Vfs\Archive.h" />
     <ClInclude Include="FastDelegate\FastDelegate.h" />
     <ClInclude Include="FastDelegate\FastDelegateBind.h" />
     <ClInclude Include="GameClock.h" />
+    <ClInclude Include="Graphics\RenderSystem\Enums.h" />
     <ClInclude Include="Graphics\Renderable.h" />
     <ClInclude Include="Graphics\RenderOperation.h" />
     <ClInclude Include="Graphics\RenderOperationBuffer.h" />
     <ClInclude Include="Graphics\Mesh.h" />
     <ClInclude Include="Graphics\Model.h" />
     <ClInclude Include="Graphics\TextureManager.h" />
+    <ClInclude Include="Graphics\RenderSystem\Buffer\HardwareBuffer.h" />
     <ClInclude Include="IO\MaterialData.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResourceCompiler\Compiler.h" />
@@ -110,7 +119,7 @@
     <ClInclude Include="EffectSystem\EffectManager.h" />
     <ClInclude Include="EffectSystem\EffectAtom.h" />
     <ClInclude Include="Core\Frustum.h" />
-    <ClInclude Include="GameTime.h" />
+    <ClInclude Include="Core\GameTime.h" />
     <ClInclude Include="Graphics\GeometryData.h" />
     <ClInclude Include="Graphics\Material.h" />
     <ClInclude Include="nedmalloc\malloc.c" />
@@ -120,14 +129,20 @@
     <ClInclude Include="Graphics\SceneProcedure.h" />
     <ClInclude Include="Scene\SimpleSceneManager.h" />
     <ClInclude Include="Graphics\Texture.h" />
+    <ClInclude Include="Core\StringTable.h" />
+    <ClInclude Include="Vfs\PathUtils.h" />
+    <ClInclude Include="Vfs\VFSCommon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Core\RandomUtils.cpp" />
+    <ClCompile Include="Core\StringUtils.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />
     <ClCompile Include="Graphics\Model.cpp" />
     <ClCompile Include="Graphics\TextureManager.cpp" />
     <ClCompile Include="IO\MaterialData.cpp" />
+    <ClCompile Include="Math\Matrix.cpp" />
     <ClCompile Include="ResourceCompiler\Compiler.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\SceneObject.cpp" />
@@ -157,6 +172,8 @@
     <ClCompile Include="Graphics\SceneProcedure.cpp" />
     <ClCompile Include="Scene\SimpleSceneManager.cpp" />
     <ClCompile Include="Graphics\Texture.cpp" />
+    <ClCompile Include="Core\StringTable.cpp" />
+    <ClCompile Include="Vfs\PathUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="apoc3d.rc" />

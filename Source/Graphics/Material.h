@@ -104,7 +104,7 @@ namespace Apoc3D
 			void setEmissive(const Color4& value) { m_mtrlColor.Emissive = value; }
 			void setSpecular(const Color4& value) { m_mtrlColor.Specular = value; }
 			void setPower(const float value) { m_mtrlColor.Power = value; }
-	
+
 			void Load(istream &strm);
 			void Save(ostream &strm);
 

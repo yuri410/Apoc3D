@@ -70,7 +70,7 @@ namespace Apoc3D
 				}
 				return true;
 			}
-
+			
 			
 
 			/* Update the frustum with new view and projection matrix.
