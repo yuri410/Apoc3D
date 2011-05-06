@@ -184,7 +184,17 @@ namespace Apoc3D
 			res._L1 = final;
 			res._L2 = crossed;
 			res._L3 = difference;
-			res._L4 = objectPosition;			
+			res._L4 = objectPosition;
+
+			__asm
+			{
+				fld1
+				fstp	float ptr [eax+0x3C]
+				fldz
+				fst		float ptr [eax+0x0C]
+				fst		float ptr [eax+0x1C]
+				fstp	float ptr [eax+0x2C]
+			}
 		}
 	}
 }

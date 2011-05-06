@@ -29,8 +29,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Vector.h"
 
-#pragma pack(push,16)
-
 #define _mm_ror_ps(vec,i)	\
 	(((i)%4) ? (_mm_shuffle_ps(vec,vec, _MM_SHUFFLE((unsigned char)(i+3)%4,(unsigned char)(i+2)%4,(unsigned char)(i+1)%4,(unsigned char)(i+0)%4))) : (vec))
 #define _mm_rol_ps(vec,i)	\
@@ -55,6 +53,9 @@ namespace Apoc3D
 		public:
 			const static Matrix Identity;
 
+			
+#pragma pack(push,16)
+
 			union {
 				struct {
 					__m128 _L1, _L2, _L3, _L4;
@@ -66,7 +67,8 @@ namespace Apoc3D
 					float	M41, M42, M43, M44;
 				};
 			};
-
+			
+#pragma pack(pop)
 			Matrix(){}
 			Matrix(const float* elements)
 			{
@@ -262,6 +264,8 @@ namespace Apoc3D
 				res._L4 = _mm_sub_ps(ma._L4,  mb._L4);
 			}
 
+			/* Creates a matrix that rotates around the x-axis.
+			*/
 			static void CreateRotationX(Matrix& res, float angle)
 			{
 				__asm { 
@@ -283,6 +287,8 @@ namespace Apoc3D
 					fstp	float ptr [eax+0x3C]	// set element _44
 				}
 			}
+			/* Creates a matrix that rotates around the y-axis.
+			*/
 			static void CreateRotationY(Matrix& res, float angle)
 			{
 				__asm { 
@@ -304,6 +310,8 @@ namespace Apoc3D
 					fstp	float ptr [eax+0x3C]	// set element _44
 				}
 			}
+			/* Creates a matrix that rotates around the z-axis.
+			*/
 			static void CreateRotationZ(Matrix& res, float angle)
 			{
 				__asm { 
@@ -326,6 +334,97 @@ namespace Apoc3D
 				}
 			}
 
+			/* Creates a matrix that rotates around an arbitary axis.
+			*/
+			static void CreateRotationAxis(Matrix& res, Vector axis, float angle)
+			{
+				Vector dotAxis = VecDot(axis,axis);
+				Vector t0 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(0, 1, 0, 0));
+				Vector t1 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(0, 2, 2, 1));
+				Vector dotAxis2 = VecDot(t0,t1);
+
+				float sins, coss;
+				__asm
+				{
+					fld		float ptr angle
+					fsincos
+					fstp		float ptr coss
+					fstp		float ptr sins
+				}
+
+				Vector sin = VecLoad(sins);
+				Vector cos = VecLoad(coss);
+				Vector one = VecLoad(1);
+
+				Vector r0 = VecSub(one, dotAxis);
+				r0 = VecMul(cos, r0);
+				r0 = VecAdd(dotAxis, r0);
+
+				Vector r1left = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(0, 1, 2, 0));
+				Vector r1right = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(0, 1, 0, 2));
+				
+				Vector tmp = VecMul(cos, r1left);
+				r1left = VecSub(r1left, tmp);
+				r1right = VecMul(sin, r1right);
+				Vector r1 = VecAdd(r1left, r1right);
+
+
+				
+				r1left = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(0, 2, 0, 1));
+				r1right = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(0, 0, 2, 1));
+				tmp = VecMul(cos, r1left);
+				r1left = VecSub(r1left, tmp);
+				r1right = VecMul(sin, r1right);
+				Vector r2 = VecSub(r1left, r1right);
+
+				float buffer[4];
+				VecStore(buffer, r0);
+				__asm { 
+					xorps	xmm0,xmm0
+					mov 	eax, res
+
+					fld		float ptr buffer[0]
+					movaps	[eax+0x00], xmm0		// clear line _L1					
+					fstp	float ptr [eax+0x00]	// set element _11
+
+					fld		float ptr buffer[1]
+					movaps	[eax+0x10], xmm0		// clear line _L2					
+					fstp	float ptr [eax+0x14]	// set element _22
+
+					fld		float ptr buffer[2]
+					movaps	[eax+0x20], xmm0		// clear line _L3					
+					fst		float ptr [eax+0x28]	// set element _33
+
+					fld1
+					movaps	[eax+0x30], xmm0		// clear line _L4					
+					fstp	float ptr [eax+0x3C]	// set element _44
+				}
+
+				VecStore(buffer, r1);
+				__asm { 					
+					mov 	eax, res
+
+					fld		float ptr buffer[0]
+					fstp	float ptr [eax+0x04]	// set element _12
+					fld		float ptr buffer[1]
+					fstp	float ptr [eax+0x18]	// set element _23
+					fld		float ptr buffer[2]
+					fstp	float ptr [eax+0x30]	// set element _31
+				}
+
+				VecStore(buffer, r2);
+				__asm { 					
+					mov 	eax, res
+
+					fld		float ptr buffer[0]
+					fstp	float ptr [eax+0x08]	// set element _13
+					fld		float ptr buffer[1]
+					fstp	float ptr [eax+0x20]	// set element _21
+					fld		float ptr buffer[2]
+					fstp	float ptr [eax+0x34]	// set element _32
+				}
+			}
+
 			static void CreateTranslation(Matrix& res, float x, float y, float z)
 			{
 				res.LoadIdentity();
@@ -341,6 +440,8 @@ namespace Apoc3D
 				res.M33 = z;
 			}
 
+			/* Creates a spherical billboard that rotates around a specified object position.
+			*/
 			static void CreateBillboard(Matrix& res, Vector objectPosition, Vector cameraPosition, Vector cameraUpVector, Vector cameraForwardVector);
 
 
@@ -350,5 +451,4 @@ namespace Apoc3D
 	}
 }
 
-#pragma pack(pop)
 #endif
