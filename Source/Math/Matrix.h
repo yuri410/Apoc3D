@@ -405,19 +405,19 @@ namespace Apoc3D
 
 					fld		float ptr buffer[0]
 					movaps	[eax+0x00], xmm0		// clear line _L1					
-					fstp	float ptr [eax+0x00]	// set element _11
+					fstp	float ptr [eax+ELEM_ADDR(1,1)]	// set element _11
 
 					fld		float ptr buffer[1]
 					movaps	[eax+0x10], xmm0		// clear line _L2					
-					fstp	float ptr [eax+0x14]	// set element _22
+					fstp	float ptr [eax+ELEM_ADDR(2,2)]	// set element _22
 
 					fld		float ptr buffer[2]
 					movaps	[eax+0x20], xmm0		// clear line _L3					
-					fst		float ptr [eax+0x28]	// set element _33
+					fst		float ptr [eax+ELEM_ADDR(3,3)]	// set element _33
 
 					fld1
 					movaps	[eax+0x30], xmm0		// clear line _L4					
-					fstp	float ptr [eax+0x3C]	// set element _44
+					fstp	float ptr [eax+ELEM_ADDR(4,4)]	// set element _44
 				}
 
 				VecStore(buffer, r1);
@@ -425,11 +425,11 @@ namespace Apoc3D
 					mov 	eax, res
 
 					fld		float ptr buffer[0]
-					fstp	float ptr [eax+0x04]	// set element _12
+					fstp	float ptr [eax+ELEM_ADDR(1,2)]	// set element _12
 					fld		float ptr buffer[1]
-					fstp	float ptr [eax+0x18]	// set element _23
+					fstp	float ptr [eax+ELEM_ADDR(2,3)]	// set element _23
 					fld		float ptr buffer[2]
-					fstp	float ptr [eax+0x30]	// set element _31
+					fstp	float ptr [eax+ELEM_ADDR(3,1)]	// set element _31
 				}
 
 				VecStore(buffer, r2);
@@ -437,14 +437,16 @@ namespace Apoc3D
 					mov 	eax, res
 
 					fld		float ptr buffer[0]
-					fstp	float ptr [eax+0x08]	// set element _13
+					fstp	float ptr [eax+ELEM_ADDR(1,3)]	// set element _13
 					fld		float ptr buffer[1]
-					fstp	float ptr [eax+0x20]	// set element _21
+					fstp	float ptr [eax+ELEM_ADDR(2,1)]	// set element _21
 					fld		float ptr buffer[2]
-					fstp	float ptr [eax+0x34]	// set element _32
+					fstp	float ptr [eax+ELEM_ADDR(3,2)]	// set element _32
 				}
 			}
 
+			/* Creates a translation matrix using the specified offsets.
+			*/
 			static void CreateTranslation(Matrix& res, float x, float y, float z)
 			{
 				__asm
@@ -468,6 +470,8 @@ namespace Apoc3D
 					fstp	float ptr [eax+ELEM_ADDR(4,3)]
 				}
 			}
+			/* Creates a matrix that scales along the x-axis, y-axis, and y-axis.
+			*/
 			static void CreateScale(Matrix& res, float x, float y, float z)
 			{
 				__asm
@@ -521,7 +525,7 @@ namespace Apoc3D
 			*/
 			static void CreateBillboard(const Vector &objectPosition, const Vector &cameraPosition, const Vector &cameraUpVector, const Vector &cameraForwardVector, Matrix& res);
 
-
+			
 		};
 	
 #pragma pack(pop)
