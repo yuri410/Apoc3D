@@ -440,9 +440,37 @@ namespace Apoc3D
 				res.M33 = z;
 			}
 
+			/* Creates a left-handed, look-at matrix.
+			*/
+			static void CreateLootAtLH(Matrix& res, Vector cameraPosition, Vector cameraTarget, Vector up)
+			{
+				
+				Vector zaxis = VecSub(cameraTarget, cameraPosition);// Vector3.Normalize(cameraTarget - cameraPosition);
+				zaxis = VecNormalize(zaxis);
+
+				Vector xaxis = VecCross(up, zaxis);// Vector3.Normalize(Vector3.Cross(up, zaxis));
+				xaxis = VecNormalize(xaxis);
+				Vector yaxis = VecCross(zaxis, xaxis);//Vector3.Cross(zaxis, xaxis);
+				
+				//res._L1 = final;
+				//res._L2 = crossed;
+				//res._L3 = difference;
+				//res._L4 = objectPosition;
+				__asm 
+				{	
+					mov 	eax, res 
+					fld1	
+					fstp	float ptr [eax+0x3C]	
+					fldz	
+					fst		float ptr [eax+0x0C]	
+					fst		float ptr [eax+0x1C]	
+					fstp	float ptr [eax+0x2C]	
+				}
+			}
+
 			/* Creates a spherical billboard that rotates around a specified object position.
 			*/
-			static void CreateBillboard(Matrix& res, Vector objectPosition, Vector cameraPosition, Vector cameraUpVector, Vector cameraForwardVector);
+			static void CreateBillboard(const Vector &objectPosition, const Vector &cameraPosition, const Vector &cameraUpVector, const Vector &cameraForwardVector, Matrix& res);
 
 
 		};

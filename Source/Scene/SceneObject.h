@@ -26,8 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 
-#include "..\Common.h"
-#include "..\Graphics\IRenderable.h"
+#include "Common.h"
+#include "Graphics\Renderable.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Core;
@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		class _Export SceneObject : public IRenderable
+		class _Export SceneObject : public Renderable
 		{
 		private:
 			bool m_hasSubObjects;
@@ -58,7 +58,7 @@ namespace Apoc3D
 				m_parentNode = node;
 			}
 
-			virtual void PrepareVisibleObjects(Camera* camera, int32 level, BatchData* data) {}
+			virtual void PrepareVisibleObjects(const Camera* const camera, int32 level, BatchData* data) {}
 
 			virtual void Update(const GameTime* const &time) = 0;
 		};

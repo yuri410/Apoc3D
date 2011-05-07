@@ -25,7 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define RENDER_OPERATION_H
 #pragma once
 
-#include "..\Common.h"
+#include "Common.h"
+#include "Math\Matrix.h"
+
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {

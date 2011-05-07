@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Matrix.h"
 
+
 namespace Apoc3D
 {
 	namespace Math
@@ -161,7 +162,8 @@ namespace Apoc3D
 		}
 
 
-		void Matrix::CreateBillboard(Matrix& res, Vector objectPosition, Vector cameraPosition, Vector cameraUpVector, Vector cameraForwardVector)
+
+		void Matrix::CreateBillboard(const Vector &objectPosition, const Vector &cameraPosition, const Vector &cameraUpVector, const Vector &cameraForwardVector, Matrix& res)
 		{
 			Vector difference = VecSub( objectPosition , cameraPosition);
 			Vector crossed;
@@ -186,14 +188,15 @@ namespace Apoc3D
 			res._L3 = difference;
 			res._L4 = objectPosition;
 
-			__asm
-			{
-				fld1
-				fstp	float ptr [eax+0x3C]
-				fldz
-				fst		float ptr [eax+0x0C]
-				fst		float ptr [eax+0x1C]
-				fstp	float ptr [eax+0x2C]
+			__asm 
+			{	
+				mov 	eax, m 
+				fld1	
+				fstp	float ptr [eax+0x3C]	
+				fldz	
+				fst		float ptr [eax+0x0C]	
+				fst		float ptr [eax+0x1C]	
+				fstp	float ptr [eax+0x2C]	
 			}
 		}
 	}
