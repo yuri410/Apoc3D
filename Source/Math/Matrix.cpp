@@ -72,7 +72,7 @@ namespace Apoc3D
 			// Calculating the minterms for the first line.
 
 			// _mm_ror_ps is just a macro using _mm_shuffle_ps().
-			tt = _L4; tt2 = _mm_ror_ps(_L3,1); 
+			tt = Row4; tt2 = _mm_ror_ps(Row3,1); 
 			Vc = _mm_mul_ps(tt2,_mm_ror_ps(tt,0));					// V3'·V4
 			Va = _mm_mul_ps(tt2,_mm_ror_ps(tt,2));					// V3'·V4"
 			Vb = _mm_mul_ps(tt2,_mm_ror_ps(tt,3));					// V3'·V4^
@@ -81,22 +81,22 @@ namespace Apoc3D
 			r2 = _mm_sub_ps(_mm_ror_ps(Vb,2),_mm_ror_ps(Vb,0));		// V3^·V4' - V3'·V4^
 			r3 = _mm_sub_ps(_mm_ror_ps(Va,0),_mm_ror_ps(Vc,1));		// V3'·V4" - V3"·V4'
 
-			tt = _L2;
+			tt = Row2;
 			Va = _mm_ror_ps(tt,1);		sum = _mm_mul_ps(Va,r1);
 			Vb = _mm_ror_ps(tt,2);		sum = _mm_add_ps(sum,_mm_mul_ps(Vb,r2));
 			Vc = _mm_ror_ps(tt,3);		sum = _mm_add_ps(sum,_mm_mul_ps(Vc,r3));
 
 			// Calculating the determinant.
-			Det = _mm_mul_ps(sum,_L1);
+			Det = _mm_mul_ps(sum,Row1);
 			Det = _mm_add_ps(Det,_mm_movehl_ps(Det,Det));
 
-			Minterms._L1 = _mm_xor_ps(sum, Sign_PNPN);
+			Minterms.Row1 = _mm_xor_ps(sum, Sign_PNPN);
 
 			// Calculating the minterms of the second line (using previous results).
-			tt = _mm_ror_ps(_L1,1);		sum = _mm_mul_ps(tt,r1);
+			tt = _mm_ror_ps(Row1,1);		sum = _mm_mul_ps(tt,r1);
 			tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r2));
 			tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r3));
-			Minterms._L2 = _mm_xor_ps(sum, Sign_NPNP);
+			Minterms.Row2 = _mm_xor_ps(sum, Sign_NPNP);
 
 			// Testing the determinant.
 			Det = _mm_sub_ss(Det,_mm_shuffle_ps(Det,Det,1));
@@ -106,35 +106,35 @@ namespace Apoc3D
 #endif
 
 			// Calculating the minterms of the third line.
-			tt = _mm_ror_ps(_L1,1);
+			tt = _mm_ror_ps(Row1,1);
 			Va = _mm_mul_ps(tt,Vb);									// V1'·V2"
 			Vb = _mm_mul_ps(tt,Vc);									// V1'·V2^
-			Vc = _mm_mul_ps(tt,_L2);								// V1'·V2
+			Vc = _mm_mul_ps(tt,Row2);								// V1'·V2
 
 			r1 = _mm_sub_ps(_mm_ror_ps(Va,1),_mm_ror_ps(Vc,2));		// V1"·V2^ - V1^·V2"
 			r2 = _mm_sub_ps(_mm_ror_ps(Vb,2),_mm_ror_ps(Vb,0));		// V1^·V2' - V1'·V2^
 			r3 = _mm_sub_ps(_mm_ror_ps(Va,0),_mm_ror_ps(Vc,1));		// V1'·V2" - V1"·V2'
 
-			tt = _mm_ror_ps(_L4,1);		sum = _mm_mul_ps(tt,r1);
+			tt = _mm_ror_ps(Row4,1);		sum = _mm_mul_ps(tt,r1);
 			tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r2));
 			tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r3));
-			Minterms._L3 = _mm_xor_ps(sum,Sign_PNPN);
+			Minterms.Row3 = _mm_xor_ps(sum,Sign_PNPN);
 
 			// Dividing is FASTER than rcp_nr! (Because rcp_nr causes many register-memory RWs).
 			RDet = _mm_div_ss(_mm_load_ss((float *)&_ZERONE_), Det);
 			RDet = _mm_shuffle_ps(RDet,RDet,0x00);
 
 			// Devide the first 12 minterms with the determinant.
-			Minterms._L1 = _mm_mul_ps(Minterms._L1, RDet);
-			Minterms._L2 = _mm_mul_ps(Minterms._L2, RDet);
-			Minterms._L3 = _mm_mul_ps(Minterms._L3, RDet);
+			Minterms.Row1 = _mm_mul_ps(Minterms.Row1, RDet);
+			Minterms.Row2 = _mm_mul_ps(Minterms.Row2, RDet);
+			Minterms.Row3 = _mm_mul_ps(Minterms.Row3, RDet);
 
 			// Calculate the minterms of the forth line and devide by the determinant.
-			tt = _mm_ror_ps(_L3,1);		sum = _mm_mul_ps(tt,r1);
+			tt = _mm_ror_ps(Row3,1);		sum = _mm_mul_ps(tt,r1);
 			tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r2));
 			tt = _mm_ror_ps(tt,1);		sum = _mm_add_ps(sum,_mm_mul_ps(tt,r3));
-			Minterms._L4 = _mm_xor_ps(sum,Sign_NPNP);
-			Minterms._L4 = _mm_mul_ps(Minterms._L4, RDet);
+			Minterms.Row4 = _mm_xor_ps(sum,Sign_NPNP);
+			Minterms.Row4 = _mm_mul_ps(Minterms.Row4, RDet);
 
 #ifdef ZERO_SINGULAR
 			// Check if the matrix is inversable.
@@ -148,14 +148,14 @@ namespace Apoc3D
 #endif
 
 			// Now we just have to transpose the minterms matrix.
-			trns0 = _mm_unpacklo_ps(Minterms._L1,Minterms._L2);
-			trns1 = _mm_unpacklo_ps(Minterms._L3,Minterms._L4);
-			trns2 = _mm_unpackhi_ps(Minterms._L1,Minterms._L2);
-			trns3 = _mm_unpackhi_ps(Minterms._L3,Minterms._L4);
-			_L1 = _mm_movelh_ps(trns0,trns1);
-			_L2 = _mm_movehl_ps(trns1,trns0);
-			_L3 = _mm_movelh_ps(trns2,trns3);
-			_L4 = _mm_movehl_ps(trns3,trns2);
+			trns0 = _mm_unpacklo_ps(Minterms.Row1,Minterms.Row2);
+			trns1 = _mm_unpacklo_ps(Minterms.Row3,Minterms.Row4);
+			trns2 = _mm_unpackhi_ps(Minterms.Row1,Minterms.Row2);
+			trns3 = _mm_unpackhi_ps(Minterms.Row3,Minterms.Row4);
+			Row1 = _mm_movelh_ps(trns0,trns1);
+			Row2 = _mm_movehl_ps(trns1,trns0);
+			Row3 = _mm_movelh_ps(trns2,trns3);
+			Row4 = _mm_movehl_ps(trns3,trns2);
 
 			// That's all folks!
 			return *(float *)&Det;	// Det[0]
@@ -183,14 +183,14 @@ namespace Apoc3D
 			final = VecCross(difference,crossed);
 			
 			
-			res._L1 = final;
-			res._L2 = crossed;
-			res._L3 = difference;
-			res._L4 = objectPosition;
+			res.Row1 = final;
+			res.Row2 = crossed;
+			res.Row3 = difference;
+			res.Row4 = objectPosition;
 
 			__asm 
 			{	
-				mov 	eax, m 
+				mov 	eax, res 
 				fld1	
 				fstp	float ptr [eax+0x3C]	
 				fldz	

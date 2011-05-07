@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 
 
-#include "Common.h"
+#include <xmmintrin.h>
 
 namespace Apoc3D
 {
@@ -38,13 +38,13 @@ namespace Apoc3D
 		*/
 		typedef __m128 Vector;
 
-		inline Vector VecLoad(const float* pVec)
+		inline Vector VecLoad(const float vec[4])
 		{
-			return _mm_load_ps(pVec);
+			return _mm_load_ps(&vec[0]);
 		};
 		inline Vector VecLoad(float f)
 		{
-			return _mm_set_ps1(f);
+			return _mm_set1_ps(f);
 		};
 
 		/* Adds two vectors.
@@ -72,7 +72,7 @@ namespace Apoc3D
 		*/
 		inline Vector VecMul(Vector va, float vb)
 		{
-			Vector scale = _mm_set_ps(vb,vb,vb,vb);
+			Vector scale = _mm_set1_ps(vb);
 			return _mm_mul_ps(va, scale);			
 		}
 
@@ -84,7 +84,7 @@ namespace Apoc3D
 		
 		inline Vector VecDiv(Vector va, float vb)
 		{
-			__m128 dd = _mm_set_ps1(vb);
+			__m128 dd = _mm_set1_ps(vb);
 			return _mm_div_ps(va, dd);
 		};
 
@@ -122,17 +122,34 @@ namespace Apoc3D
 
 		/*  Calculates the dot product of two vectors.
 		*/
-		inline Vector VecDot(Vector va, Vector vb)
+		inline float VecDot(Vector va, Vector vb)
 		{
 			Vector t0 = _mm_mul_ps(va, vb);
-			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(1,0,3,2));
-			Vector t2 = _mm_add_ps(t0, t1);
-			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(2,3,0,1));
-			Vector dot = _mm_add_ps(t3, t2);
-			return (dot);
+			
+			Vector t1 = _mm_shuffle_ps(t0, t0, 1);
+			Vector t2 = _mm_add_ss(t0, t1);
+			Vector t3 = _mm_shuffle_ps(t2, t2, 2);
+			Vector dot = _mm_add_ss(t3, t2);
+
+			float result;
+			_mm_store_ss(&result, dot);
+			return result;
 		};
 
+		
+		/*  Calculates the dot product of two vectors.
+		*/
+		inline Vector VecDot2(Vector va, Vector vb)
+		{
+			Vector t0 = _mm_mul_ps(va, vb);
+			
+			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(3,1,0,0));
+			Vector t2 = _mm_add_ps(t0, t1);
+			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(3,2,2,1));
+			Vector dot = _mm_add_ps(t3, t2);
 
+			return dot;
+		};
 
 		
 		/*	NewtonRaphson Reciprocal Square Root
@@ -162,15 +179,7 @@ namespace Apoc3D
 		*/
 		inline float VecLengthSquared(Vector va)
 		{
-			Vector t0 = _mm_mul_ps(va, va);
-			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(1,0,3,2));
-			Vector t2 = _mm_add_ps(t0, t1);
-			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(2,3,0,1));
-			Vector dot = _mm_add_ps(t3, t2);
-
-			float result;
-			_mm_store_ss(&result, dot);
-			return result;
+			return VecDot(va, va);
 		};
 
 		/* Calculates the length of a specified vector.
@@ -178,11 +187,13 @@ namespace Apoc3D
 		inline float VecLength(Vector va)
 		{
 			Vector t0 = _mm_mul_ps(va, va);
-			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(1,0,3,2));
-			Vector t2 = _mm_add_ps(t0, t1);
-			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(2,3,0,1));
-			Vector dot = _mm_add_ps(t3, t2);
-			dot = _mm_sqrt_ps(dot);
+
+			Vector t1 = _mm_shuffle_ps(t0, t0, 1);
+			Vector t2 = _mm_add_ss(t0, t1);
+			Vector t3 = _mm_shuffle_ps(t2, t2, 2);
+			Vector dot = _mm_add_ss(t3, t2);
+
+			dot = _mm_sqrt_ss(dot);
 
 			float result;
 			_mm_store_ss(&result, dot);
@@ -226,16 +237,6 @@ namespace Apoc3D
 			t = rsqrt_nr(t);
 #endif
 			return _mm_mul_ps(va, _mm_shuffle_ps(t,t,0x00));
-
-			//Vector t0 = _mm_mul_ps(va, va);
-			//Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(1,0,3,2));
-			//Vector t2 = _mm_add_ps(t0, t1);
-			//Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(2,3,0,1));
-			//Vector dot = _mm_add_ps(t3, t2);
-			//dot = _mm_rsqrt_ps(dot);
-			//
-			//dot = _mm_mul_ps(va, dot);
-			//return (dot);
 		};
 
 
@@ -249,7 +250,7 @@ namespace Apoc3D
 		inline Vector VecReflect(Vector Incident, Vector Normal)
 		{
 			// Result = Incident - (2 * dot(Incident, Normal)) * Normal
-			Vector Result = VecDot(Incident,Normal);
+			Vector Result = VecDot2(Incident,Normal);
 			Result = _mm_add_ps(Result,Result);
 			Result = _mm_mul_ps(Result,Normal);
 			Result = _mm_sub_ps(Incident,Result);

@@ -25,6 +25,55 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 
 
+void* memcpy_sse( char* pDest, const char* pSrc, size_t nBytes )
+{
+	assert( nBytes >= (15 + 64) );
+	void* pDestOrg = pDest;
+
+	uint nAlignDest = (16 - (uintptr_t)pDest) & 15;
+	memcpy( pDest, pSrc, nAlignDest );
+	pDest += nAlignDest;
+	pSrc  += nAlignDest;
+	nBytes -= nAlignDest;
+
+	uint nLoops = nBytes >> 6; // no. of loops to copy 64 bytes
+	nBytes -= nLoops << 6;
+	if( ((uintptr_t)pSrc & 15) == 0 )
+	{
+		for( int i = nLoops; i > 0; --i )
+		{
+			__m128 tmp0 = _mm_load_ps( (float*)(pSrc + 0 ) );
+			__m128 tmp1 = _mm_load_ps( (float*)(pSrc + 16) );
+			__m128 tmp2 = _mm_load_ps( (float*)(pSrc + 32) );
+			__m128 tmp3 = _mm_load_ps( (float*)(pSrc + 48) );
+			_mm_store_ps( (float*)(pDest + 0 ), tmp0 );
+			_mm_store_ps( (float*)(pDest + 16), tmp1 );
+			_mm_store_ps( (float*)(pDest + 32), tmp2 );
+			_mm_store_ps( (float*)(pDest + 48), tmp3 );
+			pSrc  += 64;
+			pDest += 64;
+		}
+	}
+	else
+	{
+		for( int i = nLoops; i > 0; --i )
+		{
+			__m128 tmp0 = _mm_loadu_ps( (float*)(pSrc + 0 ) );
+			__m128 tmp1 = _mm_loadu_ps( (float*)(pSrc + 16) );
+			__m128 tmp2 = _mm_loadu_ps( (float*)(pSrc + 32) );
+			__m128 tmp3 = _mm_loadu_ps( (float*)(pSrc + 48) );
+			_mm_store_ps( (float*)(pDest + 0 ), tmp0 );
+			_mm_store_ps( (float*)(pDest + 16), tmp1 );
+			_mm_store_ps( (float*)(pDest + 32), tmp2 );
+			_mm_store_ps( (float*)(pDest + 48), tmp3 );
+			pSrc  += 64;
+			pDest += 64;
+		}
+	}
+	memcpy( pDest, pSrc, nBytes );
+	return pDestOrg;
+}
+
 //void memcpyf(void* src, void* dst, uint s)
 //{
 //	memcpy(src,dst,s);

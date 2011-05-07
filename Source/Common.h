@@ -127,7 +127,6 @@ typedef unsigned long long BatchHandle;
 #include <iomanip>
 #include <sstream>
 
-#include <xmmintrin.h>
 
 #include "..\lib\FastDelegate\FastDelegate.h"
 #pragma warning(pop)
@@ -144,6 +143,8 @@ namespace Apoc3D
 	class Game;
 	class GameClock;
 	class GameWindow;
+
+	void* memcpy_sse( char* pDest, const char* pSrc, size_t nBytes );
 
 	//typedef D3DXMATRIX Matrix;
 	//typedef D3DXPLANE Plane;

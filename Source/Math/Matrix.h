@@ -37,12 +37,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define _mm_abs_ps(vec)		_mm_andnot_ps(_MASKSIGN_,vec)
 #define _mm_neg_ps(vec)		_mm_xor_ps(_MASKSIGN_,vec)
 
-
 namespace Apoc3D
 {
 	namespace Math
 	{
-		
+
+#define ELEM_ADDR(i,j) ((i-1)*16 + (16-j*4))
+#pragma pack(push, 16)
 		/* Defines a 4x4 matrix.
 		*/
 		class Matrix
@@ -53,76 +54,93 @@ namespace Apoc3D
 		public:
 			const static Matrix Identity;
 
-			
-#pragma pack(push,16)
-
-			union {
-				struct {
-					__m128 _L1, _L2, _L3, _L4;
-				};
-				struct {
-					float	M11, M12, M13, M14;
-					float	M21, M22, M23, M24;
-					float	M31, M32, M33, M34;
-					float	M41, M42, M43, M44;
-				};
-			};
-			
-#pragma pack(pop)
+			__m128 Row1;
+			__m128 Row2;
+			__m128 Row3;
+			__m128 Row4;
+				
 			Matrix(){}
-			Matrix(const float* elements)
-			{
-				M11 = elements[0];
-				M12 = elements[1];
-				M13 = elements[2];
-				M14 = elements[3];
-				M21 = elements[4];
-				M22 = elements[5];
-				M23 = elements[6];
-				M24 = elements[7];
-				M31 = elements[8];
-				M32 = elements[9];
-				M33 = elements[10];
-				M34 = elements[11];
-				M41 = elements[12];
-				M42 = elements[13];
-				M43 = elements[14];
-				M44 = elements[15];
-
+			Matrix(const float elements[16])
+			{				
+				Row1 = _mm_load_ps(&elements[0]);
+				Row2 = _mm_load_ps(&elements[4]);
+				Row3 = _mm_load_ps(&elements[8]);
+				Row4 = _mm_load_ps(&elements[12]);
 			}
-			Matrix(const Matrix &m) : _L1(m._L1), _L2(m._L2), _L3(m._L3), _L4(m._L4) {}
+			Matrix(const Matrix &m) : Row1(m.Row1), Row2(m.Row2), Row3(m.Row3), Row4(m.Row4) {}
 			Matrix(float f11, float f12, float f13, float f14,
 				float f21, float f22, float f23, float f24,
 				float f31, float f32, float f33, float f34,
 				float f41, float f42, float f43, float f44)
 			{
-				_L1 = _mm_set_ps(f14, f13, f12, f11);
-				_L2 = _mm_set_ps(f24, f23, f22, f21);
-				_L3 = _mm_set_ps(f34, f33, f32, f31);
-				_L4 = _mm_set_ps(f44, f43, f42, f41);
+				__asm
+				{
+					mov		eax, this
+					fld		float ptr f11
+					fstp	float ptr [eax+ELEM_ADDR(1,1)]
+					fld		float ptr f12;
+					fstp	float ptr [eax+ELEM_ADDR(1,2)]
+					fld		float ptr f13;
+					fstp	float ptr [eax+ELEM_ADDR(1,3)]
+					fld		float ptr f14;
+					fstp	float ptr [eax+ELEM_ADDR(1,4)]
+
+					fld		float ptr f21;
+					fstp	float ptr [eax+ELEM_ADDR(2,1)]
+					fld		float ptr f22;
+					fstp	float ptr [eax+ELEM_ADDR(2,2)]
+					fld		float ptr f23;
+					fstp	float ptr [eax+ELEM_ADDR(2,3)]
+					fld		float ptr f24;
+					fstp	float ptr [eax+ELEM_ADDR(2,4)]
+
+					fld		float ptr f31;
+					fstp	float ptr [eax+ELEM_ADDR(3,1)]
+					fld		float ptr f32;
+					fstp	float ptr [eax+ELEM_ADDR(3,2)]
+					fld		float ptr f33;
+					fstp	float ptr [eax+ELEM_ADDR(3,3)]
+					fld		float ptr f34;
+					fstp	float ptr [eax+ELEM_ADDR(3,4)]
+
+					fld		float ptr f41;
+					fstp	float ptr [eax+ELEM_ADDR(4,1)]
+					fld		float ptr f42;
+					fstp	float ptr [eax+ELEM_ADDR(4,2)]
+					fld		float ptr f43;
+					fstp	float ptr [eax+ELEM_ADDR(4,3)]
+					fld		float ptr f44;
+					fstp	float ptr [eax+ELEM_ADDR(4,4)]
+				}
 			}
 
 
-			void LoadIdentity() { memcpy(this, &Identity, sizeof(Identity)); }
+			void LoadIdentity()
+			{
+				Row1 = Identity.Row1;
+				Row2 = Identity.Row2;
+				Row3 = Identity.Row3;
+				Row4 = Identity.Row4;
+			}
 
 			/* Transposes the matrix
 			*/
-			void Transpose() { _MM_TRANSPOSE4_PS(_L1, _L2, _L3, _L4); }
+			void Transpose() { _MM_TRANSPOSE4_PS(Row1, Row2, Row3, Row4); }
 			/* Inverts the matrix.
 			*/
-			float Inverse();
+			float Inverse(); // TODO: Rewrite
 			
 
 			/* Calculates the determinant of the matrix.
 			*/
-			float Determinant()
+			float Determinant() // TODO: Rewrite
 			{
 				__m128 Va,Vb,Vc;
 				__m128 r1,r2,r3,t1,t2,sum;
 				__m128 Det;
 
 				// First, Let's calculate the first four minterms of the first line
-				t1 = _L4; t2 = _mm_ror_ps(_L3,1); 
+				t1 = Row4; t2 = _mm_ror_ps(Row3,1); 
 				Vc = _mm_mul_ps(t2,_mm_ror_ps(t1,0));					// V3'·V4
 				Va = _mm_mul_ps(t2,_mm_ror_ps(t1,2));					// V3'·V4"
 				Vb = _mm_mul_ps(t2,_mm_ror_ps(t1,3));					// V3'·V4^
@@ -131,12 +149,12 @@ namespace Apoc3D
 				r2 = _mm_sub_ps(_mm_ror_ps(Vb,2),_mm_ror_ps(Vb,0));		// V3^·V4' - V3'·V4^
 				r3 = _mm_sub_ps(_mm_ror_ps(Va,0),_mm_ror_ps(Vc,1));		// V3'·V4" - V3"·V4'
 
-				Va = _mm_ror_ps(_L2,1);		sum = _mm_mul_ps(Va,r1);
+				Va = _mm_ror_ps(Row2,1);		sum = _mm_mul_ps(Va,r1);
 				Vb = _mm_ror_ps(Va,1);		sum = _mm_add_ps(sum,_mm_mul_ps(Vb,r2));
 				Vc = _mm_ror_ps(Vb,1);		sum = _mm_add_ps(sum,_mm_mul_ps(Vc,r3));
 
 				// Now we can calculate the determinant:
-				Det = _mm_mul_ps(sum,_L1);
+				Det = _mm_mul_ps(sum,Row1);
 				Det = _mm_add_ps(Det,_mm_movehl_ps(Det,Det));
 				Det = _mm_sub_ss(Det,_mm_shuffle_ps(Det,Det,1));
 
@@ -145,91 +163,91 @@ namespace Apoc3D
 				return result;
 			}
 
-			void ZeroMatrix() { _L1 = _L2 = _L3 = _L4 = _mm_setzero_ps(); }
+			void ZeroMatrix() { Row1 = Row2 = Row3 = Row4 = _mm_setzero_ps(); }
 
 			/* Determines the product of two matrices.
 			*/
 			static void Multiply(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
 				__m128 Result;
-				__m128 B1 = mb._L1, B2 = mb._L2, B3 = mb._L3, B4 = mb._L4;
+				__m128 B1 = mb.Row1, B2 = mb.Row2, B3 = mb.Row3, B4 = mb.Row4;
 				__m128 t0, t1;
 
-				
-				t0 = _mm_set_ps1(ma.M11);				
+
+				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE(0,0,0,0));// m11
 				Result = _mm_mul_ps(t0, B1);
 
-				t0 = _mm_set_ps1(ma.M12);
+				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE(1,1,1,1));// m12
 				t1 = _mm_mul_ps(t0, B2);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_set_ps1(ma.M13);
+				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE(2,2,2,2));// m13
 				t1 = _mm_mul_ps(t0, B3);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_set_ps1(ma.M14);
+				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE(3,3,3,3));// m14
 				t1 = _mm_mul_ps(t0, B4);
 				Result = _mm_add_ps(Result, t1);
 
-				res._L1 = Result;
+				res.Row1 = Result;
 
-
-				t0 = _mm_set_ps1(ma.M21);
+				//_mm_store_ps(buffer, ma.Row2);
+				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE(0,0,0,0));// m21
 				Result = _mm_mul_ps(t0, B1);
 
-				t0 = _mm_set_ps1(ma.M22);
+				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE(1,1,1,1));// m21
 				t1 = _mm_mul_ps(t0, B2);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_set_ps1(ma.M23);
+				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE(2,2,2,2));// m21
 				t1 = _mm_mul_ps(t0, B3);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_set_ps1(ma.M24);
+				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE(3,3,3,3));// m21
 				t1 = _mm_mul_ps(t0, B4);
 				Result = _mm_add_ps(Result, t1);
 
-				res._L2 = Result;
+				res.Row2 = Result;
 
 
 
-
-				t0 = _mm_set_ps1(ma.M31);
+				//_mm_store_ps(buffer, ma.Row3);
+				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE(0,0,0,0));// M31
 				Result = _mm_mul_ps(t0, B1);
 
-				t0 = _mm_set_ps1(ma.M32);
+				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE(1,1,1,1));// M32
 				t1 = _mm_mul_ps(t0, B2);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_set_ps1(ma.M33);
+				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE(2,2,2,2));// M33
 				t1 = _mm_mul_ps(t0, B3);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_set_ps1(ma.M34);
+				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE(3,3,3,3));// M34
 				t1 = _mm_mul_ps(t0, B4);
 				Result = _mm_add_ps(Result, t1);
 
-				res._L3 = Result;
+				res.Row3 = Result;
 
 
 
-
-				t0 = _mm_set_ps1(ma.M41);
+				//_mm_store_ps(buffer, ma.Row4);
+				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE(0,0,0,0));// M41
 				Result = _mm_mul_ps(t0, B1);
 
-				t0 = _mm_set_ps1(ma.M42);
+				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE(1,1,1,1));// M42
 				t1 = _mm_mul_ps(t0, B2);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_set_ps1(ma.M43);
+				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE(2,2,2,2));// M43
 				t1 = _mm_mul_ps(t0, B3);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_set_ps1(ma.M44);
+				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE(3,3,3,3));// M44
 				t1 = _mm_mul_ps(t0, B4);
 				Result = _mm_add_ps(Result, t1);
 
-				res._L4 = Result;
+				res.Row4 = Result;
 
 			}
 
@@ -237,77 +255,79 @@ namespace Apoc3D
 			*/
 			static void Multiply(Matrix& res, const Matrix& ma, float mb)
 			{
-				__m128 b = _mm_set_ps(mb,mb,mb,mb);
-				res._L1 = _mm_mul_ps(ma._L1,b);
-				res._L2 = _mm_mul_ps(ma._L2,b);
-				res._L3 = _mm_mul_ps(ma._L3,b);
-				res._L4 = _mm_mul_ps(ma._L4,b);
+				__m128 b = _mm_set1_ps(mb);
+				res.Row1 = _mm_mul_ps(ma.Row1,b);
+				res.Row2 = _mm_mul_ps(ma.Row2,b);
+				res.Row3 = _mm_mul_ps(ma.Row3,b);
+				res.Row4 = _mm_mul_ps(ma.Row4,b);
 			}
 
 			/* Determines the sum of two matrices.
 			*/
 			static void Add(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
-				res._L1 = _mm_add_ps(ma._L1,  mb._L1);
-				res._L2 = _mm_add_ps(ma._L2,  mb._L2);
-				res._L3 = _mm_add_ps(ma._L3,  mb._L3);
-				res._L4 = _mm_add_ps(ma._L4,  mb._L4);
+				res.Row1 = _mm_add_ps(ma.Row1,  mb.Row1);
+				res.Row2 = _mm_add_ps(ma.Row2,  mb.Row2);
+				res.Row3 = _mm_add_ps(ma.Row3,  mb.Row3);
+				res.Row4 = _mm_add_ps(ma.Row4,  mb.Row4);
 			}
 
 			/* Determines the difference between two matrices.
 			*/
 			static void Subtract(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
-				res._L1 = _mm_sub_ps(ma._L1,  mb._L1);
-				res._L2 = _mm_sub_ps(ma._L2,  mb._L2);
-				res._L3 = _mm_sub_ps(ma._L3,  mb._L3);
-				res._L4 = _mm_sub_ps(ma._L4,  mb._L4);
+				res.Row1 = _mm_sub_ps(ma.Row1,  mb.Row1);
+				res.Row2 = _mm_sub_ps(ma.Row2,  mb.Row2);
+				res.Row3 = _mm_sub_ps(ma.Row3,  mb.Row3);
+				res.Row4 = _mm_sub_ps(ma.Row4,  mb.Row4);
 			}
 
 			/* Creates a matrix that rotates around the x-axis.
 			*/
 			static void CreateRotationX(Matrix& res, float angle)
 			{
-				__asm { 
+				__asm
+				{
 					xorps	xmm0,xmm0
 					mov 	eax, res;
 					fld		float ptr angle
-					movaps	[eax+0x10], xmm0		// clear line _L2
+					movaps	[eax+ELEM_ADDR(2,1)], xmm0		// clear line _L2
 					fsincos
-					fst		float ptr [eax+0x14]	// set element _22
-					movaps	[eax+0x20], xmm0		// clear line _L3
-					fstp	float ptr [eax+0x28]	// set element _33
-					fst		float ptr [eax+0x18]	// set element _23
+					fst		float ptr [eax+ELEM_ADDR(2,2)]	// set element _22
+					movaps	[eax+ELEM_ADDR(3,1)], xmm0		// clear line _L3
+					fstp	float ptr [eax+ELEM_ADDR(3,3)]	// set element _33
+					fst		float ptr [eax+ELEM_ADDR(2,3)]	// set element _23
 					fchs
-					movaps	[eax+0x00], xmm0		// clear line _L1
-					fstp	float ptr [eax+0x24]	// set element _32
+					movaps	[eax+ELEM_ADDR(1,1)], xmm0		// clear line _L1
+					fstp	float ptr [eax+ELEM_ADDR(3,2)]	// set element _32
 					fld1
-					fst		float ptr [eax+0x00]	// set element _11
-					movaps	[eax+0x30], xmm0		// clear line _L4
-					fstp	float ptr [eax+0x3C]	// set element _44
+					fst		float ptr [eax+ELEM_ADDR(1,1)]	// set element _11
+					movaps	[eax+ELEM_ADDR(4,1)], xmm0		// clear line _L4
+					fstp	float ptr [eax+ELEM_ADDR(4,4)]	// set element _44
 				}
 			}
 			/* Creates a matrix that rotates around the y-axis.
 			*/
 			static void CreateRotationY(Matrix& res, float angle)
 			{
-				__asm { 
+				__asm
+				{ 
 					xorps	xmm0,xmm0
 					mov 	eax, res
 					fld		float ptr angle
-					movaps	[eax+0x00], xmm0		// clear line _L1
+					movaps	[eax+ELEM_ADDR(1,1)], xmm0		// clear line _L1
 					fsincos
-					fst		float ptr [eax+0x00]	// set element _11
-					movaps	[eax+0x20], xmm0		// clear line _L3
-					fstp	float ptr [eax+0x28]	// set element _33
-					fst		float ptr [eax+0x20]	// set element _31
+					fst		float ptr [eax+ELEM_ADDR(1,1)]	// set element _11
+					movaps	[eax+ELEM_ADDR(3,1)], xmm0		// clear line _L3
+					fstp	float ptr [eax+ELEM_ADDR(3,3)]	// set element _33
+					fst		float ptr [eax+ELEM_ADDR(3,1)]	// set element _31
 					fchs
-					movaps	[eax+0x10], xmm0		// clear line _L2
-					fstp	float ptr [eax+0x08]	// set element _13
+					movaps	[eax+ELEM_ADDR(2,1)], xmm0		// clear line _L2
+					fstp	float ptr [eax+ELEM_ADDR(1,3)]	// set element _13
 					fld1
-					fst		float ptr [eax+0x14]	// set element _22
-					movaps	[eax+0x30], xmm0		// clear line _L4
-					fstp	float ptr [eax+0x3C]	// set element _44
+					fst		float ptr [eax+ELEM_ADDR(2,2)]	// set element _22
+					movaps	[eax+ELEM_ADDR(4,1)], xmm0		// clear line _L4
+					fstp	float ptr [eax+ELEM_ADDR(4,4)]	// set element _44
 				}
 			}
 			/* Creates a matrix that rotates around the z-axis.
@@ -318,19 +338,19 @@ namespace Apoc3D
 					xorps	xmm0,xmm0
 					mov 	eax, res
 					fld		float ptr angle
-					movaps	[eax+0x00], xmm0		// clear line _L1
+					movaps	[eax+ELEM_ADDR(1,1)], xmm0		// clear line _L1
 					fsincos
-					fst		float ptr [eax+0x00]	// set element _11
-					movaps	[eax+0x10], xmm0		// clear line _L2
-					fstp	float ptr [eax+0x14]	// set element _22
-					fst		float ptr [eax+0x04]	// set element _12
+					fst		float ptr [eax+ELEM_ADDR(1,1)]	// set element _11
+					movaps	[eax+ELEM_ADDR(2,1)], xmm0		// clear line _L2
+					fstp	float ptr [eax+ELEM_ADDR(2,2)]	// set element _22
+					fst		float ptr [eax+ELEM_ADDR(1,2)]	// set element _12
 					fchs
-					movaps	[eax+0x20], xmm0		// clear line _L3
-					fstp	float ptr [eax+0x10]	// set element _21
+					movaps	[eax+ELEM_ADDR(3,1)], xmm0		// clear line _L3
+					fstp	float ptr [eax+ELEM_ADDR(2,1)]	// set element _21
 					fld1
-					fst		float ptr [eax+0x28]	// set element _33
-					movaps	[eax+0x30], xmm0		// clear line _L4
-					fstp	float ptr [eax+0x3C]	// set element _44
+					fst		float ptr [eax+ELEM_ADDR(3,3)]	// set element _33
+					movaps	[eax+ELEM_ADDR(4,1)], xmm0		// clear line _L4
+					fstp	float ptr [eax+ELEM_ADDR(4,4)]	// set element _44
 				}
 			}
 
@@ -338,10 +358,10 @@ namespace Apoc3D
 			*/
 			static void CreateRotationAxis(Matrix& res, Vector axis, float angle)
 			{
-				Vector dotAxis = VecDot(axis,axis);
+				Vector dotAxis = VecDot2(axis,axis);
 				Vector t0 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(0, 1, 0, 0));
 				Vector t1 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(0, 2, 2, 1));
-				Vector dotAxis2 = VecDot(t0,t1);
+				Vector dotAxis2 = VecDot2(t0,t1);
 
 				float sins, coss;
 				__asm
@@ -427,24 +447,53 @@ namespace Apoc3D
 
 			static void CreateTranslation(Matrix& res, float x, float y, float z)
 			{
-				res.LoadIdentity();
-				res.M41 = x;
-				res.M42 = y;
-				res.M43 = z;
+				__asm
+				{ 
+					xorps	xmm0,xmm0
+					mov 	eax, res					
+					fld1
+					movaps	[eax+ELEM_ADDR(1,1)], xmm0		// clear line _L1
+					fst		float ptr [eax+ELEM_ADDR(1,1)]	// set element _11
+					movaps	[eax+ELEM_ADDR(2,1)], xmm0		// clear line _L2
+					fst		float ptr [eax+ELEM_ADDR(2,2)]	// set element _22
+					movaps	[eax+ELEM_ADDR(3,1)], xmm0		// clear line _L3
+					fst		float ptr [eax+ELEM_ADDR(3,3)]	// set element _33
+					fstp	float ptr [eax+ELEM_ADDR(4,4)]	// set element _44
+
+					fld		float ptr x;
+					fstp	float ptr [eax+ELEM_ADDR(4,1)]
+					fld		float ptr y;
+					fstp	float ptr [eax+ELEM_ADDR(4,2)]
+					fld		float ptr z;
+					fstp	float ptr [eax+ELEM_ADDR(4,3)]
+				}
 			}
 			static void CreateScale(Matrix& res, float x, float y, float z)
 			{
-				res.LoadIdentity();
-				res.M11 = x;
-				res.M22 = y;
-				res.M33 = z;
+				__asm
+				{ 
+					xorps	xmm0,xmm0
+					mov 	eax, res					
+					
+					fld		float ptr x;
+					movaps	[eax+ELEM_ADDR(1,1)], xmm0		// clear line _L1
+					fst		float ptr [eax+ELEM_ADDR(1,1)]	// set element _11
+					fld		float ptr y;
+					movaps	[eax+ELEM_ADDR(2,1)], xmm0		// clear line _L2
+					fst		float ptr [eax+ELEM_ADDR(2,2)]	// set element _22
+					fld		float ptr z;
+					movaps	[eax+ELEM_ADDR(3,1)], xmm0		// clear line _L3
+					fst		float ptr [eax+ELEM_ADDR(3,3)]	// set element _33										
+					fld1
+					movaps	[eax+ELEM_ADDR(4,1)], xmm0		// clear line _L4
+					fstp	float ptr [eax+ELEM_ADDR(4,4)]	// set element _44
+				}
 			}
 
 			/* Creates a left-handed, look-at matrix.
 			*/
-			static void CreateLootAtLH(Matrix& res, Vector cameraPosition, Vector cameraTarget, Vector up)
+			static void CreateLootAtLH(Matrix& res, Vector cameraPosition, Vector cameraTarget, Vector up) // TODO:Rewrite
 			{
-				
 				Vector zaxis = VecSub(cameraTarget, cameraPosition);// Vector3.Normalize(cameraTarget - cameraPosition);
 				zaxis = VecNormalize(zaxis);
 
@@ -475,6 +524,7 @@ namespace Apoc3D
 
 		};
 	
+#pragma pack(pop)
 
 	}
 }
