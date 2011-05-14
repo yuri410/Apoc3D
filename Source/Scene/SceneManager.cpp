@@ -25,11 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneManager.h"
 
 #include "SceneObject.h"
-#include "..\Graphics\RenderOperationBuffer.h"
-#include "..\Graphics\RenderOperation.h"
-#include "..\Graphics\Material.h"
-#include "..\Graphics\GeometryData.h"
-#include "..\GameTime.h"
+#include "Graphics\RenderOperationBuffer.h"
+#include "Graphics\RenderOperation.h"
+#include "Graphics\Material.h"
+#include "Graphics\GeometryData.h"
+#include "Core\GameTime.h"
 
 using namespace Apoc3D::Graphics;
 
@@ -95,7 +95,7 @@ namespace Apoc3D
 		{
 			m_objects.push_back(obj);
 		} 
-		void SceneManager::RemoveObject(SceneObject* const obj)
+		bool SceneManager::RemoveObject(SceneObject* const obj)
 		{
 			ObjectList::const_iterator pos = std::find(m_objects.begin(), m_objects.end(), obj);
 

@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 
-#include "..\Common.h"
+#include "Common.h"
 
 using namespace std;
 using namespace Apoc3D::Graphics;
@@ -45,16 +45,16 @@ namespace Apoc3D
 		class MaterialList;
 		
 		template class _Export vector<RenderOperation>;
-		template class _Export map<BatchHandle, OperationList*>;
-		template class _Export map<BatchHandle, GeometryTable*>;
-		template class _Export map<uint32, MaterialTable*>;
-		template class _Export map<BatchHandle, Material*>;
+		template class _Export unordered_map<BatchHandle, OperationList*>;
+		template class _Export unordered_map<BatchHandle, GeometryTable*>;
+		template class _Export unordered_map<uint32, MaterialTable*>;
+		template class _Export unordered_map<BatchHandle, Material*>;
 
 		class _Export OperationList : public vector<RenderOperation> { };
-		class _Export GeometryTable : public map<BatchHandle, OperationList*> { };
-		class _Export MaterialTable : public map<BatchHandle, GeometryTable*> { };
-		class _Export PriorityTable : public map<uint32, MaterialTable*> { };
-		class _Export MaterialList : public map<BatchHandle, Material*> { };
+		class _Export GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
+		class _Export MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
+		class _Export PriorityTable : public unordered_map<uint32, MaterialTable*> { };
+		class _Export MaterialList : public unordered_map<BatchHandle, Material*> { };
 				
 		class _Export BatchData
 		{
@@ -94,7 +94,7 @@ namespace Apoc3D
 			virtual void AddObject(SceneObject* const obj);
 			/* Removes a scene obejct from scene
 			*/
-			virtual void RemoveObject(SceneObject* const obj);
+			virtual bool RemoveObject(SceneObject* const obj);
 
 			virtual void PrepareVisibleObjects(Camera* camera, BatchData* batchData) = 0;
 
