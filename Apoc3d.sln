@@ -5,7 +5,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3d", "Source\Apoc3d.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APBuild", "APBuild\APBuild.vcxproj", "{84FF48B6-E1C8-447E-A1A1-B7D67E045E68}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestDemo", "TestDemo\TestDemo.vcxproj", "{D32782F9-3252-4B73-909D-F1F002B55300}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E38C5C50-5DA2-4675-B6A6-01FDE0512B9A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathTest", "MathTest\MathTest.vcxproj", "{35864162-34A4-4BD9-BFDD-7BC68C296CEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,12 +23,15 @@ Global
 		{84FF48B6-E1C8-447E-A1A1-B7D67E045E68}.Debug|Win32.Build.0 = Debug|Win32
 		{84FF48B6-E1C8-447E-A1A1-B7D67E045E68}.Release|Win32.ActiveCfg = Release|Win32
 		{84FF48B6-E1C8-447E-A1A1-B7D67E045E68}.Release|Win32.Build.0 = Release|Win32
-		{D32782F9-3252-4B73-909D-F1F002B55300}.Debug|Win32.ActiveCfg = Debug|Win32
-		{D32782F9-3252-4B73-909D-F1F002B55300}.Debug|Win32.Build.0 = Debug|Win32
-		{D32782F9-3252-4B73-909D-F1F002B55300}.Release|Win32.ActiveCfg = Release|Win32
-		{D32782F9-3252-4B73-909D-F1F002B55300}.Release|Win32.Build.0 = Release|Win32
+		{35864162-34A4-4BD9-BFDD-7BC68C296CEA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{35864162-34A4-4BD9-BFDD-7BC68C296CEA}.Debug|Win32.Build.0 = Debug|Win32
+		{35864162-34A4-4BD9-BFDD-7BC68C296CEA}.Release|Win32.ActiveCfg = Release|Win32
+		{35864162-34A4-4BD9-BFDD-7BC68C296CEA}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{35864162-34A4-4BD9-BFDD-7BC68C296CEA} = {E38C5C50-5DA2-4675-B6A6-01FDE0512B9A}
 	EndGlobalSection
 EndGlobal

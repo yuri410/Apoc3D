@@ -24,9 +24,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#define VEC_INDEX_X 3
+#define VEC_INDEX_Y 2
+#define VEC_INDEX_Z 1
+#define VEC_INDEX_W 0
 
+#define VEC_ADDR(x) (x*4)
+#define VEC_ADDR_X VEC_ADDR(0)
+#define VEC_ADDR_Y VEC_ADDR(1)
+#define VEC_ADDR_Z VEC_ADDR(2)
 
 #include <xmmintrin.h>
+
+#define _MM_SHUFFLE1(x) _MM_SHUFFLE(x,x,x,x)
 
 namespace Apoc3D
 {
@@ -40,7 +50,9 @@ namespace Apoc3D
 
 		inline Vector VecLoad(const float vec[4])
 		{
-			return _mm_load_ps(&vec[0]);
+			__m128 v = _mm_load_ps(&vec[0]);
+			return _mm_shuffle_ps(v, v, 
+				_MM_SHUFFLE(VEC_INDEX_W, VEC_INDEX_Z, VEC_INDEX_Y, VEC_INDEX_X));
 		};
 		inline Vector VecLoad(float f)
 		{
@@ -90,7 +102,9 @@ namespace Apoc3D
 
 		inline Vector VecStore(float* pVec, Vector v)
 		{
-			_mm_store_ps(pVec, v);
+			Vector vv = _mm_shuffle_ps(v, v, 
+				_MM_SHUFFLE(VEC_INDEX_W, VEC_INDEX_Z, VEC_INDEX_Y, VEC_INDEX_X));
+			_mm_store_ps(pVec, vv);
 		};
 
 		/* Reverses the direction of a given vector.
@@ -100,22 +114,55 @@ namespace Apoc3D
 			return _mm_xor_ps(_MASKSIGN_, va);
 		}
 			 
-
-		inline Vector VecBc(Vector v)
+		inline float GetX(Vector va)
 		{
-			return _mm_shuffle_ps(v,v, _MM_SHUFFLE(3,3,3,3));
-		};
+			float result;
+			__asm
+			{
+				lea		eax, va
+				fld		float ptr [eax+VEC_ADDR_X]
+				fstp	float ptr result
+			}
+			return result;
+		}
+		inline float GetY(Vector va)
+		{
+			float result;
+			__asm
+			{
+				lea eax, va
+				fld float ptr [eax+VEC_ADDR_Y]
+				fstp float ptr result;
+			}
+			return result;
+		}
+		inline float GetZ(Vector va)
+		{
+			float result;
+			__asm
+			{
+				lea eax, va
+				fld float ptr [eax+VEC_ADDR_Z]
+				fstp float ptr result;
+			}
+			return result;
+		}
+
+		//inline Vector VecBc(Vector v)
+		//{
+		//	return _mm_shuffle_ps(v,v, _MM_SHUFFLE(3,3,3,3));
+		//};
 
 		/* Calculates the cross product of two vectors.
 		*/
 		inline Vector VecCross(Vector va, Vector vb)
 		{
 			Vector l1, l2, m1, m2;
-			l1 = _mm_shuffle_ps(va,va, _MM_SHUFFLE(3,1,0,2));
-			l2 = _mm_shuffle_ps(vb,vb, _MM_SHUFFLE(3,0,2,1));
+			l1 = _mm_shuffle_ps(va,va, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
+			l2 = _mm_shuffle_ps(vb,vb, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
 			m2 = _mm_mul_ps(l1,l2);
-			l1 = _mm_shuffle_ps(va,va, _MM_SHUFFLE(3,0,2,1));
-			l2 = _mm_shuffle_ps(vb,vb, _MM_SHUFFLE(3,1,0,2));
+			l1 = _mm_shuffle_ps(va,va, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
+			l2 = _mm_shuffle_ps(vb,vb, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
 			m1 = _mm_mul_ps(l1,l2);
 			return _mm_sub_ps( m1,m2);
 		}
@@ -125,15 +172,13 @@ namespace Apoc3D
 		inline float VecDot(Vector va, Vector vb)
 		{
 			Vector t0 = _mm_mul_ps(va, vb);
-			
-			Vector t1 = _mm_shuffle_ps(t0, t0, 1);
-			Vector t2 = _mm_add_ss(t0, t1);
-			Vector t3 = _mm_shuffle_ps(t2, t2, 2);
-			Vector dot = _mm_add_ss(t3, t2);
 
-			float result;
-			_mm_store_ss(&result, dot);
-			return result;
+			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
+			Vector t2 = _mm_add_ps(t0, t1);
+			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
+			Vector dot = _mm_add_ps(t3, t2);
+			
+			return GetX(dot);
 		};
 
 		
@@ -143,9 +188,9 @@ namespace Apoc3D
 		{
 			Vector t0 = _mm_mul_ps(va, vb);
 			
-			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(3,1,0,0));
+			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
 			Vector t2 = _mm_add_ps(t0, t1);
-			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(3,2,2,1));
+			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
 			Vector dot = _mm_add_ps(t3, t2);
 
 			return dot;
@@ -185,19 +230,12 @@ namespace Apoc3D
 		/* Calculates the length of a specified vector.
 		*/
 		inline float VecLength(Vector va)
-		{
-			Vector t0 = _mm_mul_ps(va, va);
+		{			
+			Vector dot = VecDot2(va,va);
 
-			Vector t1 = _mm_shuffle_ps(t0, t0, 1);
-			Vector t2 = _mm_add_ss(t0, t1);
-			Vector t3 = _mm_shuffle_ps(t2, t2, 2);
-			Vector dot = _mm_add_ss(t3, t2);
-
-			dot = _mm_sqrt_ss(dot);
-
-			float result;
-			_mm_store_ss(&result, dot);
-			return result;
+			dot = _mm_sqrt_ps(dot);
+			
+			return GetX(dot);
 		};
 
 
@@ -222,13 +260,16 @@ namespace Apoc3D
 		*/
 		inline Vector VecNormalize(Vector va)
 		{
-			Vector r = _mm_mul_ps(va,va);
-			Vector t0 = _mm_movehl_ps(r,r);
+			Vector r = _mm_mul_ps(va,va); // xx, yy, zz, ww			
+			r = _mm_shuffle_ps(va,va, _MM_SHUFFLE(VEC_INDEX_W, VEC_INDEX_Z, VEC_INDEX_Y, VEC_INDEX_X)); // ww, zz, yy, xx
 
-			r = _mm_add_ps(t0,r);
+			Vector t0 = _mm_movehl_ps(r,r);// ww, zz, ww, zz
+			Vector t1 = _mm_shuffle_ps(r,r, 1); // xx, xx, xx, yy
 
-			Vector t1 = _mm_shuffle_ps(r,r, 1);
-			Vector t = _mm_add_ss(t1, r);
+
+			r = _mm_add_ps(t0,r); // ww+ww, zz+zz, yy+ww, xx+zz
+			
+			Vector t = _mm_add_ss(t1, r); // ww+ww+xx, zz+zz+xx, yy+ww+xx, xx+yy+zz
 #ifdef ZERO_VECTOR
 
 			static const Vector vecZero = _mm_setzero_ps();
@@ -238,12 +279,7 @@ namespace Apoc3D
 #endif
 			return _mm_mul_ps(va, _mm_shuffle_ps(t,t,0x00));
 		};
-
-
-		inline void VecGetX(float *p, Vector v)
-		{
-			_mm_store_ss(p, v);
-		};
+		
 
 		/* Returns the reflection of a vector off a surface that has the specified normal. 
 		*/

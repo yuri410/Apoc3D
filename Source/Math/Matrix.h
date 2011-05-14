@@ -41,8 +41,9 @@ namespace Apoc3D
 {
 	namespace Math
 	{
+#define COL_INDEX(x) (4-x)
+#define ELEM_ADDR(i,j) ((i-1)*4*4 + (j-1)*4)
 
-#define ELEM_ADDR(i,j) ((i-1)*16 + (16-j*4))
 #pragma pack(push, 16)
 		/* Defines a 4x4 matrix.
 		*/
@@ -59,13 +60,24 @@ namespace Apoc3D
 			__m128 Row3;
 			__m128 Row4;
 				
-			Matrix(){}
+			Matrix() {  ZeroMatrix(); }
 			Matrix(const float elements[16])
 			{				
 				Row1 = _mm_load_ps(&elements[0]);
+				_mm_shuffle_ps(Row1, Row1, 
+					_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
+
 				Row2 = _mm_load_ps(&elements[4]);
+				_mm_shuffle_ps(Row2, Row2, 
+					_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
+
 				Row3 = _mm_load_ps(&elements[8]);
+				_mm_shuffle_ps(Row3, Row3, 
+					_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
+
 				Row4 = _mm_load_ps(&elements[12]);
+				_mm_shuffle_ps(Row4, Row4, 
+					_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
 			}
 			Matrix(const Matrix &m) : Row1(m.Row1), Row2(m.Row2), Row3(m.Row3), Row4(m.Row4) {}
 			Matrix(float f11, float f12, float f13, float f14,
@@ -174,36 +186,36 @@ namespace Apoc3D
 				__m128 t0, t1;
 
 
-				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE(0,0,0,0));// m11
+				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE1(COL_INDEX(1)));// m11
 				Result = _mm_mul_ps(t0, B1);
 
-				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE(1,1,1,1));// m12
+				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE1(COL_INDEX(2)));// m12
 				t1 = _mm_mul_ps(t0, B2);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE(2,2,2,2));// m13
+				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE1(COL_INDEX(3)));// m13
 				t1 = _mm_mul_ps(t0, B3);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE(3,3,3,3));// m14
+				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE1(COL_INDEX(4)));// m14
 				t1 = _mm_mul_ps(t0, B4);
 				Result = _mm_add_ps(Result, t1);
 
 				res.Row1 = Result;
 
 				//_mm_store_ps(buffer, ma.Row2);
-				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE(0,0,0,0));// m21
+				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE1(COL_INDEX(1)));// m21
 				Result = _mm_mul_ps(t0, B1);
 
-				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE(1,1,1,1));// m21
+				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE1(COL_INDEX(2)));// m21
 				t1 = _mm_mul_ps(t0, B2);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE(2,2,2,2));// m21
+				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE1(COL_INDEX(3)));// m21
 				t1 = _mm_mul_ps(t0, B3);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE(3,3,3,3));// m21
+				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE1(COL_INDEX(4)));// m21
 				t1 = _mm_mul_ps(t0, B4);
 				Result = _mm_add_ps(Result, t1);
 
@@ -212,18 +224,18 @@ namespace Apoc3D
 
 
 				//_mm_store_ps(buffer, ma.Row3);
-				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE(0,0,0,0));// M31
+				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE1(COL_INDEX(1)));// M31
 				Result = _mm_mul_ps(t0, B1);
 
-				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE(1,1,1,1));// M32
+				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE1(COL_INDEX(2)));// M32
 				t1 = _mm_mul_ps(t0, B2);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE(2,2,2,2));// M33
+				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE1(COL_INDEX(3)));// M33
 				t1 = _mm_mul_ps(t0, B3);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE(3,3,3,3));// M34
+				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE1(COL_INDEX(4)));// M34
 				t1 = _mm_mul_ps(t0, B4);
 				Result = _mm_add_ps(Result, t1);
 
@@ -232,18 +244,18 @@ namespace Apoc3D
 
 
 				//_mm_store_ps(buffer, ma.Row4);
-				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE(0,0,0,0));// M41
+				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE1(COL_INDEX(1)));// M41
 				Result = _mm_mul_ps(t0, B1);
 
-				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE(1,1,1,1));// M42
+				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE1(COL_INDEX(2)));// M42
 				t1 = _mm_mul_ps(t0, B2);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE(2,2,2,2));// M43
+				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE1(COL_INDEX(3)));// M43
 				t1 = _mm_mul_ps(t0, B3);
 				Result = _mm_add_ps(Result, t1);
 
-				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE(3,3,3,3));// M44
+				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE1(COL_INDEX(4)));// M44
 				t1 = _mm_mul_ps(t0, B4);
 				Result = _mm_add_ps(Result, t1);
 
@@ -359,8 +371,8 @@ namespace Apoc3D
 			static void CreateRotationAxis(Matrix& res, Vector axis, float angle)
 			{
 				Vector dotAxis = VecDot2(axis,axis);
-				Vector t0 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(0, 1, 0, 0));
-				Vector t1 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(0, 2, 2, 1));
+				Vector t0 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(VEC_INDEX_X, VEC_INDEX_X, VEC_INDEX_Y, 0));
+				Vector t1 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(VEC_INDEX_Y, VEC_INDEX_Z, VEC_INDEX_Z, 0));
 				Vector dotAxis2 = VecDot2(t0,t1);
 
 				float sins, coss;
@@ -380,8 +392,8 @@ namespace Apoc3D
 				r0 = VecMul(cos, r0);
 				r0 = VecAdd(dotAxis, r0);
 
-				Vector r1left = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(0, 1, 2, 0));
-				Vector r1right = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(0, 1, 0, 2));
+				Vector r1left = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_X, VEC_INDEX_Z, VEC_INDEX_Y, 0));
+				Vector r1right = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_Z, VEC_INDEX_X, VEC_INDEX_Y, 0));
 				
 				Vector tmp = VecMul(cos, r1left);
 				r1left = VecSub(r1left, tmp);
@@ -390,60 +402,56 @@ namespace Apoc3D
 
 
 				
-				r1left = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(0, 2, 0, 1));
-				r1right = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(0, 0, 2, 1));
+				r1left = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_Y, VEC_INDEX_X, VEC_INDEX_Z, 0));
+				r1right = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_Y, VEC_INDEX_Z, VEC_INDEX_X, 0));
 				tmp = VecMul(cos, r1left);
 				r1left = VecSub(r1left, tmp);
 				r1right = VecMul(sin, r1right);
 				Vector r2 = VecSub(r1left, r1right);
 
-				float buffer[4];
-				VecStore(buffer, r0);
+				
 				__asm { 
 					xorps	xmm0,xmm0
 					mov 	eax, res
-
-					fld		float ptr buffer[0]
-					movaps	[eax+0x00], xmm0		// clear line _L1					
+					lea		esi, r0
+					fld		float ptr [esi+VEC_ADDR_X]
+					movaps	[eax+0x00], xmm0				// clear line _L1					
 					fstp	float ptr [eax+ELEM_ADDR(1,1)]	// set element _11
 
-					fld		float ptr buffer[1]
-					movaps	[eax+0x10], xmm0		// clear line _L2					
+					fld		float ptr [esi+VEC_ADDR_Y]
+					movaps	[eax+0x10], xmm0				// clear line _L2					
 					fstp	float ptr [eax+ELEM_ADDR(2,2)]	// set element _22
 
-					fld		float ptr buffer[2]
-					movaps	[eax+0x20], xmm0		// clear line _L3					
+					fld		float ptr [esi+VEC_ADDR_Z]
+					movaps	[eax+0x20], xmm0				// clear line _L3					
 					fst		float ptr [eax+ELEM_ADDR(3,3)]	// set element _33
 
 					fld1
-					movaps	[eax+0x30], xmm0		// clear line _L4					
+					movaps	[eax+0x30], xmm0				// clear line _L4					
 					fstp	float ptr [eax+ELEM_ADDR(4,4)]	// set element _44
-				}
-
-				VecStore(buffer, r1);
-				__asm { 					
-					mov 	eax, res
-
-					fld		float ptr buffer[0]
+				
+				
+					lea		esi, r1
+					fld		float ptr [esi+VEC_ADDR_X]
 					fstp	float ptr [eax+ELEM_ADDR(1,2)]	// set element _12
-					fld		float ptr buffer[1]
+					fld		float ptr [esi+VEC_ADDR_Y]
 					fstp	float ptr [eax+ELEM_ADDR(2,3)]	// set element _23
-					fld		float ptr buffer[2]
+					fld		float ptr [esi+VEC_ADDR_Z]
 					fstp	float ptr [eax+ELEM_ADDR(3,1)]	// set element _31
-				}
-
-				VecStore(buffer, r2);
-				__asm { 					
-					mov 	eax, res
-
-					fld		float ptr buffer[0]
+		
+					lea		esi, r2
+					fld		float ptr [esi+VEC_ADDR_X]
 					fstp	float ptr [eax+ELEM_ADDR(1,3)]	// set element _13
-					fld		float ptr buffer[1]
+					fld		float ptr [esi+VEC_ADDR_Y]
 					fstp	float ptr [eax+ELEM_ADDR(2,1)]	// set element _21
-					fld		float ptr buffer[2]
+					fld		float ptr [esi+VEC_ADDR_Z]
 					fstp	float ptr [eax+ELEM_ADDR(3,2)]	// set element _32
 				}
+
 			}
+
+
+
 
 			/* Creates a translation matrix using the specified offsets.
 			*/
@@ -496,29 +504,301 @@ namespace Apoc3D
 
 			/* Creates a left-handed, look-at matrix.
 			*/
-			static void CreateLootAtLH(Matrix& res, Vector cameraPosition, Vector cameraTarget, Vector up) // TODO:Rewrite
+			static void CreateLookAtLH(Matrix& res, Vector cameraPosition, Vector cameraTarget, Vector up)
 			{
-				Vector zaxis = VecSub(cameraTarget, cameraPosition);// Vector3.Normalize(cameraTarget - cameraPosition);
+				Vector zaxis = VecSub(cameraTarget, cameraPosition);
 				zaxis = VecNormalize(zaxis);
 
-				Vector xaxis = VecCross(up, zaxis);// Vector3.Normalize(Vector3.Cross(up, zaxis));
+				Vector xaxis = VecCross(up, zaxis);
 				xaxis = VecNormalize(xaxis);
-				Vector yaxis = VecCross(zaxis, xaxis);//Vector3.Cross(zaxis, xaxis);
+				Vector yaxis = VecCross(zaxis, xaxis);
 				
-				//res._L1 = final;
-				//res._L2 = crossed;
-				//res._L3 = difference;
-				//res._L4 = objectPosition;
+				float tx = VecDot(xaxis, cameraPosition);
+				float ty = VecDot(yaxis, cameraPosition);
+				float tz = VecDot(zaxis, cameraPosition);
+
+				res.Row1 = xaxis;
+				res.Row2 = yaxis;
+				res.Row3 = zaxis;
+
 				__asm 
 				{	
 					mov 	eax, res 
-					fld1	
-					fstp	float ptr [eax+0x3C]	
+					fld		float ptr tx
+					fstp	float ptr [eax+ELEM_ADDR(4,1)]
+					fld		float ptr ty
+					fstp	float ptr [eax+ELEM_ADDR(4,2)]
+					fld		float ptr tz
+					fstp	float ptr [eax+ELEM_ADDR(4,3)]
+					fld1
+					fstp	float ptr [eax+ELEM_ADDR(4,4)]
+
 					fldz	
-					fst		float ptr [eax+0x0C]	
-					fst		float ptr [eax+0x1C]	
-					fstp	float ptr [eax+0x2C]	
+					fst		float ptr [eax+ELEM_ADDR(1,4)]
+					fst		float ptr [eax+ELEM_ADDR(2,4)]
+					fstp	float ptr [eax+ELEM_ADDR(3,4)]
 				}
+			}
+			/* Creates a right-handed, look-at matrix.
+			*/
+			static void CreateLookAtRH(Matrix& res, Vector cameraPosition, Vector cameraTarget, Vector up)
+			{
+				Vector zaxis = VecSub(cameraTarget, cameraPosition);
+				zaxis = VecNormalize(zaxis);
+
+				Vector xaxis = VecCross(up, zaxis);
+				xaxis = VecNormalize(xaxis);
+				Vector yaxis = VecCross(zaxis, xaxis);
+
+				float tx = VecDot(xaxis, cameraPosition);
+				float ty = VecDot(yaxis, cameraPosition);
+				float tz = VecDot(zaxis, cameraPosition);
+				
+				__asm 
+				{
+					mov 	eax, res 
+					lea		esi, xaxis
+
+					fld		float ptr [esi+VEC_ADDR_X]
+					fstp	float ptr [eax+ELEM_ADDR(1,1)]
+					fld		float ptr [esi+VEC_ADDR_Y]
+					fstp	float ptr [eax+ELEM_ADDR(2,1)]
+					fld		float ptr [esi+VEC_ADDR_Z]
+					fstp	float ptr [eax+ELEM_ADDR(3,1)]
+					
+					lea		esi, yaxis
+					fld		float ptr [esi+VEC_ADDR_X]
+					fstp	float ptr [eax+ELEM_ADDR(1,2)]
+					fld		float ptr [esi+VEC_ADDR_Y]
+					fstp	float ptr [eax+ELEM_ADDR(2,2)]
+					fld		float ptr [esi+VEC_ADDR_Z]
+					fstp	float ptr [eax+ELEM_ADDR(3,2)]
+					
+					lea		esi, zaxis
+					fld		float ptr [esi+VEC_ADDR_X]
+					fstp	float ptr [eax+ELEM_ADDR(1,3)]
+					fld		float ptr [esi+VEC_ADDR_Y]
+					fstp	float ptr [eax+ELEM_ADDR(2,3)]
+					fld		float ptr [esi+VEC_ADDR_Z]
+					fstp	float ptr [eax+ELEM_ADDR(3,3)]
+					
+					fld		float ptr tx
+					fstp	float ptr [eax+ELEM_ADDR(4,1)]
+					fld		float ptr ty
+					fstp	float ptr [eax+ELEM_ADDR(4,2)]
+					fld		float ptr tz
+					fstp	float ptr [eax+ELEM_ADDR(4,3)]
+
+					fld1
+					fstp	float ptr [eax+ELEM_ADDR(4,4)]
+
+
+					fldz
+					fst		float ptr [eax+ELEM_ADDR(1,4)]
+					fst		float ptr [eax+ELEM_ADDR(2,4)]
+					fstp	float ptr [eax+ELEM_ADDR(3,4)]
+				}
+			}
+			
+			/* Creates a left-handed, perspective projection matrix based on a field of view.
+			*  
+			*  This function computes the returned matrix as shown:
+			*  
+			*  xScale     0          0               0
+			*  0        yScale       0               0
+			*  0          0       zf/(zf-zn)         1
+			*  0          0       -zn*zf/(zf-zn)     0
+			*  where:
+			*  yScale = cot(fovY/2)
+			*  
+			*  xScale = yScale / aspect ratio
+			*/
+			static void CreatePerspectiveFovLH(Matrix& res, float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
+			{
+				static const float half = 0.5f;
+				__asm
+				{
+					xorps	xmm0,xmm0
+					mov 	eax, res;
+
+					fld		float ptr fieldOfView
+					fld		half
+					movaps	[eax+ELEM_ADDR(1,1)], xmm0		// clear line _L1
+					fmul
+					fsincos
+					fdiv
+					fst		float ptr [eax+ELEM_ADDR(1,1)] 
+
+					fld		float ptr aspectRatio
+					movaps	[eax+ELEM_ADDR(2,1)], xmm0		// clear line _L1
+					fdivr
+					fstp	float ptr [eax+ELEM_ADDR(2,2)] 
+					
+					movaps	[eax+ELEM_ADDR(3,1)], xmm0		// clear line _L3
+					fld1
+					fst	float ptr [eax+ELEM_ADDR(3,4)]
+
+					fld		float ptr nearPlaneDistance					
+					fld		float ptr farPlaneDistance
+					fsub
+					fdivr
+					fld 	float ptr farPlaneDistance
+					fmul
+					fst		float ptr [eax+ELEM_ADDR(3,3)] 
+					fld 	float ptr nearPlaneDistance
+					movaps	[eax+ELEM_ADDR(4,1)], xmm0		// clear line _L4
+					fmul
+					fchs
+					fstp	float ptr [eax+ELEM_ADDR(4,3)] 
+
+				}
+			}
+
+			/* Creates a right-handed, perspective projection matrix based on a field of view.
+			*  
+			*  This function computes the returned matrix as shown:
+			*  
+			*  xScale     0          0               0
+			*  0        yScale       0               0
+			*  0          0       zf/(zn-zf)        -1
+			*  0          0       zn*zf/(zn-zf)      0
+			*  where:
+			*  yScale = cot(fovY/2)
+			*  
+			*  xScale = yScale / aspect ratio
+			*/
+			static void CreatePerspectiveFovRH(Matrix& res, float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
+			{
+				static const float half = 0.5f;
+				__asm
+				{
+					xorps	xmm0,xmm0
+					mov 	eax, res;
+
+					fld		float ptr fieldOfView
+					fld		half
+					movaps	[eax+ELEM_ADDR(1,1)], xmm0		// clear line _L1
+					fmul
+					fsincos
+					fdiv
+					fst		float ptr [eax+ELEM_ADDR(1,1)] 
+
+					fld		float ptr aspectRatio
+					movaps	[eax+ELEM_ADDR(2,1)], xmm0		// clear line _L1
+					fdivr
+					fstp	float ptr [eax+ELEM_ADDR(2,2)] 
+					
+					movaps	[eax+ELEM_ADDR(3,1)], xmm0		// clear line _L3
+					fld1
+					fchs
+					fst	float ptr [eax+ELEM_ADDR(3,4)]
+					fchs
+					fld		float ptr farPlaneDistance					
+					fld		float ptr nearPlaneDistance
+					fsub
+					fdivr
+					fld 	float ptr farPlaneDistance
+					fmul
+					fst		float ptr [eax+ELEM_ADDR(3,3)] 
+					fld 	float ptr nearPlaneDistance
+					movaps	[eax+ELEM_ADDR(4,1)], xmm0		// clear line _L4
+					fmul
+					fstp	float ptr [eax+ELEM_ADDR(4,3)] 
+
+				}
+			}
+
+
+			/* Creates a left-handed, orthographic projection matrix.
+			*  
+			*  All the parameters of the function are distances in camera space. The parameters describe the dimensions of the view volume.
+			*   2/w  0    0           0
+			*   0    2/h  0           0
+			*   0    0    1/(zf-zn)   0
+			*   0    0   -zn/(zf-zn)  1
+			*/
+			static void CreateOrthoLH(Matrix& res, float width, float height, float zNearPlane, float zFarPlane)
+			{
+				static const float two = 2;
+
+				__asm
+				{					
+					xorps	xmm0,xmm0
+					mov 	eax, res;
+										
+					fld		float ptr two
+					fst		st(1)
+					fld		float ptr width
+					movaps	[eax+ELEM_ADDR(1,1)], xmm0		// clear line _L1
+					// w 2 2
+					fdivr
+					fstp	float ptr [eax+ELEM_ADDR(1,1)] 
+					fld		float ptr height					
+					movaps	[eax+ELEM_ADDR(2,1)], xmm0		// clear line _L2
+					fdivr
+					fstp	float ptr [eax+ELEM_ADDR(2,2)] 
+
+					fld1					
+					fld		float ptr zNearPlane					
+					fld		float ptr zFarPlane
+					movaps	[eax+ELEM_ADDR(3,1)], xmm0		// clear line _L3
+					fsub
+					fdivr
+					fst		float ptr [eax+ELEM_ADDR(3,3)] 
+					movaps	[eax+ELEM_ADDR(4,1)], xmm0		// clear line _L4
+					fchs
+					fld		float ptr zNearPlane
+					fmul
+					fstp		float ptr [eax+ELEM_ADDR(4,3)] 
+				}
+
+			}
+
+			/*  Creates a right-handed, orthographic projection matrix.
+			*  
+			*  All the parameters of the function are distances in camera space.
+			*  The parameters describe the dimensions of the view volume.
+			*  
+			*  This function uses the following formula to compute the result matrix. 
+			*   2/w  0    0           0
+			*   0    2/h  0           0
+			*   0    0    1/(zn-zf)   0
+			*   0    0    zn/(zn-zf)  l
+			*/
+			static void CreateOrthoRH(Matrix& res, float width, float height, float zNearPlane, float zFarPlane)
+			{
+				static const float two = 2;
+
+				__asm
+				{					
+					xorps	xmm0,xmm0
+					mov 	eax, res;
+
+					fld		float ptr two
+					fst		st(1)
+					fld		float ptr width
+					movaps	[eax+ELEM_ADDR(1,1)], xmm0		// clear line _L1
+					// w 2 2
+					fdivr
+					fstp	float ptr [eax+ELEM_ADDR(1,1)] 
+					fld		float ptr height					
+					movaps	[eax+ELEM_ADDR(2,1)], xmm0		// clear line _L2
+					fdivr
+					fstp	float ptr [eax+ELEM_ADDR(2,2)] 
+
+					fld1					
+					fld		float ptr zNearPlane					
+					fld		float ptr zFarPlane
+					movaps	[eax+ELEM_ADDR(3,1)], xmm0		// clear line _L3
+					fsubr
+					fdivr
+					fst		float ptr [eax+ELEM_ADDR(3,3)] 
+					movaps	[eax+ELEM_ADDR(4,1)], xmm0		// clear line _L4
+					fld		float ptr zNearPlane
+					fmul
+					fstp	float ptr [eax+ELEM_ADDR(4,3)] 
+				}
+
 			}
 
 			/* Creates a spherical billboard that rotates around a specified object position.

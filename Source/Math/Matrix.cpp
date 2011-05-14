@@ -177,9 +177,7 @@ namespace Apoc3D
 
 			crossed = VecCross(cameraUpVector, difference);
 			crossed = VecNormalize(crossed);
-			//Vector3.Cross(ref cameraUpVector, ref difference, out crossed);
-			//crossed.Normalize();
-			//Vector3.Cross(ref difference, ref crossed, out final);
+
 			final = VecCross(difference,crossed);
 			
 			
@@ -190,13 +188,13 @@ namespace Apoc3D
 
 			__asm 
 			{	
-				mov 	eax, res 
-				fld1	
-				fstp	float ptr [eax+0x3C]	
+				mov 	eax, res 				
 				fldz	
-				fst		float ptr [eax+0x0C]	
-				fst		float ptr [eax+0x1C]	
-				fstp	float ptr [eax+0x2C]	
+				fst		float ptr [eax+ELEM_ADDR(1,4)]	
+				fst		float ptr [eax+ELEM_ADDR(2,4)]	
+				fstp	float ptr [eax+ELEM_ADDR(3,4)]	
+				fld1	
+				fstp	float ptr [eax+ELEM_ADDR(4,4)]	
 			}
 		}
 	}
