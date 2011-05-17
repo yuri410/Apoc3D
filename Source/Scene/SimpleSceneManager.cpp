@@ -49,10 +49,10 @@ namespace Apoc3D
 			m_defaultNode->AddObject(sceObj);
 		}
 
-		void SimpleSceneManager::RemoveObject(SceneObject* const sceObj)
-		{
-			SceneManager::RemoveObject(sceObj);
+		bool SimpleSceneManager::RemoveObject(SceneObject* const sceObj)
+		{			
 			m_defaultNode->RemoveObject(sceObj);
+			return SceneManager::RemoveObject(sceObj);
 		}
 
 		void SimpleSceneManager::PrepareVisibleObjects(Camera* camera, BatchData* batchData)

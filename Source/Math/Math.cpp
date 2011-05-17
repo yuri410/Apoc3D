@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+This source file is part of labtd
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,46 +15,36 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
+along with this program.  if not, write to the Free Software Foundation,
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SIMPLESCENEMANAGER_H
-#define SIMPLESCENEMANAGER_H
-#pragma once
-
-#include "..\Common.h"
-#include "SceneManager.h"
-#include "SceneNode.h"
+#include "Vector.h"
+#include "Color.h"
+#include "Point.h"
+#include "Rectangle.h"
+#include "Common.h"
 
 namespace Apoc3D
 {
-	namespace Scene
+	namespace Math
 	{
-		class _Export SimpleSceneNode : public SceneNode
+		class FieldInitializer
 		{
 		public:
-			SimpleSceneNode(void){}
-			~SimpleSceneNode(void){}
-		};
+			FieldInitializer()
+			{
+				uint Data2[4] = {0x80000000, 0x80000000, 0x80000000, 0x80000000};
+				memcpy((void*)&_MASKSIGN_, Data2, sizeof(Data2));
+				
+			}
 
-		class _Export SimpleSceneManager : public SceneManager
-		{
-		private:
-			SimpleSceneNode* m_defaultNode;
+		} Initializer;
 
-		public:
-			SimpleSceneManager(void);
-			~SimpleSceneManager(void);
-
-			virtual void AddObject(SceneObject* const obj);
-			virtual bool RemoveObject(SceneObject* const obj);
-
-			virtual void PrepareVisibleObjects(Camera* camera, BatchData* batchData);
-
-		};
+		const Point Point::Zero = Point(0,0);
+		const Rectangle Rectangle::Empty = Rectangle(0,0,0,0);
+		const RectangleF RectangleF::Empty = RectangleF(0,0,0,0);
 	}
 }
-#endif

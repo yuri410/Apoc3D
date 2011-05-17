@@ -41,13 +41,13 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-#define COL_INDEX(x) (4-x)
+#define COL_INDEX(x) (x-1)
 #define ELEM_ADDR(i,j) ((i-1)*4*4 + (j-1)*4)
 
 #pragma pack(push, 16)
 		/* Defines a 4x4 matrix.
 		*/
-		class Matrix
+		class _Export Matrix
 		{
 		private:
 			
@@ -64,20 +64,20 @@ namespace Apoc3D
 			Matrix(const float elements[16])
 			{				
 				Row1 = _mm_load_ps(&elements[0]);
-				_mm_shuffle_ps(Row1, Row1, 
-					_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
+				//_mm_shuffle_ps(Row1, Row1, 
+					//_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
 
 				Row2 = _mm_load_ps(&elements[4]);
-				_mm_shuffle_ps(Row2, Row2, 
-					_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
+				//_mm_shuffle_ps(Row2, Row2, 
+					//_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
 
 				Row3 = _mm_load_ps(&elements[8]);
-				_mm_shuffle_ps(Row3, Row3, 
-					_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
+				//_mm_shuffle_ps(Row3, Row3, 
+					//_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
 
 				Row4 = _mm_load_ps(&elements[12]);
-				_mm_shuffle_ps(Row4, Row4, 
-					_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
+				//_mm_shuffle_ps(Row4, Row4, 
+					//_MM_SHUFFLE(COL_INDEX(4),COL_INDEX(3),COL_INDEX(2),COL_INDEX(1)));
 			}
 			Matrix(const Matrix &m) : Row1(m.Row1), Row2(m.Row2), Row3(m.Row3), Row4(m.Row4) {}
 			Matrix(float f11, float f12, float f13, float f14,

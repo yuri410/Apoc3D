@@ -22,11 +22,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
+#include "HardwareBuffer.h"
 
-#ifndef GR_ENUMS_H
-#define GR_ENUMS_H
+#include "Apoc3DException.h"
 
-#pragma once
+using namespace Apoc3D;
 
 namespace Apoc3D
 {
@@ -34,40 +34,39 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/* 
-			*/
-			enum BufferUsage
+			void* HardwareBuffer::Lock(LockMode mode)
 			{
-				BU_Static = 1,
-				BU_Dynamic = 2,
-				BU_WriteOnly = 4,
-				BU_Discardable = 8
-			};
-			/* 
-			*/
-			enum CullMode
-			{
-				/// <summary>
-				///  Do not cull back faces.
-				/// </summary>
-				None = 1,
-				/// <summary>
-				///  Cull back faces with clockwise vertices.
-				/// </summary>
-				Clockwise = 2,
-				/// <summary>
-				///  Cull back faces with counterclockwise vertices.
-				/// </summary>
-				CounterClockwise = 3,
+				if (!m_isLocked)
+				{
+					void* ptr = lock(0, m_size, mode);
+					m_isLocked = true;
+					return ptr;
+				}
+				throw Apoc3DException::createException(EX_InvalidOperation, L"Buffer already Locked.");
 			}
-			/* 
-			*/
-			enum IndexBufferType    
+			void* HardwareBuffer::Lock(int offset, int size, LockMode mode)
 			{
-				Bit16,
-				Bit32
-			};
+				if (!m_isLocked)
+				{
+					void* ptr = lock(offset,size, mode);
+					m_isLocked = true;
+					return ptr;
+				}
+				throw Apoc3DException::createException(EX_InvalidOperation, L"Buffer already Locked.");
+			}
+
+			void HardwareBuffer::Unlock()
+			{
+				if (m_isLocked)
+				{
+					unlock();
+					m_isLocked = false;
+				}
+				else
+				{
+					throw Apoc3DException::createException(EX_InvalidOperation, L"Buffer is not locked");
+				}
+			}
 		}
 	}
 }
-#endif

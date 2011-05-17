@@ -27,11 +27,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 
-#include "..\Common.h"
-#include "..\Core\HashHandleObject.h"
+#include "Common.h"
+#include "Core\HashHandleObject.h"
+#include "Math\Color.h"
 
 using namespace Apoc3D::EffectSystem;
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Math;
 
 using namespace std;
 
@@ -54,11 +56,16 @@ namespace Apoc3D
 		private:
 			unordered_map<uint64, Effect*> m_eff;
 			vector<Texture*> m_tex;
-			D3DMATERIAL9 m_mtrlColor;
 
-			D3DBLEND m_srcBlend;
-			D3DBLEND m_dstBlend;
-			D3DBLENDOP m_blendOperation;
+			Color4 m_ambient;
+			Color4 m_diffuse;
+			Color4 m_emissive;
+			Color4 m_Specular;
+			float m_power;
+
+			//D3DBLEND m_srcBlend;
+			//D3DBLEND m_dstBlend;
+			//D3DBLENDOP m_blendOperation;
 			bool m_alphaBlendEnable;
 
 			bool m_alphaTestEnable;
@@ -79,19 +86,19 @@ namespace Apoc3D
 
 			/* Gets the ambient component of this material
 			*/
-			const Color4& getAmbient() const { return m_mtrlColor.Ambient; }
+			const Color4& getAmbient() const { return m_ambient; }
 			/* Gets the diffuse component of this material
 			*/
-			const Color4& getDiffuse() const { return m_mtrlColor.Diffuse; }
+			const Color4& getDiffuse() const { return m_diffuse; }
 			/* Gets the emissive component of this material
 			*/
-			const Color4& getEmissive() const { return m_mtrlColor.Emissive; }
+			const Color4& getEmissive() const { return m_emissive; }
 			/* Gets the specular component of this material
 			*/
-			const Color4& getSpecular() const { return m_mtrlColor.Specular; }
+			const Color4& getSpecular() const { return m_Specular; }
 			/* Gets the specular shineness
 			*/
-			const float getPower() const { return m_mtrlColor.Power; }
+			const float getPower() const { return m_power; }
 
 			const uint32 getPriority() const { return m_priority; }
 			void setPriority(uint32 value) { m_priority = value; }
@@ -99,11 +106,11 @@ namespace Apoc3D
 			uint64 getPassFlags() const { return m_passFlags; }
 			void setPassFlags(uint64 val) { m_passFlags = val; }
 
-			void setAmbient(const Color4& value) { m_mtrlColor.Ambient = value; }
-			void setDiffuse(const Color4& value) { m_mtrlColor.Diffuse = value; }
-			void setEmissive(const Color4& value) { m_mtrlColor.Emissive = value; }
-			void setSpecular(const Color4& value) { m_mtrlColor.Specular = value; }
-			void setPower(const float value) { m_mtrlColor.Power = value; }
+			void setAmbient(const Color4& value) { m_ambient = value; }
+			void setDiffuse(const Color4& value) { m_diffuse = value; }
+			void setEmissive(const Color4& value) { m_emissive = value; }
+			void setSpecular(const Color4& value) { m_Specular = value; }
+			void setPower(const float value) { m_power = value; }
 
 			void Load(istream &strm);
 			void Save(ostream &strm);

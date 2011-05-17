@@ -27,43 +27,38 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 
+#include "Common.h"
 #include <exception>
 
 namespace Apoc3D
 {
+
+	enum Apoc3DExceptionType
+	{
+		EX_Default,
+		EX_InvalidOperation,
+		EX_InvalidData
+	};
+
 	class Apoc3DException : public std::exception
 	{
+	private:
+		String m_message;
 	public:
-		Apoc3DException(const char* const &msg)
+		Apoc3DException(const wchar_t* const &msg)
+			: m_message(msg)
 		{
 
 		}
+		Apoc3DException(const Apoc3DException &another)
+			: m_message(another.m_message)
+		{
+		}
+
+		static Apoc3DException createException(Apoc3DExceptionType type, const wchar_t* const msg);
+		
+		
 	};
-
-	//class ArgumentException : public Apoc3DException
-	//{
-	//public:
-	//	ArgumentException(const char* arg)
-	//		: Apoc3DException("s")
-	//	{
-	//	}
-	//	
-	//};
-	//class ArgumentNullException : public Apoc3DException
-	//{
-	//public:
-	//	ArgumentNullException(const char* arg)
-	//		: Apoc3DException("argument " + arg + "is NULL")
-	//	{
-	//	}
-	//	
-	//};
-
-	//class NotImplementedException : public Apoc3DException
-	//{
-	//public:
-	//	NotImplementedException(const char* const& 
-	//};
 };
 
 

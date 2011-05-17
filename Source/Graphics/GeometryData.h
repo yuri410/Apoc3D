@@ -25,10 +25,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GEOMETRYDATA_H
 
 #pragma once
-#include "..\Common.h"
+#include "Common.h"
 #include "..\Core\HashHandleObject.h"
+#include "GraphicsCommon.h"
 
 using namespace Apoc3D::Scene;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -51,20 +53,20 @@ namespace Apoc3D
 		public:
 			/* Gets the vertex buffer of this GeomentryData object
 			*/
-			IDirect3DVertexBuffer9* getVertexBuffer() const { return m_vtxBuffer; }
+			VertexBuffer* getVertexBuffer() const { return m_vtxBuffer; }
 			/* Gets the index buffer of this GeomentryData object
 			*/
-			IDirect3DIndexBuffer9* getIndexBuffer() const { return m_idxBuffer; }
+			IndexBuffer* getIndexBuffer() const { return m_idxBuffer; }
 			/* Gets the vertex declaration of this GeomentryData object
 			*/
-			IDirect3DVertexDeclaration9* getVertexDecl() const { return m_vtxDecl; }
+			VertexDeclaration* getVertexDecl() const { return m_vtxDecl; }
 			/* 
 			*/
 			PrimitiveType getPrimitiveType() const { return m_primType; }
 
-			void setVertexBuffer(IDirect3DVertexBuffer9* value) { m_vtxBuffer = value; }
-			void setIndexBuffer(IDirect3DIndexBuffer9* value) { m_idxBuffer = value; }
-			void setVertexDecl(IDirect3DVertexDeclaration9* value) { m_vtxDecl = value; }
+			void setVertexBuffer(VertexBuffer* value) { m_vtxBuffer = value; }
+			void setIndexBuffer(IndexBuffer* value) { m_idxBuffer = value; }
+			void setVertexDecl(VertexDeclaration* value) { m_vtxDecl = value; }
 			void setPrimitiveType(PrimitiveType value) { m_primType = value; }
 
 

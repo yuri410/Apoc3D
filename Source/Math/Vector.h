@@ -24,10 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#define VEC_INDEX_X 3
-#define VEC_INDEX_Y 2
-#define VEC_INDEX_Z 1
-#define VEC_INDEX_W 0
+#define VEC_INDEX_X 0
+#define VEC_INDEX_Y 1
+#define VEC_INDEX_Z 2
+#define VEC_INDEX_W 3
 
 #define VEC_ADDR(x) (x*4)
 #define VEC_ADDR_X VEC_ADDR(0)
@@ -50,9 +50,7 @@ namespace Apoc3D
 
 		inline Vector VecLoad(const float vec[4])
 		{
-			__m128 v = _mm_load_ps(&vec[0]);
-			return _mm_shuffle_ps(v, v, 
-				_MM_SHUFFLE(VEC_INDEX_W, VEC_INDEX_Z, VEC_INDEX_Y, VEC_INDEX_X));
+			return _mm_load_ps(&vec[0]);
 		};
 		inline Vector VecLoad(float f)
 		{
@@ -102,9 +100,7 @@ namespace Apoc3D
 
 		inline Vector VecStore(float* pVec, Vector v)
 		{
-			Vector vv = _mm_shuffle_ps(v, v, 
-				_MM_SHUFFLE(VEC_INDEX_W, VEC_INDEX_Z, VEC_INDEX_Y, VEC_INDEX_X));
-			_mm_store_ps(pVec, vv);
+			_mm_store_ps(pVec, v);
 		};
 
 		/* Reverses the direction of a given vector.
@@ -260,16 +256,7 @@ namespace Apoc3D
 		*/
 		inline Vector VecNormalize(Vector va)
 		{
-			Vector r = _mm_mul_ps(va,va); // xx, yy, zz, ww			
-			r = _mm_shuffle_ps(va,va, _MM_SHUFFLE(VEC_INDEX_W, VEC_INDEX_Z, VEC_INDEX_Y, VEC_INDEX_X)); // ww, zz, yy, xx
-
-			Vector t0 = _mm_movehl_ps(r,r);// ww, zz, ww, zz
-			Vector t1 = _mm_shuffle_ps(r,r, 1); // xx, xx, xx, yy
-
-
-			r = _mm_add_ps(t0,r); // ww+ww, zz+zz, yy+ww, xx+zz
-			
-			Vector t = _mm_add_ss(t1, r); // ww+ww+xx, zz+zz+xx, yy+ww+xx, xx+yy+zz
+			Vector t = VecDot2(va, va);
 #ifdef ZERO_VECTOR
 
 			static const Vector vecZero = _mm_setzero_ps();

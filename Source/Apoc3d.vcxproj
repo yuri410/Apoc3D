@@ -87,6 +87,7 @@
     <ClInclude Include="Core\RandomUtils.h" />
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="Core\StringUtils.h" />
+    <ClInclude Include="Graphics\PixelFormat.h" />
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\Point.h" />
@@ -96,7 +97,7 @@
     <ClInclude Include="FastDelegate\FastDelegate.h" />
     <ClInclude Include="FastDelegate\FastDelegateBind.h" />
     <ClInclude Include="GameClock.h" />
-    <ClInclude Include="Graphics\RenderSystem\Enums.h" />
+    <ClInclude Include="Graphics\GraphicsCommon.h" />
     <ClInclude Include="Graphics\Renderable.h" />
     <ClInclude Include="Graphics\RenderOperation.h" />
     <ClInclude Include="Graphics\RenderOperationBuffer.h" />
@@ -137,12 +138,15 @@
     <ClInclude Include="Vfs\VFSCommon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Apoc3DException.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Core\RandomUtils.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
+    <ClCompile Include="Graphics\PixelFormat.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />
     <ClCompile Include="Graphics\Model.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\Buffer\HardwareBuffer.cpp" />
     <ClCompile Include="Graphics\TextureManager.cpp" />
     <ClCompile Include="IO\MaterialData.cpp" />
     <ClCompile Include="Math\Matrix.cpp" />

@@ -275,6 +275,8 @@ namespace Apoc3D
 		class SceneManager;
 		class SceneNode;
 		class SceneObject;
+		class BatchData;
+
 	};
 	namespace Graphics
 	{
@@ -289,6 +291,14 @@ namespace Apoc3D
 		class SceneProcedure;
 		class SceneRenderer;
 		class Texture;
+
+		namespace RenderSystem
+		{
+			class HardwareBuffer;
+			class VertexBuffer;
+			class IndexBuffer;
+			class DepthBuffer;
+		}
 	};
 };
 
