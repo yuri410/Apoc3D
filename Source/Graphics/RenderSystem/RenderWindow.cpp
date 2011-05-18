@@ -1,6 +1,7 @@
+
 /*
 -----------------------------------------------------------------------------
-This source file is part of labtd
+This source file is part of Apoc3D Engine
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,62 +16,57 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation,
+along with this program.  if not, write to the Free Software Foundation, 
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef POINT_H
-#define POINT_H
+
+#include "RenderWindow.h"
+
+#include "RenderWindowHandler.h"
 
 namespace Apoc3D
 {
-	namespace Math
+	namespace Graphics
 	{
-		class Size
-		{
-		public:
-			int Width;
-			int Height;
-			Size() { Width =Height =0; }
-			Size(int w, int h) { Width = w; Height = h; }
-
-			friend static bool operator ==(Point a, Point b)
+		namespace RenderSystem
+		{			
+			void RenderWindow::OnInitialize()
 			{
-				return (a.Width  == b.Width) && (a.Height == b.Height);
+				if (m_evtHandler)
+					m_evtHandler->Initialize();
 			}
-			friend static bool operator !=(Point a, Point b)
+			void RenderWindow::OnFinalize()
 			{
-				return (a.Width != b.Width) || (a.Height != b.Height);
+				if (m_evtHandler)
+					m_evtHandler->Finalize();
 			}
-			
-		
-			const static Size Zero;
-		};
 
-		class Point
-		{
-		public:
-			int X;
-			int Y;
 
-			Point() { X = Y = 0; }
-			Point(int x, int y) { X = x; Y = y; }
-
-			friend static bool operator ==(Point a, Point b)
+			void RenderWindow::OnLoad()
 			{
-				return (a.X  == b.X) && (a.Y == b.Y);
+				if (m_evtHandler)
+					m_evtHandler->Load();
 			}
-			friend static bool operator !=(Point a, Point b)
+			void RenderWindow::OnUnload()
 			{
-				return (a.X != b.X) || (a.Y != b.Y);
+				if (m_evtHandler)
+					m_evtHandler->Unload();
 			}
-			
-		
-			const static Point Zero;
-		};
 
+			void RenderWindow::OnDraw()
+			{
+				if (m_evtHandler)
+					m_evtHandler->Draw();
+				Present(); 
+			}
+			void RenderWindow::OnUpdate(const GameTime* const time)		
+			{
+				if (m_evtHandler)
+					m_evtHandler->Update(time);
+			}
+		}
 	}
 }
-#endif

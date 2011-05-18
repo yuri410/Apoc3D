@@ -88,6 +88,14 @@
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
+    <ClInclude Include="Graphics\RenderSystem\DeviceContent.h" />
+    <ClInclude Include="Graphics\RenderSystem\ObjectFactory.h" />
+    <ClInclude Include="Graphics\RenderSystem\RenderDevice.h" />
+    <ClInclude Include="Graphics\RenderSystem\RenderDeviceCaps.h" />
+    <ClInclude Include="Graphics\RenderSystem\RenderWindow.h" />
+    <ClInclude Include="Graphics\RenderSystem\RenderWindowHandler.h" />
+    <ClInclude Include="Graphics\RenderSystem\Shader.h" />
+    <ClInclude Include="Graphics\RenderSystem\Sprite.h" />
     <ClInclude Include="Graphics\RenderSystem\VertexDeclaration.h" />
     <ClInclude Include="Graphics\RenderSystem\VertexElement.h" />
     <ClInclude Include="Math\Color.h" />
@@ -149,6 +157,7 @@
     <ClCompile Include="Graphics\Mesh.cpp" />
     <ClCompile Include="Graphics\Model.cpp" />
     <ClCompile Include="Graphics\RenderSystem\Buffer\HardwareBuffer.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\RenderWindow.cpp" />
     <ClCompile Include="Graphics\TextureManager.cpp" />
     <ClCompile Include="IO\MaterialData.cpp" />
     <ClCompile Include="Math\Matrix.cpp" />

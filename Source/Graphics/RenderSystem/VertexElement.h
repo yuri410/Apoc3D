@@ -57,10 +57,9 @@ namespace Apoc3D
 				int getIndex() { return m_index; }
 				int getSize() { return GetTypeSize(m_type); }
 
-				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic)
-					: VertexElement(offset, type, semantic,0)
+				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic)					
 				{
-
+					VertexElement(offset, type, semantic,0);
 				}
 
 				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic, int index)

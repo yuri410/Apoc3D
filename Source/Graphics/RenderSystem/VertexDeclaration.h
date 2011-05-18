@@ -25,7 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define VERTEXDECLARATION_H
 
 #include "Common.h"
-#include "Core\Resource.h"
+#include "Graphics/GraphicsCommon.h"
+#include "VertexElement.h"
 
 using namespace Apoc3D::Core;
 
@@ -40,7 +41,73 @@ namespace Apoc3D
 			class _Export VertexDeclaration
 			{
 			protected:
-				
+				vector<const VertexElement> elements;
+
+				VertexDeclaration(const vector<VertexElement> &e)
+				{
+					for (size_t i=0;i<e.size();i++)
+					{
+						elements.push_back(e[i]);
+					}
+				}
+
+			public:
+				/*  Gets the number of elements in the declaration.
+				*/
+				int getElementCount()
+				{
+					return static_cast<int>(elements.size());
+				}
+
+				/* Finds a VertexElement with the given semantic, and index if there is more than 
+				 * one element with the same semantic. 
+				*/
+				bool FindElementBySemantic(VertexElementUsage semantic, VertexElement& result)
+				{
+					FindElementBySemantic(semantic, 0, result);
+				}
+
+				/* Finds a VertexElement with the given semantic, and index if there is more than 
+				 * one element with the same semantic. 
+				*/
+				virtual bool FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result)
+				{
+					for (int i = 0; i < elements.size(); i++)
+					{
+						VertexElement &element = elements[i];
+
+						// do they match?
+						if (element.getUsage() == semantic && element.getIndex() == index)
+						{
+							result = element;
+							return true;
+						}
+					}
+
+					return false;
+				}
+
+				/* Gets the VertexElement at the specified index.
+				*/
+				const VertexElement &getElement(int index)
+				{
+					return elements[index];
+				}
+
+				/* Gets the vertex size defined by this declaration.
+				*/
+				virtual int GetVertexSize()
+				{
+					int size = 0;
+
+					for (size_t i = 0; i < elements.size(); i++)
+					{
+						size += elements[i].getSize();
+					}
+
+					// return the size
+					return size;
+				}
 			};
 		}
 	}

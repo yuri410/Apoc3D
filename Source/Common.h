@@ -178,22 +178,7 @@ namespace Apoc3D
 	//const Vector3 One3(1,1,1);
 	//const Vector3 Zero3(0,0,0);
 
-	struct _Export Size 
-	{
-		int32 Width, Height;
-		Size(){}
-		Size(const int32 width, const int height) { Width = width; Height = height; }
-	
-		inline bool operator == ( const Size& value ) const
-        {
-            return ( Width == value.Width && Height == value.Height );
-        }
 
-        inline bool operator != ( const Size& value ) const
-        {
-            return ( Width != value.Width || Height != value.Height );
-        }
-	};
 
 	int32 convint32(const char* const src)
 	{
@@ -293,13 +278,42 @@ namespace Apoc3D
 
 		namespace RenderSystem
 		{
+			struct PresentParameters;
+			class DeviceContent;
+			
+			template class _Export fastdelegate::FastDelegate1<const Apoc3D::Core::GameTime*, void>;
+			typedef fastdelegate::FastDelegate0<void> UpdateEventHandler;
+
+
+			class Capabilities;
+
+			class RenderView;
+			class RenderWindow;
+			class RenderWindowHandler;
+
+			class RenderDevice;
+
 			class HardwareBuffer;
 			class VertexBuffer;
 			class IndexBuffer;
 			class DepthBuffer;
 
+			class RenderTarget;
+
 			class Texture;
+			class VertexElement;
 			class VertexDeclaration;
+
+			class VertexShader;
+			class PixelShader;
+
+			class StateBlock;
+
+
+			class Sprite;
+
+			class FPSCounter;
+
 		}
 	};
 };

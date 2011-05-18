@@ -211,6 +211,32 @@ namespace Apoc3D
 				VEU_TessellateFactor = 8,
 				VEU_TextureCoordinate = 5
 			};
+			
+			/* Specifies how a texture is to be used in the engine.
+			*/
+			enum TextureUsage
+			{
+				TU_Static = BU_Static,
+				TU_Dynamic = BU_Dynamic,
+				TU_WriteOnly = BU_WriteOnly,
+				TU_StaticWriteOnly = BU_Static | BU_WriteOnly,
+				TU_DynamicWriteOnly = BU_Dynamic | BU_WriteOnly,
+				TU_Discardable = BU_Discardable,
+				/// <summary>
+				///    Mipmaps will be automatically generated for this texture
+				///	 </summary>
+				TU_AutoMipMap = 0x100,
+				/// <summary>
+				///    This texture will be a render target, ie. used as a target for render to texture
+				///    setting this flag will ignore all other texture usages except AutoMipMap
+				///	 </summary>
+				TU_RenderTarget = 0x200,
+				/// <summary>
+				///    Default to static textures
+				///	</summary>
+				TU_Default = TU_StaticWriteOnly
+			};
+
 
 		}
 	}
