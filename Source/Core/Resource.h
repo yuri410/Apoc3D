@@ -141,7 +141,7 @@ namespace Apoc3D
 
 			const String& getHashString() const { return m_hashString; }
 			uint32 getState() const { return m_state; }
-			bool getIsManaged() const { return m_manager; }
+			bool getIsManaged() const { return !!m_manager; }
 
 			//void _Ref() { assert(!getIsManaged()); m_refCount++; }
 			//void _Unref() { assert(!getIsManaged()); if (--m_refCount == 0) delete this; }

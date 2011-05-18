@@ -88,6 +88,8 @@
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
+    <ClInclude Include="Graphics\RenderSystem\VertexDeclaration.h" />
+    <ClInclude Include="Graphics\RenderSystem\VertexElement.h" />
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\Point.h" />
@@ -132,7 +134,7 @@
     <ClInclude Include="Graphics\SceneRenderer.h" />
     <ClInclude Include="Graphics\SceneProcedure.h" />
     <ClInclude Include="Scene\SimpleSceneManager.h" />
-    <ClInclude Include="Graphics\Texture.h" />
+    <ClInclude Include="Graphics\RenderSystem\Texture.h" />
     <ClInclude Include="Core\StringTable.h" />
     <ClInclude Include="Vfs\PathUtils.h" />
     <ClInclude Include="Vfs\VFSCommon.h" />
@@ -179,7 +181,7 @@
     <ClCompile Include="Graphics\SceneRenderer.cpp" />
     <ClCompile Include="Graphics\SceneProcedure.cpp" />
     <ClCompile Include="Scene\SimpleSceneManager.cpp" />
-    <ClCompile Include="Graphics\Texture.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\Texture.cpp" />
     <ClCompile Include="Core\StringTable.cpp" />
     <ClCompile Include="Vfs\PathUtils.cpp" />
   </ItemGroup>

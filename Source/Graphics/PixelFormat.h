@@ -50,7 +50,7 @@ namespace Apoc3D
 		};
 		/* The pixel format used for images.
 		*/		
-		enum _Export ImagePixelFormat
+		enum _Export PixelFormat
 		{
 			/*  Unknown pixel format.
 			*/			
@@ -229,7 +229,7 @@ namespace Apoc3D
 
 			PixelFormat();
 		public:
-			static bool IsCompressed(ImagePixelFormat format)
+			static bool IsCompressed(PixelFormat format)
 			{
 				return (format == FMT_DXT1 ||
 					format == FMT_DXT2 ||
@@ -246,7 +246,7 @@ namespace Apoc3D
 				}
 				return width * height * bytepp;
 			}
-			static int GetMemorySize(int width, int height, int depth, ImagePixelFormat format)
+			static int GetMemorySize(int width, int height, int depth, PixelFormat format)
 			{
 				if (format == FMT_DXT1)				
 				{

@@ -22,18 +22,22 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Texture.h"
+#include "VertexElement.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		Texture::Texture(void)
+		namespace RenderSystem
 		{
-		}
+			Texture::Texture(void)
+			{
+			}
 
 
-		Texture::~Texture(void)
-		{
+			Texture::~Texture(void)
+			{
+			}
 		}
 	}
 }

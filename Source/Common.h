@@ -290,7 +290,6 @@ namespace Apoc3D
 		class ScenePass;
 		class SceneProcedure;
 		class SceneRenderer;
-		class Texture;
 
 		namespace RenderSystem
 		{
@@ -298,6 +297,9 @@ namespace Apoc3D
 			class VertexBuffer;
 			class IndexBuffer;
 			class DepthBuffer;
+
+			class Texture;
+			class VertexDeclaration;
 		}
 	};
 };
