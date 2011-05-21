@@ -223,16 +223,16 @@ namespace Apoc3D
 			}
 
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-			void SetRight(Vector3 v) { Row1 = v; (*reinterpret_cast<float*>(Row1))=0.0f; }
-			void SetLeft(Vector3 v) { Row1 = v; VecNegate(Row1); (*reinterpret_cast<float*>(Row1))=0.0f; }
+			void SetRight(Vector3 v) { Row1 = v; *(reinterpret_cast<float*>(Row1)+3)=0.0f; }
+			void SetLeft(Vector3 v) { Row1 = v; VecNegate(Row1); *(reinterpret_cast<float*>(Row1)+3)=0.0f; }
 
-			void SetUp(Vector3 v) { Row2 = v; (*reinterpret_cast<float*>(Row2))=0.0f; }
-			void SetDown(Vector3 v) { Row2 = v; VecNegate(Row2); (*reinterpret_cast<float*>(Row2))=0.0f; }
+			void SetUp(Vector3 v) { Row2 = v; *(reinterpret_cast<float*>(Row2)+3)=0.0f; }
+			void SetDown(Vector3 v) { Row2 = v; VecNegate(Row2); *(reinterpret_cast<float*>(Row2)+3)=0.0f; }
 
-			void SetBackward(Vector3 v) { Row3 = v; (*reinterpret_cast<float*>(Row3))=0.0f; }
-			void SetForward(Vector3 v) { Row3 = v; VecNegate(Row3); (*reinterpret_cast<float*>(Row3))=0.0f; }
+			void SetBackward(Vector3 v) { Row3 = v; *(reinterpret_cast<float*>(Row3)+3)=0.0f; }
+			void SetForward(Vector3 v) { Row3 = v; VecNegate(Row3); *(reinterpret_cast<float*>(Row3)+3)=0.0f; }
 
-			void SetTranslation(Vector3 v) { Row4 = v; (*reinterpret_cast<float*>(Row4))=1.0f; }
+			void SetTranslation(Vector3 v) { Row4 = v; *(reinterpret_cast<float*>(Row4)+3)=1.0f; }
 
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 

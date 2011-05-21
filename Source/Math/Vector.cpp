@@ -28,7 +28,50 @@ namespace Apoc3D
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 		Vector4 Vector3Utils::Transform(Vector3 vector, const Matrix& transform)
 		{
+			__m128 v = vector;
+			(*reinterpret_cast<float*>(v)+3)=1;
 
+			float buffer[4];
+			buffer[0] = Vec3Dot(v, transform.Row1);
+			buffer[1] = Vec3Dot(v, transform.Row2);
+			buffer[2] = Vec3Dot(v, transform.Row3);
+			buffer[3] = Vec3Dot(v, transform.Row4);
+
+			return Vector4Utils::LDVectorPtr(buffer);
+		}
+
+		Vector3 Vector3Utils::TransformSimple(Vector3 vector, const Matrix& transform)
+		{
+			__m128 v = vector;
+			(*reinterpret_cast<float*>(v)+3)=1;
+
+			float x = Vec3Dot(v, transform.Row1);
+			float y = Vec3Dot(v, transform.Row2);
+			float z = Vec3Dot(v, transform.Row3);
+			return Vector3Utils::LDVector(x,y,z);
+		}
+
+		Vector3 Vector3Utils::TransformCoordinate(const Vector3& vector, const Matrix& transform)
+		{
+			__m128 v = vector;
+			(*reinterpret_cast<float*>(v)+3)=1;
+
+			float x = Vec3Dot(v, transform.Row1);
+			float y = Vec3Dot(v, transform.Row2);
+			float z = Vec3Dot(v, transform.Row3);
+			float w = 1 / (vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + transform.M44);
+			return Vector3Utils::LDVector(x*w,y*w,z*w);
+		}
+
+		Vector3 Vector3Utils::TransformNormal(const Vector3& vector, const Matrix& transform)
+		{
+			__m128 v = vector;
+			(*reinterpret_cast<float*>(v)+3)=0;
+
+			float x = Vec3Dot(v, transform.Row1);
+			float y = Vec3Dot(v, transform.Row2);
+			float z = Vec3Dot(v, transform.Row3);
+			return Vector3Utils::LDVector(x,y,z);
 		}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 
