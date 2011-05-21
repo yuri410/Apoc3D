@@ -63,6 +63,7 @@ namespace Apoc3D
 
 		float Matrix::Inverse()
 		{
+		#if APOC3D_MATH_IMPL == APOC3D_SSE
 			__m128 Va,Vb,Vc;
 			__m128 r1,r2,r3,tt,tt2;
 			__m128 sum,Det,RDet;
@@ -100,10 +101,10 @@ namespace Apoc3D
 
 			// Testing the determinant.
 			Det = _mm_sub_ss(Det,_mm_shuffle_ps(Det,Det,1));
-#ifdef ZERO_SINGULAR
+		#ifdef ZERO_SINGULAR
 			int flag = _mm_comieq_ss(Det,_mm_sub_ss(tt,tt));
 			// Using _mm_sub_ss, as only the first element has to be zeroed.
-#endif
+		#endif
 
 			// Calculating the minterms of the third line.
 			tt = _mm_ror_ps(Row1,1);
@@ -136,7 +137,7 @@ namespace Apoc3D
 			Minterms.Row4 = _mm_xor_ps(sum,Sign_NPNP);
 			Minterms.Row4 = _mm_mul_ps(Minterms.Row4, RDet);
 
-#ifdef ZERO_SINGULAR
+		#ifdef ZERO_SINGULAR
 			// Check if the matrix is inversable.
 			// Uses a delayed branch here, so the test would not interfere the calculations.
 			// Assuming most of the matrices are inversable, the previous calculations are 
@@ -145,7 +146,7 @@ namespace Apoc3D
 				ZeroMatrix();
 				return 0.0f;
 			}
-#endif
+		#endif
 
 			// Now we just have to transpose the minterms matrix.
 			trns0 = _mm_unpacklo_ps(Minterms.Row1,Minterms.Row2);
@@ -159,12 +160,72 @@ namespace Apoc3D
 
 			// That's all folks!
 			return *(float *)&Det;	// Det[0]
+		#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			float m11 = M11;
+            float m12 = M12;
+            float m13 = M13;
+            float m14 = M14;
+            float m21 = M21;
+            float m22 = M22;
+            float m23 = M23;
+            float m24 = M24;
+            float m31 = M31;
+            float m32 = M32;
+            float m33 = M33;
+            float m34 = M34;
+            float m41 = M41;
+            float m42 = M42;
+            float m43 = M43;
+            float m44 = M44;
+            float num23 = m33 * m44 - m34 * m43;
+            float num22 = m32 * m44 - m34 * m42;
+            float num21 = m32 * m43 - m33 * m42;
+            float num20 = m31 * m44 - m34 * m41;
+            float num19 = m31 * m43 - m33 * m41;
+            float num18 = m31 * m42 - m32 * m41;
+            float num39 = m22 * num23 - m23 * num22 + m24 * num21;
+            float num38 = -(m21 * num23 - m23 * num20 + m24 * num19);
+            float num37 = m21 * num22 - m22 * num20 + m24 * num18;
+            float num36 = -(m21 * num21 - m22 * num19 + m23 * num18);
+            float num = 1.0f / (m11 * num39 + m12 * num38 + m13 * num37 + m14 * num36);
+            M11 = num39 * num;
+            M21 = num38 * num;
+            M31 = num37 * num;
+            M41 = num36 * num;
+            M12 = -(m12 * num23 - m13 * num22 + m14 * num21) * num;
+            M22 = (m11 * num23 - m13 * num20 + m14 * num19) * num;
+            M32 = -(m11 * num22 - m12 * num20 + m14 * num18) * num;
+            M42 = (m11 * num21 - m12 * num19 + m13 * num18) * num;
+            float num35 = m23 * m44 - m24 * m43;
+            float num34 = m22 * m44 - m24 * m42;
+            float num33 = m22 * m43 - m23 * m42;
+            float num32 = m21 * m44 - m24 * m41;
+            float num31 = m21 * m43 - m23 * m41;
+            float num30 = m21 * m42 - m22 * m41;
+            M13 = (m12 * num35 - m13 * num34 + m14 * num33) * num;
+            M23 = -(m11 * num35 - m13 * num32 + m14 * num31) * num;
+            M33 = (m11 * num34 - m12 * num32 + m14 * num30) * num;
+            M43 = -(m11 * num33 - m12 * num31 + m13 * num30) * num;
+            float num29 = m23 * m34 - m24 * m33;
+            float num28 = m22 * m34 - m24 * m32;
+            float num27 = m22 * m33 - m23 * m32;
+            float num26 = m21 * m34 - m24 * m31;
+            float num25 = m21 * m33 - m23 * m31;
+            float num24 = m21 * m32 - m22 * m31;
+            M14 = -(m12 * num29 - m13 * num28 + m14 * num27) * num;
+            M24 = (m11 * num29 - m13 * num26 + m14 * num25) * num;
+            M34 = -(m11 * num28 - m12 * num26 + m14 * num24) * num;
+            M44 = (m11 * num27 - m12 * num25 + m13 * num24) * num;
+			return 1.0f/num;
+		#endif
+			
 		}
 
 
 
 		void Matrix::CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix& res)
 		{
+		#if APOC3D_MATH_IMPL == APOC3D_SSE
 			Vector3 difference = VecSub( objectPosition , cameraPosition);
 			Vector3 crossed;
 			Vector3 final;
@@ -196,6 +257,38 @@ namespace Apoc3D
 				fld1	
 				fstp	float ptr [eax+ELEM_ADDR(4,4)]	
 			}
+		#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			Vector3 difference = Vector3Utils::Subtract(objectPosition , cameraPosition);
+            Vector3 crossed;
+            Vector3 final;
+
+            float lengthSq = Vector3Utils::LengthSquared( difference);
+            if (lengthSq < 0.0001f)
+                difference = Vector3Utils::Negate(cameraForwardVector);
+            else
+                difference = Vector3Utils::Multiply(difference,  1.0f / sqrtf(lengthSq));
+
+            crossed = Vector3Utils::Cross(cameraUpVector, difference);
+            crossed = Vector3Utils::Normalize(crossed);
+            final = Vector3Utils::Cross(difference, crossed);
+
+            res.M11 = final.X;
+            res.M12 = final.Y;
+            res.M13 = final.Z;
+            res.M14 = 0.0f;
+            res.M21 = crossed.X;
+            res.M22 = crossed.Y;
+            res.M23 = crossed.Z;
+            res.M24 = 0.0f;
+            res.M31 = difference.X;
+            res.M32 = difference.Y;
+            res.M33 = difference.Z;
+            res.M34 = 0.0f;
+            res.M41 = objectPosition.X;
+            res.M42 = objectPosition.Y;
+            res.M43 = objectPosition.Z;
+            res.M44 = 1.0f;
+		#endif
 		}
 	}
 }
