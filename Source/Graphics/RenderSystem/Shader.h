@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Math\Vector.h"
 #include "Math\Color.h"
+#include "Graphics\GraphicsCommon.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
@@ -37,7 +38,22 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			class _Export Shader
+			struct APOC3D_API ShaderSamplerState 
+			{
+				TextureAddressMode AddressU;
+				TextureAddressMode AddressV;
+				TextureAddressMode AddressW;
+
+				uint BorderColor;
+				TextureFilter MagFilter;
+				TextureFilter MinFilter;
+				TextureFilter MipFilter;
+				int MaxAnisotropy;
+				int MaxMipLevel;
+				float MipMapLODBias;
+
+			};
+			class APOC3D_API Shader
 			{
 			private:
 				RenderDevice* m_renderDevice;
@@ -52,18 +68,18 @@ namespace Apoc3D
 				virtual int GetConstantIndex(const String &name) = 0;
 
 				virtual void SetVector2(int index, Vector value) = 0;
-				virtual void SetVector3(int index, Vector value) = 0;
+				virtual void SetVector3(int index, Vector3 value) = 0;
 				virtual void SetVector4(int index, Vector value) = 0;
 				virtual void SetValue(int index, Quaternion value) = 0;
 				virtual void SetValue(int index, const Matrix &value) = 0;
 				virtual void SetValue(int index, const Color4 &value) = 0;
 				virtual void SetValue(int index, Plane value) = 0;
 
-				virtual void SetValueDirect(int reg, Vector value) = 0;
+				virtual void SetValueDirect(int reg, Vector3 value) = 0;
 
 
 				virtual void SetVector2(int index, const Vector* value, int count) = 0;
-				virtual void SetVector3(int index, const Vector* value, int count) = 0;
+				virtual void SetVector3(int index, const Vector3* value, int count) = 0;
 				virtual void SetVector4(int index, const Vector* value, int count) = 0;
 				virtual void SetValue(int index, const Quaternion* value, int count) = 0;
 				virtual void SetValue(int index, const Matrix* value, int count) = 0;
@@ -85,7 +101,7 @@ namespace Apoc3D
 				virtual void SetSamplerStateDirect(int index, const ShaderSamplerState &state) = 0;
 
 				virtual void SetVector2(const String &paramName, Vector value) = 0;
-				virtual void SetVector3(const String &paramName, Vector value) = 0;
+				virtual void SetVector3(const String &paramName, Vector3 value) = 0;
 				virtual void SetVector4(const String &paramName, Vector value) = 0;
 				virtual void SetValue(const String &paramName, Quaternion value) = 0;
 				virtual void SetValue(const String &paramName, const Matrix &value) = 0;
@@ -95,7 +111,7 @@ namespace Apoc3D
 
 
 				virtual void SetVector2(const String &paramName, const Vector* value, int count);
-				virtual void SetVector3(const String &paramName, const Vector* value, int count);
+				virtual void SetVector3(const String &paramName, const Vector3* value, int count);
 				virtual void SetVector4(const String &paramName, const Vector* value, int count);
 				virtual void SetValue(const String &paramName, const Quaternion* value, int count);
 				virtual void SetValue(const String &paramName, const Matrix* value, int count);

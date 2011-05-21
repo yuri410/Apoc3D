@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		/* Represents drawable object in the scene.
 		*/
-		class _Export Renderable
+		class APOC3D_API Renderable
 		{
 		public:
 			/* Gets the render operation of this renderable object at a ceratin LOD level

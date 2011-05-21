@@ -69,42 +69,33 @@ typedef unsigned long long BatchHandle;
 //#define THREAD_POINTER_SET(var, expr) var.reset(expr)
 //#define THREAD_POINTER_DELETE(var) var.reset(0)
 //#define THREAD_POINTER_GET(var) var.get()
+#define APOC3D_PLATFORM_WINDOWS 0
+#define APOC3D_PLATFORM_MAC 1
+#define APOC3D_PLATFORM_LINUX 2
+
+#if defined( __WIN32__ ) || defined( _WIN32 )
+#   define OGRE_PLATFORM APOC3D_PLATFORM_WINDOWS
+
+#elif defined( __APPLE_CC__)
+#   define OGRE_PLATFORM APOC3D_PLATFORM_MAC
+
+#else
+#   define OGRE_PLATFORM APOC3D_PLATFORM_LINUX
+#endif
 
 #if APOC3D_DLLEX
-	#define _Export __declspec( dllexport )
+	#define APOC3D_API __declspec( dllexport )
 #else
-	#define _Export __declspec( dllimport )
+	#define APOC3D_API __declspec( dllimport )
 #endif
 
 
 #define VER(x,y,z,w) D3DCOLOR_ARGB(x,y,z,w);
-#define ToDegree(x) D3DXToDegree(x)
-#define ToRadian(x) D3DXToRadian(x)
-#define MakeColor4(r, g, b, a) {  r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f }
 
-//struct _Export D3DXPLANE;
-//struct _Export D3DXVECTOR2;
-//struct _Export D3DXVECTOR3;
-//struct _Export D3DXVECTOR4;
-//struct _Export D3DXMATRIX;
-//struct _Export D3DXQUATERNION;
-//struct _Export _D3DCOLORVALUE;
-//
-//struct _Export IDirect3DDevice9;
-//struct _Export IDirect3DBaseTexture9;
-//struct _Export IDirect3DTexture9;
-//struct _Export ID3DXSprite;
-//struct _Export IDirect3DIndexBuffer9;
-//struct _Export IDirect3DVertexBuffer9;
-//struct _Export IDirect3DVertexShader9;
-//struct _Export IDirect3DPixelShader9;
-//struct _Export IDirect3DVertexDeclaration9;
 
-//#include <d3d9.h>
-//#include <d3dx9.h>
 
 #include <cassert>
-//#include <windows.h>
+
 
 #pragma warning(push)
 #pragma warning(disable:4251)
@@ -134,8 +125,8 @@ typedef unsigned long long BatchHandle;
 // Forward Declarations
 namespace Apoc3D
 {
-	template class _Export fastdelegate::FastDelegate0<void>;
-	template class _Export fastdelegate::FastDelegate1<bool*, void>;
+	template class APOC3D_API fastdelegate::FastDelegate0<void>;
+	template class APOC3D_API fastdelegate::FastDelegate1<bool*, void>;
 	
 	typedef fastdelegate::FastDelegate0<void> EventHandler;
 	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
@@ -146,37 +137,10 @@ namespace Apoc3D
 
 	void* memcpy_sse( char* pDest, const char* pSrc, size_t nBytes );
 
-	//typedef D3DXMATRIX Matrix;
-	//typedef D3DXPLANE Plane;
-	//typedef D3DXVECTOR2 Vector2;
-	//typedef D3DXVECTOR3 Vector3;
-	//typedef D3DXVECTOR4 Vector4;
-	//typedef D3DXQUATERNION Quaternion;
-	//typedef D3DCOLORVALUE Color4;
-	
-	//typedef IDirect3DDevice9 Device;
-	//typedef IDirect3DBaseTexture9 BaseTexture;
-	////typedef IDirect3DTexture9 Texture;
-	//typedef ID3DXSprite Sprite;
-	//typedef IDirect3DIndexBuffer9 IndexBuffer;
-	////typedef IDirect3DVertexBuffer9 VertexBuffer;
-	//typedef IDirect3DVertexShader9 VertexShader;
-	//typedef IDirect3DPixelShader9 PixelShader;
-	//typedef IDirect3DVertexDeclaration9 VertexDeclaration;
 
-	//typedef D3DPRIMITIVETYPE PrimitiveType;
-	//typedef D3DFORMAT Format;
-	//typedef D3DMULTISAMPLE_TYPE MSAAType;
-	//typedef D3DDEVTYPE DeviceType;
 	typedef std::wstring String;
 	
 	const int32 MaxInt32 = 0x7fffffff;
-
-	//const Vector3 UnitX3(1,0,0);
-	//const Vector3 UnitY3(0,1,0);
-	//const Vector3 UnitZ3(0,0,1);
-	//const Vector3 One3(1,1,1);
-	//const Vector3 Zero3(0,0,0);
 
 
 
@@ -231,7 +195,7 @@ namespace Apoc3D
 		class ResourceManager;
 		class GameTime;
 
-		template class _Export fastdelegate::FastDelegate1<Resource*, void>;
+		template class APOC3D_API fastdelegate::FastDelegate1<Resource*, void>;
 		typedef fastdelegate::FastDelegate0<void> ResourceEventHandler;
 
 		namespace Streaming
@@ -281,7 +245,7 @@ namespace Apoc3D
 			struct PresentParameters;
 			class DeviceContent;
 			
-			template class _Export fastdelegate::FastDelegate1<const Apoc3D::Core::GameTime*, void>;
+			template class APOC3D_API fastdelegate::FastDelegate1<const Apoc3D::Core::GameTime*, void>;
 			typedef fastdelegate::FastDelegate0<void> UpdateEventHandler;
 
 

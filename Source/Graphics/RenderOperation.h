@@ -38,7 +38,7 @@ namespace Apoc3D
 		  Represents an operation to render a mesh part in the scene.
 		  RenderOperation is used by the engine to manage the scene rendering pipeline.
 		*/
-		class _Export RenderOperation
+		class APOC3D_API RenderOperation
 		{
 		private:
 			GeometryData* m_data;

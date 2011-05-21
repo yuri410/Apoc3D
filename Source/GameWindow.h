@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	/* Implements a specialized window for games and rendering.
 	*/
-	class _Export GameWindow
+	class APOC3D_API GameWindow
 	{
 	private:
 		bool m_minimized;

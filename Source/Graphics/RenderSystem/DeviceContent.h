@@ -39,7 +39,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			struct _Export PresentParameters
+			struct APOC3D_API PresentParameters
 			{
 				bool IsWindowd;
 				bool IsFullForm;
@@ -59,7 +59,7 @@ namespace Apoc3D
 
 			/* Represent a graphics device of a graphics API. It can create one or more RenderViews.
 			*/
-			class _Export DeviceContent
+			class APOC3D_API DeviceContent
 			{
 			private:
 				vector<RenderView*> m_renderPorts;

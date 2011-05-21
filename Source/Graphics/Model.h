@@ -35,7 +35,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class _Export Model// : public Resource
+		class APOC3D_API Model// : public Resource
 		{
 		public:
 			Model(void);

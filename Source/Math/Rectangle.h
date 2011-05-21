@@ -39,14 +39,14 @@ namespace Apoc3D
 			int Width;
 			int Height;
 
-			int getLeft() { return X; }
-			int getRight() { return X + Width; }
-			int getTop() { return Y; }
-			int getBottom() { return Y + Height; }
+			int getLeft() const { return X; }
+			int getRight() const { return X + Width; }
+			int getTop() const { return Y; }
+			int getBottom() const { return Y + Height; }
 
-			Point getCenter() { return Point(X + Width / 2, Y + Height / 2); }
+			Point getCenter() const { return Point(X + Width / 2, Y + Height / 2); }
 
-			bool IsEmpty() { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
+			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
 
 			Rectangle() { X=Y=Width=Height=0; }
 			Rectangle(int x, int y, int width, int height)
@@ -70,18 +70,18 @@ namespace Apoc3D
 				Width += horizontalAmount * 2;
 				Height += verticalAmount * 2;
 			}
-			bool Contains(int x, int y)
+			bool Contains(int x, int y) const
 			{
 				return (X <= x) && x < (X + Width) && (Y <= y) && y < (Y + Height);
 			}
-			bool Contains(const Point &value)
+			bool Contains(const Point &value) const
 			{
 				return (X <= value.X) &&
 					(value.X < X + Width) &&
 					(Y <= value.Y) &&
 					(value.Y < Y + Height);
 			}
-			bool Contains(const Rectangle &value)
+			bool Contains(const Rectangle &value) const
 			{
 				return (X <= value.X) &&
 					((value.X + value.Width) <=
@@ -89,7 +89,7 @@ namespace Apoc3D
 					(Y <= value.Y) &&
 					((value.Y + value.Height) <= (Y + Height));
 			}
-			bool Intersects(const Rectangle &value)
+			bool Intersects(const Rectangle &value) const
 			{
 				return (value.X < (X + Width)) &&
 					(X < (value.X + value.Width)) &&
@@ -162,14 +162,14 @@ namespace Apoc3D
 			float Width;
 			float Height;
 
-			float getLeft() { return X; }
-			float getRight() { return X + Width; }
-			float getTop() { return Y; }
-			float getBottom() { return Y + Height; }
+			float getLeft() const { return X; }
+			float getRight() const { return X + Width; }
+			float getTop() const { return Y; }
+			float getBottom() const { return Y + Height; }
 
 			//Point getCenter() { return Point(X + Width / 2, Y + Height / 2); }
 
-			bool IsEmpty() { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
+			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
 
 			RectangleF() { X=Y=Width=Height=0; }
 			RectangleF(float x, float y, float width, float height)
@@ -193,18 +193,18 @@ namespace Apoc3D
 				Width += horizontalAmount * 2;
 				Height += verticalAmount * 2;
 			}
-			bool Contains(float x, float y)
+			bool Contains(float x, float y) const
 			{
 				return (X <= x) && x < (X + Width) && (Y <= y) && y < (Y + Height);
 			}
-			bool Contains(const Point &value)
+			bool Contains(const Point &value) const
 			{
 				return (X <= value.X) &&
 					(value.X < X + Width) &&
 					(Y <= value.Y) &&
 					(value.Y < Y + Height);
 			}
-			bool Contains(const RectangleF &value)
+			bool Contains(const RectangleF &value) const
 			{
 				return (X <= value.X) &&
 					((value.X + value.Width) <=
@@ -212,7 +212,7 @@ namespace Apoc3D
 					(Y <= value.Y) &&
 					((value.Y + value.Height) <= (Y + Height));
 			}
-			bool Intersects(const RectangleF &value)
+			bool Intersects(const RectangleF &value) const
 			{
 				return (value.X < (X + Width)) &&
 					(X < (value.X + value.Width)) &&

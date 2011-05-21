@@ -35,7 +35,7 @@ namespace Apoc3D
 		   This is usually a piece of shader fragement.
 		   eg. position transform, normal mapping
 		*/
-		class _Export EffectAtom
+		class APOC3D_API EffectAtom
 		{
 		private:
 

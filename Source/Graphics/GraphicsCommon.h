@@ -53,28 +53,43 @@ namespace Apoc3D
 			};
 			/* 
 			*/
-			enum CullMode
-			{
-				/// <summary>
-				///  Do not cull back faces.
-				/// </summary>
-				None = 1,
-				/// <summary>
-				///  Cull back faces with clockwise vertices.
-				/// </summary>
-				Clockwise = 2,
-				/// <summary>
-				///  Cull back faces with counterclockwise vertices.
-				/// </summary>
-				CounterClockwise = 3,
-			};
-			/* 
-			*/
 			enum IndexBufferType    
 			{
 				IBT_Bit16,
 				IBT_Bit32
 			};
+			/* 
+			*/
+			enum CullMode
+			{
+				/// <summary>
+				///  Do not cull back faces.
+				/// </summary>
+				CULL_None = 1,
+				/// <summary>
+				///  Cull back faces with clockwise vertices.
+				/// </summary>
+				CULL_Clockwise = 2,
+				/// <summary>
+				///  Cull back faces with counterclockwise vertices.
+				/// </summary>
+				CULL_CounterClockwise = 3,
+			};
+			enum FillMode
+			{
+				/* Draw a point at each vertex.
+				*/
+				FILL_Point = 1,
+
+				/* Draw lines connecting the vertices that define a primitive face.
+				*/
+				FILL_WireFrame = 2,
+				
+				/* Draw solid faces for each primitive.
+				*/
+				FILL_Solid = 3,
+			};
+			
 			enum PrimitiveType
 			{
 				/* Render the vertices as individual points.
@@ -96,104 +111,221 @@ namespace Apoc3D
 				*/
 				PT_TriangleFan = 6
 			};
-
-			/// <summary>
-			///  表示顶点元素中的类型
-			/// </summary>
-			/// <remarks>可以直接转换的API：XNA</remarks>
-			enum VertexElementFormat
+			enum CubeMapFace
 			{
-				/// <summary>
-				///  一个成员，32位浮点数，可以自动展开为 (float, 0, 0, 1)。
-				/// </summary>
+				/* Positive x-face of the cube map.
+				*/
+				CUBE_PositiveX = 0,
+				/* Negative x-face of the cube map.
+				*/
+				CUBE_NegativeX = 1,
+				/* Positive y-face of the cube map.
+				*/
+				CUBE_PositiveY = 2,
+				/* Negative y-face of the cube map.
+				*/
+				CUBE_NegativeY = 3,
+				/* Positive z-face of the cube map.
+				*/
+				CUBE_PositiveZ = 4,
+				/* Negative z-face of the cube map.
+				*/
+				CUBE_NegativeZ = 5,
+			};
+			
+			enum ClearFlags
+			{
+				CLEAR_Target = 1,
+				CLEAR_DepthBuffer = 2,
+				CLEAR_Stencil = 4
+			};
+
+			/* Defines stencil buffer operations.
+			*/
+			enum StencilOperation
+			{
+				/* Does not update the stencil-buffer entry. This is the default value.
+				*/
+				STOP_Keep = 1,
+				/* Sets the stencil-buffer entry to 0.
+				*/
+				STOP_Zero = 2,
+
+				/* Replaces the stencil-buffer entry with a reference value.
+				*/
+				STOP_Replace = 3,
+				
+				/* Increments the stencil-buffer entry, clamping to the maximum value.
+				*/
+				STOP_IncrementSaturation = 4,
+				
+				/*  Decrements the stencil-buffer entry, clamping to 0.
+				*/
+				STOP_DecrementSaturation = 5,
+
+				/* Inverts the bits in the stencil-buffer entry.
+				*/
+				STOP_Invert = 6,
+
+				/* Increments the stencil-buffer entry, wrapping to 0 if the new value exceeds
+				*  the maximum value.
+				*/
+				STOP_Increment = 7,
+				
+				/* Decrements the stencil-buffer entry, wrapping to the maximum value if the
+				*  new value is less than 0.
+				*/
+				STOP_Decrement = 8,
+			};
+
+			/* Defines how a texture will be filtered as it is minified for each mipmap level.
+			*/
+			enum TextureFilter
+			{
+				/* Mipmapping disabled. The rasterizer uses the magnification filter instead.
+				*/
+				TFLT_None = 0,
+
+				/*  Point filtering used as a texture magnification or minification filter. The
+				*   texel with coordinates nearest to the desired pixel value is used. The texture
+				*    filter used between mipmap levels is based on the nearest point; that is,
+				*    the rasterizer uses the color from the texel of the nearest mipmap texture.
+				*/
+				TFLT_Point = 1,
+
+				/*  Bilinear interpolation filtering used as a texture magnification or minification
+				*   filter. A weighted average of a 2×2 area of texels surrounding the desired
+				*    pixel is used. The texture filter used between mipmap levels is trilinear
+				*    mipmap interpolation, in which the rasterizer performs linear interpolation
+				*    on pixel color, using the texels of the two nearest mipmap textures.
+				*/
+				TFLT_Linear = 2,
+
+				/*  Anisotropic texture filtering used as a texture magnification or minification
+				*   filter. This type of filtering compensates for distortion caused by the difference
+				*    in angle between the texture polygon and the plane of the screen.
+				*/
+				TFLT_Anisotropic = 3,
+				
+				/*  A 4-sample tent filter used as a texture magnification or minification filter.
+				*/
+				TFLT_PyramidalQuad = 6,
+				
+				/*  A 4-sample Gaussian filter used as a texture magnification or minification filter.
+				*/
+				TFLT_GaussianQuad = 7,
+			};
+			/* Defines constants that describe supported texture-addressing modes. 
+			*/
+			enum TextureAddressMode
+			{
+				/* Tile the texture at every integer junction. For example, for u values between
+				*  0 and 3, the texture is repeated three times; no mirroring is performed.
+				*/
+				TA_Wrap = 1,
+
+				/* Similar to Wrap, except that the texture is flipped at every integer junction.
+				*  For u values between 0 and 1, for example, the texture is addressed normally;
+				*  between 1 and 2, the texture is flipped (mirrored); between 2 and 3, the
+				*  texture is normal again, and so on.
+				*/
+				TA_Mirror = 2,        
+				
+				/* Texture coordinates outside the range [0.0, 1.0] are set to the texture color
+				*  at 0.0 or 1.0, respectively.
+				*/
+				TA_Clamp = 3,        
+
+				/* Texture coordinates outside the range [0.0, 1.0] are set to the border color.
+				*/
+				TA_Border = 4,
+				/* Similar to Mirror and Clamp. Takes the absolute value of the texture coordinate
+				*  (thus, mirroring around 0), and then clamps to the maximum value. The most
+				*  common usage is for volume textures, where support for the full MirrorOnce
+				*  texture-addressing mode is not necessary, but the data is symmetrical around
+				*  the one axis.
+				*/
+				TA_MirrorOnce = 5,
+			};
+
+			/* Defines format of vertex element
+			*/
+			enum VertexElementFormat
+			{				
+				/* One-component, float expanded to (float, 0, 0, 1)
+				*/
 				VEF_Single = 0,
-				/// <summary>
-				///  两个成员，32位浮点数，可以自动展开为 (float, float, 0, 1)。
-				/// </summary>
+				/* Two-component, float expanded to (float, float, 0, 1)
+				*/
 				VEF_Vector2 = 1,
-				/// <summary>
-				///  三个成员，32位浮点数，可以自动展开为 (float, float, float, 1)。
-				/// </summary>
+				/* Three-component, float expanded to (float, float, float, 1)
+				*/
 				VEF_Vector3 = 2,
-				/// <summary>
-				///  四个成员，32位浮点数，可以自动展开为 (float, float, float, float)。
-				/// </summary>
+				/* Four-component, float expanded to (float, float, float, float)
+				*/
 				VEF_Vector4 = 3,
-				/// <summary>
-				///  四个成员，打包后的byte，映射到了0-1范围内。输入为Int32类型(ARGB)，会扩展为(R, G, B, A)。
-				/// </summary>
+				/* Four-component, packed byte to (R, G, B, A)
+				*/
 				VEF_Color = 4,
-				/// <summary>
-				///  四个成员，byte。
-				/// </summary>
+
+				/* Four-component, byte.
+				*/
 				VEF_Byte4 = 5,
-				/// <summary>
-				///  Two-component, signed short expanded to (value, value, 0, 1).
-				/// </summary>
+				/* Two-component, signed short expanded to (value, value, 0, 1).
+				*/
 				VEF_Short2 = 6,
-				/// <summary>
-				///  Four-component, signed short expanded to (value, value, value, value).
-				/// </summary>
+				/* Four-component, signed short expanded to (value, value, value, value).
+				*/
 				VEF_Short4 = 7,
-				/// <summary>
-				///  Four-component byte with each byte normalized by dividing the component with
-				///     255.0f. This type is valid for vertex shader version 2.0 or higher.
-				/// </summary>
+				
+				/* Four-component byte with each byte normalized by dividing the component with
+				*  255.0f. This type is valid for vertex shader version 2.0 or higher.
+				*/
 				VEF_Rgba32 = 8,
-				/// <summary>
-				///  Normalized, two-component, signed short, expanded to (first short/32767.0,
-				///     second short/32767.0, 0, 1). This type is valid for vertex shader version
-				///     2.0 or higher.
-				/// </summary>
+
+				/* Normalized, two-component, signed short, expanded to (first short/32767.0,
+				*  second short/32767.0, 0, 1). This type is valid for vertex shader version
+				*  2.0 or higher.
+				*/
 				VEF_NormalizedShort2 = 9,
-				/// <summary>
-				///  Normalized, four-component, signed short, expanded to (first short/32767.0,
-				///     second short/32767.0, third short/32767.0, fourth short/32767.0). This type
-				///     is valid for vertex shader version 2.0 or higher.
-				/// </summary>
+				/*  Normalized, four-component, signed short, expanded to (first short/32767.0,
+				*   second short/32767.0, third short/32767.0, fourth short/32767.0). This type
+				*   is valid for vertex shader version 2.0 or higher.
+				*/
 				VEF_NormalizedShort4 = 10,
-				/// <summary>
-				///  Normalized, two-component, unsigned short, expanded to (first byte/65535.0,
-				///     second byte/65535.0, 0, 1). This type is valid for vertex shader version
-				///     2.0 or higher.
-				/// </summary>
+
+				/*  Normalized, two-component, unsigned short, expanded to (first byte/65535.0,
+				*   second byte/65535.0, 0, 1). This type is valid for vertex shader version
+				*   2.0 or higher.
+				*/
 				VEF_Rg32 = 11,
-				/// <summary>
-				///  Normalized, four-component, unsigned short, expanded to (first byte/65535.0,
-				///     second byte/65535.0, third byte/65535.0, fourth byte/65535.0). This type
-				///     is valid for vertex shader version 2.0 or higher.
-				/// </summary>
+				/*  Normalized, four-component, unsigned short, expanded to (first byte/65535.0,
+				*   second byte/65535.0, third byte/65535.0, fourth byte/65535.0). This type
+				*   is valid for vertex shader version 2.0 or higher.
+				*/
 				VEF_Rgba64 = 12,
-				/// <summary>
-				///  Three-component, unsigned, 10 10 10 format expanded to (value, value, value, 1).
-				/// </summary>
+				/*  Three-component, unsigned, 10 10 10 format expanded to (value, value, value, 1).
+				*   v[1]/511.0, v[2]/511.0, 1).
+				*/
 				VEF_UInt101010 = 13,
-				/// <summary>
-				///  Three-component, signed, 10 10 10 format normalized and expanded to (v[0]/511.0,
-				///     v[1]/511.0, v[2]/511.0, 1).
-				/// </summary>
+				/*  Three-component, signed, 10 10 10 format normalized and expanded to (v[0]/511.0,
+				*   v[1]/511.0, v[2]/511.0, 1).
+				*/
 				VEF_Normalized101010 = 14,
-				/// <summary>
-				///  Two-component, 16-bit floating point expanded to (value, value, value, value).
-				///     This type is valid for vertex shader version 2.0 or higher.
-				/// </summary>
+				/*  Two-component, 16-bit floating point expanded to (value, value, value, value).
+				*   This type is valid for vertex shader version 2.0 or higher.
+				*/
 				VEF_HalfVector2 = 15,
-				/// <summary>
-				///  Four-component, 16-bit floating-point expanded to (value, value, value, value).
-				///     This type is valid for vertex shader version 2.0 or higher.
-				/// </summary>
+				/*  Four-component, 16-bit floating-point expanded to (value, value, value, value).
+				*   This type is valid for vertex shader version 2.0 or higher.
+				*/
 				VEF_HalfVector4 = 16,
-				/// <summary>
-				///  Type field in the declaration is unused. This is designed for use with VertexElementMethod.UV
-				///     and VertexElementMethod.LookUpPresampled.
-				/// </summary>
+				/*  Type field in the declaration is unused. 
+				*/
 				VEF_Unused = 17,
 			};
 
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <remarks>可以直接转换的API：XNA</remarks>
+
 			enum VertexElementUsage
 			{
 				VEU_Binormal = 7,
@@ -222,18 +354,17 @@ namespace Apoc3D
 				TU_StaticWriteOnly = BU_Static | BU_WriteOnly,
 				TU_DynamicWriteOnly = BU_Dynamic | BU_WriteOnly,
 				TU_Discardable = BU_Discardable,
-				/// <summary>
-				///    Mipmaps will be automatically generated for this texture
-				///	 </summary>
+				/* Mipmaps will be automatically generated for this texture
+				*/
 				TU_AutoMipMap = 0x100,
-				/// <summary>
-				///    This texture will be a render target, ie. used as a target for render to texture
-				///    setting this flag will ignore all other texture usages except AutoMipMap
-				///	 </summary>
+				
+				/* This texture will be a render target, ie. used as a target for render to texture
+				*  setting this flag will ignore all other texture usages except AutoMipMap
+				*/
 				TU_RenderTarget = 0x200,
-				/// <summary>
-				///    Default to static textures
-				///	</summary>
+				
+				/* Default to static textures
+				*/
 				TU_Default = TU_StaticWriteOnly
 			};
 

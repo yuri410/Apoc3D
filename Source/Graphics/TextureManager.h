@@ -29,7 +29,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class _Export TextureManager
+		class APOC3D_API TextureManager
 		{
 		public:
 			TextureManager(void);

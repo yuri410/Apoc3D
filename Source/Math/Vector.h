@@ -24,6 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#define EPSILON 0.00001f
+#define ZERO_VECTOR
+
 #define VEC_INDEX_X 0
 #define VEC_INDEX_Y 1
 #define VEC_INDEX_Z 2
@@ -42,11 +45,19 @@ namespace Apoc3D
 {
 	namespace Math
 	{
+		
 		const __m128 _MASKSIGN_;
 
 		/* Defines a four component vector.
 		*/
 		typedef __m128 Vector;
+
+		typedef __m128 Vector3;
+
+		const Vector ZeroVec;
+		const Vector UnitXVec;
+		const Vector UnitYVec;
+		const Vector UnitZVec;
 
 		inline Vector VecLoad(const float vec[4])
 		{
@@ -82,7 +93,7 @@ namespace Apoc3D
 		*/
 		inline Vector VecMul(Vector va, float vb)
 		{
-			Vector scale = _mm_set1_ps(vb);
+			Vector3 scale = _mm_set1_ps(vb);
 			return _mm_mul_ps(va, scale);			
 		}
 
@@ -151,9 +162,9 @@ namespace Apoc3D
 
 		/* Calculates the cross product of two vectors.
 		*/
-		inline Vector VecCross(Vector va, Vector vb)
+		inline Vector3 Vec3Cross(Vector3 va, Vector3 vb)
 		{
-			Vector l1, l2, m1, m2;
+			Vector3 l1, l2, m1, m2;
 			l1 = _mm_shuffle_ps(va,va, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
 			l2 = _mm_shuffle_ps(vb,vb, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
 			m2 = _mm_mul_ps(l1,l2);
@@ -165,47 +176,75 @@ namespace Apoc3D
 
 		/*  Calculates the dot product of two vectors.
 		*/
-		inline float VecDot(Vector va, Vector vb)
+		inline float Vec3Dot(Vector3 va, Vector3 vb)
+		{
+			Vector3 t0 = _mm_mul_ps(va, vb);
+
+			Vector3 t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
+			Vector3 t2 = _mm_add_ps(t0, t1);
+			Vector3 t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
+			Vector3 dot = _mm_add_ps(t3, t2);
+			
+			return reinterpret_cast<float&>(dot);
+		};
+		/*  Calculates the dot product of two vectors.
+		*/
+		inline float Vec4Dot(Vector va, Vector vb)
 		{
 			Vector t0 = _mm_mul_ps(va, vb);
 
-			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
+			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_X));
 			Vector t2 = _mm_add_ps(t0, t1);
-			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
-			Vector dot = _mm_add_ps(t3, t2);
-			
-			return GetX(dot);
-		};
+			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_Y));
+			Vector t4 = _mm_add_ps(t3, t2);
+			Vector t5 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_W,VEC_INDEX_W,VEC_INDEX_W,VEC_INDEX_Z));
+			Vector dot = _mm_add_ps(t4, t5);
 
+			return reinterpret_cast<float&>(dot);
+		};
 		
 		/*  Calculates the dot product of two vectors.
 		*/
-		inline Vector VecDot2(Vector va, Vector vb)
+		inline Vector3 Vec3Dot2(Vector3 va, Vector3 vb)
 		{
-			Vector t0 = _mm_mul_ps(va, vb);
+			Vector3 t0 = _mm_mul_ps(va, vb);
 			
-			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
-			Vector t2 = _mm_add_ps(t0, t1);
-			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
-			Vector dot = _mm_add_ps(t3, t2);
+			Vector3 t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
+			Vector3 t2 = _mm_add_ps(t0, t1);
+			Vector3 t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
+			Vector3 dot = _mm_add_ps(t3, t2);
 
 			return dot;
 		};
+		/*  Calculates the dot product of two vectors.
+		*/
+		inline Vector Vec4Dot2(Vector va, Vector vb)
+		{
+			Vector t0 = _mm_mul_ps(va, vb);
 
+			Vector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_X));
+			Vector t2 = _mm_add_ps(t0, t1);
+			Vector t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_Y));
+			Vector t4 = _mm_add_ps(t3, t2);
+			Vector t5 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_W,VEC_INDEX_W,VEC_INDEX_W,VEC_INDEX_Z));
+			Vector dot = _mm_add_ps(t4, t5);
+
+			return dot;
+		};
 		
 		/*	NewtonRaphson Reciprocal Square Root
 	  	0.5 * rsqrtps * (3 - x * rsqrtps(x) * rsqrtps(x)) */
 #pragma warning(push)
 #pragma warning(disable : 4640)
-		inline Vector rsqrt_nr(Vector a)
+		inline Vector3 rsqrt_nr(Vector3 a)
 		{
-			static const Vector fvecf0pt5 = VecLoad(0.5f);
-			static const Vector fvecf3pt0 = VecLoad(3.0f);
-			Vector Ra0 = _mm_rsqrt_ps(a);
+			static const Vector3 fvecf0pt5 = VecLoad(0.5f);
+			static const Vector3 fvecf3pt0 = VecLoad(3.0f);
+			Vector3 Ra0 = _mm_rsqrt_ps(a);
 
-			Vector l = _mm_mul_ps(fvecf0pt5 , Ra0);
+			Vector3 l = _mm_mul_ps(fvecf0pt5 , Ra0);
 			
-			Vector r = _mm_mul_ps(a , Ra0);
+			Vector3 r = _mm_mul_ps(a , Ra0);
 			r = _mm_mul_ps(r , Ra0);
 
 			r = _mm_sub_ps(fvecf3pt0, r);
@@ -218,16 +257,16 @@ namespace Apoc3D
 
 		/* Calculates the squared length of a specified vector.
 		*/
-		inline float VecLengthSquared(Vector va)
+		inline float Vec3LengthSquared(Vector3 va)
 		{
-			return VecDot(va, va);
+			return Vec3Dot(va, va);
 		};
 
 		/* Calculates the length of a specified vector.
 		*/
-		inline float VecLength(Vector va)
+		inline float Vec3Length(Vector3 va)
 		{			
-			Vector dot = VecDot2(va,va);
+			Vector3 dot = Vec3Dot2(va,va);
 
 			dot = _mm_sqrt_ps(dot);
 			
@@ -238,42 +277,56 @@ namespace Apoc3D
 		
 		/* Calculates the distance between two vectors.
 		*/
-		inline float VecDistance(Vector va, Vector vb)
+		inline float Vec3Distance(Vector3 va, Vector3 vb)
 		{
-			Vector d = _mm_sub_ps(va, vb);
-			return VecLength(d);
+			Vector3 d = _mm_sub_ps(va, vb);
+			return Vec3Length(d);
 		}
 		/* Calculates the squared distance between two vectors.
 		*/
-		inline float VecDistanceSquared(Vector va, Vector vb)
+		inline float Vec3DistanceSquared(Vector3 va, Vector3 vb)
 		{
-			Vector d = _mm_sub_ps(va, vb);
-			return VecLengthSquared(d);
+			Vector3 d = _mm_sub_ps(va, vb);
+			return Vec3LengthSquared(d);
 		}
 
 
 		/* Converts a specified vector into a unit vector.
 		*/
-		inline Vector VecNormalize(Vector va)
+		inline Vector3 Vec3Normalize(Vector3 va)
 		{
-			Vector t = VecDot2(va, va);
+			Vector3 t = Vec3Dot2(va, va);
 #ifdef ZERO_VECTOR
 
-			static const Vector vecZero = _mm_setzero_ps();
-			t = _mm_cmpneq_ss(t, vecZero) & rsqrt_nr(t);
+			static const Vector3 vecZero = _mm_setzero_ps();
+			t = _mm_and_ps(_mm_cmpneq_ss(_mm_shuffle_ps( t, t, VEC_INDEX_X), vecZero), rsqrt_nr(t));
 #else
 			t = rsqrt_nr(t);
 #endif
 			return _mm_mul_ps(va, _mm_shuffle_ps(t,t,0x00));
 		};
-		
+
+		/* Converts a specified vector into a unit vector.
+		*/
+		inline Vector Vec4Normalize(Vector va)
+		{
+			Vector t = Vec4Dot2(va, va);
+#ifdef ZERO_VECTOR
+
+			static const Vector vecZero = _mm_setzero_ps();
+			t = _mm_and_ps(_mm_cmpneq_ss(t, vecZero), rsqrt_nr(t));
+#else
+			t = rsqrt_nr(t);
+#endif
+			return _mm_mul_ps(va, _mm_shuffle_ps(t,t,0x00));
+		};
 
 		/* Returns the reflection of a vector off a surface that has the specified normal. 
 		*/
-		inline Vector VecReflect(Vector Incident, Vector Normal)
+		inline Vector3 VecReflect(Vector3 Incident, Vector3 Normal)
 		{
 			// Result = Incident - (2 * dot(Incident, Normal)) * Normal
-			Vector Result = VecDot2(Incident,Normal);
+			Vector3 Result = Vec3Dot2(Incident,Normal);
 			Result = _mm_add_ps(Result,Result);
 			Result = _mm_mul_ps(Result,Normal);
 			Result = _mm_sub_ps(Incident,Result);
@@ -282,14 +335,14 @@ namespace Apoc3D
 		
 		/* Returns a vector containing the smallest components of the specified vectors.
 		*/
-		inline Vector VecMin(Vector va, Vector vb)
+		inline Vector3 VecMin(Vector3 va, Vector3 vb)
 		{
 			return _mm_min_ps(va, vb);
 		};
 
 		/* Returns a vector containing the largest components of the specified vectors.
 		*/
-		inline Vector VecMax(Vector va, Vector vb)
+		inline Vector3 VecMax(Vector3 va, Vector3 vb)
 		{
 			return _mm_max_ps(va, vb);
 		};

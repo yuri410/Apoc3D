@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			class _Export Texture// : public Resource
+			class APOC3D_API Texture// : public Resource
 			{
 			private:
 				//IDirect3DBaseTexture9* m_baseTexture;

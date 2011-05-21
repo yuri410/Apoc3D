@@ -37,7 +37,7 @@ namespace Apoc3D
 		   A SceneProcedure can contains both normal passes like shadow
 		   mapping and post effect passes like bloom & HDR.
 		*/
-		class _Export SceneProcedure
+		class APOC3D_API SceneProcedure
 		{
 		public:
 			SceneProcedure(void);

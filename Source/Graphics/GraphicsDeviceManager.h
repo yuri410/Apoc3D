@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class _Export GraphicsDeviceManager
+		class APOC3D_API GraphicsDeviceManager
 		{
 		private:
 			DeviceSettings* m_currentSetting;

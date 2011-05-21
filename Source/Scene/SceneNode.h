@@ -31,12 +31,12 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		template class _Export std::vector<SceneObject*>;
+		template class APOC3D_API std::vector<SceneObject*>;
 		typedef std::vector<SceneObject*> ObjectList;
 
 		/* Represents a collection of scene objects in the scene
 		*/
-		class _Export SceneNode
+		class APOC3D_API SceneNode
 		{
 		private:
 			ObjectList m_attached;

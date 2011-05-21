@@ -10,7 +10,7 @@ namespace Apoc3D
 	namespace Core
 	{
 		template<class T>
-		class _Export Singleton
+		class APOC3D_API Singleton
 		{
 		private:
 			static T* ms_instance;

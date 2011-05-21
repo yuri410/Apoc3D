@@ -34,7 +34,7 @@ namespace Apoc3D
 	{
 		/* Contains the current timing state of the game.
 		*/
-		class _Export GameTime
+		class APOC3D_API GameTime
 		{
 		private:
 			float m_totalTime;

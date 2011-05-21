@@ -99,10 +99,14 @@
     <ClInclude Include="Graphics\RenderSystem\VertexDeclaration.h" />
     <ClInclude Include="Graphics\RenderSystem\VertexElement.h" />
     <ClInclude Include="Math\Color.h" />
+    <ClInclude Include="Math\Half.h" />
+    <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\Plane.h" />
     <ClInclude Include="Math\Point.h" />
     <ClInclude Include="Math\Rectangle.h" />
     <ClInclude Include="Math\Vector.h" />
+    <ClInclude Include="Platform\Library.h" />
     <ClInclude Include="Vfs\Archive.h" />
     <ClInclude Include="FastDelegate\FastDelegate.h" />
     <ClInclude Include="FastDelegate\FastDelegateBind.h" />
@@ -162,6 +166,7 @@
     <ClCompile Include="IO\MaterialData.cpp" />
     <ClCompile Include="Math\Matrix.cpp" />
     <ClCompile Include="Math\Math.cpp" />
+    <ClCompile Include="Platform\Library.cpp" />
     <ClCompile Include="ResourceCompiler\Compiler.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\SceneObject.cpp" />

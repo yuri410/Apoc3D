@@ -49,7 +49,7 @@ namespace Apoc3D
 
 		   The other parameters are auto mapped with parameters in atom effects.
 		*/
-		class _Export Material : public HashHandleObject
+		class APOC3D_API Material : public HashHandleObject
 		{
 		public:
 			

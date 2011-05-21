@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		/* Represents a sequencal combination of atom effects.
 		*/
-		class _Export Effect
+		class APOC3D_API Effect
 		{
 		public:
 			Effect(void);

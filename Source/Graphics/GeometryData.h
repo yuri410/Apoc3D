@@ -38,7 +38,7 @@ namespace Apoc3D
 	{
 		/* Define buffers and information used to render a geomentry
 		*/
-		class _Export GeometryData : public HashHandleObject
+		class APOC3D_API GeometryData : public HashHandleObject
 		{
 		private:
 			VertexBuffer* m_vtxBuffer;

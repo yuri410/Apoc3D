@@ -34,7 +34,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			class _Export RenderWindowHandler
+			class APOC3D_API RenderWindowHandler
 			{
 			public:
 				virtual void Initialize() = 0;

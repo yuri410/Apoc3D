@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+This source file is part of labtd
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,28 +15,44 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
+along with this program.  if not, write to the Free Software Foundation,
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#pragma once
-#include "..\Common.h"
+#ifndef LIBRARY_H
+#define LIBRARY_H
+
+#include "Common.h"
 
 namespace Apoc3D
 {
-	namespace EffectSystem
+	namespace Platform
 	{
-		/* Defines a parameter in an atom effect code.
-   
-		   This also contains effect param mapping info.
-		*/
-		class APOC3D_API EffectParameter
+
+
+		class APOC3D_API Library
 		{
+		private:
+			String m_name;
+
+			byte m_handle[8];
 		public:
-			EffectParameter(void);
-			~EffectParameter(void);
+			Library(String name)
+				: m_name(name)
+			{}
+
+			const String &getName() const { return m_name; }
+			void* getSymbolAddress(const String &name) const;
+
+			void Load();
+			void Unload();
+
+
 		};
-	};
-};
+	}
+}
+
+
+#endif

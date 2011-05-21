@@ -32,7 +32,7 @@ namespace Apoc3D
 	namespace Math
 	{
 #pragma pack(push, 16)
-		class _Export Color4
+		class APOC3D_API Color4
 		{
 		public:
 			union
@@ -55,7 +55,7 @@ namespace Apoc3D
 					*/
 					float Alpha;
 				};
-				__m128 vector;
+				Vector vector;
 			};
 			
 			Color4() { vector = VecLoad(0.0f); }
@@ -66,7 +66,7 @@ namespace Apoc3D
 				Green = static_cast<float>(((argb >> 8) & 0xff) / 255.0f);
 				Blue = static_cast<float>((argb & 0xff) / 255.0f);
 			}
-			Color4(Vector color)
+			Color4(Vector3 color)
 			{
 				vector = color;				
 			}
@@ -116,7 +116,7 @@ namespace Apoc3D
 
 			/* Converts the color into a vector.
 			*/
-			Vector ToVector()
+			Vector3 ToVector()
 			{
 				const float buffer[4]= { Red, Green, Blue, Alpha };
 				return VecLoad(buffer);
@@ -168,7 +168,7 @@ namespace Apoc3D
 			*/
 			static Color4 Lerp(const Color4 &color1, const Color4 &color2, float amount)
 			{
-				Vector b = VecSub(color2.vector, color1.vector);
+				Vector3 b = VecSub(color2.vector, color1.vector);
 				b = VecMul(b, amount);
 				b = VecAdd(color1.vector, b);
 				return b;				
@@ -177,7 +177,7 @@ namespace Apoc3D
 			*/
 			static Color4 Lerp(const Color4 &color1, const Color4 &color2, float amount, Color4& result)
 			{
-				Vector b = VecSub(color2.vector, color1.vector);
+				Vector3 b = VecSub(color2.vector, color1.vector);
 				b = VecMul(b, amount);
 				b = VecAdd(color1.vector, b);
 				result = Color4(b);
@@ -186,7 +186,7 @@ namespace Apoc3D
 			*/
 			static void Negate(const Color4 &color, Color4& result)
 			{
-				static const Vector one = VecLoad(1);
+				static const Vector3 one = VecLoad(1);
 				result = Color4(VecSub(one, color.vector));				
 			}
 			
@@ -206,9 +206,9 @@ namespace Apoc3D
 			*/
 			static void AdjustContrast(const Color4 &color, float contrast, Color4& result)
 			{
-				static const Vector half = VecLoad(0.5f);
+				static const Vector3 half = VecLoad(0.5f);
 
-				Vector t = VecSub(color.vector, half);
+				Vector3 t = VecSub(color.vector, half);
 				t = VecMul(t, contrast);
 				t = VecAdd(t, half);
 
@@ -219,9 +219,9 @@ namespace Apoc3D
 			*/
 			static Color4 AdjustContrast(const Color4 &color, float contrast)
 			{
-				static const Vector half = VecLoad(0.5f);
+				static const Vector3 half = VecLoad(0.5f);
 
-				Vector t = VecSub(color.vector, half);
+				Vector3 t = VecSub(color.vector, half);
 				t = VecMul(t, contrast);
 				t = VecAdd(t, half);
 
@@ -234,11 +234,11 @@ namespace Apoc3D
 			static void AdjustSaturation(const Color4 &color, float saturation, Color4& result)
 			{
 				static const float buffer[4] = {0.2125f, 0.7154f, 0.0721f, 0};
-				static const Vector hue = VecLoad(buffer);
+				static const Vector3 hue = VecLoad(buffer);
 			
-				Vector grey = VecDot2(hue, color.vector);
+				Vector3 grey = Vec3Dot2(hue, color.vector);
 
-				Vector c = VecSub(color.vector, grey);
+				Vector3 c = VecSub(color.vector, grey);
 				c = VecMul(c, saturation);
 				c = VecAdd(c, grey);
 
@@ -251,11 +251,11 @@ namespace Apoc3D
 			static Color4 AdjustSaturation(const Color4 &color, float saturation)
 			{
 				static const float buffer[4] = {0.2125f, 0.7154f, 0.0721f, 0};
-				static const Vector hue = VecLoad(buffer);
+				static const Vector3 hue = VecLoad(buffer);
 
-				Vector grey = VecDot2(hue, color.vector);
+				Vector3 grey = Vec3Dot2(hue, color.vector);
 
-				Vector c = VecSub(color.vector, grey);
+				Vector3 c = VecSub(color.vector, grey);
 				c = VecMul(c, saturation);
 				c = VecAdd(c, grey);
 

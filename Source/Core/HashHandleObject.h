@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		class _Export HashHandleObject
+		class APOC3D_API HashHandleObject
 		{
 		private:
 			static BatchHandle Counter;

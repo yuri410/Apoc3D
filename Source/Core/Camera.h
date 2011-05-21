@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		/* Represents a view into a 3D scene. 
 		*/
-		class _Export Camera
+		class APOC3D_API Camera
 		{
 		private:
 	

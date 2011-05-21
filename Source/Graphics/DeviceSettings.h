@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		struct _Export DeviceSettings
+		struct APOC3D_API DeviceSettings
 		{
 			/* the width of the back buffer.
 			*/

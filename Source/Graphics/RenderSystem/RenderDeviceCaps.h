@@ -246,7 +246,7 @@ namespace Apoc3D
 			//	ZFog = 2097152
 			//};
 
-			class _Export Capabilities
+			class APOC3D_API Capabilities
 			{
 
 			};

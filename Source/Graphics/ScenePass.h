@@ -40,7 +40,7 @@ namespace Apoc3D
 		   a pass of scene rendering. It selects objects for rendering
 		   according to EffectDescription in the script.
 		*/
-		class _Export ScenePass
+		class APOC3D_API ScenePass
 		{
 		public:
 			ScenePass(void);

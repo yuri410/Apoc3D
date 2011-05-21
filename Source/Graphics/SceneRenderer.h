@@ -33,7 +33,7 @@ namespace Apoc3D
 	{
 		/* Renders a scene with a particular render script.
 		*/
-		class _Export SceneRenderer
+		class APOC3D_API SceneRenderer
 		{
 		public:
 			SceneRenderer(void);

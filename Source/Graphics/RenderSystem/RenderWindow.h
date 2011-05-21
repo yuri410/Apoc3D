@@ -40,7 +40,7 @@ namespace Apoc3D
 		{
 			/* Implements a simple FPS counter
 			*/
-			class _Export FPSCounter
+			class APOC3D_API FPSCounter
 			{
 			private:
 				float m_begin;
@@ -50,13 +50,13 @@ namespace Apoc3D
 				int64 m_counter;
 
 			public:
-				float getFPS() { return m_fps; }
+				float getFPS() const { return m_fps; }
 				void OnFrame();
 			};
 
 			/* Represents a view of rendered graphics.
 			*/
-			class _Export RenderView
+			class APOC3D_API RenderView
 			{
 			private:
 				RenderTarget* m_renderTarget;
@@ -79,14 +79,14 @@ namespace Apoc3D
 			public:
 				void* UserData;
 
-				float getFPS() { return m_fpsCounter.getFPS(); }
+				float getFPS() const { return m_fpsCounter.getFPS(); }
 
 				void Present() { m_fpsCounter.OnFrame(); }
 				
 
 			};
 
-			class _Export RenderWindow : public RenderView
+			class APOC3D_API RenderWindow : public RenderView
 			{
 			private:
 				Size m_clientSize;
@@ -95,7 +95,7 @@ namespace Apoc3D
 				RenderWindowHandler* m_evtHandler;
 
 			public:
-				const String &getTitle() { return m_title; }
+				const String &getTitle() const { return m_title; }
 				
 
 				virtual void Run() = 0;

@@ -37,7 +37,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			class _Export Sprite
+			class APOC3D_API Sprite
 			{
 			private:
 				RenderDevice* m_renderDevice;
@@ -47,7 +47,7 @@ namespace Apoc3D
 				{
 				}
 			public:
-				virtual void DrawQuad(const GeomentryData* quad, PostEffect* effect) = 0;
+				virtual void DrawQuad(const GeometryData* quad, PostEffect* effect) = 0;
 				virtual void Draw(Texture* texture, const Rectangle &rect, uint color) = 0;
 				virtual void Draw(Texture* texture, Vector pos, uint color) = 0;
 				virtual void Draw(Texture* texture, int x, int y, uint color) = 0;

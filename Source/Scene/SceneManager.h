@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		template class _Export vector<SceneObject*>;
+		template class APOC3D_API vector<SceneObject*>;
 		typedef vector<SceneObject*> ObjectList;
 		class OperationList;
 		class GeometryTable;
@@ -44,19 +44,19 @@ namespace Apoc3D
 		class PriorityTable;
 		class MaterialList;
 		
-		template class _Export vector<RenderOperation>;
-		template class _Export unordered_map<BatchHandle, OperationList*>;
-		template class _Export unordered_map<BatchHandle, GeometryTable*>;
-		template class _Export unordered_map<uint32, MaterialTable*>;
-		template class _Export unordered_map<BatchHandle, Material*>;
+		template class APOC3D_API vector<RenderOperation>;
+		template class APOC3D_API unordered_map<BatchHandle, OperationList*>;
+		template class APOC3D_API unordered_map<BatchHandle, GeometryTable*>;
+		template class APOC3D_API unordered_map<uint32, MaterialTable*>;
+		template class APOC3D_API unordered_map<BatchHandle, Material*>;
 
-		class _Export OperationList : public vector<RenderOperation> { };
-		class _Export GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
-		class _Export MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
-		class _Export PriorityTable : public unordered_map<uint32, MaterialTable*> { };
-		class _Export MaterialList : public unordered_map<BatchHandle, Material*> { };
+		class APOC3D_API OperationList : public vector<RenderOperation> { };
+		class APOC3D_API GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
+		class APOC3D_API MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
+		class APOC3D_API PriorityTable : public unordered_map<uint32, MaterialTable*> { };
+		class APOC3D_API MaterialList : public unordered_map<BatchHandle, Material*> { };
 				
-		class _Export BatchData
+		class APOC3D_API BatchData
 		{
 		public:
 			static const int MaxPriority = 10;
@@ -79,7 +79,7 @@ namespace Apoc3D
 
 		/* SceneManager keeps tracks of all scene objects.
 		*/
-		class _Export SceneManager
+		class APOC3D_API SceneManager
 		{
 		private:
 			ObjectList m_objects;

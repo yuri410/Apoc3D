@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		class _Export MaterialData
+		class APOC3D_API MaterialData
 		{
 		private:
 			vector<String> m_textures;

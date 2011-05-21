@@ -47,7 +47,7 @@ namespace Apoc3D
 #pragma pack(push, 16)
 		/* Defines a 4x4 matrix.
 		*/
-		class _Export Matrix
+		class APOC3D_API Matrix
 		{
 		private:
 			
@@ -145,7 +145,7 @@ namespace Apoc3D
 
 			/* Calculates the determinant of the matrix.
 			*/
-			float Determinant() // TODO: Rewrite
+			float Determinant() const// TODO: Rewrite
 			{
 				__m128 Va,Vb,Vc;
 				__m128 r1,r2,r3,t1,t2,sum;
@@ -368,12 +368,12 @@ namespace Apoc3D
 
 			/* Creates a matrix that rotates around an arbitary axis.
 			*/
-			static void CreateRotationAxis(Matrix& res, Vector axis, float angle)
+			static void CreateRotationAxis(Matrix& res, Vector3 axis, float angle)
 			{
-				Vector dotAxis = VecDot2(axis,axis);
-				Vector t0 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(VEC_INDEX_X, VEC_INDEX_X, VEC_INDEX_Y, 0));
-				Vector t1 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(VEC_INDEX_Y, VEC_INDEX_Z, VEC_INDEX_Z, 0));
-				Vector dotAxis2 = VecDot2(t0,t1);
+				Vector3 dotAxis = Vec3Dot2(axis,axis);
+				Vector3 t0 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(VEC_INDEX_X, VEC_INDEX_X, VEC_INDEX_Y, 0));
+				Vector3 t1 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(VEC_INDEX_Y, VEC_INDEX_Z, VEC_INDEX_Z, 0));
+				Vector3 dotAxis2 = Vec3Dot2(t0,t1);
 
 				float sins, coss;
 				__asm
@@ -384,21 +384,21 @@ namespace Apoc3D
 					fstp		float ptr sins
 				}
 
-				Vector sin = VecLoad(sins);
-				Vector cos = VecLoad(coss);
-				Vector one = VecLoad(1);
+				Vector3 sin = VecLoad(sins);
+				Vector3 cos = VecLoad(coss);
+				Vector3 one = VecLoad(1);
 
-				Vector r0 = VecSub(one, dotAxis);
+				Vector3 r0 = VecSub(one, dotAxis);
 				r0 = VecMul(cos, r0);
 				r0 = VecAdd(dotAxis, r0);
 
-				Vector r1left = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_X, VEC_INDEX_Z, VEC_INDEX_Y, 0));
-				Vector r1right = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_Z, VEC_INDEX_X, VEC_INDEX_Y, 0));
+				Vector3 r1left = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_X, VEC_INDEX_Z, VEC_INDEX_Y, 0));
+				Vector3 r1right = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_Z, VEC_INDEX_X, VEC_INDEX_Y, 0));
 				
-				Vector tmp = VecMul(cos, r1left);
+				Vector3 tmp = VecMul(cos, r1left);
 				r1left = VecSub(r1left, tmp);
 				r1right = VecMul(sin, r1right);
-				Vector r1 = VecAdd(r1left, r1right);
+				Vector3 r1 = VecAdd(r1left, r1right);
 
 
 				
@@ -407,7 +407,7 @@ namespace Apoc3D
 				tmp = VecMul(cos, r1left);
 				r1left = VecSub(r1left, tmp);
 				r1right = VecMul(sin, r1right);
-				Vector r2 = VecSub(r1left, r1right);
+				Vector3 r2 = VecSub(r1left, r1right);
 
 				
 				__asm { 
@@ -504,18 +504,18 @@ namespace Apoc3D
 
 			/* Creates a left-handed, look-at matrix.
 			*/
-			static void CreateLookAtLH(Matrix& res, Vector cameraPosition, Vector cameraTarget, Vector up)
+			static void CreateLookAtLH(Matrix& res, Vector3 cameraPosition, Vector3 cameraTarget, Vector3 up)
 			{
-				Vector zaxis = VecSub(cameraTarget, cameraPosition);
-				zaxis = VecNormalize(zaxis);
+				Vector3 zaxis = VecSub(cameraTarget, cameraPosition);
+				zaxis = Vec3Normalize(zaxis);
 
-				Vector xaxis = VecCross(up, zaxis);
-				xaxis = VecNormalize(xaxis);
-				Vector yaxis = VecCross(zaxis, xaxis);
+				Vector3 xaxis = Vec3Cross(up, zaxis);
+				xaxis = Vec3Normalize(xaxis);
+				Vector3 yaxis = Vec3Cross(zaxis, xaxis);
 				
-				float tx = VecDot(xaxis, cameraPosition);
-				float ty = VecDot(yaxis, cameraPosition);
-				float tz = VecDot(zaxis, cameraPosition);
+				float tx = Vec3Dot(xaxis, cameraPosition);
+				float ty = Vec3Dot(yaxis, cameraPosition);
+				float tz = Vec3Dot(zaxis, cameraPosition);
 
 				res.Row1 = xaxis;
 				res.Row2 = yaxis;
@@ -541,18 +541,18 @@ namespace Apoc3D
 			}
 			/* Creates a right-handed, look-at matrix.
 			*/
-			static void CreateLookAtRH(Matrix& res, Vector cameraPosition, Vector cameraTarget, Vector up)
+			static void CreateLookAtRH(Matrix& res, Vector3 cameraPosition, Vector3 cameraTarget, Vector3 up)
 			{
-				Vector zaxis = VecSub(cameraTarget, cameraPosition);
-				zaxis = VecNormalize(zaxis);
+				Vector3 zaxis = VecSub(cameraTarget, cameraPosition);
+				zaxis = Vec3Normalize(zaxis);
 
-				Vector xaxis = VecCross(up, zaxis);
-				xaxis = VecNormalize(xaxis);
-				Vector yaxis = VecCross(zaxis, xaxis);
+				Vector3 xaxis = Vec3Cross(up, zaxis);
+				xaxis = Vec3Normalize(xaxis);
+				Vector3 yaxis = Vec3Cross(zaxis, xaxis);
 
-				float tx = VecDot(xaxis, cameraPosition);
-				float ty = VecDot(yaxis, cameraPosition);
-				float tz = VecDot(zaxis, cameraPosition);
+				float tx = Vec3Dot(xaxis, cameraPosition);
+				float ty = Vec3Dot(yaxis, cameraPosition);
+				float tz = Vec3Dot(zaxis, cameraPosition);
 				
 				__asm 
 				{
@@ -803,7 +803,7 @@ namespace Apoc3D
 
 			/* Creates a spherical billboard that rotates around a specified object position.
 			*/
-			static void CreateBillboard(const Vector &objectPosition, const Vector &cameraPosition, const Vector &cameraUpVector, const Vector &cameraForwardVector, Matrix& res);
+			static void CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix& res);
 
 			
 		};

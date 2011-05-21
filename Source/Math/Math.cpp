@@ -43,6 +43,17 @@ namespace Apoc3D
 
 		} Initializer;
 
+		inline Vector VecLoad(float x, float y, float z, float w)
+		{
+			float vec[4] = {x,y,z,w};
+			return _mm_load_ps(&vec[0]);
+		};
+
+		const Vector ZeroVec = VecLoad(0);
+		const Vector UnitXVec = VecLoad(1,0,0,0);
+		const Vector UnitYVec = VecLoad(0,1,0,0);
+		const Vector UnitZVec = VecLoad(0,0,1,0);
+
 		const Point Point::Zero = Point(0,0);
 		const Rectangle Rectangle::Empty = Rectangle(0,0,0,0);
 		const RectangleF RectangleF::Empty = RectangleF(0,0,0,0);

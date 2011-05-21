@@ -35,7 +35,7 @@ namespace Apoc3D
 		{
 			/* Applications use RenderDevice to perform DrawPrimitive level rendering
 			*/
-			class _Export RenderDevice
+			class APOC3D_API RenderDevice
 			{
 			private:
 				String m_rdName;
@@ -53,12 +53,12 @@ namespace Apoc3D
 
 				}
 			public:
-				int getBatchCount() { return m_batchCount; }
-				int getPrimitiveCount() { return m_primitiveCount; }
-				int getVertexCount() { return m_vertexCount; }
+				int getBatchCount() const { return m_batchCount; }
+				int getPrimitiveCount() const { return m_primitiveCount; }
+				int getVertexCount() const { return m_vertexCount; }
 
-				const Capabilities* getCapabilities() { return &m_caps; }
-				const String &getRenderDeviceName() { return m_rdName; }
+				const Capabilities* getCapabilities() const { return &m_caps; }
+				const String &getRenderDeviceName() const { return m_rdName; }
 
 				virtual void Initialize() = 0;
 

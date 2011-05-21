@@ -38,7 +38,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			class _Export VertexDeclaration
+			class APOC3D_API VertexDeclaration
 			{
 			protected:
 				vector<const VertexElement> elements;
@@ -54,7 +54,7 @@ namespace Apoc3D
 			public:
 				/*  Gets the number of elements in the declaration.
 				*/
-				int getElementCount()
+				int getElementCount() const
 				{
 					return static_cast<int>(elements.size());
 				}
@@ -62,7 +62,7 @@ namespace Apoc3D
 				/* Finds a VertexElement with the given semantic, and index if there is more than 
 				 * one element with the same semantic. 
 				*/
-				bool FindElementBySemantic(VertexElementUsage semantic, VertexElement& result)
+				bool FindElementBySemantic(VertexElementUsage semantic, VertexElement& result) const
 				{
 					FindElementBySemantic(semantic, 0, result);
 				}
@@ -70,11 +70,11 @@ namespace Apoc3D
 				/* Finds a VertexElement with the given semantic, and index if there is more than 
 				 * one element with the same semantic. 
 				*/
-				virtual bool FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result)
+				virtual bool FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result) const
 				{
 					for (int i = 0; i < elements.size(); i++)
 					{
-						VertexElement &element = elements[i];
+						const VertexElement &element = elements[i];
 
 						// do they match?
 						if (element.getUsage() == semantic && element.getIndex() == index)
@@ -89,14 +89,14 @@ namespace Apoc3D
 
 				/* Gets the VertexElement at the specified index.
 				*/
-				const VertexElement &getElement(int index)
+				const VertexElement &getElement(int index) const
 				{
 					return elements[index];
 				}
 
 				/* Gets the vertex size defined by this declaration.
 				*/
-				virtual int GetVertexSize()
+				virtual int GetVertexSize() const
 				{
 					int size = 0;
 

@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class _Export Mesh
+		class APOC3D_API Mesh
 		{
 		public:
 			Mesh(void);

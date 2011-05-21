@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			class _Export VertexElement
+			class APOC3D_API VertexElement
 			{
 			private:
 				int m_offset;
@@ -45,17 +45,17 @@ namespace Apoc3D
 			public:
 				/* Gets the offset in the buffer that this element starts at.
 				*/
-				int getOffset() { return m_offset; }
+				int getOffset() const { return m_offset; }
 				/* Gets the type of element.
 				*/
-				VertexElementFormat getType() { return m_type; }
+				VertexElementFormat getType() const { return m_type; }
 				/* Gets the meaning of the element.
 				*/
-				VertexElementUsage getUsage() { return m_semantic; }
+				VertexElementUsage getUsage() const { return m_semantic; }
 				/* Gets index of the item, only applicable for some elements like texture coords
 				*/
-				int getIndex() { return m_index; }
-				int getSize() { return GetTypeSize(m_type); }
+				int getIndex() const { return m_index; }
+				int getSize() const { return GetTypeSize(m_type); }
 
 				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic)					
 				{
