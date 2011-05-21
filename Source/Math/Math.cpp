@@ -21,7 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "Vector.h"
+
 #include "Color.h"
 #include "Point.h"
 #include "Rectangle.h"
@@ -31,28 +31,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class FieldInitializer
-		{
-		public:
-			FieldInitializer()
-			{
-				uint Data2[4] = {0x80000000, 0x80000000, 0x80000000, 0x80000000};
-				memcpy((void*)&_MASKSIGN_, Data2, sizeof(Data2));
-				
-			}
 
-		} Initializer;
-
-		inline Vector VecLoad(float x, float y, float z, float w)
-		{
-			float vec[4] = {x,y,z,w};
-			return _mm_load_ps(&vec[0]);
-		};
-
-		const Vector ZeroVec = VecLoad(0);
-		const Vector UnitXVec = VecLoad(1,0,0,0);
-		const Vector UnitYVec = VecLoad(0,1,0,0);
-		const Vector UnitZVec = VecLoad(0,0,1,0);
 
 		const Point Point::Zero = Point(0,0);
 		const Rectangle Rectangle::Empty = Rectangle(0,0,0,0);
