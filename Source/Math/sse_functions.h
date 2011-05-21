@@ -132,6 +132,19 @@ inline __m128 VecMax(__m128 va, __m128 vb)
 
 /* Calculates the cross product of two vectors.
 */
+inline float Vec2Cross(__m128 va, __m128 vb)
+{
+	// a.X * b.Y - b.X * a.Y;
+	__m128 l1, l2, m1, m2;
+	l1 = _mm_shuffle_ps(va,va, _MM_SHUFFLE(VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_W));
+	l2 = _mm_shuffle_ps(vb,vb, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_X,VEC_INDEX_Z,VEC_INDEX_W));
+	m1 = _mm_mul_ps(l1,l2); // a.X * b.Y , b.X * a.Y;
+	m2 = _mm_shuffle_ps(m1,m1, VEC_INDEX_Y);
+
+	__m128 r = _mm_sub_ps(m1, m2);
+
+	return reinterpret_cast<const float&>(r);
+}
 inline __m128 Vec3Cross(__m128 va, __m128 vb)
 {
 	__m128 l1, l2, m1, m2;

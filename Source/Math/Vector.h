@@ -185,29 +185,20 @@ namespace Apoc3D
 			*/
 			static float Length(Vector2 v)
 			{
-				Vector2 dot = Dot2(v,v);
-				dot = _mm_sqrt_ps(dot);
-
-				return GetX(dot);
+				return Vec2Length(v);
 			}
 			/* Calculates the squared length of the vector.
 			*/
 			static float LengthSquared(Vector2 v)
 			{
-				return Dot(v,v);
+				return Vec2LengthSquared(v);
 			}
 
 			/* Converts the vector into a unit vector.
 			*/
 			static Vector2 Normalize(Vector2 vector)
 			{
-				Vector2 t = Dot2(vector, vector);
-#ifdef ZERO_VECTOR
-				t = _mm_and_ps(_mm_cmpneq_ss(_mm_shuffle_ps( t, t, VEC_INDEX_X), Zero), rsqrt_nr(t));
-#else
-				t = rsqrt_nr(t);
-#endif
-				return _mm_mul_ps(vector, _mm_shuffle_ps(t,t,0x00));
+				return Vec2Normalize(vector);
 			}
 
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
@@ -266,35 +257,35 @@ namespace Apoc3D
 			*/
 			static Vector2 Add(Vector2 left, Vector2 right)
 			{
-				return _mm_add_ps(left, right);
+				return VecAdd(left, right);
 			}
 			/* Subtracts two vectors.
 			*/
 			static Vector2 Subtract(Vector2 left, Vector2 right)
 			{
-				return _mm_sub_ps(left, right);
+				return VecSub(left, right);
 			}
 			/* Scales a vector by the given value.
 			*/
 			static Vector2 Multiply(Vector2 value, float scale)
 			{
-				return _mm_mul_ps(value, scale);
+				return VecMul(value, scale);
 			}
 			/* Modulates a vector by another.
 			*/
 			static Vector2 Modulate(Vector2 left, Vector2 right)
 			{
-				return _mm_mul_ps(left, right);
+				return VecMul(left, right);
 			}
 			/* Scales a vector by the given value.
 			*/
 			static Vector2 Divide(Vector2 value, float scale)
 			{
-				return _mm_div_ps(value, scale);
+				return VecDiv(value, scale);
 			}
-			static float Cross(const Vector2& a, const Vector2& b)
+			static float Cross(Vector2 a, Vector2 b)
 			{
-				return a.X * b.Y - b.X * a.Y;
+				return Vec2Cross(a,b);
 			}
 
 			/* Reverses the direction of a given vector.
@@ -348,9 +339,130 @@ namespace Apoc3D
 #endif			
 			
 			
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+			/* Returns a Vector2 containing the 2D Cartesian coordinates of a point 
+			* specified in Barycentric coordinates relative to a 2D triangle.
+			*/
+			static Vector2 Barycentric(Vector2 value1, Vector2 value2, 
+				Vector2 value3, float amount1, float amount2)
+			{
+				__m128 t1 = VecSub(value2,value1);
+				__m128 t2 = VecSub(value3,value1);
+				t1 = VecMul(t1, amount1);
+				t2 = VecMul(t2, amount2);
 
-			
+				__m128 result = VecAdd(value1, t1);
+				result = VecAdd(result, t2);
+				return result;
+			}
+			/* Performs a Catmull-Rom interpolation using the specified positions.
+			*/
+			static Vector2 CatmullRom(Vector2 value1, Vector2 value2, 
+				Vector2 value3, Vector2 value4, float amount)
+			{
+				//Vector2 vector;
+				float squared = amount * amount;
+				float cubed = amount * squared;
 
+				__m128 lsum;
+				__m128 t3;
+				
+				__m128 result;
+				__m128 t1 = VecMul(value2, 2);
+				__m128 lsum = VecSub(value3, value1);
+
+				lsum = VecMul(t2, amount);
+
+				result = VecAdd(t1, lsum);
+
+				t1 = VecMul(value1, 2);
+				t2 = VecMul(value2, -5);
+				t3 = VecMul(value3, 4);
+				
+				lsum = VecAdd(t1, t2);
+				lsum = VecAdd(lsum, t3);
+				lsum = VecSub(lsum, value4);
+				lsum = VecMul(t2, squared);
+
+				result = VecAdd(result, lsum);
+
+				t1 = VecMul(value2, 3);
+				t2 = VecMul(value3, -3);
+							
+				lsum = VecAdd(t1, t2);
+				lsum = VecSub(lsum, value1);
+				lsum = VecAdd(lsum, value4);
+				lsum = VecMul(t2, cubed);
+
+				result = VecAdd(result, lsum);
+				result = VecMul(result, 0.5f);
+
+				//vector.X = 0.5f * (2.0f * value2.X + (value3.X - value1.X) * amount +
+				//	(2.0f * value1.X - 5.0f * value2.X + 4.0f * value3.X - value4.X) * squared + 
+				//	(3.0f * value2.X - 3.0f * value3.X + value4.X - value1.X) * cubed);
+
+				//vector.Y = 0.5f * ((((2.0f * value2.Y) + ((-value1.Y + value3.Y) * amount)) +
+				//	(((((2.0f * value1.Y) - (5.0f * value2.Y)) + (4.0f * value3.Y)) - value4.Y) * squared)) +
+				//	((((-value1.Y + (3.0f * value2.Y)) - (3.0f * value3.Y)) + value4.Y) * cubed));
+
+				return result;
+			}
+			/* Performs a Hermite spline interpolation.
+			*/
+			static Vector2 Hermite(Vector2 value1, Vector2 tangent1,
+				Vector2 value2, Vector2 tangent2, float amount)
+			{
+				float squared = amount * amount;
+				float cubed = amount * squared;
+				float part1 = ((2.0f * cubed) - (3.0f * squared)) + 1.0f;
+				float part2 = (-2.0f * cubed) + (3.0f * squared);
+				float part3 = (cubed - (2.0f * squared)) + amount;
+				float part4 = cubed - squared;
+
+
+				__m128 t1 = VecMul(value1, part1);
+				__m128 t2 = VecMul(value2, part2);
+				__m128 t3 = VecMul(tangent1, part3);
+				__m128 t4 = VecMul(tangent2, part4);
+
+				__m128 result = VecAdd(t1, t2);
+				result = VecAdd(result, t3);
+				result = VecAdd(result, t4);
+
+				return result;
+			}
+			/* Performs a linear interpolation between two vectors.
+			*/
+			static Vector2 Lerp(Vector2 start, Vector2 end, float amount)
+			{				
+				__m128 t1 = VecSub(end, start);
+				t1 = VecMul(t1, amount);
+				t1 = VecAdd(start, t1);
+				return t1;
+			}
+			/* Performs a cubic interpolation between two vectors.
+			*/
+			static Vector2 SmoothStep(Vector2 start, Vector2 end, float amount)
+			{			
+				amount = (amount > 1.0f) ? 1.0f : ((amount < 0.0f) ? 0.0f : amount);
+				amount = (amount * amount) * (3.0f - (2.0f * amount));
+
+				__m128 t1 = VecSub(end, start);
+				t1 = VecMul(t1, amount);
+				t1 = VecAdd(start, t1);
+
+				return t1;
+			}
+			/* Restricts a value to be within a specified range.
+			*/
+			static Vector2 Clamp(Vector2 value, Vector2 min, Vector2 max)
+			{
+				__m128 t1 = VecMax(min, value);
+				t1 = VecMin(max, value);
+
+				return t1;
+			}
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			/* Returns a Vector2 containing the 2D Cartesian coordinates of a point 
 			* specified in Barycentric coordinates relative to a 2D triangle.
 			*/
@@ -380,20 +492,6 @@ namespace Apoc3D
 					((((-value1.Y + (3.0f * value2.Y)) - (3.0f * value3.Y)) + value4.Y) * cubed));
 
 				return vector;
-			}
-			/* Restricts a value to be within a specified range.
-			*/
-			static Vector2 Clamp(const Vector2& value, const Vector2& min, const Vector2& max)
-			{
-				float x = value.X;
-				x = (x > max.X) ? max.X : x;
-				x = (x < min.X) ? min.X : x;
-
-				float y = value.Y;
-				y = (y > max.Y) ? max.Y : y;
-				y = (y < min.Y) ? min.Y : y;
-
-				return Vector2(x, y);
 			}
 			/* Performs a Hermite spline interpolation.
 			*/
@@ -438,7 +536,60 @@ namespace Apoc3D
 
 				return vector;
 			}
+			/* Restricts a value to be within a specified range.
+			*/
+			static Vector2 Clamp(const Vector2& value, const Vector2& min, const Vector2& max)
+			{
+				float x = value.X;
+				x = (x > max.X) ? max.X : x;
+				x = (x < min.X) ? min.X : x;
 
+				float y = value.Y;
+				y = (y > max.Y) ? max.Y : y;
+				y = (y < min.Y) ? min.Y : y;
+
+				return Vector2(x, y);
+			}
+#endif	
+			
+			
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+			/* Calculates the distance between two vectors.
+			*/
+			static float Distance(Vector2 value1, Vector2 value2)
+			{
+				return Vec2Distance(value1, value2);				
+			}
+			/* Calculates the dot product of two vectors.
+			*/
+			static float Dot(Vector2 value1, Vector2 value2)
+			{
+				return Vec2Dot(value1, value2);
+			}
+			/* Calculates the dot product of two vectors.
+			*/
+			static Vector2 Dot2(Vector2 left, Vector2 right)
+			{
+				return Vec2Dot2(value1, value2);
+			}
+			
+			static Vector2 Reflect(Vector2 vector, Vector2 normal)
+			{
+				return Vec2Reflect(vector, normal);
+			}
+			/* Returns a vector containing the smallest components of the specified vectors.
+			*/
+			static Vector2 Minimize(Vector2 left, Vector2 right)
+			{
+				return VecMin(left, right);
+			}
+			/* Returns a vector containing the largest components of the specified vectors.
+			*/
+			static Vector2 Maximize(Vector2 left, Vector2 right)
+			{
+				return VecMax(left, right);
+			}
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			/* Calculates the distance between two vectors.
 			*/
 			static float Distance(const Vector2& value1, const Vector2& value2)
@@ -461,9 +612,7 @@ namespace Apoc3D
 				float f= left.X * right.X + left.Y * right.Y;
 				return Vector2(f);
 			}
-
-
-
+			
 			static Vector2 Reflect(const Vector2& vector, const Vector2& normal)
 			{
 				Vector2 vector2;
@@ -490,6 +639,12 @@ namespace Apoc3D
 				vector.Y = (left.Y > right.Y) ? left.Y : right.Y;
 				return vector;
 			}
+#endif
+
+			
+
+
+
 
 		};
 		class APAPI Vector3Utils
