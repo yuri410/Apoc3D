@@ -237,7 +237,7 @@ namespace Apoc3D
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 
 			void SetRight(const Vector3& v) { M11 = Vector3Utils::GetX(v); M12 = Vector3Utils::GetY(v); M13 = Vector3Utils::GetZ(v); }
-			void SetLeft(const Vector3& v) { M11 = -Vector3Utils::GetX(v); M12 = -Vector3Utils::GetY(v); -M13 = Vector3Utils::GetZ(v); } 
+			void SetLeft(const Vector3& v) { M11 = -Vector3Utils::GetX(v); M12 = -Vector3Utils::GetY(v); M13 = -Vector3Utils::GetZ(v); } 
 
 			void SetUp(const Vector3& v) { M21 = Vector3Utils::GetX(v); M22 = Vector3Utils::GetY(v); M23 = Vector3Utils::GetZ(v); }
 			void SetDown(const Vector3& v) { M21 = -Vector3Utils::GetX(v); M22 = -Vector3Utils::GetY(v); M23 = -Vector3Utils::GetZ(v); }

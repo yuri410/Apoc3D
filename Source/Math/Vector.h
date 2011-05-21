@@ -1193,7 +1193,17 @@ namespace Apoc3D
 			}
 #endif
 
-
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+			static Vector4 Transform(Vector3 vector, const Matrix& transform);
+			static Vector3 TransformSimple(Vector3 vector, const Matrix& transform);
+			static Vector3 TransformCoordinate(Vector3 vector, const Matrix& transform);
+			static Vector3 TransformNormal(Vector3 vector, const Matrix& transform);
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			static Vector4 Transform(const Vector3& vector, const Matrix& transform);
+			static Vector3 TransformSimple(const Vector3& vector, const Matrix& transform);
+			static Vector3 TransformCoordinate(const Vector3& vector, const Matrix& transform);
+			static Vector3 TransformNormal(const Vector3& vector, const Matrix& transform);
+#endif
 		};
 		class APAPI Vector4Utils
 		{
