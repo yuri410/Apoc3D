@@ -22,20 +22,6 @@ namespace Apoc3D
 		const Vector4 Vector4Utils::UnitW = Vector4Utils::LDVector(0, 0, 0, 1);
 		const Vector4 Vector4Utils::One = Vector4Utils::LDVector(1);
 
-#if APOC3D_MATH_IMPL == APOC3D_SSE
-		class FieldInitializer
-		{
-		public:
-			FieldInitializer()
-			{
-				uint Data2[4] = {0x80000000, 0x80000000, 0x80000000, 0x80000000};
-				memcpy((void*)&_MASKSIGN_, Data2, sizeof(Data2));
-
-			}
-
-		} Initializer;
-
-#endif
 
 	}
 }

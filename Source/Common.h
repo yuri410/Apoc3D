@@ -123,7 +123,7 @@ typedef unsigned long long BatchHandle;
 #include <sstream>
 
 
-#include "..\lib\FastDelegate\FastDelegate.h"
+#include "..\include\FastDelegate\FastDelegate.h"
 #pragma warning(pop)
 
 // Forward Declarations
