@@ -38,7 +38,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{			
-			class APOC3D_API HardwareBuffer
+			class APAPI HardwareBuffer
 			{
 			private:
 				BufferUsage m_usage;
@@ -74,7 +74,7 @@ namespace Apoc3D
 				void Unlock();
 			};
 
-			class APOC3D_API VertexBuffer : public HardwareBuffer
+			class APAPI VertexBuffer : public HardwareBuffer
 			{
 			protected:
 				VertexBuffer(int size, BufferUsage usage, bool useSysMem)
@@ -88,7 +88,7 @@ namespace Apoc3D
 
 			};
 
-			class APOC3D_API IndexBuffer : public HardwareBuffer
+			class APAPI IndexBuffer : public HardwareBuffer
 			{
 			private:
 				IndexBufferType m_type;
@@ -110,7 +110,7 @@ namespace Apoc3D
 				int getIndexSize() { return m_type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint); }
 			};
 
-			class APOC3D_API DepthBuffer : public HardwareBuffer
+			class APAPI DepthBuffer : public HardwareBuffer
 			{
 			private:
 				int m_width;

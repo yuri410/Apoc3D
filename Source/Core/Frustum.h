@@ -34,7 +34,7 @@ namespace Apoc3D
 	{
 		/* Defines the plane indexes of a frustum
 		*/
-		enum APOC3D_API FrustumPlane
+		enum APAPI FrustumPlane
 		{
 			FPL_Right = 0,
 			FPL_Left = 1,
@@ -46,7 +46,7 @@ namespace Apoc3D
 
 		/* Defines a frustum
 		*/
-		class APOC3D_API Frustum
+		class APAPI Frustum
 		{
 		private:
 			const static int ClipPlaneCount = 6;

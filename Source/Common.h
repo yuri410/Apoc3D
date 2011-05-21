@@ -39,10 +39,10 @@ typedef uint32 uint;
 typedef uint64 ulong;
 typedef unsigned long long BatchHandle;
 
-#include "..\lib\boost\thread\tss.hpp"
-#include "..\lib\boost\thread\recursive_mutex.hpp"
-#include "..\lib\boost\thread\condition.hpp"
-#include "..\lib\boost\thread\thread.hpp"
+//#include "..\lib\boost\thread\tss.hpp"
+//#include "..\lib\boost\thread\recursive_mutex.hpp"
+//#include "..\lib\boost\thread\condition.hpp"
+//#include "..\lib\boost\thread\thread.hpp"
 //
 //#define DEFAULT_MUTEX_NAME mutex
 //#define MUTEX mutable boost::recursive_mutex DEFAULT_MUTEX_NAME;
@@ -69,6 +69,10 @@ typedef unsigned long long BatchHandle;
 //#define THREAD_POINTER_SET(var, expr) var.reset(expr)
 //#define THREAD_POINTER_DELETE(var) var.reset(0)
 //#define THREAD_POINTER_GET(var) var.get()
+#define APOC3D_DEFAULT 0
+#define APOC3D_SSE 1
+#define APOC3D_MATH_IMPL APOC3D_DEFAULT
+
 #define APOC3D_PLATFORM_WINDOWS 0
 #define APOC3D_PLATFORM_MAC 1
 #define APOC3D_PLATFORM_LINUX 2
@@ -84,9 +88,9 @@ typedef unsigned long long BatchHandle;
 #endif
 
 #if APOC3D_DLLEX
-	#define APOC3D_API __declspec( dllexport )
+	#define APAPI __declspec( dllexport )
 #else
-	#define APOC3D_API __declspec( dllimport )
+	#define APAPI __declspec( dllimport )
 #endif
 
 
@@ -125,8 +129,8 @@ typedef unsigned long long BatchHandle;
 // Forward Declarations
 namespace Apoc3D
 {
-	template class APOC3D_API fastdelegate::FastDelegate0<void>;
-	template class APOC3D_API fastdelegate::FastDelegate1<bool*, void>;
+	template class APAPI fastdelegate::FastDelegate0<void>;
+	template class APAPI fastdelegate::FastDelegate1<bool*, void>;
 	
 	typedef fastdelegate::FastDelegate0<void> EventHandler;
 	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
@@ -195,7 +199,7 @@ namespace Apoc3D
 		class ResourceManager;
 		class GameTime;
 
-		template class APOC3D_API fastdelegate::FastDelegate1<Resource*, void>;
+		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
 		typedef fastdelegate::FastDelegate0<void> ResourceEventHandler;
 
 		namespace Streaming
@@ -245,7 +249,7 @@ namespace Apoc3D
 			struct PresentParameters;
 			class DeviceContent;
 			
-			template class APOC3D_API fastdelegate::FastDelegate1<const Apoc3D::Core::GameTime*, void>;
+			template class APAPI fastdelegate::FastDelegate1<const Apoc3D::Core::GameTime*, void>;
 			typedef fastdelegate::FastDelegate0<void> UpdateEventHandler;
 
 

@@ -40,7 +40,7 @@ namespace Apoc3D
 		   EffectAtomManager uses this to create new EffectAtom from
 		   source code.
 		*/
-		class APOC3D_API EffectAtomCodeParser
+		class APAPI EffectAtomCodeParser
 		{
 		public:
 			EffectAtomCodeParser(void);

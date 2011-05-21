@@ -228,6 +228,12 @@
     <ClInclude Include="Math\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Math\BoundingSphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\BoundingBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

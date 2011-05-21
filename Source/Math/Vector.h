@@ -25,6 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define VECTOR_H
 
 #define EPSILON 0.00001f
+
+#if APOC3D_MATH_IMPL == APOC3D_SSE
 #define ZERO_VECTOR
 
 #define VEC_INDEX_X 0
@@ -40,12 +42,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <xmmintrin.h>
 
 #define _MM_SHUFFLE1(x) _MM_SHUFFLE(x,x,x,x)
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+
+#endif
 
 namespace Apoc3D
 {
 	namespace Math
 	{
-		
+
+#if APOC3D_MATH_IMPL == APOC3D_SSE
 		const __m128 _MASKSIGN_;
 
 		/* Defines a four component vector.
@@ -67,7 +73,11 @@ namespace Apoc3D
 		{
 			return _mm_set1_ps(f);
 		};
-
+		inline Vector VecLoad(float x, float y, float z)
+		{
+			float vec[4] = {x,y,z,0};
+			return _mm_load_ps(vec);
+		};
 		/* Adds two vectors.
 		*/
 		inline Vector VecAdd(Vector va, Vector vb)
@@ -346,6 +356,49 @@ namespace Apoc3D
 		{
 			return _mm_max_ps(va, vb);
 		};
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+		class APAPI Vector3
+		{
+		public:
+			/* the X component of the vector
+			*/
+			float X;
+			/* the Y component of the vector
+			*/
+			float Y;
+			/* the Z component of the vector
+			*/
+			float Z;
+
+			/* a Vector3 with all of its components set to zero.
+			*/
+			static const Vector3 Zero;
+			/* X unit Vector3 (1, 0, 0).
+			*/
+			static const Vector3 UnitX;
+			/* Y unit Vector3 (0, 1, 0).
+			*/
+			static const Vector3 UnitY;
+			/* Z unit Vector3 (0, 0, 1).
+			*/
+			static const Vector3 UnitZ;
+
+			float* GetElement(int index)
+			{				
+				return reinterpret_cast<float*>(&X) + index;
+			}
+			const float* GetElement(int index) const
+			{				
+				return reinterpret_cast<const float*>(&X) + index;
+			}
+
+			Vector3(float value)
+				: X(value), Y(value), Z(value)
+			{				
+			}
+		};
+#endif
+		
 
 	}
 }

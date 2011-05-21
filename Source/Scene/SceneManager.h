@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		template class APOC3D_API vector<SceneObject*>;
+		template class APAPI vector<SceneObject*>;
 		typedef vector<SceneObject*> ObjectList;
 		class OperationList;
 		class GeometryTable;
@@ -44,19 +44,19 @@ namespace Apoc3D
 		class PriorityTable;
 		class MaterialList;
 		
-		template class APOC3D_API vector<RenderOperation>;
-		template class APOC3D_API unordered_map<BatchHandle, OperationList*>;
-		template class APOC3D_API unordered_map<BatchHandle, GeometryTable*>;
-		template class APOC3D_API unordered_map<uint32, MaterialTable*>;
-		template class APOC3D_API unordered_map<BatchHandle, Material*>;
+		template class APAPI vector<RenderOperation>;
+		template class APAPI unordered_map<BatchHandle, OperationList*>;
+		template class APAPI unordered_map<BatchHandle, GeometryTable*>;
+		template class APAPI unordered_map<uint32, MaterialTable*>;
+		template class APAPI unordered_map<BatchHandle, Material*>;
 
-		class APOC3D_API OperationList : public vector<RenderOperation> { };
-		class APOC3D_API GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
-		class APOC3D_API MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
-		class APOC3D_API PriorityTable : public unordered_map<uint32, MaterialTable*> { };
-		class APOC3D_API MaterialList : public unordered_map<BatchHandle, Material*> { };
+		class APAPI OperationList : public vector<RenderOperation> { };
+		class APAPI GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
+		class APAPI MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
+		class APAPI PriorityTable : public unordered_map<uint32, MaterialTable*> { };
+		class APAPI MaterialList : public unordered_map<BatchHandle, Material*> { };
 				
-		class APOC3D_API BatchData
+		class APAPI BatchData
 		{
 		public:
 			static const int MaxPriority = 10;
@@ -79,7 +79,7 @@ namespace Apoc3D
 
 		/* SceneManager keeps tracks of all scene objects.
 		*/
-		class APOC3D_API SceneManager
+		class APAPI SceneManager
 		{
 		private:
 			ObjectList m_objects;

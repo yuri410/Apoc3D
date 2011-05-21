@@ -38,7 +38,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			struct APOC3D_API ShaderSamplerState 
+			struct APAPI ShaderSamplerState 
 			{
 				TextureAddressMode AddressU;
 				TextureAddressMode AddressV;
@@ -53,7 +53,7 @@ namespace Apoc3D
 				float MipMapLODBias;
 
 			};
-			class APOC3D_API Shader
+			class APAPI Shader
 			{
 			private:
 				RenderDevice* m_renderDevice;

@@ -32,7 +32,7 @@ namespace Apoc3D
 	{
 
 
-		class APOC3D_API Library
+		class APAPI Library
 		{
 		private:
 			String m_name;

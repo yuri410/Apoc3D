@@ -5,7 +5,7 @@ namespace Apoc3D
 {
 	namespace ResourceCompiler
 	{
-		class APOC3D_API Compiler
+		class APAPI Compiler
 		{
 		private:
 

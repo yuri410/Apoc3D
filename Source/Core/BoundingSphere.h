@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		class APOC3D_API BoundingSphere
+		class APAPI BoundingSphere
 		{
 		public:
 			/* The center position of the bounding sphere.

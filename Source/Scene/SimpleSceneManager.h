@@ -33,14 +33,14 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		class APOC3D_API SimpleSceneNode : public SceneNode
+		class APAPI SimpleSceneNode : public SceneNode
 		{
 		public:
 			SimpleSceneNode(void){}
 			~SimpleSceneNode(void){}
 		};
 
-		class APOC3D_API SimpleSceneManager : public SceneManager
+		class APAPI SimpleSceneManager : public SceneManager
 		{
 		private:
 			SimpleSceneNode* m_defaultNode;

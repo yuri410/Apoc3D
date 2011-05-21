@@ -34,7 +34,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		enum APOC3D_API DepthFormat
+		enum APAPI DepthFormat
 		{
 			DEPFMT_Depth15Stencil1 = 0,
 			DEPFMT_Depth16 = 1,
@@ -50,7 +50,7 @@ namespace Apoc3D
 		};
 		/* The pixel format used for images.
 		*/		
-		enum APOC3D_API PixelFormat
+		enum APAPI PixelFormat
 		{
 			/*  Unknown pixel format.
 			*/			
@@ -220,7 +220,7 @@ namespace Apoc3D
 			FMT_Count = 41
 		};
 	
-		class APOC3D_API PixelFormat
+		class APAPI PixelFormat
 		{
 		private:
 			static int sizeTable[FMT_Count];

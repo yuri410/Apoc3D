@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		/* Defines a set of effect atoms. 
 		*/
-		class APOC3D_API EffectDescription
+		class APAPI EffectDescription
 		{
 		private:
 			vector<String> m_effectAtom;

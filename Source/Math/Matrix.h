@@ -47,7 +47,7 @@ namespace Apoc3D
 #pragma pack(push, 16)
 		/* Defines a 4x4 matrix.
 		*/
-		class APOC3D_API Matrix
+		class APAPI Matrix
 		{
 		private:
 			

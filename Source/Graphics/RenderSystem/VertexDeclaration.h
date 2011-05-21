@@ -38,7 +38,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			class APOC3D_API VertexDeclaration
+			class APAPI VertexDeclaration
 			{
 			protected:
 				vector<const VertexElement> elements;

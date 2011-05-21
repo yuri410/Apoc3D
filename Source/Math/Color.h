@@ -32,7 +32,7 @@ namespace Apoc3D
 	namespace Math
 	{
 #pragma pack(push, 16)
-		class APOC3D_API Color4
+		class APAPI Color4
 		{
 		public:
 			union

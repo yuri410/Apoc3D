@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		class APOC3D_API SceneObject : public Renderable
+		class APAPI SceneObject : public Renderable
 		{
 		private:
 			bool m_hasSubObjects;

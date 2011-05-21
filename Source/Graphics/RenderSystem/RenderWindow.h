@@ -40,7 +40,7 @@ namespace Apoc3D
 		{
 			/* Implements a simple FPS counter
 			*/
-			class APOC3D_API FPSCounter
+			class APAPI FPSCounter
 			{
 			private:
 				float m_begin;
@@ -56,7 +56,7 @@ namespace Apoc3D
 
 			/* Represents a view of rendered graphics.
 			*/
-			class APOC3D_API RenderView
+			class APAPI RenderView
 			{
 			private:
 				RenderTarget* m_renderTarget;
@@ -86,7 +86,7 @@ namespace Apoc3D
 
 			};
 
-			class APOC3D_API RenderWindow : public RenderView
+			class APAPI RenderWindow : public RenderView
 			{
 			private:
 				Size m_clientSize;

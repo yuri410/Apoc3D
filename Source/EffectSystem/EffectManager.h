@@ -28,7 +28,7 @@ namespace Apoc3D
 {
 	namespace EffectSystem
 	{
-		class APOC3D_API EffectManager
+		class APAPI EffectManager
 		{
 		private:
 			EffectManager(){}

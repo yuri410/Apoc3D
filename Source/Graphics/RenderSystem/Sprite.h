@@ -37,7 +37,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			class APOC3D_API Sprite
+			class APAPI Sprite
 			{
 			private:
 				RenderDevice* m_renderDevice;

@@ -40,7 +40,7 @@ namespace Apoc3D
 			/* Factory that can create/destroy resources like textures, buffers, shaders. 
 			* Application can use this to create resources that are not managed by resource managers.
 			*/
-			class APOC3D_API ObjectFactory
+			class APAPI ObjectFactory
 			{
 			private:
 				RenderDevice* m_renderDevice;

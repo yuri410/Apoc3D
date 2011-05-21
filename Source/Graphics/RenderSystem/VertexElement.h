@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			class APOC3D_API VertexElement
+			class APAPI VertexElement
 			{
 			private:
 				int m_offset;

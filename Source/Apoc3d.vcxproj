@@ -39,8 +39,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(DXSDK_DIR)include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(DXSDK_DIR)lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -52,14 +52,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;APOC3D_DLLEX;LITTLE_INDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>Common.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\lib;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\lnclude;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\lib\dxsdk\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d9.lib;d3dx9d.lib;dinput8.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -98,6 +98,8 @@
     <ClInclude Include="Graphics\RenderSystem\Sprite.h" />
     <ClInclude Include="Graphics\RenderSystem\VertexDeclaration.h" />
     <ClInclude Include="Graphics\RenderSystem\VertexElement.h" />
+    <ClInclude Include="Math\BoundingBox.h" />
+    <ClInclude Include="Math\BoundingSphere.h" />
     <ClInclude Include="Math\Color.h" />
     <ClInclude Include="Math\Half.h" />
     <ClInclude Include="Math\Math.h" />

@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		class APOC3D_API FpsCamera : public Camera
+		class APAPI FpsCamera : public Camera
 		{
 		private:
 			float m_aspectRatio;

@@ -32,7 +32,7 @@ namespace Apoc3D
    
 		   This also contains effect param mapping info.
 		*/
-		class APOC3D_API EffectParameter
+		class APAPI EffectParameter
 		{
 		public:
 			EffectParameter(void);

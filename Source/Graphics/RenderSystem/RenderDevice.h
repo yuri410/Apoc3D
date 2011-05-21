@@ -35,7 +35,7 @@ namespace Apoc3D
 		{
 			/* Applications use RenderDevice to perform DrawPrimitive level rendering
 			*/
-			class APOC3D_API RenderDevice
+			class APAPI RenderDevice
 			{
 			private:
 				String m_rdName;

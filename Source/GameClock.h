@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace Apoc3D
 {
-	class APOC3D_API GameClock
+	class APAPI GameClock
 	{
 	private:
 		uint64 m_baseRealTime;

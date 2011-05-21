@@ -33,7 +33,7 @@ using namespace fastdelegate;
 
 namespace Apoc3D
 {
-	class APOC3D_API Game
+	class APAPI Game
 	{
 	private:
 		HINSTANCE m_inst;

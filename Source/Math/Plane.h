@@ -32,7 +32,14 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class APOC3D_API Plane
+		enum PlaneIntersectionType
+		{
+			PLANEIT_Front,
+			PLANEIT_Back,
+			PLANEIT_Intersecting
+		};
+
+		class APAPI Plane
 		{
 		public:
 			union
@@ -195,7 +202,10 @@ namespace Apoc3D
 				intersectPoint = VecAdd(start, off);
 				return true;
 			}
+			static PlaneIntersectionType Intersects(const Plane &plane, const BoudingBox &box)
+			{
 
+			}
 		};
 	}
 }
