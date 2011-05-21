@@ -166,6 +166,7 @@
     <ClCompile Include="Graphics\RenderSystem\RenderWindow.cpp" />
     <ClCompile Include="Graphics\TextureManager.cpp" />
     <ClCompile Include="IO\MaterialData.cpp" />
+    <ClCompile Include="Math\BoundingSphere.cpp" />
     <ClCompile Include="Math\Matrix.cpp" />
     <ClCompile Include="Math\Math.cpp" />
     <ClCompile Include="Platform\Library.cpp" />

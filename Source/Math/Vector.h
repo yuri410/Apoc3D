@@ -42,7 +42,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <xmmintrin.h>
 
 #define _MM_SHUFFLE1(x) _MM_SHUFFLE(x,x,x,x)
-#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 
 #endif
 
@@ -50,6 +49,369 @@ namespace Apoc3D
 {
 	namespace Math
 	{
+
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+		/* Defines a two component vector.
+		*/
+		typedef __m128 Vector2;
+		/* Defines a three component vector.
+		*/
+		typedef __m128 Vector3;
+		/* Defines a four component vector.
+		*/
+		typedef __m128 Vector4;
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+		/* Defines a two component vector.
+		*/
+		class APAPI Vector2
+		{
+		public:
+			/* the X component of the vector
+			*/
+			float X;
+			/* the Y component of the vector
+			*/
+			float Y;
+			
+			Vector2(){}
+			Vector2(float value)
+				: X(value), Y(value)
+			{ }
+
+			Vector2(float x, float y)
+				: X(x), Y(y)
+			{ }
+		};
+		/* Defines a three component vector.
+		*/
+		class APAPI Vector3
+		{
+		public:
+			/* the X component of the vector
+			*/
+			float X;
+			/* the Y component of the vector
+			*/
+			float Y;
+			/* the Z component of the vector
+			*/
+			float Z;
+
+
+			Vector3(){}
+			
+			Vector3(float value)
+				: X(value), Y(value), Z(value)
+			{				
+			}
+			Vector3(float x,float y,float z)
+				: X(x), Y(y), Z(z)
+			{
+
+			}
+		};
+		/* Defines a four component vector.
+		*/
+		class APAPI Vector4
+		{
+		public:
+			/* The X component of the vector.
+			*/
+			float X;
+
+			/* The Y component of the vector
+			*/
+			float Y;
+
+			/* The Z component of the vector.
+			*/
+			float Z;
+
+			/* The W component of the vector.
+			*/
+			float W;
+
+
+			Vector4(){}
+
+			Vector4(float value)
+				: X(value), Y(value), Z(value), W(value)
+			{				
+			}
+			Vector4(float x,float y,float z,float w)
+				: X(x), Y(y), Z(z), W(w)
+			{
+
+			}
+		};
+
+#endif
+
+
+
+
+
+
+
+		class APAPI Vector2Utils
+		{
+		public:
+			
+			/* a Vector2 with all of its components set to zero.
+			*/
+			static const Vector2 Zero;
+			/* X unit Vector2 (1, 0).
+			*/
+			static const Vector2 UnitX;
+			/* Y unit Vector2 (0, 1).
+			*/
+			static const Vector3 UnitY;
+
+
+
+			/* Adds two vectors.
+			*/
+			static Vector2 Add(const Vector2& left, const Vector2& right)
+			{
+				return Vector2(left.X + right.X, left.Y + right.Y);
+			}
+			/* Subtracts two vectors.
+			*/
+			static Vector2 Subtract(const Vector2& left, const Vector2& right)
+			{
+				return Vector2(left.X - right.X, left.Y - right.Y);
+			}
+			/* Scales a vector by the given value.
+			*/
+			static Vector2 Multiply(const Vector2& value, float scale)
+			{
+				return Vector2(value.X * scale, value.Y * scale);
+			}
+			/* Modulates a vector by another.
+			*/
+			static Vector2 Modulate(const Vector2& left, const Vector2& right)
+			{
+				return Vector2(left.X * right.X, left.Y * right.Y);
+			}
+			/* Scales a vector by the given value.
+			*/
+			static Vector2 Divide(const Vector2& value, float scale)
+			{
+				return Vector2(value.X / scale, value.Y / scale);
+			}
+
+			static float Cross(const Vector2& a, const Vector2& b)
+			{
+				return a.X * b.Y - b.X * a.Y;
+			}
+
+			/* Reverses the direction of a given vector.
+			*/
+			static Vector2 Negate(const Vector2& value)
+			{
+				return Vector2(-value.X, -value.Y);
+			}
+
+			/* Returns a Vector2 containing the 2D Cartesian coordinates of a point 
+			* specified in Barycentric coordinates relative to a 2D triangle.
+			*/
+			static Vector2 Barycentric(const Vector2& value1, const Vector2& value2, 
+				const Vector2& value3, float amount1, float amount2)
+			{
+				Vector2 vector;
+				vector.X = (value1.X + (amount1 * (value2.X - value1.X))) + (amount2 * (value3.X - value1.X));
+				vector.Y = (value1.Y + (amount1 * (value2.Y - value1.Y))) + (amount2 * (value3.Y - value1.Y));
+				return vector;
+			}
+			/* Performs a Catmull-Rom interpolation using the specified positions.
+			*/
+			static Vector2 CatmullRom(const Vector2& value1, const Vector2& value2, 
+				const Vector2& value3, const Vector2& value4, float amount)
+			{
+				Vector2 vector;
+				float squared = amount * amount;
+				float cubed = amount * squared;
+
+				vector.X = 0.5f * ((((2.0f * value2.X) + ((-value1.X + value3.X) * amount)) +
+					(((((2.0f * value1.X) - (5.0f * value2.X)) + (4.0f * value3.X)) - value4.X) * squared)) +
+					((((-value1.X + (3.0f * value2.X)) - (3.0f * value3.X)) + value4.X) * cubed));
+
+				vector.Y = 0.5f * ((((2.0f * value2.Y) + ((-value1.Y + value3.Y) * amount)) +
+					(((((2.0f * value1.Y) - (5.0f * value2.Y)) + (4.0f * value3.Y)) - value4.Y) * squared)) +
+					((((-value1.Y + (3.0f * value2.Y)) - (3.0f * value3.Y)) + value4.Y) * cubed));
+
+				return vector;
+			}
+			/* Restricts a value to be within a specified range.
+			*/
+			static Vector2 Clamp(const Vector2& value, const Vector2& min, const Vector2& max)
+			{
+				float x = value.X;
+				x = (x > max.X) ? max.X : x;
+				x = (x < min.X) ? min.X : x;
+
+				float y = value.Y;
+				y = (y > max.Y) ? max.Y : y;
+				y = (y < min.Y) ? min.Y : y;
+
+				return Vector2(x, y);
+			}
+			/* Performs a Hermite spline interpolation.
+			*/
+			static Vector2 Hermite(const Vector2& value1, const Vector2& tangent1,
+				const Vector2& value2, const Vector2& tangent2, float amount)
+			{
+				Vector2 vector;
+				float squared = amount * amount;
+				float cubed = amount * squared;
+				float part1 = ((2.0f * cubed) - (3.0f * squared)) + 1.0f;
+				float part2 = (-2.0f * cubed) + (3.0f * squared);
+				float part3 = (cubed - (2.0f * squared)) + amount;
+				float part4 = cubed - squared;
+
+				vector.X = (((value1.X * part1) + (value2.X * part2)) + (tangent1.X * part3)) + (tangent2.X * part4);
+				vector.Y = (((value1.Y * part1) + (value2.Y * part2)) + (tangent1.Y * part3)) + (tangent2.Y * part4);
+
+				return vector;
+			}
+			/* Performs a linear interpolation between two vectors.
+			*/
+			static Vector2 Lerp(const Vector2& start, const Vector2& end, float amount)
+			{
+				Vector2 vector;
+
+				vector.X = start.X + ((end.X - start.X) * amount);
+				vector.Y = start.Y + ((end.Y - start.Y) * amount);
+
+				return vector;
+			}
+			/* Performs a cubic interpolation between two vectors.
+			*/
+			static Vector2 SmoothStep(const Vector2& start, const Vector2& end, float amount)
+			{
+				Vector2 vector;
+
+				amount = (amount > 1.0f) ? 1.0f : ((amount < 0.0f) ? 0.0f : amount);
+				amount = (amount * amount) * (3.0f - (2.0f * amount));
+
+				vector.X = start.X + ((end.X - start.X) * amount);
+				vector.Y = start.Y + ((end.Y - start.Y) * amount);
+
+				return vector;
+			}
+
+			/* Calculates the distance between two vectors.
+			*/
+			static float Distance(const Vector2& value1, const Vector2& value2)
+			{
+				float x = value1.X - value2.X;
+				float y = value1.Y - value2.Y;
+
+				return sqrtf(x * x + y * y);
+			}
+			/* Calculates the dot product of two vectors.
+			*/
+			static float Dot(const Vector2& left, const Vector2& right)
+			{
+				return left.X * right.X + left.Y * right.Y;
+			}
+
+
+			
+			/* Calculates the length of the vector.
+			*/
+			static float Length(const Vector2& v)
+			{
+				return sqrtf(v.X*v.X + v.Y*v.Y);
+			}
+			/* Calculates the squared length of the vector.
+			*/
+			static float LengthSquared(const Vector2& v)
+			{
+				return v.X*v.X + v.Y*v.Y;
+			}
+
+			/* Converts the vector into a unit vector.
+			*/
+			static Vector2 Normalize(const Vector2& vector)
+			{
+				float length = Length(vector);
+				if (length < EPSILON)					
+				{
+					return Zero;
+				}
+				float num = 1.0f / length;
+				return Vector2(vector.X * num, vector.Y * num);
+			}
+
+			static Vector2 Reflect(const Vector2& vector, const Vector2& normal)
+			{
+				Vector2 vector2;
+				float num = (vector.X * normal.X) + (vector.Y * normal.Y);
+				vector2.X = vector.X - ((2.0f * num) * normal.X);
+				vector2.Y = vector.Y - ((2.0f * num) * normal.Y);
+				return vector2;
+			}
+			/* Returns a vector containing the smallest components of the specified vectors.
+			*/
+			static Vector2 Minimize(const Vector2& left, const Vector2& right)
+			{
+				Vector2 vector;
+				vector.X = (left.X < right.X) ? left.X : right.X;
+				vector.Y = (left.Y < right.Y) ? left.Y : right.Y;
+				return vector;
+			}
+			/* Returns a vector containing the largest components of the specified vectors.
+			*/
+			static Vector2 Maximize(const Vector2& left, const Vector2& right)
+			{
+				Vector2 vector;
+				vector.X = (left.X > right.X) ? left.X : right.X;
+				vector.Y = (left.Y > right.Y) ? left.Y : right.Y;
+				return vector;
+			}
+
+		};
+		class APAPI Vector3Utils
+		{
+		public:			
+			/* a Vector3 with all of its components set to zero.
+			*/
+			static const Vector3 Zero;
+			/* X unit Vector3 (1, 0, 0).
+			*/
+			static const Vector3 UnitX;
+			/* Y unit Vector3 (0, 1, 0).
+			*/
+			static const Vector3 UnitY;
+			/* Z unit Vector3 (0, 0, 1).
+			*/
+			static const Vector3 UnitZ;
+
+
+		};
+		class APAPI Vector4Utils
+		{
+		public:			
+			/* a Vector3 with all of its components set to zero.
+			*/
+			static const Vector4 Zero;
+			/* X unit Vector4 (1, 0, 0, 0).
+			*/
+			static const Vector4 UnitX;
+			/* Y unit Vector4 (0, 1, 0, 0).
+			*/
+			static const Vector4 UnitY;
+			/* Z unit Vector4 (0, 0, 1, 0).
+			*/
+			static const Vector4 UnitZ;
+			/* W unit Vector4 (0, 0, 0, 1).
+			*/
+			static const Vector4 UnitW;
+		};
+
+
+
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 		const __m128 _MASKSIGN_;
@@ -357,6 +719,7 @@ namespace Apoc3D
 			return _mm_max_ps(va, vb);
 		};
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+
 		class APAPI Vector3
 		{
 		public:
