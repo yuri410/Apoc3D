@@ -36,11 +36,11 @@ namespace Apoc3D
 			Size() { Width =Height =0; }
 			Size(int w, int h) { Width = w; Height = h; }
 
-			friend static bool operator ==(Point a, Point b)
+			friend static bool operator ==(const Size& a, const Size& b)
 			{
 				return (a.Width  == b.Width) && (a.Height == b.Height);
 			}
-			friend static bool operator !=(Point a, Point b)
+			friend static bool operator !=(const Size& a, const Size& b)
 			{
 				return (a.Width != b.Width) || (a.Height != b.Height);
 			}
@@ -58,11 +58,11 @@ namespace Apoc3D
 			Point() { X = Y = 0; }
 			Point(int x, int y) { X = x; Y = y; }
 
-			friend static bool operator ==(Point a, Point b)
+			friend static bool operator ==(const Point& a, const Point& b)
 			{
 				return (a.X  == b.X) && (a.Y == b.Y);
 			}
-			friend static bool operator !=(Point a, Point b)
+			friend static bool operator !=(const Point& a, const Point& b)
 			{
 				return (a.X != b.X) || (a.Y != b.Y);
 			}

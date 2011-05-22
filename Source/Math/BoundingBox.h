@@ -100,15 +100,15 @@ namespace Apoc3D
 			}
 			ContainmentType Contains(const BoundingBox& box) const
 			{
-				if (Maximum.X < box.Minimum.X || Minimum.X > box.Maximum.X)
+				if (_V3X(Maximum) < _V3X(box.Minimum) || _V3X(Minimum) > _V3X(box.Maximum))
 				{
 					return CONTAIN_Disjoint;
 				}
-				if (Maximum.Y < box.Minimum.Y || Minimum.Y > box.Maximum.Y)
+				if (_V3Y(Maximum) < _V3Y(box.Minimum) || _V3Y(Minimum) > _V3Y(box.Maximum))
 				{
 					return CONTAIN_Disjoint;
 				}
-				if (Maximum.Z < box.Minimum.Z || Minimum.Z > box.Maximum.Z)
+				if (_V3Z(Maximum) < _V3Z(box.Minimum) || _V3Z(Minimum) > _V3Z(box.Maximum))
 				{
 					return CONTAIN_Disjoint;
 				}
@@ -134,38 +134,21 @@ namespace Apoc3D
 
 			/*  Determines whether the box contains the specified sphere.
 			*/
-			static ContainmentType Contains(const BoundingBox& box, const BoundingSphere& sphere)
-			{				
-				Vector3 clamped = Vector3Utils::Clamp(sphere.Center, box.Minimum, box.Maximum);
-
-				float dist = Vector3Utils::DistanceSquared(sphere.Center, clamped);
-				float radius = sphere.Radius;
-
-				if (dist > (radius * radius))
-					return CONTAIN_Disjoint;
-
-				if (box.Minimum.X + radius <= sphere.Center.X && sphere.Center.X <= box.Maximum.X - radius &&
-					box.Maximum.X - box.Minimum.X > radius && box.Minimum.Y + radius <= sphere.Center.Y &&
-					sphere.Center.Y <= box.Maximum.Y - radius && box.Maximum.Y - box.Minimum.Y > radius &&
-					box.Minimum.Z + radius <= sphere.Center.Z && sphere.Center.Z <= box.Maximum.Z - radius &&
-					box.Maximum.X - box.Minimum.X > radius)
-					return CONTAIN_Contains;
-
-				return CONTAIN_Intersects;
-			}
+			static ContainmentType Contains(const BoundingBox& box, const BoundingSphere& sphere);
+			
 			/* Determines whether the box contains the specified box.
 			*/
 			static ContainmentType Contains(const BoundingBox& box1, const BoundingBox& box2)
 			{
-				if ((box1.Maximum.X < box2.Minimum.X) || (box1.Minimum.X > box2.Maximum.X))
+				if (_V3X(box1.Maximum) < _V3X(box2.Minimum) || _V3X(box1.Minimum) > _V3X(box2.Maximum))
 				{
 					return CONTAIN_Disjoint;
 				}
-				if ((box1.Maximum.Y < box2.Minimum.Y) || (box1.Minimum.Y > box2.Maximum.Y))
+				if (_V3Y(box1.Maximum) < _V3Y(box2.Minimum) || _V3Y(box1.Minimum) > _V3Y(box2.Maximum))
 				{
 					return CONTAIN_Disjoint;
 				}
-				if ((box1.Maximum.Z < box2.Minimum.Z) || (box1.Minimum.Z > box2.Maximum.Z))
+				if (_V3Z(box1.Maximum) < _V3Z(box2.Minimum) || _V3Z(box1.Minimum) > _V3Z(box2.Maximum))
 				{
 					return CONTAIN_Disjoint;
 				}
@@ -193,21 +176,13 @@ namespace Apoc3D
 			}
 			/* Constructs a BoundingBox from a given sphere.
 			*/
-			static BoundingBox CreateFromSphere(BoundingBox& res, const BoundingSphere& sphere)
-			{
-				Vector3 r = Vector3Utils::LDVector(sphere.Radius);
-				res.Minimum = Vector3Utils::Subtract(sphere.Center, r);
-				res.Maximum = Vector3Utils::Add(sphere.Center, r);
-				
-			}
+			static void CreateFromSphere(BoundingBox& res, const BoundingSphere& sphere);
 			/* Constructs a BoundingBox that is the as large as the total combined area of the two specified boxes.
 			*/
-			static BoundingBox Merge(const BoundingBox& box1, const BoundingBox& box2)
-			{
-				BoundingBox box3;
-				box3.Minimum = Vector3Utils::Minimize(box1.Minimum, box2.Minimum);
-				box3.Maximum = Vector3Utils::Maximize(box1.Maximum, box2.Maximum);
-				return box3;
+			static void Merge(BoundingBox& res, const BoundingBox& box1, const BoundingBox& box2)
+			{				
+				res.Minimum = Vector3Utils::Minimize(box1.Minimum, box2.Minimum);
+				res.Maximum = Vector3Utils::Maximize(box1.Maximum, box2.Maximum);				
 			}
 			/* Finds the intersection between a plane and a box.
 			*/
@@ -217,29 +192,24 @@ namespace Apoc3D
 			}
 			static bool Intersects(const BoundingBox& box, const Ray& ray, float& distance)
 			{
-				return Ray::Intersects(ray, box, out distance);
+				return Ray::Intersects(ray, box, distance);
 			}
 
 			/*  Determines whether a box intersects the specified object.
 			*/
-			static bool Intersects(const BoundingBox& box, const BoundingSphere& sphere)
-			{
-				Vector3 clamped = Vector3Utils::Clamp(sphere.Center, box.Minimum, box.Maximum);
-				float dist = Vector3Utils::DistanceSquared(sphere.Center, clamped);
+			static bool Intersects(const BoundingBox& box, const BoundingSphere& sphere);
 
-				return (dist <= (sphere.Radius * sphere.Radius));
-			}
 			/* Determines whether a box intersects the specified object.
 			*/
 			static bool Intersects(const BoundingBox& box1, const BoundingBox& box2)
 			{
-				if (box1.Maximum.X < box2.Minimum.X || box1.Minimum.X > box2.Maximum.X)
+				if (_V3X(box1.Maximum) < _V3X(box2.Minimum) || _V3X(box1.Minimum) > _V3X(box2.Maximum))
 					return false;
 
-				if (box1.Maximum.Y < box2.Minimum.Y || box1.Minimum.Y > box2.Maximum.Y)
+				if (_V3Y(box1.Maximum) < _V3Y(box2.Minimum) || _V3Y(box1.Minimum) > _V3Y(box2.Maximum))
 					return false;
 
-				return (box1.Maximum.Z >= box2.Minimum.Z && box1.Minimum.Z <= box2.Maximum.Z);
+				return (_V3Z(box1.Maximum) >= _V3Z(box2.Minimum) && _V3Z(box1.Minimum) <= _V3Z(box2.Maximum));
 			}
 		};
 	}

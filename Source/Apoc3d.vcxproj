@@ -168,9 +168,11 @@
     <ClCompile Include="Graphics\RenderSystem\RenderWindow.cpp" />
     <ClCompile Include="Graphics\TextureManager.cpp" />
     <ClCompile Include="IO\MaterialData.cpp" />
+    <ClCompile Include="Math\BoundingBox.cpp" />
     <ClCompile Include="Math\BoundingSphere.cpp" />
     <ClCompile Include="Math\Matrix.cpp" />
     <ClCompile Include="Math\Math.cpp" />
+    <ClCompile Include="Math\Plane.cpp" />
     <ClCompile Include="Math\Ray.cpp" />
     <ClCompile Include="Math\sse_functions.cpp" />
     <ClCompile Include="Math\Vector.cpp" />

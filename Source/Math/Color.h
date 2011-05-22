@@ -35,6 +35,7 @@ namespace Apoc3D
 		class APAPI Color4
 		{
 		public:
+#if APOC3D_MATH_IMPL == APOC3D_SSE
 			union
 			{
 				struct  
@@ -55,10 +56,43 @@ namespace Apoc3D
 					*/
 					float Alpha;
 				};
-				Vector vector;
+				_m128 vector;
 			};
-			
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			/* the color's red component.
+			*/
+			float Red;
+
+			/* the color's green component.
+			*/
+			float Green;
+
+			/* the color's blue component.
+			*/
+			float Blue;
+
+			/* the color's alpha component.
+			*/
+			float Alpha;
+#endif
+
+#if APOC3D_MATH_IMPL == APOC3D_SSE
 			Color4() { vector = VecLoad(0.0f); }
+			Color4(Vector3 color)
+			{
+				vector = color;				
+			}
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			Color4() { Red = Green = Blue = Alpha = 0; }
+			Color4(Vector3 color)
+			{
+				Red = color.X;
+				Green = color.Y;
+				Blue = color.Z;
+				Alpha = 1;
+			}
+#endif
+			
 			Color4(int argb)
 			{
 				Alpha = static_cast<float>(((argb >> 24) & 0xff) / 255.0f);
@@ -66,10 +100,7 @@ namespace Apoc3D
 				Green = static_cast<float>(((argb >> 8) & 0xff) / 255.0f);
 				Blue = static_cast<float>((argb & 0xff) / 255.0f);
 			}
-			Color4(Vector3 color)
-			{
-				vector = color;				
-			}
+			
 			Color4(int red, int green, int blue, int alpha)
 			{
 				Alpha = static_cast<float>(alpha / 255.0f);
@@ -118,22 +149,35 @@ namespace Apoc3D
 			*/
 			Vector3 ToVector()
 			{
-				const float buffer[4]= { Red, Green, Blue, Alpha };
-				return VecLoad(buffer);
+				return Vector3Utils::LDVector(Red, Green, Blue);
 			}
 
 			/* Adds two colors.
 			*/
-			static void Add(const Color4 &color1, const Color4 &color2, Color4& result)
+			static void Add(Color4& result, const Color4 &color1, const Color4 &color2)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				result = Color4(VecAdd(color1.vector, color2.vector));
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				result = Color4(color1.Red + color2.Red, 
+					color1.Green + color2.Green, 
+					color1.Blue + color2.Blue, 
+					color1.Alpha + color2.Alpha);
+			#endif
 			}
 
 			/* Adds two colors.
 			*/
 			static Color4 Add(const Color4 &color1, const Color4 &color2)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				return Color4(VecAdd(color1.vector, color2.vector));
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				return Color4(color1.Red + color2.Red, 
+					color1.Green + color2.Green, 
+					color1.Blue + color2.Blue, 
+					color1.Alpha + color2.Alpha);
+			#endif
 			}
 
 			
@@ -141,71 +185,131 @@ namespace Apoc3D
 			*/
 			static Color4 Subtract(const Color4 &color1, const Color4 &color2)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				return Color4(VecSub(color1.vector, color2.vector));
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				return Color4(color1.Red - color2.Red, 
+					color1.Green - color2.Green, 
+					color1.Blue - color2.Blue, 
+					color1.Alpha - color2.Alpha);
+			#endif
 			}
 
 			/* Subtracts two colors.
 			*/
-			static Color4 Subtract(const Color4 &color1, const Color4 &color2, Color4& result)
+			static void Subtract(Color4& result, const Color4 &color1, const Color4 &color2)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				result = Color4(VecSub(color1.vector, color2.vector));
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				result = Color4(color1.Red - color2.Red, 
+					color1.Green - color2.Green, 
+					color1.Blue - color2.Blue, 
+					color1.Alpha - color2.Alpha);
+			#endif
 			}
 
 			/* Modulates two colors.
 			*/
-			static void Modulate(const Color4 &color1, const Color4 &color2, Color4& result)
+			static void Modulate(Color4& result,  const Color4 &color1, const Color4 &color2)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				result = VecMul(color1.vector, color2.vector);
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				result = Color4(color1.Red * color2.Red, 
+					color1.Green * color2.Green, 
+					color1.Blue * color2.Blue, 
+					color1.Alpha * color2.Alpha);
+			#endif
 			}
 			/* Modulates two colors.
 			*/
 			static Color4 Modulate(const Color4 &color1, const Color4 &color2)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				return VecMul(color1.vector, color2.vector);
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				return Color4(color1.Red * color2.Red, 
+					color1.Green * color2.Green, 
+					color1.Blue * color2.Blue, 
+					color1.Alpha * color2.Alpha);
+			#endif
 			}
 
 			/* Performs a linear interpolation between two colors.
 			*/
 			static Color4 Lerp(const Color4 &color1, const Color4 &color2, float amount)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				Vector3 b = VecSub(color2.vector, color1.vector);
 				b = VecMul(b, amount);
 				b = VecAdd(color1.vector, b);
-				return b;				
+				return b;
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				float alpha = color1.Alpha + (amount * (color2.Alpha - color1.Alpha));
+				float red = color1.Red + (amount * (color2.Red - color1.Red));
+				float green = color1.Green + (amount * (color2.Green - color1.Green));
+				float blue = color1.Blue + (amount * (color2.Blue - color1.Blue));
+				return Color4(red, green, blue, alpha);
+			#endif
 			}
 			/* Performs a linear interpolation between two colors.
 			*/
-			static Color4 Lerp(const Color4 &color1, const Color4 &color2, float amount, Color4& result)
+			static void Lerp(Color4& result, const Color4 &color1, const Color4 &color2, float amount)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				Vector3 b = VecSub(color2.vector, color1.vector);
 				b = VecMul(b, amount);
 				b = VecAdd(color1.vector, b);
 				result = Color4(b);
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				float alpha = color1.Alpha + (amount * (color2.Alpha - color1.Alpha));
+				float red = color1.Red + (amount * (color2.Red - color1.Red));
+				float green = color1.Green + (amount * (color2.Green - color1.Green));
+				float blue = color1.Blue + (amount * (color2.Blue - color1.Blue));
+				result = Color4(red, green, blue, alpha);
+			#endif
 			}
 			/* Negates a color.
 			*/
-			static void Negate(const Color4 &color, Color4& result)
+			static void Negate(Color4& result, const Color4 &color)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				static const Vector3 one = VecLoad(1);
-				result = Color4(VecSub(one, color.vector));				
+				result = Color4(VecSub(one, color.vector));
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				result = Color4(1.0f - color.Red, 1.0f - color.Green, 1.0f - color.Blue, 1.0f - color.Alpha);
+			#endif
 			}
 			
 			/* Scales a color by the specified amount.
 			*/
-			static void Scale(const Color4 &color, float scale, Color4& result)
+			static void Scale(Color4& result,  const Color4 &color, float scale)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				result = Color4(VecMul(color.vector, scale));
+				result.Alpha = color.Alpha;
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				result = Color4(color.Red * scale, color.Green * scale, color.Blue * scale, color.Alpha);
+			#endif
 			}
 			/* Scales a color by the specified amount.
 			*/
 			static Color4 Scale(const Color4 &color, float scale)
 			{
-				return Color4(VecMul(color.vector, scale));
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
+				Color4 result = Color4(VecMul(color.vector, scale));
+				result.Alpha = color.Alpha;
+				return result;
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				return Color4(color.Red * scale, color.Green * scale, color.Blue * scale, color.Alpha);
+			#endif
 			}
 			/* Adjusts the contrast of a color.
 			*/
-			static void AdjustContrast(const Color4 &color, float contrast, Color4& result)
+			static void AdjustContrast(Color4& result, const Color4 &color, float contrast)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				static const Vector3 half = VecLoad(0.5f);
 
 				Vector3 t = VecSub(color.vector, half);
@@ -214,11 +318,19 @@ namespace Apoc3D
 
 				result = Color4(t);
 				result.Alpha = color.Alpha;
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				float r = 0.5f + contrast * (color.Red - 0.5f);
+				float g = 0.5f + contrast * (color.Green - 0.5f);
+				float b = 0.5f + contrast * (color.Blue - 0.5f);
+
+				result = Color4(r, g, b, color.Alpha);
+			#endif
 			}
 			/* Adjusts the contrast of a color.
 			*/
 			static Color4 AdjustContrast(const Color4 &color, float contrast)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				static const Vector3 half = VecLoad(0.5f);
 
 				Vector3 t = VecSub(color.vector, half);
@@ -228,11 +340,19 @@ namespace Apoc3D
 				Color4 result = Color4(t);
 				result.Alpha = color.Alpha;
 				return result;
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				float r = 0.5f + contrast * (color.Red - 0.5f);
+				float g = 0.5f + contrast * (color.Green - 0.5f);
+				float b = 0.5f + contrast * (color.Blue - 0.5f);
+
+				return Color4(r, g, b, color.Alpha);
+			#endif
 			}
 			/* Adjusts the saturation of a color.
 			*/
-			static void AdjustSaturation(const Color4 &color, float saturation, Color4& result)
+			static void AdjustSaturation(Color4& result, const Color4 &color, float saturation)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				static const float buffer[4] = {0.2125f, 0.7154f, 0.0721f, 0};
 				static const Vector3 hue = VecLoad(buffer);
 			
@@ -244,12 +364,21 @@ namespace Apoc3D
 
 				result = Color4(c);
 				result.Alpha = color.Alpha;
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				float grey = color.Red * 0.2125f + color.Green * 0.7154f + color.Blue * 0.0721f;
+				float r = grey + saturation * (color.Red - grey);
+				float g = grey + saturation * (color.Green - grey);
+				float b = grey + saturation * (color.Blue - grey);
+
+				result = Color4(r, g, b, color.Alpha);
+			#endif
 			}
 
 			/* Adjusts the saturation of a color.
 			*/
 			static Color4 AdjustSaturation(const Color4 &color, float saturation)
 			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				static const float buffer[4] = {0.2125f, 0.7154f, 0.0721f, 0};
 				static const Vector3 hue = VecLoad(buffer);
 
@@ -262,6 +391,14 @@ namespace Apoc3D
 				Color4 result = Color4(c);
 				result.Alpha = color.Alpha;
 				return result;
+			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				float grey = color.Red * 0.2125f + color.Green * 0.7154f + color.Blue * 0.0721f;
+				float r = grey + saturation * (color.Red - grey);
+				float g = grey + saturation * (color.Green - grey);
+				float b = grey + saturation * (color.Blue - grey);
+
+				return Color4(r, g, b, color.Alpha);
+			#endif
 			}
 
 

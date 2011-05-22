@@ -138,11 +138,11 @@ namespace Apoc3D
 				return result;
 			}
 
-			friend static bool operator ==(Rectangle a, Rectangle b)
+			friend static bool operator ==(const Rectangle& a, const Rectangle& b)
 			{
 				return (a.X  == b.X) && (b.X == b.Y) && (a.Width == b.Width) && (a.Height == b.Height);
 			}
-			friend static bool operator !=(Rectangle a, Rectangle b)
+			friend static bool operator !=(const Rectangle& a, const Rectangle& b)
 			{
 				if ((a.X == b.X) && (a.Y == b.Y) && (a.Width == b.Width))
 				{
@@ -261,11 +261,11 @@ namespace Apoc3D
 				return result;
 			}
 
-			friend static bool operator ==(RectangleF a, RectangleF b)
+			friend static bool operator ==(const RectangleF& a, const RectangleF& b)
 			{
 				return (a.X  == b.X) && (b.X == b.Y) && (a.Width == b.Width) && (a.Height == b.Height);
 			}
-			friend static bool operator !=(RectangleF a, RectangleF b)
+			friend static bool operator !=(const RectangleF& a, const RectangleF& b)
 			{
 				if ((a.X == b.X) && (a.Y == b.Y) && (a.Width == b.Width))
 				{
