@@ -106,6 +106,7 @@
     <ClInclude Include="Math\Matrix.h" />
     <ClInclude Include="Math\Plane.h" />
     <ClInclude Include="Math\Point.h" />
+    <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Math\Ray.h" />
     <ClInclude Include="Math\Rectangle.h" />
     <ClInclude Include="Math\sse_functions.h" />
