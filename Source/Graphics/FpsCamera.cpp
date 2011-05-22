@@ -22,44 +22,26 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef APOC3DEXCEPTION_H
-#define APOC3DEXCEPTION_H
-
-
-#include "Common.h"
-#include <exception>
+#include "FpsCamera.h"
 
 namespace Apoc3D
 {
-
-	enum Apoc3DExceptionType
+	namespace Graphics
 	{
-		EX_Default,
-		EX_InvalidOperation,
-		EX_InvalidData,
-		EX_NotSupported
-	};
-
-	class Apoc3DException : public std::exception
-	{
-	private:
-		String m_message;
-	public:
-		Apoc3DException(const wchar_t* const &msg)
-			: m_message(msg)
+		FpsCamera::FpsCamera(float aspectRatio)
+			: m_aspectRatio(aspectRatio), m_velocity(0), m_position(Vector3Utils::Zero)
 		{
-
+			
 		}
-		Apoc3DException(const Apoc3DException &another)
-			: m_message(another.m_message)
+
+
+		FpsCamera::~FpsCamera(void)
 		{
 		}
 
-		static Apoc3DException createException(Apoc3DExceptionType type, const wchar_t* const msg);
-		
-		
+		void FpsCamera::Update(const GameTime* time)
+		{
+
+		}
 	};
 };
-
-
-#endif

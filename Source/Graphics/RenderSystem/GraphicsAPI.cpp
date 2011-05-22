@@ -29,10 +29,22 @@ using namespace Apoc3D;
 
 namespace Apoc3D
 {
+	SINGLETON_DECL(Apoc3D::Graphics::RenderSystem::GraphicsAPIManager);
+	
 	namespace Graphics
 	{
 		namespace RenderSystem
 		{
+			//GraphicsAPIManager* GraphicsAPIManager::getSingletonPtr(void)
+			//{
+			//	return ms_instance;
+			//}
+			//GraphicsAPIManager& GraphicsAPIManager::getSingleton(void)
+			//{  
+			//	assert( ms_instance );  return ( *ms_instance );  
+			//}
+
+
 			GraphicsAPIManager::~GraphicsAPIManager()
 			{
 				for (PlatformTable::iterator iter = m_factories.begin();

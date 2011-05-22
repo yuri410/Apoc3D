@@ -65,6 +65,10 @@ namespace Apoc3D
 				
 				DeviceContent* CreateDeviceContent();
 				
+
+
+				//static GraphicsAPIManager& getSingleton();
+				//static GraphicsAPIManager* getSingletonPtr();
 			};
 
 			/** Define how well a platform is supported based on score.
@@ -106,7 +110,7 @@ namespace Apoc3D
 
 				/** Create the device content of the Graphics API.
 				*/
-				virtual DeviceContent* CreateDeviceContent();
+				virtual DeviceContent* CreateDeviceContent() = 0;
 			};
 		}
 	}

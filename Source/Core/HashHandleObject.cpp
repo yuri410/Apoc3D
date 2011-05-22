@@ -22,26 +22,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "FpsCamera.h"
+#include "HashHandleObject.h"
 
 namespace Apoc3D
 {
 	namespace Core
 	{
-		FpsCamera::FpsCamera(float aspectRatio)
-			: m_aspectRatio(aspectRatio), m_velocity(0), m_position(Zero3)
-		{
-			
-		}
-
-
-		FpsCamera::~FpsCamera(void)
-		{
-		}
-
-		void Update(const GameTime* time)
-		{
-
-		}
-	};
-};
+		BatchHandle HashHandleObject::Counter = 0;
+	}
+}

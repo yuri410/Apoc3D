@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math\Frustum.h"
 
 using namespace Apoc3D::Math;
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {

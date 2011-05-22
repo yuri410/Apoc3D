@@ -32,7 +32,16 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		namespace RenderSystem
-		{			
+		{
+			void FPSCounter::Step()
+			{
+
+			}
+
+			void RenderView::Present()
+			{
+				m_fpsCounter.Step(); 
+			}
 			void RenderWindow::OnInitialize()
 			{
 				if (m_evtHandler)

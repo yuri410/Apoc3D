@@ -51,7 +51,7 @@ namespace Apoc3D
 
 			public:
 				float getFPS() const { return m_fps; }
-				void OnFrame();
+				void Step();
 			};
 
 			/* Represents a view of rendered graphics.
@@ -83,7 +83,7 @@ namespace Apoc3D
 
 				float getFPS() const { return m_fpsCounter.getFPS(); }
 
-				void Present() { m_fpsCounter.OnFrame(); }
+				virtual void Present();
 				
 
 			};

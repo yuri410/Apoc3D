@@ -25,12 +25,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define FPSCAMERA_H
 #pragma once
 
-#include "..\Common.h"
+#include "Common.h"
 #include "Camera.h"
 
 namespace Apoc3D
 {
-	namespace Core
+	namespace Graphics
 	{
 		class APAPI FpsCamera : public Camera
 		{
@@ -50,13 +50,41 @@ namespace Apoc3D
 			const float getAspectRatio() const { return m_aspectRatio; }
 			const float getVelocity() const { return m_velocity; } 
 
-			void MoveForward() { m_position += UnitZ3 * m_velocity; }
-			void MoveBackward() { m_position -= UnitZ3 * m_velocity; }
-			void MoveLeft() { m_position += UnitX3 * m_velocity; }
-			void MoveRight() { m_position -= UnitX3 * m_velocity; }
-			void MoveUp() { m_position += UnitY3 * m_velocity;}
-			void MoveDown() { m_position -= UnitY3 * m_velocity; }
-			void Move(const Vector3 &dir) { m_position += dir * m_velocity; }
+			void MoveForward()
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
+				m_position = Vector3Utils::Add(m_position, ofs);
+			}
+			void MoveBackward()
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
+				m_position = Vector3Utils::Subtract(m_position, ofs);				
+			}
+			void MoveLeft()
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
+				m_position = Vector3Utils::Add(m_position, ofs);
+			}
+			void MoveRight() 
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
+				m_position = Vector3Utils::Subtract(m_position, ofs);
+			}
+			void MoveUp()
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
+				m_position = Vector3Utils::Add(m_position, ofs);
+			}
+			void MoveDown() 
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
+				m_position = Vector3Utils::Subtract(m_position, ofs);
+			}
+			void Move(const Vector3 &dir)
+			{
+				Vector3 ofs = Vector3Utils::Multiply(dir, m_velocity);
+				m_position = Vector3Utils::Add(m_position, ofs);
+			}
 			
 			void Update(const GameTime* const time);
 		};

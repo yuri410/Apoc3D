@@ -28,10 +28,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 
 using namespace std;
+using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
-	namespace Core
+	namespace Utility
 	{
 		class APAPI StringTable
 		{
@@ -46,21 +47,13 @@ namespace Apoc3D
 		class APAPI StringTableLoader
 		{
 		public:
-			StringTable* Load(const ResourceLocation const &rl)
-			{
-				StringTable* st = new StringTable();
-				Read(st, rl.GetStream);
-				return st;
-			}
-			StringTable* Load(const String const &file)
-			{
-				return Load(new FileLocation(file));
-			}
+			StringTable* Load(const ResourceLocation &rl);
+			StringTable* Load(const String &file);
 
-			void Read(unordered_map<String, pair<string, string>> &data, Stream stm) = 0;
-			void Write(unordered_map<string, pair<string, string>> &data, Stream stm) = 0;
+			virtual void Read(StringTable* data, wistream* stm) = 0;
+			virtual void Write(StringTable* data, wostream* stm) = 0;
 
-			vector<String> getFilers() = 0;
+			virtual vector<String> getFilters() = 0;
 		};
 	}
 }

@@ -24,6 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "Common.h"
+#include <Windows.h>
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,

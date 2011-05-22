@@ -54,6 +54,8 @@
       <PrecompiledHeaderFile>Common.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)\lnclude;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -81,7 +83,7 @@
   <ItemGroup>
     <ClInclude Include="Apoc3DException.h" />
     <ClInclude Include="Common.h" />
-    <ClInclude Include="Core\Camera.h" />
+    <ClInclude Include="Graphics\Camera.h" />
     <ClInclude Include="Core\CoreCommon.h" />
     <ClInclude Include="Core\RandomUtils.h" />
     <ClInclude Include="core\resource.h" />
@@ -138,7 +140,7 @@
     <ClInclude Include="EffectSystem\Effect.h" />
     <ClInclude Include="EffectSystem\EffectAtomCodeParser.h" />
     <ClInclude Include="EffectSystem\EffectParameter.h" />
-    <ClInclude Include="Core\FpsCamera.h" />
+    <ClInclude Include="Graphics\FpsCamera.h" />
     <ClInclude Include="Core\HashHandleObject.h" />
     <ClInclude Include="Graphics\EffectDescription.h" />
     <ClInclude Include="EffectSystem\EffectManager.h" />
@@ -156,11 +158,13 @@
     <ClInclude Include="Graphics\RenderSystem\Texture.h" />
     <ClInclude Include="Core\StringTable.h" />
     <ClInclude Include="Vfs\PathUtils.h" />
+    <ClInclude Include="Vfs\ResourceLocation.h" />
     <ClInclude Include="Vfs\VFSCommon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Apoc3DException.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Core\HashHandleObject.cpp" />
     <ClCompile Include="Core\RandomUtils.cpp" />
     <ClCompile Include="Core\Resource.cpp" />
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
@@ -199,7 +203,7 @@
     <ClCompile Include="EffectSystem\Effect.cpp" />
     <ClCompile Include="EffectSystem\EffectAtomCodeParser.cpp" />
     <ClCompile Include="EffectSystem\EffectParameter.cpp" />
-    <ClCompile Include="Core\FpsCamera.cpp" />
+    <ClCompile Include="Graphics\FpsCamera.cpp" />
     <ClCompile Include="Graphics\EffectDescription.cpp" />
     <ClCompile Include="EffectSystem\EffectAtom.cpp" />
     <ClCompile Include="EffectSystem\EffectManager.cpp" />
@@ -215,11 +219,11 @@
     <ClCompile Include="Vfs\PathUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="apoc3d.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="apoc3d.ico" />
     <None Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="apoc3d.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

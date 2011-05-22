@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+This source file is part of Apoc3D
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,51 +15,34 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
+along with this program.  if not, write to the Free Software Foundation,
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#ifndef APOC3DEXCEPTION_H
-#define APOC3DEXCEPTION_H
-
+#ifndef RESOURCELOCATION_H
+#define RESOURCELOCATION_H
+#pragma once
 
 #include "Common.h"
-#include <exception>
+
+using namespace std;
 
 namespace Apoc3D
-{
-
-	enum Apoc3DExceptionType
+{	
+	namespace VFS
 	{
-		EX_Default,
-		EX_InvalidOperation,
-		EX_InvalidData,
-		EX_NotSupported
-	};
-
-	class Apoc3DException : public std::exception
-	{
-	private:
-		String m_message;
-	public:
-		Apoc3DException(const wchar_t* const &msg)
-			: m_message(msg)
+		class APAPI ResourceLocation
 		{
-
-		}
-		Apoc3DException(const Apoc3DException &another)
-			: m_message(another.m_message)
+		public:
+			wistream* GetStream() const { return 0; }
+		};
+		class APAPI FileLocation : public ResourceLocation
 		{
-		}
-
-		static Apoc3DException createException(Apoc3DExceptionType type, const wchar_t* const msg);
-		
-		
-	};
-};
-
-
+		public:
+			FileLocation(const String& filePath) {}
+		};
+	}
+}
 #endif
