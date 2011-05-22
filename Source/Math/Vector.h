@@ -134,6 +134,10 @@ namespace Apoc3D
 
 #endif
 
+#define _V3X(x) (Vector3Utils::GetX(x))
+#define _V3Y(x) (Vector3Utils::GetY(x))
+#define _V3Z(x) (Vector3Utils::GetZ(x))
+
 		class APAPI Vector2Utils
 		{
 		public:

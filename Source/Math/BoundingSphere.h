@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D
+This source file is part of Apoc3D Engine
 
 Copyright (c) 2009+ Tao Games
 
@@ -26,6 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Vector.h"
+#include "Plane.h"
+#include "Ray.h"
 
 namespace Apoc3D
 {
@@ -112,7 +114,7 @@ namespace Apoc3D
 				res.Radius = distance * 0.5f;
 			}
 
-			/* Constructs a BoundingSphere that fully contains the given points.
+			/** Constructs a BoundingSphere that fully contains the given points.
 			*/
 			static void FromPoints(BoundingSphere& res, const Vector3* points, int count)
 			{
@@ -136,11 +138,10 @@ namespace Apoc3D
 
 			}
 
-			/* Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres.
+			/** Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres.
 			*/
-			static BoundingSphere Merge(BoundingSphere sphere1, BoundingSphere sphere2)
+			static void Merge(BoundingSphere& res, const BoundingSphere& sphere1, const BoundingSphere& sphere2)
 			{
-				BoundingSphere sphere;
 				Vector3 difference = Vector3Utils::Subtract(sphere2.Center, sphere1.Center);
 
 				float length = Vector3Utils::Length(difference);
@@ -150,10 +151,16 @@ namespace Apoc3D
 				if (radius + radius2 >= length)
 				{
 					if (radius - radius2 >= length)
-						return sphere1;
+					{
+						res = sphere1;
+						return;
+					}
 
 					if (radius2 - radius >= length)
-						return sphere2;
+					{
+						res = sphere2;
+						return;
+					}
 				}
 
 				Vector3 vector = Vector3Utils::Divide(difference, length);
@@ -161,13 +168,77 @@ namespace Apoc3D
 				float maxv = (max(radius, length + radius2) - minv) * 0.5f;
 
 				vector = Vector3Utils::Multiply(vector, maxv + minv);
-				sphere.Center = Vector3Utils::Add(sphere1.Center, vector);// + vector * (maxv + minv);
+				res.Center = Vector3Utils::Add(sphere1.Center, vector);// + vector * (maxv + minv);
+				res.Radius = maxv;
+			}
+			/** Determines whether a sphere intersects the specified object.
+			*/
+			static bool Intersects(const BoundingSphere& sphere, const BoundingBox& box)
+			{
+				return BoundingBox::Intersects(box, sphere);
+			}
+			/** Determines whether a sphere intersects the specified object.
+			*/
+			static bool Intersects(const BoundingSphere& sphere1, const BoundingSphere& sphere2)
+			{
+				float distance = Vector3Utils::DistanceSquared(sphere1.Center, sphere2.Center);
+				float radius = sphere1.Radius;
+				float radius2 = sphere2.Radius;
 
-				sphere.Radius = maxv;
+				if ((radius * radius) + (2.0f * radius * radius2) + (radius2 * radius2) <= distance)
+					return false;
 
-				return sphere;
+				return true;
+			}
+			/** Determines whether a sphere intersects the specified object.
+			*/
+			static bool Intersects(const BoundingSphere& sphere, const Ray& ray, float& distance)
+			{
+				return Ray::Intersects(ray, sphere);
 			}
 
+
+			static bool Intersects(const BoundingSphere& sphere, const Ray& ray, Vector3& p1)
+			{
+				Vector3 sc = Vector3Utils::Subtract(sphere.Center, ray.Position);
+
+				float slen = Vector3Utils::Dot(ray.Direction, sc);
+
+				if (slen > 0)
+				{
+					float dist = sqrtf(Vector3Utils::LengthSquared(sc) - slen * slen);
+
+					if (dist <= sphere.Radius)
+					{
+						const float dd = sqrtf(sphere.Radius * sphere.Radius - dist * dist);
+						Vector3 t0 = Vector3Utils::Multiply(ray.Direction,
+							slen - dd);						
+						p1 = Vector3Utils::Add(ray.Position, t0);
+
+						t0 = Vector3Utils::Multiply(ray.Direction,
+							slen + sqrtf(sphere.Radius * sphere.Radius - dist * dist));
+						Vector3 p2 = Vector3Utils::Add(ray.Position, t0);						
+
+						float d1 = Vector3Utils.DistanceSquared(p1, ray.Position);
+						float d2 = Vector3Utils.DistanceSquared(p2, ray.Position);
+
+						if (d2 < d1)
+						{
+							p1 = p2;
+						}
+						return true;
+					}
+				}
+
+				return false;
+			}
+
+			/* Finds the intersection between a plane and a sphere.
+			*/
+			static PlaneIntersectionType Intersects(const BoundingSphere& sphere, const Plane& plane)
+			{
+				return Plane::Intersects(plane, sphere);
+			}
 		};
 	}
 }
