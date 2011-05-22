@@ -41,22 +41,133 @@ namespace Apoc3D
 		class APAPI BoundingSphere
 		{
 		public:
-			/* Specifies the center point of the sphere.
+			/** Specifies the center point of the sphere.
 			*/
 			Vector3 Center;
-			/* The radius of the sphere.
+			/** The radius of the sphere.
 			*/
 			float Radius;
 
+			BoundingSphere() { }
 			BoundingSphere(Vector3 center, float radius)
 			{
 				Center = center;
 				Radius = radius;
 			}
 
-			/* Determines whether the sphere contains the specified box.
+			/** Determines whether the sphere contains the specified box.
+				@param
+					sphere The sphere that will be checked for containment.
+					box The box that will be checked for containment.
+				@return
+					A member of the ContainmentType enumeration indicating whether 
+					the two objects intersect, are contained, or don't meet at all.
 			*/
 			static ContainmentType Contains(const BoundingSphere& sphere, const BoundingBox& box);
+
+			/** Determines whether the sphere contains the specified sphere.			
+				@param
+					sphere The first sphere that will be checked for containment.
+					sphere2 The second sphere that will be checked for containment.
+				@returns
+					A member of the ContainmentType enumeration indicating whether 
+					the two objects intersect, are contained, or don't meet at all.
+			*/
+			static ContainmentType Contains(const BoundingSphere& sphere1, const BoundingSphere& sphere2)
+			{
+				float distance = Vector3Utils::Distance(sphere1.Center, sphere2.Center);
+				
+				float radius = sphere1.Radius;
+				float radius2 = sphere2.Radius;
+
+				if (radius + radius < distance)
+					return CONTAIN_Disjoint;
+
+				if (radius - radius2 < distance)
+					return CONTAIN_Intersects;
+
+				return CONTAIN_Contains;
+			}
+
+			/** Determines whether the sphere contains the specified point.
+			*/
+			static ContainmentType Contains(const BoundingSphere& sphere, Vector3 vector)
+			{
+				float distance = Vector3Utils::Distance(vector, sphere.Center);
+
+				if (distance >= (sphere.Radius * sphere.Radius))
+					return CONTAIN_Disjoint;
+
+				return CONTAIN_Contains;
+			}
+
+			/** Constructs a BoundingSphere from a given box.
+			*/
+			static void CreateFromBox(BoundingSphere& res, const BoundingBox& box)
+			{
+				res.Center = Vector3Utils::Lerp(box.Minimum, box.Maximum, 0.5f);
+				
+				float distance = Vector3Utils::Distance(box.Minimum, box.Maximum);
+
+				res.Radius = distance * 0.5f;
+			}
+
+			/* Constructs a BoundingSphere that fully contains the given points.
+			*/
+			static void FromPoints(BoundingSphere& res, const Vector3* points, int count)
+			{
+				Vector3 center = Vector3Utils::Zero;
+				for (int i = 0; i < count; i++)
+				{
+					center = Vector3Utils::Add(points[i], center);
+				}
+				center = Vector3Utils::Divide(center, static_cast<float>(count));
+
+				float radius = 0;
+				for (int i = 0; i < count; i++)
+				{
+					float dist = Vector3Utils::DistanceSquared(center, points[i]);
+					if (dist > radius)
+						radius = dist;
+				}
+
+				res.Center = center;
+				res.Radius = sqrtf(radius);
+
+			}
+
+			/* Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres.
+			*/
+			static BoundingSphere Merge(BoundingSphere sphere1, BoundingSphere sphere2)
+			{
+				BoundingSphere sphere;
+				Vector3 difference = Vector3Utils::Subtract(sphere2.Center, sphere1.Center);
+
+				float length = Vector3Utils::Length(difference);
+				float radius = sphere1.Radius;
+				float radius2 = sphere2.Radius;
+
+				if (radius + radius2 >= length)
+				{
+					if (radius - radius2 >= length)
+						return sphere1;
+
+					if (radius2 - radius >= length)
+						return sphere2;
+				}
+
+				Vector3 vector = Vector3Utils::Divide(difference, length);
+				float minv = min(-radius, length - radius2);
+				float maxv = (max(radius, length + radius2) - minv) * 0.5f;
+
+				vector = Vector3Utils::Multiply(vector, maxv + minv);
+				sphere.Center = Vector3Utils::Add(sphere1.Center, vector);// + vector * (maxv + minv);
+
+				sphere.Radius = maxv;
+
+				return sphere;
+			}
+
 		};
 	}
 }
