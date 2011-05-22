@@ -185,6 +185,65 @@ namespace Apoc3D
 				r.Z = left.Z + right.Z;
 				r.W = left.W + right.W;
 			}
+			/** Subtracts two quaternions.
+			*/
+			static void Subtract(Quaternion& result, const Quaternion& left, const Quaternion& right)
+			{
+				result.X = left.X - right.X;
+				result.Y = left.Y - right.Y;
+				result.Z = left.Z - right.Z;
+				result.W = left.W - right.W;
+			}
+			/** Modulates a quaternion by another.
+			*/
+			static void Multiply(Quaternion& result, const Quaternion& left, const Quaternion& right)
+			{
+				const float& rx = right.X;
+				const float& ry = right.Y;
+				const float& rz = right.Z;
+				const float& rw = right.W;
+				const float& lx = left.X;
+				const float& ly = left.Y;
+				const float& lz = left.Z;
+				const float& lw = left.W;
+				float yz = (ry * lz) - (rz * ly);
+				float xz = (rz * lx) - (rx * lz);
+				float xy = (rx * ly) - (ry * lx);
+				float lengthSq = ((rx * lx) + (ry * ly)) + (rz * lz);
+
+				result.X = ((rx * lw) + (lx * rw)) + yz;
+				result.Y = ((ry * lw) + (ly * rw)) + xz;
+				result.Z = ((rz * lw) + (lz * rw)) + xy;
+				result.W = (rw * lw) - lengthSq;
+			}
+			/** Scales a quaternion by the given value.
+			*/
+			static void Multiply(Quaternion& result, const Quaternion& quaternion, float scale)
+			{
+				result.X = quaternion.X * scale;
+				result.Y = quaternion.Y * scale;
+				result.Z = quaternion.Z * scale;
+				result.W = quaternion.W * scale;
+			}
+			/** Reverses the direction of a given quaternion.
+			*/
+			static void Negate(Quaternion& result, const Quaternion& quaternion)
+			{
+				result.X = -quaternion.X;
+				result.Y = -quaternion.Y;
+				result.Z = -quaternion.Z;
+				result.W = -quaternion.W;
+			}
+			/* Divides a quaternion by another.
+			*/
+			static void Divide(Quaternion& result, const Quaternion& left, const Quaternion& right)
+			{
+				result.X = left.X / right.X;
+				result.Y = left.Y / right.Y;
+				result.Z = left.Z / right.Z;
+				result.W = left.W / right.W;
+			}
+
 			/** Concatenates two quaternions.
 			*/
 			static void Concatenate(Quaternion& r, const Quaternion& left, const Quaternion& right)
@@ -218,15 +277,7 @@ namespace Apoc3D
 				result.W = quaternion.W;
 			}
 
-			/* Divides a quaternion by another.
-			*/
-			static void Divide(Quaternion& result, const Quaternion& left, const Quaternion& right)
-			{
-				result.X = left.X / right.X;
-				result.Y = left.Y / right.Y;
-				result.Z = left.Z / right.Z;
-				result.W = left.W / right.W;
-			}
+
 			/* Calculates the dot product of two quaternions.
 			*/
 			static float Dot(const Quaternion& left, const Quaternion& right)
@@ -276,46 +327,6 @@ namespace Apoc3D
 
 			}
 
-			/** Modulates a quaternion by another.
-			*/
-			static void Multiply(Quaternion& result, const Quaternion& left, const Quaternion& right)
-			{
-				const float& rx = right.X;
-				const float& ry = right.Y;
-				const float& rz = right.Z;
-				const float& rw = right.W;
-				const float& lx = left.X;
-				const float& ly = left.Y;
-				const float& lz = left.Z;
-				const float& lw = left.W;
-				float yz = (ry * lz) - (rz * ly);
-				float xz = (rz * lx) - (rx * lz);
-				float xy = (rx * ly) - (ry * lx);
-				float lengthSq = ((rx * lx) + (ry * ly)) + (rz * lz);
-
-				result.X = ((rx * lw) + (lx * rw)) + yz;
-				result.Y = ((ry * lw) + (ly * rw)) + xz;
-				result.Z = ((rz * lw) + (lz * rw)) + xy;
-				result.W = (rw * lw) - lengthSq;
-			}
-			/** Scales a quaternion by the given value.
-			*/
-			static void Multiply(Quaternion& result, const Quaternion& quaternion, float scale)
-			{
-				result.X = quaternion.X * scale;
-				result.Y = quaternion.Y * scale;
-				result.Z = quaternion.Z * scale;
-				result.W = quaternion.W * scale;
-			}
-			/** Reverses the direction of a given quaternion.
-			*/
-			static void Negate(Quaternion& result, const Quaternion& quaternion)
-			{
-				result.X = -quaternion.X;
-				result.Y = -quaternion.Y;
-				result.Z = -quaternion.Z;
-				result.W = -quaternion.W;
-			}
 			/** Converts the quaternion into a unit quaternion.
 			*/
 			static void Normalize(Quaternion& result, const Quaternion& quaternion)
