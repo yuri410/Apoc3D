@@ -155,19 +155,19 @@ namespace Apoc3D
 			static const Vector2 One;
 			
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			static float GetX(Vector2 v)
+			static float& GetX(Vector2 v)
 			{
-				return *(reinterpret_cast<const float*>(&v));
+				return *(reinterpret_cast<float*>(&v)+0);
+			}
+			static float& GetY(Vector2 v)
+			{
+				return *(reinterpret_cast<float*>(&v) + 1);
+			}
+			static float& GetElement(Vector2 v, int i)
+			{
+				return *(reinterpret_cast<float*>(&v) + i);
+			}
 
-			}
-			static float GetY(Vector2 v)
-			{
-				return *(reinterpret_cast<const float*>(&v)+1);
-			}
-			static float GetElement(Vector2 v, int i)
-			{
-				return *(reinterpret_cast<const float*>(&v) + i);
-			}
 			static Vector2 LDVectorPtr(const float* v)
 			{
 				const float buffer[4] = { v[0], v[1], 0, 0};
@@ -213,9 +213,21 @@ namespace Apoc3D
 			{
 				return v.Y;
 			}
+			static float& GetX(Vector2& v)
+			{
+				return v.X;
+			}
+			static float& GetY(Vector2& v)
+			{
+				return v.Y;
+			}
 			static float GetElement(const Vector2& v, int i)
 			{
 				return *(reinterpret_cast<const float*>(&v.X) + i);
+			}
+			static float& GetElement(Vector2& v, int i)
+			{
+				return *(reinterpret_cast<float*>(&v.X) + i);
 			}
 			static Vector2 LDVectorPtr(const float* v)
 			{
@@ -669,23 +681,22 @@ namespace Apoc3D
 
 			
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			static float GetElement(Vector3 v, int i)
+			static float& GetElement(Vector3 v, int i)
 			{
-				return *(reinterpret_cast<const float*>(&v)+i);
+				return *(reinterpret_cast<float*>(&v)+i);
 			}
-			static float GetX(Vector3 v)
+			static float& GetX(Vector3 v)
 			{
-				return *(reinterpret_cast<const float*>(&v));
+				return *(reinterpret_cast<float*>(&v)+0);
 			}
-			static float GetY(Vector3 v)
+			static float& GetY(Vector3 v)
 			{
-				return *(reinterpret_cast<const float*>(&v)+1);
+				return *(reinterpret_cast<float*>(&v)+1);
 			}
-			static float GetZ(Vector3 v)
+			static float& GetZ(Vector3 v)
 			{
-				return *(reinterpret_cast<const float*>(&v)+2);
+				return *(reinterpret_cast<float*>(&v)+2);
 			}
-
 			static Vector3 LDVectorPtr(const float* v)
 			{
 				const float buffer[4] = { v[0], v[1], v[2], 0 };
@@ -739,7 +750,22 @@ namespace Apoc3D
 			{
 				return v.Z;
 			}
-
+			static float& GetElement(Vector3& v, int i)
+			{
+				return *(reinterpret_cast<float*>(&v.X) + i);
+			}
+			static float& GetX(Vector3& v)
+			{
+				return v.X;
+			}
+			static float& GetY(Vector3& v)
+			{
+				return v.Y;
+			}
+			static float& GetZ(Vector3& v)
+			{
+				return v.Z;
+			}
 			static Vector3 LDVectorPtr(const float* v)
 			{
 				return Vector3(v[0], v[1], v[2]);
@@ -1273,27 +1299,28 @@ namespace Apoc3D
 
 			
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			static float GetElement(Vector4 v, int i)
+
+			static float& GetElement(Vector4 v, int i)
 			{
-				return *(reinterpret_cast<const float*>(&v)+i);
+				return *(reinterpret_cast<float*>(&v)+i);
 			}
-			static float GetX(Vector4 v)
+			static float& GetX(Vector4 v)
 			{
-				return *(reinterpret_cast<const float*>(&v));
+				return *(reinterpret_cast<float*>(&v)+0);
 			}
-			static float GetY(Vector4 v)
+			static float& GetY(Vector4 v)
 			{
-				return *(reinterpret_cast<const float*>(&v)+1);
+				return *(reinterpret_cast<float*>(&v)+1);
 			}
-			static float GetZ(Vector4 v)
+			static float& GetZ(Vector4 v)
 			{
-				return *(reinterpret_cast<const float*>(&v)+2);
+				return *(reinterpret_cast<float*>(&v)+2);
 			}
-			static float GetW(Vector4 v)
+			static float& GetW(Vector4 v)
 			{
-				return *(reinterpret_cast<const float*>(&v)+3);
+				return *(reinterpret_cast<float*>(&v)+3);
 			}
-			
+
 			static Vector4 LDVectorPtr(const float* v)
 			{
 				return VecLoad(v);
@@ -1332,6 +1359,10 @@ namespace Apoc3D
 			{
 				return *(reinterpret_cast<const float*>(&v.X) + i);
 			}
+			static float& GetElement(Vector4& v, int i)
+			{
+				return *(reinterpret_cast<float*>(&v.X) + i);
+			}
 			static float GetX(const Vector4& v)
 			{
 				return v.X;
@@ -1348,7 +1379,22 @@ namespace Apoc3D
 			{
 				return v.Z;
 			}
-
+			static float& GetX(Vector4& v)
+			{
+				return v.X;
+			}
+			static float& GetY(Vector4& v)
+			{
+				return v.Y;
+			}
+			static float& GetZ(Vector4& v)
+			{
+				return v.Z;
+			}
+			static float& GetW(Vector4& v)
+			{
+				return v.Z;
+			}
 			static Vector4 LDVectorPtr(const float* v)
 			{
 				return Vector4(v[0], v[1], v[2], v[3]);

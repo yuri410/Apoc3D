@@ -102,9 +102,9 @@ namespace Apoc3D
 				angle = 0;
 				if (len > EPSILON)
 				{
-					axis.X = X;
-					axis.Y = Y;
-					axis.Z = Z;
+					_V3X(axis) = X;
+					_V3Y(axis) = Y;
+					_V3Z(axis) = Z;
 
 					if (fabs(W) < 1)
 					{
@@ -113,9 +113,9 @@ namespace Apoc3D
 				}
 				else
 				{
-					axis.X = 0;
-					axis.Y = 0;
-					axis.Z = 0;
+					_V3X(axis) = 0;
+					_V3Y(axis) = 0;
+					_V3Z(axis) = 0;
 				}
 			}
 			/** Calculates the length of the quaternion.
@@ -269,7 +269,7 @@ namespace Apoc3D
 
 			/** Conjugates a quaternion.
 			*/
-			static Quaternion Conjugate(Quaternion& result, const Quaternion& quaternion)
+			static void Conjugate(Quaternion& result, const Quaternion& quaternion)
 			{				
 				result.X = -quaternion.X;
 				result.Y = -quaternion.Y;
@@ -349,9 +349,9 @@ namespace Apoc3D
 				float sin = sinf(half);
 				float cos = cosf(half);
 
-				result.X = axis2.X * sin;
-				result.Y = axis2.Y * sin;
-				result.Z = axis2.Z * sin;
+				result.X = _V3X(axis2) * sin;
+				result.Y = _V3Y(axis2) * sin;
+				result.Z = _V3Z(axis2) * sin;
 				result.W = cos;
 
 			}

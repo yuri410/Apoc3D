@@ -27,17 +27,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Vector.h"
 #include "Matrix.h"
+#include "MathCommon.h"
 
 namespace Apoc3D
 {
 	namespace Math
 	{
-		enum PlaneIntersectionType
-		{
-			PLANEIT_Front,
-			PLANEIT_Back,
-			PLANEIT_Intersecting
-		};
+
 
 		class APAPI Plane
 		{
@@ -55,7 +51,7 @@ namespace Apoc3D
 				};
 				/** The distance of the plane along its normal from the origin.
 				*/
-				Vector Normal;
+				Vector4 Normal;
 			};
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			/** The normal vector of the plane.
@@ -319,10 +315,8 @@ namespace Apoc3D
 
 			/* Transforms a normalized plane by a quaternion rotation.
 			*/
-			static Plane Transform(const Plane &plane, const Quaternion &rotation)
-			{
+			static Plane Transform(const Plane &plane, const Quaternion &rotation);
 
-			}
 			/* Finds the intersection between a plane and a line.
 			* TODO:TEST
 			*/

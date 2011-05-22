@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BoundingBox.h"
 
 #include "BoundingSphere.h"
-
+#include "Ray.h"
 
 namespace Apoc3D
 {
@@ -62,6 +62,10 @@ namespace Apoc3D
 			Vector3 r = Vector3Utils::LDVector(sphere.Radius);
 			res.Minimum = Vector3Utils::Subtract(sphere.Center, r);
 			res.Maximum = Vector3Utils::Add(sphere.Center, r);
+		}
+		bool BoundingBox::Intersects(const BoundingBox& box, const Ray& ray, float& distance)
+		{
+			return Ray::Intersects(ray, box, distance);
 		}
 
 		bool BoundingBox::Intersects(const BoundingBox& box, const BoundingSphere& sphere)

@@ -6,7 +6,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		Quaternion Quaternion::Identity = Quaternion(0,0,0,1);
+		const Quaternion Quaternion::Identity = Quaternion(0,0,0,1);
 
 		void Quaternion::CreateRotationMatrix(Quaternion& result, const Matrix& matrix)
 		{

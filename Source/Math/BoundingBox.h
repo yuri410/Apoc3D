@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Vector.h"
 #include "Plane.h"
+#include "MathCommon.h"
 
 using namespace std;
 
@@ -87,7 +88,7 @@ namespace Apoc3D
 
 			PlaneIntersectionType Intersects(const Plane& plane) const
 			{
-				return Intersects(this, plane);
+				return Intersects(*this, plane);
 			}
 			ContainmentType Contains(Vector3 vector) const
 			{
@@ -190,10 +191,7 @@ namespace Apoc3D
 			{
 				return Plane::Intersects(plane, box);
 			}
-			static bool Intersects(const BoundingBox& box, const Ray& ray, float& distance)
-			{
-				return Ray::Intersects(ray, box, distance);
-			}
+			static bool Intersects(const BoundingBox& box, const Ray& ray, float& distance);
 
 			/*  Determines whether a box intersects the specified object.
 			*/

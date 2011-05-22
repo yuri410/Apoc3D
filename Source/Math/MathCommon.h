@@ -21,19 +21,28 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MATH_H
-#define MATH_H
+#ifndef MATHCOMMON_H
+#define MATHCOMMON_H
 
-#include "Vector.h"
-#include "Matrix.h"
-#include "Point.h"
-#include "Rectangle.h"
-#include "Color.h"
-#include "MathCommon.h"
-
-
-#define ToDegree(x) D3DXToDegree(x)
-#define ToRadian(x) D3DXToRadian(x)
-
+namespace Apoc3D
+{
+	namespace Math
+	{
+#define minf(x, y) (x<y ? x : y)
+#define maxf(x, y) (x>y ? x : y)
+		enum ContainmentType
+		{
+			CONTAIN_Disjoint,
+			CONTAIN_Contains,
+			CONTAIN_Intersects
+		};
+		enum PlaneIntersectionType
+		{
+			PLANEIT_Front,
+			PLANEIT_Back,
+			PLANEIT_Intersecting
+		};
+	}
+}
 
 #endif

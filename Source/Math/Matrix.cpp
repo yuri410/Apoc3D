@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Matrix.h"
 
+#include "Quaternion.h"
 
 namespace Apoc3D
 {
@@ -289,6 +290,45 @@ namespace Apoc3D
             res.M43 = objectPosition.Z;
             res.M44 = 1.0f;
 		#endif
+		}
+
+		void Matrix::CreateRotationQuaternion(Matrix& result, const Quaternion& rotation)
+		{
+			
+			float xx = rotation.X * rotation.X;
+			float yy = rotation.Y * rotation.Y;
+			float zz = rotation.Z * rotation.Z;
+			float xy = rotation.X * rotation.Y;
+			float zw = rotation.Z * rotation.W;
+			float zx = rotation.Z * rotation.X;
+			float yw = rotation.Y * rotation.W;
+			float yz = rotation.Y * rotation.Z;
+			float xw = rotation.X * rotation.W;
+			result.M11 = 1.0f - (2.0f * (yy + zz));
+			result.M12 = 2.0f * (xy + zw);
+			result.M13 = 2.0f * (zx - yw);
+
+			result.M21 = 2.0f * (xy - zw);
+			result.M22 = 1.0f - (2.0f * (zz + xx));
+			result.M23 = 2.0f * (yz + xw);
+			
+			result.M31 = 2.0f * (zx + yw);
+			result.M32 = 2.0f * (yz - xw);
+			result.M33 = 1.0f - (2.0f * (yy + xx));
+
+
+			result.M41 = result.M42 = result.M43 =
+			result.M34 = result.M14 = result.M24 = 0.0f;
+
+			result.M44 = 1.0f;
+			
+		}
+
+		void Matrix::CreateRotationYawPitchRoll(Matrix& result, float yaw, float pitch, float roll)
+		{
+			Quaternion quaternion;
+			Quaternion::CreateRotationYawPitchRoll(quaternion, yaw, pitch, roll);
+			CreateRotationQuaternion(result, quaternion);
 		}
 	}
 }

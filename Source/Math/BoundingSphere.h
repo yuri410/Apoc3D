@@ -27,18 +27,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Vector.h"
 #include "Plane.h"
-#include "Ray.h"
+#include "MathCommon.h"
 
 namespace Apoc3D
 {
 	namespace Math
 	{
-		enum ContainmentType
-		{
-			CONTAIN_Disjoint,
-			CONTAIN_Contains,
-			CONTAIN_Intersects
-		};
 
 		class APAPI BoundingSphere
 		{
@@ -105,14 +99,7 @@ namespace Apoc3D
 
 			/** Constructs a BoundingSphere from a given box.
 			*/
-			static void CreateFromBox(BoundingSphere& res, const BoundingBox& box)
-			{
-				res.Center = Vector3Utils::Lerp(box.Minimum, box.Maximum, 0.5f);
-				
-				float distance = Vector3Utils::Distance(box.Minimum, box.Maximum);
-
-				res.Radius = distance * 0.5f;
-			}
+			static void CreateFromBox(BoundingSphere& res, const BoundingBox& box);
 
 			/** Constructs a BoundingSphere that fully contains the given points.
 			*/
@@ -164,8 +151,8 @@ namespace Apoc3D
 				}
 
 				Vector3 vector = Vector3Utils::Divide(difference, length);
-				float minv = min(-radius, length - radius2);
-				float maxv = (max(radius, length + radius2) - minv) * 0.5f;
+				float minv = minf(-radius, length - radius2);
+				float maxv = (maxf(radius, length + radius2) - minv) * 0.5f;
 
 				vector = Vector3Utils::Multiply(vector, maxv + minv);
 				res.Center = Vector3Utils::Add(sphere1.Center, vector);// + vector * (maxv + minv);
@@ -173,10 +160,8 @@ namespace Apoc3D
 			}
 			/** Determines whether a sphere intersects the specified object.
 			*/
-			static bool Intersects(const BoundingSphere& sphere, const BoundingBox& box)
-			{
-				return BoundingBox::Intersects(box, sphere);
-			}
+			static bool Intersects(const BoundingSphere& sphere, const BoundingBox& box);
+			
 			/** Determines whether a sphere intersects the specified object.
 			*/
 			static bool Intersects(const BoundingSphere& sphere1, const BoundingSphere& sphere2)
@@ -192,46 +177,10 @@ namespace Apoc3D
 			}
 			/** Determines whether a sphere intersects the specified object.
 			*/
-			static bool Intersects(const BoundingSphere& sphere, const Ray& ray, float& distance)
-			{
-				return Ray::Intersects(ray, sphere);
-			}
+			static bool Intersects(const BoundingSphere& sphere, const Ray& ray, float& distance);
 
 
-			static bool Intersects(const BoundingSphere& sphere, const Ray& ray, Vector3& p1)
-			{
-				Vector3 sc = Vector3Utils::Subtract(sphere.Center, ray.Position);
-
-				float slen = Vector3Utils::Dot(ray.Direction, sc);
-
-				if (slen > 0)
-				{
-					float dist = sqrtf(Vector3Utils::LengthSquared(sc) - slen * slen);
-
-					if (dist <= sphere.Radius)
-					{
-						const float dd = sqrtf(sphere.Radius * sphere.Radius - dist * dist);
-						Vector3 t0 = Vector3Utils::Multiply(ray.Direction,
-							slen - dd);						
-						p1 = Vector3Utils::Add(ray.Position, t0);
-
-						t0 = Vector3Utils::Multiply(ray.Direction,
-							slen + sqrtf(sphere.Radius * sphere.Radius - dist * dist));
-						Vector3 p2 = Vector3Utils::Add(ray.Position, t0);						
-
-						float d1 = Vector3Utils.DistanceSquared(p1, ray.Position);
-						float d2 = Vector3Utils.DistanceSquared(p2, ray.Position);
-
-						if (d2 < d1)
-						{
-							p1 = p2;
-						}
-						return true;
-					}
-				}
-
-				return false;
-			}
+			static bool Intersects(const BoundingSphere& sphere, const Ray& ray, Vector3& p1);
 
 			/* Finds the intersection between a plane and a sphere.
 			*/

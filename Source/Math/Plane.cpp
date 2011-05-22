@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BoundingBox.h"
 #include "BoundingSphere.h"
 
+#include "Quaternion.h"
 
 namespace Apoc3D
 {
@@ -58,7 +59,7 @@ namespace Apoc3D
 
 		PlaneIntersectionType Plane::Intersects(const Plane& plane, const BoundingSphere& sphere)
         {
-            float dot = plane.Dot3(sphere.Center.X);
+            float dot = plane.Dot3(sphere.Center);
 
             if (dot > sphere.Radius)
                 return PLANEIT_Front;
@@ -68,6 +69,33 @@ namespace Apoc3D
 
             return PLANEIT_Intersecting;
         }
+
+		Plane Plane::Transform(const Plane &plane, const Quaternion &rotation)
+		{
+			float x2 = rotation.X + rotation.X;
+			float y2 = rotation.Y + rotation.Y;
+			float z2 = rotation.Z + rotation.Z;
+			float wx = rotation.W * x2;
+			float wy = rotation.W * y2;
+			float wz = rotation.W * z2;
+			float xx = rotation.X * x2;
+			float xy = rotation.X * y2;
+			float xz = rotation.X * z2;
+			float yy = rotation.Y * y2;
+			float yz = rotation.Y * z2;
+			float zz = rotation.Z * z2;
+
+			const float& x = plane.X;
+			const float& y = plane.Y;
+			const float& z = plane.Z;
+
+			Plane result;
+			result.X = ((x * ((1.0f - yy) - zz)) + (y * (xy - wz))) + (z * (xz + wy));
+			result.Y = ((x * (xy + wz)) + (y * ((1.0f - xx) - zz))) + (z * (yz - wx));
+			result.Z = ((x * (xz - wy)) + (y * (yz + wx))) + (z * ((1.0f - xx) - yy));
+			result.D = plane.D;
+			return result;
+		}
 
 	}
 }

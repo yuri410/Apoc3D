@@ -409,25 +409,25 @@ inline __m128 Vec4Reflect(__m128 Incident, __m128 Normal)
 inline bool Vec3LessEqual(__m128 a, __m128 b)
 {
 	__m128 result = _mm_cmple_ss(a,b);
-	const bool* bc = reinterpret_cast<bool*>(result)
+	const bool* bc = reinterpret_cast<const bool*>(&result);
 	return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
 };
 inline bool Vec3Less(__m128 a, __m128 b)
 {
 	__m128 result = _mm_cmplt_ss(a,b);
-	const bool* bc = reinterpret_cast<bool*>(result)
+	const bool* bc = reinterpret_cast<const bool*>(&result);
 		return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
 };
 inline bool Vec3Greater(__m128 a, __m128 b)
 {
 	__m128 result = _mm_cmpgt_ss(a,b);
-	const bool* bc = reinterpret_cast<bool*>(result)
+	const bool* bc = reinterpret_cast<const bool*>(&result);
 		return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
 };
 inline bool Vec3GreaterEqual(__m128 a, __m128 b)
 {
 	__m128 result = _mm_cmpge_ss(a,b);
-	const bool* bc = reinterpret_cast<bool*>(result)
+	const bool* bc = reinterpret_cast<const bool*>(&result);
 		return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
 };
 
