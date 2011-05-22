@@ -26,10 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef HARDWAREBUFFER_H
 #define HARDWAREBUFFER_H
 
-#pragma once
-
 #include "Common.h"
 #include "Graphics\GraphicsCommon.h"
+
 #include "Graphics\PixelFormat.h"
 
 namespace Apoc3D
@@ -47,14 +46,12 @@ namespace Apoc3D
 				bool m_isLocked;
 				int m_lockOffset;
 				int m_lockSize;
-				bool m_useSystemMemory;
+
 
 			protected:
-				HardwareBuffer(BufferUsage usage, int sizeInBytes, bool useSysMem)
+				HardwareBuffer(BufferUsage usage, int sizeInBytes)
+					: m_usage(usage), m_size(sizeInBytes), m_isLocked(false)
 				{
-					m_usage = usage;
-					m_size = sizeInBytes;
-					m_useSystemMemory = useSysMem;
 				}
 				virtual ~HardwareBuffer() { }
 
@@ -62,12 +59,12 @@ namespace Apoc3D
 				virtual void unlock() = 0;
 
 			public:
-				BufferUsage getUsage() { return m_usage; }
-				int getSize() { return m_size; } 
-				int getLockOffset() { return m_lockOffset; } 
-				int getLockSize() { return m_lockSize; } 
-				bool UseSystemMemory() { return m_useSystemMemory; }
-				bool IsLocked() { return m_isLocked; } 
+				BufferUsage getUsage() const { return m_usage; }
+				int getSize() const { return m_size; } 
+				int getLockOffset() const { return m_lockOffset; } 
+				int getLockSize() const { return m_lockSize; } 
+
+				bool IsLocked() const { return m_isLocked; } 
 
 				void* Lock(LockMode mode);
 				void* Lock(int offset, int size, LockMode mode);
@@ -77,8 +74,8 @@ namespace Apoc3D
 			class APAPI VertexBuffer : public HardwareBuffer
 			{
 			protected:
-				VertexBuffer(int size, BufferUsage usage, bool useSysMem)
-					: HardwareBuffer(usage, size, useSysMem)
+				VertexBuffer(int size, BufferUsage usage)
+					: HardwareBuffer(usage, size)
 				{
 				}
 
@@ -96,8 +93,8 @@ namespace Apoc3D
 				int m_indexCount;
 
 			protected:
-				IndexBuffer(IndexBufferType type, int size, BufferUsage usage, bool useSysMem)
-					: HardwareBuffer(usage, size, useSysMem)
+				IndexBuffer(IndexBufferType type, int size, BufferUsage usage)
+					: HardwareBuffer(usage, size)
 				{
 					m_type = type;
 					m_indexCount = size / getIndexSize();
@@ -107,7 +104,7 @@ namespace Apoc3D
 				
 				virtual void SetData(void* data, int size) = 0;
 
-				int getIndexSize() { return m_type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint); }
+				int getIndexSize() const { return m_type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint); }
 			};
 
 			class APAPI DepthBuffer : public HardwareBuffer
@@ -118,18 +115,12 @@ namespace Apoc3D
 				DepthFormat m_depthFormat;
 
 			public:
-				int getWidth() { return m_width; }
-				int getHeight() { return m_height; }
-				DepthFormat getFormat() { return m_depthFormat; }
+				int getWidth() const { return m_width; }
+				int getHeight() const { return m_height; }
+				DepthFormat getFormat() const { return m_depthFormat; }
 
 			protected:
-				DepthBuffer(int width, int height, BufferUsage usage, DepthFormat format)
-					: HardwareBuffer(usage,PixelFormat::GetMemorySize(width, height, format), false)
-				{
-					m_width = width;
-					m_height = height;
-					m_depthFormat = format;
-				}
+				DepthBuffer(int width, int height, BufferUsage usage, DepthFormat format);
 			};
 		}		
 	}

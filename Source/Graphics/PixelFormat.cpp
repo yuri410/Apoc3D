@@ -63,11 +63,11 @@ namespace Apoc3D
             st[(int)DEPFMT_Depth32Single] = 4;		
 		}
 
-		int PixelFormat::sizeTable[FMT_Count];
-		int PixelFormat::depSizeTable[DEPFMT_Count];
-		auto_ptr<PixelFormat> PixelFormat::initializer = auto_ptr<PixelFormat>(new PixelFormat());
+		int PixelFormatUtils::sizeTable[FMT_Count];
+		int PixelFormatUtils::depSizeTable[DEPFMT_Count];
+		auto_ptr<PixelFormatUtils> PixelFormatUtils::initializer = auto_ptr<PixelFormatUtils>(new PixelFormatUtils());
 
-		PixelFormat::PixelFormat()
+		PixelFormatUtils::PixelFormatUtils()
 		{
 			createSizeTable(sizeTable);
 			createDepsizeTable(depSizeTable);

@@ -89,6 +89,7 @@
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
     <ClInclude Include="Graphics\RenderSystem\DeviceContent.h" />
+    <ClInclude Include="Graphics\RenderSystem\GraphicsAPI.h" />
     <ClInclude Include="Graphics\RenderSystem\ObjectFactory.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderDevice.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderDeviceCaps.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="Graphics\Mesh.cpp" />
     <ClCompile Include="Graphics\Model.cpp" />
     <ClCompile Include="Graphics\RenderSystem\Buffer\HardwareBuffer.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\GraphicsAPI.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderWindow.cpp" />
     <ClCompile Include="Graphics\TextureManager.cpp" />
     <ClCompile Include="IO\MaterialData.cpp" />

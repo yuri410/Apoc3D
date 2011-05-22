@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Apoc3DException.h"
 
+
 using namespace Apoc3D;
 
 namespace Apoc3D
@@ -66,6 +67,14 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_InvalidOperation, L"Buffer is not locked");
 				}
+			}
+
+			DepthBuffer::DepthBuffer(int width, int height, BufferUsage usage, DepthFormat format)
+				: HardwareBuffer(usage, PixelFormatUtils::GetMemorySize(width, height, format))
+			{
+				m_width = width;
+				m_height = height;
+				m_depthFormat = format;
 			}
 		}
 	}

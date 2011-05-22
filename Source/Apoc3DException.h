@@ -37,7 +37,8 @@ namespace Apoc3D
 	{
 		EX_Default,
 		EX_InvalidOperation,
-		EX_InvalidData
+		EX_InvalidData,
+		EX_NotSupported
 	};
 
 	class Apoc3DException : public std::exception

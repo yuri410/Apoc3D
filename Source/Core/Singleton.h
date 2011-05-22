@@ -19,7 +19,7 @@ namespace Apoc3D
 			{
 				ms_instance = static_cast<T*> (this);
 			}
-			~Singleton() { delete ms_instance; }
+			virtual ~Singleton() { delete ms_instance; }
 		public:
 			static T &getSingleton()
 			{

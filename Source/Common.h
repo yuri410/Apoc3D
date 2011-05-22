@@ -78,13 +78,13 @@ typedef unsigned long long BatchHandle;
 #define APOC3D_PLATFORM_LINUX 2
 
 #if defined( __WIN32__ ) || defined( _WIN32 )
-#   define OGRE_PLATFORM APOC3D_PLATFORM_WINDOWS
+#   define APOC3D_PLATFORM APOC3D_PLATFORM_WINDOWS
 
 #elif defined( __APPLE_CC__)
-#   define OGRE_PLATFORM APOC3D_PLATFORM_MAC
+#   define APOC3D_PLATFORM APOC3D_PLATFORM_MAC
 
 #else
-#   define OGRE_PLATFORM APOC3D_PLATFORM_LINUX
+#   define APOC3D_PLATFORM APOC3D_PLATFORM_LINUX
 #endif
 
 #if APOC3D_DLLEX
@@ -144,6 +144,7 @@ namespace Apoc3D
 
 	typedef std::wstring String;
 	
+#define StringCompare(a, b) !a.compare(b)
 	const int32 MaxInt32 = 0x7fffffff;
 
 
@@ -251,6 +252,9 @@ namespace Apoc3D
 
 		namespace RenderSystem
 		{
+			class GraphicsAPIManager;
+			class GraphicsAPIFactory;
+
 			struct PresentParameters;
 			class DeviceContent;
 			

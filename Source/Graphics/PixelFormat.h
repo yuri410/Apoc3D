@@ -220,14 +220,18 @@ namespace Apoc3D
 			FMT_Count = 41
 		};
 	
-		class APAPI PixelFormat
+		class APAPI PixelFormatUtils
 		{
 		private:
 			static int sizeTable[FMT_Count];
 			static int depSizeTable[DEPFMT_Count];
-			static auto_ptr<PixelFormat> initializer;
 
-			PixelFormat();
+#pragma warning(push)
+#pragma warning(disable:4251)
+			static auto_ptr<PixelFormatUtils> initializer;
+#pragma warning(pop)
+
+			PixelFormatUtils();
 		public:
 			static bool IsCompressed(PixelFormat format)
 			{
