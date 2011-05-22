@@ -126,9 +126,6 @@
     <ClInclude Include="Core\RandomUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\StringTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Vfs\Archive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -136,9 +133,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vfs\PathUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\StringUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Math\Matrix.h">
@@ -252,6 +246,12 @@
     <ClInclude Include="Vfs\ResourceLocation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Utility\StringUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\StringTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -323,13 +323,7 @@
     <ClCompile Include="Core\RandomUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\StringTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Vfs\PathUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\StringUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Math\Matrix.cpp">
@@ -396,6 +390,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\HashHandleObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\StringTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\StringUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

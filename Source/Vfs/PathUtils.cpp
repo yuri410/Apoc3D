@@ -23,9 +23,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "PathUtils.h"
-#include "Core/StringUtils.h"
+#include "Utility/StringUtils.h"
 
-using namespace Apoc3D::Core;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
