@@ -1,4 +1,26 @@
+/*
+-----------------------------------------------------------------------------
+This source file is part of Apoc3D
 
+Copyright (c) 2009+ Tao Games
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  if not, write to the Free Software Foundation,
+Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/gpl.txt.
+
+-----------------------------------------------------------------------------
+*/
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 
@@ -33,6 +55,11 @@ inline __m128 VecLoad(float f)
 inline __m128 VecLoad(float x, float y, float z)
 {
 	float vec[4] = {x,y,z,0};
+	return _mm_load_ps(vec);
+};
+inline __m128 VecLoad(float x, float y, float z, float w)
+{
+	float vec[4] = {x,y,z,w};
 	return _mm_load_ps(vec);
 };
 /* Adds two vectors.
@@ -378,5 +405,31 @@ inline __m128 Vec4Reflect(__m128 Incident, __m128 Normal)
 	Result = _mm_sub_ps(Incident,Result);
 	return Result;
 };
+
+inline bool Vec3LessEqual(__m128 a, __m128 b)
+{
+	__m128 result = _mm_cmple_ss(a,b);
+	const bool* bc = reinterpret_cast<bool*>(result)
+	return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
+};
+inline bool Vec3Less(__m128 a, __m128 b)
+{
+	__m128 result = _mm_cmplt_ss(a,b);
+	const bool* bc = reinterpret_cast<bool*>(result)
+		return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
+};
+inline bool Vec3Greater(__m128 a, __m128 b)
+{
+	__m128 result = _mm_cmpgt_ss(a,b);
+	const bool* bc = reinterpret_cast<bool*>(result)
+		return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
+};
+inline bool Vec3GreaterEqual(__m128 a, __m128 b)
+{
+	__m128 result = _mm_cmpge_ss(a,b);
+	const bool* bc = reinterpret_cast<bool*>(result)
+		return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
+};
+
 #endif
 		

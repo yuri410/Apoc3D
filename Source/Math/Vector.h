@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of labtd
+This source file is part of Apoc3D
 
 Copyright (c) 2009+ Tao Games
 
@@ -1220,6 +1220,32 @@ namespace Apoc3D
 			*/
 			static Vector3 TransformNormal(const Vector3& vector, const Matrix& transform);
 #endif
+
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+			static bool IsLess(Vector3 left, Vector3 right) { return Vec3Less(left, right); }
+			static bool IsLessEqual(Vector3 left, Vector3 right) { return Vec3LessEqual(left, right); }
+			static bool IsGreater(Vector3 left, Vector3 right) { return Vec3Greater(left, right); }
+			static bool IsGreaterEqual(Vector3 left, Vector3 right) { return Vec3GreaterEqual(left, right); }
+
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			static bool IsLess(const Vector3& left, const Vector3& right)
+			{
+				return left.X < right.X && left.Y < right.Y && left.Z < right.Z;				
+			}
+			static bool IsLessEqual(const Vector3& left, const Vector3& right)
+			{
+				return left.X <= right.X && left.Y <= right.Y && left.Z <= right.Z;				
+			}
+			static bool IsGreater(const Vector3& left, const Vector3& right)
+			{
+				return left.X > right.X && left.Y > right.Y && left.Z > right.Z;	
+			}
+			static bool IsGreaterEqual(const Vector3& left, const Vector3& right)
+			{
+				return left.X >= right.X && left.Y >= right.Y && left.Z >= right.Z;	
+			}
+
+#endif
 		};
 		class APAPI Vector4Utils
 		{
@@ -1434,7 +1460,6 @@ namespace Apoc3D
 				return Vector4(-value.X, -value.Y, -value.Z, -value.W);
 			}
 #endif
-			
 			
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 			/* Returns a Vector4 containing the 4D Cartesian coordinates of 
@@ -1669,7 +1694,6 @@ namespace Apoc3D
 			}
 #endif
 
-			
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 			/* Calculates the distance between two vectors.
 			*/
@@ -1758,6 +1782,33 @@ namespace Apoc3D
 			}
 #endif
 
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+			/* Transforms a 3D vector by the given Matrix
+			*/
+			static Vector4 Transform(Vector4 vector, const Matrix& transform);
+			/* Performs a coordinate transformation using the given Matrix. can not project
+			*/
+			static Vector4 TransformSimple(Vector4 vector, const Matrix& transform);
+			/* Performs a coordinate transformation using the given Matrix
+			*/
+			static Vector4 TransformCoordinate(Vector4 vector, const Matrix& transform);
+			/* Performs a normal transformation using the given Matrix
+			*/
+			static Vector4 TransformNormal(Vector4 vector, const Matrix& transform);
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			/* Transforms a 3D vector by the given Matrix
+			*/
+			static Vector4 Transform(const Vector4& vector, const Matrix& transform);
+			/* Performs a coordinate transformation using the given Matrix. can not project
+			*/
+			static Vector4 TransformSimple(const Vector4& vector, const Matrix& transform);
+			/* Performs a coordinate transformation using the given Matrix
+			*/
+			static Vector4 TransformCoordinate(const Vector4& vector, const Matrix& transform);
+			/* Performs a normal transformation using the given Matrix
+			*/
+			static Vector4 TransformNormal(const Vector4& vector, const Matrix& transform);
+#endif
 		};
 
 

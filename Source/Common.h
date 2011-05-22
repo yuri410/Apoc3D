@@ -208,8 +208,11 @@ namespace Apoc3D
 		};
 	};
 	namespace Math
-	{
+	{		
 		class Matrix;
+		class BoundingSphere;
+
+		class BoundingBox;
 	};
 	namespace IO
 	{

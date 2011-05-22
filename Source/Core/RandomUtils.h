@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of labtd
+This source file is part of Apoc3D
 
 Copyright (c) 2009+ Tao Games
 
