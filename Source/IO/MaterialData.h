@@ -25,9 +25,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MATERIALDATA_H
 #define MATERIALDATA_H
 
-#pragma once
+#include "Common.h"
+#include "Graphics/EffectDescription.h"
+
+using namespace Apoc3D::Graphics;
 
 using namespace std;
+
+
 
 namespace Apoc3D
 {

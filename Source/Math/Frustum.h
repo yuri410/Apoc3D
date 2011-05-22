@@ -23,14 +23,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef FRUSTUM_H
 #define FRUSTUM_H
-#pragma once
 
-#include "..\Common.h"
+
+#include "Common.h"
 #include "BoundingSphere.h"
+#include "Plane.h"
 
 namespace Apoc3D
 {
-	namespace Core
+	namespace Math
 	{
 		/* Defines the plane indexes of a frustum
 		*/
@@ -62,7 +63,7 @@ namespace Apoc3D
 			{
 				for (int i=0;i<ClipPlaneCount;i++)
 				{
-					float d = D3DXPlaneDotCoord(&m_planes[i], &sp.Center);
+					float d = m_planes[i].Dot3(sp.Center);
 					if (d<=-sp.Radius)
 					{
 						return false;

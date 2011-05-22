@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 #include "Common.h"
-#include "..\Core\HashHandleObject.h"
+#include "Core\HashHandleObject.h"
 #include "GraphicsCommon.h"
 
 using namespace Apoc3D::Scene;
@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Define buffers and information used to render a geomentry
+		/* Define buffers and information used to render a geometry
 		*/
 		class APAPI GeometryData : public HashHandleObject
 		{
@@ -73,7 +73,7 @@ namespace Apoc3D
 			GeometryData(void)
 				: m_sender(0), m_baseVertex(0), m_primCount(0), 
 				m_vtxDecl(0), m_idxBuffer(0), m_vtxBuffer(0),
-				m_primType(D3DPT_POINTLIST)
+				m_primType(PT_PointList)
 			{ }
 			~GeometryData(void){}
 		};

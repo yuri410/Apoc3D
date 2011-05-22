@@ -77,7 +77,7 @@ namespace Apoc3D
 			~GameTime(void)
 			{
 			}
-		}
+		};
 	};
 };
 

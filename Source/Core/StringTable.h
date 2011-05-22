@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		class StringTable
+		class APAPI StringTable
 		{
 		private:
 			unordered_map<String, pair<String, String>> m_entryTable;
@@ -43,7 +43,7 @@ namespace Apoc3D
 			~StringTable(void) {}
 		};
 
-		class StringTableLoader
+		class APAPI StringTableLoader
 		{
 		public:
 			StringTable* Load(const ResourceLocation const &rl)

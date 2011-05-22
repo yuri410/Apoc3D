@@ -26,12 +26,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
+using namespace Apoc3D;
+
 namespace Apoc3D
 {
 	namespace Platform
 	{
-
-
 		class APAPI Library
 		{
 		private:

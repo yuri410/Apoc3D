@@ -27,6 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "RenderDeviceCaps.h"
 
+#include "Graphics\GraphicsCommon.h"
+#include "Viewport.h"
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -43,25 +46,68 @@ namespace Apoc3D
 
 			protected:
 				Capabilities m_caps;
-				int m_batchCount;
-				int m_primitiveCount;
-				int m_vertexCount;
+				uint m_batchCount;
+				uint m_primitiveCount;
+				uint m_vertexCount;
+
+				ObjectFactory* m_objectFactory;
+				RenderStateManager* m_renderStates;
 
 				RenderDevice(const String &renderSysName)
-					: m_rdName(renderSysName)
+					: m_rdName(renderSysName), 
+					m_batchCount(0), m_primitiveCount(0), m_vertexCount(0), 
+					m_objectFactory(0), m_renderStates(0)
 				{
 
 				}
 			public:
-				int getBatchCount() const { return m_batchCount; }
-				int getPrimitiveCount() const { return m_primitiveCount; }
-				int getVertexCount() const { return m_vertexCount; }
+				uint getBatchCount() const { return m_batchCount; }
+				uint getPrimitiveCount() const { return m_primitiveCount; }
+				uint getVertexCount() const { return m_vertexCount; }
 
 				const Capabilities* getCapabilities() const { return &m_caps; }
 				const String &getRenderDeviceName() const { return m_rdName; }
 
 				virtual void Initialize() = 0;
 
+				const String& getName() const { return m_rdName; }
+
+				ObjectFactory* getObjectFactory() { return m_objectFactory; }
+				RenderStateManager* getRenderState() { return m_renderStates; }
+
+				virtual void BeginFrame()
+				{
+					m_batchCount = 0;
+					m_primitiveCount = 0;
+					m_vertexCount = 0;
+				}
+
+				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil) = 0;
+
+				virtual void SetRenderTarget(int index, RenderTarget* rt) = 0;
+
+				virtual RenderTarget* GetRenderTarget(int index) = 0;
+
+				virtual void SetTexture(int index, Texture* texture) = 0;
+				virtual Texture* GetTexture(int index) = 0;
+
+				virtual void BindVertexShader(VertexShader* shader) = 0;
+				virtual void BindPixelShader(PixelShader* shader) = 0;
+
+				virtual void Render(const RenderOperation* op, int count)
+				{
+					if (!op)
+						return;
+					for (int i = 0; i < count; i++)
+					{
+						m_batchCount++;
+						//m_primitiveCount += op[i];
+						//m_vertexCount += op[i];
+					}
+				}
+
+				virtual Viewport getViewport() = 0;
+				virtual void setViewport(const Viewport& vp) = 0;
 			};
 		}
 	}

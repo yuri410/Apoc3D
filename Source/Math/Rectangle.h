@@ -31,7 +31,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class Rectangle
+		class APAPI Rectangle
 		{
 		public:
 			int X;
@@ -154,7 +154,7 @@ namespace Apoc3D
 			const static Rectangle Empty;
 		};
 
-		class RectangleF
+		class APAPI RectangleF
 		{
 		public:
 			float X;

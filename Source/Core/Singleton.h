@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "..\Common.h"
+#include "Common.h"
 
 namespace Apoc3D
 {

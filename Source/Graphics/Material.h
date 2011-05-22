@@ -30,10 +30,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Core\HashHandleObject.h"
 #include "Math\Color.h"
+#include "GraphicsCommon.h"
 
 using namespace Apoc3D::EffectSystem;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 using namespace std;
 
@@ -63,9 +65,9 @@ namespace Apoc3D
 			Color4 m_Specular;
 			float m_power;
 
-			//D3DBLEND m_srcBlend;
-			//D3DBLEND m_dstBlend;
-			//D3DBLENDOP m_blendOperation;
+			Blend m_srcBlend;
+			Blend m_dstBlend;
+			BlendFunction m_blendFunction;
 			bool m_alphaBlendEnable;
 
 			bool m_alphaTestEnable;

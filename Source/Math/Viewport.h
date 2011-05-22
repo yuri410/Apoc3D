@@ -21,37 +21,58 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef BOUNDING_SPHERE_H
-#define BOUNDING_SPHERE_H
 
-#pragma once
+#ifndef VIEWPORT_H
+#define VIEWPORT_H
 
 #include "Common.h"
+#include "Vector.h"
 
 namespace Apoc3D
 {
-	namespace Core
+	namespace Math
 	{
-		class APAPI BoundingSphere
+		/** Defines a rectangular region of a render-target surface onto which 
+			a 3D rendering is projected.
+		*/
+		class APAPI Viewport
 		{
 		public:
-			/* The center position of the bounding sphere.
+			/** the viewport's X position.
 			*/
-			Vector3 Center;
+			int X;
+			/** the viewport's Y position.
+			*/
+			int Y;
+			/** the viewport's width.
+			*/
+			int Width;
+			/** the viewport's height.
+			*/
+			int Height;
+			/** the viewport's minimum Z depth.
+			*/
+			float MinZ;
+			/** the viewport's maximum Z depth.
+			*/
+			float MaxZ;
 
-			float Radius;
-
-			BoundingSphere(const Vector3& c, float r)
+			Viewport(int x, int y, int width, int height)
+				: X(x), Y(y), Width(width), Height(height),
+				MinZ(0), MaxZ(1)
 			{
-				Center = c;
-				Radius = r;
 			}
-			~BoundingSphere(void)
+			Viewport(int x, int y, int width, int height, float minZ, float maxZ)
+				: X(x), Y(y), Width(width), Height(height),
+				MinZ(minZ), MaxZ(maxZ)
 			{
-
 			}
 
+			Vector3 Unproject(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world);
+			Vector3 Project(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world);
 		};
-	};
-};
+	}
+}
+
+
 #endif

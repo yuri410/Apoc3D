@@ -1,4 +1,4 @@
-/*
+﻿/*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
 
@@ -194,7 +194,7 @@ namespace Apoc3D
 				TFLT_Point = 1,
 
 				/*  Bilinear interpolation filtering used as a texture magnification or minification
-				*   filter. A weighted average of a 2��2 area of texels surrounding the desired
+				*   filter. A weighted average of a 2×2 area of texels surrounding the desired
 				*    pixel is used. The texture filter used between mipmap levels is trilinear
 				*    mipmap interpolation, in which the rasterizer performs linear interpolation
 				*    on pixel color, using the texels of the two nearest mipmap textures.
@@ -368,6 +368,147 @@ namespace Apoc3D
 				TU_Default = TU_StaticWriteOnly
 			};
 
+			enum CompareFunction
+			{
+				/***/
+				COMFUN_Never = 1,
+
+				/// <summary>
+				///  如果预定值比当前像素的值小，则通过
+				/// </summary>
+				COMFUN_Less = 2,
+
+				/// <summary>
+				///  如果预定值与当前像素的值相同，则通过
+				/// </summary>
+				COMFUN_Equal = 3,
+
+				/// <summary>
+				///  如果预定值小于等于当前像素的值，则通过
+				/// </summary>
+				COMFUN_LessEqual = 4,
+
+				/// <summary>
+				///  如果预定值当前像素的值大，则通过
+				/// </summary>
+				COMFUN_Greater = 5,
+
+				/// <summary>
+				///  如果预定值与当前像素的值不相同，则通过
+				/// </summary>
+				COMFUN_NotEqual = 6,
+
+				/// <summary>
+				///  如果预定值大于等于当前像素的值，则通过
+				/// </summary>
+				COMFUN_GreaterEqual = 7,
+
+				/// <summary>
+				///  总是通过测试
+				/// </summary>
+				COMFUN_Always = 8,
+			};
+			enum BlendFunction
+			{				
+				/** The result is the destination added to the source.Result = (Source Color
+					* Source Blend) + (Destination Color * Destination Blend)
+				*/
+				BLFUN_Add = 1,
+
+				/** The result is the destination subtracted from the source.Result = (Source
+					Color * Source Blend) − (Destination Color * Destination Blend)
+				*/
+				BLFUN_Subtract = 2,
+
+				/** The result is the source subtracted from the destination.Result = (Destination
+					Color * Destination Blend) −(Source Color * Source Blend)
+				*/
+				BLFUN_ReverseSubtract = 3,
+
+				/** The result is the minimum of the source and destination.Result = min( (Source
+					 Color * Source Blend), (Destination Color * Destination Blend) )
+				*/
+				BLFUN_Min = 4,
+
+				/** The result is the maximum of the source and destination.Result = max( (Source
+					Color * Source Blend), (Destination Color * Destination Blend) )
+				*/
+				BLFUN_Max = 5,
+			};
+
+			enum Blend
+			{
+				/** Each component of the color is multiplied by 0
+				*/
+				BLEND_Zero = 1,
+				/** Each component of the color is multiplied by 1
+				*/
+				BLEND_One,
+				/** Each component color is multiplied by the source color.
+				*/
+				BLEND_SourceColor = 3,
+
+				/** Each component of the color is multiplied by the inverse of the source color.
+					This can be represented as (1 − Rs, 1 − Gs, 1 − Bs, 1 − As) where R, G, B,
+					and A respectively stand for the red, green, blue, and alpha destination
+					values.
+				*/
+				BLEND_InverseSourceColor = 4,
+				
+				/** Each component of the color is multiplied by the alpha value of the source.
+					This can be represented as (As, As, As, As), where As is the alpha source
+					value.
+				*/
+				BLEND_SourceAlpha = 5,
+
+				/** Each component of the color is multiplied by the inverse of the alpha value
+					of the source. This can be represented as (1 − As, 1 − As, 1 − As, 1 − As),
+					where As is the alpha destination value.
+				*/
+				BLEND_InverseSourceAlpha = 6,
+
+				
+				/** Each component of the color is multiplied by the alpha value of the destination.
+					This can be represented as (Ad, Ad, Ad, Ad), where Ad is the destination
+					alpha value.
+				*/
+				BLEND_DestinationAlpha = 7,
+				
+				/** Each component of the color is multiplied by the inverse of the alpha value
+					of the destination. This can be represented as (1 − Ad, 1 − Ad, 1 − Ad, 1
+					− Ad), where Ad is the alpha destination value.
+				*/
+				BLEND_InverseDestinationAlpha = 8,
+
+				/** Each component color is multiplied by the destination color. This can be
+					represented as (Rd, Gd, Bd, Ad), where R, G, B, and A respectively stand
+					for red, green, blue, and alpha destination values.
+				*/
+				BLEND_DestinationColor = 9,
+
+				/** Each component of the color is multiplied by the inverse of the destination
+					color. This can be represented as (1 − Rd, 1 − Gd, 1 − Bd, 1 − Ad), where
+					Rd, Gd, Bd, and Ad respectively stand for the red, green, blue, and alpha
+					destination values.
+				*/
+				BLEND_InverseDestinationColor = 10,
+
+				/** Each component of the color is multiplied by either the alpha of the source
+					color, or the inverse of the alpha of the source color, whichever is greater.
+					This can be represented as (f, f, f, 1), where f = min(A, 1 − Ad).
+				*/
+				BLEND_SourceAlphaSaturation = 11,
+
+				/** This mode is obsolete. The same effect can be achieved by setting the source
+					and destination blend factors to SourceAlpha and InverseSourceAlpha in separate
+					calls.
+				*/
+				BLEND_BothSourceAlpha = 12,
+
+				/** Each component of the color is multiplied by BlendFactor.
+				*/
+				BLEND_BlendFactor = 14,				
+			};
 
 		}
 	}

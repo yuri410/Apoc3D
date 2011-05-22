@@ -34,6 +34,7 @@ typedef unsigned __int16 uint16;
 typedef unsigned __int32 uint32;
 typedef unsigned __int64 uint64;
 
+typedef unsigned char byte;
 typedef uint16 ushort;
 typedef uint32 uint;
 typedef uint64 ulong;
@@ -268,7 +269,12 @@ namespace Apoc3D
 			class RenderWindow;
 			class RenderWindowHandler;
 
+			class ObjectFactory;
+			class RenderStateManager;
+
 			class RenderDevice;
+
+			
 
 			class HardwareBuffer;
 			class VertexBuffer;

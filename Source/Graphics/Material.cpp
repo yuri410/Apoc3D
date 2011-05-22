@@ -31,12 +31,11 @@ namespace Apoc3D
 	{
 		Material::Material()
 			: m_passFlags(0), m_priority(0), 
-			m_blendOperation(D3DBLENDOP_ADD), m_alphaBlendEnable(false), m_srcBlend(D3DBLEND_SRCALPHA), m_dstBlend(D3DBLEND_INVSRCALPHA),
+			m_blendFunction(BLFUN_Add), m_alphaBlendEnable(false), m_srcBlend(BLEND_SourceAlpha), m_dstBlend(BLEND_InverseSourceAlpha),
 			m_alphaTestEnable(false),
-			m_zWriteEnable(true), m_zTestEnable(true)
-		{				
-			std::memset(&m_mtrlColor, 0,  sizeof(m_mtrlColor));	
-
+			m_zWriteEnable(true), m_zTestEnable(true),
+			m_ambient(0,0,0,0), m_diffuse(1,1,1,1), m_Specular(0,0,0,0), m_emissive(0,0,0,0), m_power(0)
+		{
 
 		}
 

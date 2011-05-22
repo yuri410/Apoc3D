@@ -77,6 +77,8 @@ namespace Apoc3D
 				}
 				
 			public:
+				virtual ~RenderView(){}
+
 				void* UserData;
 
 				float getFPS() const { return m_fpsCounter.getFPS(); }

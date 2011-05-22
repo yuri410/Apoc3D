@@ -80,12 +80,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Apoc3DException.h" />
-    <ClInclude Include="Core\BoundingSphere.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Core\Camera.h" />
     <ClInclude Include="Core\CoreCommon.h" />
     <ClInclude Include="Core\RandomUtils.h" />
+    <ClInclude Include="core\resource.h" />
     <ClInclude Include="Core\Singleton.h" />
+    <ClInclude Include="core\streaming\asyncprocessor.h" />
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
     <ClInclude Include="Graphics\RenderSystem\DeviceContent.h" />
@@ -93,6 +94,7 @@
     <ClInclude Include="Graphics\RenderSystem\ObjectFactory.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderDevice.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderDeviceCaps.h" />
+    <ClInclude Include="Graphics\RenderSystem\RenderStateManager.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderWindow.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderWindowHandler.h" />
     <ClInclude Include="Graphics\RenderSystem\Shader.h" />
@@ -113,6 +115,7 @@
     <ClInclude Include="Math\Rectangle.h" />
     <ClInclude Include="Math\sse_functions.h" />
     <ClInclude Include="Math\Vector.h" />
+    <ClInclude Include="Math\Viewport.h" />
     <ClInclude Include="Platform\Library.h" />
     <ClInclude Include="Vfs\Archive.h" />
     <ClInclude Include="FastDelegate\FastDelegate.h" />
@@ -136,14 +139,11 @@
     <ClInclude Include="EffectSystem\EffectAtomCodeParser.h" />
     <ClInclude Include="EffectSystem\EffectParameter.h" />
     <ClInclude Include="Core\FpsCamera.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="GameWindow.h" />
-    <ClInclude Include="Graphics\GraphicsDeviceManager.h" />
     <ClInclude Include="Core\HashHandleObject.h" />
     <ClInclude Include="Graphics\EffectDescription.h" />
     <ClInclude Include="EffectSystem\EffectManager.h" />
     <ClInclude Include="EffectSystem\EffectAtom.h" />
-    <ClInclude Include="Core\Frustum.h" />
+    <ClInclude Include="Math\Frustum.h" />
     <ClInclude Include="Core\GameTime.h" />
     <ClInclude Include="Graphics\GeometryData.h" />
     <ClInclude Include="Graphics\Material.h" />
@@ -162,6 +162,8 @@
     <ClCompile Include="Apoc3DException.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Core\RandomUtils.cpp" />
+    <ClCompile Include="Core\Resource.cpp" />
+    <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
@@ -181,6 +183,7 @@
     <ClCompile Include="Math\Ray.cpp" />
     <ClCompile Include="Math\sse_functions.cpp" />
     <ClCompile Include="Math\Vector.cpp" />
+    <ClCompile Include="Math\Viewport.cpp" />
     <ClCompile Include="Platform\Library.cpp" />
     <ClCompile Include="ResourceCompiler\Compiler.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -197,13 +200,10 @@
     <ClCompile Include="EffectSystem\EffectAtomCodeParser.cpp" />
     <ClCompile Include="EffectSystem\EffectParameter.cpp" />
     <ClCompile Include="Core\FpsCamera.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameWindow.cpp" />
-    <ClCompile Include="Graphics\GraphicsDeviceManager.cpp" />
     <ClCompile Include="Graphics\EffectDescription.cpp" />
     <ClCompile Include="EffectSystem\EffectAtom.cpp" />
     <ClCompile Include="EffectSystem\EffectManager.cpp" />
-    <ClCompile Include="Core\Frustum.cpp" />
+    <ClCompile Include="Math\Frustum.cpp" />
     <ClCompile Include="Graphics\Material.cpp" />
     <ClCompile Include="Scene\SceneNode.cpp" />
     <ClCompile Include="Graphics\ScenePass.cpp" />

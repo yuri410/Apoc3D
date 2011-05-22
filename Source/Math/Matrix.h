@@ -1366,7 +1366,11 @@ namespace Apoc3D
 			*/
 			static void CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix& res);
 
-			
+			static void Inverse(Matrix& res, const Matrix& matrix)
+			{
+				res = matrix;
+				res.Inverse();
+			}
 		};
 	
 #pragma pack(pop)

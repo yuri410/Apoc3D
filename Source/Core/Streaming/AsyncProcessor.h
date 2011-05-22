@@ -36,7 +36,7 @@ namespace Apoc3D
 	{
 		namespace Streaming
 		{
-			class _Export ResourceOperation
+			class APAPI ResourceOperation
 			{
 			private:
 				Resource* m_resource;
@@ -50,7 +50,7 @@ namespace Apoc3D
 				virtual void Process() = 0;
 			};
 
-			class _Export AsyncProcessor
+			class APAPI AsyncProcessor
 			{
 			private:
 				//MUTEX;

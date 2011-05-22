@@ -26,12 +26,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define CAMERA_H
 #pragma once
 
-#include "..\Common.h"
-#include "Frustum.h"
+#include "Common.h"
+#include "Math\Frustum.h"
+
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
-	namespace Core
+	namespace Graphics
 	{
 		/* Represents a view into a 3D scene. 
 		*/
@@ -55,13 +57,13 @@ namespace Apoc3D
 
 			/* Gets the up vector of the camera view
 			*/
-			const Vector3 getUp() const { return Vector3(m_view._21, m_view._22, m_view._23); }
+			Vector3 getUp() const { return Vector3Utils::LDVector(m_view.M21, m_view.M22, m_view.M23); }
 			/* Gets the right vector of the camera view
 			*/
-			const Vector3 getRight() const { return Vector3(m_view._11, m_view._12, m_view._13); }
+			Vector3 getRight() const { return Vector3Utils::LDVector(m_view.M11, m_view.M12, m_view.M13); }
 			/* Gets the forward vector of the camera view
 			*/
-			const Vector3 getForward() const { return Vector3(m_view._31, m_view._32, m_view._33); }
+			Vector3 getForward() const { return Vector3Utils::LDVector(m_view.M31, m_view.M32, m_view.M33); }
 
 			/* Sets the view transform matrix
 			*/
@@ -74,15 +76,14 @@ namespace Apoc3D
 			*/
 			virtual void Update(const GameTime* const time) 
 			{
-				float det;
-				D3DXMatrixInverse(&m_invView, &det, &m_view);
+				Matrix::Inverse(m_invView, m_view);				
 			}
 
 
 			Camera(void)
 			{
-				D3DXMatrixIdentity(&m_view);
-				D3DXMatrixIdentity(&m_proj);
+				m_view.LoadIdentity();
+				m_proj.LoadIdentity();
 			}
 			~Camera(void) {}
 		};

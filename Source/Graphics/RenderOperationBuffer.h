@@ -73,7 +73,7 @@ namespace Apoc3D
 			}
 				
 
-			int getCount(){ return m_internalPointer; }
+			int getCount() const { return m_internalPointer; }
 		};
 
 	}

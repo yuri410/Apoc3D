@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Vector.h"
+#include "Plane.h"
 
 using namespace std;
 

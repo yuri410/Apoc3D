@@ -174,19 +174,19 @@ namespace Apoc3D
 					return 0;
 				}
 
-				friend static bool operator ==(const VertexElement const &left, const VertexElement const &right)
+				friend static bool operator ==(const VertexElement& left, const VertexElement& right)
 				{
-					return left.index == right.index &&
-						left.offset == right.offset &&
-						left.semantic == right.semantic &&
-						left.type == right.type;
+					return left.m_index == right.m_index &&
+						left.m_offset == right.m_offset &&
+						left.m_semantic == right.m_semantic &&
+						left.m_type == right.m_type;
 				}
-				friend static bool operator !=(const VertexElement const &left, const VertexElement const &right)
+				friend static bool operator !=(const VertexElement& left, const VertexElement& right)
 				{
-					return left.index != right.index ||
-						left.offset != right.offset ||
-						left.semantic != right.semantic ||
-						left.type != right.type;
+					return left.m_index != right.m_index ||
+						left.m_offset != right.m_offset ||
+						left.m_semantic != right.m_semantic ||
+						left.m_type != right.m_type;
 				}
 
 			};

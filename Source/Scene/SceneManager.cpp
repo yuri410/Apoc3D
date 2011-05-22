@@ -40,7 +40,7 @@ namespace Apoc3D
 		void BatchData::AddVisisbleObject(SceneObject* obj, int level)
 		{
 			m_objectCount++;
-			RenderOperationBuffer* buffer = obj->GetRenderOperation(level);
+			const RenderOperationBuffer* buffer = obj->GetRenderOperation(level);
 
 			if (buffer)
 			{

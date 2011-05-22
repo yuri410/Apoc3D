@@ -24,11 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef POINT_H
 #define POINT_H
 
+#include "Common.h"
+
 namespace Apoc3D
 {
 	namespace Math
 	{
-		class Size
+		class APAPI Size
 		{
 		public:
 			int Width;
@@ -49,7 +51,7 @@ namespace Apoc3D
 			const static Size Zero;
 		};
 
-		class Point
+		class APAPI Point
 		{
 		public:
 			int X;

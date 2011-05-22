@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 
-#include "..\Common.h"
+#include "Common.h"
 #include "Streaming\AsyncProcessor.h"
 
 using namespace Apoc3D::Core::Streaming;
@@ -35,8 +35,8 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		/*
-		enum _Export ResourceState
+		
+		enum APAPI ResourceState
 		{
 			RS_Unloaded = 0,
 			RS_Loaded = 1,
@@ -44,22 +44,22 @@ namespace Apoc3D
 			RS_Unloading = 3,
 			RS_Pending = 4
 		};
-		*/
+		
 		/* Represent the implementation for resource loading/unloading */
-		/*class _Export ResourceProcessor
+		class APAPI ResourceProcessor
 		{
 		public:
 			virtual void Process(Resource* res) const = 0;
 		};
-		*/
+
 		/* Implements a resource loading algorithm */
-		/*class _Export ResourceLoader : ResourceProcessor
+		class APAPI ResourceLoader : ResourceProcessor
 		{
 		public:
 			virtual void Process(Resource* res) const = 0;
 		};
-		*/
-		class _Export Resource
+
+		class APAPI Resource
 		{
 		private:
 			/*class ResourceLoadOperation : public ResourceOperation
@@ -104,7 +104,7 @@ namespace Apoc3D
 
 			//int m_refCount;
 
-			//ResourceLoader* m_resLoader;
+			ResourceLoader* m_resLoader;
 			uint32 m_state;
 
 			const String m_hashString;
@@ -117,8 +117,8 @@ namespace Apoc3D
 			//ResourceEventHandler me_Loaded;
 			//ResourceEventHandler me_Unloaded;
 		protected:
-			//virtual void load();
-			//virtual void unload() = 0;
+			virtual void load();
+			virtual void unload() = 0;
 
 		public: 
 			typedef Resource ResTempHelper;   
@@ -134,10 +134,10 @@ namespace Apoc3D
 
 			virtual uint32 getSize() = 0;
 
-			//void Use();
+			void Use();
 			//
-			//void Load();
-			//void Unload();
+			void Load();
+			void Unload();
 
 			const String& getHashString() const { return m_hashString; }
 			uint32 getState() const { return m_state; }

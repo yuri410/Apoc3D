@@ -98,7 +98,7 @@ namespace Apoc3D
 				}
 			}
 
-			if (fabs(_V3Z(Direction)) < EPSILON)
+			if (fabs(_V3Z(ray.Direction)) < EPSILON)
 			{
 				if (_V3Z(ray.Position) < _V3Z(box.Minimum) || _V3Z(ray.Position) > _V3Z(box.Maximum))
 				{
