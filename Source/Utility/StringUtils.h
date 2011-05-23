@@ -39,6 +39,8 @@ namespace Apoc3D
 		public:
 			static const String Empty;
 
+			static bool ParseBool(const String& val);
+
 			static uint16 ParseUInt16(const String& val);
 			static uint32 ParseUInt32(const String& val);
 			static uint64 ParseUInt64(const String& val);
@@ -54,7 +56,7 @@ namespace Apoc3D
 				std::ios::fmtflags flags = std::ios::fmtflags(0) );
 			static String ToString(const wchar_t* val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
-
+			static String ToString(bool val);
 			static void Trim(String& str, const String& delims = L" \t\r");
 			static void TrimLeft(String& str, const String& delims = L" \t\r");
 			static void TrimRight(String& str, const String& delims = L" \t\r");

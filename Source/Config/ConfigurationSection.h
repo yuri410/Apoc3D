@@ -57,6 +57,10 @@ namespace Apoc3D
 			const String& getName() const { return m_name; }
 			const String& getValue(const String& name) const;
 			const String& getAttribute(const String& name) const;
+
+			bool tryGetValue(const String& name, String& result) const;
+			bool tryGetAttribute(const String& name, String& result) const;
+
 			ConfigrationSection* getSection(const String& name) const;
 
 			void Get(const String& key, Parsable* value) const;
@@ -72,7 +76,7 @@ namespace Apoc3D
 			vector<float> GetPercentages(const String& key) const;
 			vector<int32> GetInts(const String& key) const;
 			vector<uint32> GetUInts(const String& key) const;
-			vector<ColorValue> GetColorValues(const String& key) const;
+
 
 			bool GetAttributeBool(const String& key) const;
 			float GetAttributeSingle(const String& key) const;
@@ -85,7 +89,6 @@ namespace Apoc3D
 			vector<float> GetAttributePercentages(const String& key) const;
 			vector<int32> GetAttributeInts(const String& key) const;
 			vector<uint32> GetAttributeUInts(const String& key) const;
-			vector<ColorValue> GetAttributeColorValues(const String& key) const;
 
 			bool TryGetBool(const String& key, bool& result) const;
 			bool TryGetSingle(const String& key, float& result) const;

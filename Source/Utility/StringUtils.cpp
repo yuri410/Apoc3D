@@ -32,9 +32,20 @@ namespace Apoc3D
 	{
 		const String StringUtils::Empty;
 
+		bool StringUtils::ParseBool(const String& val)
+		{
+			wistringstream str(val);
+			str.setf(ios::boolalpha);
+			str.imbue(locale::classic());
+
+			bool ret;
+			str >> ret;
+			return ret;
+		}
 		uint16 StringUtils::ParseUInt16(const String& val)
 		{
 			wistringstream str(val);
+			str.imbue(locale::classic());
 			uint16 ret = 0;
 			str >> ret;
 
@@ -43,6 +54,7 @@ namespace Apoc3D
 		uint32 StringUtils::ParseUInt32(const String& val)
 		{
 			wistringstream str(val);
+			str.imbue(locale::classic());
 			uint32 ret = 0;
 			str >> ret;
 
@@ -51,6 +63,7 @@ namespace Apoc3D
 		uint64 StringUtils::ParseUInt64(const String& val)
 		{
 			wistringstream str(val);
+			str.imbue(locale::classic());
 			uint64 ret = 0;
 			str >> ret;
 
@@ -59,6 +72,7 @@ namespace Apoc3D
 		int16 StringUtils::ParseInt16(const String& val)
 		{
 			wistringstream str(val);
+			str.imbue(locale::classic());
 			int16 ret = 0;
 			str >> ret;
 
@@ -67,6 +81,7 @@ namespace Apoc3D
 		int32 StringUtils::ParseInt32(const String& val)
 		{
 			wistringstream str(val);
+			str.imbue(locale::classic());
 			int32 ret = 0;
 			str >> ret;
 
@@ -75,6 +90,7 @@ namespace Apoc3D
 		int64 StringUtils::ParseInt64(const String& val)
 		{
 			wistringstream str(val);
+			str.imbue(locale::classic());
 			int64 ret = 0;
 			str >> ret;
 
@@ -83,6 +99,7 @@ namespace Apoc3D
 		float StringUtils::ParseSingle(const String& val)
 		{
 			wistringstream str(val);
+			str.imbue(locale::classic());
 			float ret = 0;
 			str >> ret;
 
@@ -91,18 +108,27 @@ namespace Apoc3D
 		double StringUtils::ParseDouble(const String& val)
 		{
 			wistringstream str(val);
+			str.imbue(locale::classic());
 			double ret = 0;
 			str >> ret;
 
 			return ret;
 		}
 
+		String StringUtils::ToString(bool val)
+		{
+			wostringstream stream;
+			stream.setf(ios::boolalpha);
+			stream << val;
+			return stream.str();
+		}
 		String StringUtils::ToString(const wchar_t* val, 
 			unsigned short width, wchar_t fill, std::ios::fmtflags flags)
 		{
 			wostringstream stream;
 			stream.width(width);
 			stream.fill(fill);
+			stream.imbue(locale::classic());
 			if (flags)
 				stream.setf(flags, ios::adjustfield);
 			stream << val;
@@ -114,6 +140,7 @@ namespace Apoc3D
 			wostringstream stream;
 			stream.width(width);
 			stream.fill(fill);
+			stream.imbue(locale::classic());
 			if (flags)
 				stream.setf(flags);
 			stream << val;
@@ -126,6 +153,7 @@ namespace Apoc3D
 			stream.precision(precision);
 			stream.width(width);
 			stream.fill(fill);
+			stream.imbue(locale::classic());
 			if (flags)
 				stream.setf(flags);
 			stream << val;
