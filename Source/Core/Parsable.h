@@ -21,22 +21,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#pragma once
-#include "..\Common.h"
+
+#include "Common.h"
 
 namespace Apoc3D
 {
-	namespace EffectSystem
+	namespace Core
 	{
-		/* Defines a parameter in an atom effect code.
-   
-		   This also contains effect param mapping info.
-		*/
-		class APAPI EffectParameter
+		class APAPI Parsable
 		{
-		public:
-			EffectParameter(void);
-			~EffectParameter(void);
+
 		};
-	};
-};
+	}
+}

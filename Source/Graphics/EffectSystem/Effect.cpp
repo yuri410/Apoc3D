@@ -21,26 +21,23 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#ifndef EFFECT_H
-#define EFFECT_H
-
-#pragma once
-
-#include "..\Common.h"
+#include "Effect.h"
 
 namespace Apoc3D
 {
-	namespace EffectSystem
+	namespace Graphics
 	{
-		/* Represents a sequencal combination of atom effects.
-		*/
-		class APAPI Effect
+		namespace EffectSystem
 		{
-		public:
-			Effect(void);
-			~Effect(void);
+			Effect::Effect(void)
+			{
+			}
+
+
+			Effect::~Effect(void)
+			{
+			}
 		};
-	};
+	}
+
 };
-#endif

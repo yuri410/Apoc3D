@@ -21,29 +21,22 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EFFECTATOM_H
-#define EFFECTATOM_H
-#pragma once
-
-#include "..\Common.h"
+#include "EffectParameter.h"
 
 namespace Apoc3D
 {
-	namespace EffectSystem
+	namespace Graphics
 	{
-		/* Represents a small effect that cannot be divided into sub effects.
-		   This is usually a piece of shader fragement.
-		   eg. position transform, normal mapping
-		*/
-		class APAPI EffectAtom
+		namespace EffectSystem
 		{
-		private:
+			EffectParameter::EffectParameter(void)
+			{
+			}
 
-		public:
-			EffectAtom(void);
-			~EffectAtom(void);
 
-		};
-	};
-};
-#endif
+			EffectParameter::~EffectParameter(void)
+			{
+			}
+		}
+	}
+}

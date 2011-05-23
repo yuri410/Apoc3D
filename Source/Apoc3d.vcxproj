@@ -137,14 +137,14 @@
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneObject.h" />
     <ClInclude Include="Graphics\DeviceSettings.h" />
-    <ClInclude Include="EffectSystem\Effect.h" />
-    <ClInclude Include="EffectSystem\EffectAtomCodeParser.h" />
-    <ClInclude Include="EffectSystem\EffectParameter.h" />
+    <ClInclude Include="Graphics\EffectSystem\Effect.h" />
+    <ClInclude Include="Graphics\EffectSystem\EffectAtomCodeParser.h" />
+    <ClInclude Include="Graphics\EffectSystem\EffectParameter.h" />
     <ClInclude Include="Graphics\FpsCamera.h" />
     <ClInclude Include="Core\HashHandleObject.h" />
     <ClInclude Include="Graphics\EffectDescription.h" />
-    <ClInclude Include="EffectSystem\EffectManager.h" />
-    <ClInclude Include="EffectSystem\EffectAtom.h" />
+    <ClInclude Include="Graphics\EffectSystem\EffectManager.h" />
+    <ClInclude Include="Graphics\EffectSystem\MicroEffect.h" />
     <ClInclude Include="Math\Frustum.h" />
     <ClInclude Include="Core\GameTime.h" />
     <ClInclude Include="Graphics\GeometryData.h" />
@@ -200,13 +200,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="EffectSystem\Effect.cpp" />
-    <ClCompile Include="EffectSystem\EffectAtomCodeParser.cpp" />
-    <ClCompile Include="EffectSystem\EffectParameter.cpp" />
+    <ClCompile Include="Graphics\EffectSystem\Effect.cpp" />
+    <ClCompile Include="Graphics\EffectSystem\EffectAtomCodeParser.cpp" />
+    <ClCompile Include="Graphics\EffectSystem\EffectParameter.cpp" />
     <ClCompile Include="Graphics\FpsCamera.cpp" />
     <ClCompile Include="Graphics\EffectDescription.cpp" />
-    <ClCompile Include="EffectSystem\EffectAtom.cpp" />
-    <ClCompile Include="EffectSystem\EffectManager.cpp" />
+    <ClCompile Include="Graphics\EffectSystem\MicroEffect.cpp" />
+    <ClCompile Include="Graphics\EffectSystem\EffectManager.cpp" />
     <ClCompile Include="Math\Frustum.cpp" />
     <ClCompile Include="Graphics\Material.cpp" />
     <ClCompile Include="Scene\SceneNode.cpp" />

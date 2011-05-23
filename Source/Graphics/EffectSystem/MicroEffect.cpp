@@ -21,19 +21,23 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "EffectParameter.h"
+#include "EffectAtom.h"
 
 namespace Apoc3D
 {
-	namespace EffectSystem
+	namespace Graphics
 	{
-		EffectParameter::EffectParameter(void)
+		namespace EffectSystem
 		{
-		}
+			EffectAtom::EffectAtom(void)
+			{
+			}
 
 
-		EffectParameter::~EffectParameter(void)
-		{
-		}
-	}
-}
+			EffectAtom::~EffectAtom(void)
+			{
+			}
+		};
+
+	};
+};

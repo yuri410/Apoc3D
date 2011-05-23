@@ -22,19 +22,24 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #pragma once
-#include "..\Common.h"
+#include "Common.h"
 
 namespace Apoc3D
 {
-	namespace EffectSystem
+	namespace Graphics
 	{
-		class APAPI EffectManager
+		namespace EffectSystem
 		{
-		private:
-			EffectManager(){}
-			
-		public:
-
+			/* Defines a parameter in an micro effect code.
+   
+			   This also contains effect param mapping info.
+			*/
+			class APAPI EffectParameter
+			{
+			public:
+				EffectParameter(void);
+				~EffectParameter(void);
+			};
 		};
 	};
 };
