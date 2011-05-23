@@ -21,7 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#pragma once
+#ifndef MICROEFFECTCODEPARSER_H
+#define MICROEFFECTCODEPARSER_H
 #include "Common.h"
 
 namespace Apoc3D
@@ -51,3 +52,4 @@ namespace Apoc3D
 		};
 	};
 };
+#endif

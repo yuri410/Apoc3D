@@ -21,18 +21,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EFFECTATOM_H
-#define EFFECTATOM_H
-#pragma once
+#ifndef MICROEFFECT_H
+#define MICROEFFECT_H
 
-#include "..\Common.h"
+#include "Common.h"
 
 namespace Apoc3D
 {
-	namespace EffectSystem
+	namespace Graphics
 	{
-		namespace Graphics
-		{
+		namespace EffectSystem
+		{	
 			/* Represents a small effect that cannot be divided into sub effects.
 			   This is usually a piece of shader fragement.
 			   eg. position transform, normal mapping

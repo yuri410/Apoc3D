@@ -30,7 +30,11 @@ namespace Apoc3D
 	{
 		class APAPI Parsable
 		{
+		public:
+			virtual void Parse(const String& str) = 0;
+			virtual String ToParsableString() = 0;
 
+			virtual String ToString() = 0;
 		};
 	}
 }

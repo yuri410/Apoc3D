@@ -21,7 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#pragma once
+#ifndef EFFECTSYSTEM_H
+#define EFFECTSYSTEM_H
 #include "Common.h"
 
 namespace Apoc3D
@@ -41,3 +42,4 @@ namespace Apoc3D
 		};
 	};
 };
+#endif

@@ -25,15 +25,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace Apoc3D
 {
-	namespace EffectSystem
+	namespace Graphics
 	{
-		EffectAtomCodeParser::EffectAtomCodeParser(void)
+		namespace EffectSystem
 		{
-		}
+			EffectAtomCodeParser::EffectAtomCodeParser(void)
+			{
+			}
 
 
-		EffectAtomCodeParser::~EffectAtomCodeParser(void)
-		{
-		}
-	};
+			EffectAtomCodeParser::~EffectAtomCodeParser(void)
+			{
+			}
+		};
+	}
+
 };
