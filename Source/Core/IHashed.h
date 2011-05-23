@@ -1,4 +1,3 @@
-
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -22,22 +21,21 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef ARCHIVE_H
-#define ARCHIVE_H
-#pragma once
+#ifndef IHASHED_H
+#define IHASHED_H
 
 #include "Common.h"
 
-
 namespace Apoc3D
 {
-	namespace VFS
+	namespace Core
 	{
-		class APAPI Archive
+		class APAPI IHashed
 		{
-
+		public:
+			virtual HashHandle GetHashCode() const { return reinterpret_cast<HashHandle>((void*)this); }
+			virtual String GetHashString() const;
 		};
 	}
 }
-
 #endif

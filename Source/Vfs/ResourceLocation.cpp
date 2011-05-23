@@ -1,4 +1,3 @@
-
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -16,28 +15,30 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
+along with this program.  if not, write to the Free Software Foundation,
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef ARCHIVE_H
-#define ARCHIVE_H
-#pragma once
+#include "ResourceLocation.h"
 
-#include "Common.h"
+#include "Utility/StringUtils.h"
 
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
-{
+{	
 	namespace VFS
 	{
-		class APAPI Archive
+		HashHandle ResourceLocation::GetHashCode() const
 		{
+			return StringUtils::GetHashCode(m_name);
+		}
 
-		};
+		MemoryLocation::MemoryLocation(void* pos, uint64 size)
+			: ResourceLocation(L"ADDR " + StringUtils::ToString(size), size), m_data(pos)
+		{
+		}
 	}
 }
-
-#endif

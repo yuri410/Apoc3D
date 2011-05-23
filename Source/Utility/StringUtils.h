@@ -56,7 +56,11 @@ namespace Apoc3D
 				std::ios::fmtflags flags = std::ios::fmtflags(0) );
 			static String ToString(const wchar_t* val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
+			static String ToString(uint64 val, 
+				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
+
 			static String ToString(bool val);
+
 			static void Trim(String& str, const String& delims = L" \t\r");
 			static void TrimLeft(String& str, const String& delims = L" \t\r");
 			static void TrimRight(String& str, const String& delims = L" \t\r");
@@ -67,6 +71,25 @@ namespace Apoc3D
 
 			static void ToLowerCase(String& str);
 			static void ToUpperCase(String& str);
+
+			static HashHandle GetHashCode(const String& str)
+			{
+				const wchar_t* chPtr = str.c_str();
+				HashHandle even = 0x15051505;
+				HashHandle odd = even;
+				const HashHandle* numPtr = reinterpret_cast<const HashHandle*>(chPtr);
+				for (int i = str.size(); i > 0; i -= 4)
+				{
+					even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
+					if (i <= 2)
+					{
+						break;
+					}
+					odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ numPtr[1];
+					numPtr += (sizeof(wchar_t) * 4) / sizeof(HashHandle);
+				}
+				return even + odd * 0x5d588b65;
+			}
 		};
 	}
 }

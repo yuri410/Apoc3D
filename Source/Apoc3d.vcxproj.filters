@@ -246,9 +246,6 @@
     <ClInclude Include="Graphics\EffectSystem\MicroEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Parsable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\EffectSystem\MicroEffectCodeParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -271,6 +268,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Math\PerlinNoise.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\XmlConfiguration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\XMLSection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IHashed.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IParsable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -429,6 +438,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Math\PerlinNoise.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config\XMLConfiguration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IHashed.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vfs\ResourceLocation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

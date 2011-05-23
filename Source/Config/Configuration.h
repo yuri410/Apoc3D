@@ -45,9 +45,10 @@ namespace Apoc3D
 			Configuration(const String& name)
 				: m_name(name)
 			{
-			}
-			virtual ~Configuration();
+			}			
 		public:
+			virtual ~Configuration();
+
 			const String& getName() const { return m_name; }
 
 			ConfigurationSection* get(const String& name) const

@@ -38,6 +38,7 @@ typedef uint16 ushort;
 typedef uint32 uint;
 typedef uint64 ulong;
 typedef unsigned long long BatchHandle;
+typedef BatchHandle HashHandle;
 
 //#include "..\lib\boost\thread\tss.hpp"
 //#include "..\lib\boost\thread\recursive_mutex.hpp"
@@ -123,7 +124,8 @@ typedef unsigned long long BatchHandle;
 #include <sstream>
 
 
-#include "..\include\FastDelegate\FastDelegate.h"
+#include "FastDelegate\FastDelegate.h"
+
 #pragma warning(pop)
 
 // Forward Declarations
@@ -161,7 +163,7 @@ namespace Apoc3D
 		class ResourceManager;
 		class GameTime;
 
-		class Parsable;
+		class IParsable;
 
 		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
 		typedef fastdelegate::FastDelegate0<void> ResourceEventHandler;
@@ -196,6 +198,8 @@ namespace Apoc3D
 	};
 	namespace VFS
 	{
+
+		class Archive;
 		class ResourceLocation;
 		class FileLocation;
 	};

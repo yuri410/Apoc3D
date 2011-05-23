@@ -22,19 +22,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "Common.h"
+#include "IHashed.h"
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
 	namespace Core
 	{
-		class APAPI Parsable
+		String IHashed::GetHashString() const
 		{
-		public:
-			virtual void Parse(const String& str) = 0;
-			virtual String ToParsableString() = 0;
-
-			virtual String ToString() = 0;
-		};
+			return StringUtils::ToString(GetHashCode());
+		}
 	}
 }

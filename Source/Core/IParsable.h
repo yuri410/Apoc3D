@@ -1,4 +1,3 @@
-
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -22,22 +21,22 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef ARCHIVE_H
-#define ARCHIVE_H
-#pragma once
+#ifndef IPARSABLE_H
+#define IPARSABLE_H
 
 #include "Common.h"
 
-
 namespace Apoc3D
 {
-	namespace VFS
+	namespace Core
 	{
-		class APAPI Archive
+		class APAPI IParsable
 		{
+		public:
+			virtual void Parse(const String& str) = 0;
+			virtual String ToParsableString() = 0;
 
 		};
 	}
 }
-
 #endif

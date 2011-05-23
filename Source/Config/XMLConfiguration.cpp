@@ -1,4 +1,3 @@
-
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -22,22 +21,21 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef ARCHIVE_H
-#define ARCHIVE_H
-#pragma once
+#include "XmlConfiguration.h"
 
-#include "Common.h"
-
+#include "Vfs/ResourceLocation.h"
+#include "tinyxml/tinyxml.h"
+#include "tinyxml/tinystr.h"
 
 namespace Apoc3D
 {
-	namespace VFS
+	namespace Config
 	{
-		class APAPI Archive
+		XMLConfiguration::XMLConfiguration(const ResourceLocation& rl)
+			: Configuration(L"")
 		{
-
-		};
+			TiXmlDocument doc;
+			
+		}
 	}
 }
-
-#endif

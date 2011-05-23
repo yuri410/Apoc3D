@@ -89,7 +89,7 @@ namespace Apoc3D
 			return false;
 		}
 
-		void ConfigrationSection::Get(const String& key, Parsable* value) const
+		void ConfigrationSection::Get(const String& key, IParsable* value) const
 		{
 			assert(value);
 			const String& str = getValue(key);

@@ -63,7 +63,7 @@ namespace Apoc3D
 
 			ConfigrationSection* getSection(const String& name) const;
 
-			void Get(const String& key, Parsable* value) const;
+			void Get(const String& key, IParsable* value) const;
 
 			bool GetBool(const String& key) const;
 			float GetSingle(const String& key) const;

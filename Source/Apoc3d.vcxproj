@@ -52,7 +52,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;APOC3D_DLLEX;LITTLE_INDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>Common.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\lnclude;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -87,7 +87,10 @@
     <ClInclude Include="Config\Configuration.h" />
     <ClInclude Include="Config\ConfigurationManager.h" />
     <ClInclude Include="Config\ConfigurationSection.h" />
-    <ClInclude Include="Core\Parsable.h" />
+    <ClInclude Include="Config\XmlConfiguration.h" />
+    <ClInclude Include="Config\XMLSection.h" />
+    <ClInclude Include="Core\IHashed.h" />
+    <ClInclude Include="Core\IParsable.h" />
     <ClInclude Include="Graphics\Camera.h" />
     <ClInclude Include="Core\CoreCommon.h" />
     <ClInclude Include="Core\RandomUtils.h" />
@@ -174,7 +177,9 @@
     <ClCompile Include="Config\ConfigrationSection.cpp" />
     <ClCompile Include="Config\Configuration.cpp" />
     <ClCompile Include="Config\ConfigurationManager.cpp" />
+    <ClCompile Include="Config\XMLConfiguration.cpp" />
     <ClCompile Include="Core\HashHandleObject.cpp" />
+    <ClCompile Include="Core\IHashed.cpp" />
     <ClCompile Include="Core\RandomUtils.cpp" />
     <ClCompile Include="Core\Resource.cpp" />
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
@@ -228,6 +233,7 @@
     <ClCompile Include="Graphics\RenderSystem\Texture.cpp" />
     <ClCompile Include="Utility\StringTable.cpp" />
     <ClCompile Include="Vfs\PathUtils.cpp" />
+    <ClCompile Include="Vfs\ResourceLocation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="apoc3d.ico" />
