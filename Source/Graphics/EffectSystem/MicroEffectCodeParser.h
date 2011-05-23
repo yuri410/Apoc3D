@@ -43,11 +43,11 @@ namespace Apoc3D
 			   EffectAtomManager uses this to create new EffectAtom from
 			   source code.
 			*/
-			class APAPI EffectAtomCodeParser
+			class APAPI MicroEffectCodeParser
 			{
 			public:
-				EffectAtomCodeParser(void);
-				~EffectAtomCodeParser(void);
+				MicroEffectCodeParser(void);
+				~MicroEffectCodeParser(void);
 			};
 		};
 	};

@@ -21,7 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "EffectAtomCodeParser.h"
+#include "MicroEffectCodeParser.h"
 
 namespace Apoc3D
 {
@@ -29,12 +29,12 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			EffectAtomCodeParser::EffectAtomCodeParser(void)
+			MicroEffectCodeParser::MicroEffectCodeParser(void)
 			{
 			}
 
 
-			EffectAtomCodeParser::~EffectAtomCodeParser(void)
+			MicroEffectCodeParser::~MicroEffectCodeParser(void)
 			{
 			}
 		};

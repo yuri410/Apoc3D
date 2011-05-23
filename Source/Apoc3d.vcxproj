@@ -83,6 +83,7 @@
   <ItemGroup>
     <ClInclude Include="Apoc3DException.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Core\Parsable.h" />
     <ClInclude Include="Graphics\Camera.h" />
     <ClInclude Include="Core\CoreCommon.h" />
     <ClInclude Include="Core\RandomUtils.h" />
@@ -133,12 +134,11 @@
     <ClInclude Include="Graphics\RenderSystem\Buffer\HardwareBuffer.h" />
     <ClInclude Include="IO\MaterialData.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="ResourceCompiler\Compiler.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneObject.h" />
     <ClInclude Include="Graphics\DeviceSettings.h" />
     <ClInclude Include="Graphics\EffectSystem\Effect.h" />
-    <ClInclude Include="Graphics\EffectSystem\EffectAtomCodeParser.h" />
+    <ClInclude Include="Graphics\EffectSystem\MicroEffectCodeParser.h" />
     <ClInclude Include="Graphics\EffectSystem\EffectParameter.h" />
     <ClInclude Include="Graphics\FpsCamera.h" />
     <ClInclude Include="Core\HashHandleObject.h" />
@@ -189,7 +189,6 @@
     <ClCompile Include="Math\Vector.cpp" />
     <ClCompile Include="Math\Viewport.cpp" />
     <ClCompile Include="Platform\Library.cpp" />
-    <ClCompile Include="ResourceCompiler\Compiler.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\SceneObject.cpp" />
     <ClCompile Include="dllmain.cpp">
@@ -201,7 +200,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Graphics\EffectSystem\Effect.cpp" />
-    <ClCompile Include="Graphics\EffectSystem\EffectAtomCodeParser.cpp" />
+    <ClCompile Include="Graphics\EffectSystem\MicroEffectCodeParser.cpp" />
     <ClCompile Include="Graphics\EffectSystem\EffectParameter.cpp" />
     <ClCompile Include="Graphics\FpsCamera.cpp" />
     <ClCompile Include="Graphics\EffectDescription.cpp" />

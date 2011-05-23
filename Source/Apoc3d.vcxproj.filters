@@ -87,9 +87,6 @@
     <ClInclude Include="Core\Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceCompiler\Compiler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IO\MaterialData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -243,13 +240,16 @@
     <ClInclude Include="Graphics\EffectSystem\Effect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\EffectSystem\EffectAtomCodeParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\EffectSystem\EffectManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graphics\EffectSystem\MicroEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Parsable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\EffectSystem\MicroEffectCodeParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -294,9 +294,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceCompiler\Compiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\MaterialData.cpp">
@@ -386,9 +383,6 @@
     <ClCompile Include="Graphics\EffectSystem\Effect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\EffectSystem\EffectAtomCodeParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics\EffectSystem\EffectManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -396,6 +390,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\EffectSystem\MicroEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\EffectSystem\MicroEffectCodeParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
