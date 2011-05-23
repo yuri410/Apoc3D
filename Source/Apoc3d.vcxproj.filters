@@ -267,6 +267,9 @@
     <ClInclude Include="Math\ColorValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Math\RandomUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -417,6 +420,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Config\ConfigrationSection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\RandomUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
