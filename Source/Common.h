@@ -94,7 +94,7 @@ typedef unsigned long long BatchHandle;
 #endif
 
 
-#define VER(x,y,z,w) D3DCOLOR_ARGB(x,y,z,w);
+//#define VER(x,y,z,w) D3DCOLOR_ARGB(x,y,z,w);
 
 
 
@@ -169,6 +169,13 @@ namespace Apoc3D
 		{
 			class AsyncProcessor;
 		};
+	};
+	namespace Config
+	{
+		class Configuration;
+		class ConfigurationSection;
+
+		class ConfigurationManager;
 	};
 	namespace Math
 	{		

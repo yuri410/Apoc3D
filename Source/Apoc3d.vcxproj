@@ -83,6 +83,10 @@
   <ItemGroup>
     <ClInclude Include="Apoc3DException.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Config\Configurable.h" />
+    <ClInclude Include="Config\Configuration.h" />
+    <ClInclude Include="Config\ConfigurationManager.h" />
+    <ClInclude Include="Config\ConfigurationSection.h" />
     <ClInclude Include="Core\Parsable.h" />
     <ClInclude Include="Graphics\Camera.h" />
     <ClInclude Include="Core\CoreCommon.h" />
@@ -164,6 +168,8 @@
   <ItemGroup>
     <ClCompile Include="Apoc3DException.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Config\Configuration.cpp" />
+    <ClCompile Include="Config\ConfigurationManager.cpp" />
     <ClCompile Include="Core\HashHandleObject.cpp" />
     <ClCompile Include="Core\RandomUtils.cpp" />
     <ClCompile Include="Core\Resource.cpp" />

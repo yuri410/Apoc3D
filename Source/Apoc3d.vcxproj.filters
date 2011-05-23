@@ -252,6 +252,18 @@
     <ClInclude Include="Graphics\EffectSystem\MicroEffectCodeParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Config\ConfigurationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\Configuration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\Configurable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\ConfigurationSection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -393,6 +405,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\EffectSystem\MicroEffectCodeParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config\ConfigurationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config\Configuration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
