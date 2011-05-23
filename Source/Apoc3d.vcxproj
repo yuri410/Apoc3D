@@ -95,6 +95,7 @@
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="core\streaming\asyncprocessor.h" />
     <ClInclude Include="Math\ColorValue.h" />
+    <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />
     <ClInclude Include="Utility\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Core\RandomUtils.cpp" />
     <ClCompile Include="Core\Resource.cpp" />
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
+    <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />
