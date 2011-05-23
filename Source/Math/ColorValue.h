@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+This source file is part of Apoc3D
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,52 +15,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
+along with this program.  if not, write to the Free Software Foundation,
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef COLORVALUE_H
+#define COLORVALUE_H
 
-#ifndef APOC3DEXCEPTION_H
-#define APOC3DEXCEPTION_H
-
-
-#include "Common.h"
-#include <exception>
 
 namespace Apoc3D
 {
-
-	enum Apoc3DExceptionType
+	namespace Math
 	{
-		EX_Default,
-		EX_InvalidOperation,
-		EX_InvalidData,
-		EX_NotSupported,
-		EX_KeyNotFound
-	};
-
-	class Apoc3DException : public std::exception
-	{
-	private:
-		String m_message;
-	public:
-		Apoc3DException(const wchar_t* const &msg)
-			: m_message(msg)
-		{
-
-		}
-		Apoc3DException(const Apoc3DException &another)
-			: m_message(another.m_message)
-		{
-		}
-
-		static Apoc3DException createException(Apoc3DExceptionType type, const wchar_t* const msg);
-		
-		
-	};
-};
-
+		/** Packed ARGB value, 8 bit per channel
+		*/
+		typedef uint ColorValue;
+#define UNPACK_COLOR(color, r,g,b,a) a = (color>>24); r = (0xff & (color>>16)); g = (0xff & (color>>8)); b = (0xff & color);
+#define PACK_COLOR(r,g,b,a) ( (static_cast<uint>(a)<<24) | (static_cast<uint>(r)<<16) | (static_cast<uint>(g)<<8) | (static_cast<uint>(b)) )
+	}
+}
 
 #endif

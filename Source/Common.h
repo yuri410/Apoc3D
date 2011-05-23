@@ -156,11 +156,12 @@ namespace Apoc3D
 	inline const double convr64(const char* const src);
 	
 	namespace Core
-	{
-		class Camera;
+	{		
 		class Resource;
 		class ResourceManager;
 		class GameTime;
+
+		class Parsable;
 
 		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
 		typedef fastdelegate::FastDelegate0<void> ResourceEventHandler;
@@ -176,6 +177,7 @@ namespace Apoc3D
 		class ConfigurationSection;
 
 		class ConfigurationManager;
+		
 	};
 	namespace Math
 	{		
@@ -213,6 +215,8 @@ namespace Apoc3D
 	};
 	namespace Graphics
 	{
+		class Camera;
+
 		class Renderable;
 		class GeometryData;
 		class RenderOperation;

@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Vector.h"
+#include "ColorValue.h"
 
 namespace Apoc3D
 {
@@ -93,7 +94,7 @@ namespace Apoc3D
 			}
 #endif
 			
-			Color4(int argb)
+			Color4(ColorValue argb)
 			{
 				Alpha = static_cast<float>(((argb >> 24) & 0xff) / 255.0f);
 				Red = static_cast<float>((float)((argb >> 16) & 0xff) / 255.0f);
@@ -132,7 +133,7 @@ namespace Apoc3D
 
 			/* Converts the color into a packed integer.
 			*/
-			uint ToArgb()
+			ColorValue ToArgb()
 			{
 				uint a = static_cast<uint>(Alpha * 255.0f);
 				uint r = static_cast<uint>(Red * 255.0f);
