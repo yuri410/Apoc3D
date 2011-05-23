@@ -192,7 +192,6 @@ namespace Apoc3D
 	};
 	namespace IO
 	{
-		class FileStream;
 		class BinaryReader;
 
 	};
