@@ -97,6 +97,8 @@
     <ClInclude Include="core\resource.h" />
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="core\streaming\asyncprocessor.h" />
+    <ClInclude Include="IO\BinaryWriter.h" />
+    <ClInclude Include="IO\TaggedData.h" />
     <ClInclude Include="IO\BinaryReader.h" />
     <ClInclude Include="IO\Streams.h" />
     <ClInclude Include="Math\ColorValue.h" />
@@ -190,6 +192,7 @@
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
     <ClCompile Include="IO\BinaryReader.cpp" />
     <ClCompile Include="IO\Streams.cpp" />
+    <ClCompile Include="IO\TaggedData.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />

@@ -27,6 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
+using namespace Apoc3D::Math;
+
 namespace Apoc3D
 {
 	namespace IO
@@ -38,21 +40,28 @@ namespace Apoc3D
 
 			char m_buffer[32];
 
+			inline void FillBuffer(int32 len);
+
 		public:
+
+			Stream* getBaseStream() const { return m_baseStream; }
+
 			BinaryReader(Stream* baseStream)
 				: m_baseStream(baseStream)
 			{
 			}
-
-			
-			void FillBuffer(int32 len);
-
+			~BinaryReader();
+			double ReadDouble()
+			{
+				FillBuffer(sizeof(double));
+				return cr64_le(m_buffer);
+			}
 			float ReadSingle()
 			{
 				FillBuffer(sizeof(float));
-				return convr32(&m_buffer[0]);
+				return cr32_le(m_buffer);
 			}
-			String* ReadString()
+			String ReadString()
 			{
 				int32 len = ReadInt32();
 				
@@ -62,7 +71,7 @@ namespace Apoc3D
 				{
 					chars[i] = ReadInt16();
 				}
-				String* str = new String(chars, len);
+				String str = String(chars, len);
 				
 				delete chars;
 				return str;
@@ -71,18 +80,59 @@ namespace Apoc3D
 			int16 ReadInt16() 
 			{
 				FillBuffer(sizeof(int16));
-				return convint16(&m_buffer[0]);
+				return ci16_le(m_buffer);
 			}
 			int32 ReadInt32() 
 			{
 				FillBuffer(sizeof(int32));
-				return convint32(&m_buffer[0]);
+				return ci32_le(m_buffer);
 			}
 			int64 ReadInt64() 
 			{
 				FillBuffer(sizeof(int64));
-				return convint64(&m_buffer[0]);
+				return ci64_le(m_buffer);
 			}
+
+			uint16 ReadUInt16() 
+			{
+				FillBuffer(sizeof(uint16));
+				return cui16_le(m_buffer);
+			}
+			uint32 ReadUInt32() 
+			{
+				FillBuffer(sizeof(uint32));
+				return cui32_le(m_buffer);
+			}
+			uint64 ReadUInt64() 
+			{
+				FillBuffer(sizeof(uint64));
+				return cui64_le(m_buffer);
+			}
+			inline void ReadColor4(Color4& color);
+
+			inline void ReadPlane(Plane& plane);
+
+			inline void ReadMatrix(Matrix& matrix);
+			inline void ReadQuaternion(Quaternion& quat);
+
+			inline void ReadPoint(Point& point);
+			inline void ReadSize(Size& size);
+
+			inline void ReadRectangle(Rectangle& rect);
+			inline void ReadRectangleF(RectangleF& rect);
+
+			inline void ReadRay(Ray& ray);
+
+			inline void ReadBoundingSphere(BoundingSphere& sphere);
+			inline void ReadBoundingBox(BoundingBox& box);
+
+			inline void ReadVector4(float* buffer);
+			inline void ReadVector3(float* buffer);
+			inline void ReadVector2(float* buffer);
+
+			const TaggedDataReader* ReadTaggedDataBlock();
+
+			inline void Close();
 		};
 	};
 };

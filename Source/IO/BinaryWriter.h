@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D
+This source file is part of Apoc3D Engine
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,27 +15,30 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation,
+along with this program.  if not, write to the Free Software Foundation, 
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MATH_H
-#define MATH_H
 
-#include "Vector.h"
-#include "Matrix.h"
-#include "Point.h"
-#include "Rectangle.h"
-#include "Color.h"
-#include "Quaternion.h"
-#include "Ray.h"
-#include "MathCommon.h"
+#ifndef BINARYWRITER_H
+#define BINARYWRITER_H
 
+#include "Common.h"
 
-#define ToDegree(x) (x)
-#define ToRadian(x) (x)
+using namespace Apoc3D::Math;
 
+namespace Apoc3D
+{
+	namespace IO
+	{
+		class APAPI BinaryWriter
+		{
+		private:
+			Stream* m_baseStream;
 
-#endif
+		public:
+		};
+	}
+}

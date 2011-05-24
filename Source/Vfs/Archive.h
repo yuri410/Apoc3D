@@ -33,6 +33,9 @@ namespace Apoc3D
 {
 	namespace VFS
 	{
+		/** Abstract factory that create archive objects.
+			One archive object keeps the archive file open during its lifetime.
+		*/
 		class APAPI ArchiveFactory
 		{
 		public:
@@ -41,6 +44,9 @@ namespace Apoc3D
 
 			virtual String getExtension() const = 0;
 		};
+
+		/** Define interface for accessing pack files, like .zip or custom packs.
+		*/
 		class APAPI Archive : public File
 		{
 		protected:

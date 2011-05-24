@@ -149,14 +149,50 @@ namespace Apoc3D
 #define StringCompare(a, b) !a.compare(b)
 	const int32 MaxInt32 = 0x7fffffff;
 
+	/** Little-Indian, used in file reading
+	*/
+	inline uint16 cui16_le(const char* const src);
+	inline uint32 cui32_le(const char* const src);
+	inline uint64 cui64_le(const char* const src);
+	inline int16 ci16_le(const char* const src);
+	inline int32 ci32_le(const char* const src);	
+	inline int64 ci64_le(const char* const src);
+	inline const float cr32_le(const char* const src);
+	inline const double cr64_le(const char* const src);
 
+	/** Convert from memory, Indian dependent
+	*/
+	inline uint16 cuint16_mem(const char* const src);
+	inline uint32 cuint32_mem(const char* const src);
+	inline uint64 cuint64_mem(const char* const src);
+	inline int16 cint16_mem(const char* const src);
+	inline int32 cint32_mem(const char* const src);	
+	inline int64 cint64_mem(const char* const src);
+	inline const float cr32_mem(const char* const src);
+	inline const double cr64_mem(const char* const src);
 
-	inline int32 convint32(const char* const src);
-	inline int16 convint16(const char* const src);
-	inline int64 convint64(const char* const src);
-	inline const float convr32(const char* const src);
-	inline const double convr64(const char* const src);
-	
+	/** Convert to Little-Indian multi bytes
+	*/
+	inline void i16tomb_le(int16 v, char* dest);
+	inline void i32tomb_le(int32 v, char* dest);
+	inline void i64tomb_le(int64 v, char* dest);
+	inline void ui16tomb_le(uint16 v, char* dest);
+	inline void ui32tomb_le(uint32 v, char* dest);
+	inline void ui64tomb_le(uint64 v, char* dest);
+	inline void r32tomb_le(float v, char* dest);
+	inline void r64tomb_le(double v, char* dest);
+
+	/** Convert to multi bytes, the result is Indian dependent
+	*/
+	inline void i16tomb_mem(int16 v, char* dest);
+	inline void i32tomb_mem(int32 v, char* dest);
+	inline void i64tomb_mem(int64 v, char* dest);
+	inline void ui16tomb_mem(uint16 v, char* dest);
+	inline void ui32tomb_mem(uint32 v, char* dest);
+	inline void ui64tomb_mem(uint64 v, char* dest);
+	inline void r32tomb_mem(float v, char* dest);
+	inline void r64tomb_mem(double v, char* dest);
+
 	namespace Core
 	{		
 		class Resource;
@@ -182,17 +218,34 @@ namespace Apoc3D
 		
 	};
 	namespace Math
-	{		
+	{	
+		class Color4;
+
 		class Matrix;
-		class Quaternion;
+		class Quaternion;		
+
+		class Plane;
+
 		class Ray;
+
+		class Point;
+		class Size;
+
+		class Rectangle;
+		class RectangleF;
 
 		class BoundingSphere;		
 		class BoundingBox;
+		class Frustum;
 	};
 	namespace IO
 	{
 		class BinaryReader;
+		class BinaryWriter;
+
+		class TaggedDataReader;
+		class TaggedDataWriter;
+
 		class Stream;
 		class FileStream;
 		class MemoryStream;
