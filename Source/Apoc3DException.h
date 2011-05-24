@@ -39,7 +39,8 @@ namespace Apoc3D
 		EX_InvalidData,
 		EX_NotSupported,
 		EX_KeyNotFound,
-		EX_FormatException
+		EX_FormatException,
+		EX_EndOfStream
 	};
 
 	class Apoc3DException : public std::exception

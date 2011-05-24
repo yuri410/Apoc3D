@@ -193,7 +193,10 @@ namespace Apoc3D
 	namespace IO
 	{
 		class BinaryReader;
-
+		class Stream;
+		class FileStream;
+		class MemoryStream;
+		class VirtualStream;
 	};
 	namespace VFS
 	{
@@ -201,6 +204,7 @@ namespace Apoc3D
 		class Archive;
 		class ResourceLocation;
 		class FileLocation;
+		class MemoryLocation;
 	};
 	namespace EffectSystem
 	{

@@ -282,6 +282,9 @@
     <ClInclude Include="Core\IParsable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\Streams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -447,6 +450,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vfs\ResourceLocation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\Streams.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

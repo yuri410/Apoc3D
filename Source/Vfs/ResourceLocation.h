@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/IHashed.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::IO;
 
 using namespace std;
 
@@ -41,20 +42,21 @@ namespace Apoc3D
 		private:
 			String m_name;
 		protected:
-			uint64 m_size;
+			int64 m_size;
 
-			ResourceLocation(const String& name, uint64 s)
+			ResourceLocation(const String& name, int64 s)
 				: m_name(name), m_size(s)
 			{
 			}
 		public:
-			virtual wostream* GetWriteStream() const = 0;
-			virtual wistream* GetReadStream() const = 0;
+			virtual Stream* GetWriteStream() const = 0;
+			virtual Stream* GetReadStream() const = 0;
 
 			virtual bool isReadOnly() const = 0;
 
-			uint64 getSize() const { return m_size; }
+			int64 getSize() const { return m_size; }
 			
+			const String& getName() const { return m_name; }
 			virtual String GetHashString() const { return m_name; }
 			virtual HashHandle GetHashCode() const;
 
@@ -66,17 +68,17 @@ namespace Apoc3D
 		private:
 			Archive* m_parent;
 			String m_path;
+			Stream* m_stream;
 
 		protected:
-			FileLocation(const String& filePath, uint64 size);
+			FileLocation(const String& filePath, int64 size);
 		public:
-			FileLocation(const String& filePath) {}
-			FileLocation(const FileLocation& fl) {}
-			FileLocation(Archive* pack, const String& filePath, wifstream* stm);
+			FileLocation(const String& filePath);
+			FileLocation(const FileLocation& fl);
+			FileLocation(Archive* pack, const String& filePath, Stream* stm);
 
-			virtual wostream* GetWriteStream() const { return 0;}
-			virtual wistream* GetReadStream() const
-			{}
+			virtual Stream* GetWriteStream() const { return 0;}
+			virtual Stream* GetReadStream() const;
 
 			bool isInArchive() const { return !!m_parent; }
 			const String& getPath() const { return m_path; } 
@@ -89,19 +91,14 @@ namespace Apoc3D
 		private:
 			void* m_data;
 		public:
-			MemoryLocation(void* pos, uint64 size);
+			MemoryLocation(void* pos, int64 size);
 
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return true; }
 
-			virtual wostream* GetWriteStream() const
-			{
-				wostream* strm;
-				
-				return strm;
-			}
-			virtual wistream* GetReadStream() const
-			{}
+			virtual Stream* GetWriteStream() const;
+			virtual Stream* GetReadStream() const;
+			
 		};
 	}
 }

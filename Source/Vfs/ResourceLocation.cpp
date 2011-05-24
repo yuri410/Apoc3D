@@ -24,6 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ResourceLocation.h"
 
 #include "Utility/StringUtils.h"
+#include "PathUtils.h"
+#include "io/Streams.h"
 
 using namespace Apoc3D::Utility;
 
@@ -31,14 +33,60 @@ namespace Apoc3D
 {	
 	namespace VFS
 	{
+		static uint64 GetFileSize(const String& file)
+		{
+			return 0;
+		}
+
 		HashHandle ResourceLocation::GetHashCode() const
 		{
 			return StringUtils::GetHashCode(m_name);
 		}
 
-		MemoryLocation::MemoryLocation(void* pos, uint64 size)
-			: ResourceLocation(L"ADDR " + StringUtils::ToString(size), size), m_data(pos)
+		FileLocation::FileLocation(Archive* pack, const String& filePath, Stream* stm)
+			: ResourceLocation(filePath, stm->getLength()), 
+			m_parent(pack), m_path(filePath), m_stream(stm)
 		{
+
+		}
+		FileLocation::FileLocation(const FileLocation& fl)
+			: ResourceLocation(fl.getName(), fl.getSize()), 
+			m_parent(fl.m_parent), m_path(fl.m_path), m_stream(0)
+		{
+		}
+		
+		FileLocation::FileLocation(const String& filePath, int64 size)
+			: ResourceLocation(filePath, size), 
+			m_parent(0), m_path(filePath), m_stream(0)
+		{
+
+		}
+		FileLocation::FileLocation(const String& filePath)
+			: ResourceLocation(filePath, GetFileSize(filePath)),
+			m_parent(0), m_path(filePath), m_stream(0)
+		{			
+
+		}
+
+		Stream* FileLocation::GetReadStream() const
+		{
+			if (m_stream)
+				return m_stream;
+			return new FileStream(m_path);
+		}
+
+		MemoryLocation::MemoryLocation(void* pos, int64 size)
+			: ResourceLocation(L"[ADDR]" + StringUtils::ToString(size), size), m_data(pos)
+		{
+		}
+
+		Stream* MemoryLocation::GetReadStream() const
+		{
+			return new MemoryStream(reinterpret_cast<byte*>(m_data), m_size);
+		}
+		Stream* MemoryLocation::GetWriteStream() const
+		{
+			return new MemoryStream(reinterpret_cast<byte*>(m_data), m_size);
 		}
 	}
 }

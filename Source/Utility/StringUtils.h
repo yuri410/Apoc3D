@@ -51,6 +51,8 @@ namespace Apoc3D
 			static double ParseDouble(const String& val);
 			static String ToString(int32 val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
+			static String ToString(int64 val, 
+				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
 			static String ToString(float val, unsigned short precision = 2, 
 				unsigned short width = 0, char fill = ' ', 
 				std::ios::fmtflags flags = std::ios::fmtflags(0) );
