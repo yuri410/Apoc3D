@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Archive.h"
 #include "Apoc3DException.h"
 #include "FileLocateRule.h"
+#include "File.h"
 
 using namespace Apoc3D::Utility;
 
@@ -42,7 +43,7 @@ namespace Apoc3D
 		FileSystem::~FileSystem()
 		{
 			for (auto e = m_openedPack.begin(); e!=m_openedPack.end(); e++)
-			{
+			{				
 				Archive* arc = e->second;
 				delete arc;
 			}
@@ -73,21 +74,20 @@ namespace Apoc3D
 		}
 
 
-		bool FileSystem::Exists(const String& path) const
+		bool FileSystem::DirectoryExists(const String& path) const
 		{
 			for (size_t i = 0; i < m_workingDirs.size(); i++)
 			{
 				String fullPath = PathUtils::Combine(m_workingDirs[i], path);
-				if (Directory.Exists(fullPath))
+				if (File::DirectoryExists(fullPath))
 				{
 					return true;
 				}
 
-				String root = Path.GetPathRoot(fullPath).ToUpper();
-				while (!PathUtils::ComparePath(root, fullPath))
+				while (!PathUtils::ComparePath( fullPath, m_workingDirs[i]))
 				{
-					fullPath = Path.GetDirectoryName(fullPath);
-					if (File.Exists(fullPath))
+					fullPath = PathUtils::GetDirectory(fullPath);
+					if (File::FileExists(fullPath))
 					{
 						return true;
 					}
@@ -96,22 +96,22 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool FileSystem::Exists(const String& path, String& result) const
+		bool FileSystem::DirectoryExists(const String& path, String& result) const
 		{
 			for (size_t i = 0; i < m_workingDirs.size(); i++)
 			{
 				String fullPath = PathUtils::Combine(m_workingDirs[i], path);
-				if (Directory.Exists(fullPath))
+				if (File::DirectoryExists(fullPath))
 				{
 					result = fullPath;
 					return true;
 				}
 
-				String root = Path.GetPathRoot(fullPath).ToUpper();
-				while (!PathUtils::ComparePath(root, fullPath))
+
+				while (!PathUtils::ComparePath( fullPath, m_workingDirs[i]))
 				{
-					fullPath = Path.GetDirectoryName(fullPath);
-					if (File.Exists(fullPath))
+					fullPath = PathUtils::GetDirectory(fullPath);
+					if (File::FileExists(fullPath))
 					{
 						result = PathUtils::Combine(m_workingDirs[i], path);
 						return true;
@@ -121,12 +121,12 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool FileSystem::Exists(const String& path, vector<String>& result, vector<String>& archivePath) const
+		bool FileSystem::SplitExistingDirectories(const String& path, vector<String>& result, vector<String>& archivePath) const
 		{
 			for (size_t i = 0; i < m_workingDirs.size(); i++)
 			{
 				String fullPath = PathUtils::Combine(m_workingDirs[i], path);
-				if (Directory.Exists(fullPath))
+				if (File::DirectoryExists(fullPath))
 				{
 					//archivePath = null;
 					//result = fullPath;
@@ -136,16 +136,16 @@ namespace Apoc3D
 
 				}
 
-				String root = Path.GetPathRoot(fullPath).ToUpper();
-				while (!PathUtils::ComparePath(root, fullPath))
+
+				while (!PathUtils::ComparePath( fullPath, m_workingDirs[i]))
 				{
-					if (File.Exists(fullPath))
+					if (File::FileExists(fullPath))
 					{
 						result.push_back(PathUtils::Combine(m_workingDirs[i], path));
 						archivePath.push_back(fullPath);
 						return true;
 					}
-					fullPath = Path.GetDirectoryName(fullPath);
+					fullPath = PathUtils::GetDirectory(fullPath);
 
 				}
 
@@ -175,7 +175,7 @@ namespace Apoc3D
 			return res;
 		}
 
-		const FileLocation* FileSystem::Locate(const String& filePath, const FileLocateRule& rule)
+		const FileLocation* FileSystem::TryLocate(const String& filePath, const FileLocateRule& rule)
 		{
 			// pass through all check points
 			for (int cp = 0; cp < rule.getCount(); cp++)
@@ -200,7 +200,7 @@ namespace Apoc3D
 					if (!checkPt.hasArchivePath(j))
 					{
 						String fullPath = PathUtils::Combine(checkPt.GetPath(j), filePath);
-						if (File.Exists(fullPath))
+						if (File::FileExists(fullPath))
 						{
 							return new FileLocation(fullPath);
 						}
@@ -212,18 +212,18 @@ namespace Apoc3D
 						try
 						{
 //#if !XBOX
-							vector<String> locs = StringUtils::Split(DirSepCharArray, StringSplitOptions.RemoveEmptyEntries);
+							vector<String> locs = PathUtils::Split(filePath);
 //#else
-//							string[] locs = filePath.Split(DirSepCharArray);
-//							List<string> locs2 = new List<string>(locs.Length);
-//							for (int i = 0; i < locs.Length; i++) 
-//							{
-//								if (locs[i].Length > 0) 
-//								{
-//									locs2.Add(locs[i]);
-//								}
-//							}
-//							locs = locs2.ToArray();
+							//vector<String> locs = StringUtils::Split(filePath, String(PathUtils::DirSepCharArray, 1));
+							//vector<String> locs2 = new List<string>(locs.Length);
+							//for (int i = 0; i < locs.Length; i++) 
+							//{
+							//	if (locs[i].Length > 0) 
+							//	{
+							//		locs2.Add(locs[i]);
+							//	}
+							//}
+							//locs = locs2.ToArray();
 //#endif
 
 
@@ -232,35 +232,35 @@ namespace Apoc3D
 								String sb;
 
 								Archive* entry = 0;
-								Archive* last;
+								Archive* parent;
 
 								bool found = true;
 
-								for (int i = 0; i < locs.size() - 1; i++)
+								for (size_t i = 0; i < locs.size() - 1; i++)
 								{
 									if (i > 0)
 									{
-										sb.append(PathUtils::DirectorySeparatorChar);
+										sb.append(1, PathUtils::DirectorySeparator);
 										sb.append(locs[i]);
 									}
 									else
 										sb.append(locs[i]);
 
-									last = entry;
+									parent = entry;
 
 
 									// check if the archive is never been opened
 									if (!IsOpened(sb, &entry))
 									{
-										// if parent archive is in archive
-										if (last)
+										// if the archive is in a parent archive
+										if (parent)
 										{
-											Stream* entStm = last->GetEntryStream(locs[i]);
+											Stream* entStm = parent->GetEntryStream(locs[i]);
 
 											if (entStm)
 											{
 												entry = CreateArchive(
-													new FileLocation(last, PathUtils::Combine(arcPath, sb), entStm));
+													new FileLocation(parent, PathUtils::Combine(arcPath, sb), entStm));
 												m_openedPack.insert(pair<String, Archive*>(entry->getFilePath(), entry));
 											}
 											else
@@ -272,7 +272,7 @@ namespace Apoc3D
 										else
 										{
 											String arc = sb;
-											if (File.Exists(arc))
+											if (File::FileExists(arc))
 											{
 												entry = CreateArchive(arc);
 												m_openedPack.insert(pair<String, Archive*>(entry->getFilePath(), entry));
@@ -288,7 +288,7 @@ namespace Apoc3D
 								if (found && entry)
 								{
 									
-									Stream* entStm = entry->GetEntryStream(locs[locs.Length - 1]);
+									Stream* entStm = entry->GetEntryStream(locs[locs.size() - 1]);
 
 									if (entStm)
 										return new FileLocation(entry, PathUtils::Combine(arcPath, filePath), entStm);
@@ -299,7 +299,7 @@ namespace Apoc3D
 								Archive* entry;
 								if (!IsOpened(arcPath, &entry))
 								{
-									if (File.Exists(arcPath))
+									if (File::FileExists(arcPath))
 									{
 										entry = CreateArchive(arcPath);
 										m_openedPack.insert(pair<String, Archive*>(entry->getFilePath(), entry));

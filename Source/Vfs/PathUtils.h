@@ -23,9 +23,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef PATHUTILS_H
 #define PATHUTILS_H
-#pragma once
 
 #include "Common.h"
+
+using namespace std;
 
 namespace Apoc3D
 {	
@@ -38,9 +39,11 @@ namespace Apoc3D
 			static const wchar_t AltDirectorySeparator;
 			static const wchar_t VolumeSeparatorChar;
 
+			static String GetDirectory(const String& fileName);
 			static void SplitFileNameExtension(const String& fileName, String& noext, String& ext);
 			static void SplitFilePath(const String& path, String& fileName, String& parentDir);
 			static void SplitFilePathNameExtension(const String& path, String& parentDir, String& noext, String& ext);
+			static vector<String> Split(const String& path);
 			/** Combines two path
 			*/
 			static String Combine(const String& left, const String& right);

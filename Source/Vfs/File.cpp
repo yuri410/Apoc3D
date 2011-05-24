@@ -25,6 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "File.h"
 
 #include "Vfs/PathUtils.h"
+#include <sys/types.h> 
+#include <sys/stat.h> 
+#include <io.h>
 
 using namespace Apoc3D::VFS;
 
@@ -40,21 +43,78 @@ namespace Apoc3D
 			PathUtils::SplitFilePath(file, m_fileName, m_filePath);
 		}
 
+
+		bool File::DirectoryExists(const String& path)
+		{
+			struct stat status;
+
+			char buffer[256];
+			size_t res;
+			wcstombs_s(&res, buffer, path.c_str(), 256);
+
+			if (access(buffer, 0) == 0)
+			{
+				stat(buffer, &status);
+
+				if (status.st_mode & S_IFDIR)
+				{
+					return true;
+				}
+			}			
+			return false;
+		}
+		bool File::FileExists(const String& path)
+		{
+			struct stat status;
+
+			char buffer[256];
+			size_t res;
+			wcstombs_s(&res, buffer, path.c_str(), 256);
+
+			if (access(buffer, 0) == 0)
+			{
+				stat(buffer, &status);
+				
+				if (status.st_mode & S_IFDIR)
+				{
+					return false;
+				}
+				return true;
+			}			
+			return false;
+		}
 		int64 File::GetFileSize(const String& path)
 		{
-			ifstream fs(path, ios::binary | ios::in);
+			struct stat status;
 
-			if (!fs)
+			char buffer[256];
+			size_t res;
+			wcstombs_s(&res, buffer, path.c_str(), 256);
+
+			if (access(buffer, 0) == 0)
 			{
-				return -1;
-			}
-			
-			fs.seekg(0, ios::end);
+				stat(buffer, &status);
 
-			streampos pos = fs.tellg();
+				if (status.st_mode & S_IFDIR)
+				{
+					return -1;
+				}
+				return status.st_size;
+			}			
+			return -1;
+			//ifstream fs(path, ios::binary | ios::in);
 
-			fs.close();
-			return pos;
+			//if (!fs)
+			//{
+			//	return -1;
+			//}
+			//
+			//fs.seekg(0, ios::end);
+
+			//streampos pos = fs.tellg();
+
+			//fs.close();
+			//return pos;
 		}
 
 	}

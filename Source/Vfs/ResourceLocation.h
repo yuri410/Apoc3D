@@ -52,8 +52,6 @@ namespace Apoc3D
 			virtual Stream* GetWriteStream() const = 0;
 			virtual Stream* GetReadStream() const = 0;
 
-			virtual bool isReadOnly() const = 0;
-
 			int64 getSize() const { return m_size; }
 			
 			const String& getName() const { return m_name; }

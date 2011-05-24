@@ -35,6 +35,13 @@ namespace Apoc3D
 		const wchar_t PathUtils::AltDirectorySeparator = '/';
 		const wchar_t PathUtils::VolumeSeparatorChar = ':';
 
+		String PathUtils::GetDirectory(const String& filePath)
+		{
+			String result;
+			String fn;
+			SplitFilePath(filePath, fn, result);
+			return result;
+		}
 		void PathUtils::SplitFileNameExtension(const String& fileName, String& noext, String& ext)
 		{
 			size_t i = fileName.find_last_of('.');
@@ -75,6 +82,53 @@ namespace Apoc3D
 			SplitFilePath( path, fullName, parentDir );
 			SplitFileNameExtension( fullName, noext, ext );
 		}
+
+		vector<String> PathUtils::Split(const String& path)
+		{
+			String str = path;
+			for (size_t i=0;i<str.length();i++)
+			{
+				if (str[i] == AltDirectorySeparator)
+				{
+					str[i] = DirectorySeparator;
+				}
+			}
+			std::vector<String> ret;
+		
+			unsigned int numSplits = 0;
+
+			// Use STL methods 
+			size_t start, pos;
+			start = 0;
+			do 
+			{
+				pos = str.find_first_of(DirectorySeparator, start);
+				if (pos == start)
+				{
+					// Do nothing
+					start = pos + 1;
+				}
+				else if (pos == String::npos)
+				{
+					// Copy the rest of the string
+					ret.push_back( str.substr(start) );
+					break;
+				}
+				else
+				{
+					// Copy up to delimiter
+					ret.push_back( str.substr(start, pos - start) );
+					start = pos + 1;
+				}
+				// parse up to next real data
+				start = str.find_first_not_of(DirectorySeparator, start);
+				++numSplits;
+
+			} while (pos != String::npos);
+
+			return ret;
+		}
+
 		void PathUtils::Append(String& path1, const String& path2)
 		{
 			size_t len1 = path1.length();
@@ -180,7 +234,57 @@ namespace Apoc3D
 
 		bool PathUtils::ComparePath(const String& left, const String& right)
 		{
-			return false;
+			size_t i = 0;
+			size_t j = 0;
+			
+			bool isLastSepL = false;
+			bool isLastSepR = false;
+
+			bool finished = false;
+
+			int lvll = 0;
+			int lvlr = 0;
+
+			while (1)
+			{
+				wchar_t lch = left[i];
+				wchar_t rch = right[j];
+
+				if (isLastSepL)
+				{
+					if  (lch == DirectorySeparator || lch == AltDirectorySeparator)
+					{
+						i++;
+						continue;
+					}
+					else
+					{
+						lvll++;
+					}
+				}
+				if (isLastSepR)
+				{
+					if (rch == DirectorySeparator || rch == AltDirectorySeparator)
+					{
+						j++;
+						continue;
+					}
+					else
+					{
+						lvlr++;
+					}
+				}
+
+				if (left[lch] != right[rch])
+					return false;
+				if (lch>=left.size() && rch>=right.size())
+					return lvlr == lvlr;
+
+				if (lch>=left.size())
+					return false;
+				if (rch>=right.size())
+					return false;
+			}
 		}
 	}
 }

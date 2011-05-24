@@ -82,7 +82,7 @@ namespace Apoc3D
 				return pathList[index].Path;
 			}
 
-=			/** Get the archive path of the check point at index
+			/** Get the archive path of the check point at index
 			*/
 			const String& GetArchivePath(int index) const
 			{

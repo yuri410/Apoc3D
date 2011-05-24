@@ -81,9 +81,9 @@ namespace Apoc3D
 			bool UnregisterArchiveType(ArchiveFactory* factory);
 
 
-			bool Exists(const String& path) const;
-			bool Exists(const String& path, String& result) const;
-			bool Exists(const String& path, vector<String>& result, vector<String>& archivePath) const;
+			bool DirectoryExists(const String& path) const;
+			bool DirectoryExists(const String& path, String& result) const;
+			bool SplitExistingDirectories(const String& path, vector<String>& result, vector<String>& archivePath) const;
 
 			vector<String> SearchFile(const String& path);
 			
