@@ -22,69 +22,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef BINARYREADER_H
-#define BINARYREADER_H
 
-#include "Common.h"
+#include "BinaryReader.h"
+
+#include "Streams.h"
 
 namespace Apoc3D
 {
 	namespace IO
 	{
-		class APAPI BinaryReader
+		void BinaryReader::FillBuffer(int32 len)
 		{
-		private:
-			Stream* m_baseStream;
-
-			char m_buffer[32];
-
-		public:
-			BinaryReader(Stream* baseStream)
-				: m_baseStream(baseStream)
-			{
-			}
-
-			
-			void FillBuffer(int32 len);
-
-			float ReadSingle()
-			{
-				FillBuffer(sizeof(float));
-				return convr32(&m_buffer[0]);
-			}
-			String* ReadString()
-			{
-				int32 len = ReadInt32();
-				
-				wchar_t* const chars = new wchar_t[len];
-
-				for (int i=0;i<len;i++)
-				{
-					chars[i] = ReadInt16();
-				}
-				String* str = new String(chars, len);
-				
-				delete chars;
-				return str;
-			}
-
-			int16 ReadInt16() 
-			{
-				FillBuffer(sizeof(int16));
-				return convint16(&m_buffer[0]);
-			}
-			int32 ReadInt32() 
-			{
-				FillBuffer(sizeof(int32));
-				return convint32(&m_buffer[0]);
-			}
-			int64 ReadInt64() 
-			{
-				FillBuffer(sizeof(int64));
-				return convint64(&m_buffer[0]);
-			}
-		};
-	};
-};
-
-#endif
+			m_baseStream->Read(&m_buffer[0], len); 
+		}
+	}
+}

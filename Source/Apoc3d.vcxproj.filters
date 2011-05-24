@@ -285,6 +285,9 @@
     <ClInclude Include="IO\Streams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\BinaryReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -453,6 +456,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\Streams.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\BinaryReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
