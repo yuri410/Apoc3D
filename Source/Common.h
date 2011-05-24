@@ -202,6 +202,12 @@ namespace Apoc3D
 	{
 
 		class Archive;
+		class ArchiveFactory;
+
+
+		class FileLocateRule;
+		class FileSystem;
+
 		class ResourceLocation;
 		class FileLocation;
 		class MemoryLocation;

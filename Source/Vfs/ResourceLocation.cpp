@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Utility/StringUtils.h"
 #include "PathUtils.h"
+#include "File.h"
 #include "io/Streams.h"
 
 using namespace Apoc3D::Utility;
@@ -33,11 +34,6 @@ namespace Apoc3D
 {	
 	namespace VFS
 	{
-		static uint64 GetFileSize(const String& file)
-		{
-			return 0;
-		}
-
 		HashHandle ResourceLocation::GetHashCode() const
 		{
 			return StringUtils::GetHashCode(m_name);
@@ -62,7 +58,7 @@ namespace Apoc3D
 
 		}
 		FileLocation::FileLocation(const String& filePath)
-			: ResourceLocation(filePath, GetFileSize(filePath)),
+			: ResourceLocation(filePath, File::GetFileSize(filePath)),
 			m_parent(0), m_path(filePath), m_stream(0)
 		{			
 

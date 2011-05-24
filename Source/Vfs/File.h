@@ -1,3 +1,4 @@
+
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,32 +22,36 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef FILESYSTEM_H
-#define FILESYSTEM_H
+#ifndef FILE_H
+#define FILE_H
 
-#include "..\Common.h"
-#include <fstream>
+#include "Common.h"
 
 namespace Apoc3D
 {
-	namespace IO
+	namespace VFS
 	{
-		class _Export FileLocation
+		class APAPI File
 		{
-		private:
-			String m_FilePath;
+		protected:
+			bool m_isInArchive;
+			int64 m_fileSize;
+			String m_fileName;
+			String m_filePath;
 
-		public:			
-			std::wfstream* Open();			
-		};
-		
-		class _Export FileSystem
-		{
+			File(const String& file, int64 size, bool isInPack);
+			
 		public:
-			FileSystem(void);
-			~FileSystem(void);
-		};
+			bool isInArchive() const { return m_isInArchive; }
+			int64 getFileSize() const { return m_fileSize; }
+			const String& getFileName() const { return m_fileName; }
+			const String& getFilePath() const { return m_filePath; }
 
-	};
+
+			static int64 GetFileSize(const String& path);
+		};
+	}
 }
+
+
 #endif

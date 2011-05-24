@@ -178,6 +178,9 @@ namespace Apoc3D
 
 		}
 
-
+		bool PathUtils::ComparePath(const String& left, const String& right)
+		{
+			return false;
+		}
 	}
 }

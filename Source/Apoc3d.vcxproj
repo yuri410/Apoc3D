@@ -169,6 +169,9 @@
     <ClInclude Include="Scene\SimpleSceneManager.h" />
     <ClInclude Include="Graphics\RenderSystem\Texture.h" />
     <ClInclude Include="Utility\StringTable.h" />
+    <ClInclude Include="Vfs\File.h" />
+    <ClInclude Include="Vfs\FileLocateRule.h" />
+    <ClInclude Include="Vfs\FileSystem.h" />
     <ClInclude Include="Vfs\PathUtils.h" />
     <ClInclude Include="Vfs\ResourceLocation.h" />
     <ClInclude Include="Vfs\VFSCommon.h" />
@@ -236,6 +239,9 @@
     <ClCompile Include="Scene\SimpleSceneManager.cpp" />
     <ClCompile Include="Graphics\RenderSystem\Texture.cpp" />
     <ClCompile Include="Utility\StringTable.cpp" />
+    <ClCompile Include="Vfs\File.cpp" />
+    <ClCompile Include="Vfs\FileLocateRule.cpp" />
+    <ClCompile Include="Vfs\FileSystem.cpp" />
     <ClCompile Include="Vfs\PathUtils.cpp" />
     <ClCompile Include="Vfs\ResourceLocation.cpp" />
   </ItemGroup>

@@ -41,9 +41,15 @@ namespace Apoc3D
 			static void SplitFileNameExtension(const String& fileName, String& noext, String& ext);
 			static void SplitFilePath(const String& path, String& fileName, String& parentDir);
 			static void SplitFilePathNameExtension(const String& path, String& parentDir, String& noext, String& ext);
+			/** Combines two path
+			*/
 			static String Combine(const String& left, const String& right);
+			/** Append sub dir to a path
+			*/
 			static void Append(String& str, const String& app);
 			static bool Match(const String& str, const String& pattern, bool caseSensitive);
+
+			static bool ComparePath(const String& left, const String& right);
 
 		private:
 			PathUtils(void) {}

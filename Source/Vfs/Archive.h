@@ -24,17 +24,30 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef ARCHIVE_H
 #define ARCHIVE_H
-#pragma once
+
 
 #include "Common.h"
-
+#include "File.h"
 
 namespace Apoc3D
 {
 	namespace VFS
 	{
-		class APAPI Archive
+		class APAPI ArchiveFactory
 		{
+		public:
+			virtual Archive* CreateInstance(const String& file) = 0;
+			virtual Archive* CreateInstance(const FileLocation* fl) = 0;
+
+			virtual String getExtension() const = 0;
+		};
+		class APAPI Archive : public File
+		{
+		protected:
+			Archive(const String& file, int64 size, bool isInArchive);
+		public:
+			virtual int getFileCount() const = 0;
+			virtual Stream* GetEntryStream(const String& file) = 0;
 
 		};
 	}

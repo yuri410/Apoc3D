@@ -288,6 +288,15 @@
     <ClInclude Include="IO\BinaryReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Vfs\FileSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vfs\File.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Vfs\FileLocateRule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -459,6 +468,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\BinaryReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vfs\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vfs\File.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vfs\FileLocateRule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

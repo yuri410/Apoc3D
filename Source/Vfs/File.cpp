@@ -21,23 +21,41 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef FILESTREAM_H
-#define FILESTREAM_H
 
-#pragma once
+#include "File.h"
 
-#include "Common.h"
-#include "Stream.h"
+#include "Vfs/PathUtils.h"
 
+using namespace Apoc3D::VFS;
 
 using namespace std;
 
 namespace Apoc3D
 {
-	namespace IO
+	namespace VFS
 	{
-		
-	};
-};
+		File::File(const String& file, int64 size, bool isInPack)
+			: m_fileSize(size), m_isInArchive(isInPack)
+		{
+			PathUtils::SplitFilePath(file, m_fileName, m_filePath);
+		}
 
-#endif
+		int64 File::GetFileSize(const String& path)
+		{
+			ifstream fs(path, ios::binary | ios::in);
+
+			if (!fs)
+			{
+				return -1;
+			}
+			
+			fs.seekg(0, ios::end);
+
+			streampos pos = fs.tellg();
+
+			fs.close();
+			return pos;
+		}
+
+	}
+}
