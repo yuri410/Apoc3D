@@ -78,11 +78,11 @@ namespace Apoc3D
 
 		Stream* MemoryLocation::GetReadStream() const
 		{
-			return new MemoryStream(reinterpret_cast<byte*>(m_data), m_size);
+			return new MemoryStream(reinterpret_cast<char*>(m_data), m_size);
 		}
 		Stream* MemoryLocation::GetWriteStream() const
 		{
-			return new MemoryStream(reinterpret_cast<byte*>(m_data), m_size);
+			return new MemoryStream(reinterpret_cast<char*>(m_data), m_size);
 		}
 	}
 }

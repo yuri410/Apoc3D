@@ -6,16 +6,17 @@ namespace Apoc3D
 {
 	namespace Utility
 	{
-		StringTable* StringTableLoader::Load(const ResourceLocation &rl)
+		StringTable* StringTableLoader::Load(const ResourceLocation* rl)
 		{
 			StringTable* st = new StringTable();
-			Read(st, rl.GetStream());
+			Read(st, rl->GetReadStream());
 			return st;
 		}
 
 		StringTable* StringTableLoader::Load(const String &file)
 		{
-			return Load(FileLocation(file));
+			const FileLocation fl(file);
+			return Load(&fl);
 		}
 	}
 }

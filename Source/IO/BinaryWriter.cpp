@@ -29,6 +29,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/BoundingSphere.h"
 #include "TaggedData.h"
 
+#include "IOUtils.h"
+
 namespace Apoc3D
 {
 	namespace IO
@@ -43,9 +45,34 @@ namespace Apoc3D
 			delete m_baseStream;
 		}
 
+		void BinaryWriter::Write(const char* bytes, int64 count) const
+		{
+			m_baseStream->Write(bytes, count);
+		}
+		void BinaryWriter::Write(char byte) const
+		{
+			m_baseStream->Write(&byte, 1);
+		}
+
 		void BinaryWriter::Write(const TaggedDataWriter* data) const
 		{
-			
+			const uint32 zeroSize = 0;
+
+			// temp placeholder
+			Write(zeroSize);
+
+			int64 start = m_baseStream->getPosition();
+			data->Save(new VirtualStream(m_baseStream, m_baseStream->getPosition()));
+
+			int64 end = m_baseStream->getPosition();
+
+			uint32 size = static_cast<uint32>(end - start);
+			m_baseStream->setPosition(start-sizeof(uint32));
+
+			Write(size);
+
+			m_baseStream->setPosition(end);
+
 		}
 		void BinaryWriter::Write(const BoundingSphere& sphere) const
 		{

@@ -31,6 +31,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/BoundingSphere.h"
 #include "TaggedData.h"
 
+#include "IOUtils.h"
+
+#include "Apoc3DException.h"
 
 namespace Apoc3D
 {
@@ -47,7 +50,117 @@ namespace Apoc3D
 		}
 		void BinaryReader::FillBuffer(int32 len)
 		{
-			m_baseStream->Read(&m_buffer[0], len); 
+			int64 result = m_baseStream->Read(&m_buffer[0], len); 
+			if (len != result)
+			{
+				Apoc3DException::createException(EX_EndOfStream, L"");
+			}
+		}
+
+
+		double BinaryReader::ReadDouble()
+		{
+			FillBuffer(sizeof(double));
+			if (m_isEndianDependent)
+			{
+				return cr64_dep(m_buffer);
+			}
+			return cr64_le(m_buffer);
+		}
+		float BinaryReader::ReadSingle()
+		{
+			FillBuffer(sizeof(float));
+			if (m_isEndianDependent)
+			{
+				return cr32_dep(m_buffer);
+			}
+			return cr32_le(m_buffer);
+		}
+		String BinaryReader::ReadString()
+		{
+			uint32 len = ReadUInt32();
+
+			//wchar_t* const chars = new wchar_t[len];
+			String str = String(len, ' ');
+			for (size_t i=0;i<len;i++)
+			{
+				str[i] = ReadInt16();
+			}
+			//String str = String(chars, len);
+
+			//delete chars;
+			return str;
+		}
+
+		int16 BinaryReader::ReadInt16() 
+		{
+			FillBuffer(sizeof(int16));
+			if (m_isEndianDependent)
+			{
+				return ci16_dep(m_buffer);
+			}
+			return ci16_le(m_buffer);
+		}
+		int32 BinaryReader::ReadInt32() 
+		{
+			FillBuffer(sizeof(int32));
+			if (m_isEndianDependent)
+			{
+				return ci32_dep(m_buffer);
+			}
+			return ci32_le(m_buffer);
+		}
+		int64 BinaryReader::ReadInt64() 
+		{
+			FillBuffer(sizeof(int64));
+			if (m_isEndianDependent)
+			{
+				return ci64_dep(m_buffer);
+			}
+			return ci64_le(m_buffer);
+		}
+
+		uint16 BinaryReader::ReadUInt16() 
+		{
+			FillBuffer(sizeof(uint16));
+			if (m_isEndianDependent)
+			{
+				return cui16_dep(m_buffer);
+			}
+			return cui16_le(m_buffer);
+		}
+		uint32 BinaryReader::ReadUInt32() 
+		{
+			FillBuffer(sizeof(uint32));
+			if (m_isEndianDependent)
+			{
+				return cui32_dep(m_buffer);
+			}
+			return cui32_le(m_buffer);
+		}
+		uint64 BinaryReader::ReadUInt64() 
+		{
+			FillBuffer(sizeof(uint64));
+			if (m_isEndianDependent)
+			{
+				return cui64_dep(m_buffer);
+			}
+			return cui64_le(m_buffer);
+		}
+
+
+		int64 BinaryReader::ReadBytes(char* dest, int64 count) const
+		{
+			return m_baseStream->Read(dest, count);
+		}
+		char BinaryReader::ReadByte() const
+		{
+			int r = m_baseStream->ReadByte();
+			if (r == -1)
+			{
+				Apoc3DException::createException(EX_EndOfStream, L"");
+			}
+			return reinterpret_cast<const char&>(r);
 		}
 
 		void BinaryReader::ReadMatrix(Matrix& matrix)

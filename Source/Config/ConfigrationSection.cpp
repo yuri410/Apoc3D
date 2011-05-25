@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ConfigurationSection.h"
 
 #include "Apoc3DException.h"
-#include "Core/Parsable.h"
+#include "Core/IParsable.h"
 #include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		const String& ConfigrationSection::getValue(const String& name) const
+		const String& ConfigurationSection::getValue(const String& name) const
 		{
 			ValueTable::const_iterator iter = m_values.find(name);
 
@@ -44,7 +44,7 @@ namespace Apoc3D
 			
 			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
 		}
-		const String& ConfigrationSection::getAttribute(const String& name) const
+		const String& ConfigurationSection::getAttribute(const String& name) const
 		{
 			ValueTable::const_iterator iter = m_attributes.find(name);
 
@@ -55,7 +55,7 @@ namespace Apoc3D
 
 			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
 		}
-		ConfigrationSection* ConfigrationSection::getSection(const String& name) const
+		ConfigurationSection* ConfigurationSection::getSection(const String& name) const
 		{
 			SubSectionTable::const_iterator iter = m_subSection.find(name);
 
@@ -66,7 +66,7 @@ namespace Apoc3D
 			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
 		}
 		
-		bool ConfigrationSection::tryGetValue(const String& name, String& result) const
+		bool ConfigurationSection::tryGetValue(const String& name, String& result) const
 		{
 			ValueTable::const_iterator iter = m_values.find(name);
 
@@ -77,7 +77,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool ConfigrationSection::tryGetAttribute(const String& name, String& result) const
+		bool ConfigurationSection::tryGetAttribute(const String& name, String& result) const
 		{
 			ValueTable::const_iterator iter = m_attributes.find(name);
 
@@ -89,7 +89,7 @@ namespace Apoc3D
 			return false;
 		}
 
-		void ConfigrationSection::Get(const String& key, IParsable* value) const
+		void ConfigurationSection::Get(const String& key, IParsable* value) const
 		{
 			assert(value);
 			const String& str = getValue(key);
@@ -97,15 +97,15 @@ namespace Apoc3D
 			value->Parse(str);
 		}
 
-		bool ConfigrationSection::GetBool(const String& key) const
+		bool ConfigurationSection::GetBool(const String& key) const
 		{
 			return StringUtils::ParseBool(getValue(key));
 		}
-		bool ConfigrationSection::GetAttributeBool(const String& key) const
+		bool ConfigurationSection::GetAttributeBool(const String& key) const
 		{
 			return StringUtils::ParseBool(getAttribute(key));
 		}
-		bool ConfigrationSection::TryGetBool(const String& key, bool& result) const
+		bool ConfigurationSection::TryGetBool(const String& key, bool& result) const
 		{
 			String str;
 			if (tryGetValue(key, str))
@@ -115,7 +115,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool ConfigrationSection::TryGetAttributeBool(const String& key, bool& result) const
+		bool ConfigurationSection::TryGetAttributeBool(const String& key, bool& result) const
 		{
 			String str;
 			if (tryGetAttribute(key, str))
@@ -126,15 +126,15 @@ namespace Apoc3D
 			return false;
 		}
 
-		float ConfigrationSection::GetSingle(const String& name) const
+		float ConfigurationSection::GetSingle(const String& name) const
 		{
 			return StringUtils::ParseSingle(getValue(name));
 		}
-		float ConfigrationSection::GetAttributeSingle(const String& key) const
+		float ConfigurationSection::GetAttributeSingle(const String& key) const
 		{
 			return StringUtils::ParseSingle(getAttribute(key));
 		}
-		bool ConfigrationSection::TryGetSingle(const String& key, float& result) const
+		bool ConfigurationSection::TryGetSingle(const String& key, float& result) const
 		{
 			String str;
 			if (tryGetValue(key, str))
@@ -144,7 +144,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool ConfigrationSection::TryGetAttributeSingle(const String& key, float& result) const
+		bool ConfigurationSection::TryGetAttributeSingle(const String& key, float& result) const
 		{
 			String str;
 			if (tryGetAttribute(key, str))
@@ -167,15 +167,15 @@ namespace Apoc3D
 		}
 		
 
-		float ConfigrationSection::GetPercentage(const String& key) const
+		float ConfigurationSection::GetPercentage(const String& key) const
 		{
 			return ParsePercentage(getValue(key));
 		}
-		float ConfigrationSection::GetAttributePercentage(const String& key) const
+		float ConfigurationSection::GetAttributePercentage(const String& key) const
 		{
 			return ParsePercentage(getAttribute(key));
 		}
-		bool ConfigrationSection::TryGetPercentage(const String& key, float& result) const
+		bool ConfigurationSection::TryGetPercentage(const String& key, float& result) const
 		{
 			String str;
 			if (tryGetValue(key, str))
@@ -185,7 +185,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool ConfigrationSection::TryGetAttributePercentage(const String& key, float& result) const
+		bool ConfigurationSection::TryGetAttributePercentage(const String& key, float& result) const
 		{
 			String str;
 			if (tryGetAttribute(key, str))
@@ -196,15 +196,15 @@ namespace Apoc3D
 			return false;
 		}
 
-		int32 ConfigrationSection::GetInt(const String& key) const
+		int32 ConfigurationSection::GetInt(const String& key) const
 		{
 			return StringUtils::ParseInt32(getValue(key));
 		}
-		int32 ConfigrationSection::GetAttributeInt(const String& key) const
+		int32 ConfigurationSection::GetAttributeInt(const String& key) const
 		{
 			return StringUtils::ParseInt32(getAttribute(key));
 		}
-		bool ConfigrationSection::TryGetInt(const String& key, int32& result) const
+		bool ConfigurationSection::TryGetInt(const String& key, int32& result) const
 		{
 			String str;
 			if (tryGetValue(key, str))
@@ -214,7 +214,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool ConfigrationSection::TryGetAttributeInt(const String& key, int32& result) const
+		bool ConfigurationSection::TryGetAttributeInt(const String& key, int32& result) const
 		{
 			String str;
 			if (tryGetAttribute(key, str))
@@ -225,15 +225,15 @@ namespace Apoc3D
 			return false;
 		}
 
-		uint32 ConfigrationSection::GetUInt(const String& key) const
+		uint32 ConfigurationSection::GetUInt(const String& key) const
 		{
 			return StringUtils::ParseUInt32(getValue(key));
 		}
-		uint32 ConfigrationSection::GetAttributeUInt(const String& key) const
+		uint32 ConfigurationSection::GetAttributeUInt(const String& key) const
 		{
 			return StringUtils::ParseUInt32(getAttribute(key));
 		}
-		bool ConfigrationSection::TryGetUInt(const String& key, uint32& result) const
+		bool ConfigurationSection::TryGetUInt(const String& key, uint32& result) const
 		{
 			String str;
 			if (tryGetValue(key, str))
@@ -243,7 +243,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool ConfigrationSection::TryGetAttributeUInt(const String& key, uint32& result) const
+		bool ConfigurationSection::TryGetAttributeUInt(const String& key, uint32& result) const
 		{
 			String str;
 			if (tryGetAttribute(key, str))
@@ -278,15 +278,15 @@ namespace Apoc3D
 			throw Apoc3DException::createException(EX_FormatException, L"Wrong number of channels");
 		}
 
-		ColorValue ConfigrationSection::GetColorValue(const String& key) const
+		ColorValue ConfigurationSection::GetColorValue(const String& key) const
 		{
 			return ParseColorValue(getValue(key));
 		}
-		ColorValue ConfigrationSection::GetAttributeColorValue(const String& key) const
+		ColorValue ConfigurationSection::GetAttributeColorValue(const String& key) const
 		{
 			return ParseColorValue(getAttribute(key));
 		}
-		bool ConfigrationSection::TryGetColorValue(const String& key, ColorValue& result) const
+		bool ConfigurationSection::TryGetColorValue(const String& key, ColorValue& result) const
 		{
 			String str;
 			if (tryGetValue(key, str))
@@ -296,7 +296,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool ConfigrationSection::TryGetAttributeColorValue(const String& key, ColorValue& result) const
+		bool ConfigurationSection::TryGetAttributeColorValue(const String& key, ColorValue& result) const
 		{
 			String str;
 			if (tryGetAttribute(key, str))
@@ -334,14 +334,14 @@ namespace Apoc3D
 			}
 		}
 
-		vector<String> ConfigrationSection::GetStrings(const String& key) const
+		vector<String> ConfigurationSection::GetStrings(const String& key) const
 		{			
 			vector<String> result;
 			SplitString(getValue(key), result);
 			
 			return result;
 		}
-		vector<String> ConfigrationSection::GetAttributeStrings(const String& key) const
+		vector<String> ConfigurationSection::GetAttributeStrings(const String& key) const
 		{
 			vector<String> result;
 			SplitString(getAttribute(key), result);
@@ -349,7 +349,7 @@ namespace Apoc3D
 			return result;
 		}
 
-		vector<float> ConfigrationSection::GetSingles(const String& key) const
+		vector<float> ConfigurationSection::GetSingles(const String& key) const
 		{
 			String val = getValue(key);
 			vector<String> vals = StringUtils::Split(val, L",");
@@ -360,7 +360,7 @@ namespace Apoc3D
 			}
 			return result;
 		}
-		vector<float> ConfigrationSection::GetAttributeSingles(const String& key) const
+		vector<float> ConfigurationSection::GetAttributeSingles(const String& key) const
 		{
 			String val = getAttribute(key);
 			vector<String> vals = StringUtils::Split(val, L",");
@@ -372,7 +372,7 @@ namespace Apoc3D
 			return result;
 		}
 		
-		vector<float> ConfigrationSection::GetPercentages(const String& key) const
+		vector<float> ConfigurationSection::GetPercentages(const String& key) const
 		{
 			String val = getValue(key);
 			vector<String> vals = StringUtils::Split(val, L",");
@@ -383,7 +383,7 @@ namespace Apoc3D
 			}
 			return result;
 		}
-		vector<float> ConfigrationSection::GetAttributePercentages(const String& key) const
+		vector<float> ConfigurationSection::GetAttributePercentages(const String& key) const
 		{
 			String val = getAttribute(key);
 			vector<String> vals = StringUtils::Split(val, L",");
@@ -395,7 +395,7 @@ namespace Apoc3D
 			return result;
 		}
 
-		vector<int32> ConfigrationSection::GetInts(const String& name) const 
+		vector<int32> ConfigurationSection::GetInts(const String& name) const 
 		{
 			String val = getValue(name);
 			vector<String> vals = StringUtils::Split(val, L",");
@@ -406,7 +406,7 @@ namespace Apoc3D
 			}
 			return result;
 		}
-		vector<int32> ConfigrationSection::GetAttributeInts(const String& name) const 
+		vector<int32> ConfigurationSection::GetAttributeInts(const String& name) const 
 		{
 			String val = getAttribute(name);
 			vector<String> vals = StringUtils::Split(val, L",");
@@ -418,7 +418,7 @@ namespace Apoc3D
 			return result;
 		}
 
-		vector<uint32> ConfigrationSection::GetUInts(const String& name) const 
+		vector<uint32> ConfigurationSection::GetUInts(const String& name) const 
 		{
 			String val = getValue(name);
 			vector<String> vals = StringUtils::Split(val, L",");
@@ -429,7 +429,7 @@ namespace Apoc3D
 			}
 			return result;
 		}
-		vector<uint32> ConfigrationSection::GetAttributeUInts(const String& name) const 
+		vector<uint32> ConfigurationSection::GetAttributeUInts(const String& name) const 
 		{
 			String val = getAttribute(name);
 			vector<String> vals = StringUtils::Split(val, L",");

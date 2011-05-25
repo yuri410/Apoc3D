@@ -38,6 +38,11 @@ namespace Apoc3D
 		float PerlinNoise::Height = 200;
 
 
+		int PerlinNoise::_p[_b+_b+2] = { 0 };
+		float PerlinNoise::_g3[(_b+_b+2)*3] = { 0 };
+		float PerlinNoise::_g2[(_b+_b+2)*2] = { 0 };
+		float PerlinNoise::_g1[(_b+_b+2)*1] = { 0 };
+		
 		int PerlinNoise::rand()
 		{
 			return Randomizer::Next();

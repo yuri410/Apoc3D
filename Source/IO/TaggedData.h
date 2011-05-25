@@ -131,7 +131,7 @@ namespace Apoc3D
 			struct Entry
 			{
 				String Name;
-				vector<char> Buffer;
+				MemoryOutStream* Buffer;
 				Entry(const String& name)
 					: Name(name)
 				{
@@ -139,12 +139,42 @@ namespace Apoc3D
 				}
 			};
 
-			typedef unordered_map<String, Entry*> SectionTable;
+			typedef unordered_map<String, Entry> SectionTable;
 
 			SectionTable m_positions;
 			char m_buffer[32];
 		public:
+			TaggedDataWriter() { }
+			~TaggedDataWriter();
+
+
+
+			BinaryWriter* AddEntry(const String& name);
+			Stream* AddEntryStream(const String& name);
+
+			inline void AddEntry(const String& name, int64 value);
+			inline void AddEntry(const String& name, uint64 value);
+			inline void AddEntry(const String& name, int32 value);
+			inline void AddEntry(const String& name, uint32 value);
+			inline void AddEntry(const String& name, int16 value);
+			inline void AddEntry(const String& name, uint16 value);
+			inline void AddEntry(const String& name, float value);
+			inline void AddEntry(const String& name, double value);
+			inline void AddEntry(const String& name, bool value);
 			
+			BinaryWriter* GetData(const String& name);
+
+			inline void SetData(const String& name, int64 value);
+			inline void SetData(const String& name, uint64 value);
+			inline void SetData(const String& name, int32 value);
+			inline void SetData(const String& name, uint32 value);
+			inline void SetData(const String& name, int16 value);
+			inline void SetData(const String& name, uint16 value);
+			inline void SetData(const String& name, float value);
+			inline void SetData(const String& name, double value);
+			inline void SetData(const String& name, bool value);
+
+			void Save(Stream* stream) const;
 		};
 	}
 }

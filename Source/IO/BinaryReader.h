@@ -48,96 +48,23 @@ namespace Apoc3D
 			Stream* getBaseStream() const { return m_baseStream; }
 
 			BinaryReader(Stream* baseStream);
+			
 			~BinaryReader();
-			double ReadDouble()
-			{
-				FillBuffer(sizeof(double));
-				if (m_isEndianDependent)
-				{
-					return cr64_dep(m_buffer);
-				}
-				return cr64_le(m_buffer);
-			}
-			float ReadSingle()
-			{
-				FillBuffer(sizeof(float));
-				if (m_isEndianDependent)
-				{
-					return cr32_dep(m_buffer);
-				}
-				return cr32_le(m_buffer);
-			}
-			String ReadString()
-			{
-				uint32 len = ReadUInt32();
-				
-				//wchar_t* const chars = new wchar_t[len];
-				String str = String(len, ' ');
-				for (size_t i=0;i<len;i++)
-				{
-					str[i] = ReadInt16();
-				}
-				//String str = String(chars, len);
-				
-				//delete chars;
-				return str;
-			}
 
-			int16 ReadInt16() 
-			{
-				FillBuffer(sizeof(int16));
-				if (m_isEndianDependent)
-				{
-					return ci16_dep(m_buffer);
-				}
-				return ci16_le(m_buffer);
-			}
-			int32 ReadInt32() 
-			{
-				FillBuffer(sizeof(int32));
-				if (m_isEndianDependent)
-				{
-					return ci32_dep(m_buffer);
-				}
-				return ci32_le(m_buffer);
-			}
-			int64 ReadInt64() 
-			{
-				FillBuffer(sizeof(int64));
-				if (m_isEndianDependent)
-				{
-					return ci64_dep(m_buffer);
-				}
-				return ci64_le(m_buffer);
-			}
+			inline int64 ReadBytes(char* dest, int64 count) const;
+			inline char ReadByte() const;
 
-			uint16 ReadUInt16() 
-			{
-				FillBuffer(sizeof(uint16));
-				if (m_isEndianDependent)
-				{
-					return cui16_dep(m_buffer);
-				}
-				return cui16_le(m_buffer);
-			}
-			uint32 ReadUInt32() 
-			{
-				FillBuffer(sizeof(uint32));
-				if (m_isEndianDependent)
-				{
-					return cui32_dep(m_buffer);
-				}
-				return cui32_le(m_buffer);
-			}
-			uint64 ReadUInt64() 
-			{
-				FillBuffer(sizeof(uint64));
-				if (m_isEndianDependent)
-				{
-					return cui64_dep(m_buffer);
-				}
-				return cui64_le(m_buffer);
-			}
+			double ReadDouble();
+			float ReadSingle();
+			String ReadString();
+
+			int16 ReadInt16();
+			int32 ReadInt32();
+			int64 ReadInt64();
+
+			uint16 ReadUInt16();
+			uint32 ReadUInt32();
+			uint64 ReadUInt64();
 			inline void ReadColor4(Color4& color);
 
 			inline void ReadPlane(Plane& plane);

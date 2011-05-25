@@ -29,11 +29,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace std;
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::IO;
 
 namespace Apoc3D
 {
 	namespace Utility
 	{
+		template class APAPI unordered_map<String, pair<String, String>>;
+
 		class APAPI StringTable
 		{
 		private:
@@ -47,11 +50,11 @@ namespace Apoc3D
 		class APAPI StringTableLoader
 		{
 		public:
-			StringTable* Load(const ResourceLocation &rl);
+			StringTable* Load(const ResourceLocation* rl);
 			StringTable* Load(const String &file);
 
-			virtual void Read(StringTable* data, wistream* stm) = 0;
-			virtual void Write(StringTable* data, wostream* stm) = 0;
+			virtual void Read(StringTable* data, Stream* stm) = 0;
+			virtual void Write(StringTable* data, Stream* stm) = 0;
 
 			virtual vector<String> getFilters() = 0;
 		};

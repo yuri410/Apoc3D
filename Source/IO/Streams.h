@@ -79,6 +79,8 @@ namespace Apoc3D
 			virtual void Seek(int64 offset, SeekMode mode) = 0;
 
 			virtual void Close() = 0;
+
+			virtual void Flush() = 0;
 		};
 
 		class APAPI FileStream : public Stream
@@ -115,21 +117,23 @@ namespace Apoc3D
 
 			virtual void Seek(int64 offset, SeekMode mode);
 			virtual void Close();
+
+			virtual void Flush() { }
 		};
 
 		class APAPI MemoryStream : public Stream
 		{
 		private:
 			int64 m_length;
-			byte* m_data;
+			char* m_data;
 			int64 m_position;
 		public:
-			byte* getInternalPointer() const { return m_data; }
+			char* getInternalPointer() const { return m_data; }
 
 			virtual bool IsReadEndianDependent() const { return false; }
 			virtual bool IsWriteEndianDependent() const { return false; }
 
-			MemoryStream(byte* data, int64 length)
+			MemoryStream(char* data, int64 length)
 				: m_data(data), m_length(length)
 			{ }
 			virtual ~MemoryStream()
@@ -162,8 +166,7 @@ namespace Apoc3D
 					count = m_length;
 				}
 
-				byte* dst = reinterpret_cast<byte*>(dest);
-				memcpy(dst, m_data+m_position, static_cast<size_t>(count));
+				memcpy(dest, m_data+m_position, static_cast<size_t>(count));
 				
 				m_position += count;
 				return count;
@@ -190,7 +193,9 @@ namespace Apoc3D
 				if (m_position > m_length)
 					m_position = m_length;
 			}
-			virtual void Close();
+			virtual void Close() { }
+
+			virtual void Flush() { }
 		};
 
 		class APAPI VirtualStream : public Stream
@@ -248,14 +253,17 @@ namespace Apoc3D
 
 			virtual int64 Read(char* dest, int64 count)
 			{
-				if (getPosition() + count > m_length)
+				if (getPosition() + count > getLength())
 				{
-					count = m_length - getPosition();
+					count = getLength() - getPosition();
 				}
 
 				return count;
 			}
-			virtual void Write(const char* src, int64 count);
+			virtual void Write(const char* src, int64 count)
+			{
+				m_baseStream->Write(src, count);
+			}
 			virtual void Seek(int64 offset, SeekMode mode)
 			{
 				switch (mode)
@@ -296,6 +304,107 @@ namespace Apoc3D
 			}
 
 			virtual void Close() { }
+
+			virtual void Flush() { m_baseStream->Flush(); }
+		};
+
+
+		class APAPI MemoryOutStream : public Stream
+		{
+		private:
+			int64 m_length;
+			vector<char>* m_data;
+			int64 m_position;
+		public:
+			const vector<char>* getPointer() const { return m_data; }
+
+			virtual bool IsReadEndianDependent() const { return false; }
+			virtual bool IsWriteEndianDependent() const { return false; }
+
+			MemoryOutStream(int64 preserved)
+				: m_length(0), m_position(0)
+			{
+				m_data = new vector<char>();
+				
+			}
+			virtual ~MemoryOutStream()
+			{
+				delete m_data;
+			}
+
+			virtual bool CanRead() const { return true; }
+			virtual bool CanWrite() const { return true; }
+
+
+			virtual int64 getLength() const
+			{
+				return m_length;
+			}
+
+			virtual void setPosition(int64 offset)
+			{
+				m_position = offset;
+			}
+			virtual int64 getPosition() const
+			{ 
+				return m_position;
+			}
+
+
+			virtual int64 Read(char* dest, int64 count)
+			{
+				if (count > m_length)
+				{
+					count = m_length;
+				}
+
+				for (size_t i=0;i<m_position;i++)
+					dest[i] = m_data->operator[](static_cast<size_t>(i+m_position));
+				
+				m_position += count;
+				return count;
+			}
+			virtual void Write(const char* src, int64 count)
+			{
+				for (size_t i=0;i<count;i++)
+				{
+					if (m_position>=m_length)
+					{
+						m_data->push_back(src[i]);
+						m_length++;
+					}
+					else
+					{
+						m_data->operator[](static_cast<size_t>(m_position)) = src[i];
+					}
+					m_position++;
+				}
+				
+			}
+
+
+			virtual void Seek(int64 offset, SeekMode mode)
+			{
+				switch (mode)
+				{
+				case SEEK_Begin:
+					m_position = (int)offset;
+					break;
+				case SEEK_Current:
+					m_position += (int)offset;
+					break;
+				case SEEK_End:
+					m_position = m_length + (int)offset;
+					break;
+				}
+				if (m_position < 0)
+					m_position = 0;
+				if (m_position > m_length)
+					m_position = m_length;
+			}
+			virtual void Close() {}
+
+			virtual void Flush(){}
 		};
 	};
 }

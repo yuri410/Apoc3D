@@ -45,10 +45,12 @@ namespace Apoc3D
 			BinaryWriter(Stream* baseStream);
 			~BinaryWriter();
 
+			inline void Write(const char* bytes, int64 count) const;
+			inline void Write(char byte) const;
 
 			inline void Write(double value) const;
 			inline void Write(float value) const;
-			inline void Write(const String& value) const;
+			inline void Write(const String& value) const;			
 			inline void Write(int16 value) const;
 			inline void Write(int32 value) const;
 			inline void Write(int64 value) const;

@@ -52,7 +52,7 @@ namespace Apoc3D
 			size_t res;
 			wcstombs_s(&res, buffer, path.c_str(), 256);
 
-			if (access(buffer, 0) == 0)
+			if (_access(buffer, 0) == 0)
 			{
 				stat(buffer, &status);
 
@@ -71,7 +71,7 @@ namespace Apoc3D
 			size_t res;
 			wcstombs_s(&res, buffer, path.c_str(), 256);
 
-			if (access(buffer, 0) == 0)
+			if (_access(buffer, 0) == 0)
 			{
 				stat(buffer, &status);
 				
@@ -91,7 +91,7 @@ namespace Apoc3D
 			size_t res;
 			wcstombs_s(&res, buffer, path.c_str(), 256);
 
-			if (access(buffer, 0) == 0)
+			if (_access(buffer, 0) == 0)
 			{
 				stat(buffer, &status);
 

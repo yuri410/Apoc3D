@@ -75,8 +75,8 @@ namespace Apoc3D
 		void FileStream::Close()
 		{
 			m_in->close();
+			
 		}
-
 
 
 		void MemoryStream::Write(const char* src, int64 count)

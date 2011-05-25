@@ -50,7 +50,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;APOC3D_DLLEX;LITTLE_INDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;APOC3D_DLLEX;LITTLE_ENDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>Common.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -60,8 +60,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\lib\dxsdk\Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\lib\x86dbg;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>tinyxml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -98,6 +99,7 @@
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="core\streaming\asyncprocessor.h" />
     <ClInclude Include="IO\BinaryWriter.h" />
+    <ClInclude Include="IO\IOUtils.h" />
     <ClInclude Include="IO\TaggedData.h" />
     <ClInclude Include="IO\BinaryReader.h" />
     <ClInclude Include="IO\Streams.h" />
@@ -150,7 +152,6 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneObject.h" />
-    <ClInclude Include="Graphics\DeviceSettings.h" />
     <ClInclude Include="Graphics\EffectSystem\Effect.h" />
     <ClInclude Include="Graphics\EffectSystem\MicroEffectCodeParser.h" />
     <ClInclude Include="Graphics\EffectSystem\EffectParameter.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
     <ClCompile Include="IO\BinaryReader.cpp" />
     <ClCompile Include="IO\BinaryWriter.cpp" />
+    <ClCompile Include="IO\IOUtils.cpp" />
     <ClCompile Include="IO\Streams.cpp" />
     <ClCompile Include="IO\TaggedData.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />

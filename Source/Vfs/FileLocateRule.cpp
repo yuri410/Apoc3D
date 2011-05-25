@@ -29,6 +29,10 @@ namespace Apoc3D
 {
 	namespace VFS
 	{
+		FileLocateRule FileLocateRule::Textures;
+		FileLocateRule FileLocateRule::Effects;
+		FileLocateRule FileLocateRule::Default;
+
 		void FileLocateRule::Initialize()
 		{
 			{
@@ -69,7 +73,7 @@ namespace Apoc3D
 			vector<String> fullPath;
 			vector<String> arcPath;
 
-			if (FileSystem::getSingleton().Exists(path, fullPath, arcPath))
+			if (FileSystem::getSingleton().SplitExistingDirectories(path, fullPath, arcPath))
 			{
 				for (size_t i = 0; i < fullPath.size(); i++)
 				{

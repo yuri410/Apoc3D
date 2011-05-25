@@ -23,9 +23,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "TaggedData.h"
 #include "BinaryReader.h"
+#include "BinaryWriter.h"
 #include "Streams.h"
 #include "Apoc3DException.h"
 
+#include "IOUtils.h"
 
 namespace Apoc3D
 {
@@ -223,5 +225,42 @@ namespace Apoc3D
 		{
 			m_stream->Close();
 		}
+		
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+		TaggedDataWriter::~TaggedDataWriter()
+		{
+			for (auto e = m_positions.begin(); e!= m_positions.end(); e++)
+			{
+				MemoryOutStream* ee = e->second.Buffer;
+				delete ee;
+			}
+			m_positions.clear();
+		}
+
+		void TaggedDataWriter::Save(Stream* stream) const
+		{
+			BinaryWriter* bw = new BinaryWriter(stream);
+
+			bw->Write(static_cast<uint32>(m_positions.size()));
+
+			for (auto i = m_positions.begin();i!=m_positions.end();i++)
+			{
+				const MemoryOutStream* e = i->second.Buffer;
+				bw->Write(i->first);
+				bw->Write(static_cast<uint32>(e->getLength()));
+				for (auto j=0;j<e->getLength();j++)
+				{
+					bw->Write(
+						static_cast<char>(e->getPointer()->operator[](j)));
+				}
+			}
+
+			bw->Close();
+			delete bw;
+		}
+
 	}
 }

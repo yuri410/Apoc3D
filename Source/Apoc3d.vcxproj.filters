@@ -33,9 +33,6 @@
     <ClInclude Include="Scene\SceneNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\DeviceSettings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\EffectDescription.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -303,6 +300,9 @@
     <ClInclude Include="IO\BinaryWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\IOUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -489,6 +489,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\BinaryWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\IOUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -36,12 +36,12 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		class APAPI ConfigrationSection
+		class APAPI ConfigurationSection
 		{
 		protected:
 			typedef unordered_map<String, String> AttributeTable;
 			typedef unordered_map<String, String> ValueTable;
-			typedef unordered_map<String, ConfigrationSection*> SubSectionTable;
+			typedef unordered_map<String, ConfigurationSection*> SubSectionTable;
 
 			String m_name;
 
@@ -50,7 +50,7 @@ namespace Apoc3D
 			SubSectionTable m_subSection;
 
 		public:
-			ConfigrationSection(const String& name)
+			ConfigurationSection(const String& name)
 				: m_name(name) 
 			{ }
 
@@ -61,7 +61,7 @@ namespace Apoc3D
 			bool tryGetValue(const String& name, String& result) const;
 			bool tryGetAttribute(const String& name, String& result) const;
 
-			ConfigrationSection* getSection(const String& name) const;
+			ConfigurationSection* getSection(const String& name) const;
 
 			void Get(const String& key, IParsable* value) const;
 

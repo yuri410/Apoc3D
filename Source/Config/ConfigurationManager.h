@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Common.h"
 #include "Core/Singleton.h"
+#include "Configuration.h"
 
 using namespace Apoc3D::Core;
 
@@ -32,6 +33,8 @@ namespace Apoc3D
 {
 	namespace Config
 	{
+		template class APAPI unordered_map<String, Configuration*>;
+			 
 		class APAPI ConfigurationManager : public Singleton<ConfigurationManager>
 		{
 		private:

@@ -32,6 +32,8 @@ namespace Apoc3D
 {
 	namespace Config
 	{
+		template class APAPI unordered_map<String, ConfigurationSection*>;
+
 		class APAPI Configuration
 		{
 		private:
