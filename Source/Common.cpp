@@ -24,67 +24,67 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
-inline int32 ci32_mem(const char* const src)
+inline int32 ci32_dep(const char* const src)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	return *reinterpret_cast<const int32*>(src);
 #else
 	return (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
 #endif
 }
-inline int16 ci16_mem(const char* const src)
+inline int16 ci16_dep(const char* const src)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	return *reinterpret_cast<const int16*>(src);
 #else
 	return (src[0] << 8) | src[1];
 #endif
 }
-inline int64 ci64_mem(const char* const src)
+inline int64 ci64_dep(const char* const src)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	return *reinterpret_cast<const int64*>(src);
 #else
 	return (src[0] << 56) | (src[1] << 48) | (src[2] << 40) | (src[3] << 32) | 
 		(src[4] << 24) | (src[5] << 16) | (src[6] << 8) | src[7];
 #endif
 }
-inline uint32 cui32_mem(const char* const src)
+inline uint32 cui32_dep(const char* const src)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	return *reinterpret_cast<const uint32*>(src);
 #else
 	return (src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3];
 #endif
 }
-inline uint16 cui16_mem(const char* const src)
+inline uint16 cui16_dep(const char* const src)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	return *reinterpret_cast<const uint16*>(src);
 #else
 	return (src[0] << 8) | src[1];
 #endif
 }
-inline uint64 cui64_mem(const char* const src)
+inline uint64 cui64_dep(const char* const src)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	return *reinterpret_cast<const uint64*>(src);
 #else
 	return (src[0] << 56) | (src[1] << 48) | (src[2] << 40) | (src[3] << 32) | 
 		(src[4] << 24) | (src[5] << 16) | (src[6] << 8) | src[7];
 #endif
 }
-inline const float cr32_mem(const char* const src)
+inline const float cr32_dep(const char* const src)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	return *reinterpret_cast<const float*>(src);
 #else
 	return reinterpret_cast<float&>((src[0] << 24) | (src[1] << 16) | (src[2] << 8) | src[3]);		
 #endif
 }
-inline const double cr64_mem(const char* const src)
+inline const double cr64_dep(const char* const src)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	return *reinterpret_cast<const double*>(src);
 #else
 	return reinterpret_cast<double&>(
@@ -128,7 +128,7 @@ inline const double cr64_le(const char* const src)
 
 inline void i16tomb_le(int16 v, char* dest)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	reinterpret_cast<int16&>(dest[0]) = v;
 #else
 	dest[0] = 0xff & (v >> 8);
@@ -137,7 +137,7 @@ inline void i16tomb_le(int16 v, char* dest)
 }
 inline void i32tomb_le(int32 v, char* dest)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	reinterpret_cast<int32&>(dest[0]) = v;
 #else
 	dest[0] = 0xff & (v >> 24);
@@ -148,7 +148,7 @@ inline void i32tomb_le(int32 v, char* dest)
 }
 inline void i64tomb_le(int64 v, char* dest)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	reinterpret_cast<int64&>(dest[0]) = v;
 #else
 	dest[0] = 0xff & (v >> 56);
@@ -163,7 +163,7 @@ inline void i64tomb_le(int64 v, char* dest)
 }
 inline void ui16tomb_le(uint16 v, char* dest)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	reinterpret_cast<uint16&>(dest[0]) = v;
 #else
 	dest[0] = 0xff & (v >> 8);
@@ -172,7 +172,7 @@ inline void ui16tomb_le(uint16 v, char* dest)
 }
 inline void ui32tomb_le(uint32 v, char* dest)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	reinterpret_cast<uint32&>(dest[0]) = v;
 #else
 	dest[0] = 0xff & (v >> 24);
@@ -183,7 +183,7 @@ inline void ui32tomb_le(uint32 v, char* dest)
 }
 inline void ui64tomb_le(uint64 v, char* dest)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	reinterpret_cast<uint64&>(dest[0]) = v;
 #else
 	dest[0] = 0xff & (v >> 56);
@@ -198,7 +198,7 @@ inline void ui64tomb_le(uint64 v, char* dest)
 }
 inline void r32tomb_le(float v, char* dest)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	reinterpret_cast<float&>(dest[0]) = v;
 #else
 	uint32 r = reinterpret_cast<const uint32&>(v);
@@ -210,7 +210,7 @@ inline void r32tomb_le(float v, char* dest)
 }
 inline void r64tomb_le(double v, char* dest)
 {
-#if LITTLE_INDIAN
+#if LITTLE_ENDIAN
 	reinterpret_cast<double&>(dest[0]) = v;
 #else
 	uint64 r = reinterpret_cast<const uint64&>(v);

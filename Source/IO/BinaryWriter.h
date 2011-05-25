@@ -36,9 +36,46 @@ namespace Apoc3D
 		class APAPI BinaryWriter
 		{
 		private:
+			bool m_endianDependent;
 			Stream* m_baseStream;
 
 		public:
+			Stream* getBaseStream() const { return m_baseStream; }
+
+			BinaryWriter(Stream* baseStream);
+			~BinaryWriter();
+
+
+			inline void Write(double value) const;
+			inline void Write(float value) const;
+			inline void Write(const String& value) const;
+			inline void Write(int16 value) const;
+			inline void Write(int32 value) const;
+			inline void Write(int64 value) const;
+			inline void Write(uint16 value) const;
+			inline void Write(uint32 value) const;
+			inline void Write(uint64 value) const;
+
+			inline void Write(const Color4& value) const;
+			inline void Write(const Plane& plane) const;
+			inline void Write(const Matrix& matrix) const;
+			inline void Write(const Quaternion& quat) const;
+			inline void Write(const Point& point) const;
+			inline void Write(const Size& size) const;
+			inline void Write(const Rectangle& rect) const;
+			inline void Write(const RectangleF& rect) const;
+
+			inline void Write(const Ray& ray) const;
+			inline void Write(const BoundingBox& sphere) const;
+			inline void Write(const BoundingSphere& box) const;
+
+			inline void WriteVector2(const float* buffer) const;
+			inline void WriteVector3(const float* buffer) const;
+			inline void WriteVector4(const float* buffer) const;
+
+			void Write(const TaggedDataWriter* data) const;
+			inline void Close() const;
 		};
 	}
 }
+#endif

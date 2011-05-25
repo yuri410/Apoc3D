@@ -191,6 +191,7 @@
     <ClCompile Include="Core\Resource.cpp" />
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
     <ClCompile Include="IO\BinaryReader.cpp" />
+    <ClCompile Include="IO\BinaryWriter.cpp" />
     <ClCompile Include="IO\Streams.cpp" />
     <ClCompile Include="IO\TaggedData.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />

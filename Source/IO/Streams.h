@@ -48,6 +48,8 @@ namespace Apoc3D
 		public:
 			virtual ~Stream() { }
 
+			virtual bool IsReadEndianDependent() const = 0;
+			virtual bool IsWriteEndianDependent() const = 0;
 			virtual bool CanRead() const = 0;
 			virtual bool CanWrite() const = 0;
 
@@ -88,6 +90,9 @@ namespace Apoc3D
 			FileStream(const String& filename);
 			virtual ~FileStream();
 
+			virtual bool IsReadEndianDependent() const { return true; }
+			virtual bool IsWriteEndianDependent() const { return false; }
+
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return false; }
 
@@ -120,6 +125,9 @@ namespace Apoc3D
 			int64 m_position;
 		public:
 			byte* getInternalPointer() const { return m_data; }
+
+			virtual bool IsReadEndianDependent() const { return false; }
+			virtual bool IsWriteEndianDependent() const { return false; }
 
 			MemoryStream(byte* data, int64 length)
 				: m_data(data), m_length(length)
@@ -195,6 +203,11 @@ namespace Apoc3D
 			bool m_isOutput;
 
 		public:
+
+			virtual bool IsReadEndianDependent() const { return m_baseStream->IsReadEndianDependent(); }
+			virtual bool IsWriteEndianDependent() const { return m_baseStream->IsWriteEndianDependent(); }
+
+
 			Stream* getBaseStream() const { return m_baseStream; }
 			bool isOutput() const { return m_isOutput; }
 
