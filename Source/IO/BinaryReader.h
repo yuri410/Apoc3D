@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 
 using namespace Apoc3D::Math;
+using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
@@ -48,7 +49,8 @@ namespace Apoc3D
 			Stream* getBaseStream() const { return m_baseStream; }
 
 			BinaryReader(Stream* baseStream);
-			
+			BinaryReader(const ResourceLocation* baseStream);
+
 			~BinaryReader();
 
 			inline int64 ReadBytes(char* dest, int64 count) const;
@@ -87,7 +89,7 @@ namespace Apoc3D
 			inline void ReadVector3(float* buffer);
 			inline void ReadVector2(float* buffer);
 
-			const TaggedDataReader* ReadTaggedDataBlock();
+			TaggedDataReader* ReadTaggedDataBlock();
 
 			inline void Close() const;
 		};

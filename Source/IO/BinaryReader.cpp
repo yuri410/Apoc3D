@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/BoundingBox.h"
 #include "Math/BoundingSphere.h"
 #include "TaggedData.h"
-
+#include "Vfs/ResourceLocation.h"
 #include "IOUtils.h"
 
 #include "Apoc3DException.h"
@@ -43,6 +43,11 @@ namespace Apoc3D
 			: m_baseStream(baseStream)
 		{
 			m_isEndianDependent = baseStream->IsReadEndianDependent();
+		}
+		BinaryReader::BinaryReader(const ResourceLocation* rl)
+		{
+			m_baseStream = rl->GetReadStream();
+			m_isEndianDependent = m_baseStream->IsReadEndianDependent();
 		}
 		BinaryReader::~BinaryReader()
 		{
@@ -462,7 +467,7 @@ namespace Apoc3D
 			}
 		}
 
-		const TaggedDataReader* BinaryReader::ReadTaggedDataBlock()
+		TaggedDataReader* BinaryReader::ReadTaggedDataBlock()
 		{
 			uint32 size = ReadUInt32();
 

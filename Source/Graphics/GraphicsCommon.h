@@ -34,6 +34,16 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+
+			enum TextureType
+			{
+				TT_Texture1D = 0,
+				TT_Texture2D,
+				TT_Texture3D,
+				TT_CubeTexture
+			};
+
+
 			enum LockMode
 			{
 				LOCK_None = 0,

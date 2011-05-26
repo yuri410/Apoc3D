@@ -297,6 +297,9 @@
     <ClInclude Include="IO\IOUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\TextureData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -492,6 +495,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\TextureData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

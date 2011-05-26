@@ -21,45 +21,52 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef TEXTUREDATA_H
+#define TEXTUREDATA_H
 
 #include "Common.h"
-#include "Graphics/GraphicsCommon.h"
 #include "Graphics/PixelFormat.h"
-//#include "Core\Resource.h"
+#include "Graphics/GraphicsCommon.h"
 
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Graphics;
 using namespace Apoc3D::VFS;
-using namespace Apoc3D::Core;
+
+using namespace std;
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace IO
 	{
-		namespace RenderSystem
+		class APAPI TextureLevelData
 		{
-			class APAPI Texture// : public Resource
-			{
-			private:
-				//IDirect3DBaseTexture9* m_baseTexture;
-				RenderDevice* m_renderDevice;
-				const ResourceLocation* m_resourceLocation;
-				TextureType* m_type;
-				int32 m_width;
-				int32 m_height;
-				int32 m_depth;
-				int32 m_contentSize;
-				int32 m_levelCount;
-				TextureUsage m_usage;
-				PixelFormat m_format;
-			protected:
+		public:
+			int32 Height;
+			int32 Width;
+			int32 Depth;
+			int32 LevelSize;
+			char* ContentData;
 
-			public:
-				Texture(void);
-				~Texture(void);
-			};
-		}
+			TextureLevelData(){}
+			~TextureLevelData(){}
+			void LoadData(TaggedDataReader* data);
+			void SaveData(TaggedDataWriter* data) const;
+		};
+		class APAPI TextureData
+		{
+		public:
+			TextureType Type;
+			vector<TextureLevelData> Levels;
+			PixelFormat Format;
+			int32 ContentSize;
+			int32 LevelCount;
 
+			TextureData() {}
+			~TextureData() {}
+			void Load(const ResourceLocation* rl);
+			void Save(Stream* strm) const;
+		};
 	}
 }
+
 #endif
