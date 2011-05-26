@@ -5,13 +5,17 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		Enumeration::Enumeration(void)
+		namespace RenderSystem
 		{
-		}
+
+			Enumeration::Enumeration(void)
+			{
+			}
 
 
-		Enumeration::~Enumeration(void)
-		{
+			Enumeration::~Enumeration(void)
+			{
+			}
 		}
 	}
 }

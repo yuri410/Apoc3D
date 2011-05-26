@@ -26,76 +26,79 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 
-#include "Common.h"
+#include "D3D9Common.h"
 #include "DeviceSettings.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class APAPI GraphicsDeviceManager
+		namespace D3D9RenderSystem
 		{
-		private:
-			DeviceSettings* m_currentSetting;
-			IDirect3D9* m_direct3D9;
-			Device* m_device;
-
-			Game* m_game;
-
-			bool m_ignoreSizeChanges;
-			bool m_deviceLost;
-
-			bool m_doNotStoreBufferSize;
-			bool m_renderingOccluded;
-
-			int32 m_fullscreenWindowWidth;
-			int32 m_fullscreenWindowHeight;
-			int32 m_windowedWindowWidth;
-			int32 m_windowedWindowHeight;
-			WINDOWPLACEMENT m_windowedPlacement;
-			int64 m_windowedStyle;
-			//bool m_savedTopmost;
-
-
-			bool CanResetDevice(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
-			void CreateDevice(const DeviceSettings &settings);
-			void game_FrameStart(bool* cancel);
-			void game_FrameEnd();
-			void Window_UserResized();
-			void Window_MonitorChanged();
-
-			void InitializeDevice();
-			HRESULT ResetDevice();
-
-			int32 GetAdapterOrdinal(HMONITOR mon);
-			void UpdateDeviceInformation();
-
-		public:
-			GraphicsDeviceManager(Game* game);
-			~GraphicsDeviceManager(void);
-
-			Device* getDevice() const { return m_device; }
-			IDirect3D9* getDirect3D() const { return m_direct3D9; }
-
-
-			/* Ensures that the device is properly initialized and ready to render.
-			*/
-			bool EnsureDevice() const
+			class APAPI GraphicsDeviceManager
 			{
-				return m_device && !m_deviceLost;
-			}
+			private:
+				DeviceSettings* m_currentSetting;
+				IDirect3D9* m_direct3D9;
+				D3DDevice* m_device;
 
-			void ChangeDevice(bool windowed, int desiredWidth, int desiredHeight);
+				Game* m_game;
 
-			/* Changes the device.
-			*/
-			void ChangeDevice(const DeviceSettings &prefer);
-			/* Toggles between full screen and windowed mode.
-			*/
-			void ToggleFullScreen();
-			void ReleaseDevice();
+				bool m_ignoreSizeChanges;
+				bool m_deviceLost;
 
-		};
+				bool m_doNotStoreBufferSize;
+				bool m_renderingOccluded;
+
+				int32 m_fullscreenWindowWidth;
+				int32 m_fullscreenWindowHeight;
+				int32 m_windowedWindowWidth;
+				int32 m_windowedWindowHeight;
+				WINDOWPLACEMENT m_windowedPlacement;
+				int64 m_windowedStyle;
+				//bool m_savedTopmost;
+
+
+				bool CanResetDevice(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
+				void CreateDevice(const DeviceSettings &settings);
+				void game_FrameStart(bool* cancel);
+				void game_FrameEnd();
+				void Window_UserResized();
+				void Window_MonitorChanged();
+
+				void InitializeDevice();
+				HRESULT ResetDevice();
+
+				int32 GetAdapterOrdinal(HMONITOR mon);
+				void UpdateDeviceInformation();
+
+			public:
+				GraphicsDeviceManager(Game* game);
+				~GraphicsDeviceManager(void);
+
+				Device* getDevice() const { return m_device; }
+				IDirect3D9* getDirect3D() const { return m_direct3D9; }
+
+
+				/* Ensures that the device is properly initialized and ready to render.
+				*/
+				bool EnsureDevice() const
+				{
+					return m_device && !m_deviceLost;
+				}
+
+				void ChangeDevice(bool windowed, int desiredWidth, int desiredHeight);
+
+				/* Changes the device.
+				*/
+				void ChangeDevice(const DeviceSettings &prefer);
+				/* Toggles between full screen and windowed mode.
+				*/
+				void ToggleFullScreen();
+				void ReleaseDevice();
+
+			};
+		}
 	}
 };
 #endif

@@ -31,7 +31,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class Random
+		class APAPI Random
 		{
 		private:
 			int32 m_inext;
@@ -145,7 +145,7 @@ namespace Apoc3D
 
 		};
 
-		class Randomizer
+		class APAPI Randomizer
 		{
 		private:
 			static Random m_randomizer;

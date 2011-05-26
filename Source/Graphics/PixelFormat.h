@@ -145,18 +145,12 @@ namespace Apoc3D
 			///    DDS (DirectDraw Surface) DXT5 format.
 			/// </summary>
 			FMT_DXT5 = 21,
-			/// <summary>
-			///    48-bit pixel format, 16 bits (float) for red, 16 bits (float) for green, 16 bits (float) for blue
-			/// </summary>
-			FMT_R16G16B16F = 22,
+
 			/// <summary>
 			/// 64-bit floating point format using 16 bits for each channel (alpha, blue, green, red).
 			/// </summary>
 			FMT_A16B16G16R16F = 23,
-			/// <summary>
-			///    96-bit pixel format, 32 bits (float) for red, 32 bits (float) for green, 32 bits (float) for blue
-			/// </summary>
-			FMT_R32G32B32F = 24,
+
 			/// <summary>
 			///    128-bit floating point format using 32 bits for each channel (alpha, blue,  green, red).
 			/// </summary>

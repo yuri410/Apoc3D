@@ -36,80 +36,82 @@ namespace Apoc3D
 		{
 			enum LockMode
 			{
-				LOCK_None,
-				LOCK_Discard,
-				LOCK_ReadOnly,
-				LOCK_NoOverwrite
+				LOCK_None = 0,
+				LOCK_Discard = 1,
+				LOCK_ReadOnly = 2,
+				LOCK_NoOverwrite = 3,
+				LOCK_Count = 4
 			};
 
 			/* 
 			*/
-			enum BufferUsage
+			enum BufferUsageFlags
 			{
 				BU_Static = 1,
 				BU_Dynamic = 2,
-				BU_WriteOnly = 4,
-				BU_Discardable = 8
+				BU_WriteOnly = 4
 			};
 			/* 
 			*/
 			enum IndexBufferType    
 			{
-				IBT_Bit16,
-				IBT_Bit32
+				IBT_Bit16 = 0,
+				IBT_Bit32 = 1
 			};
 			/* 
 			*/
 			enum CullMode
 			{
-				/// <summary>
-				///  Do not cull back faces.
-				/// </summary>
-				CULL_None = 1,
-				/// <summary>
-				///  Cull back faces with clockwise vertices.
-				/// </summary>
-				CULL_Clockwise = 2,
-				/// <summary>
-				///  Cull back faces with counterclockwise vertices.
-				/// </summary>
-				CULL_CounterClockwise = 3,
+				/** Do not cull back faces.
+				*/
+				CULL_None = 0,
+				
+				/** Cull back faces with clockwise vertices.
+				*/
+				CULL_Clockwise = 1,
+				
+				/** Cull back faces with counterclockwise vertices.
+				*/
+				CULL_CounterClockwise = 2,
+				CULL_Count = 3
 			};
 			enum FillMode
 			{
 				/* Draw a point at each vertex.
 				*/
-				FILL_Point = 1,
+				FILL_Point = 0,
 
 				/* Draw lines connecting the vertices that define a primitive face.
 				*/
-				FILL_WireFrame = 2,
+				FILL_WireFrame = 1,
 				
 				/* Draw solid faces for each primitive.
 				*/
-				FILL_Solid = 3,
+				FILL_Solid = 2,
+				FILL_Count = 3
 			};
 			
 			enum PrimitiveType
 			{
 				/* Render the vertices as individual points.
 				*/
-				PT_PointList = 1,
+				PT_PointList = 0,
 				/* Render the vertices as a series of individual lines.
 				*/
-				PT_LineList = 2,
+				PT_LineList = 1,
 				/* Render the vertices as a continuous line.
 				*/
-				PT_LineStrip = 3,
+				PT_LineStrip = 2,
 				/* Render the vertices as a series of individual triangles.
 				*/
-				PT_TriangleList = 4,				
+				PT_TriangleList = 3,				
 				/* Render the vertices as a continous set of triangles in a zigzag type fashion.
 				*/
-				PT_TriangleStrip = 5,
+				PT_TriangleStrip = 4,
 				/* Render the vertices as a set of trinagles in a fan like formation.
 				*/
-				PT_TriangleFan = 6
+				PT_TriangleFan = 5,
+				PT_Count = 6
 			};
 			enum CubeMapFace
 			{
@@ -131,6 +133,7 @@ namespace Apoc3D
 				/* Negative z-face of the cube map.
 				*/
 				CUBE_NegativeZ = 5,
+				CUBE_Count = 6
 			};
 			
 			enum ClearFlags
@@ -146,36 +149,37 @@ namespace Apoc3D
 			{
 				/* Does not update the stencil-buffer entry. This is the default value.
 				*/
-				STOP_Keep = 1,
+				STOP_Keep = 0,
 				/* Sets the stencil-buffer entry to 0.
 				*/
-				STOP_Zero = 2,
+				STOP_Zero = 1,
 
 				/* Replaces the stencil-buffer entry with a reference value.
 				*/
-				STOP_Replace = 3,
+				STOP_Replace = 2,
 				
 				/* Increments the stencil-buffer entry, clamping to the maximum value.
 				*/
-				STOP_IncrementSaturation = 4,
+				STOP_IncrementSaturation = 3,
 				
 				/*  Decrements the stencil-buffer entry, clamping to 0.
 				*/
-				STOP_DecrementSaturation = 5,
+				STOP_DecrementSaturation = 4,
 
 				/* Inverts the bits in the stencil-buffer entry.
 				*/
-				STOP_Invert = 6,
+				STOP_Invert = 5,
 
 				/* Increments the stencil-buffer entry, wrapping to 0 if the new value exceeds
 				*  the maximum value.
 				*/
-				STOP_Increment = 7,
+				STOP_Increment = 6,
 				
 				/* Decrements the stencil-buffer entry, wrapping to the maximum value if the
 				*  new value is less than 0.
 				*/
-				STOP_Decrement = 8,
+				STOP_Decrement = 7,
+				STOP_Count = 8
 			};
 
 			/* Defines how a texture will be filtered as it is minified for each mipmap level.
@@ -214,6 +218,7 @@ namespace Apoc3D
 				/*  A 4-sample Gaussian filter used as a texture magnification or minification filter.
 				*/
 				TFLT_GaussianQuad = 7,
+				TFLT_Count = 8
 			};
 			/* Defines constants that describe supported texture-addressing modes. 
 			*/
@@ -222,30 +227,31 @@ namespace Apoc3D
 				/* Tile the texture at every integer junction. For example, for u values between
 				*  0 and 3, the texture is repeated three times; no mirroring is performed.
 				*/
-				TA_Wrap = 1,
+				TA_Wrap = 0,
 
 				/* Similar to Wrap, except that the texture is flipped at every integer junction.
 				*  For u values between 0 and 1, for example, the texture is addressed normally;
 				*  between 1 and 2, the texture is flipped (mirrored); between 2 and 3, the
 				*  texture is normal again, and so on.
 				*/
-				TA_Mirror = 2,        
+				TA_Mirror = 1,        
 				
 				/* Texture coordinates outside the range [0.0, 1.0] are set to the texture color
 				*  at 0.0 or 1.0, respectively.
 				*/
-				TA_Clamp = 3,        
+				TA_Clamp = 2,        
 
 				/* Texture coordinates outside the range [0.0, 1.0] are set to the border color.
 				*/
-				TA_Border = 4,
+				TA_Border = 3,
 				/* Similar to Mirror and Clamp. Takes the absolute value of the texture coordinate
 				*  (thus, mirroring around 0), and then clamps to the maximum value. The most
 				*  common usage is for volume textures, where support for the full MirrorOnce
 				*  texture-addressing mode is not necessary, but the data is symmetrical around
 				*  the one axis.
 				*/
-				TA_MirrorOnce = 5,
+				TA_MirrorOnce = 4,
+				TA_Count = 5
 			};
 
 			/* Defines format of vertex element
@@ -281,7 +287,7 @@ namespace Apoc3D
 				/* Four-component byte with each byte normalized by dividing the component with
 				*  255.0f. This type is valid for vertex shader version 2.0 or higher.
 				*/
-				VEF_Rgba32 = 8,
+				VEF_NormalizedByte4 = 8,
 
 				/* Normalized, two-component, signed short, expanded to (first short/32767.0,
 				*  second short/32767.0, 0, 1). This type is valid for vertex shader version
@@ -294,54 +300,42 @@ namespace Apoc3D
 				*/
 				VEF_NormalizedShort4 = 10,
 
-				/*  Normalized, two-component, unsigned short, expanded to (first byte/65535.0,
-				*   second byte/65535.0, 0, 1). This type is valid for vertex shader version
-				*   2.0 or higher.
-				*/
-				VEF_Rg32 = 11,
-				/*  Normalized, four-component, unsigned short, expanded to (first byte/65535.0,
-				*   second byte/65535.0, third byte/65535.0, fourth byte/65535.0). This type
-				*   is valid for vertex shader version 2.0 or higher.
-				*/
-				VEF_Rgba64 = 12,
-				/*  Three-component, unsigned, 10 10 10 format expanded to (value, value, value, 1).
-				*   v[1]/511.0, v[2]/511.0, 1).
-				*/
-				VEF_UInt101010 = 13,
+
+				VEF_UInt101010 = 11,
 				/*  Three-component, signed, 10 10 10 format normalized and expanded to (v[0]/511.0,
 				*   v[1]/511.0, v[2]/511.0, 1).
 				*/
-				VEF_Normalized101010 = 14,
+				VEF_Normalized101010 = 12,
 				/*  Two-component, 16-bit floating point expanded to (value, value, value, value).
 				*   This type is valid for vertex shader version 2.0 or higher.
 				*/
-				VEF_HalfVector2 = 15,
+				VEF_HalfVector2 = 13,
 				/*  Four-component, 16-bit floating-point expanded to (value, value, value, value).
 				*   This type is valid for vertex shader version 2.0 or higher.
 				*/
-				VEF_HalfVector4 = 16,
-				/*  Type field in the declaration is unused. 
-				*/
-				VEF_Unused = 17,
+				VEF_HalfVector4 = 14,
+				
+				VEF_Count = 15,
 			};
 
 
 			enum VertexElementUsage
 			{
-				VEU_Binormal = 7,
-				VEU_BlendIndices = 2,
+				VEU_Position = 0,
 				VEU_BlendWeight = 1,
-				VEU_Color = 10,
-				VEU_Depth = 12,
-				VEU_Fog = 11,
+				VEU_BlendIndices = 2,
 				VEU_Normal = 3,
 				VEU_PointSize = 4,
-				VEU_Position = 0,
-				VEU_PositionTransformed = 9,
-				VEU_Sample = 13,
+				VEU_TextureCoordinate = 5,
 				VEU_Tangent = 6,
+				VEU_Binormal = 7,
 				VEU_TessellateFactor = 8,
-				VEU_TextureCoordinate = 5
+				VEU_PositionTransformed = 9,
+				VEU_Color = 10,
+				VEU_Fog = 11,
+				VEU_Depth = 12,
+				VEU_Sample = 13,
+				VEU_Count = 14
 			};
 			
 			/* Specifies how a texture is to be used in the engine.
@@ -353,161 +347,151 @@ namespace Apoc3D
 				TU_WriteOnly = BU_WriteOnly,
 				TU_StaticWriteOnly = BU_Static | BU_WriteOnly,
 				TU_DynamicWriteOnly = BU_Dynamic | BU_WriteOnly,
-				TU_Discardable = BU_Discardable,
 				/* Mipmaps will be automatically generated for this texture
 				*/
 				TU_AutoMipMap = 0x100,
 				
-				/* This texture will be a render target, ie. used as a target for render to texture
-				*  setting this flag will ignore all other texture usages except AutoMipMap
-				*/
-				TU_RenderTarget = 0x200,
-				
 				/* Default to static textures
 				*/
-				TU_Default = TU_StaticWriteOnly
+				TU_Default = TU_StaticWriteOnly,
 			};
 
 			enum CompareFunction
 			{
-				/***/
+				/** Always fail
+				*/
 				COMFUN_Never = 1,
 
-				/// <summary>
-				///  如果预定值比当前像素的值小，则通过
-				/// </summary>
+				/** Pass if the determined pixel is less than current pixel.
+				*/
 				COMFUN_Less = 2,
 
-				/// <summary>
-				///  如果预定值与当前像素的值相同，则通过
-				/// </summary>
+				/** Pass if the determined pixel is equal to current pixel.
+				*/
 				COMFUN_Equal = 3,
-
-				/// <summary>
-				///  如果预定值小于等于当前像素的值，则通过
-				/// </summary>
+				/** Pass if the determined pixel is equal or less than current pixel.
+				*/
 				COMFUN_LessEqual = 4,
 
-				/// <summary>
-				///  如果预定值当前像素的值大，则通过
-				/// </summary>
+				/** Pass if the determined pixel is greater than current pixel.
+				*/
 				COMFUN_Greater = 5,
 
-				/// <summary>
-				///  如果预定值与当前像素的值不相同，则通过
-				/// </summary>
+				/** Pass if the determined pixel is not equal to current pixel.
+				*/
 				COMFUN_NotEqual = 6,
 
-				/// <summary>
-				///  如果预定值大于等于当前像素的值，则通过
-				/// </summary>
+				/** Pass if the determined pixel is equal or greater than current pixel.
+				*/
 				COMFUN_GreaterEqual = 7,
 
-				/// <summary>
-				///  总是通过测试
-				/// </summary>
+				/** Always pass
+				*/
 				COMFUN_Always = 8,
+				COMFUN_Count = 9
 			};
 			enum BlendFunction
 			{				
 				/** The result is the destination added to the source.Result = (Source Color
 					* Source Blend) + (Destination Color * Destination Blend)
 				*/
-				BLFUN_Add = 1,
+				BLFUN_Add = 0,
 
 				/** The result is the destination subtracted from the source.Result = (Source
 					Color * Source Blend) − (Destination Color * Destination Blend)
 				*/
-				BLFUN_Subtract = 2,
+				BLFUN_Subtract = 1,
 
 				/** The result is the source subtracted from the destination.Result = (Destination
 					Color * Destination Blend) −(Source Color * Source Blend)
 				*/
-				BLFUN_ReverseSubtract = 3,
+				BLFUN_ReverseSubtract = 2,
 
 				/** The result is the minimum of the source and destination.Result = min( (Source
 					 Color * Source Blend), (Destination Color * Destination Blend) )
 				*/
-				BLFUN_Min = 4,
+				BLFUN_Min = 3,
 
 				/** The result is the maximum of the source and destination.Result = max( (Source
 					Color * Source Blend), (Destination Color * Destination Blend) )
 				*/
-				BLFUN_Max = 5,
+				BLFUN_Max = 4,
+				BLFUN_Count = 5
 			};
 
 			enum Blend
 			{
 				/** Each component of the color is multiplied by 0
 				*/
-				BLEND_Zero = 1,
+				BLEND_Zero = 0,
 				/** Each component of the color is multiplied by 1
 				*/
-				BLEND_One,
+				BLEND_One = 1,
 				/** Each component color is multiplied by the source color.
 				*/
-				BLEND_SourceColor = 3,
+				BLEND_SourceColor = 2,
 
 				/** Each component of the color is multiplied by the inverse of the source color.
 					This can be represented as (1 − Rs, 1 − Gs, 1 − Bs, 1 − As) where R, G, B,
 					and A respectively stand for the red, green, blue, and alpha destination
 					values.
 				*/
-				BLEND_InverseSourceColor = 4,
+				BLEND_InverseSourceColor = 3,
 				
 				/** Each component of the color is multiplied by the alpha value of the source.
 					This can be represented as (As, As, As, As), where As is the alpha source
 					value.
 				*/
-				BLEND_SourceAlpha = 5,
+				BLEND_SourceAlpha = 4,
 
 				/** Each component of the color is multiplied by the inverse of the alpha value
 					of the source. This can be represented as (1 − As, 1 − As, 1 − As, 1 − As),
 					where As is the alpha destination value.
 				*/
-				BLEND_InverseSourceAlpha = 6,
+				BLEND_InverseSourceAlpha = 5,
 
 				
 				/** Each component of the color is multiplied by the alpha value of the destination.
 					This can be represented as (Ad, Ad, Ad, Ad), where Ad is the destination
 					alpha value.
 				*/
-				BLEND_DestinationAlpha = 7,
+				BLEND_DestinationAlpha = 6,
 				
 				/** Each component of the color is multiplied by the inverse of the alpha value
 					of the destination. This can be represented as (1 − Ad, 1 − Ad, 1 − Ad, 1
 					− Ad), where Ad is the alpha destination value.
 				*/
-				BLEND_InverseDestinationAlpha = 8,
+				BLEND_InverseDestinationAlpha = 7,
 
 				/** Each component color is multiplied by the destination color. This can be
 					represented as (Rd, Gd, Bd, Ad), where R, G, B, and A respectively stand
 					for red, green, blue, and alpha destination values.
 				*/
-				BLEND_DestinationColor = 9,
+				BLEND_DestinationColor = 8,
 
 				/** Each component of the color is multiplied by the inverse of the destination
 					color. This can be represented as (1 − Rd, 1 − Gd, 1 − Bd, 1 − Ad), where
 					Rd, Gd, Bd, and Ad respectively stand for the red, green, blue, and alpha
 					destination values.
 				*/
-				BLEND_InverseDestinationColor = 10,
+				BLEND_InverseDestinationColor = 9,
 
 				/** Each component of the color is multiplied by either the alpha of the source
 					color, or the inverse of the alpha of the source color, whichever is greater.
 					This can be represented as (f, f, f, 1), where f = min(A, 1 − Ad).
 				*/
-				BLEND_SourceAlphaSaturation = 11,
+				BLEND_SourceAlphaSaturation = 10,
 
 				/** This mode is obsolete. The same effect can be achieved by setting the source
 					and destination blend factors to SourceAlpha and InverseSourceAlpha in separate
 					calls.
 				*/
-				BLEND_BothSourceAlpha = 12,
+				BLEND_BothSourceAlpha = 11,
 
 				/** Each component of the color is multiplied by BlendFactor.
 				*/
-				BLEND_BlendFactor = 14,				
+				BLEND_BlendFactor = 12,
+				BLEND_Count = 13
 			};
 
 		}

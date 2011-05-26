@@ -62,14 +62,14 @@ namespace Apoc3D
 
 				virtual Sprite* CreateSprite();
 
-				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsage usage, bool useSysMem) = 0;
-				virtual VertexBuffer CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsage usage, bool useSysMem) = 0;
+				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage, bool useSysMem) = 0;
+				virtual VertexBuffer CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage, bool useSysMem) = 0;
 
-				VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsage usage)
+				VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage)
 				{
 					return CreateVertexBuffer(vertexCount, vtxDecl, usage, false);
 				}
-				IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsage usage)
+				IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage)
 				{
 					return CreateIndexBuffer(type, count, usage, false);
 				}

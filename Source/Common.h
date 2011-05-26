@@ -131,11 +131,7 @@ typedef BatchHandle HashHandle;
 // Forward Declarations
 namespace Apoc3D
 {
-	template class APAPI fastdelegate::FastDelegate0<void>;
-	template class APAPI fastdelegate::FastDelegate1<bool*, void>;
-	
-	typedef fastdelegate::FastDelegate0<void> EventHandler;
-	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
+
 
 	class Game;
 	class GameClock;
@@ -193,6 +189,9 @@ namespace Apoc3D
 		class BoundingSphere;		
 		class BoundingBox;
 		class Frustum;
+
+		class Random;
+		class Randomizer;
 	};
 	namespace IO
 	{

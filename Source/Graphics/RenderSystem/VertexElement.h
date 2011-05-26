@@ -95,7 +95,7 @@ namespace Apoc3D
 					switch (t)
 					{
 					case (int)VEF_Rg32:
-					case (int)VEF_Rgba32:
+					case (int)VEF_NormalizedByte4:
 					case (int)VEF_Color:
 						return sizeof(int32);
 
@@ -137,7 +137,7 @@ namespace Apoc3D
 					switch (type)
 					{
 					case VEF_Rg32:
-					case VEF_Rgba32:
+					case VEF_NormalizedByte4:
 					case VEF_Color:
 						return 1;
 

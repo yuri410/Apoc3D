@@ -69,7 +69,7 @@ namespace Apoc3D
 				}
 			}
 
-			DepthBuffer::DepthBuffer(int width, int height, BufferUsage usage, DepthFormat format)
+			DepthBuffer::DepthBuffer(int width, int height, BufferUsageFlags usage, DepthFormat format)
 				: HardwareBuffer(usage, PixelFormatUtils::GetMemorySize(width, height, format))
 			{
 				m_width = width;

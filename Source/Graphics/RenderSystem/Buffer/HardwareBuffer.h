@@ -40,7 +40,7 @@ namespace Apoc3D
 			class APAPI HardwareBuffer
 			{
 			private:
-				BufferUsage m_usage;
+				BufferUsageFlags m_usage;
 				int m_size;
 				
 				bool m_isLocked;
@@ -49,7 +49,7 @@ namespace Apoc3D
 
 
 			protected:
-				HardwareBuffer(BufferUsage usage, int sizeInBytes)
+				HardwareBuffer(BufferUsageFlags usage, int sizeInBytes)
 					: m_usage(usage), m_size(sizeInBytes), m_isLocked(false)
 				{
 				}
@@ -59,7 +59,7 @@ namespace Apoc3D
 				virtual void unlock() = 0;
 
 			public:
-				BufferUsage getUsage() const { return m_usage; }
+				BufferUsageFlags getUsage() const { return m_usage; }
 				int getSize() const { return m_size; } 
 				int getLockOffset() const { return m_lockOffset; } 
 				int getLockSize() const { return m_lockSize; } 
@@ -74,7 +74,7 @@ namespace Apoc3D
 			class APAPI VertexBuffer : public HardwareBuffer
 			{
 			protected:
-				VertexBuffer(int size, BufferUsage usage)
+				VertexBuffer(int size, BufferUsageFlags usage)
 					: HardwareBuffer(usage, size)
 				{
 				}
@@ -93,7 +93,7 @@ namespace Apoc3D
 				int m_indexCount;
 
 			protected:
-				IndexBuffer(IndexBufferType type, int size, BufferUsage usage)
+				IndexBuffer(IndexBufferType type, int size, BufferUsageFlags usage)
 					: HardwareBuffer(usage, size)
 				{
 					m_type = type;
@@ -120,7 +120,7 @@ namespace Apoc3D
 				DepthFormat getFormat() const { return m_depthFormat; }
 
 			protected:
-				DepthBuffer(int width, int height, BufferUsage usage, DepthFormat format);
+				DepthBuffer(int width, int height, BufferUsageFlags usage, DepthFormat format);
 			};
 		}		
 	}
