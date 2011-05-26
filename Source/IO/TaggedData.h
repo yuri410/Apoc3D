@@ -60,7 +60,7 @@ namespace Apoc3D
 			//template class APAPI unordered_map<String, Entry>;
 			typedef unordered_map<String, Entry> SectionTable;
 			
-
+			bool m_endianDependent;
 			int m_sectCount;
 			SectionTable m_positions;
 			Stream* m_stream;
@@ -135,18 +135,29 @@ namespace Apoc3D
 				Entry(const String& name)
 					: Name(name)
 				{
-
 				}
 			};
 
 			typedef unordered_map<String, Entry> SectionTable;
 
+			bool m_endianDependent;
 			SectionTable m_positions;
 			char m_buffer[32];
-		public:
-			TaggedDataWriter() { }
-			~TaggedDataWriter();
 
+			const Entry* FindEntry(const String& name) const
+			{
+				SectionTable::const_iterator iter = m_positions.find(name);
+				if (iter != m_positions.end())
+				{
+					return &iter->second;
+				}
+				return 0;
+			}
+		public:
+			TaggedDataWriter(bool isWritringFile)
+				: m_endianDependent(!isWritringFile)
+			{ }
+			~TaggedDataWriter();
 
 
 			BinaryWriter* AddEntry(const String& name);

@@ -7,9 +7,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APBuild", "APBuild\APBuild.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E38C5C50-5DA2-4675-B6A6-01FDE0512B9A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MathTest", "Tests\MathTest\MathTest.vcxproj", "{35864162-34A4-4BD9-BFDD-7BC68C296CEA}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.D3D9RenderSystem", "Apoc3D.D3D9RenderSystem\Apoc3D_D3D9RenderSystem.vcxproj", "{54915473-0627-4A72-9939-2588588FF585}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FrameworkTest", "Tests\FrameworkTest\FrameworkTest.vcxproj", "{6195F83F-DE75-44EC-A53B-265FE3711FA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,19 +25,19 @@ Global
 		{84FF48B6-E1C8-447E-A1A1-B7D67E045E68}.Debug|Win32.Build.0 = Debug|Win32
 		{84FF48B6-E1C8-447E-A1A1-B7D67E045E68}.Release|Win32.ActiveCfg = Release|Win32
 		{84FF48B6-E1C8-447E-A1A1-B7D67E045E68}.Release|Win32.Build.0 = Release|Win32
-		{35864162-34A4-4BD9-BFDD-7BC68C296CEA}.Debug|Win32.ActiveCfg = Debug|Win32
-		{35864162-34A4-4BD9-BFDD-7BC68C296CEA}.Debug|Win32.Build.0 = Debug|Win32
-		{35864162-34A4-4BD9-BFDD-7BC68C296CEA}.Release|Win32.ActiveCfg = Release|Win32
-		{35864162-34A4-4BD9-BFDD-7BC68C296CEA}.Release|Win32.Build.0 = Release|Win32
 		{54915473-0627-4A72-9939-2588588FF585}.Debug|Win32.ActiveCfg = Debug|Win32
 		{54915473-0627-4A72-9939-2588588FF585}.Debug|Win32.Build.0 = Debug|Win32
 		{54915473-0627-4A72-9939-2588588FF585}.Release|Win32.ActiveCfg = Release|Win32
 		{54915473-0627-4A72-9939-2588588FF585}.Release|Win32.Build.0 = Release|Win32
+		{6195F83F-DE75-44EC-A53B-265FE3711FA1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6195F83F-DE75-44EC-A53B-265FE3711FA1}.Debug|Win32.Build.0 = Debug|Win32
+		{6195F83F-DE75-44EC-A53B-265FE3711FA1}.Release|Win32.ActiveCfg = Release|Win32
+		{6195F83F-DE75-44EC-A53B-265FE3711FA1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{35864162-34A4-4BD9-BFDD-7BC68C296CEA} = {E38C5C50-5DA2-4675-B6A6-01FDE0512B9A}
+		{6195F83F-DE75-44EC-A53B-265FE3711FA1} = {E38C5C50-5DA2-4675-B6A6-01FDE0512B9A}
 	EndGlobalSection
 EndGlobal

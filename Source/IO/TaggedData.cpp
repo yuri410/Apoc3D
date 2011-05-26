@@ -36,6 +36,8 @@ namespace Apoc3D
 		TaggedDataReader::TaggedDataReader(Stream* strm)
 			: m_stream(strm)
 		{
+			m_endianDependent = strm->IsReadEndianDependent();
+
 			BinaryReader* br = new BinaryReader(strm);
 
 			m_sectCount = br->ReadInt32();
@@ -227,7 +229,7 @@ namespace Apoc3D
 		}
 		
 		/************************************************************************/
-		/*                                                                      */
+		/* TaggedDataWriter                                                     */
 		/************************************************************************/
 
 		TaggedDataWriter::~TaggedDataWriter()
@@ -239,6 +241,301 @@ namespace Apoc3D
 			}
 			m_positions.clear();
 		}
+
+
+
+		BinaryWriter* TaggedDataWriter::AddEntry(const String& name)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+			return new BinaryWriter(new VirtualStream(ent.Buffer, 0));
+		}
+		Stream* TaggedDataWriter::AddEntryStream(const String& name)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+			return (new VirtualStream(ent.Buffer, 0));
+		}
+
+		
+		
+
+		void TaggedDataWriter::AddEntry(const String& name, int64 value)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+
+			if (m_endianDependent)
+			{
+				i64tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				i64tomb_le(value, m_buffer);
+			}
+
+			ent.Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::AddEntry(const String& name, uint64 value)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+
+			if (m_endianDependent)
+			{
+				ui64tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				ui64tomb_le(value, m_buffer);
+			}
+
+			ent.Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::AddEntry(const String& name, int32 value)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+
+			if (m_endianDependent)
+			{
+				i32tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				i32tomb_le(value, m_buffer);
+			}
+
+			ent.Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::AddEntry(const String& name, uint32 value)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+
+			if (m_endianDependent)
+			{
+				ui32tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				ui32tomb_le(value, m_buffer);
+			}
+
+			ent.Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::AddEntry(const String& name, int16 value)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+
+			if (m_endianDependent)
+			{
+				i16tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				i16tomb_le(value, m_buffer);
+			}
+
+			ent.Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::AddEntry(const String& name, uint16 value)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+
+			if (m_endianDependent)
+			{
+				ui16tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				ui16tomb_le(value, m_buffer);
+			}
+
+			ent.Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::AddEntry(const String& name, float value)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+
+			if (m_endianDependent)
+			{
+				r32tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				r32tomb_le(value, m_buffer);
+			}
+
+			ent.Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::AddEntry(const String& name, double value)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+
+			if (m_endianDependent)
+			{
+				r64tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				r64tomb_le(value, m_buffer);
+			}
+
+			ent.Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::AddEntry(const String& name, bool value)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+
+			m_buffer[0] = value ? 1 : 0;
+
+			ent.Buffer->Write(m_buffer, sizeof(value));
+		}
+
+		BinaryWriter* TaggedDataWriter::GetData(const String& name)
+		{
+			const Entry* ent = FindEntry(name);
+			return new BinaryWriter(new VirtualStream(ent->Buffer, 0));
+		}
+
+		void TaggedDataWriter::SetData(const String& name, int64 value)
+		{
+			const Entry* ent = FindEntry(name);
+
+			if (m_endianDependent)
+			{
+				i64tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				i64tomb_le(value, m_buffer);
+			}
+			ent->Buffer->setPosition(0);
+			ent->Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::SetData(const String& name, uint64 value)
+		{
+			const Entry* ent = FindEntry(name);
+
+			if (m_endianDependent)
+			{
+				ui64tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				ui64tomb_le(value, m_buffer);
+			}
+			ent->Buffer->setPosition(0);
+			ent->Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::SetData(const String& name, int32 value)
+		{
+			const Entry* ent = FindEntry(name);
+
+			if (m_endianDependent)
+			{
+				i32tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				i32tomb_le(value, m_buffer);
+			}
+			ent->Buffer->setPosition(0);
+			ent->Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::SetData(const String& name, uint32 value)
+		{
+			const Entry* ent = FindEntry(name);
+
+			if (m_endianDependent)
+			{
+				ui32tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				ui32tomb_le(value, m_buffer);
+			}
+			ent->Buffer->setPosition(0);
+			ent->Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::SetData(const String& name, int16 value)
+		{
+			const Entry* ent = FindEntry(name);
+
+			if (m_endianDependent)
+			{
+				i16tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				i16tomb_le(value, m_buffer);
+			}
+			ent->Buffer->setPosition(0);
+			ent->Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::SetData(const String& name, uint16 value)
+		{
+			const Entry* ent = FindEntry(name);
+
+			if (m_endianDependent)
+			{
+				ui16tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				ui16tomb_le(value, m_buffer);
+			}
+			ent->Buffer->setPosition(0);
+			ent->Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::SetData(const String& name, float value)
+		{
+			const Entry* ent = FindEntry(name);
+
+			if (m_endianDependent)
+			{
+				r32tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				r32tomb_le(value, m_buffer);
+			}
+			ent->Buffer->setPosition(0);
+			ent->Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::SetData(const String& name, double value)
+		{
+			const Entry* ent = FindEntry(name);
+
+			if (m_endianDependent)
+			{
+				r64tomb_dep(value, m_buffer);
+			}
+			else
+			{
+				r64tomb_le(value, m_buffer);
+			}
+			ent->Buffer->setPosition(0);
+			ent->Buffer->Write(m_buffer, sizeof(value));
+		}
+		void TaggedDataWriter::SetData(const String& name, bool value)
+		{
+			Entry ent = Entry(name);
+			m_positions.insert(pair<String, Entry>(name, ent));
+
+			m_buffer[0] = value ? 1 : 0;
+
+			ent.Buffer->setPosition(0);
+			ent.Buffer->Write(m_buffer, sizeof(value));
+		}
+
+
 
 		void TaggedDataWriter::Save(Stream* stream) const
 		{
