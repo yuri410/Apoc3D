@@ -97,12 +97,14 @@
     <ClInclude Include="core\resource.h" />
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="core\streaming\asyncprocessor.h" />
+    <ClInclude Include="Graphics\LockData.h" />
     <ClInclude Include="IO\BinaryWriter.h" />
     <ClInclude Include="IO\IOUtils.h" />
     <ClInclude Include="IO\TaggedData.h" />
     <ClInclude Include="IO\BinaryReader.h" />
     <ClInclude Include="IO\Streams.h" />
     <ClInclude Include="IO\TextureData.h" />
+    <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\ColorValue.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />

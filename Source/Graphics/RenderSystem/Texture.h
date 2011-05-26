@@ -27,10 +27,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Graphics/GraphicsCommon.h"
 #include "Graphics/PixelFormat.h"
+#include "Graphics/LockData.h"
 //#include "Core\Resource.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Core;
+using namespace Apoc3D::IO;
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
@@ -53,10 +56,30 @@ namespace Apoc3D
 				TextureUsage m_usage;
 				PixelFormat m_format;
 			protected:
+				void UpdataInfo(const TextureData& data);
+
+				Texture(RenderDevice* device, const ResourceLocation* rl, TextureUsage usage);
+				Texture(RenderDevice* device, int32 width, int32 height, int32 depth, 
+					int32 levelCount, PixelFormat format, TextureUsage usage);
+				Texture(RenderDevice* device, int32 length, int32 levelCount, TextureUsage usage, PixelFormat format);
+
+
+				virtual DataRectangle lock(int32 surface, LockMode mode, const Rectangle& rectangle) = 0;
+				virtual DataBox lock(int surface, LockMode mode, const Box& box) = 0;
+				virtual DataRectangle lock(int surface, CubeMapFace cubemapFace, LockMode mode, const Rectangle& rectangle) = 0;
+
+				virtual void unlock(int surface);
+				virtual void unlock(CubeMapFace cubemapFace, int surface);
 
 			public:
-				Texture(void);
-				~Texture(void);
+				DataRectangle Lock(int surface, LockMode mode, CubeMapFace cubemapFace, const Rectangle& rect);
+				DataRectangle Lock(int surface, LockMode mode, CubeMapFace cubemapFace);
+				DataRectangle Lock(int surface, LockMode mode, const Rectangle& rect);
+				DataRectangle Lock(int surface, LockMode mode);
+				DataBox Lock(int surface, LockMode mode, const Box& box);
+
+				void Unlock(int surface);
+				void Unlock(CubeMapFace cubemapFace, int surface);
 			};
 		}
 

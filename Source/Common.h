@@ -179,6 +179,7 @@ namespace Apoc3D
 
 		class Rectangle;
 		class RectangleF;
+		class Box;
 
 		class BoundingSphere;		
 		class BoundingBox;
@@ -200,6 +201,9 @@ namespace Apoc3D
 		class MemoryStream;
 		class MemoryOutStream;
 		class VirtualStream;
+
+		class TextureLevelData;
+		class TextureData;
 	};
 	namespace VFS
 	{
