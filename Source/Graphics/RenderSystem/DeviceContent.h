@@ -43,7 +43,7 @@ namespace Apoc3D
 			{
 				/** The device will present immediately without waiting for the refresh.
 				*/
-				Immediate = -2147483648,
+				Immediate = 1<<32,
 				/** The device will wait for the vertical retrace period.
 				*/
 				Default = 0, 
@@ -92,17 +92,8 @@ namespace Apoc3D
 			public:
 				virtual bool SupportsRenderControl() { return m_supportsRenderControl; }
 
-				RenderView* Create(const PresentParameters &pm)
-				{
-					RenderView* rc = create(pm);
-					m_renderPorts.push_back(rc);
-					return rc;
-				}
-				void Destroy(RenderView* rc)
-				{
-					m_renderPorts.erase(find(m_renderPorts.begin(), m_renderPorts.end(), rc));
-					delete rc;
-				}
+				RenderView* Create(const PresentParameters &pm);
+				void Destroy(RenderView* rc);
 
 				virtual RenderDevice* getRenderDevice() = 0;
 			protected:

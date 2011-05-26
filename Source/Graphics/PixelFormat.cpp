@@ -37,9 +37,7 @@ namespace Apoc3D
             st[(int)FMT_Luminance8] = 1;
             st[(int)FMT_R16F] = 1;
             st[(int)FMT_R16G16B16] = 6;
-            st[(int)FMT_R16G16B16F] = 6;
             st[(int)FMT_R32F] = 4;
-            st[(int)FMT_R32G32B32F] = 12;
             st[(int)FMT_R3G3B2] = 1;
             st[(int)FMT_R5G6B5] = 2;
             st[(int)FMT_R8G8B8] = 3;

@@ -188,6 +188,9 @@
     <ClCompile Include="Core\IHashed.cpp" />
     <ClCompile Include="Core\Resource.cpp" />
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\VertexDeclaration.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\VertexElement.cpp" />
     <ClCompile Include="IO\BinaryReader.cpp" />
     <ClCompile Include="IO\BinaryWriter.cpp" />
     <ClCompile Include="IO\IOUtils.cpp" />

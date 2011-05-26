@@ -21,36 +21,27 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9VERTEXDECLARATION_H
-#define D3D9VERTEXDECLARATION_H
+#include "DeviceContent.h"
 
-#include "D3D9Common.h"
-#include "Graphics\RenderSystem\VertexDeclaration.h"
-
-using namespace Apoc3D::Graphics::RenderSystem;
-
-using namespace std;
+#include "RenderWindow.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace D3D9RenderSystem
+		namespace RenderSystem
 		{
-			class D3D9VertexDeclaration : public VertexDeclaration
+			RenderView* DeviceContent::Create(const PresentParameters &pm)
 			{
-			private:
-				D3DVertexDeclaration* m_vtxDecl;
-
-			public:
-				D3D9VertexDeclaration(D3D9RenderDevice* device, const vector<VertexElement>& elements);
-				D3D9VertexDeclaration(D3D9RenderDevice* device, D3DVertexDeclaration* vtxdecl);
-
-				~D3D9VertexDeclaration();
-
-			};
+				RenderView* rc = create(pm);
+				m_renderPorts.push_back(rc);
+				return rc;
+			}
+			void DeviceContent::Destroy(RenderView* rc)
+			{
+				m_renderPorts.erase(find(m_renderPorts.begin(), m_renderPorts.end(), rc));
+				delete rc;
+			}
 		}
 	}
 }
-
-#endif

@@ -24,7 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #ifndef D3D9DEVICESETTINGS_H
 #define D3D9DEVICESETTINGS_H
-#pragma once
 
 #include "D3D9Common.h"
 

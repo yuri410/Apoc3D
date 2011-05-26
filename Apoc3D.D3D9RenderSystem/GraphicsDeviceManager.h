@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GRAPHICSDEVICEMANAGER_H
 
 #include "D3D9Common.h"
-#include "D3D9DeviceSettings.h"
+#include "DeviceSettings.h"
 
 namespace Apoc3D
 {

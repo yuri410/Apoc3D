@@ -4,7 +4,7 @@
 
 
 #include "D3D9Common.h"
-#include "D3D9DeviceSettings.h"
+#include "DeviceSettings.h"
 
 using namespace std;
 
@@ -93,34 +93,34 @@ namespace Apoc3D
 					D3DFORMAT allowedAdapterFormats[4] = {
 						D3DFMT_X8R8G8B8, D3DFMT_X1R5G5B5, D3DFMT_R5G6B5, D3DFMT_A2R10G10B10 };
 
-						UINT count = d3d9->GetAdapterCount();
-						for (UINT i=0;i<count;i++)
-						{
-							D3DADAPTER_IDENTIFIER9 dai;
+						//UINT count = d3d9->GetAdapterCount();
+						//for (UINT i=0;i<count;i++)
+						//{
+						//	D3DADAPTER_IDENTIFIER9 dai;
 
-							d3d9->GetAdapterIdentifier(i,0, &dai);
+						//	d3d9->GetAdapterIdentifier(i,0, &dai);
 
-							adapterFormats.clear();
+						//	adapterFormats.clear();
 
-							AdapterInfo ai;
-							ai.AdapterOrdinal = i;
-							ai.Details = dai;
+						//	AdapterInfo ai;
+						//	ai.AdapterOrdinal = i;
+						//	ai.Details = dai;
 
-							for (int j=0;j<4;j++)
-							{
-								UINT modeCount = d3d9->GetAdapterModeCount();
-								for (UINT k=0;k<modeCount;k++)
-								{
-									D3DDISPLAYMODE mode;
-									d3d9->get
-										if (m_minimumSettings)
-										{
+						//	for (int j=0;j<4;j++)
+						//	{
+						//		UINT modeCount = d3d9->GetAdapterModeCount();
+						//		for (UINT k=0;k<modeCount;k++)
+						//		{
+						//			D3DDISPLAYMODE mode;
+						//			d3d9->get
+						//				if (m_minimumSettings)
+						//				{
 
-										}
-								}
+						//				}
+						//		}
 
-							}
-						}	
+						//	}
+						//}	
 				}
 
 			private:

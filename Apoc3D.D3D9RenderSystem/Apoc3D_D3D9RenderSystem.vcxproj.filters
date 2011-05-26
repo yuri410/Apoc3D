@@ -66,13 +66,10 @@
     <ClInclude Include="GameWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Enumeration.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D9DeviceSettings.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="GameClock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceSettings.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -99,9 +96,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsDeviceManager.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Enumeration.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -57,122 +57,26 @@ namespace Apoc3D
 				int getIndex() const { return m_index; }
 				int getSize() const { return GetTypeSize(m_type); }
 
+				VertexElement() { }
 				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic)					
 				{
 					VertexElement(offset, type, semantic,0);
 				}
 
 				VertexElement(int offset, VertexElementFormat type, VertexElementUsage semantic, int index)
+					: m_offset(offset), m_type(type), m_semantic(semantic), m_index(index)
 				{
-					m_offset = offset;
-					m_type = type;
-					m_semantic = semantic;
-					m_index = index;
-
 				}
 
-				static bool Compare(const vector<VertexElement> &e1, const vector<VertexElement> &e2)
-				{
-					if (e1.size()==e2.size())
-					{
-						for (size_t i=0;i<e1.size();i++)
-						{
-							if (e1[i]!=e2[i])
-							{
-								return false;
-							}
-						}
-						return true;
-					}
-					return false;
-				}
+				static bool Compare(const vector<VertexElement> &e1, const vector<VertexElement> &e2);
 
 				/* Calculate the size of a specified vertex element format
 				*/
-				static int GetTypeSize(VertexElementFormat type)
-				{
-					int t = static_cast<int>(type);
-					switch (t)
-					{
-					case (int)VEF_Rg32:
-					case (int)VEF_NormalizedByte4:
-					case (int)VEF_Color:
-						return sizeof(int32);
-
-					case (int)VEF_Single:
-						return sizeof(float);
-
-					case (int)VEF_Vector2:
-						return sizeof(float) * 2;
-
-					case (int)VEF_Vector3:
-						return sizeof(float) * 3;
-
-					case (int)VEF_Vector4:
-						return sizeof(float) * 4;
-
-					case (int)VEF_NormalizedShort2:
-					case (int)VEF_Short2:
-						return sizeof(short) * 2;
-
-					case (int)VEF_NormalizedShort4:
-					case (int)VEF_Short4:
-						return sizeof(short) * 4;
-
-					case (int)VEF_Byte4:
-						return sizeof(byte) * 4;
-					case (int)VEF_HalfVector2:
-						return sizeof(ushort) * 2;
-					case (int)VEF_HalfVector4:
-						return sizeof(ushort) * 4;
-
-					}
-					return 0;
-				}
+				static int GetTypeSize(VertexElementFormat type);
 		
 				/* Utility method which returns the count of values in a given type.
 				*/
-				static int GetTypeCount(VertexElementFormat type)
-				{
-					switch (type)
-					{
-					case VEF_Rg32:
-					case VEF_NormalizedByte4:
-					case VEF_Color:
-						return 1;
-
-					case VEF_Single:
-						return 1;
-
-					case VEF_Vector2:
-						return 2;
-
-					case VEF_Vector3:
-						return 3;
-
-					case VEF_Vector4:
-						return 4;
-
-					case VEF_NormalizedShort2:
-					case VEF_Short2:
-						return 2;
-
-					case VEF_NormalizedShort4:
-					case VEF_Short4:
-						return 4;
-
-					case VEF_Byte4:
-						return 4;
-
-					case VEF_HalfVector2:
-						return 2;
-					case VEF_HalfVector4:
-						return 4;
-					} // end switch			
-
-					// keep the compiler happy
-					return 0;
-				}
+				static int GetTypeCount(VertexElementFormat type);
 
 				friend static bool operator ==(const VertexElement& left, const VertexElement& right)
 				{

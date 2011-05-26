@@ -28,7 +28,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RenderDeviceCaps.h"
 
 #include "Graphics\GraphicsCommon.h"
-#include "Viewport.h"
+#include "Math\Viewport.h"
+
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {

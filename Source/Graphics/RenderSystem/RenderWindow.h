@@ -43,15 +43,11 @@ namespace Apoc3D
 			class APAPI FPSCounter
 			{
 			private:
-				float m_begin;
-				float m_end;
-
+				list<float> m_frameTimes;
 				float m_fps;
-				int64 m_counter;
-
 			public:
 				float getFPS() const { return m_fps; }
-				void Step();
+				void Step(const GameTime* const time);
 			};
 
 			/* Represents a view of rendered graphics.
@@ -83,7 +79,7 @@ namespace Apoc3D
 
 				float getFPS() const { return m_fpsCounter.getFPS(); }
 
-				virtual void Present();
+				virtual void Present(const GameTime* const time);
 				
 
 			};
@@ -120,7 +116,7 @@ namespace Apoc3D
 				void OnLoad();
 				void OnUnload();
 				void OnUpdate(const GameTime* const time);
-				void OnDraw();
+				void OnDraw(const GameTime* const time);
 				
 			};
 

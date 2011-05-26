@@ -43,7 +43,7 @@ namespace Apoc3D
 				virtual void Load() = 0;
 				virtual void Unload() = 0;
 				virtual void Update(const GameTime* const time) = 0;
-				virtual void Draw() = 0;
+				virtual void Draw(const GameTime* const time) = 0;
 			};
 		}
 	}

@@ -38,10 +38,13 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+			template class APAPI vector<const VertexElement>;
+			typedef vector<const VertexElement> VertexElementList;
+
 			class APAPI VertexDeclaration
 			{
 			protected:
-				vector<const VertexElement> elements;
+				VertexElementList elements;
 
 				VertexDeclaration(const vector<VertexElement> &e)
 				{
@@ -64,28 +67,13 @@ namespace Apoc3D
 				*/
 				bool FindElementBySemantic(VertexElementUsage semantic, VertexElement& result) const
 				{
-					FindElementBySemantic(semantic, 0, result);
+					return FindElementBySemantic(semantic, 0, result);
 				}
 
 				/* Finds a VertexElement with the given semantic, and index if there is more than 
 				 * one element with the same semantic. 
 				*/
-				virtual bool FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result) const
-				{
-					for (int i = 0; i < elements.size(); i++)
-					{
-						const VertexElement &element = elements[i];
-
-						// do they match?
-						if (element.getUsage() == semantic && element.getIndex() == index)
-						{
-							result = element;
-							return true;
-						}
-					}
-
-					return false;
-				}
+				virtual bool FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result) const;
 
 				/* Gets the VertexElement at the specified index.
 				*/
@@ -96,18 +84,7 @@ namespace Apoc3D
 
 				/* Gets the vertex size defined by this declaration.
 				*/
-				virtual int GetVertexSize() const
-				{
-					int size = 0;
-
-					for (size_t i = 0; i < elements.size(); i++)
-					{
-						size += elements[i].getSize();
-					}
-
-					// return the size
-					return size;
-				}
+				virtual int GetVertexSize() const;
 			};
 		}
 	}

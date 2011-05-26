@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RenderWindow.h"
 
 #include "RenderWindowHandler.h"
+#include "Core\GameTime.h"
 
 namespace Apoc3D
 {
@@ -33,14 +34,42 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			void FPSCounter::Step()
+			void FPSCounter::Step(const GameTime* const time)
 			{
+				m_frameTimes.push_back(time->getTotalRealTime());
 
+				if (m_frameTimes.size()>1)
+				{
+					float begin = *m_frameTimes.begin();
+
+					list<float>::iterator iter = m_frameTimes.end();
+					iter--;
+					float end = *iter;
+
+					float timeLen = end - begin;
+
+					if (timeLen<0)
+					{
+						m_frameTimes.clear();
+						return;
+					}
+
+					m_fps = static_cast<float>(m_frameTimes.size())/(timeLen);
+
+					if (timeLen>1)
+					{
+						float stamp = end - 1;
+						while (*m_frameTimes.begin()<stamp && !m_frameTimes.empty())
+						{
+							m_frameTimes.erase(m_frameTimes.begin());
+						}
+					}
+				}
 			}
 
-			void RenderView::Present()
+			void RenderView::Present(const GameTime* const time)
 			{
-				m_fpsCounter.Step(); 
+				m_fpsCounter.Step(time); 
 			}
 			void RenderWindow::OnInitialize()
 			{
@@ -65,11 +94,11 @@ namespace Apoc3D
 					m_evtHandler->Unload();
 			}
 
-			void RenderWindow::OnDraw()
+			void RenderWindow::OnDraw(const GameTime* const time)
 			{
 				if (m_evtHandler)
-					m_evtHandler->Draw();
-				Present(); 
+					m_evtHandler->Draw(time);
+				Present(time); 
 			}
 			void RenderWindow::OnUpdate(const GameTime* const time)		
 			{

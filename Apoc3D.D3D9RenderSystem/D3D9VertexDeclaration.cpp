@@ -26,13 +26,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9RenderDevice.h"
 
+
 namespace Apoc3D
 {
 	namespace Graphics
 	{
 		namespace D3D9RenderSystem
 		{
-			D3D9VertexDeclaration(D3D9RenderDevice* device, const vector<VertexElement>& elements)
+			D3D9VertexDeclaration::D3D9VertexDeclaration(D3D9RenderDevice* device, const vector<VertexElement>& elements)
 				: VertexDeclaration(elements)
 			{
 

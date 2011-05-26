@@ -21,36 +21,44 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9VERTEXDECLARATION_H
-#define D3D9VERTEXDECLARATION_H
 
-#include "D3D9Common.h"
-#include "Graphics\RenderSystem\VertexDeclaration.h"
+#include "VertexDeclaration.h"
 
-using namespace Apoc3D::Graphics::RenderSystem;
-
-using namespace std;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace D3D9RenderSystem
+		namespace RenderSystem
 		{
-			class D3D9VertexDeclaration : public VertexDeclaration
+			bool VertexDeclaration::FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result) const
 			{
-			private:
-				D3DVertexDeclaration* m_vtxDecl;
+				for (size_t i = 0; i < elements.size(); i++)
+				{
+					const VertexElement &element = elements[i];
 
-			public:
-				D3D9VertexDeclaration(D3D9RenderDevice* device, const vector<VertexElement>& elements);
-				D3D9VertexDeclaration(D3D9RenderDevice* device, D3DVertexDeclaration* vtxdecl);
+					// do they match?
+					if (element.getUsage() == semantic && element.getIndex() == index)
+					{
+						result = element;
+						return true;
+					}
+				}
 
-				~D3D9VertexDeclaration();
+				return false;
+			}
+			int VertexDeclaration::GetVertexSize() const
+			{
+				int size = 0;
 
-			};
+				for (size_t i = 0; i < elements.size(); i++)
+				{
+					size += elements[i].getSize();
+				}
+
+				// return the size
+				return size;
+			}
 		}
 	}
 }
-
-#endif
