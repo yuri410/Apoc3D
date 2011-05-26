@@ -29,63 +29,56 @@ namespace Apoc3D
 	namespace Core
 	{
 		Resource::Resource(ResourceManager* manager, const String& hashString)
-			: m_manager(manager), m_hashString(hashString)
+			: m_manager(manager), m_hashString(hashString), m_refCount(0), m_state(RS_Unloaded)
 		{
-			//m_loadOp = new ResourceLoadOperation(this);
-			//m_unloadOp = new ResourceUnloadOperation(this);
-
+			m_resLoader = new ResourceLoadOperation(this);
+			m_resUnloader = new ResourceUnloadOperation(this);
 		}
-		//Resource::Resource(ResourceManager* manager, const String& hashString, ResourceLoader* loader)
-		//	: m_resLoader(loader), m_manager(manager), m_hashString(hashString)
-		//{
-		//	m_loadOp = new ResourceLoadOperation(this);
-		//	m_unloadOp = new ResourceUnloadOperation(this);
-
-		//}
-
-
-
-
-		void Resource::load()
+		Resource::~Resource()
 		{
-			if (m_resLoader)
-				m_resLoader->Process(this);
-		
-			m_state = RS_Loaded;
+			if (isManaged())
+			{
+
+			}
 		}
 
-		void Resource::Use()		
+		void Resource::Touch()		
 		{
-			assert(!getIsManaged());
-			
-			if (m_state == RS_Unloaded)
-				Load();
+			if (isManaged())
+			{
+				if (m_state == RS_Unloaded)
+					Load();
+			}			
 		}
 
 		void Resource::Load()
 		{
-			assert(!getIsManaged());
-			
-			assert((m_state & RS_Unloaded) == RS_Unloaded);
+			if (isManaged())
+			{
+				assert((m_state & RS_Unloaded) == RS_Unloaded);
 
-			//m_state = RS_Pending;
-			m_state = RS_Loading;
-			load();
-			m_state = RS_Loaded;
-			//load();	
+				//m_state = RS_Pending;
+				m_state = RS_Loading;
+				load();
+				m_state = RS_Loaded;
+				//load();	
+			}
+			
 		}
 
 		void Resource::Unload()
 		{
-			assert(!getIsManaged());
-			
-			assert((m_state & RS_Loaded) == RS_Loaded);
+			if (isManaged())
+			{
 
-			//m_state = RS_Pending;
+				assert((m_state & RS_Loaded) == RS_Loaded);
 
-			m_state = RS_Unloading;
-			unload();
-			m_state = RS_Unloaded;
+				//m_state = RS_Pending;
+
+				m_state = RS_Unloading;
+				unload();
+				m_state = RS_Unloaded;
+			}
 		}
 	}
 }

@@ -48,6 +48,8 @@ namespace Apoc3D
 				PixelFormat m_format;
 
 			public:
+				static const DataRectangle Empty;
+
 				PixelFormat getFormat() const { return m_format; }
 				int32 getPitch() const { return m_pitch; }
 				int32 getWidth() const { return m_width; }
@@ -88,6 +90,8 @@ namespace Apoc3D
 				PixelFormat m_format;
 
 			public:
+				static const DataBox Empty;
+
 				PixelFormat getFormat() const { return m_format; }
 				int32 getWidth() const { return m_width; }
 				int32 getHeight() const { return m_height; }

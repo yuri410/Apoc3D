@@ -23,13 +23,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef TEXTUREMANAGER_H
 #define TEXTUREMANAGER_H
-#include "..\Common.h"
+
+#include "Common.h"
+#include "Core\ResourceManager.h"
+
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class APAPI TextureManager
+		class APAPI TextureManager : public ResourceManager
 		{
 		public:
 			TextureManager(void);

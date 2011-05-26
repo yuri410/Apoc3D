@@ -21,37 +21,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "ResourceManager.h"
-#include "Resource.h"
+#include "LockData.h"
+
 
 namespace Apoc3D
 {
-	SINGLETON_DECL(Apoc3D::Core::ResourceManager);
-
-	namespace Core
+	namespace Graphics
 	{
-		Resource* ResourceManager::Exists(const String& name)
+		namespace RenderSystem
 		{
-			//ResHashTable::const_iterator iter = m_hashTable.find(name);
-			//if (iter != m_hashTable.end())
-			//{
-				//return iter->second;
-			//}
-			return 0;
-		}
-
-		void ResourceManager::NotifyNewResource(Resource* res)
-		{
-			//assert(!res->isManaged());
-			
-			//m_hashTable.insert(ResHashTable::value_type(res->getHashString(), res));
-			
-		}
-		void ResourceManager::NotifyReleaseResource(Resource* res)
-		{
-			//assert(!res->isManaged());
-
-			//m_hashTable.erase(res->getHashString());
+			const DataRectangle DataRectangle::Empty = DataRectangle(0,0,0,0, FMT_Unknown);
+			const DataBox DataBox::Empty = DataBox(0,0,0,0,0,0,FMT_Unknown);
 		}
 	}
 }

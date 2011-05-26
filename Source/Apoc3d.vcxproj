@@ -92,6 +92,7 @@
     <ClInclude Include="Config\XMLSection.h" />
     <ClInclude Include="Core\IHashed.h" />
     <ClInclude Include="Core\IParsable.h" />
+    <ClInclude Include="Core\ResourceManager.h" />
     <ClInclude Include="Graphics\Camera.h" />
     <ClInclude Include="Core\CoreCommon.h" />
     <ClInclude Include="core\resource.h" />
@@ -190,7 +191,9 @@
     <ClCompile Include="Core\HashHandleObject.cpp" />
     <ClCompile Include="Core\IHashed.cpp" />
     <ClCompile Include="Core\Resource.cpp" />
+    <ClCompile Include="Core\ResourceManager.cpp" />
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
+    <ClCompile Include="Graphics\LockData.cpp" />
     <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexDeclaration.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexElement.cpp" />

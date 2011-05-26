@@ -24,8 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
-#pragma once
-
 #include "Common.h"
 #include "Streaming\AsyncProcessor.h"
 
@@ -45,24 +43,39 @@ namespace Apoc3D
 			RS_Pending = 4
 		};
 		
-		/* Represent the implementation for resource loading/unloading */
-		class APAPI ResourceProcessor
+		template<class T>
+		class APAPI ResourceHandle
 		{
-		public:
-			virtual void Process(Resource* res) const = 0;
-		};
+		private:
+			T* m_resource;
 
-		/* Implements a resource loading algorithm */
-		class APAPI ResourceLoader : ResourceProcessor
-		{
+			bool m_isDummy;
 		public:
-			virtual void Process(Resource* res) const = 0;
+			ResourceHandle(T* resource)
+				: m_resource(resource)
+			{
+			}
+
+
 		};
+		///* Represent the implementation for resource loading/unloading */
+		//class APAPI ResourceProcessor
+		//{
+		//public:
+		//	virtual void Process(Resource* res) const = 0;
+		//};
+
+		///* Implements a resource loading algorithm */
+		//class APAPI ResourceLoader : ResourceProcessor
+		//{
+		//public:
+		//	virtual void Process(Resource* res) const = 0;
+		//};
 
 		class APAPI Resource
 		{
 		private:
-			/*class ResourceLoadOperation : public ResourceOperation
+			class ResourceLoadOperation : public ResourceOperation
 			{
 			public:
 				ResourceLoadOperation(Resource* resource)
@@ -100,24 +113,23 @@ namespace Apoc3D
 					res->m_state = RS_Unloaded;
 				}
 			};
-			*/
+			
+			int m_refCount;
 
-			//int m_refCount;
-
-			ResourceLoader* m_resLoader;
+			//ResourceLoader* m_resLoader;
 			uint32 m_state;
 
 			const String m_hashString;
 
-			//ResourceLoadOperation* m_loadOp;
-			//ResourceUnloadOperation* m_unloadOp;
+			ResourceLoadOperation* m_resLoader;
+			ResourceUnloadOperation* m_resUnloader;
 
 			ResourceManager* m_manager;
 
 			//ResourceEventHandler me_Loaded;
 			//ResourceEventHandler me_Unloaded;
 		protected:
-			virtual void load();
+			virtual void load() = 0;
 			virtual void unload() = 0;
 
 		public: 
@@ -126,25 +138,42 @@ namespace Apoc3D
 			//ResourceEventHandler* eventLoaded();
 			//ResourceEventHandler* eventUnloaded();
 
-			Resource() {}
+			Resource() 
+				: m_refCount(0), m_manager(0), m_resLoader(0), m_resUnloader(0), m_state(RS_Unloaded)
+			{
+			}
 			Resource(ResourceManager* manager, const String& hashString);
 			//Resource(ResourceManager* manager, const String& hashString, ResourceLoader* loader);
 
-			~Resource();
+			virtual ~Resource();
 
 			virtual uint32 getSize() = 0;
 
-			void Use();
-			//
+			void Touch();
 			void Load();
 			void Unload();
 
 			const String& getHashString() const { return m_hashString; }
 			uint32 getState() const { return m_state; }
-			bool getIsManaged() const { return !!m_manager; }
+			bool isManaged() const { return !!m_manager; }
 
-			//void _Ref() { assert(!getIsManaged()); m_refCount++; }
-			//void _Unref() { assert(!getIsManaged()); if (--m_refCount == 0) delete this; }
+			void _Ref()
+			{
+				if (isManaged())
+				{
+					m_refCount++;
+				}
+			}
+			void _Unref()
+			{
+				if (isManaged())
+				{
+					if (--m_refCount == 0)
+					{
+						//delete this;
+					}
+				}
+			}
 		};
 	};
 };

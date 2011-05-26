@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/GraphicsCommon.h"
 #include "Graphics/PixelFormat.h"
 #include "Graphics/LockData.h"
-//#include "Core\Resource.h"
+#include "Core\Resource.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Core;
@@ -41,13 +41,13 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			class APAPI Texture// : public Resource
+			class APAPI Texture : public Resource
 			{
 			private:
 				//IDirect3DBaseTexture9* m_baseTexture;
 				RenderDevice* m_renderDevice;
 				const ResourceLocation* m_resourceLocation;
-				TextureType* m_type;
+				TextureType m_type;
 				int32 m_width;
 				int32 m_height;
 				int32 m_depth;
@@ -55,10 +55,12 @@ namespace Apoc3D
 				int32 m_levelCount;
 				TextureUsage m_usage;
 				PixelFormat m_format;
-			protected:
-				void UpdataInfo(const TextureData& data);
 
-				Texture(RenderDevice* device, const ResourceLocation* rl, TextureUsage usage);
+				bool m_isLocked;
+			protected:
+				void UpdateInfo(const TextureData& data);
+
+				Texture(RenderDevice* device, const ResourceLocation* rl, TextureUsage usage, bool managed);
 				Texture(RenderDevice* device, int32 width, int32 height, int32 depth, 
 					int32 levelCount, PixelFormat format, TextureUsage usage);
 				Texture(RenderDevice* device, int32 length, int32 levelCount, TextureUsage usage, PixelFormat format);
@@ -68,18 +70,34 @@ namespace Apoc3D
 				virtual DataBox lock(int surface, LockMode mode, const Box& box) = 0;
 				virtual DataRectangle lock(int surface, CubeMapFace cubemapFace, LockMode mode, const Rectangle& rectangle) = 0;
 
-				virtual void unlock(int surface);
-				virtual void unlock(CubeMapFace cubemapFace, int surface);
+				virtual void unlock(int surface) = 0;
+				virtual void unlock(CubeMapFace cubemapFace, int surface) = 0;
 
 			public:
-				DataRectangle Lock(int surface, LockMode mode, CubeMapFace cubemapFace, const Rectangle& rect);
-				DataRectangle Lock(int surface, LockMode mode, CubeMapFace cubemapFace);
-				DataRectangle Lock(int surface, LockMode mode, const Rectangle& rect);
-				DataRectangle Lock(int surface, LockMode mode);
-				DataBox Lock(int surface, LockMode mode, const Box& box);
+				bool isLocked() const { return m_isLocked; }
+				RenderDevice* getRenderDevice() const { return m_renderDevice; }
+				const ResourceLocation* getResourceLocation() const { return m_resourceLocation; }
+				TextureType getType() const { return m_type; }
+				int32 getWidth() const { return m_width; }
+				int32 getHeight() const { return m_height; }
+				int32 getDepth() const { return m_depth; }
+				int32 getContentSize() const { return m_contentSize; }
+				int32 getLevelCount() const { return m_levelCount; }
+				TextureUsage getUsage() const { return m_usage; }
+				PixelFormat getFormat() const { return m_format; }
 
-				void Unlock(int surface);
-				void Unlock(CubeMapFace cubemapFace, int surface);
+
+				DataRectangle Lock(int32 surface, LockMode mode, CubeMapFace cubemapFace, const Rectangle& rect);
+				DataRectangle Lock(int32 surface, LockMode mode, CubeMapFace cubemapFace);
+				DataRectangle Lock(int32 surface, LockMode mode, const Rectangle& rect);
+				DataRectangle Lock(int32 surface, LockMode mode);
+				DataBox Lock(int32 surface, LockMode mode, const Box& box);
+
+				void Unlock(int32 surface);
+				void Unlock(CubeMapFace cubemapFace, int32 surface);
+
+				virtual void SetData(const char* data, int32 length) = 0;
+				virtual void Save(Stream* strm) = 0;
 			};
 		}
 
