@@ -131,12 +131,6 @@ typedef BatchHandle HashHandle;
 // Forward Declarations
 namespace Apoc3D
 {
-
-
-	class Game;
-	class GameClock;
-	class GameWindow;
-
 	void* memcpy_sse( char* pDest, const char* pSrc, size_t nBytes );
 	
 	

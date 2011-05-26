@@ -24,89 +24,94 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GAME_H
 #define GAME_H
 
-#pragma once
-
-#include "Common.h"
+#include "D3D9Common.h"
 
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Core;
 using namespace fastdelegate;
 
 namespace Apoc3D
 {
-	class APAPI Game
+	namespace Graphics
 	{
-	private:
-		HINSTANCE m_inst;
+		namespace D3D9RenderSystem
+		{
+			class Game
+			{
+			private:
+				HINSTANCE m_inst;
 
-		GameClock* m_gameClock;
-		float m_maxElapsedTime;
-		float m_totalGameTime;
-		float m_accumulatedElapsedGameTime;
-		float m_lastFrameElapsedGameTime;
-		float m_lastFrameElapsedRealTime;
-		float m_targetElapsedTime;
-		float m_inactiveSleepTime;
-		int32 m_updatesSinceRunningSlowly1;
-		int32 m_updatesSinceRunningSlowly2;
-		bool m_forceElapsedTimeToZero;
-		bool m_drawRunningSlowly;
-		int64 m_lastUpdateFrame;
-		float m_lastUpdateTime;
-		float m_fps;
+				GameClock* m_gameClock;
+				float m_maxElapsedTime;
+				float m_totalGameTime;
+				float m_accumulatedElapsedGameTime;
+				float m_lastFrameElapsedGameTime;
+				float m_lastFrameElapsedRealTime;
+				float m_targetElapsedTime;
+				float m_inactiveSleepTime;
+				int32 m_updatesSinceRunningSlowly1;
+				int32 m_updatesSinceRunningSlowly2;
+				bool m_forceElapsedTimeToZero;
+				bool m_drawRunningSlowly;
+				int64 m_lastUpdateFrame;
+				float m_lastUpdateTime;
+				float m_fps;
 
-		bool m_exiting;
-		bool m_active;
+				bool m_exiting;
+				bool m_active;
 
-		GraphicsDeviceManager* m_graphicsDeviceManager;
-		GameWindow* m_gameWindow;
-
-
-		CancellableEventHandler m_eFrameStart;
-		EventHandler m_eFrameEnd;
-
-		void DrawFrame();
-
-		void Window_ApplicationActivated();
-		void Window_ApplicationDeactivated();
-		void Window_Suspend();
-		void Window_Resume();
-		void Window_Paint();
-
-	protected:
-
-		Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name);
-		virtual ~Game(void);
-		virtual bool OnFrameStart();
-		virtual void OnFrameEnd();
-
-	public:
-		virtual void Release();
-		virtual void Create();
-
-		CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
-		EventHandler* eventFrameEnd() { return &m_eFrameEnd; }		
-
-		GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
-		GameWindow* getWindow() const { return m_gameWindow; }
-		Device* getDevice() const;
-		bool getIsExiting() const { return m_exiting; }
-		bool getIsActive() const { return m_active; }
-		HINSTANCE getInstance() const { return m_inst; }
-
-		virtual void Initialize() = 0;
-		virtual void LoadContent() = 0;
-		virtual void OnDeviceLost() = 0;
-		virtual void UnloadContent() = 0;
-		virtual void OnDeviceReset() = 0;
-		virtual void Render() = 0;
-		virtual void Update(const GameTime* const time) = 0;
-		void Run();
-		void Tick();
-		void Exit();
+				GraphicsDeviceManager* m_graphicsDeviceManager;
+				GameWindow* m_gameWindow;
 
 
+				CancellableEventHandler m_eFrameStart;
+				EventHandler m_eFrameEnd;
 
-	};
+				void DrawFrame();
+
+				void Window_ApplicationActivated();
+				void Window_ApplicationDeactivated();
+				void Window_Suspend();
+				void Window_Resume();
+				void Window_Paint();
+
+			protected:
+
+				Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name);
+				virtual ~Game(void);
+				virtual bool OnFrameStart();
+				virtual void OnFrameEnd();
+
+			public:
+				virtual void Release();
+				virtual void Create();
+
+				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
+				EventHandler* eventFrameEnd() { return &m_eFrameEnd; }		
+
+				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
+				GameWindow* getWindow() const { return m_gameWindow; }
+				D3DDevice* getDevice() const;
+				bool getIsExiting() const { return m_exiting; }
+				bool getIsActive() const { return m_active; }
+				HINSTANCE getInstance() const { return m_inst; }
+
+				virtual void Initialize() = 0;
+				virtual void LoadContent() = 0;
+				virtual void OnDeviceLost() = 0;
+				virtual void UnloadContent() = 0;
+				virtual void OnDeviceReset() = 0;
+				virtual void Render() = 0;
+				virtual void Update(const GameTime* const time) = 0;
+				void Run();
+				void Tick();
+				void Exit();
+
+
+
+			};
+		}
+	}
 
 }
 

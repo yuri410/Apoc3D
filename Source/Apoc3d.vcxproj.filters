@@ -63,9 +63,6 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameClock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FastDelegate\FastDelegate.h">
       <Filter>Header Files</Filter>
     </ClInclude>

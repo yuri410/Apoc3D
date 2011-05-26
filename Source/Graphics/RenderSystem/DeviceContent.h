@@ -39,6 +39,28 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+			enum PresentInterval
+			{
+				/** The device will present immediately without waiting for the refresh.
+				*/
+				Immediate = -2147483648,
+				/** The device will wait for the vertical retrace period.
+				*/
+				Default = 0, 
+				/** The device will wait for the vertical retrace period.
+				*/
+				One = 1,
+				/**  Present operations will not be affected more than twice every screen refresh.
+				*/
+				Two = 2,
+				/** Present operations will not be affected more than three times every screen refresh
+				*/
+				Three = 4,
+				/** Present operations will not be affected more than four times every screen refresh.
+				*/
+				Four = 8,
+			};			
+
 			struct APAPI PresentParameters
 			{
 				bool IsWindowd;
@@ -49,6 +71,9 @@ namespace Apoc3D
 
 				DepthFormat DepthBufferFormat;
 				PixelFormat ColorBufferFormat;
+
+				uint32 FSAASampleCount;
+				PresentInterval PresentInterval;
 
 
 				uint64 TargetHandle;

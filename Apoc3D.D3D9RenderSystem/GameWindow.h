@@ -24,9 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
-#pragma once
-
 #include "D3D9Common.h"
+#include "Math/Point.h"
+
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
@@ -36,7 +37,7 @@ namespace Apoc3D
 		{
 			/* Implements a specialized window for games and rendering.
 			*/
-			class APAPI GameWindow
+			class GameWindow
 			{
 			private:
 				bool m_minimized;

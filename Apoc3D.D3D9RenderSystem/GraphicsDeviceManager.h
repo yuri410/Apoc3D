@@ -24,10 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GRAPHICSDEVICEMANAGER_H
 #define GRAPHICSDEVICEMANAGER_H
 
-#pragma once
-
 #include "D3D9Common.h"
-#include "DeviceSettings.h"
+#include "D3D9DeviceSettings.h"
 
 namespace Apoc3D
 {
@@ -35,10 +33,10 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class APAPI GraphicsDeviceManager
+			class GraphicsDeviceManager
 			{
 			private:
-				DeviceSettings* m_currentSetting;
+				D3D9DeviceSettings* m_currentSetting;
 				IDirect3D9* m_direct3D9;
 				D3DDevice* m_device;
 
@@ -59,8 +57,8 @@ namespace Apoc3D
 				//bool m_savedTopmost;
 
 
-				bool CanResetDevice(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
-				void CreateDevice(const DeviceSettings &settings);
+				bool CanResetDevice(const D3D9DeviceSettings* const oldset, const D3D9DeviceSettings* const newset) const;
+				void CreateDevice(const D3D9DeviceSettings &settings);
 				void game_FrameStart(bool* cancel);
 				void game_FrameEnd();
 				void Window_UserResized();
@@ -76,7 +74,7 @@ namespace Apoc3D
 				GraphicsDeviceManager(Game* game);
 				~GraphicsDeviceManager(void);
 
-				Device* getDevice() const { return m_device; }
+				D3DDevice* getDevice() const { return m_device; }
 				IDirect3D9* getDirect3D() const { return m_direct3D9; }
 
 
@@ -91,7 +89,7 @@ namespace Apoc3D
 
 				/* Changes the device.
 				*/
-				void ChangeDevice(const DeviceSettings &prefer);
+				void ChangeDevice(const D3D9DeviceSettings &prefer);
 				/* Toggles between full screen and windowed mode.
 				*/
 				void ToggleFullScreen();

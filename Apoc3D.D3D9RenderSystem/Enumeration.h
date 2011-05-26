@@ -2,10 +2,9 @@
 #ifndef ENUMERATION_H
 #define ENUMERATION_H
 
-#pragma once
 
 #include "D3D9Common.h"
-#include "DeviceSettings.h"
+#include "D3D9DeviceSettings.h"
 
 using namespace std;
 
@@ -66,7 +65,7 @@ namespace Apoc3D
 			class Enumeration
 			{
 			private:
-				DeviceSettings* m_minimumSettings;
+				D3D9DeviceSettings* m_minimumSettings;
 				list<AdapterInfo>* m_adapters;
 				bool m_hasEnumerated;
 
@@ -75,11 +74,11 @@ namespace Apoc3D
 					return m_hasEnumerated;
 				}
 
-				DeviceSettings* getDeviceSettings() const
+				D3D9DeviceSettings* getDeviceSettings() const
 				{
 					return m_minimumSettings;
 				}
-				void setMinimumSettings(const DeviceSettings* settings)
+				void setMinimumSettings(const D3D9DeviceSettings* settings)
 				{
 					m_minimumSettings = settings;
 				}
@@ -90,8 +89,8 @@ namespace Apoc3D
 					m_hasEnumerated = true;
 					m_adapters = new list<AdapterInfo>();
 
-					list<Format> adapterFormats;
-					Format allowedAdapterFormats[4] = {
+					list<D3DFORMAT> adapterFormats;
+					D3DFORMAT allowedAdapterFormats[4] = {
 						D3DFMT_X8R8G8B8, D3DFMT_X1R5G5B5, D3DFMT_R5G6B5, D3DFMT_A2R10G10B10 };
 
 						UINT count = d3d9->GetAdapterCount();
@@ -126,11 +125,11 @@ namespace Apoc3D
 
 			private:
 
-				void EnumerateDevices(const AdapterInfo &info, const list<Format> &adapterFormats);
+				void EnumerateDevices(const AdapterInfo &info, const list<D3DFORMAT> &adapterFormats);
 
 
 				void EnumerateSettingsCombos(const AdapterInfo &adapterInfo, 
-					const DeviceInfo &deviceInfo, const list<Format> &adapterFormats);
+					const DeviceInfo &deviceInfo, const list<D3DFORMAT> &adapterFormats);
 
 				void BuildDepthStencilFormatList(const SettingsCombo &combo);
 

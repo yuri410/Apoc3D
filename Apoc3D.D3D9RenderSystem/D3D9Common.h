@@ -30,7 +30,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <d3d9.h>
 #include <d3dx9.h>
 
-
 typedef D3DXMATRIX D3DMatrix;
 typedef D3DXPLANE D3DPlane;
 typedef D3DXVECTOR2 D3DVector2;
@@ -62,10 +61,17 @@ namespace Apoc3D
 	typedef fastdelegate::FastDelegate0<void> EventHandler;
 	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
 
+
 	namespace Graphics
 	{
 		namespace D3D9RenderSystem
 		{
+			class Game;
+			class GameClock;
+			class GameWindow;
+
+			class GraphicsDeviceManager;
+
 			class D3D9RenderDevice;
 			class D3D9VertexDeclaration;
 		}
