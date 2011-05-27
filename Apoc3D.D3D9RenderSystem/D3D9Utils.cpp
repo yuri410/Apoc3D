@@ -45,12 +45,9 @@ namespace Apoc3D
 			D3DTEXTUREFILTERTYPE D3D9Utils::tfltTable[TFLT_Count];
 			D3DCUBEMAP_FACES D3D9Utils::cubeTable[CUBE_Count];
 
-			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTexture2D* tex)
+			PixelFormat ConvertBackPixelFormat(D3DFORMAT fmt)
 			{
-				D3DSURFACE_DESC desc;
-				tex->GetLevelDesc(0, &desc);
-
-				switch (desc.Format)
+				switch (fmt)
 				{
 				case D3DFMT_A2R10G10B10:
 					return FMT_A2R10G10B10;
@@ -125,6 +122,69 @@ namespace Apoc3D
 				}
 				throw Apoc3DException::createException(EX_NotSupported, L"");
 			}
+			TextureUsage ConvertBackTextureUsage(DWORD usage)
+			{
+				uint result = 0;
+				if ((usage & D3DUSAGE_AUTOGENMIPMAP) == D3DUSAGE_AUTOGENMIPMAP)
+				{
+					result |= TU_AutoMipMap;
+				}
+				if ((usage & D3DUSAGE_DYNAMIC) == D3DUSAGE_DYNAMIC)
+				{
+					result |= TU_Dynamic;
+				}
+				if ((usage & D3DUSAGE_WRITEONLY) == D3DUSAGE_WRITEONLY)
+				{
+					result |= TU_WriteOnly;
+				}
+				return static_cast<TextureUsage>(result);
+			}
+			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTexture2D* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+				
+				return ConvertBackPixelFormat(desc.Format);
+			}
+			TextureUsage D3D9Utils::GetD3DTextureUsage(D3DTexture2D* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return ConvertBackTextureUsage(desc.Usage);
+			}
+
+			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTexture3D* tex)
+			{
+				D3DVOLUME_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+				
+				return ConvertBackPixelFormat(desc.Format);
+			}
+			TextureUsage D3D9Utils::GetD3DTextureUsage(D3DTexture3D* tex)
+			{
+				D3DVOLUME_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+				
+				return ConvertBackTextureUsage(desc.Usage);
+			}
+
+
+			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTextureCube* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return ConvertBackPixelFormat(desc.Format);
+			}
+			TextureUsage D3D9Utils::GetD3DTextureUsage(D3DTextureCube* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				return ConvertBackTextureUsage(desc.Usage);
+			}
+
 
 			void D3D9Utils::InitPrimitiveTable()
 			{
@@ -318,6 +378,24 @@ namespace Apoc3D
 				InitDepthFormatTable();
 				InitTFLTTable();
 				InitCubeTable();
+			}
+
+			DWORD D3D9Utils::ConvertLockMode(LockMode mode)
+			{
+				DWORD result = 0;
+				if ((mode & LOCK_Discard) == LOCK_Discard)
+				{
+					result |= D3DLOCK_DISCARD;
+				}
+				if ((mode & LOCK_ReadOnly) == LOCK_ReadOnly)
+				{
+					result |= D3DLOCK_READONLY;
+				}
+				if ((mode & LOCK_NoOverwrite) == LOCK_NoOverwrite)
+				{
+					result |= D3DLOCK_NOOVERWRITE;
+				}
+				return result;
 			}
 
 			DWORD D3D9Utils::ConvertClearFlags(ClearFlags flags)

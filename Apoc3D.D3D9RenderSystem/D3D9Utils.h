@@ -54,7 +54,7 @@ namespace Apoc3D
 				static D3DFORMAT depFmtTable[DEPFMT_Count];
 				static D3DTEXTUREFILTERTYPE tfltTable[TFLT_Count];
 				static D3DCUBEMAP_FACES cubeTable[CUBE_Count];
-
+				
 			private:
 				static void InitPrimitiveTable();
 				static void InitVertexElementFormat();
@@ -70,7 +70,11 @@ namespace Apoc3D
 				static void InitTFLTTable();
 				static void InitCubeTable();
 
+				D3D9Utils();
+			public:
+				~D3D9Utils() { }
 
+				
 				static int32 GetD3DTextureWidth(D3DTexture2D* tex)
 				{
 					D3DSURFACE_DESC desc;
@@ -86,11 +90,47 @@ namespace Apoc3D
 					return static_cast<int32>(desc.Height);
 				}
 				static PixelFormat GetD3DTextureFormat(D3DTexture2D* tex);
+				static TextureUsage GetD3DTextureUsage(D3DTexture2D* tex);
 
-				D3D9Utils();
-			public:
-				~D3D9Utils() { }
 
+				static int32 GetD3DTextureWidth(D3DTexture3D* tex)
+				{
+					D3DVOLUME_DESC desc;
+					tex->GetLevelDesc(0, &desc);
+
+					return static_cast<int32>(desc.Width);
+				}
+				static int32 GetD3DTextureHeight(D3DTexture3D* tex)
+				{
+					D3DVOLUME_DESC desc;
+					tex->GetLevelDesc(0, &desc);
+
+					return static_cast<int32>(desc.Height);
+				}
+				static int32 GetD3DTextureDepth(D3DTexture3D* tex)
+				{
+					D3DVOLUME_DESC desc;
+					tex->GetLevelDesc(0, &desc);
+
+					return static_cast<int32>(desc.Depth);
+				}
+				static PixelFormat GetD3DTextureFormat(D3DTexture3D* tex);
+				static TextureUsage GetD3DTextureUsage(D3DTexture3D* tex);
+
+
+				static int32 GetD3DTextureLength(D3DTextureCube* tex)
+				{
+					D3DSURFACE_DESC desc;
+					tex->GetLevelDesc(0, &desc);
+
+					return static_cast<int32>(desc.Width);
+				}
+
+				static PixelFormat GetD3DTextureFormat(D3DTextureCube* tex);
+				static TextureUsage GetD3DTextureUsage(D3DTextureCube* tex);
+
+
+				static DWORD ConvertLockMode(LockMode mode);
 				static DWORD ConvertClearFlags(ClearFlags flags);
 
 				static DWORD ConvertBufferUsage(BufferUsageFlags usage);

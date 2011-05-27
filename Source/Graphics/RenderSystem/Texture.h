@@ -66,9 +66,9 @@ namespace Apoc3D
 				Texture(RenderDevice* device, int32 length, int32 levelCount, TextureUsage usage, PixelFormat format);
 
 
-				virtual DataRectangle lock(int32 surface, LockMode mode, const Rectangle& rectangle) = 0;
+				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rectangle) = 0;
 				virtual DataBox lock(int surface, LockMode mode, const Box& box) = 0;
-				virtual DataRectangle lock(int surface, CubeMapFace cubemapFace, LockMode mode, const Rectangle& rectangle) = 0;
+				virtual DataRectangle lock(int surface, CubeMapFace cubemapFace, LockMode mode, const Apoc3D::Math::Rectangle& rectangle) = 0;
 
 				virtual void unlock(int surface) = 0;
 				virtual void unlock(CubeMapFace cubemapFace, int surface) = 0;
@@ -87,9 +87,9 @@ namespace Apoc3D
 				PixelFormat getFormat() const { return m_format; }
 
 
-				DataRectangle Lock(int32 surface, LockMode mode, CubeMapFace cubemapFace, const Rectangle& rect);
+				DataRectangle Lock(int32 surface, LockMode mode, CubeMapFace cubemapFace, const Apoc3D::Math::Rectangle& rect);
 				DataRectangle Lock(int32 surface, LockMode mode, CubeMapFace cubemapFace);
-				DataRectangle Lock(int32 surface, LockMode mode, const Rectangle& rect);
+				DataRectangle Lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect);
 				DataRectangle Lock(int32 surface, LockMode mode);
 				DataBox Lock(int32 surface, LockMode mode, const Box& box);
 

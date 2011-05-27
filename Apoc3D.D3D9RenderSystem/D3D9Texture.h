@@ -46,6 +46,7 @@ namespace Apoc3D
 				D3DTexture2D* m_tex2D;
 				D3DTexture3D* m_tex3D;
 				D3DTextureCube* m_cube;
+				D3D9RenderDevice* m_renderDevice;
 
 			public:
 				D3D9Texture(D3D9RenderDevice* device, D3DTexture2D* tex2D);
@@ -61,9 +62,9 @@ namespace Apoc3D
 				virtual void Save(Stream* strm);
 				virtual void SetData(const char* data, int32 size);
 
-				virtual DataRectangle lock(int32 surface, LockMode mode, const Rectangle& rect);
+				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect);
 				virtual DataBox lock(int32 surface, LockMode mode, const DataBox& box);
-				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, const Rectangle& rect);
+				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, const Apoc3D::Math::Rectangle& rect);
 				virtual void unlock(int32 surface);
 				virtual void unlock(CubeMapFace cubemapFace, int32 surface);
 

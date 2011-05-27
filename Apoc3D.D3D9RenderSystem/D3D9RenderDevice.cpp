@@ -24,6 +24,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9RenderDevice.h"
 #include "GraphicsDeviceManager.h"
+#include "D3D9Utils.h"
+
+#include "D3D9PixelShader.h"
+#include "D3D9VertexShader.h"
+#include "D3D9RenderTarget.h"
+#include "D3D9Texture.h"
+
+#include "D3D9ObjectFactory.h"
 
 namespace Apoc3D
 {
@@ -37,7 +45,7 @@ namespace Apoc3D
 
 			}
 
-			D3DDevice* getDevice() const { return m_devManager->getDevice(); } 
+			D3DDevice* D3D9RenderDevice::getDevice() const { return m_devManager->getDevice(); } 
 
 			void D3D9RenderDevice::Initialize()
 			{
@@ -51,23 +59,72 @@ namespace Apoc3D
 
 			void D3D9RenderDevice::Clear(ClearFlags flags, uint color, float depth, int stencil)
 			{
+				assert(getDevice());
+				getDevice()->Clear(0, NULL, D3D9Utils::ConvertClearFlags(flags), color, depth, stencil);
+			}
+
+			void D3D9RenderDevice::SetRenderTarget(int index, RenderTarget* rt){}
+
+			RenderTarget* D3D9RenderDevice::GetRenderTarget(int index){}
+
+			void D3D9RenderDevice::SetTexture(int index, Texture* texture)
+			{
+			}
+			Texture* D3D9RenderDevice::GetTexture(int index)
+			{
+				return m_cachedTextures[index];
+			}
+
+			void D3D9RenderDevice::BindVertexShader(VertexShader* shader)
+			{
+				if (shader)
+				{
+					
+					//getDevice()->SetVertexShader();
+				}
+				else
+				{
+					getDevice()->SetVertexShader(0);
+				}
+			}
+			void D3D9RenderDevice::BindPixelShader(PixelShader* shader)
+			{
+				if (shader)
+				{
+
+					//getDevice()->SetVertexShader();
+				}
+				else
+				{
+					getDevice()->SetPixelShader(0);
+				}
+			}
+
+			void D3D9RenderDevice::Render(const RenderOperation* op, int count)
+			{
 
 			}
 
-			void D3D9RenderDevice::SetRenderTarget(int index, RenderTarget* rt);
+			Viewport D3D9RenderDevice::getViewport()
+			{
+				D3DVIEWPORT9 dvp;
+				getDevice()->GetViewport(&dvp);
 
-			RenderTarget* D3D9RenderDevice::GetRenderTarget(int index);
+				Viewport vp(dvp.X, dvp.Y, dvp.Width, dvp.Height, dvp.MinZ, dvp.MaxZ);
+				return vp;
+			}
+			void D3D9RenderDevice::setViewport(const Viewport& vp)
+			{
+				D3DVIEWPORT9 dvp;
+				dvp.X = vp.X;
+				dvp.Y = vp.Y;
+				dvp.Width = vp.Width;
+				dvp.Height = vp.Height;
+				dvp.MinZ = vp.MinZ;
+				dvp.MaxZ = vp.MaxZ;
 
-			void D3D9RenderDevice::SetTexture(int index, Texture* texture);
-			Texture* D3D9RenderDevice::GetTexture(int index);
-
-			void D3D9RenderDevice::BindVertexShader(VertexShader* shader);
-			void D3D9RenderDevice::BindPixelShader(PixelShader* shader);
-
-			void D3D9RenderDevice::Render(const RenderOperation* op, int count);
-
-			Viewport D3D9RenderDevice::getViewport();
-			void D3D9RenderDevice::setViewport(const Viewport& vp);
+				getDevice()->SetViewport(&dvp);
+			}
 		}
 	}
 }

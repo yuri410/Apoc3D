@@ -49,8 +49,7 @@ namespace Apoc3D
 				LOCK_None = 0,
 				LOCK_Discard = 1,
 				LOCK_ReadOnly = 2,
-				LOCK_NoOverwrite = 3,
-				LOCK_Count = 4
+				LOCK_NoOverwrite = 4,
 			};
 
 			/* 

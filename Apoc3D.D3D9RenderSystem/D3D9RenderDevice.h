@@ -42,10 +42,17 @@ namespace Apoc3D
 			private:
 				GraphicsDeviceManager* m_devManager;
 
-				inline D3DDevice* getDevice() const;
+				D3D9Texture* m_cachedTextures[16];
+
+
+
+
 			public:
+				inline D3DDevice* getDevice() const;
+
 				D3D9RenderDevice(GraphicsDeviceManager* devManager);
 
+				
 				virtual void Initialize();
 
 				
