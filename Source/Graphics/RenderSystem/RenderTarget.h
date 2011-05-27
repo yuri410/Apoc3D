@@ -21,16 +21,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9RENDERTARGET_H
-#define D3D9RENDERTARGET_H
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
-#include "D3D9Common.h"
-#include "Graphics/RenderSystem/RenderTarget.h"
+#include "Common.h"
 #include "Graphics/GraphicsCommon.h"
+#include "Graphics/PixelFormat.h"
+#include "Graphics/LockData.h"
 
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::Core;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Math;
 
@@ -38,21 +38,40 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace D3D9RenderSystem
+		namespace RenderSystem
 		{
-			class D3D9RenderTarget : public RenderTarget
+			class APAPI RenderTarget
 			{
 			private:
-				D3DTexture2D* m_color;
-				IDirect3DSurface9* m_depth;
+				int32 m_width;
+				int32 m_height;
+				DepthFormat m_depthFormat;
+				PixelFormat m_pixelFormat;
 
+			protected:
+				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat)
+					: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(depthFormat)
+				{
 
-
+				}
+				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat)
+					: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count)
+				{ }
 
 			public:
+				virtual ~RenderTarget() { }
+				int32 getWidth() const { return m_width; }
+				int32 getHeight() const { return m_height; }
+
+				DepthFormat getDepthFormat() const { return m_depthFormat; }
+				PixelFormat getColorFormat() const { return m_pixelFormat; }
+
+				virtual Texture* GetColorTexture() = 0;
+				virtual DepthBuffer* GetDepthBuffer() = 0;
 
 			};
 		}
+
 	}
 }
 #endif

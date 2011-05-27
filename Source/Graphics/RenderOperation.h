@@ -21,9 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RENDER_OPERATION_H
-#define RENDER_OPERATION_H
-#pragma once
+#ifndef RENDEROPERATION_H
+#define RENDEROPERATION_H
 
 #include "Common.h"
 #include "Math\Matrix.h"
@@ -34,23 +33,30 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/*
-		  Represents an operation to render a mesh part in the scene.
-		  RenderOperation is used by the engine to manage the scene rendering pipeline.
+		struct APAPI BoneTransforms
+		{
+			const Matrix* Transfroms;
+			int32 Count;			
+		};
+		/* Represents an operation to render a mesh part in the scene.
+		   RenderOperation is used by the engine to manage the scene rendering pipeline.
 		*/
 		class APAPI RenderOperation
 		{
 		private:
 			GeometryData* m_data;
 			Material* m_mtrl;
-			Matrix m_transform;
+			Matrix m_rootTransform;
+			BoneTransforms m_boneTransform;
 		public:
+			const BoneTransforms* getBoneTransforms() const { return &m_boneTransform; }
+			void setBoneTransform(const BoneTransforms& trans) { m_boneTransform = trans; }
 
 			Material* getMaterial() const { return m_mtrl; }
 			void setMaterial(Material* mtrl) { m_mtrl = mtrl; }
 
-			Matrix& getTransform() { return m_transform; }
-			void setTransform(const Matrix& value) { m_transform = value; }
+			const Matrix& getRootTransform() { return m_rootTransform; }
+			void setRootTransform(const Matrix& value) { m_rootTransform = value; }
 
 			GeometryData* getGeomentryData() const { return m_data; }
 			void setGeomentryData(GeometryData* data) { m_data = data; }

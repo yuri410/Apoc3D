@@ -24,7 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GEOMETRYDATA_H
 #define GEOMETRYDATA_H
 
-#pragma once
 #include "Common.h"
 #include "Core\HashHandleObject.h"
 #include "GraphicsCommon.h"
@@ -44,8 +43,10 @@ namespace Apoc3D
 			VertexBuffer* m_vtxBuffer;
 			IndexBuffer* m_idxBuffer;
 			VertexDeclaration* m_vtxDecl;
-			int m_primCount;
-			int m_baseVertex;
+			int32 m_primCount;
+			int32 m_baseVertex;
+			int32 m_vertexCount;
+			int32 m_vertexSize;
 
 			PrimitiveType m_primType;
 			SceneObject* m_sender;
@@ -69,10 +70,20 @@ namespace Apoc3D
 			void setVertexDecl(VertexDeclaration* value) { m_vtxDecl = value; }
 			void setPrimitiveType(PrimitiveType value) { m_primType = value; }
 
+			void setPrimitiveCount(int32 value) { m_primCount = value; }
+			void setBaseVertex(int32 value) { m_baseVertex = value; }
+			void setVertexCount(int32 value) { m_vertexCount = value; }
+
+			int32 getPrimitiveCount() const { return m_primCount; }
+			int32 getBaseVertex() const { return m_baseVertex; }
+			int32 getVertexCount() const { return m_vertexCount; }
+			int32 getVertexSize() const { return m_vertexSize; }
+			bool usesIndex() const { return !!m_idxBuffer; }
 
 			GeometryData(void)
 				: m_sender(0), m_baseVertex(0), m_primCount(0), 
 				m_vtxDecl(0), m_idxBuffer(0), m_vtxBuffer(0),
+				m_vertexCount(0), m_vertexSize(0),
 				m_primType(PT_PointList)
 			{ }
 			~GeometryData(void){}

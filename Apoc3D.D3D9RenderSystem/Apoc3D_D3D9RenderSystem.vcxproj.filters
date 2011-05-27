@@ -98,5 +98,11 @@
     <ClCompile Include="GraphicsDeviceManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="D3D9Texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D9RenderTarget.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

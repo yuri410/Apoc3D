@@ -29,7 +29,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Graphics\GraphicsCommon.h"
 #include "Math\Viewport.h"
+#include "Graphics\RenderOperation.h"
 
+using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Math;
 
 namespace Apoc3D
@@ -103,8 +105,8 @@ namespace Apoc3D
 					for (int i = 0; i < count; i++)
 					{
 						m_batchCount++;
-						//m_primitiveCount += op[i];
-						//m_vertexCount += op[i];
+						m_primitiveCount += op[i].getPrimitiveCount();
+						m_vertexCount += op[i].getVertexCount();
 					}
 				}
 

@@ -102,6 +102,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D9RenderDevice.cpp" />
+    <ClCompile Include="D3D9RenderTarget.cpp" />
+    <ClCompile Include="D3D9Texture.cpp" />
     <ClCompile Include="D3D9Utils.cpp" />
     <ClCompile Include="D3D9VertexDeclaration.cpp" />
     <ClCompile Include="dllmain.cpp">

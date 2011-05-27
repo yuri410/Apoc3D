@@ -99,6 +99,7 @@
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="core\streaming\asyncprocessor.h" />
     <ClInclude Include="Graphics\LockData.h" />
+    <ClInclude Include="Graphics\RenderSystem\RenderTarget.h" />
     <ClInclude Include="IO\BinaryWriter.h" />
     <ClInclude Include="IO\IOUtils.h" />
     <ClInclude Include="IO\TaggedData.h" />
