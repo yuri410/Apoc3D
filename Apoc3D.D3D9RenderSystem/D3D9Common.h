@@ -69,6 +69,10 @@ namespace Apoc3D
 
 			class GraphicsDeviceManager;
 
+			class D3D9Texture;
+			class D3D9RenderTarget;
+
+			class D3D9DepthBuffer;
 			class D3D9RenderDevice;
 			class D3D9VertexDeclaration;
 		}

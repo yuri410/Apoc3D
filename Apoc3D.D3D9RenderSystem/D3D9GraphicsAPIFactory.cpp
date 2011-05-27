@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "D3D9RenderTarget.h"
+#include "D3D9GraphicsAPIFactory.h"
 
 namespace Apoc3D
 {

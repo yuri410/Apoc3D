@@ -70,6 +70,23 @@ namespace Apoc3D
 				static void InitTFLTTable();
 				static void InitCubeTable();
 
+
+				static int32 GetD3DTextureWidth(D3DTexture2D* tex)
+				{
+					D3DSURFACE_DESC desc;
+					tex->GetLevelDesc(0, &desc);
+
+					return static_cast<int32>(desc.Width);
+				}
+				static int32 GetD3DTextureHeight(D3DTexture2D* tex)
+				{
+					D3DSURFACE_DESC desc;
+					tex->GetLevelDesc(0, &desc);
+
+					return static_cast<int32>(desc.Height);
+				}
+				static PixelFormat GetD3DTextureFormat(D3DTexture2D* tex);
+
 				D3D9Utils();
 			public:
 				~D3D9Utils() { }

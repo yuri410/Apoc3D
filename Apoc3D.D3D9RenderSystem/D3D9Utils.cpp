@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "D3D9Utils.h"
+#include "Apoc3DException.h"
 
 namespace Apoc3D
 {
@@ -44,6 +45,86 @@ namespace Apoc3D
 			D3DTEXTUREFILTERTYPE D3D9Utils::tfltTable[TFLT_Count];
 			D3DCUBEMAP_FACES D3D9Utils::cubeTable[CUBE_Count];
 
+			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTexture2D* tex)
+			{
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(0, &desc);
+
+				switch (desc.Format)
+				{
+				case D3DFMT_A2R10G10B10:
+					return FMT_A2R10G10B10;
+				case D3DFMT_A8R8G8B8:
+					return FMT_A8R8G8B8;
+				case D3DFMT_X8R8G8B8:
+					return FMT_X8R8G8B8;
+				case D3DFMT_A1R5G5B5:
+					return FMT_A1R5G5B5;
+				case D3DFMT_X1R5G5B5:
+					return FMT_X1R5G5B5;
+				case D3DFMT_R5G6B5:
+					return FMT_R5G6B5;
+
+				case D3DFMT_DXT1:
+					return FMT_DXT1;
+				case D3DFMT_DXT2:
+					return FMT_DXT2;
+				case D3DFMT_DXT3:
+					return FMT_DXT3;
+				case D3DFMT_DXT4:
+					return FMT_DXT4;
+				case D3DFMT_DXT5:
+					return FMT_DXT5;
+
+				case D3DFMT_R16F:
+					return FMT_R16F;
+				case D3DFMT_G16R16F:
+					return FMT_G16R16F;
+				case D3DFMT_A16B16G16R16F:
+					return FMT_A16B16G16R16F;
+
+				case D3DFMT_R32F:
+					return FMT_R32F;
+				case D3DFMT_G32R32F:
+					return FMT_G32R32F;
+				case D3DFMT_A32B32G32R32F:
+					return FMT_A32B32G32R32F;
+
+				case D3DFMT_R8G8B8:
+					return FMT_R8G8B8;
+				case D3DFMT_A4R4G4B4:
+					return FMT_A4R4G4B4;
+				case D3DFMT_R3G3B2:
+					return FMT_R3G3B2;
+				case D3DFMT_A8:
+					return FMT_Alpha8;
+				case D3DFMT_A2B10G10R10:
+					return FMT_A2B10G10R10;
+				case D3DFMT_G16R16:
+					return FMT_G16R16;
+				case D3DFMT_A16B16G16R16:
+					return FMT_A16B16G16R16;
+				case D3DFMT_A8P8:
+					return FMT_Palette8Alpha8;
+				case D3DFMT_P8:
+					return FMT_Palette8;
+				case D3DFMT_L8:
+					return FMT_Luminance8;
+				case D3DFMT_L16:
+					return FMT_Luminance16;
+				case D3DFMT_A8L8:
+					return FMT_A8L8;
+				case D3DFMT_A4L4:
+					return FMT_A4L4;
+				case D3DFMT_A1:
+					return FMT_Alpha1;
+
+				case D3DFMT_X4R4G4B4:
+				case D3DFMT_A8R3G3B2:
+					return FMT_Unknown;
+				}
+				throw Apoc3DException::createException(EX_NotSupported, L"");
+			}
 
 			void D3D9Utils::InitPrimitiveTable()
 			{
@@ -174,8 +255,9 @@ namespace Apoc3D
 				pixFmtTable[FMT_DXT5] = D3DFMT_DXT5;
 				pixFmtTable[FMT_A16B16G16R16F] = D3DFMT_A16B16G16R16F;
 				pixFmtTable[FMT_A32B32G32R32F] = D3DFMT_A32B32G32R32F;
-				pixFmtTable[FMT_X8R8G8B8] = D3DFMT_UNKNOWN;
-				pixFmtTable[FMT_X8B8G8R8] = D3DFMT_UNKNOWN;
+				pixFmtTable[FMT_X8R8G8B8] = D3DFMT_X8R8G8B8;
+				pixFmtTable[FMT_X8B8G8R8] = D3DFMT_X8B8G8R8;
+				pixFmtTable[FMT_X1R5G5B5] = D3DFMT_X1R5G5B5;
 				pixFmtTable[FMT_R8G8B8A8] = D3DFMT_UNKNOWN;
 				pixFmtTable[FMT_Depth] = D3DFMT_UNKNOWN;
 				pixFmtTable[FMT_A16B16G16R16] = D3DFMT_A16B16G16R16;

@@ -101,6 +101,7 @@
     <ClInclude Include="Plugin.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="D3D9GraphicsAPIFactory.cpp" />
     <ClCompile Include="D3D9RenderDevice.cpp" />
     <ClCompile Include="D3D9RenderTarget.cpp" />
     <ClCompile Include="D3D9Texture.cpp" />
