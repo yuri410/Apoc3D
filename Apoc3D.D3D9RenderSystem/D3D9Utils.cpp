@@ -45,6 +45,22 @@ namespace Apoc3D
 			D3DTEXTUREFILTERTYPE D3D9Utils::tfltTable[TFLT_Count];
 			D3DCUBEMAP_FACES D3D9Utils::cubeTable[CUBE_Count];
 
+
+
+			BufferUsageFlags D3D9Utils::GetBufferUsage(DWORD usage)
+			{
+				uint32 result = 0;
+				if ((usage & D3DUSAGE_WRITEONLY) == D3DUSAGE_WRITEONLY)
+				{
+					result |= BU_WriteOnly;
+				}
+				if ((usage & D3DUSAGE_DYNAMIC) == D3DUSAGE_DYNAMIC)
+				{
+					result |= BU_Dynamic;
+				}
+				return static_cast<BufferUsageFlags>(result);
+			}
+
 			PixelFormat ConvertBackPixelFormat(D3DFORMAT fmt)
 			{
 				switch (fmt)
@@ -183,6 +199,48 @@ namespace Apoc3D
 				tex->GetLevelDesc(0, &desc);
 
 				return ConvertBackTextureUsage(desc.Usage);
+			}
+
+
+			D3DMULTISAMPLE_TYPE D3D9Utils::ConvertMultisample(uint32 sampleCount)
+			{
+				switch (sampleCount)
+				{
+				case 0:
+					return D3DMULTISAMPLE_NONE;
+				case 1:
+				case 2:
+					return D3DMULTISAMPLE_2_SAMPLES;
+				case 3:
+					return D3DMULTISAMPLE_3_SAMPLES;
+				case 4:
+					return D3DMULTISAMPLE_4_SAMPLES;
+				case 5:
+					return D3DMULTISAMPLE_5_SAMPLES;
+				case 6:
+					return D3DMULTISAMPLE_6_SAMPLES;
+				case 7:
+					return D3DMULTISAMPLE_7_SAMPLES;
+				case 8:
+					return D3DMULTISAMPLE_8_SAMPLES;
+				case 9:
+					return D3DMULTISAMPLE_9_SAMPLES;
+				case 10:
+					return D3DMULTISAMPLE_10_SAMPLES;
+				case 11:
+					return D3DMULTISAMPLE_11_SAMPLES;
+				case 12:
+					return D3DMULTISAMPLE_12_SAMPLES;
+				case 13:
+					return D3DMULTISAMPLE_13_SAMPLES;
+				case 14:
+					return D3DMULTISAMPLE_14_SAMPLES;
+				case 15:
+					return D3DMULTISAMPLE_15_SAMPLES;
+				case 16:
+					return D3DMULTISAMPLE_16_SAMPLES;
+				}
+				return D3DMULTISAMPLE_NONE;
 			}
 
 

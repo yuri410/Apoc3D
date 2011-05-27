@@ -50,6 +50,7 @@ namespace Apoc3D
 				D3D9DepthBuffer* m_depthBuffer;
 				D3D9RenderDevice* m_device;
 				
+				bool m_isMultisampled;
 			public:
 				IDirect3DSurface9* getColorSurface() const { return m_colorSurface; }
 				IDirect3DSurface9* getDepthSurface() const { return m_depthSurface; }

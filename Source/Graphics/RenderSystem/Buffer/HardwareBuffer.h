@@ -81,8 +81,6 @@ namespace Apoc3D
 
 			public:
 				
-				virtual void SetData(void* data, int size) = 0;
-
 			};
 
 			class APAPI IndexBuffer : public HardwareBuffer
@@ -102,8 +100,6 @@ namespace Apoc3D
 
 			public:
 				
-				virtual void SetData(void* data, int size) = 0;
-
 				int getIndexSize() const { return m_type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint); }
 			};
 

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9VERTEXBUFFER_H
-#define D3D9VERTEXBUFFER_H
+#ifndef D3D9INDEXBUFFER_H
+#define D3D9INDEXBUFFER_H
 
 #include "D3D9Common.h"
 #include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
@@ -36,8 +36,15 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9VertexBuffer : public VertexBuffer
+			class D3D9DepthBuffer : public DepthBuffer
 			{
+			private:
+				IDirect3DSurface9* m_buffer;
+			protected:
+				
+			public:
+				D3D9DepthBuffer(D3D9RenderDevice* device, IDirect3DSurface9* buffer);
+
 
 			};
 		}

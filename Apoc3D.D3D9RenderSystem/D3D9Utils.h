@@ -74,6 +74,7 @@ namespace Apoc3D
 			public:
 				~D3D9Utils() { }
 
+				static BufferUsageFlags GetBufferUsage(DWORD usage);
 				
 				static int32 GetD3DTextureWidth(D3DTexture2D* tex)
 				{

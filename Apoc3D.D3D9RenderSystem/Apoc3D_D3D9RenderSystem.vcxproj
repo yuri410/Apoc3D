@@ -52,7 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;APOC3D_D3D9RENDERSYSTEM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Source;$(SolutionDir)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;$(SolutionDir)\Source;$(SolutionDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -82,8 +82,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D9Common.h" />
+    <ClInclude Include="Buffer\D3D9DepthBuffer.h" />
     <ClInclude Include="D3D9DeviceContent.h" />
     <ClInclude Include="D3D9GraphicsAPIFactory.h" />
+    <ClInclude Include="Buffer\D3D9IndexBuffer.h" />
     <ClInclude Include="D3D9ObjectFactory.h" />
     <ClInclude Include="D3D9PixelShader.h" />
     <ClInclude Include="D3D9RenderDevice.h" />
@@ -92,6 +94,7 @@
     <ClInclude Include="D3D9RenderWindow.h" />
     <ClInclude Include="D3D9Texture.h" />
     <ClInclude Include="D3D9Utils.h" />
+    <ClInclude Include="Buffer\D3D9VertexBuffer.h" />
     <ClInclude Include="D3D9VertexDeclaration.h" />
     <ClInclude Include="D3D9VertexShader.h" />
     <ClInclude Include="DeviceSettings.h" />
@@ -102,6 +105,7 @@
     <ClInclude Include="Plugin.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Buffer\D3D9VertexBuffer.cpp" />
     <ClCompile Include="D3D9DeviceContent.cpp" />
     <ClCompile Include="D3D9GraphicsAPIFactory.cpp" />
     <ClCompile Include="D3D9RenderDevice.cpp" />
