@@ -77,8 +77,8 @@ namespace Apoc3D
 			inline void ReadPoint(Point& point);
 			inline void ReadSize(Size& size);
 
-			inline void ReadRectangle(Rectangle& rect);
-			inline void ReadRectangleF(RectangleF& rect);
+			inline void ReadRectangle(Apoc3D::Math::Rectangle& rect);
+			inline void ReadRectangleF(Apoc3D::Math::RectangleF& rect);
 
 			inline void ReadRay(Ray& ray);
 

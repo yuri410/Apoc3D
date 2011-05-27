@@ -24,6 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9VertexShader.h"
 
+#include "D3D9RenderDevice.h"
+
+#include "IO/BinaryReader.h"
+#include "Vfs/ResourceLocation.h"
+#include "IO/Streams.h"
+#include "ConstantTable.h"
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -31,11 +38,26 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 
-			D3D9VertexShader(D3D9RenderDevice* device, const ResourceLocation* rl)
+			D3D9VertexShader::D3D9VertexShader(D3D9RenderDevice* device, const ResourceLocation* rl)
+				: VertexShader(device), m_device(device)
 			{
+				BinaryReader* br = new BinaryReader(rl);
+				int64 len = br->getBaseStream()->getLength();
+				char* buffer = new char[static_cast<uint>(len)];
+				br->ReadBytes(buffer, len);
+				br->Close();
+				delete br;
 
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->CreateVertexShader(reinterpret_cast<const DWORD*>(buffer), &m_shader);
+				assert(SUCCEEDED(hr));
+				
+
+				m_constantTable = new ConstantTable(reinterpret_cast<const DWORD*>(buffer));
+
+				delete[] buffer;
 			}
-			~D3D9VertexShader()
+			D3D9VertexShader::~D3D9VertexShader()
 			{
 
 			}

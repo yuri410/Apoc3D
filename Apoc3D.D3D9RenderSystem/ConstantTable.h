@@ -99,7 +99,7 @@ namespace Apoc3D
 				ConstantTable(const DWORD* bytes);
 				~ConstantTable() { }
 
-				const ShaderConstant& getConstant(const String& name) const inline;
+				inline const ShaderConstant& getConstant(const String& name) const;
 				
 			};
 		}

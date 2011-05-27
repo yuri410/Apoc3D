@@ -44,7 +44,7 @@ namespace Apoc3D
 			{
 				BinaryReader* br = new BinaryReader(rl);
 				int64 len = br->getBaseStream()->getLength();
-				char* buffer = new char[len];
+				char* buffer = new char[static_cast<uint>(len)];
 				br->ReadBytes(buffer, len);
 				br->Close();
 				delete br;
@@ -54,18 +54,9 @@ namespace Apoc3D
 				assert(SUCCEEDED(hr));
 				
 
-				ID3DXConstantTable* constants;
-				hr = D3DXGetShaderConstantTableEx(reinterpret_cast<const DWORD*>(buffer), 
-					D3DXCONSTTABLE_LARGEADDRESSAWARE, &constants);
-				assert(SUCCEEDED(hr));
-
-				m_constantTable = new ConstantTable(buffer);
+				m_constantTable = new ConstantTable(reinterpret_cast<const DWORD*>(buffer));
 
 				delete[] buffer;
-
-
-
-				constants->Release();
 			}
 			D3D9PixelShader::~D3D9PixelShader()
 			{
