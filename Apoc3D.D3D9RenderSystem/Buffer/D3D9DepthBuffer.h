@@ -27,8 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Common.h"
 #include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
 
-using Apoc3D::Graphics;
-using Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -41,10 +41,11 @@ namespace Apoc3D
 			private:
 				IDirect3DSurface9* m_buffer;
 			protected:
-				
+				virtual void* lock(int offset, int size, LockMode mode);
+				virtual void unlock();
 			public:
 				D3D9DepthBuffer(D3D9RenderDevice* device, IDirect3DSurface9* buffer);
-
+				~D3D9DepthBuffer();
 
 			};
 		}

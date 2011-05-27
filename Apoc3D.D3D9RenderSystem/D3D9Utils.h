@@ -75,7 +75,9 @@ namespace Apoc3D
 				~D3D9Utils() { }
 
 				static BufferUsageFlags GetBufferUsage(DWORD usage);
-				
+				static PixelFormat ConvertBackPixelFormat(DWORD format);
+				static DepthFormat ConvertBackDepthFormat(DWORD format);
+
 				static int32 GetD3DTextureWidth(D3DTexture2D* tex)
 				{
 					D3DSURFACE_DESC desc;

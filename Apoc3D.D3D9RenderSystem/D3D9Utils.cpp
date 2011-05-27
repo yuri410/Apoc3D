@@ -60,8 +60,7 @@ namespace Apoc3D
 				}
 				return static_cast<BufferUsageFlags>(result);
 			}
-
-			PixelFormat ConvertBackPixelFormat(D3DFORMAT fmt)
+			PixelFormat D3D9Utils::ConvertBackPixelFormat(DWORD fmt)
 			{
 				switch (fmt)
 				{
@@ -138,6 +137,42 @@ namespace Apoc3D
 				}
 				throw Apoc3DException::createException(EX_NotSupported, L"");
 			}
+			DepthFormat D3D9Utils::ConvertBackDepthFormat(DWORD format)
+			{
+				//depFmtTable[DEPFMT_Depth15Stencil1] = D3DFMT_D15S1;
+				//depFmtTable[DEPFMT_Depth16] = D3DFMT_D16;
+				//depFmtTable[DEPFMT_Depth16Lockable] = D3DFMT_D16_LOCKABLE;
+				//depFmtTable[DEPFMT_Depth24X8] = D3DFMT_D24X8;
+				//depFmtTable[DEPFMT_Depth24Stencil4] = D3DFMT_D24X4S4;
+				//depFmtTable[DEPFMT_Depth24Stencil8] = D3DFMT_D24X8;
+				//depFmtTable[DEPFMT_Depth24Stencil8Single] = D3DFMT_D24FS8;
+				//depFmtTable[DEPFMT_Depth32] = D3DFMT_D32;
+				//depFmtTable[DEPFMT_Depth32Lockable] = D3DFMT_D32_LOCKABLE;
+				//depFmtTable[DEPFMT_Depth32Single] = D3DFMT_D32F_LOCKABLE;
+				switch (format)
+				{
+				case D3DFMT_D15S1:
+					return DEPFMT_Depth15Stencil1;
+				case D3DFMT_D16:
+					return DEPFMT_Depth16;
+				case D3DFMT_D16_LOCKABLE:
+					return DEPFMT_Depth16Lockable;
+				case D3DFMT_D24X8:
+					return DEPFMT_Depth24X8;
+				case D3DFMT_D24X4S4:
+					return DEPFMT_Depth24Stencil4;
+				case D3DFMT_D24S8:
+					return DEPFMT_Depth24Stencil8;
+				case D3DFMT_D24FS8:
+					return DEPFMT_Depth24Stencil8Single;
+				case D3DFMT_D32:
+					return DEPFMT_Depth32;
+				case D3DFMT_D32_LOCKABLE:
+					return DEPFMT_Depth32Lockable;
+				}
+				throw Apoc3DException::createException(EX_NotSupported, L"");
+			}
+
 			TextureUsage ConvertBackTextureUsage(DWORD usage)
 			{
 				uint result = 0;

@@ -27,8 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Common.h"
 #include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
 
-using Apoc3D::Graphics;
-using Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -39,7 +39,18 @@ namespace Apoc3D
 			class D3D9IndexBuffer : public IndexBuffer
 			{
 			private:
+				D3DIndexBuffer* m_indexBuffer;
+
+			protected:
+				virtual void* lock(int offset, int size, LockMode mode);
+				virtual void unlock();
+
 			public:
+				D3D9IndexBuffer(D3D9RenderDevice* device, D3DIndexBuffer* vb);
+				D3D9IndexBuffer(D3D9RenderDevice* device, IndexBufferType type, int32 size, BufferUsageFlags usage);
+
+
+				~D3D9IndexBuffer();
 			};
 		}
 	}
