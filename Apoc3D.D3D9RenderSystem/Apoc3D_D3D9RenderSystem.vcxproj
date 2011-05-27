@@ -81,6 +81,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConstantTable.h" />
     <ClInclude Include="D3D9Common.h" />
     <ClInclude Include="Buffer\D3D9DepthBuffer.h" />
     <ClInclude Include="D3D9DeviceContent.h" />
@@ -107,7 +108,8 @@
   <ItemGroup>
     <ClCompile Include="Buffer\D3D9DepthBuffer.cpp" />
     <ClCompile Include="Buffer\D3D9IndexBuffer.cpp" />
-    <ClCompile Include="Buffer\D3D9PixelShader.cpp" />
+    <ClCompile Include="ConstantTable.cpp" />
+    <ClCompile Include="D3D9PixelShader.cpp" />
     <ClCompile Include="Buffer\D3D9VertexBuffer.cpp" />
     <ClCompile Include="D3D9VertexShader.cpp" />
     <ClCompile Include="D3D9DeviceContent.cpp" />

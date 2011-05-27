@@ -23,6 +23,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "D3D9PixelShader.h"
+#include "D3D9RenderDevice.h"
+
+#include "IO/BinaryReader.h"
+#include "Vfs/ResourceLocation.h"
+#include "IO/Streams.h"
+#include "ConstantTable.h"
+
+using namespace Apoc3D::IO;
 
 namespace Apoc3D
 {
@@ -31,135 +39,133 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 
-			void D3D9PixelShader::Init(const char* code, int32 length)
+			D3D9PixelShader::D3D9PixelShader(D3D9RenderDevice* device, const ResourceLocation* rl)
+				: PixelShader(device), m_device(device)
+			{
+				BinaryReader* br = new BinaryReader(rl);
+				int64 len = br->getBaseStream()->getLength();
+				char* buffer = new char[len];
+				br->ReadBytes(buffer, len);
+				br->Close();
+				delete br;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->CreatePixelShader(reinterpret_cast<const DWORD*>(buffer), &m_shader);
+				assert(SUCCEEDED(hr));
+				
+
+				ID3DXConstantTable* constants;
+				hr = D3DXGetShaderConstantTableEx(reinterpret_cast<const DWORD*>(buffer), 
+					D3DXCONSTTABLE_LARGEADDRESSAWARE, &constants);
+				assert(SUCCEEDED(hr));
+
+				m_constantTable = new ConstantTable(buffer);
+
+				delete[] buffer;
+
+
+
+				constants->Release();
+			}
+			D3D9PixelShader::~D3D9PixelShader()
+			{
+				m_shader->Release();
+			}
+
+
+			void D3D9PixelShader::SetVector2(int reg, Vector2 value)
+			{
+
+			}
+			void D3D9PixelShader::SetVector3(int reg, Vector3 value)
+			{
+
+			}
+			void D3D9PixelShader::SetVector4(int reg, Vector4 value) 
+			{
+
+			}
+			void D3D9PixelShader::SetValue(int reg, const Quaternion& value)  
+			{
+
+			}
+			void D3D9PixelShader::SetValue(int reg, const Matrix& value) 
+			{
+
+			}
+			void D3D9PixelShader::SetValue(int reg, const Color4& value) 
+			{
+
+			}
+			void D3D9PixelShader::SetValue(int reg, const Plane& value) 
 			{
 
 			}
 
-			D3D9PixelShader(D3D9RenderDevice* device, const ResourceLocation* rl)
+
+			void D3D9PixelShader::SetVector2(int reg, const Vector2* value, int count) 
 			{
 
 			}
-			~D3D9PixelShader()
+			void D3D9PixelShader::SetVector3(int reg, const Vector3* value, int count) 
 			{
 
 			}
-
-			int D3D9PixelShader::GetContantIndex(const String& name)
+			void D3D9PixelShader::SetVector4(int reg, const Vector4* value, int count)
 			{
 
 			}
-
-			void D3D9PixelShader::SetVector2(int index, Vector2 value)
+			void D3D9PixelShader::SetValue(int reg, const Quaternion* value, int count)
 			{
 
 			}
-			void D3D9PixelShader::SetVector3(int index, Vector3 value)
+			void D3D9PixelShader::SetValue(int reg, const Matrix* value, int count) 
 			{
 
 			}
-			void D3D9PixelShader::SetVector4(int index, Vector4 value) 
+			void D3D9PixelShader::SetValue(int reg, const Color4* value, int count) 
 			{
 
 			}
-			void D3D9PixelShader::SetValue(int index, const Quaternion& value)  
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, const Matrix& value) 
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, const Color4& value) 
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, const Plane& value) 
+			void D3D9PixelShader::SetValue(int reg, const Plane* value, int count) 
 			{
 
 			}
 
-			void D3D9PixelShader::SetValueDirect(int reg, Vector3 value) 
+			void D3D9PixelShader::SetValue(int reg, bool value) 
+			{
+
+			}
+			void D3D9PixelShader::SetValue(int reg, float value) 
+			{
+
+			}
+			void D3D9PixelShader::SetValue(int reg, int value) 
+			{
+
+			}
+			void D3D9PixelShader::SetValue(int reg, bool* value, int count) 
+			{
+
+			}
+			void D3D9PixelShader::SetValue(int reg, float* value, int count) 
+			{
+
+			}
+			void D3D9PixelShader::SetValue(int reg, int* value, int count) 
 			{
 
 			}
 
-
-			void D3D9PixelShader::SetVector2(int index, const Vector2* value, int count) 
+			void D3D9PixelShader::SetTexture(int reg, Texture* tex) 
 			{
 
 			}
-			void D3D9PixelShader::SetVector3(int index, const Vector3* value, int count) 
-			{
-
-			}
-			void D3D9PixelShader::SetVector4(int index, const Vector4* value, int count)
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, const Quaternion* value, int count)
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, const Matrix* value, int count) 
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, const Color4* value, int count) 
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, const Plane* value, int count) 
+			void D3D9PixelShader::SetSamplerState(int reg, const ShaderSamplerState &state) 
 			{
 
 			}
 
-			void D3D9PixelShader::SetValueDirect(int reg, float value) 
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, bool value) 
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, float value) 
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, int value) 
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, bool* value, int count) 
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, float* value, int count) 
-			{
-
-			}
-			void D3D9PixelShader::SetValue(int index, int* value, int count) 
-			{
-
-			}
-
-			void D3D9PixelShader::SetTexture(int index, Texture* tex) 
-			{
-
-			}
-			void D3D9PixelShader::SetSamplerState(int index, const ShaderSamplerState &state) 
-			{
-
-			}
-
-			void D3D9PixelShader::SetTextureDirect(int index, Texture* tex)
-			{
-
-			}
-			void D3D9PixelShader::SetSamplerStateDirect(int index, const ShaderSamplerState &state) 
-			{
-
-			}
 
 			void D3D9PixelShader::SetVector2(const String &paramName, Vector2 value) 
 			{

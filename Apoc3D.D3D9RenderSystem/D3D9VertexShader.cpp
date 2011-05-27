@@ -31,11 +31,6 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 
-			void D3D9VertexShader::Init(const char* code, int32 length)
-			{
-
-			}
-
 			D3D9VertexShader(D3D9RenderDevice* device, const ResourceLocation* rl)
 			{
 
@@ -45,121 +40,100 @@ namespace Apoc3D
 
 			}
 
-			int D3D9VertexShader::GetContantIndex(const String& name)
+			void D3D9VertexShader::SetVector2(int reg, Vector2 value)
 			{
 
 			}
-
-			void D3D9VertexShader::SetVector2(int index, Vector2 value)
+			void D3D9VertexShader::SetVector3(int reg, Vector3 value)
 			{
 
 			}
-			void D3D9VertexShader::SetVector3(int index, Vector3 value)
+			void D3D9VertexShader::SetVector4(int reg, Vector3 value) 
 			{
 
 			}
-			void D3D9VertexShader::SetVector4(int index, Vector3 value) 
+			void D3D9VertexShader::SetValue(int reg, const Quaternion& value)  
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, const Quaternion& value)  
+			void D3D9VertexShader::SetValue(int reg, const Matrix& value) 
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, const Matrix& value) 
+			void D3D9VertexShader::SetValue(int reg, const Color4& value) 
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, const Color4& value) 
-			{
-
-			}
-			void D3D9VertexShader::SetValue(int index, const Plane& value) 
-			{
-
-			}
-
-			void D3D9VertexShader::SetValueDirect(int reg, Vector3 value) 
+			void D3D9VertexShader::SetValue(int reg, const Plane& value) 
 			{
 
 			}
 
 
-			void D3D9VertexShader::SetVector2(int index, const Vector2* value, int count) 
+
+			void D3D9VertexShader::SetVector2(int reg, const Vector2* value, int count) 
 			{
 
 			}
-			void D3D9VertexShader::SetVector3(int index, const Vector3* value, int count) 
+			void D3D9VertexShader::SetVector3(int reg, const Vector3* value, int count) 
 			{
 
 			}
-			void D3D9VertexShader::SetVector4(int index, const Vector3* value, int count)
+			void D3D9VertexShader::SetVector4(int reg, const Vector3* value, int count)
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, const Quaternion* value, int count)
+			void D3D9VertexShader::SetValue(int reg, const Quaternion* value, int count)
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, const Matrix* value, int count) 
+			void D3D9VertexShader::SetValue(int reg, const Matrix* value, int count) 
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, const Color4* value, int count) 
+			void D3D9VertexShader::SetValue(int reg, const Color4* value, int count) 
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, const Plane* value, int count) 
-			{
-
-			}
-
-			void D3D9VertexShader::SetValueDirect(int reg, float value) 
-			{
-
-			}
-			void D3D9VertexShader::SetValue(int index, bool value) 
-			{
-
-			}
-			void D3D9VertexShader::SetValue(int index, float value) 
-			{
-
-			}
-			void D3D9VertexShader::SetValue(int index, int value) 
-			{
-
-			}
-			void D3D9VertexShader::SetValue(int index, bool* value, int count) 
-			{
-
-			}
-			void D3D9VertexShader::SetValue(int index, float* value, int count) 
-			{
-
-			}
-			void D3D9VertexShader::SetValue(int index, int* value, int count) 
+			void D3D9VertexShader::SetValue(int reg, const Plane* value, int count) 
 			{
 
 			}
 
-			void D3D9VertexShader::SetTexture(int index, Texture* tex) 
+			void D3D9VertexShader::SetValue(int reg, bool value) 
 			{
 
 			}
-			void D3D9VertexShader::SetSamplerState(int index, const ShaderSamplerState &state) 
+			void D3D9VertexShader::SetValue(int reg, float value) 
+			{
+
+			}
+			void D3D9VertexShader::SetValue(int reg, int value) 
+			{
+
+			}
+			void D3D9VertexShader::SetValue(int reg, bool* value, int count) 
+			{
+
+			}
+			void D3D9VertexShader::SetValue(int reg, float* value, int count) 
+			{
+
+			}
+			void D3D9VertexShader::SetValue(int reg, int* value, int count) 
 			{
 
 			}
 
-			void D3D9VertexShader::SetTextureDirect(int index, Texture* tex)
+			void D3D9VertexShader::SetTexture(int reg, Texture* tex) 
 			{
 
 			}
-			void D3D9VertexShader::SetSamplerStateDirect(int index, const ShaderSamplerState &state) 
+			void D3D9VertexShader::SetSamplerState(int reg, const ShaderSamplerState &state) 
 			{
 
 			}
+
 
 			void D3D9VertexShader::SetVector2(const String &paramName, Vector2 value) 
 			{

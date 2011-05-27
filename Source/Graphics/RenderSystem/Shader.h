@@ -65,40 +65,33 @@ namespace Apoc3D
 			public:
 				RenderDevice* getRenderDevice() { return m_renderDevice; }
 
-				virtual int GetConstantIndex(const String &name) = 0;
+				virtual void SetVector2(int reg, Vector2 value) = 0;
+				virtual void SetVector3(int reg, Vector3 value) = 0;
+				virtual void SetVector4(int reg, Vector3 value) = 0;
+				virtual void SetValue(int reg, Quaternion value) = 0;
+				virtual void SetValue(int reg, const Matrix &value) = 0;
+				virtual void SetValue(int reg, const Color4 &value) = 0;
+				virtual void SetValue(int reg, Plane value) = 0;
 
-				virtual void SetVector2(int index, Vector2 value) = 0;
-				virtual void SetVector3(int index, Vector3 value) = 0;
-				virtual void SetVector4(int index, Vector3 value) = 0;
-				virtual void SetValue(int index, Quaternion value) = 0;
-				virtual void SetValue(int index, const Matrix &value) = 0;
-				virtual void SetValue(int index, const Color4 &value) = 0;
-				virtual void SetValue(int index, Plane value) = 0;
-
-				virtual void SetValueDirect(int reg, Vector3 value) = 0;
+				virtual void SetVector2(int reg, const Vector2* value, int count) = 0;
+				virtual void SetVector3(int reg, const Vector3* value, int count) = 0;
+				virtual void SetVector4(int reg, const Vector3* value, int count) = 0;
+				virtual void SetValue(int reg, const Quaternion* value, int count) = 0;
+				virtual void SetValue(int reg, const Matrix* value, int count) = 0;
+				virtual void SetValue(int reg, const Color4* value, int count) = 0;
+				virtual void SetValue(int reg, const Plane* value, int count) = 0;
 
 
-				virtual void SetVector2(int index, const Vector2* value, int count) = 0;
-				virtual void SetVector3(int index, const Vector3* value, int count) = 0;
-				virtual void SetVector4(int index, const Vector3* value, int count) = 0;
-				virtual void SetValue(int index, const Quaternion* value, int count) = 0;
-				virtual void SetValue(int index, const Matrix* value, int count) = 0;
-				virtual void SetValue(int index, const Color4* value, int count) = 0;
-				virtual void SetValue(int index, const Plane* value, int count) = 0;
+				virtual void SetValue(int reg, bool value) = 0;
+				virtual void SetValue(int reg, float value) = 0;
+				virtual void SetValue(int reg, int value) = 0;
+				virtual void SetValue(int reg, bool* value, int count) = 0;
+				virtual void SetValue(int reg, float* value, int count) = 0;
+				virtual void SetValue(int reg, int* value, int count) = 0;
 
-				virtual void SetValueDirect(int reg, float value) = 0;
-				virtual void SetValue(int index, bool value) = 0;
-				virtual void SetValue(int index, float value) = 0;
-				virtual void SetValue(int index, int value) = 0;
-				virtual void SetValue(int index, bool* value, int count) = 0;
-				virtual void SetValue(int index, float* value, int count) = 0;
-				virtual void SetValue(int index, int* value, int count) = 0;
+				virtual void SetTexture(int reg, Texture* tex) = 0;
+				virtual void SetSamplerState(int reg, const ShaderSamplerState &state) = 0;
 
-				virtual void SetTexture(int index, Texture* tex) = 0;
-				virtual void SetSamplerState(int index, const ShaderSamplerState &state) = 0;
-
-				virtual void SetTextureDirect(int index, Texture* tex) = 0;
-				virtual void SetSamplerStateDirect(int index, const ShaderSamplerState &state) = 0;
 
 				virtual void SetVector2(const String &paramName, Vector2 value) = 0;
 				virtual void SetVector3(const String &paramName, Vector3 value) = 0;
