@@ -74,6 +74,8 @@ namespace Apoc3D
 				virtual void unlock(CubeMapFace cubemapFace, int surface) = 0;
 
 			public:
+				virtual uint32 getSize() { return static_cast<uint32>(m_contentSize); }
+
 				bool isLocked() const { return m_isLocked; }
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
 				const ResourceLocation* getResourceLocation() const { return m_resourceLocation; }

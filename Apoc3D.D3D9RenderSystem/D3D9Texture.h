@@ -40,7 +40,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9Texture : public Texture
+			class D3D9Texture : public Apoc3D::Graphics::RenderSystem::Texture
 			{
 			private:
 				D3DTexture2D* m_tex2D;

@@ -105,6 +105,7 @@
     <ClInclude Include="Plugin.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Buffer\D3D9DepthBuffer.cpp" />
     <ClCompile Include="Buffer\D3D9IndexBuffer.cpp" />
     <ClCompile Include="Buffer\D3D9VertexBuffer.cpp" />
     <ClCompile Include="D3D9DeviceContent.cpp" />

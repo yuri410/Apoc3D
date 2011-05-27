@@ -45,12 +45,17 @@ namespace Apoc3D
 			private:
 				D3DTexture2D* m_color;
 				IDirect3DSurface9* m_colorSurface;
-				IDirect3DSurface9* m_depthSurface;
+				D3D9Texture* m_d3dTexture;
 
+				IDirect3DSurface9* m_depthSurface;
 				D3D9DepthBuffer* m_depthBuffer;
+
 				D3D9RenderDevice* m_device;
 				
 				bool m_isMultisampled;
+
+
+				
 			public:
 				IDirect3DSurface9* getColorSurface() const { return m_colorSurface; }
 				IDirect3DSurface9* getDepthSurface() const { return m_depthSurface; }

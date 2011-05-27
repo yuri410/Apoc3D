@@ -131,5 +131,8 @@
     <ClCompile Include="Buffer\D3D9IndexBuffer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Buffer\D3D9DepthBuffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
