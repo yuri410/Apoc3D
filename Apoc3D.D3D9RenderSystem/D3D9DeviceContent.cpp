@@ -21,13 +21,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9DDEVICECONTNET_H
-#define D3D9DDEVICECONTNET_H
 
-#include "D3D9Common.h"
-#include "Graphics/RenderSystem/DeviceContent.h"
+#include "D3D9DeviceContent.h"
 
-using namespace Apoc3D::Graphics::RenderSystem;
+#include "D3D9RenderDevice.h"
+#include "D3D9RenderWindow.h"
+#include "Apoc3DException.h"
+
+
 
 namespace Apoc3D
 {
@@ -35,20 +36,28 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9DeviceContent : public DeviceContent
+			RenderView* D3D9DeviceContent::create(const PresentParameters &pm)
 			{
-			private:
-				D3D9RenderDevice* m_device;
+				if (!pm.IsFullForm)
+				{
+
+				}
+				else
+				{
+					if (!m_device)
+					{
+						m_window = new D3D9RenderWindow(0, pm);
+						return m_window;
+					}
+					Apoc3DException::createException(EX_InvalidOperation, L"Only one render window can be created.");
+				}
 				
-				D3D9RenderWindow* m_window;
-			protected:
-				virtual RenderView* create(const PresentParameters &pm);
-			public:
-				D3D9DeviceContent();
-				virtual RenderDevice* getRenderDevice();
-			};
+			}
+
+			RenderDevice* D3D9DeviceContent::getRenderDevice()
+			{
+				return m_device;
+			}
 		}
 	}
 }
-
-#endif

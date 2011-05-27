@@ -21,13 +21,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9DDEVICECONTNET_H
-#define D3D9DDEVICECONTNET_H
 
-#include "D3D9Common.h"
-#include "Graphics/RenderSystem/DeviceContent.h"
+#include "D3D9RenderWindow.h"
+#include "D3D9RenderDevice.h"
 
-using namespace Apoc3D::Graphics::RenderSystem;
+#include "GraphicsDeviceManager.h"
+#include "GameWindow.h"
 
 namespace Apoc3D
 {
@@ -35,20 +34,44 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9DeviceContent : public DeviceContent
-			{
-			private:
-				D3D9RenderDevice* m_device;
+			void D3D9RenderWindow::D3D9Game::Create()
+			{				
+				Game::Create();
 				
-				D3D9RenderWindow* m_window;
-			protected:
-				virtual RenderView* create(const PresentParameters &pm);
-			public:
-				D3D9DeviceContent();
-				virtual RenderDevice* getRenderDevice();
-			};
+				//TODO: getGraphicsDeviceManager()->ChangeDevice()
+
+				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager()->getDevice());
+				m_window->setDevice( device);
+
+				device->Initialize();
+			}
+			D3D9RenderWindow::D3D9RenderWindow(D3D9RenderDevice* device, const PresentParameters& pm)
+				: RenderWindow(device, pm)
+			{
+				m_game = new D3D9Game(this);
+			}
+
+			void D3D9RenderWindow::Run()
+			{			
+				m_game->Create();
+				m_game->Run();
+				m_game->Release();
+			}
+
+			String D3D9RenderWindow::getTitle()
+			{
+				return m_game->getWindow()->getWindowTitle();
+			}
+			void D3D9RenderWindow::setTitle(const String& name)
+			{
+				m_game->getWindow()->setWindowTitle(name);
+			}
+
+			Size D3D9RenderWindow::getClientSize()
+			{
+				return m_game->getWindow()->getCurrentSize();
+			}
+
 		}
 	}
 }
-
-#endif

@@ -57,12 +57,13 @@ namespace Apoc3D
 			private:
 				RenderTarget* m_renderTarget;
 				PresentParameters m_presentParams;
-				RenderDevice* m_renderDevice;
-
+				
 				FPSCounter m_fpsCounter;
 				
 
 			protected:
+				RenderDevice* m_renderDevice;
+
 				RenderView(RenderDevice* rd, const PresentParameters &pm, RenderTarget* rt)
 					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(rt)
 				{
@@ -71,7 +72,8 @@ namespace Apoc3D
 				{
 					RenderView(rd, pm, 0);
 				}
-				
+
+				const PresentParameters& getPresentParams() const { return m_presentParams; }
 			public:
 				virtual ~RenderView(){}
 
@@ -87,14 +89,13 @@ namespace Apoc3D
 			class APAPI RenderWindow : public RenderView
 			{
 			private:
-				Size m_clientSize;
-				String m_title;
-
 				RenderWindowHandler* m_evtHandler;
 
 			public:
-				const String &getTitle() const { return m_title; }
-				
+				virtual Size getClientSize() = 0;
+				virtual String getTitle() = 0;
+				virtual void setTitle(const String& name) = 0;
+				virtual void Exit();				
 
 				virtual void Run() = 0;
 

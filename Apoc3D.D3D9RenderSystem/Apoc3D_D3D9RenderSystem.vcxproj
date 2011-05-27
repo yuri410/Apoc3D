@@ -89,6 +89,7 @@
     <ClInclude Include="D3D9RenderDevice.h" />
     <ClInclude Include="D3D9RenderStateManager.h" />
     <ClInclude Include="D3D9RenderTarget.h" />
+    <ClInclude Include="D3D9RenderWindow.h" />
     <ClInclude Include="D3D9Texture.h" />
     <ClInclude Include="D3D9Utils.h" />
     <ClInclude Include="D3D9VertexDeclaration.h" />
@@ -101,9 +102,11 @@
     <ClInclude Include="Plugin.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="D3D9DeviceContent.cpp" />
     <ClCompile Include="D3D9GraphicsAPIFactory.cpp" />
     <ClCompile Include="D3D9RenderDevice.cpp" />
     <ClCompile Include="D3D9RenderTarget.cpp" />
+    <ClCompile Include="D3D9RenderWindow.cpp" />
     <ClCompile Include="D3D9Texture.cpp" />
     <ClCompile Include="D3D9Utils.cpp" />
     <ClCompile Include="D3D9VertexDeclaration.cpp" />

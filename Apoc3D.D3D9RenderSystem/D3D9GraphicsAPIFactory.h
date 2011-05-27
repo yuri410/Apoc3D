@@ -27,6 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Common.h"
 #include "Graphics/RenderSystem/GraphicsAPI.h"
 
+using namespace Apoc3D::Graphics::RenderSystem;
+
 namespace Apoc3D
 {
 	namespace Graphics

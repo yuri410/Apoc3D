@@ -21,34 +21,27 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9DDEVICECONTNET_H
-#define D3D9DDEVICECONTNET_H
 
-#include "D3D9Common.h"
-#include "Graphics/RenderSystem/DeviceContent.h"
-
-using namespace Apoc3D::Graphics::RenderSystem;
+#include "RenderDevice.h"
+#include "Graphics\GeometryData.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace D3D9RenderSystem
+		namespace RenderSystem
 		{
-			class D3D9DeviceContent : public DeviceContent
+			void RenderDevice::Render(const RenderOperation* op, int count)
 			{
-			private:
-				D3D9RenderDevice* m_device;
-				
-				D3D9RenderWindow* m_window;
-			protected:
-				virtual RenderView* create(const PresentParameters &pm);
-			public:
-				D3D9DeviceContent();
-				virtual RenderDevice* getRenderDevice();
-			};
+				if (!op)
+					return;
+				for (int i = 0; i < count; i++)
+				{
+					m_batchCount++;
+					m_primitiveCount += op[i].getGeomentryData()->getPrimitiveCount();
+					m_vertexCount += op[i].getGeomentryData()->getVertexCount();
+				}
+			}
 		}
 	}
 }
-
-#endif

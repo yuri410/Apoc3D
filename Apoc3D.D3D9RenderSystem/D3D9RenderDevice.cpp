@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "D3D9RenderDevice.h"
-
+#include "GraphicsDeviceManager.h"
 
 namespace Apoc3D
 {
@@ -31,7 +31,43 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			D3D9RenderDevice::D3D9RenderDevice(GraphicsDeviceManager* devManager)
+				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager)
+			{
 
+			}
+
+			D3DDevice* getDevice() const { return m_devManager->getDevice(); } 
+
+			void D3D9RenderDevice::Initialize()
+			{
+				
+			}
+			
+			void D3D9RenderDevice::BeginFrame()
+			{
+				RenderDevice::BeginFrame();
+			}
+
+			void D3D9RenderDevice::Clear(ClearFlags flags, uint color, float depth, int stencil)
+			{
+
+			}
+
+			void D3D9RenderDevice::SetRenderTarget(int index, RenderTarget* rt);
+
+			RenderTarget* D3D9RenderDevice::GetRenderTarget(int index);
+
+			void D3D9RenderDevice::SetTexture(int index, Texture* texture);
+			Texture* D3D9RenderDevice::GetTexture(int index);
+
+			void D3D9RenderDevice::BindVertexShader(VertexShader* shader);
+			void D3D9RenderDevice::BindPixelShader(PixelShader* shader);
+
+			void D3D9RenderDevice::Render(const RenderOperation* op, int count);
+
+			Viewport D3D9RenderDevice::getViewport();
+			void D3D9RenderDevice::setViewport(const Viewport& vp);
 		}
 	}
 }

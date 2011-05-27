@@ -72,6 +72,9 @@
     <ClInclude Include="DeviceSettings.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="D3D9RenderWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -105,6 +108,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="D3D9GraphicsAPIFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D9DeviceContent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D9RenderWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core\HashHandleObject.h"
 #include "GraphicsCommon.h"
 
+using namespace Apoc3D::Core;
 using namespace Apoc3D::Scene;
 using namespace Apoc3D::Graphics::RenderSystem;
 

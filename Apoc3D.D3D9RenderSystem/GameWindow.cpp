@@ -63,10 +63,12 @@ namespace Apoc3D
 			//        在此函数中，我们在全局变量中保存实例句柄并
 			//        创建和显示主程序窗口。
 			//
-			BOOL GameWindow::InitInstance(HINSTANCE hInstance, int nCmdShow,
+			BOOL GameWindow::InitInstance(HINSTANCE hInstance, 
 				const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
 			{
 				HWND hWnd;
+				
+				m_title = wndTitle;
 
 				hWnd = CreateWindow(wndClass, wndTitle, WS_OVERLAPPEDWINDOW,
 					CW_USEDEFAULT, 0, 1280, 720, NULL, NULL, hInstance, NULL);
@@ -77,7 +79,7 @@ namespace Apoc3D
 				}
 				m_hWnd = hWnd;
 
-				ShowWindow(hWnd, nCmdShow);
+				ShowWindow(hWnd, SW_NORMAL);
 				UpdateWindow(hWnd);
 
 				RECT rect;
@@ -97,10 +99,10 @@ namespace Apoc3D
 				return TRUE;
 			}
 
-			GameWindow::GameWindow(HINSTANCE hInstance, int nCmdShow,
-				const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
-				: m_mouseWheel(0), m_hInstance(hInstance), m_nCmdShow(nCmdShow)
+			GameWindow::GameWindow(const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
+				: m_mouseWheel(0)
 			{
+				m_hInstance= GetModuleHandle (0);
 				ms_Window = this;
 
 				m_className = wndClass;
@@ -117,7 +119,7 @@ namespace Apoc3D
 			{
 				MyRegisterClass(m_hInstance, m_className);
 
-				if (!InitInstance (m_hInstance, m_nCmdShow, m_className, m_wndTitle))
+				if (!InitInstance (m_hInstance, m_className, m_wndTitle))
 				{
 					assert(TRUE);
 				}
@@ -186,7 +188,7 @@ namespace Apoc3D
 					m_eMonitorChanged();
 			}
 
-			Size GameWindow::getCurrentSize()
+			Size GameWindow::getCurrentSize() const
 			{
 				RECT rect;
 				if (!GetClientRect(m_hWnd, &rect))
@@ -197,6 +199,13 @@ namespace Apoc3D
 				}
 				return Size(rect.right - rect.left, rect.bottom - rect.top);
 			}
+
+			void GameWindow::setWindowTitle(const String& txt)
+			{
+				m_title = txt;
+				SetWindowText(m_hWnd, txt.c_str());
+			}
+
 			void GameWindow::Close()
 			{
 

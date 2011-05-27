@@ -36,17 +36,17 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			Game::Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name)
+			Game::Game(const wchar_t* const &name)
 				: m_maxElapsedTime(0.5f), m_targetElapsedTime(1.0f / 60.0f), m_inactiveSleepTime(20),
 				m_updatesSinceRunningSlowly1(MAXINT32), m_updatesSinceRunningSlowly2(MAXINT32),
 				m_exiting(false),
 				m_accumulatedElapsedGameTime(0), m_lastFrameElapsedGameTime(0), m_lastFrameElapsedRealTime(0),
 				m_totalGameTime(0), m_forceElapsedTimeToZero(false), m_drawRunningSlowly(false), m_lastUpdateFrame(0),
-				m_lastUpdateTime(0), m_fps(0), m_inst(instance)
+				m_lastUpdateTime(0), m_fps(0)
 			{
 				m_gameClock = new GameClock();
 
-				m_gameWindow = new GameWindow(instance, nCmdShow, name, name);
+				m_gameWindow = new GameWindow(name, name);
 				m_gameWindow->eventApplicationActivated()->bind(this, &Game::Window_ApplicationActivated);
 				m_gameWindow->eventApplicationDeactivated()->bind(this, &Game::Window_ApplicationDeactivated);
 				m_gameWindow->eventPaint()->bind(this, &Game::Window_Paint);
@@ -88,7 +88,7 @@ namespace Apoc3D
 				m_eFrameEnd();
 			}
 
-			void Game::DrawFrame()
+			void Game::DrawFrame(const GameTime* const time)
 			{
 				try
 				{
@@ -96,7 +96,7 @@ namespace Apoc3D
 					{
 						if (!OnFrameStart())
 						{
-							Render();
+							Render(time);
 							OnFrameEnd();
 						}
 					}
@@ -215,7 +215,12 @@ namespace Apoc3D
 
 				}
 
-				DrawFrame();
+				{
+					GameTime gt(m_targetElapsedTime, m_totalGameTime,
+						elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
+					DrawFrame(&gt);
+				}
+				
 
 				// refresh the FPS counter once per second
 				m_lastUpdateFrame++;

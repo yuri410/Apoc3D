@@ -39,8 +39,6 @@ namespace Apoc3D
 			class Game
 			{
 			private:
-				HINSTANCE m_inst;
-
 				GameClock* m_gameClock;
 				float m_maxElapsedTime;
 				float m_totalGameTime;
@@ -67,7 +65,7 @@ namespace Apoc3D
 				CancellableEventHandler m_eFrameStart;
 				EventHandler m_eFrameEnd;
 
-				void DrawFrame();
+				void DrawFrame(const GameTime* const time);
 
 				void Window_ApplicationActivated();
 				void Window_ApplicationDeactivated();
@@ -77,7 +75,7 @@ namespace Apoc3D
 
 			protected:
 
-				Game(HINSTANCE instance, int nCmdShow, const wchar_t* const &name);
+				Game(const wchar_t* const &name);
 				virtual ~Game(void);
 				virtual bool OnFrameStart();
 				virtual void OnFrameEnd();
@@ -94,14 +92,13 @@ namespace Apoc3D
 				D3DDevice* getDevice() const;
 				bool getIsExiting() const { return m_exiting; }
 				bool getIsActive() const { return m_active; }
-				HINSTANCE getInstance() const { return m_inst; }
 
 				virtual void Initialize() = 0;
 				virtual void LoadContent() = 0;
 				virtual void OnDeviceLost() = 0;
 				virtual void UnloadContent() = 0;
 				virtual void OnDeviceReset() = 0;
-				virtual void Render() = 0;
+				virtual void Render(const GameTime* const time) = 0;
 				virtual void Update(const GameTime* const time) = 0;
 				void Run();
 				void Tick();

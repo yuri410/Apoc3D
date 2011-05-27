@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Graphics/RenderSystem/RenderDevice.h"
 
+using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
@@ -39,8 +40,33 @@ namespace Apoc3D
 			class D3D9RenderDevice : public RenderDevice
 			{
 			private:
+				GraphicsDeviceManager* m_devManager;
 
+				inline D3DDevice* getDevice() const;
 			public:
+				D3D9RenderDevice(GraphicsDeviceManager* devManager);
+
+				virtual void Initialize();
+
+				
+				virtual void BeginFrame();
+
+				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil);
+
+				virtual void SetRenderTarget(int index, RenderTarget* rt);
+
+				virtual RenderTarget* GetRenderTarget(int index);
+
+				virtual void SetTexture(int index, Texture* texture);
+				virtual Texture* GetTexture(int index);
+
+				virtual void BindVertexShader(VertexShader* shader);
+				virtual void BindPixelShader(PixelShader* shader);
+
+				virtual void Render(const RenderOperation* op, int count);
+
+				virtual Viewport getViewport();
+				virtual void setViewport(const Viewport& vp);
 			};
 		}
 	}

@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "D3D9GraphicsAPIFactory.h"
+#include "D3D9DeviceContent.h"
 
 namespace Apoc3D
 {
@@ -30,7 +31,20 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			GraphicsAPIDescription D3D9GraphicsAPIFactory::GetDescription()
+			{
+				PlatformAPISupport platform = { 100, L"WINDOWS" };
 
+				GraphicsAPIDescription desc;
+				desc.Name = L"Direct3D9";
+				desc.SupportedPlatforms.push_back(platform);
+				return desc;
+			}
+
+			DeviceContent* D3D9GraphicsAPIFactory::CreateDeviceContent()
+			{
+				return new D3D9DeviceContent();
+			}
 		}
 	}
 }

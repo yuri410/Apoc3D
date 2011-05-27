@@ -39,11 +39,11 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			enum PresentInterval
+			enum APAPI PresentInterval
 			{
 				/** The device will present immediately without waiting for the refresh.
 				*/
-				Immediate = 1<<32,
+				Immediate = -1,
 				/** The device will wait for the vertical retrace period.
 				*/
 				Default = 0, 

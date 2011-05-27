@@ -43,13 +43,13 @@ namespace Apoc3D
 				bool m_minimized;
 				bool m_maximized;
 				bool m_inSizeMove;
-
+				String m_title;
 				Size m_cachedSize;
 				HINSTANCE m_hInst;
 
 				HWND m_hWnd;
 				HINSTANCE m_hInstance;
-				int m_nCmdShow;
+
 				HMONITOR m_currentMonitor;
 
 				const wchar_t* m_className;
@@ -70,8 +70,7 @@ namespace Apoc3D
 
 				static GameWindow* ms_Window;
 
-				BOOL InitInstance(HINSTANCE hInstance, int nCmdShow,
-					const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
+				BOOL InitInstance(HINSTANCE hInstance, const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
 				ATOM MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass);
 
 
@@ -103,7 +102,9 @@ namespace Apoc3D
 				//{
 				//	SetWindowPos(m_hWnd, value ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, 3);
 				//}
-				Size getCurrentSize();
+				String getWindowTitle() const { return m_title; }
+				void setWindowTitle(const String& txt);
+				Size getCurrentSize() const;
 
 				void Load();
 
@@ -118,8 +119,7 @@ namespace Apoc3D
 				EventHandler* eventPaint() { return &m_ePaint; }
 				EventHandler* eventMonitorChanged() { return &m_eMonitorChanged; }
 
-				GameWindow(HINSTANCE hInstance, int nCmdShow,
-					const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
+				GameWindow(const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
 				~GameWindow(void);
 			};
 		}
