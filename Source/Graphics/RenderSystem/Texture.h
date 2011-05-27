@@ -96,7 +96,6 @@ namespace Apoc3D
 				void Unlock(int32 surface);
 				void Unlock(CubeMapFace cubemapFace, int32 surface);
 
-				virtual void SetData(const char* data, int32 length) = 0;
 				virtual void Save(Stream* strm) = 0;
 			};
 		}

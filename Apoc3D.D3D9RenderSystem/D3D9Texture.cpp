@@ -29,6 +29,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/ResourceLocation.h"
 #include "IO/TextureData.h"
 
+#include "Apoc3DException.h"
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -114,11 +116,7 @@ namespace Apoc3D
 
 			void D3D9Texture::Save(Stream* strm)
 			{
-
-			}
-			void D3D9Texture::SetData(const char* data, int32 size)
-			{
-
+				Apoc3DException::createException(EX_NotSupported, L"");
 			}
 
 			DataRectangle D3D9Texture::lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect)
@@ -339,7 +337,7 @@ namespace Apoc3D
 			{
 				TextureData data;
 				data.Load(getResourceLocation());
-
+				
 				UpdateInfo(data);
 
 				D3DDevice* dev = m_renderDevice->getDevice();

@@ -60,7 +60,6 @@ namespace Apoc3D
 				D3D9Texture(D3D9RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage);
 
 				virtual void Save(Stream* strm);
-				virtual void SetData(const char* data, int32 size);
 
 				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect);
 				virtual DataBox lock(int32 surface, LockMode mode, const DataBox& box);
