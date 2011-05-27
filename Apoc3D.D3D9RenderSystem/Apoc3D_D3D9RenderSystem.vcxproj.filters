@@ -134,5 +134,11 @@
     <ClCompile Include="Buffer\D3D9DepthBuffer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="D3D9VertexShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer\D3D9PixelShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
