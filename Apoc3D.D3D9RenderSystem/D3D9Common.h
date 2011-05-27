@@ -40,9 +40,9 @@ typedef D3DCOLORVALUE D3DColor4;
 
 typedef IDirect3DDevice9 D3DDevice;
 typedef IDirect3DBaseTexture9 D3DBaseTexture;
-typedef IDirect3DTexture9 D3DTexture;
-
-
+typedef IDirect3DTexture9 D3DTexture2D;
+typedef IDirect3DVolume9 D3DTexture3D;
+typedef IDirect3DCubeTexture9 D3DTextureCube;
 
 typedef ID3DXSprite D3DSprite;
 typedef IDirect3DIndexBuffer9 D3DIndexBuffer;

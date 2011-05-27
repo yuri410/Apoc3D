@@ -26,6 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "RenderDevice.h"
 #include "IO\TextureData.h"
+#include "Math\Rectangle.h"
+#include "Math\Box.h"
 #include "Apoc3DException.h"
 
 namespace Apoc3D
@@ -93,8 +95,18 @@ namespace Apoc3D
 				{
 					if (m_type == TT_Texture3D)
 					{
-
+						if (isManaged() && !isLoaded())
+						{
+							return DataBox::Empty;
+						}
+						else
+						{
+							DataBox res = lock(surface, mode, box);
+							m_isLocked = true;
+							return res;
+						}
 					}
+					throw Apoc3DException::createException(EX_InvalidOperation, L"Texture is not volume.");
 				}
 				throw Apoc3DException::createException(EX_InvalidOperation, L"Texture is already locked.");
 			}
@@ -104,7 +116,16 @@ namespace Apoc3D
 				{
 					if (m_type == TT_Texture1D || m_type == TT_Texture2D)
 					{
-
+						if (isManaged() && !isLoaded())
+						{
+							return DataRectangle::Empty;
+						}
+						else
+						{
+							DataRectangle res = lock(surface, mode, Rectangle(0,0, m_width, m_height));
+							m_isLocked = true;
+							return res;
+						}
 					}
 				}
 				throw Apoc3DException::createException(EX_InvalidOperation, L"Texture is already locked.");
@@ -115,7 +136,16 @@ namespace Apoc3D
 				{
 					if (m_type == TT_Texture1D || m_type == TT_Texture2D)
 					{
-
+						if (isManaged() && !isLoaded())
+						{
+							return DataRectangle::Empty;
+						}
+						else
+						{
+							DataRectangle res = lock(surface, mode, rect);
+							m_isLocked = true;
+							return res;
+						}
 					}
 				}
 				throw Apoc3DException::createException(EX_InvalidOperation, L"Texture is already locked.");
@@ -126,7 +156,16 @@ namespace Apoc3D
 				{
 					if (m_type == TT_CubeTexture)
 					{
-
+						if (isManaged() && !isLoaded())
+						{
+							return DataRectangle::Empty;
+						}
+						else
+						{
+							DataRectangle res = lock(surface, cubemapFace, mode, Rectangle(0,0, m_width, m_height));
+							m_isLocked = true;
+							return res;
+						}
 					}
 				}
 				throw Apoc3DException::createException(EX_InvalidOperation, L"Texture is already locked.");
@@ -137,7 +176,16 @@ namespace Apoc3D
 				{
 					if (m_type == TT_CubeTexture)
 					{
-
+						if (isManaged() && !isLoaded())
+						{
+							return DataRectangle::Empty;
+						}
+						else
+						{
+							DataRectangle res = lock(surface, cubemapFace, mode, rect);
+							m_isLocked = true;
+							return res;
+						}
 					}
 				}
 				throw Apoc3DException::createException(EX_InvalidOperation, L"Texture is already locked.");

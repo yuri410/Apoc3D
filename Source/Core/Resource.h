@@ -154,6 +154,7 @@ namespace Apoc3D
 			void Unload();
 
 			const String& getHashString() const { return m_hashString; }
+			bool isLoaded() const { return getState() == RS_Loaded; }
 			uint32 getState() const { return m_state; }
 			bool isManaged() const { return !!m_manager; }
 
