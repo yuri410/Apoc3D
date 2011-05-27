@@ -24,13 +24,88 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9RenderTarget.h"
 
+#include "D3D9RenderDevice.h"
+#include "D3D9Texture.h"
+#include "D3D9Utils.h"
+
 namespace Apoc3D
 {
 	namespace Graphics
 	{
 		namespace D3D9RenderSystem
 		{
+			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt)
+				: RenderTarget(device, 
+				D3D9Utils::GetD3DTextureWidth(rt),
+				D3D9Utils::GetD3DTextureHeight(rt), 
+				D3D9Utils::GetD3DTextureFormat(rt)),
+				m_device(device), m_color(rt), m_depthSurface(0), m_depthBuffer(0)
+			{
+				m_color->GetSurfaceLevel(0, &m_colorSurface);
+			}
+			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt, IDirect3DSurface9* depth)
+				: RenderTarget(device, 
+				D3D9Utils::GetD3DTextureWidth(rt),
+				D3D9Utils::GetD3DTextureHeight(rt), 
+				D3D9Utils::GetD3DTextureFormat(rt)),
+				m_device(device), m_color(rt), m_depthSurface(depth)
+			{
+				m_color->GetSurfaceLevel(0, &m_colorSurface);
+				//TODO
+			}
 
+			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format)
+				: RenderTarget(device, width, height, format),
+				m_device(device), m_depthSurface(0), m_depthBuffer(0)
+			{
+				D3DDevice* dev = device->getDevice();
+
+								
+			}
+			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat)
+				: RenderTarget(device, width, height, format),
+				m_device(device)
+			{
+
+			}
+			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, uint32 sampleCount, PixelFormat format, DepthFormat depthFormat)
+				: RenderTarget(device, width, height, format),
+				m_device(device)
+			{
+
+			}
+
+			D3D9RenderTarget::~D3D9RenderTarget()
+			{
+				if (m_color)
+				{
+					m_color->Release();
+					m_color = 0;
+				}
+				if (m_depthSurface)
+				{
+					m_depthSurface->Release();
+					m_depthSurface = 0;
+				}
+				if (m_depthBuffer)
+				{
+					delete m_depthBuffer;
+				}
+			}
+
+			Texture* D3D9RenderTarget::GetColorTexture()
+			{
+
+			}
+			DepthBuffer* D3D9RenderTarget::GetDepthBuffer()
+			{
+
+			}
+
+			void D3D9RenderTarget::Resolve()
+			{
+
+			}
 		}
 	}
 }

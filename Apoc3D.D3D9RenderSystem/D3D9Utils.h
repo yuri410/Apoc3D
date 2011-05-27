@@ -130,6 +130,11 @@ namespace Apoc3D
 				static TextureUsage GetD3DTextureUsage(D3DTextureCube* tex);
 
 
+				static D3DMULTISAMPLE_TYPE ConvertMultisample(uint32 sampleCount);
+
+
+
+
 				static DWORD ConvertLockMode(LockMode mode);
 				static DWORD ConvertClearFlags(ClearFlags flags);
 

@@ -75,9 +75,15 @@ namespace Apoc3D
 			class D3D9Texture;
 			class D3D9RenderTarget;
 
-			class D3D9DepthBuffer;
 			class D3D9RenderDevice;
+
+			class D3D9VertexBuffer;
+			class D3D9IndexBuffer;
+			class D3D9DepthBuffer;			
 			class D3D9VertexDeclaration;
+
+			class D3D9VertexShader;
+			class D3D9PixelShader;
 		}
 	}
 }

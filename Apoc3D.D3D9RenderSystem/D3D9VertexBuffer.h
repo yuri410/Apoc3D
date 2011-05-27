@@ -21,11 +21,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9VERTEXSHADER_H
-#define D3D9VERTEXSHADER_H
+#ifndef D3D9VERTEXBUFFER_H
+#define D3D9VERTEXBUFFER_H
 
 #include "D3D9Common.h"
-#include "Graphics/RenderSystem/Shader.h"
+#include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
 
 using Apoc3D::Graphics;
 using Apoc3D::Graphics::RenderSystem;

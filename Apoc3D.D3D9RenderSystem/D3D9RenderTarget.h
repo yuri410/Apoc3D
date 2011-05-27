@@ -44,22 +44,29 @@ namespace Apoc3D
 			{
 			private:
 				D3DTexture2D* m_color;
-				IDirect3DSurface9* m_depth;
+				IDirect3DSurface9* m_colorSurface;
+				IDirect3DSurface9* m_depthSurface;
 
-				D3D9Texture* m_colorTexture;
 				D3D9DepthBuffer* m_depthBuffer;
 				D3D9RenderDevice* m_device;
 				
 			public:
+				IDirect3DSurface9* getColorSurface() const { return m_colorSurface; }
+				IDirect3DSurface9* getDepthSurface() const { return m_depthSurface; }
+
 				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt);
-				D3D9RenderTarget(D3D9RenderDevice* device, IDirect3DSurface9* surface);
-				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt, IDirect3DSurface9* surface);
+				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt, IDirect3DSurface9* depth);
 				
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format);
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat);
+				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, uint32 sampleCount, PixelFormat format, DepthFormat depthFormat);
+
+				~D3D9RenderTarget();
 
 				virtual Texture* GetColorTexture();
 				virtual DepthBuffer* GetDepthBuffer();
+
+				void Resolve();
 			};
 		}
 	}
