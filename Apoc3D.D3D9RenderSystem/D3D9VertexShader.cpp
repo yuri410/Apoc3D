@@ -62,19 +62,19 @@ namespace Apoc3D
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, Quaternion value)  
+			void D3D9VertexShader::SetValue(int index, const Quaternion& value)  
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, const Matrix &value) 
+			void D3D9VertexShader::SetValue(int index, const Matrix& value) 
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, const Color4 &value) 
+			void D3D9VertexShader::SetValue(int index, const Color4& value) 
 			{
 
 			}
-			void D3D9VertexShader::SetValue(int index, Plane value) 
+			void D3D9VertexShader::SetValue(int index, const Plane& value) 
 			{
 
 			}
@@ -173,19 +173,19 @@ namespace Apoc3D
 			{
 
 			}
-			void D3D9VertexShader::SetValue(const String &paramName, Quaternion value) 
+			void D3D9VertexShader::SetValue(const String &paramName, const Quaternion& value) 
 			{
 
 			}
-			void D3D9VertexShader::SetValue(const String &paramName, const Matrix &value) 
+			void D3D9VertexShader::SetValue(const String &paramName, const Matrix& value) 
 			{
 
 			}
-			void D3D9VertexShader::SetValue(const String &paramName, Color4 value) 
+			void D3D9VertexShader::SetValue(const String &paramName, const Color4& value) 
 			{
 
 			}
-			void D3D9VertexShader::SetValue(const String &paramName, Plane value)
+			void D3D9VertexShader::SetValue(const String &paramName, const Plane& value)
 			{
 
 			}

@@ -58,23 +58,23 @@ namespace Apoc3D
 			{
 
 			}
-			void D3D9PixelShader::SetVector4(int index, Vector3 value) 
+			void D3D9PixelShader::SetVector4(int index, Vector4 value) 
 			{
 
 			}
-			void D3D9PixelShader::SetValue(int index, Quaternion value)  
+			void D3D9PixelShader::SetValue(int index, const Quaternion& value)  
 			{
 
 			}
-			void D3D9PixelShader::SetValue(int index, const Matrix &value) 
+			void D3D9PixelShader::SetValue(int index, const Matrix& value) 
 			{
 
 			}
-			void D3D9PixelShader::SetValue(int index, const Color4 &value) 
+			void D3D9PixelShader::SetValue(int index, const Color4& value) 
 			{
 
 			}
-			void D3D9PixelShader::SetValue(int index, Plane value) 
+			void D3D9PixelShader::SetValue(int index, const Plane& value) 
 			{
 
 			}
@@ -93,7 +93,7 @@ namespace Apoc3D
 			{
 
 			}
-			void D3D9PixelShader::SetVector4(int index, const Vector3* value, int count)
+			void D3D9PixelShader::SetVector4(int index, const Vector4* value, int count)
 			{
 
 			}
@@ -169,23 +169,23 @@ namespace Apoc3D
 			{
 
 			}
-			void D3D9PixelShader::SetVector4(const String &paramName, Vector3 value) 
+			void D3D9PixelShader::SetVector4(const String &paramName, Vector4 value) 
 			{
 
 			}
-			void D3D9PixelShader::SetValue(const String &paramName, Quaternion value) 
+			void D3D9PixelShader::SetValue(const String &paramName, const Quaternion& value) 
 			{
 
 			}
-			void D3D9PixelShader::SetValue(const String &paramName, const Matrix &value) 
+			void D3D9PixelShader::SetValue(const String &paramName, const Matrix& value) 
 			{
 
 			}
-			void D3D9PixelShader::SetValue(const String &paramName, Color4 value) 
+			void D3D9PixelShader::SetValue(const String &paramName, const Color4& value) 
 			{
 
 			}
-			void D3D9PixelShader::SetValue(const String &paramName, Plane value)
+			void D3D9PixelShader::SetValue(const String &paramName, const Plane& value)
 			{
 
 			}
@@ -200,7 +200,7 @@ namespace Apoc3D
 			{
 
 			}
-			void D3D9PixelShader::SetVector4(const String &paramName, const Vector3* value, int count)
+			void D3D9PixelShader::SetVector4(const String &paramName, const Vector4* value, int count)
 			{
 
 			}

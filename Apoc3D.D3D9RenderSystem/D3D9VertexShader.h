@@ -54,10 +54,10 @@ namespace Apoc3D
 				virtual void SetVector2(int index, Vector2 value) inline;
 				virtual void SetVector3(int index, Vector3 value)  inline;
 				virtual void SetVector4(int index, Vector3 value)  inline;
-				virtual void SetValue(int index, Quaternion value)  inline;
-				virtual void SetValue(int index, const Matrix &value) inline;
-				virtual void SetValue(int index, const Color4 &value) inline;
-				virtual void SetValue(int index, Plane value) inline;
+				virtual void SetValue(int index, const Quaternion& value)  inline;
+				virtual void SetValue(int index, const Matrix& value) inline;
+				virtual void SetValue(int index, const Color4& value) inline;
+				virtual void SetValue(int index, const Plane& value) inline;
 
 				virtual void SetValueDirect(int reg, Vector3 value) inline;
 
@@ -87,10 +87,10 @@ namespace Apoc3D
 				virtual void SetVector2(const String &paramName, Vector2 value) inline;
 				virtual void SetVector3(const String &paramName, Vector3 value) inline;
 				virtual void SetVector4(const String &paramName, Vector3 value) inline;
-				virtual void SetValue(const String &paramName, Quaternion value) inline;
-				virtual void SetValue(const String &paramName, const Matrix &value) inline;
-				virtual void SetValue(const String &paramName, Color4 value) inline;
-				virtual void SetValue(const String &paramName, Plane value) inline;
+				virtual void SetValue(const String &paramName, const Quaternion& value) inline;
+				virtual void SetValue(const String &paramName, const Matrix& value) inline;
+				virtual void SetValue(const String &paramName, const Color4& value) inline;
+				virtual void SetValue(const String &paramName, const Plane& value) inline;
 
 
 
