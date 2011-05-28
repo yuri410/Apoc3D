@@ -29,14 +29,14 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat)
-				: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(depthFormat)
+			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, uint32 multiSampleCount)
+				: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(depthFormat), m_sampleCount(multiSampleCount)
 			{
 
 			}
 
-			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat)
-				: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count)
+			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, uint32 multiSampleCount)
+				: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count), m_sampleCount(multiSampleCount)
 			{ 
 			}
 

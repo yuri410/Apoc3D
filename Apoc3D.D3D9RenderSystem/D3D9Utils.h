@@ -78,7 +78,7 @@ namespace Apoc3D
 				static BufferUsageFlags GetBufferUsage(DWORD usage);
 				static PixelFormat ConvertBackPixelFormat(DWORD format);
 				static DepthFormat ConvertBackDepthFormat(DWORD format);
-
+				
 				static int32 GetD3DTextureWidth(D3DTexture2D* tex)
 				{
 					D3DSURFACE_DESC desc;
@@ -138,6 +138,7 @@ namespace Apoc3D
 				static VertexElementUsage ConvertBackVertexElementUsage(D3DDECLUSAGE usage);
 
 				static D3DMULTISAMPLE_TYPE ConvertMultisample(uint32 sampleCount);
+				static uint32 ConvertBackMultiSample(D3DMULTISAMPLE_TYPE type);
 
 
 				static DWORD ConvertLockMode(LockMode mode);

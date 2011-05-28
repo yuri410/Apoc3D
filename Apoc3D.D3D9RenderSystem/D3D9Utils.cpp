@@ -236,7 +236,45 @@ namespace Apoc3D
 				return ConvertBackTextureUsage(desc.Usage);
 			}
 
-
+			uint32 D3D9Utils::ConvertBackMultiSample(D3DMULTISAMPLE_TYPE type)
+			{
+				switch (type)
+				{
+				case D3DMULTISAMPLE_NONE:
+					return 0;
+				case D3DMULTISAMPLE_2_SAMPLES:
+					return 2;
+				case D3DMULTISAMPLE_3_SAMPLES:
+					return 3;
+				case D3DMULTISAMPLE_4_SAMPLES:
+					return 4;
+				case D3DMULTISAMPLE_5_SAMPLES:
+					return 5;
+				case D3DMULTISAMPLE_6_SAMPLES:
+					return 6;
+				case D3DMULTISAMPLE_7_SAMPLES:
+					return 7;
+				case D3DMULTISAMPLE_8_SAMPLES:
+					return 8;
+				case D3DMULTISAMPLE_9_SAMPLES:
+					return 9;
+				case D3DMULTISAMPLE_10_SAMPLES:
+					return 10;
+				case D3DMULTISAMPLE_11_SAMPLES:
+					return 11;
+				case D3DMULTISAMPLE_12_SAMPLES:
+					return 12;
+				case D3DMULTISAMPLE_13_SAMPLES:
+					return 13;
+				case D3DMULTISAMPLE_14_SAMPLES:
+					return 14;
+				case D3DMULTISAMPLE_15_SAMPLES:
+					return 15;
+				case D3DMULTISAMPLE_16_SAMPLES:
+					return 16;
+				}
+				return 0;
+			}
 			D3DMULTISAMPLE_TYPE D3D9Utils::ConvertMultisample(uint32 sampleCount)
 			{
 				switch (sampleCount)

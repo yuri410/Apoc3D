@@ -37,12 +37,55 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			DepthFormat GetDepthSurfaceFormat(IDirect3DSurface9* depth)
+			{
+				D3DSURFACE_DESC desc;
+				depth->GetDesc(&desc);
+				return D3D9Utils::ConvertBackDepthFormat(desc.Format);
+			}
+			int32 getSurfaceWidth(IDirect3DSurface9* color)
+			{
+				D3DSURFACE_DESC desc;
+				color->GetDesc(&desc);
+				return desc.Height;
+			}
+			int32 getSurfaceHeight(IDirect3DSurface9* color)
+			{
+				D3DSURFACE_DESC desc;
+				color->GetDesc(&desc);
+				return desc.Width;
+			}
+			PixelFormat GetColorSurfaceFormat(IDirect3DSurface9* color)
+			{
+				D3DSURFACE_DESC desc;
+				color->GetDesc(&desc);
+				return D3D9Utils::ConvertBackPixelFormat(desc.Format);
+			}
+			uint32 GetMultiSampleCount(IDirect3DSurface9* color)
+			{
+				D3DSURFACE_DESC desc;
+				color->GetDesc(&desc);
+				return D3D9Utils::ConvertBackMultiSample(desc.MultiSampleType);
+			}
+
+			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, IDirect3DSurface9* color, IDirect3DSurface9* depth)
+				: RenderTarget(device, 
+				getSurfaceWidth(color),
+				getSurfaceHeight(color), 
+				GetColorSurfaceFormat(color), 
+				GetDepthSurfaceFormat(depth), 
+				GetMultiSampleCount(color)),
+				m_device(device), m_colorSurface(color), m_color(0), m_d3dTexture(0), m_depthSurface(depth)
+			{
+				m_depthBuffer = new D3D9DepthBuffer(device, depth);
+			}
+
 			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt)
 				: RenderTarget(device, 
 				D3D9Utils::GetD3DTextureWidth(rt),
 				D3D9Utils::GetD3DTextureHeight(rt), 
-				D3D9Utils::GetD3DTextureFormat(rt)),
-				m_device(device), m_isMultisampled(false), m_color(rt), m_d3dTexture(0), m_depthSurface(0), m_depthBuffer(0)
+				D3D9Utils::GetD3DTextureFormat(rt), 0),
+				m_device(device), m_color(rt), m_d3dTexture(0), m_depthSurface(0), m_depthBuffer(0)
 			{
 				m_color->GetSurfaceLevel(0, &m_colorSurface);
 				m_d3dTexture = new D3D9Texture(m_device, m_color);
@@ -51,8 +94,9 @@ namespace Apoc3D
 				: RenderTarget(device, 
 				D3D9Utils::GetD3DTextureWidth(rt),
 				D3D9Utils::GetD3DTextureHeight(rt), 
-				D3D9Utils::GetD3DTextureFormat(rt)),
-				m_device(device), m_isMultisampled(false), m_color(rt), m_d3dTexture(0), m_depthSurface(depth)
+				D3D9Utils::GetD3DTextureFormat(rt), 
+				GetDepthSurfaceFormat(depth), 0),
+				m_device(device), m_color(rt), m_d3dTexture(0), m_depthSurface(depth)
 			{
 				m_color->GetSurfaceLevel(0, &m_colorSurface);
 				m_depthBuffer = new D3D9DepthBuffer(device, depth);
@@ -60,8 +104,8 @@ namespace Apoc3D
 			}
 
 			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format)
-				: RenderTarget(device, width, height, format),
-				m_device(device), m_isMultisampled(false), m_depthSurface(0), m_depthBuffer(0), m_d3dTexture(0)
+				: RenderTarget(device, width, height, format, 0),
+				m_device(device), m_depthSurface(0), m_depthBuffer(0), m_d3dTexture(0)
 			{
 				D3DDevice* dev = device->getDevice();
 				HRESULT hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
@@ -71,8 +115,8 @@ namespace Apoc3D
 				m_d3dTexture = new D3D9Texture(m_device, m_color);
 			}
 			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat)
-				: RenderTarget(device, width, height, format),
-				m_device(device), m_isMultisampled(false)
+				: RenderTarget(device, width, height, format, depthFormat, 0),
+				m_device(device)
 			{
 				D3DDevice* dev = device->getDevice();
 				HRESULT hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
@@ -89,7 +133,7 @@ namespace Apoc3D
 			}
 			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, 
 				uint32 sampleCount, PixelFormat format, DepthFormat depthFormat)
-				: RenderTarget(device, width, height, format),
+				: RenderTarget(device, width, height, format, depthFormat, sampleCount),
 				m_device(device)
 			{
 				D3DDevice* dev = device->getDevice();
@@ -106,7 +150,6 @@ namespace Apoc3D
 					assert(SUCCEEDED(hr));
 
 					m_depthBuffer = new D3D9DepthBuffer(device, m_depthSurface);
-					m_isMultisampled = false;
 				}
 				else
 				{
@@ -144,7 +187,6 @@ namespace Apoc3D
 					assert(SUCCEEDED(hr));
 
 					m_depthBuffer = new D3D9DepthBuffer(device, m_depthSurface);
-					m_isMultisampled = true;
 				}
 				m_d3dTexture = new D3D9Texture(m_device, m_color);
 			}
@@ -173,6 +215,10 @@ namespace Apoc3D
 
 			Texture* D3D9RenderTarget::GetColorTexture()
 			{
+				if (!m_d3dTexture)
+				{
+					throw Apoc3DException::createException(EX_InvalidOperation, L"Cannot get texture from default render target");
+				}
 				return m_d3dTexture;
 			}
 			DepthBuffer* D3D9RenderTarget::GetDepthBuffer()
@@ -182,7 +228,7 @@ namespace Apoc3D
 
 			void D3D9RenderTarget::Resolve()
 			{
-				if (m_isMultisampled)
+				if (getMultiSampleCount())
 				{
 					D3DDevice* dev = m_device->getDevice();
 					IDirect3DSurface9* colorSuf;

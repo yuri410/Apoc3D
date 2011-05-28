@@ -35,6 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Buffer/D3D9DepthBuffer.h"
 #include "Buffer/D3D9IndexBuffer.h"
 #include "Buffer/D3D9VertexBuffer.h"
+#include "Apoc3DException.h"
 
 namespace Apoc3D
 {
@@ -61,35 +62,7 @@ namespace Apoc3D
 			}
 
 			D3DDevice* D3D9RenderDevice::getDevice() const { return m_devManager->getDevice(); } 
-			
-			PixelFormat D3D9RenderDevice::GetBackBufferFormat()
-			{				
-				D3DDevice* dev = getDevice();
 
-				IDirect3DSurface9* surface;
-				dev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &surface);
-
-				D3DSURFACE_DESC desc;
-				surface->GetDesc(&desc);
-
-				surface->Release();
-
-				return D3D9Utils::ConvertBackPixelFormat(desc.Format);
-			}
-			DepthFormat D3D9RenderDevice::GetDefaultDepthStencilFormat()
-			{
-				D3DDevice* dev = getDevice();
-
-				IDirect3DSurface9* surface;
-				dev->GetDepthStencilSurface(&surface);
-
-				D3DSURFACE_DESC desc;
-				surface->GetDesc(&desc);
-
-				surface->Release();
-
-				return D3D9Utils::ConvertBackDepthFormat(desc.Format);
-			}
 				
 			void D3D9RenderDevice::Initialize()
 			{
@@ -124,22 +97,41 @@ namespace Apoc3D
 				D3DDevice* dev = getDevice();
 				if (rt)
 				{
+					D3D9RenderTarget* oldRt = m_cachedRenderTarget[index];
+
 					D3D9RenderTarget* drt = static_cast<D3D9RenderTarget*>(rt);
 					
 					dev->SetRenderTarget(index, drt->getColorSurface());
 					if (drt->getDepthSurface())
 					{
+						if (index)
+						{
+							throw Apoc3DException::createException(EX_InvalidOperation, L"Render targets with a depth buffer can only be set at index 0.");
+						}
 						dev->SetDepthStencilSurface(drt->getDepthSurface());
 					}
 
 					m_cachedRenderTarget[index] = drt;
-				}
-				else
-				{
-					dev->SetRenderTarget(index, m_defaultRT);
-					dev->SetDepthStencilSurface(m_defaultDS);
 
-					m_cachedRenderTarget[index] = 0;
+					if (oldRt && oldRt != drt)
+					{
+						m_cachedRenderTarget[index]->Resolve();
+					}
+				}
+				else 
+				{
+					if (index == 0)
+					{
+						dev->SetRenderTarget(0, m_defaultRT);
+						dev->SetDepthStencilSurface(m_defaultDS);
+
+						m_cachedRenderTarget[0] = 0;
+					}
+					else
+					{
+						dev->SetRenderTarget(index, 0);
+						m_cachedRenderTarget[index] = 0;
+					}
 				}
 			}
 

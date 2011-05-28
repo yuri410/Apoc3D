@@ -55,8 +55,8 @@ namespace Apoc3D
 				D3D9RenderDevice(GraphicsDeviceManager* devManager);
 				~D3D9RenderDevice();
 				
-				virtual PixelFormat GetBackBufferFormat();
-				virtual DepthFormat GetDefaultDepthStencilFormat();
+				//virtual PixelFormat GetBackBufferFormat();
+				//virtual DepthFormat GetDefaultDepthStencilFormat();
 				
 				virtual void Initialize();
 				

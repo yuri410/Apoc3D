@@ -52,13 +52,11 @@ namespace Apoc3D
 
 				D3D9RenderDevice* m_device;
 				
-				bool m_isMultisampled;
-
-
-				
 			public:
 				IDirect3DSurface9* getColorSurface() const { return m_colorSurface; }
 				IDirect3DSurface9* getDepthSurface() const { return m_depthSurface; }
+
+				D3D9RenderTarget(D3D9RenderDevice* device, IDirect3DSurface9* color, IDirect3DSurface9* depth);
 
 				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt);
 				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt, IDirect3DSurface9* depth);

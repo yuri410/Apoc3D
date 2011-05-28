@@ -47,12 +47,15 @@ namespace Apoc3D
 				int32 m_height;
 				DepthFormat m_depthFormat;
 				PixelFormat m_pixelFormat;
+				uint32 m_sampleCount;
 
 			protected:
-				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat);
-				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat);
+				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, uint32 multiSampleCount);
+				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, uint32 multiSampleCount);
 			public:
 				virtual ~RenderTarget();
+				
+				uint32 getMultiSampleCount() const { return m_sampleCount; }
 				int32 getWidth() const { return m_width; }
 				int32 getHeight() const { return m_height; }
 
