@@ -22,14 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef D3D9OBJECTFACTORY_H
-#define D3D9OBJECTFACTORY_H
-
-#include "D3D9Common.h"
-#include "Graphics\RenderSystem\ObjectFactory.h"
-
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
+#include "D3D9ObjectFactory.h"
 
 namespace Apoc3D
 {
@@ -37,12 +30,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9ObjectFactory : public ObjectFactory
-			{
 
-			};
 		}
 	}
 }
-
-#endif
