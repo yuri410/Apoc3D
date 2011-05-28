@@ -195,7 +195,11 @@
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
     <ClCompile Include="Graphics\LockData.cpp" />
     <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\ObjectFactory.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderDevice.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\RenderStateManager.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\RenderTarget.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\Shader.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexDeclaration.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexElement.cpp" />
     <ClCompile Include="IO\TextureData.cpp" />

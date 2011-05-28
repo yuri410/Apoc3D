@@ -72,11 +72,11 @@ namespace Apoc3D
 
 			void* D3D9DepthBuffer::lock(int offset, int size, LockMode mode)
 			{
-				Apoc3DException::createException(EX_NotSupported, L"");
+				throw Apoc3DException::createException(EX_NotSupported, L"");
 			}
 			void D3D9DepthBuffer::unlock()
 			{
-				Apoc3DException::createException(EX_NotSupported, L"");
+				throw Apoc3DException::createException(EX_NotSupported, L"");
 			}
 
 		}

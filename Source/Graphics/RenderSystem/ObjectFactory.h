@@ -46,10 +46,7 @@ namespace Apoc3D
 				RenderDevice* m_renderDevice;
 
 			protected:
-				ObjectFactory(RenderDevice* rd)
-					: m_renderDevice(rd)
-				{
-				}
+				ObjectFactory(RenderDevice* rd);
 
 			public:
 				virtual Texture* CreateTexture(ResourceLocation* rl, TextureUsage usage, bool managed) = 0;

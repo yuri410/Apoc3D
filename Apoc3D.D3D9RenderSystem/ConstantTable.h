@@ -95,15 +95,29 @@ namespace Apoc3D
 			private:
 				unordered_map<String, ShaderConstant> m_table;
 				
+				void ThrowKeyNotFoundEx(const String& name) const;
 			public:
 				ConstantTable(const DWORD* bytes);
-				~ConstantTable() { }
+				~ConstantTable();
 
 				inline const ShaderConstant& getConstant(const String& name) const;
 				
 			};
+
+			const ShaderConstant& ConstantTable::getConstant(const String& name) const
+			{				
+				unordered_map<String, ShaderConstant>::const_iterator iter = m_table.find(name);
+			
+				if (iter != m_table.end())
+				{
+					return iter->second;
+				}
+				ThrowKeyNotFoundEx(name);
+				throw; // keep the compiler happy
+			}
 		}
 	}
 }
+
 
 #endif

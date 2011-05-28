@@ -58,10 +58,8 @@ namespace Apoc3D
 			private:
 				RenderDevice* m_renderDevice;
 			protected:
-				Shader(RenderDevice* rd)
-				{
-					m_renderDevice = rd;
-				}
+				Shader(RenderDevice* rd);
+
 			public:
 				RenderDevice* getRenderDevice() { return m_renderDevice; }
 
@@ -124,23 +122,15 @@ namespace Apoc3D
 				virtual void AutoSetParameters(const Material* mtrl) = 0;
 			};
 
-			class VertexShader : public Shader
+			class APAPI VertexShader : public Shader
 			{
 			protected:
-				VertexShader(RenderDevice* rd)
-					: Shader(rd)
-				{
-
-				}
+				VertexShader(RenderDevice* rd);
 			};
-			class PixelShader : public Shader
+			class APAPI PixelShader : public Shader
 			{
 			protected:
-				PixelShader(RenderDevice* rd)
-					: Shader(rd)
-				{
-
-				}
+				PixelShader(RenderDevice* rd);
 			};
 		}
 	}

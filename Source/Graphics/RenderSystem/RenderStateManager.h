@@ -54,11 +54,7 @@ namespace Apoc3D
 			private:
 				RenderDevice* m_renderDevice;
 			protected:
-				RenderStateManager(RenderDevice* device)
-					: m_renderDevice(device)
-				{
-
-				}
+				RenderStateManager(RenderDevice* device);
 			public:
 				/************************************************************************/
 				/* Alpha Test                                                           */

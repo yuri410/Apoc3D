@@ -85,10 +85,14 @@ namespace Apoc3D
 					{
 						m_window->OnUpdate(time);
 					}
-					virtual void OnFrameStart()
+					virtual bool OnFrameStart()
 					{
-						Game::OnFrameStart();
-						m_window->OnFrameStart();
+						if (Game::OnFrameStart())
+						{
+							m_window->OnFrameStart();
+							return true;
+						}
+						return false;
 					}
 					virtual void OnFrameEnd()
 					{

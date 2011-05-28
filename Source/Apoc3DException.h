@@ -45,7 +45,7 @@ namespace Apoc3D
 		EX_Argument
 	};
 
-	class Apoc3DException : public std::exception
+	class APAPI Apoc3DException : public std::exception
 	{
 	private:
 		String m_message;

@@ -31,16 +31,11 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			const ShaderConstant& ConstantTable::getConstant(const String& name) const
-			{				
-				unordered_map<String, ShaderConstant>::const_iterator iter = m_table.find(name);
-			
-				if (iter != m_table.end())
-				{
-					return iter->second;
-				}
+			void ConstantTable::ThrowKeyNotFoundEx(const String& name) const
+			{
 				throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
 			}
+			
 
 			ConstantTable::ConstantTable(const DWORD* bytes)
 			{
@@ -188,6 +183,12 @@ namespace Apoc3D
 
 				constants->Release();
 			}
+
+			ConstantTable::~ConstantTable()
+			{
+
+			}
+
 		}
 	}
 }

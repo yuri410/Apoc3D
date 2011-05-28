@@ -21,48 +21,28 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#include "D3D9DeviceContent.h"
-
-#include "D3D9RenderDevice.h"
-#include "D3D9RenderWindow.h"
-#include "Apoc3DException.h"
-
-
+#include "RenderTarget.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace D3D9RenderSystem
+		namespace RenderSystem
 		{
-			D3D9DeviceContent::D3D9DeviceContent()
-				: DeviceContent(true)
+			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat)
+				: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(depthFormat)
 			{
 
 			}
 
-			RenderView* D3D9DeviceContent::create(const PresentParameters &pm)
-			{
-				if (!pm.IsFullForm)
-				{
-
-				}
-				else
-				{
-					if (!m_device)
-					{
-						m_window = new D3D9RenderWindow(0, pm);
-						return m_window;
-					}
-					Apoc3DException::createException(EX_InvalidOperation, L"Only one render window can be created.");
-				}
-				
+			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat)
+				: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count)
+			{ 
 			}
 
-			RenderDevice* D3D9DeviceContent::getRenderDevice()
+			RenderTarget::~RenderTarget()
 			{
-				return m_device;
+
 			}
 		}
 	}

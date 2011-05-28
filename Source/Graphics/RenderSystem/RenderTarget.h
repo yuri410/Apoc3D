@@ -49,17 +49,10 @@ namespace Apoc3D
 				PixelFormat m_pixelFormat;
 
 			protected:
-				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat)
-					: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(depthFormat)
-				{
-
-				}
-				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat)
-					: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count)
-				{ }
-
+				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat);
+				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat);
 			public:
-				virtual ~RenderTarget() { }
+				virtual ~RenderTarget();
 				int32 getWidth() const { return m_width; }
 				int32 getHeight() const { return m_height; }
 

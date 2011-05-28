@@ -253,7 +253,13 @@ namespace Apoc3D
 				// the paint event may be raised before device init -- just created wnd class
 				if (getDevice())
 				{
-					DrawFrame();
+
+					const float elapsedRealTime = (float)m_gameClock->getElapsedTime();
+					const float totalRealTime = (float)m_gameClock->getCurrentTime();
+
+					GameTime gt(m_targetElapsedTime, m_totalGameTime,
+						elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
+					DrawFrame(&gt);
 				}		
 			}
 		}
