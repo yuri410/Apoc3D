@@ -123,6 +123,8 @@ namespace Apoc3D
 				virtual void SetPointParameters(float size, float maxSize, float minSize, bool pointSprite);
 				virtual void SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, int ref, CompareFunction func, int mask, int writemask);
 				virtual void SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func);
+				virtual void SetCullMode(CullMode mode);
+				virtual void SetFullMode(FillMode mode);
 
 				/************************************************************************/
 				/* Alpha Test                                                           */

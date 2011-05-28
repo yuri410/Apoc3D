@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9RenderStateManager.h"
 
 #include "D3D9RenderDevice.h"
+#include "D3D9Utils.h"
 
 namespace Apoc3D
 {
@@ -89,11 +90,25 @@ namespace Apoc3D
 			void D3D9RenderStateManager::InitializeDefaultState()
 			{
 				D3DDevice* dev = m_device->getDevice();
+				
+				DWORD zEnabled;
+				dev->GetRenderState(D3DRS_ZENABLE, &zEnabled);
 
 				
+
 			}
 
+			void D3D9RenderStateManager::SetCullMode(CullMode mode)
+			{
+				m_cachedCullMode = mode;
 
+				D3DCULL cull = D3D9Utils::ConvertCullMode(mode);
+				m_device->getDevice()->SetRenderState(D3DRS_CULLMODE, cull);
+			}
+			void D3D9RenderStateManager::SetFullMode(FillMode mode)
+			{
+
+			}
 			void D3D9RenderStateManager::SetAlphaTestParameters(bool enable, CompareFunction func, int reference)
 			{
 

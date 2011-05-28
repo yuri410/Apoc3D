@@ -104,8 +104,8 @@ namespace Apoc3D
 				/************************************************************************/
 				virtual CullMode getCullMode() = 0;
 				virtual FillMode getFillMode() = 0;
-				virtual void setCullMode(CullMode mode) = 0;
-				virtual void setFullMode(FillMode mode) = 0;
+				virtual void SetCullMode(CullMode mode) = 0;
+				virtual void SetFullMode(FillMode mode) = 0;
 				/************************************************************************/
 				/* Point                                                                */
 				/************************************************************************/
