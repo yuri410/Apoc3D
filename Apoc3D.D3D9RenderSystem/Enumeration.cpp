@@ -24,7 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Enumeration.h"
 #include "Utility/StringUtils.h"
 
+#include "Apoc3DException.h"
+
 using namespace Apoc3D::Utility;
+using namespace Apoc3D;
 
 namespace Apoc3D
 {
@@ -32,6 +35,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+
 			int CompareDisplayMode(const D3DDISPLAYMODE& x, const D3DDISPLAYMODE& y)
 			{
 				if (x.Width > y.Width)
@@ -55,7 +59,7 @@ namespace Apoc3D
 			}
 
 			bool Enumeration::m_hasMinimumSettings = false;
-			D3D9DeviceSettings Enumeration::m_minimumSettings;
+			DeviceSettings Enumeration::m_minimumSettings;
 			vector<AdapterInfo*> Enumeration::m_adapters;
 			bool Enumeration::m_hasEnumerated = false;
 
@@ -92,8 +96,9 @@ namespace Apoc3D
 							// check minimum
 							if (m_hasMinimumSettings)
 							{
-								if (mode.Width < m_minimumSettings.PresentParams.BackBufferWidth ||
-									mode.Height < m_minimumSettings.PresentParams.BackBufferHeight)
+								if (mode.Width < m_minimumSettings.BackBufferWidth ||
+									mode.Height < m_minimumSettings.BackBufferHeight ||
+									mode.RefreshRate < m_minimumSettings.RefreshRate)
 								{
 									continue;
 								}
@@ -226,8 +231,8 @@ namespace Apoc3D
 
 							if (m_hasMinimumSettings)
 							{
-								if (m_minimumSettings.PresentParams.BackBufferFormat != D3DFMT_UNKNOWN &&
-									m_minimumSettings.PresentParams.BackBufferFormat != backBufferFormats[j])
+								if (m_minimumSettings.BackBufferFormat != D3DFMT_UNKNOWN &&
+									m_minimumSettings.BackBufferFormat != backBufferFormats[j])
 								{
 									continue;
 								}
@@ -243,7 +248,7 @@ namespace Apoc3D
 
 								if (find(combo->MultisampleTypes.begin(), 
 									combo->MultisampleTypes.end(), 
-									m_minimumSettings.PresentParams.MultiSampleType)
+									m_minimumSettings.MultiSampleType)
 									== combo->MultisampleTypes.end())
 								{
 									continue;
@@ -339,6 +344,505 @@ namespace Apoc3D
 					}
 				}
 
+			}
+
+			
+			void Enumeration::FindValidSettings(IDirect3D9* d3d9, const DeviceSettings& settings, DeviceSettings& result)
+			{
+				if (!m_hasEnumerated)
+				{
+					Enumerate(d3d9);
+				}
+				DeviceSettings newSettings = DeviceSettings(settings);
+
+				Direct3D9Settings optimal;
+				BuildOptimalSettings(d3d9, settings, optimal);
+
+				float bestRanking = -1.0f;
+				const SettingsCombo* bestCombo = 0;
+				for (size_t i=0; i<m_adapters.size(); i++)
+				{
+					const AdapterInfo* adapterInfo = m_adapters[i];
+
+					D3DDISPLAYMODE desktopMode;
+					HRESULT hr = d3d9->GetAdapterDisplayMode(adapterInfo->AdapterOrdinal, &desktopMode);
+					assert(SUCCEEDED(hr));
+
+					for (size_t j=0; j<adapterInfo->Devices.size(); j++)
+					{
+						const DeviceInfo* deviceInfo = adapterInfo->Devices[j];
+						for (size_t k=0; k<deviceInfo->DeviceSettings.size(); k++)
+						{
+							const SettingsCombo* combo = deviceInfo->DeviceSettings[k];
+
+							if (combo->Windowed && combo->AdapterFormat == desktopMode.Format)
+								continue;
+
+							float ranking = RankSettingsCombo(combo, optimal, desktopMode);
+							if (ranking>bestRanking)
+							{
+								bestCombo = combo;
+								bestRanking = ranking;
+							}
+						}
+					}
+				}
+
+				if (!bestCombo)
+				{
+					throw Apoc3DException::createException(EX_NotSupported, L"Can not create Direct3D9 Device. No compatible Direct3D9 devices found.");
+				}
+				Direct3D9Settings inteResult;
+				BuildValidSettings(bestCombo, optimal, inteResult);
+
+				result = settings;
+				result.D3D9 = inteResult;
+			}
+
+			int GetDepthBits(D3DFORMAT format)
+			{
+				switch (format)
+				{
+				case D3DFMT_D32F_LOCKABLE:
+				case D3DFMT_D32:
+					return 32;
+
+				case D3DFMT_D24X8:
+				case D3DFMT_D24S8:
+				case D3DFMT_D24X4S4:
+				case D3DFMT_D24FS8:
+					return 24;
+					
+				case D3DFMT_D16_LOCKABLE:
+				case D3DFMT_D16:
+					return 16;
+
+				case D3DFMT_D15S1:
+					return 15;
+
+				default:
+					return 0;
+				}
+			}
+			int GetStencilBits(D3DFORMAT format)
+			{
+				switch (format)
+				{
+				case D3DFMT_D15S1:
+					return 1;
+
+				case D3DFMT_D24X4S4:
+					return 4;
+
+				case D3DFMT_D24S8:
+				case D3DFMT_D24FS8:
+					return 8;
+
+				default:
+					return 0;
+				}
+			}
+			int GetColorBits(D3DFORMAT format)
+			{
+				switch (format)
+				{
+				case D3DFMT_R8G8B8:
+				case D3DFMT_A8R8G8B8:
+				case D3DFMT_A8B8G8R8:
+				case D3DFMT_X8R8G8B8:
+					return 8;
+
+				case D3DFMT_R5G6B5:
+				case D3DFMT_X1R5G5B5:
+				case D3DFMT_A1R5G5B5:
+					return 5;
+
+				case D3DFMT_A4R4G4B4:
+				case D3DFMT_X4R4G4B4:
+					return 4;
+
+				case D3DFMT_R3G3B2:
+				case D3DFMT_A8R3G3B2:
+					return 2;
+
+				case D3DFMT_A2R10G10B10:
+				case D3DFMT_A2B10G10R10:
+					return 10;
+
+				case D3DFMT_A16B16G16R16:
+					return 16;
+
+				default:
+					return 0;
+				}
+			}
+
+			void Enumeration::BuildOptimalSettings(IDirect3D9* d3d9, 
+				const DeviceSettings& settings, Direct3D9Settings& optimal)
+			{
+				D3DDISPLAYMODE desktopMode;
+				HRESULT hr = d3d9->GetAdapterDisplayMode(0, &desktopMode);
+				assert(SUCCEEDED(hr));
+
+
+				optimal.AdapterOrdinal = settings.AdapterOrdinal;
+				optimal.DeviceType = settings.DeviceType;
+				optimal.PresentParameters.Windowed = settings.Windowed;
+				optimal.PresentParameters.BackBufferCount = settings.BackBufferCount;
+				optimal.PresentParameters.MultiSampleType = settings.MultiSampleType;
+				optimal.PresentParameters.MultiSampleQuality = settings.MultiSampleQuality;
+				optimal.PresentParameters.FullScreen_RefreshRateInHz = settings.RefreshRate;
+
+				if (settings.Multithreaded)
+					optimal.CreationFlags |= D3DCREATE_MULTITHREADED;
+
+				if (optimal.PresentParameters.Windowed || GetColorBits(desktopMode.Format) >= 8)
+					optimal.AdapterFormat = desktopMode.Format;
+				else
+					optimal.AdapterFormat = D3DFMT_X8R8G8B8;
+
+				if (settings.BackBufferWidth == 0 || settings.BackBufferHeight == 0)
+				{
+					if (optimal.PresentParameters.Windowed)
+					{
+						optimal.PresentParameters.BackBufferWidth = 640;
+						optimal.PresentParameters.BackBufferHeight = 480;
+					}
+					else
+					{
+						optimal.PresentParameters.BackBufferWidth = desktopMode.Width;
+						optimal.PresentParameters.BackBufferHeight = desktopMode.Height;
+					}
+				}
+				else
+				{
+					optimal.PresentParameters.BackBufferWidth = settings.BackBufferWidth;
+					optimal.PresentParameters.BackBufferHeight = settings.BackBufferHeight;
+				}
+
+				if (settings.BackBufferFormat == D3DFMT_UNKNOWN)
+					optimal.PresentParameters.BackBufferFormat = optimal.AdapterFormat;
+				else
+					optimal.PresentParameters.BackBufferFormat = settings.BackBufferFormat;
+
+				if (settings.DepthStencilFormat == D3DFMT_UNKNOWN)
+				{
+					if (GetColorBits(optimal.PresentParameters.BackBufferFormat) >= 8)
+						optimal.PresentParameters.AutoDepthStencilFormat = D3DFMT_D32;
+					else
+						optimal.PresentParameters.AutoDepthStencilFormat = D3DFMT_D16;
+				}
+				else
+					optimal.PresentParameters.AutoDepthStencilFormat = settings.DepthStencilFormat;
+
+				if (!settings.EnableVSync)
+					optimal.PresentParameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+			}
+
+			float Enumeration::RankSettingsCombo(const SettingsCombo* combo, 
+				const Direct3D9Settings& optimal, const D3DDISPLAYMODE& desktopMode)
+			{
+				float ranking = 0.0f;
+
+				if(combo->AdapterOrdinal == optimal.AdapterOrdinal)
+					ranking += 1000.0f;
+
+				if(combo->DeviceType == optimal.DeviceType)
+					ranking += 100.0f;
+
+				if(combo->DeviceType == D3DDEVTYPE_HAL)
+					ranking += 0.1f;
+
+				if ((combo->Windowed && optimal.PresentParameters.Windowed) || 
+					(!combo->Windowed && !optimal.PresentParameters.Windowed))
+					ranking += 10.0f;
+
+				if(combo->AdapterFormat == optimal.AdapterFormat)
+					ranking += 1.0f;
+				else
+				{
+					int bitDepthDelta = abs(GetColorBits(combo->AdapterFormat) -
+						GetColorBits(optimal.AdapterFormat));
+					float scale = max(0.9f - bitDepthDelta * 0.2f, 0.0f);
+					ranking += scale;
+				}
+				
+				if(!(combo->Windowed))
+				{
+					bool match;
+					if(GetColorBits(desktopMode.Format) >= 8)
+						match = (combo->AdapterFormat == desktopMode.Format);
+					else
+						match = (combo->AdapterFormat == D3DFMT_X8R8G8B8);
+
+					if(match)
+						ranking += 0.1f;
+				}
+
+				if((optimal.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING) != 0 &&
+					(optimal.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING) != 0)
+				{
+					if((combo->DeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0)
+						ranking += 1.0f;
+				}
+
+				if((combo->DeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0)
+					ranking += 0.1f;
+
+				const vector<D3DDISPLAYMODE>& modes =  combo->AdapterInfo->DisplayModes;
+
+				for (size_t i=0;i<modes.size();i++)
+				{
+					const D3DDISPLAYMODE& displayMode = modes[i];
+					if(displayMode.Format == combo->AdapterFormat &&
+						displayMode.Width == optimal.PresentParameters.BackBufferWidth &&
+						displayMode.Height == optimal.PresentParameters.BackBufferHeight)
+					{
+						ranking += 1.0f;
+						break;
+					}
+				}
+
+				if(combo->BackBufferFormat == optimal.PresentParameters.BackBufferFormat)
+				{
+					ranking += 1.0f;
+				}
+				else
+				{
+					int bitDepthDelta = abs(GetColorBits(combo->BackBufferFormat) -
+						GetColorBits(optimal.PresentParameters.BackBufferFormat));
+					float scale = max(0.9f - bitDepthDelta * 0.2f, 0.0f);
+					ranking += scale;
+				}
+
+				if(combo->BackBufferFormat == combo->AdapterFormat)
+					ranking += 0.1f;
+
+				for(size_t i = 0; i < combo->MultisampleTypes.size(); i++)
+				{
+					D3DMULTISAMPLE_TYPE type = combo->MultisampleTypes[i];
+					int quality = combo->MultisampleQualities[i];
+
+					if(type == optimal.PresentParameters.MultiSampleType && 
+						quality == optimal.PresentParameters.MultiSampleQuality)
+					{
+						ranking += 1.0f;
+						break;
+					}
+				}
+
+				const vector<D3DFORMAT>& dsfmts = combo->DepthStencilFormats;
+				if(find(dsfmts.begin(), dsfmts.end(), optimal.PresentParameters.AutoDepthStencilFormat) != dsfmts.end())
+					ranking += 1.0f;
+
+				const vector<D3DDISPLAYMODE>& modes2 =  combo->AdapterInfo->DisplayModes;
+				for (size_t i=0;i<modes.size();i++)
+				{
+					const D3DDISPLAYMODE& displayMode = modes[i];
+					if(displayMode.Format == combo->AdapterFormat &&
+						displayMode.RefreshRate == optimal.PresentParameters.FullScreen_RefreshRateInHz)
+					{
+						ranking += 1.0f;
+						break;
+					}
+				}
+
+				const vector<uint32>& presentIntervals = combo->PresentIntervals;
+				if(find(presentIntervals.begin(), presentIntervals.end(), 
+					optimal.PresentParameters.PresentationInterval) != presentIntervals.end())
+					ranking += 1.0f;
+
+				return ranking;
+			}
+
+			void Enumeration::BuildValidSettings(const SettingsCombo* combo, const Direct3D9Settings& input, Direct3D9Settings& settings)
+			{
+				settings.AdapterOrdinal = combo->AdapterOrdinal;
+				settings.DeviceType = combo->DeviceType;
+				settings.PresentParameters.Windowed = combo->Windowed;
+				settings.AdapterFormat = combo->AdapterFormat;
+				settings.PresentParameters.BackBufferFormat = combo->BackBufferFormat;
+				settings.PresentParameters.SwapEffect = input.PresentParameters.SwapEffect;
+				settings.PresentParameters.Flags = input.PresentParameters.Flags | D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
+
+				settings.CreationFlags = input.CreationFlags;
+				if((combo->DeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) == 0 &&
+					((settings.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING) != 0 ||
+					(settings.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING) != 0))
+				{
+					settings.CreationFlags &= ~D3DCREATE_HARDWARE_VERTEXPROCESSING;
+					settings.CreationFlags &= ~D3DCREATE_MIXED_VERTEXPROCESSING;
+					settings.CreationFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+				}
+
+				if((settings.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING) == 0 &&
+					(settings.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING) == 0 &&
+					(settings.CreationFlags & D3DCREATE_SOFTWARE_VERTEXPROCESSING) == 0)
+				{
+					if((combo->DeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0)
+						settings.CreationFlags |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
+					else
+						settings.CreationFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+				}
+
+				D3DDISPLAYMODE bestDisplayMode = FindValidResolution(combo, input);
+				settings.PresentParameters.BackBufferWidth = bestDisplayMode.Width;
+				settings.PresentParameters.BackBufferHeight = bestDisplayMode.Height;
+
+				settings.PresentParameters.BackBufferCount = input.PresentParameters.BackBufferCount;
+				if(settings.PresentParameters.BackBufferCount > 3)
+					settings.PresentParameters.BackBufferCount = 3;
+				if(settings.PresentParameters.BackBufferCount < 1)
+					settings.PresentParameters.BackBufferCount = 1;
+
+				if(input.PresentParameters.SwapEffect != D3DSWAPEFFECT_DISCARD)
+				{
+					settings.PresentParameters.MultiSampleType = D3DMULTISAMPLE_NONE;
+					settings.PresentParameters.MultiSampleQuality = 0;
+				}
+				else
+				{
+					D3DMULTISAMPLE_TYPE bestType = D3DMULTISAMPLE_NONE;
+					int bestQuality = 0;
+
+					for(size_t i = 0; i < combo->MultisampleTypes.size(); i++)
+					{
+						D3DMULTISAMPLE_TYPE type = combo->MultisampleTypes[i];
+						int quality = combo->MultisampleQualities[0];
+
+						if(abs(type - input.PresentParameters.MultiSampleType) < abs(bestType -
+							input.PresentParameters.MultiSampleType))
+						{
+							bestType = type;
+							bestQuality = min(quality - 1, input.PresentParameters.MultiSampleQuality);
+						}
+					}
+
+					settings.PresentParameters.MultiSampleType = bestType;
+					settings.PresentParameters.MultiSampleQuality = bestQuality;
+				}
+
+				vector<int> rankings;
+				int inputDepthBitDepth = GetDepthBits(input.PresentParameters.AutoDepthStencilFormat);
+				int inputStencilBitDepth = GetStencilBits(input.PresentParameters.AutoDepthStencilFormat);
+
+				for (size_t i=0;i<combo->DepthStencilFormats.size();i++)
+				{
+					D3DFORMAT format = combo->DepthStencilFormats[i];
+					int currentBitDepth = GetDepthBits(format);
+					int currentStencilDepth = GetStencilBits(format);
+
+					int ranking = abs(currentBitDepth - inputDepthBitDepth);
+					ranking += abs(currentStencilDepth - inputStencilBitDepth);
+					rankings.push_back(ranking);
+				}
+
+				int bestIndex = -1;
+				int bestRanking = MAXINT32;
+				for (size_t i=0;i<rankings.size();i++)
+				{
+					if(rankings[i] < bestRanking)
+					{
+						bestRanking = rankings[i];
+						bestIndex = i;
+					}
+				}
+
+				if(bestIndex >= 0)
+				{
+					settings.PresentParameters.AutoDepthStencilFormat = combo->DepthStencilFormats[bestIndex];
+					settings.PresentParameters.EnableAutoDepthStencil = true;
+				}
+				else
+				{
+					settings.PresentParameters.AutoDepthStencilFormat = D3DFMT_UNKNOWN;
+					settings.PresentParameters.EnableAutoDepthStencil = false;
+				}
+
+				if(combo->Windowed)
+					settings.PresentParameters.FullScreen_RefreshRateInHz = 0;
+				else
+				{
+					int match = input.PresentParameters.FullScreen_RefreshRateInHz;
+					bestDisplayMode.RefreshRate = 0;
+					if(match != 0)
+					{
+						bestRanking = 100000;
+
+						const vector<D3DDISPLAYMODE>& displayModes = combo->AdapterInfo->DisplayModes;
+						for (size_t i=0;i<displayModes.size();i++)
+						{
+							const D3DDISPLAYMODE& mode = displayModes[i];
+							if(mode.Format != combo->AdapterFormat ||
+								mode.Width != bestDisplayMode.Width ||
+								mode.Height != bestDisplayMode.Height)
+								continue;
+
+							int ranking = abs(static_cast<int>(mode.RefreshRate) - match);
+
+							if(ranking < bestRanking)
+							{
+								bestDisplayMode.RefreshRate = mode.RefreshRate;
+								bestRanking = ranking;
+
+								if(bestRanking == 0)
+									break;
+							}
+						}
+					}
+
+					settings.PresentParameters.FullScreen_RefreshRateInHz = bestDisplayMode.RefreshRate;
+				}
+
+				const vector<uint32> prIntrvls = combo->PresentIntervals;
+				if(find(prIntrvls.begin(), prIntrvls.end(), input.PresentParameters.PresentationInterval) != prIntrvls.end())
+					settings.PresentParameters.PresentationInterval = input.PresentParameters.PresentationInterval;
+				else
+					settings.PresentParameters.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+			}
+
+			D3DDISPLAYMODE Enumeration::FindValidResolution(const SettingsCombo* combo, const Direct3D9Settings& input)
+			{
+				D3DDISPLAYMODE bestMode;
+
+				if(combo->Windowed)
+				{
+					bestMode.Width = input.PresentParameters.BackBufferWidth;
+					bestMode.Height = input.PresentParameters.BackBufferHeight;
+					return bestMode;
+				}
+
+				int bestRanking = 100000;
+				int ranking;
+
+				for (size_t i=0; i<combo->AdapterInfo->DisplayModes.size();i++)
+				{
+					const D3DDISPLAYMODE& mode = combo->AdapterInfo->DisplayModes[i];
+
+					if(mode.Format != combo->AdapterFormat)
+						continue;
+
+					ranking = abs((int)mode.Width - (int)input.PresentParameters.BackBufferWidth) +
+						abs((int)mode.Height - (int)input.PresentParameters.BackBufferHeight);
+
+					if(ranking < bestRanking)
+					{
+						bestMode = mode;
+						bestRanking = ranking;
+
+						if(bestRanking == 0)
+							break;
+					}
+				}
+
+
+				if(bestMode.Width == 0)
+				{
+					bestMode.Width = input.PresentParameters.BackBufferWidth;
+					bestMode.Height = input.PresentParameters.BackBufferHeight;
+				}
+
+				return bestMode;
 			}
 		}
 	}

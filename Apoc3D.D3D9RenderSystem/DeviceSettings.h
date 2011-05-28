@@ -33,26 +33,84 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			struct D3D9DeviceSettings
+			struct Direct3D9Settings
 			{
-				int32 AdapterOrdinal;
-
+				uint32 AdapterOrdinal;
 				D3DDEVTYPE DeviceType;
-				int32 CreationFlags;
+				D3DFORMAT AdapterFormat;
+				uint32 CreationFlags;
+				D3DPRESENT_PARAMETERS PresentParameters;
 
-				D3DFORMAT DepthStencilFormat;
-				int32 RefreshRate;
-
-				D3DPRESENT_PARAMETERS PresentParams;
-
-				D3D9DeviceSettings()
+				Direct3D9Settings()
+					: AdapterFormat(D3DFMT_UNKNOWN), DeviceType(D3DDEVTYPE_HAL), AdapterOrdinal(0), CreationFlags(0)
 				{
-					memset(&this->PresentParams, '\0', sizeof(PresentParams));
-					AdapterOrdinal = 0;
-					DeviceType = D3DDEVTYPE_HAL;
-					CreationFlags = 0;
-					DepthStencilFormat = D3DFMT_UNKNOWN;
-					RefreshRate = 0;
+					memset(&PresentParameters, 0,  sizeof(PresentParameters));
+				}
+			};
+
+			struct DeviceSettings
+			{
+				/** The adapter ordinal.
+				*/
+				uint32 AdapterOrdinal;
+
+				/** The type of the device.
+				*/
+				D3DDEVTYPE DeviceType;
+
+				/** The refresh rate.
+				*/
+				int32 RefreshRate;
+				/** The width of the back buffer.
+				*/
+				int32 BackBufferWidth;
+				/** The height of the back buffer.
+				*/
+				int32 BackBufferHeight;
+				/** The back buffer format
+				*/
+				D3DFORMAT BackBufferFormat;
+
+				/** The back buffer count.
+				*/
+				int32 BackBufferCount;
+				
+				/** The depth stencil format.
+				*/
+				D3DFORMAT DepthStencilFormat;
+
+				/** true if windowed; otherwise, false.
+				*/
+				bool Windowed;
+
+				/** true if VSync is enabled; otherwise, false.
+				*/
+				bool EnableVSync;
+
+				/** true if VSync is multithreaded; otherwise, false.
+				*/
+				bool Multithreaded;
+
+				/** The multisample type.
+				*/
+				D3DMULTISAMPLE_TYPE MultiSampleType;
+
+				/** The multisample quality.
+				*/
+				int MultiSampleQuality;
+
+
+				Direct3D9Settings D3D9;
+
+				DeviceSettings()
+					: AdapterOrdinal(0), DeviceType(D3DDEVTYPE_HAL), 
+					RefreshRate(0), BackBufferWidth(0), BackBufferHeight(0),
+					BackBufferFormat(D3DFMT_UNKNOWN), BackBufferCount(0),
+					Windowed(false), EnableVSync(false), Multithreaded(false),
+					MultiSampleType(D3DMULTISAMPLE_NONE), MultiSampleQuality(0),
+					DepthStencilFormat(D3DFMT_UNKNOWN)
+				{
+
 				}
 			};
 		}

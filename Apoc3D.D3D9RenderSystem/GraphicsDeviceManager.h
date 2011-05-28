@@ -36,7 +36,7 @@ namespace Apoc3D
 			class GraphicsDeviceManager
 			{
 			private:
-				D3D9DeviceSettings* m_currentSetting;
+				DeviceSettings* m_currentSetting;
 				IDirect3D9* m_direct3D9;
 				D3DDevice* m_device;
 
@@ -56,9 +56,9 @@ namespace Apoc3D
 				int64 m_windowedStyle;
 				//bool m_savedTopmost;
 
-
-				bool CanResetDevice(const D3D9DeviceSettings* const oldset, const D3D9DeviceSettings* const newset) const;
-				void CreateDevice(const D3D9DeviceSettings &settings);
+				void PropogateSettings();
+				bool CanDeviceBeReset(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
+				void CreateDevice(const DeviceSettings &settings);
 				void game_FrameStart(bool* cancel);
 				void game_FrameEnd();
 				void Window_UserResized();
@@ -85,11 +85,27 @@ namespace Apoc3D
 					return m_device && !m_deviceLost;
 				}
 
+				/** Changes the device.
+					param
+					@settings The settings.
+					@minimumSettings The minimum settings.
+				*/
+				void ChangeDevice(const DeviceSettings& settings, const DeviceSettings& minimumSettings);
+				
+				/** Changes the device.
+					param
+					@windowed if set to true, the application will run in windowed mode instead of full screen.
+					@desiredWidth Desired width of the window.
+					@desiredHeight Desired height of the window.
+				*/
 				void ChangeDevice(bool windowed, int desiredWidth, int desiredHeight);
 
-				/* Changes the device.
+				/** Changes the device.
+					param
+					@settings The settings.
 				*/
-				void ChangeDevice(const D3D9DeviceSettings &prefer);
+				void ChangeDevice(const DeviceSettings& settings);
+
 				/* Toggles between full screen and windowed mode.
 				*/
 				void ToggleFullScreen();

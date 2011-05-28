@@ -34,7 +34,7 @@ namespace Apoc3D
 	namespace Utility
 	{
 
-		class StringUtils
+		class APAPI StringUtils
 		{
 		public:
 			static const String Empty;
