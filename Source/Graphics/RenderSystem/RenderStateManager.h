@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics\GraphicsCommon.h"
 #include "Math\Plane.h"
 
+using namespace Apoc3D::Math;
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -41,7 +43,7 @@ namespace Apoc3D
 			public:
 				virtual bool getEnabled() = 0;
 				virtual Plane getPlane() = 0;
-				
+
 				virtual void setEnabled(bool value) = 0;
 				virtual void setPlane(const Plane& plane) = 0;
 				
@@ -65,8 +67,6 @@ namespace Apoc3D
 				virtual CompareFunction getAlphaTestFunction() = 0;
 				virtual int getAlphaReference() = 0;
 
-				/** 
-				*/
 				virtual void SetAlphaTestParameters(bool enable, CompareFunction func, int reference) = 0;
 
 				/************************************************************************/
@@ -97,12 +97,15 @@ namespace Apoc3D
 				virtual bool getDepthBufferWriteEnabled() = 0;
 				virtual bool getDepthBufferEnabled() = 0;
 
+				virtual void SetDepth(bool enable, bool writeEnable, float bias, float slopebias, CompareFunction compare) = 0;
+
 				/************************************************************************/
 				/* Common                                                               */
 				/************************************************************************/
 				virtual CullMode getCullMode() = 0;
 				virtual FillMode getFillMode() = 0;
-
+				virtual void setCullMode(CullMode mode) = 0;
+				virtual void setFullMode(FillMode mode) = 0;
 				/************************************************************************/
 				/* Point                                                                */
 				/************************************************************************/
@@ -111,6 +114,7 @@ namespace Apoc3D
 				virtual float getPointSizeMin() = 0;
 				virtual bool getPointSpriteEnabled() = 0;
 
+				virtual void SetPointParameters(float size, float maxSize, float minSize, bool pointSprite) = 0;
 				/************************************************************************/
 				/* Stencil                                                              */
 				/************************************************************************/
@@ -118,10 +122,13 @@ namespace Apoc3D
 				virtual StencilOperation getStencilFail() = 0;
 				virtual StencilOperation getStencilPass() = 0;
 				virtual StencilOperation getStencilDepthFail() = 0;
-				virtual int getRefrenceStencil() = 0;
+				virtual int getStencilRefrence() = 0;
 				virtual CompareFunction getStencilFunction() = 0;
 				virtual int getStencilMask() = 0;				
 				virtual int getStencilWriteMask() = 0;
+
+				virtual void SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, int ref, CompareFunction func, int mask, int writemask) = 0;
+				virtual void SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func) = 0;
 
 				virtual bool getTwoSidedStencilMode() = 0;
 				
