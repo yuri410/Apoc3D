@@ -118,7 +118,7 @@ namespace Apoc3D
 						D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
 					assert(SUCCEEDED(hr));
 
-
+					
 					hr = dev->CreateDepthStencilSurface(width, height, 
 						D3D9Utils::ConvertDepthFormat(depthFormat), mms, 0, TRUE, &m_depthSurface, NULL);
 					assert(SUCCEEDED(hr));

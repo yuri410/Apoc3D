@@ -50,12 +50,15 @@ namespace Apoc3D
 
 			public:
 				inline D3DDevice* getDevice() const;
+				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
 
 				D3D9RenderDevice(GraphicsDeviceManager* devManager);
 				~D3D9RenderDevice();
 				
+				virtual PixelFormat GetBackBufferFormat();
+				virtual DepthFormat GetDefaultDepthStencilFormat();
+				
 				virtual void Initialize();
-
 				
 				virtual void BeginFrame();
 				virtual void EndFrame();

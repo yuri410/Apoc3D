@@ -61,7 +61,36 @@ namespace Apoc3D
 			}
 
 			D3DDevice* D3D9RenderDevice::getDevice() const { return m_devManager->getDevice(); } 
+			
+			PixelFormat D3D9RenderDevice::GetBackBufferFormat()
+			{				
+				D3DDevice* dev = getDevice();
 
+				IDirect3DSurface9* surface;
+				dev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &surface);
+
+				D3DSURFACE_DESC desc;
+				surface->GetDesc(&desc);
+
+				surface->Release();
+
+				return D3D9Utils::ConvertBackPixelFormat(desc.Format);
+			}
+			DepthFormat D3D9RenderDevice::GetDefaultDepthStencilFormat()
+			{
+				D3DDevice* dev = getDevice();
+
+				IDirect3DSurface9* surface;
+				dev->GetDepthStencilSurface(&surface);
+
+				D3DSURFACE_DESC desc;
+				surface->GetDesc(&desc);
+
+				surface->Release();
+
+				return D3D9Utils::ConvertBackDepthFormat(desc.Format);
+			}
+				
 			void D3D9RenderDevice::Initialize()
 			{
 				m_renderStates = new D3D9RenderStateManager(this);

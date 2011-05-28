@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics\GraphicsCommon.h"
 #include "Math\Viewport.h"
 #include "Graphics\RenderOperation.h"
+#include "Graphics\PixelFormat.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Math;
@@ -71,6 +72,9 @@ namespace Apoc3D
 
 				const Capabilities* getCapabilities() const { return &m_caps; }
 				const String &getRenderDeviceName() const { return m_rdName; }
+
+				virtual PixelFormat GetBackBufferFormat() = 0;
+				virtual DepthFormat GetDefaultDepthStencilFormat() = 0;
 
 				virtual void Initialize() = 0;
 
