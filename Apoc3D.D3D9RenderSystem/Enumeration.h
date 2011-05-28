@@ -104,7 +104,7 @@ namespace Apoc3D
 			private:
 				static bool m_hasMinimumSettings;
 				static D3D9DeviceSettings m_minimumSettings;
-				static vector<AdapterInfo> m_adapters;
+				static vector<AdapterInfo*> m_adapters;
 				static bool m_hasEnumerated;
 
 				static bool getHasEnumerated()
@@ -119,6 +119,7 @@ namespace Apoc3D
 				static void setMinimumSettings(const D3D9DeviceSettings& settings)
 				{
 					m_minimumSettings = settings;
+					m_hasMinimumSettings = true;
 				}
 
 				

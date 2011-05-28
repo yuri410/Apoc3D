@@ -41,6 +41,7 @@ namespace Apoc3D
 				int32 CreationFlags;
 
 				D3DFORMAT DepthStencilFormat;
+				int32 RefreshRate;
 
 				D3DPRESENT_PARAMETERS PresentParams;
 
@@ -50,7 +51,8 @@ namespace Apoc3D
 					AdapterOrdinal = 0;
 					DeviceType = D3DDEVTYPE_HAL;
 					CreationFlags = 0;
-
+					DepthStencilFormat = D3DFMT_UNKNOWN;
+					RefreshRate = 0;
 				}
 			};
 		}

@@ -56,7 +56,7 @@ namespace Apoc3D
 
 			bool Enumeration::m_hasMinimumSettings = false;
 			D3D9DeviceSettings Enumeration::m_minimumSettings;
-			vector<AdapterInfo> Enumeration::m_adapters;
+			vector<AdapterInfo*> Enumeration::m_adapters;
 			bool Enumeration::m_hasEnumerated = false;
 
 			void Enumeration::Enumerate(IDirect3D9* d3d9)
@@ -75,7 +75,7 @@ namespace Apoc3D
 					HRESULT hr = d3d9->GetAdapterIdentifier(i, 0, &adapter);
 					assert(SUCCEEDED(hr));
 
-					AdapterInfo info = new AdapterInfo();
+					AdapterInfo* info = new AdapterInfo();
 					info->AdapterOrdinal = i;
 					info->Details = adapter;					
 
@@ -92,14 +92,14 @@ namespace Apoc3D
 							// check minimum
 							if (m_hasMinimumSettings)
 							{
-								if (mode.Width < m_minimumSettings.getBackBufferWidth() ||
-									mode.Height < m_minimumSettings.getBackBufferHeight())
+								if (mode.Width < m_minimumSettings.PresentParams.BackBufferWidth ||
+									mode.Height < m_minimumSettings.PresentParams.BackBufferHeight)
 								{
 									continue;
 								}
 							}
 
-							info.DisplayModes.push_back(mode);
+							info->DisplayModes.push_back(mode);
 
 							if (find(adapterFormats.begin(), adapterFormats.end(), mode.Format) == adapterFormats.end())
 							{
@@ -118,11 +118,11 @@ namespace Apoc3D
 					}
 
 					// sort info.DisplayModes
-					sort(info.DisplayModes.begin(), info.DisplayModes.end(), CompareDisplayMode);
+					sort(info->DisplayModes.begin(), info->DisplayModes.end(), CompareDisplayMode);
 
 					EnumerateDevices(d3d9, info, adapterFormats);
 
-					if (info.Devices.size())
+					if (info->Devices.size())
 					{
 						m_adapters.push_back(info);
 					}
@@ -133,7 +133,7 @@ namespace Apoc3D
 				{
 					for (size_t j=i+1;j<m_adapters.size();j++)
 					{
-						if (!strcmp(m_adapters[i].Details.Description, m_adapters[j].Details.Description))
+						if (!strcmp(m_adapters[i]->Details.Description, m_adapters[j]->Details.Description))
 						{
 							unique = false;
 							break;
@@ -143,13 +143,13 @@ namespace Apoc3D
 				for (size_t i=0;i<m_adapters.size(); i++)
 				{
 					wchar_t buffer[512];
-					mbstowcs(buffer, m_adapters[i].Details.Description, 512);
-					m_adapters[i].Description = buffer;
+					mbstowcs(buffer, m_adapters[i]->Details.Description, 512);
+					m_adapters[i]->Description = buffer;
 					
 					if (!unique)
 					{
-						String temp = StringUtils::ToString(m_adapters[i].AdapterOrdinal);
-						m_adapters[i].Description.append(temp);
+						String temp = StringUtils::ToString(m_adapters[i]->AdapterOrdinal);
+						m_adapters[i]->Description.append(temp);
 					}
 				}
 			}
@@ -218,8 +218,8 @@ namespace Apoc3D
 							combo->AdapterInfo = adapterInfo;
 							combo->DeviceInfo = deviceInfo;
 
-							BuildDepthStencilFormatList(combo);
-							BuildMultisampleTypeList(combo);
+							BuildDepthStencilFormatList(d3d9, combo);
+							BuildMultisampleTypeList(d3d9, combo);
 
 							if (combo->MultisampleTypes.empty())
 								continue;
@@ -315,6 +315,31 @@ namespace Apoc3D
 
 			}
 
+			void Enumeration::BuildPresentIntervalList(IDirect3D9* d3d9, SettingsCombo* combo)
+			{
+				DWORD possiblePresentIntervals[] = {
+					D3DPRESENT_INTERVAL_IMMEDIATE,  D3DPRESENT_INTERVAL_DEFAULT,
+					D3DPRESENT_INTERVAL_ONE,        D3DPRESENT_INTERVAL_TWO,
+					D3DPRESENT_INTERVAL_THREE,      D3DPRESENT_INTERVAL_FOUR
+				};
+
+				for (size_t i=0;i<sizeof(possiblePresentIntervals)/sizeof(DWORD);i++)
+				{
+					const DWORD& interval = possiblePresentIntervals[i];
+
+					if (combo->Windowed && (interval == D3DPRESENT_INTERVAL_TWO || 
+						interval == D3DPRESENT_INTERVAL_THREE || interval == D3DPRESENT_INTERVAL_FOUR))
+					{
+						continue;
+					}
+
+					if (interval == D3DPRESENT_INTERVAL_DEFAULT || (combo->DeviceInfo->Capabilities.PresentationIntervals & interval) != 0)
+					{
+						combo->PresentIntervals.push_back(interval);
+					}
+				}
+
+			}
 		}
 	}
 }
