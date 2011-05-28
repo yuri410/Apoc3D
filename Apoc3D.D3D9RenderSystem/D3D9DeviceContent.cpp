@@ -42,7 +42,7 @@ namespace Apoc3D
 
 			}
 
-			RenderView* D3D9DeviceContent::create(const PresentParameters &pm)
+			RenderView* D3D9DeviceContent::create(const RenderParameters &pm)
 			{
 				if (!pm.IsFullForm)
 				{

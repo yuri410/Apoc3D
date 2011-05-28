@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9RenderWindow.h"
 #include "D3D9RenderDevice.h"
-
+#include "D3D9Utils.h"
 #include "GraphicsDeviceManager.h"
 #include "GameWindow.h"
 
@@ -38,14 +38,31 @@ namespace Apoc3D
 			{				
 				Game::Create();
 				
+				const RenderParameters& params = m_window->getRenderParams();
+
 				//TODO: getGraphicsDeviceManager()->ChangeDevice()
+				DeviceSettings settings;
+				settings.AdapterOrdinal = 0;
+				settings.BackBufferCount = 1;
+				settings.BackBufferHeight = params.BackBufferHeight;
+				settings.BackBufferWidth = params.BackBufferWidth;
+				settings.BackBufferFormat = D3D9Utils::ConvertPixelFormat(params.ColorBufferFormat);
+				settings.DepthStencilFormat = D3D9Utils::ConvertDepthFormat(params.DepthBufferFormat);
+				settings.DeviceType = D3DDEVTYPE_HAL;
+				settings.EnableVSync = params.EnableVSync;
+				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
+				settings.Multithreaded = true;
+				settings.RefreshRate = 0;
+				settings.Windowed = params.IsWindowd;				
+
+				getGraphicsDeviceManager()->ChangeDevice(settings);
 
 				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager());
 				m_window->setDevice(device);
 
 				device->Initialize();
 			}
-			D3D9RenderWindow::D3D9RenderWindow(D3D9RenderDevice* device, const PresentParameters& pm)
+			D3D9RenderWindow::D3D9RenderWindow(D3D9RenderDevice* device, const RenderParameters& pm)
 				: RenderWindow(device, pm)
 			{
 				m_game = new D3D9Game(this);

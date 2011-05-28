@@ -38,6 +38,8 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+			template class APAPI list<float>;
+
 			/* Implements a simple FPS counter
 			*/
 			class APAPI FPSCounter
@@ -73,12 +75,13 @@ namespace Apoc3D
 					RenderView(rd, pm, 0);
 				}
 
-				const RenderParameters& getPresentParams() const { return m_presentParams; }
 			public:
+				void* UserData;
+				const RenderParameters& getRenderParams() const { return m_presentParams; }
+
 				virtual ~RenderView(){}
 
-				void* UserData;
-
+				
 				float getFPS() const { return m_fpsCounter.getFPS(); }
 
 				virtual void Present(const GameTime* const time);

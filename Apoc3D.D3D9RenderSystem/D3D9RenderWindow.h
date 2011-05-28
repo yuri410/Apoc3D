@@ -109,7 +109,7 @@ namespace Apoc3D
 				}
 			public:
 
-				D3D9RenderWindow(D3D9RenderDevice* device, const PresentParameters& pm);
+				D3D9RenderWindow(D3D9RenderDevice* device, const RenderParameters& pm);
 				
 				virtual void Exit();
 				virtual void Run();

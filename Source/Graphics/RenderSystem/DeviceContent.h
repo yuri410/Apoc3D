@@ -73,8 +73,7 @@ namespace Apoc3D
 				PixelFormat ColorBufferFormat;
 
 				uint32 FSAASampleCount;
-				PresentInterval PresentInterval;
-
+				bool EnableVSync;
 
 				uint64 TargetHandle;
 

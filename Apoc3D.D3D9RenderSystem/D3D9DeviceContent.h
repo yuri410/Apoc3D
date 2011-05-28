@@ -42,7 +42,7 @@ namespace Apoc3D
 				
 				D3D9RenderWindow* m_window;
 			protected:
-				virtual RenderView* create(const PresentParameters &pm);
+				virtual RenderView* create(const RenderParameters &pm);
 			public:
 				D3D9DeviceContent();
 				virtual RenderDevice* getRenderDevice();
