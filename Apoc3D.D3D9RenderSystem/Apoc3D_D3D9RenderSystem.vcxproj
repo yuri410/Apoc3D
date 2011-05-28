@@ -99,6 +99,7 @@
     <ClInclude Include="D3D9VertexDeclaration.h" />
     <ClInclude Include="D3D9VertexShader.h" />
     <ClInclude Include="DeviceSettings.h" />
+    <ClInclude Include="Enumeration.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameWindow.h" />
@@ -130,6 +131,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Enumeration.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />

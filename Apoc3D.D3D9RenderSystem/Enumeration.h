@@ -1,4 +1,26 @@
+/*
+-----------------------------------------------------------------------------
+This source file is part of Apoc3D Engine
 
+Copyright (c) 2009+ Tao Games
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  if not, write to the Free Software Foundation, 
+Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/gpl.txt.
+
+-----------------------------------------------------------------------------
+*/
 #ifndef ENUMERATION_H
 #define ENUMERATION_H
 
@@ -14,130 +36,106 @@ namespace Apoc3D
 	{ 
 		namespace D3D9RenderSystem
 		{
-			struct AdapterInfo
+			class AdapterInfo;
+			class DeviceInfo;
+
+			class SettingsCombo
 			{
+			private:
+				SettingsCombo(const SettingsCombo& another) { }
+			public:
+				SettingsCombo(){}
+				int32 AdapterOrdinal;
+
+				D3DDEVTYPE DeviceType;
+
+				D3DFORMAT AdapterFormat;
+
+				D3DFORMAT BackBufferFormat;
+
+				bool Windowed;
+
+				vector<D3DFORMAT> DepthStencilFormats;
+
+				vector<D3DMULTISAMPLE_TYPE> MultisampleTypes;
+				vector<int32> MultisampleQualities;
+				vector<uint32> PresentIntervals;
+
+				AdapterInfo* AdapterInfo;
+
+				DeviceInfo* DeviceInfo;
+
+
+			};
+		
+			class DeviceInfo
+			{
+			private:
+				DeviceInfo(const DeviceInfo& another) { }
+			public:
+				DeviceInfo() {}
+				D3DDEVTYPE DeviceType;
+
+				D3DCAPS9 Capabilities;
+
+				vector<SettingsCombo*> DeviceSettings;
+
+			};
+			class AdapterInfo
+			{
+			private:
+				AdapterInfo(const AdapterInfo& another) { }
+			public:
+				AdapterInfo() {}
 				int32 AdapterOrdinal;
 
 				D3DADAPTER_IDENTIFIER9 Details;
 
 				String Description;
 
-				list<D3DDISPLAYMODE> DisplayModes;
+				vector<D3DDISPLAYMODE> DisplayModes;
 
-				list<DeviceInfo> Devices;
-			};
-
-			struct DeviceInfo
-			{
-				DeviceType DeviceType;
-
-				D3DCAPS9 Capabilities;
-
-				list<SettingsCombo> DeviceSettings;
-
-			};
-
-			struct SettingsCombo
-			{
-				int32 AdapterOrdinal;
-
-				DeviceType DeviceType;
-
-				Format AdapterFormat;
-
-				Format BackBufferFormat;
-
-				bool Windowed;
-
-				list<Format> DepthStencilFormats;
-
-				list<MSAAType> MultisampleTypes;
-				list<int32> MultisampleQualities;
-				list<uint32> PresentIntervals;
-
-				AdapterInfo AdapterInfo;
-
-				DeviceInfo DeviceInfo;
-
+				vector<DeviceInfo*> Devices;
 
 			};
 
 			class Enumeration
 			{
 			private:
-				D3D9DeviceSettings* m_minimumSettings;
-				list<AdapterInfo>* m_adapters;
-				bool m_hasEnumerated;
+				static bool m_hasMinimumSettings;
+				static D3D9DeviceSettings m_minimumSettings;
+				static vector<AdapterInfo> m_adapters;
+				static bool m_hasEnumerated;
 
-				bool getHasEnumerated() const
+				static bool getHasEnumerated()
 				{
 					return m_hasEnumerated;
 				}
 
-				D3D9DeviceSettings* getDeviceSettings() const
+				static const D3D9DeviceSettings& getMiniumSettings()
 				{
 					return m_minimumSettings;
 				}
-				void setMinimumSettings(const D3D9DeviceSettings* settings)
+				static void setMinimumSettings(const D3D9DeviceSettings& settings)
 				{
 					m_minimumSettings = settings;
 				}
 
+				
+				static void EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, vector<D3DFORMAT>& adapterFormats);
+
+				static void EnumerateSettingsCombos(IDirect3D9* d3d9, AdapterInfo* adapterInfo, 
+					DeviceInfo* deviceInfo, vector<D3DFORMAT>& adapterFormats);
+
+				static void BuildDepthStencilFormatList(IDirect3D9* d3d9, SettingsCombo* combo);
+
+				static void BuildMultisampleTypeList(IDirect3D9* d3d9, SettingsCombo* combo);
+
+				static void BuildPresentIntervalList(IDirect3D9* d3d9, SettingsCombo* combo);
 			public:
-				void Enumerate(IDirect3D9* const d3d9)
-				{
-					m_hasEnumerated = true;
-					m_adapters = new list<AdapterInfo>();
-
-					list<D3DFORMAT> adapterFormats;
-					D3DFORMAT allowedAdapterFormats[4] = {
-						D3DFMT_X8R8G8B8, D3DFMT_X1R5G5B5, D3DFMT_R5G6B5, D3DFMT_A2R10G10B10 };
-
-						//UINT count = d3d9->GetAdapterCount();
-						//for (UINT i=0;i<count;i++)
-						//{
-						//	D3DADAPTER_IDENTIFIER9 dai;
-
-						//	d3d9->GetAdapterIdentifier(i,0, &dai);
-
-						//	adapterFormats.clear();
-
-						//	AdapterInfo ai;
-						//	ai.AdapterOrdinal = i;
-						//	ai.Details = dai;
-
-						//	for (int j=0;j<4;j++)
-						//	{
-						//		UINT modeCount = d3d9->GetAdapterModeCount();
-						//		for (UINT k=0;k<modeCount;k++)
-						//		{
-						//			D3DDISPLAYMODE mode;
-						//			d3d9->get
-						//				if (m_minimumSettings)
-						//				{
-
-						//				}
-						//		}
-
-						//	}
-						//}	
-				}
+				static void Enumerate(IDirect3D9* d3d9);
 
 			private:
-
-				void EnumerateDevices(const AdapterInfo &info, const list<D3DFORMAT> &adapterFormats);
-
-
-				void EnumerateSettingsCombos(const AdapterInfo &adapterInfo, 
-					const DeviceInfo &deviceInfo, const list<D3DFORMAT> &adapterFormats);
-
-				void BuildDepthStencilFormatList(const SettingsCombo &combo);
-
-				void BuildMultisampleTypeList(const SettingsCombo &combo);
-
-				void BuildPresentIntervalList(const SettingsCombo &combo);
-
-			public:
 				Enumeration(void){ }
 				~Enumeration(void) { }
 			};

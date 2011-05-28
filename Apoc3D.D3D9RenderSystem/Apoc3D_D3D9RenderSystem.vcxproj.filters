@@ -69,9 +69,6 @@
     <ClInclude Include="GameClock.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DeviceSettings.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="D3D9RenderWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -85,6 +82,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Buffer\D3D9DepthBuffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Enumeration.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceSettings.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -150,6 +153,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Buffer\D3D9DepthBuffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Enumeration.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

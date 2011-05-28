@@ -35,75 +35,12 @@ namespace Apoc3D
 		{
 			struct D3D9DeviceSettings
 			{
-				/* the width of the back buffer.
-				*/
-				uint32 getBackBufferWidth() const
-				{
-					return PresentParams.BackBufferWidth;
-				}
-				void setBackBufferWidth(uint32 value)
-				{
-					PresentParams.BackBufferWidth = value;
-				}
-
-
-				/* the height of the back buffer.
-				*/
-				uint32 getBackBufferHeight() const
-				{
-					return PresentParams.BackBufferHeight;
-				}
-				void setBackBufferHeight(uint32 value)
-				{
-					PresentParams.BackBufferHeight = value;
-				}
-
-				/* the back buffer format.
-				*/
-				D3DFORMAT getBackBufferFormat() const
-				{
-					return PresentParams.BackBufferFormat;
-				}
-
-				/* the back buffer count.
-				*/
-				int32 getBackBufferCount() const
-				{
-					return PresentParams.BackBufferCount;
-				}
-
-				/* whether the device is windowed.
-				*/
-				bool getWindowed() const
-				{
-					return !!(PresentParams.Windowed);
-				}
-				void setWindowed(bool value)
-				{
-					PresentParams.Windowed = value;
-				}
-				/* is multithreaded?
-				*/
-				bool getMultithreaded() const
-				{
-					return !!(CreationFlags & D3DCREATE_MULTITHREADED);
-				}
-				/* the multisample type
-				*/
-				D3DMULTISAMPLE_TYPE getMultisampleType() const
-				{
-					return PresentParams.MultiSampleType;
-				}
-
-				int32 getMultisampleQuality() const
-				{
-					return PresentParams.MultiSampleQuality;
-				}
-
 				int32 AdapterOrdinal;
 
 				D3DDEVTYPE DeviceType;
 				int32 CreationFlags;
+
+				D3DFORMAT DepthStencilFormat;
 
 				D3DPRESENT_PARAMETERS PresentParams;
 
