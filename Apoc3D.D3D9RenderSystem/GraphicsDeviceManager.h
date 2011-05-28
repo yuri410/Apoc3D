@@ -71,6 +71,8 @@ namespace Apoc3D
 				void UpdateDeviceInformation();
 
 			public:
+				const DeviceSettings* getCurrentSetting() const { return m_currentSetting; }
+
 				GraphicsDeviceManager(Game* game);
 				~GraphicsDeviceManager(void);
 

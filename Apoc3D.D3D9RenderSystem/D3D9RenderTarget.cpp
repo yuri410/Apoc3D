@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9RenderDevice.h"
 #include "D3D9Utils.h"
 #include "Buffer/D3D9DepthBuffer.h"
+#include "GraphicsDeviceManager.h"
+#include "Apoc3DException.h"
 
 namespace Apoc3D
 {
@@ -110,17 +112,35 @@ namespace Apoc3D
 				{
 					D3DMULTISAMPLE_TYPE mms = D3D9Utils::ConvertMultisample(sampleCount);
 
-					HRESULT hr = dev->CreateRenderTarget(width, height, 
-						D3D9Utils::ConvertPixelFormat(format), mms, 1, FALSE, &m_colorSurface, NULL);
+					DWORD quality;
+					GraphicsDeviceManager* dmgr = m_device->getGraphicsDeviceManager();
+					const DeviceSettings* sets = dmgr->getCurrentSetting();
+					HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
+						sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertPixelFormat(format), sets->D3D9.PresentParameters.Windowed, mms, &quality);
+					if (hr != S_OK)
+					{
+						throw Apoc3DException::createException(EX_NotSupported, L"");
+					}
+					DWORD quality2;
+					hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
+						sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertDepthFormat(depthFormat), sets->D3D9.PresentParameters.Windowed, mms, &quality2);
+
+					if (hr != S_OK)
+					{
+						throw Apoc3DException::createException(EX_NotSupported, L"");
+					}
+
+					hr = dev->CreateRenderTarget(width, height, 
+						D3D9Utils::ConvertPixelFormat(format), mms, quality - 1, FALSE, &m_colorSurface, NULL);
 					assert(SUCCEEDED(hr));
 
 					hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
 						D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
 					assert(SUCCEEDED(hr));
 
-					
+
 					hr = dev->CreateDepthStencilSurface(width, height, 
-						D3D9Utils::ConvertDepthFormat(depthFormat), mms, 0, TRUE, &m_depthSurface, NULL);
+						D3D9Utils::ConvertDepthFormat(depthFormat), mms, quality2 - 1, TRUE, &m_depthSurface, NULL);
 					assert(SUCCEEDED(hr));
 
 					m_depthBuffer = new D3D9DepthBuffer(device, m_depthSurface);
