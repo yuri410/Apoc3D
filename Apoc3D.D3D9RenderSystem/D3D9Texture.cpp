@@ -73,7 +73,7 @@ namespace Apoc3D
 
 			}
 
-			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, const ResourceLocation* rl, TextureUsage usage, bool managed)
+			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed)
 				: Texture(device, rl, usage, managed),
 				m_renderDevice(device)
 			{

@@ -46,7 +46,7 @@ namespace Apoc3D
 			private:
 				//IDirect3DBaseTexture9* m_baseTexture;
 				RenderDevice* m_renderDevice;
-				const ResourceLocation* m_resourceLocation;
+				ResourceLocation* m_resourceLocation;
 				TextureType m_type;
 				int32 m_width;
 				int32 m_height;
@@ -60,11 +60,11 @@ namespace Apoc3D
 			protected:
 				void UpdateInfo(const TextureData& data);
 
-				Texture(RenderDevice* device, const ResourceLocation* rl, TextureUsage usage, bool managed);
+				Texture(RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed);
 				Texture(RenderDevice* device, int32 width, int32 height, int32 depth, 
 					int32 levelCount, PixelFormat format, TextureUsage usage);
 				Texture(RenderDevice* device, int32 length, int32 levelCount, TextureUsage usage, PixelFormat format);
-
+				
 
 				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rectangle) = 0;
 				virtual DataBox lock(int32 surface, LockMode mode, const Box& box) = 0;
@@ -75,6 +75,7 @@ namespace Apoc3D
 				virtual void unlock(CubeMapFace cubemapFace, int32 surface) = 0;
 
 			public:
+				virtual ~Texture();
 				virtual uint32 getSize() { return static_cast<uint32>(m_contentSize); }
 
 				bool isLocked() const { return m_isLocked; }

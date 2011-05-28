@@ -57,7 +57,7 @@ namespace Apoc3D
 				D3D9Texture(D3D9RenderDevice* device, D3DTexture3D* tex3D);
 				D3D9Texture(D3D9RenderDevice* device, D3DTextureCube* texCube);
 
-				D3D9Texture(D3D9RenderDevice* device, const ResourceLocation* rl, TextureUsage usage, bool managed);
+				D3D9Texture(D3D9RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed);
 				D3D9Texture(D3D9RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
 					PixelFormat format, TextureUsage usage);
 

@@ -44,7 +44,7 @@ namespace Apoc3D
 			public:
 				D3D9ObjectFactory(D3D9RenderDevice* device);
 
-				virtual Texture* CreateTexture(const ResourceLocation* rl, TextureUsage usage, bool managed);
+				virtual Texture* CreateTexture(ResourceLocation* rl, TextureUsage usage, bool managed);
 				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format);
 				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format);
 				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format);

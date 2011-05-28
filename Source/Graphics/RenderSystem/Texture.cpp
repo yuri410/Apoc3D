@@ -77,7 +77,14 @@ namespace Apoc3D
 			{
 				m_contentSize = 6 * PixelFormatUtils::GetMemorySize(length, length, 1, format);
 			}
-
+			Texture::~Texture()
+			{
+				if (m_resourceLocation)
+				{
+					delete m_resourceLocation;
+					m_resourceLocation = 0;
+				}
+			}
 			void Texture::UpdateInfo(const TextureData& data)
 			{
 				m_contentSize = data.ContentSize;

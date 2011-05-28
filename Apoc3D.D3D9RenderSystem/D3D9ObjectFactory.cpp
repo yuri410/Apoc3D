@@ -43,7 +43,7 @@ namespace Apoc3D
 			{
 
 			}
-			Texture* D3D9ObjectFactory::CreateTexture(const ResourceLocation* rl, TextureUsage usage, bool managed)
+			Texture* D3D9ObjectFactory::CreateTexture(ResourceLocation* rl, TextureUsage usage, bool managed)
 			{
 				return new D3D9Texture(m_device, rl, usage, managed);
 			}
