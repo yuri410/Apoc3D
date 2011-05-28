@@ -44,7 +44,7 @@ namespace Apoc3D
 			D3DFORMAT D3D9Utils::depFmtTable[DEPFMT_Count];
 			D3DTEXTUREFILTERTYPE D3D9Utils::tfltTable[TFLT_Count];
 			D3DCUBEMAP_FACES D3D9Utils::cubeTable[CUBE_Count];
-
+			D3DTEXTUREADDRESS D3D9Utils::taTable[TA_Count];
 
 
 			BufferUsageFlags D3D9Utils::GetBufferUsage(DWORD usage)
@@ -456,6 +456,16 @@ namespace Apoc3D
 				cubeTable[CUBE_PositiveZ] = D3DCUBEMAP_FACE_POSITIVE_Z;
 				cubeTable[CUBE_NegativeZ] = D3DCUBEMAP_FACE_NEGATIVE_Z;
 			}
+			void D3D9Utils::InitTATable()
+			{
+				taTable[TA_Border] = D3DTADDRESS_BORDER;
+				taTable[TA_Clamp] = D3DTADDRESS_CLAMP;
+				taTable[TA_Mirror] = D3DTADDRESS_MIRROR;
+				taTable[TA_MirrorOnce] = D3DTADDRESS_MIRRORONCE;
+				taTable[TA_Wrap] = D3DTADDRESS_WRAP;
+
+			}
+
 			D3D9Utils::D3D9Utils()
 			{
 				InitPrimitiveTable();
@@ -606,6 +616,12 @@ namespace Apoc3D
 			D3DCUBEMAP_FACES D3D9Utils::ConvertCubeMapFace(CubeMapFace face)
 			{
 				return cubeTable[static_cast<int>(face)];
+			}
+
+
+			D3DTEXTUREADDRESS D3D9Utils::ConvertTextureAddress(TextureAddressMode ta)
+			{
+				return taTable[static_cast<int>(ta)];
 			}
 		}
 	}

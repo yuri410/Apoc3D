@@ -42,6 +42,10 @@ namespace Apoc3D
 			class D3D9VertexShader : public VertexShader
 			{
 			private:
+				float m_buffer[32];
+				int m_intBuffer[32];
+				BOOL m_boolBuffer[8];
+
 				D3D9RenderDevice* m_device;
 				IDirect3DVertexShader9* m_shader;
 
@@ -53,7 +57,7 @@ namespace Apoc3D
 
 				virtual void SetVector2(int reg, Vector2 value);
 				virtual void SetVector3(int reg, Vector3 value);
-				virtual void SetVector4(int reg, Vector3 value);
+				virtual void SetVector4(int reg, Vector4 value);
 				virtual void SetValue(int reg, const Quaternion& value);
 				virtual void SetValue(int reg, const Matrix& value);
 				virtual void SetValue(int reg, const Color4& value);
@@ -61,7 +65,7 @@ namespace Apoc3D
 
 				virtual void SetVector2(int reg, const Vector2* value, int count);
 				virtual void SetVector3(int reg, const Vector3* value, int count);
-				virtual void SetVector4(int reg, const Vector3* value, int count);
+				virtual void SetVector4(int reg, const Vector4* value, int count);
 				virtual void SetValue(int reg, const Quaternion* value, int count);
 				virtual void SetValue(int reg, const Matrix* value, int count);
 				virtual void SetValue(int reg, const Color4* value, int count);
@@ -74,12 +78,12 @@ namespace Apoc3D
 				virtual void SetValue(int reg, float* value, int count);
 				virtual void SetValue(int reg, int* value, int count);
 
-				virtual void SetTexture(int reg, Texture* tex);
-				virtual void SetSamplerState(int reg, const ShaderSamplerState &state);
+				virtual void SetTexture(int samIndex, Texture* tex);
+				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state);
 
 				virtual void SetVector2(const String &paramName, Vector2 value);
 				virtual void SetVector3(const String &paramName, Vector3 value);
-				virtual void SetVector4(const String &paramName, Vector3 value);
+				virtual void SetVector4(const String &paramName, Vector4 value);
 				virtual void SetValue(const String &paramName, const Quaternion& value);
 				virtual void SetValue(const String &paramName, const Matrix& value);
 				virtual void SetValue(const String &paramName, const Color4& value);
@@ -89,7 +93,7 @@ namespace Apoc3D
 
 				virtual void SetVector2(const String &paramName, const Vector2* value, int count);
 				virtual void SetVector3(const String &paramName, const Vector3* value, int count);
-				virtual void SetVector4(const String &paramName, const Vector3* value, int count);
+				virtual void SetVector4(const String &paramName, const Vector4* value, int count);
 				virtual void SetValue(const String &paramName, const Quaternion* value, int count);
 				virtual void SetValue(const String &paramName, const Matrix* value, int count);
 				virtual void SetValue(const String &paramName, const Plane* value, int count);
@@ -103,7 +107,7 @@ namespace Apoc3D
 				virtual void SetValue(const String &paramName, int* value, int count);
 
 				virtual void SetTexture(const String &paramName, Texture* tex);
-				virtual void SetSamplerState(const String &paramName, const ShaderSamplerState &state);
+				virtual void SetSamplerState(const String &paramName, const ShaderSamplerState& state);
 
 				virtual void AutoSetParameters(const Material* mtrl);
 			};

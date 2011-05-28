@@ -54,7 +54,7 @@ namespace Apoc3D
 				static D3DFORMAT depFmtTable[DEPFMT_Count];
 				static D3DTEXTUREFILTERTYPE tfltTable[TFLT_Count];
 				static D3DCUBEMAP_FACES cubeTable[CUBE_Count];
-				
+				static D3DTEXTUREADDRESS taTable[TA_Count];
 			private:
 				static void InitPrimitiveTable();
 				static void InitVertexElementFormat();
@@ -69,6 +69,7 @@ namespace Apoc3D
 				static void InitDepthFormatTable();
 				static void InitTFLTTable();
 				static void InitCubeTable();
+				static void InitTATable();
 
 				D3D9Utils();
 			public:
@@ -170,6 +171,8 @@ namespace Apoc3D
 
 				static DWORD ConvertTextureUsage(TextureUsage usage);
 				static D3DCUBEMAP_FACES ConvertCubeMapFace(CubeMapFace face);
+
+				static D3DTEXTUREADDRESS ConvertTextureAddress(TextureAddressMode ta);
 			};
 		}
 	}

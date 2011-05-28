@@ -89,8 +89,8 @@ namespace Apoc3D
 				virtual void SetValue(int reg, float* value, int count) = 0;
 				virtual void SetValue(int reg, int* value, int count) = 0;
 
-				virtual void SetTexture(int reg, Texture* tex) = 0;
-				virtual void SetSamplerState(int reg, const ShaderSamplerState &state) = 0;
+				virtual void SetTexture(int samIndex, Texture* tex) = 0;
+				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state) = 0;
 
 
 				virtual void SetVector2(const String &paramName, Vector2 value) = 0;

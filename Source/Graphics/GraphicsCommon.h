@@ -191,6 +191,40 @@ namespace Apoc3D
 				STOP_Count = 8
 			};
 
+			/** Defines constants that describe supported texture-addressing modes.
+			*/
+			enum TextureAddressMode
+			{
+				/** Tile the texture at every integer junction. For example, for u values between
+					0 and 3, the texture is repeated three times; no mirroring is performed.
+				*/
+				TA_Wrap = 0,
+
+				/** Similar to Wrap, except that the texture is flipped at every integer junction.
+					For u values between 0 and 1, for example, the texture is addressed normally;
+					between 1 and 2, the texture is flipped (mirrored); between 2 and 3, the
+					texture is normal again, and so on.
+				*/
+				TA_Mirror = 1,
+
+				/** Texture coordinates outside the range [0.0, 1.0] are set to the texture color
+					at 0.0 or 1.0, respectively.
+				*/
+				TA_Clamp = 2,        
+				
+				/** Texture coordinates outside the range [0.0, 1.0] are set to the border color.
+				*/
+				TA_Border = 3,
+
+				/** Similar to Mirror and Clamp. Takes the absolute value of the texture coordinate
+					(thus, mirroring around 0), and then clamps to the maximum value. The most
+					common usage is for volume textures, where support for the full MirrorOnce
+					texture-addressing mode is not necessary, but the data is symmetrical around
+					the one axis.
+				*/
+				TA_MirrorOnce = 4,
+				TA_Count = 5
+			};
 			/* Defines how a texture will be filtered as it is minified for each mipmap level.
 			*/
 			enum TextureFilter
@@ -229,39 +263,7 @@ namespace Apoc3D
 				TFLT_GaussianQuad = 7,
 				TFLT_Count = 8
 			};
-			/* Defines constants that describe supported texture-addressing modes. 
-			*/
-			enum TextureAddressMode
-			{
-				/* Tile the texture at every integer junction. For example, for u values between
-				*  0 and 3, the texture is repeated three times; no mirroring is performed.
-				*/
-				TA_Wrap = 0,
 
-				/* Similar to Wrap, except that the texture is flipped at every integer junction.
-				*  For u values between 0 and 1, for example, the texture is addressed normally;
-				*  between 1 and 2, the texture is flipped (mirrored); between 2 and 3, the
-				*  texture is normal again, and so on.
-				*/
-				TA_Mirror = 1,        
-				
-				/* Texture coordinates outside the range [0.0, 1.0] are set to the texture color
-				*  at 0.0 or 1.0, respectively.
-				*/
-				TA_Clamp = 2,        
-
-				/* Texture coordinates outside the range [0.0, 1.0] are set to the border color.
-				*/
-				TA_Border = 3,
-				/* Similar to Mirror and Clamp. Takes the absolute value of the texture coordinate
-				*  (thus, mirroring around 0), and then clamps to the maximum value. The most
-				*  common usage is for volume textures, where support for the full MirrorOnce
-				*  texture-addressing mode is not necessary, but the data is symmetrical around
-				*  the one axis.
-				*/
-				TA_MirrorOnce = 4,
-				TA_Count = 5
-			};
 
 			/* Defines format of vertex element
 			*/
