@@ -445,7 +445,7 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
-				SetValue(cons.RegisterIndex, value);
+				SetValue(cons.RegisterIndex, value, count);
 			}
 			void D3D9PixelShader::SetValue(const String &paramName, float* value, int count)
 			{
@@ -469,12 +469,12 @@ namespace Apoc3D
 			void D3D9PixelShader::SetTexture(const String &paramName, Texture* tex)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetTexture(cons.SamplerIndex, tex);
+				SetTexture(cons.SamplerIndex[0], tex);
 			}
 			void D3D9PixelShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetSamplerState(cons.SamplerIndex, state);
+				SetSamplerState(cons.SamplerIndex[0], state);
 			}
 
 			void D3D9PixelShader::AutoSetParameters(const Material* mtrl)

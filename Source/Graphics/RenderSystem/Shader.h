@@ -50,7 +50,7 @@ namespace Apoc3D
 				TextureFilter MipFilter;
 				int MaxAnisotropy;
 				int MaxMipLevel;
-				float MipMapLODBias;
+				uint32 MipMapLODBias;
 
 			};
 			class APAPI Shader
