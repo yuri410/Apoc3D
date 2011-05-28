@@ -41,7 +41,7 @@ namespace Apoc3D
 				//TODO: getGraphicsDeviceManager()->ChangeDevice()
 
 				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager());
-				m_window->setDevice( device);
+				m_window->setDevice(device);
 
 				device->Initialize();
 			}
