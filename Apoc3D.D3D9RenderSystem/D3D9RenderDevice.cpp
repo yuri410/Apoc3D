@@ -30,8 +30,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9VertexShader.h"
 #include "D3D9RenderTarget.h"
 #include "D3D9Texture.h"
-
+#include "D3D9RenderStateManager.h"
 #include "D3D9ObjectFactory.h"
+#include "Buffer/D3D9DepthBuffer.h"
+#include "Buffer/D3D9IndexBuffer.h"
+#include "Buffer/D3D9VertexBuffer.h"
 
 namespace Apoc3D
 {
@@ -44,17 +47,41 @@ namespace Apoc3D
 			{
 
 			}
+			D3D9RenderDevice::~D3D9RenderDevice()
+			{
+				m_defaultRT->Release();
+				m_defaultRT = 0;
+
+				m_defaultDS->Release();
+				m_defaultDS = 0;
+
+				delete[] m_cachedRenderTarget;
+				delete m_stateManager;
+				delete m_objectFactory;
+			}
 
 			D3DDevice* D3D9RenderDevice::getDevice() const { return m_devManager->getDevice(); } 
 
 			void D3D9RenderDevice::Initialize()
 			{
-				
+				m_renderStates = new D3D9RenderStateManager(this);
+				m_objectFactory = new D3D9ObjectFactory(this);
+
+				D3DDevice* dev = getDevice();
+
+				D3DCAPS9 caps;
+				dev->GetDeviceCaps(&caps);
+
+				m_cachedRenderTarget = new D3D9RenderTarget*[caps.NumSimultaneousRTs];
 			}
 			
 			void D3D9RenderDevice::BeginFrame()
 			{
 				RenderDevice::BeginFrame();
+			}
+			void D3D9RenderDevice::EndFrame()
+			{
+
 			}
 
 			void D3D9RenderDevice::Clear(ClearFlags flags, uint color, float depth, int stencil)
@@ -63,23 +90,40 @@ namespace Apoc3D
 				getDevice()->Clear(0, NULL, D3D9Utils::ConvertClearFlags(flags), color, depth, stencil);
 			}
 
-			void D3D9RenderDevice::SetRenderTarget(int index, RenderTarget* rt){}
-
-			RenderTarget* D3D9RenderDevice::GetRenderTarget(int index){}
-
-			void D3D9RenderDevice::SetTexture(int index, Texture* texture)
+			void D3D9RenderDevice::SetRenderTarget(int index, RenderTarget* rt)
 			{
+				D3DDevice* dev = getDevice();
+				if (rt)
+				{
+					D3D9RenderTarget* drt = static_cast<D3D9RenderTarget*>(rt);
+					
+					dev->SetRenderTarget(index, drt->getColorSurface());
+					if (drt->getDepthSurface())
+					{
+						dev->SetDepthStencilSurface(drt->getDepthSurface());
+					}
+
+					m_cachedRenderTarget[index] = drt;
+				}
+				else
+				{
+					dev->SetRenderTarget(index, m_defaultRT);
+					dev->SetDepthStencilSurface(m_defaultDS);
+
+					m_cachedRenderTarget[index] = 0;
+				}
 			}
-			Texture* D3D9RenderDevice::GetTexture(int index)
+
+			RenderTarget* D3D9RenderDevice::GetRenderTarget(int index)
 			{
-				return m_cachedTextures[index];
+				return m_cachedRenderTarget[index];
 			}
 
 			void D3D9RenderDevice::BindVertexShader(VertexShader* shader)
 			{
 				if (shader)
 				{
-					VertexShader* vs = static_cast<VertexShader*>(shader);
+					D3D9VertexShader* vs = static_cast<D3D9VertexShader*>(shader);
 					getDevice()->SetVertexShader(vs->getD3DVS());
 				}
 				else
@@ -91,8 +135,8 @@ namespace Apoc3D
 			{
 				if (shader)
 				{
-
-					getDevice()->SetVertexShader();
+					D3D9PixelShader* ps = static_cast<D3D9PixelShader*>(shader);
+					getDevice()->SetPixelShader(ps->getD3DPS());
 				}
 				else
 				{

@@ -41,31 +41,32 @@ namespace Apoc3D
 			{
 			private:
 				GraphicsDeviceManager* m_devManager;
+				D3D9RenderStateManager* m_stateManager;
 
-				D3D9Texture* m_cachedTextures[16];
+				D3D9RenderTarget** m_cachedRenderTarget;
 
-
-
+				IDirect3DSurface9* m_defaultRT;
+				IDirect3DSurface9* m_defaultDS;
 
 			public:
 				inline D3DDevice* getDevice() const;
 
 				D3D9RenderDevice(GraphicsDeviceManager* devManager);
-
+				~D3D9RenderDevice();
 				
 				virtual void Initialize();
 
 				
 				virtual void BeginFrame();
-
+				virtual void EndFrame();
 				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil);
 
 				virtual void SetRenderTarget(int index, RenderTarget* rt);
 
 				virtual RenderTarget* GetRenderTarget(int index);
 
-				virtual void SetTexture(int index, Texture* texture);
-				virtual Texture* GetTexture(int index);
+				//virtual void SetTexture(int index, Texture* texture);
+				//virtual Texture* GetTexture(int index);
 
 				virtual void BindVertexShader(VertexShader* shader);
 				virtual void BindPixelShader(PixelShader* shader);

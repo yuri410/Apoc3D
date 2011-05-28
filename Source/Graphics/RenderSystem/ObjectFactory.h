@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Graphics;
-
+using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
@@ -60,28 +60,13 @@ namespace Apoc3D
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt) = 0;
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt) = 0;
 
-				virtual Sprite* CreateSprite();
-
-				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage, bool useSysMem) = 0;
-				virtual VertexBuffer CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage, bool useSysMem) = 0;
-
-				VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage)
-				{
-					return CreateVertexBuffer(vertexCount, vtxDecl, usage, false);
-				}
-				IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage)
-				{
-					return CreateIndexBuffer(type, count, usage, false);
-				}
+				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage) = 0;
+				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) = 0;
 
 				virtual VertexDeclaration* CreateVertexDeclaration(const vector<VertexElement> &elements) = 0;
-				virtual StateBlock* CreateStateBlock() = 0;
 
-				VertexShader* CreateVertexShader(const ResourceLocation* resLoc) = 0;
-				PixelShader* CreatePixelShader(const ResourceLocation* resLoc) = 0;
-
-				VertexShader* CreateVertexShader(const byte* byteCode, int len) = 0;
-				PixelShader* CreatePixelShader(const byte* byteCode, int len) = 0;
+				virtual VertexShader* CreateVertexShader(const ResourceLocation* resLoc) = 0;
+				virtual PixelShader* CreatePixelShader(const ResourceLocation* resLoc) = 0;
 			};
 		}
 	}

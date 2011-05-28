@@ -81,9 +81,9 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Buffer\D3D9DepthBuffer.h" />
     <ClInclude Include="ConstantTable.h" />
     <ClInclude Include="D3D9Common.h" />
-    <ClInclude Include="Buffer\D3D9DepthBuffer.h" />
     <ClInclude Include="D3D9DeviceContent.h" />
     <ClInclude Include="D3D9GraphicsAPIFactory.h" />
     <ClInclude Include="Buffer\D3D9IndexBuffer.h" />

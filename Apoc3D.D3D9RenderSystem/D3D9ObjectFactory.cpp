@@ -23,6 +23,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "D3D9ObjectFactory.h"
+#include "D3D9RenderDevice.h"
+#include "D3D9Texture.h"
+#include "Buffer/D3D9VertexBuffer.h"
+#include "Buffer/D3D9IndexBuffer.h"
+#include "D3D9VertexShader.h"
+#include "D3D9PixelShader.h"
+#include "D3D9VertexDeclaration.h"
+#include "D3D9RenderTarget.h"
 
 namespace Apoc3D
 {
@@ -30,7 +38,59 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			D3D9ObjectFactory::D3D9ObjectFactory(D3D9RenderDevice* device)
+				: ObjectFactory(device), m_device(device)
+			{
 
+			}
+			Texture* D3D9ObjectFactory::CreateTexture(const ResourceLocation* rl, TextureUsage usage, bool managed)
+			{
+				return new D3D9Texture(m_device, rl, usage, managed);
+			}
+			Texture* D3D9ObjectFactory::CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format)
+			{
+				return new D3D9Texture(m_device, width, height, 1, levelCount, format, usage);
+			}
+			Texture* D3D9ObjectFactory::CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format)
+			{
+				return new D3D9Texture(m_device, width, height, depth, levelCount, format, usage);
+			}
+			Texture* D3D9ObjectFactory::CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format)
+			{
+				return new D3D9Texture(m_device, length, levelCount, format, usage);
+			}
+
+			RenderTarget* D3D9ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt)
+			{
+				return new D3D9RenderTarget(m_device, width, height, clrFmt, depthFmt);
+			}
+			RenderTarget* D3D9ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt)
+			{
+				return new D3D9RenderTarget(m_device, width, height, clrFmt);
+			}
+
+			IndexBuffer* D3D9ObjectFactory::CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage)
+			{
+				return new D3D9IndexBuffer(m_device, type, count * (type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint)), usage);
+			}
+			VertexBuffer* D3D9ObjectFactory::CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage)
+			{
+				return new D3D9VertexBuffer(m_device, vertexCount * vtxDecl->GetVertexSize(), usage);
+			}
+
+			VertexDeclaration* D3D9ObjectFactory::CreateVertexDeclaration(const vector<VertexElement> &elements)
+			{
+				return new D3D9VertexDeclaration(m_device, elements);
+			}
+
+			VertexShader* D3D9ObjectFactory::CreateVertexShader(const ResourceLocation* resLoc)
+			{
+				return new D3D9VertexShader(m_device, resLoc);
+			}
+			PixelShader* D3D9ObjectFactory::CreatePixelShader(const ResourceLocation* resLoc)
+			{
+				return new D3D9PixelShader(m_device, resLoc);
+			}
 		}
 	}
 }

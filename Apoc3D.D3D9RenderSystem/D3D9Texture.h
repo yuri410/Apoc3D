@@ -63,11 +63,14 @@ namespace Apoc3D
 
 				D3D9Texture(D3D9RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage);
 
+				~D3D9Texture();
 				virtual void Save(Stream* strm);
 
 				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect);
 				virtual DataBox lock(int32 surface, LockMode mode, const DataBox& box);
-				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, const Apoc3D::Math::Rectangle& rect);
+				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, 
+					const Apoc3D::Math::Rectangle& rect);
+
 				virtual void unlock(int32 surface);
 				virtual void unlock(CubeMapFace cubemapFace, int32 surface);
 

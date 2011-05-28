@@ -156,9 +156,6 @@
     <ClInclude Include="Graphics\RenderSystem\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\RenderSystem\Sprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Platform\Library.h">
       <Filter>Header Files</Filter>
     </ClInclude>

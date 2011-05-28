@@ -92,8 +92,8 @@ namespace Apoc3D
 
 				virtual RenderTarget* GetRenderTarget(int index) = 0;
 
-				virtual void SetTexture(int index, Texture* texture) = 0;
-				virtual Texture* GetTexture(int index) = 0;
+				//virtual void SetTexture(int index, Texture* texture) = 0;
+				//virtual Texture* GetTexture(int index) = 0;
 
 				virtual void BindVertexShader(VertexShader* shader) = 0;
 				virtual void BindPixelShader(PixelShader* shader) = 0;

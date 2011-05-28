@@ -85,31 +85,31 @@ namespace Apoc3D
 				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state);
 
 
-				virtual void SetVector2(const String &paramName, Vector2 value);
-				virtual void SetVector3(const String &paramName, Vector3 value);
-				virtual void SetVector4(const String &paramName, Vector4 value);
-				virtual void SetValue(const String &paramName, const Quaternion& value);
-				virtual void SetValue(const String &paramName, const Matrix& value);
-				virtual void SetValue(const String &paramName, const Color4& value);
-				virtual void SetValue(const String &paramName, const Plane& value);
+				virtual void SetVector2(const String& paramName, Vector2 value);
+				virtual void SetVector3(const String& paramName, Vector3 value);
+				virtual void SetVector4(const String& paramName, Vector4 value);
+				virtual void SetValue(const String& paramName, const Quaternion& value);
+				virtual void SetValue(const String& paramName, const Matrix& value);
+				virtual void SetValue(const String& paramName, const Color4& value);
+				virtual void SetValue(const String& paramName, const Plane& value);
 
-				virtual void SetVector2(const String &paramName, const Vector2* value, int count);
-				virtual void SetVector3(const String &paramName, const Vector3* value, int count);
-				virtual void SetVector4(const String &paramName, const Vector4* value, int count);
-				virtual void SetValue(const String &paramName, const Quaternion* value, int count);
-				virtual void SetValue(const String &paramName, const Matrix* value, int count);
-				virtual void SetValue(const String &paramName, const Plane* value, int count);
-				virtual void SetValue(const String &paramName, const Color4* value, int count);
+				virtual void SetVector2(const String& paramName, const Vector2* value, int count);
+				virtual void SetVector3(const String& paramName, const Vector3* value, int count);
+				virtual void SetVector4(const String& paramName, const Vector4* value, int count);
+				virtual void SetValue(const String& paramName, const Quaternion* value, int count);
+				virtual void SetValue(const String& paramName, const Matrix* value, int count);
+				virtual void SetValue(const String& paramName, const Plane* value, int count);
+				virtual void SetValue(const String& paramName, const Color4* value, int count);
 
-				virtual void SetValue(const String &paramName, bool value);
-				virtual void SetValue(const String &paramName, float value);
-				virtual void SetValue(const String &paramName, int value);
-				virtual void SetValue(const String &paramName, bool* value, int count);
-				virtual void SetValue(const String &paramName, float* value, int count);
-				virtual void SetValue(const String &paramName, int* value, int count);
+				virtual void SetValue(const String& paramName, bool value);
+				virtual void SetValue(const String& paramName, float value);
+				virtual void SetValue(const String& paramName, int value);
+				virtual void SetValue(const String& paramName, bool* value, int count);
+				virtual void SetValue(const String& paramName, float* value, int count);
+				virtual void SetValue(const String& paramName, int* value, int count);
 
-				virtual void SetTexture(const String &paramName, Texture* tex);
-				virtual void SetSamplerState(const String &paramName, const ShaderSamplerState &state);
+				virtual void SetTexture(const String& paramName, Texture* tex);
+				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState &state);
 
 				virtual void AutoSetParameters(const Material* mtrl);
 			};

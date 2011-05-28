@@ -75,9 +75,6 @@
     <ClInclude Include="D3D9RenderWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Buffer\D3D9DepthBuffer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Buffer\D3D9IndexBuffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -85,6 +82,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="ConstantTable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer\D3D9DepthBuffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -134,9 +134,6 @@
     <ClCompile Include="Buffer\D3D9IndexBuffer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Buffer\D3D9DepthBuffer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="D3D9VertexShader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -150,6 +147,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="D3D9ObjectFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer\D3D9DepthBuffer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -238,7 +238,6 @@ namespace Apoc3D
 					if (tex->getState() == RS_Loaded || !tex->isManaged())
 					{
 						D3D9Texture* d3dTex = static_cast<D3D9Texture*>(tex);
-
 						if (d3dTex->getInternal2D())
 						{
 							value = d3dTex->getInternal2D();

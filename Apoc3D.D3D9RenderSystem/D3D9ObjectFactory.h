@@ -39,7 +39,26 @@ namespace Apoc3D
 		{
 			class D3D9ObjectFactory : public ObjectFactory
 			{
+			private:
+				D3D9RenderDevice* m_device;
+			public:
+				D3D9ObjectFactory(D3D9RenderDevice* device);
 
+				virtual Texture* CreateTexture(const ResourceLocation* rl, TextureUsage usage, bool managed);
+				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format);
+				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format);
+				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format);
+
+				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt);
+				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt);
+
+				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage);
+				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage);
+
+				virtual VertexDeclaration* CreateVertexDeclaration(const vector<VertexElement> &elements);
+
+				virtual VertexShader* CreateVertexShader(const ResourceLocation* resLoc);
+				virtual PixelShader* CreatePixelShader(const ResourceLocation* resLoc);
 			};
 		}
 	}

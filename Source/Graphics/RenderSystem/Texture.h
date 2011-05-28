@@ -67,11 +67,12 @@ namespace Apoc3D
 
 
 				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rectangle) = 0;
-				virtual DataBox lock(int surface, LockMode mode, const Box& box) = 0;
-				virtual DataRectangle lock(int surface, CubeMapFace cubemapFace, LockMode mode, const Apoc3D::Math::Rectangle& rectangle) = 0;
+				virtual DataBox lock(int32 surface, LockMode mode, const Box& box) = 0;
+				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, 
+					const Apoc3D::Math::Rectangle& rectangle) = 0;
 
-				virtual void unlock(int surface) = 0;
-				virtual void unlock(CubeMapFace cubemapFace, int surface) = 0;
+				virtual void unlock(int32 surface) = 0;
+				virtual void unlock(CubeMapFace cubemapFace, int32 surface) = 0;
 
 			public:
 				virtual uint32 getSize() { return static_cast<uint32>(m_contentSize); }

@@ -121,7 +121,6 @@
     <ClInclude Include="Graphics\RenderSystem\RenderWindow.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderWindowHandler.h" />
     <ClInclude Include="Graphics\RenderSystem\Shader.h" />
-    <ClInclude Include="Graphics\RenderSystem\Sprite.h" />
     <ClInclude Include="Graphics\RenderSystem\VertexDeclaration.h" />
     <ClInclude Include="Graphics\RenderSystem\VertexElement.h" />
     <ClInclude Include="Math\BoundingBox.h" />

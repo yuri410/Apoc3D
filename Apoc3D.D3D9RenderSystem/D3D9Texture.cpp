@@ -113,6 +113,24 @@ namespace Apoc3D
 					D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), D3DPOOL_MANAGED, &m_cube, NULL);
 				assert(SUCCEEDED(hr));
 			}
+			D3D9Texture::~D3D9Texture()
+			{
+				if (m_tex2D)
+				{
+					m_tex2D->Release();
+					m_tex2D = 0;
+				}
+				if (m_tex3D)
+				{
+					m_tex3D->Release();
+					m_tex3D = 0;
+				}
+				if (m_cube)
+				{
+					m_cube->Release();
+					m_cube = 0;
+				}
+			}
 
 			void D3D9Texture::Save(Stream* strm)
 			{

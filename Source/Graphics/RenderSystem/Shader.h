@@ -67,15 +67,15 @@ namespace Apoc3D
 
 				virtual void SetVector2(int reg, Vector2 value) = 0;
 				virtual void SetVector3(int reg, Vector3 value) = 0;
-				virtual void SetVector4(int reg, Vector3 value) = 0;
-				virtual void SetValue(int reg, Quaternion value) = 0;
-				virtual void SetValue(int reg, const Matrix &value) = 0;
-				virtual void SetValue(int reg, const Color4 &value) = 0;
-				virtual void SetValue(int reg, Plane value) = 0;
+				virtual void SetVector4(int reg, Vector4 value) = 0;
+				virtual void SetValue(int reg, const Quaternion& value) = 0;
+				virtual void SetValue(int reg, const Matrix& value) = 0;
+				virtual void SetValue(int reg, const Color4& value) = 0;
+				virtual void SetValue(int reg, const Plane& value) = 0;
 
 				virtual void SetVector2(int reg, const Vector2* value, int count) = 0;
 				virtual void SetVector3(int reg, const Vector3* value, int count) = 0;
-				virtual void SetVector4(int reg, const Vector3* value, int count) = 0;
+				virtual void SetVector4(int reg, const Vector4* value, int count) = 0;
 				virtual void SetValue(int reg, const Quaternion* value, int count) = 0;
 				virtual void SetValue(int reg, const Matrix* value, int count) = 0;
 				virtual void SetValue(int reg, const Color4* value, int count) = 0;
@@ -93,35 +93,35 @@ namespace Apoc3D
 				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state) = 0;
 
 
-				virtual void SetVector2(const String &paramName, Vector2 value) = 0;
-				virtual void SetVector3(const String &paramName, Vector3 value) = 0;
-				virtual void SetVector4(const String &paramName, Vector3 value) = 0;
-				virtual void SetValue(const String &paramName, Quaternion value) = 0;
-				virtual void SetValue(const String &paramName, const Matrix &value) = 0;
-				virtual void SetValue(const String &paramName, Color4 value) = 0;
-				virtual void SetValue(const String &paramName, Plane value) = 0;
+				virtual void SetVector2(const String& paramName, Vector2 value) = 0;
+				virtual void SetVector3(const String& paramName, Vector3 value) = 0;
+				virtual void SetVector4(const String& paramName, Vector4 value) = 0;
+				virtual void SetValue(const String& paramName, const Quaternion& value) = 0;
+				virtual void SetValue(const String& paramName, const Matrix& value) = 0;
+				virtual void SetValue(const String& paramName, const Color4& value) = 0;
+				virtual void SetValue(const String& paramName, const Plane& value) = 0;
 
 
 
-				virtual void SetVector2(const String &paramName, const Vector2* value, int count);
-				virtual void SetVector3(const String &paramName, const Vector3* value, int count);
-				virtual void SetVector4(const String &paramName, const Vector3* value, int count);
-				virtual void SetValue(const String &paramName, const Quaternion* value, int count);
-				virtual void SetValue(const String &paramName, const Matrix* value, int count);
-				virtual void SetValue(const String &paramName, const Plane* value, int count);
-				virtual void SetValue(const String &paramName, const Color4* value, int count);
+				virtual void SetVector2(const String& paramName, const Vector2* value, int count) = 0;
+				virtual void SetVector3(const String& paramName, const Vector3* value, int count) = 0;
+				virtual void SetVector4(const String& paramName, const Vector4* value, int count) = 0;
+				virtual void SetValue(const String& paramName, const Quaternion* value, int count) = 0;
+				virtual void SetValue(const String& paramName, const Matrix* value, int count) = 0;
+				virtual void SetValue(const String& paramName, const Plane* value, int count) = 0;
+				virtual void SetValue(const String& paramName, const Color4* value, int count) = 0;
 
-				virtual void SetValue(const String &paramName, bool value);
-				virtual void SetValue(const String &paramName, float value);
-				virtual void SetValue(const String &paramName, int value);
-				virtual void SetValue(const String &paramName, bool* value, int count);
-				virtual void SetValue(const String &paramName, float* value, int count);
-				virtual void SetValue(const String &paramName, int* value, int count);
+				virtual void SetValue(const String& paramName, bool value) = 0;
+				virtual void SetValue(const String& paramName, float value) = 0;
+				virtual void SetValue(const String& paramName, int value) = 0;
+				virtual void SetValue(const String& paramName, bool* value, int count) = 0;
+				virtual void SetValue(const String& paramName, float* value, int count) = 0;
+				virtual void SetValue(const String& paramName, int* value, int count) = 0;
 
-				virtual void SetTexture(const String &paramName, Texture* tex);
-				virtual void SetSamplerState(const String &paramName, const ShaderSamplerState &state);
+				virtual void SetTexture(const String& paramName, Texture* tex) = 0;
+				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState& state) = 0;
 
-				virtual void AutoSetParameters(const Material* mtrl);
+				virtual void AutoSetParameters(const Material* mtrl) = 0;
 			};
 
 			class VertexShader : public Shader
