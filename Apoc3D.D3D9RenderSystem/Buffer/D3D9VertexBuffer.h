@@ -47,6 +47,8 @@ namespace Apoc3D
 				virtual void unlock();
 
 			public:
+				D3DVertexBuffer* getD3DBuffer() const { return m_buffer; }
+
 				D3D9VertexBuffer(D3D9RenderDevice* device, D3DVertexBuffer* vb);
 				D3D9VertexBuffer(D3D9RenderDevice* device, int32 size, BufferUsageFlags usage);
 

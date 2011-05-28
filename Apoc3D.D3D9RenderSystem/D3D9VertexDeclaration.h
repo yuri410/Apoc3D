@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Common.h"
 #include "Graphics\RenderSystem\VertexDeclaration.h"
 
+using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 
 using namespace std;
@@ -40,9 +41,13 @@ namespace Apoc3D
 			class D3D9VertexDeclaration : public VertexDeclaration
 			{
 			private:
+				D3D9RenderDevice* m_device;
+
 				D3DVertexDeclaration* m_vtxDecl;
 
 			public:
+				D3DVertexDeclaration* getD3DDecl() const { return m_vtxDecl; }
+
 				D3D9VertexDeclaration(D3D9RenderDevice* device, const vector<VertexElement>& elements);
 				D3D9VertexDeclaration(D3D9RenderDevice* device, D3DVertexDeclaration* vtxdecl);
 

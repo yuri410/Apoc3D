@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <Windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <d3d9types.h>
 
 typedef D3DXMATRIX D3DMatrix;
 typedef D3DXPLANE D3DPlane;

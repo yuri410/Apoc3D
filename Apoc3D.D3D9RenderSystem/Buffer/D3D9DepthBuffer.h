@@ -44,6 +44,8 @@ namespace Apoc3D
 				virtual void* lock(int offset, int size, LockMode mode);
 				virtual void unlock();
 			public:
+				IDirect3DSurface9* getD3DBuffer() const { return m_buffer; }
+
 				D3D9DepthBuffer(D3D9RenderDevice* device, IDirect3DSurface9* buffer);
 				~D3D9DepthBuffer();
 

@@ -134,9 +134,10 @@ namespace Apoc3D
 				static TextureUsage GetD3DTextureUsage(D3DTextureCube* tex);
 
 
+				static VertexElementFormat ConvertBackVertexElementFormat(D3DDECLTYPE type);
+				static VertexElementUsage ConvertBackVertexElementUsage(D3DDECLUSAGE usage);
+
 				static D3DMULTISAMPLE_TYPE ConvertMultisample(uint32 sampleCount);
-
-
 
 
 				static DWORD ConvertLockMode(LockMode mode);

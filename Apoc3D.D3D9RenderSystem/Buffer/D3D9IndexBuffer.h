@@ -46,6 +46,8 @@ namespace Apoc3D
 				virtual void unlock();
 
 			public:
+				D3DIndexBuffer* getD3DBuffer() const { return m_buffer; }
+
 				D3D9IndexBuffer(D3D9RenderDevice* device, D3DIndexBuffer* vb);
 				D3D9IndexBuffer(D3D9RenderDevice* device, IndexBufferType type, int32 size, BufferUsageFlags usage);
 

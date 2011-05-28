@@ -109,6 +109,7 @@
     <ClCompile Include="Buffer\D3D9DepthBuffer.cpp" />
     <ClCompile Include="Buffer\D3D9IndexBuffer.cpp" />
     <ClCompile Include="ConstantTable.cpp" />
+    <ClCompile Include="D3D9ObjectFactory.cpp" />
     <ClCompile Include="D3D9PixelShader.cpp" />
     <ClCompile Include="Buffer\D3D9VertexBuffer.cpp" />
     <ClCompile Include="D3D9RenderStateManager.cpp" />

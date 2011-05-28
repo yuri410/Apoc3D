@@ -538,6 +538,78 @@ namespace Apoc3D
 			{
 				return ptTable[static_cast<int>(type)];
 			}
+			VertexElementFormat D3D9Utils::ConvertBackVertexElementFormat(D3DDECLTYPE type)
+			{
+				switch (type)
+				{
+				case D3DDECLTYPE_FLOAT1:
+					return VEF_Single;
+				case D3DDECLTYPE_FLOAT2:
+					return VEF_Vector2;
+				case D3DDECLTYPE_FLOAT3:
+					return VEF_Vector3;
+				case D3DDECLTYPE_FLOAT4:
+					return VEF_Vector4;
+				case D3DDECLTYPE_D3DCOLOR:
+					return VEF_Color;
+				case D3DDECLTYPE_UBYTE4:
+					return VEF_Byte4;
+				case D3DDECLTYPE_SHORT2:
+					return VEF_Short2;
+				case D3DDECLTYPE_SHORT4:
+					return VEF_Short4;
+				case D3DDECLTYPE_UBYTE4N:
+					return VEF_NormalizedByte4;
+				case D3DDECLTYPE_SHORT2N:
+					return VEF_NormalizedShort2;
+				case D3DDECLTYPE_SHORT4N:
+					return VEF_NormalizedShort4;
+				case D3DDECLTYPE_UDEC3:
+					return VEF_UInt101010;
+				case D3DDECLTYPE_DEC3N:
+					return VEF_Normalized101010;
+				case D3DDECLTYPE_FLOAT16_2:
+					return VEF_HalfVector2;
+				case D3DDECLTYPE_FLOAT16_4:
+					return VEF_HalfVector4;
+				}
+				throw Apoc3DException::createException(EX_NotSupported, L"");
+			}
+			VertexElementUsage D3D9Utils::ConvertBackVertexElementUsage(D3DDECLUSAGE usage)
+			{
+				switch (usage)
+				{
+				case D3DDECLUSAGE_POSITION:
+					return VEU_Position;
+				case D3DDECLUSAGE_BLENDWEIGHT:
+					return VEU_BlendWeight;
+				case D3DDECLUSAGE_BLENDINDICES:
+					return VEU_BlendIndices;
+				case D3DDECLUSAGE_NORMAL:
+					return VEU_Normal;
+				case D3DDECLUSAGE_PSIZE:
+					return VEU_PointSize;
+				case D3DDECLUSAGE_TEXCOORD:
+					return VEU_TextureCoordinate;
+				case D3DDECLUSAGE_TANGENT:
+					return VEU_Tangent;
+				case D3DDECLUSAGE_BINORMAL:
+					return VEU_Binormal;
+				case D3DDECLUSAGE_TESSFACTOR:
+					return VEU_TessellateFactor;
+				case D3DDECLUSAGE_POSITIONT:
+					return VEU_PositionTransformed;
+				case D3DDECLUSAGE_COLOR:
+					return VEU_Color;
+				case D3DDECLUSAGE_FOG:
+					return VEU_Fog;
+				case D3DDECLUSAGE_DEPTH:
+					return VEU_Depth;
+				case D3DDECLUSAGE_SAMPLE:
+					return VEU_Sample;
+				}
+				throw Apoc3DException::createException(EX_NotSupported, L"");
+			}
 
 			D3DDECLUSAGE D3D9Utils::ConvertVertexElementUsage(VertexElementUsage usage)
 			{

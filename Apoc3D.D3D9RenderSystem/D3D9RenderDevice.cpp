@@ -79,8 +79,8 @@ namespace Apoc3D
 			{
 				if (shader)
 				{
-					
-					//getDevice()->SetVertexShader();
+					VertexShader* vs = static_cast<VertexShader*>(shader);
+					getDevice()->SetVertexShader(vs->getD3DVS());
 				}
 				else
 				{
@@ -92,7 +92,7 @@ namespace Apoc3D
 				if (shader)
 				{
 
-					//getDevice()->SetVertexShader();
+					getDevice()->SetVertexShader();
 				}
 				else
 				{
