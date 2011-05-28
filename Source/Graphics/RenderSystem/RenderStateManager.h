@@ -65,28 +65,28 @@ namespace Apoc3D
 				/************************************************************************/
 				virtual bool getAlphaTestEnable() = 0;
 				virtual CompareFunction getAlphaTestFunction() = 0;
-				virtual int getAlphaReference() = 0;
+				virtual uint32 getAlphaReference() = 0;
 
-				virtual void SetAlphaTestParameters(bool enable, CompareFunction func, int reference) = 0;
+				virtual void SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference) = 0;
 
 				/************************************************************************/
 				/* Alpha Blend                                                          */
 				/************************************************************************/
 				virtual bool getAlphaBlendEnable() = 0;
-				virtual BlendFunction getBlendOperation() = 0;
-				virtual Blend getSourceBlend() = 0;
-				virtual Blend getDestinationBlend() = 0;
-				virtual uint getBlendFactor() = 0;
+				virtual BlendFunction getAlphaBlendOperation() = 0;
+				virtual Blend getAlphaSourceBlend() = 0;
+				virtual Blend getAlphaDestinationBlend() = 0;
+				virtual uint32 getAlphaBlendFactor() = 0;
 
-				virtual void SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint factor) = 0;
+				virtual void SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor) = 0;
 
 				virtual bool getSeparateAlphaBlendEnable() = 0;
-				virtual BlendFunction getSeparateBlendOperation() = 0;
-				virtual Blend getSeparateSourceBlend() = 0;
-				virtual Blend getSeparateDestinationBlend() = 0;
-				virtual uint getSeparateBlendFactor() = 0;
+				virtual BlendFunction getSeparateAlphaBlendOperation() = 0;
+				virtual Blend getSeparateAlphaSourceBlend() = 0;
+				virtual Blend getSeparateAlphaDestinationBlend() = 0;
+				//virtual uint32 getSeparateAlphaBlendFactor() = 0;
 
-				virtual void SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint factor) = 0;
+				virtual void SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend) = 0;
 
 				/************************************************************************/
 				/* Depth                                                                */
@@ -105,7 +105,7 @@ namespace Apoc3D
 				virtual CullMode getCullMode() = 0;
 				virtual FillMode getFillMode() = 0;
 				virtual void SetCullMode(CullMode mode) = 0;
-				virtual void SetFullMode(FillMode mode) = 0;
+				virtual void SetFillMode(FillMode mode) = 0;
 				/************************************************************************/
 				/* Point                                                                */
 				/************************************************************************/
@@ -122,12 +122,12 @@ namespace Apoc3D
 				virtual StencilOperation getStencilFail() = 0;
 				virtual StencilOperation getStencilPass() = 0;
 				virtual StencilOperation getStencilDepthFail() = 0;
-				virtual int getStencilRefrence() = 0;
+				virtual uint32 getStencilRefrence() = 0;
 				virtual CompareFunction getStencilFunction() = 0;
-				virtual int getStencilMask() = 0;				
-				virtual int getStencilWriteMask() = 0;
+				virtual uint32 getStencilMask() = 0;				
+				virtual uint32 getStencilWriteMask() = 0;
 
-				virtual void SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, int ref, CompareFunction func, int mask, int writemask) = 0;
+				virtual void SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, uint32 ref, CompareFunction func, uint32 mask, uint32 writemask) = 0;
 				virtual void SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func) = 0;
 
 				virtual bool getTwoSidedStencilMode() = 0;

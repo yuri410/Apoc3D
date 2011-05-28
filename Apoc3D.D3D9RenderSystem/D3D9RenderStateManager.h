@@ -62,19 +62,19 @@ namespace Apoc3D
 
 				bool m_cachedAlphaTestEnable;
 				CompareFunction m_cachedAlphaTestFunction;
-				int m_cachedAlphaReference;
+				uint32 m_cachedAlphaReference;
 
 				bool m_cachedAlphaBlendEnable;
-				BlendFunction m_cachedBlendFunction;
-				Blend m_cachedSourceBlend;
-				Blend m_cachedDestBlend;
-				uint m_cachedBlendFactor;
+				BlendFunction m_cachedAlphaBlendFunction;
+				Blend m_cachedAlphaSourceBlend;
+				Blend m_cachedAlphaDestBlend;
+				uint32 m_cachedAlphaBlendFactor;
 
 				bool m_cachedSepAlphaBlendEnable;
-				BlendFunction m_cachedSepBlendFunction;
-				Blend m_cachedSepSourceBlend;
-				Blend m_cachedSepDestBlend;
-				uint m_cachedSepBlendFactor;
+				BlendFunction m_cachedSepAlphaBlendFunction;
+				Blend m_cachedSepAlphaSourceBlend;
+				Blend m_cachedSepAlphaDestBlend;
+				//uint32 m_cachedSepAlphaBlendFactor;
 
 				float m_cachedDepthBias;
 				float m_cachedSlopeScaleDepthBias;
@@ -94,10 +94,10 @@ namespace Apoc3D
 				StencilOperation m_cachedStencilFail;
 				StencilOperation m_cachedStencilPass;
 				StencilOperation m_cachedStencilDepthFail;
-				int m_cachedRefrenceStencil;
+				uint32 m_cachedRefrenceStencil;
 				CompareFunction m_cachedStencilFunction;
-				int m_cachedStencilMask;
-				int m_cachedStencilWriteMask;
+				uint32 m_cachedStencilMask;
+				uint32 m_cachedStencilWriteMask;
 
 				bool m_cachedTwoSidedStencilMode;
 
@@ -116,37 +116,37 @@ namespace Apoc3D
 				D3D9RenderStateManager(D3D9RenderDevice* device);
 				~D3D9RenderStateManager();
 
-				virtual void SetAlphaTestParameters(bool enable, CompareFunction func, int reference);
-				virtual void SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint factor);
-				virtual void SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint factor);
+				virtual void SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference);
+				virtual void SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor);
+				virtual void SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend);
 				virtual void SetDepth(bool enable, bool writeEnable, float bias, float slopebias, CompareFunction compare);
 				virtual void SetPointParameters(float size, float maxSize, float minSize, bool pointSprite);
-				virtual void SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, int ref, CompareFunction func, int mask, int writemask);
+				virtual void SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, uint32 ref, CompareFunction func, uint32 mask, uint32 writemask);
 				virtual void SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func);
 				virtual void SetCullMode(CullMode mode);
-				virtual void SetFullMode(FillMode mode);
+				virtual void SetFillMode(FillMode mode);
 
 				/************************************************************************/
 				/* Alpha Test                                                           */
 				/************************************************************************/
 				virtual bool getAlphaTestEnable() { return m_cachedAlphaTestEnable; }
 				virtual CompareFunction getAlphaTestFunction() { return m_cachedAlphaTestFunction; }
-				virtual int getAlphaReference() { return m_cachedAlphaReference; }
+				virtual uint32 getAlphaReference() { return m_cachedAlphaReference; }
 
 				/************************************************************************/
 				/* Alpha Blend                                                          */
 				/************************************************************************/
 				virtual bool getAlphaBlendEnable() { return m_cachedAlphaBlendEnable; }
-				virtual BlendFunction getBlendOperation() { return m_cachedBlendFunction; }
-				virtual Blend getSourceBlend() { return m_cachedSourceBlend; }
-				virtual Blend getDestinationBlend() { return m_cachedDestBlend; }
-				virtual uint getBlendFactor() { return m_cachedBlendFactor; }
+				virtual BlendFunction getAlphaBlendOperation() { return m_cachedAlphaBlendFunction; }
+				virtual Blend getAlphaSourceBlend() { return m_cachedAlphaSourceBlend; }
+				virtual Blend getAlphaDestinationBlend() { return m_cachedAlphaDestBlend; }
+				virtual uint32 getAlphaBlendFactor() { return m_cachedAlphaBlendFactor; }
 
 				virtual bool getSeparateAlphaBlendEnable() { return m_cachedSepAlphaBlendEnable; }
-				virtual BlendFunction getSeparateBlendOperation() { return m_cachedSepBlendFunction; } 
-				virtual Blend getSeparateSourceBlend() { return m_cachedSepSourceBlend; }
-				virtual Blend getSeparateDestinationBlend() { return m_cachedSepDestBlend; }
-				virtual uint getSeparateBlendFactor() { return m_cachedSepBlendFactor; }
+				virtual BlendFunction getSeparateAlphaBlendOperation() { return m_cachedSepAlphaBlendFunction; } 
+				virtual Blend getSeparateAlphaSourceBlend() { return m_cachedSepAlphaSourceBlend; }
+				virtual Blend getSeparateAlphaDestinationBlend() { return m_cachedSepAlphaDestBlend; }
+				//virtual uint32 getSeparateAlphaBlendFactor() { return m_cachedSepAlphaBlendFactor; }
 
 				/************************************************************************/
 				/* Depth                                                                */
@@ -178,10 +178,10 @@ namespace Apoc3D
 				virtual StencilOperation getStencilFail() { return m_cachedStencilFail; }
 				virtual StencilOperation getStencilPass() { return m_cachedStencilPass; }
 				virtual StencilOperation getStencilDepthFail() { return m_cachedStencilDepthFail; }
-				virtual int getStencilRefrence() { return m_cachedRefrenceStencil; }
+				virtual uint32 getStencilRefrence() { return m_cachedRefrenceStencil; }
 				virtual CompareFunction getStencilFunction() { return m_cachedStencilFunction; }
-				virtual int getStencilMask() { return m_cachedStencilMask; }
-				virtual int getStencilWriteMask() { return m_cachedStencilWriteMask; }
+				virtual uint32 getStencilMask() { return m_cachedStencilMask; }
+				virtual uint32 getStencilWriteMask() { return m_cachedStencilWriteMask; }
 
 				virtual bool getTwoSidedStencilMode() { return m_cachedTwoSidedStencilMode; }
 				
