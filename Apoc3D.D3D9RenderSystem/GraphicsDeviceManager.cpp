@@ -456,9 +456,16 @@ namespace Apoc3D
 				if (oldSettings)
 					delete oldSettings;
 			}
-			void GraphicsDeviceManager::ChangeDevice(const DeviceSettings& settings, const DeviceSettings& minimumSettings)
+			void GraphicsDeviceManager::ChangeDevice(const DeviceSettings& settings, const DeviceSettings* minimumSettings)
 			{
-				Enumeration::setMinimumSettings(minimumSettings);
+				if (minimumSettings)
+				{
+					Enumeration::setMinimumSettings(*minimumSettings);
+				}
+				else
+				{
+					Enumeration::ClearMinimumSetting();
+				}
 				DeviceSettings validSettings;
 				Enumeration::FindValidSettings(m_direct3D9, settings, validSettings);
 				validSettings.D3D9.PresentParameters.hDeviceWindow = m_game->getWindow()->getHandle();
@@ -471,12 +478,11 @@ namespace Apoc3D
 				desiredSettings.BackBufferWidth = (desiredWidth);
 				desiredSettings.BackBufferHeight = (desiredHeight);
 
-				ChangeDevice(desiredSettings);
+				ChangeDevice(desiredSettings, 0);
 			}
 			void GraphicsDeviceManager::ChangeDevice(const DeviceSettings &prefer)
 			{
-				Enumeration::ClearMinimumSetting();
-				CreateDevice(prefer);
+				ChangeDevice(prefer, 0);
 			}
 			void GraphicsDeviceManager::ToggleFullScreen()
 			{

@@ -90,7 +90,7 @@ namespace Apoc3D
 					@settings The settings.
 					@minimumSettings The minimum settings.
 				*/
-				void ChangeDevice(const DeviceSettings& settings, const DeviceSettings& minimumSettings);
+				void ChangeDevice(const DeviceSettings& settings, const DeviceSettings* minimumSettings);
 				
 				/** Changes the device.
 					param
