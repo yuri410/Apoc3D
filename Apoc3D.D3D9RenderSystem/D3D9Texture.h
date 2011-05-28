@@ -67,7 +67,7 @@ namespace Apoc3D
 				virtual void Save(Stream* strm);
 
 				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect);
-				virtual DataBox lock(int32 surface, LockMode mode, const DataBox& box);
+				virtual DataBox lock(int32 surface, LockMode mode, const Box& box);
 				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, 
 					const Apoc3D::Math::Rectangle& rect);
 

@@ -58,19 +58,6 @@ namespace Apoc3D
 
 
 		};
-		///* Represent the implementation for resource loading/unloading */
-		//class APAPI ResourceProcessor
-		//{
-		//public:
-		//	virtual void Process(Resource* res) const = 0;
-		//};
-
-		///* Implements a resource loading algorithm */
-		//class APAPI ResourceLoader : ResourceProcessor
-		//{
-		//public:
-		//	virtual void Process(Resource* res) const = 0;
-		//};
 
 		class APAPI Resource
 		{
@@ -132,17 +119,17 @@ namespace Apoc3D
 			virtual void load() = 0;
 			virtual void unload() = 0;
 
-		public: 
-			typedef Resource ResTempHelper;   
-
-			//ResourceEventHandler* eventLoaded();
-			//ResourceEventHandler* eventUnloaded();
-
 			Resource() 
 				: m_refCount(0), m_manager(0), m_resLoader(0), m_resUnloader(0), m_state(RS_Unloaded)
 			{
 			}
 			Resource(ResourceManager* manager, const String& hashString);
+		public: 
+			//typedef Resource ResTempHelper;   
+
+			//ResourceEventHandler* eventLoaded();
+			//ResourceEventHandler* eventUnloaded();
+
 			//Resource(ResourceManager* manager, const String& hashString, ResourceLoader* loader);
 
 			virtual ~Resource();

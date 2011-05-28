@@ -40,7 +40,7 @@ namespace Apoc3D
 				
 				//TODO: getGraphicsDeviceManager()->ChangeDevice()
 
-				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager()->getDevice());
+				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager());
 				m_window->setDevice( device);
 
 				device->Initialize();
@@ -49,6 +49,12 @@ namespace Apoc3D
 				: RenderWindow(device, pm)
 			{
 				m_game = new D3D9Game(this);
+			}
+
+			void D3D9RenderWindow::Exit()
+			{
+				RenderWindow::Exit();
+				m_game->Exit();
 			}
 
 			void D3D9RenderWindow::Run()

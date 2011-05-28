@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9RenderDevice.h"
 #include "D3D9Utils.h"
 #include "Math/Rectangle.h"
+#include "Math/Box.h"
 #include "Vfs/ResourceLocation.h"
 #include "IO/TextureData.h"
 
@@ -152,7 +153,7 @@ namespace Apoc3D
 				DataRectangle result(rrect.Pitch, rrect.pBits, rect.Width, rect.Height, getFormat());
 				return result;
 			}
-			DataBox D3D9Texture::lock(int32 surface, LockMode mode, const DataBox& box)
+			DataBox D3D9Texture::lock(int32 surface, LockMode mode, const Box& box)
 			{
 				assert(m_tex3D);
 				D3DLOCKED_BOX rbox;
@@ -160,7 +161,7 @@ namespace Apoc3D
 
 				HRESULT hr = m_tex3D->LockBox(surface, &rbox, &box0, D3D9Utils::ConvertLockMode(mode));
 				assert(SUCCEEDED(hr));
-
+				
 				DataBox result(box.getWidth(), box.getHeight(), box.getDepth(), rbox.RowPitch, rbox.SlicePitch, rbox.pBits, getFormat());
 				return result;
 			}

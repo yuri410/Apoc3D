@@ -90,27 +90,33 @@ namespace Apoc3D
 			{
 			private:
 				RenderWindowHandler* m_evtHandler;
+				bool m_isExiting;
 
 			public:
 				virtual Size getClientSize() = 0;
 				virtual String getTitle() = 0;
 				virtual void setTitle(const String& name) = 0;
-				virtual void Exit();				
+				
+				virtual void Exit()
+				{
+					m_isExiting = true;
+				}
 
 				virtual void Run() = 0;
 
 			protected:
 				RenderWindow(RenderDevice* rd, const PresentParameters &pm, RenderTarget* rt)
-					: RenderView(rd, pm, rt), m_evtHandler(0)
+					: RenderView(rd, pm, rt), m_evtHandler(0), m_isExiting(false)
 				{
 
 				}
 				RenderWindow(RenderDevice* rd, const PresentParameters &pm)
-					: RenderView(rd, pm), m_evtHandler(0)
+					: RenderView(rd, pm), m_evtHandler(0), m_isExiting(false)
 				{
 
 				}
-
+				void OnFrameStart();
+				void OnFrameEnd();
 
 				void OnInitialize();
 				void OnFinalize();

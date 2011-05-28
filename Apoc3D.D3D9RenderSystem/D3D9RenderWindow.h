@@ -65,8 +65,14 @@ namespace Apoc3D
 					{
 						m_window->OnLoad();
 					}
-					virtual void OnDeviceLost() {}
-					virtual void OnDeviceReset() {}
+					virtual void OnDeviceLost() 
+					{
+
+					}
+					virtual void OnDeviceReset()
+					{
+
+					}
 					virtual void UnloadContent()
 					{
 						m_window->OnUnload();
@@ -78,6 +84,16 @@ namespace Apoc3D
 					virtual void Update(const GameTime* const time)
 					{
 						m_window->OnUpdate(time);
+					}
+					virtual void OnFrameStart()
+					{
+						Game::OnFrameStart();
+						m_window->OnFrameStart();
+					}
+					virtual void OnFrameEnd()
+					{
+						m_window->OnFrameEnd();
+						Game::OnFrameEnd();
 					}
 				};
 			private:
@@ -91,6 +107,7 @@ namespace Apoc3D
 
 				D3D9RenderWindow(D3D9RenderDevice* device, const PresentParameters& pm);
 				
+				virtual void Exit();
 				virtual void Run();
 
 				virtual String getTitle();

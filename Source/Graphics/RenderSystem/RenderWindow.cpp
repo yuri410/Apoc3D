@@ -105,6 +105,16 @@ namespace Apoc3D
 				if (m_evtHandler)
 					m_evtHandler->Update(time);
 			}
+			void RenderWindow::OnFrameStart()
+			{
+				if (m_evtHandler)
+					m_evtHandler->OnFrameStart();
+			}
+			void RenderWindow::OnFrameEnd()
+			{
+				if (m_evtHandler)
+					m_evtHandler->OnFrameEnd();
+			}
 		}
 	}
 }
