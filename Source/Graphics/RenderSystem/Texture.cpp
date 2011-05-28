@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math\Rectangle.h"
 #include "Math\Box.h"
 #include "Apoc3DException.h"
+#include "VFS\ResourceLocation.h"
 
 namespace Apoc3D
 {

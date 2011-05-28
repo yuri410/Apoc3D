@@ -31,7 +31,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			RenderView* DeviceContent::Create(const PresentParameters &pm)
+			RenderView* DeviceContent::Create(const RenderParameters &pm)
 			{
 				RenderView* rc = create(pm);
 				m_renderPorts.push_back(rc);

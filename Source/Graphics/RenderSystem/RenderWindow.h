@@ -56,7 +56,7 @@ namespace Apoc3D
 			{
 			private:
 				RenderTarget* m_renderTarget;
-				PresentParameters m_presentParams;
+				RenderParameters m_presentParams;
 				
 				FPSCounter m_fpsCounter;
 				
@@ -64,16 +64,16 @@ namespace Apoc3D
 			protected:
 				RenderDevice* m_renderDevice;
 
-				RenderView(RenderDevice* rd, const PresentParameters &pm, RenderTarget* rt)
+				RenderView(RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
 					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(rt)
 				{
 				}
-				RenderView(RenderDevice* rd, const PresentParameters &pm)
+				RenderView(RenderDevice* rd, const RenderParameters &pm)
 				{
 					RenderView(rd, pm, 0);
 				}
 
-				const PresentParameters& getPresentParams() const { return m_presentParams; }
+				const RenderParameters& getPresentParams() const { return m_presentParams; }
 			public:
 				virtual ~RenderView(){}
 
@@ -105,12 +105,12 @@ namespace Apoc3D
 				virtual void Run() = 0;
 
 			protected:
-				RenderWindow(RenderDevice* rd, const PresentParameters &pm, RenderTarget* rt)
+				RenderWindow(RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
 					: RenderView(rd, pm, rt), m_evtHandler(0), m_isExiting(false)
 				{
 
 				}
-				RenderWindow(RenderDevice* rd, const PresentParameters &pm)
+				RenderWindow(RenderDevice* rd, const RenderParameters &pm)
 					: RenderView(rd, pm), m_evtHandler(0), m_isExiting(false)
 				{
 

@@ -253,7 +253,7 @@ namespace Apoc3D
 			class GraphicsAPIManager;
 			class GraphicsAPIFactory;
 
-			struct PresentParameters;
+			struct RenderParameters;
 			class DeviceContent;
 			
 			template class APAPI fastdelegate::FastDelegate1<const Apoc3D::Core::GameTime*, void>;

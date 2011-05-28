@@ -61,7 +61,7 @@ namespace Apoc3D
 				Four = 8,
 			};			
 
-			struct APAPI PresentParameters
+			struct APAPI RenderParameters
 			{
 				bool IsWindowd;
 				bool IsFullForm;
@@ -92,12 +92,12 @@ namespace Apoc3D
 			public:
 				virtual bool SupportsRenderControl() { return m_supportsRenderControl; }
 
-				RenderView* Create(const PresentParameters &pm);
+				RenderView* Create(const RenderParameters &pm);
 				void Destroy(RenderView* rc);
 
 				virtual RenderDevice* getRenderDevice() = 0;
 			protected:
-				virtual RenderView* create(const PresentParameters &pm) = 0;
+				virtual RenderView* create(const RenderParameters &pm) = 0;
 
 				DeviceContent(bool supportsRenderCtrl)
 					: m_supportsRenderControl(supportsRenderCtrl)
