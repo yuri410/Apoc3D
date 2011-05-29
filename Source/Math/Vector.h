@@ -159,9 +159,18 @@ namespace Apoc3D
 
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
+
 			static const float* GetElementAddress(const Vector2& v)
 			{
 				return reinterpret_cast<const float*>(&v);
+			}
+			static float GetX(const Vector2& v)
+			{
+				return *(reinterpret_cast<const float*>(&v)+0);
+			}
+			static float GetY(const Vector2& v)
+			{
+				return *(reinterpret_cast<const float*>(&v) + 1);
 			}
 			static float& GetX(Vector2& v)
 			{
@@ -177,12 +186,14 @@ namespace Apoc3D
 			}
 			static void Store(Vector2 v, float* dest)
 			{
-				_mm_store_ps(dest, v);
+				SSEVecLoader buffer;
+				_mm_store_ps(reinterpret_cast<float*>(&buffer), v);
+				dest[0] = buffer.X; dest[1] = buffer.Y; dest[2] = dest[3] = 0;
 			}
 			static Vector2 LDVectorPtr(const float* v)
 			{
-				const float buffer[4] = { v[0], v[1], 0, 0};
-				return _mm_load_ps(buffer);
+				const SSEVecLoader buffer = { v[0], v[1], 0, 0};
+				return _mm_load_ps(reinterpret_cast<const float*>(&buffer));
 			}
 			static Vector2 LDVector(float v)
 			{
@@ -190,8 +201,9 @@ namespace Apoc3D
 			}
 			static Vector2 LDVector(float x, float y)
 			{
-				const float buffer[4] = { x, y, 0, 0};
-				return _mm_load_ps(buffer);
+				const SSEVecLoader buffer = { x, y, 0, 0};
+				__m128 r = _mm_load_ps(reinterpret_cast<const float*>(&buffer));
+				return r;
 			}
 
 			
@@ -723,13 +735,27 @@ namespace Apoc3D
 			{
 				return *(reinterpret_cast<float*>(&v)+2);
 			}
+			static float GetX(const Vector3& v)
+			{
+				return *(reinterpret_cast<const float*>(&v)+0);
+			}
+			static float GetY(const Vector3&  v)
+			{
+				return *(reinterpret_cast<const float*>(&v) + 1);
+			}
+			static float GetZ(const Vector3&  v)
+			{
+				return *(reinterpret_cast<const float*>(&v)+2);
+			}
 			static void Store(Vector3 v, float* dest)
 			{
-				_mm_store_ps(dest, v);
+				SSEVecLoader buffer;
+				_mm_store_ps(reinterpret_cast<float*>(&buffer), v);
+				dest[0] = buffer.X; dest[1] = buffer.Y; dest[2] = buffer.Z; dest[3] = 0;
 			}
 			static Vector3 LDVectorPtr(const float* v)
 			{
-				const float buffer[4] = { v[0], v[1], v[2], 0 };
+				const SSEVecLoader buffer = { v[0], v[1], v[2], 0 };
 
 				return VecLoad(buffer);
 			}
@@ -739,7 +765,7 @@ namespace Apoc3D
 			}
 			static Vector3 LDVector(float x, float y, float z)
 			{
-				const float buffer[4] = { x, y, z, 0 };
+				const SSEVecLoader buffer = { x, y, z, 0 };
 
 				return VecLoad(buffer);
 			}
@@ -1365,13 +1391,32 @@ namespace Apoc3D
 			{
 				return *(reinterpret_cast<float*>(&v)+3);
 			}
+			static float GetX(const Vector4& v)
+			{
+				return *(reinterpret_cast<const float*>(&v)+0);
+			}
+			static float GetY(const Vector4& v)
+			{
+				return *(reinterpret_cast<const float*>(&v) + 1);
+			}
+			static float GetZ(const Vector4& v)
+			{
+				return *(reinterpret_cast<const float*>(&v)+2);
+			}
+			static float GetW(const Vector4& v)
+			{
+				return *(reinterpret_cast<const float*>(&v)+3);
+			}
 			static void Store(Vector4 v, float* dest)
 			{
-				_mm_store_ps(dest, v);
+				SSEVecLoader buffer;
+				_mm_store_ps(reinterpret_cast<float*>(&buffer), v);
+				dest[0] = buffer.X; dest[1] = buffer.Y; dest[2] = buffer.Z; dest[3] = buffer.W;
 			}
 			static Vector4 LDVectorPtr(const float* v)
 			{
-				return VecLoad(v);
+				const SSEVecLoader buffer = {v[0],v[1],v[2],v[3]};
+				return VecLoad(buffer);
 			}
 			static Vector4 LDVector(float v)
 			{
@@ -1379,7 +1424,7 @@ namespace Apoc3D
 			}
 			static Vector4 LDVector(float x, float y, float z, float w)
 			{
-				const float buffer[4] = {x,y,z,w};
+				const SSEVecLoader buffer = {x,y,z,w};
 				return VecLoad(buffer);
 			}
 			/* Calculates the length of the vector.

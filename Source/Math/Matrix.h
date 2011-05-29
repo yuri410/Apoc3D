@@ -98,10 +98,15 @@ namespace Apoc3D
 			Matrix(const float elements[16])
 			{				
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				Row1 = _mm_load_ps(&elements[0]);
-				Row2 = _mm_load_ps(&elements[4]);
-				Row3 = _mm_load_ps(&elements[8]);
-				Row4 = _mm_load_ps(&elements[12]);
+				SSEVecLoader buffer;
+				memcpy(&buffer, &elements[0], sizeof(float) * 4);
+				Row1 = _mm_load_ps(reinterpret_cast<const float*>(&buffer));
+				memcpy(&buffer, &elements[4], sizeof(float) * 4);
+				Row2 = _mm_load_ps(reinterpret_cast<const float*>(&buffer));
+				memcpy(&buffer, &elements[8], sizeof(float) * 4);
+				Row3 = _mm_load_ps(reinterpret_cast<const float*>(&buffer));
+				memcpy(&buffer, &elements[12], sizeof(float) * 4);
+				Row4 = _mm_load_ps(reinterpret_cast<const float*>(&buffer));
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				memcpy(Elements, elements, sizeof(Elements));
 			#endif

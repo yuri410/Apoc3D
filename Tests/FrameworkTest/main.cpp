@@ -171,7 +171,21 @@ void MathTest()
 	PrintVector(L"a - b   = ", Vector2Utils::Subtract(a, b));
 	PrintValue (L"dst(a,b)= ", Vector2Utils::Distance(a, b));
 	PrintValue (L"dot(a,b)= ", Vector2Utils::Dot(a, b));
-	
+	PrintVector(L"n(a)    = ", Vector2Utils::Normalize(a));
+	PrintVector(L"n(b)    = ", Vector2Utils::Normalize(b));
+	PrintVector(L"-(a)    = ", Vector2Utils::Negate(a));
+	PrintVector(L"-(b)    = ", Vector2Utils::Negate(b));
+	PrintVector(L"3(a)    = ", Vector2Utils::Multiply(a, 3));
+	PrintVector(L"2(b)    = ", Vector2Utils::Multiply(b, 2));
+	PrintVector(L"mod(a,b)= ", Vector2Utils::Modulate(a, b));
+	//PrintVector(L"div(a,b)= ", Vector2Utils::Divide(a, b));
+	PrintVector(L"do2(a,b)= ", Vector2Utils::Dot2(a, b));
+
+	float buffer[4];
+	Vector2Utils::Store(a, buffer);
+	PrintValue(L"st(a)x   =", buffer[0]);
+	PrintValue(L"st(a)y   =", buffer[1]);
+
 
 	wprintf(L"\n");wprintf(L"\n");
 
@@ -207,7 +221,33 @@ void MathTest()
 	D3DXVec2Subtract(&dc, &da, &db);
 	PrintVector(L"a - b   = ", dc);
 	PrintValue (L"dst(a,b)= ", D3DXVec2Length(&dc));
-	PrintValue (L"dot(a,b)= ", D3DXVec2Dot(&da, &db));
+	float dot = D3DXVec2Dot(&da, &db);
+	PrintValue (L"dot(a,b)= ", dot);
+
+	D3DXVec2Normalize(&dc, &da);
+	PrintVector(L"n(a)    = ", dc);
+	D3DXVec2Normalize(&dc, &db);
+	PrintVector(L"n(b)    = ", dc);
+
+	dc = -da;
+	PrintVector(L"-(a)    = ", dc);
+	dc = -db;
+	PrintVector(L"-(b)    = ", dc);
+
+	dc = da * 3;
+	PrintVector(L"3(a)    = ", dc);
+
+	dc = db * 2;
+	PrintVector(L"2(b)    = ", dc);
+
+	dc = da;
+	dc.x *= db.x; dc.y *= db.y;
+	PrintVector(L"mod(a,b)= ", dc);
+	//dc = da;
+	//dc.x /= db.x; dc.y /= db.y;
+	//PrintVector(L"div(a,b)= ", dc);
+	PrintVector(L"do2(a,b)= ", D3DXVECTOR2(dot, dot));
+
 	getchar();
 }
 

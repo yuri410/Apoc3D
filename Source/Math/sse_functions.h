@@ -42,11 +42,20 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #define _MM_SHUFFLE1(x) _MM_SHUFFLE(x,x,x,x)
 
-const __m128 _MASKSIGN_;
-
-inline __m128 VecLoad(const float vec[4])
+#pragma pack(push ,16)
+struct __declspec(align(16)) SSEVecLoader
 {
-	return _mm_load_ps(&vec[0]);
+	float X;
+	float Y;
+	float Z;
+	float W;
+};
+#pragma pack(pop)
+static __m128 _MASKSIGN_;
+
+inline __m128 VecLoad(const SSEVecLoader& vec)
+{
+	return _mm_load_ps(reinterpret_cast<const float*>(&vec));
 };
 inline __m128 VecLoad(float f)
 {
@@ -105,7 +114,9 @@ inline __m128 VecDiv(__m128 va, float vb)
 
 inline __m128 VecStore(float* pVec, __m128 v)
 {
-	_mm_store_ps(pVec, v);
+	SSEVecLoader buffer;
+	_mm_store_ps(reinterpret_cast<float*>(&buffer), v);
+	pVec[0] = buffer.X; pVec[1] = buffer.Y; pVec[2] = buffer.Z; pVec[3] = buffer.W;
 };
 
 /* Reverses the direction of a given vector.

@@ -57,7 +57,7 @@ namespace Apoc3D
 					*/
 					float Alpha;
 				};
-				_m128 vector;
+				__m128 vector;
 			};
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			/* the color's red component.
@@ -354,7 +354,7 @@ namespace Apoc3D
 			static void AdjustSaturation(Color4& result, const Color4 &color, float saturation)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				static const float buffer[4] = {0.2125f, 0.7154f, 0.0721f, 0};
+				static const SSEVecLoader buffer = {0.2125f, 0.7154f, 0.0721f, 0};
 				static const Vector3 hue = VecLoad(buffer);
 			
 				Vector3 grey = Vec3Dot2(hue, color.vector);
@@ -380,7 +380,7 @@ namespace Apoc3D
 			static Color4 AdjustSaturation(const Color4 &color, float saturation)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				static const float buffer[4] = {0.2125f, 0.7154f, 0.0721f, 0};
+				static const SSEVecLoader buffer = {0.2125f, 0.7154f, 0.0721f, 0};
 				static const Vector3 hue = VecLoad(buffer);
 
 				Vector3 grey = Vec3Dot2(hue, color.vector);
