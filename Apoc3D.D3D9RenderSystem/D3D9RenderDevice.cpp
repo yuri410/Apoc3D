@@ -35,6 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Buffer/D3D9DepthBuffer.h"
 #include "Buffer/D3D9IndexBuffer.h"
 #include "Buffer/D3D9VertexBuffer.h"
+#include "VolatileResource.h"
 #include "Apoc3DException.h"
 
 namespace Apoc3D
@@ -63,7 +64,22 @@ namespace Apoc3D
 
 			D3DDevice* D3D9RenderDevice::getDevice() const { return m_devManager->getDevice(); } 
 
-				
+			
+			void D3D9RenderDevice::OnDeviceLost()
+			{
+				for (size_t i=0;i<m_volatileResources.size();i++)
+				{
+					m_volatileResources[i]->ReleaseVolatileResource();
+				}
+			}
+			void D3D9RenderDevice::OnDeviceReset()
+			{
+				for (size_t i=0;i<m_volatileResources.size();i++)
+				{
+					m_volatileResources[i]->ReloadVolatileResource();
+				}
+			}
+
 			void D3D9RenderDevice::Initialize()
 			{
 				m_renderStates = new D3D9RenderStateManager(this);

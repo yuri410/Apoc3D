@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Common.h"
 #include "Graphics/RenderSystem/RenderTarget.h"
 #include "Graphics/GraphicsCommon.h"
+#include "VolatileResource.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -40,7 +41,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9RenderTarget : public RenderTarget
+			class D3D9RenderTarget : public RenderTarget, public VolatileResource
 			{
 			private:
 				D3DTexture2D* m_color;
@@ -52,7 +53,16 @@ namespace Apoc3D
 
 				D3D9RenderDevice* m_device;
 				
+				bool m_isDefault;
+
+				bool m_hasColor;
+				bool m_hasDepth;
+
 			public:
+
+				virtual void ReleaseVolatileResource();
+				virtual void ReloadVolatileResource();
+
 				IDirect3DSurface9* getColorSurface() const { return m_colorSurface; }
 				IDirect3DSurface9* getDepthSurface() const { return m_depthSurface; }
 

@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9VertexDeclaration.h"
 #include "D3D9RenderTarget.h"
 
+
 namespace Apoc3D
 {
 	namespace Graphics

@@ -105,6 +105,7 @@
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="GraphicsDeviceManager.h" />
     <ClInclude Include="Plugin.h" />
+    <ClInclude Include="VolatileResource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Buffer\D3D9DepthBuffer.cpp" />
@@ -136,6 +137,7 @@
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="Plugin.cpp" />
+    <ClCompile Include="VolatileResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Source\Apoc3d.vcxproj">

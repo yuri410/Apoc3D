@@ -21,14 +21,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9INDEXBUFFER_H
-#define D3D9INDEXBUFFER_H
+
+#ifndef VOLATILERESOURCE_H
+#define VOLATILERESOURCE_H
 
 #include "D3D9Common.h"
-#include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
-
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -36,20 +33,16 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9DepthBuffer : public DepthBuffer
+			class VolatileResource
 			{
 			private:
-				IDirect3DSurface9* m_buffer;
-			protected:
-				virtual void* lock(int offset, int size, LockMode mode);
-				virtual void unlock();
+				D3D9RenderDevice* m_device;
 			public:
-				IDirect3DSurface9* getD3DBuffer() const { return m_buffer; }
-				void setD3DBuffer(IDirect3DSurface9* surface) { m_buffer = surface; }
+				VolatileResource(D3D9RenderDevice* device);
+				virtual ~VolatileResource();
 
-				D3D9DepthBuffer(D3D9RenderDevice* device, IDirect3DSurface9* buffer);
-				~D3D9DepthBuffer();
-
+				virtual void ReleaseVolatileResource() = 0;
+				virtual void ReloadVolatileResource() = 0;
 			};
 		}
 	}

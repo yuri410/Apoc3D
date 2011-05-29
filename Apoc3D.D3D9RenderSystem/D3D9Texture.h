@@ -49,6 +49,9 @@ namespace Apoc3D
 				D3D9RenderDevice* m_renderDevice;
 
 			public:
+
+				void setInternal2D(D3DTexture2D* tex) { m_tex2D = tex; }
+
 				D3DTexture2D* getInternal2D() const { return m_tex2D; }
 				D3DTexture3D* getInternal3D() const { return m_tex3D; }
 				D3DTextureCube* getInternalCube() const { return m_cube; }

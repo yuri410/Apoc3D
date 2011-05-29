@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Graphics/RenderSystem/RenderDevice.h"
 
+using namespace std;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 
@@ -48,16 +49,37 @@ namespace Apoc3D
 				IDirect3DSurface9* m_defaultRT;
 				IDirect3DSurface9* m_defaultDS;
 
+				vector<VolatileResource*> m_volatileResources;
+
 			public:
 				inline D3DDevice* getDevice() const;
 				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
 
+
+				void TrackVolatileResource(VolatileResource* res)
+				{
+					m_volatileResources.push_back(res);
+				}
+				void UntrackVolatileResource(VolatileResource* res)
+				{
+					vector<VolatileResource*>::iterator iter = find(m_volatileResources.begin(), m_volatileResources.end(), res);
+					if (iter != m_volatileResources.end())
+					{
+						m_volatileResources.erase(iter);
+					}
+				}
+
+
+
+
 				D3D9RenderDevice(GraphicsDeviceManager* devManager);
 				~D3D9RenderDevice();
 				
-				//virtual PixelFormat GetBackBufferFormat();
-				//virtual DepthFormat GetDefaultDepthStencilFormat();
-				
+				void OnDeviceReset();
+				void OnDeviceLost();
+
+
+
 				virtual void Initialize();
 				
 				virtual void BeginFrame();
