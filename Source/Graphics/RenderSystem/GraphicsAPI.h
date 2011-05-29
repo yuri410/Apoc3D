@@ -35,7 +35,6 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			 
 			/* Manages all registered graphics API. 
 			* Creates device content best for the platform.
 			*/
@@ -64,11 +63,8 @@ namespace Apoc3D
 				void UnregisterGraphicsAPI(GraphicsAPIFactory* fac);
 				
 				DeviceContent* CreateDeviceContent();
-				
-
-
-				//static GraphicsAPIManager& getSingleton();
-				//static GraphicsAPIManager* getSingletonPtr();
+			
+				SINGLETON_DECL_HEARDER(GraphicsAPIManager);
 			};
 
 			/** Define how well a platform is supported based on score.
@@ -78,6 +74,8 @@ namespace Apoc3D
 				int Score;
 				String PlatformName;
 			};
+
+			template class APAPI vector<const PlatformAPISupport>;
 
 			/* Contains information of a graphics API
 			*/

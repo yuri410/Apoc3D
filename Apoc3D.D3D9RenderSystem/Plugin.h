@@ -21,12 +21,33 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef D3DPLUGIN_H
+#define D3DPLUGIN_H
 
 #include "D3D9Common.h"
+#include "Core/Plugin.h"
 
-PLUGIN void Apoc3DPluginLoad();
-PLUGIN void Apoc3DPluginUnload();
+using namespace Apoc3D::Core;
+
+PLUGIN Plugin* Apoc3DGetPlugin();
+
+
+namespace Apoc3D
+{
+	namespace Graphics
+	{
+		namespace D3D9RenderSystem
+		{
+			class D3D9RSPlugin : public Plugin
+			{
+			public:
+				virtual void Load();
+				virtual void Unload();
+
+				virtual String GetName() { return L"Direct3D9 Render System"; }
+			};
+		}
+	}
+}
 
 #endif

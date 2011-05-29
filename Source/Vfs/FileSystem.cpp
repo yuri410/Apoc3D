@@ -39,6 +39,11 @@ namespace Apoc3D
 
 	namespace VFS
 	{
+		//void FileSystem::Initialize()
+		//{
+		//	new FileSystem();
+		//}
+
 
 		FileSystem::~FileSystem()
 		{

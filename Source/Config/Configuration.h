@@ -36,9 +36,11 @@ namespace Apoc3D
 
 		class APAPI Configuration
 		{
-		private:
+		public:
 			typedef unordered_map<String, ConfigurationSection*> ChildTable;
-
+			typedef ChildTable::iterator Iterator;
+		private:
+			
 			String m_name;
 			
 			ChildTable m_sections;
@@ -63,6 +65,9 @@ namespace Apoc3D
 				}
 				return 0;
 			}
+
+			ChildTable::iterator begin() { return m_sections.begin(); }
+			ChildTable::iterator end() { return m_sections.end(); }
 
 			virtual Configuration* Clone() const = 0;
 			virtual void Merge(Configuration* config) = 0;

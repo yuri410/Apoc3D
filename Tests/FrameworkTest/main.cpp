@@ -8,6 +8,7 @@
 
 #include "Math/Math.h"
 #include "Utility/StringUtils.h"
+#include "Math/RandomUtils.h"
 
 using namespace std;
 using namespace Apoc3D;
@@ -251,10 +252,15 @@ void MathTest()
 	getchar();
 }
 
+void RandomTest()
+{
+
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
-	MathTest();
-
+	//MathTest();
+	
 
 	
 	return 0;

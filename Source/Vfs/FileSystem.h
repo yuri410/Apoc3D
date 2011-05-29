@@ -71,10 +71,11 @@ namespace Apoc3D
 			Archive* CreateArchive(const String& file);
 
 
-		public:
 			FileSystem(void) { }
+		public:
 			~FileSystem(void);
 
+			//static void Initialize();
 
 			void AddWrokingDirectory(const String& path);
 			void RegisterArchiveType(ArchiveFactory* factory);			
@@ -90,6 +91,8 @@ namespace Apoc3D
 			Archive* LocateArchive(const String& filePath, const FileLocateRule& rule);
 			const FileLocation* Locate(const String& filePath, const FileLocateRule& rule);
 			const FileLocation* TryLocate(const String& filePath, const FileLocateRule& rule);
+
+			SINGLETON_DECL_HEARDER(FileSystem);
 		};
 	}
 }

@@ -145,6 +145,9 @@ namespace Apoc3D
 		class ResourceManager;
 		class GameTime;
 
+		class Plugin;
+		class PluginManager;
+
 		class IParsable;
 
 		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
@@ -296,6 +299,10 @@ namespace Apoc3D
 
 		}
 	};
+	namespace Platform
+	{
+		class Library;
+	}
 };
 
 #endif

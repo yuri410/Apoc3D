@@ -27,12 +27,30 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9GraphicsAPIFactory.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Graphics::D3D9RenderSystem;
 
-void Apoc3DPluginLoad()
+static D3D9RSPlugin* plugin = 0;
+
+Plugin* Apoc3DGetPlugin()
 {
-
+	return plugin;
 }
-void Apoc3DPluginUnload()
-{
 
+namespace Apoc3D
+{
+	namespace Graphics
+	{
+		namespace D3D9RenderSystem
+		{
+			void D3D9RSPlugin::Load()
+			{
+				GraphicsAPIManager::getSingleton().RegisterGraphicsAPI(new D3D9GraphicsAPIFactory());
+			}
+			void D3D9RSPlugin::Unload()
+			{
+				GraphicsAPIManager::getSingleton().UnregisterGraphicsAPI(new D3D9GraphicsAPIFactory());
+			}
+
+		}
+	}
 }

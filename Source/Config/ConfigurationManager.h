@@ -40,6 +40,8 @@ namespace Apoc3D
 		private:
 			typedef unordered_map<String, Configuration*> ConfigTable;
 			ConfigTable m_configs;
+
+			ConfigurationManager();
 		public:
 			virtual ~ConfigurationManager()
 			{
@@ -50,12 +52,12 @@ namespace Apoc3D
 					delete config;
 				}
 			}
-			/** 
-			*/
-			static void Initialize();
+			///** 
+			//*/
+			//static void Initialize();
 
 
-			const Configuration* getConfiguration(const String& name) const
+			Configuration* getConfiguration(const String& name) const
 			{
 				ConfigTable::const_iterator iter = m_configs.find(name);
 				if (iter != m_configs.end())
@@ -65,6 +67,7 @@ namespace Apoc3D
 				return 0;
 			}
 
+			SINGLETON_DECL_HEARDER(ConfigurationManager);
 		};
 	}
 }

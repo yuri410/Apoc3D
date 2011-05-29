@@ -30,10 +30,13 @@ namespace Apoc3D
 
 	namespace Config
 	{
-		
-		void ConfigurationManager::Initialize()
+		ConfigurationManager::ConfigurationManager()
 		{
 
 		}
+		//void ConfigurationManager::Initialize()
+		//{
+
+		//}
 	}
 }

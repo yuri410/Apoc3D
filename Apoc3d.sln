@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.D3D9RenderSystem", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FrameworkTest", "Tests\FrameworkTest\FrameworkTest.vcxproj", "{6195F83F-DE75-44EC-A53B-265FE3711FA1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APDesigner", "APDesigner\APDesigner.vcxproj", "{B87E9487-0D55-4B74-B0B8-B69A03F9F544}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -33,6 +35,10 @@ Global
 		{6195F83F-DE75-44EC-A53B-265FE3711FA1}.Debug|Win32.Build.0 = Debug|Win32
 		{6195F83F-DE75-44EC-A53B-265FE3711FA1}.Release|Win32.ActiveCfg = Release|Win32
 		{6195F83F-DE75-44EC-A53B-265FE3711FA1}.Release|Win32.Build.0 = Release|Win32
+		{B87E9487-0D55-4B74-B0B8-B69A03F9F544}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B87E9487-0D55-4B74-B0B8-B69A03F9F544}.Debug|Win32.Build.0 = Debug|Win32
+		{B87E9487-0D55-4B74-B0B8-B69A03F9F544}.Release|Win32.ActiveCfg = Release|Win32
+		{B87E9487-0D55-4B74-B0B8-B69A03F9F544}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

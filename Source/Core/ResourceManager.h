@@ -56,6 +56,7 @@ namespace Apoc3D
 			int64 getTotalCacheSize() const { return m_totalCacheSize; }
 			int64 getUsedCacheSize() const { return m_curUsedCache; }
 
+			SINGLETON_DECL_HEARDER(ResourceManager);
 
 		};
 	}
