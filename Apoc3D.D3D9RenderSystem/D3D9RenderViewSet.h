@@ -21,11 +21,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef GRAPHICSDEVICEMANAGER_H
-#define GRAPHICSDEVICEMANAGER_H
+#ifndef D3D9RENDERVIEWSET
+#define D3D9RENDERVIEWSET
 
 #include "D3D9Common.h"
+#include "Graphics/RenderSystem/RenderWindow.h"
 #include "DeviceSettings.h"
+
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -33,52 +37,49 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class GraphicsDeviceManager
+			class D3D9RenderViewSet
 			{
 			private:
 				DeviceSettings* m_currentSetting;
+
+				vector<D3D9RenderView*> m_views;
 				IDirect3D9* m_direct3D9;
 				D3DDevice* m_device;
+				D3D9RenderDevice* m_apiDevice;
 
-				Game* m_game;
-
-				bool m_ignoreSizeChanges;
 				bool m_deviceLost;
 
-				bool m_doNotStoreBufferSize;
-				bool m_renderingOccluded;
+				bool m_ignoreSizeChanges;
 
-				int32 m_fullscreenWindowWidth;
-				int32 m_fullscreenWindowHeight;
-				int32 m_windowedWindowWidth;
-				int32 m_windowedWindowHeight;
-				WINDOWPLACEMENT m_windowedPlacement;
-				int64 m_windowedStyle;
-				//bool m_savedTopmost;
 
-				void PropogateSettings();
-				bool CanDeviceBeReset(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
-				void CreateDevice(const DeviceSettings &settings);
-				void game_FrameStart(bool* cancel);
-				void game_FrameEnd();
-				void Window_UserResized();
-				void Window_MonitorChanged();
+				void Control_BeginPaint(bool* cancel);
+				void Control_EndPaint();
 
-				void InitializeDevice();
-				HRESULT ResetDevice();
+				void Control_UserResized();
+				void Control_MonitorChanged();
 
 				int32 GetAdapterOrdinal(HMONITOR mon);
-				void UpdateDeviceInformation();
 
+				void PropogateSettings();
+				bool CanDeviceBeReset(const DeviceSettings* const oldset,
+					const DeviceSettings* const newset) const;
+
+				HRESULT ResetDevice();
+				void CreateDevice(const DeviceSettings &settings);
+				void InitializeDevice();
+				void ReleaseDevice();
 			public:
 				const DeviceSettings* getCurrentSetting() const { return m_currentSetting; }
 
-				GraphicsDeviceManager(Game* game, IDirect3D9* d3d9);
-				~GraphicsDeviceManager(void);
+				D3D9RenderViewSet(IDirect3D9* d3d9);
+				~D3D9RenderViewSet(void);
 
 				D3DDevice* getDevice() const { return m_device; }
 				IDirect3D9* getDirect3D() const { return m_direct3D9; }
 
+
+				void AddControl(const RenderParameters& pm);
+				void NotifyControlRemoved(const D3D9RenderView* view);
 
 				/* Ensures that the device is properly initialized and ready to render.
 				*/
@@ -93,28 +94,8 @@ namespace Apoc3D
 					@minimumSettings The minimum settings.
 				*/
 				void ChangeDevice(const DeviceSettings& settings, const DeviceSettings* minimumSettings);
-				
-				/** Changes the device.
-					param
-					@windowed if set to true, the application will run in windowed mode instead of full screen.
-					@desiredWidth Desired width of the window.
-					@desiredHeight Desired height of the window.
-				*/
-				void ChangeDevice(bool windowed, int desiredWidth, int desiredHeight);
-
-				/** Changes the device.
-					param
-					@settings The settings.
-				*/
-				void ChangeDevice(const DeviceSettings& settings);
-
-				/* Toggles between full screen and windowed mode.
-				*/
-				void ToggleFullScreen();
-				void ReleaseDevice();
-
 			};
 		}
 	}
-};
+}
 #endif

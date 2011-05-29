@@ -27,6 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Utils.h"
 #include "GraphicsDeviceManager.h"
 #include "GameWindow.h"
+#include "D3D9DeviceContent.h"
+#include "Enumeration.h"
+#include "D3D9RenderViewSet.h"
+#include "DeviceSettings.h"
 
 namespace Apoc3D
 {
@@ -34,13 +38,45 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			D3D9RenderView::D3D9RenderView(D3D9RenderDevice* device, D3D9RenderViewSet* viewSet, IDirect3DSwapChain9* chain, const RenderParameters& pm)
+				: RenderView(device, pm), m_viewSet(viewSet),  m_swapChain(chain)//, m_deviceLost(false)
+			{
+				m_controlHandle = reinterpret_cast<HANDLE>(pm.TargetHandle);
+			}
+			D3D9RenderView::~D3D9RenderView()
+			{
+				m_swapChain->Release();
+			}
+
+			void D3D9RenderView::ChangeRenderParameters(const RenderParameters& params)
+			{
+				DeviceSettings settings;
+				settings.AdapterOrdinal = 0;
+				settings.BackBufferCount = 1;
+				settings.BackBufferHeight = params.BackBufferHeight;
+				settings.BackBufferWidth = params.BackBufferWidth;
+				settings.BackBufferFormat = D3D9Utils::ConvertPixelFormat(params.ColorBufferFormat);
+				settings.DepthStencilFormat = D3D9Utils::ConvertDepthFormat(params.DepthBufferFormat);
+				settings.DeviceType = D3DDEVTYPE_HAL;
+				settings.EnableVSync = params.EnableVSync;
+				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
+				settings.Multithreaded = true;
+				settings.RefreshRate = 0;
+				settings.Windowed = true;			
+
+				m_viewSet->ChangeDevice(settings, 0);
+			}
+			void D3D9RenderView::Present(const GameTime* const time)
+			{
+				m_swapChain->Present(NULL,NULL,NULL,NULL, NULL);
+			}
+
 			void D3D9RenderWindow::D3D9Game::Create()
 			{				
 				Game::Create();
 				
 				const RenderParameters& params = m_window->getRenderParams();
 
-				//TODO: getGraphicsDeviceManager()->ChangeDevice()
 				DeviceSettings settings;
 				settings.AdapterOrdinal = 0;
 				settings.BackBufferCount = 1;
@@ -62,11 +98,40 @@ namespace Apoc3D
 
 				device->Initialize();
 			}
-			D3D9RenderWindow::D3D9RenderWindow(D3D9RenderDevice* device, const RenderParameters& pm)
-				: RenderWindow(device, pm)
+
+
+			D3D9RenderWindow::D3D9RenderWindow(D3D9RenderDevice* device, D3D9DeviceContent* dc, const RenderParameters& pm)
+				: RenderWindow(device, pm), m_dc(dc)
 			{
-				m_game = new D3D9Game(this);
+				m_game = new D3D9Game(this, dc->getD3D());
 			}
+			D3D9RenderWindow::~D3D9RenderWindow()
+			{
+				m_dc->NotifyWindowClosed(this);
+				delete m_game;
+			}
+
+			void D3D9RenderWindow::ChangeRenderParameters(const RenderParameters& params)
+			{
+				RenderWindow::ChangeRenderParameters(params);
+
+				DeviceSettings settings;
+				settings.AdapterOrdinal = 0;
+				settings.BackBufferCount = 1;
+				settings.BackBufferHeight = params.BackBufferHeight;
+				settings.BackBufferWidth = params.BackBufferWidth;
+				settings.BackBufferFormat = D3D9Utils::ConvertPixelFormat(params.ColorBufferFormat);
+				settings.DepthStencilFormat = D3D9Utils::ConvertDepthFormat(params.DepthBufferFormat);
+				settings.DeviceType = D3DDEVTYPE_HAL;
+				settings.EnableVSync = params.EnableVSync;
+				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
+				settings.Multithreaded = true;
+				settings.RefreshRate = 0;
+				settings.Windowed = params.IsWindowd;				
+
+				m_game->getGraphicsDeviceManager()->ChangeDevice(settings);
+			}
+
 
 			void D3D9RenderWindow::Exit()
 			{

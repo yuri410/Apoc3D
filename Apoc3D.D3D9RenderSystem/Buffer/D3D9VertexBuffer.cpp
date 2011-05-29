@@ -46,13 +46,29 @@ namespace Apoc3D
 				return D3D9Utils::GetBufferUsage(desc.Usage);
 			}
 			
-			D3D9VertexBuffer::D3D9VertexBuffer(D3D9RenderDevice* device, D3DVertexBuffer* vb)
-				: VertexBuffer(GetVBSize(vb), GetVBUsage(vb)), m_vertexBuffer(vb)
-			{
 
+
+			void D3D9VertexBuffer::ReleaseVolatileResource()
+			{
+				HRESULT hr = m_vertexBuffer->Release();
+				assert(SUCCEEDED(hr));
 			}
+			void D3D9VertexBuffer::ReloadVolatileResource()
+			{
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->CreateVertexBuffer(getSize(), 
+					D3D9Utils::ConvertBufferUsage(getUsage()), 0, D3DPOOL_MANAGED, &m_vertexBuffer, NULL);
+				assert(SUCCEEDED(hr));
+			}
+
+
+			//D3D9VertexBuffer::D3D9VertexBuffer(D3D9RenderDevice* device, D3DVertexBuffer* vb)
+			//	: VertexBuffer(GetVBSize(vb), GetVBUsage(vb)), m_vertexBuffer(vb), m_device(device)
+			//{
+
+			//}
 			D3D9VertexBuffer::D3D9VertexBuffer(D3D9RenderDevice* device, int32 size, BufferUsageFlags usage)
-				: VertexBuffer(size, D3D9Utils::GetBufferUsage(usage))
+				: VertexBuffer(size, D3D9Utils::GetBufferUsage(usage)), VolatileResource(device), m_device(device)
 			{
 				D3DDevice* dev = device->getDevice();
 

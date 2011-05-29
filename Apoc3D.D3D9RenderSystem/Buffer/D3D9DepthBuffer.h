@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9INDEXBUFFER_H
-#define D3D9INDEXBUFFER_H
+#ifndef D3D9DEPTHBUFFER_H
+#define D3D9DEPTHBUFFER_H
 
 #include "D3D9Common.h"
 #include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"

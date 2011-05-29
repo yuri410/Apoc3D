@@ -92,6 +92,7 @@
     <ClInclude Include="D3D9RenderDevice.h" />
     <ClInclude Include="D3D9RenderStateManager.h" />
     <ClInclude Include="D3D9RenderTarget.h" />
+    <ClInclude Include="D3D9RenderViewSet.h" />
     <ClInclude Include="D3D9RenderWindow.h" />
     <ClInclude Include="D3D9Texture.h" />
     <ClInclude Include="D3D9Utils.h" />
@@ -105,6 +106,7 @@
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="GraphicsDeviceManager.h" />
     <ClInclude Include="Plugin.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="VolatileResource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -115,6 +117,7 @@
     <ClCompile Include="D3D9PixelShader.cpp" />
     <ClCompile Include="Buffer\D3D9VertexBuffer.cpp" />
     <ClCompile Include="D3D9RenderStateManager.cpp" />
+    <ClCompile Include="D3D9RenderViewSet.cpp" />
     <ClCompile Include="D3D9VertexShader.cpp" />
     <ClCompile Include="D3D9DeviceContent.cpp" />
     <ClCompile Include="D3D9GraphicsAPIFactory.cpp" />

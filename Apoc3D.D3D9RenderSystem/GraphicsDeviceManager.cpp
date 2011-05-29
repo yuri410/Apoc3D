@@ -32,12 +32,11 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			GraphicsDeviceManager::GraphicsDeviceManager(Game* game)
-				: m_currentSetting(0),m_direct3D9(0),m_device(0),
-				m_deviceLost(false), m_ignoreSizeChanges(false), m_doNotStoreBufferSize(false), m_renderingOccluded(false)
+			GraphicsDeviceManager::GraphicsDeviceManager(Game* game, IDirect3D9* d3d9)
+				: m_currentSetting(0),m_device(0),
+				m_deviceLost(false), m_ignoreSizeChanges(false), m_doNotStoreBufferSize(false), m_renderingOccluded(false),
+				m_direct3D9(d3d9)
 			{
-				m_direct3D9 = Direct3DCreate9(D3D_SDK_VERSION);
-
 				assert(game);
 
 				m_game = game;
@@ -48,12 +47,12 @@ namespace Apoc3D
 				m_game->getWindow()->eventMonitorChanged()->bind(this, &GraphicsDeviceManager::Window_MonitorChanged);
 			}
 
-
 			GraphicsDeviceManager::~GraphicsDeviceManager(void)
 			{
 				if (m_currentSetting)
 					delete m_currentSetting;
 			}
+
 			void GraphicsDeviceManager::PropogateSettings()
 			{
 				m_currentSetting->BackBufferCount = m_currentSetting->D3D9.PresentParameters.BackBufferCount;

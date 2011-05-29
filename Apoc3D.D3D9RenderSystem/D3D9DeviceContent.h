@@ -38,13 +38,21 @@ namespace Apoc3D
 			class D3D9DeviceContent : public DeviceContent
 			{
 			private:
-				D3D9RenderDevice* m_device;
+				IDirect3D9* m_d3d9;
 				
 				D3D9RenderWindow* m_window;
+				D3D9RenderViewSet* m_viewSet;
 			protected:
 				virtual RenderView* create(const RenderParameters &pm);
 			public:
+				void NotifyWindowClosed(D3D9RenderWindow* wnd);
+				
+
+				IDirect3D9* getD3D() const { return m_d3d9; }
+
 				D3D9DeviceContent();
+				~D3D9DeviceContent();
+
 				virtual RenderDevice* getRenderDevice();
 			};
 		}

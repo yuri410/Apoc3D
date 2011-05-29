@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/RenderWindow.h"
 #include "Graphics/RenderSystem/RenderWindowHandler.h"
 #include "Game.h"
+#include "D3D9RenderDevice.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -38,6 +39,26 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			class D3D9RenderView : public RenderView
+			{
+			private:
+				D3D9RenderViewSet* m_viewSet;
+				D3D9RenderDevice* m_device;
+				IDirect3DSwapChain9* m_swapChain;
+				HANDLE m_controlHandle;
+
+			public:
+
+				D3D9RenderView(D3D9RenderDevice* device, D3D9RenderViewSet* viewSet, IDirect3DSwapChain9* chain, const RenderParameters& pm);
+				~D3D9RenderView();
+
+
+				virtual void ChangeRenderParameters(const RenderParameters& params);
+
+				virtual void Present(const GameTime* const time);
+			};
+
+
 			class D3D9RenderWindow : public RenderWindow
 			{
 			private:
@@ -45,9 +66,10 @@ namespace Apoc3D
 				{
 				private:
 					D3D9RenderWindow* m_window;
+
 				public:
-					D3D9Game(D3D9RenderWindow* wnd)
-						: Game(L"Apoc3D Engine - Direct3D9"), m_window(wnd)
+					D3D9Game(D3D9RenderWindow* wnd, IDirect3D9* d3d9)
+						: Game(L"Apoc3D Engine - Direct3D9", d3d9), m_window(wnd)
 					{
 					}
 					virtual void Create();
@@ -67,11 +89,15 @@ namespace Apoc3D
 					}
 					virtual void OnDeviceLost() 
 					{
-
+						D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_window->getDevice());
+						if (device)
+							device->OnDeviceLost();
 					}
 					virtual void OnDeviceReset()
 					{
-
+						D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_window->getDevice());
+						if (device)
+							device->OnDeviceReset();
 					}
 					virtual void UnloadContent()
 					{
@@ -102,15 +128,19 @@ namespace Apoc3D
 				};
 			private:
 				D3D9Game* m_game;
-
+				D3D9DeviceContent* m_dc;
 				void setDevice(RenderDevice* device)
 				{
 					m_renderDevice = device;
 				}
 			public:
+				RenderDevice* getDevice() const { return m_renderDevice; }
 
-				D3D9RenderWindow(D3D9RenderDevice* device, const RenderParameters& pm);
-				
+				virtual void ChangeRenderParameters(const RenderParameters& params);
+
+				D3D9RenderWindow(D3D9RenderDevice* device, D3D9DeviceContent* dc, const RenderParameters& pm);
+				~D3D9RenderWindow();
+
 				virtual void Exit();
 				virtual void Run();
 

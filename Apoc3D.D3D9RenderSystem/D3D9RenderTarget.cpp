@@ -168,7 +168,7 @@ namespace Apoc3D
 				getSurfaceHeight(color), 
 				GetColorSurfaceFormat(color), 
 				GetDepthSurfaceFormat(depth), 
-				GetMultiSampleCount(color)),
+				GetMultiSampleCount(color)), VolatileResource(device),
 				m_device(device), m_colorSurface(color), m_color(0), m_d3dTexture(0), m_depthSurface(depth),
 				m_isDefault(true), m_hasDepth(true), m_hasColor(true)
 			{
@@ -179,7 +179,7 @@ namespace Apoc3D
 				: RenderTarget(device, 
 				D3D9Utils::GetD3DTextureWidth(rt),
 				D3D9Utils::GetD3DTextureHeight(rt), 
-				D3D9Utils::GetD3DTextureFormat(rt), 0),
+				D3D9Utils::GetD3DTextureFormat(rt), 0), VolatileResource(device),
 				m_device(device), m_color(rt), m_d3dTexture(0), m_depthSurface(0), m_depthBuffer(0),
 				m_isDefault(false), m_hasDepth(false), m_hasColor(true)
 			{
@@ -191,7 +191,7 @@ namespace Apoc3D
 				D3D9Utils::GetD3DTextureWidth(rt),
 				D3D9Utils::GetD3DTextureHeight(rt), 
 				D3D9Utils::GetD3DTextureFormat(rt), 
-				GetDepthSurfaceFormat(depth), 0),
+				GetDepthSurfaceFormat(depth), 0), VolatileResource(device),
 				m_device(device), m_color(rt), m_d3dTexture(0), m_depthSurface(depth),
 				m_isDefault(false), m_hasDepth(true), m_hasColor(true)
 			{
@@ -201,7 +201,7 @@ namespace Apoc3D
 			}
 
 			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format)
-				: RenderTarget(device, width, height, format, 0),
+				: RenderTarget(device, width, height, format, 0), VolatileResource(device),
 				m_device(device), m_depthSurface(0), m_depthBuffer(0), m_d3dTexture(0),
 				m_isDefault(false), m_hasDepth(false), m_hasColor(true)
 			{
@@ -213,7 +213,7 @@ namespace Apoc3D
 				m_d3dTexture = new D3D9Texture(m_device, m_color);
 			}
 			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat)
-				: RenderTarget(device, width, height, format, depthFormat, 0),
+				: RenderTarget(device, width, height, format, depthFormat, 0), VolatileResource(device),
 				m_device(device),
 				m_isDefault(false), m_hasDepth(true), m_hasColor(true)
 			{
@@ -232,7 +232,7 @@ namespace Apoc3D
 			}
 			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, 
 				uint32 sampleCount, PixelFormat format, DepthFormat depthFormat)
-				: RenderTarget(device, width, height, format, depthFormat, sampleCount),
+				: RenderTarget(device, width, height, format, depthFormat, sampleCount), VolatileResource(device),
 				m_device(device),
 				m_isDefault(false), m_hasDepth(true), m_hasColor(true)
 			{

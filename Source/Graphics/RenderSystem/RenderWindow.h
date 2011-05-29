@@ -59,9 +59,9 @@ namespace Apoc3D
 			private:
 				RenderTarget* m_renderTarget;
 				RenderParameters m_presentParams;
-				
+
 				FPSCounter m_fpsCounter;
-				
+
 
 			protected:
 				RenderDevice* m_renderDevice;
@@ -78,6 +78,7 @@ namespace Apoc3D
 			public:
 				void* UserData;
 				const RenderParameters& getRenderParams() const { return m_presentParams; }
+				virtual void ChangeRenderParameters(const RenderParameters& params) { m_presentParams = params; }
 
 				virtual ~RenderView(){}
 

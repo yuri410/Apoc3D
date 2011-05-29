@@ -38,6 +38,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, D3DTexture2D* tex2D)
 				: Texture(device,
 				D3D9Utils::GetD3DTextureWidth(tex2D), 

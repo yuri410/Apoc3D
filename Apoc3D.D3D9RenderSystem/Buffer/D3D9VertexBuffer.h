@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Common.h"
 #include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
 #include "Graphics/GraphicsCommon.h"
+#include "VolatileResource.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -37,9 +38,10 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9VertexBuffer : public VertexBuffer
+			class D3D9VertexBuffer : public VertexBuffer, public VolatileResource
 			{
 			private:
+				D3D9RenderDevice* m_device;
 				D3DVertexBuffer* m_vertexBuffer;
 
 			protected:
@@ -47,9 +49,13 @@ namespace Apoc3D
 				virtual void unlock();
 
 			public:
+
+				void ReleaseVolatileResource();
+				void ReloadVolatileResource();
+
 				D3DVertexBuffer* getD3DBuffer() const { return m_vertexBuffer; }
 
-				D3D9VertexBuffer(D3D9RenderDevice* device, D3DVertexBuffer* vb);
+				//D3D9VertexBuffer(D3D9RenderDevice* device, D3DVertexBuffer* vb);
 				D3D9VertexBuffer(D3D9RenderDevice* device, int32 size, BufferUsageFlags usage);
 
 

@@ -37,32 +37,56 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			D3D9DeviceContent::D3D9DeviceContent()
-				: DeviceContent(true)
+				: DeviceContent(true), m_window(0)
 			{
+				m_d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 
+			}
+			D3D9DeviceContent::~D3D9DeviceContent()
+			{
+				m_d3d9->Release();
+				m_d3d9 = 0;
+			}
+
+
+			void D3D9DeviceContent::NotifyWindowClosed(D3D9RenderWindow* wnd)
+			{
+				if (m_window != wnd)
+					m_window = NULL;
 			}
 
 			RenderView* D3D9DeviceContent::create(const RenderParameters &pm)
 			{
+				if (!m_window)
+				{
+					throw Apoc3DException::createException(EX_InvalidOperation, L"Cannot create more render view when a render window has been created.");
+				}
+
 				if (!pm.IsFullForm)
 				{
 					
 				}
 				else
 				{
-					if (!m_device)
+					if (!m_window)
 					{
-						m_window = new D3D9RenderWindow(0, pm);
+						m_window = new D3D9RenderWindow(0, this, pm);
+
 						return m_window;
 					}
-					Apoc3DException::createException(EX_InvalidOperation, L"Only one render window can be created.");
 				}
-				
+				// keep the compiler happy
+				return 0;
 			}
 
 			RenderDevice* D3D9DeviceContent::getRenderDevice()
 			{
-				return m_device;
+				if (m_window)
+					return m_window->getDevice();
+				else
+				{
+
+				}
 			}
 		}
 	}

@@ -99,7 +99,7 @@ namespace Apoc3D
 				}
 
 			public:
-				
+				IndexBufferType getIndexType() const { return m_type; }
 				int getIndexSize() const { return m_type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint); }
 			};
 

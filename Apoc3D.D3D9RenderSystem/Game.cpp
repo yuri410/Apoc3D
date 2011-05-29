@@ -36,7 +36,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			Game::Game(const wchar_t* const &name)
+			Game::Game(const wchar_t* const &name, IDirect3D9* d3d9)
 				: m_maxElapsedTime(0.5f), m_targetElapsedTime(1.0f / 60.0f), m_inactiveSleepTime(20),
 				m_updatesSinceRunningSlowly1(MAXINT32), m_updatesSinceRunningSlowly2(MAXINT32),
 				m_exiting(false),
@@ -53,7 +53,7 @@ namespace Apoc3D
 				m_gameWindow->eventResume()->bind(this, &Game::Window_Resume);
 				m_gameWindow->eventSuspend()->bind(this, &Game::Window_Suspend);
 
-				m_graphicsDeviceManager = new GraphicsDeviceManager(this);
+				m_graphicsDeviceManager = new GraphicsDeviceManager(this, d3d9);
 			}
 			void Game::Release()
 			{
