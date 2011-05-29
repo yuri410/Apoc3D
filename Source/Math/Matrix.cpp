@@ -29,11 +29,12 @@ namespace Apoc3D
 {
 	namespace Math
 	{
+#if APOC3D_MATH_IMPL == APOC3D_SSE
 		//const __m128 _MASKSIGN_;	// - - - -
-		const __m128 _ZERONE_;	// 1 0 0 1
-		const __m128 _0FFF_;		// 0 * * *
-		const __m128 Sign_PNPN;	// + - + -
-		const __m128 Sign_NPNP;
+		__m128 _ZERONE_;	// 1 0 0 1
+		__m128 _0FFF_;		// 0 * * *
+		__m128 Sign_PNPN;	// + - + -
+		__m128 Sign_NPNP;
 
 		class FieldInitializer
 		{
@@ -59,7 +60,7 @@ namespace Apoc3D
 			}
 
 		} Initializer;
-
+#endif
 		const Matrix Matrix::Identity = Matrix(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
 
 		float Matrix::Inverse()

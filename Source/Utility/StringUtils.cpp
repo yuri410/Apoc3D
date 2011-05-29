@@ -130,7 +130,7 @@ namespace Apoc3D
 			stream.fill(fill);
 			stream.imbue(locale::classic());
 			if (flags)
-				stream.setf(flags, ios::adjustfield);
+				stream.setf(flags);
 			stream << val;
 			return stream.str();
 		}
@@ -178,8 +178,8 @@ namespace Apoc3D
 			stream.width(width);
 			stream.fill(fill);
 			stream.imbue(locale::classic());
-			if (flags)
-				stream.setf(flags);
+
+			stream.setf(flags, ios::floatfield);
 			stream << val;
 			return stream.str();
 		}
@@ -236,7 +236,7 @@ namespace Apoc3D
 			return ret;
 		}
 
-		bool StringUtils::StartsWidth(const String& str, const String& v, bool lowerCase)
+		bool StringUtils::StartsWidth(const String& str, const String& v, bool caseInsensitive)
 		{
 			size_t len = str.length();
 			size_t vlen = v.length();
@@ -246,13 +246,18 @@ namespace Apoc3D
 			}
 
 			String startOfThis = str.substr(0, vlen);
-			if (lowerCase)
+			if (caseInsensitive)
+			{
 				ToLowerCase(startOfThis);
 
+				String newV = v;
+				ToLowerCase(newV);
+				return (startOfThis == newV);
+			}
 			return (startOfThis == v);
 		}
 
-		bool StringUtils::EndsWidth(const String& str, const String& v, bool lowerCase)
+		bool StringUtils::EndsWidth(const String& str, const String& v, bool caseInsensitive)
 		{
 			size_t thisLen = str.length();
 			size_t patternLen = v.length();
@@ -260,9 +265,15 @@ namespace Apoc3D
 				return false;
 
 			String endOfThis = str.substr(thisLen - patternLen, patternLen);
-			if (lowerCase)
+			if (caseInsensitive)
+			{
 				ToLowerCase(endOfThis);
 
+				String newV = v;
+				ToLowerCase(newV);
+
+				return (endOfThis == newV);
+			}
 			return (endOfThis == v);
 		}
 

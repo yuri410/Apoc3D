@@ -53,7 +53,7 @@ namespace Apoc3D
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
 			static String ToString(int64 val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
-			static String ToString(float val, unsigned short precision = 2, 
+			static String ToString(float val, unsigned short precision = 10, 
 				unsigned short width = 0, char fill = ' ', 
 				std::ios::fmtflags flags = std::ios::fmtflags(0) );
 			static String ToString(const wchar_t* val, 
@@ -68,8 +68,8 @@ namespace Apoc3D
 			static void TrimRight(String& str, const String& delims = L" \t\r");
 			static vector<String> StringUtils::Split(const String& str, const String& delims = L" ", const int32 preserve = 4);
 
-			static bool StartsWidth(const String& str, const String& v, bool lowerCase);
-			static bool EndsWidth(const String& str, const String& v, bool lowerCase);
+			static bool StartsWidth(const String& str, const String& v, bool caseInsensitive = false);
+			static bool EndsWidth(const String& str, const String& v, bool caseInsensitive = false);
 
 			static void ToLowerCase(String& str);
 			static void ToUpperCase(String& str);

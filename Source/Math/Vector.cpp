@@ -24,6 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vector.h"
 
 #include "Matrix.h"
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -46,6 +49,71 @@ namespace Apoc3D
 		const Vector4 Vector4Utils::UnitZ = Vector4Utils::LDVector(0, 0, 1, 0);
 		const Vector4 Vector4Utils::UnitW = Vector4Utils::LDVector(0, 0, 0, 1);
 		const Vector4 Vector4Utils::One = Vector4Utils::LDVector(1);
+		
+		String Vector2Utils::ToTextString(const Vector2& v)
+		{
+			String result = L"[";
+			result.append(StringUtils::ToString(GetX(v), 10));
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(L"]");
+			return result;
+		}
+		String Vector2Utils::ToParsableString(const Vector2& v)
+		{
+			String result = StringUtils::ToString(GetX(v), 10);
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetY(v), 10));
+			return result;
+		}
+
+		String Vector3Utils::ToTextString(const Vector3& v)
+		{
+			String result = L"[";
+			result.append(StringUtils::ToString(GetX(v), 10));
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetZ(v), 10));
+			result.append(L"]");
+			return result;
+		}
+		String Vector3Utils::ToParsableString(const Vector3& v)
+		{
+			String result = StringUtils::ToString(GetX(v), 10);
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetZ(v), 10));
+			return result;
+		}
+
+		String Vector4Utils::ToTextString(const Vector4& v)
+		{
+			String result = L"[";
+			result.append(StringUtils::ToString(GetX(v), 10));
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetZ(v), 10));
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetW(v), 10));
+			result.append(L"]");
+			return result;
+		}
+		String Vector4Utils::ToParsableString(const Vector4& v)
+		{
+			String result = StringUtils::ToString(GetX(v), 10);
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetZ(v), 10));
+			result.append(L", ");
+			result.append(StringUtils::ToString(GetW(v), 10));
+			return result;
+		}
+
+
 
 		/************************************************************************/
 		/* Vector3Utils                                                         */

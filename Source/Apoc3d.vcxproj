@@ -83,6 +83,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Apoc3DException.h" />
+    <ClInclude Include="Collections\List.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Config\Configurable.h" />
     <ClInclude Include="Config\Configuration.h" />
