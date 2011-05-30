@@ -27,7 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "RenderSystem/Texture.h"
 #include "EffectSystem/Effect.h"
-
+#include "io/Streams.h"
+#include "io/TaggedData.h"
+#include "Core\ResourceHandle.h"
 
 namespace Apoc3D
 {
@@ -49,8 +51,9 @@ namespace Apoc3D
 
 
 
-		Material::Material()
-			: m_passFlags(0), m_priority(2), 
+		Material::Material(RenderDevice* device)
+			: m_device(device),
+			m_passFlags(0), m_priority(2), 
 			BlendFunction(BLFUN_Add), IsBlendTransparent(false), 
 			SourceBlend(BLEND_SourceAlpha), DestinationBlend(BLEND_InverseSourceAlpha),
 			AlphaTestEnable(false),
@@ -68,13 +71,29 @@ namespace Apoc3D
 
 		}
 
-		void Material::Load(istream &strm)
+
+		Effect* Material::LoadEffect(const String& name)
+		{
+			return 0;
+		}
+
+		ResourceHandle<Texture>* Material::LoadTexture(BinaryReader* br)
+		{
+			return 0;
+		}
+		void Material::SaveTexture(BinaryWriter* bw, ResourceHandle<Texture>* tex)
 		{
 
 		}
-		void Material::Save(ostream &strm)
+
+		void Material::Load(TaggedDataReader* data)
 		{
 
 		}
+		TaggedDataWriter* Material::Save()
+		{
+			return 0;
+		}
+
 	}
 };

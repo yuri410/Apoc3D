@@ -25,18 +25,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#pragma once
-
 #include "Common.h"
 #include "Core\HashHandleObject.h"
 #include "Math\Color.h"
 #include "GraphicsCommon.h"
-#include "Core/ResourceHandle.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::IO;
 
 using namespace std;
 
@@ -77,6 +75,8 @@ namespace Apoc3D
 		public:
 			static const int32 MaxTextures = 16;
 		private:
+			RenderDevice* m_device;
+
 			Effect* m_effects[MaxScenePass];
 			String m_effectName[MaxScenePass];
 
@@ -90,6 +90,9 @@ namespace Apoc3D
 
 			ResourceHandle<Texture>* LoadTexture(BinaryReader* br);
 			void SaveTexture(BinaryWriter* bw, ResourceHandle<Texture>* tex);
+
+			Effect* LoadEffect(const String& name);
+
 		public:
 
 			Blend SourceBlend;
@@ -146,10 +149,10 @@ namespace Apoc3D
 			void setPassFlags(uint64 val) { m_passFlags = val; }
 
 
-			void Load(Stream* strm);
-			void Save(Stream* strm);
+			void Load(TaggedDataReader* data);
+			TaggedDataWriter* Save();
 
-			Material();
+			Material(RenderDevice* device);
 			~Material(void);
 
 		};

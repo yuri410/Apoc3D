@@ -94,8 +94,10 @@
     <ClInclude Include="Config\XMLSection.h" />
     <ClInclude Include="Core\IHashed.h" />
     <ClInclude Include="Core\IParsable.h" />
+    <ClInclude Include="Core\Logging.h" />
     <ClInclude Include="Core\Plugin.h" />
     <ClInclude Include="Core\PluginManager.h" />
+    <ClInclude Include="Core\ResourceHandle.h" />
     <ClInclude Include="Core\ResourceManager.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Graphics\Camera.h" />
@@ -198,6 +200,7 @@
     <ClCompile Include="Core\IHashed.cpp" />
     <ClCompile Include="Core\PluginManager.cpp" />
     <ClCompile Include="Core\Resource.cpp" />
+    <ClCompile Include="Core\ResourceHandle.cpp" />
     <ClCompile Include="Core\ResourceManager.cpp" />
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
     <ClCompile Include="Engine.cpp" />

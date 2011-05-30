@@ -142,6 +142,7 @@ namespace Apoc3D
 	namespace Core
 	{		
 		class Resource;
+		template<class T> class ResourceHandle;
 		class ResourceManager;
 		class GameTime;
 
@@ -149,6 +150,8 @@ namespace Apoc3D
 		class PluginManager;
 
 		class IParsable;
+
+		class Log;
 
 		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
 		typedef fastdelegate::FastDelegate0<void> ResourceEventHandler;

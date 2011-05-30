@@ -324,6 +324,12 @@
     <ClInclude Include="Scene\ScenePass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Logging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ResourceHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -549,6 +555,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Scene\SceneProcedure.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ResourceHandle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

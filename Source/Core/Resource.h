@@ -43,24 +43,24 @@ namespace Apoc3D
 			RS_Pending = 4
 		};
 		
-		template<class T>
-		class APAPI ResourceHandle
-		{
-		private:
-			T* m_resource;
+		//template<class T>
+		//class APAPI ResourceHandle
+		//{
+		//private:
+		//	T* m_resource;
 
-			bool m_isDummy;
+		//	bool m_isDummy;
 
-		private: 
-			ResourceHandle(const ResourceHandle& another) { }
-		public:
-			ResourceHandle(T* resource)
-				: m_resource(resource)
-			{
-			}
+		//private: 
+		//	ResourceHandle(const ResourceHandle& another) { }
+		//public:
+		//	ResourceHandle(T* resource)
+		//		: m_resource(resource)
+		//	{
+		//	}
 
 
-		};
+		//};
 
 		class APAPI Resource
 		{
@@ -128,7 +128,7 @@ namespace Apoc3D
 			}
 			Resource(ResourceManager* manager, const String& hashString);
 		public: 
-			//typedef Resource ResTempHelper;   
+			typedef Resource ResHandleTemplateConstraint;   
 
 			//ResourceEventHandler* eventLoaded();
 			//ResourceEventHandler* eventUnloaded();

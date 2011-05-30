@@ -23,18 +23,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef RESOURCEHANDLE_H
 #define RESOURCEHANDLE_H
-#pragma once
 
-#include "..\Common.h"
+#include "Common.h"
 
 namespace Apoc3D
 {
 	namespace Core
 	{
 		template <class ResType>
-		class _Export ResourceHandle
+		class APAPI ResourceHandle
 		{
-			typedef typename ResType::ResTempHelper CF_XXX; 
+			typedef typename ResType::ResHandleTemplateConstraint CF_XXX; 
 
 		private:
 			const ResType* m_resource;
@@ -42,6 +41,7 @@ namespace Apoc3D
 			void _Ref(const Resource* res);
 			void _Unref(const Resource* res);
 
+			ResourceHandle(const ResourceHandle& another) { }
 		protected:
 			ResourceHandle(const ResType* res)
 			{

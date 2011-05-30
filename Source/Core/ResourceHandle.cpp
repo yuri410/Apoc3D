@@ -32,7 +32,7 @@ namespace Apoc3D
 		template<class ResType>
 		void ResourceHandle<ResType>::_Ref(const Resource* res)
 		{
-			if (res->getIsManaged())
+			if (res->isManaged())
 			{
 				res->_Ref();
 			}
@@ -41,7 +41,7 @@ namespace Apoc3D
 		template<class ResType>
 		void ResourceHandle<ResType>::_Unref(const Resource* res)
 		{
-			if (res->getIsManaged())
+			if (res->isManaged())
 			{
 				res->_Unref();
 			}
@@ -50,7 +50,7 @@ namespace Apoc3D
 		template<class ResType>
 		void ResourceHandle<ResType>::Touch()
 		{
-			if (res->getIsManaged())
+			if (res->isManaged())
 			{
 				res->Use();
 			}
