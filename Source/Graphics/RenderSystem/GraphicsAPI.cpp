@@ -24,8 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GraphicsAPI.h"
 
 #include "Apoc3DException.h"
+#include "Utility/StringUtils.h"
+
 
 using namespace Apoc3D;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -68,11 +71,15 @@ namespace Apoc3D
 				for (size_t i = 0; i<plats.size();i++)
 				{
 					APIList* facList;
-					PlatformTable::iterator iter = m_factories.find(plats[i].PlatformName);
+
+					String pName = plats[i].PlatformName;
+					StringUtils::ToLowerCase(pName);
+
+					PlatformTable::iterator iter = m_factories.find(pName);
 					if (iter == m_factories.end())
 					{
 						facList = new APIList();
-						m_factories.insert(pair<String, APIList*>(plats[i].PlatformName, facList));
+						m_factories.insert(pair<String, APIList*>(pName, facList));
 					}
 					else
 					{
@@ -117,7 +124,11 @@ namespace Apoc3D
 				const vector<const PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
 				for (size_t i = 0; i < plats.size(); i++)
 				{
-					PlatformTable::iterator iter = m_factories.find(plats[i].PlatformName);
+
+					String pName = plats[i].PlatformName;
+					StringUtils::ToLowerCase(pName);
+
+					PlatformTable::iterator iter = m_factories.find(pName);
 
 					if (iter != m_factories.end())
 					{
@@ -139,6 +150,8 @@ namespace Apoc3D
 
 			int GraphicsAPIManager::Comparison(const Entry& a, const Entry& b)
 			{
+				if (a.PlatformMark == b.PlatformMark)
+					return 0;
 				return a.PlatformMark < b.PlatformMark ? -1 : 1;
 			}
 
@@ -147,11 +160,11 @@ namespace Apoc3D
 			DeviceContent* GraphicsAPIManager::CreateDeviceContent()
 			{
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-				const String OSName = L"Windows";
+				const String OSName = L"windows";
 #elif APOC3D_PLATFORM == APOC3D_PLATFORM_LINUX
-				const String OSName = L"Linux";
+				const String OSName = L"linux";
 #elif APOC3D_PLATFORM == APOC3D_PLATFORM_MAC
-				const String OSName = L"Mac";
+				const String OSName = L"mac";
 #endif
 
 				

@@ -79,6 +79,13 @@ namespace Apoc3D
 
 				void* UserData;
 
+				RenderParameters()
+					: IsWindowd(false), IsFullForm(false), BackBufferWidth(0), BackBufferHeight(0),
+					DepthBufferFormat(DEPFMT_Depth16), ColorBufferFormat(FMT_Unknown), FSAASampleCount(0), EnableVSync(false),
+					TargetHandle(0), UserData(0)
+				{
+					
+				}
 			};
 
 			/* Represent a graphics device of a graphics API. It can create one or more RenderViews.

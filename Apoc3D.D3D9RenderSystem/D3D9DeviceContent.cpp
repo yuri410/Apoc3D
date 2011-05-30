@@ -57,7 +57,7 @@ namespace Apoc3D
 
 			RenderView* D3D9DeviceContent::create(const RenderParameters &pm)
 			{
-				if (!m_window)
+				if (m_window)
 				{
 					throw Apoc3DException::createException(EX_InvalidOperation, L"Cannot create more render view when a render window has been created.");
 				}

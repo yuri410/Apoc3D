@@ -50,14 +50,26 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	DeviceContent* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContent();
 
 	RenderParameters params;
+	params.BackBufferHeight = 720;
+	params.BackBufferWidth = 1280;
+	params.ColorBufferFormat = FMT_X8R8G8B8;
+	params.DepthBufferFormat = DEPFMT_Depth24Stencil8;
+	params.EnableVSync = true;
+	params.FSAASampleCount = 4;
+	params.IsFullForm = true;
+	params.IsWindowd = true;
+	
 
 	RenderView* view =  devContent->Create(params);
 
 	RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
 
-	wnd->Run();
+	if (wnd)
+	{
+		wnd->Run();
+		delete wnd;
+	}
 
-	delete wnd;
 	delete devContent;
 
 	Engine::Shutdown();

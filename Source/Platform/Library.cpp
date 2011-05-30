@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 #	 include <windows.h>
 #	 define LIB_HANDLE HMODULE
-#    define LIB_LOAD( a ) LoadLibraryEx( a, NULL, LOAD_WITH_ALTERED_SEARCH_PATH )
+#    define LIB_LOAD( a ) LoadLibraryEx( a, NULL, 0 )
 #    define LIB_GETSYM( a, b ) GetProcAddress( a, b )
 #    define LIB_UNLOAD( a ) !FreeLibrary( a )
 #elif APOC3D_PLATFORM == APOC3D_PLATFORM_LINUX
@@ -42,6 +42,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #    define LIB_UNLOAD( a ) mac_unloadExeBundle( a )
 #endif
 
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
+
 namespace Apoc3D
 {
 	namespace Platform
@@ -50,7 +54,16 @@ namespace Apoc3D
 
 		void Library::Load()
 		{
-			LIB_HANDLE handle = LIB_LOAD(m_name.c_str());
+			String name = m_name;
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+			if (!StringUtils::EndsWidth(name, L".dll", true))
+				name.append(L".dll");
+#elif APOC3D_PLATFORM == APOC3D_PLATFORM_LINUX
+			if (!StringUtils::EndsWidth(name, L".so", true))
+				name.append(L".so");
+#elif APOC3D_PLATFORM == APOC3D_PLATFORM_MAC
+#endif
+			LIB_HANDLE handle = LIB_LOAD(name.c_str());
 			memcpy(&m_handle, &handle, sizeof(LIB_HANDLE));
 		}
 

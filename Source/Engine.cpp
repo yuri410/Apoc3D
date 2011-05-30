@@ -44,6 +44,7 @@ namespace Apoc3D
 	{
 		FileSystem::Initialize();
 		ConfigurationManager::Initialize();
+		GraphicsAPIManager::Initialize();
 
 		PluginManager::Initialize();
 		if (mconf)
@@ -56,7 +57,6 @@ namespace Apoc3D
 		}
 		
 
-		GraphicsAPIManager::Initialize();
 	}
 	void Engine::Shutdown()
 	{

@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Core;
 
-PLUGIN Plugin* Apoc3DGetPlugin();
+//extern "C" PLUGIN Plugin* Apoc3DGetPlugin();
 
 
 namespace Apoc3D
