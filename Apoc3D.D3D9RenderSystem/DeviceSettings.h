@@ -45,6 +45,20 @@ namespace Apoc3D
 					: AdapterFormat(D3DFMT_UNKNOWN), DeviceType(D3DDEVTYPE_HAL), AdapterOrdinal(0), CreationFlags(0)
 				{
 					memset(&PresentParameters, 0,  sizeof(PresentParameters));
+					DeviceType = D3DDEVTYPE_HAL;
+					AdapterFormat = D3DFMT_UNKNOWN;
+
+					CreationFlags = D3DCREATE_HARDWARE_VERTEXPROCESSING;
+
+					PresentParameters.BackBufferFormat = D3DFMT_UNKNOWN;
+					PresentParameters.BackBufferCount = 1;
+					PresentParameters.MultiSampleQuality = D3DMULTISAMPLE_NONE;
+					PresentParameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
+					PresentParameters.EnableAutoDepthStencil = TRUE;
+					PresentParameters.AutoDepthStencilFormat = D3DFMT_UNKNOWN;
+					PresentParameters.Flags = D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
+					PresentParameters.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+					PresentParameters.Windowed = TRUE;
 				}
 			};
 
@@ -106,8 +120,8 @@ namespace Apoc3D
 					: AdapterOrdinal(0), DeviceType(D3DDEVTYPE_HAL), 
 					RefreshRate(0), BackBufferWidth(0), BackBufferHeight(0),
 					BackBufferFormat(D3DFMT_UNKNOWN), BackBufferCount(0),
-					Windowed(false), EnableVSync(false), Multithreaded(false),
-					MultiSampleType(D3DMULTISAMPLE_NONE), MultiSampleQuality(0),
+					Windowed(true), EnableVSync(true), Multithreaded(false),
+					MultiSampleType(D3DMULTISAMPLE_NONE), MultiSampleQuality(MAXINT32),
 					DepthStencilFormat(D3DFMT_UNKNOWN)
 				{
 

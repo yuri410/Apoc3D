@@ -51,7 +51,7 @@ namespace Apoc3D
 				typedef unordered_map<String, APIList*> PlatformTable;
 				PlatformTable m_factories;
 				
-				static int Comparison(const Entry& a, const Entry& b);
+				static bool Comparison(const Entry& a, const Entry& b);
 
 			public:
 				GraphicsAPIManager() { }

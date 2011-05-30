@@ -36,26 +36,26 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 
-			int CompareDisplayMode(const D3DDISPLAYMODE& x, const D3DDISPLAYMODE& y)
+			bool CompareDisplayMode(const D3DDISPLAYMODE& x, const D3DDISPLAYMODE& y)
 			{
 				if (x.Width > y.Width)
-					return 1;
+					return true;//1;
 				if (x.Width < y.Width)
-					return -1;
+					return false;//-1;
 				if (x.Height > y.Height)
-					return 1;
+					return true;//1;
 				if (x.Height < y.Height)
-					return -1;
+					return false;//-1;
 				if (x.Format > y.Format)
-					return 1;
+					return true;//1;
 				if (x.Format < y.Format)
-					return -1;
+					return false;//-1;
 				if (x.RefreshRate > y.RefreshRate)
-					return 1;
+					return true;//1;
 				if (x.RefreshRate < y.RefreshRate)
-					return -1;
+					return false;//-1;
 
-				return 0;
+				return false;
 			}
 
 			bool Enumeration::m_hasMinimumSettings = false;
@@ -161,7 +161,7 @@ namespace Apoc3D
 
 			void Enumeration::EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, vector<D3DFORMAT>& adapterFormats)
 			{
-				D3DDEVTYPE devTypes[] = { D3DDEVTYPE_HAL, D3DDEVTYPE_SW };
+				D3DDEVTYPE devTypes[] = { D3DDEVTYPE_HAL, D3DDEVTYPE_REF };
 
 				for (size_t i=0;i<sizeof(devTypes)/sizeof(D3DDEVTYPE);i++)
 				{
@@ -193,7 +193,7 @@ namespace Apoc3D
 
 				for (size_t i=0;i<adapterFormats.size();i++)
 				{
-					for (size_t j=0;j<sizeof(backBufferFormats)/sizeof(D3DFORMAT);i++)
+					for (size_t j=0;j<sizeof(backBufferFormats)/sizeof(D3DFORMAT);j++)
 					{
 						for (int windowed = 0; windowed < 2; windowed++)
 						{
@@ -203,14 +203,14 @@ namespace Apoc3D
 							HRESULT hr = d3d9->CheckDeviceType(adapterInfo->AdapterOrdinal, deviceInfo->DeviceType,
 								adapterFormats[i], backBufferFormats[j], (windowed == 1) ? TRUE : FALSE);
 
-							if (!FAILED(hr))
+							if (FAILED(hr))
 								continue;
 							
 
 							hr = d3d9->CheckDeviceFormat(adapterInfo->AdapterOrdinal, deviceInfo->DeviceType,
 								adapterFormats[i], D3DUSAGE_QUERY_POSTPIXELSHADER_BLENDING, D3DRTYPE_TEXTURE, backBufferFormats[j]);
 							
-							if (!FAILED(hr))
+							if (FAILED(hr))
 								continue;
 
 
@@ -623,10 +623,9 @@ namespace Apoc3D
 					D3DMULTISAMPLE_TYPE type = combo->MultisampleTypes[i];
 					int quality = combo->MultisampleQualities[i];
 
-					if(type == optimal.PresentParameters.MultiSampleType && 
-						quality == optimal.PresentParameters.MultiSampleQuality)
+					if(type == optimal.PresentParameters.MultiSampleType)// &&  quality == optimal.PresentParameters.MultiSampleQuality
 					{
-						ranking += 1.0f;
+						ranking += 1.0f + quality * 0.5f;
 						break;
 					}
 				}
@@ -708,10 +707,10 @@ namespace Apoc3D
 					for(size_t i = 0; i < combo->MultisampleTypes.size(); i++)
 					{
 						D3DMULTISAMPLE_TYPE type = combo->MultisampleTypes[i];
-						int quality = combo->MultisampleQualities[0];
+						int quality = combo->MultisampleQualities[i];
 
-						if(abs(type - input.PresentParameters.MultiSampleType) < abs(bestType -
-							input.PresentParameters.MultiSampleType))
+						if(abs((int32)type - (int32)input.PresentParameters.MultiSampleType) < abs((int32)bestType -
+							(int32)input.PresentParameters.MultiSampleType))
 						{
 							bestType = type;
 							bestQuality = min(quality - 1, input.PresentParameters.MultiSampleQuality);

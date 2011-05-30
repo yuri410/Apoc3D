@@ -85,6 +85,8 @@ namespace Apoc3D
 
 				HRESULT hr = m_device->Reset(&m_currentSetting->D3D9.PresentParameters);
 
+				PropogateSettings();
+
 				m_game->OnDeviceReset();
 				return hr;
 			}
@@ -231,6 +233,7 @@ namespace Apoc3D
 				if (result == D3DERR_DEVICELOST)
 				{
 					m_deviceLost = true;
+					return;
 				}
 				else
 				{
@@ -245,6 +248,7 @@ namespace Apoc3D
 					}				
 				}
 				// UpdateDeviceStats();
+				PropogateSettings();
 
 				m_game->Initialize();
 				m_game->LoadContent();

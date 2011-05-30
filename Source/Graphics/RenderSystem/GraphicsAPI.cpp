@@ -148,11 +148,12 @@ namespace Apoc3D
 				}
 			}
 
-			int GraphicsAPIManager::Comparison(const Entry& a, const Entry& b)
+			bool GraphicsAPIManager::Comparison(const Entry& a, const Entry& b)
 			{
-				if (a.PlatformMark == b.PlatformMark)
-					return 0;
-				return a.PlatformMark < b.PlatformMark ? -1 : 1;
+				return a.PlatformMark < b.PlatformMark;
+				//if (a.PlatformMark == b.PlatformMark)
+					//return 0;
+				//return a.PlatformMark < b.PlatformMark ? -1 : 1;
 			}
 
 			/** Find a best suited a Graphics API for current platform and create a device content.
