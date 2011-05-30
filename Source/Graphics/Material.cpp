@@ -85,8 +85,6 @@ namespace Apoc3D
 		static String TAG_3_AlphaRef = L"AlphaReference";
 
 
-		//static String TAG_3_Effect = L"Effect";
-
 
 
 		Material::Material(RenderDevice* device)

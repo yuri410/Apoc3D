@@ -102,7 +102,7 @@ typedef BatchHandle HashHandle;
 #include <cassert>
 
 
-#pragma warning(push)
+
 #pragma warning(disable:4251)
 #include <string>
 #include <vector>
@@ -126,7 +126,7 @@ typedef BatchHandle HashHandle;
 
 #include "FastDelegate\FastDelegate.h"
 
-#pragma warning(pop)
+
 
 // Forward Declarations
 namespace Apoc3D
