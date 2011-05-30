@@ -21,30 +21,20 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENE_PROCEDURE_H
-#define SCENE_PROCEDURE_H
-#pragma once
 
-#include "..\Common.h"
+#include "SceneRenderer.h"
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace Scene
 	{
-		/* Represent a sequence of scene passes that can finally 
-		   generate end result.
-
-		   A SceneProcedure can contains both normal passes like shadow
-		   mapping and post effect passes like bloom & HDR.
-		*/
-		class APAPI SceneProcedure
+		SceneRenderer::SceneRenderer(void)
 		{
-		public:
-			SceneProcedure(void);
-			~SceneProcedure(void);
+		}
 
-			void Invoke();
-		};
+
+		SceneRenderer::~SceneRenderer(void)
+		{
+		}
 	};
 };
-#endif

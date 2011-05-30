@@ -87,7 +87,7 @@ namespace Apoc3D
 				settings.DeviceType = D3DDEVTYPE_HAL;
 				settings.EnableVSync = params.EnableVSync;
 				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
-				settings.Multithreaded = false;
+				settings.Multithreaded = true;
 				settings.RefreshRate = 0;
 				settings.Windowed = params.IsWindowd;				
 				

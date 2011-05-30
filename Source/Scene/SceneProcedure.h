@@ -21,34 +21,28 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MICROEFFECTCODEPARSER_H
-#define MICROEFFECTCODEPARSER_H
+#ifndef SCENE_PROCEDURE_H
+#define SCENE_PROCEDURE_H
+
 #include "Common.h"
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace Scene
 	{
-		namespace EffectSystem
+		/* Represent a sequence of scene passes that can finally 
+		   generate end result.
+
+		   A SceneProcedure can be either normal passes (like shadow
+		   mapping) or post effect passes (like bloom & HDR).
+		*/
+		class APAPI SceneProcedure
 		{
-			/* Implements a micro effect code parser. 
-			   It parses the code and generate useful information
-			   as the following described:
+		public:
+			SceneProcedure(void);
+			~SceneProcedure(void);
 
-			   Code: main computational code
-			   Input: input 
-			   Output: output 
-			   Parameter: EffectParameter
-
-			   EffectManager uses this to create new Effect from its managed MicroEffect from
-			   shader source code.
-			*/
-			class APAPI MicroEffectCodeParser
-			{
-			public:
-				MicroEffectCodeParser(void);
-				~MicroEffectCodeParser(void);
-			};
+			void Invoke();
 		};
 	};
 };

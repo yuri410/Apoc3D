@@ -31,8 +31,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core\HashHandleObject.h"
 #include "Math\Color.h"
 #include "GraphicsCommon.h"
+#include "Core/ResourceHandle.h"
 
-using namespace Apoc3D::EffectSystem;
+using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -43,79 +44,110 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Defines colors, textures and effect info for a geometry
+		enum MaterialCustomParameterType
+		{
+			MTRLPT_Float,
+			MTRLPT_Vector2,
+			MTRLPT_Vector4,
+			MTRLPT_Boolean,
+			MTRLPT_Int32
+		};
 
-		   Material have some Effects. Each Effect is a set of Effect Atoms. 
-		   It is an indicator that tells the batching system all passes 
-		   this Material supports.
+		struct MaterialCustomParameter
+		{
+			MaterialCustomParameterType Type;
+			byte buffer[16];
+		};
 
-		   The other parameters are auto mapped with parameters in atom effects.
+		template class APAPI unordered_map<uint64, Effect*>;
+		template class APAPI unordered_map<String, uint64>;
+		template class APAPI vector<Texture*>;
+
+		/* Defines colors, textures, effect and etc. for a geometry.
+
+		   Material have some Effects. Scene will be rendered in single or
+		   multiple pass. Each pass has sequence number and its corresponding mask value.
+		   
+		   First the mask value will do and op with pass flags of the material. If that passes, 
+		   a pass effect will be retrieved from the material with the pass sequence number
+		   as index.
 		*/
 		class APAPI Material : public HashHandleObject
 		{
 		public:
-			
+			static const int32 MaxTextures = 16;
 		private:
-			unordered_map<uint64, Effect*> m_eff;
-			vector<Texture*> m_tex;
+			Effect* m_effects[MaxScenePass];
+			String m_effectName[MaxScenePass];
 
-			Color4 m_ambient;
-			Color4 m_diffuse;
-			Color4 m_emissive;
-			Color4 m_Specular;
-			float m_power;
-
-			Blend m_srcBlend;
-			Blend m_dstBlend;
-			BlendFunction m_blendFunction;
-			bool m_alphaBlendEnable;
-
-			bool m_alphaTestEnable;
-
-			bool m_zWriteEnable;
-			bool m_zTestEnable;
+			unordered_map<String, MaterialCustomParameter> m_customParametrs;
+			ResourceHandle<Texture>* m_tex[MaxTextures];
+			String m_texName[MaxTextures];
 
 			uint64 m_passFlags;
 
 			int32 m_priority;
+
+			ResourceHandle<Texture>* LoadTexture(BinaryReader* br);
+			void SaveTexture(BinaryWriter* bw, ResourceHandle<Texture>* tex);
 		public:
+
+			Blend SourceBlend;
+			Blend DestinationBlend;
+			BlendFunction BlendFunction;
+			bool IsBlendTransparent;
+
+			CullMode Cull;
+
+			bool AlphaTestEnable;
+
+			bool DepthWriteEnable;
+			bool DepthTestEnable;
+
+			/** the ambient component of this material
+			*/
+			Color4 Ambient;
+			/** the diffuse component of this material
+			*/
+			Color4 Diffuse;
+			/** the emissive component of this material
+			*/
+			Color4 Emissive;
+			/** the specular component of this material
+			*/
+			Color4 Specular;
+			/** the specular shininess
+			*/
+			float Power;
+
+
+			const MaterialCustomParameter& getCustomParameter() const;
+			void setCustomParameter(const MaterialCustomParameter& value);
+
+			Effect* getPassEffect(int index) const { return m_effects[index]; }
+			void setPassEffect(int index, Effect* eff) { m_effects[index] = eff; }
+
 			/* Gets the texture at texture layer idx
 			*/
-			Texture* getTexture(int idx) const { return m_tex[idx]; }
+			ResourceHandle<Texture>* getTexture(int idx) const { return m_tex[idx]; }
 			/* Sets the texture at texture layer idx
 			*/
-			void setTexture(int idx, Texture* value) { m_tex[idx] = value; }
-
-			/* Gets the ambient component of this material
-			*/
-			const Color4& getAmbient() const { return m_ambient; }
-			/* Gets the diffuse component of this material
-			*/
-			const Color4& getDiffuse() const { return m_diffuse; }
-			/* Gets the emissive component of this material
-			*/
-			const Color4& getEmissive() const { return m_emissive; }
-			/* Gets the specular component of this material
-			*/
-			const Color4& getSpecular() const { return m_Specular; }
-			/* Gets the specular shineness
-			*/
-			const float getPower() const { return m_power; }
+			void setTexture(int idx, ResourceHandle<Texture>* value) { m_tex[idx] = value; }
 
 			const uint32 getPriority() const { return m_priority; }
 			void setPriority(uint32 value) { m_priority = value; }
 
+			/** Gets the pass flags.
+				The pass flag is a bit field used for selecting material when rendering.
+				If a bit is one, objects with this material will be rendered when the 
+				scene render script has requested that bit.
+			*/
 			uint64 getPassFlags() const { return m_passFlags; }
 			void setPassFlags(uint64 val) { m_passFlags = val; }
 
-			void setAmbient(const Color4& value) { m_ambient = value; }
-			void setDiffuse(const Color4& value) { m_diffuse = value; }
-			void setEmissive(const Color4& value) { m_emissive = value; }
-			void setSpecular(const Color4& value) { m_Specular = value; }
-			void setPower(const float value) { m_power = value; }
 
-			void Load(istream &strm);
-			void Save(ostream &strm);
+			void Load(Stream* strm);
+			void Save(Stream* strm);
 
 			Material();
 			~Material(void);

@@ -50,6 +50,9 @@ namespace Apoc3D
 			T* m_resource;
 
 			bool m_isDummy;
+
+		private: 
+			ResourceHandle(const ResourceHandle& another) { }
 		public:
 			ResourceHandle(T* resource)
 				: m_resource(resource)

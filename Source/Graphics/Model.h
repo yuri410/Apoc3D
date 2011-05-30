@@ -26,8 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 
-#include "..\Common.h"
-#include "..\Core\Resource.h"
+#include "Common.h"
+#include "Core\Resource.h"
 
 using namespace Apoc3D::Core;
 

@@ -53,7 +53,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;APOC3D_DLLEX;LITTLE_ENDIAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>Common.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <StructMemberAlignment>Default</StructMemberAlignment>
@@ -115,6 +115,7 @@
     <ClInclude Include="Math\ColorValue.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />
+    <ClInclude Include="Platform\Thread.h" />
     <ClInclude Include="Utility\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
     <ClInclude Include="Graphics\RenderSystem\DeviceContent.h" />
@@ -173,9 +174,9 @@
     <ClInclude Include="Graphics\Material.h" />
     <ClInclude Include="nedmalloc\malloc.c" />
     <ClInclude Include="Scene\SceneNode.h" />
-    <ClInclude Include="Graphics\ScenePass.h" />
-    <ClInclude Include="Graphics\SceneRenderer.h" />
-    <ClInclude Include="Graphics\SceneProcedure.h" />
+    <ClInclude Include="Scene\ScenePass.h" />
+    <ClInclude Include="Scene\SceneRenderer.h" />
+    <ClInclude Include="Scene\SceneProcedure.h" />
     <ClInclude Include="Scene\SimpleSceneManager.h" />
     <ClInclude Include="Graphics\RenderSystem\Texture.h" />
     <ClInclude Include="Utility\StringTable.h" />
@@ -258,9 +259,9 @@
     <ClCompile Include="Math\Frustum.cpp" />
     <ClCompile Include="Graphics\Material.cpp" />
     <ClCompile Include="Scene\SceneNode.cpp" />
-    <ClCompile Include="Graphics\ScenePass.cpp" />
-    <ClCompile Include="Graphics\SceneRenderer.cpp" />
-    <ClCompile Include="Graphics\SceneProcedure.cpp" />
+    <ClCompile Include="Scene\ScenePass.cpp" />
+    <ClCompile Include="Scene\SceneRenderer.cpp" />
+    <ClCompile Include="Scene\SceneProcedure.cpp" />
     <ClCompile Include="Scene\SimpleSceneManager.cpp" />
     <ClCompile Include="Graphics\RenderSystem\Texture.cpp" />
     <ClCompile Include="Utility\StringTable.cpp" />

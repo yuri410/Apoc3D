@@ -21,19 +21,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#include "SceneRenderer.h"
+#include "ScenePass.h"
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace Scene
 	{
-		SceneRenderer::SceneRenderer(void)
+		ScenePass::ScenePass(void)
 		{
 		}
 
 
-		SceneRenderer::~SceneRenderer(void)
+		ScenePass::~ScenePass(void)
 		{
 		}
 	};

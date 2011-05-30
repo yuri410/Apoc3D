@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef EFFECTPARAMETERS_H
 #define EFFECTPARAMETERS_H
+
 #include "Common.h"
 
 namespace Apoc3D

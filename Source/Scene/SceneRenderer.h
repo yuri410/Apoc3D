@@ -23,13 +23,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef SCENERENDERER_H
 #define SCENERENDERER_H
-#pragma once
 
-#include "..\Common.h"
+#include "Common.h"
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace Scene
 	{
 		/* Renders a scene with a particular render script.
 		*/

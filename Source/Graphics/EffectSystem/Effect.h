@@ -33,7 +33,7 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			/* Represents a sequencal combination of atom effects.
+			/* Represents a sequencal combination of micro effects.
 			*/
 			class APAPI Effect
 			{

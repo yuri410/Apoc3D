@@ -58,7 +58,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	params.FSAASampleCount = 4;
 	params.IsFullForm = true;
 	params.IsWindowd = true;
-	
+
 
 	RenderView* view =  devContent->Create(params);
 

@@ -25,18 +25,41 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Material.h"
 
+#include "RenderSystem/Texture.h"
+#include "EffectSystem/Effect.h"
+
+
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		Material::Material()
-			: m_passFlags(0), m_priority(0), 
-			m_blendFunction(BLFUN_Add), m_alphaBlendEnable(false), m_srcBlend(BLEND_SourceAlpha), m_dstBlend(BLEND_InverseSourceAlpha),
-			m_alphaTestEnable(false),
-			m_zWriteEnable(true), m_zTestEnable(true),
-			m_ambient(0,0,0,0), m_diffuse(1,1,1,1), m_Specular(0,0,0,0), m_emissive(0,0,0,0), m_power(0)
-		{
+		static String TAG_2_IsTransparent = L"IsTransparent";
+		static String TAG_2_CullMode = L"CullMode";
+		static String TAG_2_ZEnabled = L"ZEnabled";
+		static String TAG_2_ZWriteEnabled = L"ZWriteEnabled";
+		static String TAG_2_AlphaRef = L"AlphaRef";
+		static String TAG_2_IsVegetation = L"IsVegetation";
+		static String TAG_2_RenderPriority = L"RenderPriority";
 
+		static String TAG_2_MaterialFlagTag = L"Flags";
+		static String TAG_2_HasTextureTag = L"HasTexture";
+		static String TAG_2_TextureTag = L"Texture";
+		static String TAG_2_EffectTag = L"Effect";
+
+
+
+
+		Material::Material()
+			: m_passFlags(0), m_priority(2), 
+			BlendFunction(BLFUN_Add), IsBlendTransparent(false), 
+			SourceBlend(BLEND_SourceAlpha), DestinationBlend(BLEND_InverseSourceAlpha),
+			AlphaTestEnable(false),
+			DepthWriteEnable(true), DepthTestEnable(true),
+			Ambient(0,0,0,0), Diffuse(1,1,1,1), Specular(0,0,0,0), Emissive(0,0,0,0), Power(0),
+			Cull(CULL_None)
+		{
+			memset(m_tex, 0, sizeof(m_tex));
+			memset(m_effects, 0, sizeof(m_effects));
 		}
 
 

@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define SIMPLESCENEMANAGER_H
 #pragma once
 
-#include "..\Common.h"
+#include "Common.h"
 #include "SceneManager.h"
 #include "SceneNode.h"
 

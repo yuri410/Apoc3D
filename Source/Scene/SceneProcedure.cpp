@@ -21,31 +21,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENEPASS_H
-#define SCENEPASS_H
-#pragma once
-#include "..\Common.h"
+#include "SceneProcedure.h"
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace Scene
 	{
-		/* Define a sequence of operation for a rendering result.
-
-		   A scene pass is a scene rendering operation that usually 
-		   renders objects to a RenderTarget (or the like) which can 
-		   be used for furthur scene rendering passes.
-		   
-		   The ScenePass is a part of render script that controls 
-		   a pass of scene rendering. It selects objects for rendering
-		   according to EffectDescription in the script.
-		*/
-		class APAPI ScenePass
+		SceneProcedure::SceneProcedure(void)
 		{
-		public:
-			ScenePass(void);
-			~ScenePass(void);
-		};
+		}
+
+
+		SceneProcedure::~SceneProcedure(void)
+		{
+		}
 	};
 };
-#endif

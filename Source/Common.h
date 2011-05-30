@@ -135,9 +135,9 @@ namespace Apoc3D
 	
 	
 	typedef std::wstring String;
-	//class APAPI wstring;
+
 #	define StringCompare(a, b) !a.compare(b)
-	//const int32 MaxInt32 = 0x7fffffff;
+
 
 	namespace Core
 	{		
@@ -222,19 +222,17 @@ namespace Apoc3D
 		class FileLocation;
 		class MemoryLocation;
 	};
-	namespace EffectSystem
-	{
-		class Effect;
-		class EffectManager;
-		class EffectAtom;
-	};
+
 	namespace Scene
 	{
+		class ScenePass;
+		class SceneProcedure;
+		class SceneRenderer;
+
 		class SceneManager;
 		class SceneNode;
 		class SceneObject;
 		class BatchData;
-
 	};
 	namespace Graphics
 	{
@@ -245,12 +243,15 @@ namespace Apoc3D
 		class RenderOperation;
 		class RenderOperationBuffer;
 		class Material;
-		class SceneRenderer;
 		class GraphicsDeviceManager;
-		class ScenePass;
-		class SceneProcedure;
-		class SceneRenderer;
 
+		namespace EffectSystem
+		{
+			class Effect;
+			class EffectManager;
+			class MicroEffect;
+			class MicroEffectCodeParser;
+		};
 		namespace RenderSystem
 		{
 			class GraphicsAPIManager;

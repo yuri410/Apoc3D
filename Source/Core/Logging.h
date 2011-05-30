@@ -21,19 +21,25 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "ScenePass.h"
+#ifndef LOGGING_H
+#define LOGGING_H
+
+#include "Common.h"
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace Core
 	{
-		ScenePass::ScenePass(void)
+		class APAPI Log
 		{
-		}
 
+		};
 
-		ScenePass::~ScenePass(void)
+		class APAPI LogManager
 		{
+
 		}
-	};
-};
+	}
+}
+
+#endif
