@@ -22,10 +22,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef APDCommon
-#define APDCommon
+#ifndef APDCOMMON_H
+#define APDCOMMON_H
 
-#include "Common.h"
+#include "Engine.h"
 
 
 #endif

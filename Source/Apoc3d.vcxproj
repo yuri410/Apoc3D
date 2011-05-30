@@ -97,6 +97,7 @@
     <ClInclude Include="Core\Plugin.h" />
     <ClInclude Include="Core\PluginManager.h" />
     <ClInclude Include="Core\ResourceManager.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="Graphics\Camera.h" />
     <ClInclude Include="Core\CoreCommon.h" />
     <ClInclude Include="core\resource.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="Core\Resource.cpp" />
     <ClCompile Include="Core\ResourceManager.cpp" />
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Graphics\LockData.cpp" />
     <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp" />
     <ClCompile Include="Graphics\RenderSystem\ObjectFactory.cpp" />

@@ -21,48 +21,29 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "APDCommon.h"
 
-#include "Graphics/RenderSystem/GraphicsAPI.h"
-#include "Graphics/RenderSystem/DeviceContent.h"
-#include "Graphics/RenderSystem/RenderWindow.h"
+#ifndef ENGINE_H
+#define ENGINE_H
 
-#include <Windows.h>
-
-#include <SDKDDKVer.h>
+#include "Common.h"
 
 using namespace std;
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
 
-
-INT WINAPI wWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPTSTR    lpCmdLine,
-                     int       nCmdShow)
+namespace Apoc3D
 {
-	ManualStartConfig escon;
-	escon.PluginList.push_back(L"Apoc3D.D3D9RenderSystem");
+	template class APAPI vector<String>;
 
-	Engine::Initialize(&escon);
+	struct APAPI ManualStartConfig
+	{
+		vector<String> PluginList;
+	};
 
-	DeviceContent* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContent();
-
-	RenderParameters params;
-
-	RenderView* view =  devContent->Create(params);
-
-	RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
-
-	wnd->Run();
-
-	delete wnd;
-	delete devContent;
-
-	Engine::Shutdown();
-
-	return 0;
+	class APAPI Engine
+	{
+	public:
+		static void Initialize(const ManualStartConfig* mconf = 0);
+		static void Shutdown();
+	};
 }
 
-
+#endif

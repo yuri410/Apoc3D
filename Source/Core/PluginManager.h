@@ -64,9 +64,10 @@ namespace Apoc3D
 
 			void OnPluginLoad(const Plugin* plg, int32 index, int32 count);
 			void OnPluginError(const Plugin* plg);
-
-			PluginManager() { }
+		
 		public:
+			PluginManager() { }
+		
 			PluginLoadCallBack& eventPluginLoad() { return m_eventPluginLoad; }
 			PluginErrorBack& eventPluginError() { return m_eventPluginError; }
 

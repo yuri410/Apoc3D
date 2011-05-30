@@ -40,9 +40,9 @@ namespace Apoc3D
 		private:
 			typedef unordered_map<String, Configuration*> ConfigTable;
 			ConfigTable m_configs;
-
-			ConfigurationManager();
 		public:
+			ConfigurationManager();
+		
 			virtual ~ConfigurationManager()
 			{
 				for(ConfigTable::iterator iter = m_configs.begin(); 

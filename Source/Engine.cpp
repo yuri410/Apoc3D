@@ -21,48 +21,45 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "APDCommon.h"
 
+#include "Engine.h"
+
+
+
+#include "Vfs/FileSystem.h"
+#include "Config/ConfigurationManager.h"
 #include "Graphics/RenderSystem/GraphicsAPI.h"
-#include "Graphics/RenderSystem/DeviceContent.h"
-#include "Graphics/RenderSystem/RenderWindow.h"
+#include "Core/PluginManager.h"
 
-#include <Windows.h>
 
-#include <SDKDDKVer.h>
-
-using namespace std;
-using namespace Apoc3D;
+using namespace Apoc3D::Core;
+using namespace Apoc3D::VFS;
+using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 
-
-INT WINAPI wWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPTSTR    lpCmdLine,
-                     int       nCmdShow)
+namespace Apoc3D
 {
-	ManualStartConfig escon;
-	escon.PluginList.push_back(L"Apoc3D.D3D9RenderSystem");
+	void Engine::Initialize(const ManualStartConfig* mconf)
+	{
+		FileSystem::Initialize();
+		ConfigurationManager::Initialize();
 
-	Engine::Initialize(&escon);
+		PluginManager::Initialize();
+		if (mconf)
+		{
+			PluginManager::getSingleton().LoadPlugins(mconf->PluginList);
+		}
+		else
+		{
+			PluginManager::getSingleton().LoadPlugins();
+		}
+		
 
-	DeviceContent* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContent();
+		GraphicsAPIManager::Initialize();
+	}
+	void Engine::Shutdown()
+	{
 
-	RenderParameters params;
-
-	RenderView* view =  devContent->Create(params);
-
-	RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
-
-	wnd->Run();
-
-	delete wnd;
-	delete devContent;
-
-	Engine::Shutdown();
-
-	return 0;
+	}
 }
-
-

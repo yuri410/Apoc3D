@@ -34,6 +34,10 @@ namespace Apoc3D
 {
 	namespace VFS
 	{
+		template class APAPI vector<String>;
+		template class APAPI unordered_map<String, Archive*>;
+		template class APAPI unordered_map<String, ArchiveFactory*>;
+
 		class APAPI FileSystem : public Singleton<FileSystem>
 		{
 		private:
@@ -70,9 +74,8 @@ namespace Apoc3D
 			Archive* CreateArchive(const FileLocation* fl);
 			Archive* CreateArchive(const String& file);
 
-
-			FileSystem(void) { }
 		public:
+			FileSystem(void) { }
 			~FileSystem(void);
 
 			//static void Initialize();

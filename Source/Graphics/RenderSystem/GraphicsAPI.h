@@ -35,8 +35,8 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/* Manages all registered graphics API. 
-			* Creates device content best for the platform.
+			/* Manages all registered graphics APIs. 
+			* Creates device content best suited for the platform.
 			*/
 			class APAPI GraphicsAPIManager : public Singleton<GraphicsAPIManager>
 			{
@@ -53,9 +53,9 @@ namespace Apoc3D
 				
 				static int Comparison(const Entry& a, const Entry& b);
 
-			protected:
-				GraphicsAPIManager() { }
 			public:
+				GraphicsAPIManager() { }
+			
 				virtual ~GraphicsAPIManager();
 			public:
 				void RegisterGraphicsAPI(GraphicsAPIFactory* fac);
