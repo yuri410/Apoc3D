@@ -21,56 +21,39 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef LOGGING_H
-#define LOGGING_H
 
-#include "Common.h"
-#include "Singleton.h"
-
+#include "Logging.h"
 
 namespace Apoc3D
 {
+	SINGLETON_DECL(Apoc3D::Core::LogManager);
+
 	namespace Core
 	{
-		enum APAPI LogType
+		Log::Log(LogType type)
 		{
-			LOG_System = 0,
-			LOG_Graphics = 1,
-			LOG_Audio = 2,
-			LOG_Scene = 3,
-			LOG_Game = 4,
-			LOG_Network = 5,
-			LOG_Count = 6
-		};
 
+		}
 
-		class APAPI Log
+		Log::~Log()
 		{
-		private:
-			LogType m_type;
-		public:
-			Log(LogType type);
-			~Log();
 
-			LogType getType() const { return m_type; }
-		};
+		}
 
-
-		class APAPI LogManager : public Singleton<LogManager>
+		LogManager::LogManager()
 		{
-		private:
-			Log* m_logs[LOG_Count];
+			for (size_t i=0;i<LOG_Count;i++)
+			{
+				m_logs[i] = new Log(reinterpret_cast<LogType&>(i));
+			}
 
-		public:
-			LogManager();
-			~LogManager();
-
-			Log* getDefaultLog() const;
-			Log* getLogSet(const String& name);
-
-			SINGLETON_DECL_HEARDER(LogManager);
+		}
+		LogManager::~LogManager()
+		{
+			for (size_t i=0;i<LOG_Count;i++)
+			{
+				delete m_logs[i];	
+			}
 		}
 	}
 }
-
-#endif

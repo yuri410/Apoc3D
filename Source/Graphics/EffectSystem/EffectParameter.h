@@ -32,13 +32,39 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
+			/** Defines typical usage of a effect parameters.
+				When the engine auto bind a parameter, it checks the parameter's usage.
+				This enum is used to fast check common usages.
+				Custom usage is also accepted by micro effect code.
+			*/
+			enum EffectParamUsage
+			{
+				EPUSAGE_Unknown,
+				EPUSAGE_AmbientColor,
+				EPUSAGE_DiffuseColor,
+				EPUSAGE_EmissiveColor,
+				EPUSAGE_SpecularColor,
+				EPUSAGE_Power,
+
+			};
+
 			/* Defines a parameter in an micro effect code.
    
 			   This also contains effect param mapping info.
 			*/
 			class APAPI EffectParameter
 			{
+			private:
+				EffectParamUsage m_typicalUsage;
+				String m_customUsage;
+				bool m_isCustomUsage;
+
 			public:
+				bool isCustomUsage() const { return m_isCustomUsage; }
+				const String& getCustomUsage() const { return m_customUsage; }
+				EffectParamUsage getTypicalUsage() const { return m_typicalUsage; }
+
+
 				EffectParameter(void);
 				~EffectParameter(void);
 			};

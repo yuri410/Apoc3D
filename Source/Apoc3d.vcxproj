@@ -198,6 +198,7 @@
     <ClCompile Include="Config\XMLConfiguration.cpp" />
     <ClCompile Include="Core\HashHandleObject.cpp" />
     <ClCompile Include="Core\IHashed.cpp" />
+    <ClCompile Include="Core\Logging.cpp" />
     <ClCompile Include="Core\PluginManager.cpp" />
     <ClCompile Include="Core\Resource.cpp" />
     <ClCompile Include="Core\ResourceHandle.cpp" />

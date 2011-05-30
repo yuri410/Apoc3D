@@ -48,13 +48,30 @@ namespace Apoc3D
 			MTRLPT_Vector2,
 			MTRLPT_Vector4,
 			MTRLPT_Boolean,
-			MTRLPT_Int32
+			MTRLPT_Integer,
+			
 		};
 
+		/** Defines custom material parameters. 
+			The value can be 16 bytes maximum.
+		*/
 		struct MaterialCustomParameter
 		{
+			/** The data type of the parameter.
+			*/
 			MaterialCustomParameterType Type;
-			byte buffer[16];
+			byte Value[16];
+
+			/** The usage of this parameter. Effect check this for auto binding effect parameters.
+			*/
+			String Usage;
+
+			MaterialCustomParameter() { }
+			MaterialCustomParameter(bool value, const String usage = L"")
+				: Type(MTRLPT_Boolean), Usage(usage)
+			{
+				*reinterpret_cast<bool*>(Value) = value;
+			}
 		};
 
 		template class APAPI unordered_map<uint64, Effect*>;
@@ -83,6 +100,7 @@ namespace Apoc3D
 			unordered_map<String, MaterialCustomParameter> m_customParametrs;
 			ResourceHandle<Texture>* m_tex[MaxTextures];
 			String m_texName[MaxTextures];
+			bool m_texDirty[MaxTextures];
 
 			uint64 m_passFlags;
 
@@ -102,10 +120,11 @@ namespace Apoc3D
 
 			CullMode Cull;
 
-			bool AlphaTestEnable;
+			bool AlphaTestEnabled;
+			uint32 AlphaReference;
 
-			bool DepthWriteEnable;
-			bool DepthTestEnable;
+			bool DepthWriteEnabled;
+			bool DepthTestEnabled;
 
 			/** the ambient component of this material
 			*/
@@ -125,7 +144,7 @@ namespace Apoc3D
 
 
 			const MaterialCustomParameter& getCustomParameter() const;
-			void setCustomParameter(const MaterialCustomParameter& value);
+			void AddCustomParameter(const MaterialCustomParameter& value);
 
 			Effect* getPassEffect(int index) const { return m_effects[index]; }
 			void setPassEffect(int index, Effect* eff) { m_effects[index] = eff; }
@@ -149,6 +168,12 @@ namespace Apoc3D
 			void setPassFlags(uint64 val) { m_passFlags = val; }
 
 
+			/** Load with format version 2. The version used in making ZoneLink 2
+			*/
+			void LoadV2(TaggedDataReader* data);
+			/** Load with format version 3
+			*/
+			void LoadV3(TaggedDataReader* data);
 			void Load(TaggedDataReader* data);
 			TaggedDataWriter* Save();
 

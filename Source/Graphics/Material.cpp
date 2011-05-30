@@ -43,11 +43,49 @@ namespace Apoc3D
 		static String TAG_2_IsVegetation = L"IsVegetation";
 		static String TAG_2_RenderPriority = L"RenderPriority";
 
-		static String TAG_2_MaterialFlagTag = L"Flags";
-		static String TAG_2_HasTextureTag = L"HasTexture";
-		static String TAG_2_TextureTag = L"Texture";
-		static String TAG_2_EffectTag = L"Effect";
+		static String TAG_2_MaterialColorTag = L"MaterialColor";
 
+		static String TAG_2_MaterialFlag = L"Flags";
+		static String TAG_2_HasTexture = L"HasTexture";
+		static String TAG_2_Texture = L"Texture";
+		static String TAG_2_Effect = L"Effect";
+
+		
+		// =============================================================
+
+		static String TAG_3_CustomParamCount = L"CustomParamCount";
+		static String TAG_3_CustomParam = L"CustomParam";
+
+		static String TAG_3_HasTexture = L"HasTexture";
+		static String TAG_3_Texture = L"Texture";
+		static String TAG_3_HasEffect = L"HasEffect";
+		static String TAG_3_Effect = L"Effect";
+
+
+		static String TAG_3_RenderPriority = L"RenderPriority";
+		static String TAG_3_PassFlags = L"PassFlags";
+
+		static String TAG_3_IsBlendTransparent = L"IsBlendTransparent";
+		static String TAG_3_SourceBlend = L"SourceBlend";
+		static String TAG_3_DestinationBlend = L"DestinationBlend";
+		static String TAG_3_BlendFunction = L"BlendFunction";
+
+		static String TAG_3_CullMode = L"CullMode";
+
+
+		static String TAG_3_AlphaReference = L"AlphaReference";
+		static String TAG_3_AlphaTestEnable = L"AlphaTestEnable";
+
+		static String TAG_3_DepthTestEnabled = L"DepthTestEnabled";
+		static String TAG_3_DepthWriteEnabled = L"DepthWriteEnabled";
+
+		static String TAG_2_MaterialColorTag = L"MaterialColor";
+
+
+		static String TAG_3_AlphaRef = L"AlphaReference";
+
+
+		//static String TAG_3_Effect = L"Effect";
 
 
 
@@ -56,8 +94,8 @@ namespace Apoc3D
 			m_passFlags(0), m_priority(2), 
 			BlendFunction(BLFUN_Add), IsBlendTransparent(false), 
 			SourceBlend(BLEND_SourceAlpha), DestinationBlend(BLEND_InverseSourceAlpha),
-			AlphaTestEnable(false),
-			DepthWriteEnable(true), DepthTestEnable(true),
+			AlphaTestEnabled(false),
+			DepthWriteEnabled(true), DepthTestEnabled(true),
 			Ambient(0,0,0,0), Diffuse(1,1,1,1), Specular(0,0,0,0), Emissive(0,0,0,0), Power(0),
 			Cull(CULL_None)
 		{
@@ -68,9 +106,23 @@ namespace Apoc3D
 
 		Material::~Material(void)
 		{
-
+			for (int i=0;i<MaxTextures;i++)
+			{
+				if (m_tex[i])
+				{
+					delete m_tex[i];
+					m_tex[i] = 0;
+				}
+			}
 		}
 
+		void Material::AddCustomParameter(const MaterialCustomParameter& value)
+		{
+			if (value.Usage.empty())
+			{
+
+			}
+		}
 
 		Effect* Material::LoadEffect(const String& name)
 		{
@@ -86,9 +138,63 @@ namespace Apoc3D
 
 		}
 
-		void Material::Load(TaggedDataReader* data)
+		void Material::LoadV2(TaggedDataReader* data)
+		{
+			AlphaReference = static_cast<uint32>(data->GetDataSingle(TAG_2_AlphaRef)*255);
+			if (AlphaReference > 255)
+				AlphaReference = 255;
+
+			AlphaTestEnabled = !!AlphaReference;
+
+
+			bool isVegetation = false;
+			data->TryGetDataBool(TAG_2_IsVegetation, isVegetation);
+			if (isVegetation)
+			{
+				this->AddCustomParameter(MaterialCustomParameter(isVegetation, L"veg"));
+			}
+
+
+			int32 val = static_cast<int32>(CULL_None);
+			data->TryGetDataInt32(TAG_2_CullMode, val);
+			Cull = static_cast<CullMode>(val);
+
+
+			IsBlendTransparent = false;
+			data->TryGetDataBool(TAG_2_IsTransparent, IsBlendTransparent);
+			
+			DepthTestEnabled = true;
+			data->TryGetDataBool(TAG_2_ZEnabled, DepthTestEnabled);
+
+			
+			DepthWriteEnabled = true;
+			data->TryGetDataBool(TAG_2_ZWriteEnabled, DepthWriteEnabled);
+
+			m_priority = 1;
+			data->TryGetDataInt32(TAG_2_RenderPriority, m_priority);
+			m_priority++;
+			
+
+
+		}
+		void Material::LoadV3(TaggedDataReader* data)
 		{
 
+		}
+
+		void Material::Load(TaggedDataReader* data)
+		{
+			int version = 3;
+			if (data->Contains(TAG_2_AlphaRef))
+			{
+				version = 2;
+			}
+
+			if (version == 2)
+				LoadV2(data);
+			else
+				LoadV3(data);
+			
 		}
 		TaggedDataWriter* Material::Save()
 		{
