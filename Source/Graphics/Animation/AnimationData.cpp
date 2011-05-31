@@ -58,9 +58,7 @@ namespace Apoc3D
 			static const String TAG_2_MaterialAnimationKeyframeCountTag = L"KeyframeCount";
 
 			static const String TAG_3_MaterialAnimationTag = L"MaterialAnimation3.0";
-			static const String TAG_3_MaterialAnimationDurationTag = L"Duration";
-			static const String TAG_3_MaterialAnimationKeyframesTag = L"Keyframes";
-			static const String TAG_3_MaterialAnimationKeyframeCountTag = L"KeyframeCount";
+			static const String TAG_3_MaterialAnimationCountTag = L"MaterialAnimation3.0Count";
 
 
 			void AnimationData::LoadMtrlAnimation2(TaggedDataReader* data)
@@ -107,14 +105,6 @@ namespace Apoc3D
 				return data;
 			}
 
-			void AnimationData::LoadMtrlAnimation3(TaggedDataReader* data)
-			{
-				
-			}
-			TaggedDataWriter* AnimationData::SaveMtrlAnimation3()
-			{
-
-			}
 
 			void AnimationData::Load(TaggedDataReader* data)
 			{
@@ -143,12 +133,37 @@ namespace Apoc3D
 				
 				if (data->Contains(TAG_3_MaterialAnimationTag))
 				{
+					int count = data->GetDataInt32(TAG_3_MaterialAnimationCountTag);
+
+					m_mtrlAnimationClips.rehash(count);
+
+					vector<MaterialAnimationKeyframe> keyframes;
 					BinaryReader* br = data->GetData(TAG_3_MaterialAnimationTag);
-					TaggedDataReader* animData = br->ReadTaggedDataBlock();
-					LoadMtrlAnimation3(data);
-					animData->Close();
-					delete animData;
+					
+					for (int i=0;i<count;i++)
+					{
+						String key = br->ReadString();
+
+						float duration = static_cast<float>(br->ReadDouble());
+
+						int frameCount = br->ReadInt32();
+						keyframes.reserve(frameCount);
+						
+						for (int j=0;j<frameCount;i++)
+						{
+							float time = br->ReadSingle();
+							int32 mid = br->ReadInt32();
+
+							keyframes.push_back(MaterialAnimationKeyframe(time, mid));
+						}
+
+						MaterialAnimationClip* clip = new MaterialAnimationClip(duration, keyframes);
+
+						m_mtrlAnimationClips.insert(ClipTable::value_type(key, clip));
+					}
+
 					br->Close();
+
 					delete br;
 				}
 
@@ -198,6 +213,8 @@ namespace Apoc3D
 				{
 					int count = data->GetDataInt32(TAG_3_ModelAnimationClipCountTag);
 
+					m_modelAnimationClips.rehash(count);
+
 					BinaryReader* br = data->GetData(TAG_3_ModelAnimationClipTag);
 					for (int i=0;i<count;i++)
 					{
@@ -218,18 +235,83 @@ namespace Apoc3D
 							Matrix transfrom;
 							br->ReadMatrix(transfrom);
 
-							frames.push_back(ModelKeyframe(bone, totalSec, transform));
+							frames.push_back(ModelKeyframe(bone, totalSec, transfrom));
 						}
 
+						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
+						
+						m_modelAnimationClips.insert(ClipTable::value_type(key, clip));
 					}
 					br->Close();
 					delete br;
 				}
+
+				// root animation clip tag
+				if (data->GetData(TAG_3_RootAnimationClipCountTag))
+				{
+					int count = data->GetDataInt32(TAG_3_RootAnimationClipCountTag);
+
+					m_rootAnimationClips.rehash(count);
+
+					BinaryReader* br = data->GetData(TAG_3_RootAnimationClipTag);
+					for (int i=0;i<count;i++)
+					{
+						String key = br->ReadString();
+
+
+						float duration = static_cast<float>(br->ReadDouble());
+
+						int frameCount = br->ReadInt32();
+
+						vector<ModelKeyframe> frames;
+						frames.reserve(frameCount);
+
+						for (int j=0;j<frameCount;j++)
+						{
+							int32 bone = br->ReadInt32();
+
+							float totalSec = static_cast<float>(br->ReadDouble());
+							Matrix transfrom;
+							br->ReadMatrix(transfrom);
+
+							frames.push_back(ModelKeyframe(bone, totalSec, transfrom));
+						}
+
+						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
+						m_rootAnimationClips.insert(ClipTable::value_type(key, clip));
+					}
+				}
+
+				// bone hierarchy tag
+				if (data->GetData(TAG_3_BoneHierarchyCountTag))
+				{
+					int count = data->GetDataInt32(TAG_3_BoneHierarchyCountTag);
+					m_hasSkeleton = true;
+					
+					m_skeletonHierarchy.reserve(count);
+
+					BinaryReader* br = data->GetData(TAG_3_BoneHierarchyTag);
+					for (int i=0;i<count;i++)
+					{
+						m_skeletonHierarchy.push_back(br->ReadInt32());
+					}
+					br->Close();
+					delete br;
+				}
+
 			}
 
 			TaggedDataWriter* AnimationData::Save()
 			{
+				if (m_hasBindPose)
+				{
 
+				}
+				
+				if (m_hasSkeleton)
+				{
+
+				}
 			}
 		}
 	}

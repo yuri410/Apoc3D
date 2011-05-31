@@ -63,8 +63,8 @@ namespace Apoc3D
 				void LoadMtrlAnimation2(TaggedDataReader* data);
 				TaggedDataWriter* SaveMtrlAnimation2();
 
-				void LoadMtrlAnimation3(TaggedDataReader* data);
-				TaggedDataWriter* SaveMtrlAnimation3();
+				//void LoadMtrlAnimation3(TaggedDataReader* data);
+				//TaggedDataWriter* SaveMtrlAnimation3();
 			public:
 				/** Gets a collection of animation clips that operate on the root of the object.
 					These are stored by name in a map, so there could for instance be 
