@@ -57,9 +57,9 @@ namespace Apoc3D
 		class APAPI IMeshTriangleCallBack
 		{
 		protected:
-			IMeshTriangleCallBack();
+			IMeshTriangleCallBack() {}
 		public:
-			virtual ~IMeshTriangleCallBack();
+			virtual ~IMeshTriangleCallBack(){}
 
 			virtual void Process(const Vector3& a, const Vector3& b, const Vector3& c) = 0;
 		};

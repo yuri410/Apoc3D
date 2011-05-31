@@ -343,7 +343,7 @@ namespace Apoc3D
 
 			for (int i=0;i<entCount;i++)
 			{
-				String tag = StringUtils::ToString(id);
+				String tag = StringUtils::ToString(i);
 				tag = TAG_3_EntityPrefix + tag;
 				BinaryReader* br = data->GetData(tag);
 
@@ -404,7 +404,40 @@ namespace Apoc3D
 			}
 			
 		}
+		TaggedDataWriter* ModelData::WriteData() const
+		{
+			TaggedDataWriter* data = new TaggedDataWriter(true);
 
+			data->AddEntry(TAG_3_EntityCountTag, static_cast<int32>(Entities.size()));
+
+			for (size_t i=0;i<Entities.size();i++)
+			{
+				String tag = StringUtils::ToString(i);
+				tag = TAG_3_EntityPrefix + tag;
+				BinaryWriter* bw = data->AddEntry(tag);
+
+				TaggedDataWriter* meshData = Entities[i]->Save();
+				bw->Write(meshData);
+				delete meshData;
+
+				bw->Close();
+				delete bw;
+			}
+
+			if (AnimationData)
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_AnimationDataTag);
+
+				TaggedDataWriter* ad = AnimationData->Save();
+				bw->Write(ad);
+				delete ad;
+
+				bw->Close();
+				delete bw;
+			}
+
+			return data;
+		}
 		void ModelData::Load(const ResourceLocation* rl)
 		{
 			BinaryReader* br = new BinaryReader(rl->GetReadStream());
@@ -425,7 +458,16 @@ namespace Apoc3D
 		}
 		void ModelData::Save(Stream* strm) const
 		{
+			BinaryWriter* bw = new BinaryWriter(strm);
 
+			bw->Write(MdlId_V3);
+
+			TaggedDataWriter* mdlData = WriteData();
+			bw->Write(mdlData);
+			delete mdlData;
+
+			bw->Close();
+			delete bw;
 		}
 	}
 }

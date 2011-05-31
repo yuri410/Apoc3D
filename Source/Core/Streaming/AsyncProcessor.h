@@ -24,8 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef ASYNCPROCESSOR_H
 #define ASYNCPROCESSOR_H
 
-#pragma once
-
 #include "Common.h"
 
 using namespace std;

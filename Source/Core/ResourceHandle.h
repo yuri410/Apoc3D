@@ -36,25 +36,17 @@ namespace Apoc3D
 			typedef typename ResType::ResHandleTemplateConstraint CF_XXX; 
 
 		private:
-			const ResType* m_resource;
+			ResType* m_resource;
 
-			void _Ref(const Resource* res);
-			void _Unref(const Resource* res);
+			void _Ref( );
+			void _Unref( );
 
 			ResourceHandle(const ResourceHandle& another) { }
 		protected:
-			ResourceHandle(const ResType* res)
-			{
-				m_resource = res;
-				_Ref(res);
-			}
+			ResourceHandle(ResType* res);
 			
 		public:
-			~ResourceHandle(void)
-			{
-				m_resource = 0;
-				_Unref(m_resource);
-			}
+			virtual ~ResourceHandle(void);
 
 			void Touch();
 

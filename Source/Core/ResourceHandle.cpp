@@ -30,20 +30,32 @@ namespace Apoc3D
 	namespace Core
 	{
 		template<class ResType>
-		void ResourceHandle<ResType>::_Ref(const Resource* res)
+		ResourceHandle<ResType>::ResourceHandle(ResType* res)
+			: m_resource(res)
 		{
-			if (res->isManaged())
+			_Ref();
+		}
+		template<class ResType>
+		ResourceHandle<ResType>::~ResourceHandle()
+		{
+			_Unref();
+			m_resource = 0;
+		}
+		template<class ResType>
+		void ResourceHandle<ResType>::_Ref( )
+		{
+			if (m_resource->isManaged())
 			{
-				res->_Ref();
+				m_resource->_Ref();
 			}
 		}
 
 		template<class ResType>
-		void ResourceHandle<ResType>::_Unref(const Resource* res)
+		void ResourceHandle<ResType>::_Unref( )
 		{
-			if (res->isManaged())
+			if (m_resource->isManaged())
 			{
-				res->_Unref();
+				m_resource->_Unref();
 			}
 		}
 

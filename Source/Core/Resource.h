@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define RESOURCE_H
 
 #include "Common.h"
-#include "Streaming\AsyncProcessor.h"
+#include "Core/Streaming/AsyncProcessor.h"
 
 using namespace Apoc3D::Core::Streaming;
 

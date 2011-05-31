@@ -29,6 +29,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Core;
 
+using namespace std;
+
 namespace Apoc3D
 {
 	namespace Graphics

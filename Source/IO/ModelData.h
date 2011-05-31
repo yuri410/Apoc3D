@@ -81,7 +81,7 @@ namespace Apoc3D
 		{
 		private:
 			void ReadData(TaggedDataReader* data, int32 id);
-			TaggedDataWriter* WriteData();
+			TaggedDataWriter* WriteData() const;
 		public:
 			int32 RootBone;
 			vector<Bone> Bones;

@@ -61,6 +61,16 @@ namespace Apoc3D
 				: Time(time), Level(level), Content(content)
 			{
 			}
+
+			friend bool operator <(const LogEntry& a, const LogEntry& b)
+			{
+				return a.Time < b.Time || a.Level < b.Level || a.Content < b.Content;
+			}
+
+			friend bool operator ==(const LogEntry& a, const LogEntry& b)
+			{
+				return a.Time == b.Time && a.Level == b.Level && a.Content == b.Content;
+			}
 		};
 
 		template class APAPI list<LogEntry>;
@@ -103,7 +113,7 @@ namespace Apoc3D
 			void Write(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation) const;
 
 			SINGLETON_DECL_HEARDER(LogManager);
-		}
+		};
 	}
 }
 
