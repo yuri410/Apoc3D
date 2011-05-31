@@ -59,6 +59,9 @@ namespace Apoc3D
 
 				bool m_hasBindPose;
 				bool m_hasSkeleton;
+				bool m_hasMtrlClip;
+				bool m_hasModelClip;
+				bool m_hasRootClip;
 
 				void LoadMtrlAnimation2(TaggedDataReader* data);
 				TaggedDataWriter* SaveMtrlAnimation2();
@@ -96,7 +99,8 @@ namespace Apoc3D
 				TaggedDataWriter* Save();
 
 				AnimationData()
-					: m_hasBindPose(false), m_hasSkeleton(false)
+					: m_hasBindPose(false), m_hasSkeleton(false),
+					  m_hasModelClip(false), m_hasRootClip(false), m_hasMtrlClip(false)
 				{
 
 				}

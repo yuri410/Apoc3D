@@ -50,6 +50,7 @@ namespace Apoc3D
 				vector<int32> Children;
 				int32 Index;
 
+				Bone() { }
 				Bone(int32 index)
 					: Index(index), Parent(-1)
 				{
@@ -90,7 +91,7 @@ namespace Apoc3D
 				{
 
 				}
-				
+				ModelKeyframe() { }
 				~ModelKeyframe() { }
 			};
 
@@ -110,6 +111,7 @@ namespace Apoc3D
 					: m_time(time), m_materialFrame(mtrlID)
 				{
 				}
+				MaterialAnimationKeyframe() { }
 			};
 
 			template class vector<ModelKeyframe>;

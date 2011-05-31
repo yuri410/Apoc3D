@@ -30,14 +30,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/MaterialTypes.h"
 #include "Graphics/ModelTypes.h"
 #include "Graphics/RenderSystem/VertexElement.h"
+#include "Graphics/Animation/AnimationTypes.h"
 #include "Math/Color.h"
 #include "Math/BoundingSphere.h"
 #include "MaterialData.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Graphics::Animation;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::IO;
+using namespace Apoc3D::VFS;
 
 using namespace std;
 
@@ -71,13 +74,28 @@ namespace Apoc3D
 			TaggedDataWriter* Save();
 
 		};
+
+		template class APAPI vector<Bone>;
+
 		class APAPI ModelData
 		{
+		private:
+			void ReadData(TaggedDataReader* data, int32 id);
+			TaggedDataWriter* WriteData();
 		public:
+			int32 RootBone;
+			vector<Bone> Bones;
+			AnimationData* AnimationData;
+			vector<MeshData*> Entities;
 
-
-			void Load();
-			void Save();
+			ModelData()
+				: AnimationData(0), RootBone(0)
+			{
+			}
+			~ModelData();
+			
+			void Load(const ResourceLocation* rl);
+			void Save(Stream* strm) const;
 		};
 	}
 }

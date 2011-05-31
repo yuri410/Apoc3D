@@ -79,7 +79,8 @@ namespace Apoc3D
 
 				br->Close();
 
-				m_mtrlAnimationClips.insert(MtrlClipTable::value_type(L"Take 001", MaterialAnimationClip(duration, keyframes)));
+				m_mtrlAnimationClips.insert(
+					MtrlClipTable::value_type(L"Take 001", new MaterialAnimationClip(duration, keyframes)));
 
 				delete br;
 			}
@@ -144,7 +145,7 @@ namespace Apoc3D
 					{
 						String key = br->ReadString();
 
-						float duration = static_cast<float>(br->ReadDouble());
+						float duration = br->ReadSingle();
 
 						int frameCount = br->ReadInt32();
 						keyframes.reserve(frameCount);
@@ -159,7 +160,7 @@ namespace Apoc3D
 
 						MaterialAnimationClip* clip = new MaterialAnimationClip(duration, keyframes);
 
-						m_mtrlAnimationClips.insert(ClipTable::value_type(key, clip));
+						m_mtrlAnimationClips.insert(MtrlClipTable::value_type(key, clip));
 					}
 
 					br->Close();
@@ -192,6 +193,8 @@ namespace Apoc3D
 				// inv bind pose
 				if (data->Contains(TAG_3_InvBindPoseTag))
 				{
+					m_hasBindPose = true;
+
 					int count = data->GetDataInt32(TAG_3_InvBindPoseCountTag);
 					m_invBindPose.reserve(count);
 
@@ -211,6 +214,8 @@ namespace Apoc3D
 				// animation clip tag
 				if (data->Contains(TAG_3_ModelAnimationClipCountTag))
 				{
+					m_hasModelClip = true;
+
 					int count = data->GetDataInt32(TAG_3_ModelAnimationClipCountTag);
 
 					m_modelAnimationClips.rehash(count);
@@ -249,6 +254,8 @@ namespace Apoc3D
 				// root animation clip tag
 				if (data->GetData(TAG_3_RootAnimationClipCountTag))
 				{
+					m_hasRootClip = true;
+
 					int count = data->GetDataInt32(TAG_3_RootAnimationClipCountTag);
 
 					m_rootAnimationClips.rehash(count);
@@ -303,15 +310,126 @@ namespace Apoc3D
 
 			TaggedDataWriter* AnimationData::Save()
 			{
+				TaggedDataWriter* data = new TaggedDataWriter(true);
+
+				if (m_hasMtrlClip)
+				{
+					data->AddEntry(TAG_3_MaterialAnimationCountTag, m_mtrlAnimationClips.size());
+
+					BinaryWriter* bw = data->AddEntry(TAG_3_MaterialAnimationTag);
+					for (MtrlClipTable::iterator iter = m_mtrlAnimationClips.begin(); iter != m_mtrlAnimationClips.end(); iter++)
+					{
+						bw->Write(iter->first);
+
+						const MaterialAnimationClip* clip = iter->second;
+						bw->Write(clip->Duration);
+
+						const vector<MaterialAnimationKeyframe> keyFrames = clip->Keyframes;
+						bw->Write(static_cast<int32>(keyFrames.size()));
+
+						for (size_t i = 0; i < keyFrames.size(); i++)
+						{
+							bw->Write(keyFrames[i].getTime());
+							bw->Write(keyFrames[i].getMaterialFrame());
+						}
+					}
+					bw->Close();
+					delete bw;
+				}
+
 				if (m_hasBindPose)
 				{
+					{
+						data->AddEntry(TAG_3_BindPoseCountTag, static_cast<int32>(m_bindPose.size()));
 
+						BinaryWriter* bw = data->AddEntry(TAG_3_BindPoseTag);
+
+						for (size_t i=0;i<m_bindPose.size();i++)
+						{
+							bw->Write(m_bindPose[i]);
+						}
+
+						bw->Close();
+						delete bw;
+					}
+					{
+						data->AddEntry(TAG_3_InvBindPoseCountTag, static_cast<int32>(m_invBindPose.size()));
+
+						BinaryWriter* bw = data->AddEntry(TAG_3_InvBindPoseTag);
+						for (size_t i = 0; i < m_invBindPose.size(); i++)
+						{
+							bw->Write(m_invBindPose[i]);
+						}
+						bw->Close();
+						delete bw;
+					}
 				}
 				
+				if (m_hasModelClip)
+				{
+					data->AddEntry(TAG_3_ModelAnimationClipCountTag, m_modelAnimationClips.size());
+
+					BinaryWriter* bw = data->AddEntry(TAG_3_ModelAnimationClipTag);
+					for (ClipTable::iterator iter = m_modelAnimationClips.begin(); iter != m_modelAnimationClips.end(); iter++)
+					{
+						bw->Write(iter->first);
+
+						const ModelAnimationClip* clip = iter->second;
+						bw->Write(static_cast<double>(clip->getDuration()));
+
+						const vector<ModelKeyframe> keyFrames = clip->getKeyframes();
+
+						bw->Write(static_cast<int32>(clip->getKeyframes().size()));
+
+						for (size_t i = 0; i < clip->getKeyframes().size(); i++)
+						{
+							bw->Write(keyFrames[i].getBone());
+							bw->Write(static_cast<double>(keyFrames[i].getTime()));
+							bw->Write(keyFrames[i].getTransform());
+						}
+					}
+					bw->Close();
+					delete bw;
+				}
+				if (m_hasRootClip)
+				{
+					data->AddEntry(TAG_3_RootAnimationClipCountTag, m_rootAnimationClips.size());
+
+					BinaryWriter* bw = data->AddEntry(TAG_3_RootAnimationClipTag);
+					for (ClipTable::iterator iter = m_rootAnimationClips.begin(); iter != m_rootAnimationClips.end(); iter++)
+					{
+						bw->Write(iter->first);
+
+						const ModelAnimationClip* clip = iter->second;
+						bw->Write(static_cast<double>(clip->getDuration()));
+						
+						const vector<ModelKeyframe> keyFrames = clip->getKeyframes();
+						bw->Write(static_cast<int32>(clip->getKeyframes().size()));
+
+						for (size_t i = 0; i < clip->getKeyframes().size(); i++)
+						{
+							bw->Write(keyFrames[i].getBone());
+							bw->Write(static_cast<double>(keyFrames[i].getTime()));
+							bw->Write(keyFrames[i].getTransform());
+						}
+					}
+					bw->Close();
+					delete bw;
+				}
+
 				if (m_hasSkeleton)
 				{
+					data->AddEntry(TAG_3_BoneHierarchyCountTag, static_cast<int32>(m_skeletonHierarchy.size()));
 
+					BinaryWriter* bw = data->AddEntry(TAG_3_BoneHierarchyTag);
+					for (size_t i = 0; i < m_skeletonHierarchy.size(); i++)
+					{
+						bw->Write(m_skeletonHierarchy[i]);
+					}
+					bw->Close();
+					delete bw;
 				}
+				return data;
 			}
 		}
 	}

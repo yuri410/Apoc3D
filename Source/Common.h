@@ -252,6 +252,8 @@ namespace Apoc3D
 		{
 			class ModelAnimationClip;
 			class MaterialAnimationClip;
+
+			class AnimationData;
 		}
 
 		namespace EffectSystem

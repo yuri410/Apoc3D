@@ -83,7 +83,7 @@ namespace Apoc3D
 				m_set[idx].push_back(mtrl);
 			}
 
-			M& getMaterial(int index, int frame = 0) const { return m_set[index][frame]; }
+			M& getMaterial(int index, int frame = 0) {	return m_set[index][frame]; }
 
 			void Reserve(int32 mtrlCount)
 			{

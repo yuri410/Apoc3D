@@ -26,14 +26,20 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
 #include "Apoc3DException.h"
+#include "Vfs/ResourceLocation.h"
+#include "Graphics/Animation/AnimationData.h"
+
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
 	namespace IO
 	{
-
-		//static const int MeshId = ((byte)'M' << 24) | ((byte)'E' << 16) | ((byte)'S' << 8) | ((byte)'H');
-
+		static const int MdlId_V2 = 0;
+		static const int MdlId_V3 = ((byte)'M' << 24) | ((byte)'E' << 16) | ((byte)'S' << 8) | ((byte)'H');
+		
 		static const String TAG_3_MaterialCountTag = L"MaterialCount";
 		static const String TAG_3_MaterialsTag = L"Materials";
 
@@ -45,6 +51,7 @@ namespace Apoc3D
 		static const String TAG_3_VertexCountTag = L"VertexCount";
 		static const String TAG_3_VertexSizeTag = L"VertexSize";
 
+		static const String TAG_2_MaterialAnimationTag = L"MaterialAnimation2.0";
 		static const String TAG_3_VertexDataTag = L"VertexData";
 
 		static const String TAG_3_NameTag = L"Name";
@@ -311,6 +318,114 @@ namespace Apoc3D
 
 		static const String TAG_3_AnimationDataTag = L"AnimationData";
 		
+		ModelData::~ModelData()
+		{
+			if (!Entities.empty())
+			{
+				for (size_t i=0; i<Entities.size();i++)
+				{
+					delete Entities[i];
+				}
+				Entities.clear();
+			}
+			
+			if (AnimationData)
+			{
+				delete AnimationData;
+				AnimationData = 0;
+			}
+		}
 
+		void ModelData::ReadData(TaggedDataReader* data, int32 id)
+		{
+			int entCount = data->GetDataInt32(TAG_3_EntityCountTag);
+			Entities.reserve(entCount);
+
+			for (int i=0;i<entCount;i++)
+			{
+				String tag = StringUtils::ToString(id);
+				tag = TAG_3_EntityPrefix + tag;
+				BinaryReader* br = data->GetData(tag);
+
+				TaggedDataReader* meshData = br->ReadTaggedDataBlock();
+
+				MeshData* mesh = new MeshData();
+				mesh->Load(meshData);
+				Entities.push_back(mesh);
+
+				meshData->Close();
+				delete meshData;
+
+				br->Close();
+				delete br;
+			}
+
+			if (id == MdlId_V2)
+			{
+				if (data->Contains(TAG_2_MaterialAnimationTag))
+				{
+					this->AnimationData = new Graphics::Animation::AnimationData();
+					BinaryReader* br = data->GetData(TAG_2_MaterialAnimationTag);
+					TaggedDataReader* ad = br->ReadTaggedDataBlock();
+					this->AnimationData->Load(ad);
+					ad->Close();
+					delete ad;
+					br->Close();
+					delete br;
+				}
+				
+				if (data->Contains(TAG_3_AnimationDataTag))
+				{
+					this->AnimationData = new Graphics::Animation::AnimationData();
+					BinaryReader* br = data->GetData(TAG_3_AnimationDataTag);
+					TaggedDataReader* ad = br->ReadTaggedDataBlock();
+					this->AnimationData->Load(ad);
+					ad->Close();
+					delete ad;
+					br->Close();
+					delete br;
+				}
+			}
+			else if (id == MdlId_V3)
+			{
+				if (data->Contains(TAG_3_AnimationDataTag))
+				{
+					this->AnimationData = new Graphics::Animation::AnimationData();
+
+					BinaryReader* br = data->GetData(TAG_3_AnimationDataTag);
+					TaggedDataReader* ad = br->ReadTaggedDataBlock();
+					this->AnimationData->Load(ad);
+					ad->Close();
+					delete ad;
+					br->Close();
+					delete br;
+				}
+				
+			}
+			
+		}
+
+		void ModelData::Load(const ResourceLocation* rl)
+		{
+			BinaryReader* br = new BinaryReader(rl->GetReadStream());
+
+			int32 id = br->ReadInt32();
+			if (id == MdlId_V2 || id == MdlId_V3)
+			{
+				TaggedDataReader* data = br->ReadTaggedDataBlock();
+
+				ReadData(data, id);
+
+				data->Close();
+				delete data;
+			}
+
+			br->Close();
+			delete br;
+		}
+		void ModelData::Save(Stream* strm) const
+		{
+
+		}
 	}
 }
