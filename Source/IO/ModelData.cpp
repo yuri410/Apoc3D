@@ -52,7 +52,7 @@ namespace Apoc3D
 		static const String TAG_3_ParentBoneTag = L"ParentBone";
 		static const String TAG_3_BoundingSphereTag = L"BoundingSphere";
 
-		static uint32 ComputeVertexSize(const vector<VertexElement>& elements)
+		uint32 MeshData::ComputeVertexSize(const vector<VertexElement>& elements)
 		{
 			uint32 vertexSize = 0;
 			for (size_t i = 0; i < elements.size(); i++)
@@ -63,34 +63,39 @@ namespace Apoc3D
 		}
 		void MeshData::Load(TaggedDataReader* data)
 		{
-			int32 materialCount = data->GetDataInt32(TAG_3_MaterialCountTag);
+			uint32 materialCount = data->GetDataUInt32(TAG_3_MaterialCountTag);
 			Materials.Reserve(materialCount);
 
 			// load material set
+			
 			{
 				BinaryReader* br = data->GetData(TAG_3_MaterialsTag);
 
-				int32 frameCount = br->ReadInt32();
-
-				for (int32 i=0; i<frameCount; i++)
+				for (uint32 j = 0; j<materialCount; j++)
 				{
-					TaggedDataReader* matData = br->ReadTaggedDataBlock();
+					int32 frameCount = br->ReadInt32();
 
-					MaterialData mtrl;
-					mtrl.Load(matData);
-
-					if (i==0)
+					for (int32 i=0; i<frameCount; i++)
 					{
-						Materials.Add(mtrl);
-					}
-					else
-					{
-						Materials.AddFrame(mtrl, i);
-					}
+						TaggedDataReader* matData = br->ReadTaggedDataBlock();
 
-					matData->Close();
-					delete matData;
+						MaterialData mtrl;
+						mtrl.Load(matData);
+
+						if (i==0)
+						{
+							Materials.Add(mtrl);
+						}
+						else
+						{
+							Materials.AddFrame(mtrl, i);
+						}
+
+						matData->Close();
+						delete matData;
+					}
 				}
+				
 
 				br->Close();
 				delete br;
@@ -124,13 +129,13 @@ namespace Apoc3D
 
 			// read faces
 			{
-				int32 faceCount = data->GetDataInt32(TAG_3_FaceCountTag);
+				uint32 faceCount = data->GetDataInt32(TAG_3_FaceCountTag);
 
 				Faces.reserve(faceCount);
 
 				BinaryReader* br = data->GetData(TAG_3_FacesTag);
 
-				for (int i=0;i<faceCount;i++)
+				for (uint i=0;i<faceCount;i++)
 				{
 					MeshFace face;
 					face.IndexA = br->ReadInt32();
@@ -149,7 +154,7 @@ namespace Apoc3D
 			// vertex element
 			if (!data->Contains(TAG_3_VertexDeclTag))
 			{
-				// lantency support
+				// latency support
 				// vertex format
 
 				int fvf = data->GetDataInt32(TAG_1_VertexFormatTag);
@@ -172,10 +177,10 @@ namespace Apoc3D
 				VertexElements.reserve(elemConut);
 				for (int i=0;i<elemConut;i++)
 				{
-					uint emOfs = br->ReadUInt32();
+					int emOfs = br->ReadInt32();
 					VertexElementFormat emFormat = static_cast<VertexElementFormat>(br->ReadUInt32());
 					VertexElementUsage emUsage = static_cast<VertexElementUsage>(br->ReadUInt32());
-					uint emIndex = br->ReadUInt32();
+					int emIndex = br->ReadInt32();
 
 					VertexElements.push_back(VertexElement(emOfs, emFormat, emUsage, emIndex));
 				}
@@ -186,13 +191,13 @@ namespace Apoc3D
 			
 			if (data->Contains(TAG_3_VertexSizeTag))
 			{
-				VertexSize = data->GetDataInt32(TAG_3_VertexSizeTag);
+				VertexSize = data->GetDataUInt32(TAG_3_VertexSizeTag);
 			}
 			else
 			{
 				VertexSize = ComputeVertexSize(VertexElements);
 			}
-			VertexCount = data->GetDataInt32(TAG_3_VertexCountTag);
+			VertexCount = data->GetDataUInt32(TAG_3_VertexCountTag);
 
 			// vertex data
 			{
@@ -209,6 +214,88 @@ namespace Apoc3D
 		TaggedDataWriter* MeshData::Save()
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
+
+			uint32 materialCount = Materials.getMaterialCount();
+			data->AddEntry(TAG_3_MaterialCountTag, materialCount);
+
+			// save material
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_MaterialsTag);
+				for (uint32 i = 0; i < materialCount; i++)
+				{
+					int frameCount = Materials.getFrameCount(static_cast<int32>(i));
+
+					bw->Write(frameCount);
+					for (int j = 0; j < frameCount; j++)
+					{
+						TaggedDataWriter* matData = Materials.getMaterial(i, j).Save();
+						bw->Write(matData);
+						delete matData;
+					}
+				}
+				bw->Close();
+				delete bw;
+			}
+
+			data->AddEntry(TAG_3_ParentBoneTag, ParentBoneID);
+
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_BoundingSphereTag);
+				bw->Write(BoundingSphere);
+				bw->Close();
+				delete bw;
+			}
+
+			// write name
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_NameTag);
+				bw->Write(Name);
+				bw->Close();
+				delete bw;
+			}
+
+			data->AddEntry(TAG_3_FaceCountTag, static_cast<uint32>(Faces.size()));
+
+			// write faces
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_FacesTag);
+				for (size_t i=0;i<Faces.size();i++)
+				{
+					bw->Write(Faces[i].IndexA);
+					bw->Write(Faces[i].IndexB);
+					bw->Write(Faces[i].IndexC);
+					bw->Write(Faces[i].MaterialID);
+				}
+				bw->Close();
+				delete bw;
+			}
+
+			// write vertex elements
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_VertexDeclTag);
+
+				bw->Write(static_cast<uint32>(VertexElements.size()));
+				for (size_t i = 0; i < VertexElements.size(); i++)
+				{
+					bw->Write(VertexElements[i].getOffset());
+					bw->Write(static_cast<uint32>(VertexElements[i].getType()));
+					bw->Write(static_cast<uint32>(VertexElements[i].getUsage()));
+					bw->Write(VertexElements[i].getIndex());
+				}
+
+				bw->Close();
+				delete bw;
+			}
+
+			data->AddEntry(TAG_3_VertexSizeTag, VertexSize);
+			data->AddEntry(TAG_3_VertexCountTag, VertexCount);
+
+			// save vertex data
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_VertexDeclTag);
+				bw->Write(VertexData, VertexSize*VertexCount);
+				bw->Close();
+			}
 
 			return data;
 		}

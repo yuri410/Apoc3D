@@ -77,7 +77,10 @@ namespace Apoc3D
 			}
 			void Add(M& mtrl)
 			{
-				m_set.push_back(mtrl);
+				m_set.push_back(vector<M>());
+				int idx = static_cast<int>(m_set.size());
+				idx--;
+				m_set[idx].push_back(mtrl);
 			}
 
 			M& getMaterial(int index, int frame = 0) const { return m_set[index][frame]; }
@@ -90,6 +93,9 @@ namespace Apoc3D
 			{
 				m_set[index].reserve(frameCount);
 			}
+
+			uint32 getMaterialCount() const { return m_set.size(); }
+			uint32 getFrameCount(int index) const { return m_set[index].size(); }
 		};
 	}
 }

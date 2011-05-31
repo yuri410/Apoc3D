@@ -363,7 +363,7 @@ namespace Apoc3D
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
-			data->AddEntry(TAG_3_CustomParamCount, CustomParametrs.size());
+			data->AddEntry(TAG_3_CustomParamCount, static_cast<uint32>(CustomParametrs.size()));
 			int32 index = 0;
 			for (CustomParamTable::iterator iter = CustomParametrs.begin(); iter != CustomParametrs.end(); iter++)
 			{
