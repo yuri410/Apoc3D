@@ -33,17 +33,22 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Defines a set of effect atoms. 
-		*/
-		class APAPI EffectDescription
+		namespace EffectSystem
 		{
-		private:
-			vector<String> m_effectAtom;
+			/** Defines a combination of micro effect. 
+				EffectManager create an effect based on this information
+			*/
+			class APAPI EffectDescription
+			{
+			private:
+				vector<String> m_effectAtom;
 
-		public:
-			EffectDescription(void);
-			~EffectDescription(void);
-		};
+			public:
+				EffectDescription(void);
+				~EffectDescription(void);
+			};
+		}
+		
 	};
 };
 

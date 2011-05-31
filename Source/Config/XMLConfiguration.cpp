@@ -31,9 +31,10 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		XMLConfiguration::XMLConfiguration(const ResourceLocation& rl)
-			: Configuration(L"")
+		XMLConfiguration::XMLConfiguration(const ResourceLocation* rl)
+			: Configuration(rl->getName())
 		{
+			
 			TiXmlDocument doc;
 			
 		}

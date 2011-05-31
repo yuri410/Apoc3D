@@ -27,13 +27,17 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		EffectDescription::EffectDescription(void)
+		namespace EffectSystem
 		{
-		}
+			EffectDescription::EffectDescription(void)
+			{
+			}
 
 
-		EffectDescription::~EffectDescription(void)
-		{
+			EffectDescription::~EffectDescription(void)
+			{
+			}
 		}
+
 	};
 };

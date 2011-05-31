@@ -73,7 +73,7 @@ namespace Apoc3D
 				RenderView(RenderDevice* rd, const RenderParameters &pm)
 					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(0)
 				{
-					//RenderView(rd, pm, 0);
+
 				}
 
 			public:
