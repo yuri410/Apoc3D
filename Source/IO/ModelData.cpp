@@ -299,5 +299,18 @@ namespace Apoc3D
 
 			return data;
 		}
+
+
+		static const String TAG_3_EntityCountTag = L"EntityCount";
+		static const String TAG_3_EntityPrefix = L"Ent";
+
+		static const String TAG_3_RootBoneTag = L"RootBone";
+
+		static const String TAG_3_BonesTag = L"Bones";
+		static const String TAG_3_BoneCountTag = L"BoneCount";
+
+		static const String TAG_3_AnimationDataTag = L"AnimationData";
+		
+
 	}
 }

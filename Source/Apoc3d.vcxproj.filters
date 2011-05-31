@@ -342,6 +342,12 @@
     <ClInclude Include="Graphics\ModelTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\Animation\AnimationData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Animation\AnimationTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -579,6 +585,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IO\ModelData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Animation\AnimationData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

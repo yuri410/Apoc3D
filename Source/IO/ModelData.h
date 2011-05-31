@@ -58,14 +58,14 @@ namespace Apoc3D
 			BoundingSphere BoundingSphere;
 
 			String Name;
-			int32 VertexSize;
-			int32 VertexCount;
+			uint32 VertexSize;
+			uint32 VertexCount;
 
 			MeshMaterialSet<MaterialData> Materials;
 
 			vector<MeshFace> Faces;
 
-
+			static uint32 ComputeVertexSize(const vector<VertexElement>& elements);
 
 			void Load(TaggedDataReader* data);
 			TaggedDataWriter* Save();

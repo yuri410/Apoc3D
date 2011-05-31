@@ -248,6 +248,12 @@ namespace Apoc3D
 		class Material;
 		class GraphicsDeviceManager;
 
+		namespace Animation
+		{
+			class ModelAnimationClip;
+			class MaterialAnimationClip;
+		}
+
 		namespace EffectSystem
 		{
 			class Effect;
