@@ -23,7 +23,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef EFFECTSYSTEM_H
 #define EFFECTSYSTEM_H
+
 #include "Common.h"
+#include "Core/Singleton.h"
+
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {
@@ -31,13 +35,20 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			class APAPI EffectManager
+			template class APAPI unordered_map<String, Effect*> EffectTable;
+
+			class APAPI EffectManager : public Singleton<EffectManager>
 			{
 			private:
-				EffectManager(){}
-			
-			public:
+				EffectTable m_fxTable;
 
+			public:
+				EffectManager() { }
+				~EffectManager() { }
+
+				Effect* getEffect(const String& name) const { return 0; }
+
+				SINGLETON_DECL_HEARDER(EffectManager);
 			};
 		};
 	};

@@ -21,3 +21,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+
+#include "EffectManager.h"
+
+namespace Apoc3D
+{
+	SINGLETON_DECL(Apoc3D::Graphics::EffectSystem::EffectManager);
+
+	namespace Graphics
+	{
+		namespace EffectSystem
+		{
+
+		}
+	}
+}

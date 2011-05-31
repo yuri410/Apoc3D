@@ -27,11 +27,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "RenderSystem/Texture.h"
 #include "EffectSystem/Effect.h"
+#include "EffectSystem/EffectManager.h"
 #include "io/Streams.h"
 #include "io/TaggedData.h"
-#include "Core/ResourceHandle.h"
 #include "IO/BinaryReader.h"
 #include "IO/BinaryWriter.h"
+#include "Core/ResourceHandle.h"
 #include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
@@ -116,27 +117,46 @@ namespace Apoc3D
 				}
 			}
 		}
-
+		const MaterialCustomParameter* Material::getCustomParameter(const String& usage) const
+		{
+			CustomParamTable::const_iterator iter =  m_customParametrs.find(usage);
+			if (iter != m_customParametrs.end())
+			{
+				return &iter->second;
+			}
+			return 0;
+		}
 		void Material::AddCustomParameter(const MaterialCustomParameter& value)
 		{
 			if (value.Usage.empty())
 			{
-
+				throw Apoc3DException::createException(EX_Argument, L"usage can not be empty");
 			}
+			m_customParametrs.insert(CustomParamTable::value_type(value.Usage, value));
 		}
 
-		Effect* Material::LoadEffect(const String& name)
+		void Material::LoadEffect(BinaryReader* br, int32 index)
 		{
-			return 0;
+			m_effectName[index] = br->ReadString();
+			if (m_effectName[index].empty())
+				m_effectName[index] = L"Standard";
+
+			m_effects[index] = EffectManager::getSingleton().getEffect(m_effectName[index]);
+		}
+		void Material::SaveEffect(BinaryWriter* bw, int32 index)
+		{
+			bw->Write(m_effectName[index]);
 		}
 
-		ResourceHandle<Texture>* Material::LoadTexture(BinaryReader* br)
+		void Material::LoadTexture(BinaryReader* br, int32 index)
 		{
-			return 0;
+			m_texName[index] = br->ReadString();
+			
+			// load texture
 		}
-		void Material::SaveTexture(BinaryWriter* bw, ResourceHandle<Texture>* tex)
+		void Material::SaveTexture(BinaryWriter* bw, int32 index)
 		{
-
+			bw->Write(m_texName[index]);
 		}
 
 		void Material::LoadV2(TaggedDataReader* data)
@@ -214,10 +234,7 @@ namespace Apoc3D
 			// load effect
 			{
 				BinaryReader* br = data->GetData(TAG_2_Effect);
-				m_effectName[0] = br->ReadString();
-				if (m_effectName[0].empty())
-					m_effectName[0] = L"Standard";
-				m_effects[0] = LoadEffect(m_effectName[0]);
+				LoadEffect(br, 0);
 				br->Close();
 				delete br;
 			}
@@ -240,7 +257,7 @@ namespace Apoc3D
 						tag = tag + TAG_2_Texture;
 						br = data->GetData(tag);
 
-						m_tex[i] = LoadTexture(br);
+						LoadTexture(br, i);
 
 						br->Close();
 						delete br;
@@ -253,6 +270,9 @@ namespace Apoc3D
 			// load custom material parameters
 			uint32 cmpCount = 0;
 			data->TryGetDataUInt32(TAG_3_CustomParamCount, cmpCount);
+			//m_customParametrs.reserve(cmpCount);
+			m_customParametrs.rehash(cmpCount);
+
 			for (uint32 i=0;i<cmpCount;i++)
 			{
 				String tag = StringUtils::ToString(i);
@@ -269,6 +289,8 @@ namespace Apoc3D
 
 				br->Close();
 				delete br;
+
+				AddCustomParameter(mcp);
 			}
 
 			// Load textures
@@ -290,7 +312,7 @@ namespace Apoc3D
 						tag = tag + TAG_3_Texture;
 						br = data->GetData(tag);
 
-						m_tex[i] = LoadTexture(br);
+						LoadTexture(br, i);
 
 						br->Close();
 						delete br;
@@ -317,7 +339,7 @@ namespace Apoc3D
 						tag = tag + TAG_3_Effect;
 						br = data->GetData(tag);
 
-						m_effects[i] = LoadEffect(br->ReadString());
+						LoadEffect(br, i);
 
 						br->Close();
 						delete br;
@@ -326,7 +348,7 @@ namespace Apoc3D
 			}
 
 			m_priority = data->GetDataInt32(TAG_3_RenderPriority);
-			m_passFlags = data->GetDataInt32(TAG_3_PassFlags);
+			m_passFlags = data->GetDataUInt64(TAG_3_PassFlags);
 
 			IsBlendTransparent = data->GetDataBool(TAG_3_IsBlendTransparent);
 
@@ -353,7 +375,7 @@ namespace Apoc3D
 
 			// load material basic color
 			{
-				BinaryReader* br = data->GetData(TAG_2_MaterialColorTag);
+				BinaryReader* br = data->GetData(TAG_3_MaterialColorTag);
 
 				br->ReadColor4(Ambient);
 				br->ReadColor4(Diffuse);
@@ -382,7 +404,108 @@ namespace Apoc3D
 		}
 		TaggedDataWriter* Material::Save()
 		{
-			return 0;
+			TaggedDataWriter* data = new TaggedDataWriter(true);
+
+			data->AddEntry(TAG_3_CustomParamCount, m_customParametrs.size());
+			int32 index = 0;
+			for (CustomParamTable::iterator iter = m_customParametrs.begin(); iter != m_customParametrs.end(); iter++)
+			{
+				String tag = StringUtils::ToString(index++);
+				tag = tag + TAG_3_CustomParam;
+
+				BinaryWriter* bw = data->AddEntry(tag);
+
+				const MaterialCustomParameter& mcp = iter->second;
+
+				bw->Write(static_cast<uint32>(mcp.Type));
+				bw->Write(reinterpret_cast<const char*>(mcp.Value), sizeof(mcp.Value));
+				bw->Write(mcp.Usage);
+
+				bw->Close();
+				delete bw;
+			}
+
+			// save textures
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_HasTexture);
+				for (int32 i=0;i<MaxTextures;i++)
+				{
+					bw->Write(!m_texName[i].empty());
+				}
+				bw->Close();
+				delete bw;
+
+				for (int32 i=0;i<MaxTextures;i++)
+				{
+					if (!m_texName[i].empty())
+					{
+						String tag = StringUtils::ToString(i);
+						tag = tag + TAG_3_Texture;
+
+						bw = data->AddEntry(tag);
+						SaveTexture(bw, i);
+						bw->Close();
+						delete bw;
+					}
+				}
+			}
+			// save effects
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_HasEffect);
+				for (int32 i=0;i<MaxScenePass;i++)
+				{
+					bw->Write(!m_effectName[i].empty());
+				}
+				bw->Close();
+				delete bw;
+
+				for (int32 i=0;i<MaxScenePass;i++)
+				{
+					if (!m_effectName[i].empty())
+					{
+						String tag = StringUtils::ToString(i);
+						tag = tag + TAG_3_Effect;
+
+						bw = data->AddEntry(tag);
+						SaveEffect(bw, i);
+						bw->Close();
+						delete bw;
+					}
+				}
+			}
+
+			data->AddEntry(TAG_3_RenderPriority, m_priority);
+			data->AddEntry(TAG_3_PassFlags, m_passFlags);
+			
+			data->AddEntry(TAG_3_IsBlendTransparent, IsBlendTransparent);
+			data->AddEntry(TAG_3_SourceBlend, static_cast<uint32>(SourceBlend));
+			data->AddEntry(TAG_3_DestinationBlend, static_cast<uint32>(DestinationBlend));
+			data->AddEntry(TAG_3_BlendFunction, static_cast<uint32>(BlendFunction));
+			
+			data->AddEntry(TAG_3_CullMode, static_cast<uint32>(Cull));			
+
+			data->AddEntry(TAG_3_AlphaReference, AlphaReference);
+			data->AddEntry(TAG_3_AlphaTestEnable, AlphaTestEnabled);
+
+			data->AddEntry(TAG_3_DepthTestEnabled, DepthTestEnabled);
+			data->AddEntry(TAG_3_DepthWriteEnabled, DepthWriteEnabled);
+
+
+			// load material basic color
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_MaterialColorTag);
+
+				bw->Write(Ambient);
+				bw->Write(Diffuse);
+				bw->Write(Emissive);
+				bw->Write(Specular);
+				bw->Write(Power);
+
+
+				bw->Close();
+				delete bw;
+			}
+			return data;
 		}
 
 	}

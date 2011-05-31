@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core\ResourceManager.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
@@ -36,8 +37,12 @@ namespace Apoc3D
 		class APAPI TextureManager : public ResourceManager
 		{
 		public:
+			const FileLocation* RedirectLocation;
+
 			TextureManager(void);
 			~TextureManager(void);
+
+
 		};
 	}
 }

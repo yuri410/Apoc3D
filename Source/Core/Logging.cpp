@@ -31,6 +31,7 @@ namespace Apoc3D
 	namespace Core
 	{
 		Log::Log(LogType type)
+			: m_type(type)
 		{
 
 		}
@@ -40,9 +41,16 @@ namespace Apoc3D
 
 		}
 
-		void Log::Write(String message, LogMessageLevel level)
+		void Log::Write(const String& message, LogMessageLevel level)
 		{
+			time_t t;
+			time(&t);
+			m_entries.push_back(LogEntry(t, message, level));
 
+			while (m_entries.size()>MaxEntries)
+			{
+				m_entries.erase(m_entries.begin());
+			}
 		}
 
 		LogManager::LogManager()
@@ -59,6 +67,11 @@ namespace Apoc3D
 			{
 				delete m_logs[i];	
 			}
+		}
+
+		void LogManager::Write(LogType type, const String& message, LogMessageLevel level) const
+		{
+			m_logs[static_cast<int32>(type)]->Write(message, level);
 		}
 	}
 }

@@ -92,12 +92,14 @@ namespace Apoc3D
 		public:
 			static const int32 MaxTextures = 16;
 		private:
+			typedef unordered_map<String, MaterialCustomParameter> CustomParamTable;
+
 			RenderDevice* m_device;
 
 			Effect* m_effects[MaxScenePass];
 			String m_effectName[MaxScenePass];
 
-			unordered_map<String, MaterialCustomParameter> m_customParametrs;
+			CustomParamTable m_customParametrs;
 			ResourceHandle<Texture>* m_tex[MaxTextures];
 			String m_texName[MaxTextures];
 			bool m_texDirty[MaxTextures];
@@ -106,10 +108,11 @@ namespace Apoc3D
 
 			int32 m_priority;
 
-			ResourceHandle<Texture>* LoadTexture(BinaryReader* br);
-			void SaveTexture(BinaryWriter* bw, ResourceHandle<Texture>* tex);
+			void LoadTexture(BinaryReader* br, int32 index);
+			void SaveTexture(BinaryWriter* bw, int32 index);
 
-			Effect* LoadEffect(const String& name);
+			void LoadEffect(BinaryReader* br, int32 index);
+			void SaveEffect(BinaryWriter* bw, int32 index);
 
 		public:
 
@@ -143,7 +146,7 @@ namespace Apoc3D
 			float Power;
 
 
-			const MaterialCustomParameter& getCustomParameter() const;
+			const MaterialCustomParameter* getCustomParameter(const String& usage) const;
 			void AddCustomParameter(const MaterialCustomParameter& value);
 
 			Effect* getPassEffect(int index) const { return m_effects[index]; }

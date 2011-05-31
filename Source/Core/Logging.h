@@ -35,7 +35,6 @@ namespace Apoc3D
 	{
 		enum APAPI LogMessageLevel
 		{
-			
 			LOGLVL_Infomation,
 			LOGLVL_Warning
 		};
@@ -56,27 +55,36 @@ namespace Apoc3D
 			time_t Time;
 			LogMessageLevel Level;
 			String Content;
+
+			LogEntry(){}
+			LogEntry(time_t time, String content, LogMessageLevel level)
+				: Time(time), Level(level), Content(content)
+			{
+			}
 		};
 
-		template class APAPI vector<LogEntry>;
+		template class APAPI list<LogEntry>;
 
 		class APAPI Log
 		{
-		private:
-			static const int32 MaxEntries = 200;
-
+		private:			
 			LogType m_type;
-			vector<LogEntry> m_entries;
+			list<LogEntry> m_entries;
 
 		public:
+			typedef list<LogEntry>::const_iterator Iterator;
+
+			static const int32 MaxEntries = 200;
+
+			Iterator begin() const { return m_entries.begin(); }
+			Iterator end() const { return m_entries.end(); }
+
 			Log(LogType type);
 			~Log();
 
 			LogType getType() const { return m_type; }
 
-			void Write(String message, LogMessageLevel level = LOGLVL_Infomation);
-			
-
+			void Write(const String& message, LogMessageLevel level = LOGLVL_Infomation);
 		};
 
 
@@ -91,6 +99,8 @@ namespace Apoc3D
 
 			Log* getDefaultLog() const;
 			Log* getLogSet(const String& name);
+
+			void Write(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation) const;
 
 			SINGLETON_DECL_HEARDER(LogManager);
 		}

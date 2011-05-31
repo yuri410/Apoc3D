@@ -27,13 +27,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma once
 
-#include "..\Common.h"
+#include "Common.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class _Export ModelManager
+		class APAPI ModelManager
 		{
 		public:
 			ModelManager(void);
