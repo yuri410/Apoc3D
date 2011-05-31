@@ -26,9 +26,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define MATERIAL_H
 
 #include "Common.h"
-#include "Core\HashHandleObject.h"
-#include "Math\Color.h"
+#include "Core/HashHandleObject.h"
+#include "Math/Color.h"
 #include "GraphicsCommon.h"
+#include "MaterialTypes.h"
+#include "io/MaterialData.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Core;
@@ -42,38 +44,6 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		enum MaterialCustomParameterType
-		{
-			MTRLPT_Float,
-			MTRLPT_Vector2,
-			MTRLPT_Vector4,
-			MTRLPT_Boolean,
-			MTRLPT_Integer,
-			
-		};
-
-		/** Defines custom material parameters. 
-			The value can be 16 bytes maximum.
-		*/
-		struct MaterialCustomParameter
-		{
-			/** The data type of the parameter.
-			*/
-			MaterialCustomParameterType Type;
-			byte Value[16];
-
-			/** The usage of this parameter. Effect check this for auto binding effect parameters.
-			*/
-			String Usage;
-
-			MaterialCustomParameter() { }
-			MaterialCustomParameter(bool value, const String usage = L"")
-				: Type(MTRLPT_Boolean), Usage(usage)
-			{
-				*reinterpret_cast<bool*>(Value) = value;
-			}
-		};
-
 		template class APAPI unordered_map<uint64, Effect*>;
 		template class APAPI unordered_map<String, uint64>;
 		template class APAPI vector<Texture*>;
@@ -89,11 +59,7 @@ namespace Apoc3D
 		*/
 		class APAPI Material : public HashHandleObject
 		{
-		public:
-			static const int32 MaxTextures = 16;
 		private:
-			typedef unordered_map<String, MaterialCustomParameter> CustomParamTable;
-
 			RenderDevice* m_device;
 
 			Effect* m_effects[MaxScenePass];
@@ -108,12 +74,8 @@ namespace Apoc3D
 
 			int32 m_priority;
 
-			void LoadTexture(BinaryReader* br, int32 index);
-			void SaveTexture(BinaryWriter* bw, int32 index);
-
-			void LoadEffect(BinaryReader* br, int32 index);
-			void SaveEffect(BinaryWriter* bw, int32 index);
-
+			void LoadTexture(int32 index);
+			void LoadEffect(int32 index);
 		public:
 
 			Blend SourceBlend;
@@ -171,12 +133,6 @@ namespace Apoc3D
 			void setPassFlags(uint64 val) { m_passFlags = val; }
 
 
-			/** Load with format version 2. The version used in making ZoneLink 2
-			*/
-			void LoadV2(TaggedDataReader* data);
-			/** Load with format version 3
-			*/
-			void LoadV3(TaggedDataReader* data);
 			void Load(TaggedDataReader* data);
 			TaggedDataWriter* Save();
 

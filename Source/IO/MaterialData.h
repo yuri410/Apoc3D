@@ -26,13 +26,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define MATERIALDATA_H
 
 #include "Common.h"
-#include "Graphics/EffectDescription.h"
+#include "Graphics/GraphicsCommon.h"
+#include "Graphics/MaterialTypes.h"
+#include "Math/Color.h"
 
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Math;
 
 using namespace std;
-
-
 
 namespace Apoc3D
 {
@@ -41,16 +43,65 @@ namespace Apoc3D
 		class APAPI MaterialData
 		{
 		private:
-			vector<String> m_textures;
-			
-			vector<EffectDescription> m_effects;
+			void LoadTexture(BinaryReader* br, int32 index);
+			void SaveTexture(BinaryWriter* bw, int32 index);
 
+			void LoadEffect(BinaryReader* br, int32 index);
+			void SaveEffect(BinaryWriter* bw, int32 index);
+
+			void AddCustomParameter(const MaterialCustomParameter& value);
+
+			/** Load with format version 2. The version used in making ZoneLink 2
+			*/
+			void LoadV2(TaggedDataReader* data);
+			/** Load with format version 3
+			*/
+			void LoadV3(TaggedDataReader* data);
 		public:
-			MaterialData(void);
-			~MaterialData(void);
+			String EffectName[MaxScenePass];
 
-			void Read(istream &strm);
-			void Write(ostream &strm);
+			CustomParamTable CustomParametrs;
+			String TextureName[MaxTextures];
+
+			uint64 PassFlags;
+
+			int32 Priority;
+			
+			Blend SourceBlend;
+			Blend DestinationBlend;
+			BlendFunction BlendFunction;
+			bool IsBlendTransparent;
+
+			CullMode Cull;
+
+			bool AlphaTestEnabled;
+			uint32 AlphaReference;
+
+			bool DepthWriteEnabled;
+			bool DepthTestEnabled;
+
+			/** the ambient component of this material
+			*/
+			Color4 Ambient;
+			/** the diffuse component of this material
+			*/
+			Color4 Diffuse;
+			/** the emissive component of this material
+			*/
+			Color4 Emissive;
+			/** the specular component of this material
+			*/
+			Color4 Specular;
+			/** the specular shininess
+			*/
+			float Power;
+
+			//MaterialData(const Material* mtrl);
+			MaterialData(void) { }
+			~MaterialData(void) { }
+
+			void Load(TaggedDataReader *data);
+			TaggedDataWriter* Save();
 		};
 
 	}

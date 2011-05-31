@@ -21,24 +21,53 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MODEL_H
-#define MODEL_H
+
+#ifndef MATERIALTPYES_H
+#define MATERIALTPYES_H
 
 #include "Common.h"
-#include "Core\Resource.h"
 
-using namespace Apoc3D::Core;
+using namespace std;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class APAPI Model// : public Resource
+		static const int32 MaxTextures = 16;
+
+		enum MaterialCustomParameterType
 		{
-		public:
-			Model(void);
-			~Model(void);
+			MTRLPT_Float = 0,
+			MTRLPT_Vector2 = 1,
+			MTRLPT_Vector4 = 2,
+			MTRLPT_Boolean = 3,
+			MTRLPT_Integer = 4,
+			MTRLPT_Texture = 5
 		};
+
+		/** Defines custom material parameters. 
+			The value can be 16 bytes maximum.
+		*/
+		struct MaterialCustomParameter
+		{
+			/** The data type of the parameter.
+			*/
+			MaterialCustomParameterType Type;
+			byte Value[16];
+
+			/** The usage of this parameter. Effect check this for auto binding effect parameters.
+			*/
+			String Usage;
+
+			MaterialCustomParameter() { }
+			MaterialCustomParameter(bool value, const String usage = L"")
+				: Type(MTRLPT_Boolean), Usage(usage)
+			{
+				*reinterpret_cast<bool*>(Value) = value;
+			}
+		};
+		typedef unordered_map<String, MaterialCustomParameter> CustomParamTable;
 	}
 }
+
 #endif

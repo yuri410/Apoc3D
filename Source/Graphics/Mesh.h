@@ -24,8 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MESH_H
 #define MESH_H
 
-#pragma once
-
 #include "Common.h"
 
 namespace Apoc3D

@@ -106,6 +106,8 @@
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="core\streaming\asyncprocessor.h" />
     <ClInclude Include="Graphics\LockData.h" />
+    <ClInclude Include="Graphics\MaterialTypes.h" />
+    <ClInclude Include="Graphics\ModelManager.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderTarget.h" />
     <ClInclude Include="IO\BinaryWriter.h" />
     <ClInclude Include="IO\IOUtils.h" />
@@ -206,6 +208,7 @@
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Graphics\LockData.cpp" />
+    <ClCompile Include="Graphics\ModelManager.cpp" />
     <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp" />
     <ClCompile Include="Graphics\RenderSystem\ObjectFactory.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderDevice.cpp" />
