@@ -48,6 +48,8 @@ namespace Apoc3D
 			inline void Write(const char* bytes, int64 count) const;
 			inline void Write(char byte) const;
 
+			inline void Write(bool value) const;
+
 			inline void Write(double value) const;
 			inline void Write(float value) const;
 			inline void Write(const String& value) const;			

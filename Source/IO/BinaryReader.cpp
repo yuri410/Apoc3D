@@ -62,7 +62,11 @@ namespace Apoc3D
 			}
 		}
 
-
+		bool BinaryReader::ReadBoolean()
+		{
+			FillBuffer(sizeof(bool));
+			return !!m_buffer[0];
+		}
 		double BinaryReader::ReadDouble()
 		{
 			FillBuffer(sizeof(double));

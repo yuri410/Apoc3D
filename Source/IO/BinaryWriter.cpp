@@ -168,6 +168,12 @@ namespace Apoc3D
 			Write(static_cast<float>(value.Blue));
 			Write(static_cast<float>(value.Alpha));
 		}
+		void BinaryWriter::Write(bool value) const
+		{
+			char buffer[sizeof(bool)];
+			buffer[0] = value ? 1 : 0;
+			m_baseStream->Write(buffer, sizeof(bool));
+		}
 		void BinaryWriter::Write(uint64 value) const
 		{
 			char buffer[sizeof(uint64)];

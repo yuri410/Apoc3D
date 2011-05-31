@@ -27,11 +27,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Singleton.h"
 
+using namespace std;
 
 namespace Apoc3D
 {
 	namespace Core
 	{
+		enum APAPI LogMessageLevel
+		{
+			
+			LOGLVL_Infomation,
+			LOGLVL_Warning
+		};
 		enum APAPI LogType
 		{
 			LOG_System = 0,
@@ -44,15 +51,32 @@ namespace Apoc3D
 		};
 
 
+		struct APAPI LogEntry
+		{
+			time_t Time;
+			LogMessageLevel Level;
+			String Content;
+		};
+
+		template class APAPI vector<LogEntry>;
+
 		class APAPI Log
 		{
 		private:
+			static const int32 MaxEntries = 200;
+
 			LogType m_type;
+			vector<LogEntry> m_entries;
+
 		public:
 			Log(LogType type);
 			~Log();
 
 			LogType getType() const { return m_type; }
+
+			void Write(String message, LogMessageLevel level = LOGLVL_Infomation);
+			
+
 		};
 
 

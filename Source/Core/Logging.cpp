@@ -40,6 +40,11 @@ namespace Apoc3D
 
 		}
 
+		void Log::Write(String message, LogMessageLevel level)
+		{
+
+		}
+
 		LogManager::LogManager()
 		{
 			for (size_t i=0;i<LOG_Count;i++)

@@ -29,7 +29,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "EffectSystem/Effect.h"
 #include "io/Streams.h"
 #include "io/TaggedData.h"
-#include "Core\ResourceHandle.h"
+#include "Core/ResourceHandle.h"
+#include "IO/BinaryReader.h"
+#include "IO/BinaryWriter.h"
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -79,10 +84,8 @@ namespace Apoc3D
 		static String TAG_3_DepthTestEnabled = L"DepthTestEnabled";
 		static String TAG_3_DepthWriteEnabled = L"DepthWriteEnabled";
 
-		static String TAG_2_MaterialColorTag = L"MaterialColor";
+		static String TAG_3_MaterialColorTag = L"MaterialColor";
 
-
-		static String TAG_3_AlphaRef = L"AlphaReference";
 
 
 
@@ -171,13 +174,196 @@ namespace Apoc3D
 			m_priority = 1;
 			data->TryGetDataInt32(TAG_2_RenderPriority, m_priority);
 			m_priority++;
+
+			// backward compatibility
+			{
+				int32 flags = data->GetDataInt32(TAG_2_MaterialFlag);
+
+				if (flags == 2)
+				{
+					SourceBlend = BLEND_SourceAlpha;
+					DestinationBlend = BLEND_One;
+				}
+				else if (flags == 3)
+				{
+					SourceBlend = BLEND_SourceColor;
+					DestinationBlend = BLEND_One;
+				}
+				else
+				{
+					SourceBlend = BLEND_SourceAlpha;
+					DestinationBlend = BLEND_InverseSourceAlpha;
+				}
+			}
 			
+			m_passFlags = 1;
 
+			// load material basic color
+			{
+				BinaryReader* br = data->GetData(TAG_2_MaterialColorTag);
 
+				br->ReadColor4(Ambient);
+				br->ReadColor4(Diffuse);
+				br->ReadColor4(Emissive);
+				br->ReadColor4(Specular);
+				Power = br->ReadSingle();
+
+				br->Close();
+				delete br;
+			}
+			// load effect
+			{
+				BinaryReader* br = data->GetData(TAG_2_Effect);
+				m_effectName[0] = br->ReadString();
+				if (m_effectName[0].empty())
+					m_effectName[0] = L"Standard";
+				m_effects[0] = LoadEffect(m_effectName[0]);
+				br->Close();
+				delete br;
+			}
+			// load textures
+			{
+				BinaryReader* br = data->GetData(TAG_2_HasTexture);
+				bool hasTexture[MaxTextures];
+				for (int32 i=0;i<MaxTextures;i++)
+				{
+					hasTexture[i] = br->ReadBoolean();
+				} 
+				br->Close();
+				delete br;
+
+				for (int32 i=0;i<MaxTextures;i++)
+				{
+					if (hasTexture[i])
+					{
+						String tag = StringUtils::ToString(i);
+						tag = tag + TAG_2_Texture;
+						br = data->GetData(tag);
+
+						m_tex[i] = LoadTexture(br);
+
+						br->Close();
+						delete br;
+					}
+				}
+			}
 		}
 		void Material::LoadV3(TaggedDataReader* data)
 		{
+			// load custom material parameters
+			uint32 cmpCount = 0;
+			data->TryGetDataUInt32(TAG_3_CustomParamCount, cmpCount);
+			for (uint32 i=0;i<cmpCount;i++)
+			{
+				String tag = StringUtils::ToString(i);
+				tag = tag + TAG_3_CustomParam;
 
+				BinaryReader* br = data->GetData(tag);
+
+				MaterialCustomParameter mcp;
+				mcp.Type = static_cast<MaterialCustomParameterType>(br->ReadUInt32());
+
+				br->ReadBytes(reinterpret_cast<char*>(mcp.Value), sizeof(mcp.Value));
+
+				mcp.Usage = br->ReadString();
+
+				br->Close();
+				delete br;
+			}
+
+			// Load textures
+			{
+				BinaryReader* br = data->GetData(TAG_3_HasTexture);
+				bool hasTexture[MaxTextures];
+				for (int32 i=0;i<MaxTextures;i++)
+				{
+					hasTexture[i] = br->ReadBoolean();
+				} 
+				br->Close();
+				delete br;
+
+				for (int32 i=0;i<MaxTextures;i++)
+				{
+					if (hasTexture[i])
+					{
+						String tag = StringUtils::ToString(i);
+						tag = tag + TAG_3_Texture;
+						br = data->GetData(tag);
+
+						m_tex[i] = LoadTexture(br);
+
+						br->Close();
+						delete br;
+					}
+				}
+			}
+
+			// Load effects
+			{
+				BinaryReader* br = data->GetData(TAG_3_HasEffect);
+				bool hasEffect[MaxScenePass];
+				for (int32 i=0;i<MaxScenePass;i++)
+				{
+					hasEffect[i] = br->ReadBoolean();
+				} 
+				br->Close();
+				delete br;
+
+				for (int32 i=0;i<MaxScenePass;i++)
+				{
+					if (hasEffect[i])
+					{
+						String tag = StringUtils::ToString(i);
+						tag = tag + TAG_3_Effect;
+						br = data->GetData(tag);
+
+						m_effects[i] = LoadEffect(br->ReadString());
+
+						br->Close();
+						delete br;
+					}
+				}
+			}
+
+			m_priority = data->GetDataInt32(TAG_3_RenderPriority);
+			m_passFlags = data->GetDataInt32(TAG_3_PassFlags);
+
+			IsBlendTransparent = data->GetDataBool(TAG_3_IsBlendTransparent);
+
+			uint32 val = static_cast<uint32>(SourceBlend);
+			data->TryGetDataUInt32(TAG_3_SourceBlend, val);
+			SourceBlend = static_cast<Blend>(val);
+
+			val = static_cast<uint32>(DestinationBlend);
+			data->TryGetDataUInt32(TAG_3_DestinationBlend, val);
+			DestinationBlend = static_cast<Blend>(val);
+
+			val = static_cast<uint32>(BlendFunction);
+			data->TryGetDataUInt32(TAG_3_BlendFunction, val);
+			BlendFunction = static_cast<Apoc3D::Graphics::RenderSystem::BlendFunction>(val);
+
+			Cull = static_cast<CullMode>(data->GetDataUInt32(TAG_3_CullMode));
+
+			AlphaReference = data->GetDataUInt32(TAG_3_AlphaReference);
+			AlphaTestEnabled = data->GetDataBool(TAG_3_AlphaTestEnable);
+
+			DepthTestEnabled = data->GetDataBool(TAG_3_DepthTestEnabled);
+			DepthWriteEnabled = data->GetDataBool(TAG_3_DepthWriteEnabled);
+
+
+			// load material basic color
+			{
+				BinaryReader* br = data->GetData(TAG_2_MaterialColorTag);
+
+				br->ReadColor4(Ambient);
+				br->ReadColor4(Diffuse);
+				br->ReadColor4(Emissive);
+				br->ReadColor4(Specular);
+				Power = br->ReadSingle();
+
+				br->Close();
+				delete br;
+			}
 		}
 
 		void Material::Load(TaggedDataReader* data)

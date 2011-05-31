@@ -56,6 +56,8 @@ namespace Apoc3D
 			inline int64 ReadBytes(char* dest, int64 count) const;
 			inline char ReadByte() const;
 
+			bool ReadBoolean();
+
 			double ReadDouble();
 			float ReadSingle();
 			String ReadString();

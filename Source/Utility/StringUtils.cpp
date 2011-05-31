@@ -134,18 +134,7 @@ namespace Apoc3D
 			stream << val;
 			return stream.str();
 		}
-		String StringUtils::ToString(int32 val, 
-			unsigned short width, wchar_t fill, std::ios::fmtflags flags)
-		{
-			wostringstream stream;
-			stream.width(width);
-			stream.fill(fill);
-			stream.imbue(locale::classic());
-			if (flags)
-				stream.setf(flags);
-			stream << val;
-			return stream.str();
-		}
+
 		String StringUtils::ToString(int64 val, 
 			unsigned short width, wchar_t fill, std::ios::fmtflags flags)
 		{

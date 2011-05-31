@@ -49,8 +49,16 @@ namespace Apoc3D
 			static int64 ParseInt64(const String& val);
 			static float ParseSingle(const String& val);
 			static double ParseDouble(const String& val);
+			static String ToString(int16 val, 
+				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0))
+			{
+				return ToString(static_cast<int64>(val), width, fill, flags);
+			}
 			static String ToString(int32 val, 
-				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
+				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0))
+			{
+				return ToString(static_cast<int64>(val), width, fill, flags);
+			}
 			static String ToString(int64 val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
 			static String ToString(float val, unsigned short precision = 10, 
@@ -58,6 +66,17 @@ namespace Apoc3D
 				std::ios::fmtflags flags = std::ios::fmtflags(0) );
 			static String ToString(const wchar_t* val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
+
+			static String ToString(uint16 val, 
+				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0))
+			{
+				return ToString(static_cast<uint64>(val), width, fill, flags);
+			}
+			static String ToString(uint32 val, 
+				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0))
+			{
+				return ToString(static_cast<uint64>(val), width, fill, flags);
+			}
 			static String ToString(uint64 val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
 
