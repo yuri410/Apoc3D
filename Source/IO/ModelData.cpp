@@ -1,0 +1,216 @@
+/*
+-----------------------------------------------------------------------------
+This source file is part of Apoc3D Engine
+
+Copyright (c) 2009+ Tao Games
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  if not, write to the Free Software Foundation, 
+Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/gpl.txt.
+
+-----------------------------------------------------------------------------
+*/
+#include "ModelData.h"
+#include "TaggedData.h"
+#include "BinaryReader.h"
+#include "BinaryWriter.h"
+#include "Apoc3DException.h"
+
+namespace Apoc3D
+{
+	namespace IO
+	{
+
+		//static const int MeshId = ((byte)'M' << 24) | ((byte)'E' << 16) | ((byte)'S' << 8) | ((byte)'H');
+
+		static const String TAG_3_MaterialCountTag = L"MaterialCount";
+		static const String TAG_3_MaterialsTag = L"Materials";
+
+		//static const String MaterialAnimationTag = L"MaterialAnimation";
+		static const String TAG_3_FaceCountTag = L"FaceCount";
+		static const String TAG_3_FacesTag = L"Faces";
+		static const String TAG_1_VertexFormatTag = L"VertexFormat";
+		static const String TAG_3_VertexDeclTag = L"VertexDeclaration";
+		static const String TAG_3_VertexCountTag = L"VertexCount";
+		static const String TAG_3_VertexSizeTag = L"VertexSize";
+
+		static const String TAG_3_VertexDataTag = L"VertexData";
+
+		static const String TAG_3_NameTag = L"Name";
+
+		static const String TAG_3_ParentBoneTag = L"ParentBone";
+		static const String TAG_3_BoundingSphereTag = L"BoundingSphere";
+
+		static uint32 ComputeVertexSize(const vector<VertexElement>& elements)
+		{
+			uint32 vertexSize = 0;
+			for (size_t i = 0; i < elements.size(); i++)
+			{
+				vertexSize += elements[i].getSize();
+			}
+			return vertexSize;
+		}
+		void MeshData::Load(TaggedDataReader* data)
+		{
+			int32 materialCount = data->GetDataInt32(TAG_3_MaterialCountTag);
+			Materials.Reserve(materialCount);
+
+			// load material set
+			{
+				BinaryReader* br = data->GetData(TAG_3_MaterialsTag);
+
+				int32 frameCount = br->ReadInt32();
+
+				for (int32 i=0; i<frameCount; i++)
+				{
+					TaggedDataReader* matData = br->ReadTaggedDataBlock();
+
+					MaterialData mtrl;
+					mtrl.Load(matData);
+
+					if (i==0)
+					{
+						Materials.Add(mtrl);
+					}
+					else
+					{
+						Materials.AddFrame(mtrl, i);
+					}
+
+					matData->Close();
+					delete matData;
+				}
+
+				br->Close();
+				delete br;
+			}
+
+			ParentBoneID = -1;
+			data->TryGetDataInt32(TAG_3_ParentBoneTag, ParentBoneID);
+
+			if (data->Contains(TAG_3_BoundingSphereTag))
+			{
+				BinaryReader* br = data->GetData(TAG_3_BoundingSphereTag);
+				br->ReadBoundingSphere(BoundingSphere);
+				br->Close();
+				delete br;
+			}
+			else
+			{
+				BoundingSphere.Center = Vector3Utils::Zero;
+				BoundingSphere.Radius = 0;
+			}
+
+			// read name
+			{
+				BinaryReader* br = data->GetData(TAG_3_NameTag);
+
+				Name = br->ReadString();
+
+				br->Close();
+				delete br;
+			}
+
+			// read faces
+			{
+				int32 faceCount = data->GetDataInt32(TAG_3_FaceCountTag);
+
+				Faces.reserve(faceCount);
+
+				BinaryReader* br = data->GetData(TAG_3_FacesTag);
+
+				for (int i=0;i<faceCount;i++)
+				{
+					MeshFace face;
+					face.IndexA = br->ReadInt32();
+					face.IndexB = br->ReadInt32();
+					face.IndexC = br->ReadInt32();
+
+					face.MaterialID = br->ReadInt32();
+
+					Faces.push_back(face);
+				}
+
+				br->Close();
+				delete br;
+			}
+
+			// vertex element
+			if (!data->Contains(TAG_3_VertexDeclTag))
+			{
+				// lantency support
+				// vertex format
+
+				int fvf = data->GetDataInt32(TAG_1_VertexFormatTag);
+
+				if (fvf == (256 | 2 | 16))
+				{
+
+				}
+				else
+				{
+					throw Apoc3DException::createException(EX_NotSupported, L"The mesh format version is out of date.");
+				}
+			}
+			else
+			{
+				// read vertex element
+				BinaryReader* br = data->GetData(TAG_3_VertexDataTag);
+
+				int elemConut = br->ReadInt32();
+				VertexElements.reserve(elemConut);
+				for (int i=0;i<elemConut;i++)
+				{
+					uint emOfs = br->ReadUInt32();
+					VertexElementFormat emFormat = static_cast<VertexElementFormat>(br->ReadUInt32());
+					VertexElementUsage emUsage = static_cast<VertexElementUsage>(br->ReadUInt32());
+					uint emIndex = br->ReadUInt32();
+
+					VertexElements.push_back(VertexElement(emOfs, emFormat, emUsage, emIndex));
+				}
+
+				br->Close();
+				delete br;
+			}
+			
+			if (data->Contains(TAG_3_VertexSizeTag))
+			{
+				VertexSize = data->GetDataInt32(TAG_3_VertexSizeTag);
+			}
+			else
+			{
+				VertexSize = ComputeVertexSize(VertexElements);
+			}
+			VertexCount = data->GetDataInt32(TAG_3_VertexCountTag);
+
+			// vertex data
+			{
+				BinaryReader* br = data->GetData(TAG_3_VertexDataTag);
+
+				br->ReadBytes(reinterpret_cast<char*>(VertexData), VertexCount*VertexSize);
+
+				br->Close();
+				delete br;
+			}
+
+		}
+
+		TaggedDataWriter* MeshData::Save()
+		{
+			TaggedDataWriter* data = new TaggedDataWriter(true);
+
+			return data;
+		}
+	}
+}

@@ -108,9 +108,11 @@
     <ClInclude Include="Graphics\LockData.h" />
     <ClInclude Include="Graphics\MaterialTypes.h" />
     <ClInclude Include="Graphics\ModelManager.h" />
+    <ClInclude Include="Graphics\ModelTypes.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderTarget.h" />
     <ClInclude Include="IO\BinaryWriter.h" />
     <ClInclude Include="IO\IOUtils.h" />
+    <ClInclude Include="IO\ModelData.h" />
     <ClInclude Include="IO\TaggedData.h" />
     <ClInclude Include="IO\BinaryReader.h" />
     <ClInclude Include="IO\Streams.h" />
@@ -217,6 +219,7 @@
     <ClCompile Include="Graphics\RenderSystem\Shader.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexDeclaration.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexElement.cpp" />
+    <ClCompile Include="IO\ModelData.cpp" />
     <ClCompile Include="IO\TextureData.cpp" />
     <ClCompile Include="IO\BinaryReader.cpp" />
     <ClCompile Include="IO\BinaryWriter.cpp" />

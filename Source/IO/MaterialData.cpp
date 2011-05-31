@@ -86,15 +86,6 @@ namespace Apoc3D
 		static String TAG_3_MaterialColorTag = L"MaterialColor";
 
 
-		MaterialData::MaterialData(void)
-		{
-		}
-
-
-		MaterialData::~MaterialData(void)
-		{
-		}
-		
 		void MaterialData::LoadEffect(BinaryReader* br, int32 index)
 		{
 			EffectName[index] = br->ReadString();
@@ -237,7 +228,7 @@ namespace Apoc3D
 			uint32 cmpCount = 0;
 			data->TryGetDataUInt32(TAG_3_CustomParamCount, cmpCount);
 			//m_customParametrs.reserve(cmpCount);
-			m_customParametrs.rehash(cmpCount);
+			CustomParametrs.rehash(cmpCount);
 
 			for (uint32 i=0;i<cmpCount;i++)
 			{
@@ -313,8 +304,8 @@ namespace Apoc3D
 				}
 			}
 
-			m_priority = data->GetDataInt32(TAG_3_RenderPriority);
-			m_passFlags = data->GetDataUInt64(TAG_3_PassFlags);
+			Priority = data->GetDataInt32(TAG_3_RenderPriority);
+			PassFlags = data->GetDataUInt64(TAG_3_PassFlags);
 
 			IsBlendTransparent = data->GetDataBool(TAG_3_IsBlendTransparent);
 

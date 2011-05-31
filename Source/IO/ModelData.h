@@ -21,37 +21,64 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EFFECTSYSTEM_H
-#define EFFECTSYSTEM_H
+
+#ifndef MODELDATA_H
+#define MODELDATA_H
 
 #include "Common.h"
-#include "Core/Singleton.h"
+#include "Graphics/GraphicsCommon.h"
+#include "Graphics/MaterialTypes.h"
+#include "Graphics/ModelTypes.h"
+#include "Graphics/RenderSystem/VertexElement.h"
+#include "Math/Color.h"
+#include "Math/BoundingSphere.h"
+#include "MaterialData.h"
 
-using namespace Apoc3D::Core;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Math;
+using namespace Apoc3D::IO;
+
+using namespace std;
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace IO
 	{
-		namespace EffectSystem
+		class APAPI MeshData
 		{
-			template class APAPI unordered_map<String, Effect*>;
-			typedef unordered_map<String, Effect*> EffectTable;
+		public:
+			char* VertexData;
 
-			class APAPI EffectManager : public Singleton<EffectManager>
-			{
-			private:
-				EffectTable m_fxTable;
+			int32 TextureCoordCount;
+			bool HasTextureCoord[MaxTextures];
+			vector<VertexElement> VertexElements;
 
-			public:
-				EffectManager() { }
-				~EffectManager() { }
+			int32 ParentBoneID;
+			BoundingSphere BoundingSphere;
 
-				Effect* getEffect(const String& name) const { return 0; }
+			String Name;
+			int32 VertexSize;
+			int32 VertexCount;
 
-				SINGLETON_DECL_HEARDER(EffectManager);
-			};
+			MeshMaterialSet<MaterialData> Materials;
+
+			vector<MeshFace> Faces;
+
+
+
+			void Load(TaggedDataReader* data);
+			TaggedDataWriter* Save();
+
 		};
-	};
-};
+		class APAPI ModelData
+		{
+		public:
+
+
+			void Load();
+			void Save();
+		};
+	}
+}
 #endif

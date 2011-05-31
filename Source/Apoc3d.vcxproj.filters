@@ -336,6 +336,12 @@
     <ClInclude Include="Graphics\MaterialTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\ModelData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\ModelTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -570,6 +576,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\ModelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\ModelData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
