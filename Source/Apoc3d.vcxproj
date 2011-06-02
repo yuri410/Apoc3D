@@ -62,7 +62,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\x86;$(SolutionDir)\lib\x86dbg;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>tinyxml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -84,10 +84,14 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\x86;$(SolutionDir)\lib\x86dbg;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>tinyxml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\extra\tinyxml\tinystr.h" />
+    <ClInclude Include="..\extra\tinyxml\tinyxml.h" />
+    <ClInclude Include="..\extra\tthread\fast_mutex.h" />
+    <ClInclude Include="..\extra\tthread\tinythread.h" />
     <ClInclude Include="Apoc3DException.h" />
     <ClInclude Include="Collections\List.h" />
     <ClInclude Include="Common.h" />
@@ -128,7 +132,6 @@
     <ClInclude Include="Math\ColorValue.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />
-    <ClInclude Include="Platform\Thread.h" />
     <ClInclude Include="Utility\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
     <ClInclude Include="Graphics\RenderSystem\DeviceContent.h" />
@@ -201,6 +204,11 @@
     <ClInclude Include="Vfs\VFSCommon.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\extra\tinyxml\tinystr.cpp" />
+    <ClCompile Include="..\extra\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="..\extra\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="..\extra\tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="..\extra\tthread\tinythread.cpp" />
     <ClCompile Include="Apoc3DException.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Config\ConfigrationSection.cpp" />

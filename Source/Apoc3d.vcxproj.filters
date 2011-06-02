@@ -309,9 +309,6 @@
     <ClInclude Include="Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform\Thread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\SceneRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -346,6 +343,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Graphics\EffectSystem\EffectDescription.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extra\tthread\fast_mutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extra\tthread\tinythread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extra\tinyxml\tinystr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\extra\tinyxml\tinyxml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -588,6 +597,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\EffectSystem\EffectDescription.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\extra\tthread\tinythread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\extra\tinyxml\tinystr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\extra\tinyxml\tinyxml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\extra\tinyxml\tinyxmlerror.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\extra\tinyxml\tinyxmlparser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

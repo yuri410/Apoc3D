@@ -36,7 +36,7 @@ namespace Apoc3D
 		class APAPI XMLConfiguration : public Configuration
 		{
 		protected:
-			XMLConfiguration(const ResourceLocation& rl);
+			XMLConfiguration(const ResourceLocation* rl);
 		};
 	}
 }
