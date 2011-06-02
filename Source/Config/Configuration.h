@@ -39,13 +39,11 @@ namespace Apoc3D
 		public:
 			typedef unordered_map<String, ConfigurationSection*> ChildTable;
 			typedef ChildTable::iterator Iterator;
-		private:
-			
-			String m_name;
-			
+		private:			
+			String m_name;			
+		protected:
 			ChildTable m_sections;
 
-		protected:
 			Configuration(const String& name)
 				: m_name(name)
 			{

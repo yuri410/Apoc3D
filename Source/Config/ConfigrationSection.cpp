@@ -35,22 +35,22 @@ namespace Apoc3D
 	{
 		const String& ConfigurationSection::getValue(const String& name) const
 		{
-			ValueTable::const_iterator iter = m_values.find(name);
+			SubSectionTable::const_iterator iter = m_subSection.find(name);
 
-			if (iter != m_values.end())
+			if (iter != m_subSection.end())
 			{
-				return iter->second;
+				return iter->second->getValue();
 			}
 			
 			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
 		}
 		const String& ConfigurationSection::getAttribute(const String& name) const
 		{
-			ValueTable::const_iterator iter = m_attributes.find(name);
+			SubSectionTable::const_iterator iter = m_subSection.find(name);
 
-			if (iter != m_attributes.end())
+			if (iter != m_subSection.end())
 			{
-				return iter->second;
+				return iter->second->getValue();
 			}
 
 			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
@@ -68,22 +68,22 @@ namespace Apoc3D
 		
 		bool ConfigurationSection::tryGetValue(const String& name, String& result) const
 		{
-			ValueTable::const_iterator iter = m_values.find(name);
+			SubSectionTable::const_iterator iter = m_subSection.find(name);
 
-			if (iter != m_values.end())
+			if (iter != m_subSection.end())
 			{
-				result = iter->second;
+				result = iter->second->getValue();
 				return true;
 			}
 			return false;
 		}
 		bool ConfigurationSection::tryGetAttribute(const String& name, String& result) const
 		{
-			ValueTable::const_iterator iter = m_attributes.find(name);
+			SubSectionTable::const_iterator iter = m_subSection.find(name);
 
-			if (iter != m_attributes.end())
+			if (iter != m_subSection.end())
 			{
-				result = iter->second;
+				result = iter->second->getValue();
 				return true;
 			}
 			return false;

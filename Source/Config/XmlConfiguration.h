@@ -29,13 +29,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::VFS;
 
+class TiXmlDocument;
+class TiXmlNode;
+
 namespace Apoc3D
 {
 	namespace Config
 	{
 		class APAPI XMLConfiguration : public Configuration
 		{
-		protected:
+		private:
+			void BuildNode(const TiXmlNode* node, ConfigurationSection* parent);
+			void BuildXml(const TiXmlDocument* doc);
+		public:
 			XMLConfiguration(const ResourceLocation* rl);
 		};
 	}

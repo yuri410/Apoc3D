@@ -48,18 +48,42 @@ namespace Apoc3D
 			typedef unordered_map<String, ConfigurationSection*> SubSectionTable;
 
 			String m_name;
+			String m_value;
 
 			AttributeTable m_attributes;
-			ValueTable m_values;
 			SubSectionTable m_subSection;
 
 		public:
 			ConfigurationSection(const String& name)
 				: m_name(name) 
 			{ }
+			~ConfigurationSection()
+			{
+				for (SubSectionTable::iterator iter = m_subSection.begin();
+					iter != m_subSection.end(); iter++)
+				{
+					ConfigurationSection* sect = iter->second;
+					delete sect;
+				}
+			}
+
+			void AddSection(ConfigurationSection* section)
+			{
+				m_subSection.insert(SubSectionTable::value_type(section->getName(), section));
+			}
+			void AddAttribute(const String& name, const String& value)
+			{
+				m_attributes.insert(AttributeTable::value_type(name, value));
+			}
+			void SetValue( const String& value)
+			{
+				m_value = value;
+			}
+			
 
 			const String& getName() const { return m_name; }
 			const String& getValue(const String& name) const;
+			const String& getValue() const { return m_value; }
 			const String& getAttribute(const String& name) const;
 
 			bool tryGetValue(const String& name, String& result) const;

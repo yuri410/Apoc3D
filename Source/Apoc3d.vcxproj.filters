@@ -249,9 +249,6 @@
     <ClInclude Include="Config\XmlConfiguration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Config\XMLSection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\IHashed.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -62,7 +62,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\x86;$(SolutionDir)\lib\x86dbg;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>tinyxml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tinyxmlSTL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -98,7 +98,6 @@
     <ClInclude Include="Config\ConfigurationManager.h" />
     <ClInclude Include="Config\ConfigurationSection.h" />
     <ClInclude Include="Config\XmlConfiguration.h" />
-    <ClInclude Include="Config\XMLSection.h" />
     <ClInclude Include="Core\IHashed.h" />
     <ClInclude Include="Core\IParsable.h" />
     <ClInclude Include="Core\Logging.h" />

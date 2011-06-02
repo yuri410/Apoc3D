@@ -24,19 +24,132 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "XmlConfiguration.h"
 
 #include "Vfs/ResourceLocation.h"
+#include "IO/Streams.h"
+#include "ConfigurationSection.h"
+
+#include "VFS/PathUtils.h"
+
+#define TIXML_USE_STL
+
 #include "tinyxml/tinyxml.h"
 #include "tinyxml/tinystr.h"
+
+using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
 	namespace Config
 	{
+		String getElementName(const TiXmlElement* elem)
+		{
+			string str = elem->ValueStr();
+			wchar_t* buffer = new wchar_t[str.length()];
+			mbstowcs(buffer, str.c_str(), str.length());
+			String result = buffer;
+			delete[] buffer;
+			return result;
+		}
+		String getNodeText(const TiXmlText* text)
+		{
+			string str = text->ValueStr();
+			wchar_t* buffer = new wchar_t[str.length()];
+			mbstowcs(buffer, str.c_str(), str.length());
+			String result = buffer;
+			delete[] buffer;
+			return result;
+		}
+		String getAttribName(const TiXmlAttribute* attrib)
+		{
+			string str = attrib->NameTStr();
+			wchar_t* buffer = new wchar_t[str.length()];
+			mbstowcs(buffer, str.c_str(), str.length());
+			String result = buffer;
+			delete[] buffer;
+			return result;
+		}
+		String getAttribValue(const TiXmlAttribute* attrib)
+		{
+			string str = attrib->ValueStr();
+			wchar_t* buffer = new wchar_t[str.length()];
+			mbstowcs(buffer, str.c_str(), str.length());
+			String result = buffer;
+			delete[] buffer;
+			return result;
+		}
+
+		void XMLConfiguration::BuildNode(const TiXmlNode* node, ConfigurationSection* parent)
+		{
+			int type = node->Type();
+
+			switch (type)
+			{
+			case TiXmlNode::TINYXML_ELEMENT:
+				{
+					const TiXmlElement* elem = node->ToElement();
+
+					String strName = getElementName(elem);
+					
+					ConfigurationSection* section = new ConfigurationSection(strName);
+
+
+					for (const TiXmlAttribute* i = elem->FirstAttribute(); i!=0; i=i->Next())
+					{
+						parent->AddAttribute(getAttribName(i), getAttribValue(i));
+					}
+
+
+					for (const TiXmlNode* i = node->FirstChild(); i!=0; i=i->NextSibling())
+					{
+						BuildNode(i, section);
+					}
+					if (parent)
+					{
+						// parent add section
+						parent->AddSection(section);
+					}
+					else
+					{
+						m_sections.insert(ChildTable::value_type(strName, section));
+					}
+				}
+				break;
+			case TiXmlNode::TINYXML_TEXT:
+				{
+					const TiXmlText* text = node->ToText();
+					
+					String strText = getNodeText(text);;
+					
+					parent->SetValue(strText);
+				}
+				break;
+			}
+		}
+		void XMLConfiguration::BuildXml(const TiXmlDocument* doc)
+		{
+			for (const TiXmlNode* i = doc->FirstChild(); i!=0; i=i->NextSibling())
+			{
+				BuildNode(i, 0);
+			}
+		}
+
+
 		XMLConfiguration::XMLConfiguration(const ResourceLocation* rl)
 			: Configuration(rl->getName())
 		{
-			
 			TiXmlDocument doc;
 			
+			Stream* strm = rl->GetReadStream();
+			
+			char* buffer = new char[strm->getLength()];
+			strm->Read(buffer, strm->getLength());
+
+			doc.Parse(buffer);
+
+			strm->Close();
+			delete strm;
+			delete buffer;
+
+			BuildXml(&doc);
 		}
 	}
 }
