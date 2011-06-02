@@ -342,10 +342,7 @@
     <ClInclude Include="Graphics\EffectSystem\EffectDescription.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\extra\tthread\fast_mutex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extra\tthread\tinythread.h">
+    <ClInclude Include="..\extra\tinyxml\tinyxml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -590,7 +587,13 @@
     <ClCompile Include="Graphics\EffectSystem\EffectDescription.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\extra\tthread\tinythread.cpp">
+    <ClCompile Include="..\extra\tinyxml\tinyxml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\extra\tinyxml\tinyxmlerror.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\extra\tinyxml\tinyxmlparser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

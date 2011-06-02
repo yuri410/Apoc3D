@@ -36,6 +36,7 @@ namespace Apoc3D
 	struct APAPI ManualStartConfig
 	{
 		vector<String> ConfigSet;
+		vector<String> WorkingDirectories;
 		vector<String> PluginList;
 	};
 

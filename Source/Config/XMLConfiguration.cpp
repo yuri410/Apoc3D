@@ -29,8 +29,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "VFS/PathUtils.h"
 
-#define TIXML_USE_STL
-
 #include "tinyxml/tinyxml.h"
 #include "tinyxml/tinystr.h"
 

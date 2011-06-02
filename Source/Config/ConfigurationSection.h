@@ -67,19 +67,10 @@ namespace Apoc3D
 				}
 			}
 
-			void AddSection(ConfigurationSection* section)
-			{
-				m_subSection.insert(SubSectionTable::value_type(section->getName(), section));
-			}
-			void AddAttribute(const String& name, const String& value)
-			{
-				m_attributes.insert(AttributeTable::value_type(name, value));
-			}
-			void SetValue( const String& value)
-			{
-				m_value = value;
-			}
-			
+			void AddSection(ConfigurationSection* section);
+			void AddAttribute(const String& name, const String& value);
+			void SetValue( const String& value);
+
 
 			const String& getName() const { return m_name; }
 			const String& getValue(const String& name) const;

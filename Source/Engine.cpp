@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Config/ConfigurationManager.h"
 #include "Graphics/RenderSystem/GraphicsAPI.h"
 #include "Core/PluginManager.h"
-
+#include "Core/Logging.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::VFS;
@@ -42,6 +42,8 @@ namespace Apoc3D
 {
 	void Engine::Initialize(const ManualStartConfig* mconf)
 	{
+		LogManager::Initialize();
+
 		FileSystem::Initialize();
 		ConfigurationManager::Initialize();
 		GraphicsAPIManager::Initialize();

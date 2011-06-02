@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Apoc3DException.h"
 #include "Core/IParsable.h"
 #include "Utility/StringUtils.h"
+#include "Core/Logging.h"
 
 using namespace Apoc3D::Utility;
 
@@ -33,6 +34,34 @@ namespace Apoc3D
 {
 	namespace Config
 	{
+
+		void ConfigurationSection::AddSection(ConfigurationSection* section)
+		{
+			pair<SubSectionTable::iterator,bool> ret = m_subSection.insert(SubSectionTable::value_type(section->getName(), section));
+			if (!ret.second)
+			{
+				LogManager::getSingleton().Write(LOG_System,  L"Configuration Section with name '" + section->getName() + L"' already exists. Ignored.", LOGLVL_Warning);
+				delete section;
+			}
+		}
+		void ConfigurationSection::AddAttribute(const String& name, const String& value)
+		{
+			pair<AttributeTable::iterator,bool> ret = m_attributes.insert(AttributeTable::value_type(name, value));
+			if (!ret.second)
+			{
+				LogManager::getSingleton().Write(LOG_System,  L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
+			}
+		}
+		void ConfigurationSection::SetValue( const String& value)
+		{
+			if (!value.empty())
+			{
+				LogManager::getSingleton().Write(LOG_System,  L"Overwriting the value of configuration section '" + m_name + L"'. ", LOGLVL_Warning);
+			}
+			m_value = value;
+		}
+
+
 		const String& ConfigurationSection::getValue(const String& name) const
 		{
 			SubSectionTable::const_iterator iter = m_subSection.find(name);

@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Config/ConfigurationManager.h"
 #include "Config/Configuration.h"
 #include "Config/ConfigurationSection.h"
+#include "Logging.h"
 
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Platform;
@@ -76,6 +77,8 @@ namespace Apoc3D
 		{
 			try
 			{
+				LogManager::getSingleton().Write(LOG_System, L"Loading plugin" + name, LOGLVL_Infomation);
+
 				Library* lib = new Library(name);
 
 				lib->Load();
@@ -86,14 +89,17 @@ namespace Apoc3D
 					String msg = L"Entry point 'Apoc3DGetPlugin' not found on ";
 					msg.append(name);
 					msg.append(L" . Cannot load");
-					throw Apoc3DException::createException(EX_KeyNotFound, msg.c_str());
+					LogManager::getSingleton().Write(LOG_System, L"Unable to load" + name + L".\n " + msg, LOGLVL_Infomation);
+					
+					lib->Unload();
+					delete lib;
+					OnPluginError(0);
+					return;
 				}
 
 				Plugin* plugin = ((LIB_GET_PLUGIN)ptr)();
 				
 				plugin->Load();
-
-				//plugin->GetName();
 
 				m_libraries.push_back(lib);
 			}
