@@ -351,12 +351,6 @@
     <ClInclude Include="..\extra\tthread\tinythread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\extra\tinyxml\tinystr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extra\tinyxml\tinyxml.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -600,18 +594,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\extra\tthread\tinythread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extra\tinyxml\tinystr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extra\tinyxml\tinyxml.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extra\tinyxml\tinyxmlerror.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\extra\tinyxml\tinyxmlparser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

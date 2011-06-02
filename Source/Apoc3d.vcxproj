@@ -62,7 +62,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\x86;$(SolutionDir)\lib\x86dbg;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tinyxml.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -88,8 +88,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\extra\tinyxml\tinystr.h" />
-    <ClInclude Include="..\extra\tinyxml\tinyxml.h" />
     <ClInclude Include="..\extra\tthread\fast_mutex.h" />
     <ClInclude Include="..\extra\tthread\tinythread.h" />
     <ClInclude Include="Apoc3DException.h" />
@@ -204,10 +202,6 @@
     <ClInclude Include="Vfs\VFSCommon.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\extra\tinyxml\tinystr.cpp" />
-    <ClCompile Include="..\extra\tinyxml\tinyxml.cpp" />
-    <ClCompile Include="..\extra\tinyxml\tinyxmlerror.cpp" />
-    <ClCompile Include="..\extra\tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="..\extra\tthread\tinythread.cpp" />
     <ClCompile Include="Apoc3DException.cpp" />
     <ClCompile Include="Common.cpp" />
