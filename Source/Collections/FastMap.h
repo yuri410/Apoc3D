@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EXISTTABLE_H
-#define EXISTTABLE_H
+#ifndef FASTMAP_H
+#define FASTMAP_H
 
 #include "Common.h"
 #include "CollectionsCommon.h"
@@ -31,8 +31,8 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-		template<typename T>
-		class APAPI ExistTable
+		template<typename T, typename S>
+		class APAPI FastMap
 		{
 		private:
 			class HashHelpers
@@ -82,6 +82,7 @@ namespace Apoc3D
 				int hashCode;
 				int next;
 				T data;
+				S value;
 			};
 
 			int* m_buckets;
@@ -131,7 +132,7 @@ namespace Apoc3D
 				m_entries = destinationArray;
 				m_entryLength = prime;
 			}
-			void Insert(const T& item, bool add);
+			void Insert(const T& item, const S& value, bool add);
 			int FindEntry(const T& item) const
 			{
 				if (m_buckets)
@@ -150,7 +151,7 @@ namespace Apoc3D
 		public:
 			int32 getCount() const { return m_count - m_freeCount; }
 
-			ExistTable(int capacity, const IEqualityComparer<T>* comparer)
+			FastMap(int capacity, const IEqualityComparer<T>* comparer)
 				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
 				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
 			{
@@ -159,14 +160,14 @@ namespace Apoc3D
 					Initialize(capacity);
 				}
 			}
-			~ExistTable()
+			~FastMap()
 			{
-				delete[] m_buckets;
 				delete[] m_entries;
+				delete[] m_buckets;
 			}
-			void Add(const T& item)
+			void Add(const T& item, const S& value)
 			{
-				Insert(item, true);
+				Insert(item, value, true);
 			}
 
 			void Clear()
@@ -215,7 +216,7 @@ namespace Apoc3D
 				}
 				return false;
 			}
-			bool Exists(const T& item) const
+			bool Contains(const T& item) const
 			{
 				if (m_buckets)
 				{
@@ -231,6 +232,10 @@ namespace Apoc3D
 				return false;
 			}
 
+			inline S& operator [](const T& key) const;
+			inline const S& operator [](const T& key) const;
+
+			bool TryGetValue(const T& key, S& value) const;
 		};
 	}
 }

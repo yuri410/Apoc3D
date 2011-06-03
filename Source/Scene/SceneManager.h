@@ -28,9 +28,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
+
 using namespace std;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
@@ -38,22 +40,26 @@ namespace Apoc3D
 	{
 		template class APAPI vector<SceneObject*>;
 		typedef vector<SceneObject*> ObjectList;
-		class OperationList;
+
+		typedef FastList<RenderOperation> OperationList;
+		typedef FastList<RenderOperation> OperationList;
+		typedef FastList<RenderOperation> OperationList;
+		typedef FastList<RenderOperation> OperationList;
+		typedef FastList<RenderOperation> OperationList;
 		class GeometryTable;
 		class MaterialTable;
 		class PriorityTable;
 		class MaterialList;
 		
-		template class APAPI vector<RenderOperation>;
 		template class APAPI unordered_map<BatchHandle, OperationList*>;
 		template class APAPI unordered_map<BatchHandle, GeometryTable*>;
 		template class APAPI unordered_map<uint32, MaterialTable*>;
 		template class APAPI unordered_map<BatchHandle, Material*>;
 
-		class APAPI OperationList : public vector<RenderOperation> { };
 		class APAPI GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
 		class APAPI MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
 		class APAPI PriorityTable : public unordered_map<uint32, MaterialTable*> { };
+
 		class APAPI MaterialList : public unordered_map<BatchHandle, Material*> { };
 				
 		class APAPI BatchData

@@ -21,15 +21,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "ExistTable.h"
-#include "Apoc3DException.h"
+
+#include "FastMap.h"
 
 namespace Apoc3D
 {
 	namespace Collections
 	{
-		template<typename T>
-		const int ExistTable<T>::HashHelpers::primes[] = { 
+		template<typename T, typename S>
+		const int FastMap<T,S>::HashHelpers::primes[] = { 
 			3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 
 			293, 353, 431, 521, 631, 761, 919, 1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 
 			5839, 7013, 8419, 10103, 12143, 14591, 17519, 21023, 25229, 30293, 36353, 43627, 52361, 62851, 75431, 90523, 
@@ -37,8 +37,8 @@ namespace Apoc3D
 			2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369
 		};
 
-		template<typename T>
-		void ExistTable<T>::Insert(const T& item, bool add)
+		template<typename T, typename S>
+		void FastMap<T,S>::Insert(const T& item, const S& value, bool add)
 		{
 			int freeList;
 			if (!m_buckets)
@@ -79,7 +79,42 @@ namespace Apoc3D
 			m_entries[freeList].hashCode = num;
 			m_entries[freeList].next = m_buckets[index];
 			m_entries[freeList].data = item;
+			m_entries[freeList].value = value;
 			m_entries[index] = freeList;
+		}
+
+		template<typename T, typename S>
+		const S& FastMap<T,S>::operator [](const T&key) const
+		{
+			int index = FindEntry(key);
+			if (index>0)
+			{
+				return m_entries[index].value;
+			}
+			throw Apoc3DException::createException(EX_KeyNotFound, L"");
+		}
+
+		template<typename T, typename S>
+		S& FastMap<T,S>::operator [](const T&key) const
+		{
+			int index = FindEntry(key);
+			if (index>0)
+			{
+				return m_entries[index].value;
+			}
+			throw Apoc3DException::createException(EX_KeyNotFound, L"");
+		}
+
+		template<typename T, typename S>
+		bool FastMap<T,S>::TryGetValue(const T& key, S& value) const
+		{
+			int index = FindEntry(key);
+			if (index>0)
+			{
+				value = m_entries[index].value;
+				return true;
+			}
+			return false;
 		}
 	}
 }
