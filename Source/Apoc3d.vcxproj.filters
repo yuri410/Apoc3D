@@ -294,9 +294,6 @@
     <ClInclude Include="Graphics\RenderSystem\RenderTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collections\List.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\PluginManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -343,6 +340,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\extra\tinyxml\tinyxml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\Patch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collections\FastList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collections\FastQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -594,6 +600,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\extra\tinyxml\tinyxmlparser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\Patch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

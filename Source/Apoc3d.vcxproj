@@ -90,7 +90,8 @@
   <ItemGroup>
     <ClInclude Include="..\extra\tinyxml\tinyxml.h" />
     <ClInclude Include="Apoc3DException.h" />
-    <ClInclude Include="Collections\List.h" />
+    <ClInclude Include="Collections\FastList.h" />
+    <ClInclude Include="Collections\FastQueue.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Config\Configurable.h" />
     <ClInclude Include="Config\Configuration.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="Graphics\MaterialTypes.h" />
     <ClInclude Include="Graphics\ModelManager.h" />
     <ClInclude Include="Graphics\ModelTypes.h" />
+    <ClInclude Include="Graphics\Patch.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderTarget.h" />
     <ClInclude Include="IO\BinaryWriter.h" />
     <ClInclude Include="IO\IOUtils.h" />
@@ -221,6 +223,7 @@
     <ClCompile Include="Graphics\Animation\AnimationData.cpp" />
     <ClCompile Include="Graphics\LockData.cpp" />
     <ClCompile Include="Graphics\ModelManager.cpp" />
+    <ClCompile Include="Graphics\Patch.cpp" />
     <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp" />
     <ClCompile Include="Graphics\RenderSystem\ObjectFactory.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderDevice.cpp" />

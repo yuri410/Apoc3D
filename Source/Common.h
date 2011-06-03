@@ -138,7 +138,13 @@ namespace Apoc3D
 
 #	define StringCompare(a, b) !a.compare(b)
 
-
+	namespace Collections
+	{
+		class FastList;
+		class FastQueue;
+		class FastMap;
+		class ExistTable;
+	}
 	namespace Core
 	{		
 		class Resource;

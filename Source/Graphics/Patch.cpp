@@ -21,19 +21,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef LIST_H
-#define LIST_H
 
-#include "Common.h"
+
+#include "Patch.h"
 
 namespace Apoc3D
 {
-	namespace Collections
+	namespace Graphics
 	{
-		class APAPI List
-		{
 
-		};
 	}
 }
-#endif
