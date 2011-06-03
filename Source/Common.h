@@ -143,6 +143,8 @@ namespace Apoc3D
 		class FastList;
 		class FastQueue;
 		class FastMap;
+
+		template<typename T>
 		class ExistTable;
 	}
 	namespace Core

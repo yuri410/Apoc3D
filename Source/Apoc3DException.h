@@ -42,7 +42,8 @@ namespace Apoc3D
 		EX_FormatException,
 		EX_EndOfStream,
 		EX_FileNotFound,
-		EX_Argument
+		EX_Argument,
+		EX_Duplicate
 	};
 
 	class APAPI Apoc3DException : public std::exception

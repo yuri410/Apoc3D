@@ -45,6 +45,29 @@ namespace Apoc3D
 			int32 m_size;
 
 			FastQueue(const FastQueue& another) { }
+
+
+			void SetCapacity(int capacity)
+			{
+				T* destinationArray = new T[capacity];
+				if (m_size > 0)
+				{
+					if (m_head < m_tail)
+					{
+						memcpy(destinationArray, m_array+m_head, m_size * sizeof(T));
+					}
+					else
+					{
+						memcpy(destinationArray, m_array+m_head, (m_arrLength-m_head) * sizeof(T));
+						memcpy(destinationArray, m_array+(m_arrLength-m_head), (m_tail) * sizeof(T));
+					}
+				}
+				delete[] m_array;
+				m_array = destinationArray;
+				m_arrLength = capacity;
+				m_head = 0;
+				m_tail = (m_size == capacity) ? 0 : m_size;
+			}
 		public:
 			int getCount() const { return m_size; }
 
@@ -154,27 +177,6 @@ namespace Apoc3D
 			const T& Tail() const
 			{
 				return GetElement(m_size - 1);
-			}
-			void SetCapacity(int capacity)
-			{
-				T* destinationArray = new T[capacity];
-				if (m_size > 0)
-				{
-					if (m_head < m_tail)
-					{
-						memcpy(destinationArray, m_array+m_head, m_size * sizeof(T));
-					}
-					else
-					{
-						memcpy(destinationArray, m_array+m_head, (m_arrLength-m_head) * sizeof(T));
-						memcpy(destinationArray, m_array+(m_arrLength-m_head), (m_tail) * sizeof(T));
-					}
-				}
-				delete[] m_array;
-				m_array = destinationArray;
-				m_arrLength = capacity;
-				m_head = 0;
-				m_tail = (m_size == capacity) ? 0 : m_size;
 			}
 
 		};

@@ -90,6 +90,7 @@
   <ItemGroup>
     <ClInclude Include="..\extra\tinyxml\tinyxml.h" />
     <ClInclude Include="Apoc3DException.h" />
+    <ClInclude Include="Collections\ExistTable.h" />
     <ClInclude Include="Collections\FastList.h" />
     <ClInclude Include="Collections\FastQueue.h" />
     <ClInclude Include="Common.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="..\extra\tinyxml\tinyxmlerror.cpp" />
     <ClCompile Include="..\extra\tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="Apoc3DException.cpp" />
+    <ClCompile Include="Collections\ExistTable.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Config\ConfigrationSection.cpp" />
     <ClCompile Include="Config\Configuration.cpp" />
