@@ -123,7 +123,7 @@ namespace Apoc3D
 
 		class ResourceManager;
 		class GameTime;
-		class GenerationTable;
+		
 
 		class Plugin;
 		class PluginManager;
@@ -132,12 +132,12 @@ namespace Apoc3D
 
 		class Log;
 
-		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
-		typedef fastdelegate::FastDelegate0<void> ResourceEventHandler;
-
 		namespace Streaming
 		{
+			class ResourceOperation;
+
 			class AsyncProcessor;
+			class GenerationTable;
 		};
 	};
 	namespace Config

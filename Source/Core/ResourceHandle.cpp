@@ -39,6 +39,8 @@ namespace Apoc3D
 		ResourceHandle<ResType>::~ResourceHandle()
 		{
 			_Unref();
+			if (!m_resource->getReferenceCount())
+				delete m_resource;
 			m_resource = 0;
 		}
 		template<class ResType>

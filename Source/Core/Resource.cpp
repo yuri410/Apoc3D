@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "Resource.h"
+#include "ResourceManager.h"
 
 namespace Apoc3D
 {
@@ -38,7 +39,7 @@ namespace Apoc3D
 		{
 			if (isManaged())
 			{
-
+				m_manager->NotifyReleaseResource(this);
 			}
 			delete m_resLoader;
 			delete m_resUnloader;
@@ -56,40 +57,73 @@ namespace Apoc3D
 		{
 			if (isManaged())
 			{
-				//if (getState() == RS_Unloaded)
-				//{
-				//	LoadSync();
-				//}
+				m_generation->Use(this);
+
+				LoadSync();
 			}
 		}
 
+		void Resource::LoadSync()
+		{
+			if (isManaged())
+			{
+				ResourceState state = getState();
+				switch (state)
+				{
+				case RS_Loading:
+					break;
+				case RS_Unloading:
+					break;
+				case RS_Pending:
+					break;
+				case RS_Loaded:
+					break;
+				case RS_Unloaded:
+					load();
+					setState(RS_Loaded);
+					break;
+				}
+			}
+		}
 		void Resource::Load()
 		{
 			if (isManaged())
 			{
-				assert((m_state & RS_Unloaded) == RS_Unloaded);
+				m_generation->Use(this);
 
-				//m_state = RS_Pending;
-				setState(RS_Loading);
-				load();
-				setState(RS_Loaded);
-				//load();	
+				ResourceState state = getState();
+				switch (state)
+				{
+				case RS_Loading:
+				case RS_Unloading:
+				case RS_Pending:
+				case RS_Loaded:
+					return;
+				}
+
+				setState(RS_Pending);
+				m_manager->AddTask(m_resLoader);
 			}
-			
 		}
 
 		void Resource::Unload()
 		{
 			if (isManaged())
 			{
-
 				assert((m_state & RS_Loaded) == RS_Loaded);
 
-				//m_state = RS_Pending;
+				ResourceState state = getState();
+				switch (state)
+				{
+				case RS_Loading:
+				case RS_Unloading:
+				case RS_Pending:
+				case RS_Unloaded:
+					return;
+				}
 
-				m_state = RS_Unloading;
-				unload();
-				m_state = RS_Unloaded;
+				setState(RS_Pending);
+				m_manager->AddTask(m_resUnloader);
 			}
 		}
 	}

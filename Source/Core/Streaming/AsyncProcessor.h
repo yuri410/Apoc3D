@@ -67,6 +67,8 @@ namespace Apoc3D
 				static void ThreadEntry(void* arg);
 				void Main();
 			public:
+				void AddTask(ResourceOperation* op);
+
 				bool TaskCompleted();
 				int GetOperationCount();
 				void WaitForCompletion();

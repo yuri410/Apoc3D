@@ -27,6 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Singleton.h"
 
+using namespace Apoc3D::Core::Streaming;
+
 namespace Apoc3D
 {
 	namespace Core
@@ -43,18 +45,45 @@ namespace Apoc3D
 			int64 m_curUsedCache;
 
 
+			GenerationTable* m_generationTable;
+			AsyncProcessor* m_asyncProc;
+
+			bool m_isShutDown;
+
+			void Resource_Loaded(Resource* res);
+			void Resource_Unloaded(Resource* res);
 
 		protected:
-			Resource* Exists(const String& name);
-
+		public:
+			
+			/** Notifies the resource manager a new resource is created, and should be managed.
+			*/
 			void NotifyNewResource(Resource* res);
-
-
+			/** Notifies the resource manager a resource is release, and should be removed from management.
+			*/
 			void NotifyReleaseResource(Resource* res);
 
-		public:
+			GenerationTable* getTable() const { return m_generationTable; }
+
 			int64 getTotalCacheSize() const { return m_totalCacheSize; }
+			void setTotalCacheSize(int64 size) { m_totalCacheSize = size; }
+
 			int64 getUsedCacheSize() const { return m_curUsedCache; }
+			
+
+			ResourceManager(int64 cacheSize);
+			~ResourceManager();
+
+			void Shutdown();
+
+			void AddTask(ResourceOperation* op) const;
+
+
+			bool IsIdle() const;
+			void WaitForIdle() const;
+			int GetCurrentOperationCount() const;
+
+			Resource* Exists(const String& hashString);
 
 			SINGLETON_DECL_HEARDER(ResourceManager);
 

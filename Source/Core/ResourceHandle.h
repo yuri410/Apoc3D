@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define RESOURCEHANDLE_H
 
 #include "Common.h"
+#include "Resource.h"
 
 namespace Apoc3D
 {
@@ -55,7 +56,7 @@ namespace Apoc3D
 
 			ResType* getWeakRef() const { return m_resource; }
 
-			ResType* operator .()
+			ResType* operator ->()
 			{
 				Touch();
 				return m_resource;

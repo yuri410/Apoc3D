@@ -45,9 +45,15 @@ namespace Apoc3D
 			RS_Loaded = 1,
 			RS_Loading = 2,			
 			RS_Unloading = 3,
+			/** The resource is in the waiting queue. To be loaded or unloaded,
+				
+				When a resource is pending, no more load or unload operation is processed.
+			*/
 			RS_Pending = 4
 		};
 		
+		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
+		typedef fastdelegate::FastDelegate1<Resource*, void> ResourceEventHandler;
 
 		class APAPI Resource
 		{
@@ -64,11 +70,13 @@ namespace Apoc3D
 				void Process()
 				{ 
 					Resource* res = getResource();
-					if (res->m_state != RS_Pending)
+					if (res->getState() != RS_Pending)
 						return;
-					res->m_state = RS_Loading;
+					res->setState(RS_Loading);
 					res->load();
-					res->m_state = RS_Loaded;
+					res->setState(RS_Loaded);
+
+					res->OnLoaded();
 				}
 			};
 			class ResourceUnloadOperation : public ResourceOperation
@@ -83,11 +91,13 @@ namespace Apoc3D
 				void Process()
 				{ 
 					Resource* res = getResource();
-					if (res->m_state != RS_Pending)
+					if (res->getState() != RS_Pending)
 						return;
-					res->m_state = RS_Unloading;
+					res->setState(RS_Unloading);
 					res->unload();
-					res->m_state = RS_Unloaded;
+					res->setState(RS_Unloaded);
+
+					res->OnUnloaded();
 				}
 			};
 		
@@ -122,25 +132,44 @@ namespace Apoc3D
 			
 			fast_mutex m_lock;
 
+			ResourceEventHandler m_eventLoaded;
+			ResourceEventHandler m_eventUnloaded;
+
+			void OnLoaded()
+			{
+				if (!m_eventLoaded.empty())
+				{
+					m_eventLoaded(this);
+				}
+			}
+			void OnUnloaded()
+			{
+				if (!m_eventUnloaded.empty())
+				{
+					m_eventUnloaded(this);
+				}
+			}
+
+			void LoadSync();
 		protected:
 			virtual void load() = 0;
 			virtual void unload() = 0;
 
+			/** Create a unmanaged resource
+			*/
 			Resource() 
 				: m_refCount(0), m_manager(0), m_resLoader(0), m_resUnloader(0), m_state(RS_Unloaded)
 			{
 			}
 			Resource(ResourceManager* manager, const String& hashString);
 
-			void LoadSync();
+			
 		public: 
 			typedef Resource ResHandleTemplateConstraint;   
+			
+			virtual ~Resource();
 
 			int getReferenceCount() const { return m_refCount; }
-
-			//Resource(ResourceManager* manager, const String& hashString, ResourceLoader* loader);
-
-			virtual ~Resource();
 
 			virtual uint32 getSize() = 0;
 

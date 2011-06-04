@@ -39,6 +39,15 @@ namespace Apoc3D
 				}
 			}
 
+			void AsyncProcessor::AddTask(ResourceOperation* op)
+			{
+				m_syncMutex.lock();
+
+				m_opQueue.Enqueue(op);
+
+				m_syncMutex.unlock();
+			}
+
 			bool AsyncProcessor::TaskCompleted()
 			{
 				bool result;
@@ -73,8 +82,6 @@ namespace Apoc3D
 			{
 				m_processThread = new thread(&AsyncProcessor::ThreadEntry, this);
 			}
-
-
 
 			AsyncProcessor::~AsyncProcessor(void)
 			{
