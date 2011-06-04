@@ -106,10 +106,13 @@ namespace Apoc3D
 			public:
 				volatile int Generation;
 			private:
-				GenerationTable* m_table;
-				volatile FastQueue<float> m_timeQueue;
+				const GenerationTable* m_table;
+				FastQueue<float> m_timeQueue;
+
+				fast_mutex m_queueLock;
+
 			public:
-				GenerationCalculator(GenerationTable* table);
+				GenerationCalculator(const GenerationTable* table);
 
 				void Use(Resource* resource);
 				void UpdateGeneration();
@@ -169,6 +172,12 @@ namespace Apoc3D
 			
 			virtual ~Resource();
 
+			int GetGeneration() const 
+			{
+				if (m_generation)
+					return m_generation->Generation;
+				return -1;
+			}
 			int getReferenceCount() const { return m_refCount; }
 
 			virtual bool IsUnloadable() const { return true; }

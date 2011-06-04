@@ -215,6 +215,7 @@
     <ClCompile Include="..\extra\tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="..\extra\tthread\tinythread.cpp" />
     <ClCompile Include="Apoc3DException.cpp" />
+    <ClCompile Include="Collections\CollectionsCommon.cpp" />
     <ClCompile Include="Collections\ExistTable.cpp" />
     <ClCompile Include="Collections\FastMap.cpp" />
     <ClCompile Include="Common.cpp" />

@@ -21,39 +21,24 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef COLLECTIONSCOMMON_H
-#define COLLECTIONSCOMMON_H
+#include "CollectionsCommon.h"
 
-#include "Common.h"
-
-using namespace Apoc3D::Core;
+#include "Core/Resource.h"
 
 namespace Apoc3D
 {
 	namespace Collections
 	{
-		/** Defines methods to support the comparison of objects for equality.
-		*/
-		template<typename T>
-		class APAPI IEqualityComparer
+		bool ResourceEqualityComparer::Equals(const Resource*& x, const Resource*& y) const
 		{
-		public:
-			/** Determines whether the specified objects are equal.
-			*/
-			virtual bool Equals(const T& x, const T& y) const = 0;
-			/** Returns a hash code for the specified object.
-			*/
-			virtual int64 GetHashCode(const T& obj) const = 0;
-		};
-
-		class ResourceEqualityComparer : public IEqualityComparer<Resource*>
+			const void* a = x;
+			const void* b = y;
+			return a==b;
+		}
+		int64 ResourceEqualityComparer::GetHashCode(const Resource*& obj) const
 		{
-		public:
-			virtual bool Equals(const Resource*& x, const Resource*& y) const;
-			
-			virtual int64 GetHashCode(const Resource*& obj) const;
-		};
+			const void* s = obj;
+			return reinterpret_cast<int64>(s);
+		}
 	}
 }
-
-#endif

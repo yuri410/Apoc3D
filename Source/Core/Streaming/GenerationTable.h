@@ -52,10 +52,10 @@ namespace Apoc3D
 
 			private:
 				fast_mutex m_genLock;
-				volatile ExistTable<Resource*>* m_generations;
+				ExistTable<Resource*>* m_generations;
 
 				fast_mutex m_genListLock;
-				volatile FastList<Resource*> m_generationList;
+				FastList<Resource*> m_generationList;
 
 				thread* m_thread;
 

@@ -41,8 +41,12 @@ namespace Apoc3D
 				: m_manager(mgr), m_isShutdown(false), m_generationList(100)
 			{
 				m_thread = new thread(&GenerationTable::ThreadEntry, this);
+				m_generations = new ExistTable<Resource*>[MaxGeneration];
 			}
-
+			GenerationTable::~GenerationTable()
+			{
+				delete[] m_generations;
+			}
 
 			void GenerationTable::SubTask_GenUpdate()
 			{
@@ -56,7 +60,7 @@ namespace Apoc3D
 				{
 					for (int i=3;i>1 && predictSize > m_manager->getTotalCacheSize(); i--)
 					{
-						ExistTable<Resource*>::Enumerator iter = m_generations->GetEnumerator();
+						ExistTable<Resource*>::Enumerator iter = m_generations[i].GetEnumerator();
 
 						while (iter.MoveNext())
 						{
@@ -90,6 +94,36 @@ namespace Apoc3D
 						SubTask_Manage();
 					}
 					ApocSleep(100);
+				}
+			}
+
+			void GenerationTable::AddResource(Resource* res)
+			{
+				int g = res->GetGeneration();
+				if (g!=-1)
+				{
+					m_genLock.lock();
+					m_generations[g].Add(res);
+					m_genLock.unlock();
+
+					m_genListLock.lock();
+					m_generationList.Add(res);
+					m_genListLock.unlock();
+				}
+			}
+
+			void GenerationTable::RemoveResource(Resource* res)
+			{
+				int g = res->GetGeneration();
+				if (g!=-1)
+				{
+					m_genLock.lock();
+					m_generations[g].Remove(res);
+					m_genLock.unlock();
+
+					m_genListLock.lock();
+					m_generationList.Remove(res);
+					m_genListLock.unlock();
 				}
 			}
 		}
