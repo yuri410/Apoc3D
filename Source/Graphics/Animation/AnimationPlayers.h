@@ -33,7 +33,6 @@ using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;
 
-
 namespace Apoc3D
 {
 	namespace Graphics
@@ -88,6 +87,12 @@ namespace Apoc3D
 				*/
 				virtual void OnUpdate() { }
 
+				ModelAnimationPlayerBase()
+					: m_currentClipValue(0), m_currentTimeValue(0), m_currentKeyframe(0), m_playbackRate(0),
+					m_duration(0), m_elapsedPlaybackTime(0), m_paused(false)
+				{
+
+				}
 			public:
 				/** Invoked when playback has completed.
 				*/
@@ -173,6 +178,10 @@ namespace Apoc3D
 				virtual void SetKeyframe(const ModelKeyframe& keyframe);
 				
 			public:
+				RootAnimationPlayer()
+				{
+					m_currentTransfrom.LoadIdentity();
+				}
 				/** Gets the current transformation being applied
 				*/
 				void GetCurrentTransform(Matrix& result)
@@ -278,15 +287,23 @@ namespace Apoc3D
 					const FastList<Matrix>* inverseBindPose, 
 					const FastList<int32>* skeletonHierarchy)
 					: m_bindPose(bindPose), m_inverseBindPose(inverseBindPose), 
-					m_skeletonHierarchy(skeletonHierarchy)
+					m_skeletonHierarchy(skeletonHierarchy), 
+					m_isFirstPlay(true)
 				{
 					m_boneTransforms = new Matrix[bindPose->getCount()];
+					memset(m_boneTransforms, 0, sizeof(Matrix) * bindPose->getCount());
+
 					m_worldTransforms = new Matrix[bindPose->getCount()];
+					memset(m_worldTransforms, 0, sizeof(Matrix) * bindPose->getCount());
+
 					m_skinTransforms = new Matrix[bindPose->getCount()];
+					memset(m_worldTransforms, 0, sizeof(Matrix) * bindPose->getCount());
 				}
 				~SkinnedAnimationPlayer()
 				{
-
+					delete[] m_boneTransforms;
+					delete[] m_worldTransforms;
+					delete[] m_skinTransforms;
 				}
 
 				int32 getTransformCount() const { return m_bindPose->getCount(); }
@@ -316,7 +333,7 @@ namespace Apoc3D
 			private:
 				/** Clip currently being played
 				*/
-				MaterialAnimationClip* m_currentClipValue;
+				const MaterialAnimationClip* m_currentClipValue;
 
 				/** Current timeindex and keyframe in the clip
 				*/
@@ -350,6 +367,7 @@ namespace Apoc3D
 				virtual void Update(const GameTime* const gameTime);
 
 			public:
+				int getCurrentMaterialFrame() const { return m_currentFrame; }
 				/** Invoked when playback has completed.
 				*/
 				AnimationCompeletedHandler& eventCompleted() { return m_eventCompeleted; }
@@ -376,6 +394,13 @@ namespace Apoc3D
 				/** Set the current play position.
 				*/
 				void setCurrentTimeValue(float value);
+
+				MaterialAnimationPlayer()
+					: m_currentClipValue(0), m_currentTimeValue(0), m_currentKeyframe(0), m_playbackRate(0),
+					m_duration(0), m_elapsedPlaybackTime(0), m_paused(false), m_currentFrame(0)
+				{
+
+				}
 
 				/** Starts playing a clip
 				*/

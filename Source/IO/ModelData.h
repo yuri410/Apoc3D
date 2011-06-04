@@ -84,11 +84,10 @@ namespace Apoc3D
 		public:
 			int32 RootBone;
 			FastList<Bone> Bones;
-			AnimationData* AnimationData;
 			FastList<MeshData*> Entities;
 
 			ModelData()
-				: AnimationData(0), RootBone(0)
+				: RootBone(0)
 			{
 			}
 			~ModelData();

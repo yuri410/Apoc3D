@@ -329,11 +329,11 @@ namespace Apoc3D
 				Entities.Clear();
 			}
 			
-			if (AnimationData)
-			{
-				delete AnimationData;
-				AnimationData = 0;
-			}
+			//if (AnimationData)
+			//{
+			//	delete AnimationData;
+			//	AnimationData = 0;
+			//}
 		}
 
 		void ModelData::ReadData(TaggedDataReader* data, int32 id)
@@ -395,48 +395,48 @@ namespace Apoc3D
 
 
 
-			if (id == MdlId_V2)
-			{
-				if (data->Contains(TAG_2_MaterialAnimationTag))
-				{
-					this->AnimationData = new Graphics::Animation::AnimationData();
-					BinaryReader* br = data->GetData(TAG_2_MaterialAnimationTag);
-					TaggedDataReader* ad = br->ReadTaggedDataBlock();
-					this->AnimationData->Load(ad);
-					ad->Close();
-					delete ad;
-					br->Close();
-					delete br;
-				}
-				
-				if (data->Contains(TAG_3_AnimationDataTag))
-				{
-					this->AnimationData = new Graphics::Animation::AnimationData();
-					BinaryReader* br = data->GetData(TAG_3_AnimationDataTag);
-					TaggedDataReader* ad = br->ReadTaggedDataBlock();
-					this->AnimationData->Load(ad);
-					ad->Close();
-					delete ad;
-					br->Close();
-					delete br;
-				}
-			}
-			else if (id == MdlId_V3)
-			{
-				if (data->Contains(TAG_3_AnimationDataTag))
-				{
-					this->AnimationData = new Graphics::Animation::AnimationData();
+			//if (id == MdlId_V2)
+			//{
+			//	if (data->Contains(TAG_2_MaterialAnimationTag))
+			//	{
+			//		this->AnimationData = new Graphics::Animation::AnimationData();
+			//		BinaryReader* br = data->GetData(TAG_2_MaterialAnimationTag);
+			//		TaggedDataReader* ad = br->ReadTaggedDataBlock();
+			//		this->AnimationData->Load(ad);
+			//		ad->Close();
+			//		delete ad;
+			//		br->Close();
+			//		delete br;
+			//	}
+			//	
+			//	if (data->Contains(TAG_3_AnimationDataTag))
+			//	{
+			//		this->AnimationData = new Graphics::Animation::AnimationData();
+			//		BinaryReader* br = data->GetData(TAG_3_AnimationDataTag);
+			//		TaggedDataReader* ad = br->ReadTaggedDataBlock();
+			//		this->AnimationData->Load(ad);
+			//		ad->Close();
+			//		delete ad;
+			//		br->Close();
+			//		delete br;
+			//	}
+			//}
+			//else if (id == MdlId_V3)
+			//{
+			//	if (data->Contains(TAG_3_AnimationDataTag))
+			//	{
+			//		this->AnimationData = new Graphics::Animation::AnimationData();
 
-					BinaryReader* br = data->GetData(TAG_3_AnimationDataTag);
-					TaggedDataReader* ad = br->ReadTaggedDataBlock();
-					this->AnimationData->Load(ad);
-					ad->Close();
-					delete ad;
-					br->Close();
-					delete br;
-				}
-				
-			}
+			//		BinaryReader* br = data->GetData(TAG_3_AnimationDataTag);
+			//		TaggedDataReader* ad = br->ReadTaggedDataBlock();
+			//		this->AnimationData->Load(ad);
+			//		ad->Close();
+			//		delete ad;
+			//		br->Close();
+			//		delete br;
+			//	}
+			//	
+			//}
 			
 		}
 		TaggedDataWriter* ModelData::WriteData() const
@@ -488,17 +488,17 @@ namespace Apoc3D
 				data->AddEntry(TAG_3_RootBoneTag, RootBone);
 			}
 
-			if (AnimationData)
-			{
-				BinaryWriter* bw = data->AddEntry(TAG_3_AnimationDataTag);
+			//if (AnimationData)
+			//{
+			//	BinaryWriter* bw = data->AddEntry(TAG_3_AnimationDataTag);
 
-				TaggedDataWriter* ad = AnimationData->Save();
-				bw->Write(ad);
-				delete ad;
+			//	TaggedDataWriter* ad = AnimationData->Save();
+			//	bw->Write(ad);
+			//	delete ad;
 
-				bw->Close();
-				delete bw;
-			}
+			//	bw->Close();
+			//	delete bw;
+			//}
 
 			return data;
 		}

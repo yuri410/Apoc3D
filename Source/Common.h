@@ -123,6 +123,7 @@ namespace Apoc3D
 
 		class ResourceManager;
 		class GameTime;
+		class GenerationTable;
 
 		class Plugin;
 		class PluginManager;
@@ -240,6 +241,12 @@ namespace Apoc3D
 			class MaterialAnimationKeyframe;
 
 			class AnimationData;
+
+			class ModelAnimationPlayerBase;
+			class RootAnimationPlayer;
+			class RigidAnimationPlayer;
+			class SkinnedAnimationPlayer;
+			class MaterialAnimationPlayer;
 		}
 
 		namespace EffectSystem

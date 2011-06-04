@@ -60,12 +60,21 @@ namespace Apoc3D
 		}
 
 		template<class ResType>
+		inline ResourceState ResourceHandle<ResType>::getState() const
+		{
+			return m_resource->getState();
+		}
+
+		template<class ResType>
 		void ResourceHandle<ResType>::Touch()
 		{
-			if (res->isManaged())
-			{
-				res->Use();
-			}
+			res->Use();
+		}
+
+		template<class ResType>
+		void ResourceHandle<ResType>::TouchSync()
+		{
+			res->UseSync();
 		}
 	}
 }

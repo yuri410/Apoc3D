@@ -57,7 +57,7 @@ namespace Apoc3D
 						m_mtrlList[mtrlHandle] = mtrl;
 						m_priTable[mtrl->getPriority()]->
 							operator[](mtrlHandle)->
-							operator[](geoData->getBatchHandle())->push_back(op);
+							operator[](geoData->getBatchHandle())->Add(op);
 
 					}
 				}
@@ -70,14 +70,14 @@ namespace Apoc3D
 				MaterialTable* mtrlTbl = i->second;
 				for (MaterialTable::iterator j = mtrlTbl->begin(); j!=mtrlTbl->end();j++)
 				{
-					//Material* mtrl = m_mtrlList[j->first];
 					GeometryTable* geoTbl = j->second;
-
-					geoTbl->clear();
+					
+					for (GeometryTable::iterator k = geoTbl->begin(); k != geoTbl->end(); k++)
+					{
+						k->second->FastClear();
+					}
 				}
-				mtrlTbl->clear();
 			}
-			m_priTable.clear();
 		}
 
 

@@ -48,11 +48,14 @@ namespace Apoc3D
 		public:
 			virtual ~ResourceHandle(void);
 
-			void Touch();
+			inline void Touch();
+			void TouchSync();
+
+			inline ResourceState getState() const;
 
 			ResType* getWeakRef() const { return m_resource; }
 
-			ResType* operator ->()
+			ResType* operator .()
 			{
 				Touch();
 				return m_resource;

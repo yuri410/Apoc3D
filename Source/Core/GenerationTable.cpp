@@ -21,19 +21,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "Model.h"
+
+#include "GenerationTable.h"
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace Core
 	{
-		Model::Model(ResourceHandle<ModelSharedData>* data)
-		{
-		}
+		const float GenerationTable::GenerationLifeTime[MaxGeneration] = { 3, 6, 10, 30 };
 
 
-		Model::~Model(void)
-		{
-		}
 	}
 }

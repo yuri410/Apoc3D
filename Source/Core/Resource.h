@@ -26,7 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Core/Streaming/AsyncProcessor.h"
+#include "Collections/FastQueue.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core::Streaming;
 
 namespace Apoc3D
@@ -43,24 +45,6 @@ namespace Apoc3D
 			RS_Pending = 4
 		};
 		
-		//template<class T>
-		//class APAPI ResourceHandle
-		//{
-		//private:
-		//	T* m_resource;
-
-		//	bool m_isDummy;
-
-		//private: 
-		//	ResourceHandle(const ResourceHandle& another) { }
-		//public:
-		//	ResourceHandle(T* resource)
-		//		: m_resource(resource)
-		//	{
-		//	}
-
-
-		//};
 
 		class APAPI Resource
 		{
@@ -103,18 +87,37 @@ namespace Apoc3D
 					res->m_state = RS_Unloaded;
 				}
 			};
-			
-			int m_refCount;
+		
+			class GenerationCalculator
+			{
+			public:
+				volatile int Generation;
+			private:
+				GenerationTable* m_table;
+				volatile FastQueue<float> m_timeQueue;
+			public:
+				GenerationCalculator(GenerationTable* table);
 
-			//ResourceLoader* m_resLoader;
-			uint32 m_state;
+				void Use(Resource* resource);
+				void UpdateGeneration();
+
+				bool IsGenerationOutOfTime(float time);
+
+			};
+
+			GenerationCalculator* m_generation;
+			ResourceManager* m_manager;
 
 			const String m_hashString;
+
+			int m_refCount;
+
+			uint32 m_state;
 
 			ResourceLoadOperation* m_resLoader;
 			ResourceUnloadOperation* m_resUnloader;
 
-			ResourceManager* m_manager;
+			
 
 			//ResourceEventHandler me_Loaded;
 			//ResourceEventHandler me_Unloaded;
@@ -129,6 +132,9 @@ namespace Apoc3D
 			Resource(ResourceManager* manager, const String& hashString);
 		public: 
 			typedef Resource ResHandleTemplateConstraint;   
+
+			int getReferenceCount() const { return m_refCount; }
+
 
 			//ResourceEventHandler* eventLoaded();
 			//ResourceEventHandler* eventUnloaded();

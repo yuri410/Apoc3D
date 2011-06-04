@@ -117,8 +117,6 @@ namespace Apoc3D
 				m_currentTransfrom = keyframe.getTransform();
 			}
 
-
-
 			void SkinnedAnimationPlayer::SetKeyframe(const ModelKeyframe& keyframe)
 			{
 				m_boneTransforms[keyframe.getBone()] = keyframe.getTransform();

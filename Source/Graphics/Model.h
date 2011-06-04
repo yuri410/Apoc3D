@@ -51,7 +51,6 @@ namespace Apoc3D
 			FastList<Mesh*> m_entities;
 			FastList<Bone> m_bones;
 			int32 m_rootBone;
-			AnimationData* m_animationData;
 
 			ResourceLocation* m_resourceLocation;
 
@@ -62,7 +61,18 @@ namespace Apoc3D
 
 			}
 		};
-		class APAPI Model : Renderable
+
+
+		enum AnimationType
+		{
+			Root,
+			Rigid,
+			Skinned
+		};
+
+		typedef fastdelegate::FastDelegate1<AnimationType, void> AnimationCompletedEventHandler;
+
+		class APAPI Model : public Renderable, public Resource
 		{
 		private:
 			enum AnimationControl
@@ -88,12 +98,104 @@ namespace Apoc3D
 			bool m_mtrlAnimCompleted;
 
 			ResourceHandle<ModelSharedData>* m_data;
+			AnimationData* m_animData;
+
+			SkinnedAnimationPlayer* m_skinPlayer;
+			RootAnimationPlayer* m_rootPlayer;
+			RigidAnimationPlayer* m_rigidPlayer;
+			MaterialAnimationPlayer* m_mtrlPlayer;
+
+			FastList<ModelAnimationPlayerBase*> m_animInstance;
+
+			bool m_autoLoop;
+			String m_selectedClipName;
+
+			AnimationCompletedEventHandler m_eventAnimCompleted;
+
+
+
+			void ControlRootAnimation(AnimationControl ctrl);
+			void ControlSkinnedAnimation(AnimationControl ctrl);
+			void ControlRigidAnimation(AnimationControl ctrl);
+			void ControlMaterialAnimation(AnimationControl ctrl);
+
+			void RootAnim_Completed()
+			{
+
+			}
+			void RigidAnim_Competed()
+			{
+
+			}
+			void SkinAnim_Completed()
+			{
+
+			}
+			void MtrlAnim_Completed()
+			{
+
+			}
+			void InitializeAnimation();
+			void UpdateAnimation();
+		public:
+			AnimationCompletedEventHandler& eventAnimationCompeleted() { return m_eventAnimCompleted; }
+
+			FastList<ModelAnimationPlayerBase*>& getCustomAnimation() { return m_animInstance; }
+			
+			float GetSkinAnimationDuration();
+
+			void PlayAnimation()
+			{
+				ControlRootAnimation(AC_Play);
+				ControlSkinnedAnimation(AC_Play);
+				ControlRigidAnimation(AC_Play);
+				ControlMaterialAnimation(AC_Play);
+			}
+			void PauseAnimation()
+			{
+				ControlRootAnimation(AC_Pause);
+				ControlSkinnedAnimation(AC_Pause);
+				ControlRigidAnimation(AC_Pause);
+				ControlMaterialAnimation(AC_Pause);
+			}
+			void ResumeAnimation()
+			{
+				ControlRootAnimation(AC_Resume);
+				ControlSkinnedAnimation(AC_Resume);
+				ControlRigidAnimation(AC_Resume);
+				ControlMaterialAnimation(AC_Resume);
+			}
+			void StopAnimation()
+			{
+				ControlRootAnimation(AC_Stop);
+				ControlSkinnedAnimation(AC_Stop);
+				ControlRigidAnimation(AC_Stop);
+				ControlMaterialAnimation(AC_Stop);
+			}
+
+			float GetAnimationDuration()
+			{
+
+			}
 
 			
 
-		public:
-			Model(void);
+			Model(ResourceHandle<ModelSharedData>* data);
 			~Model(void);
+
+			void ReloadMaterialAnimation()
+			{
+
+			}
+
+			virtual const RenderOperationBuffer* GetRenderOperation()
+			{
+
+			}
+
+
+			void Update(const GameTime* const time);
+
 		};
 	}
 }

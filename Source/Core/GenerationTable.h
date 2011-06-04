@@ -21,19 +21,47 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "Model.h"
+
+#ifndef GENERATIONTABLE_H
+#define GENERATIONTABLE_H
+
+#include "Common.h"
+#include "Collections/FastList.h"
+
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace Core
 	{
-		Model::Model(ResourceHandle<ModelSharedData>* data)
+		class APAPI GenerationTable
 		{
-		}
+		public:
+			static const int32 MaxGeneration = 4;
+
+			static const float GenerationLifeTime[];
 
 
-		Model::~Model(void)
-		{
-		}
+			
+		private:
+			volatile ExistTable<Resource*>* m_generations;
+			volatile FastList<Resource*> m_generationList;
+
+			
+		public:
+			GenerationTable(ResourceManager* mgr);
+			~GenerationTable();
+
+			ExistTable<Resource>& getGeneration(int index) const { return m_generations[index]; }
+
+			void AddResource(Resource* res);
+			void RemoveResource(Resource* res);
+
+			void UpdateGeneration(int oldGeneration, int newGeneration, Resource* resource);
+
+
+		};
 	}
 }
+
+#endif
