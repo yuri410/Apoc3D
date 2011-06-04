@@ -40,15 +40,27 @@ namespace Apoc3D
 			{
 
 			}
+			delete m_resLoader;
+			delete m_resUnloader;
 		}
 
-		void Resource::Touch()		
+		void Resource::Use()		
 		{
 			if (isManaged())
 			{
-				if (m_state == RS_Unloaded)
+				if (getState() == RS_Unloaded)
 					Load();
 			}			
+		}
+		void Resource::UseSync()
+		{
+			if (isManaged())
+			{
+				//if (getState() == RS_Unloaded)
+				//{
+				//	LoadSync();
+				//}
+			}
 		}
 
 		void Resource::Load()
@@ -58,9 +70,9 @@ namespace Apoc3D
 				assert((m_state & RS_Unloaded) == RS_Unloaded);
 
 				//m_state = RS_Pending;
-				m_state = RS_Loading;
+				setState(RS_Loading);
 				load();
-				m_state = RS_Loaded;
+				setState(RS_Loaded);
 				//load();	
 			}
 			

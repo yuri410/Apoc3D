@@ -27,9 +27,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Core/Streaming/AsyncProcessor.h"
 #include "Collections/FastQueue.h"
+#include "tthread/tinythread.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core::Streaming;
+
+using namespace tthread;
 
 namespace Apoc3D
 {
@@ -112,15 +115,13 @@ namespace Apoc3D
 
 			int m_refCount;
 
-			uint32 m_state;
+			ResourceState m_state;
 
 			ResourceLoadOperation* m_resLoader;
 			ResourceUnloadOperation* m_resUnloader;
-
 			
+			fast_mutex m_lock;
 
-			//ResourceEventHandler me_Loaded;
-			//ResourceEventHandler me_Unloaded;
 		protected:
 			virtual void load() = 0;
 			virtual void unload() = 0;
@@ -130,14 +131,12 @@ namespace Apoc3D
 			{
 			}
 			Resource(ResourceManager* manager, const String& hashString);
+
+			void LoadSync();
 		public: 
 			typedef Resource ResHandleTemplateConstraint;   
 
 			int getReferenceCount() const { return m_refCount; }
-
-
-			//ResourceEventHandler* eventLoaded();
-			//ResourceEventHandler* eventUnloaded();
 
 			//Resource(ResourceManager* manager, const String& hashString, ResourceLoader* loader);
 
@@ -145,13 +144,28 @@ namespace Apoc3D
 
 			virtual uint32 getSize() = 0;
 
-			void Touch();
+			void Use();
+			void UseSync();
+
 			void Load();
 			void Unload();
 
 			const String& getHashString() const { return m_hashString; }
-			bool isLoaded() const { return getState() == RS_Loaded; }
-			uint32 getState() const { return m_state; }
+			bool isLoaded() { return getState() == RS_Loaded; }
+			ResourceState getState()
+			{
+				ResourceState state;
+				m_lock.lock();
+				state = m_state;
+				m_lock.unlock();
+				return state;
+			}
+			void setState(ResourceState st)
+			{
+				m_lock.lock();
+				m_state = st;
+				m_lock.unlock();
+			}
 			bool isManaged() const { return !!m_manager; }
 
 			void _Ref()

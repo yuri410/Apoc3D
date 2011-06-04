@@ -28,8 +28,9 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		const float GenerationTable::GenerationLifeTime[MaxGeneration] = { 3, 6, 10, 30 };
-
-
+		namespace Streaming
+		{
+			const float GenerationTable::GenerationLifeTime[MaxGeneration] = { 3, 6, 10, 30 };
+		}
 	}
 }

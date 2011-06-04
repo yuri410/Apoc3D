@@ -25,8 +25,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define ASYNCPROCESSOR_H
 
 #include "Common.h"
+#include "tthread/tinythread.h"
+#include "tthread/fast_mutex.h"
+#include "Collections/FastQueue.h"
+
+using namespace Apoc3D::Collections;
 
 using namespace std;
+using namespace tthread;
 
 namespace Apoc3D
 {
@@ -51,11 +57,27 @@ namespace Apoc3D
 			class APAPI AsyncProcessor
 			{
 			private:
-				//MUTEX;
+				FastQueue<ResourceOperation*> m_opQueue;
 
+				thread* m_processThread;
+				fast_mutex m_syncMutex;
+
+				bool m_closed;
+
+				static void ThreadEntry(void* arg);
+				void Main();
 			public:
-				AsyncProcessor(void);
+				bool TaskCompleted();
+				int GetOperationCount();
+				void WaitForCompletion();
+				
+
+				void Shutdown();
+
+				AsyncProcessor(const String& name);
 				~AsyncProcessor(void);
+
+
 			};
 		}
 	}

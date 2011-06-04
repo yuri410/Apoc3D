@@ -27,40 +27,50 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Collections/FastList.h"
+#include "fast_mutex.h"
+#include "tinythread.h"
 
 using namespace Apoc3D::Collections;
+using namespace tthread;
 
 namespace Apoc3D
 {
 	namespace Core
 	{
-		class APAPI GenerationTable
+		namespace Streaming
 		{
-		public:
-			static const int32 MaxGeneration = 4;
+			class APAPI GenerationTable
+			{
+			public:
+				static const int32 MaxGeneration = 4;
 
-			static const float GenerationLifeTime[];
-
-
-			
-		private:
-			volatile ExistTable<Resource*>* m_generations;
-			volatile FastList<Resource*> m_generationList;
-
-			
-		public:
-			GenerationTable(ResourceManager* mgr);
-			~GenerationTable();
-
-			ExistTable<Resource>& getGeneration(int index) const { return m_generations[index]; }
-
-			void AddResource(Resource* res);
-			void RemoveResource(Resource* res);
-
-			void UpdateGeneration(int oldGeneration, int newGeneration, Resource* resource);
+				static const float GenerationLifeTime[];
 
 
-		};
+
+			private:
+				fast_mutex m_genLock;
+				volatile ExistTable<Resource*>* m_generations;
+
+				fast_mutex m_genListLock;
+				volatile FastList<Resource*> m_generationList;
+
+				thread* m_thread;
+			public:
+				GenerationTable(ResourceManager* mgr);
+				~GenerationTable();
+
+				ExistTable<Resource>& getGeneration(int index) const { return m_generations[index]; }
+
+				void AddResource(Resource* res);
+				void RemoveResource(Resource* res);
+
+				void UpdateGeneration(int oldGeneration, int newGeneration, Resource* resource);
+
+
+			};
+		}
+		
 	}
 }
 
