@@ -34,6 +34,39 @@ namespace Apoc3D
 		template<typename T>
 		class APAPI ExistTable
 		{
+		public:
+			class Enumerator
+			{
+			private:
+				const ExistTable<T>* m_dict;
+				int m_index;
+				const T* m_current;
+
+			public:
+				const T* getCurrent() const { return m_current; }
+
+				Enumerator(const ExistTable<T>* dict)
+					: m_dict(dict), m_index(0), m_current(0)
+				{
+				}
+
+				bool MoveNext()
+				{
+					while (m_index<m_dict->m_count)
+					{
+						if (m_dict->m_entries[m_index].hashCode>=0)
+						{
+							m_current = &m_dict->m_entries[m_index].data;
+							m_index++;
+							return true;
+						}
+						m_index++;
+					}
+					m_index = m_dict->m_count + 1;
+					m_current = 0;
+					return false;
+				}
+			};
 		private:
 			class HashHelpers
 			{
@@ -93,7 +126,7 @@ namespace Apoc3D
 
 			int m_freeCount;
 			int m_freeList;
-			const IEqualityComparer* m_comparer;
+			const IEqualityComparer<T>* m_comparer;
 
 			void Initialize(int capacity)
 			{
@@ -149,6 +182,9 @@ namespace Apoc3D
 			}
 		public:
 			int32 getCount() const { return m_count - m_freeCount; }
+
+
+
 
 			ExistTable(int capacity, const IEqualityComparer<T>* comparer)
 				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
@@ -231,6 +267,10 @@ namespace Apoc3D
 				return false;
 			}
 
+			Enumerator GetEnumerator() const
+			{
+				return Enumerator(this);
+			}
 		};
 	}
 }

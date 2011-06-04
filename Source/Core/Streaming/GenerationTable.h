@@ -27,9 +27,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Collections/FastList.h"
-#include "fast_mutex.h"
-#include "tinythread.h"
+#include "Collections/ExistTable.h"
+#include "tthread/fast_mutex.h"
+#include "tthread/tinythread.h"
 
+using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
 using namespace tthread;
 
@@ -56,17 +58,40 @@ namespace Apoc3D
 				volatile FastList<Resource*> m_generationList;
 
 				thread* m_thread;
+
+				ResourceManager* m_manager;
+
+				bool m_isShutdown;
+
+				
+				static void ThreadEntry(void* args)
+				{
+					GenerationTable* table = static_cast<GenerationTable*>(args);
+					table->GenerationUpdate_Main();
+				}
+
+				void SubTask_GenUpdate();
+				void SubTask_Manage();
+
+				void GenerationUpdate_Main();
+
 			public:
 				GenerationTable(ResourceManager* mgr);
 				~GenerationTable();
 
-				ExistTable<Resource>& getGeneration(int index) const { return m_generations[index]; }
+				//ExistTable<Resource*>& getGeneration(int index) const { return m_generations[index]; }
 
 				void AddResource(Resource* res);
 				void RemoveResource(Resource* res);
 
 				void UpdateGeneration(int oldGeneration, int newGeneration, Resource* resource);
 
+				void ShutDown() 
+				{
+					m_isShutdown = true;
+
+					m_thread->join();
+				}
 
 			};
 		}

@@ -23,6 +23,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "GenerationTable.h"
+#include "Platform/Thread.h"
+#include "Core/ResourceManager.h"
+#include "Core/Resource.h"
+
+using namespace Apoc3D::Platform;
 
 namespace Apoc3D
 {
@@ -31,6 +36,62 @@ namespace Apoc3D
 		namespace Streaming
 		{
 			const float GenerationTable::GenerationLifeTime[MaxGeneration] = { 3, 6, 10, 30 };
+
+			GenerationTable::GenerationTable(ResourceManager* mgr)
+				: m_manager(mgr), m_isShutdown(false), m_generationList(100)
+			{
+				m_thread = new thread(&GenerationTable::ThreadEntry, this);
+			}
+
+
+			void GenerationTable::SubTask_GenUpdate()
+			{
+
+			}
+			void GenerationTable::SubTask_Manage()
+			{
+				int predictSize = m_manager->getUsedCacheSize();
+
+				if (predictSize>m_manager->getTotalCacheSize())
+				{
+					for (int i=3;i>1 && predictSize > m_manager->getTotalCacheSize(); i--)
+					{
+						ExistTable<Resource*>::Enumerator iter = m_generations->GetEnumerator();
+
+						while (iter.MoveNext())
+						{
+							Resource* r = *iter.getCurrent();
+
+							if (r->getState() == RS_Loaded && r->IsUnloadable())
+							{
+								predictSize -= r->getSize();
+								r->Unload();
+
+								if (predictSize <= m_manager->getTotalCacheSize())
+								{
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			void GenerationTable::GenerationUpdate_Main()
+			{
+				static const int ManageInterval = 10;
+
+				int times = 0;
+				while (!m_isShutdown)
+				{
+					SubTask_GenUpdate();
+					if (times++ & ManageInterval == 0)
+					{
+						SubTask_Manage();
+					}
+					ApocSleep(100);
+				}
+			}
 		}
 	}
 }

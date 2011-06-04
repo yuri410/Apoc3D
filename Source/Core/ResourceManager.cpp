@@ -51,6 +51,7 @@ namespace Apoc3D
 		void ResourceManager::Shutdown()
 		{
 			m_asyncProc->Shutdown();
+			m_generationTable->ShutDown();
 		}
 
 		ResourceManager::ResourceManager(int64 cacheSize)
