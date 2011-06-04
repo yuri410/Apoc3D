@@ -29,13 +29,18 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-		bool ResourceEqualityComparer::Equals(const Resource*& x, const Resource*& y) const
+		//template<typename T>
+		//const IEqualityComparer<T> IEqualityComparer<T>::Default = 0;
+
+		const IEqualityComparer<Resource*>* IEqualityComparer<Resource*>::Default = new ResourceEqualityComparer();
+
+		bool ResourceEqualityComparer::Equals(const LPResource& x, const LPResource& y) const
 		{
 			const void* a = x;
 			const void* b = y;
 			return a==b;
 		}
-		int64 ResourceEqualityComparer::GetHashCode(const Resource*& obj) const
+		int64 ResourceEqualityComparer::GetHashCode(const LPResource& obj) const
 		{
 			const void* s = obj;
 			return reinterpret_cast<int64>(s);

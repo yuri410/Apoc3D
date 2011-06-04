@@ -38,6 +38,7 @@ namespace Apoc3D
 		class APAPI IEqualityComparer
 		{
 		public:
+			static const IEqualityComparer* Default;
 			/** Determines whether the specified objects are equal.
 			*/
 			virtual bool Equals(const T& x, const T& y) const = 0;
@@ -46,12 +47,13 @@ namespace Apoc3D
 			virtual int64 GetHashCode(const T& obj) const = 0;
 		};
 
-		class ResourceEqualityComparer : public IEqualityComparer<Resource*>
+		typedef Resource* LPResource;
+		class ResourceEqualityComparer : public IEqualityComparer<LPResource>
 		{
 		public:
-			virtual bool Equals(const Resource*& x, const Resource*& y) const;
+			virtual bool Equals(const LPResource& x, const LPResource& y) const;
 			
-			virtual int64 GetHashCode(const Resource*& obj) const;
+			virtual int64 GetHashCode(const LPResource& obj) const;
 		};
 	}
 }

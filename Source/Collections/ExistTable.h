@@ -187,7 +187,9 @@ namespace Apoc3D
 				:  m_buckets(0), m_bucketsLength(0), m_count(0), 
 				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
 			{
-				// m_comparer
+				m_comparer = IEqualityComparer<T>::Default;
+				assert(m_comparer);
+
 				int capacity = 40;
 				if (capacity > 0)
 				{
