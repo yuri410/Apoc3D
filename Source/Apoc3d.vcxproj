@@ -110,6 +110,7 @@
     <ClInclude Include="Core\ResourceManager.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Graphics\Animation\AnimationData.h" />
+    <ClInclude Include="Graphics\Animation\AnimationPlayers.h" />
     <ClInclude Include="Graphics\Animation\AnimationTypes.h" />
     <ClInclude Include="Graphics\Camera.h" />
     <ClInclude Include="Core\CoreCommon.h" />
@@ -226,6 +227,7 @@
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Graphics\Animation\AnimationData.cpp" />
+    <ClCompile Include="Graphics\Animation\AnimationPlayers.cpp" />
     <ClCompile Include="Graphics\LockData.cpp" />
     <ClCompile Include="Graphics\ModelManager.cpp" />
     <ClCompile Include="Graphics\Patch.cpp" />
@@ -248,7 +250,6 @@
     <ClCompile Include="Math\RandomUtils.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />
-    <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />
     <ClCompile Include="Graphics\Model.cpp" />
     <ClCompile Include="Graphics\RenderSystem\Buffer\HardwareBuffer.cpp" />

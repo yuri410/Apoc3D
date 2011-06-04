@@ -26,7 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Math\Matrix.h"
+#include "Collections\FastList.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
 
 using namespace std;
@@ -47,7 +49,7 @@ namespace Apoc3D
 				Matrix Transfrom;
 				String Name;
 				int32 Parent;
-				vector<int32> Children;
+				FastList<int32> Children;
 				int32 Index;
 
 				Bone() { }
@@ -56,7 +58,7 @@ namespace Apoc3D
 				{
 					Transfrom.LoadIdentity();
 				}
-				Bone(int32 index, const Matrix& transform, const vector<int32>& children, int32 parent, const String& name)
+				Bone(int32 index, const Matrix& transform, const FastList<int32>& children, int32 parent, const String& name)
 					: Index(index), Transfrom(transform), Children(children), Parent(parent), Name(name)
 				{
 
@@ -122,7 +124,7 @@ namespace Apoc3D
 			{
 			private:
 				float m_duration;
-				vector<ModelKeyframe> m_keyFrames;
+				FastList<ModelKeyframe> m_keyFrames;
 
 			public:
 				/** Gets the total length of the model animation clip
@@ -131,9 +133,9 @@ namespace Apoc3D
 				/** Gets a combined list containing all the keyframes for all bones,
 					sorted by time.
 				*/
-				const vector<ModelKeyframe>& getKeyframes() const { return m_keyFrames; }
+				const FastList<ModelKeyframe>& getKeyframes() const { return m_keyFrames; }
 
-				ModelAnimationClip(float duration, const vector<ModelKeyframe>& keyframes)
+				ModelAnimationClip(float duration, const FastList<ModelKeyframe>& keyframes)
 					: m_duration(duration), m_keyFrames(keyframes)
 				{
 
@@ -147,9 +149,9 @@ namespace Apoc3D
 			{
 			public:
 				float Duration;
-				vector<MaterialAnimationKeyframe> Keyframes;
+				FastList<MaterialAnimationKeyframe> Keyframes;
 
-				MaterialAnimationClip(float duration, const vector<MaterialAnimationKeyframe>& keyframes)
+				MaterialAnimationClip(float duration, const FastList<MaterialAnimationKeyframe>& keyframes)
 					: Duration(duration), Keyframes(keyframes)
 				{
 

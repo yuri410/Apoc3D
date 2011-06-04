@@ -59,10 +59,10 @@ namespace Apoc3D
 		static const String TAG_3_ParentBoneTag = L"ParentBone";
 		static const String TAG_3_BoundingSphereTag = L"BoundingSphere";
 
-		uint32 MeshData::ComputeVertexSize(const vector<VertexElement>& elements)
+		uint32 MeshData::ComputeVertexSize(const FastList<VertexElement>& elements)
 		{
 			uint32 vertexSize = 0;
-			for (size_t i = 0; i < elements.size(); i++)
+			for (size_t i = 0; i < elements.getCount(); i++)
 			{
 				vertexSize += elements[i].getSize();
 			}
@@ -138,7 +138,7 @@ namespace Apoc3D
 			{
 				uint32 faceCount = data->GetDataInt32(TAG_3_FaceCountTag);
 
-				Faces.reserve(faceCount);
+				Faces.ResizeDiscard(faceCount);
 
 				BinaryReader* br = data->GetData(TAG_3_FacesTag);
 
@@ -151,7 +151,7 @@ namespace Apoc3D
 
 					face.MaterialID = br->ReadInt32();
 
-					Faces.push_back(face);
+					Faces.Add(face);
 				}
 
 				br->Close();
@@ -181,7 +181,7 @@ namespace Apoc3D
 				BinaryReader* br = data->GetData(TAG_3_VertexDataTag);
 
 				int elemConut = br->ReadInt32();
-				VertexElements.reserve(elemConut);
+				VertexElements.ResizeDiscard(elemConut);
 				for (int i=0;i<elemConut;i++)
 				{
 					int emOfs = br->ReadInt32();
@@ -189,7 +189,7 @@ namespace Apoc3D
 					VertexElementUsage emUsage = static_cast<VertexElementUsage>(br->ReadUInt32());
 					int emIndex = br->ReadInt32();
 
-					VertexElements.push_back(VertexElement(emOfs, emFormat, emUsage, emIndex));
+					VertexElements.Add(VertexElement(emOfs, emFormat, emUsage, emIndex));
 				}
 
 				br->Close();
@@ -261,12 +261,12 @@ namespace Apoc3D
 				delete bw;
 			}
 
-			data->AddEntry(TAG_3_FaceCountTag, static_cast<uint32>(Faces.size()));
+			data->AddEntry(TAG_3_FaceCountTag, static_cast<uint32>(Faces.getCount()));
 
 			// write faces
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_FacesTag);
-				for (size_t i=0;i<Faces.size();i++)
+				for (size_t i=0;i<Faces.getCount();i++)
 				{
 					bw->Write(Faces[i].IndexA);
 					bw->Write(Faces[i].IndexB);
@@ -281,8 +281,8 @@ namespace Apoc3D
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_VertexDeclTag);
 
-				bw->Write(static_cast<uint32>(VertexElements.size()));
-				for (size_t i = 0; i < VertexElements.size(); i++)
+				bw->Write(static_cast<uint32>(VertexElements.getCount()));
+				for (size_t i = 0; i < VertexElements.getCount(); i++)
 				{
 					bw->Write(VertexElements[i].getOffset());
 					bw->Write(static_cast<uint32>(VertexElements[i].getType()));
@@ -320,13 +320,13 @@ namespace Apoc3D
 		
 		ModelData::~ModelData()
 		{
-			if (!Entities.empty())
+			if (Entities.getCount())
 			{
-				for (size_t i=0; i<Entities.size();i++)
+				for (size_t i=0; i<Entities.getCount();i++)
 				{
 					delete Entities[i];
 				}
-				Entities.clear();
+				Entities.Clear();
 			}
 			
 			if (AnimationData)
@@ -339,7 +339,7 @@ namespace Apoc3D
 		void ModelData::ReadData(TaggedDataReader* data, int32 id)
 		{
 			int entCount = data->GetDataInt32(TAG_3_EntityCountTag);
-			Entities.reserve(entCount);
+			Entities.ResizeDiscard(entCount);
 
 			for (int i=0;i<entCount;i++)
 			{
@@ -351,7 +351,7 @@ namespace Apoc3D
 
 				MeshData* mesh = new MeshData();
 				mesh->Load(meshData);
-				Entities.push_back(mesh);
+				Entities.Add(mesh);
 
 				meshData->Close();
 				delete meshData;
@@ -359,6 +359,41 @@ namespace Apoc3D
 				br->Close();
 				delete br;
 			}
+
+			// bones
+			if (data->Contains(TAG_3_BoneCountTag))
+			{
+				int boenCount = data->GetDataInt32(TAG_3_BoneCountTag);
+
+				BinaryReader* br2 = data->GetData(TAG_3_BonesTag);
+				
+				for (int i = 0; i < boenCount; i++)
+				{
+					int bidx = br2->ReadInt32();
+					String name = br2->ReadString();
+
+					Matrix transform;
+					br2->ReadMatrix(transform);
+
+					int parentId = br2->ReadInt32();
+
+					int cldCount = br2->ReadInt32();
+
+					FastList<int> children(cldCount);
+					for (int j = 0; j < cldCount; j++)
+					{
+						children.Add(br2->ReadInt32());
+					}
+
+					Bones.Add(Bone(bidx, transform, children, parentId, name));
+				}
+				br2->Close();
+				delete br2;
+				RootBone = data->GetDataInt32(TAG_3_RootBoneTag);
+			}
+
+
+
 
 			if (id == MdlId_V2)
 			{
@@ -408,9 +443,9 @@ namespace Apoc3D
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
-			data->AddEntry(TAG_3_EntityCountTag, static_cast<int32>(Entities.size()));
+			data->AddEntry(TAG_3_EntityCountTag, static_cast<int32>(Entities.getCount()));
 
-			for (size_t i=0;i<Entities.size();i++)
+			for (size_t i=0;i<Entities.getCount();i++)
 			{
 				String tag = StringUtils::ToString(i);
 				tag = TAG_3_EntityPrefix + tag;
@@ -422,6 +457,35 @@ namespace Apoc3D
 
 				bw->Close();
 				delete bw;
+			}
+
+			// Bones
+			if (Bones.getCount())
+			{
+				data->AddEntry(TAG_3_BoneCountTag, static_cast<int32>(Bones.getCount()));
+
+				BinaryWriter* bw = data->AddEntry(TAG_3_BonesTag);
+				for (int i = 0; i < Bones.getCount(); i++)
+				{
+					bw->Write(Bones[i].Index);
+					bw->Write(Bones[i].Name);
+					bw->Write(Bones[i].Transfrom);
+
+					bw->Write(Bones[i].Parent);
+
+					int cldCount = static_cast<int32>(Bones[i].Children.getCount());
+					bw->Write(cldCount);
+
+					for (int j = 0; j < cldCount; j++)
+					{
+						bw->Write(Bones[i].Children[j]);
+					}
+
+				}
+				bw->Close();
+				delete bw;
+
+				data->AddEntry(TAG_3_RootBoneTag, RootBone);
 			}
 
 			if (AnimationData)

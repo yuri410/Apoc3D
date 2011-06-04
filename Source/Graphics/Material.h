@@ -46,7 +46,6 @@ namespace Apoc3D
 	{
 		template class APAPI unordered_map<uint64, Effect*>;
 		template class APAPI unordered_map<String, uint64>;
-		template class APAPI vector<Texture*>;
 
 		/* Defines colors, textures, effect and etc. for a geometry.
 

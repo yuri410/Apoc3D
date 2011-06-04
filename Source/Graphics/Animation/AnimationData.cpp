@@ -66,7 +66,7 @@ namespace Apoc3D
 				float duration = data->GetDataSingle(TAG_2_MaterialAnimationDurationTag);
 				uint32 count = data->GetDataUInt32(TAG_2_MaterialAnimationKeyframeCountTag);
 
-				vector<MaterialAnimationKeyframe> keyframes;
+				FastList<MaterialAnimationKeyframe> keyframes;
 				BinaryReader* br = data->GetData(TAG_2_MaterialAnimationKeyframesTag);
 
 				for (uint32 i=0;i<count;i++)
@@ -74,7 +74,7 @@ namespace Apoc3D
 					float time = br->ReadSingle();
 					int32 mid = br->ReadInt32();
 
-					keyframes.push_back(MaterialAnimationKeyframe(time, mid));
+					keyframes.Add(MaterialAnimationKeyframe(time, mid));
 				}
 
 				br->Close();
@@ -89,14 +89,14 @@ namespace Apoc3D
 				TaggedDataWriter* data = new TaggedDataWriter(true);
 
 				const MaterialAnimationClip* clip = m_mtrlAnimationClips.begin()->second;
+				const FastList<MaterialAnimationKeyframe>& keyframes = clip->Keyframes;
+
 				data->AddEntry(TAG_2_MaterialAnimationDurationTag, clip->Duration);
 				data->AddEntry(TAG_2_MaterialAnimationKeyframeCountTag, 
-					static_cast<uint32>(clip->Keyframes.size()));
-
-				const vector<MaterialAnimationKeyframe>& keyframes = clip->Keyframes;
+					static_cast<uint32>(keyframes.getCount()));
 
 				BinaryWriter* bw = data->AddEntry(TAG_2_MaterialAnimationKeyframesTag);
-				for (size_t i=0;i<keyframes.size();i++)
+				for (size_t i=0;i<keyframes.getCount();i++)
 				{
 					bw->Write(keyframes[i].getTime());
 					bw->Write(static_cast<int32>(keyframes[i].getMaterialFrame()));
@@ -138,7 +138,7 @@ namespace Apoc3D
 
 					m_mtrlAnimationClips.rehash(count);
 
-					vector<MaterialAnimationKeyframe> keyframes;
+					FastList<MaterialAnimationKeyframe> keyframes;
 					BinaryReader* br = data->GetData(TAG_3_MaterialAnimationTag);
 					
 					for (int i=0;i<count;i++)
@@ -148,14 +148,14 @@ namespace Apoc3D
 						float duration = br->ReadSingle();
 
 						int frameCount = br->ReadInt32();
-						keyframes.reserve(frameCount);
+						keyframes.ResizeDiscard(frameCount);
 						
 						for (int j=0;j<frameCount;i++)
 						{
 							float time = br->ReadSingle();
 							int32 mid = br->ReadInt32();
 
-							keyframes.push_back(MaterialAnimationKeyframe(time, mid));
+							keyframes.Add(MaterialAnimationKeyframe(time, mid));
 						}
 
 						MaterialAnimationClip* clip = new MaterialAnimationClip(duration, keyframes);
@@ -174,7 +174,7 @@ namespace Apoc3D
 					m_hasBindPose = true;
 
 					int count = data->GetDataInt32(TAG_3_BindPoseCountTag);
-					m_bindPose.reserve(count);
+					m_bindPose.ResizeDiscard(count);
 
 					BinaryReader* br = data->GetData(TAG_3_BindPoseTag);
 
@@ -183,7 +183,7 @@ namespace Apoc3D
 						Matrix transfrom;
 						br->ReadMatrix(transfrom);
 
-						m_bindPose.push_back(transfrom);
+						m_bindPose.Add(transfrom);
 					}
 
 					br->Close();
@@ -196,7 +196,7 @@ namespace Apoc3D
 					m_hasBindPose = true;
 
 					int count = data->GetDataInt32(TAG_3_InvBindPoseCountTag);
-					m_invBindPose.reserve(count);
+					m_invBindPose.ResizeDiscard(count);
 
 					BinaryReader* br = data->GetData(TAG_3_InvBindPoseTag);
 					for (int i=0;i<count;i++)
@@ -204,7 +204,7 @@ namespace Apoc3D
 						Matrix transfrom;
 						br->ReadMatrix(transfrom);
 
-						m_invBindPose.push_back(transfrom);
+						m_invBindPose.Add(transfrom);
 					}
 
 					br->Close();
@@ -229,8 +229,7 @@ namespace Apoc3D
 
 						int frameCount = br->ReadInt32();
 
-						vector<ModelKeyframe> frames;
-						frames.reserve(frameCount);
+						FastList<ModelKeyframe> frames(frameCount);
 
 						for (int j=0;j<frameCount;j++)
 						{
@@ -240,7 +239,7 @@ namespace Apoc3D
 							Matrix transfrom;
 							br->ReadMatrix(transfrom);
 
-							frames.push_back(ModelKeyframe(bone, totalSec, transfrom));
+							frames.Add(ModelKeyframe(bone, totalSec, transfrom));
 						}
 
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
@@ -270,8 +269,7 @@ namespace Apoc3D
 
 						int frameCount = br->ReadInt32();
 
-						vector<ModelKeyframe> frames;
-						frames.reserve(frameCount);
+						FastList<ModelKeyframe> frames(frameCount);
 
 						for (int j=0;j<frameCount;j++)
 						{
@@ -281,7 +279,7 @@ namespace Apoc3D
 							Matrix transfrom;
 							br->ReadMatrix(transfrom);
 
-							frames.push_back(ModelKeyframe(bone, totalSec, transfrom));
+							frames.Add(ModelKeyframe(bone, totalSec, transfrom));
 						}
 
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
@@ -295,12 +293,12 @@ namespace Apoc3D
 					int count = data->GetDataInt32(TAG_3_BoneHierarchyCountTag);
 					m_hasSkeleton = true;
 					
-					m_skeletonHierarchy.reserve(count);
+					m_skeletonHierarchy.ResizeDiscard(count);
 
 					BinaryReader* br = data->GetData(TAG_3_BoneHierarchyTag);
 					for (int i=0;i<count;i++)
 					{
-						m_skeletonHierarchy.push_back(br->ReadInt32());
+						m_skeletonHierarchy.Add(br->ReadInt32());
 					}
 					br->Close();
 					delete br;
@@ -324,10 +322,10 @@ namespace Apoc3D
 						const MaterialAnimationClip* clip = iter->second;
 						bw->Write(clip->Duration);
 
-						const vector<MaterialAnimationKeyframe> keyFrames = clip->Keyframes;
-						bw->Write(static_cast<int32>(keyFrames.size()));
+						const FastList<MaterialAnimationKeyframe>& keyFrames = clip->Keyframes;
+						bw->Write(static_cast<int32>(keyFrames.getCount()));
 
-						for (size_t i = 0; i < keyFrames.size(); i++)
+						for (size_t i = 0; i < keyFrames.getCount(); i++)
 						{
 							bw->Write(keyFrames[i].getTime());
 							bw->Write(keyFrames[i].getMaterialFrame());
@@ -340,11 +338,11 @@ namespace Apoc3D
 				if (m_hasBindPose)
 				{
 					{
-						data->AddEntry(TAG_3_BindPoseCountTag, static_cast<int32>(m_bindPose.size()));
+						data->AddEntry(TAG_3_BindPoseCountTag, static_cast<int32>(m_bindPose.getCount()));
 
 						BinaryWriter* bw = data->AddEntry(TAG_3_BindPoseTag);
 
-						for (size_t i=0;i<m_bindPose.size();i++)
+						for (int32 i=0;i<m_bindPose.getCount();i++)
 						{
 							bw->Write(m_bindPose[i]);
 						}
@@ -353,10 +351,10 @@ namespace Apoc3D
 						delete bw;
 					}
 					{
-						data->AddEntry(TAG_3_InvBindPoseCountTag, static_cast<int32>(m_invBindPose.size()));
+						data->AddEntry(TAG_3_InvBindPoseCountTag, static_cast<int32>(m_invBindPose.getCount()));
 
 						BinaryWriter* bw = data->AddEntry(TAG_3_InvBindPoseTag);
-						for (size_t i = 0; i < m_invBindPose.size(); i++)
+						for (int32 i = 0; i < m_invBindPose.getCount(); i++)
 						{
 							bw->Write(m_invBindPose[i]);
 						}
@@ -377,11 +375,11 @@ namespace Apoc3D
 						const ModelAnimationClip* clip = iter->second;
 						bw->Write(static_cast<double>(clip->getDuration()));
 
-						const vector<ModelKeyframe> keyFrames = clip->getKeyframes();
+						const FastList<ModelKeyframe>& keyFrames = clip->getKeyframes();
 
-						bw->Write(static_cast<int32>(clip->getKeyframes().size()));
+						bw->Write(static_cast<int32>(keyFrames.getCount()));
 
-						for (size_t i = 0; i < clip->getKeyframes().size(); i++)
+						for (int32 i = 0; i < keyFrames.getCount(); i++)
 						{
 							bw->Write(keyFrames[i].getBone());
 							bw->Write(static_cast<double>(keyFrames[i].getTime()));
@@ -403,10 +401,10 @@ namespace Apoc3D
 						const ModelAnimationClip* clip = iter->second;
 						bw->Write(static_cast<double>(clip->getDuration()));
 						
-						const vector<ModelKeyframe> keyFrames = clip->getKeyframes();
-						bw->Write(static_cast<int32>(clip->getKeyframes().size()));
+						const FastList<ModelKeyframe>& keyFrames = clip->getKeyframes();
+						bw->Write(static_cast<int32>(keyFrames.getCount()));
 
-						for (size_t i = 0; i < clip->getKeyframes().size(); i++)
+						for (size_t i = 0; i < keyFrames.getCount(); i++)
 						{
 							bw->Write(keyFrames[i].getBone());
 							bw->Write(static_cast<double>(keyFrames[i].getTime()));
@@ -419,10 +417,10 @@ namespace Apoc3D
 
 				if (m_hasSkeleton)
 				{
-					data->AddEntry(TAG_3_BoneHierarchyCountTag, static_cast<int32>(m_skeletonHierarchy.size()));
+					data->AddEntry(TAG_3_BoneHierarchyCountTag, static_cast<int32>(m_skeletonHierarchy.getCount()));
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_BoneHierarchyTag);
-					for (size_t i = 0; i < m_skeletonHierarchy.size(); i++)
+					for (size_t i = 0; i < m_skeletonHierarchy.getCount(); i++)
 					{
 						bw->Write(m_skeletonHierarchy[i]);
 					}

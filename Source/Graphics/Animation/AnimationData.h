@@ -26,9 +26,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Math/Matrix.h"
+#include "Collections/FastList.h"
 
 using namespace std;
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::IO;
 
@@ -53,9 +55,9 @@ namespace Apoc3D
 				ClipTable m_modelAnimationClips;
 				MtrlClipTable m_mtrlAnimationClips;
 
-				vector<Matrix> m_bindPose;
-				vector<Matrix> m_invBindPose;
-				vector<int32> m_skeletonHierarchy;
+				FastList<Matrix> m_bindPose;
+				FastList<Matrix> m_invBindPose;
+				FastList<int32> m_skeletonHierarchy;
 
 				bool m_hasBindPose;
 				bool m_hasSkeleton;
@@ -66,8 +68,6 @@ namespace Apoc3D
 				void LoadMtrlAnimation2(TaggedDataReader* data);
 				TaggedDataWriter* SaveMtrlAnimation2();
 
-				//void LoadMtrlAnimation3(TaggedDataReader* data);
-				//TaggedDataWriter* SaveMtrlAnimation3();
 			public:
 				/** Gets a collection of animation clips that operate on the root of the object.
 					These are stored by name in a map, so there could for instance be 
@@ -85,13 +85,13 @@ namespace Apoc3D
 				/** Bindpose matrices for each bone in the skeleton,
 					relative to the parent bone.
 				*/
-				const vector<Matrix>& getBindPose() const { return m_bindPose; }
+				const FastList<Matrix>& getBindPose() const { return m_bindPose; }
 				/** Vertex to bonespace transforms for each bone in the skeleton.
 				*/
-				const vector<Matrix>& getInvBindPose() const { return m_invBindPose; }
+				const FastList<Matrix>& getInvBindPose() const { return m_invBindPose; }
 				/** For each bone in the skeleton, stores the index of the parent bone.
 				*/
-				const vector<int32>& getSkeletonHierarchy() const { return m_skeletonHierarchy; }
+				const FastList<int32>& getSkeletonHierarchy() const { return m_skeletonHierarchy; }
 
 				/** Load animation data from a Tagged Data Block
 				*/

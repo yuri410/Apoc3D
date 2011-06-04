@@ -26,15 +26,71 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Core\Resource.h"
+#include "Renderable.h"
+#include "RenderOperationBuffer.h"
+#include "Collections/FastList.h"
+#include "ModelTypes.h"
+#include "Animation/AnimationTypes.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::Animation;
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class APAPI Model// : public Resource
+		class APAPI ModelSharedData
 		{
+		private:
+			RenderDevice* m_renderDevice;
+
+			FastList<Mesh*> m_entities;
+			FastList<Bone> m_bones;
+			int32 m_rootBone;
+			AnimationData* m_animationData;
+
+			ResourceLocation* m_resourceLocation;
+
+		public:
+			ModelSharedData(RenderDevice* device, ResourceLocation* rl)
+				: m_renderDevice(device), m_resourceLocation(rl)
+			{
+
+			}
+		};
+		class APAPI Model : Renderable
+		{
+		private:
+			enum AnimationControl
+			{
+				AC_Play,
+				AC_Stop,
+				AC_Resume,
+				AC_Pause
+			};
+
+			RenderOperationBuffer opBuffer;
+
+			/** table cast render operation index to entity index
+			*/
+			int* m_renderOpEntID;
+			/** table cast render operation index to entity part index
+			*/
+			int* m_renderOpEntPartID;
+
+			bool m_rigidAnimCompleted;
+			bool m_rootAnimCompleted;
+			bool m_skinAnimCompleted;
+			bool m_mtrlAnimCompleted;
+
+			ResourceHandle<ModelSharedData>* m_data;
+
+			
+
 		public:
 			Model(void);
 			~Model(void);

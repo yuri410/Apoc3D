@@ -40,11 +40,17 @@ namespace Apoc3D
 
 			int m_length;
 
-			FastList(const FastList& another) { }
+			
 		public:
 			int32 getCount() const { return m_internalPointer; }
-			T* getInternalPointer const { return m_elements; }
+			T* getInternalPointer() const { return m_elements; }
 
+			FastList(const FastList& another)
+				: m_internalPointer(another.m_internalPointer), m_length(another.m_length)
+			{
+				m_elements = new T[m_length];
+				memcpy(m_elements, another.m_elements, m_length * sizeof(T));
+			}
 			FastList(int capacity)
 				: m_internalPointer(0), m_length(capacity)
 			{
@@ -150,6 +156,13 @@ namespace Apoc3D
 					memset(m_elements+m_internalPointer, 0, count*sizeof(T));
 				}
 			}
+			void ResizeDiscard(int newSize)
+			{
+				T* newArr = new T[newSize];
+				delete[] m_elements;
+				m_elements = newArr;
+				m_length = newSize;
+			}
 			void Resize(int newSize)
 			{
 				T* newArr = new T[newSize];
@@ -190,10 +203,10 @@ namespace Apoc3D
 			{
 				return m_elements[i];
 			}
-			const T& operator [](int32 i) const
-			{
-				return m_elements[i];
-			}
+			//const T& operator [](int32 i) const
+			//{
+			//	return m_elements[i];
+			//}
 
 		};
 	}

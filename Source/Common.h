@@ -188,6 +188,9 @@ namespace Apoc3D
 
 		class TextureLevelData;
 		class TextureData;
+
+		class MeshData;
+		class ModelData;
 	};
 	namespace VFS
 	{
@@ -224,12 +227,17 @@ namespace Apoc3D
 		class RenderOperation;
 		class RenderOperationBuffer;
 		class Material;
-		class GraphicsDeviceManager;
+		
+		class Mesh;
+		class Model;
 
 		namespace Animation
 		{
 			class ModelAnimationClip;
 			class MaterialAnimationClip;
+
+			class ModelKeyframe;
+			class MaterialAnimationKeyframe;
 
 			class AnimationData;
 		}

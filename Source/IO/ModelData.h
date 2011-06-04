@@ -55,7 +55,7 @@ namespace Apoc3D
 
 			int32 TextureCoordCount;
 			bool HasTextureCoord[MaxTextures];
-			vector<VertexElement> VertexElements;
+			FastList<VertexElement> VertexElements;
 
 			int32 ParentBoneID;
 			BoundingSphere BoundingSphere;
@@ -66,16 +66,15 @@ namespace Apoc3D
 
 			MeshMaterialSet<MaterialData> Materials;
 
-			vector<MeshFace> Faces;
+			FastList<MeshFace> Faces;
 
-			static uint32 ComputeVertexSize(const vector<VertexElement>& elements);
+			static uint32 ComputeVertexSize(const FastList<VertexElement>& elements);
 
 			void Load(TaggedDataReader* data);
 			TaggedDataWriter* Save();
 
 		};
 
-		template class APAPI vector<Bone>;
 
 		class APAPI ModelData
 		{
@@ -84,9 +83,9 @@ namespace Apoc3D
 			TaggedDataWriter* WriteData() const;
 		public:
 			int32 RootBone;
-			vector<Bone> Bones;
+			FastList<Bone> Bones;
 			AnimationData* AnimationData;
-			vector<MeshData*> Entities;
+			FastList<MeshData*> Entities;
 
 			ModelData()
 				: AnimationData(0), RootBone(0)
