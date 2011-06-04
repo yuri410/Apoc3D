@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/GraphicsCommon.h"
 #include "Graphics/PixelFormat.h"
 #include "Graphics/LockData.h"
-#include "Core\Resource.h"
+#include "Core/Resource.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Core;

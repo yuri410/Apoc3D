@@ -29,6 +29,31 @@ namespace Apoc3D
 {
 	namespace Core
 	{
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+		Resource::GenerationCalculator::GenerationCalculator(const GenerationTable* table)
+			: m_table(table)
+		{
+
+		}
+
+		void Resource::GenerationCalculator::Use(Resource* resource)
+		{
+
+		}
+		void Resource::GenerationCalculator::UpdateGeneration()
+		{
+
+		}
+
+		bool Resource::GenerationCalculator::IsGenerationOutOfTime(float time)
+		{
+			return false;
+		}
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
 		Resource::Resource(ResourceManager* manager, const String& hashString)
 			: m_manager(manager), m_hashString(hashString), m_refCount(0), m_state(RS_Unloaded)
 		{

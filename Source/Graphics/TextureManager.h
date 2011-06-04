@@ -39,7 +39,7 @@ namespace Apoc3D
 		public:
 			const FileLocation* RedirectLocation;
 
-			TextureManager(void);
+			TextureManager(int64 cacheSize);
 			~TextureManager(void);
 
 

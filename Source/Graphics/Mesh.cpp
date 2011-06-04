@@ -28,13 +28,19 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		Mesh::Mesh(void)
+		Mesh::Mesh(RenderDevice* device, const MeshData& data)
 		{
 		}
 
 
 		Mesh::~Mesh(void)
 		{
+
+		}
+
+		const RenderOperationBuffer* Mesh::GetRenderOperation(int level)
+		{
+			return 0;
 		}
 	}
 }

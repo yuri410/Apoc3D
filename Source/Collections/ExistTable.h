@@ -68,48 +68,7 @@ namespace Apoc3D
 				}
 			};
 		private:
-			class HashHelpers
-			{
-			public:
-				static const int primes[];
-
-				static int GetPrime(int min)
-				{
-					for (int i = 0; i < sizeof(primes)/sizeof(int); i++)
-					{
-						int num2 = primes[i];
-						if (num2 >= min)
-						{
-							return num2;
-						}
-					}
-					for (int j = min | 1; j < 2147483647; j += 2)
-					{
-						if (IsPrime(j))
-						{
-							return j;
-						}
-					}
-					return min;
-				}
-
-				static bool IsPrime(int candidate)
-				{
-					if ((candidate & 1) == 0)
-					{
-						return (candidate == 2);
-					}
-					int num = (int)sqrtf((float)candidate);
-					for (int i = 3; i <= num; i += 2)
-					{
-						if ((candidate % i) == 0)
-						{
-							return false;
-						}
-					}
-					return true;
-				}
-			};
+			
 			struct Entry
 			{
 				int hashCode;
@@ -128,43 +87,10 @@ namespace Apoc3D
 			int m_freeList;
 			const IEqualityComparer<T>* m_comparer;
 
-			void Initialize(int capacity)
-			{
-				int prime = HashHelpers::GetPrime(capacity);
-				m_bucketsLength = prime;
-				m_buckets = new int[prime];
-				for (int i = 0; i < m_bucketsLength; i++)
-				{
-					m_buckets[i] = -1;
-				}
-				m_entries = new Entry[prime];
-				m_entryLength = prime;
-				m_freeList = -1;
-			}
-			void Resize()
-			{
-				int prime = HashHelpers::GetPrime(this.count * 2);
-				int[] numArray = new int[prime];
-				for (int i = 0; i < numArray.Length; i++)
-				{
-					numArray[i] = -1;
-				}
-				Entry[] destinationArray = new Entry[prime];
-				memcpy(destinationArray, m_entries, m_count * sizeof(Entry));
-				for (int j = 0; j < this.count; j++)
-				{
-					int index = destinationArray[j].hashCode % prime;
-					destinationArray[j].next = numArray[index];
-					numArray[index] = j;
-				}
-				delete[] m_buckets;
-				m_buckets = numArray;
-				m_bucketsLength = prime;
-				delete[] m_entries;
-				m_entries = destinationArray;
-				m_entryLength = prime;
-			}
+			void Initialize(int capacity);
+			void Resize();
 			void Insert(const T& item, bool add);
+
 			int FindEntry(const T& item) const
 			{
 				if (m_buckets)
@@ -196,6 +122,7 @@ namespace Apoc3D
 					Initialize(capacity);
 				}
 			}
+
 			ExistTable(int capacity, const IEqualityComparer<T>* comparer)
 				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
 				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
@@ -205,6 +132,7 @@ namespace Apoc3D
 					Initialize(capacity);
 				}
 			}
+
 			~ExistTable()
 			{
 				delete[] m_buckets;
@@ -268,7 +196,7 @@ namespace Apoc3D
 					int num = m_comparer->GetHashCode(item) & 2147483647;
 					for (int i = m_buckets[num % m_bucketsLength]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == num) && m_comparer.Equals(m_entries[i].data, item))
+						if ((m_entries[i].hashCode == num) && m_comparer->Equals(m_entries[i].data, item))
 						{
 							return true;
 						}

@@ -23,7 +23,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "AnimationPlayers.h"
-#include "AnimationTypes.h"
 #include "Core/GameTime.h"
 
 using namespace Apoc3D::Collections;

@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Math/Matrix.h"
 #include "Collections/FastList.h"
+#include "AnimationTypes.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
@@ -157,7 +158,7 @@ namespace Apoc3D
 				*/
 				virtual void Update(const GameTime* const time);
 
-				virtual void GetTransform(int boneID, Matrix& result);
+				virtual void GetTransform(int boneID, Matrix& result) = 0;
 			};
 
 			/** The animation player contains a single transformation that is used to move/position/scale

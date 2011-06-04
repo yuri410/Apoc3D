@@ -27,7 +27,8 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		TextureManager::TextureManager(void)
+		TextureManager::TextureManager(int64 cacheSize)
+			: ResourceManager(cacheSize)
 		{
 		}
 

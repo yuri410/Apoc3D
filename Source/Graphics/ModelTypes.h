@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/Vector.h"
 
 using namespace Apoc3D::Math;
+using namespace std;
 
 namespace Apoc3D
 {
@@ -68,7 +69,7 @@ namespace Apoc3D
 		class APAPI MeshMaterialSet
 		{
 		private:
-			vector<vector<M> > m_set;
+			vector< vector<M> > m_set;
 
 		public:
 			void AddFrame(M& mtrl, int index)

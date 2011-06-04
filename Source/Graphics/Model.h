@@ -175,7 +175,7 @@ namespace Apoc3D
 
 			float GetAnimationDuration()
 			{
-
+				return 0;
 			}
 
 			
@@ -190,7 +190,7 @@ namespace Apoc3D
 
 			virtual const RenderOperationBuffer* GetRenderOperation()
 			{
-
+				return 0;
 			}
 
 

@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/BoundingSphere.h"
 #include "Collections/FastList.h"
 #include "Renderable.h"
+#include "RenderSystem/VertexElement.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;

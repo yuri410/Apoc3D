@@ -35,5 +35,26 @@ namespace Apoc3D
 		Model::~Model(void)
 		{
 		}
+
+
+
+
+		void Model::ControlRootAnimation(AnimationControl ctrl)
+		{
+
+		}
+		void Model::ControlSkinnedAnimation(AnimationControl ctrl)
+		{
+
+		}
+		void Model::ControlRigidAnimation(AnimationControl ctrl)
+		{
+
+		}
+		void Model::ControlMaterialAnimation(AnimationControl ctrl)
+		{
+
+		}
+
 	}
 }

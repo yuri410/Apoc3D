@@ -62,6 +62,7 @@ namespace Apoc3D
 					{
 						ExistTable<Resource*>::Enumerator iter = m_generations[i].GetEnumerator();
 
+						m_genLock.lock();
 						while (iter.MoveNext())
 						{
 							Resource* r = *iter.getCurrent();
@@ -77,6 +78,7 @@ namespace Apoc3D
 								}
 							}
 						}
+						m_genLock.unlock();
 					}
 				}
 			}
@@ -125,6 +127,22 @@ namespace Apoc3D
 					m_generationList.Remove(res);
 					m_genListLock.unlock();
 				}
+			}
+
+			void GenerationTable::UpdateGeneration(int oldGeneration, int newGeneration, Resource* resource)
+			{
+				m_genLock.lock();
+
+				if (oldGeneration != -1 && m_generations[oldGeneration].Exists(resource))
+				{
+					m_generations[oldGeneration].Remove(resource);
+				}
+				if (!m_generations[newGeneration].Exists(resource))
+				{
+					m_generations[newGeneration].Add(resource);
+				}
+
+				m_genLock.unlock();
 			}
 		}
 	}
