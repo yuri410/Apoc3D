@@ -38,10 +38,10 @@ namespace Apoc3D
 		public:
 			/* Gets the render operation of this renderable object at a ceratin LOD level
 			*/
-			virtual const RenderOperationBuffer* GetRenderOperation(int level) const = 0;
+			virtual const RenderOperationBuffer* GetRenderOperation(int level) = 0;
 			/* Gets the render operation of this renderable object at the default LOD level
 			*/
-			virtual const RenderOperationBuffer* GetRenderOperation() const { return GetRenderOperation(0); }
+			virtual const RenderOperationBuffer* GetRenderOperation() { return GetRenderOperation(0); }
 
 		protected:
 			Renderable(void)

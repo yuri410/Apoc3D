@@ -119,7 +119,8 @@ namespace Apoc3D
 	{		
 		class Resource;
 
-		template<class T> class ResourceHandle;
+		template<class T> 
+		class ResourceHandle;
 
 		class ResourceManager;
 		class GameTime;

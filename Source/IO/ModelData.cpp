@@ -308,6 +308,17 @@ namespace Apoc3D
 		}
 
 
+		MeshData::MeshData()
+			: VertexData(0), ParentBoneID(-1), VertexSize(0), VertexCount(0)
+		{
+
+		}
+		MeshData::~MeshData()
+		{
+			if (VertexData)
+				delete[] VertexData;
+		}
+
 		static const String TAG_3_EntityCountTag = L"EntityCount";
 		static const String TAG_3_EntityPrefix = L"Ent";
 

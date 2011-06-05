@@ -29,9 +29,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "EffectSystem/Effect.h"
 #include "EffectSystem/EffectManager.h"
 #include "Core/ResourceHandle.h"
+#include "Core/Logging.h"
 #include "Utility/StringUtils.h"
 #include "IO/MaterialData.h"
+#include "Vfs/FileSystem.h"
+#include "Vfs/FileLocateRule.h"
+#include "TextureManager.h"
 
+using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -91,6 +96,18 @@ namespace Apoc3D
 		void Material::LoadTexture(int32 index)
 		{
 			// load texture
+			FileLocation* fl = FileSystem::getSingleton().TryLocate(m_texName[index], FileLocateRule::Textures);
+
+			if (fl)
+			{
+				m_tex[index] = TextureManager::getSingleton().CreateInstance(m_device, fl, false);
+			}
+			else
+			{
+				LogManager::getSingleton().Write(LOG_Graphics, L"Missing texture '" + m_texName[index] + L"'. ",
+					LOGLVL_Error);
+			}
+			
 		}
 
 		void Material::Load(const MaterialData& mdata)

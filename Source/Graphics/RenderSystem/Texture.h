@@ -44,7 +44,6 @@ namespace Apoc3D
 			class APAPI Texture : public Resource
 			{
 			private:
-				//IDirect3DBaseTexture9* m_baseTexture;
 				RenderDevice* m_renderDevice;
 				ResourceLocation* m_resourceLocation;
 				TextureType m_type;
@@ -59,7 +58,7 @@ namespace Apoc3D
 				bool m_isLocked;
 			protected:
 				void UpdateInfo(const TextureData& data);
-
+				
 				Texture(RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed);
 				Texture(RenderDevice* device, int32 width, int32 height, int32 depth, 
 					int32 levelCount, PixelFormat format, TextureUsage usage);

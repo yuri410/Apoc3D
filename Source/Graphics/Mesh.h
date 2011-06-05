@@ -101,9 +101,9 @@ namespace Apoc3D
 
 			virtual const RenderOperationBuffer* GetRenderOperation(int level);
 			
-			void Save(MeshData& data);
+			void Save(MeshData* data);
 
-			Mesh(RenderDevice* device, const MeshData& data);
+			Mesh(RenderDevice* device, const MeshData* data);
 			~Mesh(void);
 		};
 	}

@@ -50,7 +50,6 @@ namespace Apoc3D
 
 			FastList<Mesh*> m_entities;
 			
-
 			ResourceLocation* m_resourceLocation;
 
 		public:
@@ -58,6 +57,11 @@ namespace Apoc3D
 
 			ModelSharedData(RenderDevice* device, ResourceLocation* rl);
 			virtual ~ModelSharedData();
+
+			virtual uint32 GetSize();
+		protected:
+			virtual void load();
+			virtual void unload();
 		};
 
 

@@ -36,7 +36,7 @@ namespace Apoc3D
 		template class APAPI std::unordered_map<String, Resource*>;
 		typedef std::unordered_map<String, Resource*> ResHashTable;
 
-		class APAPI ResourceManager : public Singleton<ResourceManager>
+		class APAPI ResourceManager
 		{
 		private:
 			ResHashTable m_hashTable;
@@ -85,7 +85,7 @@ namespace Apoc3D
 
 			Resource* Exists(const String& hashString);
 
-			SINGLETON_DECL_HEARDER(ResourceManager);
+			//SINGLETON_DECL_HEARDER(ResourceManager);
 
 		};
 	}

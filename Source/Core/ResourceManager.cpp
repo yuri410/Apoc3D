@@ -29,15 +29,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace Apoc3D
 {
-	SINGLETON_DECL(Apoc3D::Core::ResourceManager);
+	//SINGLETON_DECL(Apoc3D::Core::ResourceManager);
 
 	namespace Core
 	{
-
 		void ResourceManager::Resource_Loaded(Resource* res)
 		{
 			m_curUsedCache += res->getSize();
 		}
+
 		void ResourceManager::Resource_Unloaded(Resource* res)
 		{
 			m_curUsedCache -= res->getSize();
@@ -77,7 +77,6 @@ namespace Apoc3D
 
 			return 0;
 		}
-
 		void ResourceManager::NotifyNewResource(Resource* res)
 		{
 			//assert(!res->isManaged());
@@ -97,7 +96,6 @@ namespace Apoc3D
 			}
 			//m_hashTable.erase(res->getHashString());
 		}
-
 		bool ResourceManager::IsIdle() const
 		{
 			return m_asyncProc->TaskCompleted();

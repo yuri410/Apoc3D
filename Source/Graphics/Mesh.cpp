@@ -35,12 +35,12 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		Mesh::Mesh(RenderDevice* device, const MeshData& data)
-			: m_name(data.Name), m_renderDevice(device), m_opBufferBuilt(false)
+		Mesh::Mesh(RenderDevice* device, const MeshData* data)
+			: m_name(data->Name), m_renderDevice(device), m_opBufferBuilt(false)
 		{
 			m_factory = device->getObjectFactory();
 
-			const MeshMaterialSet<MaterialData>& mtrls = data.Materials;
+			const MeshMaterialSet<MaterialData>& mtrls = data->Materials;
 
 			for (uint i=0;i<mtrls.getMaterialCount();i++)
 			{
@@ -64,26 +64,26 @@ namespace Apoc3D
 			}
 
 
-			int matCount = data.Materials.getMaterialCount();
-			int vertexCount = data.VertexCount;
-			int faceCount = data.Faces.getCount();
+			int matCount = data->Materials.getMaterialCount();
+			int vertexCount = data->VertexCount;
+			int faceCount = data->Faces.getCount();
 
 			m_primitiveCount = faceCount;
 			m_vertexCount = vertexCount;
 
-			m_vertexSize = data.VertexSize;
+			m_vertexSize = data->VertexSize;
 
-			m_vertexElements = data.VertexElements;
-			m_parentBoneID = data.ParentBoneID;
-			m_boundingSphere = data.BoundingSphere;
+			m_vertexElements = data->VertexElements;
+			m_parentBoneID = data->ParentBoneID;
+			m_boundingSphere = data->BoundingSphere;
 
-			m_factory->CreateVertexDeclaration(data.VertexElements);
+			m_factory->CreateVertexDeclaration(data->VertexElements);
 			
 			// vertex data
 			m_vertexBuffer = m_factory->CreateVertexBuffer(vertexCount, m_vtxDecl, BU_Static);
 			void* vdst = m_vertexBuffer->Lock(0,0, LOCK_None);
 
-			memcpy(vdst, data.VertexData, m_vertexSize * vertexCount);
+			memcpy(vdst, data->VertexData, m_vertexSize * vertexCount);
 
 			m_vertexBuffer->Unlock();
 			
@@ -96,7 +96,7 @@ namespace Apoc3D
 			memset(m_partPrimitiveCount, 0, sizeof(int) * matCount);
 			memset(m_partVertexCount, 0, sizeof(int) * matCount);
 
-			const FastList<MeshFace>& faces = data.Faces;
+			const FastList<MeshFace>& faces = data->Faces;
 			for (int i=0;i<faces.getCount();i++)
 			{
 				const MeshFace& face = faces[i];
@@ -193,14 +193,14 @@ namespace Apoc3D
 			}
 		}
 
-		void Mesh::Save(MeshData& data)
+		void Mesh::Save(MeshData* data)
 		{
-			data.BoundingSphere = m_boundingSphere;
-			data.Name = m_name;
-			data.VertexCount = m_vertexCount;
-			data.VertexSize = m_vertexSize;
-			data.VertexElements = m_vertexElements;
-			data.ParentBoneID = m_parentBoneID;
+			data->BoundingSphere = m_boundingSphere;
+			data->Name = m_name;
+			data->VertexCount = m_vertexCount;
+			data->VertexSize = m_vertexSize;
+			data->VertexElements = m_vertexElements;
+			data->ParentBoneID = m_parentBoneID;
 
 			//data.Materials;
 			for (uint i=0;i<m_materials.getMaterialCount();i++)
@@ -213,20 +213,54 @@ namespace Apoc3D
 
 					if (j)
 					{
-						data.Materials.AddFrame(mdata);
+						data->Materials.AddFrame(mdata);
 					}
 					else
 					{						
-						data.Materials.Add(mdata);
+						data->Materials.Add(mdata);
 					}
 				}
 			}
 
-			//data.Faces
-
-
 			//data.VertexData;
+			data->VertexData = new char[m_vertexSize * m_vertexCount];
+
+			void* src = m_vertexBuffer->Lock(0,0,LOCK_ReadOnly);
+			memcpy(data->VertexData, src, m_vertexSize * m_vertexCount);
+			m_vertexBuffer->Unlock();
+
+			//data.Faces
+			data->Faces.ResizeDiscard(m_primitiveCount);
 			
+			for (int i=0;i<m_indexBuffers.getCount();i++)
+			{
+				if (m_indexBuffers[i]->getIndexType() == IBT_Bit16)
+				{
+					ushort* isrc = (ushort*)m_indexBuffers[i]->Lock(0,0, LOCK_ReadOnly);
+
+					for (int j=0;j<m_partPrimitiveCount[i];j++)
+					{
+						int iPos = j*3;
+						MeshFace face(isrc[iPos], isrc[iPos+1], isrc[iPos+2], i);
+						data->Faces.Add(face);
+					}
+
+					m_indexBuffers[i]->Unlock();
+				}
+				else
+				{
+					uint* isrc = (uint*)m_indexBuffers[i]->Lock(0,0, LOCK_ReadOnly);
+
+					for (int j=0;j<m_partPrimitiveCount[i];j++)
+					{
+						int iPos = j*3;
+						MeshFace face(isrc[iPos], isrc[iPos+1], isrc[iPos+2], i);
+						data->Faces.Add(face);
+					}
+
+					m_indexBuffers[i]->Unlock();
+				}
+			}
 		}
 
 		void Mesh::GetIndices(uint* dest) const

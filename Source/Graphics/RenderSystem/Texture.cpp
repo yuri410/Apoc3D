@@ -22,14 +22,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Texture.h"
+
+#include "Graphics/TextureManager.h"
 #include "VertexElement.h"
 
 #include "RenderDevice.h"
-#include "IO\TextureData.h"
-#include "Math\Rectangle.h"
-#include "Math\Box.h"
+#include "IO/TextureData.h"
+#include "Math/Rectangle.h"
+#include "Math/Box.h"
 #include "Apoc3DException.h"
-#include "VFS\ResourceLocation.h"
+#include "VFS/ResourceLocation.h"
 
 namespace Apoc3D
 {
@@ -38,7 +40,8 @@ namespace Apoc3D
 		namespace RenderSystem
 		{
 			Texture::Texture(RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed)
-				: m_renderDevice(device), m_resourceLocation(rl), m_usage(usage),
+				: Resource(managed ? TextureManager::getSingletonPtr() : 0, rl->getName()),
+				m_renderDevice(device), m_resourceLocation(rl), m_usage(usage),
 				m_levelCount(0), m_width(0), m_height(0), m_depth(0), 
 				m_format(FMT_Unknown), m_type(TT_Texture2D), m_contentSize(0),
 				m_isLocked(false)
@@ -80,6 +83,7 @@ namespace Apoc3D
 			}
 			Texture::~Texture()
 			{
+				Resource::~Resource();
 				if (m_resourceLocation)
 				{
 					delete m_resourceLocation;

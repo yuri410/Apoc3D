@@ -55,6 +55,7 @@ namespace Apoc3D
 		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
 		typedef fastdelegate::FastDelegate1<Resource*, void> ResourceEventHandler;
 
+
 		class APAPI Resource
 		{
 		private:

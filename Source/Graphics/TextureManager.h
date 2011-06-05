@@ -25,24 +25,36 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define TEXTUREMANAGER_H
 
 #include "Common.h"
-#include "Core\ResourceManager.h"
+#include "Core/ResourceManager.h"
+#include "Core/Singleton.h"
+#include "PixelFormat.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class APAPI TextureManager : public ResourceManager
+		class APAPI TextureManager : public ResourceManager, public Singleton<TextureManager>
 		{
-		public:
-			const FileLocation* RedirectLocation;
+		private:
+			FileLocation* m_redirectLocation;
 
-			TextureManager(int64 cacheSize);
+		public:
+			static int64 CacheSize;
+
+			void SetRedirectLocation(FileLocation* fl);
+			
+			TextureManager();
 			~TextureManager(void);
 
+			Texture* CreateUnmanagedInstance(RenderDevice* rd, FileLocation* fl, bool genMips);
+			ResourceHandle<Texture>* CreateInstance(RenderDevice* rd, FileLocation* fl, bool genMips);
 
+			SINGLETON_DECL_HEARDER(TextureManager);
 		};
 	}
 }

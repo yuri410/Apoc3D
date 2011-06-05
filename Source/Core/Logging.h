@@ -35,8 +35,11 @@ namespace Apoc3D
 	{
 		enum APAPI LogMessageLevel
 		{
+			LOGLVL_Default,
 			LOGLVL_Infomation,
-			LOGLVL_Warning
+			LOGLVL_Warning,
+			LOGLVL_Error,
+			LOGLVL_Fatal
 		};
 		enum APAPI LogType
 		{

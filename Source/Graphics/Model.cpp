@@ -22,10 +22,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Model.h"
+
+#include "Mesh.h"
 #include "Animation/AnimationData.h"
 #include "Animation/AnimationPlayers.h"
 #include "Core/ResourceHandle.h"
 #include "Vfs/ResourceLocation.h"
+#include "ModelManager.h"
+#include "IO/ModelData.h"
 
 template class Apoc3D::Core::ResourceHandle<Apoc3D::Graphics::ModelSharedData>;
 
@@ -37,10 +41,8 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-
-
 		ModelSharedData::ModelSharedData(RenderDevice* device, ResourceLocation* rl)
-			: m_renderDevice(device), m_resourceLocation(rl)
+			: Resource(ModelManager::getSingletonPtr(), rl->getName()), m_renderDevice(device), m_resourceLocation(rl)
 		{
 
 		}
@@ -48,6 +50,38 @@ namespace Apoc3D
 		{
 			Resource::~Resource();
 			delete m_resourceLocation;
+		}
+
+		void ModelSharedData::load()
+		{
+			if (m_resourceLocation)
+			{
+				ModelData data;
+				data.Load(m_resourceLocation);
+
+				for (int i=0; i< data.Entities.getCount();i++)
+				{
+					Mesh* mesh = new Mesh(m_renderDevice, data.Entities[i]);
+					m_entities.Add(mesh);
+				}
+			}
+		}
+		void ModelSharedData::unload()
+		{
+			for (int i=0; i< m_entities.getCount();i++)
+			{
+				delete m_entities[i];
+			}
+			m_entities.Clear();
+		}
+
+		uint ModelSharedData::GetSize()
+		{
+			if (m_resourceLocation)
+			{
+				return static_cast<uint32>(m_resourceLocation->getSize());
+			}
+			return 0;
 		}
 		/************************************************************************/
 		/*                                                                      */

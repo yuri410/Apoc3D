@@ -54,8 +54,6 @@ namespace Apoc3D
 		public:
 			char* VertexData;
 
-			int32 TextureCoordCount;
-			bool HasTextureCoord[MaxTextures];
 			FastList<VertexElement> VertexElements;
 
 			int32 ParentBoneID;
@@ -73,6 +71,9 @@ namespace Apoc3D
 
 			void Load(TaggedDataReader* data);
 			TaggedDataWriter* Save();
+
+			MeshData();
+			~MeshData();
 
 		};
 

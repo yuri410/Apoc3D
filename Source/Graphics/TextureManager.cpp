@@ -22,19 +22,71 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "TextureManager.h"
+#include "RenderSystem/RenderDevice.h"
+#include "RenderSystem/ObjectFactory.h"
+#include "RenderSystem/Texture.h"
+#include "Vfs/ResourceLocation.h"
+#include "Core/ResourceHandle.h"
 
 namespace Apoc3D
 {
+	SINGLETON_DECL(Apoc3D::Graphics::TextureManager);
+
 	namespace Graphics
 	{
-		TextureManager::TextureManager(int64 cacheSize)
-			: ResourceManager(cacheSize)
+		int64 TextureManager::CacheSize = 200 * 1048576;
+
+		void TextureManager::SetRedirectLocation(FileLocation* fl)
+		{
+			if (m_redirectLocation)
+			{
+				delete m_redirectLocation;
+			}
+			m_redirectLocation = fl;
+		}
+
+		TextureManager::TextureManager()
+			: ResourceManager(CacheSize), m_redirectLocation(0)
 		{
 		}
 
 
 		TextureManager::~TextureManager(void)
 		{
+			if (m_redirectLocation)
+				delete m_redirectLocation;
 		}
+
+
+
+		Texture* TextureManager::CreateUnmanagedInstance(RenderDevice* rd, FileLocation* fl, bool genMips)
+		{
+			ObjectFactory* factory = rd->getObjectFactory();
+			if (m_redirectLocation)
+			{
+				delete fl;
+				fl = new FileLocation(*m_redirectLocation);
+			}
+			factory->CreateTexture(fl, genMips? TU_AutoMipMap : TU_Static, false);
+		}
+		ResourceHandle<Texture>* TextureManager::CreateInstance(RenderDevice* rd, FileLocation* fl, bool genMips)
+		{
+			if (m_redirectLocation)
+			{
+				delete fl;
+				fl = new FileLocation(*m_redirectLocation);
+			}
+
+			Resource* retrived = Exists(fl->getName());
+			if (!retrived)
+			{
+				ObjectFactory* factory = rd->getObjectFactory();
+				Texture* tex = factory->CreateTexture(fl, genMips? TU_AutoMipMap : TU_Static, true);
+				retrived = tex;
+				NotifyNewResource(tex);
+			}
+			return new ResourceHandle<Texture>((Texture*)retrived);
+		}
+
 	}
 }

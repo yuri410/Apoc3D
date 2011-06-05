@@ -24,17 +24,48 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "ModelManager.h"
 
+#include "Core/Logging.h"
+#include "Core/ResourceHandle.h"
+#include "Utility/StringUtils.h"
+#include "Vfs/ResourceLocation.h"
+#include "Model.h"
+
+using namespace Apoc3D::Utility;
+
 namespace Apoc3D
 {
+	SINGLETON_DECL(Apoc3D::Graphics::ModelManager);
+
 	namespace Graphics
 	{
+		int64 ModelManager::CacheSize = 100 * 1048576;
+
 		ModelManager::ModelManager(void)
+			: ResourceManager(CacheSize)
 		{
+			LogManager::getSingleton().Write(LOG_System, 
+				L"Model manager initialized with a cache size " + StringUtils::ToString(CacheSize), 
+				LOGLVL_Infomation);
 		}
 
 
 		ModelManager::~ModelManager(void)
 		{
+			ResourceManager::~ResourceManager();
+			Singleton::~Singleton();
+		}
+
+		ResourceHandle<ModelSharedData>* ModelManager::CreateInstance(RenderDevice* renderDevice, 
+			ResourceLocation* rl)
+		{
+			Resource* retrived = Exists(rl->getName());
+			if (!retrived)
+			{
+				ModelSharedData* mdl = new ModelSharedData(renderDevice, rl);
+				retrived = mdl;
+				NotifyNewResource(retrived);
+			}
+			return new ResourceHandle<ModelSharedData>((ModelSharedData*)retrived);
 		}
 	}
 }

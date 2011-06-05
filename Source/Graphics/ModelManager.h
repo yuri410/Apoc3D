@@ -25,19 +25,32 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MODELMANAGER_H
 #define MODELMANAGER_H
 
-#pragma once
-
 #include "Common.h"
+#include "Core/ResourceManager.h"
+#include "Core/Singleton.h"
+
+using namespace Apoc3D::Core;
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class APAPI ModelManager
+		class APAPI ModelManager : public ResourceManager, public Singleton<ModelManager>
 		{
+		public:
+			static int64 CacheSize;
+		private:
+			
 		public:
 			ModelManager(void);
 			~ModelManager(void);
+
+			ResourceHandle<ModelSharedData>* CreateInstance(RenderDevice* renderDevice, 
+				ResourceLocation* rl);
+
+			SINGLETON_DECL_HEARDER(ModelManager);
 		};
 	}
 }
