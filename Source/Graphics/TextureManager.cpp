@@ -67,7 +67,7 @@ namespace Apoc3D
 				delete fl;
 				fl = new FileLocation(*m_redirectLocation);
 			}
-			factory->CreateTexture(fl, genMips? TU_AutoMipMap : TU_Static, false);
+			return factory->CreateTexture(fl, genMips? TU_AutoMipMap : TU_Static, false);
 		}
 		ResourceHandle<Texture>* TextureManager::CreateInstance(RenderDevice* rd, FileLocation* fl, bool genMips)
 		{

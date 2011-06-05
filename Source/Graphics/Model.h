@@ -58,7 +58,7 @@ namespace Apoc3D
 			ModelSharedData(RenderDevice* device, ResourceLocation* rl);
 			virtual ~ModelSharedData();
 
-			virtual uint32 GetSize();
+			virtual uint32 getSize();
 		protected:
 			virtual void load();
 			virtual void unload();

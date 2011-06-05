@@ -116,8 +116,9 @@ namespace Apoc3D
 				FastQueue<float> m_timeQueue;
 
 				fast_mutex m_queueLock;
-
+				
 			public:
+
 				GenerationCalculator(const GenerationTable* table);
 
 				void Use(Resource* resource);
@@ -174,6 +175,7 @@ namespace Apoc3D
 
 			
 		public: 
+			friend class GenerationTable;
 			typedef Resource ResHandleTemplateConstraint;   
 			
 			virtual ~Resource();
@@ -225,10 +227,11 @@ namespace Apoc3D
 			{
 				if (isManaged())
 				{
-					if (--m_refCount == 0)
-					{
+					m_refCount--;
+					//if (--m_refCount == 0)
+					//{
 						//delete this;
-					}
+					//}
 				}
 			}
 		};

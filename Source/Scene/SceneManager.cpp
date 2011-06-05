@@ -48,8 +48,8 @@ namespace Apoc3D
 				{
 					RenderOperation op = buffer->get(k);
 
-					Material* mtrl = op.getMaterial();
-					GeometryData* geoData = op.getGeomentryData();
+					Material* mtrl = op.Material;
+					GeometryData* geoData = op.GeometryData;
 
 					if (mtrl)
 					{

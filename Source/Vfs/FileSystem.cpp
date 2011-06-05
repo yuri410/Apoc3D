@@ -172,15 +172,15 @@ namespace Apoc3D
 			return res;
 		}
 
-		const FileLocation* FileSystem::Locate(const String& filePath, const FileLocateRule& rule)
+		FileLocation* FileSystem::Locate(const String& filePath, const FileLocateRule& rule)
 		{
-			const FileLocation* res = TryLocate(filePath, rule);
+			FileLocation* res = TryLocate(filePath, rule);
 			if (!res)
 				throw Apoc3DException::createException(EX_FileNotFound, filePath.c_str());
 			return res;
 		}
 
-		const FileLocation* FileSystem::TryLocate(const String& filePath, const FileLocateRule& rule)
+		FileLocation* FileSystem::TryLocate(const String& filePath, const FileLocateRule& rule)
 		{
 			// pass through all check points
 			for (int cp = 0; cp < rule.getCount(); cp++)

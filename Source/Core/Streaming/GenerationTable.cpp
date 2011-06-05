@@ -50,7 +50,56 @@ namespace Apoc3D
 
 			void GenerationTable::SubTask_GenUpdate()
 			{
+				const int passTimeLimit = 4000;
+				clock_t timeStart = clock();
+				clock_t time = clock();
 
+				int count;
+				m_genListLock.lock();
+				count = m_generationList.getCount();
+				m_genListLock.unlock();
+
+				if (count)
+				{
+					int loopCount = 0;
+					int remainingTime = passTimeLimit;
+					int perObjTime = passTimeLimit / count;
+					int actlObjTime = max(1, min(perObjTime, 10));
+
+					for (int j=0;j<count;j++)
+					{
+						Resource* res;
+						m_genListLock.lock();
+						count = m_generationList.getCount();
+						if (j<count)
+							res = m_generationList[j];
+						else
+							break;
+						m_genListLock.unlock();
+
+						if (res->m_generation->IsGenerationOutOfTime((float)timeStart))
+						{
+							int og = res->m_generation->Generation;
+							res->m_generation->UpdateGeneration();
+							int ng = res->m_generation->Generation;
+							if (ng!=og)
+							{
+								UpdateGeneration(og,ng,res);
+							}
+						}
+
+						if (++loopCount % 10 ==0)
+						{
+							time = clock();
+							remainingTime -= (time-timeStart);
+							loopCount = 0;
+						}
+						if (perObjTime >=1 && remainingTime>0)
+						{
+							ApocSleep(actlObjTime);
+						}
+					}
+				}
 			}
 			void GenerationTable::SubTask_Manage()
 			{

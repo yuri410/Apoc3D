@@ -31,7 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ModelManager.h"
 #include "IO/ModelData.h"
 
-template class Apoc3D::Core::ResourceHandle<Apoc3D::Graphics::ModelSharedData>;
+//template class Apoc3D::Core::ResourceHandle<Apoc3D::Graphics::ModelSharedData>;
 
 namespace Apoc3D
 {
@@ -75,7 +75,7 @@ namespace Apoc3D
 			m_entities.Clear();
 		}
 
-		uint ModelSharedData::GetSize()
+		uint ModelSharedData::getSize()
 		{
 			if (m_resourceLocation)
 			{

@@ -213,7 +213,7 @@ namespace Apoc3D
 
 					if (j)
 					{
-						data->Materials.AddFrame(mdata);
+						data->Materials.AddFrame(mdata, i);
 					}
 					else
 					{						

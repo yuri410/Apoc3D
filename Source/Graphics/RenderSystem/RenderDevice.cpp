@@ -38,8 +38,8 @@ namespace Apoc3D
 				for (int i = 0; i < count; i++)
 				{
 					m_batchCount++;
-					m_primitiveCount += op[i].getGeomentryData()->getPrimitiveCount();
-					m_vertexCount += op[i].getGeomentryData()->getVertexCount();
+					m_primitiveCount += op[i].GeometryData->PrimitiveCount;
+					m_vertexCount += op[i].GeometryData->VertexCount;
 				}
 			}
 		}

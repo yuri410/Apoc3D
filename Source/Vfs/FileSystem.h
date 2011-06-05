@@ -92,8 +92,8 @@ namespace Apoc3D
 			vector<String> SearchFile(const String& path);
 			
 			Archive* LocateArchive(const String& filePath, const FileLocateRule& rule);
-			const FileLocation* Locate(const String& filePath, const FileLocateRule& rule);
-			const FileLocation* TryLocate(const String& filePath, const FileLocateRule& rule);
+			FileLocation* Locate(const String& filePath, const FileLocateRule& rule);
+			FileLocation* TryLocate(const String& filePath, const FileLocateRule& rule);
 
 			SINGLETON_DECL_HEARDER(FileSystem);
 		};
