@@ -132,6 +132,8 @@ namespace Apoc3D
 		}
 		Resource::~Resource()
 		{
+			m_eventLoaded.clear();
+			m_eventUnloaded.clear();
 			if (isManaged())
 			{
 				m_manager->NotifyReleaseResource(this);

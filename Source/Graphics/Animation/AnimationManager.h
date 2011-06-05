@@ -21,38 +21,38 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef ANIMATIONMANAGER_H
+#define ANIMATIONMANAGER_H
 
-#ifndef MODELMANAGER_H
-#define MODELMANAGER_H
-
-#include "Common.h"
-#include "Core/ResourceManager.h"
 #include "Core/Singleton.h"
+#include "Core/ResourceManager.h"
 
 using namespace Apoc3D::Core;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Graphics::Animation;
 using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class APAPI ModelManager : public ResourceManager, public Singleton<ModelManager>
+		namespace Animation
 		{
-		public:
-			static int64 CacheSize;
-		private:
-			
-		public:
-			ModelManager(void);
-			~ModelManager(void);
+			template class APAPI std::unordered_map<String, AnimationData*>;
+			typedef std::unordered_map<String, AnimationData*> AnimHashTable;
 
-			ResourceHandle<ModelSharedData>* CreateInstance(RenderDevice* renderDevice, 
-				ResourceLocation* rl);
+			class APAPI AnimationManager : public Singleton<AnimationManager>
+			{
+			private:
+				AnimHashTable m_hashTable;
 
-			SINGLETON_DECL_HEARDER(ModelManager);
-		};
+			public:
+				AnimationManager();
+				~AnimationManager();
+
+				const AnimationData* CreateInstance(const ResourceLocation* rl);
+
+				SINGLETON_DECL_HEARDER(AnimationManager);
+			};
+		}
 	}
 }
 

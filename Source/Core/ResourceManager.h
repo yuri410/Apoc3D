@@ -25,7 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define RESOURCEMANAGER_H
 
 #include "Common.h"
-#include "Singleton.h"
 
 using namespace Apoc3D::Core::Streaming;
 
@@ -71,7 +70,7 @@ namespace Apoc3D
 			int64 getUsedCacheSize() const { return m_curUsedCache; }
 			
 
-			ResourceManager(int64 cacheSize);
+			ResourceManager(int64 cacheSize, bool useAsync = true);
 			~ResourceManager();
 
 			void Shutdown();

@@ -29,11 +29,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Collections/FastList.h"
 #include "AnimationTypes.h"
 
-using namespace std;
-
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::IO;
+using namespace Apoc3D::VFS;
+
+using namespace std;
 
 namespace Apoc3D
 {
@@ -111,8 +112,12 @@ namespace Apoc3D
 
 				/** Load animation data from a Tagged Data Block
 				*/
-				void Load(TaggedDataReader* data);
-				TaggedDataWriter* Save();
+				void ReadData(TaggedDataReader* data);
+				TaggedDataWriter* WriteData() const;
+
+
+				void Load(const ResourceLocation* rl);
+				void Save(Stream* strm) const;
 
 				AnimationData()
 					: m_hasBindPose(false), m_hasSkeleton(false),

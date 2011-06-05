@@ -52,6 +52,7 @@ namespace Apoc3D
 				Archive* arc = e->second;
 				delete arc;
 			}
+			Singleton::~Singleton();
 		}
 
 

@@ -27,6 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RenderSystem/Texture.h"
 #include "Vfs/ResourceLocation.h"
 #include "Core/ResourceHandle.h"
+#include "Core/Logging.h"
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -48,6 +52,9 @@ namespace Apoc3D
 		TextureManager::TextureManager()
 			: ResourceManager(CacheSize), m_redirectLocation(0)
 		{
+			LogManager::getSingleton().Write(LOG_System, 
+				L"Model manager initialized with a cache size " + StringUtils::ToString(CacheSize), 
+				LOGLVL_Infomation);
 		}
 
 
@@ -55,6 +62,8 @@ namespace Apoc3D
 		{
 			if (m_redirectLocation)
 				delete m_redirectLocation;
+			ResourceManager::~ResourceManager();
+			Singleton::~Singleton();
 		}
 
 
@@ -77,7 +86,7 @@ namespace Apoc3D
 				fl = new FileLocation(*m_redirectLocation);
 			}
 
-			Resource* retrived = Exists(fl->getName());
+			Resource* retrived = Exists(fl->GetHashString());
 			if (!retrived)
 			{
 				ObjectFactory* factory = rd->getObjectFactory();

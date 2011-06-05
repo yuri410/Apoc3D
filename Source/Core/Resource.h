@@ -180,6 +180,9 @@ namespace Apoc3D
 			
 			virtual ~Resource();
 
+			ResourceEventHandler& eventLoaded() { return m_eventLoaded; }
+			ResourceEventHandler& eventUnloaded() { return m_eventUnloaded; }
+
 			int GetGeneration() const 
 			{
 				if (m_generation)

@@ -28,13 +28,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IO/BinaryWriter.h"
 #include "IO/TaggedData.h"
 
+#include "VFS/ResourceLocation.h"
+
 namespace Apoc3D
 {
 	namespace Graphics
 	{
 		namespace Animation
 		{
-
+			static const int MANI_ID = ((byte)'M' << 24) | ((byte)'A' << 16) | ((byte)'N' << 8) | ((byte)'I');
+		
 			static const String TAG_3_BindPoseTag = L"BindPose";
 			static const String TAG_3_BindPoseCountTag = L"BindPoseCount";
 
@@ -109,7 +112,7 @@ namespace Apoc3D
 			}
 
 
-			void AnimationData::Load(TaggedDataReader* data)
+			void AnimationData::ReadData(TaggedDataReader* data)
 			{
 				if (data->Contains(TAG_2_MaterialAnimationTag))
 				{
@@ -338,7 +341,7 @@ namespace Apoc3D
 
 			}
 
-			TaggedDataWriter* AnimationData::Save()
+			TaggedDataWriter* AnimationData::WriteData() const
 			{
 				TaggedDataWriter* data = new TaggedDataWriter(true);
 
@@ -347,7 +350,7 @@ namespace Apoc3D
 					data->AddEntry(TAG_3_MaterialAnimationCountTag, m_mtrlAnimationClips.size());
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_MaterialAnimationTag);
-					for (MtrlClipTable::iterator iter = m_mtrlAnimationClips.begin(); iter != m_mtrlAnimationClips.end(); iter++)
+					for (MtrlClipTable::const_iterator iter = m_mtrlAnimationClips.begin(); iter != m_mtrlAnimationClips.end(); iter++)
 					{
 						bw->Write(iter->first);
 
@@ -429,7 +432,7 @@ namespace Apoc3D
 					data->AddEntry(TAG_3_ModelAnimationClipCountTag, m_modelAnimationClips.size());
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_ModelAnimationClipTag);
-					for (ClipTable::iterator iter = m_modelAnimationClips.begin(); iter != m_modelAnimationClips.end(); iter++)
+					for (ClipTable::const_iterator iter = m_modelAnimationClips.begin(); iter != m_modelAnimationClips.end(); iter++)
 					{
 						bw->Write(iter->first);
 
@@ -455,7 +458,7 @@ namespace Apoc3D
 					data->AddEntry(TAG_3_RootAnimationClipCountTag, m_rootAnimationClips.size());
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_RootAnimationClipTag);
-					for (ClipTable::iterator iter = m_rootAnimationClips.begin(); iter != m_rootAnimationClips.end(); iter++)
+					for (ClipTable::const_iterator iter = m_rootAnimationClips.begin(); iter != m_rootAnimationClips.end(); iter++)
 					{
 						bw->Write(iter->first);
 
@@ -489,6 +492,38 @@ namespace Apoc3D
 					delete bw;
 				}
 				return data;
+			}
+
+			void AnimationData::Load(const ResourceLocation* rl)
+			{
+				BinaryReader* br = new BinaryReader(rl->GetReadStream());
+
+				int32 id = br->ReadInt32();
+				if (id == MANI_ID)
+				{
+					TaggedDataReader* data = br->ReadTaggedDataBlock();
+
+					ReadData(data);
+
+					data->Close();
+					delete data;
+				}
+
+				br->Close();
+				delete br;
+			}
+			void AnimationData::Save(Stream* strm) const
+			{
+				BinaryWriter* bw = new BinaryWriter(strm);
+
+				bw->Write(MANI_ID);
+
+				TaggedDataWriter* mdlData = WriteData();
+				bw->Write(mdlData);
+				delete mdlData;
+
+				bw->Close();
+				delete bw;
 			}
 		}
 	}

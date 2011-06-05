@@ -27,6 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Streaming/AsyncProcessor.h"
 #include "Streaming/GenerationTable.h"
 
+#include "Apoc3DException.h"
+
 namespace Apoc3D
 {
 	//SINGLETON_DECL(Apoc3D::Core::ResourceManager);
@@ -45,25 +47,40 @@ namespace Apoc3D
 
 		void ResourceManager::AddTask(ResourceOperation* op) const
 		{
+			if (!m_asyncProc)
+			{
+				throw Apoc3DException::createException(EX_NotSupported, L"Async processing not enabled");
+			}
 			m_asyncProc->AddTask(op);
 		}
 
 		void ResourceManager::Shutdown()
 		{
-			m_asyncProc->Shutdown();
-			m_generationTable->ShutDown();
+			if (m_asyncProc)
+				m_asyncProc->Shutdown();
+			if (m_generationTable)
+				m_generationTable->ShutDown();
 		}
 
-		ResourceManager::ResourceManager(int64 cacheSize)
+		ResourceManager::ResourceManager(int64 cacheSize, bool useAsync)
 			: m_totalCacheSize(cacheSize), m_curUsedCache(0)
 		{
-			m_asyncProc = new AsyncProcessor(L"");
-			m_generationTable = new GenerationTable(this);
+			if (useAsync)
+			{
+				m_asyncProc = new AsyncProcessor(L"");
+				m_generationTable = new GenerationTable(this);
+			}
+			else
+			{
+				m_asyncProc = 0; m_generationTable = 0;
+			}
 		}
 		ResourceManager::~ResourceManager()
 		{
-			delete m_asyncProc;
-			delete m_generationTable;
+			if (m_asyncProc)
+				delete m_asyncProc;
+			if (m_generationTable)
+				delete m_generationTable;
 		}
 		Resource* ResourceManager::Exists(const String& hashString)
 		{
@@ -83,7 +100,12 @@ namespace Apoc3D
 			if (!m_isShutDown)
 			{
 				m_hashTable.insert(ResHashTable::value_type(res->getHashString(), res));
-				m_generationTable->AddResource(res);
+
+				if (m_generationTable)
+					m_generationTable->AddResource(res);
+
+				res->eventLoaded().bind(this, &ResourceManager::Resource_Loaded);
+				res->eventUnloaded().bind(this, &ResourceManager::Resource_Unloaded);
 			}
 		}
 		void ResourceManager::NotifyReleaseResource(Resource* res)
@@ -92,20 +114,34 @@ namespace Apoc3D
 			if (!m_isShutDown)
 			{
 				m_hashTable.erase(res->getHashString());
-				m_generationTable->RemoveResource(res);
+
+				if (m_generationTable)
+					m_generationTable->RemoveResource(res);
 			}
 			//m_hashTable.erase(res->getHashString());
 		}
 		bool ResourceManager::IsIdle() const
 		{
+			if (!m_asyncProc)
+			{
+				throw Apoc3DException::createException(EX_NotSupported, L"Async processing not enabled");
+			}
 			return m_asyncProc->TaskCompleted();
 		}
 		void ResourceManager::WaitForIdle() const
 		{
+			if (!m_asyncProc)
+			{
+				throw Apoc3DException::createException(EX_NotSupported, L"Async processing not enabled");
+			}
 			m_asyncProc->WaitForCompletion();
 		}
 		int ResourceManager::GetCurrentOperationCount() const
 		{
+			if (!m_asyncProc)
+			{
+				throw Apoc3DException::createException(EX_NotSupported, L"Async processing not enabled");
+			}
 			return m_asyncProc->GetOperationCount();
 		}
 

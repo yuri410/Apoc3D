@@ -46,6 +46,13 @@ namespace Apoc3D
 		//{
 		//	
 		//}
+		PluginManager::~PluginManager()
+		{
+			UnloadPlugins();
+			
+			Singleton::~Singleton();
+
+		}
 
 		const Plugin* PluginManager::getPlugin(const String& name) const
 		{

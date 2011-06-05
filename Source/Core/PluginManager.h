@@ -67,7 +67,8 @@ namespace Apoc3D
 		
 		public:
 			PluginManager() { }
-		
+			~PluginManager();
+
 			PluginLoadCallBack& eventPluginLoad() { return m_eventPluginLoad; }
 			PluginErrorBack& eventPluginError() { return m_eventPluginError; }
 

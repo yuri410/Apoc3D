@@ -22,50 +22,49 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "ModelManager.h"
-
+#include "AnimationManager.h"
 #include "Core/Logging.h"
-#include "Core/ResourceHandle.h"
-#include "Utility/StringUtils.h"
 #include "Vfs/ResourceLocation.h"
-#include "Model.h"
-
-using namespace Apoc3D::Utility;
+#include "AnimationData.h"
 
 namespace Apoc3D
 {
-	SINGLETON_DECL(Apoc3D::Graphics::ModelManager);
+	SINGLETON_DECL(Apoc3D::Graphics::Animation::AnimationManager);
 
 	namespace Graphics
 	{
-		int64 ModelManager::CacheSize = 100 * 1048576;
-
-		ModelManager::ModelManager(void)
-			: ResourceManager(CacheSize)
+		namespace Animation
 		{
-			LogManager::getSingleton().Write(LOG_System, 
-				L"Model manager initialized with a cache size " + StringUtils::ToString(CacheSize), 
-				LOGLVL_Infomation);
-		}
 
-
-		ModelManager::~ModelManager(void)
-		{
-			ResourceManager::~ResourceManager();
-			Singleton::~Singleton();
-		}
-
-		ResourceHandle<ModelSharedData>* ModelManager::CreateInstance(RenderDevice* renderDevice, 
-			ResourceLocation* rl)
-		{
-			Resource* retrived = Exists(rl->GetHashString());
-			if (!retrived)
+			AnimationManager::AnimationManager(void)
 			{
-				ModelSharedData* mdl = new ModelSharedData(renderDevice, rl);
-				retrived = mdl;
-				NotifyNewResource(retrived);
 			}
-			return new ResourceHandle<ModelSharedData>((ModelSharedData*)retrived);
+
+			AnimationManager::~AnimationManager(void)
+			{
+				for (AnimHashTable::iterator iter = m_hashTable.begin(); iter != m_hashTable.end(); iter++)
+				{
+					delete iter->second;
+				}
+				Singleton::~Singleton();
+			}
+
+			const AnimationData* AnimationManager::CreateInstance(const ResourceLocation* rl)
+			{
+				AnimationData* res;
+				AnimHashTable::iterator iter = m_hashTable.find(rl->GetHashString());
+
+				if (iter != m_hashTable.end())
+				{
+					return iter->second;
+				}
+				res = new AnimationData();
+
+				res->Load(rl);
+				m_hashTable.insert(AnimHashTable::value_type(rl->GetHashString(), res));
+
+				return res;
+			}
 		}
 	}
 }
