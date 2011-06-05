@@ -44,10 +44,13 @@ namespace Apoc3D
 
 			ResourceHandle(const ResourceHandle& another) { }
 		protected:
-			ResourceHandle(ResType* res);
 			
 		public:
+			ResourceHandle(ResType* res);
+
 			virtual ~ResourceHandle(void);
+
+			void Build(ResType* res);
 
 			inline void Touch();
 			void TouchSync();

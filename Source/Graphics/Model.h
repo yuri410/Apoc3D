@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define MODEL_H
 
 #include "Common.h"
-#include "Core\Resource.h"
+#include "Core/Resource.h"
 #include "Renderable.h"
 #include "RenderOperationBuffer.h"
 #include "Collections/FastList.h"
@@ -43,7 +43,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class APAPI ModelSharedData
+		class APAPI ModelSharedData : public Resource
 		{
 		private:
 			RenderDevice* m_renderDevice;
@@ -54,11 +54,10 @@ namespace Apoc3D
 			ResourceLocation* m_resourceLocation;
 
 		public:
-			ModelSharedData(RenderDevice* device, ResourceLocation* rl)
-				: m_renderDevice(device), m_resourceLocation(rl)
-			{
+			FastList<Mesh*>& getEntities() { return m_entities; }
 
-			}
+			ModelSharedData(RenderDevice* device, ResourceLocation* rl);
+			virtual ~ModelSharedData();
 		};
 
 
@@ -72,7 +71,7 @@ namespace Apoc3D
 
 		typedef fastdelegate::FastDelegate1<AnimationType, void> ModelAnimationCompletedHandler;
 
-		class APAPI Model : public Renderable, public Resource
+		class APAPI Model : public Renderable
 		{
 		private:
 			enum AnimationControl
@@ -83,7 +82,8 @@ namespace Apoc3D
 				AC_Pause
 			};
 
-			RenderOperationBuffer opBuffer;
+			bool m_isOpBufferBuilt;
+			RenderOperationBuffer m_opBuffer;
 
 			/** table cast render operation index to entity index
 			*/

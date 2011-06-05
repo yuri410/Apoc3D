@@ -25,16 +25,37 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Animation/AnimationData.h"
 #include "Animation/AnimationPlayers.h"
 #include "Core/ResourceHandle.h"
+#include "Vfs/ResourceLocation.h"
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+
+
+		ModelSharedData::ModelSharedData(RenderDevice* device, ResourceLocation* rl)
+			: m_renderDevice(device), m_resourceLocation(rl)
+		{
+
+		}
+		ModelSharedData::~ModelSharedData()
+		{
+			Resource::~Resource();
+			delete m_resourceLocation;
+		}
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
 		Model::Model(ResourceHandle<ModelSharedData>* data, const AnimationData* animData)
 			: m_animData(animData), m_selectedClipName(L"Take 001"),
 			m_mtrlAnimCompleted(false), m_skinAnimCompleted(false), m_rootAnimCompleted(false), m_rigidAnimCompleted(false),
 			m_mtrlPlayer(0), m_skinPlayer(0), m_rigidPlayer(0), m_rootPlayer(0),
-			m_autoLoop(false)
+			m_autoLoop(false), m_isOpBufferBuilt(false)
 		{
 		}
 
@@ -49,7 +70,8 @@ namespace Apoc3D
 				delete m_rootPlayer;
 			if (m_rigidPlayer)
 				delete m_rigidPlayer;
-
+			delete m_data;
+			//delete opBuffer;
 		}
 
 		void Model::ControlRootAnimation(AnimationControl ctrl)
@@ -253,7 +275,7 @@ namespace Apoc3D
 					
 					m_animInstance.Add(m_rootPlayer);
 
-					m_rootPlayer->eventCompleted().bind(&RootAnim_Completed);
+					m_rootPlayer->eventCompleted().bind(this, &Model::RootAnim_Completed);
 				}
 			}
 			if (m_animData->hasModelClip())
@@ -265,10 +287,10 @@ namespace Apoc3D
 					if (m_animData->hasBindPose())
 					{
 						m_skinPlayer = new SkinnedAnimationPlayer(
-							m_animData->getBindPose(), m_animData->getInvBindPose(), m_animData->getSkeletonHierarchy());
+							&m_animData->getBindPose(), &m_animData->getInvBindPose(), &m_animData->getSkeletonHierarchy());
 
 						m_animInstance.Add(m_skinPlayer);
-						m_skinPlayer->eventCompleted().bind(&SkinAnim_Completed);
+						m_skinPlayer->eventCompleted().bind(this, &Model::SkinAnim_Completed);
 					}
 					else
 					{
@@ -276,7 +298,7 @@ namespace Apoc3D
 
 						m_animInstance.Add(m_rigidPlayer);
 
-						m_rigidPlayer->eventCompleted().bind(&RigidAnim_Competed);
+						m_rigidPlayer->eventCompleted().bind(this, &Model::RigidAnim_Competed);
 					}
 				}
 
@@ -290,7 +312,7 @@ namespace Apoc3D
 					
 					m_animInstance.Add(m_rigidPlayer);
 
-					m_mtrlPlayer->eventCompleted().bind(&MtrlAnim_Completed);
+					m_mtrlPlayer->eventCompleted().bind(this, &Model::MtrlAnim_Completed);
 				}
 			}
 
@@ -310,7 +332,7 @@ namespace Apoc3D
 				if (table.size())
 				{
 					m_mtrlPlayer = new MaterialAnimationPlayer();
-					m_mtrlPlayer->eventCompleted().bind(&MtrlAnim_Completed);
+					m_mtrlPlayer->eventCompleted().bind(this, &Model::MtrlAnim_Completed);
 				}
 			}
 		}
@@ -352,7 +374,26 @@ namespace Apoc3D
 
 		const RenderOperationBuffer* Model::GetRenderOperation()
 		{
-			
+			if (m_data->getState() != RS_Loaded && m_data->getWeakRef()->isManaged())
+			{
+				m_data->Touch();
+				return 0;
+			}
+
+			UpdateAnimation();
+
+			ResourceHandle<ModelSharedData>& data = *m_data;
+
+			FastList<Mesh*> entities = data->getEntities();
+			if (!m_isOpBufferBuilt)
+			{
+
+			}
+			else
+			{
+
+			}
+			return &m_opBuffer;
 		}
 
 		void Model::Update(const GameTime* const time)

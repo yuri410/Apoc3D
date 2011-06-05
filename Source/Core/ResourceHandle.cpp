@@ -36,6 +36,13 @@ namespace Apoc3D
 			_Ref();
 		}
 		template<class ResType>
+		ResourceHandle<ResType>::Build(ResType* res)
+		{
+			m_resource = res;
+			_Ref();
+		}
+
+		template<class ResType>
 		ResourceHandle<ResType>::~ResourceHandle()
 		{
 			_Unref();

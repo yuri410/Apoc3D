@@ -25,8 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef IRENDERABLE_H
 #define IRENDERABLE_H
 
-#pragma once
-
 #include "Common.h"
 
 namespace Apoc3D
