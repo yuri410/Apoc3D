@@ -34,8 +34,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "MathCommon.h"
 
 
-#define ToDegree(x) (x)
-#define ToRadian(x) (x)
 
 
 #endif

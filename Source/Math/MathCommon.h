@@ -42,6 +42,22 @@ namespace Apoc3D
 			PLANEIT_Back,
 			PLANEIT_Intersecting
 		};
+
+		const float MaxFloat = std::numeric_limits<float>::infinity();
+		const float NEG_INFINITY = -std::numeric_limits<float>::infinity();
+		const float PI = float( 4.0 * atan( 1.0 ) );
+		const float Two_PI = PI * 2;
+		const float Half_PI = float(PI * 0.5);
+
+#define ToDegree(x) (x * (PI/180.0f))
+#define ToRadian(x) (x * (180.0f/PI))
+
+		float Sign(float value)
+		{
+			if (value>0)
+				return 1;
+			return value<0 ? -1 : 0;
+		}
 	}
 }
 

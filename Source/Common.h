@@ -67,8 +67,6 @@ typedef BatchHandle HashHandle;
 
 //#define VER(x,y,z,w) D3DCOLOR_ARGB(x,y,z,w);
 
-
-
 #include <cassert>
 
 
@@ -106,7 +104,7 @@ namespace Apoc3D
 	
 	typedef std::wstring String;
 
-#	define StringCompare(a, b) !a.compare(b)
+//#	define StringCompare(a, b) !a.compare(b)
 
 	namespace Collections
 	{
