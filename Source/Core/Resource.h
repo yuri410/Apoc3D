@@ -70,8 +70,11 @@ namespace Apoc3D
 				void Process()
 				{ 
 					Resource* res = getResource();
-					if (res->getState() != RS_Pending)
+					
+					ResourceState state = res->getState();
+					if (state != RS_Unloaded)
 						return;
+					
 					res->setState(RS_Loading);
 					res->load();
 					res->setState(RS_Loaded);
@@ -91,7 +94,9 @@ namespace Apoc3D
 				void Process()
 				{ 
 					Resource* res = getResource();
-					if (res->getState() != RS_Pending)
+
+					ResourceState state = res->getState();
+					if (state != RS_Loaded)
 						return;
 					res->setState(RS_Unloading);
 					res->unload();

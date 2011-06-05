@@ -311,10 +311,6 @@ namespace Apoc3D
 		static const String TAG_3_EntityCountTag = L"EntityCount";
 		static const String TAG_3_EntityPrefix = L"Ent";
 
-		static const String TAG_3_RootBoneTag = L"RootBone";
-
-		static const String TAG_3_BonesTag = L"Bones";
-		static const String TAG_3_BoneCountTag = L"BoneCount";
 
 		static const String TAG_3_AnimationDataTag = L"AnimationData";
 		
@@ -360,37 +356,7 @@ namespace Apoc3D
 				delete br;
 			}
 
-			// bones
-			if (data->Contains(TAG_3_BoneCountTag))
-			{
-				int boenCount = data->GetDataInt32(TAG_3_BoneCountTag);
-
-				BinaryReader* br2 = data->GetData(TAG_3_BonesTag);
-				
-				for (int i = 0; i < boenCount; i++)
-				{
-					int bidx = br2->ReadInt32();
-					String name = br2->ReadString();
-
-					Matrix transform;
-					br2->ReadMatrix(transform);
-
-					int parentId = br2->ReadInt32();
-
-					int cldCount = br2->ReadInt32();
-
-					FastList<int> children(cldCount);
-					for (int j = 0; j < cldCount; j++)
-					{
-						children.Add(br2->ReadInt32());
-					}
-
-					Bones.Add(Bone(bidx, transform, children, parentId, name));
-				}
-				br2->Close();
-				delete br2;
-				RootBone = data->GetDataInt32(TAG_3_RootBoneTag);
-			}
+			
 
 
 
@@ -457,35 +423,6 @@ namespace Apoc3D
 
 				bw->Close();
 				delete bw;
-			}
-
-			// Bones
-			if (Bones.getCount())
-			{
-				data->AddEntry(TAG_3_BoneCountTag, static_cast<int32>(Bones.getCount()));
-
-				BinaryWriter* bw = data->AddEntry(TAG_3_BonesTag);
-				for (int i = 0; i < Bones.getCount(); i++)
-				{
-					bw->Write(Bones[i].Index);
-					bw->Write(Bones[i].Name);
-					bw->Write(Bones[i].Transfrom);
-
-					bw->Write(Bones[i].Parent);
-
-					int cldCount = static_cast<int32>(Bones[i].Children.getCount());
-					bw->Write(cldCount);
-
-					for (int j = 0; j < cldCount; j++)
-					{
-						bw->Write(Bones[i].Children[j]);
-					}
-
-				}
-				bw->Close();
-				delete bw;
-
-				data->AddEntry(TAG_3_RootBoneTag, RootBone);
 			}
 
 			//if (AnimationData)

@@ -25,8 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define ANIMATIONTYPES_H
 
 #include "Common.h"
-#include "Math\Matrix.h"
-#include "Collections\FastList.h"
+#include "Math/Matrix.h"
+#include "Collections/FastList.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;

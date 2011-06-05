@@ -49,8 +49,7 @@ namespace Apoc3D
 			RenderDevice* m_renderDevice;
 
 			FastList<Mesh*> m_entities;
-			FastList<Bone> m_bones;
-			int32 m_rootBone;
+			
 
 			ResourceLocation* m_resourceLocation;
 
@@ -65,12 +64,13 @@ namespace Apoc3D
 
 		enum AnimationType
 		{
-			Root,
-			Rigid,
-			Skinned
+			ANIMTYPE_Root,
+			ANIMTYPE_Rigid,
+			ANIMTYPE_Skinned,
+			ANIMTYPE_Material
 		};
 
-		typedef fastdelegate::FastDelegate1<AnimationType, void> AnimationCompletedEventHandler;
+		typedef fastdelegate::FastDelegate1<AnimationType, void> ModelAnimationCompletedHandler;
 
 		class APAPI Model : public Renderable, public Resource
 		{
@@ -92,13 +92,15 @@ namespace Apoc3D
 			*/
 			int* m_renderOpEntPartID;
 
+			/** states used for looping check. does not go public
+			*/
 			bool m_rigidAnimCompleted;
 			bool m_rootAnimCompleted;
 			bool m_skinAnimCompleted;
 			bool m_mtrlAnimCompleted;
 
 			ResourceHandle<ModelSharedData>* m_data;
-			AnimationData* m_animData;
+			const AnimationData* m_animData;
 
 			SkinnedAnimationPlayer* m_skinPlayer;
 			RootAnimationPlayer* m_rootPlayer;
@@ -110,7 +112,7 @@ namespace Apoc3D
 			bool m_autoLoop;
 			String m_selectedClipName;
 
-			AnimationCompletedEventHandler m_eventAnimCompleted;
+			ModelAnimationCompletedHandler m_eventAnimCompleted;
 
 
 
@@ -121,28 +123,37 @@ namespace Apoc3D
 
 			void RootAnim_Completed()
 			{
-
+				m_rootAnimCompleted = true;
+				if (!m_eventAnimCompleted.empty())
+					m_eventAnimCompleted(ANIMTYPE_Root);
 			}
 			void RigidAnim_Competed()
 			{
-
+				m_rigidAnimCompleted = true;
+				if (!m_eventAnimCompleted.empty())
+					m_eventAnimCompleted(ANIMTYPE_Root);
 			}
 			void SkinAnim_Completed()
 			{
-
+				m_skinAnimCompleted = true;
+				if (!m_eventAnimCompleted.empty())
+					m_eventAnimCompleted(ANIMTYPE_Root);
 			}
 			void MtrlAnim_Completed()
 			{
-
+				m_mtrlAnimCompleted = true;
+				if (!m_eventAnimCompleted.empty())
+					m_eventAnimCompleted(ANIMTYPE_Root);
 			}
 			void InitializeAnimation();
 			void UpdateAnimation();
 		public:
-			AnimationCompletedEventHandler& eventAnimationCompeleted() { return m_eventAnimCompleted; }
+			ModelAnimationCompletedHandler& eventAnimationCompeleted() { return m_eventAnimCompleted; }
 
 			FastList<ModelAnimationPlayerBase*>& getCustomAnimation() { return m_animInstance; }
 			
-			float GetSkinAnimationDuration();
+			float GetSkinAnimationDuration() const;
+			float GetAnimationDuration() const;
 
 			void PlayAnimation()
 			{
@@ -173,25 +184,14 @@ namespace Apoc3D
 				ControlMaterialAnimation(AC_Stop);
 			}
 
-			float GetAnimationDuration()
-			{
-				return 0;
-			}
+			ModelSharedData* GetData();
 
-			
-
-			Model(ResourceHandle<ModelSharedData>* data);
+			Model(ResourceHandle<ModelSharedData>* data, const AnimationData* animData = 0);
 			~Model(void);
 
-			void ReloadMaterialAnimation()
-			{
+			void ReloadMaterialAnimation();			
 
-			}
-
-			virtual const RenderOperationBuffer* GetRenderOperation()
-			{
-				return 0;
-			}
+			virtual const RenderOperationBuffer* GetRenderOperation();
 
 
 			void Update(const GameTime* const time);

@@ -104,6 +104,7 @@ namespace Apoc3D
 				case RS_Loaded:
 					break;
 				case RS_Unloaded:
+					setState(RS_Loading);
 					load();
 					setState(RS_Loaded);
 					break;

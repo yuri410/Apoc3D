@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Math/Matrix.h"
 #include "Collections/FastList.h"
+#include "AnimationTypes.h"
 
 using namespace std;
 
@@ -65,10 +66,25 @@ namespace Apoc3D
 				bool m_hasModelClip;
 				bool m_hasRootClip;
 
+
+				FastList<Bone> m_bones;
+				int32 m_rootBone;
+
+
 				void LoadMtrlAnimation2(TaggedDataReader* data);
 				TaggedDataWriter* SaveMtrlAnimation2();
 
 			public:
+				bool hasBindPose() const { return m_hasBindPose; }
+				bool hasSkeleton() const { return m_hasSkeleton; }
+
+				bool hasMtrlClip() const { return m_hasMtrlClip; }
+				bool hasModelClip() const { return m_hasModelClip; }
+				bool hasRootClip() const { return m_hasRootClip; }
+
+				const FastList<Bone> getBones() const { return m_bones; }
+				const int32 getRootBone() const { return m_rootBone; }
+
 				/** Gets a collection of animation clips that operate on the root of the object.
 					These are stored by name in a map, so there could for instance be 
 					clips for "Walk", "Run", "JumpReallyHigh", etc.

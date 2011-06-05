@@ -30,11 +30,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/MaterialTypes.h"
 #include "Graphics/ModelTypes.h"
 #include "Graphics/RenderSystem/VertexElement.h"
-#include "Graphics/Animation/AnimationTypes.h"
+#include "Collections/FastList.h"
 #include "Math/Color.h"
 #include "Math/BoundingSphere.h"
 #include "MaterialData.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics::Animation;
@@ -82,12 +83,9 @@ namespace Apoc3D
 			void ReadData(TaggedDataReader* data, int32 id);
 			TaggedDataWriter* WriteData() const;
 		public:
-			int32 RootBone;
-			FastList<Bone> Bones;
 			FastList<MeshData*> Entities;
 
 			ModelData()
-				: RootBone(0)
 			{
 			}
 			~ModelData();
