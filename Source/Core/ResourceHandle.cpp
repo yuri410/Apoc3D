@@ -23,67 +23,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "ResourceHandle.h"
 
-#include "Resource.h"
 
 namespace Apoc3D
 {
 	namespace Core
 	{
-		template<class ResType>
-		ResourceHandle<ResType>::ResourceHandle(ResType* res)
-			: m_resource(res)
-		{
-			_Ref();
-		}
-		template<class ResType>
-		ResourceHandle<ResType>::Build(ResType* res)
-		{
-			m_resource = res;
-			_Ref();
-		}
 
-		template<class ResType>
-		ResourceHandle<ResType>::~ResourceHandle()
-		{
-			_Unref();
-			if (!m_resource->getReferenceCount())
-				delete m_resource;
-			m_resource = 0;
-		}
-		template<class ResType>
-		void ResourceHandle<ResType>::_Ref( )
-		{
-			if (m_resource->isManaged())
-			{
-				m_resource->_Ref();
-			}
-		}
-
-		template<class ResType>
-		void ResourceHandle<ResType>::_Unref( )
-		{
-			if (m_resource->isManaged())
-			{
-				m_resource->_Unref();
-			}
-		}
-
-		template<class ResType>
-		inline ResourceState ResourceHandle<ResType>::getState() const
-		{
-			return m_resource->getState();
-		}
-
-		template<class ResType>
-		void ResourceHandle<ResType>::Touch()
-		{
-			res->Use();
-		}
-
-		template<class ResType>
-		void ResourceHandle<ResType>::TouchSync()
-		{
-			res->UseSync();
-		}
 	}
 }

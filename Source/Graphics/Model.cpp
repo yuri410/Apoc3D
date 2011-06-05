@@ -27,6 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/ResourceHandle.h"
 #include "Vfs/ResourceLocation.h"
 
+template class Apoc3D::Core::ResourceHandle<Apoc3D::Graphics::ModelSharedData>;
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -387,7 +389,7 @@ namespace Apoc3D
 			FastList<Mesh*> entities = data->getEntities();
 			if (!m_isOpBufferBuilt)
 			{
-
+				m_isOpBufferBuilt = true;
 			}
 			else
 			{

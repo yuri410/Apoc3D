@@ -39,23 +39,54 @@ namespace Apoc3D
 		private:
 			ResType* m_resource;
 
-			void _Ref( );
-			void _Unref( );
+			void _Ref( )
+			{
+				if (m_resource->isManaged())
+				{
+					m_resource->_Ref();
+				}
+			}
+			void _Unref( )
+			{
+				if (m_resource->isManaged())
+				{
+					m_resource->_Unref();
+				}
+			}
 
 			ResourceHandle(const ResourceHandle& another) { }
 		protected:
 			
 		public:
-			ResourceHandle(ResType* res);
+			ResourceHandle(ResType* res)
+				: m_resource(res)
+			{
+				_Ref();
+			}
 
-			virtual ~ResourceHandle(void);
+			virtual ~ResourceHandle(void)
+			{
+				_Unref();
+				if (!m_resource->getReferenceCount())
+					delete m_resource;
+				m_resource = 0;
+			}
 
 			void Build(ResType* res);
 
-			inline void Touch();
-			void TouchSync();
+			void Touch()
+			{
+				m_resource->Use();
+			}
+			void TouchSync()
+			{
+				m_resource->UseSync();
+			}
 
-			inline ResourceState getState() const;
+			inline ResourceState getState() const
+			{
+				return m_resource->getState();
+			}
 
 			ResType* getWeakRef() const { return m_resource; }
 

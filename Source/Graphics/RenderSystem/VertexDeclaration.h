@@ -27,8 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Graphics/GraphicsCommon.h"
 #include "VertexElement.h"
+#include "Collections/FastList.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Collections;
 
 using namespace std;
 
@@ -37,8 +39,7 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		namespace RenderSystem
-		{
-			template class APAPI vector<const VertexElement>;
+		{			
 			typedef vector<const VertexElement> VertexElementList;
 
 			class APAPI VertexDeclaration
@@ -46,21 +47,13 @@ namespace Apoc3D
 			protected:
 				VertexElementList elements;
 
-				VertexDeclaration(const vector<VertexElement> &e)
-				{
-					for (size_t i=0;i<e.size();i++)
-					{
-						elements.push_back(e[i]);
-					}
-				}
+				VertexDeclaration(const FastList<VertexElement> &e);
+				VertexDeclaration(const vector<VertexElement> &e);
 
 			public:
 				/*  Gets the number of elements in the declaration.
 				*/
-				int getElementCount() const
-				{
-					return static_cast<int>(elements.size());
-				}
+				int getElementCount() const;
 
 				/* Finds a VertexElement with the given semantic, and index if there is more than 
 				 * one element with the same semantic. 
@@ -77,10 +70,7 @@ namespace Apoc3D
 
 				/* Gets the VertexElement at the specified index.
 				*/
-				const VertexElement &getElement(int index) const
-				{
-					return elements[index];
-				}
+				const VertexElement &getElement(int index) const;
 
 				/* Gets the vertex size defined by this declaration.
 				*/

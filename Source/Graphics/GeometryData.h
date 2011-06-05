@@ -40,52 +40,32 @@ namespace Apoc3D
 		*/
 		class APAPI GeometryData : public HashHandleObject
 		{
-		private:
-			VertexBuffer* m_vtxBuffer;
-			IndexBuffer* m_idxBuffer;
-			VertexDeclaration* m_vtxDecl;
-			int32 m_primCount;
-			int32 m_baseVertex;
-			int32 m_vertexCount;
-			int32 m_vertexSize;
-
-			PrimitiveType m_primType;
-			SceneObject* m_sender;
-
 		public:
-			/* Gets the vertex buffer of this GeomentryData object
+			/** the vertex buffer of this GeomentryData object
 			*/
-			VertexBuffer* getVertexBuffer() const { return m_vtxBuffer; }
-			/* Gets the index buffer of this GeomentryData object
+			VertexBuffer* VertexBuffer;
+			/** the index buffer of this GeomentryData object
 			*/
-			IndexBuffer* getIndexBuffer() const { return m_idxBuffer; }
-			/* Gets the vertex declaration of this GeomentryData object
+			IndexBuffer* IndexBuffer;
+			/** the vertex declaration of this GeomentryData object
 			*/
-			VertexDeclaration* getVertexDecl() const { return m_vtxDecl; }
-			/* 
-			*/
-			PrimitiveType getPrimitiveType() const { return m_primType; }
+			VertexDeclaration* VertexDecl;
+			int32 PrimitiveCount;
+			int32 BaseVertex;
+			int32 VertexCount;
+			int32 VertexSize;
 
-			void setVertexBuffer(VertexBuffer* value) { m_vtxBuffer = value; }
-			void setIndexBuffer(IndexBuffer* value) { m_idxBuffer = value; }
-			void setVertexDecl(VertexDeclaration* value) { m_vtxDecl = value; }
-			void setPrimitiveType(PrimitiveType value) { m_primType = value; }
+			PrimitiveType PrimitiveType;
+			void* UserData;
 
-			void setPrimitiveCount(int32 value) { m_primCount = value; }
-			void setBaseVertex(int32 value) { m_baseVertex = value; }
-			void setVertexCount(int32 value) { m_vertexCount = value; }
 
-			int32 getPrimitiveCount() const { return m_primCount; }
-			int32 getBaseVertex() const { return m_baseVertex; }
-			int32 getVertexCount() const { return m_vertexCount; }
-			int32 getVertexSize() const { return m_vertexSize; }
-			bool usesIndex() const { return !!m_idxBuffer; }
+			bool usesIndex() const { return !!IndexBuffer; }
 
 			GeometryData(void)
-				: m_sender(0), m_baseVertex(0), m_primCount(0), 
-				m_vtxDecl(0), m_idxBuffer(0), m_vtxBuffer(0),
-				m_vertexCount(0), m_vertexSize(0),
-				m_primType(PT_PointList)
+				: UserData(0), BaseVertex(0), PrimitiveCount(0), 
+				VertexDecl(0), IndexBuffer(0), VertexBuffer(0),
+				VertexCount(0), VertexSize(0),
+				PrimitiveType(PT_PointList)
 			{ }
 			~GeometryData(void){}
 		};

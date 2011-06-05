@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/PixelFormat.h"
 #include "Graphics/GraphicsCommon.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::VFS;
 
@@ -60,7 +61,7 @@ namespace Apoc3D
 				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage) = 0;
 				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) = 0;
 
-				virtual VertexDeclaration* CreateVertexDeclaration(const vector<VertexElement> &elements) = 0;
+				virtual VertexDeclaration* CreateVertexDeclaration(const FastList<VertexElement>& elements) = 0;
 
 				virtual VertexShader* CreateVertexShader(const ResourceLocation* resLoc) = 0;
 				virtual PixelShader* CreatePixelShader(const ResourceLocation* resLoc) = 0;

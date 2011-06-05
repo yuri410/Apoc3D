@@ -231,6 +231,7 @@ namespace Apoc3D
 		
 		class Mesh;
 		class Model;
+		class ModelSharedData;
 
 		namespace Animation
 		{

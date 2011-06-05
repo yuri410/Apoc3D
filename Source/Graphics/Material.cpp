@@ -93,7 +93,72 @@ namespace Apoc3D
 			// load texture
 		}
 
-		
+		void Material::Load(const MaterialData& mdata)
+		{
+			m_customParametrs = mdata.CustomParametrs;
+			m_passFlags = mdata.PassFlags;
+			m_priority = mdata.Priority;
+
+			SourceBlend = mdata.SourceBlend;
+			DestinationBlend = mdata.DestinationBlend;
+			BlendFunction = mdata.BlendFunction;
+			IsBlendTransparent = mdata.IsBlendTransparent;
+
+			Cull = mdata.Cull;
+			AlphaTestEnabled = mdata.AlphaTestEnabled;
+			AlphaReference = mdata.AlphaReference;
+			DepthWriteEnabled = mdata.DepthWriteEnabled;
+			DepthTestEnabled = mdata.DepthTestEnabled;
+			Ambient = mdata.Ambient;
+			Diffuse = mdata.Diffuse;
+			Emissive = mdata.Emissive;
+			Specular = mdata.Specular;
+			Power = mdata.Power;
+
+			for (int i=0;i<MaxScenePass;i++)
+			{
+				m_effectName[i] = mdata.EffectName[i];
+				LoadEffect(i);
+			}
+			for (int i=0;i<MaxScenePass;i++)
+			{
+				m_texName[i] = mdata.TextureName[i];
+				LoadTexture(i);
+			}
+		}
+		void Material::Save(MaterialData& data)
+		{
+			data.CustomParametrs = m_customParametrs;
+			data.PassFlags = m_passFlags;
+			data.Priority = m_priority;
+
+			data.SourceBlend = SourceBlend;
+			data.DestinationBlend = DestinationBlend;
+			data.BlendFunction = BlendFunction;
+			data.IsBlendTransparent = IsBlendTransparent;
+
+			data.Cull = Cull;
+			data.AlphaTestEnabled = AlphaTestEnabled;
+			data.AlphaReference = AlphaReference;
+			data.DepthWriteEnabled = DepthWriteEnabled;
+			data.DepthTestEnabled = DepthTestEnabled;
+			data.Ambient = Ambient;
+			data.Diffuse = Diffuse;
+			data.Emissive = Emissive;
+			data.Specular = Specular;
+			data.Power = Power;
+
+
+			for (int i=0;i<MaxScenePass;i++)
+			{
+				data.EffectName[i] = m_effectName[i];
+			}
+			for (int i=0;i<MaxScenePass;i++)
+			{
+				data.TextureName[i] = m_texName[i];
+			}
+
+		}
 		void Material::Load(TaggedDataReader* data)
 		{
 			MaterialData mdata;

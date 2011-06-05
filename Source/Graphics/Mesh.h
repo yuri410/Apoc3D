@@ -46,6 +46,7 @@ namespace Apoc3D
 		private:
 			VertexDeclaration* m_vtxDecl;
 			int32 m_vertexSize;
+			bool m_opBufferBuilt;
 			RenderOperationBuffer m_bufferedOp;
 			MeshMaterialSet<Material*> m_materials;
 			VertexBuffer* m_vertexBuffer;
@@ -71,6 +72,8 @@ namespace Apoc3D
 		public:
 			VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
 			const FastList<IndexBuffer*>& getIndexBuffers() const { return m_indexBuffers; }
+			int32 getIndexCount() const { return m_primitiveCount * 3; }
+			void GetIndices(uint* dest) const;
 
 			const FastList<VertexElement>& getVertexElement() const { return m_vertexElements; }
 			const int32* getPartPrimitiveCount() const { return m_partPrimitiveCount; }
@@ -88,7 +91,6 @@ namespace Apoc3D
 
 			void setName(const String& value) { m_name = value; }
 
-			void GetIndices(int* dest) const;
 
 
 			void ProcessAllTriangles(IMeshTriangleCallBack* callback) const;
@@ -99,7 +101,7 @@ namespace Apoc3D
 
 			virtual const RenderOperationBuffer* GetRenderOperation(int level);
 			
-
+			void Save(MeshData& data);
 
 			Mesh(RenderDevice* device, const MeshData& data);
 			~Mesh(void);

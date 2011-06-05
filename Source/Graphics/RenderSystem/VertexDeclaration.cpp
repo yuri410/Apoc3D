@@ -23,14 +23,35 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "VertexDeclaration.h"
-
-
 namespace Apoc3D
 {
 	namespace Graphics
 	{
 		namespace RenderSystem
 		{
+			int VertexDeclaration::getElementCount() const
+			{
+				return static_cast<int>(elements.size());
+			}
+			const VertexElement& VertexDeclaration::getElement(int index) const
+			{
+				return elements[index];
+			}
+
+			VertexDeclaration::VertexDeclaration(const FastList<VertexElement> &e)
+			{
+				for (int i=0;i<e.getCount();i++)
+				{
+					elements.push_back(e[i]);
+				}
+			}
+			VertexDeclaration::VertexDeclaration(const vector<VertexElement> &e)
+			{
+				for (size_t i=0;i<e.size();i++)
+				{
+					elements.push_back(e[i]);
+				}
+			}
 			bool VertexDeclaration::FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result) const
 			{
 				for (size_t i = 0; i < elements.size(); i++)

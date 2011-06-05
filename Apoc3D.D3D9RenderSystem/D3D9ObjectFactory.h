@@ -55,7 +55,7 @@ namespace Apoc3D
 				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage);
 				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage);
 
-				virtual VertexDeclaration* CreateVertexDeclaration(const vector<VertexElement> &elements);
+				virtual VertexDeclaration* CreateVertexDeclaration(const FastList<VertexElement> &elements);
 
 				virtual VertexShader* CreateVertexShader(const ResourceLocation* resLoc);
 				virtual PixelShader* CreatePixelShader(const ResourceLocation* resLoc);

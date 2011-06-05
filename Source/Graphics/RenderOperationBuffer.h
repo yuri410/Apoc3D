@@ -78,6 +78,10 @@ namespace Apoc3D
 			{
 				m_oplist.FastClear();
 			}
+			void ReserveDiscard(int count)
+			{
+				m_oplist.ResizeDiscard(count);
+			}
 			const RenderOperation& get(int i) const
 			{
 				return m_oplist[i];

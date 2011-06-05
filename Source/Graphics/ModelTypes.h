@@ -85,6 +85,8 @@ namespace Apoc3D
 			}
 
 			M& getMaterial(int index, int frame = 0) {	return m_set[index][frame]; }
+			const M& getMaterial(int index, int frame = 0) const { return m_set[index][frame]; }
+
 
 			void Reserve(int32 mtrlCount)
 			{

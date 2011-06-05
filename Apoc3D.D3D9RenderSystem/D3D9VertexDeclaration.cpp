@@ -21,7 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
+#include "Collections/FastList.h"
 #include "D3D9VertexDeclaration.h"
 
 #include "D3D9RenderDevice.h"
@@ -62,13 +62,13 @@ namespace Apoc3D
 				delete[] elements;
 				return result;
 			}
-			D3D9VertexDeclaration::D3D9VertexDeclaration(D3D9RenderDevice* device, const vector<VertexElement>& elements)
+			D3D9VertexDeclaration::D3D9VertexDeclaration(D3D9RenderDevice* device, const FastList<VertexElement>& elements)
 				: VertexDeclaration(elements), m_device(device)
 			{
 
-				D3DVERTEXELEMENT9* delems = new D3DVERTEXELEMENT9[elements.size() + 1];
+				D3DVERTEXELEMENT9* delems = new D3DVERTEXELEMENT9[elements.getCount() + 1];
 
-				for (size_t i=0;i<elements.size();i++)
+				for (int i=0;i<elements.getCount();i++)
 				{
 					delems[i].Method = D3DDECLMETHOD_DEFAULT;
 					delems[i].Stream = 0;
@@ -79,7 +79,7 @@ namespace Apoc3D
 				}
 
 				const D3DVERTEXELEMENT9 declend = D3DDECL_END();
-				delems[elements.size()] = declend;
+				delems[elements.getCount()] = declend;
 
 				D3DDevice* dev = device->getDevice();
 				

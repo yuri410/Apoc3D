@@ -43,25 +43,18 @@ namespace Apoc3D
 		*/
 		class APAPI RenderOperation
 		{
-		private:
-			GeometryData* m_data;
-			Material* m_mtrl;
-			Matrix m_rootTransform;
-			BoneTransforms m_boneTransform;
 		public:
-			const BoneTransforms* getBoneTransforms() const { return &m_boneTransform; }
-			void setBoneTransform(const BoneTransforms& trans) { m_boneTransform = trans; }
+			GeometryData* GeometryData;
+			Material* Material;
+			Matrix RootTransform;
+			BoneTransforms BoneTransform;
 
-			Material* getMaterial() const { return m_mtrl; }
-			void setMaterial(Material* mtrl) { m_mtrl = mtrl; }
-
-			const Matrix& getRootTransform() { return m_rootTransform; }
-			void setRootTransform(const Matrix& value) { m_rootTransform = value; }
-
-			GeometryData* getGeomentryData() const { return m_data; }
-			void setGeomentryData(GeometryData* data) { m_data = data; }
-
-			RenderOperation(void) { }
+			RenderOperation(void)
+				: GeometryData(0), Material(0)
+			{
+				memset(&RootTransform, 0, sizeof(Matrix));
+				memset(&BoneTransform, 0, sizeof(BoneTransforms));
+			}
 			~RenderOperation(void) { }
 		};
 	};
