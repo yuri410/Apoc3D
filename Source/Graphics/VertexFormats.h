@@ -31,18 +31,41 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/IHashed.h"
 #include "Math/Vector.h"
 
+using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
+		struct APAPI VertexPIBNT1 : public IHashed
+		{
+		private:
+			static FastList<VertexElement> GetElements();
+		public:
+			static const FastList<VertexElement> Elements;
+
+			Vector3 Position;
+			Vector4 BlendIndices;
+			Vector4 BlendWeight;
+			Vector3 Normal;
+			Vector2 TexCoord;
+
+			virtual HashHandle GetHashCode() const
+			{
+				return Vector3Utils::GetHashCode(Position) ^ Vector3Utils::GetHashCode(Normal) ^ Vector2Utils::GetHashCode(TexCoord) ^
+					Vector4Utils::GetHashCode(BlendWeight) ^ Vector4Utils::GetHashCode(BlendIndices);
+			}
+			virtual String GetHashString() const;
+		};
+
 		struct APAPI VertexPN : public IHashed
 		{
 		private:
-			FastList<VertexElement> GetElements();
+			static FastList<VertexElement> GetElements();
 		public:
 			static const FastList<VertexElement> Elements;
 
@@ -51,11 +74,84 @@ namespace Apoc3D
 
 			virtual HashHandle GetHashCode() const
 			{
-				
+				return Vector3Utils::GetHashCode(Position) ^ Vector3Utils::GetHashCode(Normal);
 			}
 			virtual String GetHashString() const;
-
 		};
+
+		struct APAPI VertexPNT1 : public IHashed
+		{
+		private:
+			static FastList<VertexElement> GetElements();
+		public:
+			static const FastList<VertexElement> Elements;
+
+			Vector3 Position;
+			Vector3 Normal;
+			Vector2 TexCoord1;
+
+
+			virtual HashHandle GetHashCode() const
+			{
+				return Vector3Utils::GetHashCode(Position) ^ Vector3Utils::GetHashCode(Normal) ^ Vector2Utils::GetHashCode(TexCoord1);
+			}
+			virtual String GetHashString() const;
+		};
+
+		struct APAPI VertexPNT2 : public IHashed
+		{
+		private:
+			static FastList<VertexElement> GetElements();
+		public:
+			static const FastList<VertexElement> Elements;
+
+			Vector3 Position;
+			Vector3 Normal;
+			Vector2 TexCoord1;
+			Vector2 TexCoord2;
+
+			virtual HashHandle GetHashCode() const
+			{
+				return Vector3Utils::GetHashCode(Position) ^ Vector3Utils::GetHashCode(Normal) ^ 
+					Vector2Utils::GetHashCode(TexCoord1) ^ Vector2Utils::GetHashCode(TexCoord2);
+			}
+			virtual String GetHashString() const;
+		};
+
+		struct APAPI VertexPT1 : public IHashed
+		{
+		private:
+			static FastList<VertexElement> GetElements();
+		public:
+			static const FastList<VertexElement> Elements;
+
+			Vector3 Position;
+			Vector2 TexCoord1;
+
+			virtual HashHandle GetHashCode() const
+			{
+				return Vector3Utils::GetHashCode(Position) ^ Vector2Utils::GetHashCode(TexCoord1);
+			}
+			virtual String GetHashString() const;
+		};
+		struct APAPI VertexPT2 : public IHashed
+		{
+		private:
+			static FastList<VertexElement> GetElements();
+		public:
+			static const FastList<VertexElement> Elements;
+
+			Vector3 Position;
+			Vector2 TexCoord1;
+			Vector2 TexCoord2;
+
+			virtual HashHandle GetHashCode() const
+			{
+				return Vector3Utils::GetHashCode(Position) ^ Vector2Utils::GetHashCode(TexCoord1) ^ Vector2Utils::GetHashCode(TexCoord2);
+			}
+			virtual String GetHashString() const;
+		};
+
 	}
 }
 

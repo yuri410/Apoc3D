@@ -665,6 +665,9 @@
     <ClCompile Include="Math\MathCommon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics\VertexFormats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">

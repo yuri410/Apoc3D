@@ -251,6 +251,7 @@
     <ClCompile Include="Graphics\RenderSystem\Shader.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexDeclaration.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexElement.cpp" />
+    <ClCompile Include="Graphics\VertexFormats.cpp" />
     <ClCompile Include="IO\ModelData.cpp" />
     <ClCompile Include="IO\TextureData.cpp" />
     <ClCompile Include="IO\BinaryReader.cpp" />
