@@ -164,8 +164,8 @@ namespace Apoc3D
 			*/
 			static void CreateFromPoints(BoundingBox& res, const Vector3* points, int count)
 			{
-				Vector3 min = Vector3Utils::LDVector(numeric_limits<float>::max());
-				Vector3 max = Vector3Utils::LDVector(numeric_limits<float>::min());
+				Vector3 min = Vector3Utils::LDVector(MaxFloat);
+				Vector3 max = Vector3Utils::LDVector(MinFloat);
 
 				for (int i = 0; i < count; i++)
 				{

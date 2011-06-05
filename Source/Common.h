@@ -94,6 +94,29 @@ typedef BatchHandle HashHandle;
 
 #include "FastDelegate\FastDelegate.h"
 
+#define MaxUInt16 std::numeric_limits<uint16>::max();
+#define MinUInt16 std::numeric_limits<uint16>::min();
+
+#define MaxUInt32 std::numeric_limits<uint32>::max();
+#define MinUInt32 std::numeric_limits<uint32>::min();
+
+#define MaxUInt64 std::numeric_limits<uint64>::max();
+#define MinUInt64 std::numeric_limits<uint64>::min();
+
+
+
+
+#define MaxInt16 std::numeric_limits<int16>::max();
+#define MinInt16 std::numeric_limits<int16>::min();
+
+#define MaxInt32 std::numeric_limits<int32>::max();
+#define MinInt32 std::numeric_limits<int32>::min();
+
+#define MaxInt64 std::numeric_limits<int64>::max();
+#define MinInt64 std::numeric_limits<int64>::min();
+
+
+
 
 
 // Forward Declarations

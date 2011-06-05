@@ -128,9 +128,11 @@
     <ClInclude Include="Graphics\ModelTypes.h" />
     <ClInclude Include="Graphics\Patch.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderTarget.h" />
+    <ClInclude Include="Graphics\VertexFormats.h" />
     <ClInclude Include="IO\BinaryWriter.h" />
     <ClInclude Include="IO\IOUtils.h" />
     <ClInclude Include="IO\ModelData.h" />
+    <ClInclude Include="IO\PatchData.h" />
     <ClInclude Include="IO\TaggedData.h" />
     <ClInclude Include="IO\BinaryReader.h" />
     <ClInclude Include="IO\Streams.h" />
@@ -256,6 +258,7 @@
     <ClCompile Include="IO\IOUtils.cpp" />
     <ClCompile Include="IO\Streams.cpp" />
     <ClCompile Include="IO\TaggedData.cpp" />
+    <ClCompile Include="Math\MathCommon.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
     <ClCompile Include="Platform\Thread.cpp" />

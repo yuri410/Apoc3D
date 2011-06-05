@@ -24,6 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MATHCOMMON_H
 #define MATHCOMMON_H
 
+#include "Common.h"
+
+using namespace std;
+
 namespace Apoc3D
 {
 	namespace Math
@@ -43,8 +47,15 @@ namespace Apoc3D
 			PLANEIT_Intersecting
 		};
 
-		const float MaxFloat = std::numeric_limits<float>::infinity();
-		const float NEG_INFINITY = -std::numeric_limits<float>::infinity();
+		//static const float MaxFloat = std::numeric_limits<float>::max();
+		//static const float MinFloat = std::numeric_limits<float>::min();
+		//static const float POSINF_Float = std::numeric_limits<float>::infinity();
+		//static const float NEGINF_Float = -std::numeric_limits<float>::infinity();
+		static const float MaxFloat;
+		static const float MinFloat;
+		static const float POSINF_Float;
+		static const float NEGINF_Float;
+
 		const float PI = float( 4.0 * atan( 1.0 ) );
 		const float Two_PI = PI * 2;
 		const float Half_PI = float(PI * 0.5);
@@ -52,12 +63,8 @@ namespace Apoc3D
 #define ToDegree(x) (x * (PI/180.0f))
 #define ToRadian(x) (x * (180.0f/PI))
 
-		float Sign(float value)
-		{
-			if (value>0)
-				return 1;
-			return value<0 ? -1 : 0;
-		}
+		inline float Sign(float value);
+		
 	}
 }
 

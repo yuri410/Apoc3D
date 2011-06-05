@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D
+This source file is part of Apoc3D Engine
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,25 +15,48 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation,
+along with this program.  if not, write to the Free Software Foundation, 
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "Color.h"
-#include "Point.h"
-#include "Rectangle.h"
+
+#ifndef VERTEXFORMATS_H
+#define VERTEXFORMATS_H
+
 #include "Common.h"
+#include "Collections/FastList.h"
+#include "RenderSystem/VertexElement.h"
+#include "Core/IHashed.h"
+#include "Math/Vector.h"
+
+using namespace Apoc3D::Core;
+using namespace Apoc3D::Collections;
+using namespace Apoc3D::Graphics;
 
 namespace Apoc3D
 {
-	namespace Math
+	namespace Graphics
 	{
+		struct APAPI VertexPN : public IHashed
+		{
+		private:
+			FastList<VertexElement> GetElements();
+		public:
+			static const FastList<VertexElement> Elements;
 
+			Vector3 Position;
+			Vector3 Normal;
 
-		const Point Point::Zero = Point(0,0);
-		const Rectangle Rectangle::Empty = Rectangle(0,0,0,0);
-		const RectangleF RectangleF::Empty = RectangleF(0,0,0,0);
+			virtual HashHandle GetHashCode() const
+			{
+				
+			}
+			virtual String GetHashString() const;
+
+		};
 	}
 }
+
+#endif

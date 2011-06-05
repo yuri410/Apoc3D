@@ -21,19 +21,22 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "Color.h"
-#include "Point.h"
-#include "Rectangle.h"
-#include "Common.h"
+#include "MathCommon.h"
 
 namespace Apoc3D
 {
 	namespace Math
 	{
+		extern const float MaxFloat = std::numeric_limits<float>::max();
+		extern const float MinFloat = std::numeric_limits<float>::min();
+		extern const float POSINF_Float = std::numeric_limits<float>::infinity();
+		extern const float NEGINF_Float = -std::numeric_limits<float>::infinity();
 
-
-		const Point Point::Zero = Point(0,0);
-		const Rectangle Rectangle::Empty = Rectangle(0,0,0,0);
-		const RectangleF RectangleF::Empty = RectangleF(0,0,0,0);
+		float Sign(float value)
+		{
+			if (value>0)
+				return 1.0f;
+			return value<0 ? -1.0f : 0.0f;
+		}
 	}
 }

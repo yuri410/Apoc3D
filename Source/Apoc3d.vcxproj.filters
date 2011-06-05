@@ -381,6 +381,12 @@
     <ClInclude Include="Graphics\MeshSimplifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IO\PatchData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\VertexFormats.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -654,6 +660,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Animation\AnimationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MathCommon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

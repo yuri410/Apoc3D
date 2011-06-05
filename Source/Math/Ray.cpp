@@ -34,7 +34,7 @@ namespace Apoc3D
 		bool Ray::Intersects(const Ray& ray, const BoundingBox& box, float& distance)
 		{
 			float d = 0.0f;
-			float maxValue = numeric_limits<float>::max();
+			float maxValue = MaxFloat;
 
 			if (fabs(_V3X(ray.Direction)) < EPSILON)
 			{

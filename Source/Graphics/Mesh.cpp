@@ -88,7 +88,7 @@ namespace Apoc3D
 			m_vertexBuffer->Unlock();
 			
 			// index data
-			bool useIndex16 = vertexCount < 0xffff;
+			bool useIndex16 = vertexCount < MaxUInt16;
 			FastList<uint>* indices = new FastList<uint>[matCount];
 
 			m_partPrimitiveCount = new int[matCount];

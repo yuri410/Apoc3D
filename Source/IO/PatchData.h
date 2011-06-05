@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D
+This source file is part of Apoc3D Engine
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,25 +15,31 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation,
+along with this program.  if not, write to the Free Software Foundation, 
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "Color.h"
-#include "Point.h"
-#include "Rectangle.h"
+
+#ifndef PATCHDATA_H
+#define PATCHDATA_H
+
 #include "Common.h"
+#include "Vector.h"
+
+using namespace Math;
 
 namespace Apoc3D
 {
-	namespace Math
+	namespace IO
 	{
-
-
-		const Point Point::Zero = Point(0,0);
-		const Rectangle Rectangle::Empty = Rectangle(0,0,0,0);
-		const RectangleF RectangleF::Empty = RectangleF(0,0,0,0);
+		class APAPI PatchData
+		{
+		private:
+			List<Vector3> Points;
+		};
 	}
 }
+
+#endif

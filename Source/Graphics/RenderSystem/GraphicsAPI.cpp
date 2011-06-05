@@ -104,7 +104,7 @@ namespace Apoc3D
 
 					for (int i=static_cast<int>(list->size())-1; i>=0;i--)
 					{
-						if (StringCompare(list->operator[](i).Factory->getName(), name))
+						if (list->operator[](i).Factory->getName() == name)
 						{
 							APIList::iterator i2 = list->begin();
 							i2+=i;

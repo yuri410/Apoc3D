@@ -35,6 +35,9 @@ namespace Apoc3D
 {
 	namespace Math
 	{
+		class Vector2Utils;
+		class Vector3Utils;
+		class Vector4Utils;
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 		/* Defines a two component vector.
@@ -52,14 +55,17 @@ namespace Apoc3D
 		*/
 		class APAPI Vector2
 		{
-		public:
+		private:
+			
 			/* the X component of the vector
 			*/
 			float X;
 			/* the Y component of the vector
 			*/
 			float Y;
-			
+		public:
+			friend class Vector2Utils;
+
 			Vector2(){}
 			Vector2(float value)
 				: X(value), Y(value)
@@ -73,7 +79,8 @@ namespace Apoc3D
 		*/
 		class APAPI Vector3
 		{
-		public:
+		private:
+			
 			/* the X component of the vector
 			*/
 			float X;
@@ -84,6 +91,11 @@ namespace Apoc3D
 			*/
 			float Z;
 
+		public:
+			friend class Vector3Utils;
+			friend class Matrix;
+			friend class Plane;
+			friend class Color4;
 
 			Vector3(){}
 			
@@ -101,7 +113,7 @@ namespace Apoc3D
 		*/
 		class APAPI Vector4
 		{
-		public:
+		private:
 			/* The X component of the vector.
 			*/
 			float X;
@@ -117,7 +129,9 @@ namespace Apoc3D
 			/* The W component of the vector.
 			*/
 			float W;
-
+		public:
+			friend class Vector4Utils;
+			friend class Plane;
 
 			Vector4(){}
 
@@ -689,9 +703,15 @@ namespace Apoc3D
 #endif
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-
+			static HashHandle GetHashCode(const Vector2 &value)
+			{
+				return reinterpret_cast<const HashHandle&>(GetX(value)) ^ reinterpret_cast<const HashHandle&>(GetY(value));
+			}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-
+			static HashHandle GetHashCode(const Vector2 &value)
+			{
+				return reinterpret_cast<const HashHandle&>(value.X) ^ reinterpret_cast<const HashHandle&>(value.Y);
+			}
 #endif
 		};
 		class APAPI Vector3Utils
@@ -1342,6 +1362,22 @@ namespace Apoc3D
 			}
 
 #endif
+
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+			static HashHandle GetHashCode(const Vector3 &value)
+			{
+				return reinterpret_cast<const HashHandle&>(GetX(value)) ^ 
+					reinterpret_cast<const HashHandle&>(GetY(value)) ^ 
+					reinterpret_cast<const HashHandle&>(GetZ(value));
+			}
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			static HashHandle GetHashCode(const Vector3 &value)
+			{
+				return reinterpret_cast<const HashHandle&>(value.X) ^ 
+					reinterpret_cast<const HashHandle&>(value.Y) ^ 
+					reinterpret_cast<const HashHandle&>(value.Z);
+			}
+#endif
 		};
 		class APAPI Vector4Utils
 		{
@@ -1962,6 +1998,25 @@ namespace Apoc3D
 			/* Performs a normal transformation using the given Matrix
 			*/
 			static Vector4 TransformNormal(const Vector4& vector, const Matrix& transform);
+#endif
+
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+			static HashHandle GetHashCode(const Vector4 &value)
+			{
+				return reinterpret_cast<const HashHandle&>(GetX(value)) ^ 
+					reinterpret_cast<const HashHandle&>(GetY(value)) ^ 
+					reinterpret_cast<const HashHandle&>(GetZ(value)) ^
+					reinterpret_cast<const HashHandle&>(GetW(value));
+			}
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			static HashHandle GetHashCode(const Vector4 &value)
+			{
+				return 
+					reinterpret_cast<const HashHandle&>(value.X) ^ 
+					reinterpret_cast<const HashHandle&>(value.Y) ^
+					reinterpret_cast<const HashHandle&>(value.Z) ^
+					reinterpret_cast<const HashHandle&>(value.W);
+			}
 #endif
 		};
 
