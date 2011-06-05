@@ -123,6 +123,7 @@
     <ClInclude Include="core\streaming\asyncprocessor.h" />
     <ClInclude Include="Graphics\LockData.h" />
     <ClInclude Include="Graphics\MaterialTypes.h" />
+    <ClInclude Include="Graphics\MeshSimplifier.h" />
     <ClInclude Include="Graphics\ModelManager.h" />
     <ClInclude Include="Graphics\ModelTypes.h" />
     <ClInclude Include="Graphics\Patch.h" />
