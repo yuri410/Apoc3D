@@ -47,8 +47,14 @@ namespace Apoc3D
 
 		String VertexPIBNT1::GetHashString() const
 		{
-			return L"";
+			return L"Pos: " + Vector3Utils::ToParsableString(Position) + 
+				L"N: " + Vector4Utils::ToParsableString(BlendIndices) +
+				L"N: " + Vector4Utils::ToParsableString(BlendWeight) +
+				L"N: " + Vector3Utils::ToParsableString(Normal) +
+				L"uv0: " + Vector2Utils::ToParsableString(TexCoord1);
 		}
+
+		//======================================================================================
 
 		FastList<VertexElement> VertexPN::GetElements()
 		{
@@ -66,5 +72,82 @@ namespace Apoc3D
 			return L"Pos: " + Vector3Utils::ToParsableString(Position) + L"N: " + Vector3Utils::ToParsableString(Normal);
 		}
 
+		//======================================================================================
+		FastList<VertexElement> VertexPNT1::GetElements()
+		{
+			FastList<VertexElement> elements;
+
+			elements.Add( VertexElement(0, VEF_Vector3, VEU_Position) );
+			elements.Add( VertexElement(elements[0].getSize(), VEF_Vector3, VEU_Normal) );
+			elements.Add( VertexElement(elements[1].getSize() + elements[1].getOffset(), VEF_Vector2, VEU_TextureCoordinate, 0) );
+
+			return elements;
+		}
+		const FastList<VertexElement> VertexPNT1::Elements = GetElements();
+
+		String VertexPNT1::GetHashString() const
+		{
+			return L"Pos: " + Vector3Utils::ToParsableString(Position) + L"N: " + Vector3Utils::ToParsableString(Normal) +
+				L"uv0: " + Vector2Utils::ToParsableString(TexCoord1);
+		} 
+
+		//======================================================================================
+		FastList<VertexElement> VertexPNT2::GetElements()
+		{
+			FastList<VertexElement> elements;
+
+			elements.Add( VertexElement(0, VEF_Vector3, VEU_Position) );
+			elements.Add( VertexElement(elements[0].getSize(), VEF_Vector3, VEU_Normal) );
+			elements.Add( VertexElement(elements[1].getSize() + elements[1].getOffset(), VEF_Vector2, VEU_TextureCoordinate, 0) );
+			elements.Add( VertexElement(elements[2].getSize() + elements[2].getOffset(), VEF_Vector2, VEU_TextureCoordinate, 1) );
+
+			return elements;
+		}
+		const FastList<VertexElement> VertexPNT2::Elements = GetElements();
+
+		String VertexPNT2::GetHashString() const
+		{
+			return L"Pos: " + Vector3Utils::ToParsableString(Position) + L"N: " + Vector3Utils::ToParsableString(Normal) +
+				L"uv0: " + Vector2Utils::ToParsableString(TexCoord1) + L"uv1: " + Vector2Utils::ToParsableString(TexCoord2);
+		}
+
+		//======================================================================================
+		FastList<VertexElement> VertexPT1::GetElements()
+		{
+			FastList<VertexElement> elements;
+
+			elements.Add( VertexElement(0, VEF_Vector3, VEU_Position) );
+			elements.Add( VertexElement(elements[0].getSize(), VEF_Vector3, VEU_Normal) );
+			elements.Add( VertexElement(elements[1].getSize() + elements[1].getOffset(), VEF_Vector2, VEU_TextureCoordinate, 0) );
+
+			return elements;
+		}
+		const FastList<VertexElement> VertexPT1::Elements = GetElements();
+
+		String VertexPT1::GetHashString() const
+		{
+			return L"Pos: " + Vector3Utils::ToParsableString(Position) +
+				L"uv0: " + Vector2Utils::ToParsableString(TexCoord1);
+		}
+
+		//======================================================================================
+		FastList<VertexElement> VertexPT2::GetElements()
+		{
+			FastList<VertexElement> elements;
+
+			elements.Add( VertexElement(0, VEF_Vector3, VEU_Position) );
+			elements.Add( VertexElement(elements[0].getSize(), VEF_Vector3, VEU_Normal) );
+			elements.Add( VertexElement(elements[1].getSize() + elements[1].getOffset(), VEF_Vector2, VEU_TextureCoordinate, 0) );
+
+			return elements;
+		}
+		const FastList<VertexElement> VertexPT2::Elements = GetElements();
+
+		String VertexPT2::GetHashString() const
+		{
+			return L"Pos: " + Vector3Utils::ToParsableString(Position) +
+				L"uv0: " + Vector2Utils::ToParsableString(TexCoord1) + L"uv1: " + Vector2Utils::ToParsableString(TexCoord2);
+		} 
+		//======================================================================================
 	}
 }

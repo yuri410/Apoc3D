@@ -52,11 +52,11 @@ namespace Apoc3D
 			Vector4 BlendIndices;
 			Vector4 BlendWeight;
 			Vector3 Normal;
-			Vector2 TexCoord;
+			Vector2 TexCoord1;
 
 			virtual HashHandle GetHashCode() const
 			{
-				return Vector3Utils::GetHashCode(Position) ^ Vector3Utils::GetHashCode(Normal) ^ Vector2Utils::GetHashCode(TexCoord) ^
+				return Vector3Utils::GetHashCode(Position) ^ Vector3Utils::GetHashCode(Normal) ^ Vector2Utils::GetHashCode(TexCoord1) ^
 					Vector4Utils::GetHashCode(BlendWeight) ^ Vector4Utils::GetHashCode(BlendIndices);
 			}
 			virtual String GetHashString() const;

@@ -21,12 +21,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENE_PROCEDURE_H
-#define SCENE_PROCEDURE_H
+#ifndef SCENEPASSTYPES_H
+#define SCENEPASSTYPES_H
 
 #include "Common.h"
 #include "Collections/FastList.h"
-//#include "Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::VFS;
@@ -34,36 +33,53 @@ using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics::EffectSystem;
 
-using namespace std;
-
 namespace Apoc3D
 {
 	namespace Scene
 	{
-		/* Represent a sequence of scene passes that can finally 
-		   generate end result.
-
-		   A SceneProcedure can be either normal passes (like shadow
-		   mapping) or post effect passes (like bloom & HDR).
-		*/
-		class APAPI SceneProcedure
+		enum SceneVariableType
 		{
-		private:
-			
-
-			unordered_map<String, RenderTarget*> m_rtResources;
-			unordered_map<String, Texture*> m_texResources;
-			
-			FastList<ScenePass*> m_passes;
-
-		public:
-			SceneProcedure(void);
-			~SceneProcedure(void);
-
-			void Load(const ResourceLocation* rl);
-
-			void Invoke();
+			VARTYPE_RenderTarget,
+			VARTYPE_Matrix,
+			VARTYPE_Vector4,
+			VARTYPE_Vector3,
+			VARTYPE_Vector2,
+			VARTYPE_Texture,
+			VARTYPE_Camera,
+			VARTYPE_Effect
 		};
-	};
-};
+		struct SceneVariable
+		{
+			SceneVariableType Type;
+			uint DefaultValue[16];
+			String DefaultStringValue;
+
+			RenderTarget* RTValue;
+			ResourceHandle<Texture>* TextureValue;
+			Effect* EffectValue;
+		};
+
+		enum SceneOpCode
+		{
+			SOP_Pop,
+			SOP_Load,
+			SOP_SelectorID,
+			SOP_IF,
+			SOP_VisibleTo,
+			SOP_Render
+		};
+		struct SceneInstruction
+		{
+			SceneOpCode Operation;
+			SceneVariable A;
+			SceneVariable B;
+		};
+		struct ScenePassData
+		{
+			int32 SelectorID;
+			FastList<SceneInstruction> Instructions;
+			FastList<SceneVariable> Variables;
+		};
+	}
+}
 #endif

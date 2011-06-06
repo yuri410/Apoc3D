@@ -35,5 +35,10 @@ namespace Apoc3D
 		SceneProcedure::~SceneProcedure(void)
 		{
 		}
+
+		void SceneProcedure::Load(const ResourceLocation* rl)
+		{
+
+		}
 	};
 };

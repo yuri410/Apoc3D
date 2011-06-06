@@ -97,6 +97,7 @@
     <ClInclude Include="Collections\FastList.h" />
     <ClInclude Include="Collections\FastMap.h" />
     <ClInclude Include="Collections\FastQueue.h" />
+    <ClInclude Include="Collections\Stack.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Config\Configurable.h" />
     <ClInclude Include="Config\Configuration.h" />
@@ -142,6 +143,8 @@
     <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />
     <ClInclude Include="Platform\Thread.h" />
+    <ClInclude Include="Scene\ScenePassTypes.h" />
+    <ClInclude Include="Scene\SceneRenderScriptParser.h" />
     <ClInclude Include="Utility\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
     <ClInclude Include="Graphics\RenderSystem\DeviceContent.h" />

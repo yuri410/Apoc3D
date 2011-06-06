@@ -21,49 +21,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENE_PROCEDURE_H
-#define SCENE_PROCEDURE_H
 
-#include "Common.h"
-#include "Collections/FastList.h"
-//#include "Graphics/GraphicsCommon.h"
-
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Graphics::EffectSystem;
-
-using namespace std;
+#include "SceneRenderScriptParser.h"
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
-		/* Represent a sequence of scene passes that can finally 
-		   generate end result.
-
-		   A SceneProcedure can be either normal passes (like shadow
-		   mapping) or post effect passes (like bloom & HDR).
-		*/
-		class APAPI SceneProcedure
+		void SceneRenderScriptParser::Parse(const String& code)
 		{
-		private:
-			
 
-			unordered_map<String, RenderTarget*> m_rtResources;
-			unordered_map<String, Texture*> m_texResources;
-			
-			FastList<ScenePass*> m_passes;
-
-		public:
-			SceneProcedure(void);
-			~SceneProcedure(void);
-
-			void Load(const ResourceLocation* rl);
-
-			void Invoke();
-		};
-	};
-};
-#endif
+		}
+	}
+}

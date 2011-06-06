@@ -21,49 +21,69 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENE_PROCEDURE_H
-#define SCENE_PROCEDURE_H
-
-#include "Common.h"
-#include "Collections/FastList.h"
-//#include "Graphics/GraphicsCommon.h"
-
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Graphics::EffectSystem;
-
-using namespace std;
 
 namespace Apoc3D
 {
-	namespace Scene
+	namespace Collections
 	{
-		/* Represent a sequence of scene passes that can finally 
-		   generate end result.
-
-		   A SceneProcedure can be either normal passes (like shadow
-		   mapping) or post effect passes (like bloom & HDR).
-		*/
-		class APAPI SceneProcedure
+		template<typename T>
+		class APAPI Stack
 		{
 		private:
-			
-
-			unordered_map<String, RenderTarget*> m_rtResources;
-			unordered_map<String, Texture*> m_texResources;
-			
-			FastList<ScenePass*> m_passes;
-
+			T* m_array;
+			int m_size;
+			int m_length;
+		private:
+			Stack(const Stack& another){}
 		public:
-			SceneProcedure(void);
-			~SceneProcedure(void);
+			Stack()
+				: m_length(8), m_size(0)
+			{
+				m_array = new T[m_size];
+			}
 
-			void Load(const ResourceLocation* rl);
+			void Clear()
+			{
+				memset(m_array, 0, sizeof(T) * m_size)
+			}
 
-			void Invoke();
+			bool Contains(const T& item)
+			{
+				int index = m_size;
+				while (index-->0)
+				{
+					if (item == m_array[index])
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+
+			T& Peek()
+			{
+
+				return m_array[m_size - 1];
+			}
+
+			T Pop()
+			{
+				T local = m_array[--m_size];
+				memset(m_array[m_size], 0, sizeof(T));
+				return local;
+			}
+
+			void Push(const T& item)
+			{
+				if (m_size == m_length)
+				{
+					T* destinationArray = new T[m_length * 2];
+					memcpy(destinationArray, m_array, m_size*sizeof(T));
+					delete[] m_array;
+					m_array = destinationArray;
+				}
+				m_array[m_size++] = item;
+			}
 		};
-	};
-};
-#endif
+	}
+}

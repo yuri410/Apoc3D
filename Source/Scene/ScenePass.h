@@ -25,6 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define SCENEPASS_H
 
 #include "Common.h"
+#include "Collections/Stack.h"
+#include "ScenePassTypes.h"
 
 namespace Apoc3D
 {
@@ -38,18 +40,20 @@ namespace Apoc3D
 		   
 		   The ScenePass is a part of render script that controls 
 		   a pass of scene rendering. It selects objects for rendering
-		   by check the objects' Material::PassFlag against the pass sequence 
+		   by check the objects' Material::PassFlag against the selectorID
 		   in the script.
 		*/
 		class APAPI ScenePass
 		{
 		private:
-			int32 m_sequence;
+			int32 m_selectorID;
 			String m_name;
+
+			Stack<SceneVariable> m_exeStack;
 		public:
 			/** Gets the sequence of this pass in a entire scene rendering process.
 			*/
-			int32 getSequence() const { return m_sequence; }
+			int32 getSelectorID() const { return m_selectorID; }
 
 			/** Gets the name of this pass.
 			*/
