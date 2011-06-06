@@ -94,7 +94,7 @@ namespace Apoc3D
 
 			int m_freeCount;
 			int m_freeList;
-			const IEqualityComparer* m_comparer;
+			const IEqualityComparer<T>* m_comparer;
 
 			void Initialize(int capacity)
 			{
@@ -223,7 +223,7 @@ namespace Apoc3D
 					int num = m_comparer->GetHashCode(item) & 2147483647;
 					for (int i = m_buckets[num % m_bucketsLength]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == num) && m_comparer.Equals(m_entries[i].data, item))
+						if ((m_entries[i].hashCode == num) && m_comparer->Equals(m_entries[i].data, item))
 						{
 							return true;
 						}
@@ -233,7 +233,6 @@ namespace Apoc3D
 			}
 
 			inline S& operator [](const T& key) const;
-			inline const S& operator [](const T& key) const;
 
 			bool TryGetValue(const T& key, S& value) const;
 		};

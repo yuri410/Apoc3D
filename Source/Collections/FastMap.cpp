@@ -83,16 +83,16 @@ namespace Apoc3D
 			m_entries[index] = freeList;
 		}
 
-		template<typename T, typename S>
-		const S& FastMap<T,S>::operator [](const T&key) const
-		{
-			int index = FindEntry(key);
-			if (index>0)
-			{
-				return m_entries[index].value;
-			}
-			throw Apoc3DException::createException(EX_KeyNotFound, L"");
-		}
+		//template<typename T, typename S>
+		//const S& FastMap<T,S>::operator [](const T&key) const
+		//{
+		//	int index = FindEntry(key);
+		//	if (index>0)
+		//	{
+		//		return m_entries[index].value;
+		//	}
+		//	throw Apoc3DException::createException(EX_KeyNotFound, L"");
+		//}
 
 		template<typename T, typename S>
 		S& FastMap<T,S>::operator [](const T&key) const

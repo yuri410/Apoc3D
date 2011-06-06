@@ -72,15 +72,25 @@ namespace Apoc3D
 			SOP_Pop,
 			SOP_Load,
 			SOP_SelectorID,
-			SOP_JNZ,
+			SOP_JZ,
 			SOP_VisibleTo,
 			SOP_Render
 		};
 		struct SceneInstruction
 		{
 			SceneOpCode Operation;
-			SceneVariable A;
-			SceneVariable B;
+			const SceneVariable* A;
+			const SceneVariable* B;
+			int Next;
+
+			SceneInstruction() 
+			{
+			}
+			SceneInstruction(SceneOpCode code, const  SceneVariable* a = 0, const SceneVariable* b = 0)
+				: Operation(code), A(a), B(b)
+			{
+
+			}
 		};
 		struct ScenePassData
 		{

@@ -28,14 +28,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Utility/StringUtils.h"
 #include "Collections/Stack.h"
 #include "Collections/FastList.h"
+#include "Collections/FastMap.h"
 #include "Apoc3DException.h"
 
 #include "Graphics/PixelFormat.h"
 #include "Graphics/GraphicsCommon.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/RenderTarget.h"
 #include "tinyxml/tinyxml.h"
 #include "IO/Streams.h"
 #include "VFS/ResourceLocation.h"
+
 
 
 using namespace Apoc3D::Utility;
@@ -46,6 +49,363 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
+		static const int NUM = 256;
+		static const char LBracket = '(';
+
+
+		static const char OpAnd = '&';
+		static const char OpOr = '|';
+		static const char OpNot = '!';
+		static const char OpAt = '@';
+
+		static const char RBracket = ')';
+
+		static const char EndSym = '$';
+
+		struct PriorInfo
+		{
+			char OperatorChar;
+			int P1;
+			int P2;
+		};
+		static const PriorInfo pList[7] = {
+			{ OpAnd, 2, 1 },
+			{ OpOr, 2, 1 },
+			{ OpNot, 4, 3 },
+			{ OpAt, 4, 5 },
+			{ LBracket, 0, 5 },
+			{ RBracket, 6, 0 },
+			{ EndSym, 0, 0 }
+		};
+
+		class ExpressionCompiler
+		{
+		private:
+
+
+			enum NodeType
+			{
+				NT_Operator,
+				NT_Operand
+			};
+
+			class ExpressionNode
+			{
+			public:
+				char m_optr;
+				int m_opnd;
+				NodeType m_type;
+				ExpressionNode* m_left;
+				ExpressionNode* m_right;
+
+				/** 建立二叉树运算符结点(内结点)
+				*/
+				ExpressionNode(char optr, ExpressionNode* left, ExpressionNode* right)
+					: m_optr(optr), m_left(left), m_right(right), m_type(NT_Operator)
+				{
+				}
+
+				/** 建立二叉树数结点(叶结点) 
+				*/
+				ExpressionNode(int operand)
+					: m_opnd(operand), m_type(NT_Operand)
+				{
+				}
+			};
+
+			Stack<char> optrStack;
+			Stack<ExpressionNode*> exprStack;
+
+			/** 当GetNextSymbol()为NUM时，该字段为参数值
+			*/
+			int tokenval;
+			FastList<string> expStruct;
+
+			int position;
+			FastMap<string, int> parameters;
+
+			/** 比较栈顶运算符与下一输入运算符优先关系
+			*/
+			char Precede(char opf, char opg)
+			{
+				int op1 = -1, op2 = -1;
+				for (int i = 0; i < sizeof(pList)/sizeof(PriorInfo); i++)
+				{
+					if (pList[i].OperatorChar == opf)
+						op1 = pList[i].P1;
+					if (pList[i].OperatorChar == opg)
+						op2 = pList[i].P2;
+				}
+				if (op1 == -1 || op2 == -1)
+				{
+					throw Apoc3DException::createException(EX_InvalidOperation, L"operator error!");
+					//cout << "operator   error!" << endl;
+					//exit(1);
+				}
+				if (op1 > op2)
+					return '>';
+				else if (op1 == op2)
+					return '=';
+				else
+					return '<';
+			}
+
+			/** 获得表达式中下一个标记。如果是变量则返回NUM，变量索引tokenval
+			*/
+			int GetNextSymbol()
+			{
+				string str = expStruct[position++];
+
+				if (str.length() == 1 &&
+					(str[0] == LBracket || str[0] == RBracket || str[0] == OpAnd || 
+					str[0] == OpOr || str[0] == OpNot || str[0] == EndSym))
+				{
+					return str[0];
+				}
+				else
+				{
+					tokenval = parameters[str];
+					return NUM;
+				}
+			}
+
+			ExpressionNode* CreateBinaryTree()
+			{
+				int lookahead;
+				char op;
+				ExpressionNode* opnd1, *opnd2;
+				optrStack.Push(EndSym);
+				lookahead = GetNextSymbol();
+				while (lookahead != EndSym || optrStack.Peek() != EndSym)
+				{
+					if (lookahead == NUM)
+					{
+						exprStack.Push(new ExpressionNode(tokenval)); // mkleaf(tokenval)
+						lookahead = GetNextSymbol();
+					}
+					else
+					{
+						switch (Precede(optrStack.Peek(), lookahead))
+						{
+						case '<':
+							optrStack.Push(lookahead);
+							lookahead = GetNextSymbol();
+							break;
+						case '=':
+							optrStack.Pop();
+							lookahead = GetNextSymbol();
+							break;
+						case '>':
+							op = optrStack.Pop();
+
+							if (op == OpNot)
+							{
+								opnd2 = exprStack.Pop();
+								exprStack.Push(new ExpressionNode(op, 0, opnd2));//mknode(op, null, opnd2)
+							}
+							else
+							{
+								opnd2 = exprStack.Pop();
+
+								opnd1 = exprStack.Pop();
+								exprStack.Push(new ExpressionNode(op, opnd1, opnd2));//mknode(op, opnd1, opnd2)
+							}
+
+							break;
+						}
+					}
+				}
+				return exprStack.Peek();
+			}
+
+			bool FollowOrderTraverse(ExpressionNode* T)
+			{
+				if (!T)
+					return true;
+
+				if (T->m_type == NT_Operator)
+				{
+					if (FollowOrderTraverse(T->m_left))
+					{
+						if (FollowOrderTraverse(T->m_right))
+						{
+							switch (T->m_optr)
+							{
+							case OpAnd:
+								//Console.WriteLine("and");
+								//codeGen.Emit(OpCodes.And);
+								break;
+							case OpOr:
+								//Console.WriteLine("or");
+								//codeGen.Emit(OpCodes.Or);
+								break;
+							case OpNot:
+								//Console.WriteLine("not");
+								//codeGen.Emit(OpCodes.Not);
+								break;
+							case OpAt:
+
+								break;
+							}
+							return true;
+						}
+					}
+					return false;
+
+				}
+				else
+				{
+					//Console.WriteLine("ldarg.0");
+					//Console.WriteLine("ldc.i4   " + T.opnd.ToString());
+					//Console.WriteLine("ldelem.i1");
+
+					//codeGen.Emit(OpCodes.Ldarg_0);
+					//codeGen.Emit(OpCodes.Ldc_I4, T.opnd);
+					//codeGen.Emit(OpCodes.Ldelem_I1);
+					return true;
+				}
+			}
+
+			void Parse(string expression)
+			{
+				string sb;
+
+				bool ended = false;
+
+				int paramIndex = 0;
+
+				for (size_t i = 0; i < expression.length(); i++)
+				{
+					char cc = expression[i];
+					switch (cc)
+					{
+					case LBracket:
+						expStruct.Add(string(1, LBracket));
+
+						if (sb.length() > 0)
+						{
+							string typeName = sb;
+							expStruct.Add(typeName);
+							if (!parameters.Contains(typeName))
+							{
+								parameters.Add(typeName, paramIndex++);
+							}
+						}
+						ended = true;
+
+						sb = string();
+						break;
+					case RBracket:
+						if (sb.length() > 0)
+						{
+							string typeName = sb;
+							expStruct.Add(typeName);
+							if (!parameters.Contains(typeName))
+							{
+								parameters.Add(typeName, paramIndex++);
+							}
+						}
+
+						expStruct.Add(string(1, RBracket));
+
+						ended = true;
+
+						sb = string();
+						break;
+					case OpAnd:
+						if (sb.length() > 0)
+						{
+							string typeName = sb;
+							expStruct.Add(typeName);
+							if (!parameters.Contains(typeName))
+							{
+								parameters.Add(typeName, paramIndex++);
+							}
+						}
+
+						expStruct.Add(string(1, OpAnd));
+
+						ended = true;
+
+						sb = string();
+						break;
+					case OpOr:
+						if (sb.length() > 0)
+						{
+							string typeName = sb;
+							expStruct.Add(typeName);
+							if (!parameters.Contains(typeName))
+							{
+								parameters.Add(typeName, paramIndex++);
+							}
+						}
+						expStruct.Add(string(1, OpOr));
+
+						ended = true;
+
+						sb = string();
+						break;
+					case OpNot:
+						if (sb.length() > 0)
+						{
+							string typeName = sb;
+							expStruct.Add(typeName);
+							if (!parameters.Contains(typeName))
+							{
+								parameters.Add(typeName, paramIndex++);
+							}
+						}
+
+						expStruct.Add(string(1, OpNot));
+
+						ended = true;
+
+						sb = string();
+						break;
+					case OpAt:
+						if (sb.length() > 0)
+						{
+							string typeName = sb;
+							expStruct.Add(typeName);
+							if (!parameters.Contains(typeName))
+							{
+								parameters.Add(typeName, paramIndex++);
+							}
+						}
+
+						expStruct.Add(string(1, OpAt));
+
+						ended = true;
+
+						sb = string();
+						break;
+					case ' ':
+						break;
+					default:
+						sb.append(1, cc);
+						ended = false;
+
+						break;
+
+					}
+				}
+
+				if (!ended)
+				{
+					string typeName = sb;
+					expStruct.Add(typeName);
+					if (!parameters.Contains(typeName))
+					{
+						parameters.Add(typeName, paramIndex++);
+					}
+				}
+			}
+
+		public:
+
+		};
+
+
 		String toString(const string& str)
 		{
 			wchar_t* buffer = new wchar_t[str.length()];
@@ -56,7 +416,7 @@ namespace Apoc3D
 		}
 		String getElementName(const TiXmlElement* elem)
 		{
-			toString(elem->ValueStr());
+			return toString(elem->ValueStr());
 		}
 		String getNodeText(const TiXmlText* text)
 		{
@@ -337,7 +697,8 @@ namespace Apoc3D
 					{
 						for (size_t i=0;i<16;i++)
 						{
-							var.DefaultValue[i] = reinterpret_cast<const uint&>(StringUtils::ParseSingle(elems[i]));
+							float v = StringUtils::ParseSingle(elems[i]);
+							var.DefaultValue[i] = reinterpret_cast<const uint&>(v);
 						}
 					}
 				}
@@ -367,7 +728,8 @@ namespace Apoc3D
 					{
 						for (size_t i=0;i<4;i++)
 						{
-							var.DefaultValue[i] = reinterpret_cast<const uint&>(StringUtils::ParseSingle(elems[i]));
+							float v = StringUtils::ParseSingle(elems[i]);
+							var.DefaultValue[i] = reinterpret_cast<const uint&>(v);
 						}
 					}
 				}
@@ -391,7 +753,8 @@ namespace Apoc3D
 					{
 						for (size_t i=0;i<3;i++)
 						{
-							var.DefaultValue[i] = reinterpret_cast<const uint&>(StringUtils::ParseSingle(elems[i]));
+							float v = StringUtils::ParseSingle(elems[i]);
+							var.DefaultValue[i] = reinterpret_cast<const uint&>(v);
 						}
 					}
 				}
@@ -415,7 +778,8 @@ namespace Apoc3D
 					{
 						for (size_t i=0;i<2;i++)
 						{
-							var.DefaultValue[i] = reinterpret_cast<const uint&>(StringUtils::ParseSingle(elems[i]));
+							float v = StringUtils::ParseSingle(elems[i]);
+							var.DefaultValue[i] = reinterpret_cast<const uint&>(v);
 						}
 					}
 				}
@@ -532,14 +896,21 @@ namespace Apoc3D
 			}
 		}
 
-		void SceneRenderScriptParser::BuildInstructions(const TiXmlElement* elem, ScenePassData* data)
+		void FillInstructions(const string& cmd, FastList<SceneInstruction>& instructions)
 		{
-			for (const TiXmlNode* i = elem->FirstChild(); i!=0; i=i->NextSibling())
+
+		}
+
+		void SceneRenderScriptParser::BuildInstructions(const TiXmlElement* node, ScenePassData* data)
+		{
+			for (const TiXmlNode* i = node->FirstChild(); i!=0; i=i->NextSibling())
 			{
 				int type = i->Type();
 				switch (type)
 				{
 				case TiXmlNode::TINYXML_ELEMENT:
+					const TiXmlElement* elem = i->ToElement();
+
 					String strName = getElementName(elem);
 
 					String lowStrName = strName;
@@ -547,9 +918,20 @@ namespace Apoc3D
 
 					if (lowStrName == String(L"if"))
 					{
+						FillInstructions(elem->Attribute("Cond"), data->Instructions);
+						data->Instructions.Add(SceneInstruction(SOP_JZ));
+						
+						SceneInstruction& inst = data->Instructions[data->Instructions.getCount()-1];
 
+						BuildInstructions(elem, data);
+
+						// back fill
+						inst.Next = data->Instructions.getCount();
 					}
-					
+					else if (lowStrName == String(L"e"))
+					{
+						FillInstructions(elem->Attribute("S"), data->Instructions);
+					}
 					
 					break;
 				}

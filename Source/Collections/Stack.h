@@ -69,7 +69,7 @@ namespace Apoc3D
 			T Pop()
 			{
 				T local = m_array[--m_size];
-				memset(m_array[m_size], 0, sizeof(T));
+				memset(&m_array[m_size], 0, sizeof(T));
 				return local;
 			}
 
