@@ -57,7 +57,7 @@ namespace Apoc3D
 			FastList<ScenePass*> m_passes;
 
 		public:
-			SceneProcedure(void);
+			SceneProcedure(RenderDevice* device);
 			~SceneProcedure(void);
 
 			void Load(const ResourceLocation* rl);

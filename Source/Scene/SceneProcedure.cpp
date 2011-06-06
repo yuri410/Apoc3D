@@ -27,7 +27,7 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		SceneProcedure::SceneProcedure(void)
+		SceneProcedure::SceneProcedure(RenderDevice* dev)
 		{
 		}
 

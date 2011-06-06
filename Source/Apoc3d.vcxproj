@@ -266,6 +266,7 @@
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
     <ClCompile Include="Platform\Thread.cpp" />
+    <ClCompile Include="Scene\SceneRenderScriptParser.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />

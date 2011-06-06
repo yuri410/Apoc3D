@@ -43,7 +43,8 @@ namespace Apoc3D
 		EX_EndOfStream,
 		EX_FileNotFound,
 		EX_Argument,
-		EX_Duplicate
+		EX_Duplicate,
+		EX_ScriptCompileError
 	};
 
 	class APAPI Apoc3DException : public std::exception
@@ -61,7 +62,7 @@ namespace Apoc3D
 		{
 		}
 
-		static Apoc3DException createException(Apoc3DExceptionType type, const wchar_t* const msg);
+		static Apoc3DException createException(Apoc3DExceptionType type, const String& msg);
 		
 		
 	};

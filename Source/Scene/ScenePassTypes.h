@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Collections/FastList.h"
 
+using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Graphics;
@@ -45,9 +46,16 @@ namespace Apoc3D
 			VARTYPE_Vector3,
 			VARTYPE_Vector2,
 			VARTYPE_Texture,
-			VARTYPE_Camera,
+			//VARTYPE_Camera,
+			VARTYPE_Integer,
+			VARTYPE_Boolean,
 			VARTYPE_Effect
 		};
+		//enum SceneVariableBinding
+		//{
+		//	SVBIND_Camera
+		//};
+
 		struct SceneVariable
 		{
 			SceneVariableType Type;
@@ -64,7 +72,7 @@ namespace Apoc3D
 			SOP_Pop,
 			SOP_Load,
 			SOP_SelectorID,
-			SOP_IF,
+			SOP_JNZ,
 			SOP_VisibleTo,
 			SOP_Render
 		};

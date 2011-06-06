@@ -33,25 +33,36 @@ using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics::EffectSystem;
 
+using namespace std;
+
+class TiXmlNode;
+class TiXmlElement;
+
 namespace Apoc3D
 {
 	namespace Scene
 	{
+		template class APAPI unordered_map<String, String>;
+		typedef unordered_map<String, String> BlockArgs;
 		class APAPI SceneRenderScriptParser
 		{
 		private:
-			enum ScriptPreserveWord
-			{
-				PWORD_Pass,
-				PWORD_EndPass,
-				PWORD_Scene,
-				PWORD_EndScene,
+			String m_sceneName;
+			RenderDevice* m_renderDevice;
+			
 
-			};
+			void ParseGlocalVarNode(const TiXmlElement* node);
+
+			void BuildInstructions(const TiXmlElement* node, ScenePassData* data);
+			void BuildPass(const TiXmlElement* node);
+			void BuildNode(const TiXmlNode* node);
 		public:
 			FastList<ScenePassData> PassData;
+			FastList<SceneVariable> GlobalVars;
 
-			void Parse(const String& code);
+			SceneRenderScriptParser(RenderDevice* dev);
+
+			void Parse(const ResourceLocation* rl);
 		};
 	}
 }
