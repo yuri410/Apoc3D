@@ -98,7 +98,7 @@ namespace Apoc3D
 
 		};
 
-		template class APAPI vector<LocateCheckPoint>;
+		//template class APAPI vector<LocateCheckPoint>;
 
 		/** Defines the rule used for locate files in FileSystem.
 		* The rule is a sequence of directory/archive to look for the file.

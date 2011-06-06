@@ -75,7 +75,7 @@ namespace Apoc3D
 				String PlatformName;
 			};
 
-			template class APAPI vector<const PlatformAPISupport>;
+			//template class APAPI vector<const PlatformAPISupport>;
 
 			/* Contains information of a graphics API
 			*/

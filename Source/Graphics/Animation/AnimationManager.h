@@ -36,7 +36,7 @@ namespace Apoc3D
 	{
 		namespace Animation
 		{
-			template class APAPI std::unordered_map<String, AnimationData*>;
+			//template class APAPI std::unordered_map<String, AnimationData*>;
 			typedef std::unordered_map<String, AnimationData*> AnimHashTable;
 
 			class APAPI AnimationManager : public Singleton<AnimationManager>

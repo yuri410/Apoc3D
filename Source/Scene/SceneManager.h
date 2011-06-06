@@ -38,7 +38,7 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		template class APAPI vector<SceneObject*>;
+		//template class APAPI vector<SceneObject*>;
 		typedef vector<SceneObject*> ObjectList;
 
 		typedef FastList<RenderOperation> OperationList;
@@ -51,16 +51,16 @@ namespace Apoc3D
 		class PriorityTable;
 		class MaterialList;
 		
-		template class APAPI unordered_map<BatchHandle, OperationList*>;
-		template class APAPI unordered_map<BatchHandle, GeometryTable*>;
-		template class APAPI unordered_map<uint32, MaterialTable*>;
-		template class APAPI unordered_map<BatchHandle, Material*>;
+		//template class APAPI unordered_map<BatchHandle, OperationList*>;
+		//template class APAPI unordered_map<BatchHandle, GeometryTable*>;
+		//template class APAPI unordered_map<uint32, MaterialTable*>;
+		//template class APAPI unordered_map<BatchHandle, Material*>;
 
-		class APAPI GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
-		class APAPI MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
-		class APAPI PriorityTable : public unordered_map<uint32, MaterialTable*> { };
+		class GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
+		class MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
+		class PriorityTable : public unordered_map<uint32, MaterialTable*> { };
 
-		class APAPI MaterialList : public unordered_map<BatchHandle, Material*> { };
+		class MaterialList : public unordered_map<BatchHandle, Material*> { };
 				
 		class APAPI BatchData
 		{

@@ -34,9 +34,9 @@ namespace Apoc3D
 {
 	namespace VFS
 	{
-		template class APAPI vector<String>;
-		template class APAPI unordered_map<String, Archive*>;
-		template class APAPI unordered_map<String, ArchiveFactory*>;
+		//template class APAPI vector<String>;
+		//template class APAPI unordered_map<String, Archive*>;
+		//template class APAPI unordered_map<String, ArchiveFactory*>;
 
 		class APAPI FileSystem : public Singleton<FileSystem>
 		{

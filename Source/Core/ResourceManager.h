@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		template class APAPI std::unordered_map<String, Resource*>;
+		//template class APAPI std::unordered_map<String, Resource*>;
 		typedef std::unordered_map<String, Resource*> ResHashTable;
 
 		class APAPI ResourceManager

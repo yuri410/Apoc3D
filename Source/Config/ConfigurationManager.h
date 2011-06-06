@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		template class APAPI unordered_map<String, Configuration*>;
+		//template class APAPI unordered_map<String, Configuration*>;
 			 
 		class APAPI ConfigurationManager : public Singleton<ConfigurationManager>
 		{

@@ -38,7 +38,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			template class APAPI list<float>;
+			//template class APAPI list<float>;
 
 			/* Implements a simple FPS counter
 			*/

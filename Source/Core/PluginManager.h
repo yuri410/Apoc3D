@@ -38,15 +38,15 @@ namespace Apoc3D
 	namespace Core
 	{
 
-		template class APAPI fastdelegate::FastDelegate3<const Plugin*, int32, int32, void>;
+		//template class APAPI fastdelegate::FastDelegate3<const Plugin*, int32, int32, void>;
 		typedef fastdelegate::FastDelegate3<const Plugin*, int32, int32, void> PluginLoadCallBack;
 
-		template class APAPI fastdelegate::FastDelegate1<const Plugin*, void>;
+		//template class APAPI fastdelegate::FastDelegate1<const Plugin*, void>;
 		typedef fastdelegate::FastDelegate1<const Plugin*, void> PluginErrorBack;
 
-		template class APAPI unordered_map<String, Plugin*>;
+		//template class APAPI unordered_map<String, Plugin*>;
 
-		template class APAPI vector<Library*>;
+		//template class APAPI vector<Library*>;
 
 		class APAPI PluginManager : public Singleton<PluginManager>
 		{

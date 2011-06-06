@@ -35,7 +35,7 @@ namespace Apoc3D
 {
 	namespace Utility
 	{
-		template class APAPI unordered_map<String, pair<String, String>>;
+		//template class APAPI unordered_map<String, pair<String, String>>;
 
 		class APAPI StringTable
 		{

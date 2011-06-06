@@ -27,7 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 
 #include "Common.h"
-#include <exception>
 
 namespace Apoc3D
 {
@@ -47,7 +46,7 @@ namespace Apoc3D
 		EX_ScriptCompileError
 	};
 
-	class APAPI Apoc3DException : public std::exception
+	class APAPI Apoc3DException
 	{
 	private:
 		String m_message;

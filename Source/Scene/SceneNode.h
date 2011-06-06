@@ -23,15 +23,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef SCENENODE_H
 #define SCENENODE_H
-#pragma once
-#include "..\Common.h"
+
+#include "Common.h"
 #include <vector>
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
-		template class APAPI std::vector<SceneObject*>;
+		//template class APAPI std::vector<SceneObject*>;
 		typedef std::vector<SceneObject*> ObjectList;
 
 		/* Represents a collection of scene objects in the scene

@@ -31,7 +31,7 @@ using namespace std;
 
 namespace Apoc3D
 {
-	template class APAPI vector<String>;
+	//template class APAPI vector<String>;
 
 	struct APAPI ManualStartConfig
 	{

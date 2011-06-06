@@ -42,8 +42,8 @@ namespace Apoc3D
 	{
 		namespace Animation
 		{
-			template class APAPI unordered_map<String, ModelAnimationClip*>;
-			template class APAPI unordered_map<String, MaterialAnimationClip*>;
+			//template class APAPI unordered_map<String, ModelAnimationClip*>;
+			//template class APAPI unordered_map<String, MaterialAnimationClip*>;
 
 			/** Combines all the animation data needed to animate a object.
 			*/

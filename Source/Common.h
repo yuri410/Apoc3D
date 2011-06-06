@@ -71,7 +71,7 @@ typedef BatchHandle HashHandle;
 
 
 
-#pragma warning(disable:4251)
+//#pragma warning(disable:4251)
 #include <string>
 #include <vector>
 #include <list>

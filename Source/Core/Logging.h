@@ -76,7 +76,7 @@ namespace Apoc3D
 			}
 		};
 
-		template class APAPI list<LogEntry>;
+		//template class APAPI list<LogEntry>;
 
 		class APAPI Log
 		{

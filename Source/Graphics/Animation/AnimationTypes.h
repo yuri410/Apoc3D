@@ -39,7 +39,7 @@ namespace Apoc3D
 	{
 		namespace Animation
 		{
-			template class APAPI vector<int32>;
+			//template class APAPI vector<int32>;
 
 			class APAPI Bone
 			{
@@ -143,7 +143,7 @@ namespace Apoc3D
 				~ModelAnimationClip() { }
 			};
 
-			template class APAPI vector<MaterialAnimationKeyframe>;
+			//template class APAPI vector<MaterialAnimationKeyframe>;
 
 			class APAPI MaterialAnimationClip
 			{

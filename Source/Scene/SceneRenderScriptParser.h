@@ -42,7 +42,7 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		template class APAPI unordered_map<String, String>;
+		//template class APAPI unordered_map<String, String>;
 		typedef unordered_map<String, String> BlockArgs;
 		class APAPI SceneRenderScriptParser
 		{

@@ -44,8 +44,8 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		template class APAPI unordered_map<uint64, Effect*>;
-		template class APAPI unordered_map<String, uint64>;
+		//template class APAPI unordered_map<uint64, Effect*>;
+		//template class APAPI unordered_map<String, uint64>;
 
 		/* Defines colors, textures, effect and etc. for a geometry.
 

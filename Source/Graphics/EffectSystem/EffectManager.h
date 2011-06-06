@@ -37,7 +37,7 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			template class APAPI unordered_map<String, Effect*>;
+			//template class APAPI unordered_map<String, Effect*>;
 			typedef unordered_map<String, Effect*> EffectTable;
 
 			class APAPI EffectManager : public Singleton<EffectManager>
