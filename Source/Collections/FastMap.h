@@ -42,7 +42,7 @@ namespace Apoc3D
 
 				static int GetPrime(int min)
 				{
-					for (int i = 0; i < sizeof(primes)/sizeof(int); i++)
+					for (int i = 0; i < 72; i++)
 					{
 						int num2 = primes[i];
 						if (num2 >= min)
@@ -111,15 +111,15 @@ namespace Apoc3D
 			}
 			void Resize()
 			{
-				int prime = HashHelpers::GetPrime(this.count * 2);
-				int[] numArray = new int[prime];
-				for (int i = 0; i < numArray.Length; i++)
+				int prime = HashHelpers::GetPrime(m_count * 2);
+				int* numArray = new int[prime];
+				for (int i = 0; i < prime; i++)
 				{
 					numArray[i] = -1;
 				}
-				Entry[] destinationArray = new Entry[prime];
+				Entry* destinationArray = new Entry[prime];
 				memcpy(destinationArray, m_entries, m_count * sizeof(Entry));
-				for (int j = 0; j < this.count; j++)
+				for (int j = 0; j < m_count; j++)
 				{
 					int index = destinationArray[j].hashCode % prime;
 					destinationArray[j].next = numArray[index];
@@ -206,7 +206,7 @@ namespace Apoc3D
 							}
 							m_entries[i].hashCode = -1;
 							m_entries[i].next = m_freeList;
-							memset(m_entries[i].data,0,sizeof(T));
+							//memset(m_entries[i].data,0,sizeof(T));
 							m_freeList = i;
 							m_freeCount++;
 							return true;

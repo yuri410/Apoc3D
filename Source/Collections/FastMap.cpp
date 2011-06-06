@@ -23,13 +23,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "FastMap.h"
+#include "Apoc3DException.h"
 
 namespace Apoc3D
 {
 	namespace Collections
 	{
+		template class FastMap<string, int>;
+
 		template<typename T, typename S>
-		const int FastMap<T,S>::HashHelpers::primes[] = { 
+		const int FastMap<T,S>::HashHelpers::primes[72] = { 
 			3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 
 			293, 353, 431, 521, 631, 761, 919, 1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 
 			5839, 7013, 8419, 10103, 12143, 14591, 17519, 21023, 25229, 30293, 36353, 43627, 52361, 62851, 75431, 90523, 
@@ -80,7 +83,7 @@ namespace Apoc3D
 			m_entries[freeList].next = m_buckets[index];
 			m_entries[freeList].data = item;
 			m_entries[freeList].value = value;
-			m_entries[index] = freeList;
+			m_buckets[index] = freeList;
 		}
 
 		//template<typename T, typename S>

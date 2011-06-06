@@ -45,5 +45,17 @@ namespace Apoc3D
 			const void* s = obj;
 			return reinterpret_cast<int64>(s);
 		}
+
+		const IEqualityComparer<string>* IEqualityComparer<string>::Default = new stlstringEqualityComparer();
+
+		bool stlstringEqualityComparer::Equals(const string& x, const string& y) const
+		{
+			return x==y;
+		}
+		int64 stlstringEqualityComparer::GetHashCode(const string& obj) const
+		{
+			return m_hasher.hash_function()(obj);
+		}
+
 	}
 }

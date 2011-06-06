@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Core;
 
+using namespace std;
+
 namespace Apoc3D
 {
 	namespace Collections
@@ -55,6 +57,17 @@ namespace Apoc3D
 			
 			virtual int64 GetHashCode(const LPResource& obj) const;
 		};
+
+		class stlstringEqualityComparer : public IEqualityComparer<string>
+		{
+		private:
+			unordered_map<string, string> m_hasher;
+		public:
+			virtual bool Equals(const string& x, const string& y) const;
+
+			virtual int64 GetHashCode(const string& obj) const;
+		};
+
 	}
 }
 
