@@ -50,6 +50,8 @@ namespace Apoc3D
 			String m_sceneName;
 			RenderDevice* m_renderDevice;
 			
+			void FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions);
+
 
 			void ParseGlocalVarNode(const TiXmlElement* node);
 

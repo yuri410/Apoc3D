@@ -56,7 +56,7 @@ namespace Apoc3D
 		static const char OpAnd = '&';
 		static const char OpOr = '|';
 		static const char OpNot = '!';
-		static const char OpAt = '@';
+		//static const char OpAt = '@';
 
 		static const char RBracket = ')';
 
@@ -72,7 +72,7 @@ namespace Apoc3D
 			{ OpAnd, 2, 1 },
 			{ OpOr, 2, 1 },
 			{ OpNot, 4, 3 },
-			{ OpAt, 4, 5 },
+			//{ OpAt, 4, 5 },
 			{ LBracket, 0, 5 },
 			{ RBracket, 6, 0 },
 			{ EndSym, 0, 0 }
@@ -108,8 +108,16 @@ namespace Apoc3D
 				/** 建立二叉树数结点(叶结点) 
 				*/
 				ExpressionNode(int operand)
-					: m_opnd(operand), m_type(NT_Operand)
+					: m_opnd(operand), m_type(NT_Operand), m_left(0), m_right(0)
 				{
+				}
+
+				~ExpressionNode()
+				{
+					if (m_left)
+						delete m_left;
+					if (m_right)
+						delete m_right;
 				}
 			};
 
@@ -218,20 +226,21 @@ namespace Apoc3D
 				return exprStack.Peek();
 			}
 
-			bool FollowOrderTraverse(ExpressionNode* T)
+			bool FollowOrderTraverse(ExpressionNode* T, std::vector<SceneInstruction>& insts, const FastList<SceneVariable>& vars)
 			{
 				if (!T)
 					return true;
 
 				if (T->m_type == NT_Operator)
 				{
-					if (FollowOrderTraverse(T->m_left))
+					if (FollowOrderTraverse(T->m_left, insts, vars))
 					{
-						if (FollowOrderTraverse(T->m_right))
+						if (FollowOrderTraverse(T->m_right, insts, vars))
 						{
 							switch (T->m_optr)
 							{
 							case OpAnd:
+								
 								//Console.WriteLine("and");
 								//codeGen.Emit(OpCodes.And);
 								break;
@@ -243,9 +252,9 @@ namespace Apoc3D
 								//Console.WriteLine("not");
 								//codeGen.Emit(OpCodes.Not);
 								break;
-							case OpAt:
+							//case OpAt:
 
-								break;
+								//break;
 							}
 							return true;
 						}
@@ -255,6 +264,7 @@ namespace Apoc3D
 				}
 				else
 				{
+					
 					//Console.WriteLine("ldarg.0");
 					//Console.WriteLine("ldc.i4   " + T.opnd.ToString());
 					//Console.WriteLine("ldelem.i1");
@@ -362,23 +372,6 @@ namespace Apoc3D
 
 						sb = string();
 						break;
-					case OpAt:
-						if (sb.length() > 0)
-						{
-							string typeName = sb;
-							expStruct.Add(typeName);
-							if (!parameters.Contains(typeName))
-							{
-								parameters.Add(typeName, paramIndex++);
-							}
-						}
-
-						expStruct.Add(string(1, OpAt));
-
-						ended = true;
-
-						sb = string();
-						break;
 					case ' ':
 						break;
 					default:
@@ -402,7 +395,20 @@ namespace Apoc3D
 			}
 
 		public:
+			ExpressionCompiler()
+			{
+				
+			}
+			void FillInstrunctions(const string& expression, std::vector<SceneInstruction>& insts, const FastList<SceneVariable>& vars)
+			{
+				Parse(expression);
 
+				ExpressionNode* tree = CreateBinaryTree();
+
+				FollowOrderTraverse(tree, insts, vars);
+
+				delete tree;
+			}
 		};
 
 
@@ -896,9 +902,11 @@ namespace Apoc3D
 			}
 		}
 
-		void FillInstructions(const string& cmd, FastList<SceneInstruction>& instructions)
+		void SceneRenderScriptParser::FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions)
 		{
+			ExpressionCompiler compiler;
 
+			compiler.FillInstrunctions(cmd, instructions, GlobalVars);
 		}
 
 		void SceneRenderScriptParser::BuildInstructions(const TiXmlElement* node, ScenePassData* data)
@@ -919,18 +927,22 @@ namespace Apoc3D
 					if (lowStrName == String(L"if"))
 					{
 						FillInstructions(elem->Attribute("Cond"), data->Instructions);
-						data->Instructions.Add(SceneInstruction(SOP_JZ));
+						data->Instructions.push_back(SceneInstruction(SOP_JZ));
 						
-						SceneInstruction& inst = data->Instructions[data->Instructions.getCount()-1];
+						SceneInstruction& inst = data->Instructions[data->Instructions.size()-1];
 
 						BuildInstructions(elem, data);
 
 						// back fill
-						inst.Next = data->Instructions.getCount();
+						inst.Next = (int)data->Instructions.size();
 					}
 					else if (lowStrName == String(L"e"))
 					{
 						FillInstructions(elem->Attribute("S"), data->Instructions);
+					}
+					else if (lowStrName == String(L"c"))
+					{
+						
 					}
 					
 					break;

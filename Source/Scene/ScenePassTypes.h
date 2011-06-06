@@ -82,6 +82,8 @@ namespace Apoc3D
 			const SceneVariable* A;
 			const SceneVariable* B;
 			int Next;
+			String Call;
+			std::vector<String> Args;
 
 			SceneInstruction() 
 			{
@@ -95,8 +97,8 @@ namespace Apoc3D
 		struct ScenePassData
 		{
 			int32 SelectorID;
-			FastList<SceneInstruction> Instructions;
-			FastList<SceneVariable> Variables;
+			std::vector<SceneInstruction> Instructions;
+			std::vector<SceneVariable> Variables;
 		};
 	}
 }
