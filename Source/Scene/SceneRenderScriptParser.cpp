@@ -953,10 +953,12 @@ namespace Apoc3D
 					}
 					else
 					{
-						for (const TiXmlNode* i = elem->FirstChild(); i!=0; i=i->NextSibling())
-						{
-							BuildNode(i);
-						}
+						LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + strName + L" Node", LOGLVL_Warning);
+			
+						//for (const TiXmlNode* i = elem->FirstChild(); i!=0; i=i->NextSibling())
+						//{
+						//	BuildNode(i);
+						//}
 					}
 				}
 				break;
@@ -1182,6 +1184,10 @@ namespace Apoc3D
 				inst.Operation = SOP_Render;
 				instructions.push_back(inst);
 			}
+			else
+			{
+				LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + stat + L" function", LOGLVL_Warning);
+			}
 
 		}
 		void SceneRenderScriptParser::BuildInstructions(const TiXmlElement* node, ScenePassData* data)
@@ -1231,6 +1237,10 @@ namespace Apoc3D
 					else if (lowStrName == String(L"c"))
 					{
 						FillFunctionCall(elem, data->Instructions);
+					}
+					else
+					{
+						LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + strName + L" Element", LOGLVL_Warning);
 					}
 					
 					break;

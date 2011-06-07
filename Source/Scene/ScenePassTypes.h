@@ -107,7 +107,6 @@ namespace Apoc3D
 		{
 			int32 SelectorID;
 			std::vector<SceneInstruction> Instructions;
-			std::vector<SceneVariable> Variables;
 		};
 	}
 }

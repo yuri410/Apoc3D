@@ -45,7 +45,10 @@ namespace Apoc3D
 			SceneRenderScriptParser parser(m_renderDevice);
 			parser.Parse(rl);
 
+			for (int i=0;i<parser.PassData.getCount();i++)
+			{
 
+			}
 		}
 
 		void SceneRenderer::RenderScene(SceneManager* sceMgr)
