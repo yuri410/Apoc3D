@@ -23,6 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "EffectManager.h"
+#include "Core/Logging.h"
+
 
 namespace Apoc3D
 {
@@ -32,7 +34,17 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-
+			Effect* EffectManager::getEffect(const String& name) const
+			{
+				EffectTable::const_iterator iter = m_fxTable.find(name);
+				if (iter != m_fxTable.end())
+				{
+					return iter->second;
+				}
+				LogManager::getSingleton().Write(LOG_Graphics, 
+					L"EffectManager: Attempted to get effect " + name + L" which is not exist.", LOGLVL_Warning);
+				return 0;
+			}
 		}
 	}
 }

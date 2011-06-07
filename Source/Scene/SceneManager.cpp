@@ -37,9 +37,6 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		
-
-
 		SceneManager::SceneManager(void)
 		{
 		}

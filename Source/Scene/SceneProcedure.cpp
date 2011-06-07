@@ -26,10 +26,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneRenderScriptParser.h"
 #include "ScenePass.h"
 
-#include "Vfs/ResourceLocation.h"
+#include "Graphics/EffectSystem/EffectManager.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "Graphics/PixelFormat.h"
+#include "Graphics/TextureManager.h"
+#include "Vfs/FileLocateRule.h"
+#include "Vfs/FileSystem.h"
+#include "Vfs/ResourceLocation.h"
 
 namespace Apoc3D
 {
@@ -142,12 +146,15 @@ namespace Apoc3D
 							//VARTYPE_Vector2,
 					case VARTYPE_Texture:
 						{
-
+							FileLocation* fl = FileSystem::getSingleton().Locate(m_vars[i]->DefaultStringValue, FileLocateRule::Textures);
+							ResourceHandle<Texture>* tex = TextureManager::getSingleton().CreateInstance(m_renderDevice, fl, false);
+							m_vars[i]->TextureValue = tex;
+							m_createdTextures.Add(tex);
 						}
 						break;
 					case VARTYPE_Effect:
 						{
-
+							m_vars[i]->EffectValue = EffectManager::getSingleton().getEffect(m_vars[i]->DefaultStringValue);
 						}
 						break;
 							//VARTYPE_Integer,
