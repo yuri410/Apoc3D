@@ -37,7 +37,7 @@ namespace Apoc3D
 				m_currentSetting->MultiSampleQuality = m_currentSetting->D3D9.PresentParameters.MultiSampleQuality;
 				m_currentSetting->MultiSampleType = m_currentSetting->D3D9.PresentParameters.MultiSampleType;
 				m_currentSetting->RefreshRate = m_currentSetting->D3D9.PresentParameters.FullScreen_RefreshRateInHz;
-				m_currentSetting->Windowed = m_currentSetting->D3D9.PresentParameters.Windowed;
+				m_currentSetting->Windowed = m_currentSetting->D3D9.PresentParameters.Windowed ? true : false;
 
 			}
 			bool D3D9RenderViewSet::CanDeviceBeReset(const DeviceSettings* const oldset,

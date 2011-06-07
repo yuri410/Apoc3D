@@ -96,9 +96,9 @@ namespace Apoc3D
 							// check minimum
 							if (m_hasMinimumSettings)
 							{
-								if (mode.Width < m_minimumSettings.BackBufferWidth ||
-									mode.Height < m_minimumSettings.BackBufferHeight ||
-									mode.RefreshRate < m_minimumSettings.RefreshRate)
+								if ((int)mode.Width < m_minimumSettings.BackBufferWidth ||
+									(int)mode.Height < m_minimumSettings.BackBufferHeight ||
+									(int)mode.RefreshRate < m_minimumSettings.RefreshRate)
 								{
 									continue;
 								}
@@ -713,7 +713,7 @@ namespace Apoc3D
 							(int32)input.PresentParameters.MultiSampleType))
 						{
 							bestType = type;
-							bestQuality = min(quality - 1, input.PresentParameters.MultiSampleQuality);
+							bestQuality = min(quality - 1, (int)input.PresentParameters.MultiSampleQuality);
 						}
 					}
 

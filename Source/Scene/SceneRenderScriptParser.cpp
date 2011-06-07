@@ -1264,7 +1264,7 @@ namespace Apoc3D
 
 			Stream* strm = rl->GetReadStream();
 
-			char* buffer = new char[strm->getLength()];
+			char* buffer = new char[static_cast<int>(strm->getLength())];
 			strm->Read(buffer, strm->getLength());
 
 			doc.Parse(buffer);

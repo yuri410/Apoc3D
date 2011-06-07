@@ -62,7 +62,7 @@ namespace Apoc3D
 		uint32 MeshData::ComputeVertexSize(const FastList<VertexElement>& elements)
 		{
 			uint32 vertexSize = 0;
-			for (size_t i = 0; i < elements.getCount(); i++)
+			for (int i = 0; i < elements.getCount(); i++)
 			{
 				vertexSize += elements[i].getSize();
 			}
@@ -266,7 +266,7 @@ namespace Apoc3D
 			// write faces
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_FacesTag);
-				for (size_t i=0;i<Faces.getCount();i++)
+				for (int i=0;i<Faces.getCount();i++)
 				{
 					bw->Write(Faces[i].IndexA);
 					bw->Write(Faces[i].IndexB);
@@ -282,7 +282,7 @@ namespace Apoc3D
 				BinaryWriter* bw = data->AddEntry(TAG_3_VertexDeclTag);
 
 				bw->Write(static_cast<uint32>(VertexElements.getCount()));
-				for (size_t i = 0; i < VertexElements.getCount(); i++)
+				for (int i = 0; i < VertexElements.getCount(); i++)
 				{
 					bw->Write(VertexElements[i].getOffset());
 					bw->Write(static_cast<uint32>(VertexElements[i].getType()));
@@ -329,7 +329,7 @@ namespace Apoc3D
 		{
 			if (Entities.getCount())
 			{
-				for (size_t i=0; i<Entities.getCount();i++)
+				for (int i=0; i<Entities.getCount();i++)
 				{
 					delete Entities[i];
 				}
@@ -422,7 +422,7 @@ namespace Apoc3D
 
 			data->AddEntry(TAG_3_EntityCountTag, static_cast<int32>(Entities.getCount()));
 
-			for (size_t i=0;i<Entities.getCount();i++)
+			for (int i=0;i<Entities.getCount();i++)
 			{
 				String tag = StringUtils::ToString(i);
 				tag = TAG_3_EntityPrefix + tag;

@@ -79,6 +79,8 @@ namespace Apoc3D
 				}
 				m_hWnd = hWnd;
 
+				m_currentMonitor = MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY);
+
 				ShowWindow(hWnd, SW_NORMAL);
 				UpdateWindow(hWnd);
 

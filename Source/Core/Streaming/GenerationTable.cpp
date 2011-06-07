@@ -103,7 +103,7 @@ namespace Apoc3D
 			}
 			void GenerationTable::SubTask_Manage()
 			{
-				int predictSize = m_manager->getUsedCacheSize();
+				int64 predictSize = m_manager->getUsedCacheSize();
 
 				if (predictSize>m_manager->getTotalCacheSize())
 				{
@@ -140,7 +140,7 @@ namespace Apoc3D
 				while (!m_isShutdown)
 				{
 					SubTask_GenUpdate();
-					if (times++ & ManageInterval == 0)
+					if ((times++) % ManageInterval == 0)
 					{
 						SubTask_Manage();
 					}

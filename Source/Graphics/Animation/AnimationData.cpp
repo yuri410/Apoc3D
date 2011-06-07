@@ -101,7 +101,7 @@ namespace Apoc3D
 					static_cast<uint32>(keyframes.getCount()));
 
 				BinaryWriter* bw = data->AddEntry(TAG_2_MaterialAnimationKeyframesTag);
-				for (size_t i=0;i<keyframes.getCount();i++)
+				for (int i=0;i<keyframes.getCount();i++)
 				{
 					bw->Write(keyframes[i].getTime());
 					bw->Write(static_cast<int32>(keyframes[i].getMaterialFrame()));
@@ -360,7 +360,7 @@ namespace Apoc3D
 						const FastList<MaterialAnimationKeyframe>& keyFrames = clip->Keyframes;
 						bw->Write(static_cast<int32>(keyFrames.getCount()));
 
-						for (size_t i = 0; i < keyFrames.getCount(); i++)
+						for (int i = 0; i < keyFrames.getCount(); i++)
 						{
 							bw->Write(keyFrames[i].getTime());
 							bw->Write(keyFrames[i].getMaterialFrame());
@@ -468,7 +468,7 @@ namespace Apoc3D
 						const FastList<ModelKeyframe>& keyFrames = clip->getKeyframes();
 						bw->Write(static_cast<int32>(keyFrames.getCount()));
 
-						for (size_t i = 0; i < keyFrames.getCount(); i++)
+						for (int i = 0; i < keyFrames.getCount(); i++)
 						{
 							bw->Write(keyFrames[i].getBone());
 							bw->Write(static_cast<double>(keyFrames[i].getTime()));
@@ -484,7 +484,7 @@ namespace Apoc3D
 					data->AddEntry(TAG_3_BoneHierarchyCountTag, static_cast<int32>(m_skeletonHierarchy.getCount()));
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_BoneHierarchyTag);
-					for (size_t i = 0; i < m_skeletonHierarchy.getCount(); i++)
+					for (int i = 0; i < m_skeletonHierarchy.getCount(); i++)
 					{
 						bw->Write(m_skeletonHierarchy[i]);
 					}

@@ -25,10 +25,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "SceneRenderScriptParser.h"
 #include "ScenePass.h"
-
+#include "Core/ResourceHandle.h"
 #include "Graphics/EffectSystem/EffectManager.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
+#include "Graphics/RenderSystem/Texture.h"
+#include "Graphics/RenderSystem/RenderTarget.h"
 #include "Graphics/PixelFormat.h"
 #include "Graphics/TextureManager.h"
 #include "Vfs/FileLocateRule.h"

@@ -64,7 +64,7 @@ namespace Apoc3D
 				m_currentSetting->MultiSampleQuality = m_currentSetting->D3D9.PresentParameters.MultiSampleQuality;
 				m_currentSetting->MultiSampleType = m_currentSetting->D3D9.PresentParameters.MultiSampleType;
 				m_currentSetting->RefreshRate = m_currentSetting->D3D9.PresentParameters.FullScreen_RefreshRateInHz;
-				m_currentSetting->Windowed = m_currentSetting->D3D9.PresentParameters.Windowed;
+				m_currentSetting->Windowed = m_currentSetting->D3D9.PresentParameters.Windowed ? true : false;
 
 			}
 			bool GraphicsDeviceManager::CanDeviceBeReset(const DeviceSettings* const oldset,
@@ -186,8 +186,8 @@ namespace Apoc3D
 			}
 			void GraphicsDeviceManager::Window_UserResized()
 			{
-				if (m_ignoreSizeChanges || !EnsureDevice() ||
-					(m_currentSetting->Windowed))
+				// TBD
+				if (m_ignoreSizeChanges || !EnsureDevice()) // || (m_currentSetting->Windowed)
 					return;
 
 				DeviceSettings newSettings = *m_currentSetting;
@@ -202,6 +202,8 @@ namespace Apoc3D
 				{
 					newSettings.BackBufferWidth = 0;
 					newSettings.BackBufferHeight = 0;
+					newSettings.D3D9.PresentParameters.BackBufferWidth = 0;
+					newSettings.D3D9.PresentParameters.BackBufferHeight = 0;
 					CreateDevice(newSettings);
 				}
 			}

@@ -108,7 +108,6 @@ namespace Apoc3D
 			if (notEmpty)
 			{
 				float interval = time - topVal;
-				bool result;
 
 				if (Generation < GenerationTable::MaxGeneration -1 && 
 					interval > GenerationTable::GenerationLifeTime[Generation])

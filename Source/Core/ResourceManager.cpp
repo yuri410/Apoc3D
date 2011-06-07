@@ -84,7 +84,6 @@ namespace Apoc3D
 		}
 		Resource* ResourceManager::Exists(const String& hashString)
 		{
-			Resource* res;
 			ResHashTable::iterator iter = m_hashTable.find(hashString);
 
 			if (iter != m_hashTable.end())
