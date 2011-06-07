@@ -49,7 +49,7 @@ namespace Apoc3D
 			int32 m_selectorID;
 			String m_name;
 
-			Stack<SceneVariable> m_exeStack;
+			SceneProcedure* m_proc;
 		public:
 			/** Gets the sequence of this pass in a entire scene rendering process.
 			*/

@@ -50,8 +50,9 @@ namespace Apoc3D
 			String m_sceneName;
 			RenderDevice* m_renderDevice;
 			
+			
 			void FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions);
-
+			void FillFunctionCall(const TiXmlElement* node, std::vector<SceneInstruction>& instructions);
 
 			void ParseGlocalVarNode(const TiXmlElement* node);
 
@@ -60,7 +61,7 @@ namespace Apoc3D
 			void BuildNode(const TiXmlNode* node);
 		public:
 			FastList<ScenePassData> PassData;
-			FastList<SceneVariable> GlobalVars;
+			FastList<SceneVariable*> GlobalVars;
 
 			SceneRenderScriptParser(RenderDevice* dev);
 

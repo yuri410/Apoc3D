@@ -25,6 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define SCENERENDERER_H
 
 #include "Common.h"
+#include "Collections/FastList.h"
+
+using namespace Apoc3D::Collections;
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
@@ -34,11 +39,18 @@ namespace Apoc3D
 		*/
 		class APAPI SceneRenderer
 		{
+		private:
+			RenderDevice* m_renderDevice;
+			FastList<ScenePass*> m_passes;
+			BatchData m_batchData;
+
 		public:
-			SceneRenderer(void);
+			SceneRenderer(RenderDevice* dev);
 			~SceneRenderer(void);
 
+			void Load(const ResourceLocation* rl);
 
+			void RenderScene(SceneManager* sceMgr);
 		};
 	};
 };

@@ -24,17 +24,33 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "SceneRenderer.h"
 
+#include "SceneRenderScriptParser.h"
+
 namespace Apoc3D
 {
 	namespace Scene
 	{
-		SceneRenderer::SceneRenderer(void)
+		SceneRenderer::SceneRenderer(RenderDevice* device)
+			: m_renderDevice(device)
 		{
 		}
 
 
 		SceneRenderer::~SceneRenderer(void)
 		{
+		}
+
+		void SceneRenderer::Load(const ResourceLocation* rl)
+		{
+			SceneRenderScriptParser parser(m_renderDevice);
+			parser.Parse(rl);
+
+
+		}
+
+		void SceneRenderer::RenderScene(SceneManager* sceMgr)
+		{
+
 		}
 	};
 };

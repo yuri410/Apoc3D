@@ -51,13 +51,10 @@ namespace Apoc3D
 			VARTYPE_Boolean,
 			VARTYPE_Effect
 		};
-		//enum SceneVariableBinding
-		//{
-		//	SVBIND_Camera
-		//};
 
 		struct SceneVariable
 		{
+			String Name;
 			SceneVariableType Type;
 			uint DefaultValue[16];
 			String DefaultStringValue;
@@ -69,29 +66,41 @@ namespace Apoc3D
 
 		enum SceneOpCode
 		{
+			SOP_Add,
+			SOP_And,
+			SOP_Sub,
+			SOP_Mul,
+			SOP_Div,
+			SOP_Or,
+			SOP_Not,
 			SOP_Pop,
 			SOP_Load,
 			SOP_SelectorID,
 			SOP_JZ,
+			SOP_Clear,
+			SOP_UseRT,
 			SOP_VisibleTo,
 			SOP_Render
+		};
+		struct SceneOpArg
+		{
+			bool IsImmediate;
+			uint DefaultValue[4];
+			SceneVariable* Var;
 		};
 		struct SceneInstruction
 		{
 			SceneOpCode Operation;
-			const SceneVariable* A;
-			const SceneVariable* B;
 			int Next;
-			String Call;
-			std::vector<String> Args;
+			std::vector<SceneOpArg> Args;
 
 			SceneInstruction() 
 			{
 			}
-			SceneInstruction(SceneOpCode code, const  SceneVariable* a = 0, const SceneVariable* b = 0)
-				: Operation(code), A(a), B(b)
+			SceneInstruction(SceneOpCode code)
+				: Operation(code)
 			{
-
+				
 			}
 		};
 		struct ScenePassData

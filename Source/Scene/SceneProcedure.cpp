@@ -22,12 +22,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "SceneProcedure.h"
+#include "SceneRenderScriptParser.h"
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
 		SceneProcedure::SceneProcedure(RenderDevice* dev)
+			: m_renderDevice(dev)
 		{
 		}
 
@@ -36,7 +38,14 @@ namespace Apoc3D
 		{
 		}
 
-		void SceneProcedure::Load(const ResourceLocation* rl)
+		void SceneProcedure::Load(const ScenePassData* data)
+		{
+			
+
+			
+		}
+
+		void SceneProcedure::Invoke()
 		{
 
 		}

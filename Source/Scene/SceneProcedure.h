@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Collections/FastList.h"
+#include "ScenePassTypes.h"
 //#include "Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Collections;
@@ -49,18 +50,15 @@ namespace Apoc3D
 		class APAPI SceneProcedure
 		{
 		private:
-			
+			RenderDevice* m_renderDevice;
 
-			unordered_map<String, RenderTarget*> m_rtResources;
-			unordered_map<String, Texture*> m_texResources;
-			
 			FastList<ScenePass*> m_passes;
 
 		public:
 			SceneProcedure(RenderDevice* device);
 			~SceneProcedure(void);
 
-			void Load(const ResourceLocation* rl);
+			void Load(const ScenePassData* data);
 
 			void Invoke();
 		};
