@@ -50,7 +50,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;$(SolutionDir)\Source;$(SolutionDir)\include</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -97,9 +97,6 @@
     <ResourceCompile Include="APDesigner.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\APBuild\APBuild.vcxproj">
-      <Project>{84ff48b6-e1c8-447e-a1a1-b7d67e045e68}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Source\Apoc3d.vcxproj">
       <Project>{db9f1707-9349-4171-b670-cc5ac4ee4170}</Project>
     </ProjectReference>

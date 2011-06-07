@@ -35,6 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Vfs/FileSystem.h"
 #include "Vfs/FileLocateRule.h"
+#include "Vfs/ResourceLocation.h"
 
 #include "SceneRenderScriptParser.h"
 #include "SceneProcedure.h"
@@ -121,7 +122,7 @@ namespace Apoc3D
 				// load proc
 				FileLocation* fl = FileSystem::getSingleton().Locate(configName, FileLocateRule::Default);
 				SceneProcedure* proc = new SceneProcedure(m_renderDevice);
-				proc->Load(fl);
+				proc->Load(static_cast<ResourceLocation*>(fl));
 				delete fl;
 
 				m_procFallbacks.Add(proc);

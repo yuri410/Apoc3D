@@ -84,7 +84,7 @@ namespace Apoc3D
 				m_game->OnDeviceLost();
 
 				HRESULT hr = m_device->Reset(&m_currentSetting->D3D9.PresentParameters);
-
+				
 				PropogateSettings();
 
 				m_game->OnDeviceReset();

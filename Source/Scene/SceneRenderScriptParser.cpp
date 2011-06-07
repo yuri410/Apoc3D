@@ -78,6 +78,15 @@ namespace Apoc3D
 			{ EndSym, 0, 0 }
 		};
 
+
+		String toString(const string& str)
+		{
+			wchar_t* buffer = new wchar_t[str.length()];
+			mbstowcs(buffer, str.c_str(), str.length());
+			String result = buffer;
+			delete[] buffer;
+			return result;
+		}
 		SceneVariable* FindVar(const FastList<SceneVariable*>& vars, const String& name)
 		{
 			for (int i=0;i<vars.getCount();i++)
@@ -285,8 +294,8 @@ namespace Apoc3D
 				{
 					SceneInstruction inst;
 					inst.Operation = SOP_Load;
-
-					String token = toString(paramList[T->m_opnd]);
+					
+					String token = toString( paramList[T->m_opnd] );
 					SceneVariable* var = FindVar(vars, token);
 					if (!var)
 					{
@@ -462,15 +471,6 @@ namespace Apoc3D
 			}
 		};
 
-
-		String toString(const string& str)
-		{
-			wchar_t* buffer = new wchar_t[str.length()];
-			mbstowcs(buffer, str.c_str(), str.length());
-			String result = buffer;
-			delete[] buffer;
-			return result;
-		}
 		String getElementName(const TiXmlElement* elem)
 		{
 			return toString(elem->ValueStr());
@@ -1132,8 +1132,6 @@ namespace Apoc3D
 
 				if (passed)
 				{
-					float depth = 1;
-
 					SceneOpArg arg;
 					ParseCallArgFloat(node, "Depth", arg, GlobalVars, 1.0f);
 					inst.Args.push_back(arg);
@@ -1175,7 +1173,6 @@ namespace Apoc3D
 				ParseCallArgInt(node, "Selector", arg, GlobalVars, 0);
 				inst.Args.push_back(arg);
 
-				SceneOpArg arg;
 				ParseCallArgRef(node, "Ret", arg, GlobalVars);
 				inst.Args.push_back(arg);
 				instructions.push_back(inst);

@@ -26,7 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "SceneObject.h"
 
-#include "..\Graphics\RenderOperation.h"
+#include "Graphics\RenderOperation.h"
+#include "Scene\SceneRenderer.h"
+
 using namespace Apoc3D::Graphics;
 
 namespace Apoc3D
