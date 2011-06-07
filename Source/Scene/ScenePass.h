@@ -25,8 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define SCENEPASS_H
 
 #include "Common.h"
-#include "Collections/Stack.h"
 #include "ScenePassTypes.h"
+#include "Collections/Stack.h"
+
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
@@ -46,11 +48,24 @@ namespace Apoc3D
 		class APAPI ScenePass
 		{
 		private:
+			struct ExecutionValue
+			{
+				uint Value[2];
+
+			};
+		private:
+			SceneProcedure* m_parentProc;
 			int32 m_selectorID;
 			String m_name;
+			int32 m_cameraID;
 
-			SceneProcedure* m_proc;
+			FastList<SceneInstruction> m_instuctions;
+			Stack<ExecutionValue> m_execStack;
+
+			Camera* m_currentCamera;
 		public:
+			const Camera* getCurrentCamera() const { return m_currentCamera; }
+
 			/** Gets the sequence of this pass in a entire scene rendering process.
 			*/
 			int32 getSelectorID() const { return m_selectorID; }
@@ -59,8 +74,10 @@ namespace Apoc3D
 			*/
 			String getName() const { return m_name; }
 
-			ScenePass(void);
+			ScenePass(SceneProcedure* parent, const ScenePassData* passData);
 			~ScenePass(void);
+
+			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
 		};
 	};
 };

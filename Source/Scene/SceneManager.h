@@ -41,48 +41,6 @@ namespace Apoc3D
 		//template class APAPI vector<SceneObject*>;
 		typedef vector<SceneObject*> ObjectList;
 
-		typedef FastList<RenderOperation> OperationList;
-		typedef FastList<RenderOperation> OperationList;
-		typedef FastList<RenderOperation> OperationList;
-		typedef FastList<RenderOperation> OperationList;
-		typedef FastList<RenderOperation> OperationList;
-		class GeometryTable;
-		class MaterialTable;
-		class PriorityTable;
-		class MaterialList;
-		
-		//template class APAPI unordered_map<BatchHandle, OperationList*>;
-		//template class APAPI unordered_map<BatchHandle, GeometryTable*>;
-		//template class APAPI unordered_map<uint32, MaterialTable*>;
-		//template class APAPI unordered_map<BatchHandle, Material*>;
-
-		class GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
-		class MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
-		class PriorityTable : public unordered_map<uint32, MaterialTable*> { };
-
-		class MaterialList : public unordered_map<BatchHandle, Material*> { };
-				
-		class APAPI BatchData
-		{
-		public:
-			static const int MaxPriority = 10;
-
-		private:
-			PriorityTable m_priTable;
-			MaterialList m_mtrlList;			
-
-			int m_objectCount;
-
-		public:
-			BatchData() { }
-			
-			int getObjectCount() const { return m_objectCount; }
-			
-			void AddVisisbleObject(SceneObject* obj, int level);
-
-			void Clear();
-		};
-
 		/* SceneManager keeps tracks of all scene objects.
 		*/
 		class APAPI SceneManager
@@ -98,7 +56,7 @@ namespace Apoc3D
 			/* Adds a new scene object into scene
 			*/
 			virtual void AddObject(SceneObject* const obj);
-			/* Removes a scene obejct from scene
+			/* Removes a scene object from scene
 			*/
 			virtual bool RemoveObject(SceneObject* const obj);
 

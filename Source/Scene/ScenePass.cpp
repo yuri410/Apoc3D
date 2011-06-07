@@ -23,17 +23,43 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "ScenePass.h"
 
+#include "SceneProcedure.h"
+#include "SceneRenderer.h"
+#include "SceneManager.h"
+
 namespace Apoc3D
 {
 	namespace Scene
 	{
-		ScenePass::ScenePass(void)
+		ScenePass::ScenePass(SceneProcedure* parnetProc, const ScenePassData* passData)
+			: m_parentProc(parnetProc), m_cameraID(passData->CameraID), m_name(passData->Name), m_selectorID(passData->SelectorID)
 		{
+			for (size_t i=0;i<passData->Instructions.size();i++)
+			{
+				m_instuctions.Add(passData->Instructions[i]);
+			}
 		}
 
 
 		ScenePass::~ScenePass(void)
 		{
+		}
+		
+		
+		void ScenePass::Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData)
+		{
+			m_currentCamera = cameras[m_cameraID];
+			if (m_currentCamera != m_parentProc->getLastCamera())
+			{
+				batchData->Clear();
+				sceMgr->PrepareVisibleObjects(m_currentCamera, batchData);
+			}
+
+			// execute scene pass render script
+			for (int i=0;i<m_instuctions.getCount();i++)
+			{
+
+			}
 		}
 	};
 };

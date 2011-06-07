@@ -28,29 +28,85 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Collections/FastList.h"
 
 using namespace Apoc3D::Collections;
+using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
+
+using namespace std;
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
+		
+
+		typedef FastList<RenderOperation> OperationList;
+		typedef FastList<RenderOperation> OperationList;
+		typedef FastList<RenderOperation> OperationList;
+		typedef FastList<RenderOperation> OperationList;
+		typedef FastList<RenderOperation> OperationList;
+		class GeometryTable;
+		class MaterialTable;
+		class PriorityTable;
+		class MaterialList;
+
+		//template class APAPI unordered_map<BatchHandle, OperationList*>;
+		//template class APAPI unordered_map<BatchHandle, GeometryTable*>;
+		//template class APAPI unordered_map<uint32, MaterialTable*>;
+		//template class APAPI unordered_map<BatchHandle, Material*>;
+
+		class GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
+		class MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
+		class PriorityTable : public unordered_map<uint32, MaterialTable*> { };
+
+		class MaterialList : public unordered_map<BatchHandle, Material*> { };
+
+		class APAPI BatchData
+		{
+		public:
+			static const int MaxPriority = 10;
+
+		private:
+			PriorityTable m_priTable;
+			MaterialList m_mtrlList;			
+
+			int m_objectCount;
+
+		public:
+			BatchData() { }
+
+			int getObjectCount() const { return m_objectCount; }
+
+			void AddVisisbleObject(SceneObject* obj, int level);
+
+			void Clear();
+		};
+
 		/* Renders a scene with a particular render script.
 		*/
 		class APAPI SceneRenderer
 		{
 		private:
 			RenderDevice* m_renderDevice;
-			FastList<ScenePass*> m_passes;
+			//FastList<ScenePass*> m_passes;
 			BatchData m_batchData;
+
+			FastList<SceneProcedure*> m_procFallbacks;
+			int m_selectedProc;
+
+			FastList<Camera*> m_cameraList;
 
 		public:
 			SceneRenderer(RenderDevice* dev);
 			~SceneRenderer(void);
 
-			void Load(const ResourceLocation* rl);
+			void Load(const String& configName);
 
 			void RenderScene(SceneManager* sceMgr);
+
+			/** Renders the current batch produced by scene pass
+			*/
+			void RenderBatch();
 		};
 	};
 };

@@ -106,6 +106,8 @@ namespace Apoc3D
 		struct ScenePassData
 		{
 			int32 SelectorID;
+			String Name;
+			int32 CameraID;
 			std::vector<SceneInstruction> Instructions;
 		};
 	}

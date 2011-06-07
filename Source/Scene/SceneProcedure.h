@@ -46,6 +46,8 @@ namespace Apoc3D
 
 		   A SceneProcedure can be either normal passes (like shadow
 		   mapping) or post effect passes (like bloom & HDR).
+
+		   This class also manages resources and vars used in rendering.
 		*/
 		class APAPI SceneProcedure
 		{
@@ -53,14 +55,27 @@ namespace Apoc3D
 			RenderDevice* m_renderDevice;
 
 			FastList<ScenePass*> m_passes;
+			SceneVariable** m_vars;
+			int m_varCount;
 
+			FastList<RenderTarget*> m_createdRenderTarget;
+			FastList<ResourceHandle<Texture>*> m_createdTextures;
+
+			bool m_isAvailable;
+
+
+			const Camera* m_lastCamera;
 		public:
+			const Camera* getLastCamera() const { return m_lastCamera; }
+
 			SceneProcedure(RenderDevice* device);
 			~SceneProcedure(void);
 
-			void Load(const ScenePassData* data);
+			bool IsAvailable();
 
-			void Invoke();
+			void Load(const ResourceLocation* rl);
+
+			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
 		};
 	};
 };

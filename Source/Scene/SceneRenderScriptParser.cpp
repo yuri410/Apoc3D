@@ -677,6 +677,7 @@ namespace Apoc3D
 				const TiXmlElement* e1 = node->FirstChildElement("Width");
 				const TiXmlElement* e2 = node->FirstChildElement("Height");
 
+				var->DefaultValue[0] = var->DefaultValue[1] = 0;
 				if (e1 && e2)
 				{
 					var->DefaultValue[0] = StringUtils::ParseInt32(toString(e1->GetText()));
@@ -723,7 +724,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					DepthFormat fmt = m_renderDevice->GetRenderTarget(0)->getDepthFormat();
+					DepthFormat fmt = DEPFMT_Count;// m_renderDevice->GetRenderTarget(0)->getDepthFormat();
 					var->DefaultValue[5] = reinterpret_cast<const uint&>(fmt);
 				}
 
@@ -1108,8 +1109,9 @@ namespace Apoc3D
 		{
 			String stat = toString(node->Attribute("S"));
 			StringUtils::Trim(stat);
-			
-			if (StringUtils::StartsWidth(stat, L"clear", true))
+			StringUtils::ToLowerCase(stat);
+
+			if (stat ==  L"clear")
 			{
 				SceneInstruction inst;
 				inst.Operation = SOP_Clear;
@@ -1150,7 +1152,7 @@ namespace Apoc3D
 						L"Clear command don't actually clear any thing. Ignored", LOGLVL_Warning);
 				}
 			}
-			else if (StringUtils::StartsWidth(stat, L"usert", true))
+			else if (stat ==  L"usert")
 			{
 				SceneInstruction inst;
 				inst.Operation = SOP_UseRT;
@@ -1164,7 +1166,7 @@ namespace Apoc3D
 
 				instructions.push_back(inst);
 			}
-			else if (StringUtils::StartsWidth(stat, L"visibleto", true))
+			else if (stat == L"visibleto")
 			{
 				SceneInstruction inst;
 				inst.Operation = SOP_VisibleTo;
@@ -1178,7 +1180,7 @@ namespace Apoc3D
 				inst.Args.push_back(arg);
 				instructions.push_back(inst);
 			}
-			else if (StringUtils::StartsWidth(stat, L"render", true))
+			else if (stat == L"render")
 			{
 				SceneInstruction inst;
 				inst.Operation = SOP_Render;
@@ -1252,6 +1254,10 @@ namespace Apoc3D
 		{
 			ScenePassData passData;
 			node->Attribute("SelectorID", &passData.SelectorID);
+			string strName = node->Attribute("Name");
+			passData.Name = toString(strName);
+
+			node->Attribute("CameraID", &passData.CameraID);
 
 			BuildInstructions(node, &passData);
 		}

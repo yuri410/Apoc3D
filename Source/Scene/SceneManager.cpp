@@ -37,49 +37,7 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		void BatchData::AddVisisbleObject(SceneObject* obj, int level)
-		{
-			m_objectCount++;
-			const RenderOperationBuffer* buffer = obj->GetRenderOperation(level);
-
-			if (buffer)
-			{
-				for (int k=0;k<buffer->getCount();k++)
-				{
-					RenderOperation op = buffer->get(k);
-
-					Material* mtrl = op.Material;
-					GeometryData* geoData = op.GeometryData;
-
-					if (mtrl)
-					{
-						BatchHandle mtrlHandle = mtrl->getBatchHandle();
-						m_mtrlList[mtrlHandle] = mtrl;
-						m_priTable[mtrl->getPriority()]->
-							operator[](mtrlHandle)->
-							operator[](geoData->getBatchHandle())->Add(op);
-
-					}
-				}
-			}
-		}
-		void BatchData::Clear()
-		{
-			for (PriorityTable::iterator i = m_priTable.begin();i!=m_priTable.end();++i)
-			{
-				MaterialTable* mtrlTbl = i->second;
-				for (MaterialTable::iterator j = mtrlTbl->begin(); j!=mtrlTbl->end();j++)
-				{
-					GeometryTable* geoTbl = j->second;
-					
-					for (GeometryTable::iterator k = geoTbl->begin(); k != geoTbl->end(); k++)
-					{
-						k->second->FastClear();
-					}
-				}
-			}
-		}
-
+		
 
 
 		SceneManager::SceneManager(void)
