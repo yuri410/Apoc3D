@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Collections/FastList.h"
+#include "Collections/FastMap.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics;
@@ -36,30 +37,38 @@ using namespace std;
 
 namespace Apoc3D
 {
+	namespace Collections
+	{
+		typedef Material* LPMaterial;
+		class MaterialEqualityComparer : public IEqualityComparer<LPMaterial>
+		{
+		public:
+			virtual bool Equals(const LPMaterial& x, const LPMaterial& y) const;
+
+			virtual int64 GetHashCode(const LPMaterial& obj) const;
+		};
+
+		typedef GeometryData* LPGeometryData;
+		class GeometryDataEqualityComparer : public IEqualityComparer<LPGeometryData>
+		{
+		public:
+			virtual bool Equals(const LPGeometryData& x, const LPGeometryData& y) const;
+
+			virtual int64 GetHashCode(const LPGeometryData& obj) const;
+		};
+	}
 	namespace Scene
 	{
-		
-
-		typedef FastList<RenderOperation> OperationList;
-		typedef FastList<RenderOperation> OperationList;
-		typedef FastList<RenderOperation> OperationList;
-		typedef FastList<RenderOperation> OperationList;
 		typedef FastList<RenderOperation> OperationList;
 		class GeometryTable;
 		class MaterialTable;
 		class PriorityTable;
-		class MaterialList;
+		class MaterialList;;
 
-		//template class APAPI unordered_map<BatchHandle, OperationList*>;
-		//template class APAPI unordered_map<BatchHandle, GeometryTable*>;
-		//template class APAPI unordered_map<uint32, MaterialTable*>;
-		//template class APAPI unordered_map<BatchHandle, Material*>;
+		typedef FastMap<GeometryData*, OperationList*> GeometryTable;
+		typedef FastMap<Material*, GeometryTable*> MaterialTable;
+		typedef FastMap<uint32, MaterialTable*> PriorityTable;
 
-		class GeometryTable : public unordered_map<BatchHandle, OperationList*> { };
-		class MaterialTable : public unordered_map<BatchHandle, GeometryTable*> { };
-		class PriorityTable : public unordered_map<uint32, MaterialTable*> { };
-
-		class MaterialList : public unordered_map<BatchHandle, Material*> { };
 
 		class APAPI BatchData
 		{
@@ -68,7 +77,7 @@ namespace Apoc3D
 
 		private:
 			PriorityTable m_priTable;
-			MaterialList m_mtrlList;			
+			//MaterialList m_mtrlList;			
 
 			int m_objectCount;
 
@@ -78,6 +87,8 @@ namespace Apoc3D
 			int getObjectCount() const { return m_objectCount; }
 
 			void AddVisisbleObject(SceneObject* obj, int level);
+
+			bool HasObject(uint64 selectMask);
 
 			void Clear();
 		};
@@ -106,7 +117,7 @@ namespace Apoc3D
 
 			/** Renders the current batch produced by scene pass
 			*/
-			void RenderBatch();
+			void RenderBatch(uint64 selectionMask);
 		};
 	};
 };

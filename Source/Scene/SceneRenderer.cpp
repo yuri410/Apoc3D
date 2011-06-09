@@ -24,14 +24,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "SceneRenderer.h"
 
-#include "Config\ConfigurationManager.h"
-#include "Config\ConfigurationSection.h"
+#include "Config/ConfigurationManager.h"
+#include "Config/ConfigurationSection.h"
 
-#include "Graphics\RenderOperationBuffer.h"
-#include "Graphics\RenderOperation.h"
-#include "Graphics\Material.h"
-#include "Graphics\GeometryData.h"
-#include "Core\GameTime.h"
+#include "Graphics/RenderOperationBuffer.h"
+#include "Graphics/RenderOperation.h"
+#include "Graphics/Material.h"
+#include "Graphics/GeometryData.h"
+#include "Core/GameTime.h"
 
 #include "Vfs/FileSystem.h"
 #include "Vfs/FileLocateRule.h"
@@ -65,11 +65,9 @@ namespace Apoc3D
 
 					if (mtrl)
 					{
-						BatchHandle mtrlHandle = mtrl->getBatchHandle();
-						m_mtrlList[mtrlHandle] = mtrl;
 						m_priTable[mtrl->getPriority()]->
-							operator[](mtrlHandle)->
-							operator[](geoData->getBatchHandle())->Add(op);
+							operator[](mtrl)->
+							operator[](geoData)->Add(op);
 
 					}
 				}
@@ -77,19 +75,37 @@ namespace Apoc3D
 		}
 		void BatchData::Clear()
 		{
-			for (PriorityTable::iterator i = m_priTable.begin();i!=m_priTable.end();++i)
+			
+			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
 			{
-				MaterialTable* mtrlTbl = i->second;
-				for (MaterialTable::iterator j = mtrlTbl->begin(); j!=mtrlTbl->end();j++)
+				MaterialTable* mtrlTbl = *i.getCurrentValue();
+				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
 				{
-					GeometryTable* geoTbl = j->second;
+					GeometryTable* geoTbl = *(j.getCurrentValue());
 
-					for (GeometryTable::iterator k = geoTbl->begin(); k != geoTbl->end(); k++)
+					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext())
 					{
-						k->second->FastClear();
+						(*(k.getCurrentValue()))->FastClear();
 					}
 				}
 			}
+		}
+		bool BatchData::HasObject(uint64 selectMask)
+		{
+			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
+			{
+				MaterialTable* mtrlTbl = *i.getCurrentValue();
+				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
+				{
+					Material* m = *(j.getCurrentKey());
+
+					if (m->getBatchHandle() & selectMask)
+					{
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		/************************************************************************/
@@ -146,9 +162,40 @@ namespace Apoc3D
 			}
 		}
 
-		void SceneRenderer::RenderBatch()
+		void SceneRenderer::RenderBatch(uint64 selectionMask)
 		{
 
 		}
 	};
+
+	namespace Collections
+	{
+		const IEqualityComparer<LPMaterial>* IEqualityComparer<LPMaterial>::Default = new MaterialEqualityComparer();
+
+		bool MaterialEqualityComparer::Equals(const LPMaterial& x, const LPMaterial& y) const
+		{
+			const void* a = x;
+			const void* b = y;
+			return a==b;
+		}
+		int64 MaterialEqualityComparer::GetHashCode(const LPMaterial& obj) const
+		{
+			return obj->getBatchHandle();
+		}
+
+
+
+		const IEqualityComparer<LPGeometryData>* IEqualityComparer<LPGeometryData>::Default = new GeometryDataEqualityComparer();
+
+		bool GeometryDataEqualityComparer::Equals(const LPGeometryData& x, const LPGeometryData& y) const
+		{
+			const void* a = x;
+			const void* b = y;
+			return a==b;
+		}
+		int64 GeometryDataEqualityComparer::GetHashCode(const LPGeometryData& obj) const
+		{
+			return obj->getBatchHandle();
+		}
+	}
 };

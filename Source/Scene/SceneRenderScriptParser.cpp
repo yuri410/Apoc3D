@@ -1159,8 +1159,8 @@ namespace Apoc3D
 				ParseCallArgUint(node, "Index", arg, GlobalVars, 0);
 				inst.Args.push_back(arg);
 
-				ParseCallArgRef(node, "RT", arg, GlobalVars);
-				inst.Args.push_back(arg);
+				if (ParseCallArgRef(node, "RT", arg, GlobalVars))
+					inst.Args.push_back(arg);
 
 				instructions.push_back(inst);
 			}

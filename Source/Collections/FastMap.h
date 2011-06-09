@@ -34,6 +34,41 @@ namespace Apoc3D
 		template<typename T, typename S>
 		class APAPI FastMap
 		{
+		public:
+			class Enumerator
+			{
+			private:
+				const FastMap<T, S>* m_dict;
+				int m_index;
+				T* m_current;
+				S* m_currentVal;
+			public:
+				T* getCurrentKey() const { return m_current; }
+				S* getCurrentValue() const { return m_currentVal; }
+
+				Enumerator(const FastMap<T, S>* dict)
+					: m_dict(dict), m_index(0), m_current(0), m_currentVal(0)
+				{
+				}
+
+				bool MoveNext()
+				{
+					while (m_index<m_dict->m_count)
+					{
+						if (m_dict->m_entries[m_index].hashCode>=0)
+						{
+							m_current = &m_dict->m_entries[m_index].data;
+							m_currentVal = &m_dict->m_entries[m_index].value;
+							m_index++;
+							return true;
+						}
+						m_index++;
+					}
+					m_index = m_dict->m_count + 1;
+					m_current = m_currentVal = 0;
+					return false;
+				}
+			};
 		private:
 			class HashHelpers
 			{
@@ -248,6 +283,11 @@ namespace Apoc3D
 			inline S& operator [](const T& key) const;
 
 			bool TryGetValue(const T& key, S& value) const;
+
+			Enumerator GetEnumerator() const
+			{
+				return Enumerator(this);
+			}
 		};
 	}
 }

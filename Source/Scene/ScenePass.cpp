@@ -27,12 +27,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneRenderer.h"
 #include "SceneManager.h"
 
+#include "Graphics/RenderSystem/RenderDevice.h"
+#include "Math/Math.h"
+
+using namespace Apoc3D::Math;
+
 namespace Apoc3D
 {
 	namespace Scene
 	{
-		ScenePass::ScenePass(SceneProcedure* parnetProc, const ScenePassData* passData)
-			: m_parentProc(parnetProc), m_cameraID(passData->CameraID), m_name(passData->Name), m_selectorID(passData->SelectorID)
+		ScenePass::ScenePass(RenderDevice* device, SceneRenderer* renderer, SceneProcedure* parnetProc, const ScenePassData* passData)
+			: m_parentProc(parnetProc), m_cameraID(passData->CameraID), m_name(passData->Name), m_selectorID(passData->SelectorID),
+			m_renderDevice(device), m_renderer(renderer)
 		{
 			for (size_t i=0;i<passData->Instructions.size();i++)
 			{
@@ -58,7 +64,110 @@ namespace Apoc3D
 			// execute scene pass render script
 			for (int i=0;i<m_instuctions.getCount();i++)
 			{
+				const SceneInstruction& inst = m_instuctions[i];
+				switch (inst.Operation)
+				{
+				case SOP_And:
+					break;
+				case SOP_Or:
+					break;
+				case SOP_Not:
+					break;
+				case SOP_Clear:
+					{
+						ClearFlags flags;
 
+						if (inst.Args[0].IsImmediate)
+						{
+							flags = reinterpret_cast<const ClearFlags&>(inst.Args[0].DefaultValue[0]);
+						}
+						else
+						{
+							flags = reinterpret_cast<const ClearFlags&>(inst.Args[0].Var->DefaultValue[0]);
+						}
+
+						float depth;
+						if (inst.Args[1].IsImmediate)
+						{
+							depth = reinterpret_cast<const float&>(inst.Args[1].DefaultValue[0]);
+						}
+						else
+						{
+							depth = reinterpret_cast<const float&>(inst.Args[1].Var->DefaultValue[0]);
+						}
+
+						int stencil;
+						if (inst.Args[2].IsImmediate)
+						{
+							stencil = reinterpret_cast<const int&>(inst.Args[2].DefaultValue[0]);
+						}
+						else
+						{
+							stencil = reinterpret_cast<const int&>(inst.Args[2].Var->DefaultValue[0]);
+						}
+
+						ColorValue color;
+						if (inst.Args[3].IsImmediate)
+						{
+							color = reinterpret_cast<const ColorValue&>(inst.Args[3].DefaultValue[0]);
+						}
+						else
+						{
+							color = reinterpret_cast<const ColorValue&>(inst.Args[3].Var->DefaultValue[0]);
+						}
+						m_renderDevice->Clear(flags, color, depth, stencil);
+					}
+					break;
+				case SOP_Render:
+					{
+						m_renderer->RenderBatch();
+					}
+					break;
+				case SOP_VisibleTo:
+					{
+						bool result;
+						int selectorID;
+						if (inst.Args[0].IsImmediate)
+						{
+							selectorID = reinterpret_cast<const int&>(inst.Args[0].DefaultValue[0]);
+						}
+						else
+						{
+							selectorID = reinterpret_cast<const int&>(inst.Args[0].Var->DefaultValue[0]);
+						}
+						uint64 selectMask = 1 << m_selectorID;
+						
+					}
+					break;
+				case SOP_UseRT:
+					{
+						int index;
+						if (inst.Args[0].IsImmediate)
+						{
+							index = reinterpret_cast<const int&>(inst.Args[0].DefaultValue[0]);
+						}
+						else
+						{
+							index = reinterpret_cast<const int&>(inst.Args[0].Var->DefaultValue[0]);
+						}
+
+						
+						if (inst.Args.size() > 1)
+						{
+							m_renderDevice->SetRenderTarget(
+								index,
+								inst.Args[1].Var->RTValue);
+						}
+						else
+						{
+							
+							m_renderDevice->SetRenderTarget(
+								index,
+								0);
+						}
+					}
+					break;
+				}
 			}
 		}
 	};

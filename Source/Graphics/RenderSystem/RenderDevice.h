@@ -90,6 +90,8 @@ namespace Apoc3D
 					m_vertexCount = 0;
 				}
 
+				virtual RenderTarget* getDefaultRenderTarget();
+
 				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil) = 0;
 
 				virtual void SetRenderTarget(int index, RenderTarget* rt) = 0;

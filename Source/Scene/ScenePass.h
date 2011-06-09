@@ -54,6 +54,8 @@ namespace Apoc3D
 
 			};
 		private:
+			RenderDevice* m_renderDevice;
+			SceneRenderer* m_renderer;
 			SceneProcedure* m_parentProc;
 			int32 m_selectorID;
 			String m_name;
@@ -74,7 +76,7 @@ namespace Apoc3D
 			*/
 			String getName() const { return m_name; }
 
-			ScenePass(SceneProcedure* parent, const ScenePassData* passData);
+			ScenePass(RenderDevice* dev, SceneRenderer* renderer, SceneProcedure* parent, const ScenePassData* passData);
 			~ScenePass(void);
 
 			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
