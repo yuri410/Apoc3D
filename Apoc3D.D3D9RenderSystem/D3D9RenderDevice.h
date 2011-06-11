@@ -43,9 +43,10 @@ namespace Apoc3D
 			private:
 				GraphicsDeviceManager* m_devManager;
 				D3D9RenderStateManager* m_stateManager;
+				NativeD3DStateManager* m_nativeState;
 
 				D3D9RenderTarget** m_cachedRenderTarget;
-
+				
 				IDirect3DSurface9* m_defaultRT;
 				IDirect3DSurface9* m_defaultDS;
 
@@ -96,7 +97,7 @@ namespace Apoc3D
 				virtual void BindVertexShader(VertexShader* shader);
 				virtual void BindPixelShader(PixelShader* shader);
 
-				virtual void Render(const RenderOperation* op, int count);
+				virtual void Render(Material* mtrl, const RenderOperation* op, int count, int passSelID);
 
 				virtual Viewport getViewport();
 				virtual void setViewport(const Viewport& vp);

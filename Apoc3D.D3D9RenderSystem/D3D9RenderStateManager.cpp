@@ -33,6 +33,266 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+
+			NativeD3DStateManager::NativeD3DStateManager(D3D9RenderDevice* device)
+				: m_device(device)
+			{
+				InitializeDefaultState();
+			}
+			NativeD3DStateManager::~NativeD3DStateManager()
+			{
+
+			}
+
+			void NativeD3DStateManager::SetCullMode(CullMode mode)
+			{
+				m_cachedCullMode = mode;
+
+				D3DCULL cull = D3D9Utils::ConvertCullMode(mode);
+				HRESULT hr = m_device->getDevice()->SetRenderState(D3DRS_CULLMODE, cull);
+				assert(SUCCEEDED(hr));
+			}
+			void NativeD3DStateManager::SetFillMode(FillMode mode)
+			{
+				m_cachedFillMode = mode;
+
+				D3DFILLMODE fill = D3D9Utils::ConvertFillMode(mode);
+				HRESULT hr = m_device->getDevice()->SetRenderState(D3DRS_FILLMODE, fill);
+				assert(SUCCEEDED(hr));
+			}
+			void NativeD3DStateManager::SetAlphaTestParameters(bool enable, uint32 reference)
+			{
+				m_cachedAlphaTestEnable = enable;
+				m_cachedAlphaReference = reference;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->SetRenderState(D3DRS_ALPHATESTENABLE, enable ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_ALPHAREF, reference);
+				assert(SUCCEEDED(hr));
+			}
+			void NativeD3DStateManager::SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference)
+			{
+				m_cachedAlphaTestEnable = enable;
+				m_cachedAlphaReference = reference;
+				m_cachedAlphaTestFunction = func;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->SetRenderState(D3DRS_ALPHATESTENABLE, enable ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_ALPHAREF, reference);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_ALPHAFUNC, D3D9Utils::ConvertCompare(func));
+				assert(SUCCEEDED(hr));
+
+			}
+			void NativeD3DStateManager::SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend)
+			{
+				m_cachedAlphaBlendEnable = enable;
+				m_cachedAlphaBlendFunction = func;
+				m_cachedAlphaSourceBlend = srcBlend;
+				m_cachedAlphaDestBlend = dstBlend;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->SetRenderState(D3DRS_ALPHABLENDENABLE, enable ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_BLENDOP, D3D9Utils::ConvertBlendFunction(func));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_SRCBLEND, D3D9Utils::ConvertBlend(srcBlend));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_DESTBLEND, D3D9Utils::ConvertBlend(dstBlend));
+				assert(SUCCEEDED(hr));
+			}
+			void NativeD3DStateManager::SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor)
+			{
+				m_cachedAlphaBlendEnable = enable;
+				m_cachedAlphaBlendFunction = func;
+				m_cachedAlphaSourceBlend = srcBlend;
+				m_cachedAlphaDestBlend = dstBlend;
+				m_cachedAlphaBlendFactor = factor;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->SetRenderState(D3DRS_ALPHABLENDENABLE, enable ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_BLENDOP, D3D9Utils::ConvertBlendFunction(func));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_SRCBLEND, D3D9Utils::ConvertBlend(srcBlend));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_DESTBLEND, D3D9Utils::ConvertBlend(dstBlend));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_BLENDFACTOR, factor);
+				assert(SUCCEEDED(hr));
+			}
+
+			void NativeD3DStateManager::setAlphaBlendEnable(bool enable)
+			{
+				m_cachedAlphaBlendEnable = enable;
+				HRESULT hr = m_device->getDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, enable ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+			}
+			void NativeD3DStateManager::setAlphaBlendOperation(BlendFunction func)
+			{
+				m_cachedAlphaBlendFunction = func;
+				HRESULT hr = m_device->getDevice()->SetRenderState(D3DRS_BLENDOP, D3D9Utils::ConvertBlendFunction(func));
+				assert(SUCCEEDED(hr));
+			}
+			void NativeD3DStateManager::setAlphaSourceBlend(Blend srcBlend)
+			{
+				m_cachedAlphaSourceBlend = srcBlend;
+				HRESULT hr = m_device->getDevice()->SetRenderState(D3DRS_SRCBLEND, D3D9Utils::ConvertBlend(srcBlend));
+				assert(SUCCEEDED(hr));
+			}
+			void NativeD3DStateManager::setAlphaDestinationBlend(Blend dstBlend)
+			{
+				m_cachedAlphaDestBlend = dstBlend;
+				HRESULT hr = m_device->getDevice()->SetRenderState(D3DRS_DESTBLEND, D3D9Utils::ConvertBlend(dstBlend));
+				assert(SUCCEEDED(hr));
+			}
+
+			void NativeD3DStateManager::SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend)
+			{
+				m_cachedSepAlphaBlendEnable = enable;
+				m_cachedSepAlphaBlendFunction = func;
+				m_cachedSepAlphaSourceBlend = srcBlend;
+				m_cachedSepAlphaDestBlend = dstBlend;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, enable ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_BLENDOPALPHA, D3D9Utils::ConvertBlendFunction(func));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_SRCBLENDALPHA, D3D9Utils::ConvertBlend(srcBlend));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_DESTBLENDALPHA, D3D9Utils::ConvertBlend(dstBlend));
+				assert(SUCCEEDED(hr));
+				//dev->SetRenderState(D3DRS_BLENDFACTOR, factor);
+
+			}
+
+			void NativeD3DStateManager::SetDepth(bool enable, bool writeEnable)
+			{
+				m_cachedDepthBufferEnabled = enable;
+				m_cachedDepthBufferWriteEnabled = writeEnable;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->SetRenderState(D3DRS_ZENABLE, enable ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_ZWRITEENABLE, writeEnable ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+			}
+			void NativeD3DStateManager::SetDepth(bool enable, bool writeEnable, float bias, float slopebias, CompareFunction compare)
+			{
+				m_cachedDepthBufferEnabled = enable;
+				m_cachedDepthBufferWriteEnabled = writeEnable;
+				m_cachedDepthBias = bias;
+				m_cachedSlopeScaleDepthBias = slopebias;
+				m_cachedDepthBufferFunction = compare;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->SetRenderState(D3DRS_ZENABLE, enable ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_ZWRITEENABLE, writeEnable ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_DEPTHBIAS, *(DWORD*)&bias);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, *(DWORD*)&slopebias);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_ZFUNC, D3D9Utils::ConvertCompare(compare));
+				assert(SUCCEEDED(hr));
+			}
+			void NativeD3DStateManager::SetPointParameters(float size, float maxSize, float minSize, bool pointSprite)
+			{
+				m_cachedPointSize = size;
+				m_cachedPointSizeMax = maxSize;
+				m_cachedPointSizeMin = minSize;
+				m_cachedPointSpriteEnabled = pointSprite;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->SetRenderState(D3DRS_POINTSIZE, *((DWORD*)&size));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_POINTSIZE_MAX, *((DWORD*)&maxSize));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_POINTSIZE_MIN, *((DWORD*)&minSize));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_POINTSPRITEENABLE, pointSprite ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+			}
+			void NativeD3DStateManager::SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, 
+				uint32 ref, CompareFunction func, uint32 mask, uint32 writemask)
+			{
+				m_cachedStencilEnabled = enabled;
+				m_cachedStencilFail = fail;
+				m_cachedStencilDepthFail = depthFail;
+				m_cachedStencilPass = pass;
+				m_cachedRefrenceStencil = ref;
+				m_cachedStencilFunction = func;
+				m_cachedStencilMask = mask;
+				m_cachedStencilWriteMask = writemask;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->SetRenderState(D3DRS_STENCILENABLE, enabled ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_STENCILFAIL, D3D9Utils::ConvertStencilOperation(fail));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_STENCILZFAIL, D3D9Utils::ConvertStencilOperation(depthFail));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_STENCILPASS, D3D9Utils::ConvertStencilOperation(pass));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_STENCILREF, ref);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_STENCILFUNC, D3D9Utils::ConvertCompare(func));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_STENCILMASK, mask);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_STENCILWRITEMASK, writemask);
+				assert(SUCCEEDED(hr));
+
+			}
+			void NativeD3DStateManager::SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func)
+			{
+				m_cachedTwoSidedStencilMode = enabled;
+				m_cachedCounterClockwiseStencilFail = fail;
+				m_cachedCounterClockwiseStencilDepthBufferFail = depthFail;
+				m_cachedCounterClockwiseStencilPass = pass;
+				m_cachedCounterClockwiseStencilFunction = func;
+
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->SetRenderState(D3DRS_TWOSIDEDSTENCILMODE, enabled ? TRUE : FALSE);
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_CCW_STENCILFAIL, D3D9Utils::ConvertStencilOperation(fail));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_CCW_STENCILZFAIL, D3D9Utils::ConvertStencilOperation(depthFail));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_CCW_STENCILPASS, D3D9Utils::ConvertStencilOperation(pass));
+				assert(SUCCEEDED(hr));
+				hr = dev->SetRenderState(D3DRS_CCW_STENCILFUNC, D3D9Utils::ConvertCompare(func));
+				assert(SUCCEEDED(hr));
+
+			}
+
+
+			void NativeD3DStateManager::InitializeDefaultState()
+			{
+				D3DDevice* dev = m_device->getDevice();
+
+				DWORD zEnabled;
+				dev->GetRenderState(D3DRS_ZENABLE, &zEnabled);
+
+				SetAlphaTestParameters(false, COMFUN_Always, 0);
+				SetAlphaBlend(false, BLFUN_Add, BLEND_One, BLEND_Zero, 0xffffffff);
+				SetSeparateAlphaBlend(false, BLFUN_Add, BLEND_One, BLEND_Zero);
+				SetDepth(zEnabled == TRUE, zEnabled == TRUE, 0, 0, COMFUN_LessEqual);
+
+				float psize;
+				dev->GetRenderState(D3DRS_POINTSIZE, reinterpret_cast<DWORD*>(&psize));
+				SetPointParameters(psize, 1, 64, false);
+
+				SetStencil(false, STOP_Keep, STOP_Keep, STOP_Keep, 0, COMFUN_Always, 0xFFFFFFFF, 0xFFFFFFFF);
+				SetStencilTwoSide(false, STOP_Keep, STOP_Keep, STOP_Keep, COMFUN_Always);
+			}
+
+
+
 			D3D9ClipPlane::D3D9ClipPlane(D3D9RenderDevice* device, D3D9RenderStateManager* mgr, int index)
 				: m_manager(mgr), m_device(device), m_index(index)
 			{
@@ -73,165 +333,19 @@ namespace Apoc3D
 			}
 
 			
-			D3D9RenderStateManager::D3D9RenderStateManager(D3D9RenderDevice* device)
-				: RenderStateManager(device), m_device(device), clipPlaneEnable(0)
+			D3D9RenderStateManager::D3D9RenderStateManager(D3D9RenderDevice* device, NativeD3DStateManager* nsmgr)
+				: RenderStateManager(device), m_device(device), clipPlaneEnable(0), m_stMgr(nsmgr)
 			{
 				for (int i=0;i<32;i++)
 				{
 					m_clipPlanes[i] = D3D9ClipPlane(device, this, i);
 				}
-				InitializeDefaultState();
 			}
 			D3D9RenderStateManager::~D3D9RenderStateManager()
 			{
 
 			}
 
-			void D3D9RenderStateManager::InitializeDefaultState()
-			{
-				D3DDevice* dev = m_device->getDevice();
-				
-				DWORD zEnabled;
-				dev->GetRenderState(D3DRS_ZENABLE, &zEnabled);
-
-				SetAlphaTestParameters(false, COMFUN_Always, 0);
-				SetAlphaBlend(false, BLFUN_Add, BLEND_One, BLEND_Zero, 0xffffffff);
-				SetSeparateAlphaBlend(false, BLFUN_Add, BLEND_One, BLEND_Zero);
-				SetDepth(zEnabled == TRUE, zEnabled == TRUE, 0, 0, COMFUN_LessEqual);
-
-				float psize;
-				dev->GetRenderState(D3DRS_POINTSIZE, reinterpret_cast<DWORD*>(&psize));
-				SetPointParameters(psize, 1, 64, false);
-
-				SetStencil(false, STOP_Keep, STOP_Keep, STOP_Keep, 0, COMFUN_Always, 0xFFFFFFFF, 0xFFFFFFFF);
-				SetStencilTwoSide(false, STOP_Keep, STOP_Keep, STOP_Keep, COMFUN_Always);
-			}
-
-			void D3D9RenderStateManager::SetCullMode(CullMode mode)
-			{
-				m_cachedCullMode = mode;
-
-				D3DCULL cull = D3D9Utils::ConvertCullMode(mode);
-				m_device->getDevice()->SetRenderState(D3DRS_CULLMODE, cull);
-			}
-			void D3D9RenderStateManager::SetFillMode(FillMode mode)
-			{
-				m_cachedFillMode = mode;
-
-				D3DFILLMODE fill = D3D9Utils::ConvertFillMode(mode);
-				m_device->getDevice()->SetRenderState(D3DRS_FILLMODE, fill);
-			}
-			void D3D9RenderStateManager::SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference)
-			{
-				m_cachedAlphaTestEnable = enable;
-				m_cachedAlphaReference = reference;
-				m_cachedAlphaTestFunction = func;
-
-				D3DDevice* dev = m_device->getDevice();
-				dev->SetRenderState(D3DRS_ALPHATESTENABLE, enable ? TRUE : FALSE);
-				dev->SetRenderState(D3DRS_ALPHAREF, reference);
-				dev->SetRenderState(D3DRS_ALPHAFUNC, D3D9Utils::ConvertCompare(func));
-
-			}
-			void D3D9RenderStateManager::SetAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend, uint32 factor)
-			{
-				m_cachedAlphaBlendEnable = enable;
-				m_cachedAlphaBlendFunction = func;
-				m_cachedAlphaSourceBlend = srcBlend;
-				m_cachedAlphaDestBlend = dstBlend;
-				m_cachedAlphaBlendFactor = factor;
-
-				D3DDevice* dev = m_device->getDevice();
-				dev->SetRenderState(D3DRS_ALPHABLENDENABLE, enable ? TRUE : FALSE);
-				dev->SetRenderState(D3DRS_BLENDOP, D3D9Utils::ConvertBlendFunction(func));
-				dev->SetRenderState(D3DRS_SRCBLEND, D3D9Utils::ConvertBlend(srcBlend));
-				dev->SetRenderState(D3DRS_SRCBLEND, D3D9Utils::ConvertBlend(dstBlend));
-				dev->SetRenderState(D3DRS_BLENDFACTOR, factor);
-			}
-			void D3D9RenderStateManager::SetSeparateAlphaBlend(bool enable, BlendFunction func, Blend srcBlend, Blend dstBlend)
-			{
-				m_cachedSepAlphaBlendEnable = enable;
-				m_cachedSepAlphaBlendFunction = func;
-				m_cachedSepAlphaSourceBlend = srcBlend;
-				m_cachedSepAlphaDestBlend = dstBlend;
-
-				D3DDevice* dev = m_device->getDevice();
-				dev->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, enable ? TRUE : FALSE);
-				dev->SetRenderState(D3DRS_BLENDOPALPHA, D3D9Utils::ConvertBlendFunction(func));
-				dev->SetRenderState(D3DRS_SRCBLENDALPHA, D3D9Utils::ConvertBlend(srcBlend));
-				dev->SetRenderState(D3DRS_SRCBLENDALPHA, D3D9Utils::ConvertBlend(dstBlend));
-				//dev->SetRenderState(D3DRS_BLENDFACTOR, factor);
-				
-			}
-			void D3D9RenderStateManager::SetDepth(bool enable, bool writeEnable, float bias, float slopebias, CompareFunction compare)
-			{
-				m_cachedDepthBufferEnabled = enable;
-				m_cachedDepthBufferWriteEnabled = writeEnable;
-				m_cachedDepthBias = bias;
-				m_cachedSlopeScaleDepthBias = slopebias;
-				m_cachedDepthBufferFunction = compare;
-
-				D3DDevice* dev = m_device->getDevice();
-				dev->SetRenderState(D3DRS_ZENABLE, enable ? TRUE : FALSE);
-				dev->SetRenderState(D3DRS_ZWRITEENABLE, writeEnable ? TRUE : FALSE);
-				dev->SetRenderState(D3DRS_DEPTHBIAS, *(DWORD*)&bias);
-				dev->SetRenderState(D3DRS_SLOPESCALEDEPTHBIAS, *(DWORD*)&slopebias);
-				dev->SetRenderState(D3DRS_ZFUNC, D3D9Utils::ConvertCompare(compare));
-			}
-			void D3D9RenderStateManager::SetPointParameters(float size, float maxSize, float minSize, bool pointSprite)
-			{
-				m_cachedPointSize = size;
-				m_cachedPointSizeMax = maxSize;
-				m_cachedPointSizeMin = minSize;
-				m_cachedPointSpriteEnabled = pointSprite;
-
-				D3DDevice* dev = m_device->getDevice();
-				dev->SetRenderState(D3DRS_POINTSIZE, *((DWORD*)&size));
-				dev->SetRenderState(D3DRS_POINTSIZE_MAX, *((DWORD*)&maxSize));
-				dev->SetRenderState(D3DRS_POINTSIZE_MIN, *((DWORD*)&minSize));
-				dev->SetRenderState(D3DRS_POINTSPRITEENABLE, pointSprite ? TRUE : FALSE);
-
-			}
-			void D3D9RenderStateManager::SetStencil(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, 
-				uint32 ref, CompareFunction func, uint32 mask, uint32 writemask)
-			{
-				m_cachedStencilEnabled = enabled;
-				m_cachedStencilFail = fail;
-				m_cachedStencilDepthFail = depthFail;
-				m_cachedStencilPass = pass;
-				m_cachedRefrenceStencil = ref;
-				m_cachedStencilFunction = func;
-				m_cachedStencilMask = mask;
-				m_cachedStencilWriteMask = writemask;
-
-				D3DDevice* dev = m_device->getDevice();
-				dev->SetRenderState(D3DRS_STENCILENABLE, enabled ? TRUE : FALSE);
-				dev->SetRenderState(D3DRS_STENCILFAIL, D3D9Utils::ConvertStencilOperation(fail));
-				dev->SetRenderState(D3DRS_STENCILZFAIL, D3D9Utils::ConvertStencilOperation(depthFail));
-				dev->SetRenderState(D3DRS_STENCILPASS, D3D9Utils::ConvertStencilOperation(pass));
-				dev->SetRenderState(D3DRS_STENCILREF, ref);
-				dev->SetRenderState(D3DRS_STENCILFUNC, D3D9Utils::ConvertCompare(func));
-				dev->SetRenderState(D3DRS_STENCILMASK, mask);
-				dev->SetRenderState(D3DRS_STENCILWRITEMASK, writemask);
-
-			}
-			void D3D9RenderStateManager::SetStencilTwoSide(bool enabled, StencilOperation fail, StencilOperation depthFail, StencilOperation pass, CompareFunction func)
-			{
-				m_cachedTwoSidedStencilMode = enabled;
-				m_cachedCounterClockwiseStencilFail = fail;
-				m_cachedCounterClockwiseStencilDepthBufferFail = depthFail;
-				m_cachedCounterClockwiseStencilPass = pass;
-				m_cachedCounterClockwiseStencilFunction = func;
-
-				D3DDevice* dev = m_device->getDevice();
-				dev->SetRenderState(D3DRS_TWOSIDEDSTENCILMODE, enabled ? TRUE : FALSE);
-				dev->SetRenderState(D3DRS_CCW_STENCILFAIL, D3D9Utils::ConvertStencilOperation(fail));
-				dev->SetRenderState(D3DRS_CCW_STENCILZFAIL, D3D9Utils::ConvertStencilOperation(depthFail));
-				dev->SetRenderState(D3DRS_CCW_STENCILPASS, D3D9Utils::ConvertStencilOperation(pass));
-				dev->SetRenderState(D3DRS_CCW_STENCILFUNC, D3D9Utils::ConvertCompare(func));
-			}
-
-				
 
 		}
 	}

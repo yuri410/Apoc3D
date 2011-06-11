@@ -572,7 +572,7 @@ namespace Apoc3D
 				return result;
 			}
 
-			DWORD D3D9Utils::ConvertPrimitiveType(PrimitiveType type)
+			D3DPRIMITIVETYPE D3D9Utils::ConvertPrimitiveType(PrimitiveType type)
 			{
 				return ptTable[static_cast<int>(type)];
 			}

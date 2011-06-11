@@ -41,7 +41,7 @@ namespace Apoc3D
 			class D3D9Utils
 			{
 			private:
-				static DWORD ptTable[PT_Count];
+				static D3DPRIMITIVETYPE ptTable[PT_Count];
 				static D3DDECLTYPE vefTable[VEF_Count];
 				static D3DDECLUSAGE veuTable[VEU_Count];
 				static D3DFILLMODE fillTable[FILL_Count];
@@ -146,7 +146,7 @@ namespace Apoc3D
 
 				static DWORD ConvertBufferUsage(BufferUsageFlags usage);
 
-				static DWORD ConvertPrimitiveType(PrimitiveType type);
+				static D3DPRIMITIVETYPE ConvertPrimitiveType(PrimitiveType type);
 
 				static D3DDECLUSAGE ConvertVertexElementUsage(VertexElementUsage usage);
 

@@ -80,6 +80,7 @@ namespace Apoc3D
 
 			class D3D9RenderDevice;
 			class D3D9RenderStateManager;
+			class NativeD3DStateManager;
 
 			class D3D9VertexBuffer;
 			class D3D9IndexBuffer;

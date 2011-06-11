@@ -35,8 +35,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Buffer/D3D9DepthBuffer.h"
 #include "Buffer/D3D9IndexBuffer.h"
 #include "Buffer/D3D9VertexBuffer.h"
+#include "D3D9VertexDeclaration.h"
 #include "VolatileResource.h"
 #include "Apoc3DException.h"
+
+#include "Graphics/Material.h"
+#include "Graphics/GeometryData.h"
+#include "Graphics/EffectSystem/Effect.h"
 
 namespace Apoc3D
 {
@@ -82,7 +87,8 @@ namespace Apoc3D
 
 			void D3D9RenderDevice::Initialize()
 			{
-				m_renderStates = new D3D9RenderStateManager(this);
+				m_nativeState = new NativeD3DStateManager(this);
+				m_renderStates = new D3D9RenderStateManager(this, m_nativeState);
 				m_objectFactory = new D3D9ObjectFactory(this);
 
 				D3DDevice* dev = getDevice();
@@ -181,9 +187,94 @@ namespace Apoc3D
 				}
 			}
 
-			void D3D9RenderDevice::Render(const RenderOperation* op, int count)
+			void D3D9RenderDevice::Render(Material* mtrl, const RenderOperation* op, int count, int passSelID)
 			{
+				if (!op)
+					return;
 
+				getDevice()->SetPixelShader(NULL);
+				getDevice()->SetVertexShader(NULL);
+
+				Effect* fx = mtrl->getPassEffect(passSelID);
+				if (!fx)
+				{
+					return;
+				}
+
+				if (m_nativeState->getAlphaBlendEnable() != mtrl->IsBlendTransparent)
+				{
+					m_nativeState->setAlphaBlendEnable(mtrl->IsBlendTransparent);
+				}
+				if (m_nativeState->getAlphaSourceBlend() != mtrl->SourceBlend)
+				{
+					m_nativeState->setAlphaSourceBlend(mtrl->SourceBlend);
+				}
+				if (m_nativeState->getAlphaDestinationBlend() != mtrl->DestinationBlend)
+				{
+					m_nativeState->setAlphaDestinationBlend(mtrl->DestinationBlend);
+				}
+				if (m_nativeState->getAlphaBlendOperation() != mtrl->BlendFunction)
+				{
+					m_nativeState->setAlphaBlendOperation(mtrl->BlendFunction);
+				}
+
+				if (m_nativeState->getCullMode() != mtrl->Cull)
+				{
+					m_nativeState->SetCullMode(mtrl->Cull);
+				}
+
+
+
+				if (m_nativeState->getAlphaTestEnable() != mtrl->AlphaTestEnabled ||
+					m_nativeState->getAlphaReference() != mtrl->AlphaReference)
+				{
+					m_nativeState->SetAlphaTestParameters(mtrl->AlphaTestEnabled, 
+						mtrl->AlphaReference);
+				}
+
+				if (m_nativeState->getDepthBufferEnabled() != mtrl->DepthTestEnabled ||
+					m_nativeState->getDepthBufferWriteEnabled() != mtrl->DepthWriteEnabled)
+				{
+					m_nativeState->SetDepth(mtrl->DepthTestEnabled,
+						mtrl->DepthWriteEnabled);
+				}
+
+				for (int j=0;j<count;j++)
+				{
+					const RenderOperation& rop = op[j];
+					const GeometryData* gm = rop.GeometryData;
+					if (!gm->VertexCount || !gm->PrimitiveCount)
+					{
+						continue;
+					}
+
+					m_batchCount++;
+					m_primitiveCount += gm->PrimitiveCount;
+					m_vertexCount += gm->VertexCount;
+
+					// setup effect
+
+					D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
+					getDevice()->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
+
+					getDevice()->SetVertexDeclaration(static_cast<D3D9VertexDeclaration*>(gm->VertexDecl)->getD3DDecl());
+
+					if (gm->usesIndex())
+					{
+						D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
+						getDevice()->SetIndices(dib->getD3DBuffer());
+
+						getDevice()->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
+							gm->BaseVertex, 0,
+							gm->VertexCount, 0, 
+							gm->PrimitiveCount);
+					}
+					else
+					{
+						getDevice()->DrawPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType),
+							0, gm->PrimitiveCount);
+					}
+				}
 			}
 
 			Viewport D3D9RenderDevice::getViewport()

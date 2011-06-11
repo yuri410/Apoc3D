@@ -123,7 +123,7 @@ namespace Apoc3D
 
 				if (!InitInstance (m_hInstance, m_className, m_wndTitle))
 				{
-					assert(TRUE);
+					assert(FALSE);
 				}
 			}
 
