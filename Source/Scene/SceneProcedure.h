@@ -73,7 +73,7 @@ namespace Apoc3D
 
 			bool IsAvailable();
 
-			void Load(const ResourceLocation* rl);
+			void Load(SceneRenderer* renderer, const ResourceLocation* rl);
 
 			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
 		};

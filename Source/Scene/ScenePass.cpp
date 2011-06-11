@@ -54,6 +54,7 @@ namespace Apoc3D
 		
 		void ScenePass::Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData)
 		{
+			//uint64 selectorMask = 1<<m_selectorID;
 			m_currentCamera = cameras[m_cameraID];
 			if (m_currentCamera != m_parentProc->getLastCamera())
 			{
@@ -120,7 +121,7 @@ namespace Apoc3D
 					break;
 				case SOP_Render:
 					{
-						m_renderer->RenderBatch();
+						m_renderer->RenderBatch(m_selectorID);
 					}
 					break;
 				case SOP_VisibleTo:
@@ -136,7 +137,8 @@ namespace Apoc3D
 							selectorID = reinterpret_cast<const int&>(inst.Args[0].Var->DefaultValue[0]);
 						}
 						uint64 selectMask = 1 << m_selectorID;
-						
+						result = batchData->HasObject(selectMask);
+						inst.Args[1].Var->DefaultValue[0] = result ? 1 : 0;
 					}
 					break;
 				case SOP_UseRT:

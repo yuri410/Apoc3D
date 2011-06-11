@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Config/ConfigurationManager.h"
 #include "Config/ConfigurationSection.h"
 
+#include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderOperationBuffer.h"
 #include "Graphics/RenderOperation.h"
 #include "Graphics/Material.h"
@@ -75,15 +76,15 @@ namespace Apoc3D
 		}
 		void BatchData::Clear()
 		{
-			
+			m_objectCount = 0;
 			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
 			{
 				MaterialTable* mtrlTbl = *i.getCurrentValue();
 				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
 				{
-					GeometryTable* geoTbl = *(j.getCurrentValue());
+					GeometryTable* geoTbl = *j.getCurrentValue();
 
-					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext())
+					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext(); )
 					{
 						(*(k.getCurrentValue()))->FastClear();
 					}
@@ -138,7 +139,7 @@ namespace Apoc3D
 				// load proc
 				FileLocation* fl = FileSystem::getSingleton().Locate(configName, FileLocateRule::Default);
 				SceneProcedure* proc = new SceneProcedure(m_renderDevice);
-				proc->Load(static_cast<ResourceLocation*>(fl));
+				proc->Load(this, static_cast<ResourceLocation*>(fl));
 				delete fl;
 
 				m_procFallbacks.Add(proc);
@@ -162,9 +163,33 @@ namespace Apoc3D
 			}
 		}
 
-		void SceneRenderer::RenderBatch(uint64 selectionMask)
+		void SceneRenderer::RenderBatch(int selectorID)
 		{
+			uint64 selectorMask = 1<<selectorID;
+			const PriorityTable& table = m_batchData.getTable();
 
+			for (PriorityTable::Enumerator i = table.GetEnumerator();i.MoveNext();)
+			{
+				MaterialTable* mtrlTbl = *i.getCurrentValue();
+				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
+				{
+					Material* mtrl = *j.getCurrentKey();
+
+					if (mtrl->getPassFlags() & selectorMask)
+					{
+						GeometryTable* geoTbl = *(j.getCurrentValue());
+
+						for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
+						{
+							const OperationList* opList = *k.getCurrentValue();
+							if (opList->getCount())
+							{
+								m_renderDevice->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
+							}
+						}
+					}
+				}
+			}
 		}
 	};
 

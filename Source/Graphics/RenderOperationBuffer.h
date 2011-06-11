@@ -86,7 +86,7 @@ namespace Apoc3D
 			{
 				return m_oplist[i];
 			}
-			const RenderOperation& operator[](int i) const
+			RenderOperation& operator[](int i)
 			{
 				return m_oplist[i];
 			}

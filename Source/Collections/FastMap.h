@@ -65,7 +65,8 @@ namespace Apoc3D
 						m_index++;
 					}
 					m_index = m_dict->m_count + 1;
-					m_current = m_currentVal = 0;
+					m_current = 0;
+					m_currentVal = 0;
 					return false;
 				}
 			};

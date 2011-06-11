@@ -25,16 +25,47 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define PATCH_H
 
 #include "Common.h"
+#include "Renderable.h"
+#include "RenderSystem/Buffer/HardwareBuffer.h"
+#include "RenderSystem/VertexElement.h"
+#include "Math/Matrix.h"
+
+using namespace Apoc3D::Math;
+using namespace Apoc3D::Collections;
+using namespace Apoc3D::Graphics::RenderSystem;
+
+using namespace std;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class APAPI Patch
+		class APAPI Patch : public Renderable
 		{
+		private:
+			VertexBuffer* m_vertexBuffer;
+			IndexBuffer* m_indexBuffer;
+			VertexDeclaration* m_vertexDecl;
+			
+			int m_vertexSize;
+			int m_vertexCount;
+			int m_primitiveCount;
+
+			Matrix m_transfrom;
+			Material* m_mtrl;
+			GeometryData* m_geoData;
+			RenderOperationBuffer* m_opBuffer;
+
 		public:
-			Patch();
+			void setMaterial(Material* mtrl)
+			{
+				m_mtrl = mtrl;
+			}
+			void setTransform(const Matrix& trans) { m_transfrom = trans; }
+			Patch(RenderDevice* device, const void* vertexData, int vertexCount, const FastList<VertexElement>& vtxElems);
 			~Patch();
+
+			virtual const RenderOperationBuffer* GetRenderOperation(int lod);
 		};
 	}
 }

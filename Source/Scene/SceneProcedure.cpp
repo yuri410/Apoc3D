@@ -75,7 +75,7 @@ namespace Apoc3D
 			return m_isAvailable;
 		}
 
-		void SceneProcedure::Load(const ResourceLocation* rl)
+		void SceneProcedure::Load(SceneRenderer* renderer, const ResourceLocation* rl)
 		{
 			SceneRenderScriptParser parser(m_renderDevice);
 			parser.Parse(rl);
@@ -91,7 +91,7 @@ namespace Apoc3D
 
 			for (int i=0;i<parser.PassData.getCount();i++)
 			{
-				ScenePass* pass = new ScenePass(this, &parser.PassData[i]);
+				ScenePass* pass = new ScenePass(m_renderDevice, renderer, this, &parser.PassData[i]);
 				m_passes.Add(pass);
 			}
 

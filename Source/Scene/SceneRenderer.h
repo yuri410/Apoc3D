@@ -60,10 +60,10 @@ namespace Apoc3D
 	namespace Scene
 	{
 		typedef FastList<RenderOperation> OperationList;
-		class GeometryTable;
-		class MaterialTable;
-		class PriorityTable;
-		class MaterialList;;
+		//class GeometryTable;
+		//class MaterialTable;
+		//class PriorityTable;
+		//class MaterialList;;
 
 		typedef FastMap<GeometryData*, OperationList*> GeometryTable;
 		typedef FastMap<Material*, GeometryTable*> MaterialTable;
@@ -82,7 +82,9 @@ namespace Apoc3D
 			int m_objectCount;
 
 		public:
-			BatchData() { }
+			const PriorityTable& getTable() const { return m_priTable; }
+
+			BatchData() : m_objectCount(0) { }
 
 			int getObjectCount() const { return m_objectCount; }
 
@@ -117,7 +119,7 @@ namespace Apoc3D
 
 			/** Renders the current batch produced by scene pass
 			*/
-			void RenderBatch(uint64 selectionMask);
+			void RenderBatch(int selectorID);
 		};
 	};
 };

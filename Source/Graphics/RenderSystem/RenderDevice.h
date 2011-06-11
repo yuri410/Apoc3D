@@ -104,7 +104,7 @@ namespace Apoc3D
 				virtual void BindVertexShader(VertexShader* shader) = 0;
 				virtual void BindPixelShader(PixelShader* shader) = 0;
 
-				virtual void Render(const RenderOperation* op, int count);
+				virtual void Render(Material* mtrl, const RenderOperation* op, int count, int passSelID);
 
 				virtual Viewport getViewport() = 0;
 				virtual void setViewport(const Viewport& vp) = 0;

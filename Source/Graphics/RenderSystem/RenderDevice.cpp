@@ -31,7 +31,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			void RenderDevice::Render(const RenderOperation* op, int count)
+			void RenderDevice::Render(Material* mtrl, const RenderOperation* op, int count, int passSelID)
 			{
 				if (!op)
 					return;

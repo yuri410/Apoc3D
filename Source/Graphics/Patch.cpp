@@ -25,10 +25,62 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Patch.h"
 
+#include "Graphics/RenderSystem/VertexDeclaration.h"
+#include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/ObjectFactory.h"
+#include "RenderOperationBuffer.h"
+#include "RenderOperation.h"
+#include "GeometryData.h"
+
 namespace Apoc3D
 {
 	namespace Graphics
 	{
+		Patch::Patch(RenderDevice* device, const void* vertexData, int vertexCount, const FastList<VertexElement>& vtxElems)
+			: m_opBuffer(0), m_mtrl(0), m_primitiveCount(vertexCount - 3 + 2), m_vertexCount(vertexCount)
+		{
+			assert(vertexCount>3);
 
+			ObjectFactory* objectFactory = device->getObjectFactory();
+			m_vertexDecl = objectFactory->CreateVertexDeclaration(vtxElems);
+
+			m_vertexBuffer = objectFactory->CreateVertexBuffer(vertexCount, m_vertexDecl, BU_Dynamic);
+		}
+		Patch::~Patch()
+		{
+			delete m_vertexBuffer;
+			delete m_vertexDecl;
+			delete m_indexBuffer;
+		}
+
+		const RenderOperationBuffer* Patch::GetRenderOperation(int lod)
+		{
+			if (!m_mtrl)
+				return 0;
+
+			if (!m_opBuffer)
+			{
+				m_geoData = new GeometryData();
+				m_geoData->BaseVertex = 0;
+				m_geoData->IndexBuffer = m_indexBuffer;
+				m_geoData->PrimitiveCount = m_primitiveCount;
+				m_geoData->PrimitiveType = PT_TriangleStrip;
+				m_geoData->VertexBuffer = m_vertexBuffer;
+				m_geoData->VertexCount = m_vertexCount;
+				m_geoData->VertexDecl = m_vertexDecl;
+				m_geoData->VertexSize = m_vertexSize;
+
+				m_opBuffer = new RenderOperationBuffer();
+				RenderOperation rop;
+
+				rop.GeometryData = m_geoData;
+
+				m_opBuffer->Add(rop);
+			}
+
+			m_opBuffer->operator[](0).Material = m_mtrl;
+			m_opBuffer->operator[](0).RootTransform = m_transfrom;
+			return m_opBuffer;
+		}
 	}
 }
