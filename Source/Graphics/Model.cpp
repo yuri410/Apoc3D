@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/ResourceHandle.h"
 #include "Vfs/ResourceLocation.h"
 #include "ModelManager.h"
-#include "IO/ModelData.h"
+#include "IOLib/ModelData.h"
 
 //template class Apoc3D::Core::ResourceHandle<Apoc3D::Graphics::ModelSharedData>;
 

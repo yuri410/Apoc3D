@@ -96,32 +96,32 @@ namespace Apoc3D
 			BinaryReader* TryGetData(const String& name) const;
 			BinaryReader* GetData(const String& name) const;
 
-			inline Stream* GetDataStream(const String& name) const;
+			Stream* GetDataStream(const String& name) const;
 
-			inline int64 GetDataInt64(const String& name);
-			inline uint64 GetDataUInt64(const String& name);
-			inline int32 GetDataInt32(const String& name);
-			inline uint32 GetDataUInt32(const String& name);
-			inline int16 GetDataInt16(const String& name);
-			inline uint16 GetDataUInt16(const String& name);
-			inline bool GetDataBool(const String& name);
-			inline float GetDataSingle(const String& name);
-			inline double GetDataDouble(const String& name);
+			int64 GetDataInt64(const String& name);
+			uint64 GetDataUInt64(const String& name);
+			int32 GetDataInt32(const String& name);
+			uint32 GetDataUInt32(const String& name);
+			int16 GetDataInt16(const String& name);
+			uint16 GetDataUInt16(const String& name);
+			bool GetDataBool(const String& name);
+			float GetDataSingle(const String& name);
+			double GetDataDouble(const String& name);
 
 
-			inline bool TryGetDataInt64(const String& name, int64& v);
-			inline bool TryGetDataUInt64(const String& name, uint64& v);
-			inline bool TryGetDataInt32(const String& name, int32& v);
-			inline bool TryGetDataUInt32(const String& name, uint32& v);
-			inline bool TryGetDataInt16(const String& name, int16& v);
-			inline bool TryGetDataUInt16(const String& name, uint16& v);
-			inline bool TryGetDataBool(const String& name, bool& v);
-			inline bool TryGetDataSingle(const String& name, float& v);
-			inline bool TryGetDataDouble(const String& name, double& v);
+			bool TryGetDataInt64(const String& name, int64& v);
+			bool TryGetDataUInt64(const String& name, uint64& v);
+			bool TryGetDataInt32(const String& name, int32& v);
+			bool TryGetDataUInt32(const String& name, uint32& v);
+			bool TryGetDataInt16(const String& name, int16& v);
+			bool TryGetDataUInt16(const String& name, uint16& v);
+			bool TryGetDataBool(const String& name, bool& v);
+			bool TryGetDataSingle(const String& name, float& v);
+			bool TryGetDataDouble(const String& name, double& v);
 
-			inline int64 GetChunkOffset(const String& name) const;
+			int64 GetChunkOffset(const String& name) const;
 
-			inline void Close();
+			void Close();
 
 		};
 
@@ -163,27 +163,27 @@ namespace Apoc3D
 			BinaryWriter* AddEntry(const String& name);
 			Stream* AddEntryStream(const String& name);
 
-			inline void AddEntry(const String& name, int64 value);
-			inline void AddEntry(const String& name, uint64 value);
-			inline void AddEntry(const String& name, int32 value);
-			inline void AddEntry(const String& name, uint32 value);
-			inline void AddEntry(const String& name, int16 value);
-			inline void AddEntry(const String& name, uint16 value);
-			inline void AddEntry(const String& name, float value);
-			inline void AddEntry(const String& name, double value);
-			inline void AddEntry(const String& name, bool value);
+			void AddEntry(const String& name, int64 value);
+			void AddEntry(const String& name, uint64 value);
+			void AddEntry(const String& name, int32 value);
+			void AddEntry(const String& name, uint32 value);
+			void AddEntry(const String& name, int16 value);
+			void AddEntry(const String& name, uint16 value);
+			void AddEntry(const String& name, float value);
+			void AddEntry(const String& name, double value);
+			void AddEntry(const String& name, bool value);
 			
 			BinaryWriter* GetData(const String& name);
 
-			inline void SetData(const String& name, int64 value);
-			inline void SetData(const String& name, uint64 value);
-			inline void SetData(const String& name, int32 value);
-			inline void SetData(const String& name, uint32 value);
-			inline void SetData(const String& name, int16 value);
-			inline void SetData(const String& name, uint16 value);
-			inline void SetData(const String& name, float value);
-			inline void SetData(const String& name, double value);
-			inline void SetData(const String& name, bool value);
+			void SetData(const String& name, int64 value);
+			void SetData(const String& name, uint64 value);
+			void SetData(const String& name, int32 value);
+			void SetData(const String& name, uint32 value);
+			void SetData(const String& name, int16 value);
+			void SetData(const String& name, uint16 value);
+			void SetData(const String& name, float value);
+			void SetData(const String& name, double value);
+			void SetData(const String& name, bool value);
 
 			void Save(Stream* stream) const;
 		};

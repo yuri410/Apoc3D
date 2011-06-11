@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Utility/StringUtils.h"
 #include "PathUtils.h"
 #include "File.h"
-#include "io/Streams.h"
+#include "IOLib/Streams.h"
 
 using namespace Apoc3D::Utility;
 

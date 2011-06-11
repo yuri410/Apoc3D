@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/Rectangle.h"
 #include "Math/Box.h"
 #include "Vfs/ResourceLocation.h"
-#include "IO/TextureData.h"
+#include "IOLib/TextureData.h"
 
 #include "Apoc3DException.h"
 

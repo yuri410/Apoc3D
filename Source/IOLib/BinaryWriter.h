@@ -45,37 +45,37 @@ namespace Apoc3D
 			BinaryWriter(Stream* baseStream);
 			~BinaryWriter();
 
-			inline void Write(const char* bytes, int64 count) const;
-			inline void Write(char byte) const;
+			void Write(const char* bytes, int64 count) const;
+			void Write(char byte) const;
 
-			inline void Write(bool value) const;
+			void Write(bool value) const;
 
-			inline void Write(double value) const;
-			inline void Write(float value) const;
-			inline void Write(const String& value) const;			
-			inline void Write(int16 value) const;
-			inline void Write(int32 value) const;
-			inline void Write(int64 value) const;
-			inline void Write(uint16 value) const;
-			inline void Write(uint32 value) const;
-			inline void Write(uint64 value) const;
+			void Write(double value) const;
+			void Write(float value) const;
+			void Write(const String& value) const;			
+			void Write(int16 value) const;
+			void Write(int32 value) const;
+			void Write(int64 value) const;
+			void Write(uint16 value) const;
+			void Write(uint32 value) const;
+			void Write(uint64 value) const;
 
-			inline void Write(const Color4& value) const;
-			inline void Write(const Plane& plane) const;
-			inline void Write(const Matrix& matrix) const;
-			inline void Write(const Quaternion& quat) const;
-			inline void Write(const Point& point) const;
-			inline void Write(const Size& size) const;
-			inline void Write(const Rectangle& rect) const;
-			inline void Write(const RectangleF& rect) const;
+			void Write(const Color4& value) const;
+			void Write(const Plane& plane) const;
+			void Write(const Matrix& matrix) const;
+			void Write(const Quaternion& quat) const;
+			void Write(const Point& point) const;
+			void Write(const Size& size) const;
+			void Write(const Rectangle& rect) const;
+			void Write(const RectangleF& rect) const;
 
-			inline void Write(const Ray& ray) const;
-			inline void Write(const BoundingBox& sphere) const;
-			inline void Write(const BoundingSphere& box) const;
+			void Write(const Ray& ray) const;
+			void Write(const BoundingBox& sphere) const;
+			void Write(const BoundingSphere& box) const;
 
-			inline void WriteVector2(const float* buffer) const;
-			inline void WriteVector3(const float* buffer) const;
-			inline void WriteVector4(const float* buffer) const;
+			void WriteVector2(const float* buffer) const;
+			void WriteVector3(const float* buffer) const;
+			void WriteVector4(const float* buffer) const;
 
 			void Write(const TaggedDataWriter* data) const;
 			void Close() const;

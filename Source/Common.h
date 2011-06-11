@@ -59,7 +59,7 @@ typedef BatchHandle HashHandle;
 #endif
 
 #if APOC3D_DLLEX
-	#define APAPI  
+	#define APAPI __declspec( dllexport )
 #else
 	#define APAPI __declspec( dllimport )
 #endif
@@ -255,6 +255,8 @@ namespace Apoc3D
 		class Model;
 		class ModelSharedData;
 
+		class Patch;
+
 		namespace Animation
 		{
 			class ModelAnimationClip;
@@ -330,6 +332,11 @@ namespace Apoc3D
 	namespace Platform
 	{
 		class Library;
+	}
+	namespace UI
+	{
+		class Form;
+		class Control;
 	}
 };
 

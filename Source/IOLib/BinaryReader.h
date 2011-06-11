@@ -53,8 +53,8 @@ namespace Apoc3D
 
 			~BinaryReader();
 
-			inline int64 ReadBytes(char* dest, int64 count) const;
-			inline char ReadByte() const;
+			int64 ReadBytes(char* dest, int64 count) const;
+			char ReadByte() const;
 
 			bool ReadBoolean();
 
@@ -69,27 +69,27 @@ namespace Apoc3D
 			uint16 ReadUInt16();
 			uint32 ReadUInt32();
 			uint64 ReadUInt64();
-			inline void ReadColor4(Color4& color);
+			void ReadColor4(Color4& color);
 
-			inline void ReadPlane(Plane& plane);
+			void ReadPlane(Plane& plane);
 
-			inline void ReadMatrix(Matrix& matrix);
-			inline void ReadQuaternion(Quaternion& quat);
+			void ReadMatrix(Matrix& matrix);
+			void ReadQuaternion(Quaternion& quat);
 
-			inline void ReadPoint(Point& point);
-			inline void ReadSize(Size& size);
+			void ReadPoint(Point& point);
+			void ReadSize(Size& size);
 
-			inline void ReadRectangle(Apoc3D::Math::Rectangle& rect);
-			inline void ReadRectangleF(Apoc3D::Math::RectangleF& rect);
+			void ReadRectangle(Apoc3D::Math::Rectangle& rect);
+			void ReadRectangleF(Apoc3D::Math::RectangleF& rect);
 
-			inline void ReadRay(Ray& ray);
+			void ReadRay(Ray& ray);
 
-			inline void ReadBoundingSphere(BoundingSphere& sphere);
-			inline void ReadBoundingBox(BoundingBox& box);
+			void ReadBoundingSphere(BoundingSphere& sphere);
+			void ReadBoundingBox(BoundingBox& box);
 
-			inline void ReadVector4(float* buffer);
-			inline void ReadVector3(float* buffer);
-			inline void ReadVector2(float* buffer);
+			void ReadVector4(float* buffer);
+			void ReadVector3(float* buffer);
+			void ReadVector2(float* buffer);
 
 			TaggedDataReader* ReadTaggedDataBlock();
 

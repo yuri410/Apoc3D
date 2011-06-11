@@ -26,9 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9RenderDevice.h"
 
-#include "IO/BinaryReader.h"
+#include "IOLib/BinaryReader.h"
 #include "Vfs/ResourceLocation.h"
-#include "IO/Streams.h"
+#include "IOLib/Streams.h"
 #include "ConstantTable.h"
 #include "D3D9Utils.h"
 #include "D3D9Texture.h"

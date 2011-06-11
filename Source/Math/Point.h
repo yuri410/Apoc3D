@@ -72,7 +72,27 @@ namespace Apoc3D
 		
 			const static Point Zero;
 		};
+		class APAPI PointF
+		{
+		public:
+			float X;
+			float Y;
 
+			PointF() { X = Y = 0; }
+			PointF(int x, int y) { X = x; Y = y; }
+
+			friend static bool operator ==(const PointF& a, const PointF& b)
+			{
+				return (a.X  == b.X) && (a.Y == b.Y);
+			}
+			friend static bool operator !=(const PointF& a, const PointF& b)
+			{
+				return (a.X != b.X) || (a.Y != b.Y);
+			}
+
+
+			const static PointF Zero;
+		};
 	}
 }
 #endif

@@ -36,7 +36,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/RenderTarget.h"
 #include "tinyxml/tinyxml.h"
-#include "IO/Streams.h"
+#include "IOLib/Streams.h"
 #include "VFS/ResourceLocation.h"
 
 

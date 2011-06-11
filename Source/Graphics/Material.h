@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/Color.h"
 #include "GraphicsCommon.h"
 #include "MaterialTypes.h"
-#include "io/MaterialData.h"
+#include "IOLib/MaterialData.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Core;

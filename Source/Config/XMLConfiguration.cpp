@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "XmlConfiguration.h"
 
 #include "Vfs/ResourceLocation.h"
-#include "IO/Streams.h"
+#include "IOLib/Streams.h"
 #include "ConfigurationSection.h"
 
 #include "VFS/PathUtils.h"

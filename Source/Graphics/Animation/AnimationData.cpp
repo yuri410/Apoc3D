@@ -24,9 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "AnimationData.h"
 
-#include "IO/BinaryReader.h"
-#include "IO/BinaryWriter.h"
-#include "IO/TaggedData.h"
+#include "IOLib/BinaryReader.h"
+#include "IOLib/BinaryWriter.h"
+#include "IOLib/TaggedData.h"
 
 #include "VFS/ResourceLocation.h"
 

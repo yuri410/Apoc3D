@@ -31,7 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/ResourceHandle.h"
 #include "Core/Logging.h"
 #include "Utility/StringUtils.h"
-#include "IO/MaterialData.h"
+#include "IOLib/MaterialData.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/FileLocateRule.h"
 #include "TextureManager.h"

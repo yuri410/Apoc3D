@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "VertexElement.h"
 
 #include "RenderDevice.h"
-#include "IO/TextureData.h"
+#include "IOLib/TextureData.h"
 #include "Math/Rectangle.h"
 #include "Math/Box.h"
 #include "Apoc3DException.h"
