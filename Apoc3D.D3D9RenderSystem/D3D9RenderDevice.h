@@ -41,6 +41,8 @@ namespace Apoc3D
 			class D3D9RenderDevice : public RenderDevice
 			{
 			private:
+				friend class VolatileResource;
+
 				GraphicsDeviceManager* m_devManager;
 				D3D9RenderStateManager* m_stateManager;
 				NativeD3DStateManager* m_nativeState;
@@ -51,11 +53,6 @@ namespace Apoc3D
 				IDirect3DSurface9* m_defaultDS;
 
 				vector<VolatileResource*> m_volatileResources;
-
-			public:
-				inline D3DDevice* getDevice() const;
-				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
-
 
 				void TrackVolatileResource(VolatileResource* res)
 				{
@@ -69,6 +66,12 @@ namespace Apoc3D
 						m_volatileResources.erase(iter);
 					}
 				}
+			public:
+				inline D3DDevice* getDevice() const;
+				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
+
+
+				
 
 
 

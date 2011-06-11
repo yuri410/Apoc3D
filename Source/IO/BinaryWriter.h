@@ -78,7 +78,7 @@ namespace Apoc3D
 			inline void WriteVector4(const float* buffer) const;
 
 			void Write(const TaggedDataWriter* data) const;
-			inline void Close() const;
+			void Close() const;
 		};
 	}
 }

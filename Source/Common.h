@@ -59,7 +59,7 @@ typedef BatchHandle HashHandle;
 #endif
 
 #if APOC3D_DLLEX
-	#define APAPI __declspec( dllexport )
+	#define APAPI  
 #else
 	#define APAPI __declspec( dllimport )
 #endif

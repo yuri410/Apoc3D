@@ -93,7 +93,7 @@ namespace Apoc3D
 
 			TaggedDataReader* ReadTaggedDataBlock();
 
-			inline void Close() const;
+			void Close() const;
 		};
 	};
 };

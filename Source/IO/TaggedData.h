@@ -93,8 +93,8 @@ namespace Apoc3D
 				return (iter != m_positions.end());
 			}
 
-			inline BinaryReader* TryGetData(const String& name) const;
-			inline BinaryReader* GetData(const String& name) const;
+			BinaryReader* TryGetData(const String& name) const;
+			BinaryReader* GetData(const String& name) const;
 
 			inline Stream* GetDataStream(const String& name) const;
 

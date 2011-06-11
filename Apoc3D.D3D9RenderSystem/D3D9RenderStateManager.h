@@ -125,10 +125,10 @@ namespace Apoc3D
 				Blend getAlphaDestinationBlend() { return m_cachedAlphaDestBlend; }
 				uint32 getAlphaBlendFactor() { return m_cachedAlphaBlendFactor; }
 
-				inline void setAlphaBlendEnable(bool val);
-				inline void setAlphaBlendOperation(BlendFunction func);
-				inline void setAlphaSourceBlend(Blend val);
-				inline void setAlphaDestinationBlend(Blend val);
+				void setAlphaBlendEnable(bool val);
+				void setAlphaBlendOperation(BlendFunction func);
+				void setAlphaSourceBlend(Blend val);
+				void setAlphaDestinationBlend(Blend val);
 
 				bool getSeparateAlphaBlendEnable() { return m_cachedSepAlphaBlendEnable; }
 				BlendFunction getSeparateAlphaBlendOperation() { return m_cachedSepAlphaBlendFunction; } 

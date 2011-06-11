@@ -31,7 +31,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			DWORD D3D9Utils::ptTable[PT_Count];
+			D3DPRIMITIVETYPE D3D9Utils::ptTable[PT_Count];
 			D3DDECLTYPE D3D9Utils::vefTable[VEF_Count];
 			D3DDECLUSAGE D3D9Utils::veuTable[VEU_Count];
 			D3DFILLMODE D3D9Utils::fillTable[FILL_Count];

@@ -127,6 +127,8 @@ namespace Apoc3D
 				bool IsGenerationOutOfTime(float time);
 
 			};
+			friend class ResourceHandle<Resource>;
+
 
 			GenerationCalculator* m_generation;
 			ResourceManager* m_manager;
@@ -161,6 +163,9 @@ namespace Apoc3D
 			}
 
 			void LoadSync();
+
+
+			
 		protected:
 			virtual void load() = 0;
 			virtual void unload() = 0;
@@ -233,7 +238,7 @@ namespace Apoc3D
 					m_refCount--;
 					//if (--m_refCount == 0)
 					//{
-						//delete this;
+					//delete this;
 					//}
 				}
 			}
