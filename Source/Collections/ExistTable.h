@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "CollectionsCommon.h"
+#include "Apoc3DException.h"
 
 namespace Apoc3D
 {
@@ -87,9 +88,85 @@ namespace Apoc3D
 			int m_freeList;
 			const IEqualityComparer<T>* m_comparer;
 
-			void Initialize(int capacity);
-			void Resize();
-			void Insert(const T& item, bool add);
+			void Initialize(int capacity)
+			{
+				int prime = HashHelpers::GetPrime(capacity);
+				m_bucketsLength = prime;
+				m_buckets = new int[prime];
+				for (int i = 0; i < m_bucketsLength; i++)
+				{
+					m_buckets[i] = -1;
+				}
+				m_entries = new Entry[prime];
+				m_entryLength = prime;
+				m_freeList = -1;
+			}
+			void Resize()
+			{
+				int prime = HashHelpers::GetPrime(m_count * 2);
+				int* numArray = new int[prime];
+				for (int i = 0; i < prime; i++)
+				{
+					numArray[i] = -1;
+				}
+				Entry* destinationArray = new Entry[prime];
+				memcpy(destinationArray, m_entries, m_count * sizeof(Entry));
+				for (int j = 0; j < m_count; j++)
+				{
+					int index = destinationArray[j].hashCode % prime;
+					destinationArray[j].next = numArray[index];
+					numArray[index] = j;
+				}
+				delete[] m_buckets;
+				m_buckets = numArray;
+				m_bucketsLength = prime;
+				delete[] m_entries;
+				m_entries = destinationArray;
+				m_entryLength = prime;
+			}
+			void Insert(const T& item, bool add)
+			{
+				int freeList;
+				if (!m_buckets)
+				{
+					Initialize(0);
+				}
+				int num = m_comparer->GetHashCode(item) & 2147483647;
+				int index = num % m_bucketsLength;
+				for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
+				{
+					if ((m_entries[i].hashCode == num) &&
+						m_comparer->Equals(m_entries[i].data, item))
+					{
+						if (add)
+						{
+							throw Apoc3DException::createException(EX_Duplicate, L"");
+						}
+						m_entries[i].data = item;
+						return;
+					}
+				}
+				if (m_freeCount > 0)
+				{
+					freeList = m_freeList;
+					m_freeList = m_entries[freeList].next;
+					m_freeCount--;
+				}
+				else
+				{
+					if (m_count == m_entryLength)
+					{
+						Resize();
+						index = num % m_bucketsLength;
+					}
+					freeList = m_count;
+					m_count++;
+				}
+				m_entries[freeList].hashCode = num;
+				m_entries[freeList].next = m_buckets[index];
+				m_entries[freeList].data = item;
+				m_buckets[index] = freeList;
+			}
 
 			int FindEntry(const T& item) const
 			{

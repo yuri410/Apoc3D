@@ -226,8 +226,6 @@
     <ClCompile Include="..\extra\tthread\tinythread.cpp" />
     <ClCompile Include="Apoc3DException.cpp" />
     <ClCompile Include="Collections\CollectionsCommon.cpp" />
-    <ClCompile Include="Collections\ExistTable.cpp" />
-    <ClCompile Include="Collections\FastMap.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Config\ConfigrationSection.cpp" />
     <ClCompile Include="Config\Configuration.cpp" />

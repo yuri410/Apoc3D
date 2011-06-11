@@ -647,12 +647,6 @@
     <ClCompile Include="Graphics\Patch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Collections\ExistTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Collections\FastMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics\Animation\AnimationPlayers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

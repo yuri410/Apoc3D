@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "CollectionsCommon.h"
+#include "Apoc3DException.h"
 
 namespace Apoc3D
 {
@@ -71,48 +72,6 @@ namespace Apoc3D
 				}
 			};
 		private:
-			class HashHelpers
-			{
-			public:
-				static const int primes[];
-
-				static int GetPrime(int min)
-				{
-					for (int i = 0; i < 72; i++)
-					{
-						int num2 = primes[i];
-						if (num2 >= min)
-						{
-							return num2;
-						}
-					}
-					for (int j = min | 1; j < 2147483647; j += 2)
-					{
-						if (IsPrime(j))
-						{
-							return j;
-						}
-					}
-					return min;
-				}
-
-				static bool IsPrime(int candidate)
-				{
-					if ((candidate & 1) == 0)
-					{
-						return (candidate == 2);
-					}
-					int num = (int)sqrtf((float)candidate);
-					for (int i = 3; i <= num; i += 2)
-					{
-						if ((candidate % i) == 0)
-						{
-							return false;
-						}
-					}
-					return true;
-				}
-			};
 			struct Entry
 			{
 				int hashCode;
@@ -168,7 +127,50 @@ namespace Apoc3D
 				m_entries = destinationArray;
 				m_entryLength = prime;
 			}
-			void Insert(const T& item, const S& value, bool add);
+			void Insert(const T& item, const S& value, bool add)
+			{
+				int freeList;
+				if (!m_buckets)
+				{
+					Initialize(0);
+				}
+				int num = m_comparer->GetHashCode(item) & 2147483647;
+				int index = num % m_bucketsLength;
+				for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
+				{
+					if ((m_entries[i].hashCode == num) &&
+						m_comparer->Equals(m_entries[i].data, item))
+					{
+						if (add)
+						{
+							throw Apoc3DException::createException(EX_Duplicate, L"");
+						}
+						m_entries[i].data = item;
+						return;
+					}
+				}
+				if (m_freeCount > 0)
+				{
+					freeList = m_freeList;
+					m_freeList = m_entries[freeList].next;
+					m_freeCount--;
+				}
+				else
+				{
+					if (m_count == m_entryLength)
+					{
+						Resize();
+						index = num % m_bucketsLength;
+					}
+					freeList = m_count;
+					m_count++;
+				}
+				m_entries[freeList].hashCode = num;
+				m_entries[freeList].next = m_buckets[index];
+				m_entries[freeList].data = item;
+				m_entries[freeList].value = value;
+				m_buckets[index] = freeList;
+			}
 			int FindEntry(const T& item) const
 			{
 				if (m_buckets)
@@ -281,9 +283,26 @@ namespace Apoc3D
 				return false;
 			}
 
-			inline S& operator [](const T& key) const;
+			inline S& operator [](const T& key) const
+			{
+				int index = FindEntry(key);
+				if (index>0)
+				{
+					return m_entries[index].value;
+				}
+				throw Apoc3DException::createException(EX_KeyNotFound, L"");
+			}
 
-			bool TryGetValue(const T& key, S& value) const;
+			bool TryGetValue(const T& key, S& value) const
+			{
+				int index = FindEntry(key);
+				if (index>0)
+				{
+					value = m_entries[index].value;
+					return true;
+				}
+				return false;
+			}
 
 			Enumerator GetEnumerator() const
 			{

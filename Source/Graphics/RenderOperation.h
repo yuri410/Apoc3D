@@ -36,7 +36,13 @@ namespace Apoc3D
 		struct APAPI BoneTransforms
 		{
 			const Matrix* Transfroms;
-			int32 Count;			
+			int32 Count;
+
+			friend static bool operator ==(const BoneTransforms& left, const BoneTransforms& right)
+			{
+				return left.Count == right.Count &&
+					!memcmp(left.Transfroms, right.Transfroms, sizeof(Matrix) * left.Count);
+			}
 		};
 		/* Represents an operation to render a mesh part in the scene.
 		   RenderOperation is used by the engine to manage the scene rendering pipeline.
@@ -56,6 +62,21 @@ namespace Apoc3D
 				memset(&BoneTransform, 0, sizeof(BoneTransforms));
 			}
 			~RenderOperation(void) { }
+
+			bool operator ==(const RenderOperation& other)
+			{
+				return GeometryData == other.GeometryData && 
+					Material == other.Material && 
+					RootTransform == other.RootTransform &&
+					BoneTransform == other.BoneTransform;
+			}
+			friend static bool operator ==(const RenderOperation& left, const RenderOperation& right)
+			{
+				return left.GeometryData == right.GeometryData && 
+					left.Material == right.Material && 
+					left.RootTransform == right.RootTransform &&
+					left.BoneTransform == right.BoneTransform;
+			}
 		};
 	};
 };

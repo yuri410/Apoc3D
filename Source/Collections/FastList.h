@@ -148,9 +148,9 @@ namespace Apoc3D
 				{
 					m_internalPointer -= count;
 
-					if (index < m_internalPointer)
+					if (start < m_internalPointer)
 					{
-						memcpy( m_elements+index, m_elements+index + count, (m_internalPointer-start)*sizeof(T));
+						memcpy( m_elements+start, m_elements+start + count, (m_internalPointer-start)*sizeof(T));
 					}
 
 					memset(m_elements+m_internalPointer, 0, count*sizeof(T));

@@ -49,6 +49,14 @@ namespace Apoc3D
 			virtual int64 GetHashCode(const T& obj) const = 0;
 		};
 
+		class Uint32EqualityComparer : public IEqualityComparer<uint32>
+		{
+		public:
+			virtual bool Equals(const uint32& x, const uint32& y) const;
+
+			virtual int64 GetHashCode(const uint32& obj) const;
+		};
+
 		typedef Resource* LPResource;
 		class ResourceEqualityComparer : public IEqualityComparer<LPResource>
 		{
@@ -66,6 +74,50 @@ namespace Apoc3D
 			virtual bool Equals(const string& x, const string& y) const;
 
 			virtual int64 GetHashCode(const string& obj) const;
+		};
+
+
+		class HashHelpers
+		{
+		public:
+			static const int primes[72];
+
+			static int GetPrime(int min)
+			{
+				for (int i = 0; i < 72; i++)
+				{
+					int num2 = primes[i];
+					if (num2 >= min)
+					{
+						return num2;
+					}
+				}
+				for (int j = min | 1; j < 2147483647; j += 2)
+				{
+					if (IsPrime(j))
+					{
+						return j;
+					}
+				}
+				return min;
+			}
+
+			static bool IsPrime(int candidate)
+			{
+				if ((candidate & 1) == 0)
+				{
+					return (candidate == 2);
+				}
+				int num = (int)sqrtf((float)candidate);
+				for (int i = 3; i <= num; i += 2)
+				{
+					if ((candidate % i) == 0)
+					{
+						return false;
+					}
+				}
+				return true;
+			}
 		};
 
 	}

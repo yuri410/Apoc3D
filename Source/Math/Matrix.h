@@ -1376,6 +1376,25 @@ namespace Apoc3D
 				res = matrix;
 				res.Inverse();
 			}
+
+			bool operator ==(const Matrix& value)
+			{
+				return (M11 == value.M11 && M12 == value.M12 && M13 == value.M13 && M14 == value.M14 &&
+					M21 == value.M21 && M22 == value.M22 && M23 == value.M23 && M24 == value.M24 &&
+					M31 == value.M31 && M32 == value.M32 && M33 == value.M33 && M34 == value.M34 &&
+					M41 == value.M41 && M42 == value.M42 && M43 == value.M43 && M44 == value.M44);
+			}
+			friend static bool operator ==(const Matrix& left, const Matrix& right)
+			{
+			#if APOC3D_MATH_IMPL == APOC3D_SSE
+#pragma error "Not implemented"
+			#else
+				return (left.M11 == right.M11 && left.M12 == right.M12 && left.M13 == right.M13 && left.M14 == right.M14 &&
+					left.M21 == right.M21 && left.M22 == right.M22 && left.M23 == right.M23 && left.M24 == right.M24 &&
+					left.M31 == right.M31 && left.M32 == right.M32 && left.M33 == right.M33 && left.M34 == right.M34 &&
+					left.M41 == right.M41 && left.M42 == right.M42 && left.M43 == right.M43 && left.M44 == right.M44);
+			#endif
+			}
 		};
 	
 #pragma pack(pop)

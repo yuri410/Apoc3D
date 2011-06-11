@@ -60,15 +60,9 @@ namespace Apoc3D
 	namespace Scene
 	{
 		typedef FastList<RenderOperation> OperationList;
-		//class GeometryTable;
-		//class MaterialTable;
-		//class PriorityTable;
-		//class MaterialList;;
-
 		typedef FastMap<GeometryData*, OperationList*> GeometryTable;
 		typedef FastMap<Material*, GeometryTable*> MaterialTable;
 		typedef FastMap<uint32, MaterialTable*> PriorityTable;
-
 
 		class APAPI BatchData
 		{
