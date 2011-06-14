@@ -396,13 +396,19 @@
     <ClInclude Include="IOLib\TaggedData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UILib\Control.h">
+    <ClInclude Include="UILib\UIMaterialLibrary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UILib\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UILib\UIMaterialLibrary.h">
+    <ClInclude Include="UILib\Control.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UILib\FontManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\RenderSystem\Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -681,6 +687,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IOLib\TextureData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UILib\Control.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UILib\UIMaterialLibrary.cpp">

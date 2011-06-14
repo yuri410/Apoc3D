@@ -79,7 +79,7 @@ namespace Apoc3D
 			float Y;
 
 			PointF() { X = Y = 0; }
-			PointF(int x, int y) { X = x; Y = y; }
+			PointF(float x, float y) { X = x; Y = y; }
 
 			friend static bool operator ==(const PointF& a, const PointF& b)
 			{

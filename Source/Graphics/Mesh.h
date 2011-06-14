@@ -99,7 +99,7 @@ namespace Apoc3D
 
 
 
-			virtual const RenderOperationBuffer* GetRenderOperation(int level);
+			virtual RenderOperationBuffer* GetRenderOperation(int level);
 			
 			void Save(MeshData* data);
 

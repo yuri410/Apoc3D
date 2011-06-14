@@ -335,6 +335,9 @@ namespace Apoc3D
 	}
 	namespace UI
 	{
+		class Font;
+		class FontManager;
+
 		class Form;
 		class Control;
 	}

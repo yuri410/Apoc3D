@@ -21,44 +21,52 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SPRITE_H
-#define SPRITE_H
 
-#include "Common.h"
-#include "Math/Vector.h"
-#include "Math/Rectangle.h"
-#include "Math/Matrix.h"
+#ifndef D3D9SPRITE_H
+#define D3D9SPRITE_H
 
+#include "D3D9Common.h"
+#include "Graphics/RenderSystem/Sprite.h"
+#include "VolatileResource.h"
+
+using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace RenderSystem
+		namespace D3D9RenderSystem
 		{
-			class APAPI Sprite
+			class D3D9Sprite : public Sprite
 			{
 			private:
-				RenderDevice* m_renderDevice;
-			protected:
-				Sprite(RenderDevice* rd)
-					: m_renderDevice(rd)
-				{
-				}
-			public:
-				virtual void Begin(bool alphabled) = 0;
-				virtual void End() = 0;
-				//virtual void DrawQuad(const GeometryData* quad, PostEffect* effect) = 0;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color) = 0;
-				virtual void Draw(Texture* texture, Vector2 pos, uint color) = 0;
-				virtual void Draw(Texture* texture, const PointF& pos, uint color) = 0;
-				virtual void Draw(Texture* texture, int x, int y, uint color) = 0;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color) = 0;
+				D3DSprite* m_sprite;
 
-				virtual void SetTransform(const Matrix &matrix) = 0;
+			public:
+				D3D9Sprite(D3D9RenderDevice* device);
+				virtual ~D3D9Sprite();
+
+				virtual void Begin(bool alphabled);
+				virtual void End();
+
+				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color)
+				{
+					Draw(texture, rect, 0, color);
+				}
+				virtual void Draw(Texture* texture, Vector2 pos, uint color);
+				virtual void Draw(Texture* texture, const PointF& pos, uint color);
+				virtual void Draw(Texture* texture, int x, int y, uint color);
+				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color);
+
+				virtual void SetTransform(const Matrix& matrix);
+
+
+				virtual void ReleaseVolatileResource();
+				virtual void ReloadVolatileResource();
 			};
 		}
 	}
 }
+
 #endif

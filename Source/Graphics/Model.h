@@ -195,7 +195,7 @@ namespace Apoc3D
 
 			void ReloadMaterialAnimation();			
 
-			virtual const RenderOperationBuffer* GetRenderOperation();
+			virtual RenderOperationBuffer* GetRenderOperation();
 
 
 			void Update(const GameTime* const time);

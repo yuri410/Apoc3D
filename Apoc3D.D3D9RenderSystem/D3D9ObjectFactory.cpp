@@ -31,7 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9PixelShader.h"
 #include "D3D9VertexDeclaration.h"
 #include "D3D9RenderTarget.h"
-
+#include "D3D9Sprite.h"
 
 namespace Apoc3D
 {
@@ -95,6 +95,11 @@ namespace Apoc3D
 			PixelShader* D3D9ObjectFactory::CreatePixelShader(const ResourceLocation* resLoc)
 			{
 				return new D3D9PixelShader(m_device, resLoc);
+			}
+
+			Sprite* D3D9ObjectFactory::CreateSprite()
+			{
+				return new D3D9Sprite(m_device);
 			}
 		}
 	}

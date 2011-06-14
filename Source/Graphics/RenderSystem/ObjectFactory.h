@@ -66,6 +66,8 @@ namespace Apoc3D
 
 				virtual VertexShader* CreateVertexShader(const ResourceLocation* resLoc) = 0;
 				virtual PixelShader* CreatePixelShader(const ResourceLocation* resLoc) = 0;
+
+				virtual Sprite* CreateSprite() = 0;
 			};
 		}
 	}

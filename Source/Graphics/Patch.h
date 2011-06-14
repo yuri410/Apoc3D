@@ -65,7 +65,7 @@ namespace Apoc3D
 			Patch(RenderDevice* device, const void* vertexData, int vertexCount, const FastList<VertexElement>& vtxElems);
 			~Patch();
 
-			virtual const RenderOperationBuffer* GetRenderOperation(int lod);
+			virtual RenderOperationBuffer* GetRenderOperation(int lod);
 		};
 	}
 }

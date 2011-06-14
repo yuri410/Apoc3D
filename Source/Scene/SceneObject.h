@@ -61,6 +61,8 @@ namespace Apoc3D
 			virtual void PrepareVisibleObjects(const Camera* const camera, int32 level, BatchData* data) {}
 
 			virtual void Update(const GameTime* const &time) = 0;
+
+			//virtual RenderOperationBuffer* GetRenderOperation(int lod);
 		};
 	};
 };

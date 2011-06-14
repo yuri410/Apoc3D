@@ -99,6 +99,7 @@
     <ClInclude Include="D3D9RenderTarget.h" />
     <ClInclude Include="D3D9RenderViewSet.h" />
     <ClInclude Include="D3D9RenderWindow.h" />
+    <ClInclude Include="D3D9Sprite.h" />
     <ClInclude Include="D3D9Texture.h" />
     <ClInclude Include="D3D9Utils.h" />
     <ClInclude Include="Buffer\D3D9VertexBuffer.h" />
@@ -123,6 +124,7 @@
     <ClCompile Include="Buffer\D3D9VertexBuffer.cpp" />
     <ClCompile Include="D3D9RenderStateManager.cpp" />
     <ClCompile Include="D3D9RenderViewSet.cpp" />
+    <ClCompile Include="D3D9Sprite.cpp" />
     <ClCompile Include="D3D9VertexShader.cpp" />
     <ClCompile Include="D3D9DeviceContent.cpp" />
     <ClCompile Include="D3D9GraphicsAPIFactory.cpp" />

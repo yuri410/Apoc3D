@@ -132,6 +132,7 @@
     <ClInclude Include="Graphics\ModelTypes.h" />
     <ClInclude Include="Graphics\Patch.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderTarget.h" />
+    <ClInclude Include="Graphics\RenderSystem\Sprite.h" />
     <ClInclude Include="Graphics\VertexFormats.h" />
     <ClInclude Include="IOLib\BinaryReader.h" />
     <ClInclude Include="IOLib\BinaryWriter.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />
     <ClInclude Include="UILib\Button.h" />
     <ClInclude Include="UILib\Control.h" />
+    <ClInclude Include="UILib\FontManager.h" />
     <ClInclude Include="UILib\UIMaterialLibrary.h" />
     <ClInclude Include="Utility\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
@@ -272,6 +274,7 @@
     <ClCompile Include="Math\RandomUtils.cpp" />
     <ClCompile Include="Platform\Thread.cpp" />
     <ClCompile Include="Scene\SceneRenderScriptParser.cpp" />
+    <ClCompile Include="UILib\Control.cpp" />
     <ClCompile Include="UILib\UIMaterialLibrary.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />
