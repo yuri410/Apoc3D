@@ -275,6 +275,7 @@
     <ClCompile Include="Platform\Thread.cpp" />
     <ClCompile Include="Scene\SceneRenderScriptParser.cpp" />
     <ClCompile Include="UILib\Control.cpp" />
+    <ClCompile Include="UILib\FontManager.cpp" />
     <ClCompile Include="UILib\UIMaterialLibrary.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />

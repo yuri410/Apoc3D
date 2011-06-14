@@ -24,10 +24,13 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3DHelper.h">
+    <ClInclude Include="APBCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="APBCommon.h">
+    <ClInclude Include="TextureBuild\TextureBuild.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureBuild\BuildEngine.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,7 +41,13 @@
     <ClCompile Include="APBuild.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D3DHelper.cpp">
+    <ClCompile Include="TextureBuild\TextureBuild.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="APBCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureBuild\BuildEngine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

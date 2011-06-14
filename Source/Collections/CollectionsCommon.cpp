@@ -54,6 +54,26 @@ namespace Apoc3D
 			const void* s = obj;
 			return reinterpret_cast<int64>(s);
 		}
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+		const IEqualityComparer<wchar_t>* IEqualityComparer<wchar_t>::Default = new WCharEqualityComparer();
+
+		bool WCharEqualityComparer::Equals(const wchar_t& x, const wchar_t& y) const
+		{
+			return x==y;
+		}
+		int64 WCharEqualityComparer::GetHashCode(const wchar_t& obj) const
+		{
+			return static_cast<int64>(obj);
+		}
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+
 
 		const IEqualityComparer<string>* IEqualityComparer<string>::Default = new stlstringEqualityComparer();
 
@@ -66,6 +86,9 @@ namespace Apoc3D
 			return m_hasher.hash_function()(obj);
 		}
 
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
 
 
 		const IEqualityComparer<uint32>* IEqualityComparer<uint32>::Default = new Uint32EqualityComparer();

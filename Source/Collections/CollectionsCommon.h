@@ -57,6 +57,14 @@ namespace Apoc3D
 			virtual int64 GetHashCode(const uint32& obj) const;
 		};
 
+		class WCharEqualityComparer : public IEqualityComparer<wchar_t>
+		{
+		public:
+			virtual bool Equals(const wchar_t& x, const wchar_t& y) const;
+
+			virtual int64 GetHashCode(const wchar_t& obj) const;
+		};
+
 		typedef Resource* LPResource;
 		class ResourceEqualityComparer : public IEqualityComparer<LPResource>
 		{

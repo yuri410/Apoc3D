@@ -52,7 +52,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source;$(SolutionDir)\include;$(SolutionDir)\extra;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -84,14 +84,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APBCommon.h" />
-    <ClInclude Include="D3DHelper.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TextureBuild\BuildEngine.h" />
+    <ClInclude Include="TextureBuild\TextureBuild.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APBuild.cpp" />
-    <ClCompile Include="D3DHelper.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="APBCommon.cpp" />
+    <ClCompile Include="TextureBuild\BuildEngine.cpp" />
+    <ClCompile Include="TextureBuild\TextureBuild.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Source\Apoc3d.vcxproj">
