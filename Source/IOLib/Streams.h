@@ -120,6 +120,46 @@ namespace Apoc3D
 
 			virtual void Flush() { }
 		};
+		class APAPI FileOutStream : public Stream
+		{
+		private:
+			ofstream* m_out;
+			int64 m_length;
+		public:
+			FileOutStream(const String& filename);
+			virtual ~FileOutStream();
+
+			virtual bool IsReadEndianDependent() const { return false; }
+			virtual bool IsWriteEndianDependent() const { return true; }
+
+			virtual bool CanRead() const { return false; }
+			virtual bool CanWrite() const { return true; }
+
+			virtual int64 getLength() const
+			{
+				return m_length;
+			}
+
+			virtual void setPosition(int64 offset)
+			{
+				m_out->seekp(offset); 
+				if (m_length<offset)
+					m_length = offset;
+			}
+			virtual int64 getPosition() const
+			{ 
+				return m_out->tellp(); 
+			}
+
+			virtual int64 Read(char* dest, int64 count);
+			virtual void Write(const char* src, int64 count);
+
+			virtual void Seek(int64 offset, SeekMode mode);
+			virtual void Close();
+
+			virtual void Flush();
+			
+		};
 
 		class APAPI MemoryStream : public Stream
 		{

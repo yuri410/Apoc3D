@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef BUILDENGINE_H
 #define BUILDENGINE_H
 
-void Initialize();
+int Initialize();
 void Finalize();
 
 #endif

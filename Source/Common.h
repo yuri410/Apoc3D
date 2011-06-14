@@ -205,6 +205,7 @@ namespace Apoc3D
 
 		class Stream;
 		class FileStream;
+		class FileOutStream;
 		class MemoryStream;
 		class MemoryOutStream;
 		class VirtualStream;

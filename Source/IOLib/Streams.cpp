@@ -78,6 +78,65 @@ namespace Apoc3D
 			
 		}
 
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+		FileOutStream::FileOutStream(const String& filename)
+		{
+			m_out = new ofstream(filename.c_str());
+			m_length = 0;
+		}
+		FileOutStream::~FileOutStream()
+		{
+			delete m_out;
+		}
+
+		int64 FileOutStream::Read(char* dest, int64 count)
+		{
+			throw Apoc3DException::createException(EX_NotSupported, L"Can't read");
+		}
+		void FileOutStream::Write(const char* src, int64 count)
+		{
+			m_out->write(src, count);
+
+			m_length += count;
+		}
+		void FileOutStream::Seek(int64 offset, SeekMode mode)
+		{
+			ios::seekdir dir;
+			switch (mode)
+			{
+			case SEEK_Begin:
+				dir = ios::beg;
+				break;
+			case SEEK_End:
+				dir = ios::end;
+				break;
+			default:
+				dir = ios::cur;
+				break;
+			}
+
+			m_out->seekp(offset, dir);
+			int64 p = getPosition();
+			if (p>m_length)
+				m_length = p;
+		}
+
+		void FileOutStream::Close()
+		{
+			m_out->close();
+		}
+
+		void FileOutStream::Flush()
+		{
+			m_out->flush();
+		}
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
 
 		void MemoryStream::Write(const char* src, int64 count)
 		{

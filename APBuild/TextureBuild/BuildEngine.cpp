@@ -28,10 +28,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IL/ilu.h"
 #include "IL/ilut.h"
 
-void Initialize()
+int Initialize()
 {
+	if (ilGetInteger(IL_VERSION_NUM) < IL_VERSION ||
+		iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION)
+		ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION) {
+			printf("DevIL version is different...exiting!\n");
+			return 1;
+	}
+
 	ilInit();
-	
+	iluInit();
+
 }
 void Finalize()
 {

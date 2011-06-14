@@ -267,6 +267,210 @@ namespace Apoc3D
 				}
 				return width * height * depth * bytepp;
 			}
+
+
+			static PixelFormat ConvertFormat(const String& fmt)
+			{
+				if (fmt == String(L"L8"))
+				{
+					return FMT_Luminance8;
+				}
+				else if (fmt == String(L"L16"))
+				{
+					return FMT_Luminance16;
+				}
+				else if (fmt == String(L"A8"))
+				{
+					return FMT_Alpha8;
+				}
+				else if (fmt == String(L"A4L4"))
+				{
+					return FMT_A4L4;
+				}
+				else if (fmt == String(L"A8L8"))
+				{
+					return FMT_A8L8;
+				}
+				else if (fmt == String(L"R5G6B5"))
+				{
+					return FMT_R5G6B5;
+				}
+				else if (fmt == String(L"B5G6R5"))
+				{
+					return FMT_B5G6R5;
+				}
+				else if (fmt == String(L"A4R4G4B4"))
+				{
+					return FMT_A4R4G4B4;
+				}
+				else if (fmt == String(L"A1R5G5B5"))
+				{
+					return FMT_A1R5G5B5;
+				}
+				else if (fmt == String(L"R8G8B8"))
+				{
+					return FMT_R8G8B8;
+				}
+				else if (fmt == String(L"B8G8R8"))
+				{
+					return FMT_B8G8R8;
+				}
+				else if (fmt == String(L"A8R8G8B8"))
+				{
+					return FMT_A8R8G8B8;
+				}
+				else if (fmt == String(L"A8B8G8R8"))
+				{
+					return FMT_A8B8G8R8;
+				}
+				else if (fmt == String(L"B8G8R8A8"))
+				{
+					return FMT_B8G8R8A8;
+				}
+				else if (fmt == String(L"A2R10G10B10"))
+				{
+					return FMT_A2R10G10B10;
+				}
+				else if (fmt == String(L"A2B10G10R10"))
+				{
+					return FMT_A2B10G10R10;
+				}
+				else if (fmt == String(L"DXT1"))
+				{
+					return FMT_DXT1;
+				}
+				else if (fmt == String(L"DXT2"))
+				{
+					return FMT_DXT2;
+				}
+				else if (fmt == String(L"DXT3"))
+				{
+					return FMT_DXT3;
+				}
+				else if (fmt == String(L"DXT4"))
+				{
+					return FMT_DXT4;
+				}
+				else if (fmt == String(L"DXT5"))
+				{
+					return FMT_DXT5;
+				}
+				else if (fmt == String(L"A16B16G16R16F"))
+				{
+					return FMT_A16B16G16R16F;
+				}
+				else if (fmt == String(L"A32B32G32R32F"))
+				{
+					return FMT_A32B32G32R32F;
+				}
+				else if (fmt == String(L"X8R8G8B8"))
+				{
+					return FMT_X8R8G8B8;
+				}
+				else if (fmt == String(L"X8B8G8R8"))
+				{
+					return FMT_X8B8G8R8;
+				}
+				else if (fmt == String(L"X1R5G5B5"))
+				{
+					return FMT_X1R5G5B5;
+				}
+				else if (fmt == String(L"R8G8B8A8"))
+				{
+					return FMT_R8G8B8A8;
+				}
+				else if (fmt == String(L"A16B16G16R16"))
+				{
+					return FMT_A16B16G16R16;
+				}
+				else if (fmt == String(L"R3G3B2"))
+				{
+					return FMT_R3G3B2;
+				}
+				else if (fmt == String(L"R16F"))
+				{
+					return FMT_R16F;
+				}
+				else if (fmt == String(L"R32F"))
+				{
+					return FMT_R32F;
+				}
+				else if (fmt == String(L"G16R16"))
+				{
+					return FMT_G16R16;
+				}
+				else if (fmt == String(L"G16R16F"))
+				{
+					return FMT_G16R16F;
+				}
+				else if (fmt == String(L"G32R32F"))
+				{
+					return FMT_G32R32F;
+				}
+				else if (fmt == String(L"R16G16B16"))
+				{
+					return FMT_R16G16B16;
+				}
+				else if (fmt == String(L"B4G4R4A4"))
+				{
+					return FMT_B4G4R4A4;
+				}
+				else if (fmt == String(L"P8"))
+				{
+					return FMT_Palette8;
+				}
+				else if (fmt == String(L"P8A8"))
+				{
+					return FMT_Palette8Alpha8;
+				}
+				return FMT_Unknown;
+			}
+			static DepthFormat ConvertDepthFormat(const String& fmt)
+			{
+				if (fmt == String(L"D15S1"))
+				{
+					return DEPFMT_Depth15Stencil1;
+				}
+				else if (fmt == String(L"D16"))
+				{
+					return DEPFMT_Depth16;
+				}
+				else if (fmt == String(L"D16Lockable"))
+				{
+					return DEPFMT_Depth16Lockable;
+				}
+				else if (fmt == String(L"D24"))
+				{
+					return DEPFMT_Depth24X8;
+				}
+				else if (fmt == String(L"D24S4"))
+				{
+					return DEPFMT_Depth24Stencil4;
+				}
+				else if (fmt == String(L"D24S8"))
+				{
+					return DEPFMT_Depth24Stencil8;
+				}
+				else if (fmt == String(L"D24S8F"))
+				{
+					return DEPFMT_Depth24Stencil8Single;
+				}
+				else if (fmt == String(L"D32"))
+				{
+					return DEPFMT_Depth32;
+				}
+				else if (fmt == String(L"D32Lockable"))
+				{
+					return DEPFMT_Depth32Lockable;
+				}
+				else if (fmt == String(L"D32F"))
+				{
+					return DEPFMT_Depth32Single;
+				}
+
+				return DEPFMT_Depth16;
+			}
+
 		};
 
 	}
