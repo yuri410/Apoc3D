@@ -30,7 +30,10 @@
     <ClInclude Include="TextureBuild\TextureBuild.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="TextureBuild\BuildEngine.h">
+    <ClInclude Include="BuildEngine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FontBuild\FontBuild.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,7 +50,10 @@
     <ClCompile Include="APBCommon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TextureBuild\BuildEngine.cpp">
+    <ClCompile Include="BuildEngine.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FontBuild\FontBuild.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
