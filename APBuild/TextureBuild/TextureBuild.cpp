@@ -27,11 +27,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/TextureData.h"
 #include "IOLib/Streams.h"
 #include "Graphics/PixelFormat.h"
+#include "Apoc3DException.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"
-#include "IL/ilut.h"
 
+using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::IO;
 
@@ -48,6 +49,7 @@ namespace APBuild
 		String SourceFile;
 		String DestinationFile;
 		bool GenerateMipmaps;
+		bool Resize;
 		int NewWidth;
 		int NewHeight;
 		int NewDepth;
@@ -148,7 +150,19 @@ namespace APBuild
 		}
 		return FMT_Unknown;
 	}
-
+	int ConvertFilter(TextureFilterType flt)
+	{
+		switch (flt)
+		{
+		case TFLT_Nearest:
+			return ILU_NEAREST;
+		case TFLT_Box:
+			return ILU_SCALE_BOX;
+		case TFLT_BSpline:
+			return ILU_SCALE_BSPLINE;
+		}
+		throw Apoc3DException::createException(EX_NotSupported, L"Not supported filter type");
+	}
 	void TextureBuild::Build(const ConfigurationSection* sect)
 	{
 		TexConfig config;
@@ -160,7 +174,7 @@ namespace APBuild
 		ilBindImage(image);
 		ilSetInteger(IL_KEEP_DXTC_DATA, IL_TRUE);
 
-		ilLoadImage(config.SourceFile);
+		ilLoadImage(config.SourceFile.c_str());
 
 		int ilFormat = ilGetInteger(IL_IMAGE_FORMAT);
 
@@ -168,6 +182,11 @@ namespace APBuild
 		if (config.GenerateMipmaps)
 		{
 			iluBuildMipmaps();
+		}
+		if (config.Resize)
+		{
+			iluImageParameter(ILU_FILTER, ConvertFilter(config.ResizeFilterType));
+			iluScale(config.NewWidth, config.NewHeight, config.NewDepth);
 		}
 
 		int mipCount = ilGetInteger(IL_NUM_MIPMAPS) + 1;
@@ -197,6 +216,7 @@ namespace APBuild
 		{
 			texData.Format = ConvertFormat(dxtFormat, 0, 0);
 		}
+		
 
 		for (int i=0;i<mipCount;i++)
 		{
