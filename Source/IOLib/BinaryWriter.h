@@ -66,8 +66,8 @@ namespace Apoc3D
 			void Write(const Quaternion& quat) const;
 			void Write(const Point& point) const;
 			void Write(const Size& size) const;
-			void Write(const Rectangle& rect) const;
-			void Write(const RectangleF& rect) const;
+			void Write(const Apoc3D::Math::Rectangle& rect) const;
+			void Write(const Apoc3D::Math::RectangleF& rect) const;
 
 			void Write(const Ray& ray) const;
 			void Write(const BoundingBox& sphere) const;

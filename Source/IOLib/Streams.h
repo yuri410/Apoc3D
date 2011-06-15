@@ -297,6 +297,10 @@ namespace Apoc3D
 				{
 					count = getLength() - getPosition();
 				}
+				if (count)
+				{
+					m_baseStream->Read(dest, count);
+				}
 
 				return count;
 			}
@@ -364,8 +368,7 @@ namespace Apoc3D
 			MemoryOutStream(int64 preserved)
 				: m_length(0), m_position(0)
 			{
-				m_data = new vector<char>();
-				
+				m_data = new vector<char>(static_cast<size_t>(preserved));
 			}
 			virtual ~MemoryOutStream()
 			{

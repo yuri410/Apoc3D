@@ -106,6 +106,71 @@ namespace APBuild
 		wchar_t Character;
 		int GlyphIndex;
 	};
+
+	char ConvertByte(char c)
+	{
+		byte b = reinterpret_cast<const byte&>(c);
+		if(b == 0xff)
+			b = 0xfe;
+		return reinterpret_cast<const char&>(b);
+	}
+
+	char* CompressData(const char* src, int width, int height)
+	{
+		assert(width);
+		assert(height);
+
+		vector<char> data(width*height);
+
+		for (int i=0;i<height;i++)
+		{
+			int counter = 0;
+			
+			char curByte = ConvertByte(src[i*width]);
+
+			int startPos = 0;
+			
+
+			for (int j=1;j<width;j++)
+			{
+				char cc = ConvertByte(src[i*width + j]);
+				if (curByte == cc && counter < 0xfe)
+				{
+					if (!counter)
+					{
+						startPos = j;
+						curByte = ConvertByte(src[i*width]);
+					}
+					counter++;
+				}
+				else
+				{
+					if (counter > 3)
+					{
+						static const byte maxb = 0xff;
+						data.push_back(reinterpret_cast<const char&>(maxb));
+						data.push_back(reinterpret_cast<const char&>(counter));
+						data.push_back(curByte);
+						counter = 0;
+					}
+					else
+					{
+						for (int k=startPos;k<=j;k++)
+						{
+							data.push_back(ConvertByte(src[i*width + k]));
+						}
+						counter = 0;
+					}
+				}
+			}
+		}
+
+		char* result = new char[data.size()];
+		for (size_t i=0;i<data.size();i++)
+			result[i] = data[i];
+		return result;
+	}
+
 	void FontBuild::Build(const ConfigurationSection* sect)
 	{
 		FontConfig config;
@@ -126,13 +191,14 @@ namespace APBuild
 		int index = 0;
 		for (int i=0;i<config.Ranges.getCount();i++)
 		{
-			for (wchar_t ch = config.Ranges[i].MinChar; ch<=config.Ranges[i].MaxChar; ch++)
+			for (wchar_t ch = (wchar_t)config.Ranges[i].MinChar; 
+				ch <= (wchar_t)config.Ranges[i].MaxChar; ch++)
 			{
 				RectF size;
 				gg->MeasureString(&ch, 1, &font, Gdiplus::PointF(0,0), &size);
 
-				int width = ceilf(size.Width);
-				int height = ceilf(size.Height);
+				int width = static_cast<int>(ceilf(size.Width));
+				int height = static_cast<int>(ceilf(size.Height));
 
 				Bitmap bitmap((INT)width, (INT)height, PixelFormat32bppARGB);
 
@@ -141,7 +207,7 @@ namespace APBuild
 				g->Clear(Gdiplus::Color(0));
 
 
-				Brush* brush = new SolidBrush(Gdiplus::Color::White);
+				Brush* brush = new SolidBrush((Gdiplus::ARGB)Gdiplus::Color::White);
 				StringFormat* strFmt = new StringFormat();
 				strFmt->SetAlignment(StringAlignmentNear);
 				strFmt->SetLineAlignment(StringAlignmentNear);
