@@ -258,7 +258,86 @@ namespace APBuild
 	//	}
 	//	return true;
 	//}
+	bool FindIndexUsingMappingMode(KFbxLayerElementMaterial* layer, KFbxMesh* mesh, int polyNum, int vertNumInPolygon, int indexForThatVert, int& result)
+	{
+		KFbxLayerElement::EMappingMode mappingMode = layer->GetMappingMode();
+		if (mappingMode == KFbxLayerElement::eALL_SAME)
+		{
+			result = 0;
+			return true;
+		}
+		if (mappingMode == KFbxLayerElement::eBY_POLYGON)
+		{
+			result = polyNum;
+			return true;
+		}
+		if (mappingMode == KFbxLayerElement::eBY_CONTROL_POINT)
+		{
+			result = indexForThatVert;
+			return true;
+		}
+		if (mappingMode == KFbxLayerElement::eBY_POLYGON_VERTEX)
+		{
+			result = polyNum * 3 + vertNumInPolygon;
+			return true;
+		}
+		
+		return false;
+	}
+	KFbxSurfaceMaterial* FbxImporter::GetMaterialAppliedToPoly(KFbxMesh* mesh, int layerNum, int polyNum)
+	{
+		KFbxSurfaceMaterial* surfaceMtrl;
 
+		KFbxNode* node = mesh->GetNode();
+
+		if (!node)
+		{
+			return 0;
+		}
+		KFbxLayerElementMaterial* layeredMtrl = mesh->GetLayer(layerNum)->GetMaterials();
+		if (!layeredMtrl)
+		{
+			return 0;
+		}
+		try
+		{
+			int indexForThatVert = mesh->GetPolygonVertex(polyNum, 0);
+			int index;
+			bool re =
+				FindIndexUsingMappingMode(layeredMtrl, 
+				 mesh, polyNum, 0, indexForThatVert, index);
+			if (re && index>=0)
+			{
+				KFbxLayerElement::EReferenceMode mode = layeredMtrl->GetReferenceMode();
+				if (mode == KFbxLayerElement::eDIRECT)
+				{
+					if (index >= node->GetMaterialCount())
+					{
+						return 0;
+					}
+					return node->GetMaterial(index);
+				}
+				else if (mode == KFbxLayerElement::eINDEX_TO_DIRECT)
+				{
+					
+					KFbxLayerElementArrayTemplate<int>* indexArr = layeredMtrl->GetIndexArray();
+					if (index < indexArr->GetCount())
+					{
+						int num = indexArr->GetAt(index);
+						if (num >=0 && num < node->GetMaterialCount())
+						{
+							return node->GetMaterial(num);
+						}
+					}
+					return 0;
+				}
+			}
+		}
+		catch (CException* e)
+		{
+		}
+		return 0;
+	}
 	void FbxImporter::CacheBindPose(KFbxScene* scene)
 	{
 		for (int i=0;i<scene->GetPoseCount();i++)
@@ -310,7 +389,9 @@ namespace APBuild
 			KFbxAxisSystem currentAxisSystem = lScene->GetGlobalSettings().GetAxisSystem();
 
 			KFbxAxisSystem axisSystem = KFbxAxisSystem(KFbxAxisSystem::eUpVector::YAxis, 
-				KFbxAxisSystem::eFrontVector::ParityOdd, KFbxAxisSystem::eCoorSystem::RightHanded);
+				KFbxAxisSystem::eFrontVector::ParityOdd, 
+				KFbxAxisSystem::eCoorSystem::RightHanded);
+
 			if (axisSystem != currentAxisSystem)
 			{
 				axisSystem.ConvertScene(lScene);
