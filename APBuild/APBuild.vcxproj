@@ -52,7 +52,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Source;$(SolutionDir)\include;$(SolutionDir)\extra;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Source;$(SolutionDir)\include;$(SolutionDir)\include\fbx;$(SolutionDir)\extra;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -85,6 +85,7 @@
   <ItemGroup>
     <ClInclude Include="APBCommon.h" />
     <ClInclude Include="FontBuild\FontBuild.h" />
+    <ClInclude Include="MeshBuild\FbxImporter.h" />
     <ClInclude Include="MeshBuild\MeshBuild.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -94,6 +95,7 @@
   <ItemGroup>
     <ClCompile Include="APBuild.cpp" />
     <ClCompile Include="FontBuild\FontBuild.cpp" />
+    <ClCompile Include="MeshBuild\FbxImporter.cpp" />
     <ClCompile Include="MeshBuild\MeshBuild.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="APBCommon.cpp" />
