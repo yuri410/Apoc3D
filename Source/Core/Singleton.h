@@ -31,11 +31,12 @@ namespace Apoc3D
 	namespace Core
 	{
 #define SINGLETON_DECL_HEARDER(T) static T& getSingleton(); static T* getSingletonPtr();
-#define SINGLETON_DECL(T) namespace Core { \
+
+#define SINGLETON_DECL(T) namespace Apoc3D { namespace Core { \
 	template<> T* Singleton<T>::ms_instance = 0; } \
 	T* T::getSingletonPtr(void) { return ms_instance; } \
-	T& T::getSingleton(void) { assert( ms_instance );  return ( *ms_instance );  }
-	
+	T& T::getSingleton(void) { assert( ms_instance );  return ( *ms_instance );  } }
+
 
 		template<class T>
 		class APAPI Singleton

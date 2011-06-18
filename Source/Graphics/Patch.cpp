@@ -53,7 +53,7 @@ namespace Apoc3D
 			delete m_indexBuffer;
 		}
 
-		const RenderOperationBuffer* Patch::GetRenderOperation(int lod)
+		RenderOperationBuffer* Patch::GetRenderOperation(int lod)
 		{
 			if (!m_mtrl)
 				return 0;

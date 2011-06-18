@@ -33,10 +33,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Utility;
 
+SINGLETON_DECL(Apoc3D::VFS::FileSystem);
+
 namespace Apoc3D
 {
-	SINGLETON_DECL(Apoc3D::VFS::FileSystem);
-
 	namespace VFS
 	{
 		//void FileSystem::Initialize()

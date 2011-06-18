@@ -408,7 +408,7 @@ namespace Apoc3D
 			}
 		}
 
-		const RenderOperationBuffer* Model::GetRenderOperation()
+		RenderOperationBuffer* Model::GetRenderOperation()
 		{
 			if (m_data->getState() != RS_Loaded && m_data->getWeakRef()->isManaged())
 			{

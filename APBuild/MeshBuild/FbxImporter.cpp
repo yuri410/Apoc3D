@@ -245,20 +245,45 @@ void ExportContent(KFbxNode* pNode)
 
 namespace APBuild
 {
-	//bool IsANullNode(KFbxNode* node)
-	//{
-	//	if (node->GetNodeAttribute())
-	//	{
-	//		KFbxNodeAttribute* attr = node->GetNodeAttribute();
-	//		if (attr[0][180]()!=1)
-	//		{
-	//			
-	//			return false;
-	//		}
-	//	}
-	//	return true;
-	//}
-	bool FindIndexUsingMappingMode(KFbxLayerElementMaterial* layer, KFbxMesh* mesh, int polyNum, int vertNumInPolygon, int indexForThatVert, int& result)
+	bool IsANullNode(KFbxNode* node)
+	{
+		KFbxNodeAttribute* attr = node->GetNodeAttribute();
+		if (attr)
+		{
+			if (attr->GetAttributeType()!=KFbxNodeAttribute::eNULL)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	bool IsAnInterestingNode(KFbxNode* node)
+	{
+		KFbxNodeAttribute* attr = node->GetNodeAttribute();
+		if (!attr)
+		{
+			return true;
+		}
+		return attr->GetAttributeType() == KFbxNodeAttribute::eNULL
+			|| attr->GetAttributeType() == KFbxNodeAttribute::eSKELETON 
+			|| attr->GetAttributeType() == KFbxNodeAttribute::eMESH;
+	}
+	bool NodesAbsoluteTransformIsIdentity(KFbxNode* node)
+	{
+		const KFbxMatrix matrix = node->EvaluateGlobalTransform();
+		return matrix[0][0] == 1.0 && matrix[1][1] == 1.0 && matrix[2][2] == 1.0 && matrix[3][3] == 1.0 &&
+			matrix[0][1] == 0.0 && matrix[0][2] == 0.0 && matrix[0][3] == 0.0 &&
+			matrix[1][0] == 0.0 && matrix[1][2] == 0.0 && matrix[1][3] == 0.0 &&
+			matrix[2][0] == 0.0 && matrix[2][1] == 0.0 && matrix[2][3] == 0.0 &&
+			matrix[3][0] == 0.0 && matrix[3][1] == 0.0 && matrix[3][2] == 0.0;
+	}
+	string GetNameForFbxObject(KFbxObject* obj)
+	{
+		KString name = obj->GetNameWithNameSpacePrefix();
+		return name.operator const char *();
+	}
+	bool FindIndexUsingMappingMode(KFbxLayerElementMaterial* layer, 
+		KFbxMesh* mesh, int polyNum, int vertNumInPolygon, int indexForThatVert, int& result)
 	{
 		KFbxLayerElement::EMappingMode mappingMode = layer->GetMappingMode();
 		if (mappingMode == KFbxLayerElement::eALL_SAME)
@@ -284,6 +309,20 @@ namespace APBuild
 		
 		return false;
 	}
+
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+
+	bool FbxImporter::IsSkeletonRoot(KFbxNode* node)
+	{
+		if (!node)
+		{
+			return false;
+		}
+		return m_skeletonRoot == node;
+	}
+
 	KFbxSurfaceMaterial* FbxImporter::GetMaterialAppliedToPoly(KFbxMesh* mesh, int layerNum, int polyNum)
 	{
 		KFbxSurfaceMaterial* surfaceMtrl;
@@ -363,6 +402,99 @@ namespace APBuild
 		}
 	}
 
+	KFbxNode* FbxImporter::FindRootMostBone(KFbxNode* sceneRoot)
+	{
+		// BFS pass until the first skeleton node is found
+		if (sceneRoot)
+		{
+			list<KFbxNode*> nodeList;
+			
+			nodeList.push_back(sceneRoot);
+
+			do 
+			{
+				KFbxNode* nodePtr = *nodeList.begin();
+				nodeList.erase(nodeList.begin());
+
+				if (nodePtr->GetSkeleton())
+				{
+					return nodePtr;
+				}
+
+				if (nodePtr->GetChildCount(false)>0)
+				{
+					for (int i=0;i<nodePtr->GetChildCount(false);i++)
+					{
+						KFbxNode* subNode = nodePtr->GetChild(i);
+						nodeList.push_back(subNode);
+					}
+				}
+
+			} while (!ptrList.empty());
+		}
+		return 0;
+	}
+	void FbxImporter::BuildMesh(KFbxNode* node)
+	{
+		m_pFBXGeometryConverter->TriangulateInPlace(node);
+
+	}
+
+	void FbxImporter::ProcessNode(const Matrix& parentAbsTrans, KFbxNode* fbxNode, 
+		bool partofMainSkeleton, bool warnIfBoneButNotChild)
+	{
+		KFbxObject* fbxObj = dynamic_cast<KFbxObject*>(fbxNode);
+		assert(fbxObj);
+
+		string objName = GetNameForFbxObject(fbxObj);
+
+		KFbxNodeAttribute* attr = fbxNode->GetNodeAttribute();
+		if (attr)
+		{
+			KFbxNodeAttribute::EAttributeType type = attr->GetAttributeType();
+			switch (type)
+			{
+			case KFbxNodeAttribute::eSKELETON:
+				if (!IsSkeletonRoot(fbxNode))
+				{
+					
+				}
+				partofMainSkeleton = true;
+				break;
+			case KFbxNodeAttribute::eMESH:
+
+				break;
+			
+			case KFbxNodeAttribute::eUNIDENTIFIED:
+			case KFbxNodeAttribute::eNULL:
+			case KFbxNodeAttribute::eMARKER:
+			case KFbxNodeAttribute::eNURB:
+			case KFbxNodeAttribute::ePATCH:
+			case KFbxNodeAttribute::eCAMERA:
+			case KFbxNodeAttribute::eCAMERA_STEREO:
+			case KFbxNodeAttribute::eCAMERA_SWITCHER:
+			case KFbxNodeAttribute::eLIGHT:
+			case KFbxNodeAttribute::eOPTICAL_REFERENCE:
+			case KFbxNodeAttribute::eOPTICAL_MARKER:
+
+				break;
+			default:
+				{
+
+				}
+			}
+			
+		}
+
+		for (int i=0;i<fbxNode->GetChildCount(false);i++)
+		{
+			KFbxNode* subNode = fbxNode->GetChild(i);
+
+			ProcessNode(subNode);
+			
+		}
+	}
+
 	FbxImporter::FbxImporter()
 	{
 		
@@ -398,7 +530,6 @@ namespace APBuild
 			}
 			KFbxSystemUnit currentUnit = lScene->GetGlobalSettings().GetSystemUnit();
 
-
 			if (currentUnit.GetScaleFactor() != 1.0f)
 			{
 				KFbxSystemUnit unit = KFbxSystemUnit(1,1);
@@ -407,12 +538,17 @@ namespace APBuild
 			}
 
 			KFbxNode* node = lScene->GetRootNode();
-			//if (node->GetChildCount(false) == 1 && )
-			//{
 
-			//}
-
+			if (node->GetChildCount(false) == 1 && 
+				IsANullNode(node) && IsAnInterestingNode(node->GetChild(0)) &&
+				NodesAbsoluteTransformIsIdentity(node))
+			{
+				node = node->GetChild(0);
+			}
+			m_skeletonRoot = FindRootMostBone(node);
 			CacheBindPose(lScene);
+			ProcessNode(Matrix::Identity, node, false, true);
+			// add animation
 		}
 
 		lScene->Destroy();

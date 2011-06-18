@@ -24,10 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "ConfigurationManager.h"
 
+SINGLETON_DECL(Apoc3D::Config::ConfigurationManager);
+
 namespace Apoc3D
 {
-	SINGLETON_DECL(Apoc3D::Config::ConfigurationManager);
-
 	namespace Config
 	{
 		ConfigurationManager::ConfigurationManager()

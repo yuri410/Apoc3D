@@ -35,10 +35,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Platform;
 
+SINGLETON_DECL(Apoc3D::Core::PluginManager);
+
 namespace Apoc3D
 {
-	SINGLETON_DECL(Apoc3D::Core::PluginManager);
-
 	namespace Core
 	{
 		typedef Plugin* (*LIB_GET_PLUGIN)(void);

@@ -26,14 +26,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Apoc3DException.h"
 #include "Utility/StringUtils.h"
 
-
 using namespace Apoc3D;
 using namespace Apoc3D::Utility;
 
+SINGLETON_DECL(Apoc3D::Graphics::RenderSystem::GraphicsAPIManager);
+
 namespace Apoc3D
 {
-	SINGLETON_DECL(Apoc3D::Graphics::RenderSystem::GraphicsAPIManager);
-	
 	namespace Graphics
 	{
 		namespace RenderSystem

@@ -329,7 +329,7 @@ namespace Apoc3D
 			return size + sizeof(Mesh);
 		}
 
-		const RenderOperationBuffer* Mesh::GetRenderOperation(int level)
+		RenderOperationBuffer* Mesh::GetRenderOperation(int level)
 		{
 			if (!m_opBufferBuilt)
 			{

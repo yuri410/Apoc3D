@@ -25,11 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "EffectManager.h"
 #include "Core/Logging.h"
 
+SINGLETON_DECL(Apoc3D::Graphics::EffectSystem::EffectManager);
 
 namespace Apoc3D
 {
-	SINGLETON_DECL(Apoc3D::Graphics::EffectSystem::EffectManager);
-
 	namespace Graphics
 	{
 		namespace EffectSystem

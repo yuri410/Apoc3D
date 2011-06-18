@@ -25,7 +25,15 @@ namespace APBuild
 		KFbxIOPluginRegistry* m_pFBXPluginRegistry;
 		KFbxSdkManager* m_pFBXSdkManager;
 		FastMap<string, Matrix> m_bindPoseCache;
+		KFbxNode* m_skeletonRoot;
 
+		bool IsSkeletonRoot(KFbxNode* node);
+
+		KFbxNode* FindRootMostBone(KFbxNode* sceneRoot);
+		void BuildMesh(KFbxNode* node);
+
+		void ProcessNode(const Matrix& parentAbsTrans, KFbxNode* fbxNode, 
+			bool partofMainSkeleton, bool warnIfBoneButNotChild);
 		KFbxSurfaceMaterial* GetMaterialAppliedToPoly(KFbxMesh* mesh, int layerCount, int polyCount);
 		void CacheBindPose(KFbxScene* scene);
 	public:

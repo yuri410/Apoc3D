@@ -24,10 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Logging.h"
 
+SINGLETON_DECL(Apoc3D::Core::LogManager);
+
 namespace Apoc3D
 {
-	SINGLETON_DECL(Apoc3D::Core::LogManager);
-
 	namespace Core
 	{
 		Log::Log(LogType type)

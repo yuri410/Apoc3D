@@ -32,10 +32,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Utility;
 
+SINGLETON_DECL(Apoc3D::Graphics::TextureManager);
+
 namespace Apoc3D
 {
-	SINGLETON_DECL(Apoc3D::Graphics::TextureManager);
-
 	namespace Graphics
 	{
 		int64 TextureManager::CacheSize = 200 * 1048576;

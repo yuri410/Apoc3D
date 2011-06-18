@@ -42,6 +42,12 @@
     <ClInclude Include="MeshBuild\FbxImporter.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MeshBuild\FbxBaker.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CompileLog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -66,6 +72,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MeshBuild\FbxImporter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CompileLog.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
