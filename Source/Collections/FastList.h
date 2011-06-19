@@ -31,7 +31,7 @@ namespace Apoc3D
 	namespace Collections
 	{
 		template<typename T>
-		class APAPI FastList
+		class FastList
 		{
 		private:
 			T* m_elements;

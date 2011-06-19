@@ -27,7 +27,7 @@ namespace Apoc3D
 	namespace Collections
 	{
 		template<typename T>
-		class APAPI Stack
+		class Stack
 		{
 		private:
 			T* m_array;

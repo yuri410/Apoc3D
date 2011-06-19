@@ -33,7 +33,7 @@ namespace Apoc3D
 	namespace Collections
 	{
 		template<typename T, typename S>
-		class APAPI FastMap
+		class FastMap
 		{
 		public:
 			class Enumerator
@@ -189,11 +189,10 @@ namespace Apoc3D
 		public:
 			int32 getCount() const { return m_count - m_freeCount; }
 
-			FastMap()
-				:  m_buckets(0), m_bucketsLength(0), m_count(0), 
+			FastMap(const IEqualityComparer<T>* comparer = IBuiltInEqualityComparer<T>::Default)
+				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
 				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
 			{
-				m_comparer = IEqualityComparer<T>::Default;
 				assert(m_comparer);
 
 				int capacity = 8;
@@ -280,6 +279,7 @@ namespace Apoc3D
 						}
 					}
 				}
+				
 				return false;
 			}
 

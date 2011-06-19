@@ -50,6 +50,14 @@ namespace APBuild
 	{
 		return Vector3Utils::LDVector( v.GetAt(0), v.GetAt(1), v.GetAt(2) );
 	}
+	Vector2 ConvertVector2(const KFbxVector2& v)
+	{
+		return Vector2Utils::LDVector( v.GetAt(0), v.GetAt(1) );
+	}
+	Vector2 ConvertTexCoord(const KFbxVector2& v)
+	{
+		return Vector2Utils::LDVector( v.GetAt(0), 1-v.GetAt(1) );
+	}
 	Matrix ConvertMatrix(const KFbxMatrix& m)
 	{
 		const double* mptr = m.operator const double *();
@@ -665,6 +673,120 @@ namespace APBuild
 			break;
 		}
 		return -1;
+	}
+	MaterialData* FbxImporter::GetMaterialLinkedWithPolygon(KFbxMesh* pFBXMesh, int nLayerIndex, int nPolygonIndex, int nPolygonVertexIndex, int nVertexIndex)
+	{
+		if( nLayerIndex < 0 || nLayerIndex > pFBXMesh->GetLayerCount() )
+			return 0;
+
+		KFbxNode* pNode = pFBXMesh->GetNode();
+
+		if( !pNode )
+			return 0;
+
+		KFbxLayerElementMaterial* pFBXMaterial = pFBXMesh->GetLayer(nLayerIndex)->GetMaterials();
+
+		if( pFBXMaterial )
+		{
+			int nMappingIndex = GetMappingIndex( pFBXMaterial->GetMappingMode(), nPolygonIndex, 0, nVertexIndex );
+
+			if( nMappingIndex < 0 )
+				return 0;
+
+			KFbxLayerElement::EReferenceMode referenceMode = pFBXMaterial->GetReferenceMode();
+
+
+			if( referenceMode == KFbxLayerElement::eDIRECT )
+			{
+				if( nMappingIndex < pNode->GetMaterialCount() )
+				{
+					return GetMaterial(pNode->GetMaterial(nMappingIndex));
+				}
+			}
+			else if( referenceMode == KFbxLayerElement::eINDEX_TO_DIRECT )
+			{
+				const KFbxLayerElementArrayTemplate<int>& pMaterialIndexArray = pFBXMaterial->GetIndexArray();
+
+				if( nMappingIndex < pMaterialIndexArray.GetCount() )
+				{
+					int nIndex = pMaterialIndexArray.GetAt(nMappingIndex);
+					if( nIndex < pNode->GetMaterialCount() )
+					{
+						return GetMaterial(pNode->GetMaterial(nIndex));
+					}
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	Vector2 FbxImporter::GetTexCoord(KFbxMesh* pFBXMesh, 
+		int nLayerIndex, int nPolygonIndex, int nPolygonVertexIndex, int nVertexIndex)
+	{
+		int nLayerCount = pFBXMesh->GetLayerCount();
+		if( nLayerIndex < nLayerCount )//for( int i = 0; i < nLayerCount; ++i )
+		{
+			KFbxLayer* pFBXLayer = pFBXMesh->GetLayer(nLayerIndex);
+
+			if( pFBXLayer )
+			{
+				KFbxLayerElementUV* pUVs = pFBXLayer->GetUVs(KFbxLayerElement::eDIFFUSE_TEXTURES);
+				if( pUVs )
+				{
+					KFbxLayerElement::EMappingMode mappingMode = pUVs->GetMappingMode();
+					KFbxLayerElement::EReferenceMode referenceMode = pUVs->GetReferenceMode();
+
+					const KFbxLayerElementArrayTemplate<KFbxVector2>& pUVArray = pUVs->GetDirectArray();
+					const KFbxLayerElementArrayTemplate<int>& pUVIndexArray = pUVs->GetIndexArray();
+
+					switch(mappingMode)
+					{
+					case KFbxLayerElement::eBY_CONTROL_POINT:
+						{
+							int nMappingIndex = nVertexIndex;
+							switch(referenceMode)
+							{
+							case KFbxLayerElement::eDIRECT:
+								if( nMappingIndex < pUVArray.GetCount() )
+								{
+									return ConvertTexCoord( pUVArray.GetAt(nMappingIndex) ) ;
+								}
+								break;
+							case KFbxLayerElement::eINDEX_TO_DIRECT:
+								if( nMappingIndex < pUVIndexArray.GetCount() )
+								{
+									int nIndex = pUVIndexArray.GetAt(nMappingIndex);
+									if( nIndex < pUVArray.GetCount() )
+									{
+										return ConvertTexCoord( pUVArray.GetAt(nIndex) );
+									}
+								}
+								break;
+							};
+						}
+						break;
+
+					case KFbxLayerElement::eBY_POLYGON_VERTEX:
+						{
+							int nMappingIndex = pFBXMesh->GetTextureUVIndex(nPolygonIndex, nPolygonVertexIndex, KFbxLayerElement::eDIFFUSE_TEXTURES);
+							switch(referenceMode)
+							{
+							case KFbxLayerElement::eDIRECT:
+							case KFbxLayerElement::eINDEX_TO_DIRECT: //I have no idea why the index array is not used in this case.
+								if( nMappingIndex < pUVArray.GetCount() )
+								{
+									return ConvertTexCoord(  pUVArray.GetAt(nMappingIndex)  );
+								}
+								break;
+							};
+						}
+						break;
+					};
+				}
+			}
+		}
+		return Vector2Utils::LDVector(0);
 	}
 
 	MaterialData* FbxImporter::GetMaterial(KFbxSurfaceMaterial* pFBXMaterial)

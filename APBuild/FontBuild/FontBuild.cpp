@@ -43,6 +43,8 @@ using namespace Gdiplus;
 
 #pragma comment (lib,"Gdiplus.lib")
 
+
+
 namespace APBuild
 {
 	struct GlyphBitmap
@@ -67,9 +69,13 @@ namespace APBuild
 		}
 	};
 
+	template class IEqualityComparer<GlyphBitmap>;
+
 	class GlyphBitmapEqualityComparer : public IEqualityComparer<GlyphBitmap>
 	{
 	public:
+		GlyphBitmapEqualityComparer() { }
+
 		virtual bool Equals(const GlyphBitmap& x, const GlyphBitmap& y) const
 		{
 			return x==y;
@@ -80,7 +86,9 @@ namespace APBuild
 			return obj.HashCode;
 		}
 	};
+
 	
+
 	struct CharMapping
 	{
 		wchar_t Character;

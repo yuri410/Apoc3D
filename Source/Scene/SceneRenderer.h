@@ -42,7 +42,13 @@ namespace Apoc3D
 		typedef Material* LPMaterial;
 		class MaterialEqualityComparer : public IEqualityComparer<LPMaterial>
 		{
+		private:
 		public:
+			class BuiltIn : public IBuiltInEqualityComparer<LPMaterial>
+			{
+
+			};
+
 			virtual bool Equals(const LPMaterial& x, const LPMaterial& y) const;
 
 			virtual int64 GetHashCode(const LPMaterial& obj) const;
@@ -51,7 +57,14 @@ namespace Apoc3D
 		typedef GeometryData* LPGeometryData;
 		class GeometryDataEqualityComparer : public IEqualityComparer<LPGeometryData>
 		{
+		private:
+			
 		public:
+			class BuiltIn : public IBuiltInEqualityComparer<LPGeometryData>
+			{
+
+			};
+
 			virtual bool Equals(const LPGeometryData& x, const LPGeometryData& y) const;
 
 			virtual int64 GetHashCode(const LPGeometryData& obj) const;

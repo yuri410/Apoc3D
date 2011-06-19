@@ -29,7 +29,7 @@ namespace APBuild
 	public:
 
 
-		static  void Write(CompileLogType type, const String& message, const String& location)
+		static void Write(CompileLogType type, const String& message, const String& location)
 		{
 			CompileLogEntry ent = {type, location, message};
 			m_logs.push_back(ent);

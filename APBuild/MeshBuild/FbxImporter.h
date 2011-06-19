@@ -1,4 +1,5 @@
-
+#ifndef FBXIMPORTER_H
+#define FBXIMPORTER_H
 #include "APBCommon.h"
 
 #include <fbxsdk.h>
@@ -405,3 +406,4 @@ namespace APBuild
 	
 	};
 }
+#endif

@@ -31,7 +31,7 @@ namespace Apoc3D
 	namespace Collections
 	{
 		template<typename T>
-		class APAPI FastQueue
+		class FastQueue
 		{
 		private:
 			//static const int DefaultCapacity = 4;

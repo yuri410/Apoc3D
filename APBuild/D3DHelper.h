@@ -1,5 +1,5 @@
-#ifndef D3D9HELPER
-#define D3D9HELPER
+#ifndef D3D9HELPER_H
+#define D3D9HELPER_H
 
 #include "APBCommon.h"
 

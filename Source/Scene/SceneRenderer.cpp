@@ -195,7 +195,8 @@ namespace Apoc3D
 
 	namespace Collections
 	{
-		const IEqualityComparer<LPMaterial>* IEqualityComparer<LPMaterial>::Default = new MaterialEqualityComparer();
+		const IEqualityComparer<LPMaterial>* MaterialEqualityComparer::BuiltIn::Default =
+			new MaterialEqualityComparer();
 
 		bool MaterialEqualityComparer::Equals(const LPMaterial& x, const LPMaterial& y) const
 		{
@@ -210,7 +211,8 @@ namespace Apoc3D
 
 
 
-		const IEqualityComparer<LPGeometryData>* IEqualityComparer<LPGeometryData>::Default = new GeometryDataEqualityComparer();
+		const IEqualityComparer<LPGeometryData>* GeometryDataEqualityComparer::BuiltIn::Default = 
+			new GeometryDataEqualityComparer();
 
 		bool GeometryDataEqualityComparer::Equals(const LPGeometryData& x, const LPGeometryData& y) const
 		{
