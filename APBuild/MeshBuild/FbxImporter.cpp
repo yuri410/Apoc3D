@@ -1,5 +1,7 @@
 #include "FbxImporter.h"
 
+#include "CompileLog.h"
+
 #ifdef IOS_REF
 #undef  IOS_REF
 #define IOS_REF (*(pSdkManager->GetIOSettings()))
@@ -245,6 +247,17 @@ void ExportContent(KFbxNode* pNode)
 
 namespace APBuild
 {
+
+	Matrix ConvertMatrix(const KFbxMatrix& m)
+	{
+		const double* mptr = m.operator const double *();
+		float buffer[16];
+		for (int i=0;i<16;i++)
+		{
+			buffer[i] = static_cast<float>(mptr[i]);
+		}
+		return Matrix(buffer);
+	}
 	bool IsANullNode(KFbxNode* node)
 	{
 		KFbxNodeAttribute* attr = node->GetNodeAttribute();
@@ -310,18 +323,155 @@ namespace APBuild
 		return false;
 	}
 
+	void GetGeomentryOffset(KFbxMatrix* matrix, KFbxNode* node)
+	{
+		KFbxVector4 transl = node->GetGeometricTranslation(eSOURCE_SET);
+		KFbxVector4 rotation = node->GetGeometricRotation(eSOURCE_SET);
+		KFbxVector4 scaling = node->GetGeometricScaling(eSOURCE_SET);
+
+		matrix->SetTRS(transl, rotation, scaling);
+	}
+	Matrix GetAbsoluteTransform(KFbxNode* fbxNode, const KTime& time)
+	{
+		KFbxMatrix globalTrans = fbxNode->EvaluateGlobalTransform(time);
+		KFbxMatrix m;
+		GetGeomentryOffset(m, fbxNode);
+		m = globalTrans * m;
+		return ConvertMatrix(m);
+	}
+	CalculateNodeTransformResult CalculateNodeTransformsAtTime(const Matrix& parentAbsTransform, KFbxNode* node, const KTime& time)
+	{
+		CalculateNodeTransformResult result;
+		result.AbsoluteTransform = GetAbsoluteTransform(node, time);
+		Matrix invParent;
+		Matrix::Inverse(invParent, parentAbsTransform);
+		Matrix::Multiply(result.LocalTransform, result.AbsoluteTransform, invParent);
+		return result;
+	}
+
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
 
-	bool FbxImporter::IsSkeletonRoot(KFbxNode* node)
+	void AddAnimationChannel(AnimationContentDictionary* animationDictionary, string animationName, string boneName, 
+		AnimationTake* animationTake, double duration)
 	{
-		if (!node)
+		AnimationContent* content = 0;
+		if (!animationDictionary->TryGetValue(animationName, content))
 		{
-			return false;
+			content = new AnimationContent(animationName);
+
+			content.Duration = 0;
+			animationDictionary.Add(animationName, content);
 		}
-		return m_skeletonRoot == node;
+
+		AnimationTake* channel = 0;
+		if (!content->Takes.TryGetValue(boneName, channel))
+		{
+			channel = new AnimationTake();
+			content->Takes.Add(boneName, channel);
+		}
+		for (int i=0;i<animationTake->Keyframes.getCount();i++)
+		{
+			channel->Keyframes.Add(keyframe);
+		}
+		double span = duration;
+		double span2 = content->Duration;
+		if (span > span2)
+		{
+			content->Duration = span;
+		}
 	}
+
+	KFbxNode* AnimationConverter::FindRootMostBone(KFbxNode* sceneRoot)
+	{
+		// BFS pass until the first skeleton node is found
+		if (sceneRoot)
+		{
+			list<KFbxNode*> nodeList;
+
+			nodeList.push_back(sceneRoot);
+
+			do 
+			{
+				KFbxNode* nodePtr = *nodeList.begin();
+				nodeList.erase(nodeList.begin());
+
+				if (nodePtr->GetSkeleton())
+				{
+					return nodePtr;
+				}
+
+				if (nodePtr->GetChildCount(false)>0)
+				{
+					for (int i=0;i<nodePtr->GetChildCount(false);i++)
+					{
+						KFbxNode* subNode = nodePtr->GetChild(i);
+						nodeList.push_back(subNode);
+					}
+				}
+
+			} while (!nodeList.empty());
+		}
+		return 0;
+	}
+	void AnimationConverter::AddAnimationToNodesRecursive(NodeContent* node, const string& takeName)
+	{
+		KFbxNode* fbxNode = node->FBXNode;
+
+		KTime start;
+		KTime end;
+		
+		fbxNode->GetAnimationInterval(start, end);
+		double dend = start.GetSecondDouble();
+		double dstart = end.GetSecondDouble();
+		double invFrameRate = 1/60.0;
+
+		AnimationTake* take = new AnimationTake();
+		
+		bool flag = false;
+		for (double t = dstart; t<dend; t+=invFrameRate)
+		{
+			KTime time;
+			time.SetSecondDouble(t);
+
+			CalculateNodeTransformResult trs;
+
+			if (!flag && node->Transform != trs.LocalTransform)
+			{
+				flag = true;
+			}
+
+			AnimationKeyframe keyframe;
+			take->Keyframes.Add(keyframe);
+		}
+		if (flag)
+		{
+			string nameForFbxObject = GetNameForFbxObject(fbxNode);
+			string animationName = takeName;
+			AddAnimationChannel(!node->PartOfMainSkeleton ? node :)
+		}
+	}
+
+	void AnimationConverter::HierarchyFixup(NodeContent* sceneRoot);
+	void AnimationConverter::SetCurrentTakeRecursive(KFbxNode* node, const string& takeName);
+	void AnimationConverter::WarnAboutAnimatedNodes(NodeContent* node);
+
+	void AnimationConverter::AddAnimationInformationToScene(KFbxScene* fbxScene, NodeContent* sceneRoot);
+
+	bool AnimationConverter::IsSkeletonRoot(KFbxNode* node);
+
+	void AnimationConverter::HierarchyFixup(NodeContent* sceneRoot);
+	void AnimationConverter::NodeWasCreated(KFbxNode* fbxNode, NodeContent* node, NodeContent* potentialParent, bool partOfMainSkeleton);
+
+
+
+
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+
+
 
 	KFbxSurfaceMaterial* FbxImporter::GetMaterialAppliedToPoly(KFbxMesh* mesh, int layerNum, int polyNum)
 	{
@@ -390,57 +540,40 @@ namespace APBuild
 				string name2 = name.GetCurrentName();
 				
 				KFbxMatrix matrix = pose->GetMatrix(j);
-				float elems[16];
-				for (int k=0;k<16;k++)
-				{
-					elems[k] = static_cast<float>(matrix[k]);
-				}
-				Matrix matrix2(elems);
+				Matrix matrix2 = ConvertMatrix(matrix);
 
-				m_bindPoseCache.Add(name, matrix2);
+				m_bindPoseCache.Add(name2, matrix2);
 			}
 		}
 	}
 
-	KFbxNode* FbxImporter::FindRootMostBone(KFbxNode* sceneRoot)
+	CalculateNodeTransformResult FbxImporter::CalculateNodeTransformBindPose(const Matrix& parentAbsTransform, KFbxNode* node)
 	{
-		// BFS pass until the first skeleton node is found
-		if (sceneRoot)
+		KString name = node->GetName();
+		string key = name.operator const char *();
+
+		Matrix trans;
+		if (m_bindPoseCache.TryGetValue(key, trans))
 		{
-			list<KFbxNode*> nodeList;
-			
-			nodeList.push_back(sceneRoot);
-
-			do 
-			{
-				KFbxNode* nodePtr = *nodeList.begin();
-				nodeList.erase(nodeList.begin());
-
-				if (nodePtr->GetSkeleton())
-				{
-					return nodePtr;
-				}
-
-				if (nodePtr->GetChildCount(false)>0)
-				{
-					for (int i=0;i<nodePtr->GetChildCount(false);i++)
-					{
-						KFbxNode* subNode = nodePtr->GetChild(i);
-						nodeList.push_back(subNode);
-					}
-				}
-
-			} while (!ptrList.empty());
+			CalculateNodeTransformResult result;
+			result.AbsoluteTransform = trans;
+			Matrix invParent;
+			Matrix::Inverse(invParent, parentAbsTransform);
+			Matrix::Multiply(result.LocalTransform, trans, invParent);
+			return result;
 		}
-		return 0;
-	}
-	void FbxImporter::BuildMesh(KFbxNode* node)
-	{
-		m_pFBXGeometryConverter->TriangulateInPlace(node);
-
+		KTime time;
+		return CalculateNodeTransformsAtTime(parentAbsTransform, node, time);
 	}
 
-	void FbxImporter::ProcessNode(const Matrix& parentAbsTrans, KFbxNode* fbxNode, 
+
+	//void FbxImporter::BuildMesh(KFbxNode* node)
+	//{
+	//	KFbxGeometryConverter converter(m_pFBXSdkManager);
+	//	converter.TriangulateInPlace(node);
+	//}
+
+	NodeContent* FbxImporter::ProcessNode(const Matrix& parentAbsTrans, KFbxNode* fbxNode, 
 		bool partofMainSkeleton, bool warnIfBoneButNotChild)
 	{
 		KFbxObject* fbxObj = dynamic_cast<KFbxObject*>(fbxNode);
@@ -462,9 +595,9 @@ namespace APBuild
 				partofMainSkeleton = true;
 				break;
 			case KFbxNodeAttribute::eMESH:
+				
 
 				break;
-			
 			case KFbxNodeAttribute::eUNIDENTIFIED:
 			case KFbxNodeAttribute::eNULL:
 			case KFbxNodeAttribute::eMARKER:
@@ -486,12 +619,18 @@ namespace APBuild
 			
 		}
 
+		if (m_skeletonRoot != fbxNode)
+		{
+
+		}
+		
+		CalculateNodeTransformResult transform = CalculateNodeTransformBindPose(parentAbsTrans, node);
+
 		for (int i=0;i<fbxNode->GetChildCount(false);i++)
 		{
 			KFbxNode* subNode = fbxNode->GetChild(i);
-
-			ProcessNode(subNode);
-			
+			//IsSkeletonRoot(subNode)
+			ProcessNode(transform.AbsoluteTransform, subNode, partofMainSkeleton, warnIfBoneButNotChild);;
 		}
 	}
 
@@ -508,13 +647,14 @@ namespace APBuild
 		InitializeSdkObjects(lSdkManager, lScene);
 		m_pFBXSdkManager = lSdkManager;
 
-		m_pFBXGeometryConverter = new KFbxGeometryConverter(m_pFBXSdkManager);
+		//m_pFBXGeometryConvertser = new KFbxGeometryConverter(m_pFBXSdkManager);
 
 		bool lResult = LoadScene(lSdkManager, lScene, fileName.c_str());
 
 		if (!lResult)
 		{
-			cout << "An error occurred while loading the scene...";
+			CompileLog::getSingleton().WriteError(L"Cannot open model file.", fileName);
+			//cout << "An error occurred while loading the scene...";
 		}
 		else
 		{
@@ -547,12 +687,13 @@ namespace APBuild
 			}
 			m_skeletonRoot = FindRootMostBone(node);
 			CacheBindPose(lScene);
+
+			
 			ProcessNode(Matrix::Identity, node, false, true);
 			// add animation
 		}
 
 		lScene->Destroy();
-		delete m_pFBXGeometryConverter;
 		DestroySdkObjects(lSdkManager);
 	}
 }

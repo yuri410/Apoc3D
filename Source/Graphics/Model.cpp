@@ -98,14 +98,18 @@ namespace Apoc3D
 
 		Model::~Model(void)
 		{
+			for (int i=0;i<m_animInstance.getCount();i++)
+			{
+				delete m_animInstance[i];
+			}
 			if (m_mtrlPlayer)
 				delete m_mtrlPlayer;
-			if (m_skinPlayer)
-				delete m_skinPlayer;
-			if (m_rootPlayer)
-				delete m_rootPlayer;
-			if (m_rigidPlayer)
-				delete m_rigidPlayer;
+			//if (m_skinPlayer)
+			//	delete m_skinPlayer;
+			//if (m_rootPlayer)
+			//	delete m_rootPlayer;
+			//if (m_rigidPlayer)
+			//	delete m_rigidPlayer;
 			delete m_data;
 			//delete opBuffer;
 		}
