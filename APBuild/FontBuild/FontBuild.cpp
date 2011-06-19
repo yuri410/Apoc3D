@@ -34,6 +34,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Collections/FastMap.h"
 #include "IOLib/Streams.h"
 #include "IOLib/BinaryWriter.h"
+#include "BuildConfig.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::IO;

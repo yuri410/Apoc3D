@@ -27,7 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/TextureData.h"
 #include "IOLib/Streams.h"
 #include "Apoc3DException.h"
-#include "BuildConfig.h"
 
 #include <IL/il.h>
 #include <IL/ilu.h>

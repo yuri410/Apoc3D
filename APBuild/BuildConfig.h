@@ -1,3 +1,6 @@
+
+#ifndef BUILDCONFIG_H
+#define BUILDCONFIG_H
 #include "APBCommon.h"
 
 #include "Graphics/PixelFormat.h"
@@ -40,7 +43,7 @@ namespace APBuild
 	struct FontBuildConfig
 	{
 		FastList<CharRange> Ranges;
-		FontStyle Style;
+		uint Style;
 		String Name;
 		float Size;
 
@@ -58,3 +61,4 @@ namespace APBuild
 		
 	};
 }
+#endif

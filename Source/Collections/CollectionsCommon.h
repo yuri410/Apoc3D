@@ -84,6 +84,13 @@ namespace Apoc3D
 			virtual int64 GetHashCode(const string& obj) const;
 		};
 
+		class StringEuqlityComparer : public IEqualityComparer<String>
+		{
+		public:
+			virtual bool Equals(const String& x, const String& y) const;
+
+			virtual int64 GetHashCode(const String& obj) const;
+		};
 
 		class HashHelpers
 		{

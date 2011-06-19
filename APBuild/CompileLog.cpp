@@ -1,4 +1,4 @@
 #include "CompileLog.h"
 
 
-SINGLETON_DECL(APBuild::CompileLog);
+//SINGLETON_DECL(APBuild::CompileLog);

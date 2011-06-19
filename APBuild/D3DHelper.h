@@ -12,7 +12,7 @@ namespace APBuild
 	{
 	private:
 		//static IDirect3D9* m_d3d;
-		static IDirect3DDevice9* m_device = 0;
+		static IDirect3DDevice9* m_device;
 
 	public:
 		static void Initalize();

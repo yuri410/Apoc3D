@@ -4,6 +4,8 @@ namespace APBuild
 {
 	void D3DHelper::Initalize()
 	{
+		m_device = 0;
+
 		IDirect3D9* pD3D = Direct3DCreate9(DIRECT3D_VERSION);
 
 		D3DDISPLAYMODE Mode;

@@ -24,6 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "CollectionsCommon.h"
 
 #include "Core/Resource.h"
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -102,7 +105,20 @@ namespace Apoc3D
 			return obj;
 		}
 
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
 
+		const IEqualityComparer<String>* IEqualityComparer<String>::Default = new StringEuqlityComparer();
+
+		bool StringEuqlityComparer::Equals(const String& x, const String& y) const
+		{
+			return x==y;
+		}
+		int64 StringEuqlityComparer::GetHashCode(const String& obj) const
+		{
+			return StringUtils::GetHashCode(obj);
+		}
 
 	}
 }

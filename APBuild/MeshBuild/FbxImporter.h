@@ -9,6 +9,8 @@
 #include "IOLib/MaterialData.h"
 #include "Graphics/Animation/AnimationTypes.h"
 
+#define MAXBONES_PER_VERTEX 4
+
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;

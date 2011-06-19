@@ -31,10 +31,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 int Initialize()
 {
 	if (ilGetInteger(IL_VERSION_NUM) < IL_VERSION ||
-		iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION)
-		ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION) {
-			printf("DevIL version is different...exiting!\n");
-			return 1;
+		iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION ||
+		ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION)
+	{
+		printf("DevIL version is different...exiting!\n");
+		return 1;
 	}
 
 	ilInit();

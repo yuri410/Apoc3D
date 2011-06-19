@@ -7,7 +7,6 @@
 #undef  IOS_REF
 #define IOS_REF (*(m_pFBXSdkManager->GetIOSettings()))
 #endif
-#define MAXBONES_PER_VERTEX 4
 
 namespace APBuild
 {
@@ -130,13 +129,13 @@ namespace APBuild
 
 		if( !lImportStatus )
 		{
-			CompileLog::getSingleton().WriteError(L"Unable to initialize FBX", pFilename);
-			CompileLog::getSingleton().WriteError(toWString(lImporter->GetLastErrorString()), pFilename);
+			CompileLog::WriteError(L"Unable to initialize FBX", pFilename);
+			CompileLog::WriteError(toWString(lImporter->GetLastErrorString()), pFilename);
 
 			if (lImporter->GetLastErrorID() == KFbxIO::eFILE_VERSION_NOT_SUPPORTED_YET ||
 				lImporter->GetLastErrorID() == KFbxIO::eFILE_VERSION_NOT_SUPPORTED_ANYMORE)
 			{
-				CompileLog::getSingleton().WriteError(
+				CompileLog::WriteError(
 					L"File version is probably newer than the version supported.", pFilename);
 			}
 
@@ -189,7 +188,7 @@ namespace APBuild
 
 		if(lStatus == false && lImporter->GetLastErrorID() == KFbxIO::ePASSWORD_ERROR)
 		{
-			CompileLog::getSingleton().WriteError(L"Cannot import files with password.", pFilename);
+			CompileLog::WriteError(L"Cannot import files with password.", pFilename);
 
 			return false;
 		}
@@ -290,7 +289,6 @@ namespace APBuild
 				pMaterial->IsBlendTransparent = true;
 			}
 
-			//pMaterial->TextureName[i]
 			//pMaterial->AddTexturePath( GetFilePath(this->m_strFileName) + "/" );
 			m_materials.Add(pMaterial);
 			m_FBXMaterials.Add(pFBXMaterial);
