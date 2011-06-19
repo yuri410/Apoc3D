@@ -59,7 +59,7 @@ namespace APBuild
 		GlyphBitmap(int width, int height, const char* data)
 			: Width(width), Height(height), PixelData(data)
 		{
-			// compute hash code
+			// TODO:compute hash code
 		}
 
 		friend bool operator ==(const GlyphBitmap& x, const GlyphBitmap& y)
