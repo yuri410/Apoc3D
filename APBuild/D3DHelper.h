@@ -11,12 +11,14 @@ namespace APBuild
 	class D3DHelper
 	{
 	private:
-		static IDirect3D9* m_d3d;
-		static IDirect3DDevice9* m_device;
+		//static IDirect3D9* m_d3d;
+		static IDirect3DDevice9* m_device = 0;
 
 	public:
 		static void Initalize();
 		static void Finalize();
+
+		
 	};
 }
 

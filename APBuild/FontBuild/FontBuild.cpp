@@ -44,27 +44,6 @@ using namespace Gdiplus;
 
 namespace APBuild
 {
-	struct CharRange
-	{
-		int MinChar;
-		int MaxChar;
-
-	};
-	struct FontConfig
-	{
-		FastList<CharRange> Ranges;
-		FontStyle Style;
-		String Name;
-		float Size;
-
-		String DestFile;
-
-		void Parse(const ConfigurationSection* sect)
-		{
-
-		}
-	};
-
 	struct GlyphBitmap
 	{
 		int Index;
@@ -173,7 +152,7 @@ namespace APBuild
 
 	void FontBuild::Build(const ConfigurationSection* sect)
 	{
-		FontConfig config;
+		FontBuildConfig config;
 		config.Parse(sect);
 
 		GlyphBitmapEqualityComparer* comparer = new GlyphBitmapEqualityComparer();

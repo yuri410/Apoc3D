@@ -84,9 +84,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APBCommon.h" />
+    <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="CompileLog.h" />
+    <ClInclude Include="D3DHelper.h" />
     <ClInclude Include="FontBuild\FontBuild.h" />
     <ClInclude Include="MeshBuild\FbxBaker.h" />
+    <ClInclude Include="MeshBuild\FbxImporter.h" />
     <ClInclude Include="MeshBuild\MeshBuild.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -95,9 +98,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APBuild.cpp" />
+    <ClCompile Include="BuildConfig.cpp" />
     <ClCompile Include="CompileLog.cpp" />
+    <ClCompile Include="D3DHelper.cpp" />
     <ClCompile Include="FontBuild\FontBuild.cpp" />
     <ClCompile Include="MeshBuild\FbxBaker.cpp" />
+    <ClCompile Include="MeshBuild\FbxImporter.cpp" />
     <ClCompile Include="MeshBuild\MeshBuild.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="APBCommon.cpp" />

@@ -26,11 +26,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "IOLib/TextureData.h"
 #include "IOLib/Streams.h"
-#include "Graphics/PixelFormat.h"
 #include "Apoc3DException.h"
+#include "BuildConfig.h"
 
-#include "IL/il.h"
-#include "IL/ilu.h"
+#include <IL/il.h>
+#include <IL/ilu.h>
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
@@ -38,29 +38,7 @@ using namespace Apoc3D::IO;
 
 namespace APBuild
 {
-	enum TextureFilterType
-	{
-		TFLT_Nearest,
-		TFLT_Box,
-		TFLT_BSpline
-	};
-	struct TexConfig 
-	{
-		String SourceFile;
-		String DestinationFile;
-		bool GenerateMipmaps;
-		bool Resize;
-		int NewWidth;
-		int NewHeight;
-		int NewDepth;
-		TextureFilterType ResizeFilterType;
-		PixelFormat NewFormat;
-
-		void Parse(const ConfigurationSection* sect)
-		{
-
-		}
-	};
+	
 	PixelFormat ConvertFormat(int format, int elementType, int bpp)
 	{
 		switch (format)
@@ -165,7 +143,7 @@ namespace APBuild
 	}
 	void TextureBuild::Build(const ConfigurationSection* sect)
 	{
-		TexConfig config;
+		TextureBuildConfig config;
 		config.Parse(sect);
 
 

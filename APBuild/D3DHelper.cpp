@@ -4,19 +4,29 @@ namespace APBuild
 {
 	void D3DHelper::Initalize()
 	{
-		m_d3d = Direct3DCreate9(DIRECT3D_VERSION);
+		IDirect3D9* pD3D = Direct3DCreate9(DIRECT3D_VERSION);
 
-		D3DPRESENT_PARAMETERS pm;
-		memset(&pm,0,sizeof(pm));
-		pm.Windowed = TRUE;
-		pm.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		HRESULT hr = m_d3d->CreateDevice(0, D3DDEVTYPE_REF, 0, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &pm, &m_device);
+		D3DDISPLAYMODE Mode;
+		pD3D->GetAdapterDisplayMode(0, &Mode);
+
+		D3DPRESENT_PARAMETERS pp;
+		ZeroMemory( &pp, sizeof(D3DPRESENT_PARAMETERS) ); 
+		pp.BackBufferWidth  = 1;
+		pp.BackBufferHeight = 1;
+		pp.BackBufferFormat = Mode.Format;
+		pp.BackBufferCount  = 1;
+		pp.SwapEffect       = D3DSWAPEFFECT_COPY;
+		pp.Windowed         = TRUE;
+
+
+		HRESULT hr = pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_NULLREF, GetConsoleWindow(), 
+			D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp, &m_device );
 		assert(SUCCEEDED(hr));
+		pD3D->Release();		
 	}
 	void D3DHelper::Finalize()
 	{
 		m_device->Release();
-		m_d3d->Release();
 	}
 
 }
