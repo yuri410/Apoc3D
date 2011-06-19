@@ -1,11 +1,13 @@
 #include "FbxImporter.h"
 
 #include "CompileLog.h"
+#include "IOLib/ModelData.h"
 
 #ifdef IOS_REF
 #undef  IOS_REF
 #define IOS_REF (*(m_pFBXSdkManager->GetIOSettings()))
 #endif
+#define MAXBONES_PER_VERTEX 4
 
 namespace APBuild
 {
@@ -26,7 +28,29 @@ namespace APBuild
 		return result;
 	}
 
+	bool HasFBXAnimation(KFbxNode *pNode)
+	{
+		bool hasKeys = false;
 
+		KFbxProperty prop = pNode->GetFirstProperty();
+
+		while(prop.IsValid())
+		{
+			KFCurveNode *fcn = prop.GetCurveNode()->GetKFCurveNode();
+			if(fcn && fcn->KeyGetCount() > 0)
+			{
+				hasKeys = true;
+			}
+			prop = pNode->GetNextProperty(prop);
+		}
+
+		return hasKeys;
+	}
+
+	Vector3 ConvertVector3(const KFbxVector4& v)
+	{
+		return Vector3Utils::LDVector( v.GetAt(0), v.GetAt(1), v.GetAt(2) );
+	}
 	Matrix ConvertMatrix(const KFbxMatrix& m)
 	{
 		const double* mptr = m.operator const double *();
@@ -165,54 +189,254 @@ namespace APBuild
 
 		if(lStatus == false && lImporter->GetLastErrorID() == KFbxIO::ePASSWORD_ERROR)
 		{
-			printf("Please enter password: ");
+			CompileLog::getSingleton().WriteError(L"Cannot import files with password.", pFilename);
 
-			lPassword[0] = '\0';
+			return false;
+		}
 
-			scanf("%s", lPassword);
-			KString lString(lPassword);
+		KFbxAxisSystem currentAxisSystem = m_pFBXScene->GetGlobalSettings().GetAxisSystem();
 
-			IOS_REF.SetStringProp(IMP_FBX_PASSWORD,      lString);
-			IOS_REF.SetBoolProp(IMP_FBX_PASSWORD_ENABLE, true);
+		KFbxAxisSystem axisSystem = KFbxAxisSystem(KFbxAxisSystem::eUpVector::YAxis, 
+			KFbxAxisSystem::eFrontVector::ParityOdd, 
+			KFbxAxisSystem::eCoorSystem::RightHanded);
 
-			lStatus = lImporter->Import(m_pFBXScene);
+		if (axisSystem != currentAxisSystem)
+		{
+			axisSystem.ConvertScene(m_pFBXScene);
+		}
+		KFbxSystemUnit currentUnit = m_pFBXScene->GetGlobalSettings().GetSystemUnit();
 
-			if(lStatus == false && lImporter->GetLastErrorID() == KFbxIO::ePASSWORD_ERROR)
-			{
-				printf("\nPassword is wrong, import aborted.\n");
-			}
+		if (currentUnit.GetScaleFactor() != 1.0f)
+		{
+			KFbxSystemUnit unit = KFbxSystemUnit(1,1);
+
+			unit.ConvertScene(m_pFBXScene);
 		}
 
 		ProcessScene(m_pFBXScene);
 
-		// Destroy the importer.
 		lImporter->Destroy();
-
-
-
-		//KFbxImporter* pFBXImporter = KFbxImporter::Create(m_pFBXSdkManager,"");
-
-		//
-		//if( !pFBXImporter->Initialize(pFilename) )	{ pFBXImporter->Destroy(); return false; }	// Initialize importer
-		//if( !pFBXImporter->Import(m_pFBXScene) )	{ pFBXImporter->Destroy(); return false; }	// Import the scene
-
-		//m_strFileName = pFBXImporter->GetFileName().Buffer();
-
-		//pFBXImporter->Destroy();
-
-		//ProcessScene(m_pFBXScene);
 
 		return true;
 	}
 
 	void FbxImporter::ProcessScene(KFbxScene* pScene)
 	{
-		
+		ProcessMaterials(pScene);
+		ProcessNode(pScene->GetRootNode(), KFbxNodeAttribute::eSKELETON);
+		ProcessNode(pScene->GetRootNode(), KFbxNodeAttribute::eMESH);
+		ProcessAnimations(pScene);
 	}
 
 	void FbxImporter::ProcessMaterials(KFbxScene* pScene)
 	{
+		for( int i = 0; i < pScene->GetMaterialCount(); ++i )
+		{
+			MaterialData* pMaterial = new MaterialData();
 
+			KFbxSurfaceMaterial* pFBXMaterial = pScene->GetMaterial(i);
+
+			KFbxProperty diffuseTextureProperty = pFBXMaterial->FindProperty(KFbxSurfaceMaterial::sDiffuse);
+			if( diffuseTextureProperty.IsValid() )
+			{
+				KFbxFileTexture* pDiffuseTexture = KFbxCast<KFbxFileTexture>(diffuseTextureProperty.GetSrcObject(KFbxTexture::ClassId, 0));
+
+				if( pDiffuseTexture )
+				{
+					std::string strFileName = pDiffuseTexture->GetFileName();
+					if( strFileName.length() == 0 )
+						strFileName = pDiffuseTexture->GetRelativeFileName();
+					pMaterial->TextureName[i] = toWString( strFileName );
+				}
+			}
+
+			KFbxSurfaceLambert* pLambert = dynamic_cast<KFbxSurfaceLambert*>(pFBXMaterial);
+			KFbxSurfacePhong* pPhong = dynamic_cast<KFbxSurfacePhong*>(pFBXMaterial);
+
+			Vector3 AmbientColor;
+			Vector3 EmissiveColor;
+			Vector3 DiffuseColor;
+			Vector3 SpecularColor;
+			float fSpecularPower = 1.0f;
+			float fTransparency = 1.0f;
+
+			if( pLambert )
+			{
+				AmbientColor = GetMaterialColor(pLambert->GetAmbientColor(), pLambert->GetAmbientFactor());
+				EmissiveColor = GetMaterialColor(pLambert->GetEmissiveColor(), pLambert->GetEmissiveFactor());
+				DiffuseColor = GetMaterialColor(pLambert->GetDiffuseColor(), pLambert->GetDiffuseFactor());
+
+				KFbxPropertyDouble1 FBXTransparencyProperty = pLambert->GetTransparencyFactor();
+				if( FBXTransparencyProperty.IsValid() )
+					fTransparency = FBXTransparencyProperty.Get();
+			}
+			if( pPhong )
+			{
+				SpecularColor = GetMaterialColor(pPhong->GetSpecularColor(), pPhong->GetSpecularFactor());
+
+				KFbxPropertyDouble1 FBXSpecularPowerProperty = pPhong->GetShininess();
+				if( FBXSpecularPowerProperty.IsValid() )
+					fSpecularPower = FBXSpecularPowerProperty.Get();
+			}
+
+			pMaterial->Ambient = Color4( AmbientColor );
+			pMaterial->Diffuse = Color4( DiffuseColor );
+			pMaterial->Emissive = Color4( EmissiveColor );
+			pMaterial->Specular = Color4( SpecularColor );
+			pMaterial->Power = fSpecularPower;
+			pMaterial->Diffuse.Alpha = fTransparency;
+			if (fTransparency<1-EPSILON)
+			{
+				pMaterial->IsBlendTransparent = true;
+			}
+
+			//pMaterial->TextureName[i]
+			//pMaterial->AddTexturePath( GetFilePath(this->m_strFileName) + "/" );
+			m_materials.Add(pMaterial);
+			m_FBXMaterials.Add(pFBXMaterial);
+		}
+	}
+	void FbxImporter::ProcessAnimation(KFbxNode* pNode, 
+		const char* strTakeName, float fFrameRate, float fStart, float fStop)
+	{
+		KFbxNodeAttribute* pNodeAttribute = pNode->GetNodeAttribute();
+		if (pNodeAttribute)
+		{
+			if (pNodeAttribute->GetAttributeType() == KFbxNodeAttribute::eSKELETON)
+			{
+				if( m_pSkeleton )
+				{
+					SkeletonBone* pBone = m_pSkeleton->FindBone(pNode->GetName());
+
+					if( pBone )
+					{
+
+						AnimationKeyFrames* pAnimationKeyFrames = new AnimationKeyFrames(strTakeName);
+
+						double fTime = 0;
+						while( fTime <= fStop )
+						{
+							KTime takeTime;
+							takeTime.SetSecondDouble(fTime);
+
+							Matrix matAbsoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode, takeTime);
+							Matrix matParentAbsoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode->GetParent(), takeTime);
+							Matrix matInvParentAbsoluteTransform;
+							Matrix::Inverse(matInvParentAbsoluteTransform, matParentAbsoluteTransform);
+							Matrix matTransform;
+							Matrix::Multiply(matTransform, matAbsoluteTransform, matInvParentAbsoluteTransform);
+
+							pAnimationKeyFrames->AddKeyFrame(matTransform);
+
+							fTime += 1.0f/fFrameRate;
+						}
+
+						pBone->AddAnimationKeyFrames(pAnimationKeyFrames);
+					}
+				}
+			}
+			else if (pNodeAttribute->GetAttributeType() == KFbxNodeAttribute::eMESH)
+			{
+				FIMesh* pModel = m_meshes[pNode->GetName()];
+
+				if( pModel )
+				{
+					AnimationKeyFrames* pAnimationKeyFrames = new AnimationKeyFrames(strTakeName);
+
+					double fTime = 0;
+					while( fTime <= fStop )
+					{
+						KTime takeTime;
+						takeTime.SetSecondDouble(fTime);
+
+						Matrix matAbsoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode, takeTime);
+
+						pAnimationKeyFrames->AddKeyFrame(matAbsoluteTransform);
+
+						fTime += 1.0f/fFrameRate;
+					}
+
+					pModel->AddAnimationKeyFrames(pAnimationKeyFrames);
+				}
+			}
+		}
+
+		for( int i = 0; i < pNode->GetChildCount(); ++i )
+		{
+			ProcessAnimation(pNode->GetChild(i), strTakeName, fFrameRate, fStart, fStop);
+		}
+	}
+	void FbxImporter::ProcessAnimations(KFbxScene* pScene)
+	{
+		//m_pAnimationController = new CBTTAnimationController();
+
+		KFbxNode* pRootNode = pScene->GetRootNode();
+		if(!pRootNode)
+			return;
+
+		float fFrameRate = (float)KTime::GetFrameRate(pScene->GetGlobalSettings().GetTimeMode());
+
+		KArrayTemplate<KString*> takeArray;	
+		KFbxDocument* pDocument = dynamic_cast<KFbxDocument*>(pScene);
+		if( pDocument )
+			pDocument->FillAnimStackNameArray(takeArray);
+
+
+		for( int i = 0; i < takeArray.GetCount(); ++i )
+		{
+			KString* takeName = takeArray.GetAt(i);
+
+			if( std::string(takeName->Buffer()) != "Default" )
+			{
+				KFbxTakeInfo* lCurrentTakeInfo = pScene->GetTakeInfo(*takeName);
+
+				//pScene->SetCurrentTake(takeName->Buffer());
+				
+				KTime KStart;
+				KTime KStop;
+				if (lCurrentTakeInfo)
+				{
+					KStart = lCurrentTakeInfo->mLocalTimeSpan.GetStart();
+					KStop = lCurrentTakeInfo->mLocalTimeSpan.GetStop();
+				}
+				else
+				{
+					// Take the time line value
+					KTimeSpan lTimeLineTimeSpan;
+					pScene->GetGlobalSettings().GetTimelineDefaultTimeSpan(lTimeLineTimeSpan);
+
+					KStart = lTimeLineTimeSpan.GetStart();
+					KStop  = lTimeLineTimeSpan.GetStop();
+				}
+
+				//KTime KStart = KTIME_INFINITE;
+				//KTime KStop = KTIME_MINUS_INFINITE;
+				//pRootNode->GetAnimationInterval(KStart, KStop);
+
+				float fStart = KStart.GetSecondDouble();
+				float fStop = KStop.GetSecondDouble();
+
+				if( fStart < fStop )
+				{
+					int nKeyFrames = (fStop-fStart)*fFrameRate;
+
+					//CBTTAnimation* pAnimation = new CBTTAnimation(takeName->Buffer(), nKeyFrames, fFrameRate);
+					//m_pAnimationController->AddAnimation(pAnimation);
+
+					ProcessAnimation(pRootNode, takeName->Buffer(), fFrameRate, fStart, fStop);
+
+					//m_pAnimationController->SetCurrentAnimation(0);
+					//m_pAnimationController->Play();
+				}
+			}
+		}
+
+		takeArray.Clear();
+
+		
+		
+		//pScene->SetTakeInfo();
+		//pScene->SetCurrentTake("Default");
 	}
 	void FbxImporter::ProcessNode(KFbxNode* pNode, KFbxNodeAttribute::EAttributeType attributeType)
 	{
@@ -251,12 +475,29 @@ namespace APBuild
 	}
 	void FbxImporter::ProcessSkeleton(KFbxNode* pNode)
 	{
+		bool isAnimated = HasFBXAnimation(pNode);
 
+		KFbxSkeleton* pFBXSkeleton = pNode->GetSkeleton();
+		if( !pFBXSkeleton )
+			return;
+
+		if( !m_pSkeleton )
+		{
+			m_pSkeleton = new Skeleton();
+		}
+
+		int nParentBoneIndex = -1;
+		KFbxNode* pParentNode = pNode->GetParent();
+		if( pParentNode )
+			nParentBoneIndex = m_pSkeleton->FindBoneIndex(pParentNode->GetName());
+
+		SkeletonBone* pSkeletonBone = new SkeletonBone( pNode->GetName(), nParentBoneIndex );
+		m_pSkeleton->AddSkeletonBone(pSkeletonBone);
 	}
 	void FbxImporter::ProcessMesh(KFbxNode* pNode)
 	{
-		bool isAnimated = pNode->IsAnimated();
-
+		bool isAnimated = HasFBXAnimation(pNode);
+		
 		KFbxGeometryConverter GeometryConverter(m_pFBXSdkManager);
 		if( !GeometryConverter.TriangulateInPlace( pNode ) )
 			return;
@@ -269,53 +510,98 @@ namespace APBuild
 		if( nVertexCount <= 0 )
 			return;
 
-		std::vector<CBTTBoneWeights> boneWeights(nVertexCount, CBTTBoneWeights());
+		std::vector<BoneWeight> boneWeights(nVertexCount, BoneWeight());
 		ProcessBoneWeights(pFBXMesh, boneWeights);
 
-		//CBTTModel* pModel = new CBTTModel(pNode->GetName());
-		//KFbxVector4* aControlPoints = pFBXMesh->GetControlPoints();
-		//for( int pi = 0; pi < pFBXMesh->GetPolygonCount(); ++pi )
-		//{
-		//	CBTTMaterial* pMaterial = NULL;
+		FIMesh* mesh = new FIMesh(pNode->GetName());
+		//mesh->Name = toWString( pNode->GetName() );
+		//mesh->VertexCount = nVertexCount;
+		
+		FastList<MaterialData*> meshMtrls;
 
-		//	for( int pvi = 0; pvi < 3; ++pvi )
-		//	{
-		//		int nVertexIndex = pFBXMesh->GetPolygonVertex(pi, pvi);
+		KFbxVector4* pControlPoints = pFBXMesh->GetControlPoints();
+		for( int pi = 0; pi < pFBXMesh->GetPolygonCount(); ++pi )
+		{
+			MaterialData* pMaterial = 0;
 
-		//		if( nVertexIndex < 0 || nVertexIndex >= nVertexCount )
-		//			continue;
+			for( int pvi = 0; pvi < 3; ++pvi )
+			{
+				int nVertexIndex = pFBXMesh->GetPolygonVertex(pi, pvi);
 
-		//		if( pMaterial == NULL )
-		//			pMaterial = GetMaterialLinkedWithPolygon(pFBXMesh, 0, pi, 0, nVertexIndex);
+				if( nVertexIndex < 0 || nVertexIndex >= nVertexCount )
+					continue;
 
-		//		KFbxVector4 fbxPosition = aControlPoints[nVertexIndex];
-		//		KFbxVector4 fbxNormal;
-		//		pFBXMesh->GetPolygonVertexNormal(pi, pvi, fbxNormal);
-		//		fbxNormal.Normalize();
+				if( pMaterial == 0 )
+					pMaterial = GetMaterialLinkedWithPolygon(pFBXMesh, 0, pi, 0, nVertexIndex);
 
-		//		pModel->AddVertex(pMaterial, KFbxVector4ToD3DXVECTOR3(fbxPosition),
-		//			KFbxVector4ToD3DXVECTOR3(fbxNormal),
-		//			GetTexCoord(pFBXMesh, 0, pi, pvi, nVertexIndex),
-		//			boneWeights[nVertexIndex]);
-		//	}
-		//}
 
-		//pModel->SetAbsoluteTransform(GetAbsoluteTransformFromCurrentTake(pNode, KTime(0)));
-		//pModel->SetGeometricOffset(GetGeometricOffset(pNode));
-		//pModel->Optimize();
-		//m_Models.Add(pModel->GetName(), pModel);
+				KFbxVector4 fbxPosition = pControlPoints[nVertexIndex];
+				KFbxVector4 fbxNormal;
+				pFBXMesh->GetPolygonVertexNormal(pi, pvi, fbxNormal);
+				fbxNormal.Normalize();
+
+				//if (!mesh->VertexData)
+				//{
+
+				//}
+				mesh->AddVertex(pMaterial, ConvertVector3(fbxPosition),
+					ConvertVector3(fbxNormal),
+					GetTexCoord(pFBXMesh, 0, pi, pvi, nVertexIndex),
+					boneWeights[nVertexIndex]);
+			}
+
+		}
+		m_meshes.Add(pNode->GetName(), mesh);
 	}
 
-	void FbxImporter::ProcessBoneWeights(KFbxSkin* pFBXSkin, std::vector<CBTTBoneWeights>& meshBoneWeights)
+	void FbxImporter::ProcessBoneWeights(KFbxSkin* pFBXSkin, std::vector<BoneWeight>& meshBoneWeights)
 	{
 		KFbxCluster::ELinkMode linkMode = KFbxCluster::eNORMALIZE; //Default link mode
+
+		std::vector<BoneWeight> skinBoneWeights(meshBoneWeights.size(), BoneWeight());
+		int nClusterCount = pFBXSkin->GetClusterCount();
+		for( int i = 0; i < nClusterCount; ++i )
+		{
+			KFbxCluster* pFBXCluster = pFBXSkin->GetCluster(i);
+
+			if( !pFBXCluster )
+				continue;
+
+			linkMode = pFBXCluster->GetLinkMode();
+			KFbxNode* pLinkNode = pFBXCluster->GetLink();
+
+			if( !pLinkNode )
+				continue;
+
+			int nBoneIndex = m_pSkeleton->FindBoneIndex(pLinkNode->GetName());
+			if( nBoneIndex < 0 )
+				continue;
+
+			SkeletonBone* pSkeletonBone = m_pSkeleton->GetSkeletonBone(nBoneIndex);
+
+			KFbxXMatrix matClusterTransformMatrix;
+			KFbxXMatrix matClusterLinkTransformMatrix;
+			pFBXCluster->GetTransformMatrix(matClusterTransformMatrix);
+			pFBXCluster->GetTransformLinkMatrix(matClusterLinkTransformMatrix);
+
+			pSkeletonBone->SetBindPoseTransform(ConvertMatrix(matClusterLinkTransformMatrix));
+			pSkeletonBone->SetBoneReferenceTransform(ConvertMatrix(matClusterTransformMatrix));
+
+			int* indices = pFBXCluster->GetControlPointIndices();
+			double* weights = pFBXCluster->GetControlPointWeights();
+
+			for( int j = 0; j < pFBXCluster->GetControlPointIndicesCount(); ++j )
+			{
+				skinBoneWeights[indices[j]].AddBoneWeight(nBoneIndex, (float)weights[j]);
+			}
+		}
 
 		switch(linkMode)
 		{
 		case KFbxCluster::eNORMALIZE:	//Normalize so weight sum is 1.0.
 			for( int i = 0; i < (int)skinBoneWeights.size(); ++i )
 			{
-				skinBoneWeights[i].Normalize();
+				skinBoneWeights[i].NormalizeInPlace();
 			}
 			break;
 
@@ -328,12 +614,31 @@ namespace APBuild
 
 		for( int i = 0; i < (int)meshBoneWeights.size(); ++i )
 		{
-			meshBoneWeights[i].AddBoneWeights(skinBoneWeights[i]);
+			meshBoneWeights[i].AddBoneWeight(skinBoneWeights[i]);
 		}	
 	}
-	void FbxImporter::ProcessBoneWeights(KFbxMesh* pFBXMesh, std::vector<CBTTBoneWeights>& meshBoneWeights)
+	void FbxImporter::ProcessBoneWeights(KFbxMesh* pFBXMesh, std::vector<BoneWeight>& meshBoneWeights)
 	{
+		if( !m_pSkeleton )
+			return;
 
+		for( int i = 0; i < pFBXMesh->GetDeformerCount(); ++i )
+		{
+			KFbxDeformer* pFBXDeformer = pFBXMesh->GetDeformer(i);
+
+			if( !pFBXDeformer )
+				continue;
+
+			if( pFBXDeformer->GetDeformerType() == KFbxDeformer::eSKIN )
+			{
+				KFbxSkin* pFBXSkin = dynamic_cast<KFbxSkin*>(pFBXDeformer);
+
+				if( !pFBXSkin )
+					continue;
+
+				ProcessBoneWeights(pFBXSkin, meshBoneWeights);
+			}
+		}
 	}
 
 	int FbxImporter::GetMappingIndex(KFbxLayerElement::EMappingMode MappingMode, 
@@ -431,7 +736,7 @@ namespace APBuild
 			if( FBXFactorProperty.IsValid() )
 			{
 				double FBXFactor = FBXFactorProperty.Get();
-				Vector3Utils::Multiply(Color, static_cast<float>(FBXFactor));
+				Color = Vector3Utils::Multiply(Color, static_cast<float>(FBXFactor));
 			}
 		}
 		return Color;
