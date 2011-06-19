@@ -335,7 +335,7 @@ namespace APBuild
 	{
 		KFbxMatrix globalTrans = fbxNode->EvaluateGlobalTransform(time);
 		KFbxMatrix m;
-		GetGeomentryOffset(m, fbxNode);
+		GetGeomentryOffset(&m, fbxNode);
 		m = globalTrans * m;
 		return ConvertMatrix(m);
 	}
@@ -348,7 +348,14 @@ namespace APBuild
 		Matrix::Multiply(result.LocalTransform, result.AbsoluteTransform, invParent);
 		return result;
 	}
+	CalculateNodeTransformResult CalculateNodeTransformsAtTime(KFbxNode* fbxNode, const KTime& time)
+	{
+		if (!fbxNode->GetParent())
+		{
 
+		}
+		return CalculateNodeTransformsAtTime(Matrix::Identity, fbxNode, time);
+	}
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
@@ -361,8 +368,8 @@ namespace APBuild
 		{
 			content = new AnimationContent(animationName);
 
-			content.Duration = 0;
-			animationDictionary.Add(animationName, content);
+			content->Duration = 0;
+			animationDictionary->Add(animationName, content);
 		}
 
 		AnimationTake* channel = 0;
@@ -449,20 +456,215 @@ namespace APBuild
 		{
 			string nameForFbxObject = GetNameForFbxObject(fbxNode);
 			string animationName = takeName;
-			AddAnimationChannel(!node->PartOfMainSkeleton ? node :)
+			AddAnimationChannel(!(node->PartOfMainSkeleton) ? (&node->Animations) : (&m_SkeletonRoot->Animations), 
+				animationName, nameForFbxObject, take, dend);
+		}
+
+		for (int i=0;i<node->Children.getCount();i++)
+		{
+			AddAnimationToNodesRecursive(node->Children[i], takeName);
 		}
 	}
 
-	void AnimationConverter::HierarchyFixup(NodeContent* sceneRoot);
-	void AnimationConverter::SetCurrentTakeRecursive(KFbxNode* node, const string& takeName);
-	void AnimationConverter::WarnAboutAnimatedNodes(NodeContent* node);
+	void AnimationConverter::HierarchyFixup(NodeContent* sceneRoot)
+	{
+		AnimationTake* channel = 0;
+		
+		KFbxNode* nodePtr = m_SkeletonRoot->FBXNode;
+		//**(((int*) nodePtr))[0xa8](nodePtr, 0);
+		nodePtr->SetName(0);
 
-	void AnimationConverter::AddAnimationInformationToScene(KFbxScene* fbxScene, NodeContent* sceneRoot);
+		for (int i=0;i<nodePtr->GetChildCount();i++)
+		{
+			SetCurrentTakeRecursive(nodePtr->GetChild(i), 0);
+		}
+		KTime time;
 
-	bool AnimationConverter::IsSkeletonRoot(KFbxNode* node);
+		Matrix invSceneTrans;
+		Matrix::Inverse(invSceneTrans, sceneRoot->GetAbsoluteTransfrom());
+		Matrix m1;
+		Matrix::Multiply(m1, GetAbsoluteTransform(nodePtr, time), invSceneTrans);
+		Matrix m2;
+		Matrix::Inverse(invSceneTrans, m_SkeletonRoot->Transform);
+		Matrix m3;
+		Matrix::Multiply(m3, m1, m2);
+		m_SkeletonRoot->Transform = m1;
 
-	void AnimationConverter::HierarchyFixup(NodeContent* sceneRoot);
-	void AnimationConverter::NodeWasCreated(KFbxNode* fbxNode, NodeContent* node, NodeContent* potentialParent, bool partOfMainSkeleton);
+		AnimationContentDictionary::Enumerator e2 = m_SkeletonRoot->Animations.GetEnumerator();
+		while (1)
+		{
+			do
+			{
+				if (!e2.MoveNext())
+				{
+					return;
+				}
+				channel = 0;
+			}
+			while (!e2.getCurrentValue()->Takes.TryGetValue(m_SkeletonRoot->Name, channel));
+
+			for (int i=0;i<channel->Keyframes.getCount();i++)
+			{
+				AnimationKeyframe& current = channel->Keyframes[i];
+				Matrix matrix;
+				Matrix.Multiply(matrix, current.Transform, m3);
+				current.Transform = matrix;
+			}
+			
+		}
+
+
+	}
+	void AnimationConverter::SetCurrentTakeRecursive(KFbxNode* node, const string& takeName)
+	{
+		node->SetName(takeName.c_str());
+		
+		//if (takeName != null)
+		//{
+		//	
+		//	**(((int*) node))[0xa4](node, takeName);
+		//}
+		//else
+		//{
+		//	**(((int*) node))[0xa8](node, 0);
+		//}
+		for (int i=0;i<node->GetChildCount();i++)
+		{
+			SetCurrentTakeRecursive(node->GetChild(i), takeName);
+		}
+		//int num = 0;
+		//if (0 < fbxsdk_200901a.KFbxNode.GetChildCount((KFbxNode modopt(IsConst)* modopt(IsConst) modopt(IsConst)) node, false))
+		//{
+		//	do
+		//	{
+		//		SetCurrentTakeRecursive(fbxsdk_200901a.KFbxNode.GetChild(node, num), takeName);
+		//		num++;
+		//	}
+		//	while (num < fbxsdk_200901a.KFbxNode.GetChildCount((KFbxNode modopt(IsConst)* modopt(IsConst) modopt(IsConst)) node, false));
+		//}
+
+	}
+	void AnimationConverter::WarnAboutAnimatedNodes(NodeContent* node)
+	{
+		AnimationTake* channel = 0;
+		
+		//foreach (KeyValuePair<string, AnimationContent> pair in node.Animations)
+		//{
+		//	if (pair.Value.Channels.TryGetValue(node.Name, out channel) && (channel.Count > 0))
+		//	{
+		//		ContentIdentity contentIdentity = new ContentIdentity(this.m_ContentIdentity.SourceFilename, this.m_ContentIdentity.SourceTool, node.Name);
+		//		object[] messageArgs = new object[] { this.m_SkeletonRoot.Name, node.Name, pair.Key };
+		//		this.m_ImporterContext.Logger.LogWarning("FbxImporter_PulledOutSkeletonRootButParentIsAnimated", contentIdentity, ResourceStrings.PulledOutSkeletonRootButParentIsAnimated, messageArgs);
+		//	}
+		//}
+		
+		if (!node->Parent)
+		{
+			WarnAboutAnimatedNodes(node->Parent);
+		}
+
+	}
+
+	void AnimationConverter::AddAnimationInformationToScene(KFbxScene* fbxScene, NodeContent* sceneRoot)
+	{
+		KArrayTemplate<KString*> takeNames;
+		NodeContent* skeletonRoot = m_SkeletonRoot;
+		if (!skeletonRoot && (sceneRoot != skeletonRoot))
+		{
+			sceneRoot->Children.Add(skeletonRoot);
+		}
+
+		fbxScene->FillAnimStackNameArray(takeNames);
+
+		for (int i=0;i<takeNames.GetCount();i++)
+		{
+			KString* takeName = takeNames[i];
+			SetCurrentTakeRecursive(fbxScene->GetRootNode(), takeName->operator const char *());
+		}
+
+		if (m_SkeletonRoot)
+		{
+			HierarchyFixup(sceneRoot);
+		}
+
+		NodeContent* skeletonOldParent = m_SkeletonOldParent;
+		if (skeletonOldParent)
+		{
+			WarnAboutAnimatedNodes(skeletonOldParent);
+		}
+
+	}
+
+
+	void AnimationConverter::HierarchyFixup(NodeContent* sceneRoot)
+	{
+		AnimationTake* channel = 0;
+		KTime time;
+		//FbxNodeInfo info = this.m_NodeContentToFbxNodeInfo[this.m_SkeletonRoot];
+		//IntPtr fbxNode = info.fbxNode;
+		KFbxNode* nodePtr = m_SkeletonRoot->FBXNode;
+
+		**(((int*) nodePtr))[0xa8](nodePtr, 0);
+		for (int i=0;i<nodePtr->GetChildCount();i++)
+		{
+			//SetCurrentTakeRecursive(nodePtr->GetChild(i), );
+		}
+		//int num = 0;
+		//if (0 < fbxsdk_200901a.KFbxNode.GetChildCount((KFbxNode modopt(IsConst)* modopt(IsConst) modopt(IsConst)) nodePtr, false))
+		//{
+		//	do
+		//	{
+		//		SetCurrentTakeRecursive(fbxsdk_200901a.KFbxNode.GetChild(nodePtr, num), null);
+		//		num++;
+		//	}
+		//	while (num < fbxsdk_200901a.KFbxNode.GetChildCount((KFbxNode modopt(IsConst)* modopt(IsConst) modopt(IsConst)) nodePtr, false));
+		//}
+		//*((long*) &time) = 0;
+		//Matrix matrix3 = Matrix.Invert(sceneRoot.AbsoluteTransform);
+		//ValueType modopt(Matrix) modopt(IsBoxed) type = Matrix.Multiply((Matrix) HelperFunctions.GetAbsoluteTransform(nodePtr, time), matrix3);
+		//Matrix matrix2 = Matrix.Invert(this.m_SkeletonRoot.Transform);
+		//ValueType modopt(Matrix) modopt(IsBoxed) type2 = Matrix.Multiply((Matrix) type, matrix2);
+		//this.m_SkeletonRoot.Transform = (Matrix) type;
+		//using (IEnumerator<AnimationContent> enumerator2 = this.m_SkeletonRoot.Animations.Values.GetEnumerator())
+		//{
+		//	while (true)
+		//	{
+		//		do
+		//		{
+		//			if (!enumerator2.MoveNext())
+		//			{
+		//				return;
+		//			}
+		//			channel = null;
+		//		}
+		//		while (!enumerator2.Current.Channels.TryGetValue(this.m_SkeletonRoot.Name, out channel));
+		//		IEnumerator<AnimationKeyframe> enumerator = channel.GetEnumerator();
+		//		try
+		//		{
+		//			while (enumerator.MoveNext())
+		//			{
+		//				AnimationKeyframe current = enumerator.Current;
+		//				Matrix matrix = Matrix.Multiply(current.Transform, (Matrix) type2);
+		//				current.Transform = matrix;
+		//			}
+		//		}
+		//		finally
+		//		{
+		//			IEnumerator<AnimationKeyframe> enumerator3 = enumerator;
+		//			IDisposable disposable = enumerator;
+		//			if (enumerator != null)
+		//			{
+		//				enumerator.Dispose();
+		//			}
+		//		}
+		//	}
+		//}
+
+	}
+	void AnimationConverter::NodeWasCreated(KFbxNode* fbxNode, NodeContent* node, NodeContent* potentialParent, bool partOfMainSkeleton)
+	{
+
+	}
 
 
 

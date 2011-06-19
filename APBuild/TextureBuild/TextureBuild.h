@@ -34,7 +34,8 @@ namespace APBuild
 	class TextureBuild
 	{
 	private:
-
+		static void BuildByDevIL(const ConfigurationSection* sect);
+		static void BuildByD3D(const ConfigurationSection* sect);
 	public:
 		static void Build(const ConfigurationSection* sect);
 	};

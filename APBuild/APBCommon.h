@@ -9,4 +9,6 @@
 
 #include "squish-1.10/squish.h"
 
+#define KARCH_ENV_WIN
+
 #endif

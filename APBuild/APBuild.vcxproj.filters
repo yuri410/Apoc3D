@@ -39,13 +39,10 @@
     <ClInclude Include="MeshBuild\MeshBuild.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MeshBuild\FbxImporter.h">
+    <ClInclude Include="CompileLog.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MeshBuild\FbxBaker.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="CompileLog.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,10 +68,10 @@
     <ClCompile Include="MeshBuild\MeshBuild.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MeshBuild\FbxImporter.cpp">
+    <ClCompile Include="CompileLog.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CompileLog.cpp">
+    <ClCompile Include="MeshBuild\FbxBaker.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

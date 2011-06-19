@@ -20,6 +20,9 @@ using namespace Apoc3D::Graphics::Animation;
 
 namespace APBuild
 {
+	class AnimationContent;
+	typedef FastMap<string, AnimationContent*> AnimationContentDictionary;
+
 	class AnimationKeyframe
 	{
 	public:
@@ -48,7 +51,7 @@ namespace APBuild
 	class NodeContent
 	{
 	public:
-		FastMap<string, AnimationContent*> Animations;
+		AnimationContentDictionary Animations;
 
 		string Name;
 		FastList<NodeContent*> Children;
@@ -62,14 +65,23 @@ namespace APBuild
 			: Parent(0)
 		{
 		}
+
+		Matrix GetAbsoluteTransfrom() const
+		{
+			if (!Parent)
+			{
+				return Transform;
+			}
+			Matrix result;
+			Matrix::Multiply(result, Transform, Parent->GetAbsoluteTransfrom());
+			return result;
+		}
 	};
 	class BoneContent
 	{
 	public:
 		string Name;
 	};
-
-	typedef FastMap<string, AnimationContent*> AnimationContentDictionary;
 
 	class CalculateNodeTransformResult
 	{
@@ -88,7 +100,7 @@ namespace APBuild
 
 		//FastMap<NodeContent*, FbxNodeInfo> m_NodeContentToFbxNodeInfo;
 
-		NodeContent* m_oldSkeletonRoot;
+		
 		KFbxNode* m_FBXSkeletonRoot;
 
 		KFbxNode* FindRootMostBone(KFbxNode* sceneRoot);
@@ -100,13 +112,19 @@ namespace APBuild
 
 	public:
 		NodeContent* m_SkeletonRoot;
+		NodeContent* m_SkeletonOldParent;
 
 		void AddAnimationInformationToScene(KFbxScene* fbxScene, NodeContent* sceneRoot);
 
-		bool IsSkeletonRoot(KFbxNode* node);
+		bool IsSkeletonRoot(KFbxNode* node)
+		{
+			if (!node)
+				return false;
+			return m_FBXSkeletonRoot == node;
+		}
 		void FindSkeletonRoot(KFbxNode* sceneRoot)
 		{
-			m_skeletonRoot = FindRootMostBone(sceneRoot);
+			m_FBXSkeletonRoot = FindRootMostBone(sceneRoot);
 		}
 		void HierarchyFixup(NodeContent* sceneRoot);
 		void NodeWasCreated(KFbxNode* fbxNode, NodeContent* node, NodeContent* potentialParent, bool partOfMainSkeleton);
