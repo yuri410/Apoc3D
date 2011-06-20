@@ -37,7 +37,11 @@ namespace Apoc3D
 				HRESULT hr = D3DXCreateSprite(device->getDevice(), &m_sprite);
 				assert(SUCCEEDED(hr));
 			}
-
+			D3D9Sprite::~D3D9Sprite()
+			{
+				m_sprite->Release();
+				m_sprite = 0;
+			}
 			void D3D9Sprite::Begin(bool alphabled)
 			{
 				m_sprite->Begin(alphabled ? D3DXSPRITE_ALPHABLEND : 0);

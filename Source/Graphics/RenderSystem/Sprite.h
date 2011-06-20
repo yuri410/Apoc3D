@@ -42,10 +42,8 @@ namespace Apoc3D
 			private:
 				RenderDevice* m_renderDevice;
 			protected:
-				Sprite(RenderDevice* rd)
-					: m_renderDevice(rd)
-				{
-				}
+				Sprite(RenderDevice* rd);
+				virtual ~Sprite();
 			public:
 				virtual void Begin(bool alphabled) = 0;
 				virtual void End() = 0;

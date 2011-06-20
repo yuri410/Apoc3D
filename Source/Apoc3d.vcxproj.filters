@@ -411,6 +411,15 @@
     <ClInclude Include="Graphics\RenderSystem\Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UILib\StyleSkin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UILib\UICommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UILib\MouseInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -696,6 +705,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UILib\FontManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RenderSystem\Sprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UILib\Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UILib\StyleSkin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

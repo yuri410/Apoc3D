@@ -151,8 +151,11 @@
     <ClInclude Include="Scene\ScenePassTypes.h" />
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />
     <ClInclude Include="UILib\Button.h" />
+    <ClInclude Include="UILib\MouseInterface.h" />
+    <ClInclude Include="UILib\StyleSkin.h" />
     <ClInclude Include="UILib\Control.h" />
     <ClInclude Include="UILib\FontManager.h" />
+    <ClInclude Include="UILib\UICommon.h" />
     <ClInclude Include="UILib\UIMaterialLibrary.h" />
     <ClInclude Include="Utility\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
@@ -258,6 +261,7 @@
     <ClCompile Include="Graphics\RenderSystem\RenderStateManager.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderTarget.cpp" />
     <ClCompile Include="Graphics\RenderSystem\Shader.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\Sprite.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexDeclaration.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexElement.cpp" />
     <ClCompile Include="Graphics\VertexFormats.cpp" />
@@ -274,8 +278,10 @@
     <ClCompile Include="Math\RandomUtils.cpp" />
     <ClCompile Include="Platform\Thread.cpp" />
     <ClCompile Include="Scene\SceneRenderScriptParser.cpp" />
+    <ClCompile Include="UILib\Button.cpp" />
     <ClCompile Include="UILib\Control.cpp" />
     <ClCompile Include="UILib\FontManager.cpp" />
+    <ClCompile Include="UILib\StyleSkin.cpp" />
     <ClCompile Include="UILib\UIMaterialLibrary.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />

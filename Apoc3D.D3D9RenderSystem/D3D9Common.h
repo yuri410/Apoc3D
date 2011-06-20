@@ -56,7 +56,7 @@ typedef IDirect3DVertexDeclaration9 D3DVertexDeclaration;
 
 namespace Apoc3D
 {
-	typedef fastdelegate::FastDelegate0<void> EventHandler;
+	
 	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
 
 

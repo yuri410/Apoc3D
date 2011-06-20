@@ -123,7 +123,9 @@ typedef BatchHandle HashHandle;
 namespace Apoc3D
 {
 	void* memcpy_sse( char* pDest, const char* pSrc, size_t nBytes );
-	
+
+	template class APAPI fastdelegate::FastDelegate0<void>;
+	typedef fastdelegate::FastDelegate0<void> EventHandler;
 	
 	typedef std::wstring String;
 
@@ -339,8 +341,12 @@ namespace Apoc3D
 		class Font;
 		class FontManager;
 
+		class ControlContainer;
 		class Form;
 		class Control;
+		class Button;
+
+		class StyleSkin;
 	}
 };
 

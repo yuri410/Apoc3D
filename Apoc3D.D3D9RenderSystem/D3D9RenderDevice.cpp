@@ -36,6 +36,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Buffer/D3D9IndexBuffer.h"
 #include "Buffer/D3D9VertexBuffer.h"
 #include "D3D9VertexDeclaration.h"
+#include "D3D9Sprite.h"
 #include "VolatileResource.h"
 #include "Apoc3DException.h"
 
