@@ -173,7 +173,7 @@ namespace APBuild
 
 		Bitmap globalBmp(1,1, PixelFormat32bppARGB);
 		Gdiplus::Graphics* gg = Gdiplus::Graphics::FromImage(&globalBmp);
-
+		
 		Font font(config.Name.c_str(), config.Size, config.Style);
 
 		int index = 0;

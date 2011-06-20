@@ -15,6 +15,7 @@ namespace APBuild
 		static IDirect3DDevice9* m_device;
 
 	public:
+		static IDirect3DDevice9* getDevice() { return m_device; }
 		static void Initalize();
 		static void Finalize();
 

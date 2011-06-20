@@ -324,10 +324,10 @@ namespace Apoc3D
 
 				if (table.size())
 				{
-					if (m_animData->hasBindPose())
+					const FastList<Bone>* bones = &m_animData->getBones();
+					if (bones->getCount())
 					{
-						m_skinPlayer = new SkinnedAnimationPlayer(
-							&m_animData->getBindPose(), &m_animData->getInvBindPose(), &m_animData->getSkeletonHierarchy());
+						m_skinPlayer = new SkinnedAnimationPlayer(bones);
 
 						m_animInstance.Add(m_skinPlayer);
 						m_skinPlayer->eventCompleted().bind(this, &Model::SkinAnim_Completed);

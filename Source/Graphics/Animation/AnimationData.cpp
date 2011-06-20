@@ -38,11 +38,11 @@ namespace Apoc3D
 		{
 			static const int MANI_ID = ((byte)'M' << 24) | ((byte)'A' << 16) | ((byte)'N' << 8) | ((byte)'I');
 		
-			static const String TAG_3_BindPoseTag = L"BindPose";
-			static const String TAG_3_BindPoseCountTag = L"BindPoseCount";
+			//static const String TAG_3_BindPoseTag = L"BindPose";
+			//static const String TAG_3_BindPoseCountTag = L"BindPoseCount";
 
-			static const String TAG_3_InvBindPoseTag = L"InvBindPose";
-			static const String TAG_3_InvBindPoseCountTag = L"InvBindPoseCount";
+			//static const String TAG_3_InvBindPoseTag = L"InvBindPose";
+			//static const String TAG_3_InvBindPoseCountTag = L"InvBindPoseCount";
 
 			static const String TAG_3_ModelAnimationClipTag = L"ModelAnimationClip";
 			static const String TAG_3_ModelAnimationClipCountTag = L"ModelAnimationClipCount";
@@ -50,8 +50,8 @@ namespace Apoc3D
 			static const String TAG_3_RootAnimationClipTag = L"RootAnimationClip";
 			static const String TAG_3_RootAnimationClipCountTag = L"RootAnimationClipCount";
 
-			static const String TAG_3_BoneHierarchyTag = L"BoneHierarchy";
-			static const String TAG_3_BoneHierarchyCountTag = L"BoneHierarchyCount";
+			//static const String TAG_3_BoneHierarchyTag = L"BoneHierarchy";
+			//static const String TAG_3_BoneHierarchyCountTag = L"BoneHierarchyCount";
 
 			static const String TAG_2_MaterialAnimationTag = L"MaterialAnimation2.0";
 			static const String TAG_2_MaterialAnimationDurationTag = L"Duration";
@@ -184,8 +184,10 @@ namespace Apoc3D
 						int bidx = br2->ReadInt32();
 						String name = br2->ReadString();
 
-						Matrix transform;
-						br2->ReadMatrix(transform);
+						Matrix bindpose;
+						Matrix boneRef;
+						br2->ReadMatrix(bindpose);
+						br2->ReadMatrix(boneRef);
 
 						int parentId = br2->ReadInt32();
 
@@ -197,54 +199,57 @@ namespace Apoc3D
 							children.Add(br2->ReadInt32());
 						}
 
-						m_bones.Add(Bone(bidx, transform, children, parentId, name));
+						Bone bone = Bone(bidx, bindpose, children, parentId, name);
+						
+						bone.setBoneReferenceTransform(boneRef);
+						m_bones.Add(bone);
 					}
 					br2->Close();
 					delete br2;
 					m_rootBone = data->GetDataInt32(TAG_3_RootBoneTag);
 				}
-				// bind pose
-				if (data->Contains(TAG_3_BindPoseTag))
-				{
-					m_hasBindPose = true;
+				//// bind pose
+				//if (data->Contains(TAG_3_BindPoseTag))
+				//{
+				//	m_hasBindPose = true;
 
-					int count = data->GetDataInt32(TAG_3_BindPoseCountTag);
-					m_bindPose.ResizeDiscard(count);
+				//	int count = data->GetDataInt32(TAG_3_BindPoseCountTag);
+				//	m_bindPose.ResizeDiscard(count);
 
-					BinaryReader* br = data->GetData(TAG_3_BindPoseTag);
+				//	BinaryReader* br = data->GetData(TAG_3_BindPoseTag);
 
-					for (int i=0;i<count;i++)
-					{
-						Matrix transfrom;
-						br->ReadMatrix(transfrom);
+				//	for (int i=0;i<count;i++)
+				//	{
+				//		Matrix transfrom;
+				//		br->ReadMatrix(transfrom);
 
-						m_bindPose.Add(transfrom);
-					}
+				//		m_bindPose.Add(transfrom);
+				//	}
 
-					br->Close();
-					delete br;
-				}
+				//	br->Close();
+				//	delete br;
+				//}
 
-				// inv bind pose
-				if (data->Contains(TAG_3_InvBindPoseTag))
-				{
-					m_hasBindPose = true;
+				//// inv bind pose
+				//if (data->Contains(TAG_3_InvBindPoseTag))
+				//{
+				//	m_hasBindPose = true;
 
-					int count = data->GetDataInt32(TAG_3_InvBindPoseCountTag);
-					m_invBindPose.ResizeDiscard(count);
+				//	int count = data->GetDataInt32(TAG_3_InvBindPoseCountTag);
+				//	m_invBindPose.ResizeDiscard(count);
 
-					BinaryReader* br = data->GetData(TAG_3_InvBindPoseTag);
-					for (int i=0;i<count;i++)
-					{
-						Matrix transfrom;
-						br->ReadMatrix(transfrom);
+				//	BinaryReader* br = data->GetData(TAG_3_InvBindPoseTag);
+				//	for (int i=0;i<count;i++)
+				//	{
+				//		Matrix transfrom;
+				//		br->ReadMatrix(transfrom);
 
-						m_invBindPose.Add(transfrom);
-					}
+				//		m_invBindPose.Add(transfrom);
+				//	}
 
-					br->Close();
-					delete br;
-				}
+				//	br->Close();
+				//	delete br;
+				//}
 
 				// animation clip tag
 				if (data->Contains(TAG_3_ModelAnimationClipCountTag))
@@ -322,22 +327,22 @@ namespace Apoc3D
 					}
 				}
 
-				// bone hierarchy tag
-				if (data->GetData(TAG_3_BoneHierarchyCountTag))
-				{
-					int count = data->GetDataInt32(TAG_3_BoneHierarchyCountTag);
-					m_hasSkeleton = true;
-					
-					m_skeletonHierarchy.ResizeDiscard(count);
+				//// bone hierarchy tag
+				//if (data->GetData(TAG_3_BoneHierarchyCountTag))
+				//{
+				//	int count = data->GetDataInt32(TAG_3_BoneHierarchyCountTag);
+				//	m_hasSkeleton = true;
+				//	
+				//	m_skeletonHierarchy.ResizeDiscard(count);
 
-					BinaryReader* br = data->GetData(TAG_3_BoneHierarchyTag);
-					for (int i=0;i<count;i++)
-					{
-						m_skeletonHierarchy.Add(br->ReadInt32());
-					}
-					br->Close();
-					delete br;
-				}
+				//	BinaryReader* br = data->GetData(TAG_3_BoneHierarchyTag);
+				//	for (int i=0;i<count;i++)
+				//	{
+				//		m_skeletonHierarchy.Add(br->ReadInt32());
+				//	}
+				//	br->Close();
+				//	delete br;
+				//}
 
 			}
 
@@ -380,8 +385,8 @@ namespace Apoc3D
 					{
 						bw->Write(m_bones[i].Index);
 						bw->Write(m_bones[i].Name);
-						bw->Write(m_bones[i].BindPoseTransfrom);
-
+						bw->Write(m_bones[i].getBindPoseTransform());
+						bw->Write(m_bones[i].getBoneReferenceTransform());
 						bw->Write(m_bones[i].Parent);
 
 						int cldCount = static_cast<int32>(m_bones[i].Children.getCount());
@@ -399,7 +404,7 @@ namespace Apoc3D
 					data->AddEntry(TAG_3_RootBoneTag, m_rootBone);
 				}
 
-				if (m_hasBindPose)
+				/*if (m_hasBindPose)
 				{
 					{
 						data->AddEntry(TAG_3_BindPoseCountTag, static_cast<int32>(m_bindPose.getCount()));
@@ -425,7 +430,7 @@ namespace Apoc3D
 						bw->Close();
 						delete bw;
 					}
-				}
+				}*/
 				
 				if (m_hasModelClip)
 				{
@@ -479,18 +484,18 @@ namespace Apoc3D
 					delete bw;
 				}
 
-				if (m_hasSkeleton)
-				{
-					data->AddEntry(TAG_3_BoneHierarchyCountTag, static_cast<int32>(m_skeletonHierarchy.getCount()));
+				//if (m_hasSkeleton)
+				//{
+				//	data->AddEntry(TAG_3_BoneHierarchyCountTag, static_cast<int32>(m_skeletonHierarchy.getCount()));
 
-					BinaryWriter* bw = data->AddEntry(TAG_3_BoneHierarchyTag);
-					for (int i = 0; i < m_skeletonHierarchy.getCount(); i++)
-					{
-						bw->Write(m_skeletonHierarchy[i]);
-					}
-					bw->Close();
-					delete bw;
-				}
+				//	BinaryWriter* bw = data->AddEntry(TAG_3_BoneHierarchyTag);
+				//	for (int i = 0; i < m_skeletonHierarchy.getCount(); i++)
+				//	{
+				//		bw->Write(m_skeletonHierarchy[i]);
+				//	}
+				//	bw->Close();
+				//	delete bw;
+				//}
 				return data;
 			}
 

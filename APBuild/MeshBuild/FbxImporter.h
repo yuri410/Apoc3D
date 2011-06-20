@@ -101,6 +101,8 @@ namespace APBuild
 
 			bool m_bSkinnedModel;
 		public:
+			Matrix GeometricOffset;
+			
 			FIMeshPart(FIMesh* pModelParent, MaterialData* pMaterial)
 				: m_pModelParent(pModelParent), m_pMaterial(pMaterial),
 				m_bSkinnedModel(false)
@@ -365,6 +367,8 @@ namespace APBuild
 		//FastList<MeshData*> m_meshes;
 		FastMap<string, FIMesh*> m_meshes;
 		FISkeleton* m_pSkeleton;
+
+
 
 		bool InitializeFBXSdk();
 		bool LoadScene(const String& pFilename);

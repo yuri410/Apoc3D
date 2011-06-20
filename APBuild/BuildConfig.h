@@ -29,7 +29,7 @@ namespace APBuild
 		int NewHeight;
 		int NewDepth;
 		TextureFilterType ResizeFilterType;
-		PixelFormat NewFormat;
+		Apoc3D::Graphics::PixelFormat NewFormat;
 
 		void Parse(const ConfigurationSection* sect);
 	};

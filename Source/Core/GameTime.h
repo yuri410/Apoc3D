@@ -25,7 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GAMETIME_H
 #define GAMETIME_H
 
-#pragma once
 #include "Common.h"
 
 namespace Apoc3D

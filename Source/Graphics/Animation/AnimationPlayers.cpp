@@ -127,19 +127,23 @@ namespace Apoc3D
 					// Root bone.
 					m_worldTransforms[0] = m_boneTransforms[0];
 
-					Matrix::Multiply(m_skinTransforms[0], m_inverseBindPose->operator[](0), m_worldTransforms[0]);
+					Matrix::Multiply(m_skinTransforms[0], m_bones->operator[](0).getInvBindPoseTransform(), m_worldTransforms[0]);
 
 					// Child bones.
 					for (int bone = 1; bone < getTransformCount(); bone++)
 					{
+						const Bone& b = m_bones->operator[](bone);
 						// TODO: QuaternionKeyframe slerp
-						int parentBone = m_skeletonHierarchy->operator[](bone);
-
-						//m_worldTransforms[bone] = m_boneTransforms[bone] * m_worldTransforms[parentBone];
+						int parentBone = b.Parent;
 
 						Matrix::Multiply(m_worldTransforms[bone], m_boneTransforms[bone], m_worldTransforms[parentBone]);
-						Matrix::Multiply(m_skinTransforms[bone], m_inverseBindPose->operator[](bone), m_worldTransforms[bone]);
-						//m_skinTransforms[bone] = m_inverseBindPose[bone] * worldTransforms[bone];
+
+						Matrix tmp;
+						Matrix::Multiply(tmp, 
+							b.getBoneReferenceTransform(), 
+							b.getInvBindPoseTransform());
+
+						Matrix::Multiply(m_skinTransforms[bone], tmp, m_worldTransforms[bone]);
 					}
 				}
 			}

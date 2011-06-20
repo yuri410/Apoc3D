@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/Streams.h"
 #include "Apoc3DException.h"
 
+#include "D3DHelper.h"
+
 #include <IL/il.h>
 #include <IL/ilu.h>
 
@@ -37,7 +39,168 @@ using namespace Apoc3D::IO;
 
 namespace APBuild
 {
-	
+	PixelFormat ConvertBackPixelFormat(DWORD fmt)
+	{
+		switch (fmt)
+		{
+		case D3DFMT_A2R10G10B10:
+			return FMT_A2R10G10B10;
+		case D3DFMT_A8R8G8B8:
+			return FMT_A8R8G8B8;
+		case D3DFMT_X8R8G8B8:
+			return FMT_X8R8G8B8;
+		case D3DFMT_A1R5G5B5:
+			return FMT_A1R5G5B5;
+		case D3DFMT_X1R5G5B5:
+			return FMT_X1R5G5B5;
+		case D3DFMT_R5G6B5:
+			return FMT_R5G6B5;
+
+		case D3DFMT_DXT1:
+			return FMT_DXT1;
+		case D3DFMT_DXT2:
+			return FMT_DXT2;
+		case D3DFMT_DXT3:
+			return FMT_DXT3;
+		case D3DFMT_DXT4:
+			return FMT_DXT4;
+		case D3DFMT_DXT5:
+			return FMT_DXT5;
+
+		case D3DFMT_R16F:
+			return FMT_R16F;
+		case D3DFMT_G16R16F:
+			return FMT_G16R16F;
+		case D3DFMT_A16B16G16R16F:
+			return FMT_A16B16G16R16F;
+
+		case D3DFMT_R32F:
+			return FMT_R32F;
+		case D3DFMT_G32R32F:
+			return FMT_G32R32F;
+		case D3DFMT_A32B32G32R32F:
+			return FMT_A32B32G32R32F;
+
+		case D3DFMT_R8G8B8:
+			return FMT_R8G8B8;
+		case D3DFMT_A4R4G4B4:
+			return FMT_A4R4G4B4;
+		case D3DFMT_R3G3B2:
+			return FMT_R3G3B2;
+		case D3DFMT_A8:
+			return FMT_Alpha8;
+		case D3DFMT_A2B10G10R10:
+			return FMT_A2B10G10R10;
+		case D3DFMT_G16R16:
+			return FMT_G16R16;
+		case D3DFMT_A16B16G16R16:
+			return FMT_A16B16G16R16;
+		case D3DFMT_A8P8:
+			return FMT_Palette8Alpha8;
+		case D3DFMT_P8:
+			return FMT_Palette8;
+		case D3DFMT_L8:
+			return FMT_Luminance8;
+		case D3DFMT_L16:
+			return FMT_Luminance16;
+		case D3DFMT_A8L8:
+			return FMT_A8L8;
+		case D3DFMT_A4L4:
+			return FMT_A4L4;
+		case D3DFMT_A1:
+			return FMT_Alpha1;
+
+		case D3DFMT_X4R4G4B4:
+		case D3DFMT_A8R3G3B2:
+			return FMT_Unknown;
+		}
+		throw Apoc3DException::createException(EX_NotSupported, L"");
+	}
+
+	void TextureBuild::BuildByD3D(const TextureBuildConfig& config)
+	{
+		//DWORD usage = 0;
+		//if (config.GenerateMipmaps)
+		//{
+		//	usage |= D3DUSAGE_AUTOGENMIPMAP;
+		//}
+
+		//IDirect3DTexture9* texture;
+		//
+		//if (config.Resize)
+		//{
+		//	if (config.GenerateMipmaps)
+		//	{
+		//		D3DXCreateTextureFromFileEx(D3DHelper::getDevice(),
+		//			config.SourceFile.c_str(),
+		//			config.NewWidth,
+		//			config.NewHeight,
+		//			D3DX_DEFAULT,
+		//			usage,
+		//			D3DFMT_FROM_FILE,
+		//			D3DPOOL_SCRATCH,
+		//			D3DX_FILTER_TRIANGLE,
+		//			D3DX_FILTER_BOX, 0, NULL, NULL, &texture);
+		//	}
+		//	else
+		//	{
+		//		D3DXCreateTextureFromFileEx(D3DHelper::getDevice(),
+		//			config.SourceFile.c_str(),
+		//			config.NewWidth,
+		//			config.NewHeight,
+		//			D3DX_FROM_FILE,
+		//			usage,
+		//			D3DFMT_FROM_FILE,
+		//			D3DPOOL_SCRATCH,
+		//			D3DX_FILTER_TRIANGLE,
+		//			D3DX_FILTER_BOX, 0, NULL, NULL, &texture);
+		//	}
+		//}
+		//else
+		//{
+		//	if (config.GenerateMipmaps)
+		//	{
+		//		D3DXCreateTextureFromFileEx(D3DHelper::getDevice(),
+		//			config.SourceFile.c_str(),
+		//			D3DX_DEFAULT_NONPOW2,
+		//			D3DX_DEFAULT_NONPOW2,
+		//			D3DX_DEFAULT,
+		//			usage,
+		//			D3DFMT_FROM_FILE,
+		//			D3DPOOL_SCRATCH,
+		//			D3DX_FILTER_TRIANGLE,
+		//			D3DX_FILTER_BOX, 0, NULL, NULL, &texture);
+		//	}
+		//	else
+		//	{
+		//		D3DXCreateTextureFromFileEx(D3DHelper::getDevice(),
+		//			config.SourceFile.c_str(),
+		//			D3DX_DEFAULT_NONPOW2,
+		//			D3DX_DEFAULT_NONPOW2,
+		//			D3DX_FROM_FILE,
+		//			usage,
+		//			D3DFMT_FROM_FILE,
+		//			D3DPOOL_SCRATCH,
+		//			D3DX_FILTER_TRIANGLE,
+		//			D3DX_FILTER_BOX, 0, NULL, NULL, &texture);
+		//	}
+		//	
+		//}
+
+		//TextureData texData;
+		//texData.LevelCount = (int32)texture->GetLevelCount();
+		//texData.ContentSize = 0;
+
+		//D3DSURFACE_DESC desc;
+		//texture->GetLevelDesc(0, &desc);
+		//texData.Format = ConvertBackPixelFormat(desc.Format);
+		//for (int i=0;i<texData.LevelCount;i++)
+		//{
+
+		//}
+
+	}
+
 	PixelFormat ConvertFormat(int format, int elementType, int bpp)
 	{
 		switch (format)
@@ -140,12 +303,8 @@ namespace APBuild
 		}
 		throw Apoc3DException::createException(EX_NotSupported, L"Not supported filter type");
 	}
-	void TextureBuild::Build(const ConfigurationSection* sect)
+	void TextureBuild::BuildByDevIL(const TextureBuildConfig& config)
 	{
-		TextureBuildConfig config;
-		config.Parse(sect);
-
-
 		int image = ilGenImage();
 
 		ilBindImage(image);
@@ -155,7 +314,7 @@ namespace APBuild
 
 		int ilFormat = ilGetInteger(IL_IMAGE_FORMAT);
 
-		
+
 		if (config.GenerateMipmaps)
 		{
 			iluBuildMipmaps();
@@ -193,7 +352,7 @@ namespace APBuild
 		{
 			texData.Format = ConvertFormat(dxtFormat, 0, 0);
 		}
-		
+
 
 		for (int i=0;i<mipCount;i++)
 		{
@@ -255,11 +414,11 @@ namespace APBuild
 					//}
 					//else
 					//{
-						//IntPtr ptr = Il.ilGetData();
-						//fixed (byte* dst = &buffer[offset])
-						//{
-							memcpy(&buffer[offset], ilGetData(), imageSize);
-						//}
+					//IntPtr ptr = Il.ilGetData();
+					//fixed (byte* dst = &buffer[offset])
+					//{
+					memcpy(&buffer[offset], ilGetData(), imageSize);
+					//}
 
 					//}
 				}
@@ -279,6 +438,12 @@ namespace APBuild
 		{
 			delete[] texData.Levels[i].ContentData;
 		}
+	}
+	void TextureBuild::Build(const ConfigurationSection* sect)
+	{
+		TextureBuildConfig config;
+		config.Parse(sect);
 
+		BuildByDevIL(config);
 	}
 }

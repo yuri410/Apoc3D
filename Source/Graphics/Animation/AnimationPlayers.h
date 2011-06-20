@@ -260,9 +260,9 @@ namespace Apoc3D
 				Matrix* m_worldTransforms;
 				Matrix* m_skinTransforms;
 
-				const FastList<Matrix>* m_bindPose;
-				const FastList<Matrix>* m_inverseBindPose;
-				const FastList<int32>* m_skeletonHierarchy;
+				const FastList<Bone>* m_bones;
+				//const FastList<Matrix>* m_inverseBindPose;
+				//const FastList<int32>* m_skeletonHierarchy;
 
 			protected:
 				/** Initializes the animation clip
@@ -271,7 +271,11 @@ namespace Apoc3D
 				{
 					if (m_isFirstPlay)
 					{
-						memcpy(m_boneTransforms, m_bindPose->getInternalPointer(), m_bindPose->getCount() * sizeof(Matrix));
+						for (int i=0;i<m_bones->getCount();i++)
+						{
+							m_boneTransforms[i] = m_bones->operator[](i).getBindPoseTransform();
+						}
+						//memcpy(m_boneTransforms, m_bindPose->getInternalPointer(), m_bindPose->getCount() * sizeof(Matrix));
 						m_isFirstPlay = false;
 					}
 				}
@@ -284,21 +288,18 @@ namespace Apoc3D
 				*/
 				virtual void OnUpdate();
 			public:
-				SkinnedAnimationPlayer(const FastList<Matrix>* bindPose, 
-					const FastList<Matrix>* inverseBindPose, 
-					const FastList<int32>* skeletonHierarchy)
-					: m_bindPose(bindPose), m_inverseBindPose(inverseBindPose), 
-					m_skeletonHierarchy(skeletonHierarchy), 
+				SkinnedAnimationPlayer(const FastList<Bone>* bones)
+					: m_bones(bones), 
 					m_isFirstPlay(true)
 				{
-					m_boneTransforms = new Matrix[bindPose->getCount()];
-					memset(m_boneTransforms, 0, sizeof(Matrix) * bindPose->getCount());
+					m_boneTransforms = new Matrix[bones->getCount()];
+					memset(m_boneTransforms, 0, sizeof(Matrix) * bones->getCount());
 
-					m_worldTransforms = new Matrix[bindPose->getCount()];
-					memset(m_worldTransforms, 0, sizeof(Matrix) * bindPose->getCount());
+					m_worldTransforms = new Matrix[bones->getCount()];
+					memset(m_worldTransforms, 0, sizeof(Matrix) * bones->getCount());
 
-					m_skinTransforms = new Matrix[bindPose->getCount()];
-					memset(m_worldTransforms, 0, sizeof(Matrix) * bindPose->getCount());
+					m_skinTransforms = new Matrix[bones->getCount()];
+					memset(m_worldTransforms, 0, sizeof(Matrix) * bones->getCount());
 				}
 				~SkinnedAnimationPlayer()
 				{
@@ -307,7 +308,7 @@ namespace Apoc3D
 					delete[] m_skinTransforms;
 				}
 
-				int32 getTransformCount() const { return m_bindPose->getCount(); }
+				int32 getTransformCount() const { return m_bones->getCount(); }
 
 				/** Gets the current bone transform matrices, relative to their parent bones.
 				*/
@@ -336,7 +337,7 @@ namespace Apoc3D
 				*/
 				const MaterialAnimationClip* m_currentClipValue;
 
-				/** Current timeindex and keyframe in the clip
+				/** Current time and keyframe index in the clip
 				*/
 				float m_currentTimeValue;
 				int m_currentKeyframe;

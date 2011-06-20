@@ -56,7 +56,10 @@ namespace Apoc3D
 				int32 Index;
 
 				const Matrix& getBindPoseTransform() const { return m_bindPoseTransfrom; }
+				const Matrix& getInvBindPoseTransform() const { return m_invBindPoseTransfrom; }
 				const Matrix& getBoneReferenceTransform() const { return m_boneReferenceTransform; }
+				const Matrix& getInvBoneReferenceTransform() const { return m_invBoneReferenceTransform; }
+
 
 				void setBindPoseTransform(const Matrix& value)
 				{
@@ -103,7 +106,7 @@ namespace Apoc3D
 				Matrix m_transform;
 
 			public:
-				/** Gets the index of the target bone that is animated by this keyframe.
+				/** Gets the index of the target bone(skinned) or model entity(rigid) that is animated by this keyframe.
 				*/
 				int32 getBone() const { return m_bone; }
 

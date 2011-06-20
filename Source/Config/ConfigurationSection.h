@@ -54,6 +54,8 @@ namespace Apoc3D
 			SubSectionTable m_subSection;
 
 		public:
+			typedef SubSectionTable::const_iterator SubSectionIterator;
+
 			ConfigurationSection(const String& name)
 				: m_name(name) 
 			{ }
@@ -66,6 +68,9 @@ namespace Apoc3D
 					delete sect;
 				}
 			}
+
+			SubSectionIterator SubSectionBegin() const { return m_subSection.cbegin(); }
+			SubSectionIterator SubSectionEnd() const { return m_subSection.cend(); }
 
 			void AddSection(ConfigurationSection* section);
 			void AddAttribute(const String& name, const String& value);

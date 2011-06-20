@@ -57,12 +57,12 @@ namespace Apoc3D
 				ClipTable m_modelAnimationClips;
 				MtrlClipTable m_mtrlAnimationClips;
 
-				FastList<Matrix> m_bindPose;
-				FastList<Matrix> m_invBindPose;
-				FastList<int32> m_skeletonHierarchy;
+				//FastList<Matrix> m_bindPose;
+				//FastList<Matrix> m_invBindPose;
+				//FastList<int32> m_skeletonHierarchy;
 
-				bool m_hasBindPose;
-				bool m_hasSkeleton;
+				//bool m_hasBindPose;
+				//bool m_hasSkeleton;
 				bool m_hasMtrlClip;
 				bool m_hasModelClip;
 				bool m_hasRootClip;
@@ -76,14 +76,14 @@ namespace Apoc3D
 				TaggedDataWriter* SaveMtrlAnimation2();
 
 			public:
-				bool hasBindPose() const { return m_hasBindPose; }
-				bool hasSkeleton() const { return m_hasSkeleton; }
+				//bool hasBindPose() const { return m_hasBindPose; }
+				//bool hasSkeleton() const { return m_hasSkeleton; }
 
 				bool hasMtrlClip() const { return m_hasMtrlClip; }
 				bool hasModelClip() const { return m_hasModelClip; }
 				bool hasRootClip() const { return m_hasRootClip; }
 
-				const FastList<Bone> getBones() const { return m_bones; }
+				const FastList<Bone>& getBones() const { return m_bones; }
 				const int32 getRootBone() const { return m_rootBone; }
 
 				/** Gets a collection of animation clips that operate on the root of the object.
@@ -99,16 +99,17 @@ namespace Apoc3D
 				
 				const MtrlClipTable& getMaterialAnimationClips() const { return m_mtrlAnimationClips; }
 
-				/** Bindpose matrices for each bone in the skeleton,
-					relative to the parent bone.
-				*/
-				const FastList<Matrix>& getBindPose() const { return m_bindPose; }
-				/** Vertex to bonespace transforms for each bone in the skeleton.
-				*/
-				const FastList<Matrix>& getInvBindPose() const { return m_invBindPose; }
-				/** For each bone in the skeleton, stores the index of the parent bone.
-				*/
-				const FastList<int32>& getSkeletonHierarchy() const { return m_skeletonHierarchy; }
+				const FastList<Bone>* getBones() { return &m_bones; }
+				///** Bindpose matrices for each bone in the skeleton,
+				//	relative to the parent bone.
+				//*/
+				//const FastList<Matrix>& getBindPose() const { return m_bindPose; }
+				///** Vertex to bonespace transforms for each bone in the skeleton.
+				//*/
+				//const FastList<Matrix>& getInvBindPose() const { return m_invBindPose; }
+				///** For each bone in the skeleton, stores the index of the parent bone.
+				//*/
+				//const FastList<int32>& getSkeletonHierarchy() const { return m_skeletonHierarchy; }
 
 				/** Load animation data from a Tagged Data Block
 				*/
@@ -120,8 +121,7 @@ namespace Apoc3D
 				void Save(Stream* strm) const;
 
 				AnimationData()
-					: m_hasBindPose(false), m_hasSkeleton(false),
-					  m_hasModelClip(false), m_hasRootClip(false), m_hasMtrlClip(false)
+					: m_hasModelClip(false), m_hasRootClip(false), m_hasMtrlClip(false)
 				{
 
 				}
