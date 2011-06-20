@@ -66,6 +66,9 @@ namespace Apoc3D
 
 				~Bone() { }
 			};
+
+
+
 			/** Describes the position of a single bone at a single point in time.
 			*/
 			class APAPI ModelKeyframe

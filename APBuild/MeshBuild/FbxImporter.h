@@ -301,32 +301,21 @@ namespace APBuild
 		class Skeleton
 		{
 		private:
-			//void BuildBoneTransforms(CBTTAnimationController* pAnimationController, const std::string& strAnimationName);
-			//void BuildBoneTransforms();
-
 			FastList<SkeletonBone*> m_SkeletonBones;
-			Matrix* m_SkinTransforms;
-			Matrix* m_BoneAnimationTransforms;
-			int m_nBoneCount;
-		public:
 
+		public:
 			Skeleton()
-				: m_SkinTransforms(0), m_BoneAnimationTransforms(0), m_nBoneCount(0)
 			{
 
 			}
 			~Skeleton()
 			{
-				if (m_BoneAnimationTransforms)
-					delete[] m_SkinTransforms;
-				if (m_BoneAnimationTransforms)
-					delete[] m_BoneAnimationTransforms;
 			}
 
 			void AddSkeletonBone(SkeletonBone* pSkeletonBone)
 			{
 				m_SkeletonBones.Add(pSkeletonBone);
-				m_nBoneCount++;
+				//m_nBoneCount++;
 			}
 			SkeletonBone* FindBone(const std::string& strBoneName)
 			{
@@ -358,8 +347,13 @@ namespace APBuild
 				return m_SkeletonBones[nIndex];
 			}
 			//const FastMap<string, SkeletonBone*>& GetSkeletonBones() const { return m_SkeletonBones; }
-			Matrix* GetSkinTransforms() { return m_SkinTransforms; }
-			int GetBoneCount() const 	{ return m_nBoneCount; }
+			//Matrix* GetSkinTransforms() { return m_SkinTransforms; }
+			int GetBoneCount() const 	{ return m_SkeletonBones.getCount(); }
+
+			void Flatten(FastList<Matrix> bindPose, FastList<Matrix> invBindPose)
+			{
+
+			}
 
 			//void UpdateAnimation(CBTTAnimationController* pAnimationController);
 		};
@@ -401,6 +395,11 @@ namespace APBuild
 
 
 	public:
+		FbxImporter()
+			: m_pSkeleton(0), m_FBXMaterials(0), m_pFBXScene(0)
+		{
+
+		}
 		bool Initialize(const String& pFilename);
 		
 	

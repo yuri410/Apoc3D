@@ -88,7 +88,7 @@ namespace APBuild
 #elif APOC3D_PLATFORM == APOC3D_PLATFORM_LINUX
 		KString lExtension = "so";
 #elif
-#pragma error "FBX SDK does not not support the platform."
+#pragma error "FBX SDK does not not support this platform."
 #endif
 		m_pFBXSdkManager->LoadPluginsDirectory(lPath.Buffer(), lExtension.Buffer());
 
@@ -557,6 +557,7 @@ namespace APBuild
 			}
 
 		}
+		mesh->FinishAndOptimize();
 		m_meshes.Add(pNode->GetName(), mesh);
 	}
 
