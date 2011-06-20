@@ -312,7 +312,7 @@ namespace APBuild
 			{
 				if( m_pSkeleton )
 				{
-					SkeletonBone* pBone = m_pSkeleton->FindBone(pNode->GetName());
+					FISkeletonBone* pBone = m_pSkeleton->FindBone(pNode->GetName());
 
 					if( pBone )
 					{
@@ -489,7 +489,7 @@ namespace APBuild
 
 		if( !m_pSkeleton )
 		{
-			m_pSkeleton = new Skeleton();
+			m_pSkeleton = new FISkeleton();
 		}
 
 		int nParentBoneIndex = -1;
@@ -497,7 +497,7 @@ namespace APBuild
 		if( pParentNode )
 			nParentBoneIndex = m_pSkeleton->FindBoneIndex(pParentNode->GetName());
 
-		SkeletonBone* pSkeletonBone = new SkeletonBone( pNode->GetName(), nParentBoneIndex );
+		FISkeletonBone* pSkeletonBone = new FISkeletonBone( pNode->GetName(), nParentBoneIndex );
 		m_pSkeleton->AddSkeletonBone(pSkeletonBone);
 	}
 	void FbxImporter::ProcessMesh(KFbxNode* pNode)
@@ -584,7 +584,7 @@ namespace APBuild
 			if( nBoneIndex < 0 )
 				continue;
 
-			SkeletonBone* pSkeletonBone = m_pSkeleton->GetSkeletonBone(nBoneIndex);
+			FISkeletonBone* pSkeletonBone = m_pSkeleton->GetSkeletonBone(nBoneIndex);
 
 			KFbxXMatrix matClusterTransformMatrix;
 			KFbxXMatrix matClusterLinkTransformMatrix;

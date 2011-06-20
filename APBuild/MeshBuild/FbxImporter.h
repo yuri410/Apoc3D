@@ -239,7 +239,7 @@ namespace APBuild
 			const Matrix& GetKeyFrameTransform(int nKeyFrame) { return m_KeyFrames[nKeyFrame]; }
 			//const CBTTAnimationQuaternionKeyFrame& GetKeyFrameQuaternion(int nKeyFrame);
 		};
-		class SkeletonBone
+		class FISkeletonBone
 		{
 		private:
 
@@ -254,13 +254,13 @@ namespace APBuild
 
 			FastMap<std::string, AnimationKeyFrames*> m_AnimationKeyFrames;
 		public:
-			SkeletonBone(std::string strName, int nParentBoneIndex)
+			FISkeletonBone(std::string strName, int nParentBoneIndex)
 				: m_strName(strName), m_nParentBoneIndex(nParentBoneIndex)
 			{
 				m_matBindPoseTransform = Matrix::Identity;
 				m_matInvBindPoseTransform = Matrix::Identity;
 			}
-			~SkeletonBone()
+			~FISkeletonBone()
 			{
 				m_AnimationKeyFrames.Clear();
 			}
@@ -298,26 +298,25 @@ namespace APBuild
 			const std::string& GetName() const				{ return m_strName; }
 			int GetParentBoneIndex() const					{ return m_nParentBoneIndex; }
 		};
-		class Skeleton
+		class FISkeleton
 		{
 		private:
-			FastList<SkeletonBone*> m_SkeletonBones;
+			FastList<FISkeletonBone*> m_SkeletonBones;
 
 		public:
-			Skeleton()
+			FISkeleton()
 			{
 
 			}
-			~Skeleton()
+			~FISkeleton()
 			{
 			}
 
-			void AddSkeletonBone(SkeletonBone* pSkeletonBone)
+			void AddSkeletonBone(FISkeletonBone* pSkeletonBone)
 			{
 				m_SkeletonBones.Add(pSkeletonBone);
-				//m_nBoneCount++;
 			}
-			SkeletonBone* FindBone(const std::string& strBoneName)
+			FISkeletonBone* FindBone(const std::string& strBoneName)
 			{
 				for (int i=0;i<m_SkeletonBones.getCount();i++)
 				{
@@ -342,7 +341,7 @@ namespace APBuild
 				return -1;
 			}
 
-			SkeletonBone* GetSkeletonBone(int nIndex)
+			FISkeletonBone* GetSkeletonBone(int nIndex)
 			{
 				return m_SkeletonBones[nIndex];
 			}
@@ -350,7 +349,7 @@ namespace APBuild
 			//Matrix* GetSkinTransforms() { return m_SkinTransforms; }
 			int GetBoneCount() const 	{ return m_SkeletonBones.getCount(); }
 
-			void Flatten(FastList<Matrix> bindPose, FastList<Matrix> invBindPose)
+			void Flatten(FastList<Bone> bones)
 			{
 
 			}
@@ -365,7 +364,7 @@ namespace APBuild
 		FastList<MaterialData*> m_materials;
 		//FastList<MeshData*> m_meshes;
 		FastMap<string, FIMesh*> m_meshes;
-		Skeleton* m_pSkeleton;
+		FISkeleton* m_pSkeleton;
 
 		bool InitializeFBXSdk();
 		bool LoadScene(const String& pFilename);

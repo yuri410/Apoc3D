@@ -44,24 +44,48 @@ namespace Apoc3D
 			class APAPI Bone
 			{
 			private:
+				Matrix m_bindPoseTransfrom;
+				Matrix m_boneReferenceTransform;
+				Matrix m_invBindPoseTransfrom;
+				Matrix m_invBoneReferenceTransform;
 
 			public:
-				Matrix Transfrom;
 				String Name;
 				int32 Parent;
 				FastList<int32> Children;
 				int32 Index;
 
-				Bone() { }
+				const Matrix& getBindPoseTransform() const { return m_bindPoseTransfrom; }
+				const Matrix& getBoneReferenceTransform() const { return m_boneReferenceTransform; }
+
+				void setBindPoseTransform(const Matrix& value)
+				{
+					m_bindPoseTransfrom = value;
+					Matrix::Inverse(m_invBindPoseTransfrom, value);
+				}
+				void setBoneReferenceTransform(const Matrix& value)
+				{
+					m_invBindPoseTransfrom = value;
+					Matrix::Inverse(m_invBoneReferenceTransform, value);
+				}
+
+
+				Bone() 
+				{
+				}
 				Bone(int32 index)
 					: Index(index), Parent(-1)
 				{
-					Transfrom.LoadIdentity();
+					m_bindPoseTransfrom.LoadIdentity();
+					m_invBindPoseTransfrom.LoadIdentity();
+					m_boneReferenceTransform.LoadIdentity();
+					m_invBoneReferenceTransform.LoadIdentity();
 				}
 				Bone(int32 index, const Matrix& transform, const FastList<int32>& children, int32 parent, const String& name)
-					: Index(index), Transfrom(transform), Children(children), Parent(parent), Name(name)
+					: Index(index), m_bindPoseTransfrom(transform), Children(children), Parent(parent), Name(name)
 				{
-
+					m_boneReferenceTransform.LoadIdentity();
+					m_invBoneReferenceTransform.LoadIdentity();
 				}
 
 				~Bone() { }

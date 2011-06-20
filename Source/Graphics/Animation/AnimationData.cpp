@@ -380,7 +380,7 @@ namespace Apoc3D
 					{
 						bw->Write(m_bones[i].Index);
 						bw->Write(m_bones[i].Name);
-						bw->Write(m_bones[i].Transfrom);
+						bw->Write(m_bones[i].BindPoseTransfrom);
 
 						bw->Write(m_bones[i].Parent);
 
