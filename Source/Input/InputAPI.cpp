@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
+using namespace Apoc3D::Graphics;
 
 SINGLETON_DECL(Apoc3D::Input::InputAPIManager);
 
@@ -139,14 +140,35 @@ namespace Apoc3D
 			return a.PlatformMark < b.PlatformMark;
 		}
 
+		void InputAPIManager::Initialize(RenderWindow* window)
+		{
+			const String OSName = APOC3D_PLATFORM_NAME;
 
+			PlatformTable::iterator iter = m_factories.find(OSName);
+			if (iter != m_factories.end())
+			{
+				APIList* list = iter->second;
+				if (!list->empty())
+				{
+					std::sort(list->begin(), list->end(), InputAPIManager::Comparison);
+
+					int idx = list->size();
+					idx--;
+					m_selectedAPI = list->operator[](idx).Factory;
+					m_selectedAPI->Initialize(window);
+					return;
+				}
+				throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
+			}
+			throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
+		}
 		Mouse* InputAPIManager::CreateMouse()
 		{
-
+			return m_selectedAPI->CreateMouse();
 		}
 		Keyboard* InputAPIManager::CreateKeyboard()
 		{
-
+			return m_selectedAPI->CreateKeyboard();
 		}
 	}
 }

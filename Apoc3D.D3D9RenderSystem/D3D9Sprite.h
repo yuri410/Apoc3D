@@ -38,7 +38,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9Sprite : public Sprite
+			class D3D9Sprite : public Sprite, public VolatileResource
 			{
 			private:
 				D3DSprite* m_sprite;

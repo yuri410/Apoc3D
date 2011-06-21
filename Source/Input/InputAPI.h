@@ -29,8 +29,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/Singleton.h"
 #include "Platform/API.h"
 
-using namespace Apoc3D::Platform;
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Platform;
 using namespace std;
 
 namespace Apoc3D
@@ -52,6 +53,7 @@ namespace Apoc3D
 
 			const String& getName() { return m_description.Name; }
 
+			virtual void Initialize(RenderWindow* window) = 0;
 			virtual Mouse* CreateMouse() = 0;
 			virtual Keyboard* CreateKeyboard() = 0;
 			//virtual DeviceContent* CreateDeviceContent() = 0;
@@ -69,6 +71,8 @@ namespace Apoc3D
 			typedef unordered_map<String, APIList*> PlatformTable;
 			PlatformTable m_factories;
 
+			InputAPIFactory* m_selectedAPI;
+
 			static bool Comparison(const Entry& a, const Entry& b);
 
 		public:
@@ -80,6 +84,7 @@ namespace Apoc3D
 			void UnregisterInputAPI(const String& name);
 			void UnregisterInputAPI(InputAPIFactory* fac);
 
+			virtual void Initialize(RenderWindow* window);
 			virtual Mouse* CreateMouse();
 			virtual Keyboard* CreateKeyboard();
 		public:

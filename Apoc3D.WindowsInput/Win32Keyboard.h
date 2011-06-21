@@ -21,11 +21,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef WIN32MOUSE_H
-#define WIN32MOUSE_H
+#ifndef WIN32KEYBOARD_H
+#define WIN32KEYBOARD_H
 
 #include "WinInputCommon.h"
-#include "Input/Mouse.h"
+#include "Input/Keyboard.h"
 
 using namespace Apoc3D::Core;
 
@@ -35,21 +35,21 @@ namespace Apoc3D
 	{
 		namespace Win32
 		{
-			class Win32Mouse : public Mouse, public OIS::MouseListener
+			class Win32Keyboard : public Keyboard, public OIS::MouseListener
 			{
 			private:
 				OIS::InputManager* m_inpMgr;
-				OIS::Mouse* m_mouse;
+				OIS::Keyboard* m_keyboard;
 
 			public:
-				Win32Mouse(OIS::InputManager* mgr);
-				~Win32Mouse();
+				Win32Keyboard(OIS::InputManager* mgr);
+				~Win32Keyboard();
 
-				void Update(const GameTime* const time);
+				virtual void Update(const GameTime* const time);
 
-				bool mouseMoved( const OIS::MouseEvent &arg );
-				bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
-				bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
+
+				bool Win32Keyboard::keyPressed( const OIS::KeyEvent &arg );
+				bool Win32Keyboard::keyReleased( const OIS::KeyEvent &arg );
 			};
 		}
 	}

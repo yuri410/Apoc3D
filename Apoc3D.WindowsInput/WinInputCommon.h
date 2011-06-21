@@ -6,6 +6,12 @@
 #define PLUGIN __declspec(dllexport)
 
 #include <ois-v1-3/includes/OIS.h>
+#include <ois-v1-3/includes/OISInputManager.h>
+#include <ois-v1-3/includes/OISException.h>
+#include <ois-v1-3/includes/OISMouse.h>
+#include <ois-v1-3/includes/OISKeyboard.h>
+#include <ois-v1-3/includes/OISJoyStick.h>
+#include <ois-v1-3/includes/OISEvents.h>
 
 
 namespace Apoc3D
