@@ -337,103 +337,127 @@ namespace Apoc3D
 				m_cube->UnlockRect(D3D9Utils::ConvertCubeMapFace(cubemapFace), surface);
 			}
 
-			void copyData(const void* tex, 
-				int pitch, void* texData, const D3DSURFACE_DESC& desc,
+			void copyData(void* tex, 
+				int pitch, void* texData, D3DFORMAT surfaceFormat,
 				DWORD dwLockWidth, DWORD dwLockHeight, bool isSetting)
 			{
-				
+				byte* texPtr = reinterpret_cast<byte*>(tex);
+				byte* texDataPtr = reinterpret_cast<byte*>(texData);
+
+				byte bytesPerPixel = GetExpectedByteSizeFromFormat(surfaceFormat);
+
 				bool isDxt = false;
-				if (desc.Format == D3DFMT_DXT1 || 
-					desc.Format == D3DFMT_DXT2 || 
-					desc.Format == D3DFMT_DXT3 || 
-					desc.Format == D3DFMT_DXT4 ||
-					desc.Format == D3DFMT_DXT5)
+				if (surfaceFormat == D3DFMT_DXT1 || 
+					surfaceFormat == D3DFMT_DXT2 || 
+					surfaceFormat == D3DFMT_DXT3 || 
+					surfaceFormat == D3DFMT_DXT4 ||
+					surfaceFormat == D3DFMT_DXT5)
 				{
 					isDxt = true;
 					
 					dwLockWidth = (dwLockWidth + 3) >> 2;
 					dwLockHeight = (dwLockHeight + 3) >> 2;
+
+					bytesPerPixel = surfaceFormat == D3DFMT_DXT1 ? 8 : 16;
 				}
 				if (dwLockHeight)
 				{
 					DWORD j = dwLockHeight;
-					DWORD lineSize = dwLockWidth;
+					DWORD lineSize = dwLockWidth * bytesPerPixel;
 
 					do 
 					{
-
 						if (isSetting)
 						{
-							
+							memcpy(tex, texData, lineSize);
 						}
 						else
 						{
-
+							memcpy(texData, tex, lineSize);
 						}
+						texPtr += pitch;
+						texDataPtr += lineSize;
+
 						j--;
 					} while (j>0);
 
 				}
 			}
-			void copyData(const D3DLOCKED_BOX& box, const TextureLevelData& ldata)
+			void copyData(void* tex,
+				int rowPitch, int slicePitch, void* texData,
+				D3DFORMAT surfaceFormat,
+				DWORD dwLockWidth, DWORD dwLockHeight, DWORD dwLockDepth,
+				bool isSetting)
 			{
-				if (box.RowPitch == ldata.Width && box.SlicePitch == (ldata.Height * ldata.Width))
+				byte* texPtr = reinterpret_cast<byte*>(tex);
+				byte* texDataPtr = reinterpret_cast<byte*>(texData);
+
+				byte bytesPerPixel = GetExpectedByteSizeFromFormat(surfaceFormat);
+
+				bool isDxt = false;
+				if (surfaceFormat == D3DFMT_DXT1 || 
+					surfaceFormat == D3DFMT_DXT2 || 
+					surfaceFormat == D3DFMT_DXT3 || 
+					surfaceFormat == D3DFMT_DXT4 ||
+					surfaceFormat == D3DFMT_DXT5)
 				{
-					memcpy(box.pBits, 
-						ldata.ContentData, 
-						ldata.LevelSize);
+					isDxt = true;
+
+					dwLockWidth = (dwLockWidth + 3) >> 2;
+					dwLockHeight = (dwLockHeight + 3) >> 2;
+
+					bytesPerPixel = surfaceFormat == D3DFMT_DXT1 ? 8 : 16;
 				}
-				else
+
+				if (dwLockDepth)
 				{
-					int32 lineSize = ldata.LevelSize / (ldata.Depth*ldata.Height);
-					int32 sliceSize = ldata.LevelSize / ldata.Depth;
-
-					int ofs = 0;
-					char* dest = reinterpret_cast<char*>(box.pBits);
-
-					for (int i=0;i<ldata.Depth;i++)
+					DWORD k = dwLockDepth;
+					do 
 					{
-						for (int j=0;j<ldata.Height;j++)
+						byte* ptr = texPtr;
+
+						if (dwLockHeight)
 						{
-							memcpy(dest, ldata.ContentData + (j*lineSize), lineSize);
-							ofs += box.RowPitch;
-						}
-						ofs = box.SlicePitch * i;
-					}
-				}
-			}
-			void copyData(const D3DLOCKED_RECT& rect, const TextureLevelData& ldata, int32 offset = 0)
-			{
-				if (rect.Pitch == ldata.Width)
-				{
-					memcpy(rect.pBits, 
-						ldata.ContentData+offset, 
-						ldata.LevelSize);
-				}
-				else
-				{
-					char* dest = reinterpret_cast<char*>(rect.pBits);
-					int32 lineSize = ldata.LevelSize / ldata.Height;
+							DWORD j = dwLockHeight;
+							DWORD lineSize = dwLockWidth * bytesPerPixel;
 
-					for (int j=0;j<ldata.Height;j++)
-					{
-						memcpy(dest, ldata.ContentData + (j*lineSize)+offset, lineSize);
-						dest += rect.Pitch;
-					}
+							do 
+							{
+								if (isSetting)
+								{
+									memcpy(tex, texData, lineSize);
+								}
+								else
+								{
+									memcpy(texData, tex, lineSize);
+								}
+								ptr += rowPitch;
+								texDataPtr += lineSize;
+								j--;
+							} while (j>0);
+						}
+						texPtr += slicePitch;
+						k--;
+					} while (k>0);
 				}
 			}
+
+
 			void setData(const TextureData& data, D3DTextureCube* tex)
 			{
 				for (int i=0;i<data.LevelCount;i++)
 				{
 					int startPos = 0;
 					int levelSize = data.Levels[i].LevelSize / 6;
+					D3DSURFACE_DESC desc;
+					tex->GetLevelDesc(0, &desc);
 
 					D3DLOCKED_RECT rect;
 					HRESULT hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_X, i, &rect, NULL, 0);
 					assert(SUCCEEDED(hr));
 
-					copyData(rect, data.Levels[i], startPos);
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, true);
 					startPos += levelSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_X, i);
@@ -444,18 +468,20 @@ namespace Apoc3D
 					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i, &rect, NULL, 0);
 					assert(SUCCEEDED(hr));
 
-					copyData(rect, data.Levels[i], startPos);
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, true);
 					startPos += levelSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i);
 					assert(SUCCEEDED(hr));
 
 					// ======================================================================
-					// ======================================================================
+
 					hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i, &rect, NULL, 0);
 					assert(SUCCEEDED(hr));
 
-					copyData(rect, data.Levels[i], startPos);
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, true);
 					startPos += levelSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i);
@@ -465,19 +491,20 @@ namespace Apoc3D
 					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i, &rect, NULL, 0);
 					assert(SUCCEEDED(hr));
 
-					copyData(rect, data.Levels[i], startPos);
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, true);
 					startPos += levelSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i);
 					assert(SUCCEEDED(hr));
 
 					// ======================================================================
-					// ======================================================================
 
 					hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i, &rect, NULL, 0);
 					assert(SUCCEEDED(hr));
 
-					copyData(rect, data.Levels[i], startPos);
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, true);
 					startPos += levelSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i);
@@ -486,7 +513,8 @@ namespace Apoc3D
 					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i, &rect, NULL, 0);
 					assert(SUCCEEDED(hr));
 
-					copyData(rect, data.Levels[i], startPos);
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, true);
 					startPos += levelSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i);
@@ -501,11 +529,14 @@ namespace Apoc3D
 			{
 				for (int i=0;i<data.LevelCount;i++)
 				{
+					D3DSURFACE_DESC desc;
+					tex->GetLevelDesc(0, &desc);
+
 					D3DLOCKED_RECT rect;
 					HRESULT hr = tex->LockRect(i, &rect, NULL, 0);
 					assert(SUCCEEDED(hr));
 
-					copyData(rect, data.Levels[i]);
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData, desc.Format, desc.Width, desc.Height, true);
 
 					hr = tex->UnlockRect(i);
 					assert(SUCCEEDED(hr));
@@ -515,11 +546,16 @@ namespace Apoc3D
 			{
 				for (int i=0;i<data.LevelCount;i++)
 				{
-					D3DLOCKED_BOX rect;
-					HRESULT hr = tex->LockBox(i, &rect, NULL, 0);
+					D3DVOLUME_DESC desc;
+					tex->GetLevelDesc(0, &desc);
+
+					D3DLOCKED_BOX box;
+					HRESULT hr = tex->LockBox(i, &box, NULL, 0);
 					assert(SUCCEEDED(hr));
 
-					copyData(rect, data.Levels[i]);
+					copyData(box.pBits, box.RowPitch, box.SlicePitch,
+						data.Levels[i].ContentData, desc.Format,
+						desc.Width, desc.Height, desc.Depth, true);
 
 					hr = tex->UnlockBox(i);
 					assert(SUCCEEDED(hr));
