@@ -24,10 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Plugin.h"
 
 #include "Input/InputAPI.h"
-//#include "D3D9GraphicsAPIFactory.h"
 
 using namespace Apoc3D::Input;
-//using namespace Apoc3D::Graphics::D3D9RenderSystem;
+using namespace Apoc3D::Input::Win32;
+
 
 static WinInputPlugin* plugin = new WinInputPlugin();
 
@@ -42,13 +42,18 @@ namespace Apoc3D
 	{
 		namespace Win32
 		{
+			WinInputPlugin::WinInputPlugin()
+				: m_factory()
+			{
+
+			}
 			void WinInputPlugin::Load()
 			{
-				//GraphicsAPIManager::getSingleton().RegisterGraphicsAPI(new D3D9GraphicsAPIFactory());
+				InputAPIManager::getSingleton().RegisterInputAPI(&m_factory);
 			}
 			void WinInputPlugin::Unload()
 			{
-				//GraphicsAPIManager::getSingleton().UnregisterGraphicsAPI(new D3D9GraphicsAPIFactory());
+				InputAPIManager::getSingleton().UnregisterInputAPI(&m_factory);
 			}
 
 		}

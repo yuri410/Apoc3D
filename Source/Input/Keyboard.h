@@ -27,6 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
+using namespace Apoc3D::Core;
+
 namespace Apoc3D
 {
 	namespace Input
@@ -188,6 +190,8 @@ namespace Apoc3D
 
 			Keyboard();
 			~Keyboard();
+
+			virtual void Update(const GameTime* const time) = 0;
 		};
 	}
 }

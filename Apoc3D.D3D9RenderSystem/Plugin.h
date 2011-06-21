@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9Common.h"
 #include "Core/Plugin.h"
+#include "D3D9GraphicsAPIFactory.h"
 
 using namespace Apoc3D::Core;
 
@@ -40,7 +41,10 @@ namespace Apoc3D
 		{
 			class D3D9RSPlugin : public Plugin
 			{
+			private:
+				D3D9GraphicsAPIFactory m_factory;
 			public:
+				D3D9RSPlugin();
 				virtual void Load();
 				virtual void Unload();
 

@@ -51,8 +51,6 @@ namespace Apoc3D
 
 		ModelManager::~ModelManager(void)
 		{
-			ResourceManager::~ResourceManager();
-			Singleton::~Singleton();
 		}
 
 		ResourceHandle<ModelSharedData>* ModelManager::CreateInstance(RenderDevice* renderDevice, 

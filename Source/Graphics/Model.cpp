@@ -48,7 +48,6 @@ namespace Apoc3D
 		}
 		ModelSharedData::~ModelSharedData()
 		{
-			Resource::~Resource();
 			delete m_resourceLocation;
 		}
 

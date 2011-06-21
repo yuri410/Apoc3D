@@ -46,7 +46,6 @@ namespace Apoc3D
 				{
 					delete iter->second;
 				}
-				Singleton::~Singleton();
 			}
 
 			const AnimationData* AnimationManager::CreateInstance(const ResourceLocation* rl)

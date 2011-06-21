@@ -39,7 +39,6 @@ namespace Apoc3D
 			}
 			D3D9Sprite::~D3D9Sprite()
 			{
-				VolatileResource::~VolatileResource();
 				m_sprite->Release();
 				m_sprite = 0;
 			}

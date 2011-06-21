@@ -67,7 +67,6 @@ namespace Apoc3D
 			{
 				delete m_logs[i];	
 			}
-			Singleton::~Singleton();
 		}
 
 		void LogManager::Write(LogType type, const String& message, LogMessageLevel level) const

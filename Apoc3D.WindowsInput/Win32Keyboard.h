@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		namespace Win32
 		{
-			class Win32Keyboard : public Keyboard, public OIS::MouseListener
+			class Win32Keyboard : public Keyboard, public OIS::KeyListener
 			{
 			private:
 				OIS::InputManager* m_inpMgr;

@@ -62,8 +62,6 @@ namespace Apoc3D
 		{
 			if (m_redirectLocation)
 				delete m_redirectLocation;
-			ResourceManager::~ResourceManager();
-			Singleton::~Singleton();
 		}
 
 

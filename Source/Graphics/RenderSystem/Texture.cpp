@@ -83,7 +83,6 @@ namespace Apoc3D
 			}
 			Texture::~Texture()
 			{
-				Resource::~Resource();
 				if (m_resourceLocation)
 				{
 					delete m_resourceLocation;
