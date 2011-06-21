@@ -19,19 +19,23 @@ namespace Apoc3D
 
 			void Win32Keyboard::Update(const GameTime* const time)
 			{
-
+				m_keyboard->capture();
 			}
 
-			bool Win32Keyboard::keyPressed( const OIS::KeyEvent &arg ) {
-				std::cout << " KeyPressed {" << arg.key
-					<< ", " << ((OIS::Keyboard*)(arg.device))->getAsString(arg.key)
-					<< "} || Character (" << (char)arg.text << ")" << std::endl;
+			bool Win32Keyboard::keyPressed( const OIS::KeyEvent &arg )
+			{
+				m_keyState[arg.key] = true;
+				//std::cout << " KeyPressed {" << arg.key
+					//<< ", " << ((OIS::Keyboard*)(arg.device))->getAsString(arg.key)
+					//<< "} || Character (" << (char)arg.text << ")" << std::endl;
 				return true;
 			}
-			bool Win32Keyboard::keyReleased( const OIS::KeyEvent &arg ) {
+			bool Win32Keyboard::keyReleased( const OIS::KeyEvent &arg )
+			{
+				m_keyState[arg.key] = false;
 				//if( arg.key == OIS::KC_ESCAPE || arg.key == OIS::KC_Q )
 					//appRunning = false;
-				std::cout << "KeyReleased {" << ((OIS::Keyboard*)(arg.device))->getAsString(arg.key) << "}\n";
+				//std::cout << "KeyReleased {" << ((OIS::Keyboard*)(arg.device))->getAsString(arg.key) << "}\n";
 				return true;
 			}
 		}

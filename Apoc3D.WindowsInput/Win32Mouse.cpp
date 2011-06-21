@@ -19,20 +19,27 @@ namespace Apoc3D
 
 			void Win32Mouse::Update(const GameTime* const time)
 			{
-
+				memcpy(m_lastBtnState, m_btnState, sizeof(m_btnState));
+				m_lastPosition = m_currentPos;
+				m_lastZ = m_z;
+				
+				m_mouse->capture();
 			}
 
 			bool Win32Mouse::mouseMoved( const OIS::MouseEvent &arg )
 			{
 				const OIS::MouseState& s = arg.state;
-				//std::cout << "\nMouseMoved: Abs("
-					//<< s.X.abs << ", " << s.Y.abs << ", " << s.Z.abs << ") Rel("
-					//<< s.X.rel << ", " << s.Y.rel << ", " << s.Z.rel << ")";
+				m_currentPos.X = s.X.abs;
+				m_currentPos.Y = s.Y.abs;
+				m_z = s.Z.abs;
+
 				return true;
 			}
 			bool Win32Mouse::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id ) 
 			{
 				const OIS::MouseState& s = arg.state;
+				m_btnState[(int)id] = true;
+
 				//std::cout << "\nMouse button #" << id << " pressed. Abs("
 					//<< s.X.abs << ", " << s.Y.abs << ", " << s.Z.abs << ") Rel("
 					//<< s.X.rel << ", " << s.Y.rel << ", " << s.Z.rel << ")";
@@ -41,6 +48,9 @@ namespace Apoc3D
 			bool Win32Mouse::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 			{
 				const OIS::MouseState& s = arg.state;
+
+				m_btnState[(int)id] = false;
+
 				//std::cout << "\nMouse button #" << id << " released. Abs("
 					//<< s.X.abs << ", " << s.Y.abs << ", " << s.Z.abs << ") Rel("
 					//<< s.X.rel << ", " << s.Y.rel << ", " << s.Z.rel << ")";

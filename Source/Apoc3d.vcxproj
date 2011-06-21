@@ -270,6 +270,7 @@
     <ClCompile Include="Graphics\RenderSystem\VertexElement.cpp" />
     <ClCompile Include="Graphics\VertexFormats.cpp" />
     <ClCompile Include="Input\InputAPI.cpp" />
+    <ClCompile Include="Input\Mouse.cpp" />
     <ClCompile Include="IOLib\BinaryReader.cpp" />
     <ClCompile Include="IOLib\BinaryWriter.cpp" />
     <ClCompile Include="IOLib\IOUtils.cpp" />

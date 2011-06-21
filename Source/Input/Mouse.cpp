@@ -22,43 +22,23 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef MOUSE_H
-#define MOUSE_H
+#include "Mouse.h"
 
-#include "Common.h"
-#include "Math/Point.h"
-
-using namespace Apoc3D::Core;
-using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
 	namespace Input
 	{
-		class APAPI Mouse
+		Mouse::Mouse()
+			: m_z(0), m_lastZ(0), m_currentPos(0,0), m_lastPosition(0,0)
 		{
-		protected:
-			bool m_lastBtnState[3];
-			bool m_btnState[3];
+			memset(m_lastBtnState, 0, sizeof(m_lastBtnState));
+			memset(m_btnState, 0, sizeof(m_btnState));
+		}
+		Mouse::~Mouse()
+		{
 
-			Point m_lastPosition;
-			Point m_currentPos;
+		}
 
-			int m_z;
-			int m_lastZ;
-
-			Mouse();
-			~Mouse();
-		public:
-			const Point& GetCurrentPosition() const { return m_currentPos; }
-			bool IsLeftPressed() const { return m_btnState[0] & !m_lastBtnState[0]; }
-			bool IsLeftUp() const { return !m_btnState[0] & m_lastBtnState[0]; }
-			bool IsRightPressed() const { return m_btnState[2] & !m_lastBtnState[2]; }
-			bool IsRightUp() const { return !m_btnState[2] & m_lastBtnState[2]; }
-
-			virtual void Update(const GameTime* const time) = 0;
-		};
 	}
 }
-
-#endif

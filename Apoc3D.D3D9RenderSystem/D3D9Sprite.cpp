@@ -32,13 +32,14 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			D3D9Sprite::D3D9Sprite(D3D9RenderDevice* device)
-				: Sprite(device)
+				: Sprite(device), VolatileResource(device)
 			{
 				HRESULT hr = D3DXCreateSprite(device->getDevice(), &m_sprite);
 				assert(SUCCEEDED(hr));
 			}
 			D3D9Sprite::~D3D9Sprite()
 			{
+				VolatileResource::~VolatileResource();
 				m_sprite->Release();
 				m_sprite = 0;
 			}
