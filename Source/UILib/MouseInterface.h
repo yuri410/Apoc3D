@@ -13,12 +13,20 @@ namespace Apoc3D
 	{
 		class APAPI MouseInterface
 		{
+		private:
+			bool m_lastBtnState[3];
+			bool m_btnState[3];
+
+			Point m_lastPosition;
+			Point m_currentPos;
 		public:
-			static Point GetCurrentPosition();
-			static bool IsLeftPressed();
-			static bool IsLeftUp();
-			static bool IsRightPressed();
-			static bool IsRightUp();
+			static const Point& GetCurrentPosition() { return m_currentPos; }
+			static bool IsLeftPressed() { return m_btnState[0] & !m_lastBtnState[0]; }
+			static bool IsLeftUp() { return !m_btnState[0] & m_lastBtnState[0]; }
+			static bool IsRightPressed() { return m_btnState[2] & !m_lastBtnState[2]; }
+			static bool IsRightUp() { return !m_btnState[2] & m_lastBtnState[2]; }
+
+			static void Update(const GameTime* const time){}
 		};
 	}
 }

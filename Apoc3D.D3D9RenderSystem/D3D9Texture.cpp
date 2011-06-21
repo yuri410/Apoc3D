@@ -38,6 +38,139 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			byte GetExpectedByteSizeFromFormat(D3DFORMAT format)
+			{
+				switch (format)
+				{
+				case D3DFMT_X8R8G8B8:// SurfaceFormat.Bgr32:
+					return 4;
+
+				case D3DFMT_A2R10G10B10:// 0x23:
+					return 4;
+
+				case D3DFMT_A8R8G8B8:// SurfaceFormat.Rgba32:
+					return 4;
+
+
+				case D3DFMT_X8B8G8R8:// SurfaceFormat.Rgb32:
+					return 4;
+
+				case D3DFMT_A2B10G10R10:// SurfaceFormat.Rgba1010102:
+					return 4;
+
+				case D3DFMT_G16R16:// SurfaceFormat.Rg32:
+					return 4;
+
+				case D3DFMT_A16B16G16R16:// SurfaceFormat.Rgba64:
+					return 4;
+
+				case D3DFMT_R5G6B5:// SurfaceFormat.Bgr565:
+					return 8;
+
+				case D3DFMT_A1R5G5B5:// SurfaceFormat.Bgra5551:
+					return 2;
+
+				case D3DFMT_X1R5G5B5:// SurfaceFormat.Bgr555:
+					return 2;
+
+				case D3DFMT_A4R4G4B4://SurfaceFormat.Bgra4444:
+					return 2;
+
+				case D3DFMT_X4R4G4B4: // SurfaceFormat.Bgr444:
+					return 2;
+
+				case D3DFMT_A8R3G3B2:// SurfaceFormat.Bgra2338:
+					return 2;
+
+				case D3DFMT_A8://SurfaceFormat.Alpha8:
+					return 2;
+
+				case D3DFMT_R3G3B2://SurfaceFormat.Bgr233:
+					return 1;
+
+				case D3DFMT_R8G8B8:// 20:// SurfaceFormat.Bgr24:
+					return 1;
+
+				case D3DFMT_V8U8://SurfaceFormat.NormalizedByte2:
+					return 3;
+
+				case D3DFMT_Q8W8V8U8://SurfaceFormat.NormalizedByte4:
+					return 2;
+
+				case D3DFMT_V16U16://SurfaceFormat.NormalizedShort2:
+					return 4;
+
+				case D3DFMT_Q16W16V16U16://SurfaceFormat.NormalizedShort4:
+					return 4;
+
+				case D3DFMT_R32F:
+					return 8;
+
+				case D3DFMT_G32R32F:
+					return 4;
+
+				case D3DFMT_A32B32G32R32F:// SurfaceFormat.Vector4:
+					return 8;
+
+				case D3DFMT_R16F:// SurfaceFormat.HalfSingle:
+					return 0x10;
+
+				case D3DFMT_G16R16F:// SurfaceFormat.HalfVector2:
+					return 2;
+
+				case D3DFMT_A16B16G16R16F:// SurfaceFormat.HalfVector4:
+					return 4;
+
+				case D3DFMT_DXT1:
+					return 8;
+
+				case D3DFMT_DXT2:
+					return 1;
+
+				case D3DFMT_DXT3:
+					return 1;
+
+				case D3DFMT_DXT4:
+					return 1;
+
+				case D3DFMT_DXT5:
+					return 1;
+
+				case D3DFMT_L8:// SurfaceFormat.Luminance8:
+					return 1;
+
+				case D3DFMT_L16:// SurfaceFormat.Luminance16:
+					return 1;
+
+				case D3DFMT_A4L4:// SurfaceFormat.LuminanceAlpha8:
+					return 2;
+
+				case D3DFMT_A8L8:// SurfaceFormat.LuminanceAlpha16:
+					return 1;
+
+				case D3DFMT_P8:// SurfaceFormat.Palette8:
+					return 2;
+
+				case D3DFMT_A8P8:// SurfaceFormat.PaletteAlpha16:
+					return 1;
+
+				case D3DFMT_L6V5U5://0x3d://SurfaceFormat.NormalizedLuminance16:
+					return 2;
+
+				case D3DFMT_X8L8V8U8://0x3e://SurfaceFormat.NormalizedLuminance32:
+					return 2;
+
+				case D3DFMT_A2W10V10U10://0x43://SurfaceFormat.NormalizedAlpha1010102:
+					return 4;
+
+				case D3DFMT_CxV8U8://0x75://SurfaceFormat.NormalizedByte2Computed:
+					return 4;
+
+				//case 0x3154454d://SurfaceFormat.Multi2Bgra32:
+				//	return 2;
+				}
+				throw Apoc3DException::createException(EX_NotSupported,  L"");
+			}
 
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, D3DTexture2D* tex2D)
 				: Texture(device,
@@ -176,7 +309,8 @@ namespace Apoc3D
 				rect0.right = rect.getRight();
 				rect0.bottom = rect.getBottom();
 
-				HRESULT hr = m_cube->LockRect(D3D9Utils::ConvertCubeMapFace(cubemapFace), surface, &rrect, &rect0, D3D9Utils::ConvertLockMode(mode));
+				m_lockedCubeFace = D3D9Utils::ConvertCubeMapFace(cubemapFace);
+				HRESULT hr = m_cube->LockRect(m_lockedCubeFace, surface, &rrect, &rect0, D3D9Utils::ConvertLockMode(mode));
 				assert(SUCCEEDED(hr));
 
 				DataRectangle result(rrect.Pitch, rrect.pBits, rect.Width, rect.Height, getFormat());
@@ -195,6 +329,7 @@ namespace Apoc3D
 				}
 				else
 				{
+					m_cube->UnlockRect(m_lockedCubeFace, surface);
 				}
 			}
 			void D3D9Texture::unlock(CubeMapFace cubemapFace, int32 surface)
@@ -202,6 +337,44 @@ namespace Apoc3D
 				m_cube->UnlockRect(D3D9Utils::ConvertCubeMapFace(cubemapFace), surface);
 			}
 
+			void copyData(const void* tex, 
+				int pitch, void* texData, const D3DSURFACE_DESC& desc,
+				DWORD dwLockWidth, DWORD dwLockHeight, bool isSetting)
+			{
+				
+				bool isDxt = false;
+				if (desc.Format == D3DFMT_DXT1 || 
+					desc.Format == D3DFMT_DXT2 || 
+					desc.Format == D3DFMT_DXT3 || 
+					desc.Format == D3DFMT_DXT4 ||
+					desc.Format == D3DFMT_DXT5)
+				{
+					isDxt = true;
+					
+					dwLockWidth = (dwLockWidth + 3) >> 2;
+					dwLockHeight = (dwLockHeight + 3) >> 2;
+				}
+				if (dwLockHeight)
+				{
+					DWORD j = dwLockHeight;
+					DWORD lineSize = dwLockWidth;
+
+					do 
+					{
+
+						if (isSetting)
+						{
+							
+						}
+						else
+						{
+
+						}
+						j--;
+					} while (j>0);
+
+				}
+			}
 			void copyData(const D3DLOCKED_BOX& box, const TextureLevelData& ldata)
 			{
 				if (box.RowPitch == ldata.Width && box.SlicePitch == (ldata.Height * ldata.Width))

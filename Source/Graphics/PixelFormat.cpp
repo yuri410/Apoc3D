@@ -63,7 +63,7 @@ namespace Apoc3D
 
 		int PixelFormatUtils::sizeTable[FMT_Count];
 		int PixelFormatUtils::depSizeTable[DEPFMT_Count];
-		auto_ptr<PixelFormatUtils> PixelFormatUtils::initializer = auto_ptr<PixelFormatUtils>(new PixelFormatUtils());
+		auto_ptr<PixelFormatUtils> PixelFormatUtils::initializer (new PixelFormatUtils());
 
 		PixelFormatUtils::PixelFormatUtils()
 		{

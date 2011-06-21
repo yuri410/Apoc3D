@@ -11,9 +11,9 @@ namespace Apoc3D
 		{
 			// ButtonTexture
 
-			BtnSrcRect[0] = Rectangle(0, 0, ButtonTexture->getWidth() - 1, ButtonTexture->getHeight());
-			BtnSrcRect[1] = Rectangle(ButtonTexture->getWidth() - 1, 0, 1, ButtonTexture->getHeight());
-			BtnSrcRect[2] = Rectangle(ButtonTexture->getWidth() - 1, 0, -ButtonTexture->getWidth() + 1, ButtonTexture->getHeight());
+			BtnSrcRect[0] = Apoc3D::Math::Rectangle(0, 0, ButtonTexture->getWidth() - 1, ButtonTexture->getHeight());
+			BtnSrcRect[1] = Apoc3D::Math::Rectangle(ButtonTexture->getWidth() - 1, 0, 1, ButtonTexture->getHeight());
+			BtnSrcRect[2] = Apoc3D::Math::Rectangle(ButtonTexture->getWidth() - 1, 0, -ButtonTexture->getWidth() + 1, ButtonTexture->getHeight());
 
 			BtnHozPadding = 5;
 			BtnVertPadding = 20;

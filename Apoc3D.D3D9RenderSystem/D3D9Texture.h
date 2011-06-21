@@ -48,6 +48,8 @@ namespace Apoc3D
 				D3DTextureCube* m_cube;
 				D3D9RenderDevice* m_renderDevice;
 
+				D3DCUBEMAP_FACES m_lockedCubeFace;
+
 			public:
 				void setInternal2D(D3DTexture2D* tex) { m_tex2D = tex; }
 
