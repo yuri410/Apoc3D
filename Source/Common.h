@@ -48,14 +48,20 @@ typedef BatchHandle HashHandle;
 #define APOC3D_PLATFORM_MAC 1
 #define APOC3D_PLATFORM_LINUX 2
 
+#define APOC3D_PLATFORM_NAME L"unknown"
+
 #if defined( __WIN32__ ) || defined( _WIN32 )
 #   define APOC3D_PLATFORM APOC3D_PLATFORM_WINDOWS
-
+#	undef APOC3D_PLATFORM_NAME
+#	define APOC3D_PLATFORM_NAME L"windows"
 #elif defined( __APPLE_CC__)
 #   define APOC3D_PLATFORM APOC3D_PLATFORM_MAC
-
+#	undef APOC3D_PLATFORM_NAME
+#	define APOC3D_PLATFORM_NAME L"mac"
 #else
 #   define APOC3D_PLATFORM APOC3D_PLATFORM_LINUX
+#	undef APOC3D_PLATFORM_NAME
+#	define APOC3D_PLATFORM_NAME L"linux"
 #endif
 
 #if APOC3D_DLLEX
@@ -218,6 +224,14 @@ namespace Apoc3D
 		class MeshData;
 		class ModelData;
 	};
+	namespace Input
+	{
+		class InputAPIManager;
+		class InputAPIFactory;
+
+		class Mouse;
+		class Keyboard;
+	}
 	namespace VFS
 	{
 

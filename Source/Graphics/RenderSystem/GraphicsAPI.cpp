@@ -37,16 +37,6 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			//GraphicsAPIManager* GraphicsAPIManager::getSingletonPtr(void)
-			//{
-			//	return ms_instance;
-			//}
-			//GraphicsAPIManager& GraphicsAPIManager::getSingleton(void)
-			//{  
-			//	assert( ms_instance );  return ( *ms_instance );  
-			//}
-
-
 			GraphicsAPIManager::~GraphicsAPIManager()
 			{
 				for (PlatformTable::iterator iter = m_factories.begin();
@@ -65,7 +55,7 @@ namespace Apoc3D
 				}
 
 
-				const vector<const PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
+				const vector<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
 
 				for (size_t i = 0; i<plats.size();i++)
 				{
@@ -120,7 +110,7 @@ namespace Apoc3D
 				}
 
 
-				const vector<const PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
+				const vector<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
 				for (size_t i = 0; i < plats.size(); i++)
 				{
 
@@ -159,14 +149,7 @@ namespace Apoc3D
 			*/
 			DeviceContent* GraphicsAPIManager::CreateDeviceContent()
 			{
-#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-				const String OSName = L"windows";
-#elif APOC3D_PLATFORM == APOC3D_PLATFORM_LINUX
-				const String OSName = L"linux";
-#elif APOC3D_PLATFORM == APOC3D_PLATFORM_MAC
-				const String OSName = L"mac";
-#endif
-
+				const String OSName = APOC3D_PLATFORM_NAME;
 				
 				PlatformTable::iterator iter = m_factories.find(OSName);
 				if (iter != m_factories.end())

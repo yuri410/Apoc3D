@@ -134,6 +134,7 @@
     <ClInclude Include="Graphics\RenderSystem\RenderTarget.h" />
     <ClInclude Include="Graphics\RenderSystem\Sprite.h" />
     <ClInclude Include="Graphics\VertexFormats.h" />
+    <ClInclude Include="Input\InputAPI.h" />
     <ClInclude Include="IOLib\BinaryReader.h" />
     <ClInclude Include="IOLib\BinaryWriter.h" />
     <ClInclude Include="IOLib\IOUtils.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="Math\ColorValue.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />
+    <ClInclude Include="Platform\API.h" />
     <ClInclude Include="Platform\Thread.h" />
     <ClInclude Include="Scene\ScenePassTypes.h" />
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />
@@ -265,6 +267,7 @@
     <ClCompile Include="Graphics\RenderSystem\VertexDeclaration.cpp" />
     <ClCompile Include="Graphics\RenderSystem\VertexElement.cpp" />
     <ClCompile Include="Graphics\VertexFormats.cpp" />
+    <ClCompile Include="Input\InputAPI.cpp" />
     <ClCompile Include="IOLib\BinaryReader.cpp" />
     <ClCompile Include="IOLib\BinaryWriter.cpp" />
     <ClCompile Include="IOLib\IOUtils.cpp" />

@@ -25,8 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GRAPHICSAPI_H
 
 #include "Core/Singleton.h"
+#include "Platform/API.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Platform;
 using namespace std;
 
 namespace Apoc3D
@@ -67,42 +69,21 @@ namespace Apoc3D
 				SINGLETON_DECL_HEARDER(GraphicsAPIManager);
 			};
 
-			/** Define how well a platform is supported based on score.
-			*/
-			struct PlatformAPISupport
-			{
-				int Score;
-				String PlatformName;
-			};
-
-			//template class APAPI vector<const PlatformAPISupport>;
-
-			/* Contains information of a graphics API
-			*/
-			struct APAPI GraphicsAPIDescription
-			{
-				/** The name of the graphics API.
-				*/
-				String Name;
-				/** A vector containing all platform supported by this API.
-				*/
-				vector<const PlatformAPISupport> SupportedPlatforms;
-			};
 
 			/* Factory that create device content of particular Graphics API.
 			*/
 			class APAPI GraphicsAPIFactory
 			{
 			private:
-				GraphicsAPIDescription m_description;
+				APIDescription m_description;
 
 			protected:
-				GraphicsAPIFactory(const GraphicsAPIDescription& desc)
+				GraphicsAPIFactory(const APIDescription& desc)
 					: m_description(desc)
 				{ }
 
 			public:
-				const GraphicsAPIDescription& getDescription() const { return m_description; }
+				const APIDescription& getDescription() const { return m_description; }
 
 				const String& getName() { return m_description.Name; }
 
