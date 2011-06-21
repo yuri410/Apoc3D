@@ -64,7 +64,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\lib\x86;$(SolutionDir)\lib\x86dbg;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib\x86dbg;$(SolutionDir)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
@@ -135,6 +135,8 @@
     <ClInclude Include="Graphics\RenderSystem\Sprite.h" />
     <ClInclude Include="Graphics\VertexFormats.h" />
     <ClInclude Include="Input\InputAPI.h" />
+    <ClInclude Include="Input\Keyboard.h" />
+    <ClInclude Include="Input\Mouse.h" />
     <ClInclude Include="IOLib\BinaryReader.h" />
     <ClInclude Include="IOLib\BinaryWriter.h" />
     <ClInclude Include="IOLib\IOUtils.h" />

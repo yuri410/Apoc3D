@@ -21,34 +21,25 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef WIN32MOUSE_H
+#define WIN32MOUSE_H
 
-#ifndef MOUSE_H
-#define MOUSE_H
-
-#include "Common.h"
+#include <OISInputManager.h>
+#include <OISException.h>
+#include <OISMouse.h>
+#include <OISEvents.h>
 
 namespace Apoc3D
 {
 	namespace Input
 	{
-		class APAPI Mouse
+		namespace Win32
 		{
-		protected:
-			bool m_lastBtnState[3];
-			bool m_btnState[3];
+			class Win32Mouse : public Mouse, public MouseListener
+			{
 
-			Point m_lastPosition;
-			Point m_currentPos;
-
-		public:
-			const Point& GetCurrentPosition() const { return m_currentPos; }
-			bool IsLeftPressed() const { return m_btnState[0] & !m_lastBtnState[0]; }
-			bool IsLeftUp() const { return !m_btnState[0] & m_lastBtnState[0]; }
-			bool IsRightPressed() const { return m_btnState[2] & !m_lastBtnState[2]; }
-			bool IsRightUp() const { return !m_btnState[2] & m_lastBtnState[2]; }
-
-			virtual void Update(const GameTime* const time) = 0;
-		};
+			};
+		}
 	}
 }
 

@@ -138,5 +138,15 @@ namespace Apoc3D
 		{
 			return a.PlatformMark < b.PlatformMark;
 		}
+
+
+		Mouse* InputAPIManager::CreateMouse()
+		{
+
+		}
+		Keyboard* InputAPIManager::CreateKeyboard()
+		{
+
+		}
 	}
 }

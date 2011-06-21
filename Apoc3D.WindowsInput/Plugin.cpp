@@ -21,35 +21,36 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#include "Plugin.h"
 
-#ifndef MOUSE_H
-#define MOUSE_H
+#include "Input/InputAPI.h"
+//#include "D3D9GraphicsAPIFactory.h"
 
-#include "Common.h"
+using namespace Apoc3D::Input;
+//using namespace Apoc3D::Graphics::D3D9RenderSystem;
+
+static WinInputPlugin* plugin = new WinInputPlugin();
+
+extern "C" PLUGIN Plugin* Apoc3DGetPlugin()
+{
+	return plugin;
+}
 
 namespace Apoc3D
 {
 	namespace Input
 	{
-		class APAPI Mouse
+		namespace Win32
 		{
-		protected:
-			bool m_lastBtnState[3];
-			bool m_btnState[3];
+			void WinInputPlugin::Load()
+			{
+				//GraphicsAPIManager::getSingleton().RegisterGraphicsAPI(new D3D9GraphicsAPIFactory());
+			}
+			void WinInputPlugin::Unload()
+			{
+				//GraphicsAPIManager::getSingleton().UnregisterGraphicsAPI(new D3D9GraphicsAPIFactory());
+			}
 
-			Point m_lastPosition;
-			Point m_currentPos;
-
-		public:
-			const Point& GetCurrentPosition() const { return m_currentPos; }
-			bool IsLeftPressed() const { return m_btnState[0] & !m_lastBtnState[0]; }
-			bool IsLeftUp() const { return !m_btnState[0] & m_lastBtnState[0]; }
-			bool IsRightPressed() const { return m_btnState[2] & !m_lastBtnState[2]; }
-			bool IsRightUp() const { return !m_btnState[2] & m_lastBtnState[2]; }
-
-			virtual void Update(const GameTime* const time) = 0;
-		};
+		}
 	}
 }
-
-#endif

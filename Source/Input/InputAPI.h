@@ -53,7 +53,7 @@ namespace Apoc3D
 			const String& getName() { return m_description.Name; }
 
 			virtual Mouse* CreateMouse() = 0;
-			virtual Keyboard* CreateMouse() = 0;
+			virtual Keyboard* CreateKeyboard() = 0;
 			//virtual DeviceContent* CreateDeviceContent() = 0;
 		};
 		class APAPI InputAPIManager : public Singleton<InputAPIManager>
@@ -80,8 +80,8 @@ namespace Apoc3D
 			void UnregisterInputAPI(const String& name);
 			void UnregisterInputAPI(InputAPIFactory* fac);
 
-			virtual Mouse* CreateMouse() = 0;
-			virtual Keyboard* CreateKeyboard() = 0;
+			virtual Mouse* CreateMouse();
+			virtual Keyboard* CreateKeyboard();
 		public:
 			SINGLETON_DECL_HEARDER(InputAPIManager);
 		};

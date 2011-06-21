@@ -21,34 +21,32 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef WININPUTPLUGIN_H
+#define WININPUTPLUGIN_H
 
-#ifndef MOUSE_H
-#define MOUSE_H
+#include "WinInputCommon.h"
+#include "Core/Plugin.h"
 
-#include "Common.h"
+using namespace Apoc3D::Core;
+
+//extern "C" PLUGIN Plugin* Apoc3DGetPlugin();
+
 
 namespace Apoc3D
 {
 	namespace Input
 	{
-		class APAPI Mouse
+		namespace Win32
 		{
-		protected:
-			bool m_lastBtnState[3];
-			bool m_btnState[3];
+			class WinInputPlugin : public Plugin
+			{
+			public:
+				virtual void Load();
+				virtual void Unload();
 
-			Point m_lastPosition;
-			Point m_currentPos;
-
-		public:
-			const Point& GetCurrentPosition() const { return m_currentPos; }
-			bool IsLeftPressed() const { return m_btnState[0] & !m_lastBtnState[0]; }
-			bool IsLeftUp() const { return !m_btnState[0] & m_lastBtnState[0]; }
-			bool IsRightPressed() const { return m_btnState[2] & !m_lastBtnState[2]; }
-			bool IsRightUp() const { return !m_btnState[2] & m_lastBtnState[2]; }
-
-			virtual void Update(const GameTime* const time) = 0;
-		};
+				virtual String GetName() { return L"Window Input System"; }
+			};
+		}
 	}
 }
 

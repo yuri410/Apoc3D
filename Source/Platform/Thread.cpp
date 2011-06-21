@@ -22,8 +22,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Thread.h"
-#include <Windows.h>
 
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+#include <Windows.h>
+#elif APOC3D_PLATFORM == APOC3D_PLATFORM_MAC
+#include <Carbon/Carbon.h>
+#else
+#include <pthread.h>
+#endif
 
 namespace Apoc3D
 {
