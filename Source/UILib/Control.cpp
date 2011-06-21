@@ -28,9 +28,5 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		void Control::CenterDraw(Sprite* sprite, Texture* tex)
-		{
-			
-		}
 	}
 }

@@ -183,14 +183,15 @@ namespace Apoc3D
 			KEYCODE_MAX		= 0xFF
 		};
 
-		class Keyboard
+		class APAPI Keyboard
 		{
 		protected:
 			bool m_keyState[KEYCODE_MAX];
 
 			Keyboard();
-			~Keyboard();
+			virtual ~Keyboard();
 
+		public:
 			virtual void Update(const GameTime* const time) = 0;
 		};
 	}

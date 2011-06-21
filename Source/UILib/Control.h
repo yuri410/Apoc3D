@@ -110,7 +110,6 @@ namespace Apoc3D
 			virtual void Load(ConfigurationSection* data);
 			virtual void Save(ConfigurationSection* data);
 
-			void CenterDraw(Sprite* sprite, Texture* tex);
 		};
 
 		class ControlContainer : public Control

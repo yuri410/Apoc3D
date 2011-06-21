@@ -1,9 +1,14 @@
 #include "Button.h"
-#include "MouseInterface.h"
 #include "StyleSkin.h"
 #include "Graphics/RenderSystem/Texture.h"
 #include "Graphics/RenderSystem/Sprite.h"
 #include "FontManager.h"
+
+#include "Input/InputAPI.h"
+#include "Input/Mouse.h"
+#include "Input/Keyboard.h"
+
+using namespace Apoc3D::Input;
 
 namespace Apoc3D
 {
@@ -11,6 +16,9 @@ namespace Apoc3D
 	{
 		void Button::UpdateEvents()
 		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			Keyboard* keyb = InputAPIManager::getSingleton().getKeyboard();
+
 			if (m_owner && m_owner->getArea().Contains(getArea()))
 			{
 				if (!m_mouseOver)
@@ -18,12 +26,12 @@ namespace Apoc3D
 					m_mouseOver = true;
 					OnMouseOver();
 				}
-				if (!m_mouseDown && MouseInterface::IsLeftPressed())
+				if (!m_mouseDown && mouse && mouse->IsLeftPressed())
 				{
 					m_mouseDown = true;
 					OnPress();
 				}
-				else if (m_mouseDown && MouseInterface::IsLeftUp())
+				else if (m_mouseDown && mouse && mouse->IsLeftUp())
 				{
 					m_mouseDown = false;
 					OnRelease();

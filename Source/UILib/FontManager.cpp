@@ -69,6 +69,10 @@ namespace Apoc3D
 		{
 
 		}
+		Point Font::MeasureString(const String& text)
+		{
+			return Point();
+		}
 
 		int FontManager::TextureSize = 512;
 

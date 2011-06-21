@@ -155,7 +155,6 @@
     <ClInclude Include="Scene\ScenePassTypes.h" />
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />
     <ClInclude Include="UILib\Button.h" />
-    <ClInclude Include="UILib\MouseInterface.h" />
     <ClInclude Include="UILib\StyleSkin.h" />
     <ClInclude Include="UILib\Control.h" />
     <ClInclude Include="UILib\FontManager.h" />

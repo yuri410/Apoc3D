@@ -25,6 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Apoc3DException.h"
 #include "Utility/StringUtils.h"
+#include "Mouse.h"
+#include "Keyboard.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Graphics;
@@ -140,7 +142,7 @@ namespace Apoc3D
 			return a.PlatformMark < b.PlatformMark;
 		}
 
-		void InputAPIManager::Initialize(RenderWindow* window)
+		void InputAPIManager::Initialize(RenderWindow* window, const InputCreationParameters& params)
 		{
 			const String OSName = APOC3D_PLATFORM_NAME;
 
@@ -156,6 +158,15 @@ namespace Apoc3D
 					idx--;
 					m_selectedAPI = list->operator[](idx).Factory;
 					m_selectedAPI->Initialize(window);
+
+					if (params.UseMouse)
+					{
+						m_mouse = CreateMouse();
+					}
+					if (params.UseKeyboard)
+					{
+						m_keyboard = CreateKeyboard();
+					}
 					return;
 				}
 				throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
@@ -169,6 +180,14 @@ namespace Apoc3D
 		Keyboard* InputAPIManager::CreateKeyboard()
 		{
 			return m_selectedAPI->CreateKeyboard();
+		}
+
+		void InputAPIManager::Update(const GameTime* const time)
+		{
+			if (m_mouse)
+				m_mouse->Update(time);
+			if (m_keyboard)
+				m_keyboard->Update(time);
 		}
 	}
 }

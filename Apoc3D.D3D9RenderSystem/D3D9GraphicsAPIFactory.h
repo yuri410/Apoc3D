@@ -38,7 +38,7 @@ namespace Apoc3D
 			class D3D9GraphicsAPIFactory : public GraphicsAPIFactory
 			{
 			private:
-				static GraphicsAPIDescription GetDescription();
+				static APIDescription GetDescription();
 
 			public:
 				D3D9GraphicsAPIFactory()

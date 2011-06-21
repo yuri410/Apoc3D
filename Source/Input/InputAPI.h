@@ -38,6 +38,11 @@ namespace Apoc3D
 {
 	namespace Input
 	{
+		struct InputCreationParameters
+		{
+			bool UseMouse;
+			bool UseKeyboard;
+		};
 		class APAPI InputAPIFactory
 		{
 		private:
@@ -75,19 +80,29 @@ namespace Apoc3D
 
 			static bool Comparison(const Entry& a, const Entry& b);
 
+			Mouse* m_mouse;
+			Keyboard* m_keyboard;
+
+			virtual Mouse* CreateMouse();
+			virtual Keyboard* CreateKeyboard();
 		public:
-			InputAPIManager() { }
+			Mouse* getMouse() const { return m_mouse; }
+			Keyboard* getKeyboard() const { return m_keyboard; }
+
+			InputAPIManager()
+				: m_mouse(0), m_keyboard(0)
+			{
+			}
 
 			virtual ~InputAPIManager();
-		public:
+		
 			void RegisterInputAPI(InputAPIFactory* fac);
 			void UnregisterInputAPI(const String& name);
 			void UnregisterInputAPI(InputAPIFactory* fac);
 
-			virtual void Initialize(RenderWindow* window);
-			virtual Mouse* CreateMouse();
-			virtual Keyboard* CreateKeyboard();
-		public:
+			void Initialize(RenderWindow* window, const InputCreationParameters& params);
+		
+			void Update(const GameTime* const time);
 			SINGLETON_DECL_HEARDER(InputAPIManager);
 		};
 

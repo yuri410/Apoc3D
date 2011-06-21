@@ -417,9 +417,6 @@
     <ClInclude Include="UILib\UICommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UILib\MouseInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Input\InputAPI.h">
       <Filter>Header Files</Filter>
     </ClInclude>

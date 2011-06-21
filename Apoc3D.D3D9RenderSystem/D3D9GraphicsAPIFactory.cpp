@@ -31,11 +31,11 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			GraphicsAPIDescription D3D9GraphicsAPIFactory::GetDescription()
+			APIDescription D3D9GraphicsAPIFactory::GetDescription()
 			{
 				PlatformAPISupport platform = { 100, L"WINDOWS" };
 
-				GraphicsAPIDescription desc;
+				APIDescription desc;
 				desc.Name = L"Direct3D9";
 				desc.SupportedPlatforms.push_back(platform);
 				return desc;
