@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APDesigner", "APDesigner\AP
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.WindowsInput", "Apoc3D.WindowsInput\Apoc3D.WindowsInput.vcxproj", "{BB441C8F-5157-43A9-B180-DFA4207ADC37}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "twl", "twl\twl.vcxproj", "{BB1B5896-E3D3-4ED9-B8F7-C334B54E2C3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -45,6 +47,10 @@ Global
 		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Debug|Win32.Build.0 = Debug|Win32
 		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release|Win32.ActiveCfg = Release|Win32
 		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release|Win32.Build.0 = Release|Win32
+		{BB1B5896-E3D3-4ED9-B8F7-C334B54E2C3A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BB1B5896-E3D3-4ED9-B8F7-C334B54E2C3A}.Debug|Win32.Build.0 = Debug|Win32
+		{BB1B5896-E3D3-4ED9-B8F7-C334B54E2C3A}.Release|Win32.ActiveCfg = Release|Win32
+		{BB1B5896-E3D3-4ED9-B8F7-C334B54E2C3A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -71,6 +71,11 @@ namespace Apoc3D
 			{
 				m_fpsCounter.Step(time); 
 			}
+
+			RenderWindow::~RenderWindow()
+			{
+				delete m_evtHandler;
+			}
 			void RenderWindow::OnInitialize()
 			{
 				if (m_evtHandler)

@@ -101,13 +101,20 @@ namespace Apoc3D
 				virtual Size getClientSize() = 0;
 				virtual String getTitle() = 0;
 				virtual void setTitle(const String& name) = 0;
-				
+
+				void setEventHandler(RenderWindowHandler* handler)
+				{
+					m_evtHandler = handler;
+				}
+
 				virtual void Exit()
 				{
 					m_isExiting = true;
 				}
 
 				virtual void Run() = 0;
+
+				~RenderWindow();
 
 			protected:
 				RenderWindow(RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
@@ -120,6 +127,7 @@ namespace Apoc3D
 				{
 
 				}
+				
 				void OnFrameStart();
 				void OnFrameEnd();
 
