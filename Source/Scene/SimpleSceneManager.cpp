@@ -35,14 +35,29 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
+
+		void SimpleSceneNode::AddObject(SceneObject* sceObj)
+		{
+			m_attached.Add(sceObj);
+			sceObj->NotifyParentNode( this );
+		}
+
+		void SimpleSceneNode::RemoveObject(SceneObject* const obj)
+		{
+			m_attached.Remove(obj);
+			obj->NotifyParentNode(0);
+		}
+
 		SimpleSceneManager::SimpleSceneManager(void)
 		{
 			m_defaultNode = new SimpleSceneNode();
+
 		}
 
 
 		SimpleSceneManager::~SimpleSceneManager(void)
 		{
+			delete m_defaultNode;
 		}
 
 		void SimpleSceneManager::AddObject(SceneObject* const sceObj)
@@ -59,7 +74,7 @@ namespace Apoc3D
 
 		void SimpleSceneManager::PrepareVisibleObjects(Camera* camera, BatchData* batchData)
 		{
-			batchData->Clear();
+			//batchData->Clear();
 			for (int i =0; i<m_defaultNode->getCount();i++)
 			{
 				SceneObject* obj = m_defaultNode->operator[](i);

@@ -861,7 +861,10 @@ namespace Apoc3D
 			static void CreateRotationQuaternion(Matrix& result, const Quaternion& rotation);
 			static void CreateRotationYawPitchRoll(Matrix& result, float yaw, float pitch, float roll);
 
-
+			static void CreateTranslation(Matrix& res, const Vector3& pos)
+			{
+				CreateTranslation(res, _V3X(pos), _V3Y(pos), _V3Z(pos));
+			}
 			/* Creates a translation matrix using the specified offsets.
 			*/
 			static void CreateTranslation(Matrix& res, float x, float y, float z)

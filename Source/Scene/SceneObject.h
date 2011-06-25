@@ -24,13 +24,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef SCENEOBJECT_H
 #define SCENEOBJECT_H
 
-#pragma once
-
 #include "Common.h"
+#include "Math\Matrix.h"
+#include "Math\BoundingSphere.h"
 #include "Graphics\Renderable.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
@@ -41,10 +42,21 @@ namespace Apoc3D
 		private:
 			bool m_hasSubObjects;
 			SceneNode* m_parentNode;
+			
+		protected:
+			Matrix m_transformation;
+
+			BoundingSphere m_BoundingSphere;
 
 		public:
+			bool RequiresNodeUpdate;
+
 			bool hasSubObjects() const { return m_hasSubObjects; }
-			SceneNode* getParentNode() const { return m_parentNode; }
+			SceneNode* getSceneNode() const { return m_parentNode; }
+
+			const Matrix& getTrasformation() const { return m_transformation; }
+			const BoundingSphere& getBoundingSphere() const { return m_BoundingSphere; }
+
 
 			SceneObject(const bool hasSubObjs = false) 
 				: m_hasSubObjects(hasSubObjs), m_parentNode(0)
@@ -58,11 +70,77 @@ namespace Apoc3D
 				m_parentNode = node;
 			}
 
-			virtual void PrepareVisibleObjects(const Camera* const camera, int32 level, BatchData* data) {}
+			virtual void PrepareVisibleObjects(const Camera* const camera, int32 level, BatchData* data) { }
 
 			virtual void Update(const GameTime* const &time) = 0;
 
-			//virtual RenderOperationBuffer* GetRenderOperation(int lod);
+			virtual void OnAddedToScene(SceneManager* sceneMgr) { }
+			virtual void OnRemovedFromScene(SceneManager* sceneMgr) { }
+
+			virtual bool IntersectsSelectionRay(const Ray& ray)
+			{
+				float d;
+				return BoundingSphere::Intersects(m_BoundingSphere, ray, d);
+			}
+
+		};
+
+		class APAPI Entity : public SceneObject
+		{
+		protected:
+			Vector3 m_position;
+			Matrix m_orientation;
+			
+			Model* m_models[3];
+			bool m_isTransformDirty;
+			
+		protected:
+			Entity() { }
+
+		public:
+			bool Visible;
+			Vector3 BoundingSphereOffset;
+
+			Model* getModel(int lod) { return m_models[lod]; }
+			void setModel(int lod, Model* mdl) { m_models[lod] = mdl; }
+
+			const Matrix& getOrientation() const { return m_orientation; }
+			void setOrientation(const Matrix& ori) 
+			{
+				m_orientation = ori;
+				m_isTransformDirty = true;
+			}
+			const Vector3& getPosition() const { return m_position; }
+			void setPosition(const Vector3& pos)
+			{
+				m_position = pos;
+				m_BoundingSphere.Center = Vector3Utils::Add(pos, BoundingSphereOffset);
+				m_isTransformDirty = true;
+			}
+
+			virtual void UpdateTransform();
+
+			RenderOperationBuffer* GetRenderOperation(int lod);
+
+
+			virtual void Update(const GameTime* const time);
+		};
+
+		class APAPI StaticObject : public Entity
+		{
+		public:
+			StaticObject();
+			StaticObject(const Vector3& position, const Matrix& orientation);
+
+
+		};
+		class APAPI DynamicObject : public Entity
+		{
+		public:
+			DynamicObject();
+			DynamicObject(const Vector3& position, const Matrix& orientation);
+
+			virtual void UpdateTransform();
 		};
 	};
 };

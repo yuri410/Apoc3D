@@ -24,11 +24,60 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneObject.h"
 
 #include "SceneNode.h"
+#include "Graphics/Model.h"
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
+		void Entity::UpdateTransform()
+		{
+			Matrix::CreateTranslation(m_transformation, m_position);
+			Matrix::Multiply(m_transformation, m_orientation, m_transformation);
+			RequiresNodeUpdate = true;
+		}
+
+		void Entity::Update(const GameTime* const time)
+		{
+			if (m_models[0])
+			{
+				m_models[0]->Update(time);
+			}
+
+			if (m_models[0])
+			{
+				m_models[0]->Update(time);
+			
+			}
+
+			if (m_isTransformDirty)
+			{
+				UpdateTransform();
+				m_isTransformDirty = false;
+			}
+		}
+
+		RenderOperationBuffer* Entity::GetRenderOperation(int lod)
+		{
+			while (!m_models[lod] && lod>=0)
+			{
+				lod--;
+			}
+			if (m_models[lod])
+			{
+				return m_models[lod]->GetRenderOperation();
+			}
+			return 0;
+		}
+
+		void DynamicObject::UpdateTransform()
+		{
+			Entity::UpdateTransform();
+			
+			m_BoundingSphere.Center = Vector3Utils::Add(m_position, BoundingSphereOffset);
+
+			RequiresNodeUpdate = true;
+		}
 
 	}
 }

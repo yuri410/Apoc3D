@@ -25,27 +25,28 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define SCENENODE_H
 
 #include "Common.h"
-#include <vector>
+#include "Collections/FastList.h"
+
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
 		//template class APAPI std::vector<SceneObject*>;
-		typedef std::vector<SceneObject*> ObjectList;
+		typedef FastList<SceneObject*> ObjectList;
 
 		/* Represents a collection of scene objects in the scene
 		*/
 		class APAPI SceneNode
 		{
-		private:
+		protected:
 			ObjectList m_attached;
-		
 		public:
 			SceneNode(void);
 			~SceneNode(void);
 
-			int32 getCount() { return m_attached.size(); }
+			int32 getCount() { return m_attached.getCount(); }
 			SceneObject* operator [](int i) { return m_attached[i]; }
 
 			virtual void AddObject(SceneObject* sceObj);
