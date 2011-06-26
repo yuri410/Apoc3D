@@ -147,7 +147,7 @@ namespace Apoc3D
 					m_length = offset;
 			}
 			virtual int64 getPosition() const
-			{ 
+			{
 				return m_out->tellp(); 
 			}
 
@@ -368,7 +368,8 @@ namespace Apoc3D
 			MemoryOutStream(int64 preserved)
 				: m_length(0), m_position(0)
 			{
-				m_data = new vector<char>(static_cast<size_t>(preserved));
+				m_data = new vector<char>();
+				m_data->reserve(static_cast<size_t>(preserved));
 			}
 			virtual ~MemoryOutStream()
 			{

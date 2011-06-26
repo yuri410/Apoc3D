@@ -6,58 +6,140 @@
 
 #include "APBCommon.h"
 
+#include <direct.h>
+
 #include "ErrorCode.h"
 #include "Config/XmlConfiguration.h"
 #include "Config/ConfigurationSection.h"
 #include "Vfs/File.h"
 #include "Vfs/ResourceLocation.h"
+#include "Vfs/PathUtils.h"
 #include "Utility/StringUtils.h"
+#include "CompileLog.h"
+
+#include "TextureBuild/TextureBuild.h"
+#include "FontBuild/FontBuild.h"
+#include "MeshBuild/MeshBuild.h"
 
 
+//#include <Windows.h>
 
 using namespace std;
+using namespace APBuild;
 using namespace Apoc3D;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Utility;
 
+
+int Build(ConfigurationSection* sect)
+{
+	String buildType = sect->getAttribute(L"Type");
+	wcout << L"Building ";
+	wcout << buildType;
+	wcout << L"...\n";
+
+	StringUtils::ToLowerCase(buildType);
+
+	if (buildType == L"texture")
+	{
+		TextureBuild::Build(sect);
+	}
+	else if (buildType == L"mesh")
+	{
+
+	}
+	else if (buildType == L"effect")
+	{
+
+	}
+	else if (buildType == L"font")
+	{
+		FontBuild::Build(sect);
+	}
+	else if (buildType == L"uilayout")
+	{
+
+	}
+	else if (buildType == L"project")
+	{
+		for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
+			iter != sect->SubSectionEnd(); iter++)
+		{
+			ConfigurationSection* item = iter->second;
+
+			Build(item);
+		}
+	}
+	else
+	{
+		return ERR_UNSUPPORTED_BUILD;
+	}
+	
+	for (size_t i=0;i<CompileLog::Logs.size();i++)
+	{
+		wcout << CompileLog::Logs[i].Location;
+		wcout << L" : ";
+		wcout << CompileLog::Logs[i].Description;
+		wcout << L"\n";
+	}
+
+	CompileLog::Clear();
+	return 0;
+}
+
 int Build(int argc, _TCHAR* argv[])
 {
-	if (argc)
+	if (argc>1)
 	{
-		if (!File::FileExists(argv[0]))
+		String basePath = argv[0];
+
+		basePath = PathUtils::GetDirectory(basePath);
+
+		_chdir(StringUtils::toString(basePath).c_str());
+
+		String configPath = argv[1];
+
+		if (!File::FileExists(configPath))
 		{
+			wcout << L"Build file: ";
+			wcout << configPath;
+			wcout << L" does not exist.";
 			return ERR_CONFIG_FILE_NOT_FOUND;
 		}
-		FileLocation* fl = new FileLocation(argv[0]);
+		FileLocation* fl = new FileLocation(configPath);
 		XMLConfiguration* config = new XMLConfiguration(fl);
 
-		String buildType = config->get(L"BuildType")->getAttribute(L"Value");
-
-		StringUtils::ToLowerCase(buildType);
-
-		if (buildType == L"texture")
-		{
-
-		}
-		else
-		{
-			return ERR_UNSUPPORTED_BUILD;
-		}
+		ConfigurationSection* sect = config->get(L"Build");
+		return Build(sect);
 	}
 	else
 	{
 		cout << "Usage: APBuild [ConfigFile]\n";
 	}
+	return 0;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	Initialize();
 
-	int r = Build(argc, argv);
+	int r = 0;
 
+	try
+	{
+		r = Build(argc, argv);
+	}
+	catch (const Apoc3DException& e)
+	{
+		
+	}
+	
 	Finalize();
+
+#ifdef _DEBUG
+	getchar();
+#endif
 	return r;
 }
 

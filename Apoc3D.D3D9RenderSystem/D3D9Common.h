@@ -31,6 +31,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <d3dx9.h>
 #include <d3d9types.h>
 
+#pragma comment(lib, "Apoc3D.lib")
+#pragma comment(lib, "d3d9.lib")
+#pragma comment(lib, "d3dx9.lib")
+#pragma comment(lib, "dxguid.lib")
+
 typedef D3DXMATRIX D3DMatrix;
 typedef D3DXPLANE D3DPlane;
 typedef D3DXVECTOR2 D3DVector2;

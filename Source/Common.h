@@ -63,12 +63,12 @@ typedef BatchHandle HashHandle;
 #	undef APOC3D_PLATFORM_NAME
 #	define APOC3D_PLATFORM_NAME L"linux"
 #endif
-
-#if APOC3D_DLLEX
-	#define APAPI __declspec( dllexport )
-#else
-	#define APAPI __declspec( dllimport )
-#endif
+#define APAPI
+//#if APOC3D_DLLEX
+//#define APAPI __declspec( dllexport )
+//#else
+//#define APAPI __declspec( dllimport )
+//#endif
 
 
 //#define VER(x,y,z,w) D3DCOLOR_ARGB(x,y,z,w);
@@ -77,7 +77,7 @@ typedef BatchHandle HashHandle;
 
 
 
-#pragma warning(disable:4251)
+//#pragma warning(disable:4251)
 #include <string>
 #include <vector>
 #include <list>

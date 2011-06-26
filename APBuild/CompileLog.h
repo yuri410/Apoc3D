@@ -22,17 +22,13 @@ namespace APBuild
 	};
 	class CompileLog
 	{
-	private:
-		static vector<CompileLogEntry> m_logs;
-
-
 	public:
-
+		static vector<CompileLogEntry> Logs;
 
 		static void Write(CompileLogType type, const String& message, const String& location)
 		{
 			CompileLogEntry ent = {type, location, message};
-			m_logs.push_back(ent);
+			Logs.push_back(ent);
 		}
 		static  void WriteInformation(const String& message, const String& location)
 		{
@@ -45,6 +41,11 @@ namespace APBuild
 		static  void WriteWarning(const String& message, const String& location)
 		{
 			Write(COMPILE_Warning, message, location);
+		}
+
+		static void Clear()
+		{
+			Logs.clear();
 		}
 
 	};

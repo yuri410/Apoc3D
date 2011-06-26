@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Config/Configuration.h"
 #include "Config/ConfigurationSection.h"
 #include "Logging.h"
+#include "Collections/FastList.h"
 
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Platform;
@@ -107,6 +108,7 @@ namespace Apoc3D
 				plugin->Load();
 
 				m_libraries.push_back(lib);
+				m_plugins.insert(make_pair(name, plugin));
 			}
 			catch (Apoc3DException& e)
 			{
@@ -114,9 +116,28 @@ namespace Apoc3D
 			}
 		}
 
-		void PluginManager::LoadPlugins(const vector<String>& plugins)
+		void PluginManager::LoadPlugins(const FastList<Plugin*>& plugins)
 		{
-			for (size_t i=0;i<plugins.size();i++)
+			for (int i=0;i<plugins.getCount();i++)
+			{
+				try
+				{
+					Plugin* plugin = plugins[i];
+					LogManager::getSingleton().Write(LOG_System, L"Loading plugin" + plugin->GetName(), LOGLVL_Infomation);
+
+					plugin->Load();
+
+					m_plugins.insert(make_pair(plugin->GetName(), plugin));
+				}
+				catch (Apoc3DException& e)
+				{
+					OnPluginError(0);
+				}
+			}
+		}
+		void PluginManager::LoadPlugins(const FastList<String>& plugins)
+		{
+			for (int i=0;i<plugins.getCount();i++)
 			{
 				LoadPlugin(plugins[i]);
 			}

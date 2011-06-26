@@ -31,7 +31,7 @@ namespace Apoc3D
 	{
 		FileStream::FileStream(const String& filename)
 		{
-			m_in = new ifstream(filename.c_str());
+			m_in = new ifstream(filename.c_str(), ios::in);
 
 			uint64 oldPos = m_in->tellg();
 			m_in->seekg(0, ios::end);
@@ -84,7 +84,7 @@ namespace Apoc3D
 
 		FileOutStream::FileOutStream(const String& filename)
 		{
-			m_out = new ofstream(filename.c_str());
+			m_out = new ofstream(filename.c_str(), ios::out | ios::binary | ios::trunc);
 			m_length = 0;
 		}
 		FileOutStream::~FileOutStream()
@@ -99,8 +99,10 @@ namespace Apoc3D
 		void FileOutStream::Write(const char* src, int64 count)
 		{
 			m_out->write(src, count);
-
-			m_length += count;
+			//m_length += count;
+			int64 p = getPosition();
+			if (p>m_length)
+				m_length = p;
 		}
 		void FileOutStream::Seek(int64 offset, SeekMode mode)
 		{

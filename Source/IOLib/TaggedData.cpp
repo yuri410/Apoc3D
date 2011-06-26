@@ -232,6 +232,14 @@ namespace Apoc3D
 		/* TaggedDataWriter                                                     */
 		/************************************************************************/
 
+
+		TaggedDataWriter::Entry::Entry(const String& name)
+			: Name(name)
+		{
+			Buffer = new MemoryOutStream(1024);
+		}
+
+
 		TaggedDataWriter::~TaggedDataWriter()
 		{
 			for (auto e = m_positions.begin(); e!= m_positions.end(); e++)
@@ -543,16 +551,32 @@ namespace Apoc3D
 
 			bw->Write(static_cast<uint32>(m_positions.size()));
 
+			//int simulatedLen = 0;
 			for (auto i = m_positions.begin();i!=m_positions.end();i++)
 			{
 				const MemoryOutStream* e = i->second.Buffer;
 				bw->Write(i->first);
 				bw->Write(static_cast<uint32>(e->getLength()));
+				
+				char buffer[4096];
+				int bi = 0;
 				for (auto j=0;j<e->getLength();j++)
 				{
-					bw->Write(
-						static_cast<char>(e->getPointer()->operator[](j)));
+					buffer[bi++] = static_cast<char>(e->getPointer()->operator[](j));
+					if (bi==4096)
+					{
+						bw->Write(buffer, 4096);
+						//simulatedLen += 4096;
+						//assert(simulatedLen + 76 == ((VirtualStream*)stream)->getBaseStream()->getLength());
+						bi = 0;
+					}
+					
+					//bw->Write(
+						//static_cast<char>(e->getPointer()->operator[](j)));
 				}
+				if (bi)
+					bw->Write(buffer, bi);
+
 			}
 
 			bw->Close();

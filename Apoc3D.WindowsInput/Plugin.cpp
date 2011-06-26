@@ -29,12 +29,7 @@ using namespace Apoc3D::Input;
 using namespace Apoc3D::Input::Win32;
 
 
-static WinInputPlugin* plugin = new WinInputPlugin();
-
-extern "C" PLUGIN Plugin* Apoc3DGetPlugin()
-{
-	return plugin;
-}
+//static WinInputPlugin* plugin = new WinInputPlugin();
 
 namespace Apoc3D
 {

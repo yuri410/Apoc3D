@@ -1,3 +1,4 @@
+
 #include "FbxBaker.h"
 
 void InitializeSdkObjects(KFbxSdkManager*& pSdkManager, KFbxScene*& pScene)

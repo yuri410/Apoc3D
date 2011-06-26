@@ -26,13 +26,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/ResourceLocation.h"
 #include "IOLib/Streams.h"
 #include "ConfigurationSection.h"
-
+#include "Utility/StringUtils.h"
 #include "VFS/PathUtils.h"
 
-#include "tinyxml/tinyxml.h"
-#include "tinyxml/tinystr.h"
+#include <tinyxml/tinyxml.h>
+#include <tinyxml/tinystr.h>
 
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -41,38 +42,23 @@ namespace Apoc3D
 		String getElementName(const TiXmlElement* elem)
 		{
 			string str = elem->ValueStr();
-			wchar_t* buffer = new wchar_t[str.length()];
-			mbstowcs(buffer, str.c_str(), str.length());
-			String result = buffer;
-			delete[] buffer;
-			return result;
+
+			return StringUtils::toWString(str);
 		}
 		String getNodeText(const TiXmlText* text)
 		{
 			string str = text->ValueStr();
-			wchar_t* buffer = new wchar_t[str.length()];
-			mbstowcs(buffer, str.c_str(), str.length());
-			String result = buffer;
-			delete[] buffer;
-			return result;
+			return StringUtils::toWString(str);
 		}
 		String getAttribName(const TiXmlAttribute* attrib)
 		{
 			string str = attrib->NameTStr();
-			wchar_t* buffer = new wchar_t[str.length()];
-			mbstowcs(buffer, str.c_str(), str.length());
-			String result = buffer;
-			delete[] buffer;
-			return result;
+			return StringUtils::toWString(str);
 		}
 		String getAttribValue(const TiXmlAttribute* attrib)
 		{
 			string str = attrib->ValueStr();
-			wchar_t* buffer = new wchar_t[str.length()];
-			mbstowcs(buffer, str.c_str(), str.length());
-			String result = buffer;
-			delete[] buffer;
-			return result;
+			return StringUtils::toWString(str);
 		}
 
 		void XMLConfiguration::BuildNode(const TiXmlNode* node, ConfigurationSection* parent)
@@ -92,7 +78,7 @@ namespace Apoc3D
 
 					for (const TiXmlAttribute* i = elem->FirstAttribute(); i!=0; i=i->Next())
 					{
-						parent->AddAttribute(getAttribName(i), getAttribValue(i));
+						section->AddAttribute(getAttribName(i), getAttribValue(i));
 					}
 
 
@@ -124,9 +110,13 @@ namespace Apoc3D
 		}
 		void XMLConfiguration::BuildXml(const TiXmlDocument* doc)
 		{
-			for (const TiXmlNode* i = doc->FirstChild(); i!=0; i=i->NextSibling())
+			const TiXmlNode* i = doc->FirstChildElement();
+			if (i)
 			{
-				BuildNode(i, 0);
+				for (const TiXmlNode* j = i->FirstChild(); j!=0; j=j->NextSibling())
+				{
+					BuildNode(j, 0);
+				}
 			}
 		}
 
@@ -152,7 +142,7 @@ namespace Apoc3D
 
 		Configuration* XMLConfiguration::Clone() const
 		{
-
+			return 0;
 		}
 		void XMLConfiguration::Merge(Configuration* config)
 		{

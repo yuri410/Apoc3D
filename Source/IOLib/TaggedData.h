@@ -132,10 +132,7 @@ namespace Apoc3D
 			{
 				String Name;
 				MemoryOutStream* Buffer;
-				Entry(const String& name)
-					: Name(name)
-				{
-				}
+				Entry(const String& name);
 			};
 
 			typedef unordered_map<String, Entry> SectionTable;

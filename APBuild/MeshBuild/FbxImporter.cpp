@@ -3,6 +3,10 @@
 #include "CompileLog.h"
 #include "IOLib/ModelData.h"
 
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
+
 #ifdef IOS_REF
 #undef  IOS_REF
 #define IOS_REF (*(m_pFBXSdkManager->GetIOSettings()))
@@ -10,22 +14,6 @@
 
 namespace APBuild
 {
-	static string toString(const String& str)
-	{
-		char* buffer = new char[str.length()];
-		wcstombs(buffer, str.c_str(), str.length());
-		string result = buffer;
-		delete[] buffer;
-		return result;
-	}
-	static String toWString(const string& str)
-	{
-		wchar_t* buffer = new wchar_t[str.length()];
-		mbstowcs(buffer, str.c_str(), str.length());
-		String result = buffer;
-		delete[] buffer;
-		return result;
-	}
 
 	bool HasFBXAnimation(KFbxNode *pNode)
 	{
@@ -48,15 +36,22 @@ namespace APBuild
 
 	Vector3 ConvertVector3(const KFbxVector4& v)
 	{
-		return Vector3Utils::LDVector( v.GetAt(0), v.GetAt(1), v.GetAt(2) );
+		return Vector3Utils::LDVector( 
+			static_cast<float>(v.GetAt(0)),
+			static_cast<float>(v.GetAt(1)),
+			static_cast<float>(v.GetAt(2)) );
 	}
 	Vector2 ConvertVector2(const KFbxVector2& v)
 	{
-		return Vector2Utils::LDVector( v.GetAt(0), v.GetAt(1) );
+		return Vector2Utils::LDVector(
+			static_cast<float>(v.GetAt(0)),
+			static_cast<float>(v.GetAt(1)) );
 	}
 	Vector2 ConvertTexCoord(const KFbxVector2& v)
 	{
-		return Vector2Utils::LDVector( v.GetAt(0), 1-v.GetAt(1) );
+		return Vector2Utils::LDVector(
+			static_cast<float>(v.GetAt(0)), 
+			static_cast<float>(1-v.GetAt(1)) );
 	}
 	Matrix ConvertMatrix(const KFbxMatrix& m)
 	{
@@ -117,11 +112,11 @@ namespace APBuild
 		int lFileMajor, lFileMinor, lFileRevision;
 		int lSDKMajor,  lSDKMinor,  lSDKRevision;
 		//int lFileFormat = -1;
-		int i, lAnimStackCount;
+		//int i, lAnimStackCount;
 		bool lStatus;
-		char lPassword[256];
+		//char lPassword[256];
 
-		string mbFilename = toString(pFilename);
+		string mbFilename = StringUtils::toString(pFilename);
 
 		// Get the file version number generate by the FBX SDK.
 		KFbxSdkManager::GetFileFormatVersion(lSDKMajor, lSDKMinor, lSDKRevision);
@@ -138,7 +133,7 @@ namespace APBuild
 		if( !lImportStatus )
 		{
 			CompileLog::WriteError(L"Unable to initialize FBX", pFilename);
-			CompileLog::WriteError(toWString(lImporter->GetLastErrorString()), pFilename);
+			CompileLog::WriteError(StringUtils::toWString(lImporter->GetLastErrorString()), pFilename);
 
 			if (lImporter->GetLastErrorID() == KFbxIO::eFILE_VERSION_NOT_SUPPORTED_YET ||
 				lImporter->GetLastErrorID() == KFbxIO::eFILE_VERSION_NOT_SUPPORTED_ANYMORE)
@@ -203,9 +198,9 @@ namespace APBuild
 
 		KFbxAxisSystem currentAxisSystem = m_pFBXScene->GetGlobalSettings().GetAxisSystem();
 
-		KFbxAxisSystem axisSystem = KFbxAxisSystem(KFbxAxisSystem::eUpVector::YAxis, 
-			KFbxAxisSystem::eFrontVector::ParityOdd, 
-			KFbxAxisSystem::eCoorSystem::RightHanded);
+		KFbxAxisSystem axisSystem = KFbxAxisSystem(KFbxAxisSystem::YAxis, 
+			KFbxAxisSystem::ParityOdd, 
+			KFbxAxisSystem::RightHanded);
 
 		if (axisSystem != currentAxisSystem)
 		{
@@ -253,7 +248,7 @@ namespace APBuild
 					std::string strFileName = pDiffuseTexture->GetFileName();
 					if( strFileName.length() == 0 )
 						strFileName = pDiffuseTexture->GetRelativeFileName();
-					pMaterial->TextureName[i] = toWString( strFileName );
+					pMaterial->TextureName[i] = StringUtils::toWString( strFileName );
 				}
 			}
 
@@ -269,21 +264,21 @@ namespace APBuild
 
 			if( pLambert )
 			{
-				AmbientColor = GetMaterialColor(pLambert->GetAmbientColor(), pLambert->GetAmbientFactor());
-				EmissiveColor = GetMaterialColor(pLambert->GetEmissiveColor(), pLambert->GetEmissiveFactor());
-				DiffuseColor = GetMaterialColor(pLambert->GetDiffuseColor(), pLambert->GetDiffuseFactor());
+				AmbientColor = GetMaterialColor(pLambert->Ambient, pLambert->AmbientFactor);
+				EmissiveColor = GetMaterialColor(pLambert->Emissive, pLambert->EmissiveFactor);
+				DiffuseColor = GetMaterialColor(pLambert->Diffuse, pLambert->DiffuseFactor);
 
-				KFbxPropertyDouble1 FBXTransparencyProperty = pLambert->GetTransparencyFactor();
+				KFbxPropertyDouble1 FBXTransparencyProperty = pLambert->TransparencyFactor;
 				if( FBXTransparencyProperty.IsValid() )
-					fTransparency = FBXTransparencyProperty.Get();
+					fTransparency = static_cast<float>( FBXTransparencyProperty.Get() );
 			}
 			if( pPhong )
 			{
-				SpecularColor = GetMaterialColor(pPhong->GetSpecularColor(), pPhong->GetSpecularFactor());
-
-				KFbxPropertyDouble1 FBXSpecularPowerProperty = pPhong->GetShininess();
+				SpecularColor = GetMaterialColor(pPhong->Specular, pPhong->SpecularFactor);
+				
+				KFbxPropertyDouble1 FBXSpecularPowerProperty = pPhong->Shininess;
 				if( FBXSpecularPowerProperty.IsValid() )
-					fSpecularPower = FBXSpecularPowerProperty.Get();
+					fSpecularPower = static_cast<float>( FBXSpecularPowerProperty.Get() );
 			}
 
 			pMaterial->Ambient = Color4( AmbientColor );
@@ -419,12 +414,12 @@ namespace APBuild
 				//KTime KStop = KTIME_MINUS_INFINITE;
 				//pRootNode->GetAnimationInterval(KStart, KStop);
 
-				float fStart = KStart.GetSecondDouble();
-				float fStop = KStop.GetSecondDouble();
+				float fStart = static_cast<float>(KStart.GetSecondDouble());
+				float fStop = static_cast<float>(KStop.GetSecondDouble());
 
 				if( fStart < fStop )
 				{
-					int nKeyFrames = (fStop-fStart)*fFrameRate;
+					int nKeyFrames = static_cast<int>((fStop-fStart)*fFrameRate);
 
 					//CBTTAnimation* pAnimation = new CBTTAnimation(takeName->Buffer(), nKeyFrames, fFrameRate);
 					//m_pAnimationController->AddAnimation(pAnimation);
@@ -852,7 +847,10 @@ namespace APBuild
 		if( FBXColorProperty.IsValid() )
 		{
 			fbxDouble3 FBXColor = FBXColorProperty.Get();
-			Color = Vector3Utils::LDVector( FBXColor[0], FBXColor[1],FBXColor[2] );
+			Color = Vector3Utils::LDVector( 
+				static_cast<float>(FBXColor[0]),
+				static_cast<float>(FBXColor[1]),
+				static_cast<float>(FBXColor[2]) );
 
 			if( FBXFactorProperty.IsValid() )
 			{

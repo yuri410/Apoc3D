@@ -39,6 +39,9 @@ namespace Apoc3D
 		public:
 			static const String Empty;
 
+			static string toString(const String& str);
+			static String toWString(const string& str);
+
 			static bool ParseBool(const String& val);
 
 			static uint16 ParseUInt16(const String& val);

@@ -32,7 +32,7 @@ namespace Apoc3D
 {	
 	namespace VFS
 	{
-		class PathUtils
+		class APAPI PathUtils
 		{
 		public:
 			static const wchar_t DirectorySeparator;

@@ -26,10 +26,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Math/ColorValue.h"
+#include "Collections/FastMap.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;
-
+using namespace Apoc3D::Collections;
 using namespace std;
 
 namespace Apoc3D

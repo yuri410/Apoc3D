@@ -78,15 +78,6 @@ namespace Apoc3D
 			{ EndSym, 0, 0 }
 		};
 
-
-		String toString(const string& str)
-		{
-			wchar_t* buffer = new wchar_t[str.length()];
-			mbstowcs(buffer, str.c_str(), str.length());
-			String result = buffer;
-			delete[] buffer;
-			return result;
-		}
 		SceneVariable* FindVar(const FastList<SceneVariable*>& vars, const String& name)
 		{
 			for (int i=0;i<vars.getCount();i++)
@@ -295,7 +286,7 @@ namespace Apoc3D
 					SceneInstruction inst;
 					inst.Operation = SOP_Load;
 					
-					String token = toString( paramList[T->m_opnd] );
+					String token = StringUtils::toWString( paramList[T->m_opnd] );
 					SceneVariable* var = FindVar(vars, token);
 					if (!var)
 					{
@@ -473,7 +464,7 @@ namespace Apoc3D
 
 		String getElementName(const TiXmlElement* elem)
 		{
-			return toString(elem->ValueStr());
+			return StringUtils::toWString(elem->ValueStr());
 		}
 		String getNodeText(const TiXmlText* text)
 		{
@@ -672,7 +663,7 @@ namespace Apoc3D
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_RenderTarget;
-				var->Name = toString(name);
+				var->Name = StringUtils::toWString(name);
 
 				const TiXmlElement* e1 = node->FirstChildElement("Width");
 				const TiXmlElement* e2 = node->FirstChildElement("Height");
@@ -680,8 +671,8 @@ namespace Apoc3D
 				var->DefaultValue[0] = var->DefaultValue[1] = 0;
 				if (e1 && e2)
 				{
-					var->DefaultValue[0] = StringUtils::ParseInt32(toString(e1->GetText()));
-					var->DefaultValue[1] = StringUtils::ParseInt32(toString(e2->GetText()));
+					var->DefaultValue[0] = StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
+					var->DefaultValue[1] = StringUtils::ParseInt32(StringUtils::toWString(e2->GetText()));
 				}
 				else
 				{
@@ -690,10 +681,10 @@ namespace Apoc3D
 
 					if (e1 && e2)
 					{
-						float r = StringUtils::ParseSingle(toString(e1->GetText()));
+						float r = StringUtils::ParseSingle(StringUtils::toWString(e1->GetText()));
 						var->DefaultValue[2] = reinterpret_cast<const uint&>(r);
 
-						r = StringUtils::ParseSingle(toString(e2->GetText()));
+						r = StringUtils::ParseSingle(StringUtils::toWString(e2->GetText()));
 						var->DefaultValue[3] = reinterpret_cast<const uint&>(r);
 					}
 					else
@@ -731,7 +722,7 @@ namespace Apoc3D
 				e1 = node->FirstChildElement("SampleCount");
 				if (e1)
 				{
-					var->DefaultValue[6] = StringUtils::ParseInt32(toString(e1->GetText()));
+					var->DefaultValue[6] = StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
 				}
 				else
 				{
@@ -744,12 +735,12 @@ namespace Apoc3D
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Matrix;
-				var->Name = toString(name);
+				var->Name = StringUtils::toWString(name);
 
 				const TiXmlElement* e1 = node->FirstChildElement("Value");
 				if (e1)
 				{
-					vector<String> elems = StringUtils::Split(toString(e1->GetText()), L" ,", 16);
+					vector<String> elems = StringUtils::Split(StringUtils::toWString(e1->GetText()), L" ,", 16);
 					if (elems.size() != 16)
 					{
 						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for matrix.", LOGLVL_Warning);
@@ -776,12 +767,12 @@ namespace Apoc3D
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Vector4;
-				var->Name = toString(name);
+				var->Name = StringUtils::toWString(name);
 
 				const TiXmlElement* e1 = node->FirstChildElement("Value");
 				if (e1)
 				{
-					vector<String> elems = StringUtils::Split(toString(e1->GetText()), L" ,", 4);
+					vector<String> elems = StringUtils::Split(StringUtils::toWString(e1->GetText()), L" ,", 4);
 					if (elems.size() != 4)
 					{
 						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector4.", LOGLVL_Warning);
@@ -802,12 +793,12 @@ namespace Apoc3D
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Vector3;
-				var->Name = toString(name);
+				var->Name = StringUtils::toWString(name);
 
 				const TiXmlElement* e1 = node->FirstChildElement("Value");
 				if (e1)
 				{
-					vector<String> elems = StringUtils::Split(toString(e1->GetText()), L" ,", 4);
+					vector<String> elems = StringUtils::Split(StringUtils::toWString(e1->GetText()), L" ,", 4);
 					if (elems.size() != 3)
 					{
 						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector3.", LOGLVL_Warning);
@@ -828,12 +819,12 @@ namespace Apoc3D
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Vector2;
-				var->Name = toString(name);
+				var->Name = StringUtils::toWString(name);
 
 				const TiXmlElement* e1 = node->FirstChildElement("Value");
 				if (e1)
 				{
-					vector<String> elems = StringUtils::Split(toString(e1->GetText()), L" ,", 2);
+					vector<String> elems = StringUtils::Split(StringUtils::toWString(e1->GetText()), L" ,", 2);
 					if (elems.size() != 2)
 					{
 						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector4.", LOGLVL_Warning);
@@ -854,12 +845,12 @@ namespace Apoc3D
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Integer;
-				var->Name = toString(name);
+				var->Name = StringUtils::toWString(name);
 
 				const TiXmlElement* e1 = node->FirstChildElement("Value");
 				if (e1)
 				{
-					StringUtils::ParseInt32(toString(e1->GetText()));
+					StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
 				}
 
 				GlobalVars.Add(var);
@@ -868,12 +859,12 @@ namespace Apoc3D
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Boolean;
-				var->Name = toString(name);
+				var->Name = StringUtils::toWString(name);
 
 				const TiXmlElement* e1 = node->FirstChildElement("Value");
 				if (e1)
 				{
-					StringUtils::ParseBool(toString(e1->GetText()));
+					StringUtils::ParseBool(StringUtils::toWString(e1->GetText()));
 				}
 
 				GlobalVars.Add(var);
@@ -882,12 +873,12 @@ namespace Apoc3D
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Texture;
-				var->Name = toString(name);
+				var->Name = StringUtils::toWString(name);
 
 				const TiXmlElement* e1 = node->FirstChildElement("Source");
 				if (e1)
 				{
-					var->DefaultStringValue = toString(e1->GetText());
+					var->DefaultStringValue = StringUtils::toWString(e1->GetText());
 					GlobalVars.Add(var);
 				}
 				else
@@ -906,12 +897,12 @@ namespace Apoc3D
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Effect;
-				var->Name = toString(name);
+				var->Name = StringUtils::toWString(name);
 
 				const TiXmlElement* e1 = node->FirstChildElement("Source");
 				if (e1)
 				{
-					var->DefaultStringValue = toString(e1->GetText());
+					var->DefaultStringValue =  StringUtils::toWString(e1->GetText());
 					GlobalVars.Add(var);
 				}
 				else
@@ -921,7 +912,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				LogManager::getSingleton().Write(LOG_Scene, L"Unsupported variable type " + toString(tstr), LOGLVL_Warning);
+				LogManager::getSingleton().Write(LOG_Scene, L"Unsupported variable type " + StringUtils::toWString(tstr), LOGLVL_Warning);
 			}
 		}
 
@@ -942,7 +933,7 @@ namespace Apoc3D
 
 					if (lowStrName == String(L"scene"))
 					{
-						m_sceneName = toString(elem->Attribute("Name"));
+						m_sceneName = StringUtils::toWString(elem->Attribute("Name"));
 					}
 					else if (lowStrName == String(L"pass"))
 					{
@@ -987,7 +978,7 @@ namespace Apoc3D
 			if (res == TIXML_WRONG_TYPE)
 			{
 				arg.IsImmediate = false;
-				String vname = toString(node->Attribute(name.c_str()));
+				String vname = StringUtils::toWString(node->Attribute(name.c_str()));
 				arg.Var = FindVar(vars, vname);
 				if (!arg.Var)
 				{
@@ -1016,7 +1007,7 @@ namespace Apoc3D
 			if (res == TIXML_WRONG_TYPE)
 			{
 				arg.IsImmediate = false;
-				String vname = toString(node->Attribute(name.c_str()));
+				String vname = StringUtils::toWString(node->Attribute(name.c_str()));
 				arg.Var = FindVar(vars, vname);
 				if (!arg.Var)
 				{
@@ -1046,7 +1037,7 @@ namespace Apoc3D
 			if (res == TIXML_WRONG_TYPE)
 			{
 				arg.IsImmediate = false;
-				String vname = toString(node->Attribute(name.c_str()));
+				String vname = StringUtils::toWString(node->Attribute(name.c_str()));
 				arg.Var = FindVar(vars, vname);
 				if (!arg.Var)
 				{
@@ -1076,7 +1067,7 @@ namespace Apoc3D
 			{
 				arg.IsImmediate = false;
 
-				String vname = toString(node->Attribute(name.c_str()));
+				String vname = StringUtils::toWString(node->Attribute(name.c_str()));
 				arg.Var = FindVar(vars, vname);
 				if (!arg.Var)
 				{
@@ -1095,7 +1086,7 @@ namespace Apoc3D
 			const FastList<SceneVariable*>& vars)
 		{
 			arg.IsImmediate = false;
-			String vname = toString(node->Attribute(name.c_str()));
+			String vname = StringUtils::toWString(node->Attribute(name.c_str()));
 			arg.Var = FindVar(vars, vname);
 			if (!arg.Var)
 			{
@@ -1107,7 +1098,7 @@ namespace Apoc3D
 
 		void SceneRenderScriptParser::FillFunctionCall(const TiXmlElement* node, std::vector<SceneInstruction>& instructions)
 		{
-			String stat = toString(node->Attribute("S"));
+			String stat = StringUtils::toWString(node->Attribute("S"));
 			StringUtils::Trim(stat);
 			StringUtils::ToLowerCase(stat);
 
@@ -1252,7 +1243,7 @@ namespace Apoc3D
 			ScenePassData passData;
 			node->Attribute("SelectorID", &passData.SelectorID);
 			string strName = node->Attribute("Name");
-			passData.Name = toString(strName);
+			passData.Name = StringUtils::toWString(strName);
 
 			node->Attribute("CameraID", &passData.CameraID);
 

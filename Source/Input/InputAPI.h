@@ -100,7 +100,7 @@ namespace Apoc3D
 			void UnregisterInputAPI(const String& name);
 			void UnregisterInputAPI(InputAPIFactory* fac);
 
-			void Initialize(RenderWindow* window, const InputCreationParameters& params);
+			void InitializeInput(RenderWindow* window, const InputCreationParameters& params);
 		
 			void Update(const GameTime* const time);
 			SINGLETON_DECL_HEARDER(InputAPIManager);

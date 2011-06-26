@@ -27,6 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IL/il.h"
 #include "IL/ilu.h"
 #include "IL/ilut.h"
+#include "D3DHelper.h"
+
+using namespace APBuild;
 
 int Initialize()
 {
@@ -40,8 +43,11 @@ int Initialize()
 
 	ilInit();
 	iluInit();
+
+	D3DHelper::Initalize();
+	return 0;
 }
 void Finalize()
 {
-	
+	D3DHelper::Finalize();
 }

@@ -17,7 +17,8 @@ namespace APBuild
 		SourceFile = sect->getAttribute(L"SourceFile");
 		DestinationFile = sect->getAttribute(L"DestinationFile");
 
-		GenerateMipmaps = sect->GetAttributeBool(L"GenerateMipmaps");
+		GenerateMipmaps = false;
+		sect->TryGetAttributeBool(L"GenerateMipmaps", GenerateMipmaps);
 
 		bool passed = true;
 		passed |= sect->TryGetAttributeInt(L"Width", NewWidth);

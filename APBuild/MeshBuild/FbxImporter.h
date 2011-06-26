@@ -2,6 +2,8 @@
 #define FBXIMPORTER_H
 #include "APBCommon.h"
 
+#pragma warning(disable:4100)
+
 #include <fbxsdk.h>
 
 #include "Collections/FastList.h"

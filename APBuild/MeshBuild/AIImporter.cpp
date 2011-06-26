@@ -1,3 +1,27 @@
+/*
+-----------------------------------------------------------------------------
+This source file is part of Apoc3D Engine
+
+Copyright (c) 2009+ Tao Games
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  if not, write to the Free Software Foundation, 
+Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/gpl.txt.
+
+-----------------------------------------------------------------------------
+*/
+
 #include "AIImporter.h"
 
 #include <assimp/include/assimp.hpp>
@@ -7,32 +31,18 @@
 #include "IOLib/ModelData.h"
 #include "Graphics/Animation/AnimationData.h"
 #include "IOLib/Streams.h"
+#include "Utility/StringUtils.h"
 
 using namespace Assimp;
+using namespace Apoc3D::Utility;
 
 namespace APBuild
 {
-	static string toString(const String& str)
-	{
-		char* buffer = new char[str.length()];
-		wcstombs(buffer, str.c_str(), str.length());
-		string result = buffer;
-		delete[] buffer;
-		return result;
-	}
-	static String toWString(const string& str)
-	{
-		wchar_t* buffer = new wchar_t[str.length()];
-		mbstowcs(buffer, str.c_str(), str.length());
-		String result = buffer;
-		delete[] buffer;
-		return result;
-	}
 	ModelData* AIImporter::Import(const MeshBuildConfig& config)
 	{
 		Importer importer;
 		
-		const aiScene* scene = importer.ReadFile(toString(config.SrcFile), 
+		const aiScene* scene = importer.ReadFile(StringUtils::toString(config.SrcFile), 
 			aiProcess_Triangulate | aiProcess_RemoveRedundantMaterials | aiProcess_OptimizeMeshes | aiProcess_FlipUVs);
 		
 		ModelData* result = new ModelData();
@@ -45,7 +55,7 @@ namespace APBuild
 
 			aiMesh* m = scene->mMeshes[i];
 
-			data->Name = toWString(m->mName.data);
+			data->Name = StringUtils::toWString(m->mName.data);
 
 			// faces
 			{

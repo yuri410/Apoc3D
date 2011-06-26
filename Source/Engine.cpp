@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/FileSystem.h"
 #include "Config/ConfigurationManager.h"
 #include "Graphics/RenderSystem/GraphicsAPI.h"
+#include "Input/InputAPI.h"
 #include "Core/PluginManager.h"
 #include "Core/Logging.h"
 
@@ -37,6 +38,7 @@ using namespace Apoc3D::VFS;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Input;
 
 namespace Apoc3D
 {
@@ -47,10 +49,12 @@ namespace Apoc3D
 		FileSystem::Initialize();
 		ConfigurationManager::Initialize();
 		GraphicsAPIManager::Initialize();
+		InputAPIManager::Initialize();
 
 		PluginManager::Initialize();
 		if (mconf)
 		{
+			PluginManager::getSingleton().LoadPlugins(mconf->PluginDynLibList);
 			PluginManager::getSingleton().LoadPlugins(mconf->PluginList);
 		}
 		else

@@ -27,6 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/DeviceContent.h"
 #include "Graphics/RenderSystem/RenderWindow.h"
 
+#include "../Apoc3D.D3D9RenderSystem/Plugin.h"
+#include "../Apoc3D.WindowsInput/Plugin.h"
+
 #include <Windows.h>
 
 #include <SDKDDKVer.h>
@@ -42,8 +45,13 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
                      LPTSTR    lpCmdLine,
                      int       nCmdShow)
 {
+	Plugin* input = new Apoc3D::Input::Win32::WinInputPlugin();
+	Plugin* d3d = new Apoc3D::Graphics::D3D9RenderSystem::D3D9RSPlugin();
+
 	ManualStartConfig escon;
-	escon.PluginList.push_back(L"Apoc3D.D3D9RenderSystem");
+	//escon.PluginDyList.Add(L"Apoc3D.D3D9RenderSystem");
+	escon.PluginList.Add(input);
+	escon.PluginList.Add(d3d);
 
 	Engine::Initialize(&escon);
 
@@ -73,6 +81,10 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	delete devContent;
 
 	Engine::Shutdown();
+
+	delete input;
+	delete d3d;
+
 
 	return 0;
 }

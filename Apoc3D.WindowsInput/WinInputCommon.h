@@ -13,6 +13,13 @@
 #include <ois-v1-3/includes/OISJoyStick.h>
 #include <ois-v1-3/includes/OISEvents.h>
 
+#pragma comment(lib, "Apoc3D.lib")
+
+#ifdef _DEBUG
+#pragma comment(lib, "OIS_static_d.lib")
+#else
+#pragma comment(lib, "OIS_static.lib")
+#endif
 
 namespace Apoc3D
 {

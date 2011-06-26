@@ -72,7 +72,7 @@ namespace Apoc3D
 				{
 					Resize(!m_length ? 4 : (m_length * 2));
 				}
-				m_elements[m_internalPointer] = val;
+				m_elements[m_internalPointer++] = val;
 			}
 			void Trim()
 			{

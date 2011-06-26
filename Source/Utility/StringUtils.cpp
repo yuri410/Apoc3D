@@ -32,6 +32,25 @@ namespace Apoc3D
 	{
 		const String StringUtils::Empty;
 
+		string StringUtils::toString(const String& str)
+		{
+			char* buffer = new char[str.length()+1];
+			buffer[str.length()] = 0;
+			wcstombs(buffer, str.c_str(), str.length());
+			string result = buffer;
+			delete[] buffer;
+			return result;
+		}
+		String StringUtils::toWString(const string& str)
+		{
+			wchar_t* buffer = new wchar_t[str.length()+1];
+			buffer[str.length()] = 0;
+			mbstowcs(buffer, str.c_str(), str.length());
+			String result = buffer;
+			delete[] buffer;
+			return result;
+		}
+
 		bool StringUtils::ParseBool(const String& val)
 		{
 			wistringstream str(val);

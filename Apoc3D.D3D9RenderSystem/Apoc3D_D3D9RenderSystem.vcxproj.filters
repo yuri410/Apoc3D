@@ -104,9 +104,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="D3D9Utils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

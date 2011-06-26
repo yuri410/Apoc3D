@@ -142,7 +142,7 @@ namespace Apoc3D
 			return a.PlatformMark < b.PlatformMark;
 		}
 
-		void InputAPIManager::Initialize(RenderWindow* window, const InputCreationParameters& params)
+		void InputAPIManager::InitializeInput(RenderWindow* window, const InputCreationParameters& params)
 		{
 			const String OSName = APOC3D_PLATFORM_NAME;
 

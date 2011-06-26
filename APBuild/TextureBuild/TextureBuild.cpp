@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/TextureData.h"
 #include "IOLib/Streams.h"
 #include "Apoc3DException.h"
-
+#include "CompileLog.h"
 #include "D3DHelper.h"
 
 #include <IL/il.h>
@@ -288,7 +288,8 @@ namespace APBuild
 		case IL_DXT5:
 			return FMT_DXT5;
 		}
-		return FMT_Unknown;
+		throw Apoc3DException::createException(EX_NotSupported, L"");
+		//return FMT_Unknown;
 	}
 	int ConvertFilter(TextureFilterType flt)
 	{
@@ -309,8 +310,9 @@ namespace APBuild
 
 		ilBindImage(image);
 		ilSetInteger(IL_KEEP_DXTC_DATA, IL_TRUE);
-
-		ilLoadImage(config.SourceFile.c_str());
+		
+		ILboolean ret = ilLoadImage(config.SourceFile.c_str());
+		assert(ret);
 
 		int ilFormat = ilGetInteger(IL_IMAGE_FORMAT);
 
@@ -353,7 +355,7 @@ namespace APBuild
 			texData.Format = ConvertFormat(dxtFormat, 0, 0);
 		}
 
-
+		texData.Levels.resize(mipCount);
 		for (int i=0;i<mipCount;i++)
 		{
 			ilBindImage(image);
@@ -432,7 +434,6 @@ namespace APBuild
 
 		FileOutStream* fs = new FileOutStream(config.DestinationFile);
 		texData.Save(fs);
-		delete fs;
 
 		for (int i=0;i<mipCount;i++)
 		{
@@ -443,6 +444,8 @@ namespace APBuild
 	{
 		TextureBuildConfig config;
 		config.Parse(sect);
+
+		CompileLog::WriteInformation(config.SourceFile, L">");
 
 		BuildByDevIL(config);
 	}

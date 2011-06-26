@@ -21,44 +21,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#include "PakBuild.h"
 
-#ifndef ENGINE_H
-#define ENGINE_H
-
-#include "Common.h"
-#include "Collections/FastList.h"
-
-using namespace Apoc3D::Core;
-using namespace Apoc3D::Collections;
-using namespace std;
-
-namespace Apoc3D
+namespace APBuild
 {
-	//template class APAPI vector<String>;
-
-	struct APAPI ManualStartConfig
+	void PakBuild::Build(const ConfigurationSection* sect)
 	{
-		FastList<String> ConfigSet;
-		FastList<String> WorkingDirectories;
-		FastList<String> PluginDynLibList;
-		FastList<Plugin*> PluginList;
 
-		uint TextureCacheSize;
-		uint ModelCacheSize;
-
-		ManualStartConfig()
-			: TextureCacheSize(1024*1024*100), ModelCacheSize(1024*1024*50)
-		{
-
-		}
-	};
-
-	class APAPI Engine
-	{
-	public:
-		static void Initialize(const ManualStartConfig* mconf = 0);
-		static void Shutdown();
-	};
+	}
 }
-
-#endif

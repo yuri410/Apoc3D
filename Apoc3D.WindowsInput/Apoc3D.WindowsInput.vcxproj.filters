@@ -50,9 +50,6 @@
     <ClCompile Include="Win32InputFactory.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Win32Mouse.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
