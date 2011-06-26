@@ -88,6 +88,7 @@
     <ClInclude Include="CompileLog.h" />
     <ClInclude Include="D3DHelper.h" />
     <ClInclude Include="FontBuild\FontBuild.h" />
+    <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="MeshBuild\FbxBaker.h" />
     <ClInclude Include="MeshBuild\FbxImporter.h" />
     <ClInclude Include="MeshBuild\MeshBuild.h" />
@@ -98,7 +99,7 @@
     <ClInclude Include="TextureBuild\TextureBuild.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="APBuild.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="BuildConfig.cpp" />
     <ClCompile Include="CompileLog.cpp" />
     <ClCompile Include="D3DHelper.cpp" />

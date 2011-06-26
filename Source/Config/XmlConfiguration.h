@@ -43,6 +43,9 @@ namespace Apoc3D
 			void BuildXml(const TiXmlDocument* doc);
 		public:
 			XMLConfiguration(const ResourceLocation* rl);
+
+			virtual Configuration* Clone() const;
+			virtual void Merge(Configuration* config);
 		};
 	}
 }

@@ -40,7 +40,6 @@ int Initialize()
 
 	ilInit();
 	iluInit();
-
 }
 void Finalize()
 {

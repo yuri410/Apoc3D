@@ -149,5 +149,15 @@ namespace Apoc3D
 
 			BuildXml(&doc);
 		}
+
+		Configuration* XMLConfiguration::Clone() const
+		{
+
+		}
+		void XMLConfiguration::Merge(Configuration* config)
+		{
+
+		}
+
 	}
 }

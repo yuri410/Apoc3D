@@ -38,6 +38,15 @@ namespace Apoc3D
 		vector<String> ConfigSet;
 		vector<String> WorkingDirectories;
 		vector<String> PluginList;
+
+		uint TextureCacheSize;
+		uint ModelCacheSize;
+
+		ManualStartConfig()
+			: TextureCacheSize(1024*1024*100), ModelCacheSize(1024*1024*50)
+		{
+
+		}
 	};
 
 	class APAPI Engine
