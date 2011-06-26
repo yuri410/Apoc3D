@@ -1,5 +1,5 @@
-#ifndef XIMPORTER_H
-#define XIMPORTER_H
+#ifndef AIIMPORTER_H
+#define AIIMPORTER_H
 
 #include "APBCommon.h"
 #include "Collections/FastList.h"

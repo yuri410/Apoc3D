@@ -10,7 +10,7 @@
 
 namespace APBuild
 {
-	string toString(const String& str)
+	static string toString(const String& str)
 	{
 		char* buffer = new char[str.length()];
 		wcstombs(buffer, str.c_str(), str.length());
@@ -18,7 +18,7 @@ namespace APBuild
 		delete[] buffer;
 		return result;
 	}
-	String toWString(const string& str)
+	static String toWString(const string& str)
 	{
 		wchar_t* buffer = new wchar_t[str.length()];
 		mbstowcs(buffer, str.c_str(), str.length());

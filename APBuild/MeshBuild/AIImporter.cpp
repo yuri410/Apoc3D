@@ -8,9 +8,11 @@
 #include "Graphics/Animation/AnimationData.h"
 #include "IOLib/Streams.h"
 
+using namespace Assimp;
+
 namespace APBuild
 {
-	string toString(const String& str)
+	static string toString(const String& str)
 	{
 		char* buffer = new char[str.length()];
 		wcstombs(buffer, str.c_str(), str.length());
@@ -18,7 +20,7 @@ namespace APBuild
 		delete[] buffer;
 		return result;
 	}
-	String toWString(const string& str)
+	static String toWString(const string& str)
 	{
 		wchar_t* buffer = new wchar_t[str.length()];
 		mbstowcs(buffer, str.c_str(), str.length());
@@ -28,7 +30,7 @@ namespace APBuild
 	}
 	ModelData* AIImporter::Import(const MeshBuildConfig& config)
 	{
-		Assimp::Importer importer;
+		Importer importer;
 		
 		const aiScene* scene = importer.ReadFile(toString(config.SrcFile), 
 			aiProcess_Triangulate | aiProcess_RemoveRedundantMaterials | aiProcess_OptimizeMeshes | aiProcess_FlipUVs);
@@ -37,7 +39,7 @@ namespace APBuild
 
 		//FastMap<string, aiNode*> cachedbones;
 
-		for (int i=0;i<scene->mNumMeshes;i++)
+		for (uint i=0;i<scene->mNumMeshes;i++)
 		{
 			MeshData* data = new MeshData();
 
@@ -48,7 +50,7 @@ namespace APBuild
 			// faces
 			{
 				data->Faces.ResizeDiscard(m->mNumFaces);
-				for (int j=0;j<m->mNumFaces;j++)
+				for (uint j=0;j<m->mNumFaces;j++)
 				{
 					aiFace f = m->mFaces[i];
 					assert(f.mNumIndices == 3);
@@ -86,7 +88,7 @@ namespace APBuild
 				offset += VertexElement::GetTypeSize(VEF_Vector3);
 			}
 
-			for (int j=0;j<m->GetNumUVChannels();j++)
+			for (uint j=0;j<m->GetNumUVChannels();j++)
 			{
 				switch (m->mNumUVComponents[j])
 				{
@@ -118,7 +120,7 @@ namespace APBuild
 			data->VertexSize = offset;
 			
 			data->VertexData = new char[data->VertexCount * data->VertexSize];
-			for (int j=0;j<m->mNumVertices;j++)
+			for (uint j=0;j<m->mNumVertices;j++)
 			{
 				int baseOffset = j * data->VertexSize;
 				for (int k=0;k<vtxelems.getCount();k++)
@@ -207,7 +209,7 @@ namespace APBuild
 		//		//scene->mAnimations[i].mChannels[0].
 		//	}
 		//}
-		
+		return result;
 	}
 
 }
