@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma once
 
 #include "Common.h"
-
+#include "Collections/FastList.h"
 
 using namespace std;
 using namespace Apoc3D::Graphics;
@@ -38,15 +38,12 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		//template class APAPI vector<SceneObject*>;
-		typedef vector<SceneObject*> ObjectList;
-
 		/* SceneManager keeps tracks of all scene objects.
 		*/
 		class APAPI SceneManager
 		{
 		private:
-			ObjectList m_objects;
+			FastList<SceneObject*> m_objects;
 		protected:
 			
 		public:

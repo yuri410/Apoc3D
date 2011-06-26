@@ -52,7 +52,7 @@ namespace APBuild
 		void Parse(const ConfigurationSection* sect);
 	};
 
-	struct MeshConfig
+	struct MeshBuildConfig
 	{
 		String SrcFile;
 		String DstFile;

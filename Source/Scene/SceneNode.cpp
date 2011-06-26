@@ -38,12 +38,12 @@ namespace Apoc3D
 
 		void SceneNode::AddObject(SceneObject* sceObj)
 		{
-			m_attached.push_back(sceObj);
+			m_attached.Add(sceObj);
 			sceObj->NotifyParentNode(this);
 		}
 		void SceneNode::RemoveObject(SceneObject* sceObj)
 		{
-			m_attached.erase(std::find(m_attached.begin(), m_attached.end(), sceObj));
+			m_attached.Remove(sceObj);
 			sceObj->NotifyParentNode(0);
 		}
 	};

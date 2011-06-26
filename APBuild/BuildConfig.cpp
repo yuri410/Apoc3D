@@ -102,7 +102,7 @@ namespace APBuild
 		}
 	}
 
-	void MeshConfig::Parse(const ConfigurationSection* sect)
+	void MeshBuildConfig::Parse(const ConfigurationSection* sect)
 	{
 
 	}

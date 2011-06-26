@@ -48,23 +48,16 @@ namespace Apoc3D
 
 		void SceneManager::AddObject(SceneObject* const obj)
 		{
-			m_objects.push_back(obj);
+			m_objects.Add(obj);
 		} 
 		bool SceneManager::RemoveObject(SceneObject* const obj)
 		{
-			ObjectList::const_iterator pos = std::find(m_objects.begin(), m_objects.end(), obj);
-
-			if (pos != m_objects.end())
-			{
-				m_objects.erase(pos);
-				return true;
-			}
-			return false;
+			return m_objects.Remove(obj);
 		}
 
 		void SceneManager::Update(const GameTime* const &time)
 		{
-			for (uint32 i = 0;i<m_objects.size();i++)
+			for (int32 i = 0;i<m_objects.getCount();i++)
 			{
 				m_objects[i]->Update(time);
 			}

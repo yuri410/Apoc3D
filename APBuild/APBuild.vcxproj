@@ -58,7 +58,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Apoc3D.lib;fbxsdk-2012.1-mdd.lib;ILU.lib;ILUT.lib;DevIL.lib;squish.lib;d3d9.lib;d3dx9.lib;dxguid.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Apoc3D.lib;assimp.lib;fbxsdk-2012.1-mdd.lib;ILU.lib;ILUT.lib;DevIL.lib;squish.lib;d3d9.lib;d3dx9.lib;dxguid.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\x86;$(SolutionDir)\lib\x86dbg;$(SolutionDir)\Debug\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -91,6 +91,7 @@
     <ClInclude Include="MeshBuild\FbxBaker.h" />
     <ClInclude Include="MeshBuild\FbxImporter.h" />
     <ClInclude Include="MeshBuild\MeshBuild.h" />
+    <ClInclude Include="MeshBuild\AIImporter.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="BuildEngine.h" />
@@ -105,6 +106,7 @@
     <ClCompile Include="MeshBuild\FbxBaker.cpp" />
     <ClCompile Include="MeshBuild\FbxImporter.cpp" />
     <ClCompile Include="MeshBuild\MeshBuild.cpp" />
+    <ClCompile Include="MeshBuild\AIImporter.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="APBCommon.cpp" />
     <ClCompile Include="BuildEngine.cpp" />
