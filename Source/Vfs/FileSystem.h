@@ -71,7 +71,7 @@ namespace Apoc3D
 				}
 				return false;
 			}
-			Archive* CreateArchive(const FileLocation* fl);
+			Archive* CreateArchive(FileLocation* fl);
 			Archive* CreateArchive(const String& file);
 
 		public:

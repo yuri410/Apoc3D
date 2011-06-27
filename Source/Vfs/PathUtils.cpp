@@ -232,8 +232,26 @@ namespace Apoc3D
 
 		}
 
-		bool PathUtils::ComparePath(const String& left, const String& right)
+		bool PathUtils::ComparePath(const String& _left, const String& _right)
 		{
+			String left = _left;
+			String right = _right;
+
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+			StringUtils::ToLowerCase(left);
+			StringUtils::ToLowerCase(right);
+#endif
+			if (left.size() &&
+				(left[left.size() - 1] == DirectorySeparator || left[left.size() - 1] == AltDirectorySeparator))
+			{
+				left = left.substr(0, left.size() - 1);
+			}
+			if (right.size() &&
+				(right[right.size() - 1] == DirectorySeparator || right[right.size() - 1] == AltDirectorySeparator))
+			{
+				right = right.substr(0, right.size() - 1);
+			}
+
 			size_t i = 0;
 			size_t j = 0;
 			
@@ -250,40 +268,52 @@ namespace Apoc3D
 				wchar_t lch = left[i];
 				wchar_t rch = right[j];
 
-				if (isLastSepL)
+				//if (!isLastSepL)
 				{
 					if  (lch == DirectorySeparator || lch == AltDirectorySeparator)
 					{
 						i++;
+						if (!isLastSepL)
+						{
+							lvll++;
+							isLastSepL = true;
+						}
 						continue;
 					}
 					else
 					{
-						lvll++;
+						isLastSepL = false;
 					}
 				}
-				if (isLastSepR)
+				//if (isLastSepR)
 				{
 					if (rch == DirectorySeparator || rch == AltDirectorySeparator)
 					{
 						j++;
+						if (!isLastSepR)
+						{
+							lvlr++;
+							isLastSepR = true;
+						}
 						continue;
 					}
 					else
 					{
-						lvlr++;
+						isLastSepR = false;
 					}
 				}
 
-				if (left[lch] != right[rch])
+				if (lch != rch)
 					return false;
-				if (lch>=left.size() && rch>=right.size())
+				if (i+1>=left.size() && j+1>=right.size())
 					return lvlr == lvlr;
 
-				if (lch>=left.size())
+				if (i+1>=left.size())
 					return false;
-				if (rch>=right.size())
+				if (j+1>=right.size())
 					return false;
+				i++;
+				j++;
 			}
 		}
 	}

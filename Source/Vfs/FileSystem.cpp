@@ -56,7 +56,7 @@ namespace Apoc3D
 		}
 
 
-		Archive* FileSystem::CreateArchive(const FileLocation* fl)
+		Archive* FileSystem::CreateArchive(FileLocation* fl)
 		{
 			String fileName;
 			String fileExt;
@@ -168,21 +168,21 @@ namespace Apoc3D
 
 				}
 
-
+				// find the root archive if the path is a archive pack
 				while (!PathUtils::ComparePath( fullPath, m_workingDirs[i]))
 				{
 					if (File::FileExists(fullPath))
 					{
-						result.push_back(PathUtils::Combine(m_workingDirs[i], path));
+						result.push_back(L"");//PathUtils::Combine(m_workingDirs[i], path));
 						archivePath.push_back(fullPath);
-						return true;
+						break;
 					}
 					fullPath = PathUtils::GetDirectory(fullPath);
 
 				}
 
 			}
-			return !!result.size();
+			return !result.empty();
 		}
 
 

@@ -53,7 +53,7 @@ namespace Apoc3D
 		LogManager::Initialize();
 
 		FileSystem::Initialize();
-		if (mconf)
+		if (mconf && mconf->WorkingDirectories.getCount())
 		{
 			for (int i=0;i<mconf->WorkingDirectories.getCount();i++)
 			{

@@ -28,6 +28,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "File.h"
+#include "Collections/FastMap.h"
+
+using namespace Apoc3D::Collections;
+using namespace Apoc3D::IO;
 
 namespace Apoc3D
 {
@@ -40,7 +44,7 @@ namespace Apoc3D
 		{
 		public:
 			virtual Archive* CreateInstance(const String& file) = 0;
-			virtual Archive* CreateInstance(const FileLocation* fl) = 0;
+			virtual Archive* CreateInstance(FileLocation* fl) = 0;
 
 			virtual String getExtension() const = 0;
 		};
@@ -56,6 +60,39 @@ namespace Apoc3D
 			virtual Stream* GetEntryStream(const String& file) = 0;
 
 		};
+
+		struct PakArchiveEntry
+		{
+			String Name;
+			uint Offset;
+			uint Size;
+			uint Flag;
+		}
+		class PakArchive : public Archive
+		{
+		private:
+			FastMap<String, PakArchiveEntry> m_entries;
+
+			FileLocation* m_file;
+		public:
+			PakArchive(FileLocation* fl);
+			~PakArchive();
+
+			void FillEntries(FastList<PakArchiveEntry>& entries);
+
+			virtual int getFileCount() const;
+			virtual Stream* GetEntryStream(const String& file);
+		};
+
+		class PakArchiveFactory : public ArchiveFactory
+		{
+		public:
+			Archive* CreateInstance(const String& file);
+			Archive* CreateInstance(FileLocation* fl) { return new PakArchive(fl); }
+
+			String getExtension() const { return L".pak"; }
+		};
+
 	}
 }
 
