@@ -26,7 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Control.h"
+#include "Collections/FastList.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
@@ -85,6 +87,13 @@ namespace Apoc3D
 
 			virtual void Draw(Sprite* sprite);
 			virtual void Update(const GameTime* const time);
+
+		};
+
+		class ButtonGroup : public Control
+		{
+		private:
+			FastList<Button*> m_button;
 
 		};
 	}
