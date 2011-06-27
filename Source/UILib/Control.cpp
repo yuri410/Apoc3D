@@ -23,10 +23,22 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "Control.h"
+#include "FontManager.h"
+#include "StyleSkin.h"
 
 namespace Apoc3D
 {
 	namespace UI
 	{
+		void Control::Initialize(RenderDevice* device)
+		{
+			if (m_skin)
+			{
+				m_fontRef = FontManager::getSingleton().getFont(m_skin->ControlFontName);
+			}
+			else
+			{
+			}
+		}
 	}
 }

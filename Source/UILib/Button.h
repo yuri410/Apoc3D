@@ -46,7 +46,7 @@ namespace Apoc3D
 			Texture* m_MouseOverTexture;
 			Texture* m_NormalTexture;
 
-			Font* m_fontRef;
+			
 			Point m_textPos;
 			Point m_textSize;
 
@@ -95,6 +95,25 @@ namespace Apoc3D
 		private:
 			FastList<Button*> m_button;
 
+			int m_selectedIndex;
+
+			UIEventHandler m_eChangeSelection;
+
+			void Button_OnRelease(Control* sender);
+		public:
+			//int getSelectedIndex() const { return m_selectedIndex; }
+			const String& getSelectedText() const;
+			void setSelectedText(const String& text);
+
+			UIEventHandler& eventSelectionChanged() { return m_eChangeSelection; }
+
+			ButtonGroup(const FastList<Button*> buttons);
+			ButtonGroup(const FastList<Button*> buttons, int selected);
+
+			virtual void Initialize(RenderDevice* device);
+
+
+			
 		};
 	}
 }

@@ -45,16 +45,9 @@ namespace Apoc3D
 			}
 		}
 
-
 		void Button::Initialize(RenderDevice* device)
 		{
-			if (m_skin)
-			{
-				m_fontRef = FontManager::getSingleton().getFont(m_skin->ControlFontName);
-			}
-			else
-			{
-			}
+			Control::Initialize(device);
 		}
 
 
@@ -168,6 +161,78 @@ namespace Apoc3D
 			Control::Update(time);
 
 			UpdateEvents();
+		}
+
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+
+		ButtonGroup::ButtonGroup(const FastList<Button*> buttons)
+			: m_selectedIndex(0)
+		{
+			for (int i=0;i<buttons.getCount();i++)
+			{
+				m_button.Add(buttons[i]);
+			}
+		}
+
+		ButtonGroup::ButtonGroup(const FastList<Button*> buttons, int selected)
+			: m_selectedIndex(selected)
+		{
+			for (int i=0;i<buttons.getCount();i++)
+			{
+				m_button.Add(buttons[i]);
+			}
+		}
+
+		const String& ButtonGroup::getSelectedText() const
+		{
+			return m_button[m_selectedIndex]->Text;
+		}
+
+		void ButtonGroup::setSelectedText(const String& text)
+		{
+			for (int i=0;i<m_button.getCount();i++)
+			{
+				if (m_button[i]->Text == text)
+				{
+					m_selectedIndex = i;
+					break;
+				}
+			}
+		}
+
+		void ButtonGroup::Initialize(RenderDevice* device)
+		{
+			for (int i=0;i<m_button.getCount();i++)
+			{
+				m_button[i]->Initialize(device);
+				m_button[i]->eventRelease().bind(this, &ButtonGroup::Button_OnRelease);
+				m_button[i]->setOwner(m_owner)	;
+			}
+			Control::Initialize(device);
+		}
+
+		void ButtonGroup::Button_OnRelease(Control* sender)
+		{
+			Button* button = static_cast<Button*>(sender);
+
+			for (int i=0;i<m_button.getCount();i++)
+			{
+				if (m_button[i] == button)
+				{
+					if (m_selectedIndex != i)
+					{
+						m_selectedIndex = i;
+						if (!m_eChangeSelection.empty())
+						{
+							m_eChangeSelection(this);
+						}
+					}
+				}
+			}
 		}
 	}
 }

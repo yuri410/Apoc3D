@@ -10,6 +10,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		typedef fastdelegate::FastDelegate1<void, Control*> UIEventHandler;
 
 
 	}

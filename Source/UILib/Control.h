@@ -46,15 +46,16 @@ namespace Apoc3D
 		class Control
 		{
 		private:
-			EventHandler m_eventMouseOver;
-			EventHandler m_eventMouseOut;
-			EventHandler m_eventMousePress;
-			EventHandler m_eventMouseRelease;
+			UIEventHandler m_eventMouseOver;
+			UIEventHandler m_eventMouseOut;
+			UIEventHandler m_eventMousePress;
+			UIEventHandler m_eventMouseRelease;
 
 		protected:
 			ControlContainer* m_owner;
 			const StyleSkin* m_skin;
-			
+			Font* m_fontRef;
+
 			virtual void OnMouseOver() {  if (!m_eventMouseOver.empty()) m_eventMouseOver(); }
 			virtual void OnMouseOut() {  if (!m_eventMouseOver.empty()) m_eventMouseOut(); }
 			virtual void OnPress() {  if (!m_eventMouseOver.empty()) m_eventMousePress(); }
@@ -73,10 +74,12 @@ namespace Apoc3D
 
 			String TooltipText;
 
-			EventHandler& eventMouseOver() { return m_eventMouseOver; }
-			EventHandler& eventMouseOut() { return m_eventMouseOut; }
-			EventHandler& eventPress() { return m_eventMousePress; }
-			EventHandler& eventRelease() { return m_eventMouseRelease; }
+			ControlContainer* getOwner() const { return m_owner; }
+			void setOwner(ControlContainer* val) { return m_owner = val; }
+			UIEventHandler& eventMouseOver() { return m_eventMouseOver; }
+			UIEventHandler& eventMouseOut() { return m_eventMouseOut; }
+			UIEventHandler& eventPress() { return m_eventMousePress; }
+			UIEventHandler& eventRelease() { return m_eventMouseRelease; }
 
 
 
@@ -85,6 +88,11 @@ namespace Apoc3D
 				return Apoc3D::Math::Rectangle(Position.X, Position.Y, Size.X, Size.Y);
 			}
 
+			Control()
+				: Position(Point::Zero), m_owner(0), m_skin(0), Enabled(true)
+			{
+
+			}
 			Control(const Point& position)
 				: Position(position), m_owner(0), m_skin(0), Enabled(true)
 			{
@@ -101,7 +109,7 @@ namespace Apoc3D
 
 			}
 
-			virtual void Initialize(RenderDevice* device) { }
+			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time) { }
 			virtual void Draw(Sprite* sprite) = 0;
 
