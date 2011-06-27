@@ -80,6 +80,32 @@ namespace Apoc3D
 		}
 
 
+		void FileSystem::AddWrokingDirectory(const String& path)
+		{
+			String _path = path;
+			
+			//if (!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+				//path += Path.DirectorySeparatorChar;
+
+			m_workingDirs.push_back(_path);
+		}
+		void FileSystem::RegisterArchiveType(ArchiveFactory* factory)
+		{
+			m_factories.insert(make_pair(factory->getExtension(), factory));
+		}
+
+		bool FileSystem::UnregisterArchiveType(ArchiveFactory* factory)
+		{
+			PackFactoryTable::iterator iter = m_factories.find(factory->getExtension());
+			if (iter == m_factories.end())
+			{
+				m_factories.erase(factory->getExtension());
+				return true;
+			}
+			return false;
+		}
+
+
 		bool FileSystem::DirectoryExists(const String& path) const
 		{
 			for (size_t i = 0; i < m_workingDirs.size(); i++)

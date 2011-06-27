@@ -56,10 +56,10 @@ namespace Apoc3D
 			const StyleSkin* m_skin;
 			Font* m_fontRef;
 
-			virtual void OnMouseOver() {  if (!m_eventMouseOver.empty()) m_eventMouseOver(); }
-			virtual void OnMouseOut() {  if (!m_eventMouseOver.empty()) m_eventMouseOut(); }
-			virtual void OnPress() {  if (!m_eventMouseOver.empty()) m_eventMousePress(); }
-			virtual void OnRelease() {  if (!m_eventMouseOver.empty()) m_eventMouseRelease(); }
+			virtual void OnMouseOver() {  if (!m_eventMouseOver.empty()) m_eventMouseOver(this); }
+			virtual void OnMouseOut() {  if (!m_eventMouseOver.empty()) m_eventMouseOut(this); }
+			virtual void OnPress() {  if (!m_eventMouseOver.empty()) m_eventMousePress(this); }
+			virtual void OnRelease() {  if (!m_eventMouseOver.empty()) m_eventMouseRelease(this); }
 		public:
 			
 			String Text;

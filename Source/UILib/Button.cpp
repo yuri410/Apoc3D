@@ -275,7 +275,7 @@ namespace Apoc3D
 		ButtonRow::ButtonRow(const Vector2& position, float width, const FastList<String>& titles)
 			: m_count(titles.getCount())
 		{ 
-			Size.X = width;
+			Size.X = (int)width;
 			Size.Y = m_skin->ButtonTexture->getHeight();
 			m_texPos = new Point[m_count];
 			m_titles = new String[m_count];
