@@ -80,6 +80,20 @@ namespace Apoc3D
 				m_textPos.Y = (int)(m_btnDestRect[0].Y + (m_btnDestRect[0].Height - m_textSize.Y) / 2.0f);
 			}
 
+			if (Size.X < m_textSize.X+20)
+			{
+				Size.X = m_textSize.X + 20;
+			}
+			if (Size.Y < m_skin->ButtonTexture->getHeight())
+			{
+				Size.Y = m_skin->ButtonTexture->getHeight();
+			}
+			if (Size.Y < m_textSize.Y + 5)
+			{
+				Size.Y = m_textSize.Y + 5;
+			}
+			
+
 			if (m_mouseDown)
 			{
 				sprite->Draw(m_skin->ButtonTexture, m_btnDestRect[0], &m_skin->BtnSrcRect[0], m_skin->BtnDimColor);
@@ -101,8 +115,6 @@ namespace Apoc3D
 				}
 			}
 		}
-
-		
 
 		void Button::DrawCustomButton(Sprite* spriteBatch)
 		{
@@ -233,6 +245,95 @@ namespace Apoc3D
 					}
 				}
 			}
+		}
+
+		void ButtonGroup::Draw(Sprite* sprite)
+		{
+			for (int i=0;i<m_button.getCount();i++)
+			{
+				//if (m_selectedIndex == i)
+				//{
+					m_button[i]->Draw(sprite);
+				//}
+			}
+		}
+
+		void ButtonGroup::Update(const GameTime* const time)
+		{
+			Control::Update(time);
+
+			for (int i=0;i<m_button.getCount();i++)
+			{
+				m_button[i]->Update(time);
+			}
+		}
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+		ButtonRow::ButtonRow(const Vector2& position, float width, const FastList<String>& titles)
+			: m_count(titles.getCount())
+		{ 
+			m_texPos = new Vector2[m_count];
+			m_titles = new String[m_count];
+			m_btRect = new Apoc3D::Math::Rectangle[m_count];
+			m_rect = new Apoc3D::Math::Rectangle[m_count];
+		}
+		ButtonRow::~ButtonRow()
+		{
+			delete[] m_texPos;
+			delete[] m_titles;
+			delete[] m_btRect;
+			delete[] m_rect;
+		}
+		void ButtonRow::Initialize(RenderDevice* device)
+		{
+			//for (int i=0;i<m_count;i++)
+			//{
+			//	
+			//}
+		}
+
+		void ButtonRow::Update(const GameTime* const time)
+		{
+			Point s = m_fontRef->MeasureString(Text);
+			float cellWidth = (float)Size.X / m_count;
+			Apoc3D::Math::Rectangle area = getArea();
+			
+			for (int i=0;i<m_count;i++)
+			{
+				m_btRect[i] = Apoc3D::Math::Rectangle(
+					area.X + (int)(cellWidth*i), area.Y, (int)cellWidth, m_skin->ButtonTexture->getHeight());
+				m_texPos[i] = Vector2(m_btRect[i].X + (m_btRect[i].Width - s.X) * 0.5f,
+					m_btRect[i].Y + (m_btRect[i].Height - s.Y) * 0.5f);
+
+				if (i==0)
+				{
+					m_rect[i] = Apoc3D::Math::Rectangle(
+						Position.X+m_skin->ButtonTexture->getWidth() + (int)(cellWidth*i),
+						Position.Y, 
+						(int)cellWidth-m_skin->ButtonTexture->getWidth(), 
+						m_skin->ButtonTexture->getHeight());
+				}
+				else if (i == m_count-1)
+				{
+					m_rect[i] = Apoc3D::Math::Rectangle(
+						Position.X + (int)(cellWidth*i), 
+						Position.Y, 
+						(int)cellWidth - m_skin->ButtonTexture->getWidth(), 
+						m_skin->ButtonTexture->getHeight());
+				}
+				else
+				{
+					m_rect[i] = Apoc3D::Math::Rectangle(Position.X + (int)(cellWidth*i),
+						Position.Y,
+						(int)cellWidth,
+						m_skin->ButtonTexture->getHeight());
+				}
+			}
+			m_tailPos = Point(m_rect[m_count-1].getRight(), Position.Y);
+			Text = m_titles[0];
 		}
 	}
 }

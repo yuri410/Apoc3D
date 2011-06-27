@@ -16,7 +16,7 @@ namespace Apoc3D
 		{
 		public:
 			Texture* ButtonTexture;
-			Rectangle BtnSrcRect[3];
+			Apoc3D::Math::Rectangle BtnSrcRect[3];
 			uint BtnDimColor;
 			uint BtnHighLightColor;
 			uint BtnTextDimColor;
@@ -26,11 +26,15 @@ namespace Apoc3D
 			int BtnHozPadding;
 
 
+
+			Texture* WhitePixelTexture;
+			Apoc3D::Math::Rectangle BtnRowSrcRect[2];
+			Apoc3D::Math::Rectangle BtnRowSeparator;
 			String ControlFontName;
 
 		public:
 			// create default skin
-			StyleSkin();
+			StyleSkin(RenderDevice* device);
 
 		};
 	}

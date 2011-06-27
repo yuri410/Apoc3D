@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef CONTROL_H
 #define CONTROL_H
 
-#include "Common.h"
+#include "UICommon.h"
 
 #include "Math/Math.h"
 #include "Math/Point.h"
@@ -75,7 +75,7 @@ namespace Apoc3D
 			String TooltipText;
 
 			ControlContainer* getOwner() const { return m_owner; }
-			void setOwner(ControlContainer* val) { return m_owner = val; }
+			void setOwner(ControlContainer* val) { m_owner = val; }
 			UIEventHandler& eventMouseOver() { return m_eventMouseOver; }
 			UIEventHandler& eventMouseOut() { return m_eventMouseOut; }
 			UIEventHandler& eventPress() { return m_eventMousePress; }

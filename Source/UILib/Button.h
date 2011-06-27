@@ -24,7 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef BUTTON_H
 #define BUTTON_H
 
-#include "Common.h"
 #include "Control.h"
 #include "Collections/FastList.h"
 
@@ -101,7 +100,10 @@ namespace Apoc3D
 
 			void Button_OnRelease(Control* sender);
 		public:
-			//int getSelectedIndex() const { return m_selectedIndex; }
+			int getSelectedIndex() const { return m_selectedIndex; }
+
+			Button* getSelectedButton() const { return m_button[m_selectedIndex]; }
+
 			const String& getSelectedText() const;
 			void setSelectedText(const String& text);
 
@@ -111,9 +113,37 @@ namespace Apoc3D
 			ButtonGroup(const FastList<Button*> buttons, int selected);
 
 			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
 
-
+			virtual void Draw(Sprite* sprite);
 			
+		};
+
+		class ButtonRow : public Control
+		{
+		private:
+			int m_selectedIndex;
+
+			Vector2 m_size;
+			Point m_tailPos;
+
+			int m_count;
+			String* m_titles;
+			Vector2* m_texPos;
+			Apoc3D::Math::Rectangle* m_rect;
+			Apoc3D::Math::Rectangle* m_btRect;
+
+			int m_hoverIndex;
+
+		public:
+			ButtonRow(const Vector2& position, float width, const FastList<String>& titles);
+			~ButtonRow();
+
+			virtual void Initialize(RenderDevice* device);
+
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
 		};
 	}
 }
