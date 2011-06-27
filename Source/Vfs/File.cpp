@@ -63,6 +63,22 @@ namespace Apoc3D
 			}			
 			return false;
 		}
+		time_t File::GetFileModifiyTime(const String& path)
+		{
+			struct stat status;
+
+			char buffer[256];
+			size_t res;
+			wcstombs_s(&res, buffer, path.c_str(), 256);
+
+			if (_access(buffer, 0) == 0)
+			{
+				stat(buffer, &status);
+
+				return status.st_mtime;
+			}			
+			return 0;
+		}
 		bool File::FileExists(const String& path)
 		{
 			struct stat status;
@@ -94,7 +110,7 @@ namespace Apoc3D
 			if (_access(buffer, 0) == 0)
 			{
 				stat(buffer, &status);
-
+				
 				if (status.st_mode & S_IFDIR)
 				{
 					return -1;

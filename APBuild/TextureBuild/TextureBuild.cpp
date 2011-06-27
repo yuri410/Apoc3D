@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "IOLib/TextureData.h"
 #include "IOLib/Streams.h"
+#include "Vfs/File.h"
 #include "Apoc3DException.h"
 #include "CompileLog.h"
 #include "D3DHelper.h"
@@ -36,6 +37,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::IO;
+using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
@@ -445,8 +447,12 @@ namespace APBuild
 		TextureBuildConfig config;
 		config.Parse(sect);
 
-		CompileLog::WriteInformation(config.SourceFile, L">");
+		if (!File::FileExists(config.DestinationFile) || 
+			File::GetFileModifiyTime(config.SourceFile) >= File::GetFileModifiyTime(config.DestinationFile))
+		{
+			CompileLog::WriteInformation(config.SourceFile, L">");
 
-		BuildByDevIL(config);
+			BuildByDevIL(config);
+		}
 	}
 }

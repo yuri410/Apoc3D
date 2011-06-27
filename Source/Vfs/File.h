@@ -50,6 +50,7 @@ namespace Apoc3D
 
 			static int64 GetFileSize(const String& path);
 			static bool FileExists(const String& path);
+			static time_t GetFileModifiyTime(const String& path);
 			static bool DirectoryExists(const String& path);
 		};
 	}

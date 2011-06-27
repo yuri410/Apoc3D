@@ -24,14 +24,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Engine.h"
 
-
+#include <sys/types.h> 
+#include <sys/stat.h> 
+#include <io.h>
+#include <direct.h>
 
 #include "Vfs/FileSystem.h"
+#include "Vfs/FileLocateRule.h"
 #include "Config/ConfigurationManager.h"
 #include "Graphics/RenderSystem/GraphicsAPI.h"
 #include "Input/InputAPI.h"
 #include "Core/PluginManager.h"
 #include "Core/Logging.h"
+#include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::VFS;
@@ -39,6 +44,7 @@ using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Input;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -47,7 +53,27 @@ namespace Apoc3D
 		LogManager::Initialize();
 
 		FileSystem::Initialize();
+		if (mconf)
+		{
+			for (int i=0;i<mconf->WorkingDirectories.getCount();i++)
+			{
+				FileSystem::getSingleton().AddWrokingDirectory(mconf->WorkingDirectories[i]);
+			}
+		}
+		else
+		{
+			char currentDir[260];
+
+			if( _getcwd( currentDir, sizeof(currentDir)-1 ) != NULL )
+			{
+				FileSystem::getSingleton().AddWrokingDirectory(StringUtils::toWString(currentDir));
+			}
+		}
+		FileLocateRule::Initialize();
+
 		ConfigurationManager::Initialize();
+		
+
 		GraphicsAPIManager::Initialize();
 		InputAPIManager::Initialize();
 
