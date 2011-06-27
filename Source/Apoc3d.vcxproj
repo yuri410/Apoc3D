@@ -329,6 +329,7 @@
     <ClCompile Include="Scene\SimpleSceneManager.cpp" />
     <ClCompile Include="Graphics\RenderSystem\Texture.cpp" />
     <ClCompile Include="Utility\StringTable.cpp" />
+    <ClCompile Include="Vfs\Archive.cpp" />
     <ClCompile Include="Vfs\File.cpp" />
     <ClCompile Include="Vfs\FileLocateRule.cpp" />
     <ClCompile Include="Vfs\FileSystem.cpp" />

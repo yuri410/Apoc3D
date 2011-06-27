@@ -731,6 +731,9 @@
     <ClCompile Include="Config\ConfigurationSection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Vfs\Archive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
