@@ -275,7 +275,9 @@ namespace Apoc3D
 		ButtonRow::ButtonRow(const Vector2& position, float width, const FastList<String>& titles)
 			: m_count(titles.getCount())
 		{ 
-			m_texPos = new Vector2[m_count];
+			Size.X = width;
+			Size.Y = m_skin->ButtonTexture->getHeight();
+			m_texPos = new Point[m_count];
 			m_titles = new String[m_count];
 			m_btRect = new Apoc3D::Math::Rectangle[m_count];
 			m_rect = new Apoc3D::Math::Rectangle[m_count];
@@ -289,24 +291,17 @@ namespace Apoc3D
 		}
 		void ButtonRow::Initialize(RenderDevice* device)
 		{
-			//for (int i=0;i<m_count;i++)
-			//{
-			//	
-			//}
-		}
-
-		void ButtonRow::Update(const GameTime* const time)
-		{
+			
 			Point s = m_fontRef->MeasureString(Text);
 			float cellWidth = (float)Size.X / m_count;
 			Apoc3D::Math::Rectangle area = getArea();
-			
+
 			for (int i=0;i<m_count;i++)
 			{
 				m_btRect[i] = Apoc3D::Math::Rectangle(
 					area.X + (int)(cellWidth*i), area.Y, (int)cellWidth, m_skin->ButtonTexture->getHeight());
-				m_texPos[i] = Vector2(m_btRect[i].X + (m_btRect[i].Width - s.X) * 0.5f,
-					m_btRect[i].Y + (m_btRect[i].Height - s.Y) * 0.5f);
+				m_texPos[i] = Point((int)(m_btRect[i].X + (m_btRect[i].Width - s.X) * 0.5f),
+					(int)(m_btRect[i].Y + (m_btRect[i].Height - s.Y) * 0.5f));
 
 				if (i==0)
 				{
@@ -334,6 +329,33 @@ namespace Apoc3D
 			}
 			m_tailPos = Point(m_rect[m_count-1].getRight(), Position.Y);
 			Text = m_titles[0];
+			Control::Initialize(device);
+		}
+
+		void ButtonRow::Update(const GameTime* const time)
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+			Point rectPos;
+			Apoc3D::Math::Rectangle rect;// = Apoc3D::Math::Rectangle::Empty;
+			rectPos.X = Position.X + m_owner->Position.X;
+			rectPos.Y = Position.Y + m_owner->Position.Y;
+
+			m_hoverIndex = -1;
+
+			for (int i=0;i<m_count;i++)
+			{
+				rect.X = rectPos.X;
+				rect.Y = rectPos.Y;
+				rect.Width = m_btRect[i].Width;
+				rect.Height = m_btRect[i].Height;
+
+				if (rect.Contains(mouse->GetCurrentPosition().X, mouse->GetCurrentPosition().Y))
+				{
+					m_hoverIndex = i;
+					// TODO
+				}
+			}
 		}
 	}
 }

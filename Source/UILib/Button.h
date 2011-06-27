@@ -124,12 +124,12 @@ namespace Apoc3D
 		private:
 			int m_selectedIndex;
 
-			Vector2 m_size;
+			//Vector2 m_size;
 			Point m_tailPos;
 
 			int m_count;
 			String* m_titles;
-			Vector2* m_texPos;
+			Point* m_texPos;
 			Apoc3D::Math::Rectangle* m_rect;
 			Apoc3D::Math::Rectangle* m_btRect;
 
