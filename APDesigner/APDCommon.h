@@ -31,4 +31,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma comment(lib, "Apoc3D.D3D9RenderSystem.lib")
 #pragma comment(lib, "Apoc3D.WindowsInput.lib")
 
+namespace APDesigner
+{
+	class MainWindow;
+
+}
+
 #endif

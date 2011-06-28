@@ -87,9 +87,6 @@ namespace Apoc3D
 		{
 			PluginManager::getSingleton().LoadPlugins();
 		}
-		
-		
-
 	}
 	void Engine::Shutdown()
 	{
