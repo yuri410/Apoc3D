@@ -429,6 +429,12 @@
     <ClInclude Include="Input\Keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UILib\Menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UILib\KeyboardHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -732,6 +738,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vfs\Archive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UILib\Menu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UILib\KeyboardHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -359,6 +359,11 @@ namespace Apoc3D
 		class Form;
 		class Control;
 		class Button;
+		class ButtonRow;
+		class ButtonGroup;
+		class Menu;
+		class MenuItem;
+		class SubMenu;
 
 		class StyleSkin;
 	}

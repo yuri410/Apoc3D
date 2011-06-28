@@ -158,6 +158,8 @@
     <ClInclude Include="Scene\ScenePassTypes.h" />
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />
     <ClInclude Include="UILib\Button.h" />
+    <ClInclude Include="UILib\KeyboardHelper.h" />
+    <ClInclude Include="UILib\Menu.h" />
     <ClInclude Include="UILib\StyleSkin.h" />
     <ClInclude Include="UILib\Control.h" />
     <ClInclude Include="UILib\FontManager.h" />
@@ -290,6 +292,8 @@
     <ClCompile Include="UILib\Button.cpp" />
     <ClCompile Include="UILib\Control.cpp" />
     <ClCompile Include="UILib\FontManager.cpp" />
+    <ClCompile Include="UILib\KeyboardHelper.cpp" />
+    <ClCompile Include="UILib\Menu.cpp" />
     <ClCompile Include="UILib\StyleSkin.cpp" />
     <ClCompile Include="UILib\UIMaterialLibrary.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />

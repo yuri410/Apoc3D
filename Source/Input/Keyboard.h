@@ -187,11 +187,17 @@ namespace Apoc3D
 		{
 		protected:
 			bool m_keyState[KEYCODE_MAX];
+			bool m_lastKeyState[KEYCODE_MAX];
 
 			Keyboard();
 			virtual ~Keyboard();
 
 		public:
+			bool IsKeyDown(KeyboardKeyCode code) const { return m_keyState[(int)code] && !m_lastKeyState[(int)code]; }
+			bool IsKeyUp(KeyboardKeyCode code) const { return !m_keyState[(int)code] && m_lastKeyState[(int)code]; }
+
+			bool IsPressing(KeyboardKeyCode code) const { return m_keyState[(int)code]; }
+
 			virtual void Update(const GameTime* const time) = 0;
 		};
 	}

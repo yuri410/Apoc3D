@@ -42,6 +42,8 @@ namespace Apoc3D
 
 			void Win32Keyboard::Update(const GameTime* const time)
 			{
+				memcpy(m_lastKeyState, m_keyState, sizeof(m_keyState));
+
 				m_keyboard->capture();
 			}
 

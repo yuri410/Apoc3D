@@ -21,21 +21,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#include "Keyboard.h"
-
+#include "Menu.h"
 
 namespace Apoc3D
 {
-	namespace Input
+	namespace UI
 	{
-		Keyboard::Keyboard()
-		{
-			memset(m_keyState,0,sizeof(m_keyState));
-		}
-		Keyboard::~Keyboard()
-		{
 
-		}
 	}
 }

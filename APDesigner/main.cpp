@@ -30,6 +30,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "../Apoc3D.D3D9RenderSystem/Plugin.h"
 #include "../Apoc3D.WindowsInput/Plugin.h"
 
+
+#include "MainWindow.h"
+
 #include <Windows.h>
 
 #include <SDKDDKVer.h>
@@ -38,7 +41,7 @@ using namespace std;
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
-
+using namespace APDesigner;
 
 INT WINAPI wWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -81,11 +84,16 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 
 	RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
 
+	MainWindow* mainWnd = new MainWindow(wnd);
+	wnd->setEventHandler(mainWnd);
+
 	if (wnd)
 	{
 		wnd->Run();
 		delete wnd;
 	}
+
+	delete mainWnd;
 
 	delete devContent;
 

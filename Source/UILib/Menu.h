@@ -22,20 +22,53 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "Keyboard.h"
+#ifndef MENU_H
+#define MENU_H
 
+#include "UICommon.h"
+#include "Control.h"
+#include "Collections/FastList.h"
+
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
-	namespace Input
+	namespace UI
 	{
-		Keyboard::Keyboard()
+		enum MenuState
 		{
-			memset(m_keyState,0,sizeof(m_keyState));
-		}
-		Keyboard::~Keyboard()
+			MENU_Open,
+			MENU_Closed
+		};
+		class APAPI Menu : public Control
 		{
+		private:
+			FastList<MenuItem*> m_items;
+			MenuState m_state;
 
-		}
+			void CheckSelection();
+			void CheckHovering();
+
+		public:
+			const FastList<MenuItem*>& getItems() const { return m_items; }
+			MenuState getState() const { return m_state; }
+
+			Menu();
+			~Menu();
+
+			MenuItem* operator [](const String& name) const;
+			MenuItem* operator [](int index) const;
+
+			void Add(MenuItem* item, SubMenu* submenu);
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+
+			virtual void Draw(Sprite* sprite);
+
+			void Close();
+
+		};
 	}
 }
+
+#endif
