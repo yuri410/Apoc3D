@@ -83,7 +83,7 @@ namespace Apoc3D
 			{
 				if (m_window)
 					return m_window->getDevice();
-				
+				return 0;
 			}
 		}
 	}

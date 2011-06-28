@@ -78,6 +78,8 @@ namespace Apoc3D
 
 			public:
 				void* UserData;
+
+				RenderDevice* getRenderDevice() const { return m_renderDevice; }
 				const RenderParameters& getRenderParams() const { return m_presentParams; }
 				virtual void ChangeRenderParameters(const RenderParameters& params) { m_presentParams = params; }
 

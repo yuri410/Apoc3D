@@ -193,7 +193,7 @@ namespace Apoc3D
 			{
 				return res;
 			}
-			const FileLocation* fl = Locate(filePath, rule);
+			FileLocation* fl = Locate(filePath, rule);
 			res = CreateArchive(fl);
 			m_openedPack.insert(pair<String, Archive*>(res->getFilePath(), res));
 			return res;

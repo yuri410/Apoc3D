@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ResourceLocation.h"
 #include "IOLib/Streams.h"
 #include "IOLib/BinaryReader.h"
+#include "Collections/FastList.h"
 
 namespace Apoc3D
 {
@@ -42,26 +43,65 @@ namespace Apoc3D
 
 			BinaryReader* br = new BinaryReader(stream);
 			
+			if (br->ReadInt32() == PakFileID)
+			{
+				int fileCount = br->ReadInt32();
+
+				for (int i = 0; i < fileCount; i++)
+				{
+					PakArchiveEntry ent;
+
+					ent.Name = br->ReadString();
+					ent.Offset = br->ReadUInt32();
+					ent.Size = br->ReadUInt32();
+					ent.Flag = br->ReadUInt32();
+
+					m_entries.Add(ent.Name, ent);
+				}
+			}
+			else
+			{
+				
+			}
 			br->Close();
 			delete br;
 		}
 		PakArchive::~PakArchive()
 		{
-
+			delete m_file;
 		}
 
 		void PakArchive::FillEntries(FastList<PakArchiveEntry>& entries)
 		{
-			
+			for (FastMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
+				e.MoveNext();)
+			{
+				entries.Add(*e.getCurrentValue());
+			}
 		}
 
 		int PakArchive::getFileCount() const
 		{
-
+			return m_entries.getCount();
 		}
 		Stream* PakArchive::GetEntryStream(const String& file)
 		{
+			PakArchiveEntry lpkEnt;
 
+			if (m_entries.TryGetValue(file, lpkEnt))
+			{
+				//int threadId = Thread.CurrentThread.ManagedThreadId;
+				//Stream thStream;
+
+				//if (!threadStreams.TryGetValue(threadId, out thStream))
+				//{
+				//	thStream = m_file->GetStream();
+				//}
+				VirtualStream* res = new VirtualStream(m_file->GetReadStream(), lpkEnt.Offset, lpkEnt.Size);
+				res->setPosition( 0 );
+				return res;
+			}
+			return 0;
 		}
 
 		Archive* PakArchiveFactory::CreateInstance(const String& file)

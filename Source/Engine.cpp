@@ -93,6 +93,6 @@ namespace Apoc3D
 	}
 	void Engine::Shutdown()
 	{
-
+		PluginManager::getSingleton().UnloadPlugins();
 	}
 }

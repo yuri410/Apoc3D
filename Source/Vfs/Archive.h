@@ -67,7 +67,8 @@ namespace Apoc3D
 			uint Offset;
 			uint Size;
 			uint Flag;
-		}
+		};
+
 		class PakArchive : public Archive
 		{
 		private:
