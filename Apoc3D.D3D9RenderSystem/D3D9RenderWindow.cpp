@@ -90,11 +90,11 @@ namespace Apoc3D
 				settings.Multithreaded = true;
 				settings.RefreshRate = 0;
 				settings.Windowed = params.IsWindowd;				
-				
-				getGraphicsDeviceManager()->ChangeDevice(settings);
 
 				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager());
 				m_window->setDevice(device);
+
+				getGraphicsDeviceManager()->ChangeDevice(settings);
 
 				device->Initialize();
 			}
@@ -130,6 +130,7 @@ namespace Apoc3D
 				settings.Windowed = params.IsWindowd;				
 
 				m_game->getGraphicsDeviceManager()->ChangeDevice(settings);
+
 			}
 
 
@@ -140,7 +141,8 @@ namespace Apoc3D
 			}
 
 			void D3D9RenderWindow::Run()
-			{			
+			{
+				
 				m_game->Create();
 				m_game->Run();
 				m_game->Release();

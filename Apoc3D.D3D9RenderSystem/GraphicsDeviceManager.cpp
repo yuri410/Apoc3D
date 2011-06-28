@@ -252,7 +252,7 @@ namespace Apoc3D
 				// UpdateDeviceStats();
 				PropogateSettings();
 
-				m_game->Initialize();
+ 				m_game->Initialize();
 				m_game->LoadContent();
 			}
 			void GraphicsDeviceManager::CreateDevice(const DeviceSettings& settings)

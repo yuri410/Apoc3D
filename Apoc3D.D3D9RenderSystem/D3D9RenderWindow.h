@@ -81,7 +81,11 @@ namespace Apoc3D
 					}
 					virtual void Initialize()
 					{
-						m_window->OnInitialize();
+						if (!((D3D9RenderDevice*)m_window->getRenderDevice())->isInitialized())
+						{
+							m_window->getRenderDevice()->Initialize();
+							m_window->OnInitialize();
+						}
 					}
 					virtual void LoadContent()
 					{
@@ -89,13 +93,13 @@ namespace Apoc3D
 					}
 					virtual void OnDeviceLost() 
 					{
-						D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_window->getDevice());
+						D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_window->getRenderDevice());
 						if (device)
 							device->OnDeviceLost();
 					}
 					virtual void OnDeviceReset()
 					{
-						D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_window->getDevice());
+						D3D9RenderDevice* device = static_cast<D3D9RenderDevice*>(m_window->getRenderDevice());
 						if (device)
 							device->OnDeviceReset();
 					}
@@ -134,7 +138,6 @@ namespace Apoc3D
 					m_renderDevice = device;
 				}
 			public:
-				RenderDevice* getDevice() const { return m_renderDevice; }
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
 

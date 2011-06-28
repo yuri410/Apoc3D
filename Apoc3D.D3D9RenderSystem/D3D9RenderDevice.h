@@ -72,7 +72,7 @@ namespace Apoc3D
 
 
 				
-
+				bool isInitialized() const { return !!m_stateManager; }
 
 
 

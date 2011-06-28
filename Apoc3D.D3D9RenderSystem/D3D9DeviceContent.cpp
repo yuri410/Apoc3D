@@ -82,7 +82,7 @@ namespace Apoc3D
 			RenderDevice* D3D9DeviceContent::getRenderDevice()
 			{
 				if (m_window)
-					return m_window->getDevice();
+					return m_window->getRenderDevice();
 				return 0;
 			}
 		}

@@ -54,7 +54,7 @@ namespace Apoc3D
 				int32 m_windowedWindowHeight;
 				WINDOWPLACEMENT m_windowedPlacement;
 				int64 m_windowedStyle;
-				//bool m_savedTopmost;
+				//bool m_savedTopmost
 
 				void PropogateSettings();
 				bool CanDeviceBeReset(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;

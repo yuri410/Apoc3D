@@ -51,7 +51,7 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			D3D9RenderDevice::D3D9RenderDevice(GraphicsDeviceManager* devManager)
-				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager)
+				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager), m_stateManager(0)
 			{
 
 			}
@@ -64,6 +64,7 @@ namespace Apoc3D
 				m_defaultDS = 0;
 
 				delete[] m_cachedRenderTarget;
+				delete m_nativeState;
 				delete m_stateManager;
 				delete m_objectFactory;
 			}
@@ -89,7 +90,8 @@ namespace Apoc3D
 			void D3D9RenderDevice::Initialize()
 			{
 				m_nativeState = new NativeD3DStateManager(this);
-				m_renderStates = new D3D9RenderStateManager(this, m_nativeState);
+				m_stateManager = new D3D9RenderStateManager(this, m_nativeState);
+				m_renderStates = m_stateManager;
 				m_objectFactory = new D3D9ObjectFactory(this);
 
 				D3DDevice* dev = getDevice();
@@ -98,6 +100,11 @@ namespace Apoc3D
 				dev->GetDeviceCaps(&caps);
 
 				m_cachedRenderTarget = new D3D9RenderTarget*[caps.NumSimultaneousRTs];
+				memset(m_cachedRenderTarget, 0, sizeof(D3D9RenderTarget*) * caps.NumSimultaneousRTs);
+
+				
+				dev->GetRenderTarget(0, &m_defaultRT);
+				dev->GetDepthStencilSurface(&m_defaultDS);
 			}
 			
 			void D3D9RenderDevice::BeginFrame()
