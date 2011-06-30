@@ -67,6 +67,10 @@ namespace Apoc3D
 
 
 		public:
+			KeyboardEventHandler& eventKeyPress() { return m_eKeyPress; }
+			KeyboardEventHandler& eventKeyRelease() { return m_eKeyRelease; }
+			PasteEventHandler& eventKeyPaste() { return m_ePaste; }
+
 			KeyboardHelper()
 				: m_pasting(false), m_pressingTime(0), m_currentKey(KEY_UNASSIGNED), m_previousKey(KEY_UNASSIGNED)
 			{

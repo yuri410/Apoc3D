@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UICommon.h"
 #include "Control.h"
 #include "Collections/FastList.h"
+#include "KeyboardHelper.h"
 
 using namespace Apoc3D::Collections;
 
@@ -46,9 +47,12 @@ namespace Apoc3D
 			FastList<MenuItem*> m_items;
 			MenuState m_state;
 
+			KeyboardHelper m_helper;
+
 			void CheckSelection();
 			void CheckHovering();
-
+			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
+			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);
 		public:
 			const FastList<MenuItem*>& getItems() const { return m_items; }
 			MenuState getState() const { return m_state; }

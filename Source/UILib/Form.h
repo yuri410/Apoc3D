@@ -22,49 +22,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "Control.h"
-#include "FontManager.h"
-#include "StyleSkin.h"
+#ifndef FORM_H
+#define FORM_H
 
-namespace Apoc3D
-{
-	namespace UI
-	{
-		void Control::Initialize(RenderDevice* device)
-		{
-			if (m_skin)
-			{
-				m_fontRef = FontManager::getSingleton().getFont(m_skin->ControlFontName);
-			}
-			else
-			{
-			}
-		}
+#include "UICommon.h"
 
 
-		void ControlCollection::Add(Control* ctrl)
-		{
-			ctrl->setOwner(m_owner);
-			m_controls.Add(ctrl);
-		}
-		void ControlCollection::Remove(Control* ctrl)
-		{
-			ctrl->setOwner(0);
-			m_controls.Remove(ctrl);
-		}
-		void ControlCollection::RemoveAt(int index)
-		{
-			m_controls[index]->setOwner(0);
-			m_controls.RemoveAt(index);
-		}
-
-		void ControlCollection::Clear()
-		{
-			m_controls.Clear();
-		}
-
-
-
-
-	}
-}
+#endif

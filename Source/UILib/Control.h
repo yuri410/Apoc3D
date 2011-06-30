@@ -30,9 +30,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/Math.h"
 #include "Math/Point.h"
 #include "Graphics/Renderable.h"
+#include "Collections/FastList.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
@@ -120,8 +122,59 @@ namespace Apoc3D
 
 		};
 
+		class ControlCollection
+		{
+		private:
+			FastList<Control*> m_controls;
+
+			ControlContainer* m_owner;
+
+		public:
+			Control* ActiveControl;
+
+			ControlCollection(ControlContainer* owner)
+				: m_owner(owner)
+			{
+
+			}
+
+			int getCount() const { return m_controls.getCount(); }
+			Control* operator [](int index) const { return m_controls[index]; }
+
+			void Add(Control* ctrl);
+			void Remove(Control* ctrl);
+
+			void RemoveAt(int index);
+			void Clear();
+
+		};
+
+
 		class ControlContainer : public Control
 		{
+		private:
+			ControlCollection m_controls;
+			Menu* m_menu;
+			Point m_menuOffset;
+
+		public:
+
+			int getCount() const { return m_controls.getCount(); }
+			Control* operator [](int index) const { return m_controls[index]; }
+
+			void Add(Control* ctrl);
+			void Remove(Control* ctrl);
+
+			void RemoveAt(int index);
+			void Clear();
+
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+
+
+			virtual void Draw(Sprite* sprite);
+
 
 		};
 	}

@@ -27,6 +27,21 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		Menu::Menu()
+		{
+			m_helper.eventKeyPress().bind(this, Keyboard_OnPress);
+			m_helper.eventKeyRelease().bind(this, Keyboard_OnRelease);
 
+		}
+
+
+		void Menu::CheckSelection()
+		{
+
+		}
+		void Menu::CheckHovering()
+		{
+
+		}
 	}
 }
