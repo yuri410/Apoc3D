@@ -28,8 +28,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IL/ilu.h"
 #include "IL/ilut.h"
 #include "D3DHelper.h"
+#include <GdiPlus.h>
 
 using namespace APBuild;
+using namespace Gdiplus;
+
+static GdiplusStartupInput gdiplusStartupInput;
+static ULONG_PTR           gdiplusToken;
 
 int Initialize()
 {
@@ -45,9 +50,16 @@ int Initialize()
 	iluInit();
 
 	D3DHelper::Initalize();
+
+
+	// Initialize GDI+.
+	GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+
+
 	return 0;
 }
 void Finalize()
 {
+	GdiplusShutdown(gdiplusToken);
 	D3DHelper::Finalize();
 }

@@ -101,6 +101,8 @@ namespace APBuild
 			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
 			Ranges.Add(range);
 		}
+
+		DestFile = sect->getAttribute(L"DestinationFile");
 	}
 
 	void MeshBuildConfig::Parse(const ConfigurationSection* sect)

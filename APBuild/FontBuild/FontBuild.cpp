@@ -35,6 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/Streams.h"
 #include "IOLib/BinaryWriter.h"
 #include "BuildConfig.h"
+#include "CompileLog.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::IO;
@@ -52,20 +53,52 @@ namespace APBuild
 		int Index;
 		int Width;
 		int Height;
-		int64 HashCode;
+		int HashCode;
 		const char* PixelData;
 
 		GlyphBitmap() { }
 		GlyphBitmap(int width, int height, const char* data)
 			: Width(width), Height(height), PixelData(data)
 		{
-			// TODO:compute hash code
+			//int h = width ^ height;
+			//for (int i=0;i<width*height;i++)
+			//{
+			//	h = h << 4;
+			//	h = data[i] ^ h;
+			//}
+			//HashCode = h;
+			int even = 0x15051505;
+			int odd = even;
+			const short* numPtr = reinterpret_cast<const short*>(data);
+			for (int i = width*height; i > 0; i -= 2)
+			{
+				even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
+				if (i < 2)
+				{
+					break;
+				}
+				odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ numPtr[1];
+				numPtr ++;
+			}
+			HashCode = even + odd * 0x5d588b65;
 		}
 
 		friend bool operator ==(const GlyphBitmap& x, const GlyphBitmap& y)
 		{
-			return x.Width == y.Width && x.Height == y.Height && x.HashCode == y.HashCode &&
-				!memcmp(x.PixelData, y.PixelData, x.Width * y.Height);
+			if (x.Width == y.Width && x.Height == y.Height && x.HashCode == y.HashCode)
+			{
+				for (int i=0;i<x.Width*x.Height;i++)
+				{
+					if (x.PixelData[i] != y.PixelData[i])
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+				
+			//	memcmp(x.PixelData, y.PixelData, x.Width * x.Height) == 0;
+			return false;
 		}
 	};
 
@@ -78,7 +111,9 @@ namespace APBuild
 
 		virtual bool Equals(const GlyphBitmap& x, const GlyphBitmap& y) const
 		{
-			return x==y;
+			if (x==y)
+				return true;
+			return false;
 		}
 
 		virtual int64 GetHashCode(const GlyphBitmap& obj) const
@@ -205,27 +240,29 @@ namespace APBuild
 
 
 				g->Flush();
+				
 				delete g;
 				delete brush;
 				delete strFmt;
 
 				Gdiplus::BitmapData bmpData;
 				Gdiplus::Rect lr = Gdiplus::Rect( 0, 0, width, height );
-				bitmap.LockBits(&lr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpData);
+				Gdiplus::Status ret = bitmap.LockBits(&lr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpData);
 
-				const uint* data = reinterpret_cast<const uint*>(bmpData.Scan0);
+				const char* data = reinterpret_cast<const char*>(bmpData.Scan0);
 
 				char* buffer = new char[width*height];
 				int srcofs = 0;
 				int dstofs = 0;
-				for (int i=0;i<height;i++)
+				for (int k=0;k<height;k++)
 				{
-					srcofs += bmpData.Stride;
-					dstofs += width;
 					for (int j=0;j<width;j++)
 					{
-						buffer[dstofs+j] = data[srcofs + j] >> 24;
+						buffer[dstofs+j] = data[srcofs + j*sizeof(uint)] >> 24;
 					}
+
+					srcofs += bmpData.Stride;
+					dstofs += width;
 				}
 
 				GlyphBitmap result;
@@ -290,14 +327,17 @@ namespace APBuild
 			bw->Write((int32)g->Height);
 			bw->Write((int64)baseOfs);
 			baseOfs += g->Width * g->Height;
+			delete[] g->PixelData;
 		}
 
 
 		bw->Close();
 		delete bw;
-		delete fs;
 
 		delete comparer;
 		delete[] passCheck;
+
+		CompileLog::WriteInformation(config.Name, L">");
+
 	}
 }

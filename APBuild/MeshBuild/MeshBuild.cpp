@@ -6,6 +6,7 @@
 #include "AIImporter.h"
 #include "IOLib/Streams.h"
 #include "IOLib/ModelData.h"
+#include "CompileLog.h"
 
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Graphics;
@@ -26,5 +27,8 @@ namespace APBuild
 
 
 		delete data;
+
+		CompileLog::WriteInformation(config.SrcFile, L">");
+
 	}
 }

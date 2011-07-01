@@ -286,7 +286,7 @@ namespace Apoc3D
 			inline S& operator [](const T& key) const
 			{
 				int index = FindEntry(key);
-				if (index>0)
+				if (index>=0)
 				{
 					return m_entries[index].value;
 				}
@@ -296,7 +296,7 @@ namespace Apoc3D
 			bool TryGetValue(const T& key, S& value) const
 			{
 				int index = FindEntry(key);
-				if (index>0)
+				if (index>=0)
 				{
 					value = m_entries[index].value;
 					return true;
