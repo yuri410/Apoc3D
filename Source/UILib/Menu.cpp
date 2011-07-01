@@ -29,8 +29,8 @@ namespace Apoc3D
 	{
 		Menu::Menu()
 		{
-			m_helper.eventKeyPress().bind(this, Keyboard_OnPress);
-			m_helper.eventKeyRelease().bind(this, Keyboard_OnRelease);
+			m_helper.eventKeyPress().bind(this, &Menu::Keyboard_OnPress);
+			m_helper.eventKeyRelease().bind(this, &Menu::Keyboard_OnRelease);
 
 		}
 

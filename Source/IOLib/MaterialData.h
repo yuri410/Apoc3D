@@ -49,8 +49,6 @@ namespace Apoc3D
 			void LoadEffect(BinaryReader* br, int32 index);
 			void SaveEffect(BinaryWriter* bw, int32 index);
 
-			void AddCustomParameter(const MaterialCustomParameter& value);
-
 			/** Load with format version 2. The version used in making ZoneLink 2
 			*/
 			void LoadV2(TaggedDataReader* data);
@@ -95,6 +93,28 @@ namespace Apoc3D
 			/** the specular shininess
 			*/
 			float Power;
+
+			
+			void AddCustomParameter(const MaterialCustomParameter& value);
+
+			void SetDefaults()
+			{
+				DepthTestEnabled = DepthWriteEnabled = true;
+				Cull = CULL_CounterClockwise;
+				IsBlendTransparent = false;
+				BlendFunction = BLFUN_Add;
+				SourceBlend = BLEND_One;
+				DestinationBlend = BLEND_Zero;
+				Priority = 64;
+				PassFlags = 1;
+
+
+				Ambient = Color4(0,0,0,0);
+				Diffuse = Color4(1,1,1,1);
+				Emissive = Color4(0,0,0,0);
+				Specular = Color4(0,0,0,0);
+				Power = 0;
+			}
 
 			//MaterialData(const Material* mtrl);
 			MaterialData(void) { }

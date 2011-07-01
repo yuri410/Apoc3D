@@ -11,7 +11,7 @@ namespace APBuild
 	class MeshBuild
 	{
 	public:
-		void Build(const ConfigurationSection* sect);
+		static void Build(const ConfigurationSection* sect);
 	};
 }
 

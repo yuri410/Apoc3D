@@ -38,6 +38,31 @@ using namespace Apoc3D::Utility;
 
 namespace APBuild
 {
+	Color4 ConvertPropertyColor4(aiMaterialProperty* prop)
+	{
+		Color4 result;
+		assert(prop->mType = aiPTI_Float);
+		if (prop->mDataLength == sizeof(float) * 3)
+		{
+			result.Alpha = 1;
+			result.Red = reinterpret_cast<const float*>(prop->mData)[0];
+			result.Green = reinterpret_cast<const float*>(prop->mData)[1];
+			result.Blue = reinterpret_cast<const float*>(prop->mData)[2];
+		}
+		else
+		{
+			result.Red = reinterpret_cast<const float*>(prop->mData)[0];
+			result.Green = reinterpret_cast<const float*>(prop->mData)[1];
+			result.Blue = reinterpret_cast<const float*>(prop->mData)[2];
+			result.Alpha = reinterpret_cast<const float*>(prop->mData)[3];
+		}
+		return result;
+	}
+	float ConvertPropertyFloat(aiMaterialProperty* prop)
+	{
+		assert(prop->mType = aiPTI_Float);
+		return *reinterpret_cast<const float*>(prop->mData);
+	}
 	ModelData* AIImporter::Import(const MeshBuildConfig& config)
 	{
 		Importer importer;
@@ -62,7 +87,7 @@ namespace APBuild
 				data->Faces.ResizeDiscard(m->mNumFaces);
 				for (uint j=0;j<m->mNumFaces;j++)
 				{
-					aiFace f = m->mFaces[i];
+					aiFace f = m->mFaces[j];
 					assert(f.mNumIndices == 3);
 
 					MeshFace face(f.mIndices[0], f.mIndices[1], f.mIndices[2], m->mMaterialIndex);
@@ -130,6 +155,10 @@ namespace APBuild
 			data->VertexSize = offset;
 			
 			data->VertexData = new char[data->VertexCount * data->VertexSize];
+
+			data->BoundingSphere.Radius = 0;
+			data->BoundingSphere.Center = Vector3Utils::Zero;
+
 			for (uint j=0;j<m->mNumVertices;j++)
 			{
 				int baseOffset = j * data->VertexSize;
@@ -143,6 +172,11 @@ namespace APBuild
 						*(vertexPtr) = m->mVertices[j].x;
 						*(vertexPtr+1) = m->mVertices[j].y;
 						*(vertexPtr+2) = m->mVertices[j].z;
+
+						_V3X(data->BoundingSphere.Center) += m->mVertices[j].x;
+						_V3Y(data->BoundingSphere.Center) += m->mVertices[j].y;
+						_V3Z(data->BoundingSphere.Center) += m->mVertices[j].z;
+
 						break;
 					case VEU_Normal:
 						*(vertexPtr) = m->mNormals[j].x;
@@ -163,11 +197,11 @@ namespace APBuild
 						switch (m->mNumUVComponents[e.getIndex()])
 						{						
 						case 3:
-							*(vertexPtr+2) = m->mTextureCoords[j][e.getIndex()].z;
+							*(vertexPtr+2) = m->mTextureCoords[e.getIndex()][j].z;
 						case 2:
-							*(vertexPtr+1) = m->mTextureCoords[j][e.getIndex()].y;	
+							*(vertexPtr+1) = m->mTextureCoords[e.getIndex()][j].y;	
 						case 1:
-							*(vertexPtr) = m->mTextureCoords[j][e.getIndex()].x;
+							*(vertexPtr) = m->mTextureCoords[e.getIndex()][j].x;
 							break;
 						}
 						break;
@@ -178,6 +212,56 @@ namespace APBuild
 					}
 				}
 			}
+
+			data->BoundingSphere.Center = Vector3Utils::Divide(data->BoundingSphere.Center, static_cast<float>(m->mNumVertices));
+			for (uint j=0;j<m->mNumVertices;j++)
+			{
+				Vector3 pos = Vector3Utils::LDVector(m->mVertices[j].x, m->mVertices[j].y, m->mVertices[j].z);
+				float rr = Vector3Utils::DistanceSquared(data->BoundingSphere.Center, pos);
+				if (rr > data->BoundingSphere.Radius)
+				{
+					data->BoundingSphere.Radius = rr;
+				}
+			}
+			data->BoundingSphere.Radius = sqrtf(data->BoundingSphere.Radius);
+
+			{
+				aiMaterial* amtrl = scene->mMaterials[m->mMaterialIndex];
+				
+				MaterialData mtrl;
+				mtrl.SetDefaults();
+
+				for (uint j=0;j<amtrl->mNumProperties;j++)
+				{
+					aiMaterialProperty* prop = amtrl->mProperties[j];
+					if (std::string(prop->mKey.data) == std::string("$clr.ambient"))
+					{
+						mtrl.Ambient = ConvertPropertyColor4(prop);
+					}
+					else if (std::string(prop->mKey.data) == std::string("$clr.diffuse"))
+					{
+						mtrl.Diffuse = ConvertPropertyColor4(prop);
+					}
+					else if (std::string(prop->mKey.data) == std::string("$clr.specular"))
+					{
+						mtrl.Specular = ConvertPropertyColor4(prop);
+					}
+					else if (std::string(prop->mKey.data) == std::string("$mat.shininess"))
+					{
+						mtrl.Power = ConvertPropertyFloat(prop);
+					}
+					else if (std::string(prop->mKey.data) == std::string("$tex.file"))
+					{
+						String texFile = StringUtils::toWString(prop->mData);
+						StringUtils::Trim(texFile, L" \t\r\n\07");
+						mtrl.TextureName[0] = texFile;
+					}
+				}
+
+
+				data->Materials.Add(mtrl);
+			}
+			//data->Materials.Add();
 
 			//int* blendCountMap = new int[m->mNumVertices];
 			//memset(blendCountMap, 0, sizeof(sizeof(int)*m->mNumVertices));
@@ -206,9 +290,7 @@ namespace APBuild
 			result->Entities.Add(data);
 		}
 		
-		FileOutStream* stream = new FileOutStream(config.DstFile);
-		result->Save(stream);
-		delete stream;
+
 
 		//if (scene->HasAnimations())
 		//{

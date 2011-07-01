@@ -105,6 +105,8 @@ namespace APBuild
 
 	void MeshBuildConfig::Parse(const ConfigurationSection* sect)
 	{
+		SrcFile = sect->getAttribute(L"SourceFile");
+		DstFile = sect->getAttribute(L"DestinationFile");
 
 	}
 	

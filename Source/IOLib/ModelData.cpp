@@ -299,7 +299,7 @@ namespace Apoc3D
 
 			// save vertex data
 			{
-				BinaryWriter* bw = data->AddEntry(TAG_3_VertexDeclTag);
+				BinaryWriter* bw = data->AddEntry(TAG_3_VertexDataTag);
 				bw->Write(VertexData, VertexSize*VertexCount);
 				bw->Close();
 			}

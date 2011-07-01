@@ -47,7 +47,7 @@ int Build(ConfigurationSection* sect)
 	}
 	else if (buildType == L"mesh")
 	{
-
+		MeshBuild::Build(sect);
 	}
 	else if (buildType == L"effect")
 	{
