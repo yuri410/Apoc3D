@@ -45,7 +45,7 @@ namespace Apoc3D
 				EPUSAGE_EmissiveColor,
 				EPUSAGE_SpecularColor,
 				EPUSAGE_Power,
-
+				
 			};
 
 			/* Defines a parameter in an micro effect code.
@@ -67,6 +67,8 @@ namespace Apoc3D
 				EffectParameter() { }
 				EffectParameter(const String& name);
 				~EffectParameter(void);
+
+				static EffectParamUsage ParseParamUsage(const String& val);
 			};
 		};
 	};

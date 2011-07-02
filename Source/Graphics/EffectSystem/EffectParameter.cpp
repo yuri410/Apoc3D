@@ -23,6 +23,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "EffectParameter.h"
 
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -37,6 +41,34 @@ namespace Apoc3D
 
 			EffectParameter::~EffectParameter(void)
 			{
+			}
+
+			EffectParamUsage EffectParameter::ParseParamUsage(const String& val)
+			{
+				String v = val;
+				StringUtils::ToLowerCase(v);
+
+				if (v == L"ambient_color")
+				{
+					return EPUSAGE_AmbientColor;
+				}
+				else if (v == L"diffuse_color")
+				{
+					return EPUSAGE_DiffuseColor;
+				}
+				else if (v == L"emissive_color")
+				{
+					return EPUSAGE_EmissiveColor;
+				}
+				else if (v == L"specular_color")
+				{
+					return EPUSAGE_SpecularColor;
+				}
+				else if (v == L"power_color")
+				{
+					return EPUSAGE_Power;
+				}
+				return EPUSAGE_Unknown;
 			}
 		}
 	}

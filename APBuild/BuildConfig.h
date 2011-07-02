@@ -84,6 +84,7 @@ namespace APBuild
 	struct AFXBuildConfig
 	{
 		String SrcFile;
+		String PListFile;
 		String DestFile;
 		String EntryPoint;
 		String Profile;

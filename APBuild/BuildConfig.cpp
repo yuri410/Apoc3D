@@ -144,6 +144,7 @@ namespace APBuild
 	{
 		SrcFile = sect->getAttribute(L"SourceFile");
 		DestFile = sect->getAttribute(L"DestinationFile");
+		PListFile = sect->getAttribute(L"ParamList");
 		EntryPoint = sect->getAttribute(L"EntryPoint");
 		Profile = sect->getAttribute(L"Profile");
 	}
