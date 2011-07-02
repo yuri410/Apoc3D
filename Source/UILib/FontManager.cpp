@@ -115,21 +115,7 @@ namespace Apoc3D
 							sty += lineHeight;
 							lineHeight = 0;
 						}
-
-						br->getBaseStream()->Seek(glyph.Offset, SEEK_Begin);
-
-						DataRectangle dataRect = m_font->Lock(0, LOCK_Discard, glyph.MappedRect);
-
-						char* buf = new char[glyph.Width * glyph.Height];
-						br->ReadBytes(buf, glyph.Width * glyph.Height);
-
-						
-						for (int j=0;j<dataRect.getHeight();j++)
-						{
-							memcpy((char*)dataRect.getDataPointer()+j*dataRect.getPitch(),
-								buf+j*glyph.Width, glyph.Width);
-						}
-						m_font->Unlock(0);
+						LoadGlyphData(br, glyph);
 					}
 				}
 			}
@@ -143,6 +129,51 @@ namespace Apoc3D
 			delete m_font;
 			delete[] m_glyphList;
 			delete m_resource;
+		}
+
+
+		void Font::LoadGlyphData(BinaryReader* br, Glyph& glyph)
+		{
+			br->getBaseStream()->Seek(glyph.Offset, SEEK_Begin);
+
+			DataRectangle dataRect = m_font->Lock(0, LOCK_Discard, glyph.MappedRect);
+
+			char* buf = new char[glyph.Width * glyph.Height];
+			br->ReadBytes(buf, glyph.Width * glyph.Height);
+
+
+			for (int j=0;j<dataRect.getHeight();j++)
+			{
+				memcpy((char*)dataRect.getDataPointer()+j*dataRect.getPitch(),
+					buf+j*glyph.Width, glyph.Width);
+			}
+			m_font->Unlock(0);
+			delete[] buf;
+		}
+		void Font::EnsureGlyph(Glyph& glyph)
+		{
+			m_activeGlyph.sort();
+			
+			for (list<Glyph*>::iterator iter = m_activeGlyph.begin();iter != m_activeGlyph.end();iter++)
+			{
+				Glyph* g = *m_activeGlyph.begin();
+				if (g->Height >= glyph.Height && g->Width >= glyph.Width)
+				{
+					g->IsMapped = false;
+					m_activeGlyph.erase(iter);
+
+
+					Stream* strm = m_resource->GetReadStream();
+					BinaryReader* br = new BinaryReader(strm);
+
+					LoadGlyphData(br, glyph);
+					br->Close();delete br;
+
+					m_activeGlyph.push_back(&glyph);
+
+					break;
+				}
+			}
 		}
 
 		void Font::DrawString(Sprite* sprite, const String& text, const Point& pt, uint color)
@@ -160,12 +191,12 @@ namespace Apoc3D
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
 					{
-						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
 
 						if (!glyph.IsMapped)
 						{
-
+							EnsureGlyph(glyph);
 						}
 
 						Apoc3D::Math::Rectangle rect;
@@ -173,7 +204,7 @@ namespace Apoc3D
 						rect.Y = y;
 						rect.Width = glyph.Width;
 						rect.Height = glyph.Height;
-
+						glyph.LastTimeUsed = (float)time(0);
 
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
 

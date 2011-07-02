@@ -42,6 +42,7 @@ using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Math;
+using namespace Apoc3D::IO;
 
 namespace Apoc3D
 {
@@ -64,6 +65,13 @@ namespace Apoc3D
 
 				bool IsMapped;
 				Apoc3D::Math::Rectangle MappedRect;
+
+				float LastTimeUsed;
+
+				bool operator <(const Glyph& other)
+				{
+					return LastTimeUsed<other.LastTimeUsed;
+				}
 			};
 			Texture* m_font;
 			int m_height;
@@ -71,6 +79,12 @@ namespace Apoc3D
 
 			FastMap<wchar_t, Character> m_charTable;
 			Glyph* m_glyphList;
+
+			list<Glyph*> m_activeGlyph;
+
+			void LoadGlyphData(BinaryReader* br, Glyph& glyph);
+			void EnsureGlyph(Glyph& glyph);
+
 		public:
 
 			Font(RenderDevice* device, ResourceLocation* fl);
