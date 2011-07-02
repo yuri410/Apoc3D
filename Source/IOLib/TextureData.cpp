@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryWriter.h"
 #include "TaggedData.h"
 #include "Streams.h"
-
+#include "Core/Logging.h"
 #include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
@@ -122,7 +122,10 @@ namespace Apoc3D
 				data->Close();
 				delete data;
 			}
-
+			else
+			{
+				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid texture file. " + rl->getName(), LOGLVL_Error);
+			}
 			br->Close();
 
 			delete br;

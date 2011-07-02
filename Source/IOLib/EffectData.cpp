@@ -1,0 +1,109 @@
+/*
+-----------------------------------------------------------------------------
+This source file is part of Apoc3D Engine
+
+Copyright (c) 2009+ Tao Games
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  if not, write to the Free Software Foundation, 
+Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/gpl.txt.
+
+-----------------------------------------------------------------------------
+*/
+
+#include "EffectData.h"
+#include "IOLib/BinaryReader.h"
+#include "IOLib/Streams.h"
+#include "IOLib/TaggedData.h"
+#include "Vfs/ResourceLocation.h"
+#include "Core/Logging.h"
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
+
+namespace Apoc3D
+{
+	namespace IO
+	{
+		static const int AfxId_V3 = ((byte)'A' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
+
+		static const String TAG_3_ParameterCountTag = L"ParameterCount";
+		static const String TAG_3_ParameterTag = L"Parameter";
+		static const String TAG_3_ShaderCodeTag = L"ShaderCode";
+
+		static const String TAG_3_ShaderCodeLengthTag = L"ShaderCode";
+
+		void EffectData::Load(const ResourceLocation* rl)
+		{
+			BinaryReader* br = new BinaryReader(rl->GetReadStream());
+
+			int id = br->ReadInt32();
+
+			if (id == AfxId_V3)
+			{
+				TaggedDataReader* data = br->ReadTaggedDataBlock();
+
+
+				int count = data->GetDataInt32(TAG_3_ParameterCountTag);
+				Parameters.ResizeDiscard(count);
+
+				for (int i=0;i<count;i++)
+				{
+					String tag = StringUtils::ToString(i);
+
+					tag = TAG_3_ParameterTag + tag;
+
+					BinaryReader* br2 = data->GetData(tag);
+
+					// load parameter
+					String name = br2->ReadString();
+
+					EffectParameter params(name);
+					params.TypicalUsage = static_cast<EffectParamUsage>(br2->ReadUInt32());
+					params.IsCustomUsage = br->ReadBoolean();
+					params.CustomUsage = br->ReadString();
+
+					Parameters.Add(name);
+
+					br2->Close();
+					delete br2;
+				}
+
+				int length = data->GetDataInt32(TAG_3_ShaderCodeLengthTag);
+				ShaderCode = new char[length];
+				BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeTag);
+				br3->ReadBytes(ShaderCode, length);
+				br3->Close();
+				delete br3;
+
+				data->Close();
+				delete data;
+
+			}
+			else
+			{
+				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid model file. " + rl->getName(), LOGLVL_Error);
+			}
+			
+
+			br->Close();
+			delete br;
+		}
+		void EffectData::Save(Stream* strm) const
+		{
+
+		}
+
+	}
+};

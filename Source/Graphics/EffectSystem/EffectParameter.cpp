@@ -29,7 +29,8 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			EffectParameter::EffectParameter(void)
+			EffectParameter::EffectParameter(const String& name)
+				: m_name(name)
 			{
 			}
 

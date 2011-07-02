@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Apoc3DException.h"
 #include "Vfs/ResourceLocation.h"
 #include "Graphics/Animation/AnimationData.h"
-
+#include "Core/Logging.h"
 #include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
@@ -463,6 +463,10 @@ namespace Apoc3D
 
 				data->Close();
 				delete data;
+			}
+			else
+			{
+				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid model file. " + rl->getName(), LOGLVL_Error);
 			}
 
 			br->Close();

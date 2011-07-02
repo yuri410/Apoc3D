@@ -7,7 +7,9 @@
 #include "IOLib/Streams.h"
 #include "IOLib/ModelData.h"
 #include "CompileLog.h"
+#include "Vfs/File.h"
 
+using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Graphics;
 
@@ -17,6 +19,12 @@ namespace APBuild
 	{
 		MeshBuildConfig config;
 		config.Parse(sect);
+		
+		if (!File::FileExists(config.SrcFile))
+		{
+			CompileLog::WriteError(config.SrcFile, L"Can not file input file.");
+			return;
+		}
 
 		AIImporter importer;
 		ModelData* data = importer.Import(config);

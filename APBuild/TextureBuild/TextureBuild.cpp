@@ -447,6 +447,12 @@ namespace APBuild
 		TextureBuildConfig config;
 		config.Parse(sect);
 
+		if (!File::FileExists(config.SourceFile))
+		{
+			CompileLog::WriteError(config.SourceFile, L"Can not file input file.");
+			return;
+		}
+
 		if (!File::FileExists(config.DestinationFile) || 
 			File::GetFileModifiyTime(config.SourceFile) >= File::GetFileModifiyTime(config.DestinationFile))
 		{

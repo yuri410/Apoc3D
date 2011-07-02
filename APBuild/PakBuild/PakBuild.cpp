@@ -27,6 +27,9 @@ namespace APBuild
 {
 	void PakBuild::Build(const ConfigurationSection* sect)
 	{
+		PakBuildConfig config;
+		config.Parse(sect);
+
 
 	}
 }

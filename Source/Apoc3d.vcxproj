@@ -142,6 +142,7 @@
     <ClInclude Include="Input\Mouse.h" />
     <ClInclude Include="IOLib\BinaryReader.h" />
     <ClInclude Include="IOLib\BinaryWriter.h" />
+    <ClInclude Include="IOLib\EffectData.h" />
     <ClInclude Include="IOLib\IOUtils.h" />
     <ClInclude Include="IOLib\MaterialData.h" />
     <ClInclude Include="IOLib\ModelData.h" />

@@ -21,56 +21,38 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EFFECTPARAMETERS_H
-#define EFFECTPARAMETERS_H
+
+#ifndef EFFECTDATA_H
+#define EFFECTDATA_H
+
 
 #include "Common.h"
+#include "Collections/FastList.h"
+#include "Graphics/EffectSystem/EffectParameter.h"
+
+using namespace Apoc3D::Graphics::EffectSystem;
+using namespace Apoc3D::Collections;
+using namespace Apoc3D::VFS;
+using namespace Apoc3D::IO;
 
 namespace Apoc3D
 {
-	namespace Graphics
+	namespace IO
 	{
-		namespace EffectSystem
+		class APAPI EffectData
 		{
-			/** Defines typical usage of a effect parameters.
-				When the engine auto bind a parameter, it checks the parameter's usage.
-				This enum is used to fast check common usages.
-				Custom usage is also accepted by micro effect code.
-			*/
-			enum EffectParamUsage
-			{
-				EPUSAGE_Unknown,
-				EPUSAGE_AmbientColor,
-				EPUSAGE_DiffuseColor,
-				EPUSAGE_EmissiveColor,
-				EPUSAGE_SpecularColor,
-				EPUSAGE_Power,
+		public:
+			char* ShaderCode;
 
-			};
+			FastList<EffectParameter> Parameters;
 
-			/* Defines a parameter in an micro effect code.
-   
-			   This also contains effect param mapping info.
-			*/
-			class APAPI EffectParameter
-			{
-			private:
-				String m_name;
+			EffectData() { }
+			~EffectData() { delete[] ShaderCode; }
 
-			public:
-				const String& getName() const { return m_name; }
+			void Load(const ResourceLocation* rl);
+			void Save(Stream* strm) const;
+		}
+	}
+}
 
-				EffectParamUsage TypicalUsage;
-				String CustomUsage;
-				bool IsCustomUsage;
-
-				
-
-
-				EffectParameter(const String& name);
-				~EffectParameter(void);
-			};
-		};
-	};
-};
 #endif

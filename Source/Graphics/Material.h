@@ -131,6 +131,7 @@ namespace Apoc3D
 			uint64 getPassFlags() const { return m_passFlags; }
 			void setPassFlags(uint64 val) { m_passFlags = val; }
 
+
 			void Load(const MaterialData& data);
 			void Save(MaterialData& data);
 

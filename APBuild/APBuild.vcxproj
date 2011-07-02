@@ -87,6 +87,7 @@
     <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="CompileLog.h" />
     <ClInclude Include="D3DHelper.h" />
+    <ClInclude Include="EffectCompiler\AFXBuild.h" />
     <ClInclude Include="FontBuild\FontBuild.h" />
     <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="MeshBuild\FbxBaker.h" />
@@ -100,6 +101,7 @@
     <ClInclude Include="TextureBuild\TextureBuild.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="EffectCompiler\AFXBuild.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="BuildConfig.cpp" />
     <ClCompile Include="CompileLog.cpp" />

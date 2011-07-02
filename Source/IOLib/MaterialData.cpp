@@ -233,7 +233,7 @@ namespace Apoc3D
 			for (uint32 i=0;i<cmpCount;i++)
 			{
 				String tag = StringUtils::ToString(i);
-				tag = tag + TAG_3_CustomParam;
+				tag = TAG_3_CustomParam + tag;
 
 				BinaryReader* br = data->GetData(tag);
 
@@ -366,20 +366,23 @@ namespace Apoc3D
 			data->AddEntry(TAG_3_CustomParamCount, static_cast<uint32>(CustomParametrs.size()));
 			int32 index = 0;
 			for (CustomParamTable::iterator iter = CustomParametrs.begin(); iter != CustomParametrs.end(); iter++)
-			{
-				String tag = StringUtils::ToString(index++);
-				tag = tag + TAG_3_CustomParam;
-
-				BinaryWriter* bw = data->AddEntry(tag);
-
+			{				
 				const MaterialCustomParameter& mcp = iter->second;
 
-				bw->Write(static_cast<uint32>(mcp.Type));
-				bw->Write(reinterpret_cast<const char*>(mcp.Value), sizeof(mcp.Value));
-				bw->Write(mcp.Usage);
+				if (!mcp.IsReference())
+				{
+					String tag = StringUtils::ToString(index++);
+					tag = TAG_3_CustomParam + tag;// tag + TAG_3_CustomParam;
 
-				bw->Close();
-				delete bw;
+					BinaryWriter* bw = data->AddEntry(tag);
+
+					bw->Write(static_cast<uint32>(mcp.Type));
+					bw->Write(reinterpret_cast<const char*>(mcp.Value), sizeof(mcp.Value));
+					bw->Write(mcp.Usage);
+
+					bw->Close();
+					delete bw;
+				}
 			}
 
 			// save textures
@@ -448,7 +451,7 @@ namespace Apoc3D
 			data->AddEntry(TAG_3_DepthWriteEnabled, DepthWriteEnabled);
 
 
-			// load material basic color
+			// save material basic color
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_MaterialColorTag);
 

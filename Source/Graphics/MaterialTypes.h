@@ -42,11 +42,13 @@ namespace Apoc3D
 			MTRLPT_Vector4 = 2,
 			MTRLPT_Boolean = 3,
 			MTRLPT_Integer = 4,
-			MTRLPT_Texture = 5
+			MTRLPT_Ref_Vector2 = 5,
+			MTRLPT_Ref_Vector3 = 6,
+			MTRLPT_Ref_Vector4 = 7,
+			MTRLPT_Ref_Texture = 8,
 		};
 
 		/** Defines custom material parameters. 
-			The value can be 16 bytes maximum.
 		*/
 		struct MaterialCustomParameter
 		{
@@ -55,9 +57,16 @@ namespace Apoc3D
 			MaterialCustomParameterType Type;
 			byte Value[16];
 
+			void* RefValue;
+
 			/** The usage of this parameter. Effect check this for auto binding effect parameters.
 			*/
 			String Usage;
+
+			bool IsReference() const 
+			{
+				return Type == MTRLPT_Ref_Texture || Type == MTRLPT_Ref_Vector2 || Type == MTRLPT_Ref_Vector3 || Type == MTRLPT_Ref_Vector4;
+			}
 
 			MaterialCustomParameter() { }
 			MaterialCustomParameter(bool value, const String usage = L"")
@@ -65,6 +74,8 @@ namespace Apoc3D
 			{
 				*reinterpret_cast<bool*>(Value) = value;
 			}
+
+
 		};
 		typedef unordered_map<String, MaterialCustomParameter> CustomParamTable;
 	}

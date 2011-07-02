@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/BinaryReader.h"
 #include "IOLib/BinaryWriter.h"
 #include "IOLib/TaggedData.h"
+#include "Core/Logging.h"
 
 #include "VFS/ResourceLocation.h"
 
@@ -512,6 +513,10 @@ namespace Apoc3D
 
 					data->Close();
 					delete data;
+				}
+				else
+				{
+					LogManager::getSingleton().Write(LOG_Graphics, L"Invalid animation file." + rl->getName(), LOGLVL_Error);
 				}
 
 				br->Close();
