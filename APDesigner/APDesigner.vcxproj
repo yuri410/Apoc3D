@@ -86,12 +86,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APDCommon.h" />
+    <ClInclude Include="CommonDialog\ChooseColor.h" />
+    <ClInclude Include="CommonDialog\DialogCommon.h" />
+    <ClInclude Include="CommonDialog\FileDialog.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CommonDialog\ChooseColor.cpp" />
+    <ClCompile Include="CommonDialog\FileDialog.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="stdafx.cpp">
