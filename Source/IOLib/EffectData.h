@@ -43,6 +43,7 @@ namespace Apoc3D
 		{
 		public:
 			char* ShaderCode;
+			int ShaderCodeLength;
 
 			FastList<EffectParameter> Parameters;
 
@@ -51,7 +52,7 @@ namespace Apoc3D
 
 			void Load(const ResourceLocation* rl);
 			void Save(Stream* strm) const;
-		}
+		};
 	}
 }
 

@@ -24,6 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "EffectData.h"
 #include "IOLib/BinaryReader.h"
+#include "IOLib/BinaryWriter.h"
 #include "IOLib/Streams.h"
 #include "IOLib/TaggedData.h"
 #include "Vfs/ResourceLocation.h"
@@ -102,7 +103,48 @@ namespace Apoc3D
 		}
 		void EffectData::Save(Stream* strm) const
 		{
+			BinaryWriter* bw = new BinaryWriter(strm);
+			bw->Write(AfxId_V3);
 
+			{
+				TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
+
+				data->AddEntry(TAG_3_ParameterCountTag, Parameters.getCount());
+
+
+				for (int i=0;i<Parameters.getCount();i++)
+				{
+					String tag = StringUtils::ToString(i);
+
+					tag = TAG_3_ParameterTag + tag;
+
+					BinaryWriter* bw2 = data->AddEntry(tag);
+
+					bw2->Write(Parameters[i].getName());
+					bw2->Write(static_cast<uint>(Parameters[i].TypicalUsage));
+					bw2->Write(Parameters[i].IsCustomUsage);
+					bw2->Write(Parameters[i].CustomUsage);
+
+
+					bw2->Close();
+					delete bw2;
+				}
+
+				data->AddEntry(TAG_3_ShaderCodeLengthTag, ShaderCodeLength);
+
+				BinaryWriter* bw3 = data->AddEntry(TAG_3_ShaderCodeTag);
+				bw->Write(ShaderCode, ShaderCodeLength);
+				bw3->Close();
+				delete bw3;
+
+
+
+				bw->Write(data);
+				delete data;
+			}
+
+			bw->Close();
+			delete bw;
 		}
 
 	}

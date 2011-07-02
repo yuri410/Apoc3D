@@ -30,7 +30,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Streams.h"
 #include "Core/Logging.h"
 #include "Utility/StringUtils.h"
+#include "Vfs/ResourceLocation.h"
 
+using namespace Apoc3D::Core;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
