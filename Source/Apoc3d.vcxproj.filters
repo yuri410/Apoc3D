@@ -752,6 +752,9 @@
     <ClCompile Include="UILib\KeyboardHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IOLib\EffectData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">

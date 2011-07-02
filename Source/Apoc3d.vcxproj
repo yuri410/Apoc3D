@@ -280,6 +280,7 @@
     <ClCompile Include="Input\Mouse.cpp" />
     <ClCompile Include="IOLib\BinaryReader.cpp" />
     <ClCompile Include="IOLib\BinaryWriter.cpp" />
+    <ClCompile Include="IOLib\EffectData.cpp" />
     <ClCompile Include="IOLib\IOUtils.cpp" />
     <ClCompile Include="IOLib\MaterialData.cpp" />
     <ClCompile Include="IOLib\ModelData.cpp" />

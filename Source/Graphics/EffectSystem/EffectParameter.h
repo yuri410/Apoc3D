@@ -55,18 +55,16 @@ namespace Apoc3D
 			class APAPI EffectParameter
 			{
 			private:
-				String m_name;
-
+				
 			public:
-				const String& getName() const { return m_name; }
-
+				String Name;
 				EffectParamUsage TypicalUsage;
 				String CustomUsage;
 				bool IsCustomUsage;
 
 				
 
-
+				EffectParameter() { }
 				EffectParameter(const String& name);
 				~EffectParameter(void);
 			};

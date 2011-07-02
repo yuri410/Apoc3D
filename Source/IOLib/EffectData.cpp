@@ -120,7 +120,7 @@ namespace Apoc3D
 
 					BinaryWriter* bw2 = data->AddEntry(tag);
 
-					bw2->Write(Parameters[i].getName());
+					bw2->Write(Parameters[i].Name);
 					bw2->Write(static_cast<uint>(Parameters[i].TypicalUsage));
 					bw2->Write(Parameters[i].IsCustomUsage);
 					bw2->Write(Parameters[i].CustomUsage);
