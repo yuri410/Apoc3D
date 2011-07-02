@@ -35,6 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Collections/FastMap.h"
+#include "Math/Rectangle.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Graphics;
@@ -60,14 +61,19 @@ namespace Apoc3D
 				int Width;
 				int Height;
 				int64 Offset;
+
+				bool IsMapped;
+				Apoc3D::Math::Rectangle MappedRect;
 			};
 			Texture* m_font;
 			int m_height;
+			ResourceLocation* m_resource;
 
 			FastMap<wchar_t, Character> m_charTable;
+			Glyph* m_glyphList;
 		public:
 
-			Font(RenderDevice* device, const ResourceLocation* fl);
+			Font(RenderDevice* device, ResourceLocation* fl);
 			~Font();
 			void DrawString(Sprite* sprite, const String& text, int x, int y, uint color);
 			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color);

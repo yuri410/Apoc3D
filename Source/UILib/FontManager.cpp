@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "Graphics/RenderSystem/Texture.h"
+#include "Graphics/RenderSystem/Sprite.h"
 #include "Vfs/ResourceLocation.h"
 #include "IOLib/BinaryReader.h"
 #include "IOLib/Streams.h"
@@ -39,8 +40,8 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		Font::Font(RenderDevice* device, const ResourceLocation* fl)
-			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default)
+		Font::Font(RenderDevice* device, ResourceLocation* fl)
+			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(fl)
 		{
 			ObjectFactory* fac = device->getObjectFactory();
 			m_font = fac->CreateTexture(FontManager::TextureSize, FontManager::TextureSize, 1, TU_DynamicWriteOnly, FMT_Alpha8);
@@ -50,28 +51,174 @@ namespace Apoc3D
 
 			int charCount = br->ReadInt32();
 			
+			for (int i=0;i<charCount;i++)
+			{
+				Character ch;
+				ch._Character = static_cast<wchar_t>( br->ReadInt16());
+				ch.GlyphIndex = br->ReadInt32();
+				m_charTable.Add(ch._Character, ch);
+			}
 
+			int maxHeight = 1;
+			int maxWidth = 1;
+
+			int glyphCount = br->ReadInt32();
+			m_glyphList = new Glyph[glyphCount];
+			for (int i=0;i<glyphCount;i++)
+			{
+				Glyph glyph;
+				glyph.Index = br->ReadInt32();
+				glyph.Width = br->ReadInt32();
+				glyph.Height = br->ReadInt32();
+				glyph.Offset = br->ReadInt64();
+				glyph.IsMapped = false;
+
+				m_glyphList[glyph.Index] = glyph;
+
+				if (glyph.Width > maxWidth)
+				{
+					maxWidth = glyph.Width;
+				}
+				if (glyph.Height > maxHeight)
+				{
+					maxHeight = glyph.Height;
+				}
+			}
+			m_height = maxHeight;
+
+			// if the texture can hold all glyphs, just load them all at once
+			{
+				int holdableCount = (FontManager::TextureSize / maxHeight) *  (FontManager::TextureSize/maxWidth);
+
+				int stx = 0;
+				int sty = 0;
+				int lineHeight = 0;
+
+				if (holdableCount>=glyphCount)
+				{
+					for (int i=0;i<glyphCount;i++)
+					{
+						Glyph& glyph = m_glyphList[i];
+						
+						glyph.IsMapped = true;
+						glyph.MappedRect = Apoc3D::Math::Rectangle(stx, sty, glyph.Width, glyph.Height);
+
+						stx += glyph.Width;
+						if (lineHeight<glyph.Height)
+						{
+							lineHeight = glyph.Height;
+						}
+
+						if (stx>FontManager::TextureSize)
+						{
+							stx = 0;
+							sty += lineHeight;
+							lineHeight = 0;
+						}
+
+						br->getBaseStream()->Seek(glyph.Offset, SEEK_Begin);
+
+						DataRectangle dataRect = m_font->Lock(0, LOCK_Discard, glyph.MappedRect);
+
+						char* buf = new char[glyph.Width * glyph.Height];
+						br->ReadBytes(buf, glyph.Width * glyph.Height);
+
+						
+						for (int j=0;j<dataRect.getHeight();j++)
+						{
+							memcpy((char*)dataRect.getDataPointer()+j*dataRect.getPitch(),
+								buf+j*glyph.Width, glyph.Width);
+						}
+						m_font->Unlock(0);
+					}
+				}
+			}
+			
 
 			br->Close();
 			delete br;
-			delete strm;
 		}
 		Font::~Font()
 		{
 			delete m_font;
+			delete[] m_glyphList;
+			delete m_resource;
 		}
 
 		void Font::DrawString(Sprite* sprite, const String& text, const Point& pt, uint color)
 		{
-
+			DrawString(sprite, text, pt.X, pt.Y, color);
 		}
 		void Font::DrawString(Sprite* sprite, const String& text, int x, int y, uint color)
 		{
+			int std = x;
+			for (size_t i = 0; i < text.length(); i++)
+			{
+				wchar_t ch = text[i];
+				if (ch != '\n')
+				{
+					Character chdef;
+					if (m_charTable.TryGetValue(ch, chdef))
+					{
+						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
+
+						if (!glyph.IsMapped)
+						{
+
+						}
+
+						Apoc3D::Math::Rectangle rect;
+						rect.X = x;
+						rect.Y = y;
+						rect.Width = glyph.Width;
+						rect.Height = glyph.Height;
+
+
+						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
+
+						x += glyph.Width - 1;
+					}
+					
+				}
+				else
+				{
+					x = std;
+					y += m_height;
+				}
+			}
 		}
 		Point Font::MeasureString(const String& text)
 		{
-			return Point();
+			Point result = Point(0, m_height);
+
+			int x = 0, y = m_height;
+			for (size_t i = 0; i < text.length(); i++)
+			{
+				wchar_t ch = text[i];
+				if (ch != '\n')
+				{
+					Character chdef;
+					if (m_charTable.TryGetValue(ch, chdef))
+					{
+						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+
+						x += glyph.Width;
+					}
+				}
+				else
+				{
+					x = 0;
+					y += m_height;
+				}
+
+				if (result.X < x)
+					result.X = x;
+				if (result.Y < y)
+					result.Y = y;
+			}
+
+			return result;
 		}
 
 		int FontManager::TextureSize = 512;

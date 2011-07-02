@@ -138,7 +138,7 @@ namespace APBuild
 		return reinterpret_cast<const char&>(b);
 	}
 
-	char* CompressData(const char* src, int width, int height)
+	char* CompressData(const char* src, int width, int height, int& compLength)
 	{
 		assert(width);
 		assert(height);
@@ -155,7 +155,7 @@ namespace APBuild
 			int startPos = 0;
 			
 
-			for (int j=1;j<width;j++)
+			for (int j=0;j<width;j++)
 			{
 				char cc = ConvertByte(src[i*width + j]);
 				if (curByte == cc && counter < 0xfe)
@@ -187,8 +187,22 @@ namespace APBuild
 					}
 				}
 			}
+			if (counter > 3)
+			{
+				static const byte maxb = 0xff;
+				data.push_back(reinterpret_cast<const char&>(maxb));
+				data.push_back(reinterpret_cast<const char&>(counter));
+				data.push_back(curByte);
+			}
+			else
+			{
+				for (int k=startPos;k<width;k++)
+				{
+					data.push_back(ConvertByte(src[i*width + k]));
+				}
+			}
 		}
-
+		compLength = static_cast<int>(data.size());
 		char* result = new char[data.size()];
 		for (size_t i=0;i<data.size();i++)
 			result[i] = data[i];
@@ -299,6 +313,7 @@ namespace APBuild
 			bw->Write(charMap[i].GlyphIndex);
 		}
 
+		bw->Write(glyphHashTable.getCount());
 		int64 glyRecPos = fs->getPosition();
 		for (int i=0;i<glyphHashTable.getCount();i++)
 		{
@@ -313,7 +328,10 @@ namespace APBuild
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 
+			//int compLength;
+			//char* compressed = CompressData(g->PixelData, g->Width, g->Height, compLength);
 			bw->Write(g->PixelData, g->Width * g->Height);
+			//delete[] compressed;
 		}
 
 		fs->Seek(glyRecPos, SEEK_Begin);
