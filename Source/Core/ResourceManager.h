@@ -54,7 +54,8 @@ namespace Apoc3D
 
 		protected:
 		public:
-			
+			bool usesAsync() const { return !!m_asyncProc; }
+
 			/** Notifies the resource manager a new resource is created, and should be managed.
 			*/
 			void NotifyNewResource(Resource* res);

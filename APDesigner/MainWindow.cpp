@@ -30,7 +30,7 @@ namespace APDesigner
 	}
 	void MainWindow::Finalize()
 	{
-
+		
 	}
 
 	void MainWindow::Load()
@@ -47,7 +47,6 @@ namespace APDesigner
 	}
 	void MainWindow::Draw(const GameTime* const time)
 	{
-
 		m_device->Clear(CLEAR_Target, 0, 1, 0);
 	}
 
