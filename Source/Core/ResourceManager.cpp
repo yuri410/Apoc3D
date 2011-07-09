@@ -105,6 +105,11 @@ namespace Apoc3D
 
 				res->eventLoaded().bind(this, &ResourceManager::Resource_Loaded);
 				res->eventUnloaded().bind(this, &ResourceManager::Resource_Unloaded);
+
+				if (!usesAsync())
+				{
+					res->Load();
+				}
 			}
 		}
 		void ResourceManager::NotifyReleaseResource(Resource* res)
@@ -112,6 +117,11 @@ namespace Apoc3D
 			//assert(!res->isManaged());
 			if (!m_isShutDown)
 			{
+				if (!usesAsync())
+				{
+					res->Unload();
+				}
+
 				m_hashTable.erase(res->getHashString());
 
 				if (m_generationTable)
