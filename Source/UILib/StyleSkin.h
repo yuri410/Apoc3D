@@ -35,7 +35,7 @@ namespace Apoc3D
 		public:
 			// create default skin
 			StyleSkin(RenderDevice* device);
-
+			~StyleSkin();
 		};
 	}
 }

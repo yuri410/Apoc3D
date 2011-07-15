@@ -1,11 +1,15 @@
 #include "StyleSkin.h"
 #include "Graphics/RenderSystem/Texture.h"
-
+#include "Graphics/RenderSystem/ObjectFactory.h"
+#include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/TextureManager.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/FileLocateRule.h"
+#include "Math/ColorValue.h"
 
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Math;
+using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
 
 namespace Apoc3D
@@ -33,8 +37,17 @@ namespace Apoc3D
 			BtnRowSeparator = Apoc3D::Math::Rectangle(0,0,2,ButtonTexture->getHeight());
 
 
+			WhitePixelTexture = device->getObjectFactory()->CreateTexture(1,1,1, TU_StaticWriteOnly, FMT_A8R8G8B8);
 
+			DataRectangle rect = WhitePixelTexture->Lock(0, LOCK_Discard);
+			*(uint*)rect.getDataPointer() = PACK_COLOR(0xff,0xff,0xff,0xff);
+			WhitePixelTexture->Unlock(0);
+		}
 
+		StyleSkin::~StyleSkin()
+		{
+			delete ButtonTexture;
+			delete WhitePixelTexture;
 		}
 	}
 }
