@@ -42,6 +42,7 @@ namespace Apoc3D
 		{
 		public:
 			static int64 CacheSize;
+			static bool UseCache;
 		private:
 			
 		public:

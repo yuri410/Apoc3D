@@ -49,8 +49,8 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
                      int       nCmdShow)
 {
 	
-	//wchar_t workingDir[260];
-	//DWORD len = GetCurrentDirectory(260, workingDir);
+	wchar_t workingDir[260];
+	DWORD len = GetCurrentDirectory(260, workingDir);
 
 
 	Plugin* input = new Apoc3D::Input::Win32::WinInputPlugin();
@@ -60,7 +60,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	//escon.PluginDyList.Add(L"Apoc3D.D3D9RenderSystem");
 	escon.PluginList.Add(input);
 	escon.PluginList.Add(d3d);
-	//escon.WorkingDirectories.Add(workingDir);
+	escon.WorkingDirectories.Add(workingDir);
 	escon.TextureCacheSize = 512 * 1048576;
 	escon.ModelCacheSize = 192 * 1048576;
 	

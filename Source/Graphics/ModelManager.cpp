@@ -39,9 +39,10 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		int64 ModelManager::CacheSize = 100 * 1048576;
+		bool ModelManager::UseCache = true;
 
 		ModelManager::ModelManager(void)
-			: ResourceManager(CacheSize)
+			: ResourceManager(CacheSize, UseCache)
 		{
 			LogManager::getSingleton().Write(LOG_System, 
 				L"Model manager initialized with a cache size " + StringUtils::ToString(CacheSize), 

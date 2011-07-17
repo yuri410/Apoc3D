@@ -6,12 +6,15 @@
 #include "Graphics/RenderSystem/RenderWindowHandler.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::UI;
 
 namespace APDesigner
 {
 	class MainWindow : public RenderWindowHandler
 	{
 	private:
+		StyleSkin* m_UIskin;
+
 		RenderWindow* m_window;
 		RenderDevice* m_device;
 

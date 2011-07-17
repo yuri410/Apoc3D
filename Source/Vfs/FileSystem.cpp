@@ -241,7 +241,7 @@ namespace Apoc3D
 					{
 						String arcPath = checkPt.GetArchivePath(j);
 
-						try
+						//try
 						{
 //#if !XBOX
 							vector<String> locs = PathUtils::Split(filePath);
@@ -346,7 +346,7 @@ namespace Apoc3D
 								}
 							}
 						}
-						catch (Apoc3DException e)
+						//catch (Apoc3DException e)
 						{
 							//EngineConsole.Instance.Write("文件格式不对", ConsoleMessageType.Warning);
 						}

@@ -7,6 +7,7 @@
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
@@ -34,7 +35,7 @@ namespace Apoc3D
 
 		public:
 			// create default skin
-			StyleSkin(RenderDevice* device);
+			StyleSkin(RenderDevice* device, const FileLocateRule& rule);
 			~StyleSkin();
 		};
 	}

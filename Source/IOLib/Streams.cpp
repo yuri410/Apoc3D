@@ -31,7 +31,7 @@ namespace Apoc3D
 	{
 		FileStream::FileStream(const String& filename)
 		{
-			m_in = new ifstream(filename.c_str(), ios::in);
+			m_in = new ifstream(filename.c_str(), ios::in | ios::binary);
 
 			uint64 oldPos = m_in->tellg();
 			m_in->seekg(0, ios::end);

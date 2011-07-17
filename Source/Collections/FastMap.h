@@ -113,9 +113,10 @@ namespace Apoc3D
 					numArray[i] = -1;
 				}
 				Entry* destinationArray = new Entry[prime];
-				memcpy(destinationArray, m_entries, m_count * sizeof(Entry));
+				//memcpy(destinationArray, m_entries, m_count * sizeof(Entry));
 				for (int j = 0; j < m_count; j++)
 				{
+					destinationArray[j] = m_entries[j];
 					int index = destinationArray[j].hashCode % prime;
 					destinationArray[j].next = numArray[index];
 					numArray[index] = j;

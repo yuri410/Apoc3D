@@ -51,6 +51,9 @@ namespace Apoc3D
 			
 			ArchiveFactory* FindArchiveFactory(const String& ext)
 			{
+				if (m_factories.empty())
+					return 0;
+
 				PackFactoryTable::const_iterator iter = m_factories.find(ext);
 
 				if (iter != m_factories.end())

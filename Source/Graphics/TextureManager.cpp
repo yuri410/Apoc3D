@@ -39,6 +39,7 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		int64 TextureManager::CacheSize = 200 * 1048576;
+		bool TextureManager::UseCache = true;
 
 		void TextureManager::SetRedirectLocation(FileLocation* fl)
 		{
@@ -50,7 +51,7 @@ namespace Apoc3D
 		}
 
 		TextureManager::TextureManager()
-			: ResourceManager(CacheSize), m_redirectLocation(0)
+			: ResourceManager(CacheSize, UseCache), m_redirectLocation(0)
 		{
 			LogManager::getSingleton().Write(LOG_System, 
 				L"Model manager initialized with a cache size " + StringUtils::ToString(CacheSize), 

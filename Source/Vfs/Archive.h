@@ -54,7 +54,11 @@ namespace Apoc3D
 		class APAPI Archive : public File
 		{
 		protected:
-			Archive(const String& file, int64 size, bool isInArchive);
+			Archive(const String& file, int64 size, bool isInArchive)
+				: File(file, size, isInArchive)
+			{
+
+			}
 		public:
 			virtual int getFileCount() const = 0;
 			virtual Stream* GetEntryStream(const String& file) = 0;
@@ -91,7 +95,7 @@ namespace Apoc3D
 			Archive* CreateInstance(const String& file);
 			Archive* CreateInstance(FileLocation* fl) { return new PakArchive(fl); }
 
-			String getExtension() const { return L".pak"; }
+			String getExtension() const { return L"pak"; }
 		};
 
 	}

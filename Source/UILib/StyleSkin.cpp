@@ -16,9 +16,9 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		StyleSkin::StyleSkin(RenderDevice* device)
+		StyleSkin::StyleSkin(RenderDevice* device, const FileLocateRule& rule)
 		{
-			FileLocation* fl = FileSystem::getSingleton().TryLocate(L"classicUI\ctl_btn_default.tex", FileLocateRule::Default);
+			FileLocation* fl = FileSystem::getSingleton().TryLocate(L"ctl_btn_default.tex", rule);
 			ButtonTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
 			
 			
