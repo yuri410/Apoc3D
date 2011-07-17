@@ -33,6 +33,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/FileLocateRule.h"
 #include "Config/ConfigurationManager.h"
 #include "Graphics/RenderSystem/GraphicsAPI.h"
+#include "Graphics/TextureManager.h"
 #include "Input/InputAPI.h"
 #include "Core/PluginManager.h"
 #include "Core/Logging.h"
@@ -87,6 +88,13 @@ namespace Apoc3D
 		{
 			PluginManager::getSingleton().LoadPlugins();
 		}
+
+		if (mconf)
+		{
+			TextureManager::CacheSize = mconf->TextureCacheSize;
+		}
+		
+		TextureManager::Initialize();
 	}
 	void Engine::Shutdown()
 	{

@@ -62,12 +62,12 @@ namespace Apoc3D
 				m_generationTable->ShutDown();
 		}
 
-		ResourceManager::ResourceManager(int64 cacheSize, bool useAsync)
-			: m_totalCacheSize(cacheSize), m_curUsedCache(0)
+		ResourceManager::ResourceManager(const String& name, int64 cacheSize, bool useAsync)
+			: m_name(name), m_totalCacheSize(cacheSize), m_curUsedCache(0)
 		{
 			if (useAsync)
 			{
-				m_asyncProc = new AsyncProcessor(L"");
+				m_asyncProc = new AsyncProcessor(m_name + L" Async ResourceLoader");
 				m_generationTable = new GenerationTable(this);
 			}
 			else

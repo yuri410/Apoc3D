@@ -25,14 +25,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define THREAD_H
 
 #include "Common.h"
-
+#include "tthread/tinythread.h"
 
 namespace Apoc3D
 {
 	namespace Platform
 	{
 		void ApocSleep(uint32 ms);
-
+		void SetThreadName(tthread::thread& th, const String& name);
 	}
 }
 

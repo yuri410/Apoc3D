@@ -25,11 +25,27 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 #include <Windows.h>
+
+const DWORD MS_VC_EXCEPTION=0x406D1388;
+
+#pragma pack(push,8)
+typedef struct tagTHREADNAME_INFO
+{
+	DWORD dwType; // Must be 0x1000.
+	LPCSTR szName; // Pointer to name (in user addr space).
+	DWORD dwThreadID; // Thread ID (-1=caller thread).
+	DWORD dwFlags; // Reserved for future use, must be zero.
+} THREADNAME_INFO;
+#pragma pack(pop)
+
 #elif APOC3D_PLATFORM == APOC3D_PLATFORM_MAC
 #include <Carbon/Carbon.h>
 #else
 #include <pthread.h>
 #endif
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -65,6 +81,25 @@ namespace Apoc3D
 			pthread_mutex_lock(&fakeMutex);
 			rt = pthread_cond_timedwait(&fakeCond, &fakeMutex, &timeToWait);
 			pthread_mutex_unlock(&fakeMutex);
+#endif
+		}
+
+		void SetThreadName( tthread::thread& th, const String& name)
+		{
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+			THREADNAME_INFO info;
+			info.dwType = 0x1000;
+			info.szName = StringUtils::toString(name).c_str();
+			info.dwThreadID = GetThreadId( th.native_handle());
+			info.dwFlags = 0;
+
+			__try
+			{
+				RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), (ULONG_PTR*)&info );
+			}
+			__except(EXCEPTION_EXECUTE_HANDLER)
+			{
+			}
 #endif
 		}
 	}

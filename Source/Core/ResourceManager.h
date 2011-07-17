@@ -49,6 +49,8 @@ namespace Apoc3D
 
 			bool m_isShutDown;
 
+			String m_name;
+
 			void Resource_Loaded(Resource* res);
 			void Resource_Unloaded(Resource* res);
 
@@ -71,7 +73,7 @@ namespace Apoc3D
 			int64 getUsedCacheSize() const { return m_curUsedCache; }
 			
 
-			ResourceManager(int64 cacheSize, bool useAsync = true);
+			ResourceManager(const String& name, int64 cacheSize, bool useAsync = true);
 			~ResourceManager();
 
 			void Shutdown();

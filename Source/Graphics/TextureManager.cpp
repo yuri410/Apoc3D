@@ -51,7 +51,7 @@ namespace Apoc3D
 		}
 
 		TextureManager::TextureManager()
-			: ResourceManager(CacheSize, UseCache), m_redirectLocation(0)
+			: ResourceManager(L"Texture Manager ", CacheSize, UseCache), m_redirectLocation(0)
 		{
 			LogManager::getSingleton().Write(LOG_System, 
 				L"Model manager initialized with a cache size " + StringUtils::ToString(CacheSize), 

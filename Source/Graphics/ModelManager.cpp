@@ -42,7 +42,7 @@ namespace Apoc3D
 		bool ModelManager::UseCache = true;
 
 		ModelManager::ModelManager(void)
-			: ResourceManager(CacheSize, UseCache)
+			: ResourceManager(L"Model Manager ", CacheSize, UseCache)
 		{
 			LogManager::getSingleton().Write(LOG_System, 
 				L"Model manager initialized with a cache size " + StringUtils::ToString(CacheSize), 

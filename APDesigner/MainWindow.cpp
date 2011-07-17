@@ -47,7 +47,7 @@ namespace APDesigner
 			LocateCheckPoint pt;
 			pt.AddPath(L"classic_ui.pak");
 			rule.AddCheckPoint(pt);
-			m_UIskin = new StyleSkin(m_device, rule);
+			//m_UIskin = new StyleSkin(m_device, rule);
 		}
 		
 	}
