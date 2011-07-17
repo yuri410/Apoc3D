@@ -56,6 +56,7 @@ namespace Apoc3D
 
 		protected:
 		public:
+			const String& getName() const { return m_name; }
 			bool usesAsync() const { return !!m_asyncProc; }
 
 			/** Notifies the resource manager a new resource is created, and should be managed.

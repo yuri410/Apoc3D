@@ -81,7 +81,7 @@ namespace Apoc3D
 				: m_closed(false)
 			{
 				m_processThread = new thread(&AsyncProcessor::ThreadEntry, this);
-				
+				SetThreadName(m_processThread, name);
 			}
 
 			AsyncProcessor::~AsyncProcessor(void)

@@ -32,7 +32,7 @@ namespace Apoc3D
 	namespace Platform
 	{
 		void ApocSleep(uint32 ms);
-		void SetThreadName(tthread::thread& th, const String& name);
+		void SetThreadName(tthread::thread* th, const String& name);
 	}
 }
 

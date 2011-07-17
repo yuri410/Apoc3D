@@ -41,6 +41,7 @@ namespace Apoc3D
 				: m_manager(mgr), m_isShutdown(false), m_generationList(100)
 			{
 				m_thread = new thread(&GenerationTable::ThreadEntry, this);
+				SetThreadName(m_thread, mgr->getName() + L" Generation");
 				m_generations = new ExistTable<Resource*>[MaxGeneration];
 			}
 			GenerationTable::~GenerationTable()
