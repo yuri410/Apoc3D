@@ -1,7 +1,9 @@
 
 #include "PixelFormat.h"
 #include "LockData.h"
+#include "Math/Half.h"
 
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
@@ -494,5 +496,137 @@ namespace Apoc3D
 		}
 		}
 #undef CASECONVERTER
+
+		inline uint16 floatToU16Channel(float v)
+		{
+			if (v<0)
+				v = 0;
+			if (v>1)
+				v=1;
+			return static_cast<uint16>(v*65535);
+		}
+		inline byte floatToU8Channel(float v)
+		{
+			if (v<0)
+				v = 0;
+			if (v>1)
+				v=1;
+			return static_cast<byte>(v*255);
+		}
+		void packColour(const float r, const float g, const float b, const float a, 
+			const PixelFormat pf,  void* dest)
+		{
+			switch(pf)
+			{
+			case FMT_R32F:
+				((float*)dest)[0] = r;
+				break;
+			case FMT_G32R32F:
+				((float*)dest)[0] = g;
+				((float*)dest)[1] = r;
+				break;
+			case FMT_A32B32G32R32F:
+				((float*)dest)[0] = a;
+				((float*)dest)[1] = b;
+				((float*)dest)[2] = g;
+				((float*)dest)[3] = r;
+				break;
+			case FMT_R16F:
+				((uint16*)dest)[0] = FloatToHalf(r);
+				break;
+			case FMT_G16R16F:
+				((uint16*)dest)[0] = FloatToHalf(g);
+				((uint16*)dest)[1] = FloatToHalf(r);
+				break;
+			case FMT_A16B16G16R16F:
+				((uint16*)dest)[0] = FloatToHalf(a);
+				((uint16*)dest)[1] = FloatToHalf(b);
+				((uint16*)dest)[2] = FloatToHalf(g);
+				((uint16*)dest)[3] = FloatToHalf(r);
+				break;
+			case FMT_R16G16B16:
+				((uint16*)dest)[0] = floatToU16Channel(r);
+				((uint16*)dest)[1] = floatToU16Channel(g);
+				((uint16*)dest)[2] = floatToU16Channel(b);
+				break;
+			case FMT_A16B16G16R16:
+				((uint16*)dest)[0] = floatToU16Channel(a);
+				((uint16*)dest)[1] = floatToU16Channel(b);
+				((uint16*)dest)[2] = floatToU16Channel(g);
+				((uint16*)dest)[3] = floatToU16Channel(r);
+				break;
+			case FMT_A8L8:
+				((byte*)dest)[0] = floatToU8Channel(r);
+				((byte*)dest)[1] = floatToU8Channel(a);
+				break;
+			default:
+				throw Apoc3DException::createException(EX_NotSupported,L"");
+				break;
+			}
+		}
+		void unpackColour(float *r, float *g, float *b, float *a,
+			PixelFormat pf,  const void* src)
+		{
+			switch(pf)
+			{
+			case FMT_R32F:
+				*r = *g = *b = ((float*)src)[0];
+				*a = 1.0f;
+				break;
+			case FMT_G32R32F:
+				*g = ((float*)src)[0];
+				*r = *b = ((float*)src)[1];
+				*a = 1.0f;
+				break;
+			case FMT_A32B32G32R32F:
+				*a = ((float*)src)[0];
+				*b = ((float*)src)[1];
+				*g = ((float*)src)[2];
+				*r = ((float*)src)[3];
+
+				break;
+			case FMT_R16F:
+				*r = *g = *b = HalfToFloat(reinterpret_cast<const uint16*>(src)[0]);
+				*a = 1.0f;
+				break;
+			case FMT_G16R16F:
+				*g =  HalfToFloat(reinterpret_cast<const uint16*>(src)[0]); 
+				*r = *b = HalfToFloat(reinterpret_cast<const uint16*>(src)[1]);
+				*a = 1.0f;
+				break;
+			case FMT_A16B16G16R16F:
+				*a = HalfToFloat(reinterpret_cast<const uint16*>(src)[0]);
+				*g = HalfToFloat(reinterpret_cast<const uint16*>(src)[1]);
+				*g = HalfToFloat(reinterpret_cast<const uint16*>(src)[2]);
+				*r = HalfToFloat(reinterpret_cast<const uint16*>(src)[3]);
+
+				break;
+			case FMT_R16G16B16:
+				*r = reinterpret_cast<const uint16*>(src)[0] / (65535.0f);
+				*g = reinterpret_cast<const uint16*>(src)[1] / (65535.0f);
+				*b = reinterpret_cast<const uint16*>(src)[2] / (65535.0f);
+				*a = 1.0f;
+				break;
+			case FMT_A16B16G16R16:
+				*a = reinterpret_cast<const uint16*>(src)[0] / (65535.0f);
+				*b = reinterpret_cast<const uint16*>(src)[1] / (65535.0f);
+				*g = reinterpret_cast<const uint16*>(src)[2] / (65535.0f);
+				*r = reinterpret_cast<const uint16*>(src)[3] / (65535.0f);
+
+				break;
+			case FMT_A8L8:
+				*r = *g = *b = reinterpret_cast<const uint16*>(src)[0] / (255.0f);
+				*a =  reinterpret_cast<const uint16*>(src)[1] / (255.0f);
+				break;
+			default:
+				throw Apoc3DException::createException(EX_NotSupported,L"");
+				break;
+			}
+		}
+
+		void PixelFormatUtils::Resize(const void* src, void* dst)
+		{
+
+		}
 	}
 }

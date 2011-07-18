@@ -567,32 +567,120 @@ namespace Apoc3D
 				TextureData data;
 				data.Load(getResourceLocation());
 				
-				UpdateInfo(data);
-
+				
 				D3DDevice* dev = m_renderDevice->getDevice();
 
+
+				D3DFORMAT newFmt;
+				
+				{
+					DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
+					D3DFORMAT fmt = D3D9Utils::ConvertPixelFormat(data.Format);
+					UINT width = data.Levels[0].Width;
+					UINT height = data.Levels[0].Height;
+					UINT depth = data.Levels[0].Depth;
+					UINT levels = data.LevelCount;
+
+
+
+					newFmt = fmt;
+					UINT newWidth = width;
+					UINT newHeight = height;
+					UINT newDepth = depth;
+
+
+					switch (data.Type)
+					{
+					case (int)TT_Texture1D:
+					case (int)TT_Texture2D:
+						{
+							HRESULT hr = D3DXCheckTextureRequirements(dev, &newWidth, &newHeight, &levels,
+								0, &newFmt, 
+								D3DPOOL_MANAGED);
+							assert(SUCCEEDED(hr));
+							break;
+						}
+					case (int)TT_CubeTexture:
+						{
+							HRESULT hr = D3DXCheckCubeTextureRequirements(dev, &newWidth, &levels,
+								0, &fmt, 
+								D3DPOOL_MANAGED);
+							assert(SUCCEEDED(hr));
+							break;
+						}
+					case (int)TT_Texture3D:
+						{
+							HRESULT hr = D3DXCheckVolumeTextureRequirements(dev,
+								&newWidth, &newHeight, &newDepth,
+								&levels, 0, &newFmt, D3DPOOL_MANAGED);
+							assert(SUCCEEDED(hr));
+							break;
+						}
+					}
+
+					if (newHeight != height || newWidth != width || newDepth != depth)
+					{
+						// resize here
+					}
+
+					if (newFmt != fmt)
+					{
+						TextureData newdata = data;
+						newdata.Format = D3D9Utils::ConvertBackPixelFormat(newFmt);
+						newdata.ContentSize = 0;
+						for (int i=0;i<newdata.LevelCount;i++)
+						{
+							TextureLevelData& srcLvl = data.Levels[i];
+							TextureLevelData& dstLvl = data.Levels[i];
+
+							int lvlSize = PixelFormatUtils::GetMemorySize(
+								dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
+
+
+							dstLvl.ContentData = new char[lvlSize];
+							newdata.ContentSize += lvlSize;
+
+							DataBox src = DataBox(
+								srcLvl.Width, 
+								srcLvl.Height, 
+								srcLvl.Depth, 
+								PixelFormatUtils::GetMemorySize(srcLvl.Width, 1, 1, newdata.Format),
+								PixelFormatUtils::GetMemorySize(srcLvl.Width, srcLvl.Height, 1, newdata.Format), 
+								srcLvl.ContentData,
+								data.Format);
+
+							DataBox dst = DataBox(
+								dstLvl.Width,
+								dstLvl.Height, 
+								dstLvl.Depth, 
+								PixelFormatUtils::GetMemorySize(dstLvl.Width, 1, 1, newdata.Format),
+								PixelFormatUtils::GetMemorySize(dstLvl.Width, dstLvl.Height, 1, newdata.Format), 
+								dstLvl.ContentData,
+								newdata.Format);
+
+							PixelFormatUtils::ConvertPixels(src, dst);
+							delete[] srcLvl.ContentData;
+						}
+
+						data = newdata;
+					}
+
+				}
+				
+				UpdateInfo(data);
+
+			
 				switch (data.Type)
 				{
 				case (int)TT_Texture1D:
 				case (int)TT_Texture2D:
 					{
 						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
-						D3DFORMAT fmt = D3D9Utils::ConvertPixelFormat(getFormat());
-						UINT width = getWidth();
-						UINT height = getHeight();
-						UINT levels = getLevelCount();
-
-						HRESULT hr = D3DXCheckTextureRequirements(dev, &width, &height, &levels,
-							0, &fmt, 
-							D3DPOOL_MANAGED);
-						assert(SUCCEEDED(hr));
-						
-						hr = dev->CreateTexture(width, height, levels, 
-							usage, fmt, 
+					
+						HRESULT hr = dev->CreateTexture(getWidth(), getHeight(), getLevelCount(), 
+							usage, newFmt, 
 							D3DPOOL_MANAGED, &m_tex2D, NULL);
 						assert(SUCCEEDED(hr));
-						
-
 
 						setData(data, m_tex2D);
 					}					
@@ -600,17 +688,9 @@ namespace Apoc3D
 				case (int)TT_CubeTexture:
 					{
 						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
-						D3DFORMAT fmt = D3D9Utils::ConvertPixelFormat(getFormat());
-						UINT length = getWidth();
-						UINT levels = getLevelCount();
-
-						HRESULT hr = D3DXCheckCubeTextureRequirements(dev, &length, &levels,
-							0, &fmt, 
-							D3DPOOL_MANAGED);
-						assert(SUCCEEDED(hr));
-
-						hr = dev->CreateCubeTexture(length, levels, 
-							usage, fmt, 
+						
+						HRESULT hr = dev->CreateCubeTexture(getWidth(), getLevelCount(), 
+							usage, newFmt, 
 							D3DPOOL_MANAGED, &m_cube, NULL);
 						assert(SUCCEEDED(hr));
 
@@ -620,9 +700,11 @@ namespace Apoc3D
 					break;
 				case (int)TT_Texture3D:
 					{
-						HRESULT hr = dev->CreateCubeTexture(getWidth(), getLevelCount(), 
-							D3D9Utils::ConvertTextureUsage(getUsage()), D3D9Utils::ConvertPixelFormat(getFormat()), 
-							D3DPOOL_MANAGED, &m_cube, NULL);
+						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
+
+						HRESULT hr = dev->CreateVolumeTexture(getWidth(), getHeight(), getDepth(), getLevelCount(),
+							usage, newFmt, 
+							D3DPOOL_MANAGED, &m_tex3D, NULL);
 						assert(SUCCEEDED(hr));
 
 						setData(data, m_tex3D);

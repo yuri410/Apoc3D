@@ -474,6 +474,8 @@ namespace Apoc3D
 			}
 			static int ConvertPixels(const DataBox& src, const DataBox& dst);
 
+
+			static void Resize(const void* src, void* dst);
 		};
 
 	}

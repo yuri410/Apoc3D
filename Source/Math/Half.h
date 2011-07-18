@@ -32,7 +32,7 @@ namespace Apoc3D
 	{
 		typedef ushort Half;
 
-		static Half Convert(float value)
+		static Half FloatToHalf(float value)
 		{
 			uint num5 = reinterpret_cast<uint&>(value);
 			uint num3 = (uint)((num5 & 0x80000000) >> 0x10);
@@ -51,7 +51,7 @@ namespace Apoc3D
 			return (ushort)(num3 | ((((num + 0xc8000000) + 0xfff) + ((num >> 0xd) & 0x1)) >> 0xd));
 
 		}
-		static float Convert(Half value)
+		static float HalfToFloat(Half value)
 		{
 			uint num3;
 			if ((value & 0xffff7c00) == 0)
@@ -77,7 +77,7 @@ namespace Apoc3D
 			{
 				num3 = (uint)((((value & 0x8000) << 0x10) | (((value >> 0xa) & 0x1f) - 0xf + 0x7f) << 0x17) | ((value & 0x3ff) << 0xd));
 			}
-			return reinterpret_cast<float&>(num3);
+			return reinterpret_cast<const float&>(num3);
 		}
 
 	}
