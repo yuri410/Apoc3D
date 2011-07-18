@@ -356,16 +356,13 @@ namespace Apoc3D
 			{
 				TU_Static = BU_Static,
 				TU_Dynamic = BU_Dynamic,
-				TU_WriteOnly = BU_WriteOnly,
-				TU_StaticWriteOnly = BU_Static | BU_WriteOnly,
-				TU_DynamicWriteOnly = BU_Dynamic | BU_WriteOnly,
 				/* Mipmaps will be automatically generated for this texture
 				*/
 				TU_AutoMipMap = 0x100,
 				
 				/* Default to static textures
 				*/
-				TU_Default = TU_StaticWriteOnly,
+				TU_Default = TU_Static,
 			};
 
 			enum CompareFunction

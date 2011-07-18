@@ -635,9 +635,13 @@ namespace Apoc3D
 
 					if (newFmt != fmt)
 					{
-						TextureData newdata = data;
+						TextureData newdata;
 						newdata.Format = D3D9Utils::ConvertBackPixelFormat(newFmt);
 						newdata.ContentSize = 0;
+						newdata.LevelCount = data.LevelCount;
+						newdata.Type = data.Type;
+						newdata.Levels.reserve(data.LevelCount);
+
 
 						LogManager::getSingleton().Write(LOG_Graphics, 
 							L"[D3D9Texture] " + PixelFormatUtils::ToString(data.Format) 
@@ -647,11 +651,15 @@ namespace Apoc3D
 						for (int i=0;i<newdata.LevelCount;i++)
 						{
 							TextureLevelData& srcLvl = data.Levels[i];
-							TextureLevelData& dstLvl = data.Levels[i];
+							
+							TextureLevelData dstLvl;
+							dstLvl.Depth = srcLvl.Depth;
+							dstLvl.Width = srcLvl.Width;
+							dstLvl.Height = srcLvl.Height;
 
 							int lvlSize = PixelFormatUtils::GetMemorySize(
 								dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
-
+							dstLvl.LevelSize = lvlSize;
 
 							dstLvl.ContentData = new char[lvlSize];
 							newdata.ContentSize += lvlSize;
@@ -660,8 +668,8 @@ namespace Apoc3D
 								srcLvl.Width, 
 								srcLvl.Height, 
 								srcLvl.Depth, 
-								PixelFormatUtils::GetMemorySize(srcLvl.Width, 1, 1, newdata.Format),
-								PixelFormatUtils::GetMemorySize(srcLvl.Width, srcLvl.Height, 1, newdata.Format), 
+								PixelFormatUtils::GetMemorySize(srcLvl.Width, 1, 1, data.Format),
+								PixelFormatUtils::GetMemorySize(srcLvl.Width, srcLvl.Height, 1, data.Format), 
 								srcLvl.ContentData,
 								data.Format);
 
@@ -674,8 +682,11 @@ namespace Apoc3D
 								dstLvl.ContentData,
 								newdata.Format);
 
-							PixelFormatUtils::ConvertPixels(src, dst);
+							int r = PixelFormatUtils::ConvertPixels(src, dst);
+							assert(r);
 							delete[] srcLvl.ContentData;
+
+							newdata.Levels.push_back(dstLvl);
 						}
 
 						data = newdata;
@@ -726,6 +737,11 @@ namespace Apoc3D
 						setData(data, m_tex3D);
 					}
 					break;
+				}
+
+				for (int i=0;i<data.LevelCount;i++)
+				{
+					delete[] data.Levels[i].ContentData;
 				}
 			}
 			void D3D9Texture::unload()

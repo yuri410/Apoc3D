@@ -44,7 +44,7 @@ namespace Apoc3D
 			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(fl)
 		{
 			ObjectFactory* fac = device->getObjectFactory();
-			m_font = fac->CreateTexture(FontManager::TextureSize, FontManager::TextureSize, 1, TU_DynamicWriteOnly, FMT_Alpha8);
+			m_font = fac->CreateTexture(FontManager::TextureSize, FontManager::TextureSize, 1, TU_Dynamic, FMT_Alpha8);
 
 			Stream* strm = fl->GetReadStream();
 			BinaryReader* br = new BinaryReader(strm);

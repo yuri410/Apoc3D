@@ -96,11 +96,11 @@ namespace Apoc3D
 						{
 							dstptr[x] = U::ConvertPixel(srcptr[x]);
 						}
-						srcptr += src.getRowPitch();
-						dstptr += dst.getRowPitch();
+						srcptr = reinterpret_cast<typename U::SrcType*>((byte*)srcptr + src.getRowPitch());
+						dstptr = reinterpret_cast<typename U::DstType*>((byte*)dstptr + dst.getRowPitch());
 					}
-					srcptr += src.getSlicePitch();
-					dstptr += dst.getSlicePitch();
+					srcptr = reinterpret_cast<typename U::SrcType*>((byte*)srcptr + srcSliceSkip);
+					dstptr = reinterpret_cast<typename U::DstType*>((byte*)dstptr + dstSliceSkip);
 				} 
 			}
 		};

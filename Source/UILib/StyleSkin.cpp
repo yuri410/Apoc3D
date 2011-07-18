@@ -37,9 +37,9 @@ namespace Apoc3D
 			BtnRowSeparator = Apoc3D::Math::Rectangle(0,0,2,ButtonTexture->getHeight());
 
 
-			WhitePixelTexture = device->getObjectFactory()->CreateTexture(1,1,1, TU_StaticWriteOnly, FMT_A8R8G8B8);
+			WhitePixelTexture = device->getObjectFactory()->CreateTexture(1,1,1, TU_Static, FMT_A8R8G8B8);
 
-			DataRectangle rect = WhitePixelTexture->Lock(0, LOCK_Discard);
+			DataRectangle rect = WhitePixelTexture->Lock(0, LOCK_None);
 			*(uint*)rect.getDataPointer() = PACK_COLOR(0xff,0xff,0xff,0xff);
 			WhitePixelTexture->Unlock(0);
 		}

@@ -185,10 +185,7 @@ namespace Apoc3D
 				{
 					result |= TU_Dynamic;
 				}
-				if ((usage & D3DUSAGE_WRITEONLY) == D3DUSAGE_WRITEONLY)
-				{
-					result |= TU_WriteOnly;
-				}
+
 				return static_cast<TextureUsage>(result);
 			}
 			PixelFormat D3D9Utils::GetD3DTextureFormat(D3DTexture2D* tex)
@@ -709,11 +706,8 @@ namespace Apoc3D
 			DWORD D3D9Utils::ConvertTextureUsage(TextureUsage usage)
 			{
 				DWORD result = 0;
-				if ((usage & TU_WriteOnly) == TU_WriteOnly)
-				{
-					result |= D3DUSAGE_WRITEONLY;
-				}
-				else if ((usage & TU_Dynamic) == TU_Dynamic)
+				
+				if ((usage & TU_Dynamic) == TU_Dynamic)
 				{
 					result |= D3DUSAGE_DYNAMIC;
 				}

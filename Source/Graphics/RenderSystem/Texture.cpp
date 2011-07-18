@@ -209,7 +209,11 @@ namespace Apoc3D
 					unlock(surface);
 					m_isLocked = false;
 				}
-				throw Apoc3DException::createException(EX_InvalidOperation, L"Texture is not locked.");
+				else
+				{
+					throw Apoc3DException::createException(EX_InvalidOperation, L"Texture is not locked.");
+				}
+				
 			}
 			void Texture::Unlock(CubeMapFace cubemapFace, int surface)
 			{
@@ -218,7 +222,10 @@ namespace Apoc3D
 					unlock(cubemapFace, surface);
 					m_isLocked = false;
 				}
-				throw Apoc3DException::createException(EX_InvalidOperation, L"Texture is not locked.");
+				else
+				{
+					throw Apoc3DException::createException(EX_InvalidOperation, L"Texture is not locked.");
+				}
 			}
 			
 		}

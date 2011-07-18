@@ -47,8 +47,15 @@ namespace Apoc3D
 			int32 LevelSize;
 			char* ContentData;
 
-			TextureLevelData(){}
-			~TextureLevelData(){}
+			TextureLevelData()
+			{ }
+			~TextureLevelData() 
+			{
+
+			}
+
+
+
 			void LoadData(TaggedDataReader* data);
 			void SaveData(TaggedDataWriter* data) const;
 		};
@@ -63,6 +70,17 @@ namespace Apoc3D
 
 			TextureData() {}
 			~TextureData() {}
+			/*TextureData(const TextureData& data)
+				: Type(data.Type), Format(data.Format), ContentSize(data.ContentSize), LevelCount(data.LevelCount)
+			{
+				Levels.reserve(data.LevelCount);
+				for (int i=0;i<data.LevelCount;i++)
+				{
+					Levels.push_back(TextureLevelData(Levels[i]))]
+				}
+			}*/
+
+
 			void Load(const ResourceLocation* rl);
 			void Save(Stream* strm) const;
 		};
