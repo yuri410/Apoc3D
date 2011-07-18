@@ -21,6 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+
 #include "Color.h"
 #include "Point.h"
 #include "Rectangle.h"
