@@ -41,6 +41,7 @@ namespace Apoc3D
 			class D3D9Utils
 			{
 			private:
+				static D3D9Utils s_initlaizer;
 				static D3DPRIMITIVETYPE ptTable[PT_Count];
 				static D3DDECLTYPE vefTable[VEF_Count];
 				static D3DDECLUSAGE veuTable[VEU_Count];

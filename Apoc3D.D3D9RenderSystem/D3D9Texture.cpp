@@ -210,7 +210,7 @@ namespace Apoc3D
 
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed)
 				: Texture(device, rl, usage, managed),
-				m_renderDevice(device)
+				m_renderDevice(device), m_tex2D(0), m_tex3D(0), m_cube(0)
 			{
 				if (!managed)
 				{
@@ -220,7 +220,7 @@ namespace Apoc3D
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
 				PixelFormat format, TextureUsage usage)
 				: Texture(device, width, height, depth, level, format, usage),
-				m_renderDevice(device)
+				m_renderDevice(device), m_tex2D(0), m_tex3D(0), m_cube(0)
 			{
 				D3DDevice* dev = device->getDevice();
 
@@ -576,18 +576,41 @@ namespace Apoc3D
 				case (int)TT_Texture1D:
 				case (int)TT_Texture2D:
 					{
-						HRESULT hr = dev->CreateTexture(getWidth(), getHeight(), getLevelCount(), 
-							D3D9Utils::ConvertTextureUsage(getUsage()), D3D9Utils::ConvertPixelFormat(getFormat()), 
+						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
+						D3DFORMAT fmt = D3D9Utils::ConvertPixelFormat(getFormat());
+						UINT width = getWidth();
+						UINT height = getHeight();
+						UINT levels = getLevelCount();
+
+						HRESULT hr = D3DXCheckTextureRequirements(dev, &width, &height, &levels,
+							0, &fmt, 
+							D3DPOOL_MANAGED);
+						assert(SUCCEEDED(hr));
+						
+						hr = dev->CreateTexture(width, height, levels, 
+							usage, fmt, 
 							D3DPOOL_MANAGED, &m_tex2D, NULL);
 						assert(SUCCEEDED(hr));
 						
+
+
 						setData(data, m_tex2D);
 					}					
 					break;
 				case (int)TT_CubeTexture:
 					{
-						HRESULT hr = dev->CreateCubeTexture(getWidth(), getLevelCount(), 
-							D3D9Utils::ConvertTextureUsage(getUsage()), D3D9Utils::ConvertPixelFormat(getFormat()), 
+						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
+						D3DFORMAT fmt = D3D9Utils::ConvertPixelFormat(getFormat());
+						UINT length = getWidth();
+						UINT levels = getLevelCount();
+
+						HRESULT hr = D3DXCheckCubeTextureRequirements(dev, &length, &levels,
+							0, &fmt, 
+							D3DPOOL_MANAGED);
+						assert(SUCCEEDED(hr));
+
+						hr = dev->CreateCubeTexture(length, levels, 
+							usage, fmt, 
 							D3DPOOL_MANAGED, &m_cube, NULL);
 						assert(SUCCEEDED(hr));
 

@@ -344,6 +344,9 @@ namespace Apoc3D
 
 			class FPSCounter;
 
+
+			class DataBox;
+			class DataRectangle;
 		}
 	};
 	namespace Platform

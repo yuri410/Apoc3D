@@ -38,7 +38,7 @@ namespace Apoc3D
 		{
 			m_endianDependent = strm->IsReadEndianDependent();
 
-			BinaryReader* br = new BinaryReader(strm);
+			BinaryReader* br = new BinaryReader(new VirtualStream(strm, 0, strm->getLength()));
 
 			m_sectCount = br->ReadInt32();
 

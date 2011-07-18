@@ -111,7 +111,7 @@ namespace Apoc3D
 
 				int32 getRowPitch() const { return m_rowPitch; }
 				int32 getSlicePitch() const { return m_slicePitch; }
-
+				void* getDataPointer() const { return m_pointer; }
 				int32 getMemorySize() const
 				{
 					return PixelFormatUtils::GetMemorySize(m_width, m_height, m_depth, m_format);

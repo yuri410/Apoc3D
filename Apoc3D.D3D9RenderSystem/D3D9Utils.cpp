@@ -46,6 +46,7 @@ namespace Apoc3D
 			D3DCUBEMAP_FACES D3D9Utils::cubeTable[CUBE_Count];
 			D3DTEXTUREADDRESS D3D9Utils::taTable[TA_Count];
 
+			D3D9Utils D3D9Utils::s_initlaizer;
 
 			BufferUsageFlags D3D9Utils::GetBufferUsage(DWORD usage)
 			{

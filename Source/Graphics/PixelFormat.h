@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Apoc3DException.h"
 
+using namespace Apoc3D::Graphics::RenderSystem;
+
 using namespace std;
 
 namespace Apoc3D
@@ -470,6 +472,7 @@ namespace Apoc3D
 
 				return DEPFMT_Depth16;
 			}
+			static int ConvertPixels(const DataBox& src, const DataBox& dst);
 
 		};
 
