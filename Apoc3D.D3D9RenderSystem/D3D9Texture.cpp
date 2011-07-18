@@ -32,7 +32,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Utility/StringUtils.h"
 #include "Apoc3DException.h"
 #include "Core/Logging.h"
+#include "IOLib/Streams.h"
 
+using namespace Apoc3D::VFS;
+using namespace Apoc3D::IO;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Utility;
 
@@ -350,6 +353,7 @@ namespace Apoc3D
 
 				byte bytesPerPixel = GetExpectedByteSizeFromFormat(surfaceFormat);
 
+
 				bool isDxt = false;
 				if (surfaceFormat == D3DFMT_DXT1 || 
 					surfaceFormat == D3DFMT_DXT2 || 
@@ -373,11 +377,11 @@ namespace Apoc3D
 					{
 						if (isSetting)
 						{
-							memcpy(tex, texData, lineSize);
+							memcpy(texPtr, texDataPtr, lineSize);
 						}
 						else
 						{
-							memcpy(texData, tex, lineSize);
+							memcpy(texDataPtr, texPtr, lineSize);
 						}
 						texPtr += pitch;
 						texDataPtr += lineSize;
@@ -419,6 +423,7 @@ namespace Apoc3D
 					do 
 					{
 						byte* ptr = texPtr;
+						//byte* ptr2 = texDataPtr;
 
 						if (dwLockHeight)
 						{
@@ -429,11 +434,11 @@ namespace Apoc3D
 							{
 								if (isSetting)
 								{
-									memcpy(tex, texData, lineSize);
+									memcpy(ptr, texDataPtr, lineSize);
 								}
 								else
 								{
-									memcpy(texData, tex, lineSize);
+									memcpy(texDataPtr, ptr, lineSize);
 								}
 								ptr += rowPitch;
 								texDataPtr += lineSize;
@@ -454,7 +459,7 @@ namespace Apoc3D
 					int startPos = 0;
 					int levelSize = data.Levels[i].LevelSize / 6;
 					D3DSURFACE_DESC desc;
-					tex->GetLevelDesc(0, &desc);
+					tex->GetLevelDesc(i, &desc);
 
 					D3DLOCKED_RECT rect;
 					HRESULT hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_X, i, &rect, NULL, 0);
@@ -534,7 +539,7 @@ namespace Apoc3D
 				for (int i=0;i<data.LevelCount;i++)
 				{
 					D3DSURFACE_DESC desc;
-					tex->GetLevelDesc(0, &desc);
+					tex->GetLevelDesc(i, &desc);
 
 					D3DLOCKED_RECT rect;
 					HRESULT hr = tex->LockRect(i, &rect, NULL, 0);
@@ -551,7 +556,7 @@ namespace Apoc3D
 				for (int i=0;i<data.LevelCount;i++)
 				{
 					D3DVOLUME_DESC desc;
-					tex->GetLevelDesc(0, &desc);
+					tex->GetLevelDesc(i, &desc);
 
 					D3DLOCKED_BOX box;
 					HRESULT hr = tex->LockBox(i, &box, NULL, 0);

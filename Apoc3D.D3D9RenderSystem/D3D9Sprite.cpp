@@ -44,11 +44,13 @@ namespace Apoc3D
 			}
 			void D3D9Sprite::Begin(bool alphabled)
 			{
-				m_sprite->Begin(alphabled ? D3DXSPRITE_ALPHABLEND : 0);
+				HRESULT hr = m_sprite->Begin(alphabled ? D3DXSPRITE_ALPHABLEND : 0);
+				assert(SUCCEEDED(hr));
 			}
 			void D3D9Sprite::End()
 			{
-				m_sprite->End();
+				HRESULT hr = m_sprite->End();
+				assert(SUCCEEDED(hr));
 			}
 
 			void D3D9Sprite::Draw(Texture* texture, Vector2 pos, uint color)
@@ -57,8 +59,9 @@ namespace Apoc3D
 				position.x = Vector2Utils::GetX(pos);
 				position.y = Vector2Utils::GetY(pos);
 				position.z = 0;
-				m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
 					0, 0, &position, color);
+				assert(SUCCEEDED(hr));
 			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
 			{
@@ -66,8 +69,9 @@ namespace Apoc3D
 				position.x = pos.X;
 				position.y = pos.Y;
 				position.z = 0;
-				m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
 					0, 0, &position, color);
+				assert(SUCCEEDED(hr));
 			}
 			void D3D9Sprite::Draw(Texture* texture, int x, int y, uint color)
 			{
@@ -75,8 +79,9 @@ namespace Apoc3D
 				position.x = static_cast<float>(x);
 				position.y = static_cast<float>(y);
 				position.z = 0;
-				m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
 					0, 0, &position, color);
+				assert(SUCCEEDED(hr));
 			}
 			void D3D9Sprite::Draw(Texture* texture, 
 				const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
@@ -105,28 +110,33 @@ namespace Apoc3D
 						(LONG)srcRect->getBottom()
 					};
 				
-					m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
 						&r, &center, &position, color);
+					assert(SUCCEEDED(hr));
 				}
 				else
 				{
-					m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
 						0, &center, &position, color);
+					assert(SUCCEEDED(hr));
 				}
 			}
 
 			void D3D9Sprite::SetTransform(const Matrix& matrix)
 			{
-				m_sprite->SetTransform(reinterpret_cast<const D3DMatrix*>(&matrix));
+				HRESULT hr = m_sprite->SetTransform(reinterpret_cast<const D3DMatrix*>(&matrix));
+				assert(SUCCEEDED(hr));
 			}
 
 			void D3D9Sprite::ReleaseVolatileResource()
 			{
-				m_sprite->OnLostDevice();
+				HRESULT hr = m_sprite->OnLostDevice();
+				assert(SUCCEEDED(hr));
 			}
 			void D3D9Sprite::ReloadVolatileResource()
 			{
-				m_sprite->OnResetDevice();
+				HRESULT hr = m_sprite->OnResetDevice();
+				assert(SUCCEEDED(hr));
 			}
 		}
 	}

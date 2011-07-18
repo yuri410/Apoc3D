@@ -18,6 +18,7 @@ namespace APDesigner
 		RenderWindow* m_window;
 		RenderDevice* m_device;
 
+		Sprite* m_sprite;
 	public:
 		MainWindow(RenderWindow* wnd);
 		void Initialize();

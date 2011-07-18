@@ -55,14 +55,12 @@ namespace Apoc3D
 			BinaryReader* br = data->GetData(ContentTag);
 
 			ContentData = new char[LevelSize];
-			for (int i=0;i<LevelSize;i++)
-			{
-				br->ReadBytes(ContentData, LevelSize);
-			}
+			
+			int64 ret = br->ReadBytes(ContentData, LevelSize);
+			assert(ret == LevelSize);
 
 			br->Close();
 			delete br;
-
 		}
 		void TextureLevelData::SaveData(TaggedDataWriter* data) const
 		{

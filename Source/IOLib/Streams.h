@@ -105,7 +105,7 @@ namespace Apoc3D
 
 			virtual void setPosition(int64 offset)
 			{
-				m_in->seekg(offset); 
+				m_in->seekg(offset, ios::beg); 
 			}
 			virtual int64 getPosition() const
 			{ 
@@ -142,7 +142,7 @@ namespace Apoc3D
 
 			virtual void setPosition(int64 offset)
 			{
-				m_out->seekp(offset); 
+				m_out->seekp(offset, ios::beg); 
 				if (m_length<offset)
 					m_length = offset;
 			}

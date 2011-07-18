@@ -43,8 +43,10 @@ namespace Apoc3D
 				RenderDevice* m_renderDevice;
 			protected:
 				Sprite(RenderDevice* rd);
-				virtual ~Sprite();
+				
 			public:
+				virtual ~Sprite();
+
 				virtual void Begin(bool alphabled) = 0;
 				virtual void End() = 0;
 				//virtual void DrawQuad(const GeometryData* quad, PostEffect* effect) = 0;

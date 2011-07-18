@@ -45,7 +45,7 @@ namespace Apoc3D
 
 			public:
 				D3D9Sprite(D3D9RenderDevice* device);
-				virtual ~D3D9Sprite();
+				~D3D9Sprite();
 
 				virtual void Begin(bool alphabled);
 				virtual void End();

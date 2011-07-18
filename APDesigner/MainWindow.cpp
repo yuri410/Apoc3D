@@ -4,6 +4,8 @@
 
 #include "Graphics/RenderSystem/RenderWindow.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/ObjectFactory.h"
+#include "Graphics/RenderSystem/Sprite.h"
 #include "UILib/StyleSkin.h"
 #include "Input/InputAPI.h"
 #include "Vfs/FileLocateRule.h"
@@ -49,11 +51,14 @@ namespace APDesigner
 			rule.AddCheckPoint(pt);
 			m_UIskin = new StyleSkin(m_device, rule);
 		}
-		
+
+		ObjectFactory* fac = m_device->getObjectFactory();
+		m_sprite = fac->CreateSprite();
 	}
 	void MainWindow::Unload()
 	{
 		delete m_UIskin;
+		delete m_sprite;
 	}
 	void MainWindow::Update(const GameTime* const time)
 	{
@@ -63,7 +68,13 @@ namespace APDesigner
 	{
 		m_device->Clear(CLEAR_Target, 0, 1, 0);
 
+		m_device->BeginFrame();
 
+		m_sprite->Begin(true);
+		m_sprite->Draw(m_UIskin->ButtonTexture, 50,50,0xffffffff);
+		m_sprite->End();
+
+		m_device->EndFrame();
 
 	}
 

@@ -110,10 +110,11 @@ namespace Apoc3D
 			void D3D9RenderDevice::BeginFrame()
 			{
 				RenderDevice::BeginFrame();
+				getDevice()->BeginScene();
 			}
 			void D3D9RenderDevice::EndFrame()
 			{
-
+				getDevice()->EndScene();
 			}
 
 			void D3D9RenderDevice::Clear(ClearFlags flags, uint color, float depth, int stencil)

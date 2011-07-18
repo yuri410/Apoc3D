@@ -89,6 +89,7 @@ namespace Apoc3D
 					m_primitiveCount = 0;
 					m_vertexCount = 0;
 				}
+				virtual void EndFrame() { }
 
 				//virtual RenderTarget* getDefaultRenderTarget() = 0;
 
