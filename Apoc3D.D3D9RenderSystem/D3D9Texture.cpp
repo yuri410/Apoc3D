@@ -33,6 +33,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Apoc3DException.h"
 #include "Core/Logging.h"
 #include "IOLib/Streams.h"
+#include "Vfs/PathUtils.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;
@@ -629,9 +630,20 @@ namespace Apoc3D
 
 					if (newHeight != height || newWidth != width || newDepth != depth)
 					{
+						String name;
+						const FileLocation* fl = dynamic_cast<const FileLocation*>(getResourceLocation());
+
+						if (fl)
+						{
+							name = PathUtils::GetFileNameNoExt( fl->getPath());
+						}
+						else
+						{
+							name = getResourceLocation()->getName();
+						}
 						// resize here
 						LogManager::getSingleton().Write(LOG_Graphics, 
-							L"[D3D9Texture] Dimension " +
+							L"[D3D9Texture]" + name +  L" Dimension " +
 							StringUtils::ToString(width) + L"x" + StringUtils::ToString(height)
 							+ L" is not supported by hardware. Resizing to " +
 							StringUtils::ToString(newWidth) + L"x" + StringUtils::ToString(newHeight)
@@ -647,9 +659,19 @@ namespace Apoc3D
 						newdata.Type = data.Type;
 						newdata.Levels.reserve(data.LevelCount);
 
+						String name;
+						const FileLocation* fl = dynamic_cast<const FileLocation*>(getResourceLocation());
 
+						if (fl)
+						{
+							name = PathUtils::GetFileNameNoExt( fl->getPath());
+						}
+						else
+						{
+							name = getResourceLocation()->getName();
+						}
 						LogManager::getSingleton().Write(LOG_Graphics, 
-							L"[D3D9Texture] " + PixelFormatUtils::ToString(data.Format) 
+							L"[D3D9Texture]" + name + L" " + PixelFormatUtils::ToString(data.Format) 
 							+ L" Pixel format is not supported by hardware. Converting to " +
 							PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt)), LOGLVL_Warning);
 

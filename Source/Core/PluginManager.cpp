@@ -123,7 +123,7 @@ namespace Apoc3D
 				try
 				{
 					Plugin* plugin = plugins[i];
-					LogManager::getSingleton().Write(LOG_System, L"Loading plugin" + plugin->GetName(), LOGLVL_Infomation);
+					LogManager::getSingleton().Write(LOG_System, L"Loading plugin " + plugin->GetName(), LOGLVL_Infomation);
 
 					plugin->Load();
 

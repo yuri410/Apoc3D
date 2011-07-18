@@ -46,7 +46,7 @@ namespace Apoc3D
 				virtual void Load();
 				virtual void Unload();
 
-				virtual String GetName() { return L"Window Input System"; }
+				virtual String GetName() { return L"Windows Input System"; }
 			};
 		}
 	}

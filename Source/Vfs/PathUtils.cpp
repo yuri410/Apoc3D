@@ -42,6 +42,14 @@ namespace Apoc3D
 			SplitFilePath(filePath, fn, result);
 			return result;
 		}
+		String PathUtils::GetFileNameNoExt(const String& filePath)
+		{
+			String fn;
+			String dir;
+			String ext;
+			SplitFilePathNameExtension(filePath, dir, fn, ext);
+			return fn;
+		}
 		void PathUtils::SplitFileNameExtension(const String& fileName, String& noext, String& ext)
 		{
 			size_t i = fileName.find_last_of('.');

@@ -24,18 +24,34 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Logging.h"
 
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+#include <Windows.h>
+#endif
+
 SINGLETON_DECL(Apoc3D::Core::LogManager);
 
 namespace Apoc3D
 {
 	namespace Core
 	{
+//#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+		//HANDLE g_StandardOutput;
+//#endif
 		String LogEntry::ToString() const
 		{
 			tm* t = localtime(&Time);
 
 			wstringstream wss;
-			wss << asctime(t);
+			wss.width(2);
+			wss.fill('0');
+			wss << t->tm_hour;
+			wss << t->tm_min;
+			wss << t->tm_sec;
+			wss.width(0);
+			wss.fill(' ');
+
+
+
 			wss << L" [";
 			switch (Type)
 			{
@@ -76,6 +92,7 @@ namespace Apoc3D
 				break;
 			}
 			wss << Content;
+			wss << L"\n";
 
 			return wss.str();
 		}
@@ -109,6 +126,7 @@ namespace Apoc3D
 			{
 				m_logs[i] = new Log(reinterpret_cast<LogType&>(i));
 			}
+			//g_StandardOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 
 		}
 		LogManager::~LogManager()
@@ -117,6 +135,12 @@ namespace Apoc3D
 			{
 				delete m_logs[i];	
 			}
+////#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+			//if (g_StandardOutput!= INVALID_HANDLE_VALUE)
+			//{
+				//CloseHandle(g_StandardOutput);
+			//}
+//#endif
 		}
 
 		void LogManager::Write(LogType type, const String& message, LogMessageLevel level) const
@@ -131,7 +155,16 @@ namespace Apoc3D
 			}
 			if (WriteLogToStd)
 			{
-				wprintf( lastest.ToString().c_str() );
+				String msg = lastest.ToString();
+				cout << ( msg.c_str() );
+				
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+				//if (g_StandardOutput!= INVALID_HANDLE_VALUE)
+				//{
+				OutputDebugString(msg.c_str());
+					//WriteFile(g_StandardOutput, msg.c_str(), msg.size() * sizeof(wchar_t), NULL, NULL );
+				//}
+#endif
 			}
 		}
 	}
