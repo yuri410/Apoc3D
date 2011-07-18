@@ -63,7 +63,9 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	escon.WorkingDirectories.Add(workingDir);
 	escon.TextureCacheSize = 512 * 1048576;
 	escon.ModelCacheSize = 192 * 1048576;
-	
+#if _DEBUG
+	escon.WriteLogToStd = true;
+#endif
 
 	Engine::Initialize(&escon);
 

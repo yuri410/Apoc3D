@@ -52,16 +52,18 @@ namespace Apoc3D
 			LOG_Count = 6
 		};
 
+		
 
 		struct APAPI LogEntry
 		{
 			time_t Time;
 			LogMessageLevel Level;
 			String Content;
+			LogType Type;
 
 			LogEntry(){}
-			LogEntry(time_t time, String content, LogMessageLevel level)
-				: Time(time), Level(level), Content(content)
+			LogEntry(time_t time, String content, LogMessageLevel level, LogType type)
+				: Time(time), Level(level), Content(content), Type(type)
 			{
 			}
 
@@ -74,7 +76,11 @@ namespace Apoc3D
 			{
 				return a.Time == b.Time && a.Level == b.Level && a.Content == b.Content;
 			}
+
+			String ToString() const;
 		};
+		
+		typedef fastdelegate::FastDelegate1<LogEntry, void> NewLogWrittenHandler;
 
 		//template class APAPI list<LogEntry>;
 
@@ -105,8 +111,12 @@ namespace Apoc3D
 		{
 		private:
 			Log* m_logs[LOG_Count];
-
+			NewLogWrittenHandler m_eNewLog;
 		public:
+			bool WriteLogToStd;
+
+			NewLogWrittenHandler& eventNewLogWritten() { return m_eNewLog; }
+
 			LogManager();
 			~LogManager();
 

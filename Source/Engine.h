@@ -43,11 +43,17 @@ namespace Apoc3D
 		FastList<String> PluginDynLibList;
 		FastList<Plugin*> PluginList;
 
+		bool WriteLogToStd;
+
+		bool TextureAsync;
 		uint TextureCacheSize;
+
+		bool ModelAsync;
 		uint ModelCacheSize;
 
 		ManualStartConfig()
-			: TextureCacheSize(1024*1024*100), ModelCacheSize(1024*1024*50)
+			: TextureCacheSize(1024*1024*100), ModelCacheSize(1024*1024*50), WriteLogToStd(false),
+			TextureAsync(true), ModelAsync(true)
 		{
 
 		}

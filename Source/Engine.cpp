@@ -34,6 +34,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Config/ConfigurationManager.h"
 #include "Graphics/RenderSystem/GraphicsAPI.h"
 #include "Graphics/TextureManager.h"
+#include "Graphics/ModelManager.h"
 #include "Input/InputAPI.h"
 #include "Core/PluginManager.h"
 #include "Core/Logging.h"
@@ -52,6 +53,10 @@ namespace Apoc3D
 	void Engine::Initialize(const ManualStartConfig* mconf)
 	{
 		LogManager::Initialize();
+		if (mconf)
+		{
+			LogManager::getSingleton().WriteLogToStd = mconf->WriteLogToStd;
+		}
 
 		FileSystem::Initialize();
 		if (mconf && mconf->WorkingDirectories.getCount())
@@ -92,9 +97,14 @@ namespace Apoc3D
 		if (mconf)
 		{
 			TextureManager::CacheSize = mconf->TextureCacheSize;
+			TextureManager::UseCache = mconf->TextureAsync;
+
+			ModelManager::CacheSize = mconf->ModelCacheSize;
+			ModelManager::UseCache = mconf->ModelAsync;
 		}
 		
 		TextureManager::Initialize();
+		ModelManager::Initialize();
 	}
 	void Engine::Shutdown()
 	{

@@ -21,7 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RESOUECEMANAGER_H
+#ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
 
 #include "Common.h"

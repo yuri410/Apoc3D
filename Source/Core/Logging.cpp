@@ -30,6 +30,57 @@ namespace Apoc3D
 {
 	namespace Core
 	{
+		String LogEntry::ToString() const
+		{
+			tm* t = localtime(&Time);
+
+			wstringstream wss;
+			wss << asctime(t);
+			wss << L" [";
+			switch (Type)
+			{
+			case LOG_System:
+				wss << L"SYS";
+				break;
+			case LOG_Graphics:
+				wss << L"GRP";
+				break;
+			case LOG_Audio:
+				wss << L"AUD";
+				break;
+			case LOG_Scene:
+				wss << L"SCE";
+				break;
+			case LOG_Game:
+				wss << L"GAM";
+				break;
+			case LOG_Network:
+				wss << L"NET";
+				break;
+			}
+			wss << L"] ";
+
+			switch (Level)
+			{
+			case LOGLVL_Error:
+				wss << L"<Err> ";
+				break;
+			case LOGLVL_Warning:
+				wss << L"<Warn> ";
+				break;
+			case LOGLVL_Fatal:
+				wss << L"<Critical> ";
+				break;
+			case LOGLVL_Infomation:
+				wss << L"<Info> ";
+				break;
+			}
+			wss << Content;
+
+			return wss.str();
+		}
+
+
 		Log::Log(LogType type)
 			: m_type(type)
 		{
@@ -43,9 +94,8 @@ namespace Apoc3D
 
 		void Log::Write(const String& message, LogMessageLevel level)
 		{
-			time_t t;
-			time(&t);
-			m_entries.push_back(LogEntry(t, message, level));
+			time_t t = time(0);
+			m_entries.push_back(LogEntry(t, message, level, m_type));
 
 			while (m_entries.size()>MaxEntries)
 			{
@@ -72,6 +122,17 @@ namespace Apoc3D
 		void LogManager::Write(LogType type, const String& message, LogMessageLevel level) const
 		{
 			m_logs[static_cast<int32>(type)]->Write(message, level);
+
+			const LogEntry& lastest = *(--m_logs[static_cast<int32>(type)]->end());
+
+			if (!m_eNewLog.empty())
+			{
+				m_eNewLog(lastest);
+			}
+			if (WriteLogToStd)
+			{
+				wprintf( lastest.ToString().c_str() );
+			}
 		}
 	}
 }
