@@ -31,6 +31,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Enumeration.h"
 #include "D3D9RenderViewSet.h"
 #include "DeviceSettings.h"
+#include "Core/Logging.h"
+
 
 namespace Apoc3D
 {
@@ -72,7 +74,7 @@ namespace Apoc3D
 			}
 
 			void D3D9RenderWindow::D3D9Game::Create()
-			{				
+			{
 				Game::Create();
 				
 				const RenderParameters& params = m_window->getRenderParams();
@@ -94,9 +96,17 @@ namespace Apoc3D
 				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager());
 				m_window->setDevice(device);
 
+				LogManager::getSingleton().Write(LOG_Graphics, 
+					L"[D3D9]Creating render window. ", 
+					LOGLVL_Infomation);
+
 				getGraphicsDeviceManager()->ChangeDevice(settings);
 
-				device->Initialize();
+				LogManager::getSingleton().Write(LOG_Graphics, 
+					L"[D3D9]Render window created. ", 
+					LOGLVL_Infomation);
+
+				//device->Initialize();
 			}
 
 

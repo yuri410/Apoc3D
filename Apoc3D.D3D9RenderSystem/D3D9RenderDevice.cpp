@@ -43,6 +43,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/Material.h"
 #include "Graphics/GeometryData.h"
 #include "Graphics/EffectSystem/Effect.h"
+#include "Core/Logging.h"
+
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {
@@ -89,6 +92,11 @@ namespace Apoc3D
 
 			void D3D9RenderDevice::Initialize()
 			{
+
+				LogManager::getSingleton().Write(LOG_Graphics, 
+					L"[D3D9]Initializing D3D9 Render Device. ", 
+					LOGLVL_Infomation);
+
 				m_nativeState = new NativeD3DStateManager(this);
 				m_stateManager = new D3D9RenderStateManager(this, m_nativeState);
 				m_renderStates = m_stateManager;

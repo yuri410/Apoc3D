@@ -26,6 +26,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GameWindow.h"
 #include "Enumeration.h"
 
+#include "Core/Logging.h"
+
+using namespace Apoc3D::Core;
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -81,6 +85,10 @@ namespace Apoc3D
 
 			HRESULT GraphicsDeviceManager::ResetDevice()
 			{
+				LogManager::getSingleton().Write(LOG_Graphics, 
+					L"[D3D9]Device lost. ", 
+					LOGLVL_Default);
+
 				m_game->OnDeviceLost();
 
 				HRESULT hr = m_device->Reset(&m_currentSetting->D3D9.PresentParameters);
@@ -237,20 +245,55 @@ namespace Apoc3D
 					m_deviceLost = true;
 					return;
 				}
-				else
-				{
-					assert(SUCCEEDED(result));
 
-					if (FAILED(result))
-					{
-						MessageBox(0, L"Unable to create Direct3D Device", L"Error", MB_OK | MB_APPLMODAL | MB_ICONERROR);
-
-						exit(0);
-						return;
-					}				
-				}
 				// UpdateDeviceStats();
 				PropogateSettings();
+
+				{
+					wstringstream wss;
+
+					if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_HAL)
+						wss << L"HAL";
+					else if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_REF)
+						wss << L"REF";
+					else if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_SW)
+						wss << L"SW";
+
+					if (m_currentSetting->D3D9.CreationFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING)
+					{
+						if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_HAL)
+							wss << L" (hw vp)";
+						else
+							wss << L" (simulated hw vp)";
+					}
+					else if (m_currentSetting->D3D9.CreationFlags & D3DCREATE_MIXED_VERTEXPROCESSING)
+					{
+						if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_HAL)
+							wss << L" (mixed vp)";
+						else
+							wss << L" (simulated mixed vp)";
+					}
+					else
+					{
+						wss << L" (sw vp)";
+					}
+
+					std::vector<AdapterInfo*> adapters = Enumeration::getAdapters();
+					for (size_t i=0;i<adapters.size();i++)
+					{
+						if (adapters[i]->AdapterOrdinal
+							== m_currentSetting->D3D9.AdapterOrdinal)
+						{
+							wss << L": ";
+							wss << adapters[i]->Description;
+							break;
+						}
+					}
+
+					LogManager::getSingleton().Write(LOG_Graphics, 
+						L"[D3D9]Created device: " + wss.str(), 
+						LOGLVL_Infomation);
+				}
 
  				m_game->Initialize();
 				m_game->LoadContent();
@@ -341,8 +384,12 @@ namespace Apoc3D
 				else if (!canReset || result != D3D_OK)
 				{
 					if (oldSettings)
+					{
+						LogManager::getSingleton().Write(LOG_Graphics, 
+							L"[D3D9]Recreating Device. ", 
+							LOGLVL_Default);
 						ReleaseDevice();
-
+					}
 					InitializeDevice();
 				}
 
@@ -475,6 +522,9 @@ namespace Apoc3D
 				Enumeration::FindValidSettings(m_direct3D9, settings, validSettings);
 				validSettings.D3D9.PresentParameters.hDeviceWindow = m_game->getWindow()->getHandle();
 				CreateDevice(validSettings);
+
+				
+				
 			}
 			void GraphicsDeviceManager::ChangeDevice(bool windowed, int desiredWidth, int desiredHeight)
 			{
