@@ -29,11 +29,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/Box.h"
 #include "Vfs/ResourceLocation.h"
 #include "IOLib/TextureData.h"
-
+#include "Utility/StringUtils.h"
 #include "Apoc3DException.h"
 #include "Core/Logging.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -625,17 +626,24 @@ namespace Apoc3D
 					{
 						// resize here
 						LogManager::getSingleton().Write(LOG_Graphics, 
-							L"[D3D9Texture] ", LOGLVL_Warning);
+							L"[D3D9Texture] Dimension " +
+							StringUtils::ToString(width) + L"x" + StringUtils::ToString(height)
+							+ L" is not supported by hardware. Resizing to " +
+							StringUtils::ToString(newWidth) + L"x" + StringUtils::ToString(newHeight)
+							, LOGLVL_Warning);
 					}
 
 					if (newFmt != fmt)
 					{
-						LogManager::getSingleton().Write(LOG_Graphics, 
-							L"[D3D9Texture] Pixel format not supported by hardware. Converting. ", LOGLVL_Warning);
-
 						TextureData newdata = data;
 						newdata.Format = D3D9Utils::ConvertBackPixelFormat(newFmt);
 						newdata.ContentSize = 0;
+
+						LogManager::getSingleton().Write(LOG_Graphics, 
+							L"[D3D9Texture] " + PixelFormatUtils::ToString(data.Format) 
+							+ L" Pixel format is not supported by hardware. Converting to " +
+							PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt)), LOGLVL_Warning);
+
 						for (int i=0;i<newdata.LevelCount;i++)
 						{
 							TextureLevelData& srcLvl = data.Levels[i];
