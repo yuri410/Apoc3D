@@ -31,6 +31,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/TextureData.h"
 
 #include "Apoc3DException.h"
+#include "Core/Logging.h"
+
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {
@@ -621,10 +624,15 @@ namespace Apoc3D
 					if (newHeight != height || newWidth != width || newDepth != depth)
 					{
 						// resize here
+						LogManager::getSingleton().Write(LOG_Graphics, 
+							L"[D3D9Texture] ", LOGLVL_Warning);
 					}
 
 					if (newFmt != fmt)
 					{
+						LogManager::getSingleton().Write(LOG_Graphics, 
+							L"[D3D9Texture] Pixel format not supported by hardware. Converting. ", LOGLVL_Warning);
+
 						TextureData newdata = data;
 						newdata.Format = D3D9Utils::ConvertBackPixelFormat(newFmt);
 						newdata.ContentSize = 0;

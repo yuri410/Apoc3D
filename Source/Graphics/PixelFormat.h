@@ -270,7 +270,89 @@ namespace Apoc3D
 				return width * height * depth * bytepp;
 			}
 
-
+			static String ToString(PixelFormat format)
+			{
+				switch (format)
+				{
+				case FMT_Luminance8:
+					return L"L8";
+				case FMT_Luminance16:
+					return L"L16";
+				case FMT_Alpha8:
+					return L"A8";
+				case FMT_A4L4:
+					return L"A4L4";
+				case FMT_A8L8:
+					return L"A8L8";
+				case FMT_R5G6B5:
+					return L"R5G6B5";
+				case FMT_B5G6R5:
+					return L"B5G6R5";	
+				case FMT_A4R4G4B4:
+					return L"A4R4G4B4";
+				case FMT_A1R5G5B5:
+					return L"A1R5G5B5";
+				case FMT_R8G8B8:
+					return L"R8G8B8";
+				case FMT_B8G8R8:
+					return L"B8G8R8";
+				case FMT_A8R8G8B8:
+					return L"A8R8G8B8";
+				case FMT_A8B8G8R8:
+					return L"A8B8G8R8";
+				case FMT_B8G8R8A8:
+					return L"B8G8R8A8";
+				case FMT_A2R10G10B10:
+					return L"A2R10G10B10";
+				case FMT_A2B10G10R10:
+					return L"A2B10G10R10";
+				case FMT_DXT1:
+					return L"DXT1";
+				case FMT_DXT2:
+					return L"DXT2";
+				case FMT_DXT3:
+					return L"DXT3";
+				case FMT_DXT4:
+					return L"DXT4";
+				case FMT_DXT5:
+					return L"DXT5";
+				case FMT_A16B16G16R16F:
+					return L"A16B16G16R16F";
+				case FMT_A32B32G32R32F:
+					return L"A32B32G32R32F";
+				case FMT_X8R8G8B8:
+					return L"X8R8G8B8";
+				case FMT_X8B8G8R8:
+					return L"X8B8G8R8";
+				case FMT_X1R5G5B5:
+					return L"X1R5G5B5";
+				case FMT_R8G8B8A8:
+					return L"R8G8B8A8";
+				case FMT_A16B16G16R16:
+					return L"A16B16G16R16";
+				case FMT_R3G3B2:
+					return L"R3G3B2";
+				case FMT_R16F:
+					return L"R16F";
+				case FMT_R32F:
+					return L"R32F";
+				case FMT_G16R16:
+					return L"G16R16";
+				case FMT_G16R16F:
+					return L"G16R16F";
+				case FMT_G32R32F:
+					return L"G32R32F";
+				case FMT_R16G16B16:
+					return L"R16G16B16";
+				case FMT_B4G4R4A4:
+					return L"B4G4R4A4";
+				case FMT_Palette8:
+					return L"P8";
+				case FMT_Palette8Alpha8:
+					return L"P8A8";
+				}
+				return L"Unknown";
+			}
 			static PixelFormat ConvertFormat(const String& fmt)
 			{
 				if (fmt == String(L"L8"))
@@ -475,7 +557,8 @@ namespace Apoc3D
 			static int ConvertPixels(const DataBox& src, const DataBox& dst);
 
 
-			static void Resize(const void* src, void* dst);
+			static void Resize(const float* src, int srcWidth, int srcHeight,
+				float* dst, int dstWidth, int dstHeight, int numChannels);
 		};
 
 	}

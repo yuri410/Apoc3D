@@ -624,7 +624,7 @@ namespace Apoc3D
 			}
 		}
 
-		void PixelFormatUtils::Resize(const void* src, void* dst)
+		void PixelFormatUtils::Resize(const float* src, int srcWidth, int srcHeight, float* dst, int dstWidth, int dstHeight, int numChannels)
 		{
 
 		}
