@@ -209,6 +209,49 @@ namespace APBuild
 		return result;
 	}
 
+	bool IsColEmpty(const Gdiplus::BitmapData* bmp, int x)
+	{
+		const char* data = reinterpret_cast<const char*>(bmp->Scan0);
+
+		for (uint y = 0; y < bmp->Height; y++)
+		{
+			if (data[y* bmp->Stride + x * sizeof(uint)] & 0xff000000)
+				return false;
+		}
+
+		return true;
+	}
+	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
+	{
+		UINT  num = 0;          // number of image encoders
+		UINT  size = 0;         // size of the image encoder array in bytes
+
+		ImageCodecInfo* pImageCodecInfo = NULL;
+
+		GetImageEncodersSize(&num, &size);
+		if(size == 0)
+			return -1;  // Failure
+
+		pImageCodecInfo = (ImageCodecInfo*)(malloc(size));
+		if(pImageCodecInfo == NULL)
+			return -1;  // Failure
+
+		GetImageEncoders(num, size, pImageCodecInfo);
+
+		for(UINT j = 0; j < num; ++j)
+		{
+			if( wcscmp(pImageCodecInfo[j].MimeType, format) == 0 )
+			{
+				*pClsid = pImageCodecInfo[j].Clsid;
+				free(pImageCodecInfo);
+				return j;  // Success
+			}    
+		}
+
+		free(pImageCodecInfo);
+		return -1;  // Failure
+	}
+
 	void FontBuild::Build(const ConfigurationSection* sect)
 	{
 		FontBuildConfig config;
@@ -217,8 +260,8 @@ namespace APBuild
 		GlyphBitmapEqualityComparer* comparer = new GlyphBitmapEqualityComparer();
 		FastList<CharMapping> charMap(0xffff);
 		FastMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, comparer);
-		bool* passCheck = new bool[0xffff];
-		memset(passCheck,0,sizeof(bool)*0xffff);
+		//bool* passCheck = new bool[0xffff];
+		//memset(passCheck,0,sizeof(bool)*0xffff);
 		
 
 		Bitmap globalBmp(1,1, PixelFormat32bppARGB);
@@ -232,15 +275,16 @@ namespace APBuild
 			for (wchar_t ch = (wchar_t)config.Ranges[i].MinChar; 
 				ch <= (wchar_t)config.Ranges[i].MaxChar; ch++)
 			{
+				
 				RectF size;
 				gg->MeasureString(&ch, 1, &font, Gdiplus::PointF(0,0), &size);
 
 				int width = static_cast<int>(ceilf(size.Width));
 				int height = static_cast<int>(ceilf(size.Height));
 
-				Bitmap bitmap((INT)width, (INT)height, PixelFormat32bppARGB);
+				Bitmap* bitmap = new Bitmap((INT)width, (INT)height, PixelFormat32bppARGB);
 
-				Gdiplus::Graphics* g = Gdiplus::Graphics::FromImage(&bitmap);
+				Gdiplus::Graphics* g = Gdiplus::Graphics::FromImage(bitmap);
 				g->SetTextRenderingHint(TextRenderingHintAntiAliasGridFit);
 				g->Clear(Gdiplus::Color(0));
 
@@ -259,11 +303,81 @@ namespace APBuild
 				delete brush;
 				delete strFmt;
 
+				
+
 				Gdiplus::BitmapData bmpData;
 				Gdiplus::Rect lr = Gdiplus::Rect( 0, 0, width, height );
-				Gdiplus::Status ret = bitmap.LockBits(&lr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpData);
+				Gdiplus::Status ret = bitmap->LockBits(&lr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpData);
 
 				const char* data = reinterpret_cast<const char*>(bmpData.Scan0);
+
+				{
+					int cropLeft = 0;
+					int cropRight = width - 1;
+					while ((cropLeft < cropRight) && IsColEmpty(&bmpData, cropLeft))
+						cropLeft++;
+
+					while ((cropRight > cropLeft) && IsColEmpty(&bmpData, cropRight))
+						cropRight--;
+
+					if (cropLeft != cropRight)
+					{
+						cropLeft = max(cropLeft-1,0);
+						cropRight = min(cropRight+1, width-1);
+
+						int width2 = cropRight-cropLeft+1;
+						Gdiplus::Bitmap* altBmp = new Gdiplus::Bitmap(width2, height, bitmap->GetPixelFormat());
+
+						{
+							Gdiplus::BitmapData bmpData2;
+							Gdiplus::Rect lr2 = Gdiplus::Rect( 0, 0, width2, height );
+							Gdiplus::Status ret2 = altBmp->LockBits(&lr2, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bmpData2);
+
+							char* data2 = reinterpret_cast<char*>(bmpData2.Scan0);
+							int srcofs = 0;
+							int dstofs = 0;
+							for (int k=0;k<height;k++)
+							{
+								for (int j=cropLeft;j<=cropRight;j++)
+								{
+									*(uint*)(data2 + dstofs+(j-cropLeft)*sizeof(uint)) = *(uint*)(data + srcofs + j*sizeof(uint));
+								}
+
+								srcofs += bmpData.Stride;
+								dstofs += bmpData2.Stride;
+							}
+							altBmp->UnlockBits(&bmpData2);
+						}
+					
+
+						//Gdiplus::Graphics* g = Gdiplus::Graphics::FromImage(altBmp);
+						
+						//g->SetCompositingMode(Gdiplus::CompositingModeSourceCopy);
+						//g->DrawImage(bitmap, 0,0, cropLeft, 0, width2, height, Gdiplus::UnitPixel);
+						//g->Flush();
+						//delete g;
+						
+
+						bitmap->UnlockBits(&bmpData);
+						
+
+						width = width2;
+
+						delete bitmap;
+
+						//CLSID pngClsid;
+						//GetEncoderClsid(L"image/png", &pngClsid);
+						//altBmp->Save((String(L"E:\\Desktop\\test\\ss")+String(1,ch)+String(L".png")).c_str(), &pngClsid);
+
+						bitmap = altBmp;
+						lr = Gdiplus::Rect( 0, 0, width, height );
+						ret = bitmap->LockBits(&lr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpData);
+					}
+				}
+				
+
+
+				data = reinterpret_cast<const char*>(bmpData.Scan0);
 
 				char* buffer = new char[width*height];
 				int srcofs = 0;
@@ -288,18 +402,20 @@ namespace APBuild
 				}
 				else
 				{
+					glyph = result;
 					delete[] buffer;
 				}
 
 
 
-				if (!passCheck[ch])
+				//if (!passCheck[ch])
 				{
 					CharMapping m = { ch, glyph.Index };
 					charMap.Add(m);
 				}
 
-				bitmap.UnlockBits(&bmpData);
+				bitmap->UnlockBits(&bmpData);
+				delete bitmap;
 			}
 		}
 
@@ -353,7 +469,7 @@ namespace APBuild
 		delete bw;
 
 		delete comparer;
-		delete[] passCheck;
+		//delete[] passCheck;
 
 		CompileLog::WriteInformation(config.Name, L">");
 

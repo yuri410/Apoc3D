@@ -80,8 +80,8 @@ namespace APDesigner
 		m_device->BeginFrame();
 
 		
-		m_sprite->Begin(false);
-		m_font->DrawString(m_sprite, L"t", 50,50, CV_White);
+		m_sprite->Begin(true);
+		m_font->DrawString(m_sprite, L"Apoc3D Designer\nfdsfds!!", 50,50, CV_White);
 		//m_sprite->Draw(m_UIskin->ButtonTexture, 50,50, CV_White);
 		m_sprite->End();
 
