@@ -31,6 +31,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/BinaryReader.h"
 #include "IOLib/Streams.h"
 #include "Math/Point.h"
+#include "Core/Logging.h"
+
 
 using namespace Apoc3D::IO;
 
@@ -258,7 +260,9 @@ namespace Apoc3D
 		FontManager::FontManager()
 			: m_fontTable()
 		{
-
+			LogManager::getSingleton().Write(LOG_System, 
+				L"Font manager initialized", 
+				LOGLVL_Infomation);
 		}
 		FontManager::~FontManager()
 		{

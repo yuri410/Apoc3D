@@ -39,6 +39,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/PluginManager.h"
 #include "Core/Logging.h"
 #include "Utility/StringUtils.h"
+#include "UILib/FontManager.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::VFS;
@@ -47,6 +48,7 @@ using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Utility;
+using namespace Apoc3D::UI;
 
 namespace Apoc3D
 {
@@ -105,9 +107,24 @@ namespace Apoc3D
 		
 		TextureManager::Initialize();
 		ModelManager::Initialize();
+
+
+		FontManager::Initialize();
 	}
 	void Engine::Shutdown()
 	{
+		FontManager::Finalize();
+
+		ModelManager::Finalize();
+		TextureManager::Finalize();
+
 		PluginManager::getSingleton().UnloadPlugins();
+		PluginManager::Finalize();
+
+		InputAPIManager::Finalize();
+		GraphicsAPIManager::Finalize();
+		ConfigurationManager::Finalize();
+		FileSystem::Finalize();
+		LogManager::Finalize();
 	}
 }

@@ -166,7 +166,6 @@
     <ClInclude Include="UILib\Control.h" />
     <ClInclude Include="UILib\FontManager.h" />
     <ClInclude Include="UILib\UICommon.h" />
-    <ClInclude Include="UILib\UIMaterialLibrary.h" />
     <ClInclude Include="Utility\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
     <ClInclude Include="Graphics\RenderSystem\DeviceContent.h" />
@@ -299,7 +298,6 @@
     <ClCompile Include="UILib\KeyboardHelper.cpp" />
     <ClCompile Include="UILib\Menu.cpp" />
     <ClCompile Include="UILib\StyleSkin.cpp" />
-    <ClCompile Include="UILib\UIMaterialLibrary.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />
     <ClCompile Include="Graphics\Mesh.cpp" />

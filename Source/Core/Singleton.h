@@ -54,7 +54,10 @@ namespace Apoc3D
 			{
 				new T();
 			}
-
+			static void Finalize()
+			{
+				delete ms_instance;
+			}
 			static T& getSingleton()
 			{
 				assert(ms_instance);

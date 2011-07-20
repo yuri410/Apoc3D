@@ -12,6 +12,7 @@
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/Archive.h"
+#include "Vfs/ResourceLocation.h"
 #include "Math/ColorValue.h"
 
 using namespace Apoc3D::Input;
@@ -52,6 +53,11 @@ namespace APDesigner
 			m_UIskin = new StyleSkin(m_device, rule);
 		}
 
+		{
+
+			FileLocation* fl = FileSystem::getSingleton().Locate(L"", FileLocateRule::Default);
+			FontManager::getSingleton().LoadFont(m_device, L"english", fl);
+		}
 		m_font = FontManager::getSingleton().getFont(L"english");
 
 		ObjectFactory* fac = m_device->getObjectFactory();
@@ -61,6 +67,7 @@ namespace APDesigner
 	{
 		delete m_UIskin;
 		delete m_sprite;
+		
 	}
 	void MainWindow::Update(const GameTime* const time)
 	{
