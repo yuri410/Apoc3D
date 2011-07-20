@@ -55,7 +55,7 @@ namespace APDesigner
 
 		{
 
-			FileLocation* fl = FileSystem::getSingleton().Locate(L"", FileLocateRule::Default);
+			FileLocation* fl = FileSystem::getSingleton().Locate(L"english.fnt", FileLocateRule::Default);
 			FontManager::getSingleton().LoadFont(m_device, L"english", fl);
 		}
 		m_font = FontManager::getSingleton().getFont(L"english");
@@ -75,12 +75,14 @@ namespace APDesigner
 	}
 	void MainWindow::Draw(const GameTime* const time)
 	{
-		m_device->Clear(CLEAR_Target, 0, 1, 0);
+		m_device->Clear(CLEAR_Target, CV_BlanchedAlmond, 1, 0);
 
 		m_device->BeginFrame();
 
-		m_sprite->Begin(true);
-		m_sprite->Draw(m_UIskin->ButtonTexture, 50,50, CV_White);
+		
+		m_sprite->Begin(false);
+		m_font->DrawString(m_sprite, L"t", 50,50, CV_White);
+		//m_sprite->Draw(m_UIskin->ButtonTexture, 50,50, CV_White);
 		m_sprite->End();
 
 		m_device->EndFrame();

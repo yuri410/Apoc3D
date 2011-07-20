@@ -46,7 +46,7 @@ namespace Apoc3D
 			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(fl)
 		{
 			ObjectFactory* fac = device->getObjectFactory();
-			m_font = fac->CreateTexture(FontManager::TextureSize, FontManager::TextureSize, 1, TU_Dynamic, FMT_Alpha8);
+			m_font = fac->CreateTexture(FontManager::TextureSize, FontManager::TextureSize, 1, TU_Static, FMT_Alpha8);
 
 			Stream* strm = fl->GetReadStream();
 			BinaryReader* br = new BinaryReader(strm);
@@ -56,7 +56,7 @@ namespace Apoc3D
 			for (int i=0;i<charCount;i++)
 			{
 				Character ch;
-				ch._Character = static_cast<wchar_t>( br->ReadInt16());
+				ch._Character = static_cast<wchar_t>( br->ReadInt32());
 				ch.GlyphIndex = br->ReadInt32();
 				m_charTable.Add(ch._Character, ch);
 			}
@@ -104,6 +104,8 @@ namespace Apoc3D
 						Glyph& glyph = m_glyphList[i];
 						
 						glyph.IsMapped = true;
+						
+
 						glyph.MappedRect = Apoc3D::Math::Rectangle(stx, sty, glyph.Width, glyph.Height);
 
 						stx += glyph.Width;
@@ -112,12 +114,15 @@ namespace Apoc3D
 							lineHeight = glyph.Height;
 						}
 
-						if (stx>FontManager::TextureSize)
+						if (stx>=FontManager::TextureSize)
 						{
 							stx = 0;
 							sty += lineHeight;
 							lineHeight = 0;
+							glyph.MappedRect = Apoc3D::Math::Rectangle(stx, sty, glyph.Width, glyph.Height);
 						}
+
+						
 						LoadGlyphData(br, glyph);
 					}
 				}
@@ -139,7 +144,7 @@ namespace Apoc3D
 		{
 			br->getBaseStream()->Seek(glyph.Offset, SEEK_Begin);
 
-			DataRectangle dataRect = m_font->Lock(0, LOCK_Discard, glyph.MappedRect);
+			DataRectangle dataRect = m_font->Lock(0, LOCK_None, glyph.MappedRect);
 
 			char* buf = new char[glyph.Width * glyph.Height];
 			br->ReadBytes(buf, glyph.Width * glyph.Height);

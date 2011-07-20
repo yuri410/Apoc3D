@@ -92,10 +92,10 @@ namespace Apoc3D
 				position.y = static_cast<float>(dstRect.Y);
 				position.z = 0;
 
-				D3DVector3 center;
-				center.x = static_cast<float>(position.x + dstRect.Width * 0.5f);
-				center.y = static_cast<float>(position.y + dstRect.Height * 0.5f);
-				center.z = 0;
+				//D3DVector3 center;
+				//center.x = static_cast<float>(position.x + dstRect.Width * 0.5f);
+				//center.y = static_cast<float>(position.y + dstRect.Height * 0.5f);
+				//center.z = 0;
 
 				if (srcRect)
 				{
@@ -111,13 +111,13 @@ namespace Apoc3D
 					};
 				
 					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						&r, &center, &position, color);
+						&r, 0, &position, color);
 					assert(SUCCEEDED(hr));
 				}
 				else
 				{
 					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						0, &center, &position, color);
+						0, 0, &position, color);
 					assert(SUCCEEDED(hr));
 				}
 			}

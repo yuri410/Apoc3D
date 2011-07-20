@@ -186,7 +186,7 @@ namespace Apoc3D
 				D3D9Utils::GetD3DTextureHeight(tex2D), 1, 
 				static_cast<int32>(tex2D->GetLevelCount()), 
 				D3D9Utils::GetD3DTextureFormat(tex2D), 
-				D3D9Utils::GetD3DTextureUsage(tex2D)),
+				D3D9Utils::GetD3DTextureUsage(tex2D)), 
 				m_renderDevice(device), m_tex2D(tex2D), m_tex3D(0), m_cube(0)
 			{
 
@@ -210,14 +210,14 @@ namespace Apoc3D
 				1, 
 				static_cast<int32>(texCube->GetLevelCount()), 
 				D3D9Utils::GetD3DTextureFormat(texCube), 
-				D3D9Utils::GetD3DTextureUsage(texCube)),
+				D3D9Utils::GetD3DTextureUsage(texCube)), 
 				m_renderDevice(device), m_tex2D(0), m_tex3D(0), m_cube(texCube)
 			{
 
 			}
 
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed)
-				: Texture(device, rl, usage, managed),
+				: Texture(device, rl, usage, managed), 
 				m_renderDevice(device), m_tex2D(0), m_tex3D(0), m_cube(0)
 			{
 				if (!managed)
@@ -235,25 +235,28 @@ namespace Apoc3D
 				if (getType() == TT_Texture2D || getType() == TT_Texture1D)
 				{
 					HRESULT hr = dev->CreateTexture(width, height, level, 
-						D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), D3DPOOL_MANAGED, &m_tex2D, NULL);;
+						D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
+						(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex2D, NULL);;
 					assert(SUCCEEDED(hr));
 				}
 				else if (getType() == TT_Texture3D)
 				{
 					HRESULT hr = dev->CreateVolumeTexture(width, height,depth, level, 
-						D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), D3DPOOL_MANAGED, &m_tex3D, NULL);;
+						D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
+						(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex3D, NULL);;
 					assert(SUCCEEDED(hr));
 				}
 			}
 
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage)
-				: Texture(device, length, level, usage, format), 
+				: Texture(device, length, level, usage, format),
 				m_renderDevice(device), m_tex2D(0), m_tex3D(0)
 			{
 				D3DDevice* dev = device->getDevice();
 
 				HRESULT hr = dev->CreateCubeTexture(length, level, 
-					D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), D3DPOOL_MANAGED, &m_cube, NULL);
+					D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
+					(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_cube, NULL);
 				assert(SUCCEEDED(hr));
 			}
 			D3D9Texture::~D3D9Texture()
@@ -789,6 +792,7 @@ namespace Apoc3D
 					m_cube = 0;
 				}
 			}
+
 		}
 	}
 }

@@ -309,8 +309,8 @@ namespace APBuild
 		bw->Write(charMap.getCount());
 		for (int i=0;i<charMap.getCount();i++)
 		{
-			bw->Write(charMap[i].Character);
-			bw->Write(charMap[i].GlyphIndex);
+			bw->Write((int32)charMap[i].Character);
+			bw->Write((int32)charMap[i].GlyphIndex);
 		}
 
 		bw->Write(glyphHashTable.getCount());
