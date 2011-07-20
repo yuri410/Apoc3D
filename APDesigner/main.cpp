@@ -26,6 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/GraphicsAPI.h"
 #include "Graphics/RenderSystem/DeviceContent.h"
 #include "Graphics/RenderSystem/RenderWindow.h"
+#include "Vfs/FileSystem.h"
+#include "Vfs/Archive.h"
 
 #include "../Apoc3D.D3D9RenderSystem/Plugin.h"
 #include "../Apoc3D.WindowsInput/Plugin.h"
@@ -41,6 +43,7 @@ using namespace std;
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::VFS;
 using namespace APDesigner;
 
 INT WINAPI wWinMain(HINSTANCE hInstance,
@@ -68,6 +71,9 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 #endif
 
 	Engine::Initialize(&escon);
+
+	PakArchiveFactory* pakSupport = new PakArchiveFactory();
+	FileSystem::getSingletonPtr()->RegisterArchiveType(pakSupport);
 
 	DeviceContent* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContent();
 
@@ -98,6 +104,9 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	delete mainWnd;
 
 	delete devContent;
+
+	FileSystem::getSingletonPtr()->UnregisterArchiveType(pakSupport);
+	delete pakSupport;
 
 	Engine::Shutdown();
 

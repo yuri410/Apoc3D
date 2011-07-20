@@ -11,6 +11,7 @@
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/Archive.h"
+#include "Math/ColorValue.h"
 
 using namespace Apoc3D::Input;
 using namespace Apoc3D::VFS;
@@ -28,8 +29,6 @@ namespace APDesigner
 		m_device = m_window->getRenderDevice();
 		m_window->setTitle(L"Apoc3D Designer");
 
-		FileSystem::getSingletonPtr()->RegisterArchiveType(new PakArchiveFactory());
-		
 	}
 	void MainWindow::Finalize()
 	{
@@ -71,7 +70,7 @@ namespace APDesigner
 		m_device->BeginFrame();
 
 		m_sprite->Begin(true);
-		m_sprite->Draw(m_UIskin->ButtonTexture, 50,50,0xffffffff);
+		m_sprite->Draw(m_UIskin->ButtonTexture, 50,50, CV_White);
 		m_sprite->End();
 
 		m_device->EndFrame();
