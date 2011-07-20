@@ -10,6 +10,15 @@ using namespace Apoc3D::UI;
 
 namespace APDesigner
 {
+	class ResourcePane
+	{
+
+	};
+	class PropertyPane
+	{
+
+	};
+
 	class MainWindow : public RenderWindowHandler
 	{
 	private:

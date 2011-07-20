@@ -94,9 +94,10 @@ namespace Apoc3D
 				int sty = 0;
 				int lineHeight = 0;
 
-				if (holdableCount>=glyphCount)
+				int loopMax = min(holdableCount, glyphCount);
+				//if (holdableCount>=glyphCount)
 				{
-					for (int i=0;i<glyphCount;i++)
+					for (int i=0;i<loopMax;i++)
 					{
 						Glyph& glyph = m_glyphList[i];
 						
