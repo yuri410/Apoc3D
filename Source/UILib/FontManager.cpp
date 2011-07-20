@@ -262,7 +262,10 @@ namespace Apoc3D
 		}
 		FontManager::~FontManager()
 		{
-
+			for (FastMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
+			{
+				delete iter.getCurrentValue();
+			}
 		}
 
 		Font* FontManager::getFont(const String& fontName)
@@ -270,6 +273,12 @@ namespace Apoc3D
 			return m_fontTable[fontName];
 		}
 
+		void FontManager::LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl)
+		{
+			Font* font = new Font(device, rl);
+			m_fontTable.Add(name, font);
+
+		}
 		
 	}
 }

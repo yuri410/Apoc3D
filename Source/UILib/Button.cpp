@@ -272,7 +272,7 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		ButtonRow::ButtonRow(const Vector2& position, float width, const FastList<String>& titles)
+		ButtonRow::ButtonRow(const Vector2& position, float width, const List<String>& titles)
 			: m_count(titles.getCount())
 		{ 
 			Size.X = (int)width;

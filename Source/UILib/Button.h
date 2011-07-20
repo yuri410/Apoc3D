@@ -136,7 +136,7 @@ namespace Apoc3D
 			int m_hoverIndex;
 
 		public:
-			ButtonRow(const Vector2& position, float width, const FastList<String>& titles);
+			ButtonRow(const Vector2& position, float width, const List<String>& titles);
 			~ButtonRow();
 
 			virtual void Initialize(RenderDevice* device);

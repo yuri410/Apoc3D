@@ -106,6 +106,8 @@ namespace Apoc3D
 			FontManager();
 			~FontManager();
 
+			void LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl);
+
 
 			Font* getFont(const String& fontName);
 

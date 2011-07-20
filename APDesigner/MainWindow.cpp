@@ -7,6 +7,7 @@
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "Graphics/RenderSystem/Sprite.h"
 #include "UILib/StyleSkin.h"
+#include "UILib/FontManager.h"
 #include "Input/InputAPI.h"
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
@@ -50,6 +51,8 @@ namespace APDesigner
 			rule.AddCheckPoint(pt);
 			m_UIskin = new StyleSkin(m_device, rule);
 		}
+
+		m_font = FontManager::getSingleton().getFont(L"english");
 
 		ObjectFactory* fac = m_device->getObjectFactory();
 		m_sprite = fac->CreateSprite();

@@ -67,7 +67,7 @@ namespace Apoc3D
 			PluginErrorBack& eventPluginError() { return m_eventPluginError; }
 
 			void LoadPlugins(const FastList<Plugin*>& plugins);
-			void LoadPlugins(const FastList<String>& plugins);
+			void LoadPlugins(const List<String>& plugins);
 			void LoadPlugins();
 			void UnloadPlugins();
 

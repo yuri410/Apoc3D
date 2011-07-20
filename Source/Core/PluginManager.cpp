@@ -135,7 +135,7 @@ namespace Apoc3D
 				}
 			}
 		}
-		void PluginManager::LoadPlugins(const FastList<String>& plugins)
+		void PluginManager::LoadPlugins(const List<String>& plugins)
 		{
 			for (int i=0;i<plugins.getCount();i++)
 			{

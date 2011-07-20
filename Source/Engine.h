@@ -38,9 +38,9 @@ namespace Apoc3D
 
 	struct APAPI ManualStartConfig
 	{
-		FastList<String> ConfigSet;
-		FastList<String> WorkingDirectories;
-		FastList<String> PluginDynLibList;
+		List<String> ConfigSet;
+		List<String> WorkingDirectories;
+		List<String> PluginDynLibList;
 		FastList<Plugin*> PluginList;
 
 		bool WriteLogToStd;

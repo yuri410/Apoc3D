@@ -76,7 +76,7 @@ namespace APBuild
 	};
 	struct PakBuildConfig
 	{
-		FastList<String> Files;
+		List<String> Files;
 		String DestFile;
 
 		void Parse(const ConfigurationSection* sect);

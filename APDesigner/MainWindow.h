@@ -28,6 +28,8 @@ namespace APDesigner
 		RenderDevice* m_device;
 
 		Sprite* m_sprite;
+
+		Font* m_font;
 	public:
 		MainWindow(RenderWindow* wnd);
 		void Initialize();
