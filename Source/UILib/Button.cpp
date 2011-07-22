@@ -19,7 +19,8 @@ namespace Apoc3D
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			Keyboard* keyb = InputAPIManager::getSingleton().getKeyboard();
 
-			if (m_owner && m_owner->getArea().Contains(getArea()))
+			Apoc3D::Math::Rectangle rect = getArea();
+			if (m_owner && m_owner->getArea().Contains(rect) && rect.Contains(mouse->GetCurrentPosition()))
 			{
 				if (!m_mouseOver)
 				{
@@ -94,7 +95,7 @@ namespace Apoc3D
 			}
 			
 
-			if (m_mouseDown)
+			if (m_mouseOver)
 			{
 				sprite->Draw(m_skin->ButtonTexture, m_btnDestRect[0], &m_skin->BtnSrcRect[0], m_skin->BtnDimColor);
 				sprite->Draw(m_skin->ButtonTexture, m_btnDestRect[1], &m_skin->BtnSrcRect[1], m_skin->BtnDimColor);
@@ -331,7 +332,10 @@ namespace Apoc3D
 			Text = m_titles[0];
 			Control::Initialize(device);
 		}
+		void ButtonRow::Draw(Sprite* sprite)
+		{
 
+		}
 		void ButtonRow::Update(const GameTime* const time)
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();

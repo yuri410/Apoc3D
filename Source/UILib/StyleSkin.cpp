@@ -29,7 +29,10 @@ namespace Apoc3D
 			BtnHozPadding = 5;
 			BtnVertPadding = 20;
 
-
+			BtnDimColor = CV_DarkGray;
+			BtnHighLightColor = CV_Gray;
+			BtnTextDimColor = CV_Black;
+			BtnTextHighLightColor = CV_Black;
 
 
 			BtnRowSrcRect[0] = Apoc3D::Math::Rectangle(0,0,ButtonTexture->getWidth(),ButtonTexture->getHeight());

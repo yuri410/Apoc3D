@@ -34,6 +34,7 @@ namespace Apoc3D
 				: m_inpMgr(mgr)
 			{
 				m_keyboard = static_cast<OIS::Keyboard*>(mgr->createInputObject(OIS::OISKeyboard, true));
+				m_keyboard->setEventCallback(this);
 			}
 			Win32Keyboard::~Win32Keyboard()
 			{

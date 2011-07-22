@@ -71,7 +71,7 @@ namespace Apoc3D
 		}
 		ControlContainer::~ControlContainer()
 		{
-
+			delete m_controls;
 		}
 		void ControlContainer::Initialize(RenderDevice* device)
 		{

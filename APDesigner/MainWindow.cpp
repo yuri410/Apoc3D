@@ -71,20 +71,29 @@ namespace APDesigner
 
 
 		m_pane = new ControlContainer();
-		m_pane->Visible = true; m_pane->Enabled = true; m_pane->Position = Point(0,0); m_pane->Size = Point(100,100);
+		m_pane->Visible = true; m_pane->Enabled = true; m_pane->Position = Point(0,0); m_pane->Size = Point(400,400);
 
-		m_btn = new Button(Point(5,5), L"Test button!");
+		m_btn = new Button(Point(5,5), L"UTTTest button!");
+		m_btn->SetSkin(m_UIskin);
 
 		m_pane->getControls().Add(m_btn);
+
+
+		m_btn->Initialize(m_device);
+		m_pane->Initialize(m_device);
 	}
 	void MainWindow::Unload()
 	{
 		delete m_UIskin;
 		delete m_sprite;
 		
+		delete m_btn;
+		delete m_pane;
 	}
 	void MainWindow::Update(const GameTime* const time)
 	{
+		InputAPIManager::getSingleton().Update(time);
+
 		m_pane->Update(time);
 	}
 	void MainWindow::Draw(const GameTime* const time)
@@ -95,7 +104,7 @@ namespace APDesigner
 
 		
 		m_sprite->Begin(true);
-		m_font->DrawString(m_sprite, L"Apoc3D Designer\nfdsfds!!", 50,50, CV_White);
+		//m_font->DrawString(m_sprite, L"Apoc3D Designer\nfdsfds!!", 50,50, CV_White);
 		//m_sprite->Draw(m_UIskin->ButtonTexture, 50,50, CV_White);
 
 		m_pane->Draw(m_sprite);
