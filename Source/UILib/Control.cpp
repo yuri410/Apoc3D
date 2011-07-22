@@ -65,9 +65,9 @@ namespace Apoc3D
 
 
 		ControlContainer::ControlContainer()
-			: Control(), m_controls(this)
+			: Control()
 		{
-
+			m_controls = new ControlCollection(this);
 		}
 		ControlContainer::~ControlContainer()
 		{
@@ -81,11 +81,11 @@ namespace Apoc3D
 		void ControlContainer::Draw(Sprite* sprite)
 		{
 			int overlay = 0;
-			for (int i=0;i<m_controls.getCount();i++)
+			for (int i=0;i<m_controls->getCount();i++)
 			{
-				if (m_controls[i]->Enabled)
+				if (m_controls->operator[](i)->Enabled)
 				{
-					m_controls[i]->Draw(sprite);
+					m_controls->operator[](i)->Draw(sprite);
 				}
 			}
 			if (overlay)
@@ -97,9 +97,9 @@ namespace Apoc3D
 		}
 		void ControlContainer::Update(const GameTime* const time)
 		{
-			for (int i=0;i<m_controls.getCount();i++)
+			for (int i=0;i<m_controls->getCount();i++)
 			{
-				m_controls[i]->Update(time);
+				m_controls->operator[](i)->Update(time);
 			}
 		}
 
