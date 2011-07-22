@@ -65,8 +65,7 @@ namespace Apoc3D
 			}
 			Mouse* Win32InputFactory::CreateMouse()
 			{
-				HWND hwnd = GetForegroundWindow();
-				return new Win32Mouse(hwnd);
+				return new OldSchoolMouse();
 			}
 			Keyboard* Win32InputFactory::CreateKeyboard()
 			{
