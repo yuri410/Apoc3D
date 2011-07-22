@@ -30,6 +30,9 @@ namespace APDesigner
 		Sprite* m_sprite;
 
 		Font* m_font;
+
+		ControlContainer* m_pane;
+		Button* m_btn;
 	public:
 		MainWindow(RenderWindow* wnd);
 		void Initialize();

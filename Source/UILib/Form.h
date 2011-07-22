@@ -26,6 +26,21 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define FORM_H
 
 #include "UICommon.h"
+#include "Control.h"
 
+namespace Apoc3D
+{
+	namespace UI
+	{
+		class Form : public ControlContainer
+		{
 
+		};
+
+		class UIRoot
+		{
+
+		};
+	}
+}
 #endif

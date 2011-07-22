@@ -8,6 +8,9 @@
 #include "Graphics/RenderSystem/Sprite.h"
 #include "UILib/StyleSkin.h"
 #include "UILib/FontManager.h"
+#include "UILib/Control.h"
+#include "UILib/Button.h"
+
 #include "Input/InputAPI.h"
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
@@ -51,6 +54,8 @@ namespace APDesigner
 			pt.AddPath(L"classic_ui.pak");
 			rule.AddCheckPoint(pt);
 			m_UIskin = new StyleSkin(m_device, rule);
+
+			m_UIskin->ControlFontName = L"english";
 		}
 
 		{
@@ -62,6 +67,15 @@ namespace APDesigner
 
 		ObjectFactory* fac = m_device->getObjectFactory();
 		m_sprite = fac->CreateSprite();
+
+
+
+		m_pane = new ControlContainer();
+		m_pane->Visible = true; m_pane->Enabled = true; m_pane->Position = Point(0,0); m_pane->Size = Point(100,100);
+
+		m_btn = new Button(Point(5,5), L"Test button!");
+
+		m_pane->getControls().Add(m_btn);
 	}
 	void MainWindow::Unload()
 	{
@@ -71,7 +85,7 @@ namespace APDesigner
 	}
 	void MainWindow::Update(const GameTime* const time)
 	{
-
+		m_pane->Update(time);
 	}
 	void MainWindow::Draw(const GameTime* const time)
 	{
@@ -83,6 +97,9 @@ namespace APDesigner
 		m_sprite->Begin(true);
 		m_font->DrawString(m_sprite, L"Apoc3D Designer\nfdsfds!!", 50,50, CV_White);
 		//m_sprite->Draw(m_UIskin->ButtonTexture, 50,50, CV_White);
+
+		m_pane->Draw(m_sprite);
+
 		m_sprite->End();
 
 		m_device->EndFrame();

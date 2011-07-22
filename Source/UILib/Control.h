@@ -133,11 +133,12 @@ namespace Apoc3D
 			Control* ActiveControl;
 
 			ControlCollection(ControlContainer* owner)
-				: m_owner(owner)
+				: m_owner(owner), ActiveControl(0)
 			{
 
 			}
 
+			
 			int getCount() const { return m_controls.getCount(); }
 			Control* operator [](int index) const { return m_controls[index]; }
 
@@ -158,16 +159,30 @@ namespace Apoc3D
 			Point m_menuOffset;
 
 		public:
-
+			ControlCollection& getControls() { return m_controls; }
 			int getCount() const { return m_controls.getCount(); }
 			Control* operator [](int index) const { return m_controls[index]; }
 
-			void Add(Control* ctrl);
-			void Remove(Control* ctrl);
+			//void Add(Control* ctrl)
+			//{
+			//	ctrl->setOwner(this);
+			//	m_controls.Add(ctrl);
+			//}
+			//void Remove(Control* ctrl)
+			//{
+			//	m_controls.Remove(ctrl);
+			//}
 
-			void RemoveAt(int index);
-			void Clear();
-
+			//void RemoveAt(int index)
+			//{
+			//	m_controls.RemoveAt(index);
+			//}
+			//void Clear()
+			//{
+			//	m_controls.Clear();
+			//}
+			ControlContainer();
+			~ControlContainer();
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time);

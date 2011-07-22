@@ -64,7 +64,44 @@ namespace Apoc3D
 		}
 
 
+		ControlContainer::ControlContainer()
+			: Control(), m_controls(this)
+		{
 
+		}
+		ControlContainer::~ControlContainer()
+		{
+
+		}
+		void ControlContainer::Initialize(RenderDevice* device)
+		{
+
+		}
+
+		void ControlContainer::Draw(Sprite* sprite)
+		{
+			int overlay = 0;
+			for (int i=0;i<m_controls.getCount();i++)
+			{
+				if (m_controls[i]->Enabled)
+				{
+					m_controls[i]->Draw(sprite);
+				}
+			}
+			if (overlay)
+			{
+
+			}
+
+
+		}
+		void ControlContainer::Update(const GameTime* const time)
+		{
+			for (int i=0;i<m_controls.getCount();i++)
+			{
+				m_controls[i]->Update(time);
+			}
+		}
 
 	}
 }
