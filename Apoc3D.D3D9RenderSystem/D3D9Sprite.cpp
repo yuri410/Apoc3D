@@ -86,7 +86,7 @@ namespace Apoc3D
 			void D3D9Sprite::Draw(Texture* texture, 
 				const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
 			{
-
+				
 				D3DVector3 position;
 				position.x = static_cast<float>(dstRect.X);
 				position.y = static_cast<float>(dstRect.Y);
@@ -109,16 +109,53 @@ namespace Apoc3D
 						(LONG)srcRect->getRight(),
 						(LONG)srcRect->getBottom()
 					};
-				
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						&r, 0, &position, color);
-					assert(SUCCEEDED(hr));
+
+					if (srcRect->Width != dstRect.Width || srcRect->Height != dstRect.Height)
+					{
+						D3DMatrix trans;
+						D3DXMatrixTranslation(&trans, position.x, position.y, position.z);
+						trans._11 = (float)dstRect.Width / (float)srcRect->Width;
+						trans._22 = (float)dstRect.Height / (float)srcRect->Height;
+						m_sprite->SetTransform(&trans);
+
+						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+							&r, NULL, NULL, color);
+						assert(SUCCEEDED(hr));
+
+						D3DXMatrixIdentity(&trans);
+						m_sprite->SetTransform(&trans);
+					}
+					else
+					{
+						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+							&r, NULL, &position, color);
+						assert(SUCCEEDED(hr));
+					}
+					
 				}
 				else
 				{
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						0, 0, &position, color);
-					assert(SUCCEEDED(hr));
+					if (texture->getWidth() != dstRect.Width || texture->getHeight() != dstRect.Height)
+					{
+						D3DMatrix trans;
+						D3DXMatrixTranslation(&trans, position.x, position.y, position.z);
+						trans._11 = (float)dstRect.Width / (float)srcRect->Width;
+						trans._22 = (float)dstRect.Height / (float)srcRect->Height;
+						m_sprite->SetTransform(&trans);
+
+						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+							NULL, NULL, NULL, color);
+						assert(SUCCEEDED(hr));
+
+						D3DXMatrixIdentity(&trans);
+						m_sprite->SetTransform(&trans);
+					}
+					else
+					{
+						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+							NULL, NULL, &position, color);
+						assert(SUCCEEDED(hr));
+					}
 				}
 			}
 
