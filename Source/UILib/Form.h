@@ -27,14 +27,112 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "UICommon.h"
 #include "Control.h"
-
 namespace Apoc3D
 {
 	namespace UI
 	{
 		class Form : public ControlContainer
 		{
+		public:
+			enum BorderStyle
+			{
+				FBS_None,
+				FBS_Fixed,
+				FBS_Sizable
+			};
+			enum WindowState
+			{
+				FWS_Normal,
+				FWS_Minimized,
+				FWS_Maximized
+			};
 
+		private:
+			Point m_titleOffset;
+			Point m_minimumSize;
+			Point m_minumizedSize;
+			Point m_maximumSize;
+
+			bool m_isMinimized;
+			bool m_isMaximized;
+
+			Point m_previousPosition;
+			Point m_previousSize;
+			Point m_minimizedPos;
+
+			String m_title;
+
+			UIEventHandler m_eResized;
+
+
+
+			float m_borderAlpha;
+
+			Button* m_btClose;
+			Button* m_btMinimize;
+			Button* m_btMaximize;
+			Button* m_btRestore;
+
+			bool m_hasMinimizeButton;
+			bool m_hasMaximizeButton;
+
+			Rectangle m_dragArea;
+			Rectangle m_resizeArea;
+			
+			bool m_isDragging;
+			bool m_isResizeing;
+
+			bool m_isMinimizing;
+			bool m_isInReiszeArea;
+
+			Point m_posOffset;
+			Point m_oldSize;
+
+			bool m_initialized;
+
+			float m_lastClickTime;
+
+			BorderStyle m_borderStyle;
+			WindowState m_state;
+
+		public:
+			bool isResized() const { return m_isResizeing; }
+			bool isDragged() const { return m_isDragging; }
+			bool isMinimizing() const { return m_isMinimizing; }
+
+			bool getHasMinimizeButton() const { return m_hasMinimizeButton; }
+			void setHasMinimizeButton(bool val) { m_hasMinimizeButton = val; }
+
+			bool getHasMaximizeButton() const { return m_hasMaximizeButton; }
+			void setHasMaximizeButton(bool val) { m_hasMaximizeButton = val; }
+
+			const String& getTitle() const { return m_title; }
+			void setTitle(const String& txt) { m_title = txt; }
+
+
+
+			UIEventHandler& eventResized() { return m_eResized; }
+
+			Form();
+			Form(BorderStyle border);
+			virtual ~Form();
+
+			virtual void Show();
+			virtual void Hide();
+			virtual void Close();
+			virtual void Focus();
+			virtual void Unfocus();
+			virtual void Minimize();
+			virtual void Maximize();
+			virtual void Restore();
+
+			virtual void Initialize(RenderDevice* device);
+			
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
+
+			
 		};
 
 		class UIRoot
