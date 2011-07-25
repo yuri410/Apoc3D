@@ -295,6 +295,7 @@
     <ClCompile Include="UILib\Button.cpp" />
     <ClCompile Include="UILib\Control.cpp" />
     <ClCompile Include="UILib\FontManager.cpp" />
+    <ClCompile Include="UILib\Form.cpp" />
     <ClCompile Include="UILib\KeyboardHelper.cpp" />
     <ClCompile Include="UILib\Menu.cpp" />
     <ClCompile Include="UILib\StyleSkin.cpp" />

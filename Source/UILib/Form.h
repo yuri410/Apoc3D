@@ -27,6 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "UICommon.h"
 #include "Control.h"
+#include "Collections/FastList.h"
+
+using namespace  Apoc3D::Collections;
+
 namespace Apoc3D
 {
 	namespace UI
@@ -50,7 +54,7 @@ namespace Apoc3D
 		private:
 			Point m_titleOffset;
 			Point m_minimumSize;
-			Point m_minumizedSize;
+			Point m_minimizedSize;
 			Point m_maximumSize;
 
 			bool m_isMinimized;
@@ -95,6 +99,20 @@ namespace Apoc3D
 			BorderStyle m_borderStyle;
 			WindowState m_state;
 
+
+			void InitializeButtons();
+
+			void DrawTitle(Sprite* sprite);
+			void DrawButtons(Sprite* sprite);
+
+			void UpdateTopMost();
+			void UpdateActive();
+			void UpdateState();
+			void CheckDragging();
+			void CheckDoubleClick(const GameTime* const time);
+			void CheckResize();
+			void ToggleWindowState();
+
 		public:
 			bool isResized() const { return m_isResizeing; }
 			bool isDragged() const { return m_isDragging; }
@@ -137,6 +155,12 @@ namespace Apoc3D
 
 		class UIRoot
 		{
+		private:
+			static FastList<Form*> m_forms;
+			static Form* m_activeForm;
+			static Form* m_topMostForm;
+
+			
 
 		};
 	}
