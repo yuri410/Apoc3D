@@ -79,7 +79,7 @@ namespace APDesigner
 		m_pane->getControls().Add(m_btn);
 
 
-		m_btn->Initialize(m_device);
+		//m_btn->Initialize(m_device);
 		m_pane->Initialize(m_device);
 	}
 	void MainWindow::Unload()

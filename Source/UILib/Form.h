@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Collections/FastList.h"
 
 using namespace  Apoc3D::Collections;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
@@ -52,6 +53,8 @@ namespace Apoc3D
 			};
 
 		private:
+			RenderDevice* m_device;
+
 			Point m_titleOffset;
 			Point m_minimumSize;
 			Point m_minimizedSize;
@@ -133,6 +136,8 @@ namespace Apoc3D
 			Menu* getMenu() const { return m_menu; }
 			void setMenu(Menu* m) { m_menu = m; }
 
+			WindowState getState() const { return m_state; }
+
 			UIEventHandler& eventResized() { return m_eResized; }
 
 			Form(BorderStyle border = FBS_Sizable, const String& title = L"");
@@ -164,6 +169,10 @@ namespace Apoc3D
 			static Form* m_topMostForm;
 
 		public:
+			static RectangleF UIArea;
+
+			static Apoc3D::Math::Rectangle GetUIArea(RenderDevice* device);
+
 			static FastList<Form*>& getForms() { return m_forms; }
 
 			static Form* getActiveForm() { return m_activeForm; }
@@ -173,6 +182,9 @@ namespace Apoc3D
 			static Form* getTopMostForm() { return m_topMostForm; }
 			static void setTopMostForm(Form* frm) { m_topMostForm = frm; }
 
+
+			static bool GetMinimizedPosition(RenderDevice* dev, Form* form, Point& pos);
+			static Point GetMaximizedSize(RenderDevice* dev, Form* form);
 		};
 	}
 }

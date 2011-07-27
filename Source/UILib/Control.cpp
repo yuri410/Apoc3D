@@ -75,7 +75,10 @@ namespace Apoc3D
 		}
 		void ControlContainer::Initialize(RenderDevice* device)
 		{
-
+			for (int i=0;i<m_controls->getCount();i++)
+			{
+				m_controls->operator[](i)->Initialize(device);
+			}
 		}
 
 		void ControlContainer::Draw(Sprite* sprite)
