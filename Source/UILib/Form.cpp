@@ -3,12 +3,14 @@
 #include "Button.h"
 #include "StyleSkin.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/Sprite.h"
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
 #include "Graphics/TextureManager.h"
 #include "Input/Mouse.h"
 #include "Input/InputAPI.h"
 #include "Core/GameTime.h"
+#include "FontManager.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Input;
@@ -557,6 +559,105 @@ namespace Apoc3D
 				Restore();
 			else if (m_state == FWS_Minimized)
 				Restore();
+		}
+
+		void Form::Draw(Sprite* sprite)
+		{
+
+		}
+		void Form::DrawButtons(Sprite* sprite)
+		{
+			if (m_borderStyle != FBS_None)
+			{
+				m_btClose->Position.X = Size.X - 22;
+				m_btClose->Position.Y = 4;
+				m_btClose->Draw(sprite);
+			}
+
+			if (m_borderStyle == FBS_Sizable)
+			{
+				Matrix matrix;
+				Matrix::CreateTranslation(matrix, Position.X, Position.Y,0);
+				sprite->SetTransform(matrix);
+
+				if (m_hasMaximizeButton)
+				{					
+					if (m_state != FWS_Maximized)
+					{
+						m_btMaximize->Position.X = Size.X - 37;
+						m_btMaximize->Position.Y = 4;
+						
+						m_btMaximize->Draw(sprite);
+					}
+					else
+					{
+						m_btRestore->Position.X = Size.X - 37;
+						m_btRestore->Position.Y = 4;
+						m_btRestore->Draw(sprite);
+					}
+
+					if (m_hasMinimizeButton)
+					{
+						if (m_state != FWS_Minimized)
+						{
+							m_btMinimize->Position.X = Size.X - 52;
+							m_btMinimize->Position.Y = 4;
+							m_btMinimize->Draw(sprite);
+						}
+						else
+						{
+							m_btRestore->Position.X = Size.X - 52;
+							m_btRestore->Position.Y = 4;
+							m_btRestore->Draw(sprite);
+						}
+					}
+				}
+				else if (m_hasMinimizeButton)
+				{
+					if (m_state != FWS_Minimized)
+					{
+						m_btMinimize->Position.X = Size.X - 37;
+						m_btMinimize->Position.Y = 4;
+						m_btMinimize->Draw(sprite);
+					}
+					else
+					{
+						m_btRestore->Position.X = Size.X - 37;
+						m_btRestore->Position.Y = 4;
+						m_btRestore->Draw(sprite);
+					}
+				}
+
+				sprite->SetTransform(Matrix::Identity);
+			}
+		}
+		void Form::DrawTitle(Sprite* sprite)
+		{
+			Point size = m_fontRef->MeasureString(m_title);
+			if (size.X >= Size.X-75)
+			{
+				for (size_t i=0;i<m_title.size()+1;i++)
+				{
+					String subStr = m_title.substr(0,i);
+					size = m_fontRef->MeasureString(subStr);
+					if (size.X >= Size.X-75)
+					{
+						Point pos = Position;
+						pos.X += m_titleOffset.X;
+						pos.Y += m_titleOffset.Y;
+						m_fontRef->DrawString(sprite, subStr + L"..", pos, CV_Black);
+						break;
+					}
+				}
+			}
+			else
+			{
+				Point pos = Position;
+				pos.X += m_titleOffset.X;
+				pos.Y += m_titleOffset.Y;
+				m_fontRef->DrawString(sprite, m_title, pos, CV_Black);
+			}
+
 		}
 		/************************************************************************/
 		/*                                                                      */
