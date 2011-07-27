@@ -65,7 +65,7 @@ namespace Apoc3D
 
 
 		ControlContainer::ControlContainer()
-			: Control()
+			: Control(), m_menu(0), m_menuOffset(0,20)
 		{
 			m_controls = new ControlCollection(this);
 		}
@@ -100,9 +100,24 @@ namespace Apoc3D
 		}
 		void ControlContainer::Update(const GameTime* const time)
 		{
+			bool skip = false;
 			for (int i=0;i<m_controls->getCount();i++)
 			{
-				m_controls->operator[](i)->Update(time);
+				if (m_controls->operator[](i)->IsOverriding())
+				{
+					m_controls->operator[](i)->Update(time);
+					skip = true;
+				}
+			}
+			if (!skip)
+			{
+				for (int i=0;i<m_controls->getCount();i++)
+				{
+					if (m_controls->operator[](i)->Enabled)
+					{
+						m_controls->operator[](i)->Update(time);
+					}
+				}
 			}
 		}
 

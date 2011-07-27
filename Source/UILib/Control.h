@@ -83,7 +83,9 @@ namespace Apoc3D
 			UIEventHandler& eventPress() { return m_eventMousePress; }
 			UIEventHandler& eventRelease() { return m_eventMouseRelease; }
 
-
+			/** Gets a bool indicating if the control is blocking its parent
+			*/
+			virtual bool IsOverriding() { return false; }
 
 			Apoc3D::Math::Rectangle getArea() const
 			{

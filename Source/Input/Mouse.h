@@ -56,6 +56,8 @@ namespace Apoc3D
 			bool IsRightPressed() const { return m_btnState[2] & !m_lastBtnState[2]; }
 			bool IsRightUp() const { return !m_btnState[2] & m_lastBtnState[2]; }
 
+			bool IsLeftReleasedState() const { return !m_btnState[0]; }
+			bool IsLeftPressedState() const { m_btnState[0]; }
 			virtual void Update(const GameTime* const time) = 0;
 		};
 	}

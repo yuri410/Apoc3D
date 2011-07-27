@@ -6,8 +6,12 @@
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
 #include "Graphics/TextureManager.h"
+#include "Input/Mouse.h"
+#include "Input/InputAPI.h"
+#include "Core/GameTime.h"
 
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::Input;
 
 namespace Apoc3D
 {
@@ -21,7 +25,7 @@ namespace Apoc3D
 			m_hasMinimizeButton(true), m_hasMaximizeButton(true), 
 			m_dragArea(0,0,0,0), m_resizeArea(0,0,15,15), m_isDragging(false), m_isResizeing(false),
 			m_isMinimizing(false), m_isInReiszeArea(false), m_posOffset(0,0), m_oldSize(0,0), m_initialized(false), m_lastClickTime(0),
-			m_borderStyle(border), m_state(FWS_Normal), m_title(title), m_menu(0), m_menuOffset(0,20)
+			m_borderStyle(border), m_state(FWS_Normal), m_title(title)
 		{
 			Size = Point(200,100);
 			Visible = false;
@@ -278,7 +282,11 @@ namespace Apoc3D
 						bool skip = false;
 						for (int i=0;i<m_controls->getCount();i++)
 						{
-							
+							if (m_controls->operator[](i)->IsOverriding())
+							{
+								m_controls->operator[](i)->Update(time);
+								skip = true;
+							}
 						}
 						if (!skip)
 						{
@@ -301,6 +309,255 @@ namespace Apoc3D
 			}
 		}
 
+		void Form::UpdateTopMost()
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();	
+
+			if (mouse->IsLeftPressedState() && getArea().Contains(mouse->GetCurrentPosition()) && !UIRoot::getActiveForm())
+			{
+				UIRoot::setActiveForm(this);
+				Focus();
+			}
+		}
+
+		void Form::UpdateActive()
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			if (UIRoot::getActiveForm() == this && mouse->IsLeftReleasedState())
+			{
+				UIRoot::setActiveForm(0);
+			}
+		}
+
+		void Form::UpdateState()
+		{
+			//Restore the window to its original size and position
+			if (m_state == FWS_Normal && (m_isMaximized || m_isMinimized))
+			{
+				if (Vector2Utils::Distance(Vector2(Position.X,Position.Y), Vector2(m_previousPosition.X, m_previousPosition.Y))>2.0f)
+				{
+					Position.X += (int)((m_previousPosition.X-Position.X)*0.2f);
+					Position.Y += (int)((m_previousPosition.Y-Position.Y)*0.2f);
+				}
+				else
+				{
+					Position = m_previousPosition;
+				}
+
+				if (Vector2Utils::Distance(Vector2(Size.X,Size.Y), Vector2(m_previousPosition.X, m_previousPosition.Y))>2.0f)
+				{
+					Size.X += (int)((m_previousSize.X-Size.X)*0.2f);
+					Size.Y += (int)((m_previousSize.Y-Size.Y)*0.2f);
+				}
+				else
+				{
+					Size = m_previousSize;
+				}
+
+				if (Position == m_previousPosition && Size == m_previousSize)
+				{
+					m_isMaximized = false;
+					m_isMinimized = false;
+
+					Focus();
+					if (!m_eResized.empty())
+					{
+						m_eResized(this);
+					}
+				}
+			}
+			 //Minimize the window
+			else if (m_state == FWS_Minimized && !m_isMinimized)
+			{
+				if (Vector2Utils::Distance(Vector2(Position.X,Position.Y), Vector2(m_minimizedPos.X, m_minimizedPos.Y))>2.0f)
+				{
+					Position.X += (int)((m_minimizedPos.X-Position.X)*0.2f);
+					Position.Y += (int)((m_minimizedPos.Y-Position.Y)*0.2f);
+				}
+				else
+				{
+					Position = m_minimizedPos;
+				}
+
+				if (Vector2Utils::Distance(Vector2(Size.X,Size.Y), Vector2(m_minimizedSize.X, m_minimizedSize.Y))>2.0f)
+				{
+					Size.X += (int)((m_minimizedSize.X-Size.X)*0.2f);
+					Size.Y += (int)((m_minimizedSize.Y-Size.Y)*0.2f);
+				}
+				else
+				{
+					Size = m_minimizedSize;
+				}
+
+				if (Position == m_minimizedPos && Size == m_minimizedSize)
+				{
+					m_isMinimized = true;
+					m_isMaximized = false;
+					m_isMinimizing = false;
+					if (!m_eResized.empty())
+					{
+						m_eResized(this);
+					}
+				}
+			}
+			//Maximize the window
+			else if (m_state == FWS_Maximized && !m_isMaximized)
+			{
+				if (Vector2Utils::Distance(Vector2Utils::Zero, Vector2(Position.X, Position.Y))>2.0f)
+				{
+					Position.X += (int)((-Position.X)*0.2f);
+					Position.Y += (int)((-Position.Y)*0.2f);
+				}
+				else
+				{
+					Position = Point::Zero;
+				}
+				
+				if (Vector2Utils::Distance(Vector2(Size.X,Size.Y), Vector2(m_maximumSize.X, m_maximumSize.Y))>2.0f)
+				{
+					Size.X += (int)((m_maximumSize.X-Size.X)*0.2f);
+					Size.Y += (int)((m_maximumSize.Y-Size.Y)*0.2f);
+				}
+				else
+				{
+					Size = m_maximumSize;
+				}
+
+				if (Position == Point::Zero && Size == m_maximumSize)
+				{
+					m_isMinimized = false;
+					m_isMaximized = true;
+					
+					if (!m_eResized.empty())
+					{
+						m_eResized(this);
+					}
+				}
+			}
+		}
+		void Form::CheckDragging()
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			m_dragArea.X = Position.X + 7;
+			m_dragArea.Y = Position.Y;
+			m_dragArea.Width = Size.X - 29;
+			if (m_hasMinimizeButton)
+				m_dragArea.Width -= 15;
+			if (m_hasMaximizeButton)
+				m_dragArea.Width -= 15;
+			m_dragArea.Height = 20;
+
+			if (m_dragArea.Contains(mouse->GetCurrentPosition()) &&
+				mouse->IsLeftPressed() && UIRoot::getActiveForm()==this)
+			{
+				m_isDragging = true;
+				Focus();
+				m_posOffset.X = mouse->GetCurrentPosition().X - Position.X;
+				m_posOffset.Y = mouse->GetCurrentPosition().Y - Position.Y;
+			}
+
+			if (m_isDragging)
+			{
+				Position.X = mouse->GetCurrentPosition().X - m_posOffset.X;
+				Position.Y = mouse->GetCurrentPosition().Y - m_posOffset.Y;
+				
+				if (mouse->IsLeftReleasedState())
+					m_isDragging = false;
+			}
+			// snapping?
+		}
+
+		void Form::CheckDoubleClick(const GameTime* const time)
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			if (m_state != FWS_Normal)
+			{
+				m_dragArea.X = Position.X + 7;
+				m_dragArea.Y = Position.Y;
+
+				m_dragArea.Width = Size.X - 29;
+				if (m_hasMinimizeButton)
+					m_dragArea.Width -= 15;
+				if (m_hasMaximizeButton)
+					m_dragArea.Width -= 15;
+				m_dragArea.Height = 20;
+			}
+
+			if (m_borderStyle == FBS_Sizable && m_dragArea.Contains(mouse->GetCurrentPosition()))
+			{
+				if (mouse->IsLeftPressed())
+				{
+					if (!UIRoot::getActiveForm())
+						UIRoot::setActiveForm(this);
+
+					if (UIRoot::getActiveForm()==this)
+					{
+						if (time->getTotalTime() - m_lastClickTime < 0.2f)
+						{
+							ToggleWindowState();
+						}
+
+						m_lastClickTime = time->getTotalTime();
+					}
+				}
+			}
+		}
+
+		void Form::CheckResize()
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			m_resizeArea.X = Position.X + Size.X - m_resizeArea.Width;
+			m_resizeArea.Y = Position.Y + Size.Y - m_resizeArea.Height;
+
+			if (m_resizeArea.Contains(mouse->GetCurrentPosition()) &&
+				UIRoot::getTopMostForm()==this)
+			{
+				if (m_isInReiszeArea)
+				{
+					m_isInReiszeArea = true;
+					
+				}
+
+				if (mouse->IsLeftPressed() &&
+					UIRoot::getActiveForm() == this)
+				{
+					m_isResizeing = true;
+					Focus();
+					m_posOffset.X = mouse->GetCurrentPosition().X;
+					m_posOffset.Y = mouse->GetCurrentPosition().Y;
+					m_oldSize = Size;
+				}
+			}
+			else if (m_isInReiszeArea && !m_isResizeing)
+			{
+				m_isInReiszeArea = false;
+				
+			}
+
+			if (m_isResizeing)
+			{
+				Size.X = m_oldSize.X + mouse->GetCurrentPosition().X - m_posOffset.X;
+				Size.Y = m_oldSize.Y + mouse->GetCurrentPosition().Y - m_posOffset.Y;
+
+				if (!m_eResized.empty())
+				{
+					m_eResized(this);
+				}
+				if (mouse->IsLeftReleasedState())
+				{
+					m_isResizeing = false;
+				}
+			}
+		}
+		void Form::ToggleWindowState()
+		{
+			if (m_state == FWS_Normal)
+				Maximize();
+			else if (m_state == FWS_Maximized)
+				Restore();
+			else if (m_state == FWS_Minimized)
+				Restore();
+		}
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
