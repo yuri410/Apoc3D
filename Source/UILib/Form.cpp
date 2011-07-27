@@ -563,7 +563,24 @@ namespace Apoc3D
 
 		void Form::Draw(Sprite* sprite)
 		{
+			int overlay = 0;
+			for (int i=0;i<m_controls->getCount();i++)
+			{
+				if (m_controls->operator[](i)->IsOverriding())
+				{
+					overlay = i;
+				}
+				if (m_controls->operator[](i)->Enabled)
+				{
+					m_controls->operator[](i)->Draw(sprite);
+				}
+			}
+			if (overlay)
+			{
 
+			}
+
+			
 		}
 		void Form::DrawButtons(Sprite* sprite)
 		{

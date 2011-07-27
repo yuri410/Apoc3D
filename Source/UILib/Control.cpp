@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Control.h"
 #include "FontManager.h"
 #include "StyleSkin.h"
+#include "Menu.h"
 
 namespace Apoc3D
 {
@@ -86,6 +87,10 @@ namespace Apoc3D
 			int overlay = 0;
 			for (int i=0;i<m_controls->getCount();i++)
 			{
+				if (m_controls->operator[](i)->IsOverriding())
+				{
+					overlay = i;
+				}
 				if (m_controls->operator[](i)->Enabled)
 				{
 					m_controls->operator[](i)->Draw(sprite);
@@ -96,7 +101,10 @@ namespace Apoc3D
 
 			}
 
-
+			if (m_menu && m_menu->Visible)
+			{
+				m_menu->Draw(sprite);
+			}
 		}
 		void ControlContainer::Update(const GameTime* const time)
 		{
