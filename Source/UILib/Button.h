@@ -81,6 +81,20 @@ namespace Apoc3D
 				//ForeColor = foreColor;
 			}
 		
+			Texture* getInvalidTexture() const { return m_InvalidTexture; }
+			void setInvalidTexture(Texture* texture) { m_InvalidTexture = texture; }
+
+			Texture* getNormalTexture() const { return m_NormalTexture; }
+			void setNormalTexture(Texture* texture) { m_NormalTexture = texture; }
+
+			Texture* getMouseOverTexture() const { return m_MouseOverTexture; }
+			void setMouseOverTexture(Texture* texture) { m_MouseOverTexture = texture; }
+
+			Texture* getMouseDownTexture() const { return m_MouseDownTexture; }
+			void setMouseDownTexture(Texture* texture) { m_MouseDownTexture = texture; }
+
+			Texture* getDisabledTexture() const { return m_DisabledTexture; }
+			void setDiabledTexture(Texture* texture) { m_DisabledTexture = texture; }
 			
 			virtual void Initialize(RenderDevice* device);
 

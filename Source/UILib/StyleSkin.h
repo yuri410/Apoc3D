@@ -33,6 +33,14 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle BtnRowSeparator;
 			String ControlFontName;
 
+
+
+
+			Texture* FormCloseButton;
+			Texture* FormMinimizeButton;
+			Texture* FormMaximizeButton;
+			Texture* FormRestoreButton;
+
 		public:
 			// create default skin
 			StyleSkin(RenderDevice* device, const FileLocateRule& rule);

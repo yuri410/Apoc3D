@@ -18,7 +18,7 @@ namespace Apoc3D
 	{
 		StyleSkin::StyleSkin(RenderDevice* device, const FileLocateRule& rule)
 		{
-			FileLocation* fl = FileSystem::getSingleton().TryLocate(L"ctl_btn_default.tex", rule);
+			FileLocation* fl = FileSystem::getSingleton().Locate(L"ctl_btn_default.tex", rule);
 			ButtonTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
 			
 			
@@ -45,6 +45,17 @@ namespace Apoc3D
 			DataRectangle rect = WhitePixelTexture->Lock(0, LOCK_None);
 			*(uint*)rect.getDataPointer() = PACK_COLOR(0xff,0xff,0xff,0xff);
 			WhitePixelTexture->Unlock(0);
+
+
+			fl = FileSystem::getSingleton().Locate(L"ctl_btn_close.tex", rule);
+			FormCloseButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_btn_maximize.tex", rule);
+			FormMaximizeButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_btn_minimize.tex", rule);
+			FormMinimizeButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_btn_restore.tex", rule);
+			FormRestoreButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+
 		}
 
 		StyleSkin::~StyleSkin()

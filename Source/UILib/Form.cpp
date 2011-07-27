@@ -1,6 +1,13 @@
 #include "Form.h"
 #include "Menu.h"
+#include "Button.h"
+#include "StyleSkin.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
+#include "Vfs/FileLocateRule.h"
+#include "Vfs/FileSystem.h"
+#include "Graphics/TextureManager.h"
+
+using namespace Apoc3D::VFS;
 
 namespace Apoc3D
 {
@@ -22,7 +29,15 @@ namespace Apoc3D
 
 		Form::~Form()
 		{
+			delete m_btClose;
+			delete m_btMaximize;
+			delete m_btMinimize;
+			delete m_btRestore;
 
+			if (UIRoot::getTopMostForm() == this)
+			{
+				UIRoot::setTopMostForm(0);
+			}
 		}
 
 		void Form::Show()
@@ -142,16 +157,148 @@ namespace Apoc3D
 				m_menu->Initialize(m_device);
 			}
 
-			InitializeButtons();
+			InitializeButtons(device);
 
 			ControlContainer::Initialize(device);
 
 			m_initialized = true;
 		}
 
-		void Form::InitializeButtons()
+		void Form::InitializeButtons(RenderDevice* device)
 		{
+			m_btClose = new Button(Point(Size.X = 22, 4), L"");
+			m_btClose->setNormalTexture(m_skin->FormCloseButton);
+			m_btClose->setOwner(this);
+			m_btClose->Initialize(device);
+			m_btClose->eventRelease().bind(this, Form::btClose_Release);
 
+			
+			if (m_hasMinimizeButton)
+			{
+				m_btMinimize = new Button(Point(0,0),L"");
+				m_btMinimize->setNormalTexture(m_skin->FormMinimizeButton);
+				m_btMinimize->setOwner(this);
+				m_btMinimize->Initialize(device);
+
+				m_btMinimize->eventRelease().bind(this, Form::btMinimize_Release);
+			}
+			if (m_hasMaximizeButton)
+			{
+				m_btMaximize = new Button(Point(0,0),L"");
+				m_btMaximize->setNormalTexture(m_skin->FormMaximizeButton);
+				m_btMaximize->setOwner(this);
+				m_btMaximize->Initialize(device);
+				m_btMaximize->eventRelease().bind(this, Form::btMaximize_Release);
+			}
+			if (m_hasMinimizeButton || m_hasMaximizeButton)
+			{
+				m_btRestore = new Button(Point(0,0), L"");
+				m_btRestore->setNormalTexture(m_skin->FormRestoreButton);
+				m_btRestore->setOwner(this);
+				m_btRestore->Initialize(device);
+				m_btRestore->eventRelease().bind(this, Form::btRestore_Release);
+			}
+		}
+
+
+		void Form::btClose_Release(Control* sender)
+		{
+			Close();
+		}
+		void Form::btMinimize_Release(Control* sender)
+		{
+			Minimize();
+		}
+		void Form::btMaximize_Release(Control* sender)
+		{
+			Maximize();
+		}
+		void Form::btRestore_Release(Control* sender)
+		{
+			Restore();
+		}
+
+		void Form::Update(const GameTime* const time)
+		{
+			UpdateState();
+			UpdateTopMost();
+
+			if (m_state == FWS_Normal && !m_isMaximized && !m_isMinimized)
+			{
+				if (!m_isResizeing)
+				{
+					CheckDragging();
+				}
+				if (!m_isDragging && m_borderStyle == FBS_Sizable)
+				{
+					CheckResize();
+				}
+			}
+
+			CheckDoubleClick(time);
+
+			if (m_state != FWS_Minimized && !m_isMinimized)
+			{
+				if (Size.X < m_minimumSize.X)
+					Size.X = m_minimumSize.X;
+				if (Size.Y < m_minimumSize.Y)
+					Size.Y = m_minimumSize.Y;
+			}
+
+			if (UIRoot::getTopMostForm() == this && (m_isMinimized && UIRoot::getActiveForm() == this))
+			{
+				if (m_menu && m_menu->Visible)
+				{
+					m_menu->Update(time);
+				}
+
+				if (m_btClose)
+				{
+					m_btClose->Update(time);
+				}
+
+				if (m_btMaximize && ((m_hasMaximizeButton && !m_isMaximized)||(m_hasMinimizeButton && m_isMinimized)))
+				{
+					m_btMaximize->Update(time);
+				}
+				if (m_btMinimize && ((m_hasMinimizeButton && !m_isMinimized)||(m_hasMaximizeButton && m_isMaximized)))
+				{
+					m_btMinimize->Update(time);
+				}
+
+				if (m_btRestore && ((m_hasMinimizeButton && m_isMinimized)||(m_hasMaximizeButton && m_isMaximized)))
+				{
+					m_btRestore->Update(time);
+				}
+
+				if (!m_menu || !m_menu->Visible || m_menu->getState() == FWS_Maximized)
+				{
+					if (m_state == FWS_Normal || m_state == FWS_Maximized)
+					{
+						bool skip = false;
+						for (int i=0;i<m_controls->getCount();i++)
+						{
+							
+						}
+						if (!skip)
+						{
+							for (int i=0;i<m_controls->getCount();i++)
+							{
+								if (m_controls->operator[](i)->Enabled)
+								{
+									m_controls->operator[](i)->Update(time);
+								}
+							}
+						}
+					}
+				}
+			}
+			UpdateActive();
+			if (UIRoot::getActiveForm()!=this)
+			{
+				if (m_isResizeing) m_isResizeing = false;
+				if (m_isDragging) m_isDragging = false;
+			}
 		}
 
 		/************************************************************************/

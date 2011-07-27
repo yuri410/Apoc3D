@@ -124,7 +124,7 @@ namespace Apoc3D
 
 		class ControlCollection
 		{
-		private:
+		protected:
 			FastList<Control*> m_controls;
 
 			ControlContainer* m_owner;
@@ -153,7 +153,7 @@ namespace Apoc3D
 
 		class ControlContainer : public Control
 		{
-		private:
+		protected:
 			ControlCollection* m_controls;
 			Menu* m_menu;
 			Point m_menuOffset;
@@ -162,6 +162,9 @@ namespace Apoc3D
 			ControlCollection& getControls() { return *m_controls; }
 			int getCount() const { return m_controls->getCount(); }
 			Control* operator [](int index) const { return m_controls->operator[](index); }
+
+			Menu* getMenu() const { return m_menu; }
+			void setMenu(Menu* m) { m_menu = m; }
 
 			//void Add(Control* ctrl)
 			//{

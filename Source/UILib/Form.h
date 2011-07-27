@@ -99,14 +99,12 @@ namespace Apoc3D
 
 			float m_lastClickTime;
 
-			Menu* m_menu;
-			Point m_menuOffset;
 
 			BorderStyle m_borderStyle;
 			WindowState m_state;
 
 
-			void InitializeButtons();
+			void InitializeButtons(RenderDevice* device);
 
 			void DrawTitle(Sprite* sprite);
 			void DrawButtons(Sprite* sprite);
@@ -119,6 +117,10 @@ namespace Apoc3D
 			void CheckResize();
 			void ToggleWindowState();
 
+			void btClose_Release(Control* sender);
+			void btMinimize_Release(Control* sender);
+			void btMaximize_Release(Control* sender);
+			void btRestore_Release(Control* sender);
 		public:
 			bool isResized() const { return m_isResizeing; }
 			bool isDragged() const { return m_isDragging; }
@@ -132,9 +134,6 @@ namespace Apoc3D
 
 			const String& getTitle() const { return m_title; }
 			void setTitle(const String& txt) { m_title = txt; }
-
-			Menu* getMenu() const { return m_menu; }
-			void setMenu(Menu* m) { m_menu = m; }
 
 			WindowState getState() const { return m_state; }
 
