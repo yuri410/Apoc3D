@@ -36,6 +36,26 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		class Border
+		{
+		private:
+			Point m_shadowOffset;
+			Apoc3D::Math::Rectangle m_dstRect[9];
+			StyleSkin* m_skin;
+			bool m_resizable;
+
+			void UpdateRects(const Point& position, const Point& size);
+			void DrawUpper(Sprite* sprite);
+			void DrawMiddle(Sprite* sprite);
+			void DrawLower(Sprite* sprite);
+			void DrawShadow(Sprite* sprite, const Point& pos, float alpha);
+
+		public:
+			Border(bool resizable, StyleSkin* skin);
+			void Draw(Sprite* sprite, const Point& pt, const Point& size, float shadowAlpha);
+			
+
+		};
 		class Form : public ControlContainer
 		{
 		public:

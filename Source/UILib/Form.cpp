@@ -4,6 +4,7 @@
 #include "StyleSkin.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/Sprite.h"
+#include "Graphics/RenderSystem/Texture.h"
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
 #include "Graphics/TextureManager.h"
@@ -680,6 +681,145 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
+
+		Border::Border(bool resizable, StyleSkin* skin)
+			: m_skin(skin), m_resizable(resizable), m_shadowOffset(6,4)
+		{
+			for (int i=0;i<9;i++)
+			{
+				m_dstRect[i] = Apoc3D::Math::Rectangle(0,0,m_skin->FormBorderTexture[i]->getWidth(), m_skin->FormBorderTexture[i]->getHeight());
+			}
+		}
+
+		void Border::Draw(Sprite* sprite, const Point& pt, const Point& size, float shadowAlpha)
+		{
+			UpdateRects(pt, size);
+
+			if (size.Y > m_dstRect[0].Height)
+			{
+				Point shdPos = pt;
+				shdPos.Y += 15;
+				DrawShadow(sprite, shdPos, shadowAlpha);
+			}
+
+			DrawUpper(sprite);
+			if (size.Y > m_dstRect[0].Height)
+			{
+				DrawMiddle(sprite);
+				DrawLower(sprite);
+			}
+		}
+
+		void Border::UpdateRects(const Point& position, const Point& size)
+		{
+			// upper
+			m_dstRect[0].X = position.X;
+			m_dstRect[0].Y = position.Y;
+
+			m_dstRect[1].X = m_dstRect[0].X + m_dstRect[0].Width;
+			m_dstRect[1].Y = m_dstRect[0].Y;
+			m_dstRect[1].Width = size.X - (m_dstRect[0].Width + m_dstRect[2].Width);
+
+			m_dstRect[2].X = m_dstRect[1].X + m_dstRect[1].Width;
+			m_dstRect[2].Y = m_dstRect[1].Y;
+
+			// middle
+			m_dstRect[3].X = m_dstRect[0].X;
+			m_dstRect[3].Y = m_dstRect[0].Y + m_dstRect[0].Height;
+			m_dstRect[3].Height = size.Y - (m_dstRect[0].Height + m_skin->FormBorderTexture[6]->getHeight());
+
+			m_dstRect[4].X = m_dstRect[1].X;
+			m_dstRect[4].Y = m_dstRect[3].Y;
+			m_dstRect[4].Width = m_dstRect[1].Width;
+			m_dstRect[4].Height = m_dstRect[3].Height;
+
+			m_dstRect[5].X = m_dstRect[2].X;
+			m_dstRect[5].Y = m_dstRect[3].Y;
+			m_dstRect[5].Height = m_dstRect[3].Height;
+
+			// lower
+			m_dstRect[6].X = m_dstRect[0].X;
+			m_dstRect[6].Y = m_dstRect[3].Y + m_dstRect[3].Height;
+			if (size.Y > m_dstRect[0].Height + m_skin->FormBorderTexture[6]->getHeight())
+			{
+				m_dstRect[6].Height = m_skin->FormBorderTexture[6]->getHeight();
+			}
+			else
+			{
+				m_dstRect[6].Y = m_dstRect[0].Y + m_dstRect[0].Height;
+				m_dstRect[6].Height = size.Y - m_skin->FormBorderTexture[6]->getHeight();
+			}
+
+			m_dstRect[7].X = m_dstRect[1].X;
+			m_dstRect[7].Y = m_dstRect[6].Y;
+			m_dstRect[7].Width = m_dstRect[1].Width;
+			m_dstRect[7].Height = m_dstRect[6].Height;
+
+			m_dstRect[8].X = m_dstRect[2].X;
+			m_dstRect[8].Y = m_dstRect[6].Y;
+			m_dstRect[8].Height = m_dstRect[6].Height;
+		}
+		void Border::DrawUpper(Sprite* sprite)
+		{
+			sprite->Draw(m_skin->FormBorderTexture[0], m_dstRect[0], CV_White);
+			sprite->Draw(m_skin->FormBorderTexture[1], m_dstRect[1], CV_White);
+			sprite->Draw(m_skin->FormBorderTexture[2], m_dstRect[2], CV_White);
+		}
+		void Border::DrawMiddle(Sprite* sprite)
+		{
+			sprite->Draw(m_skin->FormBorderTexture[3], m_dstRect[3], CV_White);
+			sprite->Draw(m_skin->FormBorderTexture[4], m_dstRect[4], CV_White);
+			sprite->Draw(m_skin->FormBorderTexture[5], m_dstRect[5], CV_White);
+		}
+		void Border::DrawLower(Sprite* sprite)
+		{
+			sprite->Draw(m_skin->FormBorderTexture[6], m_dstRect[6], CV_White);
+			sprite->Draw(m_skin->FormBorderTexture[7], m_dstRect[7], CV_White);
+			sprite->Draw(m_skin->FormBorderTexture[8], m_dstRect[8], CV_White);
+		}
+		void Border::DrawShadow(Sprite* sprite, const Point& pos, float alpha)
+		{
+			if (alpha > 1)
+				alpha = 1;
+			if (alpha<0)
+				alpha=0;
+			byte a = alpha * 0xff;
+
+			ColorValue shdClr = PACK_COLOR(0,0,0,a);
+
+			Apoc3D::Math::Rectangle shadowRect = m_dstRect[2];
+			shadowRect.X += m_shadowOffset.X;
+			shadowRect.Y += m_shadowOffset.Y;
+			sprite->Draw(m_skin->FormBorderTexture[2], shadowRect, shdClr);
+
+			shadowRect = m_dstRect[5];
+			shadowRect.X += m_shadowOffset.X;
+			shadowRect.Y += m_shadowOffset.Y;
+			sprite->Draw(m_skin->FormBorderTexture[5], shadowRect, shdClr);
+
+
+			shadowRect = m_dstRect[6];
+			shadowRect.X += m_shadowOffset.X;
+			shadowRect.Y += m_shadowOffset.Y;
+			sprite->Draw(m_skin->FormBorderTexture[6], shadowRect, shdClr);
+
+
+			shadowRect = m_dstRect[7];
+			shadowRect.X += m_shadowOffset.X;
+			shadowRect.Y += m_shadowOffset.Y;
+			sprite->Draw(m_skin->FormBorderTexture[7], shadowRect, shdClr);
+
+
+			shadowRect = m_dstRect[8];
+			shadowRect.X += m_shadowOffset.X;
+			shadowRect.Y += m_shadowOffset.Y;
+			sprite->Draw(m_skin->FormBorderTexture[8], shadowRect, shdClr);
+
+
+		}
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
 		Apoc3D::Math::Rectangle UIRoot::GetUIArea(RenderDevice* device)
 		{
 			Viewport vp = device->getViewport();

@@ -33,7 +33,7 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle BtnRowSeparator;
 			String ControlFontName;
 
-
+			Texture* FormBorderTexture[9];
 
 
 			Texture* FormCloseButton;
