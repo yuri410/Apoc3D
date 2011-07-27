@@ -96,6 +96,9 @@ namespace Apoc3D
 
 			float m_lastClickTime;
 
+			Menu* m_menu;
+			Point m_menuOffset;
+
 			BorderStyle m_borderStyle;
 			WindowState m_state;
 
@@ -127,12 +130,12 @@ namespace Apoc3D
 			const String& getTitle() const { return m_title; }
 			void setTitle(const String& txt) { m_title = txt; }
 
-
+			Menu* getMenu() const { return m_menu; }
+			void setMenu(Menu* m) { m_menu = m; }
 
 			UIEventHandler& eventResized() { return m_eResized; }
 
-			Form();
-			Form(BorderStyle border);
+			Form(BorderStyle border = FBS_Sizable, const String& title = L"");
 			virtual ~Form();
 
 			virtual void Show();
@@ -160,7 +163,15 @@ namespace Apoc3D
 			static Form* m_activeForm;
 			static Form* m_topMostForm;
 
+		public:
+			static FastList<Form*>& getForms() { return m_forms; }
+
+			static Form* getActiveForm() { return m_activeForm; }
+			static void setActiveForm(Form* frm) { m_activeForm = frm; }
 			
+
+			static Form* getTopMostForm() { return m_topMostForm; }
+			static void setTopMostForm(Form* frm) { m_topMostForm = frm; }
 
 		};
 	}
