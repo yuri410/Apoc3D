@@ -23,8 +23,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Menu.h"
 #include "Utility/StringUtils.h"
+#include "Input/InputAPI.h"
+#include "Input/Mouse.h"
 
 using namespace Apoc3D::Utility;
+using namespace Apoc3D::Input;
 
 namespace Apoc3D
 {
@@ -54,13 +57,84 @@ namespace Apoc3D
 		}
 		void Menu::CheckSelection()
 		{
+			Mouse* mouse = InputAPIManager::getSingleton.getMouse();
+			if (mouse->IsLeftPressed())
+			{
+				if (m_hoverIndex != -1)
+				{
+					CloseSubMenus();
 
+					if (m_items[m_hoverIndex]->getSubMenu() && 
+						m_items[m_hoverIndex]->getSubMenu()->getState()!=MENU_Closed)
+					{
+						m_items[m_hoverIndex]->getSubMenu()->Close();
+						m_state = MENU_Closed;
+						return;
+					}
+
+					if (m_items[m_hoverIndex]->getSubMenu() &&
+						m_items[m_hoverIndex]->getSubMenu()->getState()!=MENU_Closed)
+					{
+						m_items[m_hoverIndex]->getSubMenu()->Open(m_openPos);
+						m_state = MENU_Open;
+					}
+				}
+				else
+				{
+					for (int i=0;i<m_items.getCount();i++)
+					{
+						if (m_items[i]->getSubMenu() && 
+							m_items[i]->getSubMenu()->getState()==MENU_Open &&
+							m_items[i]->getSubMenu()->IsCursorInside())
+						{
+							CloseSubMenus();
+						}
+					}
+				}
+			}
 		}
 		void Menu::CheckHovering()
 		{
+			if (m_items[m_hoverIndex]->getSubMenu() &&
+				m_items[m_hoverIndex]->getSubMenu()->getState() == MENU_Closed)
+			{
+				CloseSubMenus();
+				m_items[m_hoverIndex]->getSubMenu()->Open(m_openPos);
+				m_state = MENU_Open;
+			}
+		}
+		void Menu::Close()
+		{
+			CloseSubMenus();
+			m_state = MENU_Closed;
+		}
+		void Menu::CloseSubMenus()
+		{
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (m_items[i]->getSubMenu() &&
+					m_items[i]->getSubMenu()->getState() == MENU_Open)
+				{
+					m_items[i]->getSubMenu()->Close();
+				}
+			}
+			m_state = MENU_Closed;
+		}
+		void Menu::Update(const GameTime* const time)
+		{
+			CheckSelection();
+			m_helper.Update(time);
+
+			if (m_state == MENU_Open && m_hoverIndex != -1)
+				CheckHovering();
+
+			for (int i=0;i<m_items.getCount();i++)
+				if (m_items[i]->getSubMenu() && m_items[i]->getSubMenu()->getState() != MENU_Closed)
+				{
+					m_items[i]->getSubMenu()->Update(time);
+				}
 
 		}
-
 		void Menu::Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e)
 		{
 			switch (key)
@@ -99,6 +173,11 @@ namespace Apoc3D
 				m_openedMenu = false;
 				break;
 			}
+		}
+
+		void Menu::Draw(Sprite* sprite)
+		{
+
 		}
 
 		KeyboardKeyCode GetKey(wchar_t ch)

@@ -142,6 +142,7 @@ namespace Apoc3D
 			void CloseSubMenus();
 			void CheckSelection();
 		public:
+			MenuState getState() const { return m_state; }
 			Control* getParent() const { return m_parent; }
 			void setParent(Control* ctrl) { m_parent = ctrl; }
 
