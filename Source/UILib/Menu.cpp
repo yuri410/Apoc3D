@@ -25,6 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Utility/StringUtils.h"
 #include "Input/InputAPI.h"
 #include "Input/Mouse.h"
+#include "FontManager.h"
+#include "Graphics/RenderSystem/Sprite.h"
+#include "StyleSkin.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Input;
@@ -57,7 +60,7 @@ namespace Apoc3D
 		}
 		void Menu::CheckSelection()
 		{
-			Mouse* mouse = InputAPIManager::getSingleton.getMouse();
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			if (mouse->IsLeftPressed())
 			{
 				if (m_hoverIndex != -1)
@@ -177,7 +180,100 @@ namespace Apoc3D
 
 		void Menu::Draw(Sprite* sprite)
 		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
+			m_itemPos.X = Position.X + 5;
+			m_itemPos.Y = Position.Y;
+
+			m_hoverIndex = -1;
+
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				Point cleanTextSize = m_fontRef->MeasureString(m_items[i]->getCleanText());
+				m_itemArea.X = m_itemPos.X - 4;
+				m_itemArea.Y = m_itemPos.Y;
+				m_itemArea.Width = cleanTextSize.X + 10;
+				m_itemArea.Height = m_fontRef->getLineHeight();
+
+				if (!getOwner())
+				{
+					m_itemArea.X--;
+				}
+
+				Point cursorLoc;
+				if (!getOwner())
+				{
+					cursorLoc = mouse->GetCurrentPosition();
+				}
+				else
+				{
+					cursorLoc = mouse->GetCurrentPosition();
+					cursorLoc.X -= getOwner()->Position.X;
+					cursorLoc.Y -= getOwner()->Position.Y;
+				}
+
+				// selected item
+				if (m_items[i]->getSubMenu() &&
+					m_items[i]->getSubMenu()->getState() != MENU_Closed)
+				{
+					sprite->Draw(m_skin->WhitePixelTexture, m_itemArea, CV_LightGray);
+					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_itemPos, CV_Black);
+				}
+				// hover item
+				else if (m_itemArea.Contains(cursorLoc))
+				{
+					m_hoverIndex = i;
+					sprite->Draw(m_skin->WhitePixelTexture, m_itemArea, CV_Silver);
+					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_itemPos, CV_Black);
+
+					m_openPos.X = m_itemArea.X + 1;
+					m_openPos.Y = m_itemArea.Y + m_itemArea.Height + 2;
+				}
+				// normal item
+				else
+				{
+					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_itemPos, CV_Black);
+				}
+
+				if (m_indexToOpen == i)
+				{
+					if (!m_items[i]->event().empty())
+					{
+						m_items[i]->event()(this);
+					}
+
+					if (m_items[i]->getSubMenu() &&
+						m_items[i]->getSubMenu()->getState() == MENU_Closed)
+					{
+						m_openPos.X = m_itemArea.X + 1;
+						m_openPos.Y = m_itemArea.Y + m_itemArea.Height + 2;
+						CloseSubMenus();
+						m_items[i]->getSubMenu()->Open(m_openPos);
+						m_state = MENU_Open;
+						m_openedMenu = true;
+					}
+					else
+						Close();
+				}
+
+				if (m_items[i]->getKeyCode() != KEY_UNASSIGNED)
+				{
+					Point underscorePos(
+						m_itemPos.X + m_fontRef->MeasureString(m_items[i]->getCleanText().substr(0,m_items[i]->getKeyIndex())).X,
+						m_itemPos.Y);
+					m_fontRef->DrawString(sprite, L"_", underscorePos, CV_Black);
+				}
+				m_itemPos.X += cleanTextSize.X + 10;
+			}
+
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (m_items[i]->getSubMenu() && 
+					m_items[i]->getSubMenu()->getState() != MENU_Closed)
+				{
+					m_items[i]->getSubMenu()->Draw(sprite);
+				}
+			}
 		}
 
 		KeyboardKeyCode GetKey(wchar_t ch)

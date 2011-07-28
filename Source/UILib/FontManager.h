@@ -86,7 +86,7 @@ namespace Apoc3D
 			void EnsureGlyph(Glyph& glyph);
 
 		public:
-
+			int getLineHeight() const { return m_height; }
 			Font(RenderDevice* device, ResourceLocation* fl);
 			~Font();
 			void DrawString(Sprite* sprite, const String& text, int x, int y, uint color);
