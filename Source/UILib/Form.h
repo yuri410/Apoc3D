@@ -93,6 +93,7 @@ namespace Apoc3D
 
 
 
+			Border* m_border;
 			float m_borderAlpha;
 
 			Button* m_btClose;
@@ -103,8 +104,8 @@ namespace Apoc3D
 			bool m_hasMinimizeButton;
 			bool m_hasMaximizeButton;
 
-			Rectangle m_dragArea;
-			Rectangle m_resizeArea;
+			Apoc3D::Math::Rectangle m_dragArea;
+			Apoc3D::Math::Rectangle m_resizeArea;
 			
 			bool m_isDragging;
 			bool m_isResizeing;

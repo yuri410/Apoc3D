@@ -41,6 +41,7 @@ namespace Apoc3D
 			{
 			private:
 				RenderDevice* m_renderDevice;
+				Matrix m_transform;
 			protected:
 				Sprite(RenderDevice* rd);
 				
@@ -56,7 +57,12 @@ namespace Apoc3D
 				virtual void Draw(Texture* texture, int x, int y, uint color) = 0;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color) = 0;
 
-				virtual void SetTransform(const Matrix &matrix) = 0;
+				const Matrix& getTransform() const { return m_transform; }
+
+				virtual void SetTransform(const Matrix &matrix)
+				{
+					m_transform = matrix;
+				}
 			};
 		}
 	}

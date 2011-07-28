@@ -116,14 +116,17 @@ namespace Apoc3D
 						D3DXMatrixTranslation(&trans, position.x, position.y, position.z);
 						trans._11 = (float)dstRect.Width / (float)srcRect->Width;
 						trans._22 = (float)dstRect.Height / (float)srcRect->Height;
+
+						D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
+						D3DXMatrixMultiply(&trans, &baseTrans, &trans);
+						
 						m_sprite->SetTransform(&trans);
 
 						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
 							&r, NULL, NULL, color);
 						assert(SUCCEEDED(hr));
 
-						D3DXMatrixIdentity(&trans);
-						m_sprite->SetTransform(&trans);
+						m_sprite->SetTransform(&baseTrans);
 					}
 					else
 					{
@@ -141,14 +144,17 @@ namespace Apoc3D
 						D3DXMatrixTranslation(&trans, position.x, position.y, position.z);
 						trans._11 = (float)dstRect.Width / (float)srcRect->Width;
 						trans._22 = (float)dstRect.Height / (float)srcRect->Height;
+						
+						D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
+						D3DXMatrixMultiply(&trans, &baseTrans, &trans);
+
 						m_sprite->SetTransform(&trans);
 
 						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
 							NULL, NULL, NULL, color);
 						assert(SUCCEEDED(hr));
 
-						D3DXMatrixIdentity(&trans);
-						m_sprite->SetTransform(&trans);
+						m_sprite->SetTransform(&baseTrans);
 					}
 					else
 					{
@@ -163,6 +169,8 @@ namespace Apoc3D
 			{
 				HRESULT hr = m_sprite->SetTransform(reinterpret_cast<const D3DMatrix*>(&matrix));
 				assert(SUCCEEDED(hr));
+
+				Sprite::SetTransform(matrix);
 			}
 
 			void D3D9Sprite::ReleaseVolatileResource()
