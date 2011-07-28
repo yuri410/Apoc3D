@@ -349,5 +349,180 @@ namespace Apoc3D
 			m_helper.eventKeyRelease().bind(this, &SubMenu::Keyboard_OnRelease);
 
 		}
+
+		SubMenu::~SubMenu()
+		{
+			CloseSubMenus();
+		}
+
+		void SubMenu::Add(MenuItem* item, SubMenu* submenu)
+		{
+			if (submenu)
+			{
+				submenu->setParent(this);
+			}
+			item->setSubMenu(submenu);
+			m_items.Add(item);
+		}
+
+		void SubMenu::Initialize(RenderDevice* device)
+		{
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (m_items[i]->getSubMenu())
+					m_items[i]->getSubMenu()->Initialize(device);
+			}
+		}
+
+		void SubMenu::CalcualteSize()
+		{
+			Size.Y =0;
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (m_items[i]->getText()==L"_")
+				{
+					Size.Y += 11;
+				}
+				else
+				{
+					Size.Y += m_fontRef->getLineHeight();
+				}
+
+				Point txtSize = m_fontRef->MeasureString(m_items[i]->getText());
+				if (Size.X <txtSize.X + 30)
+					Size.X = txtSize.X + 30;
+			}
+		}
+
+		void SubMenu::Open(const Point& position)
+		{
+			m_hoverIndex = -1;
+			m_indexToOpen = -1;
+
+			m_state = MENU_Closed;
+
+			SubMenu* parentMenu = dynamic_cast<SubMenu*>(m_parent);
+			if (parentMenu)
+			{
+				parentMenu->Close();
+			}
+			else
+			{
+				Menu* parentMenu2 = dynamic_cast<Menu*>(m_parent);
+				if (parentMenu2) parentMenu2->Close();
+			}
+
+			CloseSubMenus();
+		}
+
+		void SubMenu::CloseSubMenus()
+		{
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (m_items[i]->getSubMenu() &&
+					m_items[i]->getSubMenu()->getState() != MENU_Closed)
+				{
+					m_items[i]->getSubMenu()->m_state = MENU_Closed;
+				}
+			}
+		}
+
+		bool SubMenu::IsCursorInside()
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			Point cursorLoc;
+			if (!getOwner())
+			{
+				cursorLoc = mouse->GetCurrentPosition();
+			}
+			else
+			{
+				cursorLoc = mouse->GetCurrentPosition();
+				cursorLoc.X -= getOwner()->Position.X;
+				cursorLoc.Y -= getOwner()->Position.Y;
+			}
+
+			if (getArea().Contains(cursorLoc))
+				return true;
+
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (m_items[i]->getSubMenu() &&
+					m_items[i]->getSubMenu()->getState() == MENU_Open &&
+					m_items[i]->getSubMenu()->IsCursorInside())
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		void SubMenu::Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e)
+		{
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (m_items[i]->getSubMenu() &&
+					m_items[i]->getSubMenu()->getState() == MENU_Open)
+				{
+					return;
+				}
+			}
+
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (key == m_items[i]->getKeyCode())
+					m_indexToOpen = i;
+			}
+		}
+		void SubMenu::Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e)
+		{
+
+		}
+
+		void SubMenu::Update(const GameTime* const time)
+		{
+			if (m_hoverIndex != -1)
+				CheckSelection();
+
+			m_helper.Update(time);
+
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (m_items[i]->getSubMenu() &&
+					m_items[i]->getSubMenu()->getState() != MENU_Closed)
+				{
+					m_items[i]->getSubMenu()->Update(time);
+				}
+			}
+		}
+
+		void SubMenu::CheckSelection()
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+			if (mouse->IsLeftPressed())
+			{
+				int index = m_hoverIndex;
+				if (!m_items[index]->event().empty())
+					m_items[index]->event()(this);
+
+				if (m_items[index]->getSubMenu())
+				{
+					CloseSubMenus();
+					if (m_items[index]->getSubMenu()->getState() == MENU_Closed)
+						m_items[index]->getSubMenu()->Open(m_openPos);
+				}
+				else
+					Close();
+			}
+		}
+
+		void SubMenu::Draw(Sprite* sprite)
+		{
+			// TODO: manual area
+
+
+		}
 	}
 }
