@@ -44,15 +44,27 @@ namespace Apoc3D
 		class APAPI Menu : public Control
 		{
 		private:
+			Point m_drawPos;
+
+			Point m_itemPos;
 			FastList<MenuItem*> m_items;
 			MenuState m_state;
 
+			int m_hoverIndex;
+			Point m_openPos;
+			Apoc3D::Math::Rectangle m_itemArea;
+
+
 			KeyboardHelper m_helper;
+			bool m_altDown;
+			bool m_openedMenu;
+			int m_indexToOpen;
 
 			void CheckSelection();
 			void CheckHovering();
 			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
 			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);
+			void CloseSubMenus();
 		public:
 			const FastList<MenuItem*>& getItems() const { return m_items; }
 			MenuState getState() const { return m_state; }
@@ -60,7 +72,6 @@ namespace Apoc3D
 			Menu();
 			~Menu();
 
-			MenuItem* operator [](const String& name) const;
 			MenuItem* operator [](int index) const;
 
 			void Add(MenuItem* item, SubMenu* submenu);
@@ -70,6 +81,83 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite);
 
 			void Close();
+
+		};
+
+		class APAPI MenuItem
+		{
+		private:
+			String m_text;
+			String m_cleanText;
+
+			int m_keyIndex;
+			KeyboardKeyCode m_key;
+
+			UIEventHandler m_event;
+			SubMenu* m_submenu;
+
+		public:
+			const String& getText() const { return m_text; }
+			void setText(const String& txt);
+			const String& getCleanText() const { return m_cleanText; }
+
+			KeyboardKeyCode getKeyCode() const { return m_key; }
+			int getKeyIndex() const { return m_keyIndex; }
+
+			UIEventHandler& event() { return m_event; }
+
+			SubMenu* getSubMenu() const { return m_submenu; }
+			void setSubMenu(SubMenu* sm) { m_submenu = sm; }
+
+			MenuItem(const String& text)
+				: m_submenu(0)
+			{
+				setText(text);
+			}
+		};
+
+		class APAPI SubMenu : public Control
+		{
+		private:
+			Control* m_parent;
+			FastList<MenuItem*> m_items;
+			Point m_itemPos;
+			Point m_arrowPos;
+			Point m_textPos;
+			Apoc3D::Math::Rectangle m_itemArea;
+			Apoc3D::Math::Rectangle m_borderArea;
+			int m_hoverIndex;
+			Point m_openPos;
+			ColorValue m_shadowColor;
+
+			MenuState m_state;
+
+			KeyboardHelper m_helper;
+			int m_indexToOpen;
+
+			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
+			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);
+
+			void CalcualteSize();
+			void CloseSubMenus();
+			void CheckSelection();
+		public:
+			Control* getParent() const { return m_parent; }
+			void setParent(Control* ctrl) { m_parent = ctrl; }
+
+			SubMenu(ControlContainer* owner);
+			~SubMenu();
+
+			void Add(MenuItem* item, SubMenu* submenu);
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
+			void Open(const Point& position);
+			void Close();
+
+			bool IsCursorInside();
 
 		};
 	}
