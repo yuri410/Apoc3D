@@ -46,6 +46,7 @@ namespace Apoc3D
 			Point m_textOffset;
 			Point m_drawPos;
 			Apoc3D::Math::Rectangle m_backgroundRect;
+			float m_width;
 
 			bool m_mouseOver;
 			bool m_mouseDown;
@@ -57,7 +58,7 @@ namespace Apoc3D
 			void UpdateEvents();
 
 		public:
-			Label(const Point& position, const String& text, Align alignment = ALIGN_Left);
+			Label(const Point& position, const String& text, int width, Align alignment = ALIGN_Left);
 			~Label();
 
 			virtual void Initialize(RenderDevice* device);

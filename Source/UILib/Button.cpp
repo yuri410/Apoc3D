@@ -219,13 +219,13 @@ namespace Apoc3D
 
 		void ButtonGroup::Initialize(RenderDevice* device)
 		{
+			Control::Initialize(device);
 			for (int i=0;i<m_button.getCount();i++)
 			{
 				m_button[i]->Initialize(device);
 				m_button[i]->eventRelease().bind(this, &ButtonGroup::Button_OnRelease);
-				m_button[i]->setOwner(m_owner)	;
+				m_button[i]->setOwner(m_owner);
 			}
-			Control::Initialize(device);
 		}
 
 		void ButtonGroup::Button_OnRelease(Control* sender)
@@ -292,7 +292,7 @@ namespace Apoc3D
 		}
 		void ButtonRow::Initialize(RenderDevice* device)
 		{
-			
+			Control::Initialize(device);
 			Point s = m_fontRef->MeasureString(Text);
 			float cellWidth = (float)Size.X / m_count;
 			Apoc3D::Math::Rectangle area = getArea();
@@ -418,7 +418,7 @@ namespace Apoc3D
 		}
 		void RadioButton::Initialize(RenderDevice* device)
 		{
-
+			Control::Initialize(device);
 		}
 		void RadioButton::Draw(Sprite* sprite)
 		{

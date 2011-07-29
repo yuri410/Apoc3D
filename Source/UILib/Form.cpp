@@ -176,6 +176,7 @@ namespace Apoc3D
 
 		void Form::Initialize(RenderDevice* device)
 		{
+			
 			m_device = device;
 
 			Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);

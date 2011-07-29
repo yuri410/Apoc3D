@@ -161,6 +161,7 @@
     <ClInclude Include="UILib\Button.h" />
     <ClInclude Include="UILib\Form.h" />
     <ClInclude Include="UILib\KeyboardHelper.h" />
+    <ClInclude Include="UILib\Label.h" />
     <ClInclude Include="UILib\Menu.h" />
     <ClInclude Include="UILib\StyleSkin.h" />
     <ClInclude Include="UILib\Control.h" />
@@ -297,6 +298,7 @@
     <ClCompile Include="UILib\FontManager.cpp" />
     <ClCompile Include="UILib\Form.cpp" />
     <ClCompile Include="UILib\KeyboardHelper.cpp" />
+    <ClCompile Include="UILib\Label.cpp" />
     <ClCompile Include="UILib\Menu.cpp" />
     <ClCompile Include="UILib\StyleSkin.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />

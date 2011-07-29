@@ -388,6 +388,7 @@ namespace Apoc3D
 
 		void SubMenu::Initialize(RenderDevice* device)
 		{
+			Control::Initialize(device);
 			for (int i=0;i<m_items.getCount();i++)
 			{
 				if (m_items[i]->getSubMenu())

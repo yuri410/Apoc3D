@@ -438,6 +438,9 @@
     <ClInclude Include="IOLib\EffectData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UILib\Label.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -753,6 +756,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UILib\Form.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UILib\Label.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
