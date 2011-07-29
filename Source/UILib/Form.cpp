@@ -950,7 +950,52 @@ namespace Apoc3D
 
 			return Point(rect.Width, rect.Height);
 		}
-		
+		bool UIRoot::IsObstructed(Control* control, const Point& point)
+		{
+			for (int i=0;i<m_forms.getCount();i++)
+			{
+				Apoc3D::Math::Rectangle area = control->getArea();
+				if (control->getOwner() && m_forms[i] != control->getOwner())
+				{
+					if (m_forms[i]->getArea().Contains(area) || m_forms[i]->getArea().Intersects(area))
+					{
+						if (m_forms[i]->getArea().Contains(point))
+						{
+							return true;
+						}
+					}
+				}
+				else if (!control->getOwner())
+				{
+					if (m_forms[i]->getArea().Contains(area) || m_forms[i]->getArea().Intersects(area))
+					{
+						if (m_forms[i]->getArea().Contains(point))
+							return true;
+					}
+				}
+			}
+			return false;
+		}
+		void UIRoot::Form_SizeChanged(Control* ctl)
+		{
 
+		}
+
+		void UIRoot::Initialize(RenderDevice* device)
+		{
+			
+		}
+		void UIRoot::Finalize()
+		{
+
+		}
+		void UIRoot::Draw()
+		{
+
+		}
+		void UIRoot::Update(const GameTime* const time)
+		{
+
+		}
 	}
 }

@@ -189,6 +189,7 @@ namespace Apoc3D
 			static Form* m_activeForm;
 			static Form* m_topMostForm;
 
+			static void Form_SizeChanged(Control* ctl);
 		public:
 			static RectangleF UIArea;
 
@@ -206,6 +207,16 @@ namespace Apoc3D
 
 			static bool GetMinimizedPosition(RenderDevice* dev, Form* form, Point& pos);
 			static Point GetMaximizedSize(RenderDevice* dev, Form* form);
+
+			static bool IsObstructed(Control* control, const Point& point);
+			
+			static void Initialize(RenderDevice* device);
+			static void Finalize();
+
+			
+
+			static void Draw();
+			static void Update(const GameTime* const time);
 		};
 	}
 }
