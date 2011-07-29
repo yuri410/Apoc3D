@@ -1016,19 +1016,76 @@ namespace Apoc3D
 		}
 		void UIRoot::Add(ControlContainer* cc)
 		{
-
+			Form* form = dynamic_cast<Form*>(cc);
+			if (form)
+			{
+				m_forms.Insert(0, form);
+			}
+			else
+			{
+				m_containers.Add(cc);
+			}
 		}
 		void UIRoot::Remove(ControlContainer* cc)
 		{
-
+			Form* form = dynamic_cast<Form*>(cc);
+			if (form)
+			{
+				m_forms.Remove(form);
+			}
+			else
+			{
+				m_containers.Remove(cc);
+			}
 		}
+		void UIRoot::RemoveForm(const String& name)
+		{
+			for (int i=0;i<m_forms.getCount();i++)
+			{
+				if (m_forms[i]->Name == name)
+				{
+					m_forms.RemoveAt(i);
+					break;
+				}
+			}
+		}
+		void UIRoot::RemoveContainer(const String& name)
+		{
+			for (int i=0;i<m_containers.getCount();i++)
+			{
+				if (m_containers[i]->Name == name)
+				{
+					m_containers.RemoveAt(i);
+					break;
+				}
+			}
+		}
+
 		void UIRoot::Draw()
 		{
 
 		}
 		void UIRoot::Update(const GameTime* const time)
 		{
+			if (m_activeForm)
+				m_activeForm->Update(time);
+			else if (m_topMostForm)
+				m_topMostForm->Update(time);
+			else if (!m_topMostForm && m_forms.getCount())
+			{
+				m_topMostForm = m_forms[0];
+				m_topMostForm->Focus();
+			}
 
+			for (int i=0;i<m_forms.getCount();i++)
+			{
+				if (m_forms[i]->Enabled && m_forms[i] != m_topMostForm && m_forms[i] != m_activeForm)
+				{
+					m_forms[i]->Update(time);
+				}
+			}
+
+			//Update Context Menu
 		}
 	}
 }

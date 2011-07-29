@@ -188,6 +188,7 @@ namespace Apoc3D
 		{
 		private:
 			static FastList<Form*> m_forms;
+			static FastList<ControlContainer*> m_containers;
 			static Form* m_activeForm;
 			static Form* m_topMostForm;
 
@@ -221,6 +222,8 @@ namespace Apoc3D
 
 			static void Add(ControlContainer* cc);
 			static void Remove(ControlContainer* cc);
+			static void RemoveForm(const String& name);
+			static void RemoveContainer(const String& name);
 
 			static void Draw();
 			static void Update(const GameTime* const time);
