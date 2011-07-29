@@ -34,7 +34,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		class Button : public Control
+		class APAPI Button : public Control
 		{
 		private:
 			Apoc3D::Math::Rectangle m_btnDestRect[3];
@@ -52,12 +52,14 @@ namespace Apoc3D
 			PointF m_origin;
 			float m_scale;
 
-			bool m_mouseOver;
-			bool m_mouseDown;
 
 			void DrawDefaultButton(Sprite* spriteBatch);
 			void DrawCustomButton(Sprite* spriteBatch);
 			void UpdateEvents();
+		protected:
+
+			bool m_mouseOver;
+			bool m_mouseDown;
 		public:
 			Button(const Point& position, const String& text)
 				: Control(position, text), m_mouseOver(false), m_mouseDown(false),
@@ -103,7 +105,7 @@ namespace Apoc3D
 
 		};
 
-		class ButtonGroup : public Control
+		class APAPI ButtonGroup : public Control
 		{
 		private:
 			FastList<Button*> m_button;
@@ -133,11 +135,12 @@ namespace Apoc3D
 			
 		};
 
-		class ButtonRow : public Control
+		class APAPI ButtonRow : public Control
 		{
 		private:
 			int m_selectedIndex;
 
+			bool m_mouseDown;
 			//Vector2 m_size;
 			Point m_tailPos;
 
@@ -158,6 +161,40 @@ namespace Apoc3D
 			virtual void Update(const GameTime* const time);
 			virtual void Draw(Sprite* sprite);
 
+		};
+
+		class APAPI RadioButton : public Control
+		{
+		private:
+			Point m_textOffset;
+
+			bool m_mouseDown;
+			bool m_mouseOver;
+			bool m_checked;
+			bool m_canUncheck;
+
+			void UpdateEvents();
+		public:
+			bool isChecked() const { return m_checked; }
+			bool canUncheck() const { return m_canUncheck; }
+
+			RadioButton(const Point& position, const String& text, bool checked);
+			~RadioButton() {}
+			void Toggle()
+			{
+				if (m_checked && m_canUncheck)
+				{
+					m_checked = false;
+				}
+				else if (!m_checked)
+				{
+					m_checked = true;
+				}
+			}
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
 		};
 	}
 }

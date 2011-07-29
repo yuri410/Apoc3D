@@ -274,7 +274,7 @@ namespace Apoc3D
 		/************************************************************************/
 
 		ButtonRow::ButtonRow(const Vector2& position, float width, const List<String>& titles)
-			: m_count(titles.getCount())
+			: m_count(titles.getCount()), m_hoverIndex(-1), m_selectedIndex(0)
 		{ 
 			Size.X = (int)width;
 			Size.Y = m_skin->ButtonTexture->getHeight();
@@ -334,7 +334,35 @@ namespace Apoc3D
 		}
 		void ButtonRow::Draw(Sprite* sprite)
 		{
+			if (m_selectedIndex == 0)
+				sprite->Draw(m_skin->ButtonTexture, Position, m_skin->BackColor);
+			else
+				sprite->Draw(m_skin->ButtonTexture, Position, m_skin->BtnDimColor);
 
+			for (int i=0;i<m_count;i++)
+			{
+				if (i == m_selectedIndex)
+					sprite->Draw(m_skin->ButtonTexture, m_rect[i], &m_skin->BtnRowSrcRect[1], m_skin->BackColor);
+				else if (i == m_hoverIndex)
+					sprite->Draw(m_skin->ButtonTexture, m_rect[i], &m_skin->BtnRowSrcRect[1], m_skin->BtnHighLightColor);
+				else
+					sprite->Draw(m_skin->ButtonTexture, m_rect[i], &m_skin->BtnRowSrcRect[1], m_skin->BtnDimColor);
+
+				if (i>0)
+					sprite->Draw(m_skin->ButtonTexture, 
+					Apoc3D::Math::Rectangle(m_rect[i].X-1,m_rect[i].Y,1,m_rect[i].Height),
+					&m_skin->BtnRowSrcRect[1], CV_Black);
+
+				m_fontRef->DrawString(sprite, m_titles[i], m_texPos[i], m_skin->ForeColor);
+			}
+
+			Apoc3D::Math::Rectangle rect(
+				m_tailPos.X-m_skin->BtnRowSrcRect[0].Width,
+				m_tailPos.Y,
+				m_skin->BtnRowSrcRect[0].Width, 
+				m_skin->BtnRowSrcRect->Height);
+			sprite->Draw(m_skin->ButtonTexture, rect, &m_skin->BtnRowSrcRect[0], 
+				(m_selectedIndex == m_count-1)?m_skin->BackColor : m_skin->BtnDimColor);
 		}
 		void ButtonRow::Update(const GameTime* const time)
 		{
@@ -357,9 +385,53 @@ namespace Apoc3D
 				if (rect.Contains(mouse->GetCurrentPosition().X, mouse->GetCurrentPosition().Y))
 				{
 					m_hoverIndex = i;
-					// TODO
+					if (mouse->IsLeftPressed())
+					{
+						m_mouseDown = true;
+						OnPress();
+					}
+					else if (m_mouseDown && mouse->IsLeftUp())
+					{
+						m_mouseDown = false;
+						m_selectedIndex = i;
+						Text = m_titles[i];
+						OnRelease();
+					}
 				}
+
+				rectPos.X += m_btRect[i].Width;
 			}
+
+			if (m_hoverIndex == -1 && m_mouseDown)
+			{
+				m_mouseDown = false;
+			}
+		}
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+		RadioButton::RadioButton(const Point& position, const String& text, bool checked)
+			: m_checked(checked), m_canUncheck(true), m_mouseOver(false), m_mouseDown(false), m_textOffset(0,0)
+		{
+			Position = position;
+			Text = text;
+		}
+		void RadioButton::Initialize(RenderDevice* device)
+		{
+
+		}
+		void RadioButton::Draw(Sprite* sprite)
+		{
+
+		}
+		void RadioButton::Update(const GameTime* const time)
+		{
+
+		}
+		void RadioButton::UpdateEvents()
+		{
+
 		}
 	}
 }

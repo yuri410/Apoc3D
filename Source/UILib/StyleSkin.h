@@ -68,6 +68,10 @@ namespace Apoc3D
 			ColorValue ForeColor;
 			ColorValue BackColor;
 
+
+			Texture* RadioBtnChecked;
+			Texture* RadioBtnUnchecked;
+
 		public:
 			// create default skin
 			StyleSkin(RenderDevice* device, const FileLocateRule& rule);
