@@ -983,10 +983,10 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle area = GetUIArea(form->getRenderDevice());
 			//for (int i=0;i<m_forms.getCount();i++)
 			{
-				Form* form = m_forms[i];
+				//Form* form = m_forms[i];
 				//If a form is out of the working area,
 				//we need to put it back where the user can see it.
-				if (!area.Contains(m_forms[i]->getArea()))
+				if (!area.Contains(form->getArea()))
 				{
 					if (form->Position.X + form->Size.X > area.Width)
 						form->Position.X = area.Width - form->Size.X;

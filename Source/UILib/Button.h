@@ -196,6 +196,11 @@ namespace Apoc3D
 			virtual void Update(const GameTime* const time);
 			virtual void Draw(Sprite* sprite);
 		};
+
+		//class APAPI RadioButtonGroup : public Control
+		//{
+
+		//};
 	}
 }
 

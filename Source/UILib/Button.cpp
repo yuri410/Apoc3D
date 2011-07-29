@@ -124,28 +124,28 @@ namespace Apoc3D
 				if (m_mouseDown)
 				{
 					if (m_MouseDownTexture)
-						spriteBatch->Draw(m_MouseDownTexture, getArea(), 0, 1);
+						spriteBatch->Draw(m_MouseDownTexture, getArea(), 0, CV_White);
 					else
-						spriteBatch->Draw(m_NormalTexture, getArea(), 0, 1);
+						spriteBatch->Draw(m_NormalTexture, getArea(), 0, CV_White);
 				}
 				else if (m_mouseOver)
 				{
 					if (m_MouseOverTexture)
-						spriteBatch->Draw(m_MouseOverTexture, getArea(), 0, 1);
+						spriteBatch->Draw(m_MouseOverTexture, getArea(), 0, CV_White);
 					else
-						spriteBatch->Draw(m_NormalTexture, getArea(), 0, 1);
+						spriteBatch->Draw(m_NormalTexture, getArea(), 0, CV_White);
 				}
 				else
 				{
-					spriteBatch->Draw(m_NormalTexture, getArea(), 0, 1);
+					spriteBatch->Draw(m_NormalTexture, getArea(), 0, CV_White);
 				}
 			}
 			else
 			{
 				if (m_DisabledTexture)
-					spriteBatch->Draw(m_DisabledTexture, getArea(), 0, 1);
+					spriteBatch->Draw(m_DisabledTexture, getArea(), 0, CV_White);
 				else
-					spriteBatch->Draw(m_NormalTexture, getArea(), 0, 1);
+					spriteBatch->Draw(m_NormalTexture, getArea(), 0, CV_White);
 			}
 			//if (bMouseOver)
 			//{
@@ -253,9 +253,9 @@ namespace Apoc3D
 			for (int i=0;i<m_button.getCount();i++)
 			{
 				//if (m_selectedIndex == i)
-				//{
+				{
 					m_button[i]->Draw(sprite);
-				//}
+				}
 			}
 		}
 
