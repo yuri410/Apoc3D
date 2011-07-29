@@ -45,10 +45,10 @@ namespace Apoc3D
 
 			bool m_slowly;
 		public:
-			/*  Gets the total game time, in seconds.
+			/*  Gets the amount of game time since the start of the game, in seconds.
 			*/
 			float getTotalTime() const { return m_totalTime; }
-			/* Gets the elapsed game time, in seconds.
+			/* Gets the elapsed game time since last update, in seconds.
 			*/
 			float getElapsedTime() const { return m_elapsedTime; }
 	

@@ -26,6 +26,8 @@ namespace APDesigner
 				Filter = L"All\0*.*\0";
 			}
 		};
+		/** Prompts the user to open a file.
+		*/
 		class OpenFileDialog : public FileDialog
 		{
 		private:

@@ -34,16 +34,37 @@ namespace Apoc3D
 		class APAPI Rectangle
 		{
 		public:
+			/** Specifies the x-coordinate of the rectangle.
+			*/
 			int X;
+			/** Specifies the y-coordinate of the rectangle.
+			*/
 			int Y;
+			/** Specifies the width of the rectangle.
+			*/
 			int Width;
+			/** Specifies the height of the rectangle.
+			*/
 			int Height;
 
+			/** Returns the x-coordinate of the left side of the rectangle.
+			*/
 			int getLeft() const { return X; }
+
+			/** Returns the x-coordinate of the right side of the rectangle.
+			*/
 			int getRight() const { return X + Width; }
+
+			/** Returns the y-coordinate of the top of the rectangle.
+			*/
 			int getTop() const { return Y; }
+
+			/** Returns the y-coordinate of the bottom of the rectangle.
+			*/
 			int getBottom() const { return Y + Height; }
 
+			/** Gets the Point that specifies the center of the rectangle.
+			*/
 			Point getCenter() const { return Point(X + Width / 2, Y + Height / 2); }
 
 			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
@@ -54,15 +75,20 @@ namespace Apoc3D
 				X = x; Y = y;
 				Width = width; Height = height;
 			}
-
+			/**  Changes the position of the Rectangle.
+			*/
 			void Offset(const Point &amount)
 			{
 				X += amount.X; Y += amount.Y;
 			}
+			/**  Changes the position of the Rectangle.
+			*/
 			void Offset(int offsetX, int offsetY)
 			{
 				X += offsetX; Y += offsetY;
 			}
+			/** Pushes the edges of the Rectangle out by the horizontal and vertical values specified.
+			*/
 			void Inflate(int horizontalAmount, int verticalAmount)
 			{
 				X -= horizontalAmount;
@@ -70,10 +96,15 @@ namespace Apoc3D
 				Width += horizontalAmount * 2;
 				Height += verticalAmount * 2;
 			}
+			/** Determines whether this Rectangle contains a specified point 
+			    represented by its x- and y-coordinates.
+			*/
 			bool Contains(int x, int y) const
 			{
 				return (X <= x) && x < (X + Width) && (Y <= y) && y < (Y + Height);
 			}
+			/** Determines whether this Rectangle contains a specified Point.
+			*/
 			bool Contains(const Point &value) const
 			{
 				return (X <= value.X) &&
@@ -81,6 +112,8 @@ namespace Apoc3D
 					(Y <= value.Y) &&
 					(value.Y < Y + Height);
 			}
+			/** Determines whether this Rectangle entirely contains a specified Rectangle.
+			*/
 			bool Contains(const Rectangle &value) const
 			{
 				return (X <= value.X) &&
@@ -89,6 +122,8 @@ namespace Apoc3D
 					(Y <= value.Y) &&
 					((value.Y + value.Height) <= (Y + Height));
 			}
+			/** Determines whether a specified Rectangle intersects with this Rectangle.
+			*/
 			bool Intersects(const Rectangle &value) const
 			{
 				return (value.X < (X + Width)) &&
@@ -97,6 +132,8 @@ namespace Apoc3D
 					(Y < (value.Y + value.Height));
 			}
 
+			/** Creates a Rectangle defining the area where one rectangle overlaps another rectangle.
+			*/
 			static Rectangle Intersect(const Rectangle &a, const Rectangle &b)
 			{
 				Rectangle rectangle;
@@ -123,6 +160,8 @@ namespace Apoc3D
 				rectangle.Height = 0;
 				return rectangle;
 			}
+			/** Creates a new Rectangle that exactly contains two other rectangles.
+			*/
 			static Rectangle Union(const Rectangle &a, const Rectangle &b)
 			{
 				Rectangle result;

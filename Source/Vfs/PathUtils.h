@@ -39,21 +39,26 @@ namespace Apoc3D
 			static const wchar_t AltDirectorySeparator;
 			static const wchar_t VolumeSeparatorChar;
 
+			/** Returns the parent directory path for the specified path string.
+			*/
 			static String GetDirectory(const String& fileName);
+			/** Returns the file name of the specified path string without the extension.
+			*/
 			static String GetFileNameNoExt(const String& filePath);
 
 			static void SplitFileNameExtension(const String& fileName, String& noext, String& ext);
 			static void SplitFilePath(const String& path, String& fileName, String& parentDir);
 			static void SplitFilePathNameExtension(const String& path, String& parentDir, String& noext, String& ext);
 			static vector<String> Split(const String& path);
-			/** Combines two path
+			/** Combines two path strings
 			*/
 			static String Combine(const String& left, const String& right);
-			/** Append sub dir to a path
+			/** Append sub dir to a path string
 			*/
 			static void Append(String& str, const String& app);
 			static bool Match(const String& str, const String& pattern, bool caseSensitive);
-
+			/** Compare two path string. Returns true if equal
+			*/
 			static bool ComparePath(const String& left, const String& right);
 
 		private:
