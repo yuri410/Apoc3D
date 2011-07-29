@@ -46,6 +46,8 @@ namespace Apoc3D
 				Sprite(RenderDevice* rd);
 				
 			public:
+				RenderDevice* getRenderDevice() const { return m_renderDevice; }
+
 				virtual ~Sprite();
 
 				virtual void Begin(bool alphabled) = 0;
@@ -54,9 +56,10 @@ namespace Apoc3D
 				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color) = 0;
 				virtual void Draw(Texture* texture, Vector2 pos, uint color) = 0;
 				virtual void Draw(Texture* texture, const PointF& pos, uint color) = 0;
+				virtual void Draw(Texture* texture, const Point& pos, uint color) = 0;
 				virtual void Draw(Texture* texture, int x, int y, uint color) = 0;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color) = 0;
-
+				
 				const Matrix& getTransform() const { return m_transform; }
 
 				virtual void SetTransform(const Matrix &matrix)

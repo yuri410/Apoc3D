@@ -27,7 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Input/Mouse.h"
 #include "FontManager.h"
 #include "Graphics/RenderSystem/Sprite.h"
+#include "Graphics/RenderSystem/Texture.h"
 #include "StyleSkin.h"
+#include "Core/GameTime.h"
+#include "Form.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Input;
@@ -132,11 +135,12 @@ namespace Apoc3D
 				CheckHovering();
 
 			for (int i=0;i<m_items.getCount();i++)
+			{
 				if (m_items[i]->getSubMenu() && m_items[i]->getSubMenu()->getState() != MENU_Closed)
 				{
 					m_items[i]->getSubMenu()->Update(time);
 				}
-
+			}
 		}
 		void Menu::Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e)
 		{
@@ -181,6 +185,23 @@ namespace Apoc3D
 		void Menu::Draw(Sprite* sprite)
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+			if (getOwner())
+			{
+				Size.X = getOwner()->Size.X - 2;
+			}
+			else
+			{
+				Size.X = UIRoot::GetUIArea(sprite->getRenderDevice()).Width;
+				Size.Y = 17;
+			}
+			{
+				Apoc3D::Math::Rectangle area(Position.X+1,Position.Y,Size.X,Size.Y);
+
+				sprite->Draw(m_skin->WhitePixelTexture, area, CV_White);
+
+			}
+			
 
 			m_itemPos.X = Position.X + 5;
 			m_itemPos.Y = Position.Y;
@@ -342,7 +363,8 @@ namespace Apoc3D
 		SubMenu::SubMenu(ControlContainer* owner)
 			: m_itemPos(0,0), m_arrowPos(0,0), m_textPos(0,0), m_itemArea(0,0,0,0), m_borderArea(0,0,0,0),
 			m_hoverIndex(-1), m_openPos(0,0), m_shadowColor(PACK_COLOR(0,0,0,127)),m_state(MENU_Closed),
-			m_indexToOpen(-1)
+			m_indexToOpen(-1),
+			m_timerStarted(0), m_timerCount(0.5f)
 		{
 			setOwner(owner);
 			m_helper.eventKeyPress().bind(this, &SubMenu::Keyboard_OnPress);
@@ -495,6 +517,21 @@ namespace Apoc3D
 					m_items[i]->getSubMenu()->Update(time);
 				}
 			}
+
+			if (m_timerStarted)
+			{
+				m_timerCount -= time->getElapsedTime();
+				if (m_timerCount<0)
+				{
+					if (m_hoverIndex != -1 && m_items[m_hoverIndex]->getSubMenu() &&
+						m_items[m_hoverIndex]->getSubMenu()->getState() != MENU_Open)
+					{
+						m_timerStarted = false;
+						CloseSubMenus();
+						m_items[m_hoverIndex]->getSubMenu()->Open(m_openPos);
+					}
+				}
+			}
 		}
 
 		void SubMenu::CheckSelection()
@@ -520,9 +557,129 @@ namespace Apoc3D
 
 		void SubMenu::Draw(Sprite* sprite)
 		{
-			// TODO: manual area
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			Apoc3D::Math::Rectangle area = getArea();
+			area.Width = Size.X;
+			area.Height = Size.Y;
 
+			area.X = Position.X + 6;
+			area.Y = Position.Y + 4;
 
+			sprite->Draw(m_skin->WhitePixelTexture, area, m_shadowColor);
+
+			area = getArea();
+			m_borderArea.X = area.X - 1;
+			m_borderArea.Y = area.Y - 1;
+			m_borderArea.Width = area.Width + 2;
+			m_borderArea.Height = area.Height + 2;
+			sprite->Draw(m_skin->WhitePixelTexture, m_borderArea, CV_Black);
+			sprite->Draw(m_skin->WhitePixelTexture, area, CV_White);
+
+			m_hoverIndex = -1;
+
+			m_itemPos = Position;
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				m_itemArea.X = m_itemPos.X;
+				m_itemArea.Y = m_itemPos.Y;
+
+				if (!m_itemArea.Width)
+					m_itemArea.Width = Size.X;
+
+				if (m_items[i]->getText().length() && m_items[i]->getText() != L"_")
+				{
+					if (!m_itemArea.Height)
+						m_itemArea.Height = m_fontRef->getLineHeight();
+
+					Point cursorLoc;
+					if (!getOwner())
+					{
+						cursorLoc = mouse->GetCurrentPosition();
+					}
+					else
+					{
+						cursorLoc = mouse->GetCurrentPosition();
+						cursorLoc.X -= getOwner()->Position.X;
+						cursorLoc.Y -= getOwner()->Position.Y;
+					}
+
+					if (m_items[i]->getSubMenu() &&
+						m_items[i]->getSubMenu()->getState() != MENU_Closed)
+					{
+						sprite->Draw(m_skin->WhitePixelTexture, m_itemArea, CV_LightGray);
+					}
+					else if (m_itemArea.Contains(cursorLoc))
+					{
+						m_hoverIndex = i;
+						m_openPos.X = m_itemArea.X + m_itemArea.Width -3;
+						m_openPos.Y = m_itemArea.Y;
+						// timer start
+						m_timerStarted = true;
+						m_timerCount = 0.5f;
+
+						sprite->Draw(m_skin->WhitePixelTexture, m_itemArea, CV_Silver);
+					}
+
+					if (m_indexToOpen = i)
+					{
+						if (m_items[i]->getSubMenu() &&
+							m_items[i]->getSubMenu()->getState() == MENU_Closed)
+						{
+							m_openPos.X = m_itemArea.X + m_itemArea.Width - 3;
+							m_openPos.Y = m_itemArea.Y;
+							m_items[i]->getSubMenu()->Open(m_openPos);
+							CloseSubMenus();
+						}
+						else if (!m_items[i]->event().empty())
+						{
+							m_items[i]->event()(this);
+						}
+
+						m_indexToOpen = -1;
+					}
+
+					m_textPos = m_itemPos;
+					m_textPos.X += 2;
+					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_textPos, CV_Black);
+					m_itemPos.Y += m_fontRef->getLineHeight();
+
+					if (m_items[i]->getKeyCode() != KEY_UNASSIGNED)
+					{
+						Point underscorePos(
+							m_itemPos.X + m_fontRef->MeasureString(m_items[i]->getCleanText().substr(0,m_items[i]->getKeyIndex())).X,
+							m_itemPos.Y);
+						m_fontRef->DrawString(sprite, L"_", underscorePos, CV_Black);
+					}
+
+					if (m_items[i]->getSubMenu())
+					{
+						m_arrowPos.X = m_itemArea.X + m_itemArea.Width - 15;
+						m_arrowPos.Y = m_itemArea.Y + (m_itemArea.Height - m_skin->SubMenuArrowTexture->getHeight())/2;
+
+						sprite->Draw(m_skin->SubMenuArrowTexture, m_arrowPos, CV_Black);
+					}
+				}
+				else if (m_items[i]->getText() == L"-")
+				{
+					Apoc3D::Math::Rectangle separator = Apoc3D::Math::Rectangle(m_itemPos.X, m_itemPos.Y+6, Size.X,1);
+					sprite->Draw(m_skin->WhitePixelTexture, separator, CV_Silver);
+					m_itemPos.Y += 11;
+				}
+			}
+			
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (m_items[i]->getSubMenu() && 
+					m_items[i]->getSubMenu()->getState() != MENU_Closed)
+				{
+					m_items[i]->getSubMenu()->Draw(sprite);
+				}
+			}
+
+			if (m_hoverIndex == -1 && m_timerStarted)
+			{
+				m_timerStarted = false;
+			}
 		}
 	}
 }

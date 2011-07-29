@@ -34,12 +34,15 @@ namespace Apoc3D
 			String ControlFontName;
 
 			Texture* FormBorderTexture[9];
-
+			Texture* SubMenuArrowTexture;
 
 			Texture* FormCloseButton;
 			Texture* FormMinimizeButton;
 			Texture* FormMaximizeButton;
 			Texture* FormRestoreButton;
+
+			ColorValue ForeColor;
+			ColorValue BackColor;
 
 		public:
 			// create default skin

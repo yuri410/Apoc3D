@@ -63,6 +63,16 @@ namespace Apoc3D
 					0, 0, &position, color);
 				assert(SUCCEEDED(hr));
 			}
+			void D3D9Sprite::Draw(Texture* texture, const Point& pos, uint color)
+			{
+				D3DVector3 position;
+				position.x = (float)pos.X;
+				position.y = (float)pos.Y;
+				position.z = 0;
+				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+					0, 0, &position, color);
+				assert(SUCCEEDED(hr));
+			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
 			{
 				D3DVector3 position;

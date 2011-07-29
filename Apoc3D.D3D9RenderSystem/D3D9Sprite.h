@@ -56,6 +56,7 @@ namespace Apoc3D
 				}
 				virtual void Draw(Texture* texture, Vector2 pos, uint color);
 				virtual void Draw(Texture* texture, const PointF& pos, uint color);
+				virtual void Draw(Texture* texture, const Point& pos, uint color);
 				virtual void Draw(Texture* texture, int x, int y, uint color);
 				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color);
 

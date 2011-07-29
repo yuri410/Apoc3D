@@ -135,6 +135,9 @@ namespace Apoc3D
 			KeyboardHelper m_helper;
 			int m_indexToOpen;
 
+			float m_timerCount;
+			bool m_timerStarted;
+
 			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
 			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);
 

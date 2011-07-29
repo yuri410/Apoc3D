@@ -53,23 +53,24 @@ namespace Apoc3D
 			UIEventHandler m_eventMousePress;
 			UIEventHandler m_eventMouseRelease;
 
+
 		protected:
 			ControlContainer* m_owner;
 			const StyleSkin* m_skin;
 			Font* m_fontRef;
+
+			//Apoc3D::Math::Rectangle m_area;
 
 			virtual void OnMouseOver() {  if (!m_eventMouseOver.empty()) m_eventMouseOver(this); }
 			virtual void OnMouseOut() {  if (!m_eventMouseOver.empty()) m_eventMouseOut(this); }
 			virtual void OnPress() {  if (!m_eventMouseOver.empty()) m_eventMousePress(this); }
 			virtual void OnRelease() {  if (!m_eventMouseOver.empty()) m_eventMouseRelease(this); }
 		public:
-			
+			String Name;
 			String Text;
-			//ColorValue BackColor;
-			//ColorValue ForeColor;
+			
 			Point Position;
 			Point Size;
-
 
 			bool Enabled;
 			bool Visible;
@@ -87,7 +88,7 @@ namespace Apoc3D
 			*/
 			virtual bool IsOverriding() { return false; }
 
-			Apoc3D::Math::Rectangle getArea() const
+			const Apoc3D::Math::Rectangle& getArea() const
 			{
 				return Apoc3D::Math::Rectangle(Position.X, Position.Y, Size.X, Size.Y);
 			}
@@ -114,7 +115,10 @@ namespace Apoc3D
 			}
 
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time) { }
+			virtual void Update(const GameTime* const time)
+			{
+				//m_area = Apoc3D::Math::Rectangle(Position.X, Position.Y, Size.X, Size.Y);
+			}
 			virtual void Draw(Sprite* sprite) = 0;
 
 			virtual void SetSkin(const StyleSkin* skin) { m_skin = skin; }
