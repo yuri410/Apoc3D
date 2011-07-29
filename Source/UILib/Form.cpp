@@ -989,6 +989,14 @@ namespace Apoc3D
 		{
 
 		}
+		void UIRoot::Add(ControlContainer* cc)
+		{
+
+		}
+		void UIRoot::Remove(ControlContainer* cc)
+		{
+
+		}
 		void UIRoot::Draw()
 		{
 

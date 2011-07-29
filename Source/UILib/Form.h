@@ -191,8 +191,12 @@ namespace Apoc3D
 
 			static void Form_SizeChanged(Control* ctl);
 		public:
+			/** Specifies the area to display UI in the viewport. In unified coordinates.
+			*/
 			static RectangleF UIArea;
 
+			/** Return the area to display UI in the viewport. In screen coordinates.
+			*/
 			static Apoc3D::Math::Rectangle GetUIArea(RenderDevice* device);
 
 			static FastList<Form*>& getForms() { return m_forms; }
@@ -213,7 +217,8 @@ namespace Apoc3D
 			static void Initialize(RenderDevice* device);
 			static void Finalize();
 
-			
+			static void Add(ControlContainer* cc);
+			static void Remove(ControlContainer* cc);
 
 			static void Draw();
 			static void Update(const GameTime* const time);
