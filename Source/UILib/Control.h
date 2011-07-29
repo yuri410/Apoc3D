@@ -88,7 +88,7 @@ namespace Apoc3D
 			*/
 			virtual bool IsOverriding() { return false; }
 
-			const Apoc3D::Math::Rectangle& getArea() const
+			const Apoc3D::Math::Rectangle getArea() const
 			{
 				return Apoc3D::Math::Rectangle(Position.X, Position.Y, Size.X, Size.Y);
 			}

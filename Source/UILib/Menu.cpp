@@ -199,7 +199,6 @@ namespace Apoc3D
 				Apoc3D::Math::Rectangle area(Position.X+1,Position.Y,Size.X,Size.Y);
 
 				sprite->Draw(m_skin->WhitePixelTexture, area, CV_White);
-
 			}
 			
 
@@ -398,7 +397,7 @@ namespace Apoc3D
 
 		void SubMenu::CalcualteSize()
 		{
-			Size.Y =0;
+			Size.Y = 0;
 			for (int i=0;i<m_items.getCount();i++)
 			{
 				if (m_items[i]->getText()==L"_")

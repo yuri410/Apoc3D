@@ -41,7 +41,7 @@ namespace Apoc3D
 		private:
 			Point m_shadowOffset;
 			Apoc3D::Math::Rectangle m_dstRect[9];
-			StyleSkin* m_skin;
+			const StyleSkin* m_skin;
 			bool m_resizable;
 
 			void UpdateRects(const Point& position, const Point& size);
@@ -51,7 +51,7 @@ namespace Apoc3D
 			void DrawShadow(Sprite* sprite, const Point& pos, float alpha);
 
 		public:
-			Border(bool resizable, StyleSkin* skin);
+			Border(bool resizable, const StyleSkin* skin);
 			void Draw(Sprite* sprite, const Point& pt, const Point& size, float shadowAlpha);
 			
 

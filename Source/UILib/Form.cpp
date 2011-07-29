@@ -77,7 +77,7 @@ namespace Apoc3D
 		void Form::Focus()
 		{
 			if (UIRoot::getTopMostForm() && UIRoot::getTopMostForm() != this && 
-				UIRoot::getTopMostForm()->getMenu() && UIRoot.getTopMostForm()->getMenu()->getState() == MENU_Open)
+				UIRoot::getTopMostForm()->getMenu() && UIRoot::getTopMostForm()->getMenu()->getState() == MENU_Open)
 			{
 				return;
 			}
@@ -180,7 +180,7 @@ namespace Apoc3D
 			m_btClose->setNormalTexture(m_skin->FormCloseButton);
 			m_btClose->setOwner(this);
 			m_btClose->Initialize(device);
-			m_btClose->eventRelease().bind(this, Form::btClose_Release);
+			m_btClose->eventRelease().bind(this, &Form::btClose_Release);
 
 			
 			if (m_hasMinimizeButton)
@@ -190,7 +190,7 @@ namespace Apoc3D
 				m_btMinimize->setOwner(this);
 				m_btMinimize->Initialize(device);
 
-				m_btMinimize->eventRelease().bind(this, Form::btMinimize_Release);
+				m_btMinimize->eventRelease().bind(this, &Form::btMinimize_Release);
 			}
 			if (m_hasMaximizeButton)
 			{
@@ -198,7 +198,7 @@ namespace Apoc3D
 				m_btMaximize->setNormalTexture(m_skin->FormMaximizeButton);
 				m_btMaximize->setOwner(this);
 				m_btMaximize->Initialize(device);
-				m_btMaximize->eventRelease().bind(this, Form::btMaximize_Release);
+				m_btMaximize->eventRelease().bind(this, &Form::btMaximize_Release);
 			}
 			if (m_hasMinimizeButton || m_hasMaximizeButton)
 			{
@@ -206,7 +206,7 @@ namespace Apoc3D
 				m_btRestore->setNormalTexture(m_skin->FormRestoreButton);
 				m_btRestore->setOwner(this);
 				m_btRestore->Initialize(device);
-				m_btRestore->eventRelease().bind(this, Form::btRestore_Release);
+				m_btRestore->eventRelease().bind(this, &Form::btRestore_Release);
 			}
 		}
 
@@ -340,7 +340,9 @@ namespace Apoc3D
 			//Restore the window to its original size and position
 			if (m_state == FWS_Normal && (m_isMaximized || m_isMinimized))
 			{
-				if (Vector2Utils::Distance(Vector2(Position.X,Position.Y), Vector2(m_previousPosition.X, m_previousPosition.Y))>2.0f)
+				if (Vector2Utils::Distance(
+					Vector2((float)Position.X, (float)Position.Y), 
+					Vector2((float)m_previousPosition.X, (float)m_previousPosition.Y))>2.0f)
 				{
 					Position.X += (int)((m_previousPosition.X-Position.X)*0.2f);
 					Position.Y += (int)((m_previousPosition.Y-Position.Y)*0.2f);
@@ -350,7 +352,9 @@ namespace Apoc3D
 					Position = m_previousPosition;
 				}
 
-				if (Vector2Utils::Distance(Vector2(Size.X,Size.Y), Vector2(m_previousPosition.X, m_previousPosition.Y))>2.0f)
+				if (Vector2Utils::Distance(
+					Vector2((float)Size.X,(float)Size.Y), 
+					Vector2((float)m_previousPosition.X, (float)m_previousPosition.Y))>2.0f)
 				{
 					Size.X += (int)((m_previousSize.X-Size.X)*0.2f);
 					Size.Y += (int)((m_previousSize.Y-Size.Y)*0.2f);
@@ -375,7 +379,9 @@ namespace Apoc3D
 			 //Minimize the window
 			else if (m_state == FWS_Minimized && !m_isMinimized)
 			{
-				if (Vector2Utils::Distance(Vector2(Position.X,Position.Y), Vector2(m_minimizedPos.X, m_minimizedPos.Y))>2.0f)
+				if (Vector2Utils::Distance(
+					Vector2((float)Position.X,(float)Position.Y),
+					Vector2((float)m_minimizedPos.X, (float)m_minimizedPos.Y))>2.0f)
 				{
 					Position.X += (int)((m_minimizedPos.X-Position.X)*0.2f);
 					Position.Y += (int)((m_minimizedPos.Y-Position.Y)*0.2f);
@@ -385,7 +391,9 @@ namespace Apoc3D
 					Position = m_minimizedPos;
 				}
 
-				if (Vector2Utils::Distance(Vector2(Size.X,Size.Y), Vector2(m_minimizedSize.X, m_minimizedSize.Y))>2.0f)
+				if (Vector2Utils::Distance(
+					Vector2((float)Size.X,(float)Size.Y), 
+					Vector2((float)m_minimizedSize.X, (float)m_minimizedSize.Y))>2.0f)
 				{
 					Size.X += (int)((m_minimizedSize.X-Size.X)*0.2f);
 					Size.Y += (int)((m_minimizedSize.Y-Size.Y)*0.2f);
@@ -409,7 +417,9 @@ namespace Apoc3D
 			//Maximize the window
 			else if (m_state == FWS_Maximized && !m_isMaximized)
 			{
-				if (Vector2Utils::Distance(Vector2Utils::Zero, Vector2(Position.X, Position.Y))>2.0f)
+				if (Vector2Utils::Distance(
+					Vector2Utils::Zero, 
+					Vector2((float)Position.X, (float)Position.Y))>2.0f)
 				{
 					Position.X += (int)((-Position.X)*0.2f);
 					Position.Y += (int)((-Position.Y)*0.2f);
@@ -419,7 +429,9 @@ namespace Apoc3D
 					Position = Point::Zero;
 				}
 				
-				if (Vector2Utils::Distance(Vector2(Size.X,Size.Y), Vector2(m_maximumSize.X, m_maximumSize.Y))>2.0f)
+				if (Vector2Utils::Distance(
+					Vector2((float)Size.X,(float)Size.Y), 
+					Vector2((float)m_maximumSize.X, (float)m_maximumSize.Y))>2.0f)
 				{
 					Size.X += (int)((m_maximumSize.X-Size.X)*0.2f);
 					Size.Y += (int)((m_maximumSize.Y-Size.Y)*0.2f);
@@ -605,7 +617,7 @@ namespace Apoc3D
 			if (m_borderStyle == FBS_Sizable)
 			{
 				Matrix matrix;
-				Matrix::CreateTranslation(matrix, Position.X, Position.Y,0);
+				Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
 				sprite->SetTransform(matrix);
 
 				if (m_hasMaximizeButton)
@@ -692,7 +704,7 @@ namespace Apoc3D
 		/************************************************************************/
 
 
-		Border::Border(bool resizable, StyleSkin* skin)
+		Border::Border(bool resizable, const StyleSkin* skin)
 			: m_skin(skin), m_resizable(resizable), m_shadowOffset(6,4)
 		{
 			for (int i=0;i<9;i++)
@@ -793,7 +805,7 @@ namespace Apoc3D
 				alpha = 1;
 			if (alpha<0)
 				alpha=0;
-			byte a = alpha * 0xff;
+			byte a = (byte)(alpha * 0xff);
 
 			ColorValue shdClr = PACK_COLOR(0,0,0,a);
 
@@ -830,6 +842,12 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
+		
+		FastList<Form*> UIRoot::m_forms(10);
+		Form* UIRoot::m_activeForm = 0;
+		Form* UIRoot::m_topMostForm = 0;
+		RectangleF UIRoot::UIArea(0,0,1,1);
+
 		Apoc3D::Math::Rectangle UIRoot::GetUIArea(RenderDevice* device)
 		{
 			Viewport vp = device->getViewport();
@@ -893,5 +911,7 @@ namespace Apoc3D
 
 			return Point(rect.Width, rect.Height);
 		}
+		
+
 	}
 }
