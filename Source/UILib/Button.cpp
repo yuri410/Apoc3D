@@ -273,8 +273,8 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		ButtonRow::ButtonRow(const Vector2& position, float width, const List<String>& titles)
-			: m_count(titles.getCount()), m_hoverIndex(-1), m_selectedIndex(0)
+		ButtonRow::ButtonRow(const Point& position, float width, const List<String>& titles)
+			: Control(position), m_count(titles.getCount()), m_hoverIndex(-1), m_selectedIndex(0)
 		{ 
 			Size.X = (int)width;
 			Size.Y = m_skin->ButtonTexture->getHeight();
@@ -412,10 +412,9 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 		RadioButton::RadioButton(const Point& position, const String& text, bool checked)
-			: m_checked(checked), m_canUncheck(true), m_mouseOver(false), m_mouseDown(false), m_textOffset(0,0)
+			: Control(position, text), m_checked(checked), m_canUncheck(true), m_mouseOver(false), m_mouseDown(false), m_textOffset(0,0)
 		{
-			Position = position;
-			Text = text;
+			
 		}
 		void RadioButton::Initialize(RenderDevice* device)
 		{
