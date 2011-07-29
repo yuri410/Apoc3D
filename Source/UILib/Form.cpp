@@ -978,7 +978,31 @@ namespace Apoc3D
 		}
 		void UIRoot::Form_SizeChanged(Control* ctl)
 		{
+			Form* form = static_cast<Form*>(ctl);
 
+			Apoc3D::Math::Rectangle area = GetUIArea(form->getRenderDevice());
+			//for (int i=0;i<m_forms.getCount();i++)
+			{
+				Form* form = m_forms[i];
+				//If a form is out of the working area,
+				//we need to put it back where the user can see it.
+				if (!area.Contains(m_forms[i]->getArea()))
+				{
+					if (form->Position.X + form->Size.X > area.Width)
+						form->Position.X = area.Width - form->Size.X;
+
+					if (form->Position.X + form->Size.Y > area.Height)
+						form->Position.Y = area.Height - form->Size.Y;
+				}
+
+				//If a form was maximized
+				if (form->getState() == Form::FWS_Maximized)
+				{
+					//resize it
+					form->Size.X = area.Width;
+					form->Size.Y = area.Height;
+				}
+			}
 		}
 
 		void UIRoot::Initialize(RenderDevice* device)

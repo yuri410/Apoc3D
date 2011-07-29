@@ -144,6 +144,8 @@ namespace Apoc3D
 			void btMaximize_Release(Control* sender);
 			void btRestore_Release(Control* sender);
 		public:
+			RenderDevice* getRenderDevice() const { return m_device; }
+
 			bool isResized() const { return m_isResizeing; }
 			bool isDragged() const { return m_isDragging; }
 			bool isMinimizing() const { return m_isMinimizing; }
