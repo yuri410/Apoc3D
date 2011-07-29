@@ -887,6 +887,8 @@ namespace Apoc3D
 		Form* UIRoot::m_activeForm = 0;
 		Form* UIRoot::m_topMostForm = 0;
 		RectangleF UIRoot::UIArea(0,0,1,1);
+		SubMenu* UIRoot::m_contextMenu = 0;
+		Sprite* UIRoot::m_sprite = 0;
 
 		Apoc3D::Math::Rectangle UIRoot::GetUIArea(RenderDevice* device)
 		{
@@ -1063,7 +1065,37 @@ namespace Apoc3D
 
 		void UIRoot::Draw()
 		{
+			m_sprite->Begin(true);
+			for (int i=m_forms.getCount()-1;i>-1;i--)
+			{
+				if (m_forms[i]->Visible && m_forms[i] != m_topMostForm && 
+					m_forms[i]->getState() != Form::FWS_Minimized)
+				{
+					m_forms[i]->Draw(m_sprite);
+				}
+			}
+			if (m_topMostForm && m_topMostForm->Visible)
+			{
+				m_topMostForm->Draw(m_sprite);
+			}
 
+			for (int i=m_forms.getCount()-1;i>=0;i--)
+			{
+				if (m_forms[i]->getState() == Form::FWS_Minimized &&
+					m_forms[i]->Visible && m_forms[i] != m_topMostForm)
+				{
+					m_forms[i]->Draw(m_sprite);
+				}
+			}
+
+			if (m_contextMenu && m_contextMenu->Visible && m_contextMenu->getState() != MENU_Closed)
+			{
+				m_contextMenu->Draw(m_sprite);
+			}
+
+			
+
+			m_sprite->End();
 		}
 		void UIRoot::Update(const GameTime* const time)
 		{
@@ -1086,6 +1118,11 @@ namespace Apoc3D
 			}
 
 			//Update Context Menu
+			if (m_contextMenu && m_contextMenu->getState() != MENU_Closed &&
+				m_contextMenu->Visible)
+			{
+				m_contextMenu->Update(time);
+			}
 		}
 	}
 }

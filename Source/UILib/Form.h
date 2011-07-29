@@ -191,6 +191,8 @@ namespace Apoc3D
 			static FastList<ControlContainer*> m_containers;
 			static Form* m_activeForm;
 			static Form* m_topMostForm;
+			static SubMenu* m_contextMenu;
+			static Sprite* m_sprite;
 
 			static void Form_SizeChanged(Control* ctl);
 		public:
