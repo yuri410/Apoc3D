@@ -40,6 +40,7 @@ namespace Apoc3D
 		{
 		private:
 			Point m_shadowOffset;
+			
 			Apoc3D::Math::Rectangle m_dstRect[9];
 			const StyleSkin* m_skin;
 			bool m_resizable;

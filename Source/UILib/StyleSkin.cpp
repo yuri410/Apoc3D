@@ -56,12 +56,46 @@ namespace Apoc3D
 			fl = FileSystem::getSingleton().Locate(L"ctl_btn_restore.tex", rule);
 			FormRestoreButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
 
+			fl = FileSystem::getSingleton().Locate(L"ctl_arrow.tex", rule);
+			SubMenuArrowTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+
+			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_upperleft.tex", rule);
+			FormBorderTexture[0] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_uppercenter.tex", rule);
+			FormBorderTexture[1] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_upperright.tex", rule);
+			FormBorderTexture[2] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_midleft.tex", rule);
+			FormBorderTexture[3] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_midcenter.tex", rule);
+			FormBorderTexture[4] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_midright.tex", rule);
+			FormBorderTexture[5] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_lowerleft.tex", rule);
+			FormBorderTexture[6] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_lowercenter.tex", rule);
+			FormBorderTexture[7] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_lowerright.tex", rule);
+			FormBorderTexture[8] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_lowerright_resize.tex", rule);
+			FormBorderTexture[9] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+
+
 		}
 
 		StyleSkin::~StyleSkin()
 		{
 			delete ButtonTexture;
 			delete WhitePixelTexture;
+
+			delete FormCloseButton;
+			delete FormMaximizeButton;
+			delete FormMinimizeButton;
+			delete FormRestoreButton;
+
+			for (int i=0;i<10;i++)
+				delete FormBorderTexture[i];
+			delete SubMenuArrowTexture;
 		}
 	}
 }

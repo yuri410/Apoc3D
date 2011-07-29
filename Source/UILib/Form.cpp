@@ -711,6 +711,10 @@ namespace Apoc3D
 			{
 				m_dstRect[i] = Apoc3D::Math::Rectangle(0,0,m_skin->FormBorderTexture[i]->getWidth(), m_skin->FormBorderTexture[i]->getHeight());
 			}
+			if (resizable)
+			{
+				m_dstRect[8] = Apoc3D::Math::Rectangle(0,0,m_skin->FormBorderTexture[9]->getWidth(), m_skin->FormBorderTexture[9]->getHeight());
+			}
 		}
 
 		void Border::Draw(Sprite* sprite, const Point& pt, const Point& size, float shadowAlpha)
@@ -797,7 +801,10 @@ namespace Apoc3D
 		{
 			sprite->Draw(m_skin->FormBorderTexture[6], m_dstRect[6], CV_White);
 			sprite->Draw(m_skin->FormBorderTexture[7], m_dstRect[7], CV_White);
-			sprite->Draw(m_skin->FormBorderTexture[8], m_dstRect[8], CV_White);
+			if (m_resizable)
+				sprite->Draw(m_skin->FormBorderTexture[9], m_dstRect[9], CV_White);			
+			else
+				sprite->Draw(m_skin->FormBorderTexture[8], m_dstRect[8], CV_White);
 		}
 		void Border::DrawShadow(Sprite* sprite, const Point& pos, float alpha)
 		{
@@ -831,12 +838,20 @@ namespace Apoc3D
 			shadowRect.Y += m_shadowOffset.Y;
 			sprite->Draw(m_skin->FormBorderTexture[7], shadowRect, shdClr);
 
-
-			shadowRect = m_dstRect[8];
-			shadowRect.X += m_shadowOffset.X;
-			shadowRect.Y += m_shadowOffset.Y;
-			sprite->Draw(m_skin->FormBorderTexture[8], shadowRect, shdClr);
-
+			if (m_resizable)
+			{
+				shadowRect = m_dstRect[9];
+				shadowRect.X += m_shadowOffset.X;
+				shadowRect.Y += m_shadowOffset.Y;
+				sprite->Draw(m_skin->FormBorderTexture[9], shadowRect, shdClr);
+			}
+			else
+			{
+				shadowRect = m_dstRect[8];
+				shadowRect.X += m_shadowOffset.X;
+				shadowRect.Y += m_shadowOffset.Y;
+				sprite->Draw(m_skin->FormBorderTexture[8], shadowRect, shdClr);
+			}
 
 		}
 		/************************************************************************/

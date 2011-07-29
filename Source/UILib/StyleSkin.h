@@ -4,6 +4,7 @@
 
 #include "UICommon.h"
 #include "Math/Rectangle.h"
+#include "Math/ColorValue.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -33,7 +34,7 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle BtnRowSeparator;
 			String ControlFontName;
 
-			Texture* FormBorderTexture[9];
+			Texture* FormBorderTexture[10];
 			Texture* SubMenuArrowTexture;
 
 			Texture* FormCloseButton;
