@@ -1093,7 +1093,7 @@ namespace Apoc3D
 				m_contextMenu->Draw(m_sprite);
 			}
 
-			
+			// cursor
 
 			m_sprite->End();
 		}
