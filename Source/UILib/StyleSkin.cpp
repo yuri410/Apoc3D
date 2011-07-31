@@ -105,6 +105,10 @@ namespace Apoc3D
 			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_lowerright_resize.tex", rule);
 			FormBorderTexture[9] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
 
+			fl = FileSystem::getSingleton().Locate(L"ctl_radiobtn_checked.tex", rule);
+			RadioBtnChecked = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_radiobtn_unchecked.tex", rule);
+			RadioBtnUnchecked = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
 
 		}
 
@@ -121,6 +125,9 @@ namespace Apoc3D
 			for (int i=0;i<10;i++)
 				delete FormBorderTexture[i];
 			delete SubMenuArrowTexture;
+
+			delete RadioBtnChecked;
+			delete RadioBtnUnchecked;
 		}
 	}
 }
