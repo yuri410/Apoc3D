@@ -47,7 +47,16 @@ namespace Apoc3D
 			m_helper.eventKeyRelease().bind(this, &Menu::Keyboard_OnRelease);
 
 		}
-
+		void Menu::Initialize(RenderDevice* device)
+		{
+			for (int i=0;i<m_items.getCount();i++)
+			{
+				if (m_items[i]->getSubMenu())
+				{
+					m_items[i]->getSubMenu()->Initialize(device);
+				}
+			}
+		}
 		void Menu::Add(MenuItem* item, SubMenu* submenu)
 		{
 			if (submenu)
@@ -93,9 +102,10 @@ namespace Apoc3D
 							m_items[i]->getSubMenu()->getState()==MENU_Open &&
 							m_items[i]->getSubMenu()->IsCursorInside())
 						{
-							CloseSubMenus();
+							return;
 						}
 					}
+					CloseSubMenus();
 				}
 			}
 		}
@@ -418,6 +428,15 @@ namespace Apoc3D
 
 		void SubMenu::Open(const Point& position)
 		{
+			if (Size.X==0 && Size.Y ==0)
+				CalcualteSize();
+
+			Position = position;
+
+			m_state = MENU_Open;
+		}
+		void SubMenu::Close()
+		{
 			m_hoverIndex = -1;
 			m_indexToOpen = -1;
 
@@ -436,7 +455,6 @@ namespace Apoc3D
 
 			CloseSubMenus();
 		}
-
 		void SubMenu::CloseSubMenus()
 		{
 			for (int i=0;i<m_items.getCount();i++)

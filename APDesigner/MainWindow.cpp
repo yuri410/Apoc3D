@@ -107,7 +107,8 @@ namespace APDesigner
 		m_form->Initialize(m_device);
 		//m_pane->getControls().Add(m_btn);
 
-
+		UIRoot::Initialize(m_device);
+		UIRoot::Add(m_form);
 		//m_btn->Initialize(m_device);
 		//m_pane->Initialize(m_device);
 	}
@@ -118,13 +119,16 @@ namespace APDesigner
 		
 		delete m_btn;
 		delete m_pane;
+		delete m_form;
+		UIRoot::Finalize();
 	}
 	void MainWindow::Update(const GameTime* const time)
 	{
 		InputAPIManager::getSingleton().Update(time);
 
 		//m_pane->Update(time);
-		m_form->Update(time);
+		//m_form->Update(time);
+		UIRoot::Update(time);
 	}
 	void MainWindow::Draw(const GameTime* const time)
 	{

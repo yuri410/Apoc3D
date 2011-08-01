@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Control.h"
 #include "Collections/FastList.h"
 
-using namespace  Apoc3D::Collections;
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
