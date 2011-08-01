@@ -1069,8 +1069,8 @@ namespace Apoc3D
 
 		void UIRoot::Draw()
 		{
-			m_sprite=0;
-			m_sprite->Begin(true);
+			m_sprite->Begin(true);	
+			
 			for (int i=m_forms.getCount()-1;i>-1;i--)
 			{
 				if (m_forms[i]->Visible && m_forms[i] != m_topMostForm && 

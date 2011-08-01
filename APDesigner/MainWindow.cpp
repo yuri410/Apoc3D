@@ -71,7 +71,7 @@ namespace APDesigner
 		icp.UseKeyboard = true;
 		icp.UseMouse = true;
 
-		InputAPIManager::getSingleton().InitializeInput(m_window, icp);
+		//InputAPIManager::getSingleton().InitializeInput(m_window, icp);
 
 		{
 			FileLocateRule rule;
@@ -137,7 +137,8 @@ namespace APDesigner
 
 		m_device->BeginFrame();
 
-		
+		//m_sprite = 0;
+
 		//m_sprite->Begin(true);
 		//m_font->DrawString(m_sprite, L"Apoc3D Designer\nfdsfds!!", 50,50, CV_White);
 		//m_sprite->Draw(m_UIskin->ButtonTexture, 50,50, CV_White);
@@ -147,7 +148,6 @@ namespace APDesigner
 		//m_sprite->End();
 
 		m_device->EndFrame();
-
 	}
 
 	void MainWindow::OnFrameStart()

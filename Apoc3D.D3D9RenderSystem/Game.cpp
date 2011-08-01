@@ -250,6 +250,16 @@ namespace Apoc3D
 			}
 			void Game::Window_Paint()
 			{
+#if _DEBUG
+				// If WM_PAINT frame have errors when debugging in windows, the error dlgs 
+				// can not be displayed. 
+
+				// The frame fails and another WM_PAINT will arrive in attempt to render the window.
+				// And if the error can not be recovered,
+				// WM_PAINT frames will arrive and fail again and again. Causing normal loop render unable
+				// to start. And in windows error dialogs cannot display.
+				return;
+#endif
 				// the paint event may be raised before device init -- just created wnd class
 				if (getDevice())
 				{
