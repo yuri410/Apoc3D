@@ -105,7 +105,9 @@ namespace APDesigner
 		m_form = new Form();
 		m_form->SetSkin(m_UIskin);
 		m_form->getControls().Add(m_btn);
+		m_form->Size = Point(400,400);
 		m_form->Initialize(m_device);
+		m_form->Text = L"Form 1. ABCDEFG";
 		//m_pane->getControls().Add(m_btn);
 
 		UIRoot::Initialize(m_device);

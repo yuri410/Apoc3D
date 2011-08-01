@@ -46,7 +46,7 @@ namespace Apoc3D
 			Point m_textOffset;
 			Point m_drawPos;
 			Apoc3D::Math::Rectangle m_backgroundRect;
-			float m_width;
+			int m_width;
 
 			bool m_mouseOver;
 			bool m_mouseDown;

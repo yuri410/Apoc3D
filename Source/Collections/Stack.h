@@ -36,11 +36,14 @@ namespace Apoc3D
 		private:
 			Stack(const Stack& another){}
 		public:
-			Stack()
-				: m_length(8), m_size(0)
+			
+			Stack(int capacity = 8)
+				: m_length(capacity), m_size(0)
 			{
-				m_array = new T[m_size];
+				m_array = new T[m_length];
 			}
+
+			int getCount() const { return m_size; }
 
 			void Clear()
 			{
@@ -72,11 +75,19 @@ namespace Apoc3D
 				memset(&m_array[m_size], 0, sizeof(T));
 				return local;
 			}
+			void FastPop()
+			{
+				m_size--;
+			}
 
 			void Push(const T& item)
 			{
 				if (m_size == m_length)
 				{
+					if (!m_length)
+						m_length = 1;
+					else
+						m_length *= 2;
 					T* destinationArray = new T[m_length * 2];
 					memcpy(destinationArray, m_array, m_size*sizeof(T));
 					delete[] m_array;

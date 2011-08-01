@@ -43,6 +43,27 @@ namespace Apoc3D
 {
 	namespace Math
 	{
+
+		class APAPI MatrixStack
+		{
+		private:
+			Apoc3D::Collections::Stack<Matrix>* m_stack;
+
+		public:
+			MatrixStack(int reserve);
+			~MatrixStack();
+
+			void PushMultply(const Matrix& mat);
+			void PushMatrix(const Matrix& mat);
+			bool PopMatrix();
+			bool PopMatrix(Matrix& mat);
+
+			bool Peek(Matrix& mat);
+			
+
+			int getCount() const;
+		};
+
 #define COL_INDEX(x) (x-1)
 #define ELEM_ADDR(i,j) ((i-1)*4*4 + (j-1)*4)
 #define ME(i,j) ((i-1)*4+j-1)

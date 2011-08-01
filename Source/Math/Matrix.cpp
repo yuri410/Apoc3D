@@ -24,11 +24,78 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Matrix.h"
 
 #include "Quaternion.h"
+#include "Collections/Stack.h"
+
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
 	namespace Math
 	{
+		MatrixStack::MatrixStack(int reserve)
+		{
+			m_stack = new Stack<Matrix>(reserve);
+		}
+		MatrixStack::~MatrixStack()
+		{
+			delete m_stack;
+		}
+
+		void MatrixStack::PushMultply(const Matrix& mat)
+		{
+			if (m_stack->getCount())
+			{
+				Matrix newMat;
+				Matrix::Multiply(newMat, m_stack->Peek(), mat);
+				m_stack->Push(newMat);
+			}
+			else
+			{
+				m_stack->Push(mat);
+			}
+		}
+		void MatrixStack::PushMatrix(const Matrix& mat)
+		{
+			m_stack->Push(mat);
+		}
+		bool MatrixStack::PopMatrix()
+		{
+			if (m_stack->getCount())
+			{
+				m_stack->FastPop();
+				return true;
+			}
+			return false;
+		}
+		bool MatrixStack::PopMatrix(Matrix& mat)
+		{
+			if (m_stack->getCount())
+			{
+				mat = m_stack->Pop();
+				return true;
+			}
+			return false;
+		}
+		bool MatrixStack::Peek(Matrix& mat)
+		{
+			if (m_stack->getCount())
+			{
+				mat = m_stack->Peek();
+				return true;
+			}
+			return false;
+		}
+
+		int MatrixStack::getCount() const
+		{
+			return m_stack->getCount();
+		}
+
+
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 		//const __m128 _MASKSIGN_;	// - - - -
 		__m128 _ZERONE_;	// 1 0 0 1

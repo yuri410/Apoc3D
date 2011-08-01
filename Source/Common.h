@@ -144,6 +144,7 @@ namespace Apoc3D
 		template<typename T> class FastQueue;
 		template<typename T, typename S> class FastMap;
 		template<typename T> class ExistTable;
+		template<typename T> class Stack;
 	}
 	namespace Core
 	{		
