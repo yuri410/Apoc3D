@@ -42,15 +42,25 @@ namespace Apoc3D
 			private:
 				RenderDevice* m_renderDevice;
 				Matrix m_transform;
+				MatrixStack m_stack;
+
+				bool m_useStack;
+
 			protected:
 				Sprite(RenderDevice* rd);
 				
 			public:
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
+				bool isUsingStack() const { return m_useStack; }
+
 
 				virtual ~Sprite();
 
-				virtual void Begin(bool alphabled) = 0;
+				virtual void Begin(bool alphabled, bool useStack)
+				{
+					m_useStack = useStack;
+				}
+
 				virtual void End() = 0;
 				//virtual void DrawQuad(const GeometryData* quad, PostEffect* effect) = 0;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color) = 0;
@@ -60,11 +70,49 @@ namespace Apoc3D
 				virtual void Draw(Texture* texture, int x, int y, uint color) = 0;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color) = 0;
 				
-				const Matrix& getTransform() const { return m_transform; }
-
-				virtual void SetTransform(const Matrix &matrix)
+				const Matrix& getTransform() const 
 				{
-					m_transform = matrix;
+					if (m_useStack)
+					{
+						if (m_stack.getCount())
+							return m_stack.Peek();
+						return Matrix::Identity;
+					}
+					return m_transform; 
+				}
+
+				/** When using matrix stack, pop the current matrix and restore to a previous transform
+					state. Throws exception if not using matrix stack.
+				*/
+				void PopTransform();
+
+				/** Multiply the current transform matrix by a given matrix.h If using matrix stack, push
+					the result onto the stack as well.
+				*/
+				void MultiplyTransform(const Matrix& matrix)
+				{
+					if (m_useStack)
+					{
+						m_stack.PushMultply(matrix);
+					}
+					else
+					{
+						Matrix::Multiply(m_transform, m_transform, matrix);
+					}
+				}
+
+				/** Set current transform. If using matrix stack, pushes the matrix onto the stack as well.
+				*/
+				virtual void SetTransform(const Matrix& matrix)
+				{
+					if (m_useStack)
+					{
+						m_stack.PushMatrix(matrix);
+					}
+					else
+					{
+						m_transform = matrix;
+					}
 				}
 			};
 		}

@@ -47,7 +47,7 @@ namespace Apoc3D
 				D3D9Sprite(D3D9RenderDevice* device);
 				~D3D9Sprite();
 
-				virtual void Begin(bool alphabled);
+				virtual void Begin(bool alphabled, bool useStack);
 				virtual void End();
 
 				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color)

@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Quaternion.h"
 #include "Collections/Stack.h"
+#include "Apoc3DException.h"
 
 using namespace Apoc3D::Collections;
 
@@ -41,7 +42,7 @@ namespace Apoc3D
 			delete m_stack;
 		}
 
-		void MatrixStack::PushMultply(const Matrix& mat)
+		void MatrixStack::PushMultply(const Matrix& mat) const
 		{
 			if (m_stack->getCount())
 			{
@@ -54,11 +55,11 @@ namespace Apoc3D
 				m_stack->Push(mat);
 			}
 		}
-		void MatrixStack::PushMatrix(const Matrix& mat)
+		void MatrixStack::PushMatrix(const Matrix& mat) const
 		{
 			m_stack->Push(mat);
 		}
-		bool MatrixStack::PopMatrix()
+		bool MatrixStack::PopMatrix() const
 		{
 			if (m_stack->getCount())
 			{
@@ -67,7 +68,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool MatrixStack::PopMatrix(Matrix& mat)
+		bool MatrixStack::PopMatrix(Matrix& mat) const
 		{
 			if (m_stack->getCount())
 			{
@@ -76,14 +77,13 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool MatrixStack::Peek(Matrix& mat)
+		Matrix& MatrixStack::Peek() const
 		{
 			if (m_stack->getCount())
 			{
-				mat = m_stack->Peek();
-				return true;
+				return m_stack->Peek();
 			}
-			return false;
+			throw Apoc3DException::createException(EX_InvalidOperation, L"The stack is empty.");
 		}
 
 		int MatrixStack::getCount() const

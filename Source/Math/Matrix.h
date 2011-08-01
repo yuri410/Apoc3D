@@ -53,12 +53,12 @@ namespace Apoc3D
 			MatrixStack(int reserve);
 			~MatrixStack();
 
-			void PushMultply(const Matrix& mat);
-			void PushMatrix(const Matrix& mat);
-			bool PopMatrix();
-			bool PopMatrix(Matrix& mat);
+			void PushMultply(const Matrix& mat) const;
+			void PushMatrix(const Matrix& mat) const;
+			bool PopMatrix() const;
+			bool PopMatrix(Matrix& mat) const;
 
-			bool Peek(Matrix& mat);
+			Matrix& Peek() const;
 			
 
 			int getCount() const;

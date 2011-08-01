@@ -42,10 +42,11 @@ namespace Apoc3D
 				m_sprite->Release();
 				m_sprite = 0;
 			}
-			void D3D9Sprite::Begin(bool alphabled)
+			void D3D9Sprite::Begin(bool alphabled, bool useStack)
 			{
 				HRESULT hr = m_sprite->Begin(alphabled ? D3DXSPRITE_ALPHABLEND : 0);
 				assert(SUCCEEDED(hr));
+				Sprite::Begin(alphabled, useStack);
 			}
 			void D3D9Sprite::End()
 			{
