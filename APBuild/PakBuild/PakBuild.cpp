@@ -22,14 +22,53 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "PakBuild.h"
+#include "IOLib/Streams.h"
+#include "IOLib/BinaryWriter.h"
+
+using namespace Apoc3D::IO;
 
 namespace APBuild
 {
+
+	static const int PakFileID = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
+
+	struct PakEntry
+	{
+		String SourceFile;
+		String DestPath;
+	};
+
+	void Build(const std::vector<PakEntry>& entries, Stream* dest)
+	{
+		
+	}
+
 	void PakBuild::Build(const ConfigurationSection* sect)
 	{
+
 		PakBuildConfig config;
 		config.Parse(sect);
 
+		FileOutStream* fs = new FileOutStream(config.DestFile);
+		BinaryWriter* bw = new BinaryWriter(fs);
 
+		bw->Write(PakFileID);
+
+		
+		int count = config.Files.getCount();
+		for (int i=0;i<config.Dirs.getCount();i++)
+		{
+			if (config.Dirs[i].Flatten)
+			{
+				
+			}
+		}
+
+		int64 oldPos = bw->getBaseStream()->getPosition();
+
+		
+
+		bw->Close();
+		delete bw;
 	}
 }

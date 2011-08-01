@@ -76,8 +76,15 @@ namespace APBuild
 	};
 	struct PakBuildConfig
 	{
+		struct PakDirEntryConfig
+		{
+			bool Flatten;
+			String Path;
+		};
 		List<String> Files;
+		List<PakDirEntryConfig> Dirs;
 		String DestFile;
+		bool UseMemoryTemp;
 
 		void Parse(const ConfigurationSection* sect);
 	};

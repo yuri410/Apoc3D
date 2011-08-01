@@ -31,6 +31,8 @@ namespace APBuild
 {
 	class PakBuild
 	{
+	private:
+		
 	public:
 		static void Build(const ConfigurationSection* sect);
 	};

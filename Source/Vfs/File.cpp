@@ -55,7 +55,7 @@ namespace Apoc3D
 			if (_access(buffer, 0) == 0)
 			{
 				stat(buffer, &status);
-
+				
 				if (status.st_mode & S_IFDIR)
 				{
 					return true;

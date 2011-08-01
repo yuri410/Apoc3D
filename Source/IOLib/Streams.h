@@ -26,7 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define STREAM_H
 
 #include "Common.h"
+#include "Collections/FastList.h"
 
+using namespace Apoc3D::Collections;
 using namespace std;
 
 namespace Apoc3D
@@ -357,23 +359,22 @@ namespace Apoc3D
 		{
 		private:
 			int64 m_length;
-			vector<char>* m_data;
+			FastList<char> m_data;
 			int64 m_position;
 		public:
-			const vector<char>* getPointer() const { return m_data; }
+			const char* getPointer() const { return m_data.getInternalPointer(); }
 
 			virtual bool IsReadEndianDependent() const { return false; }
 			virtual bool IsWriteEndianDependent() const { return false; }
 
 			MemoryOutStream(int64 preserved)
-				: m_length(0), m_position(0)
+				: m_length(0), m_position(0), m_data((int32)preserved)
 			{
-				m_data = new vector<char>();
-				m_data->reserve(static_cast<size_t>(preserved));
+				
 			}
 			virtual ~MemoryOutStream()
 			{
-				delete m_data;
+				
 			}
 
 			virtual bool CanRead() const { return true; }
@@ -402,24 +403,24 @@ namespace Apoc3D
 					count = m_length;
 				}
 
-				for (size_t i=0;i<m_position;i++)
-					dest[i] = m_data->operator[](static_cast<size_t>(i+m_position));
+				for (int64 i=0;i<m_position;i++)
+					dest[i] = m_data[static_cast<int32>(i+m_position)];
 				
 				m_position += count;
 				return count;
 			}
 			virtual void Write(const char* src, int64 count)
 			{
-				for (size_t i=0;i<count;i++)
+				for (int64 i=0;i<count;i++)
 				{
 					if (m_position>=m_length)
 					{
-						m_data->push_back(src[i]);
+						m_data.Add(src[i]);
 						m_length++;
 					}
 					else
 					{
-						m_data->operator[](static_cast<size_t>(m_position)) = src[i];
+						m_data[static_cast<int32>(m_position)] = src[i];
 					}
 					m_position++;
 				}

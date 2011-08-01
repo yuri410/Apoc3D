@@ -557,25 +557,25 @@ namespace Apoc3D
 				const MemoryOutStream* e = i->second.Buffer;
 				bw->Write(i->first);
 				bw->Write(static_cast<uint32>(e->getLength()));
-				
-				char buffer[4096];
-				int bi = 0;
-				for (auto j=0;j<e->getLength();j++)
-				{
-					buffer[bi++] = static_cast<char>(e->getPointer()->operator[](j));
-					if (bi==4096)
-					{
-						bw->Write(buffer, 4096);
-						//simulatedLen += 4096;
-						//assert(simulatedLen + 76 == ((VirtualStream*)stream)->getBaseStream()->getLength());
-						bi = 0;
-					}
-					
-					//bw->Write(
-						//static_cast<char>(e->getPointer()->operator[](j)));
-				}
-				if (bi)
-					bw->Write(buffer, bi);
+				bw->Write(e->getPointer(), e->getLength());
+				//char buffer[4096];
+				//int bi = 0;
+				//for (auto j=0;j<e->getLength();j++)
+				//{
+				//	buffer[bi++] = static_cast<char>(e->getPointer()[j]);
+				//	if (bi==4096)
+				//	{
+				//		bw->Write(buffer, 4096);
+				//		//simulatedLen += 4096;
+				//		//assert(simulatedLen + 76 == ((VirtualStream*)stream)->getBaseStream()->getLength());
+				//		bi = 0;
+				//	}
+				//	
+				//	//bw->Write(
+				//		//static_cast<char>(e->getPointer()->operator[](j)));
+				//}
+				//if (bi)
+				//	bw->Write(buffer, bi);
 
 			}
 
