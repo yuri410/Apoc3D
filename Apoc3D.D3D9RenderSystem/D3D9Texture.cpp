@@ -644,7 +644,7 @@ namespace Apoc3D
 						{
 							name = getResourceLocation()->getName();
 						}
-						// resize here
+						// TODO:resize here
 						LogManager::getSingleton().Write(LOG_Graphics, 
 							L"[D3D9Texture]" + name +  L" Dimension " +
 							StringUtils::ToString(width) + L"x" + StringUtils::ToString(height)

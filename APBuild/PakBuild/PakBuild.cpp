@@ -23,31 +23,64 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "PakBuild.h"
 #include "IOLib/Streams.h"
+#include "IOLib/BinaryReader.h"
 #include "IOLib/BinaryWriter.h"
+#include "Utility/StringUtils.h"
+#include "CompileLog.h"
+#include "Vfs/PathUtils.h"
+#include "Vfs/Archive.h"
+
+#include <dirent.h>
 
 using namespace Apoc3D::IO;
+using namespace Apoc3D::Utility;
+using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
 
 	static const int PakFileID = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
 
-	struct PakEntry
-	{
-		String SourceFile;
-		String DestPath;
-	};
+	//struct PakEntry
+	//{
+	//	String SourceFile;
+	//	String DestFile;
+	//};
 
-	void Build(const std::vector<PakEntry>& entries, Stream* dest)
-	{
-		
-	}
+	//struct PakNode
+	//{
+	//	List<PakEntry> SourceFiles;
+	//	List<PakNode> SubNodes;
+	//	String Directory;
+	//};
+	//PakNode* GetNodes(const PakBuildConfig& config)
+	//{
+	//	PakNode* result = new PakNode();
+	//	
+	//	for (int i=0;i<config.Files.getCount();i++)
+	//	{
+	//		
+	//	}
 
+	//	return result;
+	//}
+	//void Build(const PakNode& node, Stream* dest)
+	//{
+
+
+	//}
+	//
+	//
 	void PakBuild::Build(const ConfigurationSection* sect)
 	{
 
 		PakBuildConfig config;
 		config.Parse(sect);
+
+		//CompileLog::WriteInformation(L"Pak builder currently only supports directory flatten build.", L"");
+
+		//PakNode* root = GetNodes(config);
+		List<String> sourceFiles;
 
 		FileOutStream* fs = new FileOutStream(config.DestFile);
 		BinaryWriter* bw = new BinaryWriter(fs);
@@ -55,17 +88,89 @@ namespace APBuild
 		bw->Write(PakFileID);
 
 		
-		int count = config.Files.getCount();
+		sourceFiles.ResizeDiscard(config.Files.getCount());
+		for (int i=0;i<config.Files.getCount();i++)
+		{
+			sourceFiles.Add(config.Files[i]);
+		}
+
 		for (int i=0;i<config.Dirs.getCount();i++)
 		{
 			if (config.Dirs[i].Flatten)
 			{
-				
+				DIR* dir;
+				struct dirent* ent;
+
+				dir = opendir(StringUtils::toString(config.Dirs[i].Path).c_str());
+				if (dir)
+				{
+					while ((ent = readdir(dir)))
+					{
+						switch (ent->d_type)
+						{
+						case DT_REG:
+							String file = StringUtils::toWString(ent->d_name);
+							file = PathUtils::Combine(config.Dirs[i].Path,file);
+							sourceFiles.Add(file);
+							break;
+						}
+					}
+
+					closedir(dir);
+				}
+				else
+				{
+					CompileLog::WriteError(L"Cannot read directory.", config.Dirs[i].Path);
+				}
+			}
+			else
+			{
+				CompileLog::WriteError(L"Recursive dir currently not supported.", config.Dirs[i].Path);
 			}
 		}
+		int count = sourceFiles.getCount();
+		bw->Write(count);
 
 		int64 oldPos = bw->getBaseStream()->getPosition();
 
+		PakArchiveEntry* entries = new PakArchiveEntry[count];
+		for (int i=0;i<count;i++)
+		{
+			entries[i].Name = PathUtils::GetFileName(sourceFiles[i]);
+			bw->Write(entries[i].Name);
+			bw->Write(entries[i].Offset);
+			bw->Write(entries[i].Size);
+			bw->Write(entries[i].Flag);
+		}
+
+		for (int i=0;i<count;i++)
+		{
+			FileStream* fs2 = new FileStream(sourceFiles[i]);
+			BinaryReader* br = new BinaryReader(fs2);
+
+			entries[i].Offset = (uint)fs->getPosition();
+			entries[i].Size = (uint)fs2->getLength();
+			entries[i].Flag = 0;
+
+			char* buffer = new char[entries[i].Size];
+			br->ReadBytes(buffer, entries[i].Size);
+
+			bw->Write(buffer, entries[i].Size);
+
+			delete[] buffer;
+
+			br->Close();
+			delete br;
+		}
+
+		fs->Seek(oldPos, SEEK_Begin);
+		for (int i=0;i<count;i++)
+		{
+			bw->Write(entries[i].Name);
+			bw->Write(entries[i].Offset);
+			bw->Write(entries[i].Size);
+			bw->Write(entries[i].Flag);
+		}
 		
 
 		bw->Close();

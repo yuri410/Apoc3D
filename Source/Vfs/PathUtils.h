@@ -45,6 +45,7 @@ namespace Apoc3D
 			/** Returns the file name of the specified path string without the extension.
 			*/
 			static String GetFileNameNoExt(const String& filePath);
+			static String GetFileName(const String& filePath);
 
 			static void SplitFileNameExtension(const String& fileName, String& noext, String& ext);
 			static void SplitFilePath(const String& path, String& fileName, String& parentDir);

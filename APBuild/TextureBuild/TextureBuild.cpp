@@ -30,12 +30,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Apoc3DException.h"
 #include "CompileLog.h"
 #include "D3DHelper.h"
+#include "Graphics/LockData.h"
 
 #include <IL/il.h>
 #include <IL/ilu.h>
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
 
@@ -433,6 +435,62 @@ namespace APBuild
 		}
 
 		ilDeleteImage(image);
+
+
+		if (config.NewFormat != FMT_Unknown &&
+			texData.Format != config.NewFormat)
+		{
+			TextureData newdata;
+			newdata.Format = config.NewFormat;
+			newdata.ContentSize = 0;
+			newdata.LevelCount = texData.LevelCount;
+			newdata.Type = texData.Type;
+			newdata.Levels.reserve(texData.LevelCount);
+
+			
+			for (int i=0;i<newdata.LevelCount;i++)
+			{
+				TextureLevelData& srcLvl = texData.Levels[i];
+
+				TextureLevelData dstLvl;
+				dstLvl.Depth = srcLvl.Depth;
+				dstLvl.Width = srcLvl.Width;
+				dstLvl.Height = srcLvl.Height;
+
+				int lvlSize = PixelFormatUtils::GetMemorySize(
+					dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
+				dstLvl.LevelSize = lvlSize;
+
+				dstLvl.ContentData = new char[lvlSize];
+				newdata.ContentSize += lvlSize;
+
+				DataBox src = DataBox(
+					srcLvl.Width, 
+					srcLvl.Height, 
+					srcLvl.Depth, 
+					PixelFormatUtils::GetMemorySize(srcLvl.Width, 1, 1, texData.Format),
+					PixelFormatUtils::GetMemorySize(srcLvl.Width, srcLvl.Height, 1, texData.Format), 
+					srcLvl.ContentData,
+					texData.Format);
+
+				DataBox dst = DataBox(
+					dstLvl.Width,
+					dstLvl.Height, 
+					dstLvl.Depth, 
+					PixelFormatUtils::GetMemorySize(dstLvl.Width, 1, 1, newdata.Format),
+					PixelFormatUtils::GetMemorySize(dstLvl.Width, dstLvl.Height, 1, newdata.Format), 
+					dstLvl.ContentData,
+					newdata.Format);
+
+				int r = PixelFormatUtils::ConvertPixels(src, dst);
+				assert(r);
+				delete[] srcLvl.ContentData;
+
+				newdata.Levels.push_back(dstLvl);
+			}
+
+			texData = newdata;
+		}
 
 		FileOutStream* fs = new FileOutStream(config.DestinationFile);
 		texData.Save(fs);
