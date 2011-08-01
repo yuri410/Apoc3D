@@ -644,8 +644,8 @@ namespace Apoc3D
 			{
 				Matrix matrix;
 				Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
-				sprite->SetTransform(matrix);
-
+				
+				sprite->MultiplyTransform(matrix);
 				if (m_hasMaximizeButton)
 				{					
 					if (m_state != FWS_Maximized)
@@ -694,7 +694,15 @@ namespace Apoc3D
 					}
 				}
 
-				sprite->SetTransform(Matrix::Identity);
+				if(sprite->isUsingStack())
+				{
+					sprite->PopTransform();
+				}
+				else
+				{
+					sprite->SetTransform(Matrix::Identity);
+				}
+				
 			}
 		}
 		void Form::DrawTitle(Sprite* sprite)
@@ -1069,7 +1077,7 @@ namespace Apoc3D
 
 		void UIRoot::Draw()
 		{
-			m_sprite->Begin(true);	
+			m_sprite->Begin(true, true);	
 			
 			for (int i=m_forms.getCount()-1;i>-1;i--)
 			{
