@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Button.h"
 #include "StyleSkin.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/ObjectFactory.h"
 #include "Graphics/RenderSystem/Sprite.h"
 #include "Graphics/RenderSystem/Texture.h"
 #include "Vfs/FileLocateRule.h"
@@ -1011,11 +1012,13 @@ namespace Apoc3D
 
 		void UIRoot::Initialize(RenderDevice* device)
 		{
-			
+			ObjectFactory* fac = device->getObjectFactory();
+			m_sprite = fac->CreateSprite();
+
 		}
 		void UIRoot::Finalize()
 		{
-
+			delete m_sprite;
 		}
 		void UIRoot::Add(ControlContainer* cc)
 		{
@@ -1066,6 +1069,7 @@ namespace Apoc3D
 
 		void UIRoot::Draw()
 		{
+			m_sprite=0;
 			m_sprite->Begin(true);
 			for (int i=m_forms.getCount()-1;i>-1;i--)
 			{

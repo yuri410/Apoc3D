@@ -51,7 +51,7 @@ namespace Apoc3D
 		{
 			if (m_factories.find(fac->getName()) != m_factories.end())
 			{
-				Apoc3DException::createException(EX_InvalidOperation, L"Input API Already registered");
+				throw Apoc3DException::createException(EX_InvalidOperation, L"Input API Already registered");
 			}
 
 
@@ -83,7 +83,7 @@ namespace Apoc3D
 		{
 			if (m_factories.find(name) == m_factories.end())
 			{
-				Apoc3DException::createException(EX_InvalidOperation, L"Graphics API not registered");
+				throw Apoc3DException::createException(EX_InvalidOperation, L"Graphics API not registered");
 			}
 
 			for (PlatformTable::iterator iter = m_factories.begin();
@@ -106,7 +106,7 @@ namespace Apoc3D
 		{
 			if (m_factories.find(fac->getName()) == m_factories.end())
 			{
-				Apoc3DException::createException(EX_InvalidOperation, L"Graphics API not registered");
+				throw Apoc3DException::createException(EX_InvalidOperation, L"Graphics API not registered");
 			}
 
 

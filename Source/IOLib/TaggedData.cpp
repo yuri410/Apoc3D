@@ -219,7 +219,7 @@ namespace Apoc3D
 		{
 			const Entry* ent = FindEntry(name);
 			if (!ent)
-				Apoc3DException::createException(EX_KeyNotFound, name.c_str());
+				throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
 
 			return ent->Offset;
 		}

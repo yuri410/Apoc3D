@@ -58,7 +58,7 @@ namespace Apoc3D
 			int64 result = m_baseStream->Read(&m_buffer[0], len); 
 			if (len != result)
 			{
-				Apoc3DException::createException(EX_EndOfStream, L"");
+				throw Apoc3DException::createException(EX_EndOfStream, L"");
 			}
 		}
 
@@ -167,7 +167,7 @@ namespace Apoc3D
 			int r = m_baseStream->ReadByte();
 			if (r == -1)
 			{
-				Apoc3DException::createException(EX_EndOfStream, L"");
+				throw Apoc3DException::createException(EX_EndOfStream, L"");
 			}
 			return reinterpret_cast<const char&>(r);
 		}

@@ -103,6 +103,7 @@ namespace APDesigner
 
 
 		m_form = new Form();
+		m_form->SetSkin(m_UIskin);
 		m_form->getControls().Add(m_btn);
 		m_form->Initialize(m_device);
 		//m_pane->getControls().Add(m_btn);
@@ -137,13 +138,13 @@ namespace APDesigner
 		m_device->BeginFrame();
 
 		
-		m_sprite->Begin(true);
+		//m_sprite->Begin(true);
 		//m_font->DrawString(m_sprite, L"Apoc3D Designer\nfdsfds!!", 50,50, CV_White);
 		//m_sprite->Draw(m_UIskin->ButtonTexture, 50,50, CV_White);
-
+		UIRoot::Draw();
 		//m_pane->Draw(m_sprite);
 
-		m_sprite->End();
+		//m_sprite->End();
 
 		m_device->EndFrame();
 

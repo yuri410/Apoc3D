@@ -280,7 +280,7 @@ namespace Apoc3D
 
 			void D3D9Texture::Save(Stream* strm)
 			{
-				Apoc3DException::createException(EX_NotSupported, L"");
+				throw Apoc3DException::createException(EX_NotSupported, L"");
 			}
 
 			DataRectangle D3D9Texture::lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect)

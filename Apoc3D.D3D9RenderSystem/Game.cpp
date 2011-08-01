@@ -90,7 +90,7 @@ namespace Apoc3D
 
 			void Game::DrawFrame(const GameTime* const time)
 			{
-				try
+				//try
 				{
 					if (!m_gameWindow->getIsMinimized())
 					{
@@ -101,11 +101,11 @@ namespace Apoc3D
 						}
 					}
 				}
-				catch (Apoc3DException &e)
-				{
-					m_lastFrameElapsedGameTime = 0;
-					m_lastFrameElapsedRealTime = 0;
-				}
+				//catch (Apoc3DException &e)
+				//{
+					//m_lastFrameElapsedGameTime = 0;
+					//m_lastFrameElapsedRealTime = 0;
+				//}
 				m_lastFrameElapsedGameTime = 0;
 				m_lastFrameElapsedRealTime = 0;
 			}
@@ -198,17 +198,17 @@ namespace Apoc3D
 				{
 					ratio -= 1;
 
-					try
+					//try
 					{
 						GameTime gt(m_targetElapsedTime, m_totalGameTime,
 							elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
 						Update(&gt);
 					}
-					catch (Apoc3DException &e)
-					{
-						m_lastFrameElapsedGameTime += targetElapsedTime;
-						m_totalGameTime += targetElapsedTime;
-					}
+					//catch (Apoc3DException &e)
+					//{
+						//m_lastFrameElapsedGameTime += targetElapsedTime;
+						//m_totalGameTime += targetElapsedTime;
+					//}
 
 					m_lastFrameElapsedGameTime += targetElapsedTime;
 					m_totalGameTime += targetElapsedTime;
