@@ -34,6 +34,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/FontManager.h"
 #include "UILib/Control.h"
 #include "UILib/Button.h"
+#include "UILib/Form.h"
 
 #include "Input/InputAPI.h"
 #include "Vfs/FileLocateRule.h"
@@ -100,11 +101,15 @@ namespace APDesigner
 		m_btn = new Button(Point(5,5), L"UTTTest button!");
 		m_btn->SetSkin(m_UIskin);
 
-		m_pane->getControls().Add(m_btn);
+
+		m_form = new Form();
+		m_form->getControls().Add(m_btn);
+		m_form->Initialize(m_device);
+		//m_pane->getControls().Add(m_btn);
 
 
 		//m_btn->Initialize(m_device);
-		m_pane->Initialize(m_device);
+		//m_pane->Initialize(m_device);
 	}
 	void MainWindow::Unload()
 	{
@@ -118,7 +123,8 @@ namespace APDesigner
 	{
 		InputAPIManager::getSingleton().Update(time);
 
-		m_pane->Update(time);
+		//m_pane->Update(time);
+		m_form->Update(time);
 	}
 	void MainWindow::Draw(const GameTime* const time)
 	{
@@ -131,7 +137,7 @@ namespace APDesigner
 		//m_font->DrawString(m_sprite, L"Apoc3D Designer\nfdsfds!!", 50,50, CV_White);
 		//m_sprite->Draw(m_UIskin->ButtonTexture, 50,50, CV_White);
 
-		m_pane->Draw(m_sprite);
+		//m_pane->Draw(m_sprite);
 
 		m_sprite->End();
 
