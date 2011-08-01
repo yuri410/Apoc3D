@@ -71,7 +71,7 @@ namespace APDesigner
 		icp.UseKeyboard = true;
 		icp.UseMouse = true;
 
-		//InputAPIManager::getSingleton().InitializeInput(m_window, icp);
+		InputAPIManager::getSingleton().InitializeInput(m_window, icp);
 
 		{
 			FileLocateRule rule;
@@ -110,6 +110,8 @@ namespace APDesigner
 
 		UIRoot::Initialize(m_device);
 		UIRoot::Add(m_form);
+
+		m_form->Show();
 		//m_btn->Initialize(m_device);
 		//m_pane->Initialize(m_device);
 	}

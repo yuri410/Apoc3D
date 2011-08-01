@@ -152,8 +152,8 @@ namespace Apoc3D
 					{
 						D3DMatrix trans;
 						D3DXMatrixTranslation(&trans, position.x, position.y, position.z);
-						trans._11 = (float)dstRect.Width / (float)srcRect->Width;
-						trans._22 = (float)dstRect.Height / (float)srcRect->Height;
+						trans._11 = (float)dstRect.Width / (float)texture->getWidth();
+						trans._22 = (float)dstRect.Height / (float)texture->getHeight();
 						
 						D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
 						D3DXMatrixMultiply(&trans, &baseTrans, &trans);
