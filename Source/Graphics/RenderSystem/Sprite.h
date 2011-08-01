@@ -86,19 +86,14 @@ namespace Apoc3D
 				*/
 				void PopTransform();
 
-				/** Multiply the current transform matrix by a given matrix.h If using matrix stack, push
+				/** Multiply the current transform matrix by a given matrix. If using matrix stack, push
 					the result onto the stack as well.
 				*/
 				void MultiplyTransform(const Matrix& matrix)
 				{
-					if (m_useStack)
-					{
-						m_stack.PushMultply(matrix);
-					}
-					else
-					{
-						Matrix::Multiply(m_transform, m_transform, matrix);
-					}
+					Matrix result;
+					Matrix::Multiply(result, getTransform(), matrix);
+					SetTransform(result);
 				}
 
 				/** Set current transform. If using matrix stack, pushes the matrix onto the stack as well.

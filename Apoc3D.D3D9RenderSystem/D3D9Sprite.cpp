@@ -178,7 +178,7 @@ namespace Apoc3D
 
 			void D3D9Sprite::SetTransform(const Matrix& matrix)
 			{
-				HRESULT hr = m_sprite->SetTransform(reinterpret_cast<const D3DMatrix*>(&matrix));
+				HRESULT hr = m_sprite->SetTransform(reinterpret_cast<const D3DMatrix*>(&getTransform()));
 				assert(SUCCEEDED(hr));
 
 				Sprite::SetTransform(matrix);
