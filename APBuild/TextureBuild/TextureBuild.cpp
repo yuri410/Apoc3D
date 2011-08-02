@@ -778,6 +778,153 @@ namespace APBuild
 				} while (k>0);
 			}
 		}
+		void getData(TextureData& data, LPDIRECT3DTEXTURE9 tex)
+		{
+			for (int i=0;i<data.LevelCount;i++)
+			{
+				TextureLevelData lvlData;
+
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(i, &desc);
+
+				D3DLOCKED_RECT rect;
+				HRESULT hr = tex->LockRect(i, &rect, NULL, D3DLOCK_READONLY);
+				assert(SUCCEEDED(hr));
+
+				lvlData.Width = (int32)desc.Width;
+				lvlData.Height = (int32)desc.Height;
+				lvlData.Depth = 1;
+				lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format);
+				lvlData.ContentData  = new char[lvlData.LevelSize];
+				copyData(rect.pBits, rect.Pitch, lvlData.ContentData, desc.Format, desc.Width, desc.Height, false);
+
+				hr = tex->UnlockRect(i);
+				assert(SUCCEEDED(hr));
+
+				data.Levels.push_back(lvlData);
+				data.ContentSize += lvlData.LevelSize;
+			}
+		}
+		void getData(TextureData& data, LPDIRECT3DCUBETEXTURE9 tex)
+		{
+			for (int i=0;i<data.LevelCount;i++)
+			{
+				int startPos = 0;
+
+				D3DSURFACE_DESC desc;
+				tex->GetLevelDesc(i, &desc);
+				TextureLevelData lvlData;
+				lvlData.Width = (int32)desc.Width;
+				lvlData.Height = (int32)desc.Width;
+				lvlData.Depth = 1;
+				lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format) * 6;
+				lvlData.ContentData  = new char[lvlData.LevelSize];
+				int faceSize = data.Levels[i].LevelSize / 6;
+
+
+
+
+				D3DLOCKED_RECT rect;
+				HRESULT hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_X, i, &rect, NULL, D3DLOCK_READONLY);
+				assert(SUCCEEDED(hr));
+
+				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+					desc.Format, desc.Width, desc.Height, false);
+				startPos += faceSize;
+
+				hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_X, i);
+				assert(SUCCEEDED(hr));
+
+				// ======================================================================
+
+				hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i, &rect, NULL, D3DLOCK_READONLY);
+				assert(SUCCEEDED(hr));
+
+				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+					desc.Format, desc.Width, desc.Height, false);
+				startPos += faceSize;
+
+				hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i);
+				assert(SUCCEEDED(hr));
+
+				// ======================================================================
+
+				hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i, &rect, NULL, D3DLOCK_READONLY);
+				assert(SUCCEEDED(hr));
+
+				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+					desc.Format, desc.Width, desc.Height, false);
+				startPos += faceSize;
+
+				hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i);
+				assert(SUCCEEDED(hr));
+
+				// ======================================================================
+				hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i, &rect, NULL, D3DLOCK_READONLY);
+				assert(SUCCEEDED(hr));
+
+				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+					desc.Format, desc.Width, desc.Height, false);
+				startPos += faceSize;
+
+				hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i);
+				assert(SUCCEEDED(hr));
+
+				// ======================================================================
+
+				hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i, &rect, NULL, D3DLOCK_READONLY);
+				assert(SUCCEEDED(hr));
+
+				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+					desc.Format, desc.Width, desc.Height, false);
+				startPos += faceSize;
+
+				hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i);
+				assert(SUCCEEDED(hr));
+				// ======================================================================
+				hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i, &rect, NULL, D3DLOCK_READONLY);
+				assert(SUCCEEDED(hr));
+
+				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+					desc.Format, desc.Width, desc.Height, false);
+				startPos += faceSize;
+
+				hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i);
+				assert(SUCCEEDED(hr));
+
+				// ======================================================================
+				data.Levels.push_back(lvlData);
+				data.ContentSize += lvlData.LevelSize;
+
+			}
+		}
+		void getData(TextureData& data, LPDIRECT3DVOLUMETEXTURE9 tex)
+		{
+			for (int i=0;i<data.LevelCount;i++)
+			{
+				TextureLevelData lvlData;
+
+				D3DVOLUME_DESC desc;
+				tex->GetLevelDesc(i, &desc);
+
+				lvlData.Width = (int32)desc.Width;
+				lvlData.Height = (int32)desc.Height;
+				lvlData.Depth = (int32)desc.Depth;
+				lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, desc.Depth, data.Format);
+				lvlData.ContentData  = new char[lvlData.LevelSize];
+
+				D3DLOCKED_BOX box;
+				HRESULT hr = tex->LockBox(i, &box, NULL, 0);
+				assert(SUCCEEDED(hr));
+
+				copyData(box.pBits, box.RowPitch, box.SlicePitch,
+					data.Levels[i].ContentData, desc.Format,
+					desc.Width, desc.Height, desc.Depth, false);
+
+				hr = tex->UnlockBox(i);
+				assert(SUCCEEDED(hr));
+			}
+		}
 
 	public:
 		bool isError() const { return m_isOnError; }
@@ -1356,7 +1503,72 @@ LFail:
 
 		void Save(const String& path)
 		{
+			LPDIRECT3DBASETEXTURE9 ptex;
+			ptex = (m_ptexNew == NULL ? m_ptexOrig : m_ptexNew);
 
+
+			TextureData data;
+			data.LevelCount = (int32)m_numMips;
+
+			D3DFORMAT fmt;
+			if (IsCubeMap())
+			{
+				D3DSURFACE_DESC sd;
+				((LPDIRECT3DCUBETEXTURE9)ptex)->GetLevelDesc(0, &sd);
+
+				fmt = sd.Format;
+
+				data.Type = TT_CubeTexture;
+			}
+			else if (IsVolumeMap())
+			{
+				D3DVOLUME_DESC vd;
+				((LPDIRECT3DVOLUMETEXTURE9)ptex)->GetLevelDesc(0, &vd);
+
+				fmt = vd.Format;
+
+				data.Type = TT_Texture3D;
+			}
+			else 
+			{
+				D3DSURFACE_DESC sd;
+				((LPDIRECT3DTEXTURE9)ptex)->GetLevelDesc(0, &sd);
+				fmt = sd.Format;
+
+				if (m_dwWidth == 1 || m_dwHeight == 1)
+				{
+					data.Type = TT_Texture1D;
+				}
+				else
+				{
+					data.Type = TT_Texture2D;
+				}
+			}
+
+			data.Format = ConvertBackPixelFormat(fmt);
+			data.ContentSize = 0;
+			switch (data.Type)
+			{
+			case (int)TT_Texture1D:
+			case (int)TT_Texture2D:
+				getData(data, (LPDIRECT3DTEXTURE9)ptex);
+				break;
+			case (int)TT_CubeTexture:
+				getData(data, (LPDIRECT3DCUBETEXTURE9)ptex);
+				break;
+			case (int)TT_Texture3D:
+				getData(data, (LPDIRECT3DVOLUMETEXTURE9)ptex);
+				break;
+			}
+
+
+			FileOutStream* fs = new FileOutStream(path);
+			data.Save(fs);
+
+			for (int i=0;i<data.LevelCount;i++)
+			{
+				delete[] data.Levels[i].ContentData;
+			}
 		}
 	};
 
