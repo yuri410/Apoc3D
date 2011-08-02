@@ -42,6 +42,7 @@ namespace APBuild
 		TFLT_Box,
 		TFLT_BSpline
 	};
+
 	struct TextureBuildConfig 
 	{
 		String SourceFile;
@@ -53,6 +54,11 @@ namespace APBuild
 		int NewDepth;
 		TextureFilterType ResizeFilterType;
 		Apoc3D::Graphics::PixelFormat NewFormat;
+
+		bool AssembleCubemap;
+		bool AssembleVolumeMap;
+
+		FastMap<uint, String> SubmapTable;
 
 		void Parse(const ConfigurationSection* sect);
 	};

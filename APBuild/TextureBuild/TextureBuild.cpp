@@ -370,7 +370,7 @@ namespace APBuild
 			
 
 		}
-
+		
 		void LoadAlpha(const String& filePath)
 		{
 			HRESULT hr;
@@ -775,6 +775,9 @@ LFail:
 			m_dwHeight = dwHeightNew;
 
 		}
+
+
+
 	};
 
 
