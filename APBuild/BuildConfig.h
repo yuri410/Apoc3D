@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Graphics/PixelFormat.h"
 #include "Collections/FastList.h"
+#include "Collections/FastMap.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;
@@ -58,7 +59,8 @@ namespace APBuild
 		bool AssembleCubemap;
 		bool AssembleVolumeMap;
 
-		FastMap<uint, String> SubmapTable;
+		FastMap<uint, String> SubMapTable;
+		FastMap<uint, String> SubAlphaMapTable;
 
 		void Parse(const ConfigurationSection* sect);
 	};

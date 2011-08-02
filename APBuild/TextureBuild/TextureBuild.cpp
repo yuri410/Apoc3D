@@ -54,11 +54,148 @@ using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
+	D3DFORMAT ConvertFormat(PixelFormat fmt)
+	{
+		static D3DFORMAT pixFmtTable[FMT_Count];
+		pixFmtTable[FMT_Unknown] = D3DFMT_UNKNOWN;
+		pixFmtTable[FMT_Luminance8] = D3DFMT_L8;
+		pixFmtTable[FMT_Luminance16] = D3DFMT_L16;
+		pixFmtTable[FMT_Alpha8] = D3DFMT_A8;
+		pixFmtTable[FMT_A4L4] = D3DFMT_A4L4;
+		pixFmtTable[FMT_A8L8] = D3DFMT_A8L8;
+		pixFmtTable[FMT_R5G6B5] = D3DFMT_R5G6B5;
+		pixFmtTable[FMT_B5G6R5] = D3DFMT_UNKNOWN;
+		pixFmtTable[FMT_A4R4G4B4] = D3DFMT_A4R4G4B4;
+		pixFmtTable[FMT_A1R5G5B5] = D3DFMT_A1R5G5B5;
+		pixFmtTable[FMT_R8G8B8] = D3DFMT_R8G8B8;
+		pixFmtTable[FMT_B8G8R8] = D3DFMT_UNKNOWN;
+		pixFmtTable[FMT_A8R8G8B8] = D3DFMT_A8R8G8B8;
+		pixFmtTable[FMT_A8B8G8R8] = D3DFMT_A8B8G8R8;
+		pixFmtTable[FMT_B8G8R8A8] = D3DFMT_UNKNOWN;
+		pixFmtTable[FMT_A2R10G10B10] = D3DFMT_A2R10G10B10;
+		pixFmtTable[FMT_A2B10G10R10] = D3DFMT_A2B10G10R10;
+		pixFmtTable[FMT_DXT1] = D3DFMT_DXT1;
+		pixFmtTable[FMT_DXT2] = D3DFMT_DXT2;
+		pixFmtTable[FMT_DXT3] = D3DFMT_DXT3;
+		pixFmtTable[FMT_DXT4] = D3DFMT_DXT4;
+		pixFmtTable[FMT_DXT5] = D3DFMT_DXT5;
+		pixFmtTable[FMT_A16B16G16R16F] = D3DFMT_A16B16G16R16F;
+		pixFmtTable[FMT_A32B32G32R32F] = D3DFMT_A32B32G32R32F;
+		pixFmtTable[FMT_X8R8G8B8] = D3DFMT_X8R8G8B8;
+		pixFmtTable[FMT_X8B8G8R8] = D3DFMT_X8B8G8R8;
+		pixFmtTable[FMT_X1R5G5B5] = D3DFMT_X1R5G5B5;
+		pixFmtTable[FMT_R8G8B8A8] = D3DFMT_UNKNOWN;
+		pixFmtTable[FMT_Depth] = D3DFMT_UNKNOWN;
+		pixFmtTable[FMT_A16B16G16R16] = D3DFMT_A16B16G16R16;
+		pixFmtTable[FMT_R3G3B2] = D3DFMT_R3G3B2;
+		pixFmtTable[FMT_R16F] = D3DFMT_R16F;
+		pixFmtTable[FMT_R32F] = D3DFMT_R32F;
+		pixFmtTable[FMT_G16R16] = D3DFMT_G16R16;
+		pixFmtTable[FMT_G16R16F] = D3DFMT_G16R16F;
+		pixFmtTable[FMT_G32R32F] = D3DFMT_G32R32F;
+		pixFmtTable[FMT_R16G16B16] = D3DFMT_UNKNOWN;
+		pixFmtTable[FMT_B4G4R4A4] = D3DFMT_UNKNOWN;
+		pixFmtTable[FMT_Palette8] = D3DFMT_P8;
+		pixFmtTable[FMT_Palette8Alpha8] = D3DFMT_A8P8;
+		return pixFmtTable[(int)fmt];
+	}
+	
+	PixelFormat ConvertBackPixelFormat(DWORD fmt)
+	{
+		switch (fmt)
+		{
+		case D3DFMT_A2R10G10B10:
+			return FMT_A2R10G10B10;
+		case D3DFMT_A8R8G8B8:
+			return FMT_A8R8G8B8;
+		case D3DFMT_X8R8G8B8:
+			return FMT_X8R8G8B8;
+		case D3DFMT_A1R5G5B5:
+			return FMT_A1R5G5B5;
+		case D3DFMT_X1R5G5B5:
+			return FMT_X1R5G5B5;
+		case D3DFMT_R5G6B5:
+			return FMT_R5G6B5;
+
+		case D3DFMT_DXT1:
+			return FMT_DXT1;
+		case D3DFMT_DXT2:
+			return FMT_DXT2;
+		case D3DFMT_DXT3:
+			return FMT_DXT3;
+		case D3DFMT_DXT4:
+			return FMT_DXT4;
+		case D3DFMT_DXT5:
+			return FMT_DXT5;
+
+		case D3DFMT_R16F:
+			return FMT_R16F;
+		case D3DFMT_G16R16F:
+			return FMT_G16R16F;
+		case D3DFMT_A16B16G16R16F:
+			return FMT_A16B16G16R16F;
+
+		case D3DFMT_R32F:
+			return FMT_R32F;
+		case D3DFMT_G32R32F:
+			return FMT_G32R32F;
+		case D3DFMT_A32B32G32R32F:
+			return FMT_A32B32G32R32F;
+
+		case D3DFMT_R8G8B8:
+			return FMT_R8G8B8;
+		case D3DFMT_A4R4G4B4:
+			return FMT_A4R4G4B4;
+		case D3DFMT_R3G3B2:
+			return FMT_R3G3B2;
+		case D3DFMT_A8:
+			return FMT_Alpha8;
+		case D3DFMT_A2B10G10R10:
+			return FMT_A2B10G10R10;
+		case D3DFMT_G16R16:
+			return FMT_G16R16;
+		case D3DFMT_A16B16G16R16:
+			return FMT_A16B16G16R16;
+		case D3DFMT_A8P8:
+			return FMT_Palette8Alpha8;
+		case D3DFMT_P8:
+			return FMT_Palette8;
+		case D3DFMT_L8:
+			return FMT_Luminance8;
+		case D3DFMT_L16:
+			return FMT_Luminance16;
+		case D3DFMT_A8L8:
+			return FMT_A8L8;
+		case D3DFMT_A4L4:
+			return FMT_A4L4;
+		case D3DFMT_A1:
+			return FMT_Alpha1;
+
+		case D3DFMT_X4R4G4B4:
+		case D3DFMT_A8R3G3B2:
+			return FMT_Unknown;
+		}
+		throw Apoc3DException::createException(EX_NotSupported, L"");
+	}
+	D3DCUBEMAP_FACES ConvertCubemapFace(CubeMapFace face)
+	{
+		switch (face)
+		{
+		case CUBE_PositiveX: return D3DCUBEMAP_FACE_POSITIVE_X;
+		case CUBE_NegativeX: return  D3DCUBEMAP_FACE_NEGATIVE_X;
+		case CUBE_PositiveY: return  D3DCUBEMAP_FACE_POSITIVE_Y;
+		case CUBE_NegativeY: return  D3DCUBEMAP_FACE_NEGATIVE_Y;
+		case CUBE_PositiveZ: return  D3DCUBEMAP_FACE_POSITIVE_Z;
+		case CUBE_NegativeZ: return  D3DCUBEMAP_FACE_NEGATIVE_Z;
+		}
+		return D3DCUBEMAP_FACE_POSITIVE_X;
+	}
+
 
 	class DXTex
 	{
 	private:
-		String m_sourceFile;
+		String m_name;
 		LPDIRECT3DBASETEXTURE9 m_ptexOrig;
 		LPDIRECT3DBASETEXTURE9 m_ptexNew;
 		DWORD m_dwWidth;
@@ -290,13 +427,56 @@ namespace APBuild
 
 			return S_OK;
 		}
+
+		void OpenCubeFace(const String& file, const String* alphaFile, D3DCUBEMAP_FACES face)
+		{
+			HRESULT hr;
+			LPDIRECT3DSURFACE9 psurfOrig = NULL;
+			LPDIRECT3DSURFACE9 psurfNew = NULL;
+
+			if (!IsCubeMap())
+			{
+				Error(L"Unexpected Error. Texture type mismatch.", m_name);
+				return;
+			}
+
+			String fileName = file;
+			hr = ((LPDIRECT3DCUBETEXTURE9)m_ptexOrig)->GetCubeMapSurface(face, 0, &psurfOrig);
+			if (m_ptexNew != NULL)
+				hr = ((LPDIRECT3DCUBETEXTURE9)m_ptexNew)->GetCubeMapSurface(face, 0, &psurfNew);
+
+			hr = D3DXLoadSurfaceFromFile(psurfOrig, NULL, NULL, fileName.c_str(), NULL, D3DX_DEFAULT, 0, NULL);
+
+			if (alphaFile)
+			{
+				if (FAILED(hr = LoadAlphaIntoSurface(*alphaFile, psurfOrig)))
+				{
+					Error(L"Unexpected Error. ", m_name);
+					return;
+				}
+			}
+
+
+
+
+			if (psurfNew != NULL)
+			{
+				hr = D3DXLoadSurfaceFromSurface(psurfNew, NULL, NULL, psurfOrig, NULL, NULL, D3DX_DEFAULT, 0);
+			}
+
+
+			ReleasePpo(&psurfOrig);
+			ReleasePpo(&psurfNew);
+		}
 	public:
 		bool isError() const { return m_isOnError; }
 		bool IsCubeMap() const { return !!m_dwCubeMapFlags; }
 		bool IsVolumeMap() const { return !!m_dwDepth; }
 
 		DXTex(const String& filePath)
-			: m_isOnError(false), m_sourceFile(filePath)
+			: m_isOnError(false), m_name(filePath), 
+			m_ptexOrig(NULL), m_ptexNew(NULL), m_dwWidth(0), m_dwHeight(0), m_dwDepth(0),
+			m_numMips(0), m_dwCubeMapFlags(0)
 		{
 			LPDIRECT3DDEVICE9 pd3ddev = D3DHelper::getDevice();
 			D3DXIMAGE_INFO imageInfo;
@@ -370,8 +550,71 @@ namespace APBuild
 			
 
 		}
-		
-		void LoadAlpha(const String& filePath)
+
+		/** Prepare a DXTex object for assemble build.  
+		*/
+		DXTex(TextureType type, const String& name, int width, int height, int depth, PixelFormat format)
+			: m_isOnError(false), m_name(name),
+			m_ptexOrig(NULL), m_ptexNew(NULL), m_dwWidth(0), m_dwHeight(0), m_dwDepth(0),
+			m_numMips(1), m_dwCubeMapFlags(0)
+		{
+			HRESULT hr;
+			LPDIRECT3DDEVICE9 pd3ddev = D3DHelper::getDevice();
+
+			m_dwWidth = width;
+			m_dwHeight = height;
+			m_dwDepth = 0;
+			switch (type)
+			{
+			case TT_Texture1D:
+			case TT_Texture2D:
+				{
+					LPDIRECT3DTEXTURE9 pmiptex;
+					HRESULT hr = pd3ddev->CreateTexture(m_dwWidth, m_dwHeight, m_numMips, 
+						0, ConvertFormat(format), D3DPOOL_MANAGED, &pmiptex, NULL);
+					if (FAILED(hr))
+					{
+						Error(L"Unexpected error: cannot create texture.", m_name);
+						return;
+					}
+					m_ptexOrig = pmiptex;
+				}
+				break;
+			case TT_CubeTexture:
+				{
+					// Cube Map
+					LPDIRECT3DCUBETEXTURE9 pcubetex;
+					m_dwCubeMapFlags = DDS_CUBEMAP_ALLFACES;
+					hr = pd3ddev->CreateCubeTexture(m_dwWidth, m_numMips, 
+						0, ConvertFormat(format), D3DPOOL_MANAGED, &pcubetex, NULL);
+					if (FAILED(hr))
+					{
+						Error(L"Unexpected error: cannot create cube texture.", m_name);
+						return;
+					}
+					m_ptexOrig = pcubetex;
+				}
+				break;
+			case TT_Texture3D:
+				{
+					LPDIRECT3DVOLUMETEXTURE9 pvoltex;
+					m_dwDepth = depth;
+					hr = pd3ddev->CreateVolumeTexture(m_dwWidth, m_dwHeight, m_dwDepth, m_numMips, 
+						0, ConvertFormat(format), D3DPOOL_SYSTEMMEM, &pvoltex, NULL);
+					if (FAILED(hr))
+					{
+						Error(L"Unexpected error: cannot create volume texture.",
+							m_name);
+						return;
+					}
+					m_ptexOrig = pvoltex;
+				}
+				
+				break;
+			}
+			
+		}
+		void LoadAlphaMap(const String& filePath)
 		{
 			HRESULT hr;
 			LPDIRECT3DTEXTURE9 pmiptex;
@@ -621,13 +864,13 @@ LFail:
 					CompileLog::WriteWarning(
 						L"The source image contains premultiplied alpha, " + 
 						L"and the RGB values will be copied to the destination without \"unpremultiplying\" them" + 
-						L" so the resulting colors may be affected.", m_sourceFile);
+						L" so the resulting colors may be affected.", m_name);
 					//AfxMessageBox(ID_ERROR_PREMULTTODXT1);
 				}
 				else if (fmtTo != D3DFMT_DXT2 && fmtTo != D3DFMT_DXT4)
 				{
 					Error(L"The conversion is impossible. The source image uses premultiplied alpha.",
-						m_sourceFile);
+						m_name);
 					//AfxMessageBox(ID_ERROR_PREMULTALPHA);
 					return;
 				}
@@ -640,13 +883,13 @@ LFail:
 				if (FAILED(hr))
 				{
 					Error(L"Unexpected error: cannot create volume texture.",
-						m_sourceFile);
+						m_name);
 					return;
 				}
 				*pptexNew = pvoltexNew;
 				if (FAILED(BltAllLevels(D3DCUBEMAP_FACE_FORCE_DWORD, ptexCur, *pptexNew)))
 				{
-					Error(L"Unexpected error.", m_sourceFile);
+					Error(L"Unexpected error.", m_name);
 					return;
 				}
 			}
@@ -657,38 +900,38 @@ LFail:
 				if (FAILED(hr))
 				{
 					Error(L"Unexpected error: cannot create cube texture.",
-						m_sourceFile);
+						m_name);
 					return;
 				}
 				*pptexNew = pcubetexNew;
 				if (FAILED(hr = BltAllLevels(D3DCUBEMAP_FACE_NEGATIVE_X, ptexCur, *pptexNew)))
 				{
-					Error(L"Unexpected error.", m_sourceFile);
+					Error(L"Unexpected error.", m_name);
 					return;
 				}
 				if (FAILED(hr = BltAllLevels(D3DCUBEMAP_FACE_POSITIVE_X, ptexCur, *pptexNew)))
 				{
-					Error(L"Unexpected error.", m_sourceFile);
+					Error(L"Unexpected error.", m_name);
 					return;
 				}
 				if (FAILED(hr = BltAllLevels(D3DCUBEMAP_FACE_NEGATIVE_Y, ptexCur, *pptexNew)))
 				{
-					Error(L"Unexpected error.", m_sourceFile);
+					Error(L"Unexpected error.", m_name);
 					return;
 				}
 				if (FAILED(hr = BltAllLevels(D3DCUBEMAP_FACE_POSITIVE_Y, ptexCur, *pptexNew)))
 				{
-					Error(L"Unexpected error.", m_sourceFile);
+					Error(L"Unexpected error.", m_name);
 					return;
 				}
 				if (FAILED(hr = BltAllLevels(D3DCUBEMAP_FACE_NEGATIVE_Z, ptexCur, *pptexNew)))
 				{
-					Error(L"Unexpected error.", m_sourceFile);
+					Error(L"Unexpected error.", m_name);
 					return;
 				}
 				if (FAILED(hr = BltAllLevels(D3DCUBEMAP_FACE_POSITIVE_Z, ptexCur, *pptexNew)))
 				{
-					Error(L"Unexpected error.", m_sourceFile);
+					Error(L"Unexpected error.", m_name);
 					return;
 				}
 			}
@@ -699,7 +942,7 @@ LFail:
 					fmtTo == D3DFMT_DXT5) && (m_dwWidth % 4 != 0 || m_dwHeight % 4 != 0))
 				{
 					Error(L"This operation requires the source textures to have dimensions that are multiples of 4.",
-						m_sourceFile);
+						m_name);
 					return;
 				}
 
@@ -708,13 +951,13 @@ LFail:
 				if (FAILED(hr))
 				{
 					Error(L"Unexpected error: cannot create texture.",
-						m_sourceFile);
+						m_name);
 					return;
 				}
 				*pptexNew = pmiptexNew;
 				if (FAILED(BltAllLevels(D3DCUBEMAP_FACE_FORCE_DWORD, ptexCur, *pptexNew)))
 				{
-					Error(L"Unexpected error.", m_sourceFile);
+					Error(L"Unexpected error.", m_name);
 					return;
 				}
 			}
@@ -741,12 +984,12 @@ LFail:
 			if (FAILED(hr))
 			{
 				Error(L"Unexpected error: cannot create texture.",
-					m_sourceFile);
+					m_name);
 				return;
 			}
 			if (FAILED(BltAllLevels(D3DCUBEMAP_FACE_FORCE_DWORD, m_ptexOrig, pmiptexNew)))
 			{
-				Error(L"Unexpected error.", m_sourceFile);
+				Error(L"Unexpected error.", m_name);
 				return;
 			}
 			ReleasePpo(&m_ptexOrig);
@@ -759,12 +1002,12 @@ LFail:
 				if (FAILED(hr))
 				{
 					Error(L"Unexpected error: cannot create texture.",
-						m_sourceFile);
+						m_name);
 					return;
 				}
 				if (FAILED(BltAllLevels(D3DCUBEMAP_FACE_FORCE_DWORD, m_ptexNew, pmiptexNew)))
 				{
-					Error(L"Unexpected error.", m_sourceFile);
+					Error(L"Unexpected error.", m_name);
 					return;
 				}
 				ReleasePpo(&m_ptexNew);
@@ -777,87 +1020,22 @@ LFail:
 		}
 
 
+		void AssembleCubeMap(const FastMap<uint, String>& maps, const FastMap<uint, String>* alphaMaps = 0)
+		{
+			for (FastMap<uint, String>::Enumerator e = maps.GetEnumerator(); e.MoveNext();)
+			{
+				String alpha;
+				bool hasAlpha = alphaMaps->TryGetValue(*e.getCurrentKey(), alpha);
+				
+				OpenCubeFace(*e.getCurrentValue(), hasAlpha? &alpha:0, ConvertCubemapFace((CubeMapFace)*e.getCurrentKey()));
+			}
+		}
+		void AssembleVolumeMap(const FastMap<uint, String>& maps, const FastMap<uint, String>* alphaMaps = 0)
+		{
 
+		}
 	};
 
-
-	PixelFormat ConvertBackPixelFormat(DWORD fmt)
-	{
-		switch (fmt)
-		{
-		case D3DFMT_A2R10G10B10:
-			return FMT_A2R10G10B10;
-		case D3DFMT_A8R8G8B8:
-			return FMT_A8R8G8B8;
-		case D3DFMT_X8R8G8B8:
-			return FMT_X8R8G8B8;
-		case D3DFMT_A1R5G5B5:
-			return FMT_A1R5G5B5;
-		case D3DFMT_X1R5G5B5:
-			return FMT_X1R5G5B5;
-		case D3DFMT_R5G6B5:
-			return FMT_R5G6B5;
-
-		case D3DFMT_DXT1:
-			return FMT_DXT1;
-		case D3DFMT_DXT2:
-			return FMT_DXT2;
-		case D3DFMT_DXT3:
-			return FMT_DXT3;
-		case D3DFMT_DXT4:
-			return FMT_DXT4;
-		case D3DFMT_DXT5:
-			return FMT_DXT5;
-
-		case D3DFMT_R16F:
-			return FMT_R16F;
-		case D3DFMT_G16R16F:
-			return FMT_G16R16F;
-		case D3DFMT_A16B16G16R16F:
-			return FMT_A16B16G16R16F;
-
-		case D3DFMT_R32F:
-			return FMT_R32F;
-		case D3DFMT_G32R32F:
-			return FMT_G32R32F;
-		case D3DFMT_A32B32G32R32F:
-			return FMT_A32B32G32R32F;
-
-		case D3DFMT_R8G8B8:
-			return FMT_R8G8B8;
-		case D3DFMT_A4R4G4B4:
-			return FMT_A4R4G4B4;
-		case D3DFMT_R3G3B2:
-			return FMT_R3G3B2;
-		case D3DFMT_A8:
-			return FMT_Alpha8;
-		case D3DFMT_A2B10G10R10:
-			return FMT_A2B10G10R10;
-		case D3DFMT_G16R16:
-			return FMT_G16R16;
-		case D3DFMT_A16B16G16R16:
-			return FMT_A16B16G16R16;
-		case D3DFMT_A8P8:
-			return FMT_Palette8Alpha8;
-		case D3DFMT_P8:
-			return FMT_Palette8;
-		case D3DFMT_L8:
-			return FMT_Luminance8;
-		case D3DFMT_L16:
-			return FMT_Luminance16;
-		case D3DFMT_A8L8:
-			return FMT_A8L8;
-		case D3DFMT_A4L4:
-			return FMT_A4L4;
-		case D3DFMT_A1:
-			return FMT_Alpha1;
-
-		case D3DFMT_X4R4G4B4:
-		case D3DFMT_A8R3G3B2:
-			return FMT_Unknown;
-		}
-		throw Apoc3DException::createException(EX_NotSupported, L"");
-	}
 
 	void TextureBuild::BuildByD3D(const TextureBuildConfig& config)
 	{

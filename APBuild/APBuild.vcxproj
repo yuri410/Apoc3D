@@ -87,6 +87,7 @@
     <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="CompileLog.h" />
     <ClInclude Include="D3DHelper.h" />
+    <ClInclude Include="dds.h" />
     <ClInclude Include="EffectCompiler\AFXBuild.h" />
     <ClInclude Include="FontBuild\FontBuild.h" />
     <ClInclude Include="ErrorCode.h" />
