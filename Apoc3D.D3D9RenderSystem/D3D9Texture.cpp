@@ -35,6 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/Streams.h"
 #include "Vfs/PathUtils.h"
 
+
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Core;
@@ -278,11 +279,6 @@ namespace Apoc3D
 				}
 			}
 
-			void D3D9Texture::Save(Stream* strm)
-			{
-				throw Apoc3DException::createException(EX_NotSupported, L"");
-			}
-
 			DataRectangle D3D9Texture::lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect)
 			{
 				assert(m_tex2D);
@@ -455,13 +451,160 @@ namespace Apoc3D
 				}
 			}
 
+			void getData(TextureData& data, D3DTexture2D* tex)
+			{
+				for (int i=0;i<data.LevelCount;i++)
+				{
+					TextureLevelData lvlData;
+
+					D3DSURFACE_DESC desc;
+					tex->GetLevelDesc(i, &desc);
+
+					D3DLOCKED_RECT rect;
+					HRESULT hr = tex->LockRect(i, &rect, NULL, D3DLOCK_READONLY);
+					assert(SUCCEEDED(hr));
+
+					lvlData.Width = (int32)desc.Width;
+					lvlData.Height = (int32)desc.Height;
+					lvlData.Depth = 1;
+					lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format);
+					lvlData.ContentData  = new char[lvlData.LevelSize];
+					copyData(rect.pBits, rect.Pitch, lvlData.ContentData, desc.Format, desc.Width, desc.Height, false);
+
+					hr = tex->UnlockRect(i);
+					assert(SUCCEEDED(hr));
+
+					data.Levels.push_back(lvlData);
+					data.ContentSize += lvlData.LevelSize;
+				}
+			}
+			void getData(TextureData& data, D3DTextureCube* tex)
+			{
+				for (int i=0;i<data.LevelCount;i++)
+				{
+					int startPos = 0;
+					
+					D3DSURFACE_DESC desc;
+					tex->GetLevelDesc(i, &desc);
+					TextureLevelData lvlData;
+					lvlData.Width = (int32)desc.Width;
+					lvlData.Height = (int32)desc.Width;
+					lvlData.Depth = 1;
+					lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format) * 6;
+					lvlData.ContentData  = new char[lvlData.LevelSize];
+					int faceSize = data.Levels[i].LevelSize / 6;
+
+
+
+
+					D3DLOCKED_RECT rect;
+					HRESULT hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_X, i, &rect, NULL, D3DLOCK_READONLY);
+					assert(SUCCEEDED(hr));
+
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, false);
+					startPos += faceSize;
+
+					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_X, i);
+					assert(SUCCEEDED(hr));
+
+					// ======================================================================
+
+					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i, &rect, NULL, D3DLOCK_READONLY);
+					assert(SUCCEEDED(hr));
+
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, false);
+					startPos += faceSize;
+
+					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i);
+					assert(SUCCEEDED(hr));
+
+					// ======================================================================
+
+					hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i, &rect, NULL, D3DLOCK_READONLY);
+					assert(SUCCEEDED(hr));
+
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, false);
+					startPos += faceSize;
+
+					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i);
+					assert(SUCCEEDED(hr));
+
+					// ======================================================================
+					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i, &rect, NULL, D3DLOCK_READONLY);
+					assert(SUCCEEDED(hr));
+
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, false);
+					startPos += faceSize;
+
+					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i);
+					assert(SUCCEEDED(hr));
+
+					// ======================================================================
+
+					hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i, &rect, NULL, D3DLOCK_READONLY);
+					assert(SUCCEEDED(hr));
+
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, false);
+					startPos += faceSize;
+
+					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i);
+					assert(SUCCEEDED(hr));
+					// ======================================================================
+					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i, &rect, NULL, D3DLOCK_READONLY);
+					assert(SUCCEEDED(hr));
+
+					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+						desc.Format, desc.Width, desc.Height, false);
+					startPos += faceSize;
+
+					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i);
+					assert(SUCCEEDED(hr));
+
+					// ======================================================================
+					data.Levels.push_back(lvlData);
+					data.ContentSize += lvlData.LevelSize;
+
+				}
+			}
+			void getData(TextureData& data, D3DTexture3D* tex)
+			{
+				for (int i=0;i<data.LevelCount;i++)
+				{
+					TextureLevelData lvlData;
+
+					D3DVOLUME_DESC desc;
+					tex->GetLevelDesc(i, &desc);
+					
+					lvlData.Width = (int32)desc.Width;
+					lvlData.Height = (int32)desc.Height;
+					lvlData.Depth = (int32)desc.Depth;
+					lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, desc.Depth, data.Format);
+					lvlData.ContentData  = new char[lvlData.LevelSize];
+
+					D3DLOCKED_BOX box;
+					HRESULT hr = tex->LockBox(i, &box, NULL, 0);
+					assert(SUCCEEDED(hr));
+
+					copyData(box.pBits, box.RowPitch, box.SlicePitch,
+						data.Levels[i].ContentData, desc.Format,
+						desc.Width, desc.Height, desc.Depth, false);
+
+					hr = tex->UnlockBox(i);
+					assert(SUCCEEDED(hr));
+				}
+			}
 
 			void setData(const TextureData& data, D3DTextureCube* tex)
 			{
 				for (int i=0;i<data.LevelCount;i++)
 				{
 					int startPos = 0;
-					int levelSize = data.Levels[i].LevelSize / 6;
+					int faceSize = data.Levels[i].LevelSize / 6;
 					D3DSURFACE_DESC desc;
 					tex->GetLevelDesc(i, &desc);
 
@@ -471,7 +614,7 @@ namespace Apoc3D
 
 					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
 						desc.Format, desc.Width, desc.Height, true);
-					startPos += levelSize;
+					startPos += faceSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_X, i);
 					assert(SUCCEEDED(hr));
@@ -483,7 +626,7 @@ namespace Apoc3D
 
 					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
 						desc.Format, desc.Width, desc.Height, true);
-					startPos += levelSize;
+					startPos += faceSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i);
 					assert(SUCCEEDED(hr));
@@ -495,7 +638,7 @@ namespace Apoc3D
 
 					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
 						desc.Format, desc.Width, desc.Height, true);
-					startPos += levelSize;
+					startPos += faceSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i);
 					assert(SUCCEEDED(hr));
@@ -506,7 +649,7 @@ namespace Apoc3D
 
 					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
 						desc.Format, desc.Width, desc.Height, true);
-					startPos += levelSize;
+					startPos += faceSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i);
 					assert(SUCCEEDED(hr));
@@ -518,7 +661,7 @@ namespace Apoc3D
 
 					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
 						desc.Format, desc.Width, desc.Height, true);
-					startPos += levelSize;
+					startPos += faceSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i);
 					assert(SUCCEEDED(hr));
@@ -528,7 +671,7 @@ namespace Apoc3D
 
 					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
 						desc.Format, desc.Width, desc.Height, true);
-					startPos += levelSize;
+					startPos += faceSize;
 
 					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i);
 					assert(SUCCEEDED(hr));
@@ -790,6 +933,40 @@ namespace Apoc3D
 				{
 					m_cube->Release();
 					m_cube = 0;
+				}
+			}
+
+
+			void D3D9Texture::Save(Stream* strm)
+			{
+				UseSync();
+				
+				TextureData data;
+				data.LevelCount = getLevelCount();
+				data.Type = getType();
+				data.Format = getFormat();
+				data.ContentSize = 0;
+				switch (data.Type)
+				{
+				case (int)TT_Texture1D:
+				case (int)TT_Texture2D:
+					getData(data, m_tex2D);
+					break;
+				case (int)TT_CubeTexture:
+					getData(data, m_cube);
+					break;
+				case (int)TT_Texture3D:
+					getData(data, m_tex3D);
+					break;
+				}
+
+
+
+				data.Save(strm);
+
+				for (int i=0;i<data.LevelCount;i++)
+				{
+					delete[] data.Levels[i].ContentData;
 				}
 			}
 
