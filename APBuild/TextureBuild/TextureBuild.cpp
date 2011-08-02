@@ -1118,6 +1118,7 @@ LFail:
 	{
 		if (config.AssembleCubemap || config.AssembleVolumeMap)
 		{
+			DXTex tex(config.SourceFile);
 
 		}
 		else
@@ -1137,87 +1138,9 @@ LFail:
 			{
 				tex.Compress(ConvertFormat(config.NewFormat));
 			}
+
+
 		}
-		//DWORD usage = 0;
-		//if (config.GenerateMipmaps)
-		//{
-		//	usage |= D3DUSAGE_AUTOGENMIPMAP;
-		//}
-
-		//IDirect3DTexture9* texture;
-		//
-		//if (config.Resize)
-		//{
-		//	if (config.GenerateMipmaps)
-		//	{
-		//		D3DXCreateTextureFromFileEx(D3DHelper::getDevice(),
-		//			config.SourceFile.c_str(),
-		//			config.NewWidth,
-		//			config.NewHeight,
-		//			D3DX_DEFAULT,
-		//			usage,
-		//			D3DFMT_FROM_FILE,
-		//			D3DPOOL_SCRATCH,
-		//			D3DX_FILTER_TRIANGLE,
-		//			D3DX_FILTER_BOX, 0, NULL, NULL, &texture);
-		//	}
-		//	else
-		//	{
-		//		D3DXCreateTextureFromFileEx(D3DHelper::getDevice(),
-		//			config.SourceFile.c_str(),
-		//			config.NewWidth,
-		//			config.NewHeight,
-		//			D3DX_FROM_FILE,
-		//			usage,
-		//			D3DFMT_FROM_FILE,
-		//			D3DPOOL_SCRATCH,
-		//			D3DX_FILTER_TRIANGLE,
-		//			D3DX_FILTER_BOX, 0, NULL, NULL, &texture);
-		//	}
-		//}
-		//else
-		//{
-		//	if (config.GenerateMipmaps)
-		//	{
-		//		D3DXCreateTextureFromFileEx(D3DHelper::getDevice(),
-		//			config.SourceFile.c_str(),
-		//			D3DX_DEFAULT_NONPOW2,
-		//			D3DX_DEFAULT_NONPOW2,
-		//			D3DX_DEFAULT,
-		//			usage,
-		//			D3DFMT_FROM_FILE,
-		//			D3DPOOL_SCRATCH,
-		//			D3DX_FILTER_TRIANGLE,
-		//			D3DX_FILTER_BOX, 0, NULL, NULL, &texture);
-		//	}
-		//	else
-		//	{
-		//		D3DXCreateTextureFromFileEx(D3DHelper::getDevice(),
-		//			config.SourceFile.c_str(),
-		//			D3DX_DEFAULT_NONPOW2,
-		//			D3DX_DEFAULT_NONPOW2,
-		//			D3DX_FROM_FILE,
-		//			usage,
-		//			D3DFMT_FROM_FILE,
-		//			D3DPOOL_SCRATCH,
-		//			D3DX_FILTER_TRIANGLE,
-		//			D3DX_FILTER_BOX, 0, NULL, NULL, &texture);
-		//	}
-		//	
-		//}
-
-		//TextureData texData;
-		//texData.LevelCount = (int32)texture->GetLevelCount();
-		//texData.ContentSize = 0;
-
-		//D3DSURFACE_DESC desc;
-		//texture->GetLevelDesc(0, &desc);
-		//texData.Format = ConvertBackPixelFormat(desc.Format);
-		//for (int i=0;i<texData.LevelCount;i++)
-		//{
-
-		//}
-
 	}
 
 	PixelFormat ConvertFormat(int format, int elementType, int bpp)
