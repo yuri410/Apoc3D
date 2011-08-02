@@ -319,7 +319,6 @@ namespace APBuild
 		// it to a similar format that has at least 4 bits of alpha.
 		HRESULT EnsureAlpha(LPDIRECT3DBASETEXTURE9* pptex)
 		{
-			HRESULT hr;
 			D3DFORMAT fmtCur = GetFormat(*pptex);
 			D3DFORMAT fmtNew = D3DFMT_UNKNOWN;
 			LPDIRECT3DBASETEXTURE9 ptex = NULL;
@@ -350,8 +349,8 @@ namespace APBuild
 
 			if( fmtNew != D3DFMT_UNKNOWN )
 			{
-				if (FAILED(hr = ChangeFormat(m_ptexOrig, fmtNew, &ptex)))
-					return hr;
+				ChangeFormat(m_ptexOrig, fmtNew, &ptex);
+				
 				ReleasePpo(&m_ptexOrig);
 				m_ptexOrig = ptex;
 			}
@@ -428,7 +427,7 @@ namespace APBuild
 			return S_OK;
 		}
 
-		void OpenCubeFace(const String& file, const String* alphaFile, D3DCUBEMAP_FACES face)
+		HRESULT OpenCubeFace(const String& file, const String* alphaFile, D3DCUBEMAP_FACES face)
 		{
 			HRESULT hr;
 			LPDIRECT3DSURFACE9 psurfOrig = NULL;
@@ -436,8 +435,7 @@ namespace APBuild
 
 			if (!IsCubeMap())
 			{
-				Error(L"Unexpected Error. Texture type mismatch.", m_name);
-				return;
+				return D3DERR_INVALIDCALL;
 			}
 
 			String fileName = file;
@@ -451,13 +449,9 @@ namespace APBuild
 			{
 				if (FAILED(hr = LoadAlphaIntoSurface(*alphaFile, psurfOrig)))
 				{
-					Error(L"Unexpected Error. ", m_name);
-					return;
+					return hr;
 				}
 			}
-
-
-
 
 			if (psurfNew != NULL)
 			{
@@ -467,6 +461,81 @@ namespace APBuild
 
 			ReleasePpo(&psurfOrig);
 			ReleasePpo(&psurfNew);
+			return S_OK;
+		}
+		HRESULT OpenVolumeSlice(LPDIRECT3DVOLUME9 pVolume, UINT iSlice, LPDIRECT3DSURFACE9 psurf)
+		{
+			HRESULT hr;
+			D3DSURFACE_DESC sd;
+			D3DVOLUME_DESC vd;
+			D3DLOCKED_RECT lr;
+			D3DBOX boxSrc;
+			D3DBOX boxDest;
+
+			psurf->GetDesc(&sd);
+			pVolume->GetDesc(&vd);
+
+			boxSrc.Left = 0;
+			boxSrc.Right = sd.Width;
+			boxSrc.Top = 0;
+			boxSrc.Bottom = sd.Height;
+			boxSrc.Front = 0;
+			boxSrc.Back = 1;
+
+			boxDest.Left = 0;
+			boxDest.Right = vd.Width;
+			boxDest.Top = 0;
+			boxDest.Bottom = vd.Height;
+			boxDest.Front = iSlice;
+			boxDest.Back = iSlice + 1;
+
+			hr = psurf->LockRect(&lr, NULL, 0);
+			if (FAILED(hr))
+				return hr;
+
+			hr = D3DXLoadVolumeFromMemory(pVolume, NULL, &boxDest, lr.pBits, sd.Format, lr.Pitch, 
+				0, NULL, &boxSrc, D3DX_DEFAULT, 0);
+
+			psurf->UnlockRect();
+
+			return hr;
+		}
+		void OpenVolumeSlice(const String& file, const String* alphaFile, uint slice)
+		{
+			HRESULT hr;
+			
+			LPDIRECT3DDEVICE9 pd3ddev = D3DHelper::getDevice();
+			LPDIRECT3DTEXTURE9 ptex = NULL;
+			LPDIRECT3DSURFACE9 psurfOrig = NULL;
+			LPDIRECT3DSURFACE9 psurfNew = NULL;
+
+			hr = D3DXCreateTextureFromFile(pd3ddev, file.c_str(), &ptex);
+			hr = ptex->GetSurfaceLevel(0, &psurfOrig);
+
+
+			if (alphaFile)
+			{
+				if (FAILED(hr = LoadAlphaIntoSurface(*alphaFile, psurfOrig)))
+				{
+					Error(L"Unexpected Error. ", m_name);
+					return;
+				}
+			}
+			LPDIRECT3DVOLUME9 pvol;
+			hr = ((LPDIRECT3DVOLUMETEXTURE9)m_ptexOrig)->GetVolumeLevel(0, &pvol);
+			OpenVolumeSlice(pvol, slice, psurfOrig);
+			ReleasePpo(&pvol);
+			if (m_ptexNew)
+			{
+				hr = ((LPDIRECT3DVOLUMETEXTURE9)m_ptexNew)->GetVolumeLevel(0, &pvol);
+				OpenVolumeSlice(pvol, slice, psurfOrig);
+				ReleasePpo(&pvol);
+			}
+
+			ReleasePpo(&psurfOrig);
+			ReleasePpo(&psurfNew);
+			ReleasePpo(&ptex);
+
 		}
 	public:
 		bool isError() const { return m_isOnError; }
@@ -862,9 +931,8 @@ LFail:
 				if (fmtTo == D3DFMT_DXT1)
 				{
 					CompileLog::WriteWarning(
-						L"The source image contains premultiplied alpha, " + 
-						L"and the RGB values will be copied to the destination without \"unpremultiplying\" them" + 
-						L" so the resulting colors may be affected.", m_name);
+						L"The source image contains premultiplied alpha, and the RGB values will be copied to \
+						the destination without \"unpremultiplying\" them so the resulting colors may be affected.", m_name);
 					//AfxMessageBox(ID_ERROR_PREMULTTODXT1);
 				}
 				else if (fmtTo != D3DFMT_DXT2 && fmtTo != D3DFMT_DXT4)
@@ -964,7 +1032,6 @@ LFail:
 		}
 		void Compress(D3DFORMAT fmtTo, BOOL bSwitchView)
 		{
-			HRESULT hr;
 			LPDIRECT3DBASETEXTURE9 ptexNew = NULL;
 			ChangeFormat(m_ptexOrig, fmtTo, &ptexNew);
 			if (!isError())
@@ -1032,7 +1099,13 @@ LFail:
 		}
 		void AssembleVolumeMap(const FastMap<uint, String>& maps, const FastMap<uint, String>* alphaMaps = 0)
 		{
+			for (FastMap<uint, String>::Enumerator e = maps.GetEnumerator(); e.MoveNext();)
+			{
+				String alpha;
+				bool hasAlpha = alphaMaps->TryGetValue(*e.getCurrentKey(), alpha);
 
+				OpenVolumeSlice(*e.getCurrentValue(), hasAlpha? &alpha:0, *e.getCurrentKey());
+			}
 		}
 	};
 
