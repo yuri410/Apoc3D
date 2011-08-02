@@ -27,18 +27,85 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Config/ConfigurationSection.h"
 #include "Graphics/PixelFormat.h"
 #include "Utility/StringUtils.h"
+#include "Graphics/GraphicsCommon.h"
 #include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
 
 using namespace Apoc3D::Utility;
 
-
 namespace APBuild
 {
 	void TextureBuildConfig::Parse(const ConfigurationSection* sect)
 	{
-		SourceFile = sect->getAttribute(L"SourceFile");
+		String assembleType;
+		if (!sect->tryGetAttribute(L"Assemble", assembleType))
+		{
+			SourceFile = sect->getAttribute(L"SourceFile");
+		}
+		else
+		{
+			StringUtils::ToLowerCase(assembleType);
+			if (assembleType == L"cubemap")
+			{
+				AssembleCubemap = true;
+				AssembleVolumeMap = false;
+
+				String file = sect->getAttribute(L"NegX");
+				SubMapTable.Add((uint)CUBE_NegativeX, file);
+				file = sect->getAttribute(L"NegY");
+				SubMapTable.Add((uint)CUBE_NegativeY, file);
+				file = sect->getAttribute(L"NegZ");
+				SubMapTable.Add((uint)CUBE_NegativeZ, file);
+
+				file = sect->getAttribute(L"PosX");
+				SubMapTable.Add((uint)CUBE_PositiveX, file);
+				file = sect->getAttribute(L"PosY");
+				SubMapTable.Add((uint)CUBE_PositiveY, file);
+				file = sect->getAttribute(L"PosZ");
+				SubMapTable.Add((uint)CUBE_PositiveZ, file);
+
+				if (sect->tryGetAttribute(L"NegXAlpha", file))
+					SubAlphaMapTable.Add((uint)CUBE_NegativeX, file);
+				if (sect->tryGetAttribute(L"NegYAlpha", file))
+					SubAlphaMapTable.Add((uint)CUBE_NegativeY, file);
+				if (sect->tryGetAttribute(L"NegZAlpha", file))
+					SubAlphaMapTable.Add((uint)CUBE_NegativeZ, file);
+
+				if (sect->tryGetAttribute(L"PosXAlpha", file))
+					SubAlphaMapTable.Add((uint)CUBE_PositiveX, file);
+				if (sect->tryGetAttribute(L"PosYAlpha", file))
+					SubAlphaMapTable.Add((uint)CUBE_PositiveY, file);
+				if (sect->tryGetAttribute(L"PosZAlpha", file))
+					SubAlphaMapTable.Add((uint)CUBE_PositiveZ, file);
+
+			}
+			else
+			{
+				AssembleCubemap = false;
+				AssembleVolumeMap = true;
+
+				String fileList = sect->getAttribute(L"Source");
+				std::vector<String> files = StringUtils::Split(fileList, L"|\n\r");
+				for (size_t i=0;i<files.size();i++)
+				{
+					SubMapTable.Add(i, files[i]);
+				}
+
+				if (sect->tryGetAttribute(L"AlphaSource",fileList))
+				{
+					files = StringUtils::Split(fileList, L"|\n\r");
+					for (size_t i=0;i<files.size();i++)
+					{
+						SubAlphaMapTable.Add(i, files[i]);
+					}
+
+				}
+				
+			}
+
+		}
+
 		DestinationFile = sect->getAttribute(L"DestinationFile");
 
 		GenerateMipmaps = false;
@@ -48,7 +115,8 @@ namespace APBuild
 		passed |= sect->TryGetAttributeInt(L"Width", NewWidth);
 		passed |= sect->TryGetAttributeInt(L"Height", NewHeight);
 		passed |= sect->TryGetAttributeInt(L"Depth", NewDepth);
-
+		
+		ResizeFilterType = TFLT_BSpline;
 		String flt;
 		if (sect->tryGetAttribute(L"ResizeFilter", flt))
 		{
@@ -67,11 +135,6 @@ namespace APBuild
 				ResizeFilterType = TFLT_BSpline;
 			}
 		}
-		else
-		{
-			passed = false;
-		}
-
 
 		Resize = passed;
 		
@@ -81,6 +144,7 @@ namespace APBuild
 		{
 			NewFormat = PixelFormatUtils::ConvertFormat(fmt);
 		}
+		
 	}
 
 	void FontBuildConfig::Parse(const ConfigurationSection* sect)
