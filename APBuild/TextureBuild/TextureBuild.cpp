@@ -619,7 +619,11 @@ namespace APBuild
 			
 
 		}
-
+		~DXTex()
+		{
+			ReleasePpo(&m_ptexOrig);
+			ReleasePpo(&m_ptexNew);
+		}
 		/** Prepare a DXTex object for assemble build.  
 		*/
 		DXTex(TextureType type, const String& name, int width, int height, int depth, PixelFormat format)
@@ -1030,7 +1034,7 @@ LFail:
 				}
 			}
 		}
-		void Compress(D3DFORMAT fmtTo, BOOL bSwitchView)
+		void Compress(D3DFORMAT fmtTo)
 		{
 			LPDIRECT3DBASETEXTURE9 ptexNew = NULL;
 			ChangeFormat(m_ptexOrig, fmtTo, &ptexNew);
@@ -1112,6 +1116,28 @@ LFail:
 
 	void TextureBuild::BuildByD3D(const TextureBuildConfig& config)
 	{
+		if (config.AssembleCubemap || config.AssembleVolumeMap)
+		{
+
+		}
+		else
+		{
+			DXTex tex(config.SourceFile);
+
+
+			if (config.Resize)
+			{
+				tex.Resize(config.NewWidth, config.NewHeight);
+			}
+			if (config.GenerateMipmaps)
+			{
+				tex.GenerateMipMaps();
+			}
+			if (config.NewFormat != FMT_Unknown)
+			{
+				tex.Compress(ConvertFormat(config.NewFormat));
+			}
+		}
 		//DWORD usage = 0;
 		//if (config.GenerateMipmaps)
 		//{
