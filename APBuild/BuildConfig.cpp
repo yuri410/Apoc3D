@@ -85,21 +85,25 @@ namespace APBuild
 				AssembleCubemap = false;
 				AssembleVolumeMap = true;
 
-				String fileList = sect->getAttribute(L"Source");
-				std::vector<String> files = StringUtils::Split(fileList, L"|\n\r");
-				for (size_t i=0;i<files.size();i++)
+				uint i =0;
+				ConfigurationSection* srcsect = sect->getSection(L"Source");
+				for (ConfigurationSection::SubSectionIterator iter = srcsect->SubSectionBegin();
+					iter != sect->SubSectionEnd(); iter++)
 				{
-					SubMapTable.Add(i, files[i]);
+					const ConfigurationSection* ss = iter->second;
+
+					SubMapTable.Add(i, ss->getAttribute(L"FilePath"));
+					i++;
 				}
-
-				if (sect->tryGetAttribute(L"AlphaSource",fileList))
+				srcsect = sect->getSection(L"AlphaSource");
+				i=0;
+				for (ConfigurationSection::SubSectionIterator iter = srcsect->SubSectionBegin();
+					iter != sect->SubSectionEnd(); iter++)
 				{
-					files = StringUtils::Split(fileList, L"|\n\r");
-					for (size_t i=0;i<files.size();i++)
-					{
-						SubAlphaMapTable.Add(i, files[i]);
-					}
+					const ConfigurationSection* ss = iter->second;
 
+					SubMapTable.Add(i, ss->getAttribute(L"FilePath"));
+					i++;
 				}
 				
 			}
@@ -111,7 +115,7 @@ namespace APBuild
 		GenerateMipmaps = false;
 		sect->TryGetAttributeBool(L"GenerateMipmaps", GenerateMipmaps);
 
-		bool passed = true;
+		bool passed = false;
 		passed |= sect->TryGetAttributeInt(L"Width", NewWidth);
 		passed |= sect->TryGetAttributeInt(L"Height", NewHeight);
 		passed |= sect->TryGetAttributeInt(L"Depth", NewDepth);
@@ -199,7 +203,24 @@ namespace APBuild
 		{
 			const ConfigurationSection* ss = iter->second;
 
-			Files.Add(ss->getAttribute(L"FilePath"));
+			String path;
+			if (ss->tryGetAttribute(L"FilePath", path))
+			{
+				Files.Add(path);
+			}
+			else
+			{
+				path = ss->getAttribute(L"DirPath");
+				bool flatten = false;
+				ss->TryGetAttributeBool(L"Flatten", flatten);
+
+				PakDirEntryConfig ent;
+				ent.Flatten = flatten;
+				ent.Path = path;
+				Dirs.Add(ent);
+			}
+
+			
 		}
 
 		DestFile = sect->getAttribute(L"DestinationFile");

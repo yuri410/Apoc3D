@@ -20,7 +20,7 @@
 #include "TextureBuild/TextureBuild.h"
 #include "FontBuild/FontBuild.h"
 #include "MeshBuild/MeshBuild.h"
-
+#include "PakBuild/PakBuild.h"
 
 //#include <Windows.h>
 
@@ -56,6 +56,10 @@ int Build(ConfigurationSection* sect)
 	else if (buildType == L"font")
 	{
 		FontBuild::Build(sect);
+	}
+	else if (buildType == L"pak")
+	{
+		PakBuild::Build(sect);
 	}
 	else if (buildType == L"uilayout")
 	{

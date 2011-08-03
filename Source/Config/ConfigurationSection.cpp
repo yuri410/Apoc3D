@@ -111,11 +111,11 @@ namespace Apoc3D
 		}
 		bool ConfigurationSection::tryGetAttribute(const String& name, String& result) const
 		{
-			SubSectionTable::const_iterator iter = m_subSection.find(name);
+			AttributeTable::const_iterator iter = m_attributes.find(name);
 
-			if (iter != m_subSection.end())
+			if (iter != m_attributes.end())
 			{
-				result = iter->second->getValue();
+				result = iter->second;
 				return true;
 			}
 			return false;

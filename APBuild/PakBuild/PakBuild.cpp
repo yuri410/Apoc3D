@@ -80,6 +80,8 @@ namespace APBuild
 		//CompileLog::WriteInformation(L"Pak builder currently only supports directory flatten build.", L"");
 
 		//PakNode* root = GetNodes(config);
+		CompileLog::WriteInformation(config.DestFile, L">");
+
 		List<String> sourceFiles;
 
 		FileOutStream* fs = new FileOutStream(config.DestFile);
@@ -104,6 +106,7 @@ namespace APBuild
 				dir = opendir(StringUtils::toString(config.Dirs[i].Path).c_str());
 				if (dir)
 				{
+					int counter = 0;
 					while ((ent = readdir(dir)))
 					{
 						switch (ent->d_type)
@@ -112,20 +115,23 @@ namespace APBuild
 							String file = StringUtils::toWString(ent->d_name);
 							file = PathUtils::Combine(config.Dirs[i].Path,file);
 							sourceFiles.Add(file);
+							counter++;
 							break;
 						}
 					}
 
 					closedir(dir);
+					CompileLog::WriteInformation(L"Adding " + StringUtils::ToString(counter)
+						+ L" files from flatten dir: " + config.Dirs[i].Path, config.DestFile);
 				}
 				else
 				{
-					CompileLog::WriteError(L"Cannot read directory.", config.Dirs[i].Path);
+					CompileLog::WriteError(L"Cannot read directory: "+config.Dirs[i].Path, config.DestFile);
 				}
 			}
 			else
 			{
-				CompileLog::WriteError(L"Recursive dir currently not supported.", config.Dirs[i].Path);
+				CompileLog::WriteError(L"Recursive dir currently not supported: " + config.Dirs[i].Path, config.DestFile);
 			}
 		}
 		int count = sourceFiles.getCount();
