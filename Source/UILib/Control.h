@@ -62,9 +62,9 @@ namespace Apoc3D
 			//Apoc3D::Math::Rectangle m_area;
 
 			virtual void OnMouseOver() {  if (!m_eventMouseOver.empty()) m_eventMouseOver(this); }
-			virtual void OnMouseOut() {  if (!m_eventMouseOver.empty()) m_eventMouseOut(this); }
-			virtual void OnPress() {  if (!m_eventMouseOver.empty()) m_eventMousePress(this); }
-			virtual void OnRelease() {  if (!m_eventMouseOver.empty()) m_eventMouseRelease(this); }
+			virtual void OnMouseOut() {  if (!m_eventMouseOut.empty()) m_eventMouseOut(this); }
+			virtual void OnPress() {  if (!m_eventMousePress.empty()) m_eventMousePress(this); }
+			virtual void OnRelease() {  if (!m_eventMouseRelease.empty()) m_eventMouseRelease(this); }
 		public:
 			String Name;
 			String Text;

@@ -44,6 +44,9 @@ namespace Apoc3D
 			Texture* m_MouseDownTexture;
 			Texture* m_MouseOverTexture;
 			Texture* m_NormalTexture;
+			ColorValue m_modColor;
+			ColorValue m_modMouseDownColor;
+			ColorValue m_modMouseOverColor;
 
 			
 			Point m_textPos;
@@ -63,26 +66,45 @@ namespace Apoc3D
 		public:
 			Button(const Point& position, const String& text)
 				: Control(position, text), m_mouseOver(false), m_mouseDown(false),
-				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0)
+				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
 			}
 			Button(const Point& position, int width, const String& text)
 				: Control(position, text, Point(width, 0)), m_mouseOver(false), m_mouseDown(false),
-				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0)
+				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
 			}
 			Button(const Point& position, const Point& size, const String& text)
 				: Control(position, text, size), m_mouseOver(false), m_mouseDown(false),
-				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0)
+				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
 			}
 		
+			/** Gets the modulation color for custom button in normal state.
+			*/
+			ColorValue getCustomModColor() const { return m_modColor; }
+			void setCustomModColor(ColorValue clr) { m_modColor = clr; }
+
+			/** Gets the modulation color for custom button when mouse hover.
+			*/
+			ColorValue getCustomModColorMouseOver() const { return m_modMouseOverColor; }
+			void setCustomModColorMouseOver(ColorValue clr) { m_modMouseOverColor = clr; }
+
+			/** Gets the modulation color for custom button when mouse down.
+			*/
+			ColorValue getCustomModColorMouseDown() const { return m_modMouseDownColor; }
+			void setCustomModColorMouseDown(ColorValue clr) { m_modMouseDownColor = clr; }
+
+
 			Texture* getInvalidTexture() const { return m_InvalidTexture; }
 			void setInvalidTexture(Texture* texture) { m_InvalidTexture = texture; }
 

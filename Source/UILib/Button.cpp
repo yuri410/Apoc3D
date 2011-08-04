@@ -136,28 +136,28 @@ namespace Apoc3D
 				if (m_mouseDown)
 				{
 					if (m_MouseDownTexture)
-						spriteBatch->Draw(m_MouseDownTexture, getArea(), 0, CV_White);
+						spriteBatch->Draw(m_MouseDownTexture, getArea(), 0, m_modMouseDownColor);
 					else
-						spriteBatch->Draw(m_NormalTexture, getArea(), 0, CV_White);
+						spriteBatch->Draw(m_NormalTexture, getArea(), 0, m_modMouseDownColor);
 				}
 				else if (m_mouseOver)
 				{
 					if (m_MouseOverTexture)
-						spriteBatch->Draw(m_MouseOverTexture, getArea(), 0, CV_White);
+						spriteBatch->Draw(m_MouseOverTexture, getArea(), 0, m_modMouseOverColor);
 					else
-						spriteBatch->Draw(m_NormalTexture, getArea(), 0, CV_White);
+						spriteBatch->Draw(m_NormalTexture, getArea(), 0, m_modMouseOverColor);
 				}
 				else
 				{
-					spriteBatch->Draw(m_NormalTexture, getArea(), 0, CV_White);
+					spriteBatch->Draw(m_NormalTexture, getArea(), 0, m_modColor);
 				}
 			}
 			else
 			{
 				if (m_DisabledTexture)
-					spriteBatch->Draw(m_DisabledTexture, getArea(), 0, CV_White);
+					spriteBatch->Draw(m_DisabledTexture, getArea(), 0, m_modColor);
 				else
-					spriteBatch->Draw(m_NormalTexture, getArea(), 0, CV_White);
+					spriteBatch->Draw(m_NormalTexture, getArea(), 0, m_modColor);
 			}
 			//if (bMouseOver)
 			//{

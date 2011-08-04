@@ -67,7 +67,7 @@ namespace Apoc3D
 
 			ColorValue ForeColor;
 			ColorValue BackColor;
-
+			ColorValue FormControlButtonColor;
 
 			Texture* RadioBtnChecked;
 			Texture* RadioBtnUnchecked;

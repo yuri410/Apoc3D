@@ -206,6 +206,9 @@ namespace Apoc3D
 			m_btClose->setNormalTexture(m_skin->FormCloseButton);
 			m_btClose->setOwner(this);
 			m_btClose->Initialize(device);
+			m_btClose->setCustomModColor(m_skin->FormControlButtonColor);
+			m_btClose->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
+			m_btClose->setCustomModColorMouseOver(m_skin->BtnDimColor);
 			m_btClose->eventRelease().bind(this, &Form::btClose_Release);
 
 			
@@ -215,7 +218,9 @@ namespace Apoc3D
 				m_btMinimize->setNormalTexture(m_skin->FormMinimizeButton);
 				m_btMinimize->setOwner(this);
 				m_btMinimize->Initialize(device);
-
+				m_btMinimize->setCustomModColor(m_skin->FormControlButtonColor);
+				m_btMinimize->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
+				m_btMinimize->setCustomModColorMouseOver(m_skin->BtnDimColor);
 				m_btMinimize->eventRelease().bind(this, &Form::btMinimize_Release);
 			}
 			if (m_hasMaximizeButton)
@@ -224,6 +229,9 @@ namespace Apoc3D
 				m_btMaximize->setNormalTexture(m_skin->FormMaximizeButton);
 				m_btMaximize->setOwner(this);
 				m_btMaximize->Initialize(device);
+				m_btMaximize->setCustomModColor(m_skin->FormControlButtonColor);
+				m_btMaximize->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
+				m_btMaximize->setCustomModColorMouseOver(m_skin->BtnDimColor);
 				m_btMaximize->eventRelease().bind(this, &Form::btMaximize_Release);
 			}
 			if (m_hasMinimizeButton || m_hasMaximizeButton)
@@ -232,6 +240,9 @@ namespace Apoc3D
 				m_btRestore->setNormalTexture(m_skin->FormRestoreButton);
 				m_btRestore->setOwner(this);
 				m_btRestore->Initialize(device);
+				m_btRestore->setCustomModColor(m_skin->FormControlButtonColor);
+				m_btRestore->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
+				m_btRestore->setCustomModColorMouseOver(m_skin->BtnDimColor);
 				m_btRestore->eventRelease().bind(this, &Form::btRestore_Release);
 			}
 		}

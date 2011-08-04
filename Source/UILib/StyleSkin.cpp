@@ -41,7 +41,7 @@ namespace Apoc3D
 	namespace UI
 	{
 		StyleSkin::StyleSkin(RenderDevice* device, const FileLocateRule& rule)
-			: ForeColor(CV_Black), BackColor(CV_LightGray)
+			: ForeColor(CV_Black), BackColor(CV_LightGray), FormControlButtonColor(CV_Silver)
 		{
 			FileLocation* fl = FileSystem::getSingleton().Locate(L"ctl_btn_default.tex", rule);
 			ButtonTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
