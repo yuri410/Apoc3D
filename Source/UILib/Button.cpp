@@ -20,7 +20,12 @@ namespace Apoc3D
 			Keyboard* keyb = InputAPIManager::getSingleton().getKeyboard();
 
 			Apoc3D::Math::Rectangle rect = getArea();
-			if (m_owner && m_owner->getArea().Contains(rect) && rect.Contains(mouse->GetCurrentPosition()))
+			rect.X += m_owner->Position.X;
+			rect.Y += m_owner->Position.Y;
+
+			Point cursorPos = mouse->GetCurrentPosition();
+
+			if (m_owner && m_owner->getArea().Contains(rect) && rect.Contains(cursorPos))
 			{
 				if (!m_mouseOver)
 				{

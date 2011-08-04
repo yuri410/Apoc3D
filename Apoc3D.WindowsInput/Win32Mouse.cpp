@@ -46,10 +46,8 @@ namespace Apoc3D
 				{
 					POINT pt;
 					GetCursorPos(&pt);
-					if (hwnd)
-					{
-						ScreenToClient(hwnd, &pt);
-					}
+					
+					ScreenToClient(hwnd, &pt);
 
 					m_lastPosition = m_currentPos;
 					m_lastZ = m_z;
