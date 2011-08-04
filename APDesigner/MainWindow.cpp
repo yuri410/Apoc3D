@@ -98,7 +98,7 @@ namespace APDesigner
 		m_pane = new ControlContainer();
 		m_pane->Visible = true; m_pane->Enabled = true; m_pane->Position = Point(0,0); m_pane->Size = Point(400,400);
 
-		m_btn = new Button(Point(5,5), L"UTTTest button!");
+		m_btn = new Button(Point(25,25), L"UTTTest button!");
 		m_btn->SetSkin(m_UIskin);
 
 

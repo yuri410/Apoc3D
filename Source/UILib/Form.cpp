@@ -202,7 +202,7 @@ namespace Apoc3D
 
 		void Form::InitializeButtons(RenderDevice* device)
 		{
-			m_btClose = new Button(Point(Size.X = 22, 4), L"");
+			m_btClose = new Button(Point(Size.X - 22, 4), L"");
 			m_btClose->setNormalTexture(m_skin->FormCloseButton);
 			m_btClose->setOwner(this);
 			m_btClose->Initialize(device);
@@ -281,7 +281,7 @@ namespace Apoc3D
 					Size.Y = m_minimumSize.Y;
 			}
 
-			if (UIRoot::getTopMostForm() == this && (m_isMinimized && UIRoot::getActiveForm() == this))
+			if (UIRoot::getTopMostForm() == this || (m_isMinimized && UIRoot::getActiveForm() == this))
 			{
 				if (m_menu && m_menu->Visible)
 				{
