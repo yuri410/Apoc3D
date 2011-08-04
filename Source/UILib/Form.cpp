@@ -612,6 +612,9 @@ namespace Apoc3D
 			DrawTitle(sprite);
 			DrawButtons(sprite);
 
+			Matrix matrix;
+			Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
+			sprite->MultiplyTransform(matrix);
 			int overlay = 0;
 			for (int i=0;i<m_controls->getCount();i++)
 			{
@@ -627,6 +630,14 @@ namespace Apoc3D
 			if (overlay)
 			{
 
+			}
+			if(sprite->isUsingStack())
+			{
+				sprite->PopTransform();
+			}
+			else
+			{
+				sprite->SetTransform(Matrix::Identity);
 			}
 
 			
@@ -836,7 +847,7 @@ namespace Apoc3D
 			sprite->Draw(m_skin->FormBorderTexture[6], m_dstRect[6], CV_White);
 			sprite->Draw(m_skin->FormBorderTexture[7], m_dstRect[7], CV_White);
 			if (m_resizable)
-				sprite->Draw(m_skin->FormBorderTexture[9], m_dstRect[9], CV_White);			
+				sprite->Draw(m_skin->FormBorderTexture[9], m_dstRect[8], CV_White);			
 			else
 				sprite->Draw(m_skin->FormBorderTexture[8], m_dstRect[8], CV_White);
 		}
@@ -872,18 +883,15 @@ namespace Apoc3D
 			shadowRect.Y += m_shadowOffset.Y;
 			sprite->Draw(m_skin->FormBorderTexture[7], shadowRect, shdClr);
 
+			shadowRect = m_dstRect[8];
+			shadowRect.X += m_shadowOffset.X;
+			shadowRect.Y += m_shadowOffset.Y;
 			if (m_resizable)
 			{
-				shadowRect = m_dstRect[9];
-				shadowRect.X += m_shadowOffset.X;
-				shadowRect.Y += m_shadowOffset.Y;
 				sprite->Draw(m_skin->FormBorderTexture[9], shadowRect, shdClr);
 			}
 			else
 			{
-				shadowRect = m_dstRect[8];
-				shadowRect.X += m_shadowOffset.X;
-				shadowRect.Y += m_shadowOffset.Y;
 				sprite->Draw(m_skin->FormBorderTexture[8], shadowRect, shdClr);
 			}
 
