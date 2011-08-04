@@ -49,6 +49,18 @@ namespace Apoc3D
 		void Button::Initialize(RenderDevice* device)
 		{
 			Control::Initialize(device);
+
+			if (!m_skin)
+			{
+				assert(m_NormalTexture);
+				if (m_NormalTexture)
+				{
+					Size.X = m_NormalTexture->getWidth();
+					Size.Y = m_NormalTexture->getHeight();
+				}
+				
+
+			}
 		}
 
 

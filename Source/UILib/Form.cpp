@@ -644,6 +644,10 @@ namespace Apoc3D
 		}
 		void Form::DrawButtons(Sprite* sprite)
 		{
+			Matrix matrix;
+			Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
+
+			sprite->MultiplyTransform(matrix);
 			if (m_borderStyle != FBS_None)
 			{
 				m_btClose->Position.X = Size.X - 22;
@@ -653,10 +657,7 @@ namespace Apoc3D
 
 			if (m_borderStyle == FBS_Sizable)
 			{
-				Matrix matrix;
-				Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
 				
-				sprite->MultiplyTransform(matrix);
 				if (m_hasMaximizeButton)
 				{					
 					if (m_state != FWS_Maximized)
@@ -704,17 +705,16 @@ namespace Apoc3D
 						m_btRestore->Draw(sprite);
 					}
 				}
-
-				if(sprite->isUsingStack())
-				{
-					sprite->PopTransform();
-				}
-				else
-				{
-					sprite->SetTransform(Matrix::Identity);
-				}
-				
 			}
+			if(sprite->isUsingStack())
+			{
+				sprite->PopTransform();
+			}
+			else
+			{
+				sprite->SetTransform(Matrix::Identity);
+			}
+
 		}
 		void Form::DrawTitle(Sprite* sprite)
 		{

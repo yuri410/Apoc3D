@@ -107,7 +107,7 @@ namespace APDesigner
 		m_form->getControls().Add(m_btn);
 		m_form->Size = Point(400,400);
 		m_form->Initialize(m_device);
-		m_form->Text = L"Form 1. ABCDEFG";
+		m_form->Text = L"Form 1. abcdefg.hijklmn.opq rst.uvw xyz.";
 		m_form->setTitle(m_form->Text);
 		//m_pane->getControls().Add(m_btn);
 
