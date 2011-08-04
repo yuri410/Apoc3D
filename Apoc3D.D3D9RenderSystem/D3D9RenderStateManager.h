@@ -208,6 +208,8 @@ namespace Apoc3D
 				D3D9ClipPlane m_clipPlanes[32];
 
 				NativeD3DStateManager* m_stMgr;
+
+
 			public:
 				DWORD clipPlaneEnable;
 
@@ -319,8 +321,15 @@ namespace Apoc3D
 				
 				virtual ClipPlane& getClipPlane(int i) { return m_clipPlanes[i]; }
 				virtual int getClipPlaneCount() { return 32; }
-			};
 
+				/************************************************************************/
+				/* Scissor Test                                                         */
+				/************************************************************************/
+
+				virtual bool getScissorTestEnabled();
+				virtual Apoc3D::Math::Rectangle getScissorTestRect();
+				virtual void setScissorTest(bool enable, const Apoc3D::Math::Rectangle* rect);
+			};
 		}
 	}
 }

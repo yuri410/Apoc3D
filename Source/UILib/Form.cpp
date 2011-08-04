@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "Graphics/RenderSystem/Sprite.h"
 #include "Graphics/RenderSystem/Texture.h"
+#include "Graphics/RenderSystem/RenderStateManager.h"
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
 #include "Graphics/TextureManager.h"
@@ -98,6 +99,8 @@ namespace Apoc3D
 
 			if (UIRoot::getTopMostForm() == this)
 				UIRoot::setTopMostForm(0);
+
+			Hide();
 		}
 		void Form::Focus()
 		{
@@ -381,8 +384,13 @@ namespace Apoc3D
 					Vector2((float)Position.X, (float)Position.Y), 
 					Vector2((float)m_previousPosition.X, (float)m_previousPosition.Y))>2.0f)
 				{
-					Position.X += (int)((m_previousPosition.X-Position.X)*0.2f);
-					Position.Y += (int)((m_previousPosition.Y-Position.Y)*0.2f);
+					int dx = (int)((m_previousPosition.X-Position.X)*0.2f);
+					if (!dx) dx = m_previousPosition.X-Position.X;
+					Position.X += dx;
+
+					int dy = (int)((m_previousPosition.Y-Position.Y)*0.2f);
+					if (!dy) dy = m_previousPosition.Y-Position.Y;
+					Position.Y += dy;
 				}
 				else
 				{
@@ -393,8 +401,13 @@ namespace Apoc3D
 					Vector2((float)Size.X,(float)Size.Y), 
 					Vector2((float)m_previousPosition.X, (float)m_previousPosition.Y))>2.0f)
 				{
-					Size.X += (int)((m_previousSize.X-Size.X)*0.2f);
-					Size.Y += (int)((m_previousSize.Y-Size.Y)*0.2f);
+					int dx = (int)((m_previousSize.X-Size.X)*0.2f);
+					if (!dx) dx = m_previousSize.X-Size.X;
+					Size.X += dx;
+
+					int dy = (int)((m_previousSize.Y-Size.Y)*0.2f);
+					if (!dy) dy = m_previousSize.Y-Size.Y;
+					Size.Y += dy;
 				}
 				else
 				{
@@ -420,8 +433,13 @@ namespace Apoc3D
 					Vector2((float)Position.X,(float)Position.Y),
 					Vector2((float)m_minimizedPos.X, (float)m_minimizedPos.Y))>2.0f)
 				{
-					Position.X += (int)((m_minimizedPos.X-Position.X)*0.2f);
-					Position.Y += (int)((m_minimizedPos.Y-Position.Y)*0.2f);
+					int dx = (int)((m_minimizedPos.X-Position.X)*0.2f);
+					if (!dx) dx = m_minimizedPos.X-Position.X;
+					Position.X += dx;
+
+					int dy = (int)((m_minimizedPos.Y-Position.Y)*0.2f);
+					if (!dy) dy = m_minimizedPos.Y-Position.Y;
+					Position.Y += dy;
 				}
 				else
 				{
@@ -432,8 +450,13 @@ namespace Apoc3D
 					Vector2((float)Size.X,(float)Size.Y), 
 					Vector2((float)m_minimizedSize.X, (float)m_minimizedSize.Y))>2.0f)
 				{
-					Size.X += (int)((m_minimizedSize.X-Size.X)*0.2f);
-					Size.Y += (int)((m_minimizedSize.Y-Size.Y)*0.2f);
+					int dx = (int)((m_minimizedSize.X-Size.X)*0.2f);
+					if (!dx) dx = m_minimizedSize.X-Size.X;
+					Size.X += dx;
+
+					int dy = (int)((m_minimizedSize.Y-Size.Y)*0.2f);
+					if (!dy) dy = m_minimizedSize.Y-Size.Y;
+					Size.Y += dy;
 				}
 				else
 				{
@@ -458,8 +481,13 @@ namespace Apoc3D
 					Vector2Utils::Zero, 
 					Vector2((float)Position.X, (float)Position.Y))>2.0f)
 				{
-					Position.X += (int)((-Position.X)*0.2f);
-					Position.Y += (int)((-Position.Y)*0.2f);
+					int dx = (int)(-Position.X*0.2f);
+					if (!dx) dx = -Position.X;
+					Position.X += dx;
+
+					int dy = (int)(-Position.Y*0.2f);
+					if (!dy) dy = -Position.Y;
+					Position.Y += dy;
 				}
 				else
 				{
@@ -470,8 +498,13 @@ namespace Apoc3D
 					Vector2((float)Size.X,(float)Size.Y), 
 					Vector2((float)m_maximumSize.X, (float)m_maximumSize.Y))>2.0f)
 				{
-					Size.X += (int)((m_maximumSize.X-Size.X)*0.2f);
-					Size.Y += (int)((m_maximumSize.Y-Size.Y)*0.2f);
+					int dx = (int)((m_maximumSize.X-Size.X)*0.2f);
+					if (!dx) dx = m_maximumSize.X-Size.X;
+					Size.X += dx;
+
+					int dy = (int)((m_maximumSize.Y-Size.Y)*0.2f);
+					if (!dy) dy = m_maximumSize.Y-Size.Y;
+					Size.Y += dy;
 				}
 				else
 				{
@@ -623,9 +656,14 @@ namespace Apoc3D
 			DrawTitle(sprite);
 			DrawButtons(sprite);
 
+			sprite->Flush();
+
 			Matrix matrix;
 			Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
 			sprite->MultiplyTransform(matrix);
+			Apoc3D::Math::Rectangle rect= getAbsoluteArea();
+			m_device->getRenderState()->setScissorTest(true, &rect);
+
 			int overlay = 0;
 			for (int i=0;i<m_controls->getCount();i++)
 			{
@@ -650,7 +688,8 @@ namespace Apoc3D
 			{
 				sprite->SetTransform(Matrix::Identity);
 			}
-
+			sprite->Flush();
+			m_device->getRenderState()->setScissorTest(false,0);
 			
 		}
 		void Form::DrawButtons(Sprite* sprite)

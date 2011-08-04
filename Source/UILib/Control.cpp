@@ -41,7 +41,17 @@ namespace Apoc3D
 			{
 			}
 		}
-
+		Point Control::GetAbsolutePosition() const
+		{
+			if (m_owner)
+			{
+				Point result = m_owner->GetAbsolutePosition();
+				result.X += Position.X;
+				result.Y += Position.Y;
+				return result;
+			}
+			return Position;
+		}
 
 		void ControlCollection::Add(Control* ctrl)
 		{

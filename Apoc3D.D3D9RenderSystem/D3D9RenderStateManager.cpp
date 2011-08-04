@@ -346,6 +346,40 @@ namespace Apoc3D
 
 			}
 
+			bool D3D9RenderStateManager::getScissorTestEnabled()
+			{
+				DWORD result;
+				HRESULT hr = m_device->getDevice()->GetRenderState(D3DRS_SCISSORTESTENABLE, &result);
+				assert(SUCCEEDED(hr));
+				return !!result;
+			}
+			Apoc3D::Math::Rectangle D3D9RenderStateManager::getScissorTestRect()
+			{
+				RECT rect;
+				HRESULT hr = m_device->getDevice()->GetScissorRect(&rect);
+				return Apoc3D::Math::Rectangle((int)rect.left, (int)rect.top, (int)(rect.right-rect.left), (int)(rect.bottom-rect.top));
+			}
+			void D3D9RenderStateManager::setScissorTest(bool enable, const Apoc3D::Math::Rectangle* r)
+			{
+				if (enable)
+				{
+					RECT rect = { 
+						(LONG)r->X, 
+						(LONG)r->Y,
+						(LONG)r->getRight(),
+						(LONG)r->getBottom()
+					};
+					HRESULT hr = m_device->getDevice()->SetScissorRect(&rect);
+					assert(SUCCEEDED(hr));
+					hr = m_device->getDevice()->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+					assert(SUCCEEDED(hr));
+				}
+				else
+				{
+					HRESULT hr = m_device->getDevice()->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+					assert(SUCCEEDED(hr));
+				}
+			}
 
 		}
 	}

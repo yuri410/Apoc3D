@@ -69,6 +69,10 @@ namespace Apoc3D
 			String Name;
 			String Text;
 			
+			/** Specifies the position of the control in screen coordinate.
+				This coordinate is relative to owner containers. 
+				Except those have no owner or root containers.
+			*/
 			Point Position;
 			Point Size;
 
@@ -84,10 +88,18 @@ namespace Apoc3D
 			UIEventHandler& eventPress() { return m_eventMousePress; }
 			UIEventHandler& eventRelease() { return m_eventMouseRelease; }
 
+			Point GetAbsolutePosition() const;
+
 			/** Gets a bool indicating if the control is blocking its parent
 			*/
 			virtual bool IsOverriding() { return false; }
 
+			const Apoc3D::Math::Rectangle getAbsoluteArea() const
+			{
+				Point pos = GetAbsolutePosition();
+
+				return Apoc3D::Math::Rectangle(pos.X, pos.Y, Size.X, Size.Y);
+			}
 			const Apoc3D::Math::Rectangle getArea() const
 			{
 				return Apoc3D::Math::Rectangle(Position.X, Position.Y, Size.X, Size.Y);

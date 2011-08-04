@@ -19,13 +19,11 @@ namespace Apoc3D
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			Keyboard* keyb = InputAPIManager::getSingleton().getKeyboard();
 
-			Apoc3D::Math::Rectangle rect = getArea();
-			rect.X += m_owner->Position.X;
-			rect.Y += m_owner->Position.Y;
-
+			Apoc3D::Math::Rectangle rect = getAbsoluteArea();
+			
 			Point cursorPos = mouse->GetCurrentPosition();
 
-			if (m_owner && m_owner->getArea().Contains(rect) && rect.Contains(cursorPos))
+			if (m_owner && m_owner->getAbsoluteArea().Contains(rect) && rect.Contains(cursorPos))
 			{
 				if (!m_mouseOver)
 				{

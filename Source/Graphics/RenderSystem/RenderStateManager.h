@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Graphics\GraphicsCommon.h"
 #include "Math\Plane.h"
+#include "Math\Rectangle.h"
 
 using namespace Apoc3D::Math;
 
@@ -136,7 +137,13 @@ namespace Apoc3D
 				
 				virtual ClipPlane& getClipPlane(int i) = 0;
 				virtual int getClipPlaneCount() = 0;
-
+				/************************************************************************/
+				/* Scissor Test                                                         */
+				/************************************************************************/
+				virtual bool getScissorTestEnabled() = 0;
+				virtual Apoc3D::Math::Rectangle getScissorTestRect() = 0;
+				virtual void setScissorTest(bool enable, const Apoc3D::Math::Rectangle* rect) = 0;
+				
 			};
 		}
 	}

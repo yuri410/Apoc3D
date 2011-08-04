@@ -70,6 +70,8 @@ namespace Apoc3D
 				virtual void Draw(Texture* texture, int x, int y, uint color) = 0;
 				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color) = 0;
 				
+				virtual void Flush() = 0;
+
 				const Matrix& getTransform() const 
 				{
 					if (m_useStack)
