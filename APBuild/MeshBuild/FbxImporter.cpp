@@ -6,6 +6,7 @@
 #include "IOLib/MaterialData.h"
 #include "Utility/StringUtils.h"
 #include "Collections/ExistTable.h"
+#include "Graphics/Animation/AnimationData.h"
 
 using namespace Apoc3D::Utility;
 
@@ -867,7 +868,18 @@ namespace APBuild
 		return Color;
 	}
 
-	
+	FbxImporter::~FbxImporter()
+	{
+		for (int i=0;i<m_materials.getCount();i++)
+		{
+			delete m_materials[i];
+		}
+		for (int i=0;i<m_meshes.getCount();i++)
+		{
+			delete m_meshes[i];
+		}
+		delete m_pSkeleton;
+	}
 
 	struct FIVertex
 	{
@@ -996,8 +1008,11 @@ namespace APBuild
 		}
 	};
 
-	void FbxImporter::Import(const MeshBuildConfig& config, ModelData* modelData, AnimationData* animData)
+	void FbxImporter::Import(const MeshBuildConfig& config)
 	{
+		ModelData modelData;
+		AnimationData animData;
+
 		FbxImporter fbx;
 		fbx.Initialize(config.SrcFile);
 		
@@ -1235,7 +1250,7 @@ namespace APBuild
 				}
 				meshData->BoundingSphere.Radius = sqrtf(meshData->BoundingSphere.Radius);
 
-				modelData->Entities.Add(meshData);
+				modelData.Entities.Add(meshData);
 			}
 		}
 

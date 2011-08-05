@@ -212,6 +212,11 @@ namespace APBuild
 				{
 					delete m_ModelParts[i];
 				}
+				for (FastMap<string, AnimationKeyFrames*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
+				{
+					AnimationKeyFrames* akf = *e.getCurrentValue();
+					delete akf;
+				}
 			}
 
 			void AddVertex(MaterialData* pMaterial, const Vector3& vPosition, const Vector3& vNormal, const Vector2& vTexCoord, const BoneWeight& boneWeights)
@@ -343,6 +348,11 @@ namespace APBuild
 			}
 			~FISkeletonBone()
 			{
+				for (FastMap<string, AnimationKeyFrames*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
+				{
+					AnimationKeyFrames* akf = *e.getCurrentValue();
+					delete akf;
+				}
 				m_AnimationKeyFrames.Clear();
 			}
 
@@ -391,6 +401,10 @@ namespace APBuild
 			}
 			~FISkeleton()
 			{
+				for (int i=0;i<m_SkeletonBones.getCount();i++)
+				{
+					delete m_SkeletonBones[i];
+				}
 			}
 
 			void AddSkeletonBone(FISkeletonBone* pSkeletonBone)
@@ -505,9 +519,10 @@ namespace APBuild
 		{
 
 		}
+		~FbxImporter();
 		bool Initialize(const String& pFilename);
 		
-		static void Import(const MeshBuildConfig& config, ModelData* modelData, AnimationData* animData);
+		static void Import(const MeshBuildConfig& config);
 	};
 }
 #endif
