@@ -5,6 +5,7 @@
 #include "BuildConfig.h"
 #include "IOLib/MaterialData.h"
 #include "Utility/StringUtils.h"
+#include "Collections/ExistTable.h"
 
 using namespace Apoc3D::Utility;
 
@@ -552,7 +553,8 @@ namespace APBuild
 				mesh->AddVertex(pMaterial, ConvertVector3(fbxPosition),
 					ConvertVector3(fbxNormal),
 					GetTexCoord(pFBXMesh, 0, pi, pvi, nVertexIndex),
-					boneWeights[nVertexIndex]);
+					boneWeights[nVertexIndex]
+				);
 			}
 
 		}
@@ -865,47 +867,158 @@ namespace APBuild
 		return Color;
 	}
 
+	
+
+	struct FIVertex
+	{
+		float Position[3];
+		float Normal[3];
+		float TexCoords[4];
+		float BlendIndex[4];
+		float BlendWeight[4];
+
+		FIVertex()
+		{
+
+		}
+	};
+	class FIVertexEqualityComparer : public IEqualityComparer<FIVertex>
+	{
+	public:
+		virtual bool Equals(const FIVertex& x, const FIVertex& y) const
+		{
+			if (x.Position[0] != y.Position[0])
+				return false;
+			if (x.Position[1] != y.Position[1])
+				return false;
+			if (x.Position[2] != y.Position[2])
+				return false;
+
+			if (x.Normal[0] != y.Normal[0])
+				return false;
+			if (x.Normal[1] != y.Normal[1])
+				return false;
+			if (x.Normal[2] != y.Normal[2])
+				return false;
+
+			if (x.TexCoords[0] != y.TexCoords[0])
+				return false;
+			if (x.TexCoords[1] != y.TexCoords[1])
+				return false;
+			if (x.TexCoords[2] != y.TexCoords[2])
+				return false;
+			if (x.TexCoords[3] != y.TexCoords[3])
+				return false;
+
+
+			if (x.BlendIndex[0] != y.BlendIndex[0])
+				return false;
+			if (x.BlendIndex[1] != y.BlendIndex[1])
+				return false;
+			if (x.BlendIndex[2] != y.BlendIndex[2])
+				return false;
+			if (x.BlendIndex[3] != y.BlendIndex[3])
+				return false;
+
+			if (x.BlendWeight[0] != y.BlendWeight[0])
+				return false;
+			if (x.BlendWeight[1] != y.BlendWeight[1])
+				return false;
+			if (x.BlendWeight[2] != y.BlendWeight[2])
+				return false;
+			if (x.BlendWeight[3] != y.BlendWeight[3])
+				return false;
+
+			return true;
+		}
+
+		virtual int64 GetHashCode(const FIVertex& obj) const
+		{
+			const float* chPtr = reinterpret_cast<const float*>(&obj);
+			uint even = 0x15051505;
+			uint odd = even;
+			const uint* numPtr = reinterpret_cast<const uint*>(chPtr);
+			for (int i = sizeof(FIVertex); i > 0; i -= 8)
+			{
+				even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
+				if (i <= 3)
+				{
+					break;
+				}
+				odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ numPtr[1];
+				numPtr += (sizeof(wchar_t) * 4) / sizeof(uint);
+			}
+			return even + odd * 0x5d588b65;
+		}
+	};
+
 	void FbxImporter::Import(const MeshBuildConfig& config, ModelData* modelData, AnimationData* animData)
 	{
 		FbxImporter fbx;
 		fbx.Initialize(config.SrcFile);
 		
-		FastList<MaterialData*> materialData;
-		materialData.ResizeDiscard(fbx.m_materials.getCount());
-		bool* useTable = new bool[fbx.m_materials.getCount()];
-		memset(useTable, 0, sizeof(bool)*fbx.m_materials.getCount());
-		// material
-		{
-			for (FastMap<string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
-			{
-				FIMesh* mesh = *i.getCurrentValue();
-				const std::vector<FIMeshPart*>& parts = mesh->getParts();
-				for (size_t j=0;j<parts.size();j++)
-				{
-					int mtrlIndex = fbx.m_materials.IndexOf(parts[j]->GetMaterial());
-					assert(mtrlIndex>0);
-					useTable[mtrlIndex] = true;
-				}
-			}
-			for (int i=0;i<fbx.m_materials.getCount();i++)
-			{
-				if (useTable[i])
-					materialData.Add(fbx.m_materials[i]);
-			}
-		}
-
-		delete[] useTable;
-
 		// mesh
 		{
 			for (FastMap<string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
 			{
 				FIMesh* mesh = *i.getCurrentValue();
+				const std::vector<FIMeshPart*>& parts = mesh->getParts();
+				FastList<MaterialData*> materialData;
+				// materials
+				{
+					bool* useTable = new bool[fbx.m_materials.getCount()];
+					memset(useTable, 0, sizeof(bool)*fbx.m_materials.getCount());
+					
+					for (size_t j=0;j<parts.size();j++)
+					{
+						int mtrlIndex = fbx.m_materials.IndexOf(parts[j]->GetMaterial());
+						assert(mtrlIndex>0);
+						useTable[mtrlIndex] = true;
+					}
+					for (int j=0;j<fbx.m_materials.getCount();j++)
+					{
+						if (useTable[j])
+							materialData.Add(fbx.m_materials[j]);
+					}
 
+					delete[] useTable;
+				}
+
+				// should not merge mesh part here
+				int totalVertexCount=0;
+				bool use2TexCoords = false;
+				for (size_t j=0;j<parts.size();j++)
+				{
+					FIMeshPart* part= parts[j];
+					use2TexCoords |= !!part->getTexCoord1().size();
+					totalVertexCount+=(int32)part->getPosition().size();
+				}
+
+				MeshData* meshData = new MeshData();
+				int vtxCounter=0;
+				FIVertexEqualityComparer comparer;
+				ExistTable<FIVertex> vtxHashTable(totalVertexCount, &comparer);
+				FastList<FIVertex> vertexList(totalVertexCount);
+				meshData->Faces.ResizeDiscard(totalVertexCount/3);
+				
+				for (size_t j=0;j<parts.size();j++)
+				{
+					FIMeshPart* part= parts[j];
+					std::vector<Vector3> Positions = part->getPosition();
+					std::vector<Vector3> Normals = part->getNormal();
+					std::vector<Vector2> TexCoord0 = part->getTexCoord0();
+					std::vector<Vector2> TexCoord1 = part->getTexCoord1();
+					std::vector<BoneWeight> BoneWeights = part->getBoneWeights();
+					
+				}
+				modelData->Entities.Add(meshData);
 			}
 		}
 
 		
 		// animation
+		{
+
+		}
 	}
 }

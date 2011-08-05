@@ -60,27 +60,20 @@ namespace APBuild
 		GlyphBitmap(int width, int height, const char* data)
 			: Width(width), Height(height), PixelData(data)
 		{
-			//int h = width ^ height;
-			//for (int i=0;i<width*height;i++)
-			//{
-			//	h = h << 4;
-			//	h = data[i] ^ h;
-			//}
-			//HashCode = h;
-			int even = 0x15051505;
-			int odd = even;
-			const short* numPtr = reinterpret_cast<const short*>(data);
-			for (int i = width*height; i > 0; i -= 2)
+			uint even = 0x15051505;
+			uint odd = even;
+			const uint* numPtr = reinterpret_cast<const uint*>(data);
+			for (int i = width*height; i > 0; i -= 8)
 			{
 				even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
-				if (i < 2)
+				if (i < 8)
 				{
 					break;
 				}
 				odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ numPtr[1];
-				numPtr ++;
+				numPtr += (sizeof(wchar_t) * 4) / sizeof(uint);
 			}
-			HashCode = even + odd * 0x5d588b65;
+			HashCode = (int)( even + odd * 0x5d588b65);
 		}
 
 		friend bool operator ==(const GlyphBitmap& x, const GlyphBitmap& y)

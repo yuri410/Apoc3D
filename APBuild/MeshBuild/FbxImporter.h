@@ -87,6 +87,25 @@ namespace APBuild
 				if( !passed )
 					BoneWeights.push_back(std::make_pair(boneIndex,boneWeight));
 			}
+
+			Vector4 GetBlendIndex() const
+			{
+				float v[4] = {0};
+				for (size_t i=0;i<BoneWeights.size();i++)
+				{
+					v[i] = static_cast<float>( BoneWeights[i].first);
+				}
+				return Vector4Utils::LDVectorPtr(v);
+			}
+			Vector4 GetBlendWeight() const
+			{
+				float v[4] = {0};
+				for (size_t i=0;i<BoneWeights.size();i++)
+				{
+					v[i] = BoneWeights[i].second;
+				}
+				return Vector4Utils::LDVectorPtr(v);
+			}
 		};
 
 		class FIMesh;
@@ -101,7 +120,8 @@ namespace APBuild
 		private:
 			std::vector<Vector3> m_Positions;
 			std::vector<Vector3> m_Normals;
-			std::vector<Vector2> m_TexCoords;
+			std::vector<Vector2> m_TexCoord0;
+			std::vector<Vector2> m_TexCoord1;
 			std::vector<uint32> m_VertexIndices;
 			std::vector<BoneWeight> m_BoneWeights;
 			MaterialData* m_pMaterial;
@@ -125,7 +145,20 @@ namespace APBuild
 			{
 				m_Positions.push_back(vPosition);
 				m_Normals.push_back(vNormal);
-				m_TexCoords.push_back(vTexCoord);
+				m_TexCoord0.push_back(vTexCoord);
+				m_BoneWeights.push_back(boneWeights);
+
+				m_VertexIndices.push_back(m_VertexIndices.size());
+				if (boneWeights.BoneWeights.size())
+					m_bSkinnedModel = true;
+			}
+			void AddVertex(const Vector3& vPosition, const Vector3& vNormal, const Vector2& vTexCoord0, const Vector2& vTexCoord1,
+				const BoneWeight& boneWeights)
+			{
+				m_Positions.push_back(vPosition);
+				m_Normals.push_back(vNormal);
+				m_TexCoord0.push_back(vTexCoord0);
+				m_TexCoord1.push_back(vTexCoord1);
 				m_BoneWeights.push_back(boneWeights);
 
 				m_VertexIndices.push_back(m_VertexIndices.size());
@@ -137,8 +170,14 @@ namespace APBuild
 
 			}
 
-			inline MaterialData* GetMaterial() { return m_pMaterial; }
-
+			bool IsSkinnedModel() const { return m_bSkinnedModel; }
+			inline MaterialData* GetMaterial() const { return m_pMaterial; }
+			const std::vector<Vector3>& getPosition() const { return m_Positions; }
+			const std::vector<Vector3>& getNormal() const { return m_Normals; }
+			const std::vector<Vector2>& getTexCoord0() const { return m_TexCoord0; }
+			const std::vector<Vector2>& getTexCoord1() const { return m_TexCoord1; }
+			const std::vector<uint32>& getVertexIndices() const { return m_VertexIndices; }
+			const std::vector<BoneWeight>& getBoneWeights() const { return m_BoneWeights; }
 			//void InitializeDeviceObjects(ID3D10Device* pd3dDevice);
 			//void ReleaseDeviceObjects();
 
@@ -193,6 +232,27 @@ namespace APBuild
 				{
 					FIMeshPart* pModelPart = new FIMeshPart(this, pMaterial);
 					pModelPart->AddVertex(vPosition, vNormal, vTexCoord, boneWeights);
+					m_ModelParts.push_back(pModelPart);
+				}
+			}
+			void AddVertex(MaterialData* pMaterial, const Vector3& vPosition, const Vector3& vNormal, const Vector2& vTexCoord0, const Vector2& vTexCoord1, const BoneWeight& boneWeights)
+			{
+				bool bNewMaterial = true;
+
+				for( size_t i = 0; i < m_ModelParts.size(); ++i )
+				{
+					FIMeshPart* pModelPart = m_ModelParts[i];
+					if( pMaterial == pModelPart->GetMaterial() )
+					{
+						pModelPart->AddVertex(vPosition, vNormal, vTexCoord0, vTexCoord1, boneWeights);
+						bNewMaterial = false;
+					}
+				}
+
+				if( bNewMaterial )
+				{
+					FIMeshPart* pModelPart = new FIMeshPart(this, pMaterial);
+					pModelPart->AddVertex(vPosition, vNormal, vTexCoord0, vTexCoord1, boneWeights);
 					m_ModelParts.push_back(pModelPart);
 				}
 			}
