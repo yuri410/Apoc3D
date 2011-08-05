@@ -133,10 +133,14 @@ namespace Apoc3D
 					for (int bone = 1; bone < getTransformCount(); bone++)
 					{
 						const Bone& b = m_bones->operator[](bone);
+						const Matrix& matAnimation = m_boneTransforms[bone];
 						// TODO: QuaternionKeyframe slerp
 						int parentBone = b.Parent;
 
-						Matrix::Multiply(m_worldTransforms[bone], m_boneTransforms[bone], m_worldTransforms[parentBone]);
+						if (parentBone<0)
+							m_worldTransforms[bone] = matAnimation;
+						else
+							Matrix::Multiply(m_worldTransforms[bone], matAnimation, m_worldTransforms[parentBone]);
 
 						Matrix tmp;
 						Matrix::Multiply(tmp, 

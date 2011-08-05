@@ -26,12 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define AIIMPORTER_H
 
 #include "APBCommon.h"
-#include "Collections/FastList.h"
-#include "Collections/FastMap.h"
-#include "Math/Matrix.h"
-#include "IOLib/MaterialData.h"
-#include "Graphics/Animation/AnimationTypes.h"
-#include "BuildConfig.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;

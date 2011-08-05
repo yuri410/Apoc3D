@@ -1579,32 +1579,48 @@ LFail:
 		{
 			DXTex tex(config.AssembleCubemap ? TT_CubeTexture : TT_Texture3D, config.DestinationFile,
 				config.NewWidth, config.NewHeight, config.NewDepth, config.NewFormat);
+
+			if (tex.isError())
+				return;
+
 			if (config.AssembleCubemap)
 			{
 				tex.AssembleCubeMap(config.SubMapTable, &config.SubAlphaMapTable);
+				if (tex.isError())
+					return;
+
 			}
 			else
 			{
 				tex.AssembleVolumeMap(config.SubMapTable, &config.SubAlphaMapTable);
+				if (tex.isError())
+					return;
 			}
-
-
 		}
 		else
 		{
 			DXTex tex(config.SourceFile);
+			if (tex.isError())
+				return;
 
 			if (config.Resize)
 			{
 				tex.Resize(config.NewWidth, config.NewHeight);
+				if (tex.isError())
+					return;
 			}
 			if (config.GenerateMipmaps)
 			{
 				tex.GenerateMipMaps();
+				if (tex.isError())
+					return;
 			}
 			if (config.NewFormat != FMT_Unknown)
 			{
 				tex.Compress(ConvertFormat(config.NewFormat));
+				if (tex.isError())
+					return;
+				
 			}
 
 
@@ -1716,6 +1732,11 @@ LFail:
 	}
 	void TextureBuild::BuildByDevIL(const TextureBuildConfig& config)
 	{
+		if (config.AssembleCubemap || config.AssembleVolumeMap)
+		{
+			CompileLog::WriteError(L"Building with DevIL currently does not support assembling textures.", config.SourceFile);
+			return;
+		}
 		int image = ilGenImage();
 
 		ilBindImage(image);
@@ -1922,7 +1943,16 @@ LFail:
 		{
 			CompileLog::WriteInformation(config.SourceFile, L">");
 
-			BuildByDevIL(config);
+			switch (config.Method)
+			{
+			case TEXBUILD_D3D:
+				BuildByD3D(config);
+				break;
+			case TEXBUILD_Devil:
+				BuildByDevIL(config);
+				break;
+			}
+			
 		}
 	}
 }

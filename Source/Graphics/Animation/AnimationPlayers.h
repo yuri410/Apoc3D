@@ -260,6 +260,7 @@ namespace Apoc3D
 				Matrix* m_worldTransforms;
 				Matrix* m_skinTransforms;
 
+				bool m_useQuaternionInterpolation;
 				const FastList<Bone>* m_bones;
 				//const FastList<Matrix>* m_inverseBindPose;
 				//const FastList<int32>* m_skeletonHierarchy;
@@ -288,8 +289,8 @@ namespace Apoc3D
 				*/
 				virtual void OnUpdate();
 			public:
-				SkinnedAnimationPlayer(const FastList<Bone>* bones)
-					: m_bones(bones), 
+				SkinnedAnimationPlayer(const FastList<Bone>* bones, bool useQuaternionSlerp = false)
+					: m_bones(bones), m_useQuaternionInterpolation(useQuaternionSlerp),
 					m_isFirstPlay(true)
 				{
 					m_boneTransforms = new Matrix[bones->getCount()];

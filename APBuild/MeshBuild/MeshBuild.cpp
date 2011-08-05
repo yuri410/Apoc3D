@@ -15,6 +15,25 @@ using namespace Apoc3D::Graphics;
 
 namespace APBuild
 {
+	void MeshBuild::BuildByFBX(const MeshBuildConfig& config)
+	{
+
+	}
+	void MeshBuild::BuildByASS(const MeshBuildConfig& config)
+	{
+		AIImporter importer;
+		ModelData* data = importer.Import(config);
+
+		FileOutStream* fs = new FileOutStream(config.DstFile);
+
+		data->Save(fs);
+
+
+		delete data;
+
+		CompileLog::WriteInformation(config.SrcFile, L">");
+	}
+
 	void MeshBuild::Build(const ConfigurationSection* sect)
 	{
 		MeshBuildConfig config;
@@ -26,17 +45,14 @@ namespace APBuild
 			return;
 		}
 
-		AIImporter importer;
-		ModelData* data = importer.Import(config);
-		
-		FileOutStream* fs = new FileOutStream(config.DstFile);
-
-		data->Save(fs);
-
-
-		delete data;
-
-		CompileLog::WriteInformation(config.SrcFile, L">");
-
+		switch (config.Method)
+		{
+		case MESHBUILD_ASS:
+			BuildByASS(config);
+			break;
+		case MESHBUILD_FBX:
+			BuildByFBX(config);
+			break;
+		}
 	}
 }

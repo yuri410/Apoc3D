@@ -225,6 +225,7 @@ namespace Apoc3D
 
 		class MeshData;
 		class ModelData;
+		class MaterialData;
 	};
 	namespace Input
 	{

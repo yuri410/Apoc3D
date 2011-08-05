@@ -38,6 +38,23 @@ namespace APBuild
 {
 	void TextureBuildConfig::Parse(const ConfigurationSection* sect)
 	{
+		String method = L"d3d";
+		sect->tryGetAttribute(L"Method", method);
+		StringUtils::ToLowerCase(method);
+
+		if (method == L"d3d")
+		{
+			Method = TEXBUILD_D3D;
+		}
+		else if (method == L"devil")
+		{
+			Method = TEXBUILD_Devil;
+		}
+		else if (method == L"default")
+		{
+			Method = TEXBUILD_BuiltIn;
+		}
+
 		String assembleType;
 		if (!sect->tryGetAttribute(L"Assemble", assembleType))
 		{
@@ -107,7 +124,7 @@ namespace APBuild
 				}
 				
 			}
-
+			
 		}
 
 		DestinationFile = sect->getAttribute(L"DestinationFile");
@@ -237,7 +254,20 @@ namespace APBuild
 	{
 		SrcFile = sect->getAttribute(L"SourceFile");
 		DstFile = sect->getAttribute(L"DestinationFile");
+		sect->tryGetAttribute(L"DestinationAnimFile", DstAnimationFile);
 
+		String method = L"ass";
+		sect->tryGetAttribute(L"Method", method);
+		StringUtils::ToLowerCase(method);
+
+		if (method == L"ass")
+		{
+			Method = MESHBUILD_ASS;
+		}
+		else if (method == L"fbx")
+		{
+			Method = MESHBUILD_FBX;
+		}
 	}
 	
 }

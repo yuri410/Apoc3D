@@ -43,7 +43,12 @@ namespace APBuild
 		TFLT_Box,
 		TFLT_BSpline
 	};
-
+	enum TextureBuildMethod
+	{
+		TEXBUILD_D3D,
+		TEXBUILD_Devil,
+		TEXBUILD_BuiltIn
+	};
 	struct TextureBuildConfig 
 	{
 		String SourceFile;
@@ -61,6 +66,8 @@ namespace APBuild
 
 		FastMap<uint, String> SubMapTable;
 		FastMap<uint, String> SubAlphaMapTable;
+
+		TextureBuildMethod Method;
 
 		void Parse(const ConfigurationSection* sect);
 	};
@@ -106,10 +113,20 @@ namespace APBuild
 
 		void Parse(const ConfigurationSection* sect);
 	};
+
+	enum MeshBuildMethod
+	{
+		MESHBUILD_ASS,
+		MESHBUILD_FBX
+	};
+
 	struct MeshBuildConfig
 	{
 		String SrcFile;
 		String DstFile;
+		String DstAnimationFile;
+
+		MeshBuildMethod Method;
 
 		void Parse(const ConfigurationSection* sect);
 		

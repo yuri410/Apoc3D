@@ -28,6 +28,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <assimp/include/aiPostProcess.h>
 #include <assimp/include/aiScene.h>
 
+#include "Collections/FastList.h"
+#include "Collections/FastMap.h"
+#include "Math/Matrix.h"
+#include "BuildConfig.h"
+#include "Graphics/Animation/AnimationTypes.h"
+#include "IOLib/MaterialData.h"
 #include "IOLib/ModelData.h"
 #include "Graphics/Animation/AnimationData.h"
 #include "IOLib/Streams.h"

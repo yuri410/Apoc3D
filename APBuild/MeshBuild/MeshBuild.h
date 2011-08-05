@@ -10,6 +10,9 @@ namespace APBuild
 {
 	class MeshBuild
 	{
+	private:
+		static void BuildByASS(const MeshBuildConfig& config);
+		static void BuildByFBX(const MeshBuildConfig& config);
 	public:
 		static void Build(const ConfigurationSection* sect);
 	};

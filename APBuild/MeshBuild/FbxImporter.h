@@ -9,10 +9,11 @@
 #include "Collections/FastList.h"
 #include "Collections/FastMap.h"
 #include "Math/Matrix.h"
-#include "IOLib/MaterialData.h"
 #include "Graphics/Animation/AnimationTypes.h"
+#include "Utility/StringUtils.h"
 
 #define MAXBONES_PER_VERTEX 4
+
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;
@@ -20,6 +21,8 @@ using namespace Apoc3D::Math;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Graphics::Animation;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Utility;
 
 namespace APBuild
 {
@@ -220,6 +223,10 @@ namespace APBuild
 			const std::string& GetName() const { return m_strName; }
 		};
 
+		/** Defines an period of animation for one bone or mesh part.
+			If the animation is skeleton animation, the bone uses the keyframes when playing.
+			Otherwise the keyframes are the transform of a mesh part.
+		*/
 		class AnimationKeyFrames
 		{
 		protected:
@@ -294,13 +301,13 @@ namespace APBuild
 				return 0;
 			}
 
-			const Matrix& GetBindPoseTransform()			{ return m_matBindPoseTransform; }
-			const Matrix& GetInvBindPoseTransform()			{ return m_matInvBindPoseTransform; }
-			const Matrix& GetBoneReferenceTransform()		{ return m_matBoneReferenceTransform; }
-			const Matrix& GetInvBoneReferenceTransform()	{ return m_matInvBoneReferenceTransform; }
+			const Matrix& GetBindPoseTransform() const { return m_matBindPoseTransform; }
+			const Matrix& GetInvBindPoseTransform()	const { return m_matInvBindPoseTransform; }
+			const Matrix& GetBoneReferenceTransform() const { return m_matBoneReferenceTransform; }
+			const Matrix& GetInvBoneReferenceTransform() const { return m_matInvBoneReferenceTransform; }
 
-			const std::string& GetName() const				{ return m_strName; }
-			int GetParentBoneIndex() const					{ return m_nParentBoneIndex; }
+			const std::string& GetName() const { return m_strName; }
+			int GetParentBoneIndex() const { return m_nParentBoneIndex; }
 		};
 		class FISkeleton
 		{
@@ -353,9 +360,26 @@ namespace APBuild
 			//Matrix* GetSkinTransforms() { return m_SkinTransforms; }
 			int GetBoneCount() const 	{ return m_SkeletonBones.getCount(); }
 
-			void Flatten(FastList<Bone> bones)
+			
+			void FlattenBones(FastList<Bone>& bones)
 			{
+				for (int i=0;i<m_SkeletonBones.getCount();i++)
+				{
+					Bone bone(i);
+					bone.Parent = m_SkeletonBones[i]->GetParentBoneIndex();
+					bone.setBindPoseTransform(m_SkeletonBones[i]->GetBindPoseTransform());
+					bone.setBoneReferenceTransform(m_SkeletonBones[i]->GetBoneReferenceTransform());
+					bone.Name = StringUtils::toWString(m_SkeletonBones[i]->GetName());
+					bones.Add(bone);
+				}
 
+				for (int i=0;i<bones.getCount();i++)
+				{
+					if (bones[i].Parent != -1)
+					{
+						bones[bones[i].Parent].Children.Add(i);
+					}
+				}
 			}
 
 			//void UpdateAnimation(CBTTAnimationController* pAnimationController);
@@ -364,9 +388,13 @@ namespace APBuild
 		KFbxSdkManager* m_pFBXSdkManager;
 		KFbxScene* m_pFBXScene;
 
+		/** One to one mapping to m_materials. 
+			Used to find corresponding MaterialData from KFbxSurfaceMaterial or back.
+		*/
 		FastList<KFbxSurfaceMaterial*> m_FBXMaterials;
 		FastList<MaterialData*> m_materials;
-		//FastList<MeshData*> m_meshes;
+		
+
 		FastMap<string, FIMesh*> m_meshes;
 		FISkeleton* m_pSkeleton;
 
@@ -407,7 +435,7 @@ namespace APBuild
 		}
 		bool Initialize(const String& pFilename);
 		
-	
+		ModelData* Import(const MeshBuildConfig& config);
 	};
 }
 #endif

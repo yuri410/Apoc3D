@@ -3,6 +3,7 @@
 #include "CompileLog.h"
 #include "IOLib/ModelData.h"
 
+#include "IOLib/MaterialData.h"
 #include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
@@ -859,5 +860,10 @@ namespace APBuild
 			}
 		}
 		return Color;
+	}
+
+	ModelData* FbxImporter::Import(const MeshBuildConfig& config)
+	{
+		return 0;
 	}
 }
