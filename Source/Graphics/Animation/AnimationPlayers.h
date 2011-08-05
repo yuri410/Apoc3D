@@ -162,7 +162,7 @@ namespace Apoc3D
 			};
 
 			/** The animation player contains a single transformation that is used to move/position/scale
-				something.
+				something. all meshes use the same animation.
 			*/
 			class APAPI RootAnimationPlayer : public ModelAnimationPlayerBase
 			{
@@ -219,7 +219,7 @@ namespace Apoc3D
 				*/
 				virtual void SetKeyframe(const ModelKeyframe& keyframe)
 				{
-					m_meshTransforms[keyframe.getBone()] = keyframe.getTransform();
+					m_meshTransforms[keyframe.getObjectIndex()] = keyframe.getTransform();
 				}
 			public:
 				/** Create a new rigid animation player
@@ -245,6 +245,7 @@ namespace Apoc3D
 					if (meshID !=-1)
 					{
 						result = m_meshTransforms[meshID];
+						return;
 					}
 					result.LoadIdentity();
 				}
@@ -329,7 +330,7 @@ namespace Apoc3D
 				}
 			};
 
-			class APAPI MixedAnimationPlayer
+			class APAPI MixedAnimationPlayer : public SkinnedAnimationPlayer
 			{
 
 			};

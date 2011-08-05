@@ -96,7 +96,7 @@ namespace Apoc3D
 
 
 
-			/** Describes the position of a single bone at a single point in time.
+			/** Describes the position of a single animated object(bone, mesh) at a single point in time.
 				The build engine will flatten the animation frames, each keyframe here
 				only represents one transform for one entity(bone, mesh) at a specific time.
 				Unlike regular keyframe definition, each keyframe have multiple transformation

@@ -445,7 +445,7 @@ namespace APBuild
 		}
 		bool Initialize(const String& pFilename);
 		
-		ModelData* Import(const MeshBuildConfig& config);
+		static void Import(const MeshBuildConfig& config, ModelData* modelData, AnimationData* animData);
 	};
 }
 #endif

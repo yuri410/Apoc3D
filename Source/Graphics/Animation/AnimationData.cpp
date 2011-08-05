@@ -451,7 +451,7 @@ namespace Apoc3D
 
 						for (int32 i = 0; i < keyFrames.getCount(); i++)
 						{
-							bw->Write(keyFrames[i].getBone());
+							bw->Write(keyFrames[i].getObjectIndex());
 							bw->Write(static_cast<double>(keyFrames[i].getTime()));
 							bw->Write(keyFrames[i].getTransform());
 						}
@@ -476,7 +476,7 @@ namespace Apoc3D
 
 						for (int i = 0; i < keyFrames.getCount(); i++)
 						{
-							bw->Write(keyFrames[i].getBone());
+							bw->Write(keyFrames[i].getObjectIndex());
 							bw->Write(static_cast<double>(keyFrames[i].getTime()));
 							bw->Write(keyFrames[i].getTransform());
 						}

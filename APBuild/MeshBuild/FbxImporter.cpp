@@ -2,7 +2,7 @@
 
 #include "CompileLog.h"
 #include "IOLib/ModelData.h"
-
+#include "BuildConfig.h"
 #include "IOLib/MaterialData.h"
 #include "Utility/StringUtils.h"
 
@@ -865,8 +865,32 @@ namespace APBuild
 		return Color;
 	}
 
-	ModelData* FbxImporter::Import(const MeshBuildConfig& config)
+	void FbxImporter::Import(const MeshBuildConfig& config, ModelData* modelData, AnimationData* animData)
 	{
-		return 0;
+		FbxImporter fbx;
+		fbx.Initialize(config.SrcFile);
+		
+		FastList<MaterialData*> materialData;
+		materialData.ResizeDiscard(fbx.m_materials.getCount());
+		bool* useTable = new bool[fbx.m_materials.getCount()];
+
+		// material
+		{
+			for (FastMap<string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
+			{
+				FIMesh* mesh = *i.getCurrentValue();
+					
+			}
+		}
+
+		delete[] useTable;
+
+		// mesh
+		{
+
+		}
+
+		
+		// animation
 	}
 }
