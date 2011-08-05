@@ -427,6 +427,9 @@ namespace APBuild
 
 					ProcessAnimation(pRootNode, takeName->Buffer(), fFrameRate, fStart, fStop);
 
+					
+
+
 					//m_pAnimationController->SetCurrentAnimation(0);
 					//m_pAnimationController->Play();
 				}

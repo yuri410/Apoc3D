@@ -106,14 +106,15 @@ namespace Apoc3D
 			class APAPI ModelKeyframe
 			{
 			private:
-				int32 m_bone;
+				int32 m_nextFrameIndex;
+				int32 m_objIndex;
 				float m_time;
 				Matrix m_transform;
-
+				
 			public:
-				/** Gets the index of the target bone(skinned) or model entity(rigid) that is animated by this keyframe.
+				/** Gets the index of the target bone(skinned) or mesh(rigid) that is animated by this keyframe.
 				*/
-				int32 getBone() const { return m_bone; }
+				int32 getObjectIndex() const { return m_objIndex; }
 
 				/** Gets the time offset from the start of the animation to this keyframe.
 				*/
@@ -123,13 +124,27 @@ namespace Apoc3D
 				*/
 				const Matrix& getTransform() const { return m_transform; }
 
-				ModelKeyframe(int32 bone, float time, const Matrix& transform)
-					: m_bone(bone), m_time(time), m_transform(transform)
+				/** Gets the next frame index of the animation for this animated object. 
+					The value can be used for interpolation between frames.
+					A value of -1 means the player cannot use interpolation for this object right now.
+				*/
+				int32 getNextFrameIndex() const
+				{
+					return m_nextFrameIndex;
+				}
+
+				ModelKeyframe(int32 index, float time, const Matrix& transform)
+					: m_objIndex(index), m_time(time), m_transform(transform), m_nextFrameIndex(-1)
 				{
 
 				}
 				ModelKeyframe() { }
 				~ModelKeyframe() { }
+
+				void setNextFrameIndex(int32 idx)
+				{
+					m_nextFrameIndex = idx;
+				}
 			};
 
 			/** Describes the material frame at a single point in time.

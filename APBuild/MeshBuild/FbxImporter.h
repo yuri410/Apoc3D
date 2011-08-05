@@ -92,6 +92,10 @@ namespace APBuild
 		class FIMesh;
 		class AnimationKeyFrames;
 
+		/** A FBX importer mesh part has its own vertex data.
+			It does not have index.
+			The process of producing final result should generate indices and reduce duplicated vertices.
+		*/
 		class FIMeshPart
 		{
 		private:
@@ -140,6 +144,8 @@ namespace APBuild
 
 		};
 
+		/** 
+		*/
 		class FIMesh
 		{
 		private:
@@ -190,6 +196,8 @@ namespace APBuild
 				}
 			}
 
+			/** Obsolete. Actually do nothing.
+			*/
 			void FinishAndOptimize()
 			{
 				//for( int i = 0; i < m_ModelParts.GetSize(); ++i )
@@ -225,7 +233,7 @@ namespace APBuild
 
 		/** Defines an period of animation for one bone or mesh part.
 			If the animation is skeleton animation, the bone uses the keyframes when playing.
-			Otherwise the keyframes are the transform of a mesh part.
+			Otherwise the keyframes are used as transform of a mesh part.
 		*/
 		class AnimationKeyFrames
 		{
@@ -406,6 +414,8 @@ namespace APBuild
 		void ProcessScene(KFbxScene* pScene);
 		void ProcessMaterials(KFbxScene* pScene);
 		void ProcessAnimations(KFbxScene* pScene);
+		/** Recursively process all the animation of a specified node and all its children. 
+		*/
 		void ProcessAnimation(KFbxNode* pNode, const char* strTakeName, float fFrameRate, float fStart, float fStop);
 		void ProcessNode(KFbxNode* pNode, KFbxNodeAttribute::EAttributeType attributeType);
 		void ProcessSkeleton(KFbxNode* pNode);

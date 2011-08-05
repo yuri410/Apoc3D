@@ -204,47 +204,47 @@ namespace Apoc3D
 			private:
 				/** This is an array of the transforms to each object in the model
 				*/
-				Matrix* m_boneTransforms;
-				int32 m_boneTransformCount;
+				Matrix* m_meshTransforms;
+				int32 m_meshTransformCount;
 
 				/** Initializes all the bone transforms to the identity
 				*/
 				virtual void InitClip()
 				{
-					for (int i=0;i<m_boneTransformCount;i++)
-						m_boneTransforms[i].LoadIdentity();
+					for (int i=0;i<m_meshTransformCount;i++)
+						m_meshTransforms[i].LoadIdentity();
 				}
 
 				/** Sets the key frame for a bone to a transform
 				*/
 				virtual void SetKeyframe(const ModelKeyframe& keyframe)
 				{
-					m_boneTransforms[keyframe.getBone()] = keyframe.getTransform();
+					m_meshTransforms[keyframe.getBone()] = keyframe.getTransform();
 				}
 			public:
 				/** Create a new rigid animation player
 				*/
 				RigidAnimationPlayer(int count)
-					: m_boneTransformCount(count)
+					: m_meshTransformCount(count)
 				{
-					m_boneTransforms = new Matrix[count];
+					m_meshTransforms = new Matrix[count];
 				}
 				~RigidAnimationPlayer()
 				{
-					delete[] m_boneTransforms;
+					delete[] m_meshTransforms;
 				}
 
-				/** Gets the current bone transform matrices for the animation
+				/** Gets the current mesh transform matrices for the animation
 				*/
-				const Matrix* GetBoneTransforms() const { return m_boneTransforms; }
+				const Matrix* GetMeshTransforms() const { return m_meshTransforms; }
 
-				int32 getBoneTransformCount() const { return m_boneTransformCount; }
+				int32 getMeshTransformCount() const { return m_meshTransformCount; }
 
-				virtual void GetTransform(int boneID, Matrix& result)
+				virtual void GetTransform(int meshID, Matrix& result)
 				{
-					if (boneID !=-1)
+					if (meshID !=-1)
 					{
-						result = m_boneTransforms[boneID];
+						result = m_meshTransforms[meshID];
 					}
 					result.LoadIdentity();
 				}
@@ -327,6 +327,11 @@ namespace Apoc3D
 				{
 					result.LoadIdentity();
 				}
+			};
+
+			class APAPI MixedAnimationPlayer
+			{
+
 			};
 
 			/**
