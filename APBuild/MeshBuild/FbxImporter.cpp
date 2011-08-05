@@ -873,13 +873,24 @@ namespace APBuild
 		FastList<MaterialData*> materialData;
 		materialData.ResizeDiscard(fbx.m_materials.getCount());
 		bool* useTable = new bool[fbx.m_materials.getCount()];
-
+		memset(useTable, 0, sizeof(bool)*fbx.m_materials.getCount());
 		// material
 		{
 			for (FastMap<string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
 			{
 				FIMesh* mesh = *i.getCurrentValue();
-					
+				const std::vector<FIMeshPart*>& parts = mesh->getParts();
+				for (size_t j=0;j<parts.size();j++)
+				{
+					int mtrlIndex = fbx.m_materials.IndexOf(parts[j]->GetMaterial());
+					assert(mtrlIndex>0);
+					useTable[mtrlIndex] = true;
+				}
+			}
+			for (int i=0;i<fbx.m_materials.getCount();i++)
+			{
+				if (useTable[i])
+					materialData.Add(fbx.m_materials[i]);
 			}
 		}
 
@@ -887,7 +898,11 @@ namespace APBuild
 
 		// mesh
 		{
+			for (FastMap<string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
+			{
+				FIMesh* mesh = *i.getCurrentValue();
 
+			}
 		}
 
 		

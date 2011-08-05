@@ -159,6 +159,7 @@ namespace APBuild
 			Matrix m_matGeometricOffset;
 			Matrix m_matAnimationTransform;
 		public:
+			
 			FIMesh(const std::string& strName)
 				: m_strName(strName)
 			{
@@ -227,6 +228,7 @@ namespace APBuild
 			const Matrix& GetAbsoluteTransform() const { return m_matAbsoluteTransform; }
 			const Matrix& GetGeometricOffset() const	{ return m_matGeometricOffset; }
 			const Matrix& GetAnimationTransform() const { return m_matAnimationTransform; }
+			const std::vector<FIMeshPart*>& getParts() const { return m_ModelParts; }
 
 			const std::string& GetName() const { return m_strName; }
 		};
