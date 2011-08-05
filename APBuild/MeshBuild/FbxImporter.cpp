@@ -877,11 +877,55 @@ namespace APBuild
 		float BlendIndex[4];
 		float BlendWeight[4];
 
-		FIVertex()
+		FIVertex(){}
+		FIVertex(Vector3 pos, Vector3 n, Vector2 t1, Vector2 t2, Vector4 bi, Vector4 bw)
 		{
+			Position[0] = _V3X(pos);
+			Position[1] = _V3Y(pos);
+			Position[2] = _V3Z(pos);
 
+			Normal[0] = _V3X(n); Normal[1] = _V3Y(n); Normal[2] = _V3Z(n);
+
+			TexCoords[0] = Vector2Utils::GetX(t1);
+			TexCoords[1] = Vector2Utils::GetY(t1);
+			TexCoords[2] = Vector2Utils::GetX(t2);
+			TexCoords[3] = Vector2Utils::GetY(t2);
+
+			BlendIndex[0] = Vector4Utils::GetX(bi);
+			BlendIndex[1] = Vector4Utils::GetY(bi);
+			BlendIndex[2] = Vector4Utils::GetZ(bi);
+			BlendIndex[3] = Vector4Utils::GetW(bi);
+
+
+			BlendWeight[0] = Vector4Utils::GetX(bw);
+			BlendWeight[1] = Vector4Utils::GetY(bw);
+			BlendWeight[2] = Vector4Utils::GetZ(bw);
+			BlendWeight[3] = Vector4Utils::GetW(bw);
+		}
+		FIVertex(Vector3 pos, Vector3 n, Vector2 t1, Vector4 bi, Vector4 bw)
+		{
+			Position[0] = _V3X(pos);
+			Position[1] = _V3Y(pos);
+			Position[2] = _V3Z(pos);
+
+			Normal[0] = _V3X(n); Normal[1] = _V3Y(n); Normal[2] = _V3Z(n);
+
+			TexCoords[0] = Vector2Utils::GetX(t1);
+			TexCoords[1] = Vector2Utils::GetY(t1);
+			TexCoords[2] = TexCoords[3] = 0;
+
+			BlendIndex[0] = Vector4Utils::GetX(bi);
+			BlendIndex[1] = Vector4Utils::GetY(bi);
+			BlendIndex[2] = Vector4Utils::GetZ(bi);
+			BlendIndex[3] = Vector4Utils::GetW(bi);
+
+			BlendWeight[0] = Vector4Utils::GetX(bw);
+			BlendWeight[1] = Vector4Utils::GetY(bw);
+			BlendWeight[2] = Vector4Utils::GetZ(bw);
+			BlendWeight[3] = Vector4Utils::GetW(bw);
 		}
 	};
+
 	class FIVertexEqualityComparer : public IEqualityComparer<FIVertex>
 	{
 	public:
@@ -987,30 +1031,210 @@ namespace APBuild
 				// should not merge mesh part here
 				int totalVertexCount=0;
 				bool use2TexCoords = false;
+				bool useSkinnedFormat = false;
 				for (size_t j=0;j<parts.size();j++)
 				{
 					FIMeshPart* part= parts[j];
 					use2TexCoords |= !!part->getTexCoord1().size();
 					totalVertexCount+=(int32)part->getPosition().size();
+					useSkinnedFormat |= part->IsSkinnedModel();
 				}
+				
+				
 
 				MeshData* meshData = new MeshData();
-				int vtxCounter=0;
+				// add materials
+				{
+					for (int j=0;j<materialData.getCount();j++)
+					{
+						meshData->Materials.Add(*materialData[j]);
+					}
+				}
+				meshData->Name = StringUtils::toWString(mesh->GetName());
+				meshData->BoundingSphere.Center = Vector3Utils::Zero;
+				meshData->BoundingSphere.Radius = 0;
+
+				// duplicated vertex removal using hashtable
+				// build face data at the same time
 				FIVertexEqualityComparer comparer;
-				ExistTable<FIVertex> vtxHashTable(totalVertexCount, &comparer);
+				FastMap<FIVertex, int> vtxHashTable(totalVertexCount, &comparer);
 				FastList<FIVertex> vertexList(totalVertexCount);
-				meshData->Faces.ResizeDiscard(totalVertexCount/3);
+				meshData->Faces.ResizeDiscard(totalVertexCount/3+2);
 				
 				for (size_t j=0;j<parts.size();j++)
 				{
 					FIMeshPart* part= parts[j];
-					std::vector<Vector3> Positions = part->getPosition();
-					std::vector<Vector3> Normals = part->getNormal();
-					std::vector<Vector2> TexCoord0 = part->getTexCoord0();
-					std::vector<Vector2> TexCoord1 = part->getTexCoord1();
-					std::vector<BoneWeight> BoneWeights = part->getBoneWeights();
+					const std::vector<Vector3>& Positions = part->getPosition();
+					const std::vector<Vector3>& Normals = part->getNormal();
+					const std::vector<Vector2>& TexCoord0 = part->getTexCoord0();
+					const std::vector<Vector2>& TexCoord1 = part->getTexCoord1();
+					const std::vector<BoneWeight>& BoneWeights = part->getBoneWeights();
 					
+					int mtrlIndex = materialData.IndexOf( part->GetMaterial());
+
+					for (size_t k=0;k<Positions.size();k+=3)
+					{
+						FIVertex fiv;
+						if (use2TexCoords)
+						{
+							fiv = FIVertex(Positions[k], Normals[k], 
+								TexCoord0[k], TexCoord1[k], 
+								BoneWeights[k].GetBlendIndex(), BoneWeights[k].GetBlendWeight());
+						}
+						else
+						{
+							fiv = FIVertex(Positions[k], Normals[k], 
+								TexCoord0[k], 
+								BoneWeights[k].GetBlendIndex(), BoneWeights[k].GetBlendWeight());
+						}
+
+						int existA;
+						if (!vtxHashTable.TryGetValue(fiv, existA))
+						{
+							existA = vertexList.getCount();
+							vertexList.Add(fiv);
+							meshData->BoundingSphere.Center = 
+								Vector3Utils::Add(meshData->BoundingSphere.Center, Positions[k]);
+						}
+
+						//============================================================================
+
+						if (use2TexCoords)
+						{
+							fiv = FIVertex(Positions[k+1], Normals[k+1], 
+								TexCoord0[k+1], TexCoord1[k+1], 
+								BoneWeights[k+1].GetBlendIndex(), BoneWeights[k+1].GetBlendWeight());
+						}
+						else
+						{
+							fiv = FIVertex(Positions[k+1], Normals[k+1], 
+								TexCoord0[k+1], 
+								BoneWeights[k+1].GetBlendIndex(), BoneWeights[k+1].GetBlendWeight());
+						}
+
+						int existB;
+						if (!vtxHashTable.TryGetValue(fiv, existB))
+						{
+							existB = vertexList.getCount();
+							vertexList.Add(fiv);
+							meshData->BoundingSphere.Center = 
+								Vector3Utils::Add(meshData->BoundingSphere.Center, Positions[k+1]);
+						}
+
+						//============================================================================
+
+						if (use2TexCoords)
+						{
+							fiv = FIVertex(Positions[k+2], Normals[k+2], 
+								TexCoord0[k+2], TexCoord1[k+1], 
+								BoneWeights[k+2].GetBlendIndex(), BoneWeights[k+2].GetBlendWeight());
+						}
+						else
+						{
+							fiv = FIVertex(Positions[k+2], Normals[k+2], 
+								TexCoord0[k+2], 
+								BoneWeights[k+2].GetBlendIndex(), BoneWeights[k+2].GetBlendWeight());
+						}
+
+						int existC;
+						if (!vtxHashTable.TryGetValue(fiv, existC))
+						{
+							existC = vertexList.getCount();
+							vertexList.Add(fiv);
+							meshData->BoundingSphere.Center = 
+								Vector3Utils::Add(meshData->BoundingSphere.Center, Positions[k+2]);
+						}
+						meshData->Faces.Add(MeshFace(existA,existB,existC,mtrlIndex));
+					}
 				}
+				meshData->BoundingSphere.Center =
+					Vector3Utils::Divide(meshData->BoundingSphere.Center, static_cast<float>(vertexList.getCount()));
+				
+				meshData->VertexCount = vertexList.getCount();
+
+				// fill vertex element
+				meshData->VertexElements.Add(VertexElement(0, VEF_Vector3, VEU_Position, 0));
+				meshData->VertexElements.Add(VertexElement(
+					meshData->VertexElements[meshData->VertexElements.getCount()-1].getSize(), VEF_Vector3, VEU_Normal, 0));
+				meshData->VertexElements.Add(VertexElement(
+					meshData->VertexElements[meshData->VertexElements.getCount()-1].getSize(), VEF_Vector2, VEU_TextureCoordinate, 0));
+				if (use2TexCoords)
+					meshData->VertexElements.Add(VertexElement(
+					meshData->VertexElements[meshData->VertexElements.getCount()-1].getSize(), VEF_Vector2, VEU_TextureCoordinate, 1));
+				if (useSkinnedFormat)
+				{
+					meshData->VertexElements.Add(VertexElement(
+						meshData->VertexElements[meshData->VertexElements.getCount()-1].getSize(), VEF_Vector4, VEU_BlendIndices, 0));
+					meshData->VertexElements.Add(VertexElement(
+						meshData->VertexElements[meshData->VertexElements.getCount()-1].getSize(), VEF_Vector4, VEU_BlendWeight, 0));
+				}
+				meshData->VertexSize = meshData->ComputeVertexSize(meshData->VertexElements);
+
+				// Fill vertex data. foreach vertex, pass the vertex elements array, 
+				// fill data according to the element definition,
+				meshData->VertexData = new char[meshData->VertexSize*meshData->VertexCount];
+				for (int j=0;j<(int)meshData->VertexCount;j++)
+				{
+					int baseOffset = j * meshData->VertexSize;
+					for (int k=0;k<meshData->VertexElements.getCount();k++)
+					{
+						const VertexElement& e = meshData->VertexElements[k];
+						float* vertexPtr = (float*)(meshData->VertexData + baseOffset+e.getOffset());
+						switch (e.getUsage())
+						{
+						case VEU_Position:
+							*(vertexPtr) = vertexList[j].Position[0];
+							*(vertexPtr+1) = vertexList[j].Position[1];
+							*(vertexPtr+2) = vertexList[j].Position[2];
+
+							{
+								Vector3 pos = Vector3Utils::LDVector(
+									vertexList[j].Position[0], 
+									vertexList[j].Position[1], 
+									vertexList[j].Position[2]);
+
+								float rr = Vector3Utils::DistanceSquared(meshData->BoundingSphere.Center, pos);
+								if (rr > meshData->BoundingSphere.Radius)
+								{
+									meshData->BoundingSphere.Radius = rr;
+								}
+							}
+							
+							break;
+						case VEU_Normal:
+							*(vertexPtr) = vertexList[j].Normal[0];
+							*(vertexPtr+1) = vertexList[j].Normal[1];
+							*(vertexPtr+2) = vertexList[j].Normal[2];
+							break;
+						case VEU_TextureCoordinate:
+							if (e.getIndex() == 0)
+							{
+								*(vertexPtr) = vertexList[j].TexCoords[0];
+								*(vertexPtr+1) = vertexList[j].TexCoords[1];
+							}
+							else
+							{
+								*(vertexPtr) = vertexList[j].TexCoords[2];
+								*(vertexPtr+1) = vertexList[j].TexCoords[3];
+							}
+							break;
+						case VEU_BlendIndices:
+							*(vertexPtr) = vertexList[j].BlendIndex[0];
+							*(vertexPtr+1) = vertexList[j].BlendIndex[1];
+							*(vertexPtr+2) = vertexList[j].BlendIndex[2];
+							*(vertexPtr+3) = vertexList[j].BlendIndex[2];
+							break;
+						case VEU_BlendWeight:
+							*(vertexPtr) = vertexList[j].BlendWeight[0];
+							*(vertexPtr+1) = vertexList[j].BlendWeight[1];
+							*(vertexPtr+2) = vertexList[j].BlendWeight[2];
+							*(vertexPtr+3) = vertexList[j].BlendWeight[2];
+							break;
+						}
+					}
+				}
+				meshData->BoundingSphere.Radius = sqrtf(meshData->BoundingSphere.Radius);
+
 				modelData->Entities.Add(meshData);
 			}
 		}
