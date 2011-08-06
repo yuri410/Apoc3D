@@ -110,7 +110,7 @@ namespace APBuild
 		};
 
 		class FIMesh;
-		class FIAnimation;
+		class FIPartialAnimation;
 		class FISkeleton;
 
 		/** A FBX importer mesh part has its own vertex data.
@@ -192,7 +192,7 @@ namespace APBuild
 		private:
 			std::vector<FIMeshPart*> m_ModelParts;
 
-			FastMap<string, FIAnimation*> m_AnimationKeyFrames;
+			FastMap<string, FIPartialAnimation*> m_AnimationKeyFrames;
 
 			std::string m_strName;
 
@@ -214,9 +214,9 @@ namespace APBuild
 				{
 					delete m_ModelParts[i];
 				}
-				for (FastMap<string, FIAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
+				for (FastMap<string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
 				{
-					FIAnimation* akf = *e.getCurrentValue();
+					FIPartialAnimation* akf = *e.getCurrentValue();
 					delete akf;
 				}
 			}
@@ -277,12 +277,12 @@ namespace APBuild
 			//void InitializeDeviceObjects(ID3D10Device* pd3dDevice);
 			//void ReleaseDeviceObjects();
 
-			void AddAnimationKeyFrames(FIAnimation* pAnimationKeyFrames)
+			void AddAnimationKeyFrames(FIPartialAnimation* pAnimationKeyFrames)
 			{
 				m_AnimationKeyFrames.Add(pAnimationKeyFrames->GetAnimationName(),
 					pAnimationKeyFrames);
 			}
-			FIAnimation* GetAnimationKeyFrames(const std::string& strAnimationName)
+			FIPartialAnimation* GetAnimationKeyFrames(const std::string& strAnimationName)
 			{
 				return m_AnimationKeyFrames[strAnimationName];
 			}
@@ -300,31 +300,39 @@ namespace APBuild
 			const std::string& GetName() const { return m_strName; }
 		};
 
+		class FIAnimationKeyframe
+		{
+		public:
+			float Time;
+			Matrix Transform;
+		};
+
 		/** Defines an period of animation for one bone or mesh part.
 			If the animation is skeleton animation, the bone uses the keyframes when playing.
 			Otherwise the keyframes are used as transform of a mesh part.
 		*/
-		class FIAnimation
+		class FIPartialAnimation
 		{
 		protected:
 			std::string m_strAnimationName;
-			std::vector<Matrix> m_KeyFrames;
+			std::vector<FIAnimationKeyframe> m_KeyFrames;
 		public:
-			FIAnimation(const std::string& strAnimationName)
+			FIPartialAnimation(const std::string& strAnimationName)
 				: m_strAnimationName(strAnimationName)
 			{
 
 			}
-			~FIAnimation() { }
+			~FIPartialAnimation() { }
 
-			void AddKeyFrame(const Matrix& matTransform)
+			void AddKeyFrame(const FIAnimationKeyframe& frame)
 			{
-				m_KeyFrames.push_back(matTransform);
+				m_KeyFrames.push_back(frame);
 			}
 
 			const std::string& GetAnimationName() const { return m_strAnimationName; }
-
-			const Matrix& GetKeyFrameTransform(int nKeyFrame) { return m_KeyFrames[nKeyFrame]; }
+			uint getKeyFrameCount() const { return static_cast<uint>(m_KeyFrames.size()); }
+			const Matrix& GetKeyFrameTransform(uint nKeyFrame) const { return m_KeyFrames[nKeyFrame].Transform; }
+			float GetKeyFrameTime(uint frameIndex) const { return m_KeyFrames[frameIndex].Time; }
 			//const CBTTAnimationQuaternionKeyFrame& GetKeyFrameQuaternion(int nKeyFrame);
 		};
 		class FISkeletonBone
@@ -340,7 +348,7 @@ namespace APBuild
 
 			int m_nParentBoneIndex;
 
-			FastMap<std::string, FIAnimation*> m_AnimationKeyFrames;
+			FastMap<std::string, FIPartialAnimation*> m_AnimationKeyFrames;
 		public:
 			FISkeletonBone(std::string strName, int nParentBoneIndex)
 				: m_strName(strName), m_nParentBoneIndex(nParentBoneIndex)
@@ -350,16 +358,16 @@ namespace APBuild
 			}
 			~FISkeletonBone()
 			{
-				for (FastMap<string, FIAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
+				for (FastMap<string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
 				{
-					FIAnimation* akf = *e.getCurrentValue();
+					FIPartialAnimation* akf = *e.getCurrentValue();
 					delete akf;
 				}
 				m_AnimationKeyFrames.Clear();
 			}
 
 
-			void AddAnimationKeyFrames(FIAnimation* pAnimationKeyFrames)
+			void AddAnimationKeyFrames(FIPartialAnimation* pAnimationKeyFrames)
 			{
 				m_AnimationKeyFrames.Add(pAnimationKeyFrames->GetAnimationName(), pAnimationKeyFrames);
 			}
@@ -375,9 +383,9 @@ namespace APBuild
 				Matrix::Inverse(m_matInvBoneReferenceTransform, matBoneReferenceTransform);
 			}
 
-			FIAnimation* GetAnimationKeyFrames(const std::string strAnimationName)
+			FIPartialAnimation* GetAnimationKeyFrames(const std::string strAnimationName) const
 			{
-				FIAnimation* result;
+				FIPartialAnimation* result;
 				if (m_AnimationKeyFrames.TryGetValue(strAnimationName, result))
 					return result;
 				return 0;
@@ -446,23 +454,39 @@ namespace APBuild
 			}
 			//const FastMap<string, SkeletonBone*>& GetSkeletonBones() const { return m_SkeletonBones; }
 			//Matrix* GetSkinTransforms() { return m_SkinTransforms; }
-			int GetBoneCount() const 	{ return m_SkeletonBones.getCount(); }
+			int GetBoneCount() const { return m_SkeletonBones.getCount(); }
 
 			void FlattenAnimation(AnimationData::ClipTable* clipTable)
 			{
-				FastMap<String, FIAnimation*> seenAnimation;
+				ExistTable<string> seenAnimation;
+				
 				for (int i=0;i<m_SkeletonBones.getCount();i++)
 				{
-					FISkeletonBone* bone = m_SkeletonBones[i];
-					for (FastMap<std::string, FIAnimation*>::Enumerator j=bone->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
+					const FISkeletonBone* bone = m_SkeletonBones[i];
+					for (FastMap<std::string, FIPartialAnimation*>::Enumerator j=bone->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
 					{
-						FIAnimation* anim = *j.getCurrentValue();
+						FIPartialAnimation* anim = *j.getCurrentValue();
 
-						String name = StringUtils::toWString(anim->GetAnimationName());
+						const string& name = anim->GetAnimationName();
 
-						if (!seenAnimation.Contains(name))
+						if (!seenAnimation.Exists(name))
 						{
-							seenAnimation.Add(name, anim);
+							seenAnimation.Add(name);
+						}
+					}
+				}
+
+				for (ExistTable<string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
+				{
+					const string& animName = *e.getCurrent();
+					for (int i=0;i<m_SkeletonBones.getCount();i++)
+					{
+						const FISkeletonBone* bone = m_SkeletonBones[i];
+						FIPartialAnimation* anim = bone->GetAnimationKeyFrames(animName);
+
+						for (uint j=0;j<anim->getKeyFrameCount();j++)
+						{
+							const Matrix& trans = anim->GetKeyFrameTransform(j);
 						}
 					}
 				}

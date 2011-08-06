@@ -315,7 +315,7 @@ namespace APBuild
 					if( pBone )
 					{
 
-						FIAnimation* pAnimationKeyFrames = new FIAnimation(strTakeName);
+						FIPartialAnimation* pAnimationKeyFrames = new FIPartialAnimation(strTakeName);
 
 						double fTime = 0;
 						while( fTime <= fStop )
@@ -345,7 +345,7 @@ namespace APBuild
 
 				if( pModel )
 				{
-					FIAnimation* pAnimationKeyFrames = new FIAnimation(strTakeName);
+					FIPartialAnimation* pAnimationKeyFrames = new FIPartialAnimation(strTakeName);
 
 					double fTime = 0;
 					while( fTime <= fStop )
@@ -1258,13 +1258,15 @@ namespace APBuild
 		// animation
 		if (!config.DstAnimationFile.empty())
 		{
+			AnimationData::ClipTable skeletonAnimations;
+			AnimationData::ClipTable rigidAnimations;
+
 			FastList<Bone> bones;
 			if (fbx.m_pSkeleton)
 			{
 				fbx.m_pSkeleton->FlattenBones(bones);
+				fbx.m_pSkeleton->FlattenAnimation(&skeletonAnimations);
 			}
-			AnimationData::ClipTable skeletonAnimations;
-			AnimationData::ClipTable rigidAnimations;
 			
 		}
 
