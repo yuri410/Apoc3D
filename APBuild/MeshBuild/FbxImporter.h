@@ -8,6 +8,7 @@
 
 #include "Collections/FastList.h"
 #include "Collections/FastMap.h"
+#include "Collections/ExistTable.h"
 #include "Math/Matrix.h"
 #include "Graphics/Animation/AnimationTypes.h"
 #include "Graphics/Animation/AnimationData.h"
@@ -305,6 +306,12 @@ namespace APBuild
 		public:
 			float Time;
 			Matrix Transform;
+
+			FIAnimationKeyframe(const Matrix& tr, float time)
+				: Transform(tr), Time(time)
+			{
+
+			}
 		};
 
 		/** Defines an period of animation for one bone or mesh part.
@@ -479,16 +486,34 @@ namespace APBuild
 				for (ExistTable<string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
 				{
 					const string& animName = *e.getCurrent();
-					for (int i=0;i<m_SkeletonBones.getCount();i++)
+					
+					uint frameIndex = 0;
+					bool finished = false;
+					FastList<ModelKeyframe> frames;
+					
+					while (!finished)
 					{
-						const FISkeletonBone* bone = m_SkeletonBones[i];
-						FIPartialAnimation* anim = bone->GetAnimationKeyFrames(animName);
-
-						for (uint j=0;j<anim->getKeyFrameCount();j++)
+						finished = true;
+						for (int i=0;i<m_SkeletonBones.getCount();i++)
 						{
-							const Matrix& trans = anim->GetKeyFrameTransform(j);
+							const FISkeletonBone* bone = m_SkeletonBones[i];
+							FIPartialAnimation* anim = bone->GetAnimationKeyFrames(animName);
+
+							if (frameIndex < anim->getKeyFrameCount())
+							{
+								finished = false;
+								const Matrix& trans = anim->GetKeyFrameTransform(frameIndex);
+								float time = anim->GetKeyFrameTime(frameIndex);
+
+								frames.Add(ModelKeyframe(static_cast<int>(frameIndex),time, trans));
+							}
 						}
 					}
+					if (frames.getCount())
+					{
+						ModelAnimationClip* clip = new ModelAnimationClip(frames[frames.getCount()-1].getTime(), frames);
+						clipTable->insert(std::make_pair(StringUtils::toWString(animName), clip));
+					}					
 				}
 			}
 			void FlattenBones(FastList<Bone>& bones)

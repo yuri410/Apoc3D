@@ -1,12 +1,11 @@
 #include "FbxImporter.h"
 
 #include "CompileLog.h"
-#include "IOLib/ModelData.h"
 #include "BuildConfig.h"
-#include "IOLib/MaterialData.h"
 #include "Utility/StringUtils.h"
-#include "Collections/ExistTable.h"
 #include "IOLib/Streams.h"
+#include "IOLib/MaterialData.h"
+#include "IOLib/ModelData.h"
 
 using namespace Apoc3D::Utility;
 
@@ -330,7 +329,7 @@ namespace APBuild
 							Matrix matTransform;
 							Matrix::Multiply(matTransform, matAbsoluteTransform, matInvParentAbsoluteTransform);
 
-							pAnimationKeyFrames->AddKeyFrame(matTransform);
+							pAnimationKeyFrames->AddKeyFrame(FIAnimationKeyframe(matTransform, fTime));
 
 							fTime += 1.0f/fFrameRate;
 						}
@@ -355,7 +354,7 @@ namespace APBuild
 
 						Matrix matAbsoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode, takeTime);
 
-						pAnimationKeyFrames->AddKeyFrame(matAbsoluteTransform);
+						pAnimationKeyFrames->AddKeyFrame(FIAnimationKeyframe(matAbsoluteTransform, fTime));
 
 						fTime += 1.0f/fFrameRate;
 					}
