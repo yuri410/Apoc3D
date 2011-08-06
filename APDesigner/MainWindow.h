@@ -36,6 +36,7 @@ namespace APDesigner
 {
 	class ResourcePane
 	{
+	private:
 
 	};
 	class PropertyPane

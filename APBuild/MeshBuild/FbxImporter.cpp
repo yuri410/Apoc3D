@@ -1277,8 +1277,10 @@ namespace APBuild
 		FileOutStream* fs = new FileOutStream(config.DstFile);
 		modelData.Save(fs);
 
-		fs = new FileOutStream(config.DstAnimationFile);
-		animData.Save(fs);
-
+		if (!config.DstAnimationFile.empty())
+		{
+			fs = new FileOutStream(config.DstAnimationFile);
+			animData.Save(fs);
+		}
 	}
 }
