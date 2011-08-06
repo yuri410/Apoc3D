@@ -293,6 +293,7 @@
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
     <ClCompile Include="Platform\Thread.cpp" />
+    <ClCompile Include="Project\Project.cpp" />
     <ClCompile Include="Scene\SceneRenderScriptParser.cpp" />
     <ClCompile Include="UILib\Button.cpp" />
     <ClCompile Include="UILib\Control.cpp" />
