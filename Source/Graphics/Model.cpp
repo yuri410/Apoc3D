@@ -90,7 +90,8 @@ namespace Apoc3D
 			: m_animData(animData), m_selectedClipName(L"Take 001"),
 			m_mtrlAnimCompleted(false), m_skinAnimCompleted(false), m_rootAnimCompleted(false), m_rigidAnimCompleted(false),
 			m_mtrlPlayer(0), m_skinPlayer(0), m_rigidPlayer(0), m_rootPlayer(0),
-			m_autoLoop(false), m_isOpBufferBuilt(false)
+			m_autoLoop(false), m_isOpBufferBuilt(false),
+			m_renderOpEntID(0),m_renderOpEntPartID(0)
 		{
 		}
 
@@ -111,41 +112,45 @@ namespace Apoc3D
 			//	delete m_rigidPlayer;
 			delete m_data;
 			//delete opBuffer;
+			if (m_renderOpEntPartID)
+				delete[] m_renderOpEntPartID;
+			if (m_renderOpEntID)
+				delete[] m_renderOpEntID;
 		}
 
 		void Model::ControlRootAnimation(AnimationControl ctrl)
 		{
-			if (!m_rootPlayer)
-				return;
-			if (!m_animData)
-				return;
+			//if (!m_rootPlayer)
+			//	return;
+			//if (!m_animData)
+			//	return;
 
-			if (m_animData->hasRootClip())
-			{
-				const AnimationData::ClipTable& table = m_animData->getRootAnimationClips();
-				AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
-				if (iter != table.end())
-				{
-					const ModelAnimationClip* clip = iter->second;
+			//if (m_animData->hasRigidClip())
+			//{
+			//	const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
+			//	AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
+			//	if (iter != table.end())
+			//	{
+			//		const ModelAnimationClip* clip = iter->second;
 
-					switch (ctrl)
-					{
-					case AC_Play:
-						m_rootPlayer->StartClip(clip, 1, 0);
-						break;
-					case AC_Pause:
-						m_rootPlayer->PauseClip();
-						break;
-					case AC_Stop:
-						m_rootPlayer->PauseClip();
-						m_rootPlayer->setCurrentKeyframe(clip->getKeyframes().getCount()>10 ? 10 : 0);
-						break;
-					case AC_Resume:
-						m_rootPlayer->ResumeClip();
-						break;
-					}
-				}
-			}
+			//		switch (ctrl)
+			//		{
+			//		case AC_Play:
+			//			m_rootPlayer->StartClip(clip, 1, 0);
+			//			break;
+			//		case AC_Pause:
+			//			m_rootPlayer->PauseClip();
+			//			break;
+			//		case AC_Stop:
+			//			m_rootPlayer->PauseClip();
+			//			m_rootPlayer->setCurrentKeyframe(clip->getKeyframes().getCount()>10 ? 10 : 0);
+			//			break;
+			//		case AC_Resume:
+			//			m_rootPlayer->ResumeClip();
+			//			break;
+			//		}
+			//	}
+			//}
 		}
 		void Model::ControlSkinnedAnimation(AnimationControl ctrl)
 		{
@@ -155,9 +160,9 @@ namespace Apoc3D
 				return;
 
 
-			if (m_animData->hasModelClip())
+			if (m_animData->hasSkinnedClip())
 			{
-				const AnimationData::ClipTable& table = m_animData->getModelAnimationClips();
+				const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
 				AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
 				if (iter != table.end())
 				{
@@ -188,9 +193,9 @@ namespace Apoc3D
 			if (!m_animData)
 				return;
 
-			if (m_animData->hasModelClip())
+			if (m_animData->hasRigidClip())
 			{
-				const AnimationData::ClipTable& table = m_animData->getModelAnimationClips();
+				const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
 				AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
 				if (iter != table.end())
 				{
@@ -256,7 +261,7 @@ namespace Apoc3D
 			if (!m_skinPlayer)
 				return 0;
 
-			const AnimationData::ClipTable& table = m_animData->getModelAnimationClips();
+			const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
 
 			if (table.size())
 			{
@@ -304,41 +309,38 @@ namespace Apoc3D
 				return;
 
 			
-			if (m_animData->hasRootClip())
+			if (m_animData->hasRigidClip())
 			{
-				const AnimationData::ClipTable& table = m_animData->getRootAnimationClips();
+				const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
 				
 				if (table.size())
 				{
-					m_rootPlayer = new RootAnimationPlayer();
-					
-					m_animInstance.Add(m_rootPlayer);
+					//m_rootPlayer = new RootAnimationPlayer();
+					//
+					//m_animInstance.Add(m_rootPlayer);
 
-					m_rootPlayer->eventCompleted().bind(this, &Model::RootAnim_Completed);
+					//m_rootPlayer->eventCompleted().bind(this, &Model::RootAnim_Completed);
+
+					m_rigidPlayer = new RigidAnimationPlayer(m_animData->getBones().getCount());
+
+					m_animInstance.Add(m_rigidPlayer);
+
+					m_rigidPlayer->eventCompleted().bind(this, &Model::RigidAnim_Competed);
 				}
 			}
-			if (m_animData->hasModelClip())
+			if (m_animData->hasSkinnedClip())
 			{
-				const AnimationData::ClipTable& table = m_animData->getModelAnimationClips();
+				const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
 
 				if (table.size())
 				{
 					const FastList<Bone>* bones = &m_animData->getBones();
-					if (bones->getCount())
-					{
-						m_skinPlayer = new SkinnedAnimationPlayer(bones);
+					
+					assert(bones->getCount());
+					m_skinPlayer = new SkinnedAnimationPlayer(bones);
 
-						m_animInstance.Add(m_skinPlayer);
-						m_skinPlayer->eventCompleted().bind(this, &Model::SkinAnim_Completed);
-					}
-					else
-					{
-						m_rigidPlayer = new RigidAnimationPlayer(m_animData->getBones().getCount());
-
-						m_animInstance.Add(m_rigidPlayer);
-
-						m_rigidPlayer->eventCompleted().bind(this, &Model::RigidAnim_Competed);
-					}
+					m_animInstance.Add(m_skinPlayer);
+					m_skinPlayer->eventCompleted().bind(this, &Model::SkinAnim_Completed);
 				}
 
 			}
@@ -426,10 +428,109 @@ namespace Apoc3D
 			FastList<Mesh*> entities = data->getEntities();
 			if (!m_isOpBufferBuilt)
 			{
+				RenderOperationBuffer** entOps = new RenderOperationBuffer*[entities.getCount()];
+
+				int opCount = 0;
+				for (int i = 0; i < entities.getCount(); i++)
+				{
+					entOps[i] = entities[i]->GetRenderOperation(0);
+
+					opCount += entOps[i]->getCount();
+				}
+
+				int dstIdx = 0;
+				//gmBuffer = new GeomentryData[opCount];
+				m_opBuffer.ReserveDiscard(opCount);				
+				m_renderOpEntID = new int[opCount];
+				m_renderOpEntPartID = new int[opCount];
+
+				for (int i = 0; i < entities.getCount(); i++)
+				{
+					//memcpy();
+					//Array.Copy(entOps[i], 0, opBuffer, dstIdx, entOps[i].Length);
+					//entOps[i] = 
+					m_opBuffer.Add(&entOps[i]->operator[](0), entOps[i]->getCount());
+					for (int j = 0; j < entOps[i]->getCount(); j++)
+					{
+						int opid = dstIdx + j;
+						m_renderOpEntID[opid] = i;
+						m_renderOpEntPartID[opid] = j;
+
+
+						if (m_skinPlayer)
+						{
+							m_opBuffer[opid].BoneTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
+							m_opBuffer[opid].BoneTransform.Count = m_skinPlayer->getTransformCount();
+						}
+						if (m_animInstance.getCount())
+						{
+							m_opBuffer[opid].RootTransform = Matrix::Identity;
+
+							for (int k = 0; k < m_animInstance.getCount(); k++)
+							{
+								int entId = i;
+
+								//int boneId = entities[entId].ParentBoneID;
+								Matrix temp;
+								m_animInstance[k]->GetTransform(entId, temp);
+								Matrix::Multiply(m_opBuffer[opid].RootTransform, m_opBuffer[opid].RootTransform, temp);
+								//opBuffer[opid].Transformation *= animInstance[k].GetTransform(boneId);
+
+							}
+						}
+						else
+						{
+							m_opBuffer[opid].RootTransform = Matrix::Identity;
+						}
+					}
+
+					dstIdx += entOps[i]->getCount();
+				}
 				m_isOpBufferBuilt = true;
 			}
 			else
 			{
+				for (int i = 0; i < m_opBuffer.getCount(); i++)
+				{
+					RenderOperation& rop = m_opBuffer[i];
+					if (m_mtrlPlayer) 
+					{
+						int partId = m_renderOpEntPartID[i];
+						int entId = m_renderOpEntID[i];
+						int frame = m_mtrlPlayer->getCurrentMaterialFrame();
+						if (frame >= (int32)entities[entId]->getMaterials()->getFrameCount(partId)) 
+						{
+							frame = entities[entId]->getMaterials()->getFrameCount(partId)-1;//.Materials[partId].Length - 1;
+						}
+						rop.Material = entities[entId]->getMaterials()->getMaterial(partId, frame);
+					}
+
+					if (m_animInstance.getCount())
+					{
+						rop.RootTransform = Matrix::Identity;
+
+						for (int k = 0; k < m_animInstance.getCount(); k++)
+						{
+							int entId = m_renderOpEntID[i];
+
+							
+							Matrix temp;
+							m_animInstance[k]->GetTransform(entId, temp);
+							Matrix::Multiply(rop.RootTransform, rop.RootTransform, temp);
+						}
+					}
+					else
+					{
+						rop.RootTransform = Matrix::Identity;
+					}
+					
+					if (m_skinPlayer)
+					{
+						rop.BoneTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
+						rop.BoneTransform.Count = m_skinPlayer->getTransformCount();
+					}
+					
+				}
 
 			}
 			return &m_opBuffer;

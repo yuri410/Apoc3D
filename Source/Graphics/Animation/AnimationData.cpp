@@ -45,11 +45,17 @@ namespace Apoc3D
 			//static const String TAG_3_InvBindPoseTag = L"InvBindPose";
 			//static const String TAG_3_InvBindPoseCountTag = L"InvBindPoseCount";
 
-			static const String TAG_3_ModelAnimationClipTag = L"ModelAnimationClip";
-			static const String TAG_3_ModelAnimationClipCountTag = L"ModelAnimationClipCount";
+			static const String TAG_3_SkinnedAnimationClipTag = L"SkinnedAnimationClip";
+			static const String TAG_3_SkinnedAnimationClipCountTag = L"SkinnedAnimationClipCount";
 
-			static const String TAG_3_RootAnimationClipTag = L"RootAnimationClip";
-			static const String TAG_3_RootAnimationClipCountTag = L"RootAnimationClipCount";
+			static const String TAG_3_RigidAnimationClipTag = L"RigidAnimationClip";
+			static const String TAG_3_RigidAnimationClipCountTag = L"RigidAnimationClipCount";
+
+			static const String TAG_2_ModelAnimationClipTag = L"ModelAnimationClip";
+			static const String TAG_2_ModelAnimationClipCountTag = L"ModelAnimationClipCount";
+
+			static const String TAG_2_RootAnimationClipTag = L"RootAnimationClip";
+			static const String TAG_2_RootAnimationClipCountTag = L"RootAnimationClipCount";
 
 			//static const String TAG_3_BoneHierarchyTag = L"BoneHierarchy";
 			//static const String TAG_3_BoneHierarchyCountTag = L"BoneHierarchyCount";
@@ -252,16 +258,16 @@ namespace Apoc3D
 				//	delete br;
 				//}
 
-				// animation clip tag
-				if (data->Contains(TAG_3_ModelAnimationClipCountTag))
+				// skinned animation clip tag
+				if (data->Contains(TAG_3_SkinnedAnimationClipCountTag))
 				{
-					m_hasModelClip = true;
+					m_hasSkinnedClip = true;
 
-					int count = data->GetDataInt32(TAG_3_ModelAnimationClipCountTag);
+					int count = data->GetDataInt32(TAG_3_SkinnedAnimationClipCountTag);
 
-					m_modelAnimationClips.rehash(count);
+					m_skinnedAnimationClips.rehash(count);
 
-					BinaryReader* br = data->GetData(TAG_3_ModelAnimationClipTag);
+					BinaryReader* br = data->GetData(TAG_3_SkinnedAnimationClipTag);
 					for (int i=0;i<count;i++)
 					{
 						String key = br->ReadString();
@@ -285,22 +291,22 @@ namespace Apoc3D
 
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
 						
-						m_modelAnimationClips.insert(ClipTable::value_type(key, clip));
+						m_skinnedAnimationClips.insert(ClipTable::value_type(key, clip));
 					}
 					br->Close();
 					delete br;
 				}
 
-				// root animation clip tag
-				if (data->GetData(TAG_3_RootAnimationClipCountTag))
+				// rigid animation clip tag
+				if (data->GetData(TAG_3_RigidAnimationClipCountTag))
 				{
-					m_hasRootClip = true;
+					m_hasRigidClip = true;
 
-					int count = data->GetDataInt32(TAG_3_RootAnimationClipCountTag);
+					int count = data->GetDataInt32(TAG_3_RigidAnimationClipCountTag);
 
-					m_rootAnimationClips.rehash(count);
+					m_rigidAnimationClips.rehash(count);
 
-					BinaryReader* br = data->GetData(TAG_3_RootAnimationClipTag);
+					BinaryReader* br = data->GetData(TAG_3_RigidAnimationClipTag);
 					for (int i=0;i<count;i++)
 					{
 						String key = br->ReadString();
@@ -324,7 +330,7 @@ namespace Apoc3D
 						}
 
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
-						m_rootAnimationClips.insert(ClipTable::value_type(key, clip));
+						m_rigidAnimationClips.insert(ClipTable::value_type(key, clip));
 					}
 				}
 
@@ -433,12 +439,12 @@ namespace Apoc3D
 					}
 				}*/
 				
-				if (m_hasModelClip)
+				if (m_hasSkinnedClip)
 				{
-					data->AddEntry(TAG_3_ModelAnimationClipCountTag, m_modelAnimationClips.size());
+					data->AddEntry(TAG_3_SkinnedAnimationClipCountTag, m_skinnedAnimationClips.size());
 
-					BinaryWriter* bw = data->AddEntry(TAG_3_ModelAnimationClipTag);
-					for (ClipTable::const_iterator iter = m_modelAnimationClips.begin(); iter != m_modelAnimationClips.end(); iter++)
+					BinaryWriter* bw = data->AddEntry(TAG_3_SkinnedAnimationClipTag);
+					for (ClipTable::const_iterator iter = m_skinnedAnimationClips.begin(); iter != m_skinnedAnimationClips.end(); iter++)
 					{
 						bw->Write(iter->first);
 
@@ -459,12 +465,12 @@ namespace Apoc3D
 					bw->Close();
 					delete bw;
 				}
-				if (m_hasRootClip)
+				if (m_hasRigidClip)
 				{
-					data->AddEntry(TAG_3_RootAnimationClipCountTag, m_rootAnimationClips.size());
+					data->AddEntry(TAG_3_RigidAnimationClipCountTag, m_rigidAnimationClips.size());
 
-					BinaryWriter* bw = data->AddEntry(TAG_3_RootAnimationClipTag);
-					for (ClipTable::const_iterator iter = m_rootAnimationClips.begin(); iter != m_rootAnimationClips.end(); iter++)
+					BinaryWriter* bw = data->AddEntry(TAG_3_RigidAnimationClipTag);
+					for (ClipTable::const_iterator iter = m_rigidAnimationClips.begin(); iter != m_rigidAnimationClips.end(); iter++)
 					{
 						bw->Write(iter->first);
 

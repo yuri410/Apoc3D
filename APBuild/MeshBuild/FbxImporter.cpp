@@ -1267,8 +1267,11 @@ namespace APBuild
 				fbx.m_pSkeleton->FlattenAnimation(&skeletonAnimations);
 			}
 
-
+			fbx.FlattenAnimation(&rigidAnimations);
 			
+			animData.setBones(bones);
+			animData.setSkinnedAnimationClips(skeletonAnimations);
+			animData.setRigidAnimationClips(rigidAnimations);
 		}
 
 		FileOutStream* fs = new FileOutStream(config.DstFile);

@@ -53,8 +53,8 @@ namespace Apoc3D
 				typedef unordered_map<String, ModelAnimationClip*> ClipTable;
 				typedef unordered_map<String, MaterialAnimationClip*> MtrlClipTable;
 			private:
-				ClipTable m_rootAnimationClips;
-				ClipTable m_modelAnimationClips;
+				ClipTable m_rigidAnimationClips;
+				ClipTable m_skinnedAnimationClips;
 				MtrlClipTable m_mtrlAnimationClips;
 
 				//FastList<Matrix> m_bindPose;
@@ -64,8 +64,8 @@ namespace Apoc3D
 				//bool m_hasBindPose;
 				//bool m_hasSkeleton;
 				bool m_hasMtrlClip;
-				bool m_hasModelClip;
-				bool m_hasRootClip;
+				bool m_hasSkinnedClip;
+				bool m_hasRigidClip;
 
 
 				FastList<Bone> m_bones;
@@ -80,8 +80,8 @@ namespace Apoc3D
 				//bool hasSkeleton() const { return m_hasSkeleton; }
 
 				bool hasMtrlClip() const { return m_hasMtrlClip; }
-				bool hasModelClip() const { return m_hasModelClip; }
-				bool hasRootClip() const { return m_hasRootClip; }
+				bool hasSkinnedClip() const { return m_hasSkinnedClip; }
+				bool hasRigidClip() const { return m_hasRigidClip; }
 
 				const FastList<Bone>& getBones() const { return m_bones; }
 				const int32 getRootBone() const { return m_rootBone; }
@@ -90,12 +90,12 @@ namespace Apoc3D
 					These are stored by name in a map, so there could for instance be 
 					clips for "Walk", "Run", "JumpReallyHigh", etc.
 				*/
-				const ClipTable& getRootAnimationClips() const { return m_rootAnimationClips; }
+				const ClipTable& getRigidAnimationClips() const { return m_rigidAnimationClips; }
 				/** Gets a collection of model animation clips. These are stored by name in a
 					map, so there could for instance be clips for "Walk", "Run",
 					"JumpReallyHigh", etc.
 				*/
-				const ClipTable& getModelAnimationClips() const { return m_modelAnimationClips; }
+				const ClipTable& getSkinnedAnimationClips() const { return m_skinnedAnimationClips; }
 				
 				const MtrlClipTable& getMaterialAnimationClips() const { return m_mtrlAnimationClips; }
 
@@ -105,8 +105,8 @@ namespace Apoc3D
 				{
 					m_bones = bones;
 				}
-				void setRootAnimationClips(const ClipTable& table) { m_rootAnimationClips = table; m_hasRootClip = !table.empty();}
-				void setModelAnimationClips(const ClipTable& table) { m_modelAnimationClips = table; m_hasModelClip = !table.empty(); }
+				void setRigidAnimationClips(const ClipTable& table) { m_rigidAnimationClips = table; m_hasRigidClip = !table.empty();}
+				void setSkinnedAnimationClips(const ClipTable& table) { m_skinnedAnimationClips = table; m_hasSkinnedClip = !table.empty(); }
 				void setMaterialAnimationClips(const MtrlClipTable& table) { m_mtrlAnimationClips = table; m_hasMtrlClip = !table.empty(); }
 				
 
@@ -131,7 +131,7 @@ namespace Apoc3D
 				void Save(Stream* strm) const;
 
 				AnimationData()
-					: m_hasModelClip(false), m_hasRootClip(false), m_hasMtrlClip(false)
+					: m_hasSkinnedClip(false), m_hasRigidClip(false), m_hasMtrlClip(false)
 				{
 
 				}
