@@ -388,6 +388,8 @@ namespace APBuild
 
 			const std::string& GetName() const { return m_strName; }
 			int GetParentBoneIndex() const { return m_nParentBoneIndex; }
+
+
 		};
 		class FISkeleton
 		{
@@ -444,7 +446,13 @@ namespace APBuild
 			//Matrix* GetSkinTransforms() { return m_SkinTransforms; }
 			int GetBoneCount() const 	{ return m_SkeletonBones.getCount(); }
 
-			
+			void FlattenAnimation(AnimationData::ClipTable* clipTable)
+			{
+				for (int i=0;i<m_SkeletonBones.getCount();i++)
+				{
+					
+				}
+			}
 			void FlattenBones(FastList<Bone>& bones)
 			{
 				for (int i=0;i<m_SkeletonBones.getCount();i++)

@@ -86,7 +86,7 @@ namespace Apoc3D
 				const FastList<Bone>& getBones() const { return m_bones; }
 				const int32 getRootBone() const { return m_rootBone; }
 
-				/** Gets a collection of animation clips that operate on the root of the object.
+				/** Gets a collection of animation clips that operate a whole mesh entity in a model.
 					These are stored by name in a map, so there could for instance be 
 					clips for "Walk", "Run", "JumpReallyHigh", etc.
 				*/
@@ -100,6 +100,16 @@ namespace Apoc3D
 				const MtrlClipTable& getMaterialAnimationClips() const { return m_mtrlAnimationClips; }
 
 				const FastList<Bone>* getBones() { return &m_bones; }
+
+				void setBones(const FastList<Bone>& bones)
+				{
+					m_bones = bones;
+				}
+				void setRootAnimationClips(const ClipTable& table) { m_rootAnimationClips = table; m_hasRootClip = !table.empty();}
+				void setModelAnimationClips(const ClipTable& table) { m_modelAnimationClips = table; m_hasModelClip = !table.empty(); }
+				void setMaterialAnimationClips(const MtrlClipTable& table) { m_mtrlAnimationClips = table; m_hasMtrlClip = !table.empty(); }
+				
+
 				///** Bindpose matrices for each bone in the skeleton,
 				//	relative to the parent bone.
 				//*/

@@ -7,6 +7,7 @@
 #include "Utility/StringUtils.h"
 #include "Collections/ExistTable.h"
 #include "Graphics/Animation/AnimationData.h"
+#include "IOLib/Streams.h"
 
 using namespace Apoc3D::Utility;
 
@@ -1256,8 +1257,23 @@ namespace APBuild
 
 		
 		// animation
+		if (!config.DstAnimationFile.empty())
 		{
+			FastList<Bone> bones;
+			if (fbx.m_pSkeleton)
+			{
+				fbx.m_pSkeleton->FlattenBones(bones);
+			}
+			AnimationData::ClipTable skeletonAnimations;
+			AnimationData::ClipTable rigidAnimations;
 			
 		}
+
+		FileOutStream* fs = new FileOutStream(config.DstFile);
+		modelData.Save(fs);
+
+		fs = new FileOutStream(config.DstAnimationFile);
+		animData.Save(fs);
+
 	}
 }

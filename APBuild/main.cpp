@@ -82,6 +82,18 @@ int Build(ConfigurationSection* sect)
 	
 	for (size_t i=0;i<CompileLog::Logs.size();i++)
 	{
+		switch (CompileLog::Logs[i].Type)
+		{
+		case COMPILE_Warning:
+			wcout << L"[Warning]";
+			break;
+		case COMPILE_Information:
+
+			break;
+		case COMPILE_Error:
+			wcout << L"[Error]";
+			break;
+		}
 		wcout << CompileLog::Logs[i].Location;
 		wcout << L" : ";
 		wcout << CompileLog::Logs[i].Description;
