@@ -302,6 +302,12 @@ namespace Apoc3D
 			m_typeData = font;
 			//FontBuild::Build(sect);
 		}
+		else if (buildType == L"folder")
+		{
+			ProjectFolder* folder = new ProjectFolder();
+			folder->Parse(sect);
+			m_typeData = folder;
+		}
 		//else if (buildType == L"pak")
 		//{
 		//	PakBuild::Build(sect);
@@ -311,5 +317,31 @@ namespace Apoc3D
 
 		}
 
+	}
+
+	void ProjectParse(FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
+	{
+		for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
+			iter != sect->SubSectionEnd(); iter++)
+		{
+			ConfigurationSection* sect = iter->second;
+
+			ProjectItem* item = new ProjectItem();
+
+			item->Parse(sect);
+
+			parentContainer.Add(item);
+
+			if (item->getType() == PRJITEM_Folder)
+			{
+				ProjectFolder* folder = static_cast<ProjectFolder*>(item->getData());
+				ProjectParse(folder->SubItems, sect);
+			}
+		}
+	}
+
+	void Project::Parse(const ConfigurationSection* sect)
+	{
+		ProjectParse(m_items, sect);
 	}
 }

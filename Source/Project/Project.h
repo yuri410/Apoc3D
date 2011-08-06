@@ -79,23 +79,22 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 	};
 
-	enum TextureFilterType
-	{
-		TFLT_Nearest,
-		TFLT_Box,
-		TFLT_BSpline
-	};
-	enum TextureBuildMethod
-	{
-		TEXBUILD_D3D,
-		TEXBUILD_Devil,
-		TEXBUILD_BuiltIn
-	};
 	class ProjectResTexture : public ProjectResource
 	{
 	public:
-		virtual ProjectItemType getType() const { return PRJITEM_Texture; }
-		virtual void Parse(const ConfigurationSection* sect);
+
+		enum TextureFilterType
+		{
+			TFLT_Nearest,
+			TFLT_Box,
+			TFLT_BSpline
+		};
+		enum TextureBuildMethod
+		{
+			TEXBUILD_D3D,
+			TEXBUILD_Devil,
+			TEXBUILD_BuiltIn
+		};
 
 		String SourceFile;
 		String DestinationFile;
@@ -114,6 +113,10 @@ namespace Apoc3D
 		FastMap<uint, String> SubAlphaMapTable;
 
 		TextureBuildMethod Method;
+
+		virtual ProjectItemType getType() const { return PRJITEM_Texture; }
+		virtual void Parse(const ConfigurationSection* sect);
+
 	};
 
 	class ProjectResModel : public ProjectResource
@@ -196,7 +199,7 @@ namespace Apoc3D
 
 		const String& getName() const { return m_name; }
 		ProjectItemType getType() const { return m_typeData->getType(); }
-
+		ProjectItemData* getData() const { return m_typeData; }
 		virtual void Rename(const String& newName)
 		{
 			m_name = newName;
@@ -208,6 +211,11 @@ namespace Apoc3D
 	class Project
 	{
 	private:
+		FastList<ProjectItem*> m_items;
+	public:
+		const FastList<ProjectItem*>& getItems() const { return m_items; }
+
+		void Parse(const ConfigurationSection* sect);
 
 	};
 
