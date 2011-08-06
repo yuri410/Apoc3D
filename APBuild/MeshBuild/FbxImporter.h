@@ -111,6 +111,7 @@ namespace APBuild
 
 		class FIMesh;
 		class FIAnimation;
+		class FISkeleton;
 
 		/** A FBX importer mesh part has its own vertex data.
 			It does not have index.
