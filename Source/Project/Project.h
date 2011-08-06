@@ -226,7 +226,7 @@ namespace Apoc3D
 		const FastList<ProjectItem*>& getItems() const { return m_items; }
 
 		void Parse(const ConfigurationSection* sect);
-
+		void Save(const String& file);
 	};
 
 

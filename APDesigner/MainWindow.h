@@ -37,6 +37,9 @@ namespace APDesigner
 	class ResourcePane
 	{
 	private:
+		static const int ItemHeight = 60;
+
+		Form* m_form;
 
 	};
 	class PropertyPane
