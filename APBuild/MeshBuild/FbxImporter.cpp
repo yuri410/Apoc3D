@@ -329,7 +329,7 @@ namespace APBuild
 							Matrix matTransform;
 							Matrix::Multiply(matTransform, matAbsoluteTransform, matInvParentAbsoluteTransform);
 
-							pAnimationKeyFrames->AddKeyFrame(FIAnimationKeyframe(matTransform, fTime));
+							pAnimationKeyFrames->AddKeyFrame(FIAnimationKeyframe(matTransform, static_cast<float>(fTime)));
 
 							fTime += 1.0f/fFrameRate;
 						}
@@ -354,7 +354,7 @@ namespace APBuild
 
 						Matrix matAbsoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode, takeTime);
 
-						pAnimationKeyFrames->AddKeyFrame(FIAnimationKeyframe(matAbsoluteTransform, fTime));
+						pAnimationKeyFrames->AddKeyFrame(FIAnimationKeyframe(matAbsoluteTransform, static_cast<float>(fTime)));
 
 						fTime += 1.0f/fFrameRate;
 					}
@@ -1266,6 +1266,8 @@ namespace APBuild
 				fbx.m_pSkeleton->FlattenBones(bones);
 				fbx.m_pSkeleton->FlattenAnimation(&skeletonAnimations);
 			}
+
+
 			
 		}
 

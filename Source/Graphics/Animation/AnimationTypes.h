@@ -133,8 +133,8 @@ namespace Apoc3D
 					return m_nextFrameIndex;
 				}
 
-				ModelKeyframe(int32 index, float time, const Matrix& transform)
-					: m_objIndex(index), m_time(time), m_transform(transform), m_nextFrameIndex(-1)
+				ModelKeyframe(int32 objIndex, float time, const Matrix& transform)
+					: m_objIndex(objIndex), m_time(time), m_transform(transform), m_nextFrameIndex(-1)
 				{
 
 				}

@@ -191,6 +191,7 @@ namespace APBuild
 		class FIMesh
 		{
 		private:
+			friend class FbxImporter;
 			std::vector<FIMeshPart*> m_ModelParts;
 
 			FastMap<string, FIPartialAnimation*> m_AnimationKeyFrames;
@@ -283,7 +284,7 @@ namespace APBuild
 				m_AnimationKeyFrames.Add(pAnimationKeyFrames->GetAnimationName(),
 					pAnimationKeyFrames);
 			}
-			FIPartialAnimation* GetAnimationKeyFrames(const std::string& strAnimationName)
+			FIPartialAnimation* GetAnimationKeyFrames(const std::string& strAnimationName) const
 			{
 				return m_AnimationKeyFrames[strAnimationName];
 			}
@@ -505,7 +506,7 @@ namespace APBuild
 								const Matrix& trans = anim->GetKeyFrameTransform(frameIndex);
 								float time = anim->GetKeyFrameTime(frameIndex);
 
-								frames.Add(ModelKeyframe(static_cast<int>(frameIndex),time, trans));
+								frames.Add(ModelKeyframe(i,time, trans));
 							}
 						}
 					}
@@ -583,7 +584,62 @@ namespace APBuild
 
 		bool IsSkeletonRoot(KFbxNode* pNode);
 
+		void FlattenAnimation(AnimationData::ClipTable* clipTable)
+		{
+			const FIMesh** meshList = new const FIMesh*[m_meshes.getCount()];
+			ExistTable<string> seenAnimation;
+			int idxCounter = 0;
+			for (FastMap<string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
+			{
+				const FIMesh* mesh = *i.getCurrentValue();
+				for (FastMap<std::string, FIPartialAnimation*>::Enumerator j=mesh->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
+				{
+					FIPartialAnimation* anim = *j.getCurrentValue();
 
+					const string& name = anim->GetAnimationName();
+
+					if (!seenAnimation.Exists(name))
+					{
+						seenAnimation.Add(name);
+					}
+				}
+				meshList[idxCounter++] = mesh;
+			}
+
+			for (ExistTable<string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
+			{
+				const string& animName = *e.getCurrent();
+
+				uint frameIndex = 0;
+				bool finished = false;
+				FastList<ModelKeyframe> frames;
+
+				while (!finished)
+				{
+					finished = true;
+					for (int i=0;i<m_meshes.getCount();i++)
+					{
+						const FIMesh* mesh = meshList[i];
+						FIPartialAnimation* anim = mesh->GetAnimationKeyFrames(animName);
+
+						if (frameIndex < anim->getKeyFrameCount())
+						{
+							finished = false;
+							const Matrix& trans = anim->GetKeyFrameTransform(frameIndex);
+							float time = anim->GetKeyFrameTime(frameIndex);
+
+							frames.Add(ModelKeyframe(i,time, trans));
+						}
+					}
+				}
+				if (frames.getCount())
+				{
+					ModelAnimationClip* clip = new ModelAnimationClip(frames[frames.getCount()-1].getTime(), frames);
+					clipTable->insert(std::make_pair(StringUtils::toWString(animName), clip));
+				}					
+			}
+			delete[] meshList;
+		}
 	public:
 		FbxImporter()
 			: m_pSkeleton(0), m_FBXMaterials(0), m_pFBXScene(0)
