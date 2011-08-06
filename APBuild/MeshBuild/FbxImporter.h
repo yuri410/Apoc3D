@@ -10,6 +10,7 @@
 #include "Collections/FastMap.h"
 #include "Math/Matrix.h"
 #include "Graphics/Animation/AnimationTypes.h"
+#include "Graphics/Animation/AnimationData.h"
 #include "Utility/StringUtils.h"
 
 #define MAXBONES_PER_VERTEX 4
@@ -109,7 +110,7 @@ namespace APBuild
 		};
 
 		class FIMesh;
-		class AnimationKeyFrames;
+		class FIAnimation;
 
 		/** A FBX importer mesh part has its own vertex data.
 			It does not have index.
@@ -190,7 +191,7 @@ namespace APBuild
 		private:
 			std::vector<FIMeshPart*> m_ModelParts;
 
-			FastMap<string, AnimationKeyFrames*> m_AnimationKeyFrames;
+			FastMap<string, FIAnimation*> m_AnimationKeyFrames;
 
 			std::string m_strName;
 
@@ -212,9 +213,9 @@ namespace APBuild
 				{
 					delete m_ModelParts[i];
 				}
-				for (FastMap<string, AnimationKeyFrames*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
+				for (FastMap<string, FIAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
 				{
-					AnimationKeyFrames* akf = *e.getCurrentValue();
+					FIAnimation* akf = *e.getCurrentValue();
 					delete akf;
 				}
 			}
@@ -275,12 +276,12 @@ namespace APBuild
 			//void InitializeDeviceObjects(ID3D10Device* pd3dDevice);
 			//void ReleaseDeviceObjects();
 
-			void AddAnimationKeyFrames(AnimationKeyFrames* pAnimationKeyFrames)
+			void AddAnimationKeyFrames(FIAnimation* pAnimationKeyFrames)
 			{
 				m_AnimationKeyFrames.Add(pAnimationKeyFrames->GetAnimationName(),
 					pAnimationKeyFrames);
 			}
-			AnimationKeyFrames* GetAnimationKeyFrames(const std::string& strAnimationName)
+			FIAnimation* GetAnimationKeyFrames(const std::string& strAnimationName)
 			{
 				return m_AnimationKeyFrames[strAnimationName];
 			}
@@ -302,18 +303,18 @@ namespace APBuild
 			If the animation is skeleton animation, the bone uses the keyframes when playing.
 			Otherwise the keyframes are used as transform of a mesh part.
 		*/
-		class AnimationKeyFrames
+		class FIAnimation
 		{
 		protected:
 			std::string m_strAnimationName;
 			std::vector<Matrix> m_KeyFrames;
 		public:
-			AnimationKeyFrames(const std::string& strAnimationName)
+			FIAnimation(const std::string& strAnimationName)
 				: m_strAnimationName(strAnimationName)
 			{
 
 			}
-			~AnimationKeyFrames() { }
+			~FIAnimation() { }
 
 			void AddKeyFrame(const Matrix& matTransform)
 			{
@@ -328,7 +329,7 @@ namespace APBuild
 		class FISkeletonBone
 		{
 		private:
-
+			friend class FISkeleton;
 			std::string m_strName;
 
 			Matrix m_matBindPoseTransform;
@@ -338,7 +339,7 @@ namespace APBuild
 
 			int m_nParentBoneIndex;
 
-			FastMap<std::string, AnimationKeyFrames*> m_AnimationKeyFrames;
+			FastMap<std::string, FIAnimation*> m_AnimationKeyFrames;
 		public:
 			FISkeletonBone(std::string strName, int nParentBoneIndex)
 				: m_strName(strName), m_nParentBoneIndex(nParentBoneIndex)
@@ -348,16 +349,16 @@ namespace APBuild
 			}
 			~FISkeletonBone()
 			{
-				for (FastMap<string, AnimationKeyFrames*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
+				for (FastMap<string, FIAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
 				{
-					AnimationKeyFrames* akf = *e.getCurrentValue();
+					FIAnimation* akf = *e.getCurrentValue();
 					delete akf;
 				}
 				m_AnimationKeyFrames.Clear();
 			}
 
 
-			void AddAnimationKeyFrames(AnimationKeyFrames* pAnimationKeyFrames)
+			void AddAnimationKeyFrames(FIAnimation* pAnimationKeyFrames)
 			{
 				m_AnimationKeyFrames.Add(pAnimationKeyFrames->GetAnimationName(), pAnimationKeyFrames);
 			}
@@ -373,9 +374,9 @@ namespace APBuild
 				Matrix::Inverse(m_matInvBoneReferenceTransform, matBoneReferenceTransform);
 			}
 
-			AnimationKeyFrames* GetAnimationKeyFrames(const std::string strAnimationName)
+			FIAnimation* GetAnimationKeyFrames(const std::string strAnimationName)
 			{
-				AnimationKeyFrames* result;
+				FIAnimation* result;
 				if (m_AnimationKeyFrames.TryGetValue(strAnimationName, result))
 					return result;
 				return 0;
@@ -448,9 +449,21 @@ namespace APBuild
 
 			void FlattenAnimation(AnimationData::ClipTable* clipTable)
 			{
+				FastMap<String, FIAnimation*> seenAnimation;
 				for (int i=0;i<m_SkeletonBones.getCount();i++)
 				{
-					
+					FISkeletonBone* bone = m_SkeletonBones[i];
+					for (FastMap<std::string, FIAnimation*>::Enumerator j=bone->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
+					{
+						FIAnimation* anim = *j.getCurrentValue();
+
+						String name = StringUtils::toWString(anim->GetAnimationName());
+
+						if (!seenAnimation.Contains(name))
+						{
+							seenAnimation.Add(name, anim);
+						}
+					}
 				}
 			}
 			void FlattenBones(FastList<Bone>& bones)

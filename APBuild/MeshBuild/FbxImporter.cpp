@@ -6,7 +6,6 @@
 #include "IOLib/MaterialData.h"
 #include "Utility/StringUtils.h"
 #include "Collections/ExistTable.h"
-#include "Graphics/Animation/AnimationData.h"
 #include "IOLib/Streams.h"
 
 using namespace Apoc3D::Utility;
@@ -316,7 +315,7 @@ namespace APBuild
 					if( pBone )
 					{
 
-						AnimationKeyFrames* pAnimationKeyFrames = new AnimationKeyFrames(strTakeName);
+						FIAnimation* pAnimationKeyFrames = new FIAnimation(strTakeName);
 
 						double fTime = 0;
 						while( fTime <= fStop )
@@ -346,7 +345,7 @@ namespace APBuild
 
 				if( pModel )
 				{
-					AnimationKeyFrames* pAnimationKeyFrames = new AnimationKeyFrames(strTakeName);
+					FIAnimation* pAnimationKeyFrames = new FIAnimation(strTakeName);
 
 					double fTime = 0;
 					while( fTime <= fStop )
@@ -875,9 +874,9 @@ namespace APBuild
 		{
 			delete m_materials[i];
 		}
-		for (int i=0;i<m_meshes.getCount();i++)
+		for (FastMap<string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
 		{
-			delete m_meshes[i];
+			delete *i.getCurrentValue();
 		}
 		delete m_pSkeleton;
 	}
