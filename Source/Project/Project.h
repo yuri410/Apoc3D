@@ -34,6 +34,12 @@ using namespace Apoc3D::Graphics;
 
 namespace Apoc3D
 {
+	/** Holds, load and save project configuration file.
+		Include project directory structure, and all parameters used to compile assets to
+		final formats.
+	*/
+
+
 	class ProjectItem;
 
 	enum ProjectItemType
@@ -47,6 +53,8 @@ namespace Apoc3D
 		PRJITEM_Font
 	};
 	
+	/** Represent the build configuration for a specific type of assert in the project.
+	*/
 	class ProjectItemData
 	{
 	private:
@@ -181,6 +189,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 	};
 
+	/** Represents one asset in the project.
+	*/
 	class ProjectItem
 	{
 	private:
