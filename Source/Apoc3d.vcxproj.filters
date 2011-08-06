@@ -441,6 +441,9 @@
     <ClInclude Include="UILib\Label.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Project\Project.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
