@@ -5,8 +5,6 @@
 
 namespace APDesigner
 {
-
-
 	class Document
 	{
 	private:
