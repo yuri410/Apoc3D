@@ -106,7 +106,7 @@ namespace APDesigner
 		
 		
 
-		m_form = new Form(Form::FBS_None);
+		m_form = new Form(FBS_Pane);
 		m_form->SetSkin(m_UIskin);
 		//m_form->getControls().Add(m_btn);
 		//m_form->getControls().Add(m_mainMenu);

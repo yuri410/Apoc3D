@@ -36,6 +36,13 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		enum BorderStyle
+		{
+			FBS_None,
+			FBS_Fixed,
+			FBS_Sizable,
+			FBS_Pane
+		};
 		class Border
 		{
 		private:
@@ -43,7 +50,7 @@ namespace Apoc3D
 			
 			Apoc3D::Math::Rectangle m_dstRect[9];
 			const StyleSkin* m_skin;
-			bool m_resizable;
+			BorderStyle m_style;
 
 			void UpdateRects(const Point& position, const Point& size);
 			void DrawUpper(Sprite* sprite);
@@ -52,7 +59,7 @@ namespace Apoc3D
 			void DrawShadow(Sprite* sprite, const Point& pos, float alpha);
 
 		public:
-			Border(bool resizable, const StyleSkin* skin);
+			Border(BorderStyle style, const StyleSkin* skin);
 			void Draw(Sprite* sprite, const Point& pt, const Point& size, float shadowAlpha);
 			
 
@@ -60,12 +67,7 @@ namespace Apoc3D
 		class Form : public ControlContainer
 		{
 		public:
-			enum BorderStyle
-			{
-				FBS_None,
-				FBS_Fixed,
-				FBS_Sizable
-			};
+			
 			enum WindowState
 			{
 				FWS_Normal,

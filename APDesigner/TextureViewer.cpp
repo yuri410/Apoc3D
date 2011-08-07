@@ -40,7 +40,7 @@ namespace APDesigner
 	TextureThumbViewer::TextureThumbViewer(RenderDevice* device)
 		: m_texture(0), m_device(device)
 	{
-		m_form = new Form(Form::FBS_None, L"Texture thumbnail");
+		m_form = new Form(FBS_None, L"Texture thumbnail");
 
 		m_pictureBox = new PictureBox(Point::Zero, 0, 1);
 		m_form->getControls().Add(m_pictureBox);

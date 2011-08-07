@@ -194,7 +194,7 @@ namespace Apoc3D
 				m_menu->Initialize(m_device);
 			}
 
-			m_border = new Border(m_borderStyle == FBS_Sizable, m_skin);
+			m_border = new Border(m_borderStyle, m_skin);
 
 			InitializeButtons(device);
 
@@ -702,7 +702,7 @@ namespace Apoc3D
 			Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
 
 			sprite->MultiplyTransform(matrix);
-			if (m_borderStyle != FBS_None)
+			if (m_borderStyle != FBS_None && m_borderStyle != FBS_Pane)
 			{
 				m_btClose->Position.X = Size.X - 22;
 				m_btClose->Position.Y = 4;
@@ -803,17 +803,30 @@ namespace Apoc3D
 		/************************************************************************/
 
 
-		Border::Border(bool resizable, const StyleSkin* skin)
-			: m_skin(skin), m_resizable(resizable), m_shadowOffset(6,4)
+		Border::Border(BorderStyle style, const StyleSkin* skin)
+			: m_skin(skin), m_style(style), m_shadowOffset(6,4)
 		{
 			for (int i=0;i<9;i++)
 			{
-				m_dstRect[i] = Apoc3D::Math::Rectangle(0,0,m_skin->FormBorderTexture[i]->getWidth(), m_skin->FormBorderTexture[i]->getHeight());
+				Texture* tex;
+				if (m_style == FBS_Pane)
+				{
+					tex = m_skin->WhitePixelTexture;
+				}
+				else
+				{
+					tex = m_skin->FormBorderTexture[i];
+				}
+
+				m_dstRect[i] = Apoc3D::Math::Rectangle(0,0,tex->getWidth(), tex->getHeight());
 			}
-			if (resizable)
+			
+			if (style == FBS_Sizable)
 			{
 				m_dstRect[8] = Apoc3D::Math::Rectangle(0,0,m_skin->FormBorderTexture[9]->getWidth(), m_skin->FormBorderTexture[9]->getHeight());
 			}
+			//if (m_style == FBS_Pane)
+			//	m_shadowOffset = Point(1,1);
 		}
 
 		void Border::Draw(Sprite* sprite, const Point& pt, const Point& size, float shadowAlpha)
@@ -849,10 +862,21 @@ namespace Apoc3D
 			m_dstRect[2].Y = m_dstRect[1].Y;
 
 			// middle
-			m_dstRect[3].X = m_dstRect[0].X;
-			m_dstRect[3].Y = m_dstRect[0].Y + m_dstRect[0].Height;
-			m_dstRect[3].Height = size.Y - (m_dstRect[0].Height + m_skin->FormBorderTexture[6]->getHeight());
+			if (m_style == FBS_Pane)
+			{
+				m_dstRect[3].X = m_dstRect[0].X;
+				m_dstRect[3].Y = m_dstRect[0].Y + m_dstRect[0].Height;
+				m_dstRect[3].Height = size.Y - (m_dstRect[0].Height + m_skin->WhitePixelTexture->getHeight());
 
+			}
+			else
+			{
+				m_dstRect[3].X = m_dstRect[0].X;
+				m_dstRect[3].Y = m_dstRect[0].Y + m_dstRect[0].Height;
+				m_dstRect[3].Height = size.Y - (m_dstRect[0].Height + m_skin->FormBorderTexture[6]->getHeight());
+
+			}
+			
 			m_dstRect[4].X = m_dstRect[1].X;
 			m_dstRect[4].Y = m_dstRect[3].Y;
 			m_dstRect[4].Width = m_dstRect[1].Width;
@@ -865,15 +889,32 @@ namespace Apoc3D
 			// lower
 			m_dstRect[6].X = m_dstRect[0].X;
 			m_dstRect[6].Y = m_dstRect[3].Y + m_dstRect[3].Height;
-			if (size.Y > m_dstRect[0].Height + m_skin->FormBorderTexture[6]->getHeight())
+
+			if (m_style == FBS_Pane)
 			{
-				m_dstRect[6].Height = m_skin->FormBorderTexture[6]->getHeight();
+				if (size.Y > m_dstRect[0].Height + m_skin->WhitePixelTexture->getHeight())
+				{
+					m_dstRect[6].Height = m_skin->WhitePixelTexture->getHeight();
+				}
+				else
+				{
+					m_dstRect[6].Y = m_dstRect[0].Y + m_dstRect[0].Height;
+					m_dstRect[6].Height = size.Y - m_skin->WhitePixelTexture->getHeight();
+				}
 			}
 			else
 			{
-				m_dstRect[6].Y = m_dstRect[0].Y + m_dstRect[0].Height;
-				m_dstRect[6].Height = size.Y - m_skin->FormBorderTexture[6]->getHeight();
+				if (size.Y > m_dstRect[0].Height + m_skin->FormBorderTexture[6]->getHeight())
+				{
+					m_dstRect[6].Height = m_skin->FormBorderTexture[6]->getHeight();
+				}
+				else
+				{
+					m_dstRect[6].Y = m_dstRect[0].Y + m_dstRect[0].Height;
+					m_dstRect[6].Height = size.Y - m_skin->FormBorderTexture[6]->getHeight();
+				}
 			}
+			
 
 			m_dstRect[7].X = m_dstRect[1].X;
 			m_dstRect[7].Y = m_dstRect[6].Y;
@@ -886,27 +927,59 @@ namespace Apoc3D
 		}
 		void Border::DrawUpper(Sprite* sprite)
 		{
-			sprite->Draw(m_skin->FormBorderTexture[0], m_dstRect[0], CV_White);
-			sprite->Draw(m_skin->FormBorderTexture[1], m_dstRect[1], CV_White);
-			sprite->Draw(m_skin->FormBorderTexture[2], m_dstRect[2], CV_White);
+			if (m_style == FBS_Pane)
+			{
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[0], CV_DarkGray);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[1], CV_DarkGray);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[2], CV_DarkGray);
+			}
+			else
+			{
+				sprite->Draw(m_skin->FormBorderTexture[0], m_dstRect[0], CV_White);
+				sprite->Draw(m_skin->FormBorderTexture[1], m_dstRect[1], CV_White);
+				sprite->Draw(m_skin->FormBorderTexture[2], m_dstRect[2], CV_White);
+			}
+			
 		}
 		void Border::DrawMiddle(Sprite* sprite)
 		{
-			sprite->Draw(m_skin->FormBorderTexture[3], m_dstRect[3], CV_White);
-			sprite->Draw(m_skin->FormBorderTexture[4], m_dstRect[4], CV_White);
-			sprite->Draw(m_skin->FormBorderTexture[5], m_dstRect[5], CV_White);
+			if (m_style == FBS_Pane)
+			{
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[3], CV_DarkGray);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[4], CV_White);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[5], CV_DarkGray);
+			}
+			else
+			{
+				sprite->Draw(m_skin->FormBorderTexture[3], m_dstRect[3], CV_White);
+				sprite->Draw(m_skin->FormBorderTexture[4], m_dstRect[4], CV_White);
+				sprite->Draw(m_skin->FormBorderTexture[5], m_dstRect[5], CV_White);
+			}
+			
 		}
 		void Border::DrawLower(Sprite* sprite)
 		{
-			sprite->Draw(m_skin->FormBorderTexture[6], m_dstRect[6], CV_White);
-			sprite->Draw(m_skin->FormBorderTexture[7], m_dstRect[7], CV_White);
-			if (m_resizable)
-				sprite->Draw(m_skin->FormBorderTexture[9], m_dstRect[8], CV_White);			
+			if (m_style == FBS_Pane)
+			{
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[6], CV_DarkGray);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[7], CV_DarkGray);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[8], CV_DarkGray);
+			}
 			else
-				sprite->Draw(m_skin->FormBorderTexture[8], m_dstRect[8], CV_White);
+			{
+				sprite->Draw(m_skin->FormBorderTexture[6], m_dstRect[6], CV_White);
+				sprite->Draw(m_skin->FormBorderTexture[7], m_dstRect[7], CV_White);
+				if (m_style == FBS_Sizable)
+					sprite->Draw(m_skin->FormBorderTexture[9], m_dstRect[8], CV_White);			
+				else
+					sprite->Draw(m_skin->FormBorderTexture[8], m_dstRect[8], CV_White);
+			}
 		}
 		void Border::DrawShadow(Sprite* sprite, const Point& pos, float alpha)
 		{
+			if (m_style == FBS_Pane)
+				return;
+			
 			if (alpha > 1)
 				alpha = 1;
 			if (alpha<0)
@@ -940,7 +1013,7 @@ namespace Apoc3D
 			shadowRect = m_dstRect[8];
 			shadowRect.X += m_shadowOffset.X;
 			shadowRect.Y += m_shadowOffset.Y;
-			if (m_resizable)
+			if (m_style == FBS_Sizable)
 			{
 				sprite->Draw(m_skin->FormBorderTexture[9], shadowRect, shdClr);
 			}
