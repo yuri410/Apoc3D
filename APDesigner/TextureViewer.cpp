@@ -36,7 +36,13 @@ namespace APDesigner
 	{
 		m_texture = texture;
 
-
+		switch(m_texture->getType())
+		{
+		case TT_CubeTexture:
+			break;
+		case TT_Texture3D:
+			break;
+		}
 
 		m_form->Position = position;
 		m_form->Show();
