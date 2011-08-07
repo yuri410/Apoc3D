@@ -3,6 +3,8 @@
 
 #include "APDCommon.h"
 
+using namespace Apoc3D::Graphics;
+
 namespace APDesigner
 {
 	class TextureThumbViewer
@@ -14,15 +16,14 @@ namespace APDesigner
 		PictureBox* m_pictureBox;
 
 	public:
-		TextureThumbViewer()
-			: m_texture(0)
-		{
-			
-		}
+		TextureThumbViewer();
 
+		void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* rect);
 
+		void Show(const Point& position);
+		void Hide();
 	};
-	class TextureViewer
+	class TextureViewer : public Document
 	{
 
 	};

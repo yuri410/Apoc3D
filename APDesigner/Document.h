@@ -5,7 +5,7 @@
 
 namespace APDesigner
 {
-	class Docuement
+	class Document
 	{
 
 	};
