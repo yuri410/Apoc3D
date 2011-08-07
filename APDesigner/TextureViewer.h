@@ -3,7 +3,10 @@
 
 #include "APDCommon.h"
 
+using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::UI;
 
 namespace APDesigner
 {
@@ -15,12 +18,13 @@ namespace APDesigner
 		Form* m_form;
 		PictureBox* m_pictureBox;
 
+		Texture* m_generatedThumb;
 	public:
-		TextureThumbViewer();
+		TextureThumbViewer(RenderDevice* device);
 
 		void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* rect);
 
-		void Show(const Point& position);
+		void Show(const Point& position, Texture* texture);
 		void Hide();
 	};
 	class TextureViewer : public Document
