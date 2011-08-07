@@ -40,7 +40,8 @@ namespace APDesigner
 		static const int ItemHeight = 60;
 
 		Form* m_form;
-
+	public:
+		ResourcePane();
 	};
 	class PropertyPane
 	{
@@ -63,6 +64,7 @@ namespace APDesigner
 		Button* m_btn;
 		Form* m_form;
 
+		ResourcePane* m_resourcePane;
 	public:
 		MainWindow(RenderWindow* wnd);
 		void Initialize();

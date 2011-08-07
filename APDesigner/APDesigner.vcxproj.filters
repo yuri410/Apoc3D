@@ -74,6 +74,9 @@
     <ClCompile Include="Document.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="TextureViewer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="APDesigner.rc">

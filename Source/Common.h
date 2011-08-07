@@ -368,6 +368,8 @@ namespace Apoc3D
 		class ButtonRow;
 		class ButtonGroup;
 		class RadioButton;
+		class PictureBox;
+		class Label;
 
 		class Menu;
 		class MenuItem;

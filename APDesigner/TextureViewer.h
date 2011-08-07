@@ -2,6 +2,7 @@
 #define TEXTUREVIEWER_H
 
 #include "APDCommon.h"
+#include "Document.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
@@ -18,7 +19,10 @@ namespace APDesigner
 		Form* m_form;
 		PictureBox* m_pictureBox;
 
-		Texture* m_generatedThumb;
+		Texture* m_previewSlices[4];
+		Texture* m_previewCubeFaces[6];
+
+		RenderDevice* m_device;
 	public:
 		TextureThumbViewer(RenderDevice* device);
 
@@ -27,6 +31,7 @@ namespace APDesigner
 		void Show(const Point& position, Texture* texture);
 		void Hide();
 	};
+
 	class TextureViewer : public Document
 	{
 

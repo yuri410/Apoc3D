@@ -48,6 +48,11 @@ using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {
+	ResourcePane::ResourcePane()
+	{
+
+	}
+
 	MainWindow::MainWindow(RenderWindow* wnd)
 		: m_window(wnd), m_UIskin(0)
 	{
