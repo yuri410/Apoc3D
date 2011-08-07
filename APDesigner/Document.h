@@ -24,7 +24,10 @@ namespace APDesigner
 	public:
 		bool isActivated() const { return m_activated; }
 
-
+		virtual ObjectPropertyEditor* getRootPropertyEditor() { return 0; }
+		virtual void LoadRes() = 0;
+		virtual void SaveRes() = 0;
+		virtual bool IsReadOnly() = 0;
 
 		void DocActivate()
 		{
