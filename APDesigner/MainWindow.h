@@ -34,20 +34,6 @@ using namespace Apoc3D::UI;
 
 namespace APDesigner
 {
-	class ResourcePane
-	{
-	private:
-		static const int ItemHeight = 60;
-
-		Form* m_form;
-	public:
-		ResourcePane();
-	};
-	class PropertyPane
-	{
-
-	};
-
 	class MainWindow : public RenderWindowHandler
 	{
 	private:

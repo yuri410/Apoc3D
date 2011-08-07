@@ -54,6 +54,15 @@
     <ClInclude Include="TextureViewer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectPropertyEditor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelEditor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Panes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -75,6 +84,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TextureViewer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelEditor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Panes.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

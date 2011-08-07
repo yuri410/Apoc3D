@@ -33,6 +33,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace APDesigner
 {
+	class ResourcePane;
+	class PropertyPane;
+
 	class MainWindow;
 	class ObjectPropertyEditor;
 }
