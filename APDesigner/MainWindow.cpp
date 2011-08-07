@@ -35,6 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/Control.h"
 #include "UILib/Button.h"
 #include "UILib/Form.h"
+#include "UILib/Menu.h"
 
 #include "Input/InputAPI.h"
 #include "Vfs/FileLocateRule.h"
@@ -48,10 +49,6 @@ using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {
-	ResourcePane::ResourcePane()
-	{
-
-	}
 
 	MainWindow::MainWindow(RenderWindow* wnd)
 		: m_window(wnd), m_UIskin(0)
@@ -106,11 +103,32 @@ namespace APDesigner
 		m_btn = new Button(Point(25,25), L"UTTTest button!");
 		m_btn->SetSkin(m_UIskin);
 
+		
+		m_mainMenu = new Menu();
+		m_mainMenu->SetSkin(m_UIskin);
+		{
+			MenuItem* ttt = new MenuItem(L"Test Menu");
+			
+			m_mainMenu->Add(ttt,0);
+
+			MenuItem* tt2 = new MenuItem(L"Menu 2");
+			SubMenu* sb = new SubMenu(m_form);
+			sb->Add(new MenuItem(L"Item1"),0);
+			sb->Add(new MenuItem(L"Item2"),0);
+
+			m_mainMenu->Add(tt2, sb);
+		}
 
 		m_form = new Form();
 		m_form->SetSkin(m_UIskin);
 		m_form->getControls().Add(m_btn);
+		m_form->getControls().Add(m_mainMenu);
 		m_form->Size = Point(400,400);
+
+
+
+
+
 		m_form->Initialize(m_device);
 		m_form->Text = L"Form 1. abcdefg.hijklmn.opq rst.uvw xyz.";
 		m_form->setTitle(m_form->Text);
@@ -120,6 +138,7 @@ namespace APDesigner
 		UIRoot::Add(m_form);
 
 		m_form->Show();
+
 		//m_btn->Initialize(m_device);
 		//m_pane->Initialize(m_device);
 	}

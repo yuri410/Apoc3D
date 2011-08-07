@@ -49,6 +49,7 @@ namespace APDesigner
 		ControlContainer* m_pane;
 		Button* m_btn;
 		Form* m_form;
+		Menu* m_mainMenu;
 
 		ResourcePane* m_resourcePane;
 	public:

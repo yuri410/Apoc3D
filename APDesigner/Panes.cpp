@@ -2,5 +2,9 @@
 
 namespace APDesigner
 {
+	ResourcePane::ResourcePane()
+	{
+
+	}
 
 }
