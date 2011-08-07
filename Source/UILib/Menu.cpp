@@ -49,6 +49,8 @@ namespace Apoc3D
 		}
 		void Menu::Initialize(RenderDevice* device)
 		{
+			Control::Initialize(device);
+
 			for (int i=0;i<m_items.getCount();i++)
 			{
 				if (m_items[i]->getSubMenu())
@@ -62,10 +64,9 @@ namespace Apoc3D
 			if (submenu)
 			{
 				submenu->setParent( this);
-			}
-			if (m_owner)
 				submenu->setOwner(m_owner);
-
+			}
+			
 			item->setSubMenu(submenu);
 
 			m_items.Add(item);
@@ -88,7 +89,7 @@ namespace Apoc3D
 					}
 
 					if (m_items[m_hoverIndex]->getSubMenu() &&
-						m_items[m_hoverIndex]->getSubMenu()->getState()!=MENU_Closed)
+						m_items[m_hoverIndex]->getSubMenu()->getState()==MENU_Closed)
 					{
 						m_items[m_hoverIndex]->getSubMenu()->Open(m_openPos);
 						m_state = MENU_Open;
@@ -470,19 +471,19 @@ namespace Apoc3D
 		bool SubMenu::IsCursorInside()
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			Point cursorLoc;
-			if (!getOwner())
-			{
-				cursorLoc = mouse->GetCurrentPosition();
-			}
-			else
-			{
-				cursorLoc = mouse->GetCurrentPosition();
-				cursorLoc.X -= getOwner()->Position.X;
-				cursorLoc.Y -= getOwner()->Position.Y;
-			}
+			Point cursorLoc = mouse->GetCurrentPosition();
+			//if (!getOwner())
+			//{
+			//	cursorLoc 
+			//}
+			//else
+			//{
+			//	cursorLoc = mouse->GetCurrentPosition();
+			//	cursorLoc.X -= getOwner()->Position.X;
+			//	cursorLoc.Y -= getOwner()->Position.Y;
+			//}
 
-			if (getArea().Contains(cursorLoc))
+			if (getAbsoluteArea().Contains(cursorLoc))
 				return true;
 
 			for (int i=0;i<m_items.getCount();i++)

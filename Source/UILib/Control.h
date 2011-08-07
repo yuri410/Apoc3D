@@ -182,7 +182,7 @@ namespace Apoc3D
 			Control* operator [](int index) const { return m_controls->operator[](index); }
 
 			Menu* getMenu() const { return m_menu; }
-			void setMenu(Menu* m) { m_menu = m; }
+			void setMenu(Menu* m);
 
 			//void Add(Control* ctrl)
 			//{

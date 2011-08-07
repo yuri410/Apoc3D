@@ -680,6 +680,13 @@ namespace Apoc3D
 			{
 
 			}
+			
+			sprite->Flush();
+			m_device->getRenderState()->setScissorTest(false,0);
+			
+			if (m_menu && m_menu->Visible)
+				m_menu->Draw(sprite);
+
 			if(sprite->isUsingStack())
 			{
 				sprite->PopTransform();
@@ -688,9 +695,6 @@ namespace Apoc3D
 			{
 				sprite->SetTransform(Matrix::Identity);
 			}
-			sprite->Flush();
-			m_device->getRenderState()->setScissorTest(false,0);
-			
 		}
 		void Form::DrawButtons(Sprite* sprite)
 		{

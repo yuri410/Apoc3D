@@ -84,6 +84,11 @@ namespace Apoc3D
 		{
 			delete m_controls;
 		}
+		void ControlContainer::setMenu(Menu* m)
+		{
+			 m_menu = m;
+			 m->setOwner(this);
+		}
 		void ControlContainer::Initialize(RenderDevice* device)
 		{
 			Control::Initialize(device);
