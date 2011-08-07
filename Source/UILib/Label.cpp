@@ -97,9 +97,9 @@ namespace Apoc3D
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			Apoc3D::Math::Rectangle area = getArea();
+			Apoc3D::Math::Rectangle area = getAbsoluteArea();
 			if (area.Contains(mouse->GetCurrentPosition()) &&
-				getOwner()->getArea().Contains(area))
+				getOwner()->getAbsoluteArea().Contains(area))
 			{
 				if (!m_mouseOver)
 				{

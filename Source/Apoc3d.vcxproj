@@ -164,6 +164,7 @@
     <ClInclude Include="UILib\KeyboardHelper.h" />
     <ClInclude Include="UILib\Label.h" />
     <ClInclude Include="UILib\Menu.h" />
+    <ClInclude Include="UILib\PictureBox.h" />
     <ClInclude Include="UILib\StyleSkin.h" />
     <ClInclude Include="UILib\Control.h" />
     <ClInclude Include="UILib\FontManager.h" />
@@ -302,6 +303,7 @@
     <ClCompile Include="UILib\KeyboardHelper.cpp" />
     <ClCompile Include="UILib\Label.cpp" />
     <ClCompile Include="UILib\Menu.cpp" />
+    <ClCompile Include="UILib\PictureBox.cpp" />
     <ClCompile Include="UILib\StyleSkin.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />
