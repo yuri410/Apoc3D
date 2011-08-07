@@ -34,6 +34,9 @@ namespace APDesigner
 
 	class TextureViewer : public Document
 	{
+	private:
+		
+	public:
 
 	};
 }
