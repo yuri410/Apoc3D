@@ -148,13 +148,13 @@ namespace APDesigner
 			items.Add(L"Junk2");
 			items.Add(L"Junk3");
 			items.Add(L"Junk4");
-			//items.Add(L"Junk0");
-			//items.Add(L"Junk1");
-			//items.Add(L"Junk2");
-			//items.Add(L"Junk3");
-			//items.Add(L"Junk4");
+			items.Add(L"Junk0");
+			items.Add(L"Junk1");
+			items.Add(L"Junk2");
+			items.Add(L"Junk3");
+			items.Add(L"Junk4");
 
-			ListBox* listbox = new ListBox(Point(5,50), 300, 300, items);
+			ListBox* listbox = new ListBox(Point(50,50), 300, 300, items);
 			listbox->SetSkin(m_UIskin);
 			listbox->setUseHorizontalScrollbar(true);
 			m_form->getControls().Add(listbox);

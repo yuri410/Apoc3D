@@ -395,7 +395,7 @@ namespace Apoc3D
 			m_backArea = Apoc3D::Math::Rectangle(
 				Position.X, Position.Y+12, 12, Size.Y - 24);
 
-			sprite->Draw(m_skin->HScrollBar_Back, m_backArea, CV_White);
+			sprite->Draw(m_skin->VScrollBar_Back, m_backArea, CV_White);
 		}
 
 		void VScrollBar::DrawCursor(Sprite* sprite)
@@ -418,16 +418,16 @@ namespace Apoc3D
 			m_cursorArea.Y = m_cursorPos.Y + getOwner()->Position.Y;
 
 			Apoc3D::Math::Rectangle dstRect(m_cursorPos.X, m_cursorPos.Y, m_skin->HSCursorLeft.Width, m_skin->HSCursorLeft.Height);
-			sprite->Draw(m_skin->HScrollBar_Cursor, dstRect, &m_skin->HSCursorMiddle, CV_White);
+			sprite->Draw(m_skin->VScrollBar_Cursor, dstRect, &m_skin->VSCursorTop, CV_White);
 
 			m_cursorMidDest.X = m_cursorPos.X;
 			m_cursorMidDest.Y = m_cursorPos.Y + 3;
 			m_cursorMidDest.Height = m_cursorArea.Height - 6;
-			sprite->Draw(m_skin->HScrollBar_Cursor, m_cursorMidDest, &m_skin->HSCursorMiddle, CV_White);
+			sprite->Draw(m_skin->VScrollBar_Cursor, m_cursorMidDest, &m_skin->VSCursorMiddle, CV_White);
 
 			dstRect = Apoc3D::Math::Rectangle(
-				m_cursorPos.X, m_cursorPos.Y+m_cursorMidDest.Height, m_skin->HSCursorRight.Width, m_skin->HSCursorRight.Height);
-			sprite->Draw(m_skin->HScrollBar_Cursor, dstRect, &m_skin->HSCursorRight, CV_White);
+				m_cursorPos.X, m_cursorPos.Y+m_cursorMidDest.Height, m_skin->VSCursorBottom.Width, m_skin->VSCursorBottom.Height);
+			sprite->Draw(m_skin->VScrollBar_Cursor, dstRect, &m_skin->VSCursorBottom, CV_White);
 
 			
 		}
