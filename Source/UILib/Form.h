@@ -88,6 +88,8 @@ namespace Apoc3D
 
 			Point m_previousPosition;
 			Point m_previousSize;
+			/** The position to display form title when minimized
+			*/
 			Point m_minimizedPos;
 
 			String m_title;
@@ -107,15 +109,25 @@ namespace Apoc3D
 			bool m_hasMinimizeButton;
 			bool m_hasMaximizeButton;
 
+			/** Specify the form's drag area, where can be dragged to move the form
+			*/
 			Apoc3D::Math::Rectangle m_dragArea;
+			/** Specify the form's resize area, where can be dragged to resize the form
+			*/
 			Apoc3D::Math::Rectangle m_resizeArea;
 			
 			bool m_isDragging;
 			bool m_isResizeing;
 
+			/** Tells if the form is on the minimizing animation process.
+			*/
 			bool m_isMinimizing;
+			/** Tells if current cursor position is in the form's resize area, where can be dragged to resize the form
+			*/
 			bool m_isInReiszeArea;
 
+			/** Specify the cursor position difference since last frame when dragging or resizing the form.
+			*/
 			Point m_posOffset;
 			Point m_oldSize;
 

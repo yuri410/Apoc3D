@@ -163,6 +163,7 @@
     <ClInclude Include="UILib\Form.h" />
     <ClInclude Include="UILib\KeyboardHelper.h" />
     <ClInclude Include="UILib\Label.h" />
+    <ClInclude Include="UILib\List.h" />
     <ClInclude Include="UILib\Menu.h" />
     <ClInclude Include="UILib\PictureBox.h" />
     <ClInclude Include="UILib\StyleSkin.h" />
