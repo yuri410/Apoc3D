@@ -29,6 +29,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Button.h"
 #include "Graphics/RenderSystem/Texture.h"
 #include "Graphics/RenderSystem/Sprite.h"
+#include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/RenderStateManager.h"
 #include "Scrollbar.h"
 #include "Form.h"
 
@@ -204,6 +206,15 @@ namespace Apoc3D
 		{
 			DrawBackground(sprite);
 			
+			bool shouldRestoreScissorTest = false;
+			Apoc3D::Math::Rectangle oldScissorRect;
+			RenderDevice* dev = sprite->getRenderDevice();
+			if (dev->getRenderState()->getScissorTestEnabled())
+			{
+				shouldRestoreScissorTest = true;
+				oldScissorRect = dev->getRenderState()->getScissorTestRect();
+			}
+
 			m_hoverIndex = -1;
 			for (int i=m_vscrollbar->getValue();
 				i<min(m_items.getCount(), m_vscrollbar->getValue()+m_visisbleItems);i++)
@@ -218,6 +229,15 @@ namespace Apoc3D
 					RenderSelectionBox(sprite,i);
 
 				m_fontRef->DrawString(sprite, m_items[i], m_textOffset, m_skin->ForeColor);
+			}
+
+			if (shouldRestoreScissorTest)
+			{
+				dev->getRenderState()->setScissorTest(true,&oldScissorRect);
+			}
+			else
+			{
+				dev->getRenderState()->setScissorTest(false,0);
 			}
 
 			UpdateHScrollbar();
