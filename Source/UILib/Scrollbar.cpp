@@ -61,7 +61,7 @@ namespace Apoc3D
 			m_btLeft->eventPress().bind(this, &HScrollbar::btLeft_OnPress);
 			m_btLeft->Initialize(device);
 
-			m_cursorMidDest = Apoc3D::Math::Rectangle(0,0,1, m_skin->VScrollBar_Cursor->getHeight());
+			m_cursorMidDest = Apoc3D::Math::Rectangle(0,0,1, m_skin->HScrollBar_Cursor->getHeight());
 
 			m_btRight = new Button(Point(Position.X + Size.X - 12, Position.Y), 1, L"");
 			m_btRight->setOwner(getOwner());
@@ -220,7 +220,7 @@ namespace Apoc3D
 			m_cursorArea.Y = m_cursorPos.Y + getOwner()->Position.Y;
 
 			Apoc3D::Math::Rectangle dstRect(m_cursorPos.X, m_cursorPos.Y, m_skin->HSCursorLeft.Width, m_skin->HSCursorLeft.Height);
-			sprite->Draw(m_skin->HScrollBar_Cursor, dstRect, &m_skin->HSCursorMiddle, CV_White);
+			sprite->Draw(m_skin->HScrollBar_Cursor, dstRect, &m_skin->HSCursorLeft, CV_White);
 
 			m_cursorMidDest.X = m_cursorPos.X + 3;
 			m_cursorMidDest.Y = m_cursorPos.Y;
