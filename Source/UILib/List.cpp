@@ -208,6 +208,7 @@ namespace Apoc3D
 		{
 			DrawBackground(sprite);
 
+			sprite->Flush();
 			Matrix trans;
 			Matrix::CreateTranslation(trans, (float)Position.X, (float)Position.Y ,0);
 			sprite->MultiplyTransform(trans);

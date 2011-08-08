@@ -121,6 +121,21 @@ namespace Apoc3D
 						(LONG)srcRect->getBottom()
 					};
 
+					if (r.left > r.right)
+					{
+						LONG temp = r.right;
+						r.right = r.left;
+						r.left = temp;
+						position.x -= (float)( r.left - r.right);
+					}
+					if (r.top>r.bottom)
+					{
+						LONG temp = r.bottom;
+						r.bottom = r.top;
+						r.top = temp;
+						position.y -= (float)( r.top - r.bottom);
+					}
+
 					if (srcRect->Width != dstRect.Width || srcRect->Height != dstRect.Height)
 					{
 						D3DMatrix trans;
