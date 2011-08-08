@@ -234,7 +234,7 @@ namespace Apoc3D
 			}
 
 			ScrollBar(const Point& position, ScrollBarType type, int size)
-				: m_hsbar(0), m_vsbar(0)
+				: m_hsbar(0), m_vsbar(0), m_type(type)
 			{
 				if (m_type == SCRBAR_Horizontal)
 				{

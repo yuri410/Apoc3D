@@ -222,6 +222,8 @@ namespace Apoc3D
 				shouldRestoreScissorTest = true;
 				oldScissorRect = dev->getRenderState()->getScissorTestRect();
 			}
+			Apoc3D::Math::Rectangle scissorRect = getAbsoluteArea();
+			dev->getRenderState()->setScissorTest(true, &scissorRect);
 
 			m_hoverIndex = -1;
 			for (int i=m_vscrollbar->getValue();
