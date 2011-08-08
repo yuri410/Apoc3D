@@ -513,6 +513,7 @@ namespace APBuild
 					// find next frames
 					for (int i=0;i<frames.getCount();i++)
 					{
+						frames[i].setNextFrameIndex(-1);
 						for (int j=0;j<frames.getCount();j++)
 						{
 							int nextFrameIdx = (j + i + 1) & frames.getCount();
@@ -650,6 +651,7 @@ namespace APBuild
 				// find next frames
 				for (int i=0;i<frames.getCount();i++)
 				{
+					frames[i].setNextFrameIndex(-1);
 					for (int j=0;j<frames.getCount();j++)
 					{
 						int nextFrameIdx = (j + i + 1) & frames.getCount();
