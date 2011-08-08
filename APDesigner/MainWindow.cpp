@@ -169,7 +169,8 @@ namespace APDesigner
 
 			TreeViewNode* node2 = new TreeViewNode(L"Root2");
 			treeview->getNodes().Add(node2);
-
+			TreeViewNode* node3 = new TreeViewNode(L"Root3 the long one. Project Hosting will be READ-ONLY Tuesday at 9:00am CDT for brief maintenance.");
+			treeview->getNodes().Add(node3);
 			m_form->getControls().Add(treeview);
 		}
 		m_form->Initialize(m_device);
