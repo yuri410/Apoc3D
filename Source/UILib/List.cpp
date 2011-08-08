@@ -115,6 +115,7 @@ namespace Apoc3D
 				}
 
 				m_hscrollbar->setOwner(getOwner());
+				m_hscrollbar->SetSkin(m_skin);
 				m_hscrollbar->Initialize(device);
 			}
 
@@ -130,6 +131,7 @@ namespace Apoc3D
 
 			m_vscrollbar = new ScrollBar(Point(Position.X+Size.X - 13,1),ScrollBar::SCRBAR_Vertical,vScrollbarHeight);
 			m_vscrollbar->setOwner(getOwner());
+			m_vscrollbar->SetSkin(m_skin);
 			m_vscrollbar->Initialize(device);
 		}
 		void ListBox::Update(const GameTime* const time)
@@ -205,7 +207,11 @@ namespace Apoc3D
 		void ListBox::Draw(Sprite* sprite)
 		{
 			DrawBackground(sprite);
-			
+
+			Matrix trans;
+			Matrix::CreateTranslation(trans, (float)Position.X, (float)Position.Y ,0);
+			sprite->MultiplyTransform(trans);
+
 			bool shouldRestoreScissorTest = false;
 			Apoc3D::Math::Rectangle oldScissorRect;
 			RenderDevice* dev = sprite->getRenderDevice();
@@ -230,7 +236,7 @@ namespace Apoc3D
 
 				m_fontRef->DrawString(sprite, m_items[i], m_textOffset, m_skin->ForeColor);
 			}
-
+			sprite->Flush();
 			if (shouldRestoreScissorTest)
 			{
 				dev->getRenderState()->setScissorTest(true,&oldScissorRect);
@@ -239,7 +245,11 @@ namespace Apoc3D
 			{
 				dev->getRenderState()->setScissorTest(false,0);
 			}
-
+			if (sprite->isUsingStack())
+				sprite->PopTransform();
+			else
+				sprite->SetTransform(Matrix::Identity);
+			
 			UpdateHScrollbar();
 			DrawScrollbar(sprite);
 		}
@@ -273,33 +283,33 @@ namespace Apoc3D
 		{
 			m_destRect[0].X = Position.X;
 			m_destRect[0].Y = Position.Y;
-			sprite->Draw(m_skin->TextBox, m_destRect[0], &m_skin->ListBoxSrcRects[0], m_skin->BackColor);
+			sprite->Draw(m_skin->TextBox, m_destRect[0], &m_skin->ListBoxSrcRects[0], CV_White);
 			m_destRect[1].X = m_destRect[0].X + m_destRect[0].Width;
 			m_destRect[1].Y = m_destRect[0].Y;
-			sprite->Draw(m_skin->TextBox, m_destRect[1], &m_skin->ListBoxSrcRects[1], m_skin->BackColor);
+			sprite->Draw(m_skin->TextBox, m_destRect[1], &m_skin->ListBoxSrcRects[1], CV_White);
 			m_destRect[2].X = m_destRect[1].X + m_destRect[1].Width;
 			m_destRect[2].Y = m_destRect[0].Y;
-			sprite->Draw(m_skin->TextBox, m_destRect[2], &m_skin->ListBoxSrcRects[2], m_skin->BackColor);
+			sprite->Draw(m_skin->TextBox, m_destRect[2], &m_skin->ListBoxSrcRects[2], CV_White);
 
 			m_destRect[3].X = m_destRect[0].X;
 			m_destRect[3].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[3], &m_skin->ListBoxSrcRects[3], m_skin->BackColor);
+			sprite->Draw(m_skin->TextBox, m_destRect[3], &m_skin->ListBoxSrcRects[3], CV_White);
 			m_destRect[4].X = m_destRect[1].X;
 			m_destRect[4].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[4], &m_skin->ListBoxSrcRects[4], m_skin->BackColor);
+			sprite->Draw(m_skin->TextBox, m_destRect[4], &m_skin->ListBoxSrcRects[4], CV_White);
 			m_destRect[5].X = m_destRect[2].X;
 			m_destRect[5].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[5], &m_skin->ListBoxSrcRects[5], m_skin->BackColor);
+			sprite->Draw(m_skin->TextBox, m_destRect[5], &m_skin->ListBoxSrcRects[5], CV_White);
 
 			m_destRect[6].X = m_destRect[0].X;
 			m_destRect[6].Y = m_destRect[3].Y + m_destRect[3].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[6], &m_skin->ListBoxSrcRects[6], m_skin->BackColor);
+			sprite->Draw(m_skin->TextBox, m_destRect[6], &m_skin->ListBoxSrcRects[6], CV_White);
 			m_destRect[7].X = m_destRect[1].X;
 			m_destRect[7].Y = m_destRect[4].Y + m_destRect[4].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[7], &m_skin->ListBoxSrcRects[7], m_skin->BackColor);
+			sprite->Draw(m_skin->TextBox, m_destRect[7], &m_skin->ListBoxSrcRects[7], CV_White);
 			m_destRect[8].X = m_destRect[2].X;
 			m_destRect[8].Y = m_destRect[5].Y + m_destRect[5].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[8], &m_skin->ListBoxSrcRects[8], m_skin->BackColor);
+			sprite->Draw(m_skin->TextBox, m_destRect[8], &m_skin->ListBoxSrcRects[8], CV_White);
 		}
 		void ListBox::DrawScrollbar(Sprite* sprite)
 		{

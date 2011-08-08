@@ -36,6 +36,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/Button.h"
 #include "UILib/Form.h"
 #include "UILib/Menu.h"
+#include "UILib/List.h"
 
 #include "Input/InputAPI.h"
 #include "Vfs/FileLocateRule.h"
@@ -131,7 +132,17 @@ namespace APDesigner
 
 		}
 
+		{
+			List<String> items;
+			items.Add(L"I1");
+			items.Add(L"I1sa");
+			items.Add(L"dasad asdaA");
 
+			ListBox* listbox = new ListBox(Point(5,50), 300, 300, items);
+			listbox->SetSkin(m_UIskin);
+			m_form->getControls().Add(listbox);
+		}
+		
 		m_form->Initialize(m_device);
 		m_form->Text = L"Form 1. abcdefg.hijklmn.opq rst.uvw xyz.";
 		m_form->setTitle(m_form->Text);

@@ -321,7 +321,7 @@ namespace Apoc3D
 					m_btRestore->Update(time);
 				}
 
-				if (!m_menu || !m_menu->Visible || m_menu->getState() == FWS_Maximized)
+				if (!m_menu || !m_menu->Visible || m_menu->getState() == MENU_Closed)
 				{
 					if (m_state == FWS_Normal || m_state == FWS_Maximized)
 					{

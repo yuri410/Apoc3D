@@ -265,7 +265,7 @@ namespace Apoc3D
 				{
 					m_vsbar->SetSkin(m_skin);
 					m_vsbar->setOwner(getOwner());
-					m_hsbar->Initialize(device);
+					m_vsbar->Initialize(device);
 				}
 				
 			}

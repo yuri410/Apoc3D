@@ -162,6 +162,17 @@ namespace Apoc3D
 			ListBoxSrcRects[7] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1, -TextBox->getHeight()/2);
 			ListBoxSrcRects[8] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,-(TextBox->getWidth()-1), -TextBox->getHeight()/2);
 
+			//ListBoxSrcRects[0] = Apoc3D::Math::Rectangle(0,0,TextBox->getWidth()-1, TextBox->getHeight()/2);
+			//ListBoxSrcRects[1] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,1, TextBox->getHeight()/2);
+			//ListBoxSrcRects[2] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,(TextBox->getWidth()-1), TextBox->getHeight()/2);
+
+			//ListBoxSrcRects[3] = Apoc3D::Math::Rectangle(0,TextBox->getHeight()/2,TextBox->getWidth()-1, 1);
+			//ListBoxSrcRects[4] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1,1);
+			//ListBoxSrcRects[5] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,(TextBox->getWidth()-1),1);
+
+			//ListBoxSrcRects[6] = Apoc3D::Math::Rectangle(0,TextBox->getHeight()/2,TextBox->getWidth()-1, TextBox->getHeight()/2);
+			//ListBoxSrcRects[7] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1, TextBox->getHeight()/2);
+			//ListBoxSrcRects[8] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,(TextBox->getWidth()-1), TextBox->getHeight()/2);
 
 		}
 
