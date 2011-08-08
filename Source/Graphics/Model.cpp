@@ -334,7 +334,7 @@ namespace Apoc3D
 
 				if (table.size())
 				{
-					const FastList<Bone>* bones = &m_animData->getBones();
+					const List<Bone>* bones = &m_animData->getBones();
 					
 					assert(bones->getCount());
 					m_skinPlayer = new SkinnedAnimationPlayer(bones);
