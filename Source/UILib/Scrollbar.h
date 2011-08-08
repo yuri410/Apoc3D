@@ -158,6 +158,137 @@ namespace Apoc3D
 			HScrollbar* m_hsbar;
 			VScrollBar* m_vsbar;
 
+		public:
+			int getValue() const
+			{
+				if (m_type == SCRBAR_Horizontal)
+					return m_hsbar->getValue();
+				return m_vsbar->getValue();
+			}
+			void setValue(int val)
+			{
+				if (m_type == SCRBAR_Horizontal)
+					m_hsbar->setValue(val);
+				else
+					m_vsbar->setValue(val);
+			}
+
+			int getMax() const
+			{
+				if (m_type == SCRBAR_Horizontal)
+					return m_hsbar->getMax();
+				return m_vsbar->getMax();
+			}
+			void setMax(int v)
+			{
+				if (m_type == SCRBAR_Horizontal)
+					m_hsbar->setMax(v);
+				else
+					m_vsbar->setMax(v);
+			}
+
+			int getStep() const
+			{
+				if (m_type == SCRBAR_Horizontal)
+					return m_hsbar->getStep();
+				return m_vsbar->getStep();
+			}
+			void setStep(int s)
+			{
+				if (m_type == SCRBAR_Horizontal)
+					m_hsbar->setStep(s);
+				else
+					m_vsbar->setStep(s);
+			}
+
+			UIEventHandler& eventValueChanged()
+			{
+				if (m_type == SCRBAR_Horizontal)
+					return m_hsbar->eventValueChanged();
+				return m_vsbar->eventValueChanged();
+			}
+
+			bool getIsInverted() const
+			{
+				if (m_type == SCRBAR_Horizontal)
+					return m_hsbar->getIsInverted();
+				return m_vsbar->getIsInverted();
+			}
+			void setIsInverted(bool v)
+			{
+				if (m_type == SCRBAR_Horizontal)
+					m_hsbar->setIsInverted(v);
+				else
+					m_vsbar->setIsInverted(v);
+			}
+
+			void setWidth(int v)
+			{
+				if (m_hsbar)
+					m_hsbar->setWidth(v);
+			}
+			void setHeight(int v)
+			{
+				if (m_vsbar)
+					m_vsbar->setHeight(v);
+			}
+
+			ScrollBar(const Point& position, ScrollBarType type, int size)
+				: m_hsbar(0), m_vsbar(0)
+			{
+				if (m_type == SCRBAR_Horizontal)
+				{
+					m_hsbar = new HScrollbar(position, size);
+				}
+				else
+				{
+					m_vsbar = new VScrollBar(position, size);
+				}
+			}
+			~ScrollBar()
+			{
+				if (m_hsbar)
+					delete m_hsbar;
+				if (m_vsbar)
+					delete m_vsbar;
+			}
+
+			virtual void Initialize(RenderDevice* device)
+			{
+				if (m_hsbar)
+				{
+					m_hsbar->SetSkin(m_skin);
+					m_hsbar->setOwner(getOwner());
+					m_hsbar->Initialize(device);
+				}
+				if (m_vsbar)
+				{
+					m_vsbar->SetSkin(m_skin);
+					m_vsbar->setOwner(getOwner());
+					m_hsbar->Initialize(device);
+				}
+				
+			}
+			virtual void Update(const GameTime* const time)
+			{
+				if (Visible)
+				{
+					if (m_hsbar)
+						m_hsbar->Update(time);
+					if (m_vsbar)
+						m_vsbar->Update(time);
+				}
+			}
+			virtual void Draw(Sprite* sprite)
+			{
+				if (Visible)
+				{
+					if (m_hsbar)
+						m_hsbar->Draw(sprite);
+					if (m_vsbar)
+						m_vsbar->Draw(sprite);
+				}
+			}
 
 		};
 	}

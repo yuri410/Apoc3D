@@ -44,7 +44,8 @@ namespace Apoc3D
 		}
 		HScrollbar::~HScrollbar()
 		{
-
+			delete m_btLeft;
+			delete m_btRight;
 		}
 		void HScrollbar::setWidth(int w)
 		{
@@ -53,6 +54,7 @@ namespace Apoc3D
 		}
 		void HScrollbar::Initialize(RenderDevice* device)
 		{
+			Control::Initialize(device);
 			m_btLeft = new Button(Position,1, L"");
 			m_btLeft->setOwner(getOwner());
 			m_btLeft->setNormalTexture(m_skin->HScrollBar_Button);
@@ -243,7 +245,8 @@ namespace Apoc3D
 		}
 		VScrollBar::~VScrollBar()
 		{
-
+			delete m_btDown;
+			delete m_btUp;
 		}
 		void VScrollBar::setHeight(int w)
 		{
@@ -252,6 +255,7 @@ namespace Apoc3D
 		}
 		void VScrollBar::Initialize(RenderDevice* device)
 		{
+			Control::Initialize(device);
 			m_btUp = new Button(Position, 1, L"");
 			m_btUp->setOwner(getOwner());
 			m_btUp->setNormalTexture(m_skin->VScrollBar_Button);
@@ -266,7 +270,6 @@ namespace Apoc3D
 
 
 			m_cursorMidDest = Apoc3D::Math::Rectangle(0,0,m_skin->VScrollBar_Cursor->getWidth(),1);
-
 
 		}
 
