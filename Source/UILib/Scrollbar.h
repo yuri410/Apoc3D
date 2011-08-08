@@ -45,6 +45,7 @@ namespace Apoc3D
 			bool m_isScrolling;
 			bool m_inverted;
 
+			Apoc3D::Math::Rectangle m_cursorArea;
 			Apoc3D::Math::Rectangle m_cursorMidDest;
 
 			Point m_cursorPos;

@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Input/InputAPI.h"
 #include "Button.h"
 #include "Graphics/RenderSystem/Texture.h"
+#include "Graphics/RenderSystem/Sprite.h"
 
 using namespace Apoc3D::Input;
 
@@ -108,6 +109,17 @@ namespace Apoc3D
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
+			if (getOwner()->getArea().Contains(m_cursorArea) && m_cursorArea.Contains(mouse->GetCurrentPosition()))
+			{
+				if (mouse->IsLeftPressed())
+				{
+					m_isScrolling = true;
+					m_cursorOffset = mouse->GetCurrentPosition();
+					m_cursorOffset.X -= m_cursorArea.X;
+					m_cursorOffset.Y -= m_cursorArea.Y;
+				}
+			}
+
 			if (m_isScrolling)
 			{
 				if (mouse->IsLeftPressedState())
@@ -124,20 +136,89 @@ namespace Apoc3D
 		}
 		void HScrollbar::UpdateScrolling()
 		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			
+			m_cursorPos.X = mouse->GetCurrentPosition().X - m_cursorOffset.X - getOwner()->Position.X;
 
+			if (m_cursorPos.X < Position.X + 12)
+			{
+				m_cursorPos.X = Position.X + 12;
+			}
+			else if (m_cursorPos.X > Position.X + Size.X - m_cursorArea.Width - 9)
+			{
+				m_cursorPos.X = Position.X + Size.X - m_cursorArea.Width - 9;
+			}
+
+			int value = 0;
+
+			if (!m_inverted)
+			{
+				
+			}
+			else
+			{
+
+			}
+
+			if (value <0)
+				value = 0;
+			else if (value>m_max)
+				value = m_max;
+
+			if (m_value != value)
+			{
+				m_value = value;
+				if (!m_eChangeValue.empty())
+				{
+					m_eChangeValue(this);
+				}
+			}
 		}
 		void HScrollbar::Draw(Sprite* sprite)
 		{
-
+			DrawBackground(sprite);
+			if (m_max>0)
+				DrawCursor(sprite);
+			m_btLeft->Draw(sprite);
+			m_btLeft->Draw(sprite);
 		}
 		void HScrollbar::DrawBackground(Sprite* sprite)
 		{
-
+			sprite->Draw(m_skin->HScrollBar_Back, m_backArea, CV_White);
 		}
 
 		void HScrollbar::DrawCursor(Sprite* sprite)
 		{
+			m_cursorArea.Width = max(20, m_backArea.Width - max(20, m_max/4));
+			m_cursorArea.Height = 12;
+			m_cursorPos.Y = Position.Y;
+			if (!m_isScrolling)
+			{
+				if (!m_inverted)
+				{
+					m_cursorPos.X = (int)( m_backArea.X + (Size.X - 21 - m_cursorArea.Width) * (m_value/(float)m_max));
+				}
+				else
+				{
+					m_cursorPos.X = (int)( m_backArea.X + (Size.X - 21 - m_cursorArea.Width) * ((m_max-m_value)/(float)m_max));
+				}
 
+				m_cursorArea.X = m_cursorPos.X + getOwner()->Position.X;
+				m_cursorArea.Y = m_cursorPos.Y + getOwner()->Position.Y;
+
+				Apoc3D::Math::Rectangle dstRect(m_cursorPos.X, m_cursorPos.Y, m_skin->HSCursorLeft.Width, m_skin->HSCursorLeft.Height);
+				sprite->Draw(m_skin->HScrollBar_Cursor, dstRect, &m_skin->HSCursorMiddle, CV_White);
+
+				m_cursorMidDest.X = m_cursorPos.X + 3;
+				m_cursorMidDest.Y = m_cursorPos.Y;
+				m_cursorMidDest.Width = m_cursorArea.Width - 6;
+				sprite->Draw(m_skin->HScrollBar_Cursor, m_cursorMidDest, &m_skin->HSCursorMiddle, CV_White);
+
+				dstRect = Apoc3D::Math::Rectangle(
+					m_cursorPos.X + m_cursorMidDest.Width, m_cursorPos.Y, m_skin->HSCursorRight.Width, m_skin->HSCursorRight.Height);
+				sprite->Draw(m_skin->HScrollBar_Cursor, dstRect, &m_skin->HSCursorRight, CV_White);
+
+			}
 		}
 	}
 }
