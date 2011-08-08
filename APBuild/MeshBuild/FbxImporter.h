@@ -517,7 +517,7 @@ namespace APBuild
 					}					
 				}
 			}
-			void FlattenBones(FastList<Bone>& bones)
+			void FlattenBones(List<Bone>& bones)
 			{
 				for (int i=0;i<m_SkeletonBones.getCount();i++)
 				{
