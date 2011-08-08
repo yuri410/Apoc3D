@@ -81,9 +81,16 @@ namespace Apoc3D
 				{
 					m_volatileResources[i]->ReleaseVolatileResource();
 				}
+				m_defaultRT->Release();
+				m_defaultRT = 0;
+				m_defaultDS->Release();
+				m_defaultDS = 0;
 			}
 			void D3D9RenderDevice::OnDeviceReset()
 			{
+				D3DDevice* dev = m_devManager->getDevice();
+				dev->GetRenderTarget(0, &m_defaultRT);
+				dev->GetDepthStencilSurface(&m_defaultDS);
 				for (size_t i=0;i<m_volatileResources.size();i++)
 				{
 					m_volatileResources[i]->ReloadVolatileResource();

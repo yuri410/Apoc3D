@@ -1596,6 +1596,8 @@ LFail:
 				if (tex.isError())
 					return;
 			}
+
+			tex.Save(config.DestinationFile);
 		}
 		else
 		{
@@ -1622,7 +1624,8 @@ LFail:
 					return;
 				
 			}
-
+			
+			tex.Save(config.DestinationFile);
 
 		}
 	}

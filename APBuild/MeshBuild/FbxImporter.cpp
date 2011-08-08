@@ -1293,9 +1293,9 @@ namespace APBuild
 				for (int j=0;j<(int)meshData->VertexCount;j++)
 				{
 					int baseOffset = j * meshData->VertexSize;
-					for (int k=0;k<meshData->VertexElements.getCount();k++)
+					for (int k=0;k<vtxElem.getCount();k++)
 					{
-						const VertexElement& e = meshData->VertexElements[k];
+						const VertexElement& e = vtxElem[k];
 						float* vertexPtr = (float*)(meshData->VertexData + baseOffset+e.getOffset());
 						switch (e.getUsage())
 						{

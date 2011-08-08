@@ -369,6 +369,11 @@ namespace Apoc3D
 						(LONG)r->getRight(),
 						(LONG)r->getBottom()
 					};
+					if (rect.left<0)
+						rect.left = 0;
+					if (rect.top<0)
+						rect.top = 0;
+					
 					HRESULT hr = m_device->getDevice()->SetScissorRect(&rect);
 					assert(SUCCEEDED(hr));
 					hr = m_device->getDevice()->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);

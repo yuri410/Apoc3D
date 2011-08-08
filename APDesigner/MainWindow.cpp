@@ -60,21 +60,20 @@ namespace APDesigner
 	{
 		m_device = m_window->getRenderDevice();
 		m_window->setTitle(L"Apoc3D Designer");
-
-	}
-	void MainWindow::Finalize()
-	{
-		
-	}
-
-	void MainWindow::Load()
-	{
 		InputCreationParameters icp;
 		icp.UseKeyboard = true;
 		icp.UseMouse = true;
 
 		InputAPIManager::getSingleton().InitializeInput(m_window, icp);
 
+	}
+	void MainWindow::Finalize()
+	{
+		InputAPIManager::getSingleton().Finalize();
+	}
+
+	void MainWindow::Load()
+	{
 		{
 			FileLocateRule rule;
 			LocateCheckPoint pt;
