@@ -41,14 +41,43 @@ namespace Apoc3D
 
 			Point m_textOffset;
 
+			Apoc3D::Math::Rectangle m_destRect[9];
+
 			Apoc3D::Math::Rectangle m_selectionRect;
 			int m_hoverIndex;
 			int m_selectedIndex;
 
+			ScrollBar* m_vscrollbar;
+			ScrollBar* m_hscrollbar;
+			bool m_horizontalScrollbar;
+			int m_hScrollWidth;
 
+			UIEventHandler m_eSelect;
+			UIEventHandler m_eSelectionChanged;
+			bool m_mouseOver;
 
-
+			void InitScrollbars();
+			void UpdateHScrollbar();
+			void RenderSelectionIndex(Sprite* sprite, int index);
+			void DrawBackground(Sprite* sprite);
+			void DrawScrollbar(Sprite* sprite);
 		public:
+			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
+			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
+
+			List<String>& getItems() { return m_items; }
+
+			bool getIsSorted() const { return m_sorted; }
+			void setIsSorted(bool v) { m_sorted = v; }
+
+			int getSelectedIndex() const { return m_selectedIndex; }
+			void setSelectedIndex(int i) { m_selectedIndex = i; }
+
+			ListBox(const Point& position, int width, int height, const List<String>& items);
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
 
 		};
 	}

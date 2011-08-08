@@ -370,6 +370,7 @@ namespace Apoc3D
 		class RadioButton;
 		class PictureBox;
 		class Label;
+		class ScrollBar;
 
 		class Menu;
 		class MenuItem;
