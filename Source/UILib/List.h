@@ -81,6 +81,103 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite);
 
 		};
+
+		class TreeViewNode
+		{
+		private:
+			String m_text;
+			Texture* m_icon;
+			FastList<TreeViewNode*> m_subNode;
+
+			bool m_expanded;
+		public:
+			bool isExpanded() const { return m_expanded; }
+			const String& getText() const { return m_text; }
+			void setText(const String& txt) { m_text = txt; }
+
+			Texture* getIcon() const { return m_icon; }
+			void setIcon(Texture* texture) { m_icon = texture; }
+
+			FastList<TreeViewNode*>& getNodes() { return m_subNode; }
+
+			TreeViewNode(const String& text)
+				: m_text(text), m_icon(0), m_expanded(false)
+			{
+
+			}
+			TreeViewNode(const String& text, Texture* icon)
+				: m_text(text), m_icon(icon), m_expanded(false)
+			{
+
+			}
+
+			void Expand()
+			{
+				m_expanded = true;
+			}
+			void Close()
+			{
+				m_expanded = false;
+			}
+		};
+
+		class TreeView : public Control
+		{
+		private:
+			FastList<TreeViewNode*> m_nodes;
+
+			int m_visisbleItems;
+
+			Point m_textOffset;
+
+			Apoc3D::Math::Rectangle m_destRect[9];
+
+			Apoc3D::Math::Rectangle m_selectionRect;
+			TreeViewNode* m_selectedNode;
+			TreeViewNode* m_hoverNode;
+
+			ScrollBar* m_vscrollbar;
+			ScrollBar* m_hscrollbar;
+			bool m_horizontalScrollbar;
+			int m_hScrollWidth;
+
+			UIEventHandler m_eSelect;
+			UIEventHandler m_eSelectionChanged;
+			bool m_mouseOver;
+
+			int GetItemHeight() const;
+
+			void InitScrollbars(RenderDevice* device);
+			void UpdateHScrollbar();
+			void RenderSelectionBox(Sprite* sprite, TreeViewNode* node);
+			void DrawBackground(Sprite* sprite);
+			void DrawScrollbar(Sprite* sprite);
+			void DrawNodes(Sprite* sprite, const FastList<TreeViewNode*>& nodes, int depth, int& counter, int maxCount);
+
+			int GetExpandedNodeCount() const { return GetExpandedNodeCount(m_nodes); }
+			int GetExpandedNodeCount(const FastList<TreeViewNode*>& node) const;
+			int GetExpandedNodeMaxRight(const FastList<TreeViewNode*>& node) const;
+
+			int MeasureExpandedNodeWidth() const;
+			int MeasureExpandedModeHeight() const;
+		public:
+			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
+			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
+
+			FastList<TreeViewNode*>& getNodes() { return m_nodes; }
+
+
+			TreeViewNode* getSelectedNode() const { return m_selectedNode; }
+
+			TreeView(const Point& position, int width, int height);
+			~TreeView();
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			
+			virtual void Draw(Sprite* sprite);
+
+		};
 	}
 }
 
