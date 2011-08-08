@@ -72,6 +72,21 @@ namespace Apoc3D
 			Texture* RadioBtnChecked;
 			Texture* RadioBtnUnchecked;
 
+
+
+			Apoc3D::Math::Rectangle m_cursorArea;
+			Apoc3D::Math::Rectangle m_cursorLeft;
+			Apoc3D::Math::Rectangle m_cursorRight;
+			Apoc3D::Math::Rectangle m_cursorMiddle;
+
+			Texture* HScrollBar_Cursor;
+			Texture* HScrollBar_Back;
+			Texture* HScrollBar_Button;
+
+			Texture* VScrollBar_Cursor;
+			Texture* VScrollBar_Back;
+			Texture* VScrollBar_Button;
+
 		public:
 			// create default skin
 			StyleSkin(RenderDevice* device, const FileLocateRule& rule);

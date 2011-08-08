@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "StyleSkin.h"
 #include "Input/Mouse.h"
 #include "Input/InputAPI.h"
+#include "Button.h"
 
 namespace Apoc3D
 {
@@ -44,7 +45,12 @@ namespace Apoc3D
 
 		void HScrollbar::Initialize(RenderDevice* device)
 		{
+			m_btLeft = new Button(Position,1, L"");
+			m_btLeft->setNormalTexture(m_skin->HScrollBar_Button);
+			m_btLeft->eventPress().bind(this, HScrollbar::btLeft_OnPress);
+			m_btLeft->Initialize(device);
 
+			m_cursorLeft.
 		}
 
 		void HScrollbar::btLeft_OnPress(Control* ctrl)

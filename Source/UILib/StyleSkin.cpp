@@ -110,6 +110,21 @@ namespace Apoc3D
 			fl = FileSystem::getSingleton().Locate(L"ctl_radiobtn_unchecked.tex", rule);
 			RadioBtnUnchecked = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
 
+
+			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_hscrollbar_button.tex", rule);
+			HScrollBar_Button = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_hscrollbar_back.tex", rule);
+			HScrollBar_Back = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_hscrollbar_cursor.tex", rule);
+			HScrollBar_Cursor = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+
+			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_vscrollbar_button.tex", rule);
+			VScrollBar_Button = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_vscrollbar_back.tex", rule);
+			VScrollBar_Back = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_vscrollbar_cursor.tex", rule);
+			VScrollBar_Cursor = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+
 		}
 
 		StyleSkin::~StyleSkin()
@@ -128,6 +143,15 @@ namespace Apoc3D
 
 			delete RadioBtnChecked;
 			delete RadioBtnUnchecked;
+
+			delete HScrollBar_Back;
+			delete HScrollBar_Button;
+			delete HScrollBar_Cursor;
+
+
+			delete VScrollBar_Back;
+			delete VScrollBar_Button;
+			delete VScrollBar_Cursor;
 		}
 	}
 }
