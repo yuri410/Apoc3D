@@ -27,6 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Input/Mouse.h"
 #include "Input/InputAPI.h"
 #include "Button.h"
+#include "Graphics/RenderSystem/Texture.h"
+
+using namespace Apoc3D::Input;
 
 namespace Apoc3D
 {
@@ -46,25 +49,78 @@ namespace Apoc3D
 		void HScrollbar::Initialize(RenderDevice* device)
 		{
 			m_btLeft = new Button(Position,1, L"");
+			m_btLeft->setOwner(getOwner());
 			m_btLeft->setNormalTexture(m_skin->HScrollBar_Button);
 			m_btLeft->eventPress().bind(this, HScrollbar::btLeft_OnPress);
 			m_btLeft->Initialize(device);
 
-			m_cursorLeft.
+			m_cursorMidDest = Apoc3D::Math::Rectangle(0,0,1, m_skin->VScrollBar_Cursor->getHeight());
+
+			m_backArea = Apoc3D::Math::Rectangle(
+				Position.X + 12, Position.Y, Size.X - 24,12);
+			
+			m_btRight = new Button(Point(Position.X + Size.X - 12, Position.Y), 1, L"");
+			m_btRight->setOwner(getOwner());
+			m_btRight->setNormalTexture(m_skin->HScrollBar_Button);
+			m_btRight->eventPress().bind(this, HScrollbar::btRight_OnPress);
+			m_btRight->Initialize(device);
+
 		}
 
 		void HScrollbar::btLeft_OnPress(Control* ctrl)
 		{
-
+			if (!m_inverted)
+			{
+				if (m_value>0)
+				{
+					m_value -= m_step;
+					if (!m_eChangeValue.empty())
+						m_eChangeValue(this);
+				}
+			}
+			else if (m_value<m_max)
+			{
+				m_value += m_step;
+				if (!m_eChangeValue.empty())
+					m_eChangeValue(this);
+			}
 		}
 		void HScrollbar::btRight_OnPress(Control* ctrl)
 		{
-
+			if (!m_inverted)
+			{
+				if (m_value<m_max)
+				{
+					m_value += m_step;
+					if (!m_eChangeValue.empty())
+						m_eChangeValue(this);
+				}
+			}
+			else if (m_value>0)
+			{
+				m_value -= m_step;
+				if (!m_eChangeValue.empty())
+					m_eChangeValue(this);
+			}
 		}
 
 		void HScrollbar::Update(const GameTime* const time)
 		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
+			if (m_isScrolling)
+			{
+				if (mouse->IsLeftPressedState())
+					UpdateScrolling();
+				else if (mouse->IsLeftReleasedState())
+					m_isScrolling = false;
+			}
+
+			if (m_max>0)
+			{
+				m_btLeft->Update(time);
+				m_btRight->Update(time);
+			}
 		}
 		void HScrollbar::UpdateScrolling()
 		{

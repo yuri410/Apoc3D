@@ -50,6 +50,8 @@ namespace Apoc3D
 			Point m_cursorPos;
 			Point m_cursorOffset;
 
+			UIEventHandler m_eChangeValue;
+
 			void btLeft_OnPress(Control* ctrl);
 			void btRight_OnPress(Control* ctrl);
 
@@ -71,6 +73,8 @@ namespace Apoc3D
 
 			int getMax() const { return m_max; }
 			void setMax(int v) { m_max = v; if (m_max<0)m_max =0; if (m_value>m_max) m_value = m_max; }
+
+			UIEventHandler& eventValueChanged() const { return m_eChangeValue; }
 
 			HScrollbar(const Point& position, int width);
 			~HScrollbar();

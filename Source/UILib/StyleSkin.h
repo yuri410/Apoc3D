@@ -74,10 +74,14 @@ namespace Apoc3D
 
 
 
-			Apoc3D::Math::Rectangle m_cursorArea;
-			Apoc3D::Math::Rectangle m_cursorLeft;
-			Apoc3D::Math::Rectangle m_cursorRight;
-			Apoc3D::Math::Rectangle m_cursorMiddle;
+			//Apoc3D::Math::Rectangle HSCrsorArea;
+			Apoc3D::Math::Rectangle HSCursorLeft;
+			Apoc3D::Math::Rectangle HSCursorRight;
+			Apoc3D::Math::Rectangle HSCursorMiddle;
+
+			Apoc3D::Math::Rectangle VSCursorTop;
+			Apoc3D::Math::Rectangle VSCursorBottom;
+			Apoc3D::Math::Rectangle VSCursorMiddle;
 
 			Texture* HScrollBar_Cursor;
 			Texture* HScrollBar_Back;

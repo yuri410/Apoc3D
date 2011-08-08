@@ -125,6 +125,27 @@ namespace Apoc3D
 			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_vscrollbar_cursor.tex", rule);
 			VScrollBar_Cursor = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
 
+			HSCursorLeft = Apoc3D::Math::Rectangle(
+				0,0,
+				3, HScrollBar_Cursor->getHeight());
+			HSCursorRight = Apoc3D::Math::Rectangle(
+				HScrollBar_Cursor->getWidth()-3,0,
+				3, HScrollBar_Cursor->getHeight());
+			HSCursorMiddle = Apoc3D::Math::Rectangle(
+				3,0,
+				1, HScrollBar_Cursor->getHeight());
+
+			
+			VSCursorTop = Apoc3D::Math::Rectangle(
+				0,0,
+				VScrollBar_Cursor->getWidth(), 3);
+			VSCursorBottom = Apoc3D::Math::Rectangle(
+				0, VScrollBar_Cursor->getHeight()-3,
+				VScrollBar_Cursor->getWidth(), 3);
+			VSCursorMiddle = Apoc3D::Math::Rectangle(
+				0,3,
+				HScrollBar_Cursor->getWidth(),1);
+
 		}
 
 		StyleSkin::~StyleSkin()
