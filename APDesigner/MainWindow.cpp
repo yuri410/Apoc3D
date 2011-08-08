@@ -111,7 +111,7 @@ namespace APDesigner
 		//m_form->getControls().Add(m_btn);
 		//m_form->getControls().Add(m_mainMenu);
 		
-		m_form->Size = Point(400,400);
+		m_form->Size = Point(800,600);
 		
 
 		m_mainMenu = new Menu();
@@ -159,7 +159,19 @@ namespace APDesigner
 			listbox->setUseHorizontalScrollbar(true);
 			m_form->getControls().Add(listbox);
 		}
-		
+		{
+			TreeView* treeview = new TreeView(Point(450, 50), 300, 300);
+			treeview->SetSkin(m_UIskin);
+			treeview->setUseHorizontalScrollbar(true);
+
+			TreeViewNode* node1 = new TreeViewNode(L"Root");
+			treeview->getNodes().Add(node1);
+
+			TreeViewNode* node2 = new TreeViewNode(L"Root2");
+			treeview->getNodes().Add(node2);
+
+			m_form->getControls().Add(treeview);
+		}
 		m_form->Initialize(m_device);
 		m_form->Text = L"Form 1. abcdefg.hijklmn.opq rst.uvw xyz.";
 		m_form->setTitle(m_form->Text);

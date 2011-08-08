@@ -137,14 +137,14 @@ namespace Apoc3D
 
 			
 			VSCursorTop = Apoc3D::Math::Rectangle(
-				0,0,
-				VScrollBar_Cursor->getWidth(), 3);
+				VScrollBar_Cursor->getWidth(),0,
+				-VScrollBar_Cursor->getWidth(), 3);
 			VSCursorBottom = Apoc3D::Math::Rectangle(
-				0, VScrollBar_Cursor->getHeight()-3,
-				VScrollBar_Cursor->getWidth(), 3);
+				VScrollBar_Cursor->getWidth(), VScrollBar_Cursor->getHeight()-3,
+				-VScrollBar_Cursor->getWidth(), 3);
 			VSCursorMiddle = Apoc3D::Math::Rectangle(
-				0,3,
-				HScrollBar_Cursor->getWidth(),1);
+				VScrollBar_Cursor->getWidth(),3,
+				-VScrollBar_Cursor->getWidth(),1);
 
 
 			fl = FileSystem::getSingleton().Locate(L"ctl_textbox.tex", rule);

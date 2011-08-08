@@ -129,7 +129,7 @@ namespace Apoc3D
 				vScrollbarHeight = Size.Y - 2;
 			}
 
-			m_vscrollbar = new ScrollBar(Point(Position.X+Size.X - 13,1),ScrollBar::SCRBAR_Vertical,vScrollbarHeight);
+			m_vscrollbar = new ScrollBar(Point(Position.X+Size.X - 13,Position.Y+1),ScrollBar::SCRBAR_Vertical,vScrollbarHeight);
 			m_vscrollbar->setOwner(getOwner());
 			m_vscrollbar->SetSkin(m_skin);
 			m_vscrollbar->Initialize(device);
@@ -428,7 +428,7 @@ namespace Apoc3D
 		void TreeView::Initialize(RenderDevice* device)
 		{
 			Control::Initialize(device);
-			m_textOffset = Point(5, m_skin->TextBox->getHeight()-m_fontRef->getLineHeight()/2);
+			m_textOffset = Point(5, m_skin->TextBox->getHeight()-GetItemHeight()/2);
 
 			m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
 				m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
@@ -447,8 +447,8 @@ namespace Apoc3D
 			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->ListBoxSrcRects[0].Height);
 			m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
 
-			m_visisbleItems = (int)ceilf((float)Size.Y / m_fontRef->getLineHeight());
-			Size.Y = m_visisbleItems * m_fontRef->getLineHeight();
+			m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight());
+			Size.Y = m_visisbleItems * GetItemHeight();
 
 			UpdateHScrollbar();
 			InitScrollbars(device);
@@ -494,7 +494,7 @@ namespace Apoc3D
 				vScrollbarHeight = Size.Y - 2;
 			}
 
-			m_vscrollbar = new ScrollBar(Point(Position.X+Size.X - 13,1),ScrollBar::SCRBAR_Vertical,vScrollbarHeight);
+			m_vscrollbar = new ScrollBar(Point(Position.X+Size.X - 13,Position.Y+1),ScrollBar::SCRBAR_Vertical,vScrollbarHeight);
 			m_vscrollbar->setOwner(getOwner());
 			m_vscrollbar->SetSkin(m_skin);
 			m_vscrollbar->Initialize(device);
@@ -566,7 +566,7 @@ namespace Apoc3D
 					m_textOffset.X = 2;
 				m_textOffset.X += depth * TreeViewIntent;
 
-				m_textOffset.Y = (i - m_vscrollbar->getValue()) * m_fontRef->getLineHeight();
+				m_textOffset.Y = (i - m_vscrollbar->getValue()) * GetItemHeight();// m_fontRef->getLineHeight();
 
 				if (UIRoot::getTopMostForm() == getOwner())
 					RenderSelectionBox(sprite,nodes[i]);
@@ -596,6 +596,8 @@ namespace Apoc3D
 				shouldRestoreScissorTest = true;
 				oldScissorRect = dev->getRenderState()->getScissorTestRect();
 			}
+			Apoc3D::Math::Rectangle scissorRect = getAbsoluteArea();
+			dev->getRenderState()->setScissorTest(true, &scissorRect);
 
 			m_hoverNode = 0;
 			int counter = 0;
@@ -640,7 +642,7 @@ namespace Apoc3D
 
 			m_selectionRect.X = 0;
 			m_selectionRect.Y = m_textOffset.Y;
-			m_selectionRect.Height = m_fontRef->getLineHeight();
+			m_selectionRect.Height = GetItemHeight();// m_fontRef->getLineHeight();
 
 			if (m_vscrollbar->getMax()>0)
 				m_selectionRect.Width = Size.X - 13;
@@ -716,7 +718,7 @@ namespace Apoc3D
 				m_vscrollbar->setHeight(Size.Y - 12);
 				m_hscrollbar->setMax(m_hScrollWidth);
 				m_hscrollbar->Draw(sprite);
-				m_visisbleItems = (int)ceilf((float)Size.Y / m_fontRef->getLineHeight())-1;
+				m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight())-1;
 			}
 			else if ((!m_hscrollbar || !m_hscrollbar->getMax()) && m_vscrollbar->Size.Y != Size.Y-2)
 			{

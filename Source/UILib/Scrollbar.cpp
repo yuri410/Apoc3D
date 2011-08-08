@@ -417,7 +417,7 @@ namespace Apoc3D
 			m_cursorArea.X = m_cursorPos.X + getOwner()->Position.X;
 			m_cursorArea.Y = m_cursorPos.Y + getOwner()->Position.Y;
 
-			Apoc3D::Math::Rectangle dstRect(m_cursorPos.X, m_cursorPos.Y, m_skin->HSCursorLeft.Width, m_skin->HSCursorLeft.Height);
+			Apoc3D::Math::Rectangle dstRect(m_cursorPos.X, m_cursorPos.Y, abs(m_skin->VSCursorTop.Width), abs(m_skin->VSCursorTop.Height));
 			sprite->Draw(m_skin->VScrollBar_Cursor, dstRect, &m_skin->VSCursorTop, CV_White);
 
 			m_cursorMidDest.X = m_cursorPos.X;
@@ -426,7 +426,7 @@ namespace Apoc3D
 			sprite->Draw(m_skin->VScrollBar_Cursor, m_cursorMidDest, &m_skin->VSCursorMiddle, CV_White);
 
 			dstRect = Apoc3D::Math::Rectangle(
-				m_cursorPos.X, m_cursorPos.Y+m_cursorMidDest.Height, m_skin->VSCursorBottom.Width, m_skin->VSCursorBottom.Height);
+				m_cursorPos.X, m_cursorPos.Y+m_cursorMidDest.Height, abs(m_skin->VSCursorBottom.Width), abs(m_skin->VSCursorBottom.Height));
 			sprite->Draw(m_skin->VScrollBar_Cursor, dstRect, &m_skin->VSCursorBottom, CV_White);
 
 			
