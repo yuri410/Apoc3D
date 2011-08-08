@@ -63,6 +63,8 @@ namespace Apoc3D
 
 			void UpdateScrolling();
 		public:
+			void setWidth(int w);
+
 			int getStep() const { return m_step; }
 			void setStep(int step) { m_step = step; }
 
@@ -75,7 +77,7 @@ namespace Apoc3D
 			int getMax() const { return m_max; }
 			void setMax(int v) { m_max = v; if (m_max<0)m_max =0; if (m_value>m_max) m_value = m_max; }
 
-			UIEventHandler& eventValueChanged() const { return m_eChangeValue; }
+			UIEventHandler& eventValueChanged() { return m_eChangeValue; }
 
 			HScrollbar(const Point& position, int width);
 			~HScrollbar();
@@ -92,7 +94,54 @@ namespace Apoc3D
 			Button* m_btUp;
 			Button* m_btDown;
 
+			Apoc3D::Math::Rectangle m_backArea;
+			int m_value;
+			int m_max;
+			int m_step;
+			bool m_isScrolling;
+			bool m_inverted;
+
+			Apoc3D::Math::Rectangle m_cursorArea;
+			Apoc3D::Math::Rectangle m_cursorMidDest;
+
+			Point m_cursorPos;
+			Point m_cursorOffset;
+
+			UIEventHandler m_eChangeValue;
+
+			void btUp_OnPress(Control* ctrl);
+			void btDown_OnPress(Control* ctrl);
+
+			void DrawBackground(Sprite* sprite);
+			void DrawCursor(Sprite* sprite);
+
+
+
+			void UpdateScrolling();
 		public:
+			void setHeight(int w);
+
+			int getStep() const { return m_step; }
+			void setStep(int step) { m_step = step; }
+
+			bool getIsInverted() const { return m_inverted; }
+			void setIsInverted(bool val) { m_inverted = val; }
+
+			int getValue() const { return m_value; }
+			void setValue(int v) { m_value = v; if (m_value<0)m_value = 0; else if (m_value>m_max) m_value = m_max; }
+
+			int getMax() const { return m_max; }
+			void setMax(int v) { m_max = v; if (m_max<0)m_max =0; if (m_value>m_max) m_value = m_max; }
+
+			UIEventHandler& eventValueChanged() { return m_eChangeValue; }
+
+			VScrollBar(const Point& position, int width);
+			~VScrollBar();
+
+			virtual void Initialize(RenderDevice* device);
+
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
 
 		};
 		class ScrollBar : public Control
@@ -106,6 +155,9 @@ namespace Apoc3D
 
 		private:
 			ScrollBarType m_type;
+			HScrollbar* m_hsbar;
+			VScrollBar* m_vsbar;
+
 
 		};
 	}
