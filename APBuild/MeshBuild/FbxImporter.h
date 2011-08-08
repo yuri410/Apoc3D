@@ -509,6 +509,7 @@ namespace APBuild
 								frames.Add(ModelKeyframe(i,time, trans));
 							}
 						}
+						frameIndex++;
 					}
 					// find next frames
 					for (int i=0;i<frames.getCount();i++)

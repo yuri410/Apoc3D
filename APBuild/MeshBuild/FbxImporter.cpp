@@ -646,7 +646,7 @@ namespace APBuild
 
 			if( pFBXDeformer->GetDeformerType() == KFbxDeformer::eSKIN )
 			{
-				KFbxSkin* pFBXSkin = dynamic_cast<KFbxSkin*>(pFBXDeformer);
+				KFbxSkin* pFBXSkin = KFbxCast<KFbxSkin>(pFBXDeformer);
 
 				if( !pFBXSkin )
 					continue;
@@ -1259,23 +1259,33 @@ namespace APBuild
 				
 				meshData->VertexCount = vertexList.getCount();
 
+				FastList<VertexElement>& vtxElem = meshData->VertexElements;
 				// fill vertex element
-				meshData->VertexElements.Add(VertexElement(0, VEF_Vector3, VEU_Position, 0));
-				meshData->VertexElements.Add(VertexElement(
-					meshData->VertexElements[meshData->VertexElements.getCount()-1].getSize(), VEF_Vector3, VEU_Normal, 0));
-				meshData->VertexElements.Add(VertexElement(
-					meshData->VertexElements[meshData->VertexElements.getCount()-1].getSize(), VEF_Vector2, VEU_TextureCoordinate, 0));
-				if (use2TexCoords)
-					meshData->VertexElements.Add(VertexElement(
-					meshData->VertexElements[meshData->VertexElements.getCount()-1].getSize(), VEF_Vector2, VEU_TextureCoordinate, 1));
+				vtxElem.Add(VertexElement(0, VEF_Vector3, VEU_Position, 0));
+				
 				if (useSkinnedFormat)
 				{
-					meshData->VertexElements.Add(VertexElement(
-						meshData->VertexElements[meshData->VertexElements.getCount()-1].getSize(), VEF_Vector4, VEU_BlendIndices, 0));
-					meshData->VertexElements.Add(VertexElement(
-						meshData->VertexElements[meshData->VertexElements.getCount()-1].getSize(), VEF_Vector4, VEU_BlendWeight, 0));
+					vtxElem.Add(VertexElement(
+						vtxElem[vtxElem.getCount()-1].getSize() + vtxElem[vtxElem.getCount()-1].getOffset(), 
+						VEF_Vector4, VEU_BlendIndices, 0));
+					vtxElem.Add(VertexElement(
+						vtxElem[vtxElem.getCount()-1].getSize() + vtxElem[vtxElem.getCount()-1].getOffset(), 
+						VEF_Vector4, VEU_BlendWeight, 0));
 				}
-				meshData->VertexSize = meshData->ComputeVertexSize(meshData->VertexElements);
+				vtxElem.Add(VertexElement(
+					vtxElem[vtxElem.getCount()-1].getSize() + vtxElem[vtxElem.getCount()-1].getOffset(), 
+					VEF_Vector3, VEU_Normal, 0));
+				
+
+				vtxElem.Add(VertexElement(
+					vtxElem[vtxElem.getCount()-1].getSize() + vtxElem[vtxElem.getCount()-1].getOffset(), 
+					VEF_Vector2, VEU_TextureCoordinate, 0));
+				if (use2TexCoords)
+					vtxElem.Add(VertexElement(
+					vtxElem[vtxElem.getCount()-1].getSize() + vtxElem[vtxElem.getCount()-1].getOffset(), 
+					VEF_Vector2, VEU_TextureCoordinate, 1));
+				
+				meshData->VertexSize = meshData->ComputeVertexSize(vtxElem);
 
 				// Fill vertex data. foreach vertex, pass the vertex elements array, 
 				// fill data according to the element definition,
