@@ -372,6 +372,21 @@ namespace Apoc3D
 				delete m_vscrollbar;
 		}
 
+		int TreeView::GetAllNodeCount(const FastList<TreeViewNode*>& node) const
+		{
+			int result = node.getCount();
+
+			for (int i=0;i<node.getCount();i++)
+			{
+				result+=GetAllNodeCount( node[i]->getNodes());
+			}
+			
+			return result;
+		}
+		int TreeView::GetAllNodeCount() const
+		{
+			return GetAllNodeCount(m_nodes);
+		}
 		int TreeView::GetExpandedNodeMaxRight(const FastList<TreeViewNode*>& node) const
 		{
 			int r = 0;
@@ -470,7 +485,7 @@ namespace Apoc3D
 
 			if (getUseHorizontalScrollbar())
 			{
-				if (GetExpandedNodeCount()>m_visisbleItems)
+				if (GetAllNodeCount()>m_visisbleItems)
 				{
 					m_hscrollbar = new ScrollBar(Point(Position.X+1,Position.Y+Size.Y-13),ScrollBar::SCRBAR_Horizontal,Size.X -14);
 				}
