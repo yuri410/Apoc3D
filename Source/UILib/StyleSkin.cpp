@@ -146,6 +146,23 @@ namespace Apoc3D
 				0,3,
 				HScrollBar_Cursor->getWidth(),1);
 
+
+			fl = FileSystem::getSingleton().Locate(L"ctl_textbox.tex", rule);
+			TextBox = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+
+			ListBoxSrcRects[0] = Apoc3D::Math::Rectangle(0,0,TextBox->getWidth()-1, TextBox->getHeight()/2);
+			ListBoxSrcRects[1] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,1, TextBox->getHeight()/2);
+			ListBoxSrcRects[2] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,-(TextBox->getWidth()-1), TextBox->getHeight()/2);
+
+			ListBoxSrcRects[3] = Apoc3D::Math::Rectangle(0,TextBox->getHeight()/2,TextBox->getWidth()-1, 1);
+			ListBoxSrcRects[4] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1,1);
+			ListBoxSrcRects[5] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,-(TextBox->getWidth()-1),1);
+
+			ListBoxSrcRects[6] = Apoc3D::Math::Rectangle(0,TextBox->getHeight()/2,TextBox->getWidth()-1, -TextBox->getHeight()/2);
+			ListBoxSrcRects[7] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1, -TextBox->getHeight()/2);
+			ListBoxSrcRects[8] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,-(TextBox->getWidth()-1), -TextBox->getHeight()/2);
+
+
 		}
 
 		StyleSkin::~StyleSkin()

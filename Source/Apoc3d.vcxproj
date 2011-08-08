@@ -304,6 +304,7 @@
     <ClCompile Include="UILib\Form.cpp" />
     <ClCompile Include="UILib\KeyboardHelper.cpp" />
     <ClCompile Include="UILib\Label.cpp" />
+    <ClCompile Include="UILib\List.cpp" />
     <ClCompile Include="UILib\Menu.cpp" />
     <ClCompile Include="UILib\PictureBox.cpp" />
     <ClCompile Include="UILib\Scrollbar.cpp" />

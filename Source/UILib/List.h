@@ -56,9 +56,9 @@ namespace Apoc3D
 			UIEventHandler m_eSelectionChanged;
 			bool m_mouseOver;
 
-			void InitScrollbars();
+			void InitScrollbars(RenderDevice* device);
 			void UpdateHScrollbar();
-			void RenderSelectionIndex(Sprite* sprite, int index);
+			void RenderSelectionBox(Sprite* sprite, int index);
 			void DrawBackground(Sprite* sprite);
 			void DrawScrollbar(Sprite* sprite);
 		public:
@@ -74,6 +74,7 @@ namespace Apoc3D
 			void setSelectedIndex(int i) { m_selectedIndex = i; }
 
 			ListBox(const Point& position, int width, int height, const List<String>& items);
+			~ListBox();
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time);

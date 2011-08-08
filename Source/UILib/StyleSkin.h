@@ -91,6 +91,9 @@ namespace Apoc3D
 			Texture* VScrollBar_Back;
 			Texture* VScrollBar_Button;
 
+			Texture* TextBox;
+
+			Apoc3D::Math::Rectangle ListBoxSrcRects[9];
 		public:
 			// create default skin
 			StyleSkin(RenderDevice* device, const FileLocateRule& rule);

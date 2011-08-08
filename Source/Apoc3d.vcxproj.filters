@@ -782,6 +782,9 @@
     <ClCompile Include="UILib\Scrollbar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UILib\List.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
