@@ -1352,7 +1352,7 @@ namespace APBuild
 			AnimationData::ClipTable skeletonAnimations;
 			AnimationData::ClipTable rigidAnimations;
 
-			FastList<Bone> bones;
+			List<Bone> bones;
 			if (fbx.m_pSkeleton)
 			{
 				fbx.m_pSkeleton->FlattenBones(bones);

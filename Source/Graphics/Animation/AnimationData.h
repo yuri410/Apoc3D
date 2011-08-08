@@ -68,7 +68,7 @@ namespace Apoc3D
 				bool m_hasRigidClip;
 
 
-				FastList<Bone> m_bones;
+				List<Bone> m_bones;
 				int32 m_rootBone;
 
 
@@ -83,7 +83,7 @@ namespace Apoc3D
 				bool hasSkinnedClip() const { return m_hasSkinnedClip; }
 				bool hasRigidClip() const { return m_hasRigidClip; }
 
-				const FastList<Bone>& getBones() const { return m_bones; }
+				const List<Bone>& getBones() const { return m_bones; }
 				const int32 getRootBone() const { return m_rootBone; }
 
 				/** Gets a collection of animation clips that operate a whole mesh entity in a model.
@@ -99,10 +99,11 @@ namespace Apoc3D
 				
 				const MtrlClipTable& getMaterialAnimationClips() const { return m_mtrlAnimationClips; }
 
-				const FastList<Bone>* getBones() { return &m_bones; }
+				const List<Bone>* getBones() { return &m_bones; }
 
-				void setBones(const FastList<Bone>& bones)
+				void setBones(const List<Bone>& bones)
 				{
+					
 					m_bones = bones;
 				}
 				void setRigidAnimationClips(const ClipTable& table) { m_rigidAnimationClips = table; m_hasRigidClip = !table.empty();}

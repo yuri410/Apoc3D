@@ -137,11 +137,11 @@ namespace Apoc3D
 			/** 当GetNextSymbol()为NUM时，该字段为参数值
 			*/
 			int tokenval;
-			FastList<string> expStruct;
+			List<string> expStruct;
 
 			int position;
 			FastMap<string, int> parameters;
-			FastList<string> paramList;
+			List<string> paramList;
 
 			/** 比较栈顶运算符与下一输入运算符优先关系
 			*/

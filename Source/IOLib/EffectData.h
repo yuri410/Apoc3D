@@ -45,7 +45,7 @@ namespace Apoc3D
 			char* ShaderCode;
 			int ShaderCodeLength;
 
-			FastList<EffectParameter> Parameters;
+			List<EffectParameter> Parameters;
 
 			EffectData() { }
 			~EffectData() { delete[] ShaderCode; }

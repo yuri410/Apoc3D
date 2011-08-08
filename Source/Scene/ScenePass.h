@@ -61,7 +61,7 @@ namespace Apoc3D
 			String m_name;
 			int32 m_cameraID;
 
-			FastList<SceneInstruction> m_instuctions;
+			List<SceneInstruction> m_instuctions;
 			Stack<ExecutionValue> m_execStack;
 
 			Camera* m_currentCamera;

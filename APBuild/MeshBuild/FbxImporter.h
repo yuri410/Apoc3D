@@ -631,6 +631,7 @@ namespace APBuild
 							frames.Add(ModelKeyframe(i,time, trans));
 						}
 					}
+					frameIndex++;
 				}
 				if (frames.getCount())
 				{

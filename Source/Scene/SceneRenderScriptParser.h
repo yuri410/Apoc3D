@@ -60,7 +60,7 @@ namespace Apoc3D
 			void BuildPass(const TiXmlElement* node);
 			void BuildNode(const TiXmlNode* node);
 		public:
-			FastList<ScenePassData> PassData;
+			List<ScenePassData> PassData;
 			FastList<SceneVariable*> GlobalVars;
 
 			SceneRenderScriptParser(RenderDevice* dev);
