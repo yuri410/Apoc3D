@@ -31,6 +31,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::UI;
+using namespace Apoc3D;
+
+
 
 namespace APDesigner
 {
@@ -52,6 +55,7 @@ namespace APDesigner
 		Menu* m_mainMenu;
 
 		ResourcePane* m_resourcePane;
+		Project* m_project;
 	public:
 		MainWindow(RenderWindow* wnd);
 		void Initialize();

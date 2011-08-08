@@ -137,6 +137,18 @@ namespace Apoc3D
 
 //#	define StringCompare(a, b) !a.compare(b)
 
+	class Project;
+	class ProjectItemData;
+	class ProjectCustomItem;
+	class ProjectResource;
+	class ProjectFolder;
+	class ProjectResTexture;
+	class ProjectResModel;
+	class ProjectResEffect;
+	class ProjectResFont;
+	class ProjectItem;
+
+
 	namespace Collections
 	{
 		template<typename T> class List;

@@ -86,7 +86,6 @@ namespace APDesigner
 		}
 
 		{
-
 			FileLocation* fl = FileSystem::getSingleton().Locate(L"english.fnt", FileLocateRule::Default);
 			FontManager::getSingleton().LoadFont(m_device, L"english", fl);
 		}

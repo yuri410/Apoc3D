@@ -13,6 +13,8 @@ namespace APDesigner
 		static const int ItemHeight = 60;
 
 		Form* m_form;
+
+		TreeView* m_resourceView;
 	public:
 		ResourcePane();
 		~ResourcePane();

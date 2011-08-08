@@ -103,6 +103,8 @@ namespace APBuild
 
 	bool FbxImporter::Initialize(const String& pFilename)
 	{
+		m_sourceFile = pFilename;
+
 		if( !InitializeFBXSdk() )	return false;
 		if( !LoadScene(pFilename) )	return false;
 
@@ -505,6 +507,11 @@ namespace APBuild
 			nParentBoneIndex = m_pSkeleton->FindBoneIndex(pParentNode->GetName());
 
 		FISkeletonBone* pSkeletonBone = new FISkeletonBone( pNode->GetName(), nParentBoneIndex );
+		if (m_pSkeleton->FindBone(pNode->GetName()))
+		{
+			CompileLog::WriteError(String(L"There are more than one bone named ") + StringUtils::toWString(pNode->GetName()) + String(L" in the FBX file."), m_sourceFile);
+			return;
+		}
 		m_pSkeleton->AddSkeletonBone(pSkeletonBone);
 	}
 	void FbxImporter::ProcessMesh(KFbxNode* pNode)
@@ -566,7 +573,16 @@ namespace APBuild
 
 		}
 		mesh->FinishAndOptimize();
-		m_meshes.Add(pNode->GetName(), mesh);
+		if (m_meshes.Contains(pNode->GetName()))
+		{
+			CompileLog::WriteError(String(L"There are more than one mesh named ") + StringUtils::toWString(pNode->GetName()) + String(L" in the FBX file."), m_sourceFile);
+			return;
+		}
+		else
+		{
+			m_meshes.Add(pNode->GetName(), mesh);
+		}
+		
 	}
 
 	void FbxImporter::ProcessBoneWeights(KFbxSkin* pFBXSkin, std::vector<BoneWeight>& meshBoneWeights)

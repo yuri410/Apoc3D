@@ -556,6 +556,8 @@ namespace APBuild
 			//void UpdateAnimation(CBTTAnimationController* pAnimationController);
 		};
 	private:
+		String m_sourceFile;
+
 		KFbxSdkManager* m_pFBXSdkManager;
 		KFbxScene* m_pFBXScene;
 
