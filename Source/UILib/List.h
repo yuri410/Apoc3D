@@ -135,6 +135,7 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle m_selectionRect;
 			TreeViewNode* m_selectedNode;
 			TreeViewNode* m_hoverNode;
+			TreeViewNode* m_anyHoverNode;
 
 			ScrollBar* m_vscrollbar;
 			ScrollBar* m_hscrollbar;
@@ -149,6 +150,7 @@ namespace Apoc3D
 
 			void InitScrollbars(RenderDevice* device);
 			void UpdateHScrollbar();
+			
 			void RenderSelectionBox(Sprite* sprite, TreeViewNode* node);
 			void DrawBackground(Sprite* sprite);
 			void DrawScrollbar(Sprite* sprite);
@@ -163,7 +165,7 @@ namespace Apoc3D
 		public:
 			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
 			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
-
+			
 			FastList<TreeViewNode*>& getNodes() { return m_nodes; }
 
 

@@ -171,6 +171,25 @@ namespace APDesigner
 			treeview->getNodes().Add(node2);
 			TreeViewNode* node3 = new TreeViewNode(L"Root3 the long one. Project Hosting will be READ-ONLY Tuesday at 9:00am CDT for brief maintenance.");
 			treeview->getNodes().Add(node3);
+
+			node2->getNodes().Add(new TreeViewNode(L"SubNode1"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode2"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode3"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode4"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode5"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode6"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode7"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode8"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode9"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode10"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode11"));
+			node2->getNodes().Add(new TreeViewNode(L"SubNode12"));
+
+			node3->getNodes().Add(new TreeViewNode(L"SubNode1"));
+			node3->getNodes().Add(new TreeViewNode(L"SubNode2"));
+			node3->Expand();
+
+
 			m_form->getControls().Add(treeview);
 		}
 		m_form->Initialize(m_device);

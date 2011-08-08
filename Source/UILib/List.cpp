@@ -161,25 +161,25 @@ namespace Apoc3D
 						m_eSelect(this);
 					if (m_selectedIndex != previousIndex && !m_eSelectionChanged.empty())
 						m_eSelectionChanged(this);
+				}
 
-					if (getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
+				if (getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
+				{
+					if (!m_mouseOver)
 					{
-						if (!m_mouseOver)
-						{
-							m_mouseOver = true;
-							OnMouseOver();
-						}
+						m_mouseOver = true;
+						OnMouseOver();
+					}
 
-						if (mouse->IsLeftPressed())
-							OnPress();
-						else if (mouse->IsLeftUp())
-							OnRelease();
-					}
-					else if (m_mouseOver)
-					{
-						m_mouseOver = false;
-						OnMouseOut();
-					}
+					if (mouse->IsLeftPressed())
+						OnPress();
+					else if (mouse->IsLeftUp())
+						OnRelease();
+				}
+				else if (m_mouseOver)
+				{
+					m_mouseOver = false;
+					OnMouseOut();
 				}
 			}
 		}
@@ -386,13 +386,13 @@ namespace Apoc3D
 							r = res;
 					}
 				}
+				int w;
+				if (!m_vscrollbar || m_vscrollbar->getMax()==0)
+					w = m_fontRef->MeasureString(node[i]->getText()).X - Size.X + 12;
 				else
-				{
-					if (!m_vscrollbar || m_vscrollbar->getMax()==0)
-						r = m_fontRef->MeasureString(node[i]->getText()).X - Size.X + 12;
-					else
-						r = m_fontRef->MeasureString(node[i]->getText()).X - Size.X + 30;
-				}
+					w = m_fontRef->MeasureString(node[i]->getText()).X - Size.X + 30;
+				if (w>r)
+					r= w;
 			}
 			return r;
 		}
@@ -522,26 +522,35 @@ namespace Apoc3D
 						m_eSelect(this);
 					if (m_selectedNode != previousNode && !m_eSelectionChanged.empty())
 						m_eSelectionChanged(this);
-
-					if (getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
+				}
+				if (getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
+				{
+					if (!m_mouseOver)
 					{
-						if (!m_mouseOver)
-						{
-							m_mouseOver = true;
-							OnMouseOver();
-						}
-
-						if (mouse->IsLeftPressed())
-							OnPress();
-						else if (mouse->IsLeftUp())
-							OnRelease();
+						m_mouseOver = true;
+						OnMouseOver();
 					}
-					else if (m_mouseOver)
+
+					if (mouse->IsLeftPressed())
+						OnPress();
+					else if (mouse->IsLeftUp())
 					{
-						m_mouseOver = false;
-						OnMouseOut();
+						OnRelease();
+						if (m_selectedNode && !m_hoverNode && m_anyHoverNode == m_selectedNode)
+						{
+							if (!m_selectedNode->isExpanded())
+								m_selectedNode->Expand();
+							else
+								m_selectedNode->Close();
+						}
 					}
 				}
+				else if (m_mouseOver)
+				{
+					m_mouseOver = false;
+					OnMouseOut();
+				}
+				
 			}
 		}
 
@@ -566,7 +575,7 @@ namespace Apoc3D
 					m_textOffset.X = 2;
 				m_textOffset.X += depth * TreeViewIntent;
 
-				m_textOffset.Y = (i - m_vscrollbar->getValue()) * GetItemHeight();// m_fontRef->getLineHeight();
+				m_textOffset.Y = (counter-1 - m_vscrollbar->getValue()) * GetItemHeight();// m_fontRef->getLineHeight();
 
 				if (UIRoot::getTopMostForm() == getOwner())
 					RenderSelectionBox(sprite,nodes[i]);
@@ -600,6 +609,7 @@ namespace Apoc3D
 			dev->getRenderState()->setScissorTest(true, &scissorRect);
 
 			m_hoverNode = 0;
+			m_anyHoverNode = 0;
 			int counter = 0;
 			DrawNodes(sprite, m_nodes, 0, counter, m_visisbleItems + m_vscrollbar->getValue());
 
@@ -636,6 +646,7 @@ namespace Apoc3D
 		}
 
 
+
 		void TreeView::RenderSelectionBox(Sprite* sprite, TreeViewNode* node)
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
@@ -651,12 +662,16 @@ namespace Apoc3D
 
 			if (node == m_selectedNode)
 				sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_LightGray);
-			else if (getOwner()->getArea().Contains(mouse->GetCurrentPosition()) &&
+			if (getOwner()->getArea().Contains(mouse->GetCurrentPosition()) &&
 				m_selectionRect.Contains(Point(mouse->GetCurrentPosition().X-getOwner()->Position.X-Position.X, 
 				mouse->GetCurrentPosition().Y-getOwner()->Position.Y-Position.Y)))
 			{
-				m_selectedNode = node;
-				sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_Silver);
+				m_anyHoverNode = node;
+				if (node != m_selectedNode)
+				{
+					m_hoverNode = node;
+					sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_Silver);
+				}
 			}
 
 		}
