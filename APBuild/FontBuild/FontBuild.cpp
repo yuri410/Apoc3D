@@ -34,12 +34,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Collections/FastMap.h"
 #include "IOLib/Streams.h"
 #include "IOLib/BinaryWriter.h"
+#include "Vfs/File.h"
 #include "BuildConfig.h"
 #include "CompileLog.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Collections;
+using namespace Apoc3D::VFS;
 using namespace Gdiplus;
 
 #pragma comment (lib,"Gdiplus.lib")
@@ -262,7 +264,7 @@ namespace APBuild
 		
 		Font font(config.Name.c_str(), config.Size, config.Style);
 
-		int index = 0;
+		//int index = 0;
 		for (int i=0;i<config.Ranges.getCount();i++)
 		{
 			for (wchar_t ch = (wchar_t)config.Ranges[i].MinChar; 
@@ -358,10 +360,18 @@ namespace APBuild
 
 						delete bitmap;
 
-						//CLSID pngClsid;
-						//GetEncoderClsid(L"image/png", &pngClsid);
-						//altBmp->Save((String(L"E:\\Desktop\\test\\ss")+String(1,ch)+String(L".png")).c_str(), &pngClsid);
+						{
+							//String testOut = String(L"E:\\Desktop\\fntb\\ss")+String(1,ch)+String(L".png");
+							//if (!File::FileExists(testOut))
+							//{
+							//	CLSID pngClsid;
+							//	GetEncoderClsid(L"image/png", &pngClsid);
+							//	altBmp->Save(testOut.c_str(), &pngClsid);
 
+							//}
+							
+						}
+						
 						bitmap = altBmp;
 						lr = Gdiplus::Rect( 0, 0, width, height );
 						ret = bitmap->LockBits(&lr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpData);
@@ -390,7 +400,7 @@ namespace APBuild
 				GlyphBitmap glyph(width, height, buffer);
 				if (!glyphHashTable.TryGetValue(glyph, result))
 				{
-					glyph.Index = index++;
+					glyph.Index = glyphHashTable.getCount();// index++;
 					glyphHashTable.Add(glyph, glyph);
 				}
 				else

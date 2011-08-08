@@ -4,6 +4,7 @@
 #include "Config/ConfigurationSection.h"
 #include "BuildConfig.h"
 #include "AIImporter.h"
+#include "FbxImporter.h"
 #include "IOLib/Streams.h"
 #include "IOLib/ModelData.h"
 #include "CompileLog.h"
@@ -17,7 +18,7 @@ namespace APBuild
 {
 	void MeshBuild::BuildByFBX(const MeshBuildConfig& config)
 	{
-
+		FbxImporter::Import(config);
 	}
 	void MeshBuild::BuildByASS(const MeshBuildConfig& config)
 	{

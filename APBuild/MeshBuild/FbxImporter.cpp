@@ -19,17 +19,23 @@ namespace APBuild
 
 	bool HasFBXAnimation(KFbxNode *pNode)
 	{
+		//pNode->GetAnimationInterval();
 		bool hasKeys = false;
 
 		KFbxProperty prop = pNode->GetFirstProperty();
 
 		while(prop.IsValid())
 		{
-			KFCurveNode *fcn = prop.GetCurveNode()->GetKFCurveNode();
-			if(fcn && fcn->KeyGetCount() > 0)
+			KFbxAnimCurveNode* cn = prop.GetCurveNode();
+			if (cn)
 			{
-				hasKeys = true;
+				KFCurveNode *fcn = cn->GetKFCurveNode();
+				if(fcn && fcn->KeyGetCount() > 0)
+				{
+					hasKeys = true;
+				}
 			}
+			
 			prop = pNode->GetNextProperty(prop);
 		}
 
@@ -253,9 +259,9 @@ namespace APBuild
 					pMaterial->TextureName[i] = StringUtils::toWString( strFileName );
 				}
 			}
-
-			KFbxSurfaceLambert* pLambert = dynamic_cast<KFbxSurfaceLambert*>(pFBXMaterial);
-			KFbxSurfacePhong* pPhong = dynamic_cast<KFbxSurfacePhong*>(pFBXMaterial);
+			
+			KFbxSurfaceLambert* pLambert = KFbxCast<KFbxSurfaceLambert>(pFBXMaterial);
+			KFbxSurfacePhong* pPhong = KFbxCast<KFbxSurfacePhong>(pFBXMaterial);
 
 			Vector3 AmbientColor;
 			Vector3 EmissiveColor;
@@ -889,6 +895,38 @@ namespace APBuild
 		float BlendWeight[4];
 
 		FIVertex(){}
+		FIVertex(Vector3 pos, Vector3 n, Vector2 t1)
+		{
+			Position[0] = _V3X(pos);
+			Position[1] = _V3Y(pos);
+			Position[2] = _V3Z(pos);
+
+			Normal[0] = _V3X(n); Normal[1] = _V3Y(n); Normal[2] = _V3Z(n);
+
+			TexCoords[0] = Vector2Utils::GetX(t1);
+			TexCoords[1] = Vector2Utils::GetY(t1);
+			TexCoords[2] = TexCoords[3] = 0;
+
+			BlendIndex[0] = BlendIndex[1] = BlendIndex[2] = BlendIndex[3] = 0;
+			BlendWeight[0] = BlendWeight[1] = BlendWeight[2] = BlendWeight[3] = 0;
+		}
+		FIVertex(Vector3 pos, Vector3 n, Vector2 t1, Vector2 t2)
+		{
+			Position[0] = _V3X(pos);
+			Position[1] = _V3Y(pos);
+			Position[2] = _V3Z(pos);
+
+			Normal[0] = _V3X(n); Normal[1] = _V3Y(n); Normal[2] = _V3Z(n);
+
+			TexCoords[0] = Vector2Utils::GetX(t1);
+			TexCoords[1] = Vector2Utils::GetY(t1);
+			TexCoords[2] = Vector2Utils::GetX(t2);
+			TexCoords[3] = Vector2Utils::GetY(t2);
+
+
+			BlendIndex[0] = BlendIndex[1] = BlendIndex[2] = BlendIndex[3] = 0;
+			BlendWeight[0] = BlendWeight[1] = BlendWeight[2] = BlendWeight[3] = 0;
+		}
 		FIVertex(Vector3 pos, Vector3 n, Vector2 t1, Vector2 t2, Vector4 bi, Vector4 bw)
 		{
 			Position[0] = _V3X(pos);
@@ -996,7 +1034,7 @@ namespace APBuild
 			for (int i = sizeof(FIVertex); i > 0; i -= 8)
 			{
 				even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
-				if (i <= 3)
+				if (i <= 7)
 				{
 					break;
 				}
@@ -1030,7 +1068,7 @@ namespace APBuild
 					for (size_t j=0;j<parts.size();j++)
 					{
 						int mtrlIndex = fbx.m_materials.IndexOf(parts[j]->GetMaterial());
-						assert(mtrlIndex>0);
+						assert(mtrlIndex>=0);
 						useTable[mtrlIndex] = true;
 					}
 					for (int j=0;j<fbx.m_materials.getCount();j++)
@@ -1089,17 +1127,34 @@ namespace APBuild
 					for (size_t k=0;k<Positions.size();k+=3)
 					{
 						FIVertex fiv;
+						int vi = k;
 						if (use2TexCoords)
 						{
-							fiv = FIVertex(Positions[k], Normals[k], 
-								TexCoord0[k], TexCoord1[k], 
-								BoneWeights[k].GetBlendIndex(), BoneWeights[k].GetBlendWeight());
+							if (useSkinnedFormat)
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi], TexCoord1[vi], 
+									BoneWeights[vi].GetBlendIndex(), BoneWeights[vi].GetBlendWeight());
+							}
+							else
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi], TexCoord1[vi]);
+							}
 						}
 						else
 						{
-							fiv = FIVertex(Positions[k], Normals[k], 
-								TexCoord0[k], 
-								BoneWeights[k].GetBlendIndex(), BoneWeights[k].GetBlendWeight());
+							if (useSkinnedFormat)
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi], 
+									BoneWeights[vi].GetBlendIndex(), BoneWeights[vi].GetBlendWeight());
+							}
+							else
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi]);
+							}
 						}
 
 						int existA;
@@ -1107,23 +1162,40 @@ namespace APBuild
 						{
 							existA = vertexList.getCount();
 							vertexList.Add(fiv);
+							vtxHashTable.Add(fiv, existA);
 							meshData->BoundingSphere.Center = 
 								Vector3Utils::Add(meshData->BoundingSphere.Center, Positions[k]);
 						}
 
 						//============================================================================
-
+						vi++;
 						if (use2TexCoords)
 						{
-							fiv = FIVertex(Positions[k+1], Normals[k+1], 
-								TexCoord0[k+1], TexCoord1[k+1], 
-								BoneWeights[k+1].GetBlendIndex(), BoneWeights[k+1].GetBlendWeight());
+							if (useSkinnedFormat)
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi], TexCoord1[vi], 
+									BoneWeights[vi].GetBlendIndex(), BoneWeights[vi].GetBlendWeight());
+							}
+							else
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi], TexCoord1[vi]);
+							}
 						}
 						else
 						{
-							fiv = FIVertex(Positions[k+1], Normals[k+1], 
-								TexCoord0[k+1], 
-								BoneWeights[k+1].GetBlendIndex(), BoneWeights[k+1].GetBlendWeight());
+							if (useSkinnedFormat)
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi], 
+									BoneWeights[vi].GetBlendIndex(), BoneWeights[vi].GetBlendWeight());
+							}
+							else
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi]);
+							}
 						}
 
 						int existB;
@@ -1131,30 +1203,50 @@ namespace APBuild
 						{
 							existB = vertexList.getCount();
 							vertexList.Add(fiv);
+							vtxHashTable.Add(fiv, existB);
 							meshData->BoundingSphere.Center = 
 								Vector3Utils::Add(meshData->BoundingSphere.Center, Positions[k+1]);
 						}
 
 						//============================================================================
 
+						vi++;
 						if (use2TexCoords)
 						{
-							fiv = FIVertex(Positions[k+2], Normals[k+2], 
-								TexCoord0[k+2], TexCoord1[k+1], 
-								BoneWeights[k+2].GetBlendIndex(), BoneWeights[k+2].GetBlendWeight());
+							if (useSkinnedFormat)
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi], TexCoord1[vi], 
+									BoneWeights[vi].GetBlendIndex(), BoneWeights[vi].GetBlendWeight());
+							}
+							else
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi], TexCoord1[vi]);
+							}
 						}
 						else
 						{
-							fiv = FIVertex(Positions[k+2], Normals[k+2], 
-								TexCoord0[k+2], 
-								BoneWeights[k+2].GetBlendIndex(), BoneWeights[k+2].GetBlendWeight());
+							if (useSkinnedFormat)
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi], 
+									BoneWeights[vi].GetBlendIndex(), BoneWeights[vi].GetBlendWeight());
+							}
+							else
+							{
+								fiv = FIVertex(Positions[vi], Normals[vi], 
+									TexCoord0[vi]);
+							}
 						}
+
 
 						int existC;
 						if (!vtxHashTable.TryGetValue(fiv, existC))
 						{
 							existC = vertexList.getCount();
 							vertexList.Add(fiv);
+							vtxHashTable.Add(fiv, existC);
 							meshData->BoundingSphere.Center = 
 								Vector3Utils::Add(meshData->BoundingSphere.Center, Positions[k+2]);
 						}

@@ -90,11 +90,32 @@ namespace Apoc3D
 
 			// if the texture can hold all glyphs, just load them all at once
 			{
-				int holdableCount = (FontManager::TextureSize / maxHeight) *  (FontManager::TextureSize/maxWidth);
 
 				int stx = 0;
 				int sty = 0;
-				int lineHeight = 0;
+				int holdableCount = 0;//(FontManager::TextureSize / maxHeight) *  (FontManager::TextureSize/maxWidth);
+				for (int i=0;i<glyphCount;i++)
+				{
+					const Glyph& glyph = m_glyphList[i];
+
+					stx += glyph.Width+1;
+					
+					if (stx>=FontManager::TextureSize)
+					{
+						stx = glyph.Width+1;
+						sty += maxHeight+1;
+						if (sty>=FontManager::TextureSize)
+						{
+							break;
+						}
+					}
+					holdableCount++;
+				}
+
+
+				stx = 0;
+				sty = 0;
+				//int lineHeight = 0;
 
 				int loopMax = min(holdableCount, glyphCount);
 				//if (holdableCount>=glyphCount)
@@ -108,18 +129,18 @@ namespace Apoc3D
 
 						glyph.MappedRect = Apoc3D::Math::Rectangle(stx, sty, glyph.Width, glyph.Height);
 
-						stx += glyph.Width;
-						if (lineHeight<glyph.Height)
-						{
-							lineHeight = glyph.Height;
-						}
+						stx += glyph.Width+1;
+						//if (lineHeight<glyph.Height)
+						//{
+							//lineHeight = glyph.Height;
+						//}
 
 						if (stx>=FontManager::TextureSize)
 						{
-							stx = 0;
-							sty += lineHeight;
-							lineHeight = 0;
-							glyph.MappedRect = Apoc3D::Math::Rectangle(stx, sty, glyph.Width, glyph.Height);
+							stx = glyph.Width+1;
+							sty += m_height+1;
+							//lineHeight = 0;
+							glyph.MappedRect = Apoc3D::Math::Rectangle(0, sty, glyph.Width, glyph.Height);
 						}
 
 						
