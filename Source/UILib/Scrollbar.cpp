@@ -21,37 +21,61 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef LIST_H
-#define LIST_H
-
-#include "UICommon.h"
-#include "Control.h"
+#include "Scrollbar.h"
+#include "FontManager.h"
+#include "StyleSkin.h"
+#include "Input/Mouse.h"
+#include "Input/InputAPI.h"
 
 namespace Apoc3D
 {
 	namespace UI
 	{
-		class ListBox : public Control
+		HScrollbar::HScrollbar(const Point& position, int width)
+			: Control(position), m_value(0), m_max(0), m_step(1), m_isScrolling(false), m_inverted(false)
 		{
-		private:
-			List<String> m_items;
-			bool m_sorted;
-			bool m_isSorted;
-			int m_visisbleItems;
+			Size.X = width;
+			Size.Y = 12;
+		}
+		HScrollbar::~HScrollbar()
+		{
 
-			Point m_textOffset;
+		}
 
-			Apoc3D::Math::Rectangle m_selectionRect;
-			int m_hoverIndex;
-			int m_selectedIndex;
+		void HScrollbar::Initialize(RenderDevice* device)
+		{
 
+		}
 
+		void HScrollbar::btLeft_OnPress(Control* ctrl)
+		{
 
+		}
+		void HScrollbar::btRight_OnPress(Control* ctrl)
+		{
 
-		public:
+		}
 
-		};
+		void HScrollbar::Update(const GameTime* const time)
+		{
+
+		}
+		void HScrollbar::UpdateScrolling()
+		{
+
+		}
+		void HScrollbar::Draw(Sprite* sprite)
+		{
+
+		}
+		void HScrollbar::DrawBackground(Sprite* sprite)
+		{
+
+		}
+
+		void HScrollbar::DrawCursor(Sprite* sprite)
+		{
+
+		}
 	}
 }
-
-#endif

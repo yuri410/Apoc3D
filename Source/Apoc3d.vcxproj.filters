@@ -450,6 +450,9 @@
     <ClInclude Include="UILib\List.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UILib\Scrollbar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -774,6 +777,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UILib\PictureBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UILib\Scrollbar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
