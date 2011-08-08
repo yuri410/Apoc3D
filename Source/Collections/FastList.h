@@ -45,6 +45,7 @@ namespace Apoc3D
 			int32 getCount() const { return m_internalPointer; }
 			T* getInternalPointer() const { return m_elements; }
 
+			
 			List(const List& another)
 				: m_internalPointer(another.m_internalPointer), m_length(another.m_length)
 			{
@@ -66,7 +67,16 @@ namespace Apoc3D
 			{
 				delete[] m_elements;
 			}
-
+			List& List::operator=(const List &rhs)
+			{
+				delete[] m_elements;
+				m_internalPointer = rhs.m_internalPointer;
+				m_length = rhs.m_length;
+				m_elements = new T[m_length];
+				for (int i=0;i<m_length;i++)
+					m_elements[i] = rhs.m_elements[i];
+				return *this; 
+			}
 			void Add(const T& val)
 			{
 				if (m_length<=m_internalPointer)
@@ -78,7 +88,7 @@ namespace Apoc3D
 			
 			void Clear()
 			{
-				memset(m_elements, 0, m_internalPointer*sizeof(T));
+				//memset(m_elements, 0, m_internalPointer*sizeof(T));
 				m_internalPointer = 0;
 			}
 
@@ -108,7 +118,7 @@ namespace Apoc3D
 				if (index == m_internalPointer - 1)
 				{
 					m_internalPointer--;
-					memset(m_elements+index,0, sizeof(T));
+					//memset(m_elements+index,0, sizeof(T));
 				}
 				else
 				{
@@ -246,7 +256,15 @@ namespace Apoc3D
 			{
 				delete[] m_elements;
 			}
-
+			FastList& FastList::operator=(const FastList &rhs)
+			{
+				delete[] m_elements;
+				m_internalPointer = rhs.m_internalPointer;
+				m_length = rhs.m_length;
+				m_elements = new T[m_length];
+				memcpy(m_elements, rhs.m_elements, m_length * sizeof(T));
+				return *this; 
+			}
 			void Add(const T& val)
 			{
 				if (m_length<=m_internalPointer)

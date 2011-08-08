@@ -289,6 +289,7 @@ namespace APBuild
 					fSpecularPower = static_cast<float>( FBXSpecularPowerProperty.Get() );
 			}
 
+			pMaterial->SetDefaults();
 			pMaterial->Ambient = Color4( AmbientColor );
 			pMaterial->Diffuse = Color4( DiffuseColor );
 			pMaterial->Emissive = Color4( EmissiveColor );
@@ -299,8 +300,8 @@ namespace APBuild
 			{
 				pMaterial->IsBlendTransparent = true;
 			}
+			
 
-			//pMaterial->AddTexturePath( GetFilePath(this->m_strFileName) + "/" );
 			m_materials.Add(pMaterial);
 			m_FBXMaterials.Add(pFBXMaterial);
 		}
@@ -1344,7 +1345,6 @@ namespace APBuild
 				modelData.Entities.Add(meshData);
 			}
 		}
-
 		
 		// animation
 		if (!config.DstAnimationFile.empty())

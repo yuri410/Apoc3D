@@ -286,7 +286,9 @@ namespace Apoc3D
 							Matrix transfrom;
 							br->ReadMatrix(transfrom);
 
-							frames.Add(ModelKeyframe(bone, totalSec, transfrom));
+							ModelKeyframe keyframe(bone, totalSec, transfrom);
+							keyframe.setNextFrameIndex(br->ReadInt32());
+							frames.Add(keyframe);
 						}
 
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
@@ -326,7 +328,9 @@ namespace Apoc3D
 							Matrix transfrom;
 							br->ReadMatrix(transfrom);
 
-							frames.Add(ModelKeyframe(bone, totalSec, transfrom));
+							ModelKeyframe keyframe(bone, totalSec, transfrom);
+							keyframe.setNextFrameIndex(br->ReadInt32());
+							frames.Add(keyframe);
 						}
 
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
@@ -457,9 +461,10 @@ namespace Apoc3D
 
 						for (int32 i = 0; i < keyFrames.getCount(); i++)
 						{
-							bw->Write(keyFrames[i].getObjectIndex());
+							bw->Write(static_cast<int32>(keyFrames[i].getObjectIndex()));
 							bw->Write(static_cast<double>(keyFrames[i].getTime()));
 							bw->Write(keyFrames[i].getTransform());
+							bw->Write(static_cast<int32>(keyFrames[i].getNextFrameIndex()));
 						}
 					}
 					bw->Close();
@@ -482,9 +487,10 @@ namespace Apoc3D
 
 						for (int i = 0; i < keyFrames.getCount(); i++)
 						{
-							bw->Write(keyFrames[i].getObjectIndex());
+							bw->Write(static_cast<int32>(keyFrames[i].getObjectIndex()));
 							bw->Write(static_cast<double>(keyFrames[i].getTime()));
 							bw->Write(keyFrames[i].getTransform());
+							bw->Write(static_cast<int32>(keyFrames[i].getNextFrameIndex()));
 						}
 					}
 					bw->Close();

@@ -510,6 +510,19 @@ namespace APBuild
 							}
 						}
 					}
+					// find next frames
+					for (int i=0;i<frames.getCount();i++)
+					{
+						for (int j=0;j<frames.getCount();j++)
+						{
+							int nextFrameIdx = (j + i + 1) & frames.getCount();
+							if (frames[nextFrameIdx].getObjectIndex() == frames[i].getObjectIndex())
+							{
+								frames[i].setNextFrameIndex(nextFrameIdx);
+								break;
+							}
+						}
+					}
 					if (frames.getCount())
 					{
 						ModelAnimationClip* clip = new ModelAnimationClip(frames[frames.getCount()-1].getTime(), frames);
@@ -627,18 +640,35 @@ namespace APBuild
 							finished = false;
 							const Matrix& trans = anim->GetKeyFrameTransform(frameIndex);
 							float time = anim->GetKeyFrameTime(frameIndex);
-
+							
 							frames.Add(ModelKeyframe(i,time, trans));
 						}
 					}
 					frameIndex++;
 				}
+
+				// find next frames
+				for (int i=0;i<frames.getCount();i++)
+				{
+					for (int j=0;j<frames.getCount();j++)
+					{
+						int nextFrameIdx = (j + i + 1) & frames.getCount();
+						if (frames[nextFrameIdx].getObjectIndex() == frames[i].getObjectIndex())
+						{
+							frames[i].setNextFrameIndex(nextFrameIdx);
+							break;
+						}
+					}
+				}
+
 				if (frames.getCount())
 				{
 					ModelAnimationClip* clip = new ModelAnimationClip(frames[frames.getCount()-1].getTime(), frames);
 					clipTable->insert(std::make_pair(StringUtils::toWString(animName), clip));
 				}					
 			}
+			
+
 			delete[] meshList;
 		}
 	public:
