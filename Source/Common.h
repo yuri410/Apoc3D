@@ -383,6 +383,8 @@ namespace Apoc3D
 		class PictureBox;
 		class Label;
 		class ScrollBar;
+		class TreeView;
+		class ListBox;
 
 		class Menu;
 		class MenuItem;
