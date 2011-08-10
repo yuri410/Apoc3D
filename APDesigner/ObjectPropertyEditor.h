@@ -7,8 +7,13 @@ namespace APDesigner
 {
 	class ObjectPropertyEditor
 	{
+	private:
+
+	public:
 
 	};
+
+
 }
 
 #endif

@@ -28,11 +28,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "APDCommon.h"
 
 #include "Graphics/RenderSystem/RenderWindowHandler.h"
+#include "Math/Point.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::UI;
 using namespace Apoc3D;
-
+using namespace Apoc3D::Math;
 
 
 namespace APDesigner
@@ -47,16 +48,24 @@ namespace APDesigner
 
 		Sprite* m_sprite;
 
-		Font* m_font;
+		//Font* m_font;
 
-		ControlContainer* m_pane;
-		Button* m_btn;
-		Form* m_form;
+		//ControlContainer* m_pane;
+		//Button* m_btn;
+		//Form* m_form;
 		Menu* m_mainMenu;
 
 		ResourcePane* m_resourcePane;
 		Project* m_project;
+
+		Point m_lastSize;
+
+		void OpenProject(const String& path);
+		void SaveProject(const String& path);
+		void CloseProject();
 	public:
+		const StyleSkin* getUISkin() const { return m_UIskin; }
+		const Point& getUIAreaSize() const { return m_lastSize; }
 		MainWindow(RenderWindow* wnd);
 		void Initialize();
 		virtual void Finalize();

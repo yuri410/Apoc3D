@@ -757,5 +757,41 @@ namespace Apoc3D
 				m_visisbleItems++;
 			}
 		}
+
+		void TreeView::SetSize(const Point& newSize)
+		{
+			Size = newSize;
+
+			if (getUseHorizontalScrollbar())
+			{
+				if (GetAllNodeCount()>m_visisbleItems)
+				{
+					m_hscrollbar->Position = Point(Position.X+1,Position.Y+Size.Y-13-12);
+				}
+				else
+				{
+					m_hscrollbar->Position = Point(Position.X+1,Position.Y+Size.Y-13-12);
+				}
+			}
+
+			int vScrollbarHeight = 0;
+			if (getUseHorizontalScrollbar() && m_hscrollbar->Visible && m_hscrollbar->getMax()>0)
+			{
+				vScrollbarHeight = Size.Y - 14;
+			}
+			else
+			{
+				vScrollbarHeight = Size.Y - 2;
+			}
+			vScrollbarHeight-=12;
+
+			m_vscrollbar->Position = Point(Position.X+Size.X - 13,Position.Y+1);
+
+			if (m_hscrollbar)
+				m_hscrollbar->setWidth(newSize.X);
+			if (m_vscrollbar)
+				m_vscrollbar->setHeight(newSize.Y);
+		}
+
 	}
 }

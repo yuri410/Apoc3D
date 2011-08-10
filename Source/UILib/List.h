@@ -180,6 +180,7 @@ namespace Apoc3D
 			
 			virtual void Draw(Sprite* sprite);
 
+			void SetSize(const Point& newSize);
 		};
 	}
 }

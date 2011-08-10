@@ -1034,6 +1034,7 @@ namespace Apoc3D
 		RectangleF UIRoot::UIArea(0,0,1,1);
 		SubMenu* UIRoot::m_contextMenu = 0;
 		Sprite* UIRoot::m_sprite = 0;
+		Menu* UIRoot::m_mainMenu = 0;
 
 		Apoc3D::Math::Rectangle UIRoot::GetUIArea(RenderDevice* device)
 		{
@@ -1240,7 +1241,10 @@ namespace Apoc3D
 			{
 				m_contextMenu->Draw(m_sprite);
 			}
-
+			if (m_mainMenu && m_mainMenu->Visible)
+			{
+				m_mainMenu->Draw(m_sprite);
+			}
 			// cursor
 
 			m_sprite->End();
@@ -1270,6 +1274,10 @@ namespace Apoc3D
 				m_contextMenu->Visible)
 			{
 				m_contextMenu->Update(time);
+			}
+			if (m_mainMenu && m_mainMenu->Visible)
+			{
+				m_mainMenu->Update(time);
 			}
 		}
 	}

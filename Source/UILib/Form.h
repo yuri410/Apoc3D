@@ -207,6 +207,7 @@ namespace Apoc3D
 			static Form* m_topMostForm;
 			static SubMenu* m_contextMenu;
 			static Sprite* m_sprite;
+			static Menu* m_mainMenu;
 
 			static void Form_SizeChanged(Control* ctl);
 		public:
@@ -223,6 +224,8 @@ namespace Apoc3D
 			static Form* getActiveForm() { return m_activeForm; }
 			static void setActiveForm(Form* frm) { m_activeForm = frm; }
 			
+			static Menu* getMainMenu() { return m_mainMenu; }
+			static void setMainMenu(Menu* mm) { m_mainMenu = mm; }
 
 			static Form* getTopMostForm() { return m_topMostForm; }
 			static void setTopMostForm(Form* frm) { m_topMostForm = frm; }
