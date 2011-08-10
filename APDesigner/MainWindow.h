@@ -48,6 +48,7 @@ namespace APDesigner
 
 		Sprite* m_sprite;
 
+		FastList<Document*> m_documentList;
 		//Font* m_font;
 
 		//ControlContainer* m_pane;
@@ -67,6 +68,11 @@ namespace APDesigner
 		const StyleSkin* getUISkin() const { return m_UIskin; }
 		const Point& getUIAreaSize() const { return m_lastSize; }
 		MainWindow(RenderWindow* wnd);
+
+		void AddDocument(Document* document);
+
+		void SwitchedTo(Document* document);
+
 		void Initialize();
 		virtual void Finalize();
 

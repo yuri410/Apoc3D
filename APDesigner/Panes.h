@@ -13,14 +13,16 @@ namespace APDesigner
 	class ToolsPane
 	{
 	private:
-
+		ObjectTools* m_currentTools;
 	public:
 
 	};
+
+
 	class ResourcePane
 	{
 	private:
-		static const int ItemHeight = 60;
+		//static const int ItemHeight = 60;
 		MainWindow* m_mainWindow;
 
 		Form* m_form;

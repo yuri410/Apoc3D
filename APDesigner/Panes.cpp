@@ -59,6 +59,10 @@ namespace APDesigner
 	ResourcePane::~ResourcePane()
 	{
 		delete m_form;
+
+
+
+		delete m_resourceView;
 	}
 
 	void ResourcePane::Initialize(RenderDevice* device)

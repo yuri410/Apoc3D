@@ -3,24 +3,30 @@
 
 #include "APDCommon.h"
 
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::UI;
+
 namespace APDesigner
 {
 	class Document
 	{
 	private:
 		bool m_activated;
+		Form* m_docForm;
 
 	protected:
-		Document()
-			: m_activated(false)
-		{
-
-		}
+		Document();
 
 		virtual void activate() { }
 		virtual void deactivate() { }
 	public:
+
+		Form* getDocumentForm() const { return m_docForm; }
+
 		bool isActivated() const { return m_activated; }
+
+		virtual void Initialize(RenderDevice* device);
 
 		virtual ObjectPropertyEditor* getRootPropertyEditor() { return 0; }
 		virtual void LoadRes() = 0;

@@ -91,8 +91,9 @@
     <ClInclude Include="CommonDialog\FileDialog.h" />
     <ClInclude Include="Document.h" />
     <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="ModelDocument.h" />
     <ClInclude Include="ModelEditor.h" />
-    <ClInclude Include="ObjectPropertyEditor.h" />
+    <ClInclude Include="ObjectEditor.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Panes.h" />
     <ClInclude Include="stdafx.h" />
@@ -106,8 +107,9 @@
     <ClCompile Include="Document.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="ModelDocument.cpp" />
     <ClCompile Include="ModelEditor.cpp" />
-    <ClCompile Include="ObjectPropertyEditor.cpp" />
+    <ClCompile Include="ObjectEditor.cpp" />
     <ClCompile Include="Panes.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

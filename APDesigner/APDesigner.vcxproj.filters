@@ -54,9 +54,6 @@
     <ClInclude Include="TextureViewer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectPropertyEditor.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="ModelEditor.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -64,6 +61,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="UIResources.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectEditor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelDocument.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -95,7 +98,10 @@
     <ClCompile Include="Panes.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectPropertyEditor.cpp">
+    <ClCompile Include="ObjectEditor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelDocument.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,6 +3,8 @@
 
 #include "APDCommon.h"
 
+using namespace Apoc3D::UI;
+
 namespace APDesigner
 {
 	class ObjectPropertyEditor
@@ -15,6 +17,7 @@ namespace APDesigner
 	class ObjectTools
 	{
 	private:
+		Button* m_btSave;
 
 	public:
 
