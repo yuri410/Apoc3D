@@ -760,17 +760,32 @@ namespace Apoc3D
 
 		void TreeView::SetSize(const Point& newSize)
 		{
+			if (newSize==Size)
+				return;
+
 			Size = newSize;
+			m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
+				m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
+			m_destRect[1] = Apoc3D::Math::Rectangle(0,0, 
+				Size.X - m_skin->ListBoxSrcRects[0].Width*2, m_skin->ListBoxSrcRects[0].Height);
+			m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
+
+			m_destRect[3] = Apoc3D::Math::Rectangle(0,0, 
+				m_skin->ListBoxSrcRects[0].Width, Size.Y - m_skin->ListBoxSrcRects[0].Height*2);
+			m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
+				m_destRect[1].Width, m_destRect[3].Height);
+			m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
+				m_skin->ListBoxSrcRects[1].Width, m_destRect[3].Height);
 
 			if (getUseHorizontalScrollbar())
 			{
 				if (GetAllNodeCount()>m_visisbleItems)
 				{
-					m_hscrollbar->Position = Point(Position.X+1,Position.Y+Size.Y-13-12);
+					m_hscrollbar->setPosition( Point(Position.X+1,Position.Y+Size.Y-13));
 				}
 				else
 				{
-					m_hscrollbar->Position = Point(Position.X+1,Position.Y+Size.Y-13-12);
+					m_hscrollbar->setPosition( Point(Position.X+1,Position.Y+Size.Y-13));
 				}
 			}
 
@@ -785,7 +800,7 @@ namespace Apoc3D
 			}
 			vScrollbarHeight-=12;
 
-			m_vscrollbar->Position = Point(Position.X+Size.X - 13,Position.Y+1);
+			m_vscrollbar->setPosition( Point(Position.X+Size.X - 13,Position.Y+1));
 
 			if (m_hscrollbar)
 				m_hscrollbar->setWidth(newSize.X);

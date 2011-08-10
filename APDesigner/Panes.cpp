@@ -14,7 +14,7 @@ namespace APDesigner
 		m_form->SetSkin(window->getUISkin());
 
 
-		m_form->Size = Point(300,300);
+		m_form->Size = Point(225,600);
 		m_form->Position = Point(0, 17);
 		
 		m_form->Text = L"Resource Explorer.";
@@ -22,7 +22,7 @@ namespace APDesigner
 
 
 		{
-			TreeView* treeview = new TreeView(Point(5, 5), 300, 300);
+			TreeView* treeview = new TreeView(Point(5, 25), 200, 300);
 			treeview->SetSkin(window->getUISkin());
 			treeview->setUseHorizontalScrollbar(true);
 
@@ -74,7 +74,7 @@ namespace APDesigner
 		m_form->Size.Y = m_mainWindow->getUIAreaSize().Y - 17;
 		Point newSize = m_form->Size;
 		newSize.X -= 10;
-		newSize.Y -= 10;
+		newSize.Y -= 30+300;
 		m_resourceView->SetSize(newSize);
 		
 	}

@@ -10,6 +10,13 @@ using namespace Apoc3D::Core;
 
 namespace APDesigner
 {
+	class ToolsPane
+	{
+	private:
+
+	public:
+
+	};
 	class ResourcePane
 	{
 	private:

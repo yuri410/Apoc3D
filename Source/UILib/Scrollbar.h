@@ -64,6 +64,7 @@ namespace Apoc3D
 			void UpdateScrolling();
 		public:
 			void setWidth(int w);
+			void setPosition(const Point& pos);
 
 			int getStep() const { return m_step; }
 			void setStep(int step) { m_step = step; }
@@ -120,6 +121,7 @@ namespace Apoc3D
 			void UpdateScrolling();
 		public:
 			void setHeight(int w);
+			void setPosition(const Point& pos);
 
 			int getStep() const { return m_step; }
 			void setStep(int step) { m_step = step; }
@@ -159,6 +161,27 @@ namespace Apoc3D
 			VScrollBar* m_vsbar;
 
 		public:
+
+			void setPosition(const Point& pos)
+			{
+				if (m_type == SCRBAR_Horizontal)
+				{
+					m_hsbar->Position = pos;
+					m_hsbar->setPosition(pos);
+				}
+				else
+				{
+					m_vsbar->Position = pos;
+					m_vsbar->setPosition(pos);
+				}
+			}
+			const Point& getPosition() const 
+			{
+				if (m_type == SCRBAR_Horizontal)
+					return m_hsbar->Position;
+				return m_vsbar->Position;
+			}
+
 			int getValue() const
 			{
 				if (m_type == SCRBAR_Horizontal)

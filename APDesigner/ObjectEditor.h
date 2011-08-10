@@ -12,6 +12,13 @@ namespace APDesigner
 	public:
 
 	};
+	class ObjectTools
+	{
+	private:
+
+	public:
+
+	};
 
 
 }

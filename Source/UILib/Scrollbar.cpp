@@ -47,10 +47,17 @@ namespace Apoc3D
 			delete m_btLeft;
 			delete m_btRight;
 		}
+		void HScrollbar::setPosition(const Point& pos)
+		{
+			m_btLeft->Position = pos;
+			Position = pos;
+			setWidth(Size.X);
+		}
 		void HScrollbar::setWidth(int w)
 		{
 			Size.X = w;
 			m_btRight->Position.X = Position.X + w - 12;
+			m_btRight->Position.Y = Position.Y;
 		}
 		void HScrollbar::Initialize(RenderDevice* device)
 		{
@@ -189,7 +196,7 @@ namespace Apoc3D
 			if (m_max>0)
 				DrawCursor(sprite);
 			m_btLeft->Draw(sprite);
-			m_btLeft->Draw(sprite);
+			m_btRight->Draw(sprite);
 		}
 		void HScrollbar::DrawBackground(Sprite* sprite)
 		{
@@ -252,6 +259,13 @@ namespace Apoc3D
 		{
 			Size.Y= w;
 			m_btDown->Position.Y = Position.Y + w-12;
+			m_btDown->Position.X = Position.X;
+		}
+		void VScrollBar::setPosition(const Point& pos)
+		{
+			m_btUp->Position = pos;
+			Position = pos;
+			setHeight(Size.Y);
 		}
 		void VScrollBar::Initialize(RenderDevice* device)
 		{
