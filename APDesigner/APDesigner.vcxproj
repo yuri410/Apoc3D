@@ -98,6 +98,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextureViewer.h" />
+    <ClInclude Include="UIResources.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonDialog\ChooseColor.cpp" />

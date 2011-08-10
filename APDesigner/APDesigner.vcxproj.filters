@@ -63,6 +63,9 @@
     <ClInclude Include="Panes.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="UIResources.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

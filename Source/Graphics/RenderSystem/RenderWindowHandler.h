@@ -47,6 +47,8 @@ namespace Apoc3D
 
 				virtual void OnFrameStart() = 0;
 				virtual void OnFrameEnd() = 0;
+
+				
 			};
 		}
 	}
