@@ -49,7 +49,7 @@ namespace Apoc3D
 
 		Form::Form(BorderStyle border, const String& title)
 			: m_titleOffset(12,2), m_minimumSize(100, 40), m_minimizedSize(100, 20),
-			m_maximumSize(0,0), m_isMinimized(false), m_isMaximized(false),
+			m_maximumSize(0,0), m_maximizedPos(0,0), m_isMinimized(false), m_isMaximized(false),
 			m_previousPosition(0,0), m_previousSize(0,0), m_minimizedPos(0,0), 
 			m_hasMinimizeButton(true), m_hasMaximizeButton(true), 
 			m_dragArea(0,0,0,0), m_resizeArea(0,0,15,15), m_isDragging(false), m_isResizeing(false),
@@ -162,7 +162,10 @@ namespace Apoc3D
 
 			Focus();
 
-			m_maximumSize = UIRoot::GetMaximizedSize(m_device, this);
+			Apoc3D::Math::Rectangle rect = UIRoot::GetMaximizedRect(m_device, this);
+			m_maximizedPos.X = rect.X; m_maximizedPos.Y = rect.Y;
+
+			m_maximumSize.X = rect.Width; m_maximumSize.Y = rect.Height;// UIRoot::GetMaximizedSize(m_device, this);
 			m_state = FWS_Maximized;
 		}
 		void Form::Restore()
@@ -478,20 +481,20 @@ namespace Apoc3D
 			else if (m_state == FWS_Maximized && !m_isMaximized)
 			{
 				if (Vector2Utils::Distance(
-					Vector2Utils::Zero, 
+					Vector2((float)m_maximizedPos.X, (float)m_maximizedPos.Y), 
 					Vector2((float)Position.X, (float)Position.Y))>2.0f)
 				{
-					int dx = (int)(-Position.X*0.2f);
-					if (!dx) dx = -Position.X;
+					int dx = (int)(m_maximizedPos.X-Position.X*0.2f);
+					if (!dx) dx = m_maximizedPos.X-Position.X;
 					Position.X += dx;
 
-					int dy = (int)(-Position.Y*0.2f);
-					if (!dy) dy = -Position.Y;
+					int dy = (int)(m_maximizedPos.Y-Position.Y*0.2f);
+					if (!dy) dy = m_maximizedPos.Y-Position.Y;
 					Position.Y += dy;
 				}
 				else
 				{
-					Position = Point::Zero;
+					Position = m_maximizedPos;
 				}
 				
 				if (Vector2Utils::Distance(
@@ -511,7 +514,7 @@ namespace Apoc3D
 					Size = m_maximumSize;
 				}
 
-				if (Position == Point::Zero && Size == m_maximumSize)
+				if (Position == m_maximizedPos && Size == m_maximumSize)
 				{
 					m_isMinimized = false;
 					m_isMaximized = true;
@@ -649,6 +652,7 @@ namespace Apoc3D
 
 		void Form::Draw(Sprite* sprite)
 		{
+			Apoc3D::Math::Rectangle uiArea = UIRoot::GetUIArea(m_device);
 
 			m_borderAlpha = 0.3f - UIRoot::getForms().IndexOf(this) * 0.04f;
 			m_border->Draw(sprite, Position, Size, m_borderAlpha);
@@ -662,6 +666,14 @@ namespace Apoc3D
 			Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
 			sprite->MultiplyTransform(matrix);
 			Apoc3D::Math::Rectangle rect= getAbsoluteArea();
+			if (rect.getBottom()>uiArea.getBottom())
+			{
+				rect.Height -= rect.getBottom() - uiArea.getBottom();
+			}
+			if (rect.getRight() > uiArea.getRight())
+			{
+				rect.Width -= rect.getRight() - uiArea.getRight();
+			}
 			m_device->getRenderState()->setScissorTest(true, &rect);
 
 			int overlay = 0;
@@ -1086,6 +1098,22 @@ namespace Apoc3D
 			return true;
 		}
 
+		Apoc3D::Math::Rectangle UIRoot::GetMaximizedRect(RenderDevice* dev, Form* form)
+		{
+			Point size = GetMaximizedSize(dev, form);
+
+			if (m_mainMenu)
+			{
+				size.Y -= 17;
+				Apoc3D::Math::Rectangle result(0,17,size.X,size.Y);
+				return result;
+			}
+			else
+			{
+				Apoc3D::Math::Rectangle result(0,0,size.X,size.Y);
+				return result;
+			}
+		}
 		Point UIRoot::GetMaximizedSize(RenderDevice* dev, Form* form)
 		{
 			Apoc3D::Math::Rectangle rect = GetUIArea(dev);

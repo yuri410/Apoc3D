@@ -16,7 +16,7 @@ namespace APDesigner
 		Form* m_docForm;
 
 	protected:
-		Document();
+		Document(MainWindow* window);
 
 		virtual void activate() { }
 		virtual void deactivate() { }

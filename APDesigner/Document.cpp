@@ -1,14 +1,16 @@
 #include "Document.h"
 
 #include "UILib/Form.h"
+#include "MainWindow.h"
 
 namespace APDesigner
 {
-	Document::Document()
+	Document::Document(MainWindow* window)
 		: m_activated(false)
 	{
 		m_docForm = new Form(FBS_Sizable, L"New document");
-
+		m_docForm->Position.Y = 20;
+		m_docForm->SetSkin(window->getUISkin());
 		
 	}
 

@@ -47,7 +47,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/ResourceLocation.h"
 #include "Math/ColorValue.h"
 #include "Document.h"
-
+#include "ModelDocument.h"
 using namespace Apoc3D::Input;
 using namespace Apoc3D::VFS;
 
@@ -63,6 +63,7 @@ namespace APDesigner
 	void MainWindow::AddDocument(Document* document)
 	{
 		UIRoot::Add(document->getDocumentForm());
+		document->Initialize(m_device);
 		m_documentList.Add(document);
 	}
 
@@ -218,6 +219,7 @@ namespace APDesigner
 
 		//m_btn->Initialize(m_device);
 		//m_pane->Initialize(m_device);
+		AddDocument(new ModelDocument(this));
 	}
 	void MainWindow::Unload()
 	{

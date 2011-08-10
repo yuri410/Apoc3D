@@ -91,6 +91,7 @@ namespace Apoc3D
 			/** The position to display form title when minimized
 			*/
 			Point m_minimizedPos;
+			Point m_maximizedPos;
 
 			String m_title;
 
@@ -233,7 +234,7 @@ namespace Apoc3D
 
 			static bool GetMinimizedPosition(RenderDevice* dev, Form* form, Point& pos);
 			static Point GetMaximizedSize(RenderDevice* dev, Form* form);
-
+			static Apoc3D::Math::Rectangle GetMaximizedRect(RenderDevice* dev, Form* form);
 			static bool IsObstructed(Control* control, const Point& point);
 			
 			static void Initialize(RenderDevice* device);
