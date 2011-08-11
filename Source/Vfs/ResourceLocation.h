@@ -74,6 +74,7 @@ namespace Apoc3D
 			FileLocation(const String& filePath);
 			FileLocation(const FileLocation& fl);
 			FileLocation(Archive* pack, const String& filePath, Stream* stm);
+			~FileLocation();
 
 			virtual Stream* GetWriteStream() const { return 0;}
 			virtual Stream* GetReadStream() const;

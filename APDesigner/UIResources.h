@@ -18,7 +18,7 @@ namespace APDesigner
 		static void Initialize(RenderDevice* device);
 		static void Finalize();
 
-		static Texture* GetTexture(const String& name) const { return m_maps[name]; }
+		static Texture* GetTexture(const String& name) { return m_maps[name]; }
 	};
 }
 #endif

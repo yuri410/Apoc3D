@@ -30,6 +30,10 @@ using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
+	void ProjectFolder::Parse(const ConfigurationSection* sect)
+	{
+	
+	}
 	void ProjectResTexture::Parse(const ConfigurationSection* sect)
 	{
 		String method = L"d3d";

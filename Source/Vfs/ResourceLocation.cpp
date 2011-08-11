@@ -60,14 +60,18 @@ namespace Apoc3D
 		FileLocation::FileLocation(const String& filePath)
 			: ResourceLocation(filePath, File::GetFileSize(filePath)),
 			m_parent(0), m_path(filePath), m_stream(0)
-		{			
+		{
 
 		}
-
+		FileLocation::~FileLocation()
+		{
+			if (m_stream)
+				delete m_stream;
+		}
 		Stream* FileLocation::GetReadStream() const
 		{
 			if (m_stream)
-				return m_stream;
+				return new VirtualStream(m_stream);
 			return new FileStream(m_path);
 		}
 

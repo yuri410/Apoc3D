@@ -6,10 +6,13 @@ using namespace Apoc3D::IO;
 #include "Vfs/Archive.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/PathUtils.h"
+#include "Vfs/FileLocateRule.h"
+#include "Vfs/ResourceLocation.h"
+#include "Graphics/TextureManager.h"
 
 namespace APDesigner
 {
-	FastMap<String, Texture*> UIResources::m_maps;
+	FastMap<String, Texture*> UIResources::m_maps(10, IBuiltInEqualityComparer<String>::Default);
 
 	void UIResources::Initialize(RenderDevice* device)
 	{
