@@ -161,6 +161,11 @@ namespace Apoc3D
 		public:
 			RenderDevice* getRenderDevice() const { return m_device; }
 
+			void setMinimumSize(const Point& size) { m_minimumSize = size; }
+			void setMaximumSize(const Point& size) { m_maximumSize = size; }
+
+
+
 			bool isResized() const { return m_isResizeing; }
 			bool isDragged() const { return m_isDragging; }
 			bool isMinimizing() const { return m_isMinimizing; }

@@ -15,12 +15,13 @@ namespace APDesigner
 	{
 		m_pane = new Form(FBS_Pane);
 		m_pane->SetSkin(window->getUISkin());
-
+		
+		m_pane->setMinimumSize(Point(50,50));
 		m_pane->Size = Point(50,600);
 		m_pane->Position = Point(0, 17);
 
 		m_pane->Text = L"Tools.";
-		m_pane->setTitle(m_pane->Text);
+		//m_pane->setTitle(m_pane->Text);
 
 
 	}

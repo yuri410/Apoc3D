@@ -1279,23 +1279,35 @@ namespace Apoc3D
 		}
 		void UIRoot::Update(const GameTime* const time)
 		{
-			if (m_activeForm)
-				m_activeForm->Update(time);
-			else if (m_topMostForm)
-				m_topMostForm->Update(time);
-			else if (!m_topMostForm && m_forms.getCount())
+			bool menuOverriden = false;
+			for (int i=0;i<m_mainMenu->getItems().getCount();i++)
 			{
-				m_topMostForm = m_forms[0];
-				m_topMostForm->Focus();
-			}
-
-			for (int i=0;i<m_forms.getCount();i++)
-			{
-				if (m_forms[i]->Enabled && m_forms[i] != m_topMostForm && m_forms[i] != m_activeForm)
+				if (m_mainMenu->getItems()[i]->getSubMenu() && m_mainMenu->getItems()[i]->getSubMenu()->getState() == MENU_Open)
 				{
-					m_forms[i]->Update(time);
+					menuOverriden = true;
 				}
 			}
+			if (!menuOverriden)
+			{
+				if (m_activeForm)
+					m_activeForm->Update(time);
+				else if (m_topMostForm)
+					m_topMostForm->Update(time);
+				else if (!m_topMostForm && m_forms.getCount())
+				{
+					m_topMostForm = m_forms[0];
+					m_topMostForm->Focus();
+				}
+
+				for (int i=0;i<m_forms.getCount();i++)
+				{
+					if (m_forms[i]->Enabled && m_forms[i] != m_topMostForm && m_forms[i] != m_activeForm)
+					{
+						m_forms[i]->Update(time);
+					}
+				}
+			}
+			
 
 			//Update Context Menu
 			if (m_contextMenu && m_contextMenu->getState() != MENU_Closed &&
