@@ -37,6 +37,7 @@ namespace APDesigner
 	class PropertyPane;
 	class ToolsPane;
 
+
 	class ObjectTools;
 	class ObjectPropertyEditor;
 

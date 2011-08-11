@@ -384,6 +384,7 @@ namespace Apoc3D
 		class Label;
 		class ScrollBar;
 		class TreeView;
+		class TreeViewNode;
 		class ListBox;
 
 		class Menu;

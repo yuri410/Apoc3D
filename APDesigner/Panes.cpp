@@ -4,6 +4,7 @@
 #include "MainWindow.h"
 #include "UILib/Form.h"
 #include "UILib/List.h"
+#include "Project/Project.h"
 
 namespace APDesigner
 {
@@ -56,7 +57,7 @@ namespace APDesigner
 	/************************************************************************/
 	
 	ResourcePane::ResourcePane(MainWindow* window)
-		: m_mainWindow(window)
+		: m_mainWindow(window), m_currentProject(0)
 	{
 		m_form = new Form(FBS_Pane);
 		m_form->SetSkin(window->getUISkin());
@@ -113,6 +114,7 @@ namespace APDesigner
 		delete m_resourceView;
 	}
 
+
 	void ResourcePane::Initialize(RenderDevice* device)
 	{
 		m_form->Initialize(device);
@@ -131,5 +133,28 @@ namespace APDesigner
 		newSize.Y -= 30+300;
 		m_resourceView->SetSize(newSize);
 		
+	}
+
+	void ResourcePane::UpdateToNewProject(Project* prj)
+	{
+		m_currentProject = prj;
+	}
+
+
+	void ResourcePane::NukeTreeViewNodes(FastList<TreeViewNode*>& nodes)
+	{
+		for (int i=0;i<nodes.getCount();i++)
+		{
+			if (nodes[i]->getNodes().getCount())
+			{
+				NukeTreeViewNodes(nodes[i]->getNodes());
+			}
+			delete nodes[i];
+		}
+		nodes.Clear();
+	}
+	void ResourcePane::NukeTreeView()
+	{
+		NukeTreeViewNodes(m_resourceView->getNodes());
 	}
 }

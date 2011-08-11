@@ -3,6 +3,10 @@
 
 #include "APDCommon.h"
 
+#include "Collections/FastList.h"
+
+using namespace Apoc3D;
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::UI;
@@ -39,6 +43,11 @@ namespace APDesigner
 		Form* m_form;
 
 		TreeView* m_resourceView;
+
+		Project* m_currentProject;
+
+		void NukeTreeViewNodes(FastList<TreeViewNode*>& nodes);
+		void NukeTreeView();
 	public:
 		
 		ResourcePane(MainWindow* window);
@@ -47,12 +56,16 @@ namespace APDesigner
 		void Initialize(RenderDevice* device);
 
 		void Update(const GameTime* const time);
+
+		void UpdateToNewProject(Project* prj);
 	};
 
 	class PropertyPane
 	{
 	private:
 		ObjectPropertyEditor* m_currentEditor;
+
+		
 	public:
 
 		PropertyPane(MainWindow* window);

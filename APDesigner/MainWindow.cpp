@@ -327,6 +327,8 @@ namespace APDesigner
 			m_project->Parse(conf->get(L"Project"));
 			delete conf;
 			delete fl;
+
+			
 		}
 	}
 	void MainWindow::CloseProject()
