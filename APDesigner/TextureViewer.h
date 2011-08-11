@@ -31,6 +31,7 @@ using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::UI;
+using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {
@@ -60,7 +61,11 @@ namespace APDesigner
 	private:
 		
 	public:
-
+		TextureViewer(MainWindow* window, ResourceLocation* rl);
+		~TextureViewer();
+		virtual void LoadRes();
+		virtual void SaveRes();
+		virtual bool IsReadOnly() { return true; };
 	};
 }
 

@@ -21,25 +21,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MODELDOCUMENT_H
-#define MODELDOCUMENT_H
+#ifndef DEVRESOURCELOCATION_H
+#define DEVRESOURCELOCATION_H
 
-#include "Document.h"
+#include "APDCommon.h"
 
 namespace APDesigner
 {
-	class ModelDocument : public Document
-	{
-	public:
-		ModelDocument(MainWindow* window)
-			: Document(window)
-		{
-
-		}
-		virtual void LoadRes() { }
-		virtual void SaveRes() { };
-		virtual bool IsReadOnly() { return false; };
-	};
+	
 }
 
 #endif

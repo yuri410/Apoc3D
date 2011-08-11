@@ -217,4 +217,15 @@ namespace APDesigner
 		}
 		m_texture = 0;
 	}
+
+	TextureViewer::TextureViewer(MainWindow* window, ResourceLocation* rl)
+		: Document(window)
+	{
+
+	}
+
+	TextureViewer::~TextureViewer()
+	{
+
+	}
 }
