@@ -294,7 +294,7 @@ namespace Apoc3D
 		{
 			for (FastMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
 			{
-				delete iter.getCurrentValue();
+				delete *iter.getCurrentValue();
 			}
 		}
 

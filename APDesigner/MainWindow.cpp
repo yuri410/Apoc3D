@@ -68,6 +68,10 @@ namespace APDesigner
 	{
 
 	}
+	MainWindow::~MainWindow()
+	{
+		
+	}
 
 	void MainWindow::AddDocument(Document* document)
 	{
@@ -148,7 +152,7 @@ namespace APDesigner
 			mi->event().bind(this, &MainWindow::Menu_OpenProject);
 			pojSubMenu->Add(mi,0);
 
-			mi=new MenuItem(L"Sae Project");
+			mi=new MenuItem(L"Save Project");
 			mi->event().bind(this, &MainWindow::Menu_SaveProject);
 			pojSubMenu->Add(mi,0);
 			
@@ -156,7 +160,17 @@ namespace APDesigner
 			mi->event().bind(this, &MainWindow::Menu_Insert);
 			pojSubMenu->Add(mi,0);
 
+			mi=new MenuItem(L"_");
+			pojSubMenu->Add(mi,0);
+
+			mi=new MenuItem(L"Exit");
+			mi->event().bind(this, &MainWindow::Menu_Exit);
+			pojSubMenu->Add(mi,0);
+
+
+
 			m_mainMenu->Add(pojMenu,pojSubMenu);
+
 
 			//MenuItem* tt2 = new MenuItem(L"Menu 2");
 			//SubMenu* sb = new SubMenu(0);
@@ -328,5 +342,9 @@ namespace APDesigner
 	void MainWindow::Menu_SaveProject(Control* ctl)
 	{
 		
+	}
+	void MainWindow::Menu_Exit(Control* ctl)
+	{
+		m_window->Exit();
 	}
 }

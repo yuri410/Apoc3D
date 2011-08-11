@@ -285,6 +285,7 @@ namespace Apoc3D
 					}
 					else
 						Close();
+					m_indexToOpen=-1;
 				}
 
 				if (m_items[i]->getKeyCode() != KEY_UNASSIGNED)
@@ -639,7 +640,7 @@ namespace Apoc3D
 						sprite->Draw(m_skin->WhitePixelTexture, m_itemArea, CV_Silver);
 					}
 
-					if (m_indexToOpen = i)
+					if (m_indexToOpen == i)
 					{
 						if (m_items[i]->getSubMenu() &&
 							m_items[i]->getSubMenu()->getState() == MENU_Closed)
@@ -654,7 +655,6 @@ namespace Apoc3D
 							m_items[i]->event()(this);
 						}
 
-						m_indexToOpen = -1;
 					}
 
 					m_textPos = m_itemPos;

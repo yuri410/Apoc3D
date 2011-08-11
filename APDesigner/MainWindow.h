@@ -68,6 +68,7 @@ namespace APDesigner
 		void Menu_SaveProject(Control* ctl);
 		void Menu_CloseProject(Control* ctl);
 		void Menu_Insert(Control* ctl);
+		void Menu_Exit(Control* ctl);
 
 		void OpenProject(const String& path);
 		void SaveProject(const String& path);
@@ -78,6 +79,7 @@ namespace APDesigner
 		RenderDevice* getDevice() const { return m_device; }
 
 		MainWindow(RenderWindow* wnd);
+		~MainWindow();
 
 		void AddDocument(Document* document);
 

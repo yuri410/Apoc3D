@@ -92,8 +92,8 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 
 	RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
 
-	MainWindow* mainWnd = new MainWindow(wnd);
-	wnd->setEventHandler(mainWnd);
+	//MainWindow* mainWnd = new MainWindow(wnd);
+	wnd->setEventHandler(new MainWindow(wnd));
 
 	if (wnd)
 	{
@@ -101,7 +101,8 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 		delete wnd;
 	}
 
-	delete mainWnd;
+	//delete mainWnd;
+	//delete wnd;
 
 	delete devContent;
 

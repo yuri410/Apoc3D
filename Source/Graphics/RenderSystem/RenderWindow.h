@@ -116,7 +116,7 @@ namespace Apoc3D
 
 				virtual void Run() = 0;
 
-				~RenderWindow();
+				virtual ~RenderWindow();
 
 			protected:
 				RenderWindow(RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)

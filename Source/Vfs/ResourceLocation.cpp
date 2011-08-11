@@ -71,7 +71,19 @@ namespace Apoc3D
 		Stream* FileLocation::GetReadStream() const
 		{
 			if (m_stream)
-				return new VirtualStream(m_stream);
+			{
+				VirtualStream* strm = dynamic_cast<VirtualStream*>(m_stream);
+
+				if (strm)
+				{
+					return new VirtualStream(*strm);
+				}
+				else
+				{
+					return new VirtualStream(m_stream);
+				}
+			}
+			
 			return new FileStream(m_path);
 		}
 

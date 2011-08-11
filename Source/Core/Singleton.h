@@ -48,7 +48,7 @@ namespace Apoc3D
 			{
 				ms_instance = static_cast<T*> (this);
 			}
-			virtual ~Singleton() { delete ms_instance; ms_instance = 0; }
+			virtual ~Singleton() { ms_instance = 0; }
 		public:
 			static void Initialize()
 			{
