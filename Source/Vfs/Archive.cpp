@@ -103,6 +103,18 @@ namespace Apoc3D
 			}
 			return 0;
 		}
+		String PakArchive::GetEntryName(int index)
+		{
+			int i=0;
+			FastMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
+
+			while (i<index && e.MoveNext())
+			{
+
+			}
+			assert(e.getCurrentKey());
+			return *e.getCurrentKey();
+		}
 
 		Archive* PakArchiveFactory::CreateInstance(const String& file)
 		{

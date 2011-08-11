@@ -197,43 +197,7 @@ namespace APDesigner
 		//	listbox->setUseHorizontalScrollbar(true);
 		//	m_form->getControls().Add(listbox);
 		//}
-		//{
-		//	TreeView* treeview = new TreeView(Point(450, 50), 300, 300);
-		//	treeview->SetSkin(m_UIskin);
-		//	treeview->setUseHorizontalScrollbar(true);
-
-		//	TreeViewNode* node1 = new TreeViewNode(L"Root");
-		//	treeview->getNodes().Add(node1);
-
-		//	TreeViewNode* node2 = new TreeViewNode(L"Root2");
-		//	treeview->getNodes().Add(node2);
-		//	TreeViewNode* node3 = new TreeViewNode(L"Root3 the long one. Project Hosting will be READ-ONLY Tuesday at 9:00am CDT for brief maintenance.");
-		//	treeview->getNodes().Add(node3);
-
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode1"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode2"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode3"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode4"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode5"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode6"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode7"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode8"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode9"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode10"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode11"));
-		//	node2->getNodes().Add(new TreeViewNode(L"SubNode12"));
-
-		//	node3->getNodes().Add(new TreeViewNode(L"SubNode1"));
-		//	node3->getNodes().Add(new TreeViewNode(L"SubNode2"));
-		//	node3->Expand();
-
-
-		//	m_form->getControls().Add(treeview);
-		//}
-		//m_form->Initialize(m_device);
-		//m_form->Text = L"Form 1. abcdefg.hijklmn.opq rst.uvw xyz.";
-		//m_form->setTitle(m_form->Text);
-		//m_pane->getControls().Add(m_btn);
+		
 
 		m_resourcePane = new ResourcePane(this);
 		m_toolsPane = new ToolsPane(this);

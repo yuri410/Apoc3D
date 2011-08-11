@@ -62,7 +62,7 @@ namespace Apoc3D
 		public:
 			virtual int getFileCount() const = 0;
 			virtual Stream* GetEntryStream(const String& file) = 0;
-
+			virtual String GetEntryName(int index) = 0;
 		};
 
 		struct PakArchiveEntry
@@ -87,6 +87,7 @@ namespace Apoc3D
 
 			virtual int getFileCount() const;
 			virtual Stream* GetEntryStream(const String& file);
+			virtual String GetEntryName(int index);
 		};
 
 		class PakArchiveFactory : public ArchiveFactory
