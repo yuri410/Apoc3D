@@ -26,9 +26,31 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDCommon.h"
 
+#include "Vfs/ResourceLocation.h"
+
+using namespace Apoc3D::VFS;
+using namespace Apoc3D::IO;
+using namespace Apoc3D;
+
 namespace APDesigner
 {
-	
+	class DevFileLocation : public ResourceLocation
+	{
+	private:
+		String m_filePath;
+
+	public:
+		DevFileLocation(const String& filePath);
+
+		virtual Stream* GetWriteStream() const;
+		virtual Stream* GetReadStream() const;
+
+		bool isInArchive() const { return false; }
+		const String& getPath() const { return m_path; } 
+
+		virtual bool CanRead() const { return true; }
+		virtual bool CanWrite() const { return true; }
+	};
 }
 
 #endif
