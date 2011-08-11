@@ -328,6 +328,7 @@ namespace APDesigner
 			delete conf;
 			delete fl;
 
+			m_resourcePane->UpdateToNewProject(m_project);
 			
 		}
 	}

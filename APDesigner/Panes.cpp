@@ -138,6 +138,9 @@ namespace APDesigner
 	void ResourcePane::UpdateToNewProject(Project* prj)
 	{
 		m_currentProject = prj;
+		NukeTreeView();
+
+
 	}
 
 
