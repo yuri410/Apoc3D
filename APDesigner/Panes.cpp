@@ -124,7 +124,7 @@ namespace APDesigner
 	{
 		m_form->Position.X = 0;
 		m_form->Position.Y = 17;
-		m_form->Size.Y = m_mainWindow->getUIAreaSize().Y - 17;
+		m_form->Size.Y = m_mainWindow->getUIAreaSize().Y - 17-1;
 		Point newSize = m_form->Size;
 		newSize.X -= 10;
 		newSize.Y -= 30+300;

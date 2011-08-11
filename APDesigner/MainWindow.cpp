@@ -132,17 +132,26 @@ namespace APDesigner
 
 		
 		{
-			MenuItem* ttt = new MenuItem(L"Test Menu");
+			MenuItem* pojMenu = new MenuItem(L"Project");
 
-			m_mainMenu->Add(ttt,0);
+			
+			SubMenu* pojSubMenu = new SubMenu(0);
+			pojSubMenu->SetSkin(m_UIskin);
+			
+			pojSubMenu->Add(new MenuItem(L"Open Project..."),0);
+			pojSubMenu->Add(new MenuItem(L"Save Project"),0);
+			
+			pojSubMenu->Add(new MenuItem(L"Insert..."),0);
 
-			MenuItem* tt2 = new MenuItem(L"Menu 2");
-			SubMenu* sb = new SubMenu(0);
-			sb->SetSkin(m_UIskin);
-			sb->Add(new MenuItem(L"Item1"),0);
-			sb->Add(new MenuItem(L"Item2"),0);
+			m_mainMenu->Add(pojMenu,pojSubMenu);
 
-			m_mainMenu->Add(tt2, sb);
+			//MenuItem* tt2 = new MenuItem(L"Menu 2");
+			//SubMenu* sb = new SubMenu(0);
+			//sb->SetSkin(m_UIskin);
+			//sb->Add(new MenuItem(L"Item1"),0);
+			//sb->Add(new MenuItem(L"Item2"),0);
+
+			//m_mainMenu->Add(tt2, sb);
 
 			m_mainMenu->Initialize(m_device);
 			UIRoot::setMainMenu(m_mainMenu);

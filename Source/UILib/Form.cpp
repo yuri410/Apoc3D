@@ -305,7 +305,7 @@ namespace Apoc3D
 					m_menu->Update(time);
 				}
 
-				if (m_btClose)
+				if (m_btClose && m_borderStyle != FBS_Pane)
 				{
 					m_btClose->Update(time);
 				}
