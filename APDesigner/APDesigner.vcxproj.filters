@@ -104,6 +104,9 @@
     <ClCompile Include="ModelDocument.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="CommonDialog\DialogCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="APDesigner.rc">

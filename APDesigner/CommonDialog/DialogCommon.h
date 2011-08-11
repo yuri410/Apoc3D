@@ -1,6 +1,10 @@
 #ifndef DIALOGCOMMON_H
 #define DIALOGCOMMON_H
 
+#include "APDCommon.h"
+
+using namespace Apoc3D;
+
 namespace APDesigner
 {
 	namespace CommonDialog
@@ -17,6 +21,8 @@ namespace APDesigner
 			DLGRES_No
 
 		};
+
+		DialogResult ShowMessageBox(const String& message, const String& title, bool isError = false, bool isEx = false, bool isInfo = false);
 	}
 }
 

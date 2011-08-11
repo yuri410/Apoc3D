@@ -25,7 +25,7 @@ namespace APDesigner
 			ofn.lpstrFile[0] = '\0';
 			ofn.nMaxFile = sizeof(szFile);
 			ofn.lpstrInitialDir = InitialDirectory.c_str();
-			ofn.lpstrFilter = Filter.c_str();
+			ofn.lpstrFilter = Filter.c_str();//"All Files\0*.*\0\0"
 			ofn.nFilterIndex = FilterIndex;
 			ofn.lpstrFileTitle = NULL;
 			ofn.nMaxFileTitle = 0;

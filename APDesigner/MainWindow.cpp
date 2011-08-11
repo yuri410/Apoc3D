@@ -37,6 +37,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/Form.h"
 #include "UILib/Menu.h"
 #include "UILib/List.h"
+#include "Project/Project.h"
+#include "Config/XmlConfiguration.h"
 
 #include "Panes.h"
 
@@ -51,8 +53,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ModelDocument.h"
 #include "TextureViewer.h"
 
+#include "CommonDialog/FileDialog.h"
+
 using namespace Apoc3D::Input;
 using namespace Apoc3D::VFS;
+
+using namespace APDesigner::CommonDialog;
 
 namespace APDesigner
 {
@@ -138,10 +144,17 @@ namespace APDesigner
 			SubMenu* pojSubMenu = new SubMenu(0);
 			pojSubMenu->SetSkin(m_UIskin);
 			
-			pojSubMenu->Add(new MenuItem(L"Open Project..."),0);
-			pojSubMenu->Add(new MenuItem(L"Save Project"),0);
+			MenuItem* mi=new MenuItem(L"Open Project...");
+			mi->event().bind(this, &MainWindow::Menu_OpenProject);
+			pojSubMenu->Add(mi,0);
+
+			mi=new MenuItem(L"Sae Project");
+			mi->event().bind(this, &MainWindow::Menu_SaveProject);
+			pojSubMenu->Add(mi,0);
 			
-			pojSubMenu->Add(new MenuItem(L"Insert..."),0);
+			mi=new MenuItem(L"Insert...");
+			mi->event().bind(this, &MainWindow::Menu_Insert);
+			pojSubMenu->Add(mi,0);
 
 			m_mainMenu->Add(pojMenu,pojSubMenu);
 
@@ -301,5 +314,52 @@ namespace APDesigner
 	void MainWindow::OnFrameEnd()
 	{
 
+	}
+
+	void MainWindow::OpenProject(const String& path)
+	{
+		if (!m_project)
+		{
+			m_project = new Project();
+			FileLocation* fl = new FileLocation(path);
+			XMLConfiguration* conf = new XMLConfiguration(fl);
+
+			m_project->Parse(conf->get(L"Project"));
+			delete conf;
+			delete fl;
+		}
+	}
+	void MainWindow::CloseProject()
+	{
+
+	}
+	void MainWindow::SaveProject(const String& path)
+	{
+
+	}
+
+	void MainWindow::Menu_CloseProject(Control* ctl)
+	{
+
+	}
+	void MainWindow::Menu_Insert(Control* ctl)
+	{
+		if (m_project)
+		{
+
+		}
+	}
+	void MainWindow::Menu_OpenProject(Control* ctl)
+	{
+		OpenFileDialog dlg;
+		dlg.Filter = L"Project file(*.aproj)\0*.aproj\0\0";
+		if (dlg.ShowDialog() == DLGRES_OK)
+		{
+			OpenProject(dlg.getFilePath()[0]);
+		}
+	}
+	void MainWindow::Menu_SaveProject(Control* ctl)
+	{
+		
 	}
 }

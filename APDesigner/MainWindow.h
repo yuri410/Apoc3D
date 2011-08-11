@@ -62,6 +62,13 @@ namespace APDesigner
 
 		Point m_lastSize;
 
+		
+
+		void Menu_OpenProject(Control* ctl);
+		void Menu_SaveProject(Control* ctl);
+		void Menu_CloseProject(Control* ctl);
+		void Menu_Insert(Control* ctl);
+
 		void OpenProject(const String& path);
 		void SaveProject(const String& path);
 		void CloseProject();
