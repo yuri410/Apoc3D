@@ -60,9 +60,15 @@ namespace APDesigner
 	{
 	private:
 		
+		PictureBox* m_pictureBox;
+
+		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 	public:
 		TextureViewer(MainWindow* window, ResourceLocation* rl);
 		~TextureViewer();
+
+		virtual void Initialize(RenderDevice* device);
+
 		virtual void LoadRes();
 		virtual void SaveRes();
 		virtual bool IsReadOnly() { return true; };

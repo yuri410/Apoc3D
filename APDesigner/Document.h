@@ -36,15 +36,17 @@ namespace APDesigner
 	{
 	private:
 		bool m_activated;
+
 		Form* m_docForm;
 
 	protected:
-		Document(MainWindow* window);
 
+		Document(MainWindow* window);
+		
 		virtual void activate() { }
 		virtual void deactivate() { }
 	public:
-
+		virtual ~Document();
 		Form* getDocumentForm() const { return m_docForm; }
 
 		bool isActivated() const { return m_activated; }

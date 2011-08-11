@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/Box.h"
 #include "UILib/Form.h"
 #include "UILib/PictureBox.h"
+#include "MainWindow.h"
 
 namespace APDesigner
 {
@@ -42,7 +43,8 @@ namespace APDesigner
 	{
 		m_form = new Form(FBS_None, L"Texture thumbnail");
 
-		m_pictureBox = new PictureBox(Point::Zero, 0, 1);
+		m_pictureBox = new PictureBox(Point::Zero, 1);
+		m_pictureBox->eventPictureDraw().bind(this, &TextureThumbViewer::PictureBox_Draw);
 		m_form->getControls().Add(m_pictureBox);
 		m_form->Initialize(device);
 	}
@@ -219,13 +221,25 @@ namespace APDesigner
 	}
 
 	TextureViewer::TextureViewer(MainWindow* window, ResourceLocation* rl)
-		: Document(window)
+		: Document(window), m_pictureBox(0)
 	{
-
+		m_pictureBox = new PictureBox(Point(5,5), 1);
+		m_pictureBox->eventPictureDraw().bind(this, &TextureThumbViewer::PictureBox_Draw);
 	}
 
 	TextureViewer::~TextureViewer()
 	{
+		delete m_pictureBox;
+	}
 
+	void TextureViewer::PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
+	{
+
+	}
+
+	void TextureViewer::Initialize(RenderDevice* device)
+	{
+		getDocumentForm()->getControls().Add(m_pictureBox);
+		Document::Initialize(device);
 	}
 }

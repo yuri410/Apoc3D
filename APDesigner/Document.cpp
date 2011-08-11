@@ -14,6 +14,11 @@ namespace APDesigner
 		
 	}
 
+	Document::~Document()
+	{
+		delete m_docForm;
+	}
+
 	void Document::Initialize(RenderDevice* device)
 	{
 		m_docForm->Initialize(device);

@@ -51,7 +51,7 @@ namespace Apoc3D
 			void setImage(Texture* tex) { m_texture = tex; }
 			PictureDrawEventHandler& eventPictureDraw() { return m_eDraw; }
 
-			PictureBox(const Point& position, const String& texture, int border)
+			PictureBox(const Point& position, int border)
 				: m_mouseOver(false), m_border(border), m_texture(0)
 			{
 
