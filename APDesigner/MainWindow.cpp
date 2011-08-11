@@ -46,8 +46,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/Archive.h"
 #include "Vfs/ResourceLocation.h"
 #include "Math/ColorValue.h"
+
 #include "Document.h"
 #include "ModelDocument.h"
+#include "TextureViewer.h"
+
 using namespace Apoc3D::Input;
 using namespace Apoc3D::VFS;
 
@@ -242,6 +245,11 @@ namespace APDesigner
 		UIRoot::Update(time);
 
 		m_resourcePane->Update(time);
+
+		for (int i=0;i<m_documentList.getCount();i++)
+		{
+			m_documentList[i]->Update(time);
+		}
 	}
 	void MainWindow::Draw(const GameTime* const time)
 	{
