@@ -69,9 +69,6 @@
     <ClInclude Include="ModelDocument.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DevResourceLocation.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -105,9 +102,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ModelDocument.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DevResourceLocation.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

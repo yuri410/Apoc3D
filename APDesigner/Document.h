@@ -38,8 +38,9 @@ namespace APDesigner
 		bool m_activated;
 
 		Form* m_docForm;
-
+		MainWindow* m_mainWindow;
 	protected:
+		MainWindow* getMainWindow() const { return m_mainWindow; }
 
 		Document(MainWindow* window);
 		
@@ -74,6 +75,8 @@ namespace APDesigner
 				m_activated = false;
 			}
 		}
+
+		virtual void Update(const GameTime* const time) { }
 	};
 }
 

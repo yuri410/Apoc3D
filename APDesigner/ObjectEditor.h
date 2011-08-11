@@ -18,9 +18,10 @@ namespace APDesigner
 	{
 	private:
 		Button* m_btSave;
-
+		
 	public:
-
+		ObjectTools(MainWindow* window);
+		~ObjectTools();
 	};
 
 

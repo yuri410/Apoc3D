@@ -67,6 +67,8 @@ namespace APDesigner
 	public:
 		const StyleSkin* getUISkin() const { return m_UIskin; }
 		const Point& getUIAreaSize() const { return m_lastSize; }
+		RenderDevice* getDevice() const { return m_device; }
+
 		MainWindow(RenderWindow* wnd);
 
 		void AddDocument(Document* document);

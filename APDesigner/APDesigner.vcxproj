@@ -89,7 +89,6 @@
     <ClInclude Include="CommonDialog\ChooseColor.h" />
     <ClInclude Include="CommonDialog\DialogCommon.h" />
     <ClInclude Include="CommonDialog\FileDialog.h" />
-    <ClInclude Include="DevResourceLocation.h" />
     <ClInclude Include="Document.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="ModelDocument.h" />
@@ -105,7 +104,6 @@
   <ItemGroup>
     <ClCompile Include="CommonDialog\ChooseColor.cpp" />
     <ClCompile Include="CommonDialog\FileDialog.cpp" />
-    <ClCompile Include="DevResourceLocation.cpp" />
     <ClCompile Include="Document.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />

@@ -32,6 +32,7 @@ using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::UI;
 using namespace Apoc3D::VFS;
+using namespace Apoc3D;
 
 namespace APDesigner
 {
@@ -59,19 +60,24 @@ namespace APDesigner
 	class TextureViewer : public Document
 	{
 	private:
-		
+		String m_filePath;
+		Texture* m_texture;
 		PictureBox* m_pictureBox;
 
 		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 	public:
-		TextureViewer(MainWindow* window, ResourceLocation* rl);
+		TextureViewer(MainWindow* window, const String& filePath);
 		~TextureViewer();
+
+		
 
 		virtual void Initialize(RenderDevice* device);
 
 		virtual void LoadRes();
 		virtual void SaveRes();
 		virtual bool IsReadOnly() { return true; };
+
+		virtual void Update(const GameTime* const time);
 	};
 }
 
