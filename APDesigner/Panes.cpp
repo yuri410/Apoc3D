@@ -7,6 +7,53 @@
 
 namespace APDesigner
 {
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+	ToolsPane::ToolsPane(MainWindow* window)
+		: m_mainWindow(window)
+	{
+		m_pane = new Form(FBS_Pane);
+		m_pane->SetSkin(window->getUISkin());
+
+		m_pane->Size = Point(50,600);
+		m_pane->Position = Point(0, 17);
+
+		m_pane->Text = L"Tools.";
+		m_pane->setTitle(m_pane->Text);
+
+
+	}
+	ToolsPane::~ToolsPane()
+	{
+		delete m_pane;
+	}
+
+
+	void ToolsPane::Initialize(RenderDevice* device)
+	{
+		m_pane->Initialize(device);
+
+		UIRoot::Add(m_pane);
+		m_pane->Show();
+	}
+
+	void ToolsPane::Update(const GameTime* const time)
+	{
+		
+		m_pane->Position.X = m_mainWindow->getUIAreaSize().X - m_pane->Size.X;
+		m_pane->Position.Y = 17;
+		m_pane->Size.Y = m_mainWindow->getUIAreaSize().Y - 17;
+		//Point newSize = m_pane->Size;
+		//newSize.X -= 10;
+		//newSize.Y -= 30+300;
+		//m_resourceView->SetSize(newSize);
+
+	}
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+	
 	ResourcePane::ResourcePane(MainWindow* window)
 		: m_mainWindow(window)
 	{
@@ -75,6 +122,8 @@ namespace APDesigner
 
 	void ResourcePane::Update(const GameTime* const time)
 	{
+		m_form->Position.X = 0;
+		m_form->Position.Y = 17;
 		m_form->Size.Y = m_mainWindow->getUIAreaSize().Y - 17;
 		Point newSize = m_form->Size;
 		newSize.X -= 10;

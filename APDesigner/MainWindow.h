@@ -57,6 +57,7 @@ namespace APDesigner
 		Menu* m_mainMenu;
 
 		ResourcePane* m_resourcePane;
+		ToolsPane* m_toolsPane;
 		Project* m_project;
 
 		Point m_lastSize;

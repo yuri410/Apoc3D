@@ -13,9 +13,20 @@ namespace APDesigner
 	class ToolsPane
 	{
 	private:
+		MainWindow* m_mainWindow;
+
+		Form* m_pane;
+		Button* m_btSave;
+
 		ObjectTools* m_currentTools;
 	public:
+		ToolsPane(MainWindow* window);
+		~ToolsPane();
 
+
+		void Initialize(RenderDevice* device);
+
+		void Update(const GameTime* const time);
 	};
 
 

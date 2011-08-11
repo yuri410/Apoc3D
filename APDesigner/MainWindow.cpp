@@ -214,10 +214,12 @@ namespace APDesigner
 		//m_pane->getControls().Add(m_btn);
 
 		m_resourcePane = new ResourcePane(this);
+		m_toolsPane = new ToolsPane(this);
 
 		UIRoot::Initialize(m_device);
 		//UIRoot::Add(m_form);
 		m_resourcePane->Initialize(m_device);
+		m_toolsPane->Initialize(m_device);
 		//m_form->Show();
 
 		//m_btn->Initialize(m_device);
@@ -245,6 +247,7 @@ namespace APDesigner
 		UIRoot::Update(time);
 
 		m_resourcePane->Update(time);
+		m_toolsPane->Update(time);
 
 		for (int i=0;i<m_documentList.getCount();i++)
 		{

@@ -17,8 +17,7 @@ namespace APDesigner
 	class ObjectTools
 	{
 	private:
-		Form* m_pane;
-		Button* m_btSave;
+		
 		
 	public:
 		ObjectTools(MainWindow* window);
