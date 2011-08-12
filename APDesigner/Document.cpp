@@ -13,8 +13,8 @@ namespace APDesigner
 		m_docForm->SetSkin(window->getUISkin());
 		//reinterpret_cast<int&>(m_docForm->UserData) = 0xffffffff;
 
-		m_eDocActivated.bind(this, &Document::DocActivate);
-		m_eDocDeactivated.bind(this, &Document::DocDeactivate);
+		//m_eDocActivated.bind(this, &Document::DocActivate);
+		//m_eDocDeactivated.bind(this, &Document::DocDeactivate);
 	}
 
 	Document::~Document()
@@ -36,16 +36,18 @@ namespace APDesigner
 			{
 				if (!m_eDocActivated.empty())
 					m_eDocActivated(this);
+				DocActivate(this);
 			}
 		}
 		else
 		{
-			if (UIRoot::getTopMostForm() == m_docForm)
+			if (UIRoot::getTopMostForm() != m_docForm && UIRoot::getTopMostForm() != m_mainWindow->getToolsPane())
 			{
 				if (!m_eDocDeactivated.empty())
 				{
 					m_eDocDeactivated(this);
 				}
+				DocDeactivate(this);
 			}
 		}
 	}

@@ -78,6 +78,8 @@ namespace APDesigner
 	{
 		UIRoot::Add(document->getDocumentForm());
 		document->Initialize(m_device);
+		document->eventDocumentActivated().bind(this,&MainWindow::Document_Activated);
+		document->eventDocumentDeactivated().bind(this,&MainWindow::Document_Deactivated);
 		m_documentList.Add(document);
 	}
 
@@ -362,5 +364,10 @@ namespace APDesigner
 		{
 			m_currentDocument = 0;
 		}
+	}
+
+	Form* MainWindow::getToolsPane() const
+	{
+		return m_toolsPane->getPane();
 	}
 }

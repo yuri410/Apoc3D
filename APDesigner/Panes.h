@@ -49,6 +49,7 @@ namespace APDesigner
 
 		void BtnSave_Release(Control* ctrl);
 	public:
+		Form* getPane() const { return m_pane; }
 		ToolsPane(MainWindow* window);
 		~ToolsPane();
 

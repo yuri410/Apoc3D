@@ -82,6 +82,7 @@ namespace APDesigner
 		const StyleSkin* getUISkin() const { return m_UIskin; }
 		const Point& getUIAreaSize() const { return m_lastSize; }
 		RenderDevice* getDevice() const { return m_device; }
+		Form* getToolsPane() const;
 
 		Document* getCurrentDocument() const { return m_currentDocument; }
 
