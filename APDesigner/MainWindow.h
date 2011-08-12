@@ -48,6 +48,7 @@ namespace APDesigner
 
 		Sprite* m_sprite;
 
+		Document* m_currentDocument;
 		FastList<Document*> m_documentList;
 		//Font* m_font;
 
@@ -73,10 +74,16 @@ namespace APDesigner
 		void OpenProject(const String& path);
 		void SaveProject(const String& path);
 		void CloseProject();
+
+		void Document_Activated(Document* doc);
+		void Document_Deactivated(Document* doc);
+
 	public:
 		const StyleSkin* getUISkin() const { return m_UIskin; }
 		const Point& getUIAreaSize() const { return m_lastSize; }
 		RenderDevice* getDevice() const { return m_device; }
+
+		Document* getCurrentDocument() const { return m_currentDocument; }
 
 		MainWindow(RenderWindow* wnd);
 		~MainWindow();
@@ -84,6 +91,7 @@ namespace APDesigner
 		void AddDocument(Document* document);
 
 		void SwitchedTo(Document* document);
+		
 
 		void Initialize();
 		virtual void Finalize();

@@ -66,6 +66,8 @@ namespace Apoc3D
 			virtual void OnPress() {  if (!m_eventMousePress.empty()) m_eventMousePress(this); }
 			virtual void OnRelease() {  if (!m_eventMouseRelease.empty()) m_eventMouseRelease(this); }
 		public:
+			void* UserData;
+
 			String Name;
 			String Text;
 			
@@ -106,22 +108,22 @@ namespace Apoc3D
 			}
 
 			Control()
-				: Position(Point::Zero), m_owner(0), m_skin(0), Enabled(true)
+				: Position(Point::Zero), m_owner(0), m_skin(0), Enabled(true), UserData(0)
 			{
 
 			}
 			Control(const Point& position)
-				: Position(position), m_owner(0), m_skin(0), Enabled(true)
+				: Position(position), m_owner(0), m_skin(0), Enabled(true), UserData(0)
 			{
 
 			}
 			Control(const Point& position, const String& text)
-				: Position(position), Text(text), m_owner(0), m_skin(0), Enabled(true)
+				: Position(position), Text(text), m_owner(0), m_skin(0), Enabled(true), UserData(0)
 			{
 
 			}
 			Control(const Point& position, const String& text, const Point& size)
-				: Position(position), Text(text), Size(size), m_owner(0), m_skin(0), Enabled(true)
+				: Position(position), Text(text), Size(size), m_owner(0), m_skin(0), Enabled(true), UserData(0)
 			{
 
 			}

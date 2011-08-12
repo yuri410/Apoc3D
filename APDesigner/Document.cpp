@@ -11,7 +11,10 @@ namespace APDesigner
 		m_docForm = new Form(FBS_Sizable, L"New document");
 		m_docForm->Position.Y = 20;
 		m_docForm->SetSkin(window->getUISkin());
-		
+		//reinterpret_cast<int&>(m_docForm->UserData) = 0xffffffff;
+
+		m_eDocActivated.bind(this, &Document::DocActivate);
+		m_eDocDeactivated.bind(this, &Document::DocDeactivate);
 	}
 
 	Document::~Document()
@@ -23,5 +26,27 @@ namespace APDesigner
 	{
 		m_docForm->Initialize(device);
 		m_docForm->Show();
+	}
+
+	void Document::Update(const GameTime* const time)
+	{
+		if (!m_activated)
+		{
+			if (UIRoot::getTopMostForm() == m_docForm)
+			{
+				if (!m_eDocActivated.empty())
+					m_eDocActivated(this);
+			}
+		}
+		else
+		{
+			if (UIRoot::getTopMostForm() == m_docForm)
+			{
+				if (!m_eDocDeactivated.empty())
+				{
+					m_eDocDeactivated(this);
+				}
+			}
+		}
 	}
 }

@@ -1737,7 +1737,7 @@ LFail:
 	{
 		if (config.AssembleCubemap || config.AssembleVolumeMap)
 		{
-			CompileLog::WriteError(L"Building with DevIL currently does not support assembling textures.", config.SourceFile);
+			CompileLog::WriteError(L"DevIL Build Method currently does not support assembling textures.", config.SourceFile);
 			return;
 		}
 		int image = ilGenImage();

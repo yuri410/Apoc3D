@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/Button.h"
 #include "Project/Project.h"
 #include "UIResources.h"
+#include "Document.h"
 
 namespace APDesigner
 {
@@ -49,15 +50,27 @@ namespace APDesigner
 		m_pane->Text = L"Tools.";
 		//m_pane->setTitle(m_pane->Text);
 
-		m_btSave = new Button(Point(5,5), L"");
+		m_btSave = new Button(Point(5,20), L"");
 		m_btSave->setNormalTexture(UIResources::GetTexture(L"adui_save"));
+		m_btSave->setCustomModColorMouseOver(CV_Silver);
+		
+		m_btSave->eventRelease().bind(this,&ToolsPane::BtnSave_Release);
 		m_pane->getControls().Add(m_btSave);
 	}
 	ToolsPane::~ToolsPane()
 	{
 		delete m_pane;
+		delete m_btSave;
 	}
 
+	void ToolsPane::BtnSave_Release(Control* ctrl)
+	{
+		if (m_mainWindow->getCurrentDocument())
+		{
+			m_mainWindow->getCurrentDocument()->SaveRes();
+		}
+		//m_mainWindow->SaveProject();
+	}
 
 	void ToolsPane::Initialize(RenderDevice* device)
 	{
@@ -72,6 +85,22 @@ namespace APDesigner
 	void ToolsPane::Update(const GameTime* const time)
 	{
 		
+		if (m_mainWindow->getCurrentDocument())
+		{
+			if (m_mainWindow->getCurrentDocument()->IsReadOnly())
+			{
+				m_btSave->Enabled = false;
+			}
+			else
+			{
+				m_btSave->Enabled = true;
+			}
+		}
+		else
+		{
+			m_btSave->Enabled = false;
+		}
+
 		m_pane->Position.X = m_mainWindow->getUIAreaSize().X - m_pane->Size.X;
 		m_pane->Position.Y = 17;
 		m_pane->Size.Y = m_mainWindow->getUIAreaSize().Y - 17;

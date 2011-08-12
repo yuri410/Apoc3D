@@ -46,6 +46,8 @@ namespace APDesigner
 		Button* m_btSave;
 
 		ObjectTools* m_currentTools;
+
+		void BtnSave_Release(Control* ctrl);
 	public:
 		ToolsPane(MainWindow* window);
 		~ToolsPane();

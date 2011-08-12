@@ -47,7 +47,7 @@ namespace Apoc3D
 			ColorValue m_modColor;
 			ColorValue m_modMouseDownColor;
 			ColorValue m_modMouseOverColor;
-
+			ColorValue m_modDisabledColor;
 			
 			Point m_textPos;
 			Point m_textSize;
@@ -67,7 +67,7 @@ namespace Apoc3D
 			Button(const Point& position, const String& text)
 				: Control(position, text), m_mouseOver(false), m_mouseDown(false),
 				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White)
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_DarkGray)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
@@ -75,7 +75,7 @@ namespace Apoc3D
 			Button(const Point& position, int width, const String& text)
 				: Control(position, text, Point(width, 0)), m_mouseOver(false), m_mouseDown(false),
 				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White)
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_DarkGray)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
@@ -83,7 +83,7 @@ namespace Apoc3D
 			Button(const Point& position, const Point& size, const String& text)
 				: Control(position, text, size), m_mouseOver(false), m_mouseDown(false),
 				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White)
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_DarkGray)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
@@ -103,6 +103,9 @@ namespace Apoc3D
 			*/
 			ColorValue getCustomModColorMouseDown() const { return m_modMouseDownColor; }
 			void setCustomModColorMouseDown(ColorValue clr) { m_modMouseDownColor = clr; }
+			
+			ColorValue getCustomDisabledColor() const { return m_modDisabledColor; }
+			void setCustomDisabledColor(ColorValue clr) { m_modDisabledColor = clr; }
 
 
 			Texture* getInvalidTexture() const { return m_InvalidTexture; }

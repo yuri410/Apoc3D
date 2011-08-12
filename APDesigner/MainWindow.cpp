@@ -65,7 +65,7 @@ namespace APDesigner
 {
 
 	MainWindow::MainWindow(RenderWindow* wnd)
-		: m_window(wnd), m_UIskin(0), m_project(0)
+		: m_window(wnd), m_UIskin(0), m_project(0), m_currentDocument(0)
 	{
 
 	}
@@ -349,5 +349,18 @@ namespace APDesigner
 	void MainWindow::Menu_Exit(Control* ctl)
 	{
 		m_window->Exit();
+	}
+
+	void MainWindow::Document_Activated(Document* doc)
+	{
+		m_currentDocument = doc;
+	}
+
+	void MainWindow::Document_Deactivated(Document* doc)
+	{
+		if (m_currentDocument == doc)
+		{
+			m_currentDocument = 0;
+		}
 	}
 }

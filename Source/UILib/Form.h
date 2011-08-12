@@ -159,6 +159,7 @@ namespace Apoc3D
 			void btMaximize_Release(Control* sender);
 			void btRestore_Release(Control* sender);
 		public:
+			
 			RenderDevice* getRenderDevice() const { return m_device; }
 
 			void setMinimumSize(const Point& size) { m_minimumSize = size; }

@@ -158,9 +158,9 @@ namespace Apoc3D
 			else
 			{
 				if (m_DisabledTexture)
-					spriteBatch->Draw(m_DisabledTexture, getArea(), 0, m_modColor);
+					spriteBatch->Draw(m_DisabledTexture, getArea(), 0, m_modDisabledColor);
 				else
-					spriteBatch->Draw(m_NormalTexture, getArea(), 0, m_modColor);
+					spriteBatch->Draw(m_NormalTexture, getArea(), 0, m_modDisabledColor);
 			}
 			//if (bMouseOver)
 			//{

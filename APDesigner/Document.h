@@ -32,6 +32,8 @@ using namespace Apoc3D::UI;
 
 namespace APDesigner
 {
+	typedef fastdelegate::FastDelegate1<Document*, void> DocumentActivationHandler;
+
 	class Document
 	{
 	private:
@@ -39,15 +41,41 @@ namespace APDesigner
 
 		Form* m_docForm;
 		MainWindow* m_mainWindow;
+
+		DocumentActivationHandler m_eDocActivated;
+		DocumentActivationHandler m_eDocDeactivated;
 	protected:
 		MainWindow* getMainWindow() const { return m_mainWindow; }
 
 		Document(MainWindow* window);
-		
+
+
 		virtual void activate() { }
 		virtual void deactivate() { }
+
+		void DocActivate(Document* doc)
+		{
+			if (!m_activated)
+			{
+				activate();
+				m_activated = true;
+			}
+		}
+		void DocDeactivate(Document* doc)
+		{
+			if (m_activated)
+			{
+				deactivate();
+				m_activated = false;
+			}
+		}
 	public:
 		virtual ~Document();
+
+		DocumentActivationHandler& eventDocumentActivated() { return m_eDocActivated; }
+		DocumentActivationHandler& eventDocumentDeactivated() { return m_eDocDeactivated; }
+
+
 		Form* getDocumentForm() const { return m_docForm; }
 
 		bool isActivated() const { return m_activated; }
@@ -59,24 +87,9 @@ namespace APDesigner
 		virtual void SaveRes() = 0;
 		virtual bool IsReadOnly() = 0;
 
-		void DocActivate()
-		{
-			if (!m_activated)
-			{
-				activate();
-				m_activated = true;
-			}
-		}
-		void DocDeactivate()
-		{
-			if (m_activated)
-			{
-				deactivate();
-				m_activated = false;
-			}
-		}
 
-		virtual void Update(const GameTime* const time) { }
+
+		virtual void Update(const GameTime* const time);
 	};
 }
 
