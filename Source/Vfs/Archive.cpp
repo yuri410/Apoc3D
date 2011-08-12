@@ -107,10 +107,12 @@ namespace Apoc3D
 		{
 			int i=0;
 			FastMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
-
-			while (i<index && e.MoveNext())
+			
+			e.MoveNext();
+			while (i<index)
 			{
-
+				e.MoveNext();
+				i++;
 			}
 			assert(e.getCurrentKey());
 			return *e.getCurrentKey();

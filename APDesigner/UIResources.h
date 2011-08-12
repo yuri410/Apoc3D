@@ -13,12 +13,12 @@ namespace APDesigner
 	class UIResources
 	{
 	private:
-		static FastMap<String, Texture*> m_maps;
+		static FastMap<String, Texture*>* m_maps;
 	public:
 		static void Initialize(RenderDevice* device);
 		static void Finalize();
 
-		static Texture* GetTexture(const String& name) { return m_maps[name]; }
+		static Texture* GetTexture(const String& name) { return m_maps->operator[](name); }
 	};
 }
 #endif

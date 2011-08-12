@@ -369,6 +369,16 @@ namespace Apoc3D
 						(LONG)r->getRight(),
 						(LONG)r->getBottom()
 					};
+
+					if (rect.left>rect.right)
+					{
+						swap(rect.left, rect.right);
+					}
+					if (rect.top > rect.bottom)
+					{
+						swap(rect.top, rect.bottom);
+					}
+
 					if (rect.left<0)
 						rect.left = 0;
 					if (rect.top<0)
