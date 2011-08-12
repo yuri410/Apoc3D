@@ -32,7 +32,14 @@ namespace Apoc3D
 {
 	void ProjectFolder::Parse(const ConfigurationSection* sect)
 	{
-	
+		for (ConfigurationSection::SubSectionIterator iter = sect->SubSectionBegin();
+			iter != sect->SubSectionEnd(); iter++)
+		{
+			const ConfigurationSection* ss = iter->second;
+
+			ProjectParse(SubItems,ss);
+		}
+
 	}
 	void ProjectResTexture::Parse(const ConfigurationSection* sect)
 	{

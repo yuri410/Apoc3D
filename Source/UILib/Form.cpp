@@ -683,7 +683,7 @@ namespace Apoc3D
 				{
 					overlay = i;
 				}
-				if (m_controls->operator[](i)->Enabled)
+				if (m_controls->operator[](i)->Visible)
 				{
 					m_controls->operator[](i)->Draw(sprite);
 				}
