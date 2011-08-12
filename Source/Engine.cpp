@@ -115,7 +115,9 @@ namespace Apoc3D
 	{
 		FontManager::Finalize();
 
+		ModelManager::getSingleton().Shutdown();
 		ModelManager::Finalize();
+		TextureManager::getSingleton().Shutdown();
 		TextureManager::Finalize();
 
 		PluginManager::getSingleton().UnloadPlugins();

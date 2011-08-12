@@ -27,7 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "MainWindow.h"
 #include "UILib/Form.h"
 #include "UILib/List.h"
+#include "UILib/Button.h"
 #include "Project/Project.h"
+#include "UIResources.h"
 
 namespace APDesigner
 {
@@ -47,7 +49,9 @@ namespace APDesigner
 		m_pane->Text = L"Tools.";
 		//m_pane->setTitle(m_pane->Text);
 
-
+		m_btSave = new Button(Point(5,5), L"");
+		m_btSave->setNormalTexture(UIResources::GetTexture(L"adui_save"));
+		m_pane->getControls().Add(m_btSave);
 	}
 	ToolsPane::~ToolsPane()
 	{
@@ -57,6 +61,8 @@ namespace APDesigner
 
 	void ToolsPane::Initialize(RenderDevice* device)
 	{
+
+
 		m_pane->Initialize(device);
 
 		UIRoot::Add(m_pane);

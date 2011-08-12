@@ -52,6 +52,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Document.h"
 #include "ModelDocument.h"
 #include "TextureViewer.h"
+#include "UIResources.h"
 
 #include "CommonDialog/FileDialog.h"
 
@@ -98,6 +99,7 @@ namespace APDesigner
 
 	void MainWindow::Load()
 	{
+		UIResources::Initialize(m_device);
 		{
 			FileLocateRule rule;
 			LocateCheckPoint pt;
@@ -237,6 +239,7 @@ namespace APDesigner
 		UIRoot::Finalize();
 
 		delete m_resourcePane;
+		UIResources::Finalize();
 	}
 	void MainWindow::Update(const GameTime* const time)
 	{
