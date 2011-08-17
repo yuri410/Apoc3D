@@ -60,6 +60,7 @@ namespace APDesigner
 		ResourcePane* m_resourcePane;
 		ToolsPane* m_toolsPane;
 		Project* m_project;
+		String m_projectFilePath;
 
 		Point m_lastSize;
 

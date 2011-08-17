@@ -305,6 +305,7 @@ namespace APDesigner
 		if (!m_project)
 		{
 			m_project = new Project();
+			m_projectFilePath = path;
 			FileLocation* fl = new FileLocation(path);
 			XMLConfiguration* conf = new XMLConfiguration(fl);
 
@@ -322,7 +323,7 @@ namespace APDesigner
 	}
 	void MainWindow::SaveProject(const String& path)
 	{
-		m_project->Save()
+		m_project->Save(path);
 	}
 
 	void MainWindow::Menu_CloseProject(Control* ctl)
@@ -347,7 +348,8 @@ namespace APDesigner
 	}
 	void MainWindow::Menu_SaveProject(Control* ctl)
 	{
-		
+		if (m_project)
+			SaveProject(m_projectFilePath);
 	}
 	void MainWindow::Menu_Exit(Control* ctl)
 	{
