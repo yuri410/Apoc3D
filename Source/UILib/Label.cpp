@@ -43,7 +43,10 @@ namespace Apoc3D
 			Size.X = width;
 			
 		}
+		Label::~Label()
+		{
 
+		}
 		void Label::Initialize(RenderDevice* device)
 		{
 			Control::Initialize(device);

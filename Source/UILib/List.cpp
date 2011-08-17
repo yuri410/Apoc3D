@@ -596,7 +596,20 @@ namespace Apoc3D
 				if (UIRoot::getTopMostForm() == getOwner())
 					RenderSelectionBox(sprite,nodes[i]);
 
-				m_fontRef->DrawString(sprite, nodes[i]->getText(), m_textOffset, m_skin->ForeColor);
+				if (nodes[i]->getIcon())
+				{
+					//Apoc3D::Math::Rectangle iconRect(m_textOffset.X, m_textOffset.Y, m_nodes[i]->getIcon()->getWidth(), m_nodes[i]->getIcon()->getHeight());
+					sprite->Draw(nodes[i]->getIcon(),m_textOffset.X,m_textOffset.Y,CV_White);
+
+					Point to(m_textOffset);
+					to.X+=nodes[i]->getIcon()->getWidth();
+					m_fontRef->DrawString(sprite, nodes[i]->getText(), to, m_skin->ForeColor);
+				}
+				else
+				{
+					m_fontRef->DrawString(sprite, nodes[i]->getText(), m_textOffset, m_skin->ForeColor);
+				}
+				
 
 				if (nodes[i]->isExpanded() && nodes[i]->getNodes().getCount())
 				{

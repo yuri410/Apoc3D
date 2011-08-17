@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/Form.h"
 #include "UILib/List.h"
 #include "UILib/Button.h"
+#include "UILib/Label.h"
 #include "Project/Project.h"
 #include "UIResources.h"
 #include "Document.h"
@@ -133,41 +134,41 @@ namespace APDesigner
 			treeview->SetSkin(window->getUISkin());
 			treeview->setUseHorizontalScrollbar(true);
 
-			TreeViewNode* node1 = new TreeViewNode(L"Root");
+			TreeViewNode* node1 = new TreeViewNode(L"No project opened");
 			treeview->getNodes().Add(node1);
-
-			TreeViewNode* node2 = new TreeViewNode(L"Root2");
-			treeview->getNodes().Add(node2);
-			TreeViewNode* node3 = new TreeViewNode(L"Root3 the long one. Project Hosting will be READ-ONLY Tuesday at 9:00am CDT for brief maintenance.");
-			treeview->getNodes().Add(node3);
-
-			node2->getNodes().Add(new TreeViewNode(L"SubNode1"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode2"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode3"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode4"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode5"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode6"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode7"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode8"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode9"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode10"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode11"));
-			node2->getNodes().Add(new TreeViewNode(L"SubNode12"));
-
-			node3->getNodes().Add(new TreeViewNode(L"SubNode1"));
-			node3->getNodes().Add(new TreeViewNode(L"SubNode2"));
-			node3->Expand();
-
 
 			m_form->getControls().Add(treeview);
 			m_resourceView = treeview;
 		}
+
+		m_infoDisplay = new Label(Point(15,330),L"",1);
+		m_infoDisplay->SetSkin(window->getUISkin());
+		m_form->getControls().Add(m_infoDisplay);
+
+		m_addItem = new Button(Point(15,375),L"Add...");
+		m_addItem->SetSkin(window->getUISkin());
+		m_addItem->eventRelease().bind(this, &ResourcePane::BtnAdd_Release);
+		m_form->getControls().Add(m_addItem);
+
+		m_removeItem = new Button(Point(120,375),L"Delete");
+		m_removeItem->SetSkin(window->getUISkin());
+		m_removeItem->eventRelease().bind(this, &ResourcePane::BtnRemove_Release);
+		m_form->getControls().Add(m_removeItem);
+
+		m_openItem = new Button(Point(15,405),L"Open");
+		m_openItem->SetSkin(window->getUISkin());
+		m_openItem->eventRelease().bind(this, &ResourcePane::BtnOpen_Release);
+		m_form->getControls().Add(m_openItem);
+
 	}
 	ResourcePane::~ResourcePane()
 	{
 		delete m_form;
 
-
+		delete m_infoDisplay;
+		delete m_addItem;
+		delete m_removeItem;
+		delete m_openItem;
 
 		delete m_resourceView;
 	}
@@ -190,7 +191,12 @@ namespace APDesigner
 		newSize.X -= 10;
 		newSize.Y -= 30+300;
 		m_resourceView->SetSize(newSize);
-		
+	
+		m_infoDisplay->Position.Y = m_resourceView->Size.Y + m_resourceView->Position.Y + 5;
+
+		m_removeItem->Position.Y = m_addItem->Position.Y = m_infoDisplay->Position.Y + 80;
+		m_openItem->Position.Y = m_removeItem->Position.Y+m_removeItem->Size.Y+15;
+
 	}
 
 	void ResourcePane::UpdateToNewProject(Project* prj)
@@ -290,4 +296,23 @@ namespace APDesigner
 	{
 		BuildTreeViewNodes(0, items);
 	}
+
+	//void ResourcePane::TreeView_SelectionChanged(Control* ctrl)
+	//{
+
+	//}
+
+	void ResourcePane::BtnAdd_Release(Control* ctrl)
+	{
+
+	}
+	void ResourcePane::BtnRemove_Release(Control* ctrl)
+	{
+
+	}
+	void ResourcePane::BtnOpen_Release(Control* ctrl)
+	{
+
+	}
+
 }

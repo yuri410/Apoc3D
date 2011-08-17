@@ -62,6 +62,9 @@ namespace Apoc3D
 			void DrawBackground(Sprite* sprite);
 			void DrawScrollbar(Sprite* sprite);
 		public:
+			UIEventHandler& eventSelect() { return m_eSelect; }
+			UIEventHandler& eventSelectionChanged() { m_eSelectionChanged; }
+
 			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
 			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
 
@@ -166,6 +169,9 @@ namespace Apoc3D
 			int MeasureExpandedNodeWidth() const;
 			int MeasureExpandedModeHeight() const;
 		public:
+			UIEventHandler& eventSelect() { return m_eSelect; }
+			UIEventHandler& eventSelectionChanged() { m_eSelectionChanged; }
+
 			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
 			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
 			

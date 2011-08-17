@@ -69,6 +69,10 @@ namespace APDesigner
 		Form* m_form;
 
 		TreeView* m_resourceView;
+		Label* m_infoDisplay;
+		Button* m_addItem;
+		Button* m_removeItem;
+		Button* m_openItem;
 
 		Project* m_currentProject;
 
@@ -77,6 +81,11 @@ namespace APDesigner
 
 		void BuildTreeViewNodes(TreeViewNode* parentNode, const FastList<ProjectItem*> items);
 		void BuildTreeViewNodes(const FastList<ProjectItem*> items);
+
+		void BtnAdd_Release(Control* ctrl);
+		void BtnRemove_Release(Control* ctrl);
+		void BtnOpen_Release(Control* ctrl);
+
 	public:
 		
 		ResourcePane(MainWindow* window);
