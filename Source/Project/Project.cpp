@@ -33,14 +33,14 @@ using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
-	void ProjectParse(FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
+	void ProjectParse(Project* prj, FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
 	{
 		for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
 			iter != sect->SubSectionEnd(); iter++)
 		{
 			ConfigurationSection* sect = iter->second;
 
-			ProjectItem* item = new ProjectItem();
+			ProjectItem* item = new ProjectItem(prj);
 
 			item->Parse(sect);
 
@@ -49,10 +49,12 @@ namespace Apoc3D
 			if (item->getType() == PRJITEM_Folder)
 			{
 				ProjectFolder* folder = static_cast<ProjectFolder*>(item->getData());
-				ProjectParse(folder->SubItems, sect);
+				ProjectParse(prj, folder->SubItems, sect);
 			}
 		}
 	}
+
+
 
 	void ProjectFolder::Parse(const ConfigurationSection* sect)
 	{
@@ -61,9 +63,49 @@ namespace Apoc3D
 		{
 			const ConfigurationSection* ss = iter->second;
 
-			ProjectParse(SubItems,ss);
+			ProjectParse(m_project, SubItems,ss);
 		}
 
+	}
+
+	bool ProjectResTexture::IsEarlierThan(time_t t)
+	{
+		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+
+		if (destFileTime < t)
+			return true;
+		
+		if (AssembleCubemap || AssembleVolumeMap)
+		{
+			for (int i=0;i<SubMapTable.getCount();i++)
+			{
+				String path = PathUtils::Combine(m_project->getBasePath(),SubMapTable[i]);
+				if (File::FileExists(path))
+				{
+					if (File::GetFileModifiyTime(path) > destFileTime)
+					{
+						return true;
+					}
+				}
+			}
+			//File::GetFileModifiyTime(SourceFile);
+		}
+		else
+		{
+			String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
+			if (File::FileExists(path))
+			{
+				if (File::GetFileModifiyTime(path) > destFileTime)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	bool ProjectResTexture::IsNotBuilt()
+	{
+		return !File::FileExists(DestinationFile);
 	}
 	void ProjectResTexture::Parse(const ConfigurationSection* sect)
 	{
@@ -197,6 +239,15 @@ namespace Apoc3D
 
 	}
 
+	bool ProjectResFont::IsEarlierThan(time_t t)
+	{
+		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile)) < t;
+	}
+
+	bool ProjectResFont::IsNotBuilt()
+	{
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+	}
 	void ProjectResFont::Parse(const ConfigurationSection* sect)
 	{
 		Name = sect->getAttribute(L"Name");
@@ -271,6 +322,37 @@ namespace Apoc3D
 
 	//	DestFile = sect->getAttribute(L"DestinationFile");
 	//}
+
+
+	bool ProjectResEffect::IsEarlierThan(time_t t)
+	{
+		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+
+		if (destFileTime < t)
+			return true;
+
+		String path = PathUtils::Combine(m_project->getBasePath(), SrcFile);
+		if (File::FileExists(path))
+		{
+			if (File::GetFileModifiyTime(path) > destFileTime)
+			{
+				return true;
+			}
+		}
+		path = PathUtils::Combine(m_project->getBasePath(), PListFile);
+		if (File::FileExists(path))
+		{
+			if (File::GetFileModifiyTime(path) > destFileTime)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	bool ProjectResEffect::IsNotBuilt()
+	{
+		return !File::FileExists(DestFile);
+	}
 	void ProjectResEffect::Parse(const ConfigurationSection* sect)
 	{
 		SrcFile = sect->getAttribute(L"SourceFile");
@@ -278,6 +360,42 @@ namespace Apoc3D
 		PListFile = sect->getAttribute(L"ParamList");
 		EntryPoint = sect->getAttribute(L"EntryPoint");
 		Profile = sect->getAttribute(L"Profile");
+	}
+
+
+	bool ProjectResModel::IsEarlierThan(time_t t)
+	{
+		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DstFile));
+
+		if (destFileTime < t)
+			return true;
+
+		String path = PathUtils::Combine(m_project->getBasePath(), SrcFile);
+		if (File::FileExists(path))
+		{
+			time_t srcTime = File::GetFileModifiyTime(path);
+			if (srcTime > destFileTime)
+			{
+				return true;
+			}
+			if (DstAnimationFile.size())
+			{
+				destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DstAnimationFile));
+
+				if (srcTime > destFileTime)
+					return true;
+			}
+		}
+
+		return false;
+	}
+	bool ProjectResModel::IsNotBuilt()
+	{
+		if (DstAnimationFile.size())
+			if (!File::FileExists(DstAnimationFile))
+				return true;
+
+		return !File::FileExists(DstFile) ;
 	}
 	void ProjectResModel::Parse(const ConfigurationSection* sect)
 	{
@@ -299,6 +417,15 @@ namespace Apoc3D
 		}
 	}
 
+	bool ProjectCustomItem::IsEarlierThan(time_t t)
+	{
+		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile)) < t;
+	}
+
+	bool ProjectCustomItem::IsNotBuilt()
+	{
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+	}
 	void ProjectCustomItem::Parse(const ConfigurationSection* sect)
 	{
 		DestFile = sect->getAttribute(L"DestinationFile");
@@ -313,33 +440,33 @@ namespace Apoc3D
 
 		if (buildType == L"texture")
 		{
-			ProjectResTexture* tex = new ProjectResTexture();
+			ProjectResTexture* tex = new ProjectResTexture(m_project);
 			tex->Parse(sect);
 			m_typeData = tex;
 		}
 		else if (buildType == L"mesh")
 		{
-			ProjectResModel* mdl = new ProjectResModel();
+			ProjectResModel* mdl = new ProjectResModel(m_project);
 			mdl->Parse(sect);
 			m_typeData = mdl;
 			//MeshBuild::Build(sect);
 		}
 		else if (buildType == L"effect")
 		{
-			ProjectResEffect* eff = new ProjectResEffect();
+			ProjectResEffect* eff = new ProjectResEffect(m_project);
 			eff->Parse(sect);
 			m_typeData = eff;
 		}
 		else if (buildType == L"font")
 		{
-			ProjectResFont* font = new ProjectResFont();
+			ProjectResFont* font = new ProjectResFont(m_project);
 			font->Parse(sect);
 			m_typeData = font;
 			//FontBuild::Build(sect);
 		}
 		else if (buildType == L"folder")
 		{
-			ProjectFolder* folder = new ProjectFolder();
+			ProjectFolder* folder = new ProjectFolder(m_project);
 			folder->Parse(sect);
 			m_typeData = folder;
 		}
@@ -354,11 +481,12 @@ namespace Apoc3D
 
 	}
 
+
 	void Project::Parse(const ConfigurationSection* sect)
 	{
 		m_name = sect->getAttribute(L"Name");
 
-		ProjectParse(m_items, sect);
+		ProjectParse(this, m_items, sect);
 	}
 
 	void Project::setBasePath(const String& path)
@@ -367,4 +495,6 @@ namespace Apoc3D
 		m_outputPath = m_basePath;
 		PathUtils::Append(m_outputPath, L"build");
 	}
+
+	
 }

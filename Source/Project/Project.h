@@ -59,29 +59,62 @@ namespace Apoc3D
 	{
 	private:
 		ProjectItemType m_type;
+	protected:
+		Project* m_project;
 
+		ProjectItemData(Project* prj)
+			: m_project(prj)
+		{
+		}
 	public:
 		virtual ProjectItemType getType() const = 0;
+		virtual bool IsNotBuilt() = 0;
+		virtual bool IsEarlierThan(time_t t) = 0;
+		virtual bool RequiresPostEdit() { return false; }
 		virtual void Parse(const ConfigurationSection* sect) = 0;
+
 
 		virtual ~ProjectItemData() { }
 	};
 	class ProjectCustomItem : public ProjectItemData
 	{
 	public:
+		ProjectCustomItem(Project* prj)
+			: ProjectItemData(prj)
+		{
+
+		}
+
 		String DestFile;
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
 
 		virtual ProjectItemType getType() const { return PRJITEM_Custom; }
 		virtual void Parse(const ConfigurationSection* sect);
 	};
 	class ProjectResource : public ProjectItemData
 	{
+	protected:
+		ProjectResource(Project* prj)
+			: ProjectItemData(prj)
+		{
 
+		}
 	};
 	class ProjectFolder : public ProjectItemData
 	{
 	public:
+		ProjectFolder(Project* prj)
+			: ProjectItemData(prj)
+		{
+
+		}
+
 		FastList<ProjectItem*> SubItems;
+
+		virtual bool IsNotBuilt() { return true; }
+		virtual bool IsEarlierThan(time_t t) { return true; }
 
 		virtual ProjectItemType getType() const { return PRJITEM_Folder; }
 		virtual void Parse(const ConfigurationSection* sect);
@@ -90,7 +123,11 @@ namespace Apoc3D
 	class ProjectResTexture : public ProjectResource
 	{
 	public:
+		ProjectResTexture(Project* prj)
+			: ProjectResource(prj)
+		{
 
+		}
 		enum TextureFilterType
 		{
 			TFLT_Nearest,
@@ -125,11 +162,20 @@ namespace Apoc3D
 		virtual ProjectItemType getType() const { return PRJITEM_Texture; }
 		virtual void Parse(const ConfigurationSection* sect);
 
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+
 	};
 
 	class ProjectResModel : public ProjectResource
 	{
 	public:
+		ProjectResModel(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
 		enum MeshBuildMethod
 		{
 			MESHBUILD_ASS,
@@ -143,14 +189,25 @@ namespace Apoc3D
 
 		MeshBuildMethod Method;
 
+		virtual bool RequiresPostEdit() { return true; }
 		virtual ProjectItemType getType() const { return PRJITEM_Model; }
 		virtual void Parse(const ConfigurationSection* sect);
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+
 	};
 	
 
 	class ProjectResEffect : public ProjectResource
 	{
 	public:
+		ProjectResEffect(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
 		String SrcFile;
 		String PListFile;
 		String DestFile;
@@ -159,10 +216,19 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Effect; }
 		virtual void Parse(const ConfigurationSection* sect);
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+
 	};
 	class ProjectResFont : public ProjectResource
 	{
 	public:
+		ProjectResFont(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
 		struct CharRange
 		{
 			int MinChar;
@@ -187,6 +253,9 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Font; }
 		virtual void Parse(const ConfigurationSection* sect);
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
 	};
 
 	/** Represents one asset in the project.
@@ -194,15 +263,19 @@ namespace Apoc3D
 	class ProjectItem
 	{
 	private:
+		Project* m_project;
 		ProjectFolder* m_parent;
 
 		ProjectItemData* m_typeData;
 
 		String m_name;
-
+		
+		/** The time of last build config modification of this item
+		*/
+		time_t m_timeStamp;
 	public:
-		ProjectItem()
-			: m_parent(0), m_typeData(0)
+		ProjectItem(Project* prj)
+			: m_parent(0), m_typeData(0), m_timeStamp(0), m_project(prj)
 		{
 
 		}
@@ -216,7 +289,17 @@ namespace Apoc3D
 		}
 
 		void Parse(const ConfigurationSection* sect);
+		bool IsOutDated() const 
+		{
+			if (m_typeData)
+			{
+				return m_typeData->IsNotBuilt() || m_typeData->IsEarlierThan(m_timeStamp);
+			}
+			return false;
+		}
 
+		void Build();
+		
 	};
 	class Project
 	{
@@ -229,6 +312,7 @@ namespace Apoc3D
 	public:
 		const String& getName() const { return m_name; }
 		const String& getBasePath() const { return m_basePath; }
+		const String& getOutputPath() const { return m_outputPath; }
 		void setBasePath(const String& path);
 
 		const FastList<ProjectItem*>& getItems() const { return m_items; }

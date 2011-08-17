@@ -319,7 +319,7 @@ namespace APDesigner
 					m_infoDisplay->Text = PathUtils::GetFileName(tex->SourceFile);
 					m_infoDisplay->Text.append(L"\n");
 
-					if (File::FileExists(PathUtils::Combine(m_currentProject->getBasePath(), tex->DestinationFile)))
+					if (File::FileExists(PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile)))
 					{
 						m_infoDisplay->Text.append(L"Built(could be outdated).");
 					}
@@ -352,6 +352,7 @@ namespace APDesigner
 			{
 			case PRJITEM_Texture:
 				{
+					
 					//TextureViewer* tv = new TextureViewer(m_mainWindow, item->)
 				}
 				break;
