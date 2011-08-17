@@ -540,7 +540,7 @@ namespace Apoc3D
 			DWORD D3D9Utils::ConvertClearFlags(ClearFlags flags)
 			{
 				DWORD result = 0;
-				if ((flags & CLEAR_Target) == CLEAR_Target)
+				if ((flags & CLEAR_ColorBuffer) == CLEAR_ColorBuffer)
 				{
 					result |= D3DCLEAR_TARGET;
 				}

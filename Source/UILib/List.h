@@ -91,6 +91,8 @@ namespace Apoc3D
 
 			bool m_expanded;
 		public:
+			void* UserData;
+
 			bool isExpanded() const { return m_expanded; }
 			const String& getText() const { return m_text; }
 			void setText(const String& txt) { m_text = txt; }
@@ -101,12 +103,12 @@ namespace Apoc3D
 			FastList<TreeViewNode*>& getNodes() { return m_subNode; }
 
 			TreeViewNode(const String& text)
-				: m_text(text), m_icon(0), m_expanded(false)
+				: m_text(text), m_icon(0), m_expanded(false), UserData(0)
 			{
 
 			}
 			TreeViewNode(const String& text, Texture* icon)
-				: m_text(text), m_icon(icon), m_expanded(false)
+				: m_text(text), m_icon(icon), m_expanded(false), UserData(0)
 			{
 
 			}

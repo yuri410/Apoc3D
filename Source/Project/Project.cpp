@@ -303,7 +303,7 @@ namespace Apoc3D
 
 	void ProjectItem::Parse(const ConfigurationSection* sect)
 	{
-		m_name = sect->getValue();//L"Name");
+		m_name = sect->getName();//L"Name");
 
 		String buildType = sect->getAttribute(L"Type");
 		StringUtils::ToLowerCase(buildType);

@@ -261,7 +261,7 @@ namespace APDesigner
 	}
 	void MainWindow::Draw(const GameTime* const time)
 	{
-		m_device->Clear(CLEAR_Target, CV_BlanchedAlmond, 1, 0);
+		m_device->Clear(CLEAR_ColorAndDepth, CV_DarkGray, 1, 0);
 		
 		m_device->BeginFrame();
 

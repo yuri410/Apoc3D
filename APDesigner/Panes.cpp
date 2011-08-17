@@ -233,7 +233,54 @@ namespace APDesigner
 					
 					ProjectFolder* fld = static_cast<ProjectFolder*>(data);
 
-					fld->SubItems;
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_NewProject1"));
+					newNode->UserData = items[i];
+
+					BuildTreeViewNodes(newNode, fld->SubItems);
+
+					if (parentNode)
+					{
+						parentNode->getNodes().Add(newNode);
+					}
+					else
+					{
+						m_resourceView->getNodes().Add(newNode);
+					}
+
+				}
+				break;
+			case PRJITEM_Model:
+				{
+					ProjectResModel* mdl = static_cast<ProjectResModel*>(data);
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_Scene"));
+					newNode->UserData = items[i];
+
+
+					if (parentNode)
+					{
+						parentNode->getNodes().Add(newNode);
+					}
+					else
+					{
+						m_resourceView->getNodes().Add(newNode);
+					}
+				}
+				break;
+			case PRJITEM_Texture:
+				{
+					ProjectResTexture* tex = static_cast<ProjectResTexture*>(data);
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_Image"));
+					newNode->UserData = items[i];
+
+
+					if (parentNode)
+					{
+						parentNode->getNodes().Add(newNode);
+					}
+					else
+					{
+						m_resourceView->getNodes().Add(newNode);
+					}
 				}
 				break;
 			}
@@ -241,6 +288,6 @@ namespace APDesigner
 	}
 	void ResourcePane::BuildTreeViewNodes(const FastList<ProjectItem*> items)
 	{
-		
+		BuildTreeViewNodes(0, items);
 	}
 }

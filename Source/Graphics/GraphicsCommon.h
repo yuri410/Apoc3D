@@ -148,9 +148,11 @@ namespace Apoc3D
 			
 			enum ClearFlags
 			{
-				CLEAR_Target = 1,
+				CLEAR_ColorBuffer = 1,
 				CLEAR_DepthBuffer = 2,
-				CLEAR_Stencil = 4
+				CLEAR_Stencil = 4,
+				CLEAR_ColorAndDepth = CLEAR_ColorBuffer | CLEAR_DepthBuffer,
+				CLEAR_All = CLEAR_ColorBuffer | CLEAR_DepthBuffer | CLEAR_Stencil
 			};
 
 			/* Defines stencil buffer operations.

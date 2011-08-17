@@ -58,6 +58,9 @@ namespace APDesigner
 		case TT_Texture2D:
 			sprite->Draw(m_texture, *rect, 0, CV_White);
 			break;
+		case TT_Texture3D:
+
+			break;
 		case TT_CubeTexture:
 			
 			break;
