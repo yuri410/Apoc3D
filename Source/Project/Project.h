@@ -223,8 +223,13 @@ namespace Apoc3D
 	private:
 		FastList<ProjectItem*> m_items;
 		String m_name;
+
+		String m_basePath;
+		String m_outputPath;
 	public:
 		const String& getName() const { return m_name; }
+		const String& getBasePath() const { return m_basePath; }
+		void setBasePath(const String& path);
 
 		const FastList<ProjectItem*>& getItems() const { return m_items; }
 

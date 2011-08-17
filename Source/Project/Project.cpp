@@ -25,7 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Config/ConfigurationSection.h"
 #include "Utility/StringUtils.h"
 #include "Graphics/GraphicsCommon.h"
+#include "Vfs/File.h"
+#include "Vfs/PathUtils.h"
 
+using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -356,5 +359,12 @@ namespace Apoc3D
 		m_name = sect->getAttribute(L"Name");
 
 		ProjectParse(m_items, sect);
+	}
+
+	void Project::setBasePath(const String& path)
+	{
+		m_basePath = path; 
+		m_outputPath = m_basePath;
+		PathUtils::Append(m_outputPath, L"build");
 	}
 }

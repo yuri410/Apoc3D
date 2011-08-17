@@ -85,7 +85,7 @@ namespace APDesigner
 		void BtnAdd_Release(Control* ctrl);
 		void BtnRemove_Release(Control* ctrl);
 		void BtnOpen_Release(Control* ctrl);
-
+		void TreeView_SelectionChanged(Control* ctrl);
 	public:
 		
 		ResourcePane(MainWindow* window);

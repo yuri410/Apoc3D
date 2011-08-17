@@ -170,7 +170,7 @@ namespace Apoc3D
 			int MeasureExpandedModeHeight() const;
 		public:
 			UIEventHandler& eventSelect() { return m_eSelect; }
-			UIEventHandler& eventSelectionChanged() { m_eSelectionChanged; }
+			UIEventHandler& eventSelectionChanged() { return m_eSelectionChanged; }
 
 			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
 			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }

@@ -47,6 +47,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/FileSystem.h"
 #include "Vfs/Archive.h"
 #include "Vfs/ResourceLocation.h"
+#include "Vfs/PathUtils.h"
 #include "Math/ColorValue.h"
 
 #include "Document.h"
@@ -312,7 +313,7 @@ namespace APDesigner
 			delete fl;
 
 			m_resourcePane->UpdateToNewProject(m_project);
-			
+			m_project->setBasePath(PathUtils::GetDirectory(path));
 		}
 	}
 	void MainWindow::CloseProject()

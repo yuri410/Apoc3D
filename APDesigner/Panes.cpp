@@ -33,6 +33,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UIResources.h"
 #include "Document.h"
 
+#include "TextureViewer.h"
+
+#include "Vfs/File.h"
+#include "Vfs/PathUtils.h"
+
+using namespace Apoc3D::VFS;
+
 namespace APDesigner
 {
 	/************************************************************************/
@@ -139,6 +146,7 @@ namespace APDesigner
 
 			m_form->getControls().Add(treeview);
 			m_resourceView = treeview;
+			m_resourceView->eventSelectionChanged().bind(this, &ResourcePane::TreeView_SelectionChanged);
 		}
 
 		m_infoDisplay = new Label(Point(15,330),L"",1);
@@ -297,10 +305,35 @@ namespace APDesigner
 		BuildTreeViewNodes(0, items);
 	}
 
-	//void ResourcePane::TreeView_SelectionChanged(Control* ctrl)
-	//{
+	void ResourcePane::TreeView_SelectionChanged(Control* ctrl)
+	{
+		if (m_resourceView->getSelectedNode())
+		{
+			ProjectItem* item = static_cast<ProjectItem*>(m_resourceView->getSelectedNode()->UserData);
+			switch (item->getType())
+			{
+			case PRJITEM_Texture:
+				{
+					ProjectResTexture* tex = static_cast<ProjectResTexture*>(item->getData());
 
-	//}
+					m_infoDisplay->Text = PathUtils::GetFileName(tex->SourceFile);
+					m_infoDisplay->Text.append(L"\n");
+
+					if (File::FileExists(PathUtils::Combine(m_currentProject->getBasePath(), tex->DestinationFile)))
+					{
+						m_infoDisplay->Text.append(L"Built(could be outdated).");
+					}
+					else
+					{
+						m_infoDisplay->Text.append(L"Not built yet.");
+					}
+					
+					//TextureViewer* tv = new TextureViewer(m_mainWindow, item->)
+				}
+				break;
+			}
+		}
+	}
 
 	void ResourcePane::BtnAdd_Release(Control* ctrl)
 	{
@@ -312,7 +345,18 @@ namespace APDesigner
 	}
 	void ResourcePane::BtnOpen_Release(Control* ctrl)
 	{
-
+		if (m_resourceView->getSelectedNode())
+		{
+			ProjectItem* item = static_cast<ProjectItem*>(m_resourceView->getSelectedNode()->UserData);
+			switch (item->getType())
+			{
+			case PRJITEM_Texture:
+				{
+					//TextureViewer* tv = new TextureViewer(m_mainWindow, item->)
+				}
+				break;
+			}
+		}
 	}
 
 }
