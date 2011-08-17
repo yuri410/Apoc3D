@@ -120,7 +120,11 @@ namespace Apoc3D
 			}
 		}
 
+		XMLConfiguration::XMLConfiguration(const String& name)
+			: Configuration(name)
+		{
 
+		}
 		XMLConfiguration::XMLConfiguration(const ResourceLocation* rl)
 			: Configuration(rl->getName())
 		{
@@ -148,6 +152,41 @@ namespace Apoc3D
 		{
 
 		}
+		void XMLConfiguration::Add(ConfigurationSection* sect)
+		{
+			m_sections.insert(std::make_pair(sect->getName(), sect));
+		}
 
+		void XMLConfiguration::Save(const String& filePath)
+		{
+			TiXmlDocument doc;
+			TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );  
+			doc.LinkEndChild( decl );  
+			for (Iterator iter = begin();iter!=end();iter++)
+			{
+				ConfigurationSection* sect = iter->second;
+				TiXmlElement* elem = new TiXmlElement(StringUtils::toString(sect->getName()));
+				doc.LinkEndChild(elem);
+				SaveNode(elem, sect);
+			}
+			
+			doc.SaveFile(StringUtils::toString(filePath));
+		}
+
+		void XMLConfiguration::SaveNode(TiXmlNode* node, ConfigurationSection* parent)
+		{
+			for (ConfigurationSection::AttributeIterator iter = parent->AttributeBegin();iter!=parent->AttributeEnd();iter++)
+			{
+				node->ToElement()->SetAttribute(StringUtils::toString(iter->first), StringUtils::toString(iter->second));
+			}
+
+			for (ConfigurationSection::SubSectionIterator iter = parent->SubSectionBegin();iter!=parent->SubSectionEnd();iter++)
+			{
+				ConfigurationSection* s = iter->second;
+				TiXmlElement* elem = new TiXmlElement(StringUtils::toString(s->getName()));
+				node->LinkEndChild(elem);
+				SaveNode(elem, s);
+			}
+		}
 	}
 }

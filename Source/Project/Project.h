@@ -316,6 +316,8 @@ namespace Apoc3D
 
 		String m_basePath;
 		String m_outputPath;
+
+		ConfigurationSection* Save();
 	public:
 		const String& getName() const { return m_name; }
 		const String& getBasePath() const { return m_basePath; }
@@ -325,7 +327,7 @@ namespace Apoc3D
 		const FastList<ProjectItem*>& getItems() const { return m_items; }
 
 		void Parse(const ConfigurationSection* sect);
-		ConfigurationSection* Save();
+		
 		void Save(const String& file);
 	};
 

@@ -322,7 +322,7 @@ namespace APDesigner
 	}
 	void MainWindow::SaveProject(const String& path)
 	{
-
+		m_project->Save()
 	}
 
 	void MainWindow::Menu_CloseProject(Control* ctl)

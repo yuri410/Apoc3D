@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Project.h"
 #include "Config/ConfigurationSection.h"
+#include "Config/XmlConfiguration.h"
 #include "Utility/StringUtils.h"
 #include "Graphics/GraphicsCommon.h"
 #include "Vfs/File.h"
@@ -702,6 +703,15 @@ namespace Apoc3D
 
 		ProjectParse(this, m_items, sect);
 	}
+	void Project::Save(const String& file)
+	{
+		ConfigurationSection* s = Save();
+
+		XMLConfiguration* xc = new XMLConfiguration(m_name);
+		xc->Add(s);
+		xc->Save(file);
+		delete xc;
+	}
 	ConfigurationSection* Project::Save()
 	{
 		ConfigurationSection* sect = new ConfigurationSection(L"Project");
@@ -711,7 +721,7 @@ namespace Apoc3D
 		ProjectSave(sect, m_items);
 		return sect;
 	}
-
+	
 	void Project::setBasePath(const String& path)
 	{
 		m_basePath = path; 

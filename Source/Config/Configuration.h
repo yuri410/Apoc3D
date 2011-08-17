@@ -69,6 +69,8 @@ namespace Apoc3D
 
 			virtual Configuration* Clone() const = 0;
 			virtual void Merge(Configuration* config) = 0;
+
+			
 		};
 	}
 }

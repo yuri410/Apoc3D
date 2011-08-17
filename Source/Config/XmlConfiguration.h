@@ -39,13 +39,18 @@ namespace Apoc3D
 		class APAPI XMLConfiguration : public Configuration
 		{
 		private:
+			void SaveNode(TiXmlNode* node, ConfigurationSection* parent);
 			void BuildNode(const TiXmlNode* node, ConfigurationSection* parent);
 			void BuildXml(const TiXmlDocument* doc);
 		public:
 			XMLConfiguration(const ResourceLocation* rl);
+			XMLConfiguration(const String& name);
 
 			virtual Configuration* Clone() const;
 			virtual void Merge(Configuration* config);
+
+			void Add(ConfigurationSection* sect);
+			void Save(const String& filePath);
 		};
 	}
 }

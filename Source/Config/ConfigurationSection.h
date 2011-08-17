@@ -56,6 +56,7 @@ namespace Apoc3D
 
 		public:
 			typedef SubSectionTable::const_iterator SubSectionIterator;
+			typedef AttributeTable::const_iterator AttributeIterator;
 
 			ConfigurationSection(const String& name)
 				: m_name(name) 
@@ -70,6 +71,8 @@ namespace Apoc3D
 				}
 			}
 
+			AttributeIterator AttributeBegin() const { return m_attributes.cbegin(); }
+			AttributeIterator AttributeEnd() const { return m_attributes.cend(); }
 			SubSectionIterator SubSectionBegin() const { return m_subSection.cbegin(); }
 			SubSectionIterator SubSectionEnd() const { return m_subSection.cend(); }
 
