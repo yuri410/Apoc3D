@@ -83,7 +83,7 @@ namespace Apoc3D
 	}
 	void ProjectFolder::Save(ConfigurationSection* sect)
 	{
-
+		ProjectSave(sect, SubItems);
 	}
 	
 	bool ProjectResTexture::IsEarlierThan(time_t t)
@@ -208,7 +208,7 @@ namespace Apoc3D
 				{
 					const ConfigurationSection* ss = iter->second;
 
-					SubMapTable.Add(i, ss->getAttribute(L"FilePath"));
+					SubAlphaMapTable.Add(i, ss->getAttribute(L"FilePath"));
 					i++;
 				}
 
@@ -258,7 +258,105 @@ namespace Apoc3D
 	}
 	void ProjectResTexture::Save(ConfigurationSection* sect)
 	{
+		switch (Method)
+		{
+		case TEXBUILD_BuiltIn:
+			sect->AddAttribute(L"Method", L"default");
+			break;
+		case TEXBUILD_D3D:
+			sect->AddAttribute(L"Method", L"d3d");
+			break;
+		case TEXBUILD_Devil:
+			sect->AddAttribute(L"Method", L"devil");
+			break;
+		}
 
+		if (AssembleCubemap || AssembleVolumeMap)
+		{
+			if (AssembleCubemap)
+			{
+				sect->AddAttribute(L"Assemble", L"cubemap");
+
+				sect->AddAttribute(L"NegX", SubMapTable[CUBE_NegativeX]);
+				sect->AddAttribute(L"NegY", SubMapTable[CUBE_NegativeY]);
+				sect->AddAttribute(L"NegZ", SubMapTable[CUBE_NegativeZ]);
+				sect->AddAttribute(L"PosX", SubMapTable[CUBE_PositiveX]);
+				sect->AddAttribute(L"PosY", SubMapTable[CUBE_PositiveY]);
+				sect->AddAttribute(L"PosZ", SubMapTable[CUBE_PositiveZ]);
+
+				if (SubAlphaMapTable.Contains(CUBE_NegativeX))
+					sect->AddAttribute(L"NegXAlpha", SubAlphaMapTable[CUBE_NegativeX]);
+				if (SubAlphaMapTable.Contains(CUBE_NegativeY))
+					sect->AddAttribute(L"NegYAlpha", SubAlphaMapTable[CUBE_NegativeY]);
+				if (SubAlphaMapTable.Contains(CUBE_NegativeZ))
+					sect->AddAttribute(L"NegZAlpha", SubAlphaMapTable[CUBE_NegativeZ]);
+
+				if (SubAlphaMapTable.Contains(CUBE_PositiveX))
+					sect->AddAttribute(L"PosXAlpha", SubAlphaMapTable[CUBE_PositiveX]);
+				if (SubAlphaMapTable.Contains(CUBE_PositiveY))
+					sect->AddAttribute(L"PosYAlpha", SubAlphaMapTable[CUBE_PositiveY]);
+				if (SubAlphaMapTable.Contains(CUBE_PositiveZ))
+					sect->AddAttribute(L"PosZAlpha", SubAlphaMapTable[CUBE_PositiveZ]);
+				
+			}
+			else
+			{
+				sect->AddAttribute(L"Assemble", L"volume");
+				uint i =0;
+				ConfigurationSection* srcsect = new ConfigurationSection(L"Source");
+				for (int i=0;i<SubMapTable.getCount();i++)
+				{
+					ConfigurationSection* es = new ConfigurationSection(String(L"Slice") + StringUtils::ToString(i));
+					es->AddAttribute(L"FilePath", SubMapTable[i]);
+
+					srcsect->AddSection(es);
+				}
+				sect->AddSection(srcsect);
+
+				srcsect = new ConfigurationSection(L"AlphaSource");
+				for (int i=0;i<SubAlphaMapTable.getCount();i++)
+				{
+					ConfigurationSection* es = new ConfigurationSection(String(L"Slice") + StringUtils::ToString(i));
+					es->AddAttribute(L"FilePath", SubAlphaMapTable[i]);
+
+					srcsect->AddSection(es);
+				}
+				sect->AddSection(srcsect);
+			}
+			
+		}
+		else
+		{
+			sect->AddAttribute(L"SourceFile", SourceFile);
+		}
+		sect->AddAttribute(L"DestinationFile", DestinationFile);
+		if (GenerateMipmaps)
+			sect->AddAttribute(L"GenerateMipmaps", StringUtils::ToString(GenerateMipmaps));
+
+		if (Resize)
+		{
+			sect->AddAttribute(L"Width", StringUtils::ToString(NewWidth));
+			sect->AddAttribute(L"Height", StringUtils::ToString(NewHeight));
+			sect->AddAttribute(L"Depth", StringUtils::ToString(NewDepth));
+
+			switch (ResizeFilterType)
+			{
+			case TFLT_Nearest:
+				sect->AddAttribute(L"ResizeFilter", L"nearest");
+				break;
+			case TFLT_BSpline:
+				sect->AddAttribute(L"ResizeFilter", L"bspline");
+				break;
+			case TFLT_Box:
+				sect->AddAttribute(L"ResizeFilter", L"box");
+				break;
+			}		
+		}
+
+		if (NewFormat != FMT_Unknown)
+		{
+			sect->AddAttribute(L"PixelFormat", PixelFormatUtils::ToString(NewFormat));
+		}
 	}
 
 	bool ProjectResFont::IsEarlierThan(time_t t)
@@ -303,7 +401,6 @@ namespace Apoc3D
 			}
 		}
 
-
 		for (ConfigurationSection::SubSectionIterator iter = sect->SubSectionBegin();
 			iter != sect->SubSectionEnd(); iter++)
 		{
@@ -317,7 +414,39 @@ namespace Apoc3D
 	}
 	void ProjectResFont::Save(ConfigurationSection* sect)
 	{
+		sect->AddAttribute(L"Name", Name);
+		sect->AddAttribute(L"Size", StringUtils::ToString(Size));
 
+		if (Style != FONTSTYLE_Regular)
+		{
+			switch (Style)
+			{
+			case FONTSTYLE_Bold:
+				sect->AddAttribute(L"Style", L"Bold");
+				break;
+			case FONTSTYLE_Italic:
+				sect->AddAttribute(L"Style", L"Italic");
+				break;
+			case FONTSTYLE_BoldItalic:
+				sect->AddAttribute(L"Style", L"BoldItalic");
+				break;
+			case FONTSTYLE_Strikeout:
+				sect->AddAttribute(L"Style", L"Underline");
+				break;
+				
+			}
+		}
+
+		sect->AddAttribute(L"DestinationFile", DestFile);
+
+		for (int i=0;i<Ranges.getCount();i++)
+		{
+			ConfigurationSection* ss = new ConfigurationSection(String(L"Range") + StringUtils::ToString(i));
+			ss->AddAttribute(L"Start", StringUtils::ToString( Ranges[i].MinChar));
+			ss->AddAttribute(L"End", StringUtils::ToString( Ranges[i].MaxChar));
+
+			sect->AddSection(ss);
+		}
 	}
 	//void PakBuildConfig::Parse(const ConfigurationSection* sect)
 	//{
@@ -389,7 +518,11 @@ namespace Apoc3D
 	}
 	void ProjectResEffect::Save(ConfigurationSection* sect)
 	{
-
+		sect->AddAttribute(L"SourceFile", SrcFile);
+		sect->AddAttribute(L"DestinationFile", DestFile);
+		sect->AddAttribute(L"ParamList", PListFile);
+		sect->AddAttribute(L"EntryPoint", EntryPoint);
+		sect->AddAttribute(L"Profile", Profile);
 	}
 
 	bool ProjectResModel::IsEarlierThan(time_t t)
@@ -447,7 +580,22 @@ namespace Apoc3D
 	}
 	void ProjectResModel::Save(ConfigurationSection* sect)
 	{
+		sect->AddAttribute(L"SourceFile", SrcFile);
+		sect->AddAttribute(L"DestinationFile", DstFile);
+		if (DstAnimationFile.size())
+		{
+			sect->AddAttribute(L"DestinationAnimFile", DstAnimationFile);
+		}
 
+		switch (Method)
+		{
+		case MESHBUILD_ASS:
+			sect->AddAttribute(L"Method", L"ass");
+			break;
+		case MESHBUILD_FBX:
+			sect->AddAttribute(L"Method", L"fbx");
+			break;
+		}
 	}
 
 	bool ProjectCustomItem::IsEarlierThan(time_t t)
@@ -465,7 +613,7 @@ namespace Apoc3D
 	}
 	void ProjectCustomItem::Save(ConfigurationSection* sect)
 	{
-
+		sect->AddAttribute(L"DestinationFile", DestFile);
 	}
 
 	ConfigurationSection* ProjectItem::Save()
