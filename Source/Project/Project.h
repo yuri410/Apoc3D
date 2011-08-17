@@ -222,7 +222,10 @@ namespace Apoc3D
 	{
 	private:
 		FastList<ProjectItem*> m_items;
+		String m_name;
 	public:
+		const String& getName() const { return m_name; }
+
 		const FastList<ProjectItem*>& getItems() const { return m_items; }
 
 		void Parse(const ConfigurationSection* sect);

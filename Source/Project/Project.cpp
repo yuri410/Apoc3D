@@ -30,6 +30,27 @@ using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
+	void ProjectParse(FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
+	{
+		for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
+			iter != sect->SubSectionEnd(); iter++)
+		{
+			ConfigurationSection* sect = iter->second;
+
+			ProjectItem* item = new ProjectItem();
+
+			item->Parse(sect);
+
+			parentContainer.Add(item);
+
+			if (item->getType() == PRJITEM_Folder)
+			{
+				ProjectFolder* folder = static_cast<ProjectFolder*>(item->getData());
+				ProjectParse(folder->SubItems, sect);
+			}
+		}
+	}
+
 	void ProjectFolder::Parse(const ConfigurationSection* sect)
 	{
 		for (ConfigurationSection::SubSectionIterator iter = sect->SubSectionBegin();
@@ -282,7 +303,7 @@ namespace Apoc3D
 
 	void ProjectItem::Parse(const ConfigurationSection* sect)
 	{
-		m_name = sect->getValue();
+		m_name = sect->getValue();//L"Name");
 
 		String buildType = sect->getAttribute(L"Type");
 		StringUtils::ToLowerCase(buildType);
@@ -330,29 +351,10 @@ namespace Apoc3D
 
 	}
 
-	void ProjectParse(FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
-	{
-		for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
-			iter != sect->SubSectionEnd(); iter++)
-		{
-			ConfigurationSection* sect = iter->second;
-
-			ProjectItem* item = new ProjectItem();
-
-			item->Parse(sect);
-
-			parentContainer.Add(item);
-
-			if (item->getType() == PRJITEM_Folder)
-			{
-				ProjectFolder* folder = static_cast<ProjectFolder*>(item->getData());
-				ProjectParse(folder->SubItems, sect);
-			}
-		}
-	}
-
 	void Project::Parse(const ConfigurationSection* sect)
 	{
+		m_name = sect->getAttribute(L"Name");
+
 		ProjectParse(m_items, sect);
 	}
 }
