@@ -46,28 +46,46 @@ namespace Apoc3D
 
 			parentContainer.Add(item);
 
-			if (item->getType() == PRJITEM_Folder)
-			{
-				ProjectFolder* folder = static_cast<ProjectFolder*>(item->getData());
-				ProjectParse(prj, folder->SubItems, sect);
-			}
+			//if (item->getType() == PRJITEM_Folder)
+			//{
+			//	ProjectFolder* folder = static_cast<ProjectFolder*>(item->getData());
+			//	ProjectParse(prj, folder->SubItems, sect);
+			//}
 		}
 	}
 
+	void ProjectSave(ConfigurationSection* parentSect, FastList<ProjectItem*>& items)
+	{
+		for (int i=0;i<items.getCount();i++)
+		{
+			ConfigurationSection* sect = items[i]->Save();
+			parentSect->AddSection(sect);
+
+			//if (items[i]->getType() == PRJITEM_Folder)
+			//{
+			//	ProjectFolder* folder = static_cast<ProjectFolder*>(items[i]->getData());
+			//	ProjectSave(sect, folder->SubItems);
+			//}
+		}
+	}
 
 
 	void ProjectFolder::Parse(const ConfigurationSection* sect)
 	{
-		for (ConfigurationSection::SubSectionIterator iter = sect->SubSectionBegin();
-			iter != sect->SubSectionEnd(); iter++)
-		{
-			const ConfigurationSection* ss = iter->second;
+		//for (ConfigurationSection::SubSectionIterator iter = sect->SubSectionBegin();
+		//	iter != sect->SubSectionEnd(); iter++)
+		//{
+		//	const ConfigurationSection* ss = iter->second;
 
-			ProjectParse(m_project, SubItems,ss);
-		}
+		//	
+		//}
+		ProjectParse(m_project, SubItems,sect);
+	}
+	void ProjectFolder::Save(ConfigurationSection* sect)
+	{
 
 	}
-
+	
 	bool ProjectResTexture::IsEarlierThan(time_t t)
 	{
 		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
@@ -238,6 +256,10 @@ namespace Apoc3D
 		}
 
 	}
+	void ProjectResTexture::Save(ConfigurationSection* sect)
+	{
+
+	}
 
 	bool ProjectResFont::IsEarlierThan(time_t t)
 	{
@@ -292,6 +314,10 @@ namespace Apoc3D
 		}
 
 		DestFile = sect->getAttribute(L"DestinationFile");
+	}
+	void ProjectResFont::Save(ConfigurationSection* sect)
+	{
+
 	}
 	//void PakBuildConfig::Parse(const ConfigurationSection* sect)
 	//{
@@ -361,7 +387,10 @@ namespace Apoc3D
 		EntryPoint = sect->getAttribute(L"EntryPoint");
 		Profile = sect->getAttribute(L"Profile");
 	}
+	void ProjectResEffect::Save(ConfigurationSection* sect)
+	{
 
+	}
 
 	bool ProjectResModel::IsEarlierThan(time_t t)
 	{
@@ -416,6 +445,10 @@ namespace Apoc3D
 			Method = MESHBUILD_FBX;
 		}
 	}
+	void ProjectResModel::Save(ConfigurationSection* sect)
+	{
+
+	}
 
 	bool ProjectCustomItem::IsEarlierThan(time_t t)
 	{
@@ -430,7 +463,40 @@ namespace Apoc3D
 	{
 		DestFile = sect->getAttribute(L"DestinationFile");
 	}
+	void ProjectCustomItem::Save(ConfigurationSection* sect)
+	{
 
+	}
+
+	ConfigurationSection* ProjectItem::Save()
+	{
+		ConfigurationSection* sect = new ConfigurationSection(m_name);
+		
+		if (m_typeData)
+		{
+			switch (m_typeData->getType())
+			{
+			case PRJITEM_Texture:
+				sect->AddAttribute(L"Type", L"texture");
+				break;
+			case PRJITEM_Model:
+				sect->AddAttribute(L"Type", L"mesh");
+				break;
+			case PRJITEM_Effect:
+				sect->AddAttribute(L"Type", L"effect");
+				break;
+			case PRJITEM_Font:
+				sect->AddAttribute(L"Type", L"font");
+				break;
+			case PRJITEM_Folder:
+				sect->AddAttribute(L"Type", L"folder");
+				break;
+			}
+			
+			m_typeData->Save(sect);
+		}
+		return sect;
+	}
 	void ProjectItem::Parse(const ConfigurationSection* sect)
 	{
 		m_name = sect->getName();//L"Name");
@@ -487,6 +553,15 @@ namespace Apoc3D
 		m_name = sect->getAttribute(L"Name");
 
 		ProjectParse(this, m_items, sect);
+	}
+	ConfigurationSection* Project::Save()
+	{
+		ConfigurationSection* sect = new ConfigurationSection(L"Project");
+
+		sect->AddAttribute(L"Name", m_name);
+
+		ProjectSave(sect, m_items);
+		return sect;
 	}
 
 	void Project::setBasePath(const String& path)

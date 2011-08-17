@@ -72,7 +72,7 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t) = 0;
 		virtual bool RequiresPostEdit() { return false; }
 		virtual void Parse(const ConfigurationSection* sect) = 0;
-
+		virtual void Save(ConfigurationSection* sect) = 0;
 
 		virtual ~ProjectItemData() { }
 	};
@@ -92,6 +92,7 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Custom; }
 		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect);
 	};
 	class ProjectResource : public ProjectItemData
 	{
@@ -118,6 +119,7 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Folder; }
 		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect);
 	};
 
 	class ProjectResTexture : public ProjectResource
@@ -161,6 +163,7 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Texture; }
 		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect);
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -192,6 +195,7 @@ namespace Apoc3D
 		virtual bool RequiresPostEdit() { return true; }
 		virtual ProjectItemType getType() const { return PRJITEM_Model; }
 		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect);
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -216,6 +220,7 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Effect; }
 		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect);
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -253,7 +258,7 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Font; }
 		virtual void Parse(const ConfigurationSection* sect);
-
+		virtual void Save(ConfigurationSection* sect);
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
 	};
@@ -289,6 +294,8 @@ namespace Apoc3D
 		}
 
 		void Parse(const ConfigurationSection* sect);
+		ConfigurationSection* Save();
+
 		bool IsOutDated() const 
 		{
 			if (m_typeData)
@@ -298,7 +305,7 @@ namespace Apoc3D
 			return false;
 		}
 
-		void Build();
+		//void Build();
 		
 	};
 	class Project
@@ -318,6 +325,7 @@ namespace Apoc3D
 		const FastList<ProjectItem*>& getItems() const { return m_items; }
 
 		void Parse(const ConfigurationSection* sect);
+		ConfigurationSection* Save();
 		void Save(const String& file);
 	};
 

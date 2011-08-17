@@ -348,6 +348,11 @@ namespace APDesigner
 		if (m_resourceView->getSelectedNode())
 		{
 			ProjectItem* item = static_cast<ProjectItem*>(m_resourceView->getSelectedNode()->UserData);
+			if (item->IsOutDated())
+			{
+
+			}
+
 			switch (item->getType())
 			{
 			case PRJITEM_Texture:
