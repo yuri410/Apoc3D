@@ -144,6 +144,8 @@ namespace Apoc3D
 		{
 			Method = TEXBUILD_BuiltIn;
 		}
+		AssembleCubemap = false;
+		AssembleVolumeMap = false;
 
 		String assembleType;
 		if (!sect->tryGetAttribute(L"Assemble", assembleType))

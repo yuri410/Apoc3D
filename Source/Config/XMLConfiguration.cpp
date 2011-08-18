@@ -162,11 +162,15 @@ namespace Apoc3D
 			TiXmlDocument doc;
 			TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );  
 			doc.LinkEndChild( decl );  
+
+			TiXmlElement* root = new TiXmlElement("Root");
+			doc.LinkEndChild(root);
+
 			for (Iterator iter = begin();iter!=end();iter++)
 			{
 				ConfigurationSection* sect = iter->second;
 				TiXmlElement* elem = new TiXmlElement(StringUtils::toString(sect->getName()));
-				doc.LinkEndChild(elem);
+				root->LinkEndChild(elem);
 				SaveNode(elem, sect);
 			}
 			
