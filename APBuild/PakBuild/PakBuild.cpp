@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "CompileLog.h"
 #include "Vfs/PathUtils.h"
 #include "Vfs/Archive.h"
+#include "BuildEngine.h"
 
 #include <dirent.h>
 
@@ -76,6 +77,8 @@ namespace APBuild
 
 		PakBuildConfig config;
 		config.Parse(sect);
+
+		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
 		//CompileLog::WriteInformation(L"Pak builder currently only supports directory flatten build.", L"");
 

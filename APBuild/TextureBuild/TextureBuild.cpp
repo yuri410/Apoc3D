@@ -27,10 +27,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/TextureData.h"
 #include "IOLib/Streams.h"
 #include "Vfs/File.h"
+#include "Vfs/PathUtils.h"
 #include "Apoc3DException.h"
 #include "CompileLog.h"
 #include "D3DHelper.h"
 #include "Graphics/LockData.h"
+#include "BuildEngine.h"
+
 #include "dds.h"
 
 #include <IL/il.h>
@@ -1937,9 +1940,11 @@ LFail:
 
 		if (!File::FileExists(config.SourceFile))
 		{
-			CompileLog::WriteError(config.SourceFile, L"Can not file input file.");
+			CompileLog::WriteError(config.SourceFile, L"Could not find source file.");
 			return;
 		}
+
+		EnsureDirectory(PathUtils::GetDirectory(config.DestinationFile));
 
 		if (!File::FileExists(config.DestinationFile) || 
 			File::GetFileModifiyTime(config.SourceFile) >= File::GetFileModifiyTime(config.DestinationFile))

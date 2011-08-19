@@ -24,7 +24,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef BUILDENGINE_H
 #define BUILDENGINE_H
 
+#include "APBCommon.h"
+
+using namespace Apoc3D;
+
 int Initialize();
 void Finalize();
+void EnsureDirectory(const String& path);
 
 #endif

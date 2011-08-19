@@ -35,8 +35,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/Streams.h"
 #include "IOLib/BinaryWriter.h"
 #include "Vfs/File.h"
+#include "Vfs/PathUtils.h"
 #include "BuildConfig.h"
+#include "BuildEngine.h"
 #include "CompileLog.h"
+
 
 using namespace Apoc3D;
 using namespace Apoc3D::IO;
@@ -251,6 +254,8 @@ namespace APBuild
 	{
 		FontBuildConfig config;
 		config.Parse(sect);
+
+		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
 		GlyphBitmapEqualityComparer* comparer = new GlyphBitmapEqualityComparer();
 		FastList<CharMapping> charMap(0xffff);

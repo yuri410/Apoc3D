@@ -24,6 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "BuildEngine.h"
 
+#include "Vfs/PathUtils.h"
+#include "Vfs/File.h"
+
 #include "IL/il.h"
 #include "IL/ilu.h"
 #include "IL/ilut.h"
@@ -31,6 +34,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <GdiPlus.h>
 
 using namespace APBuild;
+using namespace Apoc3D::VFS;
 using namespace Gdiplus;
 
 static GdiplusStartupInput gdiplusStartupInput;
@@ -42,7 +46,7 @@ int Initialize()
 		iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION ||
 		ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION)
 	{
-		printf("DevIL version is different...exiting!\n");
+		printf("DevIL version is different...!\n");
 		return 1;
 	}
 
@@ -62,4 +66,20 @@ void Finalize()
 {
 	GdiplusShutdown(gdiplusToken);
 	D3DHelper::Finalize();
+}
+
+void EnsureDirectory(const String& path)
+{
+	std::vector<String> paths = PathUtils::Split(path);
+	String subPath;
+	subPath.reserve(path.size());
+	for (size_t i=0;i<paths.size();i++)
+	{
+		subPath.append(paths[0]);
+		if (!File::DirectoryExists(subPath))
+		{
+			CreateDirectory(subPath.c_str(), 0);
+		}
+	}
+
 }

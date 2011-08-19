@@ -31,6 +31,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/ModelData.h"
 #include "CompileLog.h"
 #include "Vfs/File.h"
+#include "Vfs/PathUtils.h"
+#include "BuildEngine.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;
@@ -66,9 +68,11 @@ namespace APBuild
 		
 		if (!File::FileExists(config.SrcFile))
 		{
-			CompileLog::WriteError(config.SrcFile, L"Can not file input file.");
+			CompileLog::WriteError(config.SrcFile, L"Could not find source file.");
 			return;
 		}
+		EnsureDirectory(PathUtils::GetDirectory(config.DstFile));
+		EnsureDirectory(PathUtils::GetDirectory(config.DstAnimationFile));
 
 		switch (config.Method)
 		{

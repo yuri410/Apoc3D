@@ -141,6 +141,11 @@ namespace Apoc3D
 
 			} while (pos != String::npos);
 
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+			ret[1] = ret[0] + ret[1];
+			ret.erase(ret.begin());
+#endif
+
 			return ret;
 		}
 
