@@ -66,7 +66,7 @@ namespace APDesigner
 
 		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 	public:
-		TextureViewer(MainWindow* window, const String& filePath);
+		TextureViewer(MainWindow* window, const String& filePath, const String& name);
 		~TextureViewer();
 
 		

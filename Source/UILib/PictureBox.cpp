@@ -87,7 +87,7 @@ namespace Apoc3D
 			{
 				Apoc3D::Math::Rectangle borderRect(destRect.X - m_border, 
 					destRect.Y - m_border, Size.X+m_border*2, Size.Y+m_border*2);
-				sprite->Draw(m_skin->WhitePixelTexture, destRect, 0 , CV_Black);
+				sprite->Draw(m_skin->WhitePixelTexture, borderRect, 0 , CV_Black);
 			}
 			if (m_texture)
 			{

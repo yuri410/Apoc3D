@@ -224,11 +224,13 @@ namespace APDesigner
 		m_texture = 0;
 	}
 
-	TextureViewer::TextureViewer(MainWindow* window, const String& filePath)
+	TextureViewer::TextureViewer(MainWindow* window, const String& filePath, const String& name)
 		: Document(window), m_pictureBox(0), m_filePath(filePath), m_texture(0)
 	{
 		m_pictureBox = new PictureBox(Point(5,5 + 17), 1);
+		m_pictureBox->SetSkin(window->getUISkin());
 		m_pictureBox->eventPictureDraw().bind(this, &TextureViewer::PixtureBox_Draw);
+		getDocumentForm()->setTitle(name);
 	}
 
 	TextureViewer::~TextureViewer()
@@ -240,46 +242,63 @@ namespace APDesigner
 	{
 		if (m_texture)
 		{
-			Point newSize = m_pictureBox->Size;
-			
-			switch(m_texture->getType())
+			//Point newSize = m_pictureBox->Size;
+			Apoc3D::Math::Rectangle dr(*dstRect);
+			if (dr.Width > m_texture->getWidth())
 			{
-			case TT_Texture2D:
-				if (m_texture->getWidth() < MaxSize.X && m_texture->getHeight() < MaxSize.Y)
-				{
-					newSize.X = m_texture->getWidth();
-					newSize.Y = m_texture->getHeight();		
-
-				}
-				else
-				{
-					if (m_texture->getWidth()>m_texture->getHeight())
-					{
-						newSize.X = MaxSize.X;
-						newSize.Y = static_cast<int>(m_texture->getHeight() * MaxSize.X / (float)m_texture->getWidth());
-					}
-					else
-					{
-						newSize.X = static_cast<int>(m_texture->getWidth() * MaxSize.Y / (float)m_texture->getHeight());
-						newSize.Y = MaxSize.Y;
-					}
-				}
-
-				break;
-			case TT_Texture1D:
-				if (m_texture->getWidth() >1)
-				{
-					newSize.X = MaxSize.X;
-					newSize.Y = MinSize.Y;
-				}
-				else
-				{
-					newSize.X = MinSize.X;
-					newSize.Y = MaxSize.Y;
-				}
-				break;
+				dr.Width = m_texture->getWidth();
 			}
-			
+			if (dr.Height > m_texture->getHeight())
+			{
+				dr.Height = m_texture->getHeight();
+			}
+			if (dr.Width < 16)
+			{
+				dr.Width = 16;
+			}
+			if (dr.Height<16)
+			{
+				dr.Height = 16;
+			}
+
+			//switch(m_texture->getType())
+			//{
+			//case TT_Texture2D:
+			//	if (m_texture->getWidth() < MaxSize.X && m_texture->getHeight() < MaxSize.Y)
+			//	{
+			//		newSize.X = m_texture->getWidth();
+			//		newSize.Y = m_texture->getHeight();		
+
+			//	}
+			//	else
+			//	{
+			//		if (m_texture->getWidth()>m_texture->getHeight())
+			//		{
+			//			newSize.X = MaxSize.X;
+			//			newSize.Y = static_cast<int>(m_texture->getHeight() * MaxSize.X / (float)m_texture->getWidth());
+			//		}
+			//		else
+			//		{
+			//			newSize.X = static_cast<int>(m_texture->getWidth() * MaxSize.Y / (float)m_texture->getHeight());
+			//			newSize.Y = MaxSize.Y;
+			//		}
+			//	}
+
+			//	break;
+			//case TT_Texture1D:
+			//	if (m_texture->getWidth() >1)
+			//	{
+			//		newSize.X = MaxSize.X;
+			//		newSize.Y = MinSize.Y;
+			//	}
+			//	else
+			//	{
+			//		newSize.X = MinSize.X;
+			//		newSize.Y = MaxSize.Y;
+			//	}
+			//	break;
+			//}
+			sprite->Draw(m_texture,*dstRect,0,CV_White);
 		}
 	}
 
@@ -306,7 +325,7 @@ namespace APDesigner
 	void TextureViewer::Update(const GameTime* const time)
 	{
 		m_pictureBox->Size = getDocumentForm()->Size;
-		m_pictureBox->Size.X -= 10;
-		m_pictureBox->Size.Y -= 10 - 17;
+		m_pictureBox->Size.X -= m_pictureBox->Position.X*2;
+		m_pictureBox->Size.Y -= m_pictureBox->Position.Y*2;
 	}
 }

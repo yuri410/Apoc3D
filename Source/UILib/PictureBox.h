@@ -52,7 +52,7 @@ namespace Apoc3D
 			PictureDrawEventHandler& eventPictureDraw() { return m_eDraw; }
 
 			PictureBox(const Point& position, int border)
-				: m_mouseOver(false), m_border(border), m_texture(0)
+				: Control(position), m_mouseOver(false), m_border(border), m_texture(0)
 			{
 
 			}

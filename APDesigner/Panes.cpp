@@ -368,9 +368,10 @@ namespace APDesigner
 			case PRJITEM_Texture:
 				{
 					ProjectResTexture* tex = static_cast<ProjectResTexture*>(item->getData());
-					if (File::FileExists(tex->DestinationFile))
+					String path = PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile);
+					if (File::FileExists(path))
 					{
-						TextureViewer* tv = new TextureViewer(m_mainWindow, tex->DestinationFile);
+						TextureViewer* tv = new TextureViewer(m_mainWindow, path, tex->DestinationFile);
 						tv->LoadRes();
 						m_mainWindow->AddDocument(tv);
 
