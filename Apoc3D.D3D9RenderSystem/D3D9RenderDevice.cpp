@@ -54,7 +54,8 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			D3D9RenderDevice::D3D9RenderDevice(GraphicsDeviceManager* devManager)
-				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager), m_stateManager(0)
+				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager), 
+				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0)
 			{
 
 			}
@@ -66,10 +67,18 @@ namespace Apoc3D
 				m_defaultDS->Release();
 				m_defaultDS = 0;
 
-				delete[] m_cachedRenderTarget;
-				delete m_nativeState;
-				delete m_stateManager;
-				delete m_objectFactory;
+				if (m_caps)
+					delete m_caps;
+
+				if (m_cachedRenderTarget)
+					delete[] m_cachedRenderTarget;
+				if (m_nativeState)
+					delete m_nativeState;
+				if (m_stateManager)
+					delete m_stateManager;
+				if (m_objectFactory)
+					delete m_objectFactory;
+				
 			}
 
 			D3DDevice* D3D9RenderDevice::getDevice() const { return m_devManager->getDevice(); } 
@@ -117,6 +126,7 @@ namespace Apoc3D
 				m_cachedRenderTarget = new D3D9RenderTarget*[caps.NumSimultaneousRTs];
 				memset(m_cachedRenderTarget, 0, sizeof(D3D9RenderTarget*) * caps.NumSimultaneousRTs);
 
+				m_caps = new D3D9Capabilities(this);
 				
 				dev->GetRenderTarget(0, &m_defaultRT);
 				dev->GetDepthStencilSurface(&m_defaultDS);
@@ -320,6 +330,88 @@ namespace Apoc3D
 				dvp.MaxZ = vp.MaxZ;
 
 				getDevice()->SetViewport(&dvp);
+			}
+			Capabilities* const D3D9RenderDevice::getCapabilities() const
+			{
+				return m_caps; 
+			}
+
+			bool D3D9Capabilities::SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat)
+			{
+				GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
+				IDirect3D9* d3d9 = devMgr->getDirect3D();
+				const DeviceSettings* setting = devMgr->getCurrentSetting();
+
+				if (multisampleCount)
+				{
+					if (depthFormat == DEPFMT_Count)
+					{
+						DWORD quality;
+						HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
+							D3D9Utils::ConvertPixelFormat(pixFormat),
+							setting->D3D9.PresentParameters.Windowed, 
+							D3D9Utils::ConvertMultisample(multisampleCount),
+							&quality);
+
+						return hr == S_OK;
+					}
+					else
+					{
+						DWORD quality;
+						HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
+							D3D9Utils::ConvertPixelFormat(pixFormat),
+							setting->D3D9.PresentParameters.Windowed, 
+							D3D9Utils::ConvertMultisample(multisampleCount),
+							&quality);
+
+						if (FAILED(hr))
+							return false;
+						
+						hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
+							D3D9Utils::ConvertDepthFormat(depthFormat),
+							setting->D3D9.PresentParameters.Windowed, 
+							D3D9Utils::ConvertMultisample(multisampleCount),
+							&quality);
+
+						return hr == S_OK;
+					}
+				}
+				else
+				{
+					if (depthFormat == DEPFMT_Count)
+					{
+						HRESULT hr = d3d9->CheckDeviceFormat(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType, setting->D3D9.AdapterFormat, 
+							D3DUSAGE_RENDERTARGET, D3DRTYPE_SURFACE, D3D9Utils::ConvertPixelFormat(pixFormat) );
+						return hr == S_OK;
+					}
+					else
+					{
+						HRESULT hr = d3d9->CheckDeviceFormat( setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType, setting->D3D9.AdapterFormat,
+							D3DUSAGE_DEPTHSTENCIL, D3DRTYPE_SURFACE, D3D9Utils::ConvertDepthFormat(depthFormat));
+
+						if (FAILED(hr))
+							return false;
+
+						hr = d3d9->CheckDeviceFormat(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType, setting->D3D9.AdapterFormat, 
+							D3DUSAGE_RENDERTARGET, D3DRTYPE_SURFACE, D3D9Utils::ConvertPixelFormat(pixFormat) );
+						return hr == S_OK;
+					}
+					
+				}
+			}
+
+			bool D3D9Capabilities::SupportsPixelShader(int majorVer, int minorVer)
+			{
+				D3DCAPS9 caps;
+				m_device->getDevice()->GetDeviceCaps(&caps);
+				return caps.PixelShaderVersion >= D3DPS_VERSION((uint)majorVer, (uint)minorVer);
+			}
+
+			bool D3D9Capabilities::SupportsVertexShader(int majorVer, int minorVer)
+			{
+				D3DCAPS9 caps;
+				m_device->getDevice()->GetDeviceCaps(&caps);
+				return caps.VertexShaderVersion >= D3DVS_VERSION((uint)majorVer, (uint)minorVer);
 			}
 		}
 	}

@@ -97,7 +97,24 @@ namespace Apoc3D
 
 
 			// TODO:check and set m_isAvailable
+			m_isAvailable = true;
+			for (int i=0;i<m_varCount;i++)
+			{
+				switch (m_vars[i]->Type)
+				{
+					case VARTYPE_RenderTarget:
+						{
+							PixelFormat fmt = static_cast<PixelFormat>(m_vars[i]->DefaultValue[4]);
+							DepthFormat depFmt = static_cast<DepthFormat>(m_vars[i]->DefaultValue[5]);
 
+							uint sampleCount = m_vars[i]->DefaultValue[6];
+
+
+						}
+						break;
+				}
+			}
+			
 
 
 			// initialize resources

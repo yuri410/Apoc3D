@@ -134,6 +134,7 @@ namespace Apoc3D
 						throw Apoc3DException::createException(EX_NotSupported, L"");
 					}
 
+					quality = min(quality,quality2);
 					if (m_hasColor)
 					{
 						hr = dev->CreateRenderTarget(getWidth(), getHeight(), 
@@ -151,7 +152,7 @@ namespace Apoc3D
 					if (m_hasDepth)
 					{
 						hr = dev->CreateDepthStencilSurface(getWidth(), getHeight(), 
-							D3D9Utils::ConvertDepthFormat(getDepthFormat()), mms, quality2 - 1, TRUE, &m_depthSurface, NULL);
+							D3D9Utils::ConvertDepthFormat(getDepthFormat()), mms, quality - 1, TRUE, &m_depthSurface, NULL);
 						assert(SUCCEEDED(hr));
 
 						m_depthBuffer->setD3DBuffer(m_depthSurface);

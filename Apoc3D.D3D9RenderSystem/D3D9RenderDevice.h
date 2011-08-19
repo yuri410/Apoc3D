@@ -38,6 +38,8 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			class D3D9Capabilities;
+
 			class D3D9RenderDevice : public RenderDevice
 			{
 			private:
@@ -51,6 +53,8 @@ namespace Apoc3D
 				
 				IDirect3DSurface9* m_defaultRT;
 				IDirect3DSurface9* m_defaultDS;
+
+				D3D9Capabilities* m_caps;
 
 				vector<VolatileResource*> m_volatileResources;
 
@@ -104,6 +108,24 @@ namespace Apoc3D
 
 				virtual Viewport getViewport();
 				virtual void setViewport(const Viewport& vp);
+
+				virtual Capabilities* const getCapabilities() const;
+			};
+
+			class D3D9Capabilities : public Capabilities
+			{
+			public:
+				D3D9Capabilities(D3D9RenderDevice* device)
+					: m_device(device)
+				{
+
+				}
+
+				virtual bool SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat);
+				virtual bool SupportsPixelShader(int majorVer, int minorVer);
+				virtual bool SupportsVertexShader(int majorVer, int minorVer);
+			private:
+				D3D9RenderDevice* m_device;
 			};
 		}
 	}

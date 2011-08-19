@@ -132,9 +132,6 @@
     <ClInclude Include="Graphics\RenderSystem\RenderDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\RenderSystem\RenderDeviceCaps.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\RenderSystem\ObjectFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>

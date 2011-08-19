@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define RENDERDEVICE_H
 
 #include "Common.h"
-#include "RenderDeviceCaps.h"
+//#include "RenderDeviceCaps.h"
 
 #include "Graphics\GraphicsCommon.h"
 #include "Math\Viewport.h"
@@ -50,7 +50,7 @@ namespace Apoc3D
 
 
 			protected:
-				Capabilities m_caps;
+				//Capabilities m_caps;
 				uint m_batchCount;
 				uint m_primitiveCount;
 				uint m_vertexCount;
@@ -70,7 +70,7 @@ namespace Apoc3D
 				uint getPrimitiveCount() const { return m_primitiveCount; }
 				uint getVertexCount() const { return m_vertexCount; }
 
-				const Capabilities* getCapabilities() const { return &m_caps; }
+				virtual Capabilities* const getCapabilities() const = 0;
 				const String &getRenderDeviceName() const { return m_rdName; }
 
 				//virtual PixelFormat GetBackBufferFormat() = 0;
@@ -109,6 +109,14 @@ namespace Apoc3D
 
 				virtual Viewport getViewport() = 0;
 				virtual void setViewport(const Viewport& vp) = 0;
+			};
+
+			class APAPI Capabilities
+			{
+			public:
+				virtual bool SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat) = 0;
+				virtual bool SupportsPixelShader(int majorVer, int minorVer) = 0;
+				virtual bool SupportsVertexShader(int majorVer, int minorVer) = 0;
 			};
 		}
 	}

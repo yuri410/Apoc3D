@@ -177,7 +177,6 @@
     <ClInclude Include="Graphics\RenderSystem\GraphicsAPI.h" />
     <ClInclude Include="Graphics\RenderSystem\ObjectFactory.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderDevice.h" />
-    <ClInclude Include="Graphics\RenderSystem\RenderDeviceCaps.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderStateManager.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderWindow.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderWindowHandler.h" />
