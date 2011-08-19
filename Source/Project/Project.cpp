@@ -645,7 +645,11 @@ namespace Apoc3D
 	ConfigurationSection* ProjectItem::Save(bool savingBuild)
 	{
 		ConfigurationSection* sect = new ConfigurationSection(m_name);
-		
+
+		if (!savingBuild)
+		{
+			sect->AddAttribute(L"LastModTime", StringUtils::ToString(m_timeStamp));
+		}
 		if (m_typeData)
 		{
 			switch (m_typeData->getType())
@@ -674,6 +678,16 @@ namespace Apoc3D
 	void ProjectItem::Parse(const ConfigurationSection* sect)
 	{
 		m_name = sect->getName();//L"Name");
+
+		if (sect->hasAttribute(L"LastModTime"))
+		{
+			m_timeStamp = StringUtils::ParseInt64( sect->getAttribute(L"LastModTime"));
+		}
+		else
+		{
+			m_timeStamp = time(0);
+		}
+		
 
 		String buildType = sect->getAttribute(L"Type");
 		StringUtils::ToLowerCase(buildType);

@@ -86,6 +86,8 @@ namespace Apoc3D
 			const String& getValue() const { return m_value; }
 			const String& getAttribute(const String& name) const;
 
+			bool hasAttribute(const String& name) const;
+
 			bool tryGetValue(const String& name, String& result) const;
 			bool tryGetAttribute(const String& name, String& result) const;
 

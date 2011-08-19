@@ -65,6 +65,13 @@ namespace Apoc3D
 		}
 
 
+		bool ConfigurationSection::hasAttribute(const String& name) const
+		{
+			AttributeTable::const_iterator iter = m_attributes.find(name);
+
+			return (iter != m_attributes.end());
+		}
+
 		const String& ConfigurationSection::getValue(const String& name) const
 		{
 			SubSectionTable::const_iterator iter = m_subSection.find(name);
