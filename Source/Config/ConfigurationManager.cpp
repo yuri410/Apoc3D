@@ -39,7 +39,7 @@ namespace Apoc3D
 		void ConfigurationManager::LoadConfig(const String& name, const ResourceLocation* rl)
 		{
 			XMLConfiguration* conf = new XMLConfiguration(rl);
-			m_configs.insert(std::make_pair(name, rl));
+			m_configs.insert(std::make_pair(name, conf));
 		}
 	}
 }

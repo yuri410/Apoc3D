@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <Root>
-  <Proc00 Scrpit="modelviewscene.xml" />
+  <Proc00 Script="modelviewscene.xml" />
+  
+  <Declare Type="RenderTarget" Name="View">
+    <Width>512</Width>
+    <Height>512</Height>
+    <Format>A8R8B8G8</Format>
+  </Declare>
   
   <Scene Name="Model Viewer Scene">
     <Pass SelectorID="0" Name="Default Pass">
+      <C S="UseRT" Index="0" RT="View" />
       <C S="Render"/>
+      <C S="UseRT"/>
     </Pass>
   </Scene>
 </Root>

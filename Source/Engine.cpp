@@ -29,17 +29,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <io.h>
 #include <direct.h>
 
-#include "Vfs/FileSystem.h"
-#include "Vfs/FileLocateRule.h"
+#include "Core/PluginManager.h"
+#include "Core/Logging.h"
 #include "Config/ConfigurationManager.h"
 #include "Graphics/RenderSystem/GraphicsAPI.h"
 #include "Graphics/TextureManager.h"
 #include "Graphics/ModelManager.h"
 #include "Input/InputAPI.h"
-#include "Core/PluginManager.h"
-#include "Core/Logging.h"
 #include "Utility/StringUtils.h"
 #include "UILib/FontManager.h"
+#include "Vfs/PathUtils.h"
+#include "Vfs/FileSystem.h"
+#include "Vfs/FileLocateRule.h"
+#include "Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::VFS;
@@ -80,7 +82,15 @@ namespace Apoc3D
 		FileLocateRule::Initialize();
 
 		ConfigurationManager::Initialize();
-		
+		if (mconf)
+		{
+			for (int i=0;i<mconf->ConfigSet.getCount();i++)
+			{
+				FileLocation* fl = FileSystem::getSingleton().Locate(mconf->ConfigSet[i], FileLocateRule::Default);
+
+				ConfigurationManager::getSingleton().LoadConfig(PathUtils::GetFileNameNoExt(mconf->ConfigSet[i]), fl);
+			}
+		}
 
 		GraphicsAPIManager::Initialize();
 		InputAPIManager::Initialize();

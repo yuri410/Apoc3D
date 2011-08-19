@@ -68,7 +68,16 @@ namespace Apoc3D
 		public:
 			const Camera* getLastCamera() const { return m_lastCamera; }
 
-
+			RenderTarget* FindRenderTargetVar(const String& name) const
+			{
+				for (int i=0;i<m_varCount;i++)
+				{
+					if (m_vars[i]->Name==name)
+					{
+						return m_vars[i]->RTValue;
+					}
+				}
+			}
 
 			SceneProcedure(RenderDevice* device);
 			~SceneProcedure(void);

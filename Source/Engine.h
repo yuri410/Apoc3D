@@ -39,6 +39,9 @@ namespace Apoc3D
 	struct APAPI ManualStartConfig
 	{
 		List<String> ConfigSet;
+		///** Defines a list of effects which can be setup fully using scripts.
+		//*/
+		//List<String> EffectList;
 		List<String> WorkingDirectories;
 		List<String> PluginDynLibList;
 		FastList<Plugin*> PluginList;

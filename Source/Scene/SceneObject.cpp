@@ -65,7 +65,7 @@ namespace Apoc3D
 			}
 			if (m_models[lod])
 			{
-				return m_models[lod]->GetRenderOperation();
+				return m_models[lod]->GetRenderOperation(lod);
 			}
 			return 0;
 		}
