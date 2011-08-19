@@ -137,7 +137,7 @@ namespace Apoc3D
 				m_effectName[i] = mdata.EffectName[i];
 				LoadEffect(i);
 			}
-			for (int i=0;i<MaxScenePass;i++)
+			for (int i=0;i<MaxTextures;i++)
 			{
 				m_texName[i] = mdata.TextureName[i];
 				LoadTexture(i);
@@ -170,7 +170,7 @@ namespace Apoc3D
 			{
 				data.EffectName[i] = m_effectName[i];
 			}
-			for (int i=0;i<MaxScenePass;i++)
+			for (int i=0;i<MaxTextures;i++)
 			{
 				data.TextureName[i] = m_texName[i];
 			}
@@ -206,7 +206,7 @@ namespace Apoc3D
 				m_effectName[i] = mdata.EffectName[i];
 				LoadEffect(i);
 			}
-			for (int i=0;i<MaxScenePass;i++)
+			for (int i=0;i<MaxTextures;i++)
 			{
 				m_texName[i] = mdata.TextureName[i];
 				LoadTexture(i);
@@ -241,7 +241,7 @@ namespace Apoc3D
 			{
 				data.EffectName[i] = m_effectName[i];
 			}
-			for (int i=0;i<MaxScenePass;i++)
+			for (int i=0;i<MaxTextures;i++)
 			{
 				data.TextureName[i] = m_texName[i];
 			}

@@ -77,7 +77,7 @@ namespace Apoc3D
 			m_parentBoneID = data->ParentBoneID;
 			m_boundingSphere = data->BoundingSphere;
 
-			m_factory->CreateVertexDeclaration(data->VertexElements);
+			m_vtxDecl = m_factory->CreateVertexDeclaration(data->VertexElements);
 			
 			// vertex data
 			m_vertexBuffer = m_factory->CreateVertexBuffer(vertexCount, m_vtxDecl, BU_Static);
@@ -102,6 +102,7 @@ namespace Apoc3D
 				const MeshFace& face = faces[i];
 
 				const int matID = face.MaterialID;
+				assert(matID<matCount);
 				indices[matID].Add(face.IndexA);
 				indices[matID].Add(face.IndexB);
 				indices[matID].Add(face.IndexC);

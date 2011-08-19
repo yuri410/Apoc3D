@@ -148,7 +148,7 @@ namespace Apoc3D
 		class APAPI ChaseCamera : public Camera
 		{
 		public:
-			ChaseCamera(void);
+			ChaseCamera(float fov = ToRadian(45));
 			~ChaseCamera(void);
 
 			void Reset();

@@ -89,6 +89,7 @@ namespace Apoc3D
 			const FastList<SceneVariable*>& vars, int def);
 		bool ParseCallArgRef(const TiXmlElement* node, const string& name, SceneOpArg& arg,
 			const FastList<SceneVariable*>& vars);
+		bool ParseCallArgUintHexImm(const TiXmlElement* node, const string& name, SceneOpArg& arg);
 
 		PixelFormat ConvertFormat(const string& fmt);
 		DepthFormat ConvertDepthFormat(const string& fmt);
@@ -651,6 +652,10 @@ namespace Apoc3D
 					if (lowStrName == String(L"scene"))
 					{
 						m_sceneName = StringUtils::toWString(elem->Attribute("Name"));
+						for (const TiXmlNode* i = elem->FirstChild(); i!=0; i=i->NextSibling())
+						{
+							BuildNode(i);
+						}
 					}
 					else if (lowStrName == String(L"pass"))
 					{
@@ -664,10 +669,10 @@ namespace Apoc3D
 					{
 						LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + strName + L" Node", LOGLVL_Warning);
 
-						//for (const TiXmlNode* i = elem->FirstChild(); i!=0; i=i->NextSibling())
-						//{
-						//	BuildNode(i);
-						//}
+						for (const TiXmlNode* i = elem->FirstChild(); i!=0; i=i->NextSibling())
+						{
+							BuildNode(i);
+						}
 					}
 				}
 				break;
@@ -680,9 +685,11 @@ namespace Apoc3D
 			string strName = node->Attribute("Name");
 			passData.Name = StringUtils::toWString(strName);
 
+			passData.CameraID=0;
 			node->Attribute("CameraID", &passData.CameraID);
 
 			BuildInstructions(node, &passData);
+			PassData.Add(passData);
 		}
 		void SceneRenderScriptParser::BuildInstructions(const TiXmlElement* node, ScenePassData* data)
 		{
@@ -756,13 +763,13 @@ namespace Apoc3D
 				bool passed = false;
 				{
 					SceneOpArg arg;
-					passed |= ParseCallArgBool(node, "cl_target", arg, GlobalVars, false);
+					passed |= ParseCallArgBool(node, "CL_Target", arg, GlobalVars, false);
 					inst.Args.push_back(arg);
 
-					passed |= ParseCallArgBool(node, "cl_depth", arg, GlobalVars, false);
+					passed |= ParseCallArgBool(node, "CL_Depth", arg, GlobalVars, false);
 					inst.Args.push_back(arg);
 
-					passed |= ParseCallArgBool(node, "cl_stencil", arg, GlobalVars, false);
+					passed |= ParseCallArgBool(node, "CL_Stencil", arg, GlobalVars, false);
 					inst.Args.push_back(arg);
 				}
 
@@ -776,9 +783,16 @@ namespace Apoc3D
 					ParseCallArgInt(node, "Stencil", arg, GlobalVars, 0);
 					inst.Args.push_back(arg);
 
-					ParseCallArgUint(node, "ClearColor", arg, GlobalVars, 0);
-					inst.Args.push_back(arg);
-
+					if (ParseCallArgUintHexImm(node, "ClearColorHex", arg))
+					{
+						inst.Args.push_back(arg);
+					}
+					else 
+					{
+						ParseCallArgUint(node, "ClearColor", arg, GlobalVars, 0);
+						inst.Args.push_back(arg);
+					}
+					
 					instructions.push_back(inst);
 				}
 				else
@@ -796,7 +810,7 @@ namespace Apoc3D
 				ParseCallArgUint(node, "Index", arg, GlobalVars, 0);
 				inst.Args.push_back(arg);
 
-				if (ParseCallArgRef(node, "RT", arg, GlobalVars))
+				if (node->Attribute("RT") && ParseCallArgRef(node, "RT", arg, GlobalVars))
 					inst.Args.push_back(arg);
 
 				instructions.push_back(inst);
@@ -1160,7 +1174,21 @@ namespace Apoc3D
 
 			return false;
 		}
+		bool ParseCallArgUintHexImm(const TiXmlElement* node, const string& name, SceneOpArg& arg)
+		{
+			uint flag;
+			const char* v = node->Attribute(name.c_str());
+			if (v)
+			{
+				flag = StringUtils::ParseUInt32Hex(StringUtils::toWString(v));
 
+				arg.IsImmediate = true;
+				arg.DefaultValue[0] = flag;
+				return true;
+
+			}
+			return false;
+		}
 		bool ParseCallArgUint(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, uint def)
 		{

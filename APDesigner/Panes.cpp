@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Project/Project.h"
 #include "UIResources.h"
 #include "Document.h"
+#include "ModelDocument.h"
 
 #include "TextureViewer.h"
 
@@ -383,6 +384,19 @@ namespace APDesigner
 
 						}
 
+					}
+					break;
+				case PRJITEM_Model:
+					{
+						ProjectResModel* mdl = static_cast<ProjectResModel*>(item->getData());
+						String path = PathUtils::Combine(m_currentProject->getOutputPath(), mdl->DstFile);
+						String pathAnim = PathUtils::Combine(m_currentProject->getOutputPath(), mdl->DstAnimationFile);
+						if (File::FileExists(path))
+						{
+							ModelDocument* md = new ModelDocument(m_mainWindow, mdl->DstFile, path, File::FileExists(pathAnim) ? pathAnim : L"");
+							md->LoadRes();
+							m_mainWindow->AddDocument(md);
+						}
 					}
 					break;
 				}

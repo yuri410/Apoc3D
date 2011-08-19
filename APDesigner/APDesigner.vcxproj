@@ -81,9 +81,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="APDesigner.ico" />
-    <None Include="modelviewscene.xml">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="ModelViewSceneRenderer.xml" />
+    <None Include="ModelViewSceneScript.xml" />
     <None Include="ReadMe.txt" />
     <None Include="small.ico" />
   </ItemGroup>
@@ -96,7 +95,6 @@
     <ClInclude Include="Document.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="ModelDocument.h" />
-    <ClInclude Include="ModelEditor.h" />
     <ClInclude Include="ObjectEditor.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Panes.h" />
@@ -115,7 +113,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="ModelDocument.cpp" />
-    <ClCompile Include="ModelEditor.cpp" />
     <ClCompile Include="ObjectEditor.cpp" />
     <ClCompile Include="Panes.cpp" />
     <ClCompile Include="stdafx.cpp">

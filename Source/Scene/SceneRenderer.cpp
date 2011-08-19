@@ -142,9 +142,12 @@ namespace Apoc3D
 
 				m_procFallbacks.Add(proc);
 
-				// check for compatibility
+				
+				//m_procFallbacks.Reverse();
+				
 				if (m_selectedProc==-1)
 				{
+					// check if the current render system support this proc
 					if (proc->IsAvailable())
 					{
 						m_selectedProc = m_procFallbacks.getCount()-1;

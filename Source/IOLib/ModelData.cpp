@@ -172,13 +172,13 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw Apoc3DException::createException(EX_NotSupported, L"The mesh format version is out of date.");
+					throw Apoc3DException::createException(EX_NotSupported, L"The format version of this mesh data is out of date.");
 				}
 			}
 			else
 			{
 				// read vertex element
-				BinaryReader* br = data->GetData(TAG_3_VertexDataTag);
+				BinaryReader* br = data->GetData(TAG_3_VertexDeclTag);
 
 				int elemConut = br->ReadInt32();
 				VertexElements.ResizeDiscard(elemConut);
@@ -209,7 +209,7 @@ namespace Apoc3D
 			// vertex data
 			{
 				BinaryReader* br = data->GetData(TAG_3_VertexDataTag);
-
+				VertexData = new char[VertexCount*VertexSize];
 				br->ReadBytes(reinterpret_cast<char*>(VertexData), VertexCount*VertexSize);
 
 				br->Close();

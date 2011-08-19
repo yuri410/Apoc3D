@@ -397,7 +397,13 @@ namespace Apoc3D
 				return false;
 			}
 
-
+			void Reverse()
+			{
+				for (int i=0;i<m_internalPointer/2;i++)
+				{
+					swap(m_elements[i], m_elements[m_internalPointer-i-1]);
+				}
+			}
 			T& operator [](int32 i) const
 			{
 				return m_elements[i];

@@ -90,7 +90,7 @@ namespace APDesigner
 		virtual bool IsReadOnly() = 0;
 
 
-
+		virtual void Render() { }
 		virtual void Update(const GameTime* const time);
 	};
 }

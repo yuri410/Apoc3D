@@ -46,7 +46,7 @@ namespace APDesigner
 
 		virtual void Initialize(RenderDevice* device);
 		virtual void Update(const GameTime* const time);
-
+		virtual void Render();
 	private:
 		String m_name;
 		String m_filePath;
@@ -58,6 +58,8 @@ namespace APDesigner
 		ModelSharedData* m_modelSData;
 		Model* m_model;
 		const AnimationData* m_animData;
+
+		ChaseCamera* m_camera;
 	};
 }
 

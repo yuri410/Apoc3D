@@ -22,7 +22,8 @@
     <None Include="APDesigner.ico">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="modelviewscene.xml" />
+    <None Include="ModelViewSceneRenderer.xml" />
+    <None Include="ModelViewSceneScript.xml" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -53,9 +54,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TextureViewer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelEditor.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Panes.h">
@@ -94,9 +92,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TextureViewer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelEditor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Panes.cpp">

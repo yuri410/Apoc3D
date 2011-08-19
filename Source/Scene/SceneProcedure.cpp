@@ -115,6 +115,7 @@ namespace Apoc3D
 								m_isAvailable = false;
 							}
 						}
+						break;
 					case VARTYPE_Effect:
 						{
 							if (!EffectManager::getSingleton().HasEffect(m_vars[i]->DefaultStringValue))
@@ -158,7 +159,7 @@ namespace Apoc3D
 							uint sampleCount = m_vars[i]->DefaultValue[6];
 
 							RenderTarget* rt;
-							if (depFmt != DEPFMT_Count)
+							if (depFmt == DEPFMT_Count)
 							{
 								rt = factory->CreateRenderTarget(width, height, fmt);
 							}

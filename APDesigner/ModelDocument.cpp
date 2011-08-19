@@ -37,6 +37,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/ModelManager.h"
 #include "Graphics/Material.h"
 #include "Graphics/Model.h"
+#include "Graphics/Camera.h"
 
 #include "Scene/SceneRenderer.h"
 
@@ -60,13 +61,14 @@ namespace APDesigner
 
 		m_sceneRenderer = new SceneRenderer(window->getDevice());
 
-		FileLocation* fl = FileSystem::getSingleton().Locate(L"modelviewscene.xml", FileLocateRule::Default);
+		FileLocation* fl = FileSystem::getSingleton().Locate(L"ModelViewSceneRenderer.xml", FileLocateRule::Default);
 
 		XMLConfiguration* config = new XMLConfiguration(fl);
 		m_sceneRenderer->Load(config);
 		delete config;
 		delete fl;
-
+		m_camera = new ChaseCamera();
+		m_sceneRenderer->RegisterCamera(m_camera);
 	}
 
 	ModelDocument::~ModelDocument()
@@ -77,6 +79,9 @@ namespace APDesigner
 
 
 		}
+		delete m_sceneRenderer;
+		delete m_camera;
+		
 		//delete m_modelSDat/*a*/;;
 	}
 	
@@ -125,4 +130,9 @@ namespace APDesigner
 		//m_btnZoomOut->Position.X = m_pictureBox->Size.X-30;
 		
 	}
+	void ModelDocument::Render()
+	{
+
+	}
+
 }

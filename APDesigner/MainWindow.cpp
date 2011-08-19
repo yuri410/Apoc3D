@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "MainWindow.h"
 
 #include "Core/GameTime.h"
+#include "Config/XmlConfiguration.h"
 
 #include "Graphics/RenderSystem/RenderWindow.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
@@ -38,7 +39,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/Menu.h"
 #include "UILib/List.h"
 #include "Project/Project.h"
-#include "Config/XmlConfiguration.h"
 
 #include "Panes.h"
 
@@ -298,6 +298,11 @@ namespace APDesigner
 		//m_pane->Draw(m_sprite);
 
 		//m_sprite->End();
+
+		for (int i=0;i<m_documentList.getCount();i++)
+		{
+			m_documentList[i]->Render();
+		}
 
 		m_device->EndFrame();
 

@@ -79,6 +79,17 @@ namespace Apoc3D
 
 			return ret;
 		}
+		uint32 StringUtils::ParseUInt32Hex(const String& val)
+		{
+			wistringstream str(val);
+			str.imbue(locale::classic());
+			str.setf ( ios::hex, ios::basefield );       // set hex as the basefield
+			str.setf ( ios::showbase ); 
+			uint32 ret = 0;
+			str >> ret;
+
+			return ret;
+		}
 		uint64 StringUtils::ParseUInt64(const String& val)
 		{
 			wistringstream str(val);
@@ -94,7 +105,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			int16 ret = 0;
 			str >> ret;
-
+			
 			return ret;
 		}
 		int32 StringUtils::ParseInt32(const String& val)

@@ -91,7 +91,14 @@ namespace Apoc3D
 			void Load(Configuration* config);
 			void Load(const String& configName);
 
-			
+			void RegisterCamera(Camera* camera)
+			{
+				m_cameraList.Add(camera);
+			}
+			void UnregisterCamera(Camera* camera)
+			{
+				m_cameraList.Remove(camera);
+			}
 
 			void RenderScene(SceneManager* sceMgr);
 

@@ -86,6 +86,42 @@ namespace APBuild
 
 			aiMesh* m = scene->mMeshes[i];
 
+			{
+				aiMaterial* amtrl = scene->mMaterials[m->mMaterialIndex];
+
+				MaterialData mtrl;
+				mtrl.SetDefaults();
+
+				for (uint j=0;j<amtrl->mNumProperties;j++)
+				{
+					aiMaterialProperty* prop = amtrl->mProperties[j];
+					if (std::string(prop->mKey.data) == std::string("$clr.ambient"))
+					{
+						mtrl.Ambient = ConvertPropertyColor4(prop);
+					}
+					else if (std::string(prop->mKey.data) == std::string("$clr.diffuse"))
+					{
+						mtrl.Diffuse = ConvertPropertyColor4(prop);
+					}
+					else if (std::string(prop->mKey.data) == std::string("$clr.specular"))
+					{
+						mtrl.Specular = ConvertPropertyColor4(prop);
+					}
+					else if (std::string(prop->mKey.data) == std::string("$mat.shininess"))
+					{
+						mtrl.Power = ConvertPropertyFloat(prop);
+					}
+					else if (std::string(prop->mKey.data) == std::string("$tex.file"))
+					{
+						String texFile = StringUtils::toWString(prop->mData);
+						StringUtils::Trim(texFile, L" \t\r\n\07");
+						mtrl.TextureName[0] = texFile;
+					}
+				}
+
+
+				data->Materials.Add(mtrl);
+			}
 			data->Name = StringUtils::toWString(m->mName.data);
 
 			// faces
@@ -96,7 +132,7 @@ namespace APBuild
 					aiFace f = m->mFaces[j];
 					assert(f.mNumIndices == 3);
 
-					MeshFace face(f.mIndices[0], f.mIndices[1], f.mIndices[2], m->mMaterialIndex);
+					MeshFace face(f.mIndices[0], f.mIndices[1], f.mIndices[2], 0);
 					data->Faces.Add(face);
 				}
 			}
@@ -231,42 +267,6 @@ namespace APBuild
 			}
 			data->BoundingSphere.Radius = sqrtf(data->BoundingSphere.Radius);
 
-			{
-				aiMaterial* amtrl = scene->mMaterials[m->mMaterialIndex];
-				
-				MaterialData mtrl;
-				mtrl.SetDefaults();
-
-				for (uint j=0;j<amtrl->mNumProperties;j++)
-				{
-					aiMaterialProperty* prop = amtrl->mProperties[j];
-					if (std::string(prop->mKey.data) == std::string("$clr.ambient"))
-					{
-						mtrl.Ambient = ConvertPropertyColor4(prop);
-					}
-					else if (std::string(prop->mKey.data) == std::string("$clr.diffuse"))
-					{
-						mtrl.Diffuse = ConvertPropertyColor4(prop);
-					}
-					else if (std::string(prop->mKey.data) == std::string("$clr.specular"))
-					{
-						mtrl.Specular = ConvertPropertyColor4(prop);
-					}
-					else if (std::string(prop->mKey.data) == std::string("$mat.shininess"))
-					{
-						mtrl.Power = ConvertPropertyFloat(prop);
-					}
-					else if (std::string(prop->mKey.data) == std::string("$tex.file"))
-					{
-						String texFile = StringUtils::toWString(prop->mData);
-						StringUtils::Trim(texFile, L" \t\r\n\07");
-						mtrl.TextureName[0] = texFile;
-					}
-				}
-
-
-				data->Materials.Add(mtrl);
-			}
 			//data->Materials.Add();
 
 			//int* blendCountMap = new int[m->mNumVertices];

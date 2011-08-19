@@ -276,6 +276,8 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		class Camera;
+		class FpsCamera;
+		class ChaseCamera;
 
 		class Renderable;
 		class GeometryData;

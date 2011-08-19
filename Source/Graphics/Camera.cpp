@@ -48,11 +48,11 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
-		ChaseCamera::ChaseCamera(void)
+		ChaseCamera::ChaseCamera(float fov)
 			: m_velocity(Vector3Utils::Zero), m_position(Vector3Utils::Zero), m_lootAt(Vector3Utils::Zero), m_desiredPosition(Vector3Utils::Zero),
 			m_up(Vector3Utils::UnitY), m_chasePosition(Vector3Utils::Zero), m_chaseDirection(Vector3Utils::Zero),
 			m_stiffness(1800), m_damping(600), m_mass(50), 
-			m_fieldOfView(ToRadian(30)), m_aspectRatio(1),
+			m_fieldOfView(fov), m_aspectRatio(1),
 			m_near(1), m_far(1000)
 		{
 			m_lootAtOfs = Vector3Utils::LDVector(0, 3.0f, 0);
