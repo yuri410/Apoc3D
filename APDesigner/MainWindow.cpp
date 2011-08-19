@@ -56,6 +56,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UIResources.h"
 
 #include "CommonDialog/FileDialog.h"
+#include "BuildService/BuildService.h"
 
 using namespace Apoc3D::Input;
 using namespace Apoc3D::VFS;
@@ -106,17 +107,15 @@ namespace APDesigner
 		{
 			FileLocateRule rule;
 			LocateCheckPoint pt;
-			pt.AddPath(L"classic_ui.pak");
+			pt.AddPath(L"classic_skin.pak");
 			rule.AddCheckPoint(pt);
 			m_UIskin = new StyleSkin(m_device, rule);
 
 			m_UIskin->ControlFontName = L"english";
-		}
-
-		{
-			FileLocation* fl = FileSystem::getSingleton().Locate(L"english.fnt", FileLocateRule::Default);
+			FileLocation* fl = FileSystem::getSingleton().Locate(L"english.fnt", rule);
 			FontManager::getSingleton().LoadFont(m_device, L"english", fl);
 		}
+
 		//m_font = FontManager::getSingleton().getFont(L"english");
 
 		ObjectFactory* fac = m_device->getObjectFactory();
@@ -175,8 +174,7 @@ namespace APDesigner
 
 
 			m_mainMenu->Add(pojMenu,pojSubMenu);
-
-
+		
 			//MenuItem* tt2 = new MenuItem(L"Menu 2");
 			//SubMenu* sb = new SubMenu(0);
 			//sb->SetSkin(m_UIskin);
@@ -185,6 +183,20 @@ namespace APDesigner
 
 			//m_mainMenu->Add(tt2, sb);
 
+		}
+		{
+			MenuItem* buildMenu = new MenuItem(L"Build");
+
+			SubMenu* buildSubMenu = new SubMenu(0);
+			buildSubMenu->SetSkin(m_UIskin);
+
+			MenuItem* mi=new MenuItem(L"Build All");
+			mi->event().bind(this, &MainWindow::Menu_BuildAll);
+			buildSubMenu->Add(mi,0);
+
+			m_mainMenu->Add(buildMenu, buildSubMenu);
+		}
+		{
 			m_mainMenu->Initialize(m_device);
 			UIRoot::setMainMenu(m_mainMenu);
 		}
@@ -354,6 +366,13 @@ namespace APDesigner
 	void MainWindow::Menu_Exit(Control* ctl)
 	{
 		m_window->Exit();
+	}
+	void MainWindow::Menu_BuildAll(Control* ctl)
+	{
+		if (m_project)
+		{
+			BuildInterface::BuildAll(m_project);
+		}
 	}
 
 	void MainWindow::Document_Activated(Document* doc)

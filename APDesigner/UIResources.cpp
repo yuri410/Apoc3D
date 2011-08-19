@@ -17,7 +17,7 @@ namespace APDesigner
 
 	void UIResources::Initialize(RenderDevice* device)
 	{
-		Archive* arc = FileSystem::getSingleton().LocateArchive(L"apdui_icons.pak", FileLocateRule::Default);
+		Archive* arc = FileSystem::getSingleton().LocateArchive(L"apdgui.pak", FileLocateRule::Default);
 		int count = arc->getFileCount();
 		
 		m_maps = new FastMap<String, Texture*>(count, IBuiltInEqualityComparer<String>::Default);

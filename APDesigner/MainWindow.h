@@ -71,7 +71,7 @@ namespace APDesigner
 		void Menu_CloseProject(Control* ctl);
 		void Menu_Insert(Control* ctl);
 		void Menu_Exit(Control* ctl);
-
+		void Menu_BuildAll(Control* ctl);
 		void OpenProject(const String& path);
 		void SaveProject(const String& path);
 		void CloseProject();

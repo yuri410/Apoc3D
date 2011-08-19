@@ -119,6 +119,7 @@ namespace Apoc3D
 		{
 			wistringstream str(val);
 			str.imbue(locale::classic());
+			
 			float ret = 0;
 			str >> ret;
 

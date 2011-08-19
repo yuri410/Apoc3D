@@ -45,7 +45,7 @@ namespace Apoc3D
 		{
 		protected:
 			typedef unordered_map<String, String> AttributeTable;
-			typedef unordered_map<String, String> ValueTable;
+			//typedef unordered_map<String, String> ValueTable;
 			typedef unordered_map<String, ConfigurationSection*> SubSectionTable;
 
 			String m_name;
@@ -58,6 +58,9 @@ namespace Apoc3D
 			typedef SubSectionTable::const_iterator SubSectionIterator;
 			typedef AttributeTable::const_iterator AttributeIterator;
 
+			ConfigurationSection(const String& name, int capacity)
+				: m_name(name), m_subSection(capacity)
+			{ }
 			ConfigurationSection(const String& name)
 				: m_name(name) 
 			{ }

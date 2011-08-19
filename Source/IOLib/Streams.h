@@ -323,6 +323,7 @@ namespace Apoc3D
 					{
 						offset = 0;
 					}
+					m_baseStream->setPosition(offset+ m_baseOffset);
 					break;
 				case SEEK_Current:
 					if (m_baseStream->getPosition() + offset > m_baseOffset + m_length)
@@ -333,6 +334,7 @@ namespace Apoc3D
 					{
 						offset = m_baseOffset - m_baseStream->getPosition();
 					}
+					m_baseStream->Seek(offset, mode);
 					break;
 				case SEEK_End:
 					if (offset > 0)
@@ -344,9 +346,10 @@ namespace Apoc3D
 					{
 						offset = -m_length;
 					}
+					m_baseStream->setPosition(m_length - offset+ m_baseOffset);
 					break;
 				}
-				return m_baseStream->Seek(offset, mode);
+				
 			}
 
 			virtual void Close() { }

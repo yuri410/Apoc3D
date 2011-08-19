@@ -12,7 +12,7 @@ namespace APDesigner
 	class BuildInterface
 	{
 	private:
-
+		static void ExecuteBuildOperation();
 	public:
 		static String LastResult;
 		static void BuildSingleItem(ProjectItem* item);

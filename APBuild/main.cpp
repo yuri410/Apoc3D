@@ -31,8 +31,10 @@ using namespace Apoc3D::VFS;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Utility;
 
+#define BASE_BUILD 0
+#define FINAL_BUILD 0xff
 
-int Build(ConfigurationSection* sect)
+int Build(ConfigurationSection* sect, int pass)
 {
 	String buildType = sect->getAttribute(L"Type");
 	wcout << L"Building ";
@@ -41,45 +43,62 @@ int Build(ConfigurationSection* sect)
 
 	StringUtils::ToLowerCase(buildType);
 
-	if (buildType == L"texture")
+	if (pass == BASE_BUILD)
 	{
-		TextureBuild::Build(sect);
-	}
-	else if (buildType == L"mesh")
-	{
-		MeshBuild::Build(sect);
-	}
-	else if (buildType == L"effect")
-	{
-
-	}
-	else if (buildType == L"font")
-	{
-		FontBuild::Build(sect);
-	}
-	else if (buildType == L"pak")
-	{
-		PakBuild::Build(sect);
-	}
-	else if (buildType == L"uilayout")
-	{
-
-	}
-	else if (buildType == L"project")
-	{
-		for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
-			iter != sect->SubSectionEnd(); iter++)
+		if (buildType == L"texture")
 		{
-			ConfigurationSection* item = iter->second;
+			TextureBuild::Build(sect);
+		}
+		else if (buildType == L"mesh")
+		{
+			MeshBuild::Build(sect);
+		}
+		else if (buildType == L"effect")
+		{
 
-			Build(item);
+		}
+		else if (buildType == L"font")
+		{
+			FontBuild::Build(sect);
+		}
+		else if (buildType == L"uilayout")
+		{
+
+		}
+		else if (buildType == L"project" || buildType == L"folder")
+		{
+			for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
+				iter != sect->SubSectionEnd(); iter++)
+			{
+				ConfigurationSection* item = iter->second;
+
+				Build(item, pass);
+			}
+		}
+		else
+		{
+			return ERR_UNSUPPORTED_BUILD;
 		}
 	}
-	else
+	else if (pass == FINAL_BUILD)
 	{
-		return ERR_UNSUPPORTED_BUILD;
+		if (buildType == L"pak" && pass == FINAL_BUILD)
+		{
+			PakBuild::Build(sect);
+		}
+		else if (buildType == L"project" || buildType == L"folder")
+		{
+			for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
+				iter != sect->SubSectionEnd(); iter++)
+			{
+				ConfigurationSection* item = iter->second;
+
+				Build(item, pass);
+			}
+		}
 	}
 	
+
 	for (size_t i=0;i<CompileLog::Logs.size();i++)
 	{
 		switch (CompileLog::Logs[i].Type)
@@ -127,7 +146,13 @@ int Build(int argc, _TCHAR* argv[])
 		XMLConfiguration* config = new XMLConfiguration(fl);
 
 		ConfigurationSection* sect = config->begin()->second;
-		return Build(sect);
+		wcout << L"Pass1:\n";
+		int code = Build(sect, BASE_BUILD);
+		if (code)
+			return code;
+		wcout << L"Pass2:\n";
+		code = Build(sect, FINAL_BUILD);
+		return code;
 	}
 	else
 	{

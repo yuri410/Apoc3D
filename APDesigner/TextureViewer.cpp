@@ -38,6 +38,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "MainWindow.h"
 #include "Vfs/ResourceLocation.h"
 #include "Utility/StringUtils.h"
+#include "UIResources.h"
 
 using namespace Apoc3D::Utility;
 
@@ -258,47 +259,70 @@ namespace APDesigner
 
 	void TextureViewer::PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
+		{
+			Texture* alphaGrid = UIResources::GetTexture(L"alphagrid");
+			int x ,y;
+			for (x =dstRect->X;x<dstRect->Width;x+=alphaGrid->getWidth())
+			{
+				for (y =dstRect->Y;y<dstRect->Height;y+=alphaGrid->getHeight())
+				{
+					Apoc3D::Math::Rectangle destRect(x,y,dstRect->Width-x, dstRect->Height-y);
+					if (destRect.Width>alphaGrid->getWidth())
+						destRect.Width = alphaGrid->getWidth();
+					if (destRect.Height>alphaGrid->getHeight())
+						destRect.Height = alphaGrid->getHeight();
+
+					Apoc3D::Math::Rectangle srcRect(0,0,destRect.Width, destRect.Height);
+					sprite->Draw(alphaGrid, destRect, &srcRect, CV_White);
+				}
+			}
+
+
+		}
+
 		if (m_texture)
 		{
-			sprite->Flush();
+			
+			
+			
 
-			RenderDevice* device = sprite->getRenderDevice();
-			RenderStateManager* manager = device->getRenderState();
-			Apoc3D::Math::Rectangle oldScissorRect;
-			bool restoreScissor = manager->getScissorTestEnabled();
-			if (restoreScissor)
-			{
-				oldScissorRect = manager->getScissorTestRect();
-			}
-			{
-				Apoc3D::Math::Rectangle sr(*dstRect);
-				sr.X += getDocumentForm()->Position.X;
-				sr.Y += getDocumentForm()->Position.Y;
+			//RenderDevice* device = sprite->getRenderDevice();
+			//RenderStateManager* manager = device->getRenderState();
+			//Apoc3D::Math::Rectangle oldScissorRect;
+			//bool restoreScissor = manager->getScissorTestEnabled();
+			//if (restoreScissor)
+			//{
+			//	oldScissorRect = manager->getScissorTestRect();
+			//}
+			//{
+			//	Apoc3D::Math::Rectangle sr(*dstRect);
+			//	sr.X += getDocumentForm()->Position.X;
+			//	sr.Y += getDocumentForm()->Position.Y;
 
-				manager->setScissorTest(true, &sr);
-			}
+			//	manager->setScissorTest(true, &sr);
+			//}
 			
 			float scale = powf(2, (float)m_scale);
+
+
 			//Point newSize = m_pictureBox->Size;
 			Apoc3D::Math::Rectangle dr(*dstRect);
-			//if (dr.Width > m_texture->getWidth())
+			if (dr.Width > (int)(m_texture->getWidth()*scale))
 			{
 				dr.Width = (int)(m_texture->getWidth()*scale);
 			}
-			//if (dr.Height > m_texture->getHeight())
+			if (dr.Height > (int)(m_texture->getHeight()*scale))
 			{
 				dr.Height = (int)(m_texture->getHeight()*scale);
 			}
-			if (dr.Width < 16)
-			{
-				dr.Width = 16;
-			}
-			if (dr.Height<16)
-			{
-				dr.Height = 16;
-			}
 
-			sprite->Draw(m_texture,dr,0,CV_White);
+			Apoc3D::Math::Rectangle srcRect(0,0,(int)(dr.Width/scale),(int)(dr.Height/scale));
+			if (srcRect.Width > m_texture->getWidth())
+				srcRect.Width = m_texture->getWidth();
+			if (srcRect.Height > m_texture->getHeight())
+				srcRect.Height = m_texture->getHeight();
+
+			sprite->Draw(m_texture,dr,&srcRect,CV_White);
 			switch(m_texture->getType())
 			{
 			case TT_Texture1D:
@@ -320,15 +344,15 @@ namespace APDesigner
 				break;
 			}
 
-			sprite->Flush();
-			if (restoreScissor)
-			{
-				manager->setScissorTest(true, &oldScissorRect);
-			}
-			else
-			{
-				manager->setScissorTest(false,0);
-			}
+			//sprite->Flush();
+			//if (restoreScissor)
+			//{
+			//	manager->setScissorTest(true, &oldScissorRect);
+			//}
+			//else
+			//{
+			//	manager->setScissorTest(false,0);
+			//}
 			//switch(m_texture->getType())
 			//{
 			//case TT_Texture2D:
@@ -377,7 +401,7 @@ namespace APDesigner
 
 		float scale = powf(2, (float)m_scale);
 
-		String scaleRatio = String(L" (") +StringUtils::ToString(scale,2);
+		String scaleRatio = String(L" (") +StringUtils::ToString(scale*100,2,0,' ', ios::fixed);
 		scaleRatio.append(L"%)");
 
 		getDocumentForm()->setTitle(m_name + scaleRatio);
@@ -390,7 +414,7 @@ namespace APDesigner
 
 		float scale = powf(2, (float)m_scale);
 
-		String scaleRatio = String(L" (") +StringUtils::ToString(scale,2);
+		String scaleRatio = String(L" (") +StringUtils::ToString(scale*100,2,0,' ', ios::fixed);
 		scaleRatio.append(L"%)");
 
 		getDocumentForm()->setTitle(m_name + scaleRatio);

@@ -163,6 +163,7 @@ namespace Apoc3D
 
 		void Font::LoadGlyphData(BinaryReader* br, Glyph& glyph)
 		{
+			//br->getBaseStream()->setPosition(glyph.Offset);
 			br->getBaseStream()->Seek(glyph.Offset, SEEK_Begin);
 
 			DataRectangle dataRect = m_font->Lock(0, LOCK_None, glyph.MappedRect);

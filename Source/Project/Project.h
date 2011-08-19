@@ -73,6 +73,7 @@ namespace Apoc3D
 		virtual bool RequiresPostEdit() { return false; }
 		virtual void Parse(const ConfigurationSection* sect) = 0;
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) = 0;
+		virtual std::vector<String> GetAllOutputFiles() =0;
 
 		virtual ~ProjectItemData() { }
 	};
@@ -90,6 +91,8 @@ namespace Apoc3D
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
 
+		virtual std::vector<String> GetAllOutputFiles();
+
 		virtual ProjectItemType getType() const { return PRJITEM_Custom; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
@@ -106,6 +109,9 @@ namespace Apoc3D
 	class ProjectFolder : public ProjectItemData
 	{
 	public:
+		String PackType;
+		String DestinationPack;
+
 		ProjectFolder(Project* prj)
 			: ProjectItemData(prj)
 		{
@@ -117,9 +123,13 @@ namespace Apoc3D
 		virtual bool IsNotBuilt() { return true; }
 		virtual bool IsEarlierThan(time_t t) { return true; }
 
+
+		virtual std::vector<String> GetAllOutputFiles();
+		
 		virtual ProjectItemType getType() const { return PRJITEM_Folder; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+		void SavePackBuildConfig(ConfigurationSection* sect);
 	};
 
 	class ProjectResTexture : public ProjectResource
@@ -165,6 +175,9 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
+
+		virtual std::vector<String> GetAllOutputFiles();
+
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
 
@@ -197,6 +210,8 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
+		virtual std::vector<String> GetAllOutputFiles();
+
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
 
@@ -221,6 +236,8 @@ namespace Apoc3D
 		virtual ProjectItemType getType() const { return PRJITEM_Effect; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual std::vector<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -259,6 +276,9 @@ namespace Apoc3D
 		virtual ProjectItemType getType() const { return PRJITEM_Font; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual std::vector<String> GetAllOutputFiles();
+
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
 	};

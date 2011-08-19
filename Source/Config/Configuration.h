@@ -47,6 +47,7 @@ namespace Apoc3D
 			Configuration(const String& name)
 				: m_name(name)
 			{
+				
 			}			
 		public:
 			virtual ~Configuration();

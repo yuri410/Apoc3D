@@ -25,14 +25,23 @@ namespace APDesigner
 
 		xml->Save(L"build.xml");
 
+		ExecuteBuildOperation();
+	}
+	void BuildInterface::BuildAll(Project* project)
+	{
+		project->Save(L"build.xml", true);
 
+		ExecuteBuildOperation();
+	}
 
+	void BuildInterface::ExecuteBuildOperation()
+	{
 		STARTUPINFO startUpInfo;
 		ZeroMemory(&startUpInfo, sizeof(STARTUPINFO));
 		//CreatePipe()
 		startUpInfo.cb = sizeof(STARTUPINFO);
 		startUpInfo.dwFlags |= STARTF_USESTDHANDLES;
-		
+
 
 		SECURITY_ATTRIBUTES pipeAttr;
 		ZeroMemory(&pipeAttr, sizeof(SECURITY_ATTRIBUTES));
@@ -56,7 +65,7 @@ namespace APDesigner
 			DWORD ecode = GetLastError();
 			assert(result);
 		}
-		
+
 
 		LastResult.clear();
 
@@ -85,9 +94,5 @@ namespace APDesigner
 		CloseHandle(startUpInfo.hStdError);
 		CloseHandle(startUpInfo.hStdInput);
 		CloseHandle(startUpInfo.hStdOutput);
-	}
-	void BuildInterface::BuildAll(Project* project)
-	{
-		//CreatePipe()
 	}
 }
