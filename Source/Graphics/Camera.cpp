@@ -86,7 +86,7 @@ namespace Apoc3D
 		}
 		void ChaseCamera::UpdateWorldPositions()
 		{
-			// Construct a matrix to transform from object space to worldspace
+			// Construct a matrix to transform from object space to world space
 			Matrix trans;
 			trans.LoadIdentity();
 			//D3DXMatrixIdentity(&trans);
@@ -131,6 +131,8 @@ namespace Apoc3D
 			m_position = Vector3Utils::Add(m_position, Vector3Utils::Multiply(m_velocity, time->getElapsedTime()));
 
 			UpdateMatrices();
+
+			Camera::Update(time);
 			//D3DXMatrixPerspectiveFovLH(&m_proj, ToRadius(45), LabGame::ScreenWidth/(float)(LabGame::ScreenHeight),1,1000);
 
 			//Vector3  backward;

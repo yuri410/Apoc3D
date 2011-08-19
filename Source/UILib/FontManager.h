@@ -26,8 +26,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Collections/FastMap.h"
+#include "Core/Singleton.h"
 #include "Math/Rectangle.h"
+#include "Math/Point.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;

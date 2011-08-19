@@ -154,7 +154,7 @@ namespace Apoc3D
 			void Reset();
 			virtual void Update(const GameTime* const time);
 
-			const Vector3& getUp() const { return m_up; }
+			const Vector3& getChaseUp() const { return m_up; }
 			const Vector3& getChaseDirection() const { return m_chaseDirection; }
 			const Vector3& getChasePosition() const { return m_chasePosition; }
 
@@ -175,11 +175,11 @@ namespace Apoc3D
 			const float getAspectRatio() const { return m_aspectRatio; }
 			const float getFieldOfView() const { return m_fieldOfView; }
 
-			const Vector3* getUpPtr() const { return& m_up; }
-			const Vector3* getPositionPtr() const { return &m_position; }
-			const Matrix* getViewPtr() const { return &m_view; }
-			const Matrix* getProjectionPtr() const { return &m_proj; }
-			const Vector3* getVelocityPtr() const { return &m_velocity; }
+			//const Vector3* getChaseUpPtr() const { return& m_up; }
+			//const Vector3* getPositionPtr() const { return &m_position; }
+			//const Matrix* getViewPtr() const { return &m_view; }
+			//const Matrix* getProjectionPtr() const { return &m_proj; }
+			//const Vector3* getVelocityPtr() const { return &m_velocity; }
 
 			//const Frustum* getFrustum() const { return &m_frustum; }
 
@@ -194,7 +194,7 @@ namespace Apoc3D
 			void setChasePosition(const Vector3& val) { m_chasePosition = val; }
 			void setChaseDirection(const Vector3& val) { m_chaseDirection = val; }
 			void setVelocity(const Vector3& val) { m_velocity = val; }
-			void setUp(const Vector3& val) { m_up = val; }
+			void setChaseUp(const Vector3& val) { m_up = val; }
 			void setPosition(const Vector3& val) { m_position = val; }
 			void setDesiredOffset(const Vector3& val) { m_desiredPositionOfs = val; }
 			void setLookAtOffset(const Vector3& val) { m_lootAtOfs = val; }
