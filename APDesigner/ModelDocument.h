@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Document.h"
 #include "Scene/SimpleSceneManager.h"
+#include "Scene/SceneObject.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
@@ -48,10 +49,27 @@ namespace APDesigner
 		virtual void Update(const GameTime* const time);
 		virtual void Render();
 	private:
+		class ModelWrapper : public Entity 
+		{
+		public:
+			ModelWrapper() 
+			{
+				m_position = Vector3Utils::Zero;
+				m_transformation.LoadIdentity();
+			}
+
+			void setmdl(Model* mdl) 
+			{
+				m_models[0] = mdl;
+			}
+
+		};
+
 		String m_name;
 		String m_filePath;
 		String m_animPath;
 
+		ModelWrapper m_object;
 		SimpleSceneManager m_scene;
 		SceneRenderer* m_sceneRenderer;
 
@@ -60,7 +78,11 @@ namespace APDesigner
 		const AnimationData* m_animData;
 
 		ChaseCamera* m_camera;
+		float m_xang;
+		float m_yang;
+		float m_distance;
 	};
+	
 }
 
 #endif

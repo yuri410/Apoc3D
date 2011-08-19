@@ -44,12 +44,6 @@ namespace Apoc3D
 				m_models[0]->Update(time);
 			}
 
-			if (m_models[0])
-			{
-				m_models[0]->Update(time);
-			
-			}
-
 			if (m_isTransformDirty)
 			{
 				UpdateTransform();

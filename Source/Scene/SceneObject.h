@@ -63,7 +63,7 @@ namespace Apoc3D
 			{
 			}
 
-			~SceneObject(){}
+			virtual ~SceneObject(){}
 
 			void NotifyParentNode(SceneNode* node)
 			{
@@ -72,7 +72,7 @@ namespace Apoc3D
 
 			virtual void PrepareVisibleObjects(const Camera* const camera, int32 level, BatchData* data) { }
 
-			virtual void Update(const GameTime* const &time) = 0;
+			virtual void Update(const GameTime* const time) = 0;
 
 			virtual void OnAddedToScene(SceneManager* sceneMgr) { }
 			virtual void OnRemovedFromScene(SceneManager* sceneMgr) { }
@@ -120,8 +120,7 @@ namespace Apoc3D
 
 			virtual void UpdateTransform();
 
-			RenderOperationBuffer* GetRenderOperation(int lod);
-
+			virtual RenderOperationBuffer* GetRenderOperation(int lod);
 
 			virtual void Update(const GameTime* const time);
 		};

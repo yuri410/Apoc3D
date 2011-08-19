@@ -40,6 +40,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/Camera.h"
 
 #include "Scene/SceneRenderer.h"
+#include "Scene/SceneObject.h"
 
 #include "UILib/Form.h"
 #include "UILib/Button.h"
@@ -55,7 +56,8 @@ namespace APDesigner
 {
 	ModelDocument::ModelDocument(MainWindow* window, const String& name, const String& file, const String& animationFile)
 		: Document(window), m_filePath(file), m_animPath(animationFile), 
-		m_name(name), m_model(0), m_modelSData(0), m_animData(0)
+		m_name(name), m_model(0), m_modelSData(0), m_animData(0),
+		m_distance(40),m_xang(ToRadian(45)),m_yang(ToRadian(45))
 	{
 		getDocumentForm()->setTitle(file);
 
@@ -68,7 +70,14 @@ namespace APDesigner
 		delete config;
 		delete fl;
 		m_camera = new ChaseCamera();
+		m_camera->setChaseDirection(Vector3Utils::LDVector(0, 0, 1));
+		m_camera->setChasePosition(Vector3Utils::LDVector(0, 0, 0));
+		m_camera->setDesiredOffset(Vector3Utils::LDVector(0, 0, 40));
+		m_camera->setFar(10000);
+		m_camera->setNear(10);
 		m_sceneRenderer->RegisterCamera(m_camera);
+
+		m_scene.AddObject(&m_object);
 	}
 
 	ModelDocument::~ModelDocument()
@@ -90,6 +99,7 @@ namespace APDesigner
 	{
 		if (m_model)
 		{
+			m_object.setmdl(0);
 			delete m_model;
 			//delete m_modelSData;
 		}
@@ -104,7 +114,8 @@ namespace APDesigner
 		}
 		
 		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData,true), m_animData);
-
+		m_object.setmdl(m_model);
+		
 		//m_texture = TextureManager::getSingleton().CreateUnmanagedInstance(getMainWindow()->getDevice(), fl, false);
 	}
 	void ModelDocument::SaveRes()
@@ -128,11 +139,12 @@ namespace APDesigner
 
 		//m_btnZoomIn->Position.X = m_pictureBox->Size.X-65;
 		//m_btnZoomOut->Position.X = m_pictureBox->Size.X-30;
-		
+		m_scene.Update(time);
 	}
 	void ModelDocument::Render()
 	{
-
+		m_sceneRenderer->RenderScene(&m_scene);
 	}
 
+	
 }
