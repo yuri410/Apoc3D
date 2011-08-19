@@ -96,7 +96,7 @@ namespace Apoc3D
 			}
 
 
-			// check and set m_isAvailable
+			// TODO:check and set m_isAvailable
 
 
 

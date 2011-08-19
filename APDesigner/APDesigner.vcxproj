@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="APDesigner.ico" />
+    <None Include="modelviewscene.xml" />
     <None Include="ReadMe.txt" />
     <None Include="small.ico" />
   </ItemGroup>

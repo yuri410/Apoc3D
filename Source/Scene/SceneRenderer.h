@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Collections/FastMap.h"
 
 using namespace Apoc3D::Collections;
+using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
@@ -37,39 +38,6 @@ using namespace std;
 
 namespace Apoc3D
 {
-	namespace Collections
-	{
-		typedef Material* LPMaterial;
-		class MaterialEqualityComparer : public IEqualityComparer<LPMaterial>
-		{
-		private:
-		public:
-			class BuiltIn : public IBuiltInEqualityComparer<LPMaterial>
-			{
-
-			};
-
-			virtual bool Equals(const LPMaterial& x, const LPMaterial& y) const;
-
-			virtual int64 GetHashCode(const LPMaterial& obj) const;
-		};
-
-		typedef GeometryData* LPGeometryData;
-		class GeometryDataEqualityComparer : public IEqualityComparer<LPGeometryData>
-		{
-		private:
-			
-		public:
-			class BuiltIn : public IBuiltInEqualityComparer<LPGeometryData>
-			{
-
-			};
-
-			virtual bool Equals(const LPGeometryData& x, const LPGeometryData& y) const;
-
-			virtual int64 GetHashCode(const LPGeometryData& obj) const;
-		};
-	}
 	namespace Scene
 	{
 		typedef FastList<RenderOperation> OperationList;
@@ -120,6 +88,7 @@ namespace Apoc3D
 			SceneRenderer(RenderDevice* dev);
 			~SceneRenderer(void);
 
+			void Load(Configuration* config);
 			void Load(const String& configName);
 
 			void RenderScene(SceneManager* sceMgr);
@@ -129,5 +98,38 @@ namespace Apoc3D
 			void RenderBatch(int selectorID);
 		};
 	};
+	namespace Collections
+	{
+		typedef Material* LPMaterial;
+		class MaterialEqualityComparer : public IEqualityComparer<LPMaterial>
+		{
+		private:
+		public:
+			class BuiltIn : public IBuiltInEqualityComparer<LPMaterial>
+			{
+
+			};
+
+			virtual bool Equals(const LPMaterial& x, const LPMaterial& y) const;
+
+			virtual int64 GetHashCode(const LPMaterial& obj) const;
+		};
+
+		typedef GeometryData* LPGeometryData;
+		class GeometryDataEqualityComparer : public IEqualityComparer<LPGeometryData>
+		{
+		private:
+
+		public:
+			class BuiltIn : public IBuiltInEqualityComparer<LPGeometryData>
+			{
+
+			};
+
+			virtual bool Equals(const LPGeometryData& x, const LPGeometryData& y) const;
+
+			virtual int64 GetHashCode(const LPGeometryData& obj) const;
+		};
+	}
 };
 #endif

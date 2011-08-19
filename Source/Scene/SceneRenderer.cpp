@@ -126,10 +126,8 @@ namespace Apoc3D
 			}
 		}
 
-		void SceneRenderer::Load(const String& configName)
+		void SceneRenderer::Load(Configuration* config)
 		{
-			Configuration* config = ConfigurationManager::getSingleton().getConfiguration(configName);
-
 			m_selectedProc = -1;
 
 			for (Configuration::Iterator iter = config->begin(); iter != config->end(); iter++)
@@ -137,7 +135,7 @@ namespace Apoc3D
 				String file = iter->second->getAttribute(L"Script");
 
 				// load proc
-				FileLocation* fl = FileSystem::getSingleton().Locate(configName, FileLocateRule::Default);
+				FileLocation* fl = FileSystem::getSingleton().Locate(file, FileLocateRule::Default);
 				SceneProcedure* proc = new SceneProcedure(m_renderDevice);
 				proc->Load(this, static_cast<ResourceLocation*>(fl));
 				delete fl;
@@ -153,6 +151,11 @@ namespace Apoc3D
 					}
 				}
 			}
+		}
+		void SceneRenderer::Load(const String& configName)
+		{
+			Configuration* config = ConfigurationManager::getSingleton().getConfiguration(configName);
+			Load(config);
 		}
 
 		void SceneRenderer::RenderScene(SceneManager* sceMgr)
