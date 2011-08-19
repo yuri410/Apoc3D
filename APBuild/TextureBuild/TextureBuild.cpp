@@ -1946,21 +1946,17 @@ LFail:
 
 		EnsureDirectory(PathUtils::GetDirectory(config.DestinationFile));
 
-		if (!File::FileExists(config.DestinationFile) || 
-			File::GetFileModifiyTime(config.SourceFile) >= File::GetFileModifiyTime(config.DestinationFile))
-		{
-			CompileLog::WriteInformation(config.SourceFile, L">");
+		CompileLog::WriteInformation(config.SourceFile, L">");
 
-			switch (config.Method)
-			{
-			case TEXBUILD_D3D:
-				BuildByD3D(config);
-				break;
-			case TEXBUILD_Devil:
-				BuildByDevIL(config);
-				break;
-			}
-			
+		switch (config.Method)
+		{
+		case TEXBUILD_D3D:
+			BuildByD3D(config);
+			break;
+		case TEXBUILD_Devil:
+			BuildByDevIL(config);
+			break;
 		}
+			
 	}
 }

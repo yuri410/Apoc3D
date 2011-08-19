@@ -312,36 +312,40 @@ namespace APDesigner
 		if (m_resourceView->getSelectedNode())
 		{
 			ProjectItem* item = static_cast<ProjectItem*>(m_resourceView->getSelectedNode()->UserData);
-			switch (item->getType())
+			if (item)
 			{
-			case PRJITEM_Texture:
+				switch (item->getType())
 				{
-					ProjectResTexture* tex = static_cast<ProjectResTexture*>(item->getData());
-
-					m_infoDisplay->Text = PathUtils::GetFileName(tex->SourceFile);
-					m_infoDisplay->Text.append(L"\n");
-
-					if (File::FileExists(PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile)))
+				case PRJITEM_Texture:
 					{
-						if (item->IsOutDated())
+						ProjectResTexture* tex = static_cast<ProjectResTexture*>(item->getData());
+
+						m_infoDisplay->Text = PathUtils::GetFileName(tex->SourceFile);
+						m_infoDisplay->Text.append(L"\n");
+
+						if (File::FileExists(PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile)))
 						{
-							m_infoDisplay->Text.append(L"Built(but be outdated).");
+							if (item->IsOutDated())
+							{
+								m_infoDisplay->Text.append(L"Built(but outdated).");
+							}
+							else
+							{
+								m_infoDisplay->Text.append(L"Built(up to date).");
+							}
+
 						}
 						else
 						{
-							m_infoDisplay->Text.append(L"Built(up to date).");
+							m_infoDisplay->Text.append(L"Not built yet.");
 						}
-						
+
+						//TextureViewer* tv = new TextureViewer(m_mainWindow, item->)
 					}
-					else
-					{
-						m_infoDisplay->Text.append(L"Not built yet.");
-					}
-					
-					//TextureViewer* tv = new TextureViewer(m_mainWindow, item->)
+					break;
 				}
-				break;
 			}
+			
 		}
 	}
 
@@ -358,28 +362,32 @@ namespace APDesigner
 		if (m_resourceView->getSelectedNode())
 		{
 			ProjectItem* item = static_cast<ProjectItem*>(m_resourceView->getSelectedNode()->UserData);
-			if (item->IsOutDated())
+			if (item)
 			{
-				BuildInterface::BuildSingleItem(item);
-			}
-
-			switch (item->getType())
-			{
-			case PRJITEM_Texture:
+				if (item->IsOutDated())
 				{
-					ProjectResTexture* tex = static_cast<ProjectResTexture*>(item->getData());
-					String path = PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile);
-					if (File::FileExists(path))
+					BuildInterface::BuildSingleItem(item);
+				}
+
+				switch (item->getType())
+				{
+				case PRJITEM_Texture:
 					{
-						TextureViewer* tv = new TextureViewer(m_mainWindow, path, tex->DestinationFile);
-						tv->LoadRes();
-						m_mainWindow->AddDocument(tv);
+						ProjectResTexture* tex = static_cast<ProjectResTexture*>(item->getData());
+						String path = PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile);
+						if (File::FileExists(path))
+						{
+							TextureViewer* tv = new TextureViewer(m_mainWindow, path, tex->DestinationFile);
+							tv->LoadRes();
+							m_mainWindow->AddDocument(tv);
+
+						}
 
 					}
-					
+					break;
 				}
-				break;
 			}
+			
 		}
 	}
 

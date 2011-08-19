@@ -124,7 +124,7 @@ namespace Apoc3D
 	}
 	bool ProjectResTexture::IsNotBuilt()
 	{
-		return !File::FileExists(DestinationFile);
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
 	}
 	void ProjectResTexture::Parse(const ConfigurationSection* sect)
 	{
@@ -532,7 +532,7 @@ namespace Apoc3D
 	}
 	bool ProjectResEffect::IsNotBuilt()
 	{
-		return !File::FileExists(DestFile);
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
 	}
 	void ProjectResEffect::Parse(const ConfigurationSection* sect)
 	{
@@ -580,10 +580,10 @@ namespace Apoc3D
 	bool ProjectResModel::IsNotBuilt()
 	{
 		if (DstAnimationFile.size())
-			if (!File::FileExists(DstAnimationFile))
+			if (!File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DstAnimationFile)))
 				return true;
 
-		return !File::FileExists(DstFile) ;
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DstFile)) ;
 	}
 	void ProjectResModel::Parse(const ConfigurationSection* sect)
 	{

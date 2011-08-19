@@ -304,7 +304,10 @@ namespace Apoc3D
 			}
 			return false;
 		}
-
+		void NotifyModified()
+		{
+			m_timeStamp = time(0);
+		}
 		//void Build();
 		
 	};
