@@ -80,6 +80,8 @@ namespace APDesigner
 
 		bool isActivated() const { return m_activated; }
 
+		/** Initializes the graphical user interface. File loading might be performed before this init.
+		*/
 		virtual void Initialize(RenderDevice* device);
 
 		virtual ObjectPropertyEditor* getRootPropertyEditor() { return 0; }

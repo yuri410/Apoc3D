@@ -46,7 +46,7 @@ namespace Apoc3D
 			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(fl)
 		{
 			ObjectFactory* fac = device->getObjectFactory();
-			m_font = fac->CreateTexture(FontManager::TextureSize, FontManager::TextureSize, 1, TU_Static, FMT_Alpha8);
+			m_font = fac->CreateTexture(FontManager::TextureSize, FontManager::TextureSize, 1, TU_Static, FMT_A8L8);
 
 			Stream* strm = fl->GetReadStream();
 			BinaryReader* br = new BinaryReader(strm);
@@ -173,8 +173,16 @@ namespace Apoc3D
 
 			for (int j=0;j<dataRect.getHeight();j++)
 			{
-				memcpy((char*)dataRect.getDataPointer()+j*dataRect.getPitch(),
-					buf+j*glyph.Width, glyph.Width);
+				char* src=buf+j*glyph.Width;
+				char* dest = (char*)dataRect.getDataPointer()+j*dataRect.getPitch();
+				for (int i=0;i<dataRect.getWidth();i++)
+				{
+					uint16* pix = (uint16*)(dest)+i;
+					byte alpha = *(byte*)(src+i);
+					*pix = alpha << 8 | 0xff;
+				}
+				//memcpy((char*)dataRect.getDataPointer()+j*dataRect.getPitch(),
+					//buf+j*glyph.Width, glyph.Width);
 			}
 			m_font->Unlock(0);
 			delete[] buf;

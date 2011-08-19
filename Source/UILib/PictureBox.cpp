@@ -48,6 +48,7 @@ namespace Apoc3D
 				}
 				m_srcRect = Apoc3D::Math::Rectangle(0,0,m_texture->getWidth(),m_texture->getHeight());
 			}
+			Control::Initialize(device);
 		}
 		void PictureBox::Update(const GameTime* const time)
 		{

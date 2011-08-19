@@ -370,6 +370,20 @@ namespace Apoc3D
 						(LONG)r->getBottom()
 					};
 
+					D3DVIEWPORT9 vp;
+					if (SUCCEEDED(m_device->getDevice()->GetViewport(&vp)))
+					{
+						if ((DWORD)rect.bottom > (vp.Y + vp.Height))
+						{
+							rect.bottom = vp.Y + vp.Height;
+						}
+						if ((DWORD)rect.right > (vp.X + vp.Width))
+						{
+							rect.right = vp.X + vp.Width;
+						}
+
+					}
+
 					if (rect.left>rect.right)
 					{
 						swap(rect.left, rect.right);

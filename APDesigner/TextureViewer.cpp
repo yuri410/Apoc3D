@@ -27,13 +27,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/Texture.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
+#include "Graphics/RenderSystem/RenderStateManager.h"
 #include "Graphics/TextureManager.h"
 #include "Math/ColorValue.h"
 #include "Math/Box.h"
 #include "UILib/Form.h"
+#include "UILib/Button.h"
 #include "UILib/PictureBox.h"
+#include "UILib/FontManager.h"
 #include "MainWindow.h"
 #include "Vfs/ResourceLocation.h"
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace APDesigner
 {
@@ -223,34 +229,65 @@ namespace APDesigner
 		}
 		m_texture = 0;
 	}
-
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
 	TextureViewer::TextureViewer(MainWindow* window, const String& filePath, const String& name)
-		: Document(window), m_pictureBox(0), m_filePath(filePath), m_texture(0)
+		: Document(window), m_pictureBox(0), m_filePath(filePath), m_texture(0), m_scale(0), m_name(name)
 	{
 		m_pictureBox = new PictureBox(Point(5,5 + 17), 1);
 		m_pictureBox->SetSkin(window->getUISkin());
 		m_pictureBox->eventPictureDraw().bind(this, &TextureViewer::PixtureBox_Draw);
-		getDocumentForm()->setTitle(name);
+		m_btnZoomIn = new Button(Point(100,17+5), L"+");
+		m_btnZoomIn->SetSkin(window->getUISkin());
+		m_btnZoomIn->eventPress().bind(this, &TextureViewer::BtnZoomIn_Pressed);
+		m_btnZoomOut = new Button(Point(140,17+5), L"-");
+		m_btnZoomOut->SetSkin(window->getUISkin());
+		m_btnZoomOut->eventPress().bind(this, &TextureViewer::BtnZoomOut_Pressed);
+
+
+		getDocumentForm()->setTitle(name + String(L"(100%)"));
 	}
 
 	TextureViewer::~TextureViewer()
 	{
 		delete m_pictureBox;
+		delete m_btnZoomIn;
+		delete m_btnZoomOut;
 	}
 
 	void TextureViewer::PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
 		if (m_texture)
 		{
+			sprite->Flush();
+
+			RenderDevice* device = sprite->getRenderDevice();
+			RenderStateManager* manager = device->getRenderState();
+			Apoc3D::Math::Rectangle oldScissorRect;
+			bool restoreScissor = manager->getScissorTestEnabled();
+			if (restoreScissor)
+			{
+				oldScissorRect = manager->getScissorTestRect();
+			}
+			{
+				Apoc3D::Math::Rectangle sr(*dstRect);
+				sr.X += getDocumentForm()->Position.X;
+				sr.Y += getDocumentForm()->Position.Y;
+
+				manager->setScissorTest(true, &sr);
+			}
+			
+			float scale = powf(2, (float)m_scale);
 			//Point newSize = m_pictureBox->Size;
 			Apoc3D::Math::Rectangle dr(*dstRect);
-			if (dr.Width > m_texture->getWidth())
+			//if (dr.Width > m_texture->getWidth())
 			{
-				dr.Width = m_texture->getWidth();
+				dr.Width = (int)(m_texture->getWidth()*scale);
 			}
-			if (dr.Height > m_texture->getHeight())
+			//if (dr.Height > m_texture->getHeight())
 			{
-				dr.Height = m_texture->getHeight();
+				dr.Height = (int)(m_texture->getHeight()*scale);
 			}
 			if (dr.Width < 16)
 			{
@@ -261,6 +298,37 @@ namespace APDesigner
 				dr.Height = 16;
 			}
 
+			sprite->Draw(m_texture,dr,0,CV_White);
+			switch(m_texture->getType())
+			{
+			case TT_Texture1D:
+			case TT_Texture2D:
+				{
+
+					String msg = L"Type: 2D.\nFormat: ";
+					msg.append(PixelFormatUtils::ToString(m_texture->getFormat()));
+					msg.append(L"\nDemision:");
+					msg.append(StringUtils::ToString(m_texture->getWidth()));
+					msg.append(1,'x');
+					msg.append(StringUtils::ToString(m_texture->getHeight()));
+					msg.append(L"\nMip Levels:");
+					msg.append(StringUtils::ToString(m_texture->getLevelCount()));	
+					
+					m_pictureBox->getFontRef()->DrawString(sprite, msg, Point(5+dr.X, 6+dr.Y), CV_Black);
+					m_pictureBox->getFontRef()->DrawString(sprite, msg, Point(5+dr.X, 5+dr.Y), CV_White);
+				}
+				break;
+			}
+
+			sprite->Flush();
+			if (restoreScissor)
+			{
+				manager->setScissorTest(true, &oldScissorRect);
+			}
+			else
+			{
+				manager->setScissorTest(false,0);
+			}
 			//switch(m_texture->getType())
 			//{
 			//case TT_Texture2D:
@@ -298,13 +366,41 @@ namespace APDesigner
 			//	}
 			//	break;
 			//}
-			sprite->Draw(m_texture,*dstRect,0,CV_White);
+			
 		}
 	}
+	void TextureViewer::BtnZoomIn_Pressed(Control* ctrl)
+	{
+		m_scale++;
+		if (m_scale>8)
+			m_scale = 8;
 
+		float scale = powf(2, (float)m_scale);
+
+		String scaleRatio = String(L" (") +StringUtils::ToString(scale,2);
+		scaleRatio.append(L"%)");
+
+		getDocumentForm()->setTitle(m_name + scaleRatio);
+	}
+	void TextureViewer::BtnZoomOut_Pressed(Control* ctrl)
+	{
+		m_scale--;
+		if (m_scale<-8)
+			m_scale = -8;
+
+		float scale = powf(2, (float)m_scale);
+
+		String scaleRatio = String(L" (") +StringUtils::ToString(scale,2);
+		scaleRatio.append(L"%)");
+
+		getDocumentForm()->setTitle(m_name + scaleRatio);
+	}
 	void TextureViewer::Initialize(RenderDevice* device)
 	{
 		getDocumentForm()->getControls().Add(m_pictureBox);
+		getDocumentForm()->getControls().Add(m_btnZoomIn);
+		getDocumentForm()->getControls().Add(m_btnZoomOut);
+
 		Document::Initialize(device);
 
 	}
