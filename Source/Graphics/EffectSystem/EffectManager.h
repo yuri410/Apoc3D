@@ -50,7 +50,7 @@ namespace Apoc3D
 				~EffectManager() { }
 
 
-
+				bool HasEffect(const String& name) const;
 				Effect* getEffect(const String& name) const;
 
 				SINGLETON_DECL_HEARDER(EffectManager);

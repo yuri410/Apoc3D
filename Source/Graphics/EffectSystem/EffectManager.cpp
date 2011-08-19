@@ -33,6 +33,11 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
+			bool EffectManager::HasEffect(const String& name) const
+			{
+				EffectTable::const_iterator iter = m_fxTable.find(name);
+				return (iter != m_fxTable.end())
+			}
 			Effect* EffectManager::getEffect(const String& name) const
 			{
 				EffectTable::const_iterator iter = m_fxTable.find(name);

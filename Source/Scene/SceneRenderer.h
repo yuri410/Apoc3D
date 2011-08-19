@@ -91,11 +91,21 @@ namespace Apoc3D
 			void Load(Configuration* config);
 			void Load(const String& configName);
 
+			
+
 			void RenderScene(SceneManager* sceMgr);
 
 			/** Renders the current batch produced by scene pass
 			*/
 			void RenderBatch(int selectorID);
+
+			int getSelectedProcID() const { return m_selectedProc; }
+			SceneProcedure* getSelectedProc() const
+			{
+				if (m_selectedProc!=-1)
+					return m_procFallbacks[m_selectedProc];
+				return 0;
+			}
 		};
 	};
 	namespace Collections

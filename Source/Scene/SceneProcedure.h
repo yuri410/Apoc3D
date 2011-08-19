@@ -62,7 +62,7 @@ namespace Apoc3D
 			FastList<ResourceHandle<Texture>*> m_createdTextures;
 
 			bool m_isAvailable;
-
+			String m_name;
 
 			const Camera* m_lastCamera;
 		public:

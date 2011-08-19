@@ -72,6 +72,8 @@ namespace Apoc3D
 			SceneRenderScriptParser(RenderDevice* dev);
 
 			void Parse(const ResourceLocation* rl);
+
+			const String& getSceneName() const { return m_sceneName; }
 		};
 	}
 }

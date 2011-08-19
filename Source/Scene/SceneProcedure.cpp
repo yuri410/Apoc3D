@@ -79,6 +79,7 @@ namespace Apoc3D
 		{
 			SceneRenderScriptParser parser(m_renderDevice);
 			parser.Parse(rl);
+			m_name = parser.getSceneName();
 
 			m_varCount = parser.GlobalVars.getCount();
 			m_vars = new SceneVariable*[m_varCount];
@@ -96,7 +97,7 @@ namespace Apoc3D
 			}
 
 
-			// TODO:check and set m_isAvailable
+			// check device caps and set m_isAvailable
 			m_isAvailable = true;
 			for (int i=0;i<m_varCount;i++)
 			{
@@ -109,7 +110,17 @@ namespace Apoc3D
 
 							uint sampleCount = m_vars[i]->DefaultValue[6];
 
-
+							if (!m_renderDevice->getCapabilities()->SupportsRenderTarget(sampleCount, fmt, depFmt))
+							{
+								m_isAvailable = false;
+							}
+						}
+					case VARTYPE_Effect:
+						{
+							if (!EffectManager::getSingleton().HasEffect(m_vars[i]->DefaultStringValue))
+							{
+								m_isAvailable = false;
+							}
 						}
 						break;
 				}
