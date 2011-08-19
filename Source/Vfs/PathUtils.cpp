@@ -142,8 +142,11 @@ namespace Apoc3D
 			} while (pos != String::npos);
 
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-			ret[1] = ret[0] + ret[1];
-			ret.erase(ret.begin());
+			if (ret.size()>1 && ret[0].find(VolumeSeparatorChar,0) != String::npos)
+			{
+				ret[1] = Combine(ret[0],ret[1]);
+				ret.erase(ret.begin());
+			}
 #endif
 
 			return ret;
@@ -151,6 +154,11 @@ namespace Apoc3D
 
 		void PathUtils::Append(String& path1, const String& path2)
 		{
+			if (path1.empty())
+			{
+				path1.append(path2);
+				return;
+			}
 			size_t len1 = path1.length();
 			wchar_t ch = path1[len1 - 1];
 			if (((ch != DirectorySeparator) && (ch != AltDirectorySeparator)) && (ch != VolumeSeparatorChar))
@@ -176,7 +184,7 @@ namespace Apoc3D
 			}
 
 			wchar_t ch = path1[len1 - 1];
-			if (((ch != DirectorySeparator) && (ch != AltDirectorySeparator)) && (ch != VolumeSeparatorChar))
+			if (((ch != DirectorySeparator) && (ch != AltDirectorySeparator)))//&& (ch != VolumeSeparatorChar)
 			{
 				return (path1 + DirectorySeparator + path2);
 			}

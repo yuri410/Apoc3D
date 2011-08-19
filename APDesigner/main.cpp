@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/RenderWindow.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/Archive.h"
+#include "Vfs/PathUtils.h"
+#include "Utility/StringUtils.h"
 
 #include "../Apoc3D.D3D9RenderSystem/Plugin.h"
 #include "../Apoc3D.WindowsInput/Plugin.h"
@@ -35,6 +37,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "MainWindow.h"
 
+#include <direct.h>
 #include <Windows.h>
 
 #include <SDKDDKVer.h>
@@ -44,6 +47,7 @@ using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::Utility;
 using namespace APDesigner;
 
 INT WINAPI wWinMain(HINSTANCE hInstance,
@@ -69,6 +73,10 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 #if _DEBUG
 	escon.WriteLogToStd = true;
 #endif
+
+	wchar_t exePath[260];
+	GetModuleFileName(0, exePath, 260);
+	_chdir(StringUtils::toString(PathUtils::GetDirectory(exePath)).c_str());
 
 	Engine::Initialize(&escon);
 

@@ -32,7 +32,7 @@ namespace APDesigner
 			ofn.lpstrFileTitle = NULL;
 			ofn.nMaxFileTitle = 0;
 			ofn.lpstrInitialDir = NULL;
-			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_LONGNAMES | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
 			ofn.lpstrTitle = Title.c_str();
 
 			if (MultiSelect)
@@ -43,7 +43,36 @@ namespace APDesigner
 
 			if (GetOpenFileName(&ofn)==TRUE) 
 			{
-				m_filePath = StringUtils::Split(ofn.lpstrFile, L"\0");
+				if (MultiSelect)
+				{
+					m_filePath.clear();
+
+					
+					String name;
+					int pos = 0;
+					while (1)
+					{
+						if (!ofn.lpstrFile[pos])
+						{
+							if (!name.length())
+								break;
+							m_filePath.push_back(name);
+							name.clear();
+						}
+						else
+						{
+							name.append(1,ofn.lpstrFile[pos]);
+						}
+						
+						pos++;
+					}
+				}
+				else
+				{
+					m_filePath.clear();
+					m_filePath.push_back(ofn.lpstrFile);//StringUtils::Split(ofn.lpstrFile, L"\0");
+				}
+				
 				//hf = CreateFile(ofn.lpstrFile, 
 				//GENERIC_READ,
 				//0,
@@ -76,7 +105,7 @@ namespace APDesigner
 			ofn.lpstrFileTitle = NULL;
 			ofn.nMaxFileTitle = 0;
 			ofn.lpstrInitialDir = NULL;
-			ofn.Flags = OFN_OVERWRITEPROMPT;
+			ofn.Flags = OFN_OVERWRITEPROMPT | OFN_LONGNAMES | OFN_NOCHANGEDIR;
 			ofn.lpstrTitle = Title.c_str();
 
 			m_filePath.clear();

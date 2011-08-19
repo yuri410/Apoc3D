@@ -126,7 +126,7 @@ int Build(int argc, _TCHAR* argv[])
 		FileLocation* fl = new FileLocation(configPath);
 		XMLConfiguration* config = new XMLConfiguration(fl);
 
-		ConfigurationSection* sect = config->get(L"Build");
+		ConfigurationSection* sect = config->begin()->second;
 		return Build(sect);
 	}
 	else

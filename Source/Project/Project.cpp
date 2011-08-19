@@ -739,7 +739,7 @@ namespace Apoc3D
 	}
 	ConfigurationSection* Project::Save(bool savingBuild)
 	{
-		ConfigurationSection* sect = new ConfigurationSection(L"Project");
+		ConfigurationSection* sect = new ConfigurationSection(savingBuild ? L"Build" : L"Project");
 
 		sect->AddAttribute(L"Name", m_name);
 

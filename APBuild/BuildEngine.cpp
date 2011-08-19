@@ -75,7 +75,8 @@ void EnsureDirectory(const String& path)
 	subPath.reserve(path.size());
 	for (size_t i=0;i<paths.size();i++)
 	{
-		subPath.append(paths[0]);
+		PathUtils::Append(subPath, paths[i]);
+
 		if (!File::DirectoryExists(subPath))
 		{
 			CreateDirectory(subPath.c_str(), 0);

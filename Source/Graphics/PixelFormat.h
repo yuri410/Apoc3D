@@ -252,7 +252,7 @@ namespace Apoc3D
 			{
 				if (format == FMT_DXT1)				
 				{
-					return ((width * 3) / 4) * ((height * 3) / 4) * 8;
+					return (((uint)width + 3) >> 2) * (((uint)height + 3) >> 2) * 8;
 				}
 
 				if (format == FMT_DXT2 ||
@@ -260,7 +260,8 @@ namespace Apoc3D
 					format == FMT_DXT4 ||
 					format == FMT_DXT5)
 				{
-					return ((width * 3) / 4) * ((height * 3) / 4) * 16;
+					return (((uint)width + 3) >> 2) * (((uint)height + 3) >> 2) * 16;
+					//return ((width * 3) / 4) * ((height * 3) / 4) * 16;
 				}
 				int bytepp = sizeTable[(int)format];
 				if (bytepp == -1)
