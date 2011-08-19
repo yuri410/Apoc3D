@@ -262,18 +262,18 @@ namespace APDesigner
 		{
 			Texture* alphaGrid = UIResources::GetTexture(L"alphagrid");
 			int x ,y;
-			for (x =dstRect->X;x<dstRect->Width;x+=alphaGrid->getWidth())
+			for (x =0;x<dstRect->Width;x+=alphaGrid->getWidth())
 			{
-				for (y =dstRect->Y;y<dstRect->Height;y+=alphaGrid->getHeight())
+				for (y =0;y<dstRect->Height;y+=alphaGrid->getHeight())
 				{
-					Apoc3D::Math::Rectangle destRect(x,y,dstRect->Width-x, dstRect->Height-y);
+					Apoc3D::Math::Rectangle destRect(dstRect->X+x,dstRect->Y+y,dstRect->Width-x, dstRect->Height-y);
 					if (destRect.Width>alphaGrid->getWidth())
 						destRect.Width = alphaGrid->getWidth();
 					if (destRect.Height>alphaGrid->getHeight())
 						destRect.Height = alphaGrid->getHeight();
 
 					Apoc3D::Math::Rectangle srcRect(0,0,destRect.Width, destRect.Height);
-					sprite->Draw(alphaGrid, destRect, &srcRect, CV_White);
+					sprite->Draw(alphaGrid, destRect,&srcRect, CV_White);
 				}
 			}
 
@@ -282,25 +282,6 @@ namespace APDesigner
 
 		if (m_texture)
 		{
-			
-			
-			
-
-			//RenderDevice* device = sprite->getRenderDevice();
-			//RenderStateManager* manager = device->getRenderState();
-			//Apoc3D::Math::Rectangle oldScissorRect;
-			//bool restoreScissor = manager->getScissorTestEnabled();
-			//if (restoreScissor)
-			//{
-			//	oldScissorRect = manager->getScissorTestRect();
-			//}
-			//{
-			//	Apoc3D::Math::Rectangle sr(*dstRect);
-			//	sr.X += getDocumentForm()->Position.X;
-			//	sr.Y += getDocumentForm()->Position.Y;
-
-			//	manager->setScissorTest(true, &sr);
-			//}
 			
 			float scale = powf(2, (float)m_scale);
 
@@ -331,7 +312,7 @@ namespace APDesigner
 
 					String msg = L"Type: 2D.\nFormat: ";
 					msg.append(PixelFormatUtils::ToString(m_texture->getFormat()));
-					msg.append(L"\nDemision:");
+					msg.append(L"\nDimension:");
 					msg.append(StringUtils::ToString(m_texture->getWidth()));
 					msg.append(1,'x');
 					msg.append(StringUtils::ToString(m_texture->getHeight()));
@@ -447,5 +428,9 @@ namespace APDesigner
 		m_pictureBox->Size = getDocumentForm()->Size;
 		m_pictureBox->Size.X -= m_pictureBox->Position.X*2;
 		m_pictureBox->Size.Y -= m_pictureBox->Position.Y*2;
+
+		m_btnZoomIn->Position.X = m_pictureBox->Size.X-65;
+		m_btnZoomOut->Position.X = m_pictureBox->Size.X-30;
+
 	}
 }

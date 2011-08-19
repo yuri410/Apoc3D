@@ -19,6 +19,7 @@ namespace APDesigner
 
 	Document::~Document()
 	{
+		UIRoot::Remove(m_docForm);
 		delete m_docForm;
 	}
 

@@ -267,9 +267,20 @@ namespace APDesigner
 		m_resourcePane->Update(time);
 		m_toolsPane->Update(time);
 
+		list<Document*> recycleList;
+
 		for (int i=0;i<m_documentList.getCount();i++)
 		{
 			m_documentList[i]->Update(time);
+			if (!m_documentList[i]->getDocumentForm()->Visible)
+			{
+				recycleList.push_back(m_documentList[i]);
+			}
+		}
+		for (list<Document*>::iterator iter = recycleList.begin();iter!=recycleList.end();iter++)
+		{
+			m_documentList.Remove(*iter);
+			delete *iter;
 		}
 	}
 	void MainWindow::Draw(const GameTime* const time)
