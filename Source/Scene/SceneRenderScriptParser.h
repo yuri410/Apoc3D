@@ -50,12 +50,18 @@ namespace Apoc3D
 			String m_sceneName;
 			RenderDevice* m_renderDevice;
 			
-			
+			/** Build instruction for expressions
+			*/
 			void FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions);
+			/** Build instruction for internal function calls
+			*/
 			void FillFunctionCall(const TiXmlElement* node, std::vector<SceneInstruction>& instructions);
 
 			void ParseGlocalVarNode(const TiXmlElement* node);
 
+			
+			/** Build instruction for code blocks
+			*/
 			void BuildInstructions(const TiXmlElement* node, ScenePassData* data);
 			void BuildPass(const TiXmlElement* node);
 			void BuildNode(const TiXmlNode* node);

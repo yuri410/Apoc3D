@@ -491,13 +491,6 @@ namespace Apoc3D
 
 		
 	
-		void SceneRenderScriptParser::FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions)
-		{
-			ExpressionCompiler compiler;
-
-			compiler.FillInstrunctions(cmd, instructions, GlobalVars);
-		}
-
 
 
 		
@@ -832,6 +825,13 @@ namespace Apoc3D
 				LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + stat + L" function", LOGLVL_Warning);
 			}
 
+		}
+
+		void SceneRenderScriptParser::FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions)
+		{
+			ExpressionCompiler compiler;
+
+			compiler.FillInstrunctions(cmd, instructions, GlobalVars);
 		}
 
 
