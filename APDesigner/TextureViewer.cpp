@@ -233,7 +233,7 @@ namespace APDesigner
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
-	TextureViewer::TextureViewer(MainWindow* window, const String& filePath, const String& name)
+	TextureViewer::TextureViewer(MainWindow* window, const String& name, const String& filePath)
 		: Document(window), m_pictureBox(0), m_filePath(filePath), m_texture(0), m_scale(0), m_name(name)
 	{
 		m_pictureBox = new PictureBox(Point(5,5 + 17), 1);

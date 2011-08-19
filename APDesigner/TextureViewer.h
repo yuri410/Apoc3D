@@ -59,21 +59,9 @@ namespace APDesigner
 
 	class TextureViewer : public Document
 	{
-	private:
-		String m_name;
-		String m_filePath;
-		Texture* m_texture;
-		PictureBox* m_pictureBox;
-		Button* m_btnZoomIn;
-		Button* m_btnZoomOut;
-		
-		int m_scale;
-
-		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-		void BtnZoomIn_Pressed(Control* ctrl);
-		void BtnZoomOut_Pressed(Control* ctrl);
+	
 	public:
-		TextureViewer(MainWindow* window, const String& filePath, const String& name);
+		TextureViewer(MainWindow* window, const String& name, const String& filePath);
 		~TextureViewer();
 
 		
@@ -85,6 +73,19 @@ namespace APDesigner
 		virtual bool IsReadOnly() { return true; };
 
 		virtual void Update(const GameTime* const time);
+	private:
+		String m_name;
+		String m_filePath;
+		Texture* m_texture;
+		PictureBox* m_pictureBox;
+		Button* m_btnZoomIn;
+		Button* m_btnZoomOut;
+
+		int m_scale;
+
+		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+		void BtnZoomIn_Pressed(Control* ctrl);
+		void BtnZoomOut_Pressed(Control* ctrl);
 	};
 }
 

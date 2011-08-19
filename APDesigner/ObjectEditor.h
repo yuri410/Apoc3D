@@ -14,6 +14,24 @@ namespace APDesigner
 	public:
 
 	};
+	class ProjectFolderItemEditor : public ObjectPropertyEditor
+	{
+
+	};
+
+	class ProjectTextureItemEditor : public ObjectPropertyEditor
+	{
+
+	};
+	class ProjectModelItemEditor : public ObjectPropertyEditor
+	{
+
+	};
+	class ProjectFontItemEditor : public ObjectPropertyEditor
+	{
+
+	};
+
 	class ObjectTools
 	{
 	private:

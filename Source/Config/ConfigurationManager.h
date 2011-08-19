@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Configuration.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::VFS;
 
 using namespace std;
 
@@ -52,9 +53,9 @@ namespace Apoc3D
 					delete config;
 				}
 			}
-			///** 
-			//*/
-			//static void Initialize();
+			/** 
+			*/
+			void LoadConfig(const String& name, const ResourceLocation* rl);
 
 
 			Configuration* getConfiguration(const String& name) const

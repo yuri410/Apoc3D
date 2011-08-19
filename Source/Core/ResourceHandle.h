@@ -38,17 +38,17 @@ namespace Apoc3D
 
 		private:
 			ResType* m_resource;
-
+			bool m_dummy;
 			void _Ref( )
 			{
-				if (m_resource->isManaged())
+				if (!m_dummy && m_resource->isManaged())
 				{
 					m_resource->_Ref();
 				}
 			}
 			void _Unref( )
 			{
-				if (m_resource->isManaged())
+				if (!m_dummy && m_resource->isManaged())
 				{
 					m_resource->_Unref();
 				}
@@ -59,28 +59,45 @@ namespace Apoc3D
 			
 		public:
 			ResourceHandle(ResType* res)
-				: m_resource(res)
+				: m_resource(res), m_dummy(false)
 			{
 				_Ref();
 			}
-
+			ResourceHandle(ResType* res, bool dummy)
+				: m_resource(res), m_dummy(dummy)
+			{
+				_Ref();
+			}
 			virtual ~ResourceHandle(void)
 			{
 				_Unref();
-				if (!m_resource->getReferenceCount())
+				if (m_dummy)
+				{
 					delete m_resource;
-				m_resource = 0;
+				}
+				else
+				{
+					if (!m_resource->getReferenceCount())
+						delete m_resource;
+					m_resource = 0;
+				}
 			}
 
-			void Build(ResType* res);
+			//void Build(ResType* res);
 
 			void Touch()
 			{
-				m_resource->Use();
+				if (!m_dummy)
+				{
+					m_resource->Use();
+				}
 			}
 			void TouchSync()
 			{
-				m_resource->UseSync();
+				if (!m_dummy)
+				{
+					m_resource->UseSync();
+				}
 			}
 
 			inline ResourceState getState() const
@@ -92,7 +109,11 @@ namespace Apoc3D
 
 			ResType* operator ->()
 			{
-				Touch();
+				if (!m_dummy)
+				{
+					Touch();
+				}
+				
 				return m_resource;
 			}
 

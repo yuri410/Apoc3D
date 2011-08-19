@@ -25,20 +25,39 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define MODELDOCUMENT_H
 
 #include "Document.h"
+#include "Scene/SimpleSceneManager.h"
+
+using namespace Apoc3D;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::Animation;
+using namespace Apoc3D::Scene;
 
 namespace APDesigner
 {
 	class ModelDocument : public Document
 	{
 	public:
-		ModelDocument(MainWindow* window)
-			: Document(window)
-		{
+		ModelDocument(MainWindow* window, const String& name, const String& file, const String& animationFile);
+		~ModelDocument();
 
-		}
-		virtual void LoadRes() { }
-		virtual void SaveRes() { };
+		virtual void LoadRes();
+		virtual void SaveRes();
 		virtual bool IsReadOnly() { return false; };
+
+		virtual void Initialize(RenderDevice* device);
+		virtual void Update(const GameTime* const time);
+
+	private:
+		String m_name;
+		String m_filePath;
+		String m_animPath;
+
+		SimpleSceneManager m_scene;
+		SceneRenderer* m_sceneRenderer;
+
+		ModelSharedData* m_modelSData;
+		Model* m_model;
+		const AnimationData* m_animData;
 	};
 }
 

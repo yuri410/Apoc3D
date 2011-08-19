@@ -41,10 +41,13 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		ModelSharedData::ModelSharedData(RenderDevice* device, ResourceLocation* rl)
-			: Resource(ModelManager::getSingletonPtr(), rl->getName()), m_renderDevice(device), m_resourceLocation(rl)
+		ModelSharedData::ModelSharedData(RenderDevice* device, ResourceLocation* rl, bool managed)
+			: Resource(managed ? ModelManager::getSingletonPtr():0, rl->getName()), m_renderDevice(device), m_resourceLocation(rl)
 		{
-
+			if (!managed)
+			{
+				load();
+			}
 		}
 		ModelSharedData::~ModelSharedData()
 		{
@@ -413,7 +416,7 @@ namespace Apoc3D
 			}
 		}
 
-		RenderOperationBuffer* Model::GetRenderOperation()
+		RenderOperationBuffer* Model::GetRenderOperation(int lod)
 		{
 			if (m_data->getState() != RS_Loaded && m_data->getWeakRef()->isManaged())
 			{

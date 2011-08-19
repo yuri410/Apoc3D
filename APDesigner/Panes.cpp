@@ -377,7 +377,7 @@ namespace APDesigner
 						String path = PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile);
 						if (File::FileExists(path))
 						{
-							TextureViewer* tv = new TextureViewer(m_mainWindow, path, tex->DestinationFile);
+							TextureViewer* tv = new TextureViewer(m_mainWindow, tex->DestinationFile, path);
 							tv->LoadRes();
 							m_mainWindow->AddDocument(tv);
 

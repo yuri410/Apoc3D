@@ -241,7 +241,7 @@ namespace APDesigner
 
 		//m_btn->Initialize(m_device);
 		//m_pane->Initialize(m_device);
-		AddDocument(new ModelDocument(this));
+		//AddDocument(new ModelDocument(this));
 	}
 	void MainWindow::Unload()
 	{

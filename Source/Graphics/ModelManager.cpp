@@ -66,5 +66,10 @@ namespace Apoc3D
 			}
 			return new ResourceHandle<ModelSharedData>((ModelSharedData*)retrived);
 		}
+
+		ModelSharedData* ModelManager::CreateInstanceUnmanaged(RenderDevice* renderDevice, ResourceLocation* rl)
+		{			
+			return new ModelSharedData(renderDevice, rl);
+		}
 	}
 }

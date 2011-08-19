@@ -23,6 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "ConfigurationManager.h"
+#include "Config/XmlConfiguration.h"
+#include "Vfs/ResourceLocation.h"
 
 SINGLETON_DECL(Apoc3D::Config::ConfigurationManager);
 
@@ -34,9 +36,10 @@ namespace Apoc3D
 		{
 
 		}
-		//void ConfigurationManager::Initialize()
-		//{
-
-		//}
+		void ConfigurationManager::LoadConfig(const String& name, const ResourceLocation* rl)
+		{
+			XMLConfiguration* conf = new XMLConfiguration(rl);
+			m_configs.insert(std::make_pair(name, rl));
+		}
 	}
 }
