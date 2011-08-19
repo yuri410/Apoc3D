@@ -46,9 +46,9 @@ namespace Apoc3D
 			Matrix m_invView;
 			Matrix m_proj;
 
-			Frustum frustum;
+			Frustum m_frustum;
 		public:
-	
+			Frustum& getFrustum() { return m_frustum; }
 			/* Gets the view transform matrix
 			*/
 			const Matrix &getViewMatrix() const { return m_view; }
@@ -88,7 +88,151 @@ namespace Apoc3D
 			}
 			~Camera(void) {}
 		};
+		class APAPI FpsCamera : public Camera
+		{
+		private:
+			float m_aspectRatio;
+			float m_velocity;
+			Vector3 m_position;
 
+		public:
+			FpsCamera(float aspectRatio);
+			~FpsCamera(void);
+
+			/* Gets the position of the view point
+			*/
+			const Vector3 &getPosition() const { return m_position; }
+			
+			const float getAspectRatio() const { return m_aspectRatio; }
+			const float getVelocity() const { return m_velocity; } 
+
+			void MoveForward()
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
+				m_position = Vector3Utils::Add(m_position, ofs);
+			}
+			void MoveBackward()
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
+				m_position = Vector3Utils::Subtract(m_position, ofs);				
+			}
+			void MoveLeft()
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
+				m_position = Vector3Utils::Add(m_position, ofs);
+			}
+			void MoveRight() 
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
+				m_position = Vector3Utils::Subtract(m_position, ofs);
+			}
+			void MoveUp()
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
+				m_position = Vector3Utils::Add(m_position, ofs);
+			}
+			void MoveDown() 
+			{
+				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
+				m_position = Vector3Utils::Subtract(m_position, ofs);
+			}
+			void Move(const Vector3 &dir)
+			{
+				Vector3 ofs = Vector3Utils::Multiply(dir, m_velocity);
+				m_position = Vector3Utils::Add(m_position, ofs);
+			}
+			
+			void Update(const GameTime* const time);
+		};
+
+		class APAPI ChaseCamera : public Camera
+		{
+		public:
+			ChaseCamera(void);
+			~ChaseCamera(void);
+
+			void Reset();
+			virtual void Update(const GameTime* const time);
+
+			const Vector3& getUp() const { return m_up; }
+			const Vector3& getChaseDirection() const { return m_chaseDirection; }
+			const Vector3& getChasePosition() const { return m_chasePosition; }
+
+			const Vector3& getPosition() const { return m_position; }
+			const Matrix& getView() const { return m_view; }
+			const Matrix& getProjection() const { return m_proj; }
+			const Vector3& getVelocity() const { return m_velocity; }
+			const Vector3& getDesiredOffset() const { return m_desiredPositionOfs; }
+			const Vector3& getLookAtOffset() const { return m_lootAtOfs; }
+			const Vector3& getDesiredPosition() const { return m_desiredPosition; }
+			const Vector3& getLookAt() const { return m_lootAt; }
+
+			const float getStiffness() const { return m_stiffness; }
+			const float getDamping() const { return m_damping; }
+			const float getMass() const { return m_mass; }
+			const float getNear() const { return m_near; }
+			const float getFar() const { return m_far; }
+			const float getAspectRatio() const { return m_aspectRatio; }
+			const float getFieldOfView() const { return m_fieldOfView; }
+
+			const Vector3* getUpPtr() const { return& m_up; }
+			const Vector3* getPositionPtr() const { return &m_position; }
+			const Matrix* getViewPtr() const { return &m_view; }
+			const Matrix* getProjectionPtr() const { return &m_proj; }
+			const Vector3* getVelocityPtr() const { return &m_velocity; }
+
+			//const Frustum* getFrustum() const { return &m_frustum; }
+
+			void setStiffness(const float val) { m_stiffness = val; }
+			void setDamping(const float val) { m_damping = val; }
+			void setMass(const float val) { m_mass = val; }
+			void setNear(const float val) { m_near = val; }
+			void setFar(const float val) { m_far = val; }
+			void setAspectRatio(const float val) { m_aspectRatio = val; }
+			void setFieldOfView(const float val) { m_fieldOfView = val; }
+
+			void setChasePosition(const Vector3& val) { m_chasePosition = val; }
+			void setChaseDirection(const Vector3& val) { m_chaseDirection = val; }
+			void setVelocity(const Vector3& val) { m_velocity = val; }
+			void setUp(const Vector3& val) { m_up = val; }
+			void setPosition(const Vector3& val) { m_position = val; }
+			void setDesiredOffset(const Vector3& val) { m_desiredPositionOfs = val; }
+			void setLookAtOffset(const Vector3& val) { m_lootAtOfs = val; }
+		private:
+			// Matrix properties
+			Matrix m_view;
+			Matrix m_proj;
+
+			// Perspective properties
+			float m_aspectRatio;
+			float m_fieldOfView;
+			float m_near;
+			float m_far;
+
+			// Current camera properties
+			Vector3 m_position;
+			Vector3 m_velocity;
+
+			// chased object prop
+			Vector3 m_up;
+			Vector3 m_chasePosition;
+			Vector3 m_chaseDirection;
+
+			// Desired camera positioning
+			Vector3 m_desiredPositionOfs;
+			Vector3 m_desiredPosition;
+			Vector3 m_lootAtOfs;
+			Vector3 m_lootAt;
+
+			// Camera physics
+			float m_stiffness;
+			float m_damping;
+			float m_mass;
+
+
+			void UpdateWorldPositions();
+			void UpdateMatrices();
+		};
 	};
 };
 #endif

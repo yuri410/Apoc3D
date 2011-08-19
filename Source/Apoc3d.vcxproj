@@ -217,7 +217,6 @@
     <ClInclude Include="Graphics\EffectSystem\Effect.h" />
     <ClInclude Include="Graphics\EffectSystem\MicroEffectCodeParser.h" />
     <ClInclude Include="Graphics\EffectSystem\EffectParameter.h" />
-    <ClInclude Include="Graphics\FpsCamera.h" />
     <ClInclude Include="Core\HashHandleObject.h" />
     <ClInclude Include="Graphics\EffectSystem\EffectDescription.h" />
     <ClInclude Include="Graphics\EffectSystem\EffectManager.h" />
@@ -266,6 +265,7 @@
     <ClCompile Include="Graphics\Animation\AnimationData.cpp" />
     <ClCompile Include="Graphics\Animation\AnimationManager.cpp" />
     <ClCompile Include="Graphics\Animation\AnimationPlayers.cpp" />
+    <ClCompile Include="Graphics\Camera.cpp" />
     <ClCompile Include="Graphics\LockData.cpp" />
     <ClCompile Include="Graphics\ModelManager.cpp" />
     <ClCompile Include="Graphics\Patch.cpp" />
@@ -333,7 +333,6 @@
     <ClCompile Include="Graphics\EffectSystem\Effect.cpp" />
     <ClCompile Include="Graphics\EffectSystem\MicroEffectCodeParser.cpp" />
     <ClCompile Include="Graphics\EffectSystem\EffectParameter.cpp" />
-    <ClCompile Include="Graphics\FpsCamera.cpp" />
     <ClCompile Include="Graphics\EffectSystem\EffectDescription.cpp" />
     <ClCompile Include="Graphics\EffectSystem\MicroEffect.cpp" />
     <ClCompile Include="Graphics\EffectSystem\EffectManager.cpp" />

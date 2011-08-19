@@ -78,6 +78,22 @@ namespace Apoc3D
 			{ EndSym, 0, 0 }
 		};
 
+
+		bool ParseCallArgBool(const TiXmlElement* node,  const string& name, SceneOpArg& arg, 
+			const FastList<SceneVariable*>& vars, bool def);
+		bool ParseCallArgFloat(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+			const FastList<SceneVariable*>& vars, float def);
+		bool ParseCallArgUint(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+			const FastList<SceneVariable*>& vars, uint def);
+		bool ParseCallArgInt(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+			const FastList<SceneVariable*>& vars, int def);
+		bool ParseCallArgRef(const TiXmlElement* node, const string& name, SceneOpArg& arg,
+			const FastList<SceneVariable*>& vars);
+
+		PixelFormat ConvertFormat(const string& fmt);
+		DepthFormat ConvertDepthFormat(const string& fmt);
+
+
 		SceneVariable* FindVar(const FastList<SceneVariable*>& vars, const String& name)
 		{
 			for (int i=0;i<vars.getCount();i++)
@@ -462,196 +478,362 @@ namespace Apoc3D
 			}
 		};
 
-		String getElementName(const TiXmlElement* elem)
-		{
-			return StringUtils::toWString(elem->ValueStr());
-		}
-		String getNodeText(const TiXmlText* text)
-		{
-			string str = text->ValueStr();
-			wchar_t* buffer = new wchar_t[str.length()];
-			mbstowcs(buffer, str.c_str(), str.length());
-			String result = buffer;
-			delete[] buffer;
-			return result;
-		}
-		String getAttribName(const TiXmlAttribute* attrib)
-		{
-			string str = attrib->NameTStr();
-			wchar_t* buffer = new wchar_t[str.length()];
-			mbstowcs(buffer, str.c_str(), str.length());
-			String result = buffer;
-			delete[] buffer;
-			return result;
-		}
-		String getAttribValue(const TiXmlAttribute* attrib)
-		{
-			string str = attrib->ValueStr();
-			wchar_t* buffer = new wchar_t[str.length()];
-			mbstowcs(buffer, str.c_str(), str.length());
-			String result = buffer;
-			delete[] buffer;
-			return result;
-		}
-
-		PixelFormat ConvertFormat(const string& fmt)
-		{
-			if (fmt == string("L8"))
-			{
-				return FMT_Luminance8;
-			}
-			else if (fmt == string("L16"))
-			{
-				return FMT_Luminance16;
-			}
-			else if (fmt == string("A8"))
-			{
-				return FMT_Alpha8;
-			}
-			else if (fmt == string("A8L8"))
-			{
-				return FMT_A8L8;
-			}
-			else if (fmt == string("R5G6B5"))
-			{
-				return FMT_R5G6B5;
-			}
-			else if (fmt == string("B5G6R5"))
-			{
-				return FMT_B5G6R5;
-			}
-			else if (fmt == string("A4R4G4B4"))
-			{
-				return FMT_A4R4G4B4;
-			}
-			else if (fmt == string("A1R5G5B5"))
-			{
-				return FMT_A1R5G5B5;
-			}
-			else if (fmt == string("R8G8B8"))
-			{
-				return FMT_R8G8B8;
-			}
-			else if (fmt == string("B8G8R8"))
-			{
-				return FMT_B8G8R8;
-			}
-			else if (fmt == string("A8R8G8B8"))
-			{
-				return FMT_A8R8G8B8;
-			}
-			else if (fmt == string("A8B8G8R8"))
-			{
-				return FMT_A8B8G8R8;
-			}
-			else if (fmt == string("B8G8R8A8"))
-			{
-				return FMT_B8G8R8A8;
-			}
-			else if (fmt == string("A2R10G10B10"))
-			{
-				return FMT_A2R10G10B10;
-			}
-			else if (fmt == string("A2B10G10R10"))
-			{
-				return FMT_A2B10G10R10;
-			}
-			else if (fmt == string("A16B16G16R16F"))
-			{
-				return FMT_A16B16G16R16F;
-			}
-			else if (fmt == string("A32B32G32R32F"))
-			{
-				return FMT_A32B32G32R32F;
-			}
-			else if (fmt == string("X8R8G8B8"))
-			{
-				return FMT_X8R8G8B8;
-			}
-			else if (fmt == string("X8B8G8R8"))
-			{
-				return FMT_X8B8G8R8;
-			}
-			else if (fmt == string("R8G8B8A8"))
-			{
-				return FMT_R8G8B8A8;
-			}
-			else if (fmt == string("A16B16G16R16"))
-			{
-				return FMT_A16B16G16R16;
-			}
-			else if (fmt == string("R3G3B2"))
-			{
-				return FMT_R3G3B2;
-			}
-			else if (fmt == string("R16F"))
-			{
-				return FMT_R16F;
-			}
-			else if (fmt == string("R32F"))
-			{
-				return FMT_R32F;
-			}
-			else if (fmt == string("G16R16"))
-			{
-				return FMT_G16R16;
-			}
-			else if (fmt == string("G16R16F"))
-			{
-				return FMT_G16R16F;
-			}
-			else if (fmt == string("G32R32F"))
-			{
-				return FMT_G32R32F;
-			}
-			else if (fmt == string("R16G16B16"))
-			{
-				return FMT_R16G16B16;
-			}
-			else if (fmt == string("B4G4R4A4"))
-			{
-				return FMT_B4G4R4A4;
-			}
-			return FMT_Unknown;
-		}
-		DepthFormat ConvertDepthFormat(const string& fmt)
-		{
-			if (fmt == string("D15S1"))
-			{
-				return DEPFMT_Depth15Stencil1;
-			}
-			else if (fmt == string("D16"))
-			{
-				return DEPFMT_Depth16;
-			}
-			else if (fmt == string("D24"))
-			{
-				return DEPFMT_Depth24X8;
-			}
-			else if (fmt == string("D24S4"))
-			{
-				return DEPFMT_Depth24Stencil4;
-			}
-			else if (fmt == string("D24S8"))
-			{
-				return DEPFMT_Depth24Stencil8;
-			}
-			else if (fmt == string("D24S8F"))
-			{
-				return DEPFMT_Depth24Stencil8Single;
-			}
-			else if (fmt == string("D32"))
-			{
-				return DEPFMT_Depth32;
-			}
-			return DEPFMT_Depth16;
-		}
+		String getElementName(const TiXmlElement* elem) { return StringUtils::toWString(elem->ValueStr()); }
+		String getNodeText(const TiXmlText* text) { return StringUtils::toWString(text->ValueStr()); }
+		String getAttribName(const TiXmlAttribute* attrib) { return StringUtils::toWString(attrib->NameTStr()); }
+		String getAttribValue(const TiXmlAttribute* attrib) { return StringUtils::toWString(attrib->ValueStr()); }
 
 		SceneRenderScriptParser::SceneRenderScriptParser(RenderDevice* dev)
 			: m_renderDevice(dev)
 		{
 
 		}
+
+		
+	
+		void SceneRenderScriptParser::FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions)
+		{
+			ExpressionCompiler compiler;
+
+			compiler.FillInstrunctions(cmd, instructions, GlobalVars);
+		}
+
+
+
+		
+		void SceneRenderScriptParser::Parse(const ResourceLocation* rl)
+		{
+			TiXmlDocument doc;
+
+			Stream* strm = rl->GetReadStream();
+
+			char* buffer = new char[static_cast<int>(strm->getLength())];
+			strm->Read(buffer, strm->getLength());
+
+			doc.Parse(buffer);
+
+			strm->Close();
+			delete strm;
+			delete buffer;
+
+			for (const TiXmlNode* i = doc.FirstChild(); i!=0; i=i->NextSibling())
+			{
+				BuildNode(i);
+			}
+			//vector<String> lines = StringUtils::Split(code, L"\n\r");
+
+
+			//FastList<Block> stack;
+
+			//for (size_t i=0;i<lines.size();i++)
+			//{
+			//	StringUtils::Trim(lines[i]);
+
+			//	vector<String> args;
+
+			//	{
+			//		String buildingStr;
+			//		bool isInStr = false;
+			//		bool lower = true;
+			//		for (size_t j=0;j<lines[i].length();j++)
+			//		{
+			//			wchar_t ch = lines[i][j];
+			//			if (ch == '"')
+			//			{
+			//				isInStr = !isInStr;
+			//				if (isInStr)
+			//					lower = false;
+			//			}
+			//			else if (ch == ';' && !isInStr)
+			//			{
+			//				break;
+			//			}
+			//			else if (ch == ' ' && !isInStr)
+			//			{
+			//				StringUtils::Trim(buildingStr);
+			//				if (buildingStr.length())
+			//				{
+			//					args.push_back(buildingStr);
+			//				}
+			//				buildingStr = String();
+			//				lower = true;
+			//			}
+			//			else
+			//			{
+			//				if (lower)
+			//				{
+			//					ch = tolower(ch);
+			//				}
+			//				buildingStr.append(1, ch);
+			//			}
+			//		}
+			//		StringUtils::Trim(buildingStr);
+			//		if (buildingStr.length())
+			//		{
+			//			args.push_back(buildingStr);
+			//		}
+			//	}
+			//	
+
+			//	if (args.size())
+			//	{
+			//		const String& first = args[0];
+			//		
+			//		if (first == PreserveWords[PWORD_Scene])
+			//		{
+			//			Block block = { BLK_Scene, args };
+			//			stack.Add(block);
+			//		}
+			//		else if (first == PreserveWords[PWORD_Pass])
+			//		{
+			//			Block block = { BLK_Pass, args[1] };
+			//			stack.Add(block);
+			//		}
+			//		else if (first == PreserveWords[PWORD_IF])
+			//		{
+			//			Block block = { BLK_IF, args[1] };
+			//			stack.Add(block);
+			//		}
+			//		else if (first == PreserveWords[PWORD_EndIF])
+			//		{
+			//			if (stack.Peek().BlockType == BLK_IF)
+			//			{
+			//				invStack.Push(stack.Pop());
+			//			}
+			//			else
+			//			{
+			//				throw Apoc3DException::createException(EX_ScriptCompileError, 
+			//					String(L"No corresponding IF Block. Line ") + StringUtils::ToString(i));
+			//			}
+			//		}
+			//		else if (first == PreserveWords[PWORD_EndPass])
+			//		{
+			//			if (stack.Peek().BlockType == BLK_Pass)
+			//			{
+			//				invStack.Push(stack.Pop());
+			//			}
+			//			else
+			//			{
+			//				throw Apoc3DException::createException(EX_ScriptCompileError, 
+			//					String(L"No corresponding Pass Block. Line ") + StringUtils::ToString(i));
+			//			}
+			//		}
+			//		else if (first == PreserveWords[PWORD_EndScene])
+			//		{
+			//			if (stack.Peek().BlockType == BLK_Scene)
+			//			{
+			//				invStack.Push(stack.Pop());
+			//			}
+			//			else
+			//			{
+			//				throw Apoc3DException::createException(EX_ScriptCompileError, 
+			//					String(L"No corresponding Scene Block. Line ") + StringUtils::ToString(i));
+			//			}
+			//		}
+			//		else
+			//		{
+			//			Block blk = 
+			//		}
+			//	}
+
+
+			//}
+		}
+
+		void SceneRenderScriptParser::BuildNode(const TiXmlNode* node)
+		{
+			int type = node->Type();
+
+			switch (type)
+			{
+			case TiXmlNode::TINYXML_ELEMENT:
+				{
+					const TiXmlElement* elem = node->ToElement();
+
+					String strName = getElementName(elem);
+
+					String lowStrName = strName;
+					StringUtils::ToLowerCase(lowStrName);
+
+					if (lowStrName == String(L"scene"))
+					{
+						m_sceneName = StringUtils::toWString(elem->Attribute("Name"));
+					}
+					else if (lowStrName == String(L"pass"))
+					{
+						BuildPass(elem);
+					}
+					else if (lowStrName == String(L"declare"))
+					{
+						ParseGlocalVarNode(elem);
+					}
+					else
+					{
+						LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + strName + L" Node", LOGLVL_Warning);
+
+						//for (const TiXmlNode* i = elem->FirstChild(); i!=0; i=i->NextSibling())
+						//{
+						//	BuildNode(i);
+						//}
+					}
+				}
+				break;
+			}
+		}
+		void SceneRenderScriptParser::BuildPass(const TiXmlElement* node)
+		{
+			ScenePassData passData;
+			node->Attribute("SelectorID", &passData.SelectorID);
+			string strName = node->Attribute("Name");
+			passData.Name = StringUtils::toWString(strName);
+
+			node->Attribute("CameraID", &passData.CameraID);
+
+			BuildInstructions(node, &passData);
+		}
+		void SceneRenderScriptParser::BuildInstructions(const TiXmlElement* node, ScenePassData* data)
+		{
+			for (const TiXmlNode* i = node->FirstChild(); i!=0; i=i->NextSibling())
+			{
+				int type = i->Type();
+				switch (type)
+				{
+				case TiXmlNode::TINYXML_ELEMENT:
+					const TiXmlElement* elem = i->ToElement();
+
+					String strName = getElementName(elem);
+
+					String lowStrName = strName;
+					StringUtils::ToLowerCase(lowStrName);
+
+					if (lowStrName == String(L"if"))
+					{
+						FillInstructions(elem->Attribute("Cond"), data->Instructions);
+						data->Instructions.push_back(SceneInstruction(SOP_JZ));
+
+						SceneInstruction& inst = data->Instructions[data->Instructions.size()-1];
+
+						BuildInstructions(elem, data);
+
+						// back fill
+						inst.Next = (int)data->Instructions.size();
+					}
+					else if (lowStrName == String(L"e"))
+					{
+						FillInstructions(elem->Attribute("S"), data->Instructions);
+
+						SceneOpArg arg;
+						if (ParseCallArgRef(elem, "Ret", arg, GlobalVars))
+						{
+							SceneInstruction inst = SceneInstruction(SOP_Pop);
+							inst.Args.push_back(arg);
+							data->Instructions.push_back(inst);
+						}
+						else
+						{
+							data->Instructions.push_back(SceneInstruction(SOP_Pop));
+						}
+
+					}
+					else if (lowStrName == String(L"c"))
+					{
+						FillFunctionCall(elem, data->Instructions);
+					}
+					else
+					{
+						LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + strName + L" Element", LOGLVL_Warning);
+					}
+
+					break;
+				}
+			}
+		}
+
+		void SceneRenderScriptParser::FillFunctionCall(const TiXmlElement* node, std::vector<SceneInstruction>& instructions)
+		{
+			String stat = StringUtils::toWString(node->Attribute("S"));
+			StringUtils::Trim(stat);
+			StringUtils::ToLowerCase(stat);
+
+			if (stat ==  L"clear")
+			{
+				SceneInstruction inst;
+				inst.Operation = SOP_Clear;
+
+				bool passed = false;
+				{
+					SceneOpArg arg;
+					passed |= ParseCallArgBool(node, "cl_target", arg, GlobalVars, false);
+					inst.Args.push_back(arg);
+
+					passed |= ParseCallArgBool(node, "cl_depth", arg, GlobalVars, false);
+					inst.Args.push_back(arg);
+
+					passed |= ParseCallArgBool(node, "cl_stencil", arg, GlobalVars, false);
+					inst.Args.push_back(arg);
+				}
+
+
+				if (passed)
+				{
+					SceneOpArg arg;
+					ParseCallArgFloat(node, "Depth", arg, GlobalVars, 1.0f);
+					inst.Args.push_back(arg);
+
+					ParseCallArgInt(node, "Stencil", arg, GlobalVars, 0);
+					inst.Args.push_back(arg);
+
+					ParseCallArgUint(node, "ClearColor", arg, GlobalVars, 0);
+					inst.Args.push_back(arg);
+
+					instructions.push_back(inst);
+				}
+				else
+				{
+					LogManager::getSingleton().Write(LOG_Scene, 
+						L"Clear command don't actually clear any thing. Ignored", LOGLVL_Warning);
+				}
+			}
+			else if (stat ==  L"usert")
+			{
+				SceneInstruction inst;
+				inst.Operation = SOP_UseRT;
+
+				SceneOpArg arg;
+				ParseCallArgUint(node, "Index", arg, GlobalVars, 0);
+				inst.Args.push_back(arg);
+
+				if (ParseCallArgRef(node, "RT", arg, GlobalVars))
+					inst.Args.push_back(arg);
+
+				instructions.push_back(inst);
+			}
+			else if (stat == L"visibleto")
+			{
+				SceneInstruction inst;
+				inst.Operation = SOP_VisibleTo;
+
+				SceneOpArg arg;
+				ParseCallArgInt(node, "Selector", arg, GlobalVars, 0);
+				inst.Args.push_back(arg);
+
+				ParseCallArgRef(node, "Ret", arg, GlobalVars);
+				inst.Args.push_back(arg);
+				instructions.push_back(inst);
+			}
+			else if (stat == L"render")
+			{
+				SceneInstruction inst;
+				inst.Operation = SOP_Render;
+				instructions.push_back(inst);
+			}
+			else
+			{
+				LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + stat + L" function", LOGLVL_Warning);
+			}
+
+		}
+
 
 		void SceneRenderScriptParser::ParseGlocalVarNode(const TiXmlElement* node)
 		{
@@ -694,7 +876,7 @@ namespace Apoc3D
 						var->DefaultValue[3] = reinterpret_cast<const uint&>(r);
 					}
 				}
-				
+
 				e1 = node->FirstChildElement("Format");
 				if (e1)
 				{
@@ -916,53 +1098,9 @@ namespace Apoc3D
 			}
 		}
 
-		void SceneRenderScriptParser::BuildNode(const TiXmlNode* node)
-		{
-			int type = node->Type();
-
-			switch (type)
-			{
-			case TiXmlNode::TINYXML_ELEMENT:
-				{
-					const TiXmlElement* elem = node->ToElement();
-
-					String strName = getElementName(elem);
-
-					String lowStrName = strName;
-					StringUtils::ToLowerCase(lowStrName);
-
-					if (lowStrName == String(L"scene"))
-					{
-						m_sceneName = StringUtils::toWString(elem->Attribute("Name"));
-					}
-					else if (lowStrName == String(L"pass"))
-					{
-						BuildPass(elem);
-					}
-					else if (lowStrName == String(L"declare"))
-					{
-						ParseGlocalVarNode(elem);
-					}
-					else
-					{
-						LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + strName + L" Node", LOGLVL_Warning);
-			
-						//for (const TiXmlNode* i = elem->FirstChild(); i!=0; i=i->NextSibling())
-						//{
-						//	BuildNode(i);
-						//}
-					}
-				}
-				break;
-			}
-		}
-
-		void SceneRenderScriptParser::FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions)
-		{
-			ExpressionCompiler compiler;
-
-			compiler.FillInstrunctions(cmd, instructions, GlobalVars);
-		}
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
 
 		bool ParseCallArgBool(const TiXmlElement* node,  const string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, bool def)
@@ -987,7 +1125,7 @@ namespace Apoc3D
 				}
 				return true;
 			}
-			
+
 			arg.IsImmediate = true;
 			arg.DefaultValue[0] = def;
 
@@ -1096,296 +1234,159 @@ namespace Apoc3D
 			return true;
 		}
 
-		void SceneRenderScriptParser::FillFunctionCall(const TiXmlElement* node, std::vector<SceneInstruction>& instructions)
+
+		PixelFormat ConvertFormat(const string& fmt)
 		{
-			String stat = StringUtils::toWString(node->Attribute("S"));
-			StringUtils::Trim(stat);
-			StringUtils::ToLowerCase(stat);
-
-			if (stat ==  L"clear")
+			if (fmt == string("L8"))
 			{
-				SceneInstruction inst;
-				inst.Operation = SOP_Clear;
-
-				bool passed = false;
-				{
-					SceneOpArg arg;
-					passed |= ParseCallArgBool(node, "cl_target", arg, GlobalVars, false);
-					inst.Args.push_back(arg);
-
-					passed |= ParseCallArgBool(node, "cl_depth", arg, GlobalVars, false);
-					inst.Args.push_back(arg);
-
-					passed |= ParseCallArgBool(node, "cl_stencil", arg, GlobalVars, false);
-					inst.Args.push_back(arg);
-				}
-				
-
-				if (passed)
-				{
-					SceneOpArg arg;
-					ParseCallArgFloat(node, "Depth", arg, GlobalVars, 1.0f);
-					inst.Args.push_back(arg);
-
-					ParseCallArgInt(node, "Stencil", arg, GlobalVars, 0);
-					inst.Args.push_back(arg);
-
-					ParseCallArgUint(node, "ClearColor", arg, GlobalVars, 0);
-					inst.Args.push_back(arg);
-
-					instructions.push_back(inst);
-				}
-				else
-				{
-					LogManager::getSingleton().Write(LOG_Scene, 
-						L"Clear command don't actually clear any thing. Ignored", LOGLVL_Warning);
-				}
+				return FMT_Luminance8;
 			}
-			else if (stat ==  L"usert")
+			else if (fmt == string("L16"))
 			{
-				SceneInstruction inst;
-				inst.Operation = SOP_UseRT;
-
-				SceneOpArg arg;
-				ParseCallArgUint(node, "Index", arg, GlobalVars, 0);
-				inst.Args.push_back(arg);
-
-				if (ParseCallArgRef(node, "RT", arg, GlobalVars))
-					inst.Args.push_back(arg);
-
-				instructions.push_back(inst);
+				return FMT_Luminance16;
 			}
-			else if (stat == L"visibleto")
+			else if (fmt == string("A8"))
 			{
-				SceneInstruction inst;
-				inst.Operation = SOP_VisibleTo;
-
-				SceneOpArg arg;
-				ParseCallArgInt(node, "Selector", arg, GlobalVars, 0);
-				inst.Args.push_back(arg);
-
-				ParseCallArgRef(node, "Ret", arg, GlobalVars);
-				inst.Args.push_back(arg);
-				instructions.push_back(inst);
+				return FMT_Alpha8;
 			}
-			else if (stat == L"render")
+			else if (fmt == string("A8L8"))
 			{
-				SceneInstruction inst;
-				inst.Operation = SOP_Render;
-				instructions.push_back(inst);
+				return FMT_A8L8;
 			}
-			else
+			else if (fmt == string("R5G6B5"))
 			{
-				LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + stat + L" function", LOGLVL_Warning);
+				return FMT_R5G6B5;
 			}
-
+			else if (fmt == string("B5G6R5"))
+			{
+				return FMT_B5G6R5;
+			}
+			else if (fmt == string("A4R4G4B4"))
+			{
+				return FMT_A4R4G4B4;
+			}
+			else if (fmt == string("A1R5G5B5"))
+			{
+				return FMT_A1R5G5B5;
+			}
+			else if (fmt == string("R8G8B8"))
+			{
+				return FMT_R8G8B8;
+			}
+			else if (fmt == string("B8G8R8"))
+			{
+				return FMT_B8G8R8;
+			}
+			else if (fmt == string("A8R8G8B8"))
+			{
+				return FMT_A8R8G8B8;
+			}
+			else if (fmt == string("A8B8G8R8"))
+			{
+				return FMT_A8B8G8R8;
+			}
+			else if (fmt == string("B8G8R8A8"))
+			{
+				return FMT_B8G8R8A8;
+			}
+			else if (fmt == string("A2R10G10B10"))
+			{
+				return FMT_A2R10G10B10;
+			}
+			else if (fmt == string("A2B10G10R10"))
+			{
+				return FMT_A2B10G10R10;
+			}
+			else if (fmt == string("A16B16G16R16F"))
+			{
+				return FMT_A16B16G16R16F;
+			}
+			else if (fmt == string("A32B32G32R32F"))
+			{
+				return FMT_A32B32G32R32F;
+			}
+			else if (fmt == string("X8R8G8B8"))
+			{
+				return FMT_X8R8G8B8;
+			}
+			else if (fmt == string("X8B8G8R8"))
+			{
+				return FMT_X8B8G8R8;
+			}
+			else if (fmt == string("R8G8B8A8"))
+			{
+				return FMT_R8G8B8A8;
+			}
+			else if (fmt == string("A16B16G16R16"))
+			{
+				return FMT_A16B16G16R16;
+			}
+			else if (fmt == string("R3G3B2"))
+			{
+				return FMT_R3G3B2;
+			}
+			else if (fmt == string("R16F"))
+			{
+				return FMT_R16F;
+			}
+			else if (fmt == string("R32F"))
+			{
+				return FMT_R32F;
+			}
+			else if (fmt == string("G16R16"))
+			{
+				return FMT_G16R16;
+			}
+			else if (fmt == string("G16R16F"))
+			{
+				return FMT_G16R16F;
+			}
+			else if (fmt == string("G32R32F"))
+			{
+				return FMT_G32R32F;
+			}
+			else if (fmt == string("R16G16B16"))
+			{
+				return FMT_R16G16B16;
+			}
+			else if (fmt == string("B4G4R4A4"))
+			{
+				return FMT_B4G4R4A4;
+			}
+			return FMT_Unknown;
 		}
-		void SceneRenderScriptParser::BuildInstructions(const TiXmlElement* node, ScenePassData* data)
+		DepthFormat ConvertDepthFormat(const string& fmt)
 		{
-			for (const TiXmlNode* i = node->FirstChild(); i!=0; i=i->NextSibling())
+			if (fmt == string("D15S1"))
 			{
-				int type = i->Type();
-				switch (type)
-				{
-				case TiXmlNode::TINYXML_ELEMENT:
-					const TiXmlElement* elem = i->ToElement();
-
-					String strName = getElementName(elem);
-
-					String lowStrName = strName;
-					StringUtils::ToLowerCase(lowStrName);
-
-					if (lowStrName == String(L"if"))
-					{
-						FillInstructions(elem->Attribute("Cond"), data->Instructions);
-						data->Instructions.push_back(SceneInstruction(SOP_JZ));
-						
-						SceneInstruction& inst = data->Instructions[data->Instructions.size()-1];
-
-						BuildInstructions(elem, data);
-
-						// back fill
-						inst.Next = (int)data->Instructions.size();
-					}
-					else if (lowStrName == String(L"e"))
-					{
-						FillInstructions(elem->Attribute("S"), data->Instructions);
-
-						SceneOpArg arg;
-						if (ParseCallArgRef(elem, "Ret", arg, GlobalVars))
-						{
-							SceneInstruction inst = SceneInstruction(SOP_Pop);
-							inst.Args.push_back(arg);
-							data->Instructions.push_back(inst);
-						}
-						else
-						{
-							data->Instructions.push_back(SceneInstruction(SOP_Pop));
-						}
-
-					}
-					else if (lowStrName == String(L"c"))
-					{
-						FillFunctionCall(elem, data->Instructions);
-					}
-					else
-					{
-						LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + strName + L" Element", LOGLVL_Warning);
-					}
-					
-					break;
-				}
+				return DEPFMT_Depth15Stencil1;
 			}
-		}
-
-		void SceneRenderScriptParser::BuildPass(const TiXmlElement* node)
-		{
-			ScenePassData passData;
-			node->Attribute("SelectorID", &passData.SelectorID);
-			string strName = node->Attribute("Name");
-			passData.Name = StringUtils::toWString(strName);
-
-			node->Attribute("CameraID", &passData.CameraID);
-
-			BuildInstructions(node, &passData);
-		}
-		void SceneRenderScriptParser::Parse(const ResourceLocation* rl)
-		{
-			TiXmlDocument doc;
-
-			Stream* strm = rl->GetReadStream();
-
-			char* buffer = new char[static_cast<int>(strm->getLength())];
-			strm->Read(buffer, strm->getLength());
-
-			doc.Parse(buffer);
-
-			strm->Close();
-			delete strm;
-			delete buffer;
-
-			for (const TiXmlNode* i = doc.FirstChild(); i!=0; i=i->NextSibling())
+			else if (fmt == string("D16"))
 			{
-				BuildNode(i);
+				return DEPFMT_Depth16;
 			}
-			//vector<String> lines = StringUtils::Split(code, L"\n\r");
-
-
-			//FastList<Block> stack;
-
-			//for (size_t i=0;i<lines.size();i++)
-			//{
-			//	StringUtils::Trim(lines[i]);
-
-			//	vector<String> args;
-
-			//	{
-			//		String buildingStr;
-			//		bool isInStr = false;
-			//		bool lower = true;
-			//		for (size_t j=0;j<lines[i].length();j++)
-			//		{
-			//			wchar_t ch = lines[i][j];
-			//			if (ch == '"')
-			//			{
-			//				isInStr = !isInStr;
-			//				if (isInStr)
-			//					lower = false;
-			//			}
-			//			else if (ch == ';' && !isInStr)
-			//			{
-			//				break;
-			//			}
-			//			else if (ch == ' ' && !isInStr)
-			//			{
-			//				StringUtils::Trim(buildingStr);
-			//				if (buildingStr.length())
-			//				{
-			//					args.push_back(buildingStr);
-			//				}
-			//				buildingStr = String();
-			//				lower = true;
-			//			}
-			//			else
-			//			{
-			//				if (lower)
-			//				{
-			//					ch = tolower(ch);
-			//				}
-			//				buildingStr.append(1, ch);
-			//			}
-			//		}
-			//		StringUtils::Trim(buildingStr);
-			//		if (buildingStr.length())
-			//		{
-			//			args.push_back(buildingStr);
-			//		}
-			//	}
-			//	
-
-			//	if (args.size())
-			//	{
-			//		const String& first = args[0];
-			//		
-			//		if (first == PreserveWords[PWORD_Scene])
-			//		{
-			//			Block block = { BLK_Scene, args };
-			//			stack.Add(block);
-			//		}
-			//		else if (first == PreserveWords[PWORD_Pass])
-			//		{
-			//			Block block = { BLK_Pass, args[1] };
-			//			stack.Add(block);
-			//		}
-			//		else if (first == PreserveWords[PWORD_IF])
-			//		{
-			//			Block block = { BLK_IF, args[1] };
-			//			stack.Add(block);
-			//		}
-			//		else if (first == PreserveWords[PWORD_EndIF])
-			//		{
-			//			if (stack.Peek().BlockType == BLK_IF)
-			//			{
-			//				invStack.Push(stack.Pop());
-			//			}
-			//			else
-			//			{
-			//				throw Apoc3DException::createException(EX_ScriptCompileError, 
-			//					String(L"No corresponding IF Block. Line ") + StringUtils::ToString(i));
-			//			}
-			//		}
-			//		else if (first == PreserveWords[PWORD_EndPass])
-			//		{
-			//			if (stack.Peek().BlockType == BLK_Pass)
-			//			{
-			//				invStack.Push(stack.Pop());
-			//			}
-			//			else
-			//			{
-			//				throw Apoc3DException::createException(EX_ScriptCompileError, 
-			//					String(L"No corresponding Pass Block. Line ") + StringUtils::ToString(i));
-			//			}
-			//		}
-			//		else if (first == PreserveWords[PWORD_EndScene])
-			//		{
-			//			if (stack.Peek().BlockType == BLK_Scene)
-			//			{
-			//				invStack.Push(stack.Pop());
-			//			}
-			//			else
-			//			{
-			//				throw Apoc3DException::createException(EX_ScriptCompileError, 
-			//					String(L"No corresponding Scene Block. Line ") + StringUtils::ToString(i));
-			//			}
-			//		}
-			//		else
-			//		{
-			//			Block blk = 
-			//		}
-			//	}
-
-
-			//}
+			else if (fmt == string("D24"))
+			{
+				return DEPFMT_Depth24X8;
+			}
+			else if (fmt == string("D24S4"))
+			{
+				return DEPFMT_Depth24Stencil4;
+			}
+			else if (fmt == string("D24S8"))
+			{
+				return DEPFMT_Depth24Stencil8;
+			}
+			else if (fmt == string("D24S8F"))
+			{
+				return DEPFMT_Depth24Stencil8Single;
+			}
+			else if (fmt == string("D32"))
+			{
+				return DEPFMT_Depth32;
+			}
+			return DEPFMT_Depth16;
 		}
+
 	}
 }

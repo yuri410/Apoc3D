@@ -1,12 +1,3 @@
-#include "Common.h"
-
-#include "Core/Singleton.h"
-#include "Collections/FastMap.h"
-#include "Math/Rectangle.h"
-#include "Math/Point.h"
-
-using namespace Apoc3D::Math;
-using namespace Apoc3D::Collections;
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
