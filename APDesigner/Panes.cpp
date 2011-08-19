@@ -38,6 +38,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/File.h"
 #include "Vfs/PathUtils.h"
 
+#include "BuildService/BuildService.h"
+
 using namespace Apoc3D::VFS;
 
 namespace APDesigner
@@ -321,7 +323,15 @@ namespace APDesigner
 
 					if (File::FileExists(PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile)))
 					{
-						m_infoDisplay->Text.append(L"Built(could be outdated).");
+						if (item->IsOutDated())
+						{
+							m_infoDisplay->Text.append(L"Built(but be outdated).");
+						}
+						else
+						{
+							m_infoDisplay->Text.append(L"Built(up to date).");
+						}
+						
 					}
 					else
 					{
@@ -350,15 +360,22 @@ namespace APDesigner
 			ProjectItem* item = static_cast<ProjectItem*>(m_resourceView->getSelectedNode()->UserData);
 			if (item->IsOutDated())
 			{
-
+				BuildInterface::BuildSingleItem(item);
 			}
 
 			switch (item->getType())
 			{
 			case PRJITEM_Texture:
 				{
+					ProjectResTexture* tex = static_cast<ProjectResTexture*>(item->getData());
+					if (File::FileExists(tex->DestinationFile))
+					{
+						TextureViewer* tv = new TextureViewer(m_mainWindow, tex->DestinationFile);
+						tv->LoadRes();
+						m_mainWindow->AddDocument(tv);
+
+					}
 					
-					//TextureViewer* tv = new TextureViewer(m_mainWindow, item->)
 				}
 				break;
 			}

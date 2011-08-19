@@ -69,6 +69,9 @@
     <ClInclude Include="ModelDocument.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="BuildService\BuildService.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -108,6 +111,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="UIResources.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BuildService\BuildService.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

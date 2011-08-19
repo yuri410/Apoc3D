@@ -55,11 +55,11 @@ namespace Apoc3D
 		}
 	}
 
-	void ProjectSave(ConfigurationSection* parentSect, FastList<ProjectItem*>& items)
+	void ProjectSave(ConfigurationSection* parentSect, FastList<ProjectItem*>& items, bool savingBuild)
 	{
 		for (int i=0;i<items.getCount();i++)
 		{
-			ConfigurationSection* sect = items[i]->Save();
+			ConfigurationSection* sect = items[i]->Save(savingBuild);
 			parentSect->AddSection(sect);
 
 			//if (items[i]->getType() == PRJITEM_Folder)
@@ -82,9 +82,9 @@ namespace Apoc3D
 		//}
 		ProjectParse(m_project, SubItems,sect);
 	}
-	void ProjectFolder::Save(ConfigurationSection* sect)
+	void ProjectFolder::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		ProjectSave(sect, SubItems);
+		ProjectSave(sect, SubItems, savingBuild);
 	}
 	
 	bool ProjectResTexture::IsEarlierThan(time_t t)
@@ -259,7 +259,7 @@ namespace Apoc3D
 		}
 
 	}
-	void ProjectResTexture::Save(ConfigurationSection* sect)
+	void ProjectResTexture::Save(ConfigurationSection* sect, bool savingBuild)
 	{
 		switch (Method)
 		{
@@ -280,27 +280,50 @@ namespace Apoc3D
 			{
 				sect->AddAttribute(L"Assemble", L"cubemap");
 
-				sect->AddAttribute(L"NegX", SubMapTable[CUBE_NegativeX]);
-				sect->AddAttribute(L"NegY", SubMapTable[CUBE_NegativeY]);
-				sect->AddAttribute(L"NegZ", SubMapTable[CUBE_NegativeZ]);
-				sect->AddAttribute(L"PosX", SubMapTable[CUBE_PositiveX]);
-				sect->AddAttribute(L"PosY", SubMapTable[CUBE_PositiveY]);
-				sect->AddAttribute(L"PosZ", SubMapTable[CUBE_PositiveZ]);
+				sect->AddAttribute(L"NegX", savingBuild ?
+					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_NegativeX]) : SubMapTable[CUBE_NegativeX]);
+				sect->AddAttribute(L"NegY", savingBuild ?
+					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_NegativeY]) : SubMapTable[CUBE_NegativeY]);
+				sect->AddAttribute(L"NegZ", savingBuild ?
+					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_NegativeZ]) :SubMapTable[CUBE_NegativeZ]);
+				sect->AddAttribute(L"PosX", savingBuild ?
+					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_PositiveX]) :SubMapTable[CUBE_PositiveX]);
+				sect->AddAttribute(L"PosY", savingBuild ?
+					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_PositiveY]) :SubMapTable[CUBE_PositiveY]);
+				sect->AddAttribute(L"PosZ", savingBuild ?
+					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_PositiveZ]) :SubMapTable[CUBE_PositiveZ]);
 
 				if (SubAlphaMapTable.Contains(CUBE_NegativeX))
-					sect->AddAttribute(L"NegXAlpha", SubAlphaMapTable[CUBE_NegativeX]);
+				{
+					sect->AddAttribute(L"NegXAlpha", savingBuild ?
+						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_NegativeX]) : SubAlphaMapTable[CUBE_NegativeX]);
+				}
 				if (SubAlphaMapTable.Contains(CUBE_NegativeY))
-					sect->AddAttribute(L"NegYAlpha", SubAlphaMapTable[CUBE_NegativeY]);
+				{
+					sect->AddAttribute(L"NegYAlpha", savingBuild ?
+						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_NegativeY]) : SubAlphaMapTable[CUBE_NegativeY]);
+				}
 				if (SubAlphaMapTable.Contains(CUBE_NegativeZ))
-					sect->AddAttribute(L"NegZAlpha", SubAlphaMapTable[CUBE_NegativeZ]);
+				{
+					sect->AddAttribute(L"NegZAlpha", savingBuild ?
+						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_NegativeZ]) : SubAlphaMapTable[CUBE_NegativeZ]);
+				}
 
 				if (SubAlphaMapTable.Contains(CUBE_PositiveX))
-					sect->AddAttribute(L"PosXAlpha", SubAlphaMapTable[CUBE_PositiveX]);
+				{
+					sect->AddAttribute(L"PosXAlpha", savingBuild ?
+						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_PositiveX]) : SubAlphaMapTable[CUBE_PositiveX]);
+				}
 				if (SubAlphaMapTable.Contains(CUBE_PositiveY))
-					sect->AddAttribute(L"PosYAlpha", SubAlphaMapTable[CUBE_PositiveY]);
+				{
+					sect->AddAttribute(L"PosYAlpha", savingBuild ?
+						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_PositiveY]) : SubAlphaMapTable[CUBE_PositiveY]);
+				}
 				if (SubAlphaMapTable.Contains(CUBE_PositiveZ))
-					sect->AddAttribute(L"PosZAlpha", SubAlphaMapTable[CUBE_PositiveZ]);
-				
+				{
+					sect->AddAttribute(L"PosZAlpha", savingBuild ?
+						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_PositiveZ]) : SubAlphaMapTable[CUBE_PositiveZ]);
+				}
 			}
 			else
 			{
@@ -330,9 +353,9 @@ namespace Apoc3D
 		}
 		else
 		{
-			sect->AddAttribute(L"SourceFile", SourceFile);
+			sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(),SourceFile) : SourceFile);
 		}
-		sect->AddAttribute(L"DestinationFile", DestinationFile);
+		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationFile) : DestinationFile);
 		if (GenerateMipmaps)
 			sect->AddAttribute(L"GenerateMipmaps", StringUtils::ToString(GenerateMipmaps));
 
@@ -415,7 +438,7 @@ namespace Apoc3D
 
 		DestFile = sect->getAttribute(L"DestinationFile");
 	}
-	void ProjectResFont::Save(ConfigurationSection* sect)
+	void ProjectResFont::Save(ConfigurationSection* sect, bool savingBuild)
 	{
 		sect->AddAttribute(L"Name", Name);
 		sect->AddAttribute(L"Size", StringUtils::ToString(Size));
@@ -440,7 +463,7 @@ namespace Apoc3D
 			}
 		}
 
-		sect->AddAttribute(L"DestinationFile", DestFile);
+		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 
 		for (int i=0;i<Ranges.getCount();i++)
 		{
@@ -519,11 +542,11 @@ namespace Apoc3D
 		EntryPoint = sect->getAttribute(L"EntryPoint");
 		Profile = sect->getAttribute(L"Profile");
 	}
-	void ProjectResEffect::Save(ConfigurationSection* sect)
+	void ProjectResEffect::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"SourceFile", SrcFile);
-		sect->AddAttribute(L"DestinationFile", DestFile);
-		sect->AddAttribute(L"ParamList", PListFile);
+		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
+		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttribute(L"ParamList", savingBuild ? PathUtils::Combine(m_project->getBasePath(), PListFile) : PListFile);
 		sect->AddAttribute(L"EntryPoint", EntryPoint);
 		sect->AddAttribute(L"Profile", Profile);
 	}
@@ -581,10 +604,10 @@ namespace Apoc3D
 			Method = MESHBUILD_FBX;
 		}
 	}
-	void ProjectResModel::Save(ConfigurationSection* sect)
+	void ProjectResModel::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"SourceFile", SrcFile);
-		sect->AddAttribute(L"DestinationFile", DstFile);
+		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
+		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstFile) : DstFile);
 		if (DstAnimationFile.size())
 		{
 			sect->AddAttribute(L"DestinationAnimFile", DstAnimationFile);
@@ -614,12 +637,12 @@ namespace Apoc3D
 	{
 		DestFile = sect->getAttribute(L"DestinationFile");
 	}
-	void ProjectCustomItem::Save(ConfigurationSection* sect)
+	void ProjectCustomItem::Save(ConfigurationSection* sect, bool savingBuild)
 	{
 		sect->AddAttribute(L"DestinationFile", DestFile);
 	}
 
-	ConfigurationSection* ProjectItem::Save()
+	ConfigurationSection* ProjectItem::Save(bool savingBuild)
 	{
 		ConfigurationSection* sect = new ConfigurationSection(m_name);
 		
@@ -644,7 +667,7 @@ namespace Apoc3D
 				break;
 			}
 			
-			m_typeData->Save(sect);
+			m_typeData->Save(sect, savingBuild);
 		}
 		return sect;
 	}
@@ -705,22 +728,22 @@ namespace Apoc3D
 
 		ProjectParse(this, m_items, sect);
 	}
-	void Project::Save(const String& file)
+	void Project::Save(const String& file, bool savingBuild)
 	{
-		ConfigurationSection* s = Save();
+		ConfigurationSection* s = Save(savingBuild);
 
 		XMLConfiguration* xc = new XMLConfiguration(m_name);
 		xc->Add(s);
 		xc->Save(file);
 		delete xc;
 	}
-	ConfigurationSection* Project::Save()
+	ConfigurationSection* Project::Save(bool savingBuild)
 	{
 		ConfigurationSection* sect = new ConfigurationSection(L"Project");
 
 		sect->AddAttribute(L"Name", m_name);
 
-		ProjectSave(sect, m_items);
+		ProjectSave(sect, m_items, savingBuild);
 		return sect;
 	}
 	

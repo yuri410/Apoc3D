@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APDCommon.h" />
+    <ClInclude Include="BuildService\BuildService.h" />
     <ClInclude Include="CommonDialog\ChooseColor.h" />
     <ClInclude Include="CommonDialog\DialogCommon.h" />
     <ClInclude Include="CommonDialog\FileDialog.h" />
@@ -102,6 +103,7 @@
     <ClInclude Include="UIResources.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BuildService\BuildService.cpp" />
     <ClCompile Include="CommonDialog\ChooseColor.cpp" />
     <ClCompile Include="CommonDialog\DialogCommon.cpp" />
     <ClCompile Include="CommonDialog\FileDialog.cpp" />

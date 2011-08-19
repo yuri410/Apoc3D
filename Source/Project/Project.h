@@ -72,7 +72,7 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t) = 0;
 		virtual bool RequiresPostEdit() { return false; }
 		virtual void Parse(const ConfigurationSection* sect) = 0;
-		virtual void Save(ConfigurationSection* sect) = 0;
+		virtual void Save(ConfigurationSection* sect, bool savingBuild) = 0;
 
 		virtual ~ProjectItemData() { }
 	};
@@ -92,7 +92,7 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Custom; }
 		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 	};
 	class ProjectResource : public ProjectItemData
 	{
@@ -119,7 +119,7 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Folder; }
 		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 	};
 
 	class ProjectResTexture : public ProjectResource
@@ -163,7 +163,7 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Texture; }
 		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -195,7 +195,7 @@ namespace Apoc3D
 		virtual bool RequiresPostEdit() { return true; }
 		virtual ProjectItemType getType() const { return PRJITEM_Model; }
 		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -220,7 +220,7 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Effect; }
 		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -258,7 +258,7 @@ namespace Apoc3D
 
 		virtual ProjectItemType getType() const { return PRJITEM_Font; }
 		virtual void Parse(const ConfigurationSection* sect);
-		virtual void Save(ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
 	};
@@ -294,7 +294,7 @@ namespace Apoc3D
 		}
 
 		void Parse(const ConfigurationSection* sect);
-		ConfigurationSection* Save();
+		ConfigurationSection* Save(bool savingBuild);
 
 		bool IsOutDated() const 
 		{
@@ -317,7 +317,7 @@ namespace Apoc3D
 		String m_basePath;
 		String m_outputPath;
 
-		ConfigurationSection* Save();
+		ConfigurationSection* Save(bool savingBuild);
 	public:
 		const String& getName() const { return m_name; }
 		const String& getBasePath() const { return m_basePath; }
@@ -328,7 +328,7 @@ namespace Apoc3D
 
 		void Parse(const ConfigurationSection* sect);
 		
-		void Save(const String& file);
+		void Save(const String& file, bool savingBuild = false);
 	};
 
 

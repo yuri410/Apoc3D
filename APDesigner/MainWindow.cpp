@@ -340,7 +340,7 @@ namespace APDesigner
 	void MainWindow::Menu_OpenProject(Control* ctl)
 	{
 		OpenFileDialog dlg;
-		dlg.Filter = L"Project file(*.aproj;*.xml)\0*.aproj;*.xml\0\0";
+		dlg.SetFilter(L"Project file(*.aproj;*.xml)\0*.aproj;*.xml\0\0");
 		if (dlg.ShowDialog() == DLGRES_OK)
 		{
 			OpenProject(dlg.getFilePath()[0]);
