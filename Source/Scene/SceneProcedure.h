@@ -68,6 +68,8 @@ namespace Apoc3D
 		public:
 			const Camera* getLastCamera() const { return m_lastCamera; }
 
+
+
 			SceneProcedure(RenderDevice* device);
 			~SceneProcedure(void);
 

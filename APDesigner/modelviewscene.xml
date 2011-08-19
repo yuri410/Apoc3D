@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
-<Scene Name="Model Viewer Scene">
-  <Pass SelectorID="0" Name="Default Pass">
-    <C S="Render"/>
-  </Pass>
-</Scene>
+<Root>
+  <Proc00 Scrpit="modelviewscene.xml" />
+  
+  <Scene Name="Model Viewer Scene">
+    <Pass SelectorID="0" Name="Default Pass">
+      <C S="Render"/>
+    </Pass>
+  </Scene>
+</Root>
