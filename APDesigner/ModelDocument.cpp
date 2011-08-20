@@ -34,12 +34,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "Graphics/RenderSystem/RenderStateManager.h"
+#include "Graphics/RenderSystem/RenderTarget.h"
+#include "Graphics/RenderSystem/Sprite.h"
 #include "Graphics/ModelManager.h"
 #include "Graphics/Material.h"
 #include "Graphics/Model.h"
 #include "Graphics/Camera.h"
 
 #include "Scene/SceneRenderer.h"
+#include "Scene/SceneProcedure.h"
 #include "Scene/SceneObject.h"
 
 #include "UILib/Form.h"
@@ -60,8 +63,7 @@ namespace APDesigner
 		m_name(name), m_model(0), m_modelSData(0), m_animData(0),
 		m_distance(40),m_xang(ToRadian(45)),m_yang(ToRadian(45))
 	{
-		getDocumentForm()->setTitle(file);
-
+		
 		m_sceneRenderer = new SceneRenderer(window->getDevice());
 
 		FileLocation* fl = FileSystem::getSingleton().Locate(L"ModelViewSceneRenderer.xml", FileLocateRule::Default);
@@ -81,8 +83,13 @@ namespace APDesigner
 		m_scene.AddObject(&m_object);
 
 		m_pictureBox = new PictureBox(Point(5,5 + 17), 1);
+		m_pictureBox->Size = Point(512,512);
 		m_pictureBox->SetSkin(window->getUISkin());
 		m_pictureBox->eventPictureDraw().bind(this, &ModelDocument::PixtureBox_Draw);
+
+		getDocumentForm()->setMinimumSize(Point(512+200+10,512+45));
+		getDocumentForm()->setTitle(file);
+
 	}
 
 	ModelDocument::~ModelDocument()
@@ -130,7 +137,7 @@ namespace APDesigner
 	}
 	void ModelDocument::Initialize(RenderDevice* device)
 	{
-		//getDocumentForm()->getControls().Add(m_pictureBox);
+		getDocumentForm()->getControls().Add(m_pictureBox);
 		//getDocumentForm()->getControls().Add(m_btnZoomIn);
 		//getDocumentForm()->getControls().Add(m_btnZoomOut);
 
@@ -146,7 +153,7 @@ namespace APDesigner
 		//m_btnZoomIn->Position.X = m_pictureBox->Size.X-65;
 		//m_btnZoomOut->Position.X = m_pictureBox->Size.X-30;
 		m_scene.Update(time);
-
+		m_camera->Update(time);
 
 	}
 	void ModelDocument::Render()
@@ -156,6 +163,15 @@ namespace APDesigner
 
 	void ModelDocument::PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
+		SceneProcedure* proc = m_sceneRenderer->getSelectedProc();
+
+		if (proc)
+		{
+			RenderTarget* rt = proc->FindRenderTargetVar(L"View");
+
+			Texture* texture = rt->GetColorTexture();
+			sprite->Draw(texture, *dstRect, 0, CV_White);
+		}
 		//{
 		//	Texture* alphaGrid = UIResources::GetTexture(L"alphagrid");
 		//	int x ,y;

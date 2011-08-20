@@ -70,6 +70,8 @@ namespace Apoc3D
 
 			RenderTarget* FindRenderTargetVar(const String& name) const
 			{
+				if (!m_isAvailable)
+					return 0;
 				for (int i=0;i<m_varCount;i++)
 				{
 					if (m_vars[i]->Name==name)
@@ -77,6 +79,7 @@ namespace Apoc3D
 						return m_vars[i]->RTValue;
 					}
 				}
+				return 0;
 			}
 
 			SceneProcedure(RenderDevice* device);
