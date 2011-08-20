@@ -81,6 +81,10 @@ namespace APDesigner
 		float m_xang;
 		float m_yang;
 		float m_distance;
+
+		PictureBox* m_pictureBox;
+
+		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 	};
 	
 }

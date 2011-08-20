@@ -44,6 +44,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "UILib/Form.h"
 #include "UILib/Button.h"
+#include "UILib/PictureBox.h"
 #include "UILib/FontManager.h"
 #include "Utility/StringUtils.h"
 #include "Vfs/ResourceLocation.h"
@@ -78,10 +79,15 @@ namespace APDesigner
 		m_sceneRenderer->RegisterCamera(m_camera);
 
 		m_scene.AddObject(&m_object);
+
+		m_pictureBox = new PictureBox(Point(5,5 + 17), 1);
+		m_pictureBox->SetSkin(window->getUISkin());
+		m_pictureBox->eventPictureDraw().bind(this, &ModelDocument::PixtureBox_Draw);
 	}
 
 	ModelDocument::~ModelDocument()
 	{
+		delete m_pictureBox;
 		if (m_model)
 		{
 			delete m_model;
@@ -148,5 +154,121 @@ namespace APDesigner
 		m_sceneRenderer->RenderScene(&m_scene);
 	}
 
-	
+	void ModelDocument::PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
+	{
+		//{
+		//	Texture* alphaGrid = UIResources::GetTexture(L"alphagrid");
+		//	int x ,y;
+		//	for (x =0;x<dstRect->Width;x+=alphaGrid->getWidth())
+		//	{
+		//		for (y =0;y<dstRect->Height;y+=alphaGrid->getHeight())
+		//		{
+		//			Apoc3D::Math::Rectangle destRect(dstRect->X+x,dstRect->Y+y,dstRect->Width-x, dstRect->Height-y);
+		//			if (destRect.Width>alphaGrid->getWidth())
+		//				destRect.Width = alphaGrid->getWidth();
+		//			if (destRect.Height>alphaGrid->getHeight())
+		//				destRect.Height = alphaGrid->getHeight();
+
+		//			Apoc3D::Math::Rectangle srcRect(0,0,destRect.Width, destRect.Height);
+		//			sprite->Draw(alphaGrid, destRect,&srcRect, CV_White);
+		//		}
+		//	}
+
+
+		//}
+
+		//if (m_texture)
+		//{
+
+		//	float scale = powf(2, (float)m_scale);
+
+
+		//	//Point newSize = m_pictureBox->Size;
+		//	Apoc3D::Math::Rectangle dr(*dstRect);
+		//	if (dr.Width > (int)(m_texture->getWidth()*scale))
+		//	{
+		//		dr.Width = (int)(m_texture->getWidth()*scale);
+		//	}
+		//	if (dr.Height > (int)(m_texture->getHeight()*scale))
+		//	{
+		//		dr.Height = (int)(m_texture->getHeight()*scale);
+		//	}
+
+		//	Apoc3D::Math::Rectangle srcRect(0,0,(int)(dr.Width/scale),(int)(dr.Height/scale));
+		//	if (srcRect.Width > m_texture->getWidth())
+		//		srcRect.Width = m_texture->getWidth();
+		//	if (srcRect.Height > m_texture->getHeight())
+		//		srcRect.Height = m_texture->getHeight();
+
+		//	sprite->Draw(m_texture,dr,&srcRect,CV_White);
+		//	switch(m_texture->getType())
+		//	{
+		//	case TT_Texture1D:
+		//	case TT_Texture2D:
+		//		{
+
+		//			String msg = L"Type: 2D.\nFormat: ";
+		//			msg.append(PixelFormatUtils::ToString(m_texture->getFormat()));
+		//			msg.append(L"\nDimension:");
+		//			msg.append(StringUtils::ToString(m_texture->getWidth()));
+		//			msg.append(1,'x');
+		//			msg.append(StringUtils::ToString(m_texture->getHeight()));
+		//			msg.append(L"\nMip Levels:");
+		//			msg.append(StringUtils::ToString(m_texture->getLevelCount()));	
+
+		//			m_pictureBox->getFontRef()->DrawString(sprite, msg, Point(5+dr.X, 6+dr.Y), CV_Black);
+		//			m_pictureBox->getFontRef()->DrawString(sprite, msg, Point(5+dr.X, 5+dr.Y), CV_White);
+		//		}
+		//		break;
+		//	}
+
+		//	//sprite->Flush();
+		//	//if (restoreScissor)
+		//	//{
+		//	//	manager->setScissorTest(true, &oldScissorRect);
+		//	//}
+		//	//else
+		//	//{
+		//	//	manager->setScissorTest(false,0);
+		//	//}
+		//	//switch(m_texture->getType())
+		//	//{
+		//	//case TT_Texture2D:
+		//	//	if (m_texture->getWidth() < MaxSize.X && m_texture->getHeight() < MaxSize.Y)
+		//	//	{
+		//	//		newSize.X = m_texture->getWidth();
+		//	//		newSize.Y = m_texture->getHeight();		
+
+		//	//	}
+		//	//	else
+		//	//	{
+		//	//		if (m_texture->getWidth()>m_texture->getHeight())
+		//	//		{
+		//	//			newSize.X = MaxSize.X;
+		//	//			newSize.Y = static_cast<int>(m_texture->getHeight() * MaxSize.X / (float)m_texture->getWidth());
+		//	//		}
+		//	//		else
+		//	//		{
+		//	//			newSize.X = static_cast<int>(m_texture->getWidth() * MaxSize.Y / (float)m_texture->getHeight());
+		//	//			newSize.Y = MaxSize.Y;
+		//	//		}
+		//	//	}
+
+		//	//	break;
+		//	//case TT_Texture1D:
+		//	//	if (m_texture->getWidth() >1)
+		//	//	{
+		//	//		newSize.X = MaxSize.X;
+		//	//		newSize.Y = MinSize.Y;
+		//	//	}
+		//	//	else
+		//	//	{
+		//	//		newSize.X = MinSize.X;
+		//	//		newSize.Y = MaxSize.Y;
+		//	//	}
+		//	//	break;
+		//	//}
+
+		//}
+	}
 }

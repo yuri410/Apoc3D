@@ -255,6 +255,9 @@ namespace APDesigner
 		delete m_pictureBox;
 		delete m_btnZoomIn;
 		delete m_btnZoomOut;
+
+		if (m_texture)
+			delete m_texture;
 	}
 
 	void TextureViewer::PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)

@@ -198,6 +198,7 @@ namespace Apoc3D
 
 		void SceneProcedure::Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData)
 		{
+			m_lastCamera = 0;
 			// pass each scene pass
 			for (int i=0;i<m_passes.getCount();i++)
 			{
