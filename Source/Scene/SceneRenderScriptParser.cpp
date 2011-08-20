@@ -771,6 +771,8 @@ namespace Apoc3D
 
 					passed |= ParseCallArgBool(node, "CL_Stencil", arg, GlobalVars, false);
 					inst.Args.push_back(arg);
+
+
 				}
 
 
@@ -864,11 +866,11 @@ namespace Apoc3D
 				const TiXmlElement* e1 = node->FirstChildElement("Width");
 				const TiXmlElement* e2 = node->FirstChildElement("Height");
 
-				var->DefaultValue[0] = var->DefaultValue[1] = 0;
+				var->Value[0] = var->Value[1] = 0;
 				if (e1 && e2)
 				{
-					var->DefaultValue[0] = StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
-					var->DefaultValue[1] = StringUtils::ParseInt32(StringUtils::toWString(e2->GetText()));
+					var->Value[0] = StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
+					var->Value[1] = StringUtils::ParseInt32(StringUtils::toWString(e2->GetText()));
 				}
 				else
 				{
@@ -878,16 +880,16 @@ namespace Apoc3D
 					if (e1 && e2)
 					{
 						float r = StringUtils::ParseSingle(StringUtils::toWString(e1->GetText()));
-						var->DefaultValue[2] = reinterpret_cast<const uint&>(r);
+						var->Value[2] = reinterpret_cast<const uint&>(r);
 
 						r = StringUtils::ParseSingle(StringUtils::toWString(e2->GetText()));
-						var->DefaultValue[3] = reinterpret_cast<const uint&>(r);
+						var->Value[3] = reinterpret_cast<const uint&>(r);
 					}
 					else
 					{
 						float r = 1;
-						var->DefaultValue[2] = reinterpret_cast<const uint&>(r);
-						var->DefaultValue[3] = reinterpret_cast<const uint&>(r);
+						var->Value[2] = reinterpret_cast<const uint&>(r);
+						var->Value[3] = reinterpret_cast<const uint&>(r);
 					}
 				}
 
@@ -895,34 +897,34 @@ namespace Apoc3D
 				if (e1)
 				{
 					PixelFormat fmt = ConvertFormat(e1->GetText());
-					var->DefaultValue[4] = reinterpret_cast<const uint&>(fmt);
+					var->Value[4] = reinterpret_cast<const uint&>(fmt);
 				}
 				else
 				{
 					PixelFormat fmt = m_renderDevice->GetRenderTarget(0)->getColorFormat();
-					var->DefaultValue[4] = reinterpret_cast<const uint&>(fmt);
+					var->Value[4] = reinterpret_cast<const uint&>(fmt);
 				}
 
 				e1 = node->FirstChildElement("Depth");
 				if (e1)
 				{
 					DepthFormat fmt = ConvertDepthFormat(e1->GetText());
-					var->DefaultValue[5] = reinterpret_cast<const uint&>(fmt);
+					var->Value[5] = reinterpret_cast<const uint&>(fmt);
 				}
 				else
 				{
 					DepthFormat fmt = DEPFMT_Count;// m_renderDevice->GetRenderTarget(0)->getDepthFormat();
-					var->DefaultValue[5] = reinterpret_cast<const uint&>(fmt);
+					var->Value[5] = reinterpret_cast<const uint&>(fmt);
 				}
 
 				e1 = node->FirstChildElement("SampleCount");
 				if (e1)
 				{
-					var->DefaultValue[6] = StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
+					var->Value[6] = StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
 				}
 				else
 				{
-					var->DefaultValue[6] = 0;
+					var->Value[6] = 0;
 				}
 
 				GlobalVars.Add(var);
@@ -946,7 +948,7 @@ namespace Apoc3D
 						for (size_t i=0;i<16;i++)
 						{
 							float v = StringUtils::ParseSingle(elems[i]);
-							var->DefaultValue[i] = reinterpret_cast<const uint&>(v);
+							var->Value[i] = reinterpret_cast<const uint&>(v);
 						}
 					}
 				}
@@ -978,7 +980,7 @@ namespace Apoc3D
 						for (size_t i=0;i<4;i++)
 						{
 							float v = StringUtils::ParseSingle(elems[i]);
-							var->DefaultValue[i] = reinterpret_cast<const uint&>(v);
+							var->Value[i] = reinterpret_cast<const uint&>(v);
 						}
 					}
 				}
@@ -1004,7 +1006,7 @@ namespace Apoc3D
 						for (size_t i=0;i<3;i++)
 						{
 							float v = StringUtils::ParseSingle(elems[i]);
-							var->DefaultValue[i] = reinterpret_cast<const uint&>(v);
+							var->Value[i] = reinterpret_cast<const uint&>(v);
 						}
 					}
 				}
@@ -1030,7 +1032,7 @@ namespace Apoc3D
 						for (size_t i=0;i<2;i++)
 						{
 							float v = StringUtils::ParseSingle(elems[i]);
-							var->DefaultValue[i] = reinterpret_cast<const uint&>(v);
+							var->Value[i] = reinterpret_cast<const uint&>(v);
 						}
 					}
 				}

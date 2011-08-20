@@ -95,7 +95,10 @@ namespace Apoc3D
 			bool m_isTransformDirty;
 			
 		protected:
-			Entity() { }
+			Entity()
+			{
+				memset(m_models, 0, sizeof(Model*)*3);
+			}
 
 		public:
 			bool Visible;

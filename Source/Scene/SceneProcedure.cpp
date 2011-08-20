@@ -105,10 +105,10 @@ namespace Apoc3D
 				{
 					case VARTYPE_RenderTarget:
 						{
-							PixelFormat fmt = static_cast<PixelFormat>(m_vars[i]->DefaultValue[4]);
-							DepthFormat depFmt = static_cast<DepthFormat>(m_vars[i]->DefaultValue[5]);
+							PixelFormat fmt = static_cast<PixelFormat>(m_vars[i]->Value[4]);
+							DepthFormat depFmt = static_cast<DepthFormat>(m_vars[i]->Value[5]);
 
-							uint sampleCount = m_vars[i]->DefaultValue[6];
+							uint sampleCount = m_vars[i]->Value[6];
 
 							if (!m_renderDevice->getCapabilities()->SupportsRenderTarget(sampleCount, fmt, depFmt))
 							{
@@ -140,23 +140,23 @@ namespace Apoc3D
 					{
 					case VARTYPE_RenderTarget:
 						{
-							uint width = m_vars[i]->DefaultValue[0];
-							uint height = m_vars[i]->DefaultValue[1];
+							uint width = m_vars[i]->Value[0];
+							uint height = m_vars[i]->Value[1];
 
 							if (!width || !height)
 							{
-								float wscale = reinterpret_cast<const float&>(m_vars[i]->DefaultValue[2]);
-								float hscale = reinterpret_cast<const float&>(m_vars[i]->DefaultValue[3]);
+								float wscale = reinterpret_cast<const float&>(m_vars[i]->Value[2]);
+								float hscale = reinterpret_cast<const float&>(m_vars[i]->Value[3]);
 
 								Viewport vp = m_renderDevice->getViewport();
 								width = static_cast<uint>(vp.Width * wscale + 0.5f);
 								height = static_cast<uint>(vp.Height * hscale + 0.5f);
 							}
 
-							PixelFormat fmt = static_cast<PixelFormat>(m_vars[i]->DefaultValue[4]);
-							DepthFormat depFmt = static_cast<DepthFormat>(m_vars[i]->DefaultValue[5]);
+							PixelFormat fmt = static_cast<PixelFormat>(m_vars[i]->Value[4]);
+							DepthFormat depFmt = static_cast<DepthFormat>(m_vars[i]->Value[5]);
 
-							uint sampleCount = m_vars[i]->DefaultValue[6];
+							uint sampleCount = m_vars[i]->Value[6];
 
 							RenderTarget* rt;
 							if (depFmt == DEPFMT_Count)

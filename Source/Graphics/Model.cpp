@@ -90,7 +90,7 @@ namespace Apoc3D
 		/************************************************************************/
 
 		Model::Model(ResourceHandle<ModelSharedData>* data, const AnimationData* animData)
-			: m_animData(animData), m_selectedClipName(L"Take 001"),
+			: m_data(data), m_animData(animData), m_selectedClipName(L"Take 001"),
 			m_mtrlAnimCompleted(false), m_skinAnimCompleted(false), m_rootAnimCompleted(false), m_rigidAnimCompleted(false),
 			m_mtrlPlayer(0), m_skinPlayer(0), m_rigidPlayer(0), m_rootPlayer(0),
 			m_autoLoop(false), m_isOpBufferBuilt(false),

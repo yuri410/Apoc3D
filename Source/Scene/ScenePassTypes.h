@@ -56,7 +56,7 @@ namespace Apoc3D
 		{
 			String Name;
 			SceneVariableType Type;
-			uint DefaultValue[16];
+			uint Value[16];
 			String DefaultStringValue;
 
 			RenderTarget* RTValue;

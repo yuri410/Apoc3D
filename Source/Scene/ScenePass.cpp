@@ -76,47 +76,77 @@ namespace Apoc3D
 					break;
 				case SOP_Clear:
 					{
-						ClearFlags flags;
+						int flags=0;
 
 						if (inst.Args[0].IsImmediate)
 						{
-							flags = reinterpret_cast<const ClearFlags&>(inst.Args[0].DefaultValue[0]);
+							if (inst.Args[0].DefaultValue[0])
+							{
+								flags |= CLEAR_ColorBuffer;
+							}
 						}
-						else
+						else if (inst.Args[0].Var->Value[0])
 						{
-							flags = reinterpret_cast<const ClearFlags&>(inst.Args[0].Var->DefaultValue[0]);
+							flags |= CLEAR_ColorBuffer;
 						}
 
-						float depth;
 						if (inst.Args[1].IsImmediate)
 						{
-							depth = reinterpret_cast<const float&>(inst.Args[1].DefaultValue[0]);
+							if (inst.Args[1].DefaultValue[0])
+							{
+								flags |= CLEAR_DepthBuffer;
+							}
+						}
+						else if (inst.Args[1].Var->Value[0])
+						{
+							flags |= CLEAR_DepthBuffer;
+						}
+
+						if (inst.Args[2].IsImmediate)
+						{
+							if (inst.Args[2].DefaultValue[0])
+							{
+								flags |= CLEAR_Stencil;
+							}
+						}
+						else if (inst.Args[2].Var->Value[0])
+						{
+							flags |= CLEAR_Stencil;
+						}
+
+
+
+
+						float depth;
+						if (inst.Args[3].IsImmediate)
+						{
+							depth = reinterpret_cast<const float&>(inst.Args[3].DefaultValue[0]);
 						}
 						else
 						{
-							depth = reinterpret_cast<const float&>(inst.Args[1].Var->DefaultValue[0]);
+							depth = reinterpret_cast<const float&>(inst.Args[3].Var->Value[0]);
 						}
 
 						int stencil;
-						if (inst.Args[2].IsImmediate)
+						if (inst.Args[4].IsImmediate)
 						{
-							stencil = reinterpret_cast<const int&>(inst.Args[2].DefaultValue[0]);
+							stencil = reinterpret_cast<const int&>(inst.Args[4].DefaultValue[0]);
 						}
 						else
 						{
-							stencil = reinterpret_cast<const int&>(inst.Args[2].Var->DefaultValue[0]);
+							stencil = reinterpret_cast<const int&>(inst.Args[4].Var->Value[0]);
 						}
 
 						ColorValue color;
-						if (inst.Args[3].IsImmediate)
+						if (inst.Args[5].IsImmediate)
 						{
-							color = reinterpret_cast<const ColorValue&>(inst.Args[3].DefaultValue[0]);
+							color = reinterpret_cast<const ColorValue&>(inst.Args[5].DefaultValue[0]);
 						}
 						else
 						{
-							color = reinterpret_cast<const ColorValue&>(inst.Args[3].Var->DefaultValue[0]);
+							color = reinterpret_cast<const ColorValue&>(inst.Args[5].Var->Value[0]);
 						}
-						m_renderDevice->Clear(flags, color, depth, stencil);
+						m_renderDevice->Clear(static_cast<ClearFlags>(flags), color, depth, stencil);
 					}
 					break;
 				case SOP_Render:
@@ -134,11 +164,11 @@ namespace Apoc3D
 						}
 						else
 						{
-							selectorID = reinterpret_cast<const int&>(inst.Args[0].Var->DefaultValue[0]);
+							selectorID = reinterpret_cast<const int&>(inst.Args[0].Var->Value[0]);
 						}
 						uint64 selectMask = 1 << m_selectorID;
 						result = batchData->HasObject(selectMask);
-						inst.Args[1].Var->DefaultValue[0] = result ? 1 : 0;
+						inst.Args[1].Var->Value[0] = result ? 1 : 0;
 					}
 					break;
 				case SOP_UseRT:
@@ -150,7 +180,7 @@ namespace Apoc3D
 						}
 						else
 						{
-							index = reinterpret_cast<const int&>(inst.Args[0].Var->DefaultValue[0]);
+							index = reinterpret_cast<const int&>(inst.Args[0].Var->Value[0]);
 						}
 
 						

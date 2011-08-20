@@ -66,10 +66,28 @@ namespace Apoc3D
 
 					if (mtrl)
 					{
-						m_priTable[mtrl->getPriority()]->
-							operator[](mtrl)->
-							operator[](geoData)->Add(op);
+						MaterialTable* mtrlTable;
+						if (!m_priTable.TryGetValue(mtrl->getPriority(), mtrlTable))
+						{
+							mtrlTable = new MaterialTable();
+							m_priTable.Add(mtrl->getPriority(),mtrlTable);
+						}
 
+						GeometryTable* geoTable;
+						if (!mtrlTable->TryGetValue(mtrl, geoTable))
+						{
+							geoTable = new GeometryTable();
+							mtrlTable->Add(mtrl, geoTable);
+						}
+
+						OperationList* opList;
+						if (!geoTable->TryGetValue(geoData, opList))
+						{
+							opList = new OperationList();
+							geoTable->Add(geoData, opList);
+						}
+
+						opList->Add(op);
 					}
 				}
 			}
@@ -100,7 +118,7 @@ namespace Apoc3D
 				{
 					Material* m = *(j.getCurrentKey());
 
-					if (m->getBatchHandle() & selectMask)
+					if (m->getPassFlags() & selectMask)
 					{
 						return true;
 					}
