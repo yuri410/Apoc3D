@@ -33,9 +33,12 @@ namespace Apoc3D
 		namespace EffectSystem
 		{
 			/** Defines typical usage of a effect parameters.
-				When the engine auto bind a parameter, it checks the parameter's usage.
-				This enum is used to fast check common usages.
-				Custom usage is also accepted by micro effect code.
+				When the engine auto bind a parameter, it first checks the parameter's usage to
+				find the corresponding data, then to assign to the param. 
+				
+				Alternatively, custom usage in String form is also accepted by EffectParameter.
+				Internally, parameters that uses enum this to specify typical usage 
+				can be manipulated faster than those with custom param usages.
 			*/
 			enum EffectParamUsage
 			{
@@ -48,14 +51,27 @@ namespace Apoc3D
 				
 			};
 
-			/* Defines a parameter in an micro effect code.
+			/** Include all scene render resources such as the current camera, lighting that could 
+				be used in effects.
+			*/
+			class APAPI RendererEffectParams
+			{
+			public:
+				static Camera* CurrentCamera;
+
+
+				static void Reset()
+				{
+					CurrentCamera = 0;
+				}
+			};
+
+			/* Defines a parameter in an effect.
    
 			   This also contains effect param mapping info.
 			*/
 			class APAPI EffectParameter
-			{
-			private:
-				
+			{	
 			public:
 				String Name;
 				EffectParamUsage TypicalUsage;
@@ -69,6 +85,9 @@ namespace Apoc3D
 				~EffectParameter(void);
 
 				static EffectParamUsage ParseParamUsage(const String& val);
+
+			private:
+
 			};
 		};
 	};

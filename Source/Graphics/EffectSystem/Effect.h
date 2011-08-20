@@ -27,6 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
+
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::VFS;
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -40,12 +44,32 @@ namespace Apoc3D
 			public:
 				Effect(void);
 				~Effect(void);
+
+				int Begin();
+				void End();
+
+				virtual void Setup(Material* mtrl, const RenderOperation& rop) = 0;
+
+				virtual void BeginPass(int passId);
+				virtual void EndPass();
+
+				const String& getName() const { return m_name; }
+			protected:
+				virtual int begin() = 0;
+				virtual void end() = 0;
+
+				static VertexShader* LoadVertexShader(RenderDevice* rs, const ResourceLocation* vs);
+				static PixelShader* LoadPixelShader(RenderDevice* rs, const ResourceLocation* ps);
+
+			private:
+				String m_name;
+				bool m_begun;
 			};
 
-			class APAPI DefaultEffect : public Effect
-			{
+			//class APAPI DefaultEffect : public Effect
+			//{
 
-			};
+			//};
 		};
 	};
 };

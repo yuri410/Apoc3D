@@ -23,6 +23,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Effect.h"
 
+#include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/ObjectFactory.h"
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -30,6 +33,7 @@ namespace Apoc3D
 		namespace EffectSystem
 		{
 			Effect::Effect(void)
+				: m_begun(false)
 			{
 			}
 
@@ -37,6 +41,38 @@ namespace Apoc3D
 			Effect::~Effect(void)
 			{
 			}
+
+			int Effect::Begin()
+			{
+				if (!m_begun)
+				{
+					m_begun = true;
+					return begin();
+				}
+				return -1;
+			}
+
+			void Effect::End()
+			{
+				if (m_begun)
+				{
+					end();
+					m_begun = false;
+				}
+			}
+
+
+			VertexShader* Effect::LoadVertexShader(RenderDevice* rs, const ResourceLocation* vs)
+			{
+				ObjectFactory* objFac = rs->getObjectFactory();
+				return objFac->CreateVertexShader(vs);
+			}
+			PixelShader* Effect::LoadPixelShader(RenderDevice* rs, const ResourceLocation* ps)
+			{
+				ObjectFactory* objFac = rs->getObjectFactory();
+				return objFac->CreatePixelShader(ps);
+			}
+
 		};
 	}
 

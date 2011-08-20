@@ -27,10 +27,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Common.h"
 
 #include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/EffectSystem/Effect.h"
 
 using namespace std;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Graphics::EffectSystem;
 
 namespace Apoc3D
 {
@@ -45,6 +47,7 @@ namespace Apoc3D
 			private:
 				friend class VolatileResource;
 
+				Effect* m_defaultEffect;
 				GraphicsDeviceManager* m_devManager;
 				D3D9RenderStateManager* m_stateManager;
 				NativeD3DStateManager* m_nativeState;

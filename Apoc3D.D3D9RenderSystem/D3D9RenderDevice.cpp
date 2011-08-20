@@ -55,7 +55,7 @@ namespace Apoc3D
 		{
 			D3D9RenderDevice::D3D9RenderDevice(GraphicsDeviceManager* devManager)
 				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager), 
-				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0)
+				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0), m_defaultEffect(0)
 			{
 
 			}
@@ -78,7 +78,8 @@ namespace Apoc3D
 					delete m_stateManager;
 				if (m_objectFactory)
 					delete m_objectFactory;
-				
+				if (m_defaultEffect)
+					delete m_defaultEffect;
 			}
 
 			D3DDevice* D3D9RenderDevice::getDevice() const { return m_devManager->getDevice(); } 
