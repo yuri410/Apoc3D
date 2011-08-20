@@ -58,6 +58,17 @@ namespace Apoc3D
 				D3DTexture3D* getInternal3D() const { return m_tex3D; }
 				D3DTextureCube* getInternalCube() const { return m_cube; }
 
+				D3DBaseTexture* getBaseTexture() const
+				{
+					if (m_tex2D)
+						return m_tex2D;
+					if (m_tex3D)
+						return m_tex3D;
+					if (m_cube)
+						return m_cube;
+					return 0;
+				}
+
 				D3D9Texture(D3D9RenderDevice* device, D3DTexture2D* tex2D);
 				D3D9Texture(D3D9RenderDevice* device, D3DTexture3D* tex3D);
 				D3D9Texture(D3D9RenderDevice* device, D3DTextureCube* texCube);

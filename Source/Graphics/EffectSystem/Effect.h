@@ -50,8 +50,8 @@ namespace Apoc3D
 
 				virtual void Setup(Material* mtrl, const RenderOperation& rop) = 0;
 
-				virtual void BeginPass(int passId);
-				virtual void EndPass();
+				virtual void BeginPass(int passId) = 0;
+				virtual void EndPass() = 0;
 
 				const String& getName() const { return m_name; }
 			protected:
@@ -64,6 +64,11 @@ namespace Apoc3D
 			private:
 				String m_name;
 				bool m_begun;
+			};
+
+			class AutomaticEffect : public Effect
+			{
+
 			};
 
 			//class APAPI DefaultEffect : public Effect

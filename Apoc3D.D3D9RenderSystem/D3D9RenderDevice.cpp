@@ -44,6 +44,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/GeometryData.h"
 #include "Graphics/EffectSystem/Effect.h"
 #include "Core/Logging.h"
+#include "Core/ResourceHandle.h"
 
 using namespace Apoc3D::Core;
 
@@ -53,6 +54,49 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			class BasicEffect : public Effect
+			{
+			public:
+				BasicEffect(D3D9RenderDevice* device)
+					: m_device(device)
+				{
+
+				}
+				virtual void Setup(Material* mtrl, const RenderOperation& rop)
+				{
+					IDirect3DDevice9* dev = m_device->getDevice();
+					if (mtrl->getTexture(0))
+					{
+						D3D9Texture* tex = static_cast<D3D9Texture*>(mtrl->getTexture(0)->operator->());
+
+						dev->SetTexture(0, tex->getBaseTexture());
+					}
+				}
+
+				virtual void BeginPass(int passId)
+				{
+
+				}
+				virtual void EndPass()
+				{
+
+				}
+
+			protected:
+				virtual int begin()
+				{
+					IDirect3DDevice9* dev = m_device->getDevice();
+					dev->SetVertexShader(0);
+					dev->SetPixelShader(0);
+				}
+				virtual void end()
+				{
+
+				}
+			private:
+				D3D9RenderDevice* m_device;
+			};
+
 			D3D9RenderDevice::D3D9RenderDevice(GraphicsDeviceManager* devManager)
 				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager), 
 				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0), m_defaultEffect(0)
@@ -273,42 +317,49 @@ namespace Apoc3D
 					m_nativeState->SetDepth(mtrl->DepthTestEnabled,
 						mtrl->DepthWriteEnabled);
 				}
-
-				for (int j=0;j<count;j++)
+				int passCount = fx->Begin();
+				for (int p = 0; p < passCount; p++)
 				{
-					const RenderOperation& rop = op[j];
-					const GeometryData* gm = rop.GeometryData;
-					if (!gm->VertexCount || !gm->PrimitiveCount)
+					fx->BeginPass(p);
+
+					for (int j=0;j<count;j++)
 					{
-						continue;
+						const RenderOperation& rop = op[j];
+						const GeometryData* gm = rop.GeometryData;
+						if (!gm->VertexCount || !gm->PrimitiveCount)
+						{
+							continue;
+						}
+
+						m_batchCount++;
+						m_primitiveCount += gm->PrimitiveCount;
+						m_vertexCount += gm->VertexCount;
+
+						// setup effect
+						fx->Setup(mtrl, rop);
+
+						D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
+						getDevice()->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
+
+						getDevice()->SetVertexDeclaration(static_cast<D3D9VertexDeclaration*>(gm->VertexDecl)->getD3DDecl());
+
+						if (gm->usesIndex())
+						{
+							D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
+							getDevice()->SetIndices(dib->getD3DBuffer());
+
+							getDevice()->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
+								gm->BaseVertex, 0,
+								gm->VertexCount, 0, 
+								gm->PrimitiveCount);
+						}
+						else
+						{
+							getDevice()->DrawPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType),
+								0, gm->PrimitiveCount);
+						}
 					}
-
-					m_batchCount++;
-					m_primitiveCount += gm->PrimitiveCount;
-					m_vertexCount += gm->VertexCount;
-
-					// setup effect
-
-					D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
-					getDevice()->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
-
-					getDevice()->SetVertexDeclaration(static_cast<D3D9VertexDeclaration*>(gm->VertexDecl)->getD3DDecl());
-
-					if (gm->usesIndex())
-					{
-						D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
-						getDevice()->SetIndices(dib->getD3DBuffer());
-
-						getDevice()->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
-							gm->BaseVertex, 0,
-							gm->VertexCount, 0, 
-							gm->PrimitiveCount);
-					}
-					else
-					{
-						getDevice()->DrawPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType),
-							0, gm->PrimitiveCount);
-					}
+					fx->EndPass();
 				}
 			}
 
