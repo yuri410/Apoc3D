@@ -33,13 +33,18 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			/* Represents a sequencal combination of micro effects.
+			/* Represents the result of a sequence of micro effects.
 			*/
 			class APAPI Effect
 			{
 			public:
 				Effect(void);
 				~Effect(void);
+			};
+
+			class APAPI DefaultEffect : public Effect
+			{
+
 			};
 		};
 	};

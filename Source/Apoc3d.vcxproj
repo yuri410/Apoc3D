@@ -214,12 +214,9 @@
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\SceneObject.h" />
     <ClInclude Include="Graphics\EffectSystem\Effect.h" />
-    <ClInclude Include="Graphics\EffectSystem\MicroEffectCodeParser.h" />
     <ClInclude Include="Graphics\EffectSystem\EffectParameter.h" />
     <ClInclude Include="Core\HashHandleObject.h" />
-    <ClInclude Include="Graphics\EffectSystem\EffectDescription.h" />
     <ClInclude Include="Graphics\EffectSystem\EffectManager.h" />
-    <ClInclude Include="Graphics\EffectSystem\MicroEffect.h" />
     <ClInclude Include="Math\Frustum.h" />
     <ClInclude Include="Core\GameTime.h" />
     <ClInclude Include="Graphics\GeometryData.h" />
@@ -330,10 +327,7 @@
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\SceneObject.cpp" />
     <ClCompile Include="Graphics\EffectSystem\Effect.cpp" />
-    <ClCompile Include="Graphics\EffectSystem\MicroEffectCodeParser.cpp" />
     <ClCompile Include="Graphics\EffectSystem\EffectParameter.cpp" />
-    <ClCompile Include="Graphics\EffectSystem\EffectDescription.cpp" />
-    <ClCompile Include="Graphics\EffectSystem\MicroEffect.cpp" />
     <ClCompile Include="Graphics\EffectSystem\EffectManager.cpp" />
     <ClCompile Include="Math\Frustum.cpp" />
     <ClCompile Include="Graphics\Material.cpp" />

@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			/** Defines a combination of micro effect. 
+			/** [Obsolete] Defines a combination of micro effect. 
 				EffectManager create an effect based on this information
 			*/
 			class APAPI EffectDescription
