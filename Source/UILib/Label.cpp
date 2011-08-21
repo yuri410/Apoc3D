@@ -228,7 +228,15 @@ namespace Apoc3D
 					std::vector<String> lines = StringUtils::Split(text, L"\n");
 					for (size_t i=0;i<lines.size();i++)
 					{
-						wchar_t tab = '\u0009';
+						for (size_t j=0;j<lines[i].size();j++)
+						{
+							if (lines[i][j] == '\t')
+							{
+								lines[i][j] = ' ';
+								lines[i].insert(j, L"   ");
+							}
+						}
+						//wchar_t tab = '\t';
 						//lines[i] = m_lines[i].replace()
 						if (i==0)
 						{
@@ -417,7 +425,7 @@ namespace Apoc3D
 				UpdateScrollbars(time);
 			}
 		}
-		void TextBox::Update(const GameTime* const time)
+		void TextBox::UpdateScrollbars(const GameTime* const time)
 		{
 			if (m_vscrollBar)
 			{
@@ -486,7 +494,7 @@ namespace Apoc3D
 				m_sRect.Height = Size.Y - 2;
 
 			m_dRect = getArea();
-			this->DrawText(sprite);
+			_DrawText(sprite);
 
 			if (m_vscrollBar && m_vscrollBar->getMax()>0)
 			{
@@ -545,7 +553,7 @@ namespace Apoc3D
 			m_destRect[8].Y = m_destRect[5].Y + m_destRect[5].Height;
 			sprite->Draw(texture, m_destRect[8], &m_skin->TextBoxSrcRects[8], CV_White);
 		}
-		void TextBox::DrawText(Sprite* sprite)
+		void TextBox::_DrawText(Sprite* sprite)
 		{
 			if (!m_multiline)
 			{
@@ -564,7 +572,7 @@ namespace Apoc3D
 				int maxWidth = 0;
 				for (int i=0;i<m_lines.getCount();i++)
 				{
-					Size lineSize = m_fontRef->MeasureString(m_lines[i]);
+					Point lineSize = m_fontRef->MeasureString(m_lines[i]);
 
 					m_lineOffset.Y = i*m_fontRef->getLineHeight();
 
@@ -574,11 +582,11 @@ namespace Apoc3D
 					{
 						if (m_vscrollBar && m_vscrollBar->getMax()>0)
 						{
-							maxWidth = lineSize.X - Size.Width;
+							maxWidth = lineSize.X - Size.X;
 						}
 						else
 						{
-							maxWidth = lineSize.X - Size.Width+12;
+							maxWidth = lineSize.X - Size.X+12;
 						}
 					}
 				}
@@ -743,9 +751,9 @@ namespace Apoc3D
 				break;
 			case KEY_DELETE:
 				{
-					if (!m_multiline && m_curorLocation.X < Text.size())
+					if (!m_multiline && m_curorLocation.X < (int)Text.size())
 					{
-						if (m_curorLocation.X < Text.size() - 1 && Text.substr(m_curorLocation.X, 2) == L"\n")
+						if (m_curorLocation.X < (int)Text.size() - 1 && Text.substr(m_curorLocation.X, 2) == L"\n")
 							Text = Text.erase(m_curorLocation.X, 2);
 						else
 							Text = Text.erase(m_curorLocation.X, 1);
@@ -866,6 +874,156 @@ namespace Apoc3D
 				Add(L"      ");
 				m_curorLocation.X+=6;
 				break;
+
+			case KEY_0:
+				if (e.ShiftDown) Add(L")"); else Add(L"0");
+				m_curorLocation.X++;
+				break;
+			case KEY_1:
+				if (e.ShiftDown) Add(L"!"); else Add(L"1");
+				m_curorLocation.X++;
+				break;
+			case KEY_2:
+				if (e.ShiftDown) Add(L"@"); else Add(L"2");
+				m_curorLocation.X++;
+				break;
+			case KEY_3:
+				if (e.ShiftDown) Add(L"#"); else Add(L"3");
+				m_curorLocation.X++;
+				break;
+			case KEY_4:
+				if (e.ShiftDown) Add(L"$"); else Add(L"4");
+				m_curorLocation.X++;
+				break;
+			case KEY_5:
+				if (e.ShiftDown) Add(L"%"); else Add(L"5");
+				m_curorLocation.X++;
+				break;
+			case KEY_6:
+				if (e.ShiftDown) Add(L"^"); else Add(L"6");
+				m_curorLocation.X++;
+				break;
+			case KEY_7:
+				if (e.ShiftDown) Add(L"&"); else Add(L"7");
+				m_curorLocation.X++;
+				break;
+			case KEY_8:
+				if (e.ShiftDown) Add(L"*"); else Add(L"8");
+				m_curorLocation.X++;
+				break;
+			case KEY_9:
+				if (e.ShiftDown) Add(L"("); else Add(L"9");
+				m_curorLocation.X++;
+				break;
+
+			case KEY_A:
+				if (e.ShiftDown || e.CapsLock) Add(L"A"); else Add(L"a");
+				m_curorLocation.X++;
+				break;
+			case KEY_B:
+				if (e.ShiftDown || e.CapsLock) Add(L"B"); else Add(L"b");
+				m_curorLocation.X++;
+				break;
+			case KEY_C:
+				if (e.ShiftDown || e.CapsLock) Add(L"C"); else Add(L"c");
+				m_curorLocation.X++;
+				break;
+			case KEY_D:
+				if (e.ShiftDown || e.CapsLock) Add(L"D"); else Add(L"d");
+				m_curorLocation.X++;
+				break;
+			case KEY_E:
+				if (e.ShiftDown || e.CapsLock) Add(L"E"); else Add(L"e");
+				m_curorLocation.X++;
+				break;
+			case KEY_F:
+				if (e.ShiftDown || e.CapsLock) Add(L"F"); else Add(L"f");
+				m_curorLocation.X++;
+				break;
+			case KEY_G:
+				if (e.ShiftDown || e.CapsLock) Add(L"G"); else Add(L"g");
+				m_curorLocation.X++;
+				break;
+
+			case KEY_H:
+				if (e.ShiftDown || e.CapsLock) Add(L"H"); else Add(L"h");
+				m_curorLocation.X++;
+				break;
+			case KEY_I:
+				if (e.ShiftDown || e.CapsLock) Add(L"I"); else Add(L"i");
+				m_curorLocation.X++;
+				break;
+			case KEY_J:
+				if (e.ShiftDown || e.CapsLock) Add(L"J"); else Add(L"j");
+				m_curorLocation.X++;
+				break;
+			case KEY_K:
+				if (e.ShiftDown || e.CapsLock) Add(L"K"); else Add(L"k");
+				m_curorLocation.X++;
+				break;
+			case KEY_L:
+				if (e.ShiftDown || e.CapsLock) Add(L"L"); else Add(L"l");
+				m_curorLocation.X++;
+				break;
+			case KEY_M:
+				if (e.ShiftDown || e.CapsLock) Add(L"M"); else Add(L"m");
+				m_curorLocation.X++;
+				break;
+			case KEY_N:
+				if (e.ShiftDown || e.CapsLock) Add(L"N"); else Add(L"n");
+				m_curorLocation.X++;
+				break;
+
+			case KEY_O:
+				if (e.ShiftDown || e.CapsLock) Add(L"O"); else Add(L"o");
+				m_curorLocation.X++;
+				break;
+			case KEY_P:
+				if (e.ShiftDown || e.CapsLock) Add(L"P"); else Add(L"p");
+				m_curorLocation.X++;
+				break;
+			case KEY_Q:
+				if (e.ShiftDown || e.CapsLock) Add(L"Q"); else Add(L"q");
+				m_curorLocation.X++;
+				break;
+			case KEY_R:
+				if (e.ShiftDown || e.CapsLock) Add(L"R"); else Add(L"r");
+				m_curorLocation.X++;
+				break;
+			case KEY_S:
+				if (e.ShiftDown || e.CapsLock) Add(L"S"); else Add(L"s");
+				m_curorLocation.X++;
+				break;
+			case KEY_T:
+				if (e.ShiftDown || e.CapsLock) Add(L"T"); else Add(L"t");
+				m_curorLocation.X++;
+				break;
+
+			case KEY_U:
+				if (e.ShiftDown || e.CapsLock) Add(L"U"); else Add(L"u");
+				m_curorLocation.X++;
+				break;
+			case KEY_V:
+				if (e.ShiftDown || e.CapsLock) Add(L"V"); else Add(L"v");
+				m_curorLocation.X++;
+				break;
+			case KEY_W:
+				if (e.ShiftDown || e.CapsLock) Add(L"W"); else Add(L"w");
+				m_curorLocation.X++;
+				break;
+			case KEY_X:
+				if (e.ShiftDown || e.CapsLock) Add(L"X"); else Add(L"x");
+				m_curorLocation.X++;
+				break;
+			case KEY_Y:
+				if (e.ShiftDown || e.CapsLock) Add(L"Y"); else Add(L"y");
+				m_curorLocation.X++;
+				break;
+			case KEY_Z:
+				if (e.ShiftDown || e.CapsLock) Add(L"Z"); else Add(L"z");
+				m_curorLocation.X++;
+				break;
+
 			default:
 				break;
 			}
@@ -876,7 +1034,49 @@ namespace Apoc3D
 		}
 		void TextBox::Keyboard_OnPaste(String value)
 		{
+			if (value.size())
+			{
+				String newText(value);
+				
+				for (size_t i=0;i<newText.size();i++)
+				{
+					if (newText[i] == '\r')
+						newText[i] = ' ';
 
+					if (m_multiline && newText[i]=='\t')
+					{
+						newText[i] = ' ';
+						newText.insert(i, L"   ");
+					}
+				}
+
+				Add(newText);
+
+				Point textSize = m_fontRef->MeasureString(newText);
+				m_cursorOffset.Y += (int)(textSize.Y / m_fontRef->getLineHeight()) - 1;
+				
+				std::vector<String> lines = StringUtils::Split(newText, L"\n");
+				int len = (int)lines.size();
+				m_curorLocation.X += (int)lines[len-1].size();
+
+				UpdateScrolling();
+			}
 		}
+
+		void TextBox::vScrollbar_OnChangeValue(Control* ctrl)
+		{
+			m_scrollOffset.Y = m_vscrollBar->getValue() * m_fontRef->getLineHeight();
+			m_hasFocus = true;
+		}
+		void TextBox::hScrollbar_OnChangeValue(Control* ctrl)
+		{
+			if (m_multiline)
+			{
+				m_scrollOffset.X = m_hscrollBar->getValue();
+				m_hasFocus = true;
+			}
+		}
+
+
 	}
 }

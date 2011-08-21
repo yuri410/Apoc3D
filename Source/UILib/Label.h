@@ -135,13 +135,13 @@ namespace Apoc3D
 			void Keyboard_OnPaste(String value);
 			void vScrollbar_OnChangeValue(Control* ctrl);
 			void hScrollbar_OnChangeValue(Control* ctrl);
-			void UpdateScrollPosition();
+			//void UpdateScrollPosition();
 			void UpdateScrollbars(const GameTime* const time);
 
 			void CheckFocus();
 
 			void UpdateScrolling();
-			void DrawText(Sprite* sprite);
+			void _DrawText(Sprite* sprite);
 			void DrawMonoline(Sprite* sprite);
 			void DrawMultiline(Sprite* sprite);
 		};
