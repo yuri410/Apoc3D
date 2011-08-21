@@ -61,6 +61,7 @@ namespace Apoc3D
 			SceneObject(const bool hasSubObjs = false) 
 				: m_hasSubObjects(hasSubObjs), m_parentNode(0)
 			{
+				m_transformation.LoadIdentity();
 			}
 
 			virtual ~SceneObject(){}
@@ -98,6 +99,8 @@ namespace Apoc3D
 			Entity()
 			{
 				memset(m_models, 0, sizeof(Model*)*3);
+				memset(&BoundingSphereOffset, 0, sizeof(BoundingSphereOffset));
+				m_orientation.LoadIdentity();
 			}
 
 		public:

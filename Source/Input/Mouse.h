@@ -51,13 +51,21 @@ namespace Apoc3D
 			~Mouse();
 		public:
 			const Point& GetCurrentPosition() const { return m_currentPos; }
+
+			int getDX() const { return m_currentPos.X - m_lastPosition.X; }
+			int getDY() const { return m_currentPos.Y - m_lastPosition.Y; }
+			int getDZ() const { return m_z - m_lastZ; }
+
 			bool IsLeftPressed() const { return m_btnState[0] & !m_lastBtnState[0]; }
 			bool IsLeftUp() const { return !m_btnState[0] & m_lastBtnState[0]; }
 			bool IsRightPressed() const { return m_btnState[2] & !m_lastBtnState[2]; }
 			bool IsRightUp() const { return !m_btnState[2] & m_lastBtnState[2]; }
-
-			bool IsLeftReleasedState() const { return !m_btnState[0]; }
+			
 			bool IsLeftPressedState() const { return m_btnState[0]; }
+			bool IsLeftReleasedState() const { return !m_btnState[0]; }
+			bool IsRightPressedState() const { return m_btnState[2]; }
+			bool IsRightReleasedState() const { return !m_btnState[2]; }
+
 			virtual void Update(const GameTime* const time) = 0;
 		};
 	}

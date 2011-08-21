@@ -29,6 +29,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Config/XmlConfiguration.h"
 
+#include "Input/InputAPI.h"
+#include "Input/Mouse.h"
+
 #include "Graphics/Animation/AnimationData.h"
 #include "Graphics/Animation/AnimationManager.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
@@ -54,6 +57,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/FileSystem.h"
 #include "Vfs/FileLocateRule.h"
 
+#include <d3dx9.h>
+
+using namespace Apoc3D::Input;
 using namespace Apoc3D::Utility;
 
 namespace APDesigner
@@ -61,7 +67,7 @@ namespace APDesigner
 	ModelDocument::ModelDocument(MainWindow* window, const String& name, const String& file, const String& animationFile)
 		: Document(window), m_filePath(file), m_animPath(animationFile), 
 		m_name(name), m_model(0), m_modelSData(0), m_animData(0),
-		m_distance(40),m_xang(ToRadian(45)),m_yang(ToRadian(45))
+		m_distance(7),m_xang(ToRadian(45)),m_yang(ToRadian(45))
 	{
 		
 		m_sceneRenderer = new SceneRenderer(window->getDevice());
@@ -77,7 +83,7 @@ namespace APDesigner
 		m_camera->setChasePosition(Vector3Utils::LDVector(0, 0, 0));
 		m_camera->setDesiredOffset(Vector3Utils::LDVector(0, 0, 40));
 		m_camera->setFar(10000);
-		m_camera->setNear(10);
+		m_camera->setNear(5);
 		m_sceneRenderer->RegisterCamera(m_camera);
 
 		m_scene.AddObject(&m_object);
@@ -155,6 +161,34 @@ namespace APDesigner
 		m_scene.Update(time);
 		m_camera->Update(time);
 
+		Apoc3D::Math::Rectangle rect = m_pictureBox->getAbsoluteArea();
+
+		Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+		
+		if (rect.Contains(mouse->GetCurrentPosition()))
+		{
+			if (mouse->IsRightPressedState())
+			{
+				m_xang += ToRadian(mouse->getDX()) * 0.5f;
+				m_yang += ToRadian(mouse->getDY()) * 0.5f;
+			}
+			else if (mouse->IsLeftPressedState())
+			{
+				const Matrix& ori = m_object.getOrientation();
+				Matrix temp;
+				Matrix::CreateRotationY(temp, ToRadian(mouse->getDX()) * 0.5f);
+				//Matrix::CreateTranslation(temp, mouse->getDX(), 0,0);
+				Matrix temp2;
+				Matrix::Multiply(temp2, ori, temp);
+				//D3DXMatrixMultiply(reinterpret_cast<D3DXMATRIX*>(&temp), reinterpret_cast<const D3DXMATRIX*>(&ori), reinterpret_cast<D3DXMATRIX*>(&temp));
+				//assert(temp == temp2);
+				m_object.setOrientation(temp2);
+			}
+
+			m_distance -= 0.5f * mouse->getDZ();
+		}
+		m_camera->setChaseDirection(Vector3Utils::LDVector(cosf(m_xang), -sinf(m_yang), sinf(m_xang)));
+		m_camera->setDesiredOffset(Vector3Utils::LDVector(0,0,m_distance));
 	}
 	void ModelDocument::Render()
 	{

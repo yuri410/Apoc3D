@@ -65,8 +65,10 @@ namespace Apoc3D
 					Material* mtrl = op.Material;
 					GeometryData* geoData = op.GeometryData;
 
-					if (mtrl)
+					if (mtrl && geoData)
 					{
+						Matrix::Multiply(op.RootTransform, obj->getTrasformation(), op.RootTransform);
+
 						MaterialTable* mtrlTable;
 						if (!m_priTable.TryGetValue(mtrl->getPriority(), mtrlTable))
 						{

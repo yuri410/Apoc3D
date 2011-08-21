@@ -60,8 +60,8 @@ namespace Apoc3D
 		const float Two_PI = PI * 2;
 		const float Half_PI = float(PI * 0.5);
 
-#define ToDegree(x) (x * (PI/180.0f))
-#define ToRadian(x) (x * (180.0f/PI))
+#define ToRadian(x) (x * (PI/180.0f))
+#define ToDegree(x) (x * (180.0f/PI))
 
 		inline float Sign(float value);
 		

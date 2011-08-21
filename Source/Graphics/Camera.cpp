@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Camera.h"
 #include "Core/GameTime.h"
 
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -78,7 +79,7 @@ namespace Apoc3D
 		void ChaseCamera::UpdateMatrices()
 		{
 			Matrix::CreateLookAtLH(m_view, m_position, m_lootAt, m_up);
-			//D3DXMatrixLookAtLH(&m_view, &m_position, &m_lootAt, &m_up);
+
 			Matrix::CreatePerspectiveFovLH(m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
 			//D3DXMatrixPerspectiveFovLH(&m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
 			getFrustum().Update(m_view, m_proj);
@@ -89,7 +90,6 @@ namespace Apoc3D
 			// Construct a matrix to transform from object space to world space
 			Matrix trans;
 			trans.LoadIdentity();
-			//D3DXMatrixIdentity(&trans);
 
 			trans.M31 = -_V3X(m_chaseDirection);
 			trans.M32 = -_V3Y(m_chaseDirection);
@@ -101,8 +101,6 @@ namespace Apoc3D
 
 			Vector3 right = Vector3Utils::Cross(m_up, m_chaseDirection);
 			right = Vector3Utils::Normalize(right);
-			//D3DXVec3Cross(&right, &m_up, &m_chaseDirection);
-			//D3DXVec3Normalize(&right, &right);
 
 			trans.M11 = _V3X(right);
 			trans.M12 = _V3Y(right);
@@ -112,9 +110,6 @@ namespace Apoc3D
 			Vector3 lookAtOfsT;
 			desiredPositionOfsT = Vector3Utils::TransformNormal(m_desiredPositionOfs, trans);
 			lookAtOfsT = Vector3Utils::TransformNormal(m_lootAtOfs, trans);
-			//D3DXVec3TransformNormal(&desiredPositionOfsT, &m_desiredPositionOfs, &trans);
-			//D3DXVec3TransformNormal(&lookAtOfsT, &m_lootAtOfs, &trans);
-
 
 			m_desiredPosition = Vector3Utils::Add(m_chasePosition, desiredPositionOfsT);
 			m_lootAt = Vector3Utils::Add(m_chasePosition, lookAtOfsT);
