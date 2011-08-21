@@ -150,17 +150,22 @@ namespace Apoc3D
 			fl = FileSystem::getSingleton().Locate(L"ctl_textbox.tex", rule);
 			TextBox = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
 
-			ListBoxSrcRects[0] = Apoc3D::Math::Rectangle(0,0,TextBox->getWidth()-1, TextBox->getHeight()/2);
-			ListBoxSrcRects[1] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,1, TextBox->getHeight()/2);
-			ListBoxSrcRects[2] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,-(TextBox->getWidth()-1), TextBox->getHeight()/2);
+			TextBoxSrcRects[0] = Apoc3D::Math::Rectangle(0,0,TextBox->getWidth()-1, TextBox->getHeight()/2);
+			TextBoxSrcRects[1] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,1, TextBox->getHeight()/2);
+			TextBoxSrcRects[2] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,-(TextBox->getWidth()-1), TextBox->getHeight()/2);
 
-			ListBoxSrcRects[3] = Apoc3D::Math::Rectangle(0,TextBox->getHeight()/2,TextBox->getWidth()-1, 1);
-			ListBoxSrcRects[4] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1,1);
-			ListBoxSrcRects[5] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,-(TextBox->getWidth()-1), 1);
+			TextBoxSrcRects[3] = Apoc3D::Math::Rectangle(0,TextBox->getHeight()/2,TextBox->getWidth()-1, 1);
+			TextBoxSrcRects[4] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1,1);
+			TextBoxSrcRects[5] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,-(TextBox->getWidth()-1), 1);
 			
-			ListBoxSrcRects[6] = Apoc3D::Math::Rectangle(0,TextBox->getHeight()/2,TextBox->getWidth()-1, -TextBox->getHeight()/2);
-			ListBoxSrcRects[7] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1, -TextBox->getHeight()/2);
-			ListBoxSrcRects[8] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,-(TextBox->getWidth()-1), -TextBox->getHeight()/2);
+			TextBoxSrcRects[6] = Apoc3D::Math::Rectangle(0,TextBox->getHeight()/2,TextBox->getWidth()-1, -TextBox->getHeight()/2);
+			TextBoxSrcRects[7] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1, -TextBox->getHeight()/2);
+			TextBoxSrcRects[8] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,-(TextBox->getWidth()-1), -TextBox->getHeight()/2);
+
+
+			TextBoxSrcRectsSingle[0] = Apoc3D::Math::Rectangle(0,0,TextBox->getWidth()-1, TextBox->getHeight());
+			TextBoxSrcRectsSingle[1] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,1, TextBox->getHeight());
+			TextBoxSrcRectsSingle[2] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,-(TextBox->getWidth()-1), TextBox->getHeight());
 
 		}
 

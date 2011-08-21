@@ -68,8 +68,14 @@ namespace Apoc3D
 			{
 				return (a.X != b.X) || (a.Y != b.Y);
 			}
-			
-		
+			friend static Point operator +(const Point& a, const Point& b)
+			{
+				return Point(a.X + b.X, a.Y + b.Y);
+			}
+			friend static Point operator -(const Point& a, const Point& b)
+			{
+				return Point(a.X - b.X, a.Y - b.Y);
+			}
 			const static Point Zero;
 		};
 		class APAPI PointF

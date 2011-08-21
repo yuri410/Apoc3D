@@ -57,7 +57,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/FileSystem.h"
 #include "Vfs/FileLocateRule.h"
 
-#include <d3dx9.h>
+//#include <d3dx9.h>
 
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Utility;
@@ -82,6 +82,7 @@ namespace APDesigner
 		m_camera->setChaseDirection(Vector3Utils::LDVector(0, 0, 1));
 		m_camera->setChasePosition(Vector3Utils::LDVector(0, 0, 0));
 		m_camera->setDesiredOffset(Vector3Utils::LDVector(0, 0, 40));
+		m_camera->setLookAtOffset(Vector3Utils::Zero);
 		m_camera->setFar(10000);
 		m_camera->setNear(5);
 		m_sceneRenderer->RegisterCamera(m_camera);

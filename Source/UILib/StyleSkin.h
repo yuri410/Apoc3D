@@ -93,7 +93,8 @@ namespace Apoc3D
 
 			Texture* TextBox;
 
-			Apoc3D::Math::Rectangle ListBoxSrcRects[9];
+			Apoc3D::Math::Rectangle TextBoxSrcRects[9];
+			Apoc3D::Math::Rectangle TextBoxSrcRectsSingle[3];
 		public:
 			// create default skin
 			StyleSkin(RenderDevice* device, const FileLocateRule& rule);

@@ -62,21 +62,21 @@ namespace Apoc3D
 			m_textOffset = Point(5, m_skin->TextBox->getHeight()-m_fontRef->getLineHeight()/2);
 
 			m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
-				m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
+				m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 			m_destRect[1] = Apoc3D::Math::Rectangle(0,0, 
-				Size.X - m_skin->ListBoxSrcRects[0].Width*2, m_skin->ListBoxSrcRects[0].Height);
-			m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
+				Size.X - m_skin->TextBoxSrcRects[0].Width*2, m_skin->TextBoxSrcRects[0].Height);
+			m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 
 			m_destRect[3] = Apoc3D::Math::Rectangle(0,0, 
-				m_skin->ListBoxSrcRects[0].Width, Size.Y - m_skin->ListBoxSrcRects[0].Height*2);
+				m_skin->TextBoxSrcRects[0].Width, Size.Y - m_skin->TextBoxSrcRects[0].Height*2);
 			m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
 				m_destRect[1].Width, m_destRect[3].Height);
 			m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
-				m_skin->ListBoxSrcRects[1].Width, m_destRect[3].Height);
+				m_skin->TextBoxSrcRects[1].Width, m_destRect[3].Height);
 
-			m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
-			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->ListBoxSrcRects[0].Height);
-			m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
+			m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
+			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
+			m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 
 			m_visisbleItems = (int)ceilf((float)Size.Y / m_fontRef->getLineHeight());
 			Size.Y = m_visisbleItems * m_fontRef->getLineHeight();
@@ -287,33 +287,33 @@ namespace Apoc3D
 		{
 			m_destRect[0].X = Position.X;
 			m_destRect[0].Y = Position.Y;
-			sprite->Draw(m_skin->TextBox, m_destRect[0], &m_skin->ListBoxSrcRects[0], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[0], &m_skin->TextBoxSrcRects[0], CV_White);
 			m_destRect[1].X = m_destRect[0].X + m_destRect[0].Width;
 			m_destRect[1].Y = m_destRect[0].Y;
-			sprite->Draw(m_skin->TextBox, m_destRect[1], &m_skin->ListBoxSrcRects[1], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[1], &m_skin->TextBoxSrcRects[1], CV_White);
 			m_destRect[2].X = m_destRect[1].X + m_destRect[1].Width;
 			m_destRect[2].Y = m_destRect[0].Y;
-			sprite->Draw(m_skin->TextBox, m_destRect[2], &m_skin->ListBoxSrcRects[2], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[2], &m_skin->TextBoxSrcRects[2], CV_White);
 
 			m_destRect[3].X = m_destRect[0].X;
 			m_destRect[3].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[3], &m_skin->ListBoxSrcRects[3], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[3], &m_skin->TextBoxSrcRects[3], CV_White);
 			m_destRect[4].X = m_destRect[1].X;
 			m_destRect[4].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[4], &m_skin->ListBoxSrcRects[4], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[4], &m_skin->TextBoxSrcRects[4], CV_White);
 			m_destRect[5].X = m_destRect[2].X;
 			m_destRect[5].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[5], &m_skin->ListBoxSrcRects[5], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[5], &m_skin->TextBoxSrcRects[5], CV_White);
 
 			m_destRect[6].X = m_destRect[0].X;
 			m_destRect[6].Y = m_destRect[3].Y + m_destRect[3].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[6], &m_skin->ListBoxSrcRects[6], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[6], &m_skin->TextBoxSrcRects[6], CV_White);
 			m_destRect[7].X = m_destRect[1].X;
 			m_destRect[7].Y = m_destRect[4].Y + m_destRect[4].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[7], &m_skin->ListBoxSrcRects[7], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[7], &m_skin->TextBoxSrcRects[7], CV_White);
 			m_destRect[8].X = m_destRect[2].X;
 			m_destRect[8].Y = m_destRect[5].Y + m_destRect[5].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[8], &m_skin->ListBoxSrcRects[8], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[8], &m_skin->TextBoxSrcRects[8], CV_White);
 		}
 		void ListBox::DrawScrollbar(Sprite* sprite)
 		{
@@ -446,21 +446,21 @@ namespace Apoc3D
 			m_textOffset = Point(5, m_skin->TextBox->getHeight()-GetItemHeight()/2);
 
 			m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
-				m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
+				m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 			m_destRect[1] = Apoc3D::Math::Rectangle(0,0, 
-				Size.X - m_skin->ListBoxSrcRects[0].Width*2, m_skin->ListBoxSrcRects[0].Height);
-			m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
+				Size.X - m_skin->TextBoxSrcRects[0].Width*2, m_skin->TextBoxSrcRects[0].Height);
+			m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 
 			m_destRect[3] = Apoc3D::Math::Rectangle(0,0, 
-				m_skin->ListBoxSrcRects[0].Width, Size.Y - m_skin->ListBoxSrcRects[0].Height*2);
+				m_skin->TextBoxSrcRects[0].Width, Size.Y - m_skin->TextBoxSrcRects[0].Height*2);
 			m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
 				m_destRect[1].Width, m_destRect[3].Height);
 			m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
-				m_skin->ListBoxSrcRects[1].Width, m_destRect[3].Height);
+				m_skin->TextBoxSrcRects[1].Width, m_destRect[3].Height);
 
-			m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
-			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->ListBoxSrcRects[0].Height);
-			m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
+			m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
+			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
+			m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 
 			m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight());
 			Size.Y = m_visisbleItems * GetItemHeight();
@@ -708,33 +708,33 @@ namespace Apoc3D
 		{
 			m_destRect[0].X = Position.X;
 			m_destRect[0].Y = Position.Y;
-			sprite->Draw(m_skin->TextBox, m_destRect[0], &m_skin->ListBoxSrcRects[0], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[0], &m_skin->TextBoxSrcRects[0], CV_White);
 			m_destRect[1].X = m_destRect[0].X + m_destRect[0].Width;
 			m_destRect[1].Y = m_destRect[0].Y;
-			sprite->Draw(m_skin->TextBox, m_destRect[1], &m_skin->ListBoxSrcRects[1], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[1], &m_skin->TextBoxSrcRects[1], CV_White);
 			m_destRect[2].X = m_destRect[1].X + m_destRect[1].Width;
 			m_destRect[2].Y = m_destRect[0].Y;
-			sprite->Draw(m_skin->TextBox, m_destRect[2], &m_skin->ListBoxSrcRects[2], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[2], &m_skin->TextBoxSrcRects[2], CV_White);
 
 			m_destRect[3].X = m_destRect[0].X;
 			m_destRect[3].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[3], &m_skin->ListBoxSrcRects[3], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[3], &m_skin->TextBoxSrcRects[3], CV_White);
 			m_destRect[4].X = m_destRect[1].X;
 			m_destRect[4].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[4], &m_skin->ListBoxSrcRects[4], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[4], &m_skin->TextBoxSrcRects[4], CV_White);
 			m_destRect[5].X = m_destRect[2].X;
 			m_destRect[5].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[5], &m_skin->ListBoxSrcRects[5], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[5], &m_skin->TextBoxSrcRects[5], CV_White);
 
 			m_destRect[6].X = m_destRect[0].X;
 			m_destRect[6].Y = m_destRect[3].Y + m_destRect[3].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[6], &m_skin->ListBoxSrcRects[6], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[6], &m_skin->TextBoxSrcRects[6], CV_White);
 			m_destRect[7].X = m_destRect[1].X;
 			m_destRect[7].Y = m_destRect[4].Y + m_destRect[4].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[7], &m_skin->ListBoxSrcRects[7], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[7], &m_skin->TextBoxSrcRects[7], CV_White);
 			m_destRect[8].X = m_destRect[2].X;
 			m_destRect[8].Y = m_destRect[5].Y + m_destRect[5].Height;
-			sprite->Draw(m_skin->TextBox, m_destRect[8], &m_skin->ListBoxSrcRects[8], CV_White);
+			sprite->Draw(m_skin->TextBox, m_destRect[8], &m_skin->TextBoxSrcRects[8], CV_White);
 		}
 		void TreeView::DrawScrollbar(Sprite* sprite)
 		{
@@ -778,17 +778,17 @@ namespace Apoc3D
 
 			Size = newSize;
 			m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
-				m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
+				m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 			m_destRect[1] = Apoc3D::Math::Rectangle(0,0, 
-				Size.X - m_skin->ListBoxSrcRects[0].Width*2, m_skin->ListBoxSrcRects[0].Height);
-			m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->ListBoxSrcRects[0].Width, m_skin->ListBoxSrcRects[0].Height);
+				Size.X - m_skin->TextBoxSrcRects[0].Width*2, m_skin->TextBoxSrcRects[0].Height);
+			m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 
 			m_destRect[3] = Apoc3D::Math::Rectangle(0,0, 
-				m_skin->ListBoxSrcRects[0].Width, Size.Y - m_skin->ListBoxSrcRects[0].Height*2);
+				m_skin->TextBoxSrcRects[0].Width, Size.Y - m_skin->TextBoxSrcRects[0].Height*2);
 			m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
 				m_destRect[1].Width, m_destRect[3].Height);
 			m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
-				m_skin->ListBoxSrcRects[1].Width, m_destRect[3].Height);
+				m_skin->TextBoxSrcRects[1].Width, m_destRect[3].Height);
 
 			if (getUseHorizontalScrollbar())
 			{

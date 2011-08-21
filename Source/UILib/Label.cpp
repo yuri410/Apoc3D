@@ -28,7 +28,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Input/Mouse.h"
 #include "FontManager.h"
 #include "Graphics/RenderSystem/Sprite.h"
+#include "Graphics/RenderSystem/Texture.h"
 #include "StyleSkin.h"
+#include "Scrollbar.h"
+#include "Form.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Input;
@@ -175,6 +178,705 @@ namespace Apoc3D
 					m_fontRef->DrawString(sprite, m_lines[i], m_drawPos, m_skin->ForeColor);
 				}
 			}
+		}
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+		TextBox::TextBox(const Point& position, int width)
+			: Control(position), m_curorLocation(0,0), m_previousLocation(0,0), m_cursorOffset(0,0), m_scrollOffset(0,0), m_hasFocus(false),
+			m_multiline(false), m_lineOffset(0,0), m_visibleLines(0), m_locked(false), m_scrollBar(SBT_None),
+			m_cursorVisible(false), m_timer(0.5f), m_timerStarted(false)
+		{
+			Size.X = width;
+		}
+		TextBox::TextBox(const Point& position, int width, const String& text)
+			: Control(position,text), m_curorLocation(0,0), m_previousLocation(0,0), m_cursorOffset(0,0), m_scrollOffset(0,0), m_hasFocus(false),
+			m_multiline(false), m_lineOffset(0,0), m_visibleLines(0), m_locked(false), m_scrollBar(SBT_None),
+			m_cursorVisible(false), m_timer(0.5f), m_timerStarted(false)
+		{
+			Add(text);
+			m_curorLocation.X = Text.length();
+		}
+		TextBox::TextBox(const Point& position, int width, int height, const String& text)
+			: Control(position,text, Point(width,height)), m_curorLocation(0,0), m_previousLocation(0,0), m_cursorOffset(0,0), m_scrollOffset(0,0), m_hasFocus(false),
+			m_multiline(true), m_lineOffset(0,0), m_visibleLines(0), m_locked(false), m_scrollBar(SBT_None),
+			m_cursorVisible(false), m_timer(0.5f), m_timerStarted(false)
+		{
+			Add(text);
+			m_curorLocation.Y = m_lines.getCount()-1;
+			m_curorLocation.X = (int)m_lines[m_lines.getCount()-1].size();
+		}
+		TextBox::~TextBox()
+		{
+			if (m_vscrollBar)
+				delete m_vscrollBar;
+			if (m_hscrollBar)
+				delete m_hscrollBar;
+		}
+		void TextBox::Add(const String& text)
+		{
+			if (!m_multiline)
+			{
+				Text = Text.insert(m_curorLocation.X, text);
+			}
+			else
+			{
+				if (Text.find_first_of('\n',0)!=String::npos)
+				{
+					std::vector<String> lines = StringUtils::Split(text, L"\n");
+					for (size_t i=0;i<lines.size();i++)
+					{
+						wchar_t tab = '\u0009';
+						//lines[i] = m_lines[i].replace()
+						if (i==0)
+						{
+							if (m_lines.getCount() == 0)
+								m_lines.Add(L"");
+
+							if (m_curorLocation.X > (int)m_lines[m_curorLocation.Y].size())
+								m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();
+
+							m_lines[m_curorLocation.Y] = m_lines[m_curorLocation.Y].insert(m_curorLocation.X, text);
+						}
+						else
+						{
+							m_lines.Insert(m_curorLocation.Y + i, lines[i]);
+						}
+					}
+				}
+				else
+				{
+					if (m_lines.getCount()==0)
+						m_lines.Add(L"");
+
+					if (m_curorLocation.X > (int)m_lines[m_curorLocation.Y].size())
+						m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();
+
+					m_lines[m_curorLocation.Y] = m_lines[m_curorLocation.Y].insert(m_curorLocation.X, text);
+				}
+
+				for (int i=0;i<m_lines.getCount();i++)
+					Text.append(m_lines[i]);
+			}
+			UpdateScrolling();
+		}
+		
+		void TextBox::UpdateScrolling()
+		{
+			if (m_cursorOffset.X > m_scrollOffset.X + m_sRect.Width - 20)
+				m_cursorOffset.X = m_scrollOffset.X - (m_sRect.Width - 20);
+			else if (m_cursorOffset.X - 20 < m_scrollOffset.X)
+				m_scrollOffset.X = max(0, m_cursorOffset.X - 20);
+
+			if (m_scrollOffset.X < 0)
+				m_scrollOffset.X = 0;
+			if (m_curorLocation.X == 0)
+				m_scrollOffset.X = 0;
+
+			if (m_multiline)
+			{
+				if (m_hscrollBar)
+					m_hscrollBar->setValue(m_scrollOffset.X);
+
+				if (m_fontRef)
+				{
+					int offsetY = m_scrollOffset.Y / m_fontRef->getLineHeight();
+					if (m_hscrollBar && m_hscrollBar->getMax()>0)
+					{
+						if (m_curorLocation.Y > offsetY + m_visibleLines -2)
+							m_scrollOffset.Y = (m_curorLocation.Y - (m_visibleLines - 2)) * m_fontRef->getLineHeight();
+						else if (m_curorLocation.Y < offsetY)
+							m_scrollOffset.Y = m_curorLocation.Y * m_fontRef->getLineHeight();
+					}
+					else
+					{
+						if (m_curorLocation.Y > offsetY + m_visibleLines -1)
+							m_scrollOffset.Y = (m_curorLocation.Y - (m_visibleLines - 1)) * m_fontRef->getLineHeight();
+						else if (m_curorLocation.Y < offsetY)
+							m_scrollOffset.Y = m_curorLocation.Y * m_fontRef->getLineHeight();
+					}
+
+					if (m_vscrollBar)
+						m_vscrollBar->setValue(m_scrollOffset.Y / m_fontRef->getLineHeight());
+				}
+				
+			}
+		}
+
+		void TextBox::Initialize(RenderDevice* device)
+		{
+			Control::Initialize(device);
+			Texture* texture = m_skin->TextBox;
+			m_textOffset = Point(5, (texture->getHeight() - m_fontRef->getLineHeight()) /2 );
+
+			if (!m_multiline)
+			{
+				m_destRect[0] = Apoc3D::Math::Rectangle(0,0,m_skin->TextBoxSrcRectsSingle[0].Width, m_skin->TextBoxSrcRectsSingle[0].Height);
+				m_destRect[1] = Apoc3D::Math::Rectangle(0,0,Size.X - m_skin->TextBoxSrcRectsSingle[0].Width * 2, m_skin->TextBoxSrcRectsSingle[1].Height);
+				m_destRect[2] = m_destRect[0];
+				Size.Y = texture->getHeight();
+			}
+			else
+			{
+				m_visibleLines = (int)ceilf((float)Size.Y / m_fontRef->getLineHeight());
+
+				Size.Y = m_visibleLines * m_fontRef->getLineHeight() + 2;
+
+				m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
+					m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
+				m_destRect[1] = Apoc3D::Math::Rectangle(0,0, 
+					Size.X - m_skin->TextBoxSrcRects[0].Width*2, m_skin->TextBoxSrcRects[0].Height);
+				m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
+
+				m_destRect[3] = Apoc3D::Math::Rectangle(0,0, 
+					m_skin->TextBoxSrcRects[0].Width, Size.Y - m_skin->TextBoxSrcRects[0].Height*2);
+				m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
+					m_destRect[1].Width, m_destRect[3].Height);
+				m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
+					m_skin->TextBoxSrcRects[1].Width, m_destRect[3].Height);
+
+				m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
+				m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
+				m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
+
+			}
+
+			m_dRect = Apoc3D::Math::Rectangle(0,0,Size.X,Size.Y);
+
+			m_keyboard.eventKeyPress().bind(this, &TextBox::Keyboard_OnPress);
+			m_keyboard.eventKeyPress().bind(this, &TextBox::Keyboard_OnPress);
+
+			if (m_multiline && m_scrollBar != SBT_None)
+			{
+				InitScrollbars(device);
+			}
+			m_timerStarted = true;
+		}
+		void TextBox::InitScrollbars(RenderDevice* device)
+		{
+			if (m_scrollBar == SBT_Vertical)
+			{
+				Point pos = Position;
+				pos.X += Size.X - 2;
+				pos.Y++;
+				m_vscrollBar = new ScrollBar(pos, ScrollBar::SCRBAR_Vertical, Size.Y - 2);
+			}
+			else if (m_scrollBar == SBT_Horizontal)
+			{
+				Point pos = Position;
+				pos.X++;
+				pos.Y += Size.Y - 2;
+				m_hscrollBar = new ScrollBar(pos, ScrollBar::SCRBAR_Horizontal, Size.X - 2);
+			}
+			else if (m_scrollBar == SBT_Both)
+			{
+				Point pos = Position;
+				pos.X += Size.X - 13;
+				pos.Y++;
+
+				m_vscrollBar = new ScrollBar(pos, ScrollBar::SCRBAR_Vertical, Size.Y - 14);
+
+				pos = Position;
+				pos.X++;
+				pos.Y += Size.Y - 13;
+				m_hscrollBar = new ScrollBar(pos, ScrollBar::SCRBAR_Horizontal, Size.X - 14);
+			}
+
+			if (m_vscrollBar)
+			{
+				m_vscrollBar->setOwner(getOwner());
+				m_vscrollBar->eventValueChanged().bind(this, &TextBox::vScrollbar_OnChangeValue);
+				m_vscrollBar->Initialize(device);
+			}
+			if (m_hscrollBar)
+			{
+				m_hscrollBar->setOwner(getOwner());
+				m_hscrollBar->eventValueChanged().bind(this, &TextBox::hScrollbar_OnChangeValue);
+				m_hscrollBar->Initialize(device);
+			}
+		}
+		void TextBox::Update(const GameTime* const time)
+		{
+			Control::Update(time);
+
+			CheckFocus();
+
+			if (m_hasFocus && !m_locked)
+			{
+				m_keyboard.Update(time);
+
+				if (m_multiline && m_scrollBar == SBT_Vertical &&
+					m_curorLocation.X > (int)m_lines[m_curorLocation.Y].size())
+					m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();
+			}
+
+			if (m_multiline && m_scrollBar != SBT_None)
+			{
+				UpdateScrollbars(time);
+			}
+		}
+		void TextBox::Update(const GameTime* const time)
+		{
+			if (m_vscrollBar)
+			{
+				if (m_hscrollBar && m_hscrollBar->getMax()>0)
+					m_vscrollBar->setMax(max(0, m_lines.getCount() - (m_visibleLines-1)));
+				else
+					m_vscrollBar->setMax(max(0, m_lines.getCount() - m_visibleLines));
+			}
+
+			if (m_vscrollBar && m_vscrollBar->getMax()>0)
+			{
+				if (m_hscrollBar && m_hscrollBar->getMax()>0)
+					m_vscrollBar->setHeight(Size.Y - 13);
+				else
+					m_vscrollBar->setHeight(Size.Y - 2);
+
+				m_vscrollBar->Update(time);
+			}
+
+			if (m_hscrollBar && m_hscrollBar->getMax()>0)
+			{
+				if (m_vscrollBar && m_vscrollBar->getMax()>0)
+					m_hscrollBar->setWidth(Size.X - 13);
+				else
+					m_hscrollBar->setWidth(Size.X - 2);
+
+				m_hscrollBar->Update(time);
+			}
+		}
+		void TextBox::CheckFocus()
+		{
+			m_sRect = getAbsoluteArea();
+
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			if (mouse->IsLeftPressed())
+			{
+				if (m_sRect.Contains(mouse->GetCurrentPosition()))
+				{
+					m_hasFocus = true;
+				}
+				else
+				{
+					m_hasFocus = false;
+				}
+			}
+		}
+		void TextBox::Draw(Sprite* sprite)
+		{
+			if (!m_multiline)
+			{
+				DrawMonoline(sprite);
+			}
+			else
+			{
+				DrawMultiline(sprite);
+			}
+
+			if (m_vscrollBar && m_vscrollBar->getMax()>0)
+				m_sRect.Width = Size.X - 14;
+			else
+				m_sRect.Width = Size.X - 2;
+
+			if (m_hscrollBar && m_hscrollBar->getMax()>0)
+				m_sRect.Height = Size.Y - 14;
+			else
+				m_sRect.Height = Size.Y - 2;
+
+			m_dRect = getArea();
+			this->DrawText(sprite);
+
+			if (m_vscrollBar && m_vscrollBar->getMax()>0)
+			{
+				m_vscrollBar->Draw(sprite);
+			}
+			if (m_hscrollBar && m_hscrollBar->getMax()>0)
+			{
+				m_hscrollBar->Draw(sprite);
+			}
+		}
+		void TextBox::DrawMonoline(Sprite* sprite)
+		{
+			Texture* texture = m_skin->TextBox;
+			m_destRect[0].X = (int)Position.X;
+			m_destRect[0].Y = (int)Position.Y;
+			sprite->Draw(texture, m_destRect[0], &m_skin->TextBoxSrcRectsSingle[0], CV_White);
+
+			m_destRect[1].X = m_destRect[0].X + m_destRect[0].Width;
+			m_destRect[1].Y = m_destRect[0].Y;
+			sprite->Draw(texture, m_destRect[1], &m_skin->TextBoxSrcRectsSingle[1], CV_White);
+
+			m_destRect[2].X = m_destRect[1].X + m_destRect[1].Width;
+			m_destRect[2].Y = m_destRect[0].Y;
+			sprite->Draw(texture, m_destRect[2], &m_skin->TextBoxSrcRectsSingle[2], CV_White);
+		}
+		void TextBox::DrawMultiline(Sprite* sprite)
+		{
+			Texture* texture = m_skin->TextBox;
+			m_destRect[0].X = (int)Position.X;
+			m_destRect[0].Y = (int)Position.Y;
+			sprite->Draw(texture, m_destRect[0], &m_skin->TextBoxSrcRects[0], CV_White);
+			m_destRect[1].X = m_destRect[0].X + m_destRect[0].Width;
+			m_destRect[1].Y = m_destRect[0].Y;
+			sprite->Draw(texture, m_destRect[1], &m_skin->TextBoxSrcRects[1], CV_White);
+			m_destRect[2].X = m_destRect[1].X + m_destRect[1].Width;
+			m_destRect[2].Y = m_destRect[0].Y;
+			sprite->Draw(texture, m_destRect[2], &m_skin->TextBoxSrcRects[2], CV_White);
+
+			m_destRect[3].X = m_destRect[0].X;
+			m_destRect[3].Y = m_destRect[0].Y + m_destRect[0].Height;
+			sprite->Draw(texture, m_destRect[3], &m_skin->TextBoxSrcRects[3], CV_White);
+			m_destRect[4].X = m_destRect[1].X;
+			m_destRect[4].Y = m_destRect[0].Y + m_destRect[0].Height;
+			sprite->Draw(texture, m_destRect[4], &m_skin->TextBoxSrcRects[4], CV_White);
+			m_destRect[5].X = m_destRect[2].X;
+			m_destRect[5].Y = m_destRect[0].Y + m_destRect[0].Height;
+			sprite->Draw(texture, m_destRect[5], &m_skin->TextBoxSrcRects[5], CV_White);
+
+			m_destRect[6].X = m_destRect[0].X;
+			m_destRect[6].Y = m_destRect[3].Y + m_destRect[3].Height;
+			sprite->Draw(texture, m_destRect[6], &m_skin->TextBoxSrcRects[6], CV_White);
+			m_destRect[7].X = m_destRect[1].X;
+			m_destRect[7].Y = m_destRect[4].Y + m_destRect[4].Height;
+			sprite->Draw(texture, m_destRect[7], &m_skin->TextBoxSrcRects[7], CV_White);
+			m_destRect[8].X = m_destRect[2].X;
+			m_destRect[8].Y = m_destRect[5].Y + m_destRect[5].Height;
+			sprite->Draw(texture, m_destRect[8], &m_skin->TextBoxSrcRects[8], CV_White);
+		}
+		void TextBox::DrawText(Sprite* sprite)
+		{
+			if (!m_multiline)
+			{
+				m_cursorOffset.X = m_fontRef->MeasureString(Text.substr(0, m_curorLocation.X)).X + 4;
+				m_cursorOffset.Y = 1;
+
+				//Point pos(m_textOffset.X - m_scrollOffset.X, m_textOffset.Y - m_scrollOffset.Y);
+				m_fontRef->DrawString(sprite, Text, m_textOffset-m_scrollOffset, CV_Black);
+				if (m_hasFocus && !m_locked && m_cursorVisible && getOwner()==UIRoot::getTopMostForm())
+				{
+					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset, CV_Black);
+				}
+			}
+			else
+			{
+				int maxWidth = 0;
+				for (int i=0;i<m_lines.getCount();i++)
+				{
+					Size lineSize = m_fontRef->MeasureString(m_lines[i]);
+
+					m_lineOffset.Y = i*m_fontRef->getLineHeight();
+
+					m_fontRef->DrawString(sprite, m_lines[i], m_textOffset+m_lineOffset-m_scrollOffset, CV_Black);
+
+					if (lineSize.X -Size.X > maxWidth)
+					{
+						if (m_vscrollBar && m_vscrollBar->getMax()>0)
+						{
+							maxWidth = lineSize.X - Size.Width;
+						}
+						else
+						{
+							maxWidth = lineSize.X - Size.Width+12;
+						}
+					}
+				}
+
+				if (m_hscrollBar)
+				{
+					m_hscrollBar->setMax(maxWidth);
+
+					if (m_vscrollBar && m_vscrollBar->getMax()>0 && m_hscrollBar->getMax()>0)
+						m_hscrollBar->setMax(m_hscrollBar->getMax()+20);
+					m_hscrollBar->setStep(max(1, m_hscrollBar->getMax()/15));
+				}
+				if (m_hasFocus && !m_locked && m_cursorVisible && getOwner() == UIRoot::getTopMostForm())
+				{
+					if (m_curorLocation.X > (int)m_lines[m_curorLocation.Y].size())
+						m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();
+
+					m_cursorOffset.X = m_fontRef->MeasureString(m_lines[m_curorLocation.Y].substr(0, m_curorLocation.X)).X + 4;
+					m_cursorOffset.Y = m_fontRef->getLineHeight() * m_curorLocation.Y + 1;
+
+					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset, CV_Black);
+				}
+			}
+		}
+		void TextBox::setText(const String& text)
+		{
+			Text = L"";
+			m_lines.Clear();
+			Add(text);
+		}
+
+		void TextBox::Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e)
+		{
+			switch(code)
+			{
+			case KEY_LEFT:
+				{
+					if (e.ControlDown)
+					{
+						bool foundSpace = false;
+						if (m_lines.getCount() > 0)
+						{
+							for (int i = m_curorLocation.X - 2; i > 0; i--)
+								if (m_lines[m_curorLocation.Y].substr(i, 1) == L" ")
+								{
+									m_curorLocation.X = i + 1;
+									foundSpace = true;
+									break;
+								}
+						}
+
+						if (!foundSpace)
+							if (m_curorLocation.X != 0)
+								m_curorLocation.X = 0;
+							else if (m_curorLocation.Y > 0)
+							{
+								m_curorLocation.Y -= 1;
+								m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();
+							}
+					}
+					else
+					{
+						if (!m_multiline && m_curorLocation.X > 0)
+							m_curorLocation.X -= 1;
+						else if (m_multiline)
+						{
+							if (m_curorLocation.X > 0)
+								m_curorLocation.X -= 1;
+							else if (m_curorLocation.Y > 0)
+							{
+								m_curorLocation.X = (int)m_lines[m_curorLocation.Y - 1].size();
+								m_curorLocation.Y -= 1;
+							}
+						}
+					}
+				}
+				break;
+			case KEY_RIGHT:
+				{
+					if (e.ControlDown)
+					{
+						bool foundSpace = false;
+						if (m_lines.getCount() > 0)
+						{
+							for (int i = m_curorLocation.X; i < (int)m_lines[m_curorLocation.Y].size(); i++)
+								if (m_lines[m_curorLocation.Y].substr(i, 1) == L" ")
+								{
+									m_curorLocation.X = i + 1;
+									foundSpace = true;
+									break;
+								}
+
+								if (!foundSpace)
+									if (m_curorLocation.X != (int)m_lines[m_curorLocation.Y].size())
+										m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();
+									else if (m_curorLocation.Y < m_lines.getCount() - 1)
+									{
+										m_curorLocation.X = 0;
+										m_curorLocation.Y += 1;
+									}
+						}
+					}
+					else
+					{
+						if (!m_multiline && m_curorLocation.X < (int)Text.size())
+							m_curorLocation.X += 1;
+						else if (m_multiline)
+						{
+							if (m_curorLocation.X < (int)m_lines[m_curorLocation.Y].size())
+								m_curorLocation.X += 1;
+							else if (m_curorLocation.Y < m_lines.getCount() - 1)
+							{
+								m_curorLocation.X = 0;
+								m_curorLocation.Y += 1;
+							}
+						}
+					}
+				}
+				break;
+			case KEY_UP:
+				if (m_curorLocation.Y > 0)
+					m_curorLocation.Y--;
+				break;
+			case KEY_DOWN:
+				if (m_curorLocation.Y < m_lines.getCount()-1)
+					m_curorLocation.Y++;
+				break;
+			case KEY_BACK:
+				{
+					if (!m_multiline && m_curorLocation.X > 0)
+					{
+						if (m_curorLocation.X > 1 && Text.substr(m_curorLocation.X - 2, 2) == L"\n")
+						{
+							Text = Text.erase(m_curorLocation.X - 2, 2);
+							m_curorLocation.X -= 2;
+						}
+						else
+						{
+							Text = Text.erase(m_curorLocation.X - 1, 1);
+							m_curorLocation.X -= 1;
+						}
+					}
+					else if (m_multiline)
+					{
+						if (m_curorLocation.X > 0)
+						{
+							m_lines[m_curorLocation.Y] = m_lines[m_curorLocation.Y].erase(m_curorLocation.X - 1, 1);
+							m_curorLocation.X -= 1;
+						}
+						else
+						{
+							if (m_curorLocation.Y > 0)
+							{
+								m_curorLocation.X = (int)m_lines[m_curorLocation.Y - 1].size();
+								m_lines[m_curorLocation.Y - 1] += m_lines[m_curorLocation.Y];
+								m_lines.RemoveAt(m_curorLocation.Y);
+								m_curorLocation.Y -= 1;
+							}
+						}
+					}
+				}
+				break;
+			case KEY_DELETE:
+				{
+					if (!m_multiline && m_curorLocation.X < Text.size())
+					{
+						if (m_curorLocation.X < Text.size() - 1 && Text.substr(m_curorLocation.X, 2) == L"\n")
+							Text = Text.erase(m_curorLocation.X, 2);
+						else
+							Text = Text.erase(m_curorLocation.X, 1);
+					}
+					else if (m_multiline)
+					{
+						if (m_curorLocation.X < (int)m_lines[m_curorLocation.Y].size())
+							m_lines[m_curorLocation.Y] = m_lines[m_curorLocation.Y].erase(m_curorLocation.X, 1);
+						else if (m_curorLocation.X == (int)m_lines[m_curorLocation.Y].size())
+							if (m_curorLocation.Y < m_lines.getCount() - 1)
+							{
+								if (m_lines[m_curorLocation.Y + 1].size() > 0)
+									m_lines[m_curorLocation.Y] += m_lines[m_curorLocation.Y + 1];
+								m_lines.RemoveAt(m_curorLocation.Y + 1);
+							}
+					}
+				}
+				break;
+			case KEY_HOME:
+				m_curorLocation.X = 0;
+				if (m_multiline && e.ControlDown)
+				{
+					m_curorLocation.Y = 0;
+					m_scrollOffset.X = 0;
+				}
+				break;
+			case KEY_END:
+				if (!m_multiline)
+					m_curorLocation.X = (int)Text.size();
+				else
+				{
+					if (e.ControlDown)
+					{
+						m_curorLocation.Y = m_lines.getCount() - 1;
+						m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();                            
+					}
+					else
+						m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();
+				}
+				break;
+			case KEY_RETURN:
+				{
+					if (m_multiline)
+					{
+						String lineEnd = L"";
+
+
+						if ((int)m_lines[m_curorLocation.Y].size() > m_curorLocation.X)
+						{
+							lineEnd = m_lines[m_curorLocation.Y].substr(m_curorLocation.X, m_lines[m_curorLocation.Y].size() - m_curorLocation.X);
+							m_lines[m_curorLocation.Y] = m_lines[m_curorLocation.Y].substr(0, m_lines[m_curorLocation.Y].size() - lineEnd.size());
+						}
+
+						m_lines.Insert(m_curorLocation.Y + 1, lineEnd);
+						m_curorLocation.X = 0;
+						m_curorLocation.Y += 1;
+					}
+				}
+				break;
+			case KEY_SPACE:
+				Add(L" ");
+				m_curorLocation.X++;
+				break;
+			case KEY_DECIMAL:
+				Add(L".");
+				m_curorLocation.X++;
+				break;
+			case KEY_DIVIDE:
+				Add(L"/");
+				m_curorLocation.X++;
+				break;
+			case KEY_BACKSLASH:
+				if (e.ShiftDown) Add(L"|"); else Add(L"\\");
+				m_curorLocation.X++;
+				break;
+				// " ~
+			case KEY_COMMA:
+				if (e.ShiftDown) Add(L"<"); else Add(L",");
+				m_curorLocation.X++;
+				break;
+			case KEY_MINUS:
+				if (e.ShiftDown) Add(L"_"); else Add(L"-");
+				m_curorLocation.X++;
+				break;
+			case KEY_LBRACKET:
+				if (e.ShiftDown) Add(L"{"); else Add(L"[");
+				m_curorLocation.X++;
+				break;
+			case KEY_RBRACKET:
+				if (e.ShiftDown) Add(L"}"); else Add(L"]");
+				m_curorLocation.X++;
+				break;
+			case KEY_PERIOD:
+				if (e.ShiftDown) Add(L">"); else Add(L".");
+				m_curorLocation.X++;
+				break;
+			case KEY_ADD:
+				if (e.ShiftDown) Add(L"+"); else Add(L"=");
+				m_curorLocation.X++;
+				break;
+			case KEY_SLASH:
+				if (e.ShiftDown) Add(L"?"); else Add(L"/");
+				m_curorLocation.X++;
+				break;
+			case KEY_SEMICOLON:
+				if (e.ShiftDown) Add(L":"); else Add(L"'");
+				m_curorLocation.X++;
+				break;
+			case KEY_SUBTRACT:
+				Add(L"-");
+				m_curorLocation.X++;
+				break;
+			case KEY_MULTIPLY:
+				Add(L"*");
+				m_curorLocation.X++;
+				break;
+			case KEY_TAB:
+				Add(L"      ");
+				m_curorLocation.X+=6;
+				break;
+			default:
+				break;
+			}
+
+			UpdateScrolling();
+			m_cursorVisible = true;
+			m_timerStarted = true;
+		}
+		void TextBox::Keyboard_OnPaste(String value)
+		{
+
 		}
 	}
 }

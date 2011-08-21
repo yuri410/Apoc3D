@@ -184,6 +184,10 @@ namespace Apoc3D
 				}
 				return -1;
 			}
+			ExistTable& ExistTable::operator=(const ExistTable& rhs)
+			{
+				return *this; 
+			}
 		public:
 			int32 getCount() const { return m_count - m_freeCount; }
 

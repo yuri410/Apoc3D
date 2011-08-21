@@ -34,6 +34,10 @@ namespace Apoc3D
 			int m_size;
 			int m_length;
 		private:
+			Stack& Stack::operator=(const Stack &rhs)
+			{
+				return *this; 
+			}
 			Stack(const Stack& another){}
 		public:
 			

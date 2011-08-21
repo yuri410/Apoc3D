@@ -46,7 +46,6 @@ namespace Apoc3D
 
 			FastQueue(const FastQueue& another) { }
 
-
 			void SetCapacity(int capacity)
 			{
 				T* destinationArray = new T[capacity];
@@ -67,6 +66,11 @@ namespace Apoc3D
 				m_arrLength = capacity;
 				m_head = 0;
 				m_tail = (m_size == capacity) ? 0 : m_size;
+			}
+
+			FastQueue& FastQueue::operator=(const FastQueue &rhs)
+			{
+				return *this; 
 			}
 		public:
 			int getCount() const { return m_size; }
@@ -178,7 +182,7 @@ namespace Apoc3D
 			{
 				return GetElement(m_size - 1);
 			}
-
+			
 		};
 	}
 }
