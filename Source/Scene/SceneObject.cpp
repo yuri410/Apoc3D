@@ -33,7 +33,9 @@ namespace Apoc3D
 		void Entity::UpdateTransform()
 		{
 			Matrix::CreateTranslation(m_transformation, m_position);
-			Matrix::Multiply(m_transformation, m_orientation, m_transformation);
+			Matrix temp;
+			Matrix::Multiply(temp, m_orientation, m_transformation);
+			m_transformation = temp;
 			RequiresNodeUpdate = true;
 		}
 

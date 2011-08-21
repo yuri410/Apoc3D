@@ -83,6 +83,7 @@ namespace Apoc3D
 						const Matrix& proj = RendererEffectParams::CurrentCamera->getProjMatrix();
 						dev->SetTransform(D3DTS_PROJECTION, &reinterpret_cast<const D3DMatrix&>(proj));
 					}
+					//dev->SetFVF(D3DFVF_NORMAL | D3DFVF_XYZ | D3DFVF_TEX1);
 				}
 
 				virtual void BeginPass(int passId)

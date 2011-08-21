@@ -37,9 +37,10 @@ namespace Apoc3D
 
 		Vector3 Viewport::Unproject(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world)
 		{
+			Matrix temp;
 			Matrix matrix;
-			Matrix::Multiply(matrix, world, view);
-			Matrix::Multiply(matrix, matrix, projection);
+			Matrix::Multiply(temp, world, view);
+			Matrix::Multiply(matrix, temp, projection);
 			matrix.Inverse();
 
 			float x = 2 * (_V3X(source) - X) / static_cast<float>(Width) - 1.0f;
@@ -60,9 +61,10 @@ namespace Apoc3D
 
 		Vector3 Viewport::Project(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world)
 		{
+			Matrix temp;
 			Matrix matrix;
-			Matrix::Multiply(matrix, world, view);
-			Matrix::Multiply(matrix, matrix, projection);
+			Matrix::Multiply(temp, world, view);
+			Matrix::Multiply(matrix, temp, projection);
 
 			Vector3 vector = Vector3Utils::TransformSimple(source, matrix);
 

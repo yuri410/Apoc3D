@@ -476,7 +476,10 @@ namespace Apoc3D
 								//int boneId = entities[entId].ParentBoneID;
 								Matrix temp;
 								m_animInstance[k]->GetTransform(entId, temp);
-								Matrix::Multiply(m_opBuffer[opid].RootTransform, m_opBuffer[opid].RootTransform, temp);
+
+								Matrix result;
+								Matrix::Multiply(result, m_opBuffer[opid].RootTransform, temp);
+								m_opBuffer[opid].RootTransform = result;
 								//opBuffer[opid].Transformation *= animInstance[k].GetTransform(boneId);
 
 							}
@@ -519,7 +522,10 @@ namespace Apoc3D
 							
 							Matrix temp;
 							m_animInstance[k]->GetTransform(entId, temp);
-							Matrix::Multiply(rop.RootTransform, rop.RootTransform, temp);
+
+							Matrix result;
+							Matrix::Multiply(result, rop.RootTransform, temp);
+							rop.RootTransform = result;
 						}
 					}
 					else
