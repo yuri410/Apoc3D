@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Config/ConfigurationSection.h"
 
 #include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/EffectSystem/EffectParameter.h"
 #include "Graphics/RenderOperationBuffer.h"
 #include "Graphics/RenderOperation.h"
 #include "Graphics/Material.h"
@@ -185,6 +186,7 @@ namespace Apoc3D
 			{
 				m_procFallbacks[m_selectedProc]->Invoke(m_cameraList, sceMgr, &m_batchData);
 			}
+			RendererEffectParams::Reset();
 		}
 
 		void SceneRenderer::RenderBatch(int selectorID)

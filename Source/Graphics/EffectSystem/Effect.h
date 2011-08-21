@@ -26,8 +26,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define EFFECT_H
 
 #include "Common.h"
+#include "EffectParameter.h"
+#include "Collections/FastList.h"
 
-
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
 
@@ -60,21 +62,33 @@ namespace Apoc3D
 
 				static VertexShader* LoadVertexShader(RenderDevice* rs, const ResourceLocation* vs);
 				static PixelShader* LoadPixelShader(RenderDevice* rs, const ResourceLocation* ps);
-
+				static void LoadEffect(RenderDevice* rs, const ResourceLocation* rl, VertexShader*& vs, PixelShader*& ps);
 			private:
 				String m_name;
 				bool m_begun;
 			};
 
+			/** AutomaticEffect is a sub set of Effect that create from AFX and only has know usage 
+				for each of its parameters, so that the engine can set up the
+				parameters all by the engine itself, without additional setup code.
+			*/
 			class AutomaticEffect : public Effect
 			{
+			public:
+				AutomaticEffect();
 
+				virtual void Setup(Material* mtrl, const RenderOperation& rop);
+
+				virtual void BeginPass(int passId);
+				virtual void EndPass();
+
+			protected:
+				virtual int begin();
+				virtual void end();
+			private:
+				List<EffectParameter> m_parameters;
 			};
 
-			//class APAPI DefaultEffect : public Effect
-			//{
-
-			//};
 		};
 	};
 };

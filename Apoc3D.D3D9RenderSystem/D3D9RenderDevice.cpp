@@ -40,9 +40,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "VolatileResource.h"
 #include "Apoc3DException.h"
 
+#include "Graphics/Camera.h"
 #include "Graphics/Material.h"
 #include "Graphics/GeometryData.h"
 #include "Graphics/EffectSystem/Effect.h"
+#include "Graphics/EffectSystem/EffectParameter.h"
 #include "Core/Logging.h"
 #include "Core/ResourceHandle.h"
 
@@ -71,6 +73,16 @@ namespace Apoc3D
 
 						dev->SetTexture(0, tex->getBaseTexture());
 					}
+
+					dev->SetTransform(D3DTS_WORLD, &reinterpret_cast<const D3DMatrix&>(rop.RootTransform));
+					if (RendererEffectParams::CurrentCamera)
+					{
+						const Matrix& view = RendererEffectParams::CurrentCamera->getViewMatrix();
+						dev->SetTransform(D3DTS_VIEW, &reinterpret_cast<const D3DMatrix&>(view));
+
+						const Matrix& proj = RendererEffectParams::CurrentCamera->getProjMatrix();
+						dev->SetTransform(D3DTS_PROJECTION, &reinterpret_cast<const D3DMatrix&>(proj));
+					}
 				}
 
 				virtual void BeginPass(int passId)
@@ -88,6 +100,7 @@ namespace Apoc3D
 					IDirect3DDevice9* dev = m_device->getDevice();
 					dev->SetVertexShader(0);
 					dev->SetPixelShader(0);
+					return 1;
 				}
 				virtual void end()
 				{
@@ -175,6 +188,8 @@ namespace Apoc3D
 				
 				dev->GetRenderTarget(0, &m_defaultRT);
 				dev->GetDepthStencilSurface(&m_defaultDS);
+
+				m_defaultEffect = new BasicEffect(this);
 			}
 			
 			void D3D9RenderDevice::BeginFrame()
@@ -277,7 +292,8 @@ namespace Apoc3D
 				Effect* fx = mtrl->getPassEffect(passSelID);
 				if (!fx)
 				{
-					return;
+					fx = m_defaultEffect;
+					//return;
 				}
 
 				if (m_nativeState->getAlphaBlendEnable() != mtrl->IsBlendTransparent)
@@ -361,6 +377,7 @@ namespace Apoc3D
 					}
 					fx->EndPass();
 				}
+				fx->End();
 			}
 
 			Viewport D3D9RenderDevice::getViewport()

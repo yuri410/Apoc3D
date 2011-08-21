@@ -40,7 +40,7 @@ namespace Apoc3D
 		*/
 		class APAPI Camera
 		{
-		private:
+		protected:
 	
 			Matrix m_view;
 			Matrix m_invView;
@@ -159,8 +159,8 @@ namespace Apoc3D
 			const Vector3& getChasePosition() const { return m_chasePosition; }
 
 			const Vector3& getPosition() const { return m_position; }
-			const Matrix& getView() const { return m_view; }
-			const Matrix& getProjection() const { return m_proj; }
+			//const Matrix& getView() const { return m_view; }
+			//const Matrix& getProjection() const { return m_proj; }
 			const Vector3& getVelocity() const { return m_velocity; }
 			const Vector3& getDesiredOffset() const { return m_desiredPositionOfs; }
 			const Vector3& getLookAtOffset() const { return m_lootAtOfs; }
@@ -200,8 +200,8 @@ namespace Apoc3D
 			void setLookAtOffset(const Vector3& val) { m_lootAtOfs = val; }
 		private:
 			// Matrix properties
-			Matrix m_view;
-			Matrix m_proj;
+			//Matrix m_view;
+			//Matrix m_proj;
 
 			// Perspective properties
 			float m_aspectRatio;

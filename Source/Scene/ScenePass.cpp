@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneManager.h"
 
 #include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/EffectSystem/EffectParameter.h"
 #include "Math/Math.h"
 
 using namespace Apoc3D::Math;
@@ -56,6 +57,7 @@ namespace Apoc3D
 		{
 			//uint64 selectorMask = 1<<m_selectorID;
 			m_currentCamera = cameras[m_cameraID];
+			RendererEffectParams::CurrentCamera = m_currentCamera;
 			if (m_currentCamera != m_parentProc->getLastCamera())
 			{
 				batchData->Clear();
