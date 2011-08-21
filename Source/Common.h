@@ -388,6 +388,7 @@ namespace Apoc3D
 		class TreeView;
 		class TreeViewNode;
 		class ListBox;
+		class TextBox;
 
 		class Menu;
 		class MenuItem;

@@ -51,6 +51,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/Form.h"
 #include "UILib/Button.h"
 #include "UILib/PictureBox.h"
+#include "UILib/Label.h"
 #include "UILib/FontManager.h"
 #include "Utility/StringUtils.h"
 #include "Vfs/ResourceLocation.h"
@@ -93,6 +94,9 @@ namespace APDesigner
 		m_pictureBox->Size = Point(512,512);
 		m_pictureBox->SetSkin(window->getUISkin());
 		m_pictureBox->eventPictureDraw().bind(this, &ModelDocument::PixtureBox_Draw);
+
+		m_textBox = new TextBox(Point(600, 5+17), 100, L"Test subject.");
+		m_textBox->SetSkin(window->getUISkin());
 
 		getDocumentForm()->setMinimumSize(Point(512+200+10,512+45));
 		getDocumentForm()->setTitle(file);
@@ -147,6 +151,7 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_pictureBox);
 		//getDocumentForm()->getControls().Add(m_btnZoomIn);
 		//getDocumentForm()->getControls().Add(m_btnZoomOut);
+		getDocumentForm()->getControls().Add(m_textBox);
 
 		Document::Initialize(device);
 

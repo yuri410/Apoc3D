@@ -26,12 +26,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Utility/StringUtils.h"
 #include "Input/InputAPI.h"
 #include "Input/Mouse.h"
-#include "FontManager.h"
+#include "Core/GameTime.h"
 #include "Graphics/RenderSystem/Sprite.h"
 #include "Graphics/RenderSystem/Texture.h"
+#include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/RenderStateManager.h"
 #include "StyleSkin.h"
 #include "Scrollbar.h"
 #include "Form.h"
+#include "FontManager.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Input;
@@ -186,24 +189,26 @@ namespace Apoc3D
 
 		TextBox::TextBox(const Point& position, int width)
 			: Control(position), m_curorLocation(0,0), m_previousLocation(0,0), m_cursorOffset(0,0), m_scrollOffset(0,0), m_hasFocus(false),
-			m_multiline(false), m_lineOffset(0,0), m_visibleLines(0), m_locked(false), m_scrollBar(SBT_None),
+			m_multiline(false), m_lineOffset(0,0), m_visibleLines(0), m_locked(false), m_scrollBar(SBT_None), m_vscrollBar(0), m_hscrollBar(0),
 			m_cursorVisible(false), m_timer(0.5f), m_timerStarted(false)
 		{
 			Size.X = width;
 		}
 		TextBox::TextBox(const Point& position, int width, const String& text)
-			: Control(position,text), m_curorLocation(0,0), m_previousLocation(0,0), m_cursorOffset(0,0), m_scrollOffset(0,0), m_hasFocus(false),
-			m_multiline(false), m_lineOffset(0,0), m_visibleLines(0), m_locked(false), m_scrollBar(SBT_None),
+			: Control(position), m_curorLocation(0,0), m_previousLocation(0,0), m_cursorOffset(0,0), m_scrollOffset(0,0), m_hasFocus(false),
+			m_multiline(false), m_lineOffset(0,0), m_visibleLines(0), m_locked(false), m_scrollBar(SBT_None), m_vscrollBar(0), m_hscrollBar(0),
 			m_cursorVisible(false), m_timer(0.5f), m_timerStarted(false)
 		{
+			Size.X = width;
 			Add(text);
 			m_curorLocation.X = Text.length();
 		}
 		TextBox::TextBox(const Point& position, int width, int height, const String& text)
-			: Control(position,text, Point(width,height)), m_curorLocation(0,0), m_previousLocation(0,0), m_cursorOffset(0,0), m_scrollOffset(0,0), m_hasFocus(false),
-			m_multiline(true), m_lineOffset(0,0), m_visibleLines(0), m_locked(false), m_scrollBar(SBT_None),
+			: Control(position, L"", Point(width,height)), m_curorLocation(0,0), m_previousLocation(0,0), m_cursorOffset(0,0), m_scrollOffset(0,0), m_hasFocus(false),
+			m_multiline(true), m_lineOffset(0,0), m_visibleLines(0), m_locked(false), m_scrollBar(SBT_None), m_vscrollBar(0), m_hscrollBar(0),
 			m_cursorVisible(false), m_timer(0.5f), m_timerStarted(false)
 		{
+			Size.X = width;
 			Add(text);
 			m_curorLocation.Y = m_lines.getCount()-1;
 			m_curorLocation.X = (int)m_lines[m_lines.getCount()-1].size();
@@ -274,7 +279,7 @@ namespace Apoc3D
 		void TextBox::UpdateScrolling()
 		{
 			if (m_cursorOffset.X > m_scrollOffset.X + m_sRect.Width - 20)
-				m_cursorOffset.X = m_scrollOffset.X - (m_sRect.Width - 20);
+				m_scrollOffset.X = m_cursorOffset.X - (m_sRect.Width - 20);
 			else if (m_cursorOffset.X - 20 < m_scrollOffset.X)
 				m_scrollOffset.X = max(0, m_cursorOffset.X - 20);
 
@@ -424,6 +429,16 @@ namespace Apoc3D
 			{
 				UpdateScrollbars(time);
 			}
+
+			if (m_timerStarted)
+			{
+				m_timer-= time->getElapsedTime();
+				if (m_timer<0)
+				{
+					m_timer = 0.5f;
+					m_cursorVisible = !m_cursorVisible;
+				}
+			}
 		}
 		void TextBox::UpdateScrollbars(const GameTime* const time)
 		{
@@ -457,12 +472,12 @@ namespace Apoc3D
 		}
 		void TextBox::CheckFocus()
 		{
-			m_sRect = getAbsoluteArea();
+			m_sRect = getArea();
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			if (mouse->IsLeftPressed())
 			{
-				if (m_sRect.Contains(mouse->GetCurrentPosition()))
+				if (m_dRect.Contains(mouse->GetCurrentPosition()))
 				{
 					m_hasFocus = true;
 				}
@@ -493,9 +508,22 @@ namespace Apoc3D
 			else
 				m_sRect.Height = Size.Y - 2;
 
-			m_dRect = getArea();
-			_DrawText(sprite);
+			m_dRect = getAbsoluteArea();
 
+			RenderStateManager* stMgr = sprite->getRenderDevice()->getRenderState();
+			bool oldScissorTest = stMgr->getScissorTestEnabled();
+			Apoc3D::Math::Rectangle oldScissorRect;
+			if (oldScissorTest)
+			{
+				oldScissorRect = stMgr->getScissorTestRect();
+			}
+
+			sprite->Flush();
+			stMgr->setScissorTest(true, &m_dRect);
+			_DrawText(sprite);
+			sprite->Flush();
+			stMgr->setScissorTest(oldScissorTest, &oldScissorRect);
+			
 			if (m_vscrollBar && m_vscrollBar->getMax()>0)
 			{
 				m_vscrollBar->Draw(sprite);
@@ -555,16 +583,31 @@ namespace Apoc3D
 		}
 		void TextBox::_DrawText(Sprite* sprite)
 		{
+			Point baseOffset = Point(m_sRect.X, m_sRect.Y);
+			int cursorLeft = m_fontRef->MeasureString(L"|").X/2;
+			if (m_curorLocation.X==0)
+				cursorLeft=-cursorLeft;
+
+			//baseOffset.X += m_sRect.X; baseOffset.X += m_sRect.Y;
 			if (!m_multiline)
 			{
-				m_cursorOffset.X = m_fontRef->MeasureString(Text.substr(0, m_curorLocation.X)).X + 4;
+				if (m_curorLocation.X>0)
+				{
+					m_cursorOffset.X = m_fontRef->MeasureString(
+						Text.substr(0, m_curorLocation.X-1)).X+cursorLeft;
+				}
+				else
+				{
+					m_cursorOffset.X = cursorLeft;
+				}
+				
 				m_cursorOffset.Y = 1;
 
 				//Point pos(m_textOffset.X - m_scrollOffset.X, m_textOffset.Y - m_scrollOffset.Y);
-				m_fontRef->DrawString(sprite, Text, m_textOffset-m_scrollOffset, CV_Black);
+				m_fontRef->DrawString(sprite, Text, m_textOffset-m_scrollOffset + baseOffset, CV_Black);
 				if (m_hasFocus && !m_locked && m_cursorVisible && getOwner()==UIRoot::getTopMostForm())
 				{
-					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset, CV_Black);
+					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, CV_Black);
 				}
 			}
 			else
@@ -576,7 +619,7 @@ namespace Apoc3D
 
 					m_lineOffset.Y = i*m_fontRef->getLineHeight();
 
-					m_fontRef->DrawString(sprite, m_lines[i], m_textOffset+m_lineOffset-m_scrollOffset, CV_Black);
+					m_fontRef->DrawString(sprite, m_lines[i], m_textOffset+m_lineOffset-m_scrollOffset + baseOffset, CV_Black);
 
 					if (lineSize.X -Size.X > maxWidth)
 					{
@@ -604,10 +647,11 @@ namespace Apoc3D
 					if (m_curorLocation.X > (int)m_lines[m_curorLocation.Y].size())
 						m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();
 
-					m_cursorOffset.X = m_fontRef->MeasureString(m_lines[m_curorLocation.Y].substr(0, m_curorLocation.X)).X + 4;
+					m_cursorOffset.X = m_fontRef->MeasureString(
+						m_lines[m_curorLocation.Y].substr(0, m_curorLocation.X>0 ? m_curorLocation.X-1 : 0)).X+cursorLeft;
 					m_cursorOffset.Y = m_fontRef->getLineHeight() * m_curorLocation.Y + 1;
 
-					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset, CV_Black);
+					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, CV_Black);
 				}
 			}
 		}

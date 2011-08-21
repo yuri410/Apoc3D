@@ -272,7 +272,7 @@ namespace Apoc3D
 					{
 						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
-						x += glyph.Width;
+						x += glyph.Width - 1;
 					}
 				}
 				else

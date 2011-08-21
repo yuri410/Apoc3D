@@ -83,6 +83,7 @@ namespace APDesigner
 		float m_distance;
 
 		PictureBox* m_pictureBox;
+		TextBox* m_textBox;
 
 		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 	};
