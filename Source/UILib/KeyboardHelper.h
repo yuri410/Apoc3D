@@ -59,11 +59,13 @@ namespace Apoc3D
 			KeyboardEventHandler m_eKeyRelease;
 			PasteEventHandler m_ePaste;
 
+			bool m_timerStarted;
 			float m_pressingTime;
+
 			KeyboardKeyCode m_currentKey;
 			KeyboardKeyCode m_previousKey;
 			bool m_pasting;
-
+			
 
 
 		public:
@@ -72,7 +74,7 @@ namespace Apoc3D
 			PasteEventHandler& eventKeyPaste() { return m_ePaste; }
 
 			KeyboardHelper()
-				: m_pasting(false), m_pressingTime(0), m_currentKey(KEY_UNASSIGNED), m_previousKey(KEY_UNASSIGNED)
+				: m_pasting(false), m_pressingTime(0), m_timerStarted(false), m_currentKey(KEY_UNASSIGNED), m_previousKey(KEY_UNASSIGNED)
 			{
 
 			}

@@ -78,7 +78,7 @@ namespace Apoc3D
 			CheckBox* getSubCheckbox(int i) { return m_checkbox[i]; }
 			int getSubCheckboxCount() const { return m_checkbox.getCount(); }
 
-			UIEventHandler& eventSelectionChanged() { return m_selectionChanged; }
+			UIEventHandler& eventSelectionChanged() { return m_eSelectionChanged; }
 		private:
 			FastList<CheckBox*> m_checkbox;
 			UIEventHandler m_eSelectionChanged;

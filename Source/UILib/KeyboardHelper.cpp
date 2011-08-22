@@ -229,6 +229,7 @@ namespace Apoc3D
 						if (m_currentKey != m_previousKey)
 						{
 							m_pressingTime = 0;
+							m_timerStarted = true;
 						}
 
 					}
@@ -237,6 +238,7 @@ namespace Apoc3D
 						if (m_currentKey = InputKeys[i])
 							m_currentKey = KEY_UNASSIGNED;
 
+						m_timerStarted = false;
 						m_pressingTime = 0;
 
 						if (!m_eKeyRelease.empty())
@@ -245,16 +247,21 @@ namespace Apoc3D
 						}
 					}
 				}
-				if (m_currentKey == m_previousKey)
+				//if (m_currentKey == m_previousKey && m_currentKey != KEY_UNASSIGNED)
 				{
-					m_pressingTime += time->getElapsedTime();
-					if (m_pressingTime > 15 * 25)
+					if (m_timerStarted)
 					{
-						if (!m_eKeyPress.empty())
+						m_pressingTime += time->getElapsedTime();
+						if (m_pressingTime > 15 * 25 * 0.001f)
 						{
-							m_eKeyPress(m_currentKey, eventArg);
+							m_pressingTime -= 0.2f;
+							if (!m_eKeyPress.empty())
+							{
+								m_eKeyPress(m_currentKey, eventArg);
+							}
 						}
 					}
+					
 				}
 
 
