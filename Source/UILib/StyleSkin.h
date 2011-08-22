@@ -95,6 +95,9 @@ namespace Apoc3D
 
 			Apoc3D::Math::Rectangle TextBoxSrcRects[9];
 			Apoc3D::Math::Rectangle TextBoxSrcRectsSingle[3];
+
+			Texture* ComboButton;
+			Texture* CheckBoxTextures[2];
 		public:
 			// create default skin
 			StyleSkin(RenderDevice* device, const FileLocateRule& rule);

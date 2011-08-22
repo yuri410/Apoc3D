@@ -160,6 +160,8 @@
     <ClInclude Include="Scene\ScenePassTypes.h" />
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />
     <ClInclude Include="UILib\Button.h" />
+    <ClInclude Include="UILib\CheckBox.h" />
+    <ClInclude Include="UILib\ComboBox.h" />
     <ClInclude Include="UILib\Form.h" />
     <ClInclude Include="UILib\KeyboardHelper.h" />
     <ClInclude Include="UILib\Label.h" />
@@ -295,6 +297,8 @@
     <ClCompile Include="Project\Project.cpp" />
     <ClCompile Include="Scene\SceneRenderScriptParser.cpp" />
     <ClCompile Include="UILib\Button.cpp" />
+    <ClCompile Include="UILib\CheckBox.cpp" />
+    <ClCompile Include="UILib\ComboBox.cpp" />
     <ClCompile Include="UILib\Control.cpp" />
     <ClCompile Include="UILib\FontManager.cpp" />
     <ClCompile Include="UILib\Form.cpp" />

@@ -135,6 +135,7 @@ namespace Apoc3D
 				//m_area = Apoc3D::Math::Rectangle(Position.X, Position.Y, Size.X, Size.Y);
 			}
 			virtual void Draw(Sprite* sprite) = 0;
+			virtual void DrawOverlay(Sprite* sprite) { }
 
 			virtual void SetSkin(const StyleSkin* skin) { m_skin = skin; }
 

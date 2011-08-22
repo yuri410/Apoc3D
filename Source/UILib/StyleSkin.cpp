@@ -167,6 +167,13 @@ namespace Apoc3D
 			TextBoxSrcRectsSingle[1] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,1, TextBox->getHeight());
 			TextBoxSrcRectsSingle[2] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,-(TextBox->getWidth()-1), TextBox->getHeight());
 
+			fl = FileSystem::getSingleton().Locate(L"ctl_combobox_button.tex", rule);
+			ComboButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+
+			fl = FileSystem::getSingleton().Locate(L"ctl_checkbox_checked.tex", rule);
+			CheckBoxTextures[0] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(L"ctl_checkbox_unchecked.tex", rule);
+			CheckBoxTextures[1] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
 		}
 
 		StyleSkin::~StyleSkin()
@@ -194,6 +201,12 @@ namespace Apoc3D
 			delete VScrollBar_Back;
 			delete VScrollBar_Button;
 			delete VScrollBar_Cursor;
+
+			delete TextBox;
+			delete ComboButton;
+			delete CheckBoxTextures[0];
+			delete CheckBoxTextures[1];
+
 		}
 	}
 }

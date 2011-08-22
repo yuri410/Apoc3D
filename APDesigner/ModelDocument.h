@@ -84,6 +84,7 @@ namespace APDesigner
 
 		PictureBox* m_pictureBox;
 		TextBox* m_textBox;
+		List<Control*> m_miscControls;
 
 		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 	};
