@@ -7,30 +7,30 @@ using namespace Apoc3D::UI;
 
 namespace APDesigner
 {
-	class ObjectPropertyEditor
-	{
-	private:
+	//class ObjectPropertyEditor
+	//{
+	//private:
 
-	public:
+	//public:
 
-	};
-	class ProjectFolderItemEditor : public ObjectPropertyEditor
-	{
+	//};
+	//class ProjectFolderItemEditor : public ObjectPropertyEditor
+	//{
 
-	};
+	//};
 
-	class ProjectTextureItemEditor : public ObjectPropertyEditor
-	{
+	//class ProjectTextureItemEditor : public ObjectPropertyEditor
+	//{
 
-	};
-	class ProjectModelItemEditor : public ObjectPropertyEditor
-	{
+	//};
+	//class ProjectModelItemEditor : public ObjectPropertyEditor
+	//{
 
-	};
-	class ProjectFontItemEditor : public ObjectPropertyEditor
-	{
+	//};
+	//class ProjectFontItemEditor : public ObjectPropertyEditor
+	//{
 
-	};
+	//};
 
 	class ObjectTools
 	{

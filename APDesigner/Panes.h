@@ -98,19 +98,19 @@ namespace APDesigner
 		void UpdateToNewProject(Project* prj);
 	};
 
-	class PropertyPane
-	{
-	private:
-		ObjectPropertyEditor* m_currentEditor;
+	//class PropertyPane
+	//{
+	//private:
+	//	ObjectPropertyEditor* m_currentEditor;
 
-		
-	public:
+	//	
+	//public:
 
-		PropertyPane(MainWindow* window);
+	//	PropertyPane(MainWindow* window);
 
-		void Initialize(RenderDevice* device);
-		void Update(const GameTime* const time);
-	};
+	//	void Initialize(RenderDevice* device);
+	//	void Update(const GameTime* const time);
+	//};
 }
 
 #endif
