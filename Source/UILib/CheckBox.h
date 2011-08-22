@@ -47,7 +47,11 @@ namespace Apoc3D
 
 			void Toggle();
 
-			
+			bool getValue() const { return m_check; }
+			void setValue(bool v) { m_check = v; }
+
+			bool getCanUncheck() const { return m_canUncheck; }
+			void setCanUncheck(bool v) { m_canUncheck = v; }
 		private:
 			
 			bool m_mouseDown;
@@ -57,8 +61,30 @@ namespace Apoc3D
 			bool m_canUncheck;
 			Point m_textOffset;
 
-
 			void UpdateEvents();
+		};
+
+		class CheckboxGroup : public Control
+		{
+		public:
+			CheckboxGroup(const FastList<CheckBox*>& checkbox);
+			~CheckboxGroup();
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
+			int getSelectedIndex() const { return m_selectedIndex; }
+			CheckBox* getSubCheckbox(int i) { return m_checkbox[i]; }
+			int getSubCheckboxCount() const { return m_checkbox.getCount(); }
+
+			UIEventHandler& eventSelectionChanged() { return m_selectionChanged; }
+		private:
+			FastList<CheckBox*> m_checkbox;
+			UIEventHandler m_eSelectionChanged;
+			int m_selectedIndex;
+
+			void Checkbox_Press(Control* ctrl);
 
 
 		};

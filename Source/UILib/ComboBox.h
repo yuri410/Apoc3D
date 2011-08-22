@@ -55,7 +55,7 @@ namespace Apoc3D
 			const String& getText() const;
 			void setText(const String& value);
 
-			
+			UIEventHandler eventSelectionChanged() { return m_eSelectionChanged; }
 
 		private:
 			TextBox* m_textbox;
