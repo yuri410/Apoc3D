@@ -90,8 +90,8 @@ namespace Apoc3D
 			~Font();
 			void DrawString(Sprite* sprite, const String& text, int x, int y, uint color);
 			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color);
-			Point DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
-
+			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
+			Point MeasureString(const String& text, int width);
 			Point MeasureString(const String& text);
 		};
 

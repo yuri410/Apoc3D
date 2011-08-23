@@ -326,7 +326,9 @@ namespace APDesigner
 	{
 		if (m_project)
 		{
+			LogManager::getSingleton().Write(LOG_System, String(L"Building project '") + m_project->getName() + String(L"'..."));
 			BuildInterface::BuildAll(m_project);
+			LogManager::getSingleton().Write(LOG_System, BuildInterface::LastResult);
 		}
 	}
 

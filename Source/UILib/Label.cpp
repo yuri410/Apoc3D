@@ -85,7 +85,7 @@ namespace Apoc3D
 				{
 					for (size_t c=1;c<m_lines[i].length()+1;c++)
 					{
-						if (m_fontRef->MeasureString(lines[i].substr(0,c)).X > Size.X)
+						if (m_fontRef->MeasureString(m_lines[i].substr(0,c)).X > Size.X)
 						{
 							String newLine = m_lines[i].substr(c-1, m_lines[i].length() - (c-1));
 							m_lines[i] = m_lines[i].substr(0,c-1);

@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Button.h"
 #include "PictureBox.h"
 #include "FontManager.h"
+#include "Scrollbar.h"
 #include "Graphics/RenderSystem/Sprite.h"
 #include "StyleSkin.h"
 
@@ -56,6 +57,13 @@ namespace Apoc3D
 			m_pictureBox->SetSkin(skin);
 			m_pictureBox->eventPictureDraw().bind(this, &Console::PictureBox_Draw);
 			m_form->getControls().Add(m_pictureBox);
+
+			m_scrollBar = new ScrollBar(Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 12, m_pictureBox->Position.Y),
+				ScrollBar::SCRBAR_Vertical, m_pictureBox->Size.Y);
+			m_scrollBar->SetSkin(skin);
+			m_scrollBar->setIsInverted(true);
+			m_form->getControls().Add(m_scrollBar);
+
 			m_form->setMinimumSize(Point(400,300));
 			m_form->Initialize(device);
 
@@ -84,10 +92,18 @@ namespace Apoc3D
 			m_submit->Position = Point(size.X - 75, size.Y - 45);
 			m_pictureBox->Size = size-Point(20, 80);
 
+			//m_scrollBar->Position = Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 14, m_pictureBox->Position.Y);
+			m_scrollBar->setPosition(Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 12, m_pictureBox->Position.Y));
+			m_scrollBar->setHeight(m_pictureBox->Size.Y);
+
+			
 		}
 
 		void Console::PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 		{
+			int lineCount = dstRect->Height / m_form->getFontRef()->getLineHeight();
+			m_scrollBar->setMax(m_logs.size() - lineCount);
+			
 			//int lineCount = dstRect->Height / m_form->getFontRef()->getLineHeight();
 			//int maxLineCount = 200;
 
@@ -96,10 +112,14 @@ namespace Apoc3D
 			Font* font = m_form->getFontRef();
 
 			int x = dstRect->X + 5;
-			int y = dstRect->Y + dstRect->Height - font->getLineHeight() - 5;
+			int y = dstRect->Y + dstRect->Height - 5;
 
-
-			for (std::list<LogEntry>::reverse_iterator iter = m_logs.rbegin();iter!=m_logs.rend()&&y>0;iter++)
+			std::list<LogEntry>::reverse_iterator iter = m_logs.rbegin();
+			for (int i=0;i<m_scrollBar->getValue();i++)
+			{
+				iter++;
+			}
+			for (;iter!=m_logs.rend()&&y>0;iter++)
 			{
 				const LogEntry& e = *iter;
 
@@ -123,8 +143,14 @@ namespace Apoc3D
 					break;
 				}
 
-				Point size = font->DrawString(sprite, e.ToString(), x,y,dstRect->Width - 10, color);
+				String str = e.ToString();
+				Point size = font->MeasureString(str,dstRect->Width- 10);// font->DrawString(sprite, e.ToString(), x,y,dstRect->Width - 10, color);
+
+
+
 				y -= size.Y-font->getLineHeight();
+
+				font->DrawString(sprite, e.ToString(), x,y,dstRect->Width - 10, color);
 			}
 
 		}

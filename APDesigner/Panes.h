@@ -65,6 +65,7 @@ namespace APDesigner
 	private:
 		//static const int ItemHeight = 60;
 		MainWindow* m_mainWindow;
+		const StyleSkin* m_skin;
 
 		Form* m_form;
 
@@ -73,8 +74,12 @@ namespace APDesigner
 		Button* m_addItem;
 		Button* m_removeItem;
 		Button* m_openItem;
+		Button* m_applyModify;
 
 		Project* m_currentProject;
+
+		FastList<Label*> m_propLeft;
+		FastList<TextBox*> m_propRight;
 
 		void NukeTreeViewNodes(FastList<TreeViewNode*>& nodes);
 		void NukeTreeView();
@@ -85,7 +90,12 @@ namespace APDesigner
 		void BtnAdd_Release(Control* ctrl);
 		void BtnRemove_Release(Control* ctrl);
 		void BtnOpen_Release(Control* ctrl);
+		void BtnApplyMod_Release(Control* ctrl);
 		void TreeView_SelectionChanged(Control* ctrl);
+
+		void NukePropertyList();
+		void AddPropertyPair(const String& a, const String& b);
+		void ListNewProperties(ProjectItemData* data);
 	public:
 		
 		ResourcePane(MainWindow* window);

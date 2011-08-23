@@ -257,7 +257,7 @@ namespace Apoc3D
 				}
 			}
 		}
-		Point Font::DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color)
+		void Font::DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color)
 		{
 			int stdY = y;
 			int std = x;
@@ -285,6 +285,38 @@ namespace Apoc3D
 						glyph.LastTimeUsed = (float)time(0);
 
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
+
+						x += glyph.Width - 1;
+						if (x>=width)
+						{
+							x=std;
+							y+=m_height;
+						}
+					}
+
+				}
+				else
+				{
+					x = std;
+					y += m_height;
+				}
+			}
+		}
+		Point Font::MeasureString(const String& text, int width)
+		{
+			int x =0;
+			int y =0;
+			int stdY = y;
+			int std = x;
+			for (size_t i = 0; i < text.length(); i++)
+			{
+				wchar_t ch = text[i];
+				if (ch != '\n')
+				{
+					Character chdef;
+					if (m_charTable.TryGetValue(ch, chdef))
+					{
+						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
 						x += glyph.Width - 1;
 						if (x>=width)

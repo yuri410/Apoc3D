@@ -152,6 +152,10 @@ namespace Apoc3D
 			TEXBUILD_Devil,
 			TEXBUILD_BuiltIn
 		};
+		static TextureFilterType ParseFilterType(const String& str);
+		static TextureBuildMethod ParseBuildMethod(const String& str);
+		static String ToString(TextureFilterType flt);
+		static String ToString(TextureBuildMethod method);
 
 		String SourceFile;
 		String DestinationFile;
@@ -197,6 +201,9 @@ namespace Apoc3D
 			MESHBUILD_ASS,
 			MESHBUILD_FBX
 		};
+
+		static MeshBuildMethod ParseBuildMethod(const String& str);
+		static String ToString(MeshBuildMethod method);
 
 
 		String SrcFile;

@@ -38,20 +38,17 @@ namespace Apoc3D
 		class APAPI Console
 		{
 		public:
-
 			Console(RenderDevice* device, StyleSkin* skin, const Point& position, const Point& size);
 			~Console();
 
-
 			void Update(const GameTime* const time);
-			
-
 		private:
 			Form* m_form;
 			TextBox* m_inputText;
 			Button* m_submit;
 			PictureBox* m_pictureBox;
 			StyleSkin* m_skin;
+			ScrollBar* m_scrollBar;
 			std::list<LogEntry> m_logs;
 
 			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);

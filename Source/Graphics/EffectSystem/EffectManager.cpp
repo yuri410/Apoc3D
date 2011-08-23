@@ -46,7 +46,7 @@ namespace Apoc3D
 					return iter->second;
 				}
 				LogManager::getSingleton().Write(LOG_Graphics, 
-					L"EffectManager: Attempted to get effect " + name + L" which is not exist.", LOGLVL_Warning);
+					L"EffectManager: Attempted to get effect '" + name + L"' which does not exist.", LOGLVL_Warning);
 				return 0;
 			}
 		}

@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Panes.h"
 
+#include "Core/Logging.h"
 #include "Graphics/RenderSystem/Sprite.h"
 #include "MainWindow.h"
 #include "UILib/Form.h"
@@ -41,6 +42,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "BuildService/BuildService.h"
 
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;
 
 namespace APDesigner
@@ -126,7 +130,7 @@ namespace APDesigner
 	/************************************************************************/
 	
 	ResourcePane::ResourcePane(MainWindow* window)
-		: m_mainWindow(window), m_currentProject(0)
+		: m_mainWindow(window), m_currentProject(0), m_skin(window->getUISkin())
 	{
 		m_form = new Form(FBS_Pane);
 		m_form->SetSkin(window->getUISkin());
@@ -171,16 +175,22 @@ namespace APDesigner
 		m_openItem->eventRelease().bind(this, &ResourcePane::BtnOpen_Release);
 		m_form->getControls().Add(m_openItem);
 
+		m_applyModify = new Button(Point(120,405),L"Apply");
+		m_applyModify->SetSkin(window->getUISkin());
+		m_applyModify->eventRelease().bind(this, &ResourcePane::BtnApplyMod_Release);
+		m_form->getControls().Add(m_applyModify);
 	}
 	ResourcePane::~ResourcePane()
 	{
 		delete m_form;
-
+		NukePropertyList();
 		delete m_infoDisplay;
 		delete m_addItem;
 		delete m_removeItem;
 		delete m_openItem;
+		delete m_applyModify;
 
+		NukeTreeView();
 		delete m_resourceView;
 	}
 
@@ -200,14 +210,25 @@ namespace APDesigner
 		m_form->Size.Y = m_mainWindow->getUIAreaSize().Y - 17-1;
 		Point newSize = m_form->Size;
 		newSize.X -= 10;
-		newSize.Y -= 30+300;
+		newSize.Y -= 30+400;
 		m_resourceView->SetSize(newSize);
 	
 		m_infoDisplay->Position.Y = m_resourceView->Size.Y + m_resourceView->Position.Y + 5;
 
 		m_removeItem->Position.Y = m_addItem->Position.Y = m_infoDisplay->Position.Y + 80;
 		m_openItem->Position.Y = m_removeItem->Position.Y+m_removeItem->Size.Y+15;
+		m_applyModify->Position.Y=m_openItem->Position.Y;
 
+		for (int i=0;i<m_propLeft.getCount();i++)
+		{
+			int top = m_openItem->Position.Y + 60 + i * 25;
+			m_propLeft[i]->Position.Y = top;
+		}
+		for (int i=0;i<m_propRight.getCount();i++)
+		{
+			int top = m_openItem->Position.Y + 60 + i * 25;
+			m_propRight[i]->Position.Y = top;
+		}
 	}
 
 	void ResourcePane::UpdateToNewProject(Project* prj)
@@ -308,6 +329,88 @@ namespace APDesigner
 		BuildTreeViewNodes(0, items);
 	}
 
+	void ResourcePane::NukePropertyList()
+	{
+		for (int i=0;i<m_propLeft.getCount();i++)
+		{
+			m_form->getControls().Remove(m_propLeft[i]);
+			delete m_propLeft[i];
+		}
+		m_propLeft.Clear();
+
+		for (int i=0;i<m_propRight.getCount();i++)
+		{
+			m_form->getControls().Remove(m_propRight[i]);
+			delete m_propRight[i];
+		}
+		m_propRight.Clear();
+	}
+	void ResourcePane::AddPropertyPair(const String& a, const String& b)
+	{
+		int top = m_openItem->Position.Y + 60 + m_propLeft.getCount() * 25;
+		//for (int i=0;i<m_propLeft.getCount();i++)
+		//{
+		//	if (m_propLeft[i]->Position.Y + m_propLeft[i]->Size.Y + 40> top )
+		//		top = m_propLeft[i]->Position.Y + m_propLeft[i]->Size.Y + 40;
+		//}
+
+		Label* label = new Label(Point(5, top), a, 100);
+
+		TextBox* tb = new TextBox(Point(110, top), 100, b);
+		m_propLeft.Add(label);
+		m_propRight.Add(tb);
+		label->SetSkin(m_skin);
+		label->Initialize(m_form->getRenderDevice());
+		tb->SetSkin(m_skin);
+		tb->Initialize(m_form->getRenderDevice());
+
+		m_form->getControls().Add(label);
+		m_form->getControls().Add(tb);
+	}
+	void ResourcePane::ListNewProperties(ProjectItemData* data)
+	{
+		NukePropertyList();
+		switch (data->getType())
+		{
+		case PRJITEM_Texture:
+			{
+				ProjectResTexture* tex = static_cast<ProjectResTexture*>(data);
+
+				//AddPropertyPair(L"AssembleCubemap", StringUtils::ToString(tex->AssembleCubemap));
+				//AddPropertyPair(L"AssembleVolumeMap", StringUtils::ToString(tex->AssembleVolumeMap));
+				AddPropertyPair(L"DestinationFile", tex->DestinationFile);
+				AddPropertyPair(L"SourceFile", tex->SourceFile);
+
+				AddPropertyPair(L"GenerateMipmaps", StringUtils::ToString(tex->GenerateMipmaps));
+				AddPropertyPair(L"Method", ProjectResTexture::ToString(tex->Method));
+				
+				AddPropertyPair(L"Resize", StringUtils::ToString(tex->Resize));
+				AddPropertyPair(L"ResizeFilterType", ProjectResTexture::ToString(tex->ResizeFilterType));
+				
+				AddPropertyPair(L"NewFormat", PixelFormatUtils::ToString(tex->NewFormat));
+			}
+			break;
+		case PRJITEM_Model:
+			{
+				ProjectResModel* mdl = static_cast<ProjectResModel*>(data);
+				
+				AddPropertyPair(L"DstFile", mdl->DstFile);
+				AddPropertyPair(L"DstAnimationFile", mdl->DstAnimationFile);
+				AddPropertyPair(L"SrcFile", mdl->SrcFile);
+				AddPropertyPair(L"Method", ProjectResModel::ToString(mdl->Method));
+			}
+			break;
+		case PRJITEM_Font:
+			{
+			}
+			break;
+		case PRJITEM_Folder:
+			break;
+		case PRJITEM_Effect:
+			break;
+		}
+	}
+
 	void ResourcePane::TreeView_SelectionChanged(Control* ctrl)
 	{
 		if (m_resourceView->getSelectedNode())
@@ -346,7 +449,7 @@ namespace APDesigner
 				{
 					m_infoDisplay->Text.append(L"Built(up to date).");
 				}
-
+				ListNewProperties(item->getData());
 			}
 			
 		}
@@ -369,7 +472,9 @@ namespace APDesigner
 			{
 				if (item->IsOutDated())
 				{
+					LogManager::getSingleton().Write(LOG_System, String(L"Building asset '") + item->getName() + String(L"'..."));
 					BuildInterface::BuildSingleItem(item);
+					LogManager::getSingleton().Write(LOG_System, BuildInterface::LastResult);
 				}
 
 				switch (item->getType())
@@ -406,5 +511,8 @@ namespace APDesigner
 			
 		}
 	}
+	void ResourcePane::BtnApplyMod_Release(Control* ctrl)
+	{
 
+	}
 }
