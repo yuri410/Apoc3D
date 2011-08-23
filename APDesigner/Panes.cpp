@@ -315,36 +315,38 @@ namespace APDesigner
 			ProjectItem* item = static_cast<ProjectItem*>(m_resourceView->getSelectedNode()->UserData);
 			if (item)
 			{
+				m_infoDisplay->Text = item->getName();
+				m_infoDisplay->Text.append(L"\n");
+
+
 				switch (item->getType())
 				{
 				case PRJITEM_Texture:
-					{
-						ProjectResTexture* tex = static_cast<ProjectResTexture*>(item->getData());
-
-						m_infoDisplay->Text = PathUtils::GetFileName(tex->SourceFile);
-						m_infoDisplay->Text.append(L"\n");
-
-						if (File::FileExists(PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile)))
-						{
-							if (item->IsOutDated())
-							{
-								m_infoDisplay->Text.append(L"Built(but outdated).");
-							}
-							else
-							{
-								m_infoDisplay->Text.append(L"Built(up to date).");
-							}
-
-						}
-						else
-						{
-							m_infoDisplay->Text.append(L"Not built yet.");
-						}
-
-						//TextureViewer* tv = new TextureViewer(m_mainWindow, item->)
-					}
+					m_infoDisplay->Text.append(L"[Texture]\n");
+					break;
+				case PRJITEM_Model:
+					m_infoDisplay->Text.append(L"[Model]\n");
+					break;
+				case PRJITEM_Folder:
+					m_infoDisplay->Text.append(L"[Folder]\n");
+					break;
+				case PRJITEM_Effect:
+					m_infoDisplay->Text.append(L"[Effect]\n");
+					break;
+				case PRJITEM_Font:
+					m_infoDisplay->Text.append(L"[Font]\n");
 					break;
 				}
+
+				if (item->IsOutDated())
+				{
+					m_infoDisplay->Text.append(L"Built(but outdated).");
+				}
+				else
+				{
+					m_infoDisplay->Text.append(L"Built(up to date).");
+				}
+
 			}
 			
 		}

@@ -324,6 +324,23 @@ namespace Apoc3D
 			Texture* texture = m_skin->TextBox;
 			m_textOffset = Point(5, (texture->getHeight() - m_fontRef->getLineHeight()) /2 );
 
+			InitDstRect();
+
+			m_dRect = Apoc3D::Math::Rectangle(0,0,Size.X,Size.Y);
+
+			m_keyboard.eventKeyPress().bind(this, &TextBox::Keyboard_OnPress);
+			m_keyboard.eventKeyPress().bind(this, &TextBox::Keyboard_OnPress);
+
+			if (m_multiline && m_scrollBar != SBT_None)
+			{
+				InitScrollbars(device);
+			}
+			m_timerStarted = true;
+		}
+
+		void TextBox::InitDstRect()
+		{
+			Texture* texture = m_skin->TextBox;
 			if (!m_multiline)
 			{
 				m_destRect[0] = Apoc3D::Math::Rectangle(0,0,m_skin->TextBoxSrcRectsSingle[0].Width, m_skin->TextBoxSrcRectsSingle[0].Height);
@@ -355,17 +372,6 @@ namespace Apoc3D
 				m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 
 			}
-
-			m_dRect = Apoc3D::Math::Rectangle(0,0,Size.X,Size.Y);
-
-			m_keyboard.eventKeyPress().bind(this, &TextBox::Keyboard_OnPress);
-			m_keyboard.eventKeyPress().bind(this, &TextBox::Keyboard_OnPress);
-
-			if (m_multiline && m_scrollBar != SBT_None)
-			{
-				InitScrollbars(device);
-			}
-			m_timerStarted = true;
 		}
 		void TextBox::InitScrollbars(RenderDevice* device)
 		{

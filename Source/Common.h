@@ -397,6 +397,8 @@ namespace Apoc3D
 		class MenuItem;
 		class SubMenu;
 
+		class Console;
+
 		class StyleSkin;
 	}
 };

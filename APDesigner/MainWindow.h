@@ -51,7 +51,7 @@ namespace APDesigner
 		Document* m_currentDocument;
 		FastList<Document*> m_documentList;
 		//Font* m_font;
-
+		Console* m_console;
 		//ControlContainer* m_pane;
 		//Button* m_btn;
 		//Form* m_form;

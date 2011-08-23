@@ -121,7 +121,7 @@ namespace Apoc3D
 			~LogManager();
 
 			Log* getDefaultLog() const;
-			Log* getLogSet(const String& name);
+			Log* getLogSet(LogType type) { return m_logs[static_cast<int32>(type)]; }
 
 			void Write(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation) const;
 

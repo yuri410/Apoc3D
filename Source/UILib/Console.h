@@ -25,9 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define CONSOLE_H
 
 #include "UICommon.h"
+#include "Core/Logging.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;
+using namespace Apoc3D::Graphics;
 
 namespace Apoc3D
 {
@@ -37,7 +39,7 @@ namespace Apoc3D
 		{
 		public:
 
-			Console(const Point& position, const Point& size);
+			Console(RenderDevice* device, StyleSkin* skin, const Point& position, const Point& size);
 			~Console();
 
 
@@ -49,7 +51,11 @@ namespace Apoc3D
 			TextBox* m_inputText;
 			Button* m_submit;
 			PictureBox* m_pictureBox;
+			StyleSkin* m_skin;
+			std::list<LogEntry> m_logs;
 
+			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+			void Log_New(LogEntry e);
 		};
 	}
 }

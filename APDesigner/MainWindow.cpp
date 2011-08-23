@@ -38,6 +38,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/Form.h"
 #include "UILib/Menu.h"
 #include "UILib/List.h"
+#include "UILib/Console.h"
 #include "Project/Project.h"
 
 #include "Panes.h"
@@ -122,27 +123,10 @@ namespace APDesigner
 		m_sprite = fac->CreateSprite();
 
 
-
-		//m_pane = new ControlContainer();
-		//m_pane->Visible = true; m_pane->Enabled = true; m_pane->Position = Point(0,0); m_pane->Size = Point(400,400);
-
-		//m_btn = new Button(Point(25,25), L"UTTTest button!");
-		//m_btn->SetSkin(m_UIskin);
-
-		
-		
-
-		//m_form = new Form(FBS_Pane);
-		//m_form->SetSkin(m_UIskin);
-		//m_form->getControls().Add(m_btn);
-		//m_form->getControls().Add(m_mainMenu);
-		
-		//m_form->Size = Point(800,600);
 		
 
 		m_mainMenu = new Menu();
 		m_mainMenu->SetSkin(m_UIskin);
-		//m_form->setMenu(m_mainMenu);
 
 		
 		{
@@ -171,18 +155,7 @@ namespace APDesigner
 			mi->event().bind(this, &MainWindow::Menu_Exit);
 			pojSubMenu->Add(mi,0);
 
-
-
 			m_mainMenu->Add(pojMenu,pojSubMenu);
-		
-			//MenuItem* tt2 = new MenuItem(L"Menu 2");
-			//SubMenu* sb = new SubMenu(0);
-			//sb->SetSkin(m_UIskin);
-			//sb->Add(new MenuItem(L"Item1"),0);
-			//sb->Add(new MenuItem(L"Item2"),0);
-
-			//m_mainMenu->Add(tt2, sb);
-
 		}
 		{
 			MenuItem* buildMenu = new MenuItem(L"Build");
@@ -201,34 +174,6 @@ namespace APDesigner
 			UIRoot::setMainMenu(m_mainMenu);
 		}
 
-		//{
-		//	List<String> items;
-		//	items.Add(L"I1");
-		//	items.Add(L"I1sa");
-		//	items.Add(L"dasad asdaA");
-		//	items.Add(L"Server Running Time: 24/7 (all days, all weeks) Why is the server called cupcake? ");
-		//	items.Add(L"Junk0");
-		//	items.Add(L"Junk1");
-		//	items.Add(L"Junk2");
-		//	items.Add(L"Junk3");
-		//	items.Add(L"Junk4");
-		//	items.Add(L"Junk0");
-		//	items.Add(L"Junk1");
-		//	items.Add(L"Junk2");
-		//	items.Add(L"Junk3");
-		//	items.Add(L"Junk4");
-		//	items.Add(L"Junk0");
-		//	items.Add(L"Junk1");
-		//	items.Add(L"Junk2");
-		//	items.Add(L"Junk3");
-		//	items.Add(L"Junk4");
-
-		//	ListBox* listbox = new ListBox(Point(50,50), 300, 300, items);
-		//	listbox->SetSkin(m_UIskin);
-		//	listbox->setUseHorizontalScrollbar(true);
-		//	m_form->getControls().Add(listbox);
-		//}
-		
 
 		m_resourcePane = new ResourcePane(this);
 		m_toolsPane = new ToolsPane(this);
@@ -237,22 +182,16 @@ namespace APDesigner
 		//UIRoot::Add(m_form);
 		m_resourcePane->Initialize(m_device);
 		m_toolsPane->Initialize(m_device);
-		//m_form->Show();
 
-		//m_btn->Initialize(m_device);
-		//m_pane->Initialize(m_device);
-		//AddDocument(new ModelDocument(this));
+		m_console = new Console(m_device, m_UIskin, Point(50,50), Point(400,400));
 	}
 	void MainWindow::Unload()
 	{
+		UIRoot::Finalize();
 		delete m_UIskin;
 		delete m_sprite;
-		
-		//delete m_btn;
-		//delete m_pane;
-		//delete m_form;
-		UIRoot::Finalize();
 
+		delete m_console;
 		delete m_resourcePane;
 		UIResources::Finalize();
 	}
@@ -263,7 +202,7 @@ namespace APDesigner
 		//m_pane->Update(time);
 		//m_form->Update(time);
 		UIRoot::Update(time);
-
+		m_console->Update(time);
 		m_resourcePane->Update(time);
 		m_toolsPane->Update(time);
 

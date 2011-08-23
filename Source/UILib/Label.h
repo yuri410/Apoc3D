@@ -87,7 +87,7 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite);
 
 			void setText(const String& text);
-
+			void setWidth(int w) { Size.X = w; InitDstRect(); }
 			bool getHasFocus() const { return m_hasFocus; }
 			void setHasFocus(bool value) { m_hasFocus = value; }
 			bool getLocked() const { return m_locked; }
@@ -129,6 +129,7 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle m_focusArea;
 			
 			void InitScrollbars(RenderDevice* device);
+			void InitDstRect();
 
 			void Add(const String& text);
 			void Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e);

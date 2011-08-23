@@ -257,6 +257,52 @@ namespace Apoc3D
 				}
 			}
 		}
+		Point Font::DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color)
+		{
+			int stdY = y;
+			int std = x;
+			for (size_t i = 0; i < text.length(); i++)
+			{
+				wchar_t ch = text[i];
+				if (ch != '\n')
+				{
+					Character chdef;
+					if (m_charTable.TryGetValue(ch, chdef))
+					{
+						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+
+
+						if (!glyph.IsMapped)
+						{
+							EnsureGlyph(glyph);
+						}
+
+						Apoc3D::Math::Rectangle rect;
+						rect.X = x;
+						rect.Y = y;
+						rect.Width = glyph.Width;
+						rect.Height = glyph.Height;
+						glyph.LastTimeUsed = (float)time(0);
+
+						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
+
+						x += glyph.Width - 1;
+						if (x>=width)
+						{
+							x=std;
+							y+=m_height;
+						}
+					}
+
+				}
+				else
+				{
+					x = std;
+					y += m_height;
+				}
+			}
+			return Point(width-std, y+m_height-stdY);
+		}
 		Point Font::MeasureString(const String& text)
 		{
 			Point result = Point(0, m_height);

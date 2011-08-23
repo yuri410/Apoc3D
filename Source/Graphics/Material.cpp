@@ -89,12 +89,16 @@ namespace Apoc3D
 
 		void Material::LoadEffect(int32 index)
 		{
-			m_effects[index] = EffectManager::getSingleton().getEffect(m_effectName[index]);
+			if (!m_effectName->empty())
+				m_effects[index] = EffectManager::getSingleton().getEffect(m_effectName[index]);
 		}
 
 
 		void Material::LoadTexture(int32 index)
 		{
+			if (m_texName[index].empty())
+				return;
+
 			// load texture
 			FileLocation* fl = FileSystem::getSingleton().TryLocate(m_texName[index], FileLocateRule::Textures);
 
