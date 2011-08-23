@@ -64,6 +64,21 @@ namespace APDesigner
 			}
 
 		};
+		class ColorField : public Control
+		{
+		public:
+			ColorField(const Point& position, ColorValue defaultColor);
+			~ColorField();
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* const time);
+		private:
+			Label* m_lblAmbient;
+			PictureBox* m_pbAmbient;
+			Button* m_btnAmbient;
+		};
+
 
 		String m_name;
 		String m_filePath;
@@ -84,7 +99,81 @@ namespace APDesigner
 
 		PictureBox* m_pictureBox;
 		TextBox* m_textBox;
-		List<Control*> m_miscControls;
+
+		Label* m_lblTimeline;
+		Label* m_lblKeyframeParam;
+		Label* m_lblMtrlKeyTime;
+		Label* m_lblMtrlKeyIndex;
+
+		Label* m_lblMesh;
+		Label* m_lblMtrlPart;
+
+		TextBox* m_tbMKeyTime;
+		TextBox* m_tbMKeyIndex;
+		Button* m_btnRefreshTimeLine;
+		Button* m_btnModify;
+		Button* m_btnAddMkey;
+
+		ComboBox* m_cbMesh;
+		ComboBox* m_cbMtrlPart;
+
+		Button* m_applyMtrl;
+		Button* m_addMtrlFrame;
+
+		ColorField* m_cfAmbient;
+		ColorField* m_cfDiffuse;
+		ColorField* m_cfSpecular;
+		ColorField* m_cfEmissive;
+
+		//Label* m_lblAmbient;
+		//Label* m_lblDiffuse;
+		//Label* m_lblSpecular;
+		//Label* m_lblEmissive;
+		Label* m_lblShinness;
+		
+		//PictureBox* m_pbAmbient;
+		//Button* m_btnAmbient;
+		//Button* m_btnDiffuse;
+		//Button* m_btnSpecular;
+		//Button* m_btnEmissive;
+		TextBox* m_cbShinness;
+		
+		Label* m_lblPassFlag;
+		PictureBox* m_pbPassFlag;
+		Button* m_btnPassFlag;
+
+		Label* m_lblTex1;
+		Label* m_lblTex2;
+		Label* m_lblTex3;
+		Label* m_lblTex4;
+		Label* m_lblTex5;
+		Label* m_lblTex6;
+
+		TextBox* m_tbTex1;
+		TextBox* m_tbTex2;
+		TextBox* m_tbTex3;
+		TextBox* m_tbTex4;
+		TextBox* m_tbTex5;
+		TextBox* m_tbTex6;
+
+		ListBox* m_customParameterList;
+
+		Label* m_lblPriority;
+		TextBox* m_tbPriority;
+
+		CheckBox* m_cbDepthTest;
+		CheckBox* m_cbDepthWrite;
+
+		Label* m_lblAlphaTest;
+		TextBox* m_tbAlphaTest;
+
+		CheckBox* m_cbTransparent;
+		Label* m_lblSrcBlend;
+		Label* m_lblDstBlend;
+		Label* m_lblBlendFunction;
+		ComboBox* m_cbSrcBlend;
+		ComboBox* m_cbDstBlend;
+		ComboBox* m_cbBlendFunction;
 
 		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 	};
