@@ -183,7 +183,7 @@ namespace APDesigner
 		m_resourcePane->Initialize(m_device);
 		m_toolsPane->Initialize(m_device);
 
-		m_console = new Console(m_device, m_UIskin, Point(50,50), Point(400,400));
+		m_console = new Console(m_device, m_UIskin, Point(600,100), Point(400,400));
 	}
 	void MainWindow::Unload()
 	{

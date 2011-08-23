@@ -513,6 +513,15 @@ namespace APDesigner
 	}
 	void ResourcePane::BtnApplyMod_Release(Control* ctrl)
 	{
+		if (m_resourceView->getSelectedNode())
+		{
+			ProjectItem* item = static_cast<ProjectItem*>(m_resourceView->getSelectedNode()->UserData);
+			if (item)
+			{
+
+				item->NotifyModified();
+			}
+		}
 		NukePropertyList();
 	}
 }
