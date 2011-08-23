@@ -248,6 +248,7 @@ namespace APDesigner
 
 
 		getDocumentForm()->setTitle(name + String(L"(100%)"));
+		getDocumentForm()->setMinimumSize(Point(300,300));
 	}
 
 	TextureViewer::~TextureViewer()

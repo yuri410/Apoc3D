@@ -513,6 +513,6 @@ namespace APDesigner
 	}
 	void ResourcePane::BtnApplyMod_Release(Control* ctrl)
 	{
-
+		NukePropertyList();
 	}
 }
