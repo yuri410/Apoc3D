@@ -38,6 +38,7 @@ using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::Animation;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::IO;
 
 namespace Apoc3D
 {
@@ -59,6 +60,8 @@ namespace Apoc3D
 			virtual ~ModelSharedData();
 
 			virtual uint32 getSize();
+
+			void Save(ModelData* data);
 		protected:
 			virtual void load();
 			virtual void unload();

@@ -56,7 +56,7 @@ namespace Apoc3D
 
 		static const String TAG_3_NameTag = L"Name";
 
-		static const String TAG_3_ParentBoneTag = L"ParentBone";
+		//static const String TAG_3_ParentBoneTag = L"ParentBone";
 		static const String TAG_3_BoundingSphereTag = L"BoundingSphere";
 
 		uint32 MeshData::ComputeVertexSize(const FastList<VertexElement>& elements)

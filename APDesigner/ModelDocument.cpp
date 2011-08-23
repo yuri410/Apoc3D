@@ -32,6 +32,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Input/InputAPI.h"
 #include "Input/Mouse.h"
 
+#include "IOLib/ModelData.h"
+#include "IOLib/Streams.h"
+
 #include "Graphics/Animation/AnimationData.h"
 #include "Graphics/Animation/AnimationManager.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
@@ -62,7 +65,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Utility;
-
+using namespace Apoc3D::IO;
 namespace APDesigner
 {
 	ModelDocument::ModelDocument(MainWindow* window, const String& name, const String& file, const String& animationFile)
@@ -90,7 +93,7 @@ namespace APDesigner
 
 		m_scene.AddObject(&m_object);
 
-		m_pictureBox = new PictureBox(Point(5,5 + 17), 1);
+		m_pictureBox = new PictureBox(Point(5,5 + 17+80), 1);
 		m_pictureBox->Size = Point(512,512);
 		m_pictureBox->SetSkin(window->getUISkin());
 		m_pictureBox->eventPictureDraw().bind(this, &ModelDocument::PixtureBox_Draw);
@@ -144,7 +147,13 @@ namespace APDesigner
 	}
 	void ModelDocument::SaveRes()
 	{
-
+		ModelData data;
+		m_modelSData->Save(&data);
+		data.Save(new FileOutStream(m_filePath));
+		if (m_animPath.size())
+		{
+			m_animData->Save(new FileOutStream(m_animPath));
+		}
 	}
 	void ModelDocument::Initialize(RenderDevice* device)
 	{

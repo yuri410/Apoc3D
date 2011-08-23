@@ -24,6 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Panes.h"
 
 #include "Core/Logging.h"
+#include "Config/ConfigurationSection.h"
 #include "Graphics/RenderSystem/Sprite.h"
 #include "MainWindow.h"
 #include "UILib/Form.h"
@@ -518,6 +519,10 @@ namespace APDesigner
 			ProjectItem* item = static_cast<ProjectItem*>(m_resourceView->getSelectedNode()->UserData);
 			if (item)
 			{
+				//ConfigurationSection* temp = new ConfigurationSection(L"temp");
+				//item->getData()->Save(temp, false);
+
+				
 
 				item->NotifyModified();
 			}

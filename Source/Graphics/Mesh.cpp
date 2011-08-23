@@ -74,7 +74,7 @@ namespace Apoc3D
 			m_vertexSize = data->VertexSize;
 
 			m_vertexElements = data->VertexElements;
-			m_parentBoneID = data->ParentBoneID;
+			//m_parentBoneID = data->ParentBoneID;
 			m_boundingSphere = data->BoundingSphere;
 
 			m_vtxDecl = m_factory->CreateVertexDeclaration(data->VertexElements);
@@ -201,7 +201,7 @@ namespace Apoc3D
 			data->VertexCount = m_vertexCount;
 			data->VertexSize = m_vertexSize;
 			data->VertexElements = m_vertexElements;
-			data->ParentBoneID = m_parentBoneID;
+			//data->ParentBoneID = m_parentBoneID;
 
 			//data.Materials;
 			for (uint i=0;i<m_materials.getMaterialCount();i++)

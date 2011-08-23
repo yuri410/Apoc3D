@@ -64,7 +64,7 @@ namespace Apoc3D
 			int32 m_vertexCount;
 
 
-			int32 m_parentBoneID;
+			//int32 m_parentBoneID;
 			BoundingSphere m_boundingSphere;
 
 			FastList<VertexElement> m_vertexElements;

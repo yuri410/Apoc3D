@@ -85,6 +85,17 @@ namespace Apoc3D
 			}
 			return 0;
 		}
+
+		void ModelSharedData::Save(ModelData* data)
+		{
+			for (int i=0;i<m_entities.getCount();i++)
+			{
+				MeshData* meshData = new MeshData();
+				m_entities[i]->Save(meshData);
+				data->Entities.Add(meshData);
+			}
+
+		}
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/

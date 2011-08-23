@@ -56,7 +56,7 @@ namespace Apoc3D
 
 			FastList<VertexElement> VertexElements;
 
-			int32 ParentBoneID;
+			//int32 ParentBoneID;
 			BoundingSphere BoundingSphere;
 
 			String Name;
