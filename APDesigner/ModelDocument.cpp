@@ -336,4 +336,56 @@ namespace APDesigner
 
 		//}
 	}
+	
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+
+	ModelDocument::ColorField::ColorField(const Point& position, ColorValue defaultColor)
+		: Control(position), m_lblAmbient(0), m_pbAmbient(0), m_btnAmbient(0)
+	{
+
+	}
+	ModelDocument::ColorField::~ColorField()
+	{
+		if (m_lblAmbient)
+			delete m_lblAmbient;
+		if (m_pbAmbient)
+			delete m_pbAmbient;
+
+		if (m_btnAmbient)
+			delete m_btnAmbient;
+	}
+
+	void ModelDocument::ColorField::Initialize(RenderDevice* device)
+	{
+		m_lblAmbient = new Label(Position, Text, 80);
+		m_lblAmbient->SetSkin(m_skin);
+		m_lblAmbient->Initialize(device);
+
+		m_pbAmbient = new PictureBox(Position + Point(80, 0), 1);
+		m_pbAmbient->SetSkin(m_skin);
+		m_pbAmbient->Size = Point(50, m_lblAmbient->Size.X);
+		m_pbAmbient->Initialize(device);
+
+		m_btnAmbient = new Button(Position + Point(140, 0), L"...");
+		
+		Size.Y = m_lblAmbient->Size.Y;
+		Size.X = m_btnAmbient->Position.X + m_btnAmbient->Size.X;
+
+		m_btnAmbient->SetSkin(m_skin);
+		m_btnAmbient->Initialize(device);
+	}
+	void ModelDocument::ColorField::Draw(Sprite* sprite)
+	{
+		m_lblAmbient->Draw(sprite);
+		m_pbAmbient->Draw(sprite);
+		m_btnAmbient->Draw(sprite);
+	}
+	void ModelDocument::ColorField::Update(const GameTime* const time)
+	{
+		m_lblAmbient->Position = Position;
+		m_pbAmbient->Position = Position + Point(80, 0);
+		m_btnAmbient->Position = Position + Point(140, 0);
+	}
 }

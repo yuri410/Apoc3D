@@ -36,6 +36,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 
 #include "MainWindow.h"
+#include "Math/Matrix.h"
 
 #include <direct.h>
 #include <Windows.h>
@@ -48,14 +49,15 @@ using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
+using namespace Apoc3D::Math;
 using namespace APDesigner;
+
 
 INT WINAPI wWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
                      int       nCmdShow)
 {
-	
 	wchar_t workingDir[260];
 	DWORD len = GetCurrentDirectory(260, workingDir);
 

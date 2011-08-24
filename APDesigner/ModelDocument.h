@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Document.h"
 #include "Scene/SimpleSceneManager.h"
 #include "Scene/SceneObject.h"
+#include "UILib/Control.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
@@ -125,17 +126,7 @@ namespace APDesigner
 		ColorField* m_cfSpecular;
 		ColorField* m_cfEmissive;
 
-		//Label* m_lblAmbient;
-		//Label* m_lblDiffuse;
-		//Label* m_lblSpecular;
-		//Label* m_lblEmissive;
 		Label* m_lblShinness;
-		
-		//PictureBox* m_pbAmbient;
-		//Button* m_btnAmbient;
-		//Button* m_btnDiffuse;
-		//Button* m_btnSpecular;
-		//Button* m_btnEmissive;
 		TextBox* m_cbShinness;
 		
 		Label* m_lblPassFlag;

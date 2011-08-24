@@ -47,7 +47,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/EffectSystem/EffectParameter.h"
 #include "Core/Logging.h"
 #include "Core/ResourceHandle.h"
+#include "Utility/StringUtils.h"
 
+using namespace Apoc3D::Utility;
 using namespace Apoc3D::Core;
 
 namespace Apoc3D

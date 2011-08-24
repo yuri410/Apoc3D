@@ -108,8 +108,8 @@ namespace Apoc3D
 				delete br;
 			}
 
-			ParentBoneID = -1;
-			data->TryGetDataInt32(TAG_3_ParentBoneTag, ParentBoneID);
+			//ParentBoneID = -1;
+			//data->TryGetDataInt32(TAG_3_ParentBoneTag, ParentBoneID);
 
 			if (data->Contains(TAG_3_BoundingSphereTag))
 			{
@@ -244,7 +244,7 @@ namespace Apoc3D
 				delete bw;
 			}
 
-			data->AddEntry(TAG_3_ParentBoneTag, ParentBoneID);
+			//data->AddEntry(TAG_3_ParentBoneTag, ParentBoneID);
 
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_BoundingSphereTag);
@@ -309,7 +309,7 @@ namespace Apoc3D
 
 
 		MeshData::MeshData()
-			: VertexData(0), ParentBoneID(-1), VertexSize(0), VertexCount(0)
+			: VertexData(0), VertexSize(0), VertexCount(0)
 		{
 
 		}
