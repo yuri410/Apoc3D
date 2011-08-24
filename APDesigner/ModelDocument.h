@@ -116,6 +116,7 @@ namespace APDesigner
 
 		ComboBox* m_cbMesh;
 		ComboBox* m_cbMtrlPart;
+		ComboBox* m_cbSubMtrl;
 
 		Button* m_applyMtrl;
 		Button* m_addMtrlFrame;

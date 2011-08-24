@@ -99,7 +99,7 @@ namespace Apoc3D
 		const String& ComboBox::getText() const { return m_textbox->Text; }
 		void ComboBox::setText(const String& value) { m_textbox->Text = value; }
 
-		void ComboBox::ListBox_OnPress(Control* ctrl) { Close(); }
+		void ComboBox::ListBox_OnPress(Control* ctrl) {  }
 		void ComboBox::ListBox_SelectionChanged(Control* ctrl)
 		{
 			const String& previousItem = m_textbox->Text;

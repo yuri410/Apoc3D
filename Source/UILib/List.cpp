@@ -274,7 +274,7 @@ namespace Apoc3D
 
 			if (index == m_selectedIndex)
 				sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_LightGray);
-			else if (getOwner()->getArea().Contains(mouse->GetCurrentPosition()) &&
+			else if (//getOwner()->getArea().Contains(mouse->GetCurrentPosition()) &&
 				m_selectionRect.Contains(Point(mouse->GetCurrentPosition().X-getOwner()->Position.X-Position.X, 
 				mouse->GetCurrentPosition().Y-getOwner()->Position.Y-Position.Y)))
 			{
@@ -343,7 +343,7 @@ namespace Apoc3D
 				m_hscrollbar->Draw(sprite);
 				m_visisbleItems = (int)ceilf((float)Size.Y / m_fontRef->getLineHeight())-1;
 			}
-			else if ((!m_hscrollbar || !m_hscrollbar->getMax()) && m_vscrollbar->Size.Y != Size.Y-2)
+			else if ((!m_hscrollbar || !m_hscrollbar->getMax()) && m_vscrollbar->getHeight() != Size.Y-2)
 			{
 				m_vscrollbar->setHeight(Size.Y - 2);
 				m_visisbleItems++;
@@ -764,7 +764,7 @@ namespace Apoc3D
 				m_hscrollbar->Draw(sprite);
 				m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight())-1;
 			}
-			else if ((!m_hscrollbar || !m_hscrollbar->getMax()) && m_vscrollbar->Size.Y != Size.Y-2)
+			else if ((!m_hscrollbar || !m_hscrollbar->getMax()) && m_vscrollbar->getHeight() != Size.Y-2)
 			{
 				m_vscrollbar->setHeight(Size.Y - 2-12);
 				m_visisbleItems++;

@@ -328,7 +328,7 @@ namespace Apoc3D
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			if (getOwner()->getArea().Contains(m_cursorArea) && m_cursorArea.Contains(mouse->GetCurrentPosition()))
+			if (m_cursorArea.Contains(mouse->GetCurrentPosition()))
 			{
 				if (mouse->IsLeftPressed())
 				{

@@ -153,19 +153,30 @@ namespace APDesigner
 			m_labels.Add(lbl);
 
 			List<String> items;
+			items.Add(L"0001");items.Add(L"0002");items.Add(L"0003");items.Add(L"0004");
+			items.Add(L"0005");items.Add(L"0006");items.Add(L"0007");items.Add(L"0008");
+			items.Add(L"0009");items.Add(L"0010");items.Add(L"0011");items.Add(L"0012");
 			m_cbMesh = new ComboBox(Point(21+522+100, 107), 200, items);
 			m_cbMesh->SetSkin(window->getUISkin());
 			m_cbMtrlPart = new ComboBox(Point(21+522+100, 133), 200, items);
 			m_cbMtrlPart->SetSkin(window->getUISkin());
 
 
-			m_applyMtrl = new Button(Point(21 + 522+100, 159),200, L"Apply Changes");
+			m_applyMtrl = new Button(Point(21 + 522+100+220, 159),150, L"Apply Changes");
 			m_applyMtrl->SetSkin(window->getUISkin());
 
-			m_addMtrlFrame = new Button(Point(21 + 522+100+220, 107), L"Add Sub Material");
+
+			lbl = new Label(Point(21 + 522, 159), L"SubMaterial", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
+			m_cbSubMtrl = new ComboBox(Point(21+522+100, 159), 200, items);
+			m_cbSubMtrl->SetSkin(window->getUISkin());
+
+
+			m_addMtrlFrame = new Button(Point(21 + 522+100+220, 107),150, L"Add Sub Material");
 			m_addMtrlFrame->SetSkin(window->getUISkin());
 
-			m_removeMtrlFrame = new Button(Point(21 + 522+100+220, 133), L"Remove Sub Material");
+			m_removeMtrlFrame = new Button(Point(21 + 522+100+220, 133),150, L"Remove Sub Material");
 			m_removeMtrlFrame->SetSkin(window->getUISkin());
 		}
 		{
@@ -291,7 +302,6 @@ namespace APDesigner
 			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseSourceColor));
 			items.Add(GraphicsCommonUtils::ToString(BLEND_SourceAlpha));
 			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseSourceAlpha));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_Zero));
 			items.Add(GraphicsCommonUtils::ToString(BLEND_DestinationAlpha));
 			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseDestinationAlpha));
 			items.Add(GraphicsCommonUtils::ToString(BLEND_DestinationColor));
@@ -362,6 +372,7 @@ namespace APDesigner
 
 		delete m_cbMesh;
 		delete m_cbMtrlPart;
+		delete m_cbSubMtrl;
 
 		delete m_applyMtrl;
 		delete m_addMtrlFrame;
@@ -447,6 +458,7 @@ namespace APDesigner
 		{
 			getDocumentForm()->getControls().Add(m_cbMtrlPart);
 			getDocumentForm()->getControls().Add(m_cbMesh);
+			getDocumentForm()->getControls().Add(m_cbSubMtrl);
 
 			getDocumentForm()->getControls().Add(m_applyMtrl);
 			getDocumentForm()->getControls().Add(m_addMtrlFrame);

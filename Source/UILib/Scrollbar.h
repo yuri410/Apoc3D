@@ -250,10 +250,22 @@ namespace Apoc3D
 				if (m_hsbar)
 					m_hsbar->setWidth(v);
 			}
+			int getWidth() const
+			{
+				if (m_hsbar)
+					return m_hsbar->Size.X;
+				return 0;
+			}
 			void setHeight(int v)
 			{
 				if (m_vsbar)
 					m_vsbar->setHeight(v);
+			}
+			int getHeight() const 
+			{
+				if (m_vsbar)
+					return m_vsbar->Size.Y;
+				return 0;
 			}
 
 			ScrollBar(const Point& position, ScrollBarType type, int size)
