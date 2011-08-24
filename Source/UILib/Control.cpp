@@ -114,7 +114,7 @@ namespace Apoc3D
 			}
 			if (overlay)
 			{
-
+				m_controls->operator[](overlay)->DrawOverlay(sprite);
 			}
 
 			if (m_menu && m_menu->Visible)

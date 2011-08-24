@@ -26,7 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GR_ENUMS_H
 #define GR_ENUMS_H
 
-#pragma once
+
+#include "Common.h"
 
 namespace Apoc3D
 {
@@ -505,6 +506,17 @@ namespace Apoc3D
 				BLEND_Count = 13
 			};
 
+			class GraphicsCommonUtils
+			{
+			public:
+				static Blend ParseBlend(const String& value);
+				static String ToString(Blend blend);
+
+				static BlendFunction ParseBlendFunction(const String& value);
+				static String ToString(BlendFunction func);
+			protected:
+			private:
+			};
 		}
 	}
 }

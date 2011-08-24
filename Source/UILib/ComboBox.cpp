@@ -44,8 +44,8 @@ namespace Apoc3D
 
 			m_button = new Button(Position + Point(Size.X-16,0), L"");
 			m_button->setOwner(getOwner());
-			m_button->eventPress().bind(this, &ComboBox::Button_OnPress);
 			m_button->setNormalTexture(m_skin->ComboButton);
+			m_button->eventPress().bind(this, &ComboBox::Button_OnPress);
 			m_button->Initialize(device);
 			
 

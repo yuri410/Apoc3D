@@ -696,14 +696,14 @@ namespace Apoc3D
 					m_controls->operator[](i)->Draw(sprite);
 				}
 			}
-			if (overlay)
-			{
-
-			}
 			
 			sprite->Flush();
 			m_device->getRenderState()->setScissorTest(false,0);
-			
+			if (overlay)
+			{
+				m_controls->operator[](overlay)->DrawOverlay(sprite);
+			}
+
 			if (m_menu && m_menu->Visible)
 				m_menu->Draw(sprite);
 
@@ -715,6 +715,7 @@ namespace Apoc3D
 			{
 				sprite->SetTransform(Matrix::Identity);
 			}
+			
 		}
 		void Form::DrawButtons(Sprite* sprite)
 		{

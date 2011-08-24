@@ -265,6 +265,7 @@
     <ClCompile Include="Graphics\Animation\AnimationManager.cpp" />
     <ClCompile Include="Graphics\Animation\AnimationPlayers.cpp" />
     <ClCompile Include="Graphics\Camera.cpp" />
+    <ClCompile Include="Graphics\GraphicsCommon.cpp" />
     <ClCompile Include="Graphics\LockData.cpp" />
     <ClCompile Include="Graphics\ModelManager.cpp" />
     <ClCompile Include="Graphics\Patch.cpp" />

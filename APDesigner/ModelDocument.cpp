@@ -272,14 +272,35 @@ namespace APDesigner
 			m_cbTransparent = new CheckBox(Point(sx + 250 + 100, sy), L"Transparent", false);
 			m_cbTransparent->SetSkin(window->getUISkin());
 
-
 			List<String> items;
+			items.Add(GraphicsCommonUtils::ToString(BLFUN_Add));
+			items.Add(GraphicsCommonUtils::ToString(BLFUN_Subtract));
+			items.Add(GraphicsCommonUtils::ToString(BLFUN_ReverseSubtract));
+			items.Add(GraphicsCommonUtils::ToString(BLFUN_Max));
+			items.Add(GraphicsCommonUtils::ToString(BLFUN_Min));
 			lbl = new Label(Point(sx, sy), L"Blend Func", 100);
 			lbl->SetSkin(window->getUISkin());
 			m_mtrlPanelLabels.Add(lbl);
 			m_cbBlendFunction = new ComboBox(Point(sx + 100, sy), 200, items);
 			m_cbBlendFunction->SetSkin(window->getUISkin());
 
+			items.Clear();
+			items.Add(GraphicsCommonUtils::ToString(BLEND_Zero));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_One));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_SourceColor));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseSourceColor));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_SourceAlpha));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseSourceAlpha));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_Zero));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_DestinationAlpha));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseDestinationAlpha));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_DestinationColor));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseDestinationColor));
+
+			items.Add(GraphicsCommonUtils::ToString(BLEND_SourceAlphaSaturation));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_BothSourceAlpha));
+			items.Add(GraphicsCommonUtils::ToString(BLEND_BlendFactor));
+			
 			sy += 25;
 			lbl = new Label(Point(sx, sy), L"Src Blend", 100);
 			lbl->SetSkin(window->getUISkin());
@@ -645,7 +666,10 @@ namespace APDesigner
 	}
 	void ModelDocument::PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
+		for (int i=0;i<MaxScenePass;i++)
+		{
 
+		}
 	}
 	void ModelDocument::Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
