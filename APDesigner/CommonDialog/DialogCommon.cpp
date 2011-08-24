@@ -16,7 +16,7 @@ namespace APDesigner
 			else if (isInfo)
 				flag |= MB_ICONINFORMATION;
 
-			int result = MessageBoxEx(0, message.c_str(), title.c_str(), MB_OK | flag, 0);
+			int result = MessageBoxEx(GetForegroundWindow(), message.c_str(), title.c_str(), MB_OK | flag, 0);
 
 			switch (result)
 			{

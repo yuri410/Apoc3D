@@ -17,7 +17,7 @@ namespace APDesigner
 			// Initialize CHOOSECOLOR 
 			ZeroMemory(&cc, sizeof(cc));
 			cc.lStructSize = sizeof(cc);
-			cc.hwndOwner = 0;
+			cc.hwndOwner = GetForegroundWindow();
 			cc.lpCustColors = (LPDWORD) acrCustClr;
 			cc.rgbResult = rgbCurrent;
 			cc.Flags = CC_FULLOPEN | CC_RGBINIT;
@@ -26,9 +26,9 @@ namespace APDesigner
 			{
 				rgbCurrent = cc.rgbResult; 
 				m_selectedColor = PACK_COLOR(
-					GetRValue(rgbCurrent), 
-					GetGValue(rgbCurrent),
-					GetBValue(rgbCurrent),
+					GetRValue(rgbCurrent)&0xff, 
+					GetGValue(rgbCurrent)&0xff,
+					GetBValue(rgbCurrent)&0xff,
 					0xff);
 				return DLGRES_OK;
 			}

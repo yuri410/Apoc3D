@@ -81,6 +81,7 @@ namespace APDesigner
 			ColorValue m_color;
 
 			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+			void Button_Press(Control* ctrl);
 		};
 
 
@@ -127,10 +128,10 @@ namespace APDesigner
 		ColorField* m_cfSpecular;
 		ColorField* m_cfEmissive;
 
-		//Label* m_lblShinness;
+
 		TextBox* m_tbShinness;
 		
-		//Label* m_lblPassFlag;
+
 		PictureBox* m_pbPassFlag;
 		Button* m_btnPassFlag;
 
@@ -160,7 +161,9 @@ namespace APDesigner
 		ComboBox* m_cbBlendFunction;
 
 
-		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+		void ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+		void Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 	};
 	
 }

@@ -18,7 +18,7 @@ namespace APDesigner
 			// Initialize OPENFILENAME
 			ZeroMemory(&ofn, sizeof(ofn));
 			ofn.lStructSize = sizeof(ofn);
-			ofn.hwndOwner = 0;
+			ofn.hwndOwner = GetForegroundWindow();
 			ofn.lpstrFile = szFile;
 			// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
 			// use the contents of szFile to initialize itself.
@@ -93,7 +93,7 @@ namespace APDesigner
 			// Initialize OPENFILENAME
 			ZeroMemory(&ofn, sizeof(ofn));
 			ofn.lStructSize = sizeof(ofn);
-			ofn.hwndOwner = 0;
+			ofn.hwndOwner = GetForegroundWindow();
 			ofn.lpstrFile = szFile;
 			// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
 			// use the contents of szFile to initialize itself.

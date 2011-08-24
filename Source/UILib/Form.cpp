@@ -63,6 +63,10 @@ namespace Apoc3D
 
 		Form::~Form()
 		{
+			if (UIRoot::getModalForm() == this)
+			{
+				UIRoot::setModalForm(0);
+			}
 			if (UIRoot::getTopMostForm() == this)
 			{
 				UIRoot::setTopMostForm(0);
@@ -73,7 +77,11 @@ namespace Apoc3D
 			delete m_btRestore;
 			delete m_border;
 		}
-
+		void Form::ShowModal()
+		{
+			UIRoot::setModalForm(this);
+			Show();
+		}
 		void Form::Show()
 		{
 			m_state = FWS_Normal;
@@ -1047,6 +1055,7 @@ namespace Apoc3D
 		SubMenu* UIRoot::m_contextMenu = 0;
 		Sprite* UIRoot::m_sprite = 0;
 		Menu* UIRoot::m_mainMenu = 0;
+		Form* UIRoot::m_modalForm = 0;
 
 		Apoc3D::Math::Rectangle UIRoot::GetUIArea(RenderDevice* device)
 		{
@@ -1273,12 +1282,20 @@ namespace Apoc3D
 			{
 				m_mainMenu->Draw(m_sprite);
 			}
-			// cursor
+			
+			if (m_modalForm)
+				m_modalForm->Draw(m_sprite);
 
+			// cursor
 			m_sprite->End();
 		}
 		void UIRoot::Update(const GameTime* const time)
 		{
+			if (m_modalForm)
+			{
+				m_modalForm->Update(time);
+				return;
+			}
 			bool menuOverriden = false;
 			for (int i=0;i<m_mainMenu->getItems().getCount();i++)
 			{

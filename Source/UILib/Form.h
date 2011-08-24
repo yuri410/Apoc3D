@@ -187,6 +187,7 @@ namespace Apoc3D
 			Form(BorderStyle border = FBS_Sizable, const String& title = L"");
 			virtual ~Form();
 
+			void ShowModal();
 			virtual void Show();
 			virtual void Hide();
 			virtual void Close();
@@ -215,6 +216,7 @@ namespace Apoc3D
 			static SubMenu* m_contextMenu;
 			static Sprite* m_sprite;
 			static Menu* m_mainMenu;
+			static Form* m_modalForm;
 
 			static void Form_SizeChanged(Control* ctl);
 		public:
@@ -236,7 +238,8 @@ namespace Apoc3D
 
 			static Form* getTopMostForm() { return m_topMostForm; }
 			static void setTopMostForm(Form* frm) { m_topMostForm = frm; }
-
+			static Form* getModalForm() { return m_modalForm; }
+			static void setModalForm(Form* frm) { m_modalForm = frm; }
 
 			static bool GetMinimizedPosition(RenderDevice* dev, Form* form, Point& pos);
 			static Point GetMaximizedSize(RenderDevice* dev, Form* form);

@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/ResourceHandle.h"
 
 #include "Config/XmlConfiguration.h"
+#include "CommonDialog/ChooseColor.h"
 
 #include "Input/InputAPI.h"
 #include "Input/Mouse.h"
@@ -69,6 +70,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::IO;
+using namespace APDesigner::CommonDialog;
+
 namespace APDesigner
 {
 	ModelDocument::ModelDocument(MainWindow* window, const String& name, const String& file, const String& animationFile)
@@ -96,10 +99,10 @@ namespace APDesigner
 
 		m_scene.AddObject(&m_object);
 
-		m_modelViewer = new PictureBox(Point(10,10 + 17+80), 1);
+		m_modelViewer = new PictureBox(Point(10,10 + 17+90), 1);
 		m_modelViewer->Size = Point(512,512);
 		m_modelViewer->SetSkin(window->getUISkin());
-		m_modelViewer->eventPictureDraw().bind(this, &ModelDocument::PixtureBox_Draw);
+		m_modelViewer->eventPictureDraw().bind(this, &ModelDocument::ModelView_Draw);
 
 		{
 			Label* lbl = new Label(Point(23, 33), L"Time", 100);
@@ -145,7 +148,7 @@ namespace APDesigner
 			lbl->SetSkin(window->getUISkin());
 			m_labels.Add(lbl);
 
-			lbl = new Label(Point(21 + 522, 133), L"Mesh Part", 100);
+			lbl = new Label(Point(21 + 522, 133), L"Material", 100);
 			lbl->SetSkin(window->getUISkin());
 			m_labels.Add(lbl);
 
@@ -291,9 +294,20 @@ namespace APDesigner
 			m_cbDstBlend = new ComboBox(Point(sx + 100, sy), 200, items);
 			m_cbDstBlend->SetSkin(window->getUISkin());
 
+			sy += 35;
+			lbl = new Label(Point(sx, sy), L"Pass Flags", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_pbPassFlag = new PictureBox(Point(sx+100, sy),1);
+			m_pbPassFlag->SetSkin(window->getUISkin());
+			//m_pbPassFlag->Size.Y = getDocumentForm()->getFontRef()->getLineHeight();
+			m_pbPassFlag->Size.X = 256;
+
+			m_btnPassFlag = new Button(Point(sx+100+300, sy), L"Edit");
+			m_btnPassFlag->SetSkin(window->getUISkin());
 		}
 
-		getDocumentForm()->setMinimumSize(Point(1070,512+200));
+		getDocumentForm()->setMinimumSize(Point(1070,512+137));
 		getDocumentForm()->setTitle(file);
 
 	}
@@ -354,6 +368,9 @@ namespace APDesigner
 
 		delete m_cbDepthTest;
 		delete m_cbDepthWrite;
+
+		delete m_pbPassFlag;
+		delete m_btnPassFlag;
 	}
 	
 
@@ -440,6 +457,10 @@ namespace APDesigner
 			getDocumentForm()->getControls().Add(m_cbDepthTest);
 			getDocumentForm()->getControls().Add(m_cbDepthWrite);
 
+
+			getDocumentForm()->getControls().Add(m_pbPassFlag);
+			getDocumentForm()->getControls().Add(m_btnPassFlag);
+
 		}
 		for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
 		{
@@ -455,12 +476,6 @@ namespace APDesigner
 	}
 	void ModelDocument::Update(const GameTime* const time)
 	{
-		//m_pictureBox->Size = getDocumentForm()->Size;
-		//m_pictureBox->Size.X -= m_pictureBox->Position.X*2;
-		//m_pictureBox->Size.Y -= m_pictureBox->Position.Y*2;
-
-		//m_btnZoomIn->Position.X = m_pictureBox->Size.X-65;
-		//m_btnZoomOut->Position.X = m_pictureBox->Size.X-30;
 		m_scene.Update(time);
 		m_camera->Update(time);
 
@@ -480,11 +495,10 @@ namespace APDesigner
 				const Matrix& ori = m_object.getOrientation();
 				Matrix temp;
 				Matrix::CreateRotationY(temp, ToRadian(mouse->getDX()) * 0.5f);
-				//Matrix::CreateTranslation(temp, mouse->getDX(), 0,0);
+
 				Matrix temp2;
 				Matrix::Multiply(temp2, ori, temp);
-				//D3DXMatrixMultiply(reinterpret_cast<D3DXMATRIX*>(&temp), reinterpret_cast<const D3DXMATRIX*>(&ori), reinterpret_cast<D3DXMATRIX*>(&temp));
-				//assert(temp == temp2);
+
 				m_object.setOrientation(temp2);
 			}
 
@@ -492,13 +506,18 @@ namespace APDesigner
 		}
 		m_camera->setChaseDirection(Vector3Utils::LDVector(cosf(m_xang), -sinf(m_yang), sinf(m_xang)));
 		m_camera->setDesiredOffset(Vector3Utils::LDVector(0,0,m_distance));
+
+		if (getDocumentForm()->getFontRef())
+		{
+			m_pbPassFlag->Size.Y = getDocumentForm()->getFontRef()->getLineHeight();
+		}
 	}
 	void ModelDocument::Render()
 	{
 		m_sceneRenderer->RenderScene(&m_scene);
 	}
 
-	void ModelDocument::PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
+	void ModelDocument::ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
 		SceneProcedure* proc = m_sceneRenderer->getSelectedProc();
 
@@ -624,7 +643,15 @@ namespace APDesigner
 
 		//}
 	}
-	
+	void ModelDocument::PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
+	{
+
+	}
+	void ModelDocument::Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
+	{
+
+	}
+
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
@@ -668,6 +695,7 @@ namespace APDesigner
 		m_btnAmbient->setOwner(getOwner());
 		m_btnAmbient->Initialize(device);
 		m_btnAmbient->Position.Y += (m_lblAmbient->Size.Y - m_btnAmbient->Size.Y)/2;
+		m_btnAmbient->eventPress().bind(this, &ModelDocument::ColorField::Button_Press);
 	}
 	void ModelDocument::ColorField::Draw(Sprite* sprite)
 	{
@@ -690,5 +718,13 @@ namespace APDesigner
 	void ModelDocument::ColorField::PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
 		sprite->Draw(m_skin->WhitePixelTexture, *dstRect, 0, m_color);
+	}
+	void ModelDocument::ColorField::Button_Press(Control* ctrl)
+	{
+		ChooseColorDialog dlg;
+		if (dlg.ShowDialog() == DLGRES_OK)
+		{
+			m_color = dlg.getSelectedColor();
+		}
 	}
 }
