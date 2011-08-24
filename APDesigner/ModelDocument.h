@@ -78,6 +78,9 @@ namespace APDesigner
 			Label* m_lblAmbient;
 			PictureBox* m_pbAmbient;
 			Button* m_btnAmbient;
+			ColorValue m_color;
+
+			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		};
 
 
@@ -98,47 +101,54 @@ namespace APDesigner
 		float m_yang;
 		float m_distance;
 
-		PictureBox* m_pictureBox;
-		TextBox* m_textBox;
+		PictureBox* m_modelViewer;
 
-		Label* m_lblTimeline;
-		Label* m_lblKeyframeParam;
-		Label* m_lblMtrlKeyTime;
-		Label* m_lblMtrlKeyIndex;
+		List<Label*> m_labels;
 
-		Label* m_lblMesh;
-		Label* m_lblMtrlPart;
+		//Label* m_lblTimeline;
+		//Label* m_lblKeyframeParam;
+		//Label* m_lblMtrlKeyTime;
+		//Label* m_lblMtrlKeyIndex;
 
+		//Label* m_lblMesh;
+		//Label* m_lblMtrlPart;
+		PictureBox* m_pbTime;
 		TextBox* m_tbMKeyTime;
 		TextBox* m_tbMKeyIndex;
 		Button* m_btnRefreshTimeLine;
 		Button* m_btnModify;
 		Button* m_btnAddMkey;
+		Button* m_btnRemoveMKey;
 
 		ComboBox* m_cbMesh;
 		ComboBox* m_cbMtrlPart;
 
 		Button* m_applyMtrl;
 		Button* m_addMtrlFrame;
+		Button* m_removeMtrlFrame;
+
+
 
 		ColorField* m_cfAmbient;
 		ColorField* m_cfDiffuse;
 		ColorField* m_cfSpecular;
 		ColorField* m_cfEmissive;
 
-		Label* m_lblShinness;
+		//Label* m_lblShinness;
 		TextBox* m_cbShinness;
 		
-		Label* m_lblPassFlag;
+		//Label* m_lblPassFlag;
 		PictureBox* m_pbPassFlag;
 		Button* m_btnPassFlag;
 
-		Label* m_lblTex1;
-		Label* m_lblTex2;
-		Label* m_lblTex3;
-		Label* m_lblTex4;
-		Label* m_lblTex5;
-		Label* m_lblTex6;
+		List<Label*> m_mtrlPanelLabels;
+
+		//Label* m_lblTex1;
+		//Label* m_lblTex2;
+		//Label* m_lblTex3;
+		//Label* m_lblTex4;
+		//Label* m_lblTex5;
+		//Label* m_lblTex6;
 
 		TextBox* m_tbTex1;
 		TextBox* m_tbTex2;
@@ -149,19 +159,19 @@ namespace APDesigner
 
 		ListBox* m_customParameterList;
 
-		Label* m_lblPriority;
+		//Label* m_lblPriority;
 		TextBox* m_tbPriority;
 
 		CheckBox* m_cbDepthTest;
 		CheckBox* m_cbDepthWrite;
 
-		Label* m_lblAlphaTest;
+		//Label* m_lblAlphaTest;
 		TextBox* m_tbAlphaTest;
 
 		CheckBox* m_cbTransparent;
-		Label* m_lblSrcBlend;
-		Label* m_lblDstBlend;
-		Label* m_lblBlendFunction;
+		//Label* m_lblSrcBlend;
+		//Label* m_lblDstBlend;
+		//Label* m_lblBlendFunction;
 		ComboBox* m_cbSrcBlend;
 		ComboBox* m_cbDstBlend;
 		ComboBox* m_cbBlendFunction;

@@ -38,7 +38,7 @@ namespace Apoc3D
 		{
 		public:
 
-			ComboBox(const Point& position, int width, const List<String> items);
+			ComboBox(const Point& position, int width, const List<String>& items);
 			~ComboBox();
 
 			virtual void Initialize(RenderDevice* device);

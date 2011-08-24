@@ -56,6 +56,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/PictureBox.h"
 #include "UILib/Label.h"
 #include "UILib/FontManager.h"
+#include "UILib/ComboBox.h"
+#include "UILib/StyleSkin.h"
 #include "Utility/StringUtils.h"
 #include "Vfs/ResourceLocation.h"
 #include "Vfs/FileSystem.h"
@@ -93,32 +95,144 @@ namespace APDesigner
 
 		m_scene.AddObject(&m_object);
 
-		m_pictureBox = new PictureBox(Point(5,5 + 17+80), 1);
-		m_pictureBox->Size = Point(512,512);
-		m_pictureBox->SetSkin(window->getUISkin());
-		m_pictureBox->eventPictureDraw().bind(this, &ModelDocument::PixtureBox_Draw);
+		m_modelViewer = new PictureBox(Point(10,10 + 17+80), 1);
+		m_modelViewer->Size = Point(512,512);
+		m_modelViewer->SetSkin(window->getUISkin());
+		m_modelViewer->eventPictureDraw().bind(this, &ModelDocument::PixtureBox_Draw);
 
-		m_textBox = new TextBox(Point(600, 5+17), 100, L"Test subject.");
-		m_textBox->SetSkin(window->getUISkin());
+		{
+			Label* lbl = new Label(Point(23, 33), L"Time", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
+			m_pbTime = new PictureBox(Point(94, 27), 1);
+			m_pbTime->Size = Point(957, 30);
+			m_pbTime->SetSkin(window->getUISkin());
+		}
+		{
+			Label* lbl = new Label(Point(21, 68), L"Material\nKeyframe Props", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
 
-		getDocumentForm()->setMinimumSize(Point(512+200+10,512+45));
+			lbl = new Label(Point(141, 73), L"Time", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
+			lbl = new Label(Point(331, 73), L"Material Sub-Index", 150);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
+
+			m_tbMKeyTime = new TextBox(Point(187, 73), 100);
+			m_tbMKeyTime->SetSkin(window->getUISkin());
+
+
+			m_tbMKeyIndex = new TextBox(Point(476, 73), 100);
+			m_tbMKeyIndex->SetSkin(window->getUISkin());
+
+			m_btnRefreshTimeLine = new Button(Point(693, 69), L"Refresh");
+			m_btnRefreshTimeLine->SetSkin(window->getUISkin());
+
+			m_btnModify = new Button(Point(788, 69), L"Modify");
+			m_btnModify->SetSkin(window->getUISkin());
+
+			m_btnAddMkey = new Button(Point(881, 69), L"Add");
+			m_btnAddMkey->SetSkin(window->getUISkin());
+			m_btnRemoveMKey = new Button(Point(950, 69), L"Remove");
+			m_btnRemoveMKey->SetSkin(window->getUISkin());
+
+		}
+		{
+			Label* lbl = new Label(Point(21 + 522, 107), L"Mesh", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
+
+			lbl = new Label(Point(21 + 522, 133), L"Mesh Part", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
+
+			List<String> items;
+			m_cbMesh = new ComboBox(Point(21+522+100, 107), 200, items);
+			m_cbMesh->SetSkin(window->getUISkin());
+			m_cbMtrlPart = new ComboBox(Point(21+522+100, 133), 200, items);
+			m_cbMtrlPart->SetSkin(window->getUISkin());
+
+
+			m_applyMtrl = new Button(Point(21 + 522+100+220, 107), L"Apply Changes");
+			m_applyMtrl->SetSkin(window->getUISkin());
+
+			m_addMtrlFrame = new Button(Point(21 + 522+100+220, 133), L"Add Sub Material");
+			m_addMtrlFrame->SetSkin(window->getUISkin());
+
+			m_removeMtrlFrame = new Button(Point(21 + 522+100+220, 159), L"Remove Sub Material");
+			m_removeMtrlFrame->SetSkin(window->getUISkin());
+		}
+		{
+			Label* lbl = new Label(Point(21 + 522, 133+25), L"Ambient", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_cfAmbient = new ColorField(lbl->Position + Point(100, 0), CV_Red);
+			m_cfAmbient->Text = L"Ambient";
+			m_cfAmbient->SetSkin(window->getUISkin());
+
+			lbl = new Label(Point(21 + 522, 133+25*2), L"Diffuse", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+
+			lbl = new Label(Point(21 + 522, 133+25*3), L"Specular", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+
+			lbl = new Label(Point(21 + 522, 133+25*4), L"Emissive", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+
+			lbl = new Label(Point(21 + 522, 133+25*5), L"Shininess", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+
+
+
+		}
+
+		getDocumentForm()->setMinimumSize(Point(1070,512+200));
 		getDocumentForm()->setTitle(file);
 
 	}
 
 	ModelDocument::~ModelDocument()
 	{
-		delete m_pictureBox;
+		delete m_modelViewer;
 		if (m_model)
 		{
 			delete m_model;
-
-
 		}
 		delete m_sceneRenderer;
 		delete m_camera;
+		for (int i=0;i<m_labels.getCount();i++)
+		{
+			delete m_labels[i];
+		}
+		for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
+		{
+			delete m_mtrlPanelLabels[i];
+		}
 		
-		//delete m_modelSDat/*a*/;;
+
+		delete m_pbTime;
+		delete m_tbMKeyTime;
+		delete m_tbMKeyIndex;
+		delete m_btnRefreshTimeLine;
+		delete m_btnModify;
+		delete m_btnAddMkey;
+		delete m_btnRemoveMKey;
+
+		delete m_cbMesh;
+		delete m_cbMtrlPart;
+
+		delete m_applyMtrl;
+		delete m_addMtrlFrame;
+		delete m_removeMtrlFrame;
+
+		delete m_cfAmbient;
+
 	}
 	
 
@@ -157,10 +271,41 @@ namespace APDesigner
 	}
 	void ModelDocument::Initialize(RenderDevice* device)
 	{
-		getDocumentForm()->getControls().Add(m_pictureBox);
+		getDocumentForm()->getControls().Add(m_modelViewer);
 		//getDocumentForm()->getControls().Add(m_btnZoomIn);
 		//getDocumentForm()->getControls().Add(m_btnZoomOut);
-		getDocumentForm()->getControls().Add(m_textBox);
+		{
+			getDocumentForm()->getControls().Add(m_pbTime);
+			getDocumentForm()->getControls().Add(m_tbMKeyTime);
+			getDocumentForm()->getControls().Add(m_tbMKeyIndex);
+
+			getDocumentForm()->getControls().Add(m_btnRefreshTimeLine);
+			getDocumentForm()->getControls().Add(m_btnModify);
+			getDocumentForm()->getControls().Add(m_btnAddMkey);
+			getDocumentForm()->getControls().Add(m_btnRemoveMKey);
+
+		}
+		{
+			getDocumentForm()->getControls().Add(m_cbMtrlPart);
+			getDocumentForm()->getControls().Add(m_cbMesh);
+
+			getDocumentForm()->getControls().Add(m_applyMtrl);
+			getDocumentForm()->getControls().Add(m_addMtrlFrame);
+			getDocumentForm()->getControls().Add(m_removeMtrlFrame);
+			
+		}
+		{
+			getDocumentForm()->getControls().Add(m_cfAmbient);
+
+		}
+		for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
+		{
+			getDocumentForm()->getControls().Add(m_mtrlPanelLabels[i]);
+		}
+		for (int i=0;i<m_labels.getCount();i++)
+		{
+			getDocumentForm()->getControls().Add(m_labels[i]);
+		}
 
 		Document::Initialize(device);
 
@@ -176,7 +321,7 @@ namespace APDesigner
 		m_scene.Update(time);
 		m_camera->Update(time);
 
-		Apoc3D::Math::Rectangle rect = m_pictureBox->getAbsoluteArea();
+		Apoc3D::Math::Rectangle rect = m_modelViewer->getAbsoluteArea();
 
 		Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 		
@@ -342,7 +487,7 @@ namespace APDesigner
 	/************************************************************************/
 
 	ModelDocument::ColorField::ColorField(const Point& position, ColorValue defaultColor)
-		: Control(position), m_lblAmbient(0), m_pbAmbient(0), m_btnAmbient(0)
+		: Control(position), m_lblAmbient(0), m_pbAmbient(0), m_btnAmbient(0), m_color(defaultColor)
 	{
 
 	}
@@ -365,16 +510,18 @@ namespace APDesigner
 
 		m_pbAmbient = new PictureBox(Position + Point(80, 0), 1);
 		m_pbAmbient->SetSkin(m_skin);
-		m_pbAmbient->Size = Point(50, m_lblAmbient->Size.X);
+		m_pbAmbient->Size = Point(50, m_lblAmbient->Size.Y);
+		m_pbAmbient->eventPictureDraw().bind(this, &ModelDocument::ColorField::PictureBox_Draw);
 		m_pbAmbient->Initialize(device);
 
 		m_btnAmbient = new Button(Position + Point(140, 0), L"...");
 		
 		Size.Y = m_lblAmbient->Size.Y;
 		Size.X = m_btnAmbient->Position.X + m_btnAmbient->Size.X;
-
+		
 		m_btnAmbient->SetSkin(m_skin);
 		m_btnAmbient->Initialize(device);
+		m_btnAmbient->Position.Y += (m_lblAmbient->Size.Y - m_btnAmbient->Size.Y)/2;
 	}
 	void ModelDocument::ColorField::Draw(Sprite* sprite)
 	{
@@ -387,5 +534,10 @@ namespace APDesigner
 		m_lblAmbient->Position = Position;
 		m_pbAmbient->Position = Position + Point(80, 0);
 		m_btnAmbient->Position = Position + Point(140, 0);
+	}
+
+	void ModelDocument::ColorField::PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
+	{
+		sprite->Draw(m_skin->WhitePixelTexture, *dstRect, 0, m_color);
 	}
 }

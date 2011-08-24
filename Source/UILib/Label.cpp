@@ -137,11 +137,11 @@ namespace Apoc3D
 
 		void Label::Draw(Sprite* sprite)
 		{
-			Apoc3D::Math::Rectangle area = getArea();
+			//Apoc3D::Math::Rectangle area = getAbsoluteArea();
 
-			m_backgroundRect.X = area.X - getOwner()->Position.X;
-			m_backgroundRect.Y = area.X - getOwner()->Position.Y;
-			sprite->Draw(m_skin->WhitePixelTexture, m_backgroundRect, m_skin->BackColor);
+			//m_backgroundRect.X = area.X - getOwner()->Position.X;
+			//m_backgroundRect.Y = area.X - getOwner()->Position.Y;
+			//sprite->Draw(m_skin->WhitePixelTexture, area, m_skin->BackColor);
 
 
 			if (m_lines.getCount()<=1)

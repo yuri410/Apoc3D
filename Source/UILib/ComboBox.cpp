@@ -17,7 +17,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		ComboBox::ComboBox(const Point& position, int width, const List<String> items)
+		ComboBox::ComboBox(const Point& position, int width, const List<String>& items)
 			: Control(position), m_items(items), m_textbox(0), m_listBox(0), m_button(0)
 		{
 			Size.X = width;
