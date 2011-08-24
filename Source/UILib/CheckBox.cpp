@@ -23,6 +23,10 @@ namespace Apoc3D
 		{
 			
 		}
+		CheckBox::~CheckBox()
+		{
+
+		}
 
 		void CheckBox::Initialize(RenderDevice* device)
 		{
@@ -32,7 +36,7 @@ namespace Apoc3D
 			Size.Y = max(m_skin->CheckBoxTextures[0]->getHeight(), m_fontRef->getLineHeight());
 
 			m_textOffset.X = m_skin->CheckBoxTextures[0]->getWidth() + 5;
-			m_textOffset.Y = abs(m_skin->CheckBoxTextures[0]->getHeight() - m_fontRef->getLineHeight()) - 1;
+			m_textOffset.Y = (m_skin->CheckBoxTextures[0]->getHeight() - m_fontRef->getLineHeight())/2 ;
 		}
 		void CheckBox::Update(const GameTime* const time)
 		{

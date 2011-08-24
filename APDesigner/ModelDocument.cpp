@@ -58,6 +58,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/FontManager.h"
 #include "UILib/ComboBox.h"
 #include "UILib/StyleSkin.h"
+#include "UILib/CheckBox.h"
 #include "Utility/StringUtils.h"
 #include "Vfs/ResourceLocation.h"
 #include "Vfs/FileSystem.h"
@@ -155,40 +156,140 @@ namespace APDesigner
 			m_cbMtrlPart->SetSkin(window->getUISkin());
 
 
-			m_applyMtrl = new Button(Point(21 + 522+100+220, 107), L"Apply Changes");
+			m_applyMtrl = new Button(Point(21 + 522+100, 159),200, L"Apply Changes");
 			m_applyMtrl->SetSkin(window->getUISkin());
 
-			m_addMtrlFrame = new Button(Point(21 + 522+100+220, 133), L"Add Sub Material");
+			m_addMtrlFrame = new Button(Point(21 + 522+100+220, 107), L"Add Sub Material");
 			m_addMtrlFrame->SetSkin(window->getUISkin());
 
-			m_removeMtrlFrame = new Button(Point(21 + 522+100+220, 159), L"Remove Sub Material");
+			m_removeMtrlFrame = new Button(Point(21 + 522+100+220, 133), L"Remove Sub Material");
 			m_removeMtrlFrame->SetSkin(window->getUISkin());
 		}
 		{
-			Label* lbl = new Label(Point(21 + 522, 133+25), L"Ambient", 100);
-			lbl->SetSkin(window->getUISkin());
-			m_mtrlPanelLabels.Add(lbl);
-			m_cfAmbient = new ColorField(lbl->Position + Point(100, 0), CV_Red);
+			int sx = 21 + 522;
+			int sy = 210;
+			m_cfAmbient = new ColorField(Point(sx, sy), CV_Red);
 			m_cfAmbient->Text = L"Ambient";
 			m_cfAmbient->SetSkin(window->getUISkin());
 
-			lbl = new Label(Point(21 + 522, 133+25*2), L"Diffuse", 100);
+			m_cfDiffuse = new ColorField(Point(sx + 250, sy), CV_Red);
+			m_cfDiffuse->Text = L"Diffuse";
+			m_cfDiffuse->SetSkin(window->getUISkin());
+
+			sy += 30;
+
+			m_cfSpecular = new ColorField(Point(sx, sy), CV_Red);
+			m_cfSpecular->Text = L"Specular";
+			m_cfSpecular->SetSkin(window->getUISkin());
+
+			m_cfEmissive = new ColorField(Point(sx + 250, sy), CV_Red);
+			m_cfEmissive->Text = L"Emissive";
+			m_cfEmissive->SetSkin(window->getUISkin());
+
+
+
+			sy += 30;
+			Label* lbl = new Label(Point(sx, sy), L"Shininess", 100);
 			lbl->SetSkin(window->getUISkin());
 			m_mtrlPanelLabels.Add(lbl);
+			m_tbShinness = new TextBox(Point(sx + 100, sy), 200, L"");
+			m_tbShinness->SetSkin(window->getUISkin());
 
-			lbl = new Label(Point(21 + 522, 133+25*3), L"Specular", 100);
+			sy += 40;
+			lbl = new Label(Point(sx, sy), L"Texture1", 100);
 			lbl->SetSkin(window->getUISkin());
 			m_mtrlPanelLabels.Add(lbl);
+			m_tbTex1 = new TextBox(Point(sx + 100, sy), 200, L"");
+			m_tbTex1->SetSkin(window->getUISkin());
 
-			lbl = new Label(Point(21 + 522, 133+25*4), L"Emissive", 100);
+
+			sy += 25;
+			lbl = new Label(Point(sx, sy), L"Texture2", 100);
 			lbl->SetSkin(window->getUISkin());
 			m_mtrlPanelLabels.Add(lbl);
+			m_tbTex2 = new TextBox(Point(sx + 100, sy), 200, L"");
+			m_tbTex2->SetSkin(window->getUISkin());
 
-			lbl = new Label(Point(21 + 522, 133+25*5), L"Shininess", 100);
+
+			sy += 25;
+			lbl = new Label(Point(sx, sy), L"Texture3", 100);
 			lbl->SetSkin(window->getUISkin());
 			m_mtrlPanelLabels.Add(lbl);
+			m_tbTex3 = new TextBox(Point(sx + 100, sy), 200, L"");
+			m_tbTex3->SetSkin(window->getUISkin());
 
 
+			sy += 25;
+			lbl = new Label(Point(sx, sy), L"Texture4", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_tbTex4 = new TextBox(Point(sx + 100, sy), 200, L"");
+			m_tbTex4->SetSkin(window->getUISkin());
+
+
+			sy += 25;
+			lbl = new Label(Point(sx, sy), L"Texture5", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_tbTex5 = new TextBox(Point(sx + 100, sy), 200, L"");
+			m_tbTex5->SetSkin(window->getUISkin());
+
+
+			sy += 25;
+			lbl = new Label(Point(sx, sy), L"Texture6", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_tbTex6 = new TextBox(Point(sx + 100, sy), 200, L"");
+			m_tbTex6->SetSkin(window->getUISkin());
+
+
+			sy += 35;
+			lbl = new Label(Point(sx, sy), L"Priority[0,127]", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_tbPriority = new TextBox(Point(sx + 100, sy), 200, L"");
+			m_tbPriority->SetSkin(window->getUISkin());
+
+			m_cbDepthTest = new CheckBox(Point(sx+ 250 + 100, sy), L"DepthTest", false);
+			m_cbDepthTest->SetSkin(window->getUISkin());
+
+			sy += 25;
+			lbl = new Label(Point(sx, sy), L"AlphaTest[0,1]", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_tbAlphaTest = new TextBox(Point(sx + 100, sy), 200, L"");
+			m_tbAlphaTest->SetSkin(window->getUISkin());
+			
+			m_cbDepthWrite = new CheckBox(Point(sx+ 250 + 100, sy), L"DepthWrite", false);
+			m_cbDepthWrite->SetSkin(window->getUISkin());
+
+
+			sy += 25;
+
+			m_cbTransparent = new CheckBox(Point(sx + 250 + 100, sy), L"Transparent", false);
+			m_cbTransparent->SetSkin(window->getUISkin());
+
+
+			List<String> items;
+			lbl = new Label(Point(sx, sy), L"Blend Func", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_cbBlendFunction = new ComboBox(Point(sx + 100, sy), 200, items);
+			m_cbBlendFunction->SetSkin(window->getUISkin());
+
+			sy += 25;
+			lbl = new Label(Point(sx, sy), L"Src Blend", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_cbSrcBlend = new ComboBox(Point(sx + 100, sy), 200, items);
+			m_cbSrcBlend->SetSkin(window->getUISkin());
+
+			sy += 25;
+			lbl = new Label(Point(sx, sy), L"Dest Blend", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_cbDstBlend = new ComboBox(Point(sx + 100, sy), 200, items);
+			m_cbDstBlend->SetSkin(window->getUISkin());
 
 		}
 
@@ -232,7 +333,27 @@ namespace APDesigner
 		delete m_removeMtrlFrame;
 
 		delete m_cfAmbient;
+		delete m_cfDiffuse;
+		delete m_cfEmissive;
+		delete m_cfSpecular;
+		delete m_tbShinness;
 
+		delete m_tbTex1;
+		delete m_tbTex2;
+		delete m_tbTex3;
+		delete m_tbTex4;
+		delete m_tbTex5;
+		delete m_tbTex6;
+
+		delete m_tbPriority;
+		delete m_tbAlphaTest;
+		delete m_cbTransparent;
+		delete m_cbSrcBlend;
+		delete m_cbDstBlend;
+		delete m_cbBlendFunction;
+
+		delete m_cbDepthTest;
+		delete m_cbDepthWrite;
 	}
 	
 
@@ -296,6 +417,28 @@ namespace APDesigner
 		}
 		{
 			getDocumentForm()->getControls().Add(m_cfAmbient);
+			getDocumentForm()->getControls().Add(m_cfDiffuse);
+			getDocumentForm()->getControls().Add(m_cfEmissive);
+			getDocumentForm()->getControls().Add(m_cfSpecular);
+			getDocumentForm()->getControls().Add(m_tbShinness);
+
+			getDocumentForm()->getControls().Add(m_tbTex1);
+			getDocumentForm()->getControls().Add(m_tbTex2);
+			getDocumentForm()->getControls().Add(m_tbTex3);
+			getDocumentForm()->getControls().Add(m_tbTex4);
+			getDocumentForm()->getControls().Add(m_tbTex5);
+			getDocumentForm()->getControls().Add(m_tbTex6);
+
+			getDocumentForm()->getControls().Add(m_tbPriority);
+			getDocumentForm()->getControls().Add(m_tbAlphaTest);
+
+			getDocumentForm()->getControls().Add(m_cbTransparent);
+			getDocumentForm()->getControls().Add(m_cbBlendFunction);
+			getDocumentForm()->getControls().Add(m_cbSrcBlend);
+			getDocumentForm()->getControls().Add(m_cbDstBlend);
+
+			getDocumentForm()->getControls().Add(m_cbDepthTest);
+			getDocumentForm()->getControls().Add(m_cbDepthWrite);
 
 		}
 		for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
@@ -506,20 +649,23 @@ namespace APDesigner
 	{
 		m_lblAmbient = new Label(Position, Text, 80);
 		m_lblAmbient->SetSkin(m_skin);
+		m_lblAmbient->setOwner(getOwner());
 		m_lblAmbient->Initialize(device);
-
-		m_pbAmbient = new PictureBox(Position + Point(80, 0), 1);
+		
+		m_pbAmbient = new PictureBox(Position + Point(100, 0), 1);
 		m_pbAmbient->SetSkin(m_skin);
 		m_pbAmbient->Size = Point(50, m_lblAmbient->Size.Y);
 		m_pbAmbient->eventPictureDraw().bind(this, &ModelDocument::ColorField::PictureBox_Draw);
+		m_pbAmbient->setOwner(getOwner());
 		m_pbAmbient->Initialize(device);
 
-		m_btnAmbient = new Button(Position + Point(140, 0), L"...");
+		m_btnAmbient = new Button(Position + Point(160, 0), L"...");
 		
 		Size.Y = m_lblAmbient->Size.Y;
 		Size.X = m_btnAmbient->Position.X + m_btnAmbient->Size.X;
 		
 		m_btnAmbient->SetSkin(m_skin);
+		m_btnAmbient->setOwner(getOwner());
 		m_btnAmbient->Initialize(device);
 		m_btnAmbient->Position.Y += (m_lblAmbient->Size.Y - m_btnAmbient->Size.Y)/2;
 	}
@@ -532,8 +678,13 @@ namespace APDesigner
 	void ModelDocument::ColorField::Update(const GameTime* const time)
 	{
 		m_lblAmbient->Position = Position;
-		m_pbAmbient->Position = Position + Point(80, 0);
-		m_btnAmbient->Position = Position + Point(140, 0);
+		m_pbAmbient->Position = Position + Point(100, 0);
+		m_btnAmbient->Position = Position + Point(160, 0);
+		m_btnAmbient->Position.Y += (m_lblAmbient->Size.Y - m_btnAmbient->Size.Y)/2;
+
+		m_lblAmbient->Update(time);
+		m_pbAmbient->Update(time);
+		m_btnAmbient->Update(time);
 	}
 
 	void ModelDocument::ColorField::PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)

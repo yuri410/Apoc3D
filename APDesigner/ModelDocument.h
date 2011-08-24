@@ -105,13 +105,6 @@ namespace APDesigner
 
 		List<Label*> m_labels;
 
-		//Label* m_lblTimeline;
-		//Label* m_lblKeyframeParam;
-		//Label* m_lblMtrlKeyTime;
-		//Label* m_lblMtrlKeyIndex;
-
-		//Label* m_lblMesh;
-		//Label* m_lblMtrlPart;
 		PictureBox* m_pbTime;
 		TextBox* m_tbMKeyTime;
 		TextBox* m_tbMKeyIndex;
@@ -135,7 +128,7 @@ namespace APDesigner
 		ColorField* m_cfEmissive;
 
 		//Label* m_lblShinness;
-		TextBox* m_cbShinness;
+		TextBox* m_tbShinness;
 		
 		//Label* m_lblPassFlag;
 		PictureBox* m_pbPassFlag;
@@ -143,12 +136,6 @@ namespace APDesigner
 
 		List<Label*> m_mtrlPanelLabels;
 
-		//Label* m_lblTex1;
-		//Label* m_lblTex2;
-		//Label* m_lblTex3;
-		//Label* m_lblTex4;
-		//Label* m_lblTex5;
-		//Label* m_lblTex6;
 
 		TextBox* m_tbTex1;
 		TextBox* m_tbTex2;
@@ -159,22 +146,19 @@ namespace APDesigner
 
 		ListBox* m_customParameterList;
 
-		//Label* m_lblPriority;
 		TextBox* m_tbPriority;
+		TextBox* m_tbAlphaTest;
+
 
 		CheckBox* m_cbDepthTest;
 		CheckBox* m_cbDepthWrite;
 
-		//Label* m_lblAlphaTest;
-		TextBox* m_tbAlphaTest;
 
 		CheckBox* m_cbTransparent;
-		//Label* m_lblSrcBlend;
-		//Label* m_lblDstBlend;
-		//Label* m_lblBlendFunction;
 		ComboBox* m_cbSrcBlend;
 		ComboBox* m_cbDstBlend;
 		ComboBox* m_cbBlendFunction;
+
 
 		void PixtureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 	};

@@ -54,8 +54,8 @@ namespace Apoc3D
 			BtnHozPadding = 5;
 			BtnVertPadding = 20;
 
-			BtnDimColor = CV_DarkGray;
-			BtnHighLightColor = CV_Gray;
+			BtnDimColor = CV_Gray;
+			BtnHighLightColor = CV_LightGray;
 			BtnTextDimColor = CV_Black;
 			BtnTextHighLightColor = CV_Black;
 
