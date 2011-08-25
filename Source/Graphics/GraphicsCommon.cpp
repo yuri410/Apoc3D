@@ -167,6 +167,7 @@ namespace Apoc3D
 				 case BLFUN_Max:
 					 return L"Max";
 				 }
+				 return L"Add";
 			 }
 
 			 CullMode GraphicsCommonUtils::ParseCullMode(const String& value)
@@ -198,6 +199,7 @@ namespace Apoc3D
 				 case CULL_None:
 					 return L"None";
 				 }
+				 return L"None";
 			 }
 		}
 	}

@@ -268,11 +268,9 @@ namespace APDesigner
 			m_cbDepthTest->SetSkin(window->getUISkin());
 
 			List<String> items;
-			items.Add(GraphicsCommonUtils::ToString(BLFUN_Add));
-			items.Add(GraphicsCommonUtils::ToString(BLFUN_Subtract));
-			items.Add(GraphicsCommonUtils::ToString(BLFUN_ReverseSubtract));
-			items.Add(GraphicsCommonUtils::ToString(BLFUN_Max));
-			items.Add(GraphicsCommonUtils::ToString(BLFUN_Min));
+			items.Add(GraphicsCommonUtils::ToString(CULL_None));
+			items.Add(GraphicsCommonUtils::ToString(CULL_Clockwise));
+			items.Add(GraphicsCommonUtils::ToString(CULL_CounterClockwise));
 			lbl = new Label(Point(sx, sy), L"Cull Mode", 100);
 			lbl->SetSkin(window->getUISkin());
 			m_mtrlPanelLabels.Add(lbl);
