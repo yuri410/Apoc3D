@@ -171,12 +171,12 @@ namespace APDesigner
 		m_removeItem->eventRelease().bind(this, &ResourcePane::BtnRemove_Release);
 		m_form->getControls().Add(m_removeItem);
 
-		m_openItem = new Button(Point(15,405),L"Open");
+		m_openItem = new Button(Point(15,400),L"Open");
 		m_openItem->SetSkin(window->getUISkin());
 		m_openItem->eventRelease().bind(this, &ResourcePane::BtnOpen_Release);
 		m_form->getControls().Add(m_openItem);
 
-		m_applyModify = new Button(Point(120,405),L"Apply");
+		m_applyModify = new Button(Point(120,400),L"Apply");
 		m_applyModify->SetSkin(window->getUISkin());
 		m_applyModify->eventRelease().bind(this, &ResourcePane::BtnApplyMod_Release);
 		m_form->getControls().Add(m_applyModify);
@@ -217,17 +217,17 @@ namespace APDesigner
 		m_infoDisplay->Position.Y = m_resourceView->Size.Y + m_resourceView->Position.Y + 5;
 
 		m_removeItem->Position.Y = m_addItem->Position.Y = m_infoDisplay->Position.Y + 80;
-		m_openItem->Position.Y = m_removeItem->Position.Y+m_removeItem->Size.Y+15;
+		m_openItem->Position.Y = m_removeItem->Position.Y+m_removeItem->Size.Y+5;
 		m_applyModify->Position.Y=m_openItem->Position.Y;
 
 		for (int i=0;i<m_propLeft.getCount();i++)
 		{
-			int top = m_openItem->Position.Y + 60 + i * 25;
+			int top = m_openItem->Position.Y + m_openItem->Size.Y + 15 + i * 25;
 			m_propLeft[i]->Position.Y = top;
 		}
 		for (int i=0;i<m_propRight.getCount();i++)
 		{
-			int top = m_openItem->Position.Y + 60 + i * 25;
+			int top = m_openItem->Position.Y + m_openItem->Size.Y + 15 + i * 25;
 			m_propRight[i]->Position.Y = top;
 		}
 	}
@@ -348,7 +348,7 @@ namespace APDesigner
 	}
 	void ResourcePane::AddPropertyPair(const String& a, const String& b)
 	{
-		int top = m_openItem->Position.Y + 60 + m_propLeft.getCount() * 25;
+		int top = m_openItem->Position.Y + m_openItem->Size.Y + 15 + m_propLeft.getCount() * 25;
 		//for (int i=0;i<m_propLeft.getCount();i++)
 		//{
 		//	if (m_propLeft[i]->Position.Y + m_propLeft[i]->Size.Y + 40> top )

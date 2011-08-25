@@ -339,6 +339,7 @@ namespace APDesigner
 		}
 
 		getDocumentForm()->setMinimumSize(Point(1070,512+137));
+		//getDocumentForm()->setMaximumSize(Point(1071,512+138));
 		getDocumentForm()->setTitle(file);
 
 	}
