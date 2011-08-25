@@ -168,6 +168,37 @@ namespace Apoc3D
 					 return L"Max";
 				 }
 			 }
+
+			 CullMode GraphicsCommonUtils::ParseCullMode(const String& value)
+			 {
+				 String v = value;
+				 StringUtils::ToLowerCase(v);
+				 if (v == L"none")
+				 {
+					 return CULL_None;
+				 }
+				 else if (v == L"clockwise")
+				 {
+					 return CULL_Clockwise;
+				 }
+				 else if (v == L"counterclockwise")
+				 {
+					 return CULL_CounterClockwise;
+				 }
+				 return CULL_None;
+			 }
+			 String GraphicsCommonUtils::ToString(CullMode cull)
+			 {
+				 switch (cull)
+				 {
+				 case CULL_Clockwise:
+					 return L"Clockwise";
+				 case CULL_CounterClockwise:
+					 return L"CounterClockwise";
+				 case CULL_None:
+					 return L"None";
+				 }
+			 }
 		}
 	}
 }

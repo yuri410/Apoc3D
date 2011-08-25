@@ -161,12 +161,12 @@ namespace APDesigner
 		ComboBox* m_cbDstBlend;
 		ComboBox* m_cbBlendFunction;
 
+		ComboBox* m_cbCull;
 
 		void ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 	};
-	
 }
 
 #endif

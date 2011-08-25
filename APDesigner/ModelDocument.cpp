@@ -249,12 +249,12 @@ namespace APDesigner
 			m_tbTex5->SetSkin(window->getUISkin());
 
 
-			sy += 25;
-			lbl = new Label(Point(sx, sy), L"Texture6", 100);
-			lbl->SetSkin(window->getUISkin());
-			m_mtrlPanelLabels.Add(lbl);
-			m_tbTex6 = new TextBox(Point(sx + 100, sy), 200, L"");
-			m_tbTex6->SetSkin(window->getUISkin());
+			//sy += 25;
+			//lbl = new Label(Point(sx, sy), L"Texture6", 100);
+			//lbl->SetSkin(window->getUISkin());
+			//m_mtrlPanelLabels.Add(lbl);
+			//m_tbTex6 = new TextBox(Point(sx + 100, sy), 200, L"");
+			//m_tbTex6->SetSkin(window->getUISkin());
 
 
 			sy += 35;
@@ -266,6 +266,18 @@ namespace APDesigner
 
 			m_cbDepthTest = new CheckBox(Point(sx+ 250 + 100, sy), L"DepthTest", false);
 			m_cbDepthTest->SetSkin(window->getUISkin());
+
+			List<String> items;
+			items.Add(GraphicsCommonUtils::ToString(BLFUN_Add));
+			items.Add(GraphicsCommonUtils::ToString(BLFUN_Subtract));
+			items.Add(GraphicsCommonUtils::ToString(BLFUN_ReverseSubtract));
+			items.Add(GraphicsCommonUtils::ToString(BLFUN_Max));
+			items.Add(GraphicsCommonUtils::ToString(BLFUN_Min));
+			lbl = new Label(Point(sx, sy), L"Cull Mode", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_mtrlPanelLabels.Add(lbl);
+			m_cbCull = new ComboBox(Point(sx + 100, sy), 200, items);
+			m_cbCull->SetSkin(window->getUISkin());
 
 			sy += 25;
 			lbl = new Label(Point(sx, sy), L"AlphaTest[0,1]", 100);
@@ -283,7 +295,7 @@ namespace APDesigner
 			m_cbTransparent = new CheckBox(Point(sx + 250 + 100, sy), L"Transparent", false);
 			m_cbTransparent->SetSkin(window->getUISkin());
 
-			List<String> items;
+			items.Clear();
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_Add));
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_Subtract));
 			items.Add(GraphicsCommonUtils::ToString(BLFUN_ReverseSubtract));
@@ -404,6 +416,8 @@ namespace APDesigner
 
 		delete m_pbPassFlag;
 		delete m_btnPassFlag;
+
+		delete m_cbCull;
 	}
 	
 

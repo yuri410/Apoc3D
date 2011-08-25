@@ -514,6 +514,9 @@ namespace Apoc3D
 
 				static BlendFunction ParseBlendFunction(const String& value);
 				static String ToString(BlendFunction func);
+
+				static CullMode ParseCullMode(const String& value);
+				static String ToString(CullMode cull);
 			protected:
 			private:
 			};
