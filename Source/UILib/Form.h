@@ -217,6 +217,7 @@ namespace Apoc3D
 			static Sprite* m_sprite;
 			static Menu* m_mainMenu;
 			static Form* m_modalForm;
+			static int m_modalAnim;
 
 			static void Form_SizeChanged(Control* ctl);
 		public:

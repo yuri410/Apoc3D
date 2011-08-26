@@ -267,6 +267,8 @@ namespace APDesigner
 			m_cbDepthTest = new CheckBox(Point(sx+ 250 + 100, sy), L"DepthTest", false);
 			m_cbDepthTest->SetSkin(window->getUISkin());
 
+
+			sy += 25;
 			List<String> items;
 			items.Add(GraphicsCommonUtils::ToString(CULL_None));
 			items.Add(GraphicsCommonUtils::ToString(CULL_Clockwise));
@@ -277,6 +279,9 @@ namespace APDesigner
 			m_cbCull = new ComboBox(Point(sx + 100, sy), 200, items);
 			m_cbCull->SetSkin(window->getUISkin());
 
+			m_cbDepthWrite = new CheckBox(Point(sx+ 250 + 100, sy), L"DepthWrite", false);
+			m_cbDepthWrite->SetSkin(window->getUISkin());
+
 			sy += 25;
 			lbl = new Label(Point(sx, sy), L"AlphaTest[0,1]", 100);
 			lbl->SetSkin(window->getUISkin());
@@ -284,9 +289,6 @@ namespace APDesigner
 			m_tbAlphaTest = new TextBox(Point(sx + 100, sy), 200, L"");
 			m_tbAlphaTest->SetSkin(window->getUISkin());
 			
-			m_cbDepthWrite = new CheckBox(Point(sx+ 250 + 100, sy), L"DepthWrite", false);
-			m_cbDepthWrite->SetSkin(window->getUISkin());
-
 
 			sy += 25;
 
@@ -346,12 +348,14 @@ namespace APDesigner
 
 			m_btnPassFlag = new Button(Point(sx+100+300, sy), L"Edit");
 			m_btnPassFlag->SetSkin(window->getUISkin());
+			m_btnPassFlag->eventPress().bind(this, &ModelDocument::PassButton_Pressed);
 		}
 
 		getDocumentForm()->setMinimumSize(Point(1070,512+137));
 		//getDocumentForm()->setMaximumSize(Point(1071,512+138));
 		getDocumentForm()->setTitle(file);
 
+		m_passEditor = new PassFlagDialog(window, window->getDevice());
 	}
 
 	ModelDocument::~ModelDocument()
@@ -400,7 +404,7 @@ namespace APDesigner
 		delete m_tbTex3;
 		delete m_tbTex4;
 		delete m_tbTex5;
-		delete m_tbTex6;
+		//delete m_tbTex6;
 
 		delete m_tbPriority;
 		delete m_tbAlphaTest;
@@ -416,6 +420,7 @@ namespace APDesigner
 		delete m_btnPassFlag;
 
 		delete m_cbCull;
+		delete m_passEditor;
 	}
 	
 
@@ -490,7 +495,7 @@ namespace APDesigner
 			getDocumentForm()->getControls().Add(m_tbTex3);
 			getDocumentForm()->getControls().Add(m_tbTex4);
 			getDocumentForm()->getControls().Add(m_tbTex5);
-			getDocumentForm()->getControls().Add(m_tbTex6);
+			//getDocumentForm()->getControls().Add(m_tbTex6);
 
 			getDocumentForm()->getControls().Add(m_tbPriority);
 			getDocumentForm()->getControls().Add(m_tbAlphaTest);
@@ -506,7 +511,7 @@ namespace APDesigner
 
 			getDocumentForm()->getControls().Add(m_pbPassFlag);
 			getDocumentForm()->getControls().Add(m_btnPassFlag);
-
+			getDocumentForm()->getControls().Add(m_cbCull);
 		}
 		for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
 		{
@@ -563,6 +568,10 @@ namespace APDesigner
 		m_sceneRenderer->RenderScene(&m_scene);
 	}
 
+	void ModelDocument::PassButton_Pressed(Control* ctrl)
+	{
+		m_passEditor->ShowModal();
+	}
 	void ModelDocument::ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
 		SceneProcedure* proc = m_sceneRenderer->getSelectedProc();
@@ -775,5 +784,60 @@ namespace APDesigner
 		{
 			m_color = dlg.getSelectedColor();
 		}
+	}
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+	ModelDocument::PassFlagDialog::PassFlagDialog(MainWindow* window,RenderDevice* device)
+	{
+		m_form = new Form(FBS_Fixed, L"Pass Editor");
+
+		Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
+		m_form->Size = Point(980, 450);
+		m_form->Position = Point(rect.Width, rect.Height) - m_form->Size;
+		m_form->Position.X /= 2;
+		m_form->Position.Y /= 2;
+		m_form->SetSkin(window->getUISkin());
+
+		int ofsX = 10;
+		int ofsY = 27;
+		int counter = 0;
+		for (int i=0;i<4;i++)
+		{
+			for (int j=0;j<16;j++)
+			{
+				Label* lbl = new Label(Point(i * 250+ofsX,j * 25+ofsY), L"Pass " + StringUtils::ToString(counter++), 50);
+				lbl->SetSkin(window->getUISkin());
+				m_lblTable.Add(lbl);
+
+				TextBox* text = new TextBox(Point(i * 250+ofsX+lbl->Size.X,j * 25+ofsY), 150, L"");
+				text->SetSkin(window->getUISkin());
+				m_tbTable.Add(text);
+			}
+		}
+
+		for (int i=0;i<m_lblTable.getCount();i++)
+		{
+			m_form->getControls().Add(m_lblTable[i]);
+			m_form->getControls().Add(m_tbTable[i]);
+		}
+		m_form->Initialize(device);
+		UIRoot::Add(m_form);
+	}
+
+	ModelDocument::PassFlagDialog::~PassFlagDialog()
+	{
+		UIRoot::Remove(m_form);
+		delete m_form;
+		for (int i=0;i<m_lblTable.getCount();i++)
+		{
+			delete m_lblTable[i];
+			delete m_tbTable[i];
+		}
+	}
+
+	void ModelDocument::PassFlagDialog::ShowModal()
+	{
+		m_form->ShowModal();
 	}
 }

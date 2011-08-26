@@ -83,7 +83,22 @@ namespace APDesigner
 			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 			void Button_Press(Control* ctrl);
 		};
+		class PassFlagDialog
+		{
+		public:
+			PassFlagDialog(MainWindow* window, RenderDevice* device);
+			~PassFlagDialog();
 
+			
+
+			void ShowModal();
+
+		private:
+			
+			Form* m_form;
+			FastList<Label*> m_lblTable;
+			FastList<TextBox*> m_tbTable;
+		};
 
 		String m_name;
 		String m_filePath;
@@ -104,7 +119,7 @@ namespace APDesigner
 
 		PictureBox* m_modelViewer;
 
-		List<Label*> m_labels;
+		FastList<Label*> m_labels;
 
 		PictureBox* m_pbTime;
 		TextBox* m_tbMKeyTime;
@@ -136,7 +151,7 @@ namespace APDesigner
 		PictureBox* m_pbPassFlag;
 		Button* m_btnPassFlag;
 
-		List<Label*> m_mtrlPanelLabels;
+		FastList<Label*> m_mtrlPanelLabels;
 
 
 		TextBox* m_tbTex1;
@@ -144,7 +159,7 @@ namespace APDesigner
 		TextBox* m_tbTex3;
 		TextBox* m_tbTex4;
 		TextBox* m_tbTex5;
-		TextBox* m_tbTex6;
+		//TextBox* m_tbTex6;
 
 		ListBox* m_customParameterList;
 
@@ -162,7 +177,9 @@ namespace APDesigner
 		ComboBox* m_cbBlendFunction;
 
 		ComboBox* m_cbCull;
+		PassFlagDialog* m_passEditor;
 
+		void PassButton_Pressed(Control* ctrl);
 		void ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);

@@ -90,6 +90,7 @@ namespace Apoc3D
 			UIEventHandler& eventMouseOut() { return m_eventMouseOut; }
 			UIEventHandler& eventPress() { return m_eventMousePress; }
 			UIEventHandler& eventRelease() { return m_eventMouseRelease; }
+			const StyleSkin* getSkin() const { return m_skin; }
 
 			Point GetAbsolutePosition() const;
 

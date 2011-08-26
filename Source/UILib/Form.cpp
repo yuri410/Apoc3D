@@ -96,6 +96,10 @@ namespace Apoc3D
 		}
 		void Form::Hide()
 		{
+			if (UIRoot::getModalForm() == this)
+			{
+				UIRoot::setModalForm(0);
+			}
 			Visible = false;
 		}
 		void Form::Close()
@@ -1057,6 +1061,7 @@ namespace Apoc3D
 		Sprite* UIRoot::m_sprite = 0;
 		Menu* UIRoot::m_mainMenu = 0;
 		Form* UIRoot::m_modalForm = 0;
+		int UIRoot::m_modalAnim = 0;
 
 		Apoc3D::Math::Rectangle UIRoot::GetUIArea(RenderDevice* device)
 		{
@@ -1283,9 +1288,22 @@ namespace Apoc3D
 			{
 				m_mainMenu->Draw(m_sprite);
 			}
-			
+
 			if (m_modalForm)
+			{
+				const StyleSkin* skin = m_modalForm->getSkin();
+				if (m_modalAnim>3)
+				{
+					m_sprite->Draw(skin->WhitePixelTexture, GetUIArea(m_sprite->getRenderDevice()),0, PACK_COLOR(0,0,0, 120));
+				}
+				else if (m_modalAnim)
+				{
+					m_sprite->Draw(skin->WhitePixelTexture, GetUIArea(m_sprite->getRenderDevice()),0, PACK_COLOR(0,0,0, 200));
+				}
+
 				m_modalForm->Draw(m_sprite);
+			}
+			
 
 			// cursor
 			m_sprite->End();
@@ -1295,8 +1313,11 @@ namespace Apoc3D
 			if (m_modalForm)
 			{
 				m_modalForm->Update(time);
+				m_modalAnim++;
 				return;
 			}
+
+			m_modalAnim = 0;
 			bool menuOverriden = false;
 			for (int i=0;i<m_mainMenu->getItems().getCount();i++)
 			{
