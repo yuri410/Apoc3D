@@ -234,7 +234,8 @@ namespace Apoc3D
 
 		}
 
-		String SrcFile;
+		String SrcVSFile;
+		String SrcPSFile;
 		String PListFile;
 		String DestFile;
 		String EntryPoint;

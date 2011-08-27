@@ -102,10 +102,18 @@ namespace Apoc3D
 		void ComboBox::setSelectedIndex(int v) const
 		{
 			m_listBox->setSelectedIndex(v);
+			if (m_listBox->getSelectedIndex()!=-1)
+			{
+				m_textbox->Text = m_listBox->getItems()[m_listBox->getSelectedIndex()];
+			}
 		}
 		void ComboBox::SetSelectedByName(const String& name)
 		{
 			m_listBox->SetSelectedByName(name);
+			if (m_listBox->getSelectedIndex()!=-1)
+			{
+				m_textbox->Text = m_listBox->getItems()[m_listBox->getSelectedIndex()];
+			}
 		}
 		void ComboBox::ListBox_OnPress(Control* ctrl) {  }
 		void ComboBox::ListBox_SelectionChanged(Control* ctrl)

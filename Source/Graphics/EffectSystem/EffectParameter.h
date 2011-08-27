@@ -48,7 +48,8 @@ namespace Apoc3D
 				EPUSAGE_EmissiveColor,
 				EPUSAGE_SpecularColor,
 				EPUSAGE_Power,
-				
+				EPUSAGE_LightDir,
+				EPUSAGE_ViewPos,
 			};
 
 			/** Include all scene render resources such as the current camera, lighting that could 

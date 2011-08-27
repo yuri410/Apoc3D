@@ -518,7 +518,8 @@ namespace Apoc3D
 
 	void ProjectResEffect::Parse(const ConfigurationSection* sect)
 	{
-		SrcFile = sect->getAttribute(L"SourceFile");
+		SrcVSFile = sect->getAttribute(L"VSSource");
+		SrcPSFile = sect->getAttribute(L"PSSource");
 		DestFile = sect->getAttribute(L"DestinationFile");
 		PListFile = sect->getAttribute(L"ParamList");
 		EntryPoint = sect->getAttribute(L"EntryPoint");
@@ -526,7 +527,9 @@ namespace Apoc3D
 	}
 	void ProjectResEffect::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
+		sect->AddAttribute(L"VSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcVSFile) : SrcVSFile);
+		sect->AddAttribute(L"PSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcPSFile) : SrcPSFile);
+
 		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 		sect->AddAttribute(L"ParamList", savingBuild ? PathUtils::Combine(m_project->getBasePath(), PListFile) : PListFile);
 		sect->AddAttribute(L"EntryPoint", EntryPoint);

@@ -247,7 +247,8 @@ namespace APBuild
 	}
 	void AFXBuildConfig::Parse(const ConfigurationSection* sect)
 	{
-		SrcFile = sect->getAttribute(L"SourceFile");
+		SrcVSFile = sect->getAttribute(L"VSSource");
+		SrcPSFile = sect->getAttribute(L"PSSource");
 		DestFile = sect->getAttribute(L"DestinationFile");
 		PListFile = sect->getAttribute(L"ParamList");
 		EntryPoint = sect->getAttribute(L"EntryPoint");

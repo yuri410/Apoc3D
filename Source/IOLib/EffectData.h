@@ -42,13 +42,19 @@ namespace Apoc3D
 		class APAPI EffectData
 		{
 		public:
-			char* ShaderCode;
-			int ShaderCodeLength;
+			char* VSCode;
+			char* PSCode;
+			int VSLength;
+			int PSLength;
 
 			List<EffectParameter> Parameters;
 
-			EffectData() { }
-			~EffectData() { delete[] ShaderCode; }
+			EffectData() : VSCode(0), PSCode(0), VSLength(0),PSLength(0) { }
+			~EffectData() 
+			{
+				if (VSCode) delete[] VSCode; 
+				if (PSCode) delete[] PSCode;
+			}
 
 			void Load(const ResourceLocation* rl);
 			void Save(Stream* strm) const;

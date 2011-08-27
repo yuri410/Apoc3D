@@ -55,14 +55,14 @@ namespace APBuild
 		AFXBuildConfig config;
 		config.Parse(sect);
 		
-		if (!File::FileExists(config.SrcFile))
+		if (!File::FileExists(config.SrcVSFile))
 		{
-			CompileLog::WriteError(config.SrcFile, L"Could not find source file.");
+			CompileLog::WriteError(config.SrcVSFile, L"Could not find source file.");
 			return;
 		}
 		if (!File::FileExists(config.PListFile))
 		{
-			CompileLog::WriteError(config.SrcFile, L"Could not find param list file.");
+			CompileLog::WriteError(config.PListFile, L"Could not find param list file.");
 			return;
 		}
 		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
@@ -71,7 +71,7 @@ namespace APBuild
 		ID3DXBuffer* shader;
 		ID3DXConstantTable* constants;
 		
-		HRESULT hr = D3DXCompileShaderFromFile(config.SrcFile.c_str(), 0, 0, 
+		HRESULT hr = D3DXCompileShaderFromFile(config.SrcVSFile.c_str(), 0, 0, 
 			StringUtils::toString(config.EntryPoint.c_str()).c_str(), StringUtils::toString(config.Profile.c_str()).c_str(), 
 			D3DXSHADER_PACKMATRIX_ROWMAJOR, &shader, &error, &constants);
 
@@ -83,7 +83,7 @@ namespace APBuild
 
 			for (size_t i=0;i<errs.size();i++)
 			{
-				CompileLog::WriteError(errs[i], config.SrcFile);
+				CompileLog::WriteError(errs[i], config.SrcVSFile);
 			}
 			error->Release();
 			return;
@@ -92,9 +92,9 @@ namespace APBuild
 
 		EffectData data;
 		data.ShaderCodeLength = static_cast<int>( shader->GetBufferSize());
-		data.ShaderCode = new char[data.ShaderCodeLength];
+		data.VSCode = new char[data.ShaderCodeLength];
 	
-		memcpy(data.ShaderCode, shader->GetBufferPointer(), data.ShaderCodeLength);
+		memcpy(data.VSCode, shader->GetBufferPointer(), data.ShaderCodeLength);
 		
 		FileLocation* fl = new FileLocation(config.PListFile);
 		XMLConfiguration* plist = new XMLConfiguration(fl);
@@ -116,7 +116,7 @@ namespace APBuild
 		}
 
 		delete fl;
-
+		delete plist;
 
 		FileOutStream* fos = new FileOutStream(config.DestFile);
 		data.Save(fos);

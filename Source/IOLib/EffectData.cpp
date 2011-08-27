@@ -43,7 +43,7 @@ namespace Apoc3D
 		static const String TAG_3_ParameterTag = L"Parameter";
 		static const String TAG_3_ShaderCodeTag = L"ShaderCode";
 
-		static const String TAG_3_ShaderCodeLengthTag = L"ShaderCode";
+		static const String TAG_3_ShaderCodeLengthTag = L"ShaderCodeLength";
 
 		void EffectData::Load(const ResourceLocation* rl)
 		{
@@ -81,10 +81,17 @@ namespace Apoc3D
 					delete br2;
 				}
 
-				int length = data->GetDataInt32(TAG_3_ShaderCodeLengthTag);
-				ShaderCode = new char[length];
-				BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeTag);
-				br3->ReadBytes(ShaderCode, length);
+				BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeLengthTag);
+				VSLength = br3->ReadInt32();
+				PSLength = br3->ReadInt32();
+				br3->Close();
+				delete br3;
+
+				VSCode = new char[VSLength];
+				PSCode = new char[PSLength];
+				br3 = data->GetData(TAG_3_ShaderCodeTag);
+				br3->ReadBytes(VSCode, VSLength);
+				br3->ReadBytes(PSCode, PSLength);
 				br3->Close();
 				delete br3;
 
@@ -130,10 +137,16 @@ namespace Apoc3D
 					delete bw2;
 				}
 
-				data->AddEntry(TAG_3_ShaderCodeLengthTag, ShaderCodeLength);
+				BinaryWriter* bw3 = data->AddEntry(TAG_3_ShaderCodeLengthTag);
+				bw3->Write((int32)VSLength);
+				bw3->Write((int32)PSLength);
+				bw3->Close();
+				delete bw3;
 
-				BinaryWriter* bw3 = data->AddEntry(TAG_3_ShaderCodeTag);
-				bw->Write(ShaderCode, ShaderCodeLength);
+
+				bw3 = data->AddEntry(TAG_3_ShaderCodeTag);
+				bw->Write(VSCode, VSLength);
+				bw->Write(PSCode, PSLength);
 				bw3->Close();
 				delete bw3;
 

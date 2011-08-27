@@ -77,7 +77,7 @@ namespace Apoc3D
 			class AutomaticEffect : public Effect
 			{
 			public:
-				AutomaticEffect();
+				AutomaticEffect(RenderDevice* device, const ResourceLocation* rl);
 				~AutomaticEffect();
 
 				virtual void Setup(Material* mtrl, const RenderOperation& rop);

@@ -105,7 +105,8 @@ namespace APBuild
 	};
 	struct AFXBuildConfig
 	{
-		String SrcFile;
+		String SrcVSFile;
+		String SrcPSFile;
 		String PListFile;
 		String DestFile;
 		String EntryPoint;

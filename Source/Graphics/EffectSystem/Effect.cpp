@@ -25,6 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
+#include "IOLib/Streams.h"
+#include "IOLib/BinaryReader.h"
+
+using namespace Apoc3D::IO;
 
 namespace Apoc3D
 {
@@ -77,7 +81,17 @@ namespace Apoc3D
 			/*                                                                      */
 			/************************************************************************/
 
-			
+			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
+			{
+				BinaryReader* br = new BinaryReader(rl);
+
+				br->Close();
+			}
+
+			AutomaticEffect::~AutomaticEffect()
+			{
+
+			}
 
 		};
 	}
