@@ -251,7 +251,8 @@ namespace APBuild
 		SrcPSFile = sect->getAttribute(L"PSSource");
 		DestFile = sect->getAttribute(L"DestinationFile");
 		PListFile = sect->getAttribute(L"ParamList");
-		EntryPoint = sect->getAttribute(L"EntryPoint");
+		EntryPointVS = sect->getAttribute(L"EntryPointVS");
+		EntryPointPS = sect->getAttribute(L"EntryPointPS");
 		Profile = sect->getAttribute(L"Profile");
 	}
 	void MeshBuildConfig::Parse(const ConfigurationSection* sect)

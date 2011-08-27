@@ -109,7 +109,8 @@ namespace APBuild
 		String SrcPSFile;
 		String PListFile;
 		String DestFile;
-		String EntryPoint;
+		String EntryPointVS;
+		String EntryPointPS;
 		String Profile;
 
 		void Parse(const ConfigurationSection* sect);

@@ -322,6 +322,40 @@ namespace APDesigner
 					}
 				}
 				break;
+			case PRJITEM_Effect:
+				{
+					ProjectResEffect* eff = static_cast<ProjectResEffect*>(data);
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"effects_file"));
+					newNode->UserData = items[i];
+
+
+					if (parentNode)
+					{
+						parentNode->getNodes().Add(newNode);
+					}
+					else
+					{
+						m_resourceView->getNodes().Add(newNode);
+					}
+				}
+				break;
+			case PRJITEM_Font:
+				{
+					ProjectResFont* fnt = static_cast<ProjectResFont*>(data);
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"new_document"));
+					newNode->UserData = items[i];
+
+
+					if (parentNode)
+					{
+						parentNode->getNodes().Add(newNode);
+					}
+					else
+					{
+						m_resourceView->getNodes().Add(newNode);
+					}
+				}
+				break;
 			}
 		}
 	}

@@ -522,7 +522,8 @@ namespace Apoc3D
 		SrcPSFile = sect->getAttribute(L"PSSource");
 		DestFile = sect->getAttribute(L"DestinationFile");
 		PListFile = sect->getAttribute(L"ParamList");
-		EntryPoint = sect->getAttribute(L"EntryPoint");
+		EntryPointVS = sect->getAttribute(L"EntryPointVS");
+		EntryPointPS = sect->getAttribute(L"EntryPointPS");
 		Profile = sect->getAttribute(L"Profile");
 	}
 	void ProjectResEffect::Save(ConfigurationSection* sect, bool savingBuild)
@@ -532,7 +533,8 @@ namespace Apoc3D
 
 		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 		sect->AddAttribute(L"ParamList", savingBuild ? PathUtils::Combine(m_project->getBasePath(), PListFile) : PListFile);
-		sect->AddAttribute(L"EntryPoint", EntryPoint);
+		sect->AddAttribute(L"EntryPointVS", EntryPointVS);
+		sect->AddAttribute(L"EntryPointPS", EntryPointPS);
 		sect->AddAttribute(L"Profile", Profile);
 	}
 	std::vector<String> ProjectResEffect::GetAllOutputFiles()
@@ -549,7 +551,15 @@ namespace Apoc3D
 		if (destFileTime < t)
 			return true;
 
-		String path = PathUtils::Combine(m_project->getBasePath(), SrcFile);
+		String path = PathUtils::Combine(m_project->getBasePath(), SrcVSFile);
+		if (File::FileExists(path))
+		{
+			if (File::GetFileModifiyTime(path) > destFileTime)
+			{
+				return true;
+			}
+		}
+		path = PathUtils::Combine(m_project->getBasePath(), SrcPSFile);
 		if (File::FileExists(path))
 		{
 			if (File::GetFileModifiyTime(path) > destFileTime)

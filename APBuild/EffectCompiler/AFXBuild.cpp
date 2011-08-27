@@ -50,6 +50,37 @@ using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
+	void CompileShader(const String& src, const String& entryPoint, const String& profile, char*& dest, int& size)
+	{
+		ID3DXBuffer* error;
+		ID3DXBuffer* shader;
+		ID3DXConstantTable* constants;
+
+		HRESULT hr = D3DXCompileShaderFromFile(src.c_str(), 0, 0, 
+			StringUtils::toString(entryPoint.c_str()).c_str(), StringUtils::toString(profile.c_str()).c_str(), 
+			D3DXSHADER_PACKMATRIX_ROWMAJOR, &shader, &error, &constants);
+
+		if (hr != S_OK)
+		{
+			String errmsg = String(reinterpret_cast<const wchar_t*>(error->GetBufferPointer()), error->GetBufferSize());
+
+			std::vector<String> errs = StringUtils::Split(errmsg, L"\n\r");
+
+			for (size_t i=0;i<errs.size();i++)
+			{
+				CompileLog::WriteError(errs[i], src);
+			}
+			error->Release();
+			return;
+		}
+		constants->Release();
+
+		size = static_cast<int>( shader->GetBufferSize());
+		dest = new char[size];
+
+		memcpy(dest, shader->GetBufferPointer(), size);
+
+	}
 	void AFXBuild::Build(const ConfigurationSection* sect)
 	{
 		AFXBuildConfig config;
@@ -67,35 +98,13 @@ namespace APBuild
 		}
 		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
-		ID3DXBuffer* error;
-		ID3DXBuffer* shader;
-		ID3DXConstantTable* constants;
-		
-		HRESULT hr = D3DXCompileShaderFromFile(config.SrcVSFile.c_str(), 0, 0, 
-			StringUtils::toString(config.EntryPoint.c_str()).c_str(), StringUtils::toString(config.Profile.c_str()).c_str(), 
-			D3DXSHADER_PACKMATRIX_ROWMAJOR, &shader, &error, &constants);
-
-		if (hr != S_OK)
-		{
-			String errmsg = String(reinterpret_cast<const wchar_t*>(error->GetBufferPointer()), error->GetBufferSize());
-
-			std::vector<String> errs = StringUtils::Split(errmsg, L"\n\r");
-
-			for (size_t i=0;i<errs.size();i++)
-			{
-				CompileLog::WriteError(errs[i], config.SrcVSFile);
-			}
-			error->Release();
-			return;
-		}
-		constants->Release();
 
 		EffectData data;
-		data.ShaderCodeLength = static_cast<int>( shader->GetBufferSize());
-		data.VSCode = new char[data.ShaderCodeLength];
-	
-		memcpy(data.VSCode, shader->GetBufferPointer(), data.ShaderCodeLength);
-		
+
+
+		CompileShader(config.SrcVSFile, config.EntryPointVS, config.Profile, data.VSCode, data.VSLength);
+		CompileShader(config.SrcPSFile, config.EntryPointPS, config.Profile, data.PSCode, data.PSLength);
+
 		FileLocation* fl = new FileLocation(config.PListFile);
 		XMLConfiguration* plist = new XMLConfiguration(fl);
 

@@ -238,7 +238,8 @@ namespace Apoc3D
 		String SrcPSFile;
 		String PListFile;
 		String DestFile;
-		String EntryPoint;
+		String EntryPointVS;
+		String EntryPointPS;
 		String Profile;
 
 		virtual ProjectItemType getType() const { return PRJITEM_Effect; }
