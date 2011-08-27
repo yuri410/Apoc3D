@@ -762,6 +762,48 @@ namespace APDesigner
 			{
 				Material* mtrl = mtrls->getMaterial(partIdx, frameIndex);
 
+				mtrl->Ambient = Color4(m_cfAmbient->GetValue());
+				mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
+				mtrl->Specular = Color4(m_cfSpecular->GetValue());
+				mtrl->Emissive = Color4(m_cfEmissive->GetValue());
+				mtrl->Power = StringUtils::ParseSingle(m_tbShinness->Text);
+
+				mtrl->setTextureName(0, m_tbTex1->Text);
+				mtrl->setTextureName(1, m_tbTex2->Text);
+				mtrl->setTextureName(2, m_tbTex3->Text);
+				mtrl->setTextureName(3, m_tbTex4->Text);
+				mtrl->setTextureName(4, m_tbTex5->Text);
+
+				mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->Text));
+				mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->Text);
+				
+				mtrl->DepthTestEnabled = m_cbDepthTest->getValue();
+				mtrl->DepthWriteEnabled = m_cbDepthWrite->getValue();
+				
+				mtrl->IsBlendTransparent = m_cbTransparent->getValue();
+				
+				if (m_cbSrcBlend->getSelectedIndex()!=-1)
+				{
+					mtrl->SourceBlend = GraphicsCommonUtils::ParseBlend(
+						m_cbSrcBlend->getItems()[m_cbSrcBlend->getSelectedIndex()]);
+				}
+				if (m_cbDstBlend->getSelectedIndex()!=-1)
+				{
+					mtrl->DestinationBlend = GraphicsCommonUtils::ParseBlend(
+						m_cbDstBlend->getItems()[m_cbDstBlend->getSelectedIndex()]);
+				}
+				if (m_cbBlendFunction->getSelectedIndex() !=-1)
+				{
+					mtrl->BlendFunction = GraphicsCommonUtils::ParseBlendFunction(
+						m_cbBlendFunction->getItems()[m_cbBlendFunction->getSelectedIndex()]);
+				}
+
+				if (m_cbCull->getSelectedIndex() !=-1)
+				{
+					mtrl->Cull = GraphicsCommonUtils::ParseCullMode(
+						m_cbCull->getItems()[m_cbCull->getSelectedIndex()]);
+				}
+				
 			}
 		}
 	}
