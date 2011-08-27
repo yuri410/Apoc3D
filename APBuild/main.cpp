@@ -21,7 +21,7 @@
 #include "FontBuild/FontBuild.h"
 #include "MeshBuild/MeshBuild.h"
 #include "PakBuild/PakBuild.h"
-
+#include "EffectCompiler/AFXBuild.h"
 //#include <Windows.h>
 
 using namespace std;
@@ -55,7 +55,7 @@ int Build(ConfigurationSection* sect, int pass)
 		}
 		else if (buildType == L"effect")
 		{
-
+			AFXBuild::Build(sect);
 		}
 		else if (buildType == L"font")
 		{

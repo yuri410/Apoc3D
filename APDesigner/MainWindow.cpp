@@ -108,7 +108,7 @@ namespace APDesigner
 		{
 			FileLocateRule rule;
 			LocateCheckPoint pt;
-			pt.AddPath(L"classic_skin.pak");
+			pt.AddPath(L"system.pak\\classic_skin.pak");
 			rule.AddCheckPoint(pt);
 			m_UIskin = new StyleSkin(m_device, rule);
 

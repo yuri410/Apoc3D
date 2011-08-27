@@ -32,7 +32,7 @@ namespace Apoc3D
 {	
 	namespace VFS
 	{
-		/** Contains several paths to look when searching file
+		/** Contains several paths to look when searching file.
 		*/
 		class APAPI LocateCheckPoint
 		{
@@ -101,7 +101,13 @@ namespace Apoc3D
 		//template class APAPI vector<LocateCheckPoint>;
 
 		/** Defines the rule used for locate files in FileSystem.
-		* The rule is a sequence of directory/archive to look for the file.
+			The rule is a sequence of operations, called a check point(LocateCheckPoint), 
+			which contains one location, such as directory/archive used to looks for the file. 
+			The check point first added will always have the highest priority to search the file.
+			The later ones will only get checked if the attempt to search file failed in checking the previous locations.
+
+			Using the locating rule is the only way to locate files inside archives.
+			Simply using DirectorySeprator to indicate archive location in the file path when locating will not work.
 		*/
 		class APAPI FileLocateRule
 		{

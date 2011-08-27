@@ -56,15 +56,15 @@ namespace APBuild
 		StringUtils::ToLowerCase(prof);
 
 		String spf;
-		if (prof == L"SM2.0")
+		if (prof == L"sm2.0")
 		{
 			spf = isVS ? L"vs_2_0" : L"ps_2_0";
 		}
-		else if (prof == L"SM3.0")
+		else if (prof == L"sm3.0")
 		{
 			spf = isVS ? L"vs_3_0" : L"ps_3_0";
 		}
-		else if (prof == L"SM1.0")
+		else if (prof == L"sm1.0")
 		{
 			spf = isVS ? L"vs_1_1" : L"ps_1_1";
 		}
@@ -74,14 +74,14 @@ namespace APBuild
 		ID3DXConstantTable* constants;
 
 		HRESULT hr = D3DXCompileShaderFromFile(src.c_str(), 0, 0, 
-			StringUtils::toString(entryPoint.c_str()).c_str(), StringUtils::toString(profile.c_str()).c_str(), 
+			StringUtils::toString(entryPoint.c_str()).c_str(), StringUtils::toString(spf.c_str()).c_str(), 
 			D3DXSHADER_PACKMATRIX_ROWMAJOR, &shader, &error, &constants);
 
 		if (hr != S_OK)
 		{
-			String errmsg = String(reinterpret_cast<const wchar_t*>(error->GetBufferPointer()), error->GetBufferSize());
+			string errmsg = string(reinterpret_cast<const char*>(error->GetBufferPointer()), error->GetBufferSize());
 
-			std::vector<String> errs = StringUtils::Split(errmsg, L"\n\r");
+			std::vector<String> errs = StringUtils::Split(StringUtils::toWString(errmsg), L"\n\r");
 
 			for (size_t i=0;i<errs.size();i++)
 			{
@@ -132,7 +132,7 @@ namespace APBuild
 		for (ConfigurationSection::SubSectionIterator iter = s->SubSectionBegin(); iter != s->SubSectionEnd();iter++)
 		{
 			ConfigurationSection* ps = iter->second;
-			EffectParameter ep(ps->getAttribute(L"Name"));
+			EffectParameter ep(ps->getName());
 			
 			String usage = ps->getAttribute(L"Usage");
 			ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
@@ -150,7 +150,7 @@ namespace APBuild
 		for (ConfigurationSection::SubSectionIterator iter = s->SubSectionBegin(); iter != s->SubSectionEnd();iter++)
 		{
 			ConfigurationSection* ps = iter->second;
-			EffectParameter ep(ps->getAttribute(L"Name"));
+			EffectParameter ep(ps->getName());
 
 			String usage = ps->getAttribute(L"Usage");
 			ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);

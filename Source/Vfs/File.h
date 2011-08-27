@@ -45,7 +45,7 @@ namespace Apoc3D
 			bool isInArchive() const { return m_isInArchive; }
 			int64 getFileSize() const { return m_fileSize; }
 			const String& getFileName() const { return m_fileName; }
-			const String& getFilePath() const { return m_filePath; }
+			const String& getDirectory() const { return m_filePath; }
 
 
 			static int64 GetFileSize(const String& path);

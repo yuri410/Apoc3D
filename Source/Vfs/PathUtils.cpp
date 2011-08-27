@@ -40,6 +40,7 @@ namespace Apoc3D
 			String result;
 			String fn;
 			SplitFilePath(filePath, fn, result);
+			assert(result != filePath);
 			return result;
 		}
 		String PathUtils::GetFileNameNoExt(const String& filePath)
@@ -76,6 +77,7 @@ namespace Apoc3D
 			String path = filePath;
 			// Replace \ with / first
 			std::replace( path.begin(), path.end(), DirectorySeparator, AltDirectorySeparator );
+
 			// split based on final /
 			size_t i = path.find_last_of(AltDirectorySeparator);
 
@@ -86,8 +88,20 @@ namespace Apoc3D
 			}
 			else
 			{
+				if (i==path.size()-1)
+				{
+					size_t pos = path.find_last_not_of(AltDirectorySeparator);
+					path = path.substr(0, pos+1);
+					i = path.find_last_of(AltDirectorySeparator);
+					if (i == String::npos)
+					{
+						parentDir.clear();
+						fileName = path;
+						return;
+					}
+				}
 				fileName = path.substr(i+1, path.size() - i - 1);
-				parentDir = path.substr(0, i+1);
+				parentDir = path.substr(0, i);
 			}
 
 		}
@@ -97,7 +111,13 @@ namespace Apoc3D
 			SplitFilePath( path, fullName, parentDir );
 			SplitFileNameExtension( fullName, noext, ext );
 		}
-
+		String PathUtils::NormalizePath(const String& filePath)
+		{
+			String result = filePath;
+			// Replace \ with / first
+			std::replace( result.begin(), result.end(), DirectorySeparator, AltDirectorySeparator );
+			return result;
+		}
 		vector<String> PathUtils::Split(const String& path)
 		{
 			String str = path;
@@ -186,7 +206,7 @@ namespace Apoc3D
 			wchar_t ch = path1[len1 - 1];
 			if (((ch != DirectorySeparator) && (ch != AltDirectorySeparator)))//&& (ch != VolumeSeparatorChar)
 			{
-				return (path1 + DirectorySeparator + path2);
+				return (path1 + AltDirectorySeparator + path2);
 			}
 			return (path1 + path2);
 		}

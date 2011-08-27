@@ -93,6 +93,28 @@ namespace Apoc3D
 
 			}
 
+			void AutomaticEffect::Setup(Material* mtrl, const RenderOperation& rop)
+			{
+
+			}
+			void AutomaticEffect::BeginPass(int passId)
+			{
+
+			}
+			void AutomaticEffect::EndPass()
+			{
+
+			}
+
+			int AutomaticEffect::begin()
+			{
+				return 1;
+			}
+			void AutomaticEffect::end()
+			{
+
+			}
+
 		};
 	}
 

@@ -325,7 +325,7 @@ namespace APDesigner
 			case PRJITEM_Effect:
 				{
 					ProjectResEffect* eff = static_cast<ProjectResEffect*>(data);
-					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"effects_file"));
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_effects_file"));
 					newNode->UserData = items[i];
 
 
@@ -342,7 +342,7 @@ namespace APDesigner
 			case PRJITEM_Font:
 				{
 					ProjectResFont* fnt = static_cast<ProjectResFont*>(data);
-					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"new_document"));
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_new_document"));
 					newNode->UserData = items[i];
 
 

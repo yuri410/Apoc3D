@@ -168,17 +168,23 @@ namespace Apoc3D
 
 				}
 
+				String rel;
 				// find the root archive if the path is a archive pack
 				while (!PathUtils::ComparePath( fullPath, m_workingDirs[i]))
 				{
 					if (File::FileExists(fullPath))
 					{
-						result.push_back(L"");//PathUtils::Combine(m_workingDirs[i], path));
+						// store the rel sub dir
+						result.push_back(rel);//PathUtils::Combine(m_workingDirs[i], path));
+
 						archivePath.push_back(fullPath);
 						break;
 					}
-					fullPath = PathUtils::GetDirectory(fullPath);
-
+					
+					
+					String temp;
+					PathUtils::SplitFilePath(fullPath, temp, fullPath);
+					rel = PathUtils::Combine(temp, rel);
 				}
 
 			}
@@ -195,7 +201,9 @@ namespace Apoc3D
 			}
 			FileLocation* fl = Locate(filePath, rule);
 			res = CreateArchive(fl);
-			m_openedPack.insert(pair<String, Archive*>(res->getFilePath(), res));
+			m_openedPack.insert(pair<String, Archive*>(
+				PathUtils::Combine(PathUtils::NormalizePath(res->getDirectory()), res->getFileName()),
+				res));
 			return res;
 		}
 
@@ -244,7 +252,7 @@ namespace Apoc3D
 						//try
 						{
 //#if !XBOX
-							vector<String> locs = PathUtils::Split(filePath);
+							vector<String> locs = PathUtils::Split(PathUtils::Combine(checkPt.GetPath(j), filePath));
 //#else
 							//vector<String> locs = StringUtils::Split(filePath, String(PathUtils::DirSepCharArray, 1));
 							//vector<String> locs2 = new List<string>(locs.Length);
@@ -264,6 +272,11 @@ namespace Apoc3D
 								String sb;
 
 								Archive* entry = 0;
+								if (!IsOpened(arcPath, &entry))
+								{
+									entry = CreateArchive(arcPath);
+									m_openedPack.insert(pair<String, Archive*>(PathUtils::NormalizePath(arcPath), entry));
+								}
 								Archive* parent;
 
 								bool found = true;
@@ -293,7 +306,7 @@ namespace Apoc3D
 											{
 												entry = CreateArchive(
 													new FileLocation(parent, PathUtils::Combine(arcPath, sb), entStm));
-												m_openedPack.insert(pair<String, Archive*>(entry->getFilePath(), entry));
+												m_openedPack.insert(pair<String, Archive*>(PathUtils::NormalizePath(arcPath), entry));
 											}
 											else
 											{
@@ -307,7 +320,7 @@ namespace Apoc3D
 											if (File::FileExists(arc))
 											{
 												entry = CreateArchive(arc);
-												m_openedPack.insert(pair<String, Archive*>(entry->getFilePath(), entry));
+												m_openedPack.insert(pair<String, Archive*>(PathUtils::NormalizePath(arc), entry));
 											}
 											else
 											{
@@ -334,7 +347,7 @@ namespace Apoc3D
 									if (File::FileExists(arcPath))
 									{
 										entry = CreateArchive(arcPath);
-										m_openedPack.insert(pair<String, Archive*>(entry->getFilePath(), entry));
+										m_openedPack.insert(pair<String, Archive*>(PathUtils::NormalizePath(arcPath), entry));
 									}
 								}
 								if (entry)

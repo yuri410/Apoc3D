@@ -47,6 +47,8 @@ namespace Apoc3D
 			static String GetFileNameNoExt(const String& filePath);
 			static String GetFileName(const String& filePath);
 
+			static String NormalizePath(const String& filePath);
+
 			static void SplitFileNameExtension(const String& fileName, String& noext, String& ext);
 			static void SplitFilePath(const String& path, String& fileName, String& parentDir);
 			static void SplitFilePathNameExtension(const String& path, String& parentDir, String& noext, String& ext);

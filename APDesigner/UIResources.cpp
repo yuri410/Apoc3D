@@ -17,7 +17,12 @@ namespace APDesigner
 
 	void UIResources::Initialize(RenderDevice* device)
 	{
-		Archive* arc = FileSystem::getSingleton().LocateArchive(L"apdgui.pak", FileLocateRule::Default);
+		FileLocateRule rule;
+		LocateCheckPoint pt;
+		pt.AddPath(L"system.pak");
+		rule.AddCheckPoint(pt);
+
+		Archive* arc = FileSystem::getSingleton().LocateArchive(L"apdgui.pak", rule);
 		int count = arc->getFileCount();
 		
 		m_maps = new FastMap<String, Texture*>(count, IBuiltInEqualityComparer<String>::Default);
@@ -27,7 +32,7 @@ namespace APDesigner
 			String name = arc->GetEntryName(i);
 			Stream* strm = arc->GetEntryStream(name);
 			
-			FileLocation* fl = new FileLocation(arc, PathUtils::Combine(arc->getFilePath(), name), strm);
+			FileLocation* fl = new FileLocation(arc, PathUtils::Combine(arc->getDirectory(), name), strm);
 
 			m_maps->Add(PathUtils::GetFileNameNoExt(name), TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false));
 		}
