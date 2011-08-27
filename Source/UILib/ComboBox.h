@@ -58,7 +58,7 @@ namespace Apoc3D
 			void setSelectedIndex(int v) const;
 			void SetSelectedByName(const String& name);
 
-			UIEventHandler eventSelectionChanged() { return m_eSelectionChanged; }
+			UIEventHandler& eventSelectionChanged() { return m_eSelectionChanged; }
 
 		private:
 			TextBox* m_textbox;

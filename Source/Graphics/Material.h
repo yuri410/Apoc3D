@@ -154,6 +154,8 @@ namespace Apoc3D
 			Material(RenderDevice* device);
 			~Material(void);
 
+			void Reload();
+
 		};
 	};
 };

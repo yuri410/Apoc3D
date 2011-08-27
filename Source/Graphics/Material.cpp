@@ -275,5 +275,16 @@ namespace Apoc3D
 
 			return data.Save();
 		}
+
+		void Material::Reload()
+		{
+			for (int i = 0; i < MaxTextures; i++)
+			{
+				if (m_texDirty[i])
+				{
+					LoadTexture(i);
+				}
+			}
+		}
 	}
 };

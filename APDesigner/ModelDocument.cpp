@@ -43,6 +43,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/RenderStateManager.h"
 #include "Graphics/RenderSystem/RenderTarget.h"
 #include "Graphics/RenderSystem/Sprite.h"
+#include "Graphics/EffectSystem/EffectManager.h"
 #include "Graphics/ModelManager.h"
 #include "Graphics/Material.h"
 #include "Graphics/Model.h"
@@ -156,9 +157,6 @@ namespace APDesigner
 			m_labels.Add(lbl);
 
 			List<String> items;
-			items.Add(L"0001");items.Add(L"0002");items.Add(L"0003");items.Add(L"0004");
-			items.Add(L"0005");items.Add(L"0006");items.Add(L"0007");items.Add(L"0008");
-			items.Add(L"0009");items.Add(L"0010");items.Add(L"0011");items.Add(L"0012");
 			m_cbMesh = new ComboBox(Point(21+522+100, 107), 200, items);
 			m_cbMesh->SetSkin(window->getUISkin());
 			m_cbMesh->eventSelectionChanged().bind(this, &ModelDocument::CBMesh_SelectionChanged);
@@ -350,6 +348,7 @@ namespace APDesigner
 			m_pbPassFlag->SetSkin(window->getUISkin());
 			//m_pbPassFlag->Size.Y = getDocumentForm()->getFontRef()->getLineHeight();
 			m_pbPassFlag->Size.X = 256;
+			m_pbPassFlag->eventPictureDraw().bind(this, &ModelDocument::PassFlags_Draw);
 
 			m_btnPassFlag = new Button(Point(sx+100+300, sy), L"Edit");
 			m_btnPassFlag->SetSkin(window->getUISkin());
@@ -450,6 +449,7 @@ namespace APDesigner
 		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData,true), m_animData);
 		m_object.setmdl(m_model);
 		
+		
 		//m_selectedMeshIndex = m_modelSData->getEntities().getCount() > 0 ? 0 : -1;
 		//if (m_selectedMeshIndex!=-1)
 		//{
@@ -534,6 +534,18 @@ namespace APDesigner
 
 		Document::Initialize(device);
 
+
+		m_cbMesh->getItems().Clear();
+		m_cbMeshPart->getItems().Clear();
+		m_cbSubMtrl->getItems().Clear();
+
+		{
+			const FastList<Mesh*> ents = m_modelSData->getEntities();
+			for (int i=0;i<ents.getCount();i++)
+			{
+				m_cbMesh->getItems().Add(L"[Mesh]" + ents[i]->getName());
+			}
+		}
 	}
 	void ModelDocument::Update(const GameTime* const time)
 	{
@@ -624,9 +636,9 @@ namespace APDesigner
 				for (int i=0;i<64;i++)
 				{
 					Apoc3D::Math::Rectangle dr(*dstRect);
-					dr.X += (63-i) * CX;
+					dr.X += i * CX;
 					dr.Width = CX;
-					sprite->Draw(getDocumentForm()->getSkin()->WhitePixelTexture, dr, 0, CV_Red);
+					sprite->Draw(getDocumentForm()->getSkin()->WhitePixelTexture, dr, 0, (flag & 1) ? CV_Red : CV_White);
 					flag = flag>>1;
 				}
 			}
@@ -648,7 +660,9 @@ namespace APDesigner
 	void ModelDocument::CBMesh_SelectionChanged(Control* ctrl)
 	{
 		m_cbMeshPart->getItems().Clear();
+		m_cbMeshPart->setSelectedIndex(-1);
 		m_cbSubMtrl->getItems().Clear();
+		m_cbSubMtrl->setSelectedIndex(-1);
 
 		const FastList<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
@@ -665,6 +679,8 @@ namespace APDesigner
 	void ModelDocument::CBMeshPart_SelectionChanged(Control* ctrl)
 	{
 		m_cbSubMtrl->getItems().Clear();
+		m_cbSubMtrl->setSelectedIndex(-1);
+
 		const FastList<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx!=-1)
@@ -813,6 +829,7 @@ namespace APDesigner
 						m_cbCull->getItems()[m_cbCull->getSelectedIndex()]);
 				}
 				
+				mtrl->Reload();
 			}
 		}
 	}
@@ -932,7 +949,7 @@ namespace APDesigner
 		m_form->Position.X /= 2;
 		m_form->Position.Y /= 2;
 		m_form->SetSkin(window->getUISkin());
-		
+		m_form->eventClosed().bind(this, &ModelDocument::PassFlagDialog::Form_Closed);
 		int ofsX = 10;
 		int ofsY = 27;
 		int counter = 0;
@@ -990,7 +1007,11 @@ namespace APDesigner
 				passFlags |= (uint64)1<<i;
 			}
 			//passFlags = passFlags << (uint)1;
+			m_mtrl->getPassEffectName(i) = m_tbTable[i]->Text;
+			m_mtrl->setPassEffect(i, EffectManager::getSingleton().getEffect(m_mtrl->getPassEffectName(i)));
 		}
+		if (!passFlags)
+			passFlags = 1;
 		m_mtrl->setPassFlags(passFlags);
 		m_mtrl = 0;
 	}

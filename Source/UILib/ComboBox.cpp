@@ -110,12 +110,13 @@ namespace Apoc3D
 		void ComboBox::ListBox_OnPress(Control* ctrl) {  }
 		void ComboBox::ListBox_SelectionChanged(Control* ctrl)
 		{
-			const String& previousItem = m_textbox->Text;
+			//String previousItem = m_textbox->Text;
+			//int lastIndex = m_listBox->getSelectedIndex();
 			if (m_listBox->getSelectedIndex()!=-1)
 			{
 				m_textbox->Text = m_listBox->getItems()[m_listBox->getSelectedIndex()];
 
-				if (m_textbox->Text != previousItem && !m_eSelectionChanged.empty())
+				if (!m_eSelectionChanged.empty())
 				{
 					m_eSelectionChanged(this);
 				}
