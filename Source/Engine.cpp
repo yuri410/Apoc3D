@@ -122,8 +122,6 @@ namespace Apoc3D
 		ModelManager::Initialize();
 		
 		FontManager::Initialize();
-
-		
 	}
 	void Engine::Shutdown()
 	{

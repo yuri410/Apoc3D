@@ -151,8 +151,8 @@ namespace Apoc3D
 
 
 				bw3 = data->AddEntry(TAG_3_ShaderCodeTag);
-				bw->Write(VSCode, VSLength);
-				bw->Write(PSCode, PSLength);
+				bw3->Write(VSCode, VSLength);
+				bw3->Write(PSCode, PSLength);
 				bw3->Close();
 				delete bw3;
 

@@ -118,6 +118,7 @@ namespace APBuild
 
 		EffectData data;
 		data.Name = config.Name;
+		StringUtils::ToLowerCase(config.Profile);
 		if (config.Profile == L"sm2.0")
 		{
 			data.MajorVer = 2;

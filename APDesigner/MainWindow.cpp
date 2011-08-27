@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "Graphics/RenderSystem/Sprite.h"
+#include "Graphics/EffectSystem/EffectManager.h"
 #include "UILib/StyleSkin.h"
 #include "UILib/FontManager.h"
 #include "UILib/Control.h"
@@ -59,6 +60,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "CommonDialog/FileDialog.h"
 #include "BuildService/BuildService.h"
 
+using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Input;
 using namespace Apoc3D::VFS;
 
@@ -104,6 +106,15 @@ namespace APDesigner
 
 	void MainWindow::Load()
 	{
+		{
+			FileLocateRule rule;
+			LocateCheckPoint pt;
+			pt.AddPath(L"system.pak\\effects.pak");
+			rule.AddCheckPoint(pt);
+			FileLocation* fl = FileSystem::getSingleton().Locate(L"standard.afx", rule);
+			EffectManager::getSingleton().LoadEffect(m_device, fl);
+		}
+
 		UIResources::Initialize(m_device);
 		{
 			FileLocateRule rule;
