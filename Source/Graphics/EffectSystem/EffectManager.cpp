@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "EffectManager.h"
+#include "Effect.h"
 #include "Core/Logging.h"
 
 SINGLETON_DECL(Apoc3D::Graphics::EffectSystem::EffectManager);
@@ -48,6 +49,13 @@ namespace Apoc3D
 				LogManager::getSingleton().Write(LOG_Graphics, 
 					L"EffectManager: Attempted to get effect '" + name + L"' which does not exist.", LOGLVL_Warning);
 				return 0;
+			}
+
+			void EffectManager::LoadEffect(RenderDevice* device, const ResourceLocation* rl)
+			{
+				AutomaticEffect* effect = new AutomaticEffect(device, rl);
+
+
 			}
 		}
 	}

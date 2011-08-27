@@ -41,7 +41,16 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			D3D9PixelShader::D3D9PixelShader(D3D9RenderDevice* device, const byte* byteCode)
+				: PixelShader(device), m_device(device)
+			{
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->CreatePixelShader(reinterpret_cast<const DWORD*>(byteCode), &m_shader);
+				assert(SUCCEEDED(hr));
 
+				m_constantTable = new ConstantTable(reinterpret_cast<const DWORD*>(byteCode));
+
+			}
 			D3D9PixelShader::D3D9PixelShader(D3D9RenderDevice* device, const ResourceLocation* rl)
 				: PixelShader(device), m_device(device)
 			{

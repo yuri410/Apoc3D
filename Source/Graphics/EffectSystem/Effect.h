@@ -55,17 +55,22 @@ namespace Apoc3D
 				virtual void BeginPass(int passId) = 0;
 				virtual void EndPass() = 0;
 
+				bool IsUnsupported() const { return m_isUnsupported; }
 				const String& getName() const { return m_name; }
-			protected:
+			protected:				
 				virtual int begin() = 0;
 				virtual void end() = 0;
 
 				static VertexShader* LoadVertexShader(RenderDevice* rs, const ResourceLocation* vs);
 				static PixelShader* LoadPixelShader(RenderDevice* rs, const ResourceLocation* ps);
 				static void LoadEffect(RenderDevice* rs, const ResourceLocation* rl, VertexShader*& vs, PixelShader*& ps);
+
+				bool m_isUnsupported;
+
 			private:
 				String m_name;
 				bool m_begun;
+
 			};
 
 			/** AutomaticEffect is a sub set of Effect that create from AFX and only has know usage 
@@ -89,7 +94,11 @@ namespace Apoc3D
 				virtual int begin();
 				virtual void end();
 			private:
+				VertexShader* m_vertexShader;
+				PixelShader* m_pixelShader;
+
 				List<EffectParameter> m_parameters;
+
 			};
 
 		};

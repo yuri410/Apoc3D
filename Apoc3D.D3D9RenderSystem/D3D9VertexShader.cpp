@@ -39,7 +39,15 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			D3D9VertexShader::D3D9VertexShader(D3D9RenderDevice* device, const byte* byteCode)
+				: VertexShader(device), m_device(device)
+			{
+				D3DDevice* dev = m_device->getDevice();
+				HRESULT hr = dev->CreateVertexShader(reinterpret_cast<const DWORD*>(byteCode), &m_shader);
+				assert(SUCCEEDED(hr));
 
+				m_constantTable = new ConstantTable(reinterpret_cast<const DWORD*>(byteCode));
+			}
 			D3D9VertexShader::D3D9VertexShader(D3D9RenderDevice* device, const ResourceLocation* rl)
 				: VertexShader(device), m_device(device)
 			{

@@ -53,6 +53,8 @@ namespace Apoc3D
 
 			if (id == AfxId_V3)
 			{
+				MajorVer = br->ReadInt32();
+				MinorVer = br->ReadInt32();
 				TaggedDataReader* data = br->ReadTaggedDataBlock();
 
 
@@ -111,12 +113,14 @@ namespace Apoc3D
 		void EffectData::Save(Stream* strm) const
 		{
 			BinaryWriter* bw = new BinaryWriter(strm);
-			bw->Write(AfxId_V3);
+			bw->Write((int32)AfxId_V3);
+			bw->Write((int32)MajorVer);
+			bw->Write((int32)MinorVer);
 
 			{
 				TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
-				data->AddEntry(TAG_3_ParameterCountTag, Parameters.getCount());
+				data->AddEntry(TAG_3_ParameterCountTag, (int32)Parameters.getCount());
 
 
 				for (int i=0;i<Parameters.getCount();i++)

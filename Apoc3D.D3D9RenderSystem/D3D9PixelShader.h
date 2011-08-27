@@ -54,7 +54,7 @@ namespace Apoc3D
 			public:
 				IDirect3DPixelShader9* getD3DPS() const { return m_shader; }
 
-
+				D3D9PixelShader(D3D9RenderDevice* device, const byte* byteCode);
 				D3D9PixelShader(D3D9RenderDevice* device, const ResourceLocation* rl);
 				~D3D9PixelShader();
 

@@ -46,10 +46,13 @@ namespace Apoc3D
 			char* PSCode;
 			int VSLength;
 			int PSLength;
+			
+			int MajorVer;
+			int MinorVer;
 
 			List<EffectParameter> Parameters;
 
-			EffectData() : VSCode(0), PSCode(0), VSLength(0),PSLength(0) { }
+			EffectData() : VSCode(0), PSCode(0), VSLength(0),PSLength(0),MajorVer(0), MinorVer(0) { }
 			~EffectData() 
 			{
 				if (VSCode) delete[] VSCode; 

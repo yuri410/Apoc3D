@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/Singleton.h"
 
 using namespace Apoc3D::Core;
-
+using namespace Apoc3D::VFS;
 using namespace std;
 
 namespace Apoc3D
@@ -52,6 +52,8 @@ namespace Apoc3D
 
 				bool HasEffect(const String& name) const;
 				Effect* getEffect(const String& name) const;
+
+				void LoadEffect(RenderDevice* device, const ResourceLocation* rl);
 
 				SINGLETON_DECL_HEARDER(EffectManager);
 			};

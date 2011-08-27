@@ -117,7 +117,22 @@ namespace APBuild
 
 
 		EffectData data;
-
+		
+		if (config.Profile == L"sm2.0")
+		{
+			data.MajorVer = 2;
+			data.MinorVer = 0;
+		}
+		else if (config.Profile == L"sm3.0")
+		{
+			data.MajorVer = 4;
+			data.MinorVer = 0;
+		}
+		else if (config.Profile == L"sm1.0")
+		{
+			data.MajorVer = 1;
+			data.MinorVer = 1;
+		}
 
 		if (!CompileShader(config.SrcVSFile, config.EntryPointVS, config.Profile, data.VSCode, data.VSLength, true))
 			return;

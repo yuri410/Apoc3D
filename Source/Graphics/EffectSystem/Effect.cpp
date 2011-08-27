@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "IOLib/Streams.h"
 #include "IOLib/BinaryReader.h"
+#include "IOLib/EffectData.h"
 
 using namespace Apoc3D::IO;
 
@@ -37,7 +38,7 @@ namespace Apoc3D
 		namespace EffectSystem
 		{
 			Effect::Effect(void)
-				: m_begun(false)
+				: m_begun(false), m_isUnsupported(false)
 			{
 			}
 
@@ -82,15 +83,37 @@ namespace Apoc3D
 			/************************************************************************/
 
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
+				: m_vertexShader(0), m_pixelShader(0)
 			{
-				BinaryReader* br = new BinaryReader(rl);
+				EffectData data;
+				data.Load(rl);
+				
+				Capabilities* caps = device->getCapabilities();
+				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
+				{
+					m_isUnsupported = true;
+					return;
+				}
+				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
+				{
+					m_isUnsupported = true;
+					return;
+				}
 
-				br->Close();
+				ObjectFactory* objFac = device->getObjectFactory();
+				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(data.VSCode));
+				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(data.PSCode));
+
+				m_parameters =  data.Parameters;
+				
 			}
 
 			AutomaticEffect::~AutomaticEffect()
 			{
-
+				if (m_vertexShader)
+					delete m_vertexShader;
+				if (m_pixelShader)
+					delete m_pixelShader;
 			}
 
 			void AutomaticEffect::Setup(Material* mtrl, const RenderOperation& rop)
