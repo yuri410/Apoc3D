@@ -46,6 +46,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/ModelManager.h"
 #include "Graphics/Material.h"
 #include "Graphics/Model.h"
+#include "Graphics/Mesh.h"
 #include "Graphics/Camera.h"
 
 #include "Scene/SceneRenderer.h"
@@ -77,7 +78,8 @@ namespace APDesigner
 	ModelDocument::ModelDocument(MainWindow* window, const String& name, const String& file, const String& animationFile)
 		: Document(window), m_filePath(file), m_animPath(animationFile), 
 		m_name(name), m_model(0), m_modelSData(0), m_animData(0),
-		m_distance(7),m_xang(ToRadian(45)),m_yang(ToRadian(45))
+		m_distance(7),m_xang(ToRadian(45)),m_yang(ToRadian(45)),
+		m_selectedMeshIndex(-1), m_selectedMeshPartIndex(-1), m_selectedMtrlKeyframe(0)
 	{
 		
 		m_sceneRenderer = new SceneRenderer(window->getDevice());
@@ -111,6 +113,8 @@ namespace APDesigner
 			m_pbTime = new PictureBox(Point(94, 27), 1);
 			m_pbTime->Size = Point(957, 30);
 			m_pbTime->SetSkin(window->getUISkin());
+
+			m_pbTime->eventPress().bind(this, &ModelDocument::PBTime_Pressed);
 		}
 		{
 			Label* lbl = new Label(Point(21, 68), L"Material\nKeyframe Props", 100);
@@ -158,9 +162,10 @@ namespace APDesigner
 			items.Add(L"0009");items.Add(L"0010");items.Add(L"0011");items.Add(L"0012");
 			m_cbMesh = new ComboBox(Point(21+522+100, 107), 200, items);
 			m_cbMesh->SetSkin(window->getUISkin());
-			m_cbMtrlPart = new ComboBox(Point(21+522+100, 133), 200, items);
-			m_cbMtrlPart->SetSkin(window->getUISkin());
-
+			m_cbMesh->eventSelectionChanged().bind(this, &ModelDocument::CBMesh_SelectionChanged);
+			m_cbMeshPart = new ComboBox(Point(21+522+100, 133), 200, items);
+			m_cbMeshPart->SetSkin(window->getUISkin());
+			m_cbMeshPart->eventSelectionChanged().bind(this, &ModelDocument::CBMeshPart_SelectionChanged);
 
 			m_applyMtrl = new Button(Point(21 + 522+100+220, 159),150, L"Apply Changes");
 			m_applyMtrl->SetSkin(window->getUISkin());
@@ -171,6 +176,7 @@ namespace APDesigner
 			m_labels.Add(lbl);
 			m_cbSubMtrl = new ComboBox(Point(21+522+100, 159), 200, items);
 			m_cbSubMtrl->SetSkin(window->getUISkin());
+			m_cbSubMtrl->eventSelectionChanged().bind(this, &ModelDocument::CBSubMtrl_SelectionChanged);
 
 
 			m_addMtrlFrame = new Button(Point(21 + 522+100+220, 107),150, L"Add Sub Material");
@@ -386,7 +392,7 @@ namespace APDesigner
 		delete m_btnRemoveMKey;
 
 		delete m_cbMesh;
-		delete m_cbMtrlPart;
+		delete m_cbMeshPart;
 		delete m_cbSubMtrl;
 
 		delete m_applyMtrl;
@@ -445,6 +451,11 @@ namespace APDesigner
 		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData,true), m_animData);
 		m_object.setmdl(m_model);
 		
+		//m_selectedMeshIndex = m_modelSData->getEntities().getCount() > 0 ? 0 : -1;
+		//if (m_selectedMeshIndex!=-1)
+		//{
+		//	m_selectedMeshPartIndex = m_modelSData->getEntities()[m_selectedMeshIndex]->getMaterials()->getMaterialCount() > 0 ? 0 : -1;
+		//}
 		//m_texture = TextureManager::getSingleton().CreateUnmanagedInstance(getMainWindow()->getDevice(), fl, false);
 	}
 	void ModelDocument::SaveRes()
@@ -474,7 +485,7 @@ namespace APDesigner
 
 		}
 		{
-			getDocumentForm()->getControls().Add(m_cbMtrlPart);
+			getDocumentForm()->getControls().Add(m_cbMeshPart);
 			getDocumentForm()->getControls().Add(m_cbMesh);
 			getDocumentForm()->getControls().Add(m_cbSubMtrl);
 
@@ -570,7 +581,17 @@ namespace APDesigner
 
 	void ModelDocument::PassButton_Pressed(Control* ctrl)
 	{
-		m_passEditor->ShowModal();
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		if (m_selectedMeshIndex!=-1 && m_selectedMeshIndex < ents.getCount())
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[m_selectedMeshIndex]->getMaterials();
+			if (m_selectedMeshPartIndex !=-1 && (uint)m_selectedMeshPartIndex<mtrls->getMaterialCount())
+			{
+				Material* mtrl = mtrls->getMaterial(m_selectedMeshPartIndex, m_selectedMtrlKeyframe);
+				m_passEditor->ShowModal(mtrl);
+			}
+		}
+		
 	}
 	void ModelDocument::ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
@@ -700,14 +721,123 @@ namespace APDesigner
 	}
 	void ModelDocument::PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
-		for (int i=0;i<MaxScenePass;i++)
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx !=-1)
 		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			if (m_cbMeshPart->getSelectedIndex() !=-1)
+			{
 
+			}
 		}
 	}
 	void ModelDocument::Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx!=-1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			if (m_cbMeshPart->getSelectedIndex() !=-1)
+			{
 
+			}
+		}
+	}
+	void ModelDocument::CBMesh_SelectionChanged(Control* ctrl)
+	{
+		m_cbMeshPart->getItems().Clear();
+		m_cbSubMtrl->getItems().Clear();
+
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx!=-1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			
+			for (int i=0;i<mtrls->getMaterialCount();i++)
+			{
+				m_cbMeshPart->getItems().Add(L"Part(Material Set)" + StringUtils::ToString(i, 4, '0'));
+			}
+		}
+	}
+	void ModelDocument::CBMeshPart_SelectionChanged(Control* ctrl)
+	{
+		m_cbSubMtrl->getItems().Clear();
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx!=-1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			if (partIdx != -1)
+			{
+				for (uint i=0;i<mtrls->getFrameCount(partIdx);i++)
+				{
+					m_cbSubMtrl->getItems().Add(L"Frame(Material)" + StringUtils::ToString(i, 4, '0'));
+				}
+			}
+		}
+	}
+	void ModelDocument::CBSubMtrl_SelectionChanged(Control* ctrl)
+	{
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx!=-1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			int frameIndex = m_cbSubMtrl->getSelectedIndex();
+			if (partIdx != -1 && frameIndex != -1)
+			{
+				DisplayMaterialEditor(mtrls->getMaterial(partIdx, frameIndex));
+			}
+		}
+	}
+	void ModelDocument::PBTime_Pressed(Control* ctrl)
+	{
+
+	}
+	void ModelDocument::DisplayMaterialEditor(Material* mtrl)
+	{
+		if (mtrl)
+		{
+			for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
+			{
+
+			}
+
+			m_cfAmbient->SetValue(mtrl->Ambient);
+			m_cfDiffuse->SetValue(mtrl->Diffuse);
+			m_cfSpecular->SetValue(mtrl->Specular);
+			m_cfEmissive->SetValue(mtrl->Emissive);
+
+			m_tbShinness->Text = StringUtils::ToString(mtrl->Power);
+
+			m_tbTex1->setText(mtrl->getTextureName(0));
+			m_tbTex2->setText(mtrl->getTextureName(1));
+			m_tbTex3->setText(mtrl->getTextureName(2));
+			m_tbTex4->setText(mtrl->getTextureName(3));
+			m_tbTex5->setText(mtrl->getTextureName(4));
+
+			m_tbPriority->setText(StringUtils::ToString(mtrl->getPriority()));
+			m_tbAlphaTest->setText(StringUtils::ToString(mtrl->AlphaReference));
+
+			m_cbDepthTest->setValue(mtrl->DepthTestEnabled);
+			m_cbDepthWrite->setValue(mtrl->DepthWriteEnabled);
+
+			m_cbTransparent->setValue(mtrl->IsBlendTransparent);
+
+			m_cbSrcBlend->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->SourceBlend));
+			m_cbDstBlend->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->DestinationBlend));
+			m_cbBlendFunction->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->BlendFunction));
+			m_cbCull->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->Cull));
+		}
+		else
+		{
+
+		}
 	}
 
 	/************************************************************************/
@@ -783,7 +913,15 @@ namespace APDesigner
 		if (dlg.ShowDialog() == DLGRES_OK)
 		{
 			m_color = dlg.getSelectedColor();
+
+			if (!m_selected.empty())
+				m_selected(this);
 		}
+	}
+
+	void ModelDocument::ColorField::SetValue(const Color4& color)
+	{
+		m_color = color.ToArgb();
 	}
 	/************************************************************************/
 	/*                                                                      */
@@ -798,7 +936,7 @@ namespace APDesigner
 		m_form->Position.X /= 2;
 		m_form->Position.Y /= 2;
 		m_form->SetSkin(window->getUISkin());
-
+		
 		int ofsX = 10;
 		int ofsY = 27;
 		int counter = 0;
@@ -836,8 +974,28 @@ namespace APDesigner
 		}
 	}
 
-	void ModelDocument::PassFlagDialog::ShowModal()
+	void ModelDocument::PassFlagDialog::ShowModal(Material* mtrl)
 	{
+		m_mtrl = mtrl;
+		for (int i=0;i<MaxScenePass;i++)
+		{
+			m_tbTable[i]->Text = mtrl->getPassEffectName(i);
+		}
 		m_form->ShowModal();
+	}
+
+	void ModelDocument::PassFlagDialog::Form_Closed(Control* ctrl)
+	{
+		uint64 passFlags = 0;
+		for (int i=0;i<MaxScenePass;i++)
+		{
+			if (m_tbTable[i]->Text.size())
+			{
+				passFlags |= (uint)1;
+			}
+			passFlags = passFlags << (uint)1;
+		}
+		m_mtrl->setPassFlags(passFlags);
+		m_mtrl = 0;
 	}
 }

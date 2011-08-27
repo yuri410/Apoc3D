@@ -110,6 +110,18 @@ namespace Apoc3D
 			const MaterialCustomParameter* getCustomParameter(const String& usage) const;
 			void AddCustomParameter(const MaterialCustomParameter& value);
 
+			String& getPassEffectName(int index) { return m_effectName[index]; }
+			const String& getTextureName(int index) const { return m_texName[index]; }
+
+			void setTextureName(int index, const String& name)
+			{
+				if (m_texName[index] == name)
+				{
+					m_texName[index] = name; 
+					m_texDirty[index] = true;
+				}
+			}
+
 			Effect* getPassEffect(int index) const { return m_effects[index]; }
 			void setPassEffect(int index, Effect* eff) { m_effects[index] = eff; }
 

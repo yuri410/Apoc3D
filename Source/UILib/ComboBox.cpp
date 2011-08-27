@@ -98,7 +98,15 @@ namespace Apoc3D
 		void ComboBox::setLocked(bool value) const { m_textbox->setLocked(value); }
 		const String& ComboBox::getText() const { return m_textbox->Text; }
 		void ComboBox::setText(const String& value) { m_textbox->Text = value; }
-
+		int ComboBox::getSelectedIndex() const { return m_listBox->getSelectedIndex(); }
+		void ComboBox::setSelectedIndex(int v) const
+		{
+			m_listBox->setSelectedIndex(v);
+		}
+		void ComboBox::SetSelectedByName(const String& name)
+		{
+			m_listBox->SetSelectedByName(name);
+		}
 		void ComboBox::ListBox_OnPress(Control* ctrl) {  }
 		void ComboBox::ListBox_SelectionChanged(Control* ctrl)
 		{

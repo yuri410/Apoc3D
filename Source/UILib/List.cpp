@@ -136,6 +136,9 @@ namespace Apoc3D
 		}
 		void ListBox::Update(const GameTime* const time)
 		{
+			if (m_selectedIndex>=m_items.getCount())
+				m_selectedIndex=-1;
+
 			if (m_vscrollbar && m_vscrollbar->Visible)
 			{
 				m_vscrollbar->Update(time);

@@ -75,6 +75,15 @@ namespace Apoc3D
 
 			int getSelectedIndex() const { return m_selectedIndex; }
 			void setSelectedIndex(int i) { m_selectedIndex = i; }
+			void SetSelectedByName(const String& name)
+			{
+				for (int i=0;i<m_items.getCount();i++)
+					if (m_items[i] == name)
+					{
+						setSelectedIndex(i); 
+						return;
+					}
+			}
 
 			ListBox(const Point& position, int width, int height, const List<String>& items);
 			~ListBox();

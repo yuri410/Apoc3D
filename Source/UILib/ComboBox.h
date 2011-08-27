@@ -54,6 +54,9 @@ namespace Apoc3D
 			void setLocked(bool value) const;
 			const String& getText() const;
 			void setText(const String& value);
+			int getSelectedIndex() const;
+			void setSelectedIndex(int v) const;
+			void SetSelectedByName(const String& name);
 
 			UIEventHandler eventSelectionChanged() { return m_eSelectionChanged; }
 

@@ -96,7 +96,7 @@ namespace Apoc3D
 			String m_title;
 
 			UIEventHandler m_eResized;
-
+			UIEventHandler m_eClosed;
 
 
 			Border* m_border;
@@ -183,6 +183,7 @@ namespace Apoc3D
 			WindowState getState() const { return m_state; }
 
 			UIEventHandler& eventResized() { return m_eResized; }
+			UIEventHandler& eventClosed() { return m_eClosed; }
 
 			Form(BorderStyle border = FBS_Sizable, const String& title = L"");
 			virtual ~Form();

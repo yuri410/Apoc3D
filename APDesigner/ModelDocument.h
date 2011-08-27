@@ -70,15 +70,21 @@ namespace APDesigner
 		public:
 			ColorField(const Point& position, ColorValue defaultColor);
 			~ColorField();
-
+			
 			virtual void Initialize(RenderDevice* device);
 			virtual void Draw(Sprite* sprite);
 			virtual void Update(const GameTime* const time);
+
+			UIEventHandler& eventColorSelected() { return m_selected; }
+
+			void SetValue(const Color4& color);
+			ColorValue GetValue() const { return m_color; }
 		private:
 			Label* m_lblAmbient;
 			PictureBox* m_pbAmbient;
 			Button* m_btnAmbient;
 			ColorValue m_color;
+			UIEventHandler m_selected;
 
 			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 			void Button_Press(Control* ctrl);
@@ -89,15 +95,16 @@ namespace APDesigner
 			PassFlagDialog(MainWindow* window, RenderDevice* device);
 			~PassFlagDialog();
 
-			
-
-			void ShowModal();
+			void ShowModal(Material* mtrl);
 
 		private:
 			
 			Form* m_form;
 			FastList<Label*> m_lblTable;
 			FastList<TextBox*> m_tbTable;
+
+			Material* m_mtrl;
+			void Form_Closed(Control* ctrl);
 		};
 
 		String m_name;
@@ -130,7 +137,7 @@ namespace APDesigner
 		Button* m_btnRemoveMKey;
 
 		ComboBox* m_cbMesh;
-		ComboBox* m_cbMtrlPart;
+		ComboBox* m_cbMeshPart;
 		ComboBox* m_cbSubMtrl;
 
 		Button* m_applyMtrl;
@@ -138,13 +145,12 @@ namespace APDesigner
 		Button* m_removeMtrlFrame;
 
 
+		// material specific parameters
 
 		ColorField* m_cfAmbient;
 		ColorField* m_cfDiffuse;
 		ColorField* m_cfSpecular;
 		ColorField* m_cfEmissive;
-
-
 		TextBox* m_tbShinness;
 		
 
@@ -159,9 +165,8 @@ namespace APDesigner
 		TextBox* m_tbTex3;
 		TextBox* m_tbTex4;
 		TextBox* m_tbTex5;
-		//TextBox* m_tbTex6;
 
-		ListBox* m_customParameterList;
+		//ListBox* m_customParameterList;
 
 		TextBox* m_tbPriority;
 		TextBox* m_tbAlphaTest;
@@ -180,9 +185,16 @@ namespace APDesigner
 		PassFlagDialog* m_passEditor;
 
 		void PassButton_Pressed(Control* ctrl);
+		void CBMesh_SelectionChanged(Control* ctrl);
+		void CBMeshPart_SelectionChanged(Control* ctrl);
+		void CBSubMtrl_SelectionChanged(Control* ctrl);
+		void PBTime_Pressed(Control* ctrl);
+
 		void ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+
+		void DisplayMaterialEditor(Material* mtrl);
 	};
 }
 

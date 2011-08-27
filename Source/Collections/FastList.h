@@ -217,6 +217,8 @@ namespace Apoc3D
 
 			T& operator [](int32 i) const
 			{
+				assert(i>=0);
+				assert(i<m_internalPointer);
 				return m_elements[i];
 			}
 		};

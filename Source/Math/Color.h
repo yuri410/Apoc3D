@@ -133,7 +133,7 @@ namespace Apoc3D
 
 			/* Converts the color into a packed integer.
 			*/
-			ColorValue ToArgb()
+			ColorValue ToArgb() const
 			{
 				uint a = static_cast<uint>(Alpha * 255.0f);
 				uint r = static_cast<uint>(Red * 255.0f);
@@ -148,7 +148,7 @@ namespace Apoc3D
 
 			/* Converts the color into a vector.
 			*/
-			Vector3 ToVector()
+			Vector3 ToVector() const
 			{
 				return Vector3Utils::LDVector(Red, Green, Blue);
 			}

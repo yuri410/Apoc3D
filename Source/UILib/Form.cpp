@@ -113,6 +113,10 @@ namespace Apoc3D
 				UIRoot::setTopMostForm(0);
 
 			Hide();
+			if (!m_eClosed.empty())
+			{
+				m_eClosed(this);
+			}
 		}
 		void Form::Focus()
 		{
