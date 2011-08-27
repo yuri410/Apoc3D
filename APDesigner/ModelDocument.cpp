@@ -746,8 +746,18 @@ namespace APDesigner
 
 	void ModelDocument::BtnAddMtrl_Pressed(Control* ctrl)
 	{
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx != -1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			int partIdx = m_cbMeshPart->getSelectedIndex();
 
-		CBMeshPart_SelectionChanged(ctrl);
+			Material* newMtrl = new Material(*mtrls->getMaterial(partIdx, mtrls->getFrameCount(partIdx)-1));
+			mtrls->AddFrame(newMtrl, partIdx);
+
+			CBMeshPart_SelectionChanged(ctrl);
+		}
 	}
 	void ModelDocument::BtnApplyMtrl_Pressed(Control* ctrl)
 	{
@@ -809,8 +819,20 @@ namespace APDesigner
 	}
 	void ModelDocument::BtnRemoveMtrl_Pressed(Control* ctrl)
 	{
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx != -1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			int partIdx = m_cbMeshPart->getSelectedIndex();
 
-		CBMeshPart_SelectionChanged(ctrl);
+			int frameIndex = m_cbSubMtrl->getSelectedIndex();
+			if (partIdx != -1 && frameIndex != -1)
+			{
+				
+				CBMeshPart_SelectionChanged(ctrl);
+			}
+		}
 	}
 
 	/************************************************************************/

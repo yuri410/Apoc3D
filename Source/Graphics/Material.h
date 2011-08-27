@@ -150,6 +150,7 @@ namespace Apoc3D
 			void Load(TaggedDataReader* data);
 			TaggedDataWriter* Save();
 
+			Material(const Material& m);
 			Material(RenderDevice* device);
 			~Material(void);
 

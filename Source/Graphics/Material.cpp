@@ -57,6 +57,29 @@ namespace Apoc3D
 			memset(m_effects, 0, sizeof(m_effects));
 		}
 
+		Material::Material(const Material& m)
+			: m_device(m.m_device), 
+			m_passFlags(m.m_passFlags), m_priority(m.m_priority),
+			BlendFunction(m.BlendFunction), IsBlendTransparent(m.IsBlendTransparent),
+			SourceBlend(m.SourceBlend), DestinationBlend(m.DestinationBlend),
+			AlphaTestEnabled(m.AlphaTestEnabled),
+			DepthWriteEnabled(m.DepthWriteEnabled), DepthTestEnabled(m.DepthTestEnabled),
+			Ambient(m.Ambient), Diffuse(m.Diffuse), Specular(m.Specular), Emissive(m.Emissive), Power(m.Power),
+			Cull(m.Cull)
+		{
+
+
+			for (int i=0;i<MaxScenePass;i++)
+			{
+				m_effectName[i] = m.m_effectName[i];
+				LoadEffect(i);
+			}
+			for (int i=0;i<MaxTextures;i++)
+			{
+				m_texName[i] = m.m_texName[i];
+				LoadTexture(i);
+			}
+		}
 
 		Material::~Material(void)
 		{
