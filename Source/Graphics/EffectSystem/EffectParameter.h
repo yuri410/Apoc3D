@@ -32,6 +32,12 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
+			enum ShaderType
+			{
+				SHDT_Vertex,
+				SHDT_Pixel
+			};
+
 			/** Defines typical usage of a effect parameters.
 				When the engine auto bind a parameter, it first checks the parameter's usage to
 				find the corresponding data, then to assign to the param. 
@@ -42,14 +48,63 @@ namespace Apoc3D
 			*/
 			enum EffectParamUsage
 			{
-				EPUSAGE_Unknown,
-				EPUSAGE_AmbientColor,
-				EPUSAGE_DiffuseColor,
-				EPUSAGE_EmissiveColor,
-				EPUSAGE_SpecularColor,
-				EPUSAGE_Power,
-				EPUSAGE_LightDir,
-				EPUSAGE_ViewPos,
+				/** The unknown usage means the binding for typical usage is unavailable, 
+					the engine will check custom usage.
+				*/
+				EPUSAGE_Unknown=0,
+				/** mc4_ambient
+				*/
+				EPUSAGE_MtrlC4_Ambient,
+				/** mc4_diffuse
+				*/
+				EPUSAGE_MtrlC4_Diffuse,
+				/** mc4_emissive
+				*/
+				EPUSAGE_MtrlC4_Emissive,
+				/** mc4_specular
+				*/
+				EPUSAGE_MtrlC4_Specular,
+				/** mc_power
+				*/
+				EPUSAGE_MtrlC_Power,
+				
+				/** tex_0
+				*/
+				EPUSAGE_Tex0=200,
+				EPUSAGE_Tex1,
+				EPUSAGE_Tex2,
+				EPUSAGE_Tex3,
+				EPUSAGE_Tex4,
+				EPUSAGE_Tex5,
+				EPUSAGE_Tex6,
+				EPUSAGE_Tex7,
+				EPUSAGE_Tex8,
+				EPUSAGE_Tex9,
+				EPUSAGE_Tex10,
+				EPUSAGE_Tex11,
+				EPUSAGE_Tex12,
+				EPUSAGE_Tex13,
+				EPUSAGE_Tex14,
+				EPUSAGE_Tex15,
+				EPUSAGE_Tex16,
+
+				/** lv3_lightDir
+				*/
+				EPUSAGE_LV3_LightDir=500,
+				/** lc4_ambient
+				*/
+				EPUSAGE_LC3_Ambient,
+				/** lc4_diffuse
+				*/
+				EPUSAGE_LC3_Diffuse,
+				/** lc4_specular
+				*/
+				EPUSAGE_LC3_Specular,
+
+				/** pv3_viewPos
+				*/
+				EPUSAGE_PV3_ViewPos=1000,
+
 			};
 
 			/** Include all scene render resources such as the current camera, lighting that could 
@@ -79,7 +134,7 @@ namespace Apoc3D
 				String CustomUsage;
 				bool IsCustomUsage;
 
-				
+				ShaderType ProgramType;
 
 				EffectParameter() { }
 				EffectParameter(const String& name);

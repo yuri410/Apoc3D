@@ -48,25 +48,114 @@ namespace Apoc3D
 				String v = val;
 				StringUtils::ToLowerCase(v);
 
-				if (v == L"ambient_color")
+				if (v == L"mc4_ambient")
 				{
-					return EPUSAGE_AmbientColor;
+					return EPUSAGE_MtrlC4_Ambient;
 				}
-				else if (v == L"diffuse_color")
+				else if (v == L"mc4_diffuse")
 				{
-					return EPUSAGE_DiffuseColor;
+					return EPUSAGE_MtrlC4_Diffuse;
 				}
-				else if (v == L"emissive_color")
+				else if (v == L"mc4_emissive")
 				{
-					return EPUSAGE_EmissiveColor;
+					return EPUSAGE_MtrlC4_Emissive;
 				}
-				else if (v == L"specular_color")
+				else if (v == L"mc4_specular")
 				{
-					return EPUSAGE_SpecularColor;
+					return EPUSAGE_MtrlC4_Specular;
 				}
-				else if (v == L"power_color")
+				else if (v == L"mc_power")
 				{
-					return EPUSAGE_Power;
+					return EPUSAGE_MtrlC_Power;
+				}
+				
+				
+				else if (v == L"tex_0")
+				{
+					return EPUSAGE_Tex0;
+				}
+				else if (v == L"tex_1")
+				{
+					return EPUSAGE_Tex1;
+				}
+				else if (v == L"tex_2")
+				{
+					return EPUSAGE_Tex2;
+				}
+				else if (v == L"tex_3")
+				{
+					return EPUSAGE_Tex3;
+				}
+				else if (v == L"tex_4")
+				{
+					return EPUSAGE_Tex4;
+				}
+				else if (v == L"tex_5")
+				{
+					return EPUSAGE_Tex5;
+				}
+				else if (v == L"tex_6")
+				{
+					return EPUSAGE_Tex6;
+				}
+				else if (v == L"tex_7")
+				{
+					return EPUSAGE_Tex7;
+				}
+				else if (v == L"tex_8")
+				{
+					return EPUSAGE_Tex8;
+				}
+				else if (v == L"tex_9")
+				{
+					return EPUSAGE_Tex9;
+				}
+				else if (v == L"tex_10")
+				{
+					return EPUSAGE_Tex10;
+				}
+				else if (v == L"tex_11")
+				{
+					return EPUSAGE_Tex11;
+				}
+				else if (v == L"tex_12")
+				{
+					return EPUSAGE_Tex12;
+				}
+				else if (v == L"tex_13")
+				{
+					return EPUSAGE_Tex13;
+				}
+				else if (v == L"tex_14")
+				{
+					return EPUSAGE_Tex14;
+				}
+				else if (v == L"tex_15")
+				{
+					return EPUSAGE_Tex15;
+				}
+
+
+
+				else if (v==L"lv3_lightDir")
+				{
+					return EPUSAGE_LV3_LightDir;
+				}
+				else if (v==L"lc4_ambient")
+				{
+					return EPUSAGE_LC3_Ambient;
+				}
+				else if (v==L"lc4_diffuse")
+				{
+					return EPUSAGE_LC3_Diffuse;
+				}
+				else if (v==L"lc4_specular")
+				{
+					return EPUSAGE_LC3_Specular;
+				}
+				else if (v==L"pv3_viewPos")
+				{
+					return EPUSAGE_PV3_ViewPos;
 				}
 				return EPUSAGE_Unknown;
 			}

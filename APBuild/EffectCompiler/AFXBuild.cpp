@@ -50,8 +50,25 @@ using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
-	void CompileShader(const String& src, const String& entryPoint, const String& profile, char*& dest, int& size)
+	bool CompileShader(const String& src, const String& entryPoint, const String& profile, char*& dest, int& size, bool isVS)
 	{
+		String prof = profile;
+		StringUtils::ToLowerCase(prof);
+
+		String spf;
+		if (prof == L"SM2.0")
+		{
+			spf = isVS ? L"vs_2_0" : L"ps_2_0";
+		}
+		else if (prof == L"SM3.0")
+		{
+			spf = isVS ? L"vs_3_0" : L"ps_3_0";
+		}
+		else if (prof == L"SM1.0")
+		{
+			spf = isVS ? L"vs_1_1" : L"ps_1_1";
+		}
+
 		ID3DXBuffer* error;
 		ID3DXBuffer* shader;
 		ID3DXConstantTable* constants;
@@ -71,7 +88,7 @@ namespace APBuild
 				CompileLog::WriteError(errs[i], src);
 			}
 			error->Release();
-			return;
+			return false;
 		}
 		constants->Release();
 
@@ -79,7 +96,7 @@ namespace APBuild
 		dest = new char[size];
 
 		memcpy(dest, shader->GetBufferPointer(), size);
-
+		return true;
 	}
 	void AFXBuild::Build(const ConfigurationSection* sect)
 	{
@@ -102,25 +119,47 @@ namespace APBuild
 		EffectData data;
 
 
-		CompileShader(config.SrcVSFile, config.EntryPointVS, config.Profile, data.VSCode, data.VSLength);
-		CompileShader(config.SrcPSFile, config.EntryPointPS, config.Profile, data.PSCode, data.PSLength);
+		if (!CompileShader(config.SrcVSFile, config.EntryPointVS, config.Profile, data.VSCode, data.VSLength, true))
+			return;
+		if (!CompileShader(config.SrcPSFile, config.EntryPointPS, config.Profile, data.PSCode, data.PSLength, false))
+			return;
 
 		FileLocation* fl = new FileLocation(config.PListFile);
 		XMLConfiguration* plist = new XMLConfiguration(fl);
 
-		for (Configuration::Iterator iter = plist->begin(); iter != plist->end();iter++)
+		ConfigurationSection* s = plist->get(L"VS");
+
+		for (ConfigurationSection::SubSectionIterator iter = s->SubSectionBegin(); iter != s->SubSectionEnd();iter++)
 		{
-			ConfigurationSection* s = iter->second;
-			EffectParameter ep(s->getAttribute(L"Name"));
+			ConfigurationSection* ps = iter->second;
+			EffectParameter ep(ps->getAttribute(L"Name"));
 			
-			String usage = s->getAttribute(L"Usage");
+			String usage = ps->getAttribute(L"Usage");
 			ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
 			if (ep.TypicalUsage == EPUSAGE_Unknown)
 			{
 				ep.IsCustomUsage = true;
 				ep.CustomUsage = usage;
 			}
+			ep.ProgramType = SHDT_Vertex;
+			data.Parameters.Add(ep);
+		}
 
+		s = plist->get(L"PS");
+
+		for (ConfigurationSection::SubSectionIterator iter = s->SubSectionBegin(); iter != s->SubSectionEnd();iter++)
+		{
+			ConfigurationSection* ps = iter->second;
+			EffectParameter ep(ps->getAttribute(L"Name"));
+
+			String usage = ps->getAttribute(L"Usage");
+			ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
+			if (ep.TypicalUsage == EPUSAGE_Unknown)
+			{
+				ep.IsCustomUsage = true;
+				ep.CustomUsage = usage;
+			}
+			ep.ProgramType = SHDT_Pixel;
 			data.Parameters.Add(ep);
 		}
 

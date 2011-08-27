@@ -74,7 +74,7 @@ namespace Apoc3D
 					params.TypicalUsage = static_cast<EffectParamUsage>(br2->ReadUInt32());
 					params.IsCustomUsage = br->ReadBoolean();
 					params.CustomUsage = br->ReadString();
-
+					params.ProgramType = static_cast<ShaderType>(br->ReadInt32());
 					Parameters.Add(name);
 
 					br2->Close();
@@ -131,7 +131,7 @@ namespace Apoc3D
 					bw2->Write(static_cast<uint>(Parameters[i].TypicalUsage));
 					bw2->Write(Parameters[i].IsCustomUsage);
 					bw2->Write(Parameters[i].CustomUsage);
-
+					bw2->Write(static_cast<int>(Parameters[i].ProgramType));
 
 					bw2->Close();
 					delete bw2;
