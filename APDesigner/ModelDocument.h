@@ -190,6 +190,10 @@ namespace APDesigner
 		void CBSubMtrl_SelectionChanged(Control* ctrl);
 		void PBTime_Pressed(Control* ctrl);
 
+		void BtnApplyMtrl_Pressed(Control* ctrl);
+		void BtnAddMtrl_Pressed(Control* ctrl);
+		void BtnRemoveMtrl_Pressed(Control* ctrl);
+
 		void ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);

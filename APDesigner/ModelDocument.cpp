@@ -610,12 +610,26 @@ namespace APDesigner
 	{
 		const FastList<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
-		if (selMeshIdx !=-1)
+		if (selMeshIdx != -1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			if (m_cbMeshPart->getSelectedIndex() !=-1)
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			int frameIndex = m_cbSubMtrl->getSelectedIndex();
+			if (partIdx != -1 && frameIndex != -1)
 			{
+				Material* mtrl = mtrls->getMaterial(partIdx, frameIndex);
 
+				uint64 flag = mtrl->getPassFlags();
+
+				const int CX = 4;
+				for (int i=0;i<64;i++)
+				{
+					Apoc3D::Math::Rectangle dr(*dstRect);
+					dr.X += (63-i) * CX;
+					dr.Width = CX;
+					sprite->Draw(getDocumentForm()->getSkin()->WhitePixelTexture, dr, 0, CV_Red);
+					flag = flag>>1;
+				}
 			}
 		}
 	}
@@ -686,7 +700,7 @@ namespace APDesigner
 	{
 		if (m_animData)
 		{
-			MaterialAnimationClip* clip = m_animData->getMaterialAnimationClips();
+			//const MaterialAnimationClip* clip = m_animData->getMaterialAnimationClips();
 		}
 	}
 	void ModelDocument::DisplayMaterialEditor(Material* mtrl)
@@ -728,6 +742,33 @@ namespace APDesigner
 		{
 
 		}
+	}
+
+	void ModelDocument::BtnAddMtrl_Pressed(Control* ctrl)
+	{
+
+		CBMeshPart_SelectionChanged(ctrl);
+	}
+	void ModelDocument::BtnApplyMtrl_Pressed(Control* ctrl)
+	{
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx != -1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			int frameIndex = m_cbSubMtrl->getSelectedIndex();
+			if (partIdx != -1 && frameIndex != -1)
+			{
+				Material* mtrl = mtrls->getMaterial(partIdx, frameIndex);
+
+			}
+		}
+	}
+	void ModelDocument::BtnRemoveMtrl_Pressed(Control* ctrl)
+	{
+
+		CBMeshPart_SelectionChanged(ctrl);
 	}
 
 	/************************************************************************/
@@ -881,9 +922,9 @@ namespace APDesigner
 		{
 			if (m_tbTable[i]->Text.size())
 			{
-				passFlags |= (uint)1;
+				passFlags |= (uint)1<<i;
 			}
-			passFlags = passFlags << (uint)1;
+			//passFlags = passFlags << (uint)1;
 		}
 		m_mtrl->setPassFlags(passFlags);
 		m_mtrl = 0;
