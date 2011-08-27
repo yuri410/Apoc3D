@@ -42,6 +42,7 @@ namespace Apoc3D
 		class APAPI EffectData
 		{
 		public:
+			String Name;
 			char* VSCode;
 			char* PSCode;
 			int VSLength;

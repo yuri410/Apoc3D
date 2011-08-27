@@ -117,7 +117,7 @@ namespace APBuild
 
 
 		EffectData data;
-		
+		data.Name = config.Name;
 		if (config.Profile == L"sm2.0")
 		{
 			data.MajorVer = 2;

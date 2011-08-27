@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "EffectManager.h"
 #include "Effect.h"
 #include "Core/Logging.h"
+#include "Vfs/ResourceLocation.h"
 
 SINGLETON_DECL(Apoc3D::Graphics::EffectSystem::EffectManager);
 
@@ -55,6 +56,17 @@ namespace Apoc3D
 			{
 				AutomaticEffect* effect = new AutomaticEffect(device, rl);
 
+				if (!HasEffect(effect->getName()))
+				{
+					m_fxTable.insert(std::make_pair(effect->getName(), effect));
+				}
+				else
+				{
+					LogManager::getSingleton().Write(LOG_Graphics, 
+						L"EffectManager: There is already a effect with a same name '" + effect->getName() + L"' loaded. Cannot load" + rl->getName(), LOGLVL_Error);
+					delete effect;
+				}
+				
 
 			}
 		}

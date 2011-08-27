@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Effect.h"
 
+#include "Graphics/RenderSystem/Shader.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "IOLib/Streams.h"
@@ -83,11 +84,12 @@ namespace Apoc3D
 			/************************************************************************/
 
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
-				: m_vertexShader(0), m_pixelShader(0)
+				: m_vertexShader(0), m_pixelShader(0), m_device(device)
 			{
 				EffectData data;
 				data.Load(rl);
-				
+				m_name = data.Name;
+
 				Capabilities* caps = device->getCapabilities();
 				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
 				{
@@ -131,6 +133,8 @@ namespace Apoc3D
 
 			int AutomaticEffect::begin()
 			{
+				m_device->BindPixelShader(m_pixelShader);
+				m_device->BindVertexShader(m_vertexShader);
 				return 1;
 			}
 			void AutomaticEffect::end()

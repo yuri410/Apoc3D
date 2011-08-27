@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Core/Singleton.h"
 
+using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::VFS;
 using namespace std;

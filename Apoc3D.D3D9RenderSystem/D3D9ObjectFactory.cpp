@@ -99,11 +99,11 @@ namespace Apoc3D
 
 			VertexShader* D3D9ObjectFactory::CreateVertexShader(const byte* byteCode)
 			{
-				return new D3D9VertexShader(m_device, resLoc);
+				return new D3D9VertexShader(m_device, byteCode);
 			}
 			PixelShader* D3D9ObjectFactory::CreatePixelShader(const byte* byteCode)
 			{
-				return new D3D9PixelShader(m_device, resLoc);
+				return new D3D9PixelShader(m_device, byteCode);
 			}
 
 			Sprite* D3D9ObjectFactory::CreateSprite()

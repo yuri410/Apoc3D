@@ -66,9 +66,9 @@ namespace Apoc3D
 				static void LoadEffect(RenderDevice* rs, const ResourceLocation* rl, VertexShader*& vs, PixelShader*& ps);
 
 				bool m_isUnsupported;
-
-			private:
 				String m_name;
+			private:
+				
 				bool m_begun;
 
 			};
@@ -99,6 +99,7 @@ namespace Apoc3D
 
 				List<EffectParameter> m_parameters;
 
+				RenderDevice* m_device;
 			};
 
 		};

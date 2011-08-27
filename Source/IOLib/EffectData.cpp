@@ -55,6 +55,8 @@ namespace Apoc3D
 			{
 				MajorVer = br->ReadInt32();
 				MinorVer = br->ReadInt32();
+				Name = br->ReadString();
+
 				TaggedDataReader* data = br->ReadTaggedDataBlock();
 
 
@@ -116,7 +118,7 @@ namespace Apoc3D
 			bw->Write((int32)AfxId_V3);
 			bw->Write((int32)MajorVer);
 			bw->Write((int32)MinorVer);
-
+			bw->Write(Name);
 			{
 				TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
