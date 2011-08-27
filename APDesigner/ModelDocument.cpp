@@ -78,8 +78,7 @@ namespace APDesigner
 	ModelDocument::ModelDocument(MainWindow* window, const String& name, const String& file, const String& animationFile)
 		: Document(window), m_filePath(file), m_animPath(animationFile), 
 		m_name(name), m_model(0), m_modelSData(0), m_animData(0),
-		m_distance(7),m_xang(ToRadian(45)),m_yang(ToRadian(45)),
-		m_selectedMeshIndex(-1), m_selectedMeshPartIndex(-1), m_selectedMtrlKeyframe(0)
+		m_distance(7),m_xang(ToRadian(45)),m_yang(ToRadian(45))
 	{
 		
 		m_sceneRenderer = new SceneRenderer(window->getDevice());
@@ -657,7 +656,7 @@ namespace APDesigner
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
 			
-			for (int i=0;i<mtrls->getMaterialCount();i++)
+			for (uint i=0;i<mtrls->getMaterialCount();i++)
 			{
 				m_cbMeshPart->getItems().Add(L"Part(Material Set)" + StringUtils::ToString(i, 4, '0'));
 			}
@@ -829,7 +828,9 @@ namespace APDesigner
 			int frameIndex = m_cbSubMtrl->getSelectedIndex();
 			if (partIdx != -1 && frameIndex != -1)
 			{
-				
+				Material* m = mtrls->getMaterial(partIdx, frameIndex);
+				mtrls->RemoveFrame(partIdx, frameIndex);
+				delete m;
 				CBMeshPart_SelectionChanged(ctrl);
 			}
 		}
@@ -986,7 +987,7 @@ namespace APDesigner
 		{
 			if (m_tbTable[i]->Text.size())
 			{
-				passFlags |= (uint)1<<i;
+				passFlags |= (uint64)1<<i;
 			}
 			//passFlags = passFlags << (uint)1;
 		}

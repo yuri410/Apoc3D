@@ -83,7 +83,11 @@ namespace Apoc3D
 				idx--;
 				m_set[idx].push_back(mtrl);
 			}
+			void RemoveFrame(int index, int frameIndex)
+			{
 
+				m_set[index].erase(m_set[index].cbegin() + frameIndex);
+			}
 			M& getMaterial(int index, int frame = 0) {	return m_set[index][frame]; }
 			const M& getMaterial(int index, int frame = 0) const { return m_set[index][frame]; }
 
