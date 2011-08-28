@@ -23,13 +23,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Effect.h"
 
+#include "Graphics/Camera.h"
 #include "Graphics/RenderSystem/Shader.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "IOLib/Streams.h"
 #include "IOLib/BinaryReader.h"
 #include "IOLib/EffectData.h"
+#include "Math/Matrix.h"
 
+using namespace Apoc3D::Math;
 using namespace Apoc3D::IO;
 
 namespace Apoc3D
@@ -126,6 +129,46 @@ namespace Apoc3D
 					{
 						case EPUSAGE_MtrlC4_Ambient:
 							break;
+						case EPUSAGE_MtrlC4_Diffuse:
+							break;
+						case EPUSAGE_MtrlC4_Emissive:
+							break;
+						case EPUSAGE_MtrlC4_Specular:
+							break;
+						case EPUSAGE_MtrlC_Power:
+							break;
+						case EPUSAGE_Tex0:
+							break;
+						case EPUSAGE_Tex1:
+							break;
+						case EPUSAGE_Tex2:
+							break;
+						case EPUSAGE_Tex3:
+							break;
+						case EPUSAGE_Tex4:
+							break;
+						case EPUSAGE_Tex5:
+							break;
+						case EPUSAGE_Tex6:
+							break;
+						case EPUSAGE_Tex7:
+							break;
+						case EPUSAGE_Tex8:
+							break;
+						case EPUSAGE_Tex9:
+							break;
+						case EPUSAGE_Tex10:
+							break;
+						case EPUSAGE_Tex11:
+							break;
+						case EPUSAGE_Tex12:
+							break;
+						case EPUSAGE_Tex13:
+							break;
+						case EPUSAGE_Tex14:
+							break;
+						case EPUSAGE_Tex15:
+							break;
 					}
 				}
 			}
@@ -155,10 +198,28 @@ namespace Apoc3D
 							));
 						break;
 					case EPUSAGE_LC3_Diffuse:
+						SetVector3(m_parameters[i], 
+							Vector3Utils::LDVector(RendererEffectParams::LightDiffuse.Red,
+							RendererEffectParams::LightDiffuse.Green,
+							RendererEffectParams::LightDiffuse.Blue
+							));
 						break;
 					case EPUSAGE_LC3_Specular:
+						SetVector3(m_parameters[i], 
+							Vector3Utils::LDVector(RendererEffectParams::LightSpecular.Red,
+							RendererEffectParams::LightSpecular.Green,
+							RendererEffectParams::LightSpecular.Blue
+							));
+						break;
+					case EPUSAGE_LV3_LightDir:
+						SetVector3(m_parameters[i], RendererEffectParams::LightDirection);
 						break;
 					case EPUSAGE_PV3_ViewPos:
+						if (RendererEffectParams::CurrentCamera)
+						{
+							Vector3 pos = RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation();
+							SetVector3(m_parameters[i], pos);
+						}
 						break;
 					}
 				}

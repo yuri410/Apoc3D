@@ -56,15 +56,17 @@ namespace Apoc3D
 			*/
 			const Matrix &getProjMatrix() const { return m_proj; }
 
+			const Matrix& getInvViewMatrix() const { return m_invView; }
+
 			/* Gets the up vector of the camera view
 			*/
-			Vector3 getUp() const { return Vector3Utils::LDVector(m_view.M21, m_view.M22, m_view.M23); }
+			Vector3 getUp() const { return Vector3Utils::LDVector(m_invView.M21, m_invView.M22, m_invView.M23); }
 			/* Gets the right vector of the camera view
 			*/
-			Vector3 getRight() const { return Vector3Utils::LDVector(m_view.M11, m_view.M12, m_view.M13); }
+			Vector3 getRight() const { return Vector3Utils::LDVector(m_invView.M11, m_view.M12, m_invView.M13); }
 			/* Gets the forward vector of the camera view
 			*/
-			Vector3 getForward() const { return Vector3Utils::LDVector(m_view.M31, m_view.M32, m_view.M33); }
+			Vector3 getForward() const { return Vector3Utils::LDVector(m_invView.M31, m_invView.M32, m_invView.M33); }
 
 			/* Sets the view transform matrix
 			*/
