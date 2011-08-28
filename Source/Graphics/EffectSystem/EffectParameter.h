@@ -27,7 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Math/Color.h"
 #include "Math/Vector.h"
+#include "Graphics/RenderSystem/Shader.h"
 
+using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
 
 namespace Apoc3D

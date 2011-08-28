@@ -95,6 +95,9 @@ namespace Apoc3D
 				virtual void end();
 			private:
 				void SetVector3(EffectParameter& param, Vector3 value);
+				void SetVector4(EffectParameter& param, Vector4 value);
+				void SetSamplerState(EffectParameter& param);
+				void SetTexture(EffectParameter& param, Texture* value);
 
 				VertexShader* m_vertexShader;
 				PixelShader* m_pixelShader;

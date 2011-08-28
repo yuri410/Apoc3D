@@ -250,7 +250,61 @@ namespace Apoc3D
 
 				shader->SetVector3(param.RegisterIndex, value);
 			}
+			void AutomaticEffect::SetVector4(EffectParameter& param, Vector4 value)
+			{
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
 
+				if (param.RegisterIndex == -1)
+				{
+					param.RegisterIndex = shader->GetParamIndex(param.Name);
+				}
+
+				shader->SetVector4(param.RegisterIndex, value);
+			}
+			void AutomaticEffect::SetSamplerState(EffectParameter& param)
+			{
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
+
+				if (param.SamplerIndex == -1)
+				{
+					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
+				}
+				shader->SetSamplerState(param.SamplerIndex, param.SamplerState);
+			}
+			void AutomaticEffect::SetTexture(EffectParameter& param, Texture* value)
+			{
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
+
+				if (param.SamplerIndex == -1)
+				{
+					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
+				}
+				shader->SetTexture(param.SamplerIndex, value);
+			}
 		};
 	}
 
