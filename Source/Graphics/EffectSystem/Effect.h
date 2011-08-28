@@ -94,7 +94,8 @@ namespace Apoc3D
 				virtual int begin();
 				virtual void end();
 			private:
-				
+				void SetVector3(EffectParameter& param, Vector3 value);
+
 				VertexShader* m_vertexShader;
 				PixelShader* m_pixelShader;
 

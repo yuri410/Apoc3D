@@ -72,7 +72,7 @@ namespace Apoc3D
 				m_shader->Release();
 			}
 
-			void D3D9VertexShader::GetParamIndex(const String& paramName)
+			int D3D9VertexShader::GetParamIndex(const String& paramName)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (cons.RegisterCount)
@@ -81,10 +81,10 @@ namespace Apoc3D
 				}
 				return cons.RegisterIndex;
 			}
-			void D3D9VertexShader::GetSamplerIndex(const String& paramName)
+			int D3D9VertexShader::GetSamplerIndex(const String& paramName)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				return cons.SamplerIndex;
+				return cons.SamplerIndex[0];
 			}
 
 			void D3D9VertexShader::SetVector2(int reg, Vector2 value)

@@ -148,7 +148,7 @@ namespace Apoc3D
 				int SamplerIndex;
 				ShaderSamplerState SamplerState;
 
-				EffectParameter() : RegisterIndex(-1), IsCustomUsage(false) { }
+				EffectParameter() : RegisterIndex(-1), SamplerIndex(-1), IsCustomUsage(false) { }
 				EffectParameter(const String& name);
 				~EffectParameter(void);
 

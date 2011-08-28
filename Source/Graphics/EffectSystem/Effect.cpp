@@ -148,17 +148,13 @@ namespace Apoc3D
 					switch (m_parameters[i].TypicalUsage)
 					{
 					case EPUSAGE_LC3_Ambient:
-						if (m_parameters[i].RegisterIndex == -1)
-						{
-							if (m_parameters[i].ProgramType == SHDT_Vertex)
-							{
-								
-							}
-						}
+						SetVector3(m_parameters[i], 
+							Vector3Utils::LDVector(RendererEffectParams::LightAmbient.Red,
+							RendererEffectParams::LightAmbient.Green,
+							RendererEffectParams::LightAmbient.Blue
+							));
 						break;
 					case EPUSAGE_LC3_Diffuse:
-						break;
-					case EPUSAGE_LC3_Specular:
 						break;
 					case EPUSAGE_LC3_Specular:
 						break;
@@ -172,6 +168,26 @@ namespace Apoc3D
 			void AutomaticEffect::end()
 			{
 
+			}
+
+			void AutomaticEffect::SetVector3(EffectParameter& param, Vector3 value)
+			{
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
+				
+				if (param.RegisterIndex == -1)
+				{
+					param.RegisterIndex = shader->GetParamIndex(param.Name);
+				}
+
+				shader->SetVector3(param.RegisterIndex, value);
 			}
 
 		};
