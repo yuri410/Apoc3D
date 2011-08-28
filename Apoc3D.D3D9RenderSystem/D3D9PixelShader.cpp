@@ -75,6 +75,20 @@ namespace Apoc3D
 				m_shader->Release();
 			}
 
+			void D3D9PixelShader::GetParamIndex(const String& paramName)
+			{
+				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
+				if (cons.RegisterCount)
+				{
+					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+				}
+				return cons.RegisterIndex;
+			}
+			void D3D9PixelShader::GetSamplerIndex(const String& paramName)
+			{
+				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
+				return cons.SamplerIndex;
+			}
 
 			void D3D9PixelShader::SetVector2(int reg, Vector2 value)
 			{

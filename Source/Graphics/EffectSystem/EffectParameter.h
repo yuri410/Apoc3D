@@ -25,6 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define EFFECTPARAMETERS_H
 
 #include "Common.h"
+#include "Math/Color.h"
+#include "Math/Vector.h"
+
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
@@ -114,7 +118,10 @@ namespace Apoc3D
 			{
 			public:
 				static Camera* CurrentCamera;
-
+				static Vector3 LightDirection;
+				static Color4 LightAmbient;
+				static Color4 LightDiffuse;
+				static Color4 LightSpecular;
 
 				static void Reset()
 				{
@@ -136,7 +143,12 @@ namespace Apoc3D
 
 				ShaderType ProgramType;
 
-				EffectParameter() { }
+				int RegisterIndex;
+				
+				int SamplerIndex;
+				ShaderSamplerState SamplerState;
+
+				EffectParameter() : RegisterIndex(-1), IsCustomUsage(false) { }
 				EffectParameter(const String& name);
 				~EffectParameter(void);
 

@@ -58,6 +58,9 @@ namespace Apoc3D
 				D3D9PixelShader(D3D9RenderDevice* device, const ResourceLocation* rl);
 				~D3D9PixelShader();
 
+				virtual int GetParamIndex(const String& paramName);
+				virtual int GetSamplerIndex(const String& paramName);
+
 				inline virtual void SetVector2(int reg, Vector2 value);
 				inline virtual void SetVector3(int reg, Vector3 value);
 				inline virtual void SetVector4(int reg, Vector4 value);

@@ -120,7 +120,14 @@ namespace Apoc3D
 
 			void AutomaticEffect::Setup(Material* mtrl, const RenderOperation& rop)
 			{
-
+				for (int i=0;i<m_parameters.getCount();i++)
+				{
+					switch (m_parameters[i].TypicalUsage)
+					{
+						case EPUSAGE_MtrlC4_Ambient:
+							break;
+					}
+				}
 			}
 			void AutomaticEffect::BeginPass(int passId)
 			{
@@ -135,6 +142,31 @@ namespace Apoc3D
 			{
 				m_device->BindPixelShader(m_pixelShader);
 				m_device->BindVertexShader(m_vertexShader);
+
+				for (int i=0;i<m_parameters.getCount();i++)
+				{
+					switch (m_parameters[i].TypicalUsage)
+					{
+					case EPUSAGE_LC3_Ambient:
+						if (m_parameters[i].RegisterIndex == -1)
+						{
+							if (m_parameters[i].ProgramType == SHDT_Vertex)
+							{
+								
+							}
+						}
+						break;
+					case EPUSAGE_LC3_Diffuse:
+						break;
+					case EPUSAGE_LC3_Specular:
+						break;
+					case EPUSAGE_LC3_Specular:
+						break;
+					case EPUSAGE_PV3_ViewPos:
+						break;
+					}
+				}
+
 				return 1;
 			}
 			void AutomaticEffect::end()

@@ -63,6 +63,9 @@ namespace Apoc3D
 			public:
 				RenderDevice* getRenderDevice() { return m_renderDevice; }
 
+				virtual void GetParamIndex(const String& paramName) = 0;
+				virtual void GetSamplerIndex(const String& paramName) = 0;
+
 				virtual void SetVector2(int reg, Vector2 value) = 0;
 				virtual void SetVector3(int reg, Vector3 value) = 0;
 				virtual void SetVector4(int reg, Vector4 value) = 0;

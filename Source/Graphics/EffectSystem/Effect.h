@@ -94,6 +94,7 @@ namespace Apoc3D
 				virtual int begin();
 				virtual void end();
 			private:
+				
 				VertexShader* m_vertexShader;
 				PixelShader* m_pixelShader;
 
