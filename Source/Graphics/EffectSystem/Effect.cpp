@@ -23,14 +23,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Effect.h"
 
+#include "Graphics/Material.h"
 #include "Graphics/Camera.h"
 #include "Graphics/RenderSystem/Shader.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
+#include "Graphics/RenderSystem/Texture.h"
 #include "IOLib/Streams.h"
 #include "IOLib/BinaryReader.h"
 #include "IOLib/EffectData.h"
 #include "Math/Matrix.h"
+#include "Core/Resource.h"
+#include "Core/ResourceHandle.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::IO;
@@ -128,48 +132,70 @@ namespace Apoc3D
 					switch (m_parameters[i].TypicalUsage)
 					{
 						case EPUSAGE_MtrlC4_Ambient:
+							SetValue(m_parameters[i], mtrl->Ambient);
 							break;
 						case EPUSAGE_MtrlC4_Diffuse:
+							SetValue(m_parameters[i], mtrl->Diffuse);
 							break;
 						case EPUSAGE_MtrlC4_Emissive:
+							SetValue(m_parameters[i], mtrl->Emissive);
 							break;
 						case EPUSAGE_MtrlC4_Specular:
+							SetValue(m_parameters[i], mtrl->Specular);
 							break;
 						case EPUSAGE_MtrlC_Power:
+							SetValue(m_parameters[i], mtrl->Power);
 							break;
 						case EPUSAGE_Tex0:
+							SetTexture(m_parameters[i], mtrl->getTexture(0));
 							break;
 						case EPUSAGE_Tex1:
+							SetTexture(m_parameters[i], mtrl->getTexture(1));
 							break;
 						case EPUSAGE_Tex2:
+							SetTexture(m_parameters[i], mtrl->getTexture(2));
 							break;
 						case EPUSAGE_Tex3:
+							SetTexture(m_parameters[i], mtrl->getTexture(3));
 							break;
 						case EPUSAGE_Tex4:
+							SetTexture(m_parameters[i], mtrl->getTexture(4));
 							break;
 						case EPUSAGE_Tex5:
+							SetTexture(m_parameters[i], mtrl->getTexture(5));
 							break;
 						case EPUSAGE_Tex6:
+							SetTexture(m_parameters[i], mtrl->getTexture(6));
 							break;
 						case EPUSAGE_Tex7:
+							SetTexture(m_parameters[i], mtrl->getTexture(7));
 							break;
 						case EPUSAGE_Tex8:
+							SetTexture(m_parameters[i], mtrl->getTexture(8));
 							break;
 						case EPUSAGE_Tex9:
+							SetTexture(m_parameters[i], mtrl->getTexture(9));
 							break;
 						case EPUSAGE_Tex10:
+							SetTexture(m_parameters[i], mtrl->getTexture(10));
 							break;
 						case EPUSAGE_Tex11:
+							SetTexture(m_parameters[i], mtrl->getTexture(11));
 							break;
 						case EPUSAGE_Tex12:
+							SetTexture(m_parameters[i], mtrl->getTexture(12));
 							break;
 						case EPUSAGE_Tex13:
+							SetTexture(m_parameters[i], mtrl->getTexture(13));
 							break;
 						case EPUSAGE_Tex14:
+							SetTexture(m_parameters[i], mtrl->getTexture(14));
 							break;
 						case EPUSAGE_Tex15:
+							SetTexture(m_parameters[i], mtrl->getTexture(15));
 							break;
 					}
+
 				}
 			}
 			void AutomaticEffect::BeginPass(int passId)
@@ -221,6 +247,25 @@ namespace Apoc3D
 							SetVector3(m_parameters[i], pos);
 						}
 						break;
+
+					case EPUSAGE_Tex0:
+					case EPUSAGE_Tex1:
+					case EPUSAGE_Tex2:
+					case EPUSAGE_Tex3:
+					case EPUSAGE_Tex4:
+					case EPUSAGE_Tex5:
+					case EPUSAGE_Tex6:
+					case EPUSAGE_Tex7:
+					case EPUSAGE_Tex8:
+					case EPUSAGE_Tex9:
+					case EPUSAGE_Tex10:
+					case EPUSAGE_Tex11:
+					case EPUSAGE_Tex12:
+					case EPUSAGE_Tex13:
+					case EPUSAGE_Tex14:
+					case EPUSAGE_Tex15:
+						SetSamplerState(m_parameters[i]);
+						break;
 					}
 				}
 
@@ -229,6 +274,25 @@ namespace Apoc3D
 			void AutomaticEffect::end()
 			{
 
+			}
+			template<typename T>
+			void AutomaticEffect::SetValue(EffectParameter& param, const T& value)
+			{
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
+
+				if (param.RegisterIndex == -1)
+				{
+					param.RegisterIndex = shader->GetParamIndex(param.Name);
+				}
+				shader->SetValue(param.RegisterIndex, value);
 			}
 
 			void AutomaticEffect::SetVector3(EffectParameter& param, Vector3 value)
@@ -287,8 +351,14 @@ namespace Apoc3D
 				}
 				shader->SetSamplerState(param.SamplerIndex, param.SamplerState);
 			}
-			void AutomaticEffect::SetTexture(EffectParameter& param, Texture* value)
+			void AutomaticEffect::SetTexture(EffectParameter& param, ResourceHandle<Texture>* value)
 			{
+				Texture* tex = value->operator->();
+				if (tex->getState() != RS_Loaded)
+				{
+					tex = 0;
+				}
+
 				Shader* shader = 0;
 				if (param.ProgramType == SHDT_Vertex)
 				{
@@ -303,7 +373,7 @@ namespace Apoc3D
 				{
 					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
 				}
-				shader->SetTexture(param.SamplerIndex, value);
+				shader->SetTexture(param.SamplerIndex, tex);
 			}
 		};
 	}

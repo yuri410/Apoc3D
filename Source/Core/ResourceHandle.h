@@ -116,7 +116,6 @@ namespace Apoc3D
 				
 				return m_resource;
 			}
-
 		};
 	};
 };

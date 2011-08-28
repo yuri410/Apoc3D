@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {
@@ -97,7 +98,10 @@ namespace Apoc3D
 				void SetVector3(EffectParameter& param, Vector3 value);
 				void SetVector4(EffectParameter& param, Vector4 value);
 				void SetSamplerState(EffectParameter& param);
-				void SetTexture(EffectParameter& param, Texture* value);
+				void SetTexture(EffectParameter& param, ResourceHandle<Texture>* value);
+
+				template<typename T>
+				void SetValue(EffectParameter& param, const T& value);
 
 				VertexShader* m_vertexShader;
 				PixelShader* m_pixelShader;
