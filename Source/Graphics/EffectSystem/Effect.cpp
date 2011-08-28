@@ -314,7 +314,7 @@ namespace Apoc3D
 			int AutomaticEffect::begin()
 			{
 				m_device->BindPixelShader(m_pixelShader);
-				m_device->BindVertexShader(m_vertexShader);
+				m_device->BindVertexShader(0);//m_vertexShader);
 
 				for (int i=0;i<m_parameters.getCount();i++)
 				{
@@ -475,10 +475,19 @@ namespace Apoc3D
 			}
 			void AutomaticEffect::SetTexture(EffectParameter& param, ResourceHandle<Texture>* value)
 			{
-				Texture* tex = value->operator->();
-				if (tex->getState() != RS_Loaded)
+				Texture* tex = 0;
+				
+				if (value)
 				{
-					tex = 0;
+					value->operator->();
+					if (tex->getState() != RS_Loaded)
+					{
+						tex = 0;
+					}
+				}
+				else
+				{
+					
 				}
 
 				Shader* shader = 0;

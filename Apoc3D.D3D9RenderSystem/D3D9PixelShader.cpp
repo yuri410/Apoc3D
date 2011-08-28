@@ -78,7 +78,7 @@ namespace Apoc3D
 			int D3D9PixelShader::GetParamIndex(const String& paramName)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -303,7 +303,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetVector2(const String &paramName, Vector2 value) 
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -314,7 +314,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetVector3(const String &paramName, Vector3 value) 
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -325,7 +325,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetVector4(const String &paramName, Vector4 value) 
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -334,7 +334,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, const Quaternion& value) 
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -343,7 +343,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, const Matrix& value) 
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -352,7 +352,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, const Color4& value) 
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -361,7 +361,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, const Plane& value)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -373,7 +373,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetVector2(const String &paramName, const Vector2* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -382,7 +382,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetVector3(const String &paramName, const Vector3* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -391,7 +391,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetVector4(const String &paramName, const Vector4* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -400,7 +400,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, const Quaternion* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -409,7 +409,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, const Matrix* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -418,7 +418,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, const Plane* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -427,7 +427,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, const Color4* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -437,7 +437,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, bool value)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -446,7 +446,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, float value)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -455,7 +455,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, int value)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -464,7 +464,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, bool* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -473,7 +473,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, float* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
@@ -482,7 +482,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(const String &paramName, int* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				if (cons.RegisterCount)
+				if (!cons.RegisterCount)
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}

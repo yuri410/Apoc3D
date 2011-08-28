@@ -30,11 +30,11 @@ using namespace Apoc3D;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Utility;
+//
+//#define BASE_BUILD 0
+//#define FINAL_BUILD 0xff
 
-#define BASE_BUILD 0
-#define FINAL_BUILD 0xff
-
-int Build(ConfigurationSection* sect, int pass)
+int Build(ConfigurationSection* sect)
 {
 	String buildType = sect->getAttribute(L"Type");
 	wcout << L"Building ";
@@ -43,60 +43,46 @@ int Build(ConfigurationSection* sect, int pass)
 
 	StringUtils::ToLowerCase(buildType);
 
-	if (pass == BASE_BUILD)
+
+	if (buildType == L"texture")
 	{
-		if (buildType == L"texture")
-		{
-			TextureBuild::Build(sect);
-		}
-		else if (buildType == L"mesh")
-		{
-			MeshBuild::Build(sect);
-		}
-		else if (buildType == L"effect")
-		{
-			AFXBuild::Build(sect);
-		}
-		else if (buildType == L"font")
-		{
-			FontBuild::Build(sect);
-		}
-		else if (buildType == L"uilayout")
-		{
+		TextureBuild::Build(sect);
+	}
+	else if (buildType == L"mesh")
+	{
+		MeshBuild::Build(sect);
+	}
+	else if (buildType == L"effect")
+	{
+		AFXBuild::Build(sect);
+	}
+	else if (buildType == L"font")
+	{
+		FontBuild::Build(sect);
+	}
+	else if (buildType == L"uilayout")
+	{
 
-		}
-		else if (buildType == L"project" || buildType == L"folder")
+	}
+	else if (buildType == L"project" || buildType == L"folder")
+	{
+		for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
+			iter != sect->SubSectionEnd(); iter++)
 		{
-			for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
-				iter != sect->SubSectionEnd(); iter++)
-			{
-				ConfigurationSection* item = iter->second;
+			ConfigurationSection* item = iter->second;
 
-				Build(item, pass);
-			}
-		}
-		else
-		{
-			return ERR_UNSUPPORTED_BUILD;
+			Build(item);
 		}
 	}
-	else if (pass == FINAL_BUILD)
+	else if (buildType == L"pak")
 	{
-		if (buildType == L"pak" && pass == FINAL_BUILD)
-		{
-			PakBuild::Build(sect);
-		}
-		else if (buildType == L"project" || buildType == L"folder")
-		{
-			for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
-				iter != sect->SubSectionEnd(); iter++)
-			{
-				ConfigurationSection* item = iter->second;
-
-				Build(item, pass);
-			}
-		}
+		PakBuild::Build(sect);
 	}
+	else
+	{
+		return ERR_UNSUPPORTED_BUILD;
+	}
+		
 	
 
 	for (size_t i=0;i<CompileLog::Logs.size();i++)
@@ -146,13 +132,8 @@ int Build(int argc, _TCHAR* argv[])
 		XMLConfiguration* config = new XMLConfiguration(fl);
 
 		ConfigurationSection* sect = config->begin()->second;
-		wcout << L"Pass1:\n";
-		int code = Build(sect, BASE_BUILD);
-		if (code)
-			return code;
-		wcout << L"Pass2:\n";
-		code = Build(sect, FINAL_BUILD);
-		return code;
+
+		return Build(sect);
 	}
 	else
 	{

@@ -4,10 +4,11 @@
 #include "Config/ConfigurationSection.h"
 #include "Config/XmlConfiguration.h"
 #include "Utility/StringUtils.h"
-
+#include "Core/Logging.h"
 #include <Windows.h>
 
 using namespace Apoc3D;
+using namespace Apoc3D::Core;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Utility;
 
@@ -29,12 +30,25 @@ namespace APDesigner
 	}
 	void BuildInterface::BuildAll(Project* project)
 	{
-		project->Save(L"build.xml", true);
+		//project->Save(L"build.xml", true);
+		FastList<ConfigurationSection*> scripts;
+		project->GenerateBuildScripts(scripts);
 
-		ExecuteBuildOperation();
+		for (int i=0;i<scripts.getCount();i++)
+		{
+			XMLConfiguration* xc = new XMLConfiguration(L"Root");
+			xc->Add(scripts[i]);
+			xc->Save(L"build.xml");
+			delete xc;
+			if (ExecuteBuildOperation())
+			{
+				LogManager::getSingleton().Write(LOG_System, L"Build failed.", LOGLVL_Error);
+				break;
+			}
+		}
 	}
 
-	void BuildInterface::ExecuteBuildOperation()
+	int BuildInterface::ExecuteBuildOperation()
 	{
 		STARTUPINFO startUpInfo;
 		ZeroMemory(&startUpInfo, sizeof(STARTUPINFO));
@@ -84,7 +98,11 @@ namespace APDesigner
 		while (WaitForSingleObject(procInfo.hProcess, 10) == WAIT_TIMEOUT);
 		//GetFileSize(writePipe, );
 
-
+		DWORD code;
+		if (!GetExitCodeProcess(procInfo.hProcess, &code))
+		{
+			code = 1;
+		}
 		//OpenFile()
 		//ReadFile(writePipe)
 
@@ -94,5 +112,6 @@ namespace APDesigner
 		CloseHandle(startUpInfo.hStdError);
 		CloseHandle(startUpInfo.hStdInput);
 		CloseHandle(startUpInfo.hStdOutput);
+		return code;
 	}
 }

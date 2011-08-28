@@ -123,7 +123,7 @@ namespace Apoc3D
 
 					}
 
-					Parameters.Add(name);
+					Parameters.Add(params);
 
 				}
 

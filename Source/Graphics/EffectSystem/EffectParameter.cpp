@@ -34,7 +34,8 @@ namespace Apoc3D
 		namespace EffectSystem
 		{
 			EffectParameter::EffectParameter(const String& name)
-				: Name(name), IsCustomUsage(false), TypicalUsage(EPUSAGE_Unknown)
+				: Name(name), IsCustomUsage(false), TypicalUsage(EPUSAGE_Unknown),
+				RegisterIndex(-1), SamplerIndex(-1)
 			{
 			}
 

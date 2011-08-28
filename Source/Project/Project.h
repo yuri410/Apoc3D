@@ -349,7 +349,7 @@ namespace Apoc3D
 		String m_basePath;
 		String m_outputPath;
 
-		ConfigurationSection* Save(bool savingBuild);
+		ConfigurationSection* Save();
 	public:
 		const String& getName() const { return m_name; }
 		const String& getBasePath() const { return m_basePath; }
@@ -360,7 +360,9 @@ namespace Apoc3D
 
 		void Parse(const ConfigurationSection* sect);
 		
-		void Save(const String& file, bool savingBuild = false);
+		void Save(const String& file);
+
+		void GenerateBuildScripts(FastList<ConfigurationSection*>& result);
 	};
 
 

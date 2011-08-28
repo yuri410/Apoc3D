@@ -35,7 +35,7 @@ using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
-	void RecursivePassFolderPacks(int& startNo,ConfigurationSection* parentSect, FastList<ProjectItem*>& items);
+	void RecursivePassFolderPacks(int& startNo, FastList<ConfigurationSection*>& result, FastList<ProjectItem*>& items);
 	void ProjectParse(Project* prj, FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect);
 	void ProjectSave(ConfigurationSection* parentSect, FastList<ProjectItem*>& items, bool savingBuild);
 
@@ -810,9 +810,9 @@ namespace Apoc3D
 
 		ProjectParse(this, m_items, sect);
 	}
-	void Project::Save(const String& file, bool savingBuild)
+	void Project::Save(const String& file)
 	{
-		ConfigurationSection* s = Save(savingBuild);
+		ConfigurationSection* s = Save();
 
 		XMLConfiguration* xc = new XMLConfiguration(m_name);
 		xc->Add(s);
@@ -822,26 +822,32 @@ namespace Apoc3D
 
 	void RecursivePassFolderPacks(int& startNo, ConfigurationSection* parentSect, FastList<ProjectItem*>& items);
 
-	ConfigurationSection* Project::Save(bool savingBuild)
+	ConfigurationSection* Project::Save()
 	{
-		ConfigurationSection* sect = new ConfigurationSection(savingBuild ? L"Build" : L"Project", m_items.getCount() * 2);
+		ConfigurationSection* sect = new ConfigurationSection(L"Project", m_items.getCount() * 2);
 
 		sect->AddAttribute(L"Name", m_name);
 
-		ProjectSave(sect, m_items, savingBuild);
-
-		if (savingBuild)
-		{
-			sect->AddAttribute(L"Type", L"Project");
-
-			int startNo = Randomizer::Next(65535);
-			RecursivePassFolderPacks(startNo, sect, m_items);
-		}
+		ProjectSave(sect, m_items, false);
 
 		return sect;
 	}
-	
-	void RecursivePassFolderPacks(int& startNo,ConfigurationSection* parentSect, FastList<ProjectItem*>& items)
+	void Project::GenerateBuildScripts(FastList<ConfigurationSection*>& result)
+	{
+		ConfigurationSection* sect = new ConfigurationSection(L"Build", m_items.getCount() * 2);
+
+		sect->AddAttribute(L"Name", m_name);
+
+		ProjectSave(sect, m_items, true);
+
+		sect->AddAttribute(L"Type", L"Project");
+		result.Add(sect);
+		
+		int startNo = Randomizer::Next(65535);
+		RecursivePassFolderPacks(startNo, result, m_items);
+		
+	}
+	void RecursivePassFolderPacks(int& startNo, FastList<ConfigurationSection*>& result, FastList<ProjectItem*>& items)
 	{
 		for (int i=0;i<items.getCount();i++)
 		{
@@ -851,13 +857,14 @@ namespace Apoc3D
 
 				if (fld)
 				{
-					RecursivePassFolderPacks(startNo, parentSect, fld->SubItems);
+					RecursivePassFolderPacks(startNo, result, fld->SubItems);
 
 					if (fld->PackType.size())
 					{
 						ConfigurationSection* s = new ConfigurationSection(L"Archive_" + StringUtils::ToString(startNo++));
 						fld->SavePackBuildConfig(s);
-						parentSect->AddSection(s);
+						//parentSect->AddSection(s);
+						result.Add(s);
 					}
 				}
 			}
