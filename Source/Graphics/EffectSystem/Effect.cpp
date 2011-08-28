@@ -147,6 +147,21 @@ namespace Apoc3D
 						case EPUSAGE_MtrlC_Power:
 							SetValue(ep, mtrl->Power);
 							break;
+						case EPUSAGE_Trans_WorldViewProj:
+							if (RendererEffectParams::CurrentCamera)
+							{
+								Matrix temp;
+								Matrix::Multiply(temp, rop.RootTransform, RendererEffectParams::CurrentCamera->getViewMatrix());
+
+								Matrix mvp;
+								Matrix::Multiply(mvp, temp, RendererEffectParams::CurrentCamera->getProjMatrix());
+
+								SetValue(ep, mvp);
+							}
+							break;
+						case EPUSAGE_Trans_World:
+							SetValue(ep, rop.RootTransform);
+							break;
 						case EPUSAGE_Tex0:
 							SetTexture(ep, mtrl->getTexture(0));
 							break;
@@ -399,7 +414,7 @@ namespace Apoc3D
 				{
 					param.RegisterIndex = shader->GetParamIndex(param.Name);
 				}
-
+				
 				shader->SetVector2(param.RegisterIndex, value);
 			}
 			void AutomaticEffect::SetVector3(EffectParameter& param, Vector3 value)

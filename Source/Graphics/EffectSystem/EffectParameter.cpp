@@ -69,6 +69,17 @@ namespace Apoc3D
 					return EPUSAGE_MtrlC_Power;
 				}
 				
+
+				else if (v == L"tr_worldviewproj")
+				{
+					return EPUSAGE_Trans_WorldViewProj;
+				}
+				else if (v == L"tr_world")
+				{
+					return EPUSAGE_Trans_World;
+				}
+
+
 				
 				else if (v == L"tex_0")
 				{
@@ -137,7 +148,7 @@ namespace Apoc3D
 
 
 
-				else if (v==L"lv3_lightDir")
+				else if (v==L"lv3_lightdir")
 				{
 					return EPUSAGE_LV3_LightDir;
 				}
@@ -153,7 +164,7 @@ namespace Apoc3D
 				{
 					return EPUSAGE_LC3_Specular;
 				}
-				else if (v==L"pv3_viewPos")
+				else if (v==L"pv3_viewpos")
 				{
 					return EPUSAGE_PV3_ViewPos;
 				}

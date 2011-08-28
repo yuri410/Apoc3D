@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math\Color.h"
 #include "Graphics\GraphicsCommon.h"
 
+using namespace Apoc3D::Config;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
 
@@ -52,6 +53,7 @@ namespace Apoc3D
 				int MaxMipLevel;
 				uint32 MipMapLODBias;
 
+				void Parse(ConfigurationSection* sect);
 			};
 			class APAPI Shader
 			{

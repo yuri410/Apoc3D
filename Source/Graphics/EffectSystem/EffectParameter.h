@@ -74,6 +74,13 @@ namespace Apoc3D
 				*/
 				EPUSAGE_MtrlC_Power,
 				
+				/** tr_worldviewproj
+				*/
+				EPUSAGE_Trans_WorldViewProj=100,
+				/** tr_world
+				*/
+				EPUSAGE_Trans_World,
+
 				/** tex_0
 				*/
 				EPUSAGE_Tex0=200,

@@ -76,11 +76,14 @@ namespace Apoc3D
 					String name = br2->ReadString();
 
 					EffectParameter params(name);
-					params.TypicalUsage = static_cast<EffectParamUsage>(br2->ReadUInt32());
-					params.IsCustomUsage = br->ReadBoolean();
+					//params.TypicalUsage = static_cast<EffectParamUsage>(br2->ReadUInt32());
+					//params.IsCustomUsage = br->ReadBoolean();
 					params.CustomUsage = br->ReadString();
 					params.ProgramType = static_cast<ShaderType>(br->ReadInt32());
 					
+					params.TypicalUsage = EffectParameter::ParseParamUsage(params.CustomUsage);
+					params.IsCustomUsage = params.TypicalUsage == EPUSAGE_Unknown;
+
 					br2->Close();
 					delete br2;
 
@@ -174,8 +177,8 @@ namespace Apoc3D
 					BinaryWriter* bw2 = data->AddEntry(tag);
 
 					bw2->Write(pm.Name);
-					bw2->Write(static_cast<uint>(pm.TypicalUsage));
-					bw2->Write(pm.IsCustomUsage);
+					//bw2->Write(static_cast<uint>(pm.TypicalUsage));
+					//bw2->Write(pm.IsCustomUsage);
 					bw2->Write(pm.CustomUsage);
 					bw2->Write(static_cast<int>(pm.ProgramType));
 

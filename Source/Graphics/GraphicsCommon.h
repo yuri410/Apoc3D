@@ -517,6 +517,12 @@ namespace Apoc3D
 
 				static CullMode ParseCullMode(const String& value);
 				static String ToString(CullMode cull);
+
+				static TextureAddressMode ParseTextureAddressMode(const String& value);
+				static String ToString(TextureAddressMode mode);
+
+				static TextureFilter ParseTextureFilter(const String& value);
+				static String ToString(TextureFilter filter);
 			protected:
 			private:
 			};

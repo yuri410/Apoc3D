@@ -150,14 +150,16 @@ namespace APBuild
 			ConfigurationSection* ps = iter->second;
 			EffectParameter ep(ps->getName());
 			
-			String usage = ps->getAttribute(L"Usage");
-			ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
-			if (ep.TypicalUsage == EPUSAGE_Unknown)
-			{
-				ep.IsCustomUsage = true;
-				ep.CustomUsage = usage;
-			}
+			//String usage = ps->getAttribute(L"Usage");
+			//ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
+			//if (ep.TypicalUsage == EPUSAGE_Unknown)
+			//{
+				//ep.IsCustomUsage = true;
+				//ep.CustomUsage = usage;
+			//}
+			ep.CustomUsage = ps->getAttribute(L"Usage");
 			ep.ProgramType = SHDT_Vertex;
+			ep.SamplerState.Parse(ps);
 			data.Parameters.Add(ep);
 		}
 
@@ -168,14 +170,16 @@ namespace APBuild
 			ConfigurationSection* ps = iter->second;
 			EffectParameter ep(ps->getName());
 
-			String usage = ps->getAttribute(L"Usage");
-			ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
-			if (ep.TypicalUsage == EPUSAGE_Unknown)
-			{
-				ep.IsCustomUsage = true;
-				ep.CustomUsage = usage;
-			}
+			//String usage = ps->getAttribute(L"Usage");
+			//ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
+			//if (ep.TypicalUsage == EPUSAGE_Unknown)
+			//{
+			//	ep.IsCustomUsage = true;
+			//	ep.CustomUsage = usage;
+			//}
+			ep.CustomUsage = ps->getAttribute(L"Usage");
 			ep.ProgramType = SHDT_Pixel;
+			ep.SamplerState.Parse(ps);
 			data.Parameters.Add(ep);
 		}
 

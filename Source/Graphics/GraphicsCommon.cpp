@@ -201,6 +201,105 @@ namespace Apoc3D
 				 }
 				 return L"None";
 			 }
+
+
+
+			 TextureAddressMode GraphicsCommonUtils::ParseTextureAddressMode(const String& value)
+			 {
+				 String v = value;
+				 StringUtils::ToLowerCase(v);
+
+				 if (v == L"wrap")
+				 {
+					 return TA_Wrap;
+				 }
+				 else if (v == L"mirror")
+				 {
+					 return TA_Mirror;
+				 }
+				 else if (v == L"clamp")
+				 {
+					 return TA_Clamp;
+				 }
+				 else if (v == L"border")
+				 {
+					 return TA_Border;
+				 }
+				 else if (v == L"mirroronce")
+				 {
+					 return TA_MirrorOnce;
+				 }
+				 return TA_Wrap;
+			 }
+			 String GraphicsCommonUtils::ToString(TextureAddressMode mode)
+			 {
+				 switch (mode)
+				 {
+				 case TA_Wrap:
+					 return L"Wrap";
+				 case TA_Mirror:
+					 return L"Mirror";
+				 case TA_Clamp:
+					 return L"Clamp";
+				 case TA_Border:
+					 return L"Border";
+				 case TA_MirrorOnce:
+					 return L"MirrorOnce";
+				 }
+				 return L"Wrap";
+			 }
+
+			 TextureFilter GraphicsCommonUtils::ParseTextureFilter(const String& value)
+			 {
+				 String v = value;
+				 StringUtils::ToLowerCase(v);
+
+				 if (v == L"none")
+				 {
+					 return TFLT_None;
+				 }
+				 else if (v == L"point")
+				 {
+					 return TFLT_Point;
+				 }
+				 else if (v == L"linear")
+				 {
+					 return TFLT_Linear;
+				 }
+				 else if (v == L"anisotropic")
+				 {
+					 return TFLT_Anisotropic;
+				 }
+				 else if (v == L"pyramidalquad")
+				 {
+					 return TFLT_PyramidalQuad;
+				 }
+				 else if (v == L"gaussianquad")
+				 {
+					 return TFLT_GaussianQuad;
+				 }
+				 return TFLT_None;
+			 }
+			 
+			 String GraphicsCommonUtils::ToString(TextureFilter filter)
+			 {
+				 switch (filter)
+				 {
+				 case TFLT_None:
+					 return L"None";
+				 case TFLT_Point:
+					 return L"Point";
+				 case TFLT_Linear:
+					 return L"Linear";
+				 case TFLT_Anisotropic:
+					 return L"Anisotropic";
+				 case TFLT_PyramidalQuad:
+					 return L"PyramidalQuad";
+				 case TFLT_GaussianQuad:
+					 return L"GaussianQuad";
+				 }
+				 return L"None";
+			 }
 		}
 	}
 }

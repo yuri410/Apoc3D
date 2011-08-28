@@ -23,7 +23,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "Shader.h"
+#include "Graphics/GraphicsCommon.h"
+#include "Config/ConfigurationSection.h"
+#include "Utility/StringUtils.h"
 
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -47,6 +52,48 @@ namespace Apoc3D
 				: Shader(rd)
 			{
 
+			}
+
+			void ShaderSamplerState::Parse(ConfigurationSection* sect)
+			{
+				String v = GraphicsCommonUtils::ToString(TA_Wrap);
+
+				sect->tryGetAttribute(L"AddressU", v);
+				AddressU = GraphicsCommonUtils::ParseTextureAddressMode(v);
+
+				v = GraphicsCommonUtils::ToString(TA_Wrap);
+				sect->tryGetAttribute(L"AddressV", v);
+				AddressV = GraphicsCommonUtils::ParseTextureAddressMode(v);
+
+				v = GraphicsCommonUtils::ToString(TA_Wrap);
+				sect->tryGetAttribute(L"AddressW", v);
+				AddressW = GraphicsCommonUtils::ParseTextureAddressMode(v);
+
+				v = L"0x00000000";
+				sect->tryGetAttribute(L"BorderColor", v);
+				BorderColor = StringUtils::ParseUInt32Hex(v);
+				
+				v = GraphicsCommonUtils::ToString(TFLT_None);
+				sect->tryGetAttribute(L"MagFilter", v);
+				MagFilter = GraphicsCommonUtils::ParseTextureFilter(v);
+
+				v = GraphicsCommonUtils::ToString(TFLT_None);
+				sect->tryGetAttribute(L"MinFilter", v);
+				MinFilter = GraphicsCommonUtils::ParseTextureFilter(v);
+
+				v = GraphicsCommonUtils::ToString(TFLT_None);
+				sect->tryGetAttribute(L"MipFilter", v);
+				MipFilter = GraphicsCommonUtils::ParseTextureFilter(v);
+
+
+				MaxAnisotropy = 0;
+				sect->TryGetAttributeInt(L"MaxAnisotropy", MaxAnisotropy);
+
+				MaxMipLevel = 0;
+				sect->TryGetAttributeInt(L"MaxMipLevel", MaxMipLevel);
+
+				MipMapLODBias = 0;
+				sect->TryGetAttributeUInt(L"MipMapLODBias", MipMapLODBias);
 			}
 		}
 	}
