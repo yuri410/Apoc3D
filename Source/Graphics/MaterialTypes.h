@@ -46,6 +46,7 @@ namespace Apoc3D
 			MTRLPT_Ref_Vector3 = 6,
 			MTRLPT_Ref_Vector4 = 7,
 			MTRLPT_Ref_Texture = 8,
+			MTRLPT_Ref_TextureHandle = 9,
 		};
 
 		/** Defines custom material parameters. 

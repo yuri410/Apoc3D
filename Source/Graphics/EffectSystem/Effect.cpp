@@ -129,70 +129,159 @@ namespace Apoc3D
 			{
 				for (int i=0;i<m_parameters.getCount();i++)
 				{
-					switch (m_parameters[i].TypicalUsage)
+					EffectParameter& ep = m_parameters[i];
+					switch (ep.TypicalUsage)
 					{
 						case EPUSAGE_MtrlC4_Ambient:
-							SetValue(m_parameters[i], mtrl->Ambient);
+							SetValue(ep, mtrl->Ambient);
 							break;
 						case EPUSAGE_MtrlC4_Diffuse:
-							SetValue(m_parameters[i], mtrl->Diffuse);
+							SetValue(ep, mtrl->Diffuse);
 							break;
 						case EPUSAGE_MtrlC4_Emissive:
-							SetValue(m_parameters[i], mtrl->Emissive);
+							SetValue(ep, mtrl->Emissive);
 							break;
 						case EPUSAGE_MtrlC4_Specular:
-							SetValue(m_parameters[i], mtrl->Specular);
+							SetValue(ep, mtrl->Specular);
 							break;
 						case EPUSAGE_MtrlC_Power:
-							SetValue(m_parameters[i], mtrl->Power);
+							SetValue(ep, mtrl->Power);
 							break;
 						case EPUSAGE_Tex0:
-							SetTexture(m_parameters[i], mtrl->getTexture(0));
+							SetTexture(ep, mtrl->getTexture(0));
 							break;
 						case EPUSAGE_Tex1:
-							SetTexture(m_parameters[i], mtrl->getTexture(1));
+							SetTexture(ep, mtrl->getTexture(1));
 							break;
 						case EPUSAGE_Tex2:
-							SetTexture(m_parameters[i], mtrl->getTexture(2));
+							SetTexture(ep, mtrl->getTexture(2));
 							break;
 						case EPUSAGE_Tex3:
-							SetTexture(m_parameters[i], mtrl->getTexture(3));
+							SetTexture(ep, mtrl->getTexture(3));
 							break;
 						case EPUSAGE_Tex4:
-							SetTexture(m_parameters[i], mtrl->getTexture(4));
+							SetTexture(ep, mtrl->getTexture(4));
 							break;
 						case EPUSAGE_Tex5:
-							SetTexture(m_parameters[i], mtrl->getTexture(5));
+							SetTexture(ep, mtrl->getTexture(5));
 							break;
 						case EPUSAGE_Tex6:
-							SetTexture(m_parameters[i], mtrl->getTexture(6));
+							SetTexture(ep, mtrl->getTexture(6));
 							break;
 						case EPUSAGE_Tex7:
-							SetTexture(m_parameters[i], mtrl->getTexture(7));
+							SetTexture(ep, mtrl->getTexture(7));
 							break;
 						case EPUSAGE_Tex8:
-							SetTexture(m_parameters[i], mtrl->getTexture(8));
+							SetTexture(ep, mtrl->getTexture(8));
 							break;
 						case EPUSAGE_Tex9:
-							SetTexture(m_parameters[i], mtrl->getTexture(9));
+							SetTexture(ep, mtrl->getTexture(9));
 							break;
 						case EPUSAGE_Tex10:
-							SetTexture(m_parameters[i], mtrl->getTexture(10));
+							SetTexture(ep, mtrl->getTexture(10));
 							break;
 						case EPUSAGE_Tex11:
-							SetTexture(m_parameters[i], mtrl->getTexture(11));
+							SetTexture(ep, mtrl->getTexture(11));
 							break;
 						case EPUSAGE_Tex12:
-							SetTexture(m_parameters[i], mtrl->getTexture(12));
+							SetTexture(ep, mtrl->getTexture(12));
 							break;
 						case EPUSAGE_Tex13:
-							SetTexture(m_parameters[i], mtrl->getTexture(13));
+							SetTexture(ep, mtrl->getTexture(13));
 							break;
 						case EPUSAGE_Tex14:
-							SetTexture(m_parameters[i], mtrl->getTexture(14));
+							SetTexture(ep, mtrl->getTexture(14));
 							break;
 						case EPUSAGE_Tex15:
-							SetTexture(m_parameters[i], mtrl->getTexture(15));
+							SetTexture(ep, mtrl->getTexture(15));
+							break;
+						case EPUSAGE_Unknown:
+							if (m_parameters[i].IsCustomUsage)
+							{
+								const MaterialCustomParameter* mcp = mtrl->getCustomParameter(m_parameters[i].CustomUsage);
+								if (mcp)
+								{
+									switch (mcp->Type)
+									{
+									case MTRLPT_Float:
+										if (mcp->IsReference())
+										{
+											SetValue(ep, *reinterpret_cast<const float*>(mcp->RefValue));
+										}
+										else
+										{
+											SetValue(ep, *reinterpret_cast<const float*>(mcp->Value));
+										}
+										break;
+									case MTRLPT_Vector2:
+									case MTRLPT_Ref_Vector2:
+										if (mcp->IsReference())
+										{
+											SetVector2(ep, *reinterpret_cast<const Vector2*>(mcp->RefValue));
+										}
+										else
+										{
+											SetVector2(ep, *reinterpret_cast<const Vector2*>(mcp->Value));
+										}
+										break;
+									case MTRLPT_Ref_Vector3:
+										if (mcp->IsReference())
+										{
+											SetVector3(ep, *reinterpret_cast<const Vector3*>(mcp->RefValue));
+										}
+										else
+										{
+											SetVector3(ep, *reinterpret_cast<const Vector3*>(mcp->Value));
+										}
+										break;
+
+									case MTRLPT_Ref_Vector4:
+									case MTRLPT_Vector4:
+										if (mcp->IsReference())
+										{
+											SetVector4(ep, *reinterpret_cast<const Vector4*>(mcp->RefValue));
+										}
+										else
+										{
+											SetVector4(ep, *reinterpret_cast<const Vector4*>(mcp->Value));
+										}
+										break;
+									case MTRLPT_Boolean:
+										if (mcp->IsReference())
+										{
+											SetValue(ep, *reinterpret_cast<const bool*>(mcp->RefValue));
+										}
+										else
+										{
+											SetValue(ep, *reinterpret_cast<const bool*>(mcp->Value));
+										}
+										break;
+									case MTRLPT_Integer:
+										if (mcp->IsReference())
+										{
+											SetValue(ep, *reinterpret_cast<const int*>(mcp->RefValue));
+										}
+										else
+										{
+											SetValue(ep, *reinterpret_cast<const int*>(mcp->Value));
+										}
+										break;
+									case MTRLPT_Ref_TextureHandle:
+										if (mcp->IsReference())
+										{
+											SetTexture(ep, reinterpret_cast<ResourceHandle<Texture>*>(mcp->RefValue));
+										}
+										break;
+									case MTRLPT_Ref_Texture:
+										if (mcp->IsReference())
+										{
+											SetTexture(ep, reinterpret_cast<Texture*>(mcp->RefValue));
+										}
+										break;
+									}
+								}
+							}
+							
 							break;
 					}
 
@@ -294,7 +383,25 @@ namespace Apoc3D
 				}
 				shader->SetValue(param.RegisterIndex, value);
 			}
+			void AutomaticEffect::SetVector2(EffectParameter& param, Vector2 value)
+			{
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
 
+				if (param.RegisterIndex == -1)
+				{
+					param.RegisterIndex = shader->GetParamIndex(param.Name);
+				}
+
+				shader->SetVector2(param.RegisterIndex, value);
+			}
 			void AutomaticEffect::SetVector3(EffectParameter& param, Vector3 value)
 			{
 				Shader* shader = 0;
@@ -374,6 +481,24 @@ namespace Apoc3D
 					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
 				}
 				shader->SetTexture(param.SamplerIndex, tex);
+			}
+			void AutomaticEffect::SetTexture(EffectParameter& param, Texture* value)
+			{
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
+
+				if (param.SamplerIndex == -1)
+				{
+					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
+				}
+				shader->SetTexture(param.SamplerIndex, value);
 			}
 		};
 	}

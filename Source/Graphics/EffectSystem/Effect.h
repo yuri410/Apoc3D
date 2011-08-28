@@ -95,11 +95,12 @@ namespace Apoc3D
 				virtual int begin();
 				virtual void end();
 			private:
+				void SetVector2(EffectParameter& param, Vector2 value);
 				void SetVector3(EffectParameter& param, Vector3 value);
 				void SetVector4(EffectParameter& param, Vector4 value);
 				void SetSamplerState(EffectParameter& param);
 				void SetTexture(EffectParameter& param, ResourceHandle<Texture>* value);
-
+				void SetTexture(EffectParameter& param, Texture* value);
 				template<typename T>
 				void SetValue(EffectParameter& param, const T& value);
 
