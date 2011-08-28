@@ -41,10 +41,11 @@ namespace Apoc3D
 
 		static const String TAG_3_ParameterCountTag = L"ParameterCount";
 		static const String TAG_3_ParameterTag = L"Parameter";
+		static const String TAG_3_ParameterSamplerStateTag = L"SamplerState";
 		static const String TAG_3_ShaderCodeTag = L"ShaderCode";
-
+		
 		static const String TAG_3_ShaderCodeLengthTag = L"ShaderCodeLength";
-
+		
 		void EffectData::Load(const ResourceLocation* rl)
 		{
 			BinaryReader* br = new BinaryReader(rl->GetReadStream());
@@ -79,10 +80,48 @@ namespace Apoc3D
 					params.IsCustomUsage = br->ReadBoolean();
 					params.CustomUsage = br->ReadString();
 					params.ProgramType = static_cast<ShaderType>(br->ReadInt32());
-					Parameters.Add(name);
-
+					
 					br2->Close();
 					delete br2;
+
+					tag = StringUtils::ToString(i);
+					tag = TAG_3_ParameterSamplerStateTag + tag;
+
+					if (data->Contains(tag))
+					{
+						br2 = data->GetData(tag);
+
+						params.SamplerState.AddressU = static_cast<TextureAddressMode>(br2->ReadUInt32());
+						params.SamplerState.AddressV = static_cast<TextureAddressMode>(br2->ReadUInt32());
+						params.SamplerState.AddressW = static_cast<TextureAddressMode>(br2->ReadUInt32());
+						params.SamplerState.BorderColor = br2->ReadUInt32();
+						params.SamplerState.MagFilter = static_cast<TextureFilter>(br2->ReadUInt32());
+						params.SamplerState.MaxAnisotropy = br2->ReadInt32();
+						params.SamplerState.MaxMipLevel = br2->ReadInt32();
+						params.SamplerState.MinFilter = static_cast<TextureFilter>(br2->ReadUInt32());
+						params.SamplerState.MipFilter = static_cast<TextureFilter>(br2->ReadUInt32());
+						params.SamplerState.MipMapLODBias = br2->ReadUInt32();
+
+						br2->Close();
+						delete br2;
+					}
+					else
+					{
+						params.SamplerState.AddressU = TA_Wrap;
+						params.SamplerState.AddressV = TA_Wrap;
+						params.SamplerState.AddressW = TA_Wrap;
+						params.SamplerState.BorderColor = 0;
+						params.SamplerState.MagFilter = TFLT_Linear;
+						params.SamplerState.MaxAnisotropy = 0;
+						params.SamplerState.MaxMipLevel = 0;
+						params.SamplerState.MinFilter = TFLT_Linear;
+						params.SamplerState.MipFilter = TFLT_Linear;
+						params.SamplerState.MipMapLODBias = 0;
+
+					}
+
+					Parameters.Add(name);
+
 				}
 
 				BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeLengthTag);
@@ -127,17 +166,35 @@ namespace Apoc3D
 
 				for (int i=0;i<Parameters.getCount();i++)
 				{
-					String tag = StringUtils::ToString(i);
+					const EffectParameter& pm = Parameters[i];
 
+					String tag = StringUtils::ToString(i);
 					tag = TAG_3_ParameterTag + tag;
 
 					BinaryWriter* bw2 = data->AddEntry(tag);
 
-					bw2->Write(Parameters[i].Name);
-					bw2->Write(static_cast<uint>(Parameters[i].TypicalUsage));
-					bw2->Write(Parameters[i].IsCustomUsage);
-					bw2->Write(Parameters[i].CustomUsage);
-					bw2->Write(static_cast<int>(Parameters[i].ProgramType));
+					bw2->Write(pm.Name);
+					bw2->Write(static_cast<uint>(pm.TypicalUsage));
+					bw2->Write(pm.IsCustomUsage);
+					bw2->Write(pm.CustomUsage);
+					bw2->Write(static_cast<int>(pm.ProgramType));
+
+					bw2->Close();
+					delete bw2;
+
+					tag = StringUtils::ToString(i);
+					tag = TAG_3_ParameterSamplerStateTag + tag;
+					bw2 = data->AddEntry(tag);
+					bw2->Write((uint)pm.SamplerState.AddressU);
+					bw2->Write((uint)pm.SamplerState.AddressV);
+					bw2->Write((uint)pm.SamplerState.AddressW);
+					bw2->Write((uint)pm.SamplerState.BorderColor);
+					bw2->Write((uint)pm.SamplerState.MagFilter);
+					bw2->Write((int)pm.SamplerState.MaxAnisotropy);
+					bw2->Write((int)pm.SamplerState.MaxMipLevel);
+					bw2->Write((uint)pm.SamplerState.MinFilter);
+					bw2->Write((uint)pm.SamplerState.MipFilter);
+					bw2->Write((uint)pm.SamplerState.MipMapLODBias);
 
 					bw2->Close();
 					delete bw2;
