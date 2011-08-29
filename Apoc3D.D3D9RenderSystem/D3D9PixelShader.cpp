@@ -93,14 +93,17 @@ namespace Apoc3D
 			void D3D9PixelShader::SetVector2(int reg, Vector2 value)
 			{
 				Vector2Utils::Store(value, m_buffer);
-				m_buffer[3] = m_buffer[4] = 0;
+				m_buffer[2] = m_buffer[3] = 0;
 				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 1);
 			}
 			void D3D9PixelShader::SetVector3(int reg, Vector3 value)
 			{
 				Vector3Utils::Store(value, m_buffer);
-				m_buffer[4] = 0;
+				m_buffer[3] = 0;
 				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 1);
+
+				float data[4];
+				m_device->getDevice()->GetPixelShaderConstantF(reg, data, 1);
 			}
 			void D3D9PixelShader::SetVector4(int reg, Vector4 value) 
 			{
@@ -132,7 +135,7 @@ namespace Apoc3D
 					{
 						int ofs = i*4;
 						Vector2Utils::Store(value[i], &m_buffer[ofs]);
-						m_buffer[ofs+3] = m_buffer[ofs+4] = 0;
+						m_buffer[ofs+2] = m_buffer[ofs+3] = 0;
 					}
 					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 8);
 					count -= 8;
@@ -143,7 +146,7 @@ namespace Apoc3D
 					{
 						int ofs = i*4;
 						Vector2Utils::Store(value[i], &m_buffer[ofs]);
-						m_buffer[ofs+3] = m_buffer[ofs+4] = 0;
+						m_buffer[ofs+2] = m_buffer[ofs+3] = 0;
 					}
 					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 4);
 					count -= 4;
@@ -152,7 +155,7 @@ namespace Apoc3D
 				{
 					int ofs = i*4;
 					Vector2Utils::Store(value[i], &m_buffer[ofs]);
-					m_buffer[ofs+3] = m_buffer[ofs+4] = 0;
+					m_buffer[ofs+2] = m_buffer[ofs+3] = 0;
 				}
 				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, count);
 			}
@@ -164,7 +167,7 @@ namespace Apoc3D
 					{
 						int ofs = i*4;
 						Vector3Utils::Store(value[i], &m_buffer[ofs]);
-						m_buffer[ofs+4] = 0;
+						m_buffer[ofs+3] = 0;
 					}
 					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 8);
 					count -= 8;
@@ -175,7 +178,7 @@ namespace Apoc3D
 					{
 						int ofs = i*4;
 						Vector3Utils::Store(value[i], &m_buffer[ofs]);
-						m_buffer[ofs+4] = 0;
+						m_buffer[ofs+3] = 0;
 					}
 					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 4);
 					count -= 4;
@@ -184,7 +187,7 @@ namespace Apoc3D
 				{
 					int ofs = i*4;
 					Vector3Utils::Store(value[i], &m_buffer[ofs]);
-					m_buffer[ofs+4] = 0;
+					m_buffer[ofs+3] = 0;
 				}
 				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, count);
 			}
@@ -308,7 +311,7 @@ namespace Apoc3D
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
 				Vector2Utils::Store(value, m_buffer);
-				m_buffer[3] = m_buffer[4] = 0;
+				m_buffer[2] = m_buffer[3] = 0;
 				m_device->getDevice()->SetPixelShaderConstantF(cons.RegisterIndex, m_buffer, 1);
 			}
 			void D3D9PixelShader::SetVector3(const String &paramName, Vector3 value) 
@@ -319,7 +322,7 @@ namespace Apoc3D
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
 				Vector3Utils::Store(value, m_buffer);
-				m_buffer[4] = 0;
+				m_buffer[3] = 0;
 				m_device->getDevice()->SetPixelShaderConstantF(cons.RegisterIndex, m_buffer, 1);
 			}
 			void D3D9PixelShader::SetVector4(const String &paramName, Vector4 value) 
