@@ -115,6 +115,10 @@ namespace Apoc3D
 
 				m_parameters =  data.Parameters;
 				
+				m_texture = objFac->CreateTexture(1,1,1, TU_Static, FMT_A8R8G8B8);
+				DataRectangle rect = m_texture->Lock(0, LOCK_None);
+				*(uint*)rect.getDataPointer() = 0xffffffff;
+				m_texture->Unlock(0);
 			}
 
 			AutomaticEffect::~AutomaticEffect()
@@ -123,6 +127,7 @@ namespace Apoc3D
 					delete m_vertexShader;
 				if (m_pixelShader)
 					delete m_pixelShader;
+				delete m_texture;
 			}
 
 			void AutomaticEffect::Setup(Material* mtrl, const RenderOperation& rop)
@@ -320,26 +325,15 @@ namespace Apoc3D
 				{
 					switch (m_parameters[i].TypicalUsage)
 					{
-					case EPUSAGE_LC3_Ambient:
-						SetVector3(m_parameters[i], 
-							Vector3Utils::LDVector(RendererEffectParams::LightAmbient.Red,
-							RendererEffectParams::LightAmbient.Green,
-							RendererEffectParams::LightAmbient.Blue
-							));
+					case EPUSAGE_LC4_Ambient:
+						
+						SetValue(m_parameters[i], Color4(1,1,0));// RendererEffectParams::LightAmbient);
 						break;
-					case EPUSAGE_LC3_Diffuse:
-						SetVector3(m_parameters[i], 
-							Vector3Utils::LDVector(RendererEffectParams::LightDiffuse.Red,
-							RendererEffectParams::LightDiffuse.Green,
-							RendererEffectParams::LightDiffuse.Blue
-							));
+					case EPUSAGE_LC4_Diffuse:
+						SetValue(m_parameters[i], RendererEffectParams::LightDiffuse);
 						break;
-					case EPUSAGE_LC3_Specular:
-						SetVector3(m_parameters[i], 
-							Vector3Utils::LDVector(RendererEffectParams::LightSpecular.Red,
-							RendererEffectParams::LightSpecular.Green,
-							RendererEffectParams::LightSpecular.Blue
-							));
+					case EPUSAGE_LC4_Specular:
+						SetValue(m_parameters[i], RendererEffectParams::LightSpecular);
 						break;
 					case EPUSAGE_LV3_LightDir:
 						SetVector3(m_parameters[i], RendererEffectParams::LightDirection);
@@ -368,7 +362,7 @@ namespace Apoc3D
 					case EPUSAGE_Tex13:
 					case EPUSAGE_Tex14:
 					case EPUSAGE_Tex15:
-						SetSamplerState(m_parameters[i]);
+						//SetSamplerState(m_parameters[i]);
 						break;
 					}
 				}
@@ -487,7 +481,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					
+					tex = m_texture;
 				}
 
 				Shader* shader = 0;
@@ -522,7 +516,7 @@ namespace Apoc3D
 				{
 					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
 				}
-				shader->SetTexture(param.SamplerIndex, value);
+				shader->SetTexture(param.SamplerIndex, value == 0 ? m_texture : value);
 			}
 		};
 	}

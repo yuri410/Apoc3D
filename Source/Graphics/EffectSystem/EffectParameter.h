@@ -106,13 +106,13 @@ namespace Apoc3D
 				EPUSAGE_LV3_LightDir=500,
 				/** lc4_ambient
 				*/
-				EPUSAGE_LC3_Ambient,
+				EPUSAGE_LC4_Ambient,
 				/** lc4_diffuse
 				*/
-				EPUSAGE_LC3_Diffuse,
+				EPUSAGE_LC4_Diffuse,
 				/** lc4_specular
 				*/
-				EPUSAGE_LC3_Specular,
+				EPUSAGE_LC4_Specular,
 
 				/** pv3_viewPos
 				*/

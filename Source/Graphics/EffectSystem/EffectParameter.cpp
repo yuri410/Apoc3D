@@ -155,15 +155,15 @@ namespace Apoc3D
 				}
 				else if (v==L"lc4_ambient")
 				{
-					return EPUSAGE_LC3_Ambient;
+					return EPUSAGE_LC4_Ambient;
 				}
 				else if (v==L"lc4_diffuse")
 				{
-					return EPUSAGE_LC3_Diffuse;
+					return EPUSAGE_LC4_Diffuse;
 				}
 				else if (v==L"lc4_specular")
 				{
-					return EPUSAGE_LC3_Specular;
+					return EPUSAGE_LC4_Specular;
 				}
 				else if (v==L"pv3_viewpos")
 				{

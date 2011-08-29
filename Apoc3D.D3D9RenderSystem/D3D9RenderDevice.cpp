@@ -289,8 +289,8 @@ namespace Apoc3D
 				if (!op)
 					return;
 
-				getDevice()->SetPixelShader(NULL);
-				getDevice()->SetVertexShader(NULL);
+				getDevice()->SetVertexShader(0);
+				getDevice()->SetPixelShader(0);
 
 				Effect* fx = mtrl->getPassEffect(passSelID);
 				if (!fx)
@@ -374,6 +374,8 @@ namespace Apoc3D
 						}
 						else
 						{
+							getDevice()->SetIndices(0);
+
 							getDevice()->DrawPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType),
 								0, gm->PrimitiveCount);
 						}

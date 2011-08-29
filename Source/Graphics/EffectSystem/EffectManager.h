@@ -50,7 +50,6 @@ namespace Apoc3D
 				EffectManager() { }
 				~EffectManager() { }
 
-
 				bool HasEffect(const String& name) const;
 				Effect* getEffect(const String& name) const;
 

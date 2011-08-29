@@ -126,7 +126,7 @@ namespace APBuild
 		}
 		else if (config.Profile == L"sm3.0")
 		{
-			data.MajorVer = 4;
+			data.MajorVer = 3;
 			data.MinorVer = 0;
 		}
 		else if (config.Profile == L"sm1.0")

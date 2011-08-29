@@ -110,6 +110,7 @@ namespace Apoc3D
 				List<EffectParameter> m_parameters;
 
 				RenderDevice* m_device;
+				Texture* m_texture;
 			};
 
 		};
