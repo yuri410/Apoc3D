@@ -95,33 +95,33 @@ namespace Apoc3D
 			{
 				Vector2Utils::Store(value, m_buffer);
 				m_buffer[2] = m_buffer[3] = 0;
-				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 1);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, m_buffer, 1);
 			}
 			void D3D9VertexShader::SetVector3(int reg, Vector3 value)
 			{
 				Vector3Utils::Store(value, m_buffer);
 				m_buffer[3] = 0;
-				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 1);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, m_buffer, 1);
 			}
 			void D3D9VertexShader::SetVector4(int reg, Vector4 value) 
 			{
-				m_device->getDevice()->SetPixelShaderConstantF(reg, Vector4Utils::GetElementAddress(value), 1);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, Vector4Utils::GetElementAddress(value), 1);
 			}
 			void D3D9VertexShader::SetValue(int reg, const Quaternion& value)  
 			{
-				m_device->getDevice()->SetPixelShaderConstantF(reg, &value.X, 1);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, &value.X, 1);
 			}
 			void D3D9VertexShader::SetValue(int reg, const Matrix& value) 
 			{
-				m_device->getDevice()->SetPixelShaderConstantF(reg, &value.M11, 4);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, &value.M11, 4);
 			}
 			void D3D9VertexShader::SetValue(int reg, const Color4& value) 
 			{
-				m_device->getDevice()->SetPixelShaderConstantF(reg, &value.Red, 1);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, &value.Red, 1);
 			}
 			void D3D9VertexShader::SetValue(int reg, const Plane& value) 
 			{
-				m_device->getDevice()->SetPixelShaderConstantF(reg, &value.X, 1);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, &value.X, 1);
 			}
 
 
@@ -136,7 +136,7 @@ namespace Apoc3D
 						Vector2Utils::Store(value[i], &m_buffer[ofs]);
 						m_buffer[ofs+2] = m_buffer[ofs+3] = 0;
 					}
-					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 8);
+					m_device->getDevice()->SetVertexShaderConstantF(reg, m_buffer, 8);
 					count -= 8;
 				}
 				while (count > 4)
@@ -147,7 +147,7 @@ namespace Apoc3D
 						Vector2Utils::Store(value[i], &m_buffer[ofs]);
 						m_buffer[ofs+2] = m_buffer[ofs+3] = 0;
 					}
-					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 4);
+					m_device->getDevice()->SetVertexShaderConstantF(reg, m_buffer, 4);
 					count -= 4;
 				}
 				for (int i=0;i<count;i++)
@@ -156,7 +156,7 @@ namespace Apoc3D
 					Vector2Utils::Store(value[i], &m_buffer[ofs]);
 					m_buffer[ofs+2] = m_buffer[ofs+3] = 0;
 				}
-				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, count);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, m_buffer, count);
 			}
 			void D3D9VertexShader::SetVector3(int reg, const Vector3* value, int count) 
 			{
@@ -168,7 +168,7 @@ namespace Apoc3D
 						Vector3Utils::Store(value[i], &m_buffer[ofs]);
 						m_buffer[ofs+3] = 0;
 					}
-					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 8);
+					m_device->getDevice()->SetVertexShaderConstantF(reg, m_buffer, 8);
 					count -= 8;
 				}
 				while (count > 4)
@@ -179,7 +179,7 @@ namespace Apoc3D
 						Vector3Utils::Store(value[i], &m_buffer[ofs]);
 						m_buffer[ofs+3] = 0;
 					}
-					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 4);
+					m_device->getDevice()->SetVertexShaderConstantF(reg, m_buffer, 4);
 					count -= 4;
 				}
 				for (int i=0;i<count;i++)
@@ -188,45 +188,45 @@ namespace Apoc3D
 					Vector3Utils::Store(value[i], &m_buffer[ofs]);
 					m_buffer[ofs+3] = 0;
 				}
-				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, count);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, m_buffer, count);
 			}
 			void D3D9VertexShader::SetVector4(int reg, const Vector4* value, int count)
 			{
-				m_device->getDevice()->SetPixelShaderConstantF(reg, reinterpret_cast<const float*>(value), count);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, reinterpret_cast<const float*>(value), count);
 			}
 			void D3D9VertexShader::SetValue(int reg, const Quaternion* value, int count)
 			{
-				m_device->getDevice()->SetPixelShaderConstantF(reg, reinterpret_cast<const float*>(value), count);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, reinterpret_cast<const float*>(value), count);
 			}
 			void D3D9VertexShader::SetValue(int reg, const Matrix* value, int count) 
 			{
-				m_device->getDevice()->SetPixelShaderConstantF(reg, reinterpret_cast<const float*>(value), count * 4);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, reinterpret_cast<const float*>(value), count * 4);
 			}
 			void D3D9VertexShader::SetValue(int reg, const Color4* value, int count) 
 			{
-				m_device->getDevice()->SetPixelShaderConstantF(reg, reinterpret_cast<const float*>(value), count);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, reinterpret_cast<const float*>(value), count);
 			}
 			void D3D9VertexShader::SetValue(int reg, const Plane* value, int count) 
 			{
-				m_device->getDevice()->SetPixelShaderConstantF(reg, reinterpret_cast<const float*>(value), count);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, reinterpret_cast<const float*>(value), count);
 			}
 
 			void D3D9VertexShader::SetValue(int reg, bool value) 
 			{
 				const BOOL b = value ? 1 : 0;
-				m_device->getDevice()->SetPixelShaderConstantB(reg, &b, 1);
+				m_device->getDevice()->SetVertexShaderConstantB(reg, &b, 1);
 			}
 			void D3D9VertexShader::SetValue(int reg, float value) 
 			{
 				m_buffer[0] = value;
 				m_buffer[1] = m_buffer[2] = m_buffer[3] = 0;
-				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 1);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, m_buffer, 1);
 			}
 			void D3D9VertexShader::SetValue(int reg, int value) 
 			{
 				m_intBuffer[0] = value;
 				m_intBuffer[1] = m_intBuffer[2] = m_intBuffer[3] = 0;
-				m_device->getDevice()->SetPixelShaderConstantI(reg, m_intBuffer, 1);
+				m_device->getDevice()->SetVertexShaderConstantI(reg, m_intBuffer, 1);
 			}
 			void D3D9VertexShader::SetValue(int reg, bool* value, int count) 
 			{
@@ -238,7 +238,7 @@ namespace Apoc3D
 				{
 					m_boolBuffer[i] = value ? 1 : 0;
 				}
-				m_device->getDevice()->SetPixelShaderConstantB(reg, m_boolBuffer, count / 4);
+				m_device->getDevice()->SetVertexShaderConstantB(reg, m_boolBuffer, count / 4);
 			}
 			void D3D9VertexShader::SetValue(int reg, float* value, int count) 
 			{
@@ -246,7 +246,7 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_Argument, L"count");
 				}
-				m_device->getDevice()->SetPixelShaderConstantF(reg, value, count / 4);
+				m_device->getDevice()->SetVertexShaderConstantF(reg, value, count / 4);
 			}
 			void D3D9VertexShader::SetValue(int reg, int* value, int count) 
 			{
@@ -254,7 +254,7 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_Argument, L"count");
 				}
-				m_device->getDevice()->SetPixelShaderConstantI(reg, value, count / 4);
+				m_device->getDevice()->SetVertexShaderConstantI(reg, value, count / 4);
 			}
 
 			void D3D9VertexShader::SetTexture(int samIndex, Texture* tex) 
@@ -310,7 +310,7 @@ namespace Apoc3D
 				}
 				Vector2Utils::Store(value, m_buffer);
 				m_buffer[2] = m_buffer[3] = 0;
-				//m_device->getDevice()->SetPixelShaderConstantF(cons.RegisterIndex, m_buffer, 1);
+				//m_device->getDevice()->SetVertexShaderConstantF(cons.RegisterIndex, m_buffer, 1);
 				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
 				m_constantTable->m_debugConstants->SetVector(m_device->getDevice(), handle, reinterpret_cast<D3DXVECTOR4*>(m_buffer));
 			}
@@ -323,7 +323,7 @@ namespace Apoc3D
 				}
 				Vector3Utils::Store(value, m_buffer);
 				m_buffer[3] = 0;
-				//m_device->getDevice()->SetPixelShaderConstantF(cons.RegisterIndex, m_buffer, 1);
+				//m_device->getDevice()->SetVertexShaderConstantF(cons.RegisterIndex, m_buffer, 1);
 				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
 				m_constantTable->m_debugConstants->SetVector(m_device->getDevice(), handle, reinterpret_cast<D3DXVECTOR4*>(m_buffer));
 
@@ -335,7 +335,7 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
-				//m_device->getDevice()->SetPixelShaderConstantF(cons.RegisterIndex, Vector4Utils::GetElementAddress(value), 1);
+				//m_device->getDevice()->SetVertexShaderConstantF(cons.RegisterIndex, Vector4Utils::GetElementAddress(value), 1);
 
 				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
 				m_constantTable->m_debugConstants->SetVector(m_device->getDevice(), handle, reinterpret_cast<const D3DXVECTOR4*>(Vector4Utils::GetElementAddress(value)));
@@ -359,8 +359,13 @@ namespace Apoc3D
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
 				//SetValue(cons.RegisterIndex, value);
-				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
-				m_constantTable->m_debugConstants->SetMatrix(m_device->getDevice(), handle, reinterpret_cast<const D3DXMATRIX*>(&value));
+				
+
+				//D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
+				//m_constantTable->m_debugConstants->SetMatrix(m_device->getDevice(), handle, reinterpret_cast<const D3DXMATRIX*>(&value));
+				
+				HRESULT hr = m_device->getDevice()->SetVertexShaderConstantF((UINT)cons.RegisterIndex, &value.M11, 4);
+				assert(SUCCEEDED(hr));
 			}
 			void D3D9VertexShader::SetValue(const String &paramName, const Color4& value) 
 			{

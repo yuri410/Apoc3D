@@ -101,7 +101,6 @@ namespace Apoc3D
 				~ConstantTable();
 
 				inline const ShaderConstant& getConstant(const String& name) const;
-				ID3DXConstantTable* m_debugConstants;
 			};
 
 			const ShaderConstant& ConstantTable::getConstant(const String& name) const
