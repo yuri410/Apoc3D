@@ -183,8 +183,7 @@ namespace Apoc3D
 					m_table.insert(pair<String, ShaderConstant>(constant.Name, constant));
 				}
 
-				//constants->Release();
-				m_debugConstants = constants;
+				constants->Release();
 			}
 
 			ConstantTable::~ConstantTable()

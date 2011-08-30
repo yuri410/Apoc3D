@@ -310,9 +310,7 @@ namespace Apoc3D
 				}
 				Vector2Utils::Store(value, m_buffer);
 				m_buffer[2] = m_buffer[3] = 0;
-				//m_device->getDevice()->SetVertexShaderConstantF(cons.RegisterIndex, m_buffer, 1);
-				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
-				m_constantTable->m_debugConstants->SetVector(m_device->getDevice(), handle, reinterpret_cast<D3DXVECTOR4*>(m_buffer));
+				m_device->getDevice()->SetVertexShaderConstantF(cons.RegisterIndex, m_buffer, 1);
 			}
 			void D3D9VertexShader::SetVector3(const String &paramName, Vector3 value) 
 			{
@@ -323,10 +321,7 @@ namespace Apoc3D
 				}
 				Vector3Utils::Store(value, m_buffer);
 				m_buffer[3] = 0;
-				//m_device->getDevice()->SetVertexShaderConstantF(cons.RegisterIndex, m_buffer, 1);
-				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
-				m_constantTable->m_debugConstants->SetVector(m_device->getDevice(), handle, reinterpret_cast<D3DXVECTOR4*>(m_buffer));
-
+				m_device->getDevice()->SetVertexShaderConstantF(cons.RegisterIndex, m_buffer, 1);
 			}
 			void D3D9VertexShader::SetVector4(const String &paramName, Vector4 value) 
 			{
@@ -335,10 +330,7 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
-				//m_device->getDevice()->SetVertexShaderConstantF(cons.RegisterIndex, Vector4Utils::GetElementAddress(value), 1);
-
-				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
-				m_constantTable->m_debugConstants->SetVector(m_device->getDevice(), handle, reinterpret_cast<const D3DXVECTOR4*>(Vector4Utils::GetElementAddress(value)));
+				m_device->getDevice()->SetVertexShaderConstantF(cons.RegisterIndex, Vector4Utils::GetElementAddress(value), 1);
 			}
 			void D3D9VertexShader::SetValue(const String &paramName, const Quaternion& value) 
 			{
@@ -347,9 +339,7 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
-				//SetValue(cons.RegisterIndex, value);
-				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
-				m_constantTable->m_debugConstants->SetVector(m_device->getDevice(), handle, reinterpret_cast<const D3DXVECTOR4*>(&value));
+				SetValue(cons.RegisterIndex, value);
 			}
 			void D3D9VertexShader::SetValue(const String &paramName, const Matrix& value) 
 			{
@@ -358,14 +348,8 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
-				//SetValue(cons.RegisterIndex, value);
+				SetValue(cons.RegisterIndex, value);
 				
-
-				//D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
-				//m_constantTable->m_debugConstants->SetMatrix(m_device->getDevice(), handle, reinterpret_cast<const D3DXMATRIX*>(&value));
-				
-				HRESULT hr = m_device->getDevice()->SetVertexShaderConstantF((UINT)cons.RegisterIndex, &value.M11, 4);
-				assert(SUCCEEDED(hr));
 			}
 			void D3D9VertexShader::SetValue(const String &paramName, const Color4& value) 
 			{
@@ -374,9 +358,7 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
-				//SetValue(cons.RegisterIndex, value);
-				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
-				m_constantTable->m_debugConstants->SetVector(m_device->getDevice(), handle, reinterpret_cast<const D3DXVECTOR4*>(&value));
+				SetValue(cons.RegisterIndex, value);
 			}
 			void D3D9VertexShader::SetValue(const String &paramName, const Plane& value)
 			{
@@ -385,9 +367,7 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
-				//SetValue(cons.RegisterIndex, value);
-				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
-				m_constantTable->m_debugConstants->SetVector(m_device->getDevice(), handle, reinterpret_cast<const D3DXVECTOR4*>(&value));
+				SetValue(cons.RegisterIndex, value);
 			}
 
 
@@ -472,9 +452,7 @@ namespace Apoc3D
 				{
 					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
 				}
-				//SetValue(cons.RegisterIndex, value);
-				D3DXHANDLE handle = m_constantTable->m_debugConstants->GetConstantByName(0, StringUtils::toString(paramName).c_str());
-				m_constantTable->m_debugConstants->SetFloat(m_device->getDevice(), handle, value);
+				SetValue(cons.RegisterIndex, value);
 			}
 			void D3D9VertexShader::SetValue(const String &paramName, int value)
 			{
