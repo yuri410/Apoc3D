@@ -5,6 +5,7 @@
     <Width>512</Width>
     <Height>512</Height>
     <Format>A8R8G8B8</Format>
+    <Depth></Depth>
   </Declare>
   <Pass SelectorID="0" Name="Default Pass">
     <C S="UseRT" Index="0" RT="View" />

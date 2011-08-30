@@ -101,6 +101,8 @@ namespace Apoc3D
 
 				virtual RenderTarget* GetRenderTarget(int index);
 
+				virtual PixelFormat GetDefaultRTFormat();
+				virtual DepthFormat GetDefaultDepthStencilFormat();
 				//virtual void SetTexture(int index, Texture* texture);
 				//virtual Texture* GetTexture(int index);
 

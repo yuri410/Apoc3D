@@ -901,7 +901,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					PixelFormat fmt = m_renderDevice->GetRenderTarget(0)->getColorFormat();
+					PixelFormat fmt = m_renderDevice->GetDefaultRTFormat();
 					var->Value[4] = reinterpret_cast<const uint&>(fmt);
 				}
 
@@ -909,6 +909,8 @@ namespace Apoc3D
 				if (e1)
 				{
 					DepthFormat fmt = ConvertDepthFormat(e1->GetText());
+					if (fmt == DEPFMT_Count)
+						fmt = m_renderDevice->GetDefaultDepthStencilFormat();
 					var->Value[5] = reinterpret_cast<const uint&>(fmt);
 				}
 				else
@@ -1415,7 +1417,7 @@ namespace Apoc3D
 			{
 				return DEPFMT_Depth32;
 			}
-			return DEPFMT_Depth16;
+			return DEPFMT_Count;
 		}
 
 	}

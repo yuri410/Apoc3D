@@ -409,6 +409,20 @@ namespace Apoc3D
 			{
 				return m_caps; 
 			}
+			PixelFormat D3D9RenderDevice::GetDefaultRTFormat()
+			{
+				D3DSURFACE_DESC desc;
+				m_defaultDS->GetDesc(&desc);
+
+				return D3D9Utils::ConvertBackPixelFormat(desc.Format);
+			}
+			DepthFormat D3D9RenderDevice::GetDefaultDepthStencilFormat()
+			{
+				D3DSURFACE_DESC desc;
+				m_defaultDS->GetDesc(&desc);
+
+				return D3D9Utils::ConvertBackDepthFormat(desc.Format);
+			}
 
 			bool D3D9Capabilities::SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat)
 			{

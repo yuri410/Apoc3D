@@ -435,6 +435,6 @@ namespace APDesigner
 
 		m_btnZoomIn->Position.X = m_pictureBox->Size.X-65;
 		m_btnZoomOut->Position.X = m_pictureBox->Size.X-30;
-
+		Document::Update(time);
 	}
 }

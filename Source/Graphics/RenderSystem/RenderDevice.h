@@ -71,10 +71,10 @@ namespace Apoc3D
 				uint getVertexCount() const { return m_vertexCount; }
 
 				virtual Capabilities* const getCapabilities() const = 0;
-				const String &getRenderDeviceName() const { return m_rdName; }
+				const String& getRenderDeviceName() const { return m_rdName; }
 
-				//virtual PixelFormat GetBackBufferFormat() = 0;
-				//virtual DepthFormat GetDefaultDepthStencilFormat() = 0;
+				virtual PixelFormat GetDefaultRTFormat() = 0;
+				virtual DepthFormat GetDefaultDepthStencilFormat() = 0;
 
 				virtual void Initialize() = 0;
 

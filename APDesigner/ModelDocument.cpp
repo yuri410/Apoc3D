@@ -587,6 +587,7 @@ namespace APDesigner
 		{
 			m_pbPassFlag->Size.Y = getDocumentForm()->getFontRef()->getLineHeight();
 		}
+		Document::Update(time);
 	}
 	void ModelDocument::Render()
 	{
