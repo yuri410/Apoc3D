@@ -160,13 +160,14 @@ namespace APDesigner
 			m_cbMesh = new ComboBox(Point(21+522+100, 107), 200, items);
 			m_cbMesh->SetSkin(window->getUISkin());
 			m_cbMesh->eventSelectionChanged().bind(this, &ModelDocument::CBMesh_SelectionChanged);
+
 			m_cbMeshPart = new ComboBox(Point(21+522+100, 133), 200, items);
 			m_cbMeshPart->SetSkin(window->getUISkin());
 			m_cbMeshPart->eventSelectionChanged().bind(this, &ModelDocument::CBMeshPart_SelectionChanged);
 
 			m_applyMtrl = new Button(Point(21 + 522+100+220, 159),150, L"Apply Changes");
 			m_applyMtrl->SetSkin(window->getUISkin());
-
+			m_applyMtrl->eventRelease().bind(this, &ModelDocument::BtnApplyMtrl_Pressed);
 
 			lbl = new Label(Point(21 + 522, 159), L"SubMaterial", 100);
 			lbl->SetSkin(window->getUISkin());
@@ -178,9 +179,11 @@ namespace APDesigner
 
 			m_addMtrlFrame = new Button(Point(21 + 522+100+220, 107),150, L"Add Sub Material");
 			m_addMtrlFrame->SetSkin(window->getUISkin());
+			m_addMtrlFrame->eventRelease().bind(this, &ModelDocument::BtnAddMtrl_Pressed);
 
 			m_removeMtrlFrame = new Button(Point(21 + 522+100+220, 133),150, L"Remove Sub Material");
 			m_removeMtrlFrame->SetSkin(window->getUISkin());
+			m_removeMtrlFrame->eventRelease().bind(this, &ModelDocument::BtnRemoveMtrl_Pressed);
 		}
 		{
 			int sx = 21 + 522;

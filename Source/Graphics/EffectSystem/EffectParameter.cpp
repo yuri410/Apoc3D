@@ -180,8 +180,8 @@ namespace Apoc3D
 			Camera* RendererEffectParams::CurrentCamera = 0;
 			Vector3 RendererEffectParams::LightDirection = Vector3Utils::LDVector(0.707f, 0.707f,0);
 			Color4 RendererEffectParams::LightAmbient(0,0,0);
-			Color4 RendererEffectParams::LightDiffuse(1,1,1);
-			Color4 RendererEffectParams::LightSpecular(1,1,1);
+			Color4 RendererEffectParams::LightDiffuse(1.0f,1.0f,1.0f);
+			Color4 RendererEffectParams::LightSpecular(1.0f,1.0f,1.0f);
 		}
 	}
 }

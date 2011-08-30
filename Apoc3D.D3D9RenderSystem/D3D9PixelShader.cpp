@@ -297,7 +297,11 @@ namespace Apoc3D
 				dev->SetSamplerState(samIndex, D3DSAMP_MINFILTER, D3D9Utils::ConvertTextureFilter(state.MinFilter));
 				dev->SetSamplerState(samIndex, D3DSAMP_MIPFILTER, D3D9Utils::ConvertTextureFilter(state.MipFilter));
 
-				dev->SetSamplerState(samIndex, D3DSAMP_MAXANISOTROPY, state.MaxAnisotropy);
+				if (state.MaxAnisotropy < 1)
+					dev->SetSamplerState(samIndex, D3DSAMP_MAXANISOTROPY, 1);
+				else
+					dev->SetSamplerState(samIndex, D3DSAMP_MAXANISOTROPY, state.MaxAnisotropy);
+
 				dev->SetSamplerState(samIndex, D3DSAMP_MAXMIPLEVEL, state.MaxMipLevel);
 				dev->SetSamplerState(samIndex, D3DSAMP_MIPMAPLODBIAS, state.MipMapLODBias);
 
