@@ -390,7 +390,8 @@ namespace Apoc3D
 				{
 					param.RegisterIndex = shader->GetParamIndex(param.Name);
 				}
-				shader->SetValue(param.RegisterIndex, value);
+				//shader->SetValue(param.RegisterIndex, value);
+				shader->SetValue(param.Name, value);
 			}
 			void AutomaticEffect::SetVector2(EffectParameter& param, Vector2 value)
 			{
@@ -409,7 +410,8 @@ namespace Apoc3D
 					param.RegisterIndex = shader->GetParamIndex(param.Name);
 				}
 				
-				shader->SetVector2(param.RegisterIndex, value);
+				//shader->SetVector2(param.RegisterIndex, value);
+				shader->SetVector2(param.Name, value);
 			}
 			void AutomaticEffect::SetVector3(EffectParameter& param, Vector3 value)
 			{
@@ -428,7 +430,8 @@ namespace Apoc3D
 					param.RegisterIndex = shader->GetParamIndex(param.Name);
 				}
 
-				shader->SetVector3(param.RegisterIndex, value);
+				//shader->SetVector3(param.RegisterIndex, value);
+				shader->SetVector3(param.Name, value);
 			}
 			void AutomaticEffect::SetVector4(EffectParameter& param, Vector4 value)
 			{
@@ -447,7 +450,8 @@ namespace Apoc3D
 					param.RegisterIndex = shader->GetParamIndex(param.Name);
 				}
 
-				shader->SetVector4(param.RegisterIndex, value);
+				//shader->SetVector4(param.RegisterIndex, value);
+				shader->SetVector4(param.Name, value);
 			}
 			void AutomaticEffect::SetSamplerState(EffectParameter& param)
 			{
@@ -465,7 +469,8 @@ namespace Apoc3D
 				{
 					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
 				}
-				shader->SetSamplerState(param.SamplerIndex, param.SamplerState);
+				//shader->SetSamplerState(param.SamplerIndex, param.SamplerState);
+				shader->SetSamplerState(param.Name, param.SamplerState);
 			}
 			void AutomaticEffect::SetTexture(EffectParameter& param, ResourceHandle<Texture>* value)
 			{
@@ -498,7 +503,8 @@ namespace Apoc3D
 				{
 					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
 				}
-				shader->SetTexture(param.SamplerIndex, tex);
+				//shader->SetTexture(param.SamplerIndex, tex);
+				shader->SetTexture(param.Name, tex);
 			}
 			void AutomaticEffect::SetTexture(EffectParameter& param, Texture* value)
 			{
@@ -516,7 +522,8 @@ namespace Apoc3D
 				{
 					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
 				}
-				shader->SetTexture(param.SamplerIndex, value == 0 ? m_texture : value);
+				//shader->SetTexture(param.SamplerIndex, value == 0 ? m_texture : value);
+				shader->SetTexture(param.Name, value == 0 ? m_texture : value);
 			}
 		};
 	}

@@ -24,6 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ConstantTable.h"
 
 #include "Apoc3DException.h"
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -59,9 +62,8 @@ namespace Apoc3D
 					
 					ShaderConstant constant;
 
-					wchar_t nameBuffer[128];
-					mbstowcs(nameBuffer, descs[0].Name, 128);
-					constant.Name = String(nameBuffer);
+					
+					constant.Name = StringUtils::toWString(descs[0].Name);
 					
 					switch (descs[0].RegisterSet)
 					{
@@ -181,7 +183,8 @@ namespace Apoc3D
 					m_table.insert(pair<String, ShaderConstant>(constant.Name, constant));
 				}
 
-				constants->Release();
+				//constants->Release();
+				m_debugConstants = constants;
 			}
 
 			ConstantTable::~ConstantTable()
