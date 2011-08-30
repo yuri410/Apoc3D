@@ -293,11 +293,13 @@ namespace APDesigner
 
 			m_resourcePane->UpdateToNewProject(m_project);
 			m_project->setBasePath(PathUtils::GetDirectory(path));
+
+			FileSystem::getSingleton().AddWrokingDirectory(m_project->getOutputPath());
 		}
 	}
 	void MainWindow::CloseProject()
 	{
-
+		
 	}
 	void MainWindow::SaveProject(const String& path)
 	{

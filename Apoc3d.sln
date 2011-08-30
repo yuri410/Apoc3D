@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.WindowsInput", "Apoc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.Essentials", "Apoc3D.Essentials\Apoc3D.Essentials.vcxproj", "{A834AD24-93AB-4F33-9172-D8F920E58E6C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "labtd", "twl\labtd\labtd.vcxproj", "{CF53E5EB-8003-49F8-837E-4D26053244E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -89,6 +91,18 @@ Global
 		{A834AD24-93AB-4F33-9172-D8F920E58E6C}.Release64|Win32.ActiveCfg = Release|Win32
 		{A834AD24-93AB-4F33-9172-D8F920E58E6C}.Release64|Win32.Build.0 = Release|Win32
 		{A834AD24-93AB-4F33-9172-D8F920E58E6C}.Release64|x64.ActiveCfg = Release|Win32
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Debug|Win32.Build.0 = Debug|Win32
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Debug|x64.ActiveCfg = Debug|x64
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Debug|x64.Build.0 = Debug|x64
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release|Win32.ActiveCfg = Release|Win32
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release|Win32.Build.0 = Release|Win32
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release|x64.ActiveCfg = Release|x64
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release|x64.Build.0 = Release|x64
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release64|Win32.ActiveCfg = Release64|Win32
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release64|Win32.Build.0 = Release64|Win32
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release64|x64.ActiveCfg = Release64|x64
+		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release64|x64.Build.0 = Release64|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
