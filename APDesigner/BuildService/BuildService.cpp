@@ -105,7 +105,7 @@ namespace APDesigner
 				LastResult.append(StringUtils::toWString(buffer));
 			}
 		}
-		while (WaitForSingleObject(procInfo.hProcess, 10) == WAIT_TIMEOUT);
+		while (WaitForSingleObject(procInfo.hProcess, 10) != WAIT_OBJECT_0);
 		//GetFileSize(writePipe, );
 
 		DWORD code;

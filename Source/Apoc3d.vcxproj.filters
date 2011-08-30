@@ -447,7 +447,7 @@
     <ClInclude Include="UILib\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collections\Array.h">
+    <ClInclude Include="Collections\List2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -98,7 +98,7 @@
     <ClInclude Include="..\extra\tthread\fast_mutex.h" />
     <ClInclude Include="..\extra\tthread\tinythread.h" />
     <ClInclude Include="Apoc3DException.h" />
-    <ClInclude Include="Collections\Array.h" />
+    <ClInclude Include="Collections\List2D.h" />
     <ClInclude Include="Collections\CollectionsCommon.h" />
     <ClInclude Include="Collections\ExistTable.h" />
     <ClInclude Include="Collections\FastList.h" />

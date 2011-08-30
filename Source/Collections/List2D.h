@@ -47,7 +47,7 @@ namespace Apoc3D
 			List2D(const List2D& another)
 				: m_width(another.m_width), m_height(another.m_height), m_internalPointer(another.m_internalPointer)
 			{
-				m_data = new T[m_height];
+				m_data = new T*[m_height];
 				for (int i=0;i<m_height;i++)
 				{
 					m_data[i] = new T[m_width];
@@ -60,21 +60,21 @@ namespace Apoc3D
 			}
 			~List2D()
 			{
-				for (int i=0;i<h;i++)
+				for (int i=0;i<m_internalPointer;i++)
 				{
 					delete[] m_data[i];
 				}
 				delete[] m_data;				
 			}
-			T& operator [](int32 i, int32 j) const
+			
+			T& at(int32 i, int32 j) const
 			{
 				assert(i>=0);
 				assert(i<m_internalPointer);
 				assert(j>=0);
 				assert(j<m_width);
-				return m_elements[i];
+				return m_data[i][j];
 			}
-
 			List2D& List2D::operator=(const List2D &rhs)
 			{
 				for (int i=0;i<h;i++)
@@ -99,7 +99,8 @@ namespace Apoc3D
 				}
 				return *this;
 			}
-
+			int getCount() const { return m_internalPointer; }
+			int getWidth() const { return m_width; }
 			void AddRow(const T* val)
 			{
 				if (m_height<=m_internalPointer)

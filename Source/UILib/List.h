@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Control.h"
 
 #include "Collections/FastList.h"
+#include "Collections/List2D.h"
 
 using namespace Apoc3D::Collections;
 
@@ -204,12 +205,18 @@ namespace Apoc3D
 			void SetSize(const Point& newSize);
 		};
 
+		typedef fastdelegate::FastDelegate2<int, int, void> ListViewSelectionHandler;
+
 		class ListView : public Control
 		{
 		public:
 			class Header
 			{
 			public:
+				Header()
+					:Width(0)
+				{
+				}
 				Header(const String& text, int width)
 					: Text(text), Width(width)
 				{
@@ -233,9 +240,14 @@ namespace Apoc3D
 				LHSTYLE_None
 			};
 
-			ListView(const Point& position, const Point& size);
+			ListView(const Point& position, const Point& size, const List2D<String>& items);
+			~ListView();
 
-			List<String>& getColumnHeader() { return m_columnHeader; }
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
+			List<Header>& getColumnHeader() { return m_columnHeader; }
 			ListViewHeaderStyle getHeaderStyle() const { return m_headerStyle; }
 			void setHeaderStyle(ListViewHeaderStyle s) { m_headerStyle = s; }
 
@@ -247,14 +259,28 @@ namespace Apoc3D
 
 			bool getHoverSelection() const { return m_hoverSelection; }
 			void setHoverSelection(bool v) { m_hoverSelection = v; }
+
+			ListViewSelectionHandler& eventSelected() { return m_eSelect; }
 		private:
-			int GetVisibleItems()
-			{
+			int GetVisibleItems();
+			
+			void UpdateSelection();
+			void DrawBorder(Sprite* sprite);
+			void DrawScrollbars(Sprite* sprite);
+			void DrawColumnHeaders(Sprite* sprite);
+			void UpdateHeaderSize(Apoc3D::Math::Rectangle headerArea, int index, Sprite* sprite);
+			void DrawHeaderEnd(Sprite* sprite, int width);
+			void DrawGridLines(Sprite* sprite);
+			void DrawItems(Sprite* sprite);
+			void DrawSelectionBox(Sprite* sprite, const Point& position, int x, int y);
+			void DrawSelectedBox(Sprite* sprite, const Point& position);
 
-			}
+			Apoc3D::Math::Rectangle m_sizeArea;
+			int m_resizeIndex;
 
+			List2D<String> m_items;
 
-			List<String> m_columnHeader;
+			List<Header> m_columnHeader;
 			Apoc3D::Math::Rectangle m_headerArea;
 			bool m_isResizing;
 
@@ -278,9 +304,9 @@ namespace Apoc3D
 			bool m_fullRowSelect;
 			bool m_hoverSelection;
 
-			UIEventHandler m_eSelect;
+			ListViewSelectionHandler m_eSelect;
 
-
+			Apoc3D::Math::Rectangle m_srcRect;
 		};
 	}
 }

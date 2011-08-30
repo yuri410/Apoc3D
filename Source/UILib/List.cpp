@@ -40,6 +40,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		
 		ListBox::ListBox(const Point& position, int width, int height, const List<String>& items)
 			: Control(position), m_sorted(false), m_isSorted(false), m_visisbleItems(0), m_textOffset(0,0),
 			m_selectionRect(0,0,0,0), m_hoverIndex(-1), m_selectedIndex(-1), m_vscrollbar(0), m_hscrollbar(0), m_horizontalScrollbar(false), m_hScrollWidth(0),
@@ -332,6 +333,7 @@ namespace Apoc3D
 					m_hscrollbar->setWidth( Size.X - 14);
 					UpdateHScrollbar();
 				}
+				m_vscrollbar->setStep(max(1, m_vscrollbar->getMax()/15));
 			}
 			else if (m_hscrollbar)
 			{
@@ -753,6 +755,7 @@ namespace Apoc3D
 					m_hscrollbar->setWidth( Size.X - 14);
 					UpdateHScrollbar();
 				}
+				m_vscrollbar->setStep(max(1, m_vscrollbar->getMax()/15));
 			}
 			else if (m_hscrollbar)
 			{
@@ -824,5 +827,550 @@ namespace Apoc3D
 				m_vscrollbar->setHeight(newSize.Y);
 		}
 
+		/************************************************************************/
+		/*  ListView                                                            */
+		/************************************************************************/
+
+		ListView::ListView(const Point& position, const Point& size, const List2D<String>& items)
+			: Control(position, L"", size), m_headerArea(0,0,0,0), m_isResizing(false),
+			m_headerStyle(LHSTYLE_Clickable), m_headerHoverIndex(-1), m_gridLines(false),
+			m_lineRect(0,0,0,0), m_gridSize(0,0), m_selectedRow(-1), m_selectedColumn(-1),
+			m_hoverRowIndex(-1), m_hoverColumnIndex(-1), m_selectionArea(0,0,0,0),
+			m_selectionRect(0,0,0,0), m_fullRowSelect(false), m_hoverSelection(false),
+			m_resizeIndex(-1), m_sizeArea(0,0,0,0),
+			m_items(items),
+			m_hScrollBar(0), m_vScrollBar(0),
+			m_srcRect(0,0,0,0)
+		{
+
+		}
+		ListView::~ListView()
+		{
+			if (m_hScrollBar)
+				delete m_hScrollBar;
+			if (m_vScrollBar)
+				delete m_vScrollBar;
+		}
+
+		void ListView::Initialize(RenderDevice* device)
+		{
+			Control::Initialize(device);
+
+			Size.Y = (Size.Y - 2 + 12) / m_fontRef->getLineHeight();
+
+			m_backArea.Width = Size.X;
+			m_backArea.Height = Size.Y;
+			m_backArea.X = Position.X;
+			m_backArea.Y = Position.Y;
+
+			// init scrollbars
+			m_vScrollBar = new ScrollBar(Position+Point(Size.X-13, 1), ScrollBar::SCRBAR_Vertical, Size.Y - 14);
+			m_vScrollBar->setOwner(getOwner());
+			m_vScrollBar->Initialize(device);
+
+			m_hScrollBar = new ScrollBar(Position+Point(1, Size.Y-13), ScrollBar::SCRBAR_Horizontal, Size.X -14);
+			m_hScrollBar->setOwner(getOwner());
+			m_hScrollBar->Initialize(device);
+
+		}
+
+		void ListView::Update(const GameTime* const time)
+		{
+			m_hScrollBar->Update(time);
+			m_vScrollBar->Update(time);
+
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+			if (m_isResizing && mouse->IsLeftReleasedState())
+				m_isResizing = false;
+
+			m_selectionArea = getAbsoluteArea();
+
+			if (m_headerStyle != LHSTYLE_None)
+			{
+				m_selectionArea.Y += m_fontRef->getLineHeight();
+				m_selectionArea.Height -= m_fontRef->getLineHeight();
+			}
+
+			if (m_vScrollBar->getMax()>0)
+				m_selectionArea.Width -= 12;
+			if (m_hScrollBar->getMax()>0)
+				m_selectionArea.Height -= 12;
+
+			if (m_hoverRowIndex != -1)
+				UpdateSelection();
+
+			if (m_headerStyle == LHSTYLE_Clickable && m_headerHoverIndex != -1 &&
+				mouse->IsLeftUp() && !m_columnHeader[m_headerHoverIndex].enentRelease().empty())
+			{
+				m_columnHeader[m_headerHoverIndex].enentRelease()(this);
+				m_headerHoverIndex = -1;
+			}
+		}
+
+		void ListView::UpdateSelection()
+		{
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+
+			if (mouse->IsLeftPressed())
+			{
+				m_selectedRow = m_hoverRowIndex;
+				m_selectedColumn = m_hoverColumnIndex;
+
+				if (!m_eSelect.empty())
+				{
+					if (m_fullRowSelect)
+						m_eSelect(m_selectedRow, 0);
+					else
+						m_eSelect(m_selectedRow, m_selectedColumn);
+				}
+			}
+			m_hoverRowIndex = -1;
+			m_hoverColumnIndex = -1;
+		}
+
+		void ListView::Draw(Sprite* sprite)
+		{
+			DrawBorder(sprite);
+
+			{
+				sprite->Flush();
+				Matrix trans;
+				Matrix::CreateTranslation(trans, (float)Position.X, (float)Position.Y ,0);
+				sprite->MultiplyTransform(trans);
+
+				bool shouldRestoreScissorTest = false;
+				Apoc3D::Math::Rectangle oldScissorRect;
+				RenderDevice* dev = sprite->getRenderDevice();
+				if (dev->getRenderState()->getScissorTestEnabled())
+				{
+					shouldRestoreScissorTest = true;
+					oldScissorRect = dev->getRenderState()->getScissorTestRect();
+				}
+				Apoc3D::Math::Rectangle scissorRect = getAbsoluteArea();
+				dev->getRenderState()->setScissorTest(true, &scissorRect);
+
+				// draw content
+				DrawColumnHeaders(sprite);
+				DrawItems(sprite);
+				DrawGridLines(sprite);
+
+
+				sprite->Flush();
+				if (shouldRestoreScissorTest)
+				{
+					dev->getRenderState()->setScissorTest(true,&oldScissorRect);
+				}
+				else
+				{
+					dev->getRenderState()->setScissorTest(false,0);
+				}
+				if (sprite->isUsingStack())
+					sprite->PopTransform();
+				else
+					sprite->SetTransform(Matrix::Identity);
+
+				//if (m_hScrollBar->getMax()>0)
+				//m_srcRect.Height = mar
+			}
+			
+
+			DrawScrollbars(sprite);
+		}
+
+		void ListView::DrawBorder(Sprite* sprite)
+		{
+			m_backArea.X = Position.X;
+			m_backArea.Y = Position.Y;
+			m_backArea.Width = Size.X;
+			m_backArea.Height = Size.Y;
+
+			sprite->Draw(m_skin->WhitePixelTexture, m_backArea,0,CV_Black);
+
+			m_backArea.X++;
+			m_backArea.Y++;
+			m_backArea.Width -=2;
+			m_backArea.Height -=2;
+			sprite->Draw(m_skin->WhitePixelTexture, m_backArea, 0, CV_White);
+		}
+		void ListView::DrawScrollbars(Sprite* sprite)
+		{
+			int totalWidth = 0;
+			if (m_columnHeader.getCount()>0)
+			{
+				for (int i=0;i<m_columnHeader.getCount();i++)
+					totalWidth += m_columnHeader[i].Width;
+			}
+
+			if (!m_isResizing)
+			{
+				if (m_vScrollBar->getMax() ==0)
+					m_hScrollBar->setMax(totalWidth - Size.X);
+				else
+					m_hScrollBar->setMax(totalWidth-Size.X+12);
+			}
+			m_hScrollBar->setStep(max(1, m_hScrollBar->getMax()/15));
+
+			if (m_hScrollBar->getMax()>0)
+			{
+				if (m_vScrollBar->getMax()>0 && m_hScrollBar->getWidth() != Size.X - 14)
+					m_hScrollBar->setWidth(Size.X - 14);
+				else if (m_vScrollBar->getMax() ==0 && m_hScrollBar->getWidth() != Size.X - 2)
+					m_hScrollBar->setWidth(Size.X - 2);
+
+				m_hScrollBar->Draw(sprite);
+			}
+
+			int rowCount = m_items.getCount();
+			int visiCount = GetVisibleItems();
+			if (rowCount > visiCount)
+				m_vScrollBar->setMax(rowCount-visiCount);
+			else
+				m_vScrollBar->setMax(0);
+
+			if (m_vScrollBar->getMax()>0)
+			{
+				if (m_hScrollBar->getMax()>0 && m_vScrollBar->getHeight() != Size.Y -14)
+					m_vScrollBar->setHeight(Size.Y - 14);
+				else if (m_hScrollBar->getMax() ==0 && m_vScrollBar->getHeight() != Size.Y - 2)
+					m_vScrollBar->setHeight(Size.Y - 2);
+
+				m_vScrollBar->Draw(sprite);
+			}
+		}
+
+		void ListView::DrawColumnHeaders(Sprite* sprite)
+		{
+			if (m_headerStyle != LHSTYLE_None)
+			{
+				m_headerArea.X = -m_hScrollBar->getValue();
+				m_headerArea.Y = 0;
+
+				Point textPos(0,0);
+				int totalWidth = 0;
+
+				for (int i=0;i<m_columnHeader.getCount();i++)
+				{
+					m_headerArea.Width = m_columnHeader[i].Width;
+					m_headerArea.Height = m_fontRef->getLineHeight();
+					totalWidth += m_headerArea.Width;
+					
+					UpdateHeaderSize(m_headerArea, i, sprite);
+
+					sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_Black);
+
+					// MouseOver Bevel Effect
+					Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+					Apoc3D::Math::Rectangle hoverArea(m_headerArea);
+					Point pos = GetAbsolutePosition();
+					m_headerArea.X += pos.X;
+					m_headerArea.Y += pos.Y;
+
+					if (m_headerStyle == LHSTYLE_Clickable && 
+						m_headerArea.Contains(mouse->GetCurrentPosition()) &&
+						UIRoot::getActiveForm() == getOwner())
+					{
+						m_headerHoverIndex = i;
+
+						if (mouse->IsLeftPressed() && !m_columnHeader[i].eventPress().empty())
+						{
+							m_columnHeader[i].eventPress()(this);
+						}
+
+						if (mouse->IsLeftReleasedState())
+						{
+							m_headerArea.Width--;
+							m_headerArea.Height--;
+
+							sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, 0, CV_DarkGray);
+
+							m_headerArea.X ++;
+							m_headerArea.Y ++;
+							m_headerArea.Width--;
+							m_headerArea.Height--;
+
+							sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, 0, CV_LightGray);
+
+							m_headerArea.X++;
+							m_headerArea.Y--;
+						}
+						else
+						{
+							// Draw normal header
+							m_headerArea.Width--;
+							m_headerArea.Height--;
+							sprite->Draw(m_skin->WhitePixelTexture, m_headerArea,0, CV_White);
+
+							m_headerArea.X++;
+							m_headerArea.Y++;
+							m_headerArea.Width--;
+							m_headerArea.Height--;
+							sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_LightGray);
+
+							m_headerArea.X++;
+							m_headerArea.Y--;
+						}
+					}
+					else
+					{
+						//Draw normal header
+						m_headerArea.Width--;
+						m_headerArea.Height--;
+						sprite->Draw(m_skin->WhitePixelTexture, m_headerArea,0, CV_White);
+
+						m_headerArea.X++;
+						m_headerArea.Y++;
+						m_headerArea.Width--;
+						m_headerArea.Height--;
+						sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_LightGray);
+
+						m_headerArea.X++;
+						m_headerArea.Y--;
+					}
+
+
+
+
+					// ===============
+					Point mts = m_fontRef->MeasureString(m_columnHeader[i].Text);
+
+					if (mts.X > m_headerArea.Width - 20)
+					{
+						//truncate text
+						String text = m_columnHeader[i].Text;
+						for (size_t j=0;j<Text.size();j++)
+						{
+							if (m_fontRef->MeasureString(text.substr(0,j)).X > m_headerArea.Width - 20)
+							{
+								if (j>0)
+									text = text.substr(0,j-1) + L"..";
+								else
+									text = L"";
+								break;
+							}
+						}
+
+						textPos.X = m_headerArea.X + (m_headerArea.Width - m_fontRef->MeasureString(text).X)/2;
+						textPos.Y = 0;
+						m_fontRef->DrawString(sprite, text, textPos, CV_Black);
+					}
+					else
+					{
+						textPos.X = m_headerArea.X + 
+							(m_headerArea.Width - mts.X)/2;
+						m_fontRef->DrawString(sprite, m_columnHeader[i].Text, textPos, CV_Black);
+					}
+
+					UpdateHeaderSize(m_headerArea, i, sprite);
+
+					m_headerArea.X += m_headerArea.Width;
+				}
+
+				if (m_hScrollBar->getMax() == 0)
+					DrawHeaderEnd(sprite, Size.X - totalWidth);
+			}
+		}
+
+		void ListView::UpdateHeaderSize(Apoc3D::Math::Rectangle headerArea, int index, Sprite* sprite)
+		{
+			if (getOwner() == UIRoot::getTopMostForm())
+			{
+				m_sizeArea.X = m_headerArea.X + m_headerArea.Width - 5 + Position.X;
+				m_sizeArea.Y = m_headerArea.Y + Position.Y;
+				m_sizeArea.Width = 10;
+				m_sizeArea.Height =  m_headerArea.Height;
+
+				Point absP = GetAbsolutePosition();
+				m_sizeArea.X += absP.X;
+				m_sizeArea.Y += absP.Y;
+				
+				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+				if (m_sizeArea.Contains(mouse->GetCurrentPosition()))
+				{
+					if (mouse->IsLeftPressed())
+					{
+						m_isResizing = true;
+						m_resizeIndex = index;
+					}
+				}
+
+			}
+		}
+		void ListView::DrawHeaderEnd(Sprite* sprite, int width)
+		{
+			m_headerArea.Width = width;
+			m_headerArea.Height = m_fontRef->getLineHeight();
+			sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_Black);
+
+			m_headerArea.Width--;
+			m_headerArea.Height--;
+			sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_White);
+
+			m_headerArea.X++;
+			m_headerArea.Y++;
+			m_headerArea.Width--;
+			m_headerArea.Height--;
+			sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_LightGray);
+		}
+
+		void ListView::DrawGridLines(Sprite* sprite)
+		{
+			m_lineRect.X = 0;
+			m_lineRect.Y = 0;
+
+			m_gridSize.X = m_columnHeader.getCount()+1;
+			m_gridSize.Y = Size.Y / m_fontRef->getLineHeight();
+
+			if (m_headerStyle != LHSTYLE_None)
+				m_gridSize.Y --;
+
+			m_lineRect.Width = Size.X;
+			m_lineRect.Height = 1;
+
+			for (int y=1;y<m_gridSize.Y;y++)
+			{
+				if (m_headerStyle != LHSTYLE_None)
+					m_lineRect.Y = y * m_fontRef->getLineHeight() + m_fontRef->getLineHeight();
+				else
+					m_lineRect.Y = y * m_fontRef->getLineHeight();
+
+				sprite->Draw(m_skin->WhitePixelTexture, m_lineRect, CV_LightGray);
+			}
+
+			m_lineRect.Width = 1;
+			m_lineRect.Height = Size.Y;
+			if (m_headerStyle != LHSTYLE_None)
+				m_lineRect.Y = m_fontRef->getLineHeight();
+			else
+				m_lineRect.Y = 0;
+
+			m_lineRect.X = -1-m_hScrollBar->getValue();
+			for (int x=0;x<m_columnHeader.getCount();x++)
+			{
+				sprite->Draw(m_skin->WhitePixelTexture, m_lineRect, CV_LightGray);
+				m_lineRect.X += m_columnHeader[x].Width;
+			}
+
+			sprite->Draw(m_skin->WhitePixelTexture, m_lineRect, CV_LightGray);
+		}
+
+		void ListView::DrawItems(Sprite* sprite)
+		{
+			Point textPos(0,0);
+
+			for (int y=0;y<m_items.getCount();y++)
+			{
+				textPos.X = -m_hScrollBar->getValue() + 4;
+				for (int x=0;x<m_items.getWidth();x++)
+				{
+					if (y > m_vScrollBar->getValue() -1)
+					{
+						if (m_headerStyle == LHSTYLE_None)
+							textPos.Y = (y - m_vScrollBar->getValue()) * m_fontRef->getLineHeight();
+						else
+							textPos.Y = (y - m_vScrollBar->getValue()) * m_fontRef->getLineHeight() + m_fontRef->getLineHeight();
+
+						if (m_fullRowSelect && x ==0 && y == m_selectedRow)
+							DrawSelectedBox(sprite, Point(0, textPos.Y));
+						else if (!m_fullRowSelect && x == m_selectedRow && y == m_selectedColumn)
+							DrawSelectedBox(sprite, textPos);
+
+						if (!m_isResizing)
+							DrawSelectionBox(sprite, textPos, x, y);
+
+						if (m_columnHeader.getCount()==0 || (x<m_columnHeader.getCount() &&
+							m_fontRef->MeasureString(m_items.at(y,x)).X > m_columnHeader[x].Width - 15))
+						{
+							// truncate text
+							String text = m_items.at(y,x);
+							for (size_t i=0;i<text.size();i++)
+								if (m_columnHeader.getCount()==0 ||
+									(x<m_columnHeader.getCount() && m_fontRef->MeasureString(text.substr(0,i)).X > m_columnHeader[x].Width-10))
+								{
+									if (i)
+										text = text.substr(0,i-1)+L"..";
+									else
+										text = L"";
+								}
+
+							if (x <m_columnHeader.getCount())
+								m_fontRef->DrawString(sprite, text, textPos, CV_Black);
+						}
+						else if (x<m_columnHeader.getCount())
+							m_fontRef->DrawString(sprite, m_items.at(y,x), textPos, CV_Black);
+					}
+
+					if (m_columnHeader.getCount()>0 && x<m_columnHeader.getCount())
+						textPos.X += m_columnHeader[x].Width;
+				}
+			}
+		}
+
+		void ListView::DrawSelectionBox(Sprite* sprite, const Point& position, int x, int y)
+		{
+			if (m_fullRowSelect)
+				m_selectionRect.Width = m_srcRect.Width + 2;
+			else
+				m_selectionRect.Width = m_columnHeader[x].Width + 2;
+
+			m_selectionRect.Height = m_fontRef->getLineHeight();
+
+			Point absp = GetAbsolutePosition();
+			m_selectionRect.X = position.X + absp.X - 4;
+			m_selectionRect.Y = position.Y + absp.Y;
+
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			if (m_selectionArea.Contains(mouse->GetCurrentPosition()) &&
+				m_selectionRect.Contains(mouse->GetCurrentPosition()) &&
+				UIRoot::getTopMostForm() == getOwner())
+			{
+				if (m_fullRowSelect)
+				{
+					m_hoverRowIndex = y;
+					m_hoverColumnIndex = x;
+				}
+				else
+				{
+					m_hoverRowIndex = x;
+					m_hoverColumnIndex = y;
+				}
+				if (m_hoverSelection)
+				{
+					m_selectionRect.X = position.X - 4;
+					m_selectionRect.Y = position.Y;
+					sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_LightGray);
+				}
+			}
+		}
+
+		void ListView::DrawSelectedBox(Sprite* sprite, const Point& position)
+		{
+			if (m_fullRowSelect)
+			{
+				m_selectionRect.X = 0;
+				m_selectionRect.Width = Size.X;
+			}
+			else
+			{
+				m_selectionRect.X = position.X - 4;
+				m_selectionRect.Width = m_columnHeader[m_selectedRow].Width;
+			}
+			m_selectionRect.Height = m_fontRef->getLineHeight();
+			m_selectionRect.Y = position.Y;
+
+			sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_Silver);
+		}
+
+		int ListView::GetVisibleItems()
+		{
+			int visibleItems = (int)floor((float)(Size.Y / m_fontRef->getLineHeight()));
+
+			if (m_hScrollBar->getMax()>0)
+				visibleItems--;
+			if (m_headerStyle != LHSTYLE_None)
+				visibleItems--;
+
+			return visibleItems;
+		}
 	}
 }

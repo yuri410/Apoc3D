@@ -152,6 +152,7 @@ namespace Apoc3D
 	namespace Collections
 	{
 		template<typename T> class List;
+		template<typename T> class List2D;
 		template<typename T> class FastList;
 		template<typename T> class FastQueue;
 		template<typename T, typename S> class FastMap;
