@@ -112,7 +112,7 @@ namespace Apoc3D
 
 		void Material::LoadEffect(int32 index)
 		{
-			if (!m_effectName->empty())
+			if (!m_effectName[index].empty())
 				m_effects[index] = EffectManager::getSingleton().getEffect(m_effectName[index]);
 		}
 

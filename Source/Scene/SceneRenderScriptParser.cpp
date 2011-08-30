@@ -896,7 +896,8 @@ namespace Apoc3D
 				e1 = node->FirstChildElement("Format");
 				if (e1)
 				{
-					PixelFormat fmt = ConvertFormat(e1->GetText());
+					const char* txt = e1->GetText();
+					PixelFormat fmt = ConvertFormat(txt ? txt : "");
 					var->Value[4] = reinterpret_cast<const uint&>(fmt);
 				}
 				else
@@ -908,7 +909,8 @@ namespace Apoc3D
 				e1 = node->FirstChildElement("Depth");
 				if (e1)
 				{
-					DepthFormat fmt = ConvertDepthFormat(e1->GetText());
+					const char* txt = e1->GetText();
+					DepthFormat fmt = ConvertDepthFormat(txt ? txt : "");
 					if (fmt == DEPFMT_Count)
 						fmt = m_renderDevice->GetDefaultDepthStencilFormat();
 					var->Value[5] = reinterpret_cast<const uint&>(fmt);
