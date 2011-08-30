@@ -296,7 +296,7 @@ namespace Apoc3D
 				if (!fx)
 				{
 					fx = m_defaultEffect;
-					//return;
+					return;
 				}
 
 				if (m_nativeState->getAlphaBlendEnable() != mtrl->IsBlendTransparent)

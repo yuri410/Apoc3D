@@ -665,6 +665,8 @@ namespace Apoc3D
 		{
 			Text = L"";
 			m_lines.Clear();
+			m_curorLocation.X = 0;
+			m_curorLocation.Y = 0;
 			Add(text);
 		}
 

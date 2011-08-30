@@ -319,7 +319,7 @@ namespace Apoc3D
 			int AutomaticEffect::begin()
 			{
 				m_device->BindPixelShader(m_pixelShader);
-				m_device->BindVertexShader(0);//m_vertexShader);
+				m_device->BindVertexShader(m_vertexShader);
 
 				for (int i=0;i<m_parameters.getCount();i++)
 				{

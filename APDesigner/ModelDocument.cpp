@@ -992,7 +992,7 @@ namespace APDesigner
 		m_mtrl = mtrl;
 		for (int i=0;i<MaxScenePass;i++)
 		{
-			m_tbTable[i]->Text = mtrl->getPassEffectName(i);
+			m_tbTable[i]->setText(mtrl->getPassEffectName(i));
 		}
 		m_form->ShowModal();
 	}
