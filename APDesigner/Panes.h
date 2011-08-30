@@ -59,10 +59,56 @@ namespace APDesigner
 		void Update(const GameTime* const time);
 	};
 
+	class PropEditor
+	{
+	public:
+		virtual void Show() = 0;
+		virtual void Hide() = 0;
+	};
+	class TexturePropEditor : public PropEditor
+	{
+	public:
+		TexturePropEditor(ResourcePane* pane);
+		~TexturePropEditor();
+
+		virtual void Show();
+		virtual void Hide();
+
+	private:
+		ComboBox* m_cbMethod;
+		//ComboBox* m_cb
+		
+	};
 
 	class ResourcePane
 	{
+	public:
+
+		ResourcePane(MainWindow* window);
+		~ResourcePane();
+
+		void Initialize(RenderDevice* device);
+
+		void Update(const GameTime* const time);
+
+		void UpdateToNewProject(Project* prj);
 	private:
+		
+		void NukeTreeViewNodes(FastList<TreeViewNode*>& nodes);
+		void NukeTreeView();
+
+		void BuildTreeViewNodes(TreeViewNode* parentNode, const FastList<ProjectItem*> items);
+		void BuildTreeViewNodes(const FastList<ProjectItem*> items);
+
+		void BtnAdd_Release(Control* ctrl);
+		void BtnRemove_Release(Control* ctrl);
+		void BtnOpen_Release(Control* ctrl);
+		void BtnApplyMod_Release(Control* ctrl);
+		void TreeView_SelectionChanged(Control* ctrl);
+
+		void NukePropertyList();
+		void AddPropertyPair(const String& a, const String& b);
+		void ListNewProperties(ProjectItemData* data);
 		//static const int ItemHeight = 60;
 		MainWindow* m_mainWindow;
 		const StyleSkin* m_skin;
@@ -81,31 +127,6 @@ namespace APDesigner
 		FastList<Label*> m_propLeft;
 		FastList<TextBox*> m_propRight;
 
-		void NukeTreeViewNodes(FastList<TreeViewNode*>& nodes);
-		void NukeTreeView();
-
-		void BuildTreeViewNodes(TreeViewNode* parentNode, const FastList<ProjectItem*> items);
-		void BuildTreeViewNodes(const FastList<ProjectItem*> items);
-
-		void BtnAdd_Release(Control* ctrl);
-		void BtnRemove_Release(Control* ctrl);
-		void BtnOpen_Release(Control* ctrl);
-		void BtnApplyMod_Release(Control* ctrl);
-		void TreeView_SelectionChanged(Control* ctrl);
-
-		void NukePropertyList();
-		void AddPropertyPair(const String& a, const String& b);
-		void ListNewProperties(ProjectItemData* data);
-	public:
-		
-		ResourcePane(MainWindow* window);
-		~ResourcePane();
-
-		void Initialize(RenderDevice* device);
-
-		void Update(const GameTime* const time);
-
-		void UpdateToNewProject(Project* prj);
 	};
 
 	//class PropertyPane

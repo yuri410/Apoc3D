@@ -437,6 +437,9 @@ namespace APDesigner
 			break;
 		case PRJITEM_Font:
 			{
+				ProjectResFont* fnt = static_cast<ProjectResFont*>(data);
+
+
 			}
 			break;
 		case PRJITEM_Folder:

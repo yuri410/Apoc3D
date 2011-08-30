@@ -329,18 +329,25 @@ namespace Apoc3D
 				}
 				else
 				{
-					T* destinationArray = new T[m_length - 1];
-					memcpy(destinationArray, m_elements, index * sizeof(T));
-
-					if (m_internalPointer - ++index > 0)
+					for (int i=index;i<m_internalPointer-1;i++)
 					{
-						memcpy(destinationArray+ index-1, m_elements+index, (m_internalPointer-index)*sizeof(T));
+						m_elements[i] = m_elements[i+1];
 					}
-					delete[] m_elements;
-					m_elements = destinationArray;
+					
+					//T* destinationArray = new T[m_length - 1];
+					//memcpy(destinationArray, m_elements, index * sizeof(T));
 
-					m_length--;
+					//if (m_internalPointer - ++index > 0)
+					//{
+					//	memcpy(destinationArray+ index-1, m_elements+index, (m_internalPointer-index)*sizeof(T));
+					//}
+					//delete[] m_elements;
+					//m_elements = destinationArray;
+
+					//m_length--;
 					m_internalPointer--;
+
+					memset(m_elements+m_internalPointer,0, sizeof(T));
 				}
 			}
 			void RemoveRange(int32 start, int32 count)

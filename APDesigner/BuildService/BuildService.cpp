@@ -34,6 +34,7 @@ namespace APDesigner
 		FastList<ConfigurationSection*> scripts;
 		project->GenerateBuildScripts(scripts);
 
+		String allresult;
 		for (int i=0;i<scripts.getCount();i++)
 		{
 			XMLConfiguration* xc = new XMLConfiguration(L"Root");
@@ -42,10 +43,14 @@ namespace APDesigner
 			delete xc;
 			if (ExecuteBuildOperation())
 			{
+				allresult.append(LastResult);
 				LogManager::getSingleton().Write(LOG_System, L"Build failed.", LOGLVL_Error);
 				break;
 			}
+			allresult.append(LastResult);
 		}
+
+		LastResult = allresult;
 	}
 
 	int BuildInterface::ExecuteBuildOperation()
@@ -85,11 +90,16 @@ namespace APDesigner
 
 		do
 		{
-			char buffer[128];
-			memset(buffer,0,sizeof(buffer));
+			char buffer[1024];
+			//memset(buffer,0,sizeof(buffer));
 			DWORD actul;
-			ReadFile(writePipe, buffer,128, &actul,0);
-
+			ReadFile(writePipe, buffer, sizeof(buffer), &actul,0);
+			
+			if (actul<sizeof(buffer))
+			{
+				memset(buffer+actul,0, sizeof(buffer)-actul);
+			}
+			
 			if (actul)
 			{
 				LastResult.append(StringUtils::toWString(buffer));

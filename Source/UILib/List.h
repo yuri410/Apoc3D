@@ -27,6 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UICommon.h"
 #include "Control.h"
 
+#include "Collections/FastList.h"
+
+using namespace Apoc3D::Collections;
+
 namespace Apoc3D
 {
 	namespace UI
@@ -198,6 +202,85 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite);
 
 			void SetSize(const Point& newSize);
+		};
+
+		class ListView : public Control
+		{
+		public:
+			class Header
+			{
+			public:
+				Header(const String& text, int width)
+					: Text(text), Width(width)
+				{
+				}
+
+				UIEventHandler& eventPress() { return m_eOnPress; }
+				UIEventHandler& enentRelease() { return m_eOnRelease; }
+
+				String Text;
+				int Width;
+
+			private:
+				UIEventHandler m_eOnPress;
+				UIEventHandler m_eOnRelease;
+				
+			};
+			enum ListViewHeaderStyle
+			{
+				LHSTYLE_Clickable,
+				LHSTYLE_Nonclockable,
+				LHSTYLE_None
+			};
+
+			ListView(const Point& position, const Point& size);
+
+			List<String>& getColumnHeader() { return m_columnHeader; }
+			ListViewHeaderStyle getHeaderStyle() const { return m_headerStyle; }
+			void setHeaderStyle(ListViewHeaderStyle s) { m_headerStyle = s; }
+
+			bool getGridLines() const { return m_gridLines; }
+			void setGridLines(bool v) { m_gridLines = v; }
+
+			bool getFullRowSelect() const { return m_fullRowSelect; }
+			void setFullRowSelect(bool v) { m_fullRowSelect = v; }
+
+			bool getHoverSelection() const { return m_hoverSelection; }
+			void setHoverSelection(bool v) { m_hoverSelection = v; }
+		private:
+			int GetVisibleItems()
+			{
+
+			}
+
+
+			List<String> m_columnHeader;
+			Apoc3D::Math::Rectangle m_headerArea;
+			bool m_isResizing;
+
+			Apoc3D::Math::Rectangle m_backArea;
+
+			ScrollBar* m_hScrollBar;
+			ScrollBar* m_vScrollBar;
+
+			ListViewHeaderStyle m_headerStyle;
+			int m_headerHoverIndex;
+			bool m_gridLines;
+			Apoc3D::Math::Rectangle m_lineRect;
+			Point m_gridSize;
+
+			int m_selectedRow;
+			int m_selectedColumn;
+			int m_hoverRowIndex;
+			int m_hoverColumnIndex;
+			Apoc3D::Math::Rectangle m_selectionArea;
+			Apoc3D::Math::Rectangle m_selectionRect;
+			bool m_fullRowSelect;
+			bool m_hoverSelection;
+
+			UIEventHandler m_eSelect;
+
+
 		};
 	}
 }
