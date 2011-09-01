@@ -82,7 +82,7 @@ namespace Apoc3D
 			void AddSection(ConfigurationSection* section);
 			void AddAttribute(const String& name, const String& value);
 			void SetValue( const String& value);
-
+			void SetValue(const String& name, const String& value);
 
 			const String& getName() const { return m_name; }
 			const String& getValue(const String& name) const;

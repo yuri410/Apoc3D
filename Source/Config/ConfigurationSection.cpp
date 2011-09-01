@@ -63,7 +63,12 @@ namespace Apoc3D
 			}
 			m_value = value;
 		}
-
+		void ConfigurationSection::SetValue(const String& name, const String& value)
+		{
+			ConfigurationSection* ss = new ConfigurationSection(name);
+			ss->SetValue(value);
+			AddSection(ss);
+		}
 
 		bool ConfigurationSection::hasAttribute(const String& name) const
 		{
