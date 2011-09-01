@@ -95,6 +95,7 @@ namespace Apoc3D
 			ScrollBarType getScrollbarType() const { return m_scrollBar; }
 			void setScrollbarType(ScrollBarType barType) { m_scrollBar = barType; }
 
+			UIEventHandler& eventReturnPressed() { return m_eEnterPressed; }
 
 		private:
 			Point m_textOffset;
@@ -128,6 +129,8 @@ namespace Apoc3D
 			bool m_timerStarted;
 			Apoc3D::Math::Rectangle m_focusArea;
 			
+			UIEventHandler m_eEnterPressed;
+
 			void InitScrollbars(RenderDevice* device);
 			void InitDstRect();
 

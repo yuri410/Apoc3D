@@ -42,40 +42,50 @@ namespace Apoc3D
 			tm* t = localtime(&Time);
 
 			wstringstream wss;
-			wss.width(2);
-			wss.fill('0');
-			wss << t->tm_hour;
-			wss << t->tm_min;
-			wss << t->tm_sec;
-			wss.width(0);
-			wss.fill(' ');
 
-
-
-			wss << L" [";
-			switch (Type)
+			if (Type != LOG_Command)
 			{
-			case LOG_System:
-				wss << L"SYS";
-				break;
-			case LOG_Graphics:
-				wss << L"GRP";
-				break;
-			case LOG_Audio:
-				wss << L"AUD";
-				break;
-			case LOG_Scene:
-				wss << L"SCE";
-				break;
-			case LOG_Game:
-				wss << L"GAM";
-				break;
-			case LOG_Network:
-				wss << L"NET";
-				break;
-			}
-			wss << L"] ";
+				wss.width(2);
+				wss.fill('0');
+				wss << t->tm_hour;
+				wss << t->tm_min;
+				wss << t->tm_sec;
+				wss.width(0);
+				wss.fill(' ');
 
+
+				wss << L" [";
+				switch (Type)
+				{
+				case LOG_System:
+					wss << L"SYS";
+					break;
+				case LOG_Graphics:
+					wss << L"GRP";
+					break;
+				case LOG_Audio:
+					wss << L"AUD";
+					break;
+				case LOG_Scene:
+					wss << L"SCE";
+					break;
+				case LOG_Game:
+					wss << L"GAM";
+					break;
+				case LOG_Network:
+					wss << L"NET";
+					break;
+				}
+				wss << L"] ";
+
+			}
+			else
+			{
+				wss << L" >";
+			}
+			
+
+			
 			switch (Level)
 			{
 			case LOGLVL_Error:

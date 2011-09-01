@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UICommon.h"
 #include "Core/Logging.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
@@ -35,14 +36,24 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		typedef fastdelegate::FastDelegate2<String, List<String>*> ConsoleCommandHandler;
+
 		class APAPI Console
 		{
 		public:
 			Console(RenderDevice* device, StyleSkin* skin, const Point& position, const Point& size);
 			~Console();
 
+			ConsoleCommandHandler& eventCommandSubmited() { return m_eCommandSubmited; }
+
 			void Update(const GameTime* const time);
 		private:
+			void TextBox_ReturnPressed(Control* ctrl);
+			void Submit_Pressed(Control* ctrl);
+
+			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+			void Log_New(LogEntry e);
+
 			Form* m_form;
 			TextBox* m_inputText;
 			Button* m_submit;
@@ -51,8 +62,9 @@ namespace Apoc3D
 			ScrollBar* m_scrollBar;
 			std::list<LogEntry> m_logs;
 
-			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-			void Log_New(LogEntry e);
+			ConsoleCommandHandler m_eCommandSubmited;
+
+
 		};
 	}
 }

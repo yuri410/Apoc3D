@@ -49,7 +49,8 @@ namespace Apoc3D
 			LOG_Scene = 3,
 			LOG_Game = 4,
 			LOG_Network = 5,
-			LOG_Count = 6
+			LOG_Command = 6,
+			LOG_Count = 7
 		};
 
 		
@@ -62,7 +63,7 @@ namespace Apoc3D
 			LogType Type;
 
 			LogEntry(){}
-			LogEntry(time_t time, String content, LogMessageLevel level, LogType type)
+			LogEntry(time_t time, const String& content, LogMessageLevel level, LogType type)
 				: Time(time), Level(level), Content(content), Type(type)
 			{
 			}

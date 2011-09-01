@@ -106,6 +106,12 @@ namespace Apoc3D
 			KEY_COMMA,
 			KEY_PERIOD,
 			KEY_SLASH,
+			KEY_BACKSLASH,
+			KEY_MINUS,
+			KEY_LBRACKET,
+			KEY_RBRACKET,
+			KEY_SEMICOLON,
+
 
 			KEY_TAB,
 			
@@ -194,9 +200,7 @@ namespace Apoc3D
 				}
 
 				KeyboardEventsArgs eventArg;
-#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-				eventArg.CapsLock =  (GetKeyState(VK_CAPITAL) & 0x8001) != 0;
-#endif
+
 				if (kb->IsKeyDown(KEY_LSHIFT) || kb->IsKeyDown(KEY_RSHIFT))
 				{
 					eventArg.ShiftDown = true;
@@ -209,7 +213,11 @@ namespace Apoc3D
 				{
 					eventArg.ControlDown = true;
 				}
-
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+				eventArg.CapsLock =  (GetKeyState(VK_CAPITAL) & 0x8001) != 0;
+				eventArg.ShiftDown |= !!GetAsyncKeyState(VK_LSHIFT);
+				eventArg.ShiftDown |= !!GetAsyncKeyState(VK_RSHIFT);
+#endif
 				for (int i=0;i<sizeof(InputKeys)/sizeof(KeyboardKeyCode);i++)
 				{
 					if (kb->IsKeyDown(InputKeys[i]))

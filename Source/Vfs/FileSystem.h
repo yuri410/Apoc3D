@@ -84,6 +84,9 @@ namespace Apoc3D
 			//static void Initialize();
 
 			void AddWrokingDirectory(const String& path);
+			const String& getWorkingDirectory(int i) const { return m_workingDirs[i]; }
+			int getNumWorkingDirectories() const { return (int)m_workingDirs.size(); }
+
 			void RegisterArchiveType(ArchiveFactory* factory);			
 			bool UnregisterArchiveType(ArchiveFactory* factory);
 

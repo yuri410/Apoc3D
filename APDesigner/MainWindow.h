@@ -95,7 +95,7 @@ namespace APDesigner
 		void SwitchedTo(Document* document);
 		
 
-		void Initialize();
+		virtual void Initialize();
 		virtual void Finalize();
 
 		virtual void Load();

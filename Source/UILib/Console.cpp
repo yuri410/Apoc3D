@@ -30,7 +30,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Scrollbar.h"
 #include "Graphics/RenderSystem/Sprite.h"
 #include "StyleSkin.h"
+#include "Utility/StringUtils.h"
 
+using namespace Apoc3D::Utility;
 using namespace Apoc3D::Core;
 
 namespace Apoc3D
@@ -51,6 +53,7 @@ namespace Apoc3D
 
 			m_submit = new Button(Point(size.X - 100, size.Y - 30), L"Submit");
 			m_submit->SetSkin(skin);
+			m_submit->eventRelease().bind(this,&Console::Submit_Pressed);
 			m_form->getControls().Add(m_submit);
 
 			m_pictureBox = new PictureBox(Point(10,10+17), 1);
@@ -97,6 +100,80 @@ namespace Apoc3D
 			m_scrollBar->setHeight(m_pictureBox->Size.Y);
 
 			
+		}
+		void Console::TextBox_ReturnPressed(Control* ctrl)
+		{
+			Submit_Pressed(ctrl);
+		}
+		void Console::Submit_Pressed(Control* ctrl)
+		{
+			const String& c = m_inputText->Text;
+
+			if (c.size())
+			{
+				List<String> args;
+
+				int lastPos = -1;
+				bool isInQuote = false;
+				bool isSingleQuote = false;
+				for (size_t i=0;i<c.size();i++)
+				{
+					wchar_t ch = c[i];
+					if (ch == '\'')
+					{
+						if (!isInQuote)
+						{
+							isInQuote = true;
+							isSingleQuote = true;
+						}
+						else if (isSingleQuote)
+						{
+							isInQuote = false;
+						}
+					}
+					else if (ch == '"')
+					{
+						if (!isInQuote)
+						{
+							isInQuote = true;
+							isSingleQuote = false;
+						}
+						else if (!isSingleQuote)
+						{
+							isInQuote = false;
+						}
+					}
+					else if (ch == ' ' && !isInQuote)
+					{
+						if (i && (int)i-1 != lastPos)
+						{
+							args.Add(c.substr(lastPos+1, i-lastPos-1));
+							lastPos = i;
+						}
+						else
+						{
+							lastPos = i;
+						}
+						
+					}
+				}
+				if (lastPos != c.size()-1)
+				{
+					args.Add(c.substr(lastPos+1, c.size()-lastPos-1));
+				}
+
+				LogEntry le(0, c, LOGLVL_Default, LOG_Command);
+				m_logs.push_back(le);
+
+				if (!m_eCommandSubmited.empty())
+				{
+					String cmd = args[0];
+					StringUtils::ToLowerCase(cmd);
+					m_eCommandSubmited(cmd, &args);
+				}
+			}
+
+			m_inputText->setText(L"");
 		}
 
 		void Console::PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)

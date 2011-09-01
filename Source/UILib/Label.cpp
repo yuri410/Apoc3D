@@ -863,6 +863,11 @@ namespace Apoc3D
 						m_curorLocation.X = 0;
 						m_curorLocation.Y += 1;
 					}
+					else
+					{
+						if (!m_eEnterPressed.empty())
+							m_eEnterPressed(this);
+					}
 				}
 				break;
 			case KEY_SPACE:
