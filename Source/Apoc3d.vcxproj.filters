@@ -450,6 +450,12 @@
     <ClInclude Include="Collections\List2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\ParticleSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\ParticleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -783,6 +789,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\GraphicsCommon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\ParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

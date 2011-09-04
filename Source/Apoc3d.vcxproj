@@ -134,6 +134,8 @@
     <ClInclude Include="Graphics\MeshSimplifier.h" />
     <ClInclude Include="Graphics\ModelManager.h" />
     <ClInclude Include="Graphics\ModelTypes.h" />
+    <ClInclude Include="Graphics\ParticleSettings.h" />
+    <ClInclude Include="Graphics\ParticleSystem.h" />
     <ClInclude Include="Graphics\Patch.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderTarget.h" />
     <ClInclude Include="Graphics\RenderSystem\Sprite.h" />
@@ -269,6 +271,7 @@
     <ClCompile Include="Graphics\GraphicsCommon.cpp" />
     <ClCompile Include="Graphics\LockData.cpp" />
     <ClCompile Include="Graphics\ModelManager.cpp" />
+    <ClCompile Include="Graphics\ParticleSystem.cpp" />
     <ClCompile Include="Graphics\Patch.cpp" />
     <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp" />
     <ClCompile Include="Graphics\RenderSystem\ObjectFactory.cpp" />
