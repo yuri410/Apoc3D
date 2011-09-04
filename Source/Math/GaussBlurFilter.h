@@ -24,16 +24,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GAUSSBLURFILTER_H
 #define GAUSSBLURFILTER_H
 
-#pragma once
-
 #include "Common.h"
-#include "MathUtils.h"
+#include "Vector.h"
 
-namespace lab
+namespace Apoc3D
 {
-	namespace Graphics
+	namespace Math
 	{
-		class GaussBlurFilter
+		class APAPI GaussBlurFilter
 		{
 		private:
 			float BlurAmount;
