@@ -28,12 +28,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "ParticleSettings.h"
-//#include "Material.h"
-#include "Graphics/GeometryData.h"
-#include "Graphics/RenderSystem/VertexElement.h"
+#include "Material.h"
+#include "GeometryData.h"
+#include "RenderSystem/VertexElement.h"
+#include "Renderable.h"
 #include "Math/Vector.h"
 #include "Math/Color.h"
 
+using namespace Apoc3D::Core;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Math;
@@ -44,7 +46,7 @@ namespace Apoc3D
 	{
 		/*  Custom vertex structure for drawing point sprite particles.
 		*/
-		struct ParticleVertex
+		struct APAPI ParticleVertex
 		{
 			/* Stores the starting position of the particle.
 			*/
@@ -66,7 +68,7 @@ namespace Apoc3D
 
 		/* in charge of displaying particles.
 		*/
-		class ParticleSystem
+		class APAPI ParticleSystem : public Renderable
 		{
 		public:
 			ParticleSystem(RenderDevice* device);
@@ -86,8 +88,8 @@ namespace Apoc3D
 			const ParticleSettings* getSettings() const { return &m_settings; }
 
 			/* Draws the particle system. */
-			void Render(ModelEffect* effect);
-
+			//void Render(ModelEffect* effect);
+			virtual const RenderOperationBuffer* GetRenderOperation(int lod);
 
 			/* Updates the particle system. */
 			virtual void Update(const GameTime* const time);
@@ -98,9 +100,9 @@ namespace Apoc3D
 			/* Adds a new particle to the system. */
 			void AddParticle(const Vector3 &position, Vector3 velocity);
 			
-
+			Material& getMaterial() { return m_mtrl; }
 		protected:
-			//void changeTexture(Texture* tex) { m_mtrl.setTexture(0, tex); }
+			void changeTexture(ResourceHandle<Texture>* tex) { m_mtrl.setTexture(0, tex); }
 			//virtual ModelEffect* LoadEffect(LabGame* game) const = 0;
 
 			/* Derived particle system classes should override this method
@@ -117,9 +119,11 @@ namespace Apoc3D
 			*/
 			ParticleSettings m_settings;
 
-			//IDirect3DStateBlock9* m_stateBlock;
+			RenderOperationBuffer m_opBuffer;
+			Material m_mtrl;
+			GeometryData m_geoData;
+			GeometryData m_geoData2;
 
-			//Material m_mtrl;
 			/* An array of particles, treated as a circular queue.*/
 			ParticleVertex* m_particles;
 			int32 m_particleCount;
@@ -217,7 +221,6 @@ namespace Apoc3D
 			*/
 			int32 m_drawCounter;
 
-			GeometryData m_geoData;
 
 			/* uploading new particles from our managed
 			   array to the GPU vertex buffer.
@@ -244,4 +247,4 @@ namespace Apoc3D
 	}
 
 }
-#endif PARTICLESYSTEM_H
+#endif

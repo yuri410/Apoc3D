@@ -24,11 +24,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ParticleSystem.h"
 
 #include "Core/GameTime.h"
+#include "Core/ResourceHandle.h"
+#include "Collections/FastList.h"
 #include "Math/RandomUtils.h"
-#include "LabGame.h"
-#include "ModelEffects.h"
+#include "Math/MathCommon.h"
+#include "Math\Matrix.h"
 #include "VFS\PathUtils.h"
 
+#include "Graphics\LockData.h"
 #include "Graphics\RenderSystem\RenderDevice.h"
 #include "Graphics\RenderSystem\ObjectFactory.h"
 #include "Graphics\RenderSystem\Buffer\HardwareBuffer.h"
@@ -47,7 +50,7 @@ namespace Apoc3D
 		};
 
 		ParticleSystem::ParticleSystem(RenderDevice* device)
-			: m_device(device),
+			: m_device(device), 
 			m_particles(0), m_particleCount(0), m_vertexBuffer(0), m_vertexDeclaration(0),
 			m_firstActiveParticle(0),m_firstNewParticle(0),m_firstFreeParticle(0),m_firstRetiredParticle(0),
 			m_currentTime(0),m_drawCounter(0)
@@ -72,8 +75,7 @@ namespace Apoc3D
 
 			//m_effect = LoadEffect(m_game);
 			ObjectFactory* fac = m_device->getObjectFactory();
-			//HRESULT hr = m_device->CreateVertexDeclaration(ParticleVertex::VtxElements, &m_vertexDeclaration);
-			//assert(SUCCEEDED(hr));
+			
 
 			FastList<VertexElement> elems;
 			elems.Add(ParticleVertex::VtxElements[0]);
@@ -127,10 +129,8 @@ namespace Apoc3D
 				// we can upload them all in a single call.
 				int length = (m_firstFreeParticle - m_firstNewParticle)* stride;
 
-				void* data;
-				m_vertexBuffer->Lock(m_firstNewParticle * stride,
-					length, &data, D3DLOCK_NOOVERWRITE);
-
+				void* data = m_vertexBuffer->Lock(m_firstNewParticle * stride, length, LOCK_NoOverwrite);
+				
 				memcpy(data, m_particles+m_firstNewParticle, length);
 				m_vertexBuffer->Unlock();
 			}
@@ -140,9 +140,7 @@ namespace Apoc3D
 				// back to the start, we must split them over two upload calls.
 				int length = (m_particleCount - m_firstNewParticle)*stride;
 
-				void* data;
-				m_vertexBuffer->Lock(m_firstNewParticle * stride,
-					length, &data, D3DLOCK_NOOVERWRITE);
+				void* data = m_vertexBuffer->Lock(m_firstNewParticle * stride, length, LOCK_NoOverwrite);
 
 				memcpy(data, m_particles+m_firstNewParticle, length);
 				m_vertexBuffer->Unlock();
@@ -151,7 +149,7 @@ namespace Apoc3D
 				if (m_firstFreeParticle > 0)
 				{
 					length = m_firstFreeParticle * stride;
-					m_vertexBuffer->Lock(0, length, &data, D3DLOCK_NOOVERWRITE);
+					data = m_vertexBuffer->Lock(0, length, LOCK_NoOverwrite);
 
 					memcpy(data, m_particles, length);
 
@@ -220,7 +218,7 @@ namespace Apoc3D
 
 			// Adjust the input velocity based on how much
 			// this particle system wants to be affected by it.
-			D3DXVec3Scale(&velocity, &velocity, m_settings.EmitterVelocitySensitivity);			
+			velocity = Vector3Utils::Multiply(velocity, m_settings.EmitterVelocitySensitivity);	
 
 			// Add in some random amount of horizontal velocity.
 			float horizontalVelocity = Math::Lerp(m_settings.MinHorizontalVelocity,
@@ -229,17 +227,17 @@ namespace Apoc3D
 
 			float horizontalAngle = Randomizer::NextFloat() * Math::PI * 2;
 
-			velocity.x += horizontalVelocity * cosf(horizontalAngle);
-			velocity.z += horizontalVelocity * sinf(horizontalAngle);
+			_V3X(velocity) += horizontalVelocity * cosf(horizontalAngle);
+			_V3Z(velocity) += horizontalVelocity * sinf(horizontalAngle);
 
 			// Add in some random amount of vertical velocity.
-			velocity.y += Math::Lerp(m_settings.MinVerticalVelocity,
+			_V3Y(velocity) += Math::Lerp(m_settings.MinVerticalVelocity,
 				m_settings.MaxVerticalVelocity,
 				Randomizer::NextFloat());
 
 			// Choose four random control values. These will be used by the vertex
 			// shader to give each particle a different size, rotation, and color.
-			uint32 randomValues = D3DCOLOR_ARGB(Randomizer::Next(255), 
+			uint32 randomValues = PACK_COLOR(Randomizer::Next(255), 
 				Randomizer::Next(255), Randomizer::Next(255), Randomizer::Next(255));
 			// new Color((byte)random.Next(255),
 				//(byte)random.Next(255),
@@ -253,6 +251,65 @@ namespace Apoc3D
 			m_particles[m_firstFreeParticle].Time = m_currentTime;
 
 			m_firstFreeParticle = nextFreeParticle;
+		}
+		const RenderOperationBuffer* ParticleSystem::GetRenderOperation(int lod)
+		{
+			// If there are any particles waiting in the newly added queue,
+			// we'd better upload them to the GPU ready for drawing.
+			if (m_firstNewParticle != m_firstFreeParticle)
+			{
+				AddNewParticlesToVertexBuffer();
+			}
+			if (m_firstActiveParticle != m_firstFreeParticle)
+			{
+				m_geoData.VertexBuffer = m_vertexBuffer;
+				m_geoData.VertexDecl = m_vertexDeclaration;
+				m_geoData.PrimitiveType = PT_PointList;
+				m_geoData.VertexSize = sizeof(ParticleVertex);
+				m_geoData2.VertexBuffer = m_vertexBuffer;
+				m_geoData2.VertexDecl = m_vertexDeclaration;
+				m_geoData2.PrimitiveType = PT_PointList;
+				m_geoData2.VertexSize = sizeof(ParticleVertex);
+
+				if (m_firstActiveParticle < m_firstFreeParticle)
+				{
+					RenderOperation rop;
+					rop.Material = &m_mtrl;
+					rop.GeometryData = &m_geoData;
+					rop.RootTransform.LoadIdentity();
+					m_opBuffer.Add(rop);
+					
+					m_geoData.BaseVertex = m_firstActiveParticle;
+					m_geoData.PrimitiveCount = m_firstFreeParticle - m_firstActiveParticle;
+				}
+				else
+				{
+					RenderOperation rop;
+					rop.Material = &m_mtrl;
+					rop.GeometryData = &m_geoData;
+					rop.RootTransform.LoadIdentity();
+					m_opBuffer.Add(rop);
+					m_geoData.BaseVertex = m_firstActiveParticle;
+					m_geoData.PrimitiveCount = m_firstFreeParticle - m_firstActiveParticle;
+
+
+					if (m_firstFreeParticle > 0)
+					{
+						RenderOperation rop2;
+						rop2.Material = &m_mtrl;
+						rop2.GeometryData = &m_geoData2;
+						rop2.RootTransform.LoadIdentity();
+						m_opBuffer.Add(rop2);
+
+						m_geoData2.BaseVertex = m_firstActiveParticle;
+						m_geoData2.PrimitiveCount = m_firstFreeParticle - m_firstActiveParticle;
+					}
+				}
+			}
+
+			m_drawCounter++;
+
+			return m_opBuffer;
 		}
 		void ParticleSystem::Render(ModelEffect* effect)
 		{

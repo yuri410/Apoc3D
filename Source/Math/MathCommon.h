@@ -64,7 +64,7 @@ namespace Apoc3D
 #define ToDegree(x) (x * (180.0f/PI))
 
 		inline float Sign(float value);
-		
+		inline float Lerp(float a, float b, float amount);
 	}
 }
 

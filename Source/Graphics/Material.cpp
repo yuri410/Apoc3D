@@ -51,7 +51,8 @@ namespace Apoc3D
 			AlphaTestEnabled(false),
 			DepthWriteEnabled(true), DepthTestEnabled(true),
 			Ambient(0,0,0,0), Diffuse(1,1,1,1), Specular(0,0,0,0), Emissive(0,0,0,0), Power(0),
-			Cull(CULL_None)
+			Cull(CULL_None),
+			UsePointSprite(false)
 		{
 			memset(m_tex, 0, sizeof(m_tex));
 			memset(m_effects, 0, sizeof(m_effects));
@@ -65,7 +66,8 @@ namespace Apoc3D
 			AlphaTestEnabled(m.AlphaTestEnabled),
 			DepthWriteEnabled(m.DepthWriteEnabled), DepthTestEnabled(m.DepthTestEnabled),
 			Ambient(m.Ambient), Diffuse(m.Diffuse), Specular(m.Specular), Emissive(m.Emissive), Power(m.Power),
-			Cull(m.Cull)
+			Cull(m.Cull),
+			UsePointSprite(m.UsePointSprite)
 		{
 
 

@@ -38,5 +38,10 @@ namespace Apoc3D
 				return 1.0f;
 			return value<0 ? -1.0f : 0.0f;
 		}
+
+		float Lerp(float a, float b, float amount)
+		{
+			return a + (b-a)*amount;
+		}
 	}
 }

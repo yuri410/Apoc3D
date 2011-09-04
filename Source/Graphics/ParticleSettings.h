@@ -120,6 +120,7 @@ namespace lab
 			Blend SourceBlend;
 			Blend DestinationBlend;
 
+
 			ParticleSettings()
 				: ParticleTexture(NULL),
 				MaxParticles(100),

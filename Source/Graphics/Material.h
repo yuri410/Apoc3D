@@ -76,6 +76,7 @@ namespace Apoc3D
 			void LoadTexture(int32 index);
 			void LoadEffect(int32 index);
 		public:
+			bool UsePointSprite;
 
 			Blend SourceBlend;
 			Blend DestinationBlend;
