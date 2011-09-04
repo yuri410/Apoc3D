@@ -676,54 +676,56 @@ namespace Apoc3D
 			DrawTitle(sprite);
 			DrawButtons(sprite);
 
-			sprite->Flush();
+			if (m_state != FWS_Minimized)
+			{
+				sprite->Flush();
 
-			Matrix matrix;
-			Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
-			sprite->MultiplyTransform(matrix);
-			Apoc3D::Math::Rectangle rect= getAbsoluteArea();
-			if (rect.getBottom()>uiArea.getBottom())
-			{
-				rect.Height -= rect.getBottom() - uiArea.getBottom();
-			}
-			if (rect.getRight() > uiArea.getRight())
-			{
-				rect.Width -= rect.getRight() - uiArea.getRight();
-			}
-			m_device->getRenderState()->setScissorTest(true, &rect);
-
-			int overlay = 0;
-			for (int i=0;i<m_controls->getCount();i++)
-			{
-				if (m_controls->operator[](i)->IsOverriding())
+				Matrix matrix;
+				Matrix::CreateTranslation(matrix, (float)Position.X, (float)Position.Y,0);
+				sprite->MultiplyTransform(matrix);
+				Apoc3D::Math::Rectangle rect= getAbsoluteArea();
+				if (rect.getBottom()>uiArea.getBottom())
 				{
-					overlay = i;
+					rect.Height -= rect.getBottom() - uiArea.getBottom();
 				}
-				if (m_controls->operator[](i)->Visible)
+				if (rect.getRight() > uiArea.getRight())
 				{
-					m_controls->operator[](i)->Draw(sprite);
+					rect.Width -= rect.getRight() - uiArea.getRight();
+				}
+				m_device->getRenderState()->setScissorTest(true, &rect);
+
+				int overlay = 0;
+				for (int i=0;i<m_controls->getCount();i++)
+				{
+					if (m_controls->operator[](i)->IsOverriding())
+					{
+						overlay = i;
+					}
+					if (m_controls->operator[](i)->Visible)
+					{
+						m_controls->operator[](i)->Draw(sprite);
+					}
+				}
+
+				sprite->Flush();
+				m_device->getRenderState()->setScissorTest(false,0);
+				if (overlay)
+				{
+					m_controls->operator[](overlay)->DrawOverlay(sprite);
+				}
+
+				if (m_menu && m_menu->Visible)
+					m_menu->Draw(sprite);
+
+				if(sprite->isUsingStack())
+				{
+					sprite->PopTransform();
+				}
+				else
+				{
+					sprite->SetTransform(Matrix::Identity);
 				}
 			}
-			
-			sprite->Flush();
-			m_device->getRenderState()->setScissorTest(false,0);
-			if (overlay)
-			{
-				m_controls->operator[](overlay)->DrawOverlay(sprite);
-			}
-
-			if (m_menu && m_menu->Visible)
-				m_menu->Draw(sprite);
-
-			if(sprite->isUsingStack())
-			{
-				sprite->PopTransform();
-			}
-			else
-			{
-				sprite->SetTransform(Matrix::Identity);
-			}
-			
 		}
 		void Form::DrawButtons(Sprite* sprite)
 		{
@@ -1323,13 +1325,17 @@ namespace Apoc3D
 
 			m_modalAnim = 0;
 			bool menuOverriden = false;
-			for (int i=0;i<m_mainMenu->getItems().getCount();i++)
+			if (m_mainMenu)
 			{
-				if (m_mainMenu->getItems()[i]->getSubMenu() && m_mainMenu->getItems()[i]->getSubMenu()->getState() == MENU_Open)
+				for (int i=0;i<m_mainMenu->getItems().getCount();i++)
 				{
-					menuOverriden = true;
+					if (m_mainMenu->getItems()[i]->getSubMenu() && m_mainMenu->getItems()[i]->getSubMenu()->getState() == MENU_Open)
+					{
+						menuOverriden = true;
+					}
 				}
 			}
+			
 			if (!menuOverriden)
 			{
 				if (m_activeForm)

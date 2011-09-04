@@ -178,6 +178,9 @@ namespace Apoc3D
 
 		void Console::PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 		{
+			if (m_form->getState() == Form::FWS_Minimized)
+				return;
+
 			int lineCount = dstRect->Height / m_form->getFontRef()->getLineHeight();
 			m_scrollBar->setMax(m_logs.size() - lineCount);
 			

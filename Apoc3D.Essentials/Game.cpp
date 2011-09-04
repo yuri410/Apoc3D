@@ -32,7 +32,7 @@ using namespace Apoc3D::VFS;
 namespace Apoc3DEx
 {
 	Game::Game(RenderWindow* wnd)
-		: m_window(wnd)
+		: m_window(wnd), m_console(0), m_device(0), m_UIskin(0)
 	{
 	}
 
@@ -95,6 +95,8 @@ namespace Apoc3DEx
 	void Game::Update(const GameTime* const time)
 	{
 		InputAPIManager::getSingleton().Update(time);
+
+		m_console->Update(time);
 
 		UIRoot::Update(time);
 	}
