@@ -40,7 +40,8 @@ namespace Apoc3D
 			String result;
 			String fn;
 			SplitFilePath(filePath, fn, result);
-			assert(result != filePath);
+			
+			assert((!result.size() && !filePath.size()) || result != filePath);
 			return result;
 		}
 		String PathUtils::GetFileNameNoExt(const String& filePath)
