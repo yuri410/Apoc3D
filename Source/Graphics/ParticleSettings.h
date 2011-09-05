@@ -27,9 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
 
-namespace lab
+namespace Apoc3D
 {
 	namespace Graphics
 	{

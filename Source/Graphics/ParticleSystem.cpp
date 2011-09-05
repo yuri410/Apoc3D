@@ -256,7 +256,7 @@ namespace Apoc3D
 
 			m_firstFreeParticle = nextFreeParticle;
 		}
-		const RenderOperationBuffer* ParticleSystem::GetRenderOperation(int lod)
+		RenderOperationBuffer* ParticleSystem::GetRenderOperation(int lod)
 		{
 			m_opBuffer.FastClear();
 			// If there are any particles waiting in the newly added queue,
@@ -286,6 +286,7 @@ namespace Apoc3D
 					
 					m_geoData.BaseVertex = m_firstActiveParticle;
 					m_geoData.PrimitiveCount = m_firstFreeParticle - m_firstActiveParticle;
+					m_geoData.VertexCount = m_geoData.PrimitiveCount;
 				}
 				else
 				{
@@ -296,7 +297,7 @@ namespace Apoc3D
 					m_opBuffer.Add(rop);
 					m_geoData.BaseVertex = m_firstActiveParticle;
 					m_geoData.PrimitiveCount = m_firstFreeParticle - m_firstActiveParticle;
-
+					m_geoData.VertexCount = m_geoData.PrimitiveCount;
 
 					if (m_firstFreeParticle > 0)
 					{
@@ -308,13 +309,14 @@ namespace Apoc3D
 
 						m_geoData2.BaseVertex = m_firstActiveParticle;
 						m_geoData2.PrimitiveCount = m_firstFreeParticle - m_firstActiveParticle;
+						m_geoData2.VertexCount = m_geoData2.PrimitiveCount;
 					}
 				}
 			}
 
 			m_drawCounter++;
 
-			return m_opBuffer;
+			return &m_opBuffer;
 		}
 		//void ParticleSystem::Render(ModelEffect* effect)
 		//{

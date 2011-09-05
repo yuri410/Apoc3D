@@ -34,6 +34,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Renderable.h"
 #include "Math/Vector.h"
 #include "Math/Color.h"
+#include "RenderOperationBuffer.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -89,7 +90,7 @@ namespace Apoc3D
 
 			/* Draws the particle system. */
 			//void Render(ModelEffect* effect);
-			virtual const RenderOperationBuffer* GetRenderOperation(int lod);
+			virtual RenderOperationBuffer* GetRenderOperation(int lod);
 
 			/* Updates the particle system. */
 			virtual void Update(const GameTime* const time);
