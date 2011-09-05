@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Graphics\GraphicsCommon.h"
 
+using namespace Apoc3D::Collections;
 using namespace std;
 
 namespace Apoc3D
@@ -68,6 +69,8 @@ namespace Apoc3D
 				{
 				}
 
+				static VertexElement* FindElementBySemantic(const FastList<VertexElement>& elem, VertexElementUsage semantic);
+				
 				static bool Compare(const vector<VertexElement> &e1, const vector<VertexElement> &e2);
 
 				/* Calculate the size of a specified vertex element format
