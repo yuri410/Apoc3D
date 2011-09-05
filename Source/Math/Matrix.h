@@ -185,6 +185,34 @@ namespace Apoc3D
 				}
 			}
 
+			Vector3 GetX() const
+			{
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+				return Row1;
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				return Vector3Utils::LDVector(M11, M12, M13);
+#endif
+			}
+
+			Vector3 GetY() const
+			{
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+				return Row2;
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				return Vector3Utils::LDVector(M21, M22, M23);
+#endif
+			}
+
+			Vector3 GetZ() const
+			{
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+				return Row3;
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+				return Vector3Utils::LDVector(M31, M32, M33);
+#endif
+			}
+
+
 			Vector3 GetRight() const
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -263,7 +291,18 @@ namespace Apoc3D
 
 			void SetTranslation(Vector3 v) { Row4 = v; *(reinterpret_cast<float*>(&Row4)+3)=1.0f; }
 
+
+			void SetX(Vector3 v) { Row1 = v; *(reinterpret_cast<float*>(&Row1)+3)=0.0f; }
+			void SetY(Vector3 v) { Row2 = v; *(reinterpret_cast<float*>(&Row2)+3)=0.0f; }
+			void SetZ(Vector3 v) { Row3 = v; *(reinterpret_cast<float*>(&Row3)+3)=0.0f; }
+
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+
+
+			void SetX(const Vector3& v) { M11 = Vector3Utils::GetX(v); M12 = Vector3Utils::GetY(v); M13 = Vector3Utils::GetZ(v); }
+			void SetY(const Vector3& v) { M21 = Vector3Utils::GetX(v); M22 = Vector3Utils::GetY(v); M23 = Vector3Utils::GetZ(v); }
+			void SetZ(const Vector3& v) { M31 = Vector3Utils::GetX(v); M32 = Vector3Utils::GetY(v); M33 = Vector3Utils::GetZ(v); }
+
 
 			void SetRight(const Vector3& v) { M11 = Vector3Utils::GetX(v); M12 = Vector3Utils::GetY(v); M13 = Vector3Utils::GetZ(v); }
 			void SetLeft(const Vector3& v) { M11 = -Vector3Utils::GetX(v); M12 = -Vector3Utils::GetY(v); M13 = -Vector3Utils::GetZ(v); } 
@@ -277,7 +316,10 @@ namespace Apoc3D
 			void SetTranslation(const Vector3& v) { M41 = Vector3Utils::GetX(v); M42 = Vector3Utils::GetY(v); M43 = Vector3Utils::GetZ(v); }
 
 			#endif
-
+			void SetXYZ(const Vector3& x, const Vector3& y, const Vector3& z)
+			{
+				SetX(x); SetY(y); SetZ(z);
+			}
 
 			void LoadIdentity()
 			{
@@ -381,9 +423,11 @@ namespace Apoc3D
 			}
 
 			/* Determines the product of two matrices.
+				The result matrix cannot reference to the memory that ma or mb is referring to, or the result is not correct.
 			*/
 			static void Multiply(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
+				assert(&ma != &res && &mb != &res);
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				__m128 Result;
 				__m128 B1 = mb.Row1, B2 = mb.Row2, B3 = mb.Row3, B4 = mb.Row4;
@@ -1413,6 +1457,8 @@ namespace Apoc3D
 			}
 			friend static bool operator ==(const Matrix& left, const Matrix& right)
 			{
+				if (&left == &right)
+					return;
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 #pragma error "Not implemented"
 			#else
