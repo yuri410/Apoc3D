@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
+using namespace Apoc3D::Core;
 
 namespace Apoc3D
 {
@@ -40,8 +41,8 @@ namespace Apoc3D
 		class ParticleSettings
 		{
 		public:
-			/*the texture used by this particle system.*/
-			Texture* ParticleTexture;
+			/* the texture used by this particle system.*/
+			ResourceHandle<Texture>* ParticleTexture;
 			/* Maximum number of particles that can be displayed at one time. */
 			int32 MaxParticles;
 

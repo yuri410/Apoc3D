@@ -291,6 +291,8 @@ namespace Apoc3D
 		class ModelSharedData;
 
 		class Patch;
+		class ParticleSettings;
+		class ParticleSystem;
 
 		namespace Animation
 		{
