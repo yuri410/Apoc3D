@@ -155,6 +155,7 @@
     <ClInclude Include="IOLib\TextureData.h" />
     <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\ColorValue.h" />
+    <ClInclude Include="Math\GaussBlurFilter.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />
     <ClInclude Include="Platform\API.h" />

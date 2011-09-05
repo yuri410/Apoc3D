@@ -92,6 +92,8 @@ namespace Apoc3D
 				Texture* tex = factory->CreateTexture(fl, genMips? TU_AutoMipMap : TU_Static, true);
 				retrived = tex;
 				NotifyNewResource(tex);
+				if (!usesAsync())
+					tex->Load();
 			}
 			return new ResourceHandle<Texture>((Texture*)retrived);
 		}

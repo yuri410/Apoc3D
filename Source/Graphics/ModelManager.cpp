@@ -63,6 +63,8 @@ namespace Apoc3D
 				ModelSharedData* mdl = new ModelSharedData(renderDevice, rl);
 				retrived = mdl;
 				NotifyNewResource(retrived);
+				if (!usesAsync())
+					mdl->Load();
 			}
 			return new ResourceHandle<ModelSharedData>((ModelSharedData*)retrived);
 		}

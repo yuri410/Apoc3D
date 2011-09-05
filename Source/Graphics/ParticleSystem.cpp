@@ -53,10 +53,12 @@ namespace Apoc3D
 			: m_device(device), 
 			m_particles(0), m_particleCount(0), m_vertexBuffer(0), m_vertexDeclaration(0),
 			m_firstActiveParticle(0),m_firstNewParticle(0),m_firstFreeParticle(0),m_firstRetiredParticle(0),
-			m_currentTime(0),m_drawCounter(0)
+			m_currentTime(0),m_drawCounter(0),
+			m_mtrl(device)
 		{
 			memset(&m_settings,0, sizeof(m_settings));
-
+			
+			m_mtrl.UsePointSprite = true;
 			//m_device->CreateStateBlock(D3DSBT_VERTEXSTATE,&m_stateBlock);
 		}
 
@@ -92,32 +94,34 @@ namespace Apoc3D
 
 		void ParticleSystem::SetParticleRenderStates()
 		{
-			//const float ps = 1.f;
-			//m_device->SetRenderState(D3DRS_POINTSIZE, reinterpret_cast<const DWORD&>(ps));
+			m_mtrl.SourceBlend = m_settings.SourceBlend;
+			m_mtrl.DestinationBlend = m_settings.DestinationBlend;
+			////const float ps = 1.f;
+			////m_device->SetRenderState(D3DRS_POINTSIZE, reinterpret_cast<const DWORD&>(ps));
 
-			// Enable point sprites.
-			m_device->SetRenderState(D3DRS_POINTSPRITEENABLE, TRUE);
-			const float ps = 256.f;
-			m_device->SetRenderState(D3DRS_POINTSIZE_MAX, reinterpret_cast<const DWORD&>(ps));
+			//// Enable point sprites.
+			//m_device->SetRenderState(D3DRS_POINTSPRITEENABLE, TRUE);
+			//const float ps = 256.f;
+			//m_device->SetRenderState(D3DRS_POINTSIZE_MAX, reinterpret_cast<const DWORD&>(ps));
 
-			
-			// Set the alpha blend mode.
-			m_device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			m_device->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
+			//
+			//// Set the alpha blend mode.
+			//m_device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+			//m_device->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 
-			m_device->SetRenderState(D3DRS_SRCBLEND, m_settings.SourceBlend);
-			m_device->SetRenderState(D3DRS_DESTBLEND, m_settings.DestinationBlend);
-			
-			// Set the alpha test mode.
-			m_device->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-			m_device->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-			m_device->SetRenderState(D3DRS_ALPHAREF, 0);
-			
-			// Enable the depth buffer (so particles will not be visible through
-			// solid objects like the ground plane), but disable depth writes
-			// (so particles will not obscure other particles).
-			m_device->SetRenderState(D3DRS_ZENABLE, TRUE);
-			m_device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);						
+			//m_device->SetRenderState(D3DRS_SRCBLEND, m_settings.SourceBlend);
+			//m_device->SetRenderState(D3DRS_DESTBLEND, m_settings.DestinationBlend);
+			//
+			//// Set the alpha test mode.
+			//m_device->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+			//m_device->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+			//m_device->SetRenderState(D3DRS_ALPHAREF, 0);
+			//
+			//// Enable the depth buffer (so particles will not be visible through
+			//// solid objects like the ground plane), but disable depth writes
+			//// (so particles will not obscure other particles).
+			//m_device->SetRenderState(D3DRS_ZENABLE, TRUE);
+			//m_device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);						
 		}
 		void ParticleSystem::AddNewParticlesToVertexBuffer()
 		{
@@ -254,6 +258,7 @@ namespace Apoc3D
 		}
 		const RenderOperationBuffer* ParticleSystem::GetRenderOperation(int lod)
 		{
+			m_opBuffer.FastClear();
 			// If there are any particles waiting in the newly added queue,
 			// we'd better upload them to the GPU ready for drawing.
 			if (m_firstNewParticle != m_firstFreeParticle)
@@ -311,64 +316,64 @@ namespace Apoc3D
 
 			return m_opBuffer;
 		}
-		void ParticleSystem::Render(ModelEffect* effect)
-		{
-			// If there are any particles waiting in the newly added queue,
-			// we'd better upload them to the GPU ready for drawing.
-			if (m_firstNewParticle != m_firstFreeParticle)
-			{
-				AddNewParticlesToVertexBuffer();
-			}
-			// If there are any active particles, draw them now!
-			if (m_firstActiveParticle != m_firstFreeParticle)
-			{
-				//m_stateBlock->Capture();
-				SetParticleRenderStates();
+		//void ParticleSystem::Render(ModelEffect* effect)
+		//{
+		//	// If there are any particles waiting in the newly added queue,
+		//	// we'd better upload them to the GPU ready for drawing.
+		//	if (m_firstNewParticle != m_firstFreeParticle)
+		//	{
+		//		AddNewParticlesToVertexBuffer();
+		//	}
+		//	// If there are any active particles, draw them now!
+		//	if (m_firstActiveParticle != m_firstFreeParticle)
+		//	{
+		//		//m_stateBlock->Capture();
+		//		SetParticleRenderStates();
 
-				m_device->SetStreamSource(0, m_vertexBuffer, 0, sizeof(ParticleVertex));
-				m_device->SetVertexDeclaration(m_vertexDeclaration);
+		//		m_device->SetStreamSource(0, m_vertexBuffer, 0, sizeof(ParticleVertex));
+		//		m_device->SetVertexDeclaration(m_vertexDeclaration);
 
-				Matrix world;
-				D3DXMatrixIdentity(&world);
-				effect->Begin();
-				static_cast<ExplParticleEffect*>(effect)->SetParameters(this);
-				effect->Setup(&m_mtrl, &world);
-				
-				// TODO: setup effect
-				if (m_firstActiveParticle < m_firstFreeParticle)
-				{
-					// If the active particles are all in one consecutive range,
-					// we can draw them all in a single call.
-					m_device->DrawPrimitive(D3DPT_POINTLIST,
-						m_firstActiveParticle,
-						m_firstFreeParticle - m_firstActiveParticle);
-				}
-				else
-				{
-					// If the active particle range wraps past the end of the queue
-					// back to the start, we must split them over two draw calls.
-					m_device->DrawPrimitive(D3DPT_POINTLIST,
-						m_firstActiveParticle,
-						m_particleCount - m_firstActiveParticle);
+		//		Matrix world;
+		//		D3DXMatrixIdentity(&world);
+		//		effect->Begin();
+		//		static_cast<ExplParticleEffect*>(effect)->SetParameters(this);
+		//		effect->Setup(&m_mtrl, &world);
+		//		
+		//		// TODO: setup effect
+		//		if (m_firstActiveParticle < m_firstFreeParticle)
+		//		{
+		//			// If the active particles are all in one consecutive range,
+		//			// we can draw them all in a single call.
+		//			m_device->DrawPrimitive(D3DPT_POINTLIST,
+		//				m_firstActiveParticle,
+		//				m_firstFreeParticle - m_firstActiveParticle);
+		//		}
+		//		else
+		//		{
+		//			// If the active particle range wraps past the end of the queue
+		//			// back to the start, we must split them over two draw calls.
+		//			m_device->DrawPrimitive(D3DPT_POINTLIST,
+		//				m_firstActiveParticle,
+		//				m_particleCount - m_firstActiveParticle);
 
-					if (m_firstFreeParticle > 0)
-					{
-						m_device->DrawPrimitive(D3DPT_POINTLIST,
-							0,
-							m_firstFreeParticle);
-					}
-				}
-				effect->End();
+		//			if (m_firstFreeParticle > 0)
+		//			{
+		//				m_device->DrawPrimitive(D3DPT_POINTLIST,
+		//					0,
+		//					m_firstFreeParticle);
+		//			}
+		//		}
+		//		effect->End();
 
-				//m_stateBlock->Apply();
-				m_device->SetRenderState(D3DRS_POINTSPRITEENABLE, FALSE);
-				m_device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-				m_device->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-				m_device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-			}
+		//		//m_stateBlock->Apply();
+		//		m_device->SetRenderState(D3DRS_POINTSPRITEENABLE, FALSE);
+		//		m_device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+		//		m_device->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+		//		m_device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		//	}
 
-			m_drawCounter++;
-		}
+		//	m_drawCounter++;
+		//}
 		void ParticleSystem::Update(const GameTime* const time)
 		{
 			m_currentTime += time->getElapsedTime();

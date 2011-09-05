@@ -37,7 +37,7 @@ namespace Apoc3D
 		{
 			const Matrix* Transfroms;
 			int32 Count;
-
+			
 			friend static bool operator ==(const BoneTransforms& left, const BoneTransforms& right)
 			{
 				return left.Count == right.Count &&
