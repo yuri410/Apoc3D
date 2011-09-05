@@ -81,24 +81,27 @@ namespace Apoc3D
 			}
 			void D3D9IndexBuffer::ReloadVolatileResource()
 			{
-				D3DDevice* dev = m_device->getDevice();
-				HRESULT hr = dev->CreateIndexBuffer(getSize(), 
-					D3D9Utils::ConvertBufferUsage(getUsage()), 
-					getIndexType() == IBT_Bit16 ? D3DFMT_INDEX16 : D3DFMT_INDEX32, 
-					D3DPOOL_MANAGED, &m_indexBuffer, NULL);
-				assert(SUCCEEDED(hr));
-
-				if (m_tempData)
+				if (getUsage() & BU_Dynamic)
 				{
-					void* data;
-					hr = m_indexBuffer->Lock(0,getSize(),&data,D3DLOCK_DISCARD);
+					D3DDevice* dev = m_device->getDevice();
+					HRESULT hr = dev->CreateIndexBuffer(getSize(), 
+						D3D9Utils::ConvertBufferUsage(getUsage()), 
+						getIndexType() == IBT_Bit16 ? D3DFMT_INDEX16 : D3DFMT_INDEX32, 
+						D3DPOOL_MANAGED, &m_indexBuffer, NULL);
 					assert(SUCCEEDED(hr));
-					memcpy(data, m_tempData, getSize());
-					hr = m_indexBuffer->Unlock();
-					assert(SUCCEEDED(hr));
+
+					if (m_tempData)
+					{
+						void* data;
+						hr = m_indexBuffer->Lock(0,getSize(),&data,D3DLOCK_DISCARD);
+						assert(SUCCEEDED(hr));
+						memcpy(data, m_tempData, getSize());
+						hr = m_indexBuffer->Unlock();
+						assert(SUCCEEDED(hr));
+					}
+					delete[] m_tempData;
+					m_tempData = 0;
 				}
-				delete[] m_tempData;
-				m_tempData = 0;
 			}
 
 			//D3D9IndexBuffer::D3D9IndexBuffer(D3D9RenderDevice* device, D3DIndexBuffer* ib)
@@ -111,10 +114,22 @@ namespace Apoc3D
 			{
 				D3DDevice* dev = device->getDevice();
 
+				D3DPOOL pool;
+
+				if (usage & BU_Dynamic)
+				{
+					pool = D3DPOOL_DEFAULT;
+				}
+				else
+				{
+					pool = D3DPOOL_MANAGED;
+				}
+
+
 				HRESULT hr = dev->CreateIndexBuffer(size, 
 					D3D9Utils::ConvertBufferUsage(usage), 
 					type == IBT_Bit16 ? D3DFMT_INDEX16 : D3DFMT_INDEX32, 
-					D3DPOOL_MANAGED, &m_indexBuffer, NULL);
+					pool, &m_indexBuffer, NULL);
 				assert(SUCCEEDED(hr));
 			}
 
