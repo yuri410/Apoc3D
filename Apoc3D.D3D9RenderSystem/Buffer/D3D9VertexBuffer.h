@@ -40,26 +40,23 @@ namespace Apoc3D
 		{
 			class D3D9VertexBuffer : public VertexBuffer, public VolatileResource
 			{
-			private:
-				D3D9RenderDevice* m_device;
-				D3DVertexBuffer* m_vertexBuffer;
-
-			protected:
-				virtual void* lock(int offset, int size, LockMode mode);
-				virtual void unlock();
-
 			public:
+				D3D9VertexBuffer(D3D9RenderDevice* device, int32 size, BufferUsageFlags usage);
+				~D3D9VertexBuffer();
 
 				void ReleaseVolatileResource();
 				void ReloadVolatileResource();
 
 				D3DVertexBuffer* getD3DBuffer() const { return m_vertexBuffer; }
 
-				//D3D9VertexBuffer(D3D9RenderDevice* device, D3DVertexBuffer* vb);
-				D3D9VertexBuffer(D3D9RenderDevice* device, int32 size, BufferUsageFlags usage);
+			protected:
+				virtual void* lock(int offset, int size, LockMode mode);
+				virtual void unlock();
+			private:
+				D3D9RenderDevice* m_device;
+				D3DVertexBuffer* m_vertexBuffer;
 
-
-				~D3D9VertexBuffer();
+				char* m_tempData;
 			};
 		}
 	}

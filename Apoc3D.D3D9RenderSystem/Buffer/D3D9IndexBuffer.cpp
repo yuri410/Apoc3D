@@ -57,8 +57,27 @@ namespace Apoc3D
 
 			void D3D9IndexBuffer::ReleaseVolatileResource()
 			{
-				HRESULT hr = m_indexBuffer->Release();
-				assert(SUCCEEDED(hr));
+				if (getUsage() & BU_Dynamic)
+				{
+					if (m_tempData)
+						delete[] m_tempData;
+					m_tempData = new char[getSize()];
+
+					HRESULT hr;
+
+					if ((getUsage() & BU_WriteOnly) == 0)
+					{
+						void* data;
+						hr = m_indexBuffer->Lock(0, getSize(), &data, D3DLOCK_READONLY);
+						assert(SUCCEEDED(hr));
+						memcpy(m_tempData, data, getSize());
+						hr = m_indexBuffer->Unlock();
+						assert(SUCCEEDED(hr));
+					}
+					hr = m_indexBuffer->Release();
+					assert(SUCCEEDED(hr));
+					m_indexBuffer = 0;
+				}
 			}
 			void D3D9IndexBuffer::ReloadVolatileResource()
 			{
@@ -68,6 +87,18 @@ namespace Apoc3D
 					getIndexType() == IBT_Bit16 ? D3DFMT_INDEX16 : D3DFMT_INDEX32, 
 					D3DPOOL_MANAGED, &m_indexBuffer, NULL);
 				assert(SUCCEEDED(hr));
+
+				if (m_tempData)
+				{
+					void* data;
+					hr = m_indexBuffer->Lock(0,getSize(),&data,D3DLOCK_DISCARD);
+					assert(SUCCEEDED(hr));
+					memcpy(data, m_tempData, getSize());
+					hr = m_indexBuffer->Unlock();
+					assert(SUCCEEDED(hr));
+				}
+				delete[] m_tempData;
+				m_tempData = 0;
 			}
 
 			//D3D9IndexBuffer::D3D9IndexBuffer(D3D9RenderDevice* device, D3DIndexBuffer* ib)
@@ -76,7 +107,7 @@ namespace Apoc3D
 
 			//}
 			D3D9IndexBuffer::D3D9IndexBuffer(D3D9RenderDevice* device, IndexBufferType type, int32 size, BufferUsageFlags usage)
-				: IndexBuffer(type, size, usage), VolatileResource(device), m_device(device)
+				: IndexBuffer(type, size, usage), VolatileResource(device), m_device(device), m_tempData(0)
 			{
 				D3DDevice* dev = device->getDevice();
 

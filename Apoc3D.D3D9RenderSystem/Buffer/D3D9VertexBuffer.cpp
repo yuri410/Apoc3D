@@ -50,15 +50,49 @@ namespace Apoc3D
 
 			void D3D9VertexBuffer::ReleaseVolatileResource()
 			{
-				HRESULT hr = m_vertexBuffer->Release();
-				assert(SUCCEEDED(hr));
+				if (getUsage() & BU_Dynamic)
+				{
+					if (m_tempData)
+						delete[] m_tempData;
+					m_tempData = new char[getSize()];
+
+					HRESULT hr;
+					if ((getUsage() & BU_WriteOnly)==0)
+					{
+						void* data;
+						hr = m_vertexBuffer->Lock(0,getSize(), &data, D3DLOCK_READONLY);
+						assert(SUCCEEDED(hr));
+						memcpy(m_tempData, data, getSize());
+						hr = m_vertexBuffer->Unlock();
+						assert(SUCCEEDED(hr));
+					}
+					hr = m_vertexBuffer->Release();
+					assert(SUCCEEDED(hr));
+					m_vertexBuffer = 0;
+				}
+				
 			}
 			void D3D9VertexBuffer::ReloadVolatileResource()
 			{
-				D3DDevice* dev = m_device->getDevice();
-				HRESULT hr = dev->CreateVertexBuffer(getSize(), 
-					D3D9Utils::ConvertBufferUsage(getUsage()), 0, D3DPOOL_MANAGED, &m_vertexBuffer, NULL);
-				assert(SUCCEEDED(hr));
+				if (getUsage() & BU_Dynamic)
+				{
+					D3DDevice* dev = m_device->getDevice();
+					HRESULT hr = dev->CreateVertexBuffer(getSize(), 
+						D3D9Utils::ConvertBufferUsage(getUsage()), 0, D3DPOOL_MANAGED, &m_vertexBuffer, NULL);
+					assert(SUCCEEDED(hr));
+
+					if (m_tempData)
+					{
+						void* data;
+						hr = m_vertexBuffer->Lock(0, getSize(), &data, D3DLOCK_DISCARD);
+						assert(SUCCEEDED(hr));
+						memcpy(data, m_tempData, getSize());
+						hr = m_vertexBuffer->Unlock();
+						assert(SUCCEEDED(hr));
+					}
+					delete[] m_tempData;
+					m_tempData = 0;
+				}
 			}
 
 
@@ -68,7 +102,7 @@ namespace Apoc3D
 
 			//}
 			D3D9VertexBuffer::D3D9VertexBuffer(D3D9RenderDevice* device, int32 size, BufferUsageFlags usage)
-				: VertexBuffer(size, D3D9Utils::GetBufferUsage(usage)), VolatileResource(device), m_device(device)
+				: VertexBuffer(size, D3D9Utils::GetBufferUsage(usage)), VolatileResource(device), m_device(device), m_tempData(0)
 			{
 				D3DDevice* dev = device->getDevice();
 
