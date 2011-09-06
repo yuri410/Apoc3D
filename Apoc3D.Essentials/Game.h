@@ -55,6 +55,10 @@ namespace Apoc3DEx
 		virtual void OnFrameStart();
 		virtual void OnFrameEnd();
 
+		void Exit();
+
+		RenderDevice* getRenderDevice() const { return m_device; }
+		RenderWindow* getWindow() const { return m_window; }
 	protected:
 		RenderWindow* m_window;
 		RenderDevice* m_device;

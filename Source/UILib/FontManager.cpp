@@ -218,9 +218,18 @@ namespace Apoc3D
 		{
 			DrawString(sprite, text, pt.X, pt.Y, color);
 		}
-		void Font::DrawString(Sprite* sprite, const String& text, int x, int y, uint color)
+		void Font::DrawString(Sprite* sprite, const String& text, int x, int y, uint color, int length, int lineSpace)
 		{
 			int std = x;
+			size_t len = text.length();
+			if (length !=-1)
+			{
+				if ((size_t)length<len)
+					len = (size_t)length;
+			}
+			int ls = m_height;
+			if (lineSpace!=-1)
+				ls=lineSpace;
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
@@ -253,7 +262,7 @@ namespace Apoc3D
 				else
 				{
 					x = std;
-					y += m_height;
+					y += lineSpace;
 				}
 			}
 		}

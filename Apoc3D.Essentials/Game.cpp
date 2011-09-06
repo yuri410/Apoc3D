@@ -34,11 +34,17 @@ namespace Apoc3DEx
 	Game::Game(RenderWindow* wnd)
 		: m_window(wnd), m_console(0), m_device(0), m_UIskin(0)
 	{
+		
 	}
 
 	Game::~Game()
 	{
 		
+	}
+
+	void Game::Exit()
+	{
+		m_window->Exit();
 	}
 
 	void Game::OnFrameStart()
