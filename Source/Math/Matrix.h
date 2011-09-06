@@ -1458,7 +1458,7 @@ namespace Apoc3D
 			friend static bool operator ==(const Matrix& left, const Matrix& right)
 			{
 				if (&left == &right)
-					return;
+					return true;
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 #pragma error "Not implemented"
 			#else
