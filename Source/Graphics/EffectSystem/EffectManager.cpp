@@ -62,9 +62,23 @@ namespace Apoc3D
 				}
 				else
 				{
-					LogManager::getSingleton().Write(LOG_Graphics, 
-						L"EffectManager: There is already a effect with a same name '" + effect->getName() + L"' loaded. Cannot load" + rl->getName(), LOGLVL_Error);
-					delete effect;
+					Effect* eff = getEffect(effect->getName());
+
+					AutomaticEffect* ae = dynamic_cast<AutomaticEffect*>(eff);
+					if (ae)
+					{
+						delete m_fxTable[effect->getName()];
+						m_fxTable[effect->getName()] = effect;
+						LogManager::getSingleton().Write(LOG_Graphics, 
+							L"EffectManager: An automatic effect with the same name '" + effect->getName() + L"' is already loaded. Reloading...",
+							LOGLVL_Infomation);
+					}
+					else
+					{
+						LogManager::getSingleton().Write(LOG_Graphics, 
+							L"EffectManager: A custom effect with the same name '" + effect->getName() + L"' is already loaded. Cannot load effect.", LOGLVL_Error);
+						delete effect;
+					}
 				}
 				
 

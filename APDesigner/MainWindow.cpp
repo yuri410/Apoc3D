@@ -295,6 +295,15 @@ namespace APDesigner
 			m_project->setBasePath(PathUtils::GetDirectory(path));
 
 			FileSystem::getSingleton().AddWrokingDirectory(m_project->getOutputPath());
+
+			if (m_project->getTexturePath().size())
+			{
+				LocateCheckPoint cp;
+				cp.AddPath(m_project->getTexturePath());
+				FileLocateRule::Textures.AddCheckPoint(cp);
+				LogManager::getSingleton().Write(LOG_System, L"Adding texture dir: '" + m_project->getTexturePath() + L"'");
+			}
+			UpdateProjectEffect();
 		}
 	}
 	void MainWindow::CloseProject()
@@ -305,7 +314,39 @@ namespace APDesigner
 	{
 		m_project->Save(path);
 	}
+	void MainWindow::UpdateProjectEffect()
+	{
+		if (m_project)
+		{
+			UpdateProjectEffect(m_project->getItems());
+		}
+	}
+	void MainWindow::UpdateProjectEffect(const FastList<ProjectItem*>& items)
+	{
+		for (int i=0;i<items.getCount();i++)
+		{
+			ProjectItem* itm = items[i];
+			if (itm->getType() == PRJITEM_Effect)
+			{
+				if (!itm->IsOutDated())
+				{
+					ProjectResEffect* eff = static_cast<ProjectResEffect*>(itm->getData());
+					String df = PathUtils::Combine(m_project->getOutputPath(), eff->DestFile);
 
+					LogManager::getSingleton().Write(LOG_Graphics, L"Updating effect " + eff->DestFile);
+
+					FileLocation* fl = new FileLocation(df);
+					EffectManager::getSingleton().LoadEffect(m_device, fl);
+					delete fl;
+				}
+			}
+			else if (itm->getType() == PRJITEM_Folder)
+			{
+				ProjectFolder* fld = static_cast<ProjectFolder*>(itm->getData());
+				UpdateProjectEffect(fld->SubItems);
+			}
+		}
+	}
 	void MainWindow::Menu_CloseProject(Control* ctl)
 	{
 
@@ -342,6 +383,8 @@ namespace APDesigner
 			LogManager::getSingleton().Write(LOG_System, String(L"Building project '") + m_project->getName() + String(L"'..."));
 			BuildInterface::BuildAll(m_project);
 			LogManager::getSingleton().Write(LOG_System, BuildInterface::LastResult);
+
+			UpdateProjectEffect();
 		}
 	}
 

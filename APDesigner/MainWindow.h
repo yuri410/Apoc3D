@@ -78,7 +78,8 @@ namespace APDesigner
 
 		void Document_Activated(Document* doc);
 		void Document_Deactivated(Document* doc);
-
+		void UpdateProjectEffect(const FastList<ProjectItem*>& items);
+		void UpdateProjectEffect();
 	public:
 		const StyleSkin* getUISkin() const { return m_UIskin; }
 		const Point& getUIAreaSize() const { return m_lastSize; }

@@ -116,7 +116,7 @@ namespace Apoc3D
 
 			void setTextureName(int index, const String& name)
 			{
-				if (m_texName[index] == name)
+				if (m_texName[index] != name)
 				{
 					m_texName[index] = name; 
 					m_texDirty[index] = true;

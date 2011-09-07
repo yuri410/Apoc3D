@@ -165,6 +165,15 @@ namespace APDesigner
 			m_cbMeshPart->SetSkin(window->getUISkin());
 			m_cbMeshPart->eventSelectionChanged().bind(this, &ModelDocument::CBMeshPart_SelectionChanged);
 
+			lbl = new Label(Point(21 + 522, 183), L"Mesh Name", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
+
+			m_tbMeshName = new TextBox(Point(21+522+100, 183), 200);
+			m_tbMeshName->SetSkin(window->getUISkin());
+
+
+
 			m_applyMtrl = new Button(Point(21 + 522+100+220, 159),150, L"Apply Changes");
 			m_applyMtrl->SetSkin(window->getUISkin());
 			m_applyMtrl->eventRelease().bind(this, &ModelDocument::BtnApplyMtrl_Pressed);
@@ -184,6 +193,7 @@ namespace APDesigner
 			m_removeMtrlFrame = new Button(Point(21 + 522+100+220, 133),150, L"Remove Sub Material");
 			m_removeMtrlFrame->SetSkin(window->getUISkin());
 			m_removeMtrlFrame->eventRelease().bind(this, &ModelDocument::BtnRemoveMtrl_Pressed);
+
 		}
 		{
 			int sx = 21 + 522;
@@ -395,10 +405,11 @@ namespace APDesigner
 		delete m_cbMesh;
 		delete m_cbMeshPart;
 		delete m_cbSubMtrl;
-
+		
 		delete m_applyMtrl;
 		delete m_addMtrlFrame;
 		delete m_removeMtrlFrame;
+		delete m_tbMeshName;
 
 		delete m_cfAmbient;
 		delete m_cfDiffuse;
@@ -490,6 +501,7 @@ namespace APDesigner
 			getDocumentForm()->getControls().Add(m_cbMeshPart);
 			getDocumentForm()->getControls().Add(m_cbMesh);
 			getDocumentForm()->getControls().Add(m_cbSubMtrl);
+			getDocumentForm()->getControls().Add(m_tbMeshName);
 
 			getDocumentForm()->getControls().Add(m_applyMtrl);
 			getDocumentForm()->getControls().Add(m_addMtrlFrame);
@@ -668,12 +680,15 @@ namespace APDesigner
 		m_cbSubMtrl->getItems().Clear();
 		m_cbSubMtrl->setSelectedIndex(-1);
 
+
 		const FastList<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx!=-1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
 			
+			m_tbMeshName->setText(ents[selMeshIdx]->getName());
+
 			for (uint i=0;i<mtrls->getMaterialCount();i++)
 			{
 				m_cbMeshPart->getItems().Add(L"Part(Material Set)" + StringUtils::ToString(i, 4, '0'));
@@ -728,8 +743,34 @@ namespace APDesigner
 		{
 			for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
 			{
-
+				m_mtrlPanelLabels[i]->Visible = true;
 			}
+			m_cfAmbient->Visible = true;
+			m_cfDiffuse->Visible = true;
+			m_cfSpecular->Visible = true;
+			m_cfEmissive->Visible = true;
+
+			m_tbShinness->Visible = true;
+
+			m_tbTex1->Visible = true;
+			m_tbTex2->Visible = true;
+			m_tbTex3->Visible = true;
+			m_tbTex4->Visible = true;
+			m_tbTex5->Visible = true;
+
+			m_tbPriority->Visible = true;
+			m_tbAlphaTest->Visible = true;
+
+			m_cbDepthTest->Visible = true;
+			m_cbDepthWrite->Visible = true;
+
+			m_cbTransparent->Visible = true;
+
+			m_cbSrcBlend->Visible = true;
+			m_cbDstBlend->Visible = true;
+			m_cbBlendFunction->Visible = true;
+			m_cbCull->Visible = true;
+
 
 			m_cfAmbient->SetValue(mtrl->Ambient);
 			m_cfDiffuse->SetValue(mtrl->Diffuse);
@@ -759,6 +800,36 @@ namespace APDesigner
 		}
 		else
 		{
+			for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
+			{
+				m_mtrlPanelLabels[i]->Visible = false;
+			}
+			m_cfAmbient->Visible = false;
+			m_cfDiffuse->Visible = false;
+			m_cfSpecular->Visible = false;
+			m_cfEmissive->Visible = false;
+
+			m_tbShinness->Visible = false;
+
+			m_tbTex1->Visible = false;
+			m_tbTex2->Visible = false;
+			m_tbTex3->Visible = false;
+			m_tbTex4->Visible = false;
+			m_tbTex5->Visible = false;
+
+			m_tbPriority->Visible = false;
+			m_tbAlphaTest->Visible = false;
+
+			m_cbDepthTest->Visible = false;
+			m_cbDepthWrite->Visible = false;
+
+			m_cbTransparent->Visible = false;
+
+			m_cbSrcBlend->Visible = false;
+			m_cbDstBlend->Visible = false;
+			m_cbBlendFunction->Visible = false;
+			m_cbCull->Visible = false;
+
 
 		}
 	}
@@ -785,6 +856,8 @@ namespace APDesigner
 		if (selMeshIdx != -1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			ents[selMeshIdx]->setName(m_tbMeshName->Text);
+
 			int partIdx = m_cbMeshPart->getSelectedIndex();
 			int frameIndex = m_cbSubMtrl->getSelectedIndex();
 			if (partIdx != -1 && frameIndex != -1)

@@ -346,6 +346,7 @@ namespace Apoc3D
 		FastList<ProjectItem*> m_items;
 		String m_name;
 
+		String m_texturePath;
 		String m_basePath;
 		String m_outputPath;
 
@@ -353,6 +354,7 @@ namespace Apoc3D
 	public:
 		const String& getName() const { return m_name; }
 		const String& getBasePath() const { return m_basePath; }
+		const String& getTexturePath() const { return m_texturePath; }
 		const String& getOutputPath() const { return m_outputPath; }
 		void setBasePath(const String& path);
 

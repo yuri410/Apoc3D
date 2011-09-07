@@ -24,6 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ResourceManager.h"
 #include "Resource.h"
 
+#include "Core/Logging.h"
 #include "Streaming/AsyncProcessor.h"
 #include "Streaming/GenerationTable.h"
 
@@ -77,6 +78,15 @@ namespace Apoc3D
 		}
 		ResourceManager::~ResourceManager()
 		{
+			if (m_hashTable.size())
+			{
+				for (ResHashTable::iterator iter = m_hashTable.begin();iter!=m_hashTable.end();iter++)
+				{
+					LogManager::getSingleton().Write(LOG_System, 
+						L"ResMgr: Resource leak detected: " + iter->first, LOGLVL_Warning);
+				}
+				
+			}
 			if (m_asyncProc)
 				delete m_asyncProc;
 			if (m_generationTable)

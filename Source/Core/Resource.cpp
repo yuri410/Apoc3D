@@ -124,10 +124,19 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 		Resource::Resource(ResourceManager* manager, const String& hashString)
-			: m_manager(manager), m_hashString(hashString), m_refCount(0), m_state(RS_Unloaded)
+			: m_manager(manager), m_hashString(hashString), m_refCount(0), m_state(RS_Unloaded), m_resLoader(0), m_resUnloader(0), m_generation(0)
 		{
-			m_resLoader = new ResourceLoadOperation(this);
-			m_resUnloader = new ResourceUnloadOperation(this);
+			if (isManaged())
+			{
+				if (m_manager->usesAsync())
+				{
+					m_resLoader = new ResourceLoadOperation(this);
+					m_resUnloader = new ResourceUnloadOperation(this);
+
+					m_generation = new GenerationCalculator(manager->m_generationTable);
+				}
+			}
+			
 		}
 		Resource::~Resource()
 		{
@@ -137,8 +146,12 @@ namespace Apoc3D
 			{
 				m_manager->NotifyReleaseResource(this);
 			}
-			delete m_resLoader;
-			delete m_resUnloader;
+			if (m_generation)
+				delete m_generation;
+			if (m_resLoader)
+				delete m_resLoader;
+			if (m_resUnloader)
+				delete m_resUnloader;
 		}
 
 		void Resource::Use()		

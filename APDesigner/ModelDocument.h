@@ -143,7 +143,7 @@ namespace APDesigner
 		Button* m_applyMtrl;
 		Button* m_addMtrlFrame;
 		Button* m_removeMtrlFrame;
-
+		TextBox* m_tbMeshName;
 
 		// material specific parameters
 

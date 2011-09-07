@@ -53,6 +53,7 @@ namespace Apoc3D
 				bool HasEffect(const String& name) const;
 				Effect* getEffect(const String& name) const;
 
+				//void ReloadEffect(RenderDevice* device, const ResourceLocation* fl);
 				void LoadEffect(RenderDevice* device, const ResourceLocation* rl);
 
 				SINGLETON_DECL_HEARDER(EffectManager);

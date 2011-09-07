@@ -54,6 +54,7 @@ namespace Apoc3D
 			void Resource_Loaded(Resource* res);
 			void Resource_Unloaded(Resource* res);
 
+			friend class Resource;
 		protected:
 		public:
 			const String& getName() const { return m_name; }

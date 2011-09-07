@@ -712,6 +712,12 @@ namespace Apoc3D
 
 	ConfigurationSection* ProjectItem::Save(bool savingBuild)
 	{
+		if (savingBuild && 
+			(m_typeData->getType() == PRJITEM_Model || m_typeData->getType() == PRJITEM_Texture) &&
+			!IsOutDated())
+		{
+			return 0;
+		}
 		ConfigurationSection* sect = new ConfigurationSection(m_name);
 
 		if (!savingBuild)
@@ -807,7 +813,7 @@ namespace Apoc3D
 	void Project::Parse(const ConfigurationSection* sect)
 	{
 		m_name = sect->getAttribute(L"Name");
-
+		sect->tryGetAttribute(L"TexturePath", m_texturePath);
 		ProjectParse(this, m_items, sect);
 	}
 	void Project::Save(const String& file)
@@ -891,7 +897,8 @@ namespace Apoc3D
 		for (int i=0;i<items.getCount();i++)
 		{
 			ConfigurationSection* sect = items[i]->Save(savingBuild);
-			parentSect->AddSection(sect);
+			if (sect)
+				parentSect->AddSection(sect);
 		}
 	}
 
