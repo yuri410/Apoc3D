@@ -88,7 +88,7 @@ namespace Apoc3D
 			int getLineHeight() const { return m_height; }
 			Font(RenderDevice* device, ResourceLocation* fl);
 			~Font();
-			void DrawString(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1);
+			void DrawString(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0);
 			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color);
 
 			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);

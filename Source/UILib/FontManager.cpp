@@ -218,7 +218,7 @@ namespace Apoc3D
 		{
 			DrawString(sprite, text, pt.X, pt.Y, color);
 		}
-		void Font::DrawString(Sprite* sprite, const String& text, int x, int y, uint color, int length, int lineSpace)
+		void Font::DrawString(Sprite* sprite, const String& text, int x, int y, uint color, int length, int lineSpace,wchar_t suffix)
 		{
 			int std = x;
 			size_t len = text.length();
@@ -263,6 +263,30 @@ namespace Apoc3D
 				{
 					x = std;
 					y += lineSpace;
+				}
+			}
+			if (suffix)
+			{
+				wchar_t ch = suffix;
+				
+				Character chdef;
+				if (m_charTable.TryGetValue(ch, chdef))
+				{
+					Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+
+					if (!glyph.IsMapped)
+					{
+						EnsureGlyph(glyph);
+					}
+
+					Apoc3D::Math::Rectangle rect;
+					rect.X = x;
+					rect.Y = y;
+					rect.Width = glyph.Width;
+					rect.Height = glyph.Height;
+					glyph.LastTimeUsed = (float)time(0);
+
+					sprite->Draw(m_font, rect, &glyph.MappedRect, color);
 				}
 			}
 		}

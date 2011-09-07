@@ -217,6 +217,8 @@ namespace Apoc3D
 
 		class Random;
 		class Randomizer;
+
+		class GaussBlurFilter;
 	};
 	namespace IO
 	{
