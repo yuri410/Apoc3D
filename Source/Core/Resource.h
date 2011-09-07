@@ -133,7 +133,6 @@ namespace Apoc3D
 			};
 			friend class ResourceHandle<Resource>;
 
-
 			GenerationCalculator* m_generation;
 			ResourceManager* m_manager;
 
@@ -176,10 +175,7 @@ namespace Apoc3D
 
 			/** Create a unmanaged resource
 			*/
-			Resource() 
-				: m_refCount(0), m_manager(0), m_resLoader(0), m_resUnloader(0), m_state(RS_Unloaded)
-			{
-			}
+			Resource();
 			Resource(ResourceManager* manager, const String& hashString);
 
 			
@@ -227,7 +223,7 @@ namespace Apoc3D
 				m_lock.unlock();
 			}
 			bool isManaged() const { return !!m_manager; }
-
+			ResourceManager* getManager() const { return m_manager; }
 			void _Ref()
 			{
 				if (isManaged())

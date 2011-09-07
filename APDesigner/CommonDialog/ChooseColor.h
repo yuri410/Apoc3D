@@ -18,7 +18,7 @@ namespace APDesigner
 			ColorValue m_selectedColor;
 		public:
 			ChooseColorDialog(ColorValue defColor = 0)
-				: m_selectedColor(0)
+				: m_selectedColor(defColor)
 			{ }
 				
 			ColorValue getSelectedColor() const { return m_selectedColor; }

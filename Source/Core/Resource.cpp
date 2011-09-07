@@ -123,6 +123,11 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
+		Resource::Resource()
+			: m_refCount(0), m_manager(0), m_resLoader(0), m_resUnloader(0), m_state(RS_Unloaded), m_generation(0)
+		{
+
+		}
 		Resource::Resource(ResourceManager* manager, const String& hashString)
 			: m_manager(manager), m_hashString(hashString), m_refCount(0), m_state(RS_Unloaded), m_resLoader(0), m_resUnloader(0), m_generation(0)
 		{

@@ -12,14 +12,15 @@ namespace APDesigner
 			CHOOSECOLOR cc;                 // common dialog box structure 
 			static COLORREF acrCustClr[16]; // array of custom colors 
 
-			//static DWORD rgbCurrent;        // initial color selection
+			static DWORD rgbCurrent;        // initial color selection
+			rgbCurrent = RGB(GetColorR(m_selectedColor), GetColorG(m_selectedColor), GetColorB(m_selectedColor));
 
 			// Initialize CHOOSECOLOR 
 			ZeroMemory(&cc, sizeof(cc));
 			cc.lStructSize = sizeof(cc);
 			cc.hwndOwner = GetForegroundWindow();
 			cc.lpCustColors = (LPDWORD) acrCustClr;
-			cc.rgbResult = RGB(GetColorR(m_selectedColor), GetColorG(m_selectedColor), GetColorB(m_selectedColor));
+			cc.rgbResult = rgbCurrent; 
 			cc.Flags = CC_FULLOPEN | CC_RGBINIT;
 
 			if (ChooseColor(&cc)==TRUE) 

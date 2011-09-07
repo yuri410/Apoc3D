@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Resource.h"
+#include "ResourceManager.h"
 
 namespace Apoc3D
 {
@@ -71,14 +72,19 @@ namespace Apoc3D
 			virtual ~ResourceHandle(void)
 			{
 				_Unref();
+				
 				if (m_dummy)
 				{
 					delete m_resource;
 				}
 				else
 				{
-					if (!m_resource->getReferenceCount())
+					if (!m_resource->getReferenceCount() && 
+						(m_resource->isManaged() && !m_resource->getManager()->usesAsync())
+						)
+					{
 						delete m_resource;
+					}
 					m_resource = 0;
 				}
 			}

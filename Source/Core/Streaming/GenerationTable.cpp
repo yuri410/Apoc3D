@@ -108,11 +108,11 @@ namespace Apoc3D
 
 				if (predictSize>m_manager->getTotalCacheSize())
 				{
-					for (int i=3;i>1 && predictSize > m_manager->getTotalCacheSize(); i--)
+					for (int i=MaxGeneration-1;i>1 && predictSize > m_manager->getTotalCacheSize(); i--)
 					{
+						m_genLock.lock();
 						ExistTable<Resource*>::Enumerator iter = m_generations[i].GetEnumerator();
 
-						m_genLock.lock();
 						while (iter.MoveNext())
 						{
 							Resource* r = *iter.getCurrent();
@@ -130,6 +130,21 @@ namespace Apoc3D
 						}
 						m_genLock.unlock();
 					}
+				}
+				{
+					m_genLock.lock();
+					for (ExistTable<Resource*>::Enumerator iter = m_generations[MaxGeneration-1].GetEnumerator();iter.MoveNext();)
+					{
+						Resource* r = *iter.getCurrent();
+						if (!r->getReferenceCount())
+						{
+							if (r->getState() == RS_Loaded && r->IsUnloadable())
+							{
+								r->Unload();
+							}
+						}
+					}
+					m_genLock.unlock();
 				}
 			}
 
