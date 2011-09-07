@@ -35,7 +35,10 @@ namespace Apoc3D
 		typedef uint ColorValue;
 #define UNPACK_COLOR(color, r,g,b,a) a = (color>>24); r = (0xff & (color>>16)); g = (0xff & (color>>8)); b = (0xff & color);
 #define PACK_COLOR(r,g,b,a) ( (static_cast<uint>(a)<<24) | (static_cast<uint>(r)<<16) | (static_cast<uint>(g)<<8) | (static_cast<uint>(b)) )
-
+#define GetColorR(v) ((v>>16)&0xff)
+#define GetColorG(v) ((v>>8)&0xff)
+#define GetColorB(v) (v & 0xff)
+#define GetColorA(v) ((v>>24)&0xff)
 		static const ColorValue CV_TransparentBlack = 0;
 		static const ColorValue CV_TransparentWhite = 0xffffff;
 		static const ColorValue CV_AliceBlue = 0xfff0f8ff;

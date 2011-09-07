@@ -473,7 +473,7 @@ namespace Apoc3D
 				
 				if (value)
 				{
-					value->operator->();
+					tex = value->operator->();
 					if (tex->getState() != RS_Loaded)
 					{
 						tex = 0;

@@ -49,7 +49,9 @@ namespace Apoc3D
 				
 				When a resource is pending, no more load or unload operation is processed.
 			*/
-			RS_Pending = 4
+			RS_PendingLoad = 4,
+			RS_PendingUnload = 5,
+
 		};
 		
 		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
@@ -73,7 +75,9 @@ namespace Apoc3D
 					Resource* res = getResource();
 					
 					ResourceState state = res->getState();
-					if (state != RS_Unloaded)
+					
+
+					if (state != RS_PendingLoad)
 						return;
 					
 					res->setState(RS_Loading);
@@ -97,7 +101,7 @@ namespace Apoc3D
 					Resource* res = getResource();
 
 					ResourceState state = res->getState();
-					if (state != RS_Loaded)
+					if (state != RS_PendingUnload)
 						return;
 					res->setState(RS_Unloading);
 					res->unload();

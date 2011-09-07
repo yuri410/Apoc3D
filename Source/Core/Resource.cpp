@@ -180,11 +180,9 @@ namespace Apoc3D
 				switch (state)
 				{
 				case RS_Loading:
-					break;
 				case RS_Unloading:
-					break;
-				case RS_Pending:
-					break;
+				case RS_PendingLoad:
+				case RS_PendingUnload:
 				case RS_Loaded:
 					break;
 				case RS_Unloaded:
@@ -208,12 +206,13 @@ namespace Apoc3D
 					{
 					case RS_Loading:
 					case RS_Unloading:
-					case RS_Pending:
+					case RS_PendingLoad:
+					case RS_PendingUnload:
 					case RS_Loaded:
 						return;
 					}
 
-					setState(RS_Pending);
+					setState(RS_PendingLoad);
 					m_manager->AddTask(m_resLoader);
 				}
 				else
@@ -236,12 +235,13 @@ namespace Apoc3D
 					{
 					case RS_Loading:
 					case RS_Unloading:
-					case RS_Pending:
+					case RS_PendingLoad:
+					case RS_PendingUnload:
 					case RS_Unloaded:
 						return;
 					}
 
-					setState(RS_Pending);
+					setState(RS_PendingUnload);
 					m_manager->AddTask(m_resUnloader);
 				}
 				else
@@ -250,13 +250,10 @@ namespace Apoc3D
 					switch (state)
 					{
 					case RS_Loading:
-						break;
 					case RS_Unloading:
-						break;
-					case RS_Pending:
-						break;
+					case RS_PendingLoad:
+					case RS_PendingUnload:
 					case RS_Loaded:
-						break;
 					case RS_Unloaded:
 						setState(RS_Unloading);
 						unload();

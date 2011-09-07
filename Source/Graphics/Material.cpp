@@ -284,6 +284,7 @@ namespace Apoc3D
 			{
 				if (m_texDirty[i])
 				{
+					delete m_tex[i];
 					LoadTexture(i);
 				}
 			}

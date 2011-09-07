@@ -999,7 +999,7 @@ namespace APDesigner
 	}
 	void ModelDocument::ColorField::Button_Press(Control* ctrl)
 	{
-		ChooseColorDialog dlg;
+		ChooseColorDialog dlg(m_color);
 		if (dlg.ShowDialog() == DLGRES_OK)
 		{
 			m_color = dlg.getSelectedColor();
