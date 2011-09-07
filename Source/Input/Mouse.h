@@ -52,6 +52,9 @@ namespace Apoc3D
 		public:
 			const Point& GetCurrentPosition() const { return m_currentPos; }
 
+			int getX() const { return m_currentPos.X; }
+			int getY() const { return m_currentPos.Y; }
+
 			int getDX() const { return m_currentPos.X - m_lastPosition.X; }
 			int getDY() const { return m_currentPos.Y - m_lastPosition.Y; }
 			int getDZ() const { return m_z - m_lastZ; }
