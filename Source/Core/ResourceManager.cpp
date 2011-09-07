@@ -64,12 +64,12 @@ namespace Apoc3D
 		}
 
 		ResourceManager::ResourceManager(const String& name, int64 cacheSize, bool useAsync)
-			: m_name(name), m_totalCacheSize(cacheSize), m_curUsedCache(0)
+			: m_name(name), m_totalCacheSize(cacheSize), m_curUsedCache(0), m_isShutDown(false)
 		{
 			if (useAsync)
 			{
-				m_asyncProc = new AsyncProcessor(m_name + L" Async ResourceLoader");
 				m_generationTable = new GenerationTable(this);
+				m_asyncProc = new AsyncProcessor(m_generationTable, m_name + L" Async ResourceLoader");
 			}
 			else
 			{
@@ -82,8 +82,12 @@ namespace Apoc3D
 			{
 				for (ResHashTable::iterator iter = m_hashTable.begin();iter!=m_hashTable.end();iter++)
 				{
-					LogManager::getSingleton().Write(LOG_System, 
-						L"ResMgr: Resource leak detected: " + iter->first, LOGLVL_Warning);
+					if (iter->second->getState() == RS_Loaded)
+					{
+						LogManager::getSingleton().Write(LOG_System, 
+							L"ResMgr: Resource leak detected: " + iter->first, LOGLVL_Warning);
+					}
+					
 				}
 				
 			}

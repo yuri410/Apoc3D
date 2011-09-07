@@ -26,8 +26,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Platform/Thread.h"
 #include "Core/ResourceManager.h"
 #include "Core/Resource.h"
+#include "Core/Logging.h"
+#include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Platform;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -35,14 +38,15 @@ namespace Apoc3D
 	{
 		namespace Streaming
 		{
-			const float GenerationTable::GenerationLifeTime[MaxGeneration] = { 3, 6, 10, 30 };
+			const float GenerationTable::GenerationLifeTime[MaxGeneration] = { 3, 10, 20, 30 };
 
 			GenerationTable::GenerationTable(ResourceManager* mgr)
 				: m_manager(mgr), m_isShutdown(false), m_generationList(100)
 			{
-				m_thread = new thread(&GenerationTable::ThreadEntry, this);
-				SetThreadName(m_thread, mgr->getName() + L" Generation");
 				m_generations = new ExistTable<Resource*>[MaxGeneration];
+
+				//m_thread = new thread(&GenerationTable::ThreadEntry, this);
+				//SetThreadName(m_thread, mgr->getName() + L" Generation");
 			}
 			GenerationTable::~GenerationTable()
 			{
@@ -51,34 +55,34 @@ namespace Apoc3D
 
 			void GenerationTable::SubTask_GenUpdate()
 			{
-				const int passTimeLimit = 4000;
+				//const int passTimeLimit = 4000;
 				clock_t timeStart = clock();
 				clock_t time = clock();
 
 				int count;
-				m_genListLock.lock();
+				m_genLock.lock();
 				count = m_generationList.getCount();
-				m_genListLock.unlock();
+				m_genLock.unlock();
 
-				if (count)
+				//if (count)
 				{
-					int loopCount = 0;
-					int remainingTime = passTimeLimit;
-					int perObjTime = passTimeLimit / count;
-					int actlObjTime = max(1, min(perObjTime, 10));
+					//int loopCount = 0;
+					//int remainingTime = passTimeLimit;
+					//int perObjTime = passTimeLimit / count;
+					//int actlObjTime = max(1, min(perObjTime, 10));
 
 					for (int j=0;j<count;j++)
 					{
 						Resource* res;
-						m_genListLock.lock();
+						m_genLock.lock();
 						count = m_generationList.getCount();
 						if (j<count)
 							res = m_generationList[j];
 						else
 							break;
-						m_genListLock.unlock();
+						m_genLock.unlock();
 
-						if (res->m_generation->IsGenerationOutOfTime((float)timeStart))
+						if (res->m_generation->IsGenerationOutOfTime((float)timeStart/CLOCKS_PER_SEC))
 						{
 							int og = res->m_generation->Generation;
 							res->m_generation->UpdateGeneration();
@@ -86,19 +90,22 @@ namespace Apoc3D
 							if (ng!=og)
 							{
 								UpdateGeneration(og,ng,res);
+#ifdef _DEBUG
+								LogManager::getSingleton().Write(LOG_System, L"GEN_CHG" + StringUtils::ToString(ng) +L" ("+ res->getHashString() + L")", LOGLVL_Default);
+#endif
 							}
 						}
 
-						if (++loopCount % 10 ==0)
-						{
-							time = clock();
-							remainingTime -= (time-timeStart);
-							loopCount = 0;
-						}
-						if (perObjTime >=1 && remainingTime>0)
-						{
-							ApocSleep(actlObjTime);
-						}
+						//if (++loopCount % 10 ==0)
+						//{
+						//	time = clock();
+						//	remainingTime -= (time-timeStart);
+						//	loopCount = 0;
+						//}
+						//if (perObjTime >=1 && remainingTime>0)
+						//{
+						//	ApocSleep(actlObjTime);
+						//}
 					}
 				}
 			}
@@ -148,21 +155,21 @@ namespace Apoc3D
 				}
 			}
 
-			void GenerationTable::GenerationUpdate_Main()
-			{
-				static const int ManageInterval = 10;
+			//void GenerationTable::GenerationUpdate_Main()
+			//{
+			//	static const int ManageInterval = 10;
 
-				int times = 0;
-				while (!m_isShutdown)
-				{
-					SubTask_GenUpdate();
-					if ((times++) % ManageInterval == 0)
-					{
-						SubTask_Manage();
-					}
-					ApocSleep(100);
-				}
-			}
+			//	int times = 0;
+			//	while (!m_isShutdown)
+			//	{
+			//		SubTask_GenUpdate();
+			//		if ((times++) % ManageInterval == 0)
+			//		{
+			//			SubTask_Manage();
+			//		}
+			//		ApocSleep(100);
+			//	}
+			//}
 
 			void GenerationTable::AddResource(Resource* res)
 			{
@@ -171,11 +178,8 @@ namespace Apoc3D
 				{
 					m_genLock.lock();
 					m_generations[g].Add(res);
-					m_genLock.unlock();
-
-					m_genListLock.lock();
 					m_generationList.Add(res);
-					m_genListLock.unlock();
+					m_genLock.unlock();
 				}
 			}
 
@@ -186,11 +190,8 @@ namespace Apoc3D
 				{
 					m_genLock.lock();
 					m_generations[g].Remove(res);
-					m_genLock.unlock();
-
-					m_genListLock.lock();
 					m_generationList.Remove(res);
-					m_genListLock.unlock();
+					m_genLock.unlock();
 				}
 			}
 

@@ -52,6 +52,11 @@ namespace Apoc3D
 		ModelSharedData::~ModelSharedData()
 		{
 			delete m_resourceLocation;
+			for (int i=0; i< m_entities.getCount();i++)
+			{
+				delete m_entities[i];
+			}
+			m_entities.FastClear();
 		}
 
 		void ModelSharedData::load()

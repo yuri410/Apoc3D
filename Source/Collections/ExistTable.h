@@ -260,7 +260,7 @@ namespace Apoc3D
 							}
 							m_entries[i].hashCode = -1;
 							m_entries[i].next = m_freeList;
-							memset(m_entries[i].data,0,sizeof(T));
+							memset(&m_entries[i].data,0,sizeof(T));
 							m_freeList = i;
 							m_freeCount++;
 							return true;

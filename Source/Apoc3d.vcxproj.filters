@@ -333,9 +333,6 @@
     <ClInclude Include="Platform\Thread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Streaming\GenerationTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\Animation\AnimationManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -457,6 +454,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Math\GaussBlurFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Streaming\GenerationTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -677,9 +677,6 @@
     <ClCompile Include="Platform\Thread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Streaming\GenerationTable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Collections\CollectionsCommon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -795,6 +792,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Streaming\GenerationTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -111,7 +111,6 @@
     <ClInclude Include="Config\ConfigurationManager.h" />
     <ClInclude Include="Config\ConfigurationSection.h" />
     <ClInclude Include="Config\XmlConfiguration.h" />
-    <ClInclude Include="Core\Streaming\GenerationTable.h" />
     <ClInclude Include="Core\IHashed.h" />
     <ClInclude Include="Core\IParsable.h" />
     <ClInclude Include="Core\Logging.h" />
@@ -119,6 +118,7 @@
     <ClInclude Include="Core\PluginManager.h" />
     <ClInclude Include="Core\ResourceHandle.h" />
     <ClInclude Include="Core\ResourceManager.h" />
+    <ClInclude Include="Core\Streaming\GenerationTable.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Graphics\Animation\AnimationData.h" />
     <ClInclude Include="Graphics\Animation\AnimationManager.h" />
@@ -255,7 +255,6 @@
     <ClCompile Include="Config\Configuration.cpp" />
     <ClCompile Include="Config\ConfigurationManager.cpp" />
     <ClCompile Include="Config\XMLConfiguration.cpp" />
-    <ClCompile Include="Core\Streaming\GenerationTable.cpp" />
     <ClCompile Include="Core\HashHandleObject.cpp" />
     <ClCompile Include="Core\IHashed.cpp" />
     <ClCompile Include="Core\Logging.cpp" />
@@ -264,6 +263,7 @@
     <ClCompile Include="Core\ResourceHandle.cpp" />
     <ClCompile Include="Core\ResourceManager.cpp" />
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
+    <ClCompile Include="Core\Streaming\GenerationTable.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Graphics\Animation\AnimationData.cpp" />
     <ClCompile Include="Graphics\Animation\AnimationManager.cpp" />

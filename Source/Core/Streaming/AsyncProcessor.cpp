@@ -1,5 +1,6 @@
 #include "AsyncProcessor.h"
 #include "Platform/Thread.h"
+#include "GenerationTable.h"
 
 using namespace Apoc3D::Platform;
 
@@ -9,6 +10,7 @@ namespace Apoc3D
 	{
 		namespace Streaming
 		{
+			
 			void AsyncProcessor::ThreadEntry(void* arg)
 			{
 				AsyncProcessor* obj = static_cast<AsyncProcessor*>(arg);
@@ -17,6 +19,8 @@ namespace Apoc3D
 			}
 			void AsyncProcessor::Main()
 			{
+				static const int ManageInterval = 50;
+				int times = 0;
 				while (!m_closed)
 				{
 					ResourceOperation* resOp = 0;
@@ -32,10 +36,14 @@ namespace Apoc3D
 					{
 						resOp->Process();
 					}
-					else
+
+					m_genTable->SubTask_GenUpdate();
+					if ((times++) % ManageInterval == 0)
 					{
-						ApocSleep(10);
+						m_genTable->SubTask_Manage();
+						times = 0;
 					}
+					ApocSleep(10);
 				}
 			}
 
@@ -74,11 +82,13 @@ namespace Apoc3D
 			void AsyncProcessor::Shutdown()
 			{
 				m_closed = true;
+				m_genTable->ShutDown();
 				m_processThread->join();
+				
 			}
 
-			AsyncProcessor::AsyncProcessor(const String& name)
-				: m_closed(false)
+			AsyncProcessor::AsyncProcessor(GenerationTable* gtable, const String& name)
+				: m_closed(false), m_genTable(gtable)
 			{
 				m_processThread = new thread(&AsyncProcessor::ThreadEntry, this);
 				SetThreadName(m_processThread, name);

@@ -58,7 +58,7 @@ namespace Apoc3D
 			{
 			private:
 				FastQueue<ResourceOperation*> m_opQueue;
-
+				GenerationTable* m_genTable;
 				thread* m_processThread;
 				fast_mutex m_syncMutex;
 
@@ -76,7 +76,7 @@ namespace Apoc3D
 
 				void Shutdown();
 
-				AsyncProcessor(const String& name);
+				AsyncProcessor(GenerationTable* gTable,const String& name);
 				~AsyncProcessor(void);
 
 

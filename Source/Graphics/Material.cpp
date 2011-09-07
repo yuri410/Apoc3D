@@ -133,6 +133,7 @@ namespace Apoc3D
 			}
 			else
 			{
+				m_tex[index] = 0;
 				LogManager::getSingleton().Write(LOG_Graphics, L"Missing texture '" + m_texName[index] + L"'. ",
 					LOGLVL_Error);
 			}

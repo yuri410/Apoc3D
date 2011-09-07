@@ -109,22 +109,22 @@ namespace Apoc3D
 			{
 				float interval = time - topVal;
 
-				if (Generation < GenerationTable::MaxGeneration -1 && 
-					interval > GenerationTable::GenerationLifeTime[Generation])
+				if (Generation < GenerationTable::MaxGeneration && 
+					interval > GenerationTable::GenerationLifeTime[Generation]) // become older
 				{
 					return true;
 				}
-				return Generation>0 && interval <= GenerationTable::GenerationLifeTime[Generation-1];
+				// become younger
+				return Generation >0 && interval <= GenerationTable::GenerationLifeTime[Generation-1];
 				
 			}
-
-			return Generation!= GenerationTable::MaxGeneration -1;
+			return Generation == GenerationTable::MaxGeneration -1;
 		}
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
 		Resource::Resource()
-			: m_refCount(0), m_manager(0), m_resLoader(0), m_resUnloader(0), m_state(RS_Unloaded), m_generation(0)
+			: m_refCount(0), m_manager(0), m_resLoader(0), m_resUnloader(0), m_state(RS_Unloaded),  m_generation(0)
 		{
 
 		}
@@ -163,6 +163,8 @@ namespace Apoc3D
 		{
 			if (isManaged())
 			{
+				m_generation->Use(this);
+
 				if (getState() == RS_Unloaded)
 					Load();
 			}			
