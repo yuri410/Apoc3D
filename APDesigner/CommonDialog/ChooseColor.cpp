@@ -1,6 +1,8 @@
 #include "ChooseColor.h"
 
 #include <Windows.h>
+#undef GetGValue
+#define GetGValue(rgb) (LOBYTE((rgb) >> 8))
 
 namespace APDesigner
 {
