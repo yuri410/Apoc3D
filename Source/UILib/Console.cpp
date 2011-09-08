@@ -105,6 +105,26 @@ namespace Apoc3D
 		{
 			Submit_Pressed(ctrl);
 		}
+		void Console::setPosition(const Point& pt)
+		{
+			m_form->Position = pt;
+		}
+		const Point& Console::getSize() const
+		{
+			return m_form->Size;
+		}
+		void Console::Maximize()
+		{
+			m_form->Maximize();
+		}
+		void Console::Minimize()
+		{
+			m_form->Minimize();
+		}
+		void Console::Restore()
+		{
+			m_form->Restore();
+		}
 		void Console::Submit_Pressed(Control* ctrl)
 		{
 			const String& c = m_inputText->Text;

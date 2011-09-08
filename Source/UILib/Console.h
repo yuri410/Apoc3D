@@ -45,7 +45,12 @@ namespace Apoc3D
 			~Console();
 
 			ConsoleCommandHandler& eventCommandSubmited() { return m_eCommandSubmited; }
+			void setPosition(const Point& pt);
+			const Point& getSize() const;
 
+			void Minimize();
+			void Restore();
+			void Maximize();
 			void Update(const GameTime* const time);
 		private:
 			void TextBox_ReturnPressed(Control* ctrl);
