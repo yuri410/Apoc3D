@@ -40,6 +40,7 @@ namespace Apoc3D
 		private:
 			ResType* m_resource;
 			bool m_dummy;
+			bool m_disposal;
 			void _Ref( )
 			{
 				if (!m_dummy && m_resource->isManaged())
@@ -64,8 +65,8 @@ namespace Apoc3D
 			{
 				_Ref();
 			}
-			ResourceHandle(ResType* res, bool dummy)
-				: m_resource(res), m_dummy(dummy)
+			ResourceHandle(ResType* res, bool dummy, bool disposal = true)
+				: m_resource(res), m_dummy(dummy), m_disposal(disposal)
 			{
 				_Ref();
 			}
@@ -73,7 +74,7 @@ namespace Apoc3D
 			{
 				_Unref();
 				
-				if (m_dummy)
+				if (m_dummy && m_disposal)
 				{
 					delete m_resource;
 				}
