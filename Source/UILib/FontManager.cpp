@@ -401,7 +401,7 @@ namespace Apoc3D
 			return result;
 		}
 
-		int FontManager::TextureSize = 512;
+		int FontManager::TextureSize = 1024;
 
 		FontManager::FontManager()
 			: m_fontTable()

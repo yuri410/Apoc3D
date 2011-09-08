@@ -69,6 +69,7 @@ namespace Apoc3D
 
 		Texture* TextureManager::CreateUnmanagedInstance(RenderDevice* rd, FileLocation* fl, bool genMips)
 		{
+			assert(fl);
 			ObjectFactory* factory = rd->getObjectFactory();
 			if (m_redirectLocation)
 			{
@@ -81,6 +82,7 @@ namespace Apoc3D
 		}
 		ResourceHandle<Texture>* TextureManager::CreateInstance(RenderDevice* rd, FileLocation* fl, bool genMips)
 		{
+			assert(fl);
 			if (m_redirectLocation)
 			{
 				delete fl;
