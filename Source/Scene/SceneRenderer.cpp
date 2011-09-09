@@ -195,7 +195,12 @@ namespace Apoc3D
 
 		void SceneRenderer::RenderBatch(int selectorID)
 		{
-			uint64 selectorMask = 1<<selectorID;
+			uint64 selectorMask;
+			if (selectorID == -1)
+				selectorMask = 0xffffffffffffffff;
+			else
+				selectorMask = 1<<selectorID;
+
 			const PriorityTable& table = m_batchData.getTable();
 
 			for (PriorityTable::Enumerator i = table.GetEnumerator();i.MoveNext();)

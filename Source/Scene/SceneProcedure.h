@@ -41,6 +41,24 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
+		/* 
+			pass config <Pass></Pass>
+				attributes:
+				Name
+				SelectorID  -- use -1 to select all objects
+				CameraID  --  index of camera registered in SceneRenderer object, try not to change camera too often
+
+
+			function call
+				<C S = "func" params/>
+
+				Clear
+				UseRT
+				Render
+				VisibleTo
+
+		*/
+
 		/* Represent a sequence of scene passes that can finally 
 		   generate end result.
 
