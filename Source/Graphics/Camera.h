@@ -200,6 +200,11 @@ namespace Apoc3D
 			void setPosition(const Vector3& val) { m_position = val; }
 			void setDesiredOffset(const Vector3& val) { m_desiredPositionOfs = val; }
 			void setLookAtOffset(const Vector3& val) { m_lootAtOfs = val; }
+
+			void ForceUpdateMatrix()
+			{
+				UpdateMatrices();
+			}
 		private:
 			// Matrix properties
 			//Matrix m_view;

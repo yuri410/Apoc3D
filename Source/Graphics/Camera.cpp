@@ -43,7 +43,7 @@ namespace Apoc3D
 
 		void FpsCamera::Update(const GameTime* time)
 		{
-
+			Camera::Update(time);
 		}
 
 		/************************************************************************/
