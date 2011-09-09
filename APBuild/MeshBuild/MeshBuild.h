@@ -13,6 +13,7 @@ namespace APBuild
 	private:
 		static void BuildByASS(const MeshBuildConfig& config);
 		static void BuildByFBX(const MeshBuildConfig& config);
+		static void BuildByD3D(const MeshBuildConfig& config);
 	public:
 		static void Build(const ConfigurationSection* sect);
 	};

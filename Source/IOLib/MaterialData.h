@@ -108,6 +108,8 @@ namespace Apoc3D
 				Priority = 64;
 				PassFlags = 1;
 
+				AlphaReference = 0;
+				AlphaTestEnabled = false;
 
 				Ambient = Color4(0,0,0,0);
 				Diffuse = Color4(1,1,1,1);

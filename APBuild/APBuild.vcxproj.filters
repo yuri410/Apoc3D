@@ -69,6 +69,9 @@
     <ClInclude Include="dds.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MeshBuild\XImporter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -114,6 +117,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="EffectCompiler\AFXBuild.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshBuild\XImporter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -121,7 +121,8 @@ namespace APBuild
 	enum MeshBuildMethod
 	{
 		MESHBUILD_ASS,
-		MESHBUILD_FBX
+		MESHBUILD_FBX,
+		MESHBUILD_D3D
 	};
 
 	struct MeshBuildConfig

@@ -163,17 +163,24 @@ namespace Apoc3D
 		{
 			if (isManaged())
 			{
-				m_generation->Use(this);
+				if (m_manager->usesAsync())
+				{
+					m_generation->Use(this);
 
-				if (getState() == RS_Unloaded)
-					Load();
+					if (getState() == RS_Unloaded)
+						Load();
+				}
+				else
+				{
+					UseSync();
+				}
 			}			
 		}
 		void Resource::UseSync()
 		{
 			if (isManaged())
 			{
-				m_generation->Use(this);
+				//m_generation->Use(this);
 
 				LoadSync();
 			}

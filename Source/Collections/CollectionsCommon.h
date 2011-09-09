@@ -79,6 +79,18 @@ namespace Apoc3D
 			virtual int64 GetHashCode(const uint32& obj) const;
 		};
 
+		class APAPI Int32EqualityComparer : public IEqualityComparer<int32>
+		{
+		public:
+			class BuiltIn : public IBuiltInEqualityComparer<int32>
+			{
+
+			};
+			virtual bool Equals(const int32& x, const int32& y) const;
+
+			virtual int64 GetHashCode(const int32& obj) const;
+		};
+
 		class APAPI WCharEqualityComparer : public IEqualityComparer<wchar_t>
 		{
 		public:

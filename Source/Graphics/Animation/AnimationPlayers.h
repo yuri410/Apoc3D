@@ -161,6 +161,38 @@ namespace Apoc3D
 				virtual void GetTransform(int boneID, Matrix& result) = 0;
 			};
 
+			class APAPI TransformAdjuster : public ModelAnimationPlayerBase
+			{
+			private:
+				Matrix m_currentTransfrom;
+
+			protected:
+				/** Initializes the transformation to the identity
+				*/
+				virtual void InitClip() { }
+
+				/** Sets the key frame by storing the current transform
+				*/
+				virtual void SetKeyframe(const ModelKeyframe& keyframe) { }
+				
+			public:
+				TransformAdjuster(const Matrix& m)
+					: m_currentTransfrom(m)
+				{
+				}
+				/** Gets the current transformation being applied
+				*/
+				void GetCurrentTransform(Matrix& result)
+				{
+					result = m_currentTransfrom;
+				}
+
+				virtual void GetTransform(int boneID, Matrix& result)
+				{
+					result = m_currentTransfrom;
+				}
+			};
+
 			/** The animation player contains a single transformation that is used to move/position/scale
 				something. all meshes use the same animation.
 			*/

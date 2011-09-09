@@ -275,6 +275,10 @@ namespace APBuild
 		{
 			Method = MESHBUILD_FBX;
 		}
+		else if (method == L"d3d")
+		{
+			Method = MESHBUILD_D3D;
+		}
 	}
 	
 }

@@ -108,7 +108,20 @@ namespace Apoc3D
 		{
 			return obj;
 		}
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+		const IEqualityComparer<int32>* 
+			Int32EqualityComparer::BuiltIn::Default = new Int32EqualityComparer();
 
+		bool Int32EqualityComparer::Equals(const int32& x, const int32& y) const
+		{
+			return x==y;
+		}
+		int64 Int32EqualityComparer::GetHashCode(const int32& obj) const
+		{
+			return obj;
+		}
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/

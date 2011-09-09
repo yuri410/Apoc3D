@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Config/ConfigurationSection.h"
 #include "BuildConfig.h"
 #include "AIImporter.h"
+#include "XImporter.h"
 #include "FbxImporter.h"
 #include "IOLib/Streams.h"
 #include "IOLib/ModelData.h"
@@ -60,6 +61,13 @@ namespace APBuild
 
 		CompileLog::WriteInformation(config.SrcFile, L">");
 	}
+	void MeshBuild::BuildByD3D(const MeshBuildConfig& config)
+	{
+		XImporter importer;
+		importer.Import(config);
+
+		CompileLog::WriteInformation(config.SrcFile, L">");
+	}
 
 	void MeshBuild::Build(const ConfigurationSection* sect)
 	{
@@ -81,6 +89,9 @@ namespace APBuild
 			break;
 		case MESHBUILD_FBX:
 			BuildByFBX(config);
+			break;
+		case MESHBUILD_D3D:
+			BuildByD3D(config);
 			break;
 		}
 	}

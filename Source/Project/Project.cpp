@@ -663,6 +663,10 @@ namespace Apoc3D
 		{
 			return MESHBUILD_FBX;
 		}
+		else if (str == L"d3d")
+		{
+			return MESHBUILD_D3D;
+		}
 		return MESHBUILD_ASS;
 	}
 	String ProjectResModel::ToString(MeshBuildMethod method)
