@@ -108,8 +108,6 @@ namespace Apoc3D
 		class ExpressionCompiler
 		{
 		private:
-
-
 			enum NodeType
 			{
 				NT_Operator,
@@ -464,12 +462,14 @@ namespace Apoc3D
 
 		public:
 			ExpressionCompiler()
+				: tokenval(0), position(0)
 			{
 				
 			}
 			void FillInstrunctions(const string& expression, std::vector<SceneInstruction>& insts, const FastList<SceneVariable*>& vars)
 			{
 				Parse(expression);
+				expStruct.Add(string(1,EndSym));
 
 				ExpressionNode* tree = CreateBinaryTree();
 
@@ -709,14 +709,18 @@ namespace Apoc3D
 					if (lowStrName == String(L"if"))
 					{
 						FillInstructions(elem->Attribute("Cond"), data->Instructions);
-						data->Instructions.push_back(SceneInstruction(SOP_JZ));
 
-						SceneInstruction& inst = data->Instructions[data->Instructions.size()-1];
+						SceneInstruction inst(SOP_JNZ);
+						data->Instructions.push_back(inst);
+						
+						size_t refIdx = data->Instructions.size()-1;
+						
 
 						BuildInstructions(elem, data);
 
 						// back fill
-						inst.Next = (int)data->Instructions.size();
+						SceneInstruction& instref = data->Instructions[refIdx];
+						instref.Next = (int)data->Instructions.size();
 					}
 					else if (lowStrName == String(L"e"))
 					{
@@ -725,7 +729,7 @@ namespace Apoc3D
 						SceneOpArg arg;
 						if (ParseCallArgRef(elem, "Ret", arg, GlobalVars))
 						{
-							SceneInstruction inst = SceneInstruction(SOP_Pop);
+							SceneInstruction inst(SOP_Pop);
 							inst.Args.push_back(arg);
 							data->Instructions.push_back(inst);
 						}
@@ -1052,7 +1056,8 @@ namespace Apoc3D
 				const TiXmlElement* e1 = node->FirstChildElement("Value");
 				if (e1)
 				{
-					StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
+					int iv = StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
+					var->Value[0] = reinterpret_cast<const uint&>(iv);
 				}
 
 				GlobalVars.Add(var);
@@ -1066,7 +1071,7 @@ namespace Apoc3D
 				const TiXmlElement* e1 = node->FirstChildElement("Value");
 				if (e1)
 				{
-					StringUtils::ParseBool(StringUtils::toWString(e1->GetText()));
+					var->Value[0] = StringUtils::ParseBool(StringUtils::toWString(e1->GetText()));
 				}
 
 				GlobalVars.Add(var);

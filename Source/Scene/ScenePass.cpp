@@ -76,6 +76,43 @@ namespace Apoc3D
 					break;
 				case SOP_Not:
 					break;
+				case SOP_Load:
+					{
+						ExecutionValue val;
+						if (inst.Args[0].IsImmediate)
+						{
+							val.Value[0] = inst.Args[0].DefaultValue[0];
+							val.Value[1] = inst.Args[0].DefaultValue[1];
+						}
+						else
+						{
+							val.Value[0] = inst.Args[0].Var->Value[0];
+							val.Value[1] = inst.Args[0].Var->Value[1];
+						}
+						
+						m_execStack.Push(val);
+					}
+					break;
+				case SOP_JNZ:
+					{
+						assert(m_execStack.getCount());
+						ExecutionValue val = m_execStack.Pop();
+						if (val.Value[0] || val.Value[1])
+						{
+							i = inst.Next;
+						}
+					}
+					break;
+				case SOP_JZ:
+					{
+						assert(m_execStack.getCount());
+						ExecutionValue val = m_execStack.Pop();
+						if (!val.Value[0] && !val.Value[1])
+						{
+							i = inst.Next;
+						}
+					}
+					break;
 				case SOP_Clear:
 					{
 						int flags=0;

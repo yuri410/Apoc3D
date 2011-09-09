@@ -74,9 +74,10 @@ namespace Apoc3D
 			{
 				_Unref();
 				
-				if (m_dummy && m_disposal)
+				if (m_dummy) 
 				{
-					delete m_resource;
+					if (m_disposal)
+						delete m_resource;
 				}
 				else
 				{

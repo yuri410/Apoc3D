@@ -62,6 +62,31 @@ namespace Apoc3D
 			RenderTarget* RTValue;
 			ResourceHandle<Texture>* TextureValue;
 			Effect* EffectValue;
+
+			SceneVariable()
+				: TextureValue(0), RTValue(0), EffectValue(0), Type(VARTYPE_Integer)
+			{
+				memset(Value, 0, sizeof(Value));
+			}
+
+			SceneVariable(const SceneVariable& other)
+				: Name(other.Name), DefaultStringValue(other.DefaultStringValue),
+				Type(other.Type), RTValue(other.RTValue), TextureValue(other.TextureValue), EffectValue(other.EffectValue)
+			{
+				memcpy(Value, other.Value, sizeof(Value));
+			}
+			SceneVariable& operator =(const SceneVariable& other)
+			{
+				Name = other.Name;
+				DefaultStringValue = other.DefaultStringValue;
+
+				Type = other.Type;
+				RTValue = other.RTValue;
+				TextureValue = other.TextureValue;
+				EffectValue = other.EffectValue;
+				memcpy(Value, other.Value, sizeof(Value));
+				return *this;
+			}
 		};
 
 		enum SceneOpCode
@@ -77,6 +102,7 @@ namespace Apoc3D
 			SOP_Load,
 			SOP_SelectorID,
 			SOP_JZ,
+			SOP_JNZ,
 			SOP_Clear,
 			SOP_UseRT,
 			SOP_VisibleTo,
@@ -102,6 +128,21 @@ namespace Apoc3D
 			{
 				
 			}
+
+			SceneInstruction(const SceneInstruction& other)
+				: Operation(other.Operation), Next(other.Next),
+				Args(other.Args)
+			{
+
+			}
+			SceneInstruction& operator =(const SceneInstruction& other)
+			{
+				Operation = other.Operation;
+				Next = other.Next;
+
+				Args = other.Args;
+				return *this;
+			}
 		};
 		struct ScenePassData
 		{
@@ -109,6 +150,26 @@ namespace Apoc3D
 			String Name;
 			int32 CameraID;
 			std::vector<SceneInstruction> Instructions;
+
+			ScenePassData()
+			{
+
+			}
+			ScenePassData(const ScenePassData& other)
+				: SelectorID(other.SelectorID), Name(other.Name),
+				CameraID(other.CameraID), Instructions(other.Instructions)
+			{
+
+			}
+			ScenePassData& operator =(const ScenePassData& other)
+			{
+				SelectorID = other.SelectorID;
+				Name = other.Name;
+
+				CameraID = other.CameraID;
+				Instructions = other.Instructions;
+				return *this;
+			}
 		};
 	}
 }

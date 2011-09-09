@@ -56,7 +56,7 @@ namespace Apoc3D
 				UseRT
 				Render
 				VisibleTo
-
+				RenderQuad
 		*/
 
 		/* Represent a sequence of scene passes that can finally 
