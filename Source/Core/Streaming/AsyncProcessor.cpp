@@ -36,14 +36,16 @@ namespace Apoc3D
 					{
 						resOp->Process();
 					}
-
-					m_genTable->SubTask_GenUpdate();
-					if ((times++) % ManageInterval == 0)
+					else
 					{
-						m_genTable->SubTask_Manage();
-						times = 0;
+						m_genTable->SubTask_GenUpdate();
+						if ((times++) % ManageInterval == 0)
+						{
+							m_genTable->SubTask_Manage();
+							times = 0;
+						}
+						ApocSleep(10);
 					}
-					ApocSleep(10);
 				}
 			}
 

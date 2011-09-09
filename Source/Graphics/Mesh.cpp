@@ -346,7 +346,8 @@ namespace Apoc3D
 					md->VertexCount = m_partVertexCount[i];
 					md->VertexDecl = m_vtxDecl;
 					md->VertexSize = m_vertexSize;
-					
+					md->UserData = this;
+
 					RenderOperation op;
 					op.GeometryData = md;
 					op.Material = m_materials.getMaterial(i,0);

@@ -274,6 +274,7 @@
     <ClCompile Include="Graphics\ModelManager.cpp" />
     <ClCompile Include="Graphics\ParticleSystem.cpp" />
     <ClCompile Include="Graphics\Patch.cpp" />
+    <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp" />
     <ClCompile Include="Graphics\RenderSystem\ObjectFactory.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderDevice.cpp" />

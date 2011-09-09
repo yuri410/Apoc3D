@@ -90,7 +90,7 @@ namespace Apoc3D
 			{
 				return m_oplist[i];
 			}
-				
+			void MultiplyTransform(const Matrix& m);
 
 			int getCount() const { return m_oplist.getCount(); }
 		};

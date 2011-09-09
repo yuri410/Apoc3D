@@ -554,7 +554,6 @@ namespace Apoc3D
 						rop.BoneTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
 						rop.BoneTransform.Count = m_skinPlayer->getTransformCount();
 					}
-					
 				}
 
 			}
