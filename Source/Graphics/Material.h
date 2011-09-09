@@ -123,7 +123,9 @@ namespace Apoc3D
 				}
 			}
 
-			Effect* getPassEffect(int index) const { return m_effects[index]; }
+			Effect* GetFirstValidEffect() const;
+
+			Effect* getPassEffect(int index) const { if (index==-1) return GetFirstValidEffect(); return m_effects[index]; }
 			void setPassEffect(int index, Effect* eff) { m_effects[index] = eff; }
 
 			/* Gets the texture at texture layer idx

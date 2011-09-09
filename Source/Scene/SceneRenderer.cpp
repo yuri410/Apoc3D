@@ -199,7 +199,7 @@ namespace Apoc3D
 			if (selectorID == -1)
 				selectorMask = 0xffffffffffffffff;
 			else
-				selectorMask = 1<<selectorID;
+				selectorMask = (uint64)1<<selectorID;
 
 			const PriorityTable& table = m_batchData.getTable();
 

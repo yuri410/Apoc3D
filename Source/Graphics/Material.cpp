@@ -290,5 +290,15 @@ namespace Apoc3D
 				}
 			}
 		}
+
+		Effect* Material::GetFirstValidEffect() const
+		{
+			for (int i=0;i<MaxScenePass;i++)
+			{
+				if (m_effects[i])
+					return m_effects[i];
+			}
+			return 0;
+		}
 	}
 };
