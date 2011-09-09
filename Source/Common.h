@@ -316,6 +316,8 @@ namespace Apoc3D
 		namespace EffectSystem
 		{
 			class Effect;
+			class AutomaticEffect;
+			class CustomShaderEffect;
 			class EffectManager;
 			class MicroEffect;
 			class MicroEffectCodeParser;

@@ -38,7 +38,7 @@ namespace Apoc3D
 	namespace IO
 	{
 		static const int AfxId_V3 = ((byte)'A' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
-
+		static const int CfxID_V3 = ((byte)'C' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
 		static const String TAG_3_ParameterCountTag = L"ParameterCount";
 		static const String TAG_3_ParameterTag = L"Parameter";
 		static const String TAG_3_ParameterSamplerStateTag = L"SamplerState";
@@ -145,9 +145,36 @@ namespace Apoc3D
 				delete data;
 
 			}
+			else if (id == CfxID_V3)
+			{
+				IsCustom = true;
+
+				MajorVer = br->ReadInt32();
+				MinorVer = br->ReadInt32();
+				Name = br->ReadString();
+
+				TaggedDataReader* data = br->ReadTaggedDataBlock();
+
+				BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeLengthTag);
+				VSLength = br3->ReadInt32();
+				PSLength = br3->ReadInt32();
+				br3->Close();
+				delete br3;
+
+				VSCode = new char[VSLength];
+				PSCode = new char[PSLength];
+				br3 = data->GetData(TAG_3_ShaderCodeTag);
+				br3->ReadBytes(VSCode, VSLength);
+				br3->ReadBytes(PSCode, PSLength);
+				br3->Close();
+				delete br3;
+
+				data->Close();
+				delete data;
+			}
 			else
 			{
-				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid model file. " + rl->getName(), LOGLVL_Error);
+				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid effect file. " + rl->getName(), LOGLVL_Error);
 			}
 			
 
@@ -156,74 +183,110 @@ namespace Apoc3D
 		}
 		void EffectData::Save(Stream* strm) const
 		{
-			BinaryWriter* bw = new BinaryWriter(strm);
-			bw->Write((int32)AfxId_V3);
-			bw->Write((int32)MajorVer);
-			bw->Write((int32)MinorVer);
-			bw->Write(Name);
+			if (IsCustom)
 			{
-				TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
-
-				data->AddEntry(TAG_3_ParameterCountTag, (int32)Parameters.getCount());
-
-
-				for (int i=0;i<Parameters.getCount();i++)
+				BinaryWriter* bw = new BinaryWriter(strm);
+				bw->Write((int32)AfxId_V3);
+				bw->Write((int32)MajorVer);
+				bw->Write((int32)MinorVer);
+				bw->Write(Name);
 				{
-					const EffectParameter& pm = Parameters[i];
+					TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
-					String tag = StringUtils::ToString(i);
-					tag = TAG_3_ParameterTag + tag;
+					BinaryWriter* bw3 = data->AddEntry(TAG_3_ShaderCodeLengthTag);
+					bw3->Write((int32)VSLength);
+					bw3->Write((int32)PSLength);
+					bw3->Close();
+					delete bw3;
 
-					BinaryWriter* bw2 = data->AddEntry(tag);
 
-					bw2->Write(pm.Name);
-					//bw2->Write(static_cast<uint>(pm.TypicalUsage));
-					//bw2->Write(pm.IsCustomUsage);
-					bw2->Write(pm.CustomUsage);
-					bw2->Write(static_cast<int>(pm.ProgramType));
+					bw3 = data->AddEntry(TAG_3_ShaderCodeTag);
+					bw3->Write(VSCode, VSLength);
+					bw3->Write(PSCode, PSLength);
+					bw3->Close();
+					delete bw3;
 
-					bw2->Close();
-					delete bw2;
 
-					tag = StringUtils::ToString(i);
-					tag = TAG_3_ParameterSamplerStateTag + tag;
-					bw2 = data->AddEntry(tag);
-					bw2->Write((uint)pm.SamplerState.AddressU);
-					bw2->Write((uint)pm.SamplerState.AddressV);
-					bw2->Write((uint)pm.SamplerState.AddressW);
-					bw2->Write((uint)pm.SamplerState.BorderColor);
-					bw2->Write((uint)pm.SamplerState.MagFilter);
-					bw2->Write((int)pm.SamplerState.MaxAnisotropy);
-					bw2->Write((int)pm.SamplerState.MaxMipLevel);
-					bw2->Write((uint)pm.SamplerState.MinFilter);
-					bw2->Write((uint)pm.SamplerState.MipFilter);
-					bw2->Write((uint)pm.SamplerState.MipMapLODBias);
 
-					bw2->Close();
-					delete bw2;
+					bw->Write(data);
+					delete data;
 				}
 
-				BinaryWriter* bw3 = data->AddEntry(TAG_3_ShaderCodeLengthTag);
-				bw3->Write((int32)VSLength);
-				bw3->Write((int32)PSLength);
-				bw3->Close();
-				delete bw3;
-
-
-				bw3 = data->AddEntry(TAG_3_ShaderCodeTag);
-				bw3->Write(VSCode, VSLength);
-				bw3->Write(PSCode, PSLength);
-				bw3->Close();
-				delete bw3;
-
-
-
-				bw->Write(data);
-				delete data;
+				bw->Close();
+				delete bw;
 			}
+			else
+			{
+				BinaryWriter* bw = new BinaryWriter(strm);
+				bw->Write((int32)AfxId_V3);
+				bw->Write((int32)MajorVer);
+				bw->Write((int32)MinorVer);
+				bw->Write(Name);
+				{
+					TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
-			bw->Close();
-			delete bw;
+					data->AddEntry(TAG_3_ParameterCountTag, (int32)Parameters.getCount());
+
+
+					for (int i=0;i<Parameters.getCount();i++)
+					{
+						const EffectParameter& pm = Parameters[i];
+
+						String tag = StringUtils::ToString(i);
+						tag = TAG_3_ParameterTag + tag;
+
+						BinaryWriter* bw2 = data->AddEntry(tag);
+
+						bw2->Write(pm.Name);
+						//bw2->Write(static_cast<uint>(pm.TypicalUsage));
+						//bw2->Write(pm.IsCustomUsage);
+						bw2->Write(pm.CustomUsage);
+						bw2->Write(static_cast<int>(pm.ProgramType));
+
+						bw2->Close();
+						delete bw2;
+
+						tag = StringUtils::ToString(i);
+						tag = TAG_3_ParameterSamplerStateTag + tag;
+						bw2 = data->AddEntry(tag);
+						bw2->Write((uint)pm.SamplerState.AddressU);
+						bw2->Write((uint)pm.SamplerState.AddressV);
+						bw2->Write((uint)pm.SamplerState.AddressW);
+						bw2->Write((uint)pm.SamplerState.BorderColor);
+						bw2->Write((uint)pm.SamplerState.MagFilter);
+						bw2->Write((int)pm.SamplerState.MaxAnisotropy);
+						bw2->Write((int)pm.SamplerState.MaxMipLevel);
+						bw2->Write((uint)pm.SamplerState.MinFilter);
+						bw2->Write((uint)pm.SamplerState.MipFilter);
+						bw2->Write((uint)pm.SamplerState.MipMapLODBias);
+
+						bw2->Close();
+						delete bw2;
+					}
+
+					BinaryWriter* bw3 = data->AddEntry(TAG_3_ShaderCodeLengthTag);
+					bw3->Write((int32)VSLength);
+					bw3->Write((int32)PSLength);
+					bw3->Close();
+					delete bw3;
+
+
+					bw3 = data->AddEntry(TAG_3_ShaderCodeTag);
+					bw3->Write(VSCode, VSLength);
+					bw3->Write(PSCode, PSLength);
+					bw3->Close();
+					delete bw3;
+
+
+
+					bw->Write(data);
+					delete data;
+				}
+
+				bw->Close();
+				delete bw;
+			}
+			
 		}
 
 	}

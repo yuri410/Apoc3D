@@ -518,6 +518,42 @@ namespace Apoc3D
 				}
 				shader->SetTexture(param.SamplerIndex, value == 0 ? m_texture : value);
 			}
+
+			/************************************************************************/
+			/*                                                                      */
+			/************************************************************************/
+
+			CustomShaderEffect::CustomShaderEffect(RenderDevice* device, const ResourceLocation* rl)
+			{
+				EffectData data;
+				data.Load(rl);
+				m_name = data.Name;
+
+				Capabilities* caps = device->getCapabilities();
+				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
+				{
+					m_isUnsupported = true;
+					return;
+				}
+				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
+				{
+					m_isUnsupported = true;
+					return;
+				}
+
+				ObjectFactory* objFac = device->getObjectFactory();
+				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(data.VSCode));
+				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(data.PSCode));
+
+			}
+
+			CustomShaderEffect::~CustomShaderEffect()
+			{
+				if (m_vertexShader)
+					delete m_vertexShader;
+				if (m_pixelShader)
+					delete m_pixelShader;
+			}
 		};
 	}
 

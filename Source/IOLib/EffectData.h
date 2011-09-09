@@ -51,9 +51,11 @@ namespace Apoc3D
 			int MajorVer;
 			int MinorVer;
 
+			bool IsCustom;
+
 			List<EffectParameter> Parameters;
 
-			EffectData() : VSCode(0), PSCode(0), VSLength(0),PSLength(0),MajorVer(0), MinorVer(0) { }
+			EffectData() : VSCode(0), PSCode(0), VSLength(0),PSLength(0),MajorVer(0), MinorVer(0),IsCustom(false) { }
 			~EffectData() 
 			{
 				if (VSCode) delete[] VSCode; 
