@@ -64,7 +64,13 @@ namespace APBuild
 	void MeshBuild::BuildByD3D(const MeshBuildConfig& config)
 	{
 		XImporter importer;
-		importer.Import(config);
+		ModelData* data = importer.Import(config);
+
+		FileOutStream* fs = new FileOutStream(config.DstFile);
+
+		data->Save(fs);
+
+		delete data;
 
 		CompileLog::WriteInformation(config.SrcFile, L">");
 	}

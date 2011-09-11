@@ -135,6 +135,8 @@ namespace APDesigner
 		Button* m_btnModify;
 		Button* m_btnAddMkey;
 		Button* m_btnRemoveMKey;
+		Button* m_recenterModel;
+		Button* m_revertZ;
 
 		ComboBox* m_cbMesh;
 		ComboBox* m_cbMeshPart;
@@ -198,7 +200,11 @@ namespace APDesigner
 		void Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 
+		void RecenterModel_Pressed(Control* ctrl);
+		void RevertZ_Pressed(Control* ctrl);
+
 		void DisplayMaterialEditor(Material* mtrl);
+
 	};
 }
 

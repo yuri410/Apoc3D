@@ -163,6 +163,7 @@ namespace APBuild
 		mesh->LockVertexBuffer(0, (void**)&vtxData);
 		mesh->LockIndexBuffer(0,(void**)&idxData);
 		mesh->LockAttributeBuffer(0, &attData);
+		
 		for (uint i=0;i<partCount;i++)
 		{
 			FastMap<int,int> vertexTable((int)totalVertex, Apoc3D::Collections::IBuiltInEqualityComparer<int>::Default);
@@ -178,7 +179,7 @@ namespace APBuild
 					if (!vertexTable.TryGetValue(idxA, realIdx))
 					{
 						realIdx = vertices.getCount();
-						vertexTable.Add(realIdx, realIdx);
+						vertexTable.Add(idxA, realIdx);
 						vertices.Add(vtxData+idxA*vertexSize);
 					}
 					idxA = realIdx;
@@ -187,7 +188,7 @@ namespace APBuild
 					if (!vertexTable.TryGetValue(idxB, realIdx))
 					{
 						realIdx = vertices.getCount();
-						vertexTable.Add(realIdx, realIdx);
+						vertexTable.Add(idxB, realIdx);
 						vertices.Add(vtxData+idxB*vertexSize);
 					}
 					idxB = realIdx;
@@ -197,7 +198,7 @@ namespace APBuild
 					if (!vertexTable.TryGetValue(idxC, realIdx))
 					{
 						realIdx = vertices.getCount();
-						vertexTable.Add(realIdx, realIdx);
+						vertexTable.Add(idxC, realIdx);
 						vertices.Add(vtxData+idxC*vertexSize);
 					}
 					idxC = realIdx;

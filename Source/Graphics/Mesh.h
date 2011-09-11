@@ -91,7 +91,8 @@ namespace Apoc3D
 
 			void setName(const String& value) { m_name = value; }
 
-
+			const BoundingSphere& getBoundingSphere() const { return m_boundingSphere; }
+			void setBoundingSphere(const BoundingSphere& sphere) { m_boundingSphere = sphere; }
 
 			void ProcessAllTriangles(IMeshTriangleCallBack* callback) const;
 

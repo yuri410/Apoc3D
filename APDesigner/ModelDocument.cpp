@@ -43,6 +43,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/RenderStateManager.h"
 #include "Graphics/RenderSystem/RenderTarget.h"
 #include "Graphics/RenderSystem/Sprite.h"
+#include "Graphics/RenderSystem/VertexElement.h"
+#include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
 #include "Graphics/EffectSystem/EffectManager.h"
 #include "Graphics/ModelManager.h"
 #include "Graphics/Material.h"
@@ -194,6 +196,7 @@ namespace APDesigner
 			m_removeMtrlFrame->SetSkin(window->getUISkin());
 			m_removeMtrlFrame->eventRelease().bind(this, &ModelDocument::BtnRemoveMtrl_Pressed);
 
+
 		}
 		{
 			int sx = 21 + 522;
@@ -215,10 +218,8 @@ namespace APDesigner
 			m_cfEmissive = new ColorField(Point(sx + 250, sy), CV_Red);
 			m_cfEmissive->Text = L"Emissive";
 			m_cfEmissive->SetSkin(window->getUISkin());
-
-
-
 			sy += 30;
+
 			Label* lbl = new Label(Point(sx, sy), L"Shininess", 100);
 			lbl->SetSkin(window->getUISkin());
 			m_mtrlPanelLabels.Add(lbl);
@@ -232,7 +233,6 @@ namespace APDesigner
 			m_tbTex1 = new TextBox(Point(sx + 100, sy), 200, L"");
 			m_tbTex1->SetSkin(window->getUISkin());
 
-
 			sy += 25;
 			lbl = new Label(Point(sx, sy), L"Texture2", 100);
 			lbl->SetSkin(window->getUISkin());
@@ -240,7 +240,7 @@ namespace APDesigner
 			m_tbTex2 = new TextBox(Point(sx + 100, sy), 200, L"");
 			m_tbTex2->SetSkin(window->getUISkin());
 
-
+			
 			sy += 25;
 			lbl = new Label(Point(sx, sy), L"Texture3", 100);
 			lbl->SetSkin(window->getUISkin());
@@ -367,8 +367,28 @@ namespace APDesigner
 			m_btnPassFlag->SetSkin(window->getUISkin());
 			m_btnPassFlag->eventPress().bind(this, &ModelDocument::PassButton_Pressed);
 		}
+		{
+			int sx = 21;
+			int sy = 522 + 115;
 
-		getDocumentForm()->setMinimumSize(Point(1070,512+137));
+
+			Label* lbl = new Label(Point(sx, sy), L"Utilities: ", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
+			sy+=20;
+
+			m_revertZ = new Button(Point(sx , sy),100, L"Revert Z");
+			m_revertZ->SetSkin(window->getUISkin());
+			m_revertZ->eventPress().bind(this, &ModelDocument::RevertZ_Pressed);
+
+			sx += 110;
+			m_recenterModel = new Button(Point(sx, sy),100, L"Center model");
+			m_recenterModel->SetSkin(window->getUISkin());
+			m_recenterModel->eventPress().bind(this, &ModelDocument::RecenterModel_Pressed);
+
+		}
+		getDocumentForm()->setMinimumSize(Point(1070,512+137+50));
+		
 		//getDocumentForm()->setMaximumSize(Point(1071,512+138));
 		getDocumentForm()->setTitle(file);
 
@@ -439,6 +459,9 @@ namespace APDesigner
 
 		delete m_cbCull;
 		delete m_passEditor;
+
+		delete m_recenterModel;
+		delete m_revertZ;
 	}
 	
 
@@ -508,6 +531,8 @@ namespace APDesigner
 			getDocumentForm()->getControls().Add(m_removeMtrlFrame);
 			
 		}
+		getDocumentForm()->getControls().Add(m_recenterModel);
+		getDocumentForm()->getControls().Add(m_revertZ);
 		{
 			getDocumentForm()->getControls().Add(m_cfAmbient);
 			getDocumentForm()->getControls().Add(m_cfDiffuse);
@@ -632,6 +657,33 @@ namespace APDesigner
 			Texture* texture = rt->GetColorTexture();
 			sprite->Draw(texture, *dstRect, 0, CV_White);
 		}
+
+		Font* font = getDocumentForm()->getFontRef();
+		int totalVertexCount = 0;
+		int totalFaceCount = 0;
+		bool hasSkin = false;
+		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		{
+			totalFaceCount+=m_modelSData->getEntities()[i]->getPrimitiveConut();
+			totalVertexCount+=m_modelSData->getEntities()[i]->getVertexCount();
+
+			if (!hasSkin)
+			{
+				hasSkin |= !!VertexElement::FindElementBySemantic(m_modelSData->getEntities()[i]->getVertexElement(), VEU_BlendWeight);
+			}
+		}
+		String message = L"Vertex Count: " + StringUtils::ToString(totalVertexCount);
+		message.append(L"\nFace Count:");
+		message.append(StringUtils::ToString(totalFaceCount));
+		if (hasSkin)
+		{
+			message.append(L"\n");
+			message.append(L"Skinned");
+		}
+
+		font->DrawString(sprite, message, Point(dstRect->X+11, dstRect->Y+11), CV_Black);
+		font->DrawString(sprite, message, Point(dstRect->X+10, dstRect->Y+10), CV_White);
+		
 	}
 	void ModelDocument::PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
@@ -930,6 +982,83 @@ namespace APDesigner
 		}
 	}
 
+	void ModelDocument::RecenterModel_Pressed(Control* ctrl)
+	{
+		Vector3 center = Vector3Utils::Zero;
+		int totalVertexCount = 0;
+		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		{
+			Mesh* mesh = m_modelSData->getEntities()[i];
+			center = Vector3Utils::Add(center, Vector3Utils::Multiply(mesh->getBoundingSphere().Center, (float)mesh->getVertexCount()));
+			totalVertexCount+=mesh->getVertexCount();
+		}
+
+		center = Vector3Utils::Divide(center, (float)totalVertexCount);
+
+		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		{
+			Mesh* mesh = m_modelSData->getEntities()[i];
+		
+			const VertexElement* posElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Position);
+			//const VertexElement* nrmElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Normal);
+
+			if (posElem && posElem->getType() == VEF_Vector3)
+			{
+				char* vtxData = reinterpret_cast<char*>(mesh->getVertexBuffer()->Lock(LOCK_None));
+				for (int j=0;j<mesh->getVertexCount();j++)
+				{
+					float* vtxPosOfs = reinterpret_cast<float*>(vtxData+posElem->getOffset()+j*mesh->getVertexSize());
+					vtxPosOfs[0] -= _V3X(center);
+					vtxPosOfs[1] -= _V3Y(center);
+					vtxPosOfs[2] -= _V3Z(center);
+				}
+				mesh->getVertexBuffer()->Unlock();
+			}
+
+			BoundingSphere sphere = mesh->getBoundingSphere();
+			sphere.Center = Vector3Utils::Subtract(sphere.Center, center);
+			mesh->setBoundingSphere(sphere);
+		}
+	}
+	void ModelDocument::RevertZ_Pressed(Control* ctrl)
+	{
+		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		{
+			Mesh* mesh = m_modelSData->getEntities()[i];
+
+			const VertexElement* posElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Position);
+			const VertexElement* nrmElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Normal);
+
+			if (posElem || nrmElem)
+			{
+				char* vtxData = reinterpret_cast<char*>(mesh->getVertexBuffer()->Lock(LOCK_None));
+				for (int j=0;j<mesh->getVertexCount();j++)
+				{
+					if (posElem &&  posElem->getType() == VEF_Vector3)
+					{
+						float* vtxPosOfs = reinterpret_cast<float*>(vtxData+posElem->getOffset()+j*mesh->getVertexSize());
+
+						vtxPosOfs[2] = -vtxPosOfs[2];
+					}
+
+					if (nrmElem &&  nrmElem->getType() == VEF_Vector3)
+					{
+						float* vtxPosOfs = reinterpret_cast<float*>(vtxData+nrmElem->getOffset()+j*mesh->getVertexSize());
+
+						//vtxPosOfs[2] = -vtxPosOfs[2];
+						vtxPosOfs[1] = -vtxPosOfs[1];
+						vtxPosOfs[0] = -vtxPosOfs[0];
+					}
+
+				}
+				mesh->getVertexBuffer()->Unlock();
+			}
+
+			BoundingSphere sphere = mesh->getBoundingSphere();
+			_V3Z(sphere.Center) = -_V3Z(sphere.Center);
+			mesh->setBoundingSphere(sphere);
+		}
+	}
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/

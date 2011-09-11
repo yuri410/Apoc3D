@@ -713,8 +713,8 @@ namespace Apoc3D
 					fstp	float ptr [eax+ELEM_ADDR(4,4)]	// set element _44
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				float cos = sinf(angle);
-				float sin = cosf(angle);
+				float cos = cosf(angle);
+				float sin = sinf(angle);
 				
 				res.M22 = res.M33 = cos;
 				res.M23 = sin;

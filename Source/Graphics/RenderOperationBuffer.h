@@ -69,6 +69,9 @@ namespace Apoc3D
 					m_oplist.Add(*(op+i));
 				}
 			}
+
+			void Add(const RenderOperation* op, int count, const Matrix& transform);
+
 			void Clear()
 			{
 				m_oplist.Clear();
@@ -90,7 +93,7 @@ namespace Apoc3D
 			{
 				return m_oplist[i];
 			}
-			void MultiplyTransform(const Matrix& m);
+			//void MultiplyTransform(const Matrix& m);
 
 			int getCount() const { return m_oplist.getCount(); }
 		};
