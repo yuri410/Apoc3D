@@ -168,6 +168,12 @@ namespace Apoc3D
 						case EPUSAGE_Trans_World:
 							SetValue(ep, rop.RootTransform);
 							break;
+						case EPUSAGE_M4X3_BoneTrans:
+							Set4X3Matrix(ep, rop.BoneTransform.Transfroms, rop.BoneTransform.Count);
+							break;
+						case EPUSAGE_M4X4_BoneTrans:
+							SetMatrix(ep, rop.BoneTransform.Transfroms, rop.BoneTransform.Count);
+							break;
 						case EPUSAGE_Tex0:
 							SetTexture(ep, mtrl->getTexture(0));
 							break;
@@ -519,7 +525,42 @@ namespace Apoc3D
 				}
 				shader->SetTexture(param.SamplerIndex, value == 0 ? m_texture : value);
 			}
+			void AutomaticEffect::Set4X3Matrix(EffectParameter& param, const Matrix* transfroms, int count)
+			{
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
 
+				if (param.RegisterIndex == -1)
+				{
+					param.RegisterIndex = shader->GetParamIndex(param.Name);
+				}
+				shader->SetMatrix4x3(param.RegisterIndex, transfroms, count);
+			}
+			void AutomaticEffect::SetMatrix(EffectParameter& param, const Matrix* transfroms, int count)
+			{
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
+
+				if (param.RegisterIndex == -1)
+				{
+					param.RegisterIndex = shader->GetParamIndex(param.Name);
+				}
+				shader->SetValue(param.RegisterIndex, transfroms, count);
+			}
 			/************************************************************************/
 			/*                                                                      */
 			/************************************************************************/

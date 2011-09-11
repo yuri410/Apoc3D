@@ -83,7 +83,7 @@ namespace Apoc3D
 				virtual void SetValue(int reg, const Matrix* value, int count) = 0;
 				virtual void SetValue(int reg, const Color4* value, int count) = 0;
 				virtual void SetValue(int reg, const Plane* value, int count) = 0;
-
+				virtual void SetMatrix4x3(int reg, const Matrix* value, int count) = 0;
 
 				virtual void SetValue(int reg, bool value) = 0;
 				virtual void SetValue(int reg, float value) = 0;

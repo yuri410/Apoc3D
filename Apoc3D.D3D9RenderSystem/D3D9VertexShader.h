@@ -42,7 +42,7 @@ namespace Apoc3D
 			class D3D9VertexShader : public VertexShader
 			{
 			private:
-				float m_buffer[32];
+				float m_buffer[192];
 				int m_intBuffer[32];
 				BOOL m_boolBuffer[8];
 
@@ -76,6 +76,7 @@ namespace Apoc3D
 				virtual void SetValue(int reg, const Matrix* value, int count);
 				virtual void SetValue(int reg, const Color4* value, int count);
 				virtual void SetValue(int reg, const Plane* value, int count);
+				virtual void SetMatrix4x3(int reg, const Matrix* value, int count);
 
 				virtual void SetValue(int reg, bool value);
 				virtual void SetValue(int reg, float value);

@@ -152,13 +152,17 @@ namespace Apoc3D
 					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 4);
 					count -= 4;
 				}
-				for (int i=0;i<count;i++)
+				if (count>0)
 				{
-					int ofs = i*4;
-					Vector2Utils::Store(value[i], &m_buffer[ofs]);
-					m_buffer[ofs+2] = m_buffer[ofs+3] = 0;
+					for (int i=0;i<count;i++)
+					{
+						int ofs = i*4;
+						Vector2Utils::Store(value[i], &m_buffer[ofs]);
+						m_buffer[ofs+2] = m_buffer[ofs+3] = 0;
+					}
+					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, count);
 				}
-				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, count);
+				
 			}
 			void D3D9PixelShader::SetVector3(int reg, const Vector3* value, int count) 
 			{
@@ -184,13 +188,17 @@ namespace Apoc3D
 					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 4);
 					count -= 4;
 				}
-				for (int i=0;i<count;i++)
+				if (count>0)
 				{
-					int ofs = i*4;
-					Vector3Utils::Store(value[i], &m_buffer[ofs]);
-					m_buffer[ofs+3] = 0;
+					for (int i=0;i<count;i++)
+					{
+						int ofs = i*4;
+						Vector3Utils::Store(value[i], &m_buffer[ofs]);
+						m_buffer[ofs+3] = 0;
+					}
+					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, count);
 				}
-				m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, count);
+				
 			}
 			void D3D9PixelShader::SetVector4(int reg, const Vector4* value, int count)
 			{
@@ -203,6 +211,28 @@ namespace Apoc3D
 			void D3D9PixelShader::SetValue(int reg, const Matrix* value, int count) 
 			{
 				m_device->getDevice()->SetPixelShaderConstantF(reg, reinterpret_cast<const float*>(value), count * 4);
+			}
+			void D3D9PixelShader::SetMatrix4x3(int reg, const Matrix* value, int count)
+			{
+				while (count > 16)
+				{
+					for (int i=0;i<16;i++)
+					{
+						int ofs = i*12;
+						memcpy(m_buffer+ofs, value+i, sizeof(float)*12);
+					}
+					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, 16 * 3);
+					count -= 16;
+				}
+				if (count>0)
+				{
+					for (int i=0;i<count;i++)
+					{
+						int ofs = i*12;
+						memcpy(m_buffer+ofs, value+i, sizeof(float)*12);
+					}
+					m_device->getDevice()->SetPixelShaderConstantF(reg, m_buffer, count * 3);
+				}
 			}
 			void D3D9PixelShader::SetValue(int reg, const Color4* value, int count) 
 			{

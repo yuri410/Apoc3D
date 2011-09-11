@@ -80,7 +80,12 @@ namespace Apoc3D
 				/** tr_world
 				*/
 				EPUSAGE_Trans_World,
-
+				/** m4x3_bonestransform
+				*/
+				EPUSAGE_M4X3_BoneTrans,
+				/** m4x4_bonestransform
+				*/
+				EPUSAGE_M4X4_BoneTrans,
 				/** tex_0
 				*/
 				EPUSAGE_Tex0=200,

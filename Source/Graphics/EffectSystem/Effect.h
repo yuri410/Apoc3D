@@ -103,6 +103,8 @@ namespace Apoc3D
 				void SetTexture(EffectParameter& param, Texture* value);
 				template<typename T>
 				void SetValue(EffectParameter& param, const T& value);
+				void Set4X3Matrix(EffectParameter& param, const Matrix* transfroms, int count);
+				void SetMatrix(EffectParameter& param, const Matrix* transfroms, int count);
 
 				VertexShader* m_vertexShader;
 				PixelShader* m_pixelShader;

@@ -79,6 +79,14 @@ namespace Apoc3D
 				{
 					return EPUSAGE_Trans_World;
 				}
+				else if (v == L"m4x3_bonestransform")
+				{
+					return EPUSAGE_M4X3_BoneTrans;
+				}
+				else if (v == L"m4x4_bonestransform")
+				{
+					return EPUSAGE_M4X4_BoneTrans;
+				}
 
 
 				

@@ -837,7 +837,7 @@ namespace Apoc3D
 		ConfigurationSection* sect = new ConfigurationSection(L"Project", m_items.getCount() * 2);
 
 		sect->AddAttribute(L"Name", m_name);
-
+		sect->AddAttribute(L"TexturePath", m_texturePath);
 		ProjectSave(sect, m_items, false);
 
 		return sect;

@@ -487,6 +487,14 @@ namespace APDesigner
 		m_object.setmdl(m_model);
 		m_model->PlayAnimation();
 		
+		float maxR = 7;
+		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		{
+			if (m_modelSData->getEntities()[i]->getBoundingSphere().Radius > maxR)
+				maxR = m_modelSData->getEntities()[i]->getBoundingSphere().Radius;
+		}
+		m_distance = maxR * 1.5f;
+
 		//m_selectedMeshIndex = m_modelSData->getEntities().getCount() > 0 ? 0 : -1;
 		//if (m_selectedMeshIndex!=-1)
 		//{
