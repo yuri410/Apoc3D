@@ -485,7 +485,7 @@ namespace APDesigner
 		
 		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData,true), m_animData);
 		m_object.setmdl(m_model);
-		
+		m_model->PlayAnimation();
 		
 		//m_selectedMeshIndex = m_modelSData->getEntities().getCount() > 0 ? 0 : -1;
 		//if (m_selectedMeshIndex!=-1)

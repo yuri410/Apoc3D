@@ -1390,6 +1390,7 @@ namespace APBuild
 			animData.setBones(bones);
 			animData.setSkinnedAnimationClips(skeletonAnimations);
 			animData.setRigidAnimationClips(rigidAnimations);
+			animData.RigidEntityCount = modelData.Entities.getCount();
 		}
 
 		FileOutStream* fs = new FileOutStream(config.DstFile);

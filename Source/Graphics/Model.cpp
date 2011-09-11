@@ -109,9 +109,10 @@ namespace Apoc3D
 			: m_data(data), m_animData(animData), m_selectedClipName(L"Take 001"),
 			m_mtrlAnimCompleted(false), m_skinAnimCompleted(false), m_rootAnimCompleted(false), m_rigidAnimCompleted(false),
 			m_mtrlPlayer(0), m_skinPlayer(0), m_rigidPlayer(0), m_rootPlayer(0),
-			m_autoLoop(false), m_isOpBufferBuilt(false),
+			m_autoLoop(true), m_isOpBufferBuilt(false),
 			m_renderOpEntID(0),m_renderOpEntPartID(0)
 		{
+			InitializeAnimation();
 		}
 
 
@@ -214,7 +215,7 @@ namespace Apoc3D
 
 			if (m_animData->hasRigidClip())
 			{
-				const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
+				const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
 				AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
 				if (iter != table.end())
 				{
@@ -340,8 +341,8 @@ namespace Apoc3D
 
 					//m_rootPlayer->eventCompleted().bind(this, &Model::RootAnim_Completed);
 
-					m_rigidPlayer = new RigidAnimationPlayer(m_animData->getBones().getCount());
-
+					m_rigidPlayer = new RigidAnimationPlayer(m_animData->RigidEntityCount);
+					
 					m_animInstance.Add(m_rigidPlayer);
 
 					m_rigidPlayer->eventCompleted().bind(this, &Model::RigidAnim_Competed);
@@ -566,6 +567,8 @@ namespace Apoc3D
 			{
 				m_animInstance[i]->Update(time);
 			}
+			if (m_mtrlPlayer)
+				m_mtrlPlayer->Update(time);
 		}
 	}
 }

@@ -605,7 +605,7 @@ namespace Apoc3D
 		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstFile) : DstFile);
 		if (DstAnimationFile.size())
 		{
-			sect->AddAttribute(L"DestinationAnimFile", DstAnimationFile);
+			sect->AddAttribute(L"DestinationAnimFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstAnimationFile) :DstAnimationFile);
 		}
 		sect->AddAttribute(L"Method", ToString(Method));
 	}

@@ -68,7 +68,7 @@ namespace Apoc3D
 					if (mtrl && geoData)
 					{
 						Matrix temp;
-						Matrix::Multiply(temp, obj->getTrasformation(), op.RootTransform);
+						Matrix::Multiply(temp, op.RootTransform, obj->getTrasformation());
 						op.RootTransform = temp;
 
 						MaterialTable* mtrlTable;

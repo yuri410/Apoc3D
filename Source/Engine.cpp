@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/PluginManager.h"
 #include "Core/Logging.h"
 #include "Config/ConfigurationManager.h"
+#include "Graphics/Animation/AnimationManager.h"
 #include "Graphics/EffectSystem/EffectManager.h"
 #include "Graphics/RenderSystem/GraphicsAPI.h"
 #include "Graphics/TextureManager.h"
@@ -48,6 +49,7 @@ using namespace Apoc3D::Core;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::Animation;
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Input;
@@ -119,6 +121,7 @@ namespace Apoc3D
 		
 		TextureManager::Initialize();
 		EffectManager::Initialize();
+		AnimationManager::Initialize();
 		ModelManager::Initialize();
 		
 		FontManager::Initialize();
@@ -129,7 +132,7 @@ namespace Apoc3D
 		
 		ModelManager::getSingleton().Shutdown();
 		ModelManager::Finalize();
-		
+		AnimationManager::Finalize();
 		EffectManager::Finalize();
 		TextureManager::getSingleton().Shutdown();
 		TextureManager::Finalize();

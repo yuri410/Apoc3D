@@ -76,6 +76,7 @@ namespace Apoc3D
 				TaggedDataWriter* SaveMtrlAnimation2();
 
 			public:
+				int RigidEntityCount;
 				//bool hasBindPose() const { return m_hasBindPose; }
 				//bool hasSkeleton() const { return m_hasSkeleton; }
 

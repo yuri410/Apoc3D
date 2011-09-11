@@ -77,7 +77,7 @@ namespace Apoc3D
 			protected:
 				/** Virtual method allowing subclasses to do any initialization of data when the clip is initialized.
 				*/
-				virtual void InitClip() { }
+				virtual void InitClip(bool newClip = false) { }
 
 				/** Virtual method allowing subclasses to set any data associated with a particular keyframe.
 				*/
@@ -137,7 +137,7 @@ namespace Apoc3D
 					m_playbackRate = playbackRate;
 					m_duration = duration;
 
-					InitClip();
+					InitClip(true);
 				}
 
 				/** Will pause the playback of the current clip
@@ -169,7 +169,7 @@ namespace Apoc3D
 			protected:
 				/** Initializes the transformation to the identity
 				*/
-				virtual void InitClip() { }
+				virtual void InitClip(bool newClip = false) { }
 
 				/** Sets the key frame by storing the current transform
 				*/
@@ -204,7 +204,7 @@ namespace Apoc3D
 			protected:
 				/** Initializes the transformation to the identity
 				*/
-				virtual void InitClip();
+				virtual void InitClip(bool newClip = false);
 
 				/** Sets the key frame by storing the current transform
 				*/
@@ -237,15 +237,12 @@ namespace Apoc3D
 				/** This is an array of the transforms to each object in the model
 				*/
 				Matrix* m_meshTransforms;
+				Matrix* m_initialTransforms;
 				int32 m_meshTransformCount;
 
 				/** Initializes all the bone transforms to the identity
 				*/
-				virtual void InitClip()
-				{
-					for (int i=0;i<m_meshTransformCount;i++)
-						m_meshTransforms[i].LoadIdentity();
-				}
+				virtual void InitClip(bool newClip = false);
 
 				/** Sets the key frame for a bone to a transform
 				*/
@@ -260,6 +257,7 @@ namespace Apoc3D
 					: m_meshTransformCount(count)
 				{
 					m_meshTransforms = new Matrix[count];
+					m_initialTransforms = new Matrix[count];
 				}
 				~RigidAnimationPlayer()
 				{
@@ -288,7 +286,7 @@ namespace Apoc3D
 			class APAPI SkinnedAnimationPlayer : public ModelAnimationPlayerBase
 			{
 			private:
-				bool m_isFirstPlay;
+
 				Matrix* m_boneTransforms;
 				Matrix* m_worldTransforms;
 				Matrix* m_skinTransforms;
@@ -301,16 +299,16 @@ namespace Apoc3D
 			protected:
 				/** Initializes the animation clip
 				*/
-				virtual void InitClip()
+				virtual void InitClip(bool newClip = false)
 				{
-					if (m_isFirstPlay)
+					if (newClip)
 					{
 						for (int i=0;i<m_bones->getCount();i++)
 						{
 							m_boneTransforms[i] = m_bones->operator[](i).getBindPoseTransform();
 						}
 						//memcpy(m_boneTransforms, m_bindPose->getInternalPointer(), m_bindPose->getCount() * sizeof(Matrix));
-						m_isFirstPlay = false;
+						
 					}
 				}
 
@@ -323,8 +321,7 @@ namespace Apoc3D
 				virtual void OnUpdate();
 			public:
 				SkinnedAnimationPlayer(const List<Bone>* bones, bool useQuaternionSlerp = false)
-					: m_bones(bones), m_useQuaternionInterpolation(useQuaternionSlerp),
-					m_isFirstPlay(true)
+					: m_bones(bones), m_useQuaternionInterpolation(useQuaternionSlerp)
 				{
 					m_boneTransforms = new Matrix[bones->getCount()];
 					memset(m_boneTransforms, 0, sizeof(Matrix) * bones->getCount());
@@ -405,8 +402,6 @@ namespace Apoc3D
 				void InitClip() { }
 				inline void SetKeyframe(const MaterialAnimationKeyframe& keyframe);
 				
-				virtual void Update(const GameTime* const gameTime);
-
 			public:
 				int getCurrentMaterialFrame() const { return m_currentFrame; }
 				/** Invoked when playback has completed.
@@ -474,6 +469,8 @@ namespace Apoc3D
 				{
 					m_paused = false;
 				}
+
+				virtual void Update(const GameTime* const gameTime);
 
 
 

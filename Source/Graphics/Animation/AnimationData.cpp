@@ -69,7 +69,7 @@ namespace Apoc3D
 			static const String TAG_3_MaterialAnimationCountTag = L"MaterialAnimation3.0Count";
 
 			static const String TAG_3_RootBoneTag = L"RootBone";
-
+			static const String TAG_3_RigidEntityCount = L"RigidEntityCount";
 			static const String TAG_3_BonesTag = L"Bones";
 			static const String TAG_3_BoneCountTag = L"BoneCount";
 
@@ -144,6 +144,10 @@ namespace Apoc3D
 					delete br;
 				}
 				
+				RigidEntityCount = 0;
+				if (data->Contains(TAG_3_RigidEntityCount))
+					RigidEntityCount = data->GetDataInt32(TAG_3_RigidEntityCount);
+
 				if (data->Contains(TAG_3_MaterialAnimationTag))
 				{
 					int count = data->GetDataInt32(TAG_3_MaterialAnimationCountTag);
@@ -360,6 +364,8 @@ namespace Apoc3D
 			TaggedDataWriter* AnimationData::WriteData() const
 			{
 				TaggedDataWriter* data = new TaggedDataWriter(true);
+
+				data->AddEntry(TAG_3_RigidEntityCount, RigidEntityCount);
 
 				if (m_hasMtrlClip)
 				{

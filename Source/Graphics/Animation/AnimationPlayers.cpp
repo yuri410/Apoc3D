@@ -104,7 +104,7 @@ namespace Apoc3D
 				OnUpdate();
 			}
 
-			void RootAnimationPlayer::InitClip()
+			void RootAnimationPlayer::InitClip(bool newClip)
 			{
 				const ModelAnimationClip* clip = getCurrentClip();
 				const FastList<ModelKeyframe>& keyframes = clip->getKeyframes();
@@ -115,6 +115,40 @@ namespace Apoc3D
 			{
 				m_currentTransfrom = keyframe.getTransform();
 			}
+
+			/************************************************************************/
+			/*                                                                      */
+			/************************************************************************/
+
+			void RigidAnimationPlayer::InitClip(bool newClip)
+			{
+				if (newClip)
+				{
+					for (int i=0;i<m_meshTransformCount;i++)
+					{
+						m_initialTransforms[i].LoadIdentity();
+
+						const ModelAnimationClip* clip = getCurrentClip();
+						for (int j=0;j<clip->getKeyframes().getCount();j++)
+						{
+							if (clip->getKeyframes()[j].getObjectIndex() == i)
+							{
+								m_initialTransforms[i] = clip->getKeyframes()[j].getTransform();
+								break;
+							}
+						}
+					}
+				}
+				else
+				{
+					memcpy(m_meshTransforms, m_initialTransforms, sizeof(Matrix) * m_meshTransformCount);
+				}
+			}
+
+			/************************************************************************/
+			/*                                                                      */
+			/************************************************************************/
+
 
 			void SkinnedAnimationPlayer::SetKeyframe(const ModelKeyframe& keyframe)
 			{
