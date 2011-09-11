@@ -96,6 +96,7 @@ namespace Apoc3D
 				EffectData data;
 				data.Load(rl);
 				m_name = data.Name;
+				assert(!data.IsCustom);
 
 				Capabilities* caps = device->getCapabilities();
 				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
@@ -528,6 +529,8 @@ namespace Apoc3D
 				EffectData data;
 				data.Load(rl);
 				m_name = data.Name;
+
+				assert(data.IsCustom);
 
 				Capabilities* caps = device->getCapabilities();
 				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))

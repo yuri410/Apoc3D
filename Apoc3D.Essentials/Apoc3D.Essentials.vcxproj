@@ -12,8 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="AI\PathFinder.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AI\PathFinder.cpp" />
     <ClCompile Include="Game.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -59,6 +59,8 @@ namespace Apoc3D
 		const float PI = float( 4.0 * atan( 1.0 ) );
 		const float Two_PI = PI * 2;
 		const float Half_PI = float(PI * 0.5);
+		const float Root2 = 1.41421f;
+		const float Root3 = 1.73205f;
 
 #define ToRadian(x) (x * (PI/180.0f))
 #define ToDegree(x) (x * (180.0f/PI))

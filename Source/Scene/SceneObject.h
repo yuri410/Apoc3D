@@ -134,7 +134,7 @@ namespace Apoc3D
 		class APAPI StaticObject : public Entity
 		{
 		public:
-			StaticObject();
+			StaticObject() { }
 			StaticObject(const Vector3& position, const Matrix& orientation);
 
 
@@ -142,7 +142,7 @@ namespace Apoc3D
 		class APAPI DynamicObject : public Entity
 		{
 		public:
-			DynamicObject();
+			DynamicObject() { }
 			DynamicObject(const Vector3& position, const Matrix& orientation);
 
 			virtual void UpdateTransform();

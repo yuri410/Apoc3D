@@ -66,6 +66,19 @@ namespace Apoc3D
 			return 0;
 		}
 
+		StaticObject::StaticObject(const Vector3& position, const Matrix& orientation)
+		{
+			m_position = position;
+			m_orientation = orientation;
+			UpdateTransform();
+		}
+
+		DynamicObject::DynamicObject(const Vector3& position, const Matrix& orientation)
+		{
+			m_position = position;
+			m_orientation = orientation;
+			UpdateTransform();
+		}
 		void DynamicObject::UpdateTransform()
 		{
 			Entity::UpdateTransform();
