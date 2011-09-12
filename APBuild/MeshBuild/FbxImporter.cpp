@@ -210,7 +210,7 @@ namespace APBuild
 
 		KFbxAxisSystem currentAxisSystem = m_pFBXScene->GetGlobalSettings().GetAxisSystem();
 		
-		KFbxAxisSystem axisSystem = KFbxAxisSystem::OpenGL;//KFbxAxisSystem(KFbxAxisSystem::YAxis, 
+		KFbxAxisSystem axisSystem = KFbxAxisSystem::DirectX;//KFbxAxisSystem(KFbxAxisSystem::YAxis, 
 			//KFbxAxisSystem::ParityOdd, 
 			//KFbxAxisSystem::RightHanded);
 
