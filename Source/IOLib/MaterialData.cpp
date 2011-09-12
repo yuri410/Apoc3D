@@ -118,6 +118,7 @@ namespace Apoc3D
 
 		void MaterialData::LoadV2(TaggedDataReader* data)
 		{
+			SetDefaults();
 			AlphaReference = static_cast<uint32>(data->GetDataSingle(TAG_2_AlphaRef)*255);
 			if (AlphaReference > 255)
 				AlphaReference = 255;
@@ -211,7 +212,7 @@ namespace Apoc3D
 					if (hasTexture[i])
 					{
 						String tag = StringUtils::ToString(i);
-						tag = tag + TAG_2_Texture;
+						tag = TAG_2_Texture + tag;
 						br = data->GetData(tag);
 
 						LoadTexture(br, i);

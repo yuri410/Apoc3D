@@ -68,7 +68,7 @@ namespace Apoc3D
 				}
 				void setBoneReferenceTransform(const Matrix& value)
 				{
-					m_invBindPoseTransfrom = value;
+					m_boneReferenceTransform = value;
 					Matrix::Inverse(m_invBoneReferenceTransform, value);
 				}
 
@@ -87,7 +87,7 @@ namespace Apoc3D
 				Bone(int32 index, const Matrix& transform, const FastList<int32>& children, int32 parent, const String& name)
 					: Index(index), m_bindPoseTransfrom(transform), Children(children), Parent(parent), Name(name)
 				{
-					m_boneReferenceTransform.LoadIdentity();
+					Matrix::Inverse(m_invBindPoseTransfrom, transform);
 					m_invBoneReferenceTransform.LoadIdentity();
 				}
 

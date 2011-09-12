@@ -1510,7 +1510,7 @@ namespace Apoc3D
 			}
 			static float GetW(const Vector4& v)
 			{
-				return v.Z;
+				return v.W;
 			}
 			static float& GetX(Vector4& v)
 			{
@@ -1526,7 +1526,7 @@ namespace Apoc3D
 			}
 			static float& GetW(Vector4& v)
 			{
-				return v.Z;
+				return v.W;
 			}
 			static void Store(const Vector4& v, float* dest)
 			{

@@ -299,18 +299,7 @@ namespace Apoc3D
 			protected:
 				/** Initializes the animation clip
 				*/
-				virtual void InitClip(bool newClip = false)
-				{
-					if (newClip)
-					{
-						for (int i=0;i<m_bones->getCount();i++)
-						{
-							m_boneTransforms[i] = m_bones->operator[](i).getBindPoseTransform();
-						}
-						//memcpy(m_boneTransforms, m_bindPose->getInternalPointer(), m_bindPose->getCount() * sizeof(Matrix));
-						
-					}
-				}
+				virtual void InitClip(bool newClip = false);
 
 				/** Sets the key frame for the passed in frame
 				*/

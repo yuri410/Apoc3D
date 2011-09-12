@@ -22,7 +22,7 @@ namespace APBuild
 
 
 		HRESULT hr = pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_NULLREF, GetConsoleWindow(), 
-			D3DCREATE_HARDWARE_VERTEXPROCESSING, &pp, &m_device );
+			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, &pp, &m_device );
 		assert(SUCCEEDED(hr));
 		pD3D->Release();		
 	}

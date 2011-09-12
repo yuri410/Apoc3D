@@ -517,7 +517,7 @@ namespace APBuild
 						frames[i].setNextFrameIndex(-1);
 						for (int j=0;j<frames.getCount();j++)
 						{
-							int nextFrameIdx = (j + i + 1) & frames.getCount();
+							int nextFrameIdx = (j + i + 1) % frames.getCount();
 							if (frames[nextFrameIdx].getObjectIndex() == frames[i].getObjectIndex())
 							{
 								frames[i].setNextFrameIndex(nextFrameIdx);
@@ -657,7 +657,7 @@ namespace APBuild
 					frames[i].setNextFrameIndex(-1);
 					for (int j=0;j<frames.getCount();j++)
 					{
-						int nextFrameIdx = (j + i + 1) & frames.getCount();
+						int nextFrameIdx = (j + i + 1) % frames.getCount();
 						if (frames[nextFrameIdx].getObjectIndex() == frames[i].getObjectIndex())
 						{
 							frames[i].setNextFrameIndex(nextFrameIdx);

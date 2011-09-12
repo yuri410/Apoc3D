@@ -150,6 +150,18 @@ namespace Apoc3D
 			/************************************************************************/
 
 
+			void SkinnedAnimationPlayer::InitClip(bool newClip /* = false */)
+			{
+				if (newClip)
+				{
+					for (int i=0;i<m_bones->getCount();i++)
+					{
+						m_boneTransforms[i] = m_bones->operator[](i).getBindPoseTransform();
+					}
+					//memcpy(m_boneTransforms, m_bindPose->getInternalPointer(), m_bindPose->getCount() * sizeof(Matrix));
+
+				}
+			}
 			void SkinnedAnimationPlayer::SetKeyframe(const ModelKeyframe& keyframe)
 			{
 				m_boneTransforms[keyframe.getObjectIndex()] = keyframe.getTransform();
@@ -158,13 +170,13 @@ namespace Apoc3D
 			{
 				if (getCurrentClip())
 				{
-					// Root bone.
-					m_worldTransforms[0] = m_boneTransforms[0];
+					//// Root bone.
+					//m_worldTransforms[0] = m_boneTransforms[0];
 
-					Matrix::Multiply(m_skinTransforms[0], m_bones->operator[](0).getInvBindPoseTransform(), m_worldTransforms[0]);
+					//Matrix::Multiply(m_skinTransforms[0], m_bones->operator[](0).getInvBindPoseTransform(), m_worldTransforms[0]);
 
-					// Child bones.
-					for (int bone = 1; bone < getTransformCount(); bone++)
+					//// Child bones.
+					for (int bone = 0; bone < getTransformCount(); bone++)
 					{
 						const Bone& b = m_bones->operator[](bone);
 						const Matrix& matAnimation = m_boneTransforms[bone];

@@ -63,13 +63,15 @@ namespace APBuild
 	}
 	Matrix ConvertMatrix(const KFbxMatrix& m)
 	{
-		const double* mptr = m.operator const double *();
-		float buffer[16];
-		for (int i=0;i<16;i++)
-		{
-			buffer[i] = static_cast<float>(mptr[i]);
-		}
-		return Matrix(buffer);
+		KFbxVector4 r1 = m.GetRow(0);
+		KFbxVector4 r2 = m.GetRow(1);
+		KFbxVector4 r3 = m.GetRow(2);
+		KFbxVector4 r4 = m.GetRow(3);
+
+		return Matrix( (float)r1.GetAt(0), (float)r1.GetAt(1), (float)r1.GetAt(2), (float)r1.GetAt(3),
+			(float)r2.GetAt(0), (float)r2.GetAt(1), (float)r2.GetAt(2), (float)r2.GetAt(3), 
+			(float)r3.GetAt(0), (float)r3.GetAt(1), (float)r3.GetAt(2), (float)r3.GetAt(3),
+			(float)r4.GetAt(0), (float)r4.GetAt(1), (float)r4.GetAt(2), (float)r4.GetAt(3));
 	}
 
 	bool FbxImporter::InitializeFBXSdk()
@@ -207,23 +209,25 @@ namespace APBuild
 		}
 
 		KFbxAxisSystem currentAxisSystem = m_pFBXScene->GetGlobalSettings().GetAxisSystem();
-
-		KFbxAxisSystem axisSystem = KFbxAxisSystem(KFbxAxisSystem::YAxis, 
-			KFbxAxisSystem::ParityOdd, 
-			KFbxAxisSystem::RightHanded);
+		
+		KFbxAxisSystem axisSystem = KFbxAxisSystem::OpenGL;//KFbxAxisSystem(KFbxAxisSystem::YAxis, 
+			//KFbxAxisSystem::ParityOdd, 
+			//KFbxAxisSystem::RightHanded);
 
 		if (axisSystem != currentAxisSystem)
 		{
 			axisSystem.ConvertScene(m_pFBXScene);
 		}
-		KFbxSystemUnit currentUnit = m_pFBXScene->GetGlobalSettings().GetSystemUnit();
 
-		if (currentUnit.GetScaleFactor() != 1.0f)
-		{
-			KFbxSystemUnit unit = KFbxSystemUnit(1,1);
 
-			unit.ConvertScene(m_pFBXScene);
-		}
+		//KFbxSystemUnit currentUnit = m_pFBXScene->GetGlobalSettings().GetSystemUnit();
+
+		//if (currentUnit.GetScaleFactor() != 1.0f)
+		//{
+		//	KFbxSystemUnit unit = KFbxSystemUnit(1,1);
+
+		//	unit.ConvertScene(m_pFBXScene);
+		//}
 
 		ProcessScene(m_pFBXScene);
 
@@ -380,8 +384,6 @@ namespace APBuild
 	}
 	void FbxImporter::ProcessAnimations(KFbxScene* pScene)
 	{
-		//m_pAnimationController = new CBTTAnimationController();
-
 		KFbxNode* pRootNode = pScene->GetRootNode();
 		if(!pRootNode)
 			return;
@@ -389,7 +391,7 @@ namespace APBuild
 		float fFrameRate = (float)KTime::GetFrameRate(pScene->GetGlobalSettings().GetTimeMode());
 
 		KArrayTemplate<KString*> takeArray;	
-		KFbxDocument* pDocument = dynamic_cast<KFbxDocument*>(pScene);
+		KFbxDocument* pDocument = KFbxCast<KFbxDocument>(pScene);
 		if( pDocument )
 			pDocument->FillAnimStackNameArray(takeArray);
 
