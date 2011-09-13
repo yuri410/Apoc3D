@@ -77,6 +77,9 @@ namespace Apoc3D
 				/** tr_worldviewproj
 				*/
 				EPUSAGE_Trans_WorldViewProj=100,
+				/** tr_worldvieworiproj
+				*/
+				EPUSAGE_Trans_WorldViewOriProj,
 				/** tr_world
 				*/
 				EPUSAGE_Trans_World,

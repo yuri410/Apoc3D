@@ -23,8 +23,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "EffectParameter.h"
 
+#include "Core/Logging.h"
 #include "Utility/StringUtils.h"
 
+using namespace Apoc3D::Core;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -74,6 +76,10 @@ namespace Apoc3D
 				else if (v == L"tr_worldviewproj")
 				{
 					return EPUSAGE_Trans_WorldViewProj;
+				}
+				else if (v == L"tr_worldvieworiproj")
+				{
+					return EPUSAGE_Trans_WorldViewOriProj;
 				}
 				else if (v == L"tr_world")
 				{
@@ -177,6 +183,7 @@ namespace Apoc3D
 				{
 					return EPUSAGE_PV3_ViewPos;
 				}
+				LogManager::getSingleton().Write(LOG_Graphics, L"Unknown effect parameter usage: " + val, LOGLVL_Warning );
 				return EPUSAGE_Unknown;
 			}
 

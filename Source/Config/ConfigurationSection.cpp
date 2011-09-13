@@ -57,7 +57,7 @@ namespace Apoc3D
 		}
 		void ConfigurationSection::SetValue( const String& value)
 		{
-			if (!value.empty())
+			if (m_value != value && !m_value.empty())
 			{
 				LogManager::getSingleton().Write(LOG_System,  L"Overwriting the value of configuration section '" + m_name + L"'. ", LOGLVL_Warning);
 			}

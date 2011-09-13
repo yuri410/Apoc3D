@@ -168,6 +168,21 @@ namespace Apoc3D
 						case EPUSAGE_Trans_World:
 							SetValue(ep, rop.RootTransform);
 							break;
+						case EPUSAGE_Trans_WorldViewOriProj:
+							if (RendererEffectParams::CurrentCamera)
+							{
+								Matrix view = RendererEffectParams::CurrentCamera->getViewMatrix();
+								view.SetTranslation(Vector3Utils::Zero);
+
+								Matrix temp;
+								Matrix::Multiply(temp, rop.RootTransform, view);
+
+								Matrix mvp;
+								Matrix::Multiply(mvp, temp, RendererEffectParams::CurrentCamera->getProjMatrix());
+
+								SetValue(ep, mvp);
+							}
+							break;
 						case EPUSAGE_M4X3_BoneTrans:
 							Set4X3Matrix(ep, rop.BoneTransform.Transfroms, rop.BoneTransform.Count);
 							break;
