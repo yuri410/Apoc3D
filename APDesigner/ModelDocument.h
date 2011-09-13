@@ -142,6 +142,7 @@ namespace APDesigner
 		ComboBox* m_cbMeshPart;
 		ComboBox* m_cbSubMtrl;
 
+		Button* m_applyAllMtrl;
 		Button* m_applyMtrl;
 		Button* m_addMtrlFrame;
 		Button* m_removeMtrlFrame;
@@ -192,6 +193,7 @@ namespace APDesigner
 		void CBSubMtrl_SelectionChanged(Control* ctrl);
 		void PBTime_Pressed(Control* ctrl);
 
+		void BtnApplyAllMtrl_Pressed(Control* ctrl);
 		void BtnApplyMtrl_Pressed(Control* ctrl);
 		void BtnAddMtrl_Pressed(Control* ctrl);
 		void BtnRemoveMtrl_Pressed(Control* ctrl);

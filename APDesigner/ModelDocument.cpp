@@ -180,6 +180,12 @@ namespace APDesigner
 			m_applyMtrl->SetSkin(window->getUISkin());
 			m_applyMtrl->eventRelease().bind(this, &ModelDocument::BtnApplyMtrl_Pressed);
 
+
+			m_applyAllMtrl = new Button(Point(21 + 522+100+220, 185),150, L"Apply To All");
+			m_applyAllMtrl->SetSkin(window->getUISkin());
+			m_applyAllMtrl->eventRelease().bind(this, &ModelDocument::BtnApplyAllMtrl_Pressed);
+
+
 			lbl = new Label(Point(21 + 522, 159), L"SubMaterial", 100);
 			lbl->SetSkin(window->getUISkin());
 			m_labels.Add(lbl);
@@ -426,6 +432,7 @@ namespace APDesigner
 		delete m_cbMeshPart;
 		delete m_cbSubMtrl;
 		
+		delete m_applyAllMtrl;
 		delete m_applyMtrl;
 		delete m_addMtrlFrame;
 		delete m_removeMtrlFrame;
@@ -535,6 +542,7 @@ namespace APDesigner
 			getDocumentForm()->getControls().Add(m_tbMeshName);
 
 			getDocumentForm()->getControls().Add(m_applyMtrl);
+			getDocumentForm()->getControls().Add(m_applyAllMtrl);
 			getDocumentForm()->getControls().Add(m_addMtrlFrame);
 			getDocumentForm()->getControls().Add(m_removeMtrlFrame);
 			
@@ -894,6 +902,97 @@ namespace APDesigner
 		}
 	}
 
+	void ModelDocument::BtnApplyAllMtrl_Pressed(Control* ctrl)
+	{
+		Material* currentMtrl = 0;
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx != -1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			ents[selMeshIdx]->setName(m_tbMeshName->Text);
+
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			int frameIndex = m_cbSubMtrl->getSelectedIndex();
+			if (partIdx != -1 && frameIndex != -1)
+			{
+				currentMtrl = mtrls->getMaterial(partIdx, frameIndex);
+			}
+		}
+
+
+		for (int i=0;i<ents.getCount();i++)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[i]->getMaterials();
+			
+			for (int j=0;j<mtrls->getMaterialCount();j++)
+			{
+				for (int k=0;k<mtrls->getFrameCount(j);k++)
+				{
+					Material* mtrl = mtrls->getMaterial(j,k);
+
+					mtrl->Ambient = Color4(m_cfAmbient->GetValue());
+					mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
+					mtrl->Specular = Color4(m_cfSpecular->GetValue());
+					mtrl->Emissive = Color4(m_cfEmissive->GetValue());
+					mtrl->Power = StringUtils::ParseSingle(m_tbShinness->Text);
+
+					mtrl->setTextureName(0, m_tbTex1->Text);
+					mtrl->setTextureName(1, m_tbTex2->Text);
+					mtrl->setTextureName(2, m_tbTex3->Text);
+					mtrl->setTextureName(3, m_tbTex4->Text);
+					mtrl->setTextureName(4, m_tbTex5->Text);
+
+					mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->Text));
+					mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->Text);
+
+					mtrl->DepthTestEnabled = m_cbDepthTest->getValue();
+					mtrl->DepthWriteEnabled = m_cbDepthWrite->getValue();
+
+					mtrl->IsBlendTransparent = m_cbTransparent->getValue();
+
+					if (m_cbSrcBlend->getSelectedIndex()!=-1)
+					{
+						mtrl->SourceBlend = GraphicsCommonUtils::ParseBlend(
+							m_cbSrcBlend->getItems()[m_cbSrcBlend->getSelectedIndex()]);
+					}
+					if (m_cbDstBlend->getSelectedIndex()!=-1)
+					{
+						mtrl->DestinationBlend = GraphicsCommonUtils::ParseBlend(
+							m_cbDstBlend->getItems()[m_cbDstBlend->getSelectedIndex()]);
+					}
+					if (m_cbBlendFunction->getSelectedIndex() !=-1)
+					{
+						mtrl->BlendFunction = GraphicsCommonUtils::ParseBlendFunction(
+							m_cbBlendFunction->getItems()[m_cbBlendFunction->getSelectedIndex()]);
+					}
+
+					if (m_cbCull->getSelectedIndex() !=-1)
+					{
+						mtrl->Cull = GraphicsCommonUtils::ParseCullMode(
+							m_cbCull->getItems()[m_cbCull->getSelectedIndex()]);
+					}
+
+					mtrl->setPassFlags(currentMtrl->getPassFlags());
+					for (int i=0;i<MaxScenePass;i++)
+					{
+						mtrl->getPassEffectName(i) = currentMtrl->getPassEffectName(i);
+						if (mtrl->getPassEffectName(i).size())
+						{
+							mtrl->setPassEffect(i, EffectManager::getSingleton().getEffect(mtrl->getPassEffectName(i)));
+						}
+						else
+						{
+							mtrl->setPassEffect(i, 0);
+						}
+					}
+
+					mtrl->Reload();
+				}
+			}
+			
+		}
+	}
 	void ModelDocument::BtnAddMtrl_Pressed(Control* ctrl)
 	{
 		const FastList<Mesh*> ents = m_modelSData->getEntities();
@@ -966,6 +1065,7 @@ namespace APDesigner
 						m_cbCull->getItems()[m_cbCull->getSelectedIndex()]);
 				}
 				
+
 				mtrl->Reload();
 			}
 		}
