@@ -50,6 +50,8 @@ namespace Apoc3D
 		PRJITEM_Model,
 		PRJITEM_Animation,
 		PRJITEM_Effect,
+		PRJITEM_EffectList,
+		PRJITEM_CustomEffect,
 		PRJITEM_Font
 	};
 	
@@ -252,6 +254,51 @@ namespace Apoc3D
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
 
+	};
+	class ProjectResCustomEffect : public ProjectResource
+	{
+	public:
+		ProjectResCustomEffect(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
+		String SrcVSFile;
+		String SrcPSFile;
+		String DestFile;
+		String EntryPointVS;
+		String EntryPointPS;
+		String Profile;
+
+		virtual ProjectItemType getType() const { return PRJITEM_CustomEffect; }
+		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual std::vector<String> GetAllOutputFiles();
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+	};
+	class ProjectResEffectList : public ProjectResource
+	{
+	public:
+		ProjectResEffectList(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
+		String DestFile;
+
+		virtual ProjectItemType getType() const { return PRJITEM_EffectList; }
+		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual std::vector<String> GetAllOutputFiles();
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t) { return true; }
 	};
 	class ProjectResFont : public ProjectResource
 	{

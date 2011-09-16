@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "AFXBuild.h"
+#include "CFXBuild.h"
 
 #include "Collections/CollectionsCommon.h"
 #include "Config/ConfigurationSection.h"
@@ -52,11 +52,12 @@ using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
-	void AFXBuild::Build(const ConfigurationSection* sect)
+
+	void CFXBuild::Build(const ConfigurationSection* sect)
 	{
 		AFXBuildConfig config;
 		config.Parse(sect);
-		
+
 		if (!File::FileExists(config.SrcVSFile))
 		{
 			CompileLog::WriteError(config.SrcVSFile, L"Could not find source file.");
@@ -94,51 +95,7 @@ namespace APBuild
 		if (!CompileShader(config.SrcPSFile, config.EntryPointPS, config.Profile, data.PSCode, data.PSLength, false))
 			return;
 
-		FileLocation* fl = new FileLocation(config.PListFile);
-		XMLConfiguration* plist = new XMLConfiguration(fl);
-
-		ConfigurationSection* s = plist->get(L"VS");
-
-		for (ConfigurationSection::SubSectionIterator iter = s->SubSectionBegin(); iter != s->SubSectionEnd();iter++)
-		{
-			ConfigurationSection* ps = iter->second;
-			EffectParameter ep(ps->getName());
-			
-			//String usage = ps->getAttribute(L"Usage");
-			//ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
-			//if (ep.TypicalUsage == EPUSAGE_Unknown)
-			//{
-				//ep.IsCustomUsage = true;
-				//ep.CustomUsage = usage;
-			//}
-			ep.CustomUsage = ps->getAttribute(L"Usage");
-			ep.ProgramType = SHDT_Vertex;
-			ep.SamplerState.Parse(ps);
-			data.Parameters.Add(ep);
-		}
-
-		s = plist->get(L"PS");
-
-		for (ConfigurationSection::SubSectionIterator iter = s->SubSectionBegin(); iter != s->SubSectionEnd();iter++)
-		{
-			ConfigurationSection* ps = iter->second;
-			EffectParameter ep(ps->getName());
-
-			//String usage = ps->getAttribute(L"Usage");
-			//ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
-			//if (ep.TypicalUsage == EPUSAGE_Unknown)
-			//{
-			//	ep.IsCustomUsage = true;
-			//	ep.CustomUsage = usage;
-			//}
-			ep.CustomUsage = ps->getAttribute(L"Usage");
-			ep.ProgramType = SHDT_Pixel;
-			ep.SamplerState.Parse(ps);
-			data.Parameters.Add(ep);
-		}
-
-		delete fl;
-		delete plist;
+		data.IsCustom=true;
 
 		FileOutStream* fos = new FileOutStream(config.DestFile);
 		data.Save(fos);

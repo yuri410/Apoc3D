@@ -91,6 +91,9 @@
     <ClInclude Include="D3DHelper.h" />
     <ClInclude Include="dds.h" />
     <ClInclude Include="EffectCompiler\AFXBuild.h" />
+    <ClInclude Include="EffectCompiler\CFXBuild.h" />
+    <ClInclude Include="EffectCompiler\FXListBuild.h" />
+    <ClInclude Include="EffectCompiler\HLSLCompileService.h" />
     <ClInclude Include="FontBuild\FontBuild.h" />
     <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="MeshBuild\FbxBaker.h" />
@@ -106,6 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectCompiler\AFXBuild.cpp" />
+    <ClCompile Include="EffectCompiler\CFXBuild.cpp" />
+    <ClCompile Include="EffectCompiler\FXListBuild.cpp" />
+    <ClCompile Include="EffectCompiler\HLSLCompileService.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="BuildConfig.cpp" />
     <ClCompile Include="CompileLog.cpp" />

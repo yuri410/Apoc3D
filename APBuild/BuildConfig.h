@@ -117,7 +117,26 @@ namespace APBuild
 
 		void Parse(const ConfigurationSection* sect);
 	};
+	struct CFXBuildConfig
+	{
+		String Name;
 
+		String SrcVSFile;
+		String SrcPSFile;
+		String DestFile;
+		String EntryPointVS;
+		String EntryPointPS;
+		String Profile;
+
+		void Parse(const ConfigurationSection* sect);
+	};
+	struct FXListBuildConfig
+	{
+		String Name;
+		String DestFile;
+
+		void Parse(const ConfigurationSection* sect);
+	};
 	enum MeshBuildMethod
 	{
 		MESHBUILD_ASS,

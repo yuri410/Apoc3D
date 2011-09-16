@@ -25,6 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "EffectManager.h"
 #include "Effect.h"
 #include "Core/Logging.h"
+#include "Config/XmlConfiguration.h"
+#include "Config/ConfigurationSection.h"
+#include "Vfs/FileSystem.h"
+#include "Vfs/FileLocateRule.h"
 #include "Vfs/ResourceLocation.h"
 
 SINGLETON_DECL(Apoc3D::Graphics::EffectSystem::EffectManager);
@@ -52,6 +56,21 @@ namespace Apoc3D
 				return 0;
 			}
 
+			void EffectManager::LoadEffectFromList(RenderDevice* device, const ResourceLocation* rl)
+			{
+				XMLConfiguration* config = new XMLConfiguration(rl);
+				for (XMLConfiguration::ChildTable::iterator iter = config->begin(); iter!=config->end();iter++)
+				{
+					FileLocation* fl = FileSystem::getSingleton().TryLocate(iter->second->getName() + L".afx", FileLocateRule::Effects);
+					if (!fl)
+					{
+						LogManager::getSingleton().Write(LOG_Graphics, L"Effect " + iter->second->getName() + L" is not found.", LOGLVL_Error);
+						continue;
+					}
+					LoadEffect(device, fl);
+					delete fl;
+				}
+			}
 			void EffectManager::LoadEffect(RenderDevice* device, const ResourceLocation* rl)
 			{
 				AutomaticEffect* effect = new AutomaticEffect(device, rl);

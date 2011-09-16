@@ -339,6 +339,23 @@ namespace APDesigner
 					}
 				}
 				break;
+			case PRJITEM_CustomEffect:
+				{
+					ProjectResCustomEffect* eff = static_cast<ProjectResCustomEffect*>(data);
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_effects_file"));
+					newNode->UserData = items[i];
+
+
+					if (parentNode)
+					{
+						parentNode->getNodes().Add(newNode);
+					}
+					else
+					{
+						m_resourceView->getNodes().Add(newNode);
+					}
+				}
+				break;
 			case PRJITEM_Font:
 				{
 					ProjectResFont* fnt = static_cast<ProjectResFont*>(data);

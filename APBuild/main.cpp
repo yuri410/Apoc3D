@@ -22,6 +22,8 @@
 #include "MeshBuild/MeshBuild.h"
 #include "PakBuild/PakBuild.h"
 #include "EffectCompiler/AFXBuild.h"
+#include "EffectCompiler/CFXBuild.h"
+#include "EffectCompiler/FXListBuild.h"
 //#include <Windows.h>
 
 using namespace std;
@@ -56,6 +58,10 @@ int Build(ConfigurationSection* sect)
 	{
 		AFXBuild::Build(sect);
 	}
+	else if (buildType == L"customeffect")
+	{
+		CFXBuild::Build(sect);
+	}
 	else if (buildType == L"font")
 	{
 		FontBuild::Build(sect);
@@ -77,6 +83,10 @@ int Build(ConfigurationSection* sect)
 	else if (buildType == L"pak")
 	{
 		PakBuild::Build(sect);
+	}
+	else if (buildType == L"projectfxlist")
+	{
+		FXListBuild::Build(sect);
 	}
 	else
 	{

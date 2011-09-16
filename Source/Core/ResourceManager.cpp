@@ -131,10 +131,10 @@ namespace Apoc3D
 			//assert(!res->isManaged());
 			if (!m_isShutDown)
 			{
-				if (!usesAsync())
-				{
-					res->Unload();
-				}
+				//if (!usesAsync())
+				//{
+				//	res->Unload();
+				//}
 
 				m_hashTable.erase(res->getHashString());
 

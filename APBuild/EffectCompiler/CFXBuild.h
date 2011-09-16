@@ -21,45 +21,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EFFECTSYSTEM_H
-#define EFFECTSYSTEM_H
+#ifndef CFXBUILD_H
+#define CFXBUILD_H
 
-#include "Common.h"
-#include "Core/Singleton.h"
+#include "APBCommon.h"
 
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Core;
-using namespace Apoc3D::VFS;
-using namespace std;
+using namespace Apoc3D::Config;
 
-namespace Apoc3D
+namespace APBuild
 {
-	namespace Graphics
+	class CFXBuild
 	{
-		namespace EffectSystem
-		{
-			//template class APAPI unordered_map<String, Effect*>;
-			typedef unordered_map<String, Effect*> EffectTable;
-
-			class APAPI EffectManager : public Singleton<EffectManager>
-			{
-			private:
-				EffectTable m_fxTable;
-
-			public:
-				EffectManager() { }
-				~EffectManager() { }
-
-				bool HasEffect(const String& name) const;
-				Effect* getEffect(const String& name) const;
-
-				//void ReloadEffect(RenderDevice* device, const ResourceLocation* fl);
-				void LoadEffect(RenderDevice* device, const ResourceLocation* rl);
-				void LoadEffectFromList(RenderDevice* device, const ResourceLocation* rl);
-
-				SINGLETON_DECL_HEARDER(EffectManager);
-			};
-		};
+	public:
+		static void Build(const ConfigurationSection* sect);
 	};
-};
+}
 #endif

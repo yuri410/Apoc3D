@@ -581,6 +581,117 @@ namespace Apoc3D
 	{
 		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
 	}
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+	void ProjectResCustomEffect::Parse(const ConfigurationSection* sect)
+	{
+		SrcVSFile = sect->getAttribute(L"VSSource");
+		SrcPSFile = sect->getAttribute(L"PSSource");
+		DestFile = sect->getAttribute(L"DestinationFile");
+		EntryPointVS = sect->getAttribute(L"EntryPointVS");
+		EntryPointPS = sect->getAttribute(L"EntryPointPS");
+		Profile = sect->getAttribute(L"Profile");
+	}
+	void ProjectResCustomEffect::Save(ConfigurationSection* sect, bool savingBuild)
+	{
+		sect->AddAttribute(L"VSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcVSFile) : SrcVSFile);
+		sect->AddAttribute(L"PSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcPSFile) : SrcPSFile);
+
+		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttribute(L"EntryPointVS", EntryPointVS);
+		sect->AddAttribute(L"EntryPointPS", EntryPointPS);
+		sect->AddAttribute(L"Profile", Profile);
+	}
+	std::vector<String> ProjectResCustomEffect::GetAllOutputFiles()
+	{
+		std::vector<String> e;
+		if (DestFile.size())
+			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+		return e;
+	}
+	bool ProjectResCustomEffect::IsEarlierThan(time_t t)
+	{
+		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+
+		if (destFileTime < t)
+			return true;
+
+		String path = PathUtils::Combine(m_project->getBasePath(), SrcVSFile);
+		if (File::FileExists(path))
+		{
+			if (File::GetFileModifiyTime(path) > destFileTime)
+			{
+				return true;
+			}
+		}
+		path = PathUtils::Combine(m_project->getBasePath(), SrcPSFile);
+		if (File::FileExists(path))
+		{
+			if (File::GetFileModifiyTime(path) > destFileTime)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	bool ProjectResCustomEffect::IsNotBuilt()
+	{
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+	}
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+
+	void WalkProject(const FastList<ProjectItem*>& items, List<String>& effectsFound)
+	{
+		for (int i=0;i<items.getCount();i++)
+		{
+			if (items[i]->getType() == PRJITEM_Effect)
+			{
+				effectsFound.Add(items[i]->getName());
+			}
+			else if (items[i]->getType() == PRJITEM_Folder)
+			{
+				ProjectFolder* folder = static_cast<ProjectFolder*>(items[i]->getData());
+
+				WalkProject(folder->SubItems, effectsFound);
+			}
+		}
+	}
+
+	void ProjectResEffectList::Parse(const ConfigurationSection* sect)
+	{
+		DestFile = sect->getAttribute(L"DestinationFile");
+	}
+	void ProjectResEffectList::Save(ConfigurationSection* sect, bool savingBuild)
+	{
+		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+
+		if (savingBuild)
+		{
+			List<String> effectList;
+			WalkProject(m_project->getItems(), effectList);
+
+			for (int i=0;i<effectList.getCount();i++)
+			{
+				ConfigurationSection* ss = new ConfigurationSection(effectList[i]);
+				sect->AddSection(ss);
+			}
+		}
+		
+	}
+	std::vector<String> ProjectResEffectList::GetAllOutputFiles()
+	{
+		std::vector<String> e;
+		if (DestFile.size())
+			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+		return e;
+	}
+	bool ProjectResEffectList::IsNotBuilt()
+	{
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+	}
 
 	/************************************************************************/
 	/*                                                                      */
@@ -681,10 +792,11 @@ namespace Apoc3D
 		}
 		return L"ass";
 	}
+
+
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
-
 
 	void ProjectCustomItem::Parse(const ConfigurationSection* sect)
 	{
@@ -740,6 +852,12 @@ namespace Apoc3D
 				break;
 			case PRJITEM_Effect:
 				sect->AddAttribute(L"Type", L"effect");
+				break;
+			case PRJITEM_EffectList:
+				sect->AddAttribute(L"Type", L"ProjectFXList");
+				break;
+			case PRJITEM_CustomEffect:
+				sect->AddAttribute(L"Type", L"CustomEffect");
 				break;
 			case PRJITEM_Font:
 				sect->AddAttribute(L"Type", L"font");
@@ -810,7 +928,12 @@ namespace Apoc3D
 		{
 
 		}
-
+		else if (buildType == L"projectfxlist")
+		{
+			ProjectResEffectList* list = new ProjectResEffectList(m_project);
+			list->Parse(sect);
+			m_typeData = list;
+		}
 	}
 
 

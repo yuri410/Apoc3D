@@ -85,6 +85,7 @@ namespace Apoc3D
 						(m_resource->isManaged() && !m_resource->getManager()->usesAsync())
 						)
 					{
+						m_resource->Unload();
 						delete m_resource;
 					}
 					m_resource = 0;

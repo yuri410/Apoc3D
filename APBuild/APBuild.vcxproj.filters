@@ -72,6 +72,15 @@
     <ClInclude Include="MeshBuild\XImporter.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="EffectCompiler\CFXBuild.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectCompiler\HLSLCompileService.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectCompiler\FXListBuild.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -120,6 +129,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MeshBuild\XImporter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectCompiler\CFXBuild.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectCompiler\HLSLCompileService.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectCompiler\FXListBuild.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

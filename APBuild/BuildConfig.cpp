@@ -257,6 +257,25 @@ namespace APBuild
 		EntryPointPS = sect->getAttribute(L"EntryPointPS");
 		Profile = sect->getAttribute(L"Profile");
 	}
+	void CFXBuildConfig::Parse(const ConfigurationSection* sect)
+	{
+		Name = sect->getName();
+
+		SrcVSFile = sect->getAttribute(L"VSSource");
+		SrcPSFile = sect->getAttribute(L"PSSource");
+		DestFile = sect->getAttribute(L"DestinationFile");
+		EntryPointVS = sect->getAttribute(L"EntryPointVS");
+		EntryPointPS = sect->getAttribute(L"EntryPointPS");
+		Profile = sect->getAttribute(L"Profile");
+	}
+	void FXListBuildConfig::Parse(const ConfigurationSection* sect)
+	{
+		Name = sect->getName();
+		DestFile = sect->getAttribute(L"DestinationFile");
+
+
+
+	}
 	void MeshBuildConfig::Parse(const ConfigurationSection* sect)
 	{
 		SrcFile = sect->getAttribute(L"SourceFile");
