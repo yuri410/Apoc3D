@@ -392,6 +392,11 @@ namespace APDesigner
 			m_recenterModel->SetSkin(window->getUISkin());
 			m_recenterModel->eventPress().bind(this, &ModelDocument::RecenterModel_Pressed);
 
+			sx += 110;
+			m_swapYZ = new Button(Point(sx, sy),100, L"Swap TZ");
+			m_swapYZ->SetSkin(window->getUISkin());
+			m_swapYZ->eventPress().bind(this, &ModelDocument::RevertYZ_Pressed);
+
 		}
 		getDocumentForm()->setMinimumSize(Point(1070,512+137+50));
 		
@@ -469,6 +474,7 @@ namespace APDesigner
 
 		delete m_recenterModel;
 		delete m_revertZ;
+		delete m_swapYZ;
 	}
 	
 
@@ -549,6 +555,7 @@ namespace APDesigner
 		}
 		getDocumentForm()->getControls().Add(m_recenterModel);
 		getDocumentForm()->getControls().Add(m_revertZ);
+		getDocumentForm()->getControls().Add(m_swapYZ);
 		{
 			getDocumentForm()->getControls().Add(m_cfAmbient);
 			getDocumentForm()->getControls().Add(m_cfDiffuse);
@@ -1125,6 +1132,64 @@ namespace APDesigner
 
 			BoundingSphere sphere = mesh->getBoundingSphere();
 			sphere.Center = Vector3Utils::Subtract(sphere.Center, center);
+			mesh->setBoundingSphere(sphere);
+		}
+	}
+	void ModelDocument::RevertYZ_Pressed(Control* ctrl)
+	{
+		Matrix rot;
+		Matrix::CreateRotationX(rot, Math::Half_PI);
+		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
+		{
+			Mesh* mesh = m_modelSData->getEntities()[i];
+
+			const VertexElement* posElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Position);
+			const VertexElement* nrmElem = VertexElement::FindElementBySemantic(mesh->getVertexElement(), VEU_Normal);
+
+			if (posElem || nrmElem)
+			{
+				char* vtxData = reinterpret_cast<char*>(mesh->getVertexBuffer()->Lock(LOCK_None));
+				for (int j=0;j<mesh->getVertexCount();j++)
+				{
+					if (posElem &&  posElem->getType() == VEF_Vector3)
+					{
+						float* dataOfs = reinterpret_cast<float*>(vtxData+posElem->getOffset()+j*mesh->getVertexSize());
+
+						Vector3 pos = Vector3Utils::LDVectorPtr(dataOfs);
+						pos = Vector3Utils::TransformNormal(pos, rot);
+						
+						Vector3Utils::Store(pos, dataOfs);
+						//float temp = dataOfs[1];
+						//dataOfs[1] = dataOfs[2];
+						//dataOfs[2] = temp;
+					}
+
+					if (nrmElem &&  nrmElem->getType() == VEF_Vector3)
+					{
+						float* dataOfs = reinterpret_cast<float*>(vtxData+nrmElem->getOffset()+j*mesh->getVertexSize());
+
+						Vector3 pos = Vector3Utils::LDVectorPtr(dataOfs);
+						pos = Vector3Utils::TransformNormal(pos, rot);
+
+						Vector3Utils::Store(pos, dataOfs);
+						//float* dataOfs = reinterpret_cast<float*>(vtxData+nrmElem->getOffset()+j*mesh->getVertexSize());
+
+						//float temp = dataOfs[1];
+						//dataOfs[1] = dataOfs[2];
+						//dataOfs[2] = temp;
+					}
+
+				}
+				mesh->getVertexBuffer()->Unlock();
+			}
+
+			BoundingSphere sphere = mesh->getBoundingSphere();
+			
+
+			float temp2 = _V3Y(sphere.Center);
+			_V3Y(sphere.Center) = _V3Z(sphere.Center);
+			_V3Z(sphere.Center) = temp2;
+
 			mesh->setBoundingSphere(sphere);
 		}
 	}

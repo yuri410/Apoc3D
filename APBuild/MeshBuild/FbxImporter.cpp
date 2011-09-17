@@ -542,6 +542,7 @@ namespace APBuild
 		FastList<MaterialData*> meshMtrls;
 
 		KFbxVector4* pControlPoints = pFBXMesh->GetControlPoints();
+		int nLayerCount = pFBXMesh->GetLayerCount();
 		for( int pi = 0; pi < pFBXMesh->GetPolygonCount(); ++pi )
 		{
 			MaterialData* pMaterial = 0;
@@ -566,11 +567,24 @@ namespace APBuild
 				//{
 
 				//}
-				mesh->AddVertex(pMaterial, ConvertVector3(fbxPosition),
-					ConvertVector3(fbxNormal),
-					GetTexCoord(pFBXMesh, 0, pi, pvi, nVertexIndex),
-					boneWeights[nVertexIndex]
-				);
+				if (nLayerCount>1)
+				{
+					mesh->AddVertex(pMaterial, ConvertVector3(fbxPosition),
+						ConvertVector3(fbxNormal),
+						GetTexCoord(pFBXMesh, 0, pi, pvi, nVertexIndex),
+						GetTexCoord(pFBXMesh, 1, pi, pvi, nVertexIndex),
+						boneWeights[nVertexIndex]
+					);
+				}
+				else
+				{
+					mesh->AddVertex(pMaterial, ConvertVector3(fbxPosition),
+						ConvertVector3(fbxNormal),
+						GetTexCoord(pFBXMesh, 0, pi, pvi, nVertexIndex),
+						boneWeights[nVertexIndex]
+					);
+				}
+				
 			}
 
 		}
@@ -681,19 +695,15 @@ namespace APBuild
 		{
 		case KFbxLayerElement::eALL_SAME:
 			return 0;
-			break;
 
 		case KFbxLayerElement::eBY_CONTROL_POINT:
 			return nVertexIndex;
-			break;
 
 		case KFbxLayerElement::eBY_POLYGON_VERTEX:
 			return nPolygonIndex*3 + nPolygonVertexIndex;
-			break;
 
 		case KFbxLayerElement::eBY_POLYGON:
 			return nPolygonIndex;
-			break;
 
 		case KFbxLayerElement::eNONE:
 		case KFbxLayerElement::eBY_EDGE:
@@ -764,52 +774,78 @@ namespace APBuild
 					KFbxLayerElement::EMappingMode mappingMode = pUVs->GetMappingMode();
 					KFbxLayerElement::EReferenceMode referenceMode = pUVs->GetReferenceMode();
 
+					int index = GetMappingIndex(mappingMode, nPolygonIndex, nPolygonVertexIndex, nVertexIndex);
+					if (index<0)
+						return Vector2Utils::Zero;
+					
+
 					const KFbxLayerElementArrayTemplate<KFbxVector2>& pUVArray = pUVs->GetDirectArray();
 					const KFbxLayerElementArrayTemplate<int>& pUVIndexArray = pUVs->GetIndexArray();
 
-					switch(mappingMode)
+					int nMappingIndex = index;
+					switch(referenceMode)
 					{
-					case KFbxLayerElement::eBY_CONTROL_POINT:
+					case KFbxLayerElement::eDIRECT:
+						if( nMappingIndex < pUVArray.GetCount() )
 						{
-							int nMappingIndex = nVertexIndex;
-							switch(referenceMode)
-							{
-							case KFbxLayerElement::eDIRECT:
-								if( nMappingIndex < pUVArray.GetCount() )
-								{
-									return ConvertTexCoord( pUVArray.GetAt(nMappingIndex) ) ;
-								}
-								break;
-							case KFbxLayerElement::eINDEX_TO_DIRECT:
-								if( nMappingIndex < pUVIndexArray.GetCount() )
-								{
-									int nIndex = pUVIndexArray.GetAt(nMappingIndex);
-									if( nIndex < pUVArray.GetCount() )
-									{
-										return ConvertTexCoord( pUVArray.GetAt(nIndex) );
-									}
-								}
-								break;
-							};
+							return ConvertTexCoord( pUVArray.GetAt(nMappingIndex) ) ;
 						}
 						break;
-
-					case KFbxLayerElement::eBY_POLYGON_VERTEX:
+					case KFbxLayerElement::eINDEX_TO_DIRECT:
+						if( nMappingIndex < pUVIndexArray.GetCount() )
 						{
-							int nMappingIndex = pFBXMesh->GetTextureUVIndex(nPolygonIndex, nPolygonVertexIndex, KFbxLayerElement::eDIFFUSE_TEXTURES);
-							switch(referenceMode)
+							int nIndex = pUVIndexArray.GetAt(nMappingIndex);
+							if( nIndex < pUVArray.GetCount() )
 							{
-							case KFbxLayerElement::eDIRECT:
-							case KFbxLayerElement::eINDEX_TO_DIRECT: //I have no idea why the index array is not used in this case.
-								if( nMappingIndex < pUVArray.GetCount() )
-								{
-									return ConvertTexCoord(  pUVArray.GetAt(nMappingIndex)  );
-								}
-								break;
-							};
+								return ConvertTexCoord( pUVArray.GetAt(nIndex) );
+							}
 						}
 						break;
 					};
+
+					//switch(mappingMode)
+					//{
+					//case KFbxLayerElement::eBY_CONTROL_POINT:
+					//	{
+					//		int nMappingIndex = nVertexIndex;
+					//		switch(referenceMode)
+					//		{
+					//		case KFbxLayerElement::eDIRECT:
+					//			if( nMappingIndex < pUVArray.GetCount() )
+					//			{
+					//				return ConvertTexCoord( pUVArray.GetAt(nMappingIndex) ) ;
+					//			}
+					//			break;
+					//		case KFbxLayerElement::eINDEX_TO_DIRECT:
+					//			if( nMappingIndex < pUVIndexArray.GetCount() )
+					//			{
+					//				int nIndex = pUVIndexArray.GetAt(nMappingIndex);
+					//				if( nIndex < pUVArray.GetCount() )
+					//				{
+					//					return ConvertTexCoord( pUVArray.GetAt(nIndex) );
+					//				}
+					//			}
+					//			break;
+					//		};
+					//	}
+					//	break;
+
+					//case KFbxLayerElement::eBY_POLYGON_VERTEX:
+					//	{
+					//		int nMappingIndex = pFBXMesh->GetTextureUVIndex(nPolygonIndex, nPolygonVertexIndex, KFbxLayerElement::eDIFFUSE_TEXTURES);
+					//		switch(referenceMode)
+					//		{
+					//		case KFbxLayerElement::eDIRECT:
+					//		case KFbxLayerElement::eINDEX_TO_DIRECT: //I have no idea why the index array is not used in this case.
+					//			if( nMappingIndex < pUVArray.GetCount() )
+					//			{
+					//				return ConvertTexCoord(  pUVArray.GetAt(nMappingIndex)  );
+					//			}
+					//			break;
+					//		};
+					//	}
+					//	break;
+					//};
 				}
 			}
 		}
