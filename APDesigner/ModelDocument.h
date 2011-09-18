@@ -135,9 +135,12 @@ namespace APDesigner
 		Button* m_btnModify;
 		Button* m_btnAddMkey;
 		Button* m_btnRemoveMKey;
+		
 		Button* m_recenterModel;
 		Button* m_revertZ;
 		Button* m_swapYZ;
+		Button* m_zoomIn;
+		Button* m_zoomOut;
 
 		ComboBox* m_cbMesh;
 		ComboBox* m_cbMeshPart;
@@ -206,6 +209,8 @@ namespace APDesigner
 		void RecenterModel_Pressed(Control* ctrl);
 		void RevertZ_Pressed(Control* ctrl);
 		void RevertYZ_Pressed(Control* ctrl);
+		void ZoomIn_Pressed(Control* ctrl);
+		void ZoomOut_Pressed(Control* ctrl);
 
 		void DisplayMaterialEditor(Material* mtrl);
 

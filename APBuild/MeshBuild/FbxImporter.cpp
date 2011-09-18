@@ -262,7 +262,7 @@ namespace APBuild
 					std::string strFileName = pDiffuseTexture->GetFileName();
 					if( strFileName.length() == 0 )
 						strFileName = pDiffuseTexture->GetRelativeFileName();
-					pMaterial->TextureName[i] = StringUtils::toWString( strFileName );
+					pMaterial->TextureName[0] = StringUtils::toWString( strFileName );
 				}
 			}
 			

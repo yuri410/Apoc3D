@@ -122,8 +122,10 @@ namespace Apoc3D
 		void Material::LoadTexture(int32 index)
 		{
 			if (m_texName[index].empty())
+			{
+				m_tex[index] = 0;
 				return;
-
+			}
 			// load texture
 			FileLocation* fl = FileSystem::getSingleton().TryLocate(m_texName[index], FileLocateRule::Textures);
 
@@ -287,6 +289,7 @@ namespace Apoc3D
 				{
 					delete m_tex[i];
 					LoadTexture(i);
+					m_texDirty[i] = false;
 				}
 			}
 		}

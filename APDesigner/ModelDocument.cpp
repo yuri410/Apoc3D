@@ -397,6 +397,16 @@ namespace APDesigner
 			m_swapYZ->SetSkin(window->getUISkin());
 			m_swapYZ->eventPress().bind(this, &ModelDocument::RevertYZ_Pressed);
 
+			sx += 110;
+			m_zoomIn = new Button(Point(sx, sy),50, L"+");
+			m_zoomIn->SetSkin(window->getUISkin());
+			m_zoomIn->eventPress().bind(this, &ModelDocument::ZoomIn_Pressed);
+
+			sx += 60;
+			m_zoomOut = new Button(Point(sx, sy),50, L"-");
+			m_zoomOut->SetSkin(window->getUISkin());
+			m_zoomOut->eventPress().bind(this, &ModelDocument::ZoomOut_Pressed);
+
 		}
 		getDocumentForm()->setMinimumSize(Point(1070,512+137+50));
 		
@@ -475,6 +485,8 @@ namespace APDesigner
 		delete m_recenterModel;
 		delete m_revertZ;
 		delete m_swapYZ;
+		delete m_zoomIn;
+		delete m_zoomOut;
 	}
 	
 
@@ -556,6 +568,9 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_recenterModel);
 		getDocumentForm()->getControls().Add(m_revertZ);
 		getDocumentForm()->getControls().Add(m_swapYZ);
+		getDocumentForm()->getControls().Add(m_zoomIn);
+		getDocumentForm()->getControls().Add(m_zoomOut);
+
 		{
 			getDocumentForm()->getControls().Add(m_cfAmbient);
 			getDocumentForm()->getControls().Add(m_cfDiffuse);
@@ -1231,6 +1246,14 @@ namespace APDesigner
 			_V3Z(sphere.Center) = -_V3Z(sphere.Center);
 			mesh->setBoundingSphere(sphere);
 		}
+	}
+	void ModelDocument::ZoomIn_Pressed(Control* ctrl)
+	{
+		m_distance -= 10;
+	}
+	void ModelDocument::ZoomOut_Pressed(Control* ctrl)
+	{
+		m_distance += 10;
 	}
 	/************************************************************************/
 	/*                                                                      */
