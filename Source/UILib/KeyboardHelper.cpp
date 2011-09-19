@@ -262,7 +262,7 @@ namespace Apoc3D
 						m_pressingTime += time->getElapsedTime();
 						if (m_pressingTime > 15 * 25 * 0.001f)
 						{
-							m_pressingTime -= 0.12f;
+							m_pressingTime -= 0.1f;
 							if (!m_eKeyPress.empty())
 							{
 								m_eKeyPress(m_currentKey, eventArg);
