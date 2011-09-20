@@ -212,6 +212,8 @@ namespace Apoc3D
 #endif
 			
 
+			void ProjectLine(const Vector3& start, const Vector3& end, Vector3& ps, Vector3 pe);
+
 			/* Changes the coefficients of the normal vector of the plane to make it of unit length.
 			*/
 			static Plane Normalize(const Plane &plane)
