@@ -560,6 +560,55 @@ namespace Apoc3D
 			}
 			return &m_opBuffer;
 		}
+		RenderOperationBuffer* Model::GetRenderOperationSubEntity(int index)
+		{
+			if (m_data->getState() != RS_Loaded && m_data->getWeakRef()->isManaged())
+			{
+				m_data->Touch();
+				return 0;
+			}
+
+			UpdateAnimation();
+
+			ResourceHandle<ModelSharedData>& data = *m_data;
+
+			FastList<Mesh*> entities = data->getEntities();
+
+			RenderOperationBuffer* opBuf = entities[index]->GetRenderOperation(0);
+			m_opBuffer.FastClear();
+			for (int j = 0; j < opBuf->getCount(); j++)
+			{
+				int opid = j;
+
+				if (m_skinPlayer)
+				{
+					m_opBuffer[opid].BoneTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
+					m_opBuffer[opid].BoneTransform.Count = m_skinPlayer->getTransformCount();
+				}
+				if (m_animInstance.getCount())
+				{
+					m_opBuffer[opid].RootTransform = Matrix::Identity;
+
+					for (int k = 0; k < m_animInstance.getCount(); k++)
+					{
+						int entId = index;
+
+						Matrix temp;
+						m_animInstance[k]->GetTransform(entId, temp);
+
+						Matrix result;
+						Matrix::Multiply(result, m_opBuffer[opid].RootTransform, temp);
+						m_opBuffer[opid].RootTransform = result;
+
+					}
+				}
+				else
+				{
+					m_opBuffer[opid].RootTransform = Matrix::Identity;
+				}
+			}
+			return &m_opBuffer;
+		}
 
 		void Model::Update(const GameTime* const time)
 		{

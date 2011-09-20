@@ -199,7 +199,7 @@ namespace Apoc3D
 			void ReloadMaterialAnimation();			
 
 			virtual RenderOperationBuffer* GetRenderOperation(int lod);
-
+			virtual RenderOperationBuffer* GetRenderOperationSubEntity(int index);
 
 			void Update(const GameTime* const time);
 
