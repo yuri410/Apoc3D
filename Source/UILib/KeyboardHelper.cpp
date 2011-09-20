@@ -215,9 +215,10 @@ namespace Apoc3D
 				}
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 				eventArg.CapsLock =  (GetKeyState(VK_CAPITAL) & 0x8001) != 0;
-				eventArg.ShiftDown |= !!GetAsyncKeyState(VK_LSHIFT);
-				eventArg.ShiftDown |= !!GetAsyncKeyState(VK_RSHIFT);
 #endif
+				eventArg.ShiftDown |= kb->IsPressing(KEY_LSHIFT);
+				eventArg.ShiftDown |= kb->IsPressing(KEY_RSHIFT);
+
 				for (int i=0;i<sizeof(InputKeys)/sizeof(KeyboardKeyCode);i++)
 				{
 					if (kb->IsKeyDown(InputKeys[i]))

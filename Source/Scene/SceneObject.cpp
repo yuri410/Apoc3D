@@ -55,7 +55,7 @@ namespace Apoc3D
 
 		RenderOperationBuffer* Entity::GetRenderOperation(int lod)
 		{
-			while (!m_models[lod] && lod>=0)
+			while (!m_models[lod] && lod>0)
 			{
 				lod--;
 			}
