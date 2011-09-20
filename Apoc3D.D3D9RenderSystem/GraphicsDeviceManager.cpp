@@ -143,13 +143,13 @@ namespace Apoc3D
 				if (!m_device)
 					return;
 
-#ifdef _DEBUG
-				if (m_deviceLost)
-					Sleep(50);
-#else
+//#ifdef _DEBUG
+				//if (m_deviceLost)
+					//Sleep(50);
+//#else
 				if (m_deviceLost || !m_game->getIsActive())
 					Sleep(50);
-#endif
+//#endif
 
 				if (m_deviceLost)
 				{
@@ -160,20 +160,20 @@ namespace Apoc3D
 						return;
 					}
 
-					if (m_currentSetting->Windowed)
-					{
-						D3DDISPLAYMODE mode;
-						HRESULT hr = m_direct3D9->GetAdapterDisplayMode(m_currentSetting->D3D9.AdapterOrdinal, &mode);
-						assert(SUCCEEDED(hr));
+					//if (m_currentSetting->Windowed)
+					//{
+					//	D3DDISPLAYMODE mode;
+					//	HRESULT hr = m_direct3D9->GetAdapterDisplayMode(m_currentSetting->D3D9.AdapterOrdinal, &mode);
+					//	assert(SUCCEEDED(hr));
 
-						if (m_currentSetting->D3D9.AdapterFormat != mode.Format)
-						{
-							DeviceSettings newSettings = *m_currentSetting;
-							ChangeDevice(newSettings);
-							*cancel = true;
-							return;
-						}
-					}
+					//	if (m_currentSetting->D3D9.AdapterFormat != mode.Format)
+					//	{
+					//		DeviceSettings newSettings = *m_currentSetting;
+					//		ChangeDevice(newSettings);
+					//		*cancel = true;
+					//		return;
+					//	}
+					//}
 
 					hr = ResetDevice();
 					if (hr != D3D_OK)

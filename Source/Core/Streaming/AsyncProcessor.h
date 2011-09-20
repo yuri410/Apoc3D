@@ -68,6 +68,7 @@ namespace Apoc3D
 				void Main();
 			public:
 				void AddTask(ResourceOperation* op);
+				void RemoveTask(ResourceOperation* op);
 
 				bool TaskCompleted();
 				int GetOperationCount();

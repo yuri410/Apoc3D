@@ -104,7 +104,23 @@ namespace Apoc3D
 				m_tail = 0;
 				m_size = 0;
 			}
+			bool Replace(const T& item, const T& item2)
+			{
+				int index = m_head;
+				int num2 = m_size;
 
+				while (num2-- > 0)
+				{
+					if (m_array[index] == item)
+					{
+						m_array[index] = item2;
+						return true;
+					}
+
+					index = (index + 1) % m_arrLength;
+				}
+				return false;
+			}
 			bool Contains(const T& item) const
 			{
 				int index = m_head;

@@ -54,6 +54,14 @@ namespace Apoc3D
 			}
 			m_asyncProc->AddTask(op);
 		}
+		void ResourceManager::RemoveTask(ResourceOperation* op) const
+		{
+			if (!m_asyncProc)
+			{
+				throw Apoc3DException::createException(EX_NotSupported, L"Async processing not enabled");
+			}
+			m_asyncProc->RemoveTask(op);
+		}
 
 		void ResourceManager::Shutdown()
 		{

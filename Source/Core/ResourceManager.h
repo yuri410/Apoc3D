@@ -81,7 +81,7 @@ namespace Apoc3D
 			void Shutdown();
 
 			void AddTask(ResourceOperation* op) const;
-
+			void RemoveTask(ResourceOperation* op) const;
 
 			bool IsIdle() const;
 			void WaitForIdle() const;

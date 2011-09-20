@@ -57,7 +57,14 @@ namespace Apoc3D
 
 				m_syncMutex.unlock();
 			}
+			void AsyncProcessor::RemoveTask(ResourceOperation* op)
+			{
+				m_syncMutex.lock();
 
+				m_opQueue.Replace(op, 0);
+
+				m_syncMutex.unlock();
+			}
 			bool AsyncProcessor::TaskCompleted()
 			{
 				bool result;

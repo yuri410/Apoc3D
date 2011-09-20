@@ -154,9 +154,15 @@ namespace Apoc3D
 			if (m_generation)
 				delete m_generation;
 			if (m_resLoader)
+			{
+				m_manager->RemoveTask(m_resLoader);
 				delete m_resLoader;
+			}
 			if (m_resUnloader)
+			{
+				m_manager->RemoveTask(m_resUnloader);
 				delete m_resUnloader;
+			}
 		}
 
 		void Resource::Use()		
