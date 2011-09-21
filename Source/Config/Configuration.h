@@ -25,7 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define CONFIGURATION_H
 
 #include "Common.h"
+#include "Collections/FastMap.h"
 
+using namespace Apoc3D::Collections;
 using namespace std;
 
 namespace Apoc3D
@@ -37,8 +39,7 @@ namespace Apoc3D
 		class APAPI Configuration
 		{
 		public:
-			typedef unordered_map<String, ConfigurationSection*> ChildTable;
-			typedef ChildTable::iterator Iterator;
+			typedef FastMap<String, ConfigurationSection*> ChildTable;
 		private:			
 			String m_name;			
 		protected:
@@ -56,17 +57,12 @@ namespace Apoc3D
 
 			ConfigurationSection* get(const String& name) const
 			{
-				ChildTable::const_iterator iter = m_sections.find(name);
-
-				if (iter != m_sections.end())
-				{
-					return iter->second;
-				}
-				return 0;
+				ConfigurationSection* result;
+				m_sections.TryGetValue(name, result);
+				return result;
 			}
 
-			ChildTable::iterator begin() { return m_sections.begin(); }
-			ChildTable::iterator end() { return m_sections.end(); }
+			ChildTable::Enumerator GetEnumerator() { return m_sections.GetEnumerator(); }
 
 			virtual Configuration* Clone() const = 0;
 			virtual void Merge(Configuration* config) = 0;

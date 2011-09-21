@@ -59,12 +59,14 @@ namespace Apoc3D
 			void EffectManager::LoadEffectFromList(RenderDevice* device, const ResourceLocation* rl)
 			{
 				XMLConfiguration* config = new XMLConfiguration(rl);
-				for (XMLConfiguration::ChildTable::iterator iter = config->begin(); iter!=config->end();iter++)
+				for (XMLConfiguration::ChildTable::Enumerator iter = config->GetEnumerator();iter.MoveNext();)
 				{
-					FileLocation* fl = FileSystem::getSingleton().TryLocate(iter->second->getName() + L".afx", FileLocateRule::Effects);
+					ConfigurationSection* lstEntry = *iter.getCurrentValue();
+
+					FileLocation* fl = FileSystem::getSingleton().TryLocate(lstEntry->getName() + L".afx", FileLocateRule::Effects);
 					if (!fl)
 					{
-						LogManager::getSingleton().Write(LOG_Graphics, L"Effect " + iter->second->getName() + L" is not found.", LOGLVL_Error);
+						LogManager::getSingleton().Write(LOG_Graphics, L"Effect " + lstEntry->getName() + L" is not found.", LOGLVL_Error);
 						continue;
 					}
 					LoadEffect(device, fl);

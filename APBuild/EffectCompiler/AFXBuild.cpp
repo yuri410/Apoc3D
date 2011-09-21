@@ -99,9 +99,9 @@ namespace APBuild
 
 		ConfigurationSection* s = plist->get(L"VS");
 
-		for (ConfigurationSection::SubSectionIterator iter = s->SubSectionBegin(); iter != s->SubSectionEnd();iter++)
+		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
 		{
-			ConfigurationSection* ps = iter->second;
+			ConfigurationSection* ps = *iter.getCurrentValue();
 			EffectParameter ep(ps->getName());
 			
 			//String usage = ps->getAttribute(L"Usage");
@@ -119,9 +119,9 @@ namespace APBuild
 
 		s = plist->get(L"PS");
 
-		for (ConfigurationSection::SubSectionIterator iter = s->SubSectionBegin(); iter != s->SubSectionEnd();iter++)
+		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
 		{
-			ConfigurationSection* ps = iter->second;
+			ConfigurationSection* ps = *iter.getCurrentValue();
 			EffectParameter ep(ps->getName());
 
 			//String usage = ps->getAttribute(L"Usage");

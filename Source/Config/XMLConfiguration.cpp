@@ -93,7 +93,7 @@ namespace Apoc3D
 					}
 					else
 					{
-						m_sections.insert(ChildTable::value_type(strName, section));
+						m_sections.Add(strName, section);
 					}
 				}
 				break;
@@ -154,7 +154,7 @@ namespace Apoc3D
 		}
 		void XMLConfiguration::Add(ConfigurationSection* sect)
 		{
-			m_sections.insert(std::make_pair(sect->getName(), sect));
+			m_sections.Add(sect->getName(), sect);
 		}
 
 		void XMLConfiguration::Save(const String& filePath)
@@ -166,9 +166,9 @@ namespace Apoc3D
 			TiXmlElement* root = new TiXmlElement("Root");
 			doc.LinkEndChild(root);
 
-			for (Iterator iter = begin();iter!=end();iter++)
+			for (ChildTable::Enumerator iter = m_sections.GetEnumerator();iter.MoveNext();)
 			{
-				ConfigurationSection* sect = iter->second;
+				ConfigurationSection* sect = *iter.getCurrentValue();
 				TiXmlElement* elem = new TiXmlElement(StringUtils::toString(sect->getName()));
 				root->LinkEndChild(elem);
 				SaveNode(elem, sect);
@@ -179,14 +179,14 @@ namespace Apoc3D
 
 		void XMLConfiguration::SaveNode(TiXmlNode* node, ConfigurationSection* parent)
 		{
-			for (ConfigurationSection::AttributeIterator iter = parent->AttributeBegin();iter!=parent->AttributeEnd();iter++)
+			for (ConfigurationSection::AttributeEnumerator iter = parent->GetAttributeEnumrator();iter.MoveNext();)
 			{
-				node->ToElement()->SetAttribute(StringUtils::toString(iter->first), StringUtils::toString(iter->second));
+				node->ToElement()->SetAttribute(StringUtils::toString(*iter.getCurrentKey()), StringUtils::toString(*iter.getCurrentValue()));
 			}
 
-			for (ConfigurationSection::SubSectionIterator iter = parent->SubSectionBegin();iter!=parent->SubSectionEnd();iter++)
+			for (ConfigurationSection::SubSectionEnumerator iter = parent->GetSubSectionEnumrator();iter.MoveNext();)
 			{
-				ConfigurationSection* s = iter->second;
+				ConfigurationSection* s = *iter.getCurrentValue();
 				TiXmlElement* elem = new TiXmlElement(StringUtils::toString(s->getName()));
 				node->LinkEndChild(elem);
 				SaveNode(elem, s);

@@ -124,7 +124,7 @@ namespace Apoc3D
 			Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();
 			if (kb)
 			{
-				if (kb->IsKeyDown(KEY_LCONTROL) || kb->IsKeyDown(KEY_RCONTROL))
+				if (kb->IsPressing(KEY_LCONTROL) || kb->IsPressing(KEY_RCONTROL))
 				{
 					if (kb->IsKeyDown(KEY_V))
 					{
@@ -201,15 +201,11 @@ namespace Apoc3D
 
 				KeyboardEventsArgs eventArg;
 
-				if (kb->IsKeyDown(KEY_LSHIFT) || kb->IsKeyDown(KEY_RSHIFT))
-				{
-					eventArg.ShiftDown = true;
-				}
-				if (kb->IsKeyDown(KEY_LMENU) || kb->IsKeyDown(KEY_RMENU))
+				if (kb->IsPressing(KEY_LMENU) || kb->IsPressing(KEY_RMENU))
 				{
 					eventArg.AltDown = true;
 				}
-				if (kb->IsKeyDown(KEY_LCONTROL) || kb->IsKeyDown(KEY_RCONTROL))
+				if (kb->IsPressing(KEY_LCONTROL) || kb->IsPressing(KEY_RCONTROL))
 				{
 					eventArg.ControlDown = true;
 				}

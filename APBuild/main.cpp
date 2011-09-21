@@ -72,10 +72,10 @@ int Build(ConfigurationSection* sect)
 	}
 	else if (buildType == L"project" || buildType == L"folder")
 	{
-		for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
-			iter != sect->SubSectionEnd(); iter++)
+		for (ConfigurationSection::SubSectionEnumerator iter =  sect->GetSubSectionEnumrator();
+			iter.MoveNext();)
 		{
-			ConfigurationSection* item = iter->second;
+			ConfigurationSection* item = *iter.getCurrentValue();
 
 			Build(item);
 		}
@@ -141,9 +141,11 @@ int Build(int argc, _TCHAR* argv[])
 		FileLocation* fl = new FileLocation(configPath);
 		XMLConfiguration* config = new XMLConfiguration(fl);
 
-		ConfigurationSection* sect = config->begin()->second;
+		Configuration::ChildTable::Enumerator e = config->GetEnumerator();
+		e.MoveNext();
+		//ConfigurationSection* sect = config->GetEnumerator()->second;
 
-		return Build(sect);
+		return Build(*e.getCurrentValue());
 	}
 	else
 	{

@@ -37,16 +37,12 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		//template class APAPI unordered_map<String, String>;
-		//template class APAPI unordered_map<String, String>;
-		//template class APAPI unordered_map<String, ConfigurationSection*>;
 
 		class APAPI ConfigurationSection
 		{
 		protected:
-			typedef unordered_map<String, String> AttributeTable;
-			//typedef unordered_map<String, String> ValueTable;
-			typedef unordered_map<String, ConfigurationSection*> SubSectionTable;
+			typedef FastMap<String, String> AttributeTable;
+			typedef FastMap<String, ConfigurationSection*> SubSectionTable;
 
 			String m_name;
 			String m_value;
@@ -55,29 +51,26 @@ namespace Apoc3D
 			SubSectionTable m_subSection;
 
 		public:
-			typedef SubSectionTable::const_iterator SubSectionIterator;
-			typedef AttributeTable::const_iterator AttributeIterator;
+			typedef SubSectionTable::Enumerator SubSectionEnumerator;
+			typedef AttributeTable::Enumerator AttributeEnumerator;
 
 			ConfigurationSection(const String& name, int capacity)
-				: m_name(name), m_subSection(capacity)
+				: m_name(name), m_subSection(capacity, Apoc3D::Collections::IBuiltInEqualityComparer<String>::Default)
 			{ }
 			ConfigurationSection(const String& name)
 				: m_name(name) 
 			{ }
 			~ConfigurationSection()
 			{
-				for (SubSectionTable::iterator iter = m_subSection.begin();
-					iter != m_subSection.end(); iter++)
+				for (SubSectionTable::Enumerator e = m_subSection.GetEnumerator();e.MoveNext();)
 				{
-					ConfigurationSection* sect = iter->second;
+					ConfigurationSection* sect = *e.getCurrentValue();
 					delete sect;
 				}
 			}
+			AttributeTable::Enumerator GetAttributeEnumrator() const { return m_attributes.GetEnumerator(); }
+			SubSectionTable::Enumerator GetSubSectionEnumrator() const { return m_subSection.GetEnumerator(); }
 
-			AttributeIterator AttributeBegin() const { return m_attributes.cbegin(); }
-			AttributeIterator AttributeEnd() const { return m_attributes.cend(); }
-			SubSectionIterator SubSectionBegin() const { return m_subSection.cbegin(); }
-			SubSectionIterator SubSectionEnd() const { return m_subSection.cend(); }
 
 			void AddSection(ConfigurationSection* section);
 			void AddAttribute(const String& name, const String& value);

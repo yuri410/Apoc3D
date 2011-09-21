@@ -37,18 +37,20 @@ namespace Apoc3D
 
 		void ConfigurationSection::AddSection(ConfigurationSection* section)
 		{
-			pair<SubSectionTable::iterator,bool> ret = m_subSection.insert(SubSectionTable::value_type(section->getName(), section));
-			if (!ret.second)
+			if (m_subSection.Contains(section->getName()))
 			{
 				LogManager::getSingleton().Write(LOG_System,  L"Configuration Section with name '" + section->getName() + L"' already exists. Ignored.", LOGLVL_Warning);
 				delete section;
+				return;
 			}
+			m_subSection.Add(section->getName(), section);
 		}
 		void ConfigurationSection::AddAttribute(const String& name, const String& value)
 		{
 			try
 			{
-				m_attributes.insert(make_pair(name, value));
+				m_attributes.Add(name, value);
+				//m_attributes.insert(make_pair(name, value));
 			}
 			catch (const Apoc3DException& e)
 			{
@@ -72,65 +74,40 @@ namespace Apoc3D
 
 		bool ConfigurationSection::hasAttribute(const String& name) const
 		{
-			AttributeTable::const_iterator iter = m_attributes.find(name);
-
-			return (iter != m_attributes.end());
+			return m_attributes.Contains(name);
 		}
 
 		const String& ConfigurationSection::getValue(const String& name) const
 		{
-			SubSectionTable::const_iterator iter = m_subSection.find(name);
-
-			if (iter != m_subSection.end())
-			{
-				return iter->second->getValue();
-			}
-			
-			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
+			assert(m_subSection.Contains(name));
+			ConfigurationSection* sect = m_subSection[name];
+			return sect->getValue();
 		}
 		const String& ConfigurationSection::getAttribute(const String& name) const
 		{
-			AttributeTable::const_iterator iter = m_attributes.find(name);
-
-			if (iter != m_attributes.end())
-			{
-				return iter->second;
-			}
-
-			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
+			assert(m_attributes.Contains(name));
+			return m_attributes[name];
 		}
 		ConfigurationSection* ConfigurationSection::getSection(const String& name) const
 		{
-			SubSectionTable::const_iterator iter = m_subSection.find(name);
-
-			if (iter != m_subSection.end())
-			{
-				return iter->second;
-			}
-			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
+			assert(m_subSection.Contains(name));
+			ConfigurationSection* sect = m_subSection[name];
+			return sect;
 		}
 		
 		bool ConfigurationSection::tryGetValue(const String& name, String& result) const
 		{
-			SubSectionTable::const_iterator iter = m_subSection.find(name);
-
-			if (iter != m_subSection.end())
+			ConfigurationSection* sect;
+			if (m_subSection.TryGetValue(name, sect))
 			{
-				result = iter->second->getValue();
+				result = sect->getValue();
 				return true;
 			}
 			return false;
 		}
 		bool ConfigurationSection::tryGetAttribute(const String& name, String& result) const
 		{
-			AttributeTable::const_iterator iter = m_attributes.find(name);
-
-			if (iter != m_attributes.end())
-			{
-				result = iter->second;
-				return true;
-			}
-			return false;
+			return (m_attributes.TryGetValue(name, result));
 		}
 
 		void ConfigurationSection::Get(const String& key, IParsable* value) const

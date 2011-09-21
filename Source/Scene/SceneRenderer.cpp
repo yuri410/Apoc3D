@@ -153,9 +153,9 @@ namespace Apoc3D
 		{
 			m_selectedProc = -1;
 
-			for (Configuration::Iterator iter = config->begin(); iter != config->end(); iter++)
+			for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator(); iter.MoveNext();)
 			{
-				String file = iter->second->getAttribute(L"Script");
+				String file = (*iter.getCurrentValue())->getAttribute(L"Script");
 
 				// load proc
 				FileLocation* fl = FileSystem::getSingleton().Locate(file, FileLocateRule::Default);

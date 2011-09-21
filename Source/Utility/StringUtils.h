@@ -97,12 +97,12 @@ namespace Apoc3D
 			static void ToLowerCase(String& str);
 			static void ToUpperCase(String& str);
 
-			static HashHandle GetHashCode(const String& str)
+			static uint GetHashCode(const String& str)
 			{
 				const wchar_t* chPtr = str.c_str();
-				HashHandle even = 0x15051505;
-				HashHandle odd = even;
-				const HashHandle* numPtr = reinterpret_cast<const HashHandle*>(chPtr);
+				uint even = 0x15051505;
+				uint odd = even;
+				const uint* numPtr = reinterpret_cast<const uint*>(chPtr);
 				for (int i = str.size(); i > 0; i -= 4)
 				{
 					even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
@@ -111,7 +111,7 @@ namespace Apoc3D
 						break;
 					}
 					odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ numPtr[1];
-					numPtr += (sizeof(wchar_t) * 4) / sizeof(HashHandle);
+					numPtr += 2;
 				}
 				return even + odd * 0x5d588b65;
 			}

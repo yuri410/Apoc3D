@@ -32,12 +32,13 @@ namespace Apoc3D
 	{
 		Configuration::~Configuration()
 		{
-			for (ChildTable::iterator iter = m_sections.begin();
-				iter != m_sections.end(); iter++)
+			for (Configuration::ChildTable::Enumerator e = m_sections.GetEnumerator();
+				e.MoveNext();)
 			{
-				ConfigurationSection* sect = iter->second;
+				ConfigurationSection* sect = *e.getCurrentValue();
 				delete sect;
 			}
+
 		}
 	}
 }

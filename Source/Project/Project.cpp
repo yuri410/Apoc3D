@@ -150,20 +150,20 @@ namespace Apoc3D
 
 				uint i =0;
 				ConfigurationSection* srcsect = sect->getSection(L"Source");
-				for (ConfigurationSection::SubSectionIterator iter = srcsect->SubSectionBegin();
-					iter != sect->SubSectionEnd(); iter++)
+				for (ConfigurationSection::SubSectionEnumerator iter = srcsect->GetSubSectionEnumrator();
+					iter.MoveNext();)
 				{
-					const ConfigurationSection* ss = iter->second;
+					const ConfigurationSection* ss = *iter.getCurrentValue();
 
 					SubMapTable.Add(i, ss->getAttribute(L"FilePath"));
 					i++;
 				}
 				srcsect = sect->getSection(L"AlphaSource");
 				i=0;
-				for (ConfigurationSection::SubSectionIterator iter = srcsect->SubSectionBegin();
-					iter != sect->SubSectionEnd(); iter++)
+				for (ConfigurationSection::SubSectionEnumerator iter = srcsect->GetSubSectionEnumrator();
+					iter.MoveNext();)
 				{
-					const ConfigurationSection* ss = iter->second;
+					const ConfigurationSection* ss = *iter.getCurrentValue();
 
 					SubAlphaMapTable.Add(i, ss->getAttribute(L"FilePath"));
 					i++;
@@ -449,10 +449,10 @@ namespace Apoc3D
 			}
 		}
 
-		for (ConfigurationSection::SubSectionIterator iter = sect->SubSectionBegin();
-			iter != sect->SubSectionEnd(); iter++)
+		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
+			iter.MoveNext();)
 		{
-			const ConfigurationSection* ss = iter->second;
+			const ConfigurationSection* ss = *iter.getCurrentValue();
 
 			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
 			Ranges.Add(range);
@@ -1005,10 +1005,10 @@ namespace Apoc3D
 	}
 	void ProjectParse(Project* prj, FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
 	{
-		for (ConfigurationSection::SubSectionIterator iter =  sect->SubSectionBegin();
-			iter != sect->SubSectionEnd(); iter++)
+		for (ConfigurationSection::SubSectionEnumerator iter =  sect->GetSubSectionEnumrator();
+			iter.MoveNext();)
 		{
-			ConfigurationSection* sect = iter->second;
+			ConfigurationSection* sect = *iter.getCurrentValue();
 
 			ProjectItem* item = new ProjectItem(prj);
 
