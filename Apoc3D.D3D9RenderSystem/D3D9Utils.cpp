@@ -517,6 +517,7 @@ namespace Apoc3D
 				InitDepthFormatTable();
 				InitTFLTTable();
 				InitCubeTable();
+				InitTATable();
 			}
 
 			DWORD D3D9Utils::ConvertLockMode(LockMode mode)

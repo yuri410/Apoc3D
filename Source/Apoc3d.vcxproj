@@ -124,6 +124,7 @@
     <ClInclude Include="Graphics\Animation\AnimationManager.h" />
     <ClInclude Include="Graphics\Animation\AnimationPlayers.h" />
     <ClInclude Include="Graphics\Animation\AnimationTypes.h" />
+    <ClInclude Include="Graphics\BatchModelBuilder.h" />
     <ClInclude Include="Graphics\Camera.h" />
     <ClInclude Include="Core\CoreCommon.h" />
     <ClInclude Include="core\resource.h" />
@@ -268,6 +269,7 @@
     <ClCompile Include="Graphics\Animation\AnimationData.cpp" />
     <ClCompile Include="Graphics\Animation\AnimationManager.cpp" />
     <ClCompile Include="Graphics\Animation\AnimationPlayers.cpp" />
+    <ClCompile Include="Graphics\BatchModelBuilder.cpp" />
     <ClCompile Include="Graphics\Camera.cpp" />
     <ClCompile Include="Graphics\GraphicsCommon.cpp" />
     <ClCompile Include="Graphics\LockData.cpp" />

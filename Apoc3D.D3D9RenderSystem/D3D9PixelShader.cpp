@@ -317,7 +317,7 @@ namespace Apoc3D
 			void D3D9PixelShader::SetSamplerState(int samIndex, const ShaderSamplerState &state) 
 			{
 				D3DDevice* dev = m_device->getDevice();
-				
+
 				dev->SetSamplerState(samIndex, D3DSAMP_ADDRESSU, D3D9Utils::ConvertTextureAddress(state.AddressU));
 				dev->SetSamplerState(samIndex, D3DSAMP_ADDRESSV, D3D9Utils::ConvertTextureAddress(state.AddressV));
 				dev->SetSamplerState(samIndex, D3DSAMP_ADDRESSW, D3D9Utils::ConvertTextureAddress(state.AddressW));
