@@ -40,7 +40,15 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
-
+		ModelSharedData::ModelSharedData(RenderDevice* device, const ModelData* mdlData)
+			: Resource(), m_resourceLocation(0), m_renderDevice(device)
+		{
+			for (int i=0;i<mdlData->Entities.getCount();i++)
+			{
+				Mesh* mesh = new Mesh(m_renderDevice, mdlData->Entities[i]);
+				m_entities.Add(mesh);
+			}
+		}
 		ModelSharedData::ModelSharedData(RenderDevice* device, ResourceLocation* rl, bool managed)
 			: Resource(managed ? ModelManager::getSingletonPtr():0, rl->getName()), m_renderDevice(device), m_resourceLocation(rl)
 		{

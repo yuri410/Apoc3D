@@ -33,9 +33,29 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		typedef MeshData* LPMeshData;
+		class APAPI LPMeshDataEqualityComparer : public IEqualityComparer<LPMeshData>
+		{
+		public:
+
+			virtual bool Equals(const LPMeshData& x, const LPMeshData& y) const
+			{
+				const void* a = x;
+				const void* b = y;
+				return a==b;
+			}
+
+			virtual int64 GetHashCode(const LPMeshData& obj) const
+			{
+				const void* s = obj;
+				return reinterpret_cast<int64>(s);
+			}
+		};
+
 		ModelData* BatchModelBuilder::BuildData()
 		{
-			FastMap<MeshData*, int> targets;
+			LPMeshDataEqualityComparer comparer;
+			FastMap<MeshData*, int> targets(10, &comparer);
 			
 			FastList<ModelData*> sources(m_modelTable.getCount());
 			int index = 0;

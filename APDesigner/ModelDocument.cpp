@@ -955,9 +955,9 @@ namespace APDesigner
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[i]->getMaterials();
 			
-			for (int j=0;j<mtrls->getMaterialCount();j++)
+			for (uint j=0;j<mtrls->getMaterialCount();j++)
 			{
-				for (int k=0;k<mtrls->getFrameCount(j);k++)
+				for (uint k=0;k<mtrls->getFrameCount(j);k++)
 				{
 					Material* mtrl = mtrls->getMaterial(j,k);
 

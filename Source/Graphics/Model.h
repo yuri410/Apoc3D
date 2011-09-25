@@ -56,6 +56,7 @@ namespace Apoc3D
 		public:
 			FastList<Mesh*>& getEntities() { return m_entities; }
 
+			ModelSharedData(RenderDevice* device, const ModelData* mdlData);
 			ModelSharedData(RenderDevice* device, ResourceLocation* rl, bool managed = true);
 			virtual ~ModelSharedData();
 
