@@ -398,6 +398,12 @@ namespace APDesigner
 			m_swapYZ->eventPress().bind(this, &ModelDocument::RevertYZ_Pressed);
 
 			sx += 110;
+			m_rotateY = new Button(Point(sx, sy),100, L"Rotation Y 90");
+			m_rotateY->SetSkin(window->getUISkin());
+			m_rotateY->eventPress().bind(this, &ModelDocument::RotY_Pressed);
+
+
+			sx += 110;
 			m_zoomIn = new Button(Point(sx, sy),50, L"+");
 			m_zoomIn->SetSkin(window->getUISkin());
 			m_zoomIn->eventPress().bind(this, &ModelDocument::ZoomIn_Pressed);
@@ -485,6 +491,7 @@ namespace APDesigner
 		delete m_recenterModel;
 		delete m_revertZ;
 		delete m_swapYZ;
+		delete m_rotateY;
 		delete m_zoomIn;
 		delete m_zoomOut;
 	}
@@ -568,6 +575,7 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_recenterModel);
 		getDocumentForm()->getControls().Add(m_revertZ);
 		getDocumentForm()->getControls().Add(m_swapYZ);
+		getDocumentForm()->getControls().Add(m_rotateY);
 		getDocumentForm()->getControls().Add(m_zoomIn);
 		getDocumentForm()->getControls().Add(m_zoomOut);
 
@@ -1150,10 +1158,8 @@ namespace APDesigner
 			mesh->setBoundingSphere(sphere);
 		}
 	}
-	void ModelDocument::RevertYZ_Pressed(Control* ctrl)
+	void ModelDocument::Transform(const Matrix& transform)
 	{
-		Matrix rot;
-		Matrix::CreateRotationX(rot, Math::Half_PI);
 		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
 		{
 			Mesh* mesh = m_modelSData->getEntities()[i];
@@ -1171,12 +1177,10 @@ namespace APDesigner
 						float* dataOfs = reinterpret_cast<float*>(vtxData+posElem->getOffset()+j*mesh->getVertexSize());
 
 						Vector3 pos = Vector3Utils::LDVectorPtr(dataOfs);
-						pos = Vector3Utils::TransformNormal(pos, rot);
-						
+						pos = Vector3Utils::TransformCoordinate(pos, transform);
+
 						Vector3Utils::Store(pos, dataOfs);
-						//float temp = dataOfs[1];
-						//dataOfs[1] = dataOfs[2];
-						//dataOfs[2] = temp;
+
 					}
 
 					if (nrmElem &&  nrmElem->getType() == VEF_Vector3)
@@ -1184,14 +1188,10 @@ namespace APDesigner
 						float* dataOfs = reinterpret_cast<float*>(vtxData+nrmElem->getOffset()+j*mesh->getVertexSize());
 
 						Vector3 pos = Vector3Utils::LDVectorPtr(dataOfs);
-						pos = Vector3Utils::TransformNormal(pos, rot);
+						pos = Vector3Utils::TransformNormal(pos, transform);
 
 						Vector3Utils::Store(pos, dataOfs);
-						//float* dataOfs = reinterpret_cast<float*>(vtxData+nrmElem->getOffset()+j*mesh->getVertexSize());
 
-						//float temp = dataOfs[1];
-						//dataOfs[1] = dataOfs[2];
-						//dataOfs[2] = temp;
 					}
 
 				}
@@ -1199,14 +1199,18 @@ namespace APDesigner
 			}
 
 			BoundingSphere sphere = mesh->getBoundingSphere();
-			
+			sphere.Center = Vector3Utils::TransformCoordinate(sphere.Center, transform);
 
-			float temp2 = _V3Y(sphere.Center);
-			_V3Y(sphere.Center) = _V3Z(sphere.Center);
-			_V3Z(sphere.Center) = temp2;
 
 			mesh->setBoundingSphere(sphere);
 		}
+	}
+	void ModelDocument::RevertYZ_Pressed(Control* ctrl)
+	{
+		Matrix rot;
+		Matrix::CreateRotationX(rot, Math::Half_PI);
+		Transform(rot);
+
 	}
 	void ModelDocument::RevertZ_Pressed(Control* ctrl)
 	{
@@ -1246,6 +1250,12 @@ namespace APDesigner
 			_V3Z(sphere.Center) = -_V3Z(sphere.Center);
 			mesh->setBoundingSphere(sphere);
 		}
+	}
+	void ModelDocument::RotY_Pressed(Control* ctrl)
+	{
+		Matrix rot;
+		Matrix::CreateRotationY(rot, Math::Half_PI);
+		Transform(rot);
 	}
 	void ModelDocument::ZoomIn_Pressed(Control* ctrl)
 	{

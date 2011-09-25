@@ -190,27 +190,35 @@ namespace Apoc3D
 							SetMatrix(ep, rop.BoneTransform.Transfroms, rop.BoneTransform.Count);
 							break;
 						case EPUSAGE_Tex0:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(0));
 							break;
 						case EPUSAGE_Tex1:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(1));
 							break;
 						case EPUSAGE_Tex2:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(2));
 							break;
 						case EPUSAGE_Tex3:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(3));
 							break;
 						case EPUSAGE_Tex4:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(4));
 							break;
 						case EPUSAGE_Tex5:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(5));
 							break;
 						case EPUSAGE_Tex6:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(6));
 							break;
 						case EPUSAGE_Tex7:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(7));
 							break;
 						case EPUSAGE_Tex8:

@@ -139,6 +139,7 @@ namespace APDesigner
 		Button* m_recenterModel;
 		Button* m_revertZ;
 		Button* m_swapYZ;
+		Button* m_rotateY;
 		Button* m_zoomIn;
 		Button* m_zoomOut;
 
@@ -206,9 +207,12 @@ namespace APDesigner
 		void Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 
+		void Transform(const Matrix& transform);
+
 		void RecenterModel_Pressed(Control* ctrl);
 		void RevertZ_Pressed(Control* ctrl);
 		void RevertYZ_Pressed(Control* ctrl);
+		void RotY_Pressed(Control* ctrl);
 		void ZoomIn_Pressed(Control* ctrl);
 		void ZoomOut_Pressed(Control* ctrl);
 
