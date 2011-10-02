@@ -30,6 +30,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "labtd", "twl\labtd\labtd.vc
 		{84FF48B6-E1C8-447E-A1A1-B7D67E045E68} = {84FF48B6-E1C8-447E-A1A1-B7D67E045E68}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mag", "mag\mag.vcxproj", "{63708821-709C-4872-8337-0E7B72C3E156}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -114,6 +116,15 @@ Global
 		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release64|Win32.Build.0 = Release64|Win32
 		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release64|x64.ActiveCfg = Release64|x64
 		{CF53E5EB-8003-49F8-837E-4D26053244E8}.Release64|x64.Build.0 = Release64|x64
+		{63708821-709C-4872-8337-0E7B72C3E156}.Debug|Win32.ActiveCfg = Debug|Win32
+		{63708821-709C-4872-8337-0E7B72C3E156}.Debug|Win32.Build.0 = Debug|Win32
+		{63708821-709C-4872-8337-0E7B72C3E156}.Debug|x64.ActiveCfg = Debug|Win32
+		{63708821-709C-4872-8337-0E7B72C3E156}.Release|Win32.ActiveCfg = Release|Win32
+		{63708821-709C-4872-8337-0E7B72C3E156}.Release|Win32.Build.0 = Release|Win32
+		{63708821-709C-4872-8337-0E7B72C3E156}.Release|x64.ActiveCfg = Release|Win32
+		{63708821-709C-4872-8337-0E7B72C3E156}.Release64|Win32.ActiveCfg = Release|Win32
+		{63708821-709C-4872-8337-0E7B72C3E156}.Release64|Win32.Build.0 = Release|Win32
+		{63708821-709C-4872-8337-0E7B72C3E156}.Release64|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
