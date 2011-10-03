@@ -586,6 +586,8 @@ namespace APBuild
 		void ProcessSkeleton(KFbxNode* pNode);
 		void ProcessMesh(KFbxNode* pNode);
 
+		void FixSkeletonTransform(KFbxNode* pSceneRoot, KFbxNode* pNode);
+
 		void ProcessBoneWeights(KFbxMesh* pFBXMesh, std::vector<BoneWeight>& meshBoneWeights);
 		void ProcessBoneWeights(KFbxSkin* pFBXSkin, std::vector<BoneWeight>& meshBoneWeights);
 

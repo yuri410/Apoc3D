@@ -399,13 +399,15 @@ namespace APBuild
 		for( int i = 0; i < takeArray.GetCount(); ++i )
 		{
 			KString* takeName = takeArray.GetAt(i);
+			
 
 			if( std::string(takeName->Buffer()) != "Default" )
 			{
 				KFbxTakeInfo* lCurrentTakeInfo = pScene->GetTakeInfo(*takeName);
 
 				//pScene->SetCurrentTake(takeName->Buffer());
-				
+				pScene->ActiveAnimStackName.Set(*takeName);
+
 				KTime KStart;
 				KTime KStop;
 				if (lCurrentTakeInfo)
@@ -597,6 +599,41 @@ namespace APBuild
 		else
 		{
 			m_meshes.Add(pNode->GetName(), mesh);
+		}
+		
+	}
+
+	void FbxImporter::FixSkeletonTransform(KFbxNode* pSceneRoot,KFbxNode* pNode)
+	{
+		KFbxNodeAttribute* pNodeAttribute = pNode->GetNodeAttribute();
+		if (pNodeAttribute)
+		{
+			if (pNodeAttribute->GetAttributeType() == KFbxNodeAttribute::eSKELETON)
+			{
+				if( m_pSkeleton )
+				{
+					FISkeletonBone* pBone = m_pSkeleton->FindBone(pNode->GetName());
+
+					if( pBone )
+					{
+						KTime time = 0;
+
+						// frame *= AbsoluteTransform * invRootTrans * invSkeleRootTrans
+						// SkeleRootTrans = AbsoluteTransform * invRootTrans
+
+						Matrix absoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode, time);
+						//Matrix invRootTrans = pSceneRoot;
+
+					}
+				}
+			}
+			else
+			{
+				for( int i = 0; i < pNode->GetChildCount(); ++i )
+				{
+					FixSkeletonTransform(pSceneRoot, pNode->GetChild(i));
+				}
+			}
 		}
 		
 	}
@@ -865,6 +902,7 @@ namespace APBuild
 		{
 			return Matrix::Identity;
 		}
+		
 		Matrix a,b,c;
 		a = ConvertMatrix(pNode->EvaluateGlobalTransform(time));
 		b = GetGeometricOffset(pNode);
