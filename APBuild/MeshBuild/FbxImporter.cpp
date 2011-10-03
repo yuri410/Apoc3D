@@ -865,7 +865,12 @@ namespace APBuild
 		{
 			return Matrix::Identity;
 		}
-		return ConvertMatrix(pNode->EvaluateGlobalTransform(time));
+		Matrix a,b,c;
+		a = ConvertMatrix(pNode->EvaluateGlobalTransform(time));
+		b = GetGeometricOffset(pNode);
+
+		Matrix::Multiply(c, b,a);
+		return c;
 	}
 	Matrix FbxImporter::GetGeometricOffset(KFbxNode* pNode)
 	{

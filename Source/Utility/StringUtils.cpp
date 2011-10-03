@@ -53,13 +53,10 @@ namespace Apoc3D
 
 		bool StringUtils::ParseBool(const String& val)
 		{
-			wistringstream str(val);
-			str.setf(ios::boolalpha);
-			str.imbue(locale::classic());
-
-			bool ret;
-			str >> ret;
-			return ret;
+			String v = val;
+			ToLowerCase(v);
+			return (StartsWidth(v, L"true") || StartsWidth(v, L"yes")
+				|| StartsWidth(v, L"1"));
 		}
 		uint16 StringUtils::ParseUInt16(const String& val)
 		{
