@@ -52,7 +52,7 @@ namespace Apoc3DEx
 				}
 				delete[] m_units[i];
 			}
-			delete m_units;
+			delete[] m_units;
 		}
 
 		PathFinder* PathFinderManager::CreatePathFinder()
