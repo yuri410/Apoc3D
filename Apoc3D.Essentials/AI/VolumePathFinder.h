@@ -68,7 +68,7 @@ namespace Apoc3DEx
 			VolumePathFinderManager(VolumePathFinderField* fld, int maxWidth, int maxHeight, int maxZ);
 			~VolumePathFinderManager();
 
-			VolumePathFinder* CreatePathFinder();
+			VolumePathFinder* CreatePathFinder() const;
 			VolumePathFinderField* getFieldTable() const { return m_terrain; }
 		private:
 			AStarNode3**** m_units;

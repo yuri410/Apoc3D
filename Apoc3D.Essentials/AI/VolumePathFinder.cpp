@@ -63,7 +63,7 @@ namespace Apoc3DEx
 			delete[] m_units;
 		}
 
-		VolumePathFinder* VolumePathFinderManager::CreatePathFinder()
+		VolumePathFinder* VolumePathFinderManager::CreatePathFinder() const
 		{
 			return new VolumePathFinder(m_terrain, m_units);
 		}
