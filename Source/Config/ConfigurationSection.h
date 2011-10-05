@@ -71,7 +71,6 @@ namespace Apoc3D
 			AttributeTable::Enumerator GetAttributeEnumrator() const { return m_attributes.GetEnumerator(); }
 			SubSectionTable::Enumerator GetSubSectionEnumrator() const { return m_subSection.GetEnumerator(); }
 
-
 			void AddSection(ConfigurationSection* section);
 			void AddAttribute(const String& name, const String& value);
 			void SetValue( const String& value);
@@ -130,6 +129,8 @@ namespace Apoc3D
 			bool TryGetAttributeUInt(const String& key, uint32& result) const;
 			bool TryGetAttributeColorValue(const String& key, ColorValue& result) const;
 
+
+			int getSubSectionCount() const { return m_subSection.getCount(); }
 		};
 	}
 }
