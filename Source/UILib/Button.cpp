@@ -315,11 +315,16 @@ namespace Apoc3D
 			: Control(position), m_count(titles.getCount()), m_hoverIndex(-1), m_selectedIndex(0)
 		{ 
 			Size.X = (int)width;
-			Size.Y = m_skin->ButtonTexture->getHeight();
+			
 			m_texPos = new Point[m_count];
 			m_titles = new String[m_count];
 			m_btRect = new Apoc3D::Math::Rectangle[m_count];
 			m_rect = new Apoc3D::Math::Rectangle[m_count];
+
+			for (int i=0;i<titles.getCount();i++)
+			{
+				m_titles[i] = titles[i];
+			}
 		}
 		ButtonRow::~ButtonRow()
 		{
@@ -330,6 +335,8 @@ namespace Apoc3D
 		}
 		void ButtonRow::Initialize(RenderDevice* device)
 		{
+			Size.Y = m_skin->ButtonTexture->getHeight();
+
 			Control::Initialize(device);
 			Point s = m_fontRef->MeasureString(Text);
 			float cellWidth = (float)Size.X / m_count;
@@ -395,11 +402,11 @@ namespace Apoc3D
 			}
 
 			Apoc3D::Math::Rectangle rect(
-				m_tailPos.X-m_skin->BtnRowSrcRect[0].Width,
+				m_tailPos.X-m_skin->BtnRowSrcRect[2].Width,
 				m_tailPos.Y,
-				m_skin->BtnRowSrcRect[0].Width, 
+				m_skin->BtnRowSrcRect[2].Width, 
 				m_skin->BtnRowSrcRect->Height);
-			sprite->Draw(m_skin->ButtonTexture, rect, &m_skin->BtnRowSrcRect[0], 
+			sprite->Draw(m_skin->ButtonTexture, rect, &m_skin->BtnRowSrcRect[2], 
 				(m_selectedIndex == m_count-1)?m_skin->BackColor : m_skin->BtnDimColor);
 		}
 		void ButtonRow::Update(const GameTime* const time)
