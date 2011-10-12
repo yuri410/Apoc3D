@@ -53,7 +53,7 @@ namespace Apoc3D
 
 
 			Texture* WhitePixelTexture;
-			Apoc3D::Math::Rectangle BtnRowSrcRect[2];
+			//Apoc3D::Math::Rectangle BtnRowSrcRect[2];
 			Apoc3D::Math::Rectangle BtnRowSeparator;
 			String ControlFontName;
 

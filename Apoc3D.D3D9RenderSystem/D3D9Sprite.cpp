@@ -56,43 +56,120 @@ namespace Apoc3D
 
 			void D3D9Sprite::Draw(Texture* texture, Vector2 pos, uint color)
 			{
-				D3DVector3 position;
-				position.x = Vector2Utils::GetX(pos);
-				position.y = Vector2Utils::GetY(pos);
-				position.z = 0;
-				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-					0, 0, &position, color);
-				assert(SUCCEEDED(hr));
+				if (isUsingStack())
+				{
+					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
+
+					D3DMatrix trans = baseTrans;
+					trans._41 += Vector2Utils::GetX(pos);
+					trans._42 += Vector2Utils::GetY(pos);
+
+					m_sprite->SetTransform(&trans);
+
+					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+						NULL, NULL, NULL, color);
+					assert(SUCCEEDED(hr));
+
+					m_sprite->SetTransform(&baseTrans);
+				}
+				else
+				{
+					D3DVector3 position;
+					position.x = Vector2Utils::GetX(pos);
+					position.y = Vector2Utils::GetY(pos);
+					position.z = 0;
+					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+						0, 0, &position, color);
+					assert(SUCCEEDED(hr));
+				}
 			}
 			void D3D9Sprite::Draw(Texture* texture, const Point& pos, uint color)
 			{
-				D3DVector3 position;
-				position.x = (float)pos.X;
-				position.y = (float)pos.Y;
-				position.z = 0;
-				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-					0, 0, &position, color);
-				assert(SUCCEEDED(hr));
+				if (isUsingStack())
+				{
+					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
+
+					D3DMatrix trans = baseTrans;
+					trans._41 += pos.X;
+					trans._42 += pos.Y;
+
+					m_sprite->SetTransform(&trans);
+
+					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+						NULL, NULL, NULL, color);
+					assert(SUCCEEDED(hr));
+
+					m_sprite->SetTransform(&baseTrans);
+				}
+				else
+				{
+					D3DVector3 position;
+					position.x = (float)pos.X;
+					position.y = (float)pos.Y;
+					position.z = 0;
+					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+						0, 0, &position, color);
+					assert(SUCCEEDED(hr));
+				}
 			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
 			{
-				D3DVector3 position;
-				position.x = pos.X;
-				position.y = pos.Y;
-				position.z = 0;
-				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-					0, 0, &position, color);
-				assert(SUCCEEDED(hr));
+				if (isUsingStack())
+				{
+					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
+
+					D3DMatrix trans = baseTrans;
+					trans._41 += pos.X;
+					trans._42 += pos.Y;
+
+					m_sprite->SetTransform(&trans);
+
+					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+						NULL, NULL, NULL, color);
+					assert(SUCCEEDED(hr));
+
+					m_sprite->SetTransform(&baseTrans);
+				}
+				else
+				{
+					D3DVector3 position;
+					position.x = pos.X;
+					position.y = pos.Y;
+					position.z = 0;
+					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+						0, 0, &position, color);
+					assert(SUCCEEDED(hr));
+				}
 			}
 			void D3D9Sprite::Draw(Texture* texture, int x, int y, uint color)
 			{
-				D3DVector3 position;
-				position.x = static_cast<float>(x);
-				position.y = static_cast<float>(y);
-				position.z = 0;
-				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-					0, 0, &position, color);
-				assert(SUCCEEDED(hr));
+				if (isUsingStack())
+				{
+					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
+
+					D3DMatrix trans = baseTrans;
+					trans._41 += x;
+					trans._42 += y;
+
+					m_sprite->SetTransform(&trans);
+
+					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+						NULL, NULL, NULL, color);
+					assert(SUCCEEDED(hr));
+
+					m_sprite->SetTransform(&baseTrans);
+				}
+				else
+				{
+					D3DVector3 position;
+					position.x = static_cast<float>(x);
+					position.y = static_cast<float>(y);
+					position.z = 0;
+					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+						0, 0, &position, color);
+					assert(SUCCEEDED(hr));
+				}
+				
 			}
 			void D3D9Sprite::Draw(Texture* texture, 
 				const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)

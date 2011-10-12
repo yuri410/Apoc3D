@@ -338,12 +338,13 @@ namespace Apoc3D
 			Size.Y = m_skin->ButtonTexture->getHeight();
 
 			Control::Initialize(device);
-			Point s = m_fontRef->MeasureString(Text);
+			
 			float cellWidth = (float)Size.X / m_count;
 			Apoc3D::Math::Rectangle area = getArea();
 
 			for (int i=0;i<m_count;i++)
 			{
+				Point s = m_fontRef->MeasureString(m_titles[i]);
 				m_btRect[i] = Apoc3D::Math::Rectangle(
 					area.X + (int)(cellWidth*i), area.Y, (int)cellWidth, m_skin->ButtonTexture->getHeight());
 				m_texPos[i] = Point((int)(m_btRect[i].X + (m_btRect[i].Width - s.X) * 0.5f),
@@ -387,27 +388,46 @@ namespace Apoc3D
 			for (int i=0;i<m_count;i++)
 			{
 				if (i == m_selectedIndex)
-					sprite->Draw(m_skin->ButtonTexture, m_rect[i], &m_skin->BtnRowSrcRect[1], m_skin->BackColor);
+					sprite->Draw(m_skin->ButtonTexture, m_rect[i], &m_skin->BtnSrcRect[1], m_skin->BackColor);
 				else if (i == m_hoverIndex)
-					sprite->Draw(m_skin->ButtonTexture, m_rect[i], &m_skin->BtnRowSrcRect[1], m_skin->BtnHighLightColor);
+					sprite->Draw(m_skin->ButtonTexture, m_rect[i], &m_skin->BtnSrcRect[1], m_skin->BtnHighLightColor);
 				else
-					sprite->Draw(m_skin->ButtonTexture, m_rect[i], &m_skin->BtnRowSrcRect[1], m_skin->BtnDimColor);
+					sprite->Draw(m_skin->ButtonTexture, m_rect[i], &m_skin->BtnSrcRect[1], m_skin->BtnDimColor);
 
 				if (i>0)
 					sprite->Draw(m_skin->ButtonTexture, 
 					Apoc3D::Math::Rectangle(m_rect[i].X-1,m_rect[i].Y,1,m_rect[i].Height),
-					&m_skin->BtnRowSrcRect[1], CV_Black);
+					&m_skin->BtnSrcRect[1], CV_Black);
 
 				m_fontRef->DrawString(sprite, m_titles[i], m_texPos[i], m_skin->ForeColor);
 			}
 
+			//m_btnDestRect[0].X = (int)(Position.X);
+			//m_btnDestRect[0].Y = (int)(Position.Y);
+			//m_btnDestRect[0].Width = m_skin->ButtonTexture->getWidth() - 1;
+			//m_btnDestRect[0].Height = (int)Size.Y;
+
+			//m_btnDestRect[1].X = m_btnDestRect[0].X + m_btnDestRect[0].Width;
+			//m_btnDestRect[1].Y = m_btnDestRect[0].Y;
+			//m_btnDestRect[1].Width = (int)Size.X - m_btnDestRect[0].Width * 2;
+			//m_btnDestRect[1].Height = m_btnDestRect[0].Height;
+
+			//m_btnDestRect[2].X = m_btnDestRect[1].X + m_btnDestRect[1].Width;
+			//m_btnDestRect[2].Y = m_btnDestRect[0].Y;
+			//m_btnDestRect[2].Width = m_btnDestRect[0].Width;
+			//m_btnDestRect[2].Height = m_btnDestRect[0].Height;
+
 			Apoc3D::Math::Rectangle rect(
-				m_tailPos.X-m_skin->BtnRowSrcRect[2].Width,
+				m_tailPos.X,
 				m_tailPos.Y,
-				m_skin->BtnRowSrcRect[2].Width, 
-				m_skin->BtnRowSrcRect->Height);
-			sprite->Draw(m_skin->ButtonTexture, rect, &m_skin->BtnRowSrcRect[2], 
-				(m_selectedIndex == m_count-1)?m_skin->BackColor : m_skin->BtnDimColor);
+				m_skin->BtnSrcRect[0].Width, 
+				m_skin->BtnSrcRect[0].Height);
+			if (m_selectedIndex == m_count-1)
+				sprite->Draw(m_skin->ButtonTexture, rect, &m_skin->BtnSrcRect[2], m_skin->BackColor);
+			else
+				sprite->Draw(m_skin->ButtonTexture, rect, &m_skin->BtnSrcRect[2], m_skin->BtnDimColor);
+					//(m_hoverIndex == m_count-1)? m_skin->BtnHighLightColor : m_skin->BtnDimColor);
+
 		}
 		void ButtonRow::Update(const GameTime* const time)
 		{
