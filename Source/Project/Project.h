@@ -88,6 +88,8 @@ namespace Apoc3D
 
 		}
 
+		String EditorExtension;
+
 		String DestFile;
 
 		virtual bool IsNotBuilt();

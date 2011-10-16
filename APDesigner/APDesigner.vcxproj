@@ -50,7 +50,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;APOC3DES_DLLEX;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\Source;$(SolutionDir)\include;$(SolutionDir)\extra</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <SmallerTypeCheck>true</SmallerTypeCheck>
@@ -93,6 +93,7 @@
     <ClInclude Include="CommonDialog\DialogCommon.h" />
     <ClInclude Include="CommonDialog\FileDialog.h" />
     <ClInclude Include="Document.h" />
+    <ClInclude Include="EditorExtensionManager.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="ModelDocument.h" />
     <ClInclude Include="ObjectEditor.h" />
@@ -108,6 +109,7 @@
     <ClCompile Include="CommonDialog\ChooseColor.cpp" />
     <ClCompile Include="CommonDialog\DialogCommon.cpp" />
     <ClCompile Include="CommonDialog\FileDialog.cpp" />
+    <ClCompile Include="EditorExtensionManager.cpp" />
     <ClCompile Include="UIResources.cpp" />
     <ClCompile Include="Document.cpp" />
     <ClCompile Include="main.cpp" />

@@ -801,10 +801,15 @@ namespace Apoc3D
 	void ProjectCustomItem::Parse(const ConfigurationSection* sect)
 	{
 		DestFile = sect->getAttribute(L"DestinationFile");
+		sect->tryGetAttribute(L"EditorExtension", EditorExtension);
 	}
 	void ProjectCustomItem::Save(ConfigurationSection* sect, bool savingBuild)
 	{
 		sect->AddAttribute(L"DestinationFile", DestFile);
+		if (EditorExtension.size())
+		{
+			sect->AddAttribute(L"EditorExtension", EditorExtension);
+		}
 	}
 	std::vector<String> ProjectCustomItem::GetAllOutputFiles()
 	{
