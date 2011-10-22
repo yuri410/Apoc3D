@@ -24,6 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "EditorExtensionManager.h"
 #include "Core/Logging.h"
 
+SINGLETON_DECL(APDesigner::EditorExtensionManager);
+
 namespace APDesigner
 {
 	void EditorExtensionManager::RegisterExtension(EditorExtension* ext)

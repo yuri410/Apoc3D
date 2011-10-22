@@ -79,6 +79,14 @@ namespace APBuild
 		config.Parse(sect);
 
 		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
+		for (int i=0;i<config.Files.getCount();i++)
+		{
+			if (!File::FileExists(config.Files[i]))
+			{
+				CompileLog::WriteError(L"Source file does not exist: " + config.Files[i], config.DestFile);
+				return;
+			}
+		}
 
 		//CompileLog::WriteInformation(L"Pak builder currently only supports directory flatten build.", L"");
 

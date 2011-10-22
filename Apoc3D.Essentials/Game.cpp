@@ -70,7 +70,7 @@ namespace Apoc3DEx
 	}
 	void Game::Finalize()
 	{
-		InputAPIManager::getSingleton().Finalize();
+		InputAPIManager::getSingleton().FinalizeInput();
 	}
 	void Game::Load()
 	{

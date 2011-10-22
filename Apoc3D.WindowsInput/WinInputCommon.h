@@ -15,10 +15,20 @@
 
 #pragma comment(lib, "Apoc3D.lib")
 
+
+
 #ifdef _DEBUG
-#pragma comment(lib, "OIS_static_d.lib")
+#	ifdef APOC3D_STATIC_RT
+#		pragma comment(lib, "OIS_static_d_mt.lib")
+#	else
+#		pragma comment(lib, "OIS_static_d.lib")
+#	endif
 #else
-#pragma comment(lib, "OIS_static.lib")
+#	ifdef APOC3D_STATIC_RT
+#		pragma comment(lib, "OIS_static_mt.lib")
+#	else
+#		pragma comment(lib, "OIS_static.lib")
+#	endif
 #endif
 
 namespace Apoc3D

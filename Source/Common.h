@@ -63,12 +63,17 @@ typedef BatchHandle HashHandle;
 #	undef APOC3D_PLATFORM_NAME
 #	define APOC3D_PLATFORM_NAME L"linux"
 #endif
-#define APAPI
-//#if APOC3D_DLLEX
-//#define APAPI __declspec( dllexport )
-//#else
-//#define APAPI __declspec( dllimport )
-//#endif
+
+#ifndef APOC3D_DYBLIB
+#	define APAPI
+#else
+#	if APOC3D_DLLEX
+#		define APAPI __declspec( dllexport )
+#	else
+#		define APAPI __declspec( dllimport )
+#	endif
+#endif
+
 
 
 //#define VER(x,y,z,w) D3DCOLOR_ARGB(x,y,z,w);
@@ -395,6 +400,7 @@ namespace Apoc3D
 		class TreeView;
 		class TreeViewNode;
 		class ListBox;
+		class ListView;
 		class TextBox;
 		class CheckBox;
 		class CheckboxGroup;

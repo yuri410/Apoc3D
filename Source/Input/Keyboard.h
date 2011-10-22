@@ -190,9 +190,9 @@ namespace Apoc3D
 			bool m_lastKeyState[KEYCODE_MAX];
 
 			Keyboard();
+		public:
 			virtual ~Keyboard();
 
-		public:
 			bool IsKeyDown(KeyboardKeyCode code) const { return m_keyState[(int)code] && !m_lastKeyState[(int)code]; }
 			bool IsKeyUp(KeyboardKeyCode code) const { return !m_keyState[(int)code] && m_lastKeyState[(int)code]; }
 

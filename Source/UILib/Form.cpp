@@ -137,6 +137,8 @@ namespace Apoc3D
 			{
 				m_menu->Close();
 			}
+			if (UIRoot::getTopMostForm() == this)
+				UIRoot::setTopMostForm(0);
 		}
 		void Form::Minimize()
 		{
@@ -1277,14 +1279,14 @@ namespace Apoc3D
 				m_topMostForm->Draw(m_sprite);
 			}
 
-			//for (int i=m_forms.getCount()-1;i>=0;i--)
-			//{
-			//	if (m_forms[i]->getState() == Form::FWS_Minimized &&
-			//		m_forms[i]->Visible && m_forms[i] != m_topMostForm)
-			//	{
-			//		m_forms[i]->Draw(m_sprite);
-			//	}
-			//}
+			for (int i=m_forms.getCount()-1;i>=0;i--)
+			{
+				if (m_forms[i]->getState() == Form::FWS_Minimized &&
+					m_forms[i]->Visible && m_forms[i] != m_topMostForm)
+				{
+					m_forms[i]->Draw(m_sprite);
+				}
+			}
 
 			if (m_contextMenu && m_contextMenu->Visible && m_contextMenu->getState() != MENU_Closed)
 			{

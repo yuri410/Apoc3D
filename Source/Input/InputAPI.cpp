@@ -173,6 +173,14 @@ namespace Apoc3D
 			}
 			throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
 		}
+		void InputAPIManager::FinalizeInput()
+		{
+			if (m_mouse)
+				delete m_mouse;
+			if (m_keyboard)
+				delete m_keyboard;
+
+		}
 		Mouse* InputAPIManager::CreateMouse()
 		{
 			return m_selectedAPI->CreateMouse();

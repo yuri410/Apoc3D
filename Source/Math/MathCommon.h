@@ -70,6 +70,18 @@ namespace Apoc3D
 		{
 			return a + (b-a)*amount;
 		}
+		static inline float Saturate(float v)
+		{
+			if (v>1)
+				v=1;
+			return (v<0) ? 0:v;
+		}
+		static inline float Clamp(float v, float _min, float _max)
+		{
+			if (v > _max)
+				v = _max;
+			return (v < _min) ? _min : v;
+		}
 	}
 }
 

@@ -247,6 +247,7 @@ namespace Apoc3D
 			virtual void Update(const GameTime* const time);
 			virtual void Draw(Sprite* sprite);
 
+			List2D<String>& getItems() { return m_items; }
 			List<Header>& getColumnHeader() { return m_columnHeader; }
 			ListViewHeaderStyle getHeaderStyle() const { return m_headerStyle; }
 			void setHeaderStyle(ListViewHeaderStyle s) { m_headerStyle = s; }

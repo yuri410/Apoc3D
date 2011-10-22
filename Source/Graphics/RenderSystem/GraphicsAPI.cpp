@@ -122,7 +122,7 @@ namespace Apoc3D
 					if (iter != m_factories.end())
 					{
 						APIList* facList = iter->second;
-						for (int j = facList->size(); j >0; j--)
+						for (int j = facList->size()-1; j >0; j--)
 						{
 							if (facList->operator[](j).Factory == fac)
 							{

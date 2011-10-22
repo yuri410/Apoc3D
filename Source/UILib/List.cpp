@@ -856,7 +856,7 @@ namespace Apoc3D
 		{
 			Control::Initialize(device);
 
-			Size.Y = (Size.Y - 2 + 12) / m_fontRef->getLineHeight();
+			//Size.Y = (Size.Y - 2 + 12) / m_fontRef->getLineHeight();
 
 			m_backArea.Width = Size.X;
 			m_backArea.Height = Size.Y;
@@ -866,10 +866,12 @@ namespace Apoc3D
 			// init scrollbars
 			m_vScrollBar = new ScrollBar(Position+Point(Size.X-13, 1), ScrollBar::SCRBAR_Vertical, Size.Y - 14);
 			m_vScrollBar->setOwner(getOwner());
+			m_vScrollBar->SetSkin(m_skin);
 			m_vScrollBar->Initialize(device);
 
 			m_hScrollBar = new ScrollBar(Position+Point(1, Size.Y-13), ScrollBar::SCRBAR_Horizontal, Size.X -14);
 			m_hScrollBar->setOwner(getOwner());
+			m_hScrollBar->SetSkin(m_skin);
 			m_hScrollBar->Initialize(device);
 
 		}
@@ -1063,11 +1065,11 @@ namespace Apoc3D
 					Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 					Apoc3D::Math::Rectangle hoverArea(m_headerArea);
 					Point pos = GetAbsolutePosition();
-					m_headerArea.X += pos.X;
-					m_headerArea.Y += pos.Y;
+					//m_headerArea.X += Position.X;
+					//m_headerArea.Y += Position.Y;
 
 					if (m_headerStyle == LHSTYLE_Clickable && 
-						m_headerArea.Contains(mouse->GetCurrentPosition()) &&
+						m_headerArea.Contains(mouse->GetCurrentPosition()-pos) &&
 						UIRoot::getActiveForm() == getOwner())
 					{
 						m_headerHoverIndex = i;
@@ -1175,17 +1177,19 @@ namespace Apoc3D
 		{
 			if (getOwner() == UIRoot::getTopMostForm())
 			{
-				m_sizeArea.X = m_headerArea.X + m_headerArea.Width - 5 + Position.X;
-				m_sizeArea.Y = m_headerArea.Y + Position.Y;
+				m_sizeArea.X = m_headerArea.X + m_headerArea.Width - 5;
+				m_sizeArea.Y = m_headerArea.Y;
 				m_sizeArea.Width = 10;
 				m_sizeArea.Height =  m_headerArea.Height;
 
 				Point absP = GetAbsolutePosition();
-				m_sizeArea.X += absP.X;
-				m_sizeArea.Y += absP.Y;
+				//m_sizeArea.X += absP.X;
+				//m_sizeArea.Y += absP.Y;
 				
 				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-				if (m_sizeArea.Contains(mouse->GetCurrentPosition()))
+				Point mousePos = mouse->GetCurrentPosition();
+				mousePos = mousePos - absP;
+				if (m_sizeArea.Contains(mousePos))
 				{
 					if (mouse->IsLeftPressed())
 					{

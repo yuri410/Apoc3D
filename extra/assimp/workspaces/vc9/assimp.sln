@@ -25,6 +25,8 @@ Global
 		release-dll|x64 = release-dll|x64
 		release-noboost-st|Win32 = release-noboost-st|Win32
 		release-noboost-st|x64 = release-noboost-st|x64
+		release-noboost-st-mt|Win32 = release-noboost-st-mt|Win32
+		release-noboost-st-mt|x64 = release-noboost-st-mt|x64
 		release-st|Win32 = release-st|Win32
 		release-st|x64 = release-st|x64
 	EndGlobalSection
@@ -57,6 +59,10 @@ Global
 		{B17B959B-BB8A-4596-AF0F-A8C8DBBC3C5E}.release-noboost-st|Win32.Build.0 = release-noboost-st|Win32
 		{B17B959B-BB8A-4596-AF0F-A8C8DBBC3C5E}.release-noboost-st|x64.ActiveCfg = release-noboost-st|x64
 		{B17B959B-BB8A-4596-AF0F-A8C8DBBC3C5E}.release-noboost-st|x64.Build.0 = release-noboost-st|x64
+		{B17B959B-BB8A-4596-AF0F-A8C8DBBC3C5E}.release-noboost-st-mt|Win32.ActiveCfg = release-noboost-st-mt|Win32
+		{B17B959B-BB8A-4596-AF0F-A8C8DBBC3C5E}.release-noboost-st-mt|Win32.Build.0 = release-noboost-st-mt|Win32
+		{B17B959B-BB8A-4596-AF0F-A8C8DBBC3C5E}.release-noboost-st-mt|x64.ActiveCfg = release-noboost-st-mt|x64
+		{B17B959B-BB8A-4596-AF0F-A8C8DBBC3C5E}.release-noboost-st-mt|x64.Build.0 = release-noboost-st-mt|x64
 		{B17B959B-BB8A-4596-AF0F-A8C8DBBC3C5E}.release-st|Win32.ActiveCfg = release-st|Win32
 		{B17B959B-BB8A-4596-AF0F-A8C8DBBC3C5E}.release-st|Win32.Build.0 = release-st|Win32
 		{B17B959B-BB8A-4596-AF0F-A8C8DBBC3C5E}.release-st|x64.ActiveCfg = release-st|x64
@@ -89,6 +95,10 @@ Global
 		{5691E159-2D9B-407F-971F-EA5C592DC524}.release-noboost-st|Win32.Build.0 = release-noboost-st|Win32
 		{5691E159-2D9B-407F-971F-EA5C592DC524}.release-noboost-st|x64.ActiveCfg = release-noboost-st|x64
 		{5691E159-2D9B-407F-971F-EA5C592DC524}.release-noboost-st|x64.Build.0 = release-noboost-st|x64
+		{5691E159-2D9B-407F-971F-EA5C592DC524}.release-noboost-st-mt|Win32.ActiveCfg = release-noboost-st-mt|Win32
+		{5691E159-2D9B-407F-971F-EA5C592DC524}.release-noboost-st-mt|Win32.Build.0 = release-noboost-st-mt|Win32
+		{5691E159-2D9B-407F-971F-EA5C592DC524}.release-noboost-st-mt|x64.ActiveCfg = release-noboost-st-mt|x64
+		{5691E159-2D9B-407F-971F-EA5C592DC524}.release-noboost-st-mt|x64.Build.0 = release-noboost-st-mt|x64
 		{5691E159-2D9B-407F-971F-EA5C592DC524}.release-st|Win32.ActiveCfg = release-st|Win32
 		{5691E159-2D9B-407F-971F-EA5C592DC524}.release-st|Win32.Build.0 = release-st|Win32
 		{5691E159-2D9B-407F-971F-EA5C592DC524}.release-st|x64.ActiveCfg = release-st|x64
@@ -120,6 +130,10 @@ Global
 		{9B9D1C90-8A03-409A-B547-AE7B48B90F1A}.release-noboost-st|Win32.Build.0 = release-noboost-st|Win32
 		{9B9D1C90-8A03-409A-B547-AE7B48B90F1A}.release-noboost-st|x64.ActiveCfg = release-noboost-st|x64
 		{9B9D1C90-8A03-409A-B547-AE7B48B90F1A}.release-noboost-st|x64.Build.0 = release-noboost-st|x64
+		{9B9D1C90-8A03-409A-B547-AE7B48B90F1A}.release-noboost-st-mt|Win32.ActiveCfg = release-noboost-st-mt|Win32
+		{9B9D1C90-8A03-409A-B547-AE7B48B90F1A}.release-noboost-st-mt|Win32.Build.0 = release-noboost-st-mt|Win32
+		{9B9D1C90-8A03-409A-B547-AE7B48B90F1A}.release-noboost-st-mt|x64.ActiveCfg = release-noboost-st-mt|x64
+		{9B9D1C90-8A03-409A-B547-AE7B48B90F1A}.release-noboost-st-mt|x64.Build.0 = release-noboost-st-mt|x64
 		{9B9D1C90-8A03-409A-B547-AE7B48B90F1A}.release-st|Win32.ActiveCfg = release-st|Win32
 		{9B9D1C90-8A03-409A-B547-AE7B48B90F1A}.release-st|Win32.Build.0 = release-st|Win32
 		{9B9D1C90-8A03-409A-B547-AE7B48B90F1A}.release-st|x64.ActiveCfg = release-st|x64
@@ -152,6 +166,10 @@ Global
 		{7C8F7B44-C990-4EA8-A2A5-9028472E0AD3}.release-noboost-st|Win32.Build.0 = release-noboost-st|Win32
 		{7C8F7B44-C990-4EA8-A2A5-9028472E0AD3}.release-noboost-st|x64.ActiveCfg = release-noboost-st|x64
 		{7C8F7B44-C990-4EA8-A2A5-9028472E0AD3}.release-noboost-st|x64.Build.0 = release-noboost-st|x64
+		{7C8F7B44-C990-4EA8-A2A5-9028472E0AD3}.release-noboost-st-mt|Win32.ActiveCfg = release-noboost-st-mt|Win32
+		{7C8F7B44-C990-4EA8-A2A5-9028472E0AD3}.release-noboost-st-mt|Win32.Build.0 = release-noboost-st-mt|Win32
+		{7C8F7B44-C990-4EA8-A2A5-9028472E0AD3}.release-noboost-st-mt|x64.ActiveCfg = release-noboost-st-mt|x64
+		{7C8F7B44-C990-4EA8-A2A5-9028472E0AD3}.release-noboost-st-mt|x64.Build.0 = release-noboost-st-mt|x64
 		{7C8F7B44-C990-4EA8-A2A5-9028472E0AD3}.release-st|Win32.ActiveCfg = release-st|Win32
 		{7C8F7B44-C990-4EA8-A2A5-9028472E0AD3}.release-st|Win32.Build.0 = release-st|Win32
 		{7C8F7B44-C990-4EA8-A2A5-9028472E0AD3}.release-st|x64.ActiveCfg = release-st|x64

@@ -48,8 +48,10 @@ namespace Apoc3D
 			int m_lastZ;
 
 			Mouse();
-			~Mouse();
 		public:
+
+			virtual ~Mouse();
+
 			const Point& GetCurrentPosition() const { return m_currentPos; }
 
 			int getX() const { return m_currentPos.X; }

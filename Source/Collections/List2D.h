@@ -105,7 +105,7 @@ namespace Apoc3D
 			{
 				if (m_height<=m_internalPointer)
 				{
-					ResizeRow(!m_height ? 4 : (m_height * 2));
+					ResizeRows(!m_height ? 4 : (m_height * 2));
 				}
 				for (int i=0;i<m_width;i++)
 				{
@@ -166,6 +166,10 @@ namespace Apoc3D
 				memcpy(newArr, m_data, m_height*sizeof(T*));
 				delete[] m_data;
 				m_data = newArr;
+				for (int i=m_height;i<newSize;i++)
+				{
+					newArr[i] = new T[m_width];
+				}
 				m_height = newSize;
 			}
 		};
