@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Collections/FastMap.h"
+#include "Collections/FastList.h"
 #include "Core/Singleton.h"
 #include "Math/Rectangle.h"
 #include "Math/Point.h"
@@ -49,7 +50,23 @@ namespace Apoc3D
 		*/
 		class APAPI Font
 		{
+		public:
+			
+			Font(RenderDevice* device, ResourceLocation* fl);
+			~Font();
+			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0);
+			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color);
+
+			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
+			Point MeasureString(const String& text, int width);
+			Point MeasureString(const String& text);
+
+			int getLineHeight() const { return m_height; }
+
+			static int qsort_comparer(const void* a, const void* b);
+
 		private:
+			static const int MaxFreq = 5;
 			struct Character
 			{
 				wchar_t _Character;
@@ -65,35 +82,45 @@ namespace Apoc3D
 				bool IsMapped;
 				Apoc3D::Math::Rectangle MappedRect;
 
-				float LastTimeUsed;
+				int ParentBuckets[4];
 
-				bool operator <(const Glyph& other)
-				{
-					return LastTimeUsed<other.LastTimeUsed;
-				}
 			};
+			struct Bucket
+			{
+				int CurrentGlyph;
+				Apoc3D::Math::Rectangle SrcRect;
+				int BucketIndex;
+
+				//int Freq;
+			};
+
+
+
 			Texture* m_font;
 			int m_height;
+			int m_maxWidth;
+			int m_edgeCount;
 			ResourceLocation* m_resource;
 
 			FastMap<wchar_t, Character> m_charTable;
 			Glyph* m_glyphList;
 
-			list<Glyph*> m_activeGlyph;
+			//list<Glyph*> m_activeGlyph;
+			//FastList<Bucket*> m_buckets;
+			Bucket* m_buckets;
+			int* m_lineBucketsFreqClassificationCount;
+			int* m_currentFreqTable;
+			int* m_lastFreqTable;
 
 			void LoadGlyphData(BinaryReader* br, Glyph& glyph);
 			void EnsureGlyph(Glyph& glyph);
 
-		public:
-			int getLineHeight() const { return m_height; }
-			Font(RenderDevice* device, ResourceLocation* fl);
-			~Font();
-			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0);
-			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color);
+			void FrameStartReset();
 
-			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
-			Point MeasureString(const String& text, int width);
-			Point MeasureString(const String& text);
+			void SetUseFreq(const Glyph& g);
+			
+			friend class FontManager;
+		
 		};
 
 		/** Manages font resources, creating them from font files.
@@ -110,6 +137,7 @@ namespace Apoc3D
 			FontManager();
 			~FontManager();
 
+			void StartFrame();
 			void LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl);
 
 

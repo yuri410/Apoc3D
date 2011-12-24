@@ -88,24 +88,24 @@ namespace APDesigner
 
 		LastResult.clear();
 
-		do
+		while (WaitForSingleObject(procInfo.hProcess, 10) == WAIT_TIMEOUT)
 		{
 			char buffer[1024];
 			//memset(buffer,0,sizeof(buffer));
 			DWORD actul;
 			ReadFile(writePipe, buffer, sizeof(buffer), &actul,0);
-			
+
 			if (actul<sizeof(buffer))
 			{
 				memset(buffer+actul,0, sizeof(buffer)-actul);
 			}
-			
+
 			if (actul)
 			{
 				LastResult.append(StringUtils::toWString(buffer));
 			}
 		}
-		while (WaitForSingleObject(procInfo.hProcess, 10) != WAIT_OBJECT_0);
+
 		//GetFileSize(writePipe, );
 
 		DWORD code;
