@@ -1264,6 +1264,8 @@ namespace Apoc3D
 
 		void UIRoot::Draw()
 		{
+			FontManager::getSingleton().StartFrame();
+
 			m_sprite->Begin(true, true);	
 			
 			for (int i=m_forms.getCount()-1;i>-1;i--)

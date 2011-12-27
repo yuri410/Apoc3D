@@ -160,11 +160,12 @@ namespace Apoc3D
 							m_buckets[buckY*m_edgeCount+startX+k].CurrentGlyph = glyph.Index;
 						}
 
+						Glyph& oglyph = m_glyphList[glyph.Index];
 						const Apoc3D::Math::Rectangle& bukRect = m_buckets[buckY*m_edgeCount+startX].SrcRect;
-						glyph.MappedRect = Apoc3D::Math::Rectangle(bukRect.X, bukRect.Y, glyph.Width, glyph.Height);
-						glyph.IsMapped = true;
+						oglyph.MappedRect = Apoc3D::Math::Rectangle(bukRect.X, bukRect.Y, glyph.Width, glyph.Height);
+						oglyph.IsMapped = true;
 
-						LoadGlyphData(br, glyph);
+						LoadGlyphData(br, oglyph);
 
 						buckX[buckY]+=bucketsNeeded;
 					}
@@ -172,6 +173,7 @@ namespace Apoc3D
 				}
 
 				delete[] tempList;
+				delete[] buckX;
 			}
 			
 			//// if the texture can hold all glyphs, just load them all at once
