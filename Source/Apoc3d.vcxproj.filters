@@ -462,6 +462,12 @@
     <ClInclude Include="Graphics\BatchModelBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scene\OctreeSceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\OctreeBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -804,6 +810,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\BatchModelBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\OctreeSceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\OctreeBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

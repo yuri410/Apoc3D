@@ -200,11 +200,13 @@
     <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\ColorValue.h" />
     <ClInclude Include="Math\GaussBlurFilter.h" />
+    <ClInclude Include="Math\OctreeBox.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />
     <ClInclude Include="Platform\API.h" />
     <ClInclude Include="Platform\Thread.h" />
     <ClInclude Include="Project\Project.h" />
+    <ClInclude Include="Scene\OctreeSceneManager.h" />
     <ClInclude Include="Scene\ScenePassTypes.h" />
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />
     <ClInclude Include="UILib\Button.h" />
@@ -344,10 +346,12 @@
     <ClCompile Include="IOLib\TextureData.cpp" />
     <ClCompile Include="Math\ColorValue.cpp" />
     <ClCompile Include="Math\MathCommon.cpp" />
+    <ClCompile Include="Math\OctreeBox.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
     <ClCompile Include="Platform\Thread.cpp" />
     <ClCompile Include="Project\Project.cpp" />
+    <ClCompile Include="Scene\OctreeSceneManager.cpp" />
     <ClCompile Include="Scene\SceneRenderScriptParser.cpp" />
     <ClCompile Include="UILib\Button.cpp" />
     <ClCompile Include="UILib\CheckBox.cpp" />

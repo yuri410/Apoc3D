@@ -24,8 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef SCENEMANAGER_H
 #define SCENEMANAGER_H
 
-#pragma once
-
 #include "Common.h"
 #include "Collections/FastList.h"
 
@@ -42,13 +40,9 @@ namespace Apoc3D
 		*/
 		class APAPI SceneManager
 		{
-		private:
-			FastList<SceneObject*> m_objects;
-		protected:
-			
 		public:
 			SceneManager(void);
-			~SceneManager(void);
+			virtual ~SceneManager(void);
 		
 			/* Adds a new scene object into scene
 			*/
@@ -60,6 +54,12 @@ namespace Apoc3D
 			virtual void PrepareVisibleObjects(Camera* camera, BatchData* batchData) = 0;
 
 			virtual void Update(const GameTime* const &time);
+
+			const FastList<SceneObject*>& getAllObjects() const { return m_objects; }
+		private:
+			FastList<SceneObject*> m_objects;
+		protected:
+
 		};
 	};
 };

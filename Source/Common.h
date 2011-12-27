@@ -215,6 +215,7 @@ namespace Apoc3D
 		class Rectangle;
 		class RectangleF;
 		class Box;
+		class OctreeBox;
 
 		class BoundingSphere;		
 		class BoundingBox;
@@ -278,8 +279,13 @@ namespace Apoc3D
 
 		class SceneManager;
 		class SceneNode;
+		class SimpleSceneManager;
+		class SimpleSceneNode;
+		class OctreeSceneManager;
+		class OctreeSceneNode;
 		class SceneObject;
 		class BatchData;
+		class DynamicObject;
 	};
 	namespace Graphics
 	{

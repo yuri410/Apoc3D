@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+This source file is part of labtd
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,43 +15,34 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
+along with this program.  if not, write to the Free Software Foundation,
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "SceneNode.h"
-#include "SceneObject.h"
 
-namespace Apoc3D
+
+#ifndef GAMECOMMON_H
+#define GAMECOMMON_H
+
+#include "Engine.h"
+
+#pragma comment(lib, "Apoc3D.lib")
+#pragma comment(lib, "Apoc3D.D3D9RenderSystem.lib")
+#pragma comment(lib, "Apoc3D.WindowsInput.lib")
+#pragma comment(lib, "Apoc3D.Essentials.lib")
+
+// Forward Declarations
+namespace SampleTerrain
 {
-	namespace Scene
-	{
-		SceneNode::SceneNode(void)
-		{
-		}
+	typedef fastdelegate::FastDelegate0<void> EventHandler;
+	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
 
-		SceneNode::~SceneNode(void)
-		{
-			for (int i=0;i<m_attached.getCount();i++)
-			{
-				if (m_attached[i]->getSceneNode() == this)
-				{
-					m_attached[i]->NotifyParentNode(0);
-				}
-			}
-		}
+	class TerrainDemo;
 
-		void SceneNode::AddObject(SceneObject* sceObj)
-		{
-			m_attached.Add(sceObj);
-			sceObj->NotifyParentNode(this);
-		}
-		void SceneNode::RemoveObject(SceneObject* sceObj)
-		{
-			m_attached.Remove(sceObj);
-			sceObj->NotifyParentNode(0);
-		}
-	};
 };
+
+using namespace Apoc3D;
+
+#endif

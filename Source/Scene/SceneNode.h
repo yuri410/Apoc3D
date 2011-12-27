@@ -44,13 +44,15 @@ namespace Apoc3D
 			ObjectList m_attached;
 		public:
 			SceneNode(void);
-			~SceneNode(void);
+			virtual ~SceneNode(void);
 
 			int32 getCount() { return m_attached.getCount(); }
 			SceneObject* operator [](int i) { return m_attached[i]; }
 
 			virtual void AddObject(SceneObject* sceObj);
 			virtual void RemoveObject(SceneObject* sceObj);
+
+			const ObjectList& getAttachedObjects() const {  return m_attached; }
 		};
 	};
 };

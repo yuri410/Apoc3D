@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+This source file is part of Apoc3D
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,48 +15,39 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
+along with this program.  if not, write to the Free Software Foundation,
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SIMPLESCENEMANAGER_H
-#define SIMPLESCENEMANAGER_H
 
-#include "Common.h"
-#include "SceneManager.h"
-#include "SceneNode.h"
+#include "OctreeBox.h"
+
+#include "BoundingBox.h"
+#include "BoundingSphere.h"
 
 namespace Apoc3D
 {
-	namespace Scene
+	namespace Math
 	{
-		class APAPI SimpleSceneNode : public SceneNode
+		OctreeBox::OctreeBox(const BoundingBox& aabb)
 		{
-		public:
-			SimpleSceneNode(void){}
-			~SimpleSceneNode(void){}
+			Length = Vector3Utils::Distance(aabb.Minimum, aabb.Maximum) / Math::Root3;
+			Center = Vector3Utils::Add(aabb.Minimum, aabb.Maximum);
+			Center = Vector3Utils::Multiply(Center, 0.5f);
+		}
 
-			virtual void AddObject(SceneObject* sceObj);
-			virtual void RemoveObject(SceneObject* sceObj);
-		};
-
-		class APAPI SimpleSceneManager : public SceneManager
+		OctreeBox::OctreeBox(const BoundingSphere& sph)
 		{
-		private:
-			SimpleSceneNode* m_defaultNode;
+			Center = sph.Center;
+			Length = sph.Radius * 2;
+		}
 
-		public:
-			SimpleSceneManager(void);
-			~SimpleSceneManager(void);
-
-			virtual void AddObject(SceneObject* const obj);
-			virtual bool RemoveObject(SceneObject* const obj);
-
-			virtual void PrepareVisibleObjects(Camera* camera, BatchData* batchData);
-
-		};
+		void OctreeBox::GetBoundingSphere(BoundingSphere& sp) const
+		{
+			sp.Center = Center;
+			sp.Radius = Length * (Math::Root3 * 0.5f);
+		}
 	}
 }
-#endif

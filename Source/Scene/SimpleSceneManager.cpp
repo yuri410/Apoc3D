@@ -40,6 +40,7 @@ namespace Apoc3D
 		{
 			m_attached.Add(sceObj);
 			sceObj->NotifyParentNode( this );
+			
 		}
 
 		void SimpleSceneNode::RemoveObject(SceneObject* const obj)
@@ -64,11 +65,13 @@ namespace Apoc3D
 		{
 			SceneManager::AddObject(sceObj);
 			m_defaultNode->AddObject(sceObj);
+			sceObj->OnAddedToScene(this);
 		}
 
 		bool SimpleSceneManager::RemoveObject(SceneObject* const sceObj)
 		{			
 			m_defaultNode->RemoveObject(sceObj);
+			sceObj->OnRemovedFromScene(this);
 			return SceneManager::RemoveObject(sceObj);
 		}
 
