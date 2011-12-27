@@ -120,6 +120,9 @@ namespace Apoc3D
 
 			virtual void Update(const GameTime* const &time);
 
+			virtual SceneObject* FindObject(const Ray& ray, IObjectFilter* filter);
+
+
 			float getMinimumBVSize() const { return m_minimumBVSize; }
 
 			bool QualifiesFarObject(const SceneObject* obj) const;

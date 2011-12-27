@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Graphics\RenderOperation.h"
 #include "Scene\SceneRenderer.h"
+#include "Math\Ray.h"
 
 using namespace Apoc3D::Graphics;
 
@@ -88,6 +89,27 @@ namespace Apoc3D
 
 				batchData->AddVisisbleObject(obj, 0);
 			}
+		}
+		SceneObject* SimpleSceneManager::FindObject(const Ray& ray, IObjectFilter* filter)
+		{
+			SceneObject* result = 0;
+			float nearest = Math::MaxFloat;
+			for (int i =0; i<m_defaultNode->getCount();i++)
+			{
+				SceneObject* obj = m_defaultNode->operator[](i);
+				
+				if ((filter && filter->Check(obj) || !filter) &&
+					obj->IntersectsSelectionRay(ray))
+				{
+					float dist = Vector3Utils::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
+					if (dist<nearest)
+					{
+						nearest = dist;
+						result = obj;
+					}
+				}
+			}
+			return result;
 		}
 	}
 }

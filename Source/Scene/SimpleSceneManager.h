@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneManager.h"
 #include "SceneNode.h"
 
+using namespace Apoc3D::Math;
+
 namespace Apoc3D
 {
 	namespace Scene
@@ -55,7 +57,7 @@ namespace Apoc3D
 			virtual bool RemoveObject(SceneObject* const obj);
 
 			virtual void PrepareVisibleObjects(Camera* camera, BatchData* batchData);
-
+			virtual SceneObject* FindObject(const Ray& ray, IObjectFilter* filter);
 		};
 	}
 }

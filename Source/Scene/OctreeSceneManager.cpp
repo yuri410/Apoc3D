@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core\GameTime.h"
 #include "Graphics\Camera.h"
 #include "Math\Frustum.h"
+#include "Math\Ray.h"
 #include "SceneRenderer.h"
 
 using namespace Apoc3D::Graphics;
@@ -271,6 +272,76 @@ namespace Apoc3D
 				}
 			}
 
+		}
+
+		SceneObject* OctreeSceneManager::FindObject(const Ray& ray, IObjectFilter* filter)
+		{
+			SceneObject* result = 0;
+			float nearest = Math::MaxFloat;
+			assert(m_bfsQueue.getCount()==0);
+
+			m_bfsQueue.Enqueue(m_octRootNode);
+			while (m_bfsQueue.getCount())
+			{
+				OctreeSceneNode* node = m_bfsQueue.Dequeue();
+				
+				float d;
+				if (BoundingSphere::Intersects(node->getBoundingSphere(), ray, d))
+				{
+					for (int i=0;i<OctreeSceneNode::OCTE_Count;i++)
+					{
+						if (node->getNode(static_cast<OctreeSceneNode::Extend>(i)))
+						{
+							m_bfsQueue.Enqueue(node->getNode(static_cast<OctreeSceneNode::Extend>(i)));
+						}
+					}
+					const ObjectList& objs = node->getAttachedObjects();
+					for (int i=0;i<objs.getCount();i++)
+					{
+						SceneObject* obj = objs[i];
+						if ((filter && filter->Check(obj) || !filter) &&
+							obj->IntersectsSelectionRay(ray))
+						{
+							float dist = Vector3Utils::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
+							if (dist<nearest)
+							{
+								nearest = dist;
+								result = obj;
+							}
+						}
+					}
+				}
+			}
+
+			for (list<SceneObject*>::iterator iter = m_farObjs.begin();iter!=m_farObjs.end();iter++)
+			{
+				SceneObject* obj = *iter;
+				if ((filter && filter->Check(obj) || !filter) && 
+					obj->IntersectsSelectionRay(ray))
+				{
+					float dist = Vector3Utils::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
+					if (dist < nearest)
+					{
+						nearest = dist;
+						result = obj;
+					}
+				}
+			}
+			for (list<DynamicObject*>::iterator iter = m_dynObjs.begin();iter!=m_dynObjs.end();iter++)
+			{
+				DynamicObject* obj = *iter;
+				if ((filter && filter->Check(obj) || !filter) && 
+					obj->IntersectsSelectionRay(ray))
+				{
+					float dist = Vector3Utils::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
+					if (dist < nearest)
+					{
+						nearest = dist;
+						result = obj;
+					}
+				}
+			}
+			return result;
 		}
 
 		void OctreeSceneManager::Update(const GameTime* const &time)

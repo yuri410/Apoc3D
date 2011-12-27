@@ -31,11 +31,20 @@ using namespace std;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
 	namespace Scene
 	{
+		class IObjectFilter
+		{
+		public:
+			virtual bool Check(SceneObject* obj) = 0;
+			virtual bool Check(SceneNode* node) { return true; }
+		};
+
+
 		/* SceneManager keeps tracks of all scene objects.
 		*/
 		class APAPI SceneManager
@@ -54,6 +63,8 @@ namespace Apoc3D
 			virtual void PrepareVisibleObjects(Camera* camera, BatchData* batchData) = 0;
 
 			virtual void Update(const GameTime* const &time);
+
+			virtual SceneObject* FindObject(const Ray& ray, IObjectFilter* filter) = 0;
 
 			const FastList<SceneObject*>& getAllObjects() const { return m_objects; }
 		private:
