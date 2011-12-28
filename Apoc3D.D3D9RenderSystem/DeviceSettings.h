@@ -48,7 +48,7 @@ namespace Apoc3D
 					DeviceType = D3DDEVTYPE_HAL;
 					AdapterFormat = D3DFMT_UNKNOWN;
 
-					CreationFlags = D3DCREATE_HARDWARE_VERTEXPROCESSING;
+					CreationFlags = D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE;
 
 					PresentParameters.BackBufferFormat = D3DFMT_UNKNOWN;
 					PresentParameters.BackBufferCount = 1;

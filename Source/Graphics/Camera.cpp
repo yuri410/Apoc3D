@@ -31,7 +31,8 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		FpsCamera::FpsCamera(float aspectRatio)
-			: m_aspectRatio(aspectRatio), m_velocity(0), m_position(Vector3Utils::Zero)
+			: m_aspectRatio(aspectRatio), m_velocity(1), m_position(Vector3Utils::Zero),
+			m_fieldOfView(ToRadian(50)), m_near(0.5f), m_far(1500)
 		{
 			
 		}
@@ -43,6 +44,13 @@ namespace Apoc3D
 
 		void FpsCamera::Update(const GameTime* time)
 		{
+			Vector3 at = Vector3Utils::Add(m_position, Vector3Utils::UnitZ);
+			Matrix::CreateLookAtLH(m_view, m_position, at, Vector3Utils::UnitY);
+
+			Matrix::CreatePerspectiveFovLH(m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
+
+			getFrustum().Update(m_view, m_proj);
+
 			Camera::Update(time);
 		}
 

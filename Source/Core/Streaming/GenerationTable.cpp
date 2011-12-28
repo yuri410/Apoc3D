@@ -57,7 +57,7 @@ namespace Apoc3D
 			{
 				//const int passTimeLimit = 4000;
 				clock_t timeStart = clock();
-				clock_t time = clock();
+				//clock_t time = clock();
 
 				int count;
 				m_genLock.lock();
@@ -90,9 +90,9 @@ namespace Apoc3D
 							if (ng!=og)
 							{
 								UpdateGeneration(og,ng,res);
-#ifdef _DEBUG
+//#ifdef _DEBUG
 								LogManager::getSingleton().Write(LOG_System, L"GEN_CHG" + StringUtils::ToString(ng) +L" ("+ res->getHashString() + L")", LOGLVL_Default);
-#endif
+//#endif
 							}
 						}
 

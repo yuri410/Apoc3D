@@ -25,7 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Resource.h"
 #include "ResourceManager.h"
 #include "Streaming/GenerationTable.h"
+#include "Math/MathCommon.h"
 
+using namespace Apoc3D::Math;
 using namespace Apoc3D::Core::Streaming;
 
 namespace Apoc3D
@@ -53,12 +55,13 @@ namespace Apoc3D
 		}
 		void Resource::GenerationCalculator::UpdateGeneration()
 		{
-			float result = 0;
+			float result = -9999999;
 			
 			m_queueLock.lock();
 
 			if (m_timeQueue.getCount())
 			{
+				result = 0;
 				for (int i=0;i<m_timeQueue.getCount();i++)
 				{
 					result += m_timeQueue.GetElement(i);

@@ -76,6 +76,8 @@ namespace Apoc3D
 			virtual void AddObject(SceneObject* sceObj);
 			virtual void RemoveObject(SceneObject* sceObj);
 
+			
+
 			Vector3 GetMax() const
 			{
 				Vector3 ext = Vector3Utils::LDVector(m_boundingVolume.Length*0.5f);
@@ -92,7 +94,6 @@ namespace Apoc3D
 			
 		private:
 			
-
 			bool RemoveAttachedObject(SceneObject* obj);
 			bool RemoveObjectInternal(SceneObject* obj);
 
@@ -128,7 +129,7 @@ namespace Apoc3D
 			bool QualifiesFarObject(const SceneObject* obj) const;
 
 		private:
-			list<DynamicObject*> m_dynObjs;
+			list<SceneObject*> m_dynObjs;
 			list<SceneObject*> m_farObjs;
 
 			FastQueue<OctreeSceneNode*> m_bfsQueue;
@@ -140,7 +141,9 @@ namespace Apoc3D
 			float m_minimumBVSize;
 
 			OctreeSceneNode* m_octRootNode;
-		
+
+			void AddStaticObject(SceneObject* obj);
+
 		};
 	}
 }

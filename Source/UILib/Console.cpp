@@ -70,6 +70,16 @@ namespace Apoc3D
 			m_form->setMinimumSize(Point(400,300));
 			m_form->Initialize(device);
 
+			{
+				Log* log = LogManager::getSingleton().getLogSet(LOG_System);
+				for (Log::Iterator iter = log->begin();iter!=log->end();iter++)
+				{
+					Log_New(*iter);
+				}
+			}
+			
+			
+			
 			LogManager::getSingleton().eventNewLogWritten().bind(this, &Console::Log_New);
 			UIRoot::Add(m_form);
 			m_form->Show();

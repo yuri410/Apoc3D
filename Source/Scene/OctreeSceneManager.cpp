@@ -73,13 +73,13 @@ namespace Apoc3D
 			// if obj's size is small enough, put it in to child nodes
 			const float ofLen = m_boundingVolume.Length / 4.0f;
 
-			if (ofLen > m_manager->getMinimumBVSize() && obj->getBoundingSphere().Radius <= (1.0 / 16.0f) * m_boundingVolume.Length)
+			if (ofLen > m_manager->getMinimumBVSize() && obj->getBoundingSphere().Radius <= (1.0 / 4.0f) * m_boundingVolume.Length)
 			{
 				// if the child node is more suitable, add obj to the child node 
 				
 				Extend ext = GetExtend(obj->getBoundingSphere().Center);
 
-				if (m_childTable[ext])
+				if (!m_childTable[ext])
 				{
 					OctreeBox box;
 					box.Length = m_boundingVolume.Length*0.5f;
@@ -164,41 +164,43 @@ namespace Apoc3D
 		{
 			SceneManager::AddObject(sceObj);
 
-			DynamicObject* dynObj = dynamic_cast<DynamicObject*>(sceObj);
-			if (dynObj)
+			if (sceObj->IsDynamicObject())
 			{
-				m_dynObjs.push_back(dynObj);
+				m_dynObjs.push_back(sceObj);
 			}
 			else
 			{
-				list<SceneObject*>::iterator iter = find(m_farObjs.begin(), m_farObjs.end(), sceObj);
-
-				if (QualifiesFarObject(sceObj))
-				{
-					m_octRootNode->AddObject(sceObj);
-					if (iter != m_farObjs.end())
-					{
-						m_farObjs.erase(iter);
-					}
-				}
-				else
-				{
-					if (iter == m_farObjs.end())
-					{
-						m_farObjs.push_back(sceObj);
-					}
-				}
+				AddStaticObject(sceObj);
 			}
 
 			sceObj->OnAddedToScene(this);
 		}
+		void OctreeSceneManager::AddStaticObject(SceneObject* sceObj)
+		{
+			list<SceneObject*>::iterator iter = find(m_farObjs.begin(), m_farObjs.end(), sceObj);
 
+			if (!QualifiesFarObject(sceObj))
+			{
+				m_octRootNode->AddObject(sceObj);
+				if (iter != m_farObjs.end())
+				{
+					m_farObjs.erase(iter);
+				}
+			}
+			else
+			{
+				if (iter == m_farObjs.end())
+				{
+					m_farObjs.push_back(sceObj);
+				}
+			}
+		}
 		bool OctreeSceneManager::RemoveObject(SceneObject* const sceObj)
 		{
-			DynamicObject* dynObj = dynamic_cast<DynamicObject*>(sceObj);
-			if (dynObj)
+			
+			if (sceObj->IsDynamicObject())
 			{
-				m_dynObjs.remove(dynObj);
+				m_dynObjs.remove(sceObj);
 			}
 			else
 			{
@@ -247,11 +249,15 @@ namespace Apoc3D
 					const ObjectList& objs = node->getAttachedObjects();
 					for (int i=0;i<objs.getCount();i++)
 					{
-						if (objs[i]->hasSubObjects())
+						if (frus.Intersects(objs[i]->getBoundingSphere()))
 						{
-							objs[i]->PrepareVisibleObjects(camera, 0, batchData);
+							if (objs[i]->hasSubObjects())
+							{
+								objs[i]->PrepareVisibleObjects(camera, 0, batchData);
+							}
+							batchData->AddVisisbleObject(objs[i], 0);
 						}
-						batchData->AddVisisbleObject(objs[i], 0);
+						
 					}
 				}
 			}
@@ -263,9 +269,9 @@ namespace Apoc3D
 					batchData->AddVisisbleObject(obj, 0);
 				}
 			}
-			for (list<DynamicObject*>::iterator iter = m_dynObjs.begin();iter!=m_dynObjs.end();iter++)
+			for (list<SceneObject*>::iterator iter = m_dynObjs.begin();iter!=m_dynObjs.end();iter++)
 			{
-				DynamicObject* obj = *iter;
+				SceneObject* obj = *iter;
 				if (frus.Intersects(obj->getBoundingSphere()))
 				{
 					batchData->AddVisisbleObject(obj, 0);
@@ -327,9 +333,9 @@ namespace Apoc3D
 					}
 				}
 			}
-			for (list<DynamicObject*>::iterator iter = m_dynObjs.begin();iter!=m_dynObjs.end();iter++)
+			for (list<SceneObject*>::iterator iter = m_dynObjs.begin();iter!=m_dynObjs.end();iter++)
 			{
-				DynamicObject* obj = *iter;
+				SceneObject* obj = *iter;
 				if ((filter && filter->Check(obj) || !filter) && 
 					obj->IntersectsSelectionRay(ray))
 				{
@@ -351,10 +357,11 @@ namespace Apoc3D
 			{
 				objects[i]->Update(time);
 
-				if (objects[i]->RequiresNodeUpdate)
+				if (objects[i]->IsDynamicObject() && objects[i]->RequiresNodeUpdate)
 				{
 					m_octRootNode->RemoveObject(objects[i]);
-					AddObject(objects[i]);
+					AddStaticObject(objects[i]);
+					objects[i]->RequiresNodeUpdate = false;
 				}
 			}
 		}

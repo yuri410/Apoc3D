@@ -22,9 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef CAMREA_H
+#ifndef CAMERA_H
 #define CAMERA_H
-#pragma once
 
 #include "Common.h"
 #include "Math\Frustum.h"
@@ -92,11 +91,6 @@ namespace Apoc3D
 		};
 		class APAPI FpsCamera : public Camera
 		{
-		private:
-			float m_aspectRatio;
-			float m_velocity;
-			Vector3 m_position;
-
 		public:
 			FpsCamera(float aspectRatio);
 			~FpsCamera(void);
@@ -121,12 +115,12 @@ namespace Apoc3D
 			void MoveLeft()
 			{
 				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
-				m_position = Vector3Utils::Add(m_position, ofs);
+				m_position = Vector3Utils::Subtract(m_position, ofs);
 			}
 			void MoveRight() 
 			{
 				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
-				m_position = Vector3Utils::Subtract(m_position, ofs);
+				m_position = Vector3Utils::Add(m_position, ofs);
 			}
 			void MoveUp()
 			{
@@ -145,6 +139,18 @@ namespace Apoc3D
 			}
 			
 			void Update(const GameTime* const time);
+		
+		protected:
+			Vector3 m_position;
+
+		private:
+			float m_aspectRatio;
+			float m_velocity;
+			
+			float m_fieldOfView;
+			float m_near;
+			float m_far;
+
 		};
 
 		class APAPI ChaseCamera : public Camera

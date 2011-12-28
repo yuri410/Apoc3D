@@ -1,6 +1,6 @@
 /*
 -----------------------------------------------------------------------------
-This source file is part of Apoc3D Engine
+This source file is part of Apoc3D
 
 Copyright (c) 2009+ Tao Games
 
@@ -15,39 +15,41 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation, 
+along with this program.  if not, write to the Free Software Foundation,
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
 
-#ifndef CORECOMMON_H
-#define CORECOMMON_H
+#include "GameCamera.h"
 
-#include "Common.h"
+#include "Core/GameTime.h"
+#include "Terrain.h"
+//#include "Math/PerlinNoise.h"
 
-namespace Apoc3D
+namespace SampleTerrain
 {
-	namespace Core
+	GameCamera::GameCamera(float aspectRatio)
+		: FpsCamera(aspectRatio), m_height(100)
 	{
-		struct PlatformAPISupport
-		{
-			int mark;
-			String name;
+		
 
-		public:
-			PlatformAPISupport(int mark, String name)
-			{
-				mark = mark;
-				name = name;
-			}
-
-
-			const String &getPlatformName() { return name; }
-			int getMark() { return mark; }
-
-		};
 	}
+	GameCamera::~GameCamera()
+	{
+	}
+
+	void GameCamera::Update(const GameTime* const time)
+	{
+
+		float groundHeight = Terrain::GetHeightAt(_V3X(m_position), _V3Z(m_position));
+
+		m_height = groundHeight * Terrain::HeightScale + 5;
+		_V3Y(m_position) = m_height;
+
+		FpsCamera::Update(time);
+
+	}
+	
 }
-#endif

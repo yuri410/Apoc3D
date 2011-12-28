@@ -75,8 +75,8 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 #if _DEBUG
 	escon.WriteLogToStd = true;
 #endif
-	escon.ModelAsync = false;
-	escon.TextureAsync = false;
+	escon.ModelAsync = true;
+	escon.TextureAsync = true;
 
 
 	wchar_t exePath[260];

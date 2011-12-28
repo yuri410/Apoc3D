@@ -1,0 +1,329 @@
+#include "TerrainMesh.h"
+
+#include "Core/Logging.h"
+#include "Core/ResourceHandle.h"
+#include "Collections/FastList.h"
+#include "Graphics/EffectSystem/EffectManager.h"
+#include "Graphics/RenderSystem/ObjectFactory.h"
+#include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
+#include "Graphics/RenderSystem/VertexDeclaration.h"
+#include "Graphics/RenderSystem/Texture.h"
+#include "Graphics/TextureManager.h"
+#include "Vfs/FileSystem.h"
+#include "Vfs/FileLocateRule.h"
+#include "Math/RandomUtils.h"
+#include "Math/PerlinNoise.h"
+#include "Utility/StringUtils.h"
+
+#include "Terrain.h"
+
+SINGLETON_DECL(SampleTerrain::TerrainMeshManager);
+
+using namespace Apoc3D::Utility;
+using namespace Apoc3D::VFS;
+
+namespace SampleTerrain
+{
+	struct TerrainVertex
+	{
+		float Position[3];
+		float Normal[3];
+		float u;
+		float v;
+		
+		
+	};
+
+	static VertexElement Elements[3] =
+	{
+		VertexElement(0, VEF_Vector3, VEU_Position, 0),
+		VertexElement(12, VEF_Vector3, VEU_Normal, 0),
+		VertexElement(24, VEF_Vector2, VEU_TextureCoordinate, 0)
+	};
+
+
+	String TerrainMesh::GetHashString(int x, int z, int size)
+	{
+		return L"TM" + StringUtils::ToString(x) + L" " + StringUtils::ToString(z) + L" " + StringUtils::ToString(size);
+	}
+	TerrainMesh::TerrainMesh(RenderDevice* rd, int bx, int bz, int size)
+		: Resource(TerrainMeshManager::getSingletonPtr(), TerrainMesh::GetHashString(bx,bz,size)), m_device(rd),
+		m_edgeVertexCount(size+1),
+		m_vertexBuffer(0), m_vtxDecl(0),
+		m_bx(bx), m_bz(bz), m_material(rd)
+	{
+
+		m_material.Cull = CULL_None;
+		m_material.Ambient = Color4(0.5f,0.5f,0.5f);
+		m_material.Diffuse = Color4(1.0f, 1.0f, 1.0f);
+		m_material.Specular = Color4(0.0f, 0.0f, 0.0f);
+		m_material.Power = 1;
+		m_material.setPriority(5);
+		m_material.setPassFlags(1);
+		m_material.setPassEffect(0, EffectManager::getSingleton().getEffect(L"Terrain"));
+		m_material.setTexture(0, TerrainMeshManager::getSingleton().getTexture(0));
+		m_material.setTexture(1, TerrainMeshManager::getSingleton().getTexture(1));
+		m_material.setTexture(2, TerrainMeshManager::getSingleton().getTexture(2));
+		m_material.setTexture(3, TerrainMeshManager::getSingleton().getTexture(3));
+
+		m_primitiveCount = size * size*2;
+
+		m_sharedIndex = TerrainMeshManager::getSingleton().getIndexData(size)->getIndexBuffer();
+	}
+
+	RenderOperationBuffer* TerrainMesh::GetRenderOperation(int lod)
+	{
+		if (getState() == RS_Loaded)
+		{
+			return &m_opBuffer;
+		}
+		return 0;
+	}
+
+	uint32 TerrainMesh::getSize()
+	{
+		int size = 0;
+
+		size += sizeof(TerrainVertex) * m_edgeVertexCount * m_edgeVertexCount;
+		size += sizeof(int) * 6 * m_primitiveCount;
+
+		return size;
+	}
+	void TerrainMesh::load()
+	{
+		m_opBuffer.FastClear();
+		
+		ObjectFactory* fac = m_device->getObjectFactory();
+
+		FastList<VertexElement> elements(4);
+		elements.Add(Elements[0]); 
+		elements.Add(Elements[1]);
+		elements.Add(Elements[2]);
+
+		m_vtxDecl = fac->CreateVertexDeclaration(elements);
+		
+
+		int vertexCount = m_edgeVertexCount * m_edgeVertexCount;
+		m_vertexBuffer = fac->CreateVertexBuffer(vertexCount, m_vtxDecl, BU_WriteOnly);
+
+		TerrainVertex* vtxData = reinterpret_cast<TerrainVertex*>(m_vertexBuffer->Lock(LOCK_None));
+
+		const float HeightScale= Terrain::HeightScale;
+
+		float cellLength = Terrain::CellLength;
+		for (int i=0;i<m_edgeVertexCount;i++)
+		{
+			for (int j=0;j<m_edgeVertexCount;j++)
+			{
+				float height = Terrain::GetHeightAt(i + m_bx*(float)Terrain::TerrainEdgeLength, j+m_bz*(float)Terrain::TerrainEdgeLength);
+				
+				int index = i * m_edgeVertexCount + j;
+
+				vtxData[index].Position[0] = cellLength * i;
+				vtxData[index].Position[1] = height * HeightScale;
+				vtxData[index].Position[2] = cellLength * j;
+
+				vtxData[index].u = 16 * (float)i / m_edgeVertexCount;
+				vtxData[index].v = 16 * (float)j / m_edgeVertexCount;
+			}
+		}
+		for (int i=0;i<m_edgeVertexCount;i++)
+		{
+			for (int j=0;j<m_edgeVertexCount;j++)
+			{
+				int index = i * m_edgeVertexCount + j;
+				Vector3 pos = Vector3Utils::LDVectorPtr(vtxData[index].Position);
+				Vector3 posB;
+				if (i<m_edgeVertexCount-1)
+				{
+					int indexB = (i+1) * m_edgeVertexCount + j;
+					posB = Vector3Utils::LDVectorPtr(vtxData[indexB].Position);
+				}
+				else
+				{
+					float height = (float)Terrain::GetHeightAt(i+1 + m_bx*(float)Terrain::TerrainEdgeLength, j+m_bz*(float)Terrain::TerrainEdgeLength);
+					posB = Vector3Utils::LDVector(cellLength * (i+1), height*HeightScale, cellLength * j);
+				}
+
+				Vector3 posR;
+				if (j<m_edgeVertexCount-1)
+				{
+					int indexR = i * m_edgeVertexCount + j+1;
+					posR = Vector3Utils::LDVectorPtr(vtxData[indexR].Position);
+				}
+				else
+				{
+					float height = (float)Terrain::GetHeightAt(i + m_bx*(float)Terrain::TerrainEdgeLength, j+1+m_bz*(float)Terrain::TerrainEdgeLength);
+					posR = Vector3Utils::LDVector(cellLength * i, height*HeightScale, cellLength * (j+1));
+				}
+				
+				Vector3 va = Vector3Utils::Subtract(posR, pos);
+				Vector3 vb = Vector3Utils::Subtract(posB, pos);
+				Vector3 n = Vector3Utils::Cross(va, vb);
+				n = Vector3Utils::Normalize(n);
+
+				Vector3Utils::Store(n, vtxData[index].Normal);
+			}
+		}
+		m_vertexBuffer->Unlock();
+
+		m_geoData.VertexDecl = m_vtxDecl;
+		m_geoData.VertexSize = sizeof(TerrainVertex);
+		m_geoData.VertexBuffer = m_vertexBuffer;
+		m_geoData.IndexBuffer = m_sharedIndex;
+		m_geoData.PrimitiveCount = m_primitiveCount;
+		m_geoData.VertexCount = vertexCount;
+		m_geoData.PrimitiveType = PT_TriangleList;
+		m_geoData.BaseVertex = 0;
+
+		RenderOperation op;
+		op.Material = &m_material;
+		op.GeometryData = &m_geoData;
+		Matrix::CreateTranslation(op.RootTransform, m_bx*Terrain::BlockLength,0,m_bz*Terrain::BlockLength);
+		m_opBuffer.Add(op);
+	}
+	void TerrainMesh::unload()
+	{
+		delete m_vertexBuffer;
+		delete m_vtxDecl;
+		m_vertexBuffer = 0;
+		m_vtxDecl = 0;
+		m_opBuffer.Clear();
+	}
+
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+	TerrainMeshManager::TerrainMeshManager()
+		: ResourceManager(L"TerrainMeshManager Manager ", 200 * 1048576, true)
+	{
+		LogManager::getSingleton().Write(LOG_System, 
+			L"TerrainMeshManager initialized with a cache size 200MB, using async streaming.", 
+			LOGLVL_Infomation);
+	}
+	TerrainMeshManager::~TerrainMeshManager()
+	{
+
+	}
+	void TerrainMeshManager::InitializeResources(RenderDevice* device)
+	{
+		m_idxLod0 = new SharedIndexData(device, 513);
+		m_idxLod1 = new SharedIndexData(device, 129);
+		m_idxLod2 = new SharedIndexData(device, 65);
+
+		FileLocateRule rule;
+		LocateCheckPoint cp;
+		cp.AddPath(L"textures.pak");
+		rule.AddCheckPoint(cp);
+
+		FileLocation* fl = FileSystem::getSingleton().Locate(L"TRock.tex", rule);
+		m_textures[0] = TextureManager::getSingleton().CreateInstance(device,fl, false);
+		fl = FileSystem::getSingleton().Locate(L"TSand.tex", rule);
+		m_textures[1] = TextureManager::getSingleton().CreateInstance(device,fl, false);
+		fl = FileSystem::getSingleton().Locate(L"TGrass.tex", rule);
+		m_textures[2] = TextureManager::getSingleton().CreateInstance(device,fl, false);
+		fl = FileSystem::getSingleton().Locate(L"TSnow.tex", rule);
+		m_textures[3] = TextureManager::getSingleton().CreateInstance(device,fl, false);
+
+	}
+	void TerrainMeshManager::FinalizeResources()
+	{
+		delete m_idxLod0;
+		delete m_idxLod1;
+		delete m_idxLod2;
+
+		delete m_textures[0];
+		delete m_textures[1];
+		delete m_textures[2];
+		delete m_textures[3];
+
+	}
+	ResourceHandle<TerrainMesh>* TerrainMeshManager::CreateInstance(RenderDevice* rd, int bx, int bz, int lod)
+	{
+		int size;
+		if (lod == 0)
+			size = 512;
+		else if (lod == 1)
+			size = 128;
+		else size = 64;
+
+		Resource* retirved = Exists(TerrainMesh::GetHashString(bx,bz, size));
+		if (!retirved)
+		{
+			TerrainMesh* mdl = new TerrainMesh(rd, bx,bz,size);
+			retirved = mdl;
+			NotifyNewResource(mdl);
+		}
+		return new ResourceHandle<TerrainMesh>((TerrainMesh*)retirved);
+	}
+
+	SharedIndexData* TerrainMeshManager::getIndexData(int size) const
+	{
+		switch (size)
+		{
+		case 512:
+			return m_idxLod0;
+		case 128:
+			return m_idxLod1;
+		case 64:
+			return m_idxLod2;
+		}
+		return m_idxLod2;
+	}
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+	SharedIndexData::SharedIndexData(RenderDevice* rd, int terrSize)
+		: m_terrainSize(terrSize)
+	{
+		ObjectFactory* objFac = rd->getObjectFactory();
+
+		int primCount = terrSize * terrSize * 2;
+		int indexCount = primCount * 3;
+		m_indexBuffer = objFac->CreateIndexBuffer(IBT_Bit32, indexCount, BU_WriteOnly);
+		
+		uint* idxData = reinterpret_cast<uint*>(m_indexBuffer->Lock(LOCK_None));
+
+		int idx = 0;
+		for (int i=0;i<terrSize-1;i++)
+		{
+			int remi = i % 2;
+
+			for (int j = 0; j < terrSize - 1; j++)
+			{
+				int remj = j % 2;
+				if (remi == remj)
+				{
+					idxData[idx++] = i * terrSize + j;
+					idxData[idx++] = i * terrSize + (j + 1);
+					idxData[idx++] = (i + 1) * terrSize + j;
+
+
+					idxData[idx++] = i * terrSize + (j + 1);
+					idxData[idx++] = (i + 1) * terrSize + (j + 1);
+					idxData[idx++] = (i + 1) * terrSize + j;
+				}
+				else
+				{
+					idxData[idx++] = i * terrSize + j;
+					idxData[idx++] = (i + 1) * terrSize + (j + 1);
+					idxData[idx++] = i * terrSize + (j + 1);
+
+					idxData[idx++] = i * terrSize + j;
+					idxData[idx++] = (i + 1) * terrSize + j;
+					idxData[idx++] = (i + 1) * terrSize + (j + 1);
+				}
+			}
+		}
+		m_indexBuffer->Unlock();
+	}
+	SharedIndexData::~SharedIndexData()
+	{
+		delete m_indexBuffer;
+	}
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+
+}

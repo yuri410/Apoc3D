@@ -36,6 +36,8 @@ namespace Apoc3D
 			Matrix temp;
 			Matrix::Multiply(temp, m_orientation, m_transformation);
 			m_transformation = temp;
+
+			m_BoundingSphere.Center = Vector3Utils::Add(m_position, BoundingSphereOffset);
 			RequiresNodeUpdate = true;
 		}
 
@@ -49,6 +51,7 @@ namespace Apoc3D
 			if (m_isTransformDirty)
 			{
 				UpdateTransform();
+				
 				m_isTransformDirty = false;
 			}
 		}
@@ -82,10 +85,6 @@ namespace Apoc3D
 		void DynamicObject::UpdateTransform()
 		{
 			Entity::UpdateTransform();
-			
-			m_BoundingSphere.Center = Vector3Utils::Add(m_position, BoundingSphereOffset);
-
-			RequiresNodeUpdate = true;
 		}
 
 	}

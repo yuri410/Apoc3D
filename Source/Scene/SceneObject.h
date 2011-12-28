@@ -59,7 +59,7 @@ namespace Apoc3D
 
 
 			SceneObject(const bool hasSubObjs = false) 
-				: m_hasSubObjects(hasSubObjs), m_parentNode(0)
+				: m_hasSubObjects(hasSubObjs), m_parentNode(0), RequiresNodeUpdate(false)
 			{
 				m_transformation.LoadIdentity();
 			}
@@ -84,6 +84,7 @@ namespace Apoc3D
 				return BoundingSphere::Intersects(m_BoundingSphere, ray, d);
 			}
 
+			virtual bool IsDynamicObject() const { return false; }
 		};
 
 		class APAPI Entity : public SceneObject
@@ -146,6 +147,8 @@ namespace Apoc3D
 			DynamicObject(const Vector3& position, const Matrix& orientation);
 
 			virtual void UpdateTransform();
+
+			virtual bool IsDynamicObject() const { return true; }
 		};
 	};
 };

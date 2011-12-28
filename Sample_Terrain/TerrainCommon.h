@@ -40,6 +40,12 @@ namespace SampleTerrain
 	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
 
 	class TerrainDemo;
+	class GameCamera;
+	class Terrain;
+	class TerrainMesh;
+	class TerrainMeshManager;
+	class SharedIndexData;
+
 
 };
 

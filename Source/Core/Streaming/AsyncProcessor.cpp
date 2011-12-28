@@ -21,8 +21,12 @@ namespace Apoc3D
 			{
 				static const int ManageInterval = 50;
 				int times = 0;
+				int genUpdateCounter = 0;
+
 				while (!m_closed)
 				{
+					//bool rest = true;
+
 					ResourceOperation* resOp = 0;
 					m_syncMutex.lock();
 					if (m_opQueue.getCount())
@@ -35,17 +39,31 @@ namespace Apoc3D
 					if (resOp)
 					{
 						resOp->Process();
+						times++;
+						//genUpdateCounter++;
+						//rest = false;
 					}
-					else
+					
+
+					//genUpdateCounter++;
+					//if (genUpdateCounter % (ManageInterval/4) == 0)
+					//{
+					//	m_genTable->SubTask_GenUpdate();
+					//	genUpdateCounter = 0;
+					//}
+
+					m_genTable->SubTask_GenUpdate();
+
+					times++;
+					//if (times % ManageInterval == 0)
 					{
-						m_genTable->SubTask_GenUpdate();
-						if ((times++) % ManageInterval == 0)
-						{
-							m_genTable->SubTask_Manage();
-							times = 0;
-						}
-						ApocSleep(10);
+						m_genTable->SubTask_Manage();
+						times = 0;
+						//if (!rest) ApocSleep(10);
 					}
+
+					ApocSleep(10);
+					
 				}
 			}
 
