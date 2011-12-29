@@ -44,7 +44,7 @@ namespace SampleTerrain
 
 		virtual void Update(const GameTime* const time);
 
-
+		
 	private:
 		float m_height;
 	};

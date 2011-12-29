@@ -78,7 +78,8 @@ namespace SampleTerrain
 
 		m_camera = new GameCamera(vp.Width/(float)(vp.Height));
 		m_camera->Move(Vector3Utils::LDVector(100,0,100));
-		
+		m_camera->UpdateTransform();
+
 		m_sceneRenderer = new SceneRenderer(m_device);
 
 		fl = FileSystem::getSingleton().Locate(L"Renderer.xml", FileLocateRule::Default);
@@ -96,15 +97,15 @@ namespace SampleTerrain
 		TerrainMeshManager::getSingleton().InitializeResources(m_device);
 
 
-		m_scene = new OctreeSceneManager(OctreeBox(10000), 10000/128);
+		m_scene = new OctreeSceneManager(OctreeBox(20000), 20000/256);
 		//PerlinNoise::Frequency = 0.01f;
 		//PerlinNoise::Persistency = 0.3f;
 		//PerlinNoise::NumInterations = 8;
 		//PerlinNoise::ComputeRandomTable();
 		
-		for (int i=0;i<5;i++)
+		for (int i=-15;i<=15;i++)
 		{
-			for (int j=0;j<5;j++)
+			for (int j=-15;j<=15;j++)
 			{
 				Terrain* t1 = new Terrain(m_device, i,j);
 				m_scene->AddObject(t1);

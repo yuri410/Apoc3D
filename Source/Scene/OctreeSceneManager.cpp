@@ -241,9 +241,10 @@ namespace Apoc3D
 				{
 					for (int i=0;i<OctreeSceneNode::OCTE_Count;i++)
 					{
-						if (node->getNode(static_cast<OctreeSceneNode::Extend>(i)))
+						OctreeSceneNode* subNode = node->getNode(static_cast<OctreeSceneNode::Extend>(i));
+						if (subNode)
 						{
-							m_bfsQueue.Enqueue(node->getNode(static_cast<OctreeSceneNode::Extend>(i)));
+							m_bfsQueue.Enqueue(subNode);
 						}
 					}
 					const ObjectList& objs = node->getAttachedObjects();

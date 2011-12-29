@@ -58,7 +58,7 @@ namespace Apoc3D
 					else
 					{
 						memcpy(destinationArray, m_array+m_head, (m_arrLength-m_head) * sizeof(T));
-						memcpy(destinationArray, m_array+(m_arrLength-m_head), (m_tail) * sizeof(T));
+						memcpy(destinationArray+(m_arrLength-m_head), m_array, (m_tail) * sizeof(T));
 					}
 				}
 				delete[] m_array;

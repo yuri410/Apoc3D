@@ -116,7 +116,7 @@ namespace SampleTerrain
 		{
 			for (int j=0;j<m_edgeVertexCount;j++)
 			{
-				float height = Terrain::GetHeightAt(i + m_bx*(float)Terrain::TerrainEdgeLength, j+m_bz*(float)Terrain::TerrainEdgeLength);
+				float height = Terrain::GetHeightAt(i*Terrain::CellLength + m_bx*Terrain::BlockLength, j*Terrain::CellLength+m_bz*Terrain::BlockLength);
 				
 				int index = i * m_edgeVertexCount + j;
 
@@ -142,7 +142,7 @@ namespace SampleTerrain
 				}
 				else
 				{
-					float height = (float)Terrain::GetHeightAt(i+1 + m_bx*(float)Terrain::TerrainEdgeLength, j+m_bz*(float)Terrain::TerrainEdgeLength);
+					float height = (float)Terrain::GetHeightAt((i+1)*Terrain::CellLength + m_bx*Terrain::BlockLength, j*Terrain::CellLength+m_bz*Terrain::BlockLength);
 					posB = Vector3Utils::LDVector(cellLength * (i+1), height*HeightScale, cellLength * j);
 				}
 
@@ -154,7 +154,7 @@ namespace SampleTerrain
 				}
 				else
 				{
-					float height = (float)Terrain::GetHeightAt(i + m_bx*(float)Terrain::TerrainEdgeLength, j+1+m_bz*(float)Terrain::TerrainEdgeLength);
+					float height = (float)Terrain::GetHeightAt(i*Terrain::CellLength + m_bx*Terrain::BlockLength, (j+1)*Terrain::CellLength+m_bz*Terrain::BlockLength);
 					posR = Vector3Utils::LDVector(cellLength * i, height*HeightScale, cellLength * (j+1));
 				}
 				
@@ -208,9 +208,9 @@ namespace SampleTerrain
 	}
 	void TerrainMeshManager::InitializeResources(RenderDevice* device)
 	{
-		m_idxLod0 = new SharedIndexData(device, 513);
-		m_idxLod1 = new SharedIndexData(device, 129);
-		m_idxLod2 = new SharedIndexData(device, 65);
+		m_idxLod0 = new SharedIndexData(device, 256);
+		m_idxLod1 = new SharedIndexData(device, 64);
+		m_idxLod2 = new SharedIndexData(device, 32);
 
 		FileLocateRule rule;
 		LocateCheckPoint cp;
@@ -243,10 +243,10 @@ namespace SampleTerrain
 	{
 		int size;
 		if (lod == 0)
-			size = 512;
+			size = 256;
 		else if (lod == 1)
-			size = 128;
-		else size = 64;
+			size = 64;
+		else size = 32;
 
 		Resource* retirved = Exists(TerrainMesh::GetHashString(bx,bz, size));
 		if (!retirved)
@@ -262,11 +262,11 @@ namespace SampleTerrain
 	{
 		switch (size)
 		{
-		case 512:
+		case 256:
 			return m_idxLod0;
-		case 128:
-			return m_idxLod1;
 		case 64:
+			return m_idxLod1;
+		case 32:
 			return m_idxLod2;
 		}
 		return m_idxLod2;
@@ -284,6 +284,8 @@ namespace SampleTerrain
 		m_indexBuffer = objFac->CreateIndexBuffer(IBT_Bit32, indexCount, BU_WriteOnly);
 		
 		uint* idxData = reinterpret_cast<uint*>(m_indexBuffer->Lock(LOCK_None));
+
+		terrSize++;
 
 		int idx = 0;
 		for (int i=0;i<terrSize-1;i++)

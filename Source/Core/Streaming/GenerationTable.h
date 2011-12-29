@@ -48,27 +48,6 @@ namespace Apoc3D
 
 				static const float GenerationLifeTime[];
 
-			private:
-				
-				ExistTable<Resource*>* m_generations;
-
-				FastList<Resource*> m_generationList;
-
-				//thread* m_thread;
-
-				ResourceManager* m_manager;
-
-				bool m_isShutdown;
-
-				
-				static void ThreadEntry(void* args)
-				{
-					GenerationTable* table = static_cast<GenerationTable*>(args);
-					table->GenerationUpdate_Main();
-				}
-
-				void GenerationUpdate_Main();
-
 			public:
 				fast_mutex m_genLock;
 
@@ -77,7 +56,7 @@ namespace Apoc3D
 
 
 				void SubTask_GenUpdate();
-				void SubTask_Manage();
+				void SubTask_Collect();
 
 
 				//ExistTable<Resource*>& getGeneration(int index) const { return m_generations[index]; }
@@ -94,6 +73,27 @@ namespace Apoc3D
 					//m_thread->join();
 				}
 
+			private:
+
+				ExistTable<Resource*>* m_generations;
+
+				FastList<Resource*> m_generationList;
+
+				//thread* m_thread;
+
+				ResourceManager* m_manager;
+
+				bool m_isShutdown;
+
+
+				static void ThreadEntry(void* args)
+				{
+					GenerationTable* table = static_cast<GenerationTable*>(args);
+					table->GenerationUpdate_Main();
+				}
+
+				void GenerationUpdate_Main();
+				bool CanUnload(Resource* res) const;
 			};
 		}
 		

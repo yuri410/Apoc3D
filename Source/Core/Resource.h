@@ -86,6 +86,8 @@ namespace Apoc3D
 
 					res->OnLoaded();
 				}
+
+				virtual OperationType getType() const { return RESOP_Load; }
 			};
 			class ResourceUnloadOperation : public ResourceOperation
 			{
@@ -109,6 +111,8 @@ namespace Apoc3D
 
 					res->OnUnloaded();
 				}
+
+				virtual OperationType getType() const { return RESOP_Unload; }
 			};
 		
 			class GenerationCalculator
@@ -126,7 +130,7 @@ namespace Apoc3D
 				GenerationCalculator(const GenerationTable* table);
 
 				void Use(Resource* resource);
-				void UpdateGeneration();
+				void UpdateGeneration(float time);
 
 				bool IsGenerationOutOfTime(float time);
 
@@ -197,6 +201,7 @@ namespace Apoc3D
 			int getReferenceCount() const { return m_refCount; }
 
 			virtual bool IsUnloadable() const { return true; }
+			virtual bool IsIndependent() const { return true; }
 
 			virtual uint32 getSize() = 0;
 

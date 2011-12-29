@@ -45,7 +45,10 @@ namespace Apoc3D
 		{
 			m_curUsedCache -= res->getSize();
 		}
-
+		bool ResourceManager::NeutralizeTask(ResourceOperation* op) const
+		{
+			return m_asyncProc->NeutralizeTask(op);
+		}
 		void ResourceManager::AddTask(ResourceOperation* op) const
 		{
 			if (!m_asyncProc)

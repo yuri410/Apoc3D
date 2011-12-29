@@ -1,6 +1,7 @@
 #include "AsyncProcessor.h"
 #include "Platform/Thread.h"
 #include "GenerationTable.h"
+#include "Core/Resource.h"
 
 using namespace Apoc3D::Platform;
 
@@ -19,13 +20,19 @@ namespace Apoc3D
 			}
 			void AsyncProcessor::Main()
 			{
-				static const int ManageInterval = 50;
-				int times = 0;
-				int genUpdateCounter = 0;
+				static const float CollectInterval = 1;
+				static const float GenUpdateInterval = 0.25f;
+
+				float accumulatedCollectWaitingTime = 0;
+				float accumulatedGenUpdateWaitingTime = 0;
+
+
+				float timeStart1 = (float)clock() / CLOCKS_PER_SEC;
+				float timeStart2 = timeStart1;
 
 				while (!m_closed)
 				{
-					//bool rest = true;
+					bool rest = true;
 
 					ResourceOperation* resOp = 0;
 					m_syncMutex.lock();
@@ -39,41 +46,95 @@ namespace Apoc3D
 					if (resOp)
 					{
 						resOp->Process();
-						times++;
-						//genUpdateCounter++;
-						//rest = false;
+						rest = false;
 					}
 					
+					float t = (float)clock() / CLOCKS_PER_SEC;
+					float timeSpent1 = t - timeStart1;
+					if (timeSpent1<0) timeSpent1 = 0;
+					float timeSpent2 = t - timeStart2;
+					if (timeSpent2<0) timeSpent2 = 0;
 
-					//genUpdateCounter++;
-					//if (genUpdateCounter % (ManageInterval/4) == 0)
-					//{
-					//	m_genTable->SubTask_GenUpdate();
-					//	genUpdateCounter = 0;
-					//}
 
-					m_genTable->SubTask_GenUpdate();
+					accumulatedCollectWaitingTime += timeSpent1;
+					accumulatedGenUpdateWaitingTime += timeSpent2;
+					timeStart1 = t;
+					timeStart2 = t;
 
-					times++;
-					//if (times % ManageInterval == 0)
+					if (accumulatedGenUpdateWaitingTime > GenUpdateInterval)
 					{
-						m_genTable->SubTask_Manage();
-						times = 0;
-						//if (!rest) ApocSleep(10);
+						m_genTable->SubTask_GenUpdate();
+						accumulatedGenUpdateWaitingTime = 0;
+						if (!rest) ApocSleep(10);
 					}
 
-					ApocSleep(10);
+
+					if (accumulatedCollectWaitingTime > CollectInterval)
+					{
+						m_genTable->SubTask_Collect();
+						accumulatedCollectWaitingTime = 0;
+						if (!rest) ApocSleep(10);
+					}
+
+					if (rest) ApocSleep(10);
 					
 				}
 			}
+			bool AsyncProcessor::NeutralizeTask(ResourceOperation* op)
+			{
+				bool passed = false;
+				ResourceOperation::OperationType type = op->getType();
 
+				if (op->getResource() && op->getResource()->IsIndependent())
+				{
+					if (type == ResourceOperation::RESOP_Load)
+					{
+						m_syncMutex.lock();
+
+						for (int i=0;i<m_opQueue.getCount();i++)
+						{
+							ResourceOperation* other = m_opQueue.GetElement(i);
+							if (other && other->getResource() == op->getResource() && other->getType() == ResourceOperation::RESOP_Unload)
+							{
+								m_opQueue.SetElement(i,0);
+								passed = true;
+								break;
+							}
+						}
+
+						m_syncMutex.unlock();
+					}
+					else if (type == ResourceOperation::RESOP_Unload)
+					{
+						m_syncMutex.lock();
+
+						for (int i=0;i<m_opQueue.getCount();i++)
+						{
+							ResourceOperation* other = m_opQueue.GetElement(i);
+							if (other && other->getResource() == op->getResource() && other->getType() == ResourceOperation::RESOP_Load)
+							{
+								m_opQueue.SetElement(i,0);
+								passed = true;
+								break;
+							}
+						}
+
+						m_syncMutex.unlock();
+					}
+				}
+				return passed;
+			}
 			void AsyncProcessor::AddTask(ResourceOperation* op)
 			{
-				m_syncMutex.lock();
+				
+				//if (!ignored)
+				{
+					m_syncMutex.lock();
 
-				m_opQueue.Enqueue(op);
+					m_opQueue.Enqueue(op);
 
-				m_syncMutex.unlock();
+					m_syncMutex.unlock();
+				}
 			}
 			void AsyncProcessor::RemoveTask(ResourceOperation* op)
 			{

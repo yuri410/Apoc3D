@@ -49,9 +49,18 @@ namespace Apoc3D
 				ResourceOperation(Resource* res)
 					: m_resource(res){ }
 
-				Resource* getResource() const { return m_resource; }
+			
 			public:
+				enum OperationType
+				{
+					RESOP_Load,
+					RESOP_Unload,
+					RESOP_Other
+				};
 				virtual void Process() = 0;
+
+				virtual OperationType getType() const = 0;
+				Resource* getResource() const { return m_resource; }
 			};
 
 			class APAPI AsyncProcessor
@@ -67,6 +76,8 @@ namespace Apoc3D
 				static void ThreadEntry(void* arg);
 				void Main();
 			public:
+				bool NeutralizeTask(ResourceOperation* op);
+
 				void AddTask(ResourceOperation* op);
 				void RemoveTask(ResourceOperation* op);
 

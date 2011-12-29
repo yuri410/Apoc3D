@@ -85,7 +85,7 @@ namespace Apoc3D
 						if (res->m_generation->IsGenerationOutOfTime((float)timeStart/CLOCKS_PER_SEC))
 						{
 							int og = res->m_generation->Generation;
-							res->m_generation->UpdateGeneration();
+							res->m_generation->UpdateGeneration((float)timeStart/CLOCKS_PER_SEC);
 							int ng = res->m_generation->Generation;
 							if (ng!=og)
 							{
@@ -109,7 +109,7 @@ namespace Apoc3D
 					}
 				}
 			}
-			void GenerationTable::SubTask_Manage()
+			void GenerationTable::SubTask_Collect()
 			{
 				int64 predictSize = m_manager->getUsedCacheSize();
 
@@ -124,7 +124,7 @@ namespace Apoc3D
 						{
 							Resource* r = *iter.getCurrent();
 
-							if (r->getState() == RS_Loaded && r->IsUnloadable())
+							if (CanUnload(r) && r->IsUnloadable())
 							{
 								predictSize -= r->getSize();
 								r->Unload();
@@ -145,7 +145,7 @@ namespace Apoc3D
 						Resource* r = *iter.getCurrent();
 						if (!r->getReferenceCount())
 						{
-							if (r->getState() == RS_Loaded && r->IsUnloadable())
+							if (CanUnload(r) && r->IsUnloadable())
 							{
 								r->Unload();
 							}
@@ -154,7 +154,11 @@ namespace Apoc3D
 					m_genLock.unlock();
 				}
 			}
-
+			bool GenerationTable::CanUnload(Resource* res) const
+			{
+				ResourceState state = res->getState();
+				return state == RS_PendingLoad || state == RS_Loaded;
+			}
 			//void GenerationTable::GenerationUpdate_Main()
 			//{
 			//	static const int ManageInterval = 10;

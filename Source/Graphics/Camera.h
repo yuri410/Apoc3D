@@ -139,7 +139,7 @@ namespace Apoc3D
 			}
 			
 			void Update(const GameTime* const time);
-		
+			void UpdateTransform();
 		protected:
 			Vector3 m_position;
 

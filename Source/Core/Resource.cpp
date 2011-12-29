@@ -53,7 +53,7 @@ namespace Apoc3D
 				m_timeQueue.Dequeue();
 			m_queueLock.unlock();
 		}
-		void Resource::GenerationCalculator::UpdateGeneration()
+		void Resource::GenerationCalculator::UpdateGeneration(float time)
 		{
 			float result = -9999999;
 			
@@ -70,10 +70,10 @@ namespace Apoc3D
 			}
 			m_queueLock.unlock();
 
-			clock_t t = clock();
+			//clock_t t = clock();
 
-			result = (float)t/ CLOCKS_PER_SEC - result;
-
+			//result = (float)t/ CLOCKS_PER_SEC - result;
+			result = time - result;
 			if (result > GenerationTable::GenerationLifeTime[0])
 			{
 				if (result > GenerationTable::GenerationLifeTime[1])
@@ -222,6 +222,8 @@ namespace Apoc3D
 			{
 				if (m_manager->usesAsync())
 				{
+					//assert(getState() == RS_Unloaded || getState() == RS_PendingUnload);
+
 					m_generation->Use(this);
 
 					ResourceState state = getState();
@@ -230,13 +232,26 @@ namespace Apoc3D
 					case RS_Loading:
 					case RS_Unloading:
 					case RS_PendingLoad:
-					case RS_PendingUnload:
 					case RS_Loaded:
 						return;
+					case RS_PendingUnload:
+						{
+							if (!m_manager->NeutralizeTask(m_resLoader))
+							{
+								setState(RS_PendingLoad);
+								m_manager->AddTask(m_resLoader);
+							}
+							break;
+						}
+					default:
+						{
+							setState(RS_PendingLoad);
+							m_manager->AddTask(m_resLoader);
+							break;
+						}
 					}
 
-					setState(RS_PendingLoad);
-					m_manager->AddTask(m_resLoader);
+					
 				}
 				else
 				{
@@ -251,21 +266,33 @@ namespace Apoc3D
 			{
 				if (m_manager->usesAsync())
 				{
-					assert((m_state & RS_Loaded) == RS_Loaded);
+					assert(getState() == RS_Loaded || getState() == RS_PendingLoad);
 
 					ResourceState state = getState();
 					switch (state)
 					{
 					case RS_Loading:
 					case RS_Unloading:
-					case RS_PendingLoad:
 					case RS_PendingUnload:
 					case RS_Unloaded:
 						return;
+					case RS_PendingLoad:
+						{
+							if (!m_manager->NeutralizeTask(m_resUnloader))
+							{
+								setState(RS_PendingUnload);
+								m_manager->AddTask(m_resUnloader);
+							}
+							break;
+						}
+					default:
+						{
+							setState(RS_PendingUnload);
+							m_manager->AddTask(m_resUnloader);
+							break;
+						}
 					}
 
-					setState(RS_PendingUnload);
-					m_manager->AddTask(m_resUnloader);
 				}
 				else
 				{

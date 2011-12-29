@@ -44,6 +44,11 @@ namespace Apoc3D
 
 		void FpsCamera::Update(const GameTime* time)
 		{
+			UpdateTransform();
+			Camera::Update(time);
+		}
+		void FpsCamera::UpdateTransform()
+		{
 			Vector3 at = Vector3Utils::Add(m_position, Vector3Utils::UnitZ);
 			Matrix::CreateLookAtLH(m_view, m_position, at, Vector3Utils::UnitY);
 
@@ -51,9 +56,7 @@ namespace Apoc3D
 
 			getFrustum().Update(m_view, m_proj);
 
-			Camera::Update(time);
 		}
-
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/

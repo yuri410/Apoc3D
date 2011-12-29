@@ -51,5 +51,5 @@ namespace SampleTerrain
 		FpsCamera::Update(time);
 
 	}
-	
+
 }

@@ -21,7 +21,7 @@ namespace SampleTerrain
 	public:
 		static const float CellLength;
 
-		static const int TerrainEdgeLength = 512;
+		static const int TerrainEdgeLength = 256;
 		static const float BlockLength;
 		static const float HeightScale;
 		

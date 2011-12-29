@@ -80,6 +80,7 @@ namespace Apoc3D
 
 			void Shutdown();
 
+			bool NeutralizeTask(ResourceOperation* op) const;
 			void AddTask(ResourceOperation* op) const;
 			void RemoveTask(ResourceOperation* op) const;
 

@@ -4,10 +4,10 @@
 
 namespace SampleTerrain
 {
-	const float Terrain::CellLength = 1;
+	const float Terrain::CellLength = 2;
 	const float Terrain::BlockLength = CellLength * TerrainEdgeLength;
 	const float Terrain::HeightScale = 75;
-	PerlinNoise Terrain::Noiser(0.4, 0.015, 1, 8, 8881);
+	PerlinNoise Terrain::Noiser(0.42, 0.015, 1, 8, 8881);
 
 	Terrain::Terrain(RenderDevice* device, int bx, int bz)
 	{
