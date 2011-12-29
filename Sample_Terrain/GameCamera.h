@@ -44,9 +44,14 @@ namespace SampleTerrain
 
 		virtual void Update(const GameTime* const time);
 
-		
+		void Sprint();
+		void Jump();
 	private:
-		float m_height;
+		//float m_height;
+		//float m_lastHeight;
+		//float m_fallSpeed;
+		
+		bool m_isOnGround;
 	};
 	
 }

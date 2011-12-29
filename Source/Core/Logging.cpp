@@ -121,6 +121,8 @@ namespace Apoc3D
 
 		void Log::Write(const String& message, LogMessageLevel level)
 		{
+			m_lock.lock();
+
 			time_t t = time(0);
 			m_entries.push_back(LogEntry(t, message, level, m_type));
 
@@ -128,6 +130,8 @@ namespace Apoc3D
 			{
 				m_entries.erase(m_entries.begin());
 			}
+
+			m_lock.unlock();
 		}
 
 		LogManager::LogManager()

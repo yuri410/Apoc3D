@@ -100,52 +100,60 @@ namespace Apoc3D
 			const Vector3 &getPosition() const { return m_position; }
 			
 			const float getAspectRatio() const { return m_aspectRatio; }
-			const float getVelocity() const { return m_velocity; } 
+			//const float getVelocity() const { return m_velocity; } 
 
 			void MoveForward()
 			{
-				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
-				m_position = Vector3Utils::Add(m_position, ofs);
+				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
+				m_velChange = Vector3Utils::Add(m_velChange, Vector3Utils::UnitZ);
 			}
 			void MoveBackward()
 			{
-				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
-				m_position = Vector3Utils::Subtract(m_position, ofs);				
+				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
+				m_velChange = Vector3Utils::Subtract(m_velChange, Vector3Utils::UnitZ);				
 			}
 			void MoveLeft()
 			{
-				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
-				m_position = Vector3Utils::Subtract(m_position, ofs);
+				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
+				m_velChange = Vector3Utils::Subtract(m_velChange, Vector3Utils::UnitX);
 			}
 			void MoveRight() 
 			{
-				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
-				m_position = Vector3Utils::Add(m_position, ofs);
+				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
+				m_velChange = Vector3Utils::Add(m_velChange, Vector3Utils::UnitX);
 			}
 			void MoveUp()
 			{
-				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
-				m_position = Vector3Utils::Add(m_position, ofs);
+				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
+				m_velChange = Vector3Utils::Add(m_velChange, Vector3Utils::UnitY);
 			}
 			void MoveDown() 
 			{
-				Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
-				m_position = Vector3Utils::Subtract(m_position, ofs);
+				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
+				m_velChange = Vector3Utils::Subtract(m_velChange, Vector3Utils::UnitY);
 			}
 			void Move(const Vector3 &dir)
 			{
-				Vector3 ofs = Vector3Utils::Multiply(dir, m_velocity);
-				m_position = Vector3Utils::Add(m_position, ofs);
+				//Vector3 ofs = Vector3Utils::Multiply(dir, m_velocity);
+				m_velChange = Vector3Utils::Add(m_velChange, dir);
 			}
 			
 			void Update(const GameTime* const time);
 			void UpdateTransform();
+
+			void setPosition(const Vector3& p)
+			{
+				m_position = p;
+			}
 		protected:
 			Vector3 m_position;
+			float m_maxVelocity;
+			Vector3 m_velocity;
+			Vector3 m_velChange;
 
 		private:
 			float m_aspectRatio;
-			float m_velocity;
+			
 			
 			float m_fieldOfView;
 			float m_near;

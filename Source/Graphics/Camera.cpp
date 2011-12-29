@@ -31,8 +31,8 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		FpsCamera::FpsCamera(float aspectRatio)
-			: m_aspectRatio(aspectRatio), m_velocity(1), m_position(Vector3Utils::Zero),
-			m_fieldOfView(ToRadian(50)), m_near(0.5f), m_far(1500)
+			: m_aspectRatio(aspectRatio), m_maxVelocity(5), m_position(Vector3Utils::Zero),
+			m_fieldOfView(ToRadian(50)), m_near(0.5f), m_far(1500), m_velocity(Vector3Utils::Zero), m_velChange(Vector3Utils::Zero)
 		{
 			
 		}
@@ -44,6 +44,38 @@ namespace Apoc3D
 
 		void FpsCamera::Update(const GameTime* time)
 		{
+			m_velocity = Vector3Utils::Add(m_velChange, m_velocity);
+			m_velChange = Vector3Utils::Zero;
+			Vector2 hozV = Vector2Utils::LDVector(_V3X(m_velocity), _V3Z(m_velocity));
+
+			if (Vector2Utils::LengthSquared(hozV)>1)
+			{
+				hozV = Vector2Utils::Normalize(hozV);
+			}
+
+			{
+				float vLen = Vector2Utils::Length(hozV);
+
+				if (vLen > 0.05f)
+				{
+					vLen -= time->getElapsedTime() * 1.5f;
+
+					hozV = Vector2Utils::Normalize(hozV);
+					hozV = Vector2Utils::Multiply(hozV, vLen);
+					_V3X(m_velocity) = Vector2Utils::GetX(hozV);
+					_V3Z(m_velocity) = Vector2Utils::GetY(hozV);
+				}
+				else
+				{
+					_V3X(m_velocity) = 0; _V3Z(m_velocity) = 0;
+				}
+
+			}
+
+			Vector3 dp = Vector3Utils::Multiply(m_velocity, time->getElapsedTime() * m_maxVelocity);
+			m_position = Vector3Utils::Add(m_position, dp);
+
+
 			UpdateTransform();
 			Camera::Update(time);
 		}

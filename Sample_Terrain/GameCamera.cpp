@@ -31,9 +31,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 namespace SampleTerrain
 {
 	GameCamera::GameCamera(float aspectRatio)
-		: FpsCamera(aspectRatio), m_height(100)
+		: FpsCamera(aspectRatio), m_isOnGround(false)//m_height(100), m_fallSpeed(0)
 	{
 		
+		//m_lastHeight = m_height;
 
 	}
 	GameCamera::~GameCamera()
@@ -42,14 +43,100 @@ namespace SampleTerrain
 
 	void GameCamera::Update(const GameTime* const time)
 	{
+		
+		float gravity = 50;
 
 		float groundHeight = Terrain::GetHeightAt(_V3X(m_position), _V3Z(m_position));
 
-		m_height = groundHeight * Terrain::HeightScale + 5;
-		_V3Y(m_position) = m_height;
+		float target = groundHeight * Terrain::HeightScale + 5;
 
-		FpsCamera::Update(time);
+		if ((_V3Y(m_position)-target)/time->getElapsedTime()>gravity)
+		{
+			m_isOnGround = false;
+		}
 
+		if ((_V3Y(m_position)>= target && !m_isOnGround) || _V3Y(m_velocity)>0)
+		{
+			_V3Y(m_velocity) -= time->getElapsedTime() * gravity;
+			//m_fallSpeed += time->getElapsedTime() * gravity;
+			//m_height -= m_fallSpeed * time->getElapsedTime();
+		}
+		else
+		{
+			_V3Y(m_velocity) = 0;
+			_V3Y(m_position) = target;
+			//m_fallSpeed = 0;
+			m_isOnGround = true;
+		}
+		//_V3Y(m_position) = m_height;
+		//m_lastHeight = m_height;
+
+		
+		
+
+		{
+			if (m_isOnGround)
+			{
+				m_velocity = Vector3Utils::Add(m_velChange, m_velocity);
+			}
+
+			Vector2 hozV = Vector2Utils::LDVector(_V3X(m_velocity), _V3Z(m_velocity));
+			Vector3 v = m_velocity;
+
+			if (Vector2Utils::LengthSquared(hozV)>1)
+			{
+				hozV = Vector2Utils::Normalize(hozV);
+			}
+
+			//if (m_isOnGround)
+			{
+				float vLen = Vector2Utils::Length(hozV);
+
+				if (vLen > 0.05f)
+				{
+					if (m_isOnGround)
+						vLen -= time->getElapsedTime() * 1.5f;
+
+					hozV = Vector2Utils::Normalize(hozV);
+					hozV = Vector2Utils::Multiply(hozV, vLen);
+					_V3X(v) = Vector2Utils::GetX(hozV)* m_maxVelocity;
+					_V3Z(v) = Vector2Utils::GetY(hozV)* m_maxVelocity;
+
+					_V3X(m_velocity) = Vector2Utils::GetX(hozV);
+					_V3Z(m_velocity) = Vector2Utils::GetY(hozV);
+				}
+				else
+				{
+					_V3X(v) = 0; _V3Z(v) = 0;
+
+					_V3X(m_velocity) = 0;
+					_V3Z(m_velocity) = 0;
+				}
+			}
+
+			
+
+			Vector3 dp = Vector3Utils::Multiply(v, time->getElapsedTime());
+			m_position = Vector3Utils::Add(m_position, dp);
+			m_velChange = Vector3Utils::Zero;
+		}
+
+
+		UpdateTransform();
+		Camera::Update(time);
+
+		m_maxVelocity = 20;
 	}
-
+	void GameCamera::Sprint()
+	{
+		m_maxVelocity = 60;
+	}
+	void GameCamera::Jump()
+	{
+		if (m_isOnGround)
+		{
+			_V3Y(m_velocity) = 25.0f;
+			m_isOnGround = false;
+		}
+	}
 }

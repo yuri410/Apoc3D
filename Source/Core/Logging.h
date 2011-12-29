@@ -26,6 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Singleton.h"
+#include "tthread/tinythread.h"
+#include "tthread/fast_mutex.h"
 
 using namespace std;
 
@@ -90,6 +92,8 @@ namespace Apoc3D
 		private:			
 			LogType m_type;
 			list<LogEntry> m_entries;
+
+			tthread::fast_mutex m_lock;
 
 		public:
 			typedef list<LogEntry>::const_iterator Iterator;

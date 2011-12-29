@@ -18,6 +18,7 @@
 #include "Scene/SceneRenderer.h"
 #include "Input/InputAPI.h"
 #include "Input/Keyboard.h"
+#include "Input/Mouse.h"
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/Archive.h"
@@ -77,7 +78,7 @@ namespace SampleTerrain
 		Viewport vp = m_device->getViewport();
 
 		m_camera = new GameCamera(vp.Width/(float)(vp.Height));
-		m_camera->Move(Vector3Utils::LDVector(100,0,100));
+		m_camera->setPosition(Vector3Utils::LDVector(100,0,100));
 		m_camera->UpdateTransform();
 
 		m_sceneRenderer = new SceneRenderer(m_device);
@@ -159,6 +160,12 @@ namespace SampleTerrain
 			m_camera->MoveRight();
 		if (kb->IsPressing(KEY_S))
 			m_camera->MoveBackward();
+		if (kb->IsPressing(KEY_LSHIFT))
+			m_camera->Sprint();
+		if (kb->IsKeyDown(KEY_SPACE))
+			m_camera->Jump();
 
+		Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+		mouse->getDX();
 	}
 }
