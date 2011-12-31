@@ -259,7 +259,7 @@ namespace Apoc3D
 				m_intBuffer[1] = m_intBuffer[2] = m_intBuffer[3] = 0;
 				m_device->getDevice()->SetVertexShaderConstantI(reg, m_intBuffer, 1);
 			}
-			void D3D9VertexShader::SetValue(int reg, bool* value, int count) 
+			void D3D9VertexShader::SetValue(int reg, const bool* value, int count) 
 			{
 				if ((count%4))
 				{
@@ -271,7 +271,7 @@ namespace Apoc3D
 				}
 				m_device->getDevice()->SetVertexShaderConstantB(reg, m_boolBuffer, count / 4);
 			}
-			void D3D9VertexShader::SetValue(int reg, float* value, int count) 
+			void D3D9VertexShader::SetValue(int reg, const float* value, int count) 
 			{
 				if ((count%4))
 				{
@@ -279,7 +279,7 @@ namespace Apoc3D
 				}
 				m_device->getDevice()->SetVertexShaderConstantF(reg, value, count / 4);
 			}
-			void D3D9VertexShader::SetValue(int reg, int* value, int count) 
+			void D3D9VertexShader::SetValue(int reg, const int* value, int count) 
 			{
 				if ((count%4))
 				{
@@ -494,7 +494,7 @@ namespace Apoc3D
 				}
 				SetValue(cons.RegisterIndex, value);
 			}
-			void D3D9VertexShader::SetValue(const String &paramName, bool* value, int count)
+			void D3D9VertexShader::SetValue(const String &paramName, const bool* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -503,7 +503,7 @@ namespace Apoc3D
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
-			void D3D9VertexShader::SetValue(const String &paramName, float* value, int count)
+			void D3D9VertexShader::SetValue(const String &paramName, const float* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
@@ -512,7 +512,7 @@ namespace Apoc3D
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
-			void D3D9VertexShader::SetValue(const String &paramName, int* value, int count)
+			void D3D9VertexShader::SetValue(const String &paramName, const int* value, int count)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)

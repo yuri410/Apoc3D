@@ -347,11 +347,82 @@ namespace Apoc3D
 			}
 
 			template<typename T>
-			void AutomaticEffect::SetParameterValue(int index, const T& value)
+			void AutomaticEffect::SetParameterValue(int index, const T* value, int count)
 			{
-				const EffectParameter& param = m_parameters[index];
-				SetValue(param, value);
+				EffectParameter& param = m_parameters[index];
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
+
+				if (param.RegisterIndex == -1)
+				{
+					param.RegisterIndex = shader->GetParamIndex(param.Name);
+				}
+				shader->SetValue(param.RegisterIndex, value, count);
 			}
+			void AutomaticEffect::SetParameterTexture(int index, ResourceHandle<Texture>* value)
+			{
+				EffectParameter& param = m_parameters[index];
+				Texture* tex = 0;
+
+				if (value)
+				{
+					tex = value->operator->();
+					if (tex->getState() != RS_Loaded)
+					{
+						tex = 0;
+					}
+				}
+				else
+				{
+					tex = m_texture;
+				}
+
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
+
+				if (param.SamplerIndex == -1)
+				{
+					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
+				}
+				shader->SetTexture(param.SamplerIndex, tex);
+			}
+
+			void AutomaticEffect::SetParameterTexture(int index, Texture* tex)
+			{
+				EffectParameter& param = m_parameters[index];
+				
+
+				Shader* shader = 0;
+				if (param.ProgramType == SHDT_Vertex)
+				{
+					shader = m_vertexShader;
+				}
+				else if (param.ProgramType == SHDT_Pixel)
+				{
+					shader = m_pixelShader;
+				}
+
+				if (param.SamplerIndex == -1)
+				{
+					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
+				}
+				shader->SetTexture(param.SamplerIndex, tex);
+			}
+
 			int AutomaticEffect::FindParameterIndex(const String& name)
 			{
 				for (int i=0;i<m_parameters.getCount();i++)

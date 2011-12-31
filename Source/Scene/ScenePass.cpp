@@ -28,7 +28,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneManager.h"
 
 #include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/RenderTarget.h"
 #include "Graphics/EffectSystem/EffectParameter.h"
+#include "Graphics/EffectSystem/Effect.h"
 #include "Math/Math.h"
 
 using namespace Apoc3D::Math;
@@ -224,7 +226,73 @@ namespace Apoc3D
 		}
 		void ScenePass::RenderQuad(const SceneInstruction& inst)
 		{
+			float xScale = reinterpret_cast<const float&>(inst.Args[0].DefaultValue[0]);
+			float yScale = reinterpret_cast<const float&>(inst.Args[0].DefaultValue[1]);
 
+			Effect* effect;
+			memcpy(&effect, inst.Args[1].DefaultValue, sizeof(void*));
+
+			AutomaticEffect* autoFx = dynamic_cast<AutomaticEffect*>(effect);
+			for (size_t i=2;i<inst.Args.size();i++)
+			{
+				const SceneOpArg& arg = inst.Args[i];
+				if (arg.IsImmediate)
+				{
+					int idx = static_cast<int>(arg.DefaultValue[0]);
+					int count = static_cast<int>(arg.DefaultValue[1] & 0xffff);
+					ScenePostEffectParamType type = 
+						static_cast<ScenePostEffectParamType>(arg.DefaultValue[1] >> 16);
+
+					switch (type)
+					{
+					case SPFX_TYPE_BOOLS:
+						autoFx->SetParameterValue(idx, reinterpret_cast<const bool*>(&arg.DefaultValue[2]), count);
+						break;
+					case SPFX_TYPE_FLOATS:
+						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(&arg.DefaultValue[2]), count);
+						break;
+					case SPFX_TYPE_INTS:
+						autoFx->SetParameterValue(idx, reinterpret_cast<const int*>(&arg.DefaultValue[2]), count);
+						break;
+					}
+				}
+				else
+				{
+					SceneVariable* var = arg.Var;
+					assert(var);
+
+					int idx = static_cast<int>(arg.DefaultValue[0]);
+					switch (var->Type)
+					{
+					case VARTYPE_Boolean:
+						autoFx->SetParameterValue(idx, reinterpret_cast<const bool*>(var->Value), 1);
+						break;
+					case VARTYPE_RenderTarget:
+						autoFx->SetParameterTexture(idx, var->RTValue->GetColorTexture());
+						break;
+					case VARTYPE_Matrix:
+						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 16);
+						break;
+					case VARTYPE_Vector4:
+						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 4);
+						break;
+					case VARTYPE_Vector3:
+						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 3);
+						break;
+					case VARTYPE_Vector2:
+						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 2);
+						break;
+					case VARTYPE_Texture:
+						autoFx->SetParameterTexture(idx, var->TextureValue);
+						break;
+							
+					case VARTYPE_Integer:
+						autoFx->SetParameterValue(idx, reinterpret_cast<const int*>(var->Value), 1);
+						break;
+
+					}
+				}
+			}
 		}
 		void ScenePass::UseRT(const SceneInstruction& inst)
 		{

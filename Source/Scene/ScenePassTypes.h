@@ -114,7 +114,8 @@ namespace Apoc3D
 		{
 			SPFX_TYPE_FLOATS,
 			SPFX_TYPE_INTS,
-			SPFX_TYPE_BOOLS
+			SPFX_TYPE_BOOLS,
+			SPFX_TYPE_TEXTURE
 		};
 		struct SceneOpArg
 		{

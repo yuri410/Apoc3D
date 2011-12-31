@@ -968,6 +968,8 @@ namespace Apoc3D
 
 										arg.IsImmediate = false;
 
+										arg.DefaultValue[0] = (uint)(idx);
+
 										String vname = StringUtils::toWString(value);
 										arg.Var = FindVar(GlobalVars, vname);
 										if (!arg.Var)

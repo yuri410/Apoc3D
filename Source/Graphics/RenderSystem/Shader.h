@@ -88,9 +88,9 @@ namespace Apoc3D
 				virtual void SetValue(int reg, bool value) = 0;
 				virtual void SetValue(int reg, float value) = 0;
 				virtual void SetValue(int reg, int value) = 0;
-				virtual void SetValue(int reg, bool* value, int count) = 0;
-				virtual void SetValue(int reg, float* value, int count) = 0;
-				virtual void SetValue(int reg, int* value, int count) = 0;
+				virtual void SetValue(int reg, const bool* value, int count) = 0;
+				virtual void SetValue(int reg, const float* value, int count) = 0;
+				virtual void SetValue(int reg, const int* value, int count) = 0;
 
 				virtual void SetTexture(int samIndex, Texture* tex) = 0;
 				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state) = 0;
@@ -117,9 +117,9 @@ namespace Apoc3D
 				virtual void SetValue(const String& paramName, bool value) = 0;
 				virtual void SetValue(const String& paramName, float value) = 0;
 				virtual void SetValue(const String& paramName, int value) = 0;
-				virtual void SetValue(const String& paramName, bool* value, int count) = 0;
-				virtual void SetValue(const String& paramName, float* value, int count) = 0;
-				virtual void SetValue(const String& paramName, int* value, int count) = 0;
+				virtual void SetValue(const String& paramName, const bool* value, int count) = 0;
+				virtual void SetValue(const String& paramName, const float* value, int count) = 0;
+				virtual void SetValue(const String& paramName, const int* value, int count) = 0;
 
 				virtual void SetTexture(const String& paramName, Texture* tex) = 0;
 				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState& state) = 0;

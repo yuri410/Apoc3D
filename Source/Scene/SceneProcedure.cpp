@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneRenderScriptParser.h"
 #include "ScenePass.h"
 #include "Core/ResourceHandle.h"
+#include "Core/Logging.h"
 #include "Graphics/EffectSystem/EffectManager.h"
 #include "Graphics/EffectSystem/Effect.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
@@ -131,6 +132,7 @@ namespace Apoc3D
 							}
 						}
 						break;
+					
 				}
 			}
 			
@@ -184,10 +186,18 @@ namespace Apoc3D
 							//VARTYPE_Vector2,
 					case VARTYPE_Texture:
 						{
-							FileLocation* fl = FileSystem::getSingleton().Locate(m_vars[i]->DefaultStringValue, FileLocateRule::Textures);
-							ResourceHandle<Texture>* tex = TextureManager::getSingleton().CreateInstance(m_renderDevice, fl, false);
-							m_vars[i]->TextureValue = tex;
-							m_createdTextures.Add(tex);
+							FileLocation* fl = FileSystem::getSingleton().TryLocate(m_vars[i]->DefaultStringValue, FileLocateRule::Textures);
+							if (fl)
+							{
+								ResourceHandle<Texture>* tex = TextureManager::getSingleton().CreateInstance(m_renderDevice, fl, false);
+								m_vars[i]->TextureValue = tex;
+								m_createdTextures.Add(tex);
+							}
+							else
+							{
+								LogManager::getSingleton().Write(LOG_Scene, 
+									L"Texture resource " + m_vars[i]->DefaultStringValue + L" for Scene Procedure " + m_name + L" is not found", LOGLVL_Warning);
+							}
 						}
 						break;
 					case VARTYPE_Effect:

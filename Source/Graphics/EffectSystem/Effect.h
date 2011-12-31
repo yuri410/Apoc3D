@@ -92,9 +92,11 @@ namespace Apoc3D
 				virtual void EndPass();
 
 				int FindParameterIndex(const String& name);
+
 				template<typename T>
-				void SetParameterValue(int index, const T& value);
-				
+				void SetParameterValue(int index, const T* value, int count);
+				void SetParameterTexture(int index, ResourceHandle<Texture>* value);
+				void SetParameterTexture(int index, Texture* value);
 			protected:
 				virtual int begin();
 				virtual void end();
@@ -117,6 +119,7 @@ namespace Apoc3D
 
 				RenderDevice* m_device;
 				Texture* m_texture;
+
 			};
 
 			class APAPI CustomShaderEffect : public Effect
