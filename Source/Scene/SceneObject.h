@@ -98,6 +98,7 @@ namespace Apoc3D
 			
 		protected:
 			Entity()
+				: m_position(Vector3Utils::Zero)
 			{
 				memset(m_models, 0, sizeof(Model*)*3);
 				memset(&BoundingSphereOffset, 0, sizeof(BoundingSphereOffset));
@@ -108,6 +109,7 @@ namespace Apoc3D
 			bool Visible;
 			Vector3 BoundingSphereOffset;
 
+			void setRadius(float r) { m_BoundingSphere.Radius = r; }
 			Model* getModel(int lod) { return m_models[lod]; }
 			void setModel(int lod, Model* mdl) { m_models[lod] = mdl; }
 

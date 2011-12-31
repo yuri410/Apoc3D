@@ -109,7 +109,20 @@ namespace Apoc3D
 			m_scrollBar->setPosition(Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 12, m_pictureBox->Position.Y));
 			m_scrollBar->setHeight(m_pictureBox->Size.Y);
 
-			
+
+			m_logLock.lock();
+			while (m_queuedNewLogs.getCount()>0)
+			{
+				LogEntry e = m_queuedNewLogs.Dequeue();
+				m_logs.push_back(e);
+
+				while (m_logs.size()>200)
+				{
+					m_logs.erase(m_logs.begin());
+				}
+			}
+			m_logLock.unlock();
+
 		}
 		void Console::TextBox_ReturnPressed(Control* ctrl)
 		{
@@ -255,24 +268,19 @@ namespace Apoc3D
 
 				String str = e.ToString();
 				Point size = font->MeasureString(str,dstRect->Width- 10);// font->DrawString(sprite, e.ToString(), x,y,dstRect->Width - 10, color);
-
-
+				
 
 				y -= size.Y-font->getLineHeight();
 
 				font->DrawString(sprite, e.ToString(), x,y,dstRect->Width - 10, color);
 			}
-
 		}
 
 		void Console::Log_New(LogEntry e)
 		{
-			m_logs.push_back(e);
-
-			while (m_logs.size()>200)
-			{
-				m_logs.erase(m_logs.begin());
-			}
+			m_logLock.lock();
+			m_queuedNewLogs.Enqueue(e);
+			m_logLock.unlock();
 		}
 	}
 }

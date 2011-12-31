@@ -183,7 +183,7 @@ namespace Apoc3D
 				{
 					return EPUSAGE_PV3_ViewPos;
 				}
-				LogManager::getSingleton().Write(LOG_Graphics, L"Unknown effect parameter usage: " + val, LOGLVL_Warning );
+				LogManager::getSingleton().Write(LOG_Graphics, L"Unknown effect parameter usage: " + val, LOGLVL_Infomation );
 				return EPUSAGE_Unknown;
 			}
 

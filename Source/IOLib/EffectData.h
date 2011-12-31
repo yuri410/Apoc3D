@@ -51,6 +51,9 @@ namespace Apoc3D
 			int MajorVer;
 			int MinorVer;
 
+			/** Indicates whether this effect is from a AFX or CFX. 
+				AFX is loaded by AutomaticEffect, while CFX is the custom one.
+			*/
 			bool IsCustom;
 
 			List<EffectParameter> Parameters;

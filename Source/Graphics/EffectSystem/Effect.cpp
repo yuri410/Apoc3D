@@ -346,6 +346,24 @@ namespace Apoc3D
 
 			}
 
+
+			void AutomaticEffect::SetParameterValue(int index, const void* data)
+			{
+				const EffectParameter& param = m_parameters[index];
+				switch (param.)
+			}
+			int AutomaticEffect::FindParameterIndex(const String& name)
+			{
+				for (int i=0;i<m_parameters.getCount();i++)
+				{
+					if (m_parameters[i].Name == name)
+					{
+						return i;
+					}
+				}
+				return -1;
+			}
+
 			int AutomaticEffect::begin()
 			{
 				m_device->BindPixelShader(m_pixelShader);
@@ -584,6 +602,7 @@ namespace Apoc3D
 				}
 				shader->SetValue(param.RegisterIndex, transfroms, count);
 			}
+
 			/************************************************************************/
 			/*                                                                      */
 			/************************************************************************/

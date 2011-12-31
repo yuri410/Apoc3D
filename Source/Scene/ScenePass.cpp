@@ -193,6 +193,11 @@ namespace Apoc3D
 						m_renderer->RenderBatch(m_selectorID);
 					}
 					break;
+				case SOP_RenderQuad:
+					{
+
+					}
+					break;
 				case SOP_VisibleTo:
 					{
 						bool result;

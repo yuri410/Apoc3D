@@ -66,6 +66,7 @@ namespace SampleTerrain
 		m_material.setTexture(1, TerrainMeshManager::getSingleton().getTexture(1));
 		m_material.setTexture(2, TerrainMeshManager::getSingleton().getTexture(2));
 		m_material.setTexture(3, TerrainMeshManager::getSingleton().getTexture(3));
+		m_material.setTexture(4, TerrainMeshManager::getSingleton().getTexture(4));
 
 		m_primitiveCount = size * size*2;
 
@@ -212,19 +213,16 @@ namespace SampleTerrain
 		m_idxLod1 = new SharedIndexData(device, 64);
 		m_idxLod2 = new SharedIndexData(device, 32);
 
-		FileLocateRule rule;
-		LocateCheckPoint cp;
-		cp.AddPath(L"textures.pak");
-		rule.AddCheckPoint(cp);
-
-		FileLocation* fl = FileSystem::getSingleton().Locate(L"TRock.tex", rule);
+		FileLocation* fl = FileSystem::getSingleton().Locate(L"TRock.tex", FileLocateRule::Textures);
 		m_textures[0] = TextureManager::getSingleton().CreateInstance(device,fl, false);
-		fl = FileSystem::getSingleton().Locate(L"TSand.tex", rule);
+		fl = FileSystem::getSingleton().Locate(L"TSand.tex", FileLocateRule::Textures);
 		m_textures[1] = TextureManager::getSingleton().CreateInstance(device,fl, false);
-		fl = FileSystem::getSingleton().Locate(L"TGrass.tex", rule);
+		fl = FileSystem::getSingleton().Locate(L"TGrass.tex", FileLocateRule::Textures);
 		m_textures[2] = TextureManager::getSingleton().CreateInstance(device,fl, false);
-		fl = FileSystem::getSingleton().Locate(L"TSnow.tex", rule);
+		fl = FileSystem::getSingleton().Locate(L"TSnow.tex", FileLocateRule::Textures);
 		m_textures[3] = TextureManager::getSingleton().CreateInstance(device,fl, false);
+		fl = FileSystem::getSingleton().Locate(L"TEdge.tex", FileLocateRule::Textures);
+		m_textures[4] = TextureManager::getSingleton().CreateInstance(device,fl, false);
 
 	}
 	void TerrainMeshManager::FinalizeResources()
@@ -237,6 +235,7 @@ namespace SampleTerrain
 		delete m_textures[1];
 		delete m_textures[2];
 		delete m_textures[3];
+		delete m_textures[4];
 
 	}
 	ResourceHandle<TerrainMesh>* TerrainMeshManager::CreateInstance(RenderDevice* rd, int bx, int bz, int lod)

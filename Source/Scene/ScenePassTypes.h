@@ -106,7 +106,8 @@ namespace Apoc3D
 			SOP_Clear,
 			SOP_UseRT,
 			SOP_VisibleTo,
-			SOP_Render
+			SOP_Render,
+			SOP_RenderQuad
 		};
 		struct SceneOpArg
 		{

@@ -46,11 +46,11 @@ namespace Apoc3D
 
 			/** Defines typical usage of a effect parameters.
 				When the engine auto bind a parameter, it first checks the parameter's usage to
-				find the corresponding data, then to assign to the param. 
+				find the corresponding data, then assign it to the param. 
 				
-				Alternatively, custom usage in String form is also accepted by EffectParameter.
-				Internally, parameters that uses enum this to specify typical usage 
-				can be manipulated faster than those with custom param usages.
+				Alternatively, custom usage in a String format is also accepted by EffectParameter.
+				Internally, parameters using automatic(normal usages) can be manipulated 
+				faster than those using custom param usages. See EffectParameter for the definition.
 			*/
 			enum EffectParamUsage
 			{
@@ -128,7 +128,7 @@ namespace Apoc3D
 
 			};
 
-			/** Include all scene render resources such as the current camera, lighting that could 
+			/** Includes all global scene render resources such as the current camera, lighting that could 
 				be used in effects.
 			*/
 			class APAPI RendererEffectParams
@@ -146,9 +146,17 @@ namespace Apoc3D
 				}
 			};
 
-			/* Defines a parameter in an effect.
-   
-			   This also contains effect param mapping info.
+			/** Defines a parameter in an effect containing effect param mapping info.
+
+				A custom parameter is recognized when the usage string in the effect parameter listing file can not be parsed
+				by this class. A custom parameter is bond to the parameter with the same name in the corresponding material if 
+				material is used. In other occasions like the effect is a post effect without materials, the value of custom
+				effect can be assigned by scene rendering scripts.
+
+				A typical parameter's usage string can be understood by the engine as a matter of fact the engine supports
+				a range of predefined usage names. When this type of parameters are used, no more attention from developer is needed.
+
+				The so called parameter's usage string is written in the effect parameter listing file when building resources using APBuild or APDesigner.
 			*/
 			class APAPI EffectParameter
 			{	

@@ -53,12 +53,24 @@ namespace Apoc3D
 				{
 					if (m_head < m_tail)
 					{
-						memcpy(destinationArray, m_array+m_head, m_size * sizeof(T));
+						for (int i=0;i<m_size;i++)
+						{
+							destinationArray[i] = m_array[i+m_head];
+						}
+						//memcpy(destinationArray, m_array+m_head, m_size * sizeof(T));
 					}
 					else
 					{
-						memcpy(destinationArray, m_array+m_head, (m_arrLength-m_head) * sizeof(T));
-						memcpy(destinationArray+(m_arrLength-m_head), m_array, (m_tail) * sizeof(T));
+						for (int i=m_head;i<m_arrLength;i++)
+						{
+							destinationArray[i-m_head] = m_array[i];
+						}
+						//memcpy(destinationArray, m_array+m_head, (m_arrLength-m_head) * sizeof(T));
+						for (int i=0;i<m_tail;i++)
+						{
+							destinationArray[m_arrLength-m_head+i] = m_array[i];
+						}
+						//memcpy(destinationArray+(m_arrLength-m_head), m_array, (m_tail) * sizeof(T));
 					}
 				}
 				delete[] m_array;
@@ -145,11 +157,19 @@ namespace Apoc3D
 				if (num2 != 0)
 				{
 					int num3 = ((m_arrLength - m_head) < num2) ? (m_arrLength - m_head) : num2;
-					memcpy(dest,m_array+m_head,num3*sizeof(T));
+					for (int i=0;i<num3)
+					{
+						dest[i*sizeof(T)] = m_array[i+m_head];
+					}
+					//memcpy(dest,m_array+m_head,num3*sizeof(T));
 					num2 -= num3;
 					if (num2 > 0)
 					{
-						memcpy(dest+(m_arrLength-m_head)*sizeof(T), m_array, num2*sizeof(T));
+						for (int i=0;i<num2;i++)
+						{
+							dest[(i + m_arrLength-m_head)*sizeof(T)] = m_array[i];
+						}
+						//memcpy(dest+(m_arrLength-m_head)*sizeof(T), m_array, num2*sizeof(T));
 						//Array.Copy(m_array, 0, m_array, (arrayIndex + m_arrLength) - m_head, num2);
 					}
 				}

@@ -26,6 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "UICommon.h"
 #include "Core/Logging.h"
+#include "Collections/FastQueue.h"
+#include "tthread/tinythread.h"
+#include "tthread/fast_mutex.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
@@ -66,9 +69,11 @@ namespace Apoc3D
 			StyleSkin* m_skin;
 			ScrollBar* m_scrollBar;
 			std::list<LogEntry> m_logs;
+			FastQueue<LogEntry> m_queuedNewLogs;
 
 			ConsoleCommandHandler m_eCommandSubmited;
 
+			tthread::fast_mutex m_logLock;
 
 		};
 	}

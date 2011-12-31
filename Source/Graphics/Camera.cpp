@@ -32,7 +32,8 @@ namespace Apoc3D
 	{
 		FpsCamera::FpsCamera(float aspectRatio)
 			: m_aspectRatio(aspectRatio), m_maxVelocity(5), m_position(Vector3Utils::Zero),
-			m_fieldOfView(ToRadian(50)), m_near(0.5f), m_far(1500), m_velocity(Vector3Utils::Zero), m_velChange(Vector3Utils::Zero)
+			m_fieldOfView(ToRadian(50)), m_near(0.5f), m_far(1500), m_velocity(Vector3Utils::Zero), m_velChange(Vector3Utils::Zero),
+			m_rotX(0), m_rotY(0)
 		{
 			
 		}
@@ -81,7 +82,18 @@ namespace Apoc3D
 		}
 		void FpsCamera::UpdateTransform()
 		{
-			Vector3 at = Vector3Utils::Add(m_position, Vector3Utils::UnitZ);
+			Vector3 dir = Vector3Utils::UnitZ;
+
+			Matrix oriX;
+			Matrix::CreateRotationX(oriX, m_rotY);
+			Matrix oriY;
+			Matrix::CreateRotationY(oriY, m_rotX);
+			Matrix temp;
+			Matrix::Multiply(temp, oriX, oriY);
+
+			dir = Vector3Utils::TransformNormal(dir, temp);
+
+			Vector3 at = Vector3Utils::Add(m_position, dir);
 			Matrix::CreateLookAtLH(m_view, m_position, at, Vector3Utils::UnitY);
 
 			Matrix::CreatePerspectiveFovLH(m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);

@@ -35,12 +35,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/GraphicsCommon.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/RenderTarget.h"
+#include "Graphics/EffectSystem/EffectManager.h"
 #include "tinyxml/tinyxml.h"
 #include "IOLib/Streams.h"
 #include "VFS/ResourceLocation.h"
 
 
-
+using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::IO;
 
@@ -840,6 +841,28 @@ namespace Apoc3D
 				inst.Operation = SOP_Render;
 				instructions.push_back(inst);
 			}
+			else if (stat == L"renderquad")
+			{
+				SceneInstruction inst;
+				inst.Operation = SOP_RenderQuad;
+
+				{
+					SceneOpArg arg;
+					ParseCallArgVector2(node, "Size", arg, GlobalVars, Vector2Utils::One);
+					inst.Args.push_back(arg);
+				}
+				
+				{
+					SceneOpArg arg;
+					arg.IsImmediate = true;
+
+					String effectName = StringUtils::toWString(node->Attribute("Effect"));
+					arg.DefaultValue[0] = reinterpret_cast<uint>(EffectManager::getSingleton().getEffect(effectName));
+					inst.Args.push_back(arg);
+				}
+				
+
+			}
 			else
 			{
 				LogManager::getSingleton().Write(LOG_Scene, L"Unknown " + stat + L" function", LOGLVL_Warning);
@@ -1145,7 +1168,7 @@ namespace Apoc3D
 				arg.Var = FindVar(vars, vname);
 				if (!arg.Var)
 				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L"not found", LOGLVL_Warning);
+					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
 					return false;
 				}
 				return true;
@@ -1174,7 +1197,7 @@ namespace Apoc3D
 				arg.Var = FindVar(vars, vname);
 				if (!arg.Var)
 				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L"not found", LOGLVL_Warning);
+					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
 					return false;
 				}
 				return true;
@@ -1218,7 +1241,7 @@ namespace Apoc3D
 				arg.Var = FindVar(vars, vname);
 				if (!arg.Var)
 				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L"not found", LOGLVL_Warning);
+					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
 					return false;
 				}
 				return true;
@@ -1248,7 +1271,7 @@ namespace Apoc3D
 				arg.Var = FindVar(vars, vname);
 				if (!arg.Var)
 				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L"not found", LOGLVL_Warning);
+					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
 					return false;
 				}
 				return true;
@@ -1272,6 +1295,35 @@ namespace Apoc3D
 			}
 			return true;
 		}
+
+		bool ParseCallArgVector2(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+			const FastList<SceneVariable*>& vars, Vector2 def)
+		{
+			const string* result = node->Attribute(name);
+
+			String str = StringUtils::toWString(*result);
+			std::vector<String> comps = StringUtils::Split(str, L" ,");
+			if (comps.size() == 2)
+			{
+				arg.IsImmediate = true;
+
+				arg.DefaultValue[0] = StringUtils::ParseSingle(comps[0]);
+				arg.DefaultValue[1] = StringUtils::ParseSingle(comps[1]);
+
+				return true;
+			}
+			arg.IsImmediate = false;
+
+			String vname = StringUtils::toWString(node->Attribute(name.c_str()));
+			arg.Var = FindVar(vars, vname);
+			if (!arg.Var)
+			{
+				LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
+				return false;
+			}
+			return true;
+		}
+
 
 
 		PixelFormat ConvertFormat(const string& fmt)

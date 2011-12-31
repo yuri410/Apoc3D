@@ -14,6 +14,8 @@
 #include "Graphics/TextureManager.h"
 #include "Graphics/GraphicsCommon.h"
 #include "Graphics/PixelFormat.h"
+#include "Graphics/ModelManager.h"
+#include "Graphics/Model.h"
 #include "Scene/OctreeSceneManager.h"
 #include "Scene/SceneRenderer.h"
 #include "Input/InputAPI.h"
@@ -71,6 +73,13 @@ namespace SampleTerrain
 	{
 		Game::Load();
 
+		{
+			LocateCheckPoint cp;
+			cp.AddPath(L"textures.pak");
+			FileLocateRule::Textures.AddCheckPoint(cp);
+		}
+		
+
 		FileLocation* fl = FileSystem::getSingleton().Locate(L"effectList.xml", FileLocateRule::Effects);
 		EffectManager::getSingleton().LoadEffectFromList(m_device, fl);
 		delete fl;
@@ -111,6 +120,22 @@ namespace SampleTerrain
 				Terrain* t1 = new Terrain(m_device, i,j);
 				m_scene->AddObject(t1);
 			}
+		}
+
+		{
+			StaticObject* obj = new StaticObject();
+			obj->setRadius(9999999);
+
+			FileLocateRule rule;
+			LocateCheckPoint cp;
+			cp.AddPath(L"models");
+			rule.AddCheckPoint(cp);
+
+			FileLocation* fl = FileSystem::getSingleton().Locate(L"SkySphere.mesh", rule);
+			Model* sky = new Model(ModelManager::getSingleton().CreateInstance(m_device, fl));
+			obj->setModel(0, sky);
+
+			m_scene->AddObject(obj);
 		}
 		//m_device->getRenderState()->SetFillMode(FILL_Solid);
 	}
@@ -166,6 +191,11 @@ namespace SampleTerrain
 			m_camera->Jump();
 
 		Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-		mouse->getDX();
+		if (mouse->IsLeftPressedState())
+		{
+			m_camera->Turn(mouse->getDX()*0.25f, mouse->getDY()*0.25f);
+		}
+		
+
 	}
 }

@@ -75,7 +75,7 @@ namespace SampleTerrain
 		SharedIndexData* m_idxLod1;
 		SharedIndexData* m_idxLod2;
 
-		ResourceHandle<Texture>* m_textures[4];
+		ResourceHandle<Texture>* m_textures[5];
 	};
 
 	class SharedIndexData
