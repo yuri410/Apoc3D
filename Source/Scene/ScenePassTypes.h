@@ -51,7 +51,7 @@ namespace Apoc3D
 			VARTYPE_Boolean,
 			VARTYPE_Effect
 		};
-
+		
 		struct SceneVariable
 		{
 			String Name;
@@ -109,10 +109,17 @@ namespace Apoc3D
 			SOP_Render,
 			SOP_RenderQuad
 		};
+
+		enum ScenePostEffectParamType
+		{
+			SPFX_TYPE_FLOATS,
+			SPFX_TYPE_INTS,
+			SPFX_TYPE_BOOLS
+		};
 		struct SceneOpArg
 		{
 			bool IsImmediate;
-			uint DefaultValue[4];
+			uint DefaultValue[16];
 			SceneVariable* Var;
 		};
 		struct SceneInstruction

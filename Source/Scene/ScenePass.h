@@ -47,6 +47,22 @@ namespace Apoc3D
 		*/
 		class APAPI ScenePass
 		{
+		public:
+			const Camera* getCurrentCamera() const { return m_currentCamera; }
+
+			/** Gets the sequence of this pass in a entire scene rendering process.
+			*/
+			int32 getSelectorID() const { return m_selectorID; }
+
+			/** Gets the name of this pass.
+			*/
+			String getName() const { return m_name; }
+
+			ScenePass(RenderDevice* dev, SceneRenderer* renderer, SceneProcedure* parent, const ScenePassData* passData);
+			~ScenePass(void);
+
+			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
+
 		private:
 			struct ExecutionValue
 			{
@@ -65,21 +81,11 @@ namespace Apoc3D
 			Stack<ExecutionValue> m_execStack;
 
 			Camera* m_currentCamera;
-		public:
-			const Camera* getCurrentCamera() const { return m_currentCamera; }
 
-			/** Gets the sequence of this pass in a entire scene rendering process.
-			*/
-			int32 getSelectorID() const { return m_selectorID; }
+			void Clear(const SceneInstruction& inst);
+			void RenderQuad(const SceneInstruction& inst);
+			void UseRT(const SceneInstruction& inst);
 
-			/** Gets the name of this pass.
-			*/
-			String getName() const { return m_name; }
-
-			ScenePass(RenderDevice* dev, SceneRenderer* renderer, SceneProcedure* parent, const ScenePassData* passData);
-			~ScenePass(void);
-
-			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
 		};
 	};
 };

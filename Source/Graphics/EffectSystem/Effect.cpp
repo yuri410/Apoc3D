@@ -346,11 +346,11 @@ namespace Apoc3D
 
 			}
 
-
-			void AutomaticEffect::SetParameterValue(int index, const void* data)
+			template<typename T>
+			void AutomaticEffect::SetParameterValue(int index, const T& value)
 			{
 				const EffectParameter& param = m_parameters[index];
-				switch (param.)
+				SetValue(param, value);
 			}
 			int AutomaticEffect::FindParameterIndex(const String& name)
 			{

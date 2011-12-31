@@ -183,6 +183,10 @@ namespace Apoc3D
 				{
 					return EPUSAGE_PV3_ViewPos;
 				}
+				else if (v==L"sv2_viewportsize")
+				{
+					return EPUSAGE_SV2_ViewportSize;
+				}
 				LogManager::getSingleton().Write(LOG_Graphics, L"Unknown effect parameter usage: " + val, LOGLVL_Infomation );
 				return EPUSAGE_Unknown;
 			}

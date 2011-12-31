@@ -92,7 +92,9 @@ namespace Apoc3D
 				virtual void EndPass();
 
 				int FindParameterIndex(const String& name);
-				void SetParameterValue(int index, const void* data);
+				template<typename T>
+				void SetParameterValue(int index, const T& value);
+				
 			protected:
 				virtual int begin();
 				virtual void end();

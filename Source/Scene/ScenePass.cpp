@@ -114,79 +114,7 @@ namespace Apoc3D
 					}
 					break;
 				case SOP_Clear:
-					{
-						int flags=0;
-
-						if (inst.Args[0].IsImmediate)
-						{
-							if (inst.Args[0].DefaultValue[0])
-							{
-								flags |= CLEAR_ColorBuffer;
-							}
-						}
-						else if (inst.Args[0].Var->Value[0])
-						{
-							flags |= CLEAR_ColorBuffer;
-						}
-
-						if (inst.Args[1].IsImmediate)
-						{
-							if (inst.Args[1].DefaultValue[0])
-							{
-								flags |= CLEAR_DepthBuffer;
-							}
-						}
-						else if (inst.Args[1].Var->Value[0])
-						{
-							flags |= CLEAR_DepthBuffer;
-						}
-
-						if (inst.Args[2].IsImmediate)
-						{
-							if (inst.Args[2].DefaultValue[0])
-							{
-								flags |= CLEAR_Stencil;
-							}
-						}
-						else if (inst.Args[2].Var->Value[0])
-						{
-							flags |= CLEAR_Stencil;
-						}
-
-
-
-
-						float depth;
-						if (inst.Args[3].IsImmediate)
-						{
-							depth = reinterpret_cast<const float&>(inst.Args[3].DefaultValue[0]);
-						}
-						else
-						{
-							depth = reinterpret_cast<const float&>(inst.Args[3].Var->Value[0]);
-						}
-
-						int stencil;
-						if (inst.Args[4].IsImmediate)
-						{
-							stencil = reinterpret_cast<const int&>(inst.Args[4].DefaultValue[0]);
-						}
-						else
-						{
-							stencil = reinterpret_cast<const int&>(inst.Args[4].Var->Value[0]);
-						}
-
-						ColorValue color;
-						if (inst.Args[5].IsImmediate)
-						{
-							color = reinterpret_cast<const ColorValue&>(inst.Args[5].DefaultValue[0]);
-						}
-						else
-						{
-							color = reinterpret_cast<const ColorValue&>(inst.Args[5].Var->Value[0]);
-						}
-						m_renderDevice->Clear(static_cast<ClearFlags>(flags), color, depth, stencil);
-					}
+					Clear(inst);
 					break;
 				case SOP_Render:
 					{
@@ -194,9 +122,7 @@ namespace Apoc3D
 					}
 					break;
 				case SOP_RenderQuad:
-					{
-
-					}
+					RenderQuad(inst);
 					break;
 				case SOP_VisibleTo:
 					{
@@ -216,34 +142,115 @@ namespace Apoc3D
 					}
 					break;
 				case SOP_UseRT:
-					{
-						int index;
-						if (inst.Args[0].IsImmediate)
-						{
-							index = reinterpret_cast<const int&>(inst.Args[0].DefaultValue[0]);
-						}
-						else
-						{
-							index = reinterpret_cast<const int&>(inst.Args[0].Var->Value[0]);
-						}
-
-						
-						if (inst.Args.size() > 1)
-						{
-							m_renderDevice->SetRenderTarget(
-								index,
-								inst.Args[1].Var->RTValue);
-						}
-						else
-						{
-							
-							m_renderDevice->SetRenderTarget(
-								index,
-								0);
-						}
-					}
+					UseRT(inst);
 					break;
 				}
+			}
+		}
+
+		void ScenePass::Clear(const SceneInstruction& inst)
+		{
+			int flags=0;
+
+			if (inst.Args[0].IsImmediate)
+			{
+				if (inst.Args[0].DefaultValue[0])
+				{
+					flags |= CLEAR_ColorBuffer;
+				}
+			}
+			else if (inst.Args[0].Var->Value[0])
+			{
+				flags |= CLEAR_ColorBuffer;
+			}
+
+			if (inst.Args[1].IsImmediate)
+			{
+				if (inst.Args[1].DefaultValue[0])
+				{
+					flags |= CLEAR_DepthBuffer;
+				}
+			}
+			else if (inst.Args[1].Var->Value[0])
+			{
+				flags |= CLEAR_DepthBuffer;
+			}
+
+			if (inst.Args[2].IsImmediate)
+			{
+				if (inst.Args[2].DefaultValue[0])
+				{
+					flags |= CLEAR_Stencil;
+				}
+			}
+			else if (inst.Args[2].Var->Value[0])
+			{
+				flags |= CLEAR_Stencil;
+			}
+
+
+
+
+			float depth;
+			if (inst.Args[3].IsImmediate)
+			{
+				depth = reinterpret_cast<const float&>(inst.Args[3].DefaultValue[0]);
+			}
+			else
+			{
+				depth = reinterpret_cast<const float&>(inst.Args[3].Var->Value[0]);
+			}
+
+			int stencil;
+			if (inst.Args[4].IsImmediate)
+			{
+				stencil = reinterpret_cast<const int&>(inst.Args[4].DefaultValue[0]);
+			}
+			else
+			{
+				stencil = reinterpret_cast<const int&>(inst.Args[4].Var->Value[0]);
+			}
+
+			ColorValue color;
+			if (inst.Args[5].IsImmediate)
+			{
+				color = reinterpret_cast<const ColorValue&>(inst.Args[5].DefaultValue[0]);
+			}
+			else
+			{
+				color = reinterpret_cast<const ColorValue&>(inst.Args[5].Var->Value[0]);
+			}
+			m_renderDevice->Clear(static_cast<ClearFlags>(flags), color, depth, stencil);
+		}
+		void ScenePass::RenderQuad(const SceneInstruction& inst)
+		{
+
+		}
+		void ScenePass::UseRT(const SceneInstruction& inst)
+		{
+			int index;
+			if (inst.Args[0].IsImmediate)
+			{
+				index = reinterpret_cast<const int&>(inst.Args[0].DefaultValue[0]);
+			}
+			else
+			{
+				index = reinterpret_cast<const int&>(inst.Args[0].Var->Value[0]);
+			}
+
+
+			if (inst.Args.size() > 1)
+			{
+				m_renderDevice->SetRenderTarget(
+					index,
+					inst.Args[1].Var->RTValue);
+			}
+			else
+			{
+
+				m_renderDevice->SetRenderTarget(
+					index,
+					0);
 			}
 		}
 	};
