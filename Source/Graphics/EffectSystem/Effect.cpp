@@ -90,6 +90,17 @@ namespace Apoc3D
 			/*                                                                      */
 			/************************************************************************/
 
+			template void AutomaticEffect::SetParameterValue<bool>(int index, bool* value, int count);
+			template void AutomaticEffect::SetParameterValue<int>(int index, int* value, int count);
+			template void AutomaticEffect::SetParameterValue<float>(int index, float* value, int count);
+
+			template void AutomaticEffect::SetParameterValue<const bool>(int index, const bool* value, int count);
+			template void AutomaticEffect::SetParameterValue<const int>(int index, const int* value, int count);
+			template void AutomaticEffect::SetParameterValue<const float>(int index, const float* value, int count);
+
+
+
+
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
 				: m_vertexShader(0), m_pixelShader(0), m_device(device)
 			{
@@ -222,31 +233,40 @@ namespace Apoc3D
 							SetTexture(ep, mtrl->getTexture(7));
 							break;
 						case EPUSAGE_Tex8:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(8));
 							break;
 						case EPUSAGE_Tex9:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(9));
 							break;
 						case EPUSAGE_Tex10:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(10));
 							break;
 						case EPUSAGE_Tex11:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(11));
 							break;
 						case EPUSAGE_Tex12:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(12));
 							break;
 						case EPUSAGE_Tex13:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(13));
 							break;
 						case EPUSAGE_Tex14:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(14));
 							break;
 						case EPUSAGE_Tex15:
+							SetSamplerState(ep);
 							SetTexture(ep, mtrl->getTexture(15));
 							break;
+
 						case EPUSAGE_Unknown:
-							if (m_parameters[i].IsCustomUsage)
+							if (m_parameters[i].IsCustomUsage && mtrl)
 							{
 								const MaterialCustomParameter* mcp = mtrl->getCustomParameter(m_parameters[i].CustomUsage);
 								if (mcp)
@@ -347,7 +367,7 @@ namespace Apoc3D
 			}
 
 			template<typename T>
-			void AutomaticEffect::SetParameterValue(int index, const T* value, int count)
+			void AutomaticEffect::SetParameterValue(int index, T* value, int count)
 			{
 				EffectParameter& param = m_parameters[index];
 				Shader* shader = 0;
@@ -462,6 +482,14 @@ namespace Apoc3D
 						{
 							Vector3 pos = RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation();
 							SetVector3(m_parameters[i], pos);
+						}
+						break;
+
+					case EPUSAGE_SV2_ViewportSize:
+						{
+							Viewport vp = m_device->getViewport();
+							Vector2 size = Vector2Utils::LDVector((float)vp.Width, (float)vp.Height);
+							SetVector2(m_parameters[i], size);
 						}
 						break;
 

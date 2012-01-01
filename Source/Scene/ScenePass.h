@@ -77,6 +77,10 @@ namespace Apoc3D
 			String m_name;
 			int32 m_cameraID;
 
+			
+			VertexBuffer* m_quadBuffer;
+			VertexDeclaration* m_quadVtxDecl;
+
 			List<SceneInstruction> m_instuctions;
 			Stack<ExecutionValue> m_execStack;
 

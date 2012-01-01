@@ -29,8 +29,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/RenderTarget.h"
+#include "Graphics/RenderSystem/ObjectFactory.h"
+#include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
+#include "Graphics/RenderSystem/VertexDeclaration.h"
+#include "Graphics/RenderSystem/VertexElement.h"
 #include "Graphics/EffectSystem/EffectParameter.h"
 #include "Graphics/EffectSystem/Effect.h"
+#include "Graphics/Material.h"
+#include "Graphics/GeometryData.h"
+
 #include "Math/Math.h"
 
 using namespace Apoc3D::Math;
@@ -39,6 +46,11 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
+		struct QuadVertex
+		{
+			float Position[3];
+		};
+
 		ScenePass::ScenePass(RenderDevice* device, SceneRenderer* renderer, SceneProcedure* parnetProc, const ScenePassData* passData)
 			: m_parentProc(parnetProc), m_cameraID(passData->CameraID), m_name(passData->Name), m_selectorID(passData->SelectorID),
 			m_renderDevice(device), m_renderer(renderer)
@@ -47,11 +59,34 @@ namespace Apoc3D
 			{
 				m_instuctions.Add(passData->Instructions[i]);
 			}
+
+			ObjectFactory* fac = device->getObjectFactory();
+
+
+			FastList<VertexElement> elements;
+			elements.Add(VertexElement(0, VEF_Vector3, VEU_Position));
+			m_quadVtxDecl = fac->CreateVertexDeclaration(elements);
+
+			m_quadBuffer = fac->CreateVertexBuffer(4, m_quadVtxDecl, BU_Static);
+			QuadVertex* vtxData = reinterpret_cast<QuadVertex*>(m_quadBuffer->Lock(LOCK_None));
+			vtxData[0].Position[0] = 0; vtxData[0].Position[1] = 0; vtxData[0].Position[2] = 0;
+			vtxData[1].Position[0] = 1; vtxData[1].Position[1] = 0; vtxData[1].Position[2] = 0;
+			vtxData[2].Position[0] = 1; vtxData[2].Position[1] = 1; vtxData[2].Position[2] = 0;
+			
+			vtxData[3].Position[0] = 0; vtxData[3].Position[1] = 0; vtxData[3].Position[2] = 0;
+			vtxData[4].Position[0] = 1; vtxData[4].Position[1] = 1; vtxData[4].Position[2] = 0;
+			vtxData[5].Position[0] = 0; vtxData[5].Position[1] = 1; vtxData[5].Position[2] = 0;
+
+			m_quadBuffer->Unlock();
+
+
 		}
 
 
 		ScenePass::~ScenePass(void)
 		{
+			delete m_quadVtxDecl;
+			delete m_quadBuffer;
 		}
 		
 		
@@ -292,7 +327,32 @@ namespace Apoc3D
 
 					}
 				}
+
 			}
+
+			Material mtrl(m_renderDevice);
+			mtrl.setPassEffect(m_selectorID, effect);
+			mtrl.setPassFlags((uint64)1<<(uint64)m_selectorID);
+
+			GeometryData geoData;
+			geoData.BaseVertex = 0;
+			geoData.IndexBuffer = 0;
+			geoData.PrimitiveCount = 2;
+			geoData.PrimitiveType = PT_TriangleList;
+			geoData.VertexBuffer = m_quadBuffer;
+			geoData.VertexCount = 6;
+			geoData.VertexDecl = m_quadVtxDecl;
+			geoData.VertexSize = m_quadVtxDecl->GetVertexSize();
+
+			RenderOperation rop;
+			rop.Material = &mtrl;
+			rop.GeometryData = &geoData;
+			
+			Matrix::CreateScale(rop.RootTransform, xScale, yScale, 1);
+
+
+			m_renderDevice->Render(&mtrl, &rop, 1, m_selectorID);
+
 		}
 		void ScenePass::UseRT(const SceneInstruction& inst)
 		{
