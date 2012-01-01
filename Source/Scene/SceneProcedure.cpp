@@ -35,6 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/RenderTarget.h"
 #include "Graphics/PixelFormat.h"
 #include "Graphics/TextureManager.h"
+#include "Math/GaussBlurFilter.h"
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/ResourceLocation.h"
@@ -68,7 +69,10 @@ namespace Apoc3D
 			{
 				delete m_createdRenderTarget[i];
 			}
-
+			for (int i=0;i<m_createdGaussFilters.getCount();i++)
+			{
+				delete m_createdGaussFilters[i];
+			}
 			delete[] m_vars;
 		}
 
@@ -203,6 +207,29 @@ namespace Apoc3D
 					case VARTYPE_Effect:
 						{
 							m_vars[i]->EffectValue = EffectManager::getSingleton().getEffect(m_vars[i]->DefaultStringValue);
+						}
+						break;
+					case VARTYPE_GaussBlurFilter:
+						{
+							uint width = m_vars[i]->Value[0];
+							uint height = m_vars[i]->Value[1];
+
+							if (!width || !height)
+							{
+								float wscale = reinterpret_cast<const float&>(m_vars[i]->Value[2]);
+								float hscale = reinterpret_cast<const float&>(m_vars[i]->Value[3]);
+
+								Viewport vp = m_renderDevice->getViewport();
+								width = static_cast<uint>(vp.Width * wscale + 0.5f);
+								height = static_cast<uint>(vp.Height * hscale + 0.5f);
+							}
+
+							int sampleCount = m_vars[i]->Value[5];
+							float blurAmount = reinterpret_cast<const float&>(m_vars[i]->Value[4]);
+							GaussBlurFilter* filter = new GaussBlurFilter(sampleCount,blurAmount, (int32)width,(int32)height);
+							m_vars[i]->ObjectValue = filter;
+							
+							m_createdGaussFilters.Add(filter);
 						}
 						break;
 							//VARTYPE_Integer,

@@ -49,7 +49,8 @@ namespace Apoc3D
 			//VARTYPE_Camera,
 			VARTYPE_Integer,
 			VARTYPE_Boolean,
-			VARTYPE_Effect
+			VARTYPE_Effect,
+			VARTYPE_GaussBlurFilter
 		};
 		
 		struct SceneVariable
@@ -63,15 +64,17 @@ namespace Apoc3D
 			ResourceHandle<Texture>* TextureValue;
 			Effect* EffectValue;
 
+			void* ObjectValue;
+
 			SceneVariable()
-				: TextureValue(0), RTValue(0), EffectValue(0), Type(VARTYPE_Integer)
+				: TextureValue(0), RTValue(0), EffectValue(0), Type(VARTYPE_Integer), ObjectValue(0)
 			{
 				memset(Value, 0, sizeof(Value));
 			}
 
 			SceneVariable(const SceneVariable& other)
 				: Name(other.Name), DefaultStringValue(other.DefaultStringValue),
-				Type(other.Type), RTValue(other.RTValue), TextureValue(other.TextureValue), EffectValue(other.EffectValue)
+				Type(other.Type), RTValue(other.RTValue), TextureValue(other.TextureValue), EffectValue(other.EffectValue), ObjectValue(other.ObjectValue)
 			{
 				memcpy(Value, other.Value, sizeof(Value));
 			}
@@ -84,6 +87,7 @@ namespace Apoc3D
 				RTValue = other.RTValue;
 				TextureValue = other.TextureValue;
 				EffectValue = other.EffectValue;
+				ObjectValue = other.ObjectValue;
 				memcpy(Value, other.Value, sizeof(Value));
 				return *this;
 			}
@@ -115,12 +119,14 @@ namespace Apoc3D
 			SPFX_TYPE_FLOATS,
 			SPFX_TYPE_INTS,
 			SPFX_TYPE_BOOLS,
-			SPFX_TYPE_TEXTURE
+			SPFX_TYPE_TEXTURE,
+			SPFX_TYPE_VECTOR
 		};
 		struct SceneOpArg
 		{
 			bool IsImmediate;
 			uint DefaultValue[16];
+			String StrData;
 			SceneVariable* Var;
 		};
 		struct SceneInstruction

@@ -175,7 +175,10 @@ namespace Apoc3D
 				delete[] tempList;
 				delete[] buckX;
 			}
-			
+			else
+			{
+
+			}
 			//// if the texture can hold all glyphs, just load them all at once
 			////if (m_edgeCount*m_edgeCount>glyphCount)
 			//{
@@ -496,8 +499,10 @@ namespace Apoc3D
 				for (int i=0;i<dataRect.getWidth();i++)
 				{
 					uint16* pix = (uint16*)(dest)+i;
-					byte alpha = *(byte*)(src+i);
-					*pix = alpha << 8 | 0xff;
+
+					ushort highA = (byte)*(src+i);
+
+					*pix = highA<<8 | 0xff;
 				}
 				//memcpy((char*)dataRect.getDataPointer()+j*dataRect.getPitch(),
 				//buf+j*glyph.Width, glyph.Width);

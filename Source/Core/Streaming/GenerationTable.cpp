@@ -91,7 +91,7 @@ namespace Apoc3D
 							{
 								UpdateGeneration(og,ng,res);
 //#ifdef _DEBUG
-								LogManager::getSingleton().Write(LOG_System, L"GEN_CHG" + StringUtils::ToString(ng) +L" ("+ res->getHashString() + L")", LOGLVL_Default);
+								//LogManager::getSingleton().Write(LOG_System, L"GEN_CHG" + StringUtils::ToString(ng) +L" ("+ res->getHashString() + L")", LOGLVL_Default);
 //#endif
 							}
 						}

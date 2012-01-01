@@ -176,6 +176,15 @@ namespace Apoc3D
 								SetValue(ep, mvp);
 							}
 							break;
+						case EPUSAGE_Trans_WorldView:
+							if (RendererEffectParams::CurrentCamera)
+							{
+								Matrix mv;
+								Matrix::Multiply(mv, rop.RootTransform, RendererEffectParams::CurrentCamera->getViewMatrix());
+
+								SetValue(ep, mv);
+							}
+							break;
 						case EPUSAGE_Trans_World:
 							SetValue(ep, rop.RootTransform);
 							break;
@@ -418,6 +427,7 @@ namespace Apoc3D
 				{
 					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
 				}
+				shader->SetSamplerState(param.SamplerIndex, param.SamplerState);
 				shader->SetTexture(param.SamplerIndex, tex);
 			}
 
@@ -440,6 +450,7 @@ namespace Apoc3D
 				{
 					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
 				}
+				shader->SetSamplerState(param.SamplerIndex, param.SamplerState);
 				shader->SetTexture(param.SamplerIndex, tex);
 			}
 

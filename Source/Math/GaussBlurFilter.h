@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Vector.h"
+#include "MathCommon.h"
 
 namespace Apoc3D
 {

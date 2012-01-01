@@ -34,8 +34,6 @@ namespace SampleTerrain
 		virtual void OnFrameStart();
 		virtual void OnFrameEnd();
 
-
-		void UpdateCamera();
 	private:
 		Sprite* m_sprite;
 
@@ -43,6 +41,9 @@ namespace SampleTerrain
 		OctreeSceneManager* m_scene;
 
 		GameCamera* m_camera;
+
+		void UpdateCamera();
+		void DrawInfomation(Sprite* sprite);
 	};
 }
 #endif

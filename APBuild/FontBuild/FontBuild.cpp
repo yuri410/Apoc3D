@@ -367,7 +367,7 @@ namespace APBuild
 
 						{
 							//String testOut = String(L"E:\\Desktop\\fntb\\ss")+String(1,ch)+String(L".png");
-							//if (!File::FileExists(testOut))
+							//if (ch >= 'A' && ch <= 'Z' && !File::FileExists(testOut))
 							//{
 							//	CLSID pngClsid;
 							//	GetEncoderClsid(L"image/png", &pngClsid);
@@ -394,7 +394,7 @@ namespace APBuild
 				{
 					for (int j=0;j<width;j++)
 					{
-						buffer[dstofs+j] = data[srcofs + j*sizeof(uint)] >> 24;
+						buffer[dstofs+j] = data[srcofs + j*sizeof(uint)+3];
 					}
 
 					srcofs += bmpData.Stride;

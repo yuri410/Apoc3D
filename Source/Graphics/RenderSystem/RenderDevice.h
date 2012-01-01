@@ -117,6 +117,8 @@ namespace Apoc3D
 				virtual bool SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat) = 0;
 				virtual bool SupportsPixelShader(int majorVer, int minorVer) = 0;
 				virtual bool SupportsVertexShader(int majorVer, int minorVer) = 0;
+
+				virtual int GetMRTCount() = 0;
 			};
 		}
 	}

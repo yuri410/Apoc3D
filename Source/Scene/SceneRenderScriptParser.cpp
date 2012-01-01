@@ -30,13 +30,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Collections/FastList.h"
 #include "Collections/FastMap.h"
 #include "Apoc3DException.h"
-
 #include "Graphics/PixelFormat.h"
 #include "Graphics/GraphicsCommon.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/RenderTarget.h"
 #include "Graphics/EffectSystem/EffectManager.h"
 #include "Graphics/EffectSystem/Effect.h"
+#include "Math/GaussBlurFilter.h"
 #include "tinyxml/tinyxml.h"
 #include "IOLib/Streams.h"
 #include "VFS/ResourceLocation.h"
@@ -81,6 +81,9 @@ namespace Apoc3D
 		};
 
 
+		bool ParseCallArgAsVar(const string& value, SceneOpArg& arg, 
+			const FastList<SceneVariable*>& vars);
+
 		bool ParseCallArgBool(const TiXmlElement* node,  const string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, bool def);
 		bool ParseCallArgFloat(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
@@ -94,6 +97,7 @@ namespace Apoc3D
 		bool ParseCallArgUintHexImm(const TiXmlElement* node, const string& name, SceneOpArg& arg);
 		bool ParseCallArgVector2(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, Vector2 def);
+		void ParseCallArgRenderStates(const string& value, std::vector<SceneOpArg>& args);
 
 		PixelFormat ConvertFormat(const string& fmt);
 		DepthFormat ConvertDepthFormat(const string& fmt);
@@ -846,160 +850,7 @@ namespace Apoc3D
 			}
 			else if (stat == L"renderquad")
 			{
-				SceneInstruction inst;
-				inst.Operation = SOP_RenderQuad;
-
-				Effect* effect = 0;
-
-				{
-					SceneOpArg arg;
-					ParseCallArgVector2(node, "Size", arg, GlobalVars, Vector2Utils::One);
-					inst.Args.push_back(arg);
-				}
-				
-				String effectName = StringUtils::toWString(node->Attribute("Effect"));
-				{
-					SceneOpArg arg;
-					arg.IsImmediate = true;
-
-					effect = EffectManager::getSingleton().getEffect(effectName);
-
-					void* ptr = effect;
-					memset(arg.DefaultValue, 0, sizeof(arg.DefaultValue));
-					memcpy(arg.DefaultValue, &ptr, sizeof(void*));
-					inst.Args.push_back(arg);
-				}
-				
-				
-				if (effect)
-				{
-					AutomaticEffect* autoFx = dynamic_cast<AutomaticEffect*>(effect);
-					if (autoFx)
-					{
-						const TiXmlAttribute* att = node->FirstAttribute();
-						while (att)
-						{
-							string name = att->Name();
-							if (name != "Size" && name != "Effect")
-							{
-								string value = att->Value();
-								string::size_type pos = value.find_last_of(':');
-
-								String paramName = StringUtils::toWString(name);
-								int idx = autoFx->FindParameterIndex(paramName);
-
-								if (idx!=-1)
-								{
-									if (pos != string::npos)
-									{
-										SceneOpArg arg;
-										arg.IsImmediate = true;
-
-										arg.DefaultValue[0] = (uint)(idx);
-
-										String wvalue = StringUtils::toWString(value);
-										pos = wvalue.find_last_of(':');
-
-										String typeString = wvalue.substr(pos);
-										StringUtils::Trim(typeString);
-										StringUtils::ToLowerCase(typeString);
-
-
-										String valueString = wvalue.substr(0, pos);
-										StringUtils::Trim(valueString);
-										std::vector<String> vals = StringUtils::Split(valueString, L" ,[]");
-										
-										if (vals.size() >= 16)
-										{
-											LogManager::getSingleton().Write(LOG_Scene, L"The parameter " + paramName + L" of " + effectName + L" in scene rendering config is too big .", LOGLVL_Warning);
-											continue;
-										}
-
-										ScenePostEffectParamType type;
-										if (typeString == L"boolean" || typeString == L"bool")
-										{
-											type = SPFX_TYPE_BOOLS;
-										}
-										else if (typeString == L"int" || typeString == L"integer")
-										{
-											type = SPFX_TYPE_INTS;
-										}
-										else if (typeString == L"single" || typeString == L"float")
-										{
-											type = SPFX_TYPE_FLOATS;
-										}
-										else
-										{
-											LogManager::getSingleton().Write(LOG_Scene, L"Unknown post effect parameter type " + typeString + L".", LOGLVL_Warning);
-											continue;
-										}
-
-										arg.DefaultValue[1] = ((uint)(SPFX_TYPE_FLOATS) << 16) | (uint)vals.size();
-										for (size_t i=0;i<vals.size();i++)
-										{
-											switch (type)
-											{
-											case SPFX_TYPE_BOOLS:
-												{
-													float d = StringUtils::ParseSingle(vals[i]);
-													arg.DefaultValue[i + 2] = reinterpret_cast<const uint&>(d);
-												}
-												break;
-											case SPFX_TYPE_FLOATS:
-												{
-													bool d = StringUtils::ParseBool(vals[i]);
-													arg.DefaultValue[i + 2] = d ? 1 : 0;
-												}
-												break;
-											case SPFX_TYPE_INTS:
-												{
-													int d = StringUtils::ParseInt32(vals[i]);
-													arg.DefaultValue[i + 2] = reinterpret_cast<const uint&>(d);
-												}
-												break;
-											}
-										}
-
-										inst.Args.push_back(arg);
-									}
-									else
-									{
-										SceneOpArg arg;
-
-										arg.IsImmediate = false;
-
-										arg.DefaultValue[0] = (uint)(idx);
-
-										String vname = StringUtils::toWString(value);
-										arg.Var = FindVar(GlobalVars, vname);
-										if (!arg.Var)
-										{
-											LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
-										}
-										else
-										{
-											inst.Args.push_back(arg);
-										}
-										
-									}
-								}
-								else
-								{
-									LogManager::getSingleton().Write(LOG_Graphics, 
-										L"Post effect parameter " + paramName + L" is not found in " + effectName, LOGLVL_Warning);
-								}
-								
-							}
-						}
-					}
-					
-					instructions.push_back(inst);
-				}
-				else
-				{
-					LogManager::getSingleton().Write(LOG_Graphics, 
-						L"Post effect is " + effectName + L"not found. ", LOGLVL_Warning);
-				}
+				FillRenderQuad(node, instructions);
 			}
 			else
 			{
@@ -1278,15 +1129,245 @@ namespace Apoc3D
 					LogManager::getSingleton().Write(LOG_Scene, L"Can not find effect name.", LOGLVL_Warning);
 				}
 			}
+			else if (tstr == string("gaussblurfilter"))
+			{
+				SceneVariable* var = new SceneVariable();
+				var->Type = VARTYPE_GaussBlurFilter;
+				var->Name = StringUtils::toWString(name);
+
+				const TiXmlElement* e1 = node->FirstChildElement("MapWidth");
+				const TiXmlElement* e2 = node->FirstChildElement("MapHeight");
+
+				var->Value[0] = var->Value[1] = 0;
+				if (e1 && e2)
+				{
+					var->Value[0] = StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
+					var->Value[1] = StringUtils::ParseInt32(StringUtils::toWString(e2->GetText()));
+				}
+				else
+				{
+					e1 = node->FirstChildElement("MapWidthP");
+					e2 = node->FirstChildElement("MapHeightP");
+
+					if (e1 && e2)
+					{
+						float r = StringUtils::ParseSingle(StringUtils::toWString(e1->GetText()));
+						var->Value[2] = reinterpret_cast<const uint&>(r);
+
+						r = StringUtils::ParseSingle(StringUtils::toWString(e2->GetText()));
+						var->Value[3] = reinterpret_cast<const uint&>(r);
+					}
+					else
+					{
+						float r = 1;
+						var->Value[2] = reinterpret_cast<const uint&>(r);
+						var->Value[3] = reinterpret_cast<const uint&>(r);
+					}
+				}
+
+				e1 = node->FirstChildElement("BlurAmount");
+				if (e1)
+				{
+					float r = StringUtils::ParseSingle(StringUtils::toWString(e1->GetText()));
+					var->Value[4] = reinterpret_cast<const uint&>(r);
+				}
+				else
+				{
+					float r = 1;
+					var->Value[4] = reinterpret_cast<const uint&>(r);
+				}
+
+				e1 = node->FirstChildElement("SampleCount");
+				if (e1)
+				{
+					var->Value[5] = StringUtils::ParseInt32(StringUtils::toWString(e1->GetText()));
+				}
+				else
+				{
+					var->Value[5] = 3;
+				}
+				GlobalVars.Add(var);
+			}
 			else
 			{
 				LogManager::getSingleton().Write(LOG_Scene, L"Unsupported variable type " + StringUtils::toWString(tstr), LOGLVL_Warning);
 			}
 		}
 
+		void SceneRenderScriptParser::FillRenderQuad(const TiXmlElement* node, std::vector<SceneInstruction>& instructions)
+		{
+			SceneInstruction inst;
+			inst.Operation = SOP_RenderQuad;
+
+			Effect* effect = 0;
+
+			{
+				SceneOpArg arg;
+				ParseCallArgVector2(node, "Size", arg, GlobalVars, Vector2Utils::One);
+				inst.Args.push_back(arg);
+			}
+
+			String effectName = StringUtils::toWString(node->Attribute("Effect"));
+			{
+				SceneOpArg arg;
+				arg.IsImmediate = true;
+
+				effect = EffectManager::getSingleton().getEffect(effectName);
+
+				void* ptr = effect;
+				memset(arg.DefaultValue, 0, sizeof(arg.DefaultValue));
+				memcpy(arg.DefaultValue, &ptr, sizeof(void*));
+				inst.Args.push_back(arg);
+			}
+			
+
+			if (effect)
+			{
+				AutomaticEffect* autoFx = dynamic_cast<AutomaticEffect*>(effect);
+				if (autoFx)
+				{
+					const TiXmlAttribute* att = node->FirstAttribute();
+					while (att)
+					{
+						string name = att->Name();
+						if (name != "Size" && name != "Effect" && name != "S" && name != "RenderStates")
+						{
+							string value = att->Value();
+							string::size_type pos = value.find_last_of(':');
+
+							String paramName = StringUtils::toWString(name);
+							int idx = autoFx->FindParameterIndex(paramName);
+
+							if (idx!=-1)
+							{
+								if (pos != string::npos)
+								{
+									SceneOpArg arg;
+									arg.IsImmediate = true;
+
+									arg.DefaultValue[0] = (uint)(idx);
+
+									String wvalue = StringUtils::toWString(value);
+									pos = wvalue.find_last_of(':');
+
+									String typeString = wvalue.substr(pos);
+									StringUtils::Trim(typeString);
+									StringUtils::ToLowerCase(typeString);
+
+
+									String valueString = wvalue.substr(0, pos);
+									StringUtils::Trim(valueString);
+									std::vector<String> vals = StringUtils::Split(valueString, L" ,[]()");
+
+									if (vals.size() >= 16)
+									{
+										LogManager::getSingleton().Write(LOG_Scene, L"The parameter " + paramName + L" of " + effectName + L" in scene rendering config is too big .", LOGLVL_Warning);
+										continue;
+									}
+
+									ScenePostEffectParamType type;
+									if (typeString == L"boolean" || typeString == L"bool")
+									{
+										type = SPFX_TYPE_BOOLS;
+									}
+									else if (typeString == L"int" || typeString == L"integer")
+									{
+										type = SPFX_TYPE_INTS;
+									}
+									else if (typeString == L"single" || typeString == L"float")
+									{
+										type = SPFX_TYPE_FLOATS;
+									}
+									else if (StringUtils::StartsWidth(typeString, L"vector"))
+									{
+										String vDem = typeString.substr(6);
+										int dem = StringUtils::ParseInt32(vDem);
+										arg.DefaultValue[2] = reinterpret_cast<const uint&>(dem);
+										type = SPFX_TYPE_VECTOR;
+									}
+									else
+									{
+										LogManager::getSingleton().Write(LOG_Scene, L"Unknown post effect parameter type " + typeString + L".", LOGLVL_Warning);
+										continue;
+									}
+
+									arg.DefaultValue[1] = ((uint)(SPFX_TYPE_FLOATS) << 16) | (uint)vals.size();
+									for (size_t i=0;i<vals.size();i++)
+									{
+										switch (type)
+										{
+										case SPFX_TYPE_BOOLS:
+											{
+												float d = StringUtils::ParseSingle(vals[i]);
+												arg.DefaultValue[i + 2] = reinterpret_cast<const uint&>(d);
+											}
+											break;
+										case SPFX_TYPE_FLOATS:
+											{
+												bool d = StringUtils::ParseBool(vals[i]);
+												arg.DefaultValue[i + 2] = d ? 1 : 0;
+											}
+											break;
+										case SPFX_TYPE_INTS:
+											{
+												int d = StringUtils::ParseInt32(vals[i]);
+												arg.DefaultValue[i + 2] = reinterpret_cast<const uint&>(d);
+											}
+											break;
+										case SPFX_TYPE_VECTOR:
+											{
+												float d = StringUtils::ParseSingle(vals[i]);
+												arg.DefaultValue[i + 3] = reinterpret_cast<const uint&>(d);
+											}
+											break;
+										}
+									}
+
+									inst.Args.push_back(arg);
+								}
+								else
+								{
+									SceneOpArg arg;
+
+									arg.IsImmediate = false;
+
+									if (ParseCallArgAsVar(value,arg,GlobalVars))
+									{
+										arg.DefaultValue[15] = (uint)(idx);
+
+										inst.Args.push_back(arg);
+									}
+								}
+							}
+							else
+							{
+								LogManager::getSingleton().Write(LOG_Graphics, 
+									L"Post effect parameter " + paramName + L" is not found in " + effectName, LOGLVL_Warning);
+							}
+
+						}
+						att = att->Next();
+					}
+				}
+
+				{
+					const char* rs = node->Attribute("RenderStates");
+					if (rs)
+						ParseCallArgRenderStates(rs, inst.Args);
+				}
+				instructions.push_back(inst);
+			}
+			else
+			{
+				LogManager::getSingleton().Write(LOG_Graphics, 
+					L"Post effect " + effectName + L" is not found. ", LOGLVL_Warning);
+			}
+		}
+
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
+
 
 		bool ParseCallArgBool(const TiXmlElement* node,  const string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, bool def)
@@ -1301,15 +1382,7 @@ namespace Apoc3D
 			}
 			if (res == TIXML_WRONG_TYPE)
 			{
-				arg.IsImmediate = false;
-				String vname = StringUtils::toWString(node->Attribute(name.c_str()));
-				arg.Var = FindVar(vars, vname);
-				if (!arg.Var)
-				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
-					return false;
-				}
-				return true;
+				return ParseCallArgAsVar(*node->Attribute(name), arg,vars);
 			}
 
 			arg.IsImmediate = true;
@@ -1330,15 +1403,7 @@ namespace Apoc3D
 			}
 			if (res == TIXML_WRONG_TYPE)
 			{
-				arg.IsImmediate = false;
-				String vname = StringUtils::toWString(node->Attribute(name.c_str()));
-				arg.Var = FindVar(vars, vname);
-				if (!arg.Var)
-				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
-					return false;
-				}
-				return true;
+				return ParseCallArgAsVar(*node->Attribute(name), arg,vars);
 			}
 
 			arg.IsImmediate = true;
@@ -1374,15 +1439,7 @@ namespace Apoc3D
 			}
 			if (res == TIXML_WRONG_TYPE)
 			{
-				arg.IsImmediate = false;
-				String vname = StringUtils::toWString(node->Attribute(name.c_str()));
-				arg.Var = FindVar(vars, vname);
-				if (!arg.Var)
-				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
-					return false;
-				}
-				return true;
+				return ParseCallArgAsVar(*node->Attribute(name), arg,vars);
 			}
 
 			arg.IsImmediate = true;
@@ -1403,16 +1460,7 @@ namespace Apoc3D
 			}
 			if (res == TIXML_WRONG_TYPE)
 			{
-				arg.IsImmediate = false;
-
-				String vname = StringUtils::toWString(node->Attribute(name.c_str()));
-				arg.Var = FindVar(vars, vname);
-				if (!arg.Var)
-				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
-					return false;
-				}
-				return true;
+				return ParseCallArgAsVar(*node->Attribute(name), arg,vars);
 			}
 
 			arg.IsImmediate = true;
@@ -1423,15 +1471,7 @@ namespace Apoc3D
 		bool ParseCallArgRef(const TiXmlElement* node, const string& name, SceneOpArg& arg,
 			const FastList<SceneVariable*>& vars)
 		{
-			arg.IsImmediate = false;
-			String vname = StringUtils::toWString(node->Attribute(name.c_str()));
-			arg.Var = FindVar(vars, vname);
-			if (!arg.Var)
-			{
-				LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L"not found", LOGLVL_Warning);
-				return false;
-			}
-			return true;
+			return ParseCallArgAsVar(*node->Attribute(name), arg,vars);
 		}
 
 		bool ParseCallArgVector2(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
@@ -1439,32 +1479,112 @@ namespace Apoc3D
 		{
 			const string* result = node->Attribute(name);
 
-			String str = StringUtils::toWString(*result);
-			std::vector<String> comps = StringUtils::Split(str, L" ,");
-			if (comps.size() == 2)
+			if (result)
 			{
-				arg.IsImmediate = true;
+				String str = StringUtils::toWString(*result);
+				std::vector<String> comps = StringUtils::Split(str, L" ,");
+				if (comps.size() == 2)
+				{
+					arg.IsImmediate = true;
 
-				float single = StringUtils::ParseSingle(comps[0]);
+					float single = StringUtils::ParseSingle(comps[0]);
+					arg.DefaultValue[0] = reinterpret_cast<const uint&>(single);
+					single = StringUtils::ParseSingle(comps[1]);
+					arg.DefaultValue[1] = reinterpret_cast<const uint&>(single);
+
+					return true;
+				}
+
+				return ParseCallArgAsVar(*result,arg,vars);
+			}
+			{
+				float single = Vector2Utils::GetX(def);
 				arg.DefaultValue[0] = reinterpret_cast<const uint&>(single);
-				single = StringUtils::ParseSingle(comps[1]);
+				single = Vector2Utils::GetY(def);
 				arg.DefaultValue[1] = reinterpret_cast<const uint&>(single);
 
-				return true;
 			}
+			
+			return false;
+		}
+
+
+		bool ParseCallArgAsVar(const string& value, SceneOpArg& arg, 
+			const FastList<SceneVariable*>& vars)
+		{
+			//arg.IsImmediate = false;
+			//String vname = StringUtils::toWString(node->Attribute(name.c_str()));
+			//arg.Var = FindVar(vars, vname);
+			//if (!arg.Var)
+			//{
+			//	LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
+			//	return false;
+			//}
+			//return true;
+
+			//SceneOpArg arg;
+
 			arg.IsImmediate = false;
 
-			String vname = StringUtils::toWString(node->Attribute(name.c_str()));
+
+			String vname = StringUtils::toWString(value);
+			StringUtils::Trim(vname);
+
+			String propName;
+			if (StringUtils::StartsWidth(vname, L"[") && StringUtils::EndsWidth(vname, L"]"))
+			{
+				vname = vname.substr(1, vname.size()-2);
+
+				String::size_type dotPos = vname.find_first_of('.');
+				assert(dotPos!=String::npos);
+
+				propName = vname.substr(dotPos+1);
+				vname = vname.substr(0, dotPos);
+			}
+
 			arg.Var = FindVar(vars, vname);
 			if (!arg.Var)
 			{
 				LogManager::getSingleton().Write(LOG_Scene, L"Variable " + vname + L" not found", LOGLVL_Warning);
 				return false;
 			}
+			arg.StrData = propName;
+
 			return true;
 		}
 
+		void ParseCallArgRenderStates(const string& value, std::vector<SceneOpArg>& args)
+		{
+			String val = StringUtils::toWString(value);
+			std::vector<String> vals = StringUtils::Split(val, L",; ");
 
+			for (size_t i=0;i<vals.size();i++)
+			{
+				String::size_type pos = vals[i].find_first_of('=');
+				if (pos != String::npos)
+				{
+					String k = vals[i].substr(0, pos);
+					String v = vals[i].substr(pos+1);
+
+					StringUtils::Trim(k);
+					StringUtils::Trim(v);
+
+					if (k == L"IsBlendTransparent" || k == L"DepthTest")
+					{
+						SceneOpArg arg;
+						arg.IsImmediate = true;
+						arg.StrData = k;
+						arg.DefaultValue[15] = StringUtils::ParseBool(v) ? 1 : 0;
+						arg.DefaultValue[0] = arg.DefaultValue[1] = 0xffffffff;
+						args.push_back(arg);
+					}
+
+
+					// TODO
+				}
+			}
+
+		}
 
 		PixelFormat ConvertFormat(const string& fmt)
 		{

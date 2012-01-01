@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneProcedure.h"
 #include "SceneRenderer.h"
 #include "SceneManager.h"
-
+#include "Core/Logging.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/RenderTarget.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
@@ -37,9 +37,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/EffectSystem/Effect.h"
 #include "Graphics/Material.h"
 #include "Graphics/GeometryData.h"
-
+#include "Math/GaussBlurFilter.h"
 #include "Math/Math.h"
 
+using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;
 
 namespace Apoc3D
@@ -67,7 +68,7 @@ namespace Apoc3D
 			elements.Add(VertexElement(0, VEF_Vector3, VEU_Position));
 			m_quadVtxDecl = fac->CreateVertexDeclaration(elements);
 
-			m_quadBuffer = fac->CreateVertexBuffer(4, m_quadVtxDecl, BU_Static);
+			m_quadBuffer = fac->CreateVertexBuffer(6, m_quadVtxDecl, BU_Static);
 			QuadVertex* vtxData = reinterpret_cast<QuadVertex*>(m_quadBuffer->Lock(LOCK_None));
 			vtxData[0].Position[0] = 0; vtxData[0].Position[1] = 0; vtxData[0].Position[2] = 0;
 			vtxData[1].Position[0] = 1; vtxData[1].Position[1] = 0; vtxData[1].Position[2] = 0;
@@ -85,8 +86,8 @@ namespace Apoc3D
 
 		ScenePass::~ScenePass(void)
 		{
-			delete m_quadVtxDecl;
 			delete m_quadBuffer;
+			delete m_quadVtxDecl;
 		}
 		
 		
@@ -267,28 +268,48 @@ namespace Apoc3D
 			Effect* effect;
 			memcpy(&effect, inst.Args[1].DefaultValue, sizeof(void*));
 
+			Material mtrl(m_renderDevice);
+			mtrl.Cull = CULL_None;
+			//mtrl.IsBlendTransparent = true;
+
 			AutomaticEffect* autoFx = dynamic_cast<AutomaticEffect*>(effect);
 			for (size_t i=2;i<inst.Args.size();i++)
 			{
 				const SceneOpArg& arg = inst.Args[i];
 				if (arg.IsImmediate)
 				{
-					int idx = static_cast<int>(arg.DefaultValue[0]);
-					int count = static_cast<int>(arg.DefaultValue[1] & 0xffff);
-					ScenePostEffectParamType type = 
-						static_cast<ScenePostEffectParamType>(arg.DefaultValue[1] >> 16);
-
-					switch (type)
+					if ((arg.DefaultValue[0] & arg.DefaultValue[1] ) == 0xffffffff)
 					{
-					case SPFX_TYPE_BOOLS:
-						autoFx->SetParameterValue(idx, reinterpret_cast<const bool*>(&arg.DefaultValue[2]), count);
-						break;
-					case SPFX_TYPE_FLOATS:
-						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(&arg.DefaultValue[2]), count);
-						break;
-					case SPFX_TYPE_INTS:
-						autoFx->SetParameterValue(idx, reinterpret_cast<const int*>(&arg.DefaultValue[2]), count);
-						break;
+						if (arg.StrData == L"IsBlendTransparent")
+						{
+							mtrl.IsBlendTransparent = arg.DefaultValue[15] ? true : false;
+						}
+						else if (arg.StrData == L"DepthTest")
+						{
+							mtrl.DepthTestEnabled = arg.DefaultValue[15] ? true : false;
+						}
+
+					}
+					else
+					{
+
+						int idx = static_cast<int>(arg.DefaultValue[0]);
+						int count = static_cast<int>(arg.DefaultValue[1] & 0xffff);
+						ScenePostEffectParamType type = 
+							static_cast<ScenePostEffectParamType>(arg.DefaultValue[1] >> 16);
+
+						switch (type)
+						{
+						case SPFX_TYPE_BOOLS:
+							autoFx->SetParameterValue(idx, reinterpret_cast<const bool*>(&arg.DefaultValue[2]), count);
+							break;
+						case SPFX_TYPE_FLOATS:
+							autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(&arg.DefaultValue[2]), count);
+							break;
+						case SPFX_TYPE_INTS:
+							autoFx->SetParameterValue(idx, reinterpret_cast<const int*>(&arg.DefaultValue[2]), count);
+							break;
+						}
 					}
 				}
 				else
@@ -296,17 +317,45 @@ namespace Apoc3D
 					SceneVariable* var = arg.Var;
 					assert(var);
 
-					int idx = static_cast<int>(arg.DefaultValue[0]);
+					bool propNotFountErr = false;
+					int idx = static_cast<int>(arg.DefaultValue[15]);
 					switch (var->Type)
 					{
 					case VARTYPE_Boolean:
 						autoFx->SetParameterValue(idx, reinterpret_cast<const bool*>(var->Value), 1);
 						break;
 					case VARTYPE_RenderTarget:
-						autoFx->SetParameterTexture(idx, var->RTValue->GetColorTexture());
+						if (arg.StrData.size())
+						{
+							if (arg.StrData == L"Width")
+							{
+								int width = var->RTValue->getWidth();
+								autoFx->SetParameterValue(idx, &width, 1);
+							}
+							else if (arg.StrData == L"Height")
+							{
+								int height = var->RTValue->getHeight();
+								autoFx->SetParameterValue(idx, &height, 1);
+							}
+							else 
+							{
+								//arg.StrData = L"";
+								LogManager::getSingleton().Write(LOG_Scene, L"Property " + arg.StrData + L" is not found on " + var->Name, LOGLVL_Error);
+							}
+						}
+						else
+						{
+							autoFx->SetParameterTexture(idx, var->RTValue->GetColorTexture());
+						}
 						break;
 					case VARTYPE_Matrix:
-						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 16);
+						//if (arg.StrData.size())
+						//{
+						//}
+						//else
+						{
+							autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 16);
+						}
 						break;
 					case VARTYPE_Vector4:
 						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 4);
@@ -324,15 +373,57 @@ namespace Apoc3D
 					case VARTYPE_Integer:
 						autoFx->SetParameterValue(idx, reinterpret_cast<const int*>(var->Value), 1);
 						break;
+					case VARTYPE_GaussBlurFilter:
+						if (arg.StrData.size())
+						{
+							GaussBlurFilter* filter = static_cast<GaussBlurFilter*>(var->ObjectValue);
+							if (arg.StrData == L"SampleOffsetsX")
+							{
+								const Vector4* weights = filter->getSampleOffsetX();
+								autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(weights), 4 * filter->getSampleCount());
+							}
+							else if (arg.StrData == L"SampleOffsetsY")
+							{
+								const Vector4* weights = filter->getSampleOffsetY();
+								autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(weights), 4 * filter->getSampleCount());
+							}
+							else if (arg.StrData == L"SampleWeights")
+							{
+								const float* weights = filter->getSampleWeights();
+								memset(m_floatBuffer,0, sizeof(m_floatBuffer));
+								for (int i=0;i<filter->getSampleCount();i++)
+								{
+									m_floatBuffer[i*4   ] = weights[i];
+									m_floatBuffer[i*4+1 ] = weights[i];
+									m_floatBuffer[i*4+2 ] = weights[i];
+									m_floatBuffer[i*4+3 ] = weights[i];
+
+								}
+								autoFx->SetParameterValue(idx, m_floatBuffer, filter->getSampleCount() * 4);
+							}
+							else if (arg.StrData == L"SampleCount")
+							{
+								int val = filter->getSampleCount();
+								autoFx->SetParameterValue(idx, &val, 1);
+							}
+							else 
+							{
+								//arg.StrData = L"";
+								LogManager::getSingleton().Write(LOG_Scene, L"Property " + arg.StrData + L" is not found on " + var->Name, LOGLVL_Error);
+							}
+						}
+
+						break;
 
 					}
 				}
 
 			}
 
-			Material mtrl(m_renderDevice);
 			mtrl.setPassEffect(m_selectorID, effect);
 			mtrl.setPassFlags((uint64)1<<(uint64)m_selectorID);
+			
+			//mtrl.IsBlendTransparent = true;
 
 			GeometryData geoData;
 			geoData.BaseVertex = 0;

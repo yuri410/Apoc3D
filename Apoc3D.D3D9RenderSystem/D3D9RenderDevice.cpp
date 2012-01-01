@@ -501,6 +501,13 @@ namespace Apoc3D
 				m_device->getDevice()->GetDeviceCaps(&caps);
 				return caps.VertexShaderVersion >= D3DVS_VERSION((uint)majorVer, (uint)minorVer);
 			}
+
+			int D3D9Capabilities::GetMRTCount()
+			{
+				D3DCAPS9 caps;
+				m_device->getDevice()->GetDeviceCaps(&caps);
+				return caps.NumSimultaneousRTs;
+			}
 		}
 	}
 }

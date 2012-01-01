@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics::EffectSystem;
@@ -78,6 +79,7 @@ namespace Apoc3D
 
 			FastList<RenderTarget*> m_createdRenderTarget;
 			FastList<ResourceHandle<Texture>*> m_createdTextures;
+			FastList<GaussBlurFilter*> m_createdGaussFilters;
 
 			bool m_isAvailable;
 			String m_name;

@@ -55,7 +55,7 @@ namespace SampleTerrain
 	{
 
 		m_material.Cull = CULL_None;
-		m_material.Ambient = Color4(0.5f,0.5f,0.5f);
+		m_material.Ambient = Color4(0.35f,0.35f,0.35f);
 		m_material.Diffuse = Color4(1.0f, 1.0f, 1.0f);
 		m_material.Specular = Color4(0.0f, 0.0f, 0.0f);
 		m_material.Power = 1;
@@ -197,10 +197,10 @@ namespace SampleTerrain
 	/*                                                                      */
 	/************************************************************************/
 	TerrainMeshManager::TerrainMeshManager()
-		: ResourceManager(L"TerrainMeshManager Manager ", 200 * 1048576, true)
+		: ResourceManager(L"TerrainMeshManager Manager ", 250 * 1048576, true)
 	{
 		LogManager::getSingleton().Write(LOG_System, 
-			L"TerrainMeshManager initialized with a cache size 200MB, using async streaming.", 
+			L"TerrainMeshManager initialized with a cache size 250MB, using async streaming.", 
 			LOGLVL_Infomation);
 	}
 	TerrainMeshManager::~TerrainMeshManager()

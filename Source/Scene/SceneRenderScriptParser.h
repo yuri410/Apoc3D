@@ -46,6 +46,17 @@ namespace Apoc3D
 		typedef unordered_map<String, String> BlockArgs;
 		class APAPI SceneRenderScriptParser
 		{
+		
+		public:
+			List<ScenePassData> PassData;
+			FastList<SceneVariable*> GlobalVars;
+
+			SceneRenderScriptParser(RenderDevice* dev);
+
+			void Parse(const ResourceLocation* rl);
+
+			const String& getSceneName() const { return m_sceneName; }
+
 		private:
 			String m_sceneName;
 			RenderDevice* m_renderDevice;
@@ -59,21 +70,14 @@ namespace Apoc3D
 
 			void ParseGlocalVarNode(const TiXmlElement* node);
 
-			
+			void FillRenderQuad(const TiXmlElement* node, std::vector<SceneInstruction>& instructions);
 			/** Build instruction for code blocks
 			*/
 			void BuildInstructions(const TiXmlElement* node, ScenePassData* data);
 			void BuildPass(const TiXmlElement* node);
 			void BuildNode(const TiXmlNode* node);
-		public:
-			List<ScenePassData> PassData;
-			FastList<SceneVariable*> GlobalVars;
 
-			SceneRenderScriptParser(RenderDevice* dev);
-
-			void Parse(const ResourceLocation* rl);
-
-			const String& getSceneName() const { return m_sceneName; }
+			
 		};
 	}
 }

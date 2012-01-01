@@ -67,7 +67,6 @@ namespace Apoc3D
 			struct ExecutionValue
 			{
 				uint Value[2];
-
 			};
 		private:
 			RenderDevice* m_renderDevice;
@@ -83,6 +82,8 @@ namespace Apoc3D
 
 			List<SceneInstruction> m_instuctions;
 			Stack<ExecutionValue> m_execStack;
+
+			float m_floatBuffer[25];
 
 			Camera* m_currentCamera;
 

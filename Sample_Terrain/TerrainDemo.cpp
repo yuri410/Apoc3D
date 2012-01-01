@@ -30,6 +30,7 @@
 #include "Math/RandomUtils.h"
 #include "Math/PerlinNoise.h"
 #include "Utility/StringUtils.h"
+#include "UILib/FontManager.h"
 #include "Platform/Thread.h"
 
 #include "GameCamera.h"
@@ -78,7 +79,10 @@ namespace SampleTerrain
 			cp.AddPath(L"textures.pak");
 			FileLocateRule::Textures.AddCheckPoint(cp);
 		}
-		
+		{
+			FileLocation* fl = FileSystem::getSingleton().Locate(L"comic.fnt", FileLocateRule::Default);
+			FontManager::getSingleton().LoadFont(m_device, L"comic", fl);
+		}
 
 		FileLocation* fl = FileSystem::getSingleton().Locate(L"effectList.xml", FileLocateRule::Effects);
 		EffectManager::getSingleton().LoadEffectFromList(m_device, fl);
@@ -108,10 +112,8 @@ namespace SampleTerrain
 
 
 		m_scene = new OctreeSceneManager(OctreeBox(20000), 20000/256);
-		//PerlinNoise::Frequency = 0.01f;
-		//PerlinNoise::Persistency = 0.3f;
-		//PerlinNoise::NumInterations = 8;
-		//PerlinNoise::ComputeRandomTable();
+
+
 		
 		for (int i=-15;i<=15;i++)
 		{
@@ -167,6 +169,11 @@ namespace SampleTerrain
 		m_sceneRenderer->RenderScene(m_scene);
 
 		Game::Draw(time);
+		
+		m_sprite->Begin(true, false);
+		DrawInfomation(m_sprite);
+
+		m_sprite->End();
 
 		m_device->EndFrame();
 	}
@@ -196,6 +203,34 @@ namespace SampleTerrain
 			m_camera->Turn(mouse->getDX()*0.25f, mouse->getDY()*0.25f);
 		}
 		
+
+	}
+
+	void TerrainDemo::DrawInfomation(Sprite* sprite)
+	{
+		int usage = (int)TerrainMeshManager::getSingleton().getUsedCacheSize();
+		int total = (int)TerrainMeshManager::getSingleton().getTotalCacheSize();
+
+		int op = TerrainMeshManager::getSingleton().GetCurrentOperationCount();
+
+		Font* fnt = FontManager::getSingleton().getFont(L"comic");
+		
+		Viewport vp = m_device->getViewport();
+		int x = 26;
+		int y = vp.Height - (675-480);
+
+		m_device->getRenderState()->SetAlphaBlend(true, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, 0);
+
+
+		fnt->DrawString(m_sprite, L"Operation: " + StringUtils::ToString(op), Point(x,y), CV_White);
+		y+=35;
+		fnt->DrawString(m_sprite, L"Cache Usage: " + StringUtils::ToString(usage/1048576) + L"/" + StringUtils::ToString(total/1048576) + L"MB", Point(x,y), CV_White);
+		y+=35;
+		fnt->DrawString(m_sprite, L"Batch Count: " + StringUtils::ToString(m_device->getBatchCount()), Point(x,y), CV_White);
+		y+=35;
+		fnt->DrawString(m_sprite, L"Primitive Count: " + StringUtils::ToString(m_device->getPrimitiveCount()), Point(x,y), CV_White);
+		y+=35;
+		fnt->DrawString(m_sprite, L"FPS: " + StringUtils::ToString(m_window->getFPS(), 2, 2), Point(x,y), CV_White);
 
 	}
 }
