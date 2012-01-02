@@ -162,6 +162,10 @@ namespace Apoc3D
 				m_rotX += ToRadian(dx);
 				m_rotY += ToRadian(dy);
 
+				if (m_rotY<ToRadian(-89))
+					m_rotY = ToRadian(-89);
+				else if (m_rotY>ToRadian(89))
+					m_rotY = ToRadian(89);
 			}
 
 			void Update(const GameTime* const time);

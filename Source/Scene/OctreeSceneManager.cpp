@@ -145,6 +145,21 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
+		static const int WorldLodLevelCount = 4;
+		static const float LodThresold[WorldLodLevelCount] = { 1.4f, 2, 3.3f, 4.5f };
+		int GetLevel(const BoundingSphere& sphere, const Vector3& pos)
+		{
+			float dist = Vector3Utils::Distance(sphere.Center, pos);
+
+			for (int i = 0; i < WorldLodLevelCount; i++)
+			{
+				if (dist <= sphere.Radius * LodThresold[i])
+				{
+					return i;
+				}
+			}
+			return WorldLodLevelCount;
+		}
 
 		OctreeSceneManager::OctreeSceneManager(const OctreeBox& range, float minBVSize)
 			: m_minimumBVSize(minBVSize), m_range(range)
@@ -232,6 +247,8 @@ namespace Apoc3D
 
 			m_bfsQueue.Enqueue(m_octRootNode);
 
+			Vector3 camPos = camera->getInvViewMatrix().GetTranslation();
+
 			while (m_bfsQueue.getCount())
 			{
 				OctreeSceneNode* node = m_bfsQueue.Dequeue();
@@ -255,8 +272,10 @@ namespace Apoc3D
 							if (objs[i]->hasSubObjects())
 							{
 								objs[i]->PrepareVisibleObjects(camera, 0, batchData);
-							}
-							batchData->AddVisisbleObject(objs[i], 0);
+							} 
+							int level = GetLevel(objs[i]->getBoundingSphere(), camPos);
+
+							batchData->AddVisisbleObject(objs[i], level);
 						}
 						
 					}
@@ -267,7 +286,9 @@ namespace Apoc3D
 				SceneObject* obj = *iter;
 				if (frus.Intersects(obj->getBoundingSphere()))
 				{
-					batchData->AddVisisbleObject(obj, 0);
+					int level = GetLevel(obj->getBoundingSphere(), camPos);
+
+					batchData->AddVisisbleObject(obj, level);
 				}
 			}
 			for (list<SceneObject*>::iterator iter = m_dynObjs.begin();iter!=m_dynObjs.end();iter++)
@@ -275,7 +296,9 @@ namespace Apoc3D
 				SceneObject* obj = *iter;
 				if (frus.Intersects(obj->getBoundingSphere()))
 				{
-					batchData->AddVisisbleObject(obj, 0);
+					int level = GetLevel(obj->getBoundingSphere(), camPos);
+
+					batchData->AddVisisbleObject(obj, level);
 				}
 			}
 

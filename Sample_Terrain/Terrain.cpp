@@ -16,7 +16,7 @@ namespace SampleTerrain
 		m_transformation.LoadIdentity();
 		//m_transformation.SetTranslation(Vector3Utils::LDVector(bx * BlockLength, 0, bz*BlockLength));
 
-		for (int i=0;i<1;i++)
+		for (int i=0;i<3;i++)
 		{
 			m_terrains[i] = TerrainMeshManager::getSingleton().CreateInstance(device, bx,bz, i);
 		}
@@ -32,9 +32,19 @@ namespace SampleTerrain
 
 	RenderOperationBuffer* Terrain::GetRenderOperation(int lod)
 	{
-		//return 0;
-		ResourceHandle<TerrainMesh>& mesh = *m_terrains[0];
-		return mesh->GetRenderOperation(0);
+		if (lod>=3)
+			lod = 2;
+
+		RenderOperationBuffer* opBuf = 0;
+		while (!opBuf && lod<3)
+		{
+			ResourceHandle<TerrainMesh>& mesh = *m_terrains[lod];
+			opBuf = mesh->GetRenderOperation(lod);
+			if (opBuf)
+				return opBuf;
+			lod++;
+		}
+		return 0;
 	}
 
 	void Terrain::Update(const GameTime* const time)

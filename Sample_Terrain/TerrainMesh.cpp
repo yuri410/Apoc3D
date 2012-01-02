@@ -112,12 +112,13 @@ namespace SampleTerrain
 
 		const float HeightScale= Terrain::HeightScale;
 
-		float cellLength = Terrain::CellLength;
+		const float cellLength = Terrain::BlockLength/(m_edgeVertexCount-1);
+		//float cellLength = Terrain::CellLength;
 		for (int i=0;i<m_edgeVertexCount;i++)
 		{
 			for (int j=0;j<m_edgeVertexCount;j++)
 			{
-				float height = Terrain::GetHeightAt(i*Terrain::CellLength + m_bx*Terrain::BlockLength, j*Terrain::CellLength+m_bz*Terrain::BlockLength);
+				float height = Terrain::GetHeightAt(i*cellLength + m_bx*Terrain::BlockLength, j*cellLength+m_bz*Terrain::BlockLength);
 				
 				int index = i * m_edgeVertexCount + j;
 
@@ -143,7 +144,7 @@ namespace SampleTerrain
 				}
 				else
 				{
-					float height = (float)Terrain::GetHeightAt((i+1)*Terrain::CellLength + m_bx*Terrain::BlockLength, j*Terrain::CellLength+m_bz*Terrain::BlockLength);
+					float height = (float)Terrain::GetHeightAt((i+1)*cellLength + m_bx*Terrain::BlockLength, j*cellLength+m_bz*Terrain::BlockLength);
 					posB = Vector3Utils::LDVector(cellLength * (i+1), height*HeightScale, cellLength * j);
 				}
 
@@ -155,7 +156,7 @@ namespace SampleTerrain
 				}
 				else
 				{
-					float height = (float)Terrain::GetHeightAt(i*Terrain::CellLength + m_bx*Terrain::BlockLength, (j+1)*Terrain::CellLength+m_bz*Terrain::BlockLength);
+					float height = (float)Terrain::GetHeightAt(i*cellLength + m_bx*Terrain::BlockLength, (j+1)*cellLength+m_bz*Terrain::BlockLength);
 					posR = Vector3Utils::LDVector(cellLength * i, height*HeightScale, cellLength * (j+1));
 				}
 				

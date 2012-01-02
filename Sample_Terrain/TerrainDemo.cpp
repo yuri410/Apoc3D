@@ -219,7 +219,7 @@ namespace SampleTerrain
 		int x = 26;
 		int y = vp.Height - (675-480);
 
-		m_device->getRenderState()->SetAlphaBlend(true, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, 0);
+		//m_device->getRenderState()->SetAlphaBlend(true, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, 0);
 
 
 		fnt->DrawString(m_sprite, L"Operation: " + StringUtils::ToString(op), Point(x,y), CV_White);
