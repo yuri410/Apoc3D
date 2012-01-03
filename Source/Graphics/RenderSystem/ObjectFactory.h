@@ -38,8 +38,8 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/* Factory that can create/destroy resources like textures, buffers, shaders. 
-			* Application can use this to create resources that are not managed by resource managers.
+			/* Factory that can create resources like textures, buffers, shaders. 
+			* Application can use this to create resources which are not managed by resource managers.
 			*/
 			class APAPI ObjectFactory
 			{
@@ -71,6 +71,8 @@ namespace Apoc3D
 				virtual PixelShader* CreatePixelShader(const byte* byteCode) = 0;
 
 				virtual Sprite* CreateSprite() = 0;
+
+				//virtual InstancingData* CreateInstancingData() = 0;
 			};
 		}
 	}

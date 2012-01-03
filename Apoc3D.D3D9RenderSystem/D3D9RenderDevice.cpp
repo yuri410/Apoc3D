@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Texture.h"
 #include "D3D9RenderStateManager.h"
 #include "D3D9ObjectFactory.h"
+#include "D3D9InstancingData.h"
 #include "Buffer/D3D9DepthBuffer.h"
 #include "Buffer/D3D9IndexBuffer.h"
 #include "Buffer/D3D9VertexBuffer.h"
@@ -66,7 +67,7 @@ namespace Apoc3D
 				{
 
 				}
-				virtual void Setup(Material* mtrl, const RenderOperation& rop)
+				virtual void Setup(Material* mtrl, const RenderOperation* rop, int count)
 				{
 					IDirect3DDevice9* dev = m_device->getDevice();
 					if (mtrl->getTexture(0))
@@ -76,7 +77,7 @@ namespace Apoc3D
 						dev->SetTexture(0, tex->getBaseTexture());
 					}
 
-					dev->SetTransform(D3DTS_WORLD, &reinterpret_cast<const D3DMatrix&>(rop.RootTransform));
+					dev->SetTransform(D3DTS_WORLD, &reinterpret_cast<const D3DMatrix&>(rop->RootTransform));
 					if (RendererEffectParams::CurrentCamera)
 					{
 						const Matrix& view = RendererEffectParams::CurrentCamera->getViewMatrix();
@@ -140,6 +141,8 @@ namespace Apoc3D
 					delete m_objectFactory;
 				if (m_defaultEffect)
 					delete m_defaultEffect;
+				if (m_instancingData)
+					delete m_instancingData;
 			}
 
 			D3DDevice* D3D9RenderDevice::getDevice() const { return m_devManager->getDevice(); } 
@@ -193,6 +196,8 @@ namespace Apoc3D
 				dev->GetDepthStencilSurface(&m_defaultDS);
 
 				m_defaultEffect = new BasicEffect(this);
+
+				m_instancingData = new D3D9InstancingData(this);
 			}
 			
 			void D3D9RenderDevice::BeginFrame()
@@ -286,7 +291,7 @@ namespace Apoc3D
 
 			void D3D9RenderDevice::Render(Material* mtrl, const RenderOperation* op, int count, int passSelID)
 			{
-				if (!op)
+				if (!op || count == 0)
 					return;
 
 				getDevice()->SetVertexShader(0);
@@ -341,45 +346,114 @@ namespace Apoc3D
 				{
 					fx->BeginPass(p);
 
-					for (int j=0;j<count;j++)
+					if (fx->SupportsInstancing())
 					{
-						const RenderOperation& rop = op[j];
+						// here the input render operation list is guaranteed to have the same geometry data,
+						// instancing drawing is done here once the effect supports it
+						
+						const RenderOperation& rop = op[0];
 						const GeometryData* gm = rop.GeometryData;
-						if (!gm->VertexCount || !gm->PrimitiveCount)
-						{
-							continue;
-						}
-
-						m_batchCount++;
-						m_primitiveCount += gm->PrimitiveCount;
-						m_vertexCount += gm->VertexCount;
-
-						// setup effect
-						fx->Setup(mtrl, rop);
-
-						D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
-						getDevice()->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
-
-						getDevice()->SetVertexDeclaration(static_cast<D3D9VertexDeclaration*>(gm->VertexDecl)->getD3DDecl());
 
 						if (gm->usesIndex())
 						{
+							//count = 1;
+							m_batchCount++;
+							m_primitiveCount += gm->PrimitiveCount*count;
+							m_vertexCount += gm->VertexCount*count;
+
+
+							const RenderOperation& rop = op[0];
+							const GeometryData* gm = rop.GeometryData;
+
+							VertexDeclaration* vtxDecl = static_cast<D3D9VertexDeclaration*>(gm->VertexDecl);
+							getDevice()->SetVertexDeclaration(m_instancingData->ExpandVertexDecl(vtxDecl));
+
+							
 							D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
 							getDevice()->SetIndices(dib->getD3DBuffer());
 
-							getDevice()->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
-								gm->BaseVertex, 0,
-								gm->VertexCount, 0, 
-								gm->PrimitiveCount);
-						}
-						else
-						{
-							getDevice()->SetIndices(0);
+							int currentIndex = 0;
+							while (currentIndex<count)
+							{
+								uint actual = (uint)m_instancingData->Setup(op, count, currentIndex);
 
-							getDevice()->DrawPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType),
-								0, gm->PrimitiveCount);
+								fx->Setup(mtrl, op+currentIndex, actual);
+
+									
+								D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
+								getDevice()->SetStreamSourceFreq(0,
+									(D3DSTREAMSOURCE_INDEXEDDATA | actual));
+								getDevice()->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
+
+
+								getDevice()->SetStreamSourceFreq(1,
+									(D3DSTREAMSOURCE_INSTANCEDATA | 1));
+								getDevice()->SetStreamSource(1, m_instancingData->GetInstanceBuffer(), 0, m_instancingData->getInstanceDataSize());
+
+
+
+								D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
+								getDevice()->SetIndices(dib->getD3DBuffer());
+
+								getDevice()->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
+									gm->BaseVertex, 0,
+									gm->VertexCount, 0, 
+									gm->PrimitiveCount);
+								
+
+								currentIndex += actual;
+							}
+
+							getDevice()->SetStreamSourceFreq(0,1);
+							getDevice()->SetStreamSourceFreq(1,1);
+						}
+
+					}
+					else
+					{
+						for (int j=0;j<count;j++)
+						{
+							const RenderOperation& rop = op[j];
+							const GeometryData* gm = rop.GeometryData;
+							
+							if (!gm->VertexCount || !gm->PrimitiveCount)
+							{
+								fx->EndPass();
+								break;
+							}
+
+							m_primitiveCount += gm->PrimitiveCount;
+							m_vertexCount += gm->VertexCount;
+							m_batchCount++;
+
+							// setup effect
+							fx->Setup(mtrl, &rop, 1);
+
+							D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
+							getDevice()->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
+
+							getDevice()->SetVertexDeclaration(static_cast<D3D9VertexDeclaration*>(gm->VertexDecl)->getD3DDecl());
+
+							if (gm->usesIndex())
+							{
+								D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
+								getDevice()->SetIndices(dib->getD3DBuffer());
+
+								getDevice()->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
+									gm->BaseVertex, 0,
+									gm->VertexCount, 0, 
+									gm->PrimitiveCount);
+							}
+							else
+							{
+								getDevice()->SetIndices(0);
+
+								getDevice()->DrawPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType),
+									0, gm->PrimitiveCount);
+							}
 						}
 					}
+					
 					fx->EndPass();
 				}
 				fx->End();

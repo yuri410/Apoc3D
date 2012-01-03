@@ -74,6 +74,7 @@ namespace Apoc3D
 				*/
 				EPUSAGE_MtrlC_Power,
 				
+
 				/** tr_worldviewproj
 				*/
 				EPUSAGE_Trans_WorldViewProj=100,
@@ -86,12 +87,23 @@ namespace Apoc3D
 				/** tr_worldview
 				*/
 				EPUSAGE_Trans_WorldView,
+				/** tr_view
+				*/
+				EPUSAGE_Trans_View,
+				/** tr_instanceworld
+				*/
+				EPUSAGE_Trans_InstanceWorlds,
+				/** tr_proj
+				*/
+				EPUSAGE_Trans_Projection,
 				/** m4x3_bonestransform
 				*/
 				EPUSAGE_M4X3_BoneTrans,
 				/** m4x4_bonestransform
 				*/
 				EPUSAGE_M4X4_BoneTrans,
+
+
 				/** tex_0
 				*/
 				EPUSAGE_Tex0=200,

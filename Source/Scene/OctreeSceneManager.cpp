@@ -146,7 +146,7 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 		static const int WorldLodLevelCount = 4;
-		static const float LodThresold[WorldLodLevelCount] = { 1.4f, 2, 3.3f, 4.5f };
+		static const float LodThresold[WorldLodLevelCount] = { 1.4f, 2.5, 4.0f, 5.5f };
 		int GetLevel(const BoundingSphere& sphere, const Vector3& pos)
 		{
 			float dist = Vector3Utils::Distance(sphere.Center, pos);

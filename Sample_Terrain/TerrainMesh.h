@@ -35,7 +35,18 @@ namespace SampleTerrain
 		static String GetHashString(int x, int z, int size);
 
 	private:
+		struct TreeInfo
+		{
+			float Rot;
+			float Height;
+			Vector3 Position;
+		};
+
 		RenderDevice* m_device;
+
+		FastList<TreeInfo> m_trees;
+
+
 		IndexBuffer* m_sharedIndex;
 
 		VertexBuffer* m_vertexBuffer;
@@ -51,6 +62,10 @@ namespace SampleTerrain
 
 		int m_bx;
 		int m_bz;
+
+		Model* m_tree;
+
+		void MakeTree(float x, float y, float z);
 	};
 
 	class TerrainMeshManager : public ResourceManager, public Singleton<TerrainMeshManager>
@@ -64,18 +79,21 @@ namespace SampleTerrain
 
 		ResourceHandle<TerrainMesh>* CreateInstance(RenderDevice* rd, int bx, int bz, int lod);
 
+		Model* getTreeModel(int size) const;
 		SharedIndexData* getIndexData(int size) const;
 		ResourceHandle<Texture>* getTexture(int id) const { return m_textures[id]; }
 
 		SINGLETON_DECL_HEARDER(TerrainMeshManager);
 
 	private:
+		Model* m_tree[4];
 
 		SharedIndexData* m_idxLod0;
 		SharedIndexData* m_idxLod1;
 		SharedIndexData* m_idxLod2;
+		SharedIndexData* m_idxLod3;
 
-		ResourceHandle<Texture>* m_textures[5];
+		ResourceHandle<Texture>* m_textures[6];
 	};
 
 	class SharedIndexData

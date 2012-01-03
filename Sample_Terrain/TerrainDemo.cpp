@@ -84,6 +84,8 @@ namespace SampleTerrain
 			FontManager::getSingleton().LoadFont(m_device, L"comic", fl);
 		}
 
+		
+
 		FileLocation* fl = FileSystem::getSingleton().Locate(L"effectList.xml", FileLocateRule::Effects);
 		EffectManager::getSingleton().LoadEffectFromList(m_device, fl);
 		delete fl;
@@ -106,6 +108,7 @@ namespace SampleTerrain
 		m_sceneRenderer->RegisterCamera(m_camera);
 
 		RendererEffectParams::CurrentCamera = m_camera;
+		RendererEffectParams::LightDirection = Vector3Utils::LDVector(-0.707f,0.707f,0);
 
 		TerrainMeshManager::Initialize();
 		TerrainMeshManager::getSingleton().InitializeResources(m_device);
@@ -113,11 +116,18 @@ namespace SampleTerrain
 
 		m_scene = new OctreeSceneManager(OctreeBox(20000), 20000/256);
 
-
+		LoadScene();
+		LoadUI();
+		//int test = sizeof(TerrainMesh) + sizeof(Terrain);
 		
-		for (int i=-15;i<=15;i++)
+		
+		//m_device->getRenderState()->SetFillMode(FILL_Solid);
+	}
+	void TerrainDemo::LoadScene()
+	{
+		for (int i=-16;i<=16;i++)
 		{
-			for (int j=-15;j<=15;j++)
+			for (int j=-16;j<=16;j++)
 			{
 				Terrain* t1 = new Terrain(m_device, i,j);
 				m_scene->AddObject(t1);
@@ -139,7 +149,18 @@ namespace SampleTerrain
 
 			m_scene->AddObject(obj);
 		}
-		//m_device->getRenderState()->SetFillMode(FILL_Solid);
+	}
+	void TerrainDemo::LoadUI()
+	{
+
+		//Viewport vp = m_device->getViewport();
+		//int x = vp.Width - 180;
+		//int y = vp.Height - 120;
+
+		//m_cbWireframe = new CheckBox(Point(x,y), L"Wireframe Mode", false);
+		//m_cbWireframe->SetSkin(m_UIskin);
+		//m_cbWireframe->Initialize(m_device);
+		////m_cbWireframe->setFontRef(FontManager::getSingleton().getFont(L"comic"));
 	}
 	void TerrainDemo::Unload()
 	{
@@ -161,6 +182,8 @@ namespace SampleTerrain
 		m_scene->Update(time);
 
 		UpdateCamera();
+		UpdateUI(time);
+		
 	}
 	void TerrainDemo::Draw(const GameTime* const time)
 	{
@@ -171,7 +194,7 @@ namespace SampleTerrain
 		Game::Draw(time);
 		
 		m_sprite->Begin(true, false);
-		DrawInfomation(m_sprite);
+		DrawUI(m_sprite);
 
 		m_sprite->End();
 
@@ -205,8 +228,22 @@ namespace SampleTerrain
 		
 
 	}
+	void TerrainDemo::UpdateUI(const GameTime* const time)
+	{
+		//m_cbWireframe->Update(time);
 
-	void TerrainDemo::DrawInfomation(Sprite* sprite)
+		//if (m_cbWireframe->getValue())
+		//{
+		//	m_device->getRenderState()->SetFillMode(FILL_WireFrame);
+		//}
+		//else 
+		//{
+		//	m_device->getRenderState()->SetFillMode(FILL_Solid);
+		//}
+
+	}
+
+	void TerrainDemo::DrawUI(Sprite* sprite)
 	{
 		int usage = (int)TerrainMeshManager::getSingleton().getUsedCacheSize();
 		int total = (int)TerrainMeshManager::getSingleton().getTotalCacheSize();
@@ -232,5 +269,9 @@ namespace SampleTerrain
 		y+=35;
 		fnt->DrawString(m_sprite, L"FPS: " + StringUtils::ToString(m_window->getFPS(), 2, 2), Point(x,y), CV_White);
 
+		//x = vp.Width - 180;
+		//y = vp.Height - 120;
+		//m_cbWireframe->Position = Point(x,y);
+		//m_cbWireframe->Draw(sprite);
 	}
 }

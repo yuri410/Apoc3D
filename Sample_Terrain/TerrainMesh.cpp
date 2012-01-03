@@ -10,7 +10,10 @@
 #include "Graphics/RenderSystem/VertexDeclaration.h"
 #include "Graphics/RenderSystem/Texture.h"
 #include "Graphics/TextureManager.h"
+#include "Graphics/ModelManager.h"
+#include "Graphics/Model.h"
 #include "Vfs/FileSystem.h"
+#include "Vfs/ResourceLocation.h"
 #include "Vfs/FileLocateRule.h"
 #include "Math/RandomUtils.h"
 #include "Math/PerlinNoise.h"
@@ -47,6 +50,8 @@ namespace SampleTerrain
 	{
 		return L"TM" + StringUtils::ToString(x) + L" " + StringUtils::ToString(z) + L" " + StringUtils::ToString(size);
 	}
+
+
 	TerrainMesh::TerrainMesh(RenderDevice* rd, int bx, int bz, int size)
 		: Resource(TerrainMeshManager::getSingletonPtr(), TerrainMesh::GetHashString(bx,bz,size)), m_device(rd),
 		m_edgeVertexCount(size+1),
@@ -54,7 +59,7 @@ namespace SampleTerrain
 		m_bx(bx), m_bz(bz), m_material(rd)
 	{
 
-		m_material.Cull = CULL_None;
+		m_material.Cull = CULL_Clockwise;
 		m_material.Ambient = Color4(0.35f,0.35f,0.35f);
 		m_material.Diffuse = Color4(1.0f, 1.0f, 1.0f);
 		m_material.Specular = Color4(0.0f, 0.0f, 0.0f);
@@ -67,16 +72,43 @@ namespace SampleTerrain
 		m_material.setTexture(2, TerrainMeshManager::getSingleton().getTexture(2));
 		m_material.setTexture(3, TerrainMeshManager::getSingleton().getTexture(3));
 		m_material.setTexture(4, TerrainMeshManager::getSingleton().getTexture(4));
+		m_material.setTexture(5, TerrainMeshManager::getSingleton().getTexture(5));
 
 		m_primitiveCount = size * size*2;
 
 		m_sharedIndex = TerrainMeshManager::getSingleton().getIndexData(size)->getIndexBuffer();
+		m_tree = TerrainMeshManager::getSingleton().getTreeModel(size);
 	}
 
 	RenderOperationBuffer* TerrainMesh::GetRenderOperation(int lod)
 	{
 		if (getState() == RS_Loaded)
 		{
+			m_opBuffer.FastClear();
+
+			RenderOperation op;
+			op.Material = &m_material;
+			op.GeometryData = &m_geoData;
+			Matrix::CreateTranslation(op.RootTransform, m_bx*Terrain::BlockLength,0,m_bz*Terrain::BlockLength);
+			m_opBuffer.Add(op);
+
+			if (lod != 3)
+			{
+				for (int i=0;i<m_trees.getCount();i++)
+				{
+					const TreeInfo& info = m_trees[i];
+
+					RenderOperationBuffer* opbuf = m_tree->GetRenderOperation(0);
+					if (opbuf)
+					{
+						Matrix trans;
+						Matrix::CreateTranslation(trans,info.Position);
+
+						m_opBuffer.Add(&opbuf->operator[](0), opbuf->getCount(), trans);
+					}
+				}
+			}
+
 			return &m_opBuffer;
 		}
 		return 0;
@@ -93,8 +125,9 @@ namespace SampleTerrain
 	}
 	void TerrainMesh::load()
 	{
-		m_opBuffer.FastClear();
-		
+		//m_opBuffer.FastClear();
+		m_trees.FastClear();
+
 		ObjectFactory* fac = m_device->getObjectFactory();
 
 		FastList<VertexElement> elements(4);
@@ -112,13 +145,17 @@ namespace SampleTerrain
 
 		const float HeightScale= Terrain::HeightScale;
 
-		const float cellLength = Terrain::BlockLength/(m_edgeVertexCount-1);
-		//float cellLength = Terrain::CellLength;
+		float cellLength = Terrain::BlockLength/(m_edgeVertexCount-1);
+		
+		
 		for (int i=0;i<m_edgeVertexCount;i++)
 		{
 			for (int j=0;j<m_edgeVertexCount;j++)
 			{
-				float height = Terrain::GetHeightAt(i*cellLength + m_bx*Terrain::BlockLength, j*cellLength+m_bz*Terrain::BlockLength);
+				float worldX = i*cellLength + m_bx*Terrain::BlockLength;
+				float worldZ = j*cellLength + m_bz*Terrain::BlockLength;
+
+				float height = Terrain::GetHeightAt(worldX, worldZ);
 				
 				int index = i * m_edgeVertexCount + j;
 
@@ -168,6 +205,36 @@ namespace SampleTerrain
 				Vector3Utils::Store(n, vtxData[index].Normal);
 			}
 		}
+
+		cellLength = 6;
+
+		int treeCellEdgeCount = (int)(Terrain::BlockLength/cellLength);
+		for (int i=0;i<treeCellEdgeCount;i++)
+		{
+			for (int j=0;j<treeCellEdgeCount;j++)
+			{
+				float worldX = (i+0.5f)*cellLength + m_bx*Terrain::BlockLength;
+				float worldZ = (j+0.5f)*cellLength + m_bz*Terrain::BlockLength;
+
+				float height = Terrain::GetHeightAt(worldX, worldZ);
+				float refheight1 = Terrain::GetHeightAt(worldX+1, worldZ);
+				float refheight2 = Terrain::GetHeightAt(worldX, worldZ+1);
+
+				float p = Math::Saturate(fabs(height - ( 0.00f)) / (0.25f) + 
+					powf((fabs(refheight1-height) + fabs(refheight2-height)) * HeightScale * 1.5f,8));
+
+				float ofX = Terrain::GetNoise(worldX, worldZ);
+				float ofZ = Terrain::GetNoise(worldX+65535, worldZ);
+
+				worldX += ofX*cellLength*0.5f; worldZ += ofZ*cellLength*0.5f;
+
+				if (Terrain::GetPlantDist(worldX, worldZ) > p)
+				{
+					MakeTree(worldX, height * HeightScale-0.5f, worldZ);
+				}
+			}
+		}
+
 		m_vertexBuffer->Unlock();
 
 		m_geoData.VertexDecl = m_vtxDecl;
@@ -179,11 +246,7 @@ namespace SampleTerrain
 		m_geoData.PrimitiveType = PT_TriangleList;
 		m_geoData.BaseVertex = 0;
 
-		RenderOperation op;
-		op.Material = &m_material;
-		op.GeometryData = &m_geoData;
-		Matrix::CreateTranslation(op.RootTransform, m_bx*Terrain::BlockLength,0,m_bz*Terrain::BlockLength);
-		m_opBuffer.Add(op);
+		m_opBuffer.ReserveDiscard(100);
 	}
 	void TerrainMesh::unload()
 	{
@@ -192,16 +255,27 @@ namespace SampleTerrain
 		m_vertexBuffer = 0;
 		m_vtxDecl = 0;
 		m_opBuffer.Clear();
+		m_opBuffer.ReserveDiscard(4);
 	}
+	void TerrainMesh::MakeTree(float x, float y, float z)
+	{
+		//if (m_trees.getCount()>50)
+			//return;
 
+		TreeInfo info;
+		info.Height = Randomizer::NextFloat() * 0.1f + 0.9f;
+		info.Rot = Randomizer::NextFloat() * Math::PI * 2;
+		info.Position = Vector3Utils::LDVector(x,y,z);
+		m_trees.Add(info);
+	}
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
 	TerrainMeshManager::TerrainMeshManager()
-		: ResourceManager(L"TerrainMeshManager Manager ", 250 * 1048576, true)
+		: ResourceManager(L"TerrainMeshManager Manager ", 128 * 1048576, true)
 	{
 		LogManager::getSingleton().Write(LOG_System, 
-			L"TerrainMeshManager initialized with a cache size 250MB, using async streaming.", 
+			L"TerrainMeshManager initialized with a cache size 128MB, using async streaming.", 
 			LOGLVL_Infomation);
 	}
 	TerrainMeshManager::~TerrainMeshManager()
@@ -210,9 +284,10 @@ namespace SampleTerrain
 	}
 	void TerrainMeshManager::InitializeResources(RenderDevice* device)
 	{
-		m_idxLod0 = new SharedIndexData(device, 256);
-		m_idxLod1 = new SharedIndexData(device, 64);
-		m_idxLod2 = new SharedIndexData(device, 32);
+		m_idxLod0 = new SharedIndexData(device, 128);
+		m_idxLod1 = new SharedIndexData(device, 96);
+		m_idxLod2 = new SharedIndexData(device, 64);
+		m_idxLod3 = new SharedIndexData(device, 32);
 
 		FileLocation* fl = FileSystem::getSingleton().Locate(L"TRock.tex", FileLocateRule::Textures);
 		m_textures[0] = TextureManager::getSingleton().CreateInstance(device,fl, false);
@@ -224,6 +299,27 @@ namespace SampleTerrain
 		m_textures[3] = TextureManager::getSingleton().CreateInstance(device,fl, false);
 		fl = FileSystem::getSingleton().Locate(L"TEdge.tex", FileLocateRule::Textures);
 		m_textures[4] = TextureManager::getSingleton().CreateInstance(device,fl, false);
+		fl = FileSystem::getSingleton().Locate(L"foliagecolor.tex", FileLocateRule::Textures);
+		m_textures[5] = TextureManager::getSingleton().CreateInstance(device,fl, false);
+
+
+		FileLocateRule rule;
+		LocateCheckPoint cp;
+		cp.AddPath(L"models");
+		rule.AddCheckPoint(cp);
+
+		fl = FileSystem::getSingleton().Locate(L"tree_l0.mesh", rule);
+		m_tree[0] = new Model( ModelManager::getSingleton().CreateInstance(device, fl));
+
+		fl = FileSystem::getSingleton().Locate(L"tree_l1.mesh", rule);
+		m_tree[1] = new Model( ModelManager::getSingleton().CreateInstance(device, fl));
+
+		fl = FileSystem::getSingleton().Locate(L"tree_l2.mesh", rule);
+		m_tree[2] = new Model( ModelManager::getSingleton().CreateInstance(device, fl));
+
+		fl = FileSystem::getSingleton().Locate(L"tree_l3.mesh", rule);
+		m_tree[3] = new Model( ModelManager::getSingleton().CreateInstance(device, fl));
+
 
 	}
 	void TerrainMeshManager::FinalizeResources()
@@ -231,22 +327,33 @@ namespace SampleTerrain
 		delete m_idxLod0;
 		delete m_idxLod1;
 		delete m_idxLod2;
+		delete m_idxLod3;
+
+		delete m_tree[0];
+		delete m_tree[1];
+		delete m_tree[2];
+		delete m_tree[3];
+
 
 		delete m_textures[0];
 		delete m_textures[1];
 		delete m_textures[2];
 		delete m_textures[3];
 		delete m_textures[4];
-
+		delete m_textures[5];
 	}
 	ResourceHandle<TerrainMesh>* TerrainMeshManager::CreateInstance(RenderDevice* rd, int bx, int bz, int lod)
 	{
 		int size;
 		if (lod == 0)
-			size = 256;
+			size = 128;
 		else if (lod == 1)
+			size = 96;
+		else if (lod == 2)
 			size = 64;
-		else size = 32;
+		else 
+			size = 32;
+
 
 		Resource* retirved = Exists(TerrainMesh::GetHashString(bx,bz, size));
 		if (!retirved)
@@ -262,14 +369,31 @@ namespace SampleTerrain
 	{
 		switch (size)
 		{
-		case 256:
+		case 128:
 			return m_idxLod0;
-		case 64:
+		case 96:
 			return m_idxLod1;
-		case 32:
+		case 64:
 			return m_idxLod2;
+		case 32:
+			return m_idxLod3;
 		}
 		return m_idxLod2;
+	}
+	Model* TerrainMeshManager::getTreeModel(int size) const
+	{
+		switch (size)
+		{
+		case 128:
+			return m_tree[1];
+		case 96:
+			return m_tree[2];
+		case 64:
+			return m_tree[3];
+		case 32:
+			return m_tree[3];
+		}
+		return m_tree[3];
 	}
 	/************************************************************************/
 	/*                                                                      */
@@ -298,13 +422,12 @@ namespace SampleTerrain
 				if (remi == remj)
 				{
 					idxData[idx++] = i * terrSize + j;
+					idxData[idx++] = (i + 1) * terrSize + j;
+					idxData[idx++] = i * terrSize + (j + 1);
+
 					idxData[idx++] = i * terrSize + (j + 1);
 					idxData[idx++] = (i + 1) * terrSize + j;
-
-
-					idxData[idx++] = i * terrSize + (j + 1);
 					idxData[idx++] = (i + 1) * terrSize + (j + 1);
-					idxData[idx++] = (i + 1) * terrSize + j;
 				}
 				else
 				{

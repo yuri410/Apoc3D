@@ -76,6 +76,7 @@ namespace Apoc3D
 			{
 				m_oplist.Clear();
 			}
+
 			
 			void FastClear()
 			{
@@ -87,10 +88,12 @@ namespace Apoc3D
 			}
 			const RenderOperation& get(int i) const
 			{
+				assert(i>=0 && i<getCount());
 				return m_oplist[i];
 			}
 			RenderOperation& operator[](int i)
 			{
+				assert(i>=0 && i<getCount());
 				return m_oplist[i];
 			}
 			//void MultiplyTransform(const Matrix& m);

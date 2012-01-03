@@ -56,13 +56,14 @@ namespace Apoc3D
 			void SetOctaves(    int    _octaves)     { octaves = _octaves;         }
 			void SetRandomSeed( int    _randomseed)  { randomseed = _randomseed;   }
 
+			double Noise(int x, int y) const;
+
 		private:
 
 			double Total(double i, double j) const;
 			double GetValue(double x, double y) const;
 			double Interpolate(double x, double y, double a) const;
-			double Noise(int x, int y) const;
-
+			
 			double persistence, frequency, amplitude;
 			int octaves, randomseed;
 		};

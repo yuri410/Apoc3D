@@ -67,6 +67,19 @@ namespace Apoc3D
 			static const IEqualityComparer<T>* Default;
 		};
 
+		typedef void* LPVoid;
+		class APAPI PointerEqualityComparer : public IEqualityComparer<LPVoid>
+		{
+		public:
+			class BuiltIn : public IBuiltInEqualityComparer<LPVoid>
+			{
+
+			};
+			virtual bool Equals(const LPVoid& x, const LPVoid& y) const;
+
+			virtual int64 GetHashCode(const LPVoid& obj) const;
+		};
+
 		class APAPI Uint32EqualityComparer : public IEqualityComparer<uint32>
 		{
 		public:

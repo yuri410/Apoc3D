@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="Buffer\D3D9DepthBuffer.h" />
     <ClInclude Include="ConstantTable.h" />
+    <ClInclude Include="D3D9InstancingData.h" />
     <ClInclude Include="D3D9Common.h" />
     <ClInclude Include="D3D9DeviceContent.h" />
     <ClInclude Include="D3D9GraphicsAPIFactory.h" />
@@ -168,6 +169,7 @@
     <ClCompile Include="Buffer\D3D9DepthBuffer.cpp" />
     <ClCompile Include="Buffer\D3D9IndexBuffer.cpp" />
     <ClCompile Include="ConstantTable.cpp" />
+    <ClCompile Include="D3D9InstancingData.cpp" />
     <ClCompile Include="D3D9ObjectFactory.cpp" />
     <ClCompile Include="D3D9PixelShader.cpp" />
     <ClCompile Include="Buffer\D3D9VertexBuffer.cpp" />

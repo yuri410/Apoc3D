@@ -62,11 +62,11 @@ namespace Apoc3D
 			RenderDevice* m_device;
 
 			Effect* m_effects[MaxScenePass];
-			String m_effectName[MaxScenePass];
+			unordered_map<int, String> m_effectName;//[MaxScenePass];
 
 			CustomParamTable m_customParametrs;
 			ResourceHandle<Texture>* m_tex[MaxTextures];
-			String m_texName[MaxTextures];
+			unordered_map<int, String> m_texName;//[MaxTextures];
 			bool m_texDirty[MaxTextures];
 
 			uint64 m_passFlags;
@@ -111,8 +111,15 @@ namespace Apoc3D
 			const MaterialCustomParameter* getCustomParameter(const String& usage) const;
 			void AddCustomParameter(const MaterialCustomParameter& value);
 
-			String& getPassEffectName(int index) { return m_effectName[index]; }
-			const String& getTextureName(int index) const { return m_texName[index]; }
+			String& getPassEffectName(int index) { assert(index<MaxScenePass); return  m_effectName[index]; }
+			const String& getTextureName(int index) const 
+			{
+				static String Empty = L"";
+				assert(index<MaxTextures);
+				if (m_texName.find(index) == m_texName.end())
+					return Empty;
+				return m_texName.at(index); 
+			}
 
 			void setTextureName(int index, const String& name)
 			{

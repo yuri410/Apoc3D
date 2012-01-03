@@ -62,6 +62,20 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
+		const IEqualityComparer<LPVoid>*
+			PointerEqualityComparer::BuiltIn::Default = new PointerEqualityComparer();
+
+		bool PointerEqualityComparer::Equals(const LPVoid& x, const LPVoid& y) const
+		{
+			return x==y;
+		}
+		int64 PointerEqualityComparer::GetHashCode(const LPVoid& obj) const
+		{
+			return reinterpret_cast<int64>(obj);
+		}
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
 		const IEqualityComparer<wchar_t>*
 			WCharEqualityComparer::BuiltIn::Default = new WCharEqualityComparer();
 

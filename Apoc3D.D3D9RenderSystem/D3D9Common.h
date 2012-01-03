@@ -92,6 +92,8 @@ namespace Apoc3D
 			class D3D9DepthBuffer;			
 			class D3D9VertexDeclaration;
 
+			class D3D9InstancingData;
+
 			class ConstantTable;
 
 			class D3D9VertexShader;

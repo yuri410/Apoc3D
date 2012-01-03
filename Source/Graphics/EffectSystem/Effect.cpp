@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "Graphics/RenderSystem/Texture.h"
+#include "Graphics/RenderSystem/InstancingData.h"
 #include "IOLib/Streams.h"
 #include "IOLib/BinaryReader.h"
 #include "IOLib/EffectData.h"
@@ -102,7 +103,7 @@ namespace Apoc3D
 
 
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
-				: m_vertexShader(0), m_pixelShader(0), m_device(device)
+				: m_vertexShader(0), m_pixelShader(0), m_device(device), m_supportsInstancing(false)
 			{
 				EffectData data;
 				data.Load(rl);
@@ -131,6 +132,18 @@ namespace Apoc3D
 				DataRectangle rect = m_texture->Lock(0, LOCK_None);
 				*(uint*)rect.getDataPointer() = 0xffffffff;
 				m_texture->Unlock(0);
+
+
+				{
+					for (int i=0;i<m_parameters.getCount();i++)
+					{
+						if (m_parameters[i].TypicalUsage == EPUSAGE_Trans_InstanceWorlds)
+						{
+							m_supportsInstancing = true;
+							break;
+						}
+					}
+				}
 			}
 
 			AutomaticEffect::~AutomaticEffect()
@@ -142,7 +155,11 @@ namespace Apoc3D
 				delete m_texture;
 			}
 
-			void AutomaticEffect::Setup(Material* mtrl, const RenderOperation& rop)
+			bool AutomaticEffect::SupportsInstancing()
+			{
+				return m_supportsInstancing;
+			}
+			void AutomaticEffect::Setup(Material* mtrl, const RenderOperation* rop, int count)
 			{
 				for (int i=0;i<m_parameters.getCount();i++)
 				{
@@ -168,7 +185,7 @@ namespace Apoc3D
 							if (RendererEffectParams::CurrentCamera)
 							{
 								Matrix temp;
-								Matrix::Multiply(temp, rop.RootTransform, RendererEffectParams::CurrentCamera->getViewMatrix());
+								Matrix::Multiply(temp, rop->RootTransform, RendererEffectParams::CurrentCamera->getViewMatrix());
 
 								Matrix mvp;
 								Matrix::Multiply(mvp, temp, RendererEffectParams::CurrentCamera->getProjMatrix());
@@ -180,13 +197,13 @@ namespace Apoc3D
 							if (RendererEffectParams::CurrentCamera)
 							{
 								Matrix mv;
-								Matrix::Multiply(mv, rop.RootTransform, RendererEffectParams::CurrentCamera->getViewMatrix());
+								Matrix::Multiply(mv, rop->RootTransform, RendererEffectParams::CurrentCamera->getViewMatrix());
 
 								SetValue(ep, mv);
 							}
 							break;
 						case EPUSAGE_Trans_World:
-							SetValue(ep, rop.RootTransform);
+							SetValue(ep, rop->RootTransform);
 							break;
 						case EPUSAGE_Trans_WorldViewOriProj:
 							if (RendererEffectParams::CurrentCamera)
@@ -195,7 +212,7 @@ namespace Apoc3D
 								view.SetTranslation(Vector3Utils::Zero);
 
 								Matrix temp;
-								Matrix::Multiply(temp, rop.RootTransform, view);
+								Matrix::Multiply(temp, rop->RootTransform, view);
 
 								Matrix mvp;
 								Matrix::Multiply(mvp, temp, RendererEffectParams::CurrentCamera->getProjMatrix());
@@ -203,11 +220,44 @@ namespace Apoc3D
 								SetValue(ep, mvp);
 							}
 							break;
+						case EPUSAGE_Trans_InstanceWorlds:
+							{
+								Shader* shader = 0;
+								if (ep.ProgramType == SHDT_Vertex)
+								{
+									shader = m_vertexShader;
+								}
+								else if (ep.ProgramType == SHDT_Pixel)
+								{
+									shader = m_pixelShader;
+								}
+
+								if (ep.RegisterIndex == -1)
+								{
+									ep.RegisterIndex = shader->GetParamIndex(ep.Name);
+								}
+
+								for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+								{
+									shader->SetValue(ep.RegisterIndex + i * 4, rop[i].RootTransform);
+								}
+							}
+							break;
+						case EPUSAGE_Trans_View:
+							{
+								SetValue(ep, RendererEffectParams::CurrentCamera->getViewMatrix());
+							}
+							break;
+						case EPUSAGE_Trans_Projection:
+							{
+								SetValue(ep, RendererEffectParams::CurrentCamera->getProjMatrix());
+							}
+							break;
 						case EPUSAGE_M4X3_BoneTrans:
-							Set4X3Matrix(ep, rop.BoneTransform.Transfroms, rop.BoneTransform.Count);
+							Set4X3Matrix(ep, rop->BoneTransform.Transfroms, rop->BoneTransform.Count);
 							break;
 						case EPUSAGE_M4X4_BoneTrans:
-							SetMatrix(ep, rop.BoneTransform.Transfroms, rop.BoneTransform.Count);
+							SetMatrix(ep, rop->BoneTransform.Transfroms, rop->BoneTransform.Count);
 							break;
 						case EPUSAGE_Tex0:
 							SetSamplerState(ep);

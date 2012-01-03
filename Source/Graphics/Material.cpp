@@ -70,15 +70,16 @@ namespace Apoc3D
 			UsePointSprite(m.UsePointSprite)
 		{
 
-
+			m_effectName = m.m_effectName;
 			for (int i=0;i<MaxScenePass;i++)
 			{
-				m_effectName[i] = m.m_effectName[i];
+				//m_effectName[i] = m.m_effectName.at(i);
 				LoadEffect(i);
 			}
+			m_texName = m.m_texName;
 			for (int i=0;i<MaxTextures;i++)
 			{
-				m_texName[i] = m.m_texName[i];
+				//m_texName[i] = m.m_texName.at(i);
 				LoadTexture(i);
 			}
 		}
@@ -114,14 +115,14 @@ namespace Apoc3D
 
 		void Material::LoadEffect(int32 index)
 		{
-			if (!m_effectName[index].empty())
+			if (m_effectName.find(index)!=m_effectName.end() && !m_effectName[index].empty())
 				m_effects[index] = EffectManager::getSingleton().getEffect(m_effectName[index]);
 		}
 
 
 		void Material::LoadTexture(int32 index)
 		{
-			if (m_texName[index].empty())
+			if (m_texName.find(index) == m_texName.end() || m_texName[index].empty())
 			{
 				m_tex[index] = 0;
 				return;
@@ -166,12 +167,14 @@ namespace Apoc3D
 
 			for (int i=0;i<MaxScenePass;i++)
 			{
-				m_effectName[i] = mdata.EffectName[i];
+				if (mdata.EffectName[i].size())
+					m_effectName[i] = mdata.EffectName[i];
 				LoadEffect(i);
 			}
 			for (int i=0;i<MaxTextures;i++)
 			{
-				m_texName[i] = mdata.TextureName[i];
+				if(mdata.TextureName[i].size())
+					m_texName[i] = mdata.TextureName[i];
 				LoadTexture(i);
 			}
 		}
@@ -200,11 +203,17 @@ namespace Apoc3D
 
 			for (int i=0;i<MaxScenePass;i++)
 			{
-				data.EffectName[i] = m_effectName[i];
+				if (m_effectName.find(i) == m_effectName.end())
+					data.EffectName[i] = L"";
+				else
+					data.EffectName[i] = m_effectName[i];
 			}
 			for (int i=0;i<MaxTextures;i++)
 			{
-				data.TextureName[i] = m_texName[i];
+				if (m_texName.find(i) == m_texName.end())
+					data.TextureName[i] = L"";
+				else
+					data.TextureName[i] = m_texName[i];
 			}
 
 		}
@@ -213,70 +222,13 @@ namespace Apoc3D
 			MaterialData mdata;
 			mdata.Load(data);
 
-			m_customParametrs = mdata.CustomParametrs;
-			m_passFlags = mdata.PassFlags;
-			m_priority = mdata.Priority;
-
-			SourceBlend = mdata.SourceBlend;
-			DestinationBlend = mdata.DestinationBlend;
-			BlendFunction = mdata.BlendFunction;
-			IsBlendTransparent = mdata.IsBlendTransparent;
-
-			Cull = mdata.Cull;
-			AlphaTestEnabled = mdata.AlphaTestEnabled;
-			AlphaReference = mdata.AlphaReference;
-			DepthWriteEnabled = mdata.DepthWriteEnabled;
-			DepthTestEnabled = mdata.DepthTestEnabled;
-			Ambient = mdata.Ambient;
-			Diffuse = mdata.Diffuse;
-			Emissive = mdata.Emissive;
-			Specular = mdata.Specular;
-			Power = mdata.Power;
-
-			for (int i=0;i<MaxScenePass;i++)
-			{
-				m_effectName[i] = mdata.EffectName[i];
-				LoadEffect(i);
-			}
-			for (int i=0;i<MaxTextures;i++)
-			{
-				m_texName[i] = mdata.TextureName[i];
-				LoadTexture(i);
-			}
+			Load(mdata);
 		}
 		TaggedDataWriter* Material::Save()
 		{
 			MaterialData data;
-
-			data.CustomParametrs = m_customParametrs;
-			data.PassFlags = m_passFlags;
-			data.Priority = m_priority;
-
-			data.SourceBlend = SourceBlend;
-			data.DestinationBlend = DestinationBlend;
-			data.BlendFunction = BlendFunction;
-			data.IsBlendTransparent = IsBlendTransparent;
-
-			data.Cull = Cull;
-			data.AlphaTestEnabled = AlphaTestEnabled;
-			data.AlphaReference = AlphaReference;
-			data.DepthWriteEnabled = DepthWriteEnabled;
-			data.DepthTestEnabled = DepthTestEnabled;
-			data.Ambient = Ambient;
-			data.Diffuse = Diffuse;
-			data.Emissive = Emissive;
-			data.Specular = Specular;
-			data.Power = Power;
-
-
-			for (int i=0;i<MaxScenePass;i++)
-			{
-				data.EffectName[i] = m_effectName[i];
-			}
-			for (int i=0;i<MaxTextures;i++)
-			{
-				data.TextureName[i] = m_texName[i];
-			}
+			
+			Save(data);
 
 			return data.Save();
 		}

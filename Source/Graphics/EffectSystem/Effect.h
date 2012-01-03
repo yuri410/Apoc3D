@@ -51,10 +51,17 @@ namespace Apoc3D
 				int Begin();
 				void End();
 
-				virtual void Setup(Material* mtrl, const RenderOperation& rop) = 0;
+				/** Prepare the parameter setting up
+					
+					A list of render operation with the same geometry data is provided here as parameter, 
+					in case the needs of other render data, eg. instancing requires all transformation of the each instance
+				*/
+				virtual void Setup(Material* mtrl, const RenderOperation* rop, int count) = 0;
 
 				virtual void BeginPass(int passId) = 0;
 				virtual void EndPass() = 0;
+
+				virtual bool SupportsInstancing() { return false; }
 
 				bool IsUnsupported() const { return m_isUnsupported; }
 				const String& getName() const { return m_name; }
@@ -86,10 +93,13 @@ namespace Apoc3D
 				AutomaticEffect(RenderDevice* device, const ResourceLocation* rl);
 				~AutomaticEffect();
 
-				virtual void Setup(Material* mtrl, const RenderOperation& rop);
+				virtual void Setup(Material* mtrl, const RenderOperation* rop, int count);
 
 				virtual void BeginPass(int passId);
 				virtual void EndPass();
+
+
+				virtual bool SupportsInstancing();
 
 				int FindParameterIndex(const String& name);
 
@@ -120,6 +130,8 @@ namespace Apoc3D
 				RenderDevice* m_device;
 				Texture* m_texture;
 
+				bool m_supportsInstancing;
+				//Matrix m_mtrxBuffer[InstancingData::MaxOneTimeInstances];
 			};
 
 			class APAPI CustomShaderEffect : public Effect

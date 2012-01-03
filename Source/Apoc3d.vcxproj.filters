@@ -468,6 +468,9 @@
     <ClInclude Include="Math\OctreeBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\RenderSystem\InstancingData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -816,6 +819,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Math\OctreeBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RenderSystem\InstancingData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

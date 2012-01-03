@@ -102,6 +102,9 @@
     <ClInclude Include="D3D9Sprite.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="D3D9InstancingData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D9Utils.cpp">
@@ -174,6 +177,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="D3D9Sprite.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D9InstancingData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -89,6 +89,18 @@ namespace Apoc3D
 				{
 					return EPUSAGE_Trans_WorldView;
 				}
+				else if (v == L"tr_view")
+				{
+					return EPUSAGE_Trans_View;
+				}
+				else if (v == L"tr_instanceworld")
+				{
+					return EPUSAGE_Trans_InstanceWorlds;
+				}
+				else if (v == L"tr_proj")
+				{
+					return EPUSAGE_Trans_Projection;
+				}
 				else if (v == L"m4x3_bonestransform")
 				{
 					return EPUSAGE_M4X3_BoneTrans;

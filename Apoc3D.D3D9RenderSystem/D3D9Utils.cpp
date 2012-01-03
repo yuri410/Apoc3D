@@ -363,8 +363,8 @@ namespace Apoc3D
 			void D3D9Utils::InitFillTable()
 			{
 				fillTable[FILL_Point] = D3DFILL_POINT;
-				fillTable[FILL_WireFrame] = D3DFILL_POINT;
-				fillTable[FILL_Solid] = D3DFILL_POINT;
+				fillTable[FILL_WireFrame] = D3DFILL_WIREFRAME;
+				fillTable[FILL_Solid] = D3DFILL_SOLID;
 			}
 			void D3D9Utils::InitCullTable()
 			{

@@ -4,7 +4,8 @@
 #include "TerrainCommon.h"
 
 #include "Graphics/RenderSystem/RenderWindowHandler.h"
-
+#include "Graphics/Material.h"
+#include "UILib/CheckBox.h"
 #include "Apoc3D.Essentials/Game.h"
 
 using namespace Apoc3DEx;
@@ -42,8 +43,14 @@ namespace SampleTerrain
 
 		GameCamera* m_camera;
 
+		//CheckBox* m_cbWireframe;
+
 		void UpdateCamera();
-		void DrawInfomation(Sprite* sprite);
+		void UpdateUI(const GameTime* const time);
+		void DrawUI(Sprite* sprite);
+
+		void LoadScene();
+		void LoadUI();
 	};
 }
 #endif

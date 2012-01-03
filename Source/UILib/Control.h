@@ -83,6 +83,7 @@ namespace Apoc3D
 
 			String TooltipText;
 
+			void setFontRef(Font* fnt) { m_fontRef = fnt; }
 			Font* getFontRef() const { return m_fontRef; }
 			ControlContainer* getOwner() const { return m_owner; }
 			void setOwner(ControlContainer* val) { m_owner = val; }

@@ -21,7 +21,7 @@ namespace SampleTerrain
 	public:
 		static const float CellLength;
 
-		static const int TerrainEdgeLength = 256;
+		static const int TerrainEdgeLength = 128;
 		static const float BlockLength;
 		static const float HeightScale;
 		
@@ -34,11 +34,14 @@ namespace SampleTerrain
 		{
 			return BoundingSphere(Vector3Utils::LDVector((bx+0.5f) * BlockLength, 0, (bz+0.5f)*BlockLength), BlockLength * Math::Root2 * 0.5f);
 		}
+		static float GetPlantDist(float x, float z);
 		static float GetHeightAt(float x, float z);
+		static float GetNoise(int x, int y);
 	private:
 		ResourceHandle<TerrainMesh>* m_terrains[3];
 		
 		static PerlinNoise Noiser;
+		static PerlinNoise NoiserPlant;
 	};
 }
 

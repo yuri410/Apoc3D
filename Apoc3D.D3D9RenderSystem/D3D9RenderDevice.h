@@ -44,35 +44,6 @@ namespace Apoc3D
 
 			class D3D9RenderDevice : public RenderDevice
 			{
-			private:
-				friend class VolatileResource;
-
-				Effect* m_defaultEffect;
-				GraphicsDeviceManager* m_devManager;
-				D3D9RenderStateManager* m_stateManager;
-				NativeD3DStateManager* m_nativeState;
-
-				D3D9RenderTarget** m_cachedRenderTarget;
-				
-				IDirect3DSurface9* m_defaultRT;
-				IDirect3DSurface9* m_defaultDS;
-
-				D3D9Capabilities* m_caps;
-
-				vector<VolatileResource*> m_volatileResources;
-
-				void TrackVolatileResource(VolatileResource* res)
-				{
-					m_volatileResources.push_back(res);
-				}
-				void UntrackVolatileResource(VolatileResource* res)
-				{
-					vector<VolatileResource*>::iterator iter = find(m_volatileResources.begin(), m_volatileResources.end(), res);
-					if (iter != m_volatileResources.end())
-					{
-						m_volatileResources.erase(iter);
-					}
-				}
 			public:
 				inline D3DDevice* getDevice() const;
 				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
@@ -115,6 +86,37 @@ namespace Apoc3D
 				virtual void setViewport(const Viewport& vp);
 
 				virtual Capabilities* const getCapabilities() const;
+			private:
+				friend class VolatileResource;
+
+				Effect* m_defaultEffect;
+				GraphicsDeviceManager* m_devManager;
+				D3D9RenderStateManager* m_stateManager;
+				NativeD3DStateManager* m_nativeState;
+
+				D3D9RenderTarget** m_cachedRenderTarget;
+
+				IDirect3DSurface9* m_defaultRT;
+				IDirect3DSurface9* m_defaultDS;
+
+				D3D9Capabilities* m_caps;
+
+				vector<VolatileResource*> m_volatileResources;
+
+				D3D9InstancingData* m_instancingData;
+
+				void TrackVolatileResource(VolatileResource* res)
+				{
+					m_volatileResources.push_back(res);
+				}
+				void UntrackVolatileResource(VolatileResource* res)
+				{
+					vector<VolatileResource*>::iterator iter = find(m_volatileResources.begin(), m_volatileResources.end(), res);
+					if (iter != m_volatileResources.end())
+					{
+						m_volatileResources.erase(iter);
+					}
+				}
 			};
 
 			class D3D9Capabilities : public Capabilities
