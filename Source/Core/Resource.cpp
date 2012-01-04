@@ -34,95 +34,7 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		/************************************************************************/
-		/*                                                                      */
-		/************************************************************************/
-		Resource::GenerationCalculator::GenerationCalculator(const GenerationTable* table)
-			: m_table(table), Generation(GenerationTable::MaxGeneration - 1)
-		{
 
-		}
-
-		void Resource::GenerationCalculator::Use(Resource* resource)
-		{
-			clock_t t = clock();
-			
-			m_queueLock.lock();
-			m_timeQueue.Enqueue((float)t / CLOCKS_PER_SEC);
-			while (m_timeQueue.getCount()>5)
-				m_timeQueue.Dequeue();
-			m_queueLock.unlock();
-		}
-		void Resource::GenerationCalculator::UpdateGeneration(float time)
-		{
-			float result = -9999999;
-			
-			m_queueLock.lock();
-
-			if (m_timeQueue.getCount())
-			{
-				result = 0;
-				for (int i=0;i<m_timeQueue.getCount();i++)
-				{
-					result += m_timeQueue.GetElement(i);
-				}
-				result /= (float)m_timeQueue.getCount();
-			}
-			m_queueLock.unlock();
-
-			//clock_t t = clock();
-
-			//result = (float)t/ CLOCKS_PER_SEC - result;
-			result = time - result;
-			if (result > GenerationTable::GenerationLifeTime[0])
-			{
-				if (result > GenerationTable::GenerationLifeTime[1])
-				{
-					if (result > GenerationTable::GenerationLifeTime[2])
-					{
-						Generation = 3;
-					}
-					else
-					{
-						Generation = 2;
-					}
-				}
-				else
-				{
-					Generation = 1;
-				}
-			}
-			else
-			{
-				Generation = 0;
-			}
-		}
-
-		bool Resource::GenerationCalculator::IsGenerationOutOfTime(float time)
-		{
-			bool notEmpty;
-			float topVal = 0;
-			m_queueLock.lock();
-			notEmpty = !!m_timeQueue.getCount();
-			if (notEmpty)
-				topVal = m_timeQueue.Tail();
-			m_queueLock.unlock();
-
-			if (notEmpty)
-			{
-				float interval = time - topVal;
-
-				if (Generation < GenerationTable::MaxGeneration && 
-					interval > GenerationTable::GenerationLifeTime[Generation]) // become older
-				{
-					return true;
-				}
-				// become younger
-				return Generation >0 && interval <= GenerationTable::GenerationLifeTime[Generation-1];
-				
-			}
-			return Generation == GenerationTable::MaxGeneration -1;
-		}
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
@@ -313,6 +225,96 @@ namespace Apoc3D
 				}
 				
 			}
+		}
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+		Resource::GenerationCalculator::GenerationCalculator(const GenerationTable* table)
+			: m_table(table), Generation(GenerationTable::MaxGeneration - 1)
+		{
+
+		}
+
+		void Resource::GenerationCalculator::Use(Resource* resource)
+		{
+			clock_t t = clock();
+
+			m_queueLock.lock();
+			m_timeQueue.Enqueue((float)t / CLOCKS_PER_SEC);
+			while (m_timeQueue.getCount()>5)
+				m_timeQueue.Dequeue();
+			m_queueLock.unlock();
+		}
+		void Resource::GenerationCalculator::UpdateGeneration(float time)
+		{
+			float result = -9999999;
+
+			m_queueLock.lock();
+
+			if (m_timeQueue.getCount())
+			{
+				result = 0;
+				for (int i=0;i<m_timeQueue.getCount();i++)
+				{
+					result += m_timeQueue.GetElement(i);
+				}
+				result /= (float)m_timeQueue.getCount();
+			}
+			m_queueLock.unlock();
+
+			//clock_t t = clock();
+
+			//result = (float)t/ CLOCKS_PER_SEC - result;
+			result = time - result;
+			if (result > GenerationTable::GenerationLifeTime[0])
+			{
+				if (result > GenerationTable::GenerationLifeTime[1])
+				{
+					if (result > GenerationTable::GenerationLifeTime[2])
+					{
+						Generation = 3;
+					}
+					else
+					{
+						Generation = 2;
+					}
+				}
+				else
+				{
+					Generation = 1;
+				}
+			}
+			else
+			{
+				Generation = 0;
+			}
+		}
+
+		bool Resource::GenerationCalculator::IsGenerationOutOfTime(float time)
+		{
+			bool notEmpty;
+			float topVal = 0;
+			m_queueLock.lock();
+			notEmpty = !!m_timeQueue.getCount();
+			if (notEmpty)
+				topVal = m_timeQueue.Tail();
+			m_queueLock.unlock();
+
+			if (notEmpty)
+			{
+				float interval = time - topVal;
+
+				if (Generation < GenerationTable::MaxGeneration && 
+					interval > GenerationTable::GenerationLifeTime[Generation]) // become older
+				{
+					return true;
+				}
+				// become younger
+				return Generation >0 && interval <= GenerationTable::GenerationLifeTime[Generation-1];
+
+			}
+			return Generation == GenerationTable::MaxGeneration -1;
 		}
 	}
 }

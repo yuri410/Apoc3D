@@ -30,6 +30,7 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
+
 		template<typename T>
 		class List
 		{
@@ -223,6 +224,12 @@ namespace Apoc3D
 			}
 		};
 
+		/** Fast list is only suitable for simple types such as int, 
+		 *	or structures, classes which can be copied without the
+		 *  overloading of copy constructor or assigned operator.
+		 *
+		 *  Otherwise memory errors will occur.
+		 */
 		template<typename T>
 		class FastList
 		{

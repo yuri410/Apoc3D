@@ -35,30 +35,9 @@ namespace Apoc3D
 		template <class ResType>
 		class APAPI ResourceHandle
 		{
-			typedef typename ResType::ResHandleTemplateConstraint CF_XXX; 
-
-		private:
-			ResType* m_resource;
-			bool m_dummy;
-			bool m_disposal;
-			void _Ref( )
-			{
-				if (!m_dummy && m_resource->isManaged())
-				{
-					m_resource->_Ref();
-				}
-			}
-			void _Unref( )
-			{
-				if (!m_dummy && m_resource->isManaged())
-				{
-					m_resource->_Unref();
-				}
-			}
-
-			ResourceHandle(const ResourceHandle& another) { }
-		protected:
-			
+			/** used to make sure the ResType are derived from the Resource class
+			*/
+			typedef typename ResType::ResHandleTemplateConstraint CF_XXX;
 		public:
 			ResourceHandle(ResType* res)
 				: m_resource(res), m_dummy(false)
@@ -125,6 +104,32 @@ namespace Apoc3D
 				
 				return m_resource;
 			}
+
+		private:
+			ResType* m_resource;
+			bool m_dummy;
+			bool m_disposal;
+			void _Ref( )
+			{
+				if (!m_dummy && m_resource->isManaged())
+				{
+					m_resource->_Ref();
+				}
+			}
+			void _Unref( )
+			{
+				if (!m_dummy && m_resource->isManaged())
+				{
+					m_resource->_Unref();
+				}
+			}
+
+			ResourceHandle(const ResourceHandle& another) { }
+			ResourceHandle& operator =(const ResourceHandle& other)
+			{
+				return *this;
+			}
+		protected:
 		};
 	};
 };

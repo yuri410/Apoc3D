@@ -35,8 +35,104 @@ namespace Apoc3D
 		//template class APAPI std::unordered_map<String, Resource*>;
 		typedef std::unordered_map<String, Resource*> ResHashTable;
 
+		/** A resource manager keeps track of certain type of resources. It does 2 jobs:
+		 *    1. Ensure a resource is only loaded onces. In the case of textures, a wall texture used everywhere 
+		 *		 is supposed to be loaded only once so that the memory will not be wasted.
+		 *	  2. When async streaming is turn on for this resource manager, it also participate in loading
+		 *		 demanding resources and unload inactive resource in background to make sure the space usage 
+		 *		 is within a given size, while the front client application is minimum affected.
+		 *
+		 *	As being said, a resource manager can work either in async mode or sync mode. 
+		 *  In sync mode the processing is done in the same thread as the rendering's. Lag may occur if the resource
+		 *	processing is time consuming. And as only the first function will only be supported, automatically unloading 
+		 *  inactive one to release memory spaces is not supported in this mode.
+		 *
+		 *  In async mode, resource can be seen as in a cache, only most recent and active ones are likely to survive
+		 *  longer. While seldom used ones are more possible to be loaded on demand. 
+		 */
 		class APAPI ResourceManager
 		{
+		public:
+			/** Initializes the resource manager. 
+			 * &param name  The name for the resource manager. See getName() for details.
+			 * &param cacheSize  See getTotalCacheSize() and setTotalCacheSize() for details. Can be any number if not using async mode.
+			 * &param useAsync  True if using async mode.
+			 */
+			ResourceManager(const String& name, int64 cacheSize, bool useAsync = true);
+			~ResourceManager();
+
+			/** Finalizes the resource manager.
+			*/
+			void Shutdown();
+
+			/** [Only applicable when working in async mode.]
+			 *  If a resource is IsIndependent(), this cancels(or removes) the corresponding opposite resource operation
+			 *  from the task queue. Say a load ResourceOperation can cancel an unload ResourceOperation for the same resources
+			 *  if the unload ResourceOperation is yet to be processed.
+			 * 
+			 * &return True if successfully canceled.
+			 */
+			bool NeutralizeTask(ResourceOperation* op) const;
+			/** [Only applicable when working in async mode.]
+			 *  Adds a task represented by a ResourceOperation object to the task queue, waiting to be processed.
+			*/
+			void AddTask(ResourceOperation* op) const;
+			/** [Only applicable when working in async mode.]
+			 *  Remove a task from the task queue, if the it is not the operation's turn in the background.
+			*/
+			void RemoveTask(ResourceOperation* op) const;
+
+			/** [Only applicable when working in async mode.]
+			 *  Check if no async processing task is running in the background. (i.e. check if queue is empty)
+			 */
+			bool IsIdle() const;
+			/** [Only applicable when working in async mode.]
+			 *  Suspend the current thread until the background tasks are all finished.
+			 */
+			void WaitForIdle() const;
+			/** [Only applicable when working in async mode.]
+			 *  Gets the number of background tasks currently.
+			*/
+			int GetCurrentOperationCount() const;
+
+			/** Check if a resource identified by a string is already loaded before.
+			 *
+			 * @return The pointer to the resource object if it is loaded before, otherwise 0.
+			 */
+			Resource* Exists(const String& hashString);
+
+			/** Gets the name of the resource manager. 
+			 *  The name usually tells what kind of resources the manager takes care of.
+			 */
+			const String& getName() const { return m_name; }
+
+			/** Check if the resource manager is working in async mode.
+			 */
+			bool usesAsync() const { return !!m_asyncProc; }
+
+			/** Notifies the resource manager a new resource is created, and should be managed.
+			 */
+			void NotifyNewResource(Resource* res);
+			/** Notifies the resource manager a resource is release, and should be removed from management.
+			 */
+			void NotifyReleaseResource(Resource* res);
+
+			GenerationTable* getTable() const { return m_generationTable; }
+
+			/** [Only applicable when working in async mode.]
+			 *  Gets the reference limits that resources can use. 
+			 */
+			int64 getTotalCacheSize() const { return m_totalCacheSize; }
+			/** [Only applicable when working in async mode.]
+			 *  Sets the reference limits that resources can use. 
+			 *  Once the space usage is over using, the resource manager will unload the inactive resources.
+			 */
+			void setTotalCacheSize(int64 size) { m_totalCacheSize = size; }
+			/** [Only applicable when working in async mode.]
+			 *  Gets the currently used spaces by the resources.
+			 */
+			int64 getUsedCacheSize() const { return m_curUsedCache; }
+			
 		private:
 			ResHashTable m_hashTable;
 
@@ -56,42 +152,6 @@ namespace Apoc3D
 
 			friend class Resource;
 		protected:
-		public:
-			const String& getName() const { return m_name; }
-			bool usesAsync() const { return !!m_asyncProc; }
-
-			/** Notifies the resource manager a new resource is created, and should be managed.
-			*/
-			void NotifyNewResource(Resource* res);
-			/** Notifies the resource manager a resource is release, and should be removed from management.
-			*/
-			void NotifyReleaseResource(Resource* res);
-
-			GenerationTable* getTable() const { return m_generationTable; }
-
-			int64 getTotalCacheSize() const { return m_totalCacheSize; }
-			void setTotalCacheSize(int64 size) { m_totalCacheSize = size; }
-
-			int64 getUsedCacheSize() const { return m_curUsedCache; }
-			
-
-			ResourceManager(const String& name, int64 cacheSize, bool useAsync = true);
-			~ResourceManager();
-
-			void Shutdown();
-
-			bool NeutralizeTask(ResourceOperation* op) const;
-			void AddTask(ResourceOperation* op) const;
-			void RemoveTask(ResourceOperation* op) const;
-
-			bool IsIdle() const;
-			void WaitForIdle() const;
-			int GetCurrentOperationCount() const;
-
-			Resource* Exists(const String& hashString);
-
-			//SINGLETON_DECL_HEARDER(ResourceManager);
-
 		};
 	}
 }
