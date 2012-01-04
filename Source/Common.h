@@ -64,7 +64,7 @@ typedef BatchHandle HashHandle;
 #	define APOC3D_PLATFORM_NAME L"linux"
 #endif
 
-#ifndef APOC3D_DYBLIB
+#ifndef APOC3D_DYNLIB
 #	define APAPI
 #else
 #	if APOC3D_DLLEX

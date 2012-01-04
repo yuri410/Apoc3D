@@ -35,16 +35,7 @@ namespace SampleTerrain
 		static String GetHashString(int x, int z, int size);
 
 	private:
-		struct TreeInfo
-		{
-			float Rot;
-			float Height;
-			Vector3 Position;
-		};
-
 		RenderDevice* m_device;
-
-		FastList<TreeInfo> m_trees;
 
 
 		IndexBuffer* m_sharedIndex;
@@ -63,9 +54,6 @@ namespace SampleTerrain
 		int m_bx;
 		int m_bz;
 
-		Model* m_tree;
-
-		void MakeTree(float x, float y, float z);
 	};
 
 	class TerrainMeshManager : public ResourceManager, public Singleton<TerrainMeshManager>
@@ -79,7 +67,7 @@ namespace SampleTerrain
 
 		ResourceHandle<TerrainMesh>* CreateInstance(RenderDevice* rd, int bx, int bz, int lod);
 
-		Model* getTreeModel(int size) const;
+		Model* getTreeModelByLOD(int lod) const;
 		SharedIndexData* getIndexData(int size) const;
 		ResourceHandle<Texture>* getTexture(int id) const { return m_textures[id]; }
 

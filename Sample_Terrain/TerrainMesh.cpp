@@ -77,7 +77,6 @@ namespace SampleTerrain
 		m_primitiveCount = size * size*2;
 
 		m_sharedIndex = TerrainMeshManager::getSingleton().getIndexData(size)->getIndexBuffer();
-		m_tree = TerrainMeshManager::getSingleton().getTreeModel(size);
 	}
 
 	RenderOperationBuffer* TerrainMesh::GetRenderOperation(int lod)
@@ -92,22 +91,6 @@ namespace SampleTerrain
 			Matrix::CreateTranslation(op.RootTransform, m_bx*Terrain::BlockLength,0,m_bz*Terrain::BlockLength);
 			m_opBuffer.Add(op);
 
-			if (lod != 3)
-			{
-				for (int i=0;i<m_trees.getCount();i++)
-				{
-					const TreeInfo& info = m_trees[i];
-
-					RenderOperationBuffer* opbuf = m_tree->GetRenderOperation(0);
-					if (opbuf)
-					{
-						Matrix trans;
-						Matrix::CreateTranslation(trans,info.Position);
-
-						m_opBuffer.Add(&opbuf->operator[](0), opbuf->getCount(), trans);
-					}
-				}
-			}
 
 			return &m_opBuffer;
 		}
@@ -126,8 +109,7 @@ namespace SampleTerrain
 	void TerrainMesh::load()
 	{
 		//m_opBuffer.FastClear();
-		m_trees.FastClear();
-
+		
 		ObjectFactory* fac = m_device->getObjectFactory();
 
 		FastList<VertexElement> elements(4);
@@ -206,34 +188,6 @@ namespace SampleTerrain
 			}
 		}
 
-		cellLength = 6;
-
-		int treeCellEdgeCount = (int)(Terrain::BlockLength/cellLength);
-		for (int i=0;i<treeCellEdgeCount;i++)
-		{
-			for (int j=0;j<treeCellEdgeCount;j++)
-			{
-				float worldX = (i+0.5f)*cellLength + m_bx*Terrain::BlockLength;
-				float worldZ = (j+0.5f)*cellLength + m_bz*Terrain::BlockLength;
-
-				float height = Terrain::GetHeightAt(worldX, worldZ);
-				float refheight1 = Terrain::GetHeightAt(worldX+1, worldZ);
-				float refheight2 = Terrain::GetHeightAt(worldX, worldZ+1);
-
-				float p = Math::Saturate(fabs(height - ( 0.00f)) / (0.25f) + 
-					powf((fabs(refheight1-height) + fabs(refheight2-height)) * HeightScale * 1.5f,8));
-
-				float ofX = Terrain::GetNoise(worldX, worldZ);
-				float ofZ = Terrain::GetNoise(worldX+65535, worldZ);
-
-				worldX += ofX*cellLength*0.5f; worldZ += ofZ*cellLength*0.5f;
-
-				if (Terrain::GetPlantDist(worldX, worldZ) > p)
-				{
-					MakeTree(worldX, height * HeightScale-0.5f, worldZ);
-				}
-			}
-		}
 
 		m_vertexBuffer->Unlock();
 
@@ -256,17 +210,6 @@ namespace SampleTerrain
 		m_vtxDecl = 0;
 		m_opBuffer.Clear();
 		m_opBuffer.ReserveDiscard(4);
-	}
-	void TerrainMesh::MakeTree(float x, float y, float z)
-	{
-		//if (m_trees.getCount()>50)
-			//return;
-
-		TreeInfo info;
-		info.Height = Randomizer::NextFloat() * 0.1f + 0.9f;
-		info.Rot = Randomizer::NextFloat() * Math::PI * 2;
-		info.Position = Vector3Utils::LDVector(x,y,z);
-		m_trees.Add(info);
 	}
 	/************************************************************************/
 	/*                                                                      */
@@ -380,20 +323,9 @@ namespace SampleTerrain
 		}
 		return m_idxLod2;
 	}
-	Model* TerrainMeshManager::getTreeModel(int size) const
+	Model* TerrainMeshManager::getTreeModelByLOD(int lod) const
 	{
-		switch (size)
-		{
-		case 128:
-			return m_tree[1];
-		case 96:
-			return m_tree[2];
-		case 64:
-			return m_tree[3];
-		case 32:
-			return m_tree[3];
-		}
-		return m_tree[3];
+		return m_tree[lod];
 	}
 	/************************************************************************/
 	/*                                                                      */

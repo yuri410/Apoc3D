@@ -142,7 +142,11 @@ namespace Apoc3D
 				EPUSAGE_PV3_ViewPos=1000,
 				/** sv2_viewportSize
 				*/
-				EPUSAGE_SV2_ViewportSize
+				EPUSAGE_SV2_ViewportSize,
+
+				/** s_unifiedTime
+				*/
+				EPUSAGE_S_UnifiedTime
 			};
 
 			/** Includes all global scene render resources such as the current camera, lighting that could 

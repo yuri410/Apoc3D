@@ -203,6 +203,10 @@ namespace Apoc3D
 				{
 					return EPUSAGE_SV2_ViewportSize;
 				}
+				else if (v==L"s_unifiedtime")
+				{
+					return EPUSAGE_S_UnifiedTime;
+				}
 				LogManager::getSingleton().Write(LOG_Graphics, L"Unknown effect parameter usage: " + val, LOGLVL_Infomation );
 				return EPUSAGE_Unknown;
 			}

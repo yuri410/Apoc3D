@@ -103,7 +103,8 @@ namespace Apoc3D
 
 
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
-				: m_vertexShader(0), m_pixelShader(0), m_device(device), m_supportsInstancing(false)
+				: m_vertexShader(0), m_pixelShader(0), m_device(device), m_supportsInstancing(false), 
+				m_unifiedTime(0), m_lastTime(0)
 			{
 				EffectData data;
 				data.Load(rl);
@@ -518,6 +519,15 @@ namespace Apoc3D
 
 			int AutomaticEffect::begin()
 			{
+				float t = m_lastTime + 0.016f;//(float)( clock() / CLOCKS_PER_SEC);
+				m_unifiedTime += t - m_lastTime;
+				m_lastTime = t;
+
+				while (m_unifiedTime > Math::PI * 10)
+				{
+					m_unifiedTime -= Math::PI * 10;
+				}
+
 				m_device->BindPixelShader(m_pixelShader);
 				m_device->BindVertexShader(m_vertexShader);
 
@@ -571,6 +581,9 @@ namespace Apoc3D
 					case EPUSAGE_Tex14:
 					case EPUSAGE_Tex15:
 						//SetSamplerState(m_parameters[i]);
+						break;
+					case EPUSAGE_S_UnifiedTime:
+						SetValue(m_parameters[i], m_unifiedTime);
 						break;
 					}
 				}

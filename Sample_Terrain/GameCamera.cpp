@@ -31,7 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 namespace SampleTerrain
 {
 	GameCamera::GameCamera(float aspectRatio)
-		: FpsCamera(aspectRatio), m_isOnGround(false)//m_height(100), m_fallSpeed(0)
+		: FpsCamera(aspectRatio), m_isOnGround(false), m_isSprinting(false)//m_height(100), m_fallSpeed(0)
 	{
 		
 		//m_lastHeight = m_height;
@@ -126,10 +126,12 @@ namespace SampleTerrain
 		Camera::Update(time);
 
 		m_maxVelocity = 20;
+		m_isSprinting = false;
 	}
 	void GameCamera::Sprint()
 	{
 		m_maxVelocity = 60;
+		m_isSprinting = true;
 	}
 	void GameCamera::Jump()
 	{

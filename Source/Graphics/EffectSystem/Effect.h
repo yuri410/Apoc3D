@@ -131,6 +131,9 @@ namespace Apoc3D
 				Texture* m_texture;
 
 				bool m_supportsInstancing;
+
+				float m_unifiedTime;
+				float m_lastTime;
 				//Matrix m_mtrxBuffer[InstancingData::MaxOneTimeInstances];
 			};
 

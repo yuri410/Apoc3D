@@ -36,6 +36,10 @@ namespace SampleTerrain
 		virtual void OnFrameEnd();
 
 	private:
+		static const int NumBlockOnEdge = 64;
+		static const int MinBlockCoord = -NumBlockOnEdge/2;
+		static const int MaxBlockCoord = NumBlockOnEdge/2-1;
+
 		Sprite* m_sprite;
 
 		SceneRenderer* m_sceneRenderer;
@@ -43,7 +47,18 @@ namespace SampleTerrain
 
 		GameCamera* m_camera;
 
-		//CheckBox* m_cbWireframe;
+		Terrain* m_terrainBlocks[NumBlockOnEdge][NumBlockOnEdge];
+
+		bool m_isMoving;
+		bool m_allowTakingDownTrees;
+		CheckBox* m_cbPushTrees;
+		bool m_isLoading;
+		int m_sceneContentLoaded;
+		int m_zeroOpFrameCounter;
+		Texture* m_loadingScreen;
+		Texture* m_helpMove;
+		Texture* m_helpLook;
+		float m_helpShowState;
 
 		void UpdateCamera();
 		void UpdateUI(const GameTime* const time);

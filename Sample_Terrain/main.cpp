@@ -92,7 +92,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	DeviceContent* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContent();
 
 	RenderParameters params;
-	params.BackBufferHeight = 768;
+	params.BackBufferHeight = 720;
 	params.BackBufferWidth = 1280;
 	params.ColorBufferFormat = FMT_X8R8G8B8;
 	params.DepthBufferFormat = DEPFMT_Depth24Stencil8;
