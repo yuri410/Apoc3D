@@ -178,15 +178,29 @@ namespace SampleTerrain
 	{
 		m_sceneRenderer->UnregisterCamera(m_camera);
 
-		delete m_sprite;
+		
 		delete m_sceneRenderer;
 		delete m_scene;
 		delete m_camera;
+		
+		for (int i=MinBlockCoord;i<=MaxBlockCoord;i++)
+		{
+			for (int j=MinBlockCoord;j<=MaxBlockCoord;j++)
+			{
+				delete m_terrainBlocks[i - MinBlockCoord][j - MinBlockCoord];
+			}
+		}
+
+		delete m_sprite;
+
+
 
 		delete m_cbPushTrees;
 		delete m_helpLook;
 		delete m_helpMove;
 
+
+		TerrainMeshManager::getSingleton().Shutdown();
 		TerrainMeshManager::getSingleton().FinalizeResources();
 		TerrainMeshManager::Finalize();
 		Game::Unload();

@@ -27,13 +27,15 @@ namespace SampleTerrain
 		~TerrainMesh() { }
 
 		virtual uint32 getSize();
-		virtual void load();
-		virtual void unload();
 
 		virtual RenderOperationBuffer* GetRenderOperation(int lod);
 		
 		static String GetHashString(int x, int z, int size);
 
+	protected:
+
+		virtual void load();
+		virtual void unload();
 	private:
 		RenderDevice* m_device;
 
