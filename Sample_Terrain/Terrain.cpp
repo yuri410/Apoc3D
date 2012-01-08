@@ -21,14 +21,14 @@ namespace SampleTerrain
 		m_transformation.LoadIdentity();
 		//m_transformation.SetTranslation(Vector3Utils::LDVector(bx * BlockLength, 0, bz*BlockLength));
 
-		m_treeOPBuffer.ReserveDiscard(300);
+		//m_treeOPBuffer.ReserveDiscard(300);
 
 		for (int i=0;i<4;i++)
 		{
 			m_terrains[i] = TerrainMeshManager::getSingleton().CreateInstance(device, bx,bz, i);
 		}
 
-
+		m_trees.ResizeDiscard(300);
 		float cellLength = 8;
 
 		int treeCellEdgeCount = (int)(Terrain::BlockLength/cellLength);
@@ -40,11 +40,13 @@ namespace SampleTerrain
 				float worldZ = (j+0.5f)*cellLength + bz*Terrain::BlockLength;
 
 				float height = Terrain::GetHeightAt(worldX, worldZ);
-				float refheight1 = Terrain::GetHeightAt(worldX+1, worldZ);
-				float refheight2 = Terrain::GetHeightAt(worldX, worldZ+1);
+				//float refheight1 = Terrain::GetHeightAt(worldX+1, worldZ);
+				float refheight2 = Terrain::GetHeightAt(worldX+1, worldZ+1);
 
+				//float p = Math::Saturate(fabs(height - ( 0.00f)) / (0.25f) + 
+				//	powf((fabs(refheight1-height) + fabs(refheight2-height)) * HeightScale * 1.5f,8));
 				float p = Math::Saturate(fabs(height - ( 0.00f)) / (0.25f) + 
-					powf((fabs(refheight1-height) + fabs(refheight2-height)) * HeightScale * 1.5f,8));
+					powf(fabs(refheight2-height)*1.414f * HeightScale * 1.5f,8));
 
 				float ofX = Terrain::GetNoise((int)worldX, (int)worldZ);
 				float ofZ = Terrain::GetNoise((int)worldX+65535, (int)worldZ);
@@ -57,6 +59,7 @@ namespace SampleTerrain
 				}
 			}
 		}
+		m_trees.Trim();
 	}
 
 	Terrain::~Terrain()
@@ -96,16 +99,26 @@ namespace SampleTerrain
 				m_treeROPDirty = true;
 			}
 
-			if (m_treeROPDirty)
-			{
-				if (RebuildROPBuffer(lod))
-					m_treeROPDirty = false;
-			}
 			if (lod != 3)
 			{
+				if (m_treeROPDirty)
+				{
+					if (RebuildROPBuffer(lod))
+						m_treeROPDirty = false;
+				}
+
 				if (m_treeOPBuffer.getCount())
 				{
 					m_opBuffer.Add(&m_treeOPBuffer[0], m_treeOPBuffer.getCount());
+				}
+			}
+			else
+			{
+				if (m_treeOPBuffer.getCount() > 10)
+				{
+					m_treeOPBuffer.FastClear();
+					m_treeOPBuffer.ReserveDiscard(4);
+					m_treeROPDirty = true;
 				}
 			}
 		}
@@ -205,9 +218,12 @@ namespace SampleTerrain
 	}
 	float Terrain::GetHeightAt(float x, float z)
 	{
+
 		float h = (float)Noiser.GetHeight(x,z);
 		if (h<-0.5f)
 			h=-0.5f;
+
+
 		return h;
 	}
 	float Terrain::GetPlantDist(float x, float z)

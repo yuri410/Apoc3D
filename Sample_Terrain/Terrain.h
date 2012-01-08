@@ -5,12 +5,14 @@
 #include "Scene/SceneObject.h"
 #include "Core/Resource.h"
 #include "Core/ResourceManager.h"
+#include "Collections/FastQueue.h"
 #include "Math/BoundingSphere.h"
 #include "Math/PerlinNoise.h"
 #include "Graphics/RenderOperationBuffer.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Scene;
 using namespace Apoc3D::Math;
@@ -47,6 +49,7 @@ namespace SampleTerrain
 		static float GetPlantDist(float x, float z);
 		static float GetHeightAt(float x, float z);
 		static float GetNoise(int x, int y);
+
 	private:
 		struct TreeInfo
 		{
@@ -56,7 +59,6 @@ namespace SampleTerrain
 			float FallState;
 			Vector3 FallAxis;
 			bool IsFastFalling;
-			//float FallDirection;
 
 			void CalculateTransform(Matrix& result) const
 			{
@@ -108,6 +110,7 @@ namespace SampleTerrain
 
 		bool RebuildROPBuffer(int lod);
 		void MakeTree(float x, float y, float z);
+
 
 		static RenderOperationBuffer m_opBuffer;
 		static PerlinNoise Noiser;

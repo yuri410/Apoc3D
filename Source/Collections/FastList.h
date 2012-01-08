@@ -282,6 +282,8 @@ namespace Apoc3D
 				}
 				m_elements[m_internalPointer++] = val;
 			}
+			/** Releases the unused preserved space in the internal array
+			 */
 			void Trim()
 			{
 				if (m_internalPointer<m_length)
@@ -289,6 +291,8 @@ namespace Apoc3D
 					 Resize(m_internalPointer);
 				}
 			}
+			/** Set the unused preserved space to zero. This is used in special cases.
+			 */
 			void TrimClear()
 			{
 				if (m_internalPointer<m_length)
@@ -296,6 +300,8 @@ namespace Apoc3D
 					memset(m_elements + m_internalPointer, 0, (m_length - m_internalPointer)*sizeof(T));
 				}
 			}
+			/** Clears content by set the new insert point at the beginning without setting the contents to zero.
+			 */
 			void FastClear()
 			{
 				m_internalPointer = 0;

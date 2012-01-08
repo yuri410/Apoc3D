@@ -175,6 +175,14 @@ namespace Apoc3D
 				}
 			}
 
+			void DequeueOnly()
+			{
+				memset(m_array+m_head, 0, sizeof(T));
+
+				m_head = (m_head + 1) % m_arrLength;
+				m_size--;
+
+			}
 			T Dequeue()
 			{
 				T local = m_array[m_head];

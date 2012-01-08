@@ -32,17 +32,17 @@ namespace SampleTerrain
 	{
 		float Position[3];
 		float Normal[3];
-		float u;
-		float v;
+		//float u;
+		//float v;
 		
 		
 	};
 
-	static VertexElement Elements[3] =
+	static VertexElement Elements[2] =
 	{
 		VertexElement(0, VEF_Vector3, VEU_Position, 0),
-		VertexElement(12, VEF_Vector3, VEU_Normal, 0),
-		VertexElement(24, VEF_Vector2, VEU_TextureCoordinate, 0)
+		VertexElement(12, VEF_Vector3, VEU_Normal, 0)
+		//VertexElement(24, VEF_Vector2, VEU_TextureCoordinate, 0)
 	};
 
 
@@ -102,7 +102,7 @@ namespace SampleTerrain
 		int size = 0;
 
 		size += sizeof(TerrainVertex) * m_edgeVertexCount * m_edgeVertexCount;
-		size += sizeof(int) * 6 * m_primitiveCount;
+		//size += sizeof(int) * 6 * m_primitiveCount;
 
 		return size;
 	}
@@ -115,7 +115,7 @@ namespace SampleTerrain
 		FastList<VertexElement> elements(4);
 		elements.Add(Elements[0]); 
 		elements.Add(Elements[1]);
-		elements.Add(Elements[2]);
+		//elements.Add(Elements[2]);
 
 		m_vtxDecl = fac->CreateVertexDeclaration(elements);
 		
@@ -145,8 +145,8 @@ namespace SampleTerrain
 				vtxData[index].Position[1] = height * HeightScale;
 				vtxData[index].Position[2] = cellLength * j;
 
-				vtxData[index].u = 16 * (float)i / m_edgeVertexCount;
-				vtxData[index].v = 16 * (float)j / m_edgeVertexCount;
+				//vtxData[index].u = 16 * (float)i / m_edgeVertexCount;
+				//vtxData[index].v = 16 * (float)j / m_edgeVertexCount;
 			}
 		}
 		for (int i=0;i<m_edgeVertexCount;i++)
@@ -215,10 +215,10 @@ namespace SampleTerrain
 	/*                                                                      */
 	/************************************************************************/
 	TerrainMeshManager::TerrainMeshManager()
-		: ResourceManager(L"TerrainMeshManager Manager ", 128 * 1048576, true)
+		: ResourceManager(L"TerrainMeshManager Manager ", 32 * 1048576, true)
 	{
 		LogManager::getSingleton().Write(LOG_System, 
-			L"TerrainMeshManager initialized with a cache size 128MB, using async streaming.", 
+			L"TerrainMeshManager initialized with a cache size 32MB, using async streaming.", 
 			LOGLVL_Infomation);
 	}
 	TerrainMeshManager::~TerrainMeshManager()
