@@ -37,6 +37,8 @@ using namespace Apoc3D::UI;
 
 namespace Apoc3DEx
 {
+	/** A class 
+	*/
 	class APAPI Game : public RenderWindowHandler
 	{
 	public:

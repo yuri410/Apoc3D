@@ -59,6 +59,8 @@ using namespace Apoc3D::Utility;
 
 INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 {
+	// the following code is the usual and typical way to initialize the engine for an render window
+
 	wchar_t workingDir[260];
 	DWORD len = GetCurrentDirectory(260, workingDir);
 

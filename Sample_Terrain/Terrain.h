@@ -19,6 +19,21 @@ using namespace Apoc3D::Math;
 
 namespace SampleTerrain
 {
+	/** A terrain block/chunk with a size of BlockLength by BlockLength.
+	 *  A Terrain object always has a mesh and a list of trees' info with it.
+	 *  
+	 *  Tree's info is generated once the terrain object is constructed, while the terrain mesh is treated
+	 *  as a resources, which is handle by TerrainMeshManager.
+	 *  
+	 *  TerrainMesh are loaded around the time been seen if it is not loaded, and unloaded when not seen for
+	 *  a long time.
+	 *
+	 *  A terrain chunk has 4 terrain mesh of the same place but with different level of details. The level of details are
+	 *  controlled by the OctreeSceneManager's decision, by giving an index. The distant mesh is very rough. Two benefits comes. 
+	 *  Reducing primitives and when it is used as an async resources, the processing can be done instantly.
+	 *
+	 *  RenderOperation buffer for trees are pre-calculated once the chunk is has higher LOD, and releases when the LOD drops too low.
+	 */
 	class Terrain : public SceneObject
 	{
 	public:

@@ -20,6 +20,8 @@ using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace SampleTerrain
 {
+	/** The terrain's mesh for each terrain chunk, considered as Resources.
+	*/
 	class TerrainMesh : public Resource, public Renderable
 	{
 	public:
@@ -86,6 +88,8 @@ namespace SampleTerrain
 		ResourceHandle<Texture>* m_textures[6];
 	};
 
+	/** The mesh in one LOD share the same index data as the topology is unchanged.
+	*/
 	class SharedIndexData
 	{
 	public:
