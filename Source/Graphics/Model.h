@@ -44,6 +44,11 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		/** Model's geometry part, which is considered as resources for the vertex and index data.
+
+			Internally, models can share the same ModelSharedData, if the geometry is from the same source(i.e. a file).
+			At the same time, they can use difference animation. The handling of these 2 are separated behind the scenes.
+		*/
 		class APAPI ModelSharedData : public Resource
 		{
 		private:
@@ -79,8 +84,69 @@ namespace Apoc3D
 
 		typedef fastdelegate::FastDelegate1<AnimationType, void> ModelAnimationCompletedHandler;
 
+		/** A model is a set of subsets called Mesh, additionally with animation controller and data.
+		*/
 		class APAPI Model : public Renderable
 		{
+		public:
+			ModelAnimationCompletedHandler& eventAnimationCompeleted() { return m_eventAnimCompleted; }
+
+			FastList<ModelAnimationPlayerBase*>& getCustomAnimation() { return m_animInstance; }
+			
+			float GetSkinAnimationDuration() const;
+			float GetAnimationDuration() const;
+
+			void PlayAnimation()
+			{
+				ControlRootAnimation(AC_Play);
+				ControlSkinnedAnimation(AC_Play);
+				ControlRigidAnimation(AC_Play);
+				ControlMaterialAnimation(AC_Play);
+			}
+			void PauseAnimation()
+			{
+				ControlRootAnimation(AC_Pause);
+				ControlSkinnedAnimation(AC_Pause);
+				ControlRigidAnimation(AC_Pause);
+				ControlMaterialAnimation(AC_Pause);
+			}
+			void ResumeAnimation()
+			{
+				ControlRootAnimation(AC_Resume);
+				ControlSkinnedAnimation(AC_Resume);
+				ControlRigidAnimation(AC_Resume);
+				ControlMaterialAnimation(AC_Resume);
+			}
+			void StopAnimation()
+			{
+				ControlRootAnimation(AC_Stop);
+				ControlSkinnedAnimation(AC_Stop);
+				ControlRigidAnimation(AC_Stop);
+				ControlMaterialAnimation(AC_Stop);
+			}
+
+			/** Gets the ModelSharedData using. 
+			 *  The caller's thread will be suspended if ModelSharedData is loaded.
+			 *
+			 */
+			ModelSharedData* GetData();
+
+			/** Initializes a new model from ModelSharedData and an optional AnimationData.
+			 *
+			 *  The AnimationData need to be deleted manually when no longer used, as the Model class will not modify it.
+			 */
+			Model(ResourceHandle<ModelSharedData>* data, const AnimationData* animData = 0);
+			~Model(void);
+
+			void ReloadMaterialAnimation();			
+
+			virtual RenderOperationBuffer* GetRenderOperation(int lod);
+			virtual RenderOperationBuffer* GetRenderOperationSubEntity(int index);
+
+			/** The update will do the animation works if the model has animation.
+			*/
+			void Update(const GameTime* const time);
+			
 		private:
 			enum AnimationControl
 			{
@@ -90,6 +156,11 @@ namespace Apoc3D
 				AC_Pause
 			};
 
+			/** Whether the RenderOperationBuffer is pre-calculated and stored. 
+			 *  The RenderOperations inside are build first time the model is drawn for performance considerations.
+			 *  This will not affect animation; because even though the RenderOperations are pre-calculated, the 
+			 *  matrices are re-calculated based on animation each frame.
+			 */
 			bool m_isOpBufferBuilt;
 			RenderOperationBuffer m_opBuffer;
 
@@ -155,55 +226,6 @@ namespace Apoc3D
 			}
 			void InitializeAnimation();
 			void UpdateAnimation();
-		public:
-			ModelAnimationCompletedHandler& eventAnimationCompeleted() { return m_eventAnimCompleted; }
-
-			FastList<ModelAnimationPlayerBase*>& getCustomAnimation() { return m_animInstance; }
-			
-			float GetSkinAnimationDuration() const;
-			float GetAnimationDuration() const;
-
-			void PlayAnimation()
-			{
-				ControlRootAnimation(AC_Play);
-				ControlSkinnedAnimation(AC_Play);
-				ControlRigidAnimation(AC_Play);
-				ControlMaterialAnimation(AC_Play);
-			}
-			void PauseAnimation()
-			{
-				ControlRootAnimation(AC_Pause);
-				ControlSkinnedAnimation(AC_Pause);
-				ControlRigidAnimation(AC_Pause);
-				ControlMaterialAnimation(AC_Pause);
-			}
-			void ResumeAnimation()
-			{
-				ControlRootAnimation(AC_Resume);
-				ControlSkinnedAnimation(AC_Resume);
-				ControlRigidAnimation(AC_Resume);
-				ControlMaterialAnimation(AC_Resume);
-			}
-			void StopAnimation()
-			{
-				ControlRootAnimation(AC_Stop);
-				ControlSkinnedAnimation(AC_Stop);
-				ControlRigidAnimation(AC_Stop);
-				ControlMaterialAnimation(AC_Stop);
-			}
-
-			ModelSharedData* GetData();
-
-			Model(ResourceHandle<ModelSharedData>* data, const AnimationData* animData = 0);
-			~Model(void);
-
-			void ReloadMaterialAnimation();			
-
-			virtual RenderOperationBuffer* GetRenderOperation(int lod);
-			virtual RenderOperationBuffer* GetRenderOperationSubEntity(int index);
-
-			void Update(const GameTime* const time);
-
 		};
 	}
 }

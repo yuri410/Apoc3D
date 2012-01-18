@@ -33,6 +33,8 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		/** The current-frame transformations for all bones in a sequential order. 
+		*/
 		struct APAPI BoneTransforms
 		{
 			const Matrix* Transfroms;

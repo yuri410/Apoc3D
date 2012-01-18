@@ -49,12 +49,12 @@ namespace Apoc3D
 
 		/* Defines colors, textures, effect and etc. for a geometry.
 
-		   Material have some Effects. Scene will be rendered in single or
+		   Material have multiple Effects. Scene will be rendered in single or
 		   multiple pass. Each pass has sequence number and its corresponding mask value.
 		   
-		   First the mask value will do and op with pass flags of the material. If that passes, 
+		   First the mask value will do bitwise AND with pass flags of the material. If that passes, 
 		   a pass effect will be retrieved from the material with the pass sequence number
-		   as index.
+		   as an index.
 		*/
 		class APAPI Material : public HashHandleObject
 		{

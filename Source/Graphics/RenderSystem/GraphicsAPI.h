@@ -43,6 +43,9 @@ namespace Apoc3D
 			class APAPI GraphicsAPIManager : public Singleton<GraphicsAPIManager>
 			{
 			private:
+				/** Obtains the information for each graphics API.h
+				 *  Platform mark is the API's score indicating how the API fits the current platform running on, scaled to 0-100.
+				 */
 				struct Entry
 				{
 					GraphicsAPIFactory* Factory;
@@ -85,6 +88,8 @@ namespace Apoc3D
 			public:
 				const APIDescription& getDescription() const { return m_description; }
 
+				/** Gets the name of the graphics API.
+				*/
 				const String& getName() { return m_description.Name; }
 
 				/** Create the device content of the Graphics API.

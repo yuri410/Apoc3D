@@ -38,9 +38,9 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/* Factory that can create resources like textures, buffers, shaders. 
-			* Application can use this to create resources which are not managed by resource managers.
-			*/
+			/* Factory that can create resources like textures, buffers and shaders. 
+			 * Application can use this to create resources which are not managed by resource managers.
+			 */
 			class APAPI ObjectFactory
 			{
 			private:

@@ -41,13 +41,13 @@ namespace Apoc3D
 		class APAPI GeometryData : public HashHandleObject
 		{
 		public:
-			/** the vertex buffer of this GeomentryData object
+			/** the vertex buffer used to draw the geometry
 			*/
 			VertexBuffer* VertexBuffer;
-			/** the index buffer of this GeomentryData object
+			/** the index buffer used to draw the geometry
 			*/
 			IndexBuffer* IndexBuffer;
-			/** the vertex declaration of this GeomentryData object
+			/** the vertex declaration for vertex in the geometry
 			*/
 			VertexDeclaration* VertexDecl;
 			int32 PrimitiveCount;

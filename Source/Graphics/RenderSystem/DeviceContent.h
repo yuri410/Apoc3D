@@ -96,6 +96,8 @@ namespace Apoc3D
 				vector<RenderView*> m_renderPorts;
 				bool m_supportsRenderControl;
 			public:
+				/** Indicates whether if the API can draw in pre-existing windows or areas.
+				*/
 				virtual bool SupportsRenderControl() { return m_supportsRenderControl; }
 
 				RenderView* Create(const RenderParameters &pm);

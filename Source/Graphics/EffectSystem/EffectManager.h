@@ -55,6 +55,9 @@ namespace Apoc3D
 
 				//void ReloadEffect(RenderDevice* device, const ResourceLocation* fl);
 				void LoadEffect(RenderDevice* device, const ResourceLocation* rl);
+
+				/** Loads a set of effects from a APBuild-generated xml list automatically.
+				*/
 				void LoadEffectFromList(RenderDevice* device, const ResourceLocation* rl);
 
 				SINGLETON_DECL_HEARDER(EffectManager);

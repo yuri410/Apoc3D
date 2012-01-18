@@ -93,6 +93,8 @@ namespace Apoc3D
 
 			};
 
+			/** Represents a window with rendered graphics displayed in its client area.
+			*/
 			class APAPI RenderWindow : public RenderView
 			{
 			private:

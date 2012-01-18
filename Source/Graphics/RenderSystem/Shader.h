@@ -39,6 +39,8 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+			/** Contains the parameters required for texture samplers.
+			*/
 			struct APAPI ShaderSamplerState 
 			{
 				TextureAddressMode AddressU;

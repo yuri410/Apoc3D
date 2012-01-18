@@ -41,10 +41,85 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/* Applications use RenderDevice to perform DrawPrimitive level rendering
-			*/
+			/** Applications use RenderDevice to perform DrawPrimitive level rendering and 
+			 *  obtain related objects such as RenderStateManager and RenderTargets.
+			 */
 			class APAPI RenderDevice
 			{
+			public:
+				virtual Capabilities* const getCapabilities() const = 0;
+				
+				/** Gets the color pixel format of default render target.
+				*/
+				virtual PixelFormat GetDefaultRTFormat() = 0;
+				/** Gets the depth pixel format of default render target.
+				*/
+				virtual DepthFormat GetDefaultDepthStencilFormat() = 0;
+
+				virtual void Initialize() = 0;
+
+				/** Gets the device's name.
+				*/
+				const String& getName() const { return m_rdName; }
+
+				/** Gets the device's ObjectFactory object.
+				*/
+				ObjectFactory* getObjectFactory() { return m_objectFactory; }
+
+				/** Gets the device's RenderStateManager object.
+				*/
+				RenderStateManager* getRenderState() { return m_renderStates; }
+
+				/** Notify the RenderDevice a new frame is began to draw.
+				*/
+				virtual void BeginFrame()
+				{
+					m_batchCount = 0;
+					m_primitiveCount = 0;
+					m_vertexCount = 0;
+				}
+				/** Notify the RenderDevice the current frame rendering is over.
+				*/
+				virtual void EndFrame() { }
+
+				//virtual RenderTarget* getDefaultRenderTarget() = 0;
+
+				/** Clears all the currently binded render targets.
+				*/
+				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil) = 0;
+
+				/** Sets the current render target at given index. A value of 0 will reset the rendertarget to default.
+				*/
+				virtual void SetRenderTarget(int index, RenderTarget* rt) = 0;
+
+				virtual RenderTarget* GetRenderTarget(int index) = 0;
+
+				//virtual void SetTexture(int index, Texture* texture) = 0;
+				//virtual Texture* GetTexture(int index) = 0;
+
+				virtual void BindVertexShader(VertexShader* shader) = 0;
+				virtual void BindPixelShader(PixelShader* shader) = 0;
+
+				/** Draws a list of RenderOperations.
+				 *  @param mtrl All RenderOperations are expected to have the same material as this param.
+				 *  @param passSelID An index used to tell which shader effect inside materials to be used. 
+				 *   A number of -1 mean the first available shader effect will be used. 
+				 */
+				virtual void Render(Material* mtrl, const RenderOperation* op, int count, int passSelID);
+
+				virtual Viewport getViewport() = 0;
+				virtual void setViewport(const Viewport& vp) = 0;
+
+				/** Gets the number of draw calls on the last frame if the frame is done, or the current draw call count if not.
+				*/
+				uint getBatchCount() const { return m_batchCount; }
+				/** Gets the number of primitives drawn on the last frame if the frame is done, or the current value if not.
+				*/
+				uint getPrimitiveCount() const { return m_primitiveCount; }
+				/** Gets the number of vertices drawn on the last frame if the frame is done, or the current value if not.
+				*/
+				uint getVertexCount() const { return m_vertexCount; }
+
 			private:
 				String m_rdName;
 
@@ -65,52 +140,10 @@ namespace Apoc3D
 				{
 
 				}
-			public:
-				uint getBatchCount() const { return m_batchCount; }
-				uint getPrimitiveCount() const { return m_primitiveCount; }
-				uint getVertexCount() const { return m_vertexCount; }
-
-				virtual Capabilities* const getCapabilities() const = 0;
-				const String& getRenderDeviceName() const { return m_rdName; }
-
-				virtual PixelFormat GetDefaultRTFormat() = 0;
-				virtual DepthFormat GetDefaultDepthStencilFormat() = 0;
-
-				virtual void Initialize() = 0;
-
-				const String& getName() const { return m_rdName; }
-
-				ObjectFactory* getObjectFactory() { return m_objectFactory; }
-				RenderStateManager* getRenderState() { return m_renderStates; }
-
-				virtual void BeginFrame()
-				{
-					m_batchCount = 0;
-					m_primitiveCount = 0;
-					m_vertexCount = 0;
-				}
-				virtual void EndFrame() { }
-
-				//virtual RenderTarget* getDefaultRenderTarget() = 0;
-
-				virtual void Clear(ClearFlags flags, uint color, float depth, int stencil) = 0;
-
-				virtual void SetRenderTarget(int index, RenderTarget* rt) = 0;
-
-				virtual RenderTarget* GetRenderTarget(int index) = 0;
-
-				//virtual void SetTexture(int index, Texture* texture) = 0;
-				//virtual Texture* GetTexture(int index) = 0;
-
-				virtual void BindVertexShader(VertexShader* shader) = 0;
-				virtual void BindPixelShader(PixelShader* shader) = 0;
-
-				virtual void Render(Material* mtrl, const RenderOperation* op, int count, int passSelID);
-
-				virtual Viewport getViewport() = 0;
-				virtual void setViewport(const Viewport& vp) = 0;
 			};
 
+			/** An interface for check if some feature are supported.
+			*/
 			class APAPI Capabilities
 			{
 			public:

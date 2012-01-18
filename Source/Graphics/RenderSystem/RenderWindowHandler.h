@@ -34,6 +34,9 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+			/** An interface for client application to handle RenderWindow's events.
+			 *  The engine will call back the implemented methods upon the raise of the event.
+			 */
 			class APAPI RenderWindowHandler
 			{
 			public:

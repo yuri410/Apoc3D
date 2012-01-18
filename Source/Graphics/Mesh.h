@@ -41,34 +41,10 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		/** The geometry data including vertices as well as indices and materials.
+		*/
 		class APAPI Mesh : public Renderable
 		{
-		private:
-			VertexDeclaration* m_vtxDecl;
-			int32 m_vertexSize;
-			bool m_opBufferBuilt;
-			RenderOperationBuffer m_bufferedOp;
-			MeshMaterialSet<Material*> m_materials;
-			VertexBuffer* m_vertexBuffer;
-			FastList<IndexBuffer*> m_indexBuffers;
-
-			int32* m_partPrimitiveCount;
-			int32* m_partVertexCount;
-
-			RenderDevice* m_renderDevice;
-			ObjectFactory* m_factory;
-
-			String m_name;
-
-			int32 m_primitiveCount;
-			int32 m_vertexCount;
-
-
-			//int32 m_parentBoneID;
-			BoundingSphere m_boundingSphere;
-
-			FastList<VertexElement> m_vertexElements;
-			
 		public:
 			VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
 			const FastList<IndexBuffer*>& getIndexBuffers() const { return m_indexBuffers; }
@@ -106,6 +82,33 @@ namespace Apoc3D
 
 			Mesh(RenderDevice* device, const MeshData* data);
 			~Mesh(void);
+
+		private:
+			VertexDeclaration* m_vtxDecl;
+			int32 m_vertexSize;
+			bool m_opBufferBuilt;
+			RenderOperationBuffer m_bufferedOp;
+			MeshMaterialSet<Material*> m_materials;
+			VertexBuffer* m_vertexBuffer;
+			FastList<IndexBuffer*> m_indexBuffers;
+
+			int32* m_partPrimitiveCount;
+			int32* m_partVertexCount;
+
+			RenderDevice* m_renderDevice;
+			ObjectFactory* m_factory;
+
+			String m_name;
+
+			int32 m_primitiveCount;
+			int32 m_vertexCount;
+
+
+			//int32 m_parentBoneID;
+			BoundingSphere m_boundingSphere;
+
+			FastList<VertexElement> m_vertexElements;
+
 		};
 	}
 }

@@ -37,6 +37,8 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+			/** Sprite is a utility used to draw textured rectangles in viewport. 
+			*/
 			class APAPI Sprite
 			{
 			private:
