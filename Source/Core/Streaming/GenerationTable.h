@@ -41,6 +41,9 @@ namespace Apoc3D
 	{
 		namespace Streaming
 		{
+			/** A GenerationTable puts resources with different gen numbers into different tables,
+			 *  and works on resource collecting and gen number updating based on the them.
+			 */
 			class APAPI GenerationTable
 			{
 			public:
@@ -64,6 +67,8 @@ namespace Apoc3D
 				void AddResource(Resource* res);
 				void RemoveResource(Resource* res);
 
+				/** Remove the resource from the table with oldGeneration number in m_generations, and add to the new table of newGeneration.
+				*/
 				void UpdateGeneration(int oldGeneration, int newGeneration, Resource* resource);
 
 				void ShutDown() 
@@ -74,9 +79,11 @@ namespace Apoc3D
 				}
 
 			private:
-
+				/** An array of tables represents that resources with gen i are in i+1 th table.
+				*/
 				ExistTable<Resource*>* m_generations;
-
+				/** A list of all pointers to resource objects.
+				*/
 				FastList<Resource*> m_generationList;
 
 				//thread* m_thread;

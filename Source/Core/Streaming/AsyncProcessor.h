@@ -40,6 +40,8 @@ namespace Apoc3D
 	{
 		namespace Streaming
 		{
+			/** Represents an operation that processes resources.
+			*/
 			class APAPI ResourceOperation
 			{
 			private:
@@ -57,12 +59,18 @@ namespace Apoc3D
 					RESOP_Unload,
 					RESOP_Other
 				};
+
+				/** Do the processing.
+				*/
 				virtual void Process() = 0;
 
 				virtual OperationType getType() const = 0;
 				Resource* getResource() const { return m_resource; }
 			};
 
+			/** This is used to initialize a thread for resource collection and processing.
+			  *  At the same time it keeps track of current ResourceOperations and process queued ones in background .
+			  */
 			class APAPI AsyncProcessor
 			{
 			private:
@@ -76,16 +84,31 @@ namespace Apoc3D
 				static void ThreadEntry(void* arg);
 				void Main();
 			public:
+				/** If a resource is IsIndependent(), this cancels(or removes) the corresponding opposite resource operation
+				 *  from the queue.
+				 */
 				bool NeutralizeTask(ResourceOperation* op);
 
+				/** Adds a ResourceOperation object to the queue.
+				*/
 				void AddTask(ResourceOperation* op);
+				/** Removes a ResourceOperation object from the queue.
+				*/
 				void RemoveTask(ResourceOperation* op);
 
+				/** Check if there is no queued ResourceOperations at the moment.
+				*/
 				bool TaskCompleted();
+				/** Gets the current number of queued ResourceOperations.
+				*/
 				int GetOperationCount();
+
+				/** Suspends the caller's thread until all queued ResourceOperations are processed.
+				*/
 				void WaitForCompletion();
 				
-
+				/** Shuts down the AsyncProcessor. Terminating the background thread.
+				*/
 				void Shutdown();
 
 				AsyncProcessor(GenerationTable* gTable,const String& name);
