@@ -12,23 +12,30 @@ namespace SampleTerrain
 	const float Terrain::HeightScale = 75;
 	PerlinNoise Terrain::Noiser(0.42, 0.01, 1, 8, 8881);
 	RenderOperationBuffer Terrain::m_opBuffer;
-	//PerlinNoise Terrain::Noiser(0.42, 0.01, 1, 8, 8881);
+	
 
 	Terrain::Terrain(RenderDevice* device, int bx, int bz)
 		: m_treeROPDirty(true), m_bufferedLevel(0), m_isPushing(false)
 	{
 		m_BoundingSphere = GetBoundingSphere(bx, bz);
 		m_transformation.LoadIdentity();
-		//m_transformation.SetTranslation(Vector3Utils::LDVector(bx * BlockLength, 0, bz*BlockLength));
-
-		//m_treeOPBuffer.ReserveDiscard(300);
-
+		
+		// create TerrainMesh instances from the manager for different LODs.
 		for (int i=0;i<4;i++)
 		{
 			m_terrains[i] = TerrainMeshManager::getSingleton().CreateInstance(device, bx,bz, i);
 		}
 
+		// Now generate the trees' position, rotation, height one by one.
+
+		// reserve the list's space to an average amount of trees; so resizing will be limited.
 		m_trees.ResizeDiscard(300);
+
+		// the cellLength here is use to for trees' distribution only.
+		// The chunk is divided into rows and columns of quad areas with a size of 
+		// cellLength by cellLength. One tree will be spawned in the area at most dependents
+		// on a probability calculated later.
+		// this has nothing to do with the terrain mesh's cell in this method
 		float cellLength = 8;
 
 		int treeCellEdgeCount = (int)(Terrain::BlockLength/cellLength);
@@ -39,20 +46,27 @@ namespace SampleTerrain
 				float worldX = (i+0.5f)*cellLength + bx*Terrain::BlockLength;
 				float worldZ = (j+0.5f)*cellLength + bz*Terrain::BlockLength;
 
+				// two additional sample are required to check the gradient at current position
+				// the gradient is used to modulate the chance whether a tree is spawned here.
 				float height = Terrain::GetHeightAt(worldX, worldZ);
-				//float refheight1 = Terrain::GetHeightAt(worldX+1, worldZ);
 				float refheight2 = Terrain::GetHeightAt(worldX+1, worldZ+1);
 
-				//float p = Math::Saturate(fabs(height - ( 0.00f)) / (0.25f) + 
-				//	powf((fabs(refheight1-height) + fabs(refheight2-height)) * HeightScale * 1.5f,8));
+				// the probability of a tree's appearance at the current position.
+				// the p here is inverted, the real probability should be 1-p
+				//
+				// the first half of the expression calculate the inv-chance by elevation, a elevation closer to 0.0
+				// is better place to put trees. The second part take the slope into consideration, 
+				// a higher different in height results higher inv-chance, which in turn make the chance smaller
 				float p = Math::Saturate(fabs(height - ( 0.00f)) / (0.25f) + 
 					powf(fabs(refheight2-height)*1.414f * HeightScale * 1.5f,8));
 
+				// some offset in position to make the tree's are not planted in rows or lines.
 				float ofX = Terrain::GetNoise((int)worldX, (int)worldZ);
 				float ofZ = Terrain::GetNoise((int)worldX+65535, (int)worldZ);
 
 				worldX += ofX*cellLength*0.5f; worldZ += ofZ*cellLength*0.5f;
 
+				// compare the probability. A lower P is easier to meet.
 				if (Terrain::GetPlantDist(worldX, worldZ) > p)
 				{
 					MakeTree(worldX, height * HeightScale-0.5f, worldZ);
@@ -76,6 +90,15 @@ namespace SampleTerrain
 		if (lod>=4)
 			lod = 3;
 
+		// do a render operation request from the TerrainMeshes, with an order
+		// from higher lod number to lower. 
+		// (The LOD index or LOD number means a more rough when the number is higher, and when 0 it mean the most detailed model.)
+		// 
+		// Now, if a resource is not loaded, according to the protocol, the returned RenderOperationBuffer
+		// should be 0. As the matter of fact that rough model(higher LOD number) is usually loaded before the detailed one, 
+		// and the processing takes less time. The strategy trying from higher LOD to lower ones ensures the terrain can be
+		// showed up as soon as possible if not loaded yet. And minimize the waiting time during which may cause the terrain chunk
+		// translucent.
 		RenderOperationBuffer* opBuf = 0;
 		while (!opBuf && lod<4)
 		{
@@ -93,7 +116,8 @@ namespace SampleTerrain
 				m_opBuffer.Add(&opBuf->operator[](0), opBuf->getCount());
 
 
-			
+			// when the lod changes from frame to frame, the pre-built RenderOperations need to be
+			// rebuilt as the tree models used is different.
 			if (lod != 3 && m_bufferedLevel != lod)
 			{
 				m_treeROPDirty = true;
@@ -114,6 +138,7 @@ namespace SampleTerrain
 			}
 			else
 			{
+				// release the pre-built RenderOperations when lod is far( equals to 3)
 				if (m_treeOPBuffer.getCount() > 10)
 				{
 					m_treeOPBuffer.FastClear();
@@ -131,6 +156,8 @@ namespace SampleTerrain
 	{
 		if (m_isPushing)
 		{
+			// do the tree falling when the camera is inside
+
 			const float thres = m_isFastPushing ? 256.0f : 64.0f;
 
 			for (int i=0;i<m_trees.getCount();i++)
@@ -204,6 +231,9 @@ namespace SampleTerrain
 		m_isFastPushing = isFastPushing;
 		m_isPushing = true;
 		m_pushingPos = pos;
+
+		// the pre-built RenderOperations will rebuild every frame when pushing, to animate the 
+		// trees' falling
 		m_treeROPDirty = true;
 	}
 

@@ -33,8 +33,12 @@ using namespace Apoc3D::Math;
 
 namespace SampleTerrain
 {
-	
-
+	/** Represent a FPS view into the game scene, with addition function like jump and sprinting.
+	 *  The velocity used consists of a normalize directional speed vector and a max velocity.
+	 *  
+	 *  When sprinting, the max velocity will be modified to a bigger value for faster movement, while
+	 *  keeping other logic remains unchanged.
+	 */
 	class GameCamera : public FpsCamera
 	{
 	public:

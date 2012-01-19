@@ -32,11 +32,18 @@ namespace SampleTerrain
 
 		virtual RenderOperationBuffer* GetRenderOperation(int lod);
 		
+		/** Gets a string that represent this resource
+		*/
 		static String GetHashString(int x, int z, int size);
 
 	protected:
-
+		/** This is call by the background thread to load the actual content of the mesh.
+		*/
 		virtual void load();
+		/** This is call by the background thread to unload the actual content of the mesh.
+		 *  In this demo, vertex buffers should be released and deleted to 
+		 *  make effect that the memory being released.
+		 */
 		virtual void unload();
 	private:
 		RenderDevice* m_device;
@@ -52,14 +59,33 @@ namespace SampleTerrain
 
 		RenderOperationBuffer m_opBuffer;
 
+		/** The number of vertices on one edge of the terrain mesh quad.
+		*/
 		int m_edgeVertexCount;
+		/** The total number of triangles as primitives in the terrain mesh.
+		*/
 		int m_primitiveCount;
 
+		/** The X coordinate in the terrain chunk space.
+		*/
 		int m_bx;
+		/** The Z coordinate in the terrain chunk space.
+		*/
 		int m_bz;
 
 	};
 
+	/** The resource manager for TerrainMeshes. This type of use of ResourceManager enables
+	 *  independent background resource management for customized resources. In this case it is 
+	 *  TerrainMesh. 
+	 *  TerrainMesh for different level of details are all managed in this class. To distinguish
+	 *  different TerrainMesh at different chunk space and LODs, a "HashString", which is the unique
+	 *  id for each chunk, is used as the name of resource(see TerrainMesh::GetHashString). This will
+	 *  prevent the same terrain mesh loaded twice, though very rare. 
+	 *
+	 *  Index data for the LODs are prepared for using as a shared resources. So did the tree models,
+	 *  which does not have artist-created animations.
+	 */
 	class TerrainMeshManager : public ResourceManager, public Singleton<TerrainMeshManager>
 	{
 	public:

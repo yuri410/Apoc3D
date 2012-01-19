@@ -50,11 +50,13 @@ namespace SampleTerrain
 
 		float target = groundHeight * Terrain::HeightScale + 5;
 
+		// check by comparing acceleration
 		if ((_V3Y(m_position)-target)/time->getElapsedTime()>gravity)
 		{
 			m_isOnGround = false;
 		}
 
+		// apply gravity when not on ground or jumping
 		if ((_V3Y(m_position)>= target && !m_isOnGround) || _V3Y(m_velocity)>0)
 		{
 			_V3Y(m_velocity) -= time->getElapsedTime() * gravity;
@@ -75,11 +77,13 @@ namespace SampleTerrain
 		
 
 		{
+			// camera can change speed when on ground
 			if (m_isOnGround)
 			{
 				m_velocity = Vector3Utils::Add(m_velChange, m_velocity);
 			}
 
+			// calculate the normalized horizontal velocity, storing into hozV
 			Vector2 hozV = Vector2Utils::LDVector(_V3X(m_velocity), _V3Z(m_velocity));
 			Vector3 v = m_velocity;
 
@@ -88,10 +92,12 @@ namespace SampleTerrain
 				hozV = Vector2Utils::Normalize(hozV);
 			}
 
+			 
 			//if (m_isOnGround)
 			{
 				float vLen = Vector2Utils::Length(hozV);
 
+				// if the vel is big enough, add some drag
 				if (vLen > 0.05f)
 				{
 					if (m_isOnGround)

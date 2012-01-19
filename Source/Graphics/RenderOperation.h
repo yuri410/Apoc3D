@@ -46,9 +46,14 @@ namespace Apoc3D
 					!memcmp(left.Transfroms, right.Transfroms, sizeof(Matrix) * left.Count);
 			}
 		};
-		/* Represents an operation to render a mesh part in the scene.
-		   RenderOperation is used by the engine to manage the scene rendering pipeline.
-		*/
+		/** Represents an operation to render a mesh part in the scene.
+		 *
+		 *  Usually, transformations data, material and GeometryData including buffers and declarations are part of 
+		 *  this operation. Each operation is in equivalent to a DrawPrimitive or DrawIndexedPrimitive call in D3D when not
+		 *  using instancing.
+		 *
+		 *  RenderOperation is used by the engine to manage the scene rendering pipeline.
+		 */
 		class APAPI RenderOperation
 		{
 		public:
