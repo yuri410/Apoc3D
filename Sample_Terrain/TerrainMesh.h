@@ -80,11 +80,14 @@ namespace SampleTerrain
 	 *  TerrainMesh. 
 	 *  TerrainMesh for different level of details are all managed in this class. To distinguish
 	 *  different TerrainMesh at different chunk space and LODs, a "HashString", which is the unique
-	 *  id for each chunk, is used as the name of resource(see TerrainMesh::GetHashString). This will
-	 *  prevent the same terrain mesh loaded twice, though very rare. 
-	 *
+	 *  id for each chunk at certain LOD, is used as the name of resource(see TerrainMesh::GetHashString). 
+	 *  This will prevent the same terrain mesh loaded twice. Though duplication seems impossible in a chunk world,
+	 *  as a universal model for resource management, it is required by the resource manager.
+	 *  HashString could be more useful in other cases like ModelManager loading from files; it
+	 *  will help the ModelManager from loading from the same file multiple times.
+	 *  
 	 *  Index data for the LODs are prepared for using as a shared resources. So did the tree models,
-	 *  which does not have artist-created animations.
+	 *  which does not have artist-created animations to necessarily load 1 model per-instance.
 	 */
 	class TerrainMeshManager : public ResourceManager, public Singleton<TerrainMeshManager>
 	{

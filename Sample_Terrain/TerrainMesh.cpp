@@ -32,10 +32,6 @@ namespace SampleTerrain
 	{
 		float Position[3];
 		float Normal[3];
-		//float u;
-		//float v;
-		
-		
 	};
 
 	static VertexElement Elements[2] =
@@ -149,6 +145,8 @@ namespace SampleTerrain
 				//vtxData[index].v = 16 * (float)j / m_edgeVertexCount;
 			}
 		}
+		// normal generation is done on a separate pass
+		// Calculated by cross product
 		for (int i=0;i<m_edgeVertexCount;i++)
 		{
 			for (int j=0;j<m_edgeVertexCount;j++)

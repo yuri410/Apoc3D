@@ -64,10 +64,12 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	wchar_t workingDir[260];
 	DWORD len = GetCurrentDirectory(260, workingDir);
 
+	// manually add these plugins, since the library is built statically.
+	// dynamic lib loading is not practical
 	Plugin* input = new Apoc3D::Input::Win32::WinInputPlugin();
 	Plugin* d3d = new Apoc3D::Graphics::D3D9RenderSystem::D3D9RSPlugin();
 
-	// escon hold all the parameters to initialize the engine
+	// fill up the engine's initialization parameters
 	ManualStartConfig escon;
 	//escon.PluginDyList.Add(L"Apoc3D.D3D9RenderSystem");
 	escon.PluginList.Add(input);
@@ -81,19 +83,23 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	escon.ModelAsync = true;
 	escon.TextureAsync = true;
 
-
+	// get the exe's path, add this path to the working directories
 	wchar_t exePath[260];
 	GetModuleFileName(0, exePath, 260);
 	_chdir(StringUtils::toString(PathUtils::GetDirectory(exePath)).c_str());
 	escon.WorkingDirectories.Add(PathUtils::GetDirectory(exePath));
 
+	/* Initialization */
 	Engine::Initialize(&escon);
 
+	// pak file support should be manually added to the file system. Apoc3DEx (Apoc3D.Essentials) will use it for the 'system.pak' file.
 	PakArchiveFactory* pakSupport = new PakArchiveFactory();
 	FileSystem::getSingletonPtr()->RegisterArchiveType(pakSupport);
 
+	// now move on the creation of render window
 	DeviceContent* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContent();
 
+	// fill the params
 	RenderParameters params;
 	params.BackBufferHeight = 720;
 	params.BackBufferWidth = 1280;
@@ -108,17 +114,23 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	RenderView* view =  devContent->Create(params);
 
 	RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
-
+	// once created, set the application's main class as the event handler, 
+	// so that the window's events will be passes to demo code
 	wnd->setEventHandler(new TerrainDemo(wnd));
 
 	if (wnd)
 	{
+		// this will enter the main loop. the execution will not leave the Run method until
+		// the renderWindow closes.
 		wnd->Run();
+
+		// clean up then the window closed
 		delete wnd;
 	}
 
 	delete devContent;
 
+	// unregister pakSupport before deleting it.
 	FileSystem::getSingletonPtr()->UnregisterArchiveType(pakSupport);
 	delete pakSupport;
 
