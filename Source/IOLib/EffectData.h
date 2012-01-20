@@ -39,6 +39,8 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		/** Defines one entire effect's data stored in binary form and procedures to load them.
+		*/
 		class APAPI EffectData
 		{
 		public:

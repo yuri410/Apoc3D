@@ -38,6 +38,8 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		/** Defines one entire texture level's data stored in binary form and procedures to load them.
+		*/
 		class APAPI TextureLevelData
 		{
 		public:
@@ -59,6 +61,9 @@ namespace Apoc3D
 			void LoadData(TaggedDataReader* data);
 			void SaveData(TaggedDataWriter* data) const;
 		};
+
+		/** Defines one entire texture's data stored in binary form and procedures to load them.
+		*/
 		class APAPI TextureData
 		{
 		public:

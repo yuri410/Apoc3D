@@ -40,6 +40,8 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		/** Defines all of one material's data stored in binary form and procedures to load them.
+		*/
 		class APAPI MaterialData
 		{
 		private:

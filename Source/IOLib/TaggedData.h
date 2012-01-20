@@ -34,14 +34,16 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		
-
 		/** Tagged data is a collection of key and values. 
-			The keys are name of the corresponding value in string form. 
-			The value is a series of binary bytes which can represent anything.
-
-			This class implements a reader for Tagged Data.
-		*/
+		 *  The keys are name of the corresponding value in string form. 
+		 *  The value is a series of binary bytes which can represent anything.
+		 *  
+		 *  As TaggedData is in a key-value form. the value can be a sub-TaggedData. And the value of sub-TaggedData
+		 *  can have sub-sub-TaggedData.
+		 *  In this way, respectively a tree of data can be stored with this class easily.
+		 *  
+		 *  This class implements a reader for Tagged Data.
+		 */
 		class APAPI TaggedDataReader
 		{
 		private:
@@ -125,6 +127,8 @@ namespace Apoc3D
 
 		};
 
+		/** This class implements a writer for Tagged Data.
+		*/
 		class APAPI TaggedDataWriter
 		{
 		private:

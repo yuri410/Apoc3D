@@ -49,6 +49,8 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		/** Defines one entire mesh's data stored in binary form and procedures to load them.
+		*/
 		class APAPI MeshData
 		{
 		public:
@@ -77,7 +79,8 @@ namespace Apoc3D
 
 		};
 
-
+		/** Defines one entire model's data stored in binary form and procedures to load them.
+		 */
 		class APAPI ModelData
 		{
 		private:

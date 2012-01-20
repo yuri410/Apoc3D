@@ -38,6 +38,13 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		/** The resource manager for all ModelSharedData.
+		 *
+		 *  In addition, this class can also create unmanaged resource. 
+		 *  CreateUnmanagedInstance directly loads a model; then return it. Instances created in this
+		 *  way need to be taken care by the client code. Deleting is required when no longer used.
+		 *
+		 */
 		class APAPI ModelManager : public ResourceManager, public Singleton<ModelManager>
 		{
 		public:

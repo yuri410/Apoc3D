@@ -38,6 +38,12 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		/** The resource manager for textures.
+		 * 
+		 *  In addition, this class can also create unmanaged resource. 
+		 *  CreateUnmanagedInstance directly loads a texture; then return it. Instances created in this
+		 *  way need to be taken care by the client code. Deleting is required when no longer used.
+		 */
 		class APAPI TextureManager : public ResourceManager, public Singleton<TextureManager>
 		{
 		private:

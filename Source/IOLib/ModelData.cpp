@@ -319,12 +319,23 @@ namespace Apoc3D
 				delete[] VertexData;
 		}
 
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+		//  With the help from VirtualStream and TaggedData, data like this, models
+		//  are stored in a hierarchical structure, since a model contains meshes, and meshes
+		//  contain materials, materials at last contain effects, and this is not
+		//  all of it.
+
+
 		static const String TAG_3_EntityCountTag = L"EntityCount";
 		static const String TAG_3_EntityPrefix = L"Ent";
 
 
 		static const String TAG_3_AnimationDataTag = L"AnimationData";
 		
+
+
 		ModelData::~ModelData()
 		{
 			if (Entities.getCount())

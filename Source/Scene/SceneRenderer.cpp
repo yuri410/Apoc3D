@@ -58,6 +58,7 @@ namespace Apoc3D
 
 			if (buffer)
 			{
+				// add rops one by one
 				for (int k=0;k<buffer->getCount();k++)
 				{
 					RenderOperation op = buffer->get(k);
@@ -65,12 +66,14 @@ namespace Apoc3D
 					Material* mtrl = op.Material;
 					GeometryData* geoData = op.GeometryData;
 
+					// rop with no material or geo is not eligible
 					if (mtrl && geoData)
 					{
 						Matrix temp;
 						Matrix::Multiply(temp, op.RootTransform, obj->getTrasformation());
 						op.RootTransform = temp;
 
+						// add the rop from outer table to inner table(top down)
 						MaterialTable* mtrlTable;
 						if (!m_priTable.TryGetValue(mtrl->getPriority(), mtrlTable))
 						{
@@ -100,6 +103,9 @@ namespace Apoc3D
 		void BatchData::Clear()
 		{
 			m_objectCount = 0;
+
+			// this will only clear the rop list inside. The hashtables are remained as 
+			// it is highly possible the next time the buckets in them are reused.
 			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
 			{
 				MaterialTable* mtrlTbl = *i.getCurrentValue();

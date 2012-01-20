@@ -37,7 +37,7 @@ using namespace Apoc3D::UI;
 
 namespace Apoc3DEx
 {
-	/** A class 
+	/** A class as a framework, which looks similar to XNA's, but with the whole engine's support.
 	*/
 	class APAPI Game : public RenderWindowHandler
 	{
@@ -57,6 +57,8 @@ namespace Apoc3DEx
 		virtual void OnFrameStart();
 		virtual void OnFrameEnd();
 
+		/** Closes the window
+		*/
 		void Exit();
 
 		RenderDevice* getRenderDevice() const { return m_device; }

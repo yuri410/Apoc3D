@@ -38,6 +38,16 @@ namespace Apoc3D
 		//template class APAPI unordered_map<String, Archive*>;
 		//template class APAPI unordered_map<String, ArchiveFactory*>;
 
+		/** A services class providing file locating, multiple working directories and archive file features.
+		 *  Ordinarily FileSystem::Locate or FileSystem::TryLocate is used to locate a file. A file name or relative directory
+		 *  as well as a FileLocateRule object is needed. When locating files outside archive, relative directory with
+		 *  file names can be directly used with a default FileLocateRule.
+		 *  On the other hand, when locating files inside archives, FileLocateRule is required or the locating will fail.
+		 *  FileLocateRule is a series of check points telling the FileSystem where to find the file.
+		 *  These check points can point to archives, even to archives in archives, while normal directory is supported at the same
+		 *  time. It is encouraged to use FileLocateRules, by preparing them at the beginning of your app's Initialization
+		 *  (after engine's init).
+		 */
 		class APAPI FileSystem : public Singleton<FileSystem>
 		{
 		private:

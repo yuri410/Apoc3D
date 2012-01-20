@@ -73,6 +73,7 @@ namespace Apoc3D
 			uint Flag;
 		};
 
+		// the engine has built in support for a kind of uncompressed pak file.
 		class PakArchive : public Archive
 		{
 		private:

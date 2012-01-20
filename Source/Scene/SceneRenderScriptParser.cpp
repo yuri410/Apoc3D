@@ -502,7 +502,8 @@ namespace Apoc3D
 	
 
 
-		
+		// the parsing processing is done recursively as the structure of xml
+		// first the outer element, then the inside ScenePass and Commands
 		void SceneRenderScriptParser::Parse(const ResourceLocation* rl)
 		{
 			TiXmlDocument doc;

@@ -45,10 +45,39 @@ namespace Apoc3D
 		typedef FastMap<Material*, GeometryTable*> MaterialTable;
 		typedef FastMap<uint32, MaterialTable*> PriorityTable;
 
+		/** A hirerachy of tables to store classified render operations.
+		 *  The classification is done by hashing, similar render op will be 
+		 *  grouped together.
+		 */
 		class APAPI BatchData
 		{
 		public:
-			static const int MaxPriority = 10;
+			//static const int MaxPriority = 10;
+
+		public:
+
+			BatchData() : m_objectCount(0) { }
+
+			/** Adds an object's render operations into the internal table.
+			*/
+			void AddVisisbleObject(SceneObject* obj, int level);
+
+			/** Check if any materials with passFlag corresponding to selectMask are already added
+			 *  into the table.
+			 */
+			bool HasObject(uint64 selectMask);
+
+			/** Clears all the render operations added.
+			*/
+			void Clear();
+
+			/** Gets a reference to the internal table
+			*/
+			const PriorityTable& getTable() const { return m_priTable; }
+
+			/** Gets the total number of objects added since last Clear
+			*/
+			int getObjectCount() const { return m_objectCount; }
 
 		private:
 			PriorityTable m_priTable;
@@ -56,18 +85,6 @@ namespace Apoc3D
 
 			int m_objectCount;
 
-		public:
-			const PriorityTable& getTable() const { return m_priTable; }
-
-			BatchData() : m_objectCount(0) { }
-
-			int getObjectCount() const { return m_objectCount; }
-
-			void AddVisisbleObject(SceneObject* obj, int level);
-
-			bool HasObject(uint64 selectMask);
-
-			void Clear();
 		};
 
 		/* Renders a scene with a particular render script.

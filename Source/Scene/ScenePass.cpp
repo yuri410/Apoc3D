@@ -47,6 +47,9 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
+		/** Vertex structure for screen quad
+		 *  The vertices are in screen space; the tex coords will be calculated in vertex shader
+		 */
 		struct QuadVertex
 		{
 			float Position[3];
@@ -61,6 +64,7 @@ namespace Apoc3D
 				m_instuctions.Add(passData->Instructions[i]);
 			}
 
+			// generate the quad vertices
 			ObjectFactory* fac = device->getObjectFactory();
 
 
@@ -98,6 +102,7 @@ namespace Apoc3D
 			RendererEffectParams::CurrentCamera = m_currentCamera;
 			if (m_currentCamera != m_parentProc->getLastCamera())
 			{
+				// only re add visible objects into table when the camera is changed.
 				batchData->Clear();
 				sceMgr->PrepareVisibleObjects(m_currentCamera, batchData);
 			}
@@ -272,7 +277,10 @@ namespace Apoc3D
 			mtrl.Cull = CULL_None;
 			//mtrl.IsBlendTransparent = true;
 
+			// the post here is expected to be an AutomaticEffect
 			AutomaticEffect* autoFx = dynamic_cast<AutomaticEffect*>(effect);
+
+			// assign the parameters
 			for (size_t i=2;i<inst.Args.size();i++)
 			{
 				const SceneOpArg& arg = inst.Args[i];

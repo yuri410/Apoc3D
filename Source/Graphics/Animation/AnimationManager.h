@@ -39,6 +39,15 @@ namespace Apoc3D
 			//template class APAPI std::unordered_map<String, AnimationData*>;
 			typedef std::unordered_map<String, AnimationData*> AnimHashTable;
 
+			/** Animation is only a helper class to make sure animation data is not loaded multiple times.
+			 *
+			 *  Unlike other real resource management classes, this does not provide features like streaming.
+			 *
+			 *  All created animation data by this class can not be deleted. 
+			 *  They will be deleted by the manager when the manager is shut down. 
+			 *  Actually, user can load AnimationData manually if this AnimationManager is felt tricky.
+			 *  locating a file and call Animation::Load will do the job, only few lines of code.
+			 */
 			class APAPI AnimationManager : public Singleton<AnimationManager>
 			{
 			private:

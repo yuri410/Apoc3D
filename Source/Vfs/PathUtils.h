@@ -32,6 +32,8 @@ namespace Apoc3D
 {	
 	namespace VFS
 	{
+		/** A collection of function used to process path strings
+		*/
 		class APAPI PathUtils
 		{
 		public:
@@ -46,7 +48,8 @@ namespace Apoc3D
 			*/
 			static String GetFileNameNoExt(const String& filePath);
 			static String GetFileName(const String& filePath);
-
+			/** Replaces \ with / in a path
+			*/
 			static String NormalizePath(const String& filePath);
 
 			static void SplitFileNameExtension(const String& fileName, String& noext, String& ext);
@@ -60,7 +63,8 @@ namespace Apoc3D
 			*/
 			static void Append(String& str, const String& app);
 			static bool Match(const String& str, const String& pattern, bool caseSensitive);
-			/** Compare two path string. Returns true if equal
+
+			/** Compare two path string in a reliable way. Returns true if equal
 			*/
 			static bool ComparePath(const String& left, const String& right);
 

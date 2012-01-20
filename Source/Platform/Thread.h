@@ -31,7 +31,12 @@ namespace Apoc3D
 {
 	namespace Platform
 	{
+		/** Suspends the calling thread for certain amount of time
+		*/
 		void ApocSleep(uint32 ms);
+
+		/** This is only useful when debugging in windows.
+		*/
 		void SetThreadName(tthread::thread* th, const String& name);
 	}
 }

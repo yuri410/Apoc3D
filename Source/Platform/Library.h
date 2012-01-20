@@ -32,6 +32,8 @@ namespace Apoc3D
 {
 	namespace Platform
 	{
+		/** Represents a dynamic library.
+		*/
 		class APAPI Library
 		{
 		private:
@@ -44,8 +46,13 @@ namespace Apoc3D
 			{}
 
 			const String &getName() const { return m_name; }
+			/** 
+			*/
 			void* getSymbolAddress(const String &name) const;
 
+			/** Dynamically loads the library into memory.
+			 *  Exported functions on the library can be called once it is loaded.
+			 */
 			void Load();
 			void Unload();
 

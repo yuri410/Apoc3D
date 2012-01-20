@@ -36,6 +36,8 @@ namespace Apoc3D
 		*/
 		struct PlatformAPISupport
 		{
+			/** A score on a scale of 0-100 showing how well the API supports the platform
+			*/
 			int Score;
 			String PlatformName;
 		};

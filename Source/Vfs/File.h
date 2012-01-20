@@ -31,6 +31,9 @@ namespace Apoc3D
 {
 	namespace VFS
 	{
+		/** Represent the properties of a file. Also provides some
+		 *  cross-platform utility function on file system.
+		 */
 		class APAPI File
 		{
 		protected:

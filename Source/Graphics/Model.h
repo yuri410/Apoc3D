@@ -45,10 +45,11 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		/** Model's geometry part, which is considered as resources for the vertex and index data.
-
-			Internally, models can share the same ModelSharedData, if the geometry is from the same source(i.e. a file).
-			At the same time, they can use difference animation. The handling of these 2 are separated behind the scenes.
-		*/
+         *
+		 *  Internally, models can share the same ModelSharedData, if the geometry is from the same source(i.e. a file).
+		 *  At the same time, they can use difference animation. The handling of these 2 are separated behind the scenes.
+		 *
+		 */
 		class APAPI ModelSharedData : public Resource
 		{
 		private:
@@ -85,7 +86,10 @@ namespace Apoc3D
 		typedef fastdelegate::FastDelegate1<AnimationType, void> ModelAnimationCompletedHandler;
 
 		/** A model is a set of subsets called Mesh, additionally with animation controller and data.
-		*/
+		 *
+		 *  When loading model, ModelManager is recommended, the model manager will create ModelSharedData, which is then
+		 *  used as Model's constructor's parameter.
+		 */
 		class APAPI Model : public Renderable
 		{
 		public:

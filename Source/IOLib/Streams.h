@@ -35,13 +35,15 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		/** Defines represent reference points in streams for seeking.
+		*/
 		enum APAPI SeekMode
 		{
 			SEEK_Begin,
 			SEEK_Current,
 			SEEK_End
 		};
-		/* 
+		/* Provides a generic access of a sequence of bytes.
 		*/
 		class APAPI Stream
 		{
@@ -85,6 +87,8 @@ namespace Apoc3D
 			virtual void Flush() = 0;
 		};
 
+		/** Provides read-only access to a file as a stream
+		*/
 		class APAPI FileStream : public Stream
 		{
 		private:
@@ -122,6 +126,8 @@ namespace Apoc3D
 
 			virtual void Flush() { }
 		};
+		/** Provides write-only access to a file as a stream
+		*/
 		class APAPI FileOutStream : public Stream
 		{
 		private:
@@ -162,7 +168,8 @@ namespace Apoc3D
 			virtual void Flush();
 			
 		};
-
+		/** Provides access to a space in memory as a stream
+		*/
 		class APAPI MemoryStream : public Stream
 		{
 		private:
@@ -240,6 +247,9 @@ namespace Apoc3D
 			virtual void Flush() { }
 		};
 
+		/** Provides access to a portion of another stream as a new stream
+		 *  Close operation done on this stream will not affect the parent stream.
+		 */
 		class APAPI VirtualStream : public Stream
 		{
 		private:
@@ -357,7 +367,8 @@ namespace Apoc3D
 			virtual void Flush() { m_baseStream->Flush(); }
 		};
 
-
+		/** Provides access to a dynamic length of space in memory as a stream
+		*/
 		class APAPI MemoryOutStream : public Stream
 		{
 		private:

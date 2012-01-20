@@ -41,6 +41,10 @@ namespace Apoc3D
 		{
 			//template class APAPI vector<int32>;
 
+			/** Defines a bone in model. 
+			 *
+			 *  Bind poses for animation purposes are stored with this class.
+			 */
 			class APAPI Bone
 			{
 			private:
