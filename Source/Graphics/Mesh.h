@@ -56,6 +56,13 @@ namespace Apoc3D
 			const int32* getPartVertexCount() const { return m_partVertexCount; } 
 			const int32 getPartCount() const { return m_indexBuffers.getCount(); }
 
+			/** A set of arrays of materials.
+			 *  Each array in the set is corresponding to a sub mesh. each material as the array element is a 
+			 *  keyframe material if material animation is applicable.
+			 *
+			 *  When not using any material animation, this should be a set of arrays with a length of 1.
+			 *  That is in equivalent to a set of Material.
+			 */
 			MeshMaterialSet<Material*>* getMaterials() { return &m_materials; }
 			int32 getVertexSize() const { return m_vertexSize; }
 			int32 getVertexCount() const { return m_vertexCount; }

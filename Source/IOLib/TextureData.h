@@ -38,7 +38,7 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		/** Defines one entire texture level's data stored in binary form and procedures to load them.
+		/** Defines one entire texture level's data stored in binary form and procedures to load/save them.
 		*/
 		class APAPI TextureLevelData
 		{
@@ -46,7 +46,11 @@ namespace Apoc3D
 			int32 Height;
 			int32 Width;
 			int32 Depth;
+			/** The size of the content data in bytes.
+			*/
 			int32 LevelSize;
+			/** Packed pixel data.
+			*/
 			char* ContentData;
 
 			TextureLevelData()
@@ -62,7 +66,7 @@ namespace Apoc3D
 			void SaveData(TaggedDataWriter* data) const;
 		};
 
-		/** Defines one entire texture's data stored in binary form and procedures to load them.
+		/** Defines one entire texture's data stored in binary form and procedures to load/save them.
 		*/
 		class APAPI TextureData
 		{

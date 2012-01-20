@@ -65,6 +65,8 @@ namespace Apoc3D
 
 			uint64 PassFlags;
 
+			/** 
+			*/
 			int32 Priority;
 			
 			Blend SourceBlend;

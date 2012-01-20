@@ -49,11 +49,13 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		/** Defines one entire mesh's data stored in binary form and procedures to load them.
+		/** Defines one entire mesh's data stored in binary form and procedures to load/save them.
 		*/
 		class APAPI MeshData
 		{
 		public:
+			/** Vertex data, no matter what exactly the vertex elements are, this is in a binary buffer form.
+			*/
 			char* VertexData;
 
 			FastList<VertexElement> VertexElements;
@@ -65,8 +67,17 @@ namespace Apoc3D
 			uint32 VertexSize;
 			uint32 VertexCount;
 
+			/** A set of arrays of material data.
+			 *  Each array in the set is corresponding to a sub mesh. each material data as the array element is a 
+			 *  keyframe material if material animation is applicable.
+			 *
+			 *  When not using any material animation, this should be a set of arrays with a length of 1.
+			 *  That is in equivalent to a set of MaterialData.
+			 */
 			MeshMaterialSet<MaterialData> Materials;
 
+			/** A list of triangle faces. Only triangle list is supported as primitive at this stage.
+			*/
 			FastList<MeshFace> Faces;
 
 			static uint32 ComputeVertexSize(const FastList<VertexElement>& elements);
@@ -79,7 +90,7 @@ namespace Apoc3D
 
 		};
 
-		/** Defines one entire model's data stored in binary form and procedures to load them.
+		/** Defines one entire model's data stored in binary form and procedures to load/save them.
 		 */
 		class APAPI ModelData
 		{
@@ -87,6 +98,8 @@ namespace Apoc3D
 			void ReadData(TaggedDataReader* data, int32 id);
 			TaggedDataWriter* WriteData() const;
 		public:
+			/** A list of meshes that this model has.
+			*/
 			FastList<MeshData*> Entities;
 
 			ModelData()

@@ -39,17 +39,24 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		/** Defines one entire effect's data stored in binary form and procedures to load them.
+		/** Defines one entire effect's data stored in binary form and procedures to load/save them.
 		*/
 		class APAPI EffectData
 		{
 		public:
 			String Name;
+			/** The vertex shader code. Could be compiled HLSL microcode or GLSL source 
+			 *  depends on the
+			 */
 			char* VSCode;
 			char* PSCode;
+			/** The length of VSCode in bytes.
+			*/
 			int VSLength;
 			int PSLength;
 			
+			/** The major version of shader model expected.
+			*/
 			int MajorVer;
 			int MinorVer;
 
