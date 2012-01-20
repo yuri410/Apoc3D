@@ -77,15 +77,20 @@ namespace SampleTerrain
 		Game::Load();
 
 		{
-			// this will change the default file locate rule 'Textures' to our own one, which
+			// This will change the default FileLocateRule 'Textures' to our own one, which
 			// can search in the pak file.
 			LocateCheckPoint cp;
 			cp.AddPath(L"textures.pak");
 			FileLocateRule::Textures.AddCheckPoint(cp);
 		}
 		{
-			// add a comic font to the font manager
+			// Add a comic font to the font manager. Use of FileLocation is explained here.
+
+			// Locate the file, using "comic.fnt" as the name, FileLocateRule::Default as the rule.
+			// In this case, Default is to search the file in the same dir as the application
 			FileLocation* fl = FileSystem::getSingleton().Locate(L"comic.fnt", FileLocateRule::Default);
+
+			// Giving the font a name and telling FontManager the location, it will load it.
 			FontManager::getSingleton().LoadFont(m_device, L"comic", fl);
 		}
 
@@ -105,9 +110,9 @@ namespace SampleTerrain
 
 		m_sceneRenderer = new SceneRenderer(m_device);
 
-		// the scene render script is located
+		// The scene render script is located
 		fl = FileSystem::getSingleton().Locate(L"Renderer.xml", FileLocateRule::Default);
-		// then loaded by SceneRenderer
+		// Then loaded by SceneRenderer
 		XMLConfiguration* config = new XMLConfiguration(fl);
 		m_sceneRenderer->Load(config);
 		delete config;

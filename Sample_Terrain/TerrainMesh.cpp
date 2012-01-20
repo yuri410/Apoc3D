@@ -225,6 +225,8 @@ namespace SampleTerrain
 	}
 	void TerrainMeshManager::InitializeResources(RenderDevice* device)
 	{
+		// load up shared things
+
 		m_idxLod0 = new SharedIndexData(device, 128);
 		m_idxLod1 = new SharedIndexData(device, 96);
 		m_idxLod2 = new SharedIndexData(device, 64);
