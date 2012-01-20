@@ -61,7 +61,7 @@ namespace Apoc3D
 		*/
 
 		/* Represent a sequence of scene passes that can finally 
-		   generate end result.
+		   generate the end result.
 
 		   A SceneProcedure can be either normal passes (like shadow
 		   mapping) or post effect passes (like bloom & HDR).
@@ -70,24 +70,10 @@ namespace Apoc3D
 		*/
 		class APAPI SceneProcedure
 		{
-		private:
-			RenderDevice* m_renderDevice;
-
-			FastList<ScenePass*> m_passes;
-			SceneVariable** m_vars;
-			int m_varCount;
-
-			FastList<RenderTarget*> m_createdRenderTarget;
-			FastList<ResourceHandle<Texture>*> m_createdTextures;
-			FastList<GaussBlurFilter*> m_createdGaussFilters;
-
-			bool m_isAvailable;
-			String m_name;
-
-			const Camera* m_lastCamera;
 		public:
-			const Camera* getLastCamera() const { return m_lastCamera; }
-
+			/** Find a variable define in the procedure script by name; 
+			 *  then returns as a RenderTarget.
+			 */
 			RenderTarget* FindRenderTargetVar(const String& name) const
 			{
 				if (!m_isAvailable)
@@ -105,11 +91,37 @@ namespace Apoc3D
 			SceneProcedure(RenderDevice* device);
 			~SceneProcedure(void);
 
+			/** Check if the SceneProcedure is available. A SceneProcedure is unavailable if the techniques
+			 *  used is not supported. (eg. A type of render target format is not supported)
+			 */
 			bool IsAvailable();
 
 			void Load(SceneRenderer* renderer, const ResourceLocation* rl);
 
+			/** Execute the procedure, respectively invoking a series of Scene Passes.
+			*/
 			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
+			
+			/** Gets the current camera in the rendering process.
+			 *  If this method is call when not rendering, eg. updating, the last camera use will be returned.
+			 */
+			const Camera* getLastCamera() const { return m_lastCamera; }
+
+		private:
+			RenderDevice* m_renderDevice;
+
+			FastList<ScenePass*> m_passes;
+			SceneVariable** m_vars;
+			int m_varCount;
+
+			FastList<RenderTarget*> m_createdRenderTarget;
+			FastList<ResourceHandle<Texture>*> m_createdTextures;
+			FastList<GaussBlurFilter*> m_createdGaussFilters;
+
+			bool m_isAvailable;
+			String m_name;
+
+			const Camera* m_lastCamera;
 		};
 	};
 };

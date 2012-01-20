@@ -79,6 +79,7 @@ namespace Apoc3D
 		}
 		else
 		{
+			// uses the app's working dir as one of the FileSystem's working dir.
 			char currentDir[260];
 
 			if( _getcwd( currentDir, sizeof(currentDir)-1 ) != NULL )

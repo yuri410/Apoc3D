@@ -48,6 +48,16 @@ namespace Apoc3D
 		class APAPI ScenePass
 		{
 		public:
+
+			ScenePass(RenderDevice* dev, SceneRenderer* renderer, SceneProcedure* parent, const ScenePassData* passData);
+			~ScenePass(void);
+
+			/** Begins executing the pass' procedure for once.
+			*/
+			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
+			
+			/** Gets the camera used in this scene pass.
+			 */
 			const Camera* getCurrentCamera() const { return m_currentCamera; }
 
 			/** Gets the sequence of this pass in a entire scene rendering process.
@@ -57,11 +67,6 @@ namespace Apoc3D
 			/** Gets the name of this pass.
 			*/
 			String getName() const { return m_name; }
-
-			ScenePass(RenderDevice* dev, SceneRenderer* renderer, SceneProcedure* parent, const ScenePassData* passData);
-			~ScenePass(void);
-
-			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
 
 		private:
 			struct ExecutionValue

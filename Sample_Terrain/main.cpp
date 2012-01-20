@@ -67,6 +67,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	Plugin* input = new Apoc3D::Input::Win32::WinInputPlugin();
 	Plugin* d3d = new Apoc3D::Graphics::D3D9RenderSystem::D3D9RSPlugin();
 
+	// escon hold all the parameters to initialize the engine
 	ManualStartConfig escon;
 	//escon.PluginDyList.Add(L"Apoc3D.D3D9RenderSystem");
 	escon.PluginList.Add(input);
