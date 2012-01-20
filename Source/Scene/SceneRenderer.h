@@ -46,17 +46,22 @@ namespace Apoc3D
 		typedef FastMap<uint32, MaterialTable*> PriorityTable;
 
 		/** A hirerachy of tables to store classified render operations.
-		 *  The classification is done by hashing, similar render op will be 
-		 *  grouped together.
+		 *
+		 *  At the time visible objects are detected, their render operations will
+		 *  be inserted into this sheet, grouped according to their sources, materials, priorities..
+		 *  The classification is done by hashing; similar render op will be 
+		 *  grouped together. This is good for minimizing render state changes if grouped 
+		 *  render operations are drawn one time. And also instancing is automatic once
+		 *  the shader effect supports.
 		 */
 		class APAPI BatchData
 		{
 		public:
-			//static const int MaxPriority = 10;
+			static const uint MaxPriority = 32;
 
 		public:
 
-			BatchData() : m_objectCount(0) { }
+			BatchData();
 
 			/** Adds an object's render operations into the internal table.
 			*/

@@ -51,6 +51,21 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
+		BatchData::BatchData()
+			: m_objectCount(0), m_priTable(5, IBuiltInEqualityComparer<uint>::Default)
+		{
+			for (int i=0;i<MaxPriority;i++)
+			{
+				MaterialTable* mtrlTable;
+				if (!m_priTable.TryGetValue(i, mtrlTable))
+				{
+					mtrlTable = new MaterialTable();
+					m_priTable.Add(i,mtrlTable);
+				}
+			}
+			
+		}
+
 		void BatchData::AddVisisbleObject(SceneObject* obj, int level)
 		{
 			m_objectCount++;
@@ -73,12 +88,14 @@ namespace Apoc3D
 						Matrix::Multiply(temp, op.RootTransform, obj->getTrasformation());
 						op.RootTransform = temp;
 
+						uint priority = min(mtrl->getPriority(), MaxPriority);
+
 						// add the rop from outer table to inner table(top down)
 						MaterialTable* mtrlTable;
-						if (!m_priTable.TryGetValue(mtrl->getPriority(), mtrlTable))
+						if (!m_priTable.TryGetValue(priority, mtrlTable))
 						{
 							mtrlTable = new MaterialTable();
-							m_priTable.Add(mtrl->getPriority(),mtrlTable);
+							m_priTable.Add(priority,mtrlTable);
 						}
 
 						GeometryTable* geoTable;

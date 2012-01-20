@@ -142,6 +142,9 @@ namespace Apoc3D
 			*/
 			void setTexture(int idx, ResourceHandle<Texture>* value) { m_tex[idx] = value; }
 
+			/** Gets the priority of this material. The legal range should be from 0 to BatchData::MaxPriority.
+			 *  Higher priority will make the geometry assigned drawn earlier before the other.
+			 */
 			const uint32 getPriority() const { return m_priority; }
 			void setPriority(uint32 value) { m_priority = value; }
 

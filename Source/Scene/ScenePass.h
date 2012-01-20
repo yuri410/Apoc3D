@@ -42,7 +42,7 @@ namespace Apoc3D
 		   
 		   As a a part of render script, the ScenePass controls 
 		   a pass of scene rendering. It selects objects for rendering
-		   by check the objects' Material::PassFlag against the selectorID
+		   by check the objects' Material::PassFlag against the selectorID as
 		   declared in the script.
 		*/
 		class APAPI ScenePass
