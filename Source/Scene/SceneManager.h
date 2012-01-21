@@ -37,9 +37,13 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
+		/** A callback interface used for ray-based selection check.
+		*/
 		class IObjectFilter
 		{
 		public:
+			/** Check if an intersected object should be accepted
+			*/
 			virtual bool Check(SceneObject* obj) = 0;
 			virtual bool Check(SceneNode* node) { return true; }
 		};

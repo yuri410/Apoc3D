@@ -134,7 +134,7 @@ namespace Apoc3D
 				*(uint*)rect.getDataPointer() = 0xffffffff;
 				m_texture->Unlock(0);
 
-
+				// instancing check
 				{
 					for (int i=0;i<m_parameters.getCount();i++)
 					{
@@ -162,6 +162,12 @@ namespace Apoc3D
 			}
 			void AutomaticEffect::Setup(Material* mtrl, const RenderOperation* rop, int count)
 			{
+				// set the param's value one by one. 
+
+				// TODO: some optimization can be done to reduce the parameters here.
+				// as the material for all the render operations in the list is the same.
+				// material parameters had better to be set only once.
+
 				for (int i=0;i<m_parameters.getCount();i++)
 				{
 					EffectParameter& ep = m_parameters[i];
@@ -519,6 +525,12 @@ namespace Apoc3D
 
 			int AutomaticEffect::begin()
 			{
+				// as you can see, some parameters are set up here.
+				// The reason here is for performance reasons, the begin method
+				// is called per material and geometry shape, not per render operation.   
+				// The amount is much smaller than render operations.
+				// As a result, data sending to the GPU will be fewer.
+
 				float t = m_lastTime + 0.016f;//(float)( clock() / CLOCKS_PER_SEC);
 				m_unifiedTime += t - m_lastTime;
 				m_lastTime = t;

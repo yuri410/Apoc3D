@@ -91,7 +91,9 @@ namespace Apoc3D
 				*/
 				EPUSAGE_Trans_View,
 				/** tr_instanceworld
-				*/
+				 *  This parameter is supposed to be a 4x4 matrix array in the shader with a length of
+				 *  InstancingData::MaxOneTimeInstances
+				 */
 				EPUSAGE_Trans_InstanceWorlds,
 				/** tr_proj
 				*/
@@ -144,7 +146,7 @@ namespace Apoc3D
 				*/
 				EPUSAGE_SV2_ViewportSize,
 
-				/** s_unifiedTime
+				/** s_unifiedTime. A time from 0 to 5pi will be assigned to the parameter
 				*/
 				EPUSAGE_S_UnifiedTime
 			};
@@ -174,10 +176,12 @@ namespace Apoc3D
 				material is used. In other occasions like the effect is a post effect without materials, the value of custom
 				effect can be assigned by scene rendering scripts.
 
-				A typical parameter's usage string can be understood by the engine as a matter of fact the engine supports
-				a range of predefined usage names. When this type of parameters are used, no more attention from developer is needed.
+				A typical parameter's usage string can be understood by the engine as a matter of fact the engine can only supports
+				a finite range of predefined usage names. When this type of parameters are used, 
+				no more attention from application developer is needed.
 
-				The so called parameter's usage string is written in the effect parameter listing file when building resources using APBuild or APDesigner.
+				The so called parameter's usage string is written in the effect parameter listing file along with the shader code,
+				when building resources using APBuild or APDesigner.
 			*/
 			class APAPI EffectParameter
 			{	

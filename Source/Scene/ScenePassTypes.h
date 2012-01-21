@@ -40,7 +40,7 @@ namespace Apoc3D
 	{
 		/* Now the type system used inside scene script is hard coded. All types are check and 
 		 * interpreted by fixed logic inside the engine. 
-		 * In the future, a type system may be implemented. Custom types,
+		 * In the future, a object-oriented type system may be implemented. Custom types,
 		 * object handling may be easier to use/test. And the code will be more readable and less redundant.
 		 */
 

@@ -64,6 +64,10 @@ namespace Apoc3D
 			struct APAPI RenderParameters
 			{
 				bool IsWindowd;
+				/** Represents when not full screen rendering, whether
+				 *  the engine should create a RenderWindow or(true), or
+				 *  using a user specified render area as a RenderView(false).
+				 */
 				bool IsFullForm;
 
 				int BackBufferWidth;
@@ -75,6 +79,9 @@ namespace Apoc3D
 				uint32 FSAASampleCount;
 				bool EnableVSync;
 
+				/** When IsFullForm==true, this is used to indicate the target area
+				 *  to present the render result.
+				 */
 				uint64 TargetHandle;
 
 				void* UserData;
@@ -100,6 +107,9 @@ namespace Apoc3D
 				*/
 				virtual bool SupportsRenderControl() { return m_supportsRenderControl; }
 
+				/** Creates a render view. The creation can create a render window or render view. 
+				 *  See RenderParameters for details.
+				 */
 				RenderView* Create(const RenderParameters &pm);
 				void Destroy(RenderView* rc);
 

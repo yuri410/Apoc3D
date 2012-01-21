@@ -42,7 +42,9 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		/** The geometry data including vertices as well as indices and materials.
-		*/
+		 *  Every mesh has several materials. These materials cut the mesh into
+		 *  sub parts, where each part has only one material.
+		 */
 		class APAPI Mesh : public Renderable
 		{
 		public:

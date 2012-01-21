@@ -38,8 +38,8 @@ namespace Apoc3D
 		namespace RenderSystem
 		{
 			/* Manages all registered graphics APIs. 
-			* Creates device content best suited for the platform.
-			*/
+			 * Creates device content best suited for the platform.
+			 */
 			class APAPI GraphicsAPIManager : public Singleton<GraphicsAPIManager>
 			{
 			private:

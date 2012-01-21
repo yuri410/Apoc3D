@@ -444,10 +444,21 @@ namespace Apoc3D
 		ConfigurationSection* Save();
 	public:
 		const String& getName() const { return m_name; }
-		const String& getBasePath() const { return m_basePath; }
+		
+		/** Gets the relative path for textures
+		*/
 		const String& getTexturePath() const { return m_texturePath; }
+		/** Gets the absolute path for placing imported assets or project items
+		*/
 		const String& getOutputPath() const { return m_outputPath; }
+
+		/** Sets the absolute path for the project's source assets. 
+		 *  Once this is set, OutputPath will be changed to "build" sub folder under this path
+		 */
 		void setBasePath(const String& path);
+		/** Gets the absolute path for the project's source assets. 
+		*/
+		const String& getBasePath() const { return m_basePath; }
 
 		const FastList<ProjectItem*>& getItems() const { return m_items; }
 

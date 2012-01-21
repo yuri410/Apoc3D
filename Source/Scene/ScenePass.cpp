@@ -195,6 +195,7 @@ namespace Apoc3D
 		{
 			int flags=0;
 
+			// retrieve the arguments
 			if (inst.Args[0].IsImmediate)
 			{
 				if (inst.Args[0].DefaultValue[0])

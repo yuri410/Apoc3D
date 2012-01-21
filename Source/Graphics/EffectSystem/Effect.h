@@ -48,7 +48,18 @@ namespace Apoc3D
 				Effect(void);
 				virtual ~Effect(void);
 
+				/** Begins a effect.
+				 *  Ordinarily this is call by the RenderDevice when drawing a list of render operations.
+				 *  As the nature of batching, that is to say, this is called per material and geometry shape.
+				 *  For instance, this will not be call more than one time, 
+				 *  if all the render operations are from the same model.
+				 *
+				 * @return The number of passes needed.
+				 */
 				int Begin();
+				/** Ends s effect.
+				 *  This must be call corresponding to Begin. 
+				 */
 				void End();
 
 				/** Prepare the parameter setting up
@@ -58,9 +69,16 @@ namespace Apoc3D
 				*/
 				virtual void Setup(Material* mtrl, const RenderOperation* rop, int count) = 0;
 
+				/** Some effects need to draw the mesh more than one time.
+				 *  So material-shape level multi-pass is supported here.
+				 *
+				 *  Notice this is different form scene-level pass(aka. ScenePass).
+				 */
 				virtual void BeginPass(int passId) = 0;
 				virtual void EndPass() = 0;
 
+				/** Check if the effect supports instancing. 
+				*/
 				virtual bool SupportsInstancing() { return false; }
 
 				bool IsUnsupported() const { return m_isUnsupported; }
@@ -81,7 +99,7 @@ namespace Apoc3D
 
 			};
 
-			/** AutomaticEffect is a sub set of Effect which can be create from AFX while only each parameter's usage 
+			/** AutomaticEffect is a sub set of Effect which can be create from AFX while only each parameter's usage string
 				is required for setup, so that the engine can set up the
 				parameters based on the usage description all by the engine itself, without additional setup code.
 
@@ -98,7 +116,10 @@ namespace Apoc3D
 				virtual void BeginPass(int passId);
 				virtual void EndPass();
 
-
+				/** Check if the effect supports instancing.
+				 *  The effect is regarded instancing once at least one parameter with usage
+				 *  "tr_instanceworld" is used.
+				 */
 				virtual bool SupportsInstancing();
 
 				int FindParameterIndex(const String& name);

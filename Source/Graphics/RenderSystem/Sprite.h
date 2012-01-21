@@ -38,19 +38,12 @@ namespace Apoc3D
 		namespace RenderSystem
 		{
 			/** Sprite is a utility used to draw textured rectangles in viewport. 
-			*/
+			 *  Sprite can work with a built-in matrix stack. When using matrix 
+			 *  stack, please notice that you should keep the stack balanced. 
+			 *  A call to SetTransform will push a matrix into the stack.
+			 */
 			class APAPI Sprite
 			{
-			private:
-				RenderDevice* m_renderDevice;
-				Matrix m_transform;
-				MatrixStack m_stack;
-
-				bool m_useStack;
-
-			protected:
-				Sprite(RenderDevice* rd);
-				
 			public:
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
 				bool isUsingStack() const { return m_useStack; }
@@ -113,6 +106,17 @@ namespace Apoc3D
 						m_transform = matrix;
 					}
 				}
+
+			private:
+				RenderDevice* m_renderDevice;
+				Matrix m_transform;
+				MatrixStack m_stack;
+
+				bool m_useStack;
+
+			protected:
+				Sprite(RenderDevice* rd);
+
 			};
 		}
 	}

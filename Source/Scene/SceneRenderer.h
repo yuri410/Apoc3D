@@ -51,7 +51,7 @@ namespace Apoc3D
 		 *  be inserted into this sheet, grouped according to their sources, materials, priorities..
 		 *  The classification is done by hashing; similar render op will be 
 		 *  grouped together. This is good for minimizing render state changes if grouped 
-		 *  render operations are drawn one time. And also instancing is automatic once
+		 *  render operations are drawn one time. And also, with this, instancing is automatic once
 		 *  the shader effect supports.
 		 */
 		class APAPI BatchData
@@ -96,20 +96,20 @@ namespace Apoc3D
 		*/
 		class APAPI SceneRenderer
 		{
-		private:
-			RenderDevice* m_renderDevice;
-			//FastList<ScenePass*> m_passes;
-			BatchData m_batchData;
-
-			FastList<SceneProcedure*> m_procFallbacks;
-			int m_selectedProc;
-
-			FastList<Camera*> m_cameraList;
-
 		public:
 			SceneRenderer(RenderDevice* dev);
 			~SceneRenderer(void);
 
+			/** The scene renderer loads from a config which lists several render script (SceneProcedure) files.
+			 *  What the config has, is all options as SceneProcedure xmls for the renders to 
+			 *  choose from. The input list is expected to be sorted form high ended SceneProcedures
+			 *  to low ended ones. A fall back will be performed if the prior ones are 
+			 *  not supported by the hardware.
+			 *  SceneRenderer will eventually select one SceneProcedure. And if the hardware
+			 *  does not support any of the SceneProcedures, nothing will be selected; scene will not
+			 *  be drawn in this case. In the future, a explanation for reason will be displayed on the expected
+			 *  RenderTarget.
+			 */
 			void Load(Configuration* config);
 			void Load(const String& configName);
 
@@ -122,19 +122,39 @@ namespace Apoc3D
 				m_cameraList.Remove(camera);
 			}
 
+			/** Begin the whole rendering process. The client application should use this method to
+			 *  draw the scene.
+			 */
 			void RenderScene(SceneManager* sceMgr);
 
-			/** Renders the current batch produced by scene pass
+			/** Renders the current batch data produced by instructions in the scene pass.
 			*/
 			void RenderBatch(int selectorID);
 
+			/** Gets the index of selected SceneProcedure.
+			 *  If no SceneProcedure is selected, returns -1.
+			 */
 			int getSelectedProcID() const { return m_selectedProc; }
+			/** Gets the selected SceneProcedure.
+			 *  If no SceneProcedure is selected, returns 0.
+			 */
 			SceneProcedure* getSelectedProc() const
 			{
 				if (m_selectedProc!=-1)
 					return m_procFallbacks[m_selectedProc];
 				return 0;
 			}
+
+		private:
+			RenderDevice* m_renderDevice;
+			//FastList<ScenePass*> m_passes;
+			BatchData m_batchData;
+
+			FastList<SceneProcedure*> m_procFallbacks;
+			int m_selectedProc;
+
+			FastList<Camera*> m_cameraList;
+
 		};
 	};
 	namespace Collections

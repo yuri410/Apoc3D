@@ -176,6 +176,8 @@ namespace Apoc3D
 		{
 			m_selectedProc = -1;
 
+			// when loading, each script listed will be loaded
+			// then the engine will do a check one them
 			for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator(); iter.MoveNext();)
 			{
 				String file = (*iter.getCurrentValue())->getAttribute(L"Script");
@@ -188,8 +190,6 @@ namespace Apoc3D
 
 				m_procFallbacks.Add(proc);
 
-				
-				//m_procFallbacks.Reverse();
 				
 				if (m_selectedProc==-1)
 				{

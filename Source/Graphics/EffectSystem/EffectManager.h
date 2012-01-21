@@ -41,6 +41,9 @@ namespace Apoc3D
 			//template class APAPI unordered_map<String, Effect*>;
 			typedef unordered_map<String, Effect*> EffectTable;
 
+			/** Keeps track of all shader effects.
+			 *  All fx are recommended to be loaded at the beginning of your program.
+			 */
 			class APAPI EffectManager : public Singleton<EffectManager>
 			{
 			private:
@@ -56,7 +59,7 @@ namespace Apoc3D
 				//void ReloadEffect(RenderDevice* device, const ResourceLocation* fl);
 				void LoadEffect(RenderDevice* device, const ResourceLocation* rl);
 
-				/** Loads a set of effects from a APBuild-generated xml list automatically.
+				/** Loads all of a project's effects from a APBuild-generated xml list automatically.
 				*/
 				void LoadEffectFromList(RenderDevice* device, const ResourceLocation* rl);
 

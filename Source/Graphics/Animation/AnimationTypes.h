@@ -151,8 +151,9 @@ namespace Apoc3D
 				}
 			};
 
-			/** Describes the material frame at a single point in time.
-			*/
+			/** Describes the material key frame at a single point in time.
+			 *  For more information about material key frame, please see Mesh.
+			 */
 			class APAPI MaterialAnimationKeyframe
 			{
 			private:
