@@ -37,6 +37,9 @@ using namespace Apoc3D::Graphics;
 
 namespace APBuild
 {
+	/** More descriptions on these build config structs can be found in Project.h
+	*/
+
 	enum TextureFilterType
 	{
 		TFLT_Nearest,

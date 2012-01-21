@@ -34,8 +34,8 @@ using namespace Apoc3D::Graphics;
 
 namespace Apoc3D
 {
-	/** Holds, load and save project configuration file.
-		Include project directory structure, and all parameters used to compile assets to
+	/** Presents and provides load and save operation for project configuration file.
+		Includes project directory structure, and all parameters used to compile assets to
 		final formats.
 	*/
 
@@ -70,10 +70,20 @@ namespace Apoc3D
 		}
 	public:
 		virtual ProjectItemType getType() const = 0;
+		
+		/** Check if the item is not built yet
+		*/
 		virtual bool IsNotBuilt() = 0;
+		/** Check if the item's built is earlier than the given time or not
+		*/
 		virtual bool IsEarlierThan(time_t t) = 0;
+		/** Indicates if the item's required further editing on the built file after building
+		*/
 		virtual bool RequiresPostEdit() { return false; }
 		virtual void Parse(const ConfigurationSection* sect) = 0;
+		/** Save the project item as an section in the project file.
+		 *  @param savingBuild If true, build information in the section will be generated.
+		 */
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) = 0;
 		virtual std::vector<String> GetAllOutputFiles() =0;
 
@@ -93,6 +103,7 @@ namespace Apoc3D
 		String DestFile;
 
 		virtual bool IsNotBuilt();
+
 		virtual bool IsEarlierThan(time_t t);
 
 		virtual std::vector<String> GetAllOutputFiles();
@@ -101,6 +112,9 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 	};
+
+	/** Represents the type of resource that is natively supported by the engine.
+	*/
 	class ProjectResource : public ProjectItemData
 	{
 	protected:
@@ -110,6 +124,10 @@ namespace Apoc3D
 
 		}
 	};
+	/** Represents a project folder 
+	 *  When building, a project folder can either be converted into a archive file, or
+	 *  just as a folder as a result
+	 */
 	class ProjectFolder : public ProjectItemData
 	{
 	public:
@@ -136,6 +154,13 @@ namespace Apoc3D
 		void SavePackBuildConfig(ConfigurationSection* sect);
 	};
 
+	/** A texture
+	 *  When building, a texture can come from 2 type of sources.
+	 *   1. For cubemaps and volume maps, a series of 2D images/textures can be used to 
+	 *      assemble the final result. Each 2D texture is used as a cubemap face or a slice.
+	 *   2. From image/texture files. Pixel conversion, resizing, mipmap generation can be
+	 *      accomplished by the build system when specified.
+	 */
 	class ProjectResTexture : public ProjectResource
 	{
 	public:
@@ -191,6 +216,11 @@ namespace Apoc3D
 
 	};
 
+	/** Represents model with animation
+	 *  When building, a model is converted into a .mesh file, and a .anim file.
+	 *  .mesh file only contains the geometry, material information of the model, while in the anim file
+	 *  frames, bones are included.
+	 */
 	class ProjectResModel : public ProjectResource
 	{
 	public:
@@ -203,6 +233,8 @@ namespace Apoc3D
 		enum MeshBuildMethod
 		{
 			MESHBUILD_ASS,
+			/** The method for importing FBX files
+			*/
 			MESHBUILD_FBX,
 			MESHBUILD_D3D
 		};
@@ -302,6 +334,11 @@ namespace Apoc3D
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t) { return true; }
 	};
+
+	/** Represents font assets.
+	 *  Font asset can only be built from system fonts so far.
+	 *  When using languages like Chinese, Korean, the generated font file could be up to MBs in size.
+	 */
 	class ProjectResFont : public ProjectResource
 	{
 	public:
@@ -343,20 +380,12 @@ namespace Apoc3D
 	};
 
 	/** Represents one asset in the project.
-	*/
+	 *  A ProjectItem is one to one to a ProjectItemData, which means
+	 *  the specific data used in specific type of item. A texture
+	 *  item will use the ProjectResTexture for the data.
+	 */
 	class ProjectItem
 	{
-	private:
-		Project* m_project;
-		ProjectFolder* m_parent;
-
-		ProjectItemData* m_typeData;
-
-		String m_name;
-		
-		/** The time of last build config modification of this item
-		*/
-		time_t m_timeStamp;
 	public:
 		ProjectItem(Project* prj)
 			: m_parent(0), m_typeData(0), m_timeStamp(0), m_project(prj)
@@ -375,6 +404,8 @@ namespace Apoc3D
 		void Parse(const ConfigurationSection* sect);
 		ConfigurationSection* Save(bool savingBuild);
 
+		/** Check if the item's built version is outdated
+		*/
 		bool IsOutDated() const 
 		{
 			if (m_typeData)
@@ -387,8 +418,18 @@ namespace Apoc3D
 		{
 			m_timeStamp = time(0);
 		}
-		//void Build();
+
+	private:
+		Project* m_project;
+		ProjectFolder* m_parent;
+
+		ProjectItemData* m_typeData;
+
+		String m_name;
 		
+		/** The time of the last modification time
+		*/
+		time_t m_timeStamp;
 	};
 	class Project
 	{
@@ -410,10 +451,17 @@ namespace Apoc3D
 
 		const FastList<ProjectItem*>& getItems() const { return m_items; }
 
+		/** Load the project from a ConfigurationSection
+		*/
 		void Parse(const ConfigurationSection* sect);
 		
+		/** Saves the project into a file
+		*/
 		void Save(const String& file);
 
+		/** Generate a series of build action represented by ConfigurationSection object.
+		 *  The sequence is based on the dependency of project items.
+		 */
 		void GenerateBuildScripts(FastList<ConfigurationSection*>& result);
 	};
 

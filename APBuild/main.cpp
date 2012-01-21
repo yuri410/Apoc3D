@@ -32,9 +32,75 @@ using namespace Apoc3D;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Utility;
-//
-//#define BASE_BUILD 0
-//#define FINAL_BUILD 0xff
+
+
+int Build(ConfigurationSection* sect);
+int Build(int argc, _TCHAR* argv[]);
+
+// This APBuild program may be executed by Apoc3D Designer multiple time
+// base on the dependency of project items. For instance, a first time build 
+// could used to process basic textures and models. Then a second
+// build will be called to pack them into archive files.
+int _tmain(int argc, _TCHAR* argv[])
+{
+	Initialize();
+
+	int r = 0;
+
+	try
+	{
+		r = Build(argc, argv);
+	}
+	catch (const Apoc3DException& e)
+	{
+		
+	}
+	
+	Finalize();
+
+#ifdef _DEBUG
+	getchar();
+#endif
+	return r;
+}
+
+int Build(int argc, _TCHAR* argv[])
+{
+	if (argc>1)
+	{
+		String basePath = argv[0];
+
+		basePath = PathUtils::GetDirectory(basePath);
+
+		_chdir(StringUtils::toString(basePath).c_str());
+
+		String configPath = argv[1];
+
+		if (!File::FileExists(configPath))
+		{
+			wcout << L"Build file: ";
+			wcout << configPath;
+			wcout << L" does not exist.";
+			return ERR_CONFIG_FILE_NOT_FOUND;
+		}
+		FileLocation* fl = new FileLocation(configPath);
+		XMLConfiguration* config = new XMLConfiguration(fl);
+
+		// find the first section in the build config
+		Configuration::ChildTable::Enumerator e = config->GetEnumerator();
+		e.MoveNext();
+		
+		// build the node
+		return Build(*e.getCurrentValue());
+	}
+	else
+	{
+		cout << "Usage: APBuild [ConfigFile]\n";
+	}
+	return 0;
+}
+
+
 
 int Build(ConfigurationSection* sect)
 {
@@ -72,6 +138,7 @@ int Build(ConfigurationSection* sect)
 	}
 	else if (buildType == L"project" || buildType == L"folder")
 	{
+		// If the node is a project or folder node, building sub-nodes recursively
 		for (ConfigurationSection::SubSectionEnumerator iter =  sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
 		{
@@ -92,8 +159,8 @@ int Build(ConfigurationSection* sect)
 	{
 		return ERR_UNSUPPORTED_BUILD;
 	}
-		
-	
+
+
 
 	for (size_t i=0;i<CompileLog::Logs.size();i++)
 	{
@@ -118,62 +185,3 @@ int Build(ConfigurationSection* sect)
 	CompileLog::Clear();
 	return 0;
 }
-
-int Build(int argc, _TCHAR* argv[])
-{
-	if (argc>1)
-	{
-		String basePath = argv[0];
-
-		basePath = PathUtils::GetDirectory(basePath);
-
-		_chdir(StringUtils::toString(basePath).c_str());
-
-		String configPath = argv[1];
-
-		if (!File::FileExists(configPath))
-		{
-			wcout << L"Build file: ";
-			wcout << configPath;
-			wcout << L" does not exist.";
-			return ERR_CONFIG_FILE_NOT_FOUND;
-		}
-		FileLocation* fl = new FileLocation(configPath);
-		XMLConfiguration* config = new XMLConfiguration(fl);
-
-		Configuration::ChildTable::Enumerator e = config->GetEnumerator();
-		e.MoveNext();
-		//ConfigurationSection* sect = config->GetEnumerator()->second;
-
-		return Build(*e.getCurrentValue());
-	}
-	else
-	{
-		cout << "Usage: APBuild [ConfigFile]\n";
-	}
-	return 0;
-}
-
-int _tmain(int argc, _TCHAR* argv[])
-{
-	Initialize();
-
-	int r = 0;
-
-	try
-	{
-		r = Build(argc, argv);
-	}
-	catch (const Apoc3DException& e)
-	{
-		
-	}
-	
-	Finalize();
-
-#ifdef _DEBUG
-	getchar();
-#endif
-	return r;
-}
-

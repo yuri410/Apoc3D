@@ -65,6 +65,7 @@ namespace Apoc3D
 		sect->AddAttribute(L"Type", PackType);
 		sect->AddAttribute(L"DestinationFile", PathUtils::Combine(m_project->getOutputPath(),DestinationPack));
 
+		// a package file/archive build config section needs every item's path
 		int pakEntryIndex = 0;
 		for (int i=0;i<SubItems.getCount();i++)
 		{
@@ -414,7 +415,6 @@ namespace Apoc3D
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
-
 	
 	void ProjectResFont::Parse(const ConfigurationSection* sect)
 	{
@@ -643,6 +643,7 @@ namespace Apoc3D
 	/*                                                                      */
 	/************************************************************************/
 
+	// Finds all effects in the project
 	void WalkProject(const FastList<ProjectItem*>& items, List<String>& effectsFound)
 	{
 		for (int i=0;i<items.getCount();i++)
@@ -736,6 +737,7 @@ namespace Apoc3D
 		if (destFileTime < t)
 			return true;
 
+		// check if the source file is newer than the built ones.
 		String path = PathUtils::Combine(m_project->getBasePath(), SrcFile);
 		if (File::FileExists(path))
 		{
@@ -987,6 +989,7 @@ namespace Apoc3D
 	}
 	void RecursivePassFolderPacks(int& startNo, FastList<ConfigurationSection*>& result, FastList<ProjectItem*>& items)
 	{
+		// post traversal on the project tree will make leaf folder to pack file builds comes first
 		for (int i=0;i<items.getCount();i++)
 		{
 			if (items[i]->getType() == PRJITEM_Folder)
@@ -1002,12 +1005,16 @@ namespace Apoc3D
 						ConfigurationSection* s = new ConfigurationSection(L"Archive_" + StringUtils::ToString(startNo++));
 						fld->SavePackBuildConfig(s);
 						//parentSect->AddSection(s);
+
+						// these packaging builds will be added to the end, as the prerequisite items should be built first
 						result.Add(s);
 					}
 				}
 			}
 		}
 	}
+
+	// this function is for parsing all sub items in a section
 	void ProjectParse(Project* prj, FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
 	{
 		for (ConfigurationSection::SubSectionEnumerator iter =  sect->GetSubSectionEnumrator();
@@ -1024,6 +1031,7 @@ namespace Apoc3D
 		}
 	}
 
+	// this function is for saving all sub items into a section
 	void ProjectSave(ConfigurationSection* parentSect, FastList<ProjectItem*>& items, bool savingBuild)
 	{
 		for (int i=0;i<items.getCount();i++)

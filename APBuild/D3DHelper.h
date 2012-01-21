@@ -8,6 +8,8 @@
 
 namespace APBuild
 {
+	/** Provide a nullref device for using D3DX functions
+	*/
 	class D3DHelper
 	{
 	private:
