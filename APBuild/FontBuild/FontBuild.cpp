@@ -53,6 +53,10 @@ using namespace Gdiplus;
 
 namespace APBuild
 {
+	/** The font file is made up of the following
+	 *   1. Glyph bitmaps
+	 *   2. Mapping from each character to the glyphs
+	 */
 	struct GlyphBitmap
 	{
 		int Index;
@@ -121,7 +125,8 @@ namespace APBuild
 	};
 
 	
-
+	/** Establish a mapping between a character and a glyph
+	*/
 	struct CharMapping
 	{
 		wchar_t Character;
@@ -191,7 +196,7 @@ namespace APBuild
 		
 		Font font(config.Name.c_str(), config.Size, config.Style);
 
-		//int index = 0;
+		// generate the images for characters as specified in the ranges
 		for (int i=0;i<config.Ranges.getCount();i++)
 		{
 			for (wchar_t ch = (wchar_t)config.Ranges[i].MinChar; 
@@ -233,6 +238,7 @@ namespace APBuild
 
 				const char* data = reinterpret_cast<const char*>(bmpData.Scan0);
 
+				// clip the character
 				{
 					int cropLeft = 0;
 					int cropRight = width - 1;
@@ -309,6 +315,7 @@ namespace APBuild
 
 				data = reinterpret_cast<const char*>(bmpData.Scan0);
 
+				// put the data in bitmap to a byte buffer
 				char* buffer = new char[width*height];
 				int srcofs = 0;
 				int dstofs = 0;
@@ -323,6 +330,8 @@ namespace APBuild
 					dstofs += width;
 				}
 
+				// check duplicated glyphs using hash table
+				// use the previous glyph if a same one already exists
 				GlyphBitmap result;
 				GlyphBitmap glyph(width, height, buffer);
 				if (!glyphHashTable.TryGetValue(glyph, result))

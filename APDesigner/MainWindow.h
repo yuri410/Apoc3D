@@ -38,6 +38,8 @@ using namespace Apoc3D::Math;
 
 namespace APDesigner
 {
+	/** The main window and the main class
+	*/
 	class MainWindow : public RenderWindowHandler
 	{
 	private:

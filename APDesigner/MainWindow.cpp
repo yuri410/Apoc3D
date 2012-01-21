@@ -296,6 +296,9 @@ namespace APDesigner
 
 			FileSystem::getSingleton().AddWrokingDirectory(m_project->getOutputPath());
 
+			// project has default texture dirs
+			// this directory is added to the FileLocateRule by APDesigner, so that
+			// textures can be correctly used
 			if (m_project->getTexturePath().size())
 			{
 				LocateCheckPoint cp;
@@ -303,6 +306,8 @@ namespace APDesigner
 				FileLocateRule::Textures.AddCheckPoint(cp);
 				LogManager::getSingleton().Write(LOG_System, L"Adding texture dir: '" + m_project->getTexturePath() + L"'");
 			}
+			// Once a project is loaded or built, the effects used will be registered/updated in the EffectSystem.
+			// So the editing tools using these effect will work perfectly
 			UpdateProjectEffect();
 		}
 	}

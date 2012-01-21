@@ -207,6 +207,10 @@ namespace Apoc3D
 			
 		};
 
+		/** The manager class for Forms and Panels. And it is also responsible
+		 *  for drawing and updating them.
+		 *  Any forms should be added to this class.
+		 */
 		class UIRoot
 		{
 		private:
