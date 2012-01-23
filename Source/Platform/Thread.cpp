@@ -83,9 +83,10 @@ namespace Apoc3D
 			pthread_mutex_unlock(&fakeMutex);
 #endif
 		}
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+#if _DEBUG
 		void SetThreadNameInternal( DWORD dwThreadID, LPCSTR szThreadName)
 		{
-#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 #if _MSC_VER > 1400
 			THREADNAME_INFO info;
 			info.dwType = 0x1000;
@@ -101,14 +102,18 @@ namespace Apoc3D
 			{
 			}
 #endif
-#endif
 		}
-
+#endif
+#endif
 		
 		void SetThreadName( tthread::thread* th, const String& name)
 		{
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+#if _DEBUG
 			const tthread::thread::native_handle_type handle = th->native_handle();
 			SetThreadNameInternal(GetThreadId(handle), StringUtils::toString(name).c_str());
+#endif
+#endif
 		}
 	}
 }

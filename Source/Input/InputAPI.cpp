@@ -53,8 +53,6 @@ namespace Apoc3D
 			{
 				throw Apoc3DException::createException(EX_InvalidOperation, L"Input API Already registered");
 			}
-
-
 			const vector<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
 
 			for (size_t i = 0; i<plats.size();i++)
@@ -81,10 +79,7 @@ namespace Apoc3D
 		}
 		void InputAPIManager::UnregisterInputAPI(const String& name)
 		{
-			if (m_factories.find(name) == m_factories.end())
-			{
-				throw Apoc3DException::createException(EX_InvalidOperation, L"Graphics API not registered");
-			}
+			bool passed = false;
 
 			for (PlatformTable::iterator iter = m_factories.begin();
 				iter != m_factories.end(); iter++)
@@ -98,17 +93,19 @@ namespace Apoc3D
 						APIList::iterator i2 = list->begin();
 						i2+=i;
 						list->erase(i2);
+						passed = true;
 					}
 				}
+			}
+
+			if (!passed)
+			{
+				throw Apoc3DException::createException(EX_InvalidOperation, L"Input API not registered");
 			}
 		}
 		void InputAPIManager::UnregisterInputAPI(InputAPIFactory* fac)
 		{
-			if (m_factories.find(fac->getName()) == m_factories.end())
-			{
-				throw Apoc3DException::createException(EX_InvalidOperation, L"Graphics API not registered");
-			}
-
+			bool passed = false;
 
 			const vector<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
 			for (size_t i = 0; i < plats.size(); i++)
@@ -122,18 +119,22 @@ namespace Apoc3D
 				if (iter != m_factories.end())
 				{
 					APIList* facList = iter->second;
-					for (int j = facList->size(); j >0; j--)
+					for (int j = facList->size()-1; j >=0; j--)
 					{
 						if (facList->operator[](j).Factory == fac)
 						{
 							APIList::iterator i2 = facList->begin();
 							i2+=i;
 							facList->erase(i2);
-
+							passed = true;
 							break;
 						}
 					}
 				}
+			}
+			if (!passed)
+			{
+				throw Apoc3DException::createException(EX_InvalidOperation, L"Input API not registered");
 			}
 		}
 
