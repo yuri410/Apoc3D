@@ -44,6 +44,9 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		/** This class joins several small models into a big one with each transformed by a matrix.
+		 *  All input models are expected to have the same vertex format.
+		 */
 		class APAPI BatchModelBuilder
 		{
 		public:
