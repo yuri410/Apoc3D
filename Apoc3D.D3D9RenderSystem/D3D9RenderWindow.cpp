@@ -73,6 +73,13 @@ namespace Apoc3D
 				m_swapChain->Present(NULL,NULL,NULL,NULL, NULL);
 			}
 
+			/************************************************************************/
+			/*                                                                      */
+			/************************************************************************/
+
+			// The implementation of the D3D9Game class is just as the way labtd once uses it to initialize D3DDevice.
+			// Despite some more features like the device enumeration were added to the GraphicsDeviceManager to 
+			// increase reliability on latency hardwares, the way to use it almost remains unchanged.
 			void D3D9RenderWindow::D3D9Game::Create()
 			{
 				Game::Create();

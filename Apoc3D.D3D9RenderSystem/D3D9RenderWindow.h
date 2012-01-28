@@ -62,6 +62,12 @@ namespace Apoc3D
 			class D3D9RenderWindow : public RenderWindow
 			{
 			private:
+				/** This Game classes and its dependent classes were once used in labtd. 
+				 *  Now they are just wrapped to fit the new render system interface. This D3D9Game is only the wrapper class.
+				 *  The Game class does the real business. It has its own GameWindow class which is the real place to
+				 *  handle the windows messages. The Game class also has the GraphicsDeviceManager class,
+				 *  which is in charge of creating suitable device and handling device lost.
+				 */
 				class D3D9Game : public Game
 				{
 				private:
