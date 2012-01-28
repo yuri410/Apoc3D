@@ -82,12 +82,25 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameClock.h" />
+    <ClInclude Include="GraphicsDeviceManager.h" />
+    <ClInclude Include="Win32GameWindow.h" />
+    <ClInclude Include="GL1RenderWindow.h" />
+    <ClInclude Include="GL1GraphicsAPIFactory.h" />
     <ClInclude Include="GL1DeviceContent.h" />
     <ClInclude Include="GL1Common.h" />
+    <ClInclude Include="Plugin.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GraphicsDeviceManager.cpp" />
+    <ClCompile Include="Win32GameWindow.cpp" />
+    <ClCompile Include="GL1RenderWindow.cpp" />
+    <ClCompile Include="GL1GraphicsAPIFactory.cpp" />
     <ClCompile Include="GL1DeviceContent.cpp" />
+    <ClCompile Include="Plugin.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

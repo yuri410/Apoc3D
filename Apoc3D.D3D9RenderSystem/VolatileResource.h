@@ -33,6 +33,8 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			/** Provides an interface to release and restore those resource needed to handle when the device is lost. 
+			*/
 			class VolatileResource
 			{
 			private:
@@ -41,7 +43,11 @@ namespace Apoc3D
 				VolatileResource(D3D9RenderDevice* device);
 				virtual ~VolatileResource();
 
+				/** called when OnDeviceLost
+				*/
 				virtual void ReleaseVolatileResource() = 0;
+				/** called when OnDeviceReset
+				*/
 				virtual void ReloadVolatileResource() = 0;
 			};
 		}

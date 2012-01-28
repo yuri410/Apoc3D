@@ -32,6 +32,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma comment(lib, "Apoc3D.lib")
 
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glu32.lib")
+
 #define PLUGIN __declspec(dllexport)
 
 namespace Apoc3D
@@ -42,7 +45,11 @@ namespace Apoc3D
 	{
 		namespace GL1RenderSystem
 		{
-			
+			class GameClock;
+			class Game;
+			class Win32GameWindow;
+
+			class GL1RenderDevice;
 		}
 	}
 }

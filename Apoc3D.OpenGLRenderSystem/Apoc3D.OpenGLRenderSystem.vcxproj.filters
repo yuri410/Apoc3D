@@ -27,12 +27,51 @@
     <ClInclude Include="GL1DeviceContent.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Plugin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GL1GraphicsAPIFactory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GL1RenderWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32GameWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsDeviceManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GL1DeviceContent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GL1GraphicsAPIFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GL1RenderWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32GameWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDeviceManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

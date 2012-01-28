@@ -275,6 +275,13 @@ namespace Apoc3D
 				return width * height * depth * bytepp;
 			}
 
+			/** Gets the num of bytes per pixel of a given format
+			*/
+			static int GetBPP(PixelFormat fmt)
+			{
+				return sizeTable[(int)fmt];
+			}
+
 			/** Converts a PixelFormat value to a string representation
 			*/
 			static String ToString(PixelFormat format)

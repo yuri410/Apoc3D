@@ -22,10 +22,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "D3D9DeviceContent.h"
+#include "GL1DeviceContent.h"
 
-#include "D3D9RenderDevice.h"
-#include "D3D9RenderWindow.h"
+#include "GL1RenderDevice.h"
+#include "GL1RenderWindow.h"
 #include "Apoc3DException.h"
 
 
@@ -34,28 +34,28 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace D3D9RenderSystem
+		namespace GL1RenderSystem
 		{
-			D3D9DeviceContent::D3D9DeviceContent()
+			GL1DeviceContent::GL1DeviceContent()
 				: DeviceContent(true), m_window(0)
 			{
 				m_d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 
 			}
-			D3D9DeviceContent::~D3D9DeviceContent()
+			GL1DeviceContent::~GL1DeviceContent()
 			{
 				m_d3d9->Release();
 				m_d3d9 = 0;
 			}
 
 
-			void D3D9DeviceContent::NotifyWindowClosed(D3D9RenderWindow* wnd)
+			void GL1DeviceContent::NotifyWindowClosed(D3D9RenderWindow* wnd)
 			{
 				if (m_window != wnd)
 					m_window = NULL;
 			}
 
-			RenderView* D3D9DeviceContent::create(const RenderParameters &pm)
+			RenderView* GL1DeviceContent::create(const RenderParameters &pm)
 			{
 				if (m_window)
 				{
@@ -70,7 +70,7 @@ namespace Apoc3D
 				{
 					if (!m_window)
 					{
-						m_window = new D3D9RenderWindow(0, this, pm);
+						m_window = new GL1RenderWindow(0, this, pm);
 
 						return m_window;
 					}

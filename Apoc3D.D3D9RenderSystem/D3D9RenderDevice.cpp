@@ -409,7 +409,7 @@ namespace Apoc3D
 						}
 
 					}
-					else
+					else // the ordinary way. Go through one by one
 					{
 						for (int j=0;j<count;j++)
 						{
@@ -497,6 +497,10 @@ namespace Apoc3D
 
 				return D3D9Utils::ConvertBackDepthFormat(desc.Format);
 			}
+
+			/************************************************************************/
+			/*                                                                      */
+			/************************************************************************/
 
 			bool D3D9Capabilities::SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat)
 			{
