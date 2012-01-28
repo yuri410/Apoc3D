@@ -281,7 +281,26 @@ namespace Apoc3D
 			{
 				return sizeTable[(int)fmt];
 			}
+			static int GetBPP(DepthFormat fmt)
+			{
+				return depSizeTable[(int)fmt];
+			}
+			static int GetStencilDepth(DepthFormat fmt)
+			{
+				switch (fmt)
+				{
+				case DEPFMT_Depth15Stencil1:
+					return 1;
+				case DEPFMT_Depth24Stencil4:
+					return 4;
+				case DEPFMT_Depth24Stencil8:
+					return 8;
+				case DEPFMT_Depth24Stencil8Single:
+					return 8;
 
+				}
+				return 0;
+			}
 			/** Converts a PixelFormat value to a string representation
 			*/
 			static String ToString(PixelFormat format)

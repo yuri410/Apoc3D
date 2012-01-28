@@ -123,7 +123,7 @@ namespace Apoc3D
 
 				m_hDC=GetDC(sss);
 
-				static	PIXELFORMATDESCRIPTOR pfd=				// pfd Tells Windows How We Want Things To Be
+				PIXELFORMATDESCRIPTOR pfd=				// pfd Tells Windows How We Want Things To Be
 				{
 					sizeof(PIXELFORMATDESCRIPTOR),				// Size Of This Pixel Format Descriptor
 					1,											// Version Number
@@ -137,14 +137,14 @@ namespace Apoc3D
 					0,											// Shift Bit Ignored
 					0,											// No Accumulation Buffer
 					0, 0, 0, 0,									// Accumulation Bits Ignored
-					16,											// 16Bit Z-Buffer (Depth Buffer)  
-					0,											// No Stencil Buffer
+					PixelFormatUtils::GetBPP(settings.DepthBufferFormat)*8,	//  Z-Buffer (Depth Buffer)  
+					PixelFormatUtils::GetStencilDepth(settings.DepthBufferFormat),	// Stencil Buffer
 					0,											// No Auxiliary Buffer
 					PFD_MAIN_PLANE,								// Main Drawing Layer
 					0,											// Reserved
 					0, 0, 0										// Layer Masks Ignored
 				};
-
+				
 				int pixFmt = ChoosePixelFormat(m_hDC, &pfd);
 				SetPixelFormat(m_hDC, pixFmt, &pfd);
 				m_hRC = wglCreateContext(m_hDC);
@@ -413,8 +413,11 @@ namespace Apoc3D
 							dmode = dm;
 						}
 					}
-				}
 
+					validSettings.BackBufferWidth = (int)dmode.dmPelsWidth;
+					validSettings.BackBufferHeight = (int)dmode.dmPelsHeight;
+				}
+				
 				//if (minimumSettings)
 				//{
 				//	Enumeration::setMinimumSettings(*minimumSettings);
@@ -446,7 +449,7 @@ namespace Apoc3D
 			{
 				assert(EnsureDevice());
 
-				RenderParameters newSettings = m_currentSetting;
+				RenderParameters newSettings = *m_currentSetting;
 				newSettings.IsWindowd =  !newSettings.IsWindowd;
 
 				int width = newSettings.IsWindowd ? m_windowedWindowWidth :  m_fullscreenWindowWidth;

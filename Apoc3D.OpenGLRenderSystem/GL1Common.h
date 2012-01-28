@@ -35,6 +35,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+#include "gl/wglext.h"
+#endif
+
 #define PLUGIN __declspec(dllexport)
 
 namespace Apoc3D
@@ -49,7 +53,11 @@ namespace Apoc3D
 			class Game;
 			class Win32GameWindow;
 
+			class GL1ObjectFactory;
 			class GL1RenderDevice;
+			class GL1Texture;
+			class GL1Sprite;
+			
 		}
 	}
 }
