@@ -77,6 +77,10 @@ namespace Apoc3D
 			{
 				// add the instancing vertex element on the given one
 				// save it the a map for future look ups
+
+				// As the render system API layer does not support multi-stream mixing
+				// this is the only way to do it, API specific
+
 				IDirect3DVertexDeclaration9* result;
 				if (!m_vtxDeclExpansionTable.TryGetValue(decl, result))
 				{

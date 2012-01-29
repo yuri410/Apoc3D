@@ -427,17 +427,7 @@ namespace Apoc3D
 					validSettings.BackBufferHeight = (int)dmode.dmPelsHeight;
 				}
 				
-				//if (minimumSettings)
-				//{
-				//	Enumeration::setMinimumSettings(*minimumSettings);
-				//}
-				//else
-				//{
-				//	Enumeration::ClearMinimumSetting();
-				//}
-				//DeviceSettings validSettings;
-				//Enumeration::FindValidSettings(m_direct3D9, settings, validSettings);
-				//validSettings.D3D9.PresentParameters.hDeviceWindow = m_game->getWindow()->getHandle();
+
 				CreateDevice(validSettings, &dmode);
 				
 			}

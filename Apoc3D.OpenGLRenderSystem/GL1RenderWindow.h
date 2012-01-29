@@ -67,8 +67,8 @@ namespace Apoc3D
 					GL1RenderWindow* m_window;
 
 				public:
-					GLGame(D3D9RenderWindow* wnd)
-						: Game(L"Apoc3D Engine - OpenGL 1.x"), m_window(wnd)
+					GLGame(GL1RenderWindow* wnd, GL1DeviceContent* devCont)
+						: Game(devCont, L"Apoc3D Engine - OpenGL 1.x"), m_window(wnd)
 					{
 					}
 					virtual void Create();
@@ -80,7 +80,7 @@ namespace Apoc3D
 					}
 					virtual void Initialize()
 					{
-						if (!((D3D9RenderDevice*)m_window->getRenderDevice())->isInitialized())
+						if (!((GL1RenderDevice*)m_window->getRenderDevice())->isInitialized())
 						{
 							m_window->getRenderDevice()->Initialize();
 							m_window->OnInitialize();
@@ -117,12 +117,6 @@ namespace Apoc3D
 						Game::OnFrameEnd();
 					}
 				};
-			private:
-				GL1DeviceContent* m_dc;
-				void setDevice(RenderDevice* device)
-				{
-					m_renderDevice = device;
-				}
 			public:
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
@@ -137,6 +131,15 @@ namespace Apoc3D
 				virtual void setTitle(const String& name);
 
 				virtual Size getClientSize();
+
+			private:
+				GL1DeviceContent* m_dc;
+				GLGame* m_game;
+
+				void setDevice(RenderDevice* device)
+				{
+					m_renderDevice = device;
+				}
 			};
 		}
 	}

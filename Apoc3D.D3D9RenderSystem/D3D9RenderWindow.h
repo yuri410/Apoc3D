@@ -146,13 +146,6 @@ namespace Apoc3D
 						Game::OnFrameEnd();
 					}
 				};
-			private:
-				D3D9Game* m_game;
-				D3D9DeviceContent* m_dc;
-				void setDevice(RenderDevice* device)
-				{
-					m_renderDevice = device;
-				}
 			public:
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
@@ -167,6 +160,15 @@ namespace Apoc3D
 				virtual void setTitle(const String& name);
 
 				virtual Size getClientSize();
+
+
+			private:
+				D3D9Game* m_game;
+				D3D9DeviceContent* m_dc;
+				void setDevice(RenderDevice* device)
+				{
+					m_renderDevice = device;
+				}
 			};
 		}
 	}

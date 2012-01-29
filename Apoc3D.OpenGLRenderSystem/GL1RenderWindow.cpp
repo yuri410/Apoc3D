@@ -24,14 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "GL1RenderWindow.h"
 #include "GL1RenderDevice.h"
-#include "GL1Utils.h"
-#include "GraphicsDeviceManager.h"
+#include "GLUtils.h"
 
 #include "GL1DeviceContent.h"
-#include "GL1RenderViewSet.h"
 #include "Core/Logging.h"
 
 #include "Win32GameWindow.h"
+#include "GraphicsDeviceManager.h"
 
 namespace Apoc3D
 {
@@ -39,44 +38,37 @@ namespace Apoc3D
 	{
 		namespace GL1RenderSystem
 		{
+
 			/************************************************************************/
 			/*                                                                      */
 			/************************************************************************/
+
+			// The implementation of the GLGame class is similar to D3D9RenderWindow::D3D9Game.
+			// Please refer to that class.
 			
-			void D3D9RenderWindow::GLGame::Create()
+
+			void GL1RenderWindow::GLGame::Create()
 			{
+				// with this call, the RenderWindow and Game object are created.
 				Game::Create();
 
 				const RenderParameters& params = m_window->getRenderParams();
 
-				//DeviceSettings settings;
-				//settings.AdapterOrdinal = 0;
-				//settings.BackBufferCount = 1;
-				//settings.BackBufferHeight = params.BackBufferHeight;
-				//settings.BackBufferWidth = params.BackBufferWidth;
-				//settings.BackBufferFormat = D3D9Utils::ConvertPixelFormat(params.ColorBufferFormat);
-				//settings.DepthStencilFormat = D3D9Utils::ConvertDepthFormat(params.DepthBufferFormat);
-				//settings.DeviceType = D3DDEVTYPE_HAL;
-				//settings.EnableVSync = params.EnableVSync;
-				//settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
-				//settings.Multithreaded = true;
-				//settings.RefreshRate = 0;
-				//settings.Windowed = params.IsWindowd;				
-
-				GL1RenderDevice* device = new GL1RenderDevice();
+				GL1RenderDevice* device = new GL1RenderDevice(getGraphicsDeviceManager());
 				m_window->setDevice(device);
 
 				LogManager::getSingleton().Write(LOG_Graphics, 
 					L"[GL1]Creating render window. ", 
 					LOGLVL_Infomation);
 
+				// Initialize() and Load() are called as the device is being created.
+				// The GraphicsDeviceManager here accepts RenderParameters directly.
 				getGraphicsDeviceManager()->ChangeDevice(params);
 
 				LogManager::getSingleton().Write(LOG_Graphics, 
 					L"[GL1]Render window created. ", 
 					LOGLVL_Infomation);
 
-				//device->Initialize();
 			}
 
 			/************************************************************************/
@@ -85,7 +77,7 @@ namespace Apoc3D
 			GL1RenderWindow::GL1RenderWindow(GL1RenderDevice* device, GL1DeviceContent* dc, const RenderParameters& pm)
 				: RenderWindow(device, pm), m_dc(dc)
 			{
-				m_game = new Game(this);
+				m_game = new GLGame(this, dc);
 			}
 			GL1RenderWindow::~GL1RenderWindow()
 			{
@@ -97,21 +89,8 @@ namespace Apoc3D
 			{
 				RenderWindow::ChangeRenderParameters(params);
 
-				//DeviceSettings settings;
-				//settings.AdapterOrdinal = 0;
-				//settings.BackBufferCount = 1;
-				//settings.BackBufferHeight = params.BackBufferHeight;
-				//settings.BackBufferWidth = params.BackBufferWidth;
-				//settings.BackBufferFormat = D3D9Utils::ConvertPixelFormat(params.ColorBufferFormat);
-				//settings.DepthStencilFormat = D3D9Utils::ConvertDepthFormat(params.DepthBufferFormat);
-				//settings.DeviceType = D3DDEVTYPE_HAL;
-				//settings.EnableVSync = params.EnableVSync;
-				//settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
-				//settings.Multithreaded = true;
-				//settings.RefreshRate = 0;
-				//settings.Windowed = params.IsWindowd;				
 
-				m_game->getGraphicsDeviceManager()->ChangeDevice(settings);
+				m_game->getGraphicsDeviceManager()->ChangeDevice(params);
 
 			}
 
@@ -124,9 +103,15 @@ namespace Apoc3D
 
 			void GL1RenderWindow::Run()
 			{
-				
+				// This Run method is called from outside client code to create a render window
+				// for the first time and right after when the constructor is called. No other methods are
+				// needed. 
+
+				// Creates almost every thing
 				m_game->Create();
+
 				m_game->Run();
+				// Releases almost every thing
 				m_game->Release();
 			}
 

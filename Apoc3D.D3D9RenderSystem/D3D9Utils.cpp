@@ -31,6 +31,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			// pre-calculated fast type cast tables
 			D3DPRIMITIVETYPE D3D9Utils::ptTable[PT_Count];
 			D3DDECLTYPE D3D9Utils::vefTable[VEF_Count];
 			D3DDECLUSAGE D3D9Utils::veuTable[VEU_Count];
@@ -271,6 +272,7 @@ namespace Apoc3D
 				case D3DMULTISAMPLE_16_SAMPLES:
 					return 16;
 				}
+				// to make the compiler happy
 				return 0;
 			}
 			D3DMULTISAMPLE_TYPE D3D9Utils::ConvertMultisample(uint32 sampleCount)
@@ -311,6 +313,7 @@ namespace Apoc3D
 				case 16:
 					return D3DMULTISAMPLE_16_SAMPLES;
 				}
+				// to make the compiler happy
 				return D3DMULTISAMPLE_NONE;
 			}
 

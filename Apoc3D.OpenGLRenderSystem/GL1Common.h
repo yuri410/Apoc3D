@@ -27,8 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 
 #include <Windows.h>
-#include <gl/GL.h>
-#include <gl/GLU.h>
 #include "gl/GLee.h"
 
 #pragma comment(lib, "Apoc3D.lib")
@@ -63,6 +61,8 @@ namespace Apoc3D
 			class GL1Capabilities;
 			class GL1RenderStateManager;
 			class GL1RenderTarget;
+
+			class NativeGL1StateManager;
 
 			class GL1Texture;
 			class GL1Sprite;

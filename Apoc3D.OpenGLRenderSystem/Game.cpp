@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "GameClock.h"
 #include "Win32GameWindow.h"
+#include "GraphicsDeviceManager.h"
 
 //using namespace Apoc3D::Graphics;
 
@@ -37,7 +38,7 @@ namespace Apoc3D
 	{
 		namespace GL1RenderSystem
 		{
-			Game::Game(const wchar_t* const &name)
+			Game::Game(GL1DeviceContent* devCont, const wchar_t* const &name)
 				: m_maxElapsedTime(0.5f), m_targetElapsedTime(1.0f / 60.0f), m_inactiveSleepTime(20),
 				m_updatesSinceRunningSlowly1(MAXINT32), m_updatesSinceRunningSlowly2(MAXINT32),
 				m_exiting(false),
@@ -54,7 +55,7 @@ namespace Apoc3D
 				m_gameWindow->eventResume()->bind(this, &Game::Window_Resume);
 				m_gameWindow->eventSuspend()->bind(this, &Game::Window_Suspend);
 
-				m_graphicsDeviceManager = new GraphicsDeviceManager(this);
+				m_graphicsDeviceManager = new GraphicsDeviceManager(this, devCont);
 			}
 			void Game::Release()
 			{
@@ -135,6 +136,7 @@ namespace Apoc3D
 				if (m_exiting)
 					return;
 
+				// Background apps need to slow down rendering speed
 				if (!m_active)
 					Sleep(static_cast<int>(m_inactiveSleepTime));
 

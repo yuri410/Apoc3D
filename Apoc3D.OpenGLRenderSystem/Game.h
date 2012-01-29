@@ -84,6 +84,7 @@ namespace Apoc3D
 				virtual void Release();
 				virtual void Create();
 
+				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
 				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
 				EventHandler* eventFrameEnd() { return &m_eFrameEnd; }
 

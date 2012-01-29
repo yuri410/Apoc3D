@@ -41,9 +41,13 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			// the expected way of instancing in d3d shaders is use the TEX15 as the index
-			// of the EPUSAGE_Trans_InstanceWorlds array
-			
+			/** The instancing is done using vertex streams by mixing a per-instance index to
+			 *  the geometry vertex in vertex element TEX15.
+			 *
+			 *  The expected way of instancing in d3d shaders is use the TEX15 as the index
+			 *  of the EPUSAGE_Trans_InstanceWorlds array to obtain the transformation,
+			 *  then use this as the world transform.
+			 */
 			class D3D9InstancingData : public InstancingData
 			{
 			public:
@@ -59,6 +63,9 @@ namespace Apoc3D
 				int getInstanceDataSize() const { return sizeof(float); }
 			private:
 				FastMap<void*, IDirect3DVertexDeclaration9*> m_vtxDeclExpansionTable;
+
+				/** Per-instance index stored in this vertex buffer
+				*/
 				IDirect3DVertexBuffer9* m_vertexBuffer;
 				D3D9RenderDevice* m_d3ddev;
 			};

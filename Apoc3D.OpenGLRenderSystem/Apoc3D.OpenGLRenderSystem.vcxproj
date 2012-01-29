@@ -82,6 +82,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GLUtils.h" />
     <ClInclude Include="GL1RenderStateManager.h" />
     <ClInclude Include="GL1ObjectFactory.h" />
     <ClInclude Include="GL1RenderDevice.h" />
@@ -105,6 +106,7 @@
     <ClCompile Include="GL1Sprite.cpp" />
     <ClCompile Include="GL1Texture.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GLUtils.cpp" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="Win32GameWindow.cpp" />
     <ClCompile Include="GL1RenderWindow.cpp" />
