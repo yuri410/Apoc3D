@@ -28,7 +28,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GL1RenderWindow.h"
 #include "Apoc3DException.h"
 
+#include "Utility/StringUtils.h"
 
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -39,17 +41,16 @@ namespace Apoc3D
 			GL1DeviceContent::GL1DeviceContent()
 				: DeviceContent(true), m_window(0)
 			{
-				m_d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
+
 
 			}
 			GL1DeviceContent::~GL1DeviceContent()
 			{
-				m_d3d9->Release();
-				m_d3d9 = 0;
+
 			}
 
 
-			void GL1DeviceContent::NotifyWindowClosed(D3D9RenderWindow* wnd)
+			void GL1DeviceContent::NotifyWindowClosed(GL1RenderWindow* wnd)
 			{
 				if (m_window != wnd)
 					m_window = NULL;
@@ -79,7 +80,7 @@ namespace Apoc3D
 				return 0;
 			}
 
-			RenderDevice* D3D9DeviceContent::getRenderDevice()
+			RenderDevice* GL1DeviceContent::getRenderDevice()
 			{
 				if (m_window)
 					return m_window->getRenderDevice();

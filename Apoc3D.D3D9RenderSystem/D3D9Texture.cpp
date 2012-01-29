@@ -939,6 +939,7 @@ namespace Apoc3D
 
 			void D3D9Texture::Save(Stream* strm)
 			{
+				Lock_Unloadable();
 				UseSync();
 				
 				TextureData data;
@@ -960,7 +961,7 @@ namespace Apoc3D
 					break;
 				}
 
-
+				Unlock_Unloadable();
 
 				data.Save(strm);
 

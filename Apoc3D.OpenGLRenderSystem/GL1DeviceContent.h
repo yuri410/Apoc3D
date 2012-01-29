@@ -24,9 +24,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GL1DDEVICECONTNET_H
 #define GL1DDEVICECONTNET_H
 
-#include "GLCommon.h"
+#include "GL1Common.h"
+
+#include "Collections/FastMap.h"
 #include "Graphics/RenderSystem/DeviceContent.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
@@ -37,19 +40,21 @@ namespace Apoc3D
 		{
 			class GL1DeviceContent : public DeviceContent
 			{
-			private:
-				
-
 			protected:
 				virtual RenderView* create(const RenderParameters &pm);
 			public:
-				void NotifyWindowClosed(D3D9RenderWindow* wnd);
+				void NotifyWindowClosed(GL1RenderWindow* wnd);
 				
 
 				GL1DeviceContent();
 				~GL1DeviceContent();
 
 				virtual RenderDevice* getRenderDevice();
+
+
+			private:
+
+				GL1RenderWindow* m_window;
 			};
 		}
 	}

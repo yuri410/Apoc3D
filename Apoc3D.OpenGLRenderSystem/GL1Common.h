@@ -29,15 +29,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <Windows.h>
 #include <gl/GL.h>
 #include <gl/GLU.h>
+#include "gl/GLee.h"
 
 #pragma comment(lib, "Apoc3D.lib")
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 
-#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-#include "gl/wglext.h"
-#endif
+
 
 #define PLUGIN __declspec(dllexport)
 
@@ -52,9 +51,19 @@ namespace Apoc3D
 			class GameClock;
 			class Game;
 			class Win32GameWindow;
+			class GraphicsDeviceManager;
 
+			class GL1RenderView;
+			class GL1RenderWindow;
+
+			class GL1DeviceContent;
+			
 			class GL1ObjectFactory;
 			class GL1RenderDevice;
+			class GL1Capabilities;
+			class GL1RenderStateManager;
+			class GL1RenderTarget;
+
 			class GL1Texture;
 			class GL1Sprite;
 			

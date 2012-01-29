@@ -486,7 +486,7 @@ namespace Apoc3D
 			PixelFormat D3D9RenderDevice::GetDefaultRTFormat()
 			{
 				D3DSURFACE_DESC desc;
-				m_defaultDS->GetDesc(&desc);
+				m_defaultRT->GetDesc(&desc);
 
 				return D3D9Utils::ConvertBackPixelFormat(desc.Format);
 			}

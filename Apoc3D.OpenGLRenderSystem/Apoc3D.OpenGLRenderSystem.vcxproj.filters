@@ -48,6 +48,21 @@
     <ClInclude Include="GraphicsDeviceManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GL1Sprite.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GL1ObjectFactory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GL1Texture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GL1RenderDevice.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GL1RenderStateManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +87,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsDeviceManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GL1Sprite.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GL1ObjectFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GL1Texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GL1RenderDevice.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GL1RenderStateManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

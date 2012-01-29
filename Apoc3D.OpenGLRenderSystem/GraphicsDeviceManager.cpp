@@ -27,6 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Core/Logging.h"
 
+#include "GL1DeviceContent.h"
+
 using namespace Apoc3D::Core;
 
 namespace Apoc3D
@@ -35,9 +37,10 @@ namespace Apoc3D
 	{
 		namespace GL1RenderSystem
 		{
-			GraphicsDeviceManager::GraphicsDeviceManager(Game* game)
+			GraphicsDeviceManager::GraphicsDeviceManager(Game* game, GL1DeviceContent* devCont)
 				: m_currentSetting(0), m_ignoreSizeChanges(false), m_doNotStoreBufferSize(false), m_renderingOccluded(false),
-				m_deviceCreated(false)
+				m_deviceCreated(false),
+				m_devCont(devCont)
 			{
 				assert(game);
 
@@ -46,6 +49,8 @@ namespace Apoc3D
 				m_game->eventFrameStart()->bind(this, &GraphicsDeviceManager::game_FrameStart);
 				m_game->eventFrameEnd()->bind(this, &GraphicsDeviceManager::game_FrameEnd);
 				m_game->getWindow()->eventUserResized()->bind(this, &GraphicsDeviceManager::Window_UserResized);
+				
+				
 			}
 
 			GraphicsDeviceManager::~GraphicsDeviceManager(void)
@@ -121,9 +126,9 @@ namespace Apoc3D
 			{
 				HWND sss = m_game->getWindow()->getHandle();
 
-				m_hDC=GetDC(sss);
+				m_hDC = GetDC(sss);
 
-				PIXELFORMATDESCRIPTOR pfd=				// pfd Tells Windows How We Want Things To Be
+				PIXELFORMATDESCRIPTOR pfd =				// pfd Tells Windows How We Want Things To Be
 				{
 					sizeof(PIXELFORMATDESCRIPTOR),				// Size Of This Pixel Format Descriptor
 					1,											// Version Number
@@ -132,7 +137,7 @@ namespace Apoc3D
 					PFD_DOUBLEBUFFER,							// Must Support Double Buffering
 					PFD_TYPE_RGBA,								// Request An RGBA Format
 					PixelFormatUtils::GetBPP(settings.ColorBufferFormat)*8,	// Select Our Color Depth
-					0, 0, 0, 0, 0, 0,							// Color Bits Ignored
+					0, 0, 0, 0, 0, 0,							// Color Bits Ignored. TODO: specify them
 					0,											// No Alpha Buffer
 					0,											// Shift Bit Ignored
 					0,											// No Accumulation Buffer
@@ -256,7 +261,11 @@ namespace Apoc3D
 						assert(mode);
 						ChangeResolution(*mode);
 					}
+				}
 
+				if (GLEE_WGL_EXT_swap_control)
+				{
+					wglSwapIntervalEXT(settings.EnableVSync ? 1 : 0);
 				}
 
 

@@ -106,7 +106,15 @@ namespace Apoc3D
 			/** [ASync resource only]
 			 *  Tells if the resource can be unloaded when inactive.
 			 */
-			virtual bool IsUnloadable() const { return true; }
+			virtual bool IsUnloadable()
+			{
+				bool ul;
+				m_lock.lock(); 
+				ul = m_unloadableLock;
+				m_lock.unlock();
+
+				return !ul;
+			}
 
 			virtual bool IsIndependent() const { return true; }
 
@@ -122,6 +130,14 @@ namespace Apoc3D
 			 */
 			void Use();
 			void UseSync();
+
+			/** Makes this resource not unloadable by the resource collector
+			*/
+			void Lock_Unloadable() { m_lock.lock(); m_unloadableLock = true; m_lock.unlock(); }
+			/** Makes this resource unloadable by the resource collector
+			*/
+			void Unlock_Unloadable() { m_lock.lock(); m_unloadableLock = false; m_lock.unlock(); }
+
 
 			/** Load the resource
 			*/
@@ -292,6 +308,8 @@ namespace Apoc3D
 
 			ResourceEventHandler m_eventLoaded;
 			ResourceEventHandler m_eventUnloaded;
+
+			bool m_unloadableLock;
 
 			void OnLoaded()
 			{

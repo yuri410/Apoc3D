@@ -82,6 +82,11 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GL1RenderStateManager.h" />
+    <ClInclude Include="GL1ObjectFactory.h" />
+    <ClInclude Include="GL1RenderDevice.h" />
+    <ClInclude Include="GL1Sprite.h" />
+    <ClInclude Include="GL1Texture.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GraphicsDeviceManager.h" />
@@ -94,6 +99,11 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GL1RenderStateManager.cpp" />
+    <ClCompile Include="GL1ObjectFactory.cpp" />
+    <ClCompile Include="GL1RenderDevice.cpp" />
+    <ClCompile Include="GL1Sprite.cpp" />
+    <ClCompile Include="GL1Texture.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="Win32GameWindow.cpp" />

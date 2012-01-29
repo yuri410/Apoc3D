@@ -38,9 +38,9 @@ namespace Apoc3D
 			class GraphicsDeviceManager
 			{
 			public:
-				//const DeviceSettings* getCurrentSetting() const { return m_currentSetting; }
+				const RenderParameters* getCurrentSetting() const { return m_currentSetting; }
 
-				GraphicsDeviceManager(Game* game);
+				GraphicsDeviceManager(Game* game, GL1DeviceContent* devCont);
 				~GraphicsDeviceManager(void);
 
 
@@ -79,7 +79,7 @@ namespace Apoc3D
 
 			private:
 				RenderParameters* m_currentSetting;
-
+				GL1DeviceContent* m_devCont;
 
 				HDC m_hDC;
 				HGLRC m_hRC;
@@ -87,7 +87,6 @@ namespace Apoc3D
 				Game* m_game;
 
 				bool m_ignoreSizeChanges;
-				//bool m_deviceLost;
 
 				bool m_doNotStoreBufferSize;
 				bool m_renderingOccluded;
@@ -98,10 +97,7 @@ namespace Apoc3D
 				int32 m_windowedWindowHeight;
 				WINDOWPLACEMENT m_windowedPlacement;
 				int64 m_windowedStyle;
-				//bool m_savedTopmost
-
-				//void PropogateSettings();
-				//bool CanDeviceBeReset(const RenderParameters* const oldset, const RenderParameters* const newset) const;
+				
 				void CreateDevice(const RenderParameters &settings, const DEVMODE* mode = 0);
 				void game_FrameStart(bool* cancel);
 				void game_FrameEnd();
@@ -110,9 +106,7 @@ namespace Apoc3D
 
 				void ChangeResolution(const DEVMODE& mode);
 				void InitializeDevice(const RenderParameters &settings);
-				//HRESULT ResetDevice();
-
-
+			
 
 			};
 		}
