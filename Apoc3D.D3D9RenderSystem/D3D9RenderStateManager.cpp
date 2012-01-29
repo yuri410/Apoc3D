@@ -384,6 +384,8 @@ namespace Apoc3D
 
 					}
 
+					// In some cases, the X,Y of the rect is not always the top-left corner,
+					// when the Width or Height is negative. Standardize it.
 					if (rect.left>rect.right)
 					{
 						swap(rect.left, rect.right);

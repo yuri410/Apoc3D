@@ -82,6 +82,7 @@ namespace Apoc3D
 			// increase reliability on latency hardwares, the way to use it almost remains unchanged.
 			void D3D9RenderWindow::D3D9Game::Create()
 			{
+				// with this call, the RenderWindow and Game object are created.
 				Game::Create();
 				
 				const RenderParameters& params = m_window->getRenderParams();
@@ -107,6 +108,7 @@ namespace Apoc3D
 					L"[D3D9]Creating render window. ", 
 					LOGLVL_Infomation);
 
+				// Initialize() and Load() are called as the device is being created.
 				getGraphicsDeviceManager()->ChangeDevice(settings);
 
 				LogManager::getSingleton().Write(LOG_Graphics, 
@@ -124,6 +126,7 @@ namespace Apoc3D
 			}
 			D3D9RenderWindow::~D3D9RenderWindow()
 			{
+				// clean up traces.
 				m_dc->NotifyWindowClosed(this);
 				delete m_game;
 			}
@@ -159,9 +162,15 @@ namespace Apoc3D
 
 			void D3D9RenderWindow::Run()
 			{
+				// This Run method is called from outside client code to create a render window
+				// for the first time and right after when the constructor is called. No other methods are
+				// needed. 
 				
+				// Creates almost every thing
 				m_game->Create();
+				
 				m_game->Run();
+				// Releases almost every thing
 				m_game->Release();
 			}
 

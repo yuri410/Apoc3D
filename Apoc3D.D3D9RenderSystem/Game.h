@@ -81,7 +81,16 @@ namespace Apoc3D
 				virtual void OnFrameEnd();
 
 			public:
+				/** This method will ask the GraphicsDeviceManager to release resources. And 
+				 *  will cause the Game::UnloadContent to be called.
+				 */
 				virtual void Release();
+
+				/** When derived, this method should be overrided to initialize the graphics device,
+				 *  with the specific parameters and settings provided.
+				 *  As GraphicsDeviceManager has creates the device, Game::LoadContent and Game::Initialize
+				 *  will be called.
+				 */
 				virtual void Create();
 
 				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
@@ -100,6 +109,8 @@ namespace Apoc3D
 				virtual void OnDeviceReset() = 0;
 				virtual void Render(const GameTime* const time) = 0;
 				virtual void Update(const GameTime* const time) = 0;
+				/** Enters the main loop. 
+				*/
 				void Run();
 				void Tick();
 				void Exit();

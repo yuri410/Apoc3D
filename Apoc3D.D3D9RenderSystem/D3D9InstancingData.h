@@ -41,6 +41,9 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			// the expected way of instancing in d3d shaders is use the TEX15 as the index
+			// of the EPUSAGE_Trans_InstanceWorlds array
+			
 			class D3D9InstancingData : public InstancingData
 			{
 			public:

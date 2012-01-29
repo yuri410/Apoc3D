@@ -36,7 +36,9 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-
+			/** This class stores states for quick state checks without any
+			 *  D3D calls. Other classes check state to avoid redundant state changes.
+			 */
 			class NativeD3DStateManager
 			{
 			private:

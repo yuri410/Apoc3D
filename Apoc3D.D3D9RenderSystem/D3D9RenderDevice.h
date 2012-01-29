@@ -105,6 +105,7 @@ namespace Apoc3D
 
 				D3D9InstancingData* m_instancingData;
 
+				// This is called by the VolatileResource itself
 				void TrackVolatileResource(VolatileResource* res)
 				{
 					m_volatileResources.push_back(res);

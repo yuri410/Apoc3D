@@ -56,6 +56,10 @@ namespace Apoc3D
 				*/
 				virtual DepthFormat GetDefaultDepthStencilFormat() = 0;
 
+				/** Initialize. 
+				 *  This is called when the graphics device, window,  have been created and called just before 
+				 *  when the Game::Initialize method is called.
+				 */
 				virtual void Initialize() = 0;
 
 				/** Gets the device's name.

@@ -51,7 +51,8 @@ namespace Apoc3D
 				InstancingData(RenderDevice* device);
 
 				/** Prepares the instancing data for a set of render operation began at beginIndex in op.
-					
+					This is called each time of drawing up to MaxOneTimeInstances instances.
+
 					@return: the actual prepared number of render operations in this call.
 				*/
 				virtual int Setup(const RenderOperation* op, int count, int beginIndex) = 0;

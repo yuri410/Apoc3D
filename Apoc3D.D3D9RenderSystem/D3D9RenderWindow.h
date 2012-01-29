@@ -67,6 +67,12 @@ namespace Apoc3D
 				 *  The Game class does the real business. It has its own GameWindow class which is the real place to
 				 *  handle the windows messages. The Game class also has the GraphicsDeviceManager class,
 				 *  which is in charge of creating suitable device and handling device lost.
+				 *
+				 *  Most overrided methods in this class are called passively by the GraphicsDeviceManager, the Game::Create() method,
+				 *  and the GameWindow class. As being said above, these classes works on their own. D3D9Game is the "implementation" but as
+				 *  a wrapper redirects the calls from Game and etc to the D3D9RenderWindow class, which is associated with the 
+				 *  client application event handler to handle the Load(), Initialize() operations.
+				 *  Thus, make sure to draw a line here. Maybe that helps understanding or reviewing the code.
 				 */
 				class D3D9Game : public Game
 				{
@@ -82,15 +88,19 @@ namespace Apoc3D
 					
 					virtual void Release() 
 					{
+						// First use this to make sure the Unload is handled first
 						Game::Release();
+						// then finalize
 						m_window->OnFinalize();
 					}
 					virtual void Initialize()
 					{
+						// The window will be only initialized once, even in some cases, like device losts
+						// when this is called again.
 						if (!((D3D9RenderDevice*)m_window->getRenderDevice())->isInitialized())
 						{
 							m_window->getRenderDevice()->Initialize();
-							m_window->OnInitialize();
+							m_window->OnInitialize(); // will make the event handler interface to process the event
 						}
 					}
 					virtual void LoadContent()

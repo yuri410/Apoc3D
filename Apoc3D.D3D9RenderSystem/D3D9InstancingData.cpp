@@ -47,6 +47,7 @@ namespace Apoc3D
 					D3DUSAGE_WRITEONLY, 0, D3DPOOL_MANAGED, &m_vertexBuffer,0);
 				assert(SUCCEEDED(hr));
 
+				// fill up buffer with instance index 
 				void* dstData;
 				m_vertexBuffer->Lock(0,0, &dstData, 0);
 
@@ -74,6 +75,8 @@ namespace Apoc3D
 
 			IDirect3DVertexDeclaration9* D3D9InstancingData::ExpandVertexDecl(VertexDeclaration* decl)
 			{
+				// add the instancing vertex element on the given one
+				// save it the a map for future look ups
 				IDirect3DVertexDeclaration9* result;
 				if (!m_vtxDeclExpansionTable.TryGetValue(decl, result))
 				{
@@ -101,6 +104,10 @@ namespace Apoc3D
 			}
 			int D3D9InstancingData::Setup(const RenderOperation* op, int count, int beginIndex)
 			{
+				// In d3d no more setup is needed
+				// As the instancing index is mixed in the vertex stream, the rest of work: per-instancing transformations
+				// are set in effects.
+
 				return min(MaxOneTimeInstances, count-beginIndex);
 			}
 

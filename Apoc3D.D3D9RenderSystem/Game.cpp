@@ -193,6 +193,7 @@ namespace Apoc3D
 					ratio=0;
 		#endif
 
+				// keep up update calls:
 				// update until it's time to draw the next frame
 				while (ratio > 1)
 				{
