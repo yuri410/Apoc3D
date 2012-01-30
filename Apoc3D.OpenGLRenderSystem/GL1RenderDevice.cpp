@@ -327,6 +327,11 @@ namespace Apoc3D
 
 			void GL1RenderDevice::BindVertexShader(VertexShader* shader)
 			{
+				if (GLEE_ARB_vertex_program)
+				{
+					//glDisable(GL_VERTEX_PROGRAM_ARB);
+				}
+
 				//if (shader)
 				//{
 				//	D3D9VertexShader* vs = static_cast<D3D9VertexShader*>(shader);
@@ -339,6 +344,11 @@ namespace Apoc3D
 			}
 			void GL1RenderDevice::BindPixelShader(PixelShader* shader)
 			{
+
+				if (GLEE_ARB_fragment_program)
+				{
+					//glDisable(GL_FRAGMENT_PROGRAM_ARB);
+				}
 				//glBindProgramARB(GL_VERTEX_PROGRAM_ARB, );
 
 				//if (shader)

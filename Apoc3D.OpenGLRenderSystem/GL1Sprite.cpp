@@ -46,14 +46,10 @@ namespace Apoc3D
 			{
 				m_alphaEnabled = alphabled;
 
-				if (GLEE_ARB_vertex_program)
-				{
-					glDisable(GL_VERTEX_PROGRAM_ARB);
-				}
-				if (GLEE_ARB_fragment_program)
-				{
-					glDisable(GL_FRAGMENT_PROGRAM_ARB);
-				}
+				// disable all shaders
+				m_gl1device->BindPixelShader(0);
+				m_gl1device->BindVertexShader(0);
+				
 				
 				if (alphabled)
 				{
