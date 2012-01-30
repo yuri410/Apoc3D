@@ -51,6 +51,8 @@ namespace Apoc3D
 			*/
 			VertexDeclaration* VertexDecl;
 			int32 PrimitiveCount;
+			/** The starting index offset
+			*/
 			int32 BaseVertex;
 			int32 VertexCount;
 			int32 VertexSize;

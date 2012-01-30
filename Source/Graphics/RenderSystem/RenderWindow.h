@@ -100,16 +100,8 @@ namespace Apoc3D
 			private:
 				RenderWindowHandler* m_evtHandler;
 				bool m_isExiting;
-
+				
 			public:
-				virtual Size getClientSize() = 0;
-				virtual String getTitle() = 0;
-				virtual void setTitle(const String& name) = 0;
-
-				void setEventHandler(RenderWindowHandler* handler)
-				{
-					m_evtHandler = handler;
-				}
 
 				virtual void Exit()
 				{
@@ -120,7 +112,24 @@ namespace Apoc3D
 
 				virtual ~RenderWindow();
 
+
+				virtual Size getClientSize() = 0;
+				virtual String getTitle() = 0;
+				virtual void setTitle(const String& name) = 0;
+
+				void setEventHandler(RenderWindowHandler* handler)
+				{
+					m_evtHandler = handler;
+				}
+
+				bool getIsExiting() const { return m_isExiting; }
+				/** Represents if the window is activated.
+				*/
+				virtual bool getIsActive() const = 0;
+
+
 			protected:
+
 				RenderWindow(RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
 					: RenderView(rd, pm, rt), m_evtHandler(0), m_isExiting(false)
 				{

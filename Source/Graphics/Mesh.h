@@ -42,6 +42,7 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		/** The geometry data including vertices as well as indices and materials.
+		 *
 		 *  Every mesh has several materials. These materials cut the mesh into
 		 *  sub parts, where each part has only one material.
 		 */
@@ -51,6 +52,8 @@ namespace Apoc3D
 			VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
 			const FastList<IndexBuffer*>& getIndexBuffers() const { return m_indexBuffers; }
 			int32 getIndexCount() const { return m_primitiveCount * 3; }
+			/** Copies the indices to a given buffer.
+			*/
 			void GetIndices(uint* dest) const;
 
 			const FastList<VertexElement>& getVertexElement() const { return m_vertexElements; }
@@ -79,6 +82,8 @@ namespace Apoc3D
 			const BoundingSphere& getBoundingSphere() const { return m_boundingSphere; }
 			void setBoundingSphere(const BoundingSphere& sphere) { m_boundingSphere = sphere; }
 
+			/** Passes triangle primitives one by one, while call the callback for each one.
+			*/
 			void ProcessAllTriangles(IMeshTriangleCallBack* callback) const;
 
 			int32 CalculateSizeInBytes() const;
@@ -101,7 +106,13 @@ namespace Apoc3D
 			VertexBuffer* m_vertexBuffer;
 			FastList<IndexBuffer*> m_indexBuffers;
 
+			/** An array indicating the primitive 
+			 *  count for each sub mesh (or sub part, cut by materials; see the Mesh class)
+			 *  at specific index.
+			 */
 			int32* m_partPrimitiveCount;
+			/** Similar to m_partPrimitiveCount but the vertex count.
+			*/
 			int32* m_partVertexCount;
 
 			RenderDevice* m_renderDevice;
@@ -113,7 +124,6 @@ namespace Apoc3D
 			int32 m_vertexCount;
 
 
-			//int32 m_parentBoneID;
 			BoundingSphere m_boundingSphere;
 
 			FastList<VertexElement> m_vertexElements;

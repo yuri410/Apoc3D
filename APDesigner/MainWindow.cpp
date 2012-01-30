@@ -208,7 +208,8 @@ namespace APDesigner
 	}
 	void MainWindow::Update(const GameTime* const time)
 	{
-		InputAPIManager::getSingleton().Update(time);
+		if (m_window->getIsActive())
+			InputAPIManager::getSingleton().Update(time);
 
 		//m_pane->Update(time);
 		//m_form->Update(time);

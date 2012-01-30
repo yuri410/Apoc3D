@@ -161,7 +161,7 @@ namespace Apoc3D
 
 				virtual Size getClientSize();
 
-
+				virtual bool getIsActive() const;
 			private:
 				D3D9Game* m_game;
 				D3D9DeviceContent* m_dc;

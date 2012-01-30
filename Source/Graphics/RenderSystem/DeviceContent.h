@@ -81,6 +81,7 @@ namespace Apoc3D
 
 				/** When IsFullForm==true, this is used to indicate the target area
 				 *  to present the render result.
+				 *  On console targets, this is not really likely to use.
 				 */
 				uint64 TargetHandle;
 

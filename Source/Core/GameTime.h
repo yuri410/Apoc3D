@@ -51,9 +51,22 @@ namespace Apoc3D
 			/* Gets the elapsed game time since last update, in seconds.
 			*/
 			float getElapsedTime() const { return m_elapsedTime; }
-	
+			
 			float getTotalRealTime() const { return m_totalRealTime; }
-
+			/* Gets the elapsed real game time since last update, in seconds.
+			 *
+			 * Why real? Sometimes(based on the config) 
+			 * more times of Update() is called in the main loop
+			 * when only drawing one frame, to keep up the Update's speed, sending a fixed
+			 * time duration as the ElapsedTime. If so, this is the place to know the
+			 * real time passed.
+			 *
+			 * The purpose of fixed update time duration is to keep the updating
+			 * smooth, rendering delay will not augment the duration.
+			 *
+			 * See the RenderWindow implementation in specific render systems for 
+			 * more information.
+			 */
 			float getElapsedRealTime() const { return m_elapsedRealTime; }
 
 			float getFPS() const { return m_fps; }

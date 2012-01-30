@@ -100,9 +100,10 @@ namespace Apoc3DEx
 
 	void Game::Update(const GameTime* const time)
 	{
+		
 		InputAPIManager::getSingleton().Update(time);
 
-		m_console->Update(time);
+		//m_console->Update(time);
 
 		UIRoot::Update(time);
 	}

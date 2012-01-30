@@ -80,6 +80,9 @@ namespace Apoc3D
 				virtual Texture* GetColorTexture();
 				virtual DepthBuffer* GetDepthBuffer();
 
+				/** When the RT is just un-binded from the device.
+				 *  This will be called by the RenderDevice to resolve the color texture.
+				 */
 				void Resolve();
 			};
 		}

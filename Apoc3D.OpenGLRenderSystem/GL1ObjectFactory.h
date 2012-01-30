@@ -37,6 +37,9 @@ namespace Apoc3D
 	{
 		namespace GL1RenderSystem
 		{
+			/** The place for creating graphics objects under OpenGL.
+			 *  See ObjectFactory for general description.
+			 */
 			class GL1ObjectFactory : public ObjectFactory
 			{
 			private:

@@ -47,6 +47,9 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			/** Hacked from somewhere: 
+			 *   getting to know how big the data is by treating each pixel sized in a differently way inside D3D.
+			 */
 			byte GetExpectedByteSizeFromFormat(D3DFORMAT format)
 			{
 				switch (format)
@@ -98,7 +101,7 @@ namespace Apoc3D
 					return 1;
 
 				case D3DFMT_R8G8B8:// 20:// SurfaceFormat.Bgr24:
-					return 1;
+					return 1; // why?
 
 				case D3DFMT_V8U8://SurfaceFormat.NormalizedByte2:
 					return 3;
@@ -344,6 +347,8 @@ namespace Apoc3D
 				m_cube->UnlockRect(D3D9Utils::ConvertCubeMapFace(cubemapFace), surface);
 			}
 
+			// These are 2 way(getting and setting) utility functions
+			// for accessing the content of D3D9 textures.
 			void copyData(void* tex, 
 				int pitch, void* texData, D3DFORMAT surfaceFormat,
 				DWORD dwLockWidth, DWORD dwLockHeight, bool isSetting)
@@ -720,15 +725,15 @@ namespace Apoc3D
 
 			void D3D9Texture::load()
 			{
+				// These 2 lines will load the data into memory from the ResourceLocation
 				TextureData data;
 				data.Load(getResourceLocation());
 				
-				
+				// Before setting up the D3D9 texture objects, check if the 
+				// device supports this kind of texture
 				D3DDevice* dev = m_renderDevice->getDevice();
 
-
 				D3DFORMAT newFmt;
-				
 				{
 					DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
 					D3DFORMAT fmt = D3D9Utils::ConvertPixelFormat(data.Format);
@@ -744,7 +749,9 @@ namespace Apoc3D
 					UINT newHeight = height;
 					UINT newDepth = depth;
 
-
+					// Checking whether the texture parameter is supported
+					// to get rid of the occasion that a rare texture format
+					// is not supported by an old hardware, causing the application to crash
 					switch (data.Type)
 					{
 					case (int)TT_Texture1D:
@@ -774,6 +781,8 @@ namespace Apoc3D
 						}
 					}
 
+					// resize the texture to the preferred size
+					// usually happens when the hardware does not support non power of 2 textures
 					if (newHeight != height || newWidth != width || newDepth != depth)
 					{
 						String name;
@@ -787,7 +796,7 @@ namespace Apoc3D
 						{
 							name = getResourceLocation()->getName();
 						}
-						// TODO:resize here
+						// TODO: resize here
 						LogManager::getSingleton().Write(LOG_Graphics, 
 							L"[D3D9Texture]" + name +  L" Dimension " +
 							StringUtils::ToString(width) + L"x" + StringUtils::ToString(height)
@@ -796,6 +805,7 @@ namespace Apoc3D
 							, LOGLVL_Warning);
 					}
 
+					// automatically converts to the preferred format
 					if (newFmt != fmt)
 					{
 						TextureData newdata;
@@ -821,6 +831,7 @@ namespace Apoc3D
 							+ L" Pixel format is not supported by hardware. Converting to " +
 							PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt)), LOGLVL_Warning);
 
+						// do it for all levels
 						for (int i=0;i<newdata.LevelCount;i++)
 						{
 							TextureLevelData& srcLvl = data.Levels[i];
@@ -867,6 +878,7 @@ namespace Apoc3D
 
 				}
 				
+				// update using the checked data
 				UpdateInfo(data);
 
 			
@@ -939,7 +951,12 @@ namespace Apoc3D
 
 			void D3D9Texture::Save(Stream* strm)
 			{
+				// First lock the resource to keep it safe.
+				// This resource will not be unloaded by the background resource management
+				// in any case until the unlock method is called
 				Lock_Unloadable();
+
+				// After securing it, ensure it is loaded.
 				UseSync();
 				
 				TextureData data;
@@ -961,6 +978,7 @@ namespace Apoc3D
 					break;
 				}
 
+				// The resource is free now.
 				Unlock_Unloadable();
 
 				data.Save(strm);

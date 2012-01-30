@@ -88,7 +88,7 @@ namespace Apoc3D
 				if (m_isDefault)
 					return;
 
-
+				// recreating from a device lost needs some work
 				D3DDevice* dev = m_device->getDevice();
 
 				if (!getMultiSampleCount())
@@ -329,6 +329,9 @@ namespace Apoc3D
 
 			void D3D9RenderTarget::Resolve()
 			{
+				/** Because D3D9 RT texture is used and this RS is for Windows PC, 
+				 *  only multisample ones need to resolve.
+				 */
 				if (getMultiSampleCount())
 				{
 					D3DDevice* dev = m_device->getDevice();

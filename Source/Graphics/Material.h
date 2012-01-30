@@ -62,6 +62,9 @@ namespace Apoc3D
 			RenderDevice* m_device;
 
 			Effect* m_effects[MaxScenePass];
+			// NB: it is found that an array of Strings will use up considerable
+			// amount of memory as the Stl String will initialize their inner objects. 
+			// Thousands of Materials are space consuming if not using map.
 			unordered_map<int, String> m_effectName;//[MaxScenePass];
 
 			CustomParamTable m_customParametrs;
@@ -112,6 +115,12 @@ namespace Apoc3D
 			void AddCustomParameter(const MaterialCustomParameter& value);
 
 			String& getPassEffectName(int index) { assert(index<MaxScenePass); return  m_effectName[index]; }
+
+			/** Gets the material's texture's name at given index.
+			 * 
+			 *  The texture name is the file name. The engine will try to locate
+			 *  the texture file with the rule "FileLocateRule::Textures".
+			 */
 			const String& getTextureName(int index) const 
 			{
 				static String Empty = L"";
@@ -120,7 +129,11 @@ namespace Apoc3D
 					return Empty;
 				return m_texName.at(index); 
 			}
-
+			/** Sets the material's texture's name at given index.
+			 * 
+			 *  The texture name is the file name. The engine will try to locate
+			 *  the texture file with the rule "FileLocateRule::Textures".
+			 */
 			void setTextureName(int index, const String& name)
 			{
 				if (m_texName[index] != name)
@@ -130,8 +143,13 @@ namespace Apoc3D
 				}
 			}
 
+			/** Get the first effect appeared when passing the mtrl's effect 
+			 *  table from beginning to end.
+			 */
 			Effect* GetFirstValidEffect() const;
 
+			/** Get the effect at the given index in the mtrl's effect table.
+			*/
 			Effect* getPassEffect(int index) const { if (index==-1) return GetFirstValidEffect(); return m_effects[index]; }
 			void setPassEffect(int index, Effect* eff) { m_effects[index] = eff; }
 
@@ -161,12 +179,17 @@ namespace Apoc3D
 			void Save(MaterialData& data);
 
 			void Load(TaggedDataReader* data);
+			/** Packs the material to a MaterialData. Then save it as
+			 *  TaggedData.
+			 */
 			TaggedDataWriter* Save();
 
 			Material(const Material& m);
 			Material(RenderDevice* device);
 			~Material(void);
 
+			/** Reloads all textures in this material if their name have been changed.
+			*/
 			void Reload();
 
 		};

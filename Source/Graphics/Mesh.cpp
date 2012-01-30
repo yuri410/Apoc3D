@@ -40,6 +40,8 @@ namespace Apoc3D
 		{
 			m_factory = device->getObjectFactory();
 
+			// Add the materials from MeshData to the Mesh's material table,
+			// which is used for material animations. See getMaterials for details.
 			const MeshMaterialSet<MaterialData>& mtrls = data->Materials;
 
 			for (uint i=0;i<mtrls.getMaterialCount();i++)
@@ -96,6 +98,10 @@ namespace Apoc3D
 			memset(m_partPrimitiveCount, 0, sizeof(int) * matCount);
 			memset(m_partVertexCount, 0, sizeof(int) * matCount);
 
+			// Based on the face data, generate indices, grouping them to each sub part.
+			// Counting some statistics at the same time.
+			// 
+			// The mesh only supports triangle list as primitives.
 			const FastList<MeshFace>& faces = data->Faces;
 			for (int i=0;i<faces.getCount();i++)
 			{
@@ -109,6 +115,9 @@ namespace Apoc3D
 				m_partPrimitiveCount[matID]++;
 			}
 			
+			// Now put the group indices to the index buffers.
+			// At the same time, find out how many vertex that each group of
+			// indices is pointing to.
 			bool* passed = new bool[vertexCount];
 			if (useIndex16)
 			{
@@ -120,6 +129,8 @@ namespace Apoc3D
 					IndexBuffer* indexBuffer = m_factory->CreateIndexBuffer(IBT_Bit16, idx.getCount(), BU_Static);
 
 					ushort* ib = (ushort*)indexBuffer->Lock(0,0, LOCK_None);
+					// put the indices in to the buffer
+					// while marking the vertices used
 					for (int j=0;j<idx.getCount();j++)
 					{
 						ib[j] = (ushort)idx[j];
@@ -127,6 +138,8 @@ namespace Apoc3D
 					}
 					indexBuffer->Unlock();
 
+					// find out how many vertex that this index buffer
+					// is pointing to.
 					int vtxCount = 0;
 					for (int j=0;j<vertexCount;j++)
 					{
@@ -140,6 +153,7 @@ namespace Apoc3D
 			}
 			else
 			{
+				// 32 bit is the way same as 16 bit
 				for (int i=0;i<matCount;i++)
 				{
 					memset(passed, 0, vertexCount * sizeof(bool));

@@ -315,7 +315,8 @@ namespace Apoc3D
 				*/
 				VEF_NormalizedShort4 = 10,
 
-
+				/** Three-component, unsigned, 10 10 10 format expanded to (value, value, value, 1).
+				*/
 				VEF_UInt101010 = 11,
 				/*  Three-component, signed, 10 10 10 format normalized and expanded to (v[0]/511.0,
 				*   v[1]/511.0, v[2]/511.0, 1).

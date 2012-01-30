@@ -111,6 +111,7 @@ namespace Apoc3D
 			}
 			void Game::Exit()
 			{
+				m_exiting = true;
 				m_gameWindow->Close();
 			}
 

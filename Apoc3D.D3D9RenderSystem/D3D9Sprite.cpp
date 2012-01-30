@@ -54,6 +54,7 @@ namespace Apoc3D
 				assert(SUCCEEDED(hr));
 			}
 
+
 			void D3D9Sprite::Draw(Texture* texture, Vector2 pos, uint color)
 			{
 				D3DVector3 position;
@@ -90,6 +91,9 @@ namespace Apoc3D
 			{
 				Draw(texture, Point(x,y), color);
 			}
+
+			// Auto resizing to fit the target rectangle is implemented in this method.
+			// 
 			void D3D9Sprite::Draw(Texture* texture, 
 				const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
 			{

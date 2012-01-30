@@ -66,8 +66,9 @@ namespace Apoc3D
 			void SaveData(TaggedDataWriter* data) const;
 		};
 
-		/** Defines one entire texture's data stored in binary form and procedures to load/save them.
-		*/
+		/** Defines one entire texture's data stored in binary form and procedures to load/save them
+		 *  from ResourceLocations and Streams.
+		 */
 		class APAPI TextureData
 		{
 		public:

@@ -187,7 +187,10 @@ namespace Apoc3D
 			{
 				return m_game->getWindow()->getCurrentSize();
 			}
-
+			bool D3D9RenderWindow::getIsActive() const
+			{
+				return m_game->getIsActive();
+			}
 		}
 	}
 }

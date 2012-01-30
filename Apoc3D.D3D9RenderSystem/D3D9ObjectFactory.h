@@ -37,6 +37,9 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			/** The place for creating graphics objects under D3D9.
+			 *  See ObjectFactory for general description.
+			 */
 			class D3D9ObjectFactory : public ObjectFactory
 			{
 			private:
