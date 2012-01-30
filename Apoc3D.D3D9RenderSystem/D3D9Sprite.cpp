@@ -156,7 +156,7 @@ namespace Apoc3D
 							&r, NULL, NULL, color);
 						assert(SUCCEEDED(hr));
 
-						// restore the normal transform to keep others are working well
+						// restore the normal transform to keep others working well
 						m_sprite->SetTransform(&baseTrans);
 					}
 					else

@@ -38,6 +38,7 @@ namespace Apoc3D
 			GL1RSPlugin::GL1RSPlugin()
 				: m_factory()
 			{
+				GLeeInit();
 			}
 
 			void GL1RSPlugin::Load()

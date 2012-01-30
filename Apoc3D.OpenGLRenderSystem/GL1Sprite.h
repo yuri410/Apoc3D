@@ -62,7 +62,8 @@ namespace Apoc3D
 				virtual void SetTransform(const Matrix& matrix);
 			private:
 				GL1RenderDevice* m_gl1device;
-				
+				bool m_vboSupported;
+
 				bool m_alphaEnabled;
 
 				bool m_oldAlphaBlendEnabled;

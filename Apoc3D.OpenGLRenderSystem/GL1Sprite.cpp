@@ -33,7 +33,8 @@ namespace Apoc3D
 		namespace GL1RenderSystem
 		{
 			GL1Sprite::GL1Sprite(GL1RenderDevice* device)
-				: Sprite(device), m_gl1device(device), m_alphaEnabled(false)
+				: Sprite(device), m_gl1device(device), m_alphaEnabled(false),
+				m_vboSupported(false)
 			{
 
 			}
@@ -117,270 +118,200 @@ namespace Apoc3D
 
 			void GL1Sprite::Draw(Texture* texture, Vector2 pos, uint color)
 			{
-				if (isUsingStack())
+				if (m_vboSupported)
 				{
-					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
 
-					D3DMatrix trans = baseTrans;
-					trans._41 += Vector2Utils::GetX(pos);
-					trans._42 += Vector2Utils::GetY(pos);
-
-					m_sprite->SetTransform(&trans);
-
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						NULL, NULL, NULL, color);
-					assert(SUCCEEDED(hr));
-
-					m_sprite->SetTransform(&baseTrans);
 				}
 				else
 				{
-					D3DVector3 position;
-					position.x = Vector2Utils::GetX(pos);
-					position.y = Vector2Utils::GetY(pos);
-					position.z = 0;
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						0, 0, &position, color);
-					assert(SUCCEEDED(hr));
+					glColor4ub(GetColorR(color), GetColorG(color), GetColorB(color), GetColorA(color));
+
+					//glBindTexture()
+					glBegin(GL_QUADS);
+
+					glTexCoord2f(0,0);
+					glVertex4f(0, 0, 0, 1);
+					glTexCoord2f(0,1);
+					glVertex4f(0, Vector2Utils::GetY(pos), 0, 1);
+					glTexCoord2f(1,1);
+					glVertex4f(Vector2Utils::GetX(pos), Vector2Utils::GetY(pos), 0, 1);
+					glTexCoord2f(1,0);
+					glVertex4f(Vector2Utils::GetX(pos), 0, 0, 1);
+
+					glEnd();
 				}
 			}
 			void GL1Sprite::Draw(Texture* texture, const Point& pos, uint color)
 			{
-				if (isUsingStack())
+				if (m_vboSupported)
 				{
-					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
 
-					D3DMatrix trans = baseTrans;
-					trans._41 += pos.X;
-					trans._42 += pos.Y;
-
-					m_sprite->SetTransform(&trans);
-
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						NULL, NULL, NULL, color);
-					assert(SUCCEEDED(hr));
-
-					m_sprite->SetTransform(&baseTrans);
 				}
 				else
 				{
-					D3DVector3 position;
-					position.x = (float)pos.X;
-					position.y = (float)pos.Y;
-					position.z = 0;
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						0, 0, &position, color);
-					assert(SUCCEEDED(hr));
+					glColor4ub(GetColorR(color), GetColorG(color), GetColorB(color), GetColorA(color));
+
+					//glBindTexture()
+					glBegin(GL_QUADS);
+
+					glTexCoord2f(0,0);
+					glVertex4f(0, 0, 0, 1);
+					glTexCoord2f(0,1);
+					glVertex4f(0, pos.Y, 0, 1);
+					glTexCoord2f(1,1);
+					glVertex4f(pos.X, pos.Y, 0, 1);
+					glTexCoord2f(1,0);
+					glVertex4f(pos.X, 0, 0, 1);
+
+					glEnd();
 				}
 			}
 			void GL1Sprite::Draw(Texture* texture, const PointF& pos, uint color)
 			{
-				if (isUsingStack())
+				if (m_vboSupported)
 				{
-					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
 
-					D3DMatrix trans = baseTrans;
-					trans._41 += pos.X;
-					trans._42 += pos.Y;
-
-					m_sprite->SetTransform(&trans);
-
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						NULL, NULL, NULL, color);
-					assert(SUCCEEDED(hr));
-
-					m_sprite->SetTransform(&baseTrans);
 				}
 				else
 				{
-					D3DVector3 position;
-					position.x = pos.X;
-					position.y = pos.Y;
-					position.z = 0;
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						0, 0, &position, color);
-					assert(SUCCEEDED(hr));
+					glColor4ub(GetColorR(color), GetColorG(color), GetColorB(color), GetColorA(color));
+
+					//glBindTexture()
+					glBegin(GL_QUADS);
+
+					glTexCoord2f(0,0);
+					glVertex4f(0, 0, 0, 1);
+					glTexCoord2f(0,1);
+					glVertex4f(0, pos.Y, 0, 1);
+					glTexCoord2f(1,1);
+					glVertex4f(pos.X, pos.Y, 0, 1);
+					glTexCoord2f(1,0);
+					glVertex4f(pos.X, 0, 0, 1);
+
+					glEnd();
 				}
 			}
 			void GL1Sprite::Draw(Texture* texture, int x, int y, uint color)
 			{
-				if (isUsingStack())
-				{
-					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-
-					D3DMatrix trans = baseTrans;
-					trans._41 += x;
-					trans._42 += y;
-
-					m_sprite->SetTransform(&trans);
-
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						NULL, NULL, NULL, color);
-					assert(SUCCEEDED(hr));
-
-					m_sprite->SetTransform(&baseTrans);
-				}
-				else
-				{
-					D3DVector3 position;
-					position.x = static_cast<float>(x);
-					position.y = static_cast<float>(y);
-					position.z = 0;
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						0, 0, &position, color);
-					assert(SUCCEEDED(hr));
-				}
-				
+				Draw(texture, Point(x,y), color);
 			}
 			void GL1Sprite::Draw(Texture* texture, 
 				const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
 			{
 				
-				D3DVector3 position;
-				position.x = static_cast<float>(dstRect.X);
-				position.y = static_cast<float>(dstRect.Y);
-				position.z = 0;
+				float position[3];
+				position[0] = static_cast<float>(dstRect.X);
+				position[1] = static_cast<float>(dstRect.Y);
+				position[2] = 0;
 
-				//D3DVector3 center;
-				//center.x = static_cast<float>(position.x + dstRect.Width * 0.5f);
-				//center.y = static_cast<float>(position.y + dstRect.Height * 0.5f);
-				//center.z = 0;
+
 
 				if (srcRect)
 				{
-					//LONG    left;
-					//LONG    top;
-					//LONG    right;
-					//LONG    bottom;
-					RECT r = { 
-						(LONG)srcRect->X, 
-						(LONG)srcRect->Y,
-						(LONG)srcRect->getRight(),
-						(LONG)srcRect->getBottom()
+					// util for standardizing rect
+					struct TempRect
+					{
+						int    left;
+						int    top;
+						int    right;
+						int    bottom;
+					};
+					TempRect r = { 
+						srcRect->X, 
+						srcRect->Y,
+						srcRect->getRight(),
+						srcRect->getBottom()
 					};
 
+					// In some cases, the X,Y of the rect is not always the top-left corner,
+					// when the Width or Height is negative. Standardize it.
 					if (r.left > r.right)
 					{
-						LONG temp = r.right;
+						int temp = r.right;
 						r.right = r.left;
 						r.left = temp;
-						position.x -= (float)( r.left - r.right);
+						position[0] -= (float)( r.left - r.right);
 					}
 					if (r.top>r.bottom)
 					{
-						LONG temp = r.bottom;
+						int temp = r.bottom;
 						r.bottom = r.top;
 						r.top = temp;
-						position.y -= (float)( r.top - r.bottom);
+						position[1] -= (float)( r.top - r.bottom);
 					}
 
+					// scaling is required when the 2 rects' size do not match
 					if (srcRect->Width != dstRect.Width || srcRect->Height != dstRect.Height)
 					{
-						D3DMatrix trans;
-						D3DXMatrixTranslation(&trans, position.x, position.y, position.z);
-						trans._11 = (float)dstRect.Width / (float)srcRect->Width;
-						trans._22 = (float)dstRect.Height / (float)srcRect->Height;
-
-						D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-						D3DXMatrixMultiply(&trans, &trans,&baseTrans);
+						// calculate a scaling and translation matrix
+						Matrix trans;
+						Matrix::CreateTranslation(trans, position[0], position[1], position[2]);
 						
-						m_sprite->SetTransform(&trans);
+						trans.M11 = (float)dstRect.Width / (float)srcRect->Width;
+						trans.M22 = (float)dstRect.Height / (float)srcRect->Height;
 
-						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-							&r, NULL, NULL, color);
-						assert(SUCCEEDED(hr));
+						//  "trans" * transform for the result
+						Matrix result;
+						Matrix::Multiply(result, trans, getTransform());
 
-						m_sprite->SetTransform(&baseTrans);
+						glLoadMatrixf(reinterpret_cast<const float*>(&trans));
+						
+						// As the position have been added to the transform, 
+						// draw the texture at the origin
+						Draw(texture, 0,0, color);
+
+						// restore the normal transform to keep others working well
+						glLoadMatrixf(reinterpret_cast<const float*>(&getTransform()));
 					}
 					else
 					{
-						if (isUsingStack())
-						{
-							D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-							//D3DXMatrixMultiply(&trans, &trans,&baseTrans);
-							D3DMatrix trans = baseTrans;
-							trans._41 += position.x;
-							trans._42 += position.y;
-							trans._43 += position.z;
-
-							m_sprite->SetTransform(&trans);
-
-							HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-								&r, NULL, NULL, color);
-							assert(SUCCEEDED(hr));
-
-							m_sprite->SetTransform(&baseTrans);
-						}
-						else
-						{
-							HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-								&r, NULL, &position, color);
-							assert(SUCCEEDED(hr));
-						}
+						Draw(texture, PointF(position[0], position[1]), color);
 					}
 					
 				}
 				else
 				{
+					// scaling is required when the dstRect's size do not match the texture's
 					if (texture->getWidth() != dstRect.Width || texture->getHeight() != dstRect.Height)
 					{
-						D3DMatrix trans;
-						D3DXMatrixTranslation(&trans, position.x, position.y, position.z);
-						trans._11 = (float)dstRect.Width / (float)texture->getWidth();
-						trans._22 = (float)dstRect.Height / (float)texture->getHeight();
+						Matrix trans;
+						Matrix::CreateTranslation(trans, position[0], position[1], position[2]);
+
+						trans.M11 = (float)dstRect.Width / (float)texture->getWidth();
+						trans.M22 = (float)dstRect.Height / (float)texture->getHeight();
 						
-						D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-						D3DXMatrixMultiply(&trans,  &trans, &baseTrans);
+						Matrix result;
+						Matrix::Multiply(result, trans, getTransform());
 
-						m_sprite->SetTransform(&trans);
+						glLoadMatrixf(reinterpret_cast<const float*>(&trans));
 
-						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-							NULL, NULL, NULL, color);
-						assert(SUCCEEDED(hr));
+						Draw(texture, 0,0, color);
 
-						m_sprite->SetTransform(&baseTrans);
+						glLoadMatrixf(reinterpret_cast<const float*>(&getTransform()));
 					}
 					else
 					{
-						if (isUsingStack())
-						{
-							D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-							D3DMatrix trans = baseTrans;
-							trans._41 += position.x;
-							trans._42 += position.y;
-							trans._43 += position.z;
-
-							m_sprite->SetTransform(&trans);
-
-							HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-								NULL, NULL, NULL, color);
-							assert(SUCCEEDED(hr));
-
-							m_sprite->SetTransform(&baseTrans);
-						}
-						else
-						{
-							HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-								NULL, NULL, &position, color);
-							assert(SUCCEEDED(hr));
-						}
-						
+						Draw(texture, PointF(position[0], position[1]), color);
 					}
 				}
 			}
 
 			void GL1Sprite::Flush()
 			{
-				//HRESULT hr = m_sprite->Flush();
-				//assert(SUCCEEDED(hr));
+				// When using VBO, draws the quads in buffer then clears it
+
 			}
 
 			void GL1Sprite::SetTransform(const Matrix& matrix)
 			{
-				//HRESULT hr = m_sprite->SetTransform(reinterpret_cast<const D3DMatrix*>(&getTransform()));
-				//assert(SUCCEEDED(hr));
+				if (m_vboSupported)
+					Flush();
 
 				Sprite::SetTransform(matrix);
+
+				// This will set the transformation. 
+				// When using stack, the top matrix will be used.
+				glLoadMatrixf(reinterpret_cast<const float*>(&getTransform()));
 			}
 
 

@@ -145,13 +145,19 @@ namespace Apoc3D
 				//	delete m_instancingData;
 			}
 
-			//D3DDevice* D3D9RenderDevice::getDevice() const { return m_devManager->getDevice(); } 
-
-			
 
 
 			void GL1RenderDevice::Initialize()
 			{
+				glEnable(GL_TEXTURE_2D);
+				glEnable(GL_TEXTURE_1D);
+
+				if (GLEE_EXT_texture3D)
+					glEnable(GL_TEXTURE_3D);
+				if (GLEE_EXT_texture_cube_map)
+					glEnable(GL_TEXTURE_CUBE_MAP);
+
+				//glDisable(GL_LIGHTING);
 
 				LogManager::getSingleton().Write(LOG_Graphics, 
 					L"[GL1]Initializing OpenGL 1.x Render Device. ", 
