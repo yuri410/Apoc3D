@@ -56,120 +56,39 @@ namespace Apoc3D
 
 			void D3D9Sprite::Draw(Texture* texture, Vector2 pos, uint color)
 			{
-				if (isUsingStack())
-				{
-					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
+				D3DVector3 position;
+				position.x = Vector2Utils::GetX(pos);
+				position.y = Vector2Utils::GetY(pos);
+				position.z = 0;
 
-					D3DMatrix trans = baseTrans;
-					trans._41 += Vector2Utils::GetX(pos);
-					trans._42 += Vector2Utils::GetY(pos);
-
-					m_sprite->SetTransform(&trans);
-
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						NULL, NULL, NULL, color);
-					assert(SUCCEEDED(hr));
-
-					m_sprite->SetTransform(&baseTrans);
-				}
-				else
-				{
-					D3DVector3 position;
-					position.x = Vector2Utils::GetX(pos);
-					position.y = Vector2Utils::GetY(pos);
-					position.z = 0;
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						0, 0, &position, color);
-					assert(SUCCEEDED(hr));
-				}
+				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+					0, 0, &position, color);
+				assert(SUCCEEDED(hr));
+				
 			}
 			void D3D9Sprite::Draw(Texture* texture, const Point& pos, uint color)
 			{
-				if (isUsingStack())
-				{
-					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-
-					D3DMatrix trans = baseTrans;
-					trans._41 += pos.X;
-					trans._42 += pos.Y;
-
-					m_sprite->SetTransform(&trans);
-
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						NULL, NULL, NULL, color);
-					assert(SUCCEEDED(hr));
-
-					m_sprite->SetTransform(&baseTrans);
-				}
-				else
-				{
-					D3DVector3 position;
-					position.x = (float)pos.X;
-					position.y = (float)pos.Y;
-					position.z = 0;
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						0, 0, &position, color);
-					assert(SUCCEEDED(hr));
-				}
+				D3DVector3 position;
+				position.x = (float)pos.X;
+				position.y = (float)pos.Y;
+				position.z = 0;
+				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+					0, 0, &position, color);
+				assert(SUCCEEDED(hr));
 			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
 			{
-				if (isUsingStack())
-				{
-					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-
-					D3DMatrix trans = baseTrans;
-					trans._41 += pos.X;
-					trans._42 += pos.Y;
-
-					m_sprite->SetTransform(&trans);
-
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						NULL, NULL, NULL, color);
-					assert(SUCCEEDED(hr));
-
-					m_sprite->SetTransform(&baseTrans);
-				}
-				else
-				{
-					D3DVector3 position;
-					position.x = pos.X;
-					position.y = pos.Y;
-					position.z = 0;
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						0, 0, &position, color);
-					assert(SUCCEEDED(hr));
-				}
+				D3DVector3 position;
+				position.x = pos.X;
+				position.y = pos.Y;
+				position.z = 0;
+				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+					0, 0, &position, color);
+				assert(SUCCEEDED(hr));
 			}
 			void D3D9Sprite::Draw(Texture* texture, int x, int y, uint color)
 			{
-				if (isUsingStack())
-				{
-					D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-
-					D3DMatrix trans = baseTrans;
-					trans._41 += x;
-					trans._42 += y;
-
-					m_sprite->SetTransform(&trans);
-
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						NULL, NULL, NULL, color);
-					assert(SUCCEEDED(hr));
-
-					m_sprite->SetTransform(&baseTrans);
-				}
-				else
-				{
-					D3DVector3 position;
-					position.x = static_cast<float>(x);
-					position.y = static_cast<float>(y);
-					position.z = 0;
-					HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-						0, 0, &position, color);
-					assert(SUCCEEDED(hr));
-				}
-				
+				Draw(texture, Point(x,y), color);
 			}
 			void D3D9Sprite::Draw(Texture* texture, 
 				const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
@@ -187,10 +106,11 @@ namespace Apoc3D
 
 				if (srcRect)
 				{
-					//LONG    left;
-					//LONG    top;
-					//LONG    right;
-					//LONG    bottom;
+					// RECT:
+					// LONG    left;
+					// LONG    top;
+					// LONG    right;
+					// LONG    bottom;
 					RECT r = { 
 						(LONG)srcRect->X, 
 						(LONG)srcRect->Y,
@@ -198,6 +118,8 @@ namespace Apoc3D
 						(LONG)srcRect->getBottom()
 					};
 
+					// In some cases, the X,Y of the rect is not always the top-left corner,
+					// when the Width or Height is negative. Standardize it.
 					if (r.left > r.right)
 					{
 						LONG temp = r.right;
@@ -213,54 +135,41 @@ namespace Apoc3D
 						position.y -= (float)( r.top - r.bottom);
 					}
 
+					// scaling is required when the 2 rects' size do not match
 					if (srcRect->Width != dstRect.Width || srcRect->Height != dstRect.Height)
 					{
+						// calculate a scaling and translation matrix
 						D3DMatrix trans;
 						D3DXMatrixTranslation(&trans, position.x, position.y, position.z);
 						trans._11 = (float)dstRect.Width / (float)srcRect->Width;
 						trans._22 = (float)dstRect.Height / (float)srcRect->Height;
 
+						// add "trans" at the the beginning for the result
 						D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
 						D3DXMatrixMultiply(&trans, &trans,&baseTrans);
 						
 						m_sprite->SetTransform(&trans);
 
+						// As the position have been added to the transform, 
+						// draw the texture at the origin
 						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
 							&r, NULL, NULL, color);
 						assert(SUCCEEDED(hr));
 
+						// restore the normal transform to keep others are working well
 						m_sprite->SetTransform(&baseTrans);
 					}
 					else
 					{
-						if (isUsingStack())
-						{
-							D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-							//D3DXMatrixMultiply(&trans, &trans,&baseTrans);
-							D3DMatrix trans = baseTrans;
-							trans._41 += position.x;
-							trans._42 += position.y;
-							trans._43 += position.z;
-
-							m_sprite->SetTransform(&trans);
-
-							HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-								&r, NULL, NULL, color);
-							assert(SUCCEEDED(hr));
-
-							m_sprite->SetTransform(&baseTrans);
-						}
-						else
-						{
-							HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-								&r, NULL, &position, color);
-							assert(SUCCEEDED(hr));
-						}
+						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+							&r, NULL, &position, color);
+						assert(SUCCEEDED(hr));
 					}
-					
 				}
 				else
 				{
+					// scaling is required when the dstRect's size do not match the texture's
+
 					if (texture->getWidth() != dstRect.Width || texture->getHeight() != dstRect.Height)
 					{
 						D3DMatrix trans;
@@ -281,28 +190,9 @@ namespace Apoc3D
 					}
 					else
 					{
-						if (isUsingStack())
-						{
-							D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-							D3DMatrix trans = baseTrans;
-							trans._41 += position.x;
-							trans._42 += position.y;
-							trans._43 += position.z;
-
-							m_sprite->SetTransform(&trans);
-
-							HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-								NULL, NULL, NULL, color);
-							assert(SUCCEEDED(hr));
-
-							m_sprite->SetTransform(&baseTrans);
-						}
-						else
-						{
-							HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-								NULL, NULL, &position, color);
-							assert(SUCCEEDED(hr));
-						}
+						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
+							NULL, NULL, &position, color);
+						assert(SUCCEEDED(hr));
 						
 					}
 				}
@@ -316,10 +206,12 @@ namespace Apoc3D
 
 			void D3D9Sprite::SetTransform(const Matrix& matrix)
 			{
+				Sprite::SetTransform(matrix);
+
+				// This will set the transformation. 
+				// When using stack, the top matrix will be used.
 				HRESULT hr = m_sprite->SetTransform(reinterpret_cast<const D3DMatrix*>(&getTransform()));
 				assert(SUCCEEDED(hr));
-
-				Sprite::SetTransform(matrix);
 			}
 
 			void D3D9Sprite::ReleaseVolatileResource()

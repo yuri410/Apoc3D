@@ -86,6 +86,9 @@ namespace Apoc3D
 				virtual void setViewport(const Viewport& vp);
 
 				virtual Capabilities* const getCapabilities() const;
+
+
+				NativeGL1StateManager* getNativeState() const { return m_nativeState; }
 			private:
 				friend class VolatileResource;
 

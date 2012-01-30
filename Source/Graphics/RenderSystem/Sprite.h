@@ -38,6 +38,7 @@ namespace Apoc3D
 		namespace RenderSystem
 		{
 			/** Sprite is a utility used to draw textured rectangles in viewport. 
+			 *
 			 *  Sprite can work with a built-in matrix stack. When using matrix 
 			 *  stack, please notice that you should keep the stack balanced. 
 			 *  A call to SetTransform will push a matrix into the stack.
