@@ -47,47 +47,34 @@ namespace Apoc3D
 	{
 		namespace GL1RenderSystem
 		{
+			/**
+			  You are probably looking for glGetTexImage
+			  (see http://www.opengl.org/sdk/docs/man/xhtml/glGetTexImage.xml for further information).
+
+			  Before using glGetTexImage, don't forget to use 
+			  glBindTexture (http://www.opengl.org/sdk/docs/man/xhtml/glBindTexture.xml) with your texture ID.
+			*/
+
+			/** glGetTexParameterfv
+			*/
+
+			GL1Texture::GL1Texture(GL1RenderDevice* device, GLuint texId, TextureType type)
+				: Texture(device,
+				GL1Utils::GetGLTextureWidth(tex2D), 
+				GL1Utils::GetGLTextureHeight(tex2D), 
+				GL1Utils::GetGLTextureDepth(tex2D),
+				GL1Utils::GetGLTextureLevels(tex2D), 
+				GL1Utils::GetGLTextureFormat(tex2D), 
+				GL1Utils::GetGLTextureUsage(tex2D)), 
+				m_renderDevice(device)
+			{
+
+			}
 			
-
-			GL1Texture::GL1Texture(GL1RenderDevice* device, D3DTexture2D* tex2D)
-				: Texture(device,
-				D3D9Utils::GetD3DTextureWidth(tex2D), 
-				D3D9Utils::GetD3DTextureHeight(tex2D), 1, 
-				static_cast<int32>(tex2D->GetLevelCount()), 
-				D3D9Utils::GetD3DTextureFormat(tex2D), 
-				D3D9Utils::GetD3DTextureUsage(tex2D)), 
-				m_renderDevice(device), m_tex2D(tex2D), m_tex3D(0), m_cube(0)
-			{
-
-			}
-			GL1Texture::GL1Texture(GL1RenderDevice* device, D3DTexture3D* tex3D)
-				: Texture(device,
-				D3D9Utils::GetD3DTextureWidth(tex3D), 
-				D3D9Utils::GetD3DTextureHeight(tex3D), 
-				D3D9Utils::GetD3DTextureDepth(tex3D), 
-				static_cast<int32>(tex3D->GetLevelCount()), 
-				D3D9Utils::GetD3DTextureFormat(tex3D), 
-				D3D9Utils::GetD3DTextureUsage(tex3D)),
-				m_renderDevice(device), m_tex2D(0), m_tex3D(tex3D), m_cube(0)
-			{
-				
-			}
-			GL1Texture::GL1Texture(GL1RenderDevice* device, D3DTextureCube* texCube)
-				: Texture(device,
-				D3D9Utils::GetD3DTextureLength(texCube), 
-				D3D9Utils::GetD3DTextureLength(texCube), 
-				1, 
-				static_cast<int32>(texCube->GetLevelCount()), 
-				D3D9Utils::GetD3DTextureFormat(texCube), 
-				D3D9Utils::GetD3DTextureUsage(texCube)), 
-				m_renderDevice(device), m_tex2D(0), m_tex3D(0), m_cube(texCube)
-			{
-
-			}
 
 			GL1Texture::GL1Texture(GL1RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed)
 				: Texture(device, rl, usage, managed), 
-				m_renderDevice(device), m_tex2D(0), m_tex3D(0), m_cube(0)
+				m_renderDevice(device)
 			{
 				if (!managed)
 				{
@@ -97,7 +84,7 @@ namespace Apoc3D
 			GL1Texture::GL1Texture(GL1RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
 				PixelFormat format, TextureUsage usage)
 				: Texture(device, width, height, depth, level, format, usage),
-				m_renderDevice(device), m_tex2D(0), m_tex3D(0), m_cube(0)
+				m_renderDevice(device)
 			{
 				D3DDevice* dev = device->getDevice();
 
@@ -119,7 +106,7 @@ namespace Apoc3D
 
 			GL1Texture::GL1Texture(GL1RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage)
 				: Texture(device, length, level, usage, format),
-				m_renderDevice(device), m_tex2D(0), m_tex3D(0)
+				m_renderDevice(device)
 			{
 				D3DDevice* dev = device->getDevice();
 

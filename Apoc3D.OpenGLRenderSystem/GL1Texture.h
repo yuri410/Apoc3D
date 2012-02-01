@@ -44,37 +44,16 @@ namespace Apoc3D
 			class GL1Texture : public Apoc3D::Graphics::RenderSystem::Texture
 			{
 			private:
-				//GL1Texture2D* m_tex2D;
-				//GL1Texture3D* m_tex3D;
-				//GL1TextureCube* m_cube;
 				GL1RenderDevice* m_renderDevice;
 				GLuint m_textureID;
-
-				//D3DCUBEMAP_FACES m_lockedCubeFace;
 
 			public:
 				void setInternalTexID(GLuint id) { m_textureID = id; }
 				GLuint getInternalTexID() const { return m_textureID; }
-				//void setInternal2D(D3DTexture2D* tex) { m_tex2D = tex; }
+			
 
-				//D3DTexture2D* getInternal2D() const { return m_tex2D; }
-				//D3DTexture3D* getInternal3D() const { return m_tex3D; }
-				//D3DTextureCube* getInternalCube() const { return m_cube; }
-
-				//D3DBaseTexture* getBaseTexture() const
-				//{
-				//	if (m_tex2D)
-				//		return m_tex2D;
-				//	if (m_tex3D)
-				//		return m_tex3D;
-				//	if (m_cube)
-				//		return m_cube;
-				//	return 0;
-				//}
 				GL1Texture(GL1RenderDevice* device, GLuint id, TextureType type);
-				//GL1Texture(GL1RenderDevice* device, D3DTexture2D* tex2D);
-				//GL1Texture(GL1RenderDevice* device, D3DTexture3D* tex3D);
-				//GL1Texture(GL1RenderDevice* device, D3DTextureCube* texCube);
+
 
 				GL1Texture(GL1RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed);
 				GL1Texture(GL1RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
