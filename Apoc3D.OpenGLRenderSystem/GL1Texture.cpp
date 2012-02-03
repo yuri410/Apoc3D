@@ -55,20 +55,56 @@ namespace Apoc3D
 			  glBindTexture (http://www.opengl.org/sdk/docs/man/xhtml/glBindTexture.xml) with your texture ID.
 			*/
 
-			/** glGetTexParameterfv
+
+			/** Assuming that OpenGL will select an alternative 
+				internalFormat if the suggested one is not supported,
+				no manual pixel format conversion is required.
+				 -This could be wrong, confirmation needed.
+
+				see: http://www.opengl.org/wiki/GLAPI/glTexImage2D
+
+				Since so, the pixel format provided here will be 
+				only based on "GLenum format, GLenum type",
+				as these params determines the interface for accessing the pixel data.
 			*/
 
 			GL1Texture::GL1Texture(GL1RenderDevice* device, GLuint texId, TextureType type)
-				: Texture(device,
-				GL1Utils::GetGLTextureWidth(tex2D), 
-				GL1Utils::GetGLTextureHeight(tex2D), 
-				GL1Utils::GetGLTextureDepth(tex2D),
-				GL1Utils::GetGLTextureLevels(tex2D), 
-				GL1Utils::GetGLTextureFormat(tex2D), 
-				GL1Utils::GetGLTextureUsage(tex2D)), 
+				: Texture(device, 1,1,1,1, FMT_Unknown, TU_Static),  // initialize base class using dummy params
 				m_renderDevice(device)
 			{
+				GLenum target = GLUtils::GetTextureTarget(type);
+				glBindTexture(target, texId);
 
+				
+				// retrieve and set the real param here
+				switch (type)
+				{
+				case TT_Texture1D:
+					{
+						int width;
+						glGetTexLevelParameteriv(target, 0, texId, &width);
+						
+
+
+					}
+					break;
+				case TT_Texture2D:
+					{
+						
+					}
+					break;
+				case TT_Texture3D:
+					{
+						
+					}
+					break;
+				case TT_CubeTexture:
+					{
+						
+					}
+					break;
+				}
+				glBindTexture(target, 0);
 			}
 			
 

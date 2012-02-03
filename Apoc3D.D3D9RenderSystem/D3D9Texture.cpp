@@ -48,7 +48,7 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			/** Hacked from somewhere: 
-			 *   getting to know how big the data is by treating each pixel sized in a differently way inside D3D.
+			 *   getting to know how big the internal data is by treating each pixel sized in a differently way inside D3D.
 			 */
 			byte GetExpectedByteSizeFromFormat(D3DFORMAT format)
 			{

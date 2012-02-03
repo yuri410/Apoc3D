@@ -84,46 +84,36 @@ namespace Apoc3D
 			//	static BufferUsageFlags GetBufferUsage(DWORD usage);
 			//	static PixelFormat ConvertBackPixelFormat(DWORD format);
 			//	static DepthFormat ConvertBackDepthFormat(DWORD format);
-			//	
-			//	static int32 GetD3DTextureWidth(D3DTexture2D* tex)
-			//	{
-			//		D3DSURFACE_DESC desc;
-			//		tex->GetLevelDesc(0, &desc);
 
-			//		return static_cast<int32>(desc.Width);
-			//	}
-			//	static int32 GetD3DTextureHeight(D3DTexture2D* tex)
-			//	{
-			//		D3DSURFACE_DESC desc;
-			//		tex->GetLevelDesc(0, &desc);
+				/** Converts "GLenum format, GLenum type" to PixelFormat
+				 */
+				static PixelFormat ConvertBackPixelFormat(GLenum format, GLenum type);
+				/** Converts PixelFormat to "GLenum format, GLenum type"
+				*/
+				static void ConvertPixelFormat(PixelFormat fmt, GLenum& format, GLenum& type);
 
-			//		return static_cast<int32>(desc.Height);
-			//	}
-			//	static PixelFormat GetD3DTextureFormat(D3DTexture2D* tex);
-			//	static TextureUsage GetD3DTextureUsage(D3DTexture2D* tex);
+				/** Converts TextureType to GL_TEXTURE_1D, GL_TEXTURE_2D..
+				*/
+				static GLenum GetTextureTarget(TextureType type)
+				{
+					switch (type)
+					{
+					case TT_Texture1D:
+						return GL_TEXTURE_1D;
+					case TT_Texture2D:
+						return GL_TEXTURE_2D;
+					case TT_Texture3D:
+						return GL_TEXTURE_3D;
+					case TT_CubeTexture:
+						return GL_TEXTURE_CUBE_MAP;
+					}
+					// keep the compiler happy
+					return GL_TEXTURE_1D; 
+				}
 
 
-			//	static int32 GetD3DTextureWidth(D3DTexture3D* tex)
-			//	{
-			//		D3DVOLUME_DESC desc;
-			//		tex->GetLevelDesc(0, &desc);
 
-			//		return static_cast<int32>(desc.Width);
-			//	}
-			//	static int32 GetD3DTextureHeight(D3DTexture3D* tex)
-			//	{
-			//		D3DVOLUME_DESC desc;
-			//		tex->GetLevelDesc(0, &desc);
 
-			//		return static_cast<int32>(desc.Height);
-			//	}
-			//	static int32 GetD3DTextureDepth(D3DTexture3D* tex)
-			//	{
-			//		D3DVOLUME_DESC desc;
-			//		tex->GetLevelDesc(0, &desc);
-
-			//		return static_cast<int32>(desc.Depth);
-			//	}
 			//	static PixelFormat GetD3DTextureFormat(D3DTexture3D* tex);
 			//	static TextureUsage GetD3DTextureUsage(D3DTexture3D* tex);
 

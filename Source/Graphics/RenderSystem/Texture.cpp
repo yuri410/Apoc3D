@@ -70,7 +70,7 @@ namespace Apoc3D
 				{
 					m_type = TT_Texture3D;
 				}
-				m_contentSize = PixelFormatUtils::GetMemorySize(width, height, 1, format);
+				RecalculateContentSize();
 			}
 			Texture::Texture(RenderDevice* device, int length, int levelCount, TextureUsage usage, PixelFormat format)
 				: m_renderDevice(device), m_resourceLocation(0), m_usage(usage), 
@@ -79,7 +79,7 @@ namespace Apoc3D
 				m_type(TT_CubeTexture),
 				m_isLocked(false)
 			{
-				m_contentSize = 6 * PixelFormatUtils::GetMemorySize(length, length, 1, format);
+				RecalculateContentSize();
 			}
 			Texture::~Texture()
 			{
@@ -99,6 +99,40 @@ namespace Apoc3D
 				m_type = data.Type;
 				m_width = data.Levels[0].Width;
 			}
+			void Texture::UpdateProperties(TextureType type, int width, int height, int depth, int levelCount, PixelFormat format, TextureUsage usage)
+			{
+				m_type = type;
+				m_width = width;
+				m_height = height;
+				m_depth = depth;
+				m_levelCount = levelCount;
+				m_format = format;
+				m_usage = usage;
+				RecalculateContentSize();
+			}
+			void Texture::RecalculateContentSize()
+			{
+				int width = m_width;
+				int height = m_height;
+				int depth = m_depth;
+
+				m_contentSize = 0;
+
+				// One assumption is made here:
+				//  All sub levels' size in the texture is the same as the mipmap's.
+				for (int i=0;i<m_levelCount;i++)
+				{
+					m_contentSize += PixelFormatUtils::GetMemorySize(width, height, depth, m_format);	
+
+					if (width>1) width >>= 1;
+					if (height>1) height >>= 1;
+					if (depth>1) depth >>= 1;
+				}
+
+				if (m_type == TT_CubeTexture)
+					m_contentSize *= 6;
+			}
+
 
 			DataBox Texture::Lock(int surface, LockMode mode, const Box& box)
 			{
