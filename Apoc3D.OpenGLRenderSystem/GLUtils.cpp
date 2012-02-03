@@ -99,7 +99,118 @@ namespace Apoc3D
 			}
 			void GLUtils::ConvertPixelFormat(PixelFormat fmt, GLenum& format, GLenum& type)
 			{
+				switch (fmt)
+				{
+				case FMT_Luminance8:
+					format = GL_LUMINANCE;
+					//type = GL_UNSIGNED_BYTE;
+					return;
+				case FMT_Luminance16:
+					format = GL_LUMINANCE;
+					return;
+				case FMT_Alpha1:
+					// not supported
+					break;
+				case FMT_Alpha8:
+					format = GL_ALPHA;
+					return;
+				case FMT_A4L4:
+					format = GL_LUMINANCE_ALPHA;
+					return;
+				case FMT_A8L8:
 
+					break;
+				case FMT_R5G6B5:
+					format = GL_RGB;
+					return;
+				case FMT_B5G6R5:
+					format = GL_BGR;
+					return;
+				case FMT_A4R4G4B4:
+					format = GL_BGRA;
+					return;
+				case FMT_A1R5G5B5:
+					format = GL_BGRA;
+					return;
+#ifdef LITTLEENDIAN
+				case FMT_R8G8B8:
+					format = GL_BGR;
+					return;
+				case FMT_B8G8R8:
+					format = GL_RGB;
+					return;
+#else
+				case FMT_R8G8B8:
+					format = GL_RGB;
+					return;
+				case FMT_B8G8R8:
+					format = GL_BGR;
+					return;
+#endif
+				case FMT_A8R8G8B8:
+					format = GL_BGRA;
+					return;
+				case FMT_A8B8G8R8:
+					format = GL_RGBA;
+					return;
+				case FMT_B8G8R8A8:
+					format = GL_BGRA;
+					return;
+				case FMT_A2R10G10B10:
+					format = GL_BGRA;
+					return;
+				case FMT_A2B10G10R10:
+					format = GL_RGBA;
+					return;
+				case FMT_DXT1:
+					format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+					return;
+				case FMT_DXT3:
+					format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+					return;
+				case FMT_DXT5:
+					format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+					return;
+				case FMT_A16B16G16R16F:
+					format = GL_RGBA;
+					return;
+				case FMT_A32B32G32R32F:
+					format = GL_RGBA;
+					break;
+				case FMT_X8R8G8B8:
+					format = GL_BGRA;
+					return;
+				case FMT_X8B8G8R8:
+					format = GL_RGBA;
+					return;
+				case FMT_X1R5G5B5:
+					break;
+				case FMT_R8G8B8A8:
+					break;
+				case FMT_A16B16G16R16:
+					break;
+				case FMT_R3G3B2:
+					break;
+				case FMT_R16F:
+					break;
+				case FMT_R32F:
+					break;
+				case FMT_G16R16:
+					break;
+				case FMT_G16R16F:
+					break;
+				case FMT_G32R32F:
+					break;
+				case FMT_R16G16B16:
+					break;
+				case FMT_B4G4R4A4:
+					break;
+				case FMT_Palette8:
+					break;
+				case FMT_Palette8Alpha8:
+					break;
+				}
+				throw Apoc3DException::createException(EX_NotSupported, L"");
 			}
 
 			void GLUtils::InitCompareFunctionTable()

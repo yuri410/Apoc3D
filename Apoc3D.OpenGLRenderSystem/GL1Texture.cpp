@@ -76,15 +76,16 @@ namespace Apoc3D
 				glBindTexture(target, texId);
 
 				
+				
 				// retrieve and set the real param here
 				switch (type)
 				{
 				case TT_Texture1D:
 					{
 						int width;
-						glGetTexLevelParameteriv(target, 0, texId, &width);
+						glGetTexLevelParameteriv(target, 0, GL_TEXTURE_WIDTH, &width);
 						
-
+						
 
 					}
 					break;
@@ -122,21 +123,22 @@ namespace Apoc3D
 				: Texture(device, width, height, depth, level, format, usage),
 				m_renderDevice(device)
 			{
-				D3DDevice* dev = device->getDevice();
+				
 
 				if (getType() == TT_Texture2D || getType() == TT_Texture1D)
 				{
-					HRESULT hr = dev->CreateTexture(width, height, level, 
-						D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
-						(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex2D, NULL);;
-					assert(SUCCEEDED(hr));
+
+					//HRESULT hr = dev->CreateTexture(width, height, level, 
+					//	D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
+					//	(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex2D, NULL);;
+					//assert(SUCCEEDED(hr));
 				}
 				else if (getType() == TT_Texture3D)
 				{
-					HRESULT hr = dev->CreateVolumeTexture(width, height,depth, level, 
-						D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
-						(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex3D, NULL);;
-					assert(SUCCEEDED(hr));
+					//HRESULT hr = dev->CreateVolumeTexture(width, height,depth, level, 
+					//	D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
+					//	(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex3D, NULL);;
+					//assert(SUCCEEDED(hr));
 				}
 			}
 
@@ -144,12 +146,15 @@ namespace Apoc3D
 				: Texture(device, length, level, usage, format),
 				m_renderDevice(device)
 			{
-				D3DDevice* dev = device->getDevice();
+				glGenTextures(1, &m_textureID);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureID);
 
-				HRESULT hr = dev->CreateCubeTexture(length, level, 
-					D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
-					(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_cube, NULL);
-				assert(SUCCEEDED(hr));
+				//D3DDevice* dev = device->getDevice();
+
+				//HRESULT hr = dev->CreateCubeTexture(length, level, 
+				//	D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
+				//	(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_cube, NULL);
+				//assert(SUCCEEDED(hr));
 			}
 			GL1Texture::~GL1Texture()
 			{
