@@ -38,6 +38,47 @@ namespace Apoc3D
 		{
 			class Game
 			{
+			public:
+				/** This method will ask the GraphicsDeviceManager to release resources. And 
+				 *  will cause the Game::UnloadContent to be called.
+				 */
+				virtual void Release();
+
+				/** When derived, this method should be overrided to initialize the graphics device,
+				 *  with the specific parameters and settings provided.
+				 *  As GraphicsDeviceManager has creates the device, Game::LoadContent and Game::Initialize
+				 *  will be called.
+				 */
+				virtual void Create();
+
+				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
+				EventHandler* eventFrameEnd() { return &m_eFrameEnd; }		
+
+				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
+				GameWindow* getWindow() const { return m_gameWindow; }
+				D3DDevice* getDevice() const;
+				bool getIsExiting() const { return m_exiting; }
+				bool getIsActive() const { return m_active; }
+
+				virtual void Initialize() = 0;
+				virtual void LoadContent() = 0;
+				virtual void OnDeviceLost() = 0;
+				virtual void UnloadContent() = 0;
+				virtual void OnDeviceReset() = 0;
+				/** This should be overrided to draw a frame
+				 */
+				virtual void Render(const GameTime* const time) = 0;
+				/** This should be overrided to allow the game to run logic such as updating the world,
+				 *  checking for collisions, gathering input, playing audio and etc.
+				 */
+				virtual void Update(const GameTime* const time) = 0;
+				/** Enters the main loop. 
+				*/
+				void Run();
+				void Tick();
+				void Exit();
+
+
 			private:
 				GameClock* m_gameClock;
 				float m_maxElapsedTime;
@@ -79,42 +120,6 @@ namespace Apoc3D
 				virtual ~Game(void);
 				virtual bool OnFrameStart();
 				virtual void OnFrameEnd();
-
-			public:
-				/** This method will ask the GraphicsDeviceManager to release resources. And 
-				 *  will cause the Game::UnloadContent to be called.
-				 */
-				virtual void Release();
-
-				/** When derived, this method should be overrided to initialize the graphics device,
-				 *  with the specific parameters and settings provided.
-				 *  As GraphicsDeviceManager has creates the device, Game::LoadContent and Game::Initialize
-				 *  will be called.
-				 */
-				virtual void Create();
-
-				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
-				EventHandler* eventFrameEnd() { return &m_eFrameEnd; }		
-
-				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
-				GameWindow* getWindow() const { return m_gameWindow; }
-				D3DDevice* getDevice() const;
-				bool getIsExiting() const { return m_exiting; }
-				bool getIsActive() const { return m_active; }
-
-				virtual void Initialize() = 0;
-				virtual void LoadContent() = 0;
-				virtual void OnDeviceLost() = 0;
-				virtual void UnloadContent() = 0;
-				virtual void OnDeviceReset() = 0;
-				virtual void Render(const GameTime* const time) = 0;
-				virtual void Update(const GameTime* const time) = 0;
-				/** Enters the main loop. 
-				*/
-				void Run();
-				void Tick();
-				void Exit();
-
 
 
 			};

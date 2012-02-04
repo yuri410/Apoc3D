@@ -38,6 +38,38 @@ namespace Apoc3D
 		{
 			class Game
 			{
+			public:
+				virtual void Release();
+				/** Creates RenderWindow and Game object are created.
+				 *  When overrided, the derived class expected to
+				 *  initialize the graphics device
+				 */
+				virtual void Create();
+
+				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
+				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
+				EventHandler* eventFrameEnd() { return &m_eFrameEnd; }
+
+				Win32GameWindow* getWindow() const { return m_gameWindow; }
+
+				bool getIsExiting() const { return m_exiting; }
+				bool getIsActive() const { return m_active; }
+
+				virtual void Initialize() = 0;
+				virtual void LoadContent() = 0;
+				virtual void UnloadContent() = 0;
+				/** This should be overrided to draw a frame
+				 */
+				virtual void Render(const GameTime* const time) = 0;
+				/** This should be overrided to allow the game to run logic such as updating the world,
+				 *  checking for collisions, gathering input, playing audio and etc.
+				 */
+				virtual void Update(const GameTime* const time) = 0;
+				void Run();
+				void Tick();
+				void Exit();
+
+
 			private:
 				GameClock* m_gameClock;
 				float m_maxElapsedTime;
@@ -79,30 +111,6 @@ namespace Apoc3D
 				virtual ~Game(void);
 				virtual bool OnFrameStart();
 				virtual void OnFrameEnd();
-
-			public:
-				virtual void Release();
-				virtual void Create();
-
-				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_graphicsDeviceManager; }
-				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
-				EventHandler* eventFrameEnd() { return &m_eFrameEnd; }
-
-				Win32GameWindow* getWindow() const { return m_gameWindow; }
-
-				bool getIsExiting() const { return m_exiting; }
-				bool getIsActive() const { return m_active; }
-
-				virtual void Initialize() = 0;
-				virtual void LoadContent() = 0;
-				virtual void UnloadContent() = 0;
-
-				virtual void Render(const GameTime* const time) = 0;
-				virtual void Update(const GameTime* const time) = 0;
-				void Run();
-				void Tick();
-				void Exit();
-
 
 
 			};

@@ -38,23 +38,48 @@ using namespace Apoc3D::UI;
 namespace Apoc3DEx
 {
 	/** A class as a framework, which looks similar to XNA's, but with the whole engine's support.
-	*/
+	 *  This class is the event handler for all messages from render window. The game's drawing, updating in the main loop and initialization are
+	 *  all handled in this class.
+	 *
+	 */
 	class APAPI Game : public RenderWindowHandler
 	{
 	public:
 		Game(RenderWindow* wnd);
 		~Game();
 
-
+		/** This is the place to load or initialize something before any other 
+		 *  events being handled.
+		 */
 		virtual void Initialize();
+		/** This is opposed to Initialize, which is called last(after Unload)
+		 *  and is supposed release the resources created in Initialize here.
+		 */
 		virtual void Finalize();
 
+		/** Load will be called to load contents. 
+		 *  Graphics content should be loaded here, if there are any to load as the game starts up.
+		 */
 		virtual void Load();
+
+		/** Opposite to Load, this is the place to unload content, called once the game window is closed.
+		*/
 		virtual void Unload();
+
+		/** Allows the game to run logic such as updating the world,
+		 *  checking for collisions, gathering input, playing audio and etc.
+		 */
 		virtual void Update(const GameTime* const time);
+
+		/** This is called when the game should draw a frame.
+		*/
 		virtual void Draw(const GameTime* const time);
 
+		/** This is called before drawing a new frame.
+		*/
 		virtual void OnFrameStart();
+		/** This is called after a frame is drawn.
+		*/
 		virtual void OnFrameEnd();
 
 		/** Closes the window
