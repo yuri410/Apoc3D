@@ -92,6 +92,10 @@ namespace Apoc3D
 				*/
 				static void ConvertPixelFormat(PixelFormat fmt, GLenum& format, GLenum& type);
 
+				/** Converts a PixelFormat to the closest OpenGL internal format
+				*/
+				static GLenum ConvertPixelFormat(PixelFormat fmt);
+
 				/** Converts TextureType to GL_TEXTURE_1D, GL_TEXTURE_2D..
 				*/
 				static GLenum GetTextureTarget(TextureType type)

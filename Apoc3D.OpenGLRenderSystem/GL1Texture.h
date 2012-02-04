@@ -43,16 +43,12 @@ namespace Apoc3D
 		{
 			class GL1Texture : public Apoc3D::Graphics::RenderSystem::Texture
 			{
-			private:
-				GL1RenderDevice* m_renderDevice;
-				GLuint m_textureID;
-
 			public:
 				void setInternalTexID(GLuint id) { m_textureID = id; }
 				GLuint getInternalTexID() const { return m_textureID; }
 			
 
-				GL1Texture(GL1RenderDevice* device, GLuint id, TextureType type);
+				//GL1Texture(GL1RenderDevice* device, GLuint id, TextureType type);
 
 
 				GL1Texture(GL1RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed);
@@ -75,6 +71,14 @@ namespace Apoc3D
 				virtual void load();
 				virtual void unload();
 
+			private:
+				GL1RenderDevice* m_renderDevice;
+				GLuint m_textureID;
+
+				GLenum m_lockedCubemapFace;
+				char* m_lockBuffer;
+
+				void InitializeEmptyGLTexture(int32 width, int32 height, int32 depth, int32 level, PixelFormat format);
 			};
 		}
 	}

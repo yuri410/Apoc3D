@@ -73,6 +73,8 @@ namespace Apoc3D
 				return STOP_Keep;
 			}
 
+			
+
 			/**
 			  format determines the composition of each element in data. It can assume one of these symbolic values:
 			  GL_RED​
@@ -212,7 +214,68 @@ namespace Apoc3D
 				}
 				throw Apoc3DException::createException(EX_NotSupported, L"");
 			}
-
+			GLenum GLUtils::ConvertPixelFormat(PixelFormat fmt)
+			{
+				switch(fmt)
+				{
+					case FMT_Luminance8:
+						return GL_LUMINANCE8;
+					case FMT_Luminance16:
+						return GL_LUMINANCE16;
+					case FMT_Alpha8:
+						return GL_ALPHA8;
+					case FMT_A4L4:
+						return GL_LUMINANCE4_ALPHA4;
+					case FMT_A8L8:
+						return GL_LUMINANCE8_ALPHA8;
+					case FMT_R3G3B2:
+						return GL_R3_G3_B2;
+					case FMT_A1R5G5B5:
+						return GL_RGB5_A1;
+					case FMT_R5G6B5:
+					case FMT_B5G6R5:
+						return GL_RGB5;
+					case FMT_A4R4G4B4:
+						return GL_RGBA4;
+					case FMT_R8G8B8:
+					case FMT_B8G8R8:
+					case FMT_X8B8G8R8:
+					case FMT_X8R8G8B8:
+						return GL_RGB8;
+					case FMT_A8R8G8B8:
+					case FMT_B8G8R8A8:
+						return GL_RGBA8;
+					case FMT_A2R10G10B10:
+					case FMT_A2B10G10R10:
+						return GL_RGB10_A2;
+					case FMT_R16F:
+						return GL_LUMINANCE16F_ARB;
+					case FMT_G16R16F: 
+						return GL_LUMINANCE_ALPHA16F_ARB;
+					case FMT_A16B16G16R16F:
+						return GL_RGBA16F_ARB;
+					case FMT_R32F:
+						return GL_LUMINANCE32F_ARB;
+					case FMT_G32R32F:
+						return GL_LUMINANCE_ALPHA32F_ARB;
+					case FMT_A32B32G32R32F:
+						return GL_RGBA32F_ARB;
+					case FMT_A16B16G16R16:
+						return GL_RGBA16;
+					case FMT_R16G16B16:
+						return GL_RGB16;
+					case FMT_G16R16:
+						return GL_LUMINANCE16_ALPHA16;
+					case FMT_DXT1:
+						return GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+					case FMT_DXT3:
+						return GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+					case FMT_DXT5:
+						return GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+					default:
+						return GL_NONE;
+				}
+			}
 			void GLUtils::InitCompareFunctionTable()
 			{
 				comfunTable[COMFUN_Never] = GL_NEVER;

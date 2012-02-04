@@ -124,9 +124,9 @@ namespace Apoc3D
 				{
 					m_contentSize += PixelFormatUtils::GetMemorySize(width, height, depth, m_format);	
 
-					if (width>1) width >>= 1;
-					if (height>1) height >>= 1;
-					if (depth>1) depth >>= 1;
+					if (width>1) width = width/2;//>>= 1;
+					if (height>1) height = height/2;// >>= 1;
+					if (depth>1) depth =depth/2;//>>= 1;
 				}
 
 				if (m_type == TT_CubeTexture)

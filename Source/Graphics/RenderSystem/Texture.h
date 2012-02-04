@@ -144,6 +144,7 @@ namespace Apoc3D
 				bool m_isLocked;
 
 				void RecalculateContentSize();
+				
 			};
 		}
 
