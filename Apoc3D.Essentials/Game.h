@@ -49,7 +49,7 @@ namespace Apoc3DEx
 		~Game();
 
 		/** This is the place to load or initialize something before any other 
-		 *  events being handled.
+		 *  events being handled. Remember to call this if overrided.
 		 */
 		virtual void Initialize();
 		/** This is opposed to Initialize, which is called last(after Unload)
