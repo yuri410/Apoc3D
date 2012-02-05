@@ -78,7 +78,8 @@ namespace Apoc3D
 				
 				glMatrixMode(GL_PROJECTION);
 				glPushMatrix();
-					
+				// NB: must load the identity because the glOrtho will multiply a new one on this
+				glLoadIdentity(); 
 				GLint viewport[4];
 				glGetIntegerv(GL_VIEWPORT, viewport);
 				glOrtho(viewport[0], viewport[2], viewport[3], viewport[1], 0, 1);
