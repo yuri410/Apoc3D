@@ -37,7 +37,25 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-
+		/** Represents a section in a configuration.
+		 *
+		 * @remarks
+		 *  As tree node in configuration, each section can have a name, a value
+		 *  and several attributes. Particular value parsing functions are also provided.
+		 *  The parsing will convert a string representation to the target data type.
+		 *
+		 *  The ConfigurationSection can get value in a key-value way, beside attributes,
+		 *  by treating all the sub-sections as value with the name, which is the key.
+		 *
+		 *  Ideally, if the sub section does not have any children, its config file
+		 *  representation should be well understandable. For instance, in a xml file:
+		 *  <Section>
+		 *    <SubSect1>Value1</SubSect1>
+		 *    <Key2>Value2</Key2>
+		 *  </Section>
+		 *  At the "Section" level, SubSect1 and Key2 and their value(like Value1, Value2)
+		 *  can be obtained by providing their name as the key, by using getXXX method.
+		 */
 		class APAPI ConfigurationSection
 		{
 		protected:
@@ -77,6 +95,8 @@ namespace Apoc3D
 			void SetValue(const String& name, const String& value);
 
 			const String& getName() const { return m_name; }
+			/** Gets the value of the sub-section with the given name.
+			 */
 			const String& getValue(const String& name) const;
 			const String& getValue() const { return m_value; }
 			const String& getAttribute(const String& name) const;
@@ -87,6 +107,7 @@ namespace Apoc3D
 			bool tryGetAttribute(const String& name, String& result) const;
 
 			ConfigurationSection* getSection(const String& name) const;
+
 
 			void Get(const String& key, IParsable* value) const;
 

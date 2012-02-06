@@ -77,6 +77,11 @@ namespace Apoc3D
 				void ToggleFullScreen();
 				void ReleaseDevice();
 
+				/** The GraphicsDeviceManager needs to know some capabilities by
+				 *  doing some experiments. Call this prior to the creation of any
+				 *  window.
+				 */
+				void PreTest();
 			private:
 				RenderParameters* m_currentSetting;
 				GL1DeviceContent* m_devCont;
@@ -98,6 +103,10 @@ namespace Apoc3D
 				WINDOWPLACEMENT m_windowedPlacement;
 				int64 m_windowedStyle;
 				
+				/** Stores the supported chosen FSAA pixel format in PreTest()
+				*/
+				int m_arbFSAAFormat;
+
 				void CreateDevice(const RenderParameters &settings, const DEVMODE* mode = 0);
 				void game_FrameStart(bool* cancel);
 				void game_FrameEnd();

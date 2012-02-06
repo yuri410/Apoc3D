@@ -36,6 +36,16 @@ namespace Apoc3D
 	{
 		//template class APAPI unordered_map<String, ConfigurationSection*>;
 
+		/** Represents a configuration
+		 *
+		 * @remarks
+		 *  A configuration is a tree structure, containing sections as portions, which
+		 *  themselves have sections as sub sections. Each section can have a name, a value
+		 *  and several attributes.
+		 *
+		 *  In each level, every sections has a unique name. When loading from file, a valid
+		 *  config file should not have 2 or more sections at the same level with the same name.
+		 */
 		class APAPI Configuration
 		{
 		public:
@@ -55,6 +65,8 @@ namespace Apoc3D
 
 			const String& getName() const { return m_name; }
 
+			/** Gets the top level sections with a name.
+			*/
 			ConfigurationSection* get(const String& name) const
 			{
 				ConfigurationSection* result;
@@ -62,6 +74,8 @@ namespace Apoc3D
 				return result;
 			}
 
+			/** Gets the top section enumerator
+			*/
 			ChildTable::Enumerator GetEnumerator() { return m_sections.GetEnumerator(); }
 
 			virtual Configuration* Clone() const = 0;

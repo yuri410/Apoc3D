@@ -29,6 +29,9 @@ namespace Apoc3D
 {
 	namespace Config
 	{
+		/** Defines interface for classes that can be 
+		 *  set up by parsing from a configuration section
+		 */
 		class APAPI Configurable
 		{
 		public:

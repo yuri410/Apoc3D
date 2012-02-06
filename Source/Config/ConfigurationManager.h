@@ -53,11 +53,14 @@ namespace Apoc3D
 					delete config;
 				}
 			}
-			/** 
-			*/
+			/** Loads a config from given location. Then stores it in the
+			 *  manager with the given name as an identifier, which can be 
+			 *  used to retrieve the config using the getConfiguration method.
+			 */
 			void LoadConfig(const String& name, const ResourceLocation* rl);
 
-
+			/** Gets a pre-loaded configuration with the given name
+			*/
 			Configuration* getConfiguration(const String& name) const
 			{
 				ConfigTable::const_iterator iter = m_configs.find(name);

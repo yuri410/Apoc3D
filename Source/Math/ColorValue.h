@@ -39,6 +39,11 @@ namespace Apoc3D
 #define GetColorG(v) ((v>>8)&0xff)
 #define GetColorB(v) (v & 0xff)
 #define GetColorA(v) ((v>>24)&0xff)
+
+		/************************************************************************/
+		/* Named colors                                                         */
+		/************************************************************************/
+
 		static const ColorValue CV_TransparentBlack = 0;
 		static const ColorValue CV_TransparentWhite = 0xffffff;
 		static const ColorValue CV_AliceBlue = 0xfff0f8ff;

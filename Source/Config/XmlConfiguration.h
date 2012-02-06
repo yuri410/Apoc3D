@@ -36,17 +36,29 @@ namespace Apoc3D
 {
 	namespace Config
 	{
+		/** Loads a xml file, and stores it as described in Configuration
+		*/
 		class APAPI XMLConfiguration : public Configuration
 		{
 		private:
+			/** Saves a ConfigurationSection sub tree to the tiny xml node, recursively.
+			*/
 			void SaveNode(TiXmlNode* node, ConfigurationSection* parent);
+			/** Read xml node recursively, while add data into ConfigurationSection
+			*/
 			void BuildNode(const TiXmlNode* node, ConfigurationSection* parent);
 			void BuildXml(const TiXmlDocument* doc);
 		public:
 			XMLConfiguration(const ResourceLocation* rl);
+			/** Initializes the empty configuration with a given name
+			*/
 			XMLConfiguration(const String& name);
 
+			/** Not supported
+			*/
 			virtual Configuration* Clone() const;
+			/** Not supported
+			*/
 			virtual void Merge(Configuration* config);
 
 			void Add(ConfigurationSection* sect);
