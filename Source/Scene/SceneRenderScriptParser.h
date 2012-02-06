@@ -66,7 +66,7 @@ namespace Apoc3D
 			/** Build instructions for expressions
 			*/
 			void FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions);
-			/** Build instructions for internal function calls
+			/** Build instructions for commands.
 			*/
 			void FillFunctionCall(const TiXmlElement* node, std::vector<SceneInstruction>& instructions);
 

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Scene Name="Terrain Scene">
+  <!--The whole rendering process shares a same depth buffer; 
+  so render targets do not have depth buffer.-->
+  <!--Color target. The default view, normal render-->
+  <Declare Type="RenderTarget" Name="Original">
+    <WidthP>1</WidthP>
+    <HeightP>1</HeightP>
+    <Format>A8R8G8B8</Format>
+  </Declare>
+  <!--A target packing normal vector and depth in view space-->
+  <Declare Type="RenderTarget" Name="NormalDepth">
+    <WidthP>1</WidthP>
+    <HeightP>1</HeightP>
+    <Format>A8R8G8B8</Format>
+  </Declare>
+  
+  <!--A rescaled one to half of the oringinal's.-->
+  <Declare Type="RenderTarget" Name="SmallOriginal">
+    <WidthP>0.5</WidthP>
+    <HeightP>0.5</HeightP>
+    <Format>A8R8G8B8</Format>
+  </Declare>
+  <!--The same as SmallOriginal, used for the intermediate blurring result.-->
+  <Declare Type="RenderTarget" Name="MidBlur">
+    <WidthP>0.5</WidthP>
+    <HeightP>0.5</HeightP>
+    <Format>A8R8G8B8</Format>
+  </Declare>
+  
+  <!--Provide gauss filter weights and offsets for shaders-->
+  <Declare Type="GaussBlurFilter" Name="GaussFilter">
+    <SampleCount>5</SampleCount>
+    <BlurAmount>1.5</BlurAmount>
+    <MapWidthP>0.5</MapWidthP>
+    <MapHeightP>0.5</MapHeightP>
+  </Declare>
+
+  <!--This pass setups the render targets. 
+  MRT is used here to produce 2 results with only one time drawing.
+  NormalDepth, and Original(normal rendering color) are generated.
+  -->
+  <Pass SelectorID="0" CameraID="0" Name="Default Pass">
+    <!--Clear the 2 RT, respectively-->
+    <!--Set Original as the current render target at index 0-->
+    <C S="UseRT" Index="0" RT="Original" />
+    <!--Clears all binded RTs with the parameters provided here. 
+    In this case, only Original will be cleared. -->
+    <C S="Clear" CL_Target="True" CL_Depth="True" Depth="1" ClearColorHex="0x00e1d47b"/>
+    <!--Similar to above-->
+    <C S="UseRT" Index="0" RT="NormalDepth" />
+    <C S="Clear" CL_Target="True" ClearColorHex="0xff000000"/>
+
+    <!--Now do the work-->
+    <!--Set Original as the current render target at index 0-->
+    <C S="UseRT" Index="0" RT="Original" />
+    <!--Set NormalDepth as the current render target at index 1-->
+    <C S="UseRT" Index="1" RT="NormalDepth" />
+    <!--This command will render all objects visible to the camera 
+    specified by CameraID, while with the SelectorID to do the object selection-->
+    <C S="Render" />
+    <!--This will reset the render target slot at index 1 to its default-->
+    <C S="UseRT" Index="1" />
+  </Pass>
+  
+  <!--The post processing are done in this pass-->
+  <Pass SelectorID="10" CameraID="0" Name="Post-Blur">
+    <C S="UseRT" Index="0" RT="SmallOriginal" />
+    <!--Draws a quad using post effect TexturedQuad, 
+    with a size of (100%, 100%) of SmallOriginal's as specified in the attribute-->
+    <C S="RenderQuad" Size="1,1" Effect="TexturedQuad" tex="Original"/>
+    
+    <C S="UseRT" Index="0" RT="MidBlur" />
+    <!--Draws a quad using the blur fx on X direction. 
+    The post effect's parameter are assigned here.-->
+    <C S="RenderQuad" Effect="Blur" tex="SmallOriginal" 
+       SampleOffsets="[GaussFilter.SampleOffsetsX]" 
+       SampleWeights="[GaussFilter.SampleWeights]" />
+
+    <C S="UseRT" Index="0" RT="SmallOriginal" />
+    <!--Blurs the Y direction-->
+    <C S="RenderQuad" Effect="Blur" tex="MidBlur" 
+       SampleOffsets="[GaussFilter.SampleOffsetsY]" 
+       SampleWeights="[GaussFilter.SampleWeights]" />
+
+    <!--This will reset the render target slot at index 0 to its default-->
+    <C S="UseRT" />
+    
+    <!--Draws objects. In this demo, only the sky box model is rendered here, 
+    as it is compatible with the SelectorID 10. Drawing in this order
+    also ensures that the sky is render as original, not process by post-fx.
+    -->
+    <C S="Render" />
+    
+    <!--Draws the quad containing terrains and trees. Since it is transparent, 
+    with the render states set, it will overlay the sky which is as a background. 
+    Simple depth of field is also performed here. -->
+    <C S="RenderQuad" Effect="Composite" colorTex="Original" depthTex="NormalDepth" 
+       blurredTex="MidBlur" RenderStates="IsBlendTransparent=true;DepthTest=false;" />
+  </Pass>
+</Scene>

@@ -93,7 +93,10 @@ namespace Apoc3D
 		};
 
 		/* Renders a scene with a particular render script.
-		*/
+		 * 
+		 * @remarks
+		 *  For the script listing config, please refer to the sample file.
+		 */
 		class APAPI SceneRenderer
 		{
 		public:
@@ -101,7 +104,7 @@ namespace Apoc3D
 			~SceneRenderer(void);
 
 			/** The scene renderer loads from a config which lists several render script (SceneProcedure) files.
-			 *  What the config has, is all options as SceneProcedure xmls for the renders to 
+			 *  What the config has, are all options as SceneProcedure xmls for the renders to 
 			 *  choose from. The input list is expected to be sorted form high ended SceneProcedures
 			 *  to low ended ones. A fall back will be performed if the prior ones are 
 			 *  not supported by the hardware.

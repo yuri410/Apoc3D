@@ -287,8 +287,10 @@ namespace Apoc3D
 				const SceneOpArg& arg = inst.Args[i];
 				if (arg.IsImmediate)
 				{
+					// Check the type of this immediate value.
 					if ((arg.DefaultValue[0] & arg.DefaultValue[1] ) == 0xffffffff)
 					{
+						// the type is material
 						if (arg.StrData == L"IsBlendTransparent")
 						{
 							mtrl.IsBlendTransparent = arg.DefaultValue[15] ? true : false;

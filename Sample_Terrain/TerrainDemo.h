@@ -17,15 +17,21 @@ using namespace Apoc3D::UI;
 
 namespace SampleTerrain
 {
-	/** This class is the event handler for all messages from render window. The game's drawing, updating in the main loop and initialization are
+	/** This class is the event handler for all messages from render window. 
+	 *  The game's drawing, updating in the main loop and initialization are
 	 *  all handled in this class.
 	 *
-	 *  In this demo, it inherits the Apoc3D.Essentials.Game class, which has some fundamental features like UI and Consoles. When using this
-	 *  game class, the application will have a dependency on the 'system.pak' file, which includes the basic font and UI elements.
+	 *  In this demo, it inherits the Apoc3D.Essentials.Game class,
+	 *  which has some fundamental features like UI and Consoles. When using this
+	 *  game class, the application will have a dependency on the 
+	 *  'system.pak' file, which includes the basic font and UI elements.
 	 *
-	 *  The terrain is divided into blocks, or chunks for another name. The entire terrain is NumBlockOnEdge by NumBlockOnEdge big.
-	 *  Every block has the same horizontal size(width and height). The terrain mesh has the same width and height, and different height at different point. 
-	 *  The terrain mesh's width and height are calculated by multiplying CellLength and the number of vertices on the edge -1.
+	 *  The terrain is divided into blocks, or chunks for another name.
+	 *  The entire terrain is NumBlockOnEdge by NumBlockOnEdge big.
+	 *  Every block has the same horizontal size(width and height). 
+	 *  The terrain mesh has the same width and height, and different height at different point. 
+	 *  The terrain mesh's width and height are calculated by
+	 *  multiplying CellLength and the number of vertices on the edge -1.
 	 *
 	 */
 	class TerrainDemo : public Game

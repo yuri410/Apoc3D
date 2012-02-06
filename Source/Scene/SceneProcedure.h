@@ -50,24 +50,41 @@ namespace Apoc3D
 				CameraID  --  index of camera registered in SceneRenderer object, try not to change camera too often
 
 
-			function call
+			Commands (aka. function call)
 				<C S = "func" params/>
 
-				Clear
-				UseRT
-				Render
-				VisibleTo
-				RenderQuad
 		*/
 
-		/* Represent a sequence of scene passes that can finally 
-		   generate the end result.
-
-		   A SceneProcedure can be either normal passes (like shadow
-		   mapping) or post effect passes (like bloom & HDR).
-
-		   This class also manages resources and vars used in rendering.
-		*/
+		/** Represent a sequence of scene passes that can finally 
+		 *  generate the end result.
+		 *
+		 *  A SceneProcedure can be either normal passes (like shadow
+		 *  mapping) or post effect passes (like bloom & HDR).
+		 *
+		 *  This class also manages resources and vars used in rendering.
+		 * 
+		 * @remarks
+		 *   For the structure or the use of the script, please refer
+		 *   to the sample file.
+		 *   
+		 *   Commands(aka. function call):
+		 *    Clear
+		 *    UseRT
+		 *    Render
+		 *    RenderQuad
+		 *    VisibleTo
+		 *    State
+		 *
+		 *   Variable Types
+		 *    GaussBlurFilter - see VARTYPE_GaussBlurFilter
+		 *    Texture - see VARTYPE_Texture
+		 *    RenderTarget - see VARTYPE_RenderTarget
+		 *    Matrix - see VARTYPE_Matrix
+		 *
+		 *   Immediate Value Types
+		 *
+		 *
+		 */
 		class APAPI SceneProcedure
 		{
 		public:

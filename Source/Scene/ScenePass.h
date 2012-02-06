@@ -34,17 +34,18 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		/* Define a sequence of operation for a rendering result.
-
-		   A scene pass is a scene rendering operation that usually 
-		   renders objects to a RenderTarget (or the like) which can 
-		   be used for further scene rendering passes.
-		   
-		   As a a part of render script, the ScenePass controls 
-		   a pass of scene rendering. It selects objects for rendering
-		   by check the objects' Material::PassFlag against the selectorID as
-		   declared in the script.
-		*/
+		/** Define a sequence of operation for a rendering result.
+		 *
+		 *  A scene pass is a scene rendering operation that usually 
+		 *  renders objects to a RenderTarget (or the like) which can 
+		 *  be used for further scene rendering passes.
+		 * 
+		 *  As a a part of render script, the ScenePass controls 
+		 *  a pass of scene rendering. It selects objects for rendering
+		 *  by check the objects' Material::PassFlag against the selectorID as
+		 *  declared in the script.
+		 *
+		 */
 		class APAPI ScenePass
 		{
 		public:

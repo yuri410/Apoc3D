@@ -78,6 +78,7 @@ namespace SampleTerrain
 	/** The resource manager for TerrainMeshes. This type of use of ResourceManager enables
 	 *  independent background resource management for customized resources. In this case it is 
 	 *  TerrainMesh. 
+	 *
 	 *  TerrainMesh for different level of details are all managed in this class. To distinguish
 	 *  different TerrainMesh at different chunk space and LODs, a "HashString", which is the unique
 	 *  id for each chunk at certain LOD, is used as the name of resource(see TerrainMesh::GetHashString). 

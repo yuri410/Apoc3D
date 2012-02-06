@@ -48,7 +48,27 @@ namespace Apoc3D
 		*/
 		enum SceneVariableType
 		{
+			/** Represents a render target.
+			 *
+			 *  Properties:
+			 *  These are parameters required to declare the variable.
+			 *   Width, Height
+			 *   WidthP, HeightP
+			 *   Format
+			 *   Depth
+			 *   SampleCount
+			 *
+			 *  Accessible Properties:
+			 *  These properties can be accessed in code
+			 *   Width
+			 *   Height
+			 */
 			VARTYPE_RenderTarget,
+			/** A 4x4 float matrix
+			 *  
+			 *  Properties:
+			 *  
+			 */
 			VARTYPE_Matrix,
 			VARTYPE_Vector4,
 			VARTYPE_Vector3,
