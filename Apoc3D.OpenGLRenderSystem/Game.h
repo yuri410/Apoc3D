@@ -107,7 +107,7 @@ namespace Apoc3D
 
 			protected:
 
-				Game(GL1DeviceContent* devCont, const wchar_t* const &name);
+				Game(GL1DeviceContent* devCont, const String& name);
 				virtual ~Game(void);
 				virtual bool OnFrameStart();
 				virtual void OnFrameEnd();

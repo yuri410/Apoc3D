@@ -58,9 +58,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	Finalize();
 
-#ifdef _DEBUG
-	getchar();
-#endif
+//#ifdef _DEBUG
+//	getchar();
+//#endif
 	return r;
 }
 

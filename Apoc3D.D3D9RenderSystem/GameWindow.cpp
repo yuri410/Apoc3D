@@ -101,14 +101,14 @@ namespace Apoc3D
 				return TRUE;
 			}
 
-			GameWindow::GameWindow(const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
+			GameWindow::GameWindow(const String& wndClass, const String& title)
 				: m_mouseWheel(0)
 			{
 				m_hInstance= GetModuleHandle (0);
 				ms_Window = this;
 
 				m_className = wndClass;
-				m_wndTitle = wndTitle;
+				m_title = title;
 			}
 
 			GameWindow::~GameWindow(void)
@@ -119,9 +119,9 @@ namespace Apoc3D
 
 			void GameWindow::Load()
 			{
-				MyRegisterClass(m_hInstance, m_className);
+				MyRegisterClass(m_hInstance, m_className.c_str());
 
-				if (!InitInstance (m_hInstance, m_className, m_wndTitle))
+				if (!InitInstance (m_hInstance, m_className.c_str(), m_title.c_str()))
 				{
 					assert(FALSE);
 				}
@@ -339,7 +339,7 @@ namespace Apoc3D
 					OnResume();
 					break;
 				case WM_DESTROY:
-					UnregisterClass(m_className, m_hInstance);
+					UnregisterClass(m_className.c_str(), m_hInstance);
 
 					PostQuitMessage(0);
 					break;

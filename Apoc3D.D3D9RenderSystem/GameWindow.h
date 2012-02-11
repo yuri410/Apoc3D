@@ -44,6 +44,7 @@ namespace Apoc3D
 				bool m_maximized;
 				bool m_inSizeMove;
 				String m_title;
+				String m_className;
 				Size m_cachedSize;
 				HINSTANCE m_hInst;
 
@@ -52,8 +53,6 @@ namespace Apoc3D
 
 				HMONITOR m_currentMonitor;
 
-				const wchar_t* m_className;
-				const wchar_t* m_wndTitle;
 
 				EventHandler m_ePaint;
 				EventHandler m_eResume;
@@ -119,7 +118,7 @@ namespace Apoc3D
 				EventHandler* eventPaint() { return &m_ePaint; }
 				EventHandler* eventMonitorChanged() { return &m_eMonitorChanged; }
 
-				GameWindow(const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
+				GameWindow(const String& name, const String& wndTitle);
 				~GameWindow(void);
 			};
 		}

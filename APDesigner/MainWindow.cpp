@@ -101,7 +101,7 @@ namespace APDesigner
 	}
 	void MainWindow::Finalize()
 	{
-		InputAPIManager::getSingleton().Finalize();
+		InputAPIManager::getSingleton().FinalizeInput();
 	}
 
 	void MainWindow::Load()

@@ -116,7 +116,7 @@ namespace Apoc3D
 
 			protected:
 
-				Game(const wchar_t* const &name, IDirect3D9* d3d9);
+				Game(const String& name, IDirect3D9* d3d9);
 				virtual ~Game(void);
 				virtual bool OnFrameStart();
 				virtual void OnFrameEnd();
