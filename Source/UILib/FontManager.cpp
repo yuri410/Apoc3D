@@ -42,10 +42,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		//int qsort_comparer(const void* a, const void* b)
-		//{
-		//	return Font::qsort_comparer(b,a);
-		//}
+		// compare Glyph by their width
 		int Font::qsort_comparer(const void* a, const void* b)
 		{
 			const Glyph* ga = reinterpret_cast<const Glyph*>(b);
@@ -57,6 +54,7 @@ namespace Apoc3D
 				return 1;
 			return 0;
 		}
+
 		Font::Font(RenderDevice* device, ResourceLocation* fl)
 			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(fl)
 		{
@@ -89,7 +87,8 @@ namespace Apoc3D
 				glyph.Height = br->ReadInt32();
 				glyph.Offset = br->ReadInt64();
 				glyph.IsMapped = false;
-				glyph.ParentBuckets[0] = glyph.ParentBuckets[1] = glyph.ParentBuckets[2] = glyph.ParentBuckets[3] = glyph.ParentBuckets[4]=-1;
+				glyph.NumberOfBucketUsing = 0;
+				glyph.StartingParentBucket = -1;
 				m_glyphList[glyph.Index] = glyph;
 
 				if (glyph.Width > maxWidth)
@@ -124,46 +123,38 @@ namespace Apoc3D
 			}
 			m_lineBucketsFreqClassificationCount = new int[m_edgeCount*MaxFreq];
 			
+			memset(m_lasttime_lineBucketsFreqClassificationCount, 0, sizeof(int)*m_edgeCount*MaxFreq);
 			memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
 			memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
 			memset(m_lastFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
 
 
-			if (glyphCount<=256)
 			{
+				// this temp list is used to store sorting without changing the original one
 				Glyph* tempList = new Glyph[glyphCount];
 				memcpy(tempList, m_glyphList, sizeof(Glyph) * glyphCount);
 
+				// sort glyphs from wider to thiner.
 				std::qsort(tempList, glyphCount, sizeof(Glyph), qsort_comparer);
 
 				int buckY = 0;
 				int* buckX = new int[m_edgeCount];
 				memset(buckX,0,sizeof(int)*m_edgeCount);
+
+				// use up the buckets from column to column.
+				// The first column will have the most fat glyph, while the latter ones will have thiner ones.
 				for (int i=0;i<glyphCount && buckX[buckY]<m_edgeCount;i++)
 				{
 					int startX = buckX[buckY];
-					//// first find the 1st available bucket in this line
-					//for (int k=0;k<m_edgeCount;k++)
-					//{
-					//	if (m_buckets[k+buckY*m_edgeCount].BucketIndex!=-1) buckX++;
-					//}
-
 
 					Glyph& glyph = tempList[i];
 					int bucketsNeeded = (int)ceil((double)glyph.Width/m_height);
 
 					if (startX+bucketsNeeded-1<m_edgeCount)
 					{
-						for (int k=0;k<bucketsNeeded;k++)
-						{
-							glyph.ParentBuckets[k] = buckY*m_edgeCount+startX+k;
-							m_buckets[buckY*m_edgeCount+startX+k].CurrentGlyph = glyph.Index;
-						}
-
 						Glyph& oglyph = m_glyphList[glyph.Index];
-						const Apoc3D::Math::Rectangle& bukRect = m_buckets[buckY*m_edgeCount+startX].SrcRect;
-						oglyph.MappedRect = Apoc3D::Math::Rectangle(bukRect.X, bukRect.Y, glyph.Width, glyph.Height);
-						oglyph.IsMapped = true;
+
+						UseBuckets(&oglyph, buckY, startX, bucketsNeeded);
 
 						LoadGlyphData(br, oglyph);
 
@@ -175,99 +166,7 @@ namespace Apoc3D
 				delete[] tempList;
 				delete[] buckX;
 			}
-			else
-			{
 
-			}
-			//// if the texture can hold all glyphs, just load them all at once
-			////if (m_edgeCount*m_edgeCount>glyphCount)
-			//{
-			//	int remainingBuckets = m_edgeCount*m_edgeCount;
-			//	//int stx = 0;
-			//	//int sty = 0;
-			//	//int holdableCount = 0;//(FontManager::TextureSize / maxHeight) *  (FontManager::TextureSize/maxWidth);
-			//	for (int i=0;i<glyphCount;i++)
-			//	{
-			//		const Glyph& glyph = m_glyphList[i];
-
-			//		int w = glyph.Width;
-
-			//		//stx += glyph.Width+1;
-			//		//
-			//		//if (stx>=FontManager::TextureSize)
-			//		//{
-			//		//	stx = glyph.Width+1;
-			//		//	sty += maxHeight+1;
-			//		//	if (sty>=FontManager::TextureSize)
-			//		//	{
-			//		//		break;
-			//		//	}
-			//		//}
-			//		//holdableCount++;
-			//	}
-
-
-			//	stx = 0;
-			//	sty = 0;
-			//	//int lineHeight = 0;
-
-			//	int loopMax = min(holdableCount, glyphCount);
-			//	//if (holdableCount>=glyphCount)
-
-			//	//m_buckets.ResizeDiscard(FontManager::TextureSize/maxHeight);
-
-
-			//	{
-			//		//Bucket* bukk = 0;
-
-			//		for (int i=0;i<loopMax;i++)
-			//		{
-			//			Glyph& glyph = m_glyphList[i];
-			//			
-			//			glyph.IsMapped = true;
-			//			
-
-			//			glyph.MappedRect = Apoc3D::Math::Rectangle(stx, sty, glyph.Width, glyph.Height);
-
-			//			stx += glyph.Width+1;
-			//			//if (lineHeight<glyph.Height)
-			//			//{
-			//				//lineHeight = glyph.Height;
-			//			//}
-
-			//			if (stx>=FontManager::TextureSize)
-			//			{
-			//				stx = glyph.Width+1;
-			//				sty += m_height+1;
-			//				//lineHeight = 0;
-			//				glyph.MappedRect = Apoc3D::Math::Rectangle(0, sty, glyph.Width, glyph.Height);
-
-			//				
-			//				bukk = 0;
-			//			}
-
-			//			
-			//			LoadGlyphData(br, glyph);
-
-			//			//if (bukk==0)
-			//			//{
-			//			//	bukk = new Bucket();
-			//			//	bukk->CurrentGlyph = &glyph;
-			//			//	bukk->SrcRect = glyph.MappedRect;
-			//			//	bukk->Next = 0;
-			//			//	m_buckets.Add(bukk);
-			//			//}
-			//			//else
-			//			//{
-			//			//	bukk->Next = new Bucket();
-			//			//	bukk->Next->CurrentGlyph = &glyph;
-			//			//	bukk->Next->SrcRect = glyph.MappedRect;
-			//			//	bukk->Next->Next = 0;
-			//			//}
-			//		}
-			//	}
-			//}
-			//
 
 			br->Close();
 			delete br;
@@ -474,7 +373,7 @@ namespace Apoc3D
 
 		void Font::FrameStartReset()
 		{
-			
+			memcpy(m_lasttime_lineBucketsFreqClassificationCount, m_lineBucketsFreqClassificationCount, sizeof(int)*m_edgeCount*MaxFreq);
 			memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
 			memcpy(m_lastFreqTable, m_currentFreqTable, sizeof(int)*m_edgeCount*m_edgeCount);
 			memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
@@ -512,54 +411,105 @@ namespace Apoc3D
 		}
 		void Font::EnsureGlyph(Glyph& glyph)
 		{
+			int bucketsNeeded = (int)ceil((double)glyph.Width/m_height);
 
-			//m_activeGlyph.sort();
+			bool done = false;
+			// find enough space for the glyph, testing from lower use time to higher use time
+			for (int freq = 0; freq<MaxFreq && !done; freq++)
+			{
+				for (int i=0;i<m_edgeCount && !done;i++)
+				{
+					if (m_lineBucketsFreqClassificationCount[freq]>=bucketsNeeded)
+					{
+						// even though the number of buckets in line is sufficient enough
+						// whether they are consecutive still needed to be checked.
+						int numOfConsqBuckets = 0;
+						int bucketPosition = -1;
+						for (int j=0;j<m_edgeCount && numOfConsqBuckets<bucketsNeeded;j++)
+						{
+							if (m_currentFreqTable[i*m_edgeCount+j]==freq)
+							{
+								numOfConsqBuckets++;
+								if (bucketPosition==-1)
+									bucketPosition = j;
+							}
+							else
+							{
+								numOfConsqBuckets=-1; // resets if it meets any obstacle
+							}
+						}
 
-			//int accum_width = 0;
-			//list<list<Glyph*>::iterator> discards;
-			//for (list<Glyph*>::iterator iter = m_activeGlyph.begin();iter != m_activeGlyph.end();iter++)
-			//{
-			//	Glyph* g = *iter;
-			//	discards.push_back(iter);
+						if (numOfConsqBuckets==bucketsNeeded)
+						{
+							// once the space has been located,
+							// load the glyph
 
-			//	accum_width += g->Width;
-			//	if (accum_width>=glyph.Width)
-			//	{
+							// 1. Clears the buckets
+							UseBuckets(0, i, bucketPosition, bucketsNeeded);
 
-			//	}
-			//	//if (g->Height >= glyph.Height && g->Width >= glyph.Width)
-			//	//{
-			//	//	g->IsMapped = false;
-			//	//	m_activeGlyph.erase(iter);
+							Stream* strm = m_resource->GetReadStream();
+							BinaryReader* br = new BinaryReader(strm);
 
+							// 2. Tag the buckets
+							UseBuckets(&glyph, i, bucketPosition, bucketsNeeded);
 
-			//	//	Stream* strm = m_resource->GetReadStream();
-			//	//	BinaryReader* br = new BinaryReader(strm);
+							// 3. Load the data
+							LoadGlyphData(br, glyph);
 
-			//	//	LoadGlyphData(br, glyph);
-			//	//	br->Close();delete br;
+							br->Close();
+							delete br;
 
-			//	//	m_activeGlyph.push_back(&glyph);
+							done = true;
 
-			//	//	break;
-			//	//}
-			//}
+							break;
+						}
+
+					}
+				}
+			}
 		}
 		void Font::SetUseFreq(const Glyph& glyph)
 		{
-			int k=0;
-			while (k<5 && glyph.ParentBuckets[k]!=-1)
+			for (int i=0;i<glyph.NumberOfBucketUsing;i++)
 			{
-				const Bucket& buk = m_buckets[glyph.ParentBuckets[k]];
+				const Bucket& buk = m_buckets[glyph.StartingParentBucket+i];
 				int& freq = m_currentFreqTable[buk.BucketIndex];
 				freq++;
 				if (freq >= MaxFreq)
 					freq = MaxFreq-1;
 				m_lineBucketsFreqClassificationCount[freq]++;
-				k++;
 			}
 		}
+		void Font::UseBuckets(Glyph* g, int i, int j, int amount)
+		{
+			// if amount > 0 then use buckets, otherwise clears the given range of buckets(g should be 0 in this case)
+			if (amount>0)
+			{
+				const Apoc3D::Math::Rectangle& bukRect = m_buckets[i*m_edgeCount+j].SrcRect;
 
+				g->NumberOfBucketUsing = amount;
+				g->StartingParentBucket = i*m_edgeCount+j;
+				for (int k=0;k<amount;k++)
+				{
+					m_buckets[i*m_edgeCount+j+k].CurrentGlyph = g->Index;
+				}
+				g->MappedRect = Apoc3D::Math::Rectangle(bukRect.X, bukRect.Y, g->Width, g->Height);
+				g->IsMapped = true;
+			}
+			else
+			{
+				for (int k=0;k<amount;k++)
+				{
+					int index = m_buckets[i*m_edgeCount+j].CurrentGlyph;
+					Glyph& oglyph = m_glyphList[index];
+					oglyph.IsMapped = false;
+					oglyph.StartingParentBucket = -1;
+					oglyph.NumberOfBucketUsing = 0;
+
+					m_buckets[i*m_edgeCount+j+k].CurrentGlyph = -1;;
+				}
+			}
+		}
 		int FontManager::TextureSize = 1024;
 
 		FontManager::FontManager()
@@ -593,7 +543,7 @@ namespace Apoc3D
 			for (FastMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
 			{
 				Font* fnt = *iter.getCurrentValue();
-				
+				fnt->FrameStartReset();
 			}
 		}
 	}

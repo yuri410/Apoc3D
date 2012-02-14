@@ -38,7 +38,6 @@ namespace SampleTerrain
 	{
 		VertexElement(0, VEF_Vector3, VEU_Position, 0),
 		VertexElement(12, VEF_Vector3, VEU_Normal, 0)
-		//VertexElement(24, VEF_Vector2, VEU_TextureCoordinate, 0)
 	};
 
 
@@ -104,14 +103,11 @@ namespace SampleTerrain
 	}
 	void TerrainMesh::load()
 	{
-		//m_opBuffer.FastClear();
-		
 		ObjectFactory* fac = m_device->getObjectFactory();
 
 		FastList<VertexElement> elements(4);
 		elements.Add(Elements[0]); 
 		elements.Add(Elements[1]);
-		//elements.Add(Elements[2]);
 
 		m_vtxDecl = fac->CreateVertexDeclaration(elements);
 		
@@ -140,9 +136,6 @@ namespace SampleTerrain
 				vtxData[index].Position[0] = cellLength * i;
 				vtxData[index].Position[1] = height * HeightScale;
 				vtxData[index].Position[2] = cellLength * j;
-
-				//vtxData[index].u = 16 * (float)i / m_edgeVertexCount;
-				//vtxData[index].v = 16 * (float)j / m_edgeVertexCount;
 			}
 		}
 		// normal generation is done on a separate pass

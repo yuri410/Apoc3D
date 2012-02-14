@@ -55,7 +55,7 @@ namespace Apoc3D
 
 			/** Begins executing the pass' procedure for once.
 			*/
-			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
+			void Invoke(const FastList<Camera*>& cameras, SceneManager* sceMgr, BatchData* batchData);
 			
 			/** Gets the camera used in this scene pass.
 			 */

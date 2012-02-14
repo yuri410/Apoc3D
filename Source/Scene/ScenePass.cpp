@@ -95,7 +95,7 @@ namespace Apoc3D
 		}
 		
 		
-		void ScenePass::Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData)
+		void ScenePass::Invoke(const FastList<Camera*>& cameras, SceneManager* sceMgr, BatchData* batchData)
 		{
 			//uint64 selectorMask = 1<<m_selectorID;
 			m_currentCamera = cameras[m_cameraID];
@@ -114,10 +114,37 @@ namespace Apoc3D
 				switch (inst.Operation)
 				{
 				case SOP_And:
+					{
+						ExecutionValue val1 = m_execStack.Pop();
+						ExecutionValue val2 = m_execStack.Pop();
+						ExecutionValue result;
+						
+						result.Value[0] = val1.Value[0] & val2.Value[0];
+						result.Value[1] = val1.Value[1] & val2.Value[1];
+
+						m_execStack.Push(result);
+					}
 					break;
 				case SOP_Or:
+					{
+						ExecutionValue val1 = m_execStack.Pop();
+						ExecutionValue val2 = m_execStack.Pop();
+						ExecutionValue result;
+
+						result.Value[0] = val1.Value[0] | val2.Value[0];
+						result.Value[1] = val1.Value[1] | val2.Value[1];
+
+						m_execStack.Push(result);
+					}
 					break;
 				case SOP_Not:
+					{
+						ExecutionValue val = m_execStack.Pop();
+						ExecutionValue result;
+						result.Value[0] = !val.Value[0];
+						result.Value[1] = !val.Value[1];
+						m_execStack.Push(result);
+					}
 					break;
 				case SOP_Load:
 					{

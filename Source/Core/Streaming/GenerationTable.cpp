@@ -55,22 +55,14 @@ namespace Apoc3D
 
 			void GenerationTable::SubTask_GenUpdate()
 			{
-				//const int passTimeLimit = 4000;
 				clock_t timeStart = clock();
-				//clock_t time = clock();
 
 				int count;
 				m_genLock.lock();
 				count = m_generationList.getCount();
 				m_genLock.unlock();
 
-				//if (count)
 				{
-					//int loopCount = 0;
-					//int remainingTime = passTimeLimit;
-					//int perObjTime = passTimeLimit / count;
-					//int actlObjTime = max(1, min(perObjTime, 10));
-
 					for (int j=0;j<count;j++)
 					{
 						Resource* res;
@@ -90,22 +82,11 @@ namespace Apoc3D
 							if (ng!=og)
 							{
 								UpdateGeneration(og,ng,res);
-//#ifdef _DEBUG
+			//#ifdef _DEBUG
 								//LogManager::getSingleton().Write(LOG_System, L"GEN_CHG" + StringUtils::ToString(ng) +L" ("+ res->getHashString() + L")", LOGLVL_Default);
-//#endif
+			//#endif
 							}
 						}
-
-						//if (++loopCount % 10 ==0)
-						//{
-						//	time = clock();
-						//	remainingTime -= (time-timeStart);
-						//	loopCount = 0;
-						//}
-						//if (perObjTime >=1 && remainingTime>0)
-						//{
-						//	ApocSleep(actlObjTime);
-						//}
 					}
 				}
 			}

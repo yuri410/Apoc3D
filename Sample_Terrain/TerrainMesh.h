@@ -37,7 +37,7 @@ namespace SampleTerrain
 		static String GetHashString(int x, int z, int size);
 
 	protected:
-		/** This is call by the background thread to load the actual content of the mesh.
+		/** This is called by the background thread to load the actual content of the mesh.
 		*/
 		virtual void load();
 		/** This is call by the background thread to unload the actual content of the mesh.
@@ -118,8 +118,9 @@ namespace SampleTerrain
 		ResourceHandle<Texture>* m_textures[6];
 	};
 
-	/** The mesh in one LOD share the same index data as the topology is unchanged.
-	*/
+	/** Stores the index data for each size of the terrain tile at a specific LOD, 
+	 *  the mesh in one LOD share the same index data as the topology is unchanged.
+	 */
 	class SharedIndexData
 	{
 	public:

@@ -249,6 +249,7 @@ namespace Apoc3D
 
 			Vector3 camPos = camera->getInvViewMatrix().GetTranslation();
 
+			// do board first pass a the octree
 			while (m_bfsQueue.getCount())
 			{
 				OctreeSceneNode* node = m_bfsQueue.Dequeue();
