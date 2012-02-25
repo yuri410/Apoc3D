@@ -40,7 +40,7 @@ namespace Apoc3D
 			public:
 				const RenderParameters* getCurrentSetting() const { return m_currentSetting; }
 
-				GraphicsDeviceManager(Game* game, GL1DeviceContent* devCont);
+				GraphicsDeviceManager(Game* game);
 				~GraphicsDeviceManager(void);
 
 
@@ -78,13 +78,12 @@ namespace Apoc3D
 				void ReleaseDevice();
 
 				/** The GraphicsDeviceManager needs to know some capabilities by
-				 *  doing some experiments. Call this prior to the creation of any
-				 *  window.
-				 */
+				*  doing some experiments. Call this prior to the creation of any
+				*  window.
+				*/
 				void PreTest();
 			private:
 				RenderParameters* m_currentSetting;
-				GL1DeviceContent* m_devCont;
 
 				HDC m_hDC;
 				HGLRC m_hRC;
@@ -102,11 +101,9 @@ namespace Apoc3D
 				int32 m_windowedWindowHeight;
 				WINDOWPLACEMENT m_windowedPlacement;
 				int64 m_windowedStyle;
-				
-				/** Stores the supported chosen FSAA pixel format in PreTest()
-				*/
-				int m_arbFSAAFormat;
 
+				int m_arbFSAAFormat;
+				
 				void CreateDevice(const RenderParameters &settings, const DEVMODE* mode = 0);
 				void game_FrameStart(bool* cancel);
 				void game_FrameEnd();

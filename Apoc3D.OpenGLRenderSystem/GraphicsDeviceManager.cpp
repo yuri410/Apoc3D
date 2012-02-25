@@ -37,10 +37,9 @@ namespace Apoc3D
 	{
 		namespace GL1RenderSystem
 		{
-			GraphicsDeviceManager::GraphicsDeviceManager(Game* game, GL1DeviceContent* devCont)
+			GraphicsDeviceManager::GraphicsDeviceManager(Game* game)
 				: m_currentSetting(0), m_ignoreSizeChanges(false), m_doNotStoreBufferSize(false), m_renderingOccluded(false),
-				m_deviceCreated(false),
-				m_devCont(devCont)
+				m_deviceCreated(false), m_arbFSAAFormat(0)
 			{
 				assert(game);
 
@@ -49,8 +48,8 @@ namespace Apoc3D
 				m_game->eventFrameStart()->bind(this, &GraphicsDeviceManager::game_FrameStart);
 				m_game->eventFrameEnd()->bind(this, &GraphicsDeviceManager::game_FrameEnd);
 				m_game->getWindow()->eventUserResized()->bind(this, &GraphicsDeviceManager::Window_UserResized);
-				
-				
+
+
 			}
 
 			GraphicsDeviceManager::~GraphicsDeviceManager(void)
@@ -59,7 +58,7 @@ namespace Apoc3D
 					delete m_currentSetting;
 			}
 
-	
+
 
 
 			void GraphicsDeviceManager::ReleaseDevice()
@@ -79,7 +78,7 @@ namespace Apoc3D
 
 				ReleaseDC(hWnd,m_hDC);
 				DestroyWindow(hWnd);
-				
+
 				m_hDC = NULL;
 				m_hRC = NULL;
 			}
@@ -121,10 +120,196 @@ namespace Apoc3D
 				}
 			}
 
-			LRESULT CALLBACK DummyWindowProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-			BOOL CreateDummyWindowGL(HWND &hWnd, HDC& hdc, HGLRC& hrc, const PIXELFORMATDESCRIPTOR& pfd);
-			BOOL DestroyDummyWindowGL(HWND &hWnd, HDC& hdc, HGLRC& hrc);
-			bool InitMultisample(HWND hWnd,PIXELFORMATDESCRIPTOR pfd, int& arbMultisampleFormat);
+			LRESULT CALLBACK DummyWindowProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+			{
+				return DefWindowProc (hWnd, uMsg, wParam, lParam);
+			}
+
+			BOOL CreateDummyWindowGL(HWND &hWnd, HDC& hdc, HGLRC& hrc, const PIXELFORMATDESCRIPTOR& pfd)									// This Code Creates Our OpenGL Window
+			{
+				GLuint PixelFormat;													// Will Hold The Selected Pixel Format
+
+
+				HINSTANCE hInstance = GetModuleHandle(0);
+				WNDCLASSEX wcex;
+
+				wcex.cbSize = sizeof(WNDCLASSEX);
+
+				wcex.style			= CS_HREDRAW | CS_VREDRAW;
+				wcex.lpfnWndProc	= DummyWindowProc;
+				wcex.cbClsExtra		= 0;
+				wcex.cbWndExtra		= 0;
+				wcex.hInstance		= hInstance;
+				wcex.hIcon			= 0;
+				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+				wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+				wcex.lpszMenuName	= 0;
+				wcex.lpszClassName	= L"OpenGLTesting";
+				wcex.hIconSm		= 0;
+
+				RegisterClassEx(&wcex);
+
+
+				// Create The OpenGL Window
+				hWnd = CreateWindow(L"OpenGLTesting", L"OpenGLTesting", WS_OVERLAPPEDWINDOW,
+					0, 0, 400, 400, NULL, NULL, hInstance, NULL);
+
+				if (hWnd == 0)												// Was Window Creation A Success?
+				{
+					return FALSE;													// If Not Return False
+				}
+
+				hdc = GetDC (hWnd);									// Grab A Device Context For This Window
+				if (hdc == 0)												// Did We Get A Device Context?
+				{
+					// Failed
+					DestroyWindow (hWnd);									// Destroy The Window
+					hWnd = 0;												// Zero The Window Handle
+					return FALSE;													// Return False
+				}
+
+
+				PixelFormat = ChoosePixelFormat (hdc, &pfd);				// Find A Compatible Pixel Format
+				if (PixelFormat == 0)												// Did We Find A Compatible Format?
+				{
+					// Failed
+					ReleaseDC (hWnd, hdc);							// Release Our Device Context
+					hdc = 0;												// Zero The Device Context
+					DestroyWindow (hWnd);									// Destroy The Window
+					hWnd = 0;												// Zero The Window Handle
+					return FALSE;													// Return False
+				}
+
+
+				if (SetPixelFormat (hdc, PixelFormat, &pfd) == FALSE)		// Try To Set The Pixel Format
+				{
+					// Failed
+					ReleaseDC (hWnd, hdc);							// Release Our Device Context
+					hdc = 0;												// Zero The Device Context
+					DestroyWindow (hWnd);									// Destroy The Window
+					hWnd = 0;												// Zero The Window Handle
+					return FALSE;													// Return False
+				}
+
+				hrc = wglCreateContext (hdc);						// Try To Get A Rendering Context
+				if (hrc == 0)												// Did We Get A Rendering Context?
+				{
+					// Failed
+					ReleaseDC (hWnd, hdc);							// Release Our Device Context
+					hrc = 0;												// Zero The Device Context
+					DestroyWindow (hWnd);									// Destroy The Window
+					hWnd = 0;												// Zero The Window Handle
+					return FALSE;													// Return False
+				}
+
+				// Make The Rendering Context Our Current Rendering Context
+				if (wglMakeCurrent (hdc, hrc) == FALSE)
+				{
+					// Failed
+					wglDeleteContext (hrc);									// Delete The Rendering Context
+					hrc = 0;												// Zero The Rendering Context
+					ReleaseDC (hWnd, hdc);							// Release Our Device Context
+					hdc = 0;												// Zero The Device Context
+					DestroyWindow (hWnd);									// Destroy The Window
+					hWnd = 0;												// Zero The Window Handle
+					return FALSE;													// Return False
+				}
+
+				return TRUE;														// Window Creating Was A Success
+				// Initialization Will Be Done In WM_CREATE
+			}
+
+			BOOL DestroyDummyWindowGL(HWND &hWnd, HDC& hdc, HGLRC& hrc)								// Destroy The OpenGL Window & Release Resources
+			{
+				if (hWnd != 0)												// Does The Window Have A Handle?
+				{	
+					if (hdc != 0)											// Does The Window Have A Device Context?
+					{
+						wglMakeCurrent (hdc, 0);							// Set The Current Active Rendering Context To Zero
+						if (hrc != 0)										// Does The Window Have A Rendering Context?
+						{
+							wglDeleteContext (hrc);							// Release The Rendering Context
+							hrc = 0;										// Zero The Rendering Context
+
+						}
+						ReleaseDC (hWnd, hdc);						// Release The Device Context
+						hdc = 0;											// Zero The Device Context
+					}
+					DestroyWindow (hWnd);									// Destroy The Window
+					hWnd = 0;												// Zero The Window Handle
+				}
+
+				HINSTANCE hInstance = GetModuleHandle(0);
+				UnregisterClass(L"OpenGLTesting", hInstance);
+
+				return TRUE;														// Return True
+			}
+
+			bool InitMultisample(HWND hWnd,PIXELFORMATDESCRIPTOR pfd, int& arbMultisampleFormat)
+			{
+				if (!GLEE_WGL_ARB_multisample)
+				{
+					return false;
+				}
+				if (!GLEE_WGL_ARB_pixel_format)
+				{
+					return false;
+				}
+
+
+				bool arbMultisampleSupported = false;
+				//int arbMultisampleFormat    = 0;
+
+				// Get Our Current Device Context. We Need This In Order To Ask The OpenGL Window What Attributes We Have
+				HDC hDC = GetDC(hWnd);
+
+				int pixelFormat;
+				bool valid;
+				UINT numFormats;
+				float fAttributes[] = {0,0};
+
+				// These Attributes Are The Bits We Want To Test For In Our Sample
+				// Everything Is Pretty Standard, The Only One We Want To
+				// Really Focus On Is The SAMPLE BUFFERS ARB And WGL SAMPLES
+				// These Two Are Going To Do The Main Testing For Whether Or Not
+				// We Support Multisampling On This Hardware
+				int iAttributes[] = { WGL_DRAW_TO_WINDOW_ARB,GL_TRUE,
+					WGL_SUPPORT_OPENGL_ARB,GL_TRUE,
+					WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB,
+					WGL_COLOR_BITS_ARB,24,
+					WGL_ALPHA_BITS_ARB,8,
+					WGL_DEPTH_BITS_ARB,16,
+					WGL_STENCIL_BITS_ARB,0,
+					WGL_DOUBLE_BUFFER_ARB,GL_TRUE,
+					WGL_SAMPLE_BUFFERS_ARB,GL_TRUE,
+					WGL_SAMPLES_ARB, 4 ,                        // Check For 4x Multisampling
+					0,0};
+
+				// First We Check To See If We Can Get A Pixel Format For 4 Samples
+				valid = wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixelFormat,&numFormats);
+
+				// if We Returned True, And Our Format Count Is Greater Than 1
+				if (valid && numFormats >= 1)
+				{
+					arbMultisampleSupported = true;
+					arbMultisampleFormat    = pixelFormat; 
+					return arbMultisampleSupported;
+				}
+
+				// Our Pixel Format With 4 Samples Failed, Test For 2 Samples
+				iAttributes[19] = 2;
+				valid = wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixelFormat,&numFormats);
+				if (valid && numFormats >= 1)
+				{
+					arbMultisampleSupported = true;
+					arbMultisampleFormat    = pixelFormat;  
+
+					return arbMultisampleSupported;
+				}
+
+				// Return The Valid Format
+				return  arbMultisampleSupported;
+			}
 
 			void GraphicsDeviceManager::PreTest()
 			{
@@ -163,7 +348,6 @@ namespace Apoc3D
 				}
 			}
 
-
 			void GraphicsDeviceManager::InitializeDevice(const RenderParameters &settings)
 			{
 				HWND sss = m_game->getWindow()->getHandle();
@@ -191,11 +375,11 @@ namespace Apoc3D
 					0,											// Reserved
 					0, 0, 0										// Layer Masks Ignored
 				};
-				
+
 
 				int pixFmt;
 
-				if (settings.FSAASampleCount == 0)
+				if (settings.FSAASampleCount == 0 || m_arbFSAAFormat == 0)
 				{
 					ChoosePixelFormat(m_hDC, &pfd);
 				}
@@ -214,13 +398,12 @@ namespace Apoc3D
 				}
 
 
-				// mark as created
 				m_deviceCreated = true;
 
- 				m_game->Initialize();
+				m_game->Initialize();
 				m_game->LoadContent();
 			}
-			void GraphicsDeviceManager::CreateDevice(const RenderParameters& settings, const DEVMODE* mode = 0)
+			void GraphicsDeviceManager::CreateDevice(const RenderParameters& settings, const DEVMODE* mode)
 			{
 				RenderParameters* oldSettings = m_currentSetting;
 				m_currentSetting = new RenderParameters(settings);
@@ -304,10 +487,10 @@ namespace Apoc3D
 				if (!canReset)
 				{
 					ReleaseDevice();
-					LogManager::getSingleton().Write(LOG_Graphics, 
-							L"[GL1]Recreating Device. ", 
-							LOGLVL_Default);
-					
+					//LogManager::getSingleton().Write(LOG_Graphics, 
+					//		L"[GL1]Recreating Device. ", 
+					//		LOGLVL_Default);
+
 					if (!settings.IsWindowd)
 					{
 						assert(mode);
@@ -325,11 +508,13 @@ namespace Apoc3D
 					}
 				}
 
-				// set up the VSync
 				if (GLEE_WGL_EXT_swap_control)
 				{
 					wglSwapIntervalEXT(settings.EnableVSync ? 1 : 0);
 				}
+
+				glViewport(0,0, settings.BackBufferWidth,settings.BackBufferHeight);
+
 
 
 				// check if we changed from fullscreen to windowed mode
@@ -471,7 +656,7 @@ namespace Apoc3D
 						//  - Width and Height
 						//  - Frequency
 						//  - etc.
-						
+
 						int bpp = PixelFormatUtils::GetBPP(settings.ColorBufferFormat);
 						if (bpp * 8 != (int)dm.dmBitsPerPel)
 						{
@@ -489,10 +674,10 @@ namespace Apoc3D
 					validSettings.BackBufferWidth = (int)dmode.dmPelsWidth;
 					validSettings.BackBufferHeight = (int)dmode.dmPelsHeight;
 				}
-				
+
 
 				CreateDevice(validSettings, &dmode);
-				
+
 			}
 			void GraphicsDeviceManager::ChangeDevice(bool windowed, int desiredWidth, int desiredHeight)
 			{
@@ -522,211 +707,10 @@ namespace Apoc3D
 
 				ChangeDevice(newSettings);
 			}
-
-			/************************************************************************/
-			/* Functions used for pre testing                                       */
-			/************************************************************************/
-
-
-			LRESULT CALLBACK DummyWindowProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+			void GraphicsDeviceManager::ChangeResolution(const DEVMODE& mode)
 			{
-				return DefWindowProc (hWnd, uMsg, wParam, lParam);
+
 			}
-
-			/** Creates an invisible small window for testing.
-			*/
-			BOOL CreateDummyWindowGL(HWND &hWnd, HDC& hdc, HGLRC& hrc, const PIXELFORMATDESCRIPTOR& pfd)									// This Code Creates Our OpenGL Window
-			{
-				GLuint PixelFormat;													// Will Hold The Selected Pixel Format
-
-
-				HINSTANCE hInstance = GetModuleHandle(0);
-				WNDCLASSEX wcex;
-
-				wcex.cbSize = sizeof(WNDCLASSEX);
-
-				wcex.style			= CS_HREDRAW | CS_VREDRAW;
-				wcex.lpfnWndProc	= DummyWindowProc;
-				wcex.cbClsExtra		= 0;
-				wcex.cbWndExtra		= 0;
-				wcex.hInstance		= hInstance;
-				wcex.hIcon			= 0;
-				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-				wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
-				wcex.lpszMenuName	= 0;
-				wcex.lpszClassName	= L"OpenGLTesting";
-				wcex.hIconSm		= 0;
-
-				RegisterClassEx(&wcex);
-
-
-				// Create The OpenGL Window
-				hWnd = CreateWindow(L"OpenGLTesting", L"OpenGLTesting", WS_OVERLAPPEDWINDOW,
-					0, 0, 400, 400, NULL, NULL, hInstance, NULL);
-
-				if (hWnd == 0)												// Was Window Creation A Success?
-				{
-					return FALSE;													// If Not Return False
-				}
-
-				hdc = GetDC (hWnd);									// Grab A Device Context For This Window
-				if (hdc == 0)												// Did We Get A Device Context?
-				{
-					// Failed
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-					return FALSE;													// Return False
-				}
-
-
-				PixelFormat = ChoosePixelFormat (hdc, &pfd);				// Find A Compatible Pixel Format
-				if (PixelFormat == 0)												// Did We Find A Compatible Format?
-				{
-					// Failed
-					ReleaseDC (hWnd, hdc);							// Release Our Device Context
-					hdc = 0;												// Zero The Device Context
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-					return FALSE;													// Return False
-				}
-
-
-				if (SetPixelFormat (hdc, PixelFormat, &pfd) == FALSE)		// Try To Set The Pixel Format
-				{
-					// Failed
-					ReleaseDC (hWnd, hdc);							// Release Our Device Context
-					hdc = 0;												// Zero The Device Context
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-					return FALSE;													// Return False
-				}
-
-				hrc = wglCreateContext (hdc);						// Try To Get A Rendering Context
-				if (hrc == 0)												// Did We Get A Rendering Context?
-				{
-					// Failed
-					ReleaseDC (hWnd, hdc);							// Release Our Device Context
-					hrc = 0;												// Zero The Device Context
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-					return FALSE;													// Return False
-				}
-
-				// Make The Rendering Context Our Current Rendering Context
-				if (wglMakeCurrent (hdc, hrc) == FALSE)
-				{
-					// Failed
-					wglDeleteContext (hrc);									// Delete The Rendering Context
-					hrc = 0;												// Zero The Rendering Context
-					ReleaseDC (hWnd, hdc);							// Release Our Device Context
-					hdc = 0;												// Zero The Device Context
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-					return FALSE;													// Return False
-				}
-
-				return TRUE;														// Window Creating Was A Success
-				// Initialization Will Be Done In WM_CREATE
-			}
-
-			/** Destroys the dummy window and releases the resources.
-			*/
-			BOOL DestroyDummyWindowGL(HWND &hWnd, HDC& hdc, HGLRC& hrc)								// Destroy The OpenGL Window & Release Resources
-			{
-				if (hWnd != 0)												// Does The Window Have A Handle?
-				{	
-					if (hdc != 0)											// Does The Window Have A Device Context?
-					{
-						wglMakeCurrent (hdc, 0);							// Set The Current Active Rendering Context To Zero
-						if (hrc != 0)										// Does The Window Have A Rendering Context?
-						{
-							wglDeleteContext (hrc);							// Release The Rendering Context
-							hrc = 0;										// Zero The Rendering Context
-
-						}
-						ReleaseDC (hWnd, hdc);						// Release The Device Context
-						hdc = 0;											// Zero The Device Context
-					}
-					DestroyWindow (hWnd);									// Destroy The Window
-					hWnd = 0;												// Zero The Window Handle
-				}
-
-				HINSTANCE hInstance = GetModuleHandle(0);
-				UnregisterClass(L"OpenGLTesting", hInstance);
-
-				return TRUE;														// Return True
-			}
-
-			/** Determine the support multisample pixel format
-			*/
-			bool InitMultisample(HWND hWnd,PIXELFORMATDESCRIPTOR pfd, int& arbMultisampleFormat)
-			{
-				/** Can not support if any of the necessary extensions is not supported
-				*/
-				if (!GLEE_WGL_ARB_multisample)
-				{
-					return false;
-				}
-				if (!GLEE_WGL_ARB_pixel_format)
-				{
-					return false;
-				}
-
-
-				bool arbMultisampleSupported = false;
-				//int arbMultisampleFormat    = 0;
-
-				// Get Our Current Device Context. We Need This In Order To Ask The OpenGL Window What Attributes We Have
-				HDC hDC = GetDC(hWnd);
-
-				int pixelFormat;
-				bool valid;
-				UINT numFormats;
-				float fAttributes[] = {0,0};
-
-				// These Attributes Are The Bits We Want To Test For In Our Sample
-				// Everything Is Pretty Standard, The Only One We Want To
-				// Really Focus On Is The SAMPLE BUFFERS ARB And WGL SAMPLES
-				// These Two Are Going To Do The Main Testing For Whether Or Not
-				// We Support Multisampling On This Hardware
-				int iAttributes[] = { WGL_DRAW_TO_WINDOW_ARB,GL_TRUE,
-					WGL_SUPPORT_OPENGL_ARB,GL_TRUE,
-					WGL_ACCELERATION_ARB,WGL_FULL_ACCELERATION_ARB,
-					WGL_COLOR_BITS_ARB,24,
-					WGL_ALPHA_BITS_ARB,8,
-					WGL_DEPTH_BITS_ARB,16,
-					WGL_STENCIL_BITS_ARB,0,
-					WGL_DOUBLE_BUFFER_ARB,GL_TRUE,
-					WGL_SAMPLE_BUFFERS_ARB,GL_TRUE,
-					WGL_SAMPLES_ARB, 4 ,                        // Check For 4x Multisampling
-					0,0};
-
-				// First We Check To See If We Can Get A Pixel Format For 4 Samples
-				valid = wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixelFormat,&numFormats);
-
-				// if We Returned True, And Our Format Count Is Greater Than 1
-				if (valid && numFormats >= 1)
-				{
-					arbMultisampleSupported = true;
-					arbMultisampleFormat    = pixelFormat; 
-					return arbMultisampleSupported;
-				}
-
-				// Our Pixel Format With 4 Samples Failed, Test For 2 Samples
-				iAttributes[19] = 2;
-				valid = wglChoosePixelFormatARB(hDC,iAttributes,fAttributes,1,&pixelFormat,&numFormats);
-				if (valid && numFormats >= 1)
-				{
-					arbMultisampleSupported = true;
-					arbMultisampleFormat    = pixelFormat;  
-
-					return arbMultisampleSupported;
-				}
-
-				// Return The Valid Format
-				return  arbMultisampleSupported;
-			}
-
 		}
 	}
 }

@@ -55,7 +55,7 @@ namespace Apoc3D
 				m_gameWindow->eventResume()->bind(this, &Game::Window_Resume);
 				m_gameWindow->eventSuspend()->bind(this, &Game::Window_Suspend);
 
-				m_graphicsDeviceManager = new GraphicsDeviceManager(this, devCont);
+				m_graphicsDeviceManager = new GraphicsDeviceManager(this);
 				m_graphicsDeviceManager->PreTest();
 			}
 			void Game::Release()
