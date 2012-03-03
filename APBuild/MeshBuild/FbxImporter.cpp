@@ -1474,6 +1474,7 @@ namespace APBuild
 			animData.RigidEntityCount = modelData.Entities.getCount();
 		}
 
+
 		FileOutStream* fs = new FileOutStream(config.DstFile);
 		modelData.Save(fs);
 

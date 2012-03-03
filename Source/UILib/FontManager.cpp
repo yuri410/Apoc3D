@@ -122,7 +122,8 @@ namespace Apoc3D
 				}
 			}
 			m_lineBucketsFreqClassificationCount = new int[m_edgeCount*MaxFreq];
-			
+			m_lasttime_lineBucketsFreqClassificationCount = new int[m_edgeCount*MaxFreq];
+
 			memset(m_lasttime_lineBucketsFreqClassificationCount, 0, sizeof(int)*m_edgeCount*MaxFreq);
 			memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
 			memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);

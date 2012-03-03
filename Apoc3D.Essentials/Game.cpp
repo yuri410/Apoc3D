@@ -103,7 +103,7 @@ namespace Apoc3DEx
 		
 		InputAPIManager::getSingleton().Update(time);
 
-		//m_console->Update(time);
+		m_console->Update(time);
 
 		UIRoot::Update(time);
 	}

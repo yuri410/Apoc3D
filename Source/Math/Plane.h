@@ -320,36 +320,37 @@ namespace Apoc3D
 			static Plane Transform(const Plane &plane, const Quaternion &rotation);
 
 			/* Finds the intersection between a plane and a line.
-			* TODO:TEST
 			*/
 			static bool Intersects(const Plane &plane, Vector3 start, Vector3 end, Vector3 &intersectPoint)
 			{
 				Vector3 dir = Vector3Utils::Subtract(end, start);
+				float dirLen = Vector3Utils::Length(dir);
 
 				float cos = plane.DotNormal(dir);
 
-				if (cos < EPSILON)
+				if (fabs(cos) < EPSILON)
 				{
 					intersectPoint = Vector3Utils::Zero;
 					return false;
 				}
 
-				float d1 = plane.DotNormal(start);
-				float d2 = plane.DotNormal(end);
+				float d1 = plane.Dot3(start);
+				float d2 = plane.Dot3(end);
 
-				if (d1 * d2 < 0)
+				if (d1 * d2 > 0)
 				{
 					intersectPoint = Vector3Utils::Zero;
 					return false;
 				}
 
-				cos /= Vector3Utils::Length(dir);
-				float sin = (float)sqrtf(1 - cos * cos);
+				
+				cos /= -dirLen;
+				//float sin = (float)sqrtf(1 - cos * cos);
 
-				float dist = d1 / sin;
+				float dist = d1 / cos;
 
 
-				Vector3 off = Vector3Utils::Multiply(dir , dist);
+				Vector3 off = Vector3Utils::Multiply(dir, dist/dirLen);
 
 				intersectPoint = Vector3Utils::Add(start, off);
 				return true;
