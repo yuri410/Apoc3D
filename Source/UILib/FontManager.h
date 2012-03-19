@@ -127,8 +127,9 @@ namespace Apoc3D
 			 *  bucket is used since the beginning of the last frame.
 			 */
 			int* m_currentFreqTable;
-			/** A one to one array containing the last-frame frequency of each bucket
-			*/
+			/** A one to one array containing the last-frame frequency of each bucket.
+			 *  This is statistical as the string is drawn.
+			 */
 			int* m_lastFreqTable;
 			/** An array of m_edgeCount*MaxFreq, 
 			 *  indicates how many buckets with specific freqs in each line.
@@ -140,12 +141,15 @@ namespace Apoc3D
 
 			void LoadGlyphData(BinaryReader* br, Glyph& glyph);
 			void EnsureGlyph(Glyph& glyph);
-			/** Marks a glyph and its buckets using or clears the use
-			*/
+			/** Marks a glyph and its buckets using by the given glyph or 
+			 *  clears the use when the given glyph pointer is 0
+			 */
 			void UseBuckets(Glyph* g, int i, int j, int amount);
 			
 			void FrameStartReset();
 
+			/** Increase the frequency of use of the buckets used by the given glyph, by one
+			*/
 			void SetUseFreq(const Glyph& g);
 			
 			friend class FontManager;

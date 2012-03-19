@@ -47,37 +47,17 @@ namespace Apoc3D
 		//template class APAPI unordered_map<uint64, Effect*>;
 		//template class APAPI unordered_map<String, uint64>;
 
-		/* Defines colors, textures, effect and etc. for a geometry.
-
-		   Material have multiple Effects. Scene will be rendered in single or
-		   multiple pass. Each pass has sequence number and its corresponding mask value.
-		   
-		   First the mask value will do bitwise AND with pass flags of the material. If that passes, 
-		   a pass effect will be retrieved from the material with the pass sequence number
-		   as an index.
-		*/
+		/** Defines colors, textures, effect and etc. for a geometry.
+		 *
+		 *  Material have multiple Effects. Scene will be rendered in single or
+		 *  multiple pass. Each pass has sequence number and its corresponding mask value.
+		 * 
+		 *  First the mask value will do bitwise AND with pass flags of the material. If that passes, 
+		 *  a pass effect will be retrieved from the effect map inside the material,
+		 *  with the pass sequence number as an index.
+		 */
 		class APAPI Material : public HashHandleObject
 		{
-		private:
-			RenderDevice* m_device;
-
-			Effect* m_effects[MaxScenePass];
-			// NB: it is found that an array of Strings will use up considerable
-			// amount of memory as the Stl String will initialize their inner objects. 
-			// Thousands of Materials are space consuming if not using map.
-			unordered_map<int, String> m_effectName;//[MaxScenePass];
-
-			CustomParamTable m_customParametrs;
-			ResourceHandle<Texture>* m_tex[MaxTextures];
-			unordered_map<int, String> m_texName;//[MaxTextures];
-			bool m_texDirty[MaxTextures];
-
-			uint64 m_passFlags;
-
-			int32 m_priority;
-
-			void LoadTexture(int32 index);
-			void LoadEffect(int32 index);
 		public:
 			bool UsePointSprite;
 
@@ -192,6 +172,34 @@ namespace Apoc3D
 			*/
 			void Reload();
 
+		private:
+			RenderDevice* m_device;
+
+			/** An array of effect, initialized from m_effectName, is use to store multiple effect
+			 *  for the material
+			 */
+			Effect* m_effects[MaxScenePass];
+			// NB: it is found that an array of Strings will use up considerable
+			// amount of memory as the Stl String will initialize their inner objects. 
+			// Thousands of Materials are space consuming if not using map.
+			/** A map of effect names
+			*/
+			unordered_map<int, String> m_effectName;//[MaxScenePass];
+
+			CustomParamTable m_customParametrs;
+			ResourceHandle<Texture>* m_tex[MaxTextures];
+			unordered_map<int, String> m_texName;//[MaxTextures];
+			bool m_texDirty[MaxTextures];
+
+			/** The bit field used for object selection during scene rendering, 
+			 *  as mentioned in the Material class's description.
+			 */
+			uint64 m_passFlags;
+
+			int32 m_priority;
+
+			void LoadTexture(int32 index);
+			void LoadEffect(int32 index);
 		};
 	};
 };

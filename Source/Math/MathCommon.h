@@ -62,8 +62,8 @@ namespace Apoc3D
 		const float Root2 = 1.41421f;
 		const float Root3 = 1.73205f;
 
-#define ToRadian(x) (x * (PI/180.0f))
-#define ToDegree(x) (x * (180.0f/PI))
+#define ToRadian(x) (x * (Apoc3D::Math::PI/180.0f))
+#define ToDegree(x) (x * (180.0f/Apoc3D::Math::PI))
 
 		static inline float Sign(float value);
 		static inline float Lerp(float a, float b, float amount)

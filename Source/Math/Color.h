@@ -33,6 +33,8 @@ namespace Apoc3D
 	namespace Math
 	{
 #pragma pack(push, 16)
+		/** A four component color represented using 4 floats from 0 to 1
+		*/
 		class APAPI Color4
 		{
 		public:

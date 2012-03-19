@@ -42,6 +42,8 @@ namespace Apoc3D
 
 		typedef fastdelegate::FastDelegate1<const Plugin*, void> PluginErrorBack;
 
+		/** A 
+		*/
 		class APAPI PluginManager : public Singleton<PluginManager>
 		{
 		private:

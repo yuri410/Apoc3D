@@ -37,6 +37,8 @@ namespace Apoc3D
 {	
 	namespace VFS
 	{
+		/** An abstract class representing the location of an asset.
+		*/
 		class APAPI ResourceLocation : public IHashed
 		{
 		private:
@@ -61,6 +63,10 @@ namespace Apoc3D
 			virtual bool CanRead() const = 0;
 			virtual bool CanWrite() const = 0;
 		};
+		/** Represents the location of an asset which is stored in a file, including
+		 *  those in archives.
+		 *  The location can be specified manually or provided by the FileSystem.
+		 */
 		class APAPI FileLocation : public ResourceLocation
 		{
 		private:
@@ -85,6 +91,8 @@ namespace Apoc3D
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return false; }
 		};
+		/** Represents the location of an asset which is stored in memory.
+		*/
 		class APAPI MemoryLocation : public ResourceLocation
 		{
 		private:

@@ -108,6 +108,7 @@ namespace Apoc3D
 			m_currentFreqTable = new int[m_edgeCount*m_edgeCount];
 			m_lastFreqTable = new int[m_edgeCount*m_edgeCount];
 
+			// initializes the buckets
 			for (int i=0;i<m_edgeCount;i++)
 			{
 				for (int j=0;j<m_edgeCount;j++)
@@ -129,7 +130,7 @@ namespace Apoc3D
 			memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
 			memset(m_lastFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
 
-
+			// now put the glyphs into the buckets. Initially the largest glyphs are inserted.
 			{
 				// this temp list is used to store sorting without changing the original one
 				Glyph* tempList = new Glyph[glyphCount];
@@ -374,8 +375,11 @@ namespace Apoc3D
 
 		void Font::FrameStartReset()
 		{
+			// copy the data to its "last-frame" buffer
 			memcpy(m_lasttime_lineBucketsFreqClassificationCount, m_lineBucketsFreqClassificationCount, sizeof(int)*m_edgeCount*MaxFreq);
+			// the reset the current to zero for statistics in the current frame
 			memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
+
 			memcpy(m_lastFreqTable, m_currentFreqTable, sizeof(int)*m_edgeCount*m_edgeCount);
 			memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
 			
