@@ -190,6 +190,18 @@ namespace Apoc3D
 		public:
 			int32 getCount() const { return m_count - m_freeCount; }
 
+			FastMap(const FastMap& another)
+				: m_comparer(another.m_comparer), m_bucketsLength(another.m_bucketsLength),
+				m_count(another.m_count), m_entryLength(another.m_entryLength), m_freeCount(another.m_freeCount),
+				m_freeList(another.m_freeList)
+			{
+				m_buckets = new int[m_bucketsLength];
+				memcpy(m_buckets, another.m_buckets, sizeof(int)*m_bucketsLength);
+
+				m_entries = new Entry[m_entryLength];
+				for (int i=0;i<m_entryLength;i++)
+					m_entries[i] = another.m_entries[i];
+			}
 			FastMap(const IEqualityComparer<T>* comparer = IBuiltInEqualityComparer<T>::Default)
 				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
 				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
@@ -215,6 +227,28 @@ namespace Apoc3D
 			{
 				delete[] m_entries;
 				delete[] m_buckets;
+			}
+			FastMap& FastMap::operator=(const FastMap &another)
+			{
+				delete[] m_entries;
+				delete[] m_buckets;
+
+				m_comparer = another.m_comparer;
+				m_bucketsLength = another.m_bucketsLength;
+
+				m_count = another.m_count;
+				m_entryLength = another.m_entryLength;
+				m_freeCount = another.m_freeCount;
+				m_freeList = another.m_freeList;
+
+				m_buckets = new int[m_bucketsLength];
+				memcpy(m_buckets, another.m_buckets, sizeof(int)*m_bucketsLength);
+
+				m_entries = new Entry[m_entryLength];
+				for (int i=0;i<m_entryLength;i++)
+					m_entries[i] = another.m_entries[i];
+
+				return *this; 
 			}
 			void Add(const T& item, const S& value)
 			{

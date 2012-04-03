@@ -445,7 +445,7 @@ namespace Apoc3D
 				return ((inp&0x0000FF)<<24)|((inp&0xFF0000)>>8)|((inp&0x00FF00)<<8)|0x000000FF;
 			}
 		};
-
+		
 #define CASECONVERTER(type) case type::ID : DataBoxConverter<type>::conversion(src, dst); return 1;
 
 		int PixelFormatUtils::ConvertPixels(const DataBox& src, const DataBox& dst)

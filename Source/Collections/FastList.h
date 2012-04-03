@@ -34,14 +34,6 @@ namespace Apoc3D
 		template<typename T>
 		class List
 		{
-		private:
-			T* m_elements;
-
-			int m_internalPointer;
-
-			int m_length;
-
-
 		public:
 			int32 getCount() const { return m_internalPointer; }
 			T* getInternalPointer() const { return m_elements; }
@@ -222,6 +214,13 @@ namespace Apoc3D
 				assert(i<m_internalPointer);
 				return m_elements[i];
 			}
+
+		private:
+			T* m_elements;
+
+			int m_internalPointer;
+
+			int m_length;
 		};
 
 		/** Fast list is only suitable for simple types such as int, 
@@ -233,14 +232,6 @@ namespace Apoc3D
 		template<typename T>
 		class FastList
 		{
-		private:
-			T* m_elements;
-
-			int m_internalPointer;
-
-			int m_length;
-
-			
 		public:
 			int32 getCount() const { return m_internalPointer; }
 			T* getInternalPointer() const { return m_elements; }
@@ -434,6 +425,14 @@ namespace Apoc3D
 			//{
 			//	return m_elements[i];
 			//}
+
+		private:
+			T* m_elements;
+
+			int m_internalPointer;
+
+			int m_length;
+
 
 		};
 	}

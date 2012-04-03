@@ -70,8 +70,11 @@ namespace Apoc3D
 			ConfigurationSection* get(const String& name) const
 			{
 				ConfigurationSection* result;
-				m_sections.TryGetValue(name, result);
-				return result;
+				if (m_sections.TryGetValue(name, result))
+				{
+					return result;
+				}
+				return 0;
 			}
 
 			/** Gets the top section enumerator
