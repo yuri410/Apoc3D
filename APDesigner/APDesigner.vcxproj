@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APDCommon.h" />
+    <ClInclude Include="AutoEffectDocument.h" />
     <ClInclude Include="BuildService\BuildService.h" />
     <ClInclude Include="CommonDialog\ChooseColor.h" />
     <ClInclude Include="CommonDialog\DialogCommon.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="UIResources.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AutoEffectDocument.cpp" />
     <ClCompile Include="BuildService\BuildService.cpp" />
     <ClCompile Include="CommonDialog\ChooseColor.cpp" />
     <ClCompile Include="CommonDialog\DialogCommon.cpp" />

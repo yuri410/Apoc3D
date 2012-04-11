@@ -374,7 +374,7 @@ namespace Apoc3D
 		{
 			String val = getValue(key);
 			vector<String> vals = StringUtils::Split(val, L",");
-			vector<float> result(val.size());
+			vector<float> result(vals.size());
 			for (size_t i=0;i<vals.size();i++)
 			{
 				result[i] = StringUtils::ParseSingle(vals[i]);
@@ -385,7 +385,7 @@ namespace Apoc3D
 		{
 			String val = getAttribute(key);
 			vector<String> vals = StringUtils::Split(val, L",");
-			vector<float> result(val.size());
+			vector<float> result(vals.size());
 			for (size_t i=0;i<vals.size();i++)
 			{
 				result[i] = StringUtils::ParseSingle(vals[i]);
@@ -397,7 +397,7 @@ namespace Apoc3D
 		{
 			String val = getValue(key);
 			vector<String> vals = StringUtils::Split(val, L",");
-			vector<float> result(val.size());
+			vector<float> result(vals.size());
 			for (size_t i=0;i<vals.size();i++)
 			{
 				result[i] = ParsePercentage(vals[i]);
@@ -408,7 +408,7 @@ namespace Apoc3D
 		{
 			String val = getAttribute(key);
 			vector<String> vals = StringUtils::Split(val, L",");
-			vector<float> result(val.size());
+			vector<float> result(vals.size());
 			for (size_t i=0;i<vals.size();i++)
 			{
 				result[i] = ParsePercentage(vals[i]);
@@ -420,7 +420,7 @@ namespace Apoc3D
 		{
 			String val = getValue(name);
 			vector<String> vals = StringUtils::Split(val, L",");
-			vector<int32> result(val.size());
+			vector<int32> result(vals.size());
 			for (size_t i=0;i<vals.size();i++)
 			{
 				result[i] = StringUtils::ParseInt32(vals[i]);
@@ -431,7 +431,7 @@ namespace Apoc3D
 		{
 			String val = getAttribute(name);
 			vector<String> vals = StringUtils::Split(val, L",");
-			vector<int32> result(val.size());
+			vector<int32> result(vals.size());
 			for (size_t i=0;i<vals.size();i++)
 			{
 				result[i] = StringUtils::ParseInt32(vals[i]);
@@ -443,7 +443,7 @@ namespace Apoc3D
 		{
 			String val = getValue(name);
 			vector<String> vals = StringUtils::Split(val, L",");
-			vector<uint32> result(val.size());
+			vector<uint32> result(vals.size());
 			for (size_t i=0;i<vals.size();i++)
 			{
 				result[i] = StringUtils::ParseInt32(vals[i]);
@@ -454,7 +454,7 @@ namespace Apoc3D
 		{
 			String val = getAttribute(name);
 			vector<String> vals = StringUtils::Split(val, L",");
-			vector<uint32> result(val.size());
+			vector<uint32> result(vals.size());
 			for (size_t i=0;i<vals.size();i++)
 			{
 				result[i] = StringUtils::ParseInt32(vals[i]);
