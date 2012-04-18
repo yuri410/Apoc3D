@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "ShaderAtomType.h"
 
-SINGLETON_DECL(APDesigner::ShaderAtomManager);
+SINGLETON_DECL(APDesigner::ShaderAtomLibraryManager);
 
 namespace APDesigner
 {
@@ -56,21 +56,21 @@ namespace APDesigner
 	/*                                                                      */
 	/************************************************************************/
 
-	void ShaderAtomManager::Load(const String& atomLib)
+	void ShaderAtomLibraryManager::Load(const String& atomLib)
 	{
 
 	}
 
-	void ShaderAtomManager::AddAtomType(ShaderAtomType* type)
+	void ShaderAtomLibraryManager::AddAtomType(ShaderAtomType* type)
 	{
 		m_table.Add(type->getName(), type);
 	}
-	void ShaderAtomManager::RemoveAtomType(ShaderAtomType* type)
+	void ShaderAtomLibraryManager::RemoveAtomType(ShaderAtomType* type)
 	{
 		m_table.Remove(type->getName());
 	}
 
-	ShaderAtomType* ShaderAtomManager::FindAtomType(const String& name)
+	ShaderAtomType* ShaderAtomLibraryManager::FindAtomType(const String& name)
 	{
 		ShaderAtomType* result = 0;
 		m_table.TryGetValue(name, result);

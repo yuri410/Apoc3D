@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::Animation;
+using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Scene;
 
 namespace APDesigner
@@ -48,8 +49,13 @@ namespace APDesigner
 		virtual void Update(const GameTime* const time);
 		virtual void Render();
 	private:
+		void Form_Resized(Control* ctrl);
+
 		ShaderGraph* m_graph;
 		String m_filePath;
+
+		RenderTarget* m_renderTarget;
+		Texture* m_graphRender;
 	}
 }
 

@@ -27,15 +27,29 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDCommon.h"
 
+using namespace Apoc3D;
+
 namespace APDesigner
 {
+	struct ShaderAtomLinkInfo
+	{
+		int SourcePortID;
+		int TargetPortID;
+
+		int SourceNodeIndex;
+		int TargetNodeIndex;
+	};
+
 	/** Class for loading and saving the data used in a shader network document.
 	*/
 	class ShaderDocumentData
 	{
 	public:
+		List<String> Nodes;
+		List<ShaderAtomLinkInfo> Links;
 
-
+		int MajorSMVersion;
+		int MinorSMVersion;
 	};
 }
 

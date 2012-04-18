@@ -66,6 +66,8 @@ namespace APDesigner
 		const String& getName() const { return m_name; }
 		const String& getCodeBody() const { return m_codeBody; }
 
+		/** minimum SM version required to use this atom type
+		*/
 		int getMajorSMVersion() const { return m_majorSMVersion; }
 		int getMinorSMVersion() const { return m_minorSMVersion; }
 	private:
@@ -78,11 +80,13 @@ namespace APDesigner
 
 	/** A singleton to keep track of all available shader atom types,
 	 *  providing load, add/remove and find function.
+	 *
+	 *  This also provides all available shader output nodes.
 	 */
-	class ShaderAtomManager : public Singleton<ShaderAtomManager>
+	class ShaderAtomLibraryManager : public Singleton<ShaderAtomLibraryManager>
 	{
 	public:
-		SINGLETON_DECL_HEARDER(APDesigner::ShaderAtomManager);
+		SINGLETON_DECL_HEARDER(APDesigner::ShaderAtomLibraryManager);
 
 		/** Load all atom types from give file.
 		 *  Before that all previous loaded atom types will be unloaded,
@@ -97,6 +101,7 @@ namespace APDesigner
 	private:
 		FastMap<String, ShaderAtomType*> m_table;
 	};
+
 }
 
 #endif

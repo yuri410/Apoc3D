@@ -25,10 +25,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Utility/StringUtils.h"
 #include "UILib/Form.h"
+#include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/ObjectFactory.h"
+#include "Graphics/RenderSystem/RenderTarget.h"
+
+#include "MainWindow.h"
+#include "ShaderGraph.h"
 
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::IO;
+using namespace Apoc3D::Graphics::RenderSystem;
 //using namespace APDesigner::CommonDialog;
 
 namespace APDesigner
@@ -37,6 +44,10 @@ namespace APDesigner
 		: Document(window), m_filePath(file), m_graph(0)
 	{
 		getDocumentForm()->setTitle(file);
+		getDocumentForm()->eventResized().bind(this, &AutoEffectDocument::Form_Resized);
+
+		ObjectFactory* fac = window->getDevice()->getObjectFactory();
+		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->Size.X,getDocumentForm()->Size.Y, FMT_X8R8G8B8, DEPFMT_Depth24X8);
 	}
 
 	AutoEffectDocument::~AutoEffectDocument()
@@ -53,5 +64,31 @@ namespace APDesigner
 		}
 
 
+	}
+
+	/** Similar to model document, the content: graph is rendered to a separate render target
+	  * which is latter presented on GUI.
+	  * But here we do it manually.
+	  */
+	void AutoEffectDocument::Render()
+	{
+		RenderDevice* device = getMainWindow()->getDevice();
+
+		device->SetRenderTarget(0, m_renderTarget);
+		if (m_graph)
+		{
+			m_graph->Draw();
+		}
+		device->SetRenderTarget(0,0);
+
+		m_graphRender = m_renderTarget->GetColorTexture();
+	}
+
+	void AutoEffectDocument::Form_Resized(Control* ctrl)
+	{
+		delete m_renderTarget;
+
+		ObjectFactory* fac = getMainWindow()->getDevice()->getObjectFactory();
+		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->Size.X,getDocumentForm()->Size.Y, FMT_X8R8G8B8, DEPFMT_Depth24X8);
 	}
 }

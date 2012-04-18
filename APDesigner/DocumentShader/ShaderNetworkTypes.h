@@ -26,14 +26,52 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define SHADERNETWORKTYPES_H
 
 #include "APDCommon.h"
+#include "Graphics/EffectSystem/EffectParameter.h"
 
 using namespace Apoc3D;
+using namespace Apoc3D::Graphics::EffectSystem;
 
 namespace APDesigner
 {
 	enum ShaderAtomDataExchangeType
 	{
 
+	};
+
+	enum ShaderNetOutputType
+	{
+		/** Pixel shaders
+		*/
+		SNOUT_Color,
+		SNOUT_Depth,
+
+		/** Vertex shaders
+		*/
+		SNOUT_Position,
+		SNOUT_TexCoord0,
+		SNOUT_TexCoord1,
+		SNOUT_TexCoord2,
+		SNOUT_TexCoord3,
+		SNOUT_TexCoord4,
+		SNOUT_TexCoord5,
+		SNOUT_TexCoord6,
+		SNOUT_TexCoord7,
+
+	};
+	
+	/** Auto generated input parameter node
+	*/
+	struct ShaderNetInputNode
+	{
+		EffectParamUsage Usage;
+	};
+
+	struct ShaderNetOutputNode
+	{
+		int RequiredSMVersionMajor;
+		int RequiredSMVersionMinor;
+
+		ShaderNetOutputType Type;
 	};
 }
 
