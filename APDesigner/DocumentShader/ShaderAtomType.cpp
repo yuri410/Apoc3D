@@ -28,5 +28,52 @@ SINGLETON_DECL(APDesigner::ShaderAtomManager);
 
 namespace APDesigner
 {
+	/************************************************************************/
+	/*  ShaderAtomPort                                                      */
+	/************************************************************************/
+	bool ShaderAtomPort::IsTypeCompatible(ShaderAtomDataExchangeType other)
+	{
+		return false;
+	}
 
+	/************************************************************************/
+	/*  ShaderAtomType                                                      */
+	/************************************************************************/
+	bool ShaderAtomType::MatchPorts(const ShaderAtomType* other)
+	{
+		return false;
+	}
+
+	void ShaderAtomType::UpdateTo(const ShaderAtomType* newOne)
+	{
+		m_codeBody = newOne->m_codeBody;
+		m_name = newOne->m_name;
+		m_minorSMVersion = newOne->m_minorSMVersion;
+		m_majorSMVersion = newOne->m_majorSMVersion;
+	}
+
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+
+	void ShaderAtomManager::Load(const String& atomLib)
+	{
+
+	}
+
+	void ShaderAtomManager::AddAtomType(ShaderAtomType* type)
+	{
+		m_table.Add(type->getName(), type);
+	}
+	void ShaderAtomManager::RemoveAtomType(ShaderAtomType* type)
+	{
+		m_table.Remove(type->getName());
+	}
+
+	ShaderAtomType* ShaderAtomManager::FindAtomType(const String& name)
+	{
+		ShaderAtomType* result = 0;
+		m_table.TryGetValue(name, result);
+		return result;
+	}
 }

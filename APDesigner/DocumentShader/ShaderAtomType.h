@@ -50,18 +50,30 @@ namespace APDesigner
 		bool IsTypeCompatible(ShaderAtomDataExchangeType other);
 	};
 
+	/** Represents a shader atom type
+	*/
 	class ShaderAtomType
 	{
 	public:
 
+		/** Tells if the atom type's port setting can automatically match the other one's
+		 *  ports based on the usage information.
+		 */
 		bool MatchPorts(const ShaderAtomType* other);
 
 		void UpdateTo(const ShaderAtomType* newOne);
+
+		const String& getName() const { return m_name; }
+		const String& getCodeBody() const { return m_codeBody; }
+
+		int getMajorSMVersion() const { return m_majorSMVersion; }
+		int getMinorSMVersion() const { return m_minorSMVersion; }
 	private:
 		String m_codeBody;
 		String m_name;
 		
-		
+		int m_majorSMVersion;
+		int m_minorSMVersion;
 	};
 
 	/** A singleton to keep track of all available shader atom types,

@@ -163,6 +163,7 @@
     <ClCompile Include="CommonDialog\FileDialog.cpp" />
     <ClCompile Include="DocumentShader\GraphNode.cpp" />
     <ClCompile Include="DocumentShader\QuadTree.cpp" />
+    <ClCompile Include="DocumentShader\ShaderAtomDocument.cpp" />
     <ClCompile Include="DocumentShader\ShaderAtomType.cpp" />
     <ClCompile Include="DocumentShader\ShaderGraph.cpp" />
     <ClCompile Include="UIResources.cpp" />
