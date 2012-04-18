@@ -70,7 +70,7 @@ namespace APDesigner
 		 */
 		bool MatchPorts(const ShaderAtomType* other);
 
-		void UpdateTo(const ShaderAtomType* newOne);
+		void CopyFrom(const ShaderAtomType* newOne);
 
 		const String& getName() const { return m_name; }
 		const String& getCodeBody() const { return m_codeBody; }

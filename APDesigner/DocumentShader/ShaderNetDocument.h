@@ -51,7 +51,8 @@ namespace APDesigner
 	private:
 		void Form_Resized(Control* ctrl);
 
-		ShaderGraph* m_graph;
+		ShaderGraph* m_vsGraph;
+		ShaderGraph* m_psGraph;
 		String m_filePath;
 
 		RenderTarget* m_renderTarget;

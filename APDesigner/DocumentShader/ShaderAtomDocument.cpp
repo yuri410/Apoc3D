@@ -61,7 +61,7 @@ namespace APDesigner
 			ShaderAtomType* requested = ShaderAtomLibraryManager::getSingleton().FindAtomType(m_atomName);
 			if (requested)
 			{
-				requested->UpdateTo(m_currentWorkingCopy);
+				requested->CopyFrom(m_currentWorkingCopy);
 			}
 		}
 	}

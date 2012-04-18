@@ -77,7 +77,8 @@ namespace APDesigner
 		ATOMDATA_Float4x3,
 		ATOMDATA_Float4x4,
 
-		ATOMDATA_Other
+		ATOMDATA_Other,
+		ATOMDATA_Count
 	};
 
 	enum ShaderInterfaceParamType

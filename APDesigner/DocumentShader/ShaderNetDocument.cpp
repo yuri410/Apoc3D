@@ -21,7 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "AutoEffectDocument.h"
+#include "ShaderNetDocument.h"
 
 #include "Utility/StringUtils.h"
 #include "UILib/Form.h"
@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "MainWindow.h"
 #include "ShaderGraph.h"
+#include "ShaderDataIO.h"
 
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Utility;
@@ -41,7 +42,7 @@ using namespace Apoc3D::Graphics::RenderSystem;
 namespace APDesigner
 {
 	ShaderNetDocument::ShaderNetDocument(MainWindow* window, const String& file)
-		: Document(window), m_filePath(file), m_graph(0)
+		: Document(window), m_filePath(file), m_vsGraph(0), m_psGraph(0)
 	{
 		getDocumentForm()->setTitle(file);
 		getDocumentForm()->eventResized().bind(this, &ShaderNetDocument::Form_Resized);
@@ -52,16 +53,21 @@ namespace APDesigner
 
 	ShaderNetDocument::~ShaderNetDocument()
 	{
-		if (m_graph)
-			delete m_graph;
+		if (m_vsGraph)
+			delete m_vsGraph;
 	}
+	void ShaderNetDocument::Initialize(RenderDevice* device)
+	{
 
+	}
 	void ShaderNetDocument::LoadRes()
 	{
-		if (m_graph)
+		if (m_vsGraph)
 		{
-			delete m_graph;
+			delete m_vsGraph;
 		}
+		ShaderDocumentData data;
+		data.Load(m_filePath);
 
 
 	}
@@ -75,15 +81,21 @@ namespace APDesigner
 		RenderDevice* device = getMainWindow()->getDevice();
 
 		device->SetRenderTarget(0, m_renderTarget);
-		if (m_graph)
+		if (m_vsGraph)
 		{
-			m_graph->Draw();
+			m_vsGraph->Draw();
 		}
 		device->SetRenderTarget(0,0);
 
 		m_graphRender = m_renderTarget->GetColorTexture();
 	}
-
+	void ShaderNetDocument:Update(const GameTime* const time)
+	{
+		if (m_graph)
+		{
+			m_graph->Update(time);
+		}
+	}
 	void ShaderNetDocument::Form_Resized(Control* ctrl)
 	{
 		delete m_renderTarget;
