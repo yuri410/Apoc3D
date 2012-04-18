@@ -21,46 +21,42 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef AUTOEFFECTDOCUMENT_H
+#define AUTOEFFECTDOCUMENT_H
 
-#ifndef SHADERDOCUMENTDATA_H
-#define SHADERDOCUMENTDATA_H
-
-#include "APDCommon.h"
-#include "ShaderNetworkTypes.h"
+#include "Document.h"
+#include "UILib/Control.h"
 
 using namespace Apoc3D;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::Animation;
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Scene;
 
 namespace APDesigner
 {
-	struct ShaderAtomLinkInfo
-	{
-		int SourcePortID;
-		int TargetPortID;
-
-		int SourceNodeIndex;
-		int TargetNodeIndex;
-
-		int InputNodeIndex;
-		int OutputNodeIndex;
-	};
-
-	/** Class for loading and saving the data used in a shader network document.
-	*/
-	class ShaderDocumentData
+	class ShaderNetDocument : public Document
 	{
 	public:
-		List<String> Nodes;
-		List<ShaderAtomLinkInfo> Links;
+		ShaderNetDocument(MainWindow* window, const String& file);
+		~ShaderNetDocument();
 
-		int MajorSMVersion;
-		int MinorSMVersion;
+		virtual void LoadRes();
+		virtual void SaveRes();
+		virtual bool IsReadOnly() { return false; }
 
-		List<ShaderNetInputNode> InputNodes;
-		List<ShaderNetOutputNode> OutputNodes;
+		virtual void Initialize(RenderDevice* device);
+		virtual void Update(const GameTime* const time);
+		virtual void Render();
+	private:
+		void Form_Resized(Control* ctrl);
 
-		void Load(const String& filePath);
-		void Save(const String& filePath);
-	};
+		ShaderGraph* m_graph;
+		String m_filePath;
+
+		RenderTarget* m_renderTarget;
+		Texture* m_graphRender;
+	}
 }
 
 #endif

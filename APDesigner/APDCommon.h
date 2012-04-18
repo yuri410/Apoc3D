@@ -45,7 +45,7 @@ namespace APDesigner
 
 	class MainWindow;
 	
-	class AutoEffectDocument;
+	class ShaderNetDocument;
 	class ShaderGraph;
 	class GraphNode;
 	class QuadTreeNode;

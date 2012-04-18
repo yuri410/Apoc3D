@@ -40,23 +40,23 @@ using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace APDesigner
 {
-	AutoEffectDocument::AutoEffectDocument(MainWindow* window, const String& file)
+	ShaderNetDocument::ShaderNetDocument(MainWindow* window, const String& file)
 		: Document(window), m_filePath(file), m_graph(0)
 	{
 		getDocumentForm()->setTitle(file);
-		getDocumentForm()->eventResized().bind(this, &AutoEffectDocument::Form_Resized);
+		getDocumentForm()->eventResized().bind(this, &ShaderNetDocument::Form_Resized);
 
 		ObjectFactory* fac = window->getDevice()->getObjectFactory();
 		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->Size.X,getDocumentForm()->Size.Y, FMT_X8R8G8B8, DEPFMT_Depth24X8);
 	}
 
-	AutoEffectDocument::~AutoEffectDocument()
+	ShaderNetDocument::~ShaderNetDocument()
 	{
 		if (m_graph)
 			delete m_graph;
 	}
 
-	void AutoEffectDocument::LoadRes()
+	void ShaderNetDocument::LoadRes()
 	{
 		if (m_graph)
 		{
@@ -70,7 +70,7 @@ namespace APDesigner
 	  * which is latter presented on GUI.
 	  * But here we do it manually.
 	  */
-	void AutoEffectDocument::Render()
+	void ShaderNetDocument::Render()
 	{
 		RenderDevice* device = getMainWindow()->getDevice();
 
@@ -84,7 +84,7 @@ namespace APDesigner
 		m_graphRender = m_renderTarget->GetColorTexture();
 	}
 
-	void AutoEffectDocument::Form_Resized(Control* ctrl)
+	void ShaderNetDocument::Form_Resized(Control* ctrl)
 	{
 		delete m_renderTarget;
 

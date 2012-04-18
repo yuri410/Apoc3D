@@ -133,7 +133,7 @@
   <ItemGroup>
     <ClInclude Include="APDCommon.h" />
     <ClInclude Include="CommonDialog\Win32InputBox.h" />
-    <ClInclude Include="DocumentShader\AutoEffectDocument.h" />
+    <ClInclude Include="DocumentShader\ShaderNetDocument.h" />
     <ClInclude Include="BuildService\BuildService.h" />
     <ClInclude Include="CommonDialog\ChooseColor.h" />
     <ClInclude Include="CommonDialog\DialogCommon.h" />
@@ -158,7 +158,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonDialog\Win32InputBox.cpp" />
-    <ClCompile Include="DocumentShader\AutoEffectDocument.cpp" />
+    <ClCompile Include="DocumentShader\ShaderDocumentData.cpp" />
+    <ClCompile Include="DocumentShader\ShaderNetDocument.cpp" />
     <ClCompile Include="BuildService\BuildService.cpp" />
     <ClCompile Include="CommonDialog\ChooseColor.cpp" />
     <ClCompile Include="CommonDialog\DialogCommon.cpp" />

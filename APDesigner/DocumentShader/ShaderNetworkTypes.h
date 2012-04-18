@@ -38,43 +38,58 @@ namespace APDesigner
 
 	};
 
+	/** Defines type of shader input data.
+	 *  This is only used in raw inputs.
+	 */
+	enum ShaderNetVaringType
+	{
+
+	};
+
+	/** Shader final output type
+	*/
 	enum ShaderNetOutputType
 	{
 		/** Pixel shaders
 		*/
-		SNOUT_Color,
+		SNOUT_Color0,
 		SNOUT_Depth,
 
 		/** Vertex shaders
 		*/
-		SNOUT_Position,
-		SNOUT_TexCoord0,
-		SNOUT_TexCoord1,
-		SNOUT_TexCoord2,
-		SNOUT_TexCoord3,
-		SNOUT_TexCoord4,
-		SNOUT_TexCoord5,
-		SNOUT_TexCoord6,
-		SNOUT_TexCoord7,
-
+		SNOUT_Position
 	};
 	
 	/** Auto generated input parameter node
 	*/
 	struct ShaderNetInputNode
 	{
+		String Name;
+
 		EffectParamUsage Usage;
+		/** OR */
+		/** In an input node, this is only used when fetching data from vertex stream.
+		*/
+		ShaderNetVaringType VaringType;
+		/** OR */
+		/** Used when passing data between shaders.
+		*/
+		String VaringTypeName;
 	};
 
 	struct ShaderNetOutputNode
 	{
-		int RequiredSMVersionMajor;
-		int RequiredSMVersionMinor;
+		String Name;
+
+		//int RequiredSMVersionMajor;
+		//int RequiredSMVersionMinor;
 
 		ShaderNetOutputType Type;
-
+		/** OR */
 		/** If this is not empty, the output data will be passed via shader result. This name is used as identification.
-		*/
+		 *  varying data will be passed as texture coords to PS. 
+		 *  The coord slot number will be determined based on this name and the output nodes in the previous stage.
+		 */
 		String VaringTypeName;
 	};
 }

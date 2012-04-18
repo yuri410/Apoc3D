@@ -71,9 +71,6 @@
     <ClInclude Include="BuildService\BuildService.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DocumentShader\AutoEffectDocument.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DocumentShader\ShaderGraph.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -96,6 +93,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="CommonDialog\Win32InputBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentShader\ShaderNetDocument.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -139,9 +139,6 @@
     <ClCompile Include="BuildService\BuildService.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DocumentShader\AutoEffectDocument.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DocumentShader\ShaderGraph.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -158,6 +155,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CommonDialog\Win32InputBox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentShader\ShaderNetDocument.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentShader\ShaderDocumentData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

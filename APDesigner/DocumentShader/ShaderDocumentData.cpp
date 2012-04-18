@@ -21,42 +21,47 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef AUTOEFFECTDOCUMENT_H
-#define AUTOEFFECTDOCUMENT_H
 
-#include "Document.h"
-#include "UILib/Control.h"
+#include "ShaderDocumentData.h"
 
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::Animation;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Scene;
+#include "Config/XmlConfiguration.h"
+#include "Config/ConfigurationSection.h"
+
+using namespace Apoc3D::Config;
 
 namespace APDesigner
 {
-	class AutoEffectDocument : public Document
+	void ShaderDocumentData::Load(const String& filePath)
 	{
-	public:
-		AutoEffectDocument(MainWindow* window, const String& file);
-		~AutoEffectDocument();
+		XMLConfiguration* config = new XMLConfiguration(filePath);
 
-		virtual void LoadRes();
-		virtual void SaveRes();
-		virtual bool IsReadOnly() { return false; }
+		ConfigurationSection* sect = config->get(L"Basic");
+		MajorSMVersion = sect->GetInt(L"MajorSMVersion");
+		MinorSMVersion = sect->GetInt(L"MinorSMVersion");
 
-		virtual void Initialize(RenderDevice* device);
-		virtual void Update(const GameTime* const time);
-		virtual void Render();
-	private:
-		void Form_Resized(Control* ctrl);
+		sect = config->get(L"Nodes");
+		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
+		{
+			Nodes.Add(
+				(*e.getCurrentValue())->getValue()
+			);
+		}
 
-		ShaderGraph* m_graph;
-		String m_filePath;
+		sect = config->get(L"Inputs");
 
-		RenderTarget* m_renderTarget;
-		Texture* m_graphRender;
+
+
+		sect = config->get(L"Outputs");
+
+
+
+		sect = config->get(L"Links");
+
+
+		delete config;
+	}
+	void ShaderDocumentData::Save(const String& filePath)
+	{
+
 	}
 }
-
-#endif
