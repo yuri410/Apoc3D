@@ -143,7 +143,7 @@
     <ClInclude Include="DocumentShader\QuadTree.h" />
     <ClInclude Include="DocumentShader\ShaderAtomDocument.h" />
     <ClInclude Include="DocumentShader\ShaderAtomType.h" />
-    <ClInclude Include="DocumentShader\ShaderDocumentData.h" />
+    <ClInclude Include="DocumentShader\ShaderDataIO.h" />
     <ClInclude Include="DocumentShader\ShaderGraph.h" />
     <ClInclude Include="DocumentShader\ShaderNetworkTypes.h" />
     <ClInclude Include="MainWindow.h" />
@@ -158,7 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonDialog\Win32InputBox.cpp" />
-    <ClCompile Include="DocumentShader\ShaderDocumentData.cpp" />
+    <ClCompile Include="DocumentShader\ShaderDataIO.cpp" />
     <ClCompile Include="DocumentShader\ShaderNetDocument.cpp" />
     <ClCompile Include="BuildService\BuildService.cpp" />
     <ClCompile Include="CommonDialog\ChooseColor.cpp" />
@@ -169,6 +169,7 @@
     <ClCompile Include="DocumentShader\ShaderAtomDocument.cpp" />
     <ClCompile Include="DocumentShader\ShaderAtomType.cpp" />
     <ClCompile Include="DocumentShader\ShaderGraph.cpp" />
+    <ClCompile Include="DocumentShader\ShaderNetworkTypes.cpp" />
     <ClCompile Include="UIResources.cpp" />
     <ClCompile Include="Document.cpp" />
     <ClCompile Include="main.cpp" />

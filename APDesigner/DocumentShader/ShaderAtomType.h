@@ -40,6 +40,9 @@ using namespace Apoc3D::Graphics::EffectSystem;
 
 namespace APDesigner
 {
+	/** A part of one ShaderAtomType, defines the input and outputs of a
+	 *  ShaderAtomType.
+	 */
 	struct ShaderAtomPort
 	{
 		bool IsInputOrOutput;
@@ -62,7 +65,6 @@ namespace APDesigner
 	class ShaderAtomType
 	{
 	public:
-
 		/** Tells if the atom type's port setting can automatically match the other one's
 		 *  ports based on the usage information.
 		 */

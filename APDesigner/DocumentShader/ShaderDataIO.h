@@ -64,6 +64,7 @@ namespace APDesigner
 		void Load(const String& filePath);
 		void Save(const String& filePath);
 	};
+
 }
 
 #endif

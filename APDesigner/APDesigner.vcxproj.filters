@@ -86,9 +86,6 @@
     <ClInclude Include="DocumentShader\ShaderNetworkTypes.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DocumentShader\ShaderDocumentData.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DocumentShader\ShaderAtomDocument.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -96,6 +93,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DocumentShader\ShaderNetDocument.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentShader\ShaderDataIO.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -160,7 +160,10 @@
     <ClCompile Include="DocumentShader\ShaderNetDocument.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DocumentShader\ShaderDocumentData.cpp">
+    <ClCompile Include="DocumentShader\ShaderNetworkTypes.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentShader\ShaderDataIO.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

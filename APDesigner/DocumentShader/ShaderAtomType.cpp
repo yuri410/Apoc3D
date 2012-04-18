@@ -53,7 +53,7 @@ namespace APDesigner
 	}
 
 	/************************************************************************/
-	/*                                                                      */
+	/*  ShaderAtomLibraryManager                                            */
 	/************************************************************************/
 
 	void ShaderAtomLibraryManager::Load(const String& atomLib)

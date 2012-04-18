@@ -48,14 +48,25 @@ namespace APDesigner
 		}
 
 		sect = config->get(L"Inputs");
-
-
+		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
+		{
+			ShaderNetInputNode inp;
+			inp.Parse(*e.getCurrentValue());
+		}
 
 		sect = config->get(L"Outputs");
-
-
+		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
+		{
+			ShaderNetOutputNode oup;
+			oup.Parse(*e.getCurrentValue());
+		}
 
 		sect = config->get(L"Links");
+		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
+		{
+			ShaderNetOutputNode oup;
+			oup.Parse(*e.getCurrentValue());
+		}
 
 
 		delete config;
@@ -72,6 +83,16 @@ namespace APDesigner
 
 	void ShaderAtomLinkInfo::Parse(ConfigurationSection* sect)
 	{
+		SourceNodeIndex = sect->GetAttributeInt(L"Source");
+		TargetNodeIndex = sect->GetAttributeInt(L"Target");
+
+		SourcePortID = TargetPortID = -1;
+		sect->TryGetAttributeInt(L"SourcePortID", SourcePortID);
+		sect->TryGetAttributeInt(L"TargetPortID", TargetPortID);
+
+		InputNodeIndex = OutputNodeIndex = -1;
+		sect->TryGetAttributeInt(L"InputNodeIndex", InputNodeIndex);
+		sect->TryGetAttributeInt(L"OutputNodeIndex", OutputNodeIndex);
 
 	}
 }

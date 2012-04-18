@@ -35,7 +35,49 @@ namespace APDesigner
 {
 	enum ShaderAtomDataExchangeType
 	{
+		ATOMDATA_Int1,
+		ATOMDATA_Int2,
+		ATOMDATA_Int3,
+		ATOMDATA_Int4,
 
+		ATOMDATA_Int2x1,
+		ATOMDATA_Int2x2,
+		ATOMDATA_Int2x3,
+		ATOMDATA_Int2x4,
+
+		ATOMDATA_Int3x1,
+		ATOMDATA_Int3x2,
+		ATOMDATA_Int3x3,
+		ATOMDATA_Int3x4,
+
+		ATOMDATA_Int4x1,
+		ATOMDATA_Int4x2,
+		ATOMDATA_Int4x3,
+		ATOMDATA_Int4x4,
+
+
+		
+		ATOMDATA_Float1,
+		ATOMDATA_Float2,
+		ATOMDATA_Float3,
+		ATOMDATA_Float4,
+
+		ATOMDATA_Float2x1,
+		ATOMDATA_Float2x2,
+		ATOMDATA_Float2x3,
+		ATOMDATA_Float2x4,
+
+		ATOMDATA_Float3x1,
+		ATOMDATA_Float3x2,
+		ATOMDATA_Float3x3,
+		ATOMDATA_Float3x4,
+
+		ATOMDATA_Float4x1,
+		ATOMDATA_Float4x2,
+		ATOMDATA_Float4x3,
+		ATOMDATA_Float4x4,
+
+		ATOMDATA_Other
 	};
 
 	enum ShaderInterfaceParamType
@@ -44,6 +86,7 @@ namespace APDesigner
 		SIPT_CustomConstant,
 		/** used when the param is associated with data outside shaders. 
 		 *  (i.e. vertex stream, final PS outputs)
+		 *  cases where either ShaderNetVaringType or ShaderNetOutputType is used
 		 */
 		SIPT_OutsideIOVarying,
 		SIPT_PreviousStageVarying
