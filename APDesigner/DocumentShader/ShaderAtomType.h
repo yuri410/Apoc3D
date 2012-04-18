@@ -45,6 +45,9 @@ namespace APDesigner
 		bool IsInputOrOutput;
 		String Name;
 		ShaderAtomDataExchangeType DataType;
+		/** When data is passed via shader result, this name is used to identify that.
+		*/
+		String VaringTypeName;
 		EffectParamUsage Usage;
 
 		bool IsTypeCompatible(ShaderAtomDataExchangeType other);

@@ -72,6 +72,10 @@ namespace APDesigner
 		int RequiredSMVersionMinor;
 
 		ShaderNetOutputType Type;
+
+		/** If this is not empty, the output data will be passed via shader result. This name is used as identification.
+		*/
+		String VaringTypeName;
 	};
 }
 
