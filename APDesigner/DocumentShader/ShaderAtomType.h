@@ -45,9 +45,13 @@ namespace APDesigner
 		bool IsInputOrOutput;
 		String Name;
 		ShaderAtomDataExchangeType DataType;
-		/** When data is passed via shader result, this name is used to identify that.
+
+		/** used for auto binding a varying input node
 		*/
 		String VaringTypeName;
+		/** used for auto binding a constant input node.
+		 *  custom constant is not the case here.
+		 */
 		EffectParamUsage Usage;
 
 		bool IsTypeCompatible(ShaderAtomDataExchangeType other);

@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ShaderNetworkTypes.h"
 
 using namespace Apoc3D;
+using namespace Apoc3D::Collections;
 
 namespace APDesigner
 {
@@ -42,6 +43,8 @@ namespace APDesigner
 
 		int InputNodeIndex;
 		int OutputNodeIndex;
+
+		void Parse(ConfigurationSection* sect);
 	};
 
 	/** Class for loading and saving the data used in a shader network document.

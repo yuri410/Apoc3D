@@ -38,6 +38,17 @@ namespace APDesigner
 
 	};
 
+	enum ShaderInterfaceParamType
+	{
+		SIPT_AutoContant,
+		SIPT_CustomConstant,
+		/** used when the param is associated with data outside shaders. 
+		 *  (i.e. vertex stream, final PS outputs)
+		 */
+		SIPT_OutsideIOVarying,
+		SIPT_PreviousStageVarying
+	};
+
 	/** Defines type of shader input data.
 	 *  This is only used in raw inputs.
 	 */
@@ -53,11 +64,11 @@ namespace APDesigner
 		/** Pixel shaders
 		*/
 		SNOUT_Color0,
-		SNOUT_Depth,
+		SNOUT_Depth0,
 
 		/** Vertex shaders
 		*/
-		SNOUT_Position
+		SNOUT_Position0
 	};
 	
 	/** Auto generated input parameter node
@@ -66,31 +77,40 @@ namespace APDesigner
 	{
 		String Name;
 
+
+		ShaderInterfaceParamType InterfaceType;
+
+		/** If the node is a effect param(constant or uniform)(SIPT_AutoContant), it is specified here
+		*/
 		EffectParamUsage Usage;
+		/** OR */
+		String CustomUsage; // when SIPT_CustomConstant
 		/** OR */
 		/** In an input node, this is only used when fetching data from vertex stream.
 		*/
-		ShaderNetVaringType VaringType;
+		ShaderNetVaringType VaringType; // when SIPT_OutsideIOVarying
 		/** OR */
 		/** Used when passing data between shaders.
 		*/
-		String VaringTypeName;
+		String VaringTypeName; // when SIPT_PreviousStageVarying
+
+		void Parse(ConfigurationSection* sect);
 	};
 
 	struct ShaderNetOutputNode
 	{
 		String Name;
 
-		//int RequiredSMVersionMajor;
-		//int RequiredSMVersionMinor;
 
-		ShaderNetOutputType Type;
+		ShaderNetOutputType Type; // when SIPT_OutsideIOVarying
 		/** OR */
 		/** If this is not empty, the output data will be passed via shader result. This name is used as identification.
 		 *  varying data will be passed as texture coords to PS. 
 		 *  The coord slot number will be determined based on this name and the output nodes in the previous stage.
 		 */
-		String VaringTypeName;
+		String VaringTypeName; // when SIPT_PreviousStageVarying
+
+		void Parse(ConfigurationSection* sect);
 	};
 }
 

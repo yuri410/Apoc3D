@@ -22,56 +22,21 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "ShaderDocumentData.h"
+#include "ShaderNetworkTypes.h"
 
-#include "Config/XmlConfiguration.h"
 #include "Config/ConfigurationSection.h"
 
 using namespace Apoc3D::Config;
 
 namespace APDesigner
 {
-	void ShaderDocumentData::Load(const String& filePath)
+	void ShaderNetInputNode::Parse(ConfigurationSection* sect)
 	{
-		XMLConfiguration* config = new XMLConfiguration(filePath);
-
-		ConfigurationSection* sect = config->get(L"Basic");
-		MajorSMVersion = sect->GetInt(L"MajorSMVersion");
-		MinorSMVersion = sect->GetInt(L"MinorSMVersion");
-
-		sect = config->get(L"Nodes");
-		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
-		{
-			Nodes.Add(
-				(*e.getCurrentValue())->getValue()
-			);
-		}
-
-		sect = config->get(L"Inputs");
-
-
-
-		sect = config->get(L"Outputs");
-
-
-
-		sect = config->get(L"Links");
-
-
-		delete config;
+		Name = sect->getAttribute(L"Name");
 	}
 
-	void ShaderDocumentData::Save(const String& filePath)
+	void ShaderNetOutputNode::Parse(ConfigurationSection* sect)
 	{
-
-	}
-
-	/************************************************************************/
-	/*                                                                      */
-	/************************************************************************/
-
-	void ShaderAtomLinkInfo::Parse(ConfigurationSection* sect)
-	{
-
+		Name = sect->getAttribute(L"Name");
 	}
 }
