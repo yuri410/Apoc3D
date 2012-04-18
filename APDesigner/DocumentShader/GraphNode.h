@@ -37,7 +37,7 @@ using namespace Apoc3D;
 namespace APDesigner
 {
 	/** Represents a node in the graph, used to represent a
-	 *  kind of resource
+	 *  atom in the shader network
 	 */
 	class GraphNode
 	{

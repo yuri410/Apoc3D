@@ -55,6 +55,8 @@ namespace APDesigner
 	public:
 
 		bool MatchPorts(const ShaderAtomType* other);
+
+		void UpdateTo(const ShaderAtomType* newOne);
 	private:
 		String m_codeBody;
 		String m_name;

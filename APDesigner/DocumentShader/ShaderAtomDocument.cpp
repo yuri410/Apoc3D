@@ -21,36 +21,48 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef AUTOEFFECTDOCUMENT_H
-#define AUTOEFFECTDOCUMENT_H
 
-#include "Document.h"
-#include "UILib/Control.h"
+#include "ShaderAtomDocument.h"
 
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::Animation;
-using namespace Apoc3D::Scene;
+#include "ShaderAtomType.h"
+
+#include "UILib/Form.h"
 
 namespace APDesigner
 {
-	class AutoEffectDocument : public Document
+	ShaderAtomDocument::ShaderAtomDocument(MainWindow* window, const String& name)
+		: Document(window), m_atomName(name), m_currentWorkingCopy(0)
 	{
-	public:
-		AutoEffectDocument(MainWindow* window, const String& file);
-		~AutoEffectDocument();
+		getDocumentForm()->setTitle(L"Shader Atom: " + name);
+	}
 
-		virtual void LoadRes();
-		virtual void SaveRes();
-		virtual bool IsReadOnly() { return false; }
+	ShaderAtomDocument::~ShaderAtomDocument()
+	{
 
-		virtual void Initialize(RenderDevice* device);
-		virtual void Update(const GameTime* const time);
-		virtual void Render();
-	private:
-		ShaderGraph* m_graph;
-		String m_filePath;
+	}
+
+	void ShaderAtomDocument::LoadRes()
+	{
+		ShaderAtomType* requested = ShaderAtomManager::getSingleton().FindAtomType(m_atomName);
+		if (requested)
+		{
+			if (m_currentWorkingCopy)
+			{
+				delete m_currentWorkingCopy;
+			}
+
+			m_currentWorkingCopy = new ShaderAtomType(*requested);
+		}
+	}
+	void ShaderAtomDocument::SaveRes()
+	{
+		if (m_currentWorkingCopy)
+		{
+			ShaderAtomType* requested = ShaderAtomManager::getSingleton().FindAtomType(m_atomName);
+			if (requested)
+			{
+				requested->UpdateTo(m_currentWorkingCopy);
+			}
+		}
 	}
 }
-
-#endif

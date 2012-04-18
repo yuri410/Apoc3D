@@ -24,6 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "AutoEffectDocument.h"
 
 #include "Utility/StringUtils.h"
+#include "UILib/Form.h"
 
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Utility;
@@ -32,5 +33,25 @@ using namespace Apoc3D::IO;
 
 namespace APDesigner
 {
+	AutoEffectDocument::AutoEffectDocument(MainWindow* window, const String& file)
+		: Document(window), m_filePath(file), m_graph(0)
+	{
+		getDocumentForm()->setTitle(file);
+	}
 
+	AutoEffectDocument::~AutoEffectDocument()
+	{
+		if (m_graph)
+			delete m_graph;
+	}
+
+	void AutoEffectDocument::LoadRes()
+	{
+		if (m_graph)
+		{
+			delete m_graph;
+		}
+
+
+	}
 }

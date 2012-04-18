@@ -21,11 +21,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef AUTOEFFECTDOCUMENT_H
-#define AUTOEFFECTDOCUMENT_H
+#ifndef SHADERATOMDOCUMENT_H
+#define SHADERATOMDOCUMENT_H
 
 #include "Document.h"
-#include "UILib/Control.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
@@ -34,23 +33,24 @@ using namespace Apoc3D::Scene;
 
 namespace APDesigner
 {
-	class AutoEffectDocument : public Document
+	class ShaderAtomDocument : public Document
 	{
 	public:
-		AutoEffectDocument(MainWindow* window, const String& file);
-		~AutoEffectDocument();
+		ShaderAtomDocument(MainWindow* window, const String& name);
+		~ShaderAtomDocument();
 
 		virtual void LoadRes();
 		virtual void SaveRes();
-		virtual bool IsReadOnly() { return false; }
+		virtual bool IsReadOnly() { return false; };
 
 		virtual void Initialize(RenderDevice* device);
 		virtual void Update(const GameTime* const time);
 		virtual void Render();
 	private:
-		ShaderGraph* m_graph;
-		String m_filePath;
-	}
+		String m_atomName;
+
+		ShaderAtomType* m_currentWorkingCopy;
+	};
 }
 
 #endif

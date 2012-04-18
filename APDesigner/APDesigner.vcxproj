@@ -140,7 +140,9 @@
     <ClInclude Include="Document.h" />
     <ClInclude Include="DocumentShader\GraphNode.h" />
     <ClInclude Include="DocumentShader\QuadTree.h" />
+    <ClInclude Include="DocumentShader\ShaderAtomDocument.h" />
     <ClInclude Include="DocumentShader\ShaderAtomType.h" />
+    <ClInclude Include="DocumentShader\ShaderDocumentData.h" />
     <ClInclude Include="DocumentShader\ShaderGraph.h" />
     <ClInclude Include="DocumentShader\ShaderNetworkTypes.h" />
     <ClInclude Include="MainWindow.h" />
@@ -161,6 +163,7 @@
     <ClCompile Include="CommonDialog\FileDialog.cpp" />
     <ClCompile Include="DocumentShader\GraphNode.cpp" />
     <ClCompile Include="DocumentShader\QuadTree.cpp" />
+    <ClCompile Include="DocumentShader\ShaderAtomType.cpp" />
     <ClCompile Include="DocumentShader\ShaderGraph.cpp" />
     <ClCompile Include="UIResources.cpp" />
     <ClCompile Include="Document.cpp" />

@@ -21,36 +21,22 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef AUTOEFFECTDOCUMENT_H
-#define AUTOEFFECTDOCUMENT_H
 
-#include "Document.h"
-#include "UILib/Control.h"
+#ifndef SHADERDOCUMENTDATA_H
+#define SHADERDOCUMENTDATA_H
 
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::Animation;
-using namespace Apoc3D::Scene;
+#include "APDCommon.h"
 
 namespace APDesigner
 {
-	class AutoEffectDocument : public Document
+	/** Class for loading and saving the data used in a shader network document.
+	*/
+	class ShaderDocumentData
 	{
 	public:
-		AutoEffectDocument(MainWindow* window, const String& file);
-		~AutoEffectDocument();
 
-		virtual void LoadRes();
-		virtual void SaveRes();
-		virtual bool IsReadOnly() { return false; }
 
-		virtual void Initialize(RenderDevice* device);
-		virtual void Update(const GameTime* const time);
-		virtual void Render();
-	private:
-		ShaderGraph* m_graph;
-		String m_filePath;
-	}
+	};
 }
 
 #endif
