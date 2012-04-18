@@ -21,37 +21,36 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef AUTOEFFECTDOCUMENT_H
+#define AUTOEFFECTDOCUMENT_H
 
-#ifndef APDCOMMON_H
-#define APDCOMMON_H
+#include "Document.h"
+#include "UILib/Control.h"
 
-#include "Engine.h"
-
-#pragma comment(lib, "Apoc3D.lib")
-#pragma comment(lib, "Apoc3D.D3D9RenderSystem.lib")
-#pragma comment(lib, "Apoc3D.WindowsInput.lib")
+using namespace Apoc3D;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::Animation;
+using namespace Apoc3D::Scene;
 
 namespace APDesigner
 {
-	class ResourcePane;
-	class PropertyPane;
-	class ToolsPane;
+	class AutoEffectDocument : public Document
+	{
+	public:
+		AutoEffectDocument(MainWindow* window, const String& name, const String& file, const String& animationFile);
+		~AutoEffectDocument();
 
+		virtual void LoadRes();
+		virtual void SaveRes();
+		virtual bool IsReadOnly() { return false; };
 
-	class ObjectTools;
-	class ObjectPropertyEditor;
-
-	class Document;
-
-	class MainWindow;
-	
-	class AutoEffectDocument;
-	class ShaderGraph;
-	class GraphNode;
-	class QuadTreeNode;
-
-	class ShaderAtomType;
-	class ShaderAtomDocument;
+		virtual void Initialize(RenderDevice* device);
+		virtual void Update(const GameTime* const time);
+		virtual void Render();
+	private:
+		ShaderGraph* m_graph;
+		String m_filePath;
+	}
 }
 
 #endif

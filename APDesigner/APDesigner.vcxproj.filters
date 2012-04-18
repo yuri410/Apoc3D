@@ -71,7 +71,22 @@
     <ClInclude Include="BuildService\BuildService.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="AutoEffectDocument.h">
+    <ClInclude Include="DocumentShader\AutoEffectDocument.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentShader\ShaderGraph.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentShader\QuadTree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentShader\GraphNode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentShader\ShaderAtomType.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentShader\ShaderNetworkTypes.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -115,7 +130,16 @@
     <ClCompile Include="BuildService\BuildService.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="AutoEffectDocument.cpp">
+    <ClCompile Include="DocumentShader\AutoEffectDocument.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentShader\ShaderGraph.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentShader\GraphNode.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentShader\QuadTree.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -21,36 +21,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef AUTOEFFECTDOCUMENT_H
-#define AUTOEFFECTDOCUMENT_H
 
-#include "Document.h"
-#include "UILib/Control.h"
+#include "ShaderAtomType.h"
 
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::Animation;
-using namespace Apoc3D::Scene;
+SINGLETON_DECL(APDesigner::ShaderAtomManager);
 
 namespace APDesigner
 {
-	class AutoEffectDocument : public Document
-	{
-	public:
-		AutoEffectDocument(MainWindow* window, const String& name, const String& file, const String& animationFile);
-		~AutoEffectDocument();
 
-		virtual void LoadRes();
-		virtual void SaveRes();
-		virtual bool IsReadOnly() { return false; };
-
-		virtual void Initialize(RenderDevice* device);
-		virtual void Update(const GameTime* const time);
-		virtual void Render();
-	private:
-
-		String m_filePath;
-	}
 }
-
-#endif

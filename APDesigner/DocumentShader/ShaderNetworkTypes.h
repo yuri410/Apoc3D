@@ -22,36 +22,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef APDCOMMON_H
-#define APDCOMMON_H
+#ifndef SHADERNETWORKTYPES_H
+#define SHADERNETWORKTYPES_H
 
-#include "Engine.h"
+#include "APDCommon.h"
 
-#pragma comment(lib, "Apoc3D.lib")
-#pragma comment(lib, "Apoc3D.D3D9RenderSystem.lib")
-#pragma comment(lib, "Apoc3D.WindowsInput.lib")
+using namespace Apoc3D;
 
 namespace APDesigner
 {
-	class ResourcePane;
-	class PropertyPane;
-	class ToolsPane;
+	enum ShaderAtomDataExchangeType
+	{
 
-
-	class ObjectTools;
-	class ObjectPropertyEditor;
-
-	class Document;
-
-	class MainWindow;
-	
-	class AutoEffectDocument;
-	class ShaderGraph;
-	class GraphNode;
-	class QuadTreeNode;
-
-	class ShaderAtomType;
-	class ShaderAtomDocument;
+	};
 }
 
 #endif

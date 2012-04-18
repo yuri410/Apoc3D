@@ -132,12 +132,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APDCommon.h" />
-    <ClInclude Include="AutoEffectDocument.h" />
+    <ClInclude Include="DocumentShader\AutoEffectDocument.h" />
     <ClInclude Include="BuildService\BuildService.h" />
     <ClInclude Include="CommonDialog\ChooseColor.h" />
     <ClInclude Include="CommonDialog\DialogCommon.h" />
     <ClInclude Include="CommonDialog\FileDialog.h" />
     <ClInclude Include="Document.h" />
+    <ClInclude Include="DocumentShader\GraphNode.h" />
+    <ClInclude Include="DocumentShader\QuadTree.h" />
+    <ClInclude Include="DocumentShader\ShaderAtomType.h" />
+    <ClInclude Include="DocumentShader\ShaderGraph.h" />
+    <ClInclude Include="DocumentShader\ShaderNetworkTypes.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="ModelDocument.h" />
     <ClInclude Include="ObjectEditor.h" />
@@ -149,11 +154,14 @@
     <ClInclude Include="UIResources.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AutoEffectDocument.cpp" />
+    <ClCompile Include="DocumentShader\AutoEffectDocument.cpp" />
     <ClCompile Include="BuildService\BuildService.cpp" />
     <ClCompile Include="CommonDialog\ChooseColor.cpp" />
     <ClCompile Include="CommonDialog\DialogCommon.cpp" />
     <ClCompile Include="CommonDialog\FileDialog.cpp" />
+    <ClCompile Include="DocumentShader\GraphNode.cpp" />
+    <ClCompile Include="DocumentShader\QuadTree.cpp" />
+    <ClCompile Include="DocumentShader\ShaderGraph.cpp" />
     <ClCompile Include="UIResources.cpp" />
     <ClCompile Include="Document.cpp" />
     <ClCompile Include="main.cpp" />
