@@ -38,12 +38,6 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			enum ShaderType
-			{
-				SHDT_Vertex,
-				SHDT_Pixel
-			};
-
 			/** Defines typical usage of a effect parameters.
 				When the engine auto bind a parameter, it first checks the parameter's usage to
 				find the corresponding data, then assign it to the param. 

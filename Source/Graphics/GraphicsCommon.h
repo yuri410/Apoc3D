@@ -506,6 +506,11 @@ namespace Apoc3D
 				BLEND_BlendFactor = 12,
 				BLEND_Count = 13
 			};
+			enum ShaderType
+			{
+				SHDT_Vertex,
+				SHDT_Pixel
+			};
 
 			class GraphicsCommonUtils
 			{
@@ -524,6 +529,9 @@ namespace Apoc3D
 
 				static TextureFilter ParseTextureFilter(const String& value);
 				static String ToString(TextureFilter filter);
+
+				static ShaderType ParseShaderType(const String& value);
+				static String ToString(ShaderType type);
 			protected:
 			private:
 			};

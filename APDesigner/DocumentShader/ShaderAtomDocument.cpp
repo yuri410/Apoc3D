@@ -25,8 +25,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ShaderAtomDocument.h"
 
 #include "ShaderAtomType.h"
+#include "MainWindow.h"
 
 #include "UILib/Form.h"
+#include "UILib/Button.h"
+#include "UILib/PictureBox.h"
+#include "UILib/Label.h"
+#include "UILib/FontManager.h"
+#include "UILib/ComboBox.h"
+#include "UILib/StyleSkin.h"
+#include "UILib/CheckBox.h"
+#include "Utility/StringUtils.h"
 
 namespace APDesigner
 {
@@ -34,14 +43,62 @@ namespace APDesigner
 		: Document(window), m_atomName(name), m_currentWorkingCopy(0)
 	{
 		getDocumentForm()->setTitle(L"Shader Atom: " + name);
+
+		{
+			Label* lbl = new Label(Point(23, 33), L"Name", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
+
+			m_tbName = new TextBox(Point(125, 33), 100);
+			m_tbName->SetSkin(window->getUISkin());
+
+			List<String> items;
+			items.Add(GraphicsCommonUtils::ToString(SHDT_Vertex));
+			items.Add(GraphicsCommonUtils::ToString(SHDT_Pixel));
+			m_cbShaderType = new ComboBox(Point(250, 33), 120, items);
+			m_cbShaderType->SetSkin(window->getUISkin());
+
+			lbl = new Label(Point(260, 33), L"Name", 100);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
+
+			items.Clear();
+			items.Add(L"Shader Model 1");
+			items.Add(L"Shader Model 2");
+			items.Add(L"Shader Model 3");
+
+			m_cbProfile = new ComboBox(Point(360, 33), 120, items);
+			m_cbProfile->SetSkin(window->getUISkin());
+
+			m_tbCode = new TextBox(Point(33, 100),500,500,L"");
+			m_tbCode->SetSkin(window->getUISkin());
+
+		}
 	}
 
 	ShaderAtomDocument::~ShaderAtomDocument()
 	{
+		delete m_tbName;
+		delete m_cbShaderType;
+		delete m_tbCode;
 
+		for (int i=0;i<m_labels.getCount();i++)
+		{
+			delete m_labels[i];
+		}
 	}
 	void ShaderAtomDocument::Initialize(RenderDevice* device)
 	{
+		getDocumentForm()->getControls().Add(m_tbName);
+		getDocumentForm()->getControls().Add(m_tbCode);
+		getDocumentForm()->getControls().Add(m_cbShaderType);
+
+		for (int i=0;i<m_labels.getCount();i++)
+		{
+			getDocumentForm()->getControls().Add(m_labels[i]);
+		}
+
+		Document::Initialize(device);
 
 	}
 
@@ -56,6 +113,7 @@ namespace APDesigner
 			}
 
 			m_currentWorkingCopy = new ShaderAtomType(*requested);
+			
 		}
 	}
 	void ShaderAtomDocument::SaveRes()
@@ -77,6 +135,12 @@ namespace APDesigner
 
 	void ShaderAtomDocument::Update(const GameTime* const time)
 	{
+		Document::Update(time);
+	}
 
+	void ShaderAtomDocument::Form_Resized(Control* ctrl)
+	{
+		m_tbCode->setWidth(getDocumentForm()->Size.X-50);
+		m_tbCode->Size.Y = getDocumentForm()->Size.Y;
 	}
 }

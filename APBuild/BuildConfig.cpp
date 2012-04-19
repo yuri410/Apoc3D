@@ -46,6 +46,10 @@ namespace APBuild
 		{
 			Method = TEXBUILD_D3D;
 		}
+		else if (method == L"d3dl")
+		{
+			Method = TEXBUILD_D3D_LatencySupport;
+		}
 		else if (method == L"devil")
 		{
 			Method = TEXBUILD_Devil;

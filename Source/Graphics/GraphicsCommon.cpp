@@ -300,6 +300,33 @@ namespace Apoc3D
 				 }
 				 return L"None";
 			 }
+
+			 ShaderType GraphicsCommonUtils::ParseShaderType(const String& value)
+			 {
+				 String v = value;
+				 StringUtils::ToLowerCase(v);
+
+				 if (v==L"vertexshader")
+				 {
+					 return SHDT_Vertex;
+				 }
+				 else if (v==L"pixelshader")
+				 {
+					 return SHDT_Pixel;
+				 }
+				 return SHDT_Pixel;
+			 }
+			 String GraphicsCommonUtils::ToString(ShaderType type)
+			 {
+				 switch (type)
+				 {
+				 case SHDT_Pixel:
+					 return L"PixelShader";
+				 case SHDT_Vertex:
+					 return L"VertexShader";
+				 }
+				 return L"VertexShader";
+			 }
 		}
 	}
 }

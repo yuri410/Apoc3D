@@ -75,14 +75,18 @@ namespace APDesigner
 		const String& getName() const { return m_name; }
 		const String& getCodeBody() const { return m_codeBody; }
 
+		ShaderType getShaderType() const { return m_type; }
+
 		/** minimum SM version required to use this atom type
 		*/
 		int getMajorSMVersion() const { return m_majorSMVersion; }
 		int getMinorSMVersion() const { return m_minorSMVersion; }
+
 	private:
 		String m_codeBody;
 		String m_name;
 		
+		ShaderType m_type;
 		int m_majorSMVersion;
 		int m_minorSMVersion;
 	};

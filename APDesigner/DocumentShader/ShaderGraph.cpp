@@ -86,82 +86,82 @@ namespace APDesigner
 	{
 		Reset();
 
-		std::unordered_map<String, GraphNode*> hashTable;
+		//std::unordered_map<String, GraphNode*> hashTable;
 
-		std::wifstream instrm(filePath.c_str(), std::ios::in);
-		
-		int index =0;
-		while (!instrm.eof())
-		{			
-			String item;
-			String dependent;
+		//std::wifstream instrm(filePath.c_str(), std::ios::in);
+		//
+		//int index =0;
+		//while (!instrm.eof())
+		//{			
+		//	String item;
+		//	String dependent;
 
-			{
-				String line;
-				std::getline(instrm, line);
+		//	{
+		//		String line;
+		//		std::getline(instrm, line);
 
-				std::vector<String> list = StringUtils::Split(line, L" ,\t;");
-				if (list.size()>1)
-					dependent = list[1];
-				if (list.size()>0)
-					item = list[0];
-			}
+		//		std::vector<String> list = StringUtils::Split(line, L" ,\t;");
+		//		if (list.size()>1)
+		//			dependent = list[1];
+		//		if (list.size()>0)
+		//			item = list[0];
+		//	}
 
-			if (item.empty())
-				break;
+		//	if (item.empty())
+		//		break;
 
-			GraphNode* a = 0;
-			GraphNode* b = 0;
+		//	GraphNode* a = 0;
+		//	GraphNode* b = 0;
 
-			std::unordered_map<String, GraphNode*>::iterator iter = hashTable.find(item);
-			if (iter == hashTable.end())
-			{
-				a = new GraphNode(this, m_quadTree, item,index++);
-				hashTable.insert(std::make_pair(item, a));
-			}
-			else
-			{
-				a = iter->second;
-			}
+		//	std::unordered_map<String, GraphNode*>::iterator iter = hashTable.find(item);
+		//	if (iter == hashTable.end())
+		//	{
+		//		a = new GraphNode(this, m_quadTree, item,index++);
+		//		hashTable.insert(std::make_pair(item, a));
+		//	}
+		//	else
+		//	{
+		//		a = iter->second;
+		//	}
 
-			// if the dependent node is not specified, just leave
-			// "node a" as an isolated one.
-			if (!dependent.empty())
-			{
-				iter = hashTable.find(dependent);
-				if (iter == hashTable.end())
-				{
-					b = new GraphNode(this, m_quadTree, dependent,index++);
-					hashTable.insert(std::make_pair(dependent, b));
-				}
-				else
-				{
-					b = iter->second;
-				}
+		//	// if the dependent node is not specified, just leave
+		//	// "node a" as an isolated one.
+		//	if (!dependent.empty())
+		//	{
+		//		iter = hashTable.find(dependent);
+		//		if (iter == hashTable.end())
+		//		{
+		//			b = new GraphNode(this, m_quadTree, dependent,index++);
+		//			hashTable.insert(std::make_pair(dependent, b));
+		//		}
+		//		else
+		//		{
+		//			b = iter->second;
+		//		}
 
-				// make sure its not linked before
-				if (!b->IsDirectedTo(a))
-				{
-					// link on dual direction
-					a->Link(b);
-					b->Link(a);
+		//		// make sure its not linked before
+		//		if (!b->IsDirectedTo(a))
+		//		{
+		//			// link on dual direction
+		//			a->Link(b);
+		//			b->Link(a);
 
-					b->LinkTopological(a);
-				}
-			}
-			
-		}
+		//			b->LinkTopological(a);
+		//		}
+		//	}
+		//	
+		//}
 
-		// preserve some space
-		m_nodes.ResizeDiscard((int)hashTable.size());
+		//// preserve some space
+		//m_nodes.ResizeDiscard((int)hashTable.size());
 
-		index = 0;
-		for (std::unordered_map<String, GraphNode*>::iterator iter = hashTable.begin();
-			iter != hashTable.end();iter++)
-		{
-			iter->second->setIndex(index++);
-			m_nodes.Add(iter->second);
-		}
+		//index = 0;
+		//for (std::unordered_map<String, GraphNode*>::iterator iter = hashTable.begin();
+		//	iter != hashTable.end();iter++)
+		//{
+		//	iter->second->setIndex(index++);
+		//	m_nodes.Add(iter->second);
+		//}
 
 		InitialPlacement();
 
@@ -173,30 +173,30 @@ namespace APDesigner
 
 	void ShaderGraph::Save(const String& filePath)
 	{
-		std::wofstream outstrm(filePath.c_str(), std::ios::out);
+		//std::wofstream outstrm(filePath.c_str(), std::ios::out);
 
-		for (int i=0;i<m_nodes.getCount();i++)
-		{
-			const String& item = m_nodes[i]->getName();
+		//for (int i=0;i<m_nodes.getCount();i++)
+		//{
+		//	const String& item = m_nodes[i]->getName();
 
-			const FastList<GraphNode*>& neighbors = m_nodes[i]->getNeighbors();
-			// find dependents among all linked nodes.
-			for (int j=0;j<neighbors.getCount();j++)
-			{
-				const FastList<GraphNode*>& targets = neighbors[j]->getTargets();
-				for (int k=0;k<targets.getCount();k++)
-				{
-					if (targets[k] == m_nodes[i])
-					{
-						const String& dependent = neighbors[j]->getName(); 
-						
-						outstrm << item << L" " << dependent << endl;
-						break;
-					}
-				}
-				
-			}
-		}
+		//	const FastList<GraphNode*>& neighbors = m_nodes[i]->getNeighbors();
+		//	// find dependents among all linked nodes.
+		//	for (int j=0;j<neighbors.getCount();j++)
+		//	{
+		//		const FastList<GraphNode*>& targets = neighbors[j]->getTargets();
+		//		for (int k=0;k<targets.getCount();k++)
+		//		{
+		//			if (targets[k] == m_nodes[i])
+		//			{
+		//				const String& dependent = neighbors[j]->getName(); 
+		//				
+		//				outstrm << item << L" " << dependent << endl;
+		//				break;
+		//			}
+		//		}
+		//		
+		//	}
+		//}
 	}
 	struct Island
 	{

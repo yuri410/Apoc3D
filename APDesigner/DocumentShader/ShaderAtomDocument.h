@@ -47,9 +47,19 @@ namespace APDesigner
 		virtual void Update(const GameTime* const time);
 		virtual void Render();
 	private:
+		void Form_Resized(Control* ctrl);
+
 		String m_atomName;
 
 		ShaderAtomType* m_currentWorkingCopy;
+
+		TextBox* m_tbName;
+		TextBox* m_tbCode;
+		ComboBox* m_cbProfile;
+		ComboBox* m_cbShaderType;
+
+		FastList<Label*> m_labels;
+
 	};
 }
 

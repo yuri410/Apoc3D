@@ -49,6 +49,7 @@ namespace APBuild
 	enum TextureBuildMethod
 	{
 		TEXBUILD_D3D,
+		TEXBUILD_D3D_LatencySupport,
 		TEXBUILD_Devil,
 		TEXBUILD_BuiltIn
 	};

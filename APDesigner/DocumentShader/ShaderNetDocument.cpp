@@ -70,6 +70,8 @@ namespace APDesigner
 			delete m_vsGraph;
 		if (m_psGraph)
 			delete m_psGraph;
+
+		delete m_shaderSwitch;
 	}
 	void ShaderNetDocument::Initialize(RenderDevice* device)
 	{
