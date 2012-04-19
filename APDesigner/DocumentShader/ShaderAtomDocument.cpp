@@ -40,6 +40,10 @@ namespace APDesigner
 	{
 
 	}
+	void ShaderAtomDocument::Initialize(RenderDevice* device)
+	{
+
+	}
 
 	void ShaderAtomDocument::LoadRes()
 	{
@@ -64,5 +68,15 @@ namespace APDesigner
 				requested->CopyFrom(m_currentWorkingCopy);
 			}
 		}
+	}
+
+	void ShaderAtomDocument::Render()
+	{
+
+	}
+
+	void ShaderAtomDocument::Update(const GameTime* const time)
+	{
+
 	}
 }

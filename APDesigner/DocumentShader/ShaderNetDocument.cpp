@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Utility/StringUtils.h"
 #include "UILib/Form.h"
+#include "UILib/Button.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "Graphics/RenderSystem/RenderTarget.h"
@@ -49,15 +50,32 @@ namespace APDesigner
 
 		ObjectFactory* fac = window->getDevice()->getObjectFactory();
 		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->Size.X,getDocumentForm()->Size.Y, FMT_X8R8G8B8, DEPFMT_Depth24X8);
+
+		List<String> items;
+		items.Add(L"Basic");
+		items.Add(L"Entities");
+		items.Add(L"GridPlanes");
+		items.Add(L"Collision Shapes");
+		items.Add(L"Waves");
+
+		items.Add(L"Events");
+
+		m_shaderSwitch = new ButtonRow(Point(5, 18), items.getCount()*100, items);
+		m_shaderSwitch->SetSkin(window->getUISkin());
 	}
 
 	ShaderNetDocument::~ShaderNetDocument()
 	{
 		if (m_vsGraph)
 			delete m_vsGraph;
+		if (m_psGraph)
+			delete m_psGraph;
 	}
 	void ShaderNetDocument::Initialize(RenderDevice* device)
 	{
+		getDocumentForm()->getControls().Add(m_shaderSwitch);
+
+		Document::Initialize(device);
 
 	}
 	void ShaderNetDocument::LoadRes()
@@ -66,9 +84,18 @@ namespace APDesigner
 		{
 			delete m_vsGraph;
 		}
+		if (m_psGraph)
+		{
+			delete m_psGraph;
+		}
+
 		ShaderDocumentData data;
 		data.Load(m_filePath);
 
+
+	}
+	void ShaderNetDocument::SaveRes()
+	{
 
 	}
 
@@ -81,20 +108,35 @@ namespace APDesigner
 		RenderDevice* device = getMainWindow()->getDevice();
 
 		device->SetRenderTarget(0, m_renderTarget);
-		if (m_vsGraph)
+		if (m_shaderSwitch->getSelectedIndex()==0)
 		{
-			m_vsGraph->Draw();
+			if (m_vsGraph)
+			{
+				m_vsGraph->Draw();
+			}
+		}
+		else
+		{
+			if (m_psGraph)
+			{
+				m_psGraph->Draw();
+			}
 		}
 		device->SetRenderTarget(0,0);
 
 		m_graphRender = m_renderTarget->GetColorTexture();
 	}
-	void ShaderNetDocument:Update(const GameTime* const time)
+	void ShaderNetDocument::Update(const GameTime* const time)
 	{
-		if (m_graph)
+		if (m_vsGraph)
 		{
-			m_graph->Update(time);
+			m_vsGraph->Update(time);
 		}
+		if (m_psGraph)
+		{
+			m_psGraph->Update(time);
+		}
+		Document::Update(time);
 	}
 	void ShaderNetDocument::Form_Resized(Control* ctrl)
 	{

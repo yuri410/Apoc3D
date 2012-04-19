@@ -31,10 +31,15 @@ using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::Animation;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::UI;
 using namespace Apoc3D::Scene;
 
 namespace APDesigner
 {
+	/** The shader net doc provides access to the shader network.
+	 *  This document contains a VS and a PS graph(for now). And it can be
+	 *  build to an AFX effect by APBuild.
+	 */
 	class ShaderNetDocument : public Document
 	{
 	public:
@@ -51,13 +56,15 @@ namespace APDesigner
 	private:
 		void Form_Resized(Control* ctrl);
 
+		ButtonRow* m_shaderSwitch;
+		
 		ShaderGraph* m_vsGraph;
 		ShaderGraph* m_psGraph;
 		String m_filePath;
 
 		RenderTarget* m_renderTarget;
 		Texture* m_graphRender;
-	}
+	};
 }
 
 #endif

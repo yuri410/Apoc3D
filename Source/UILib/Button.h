@@ -162,6 +162,16 @@ namespace Apoc3D
 
 		class APAPI ButtonRow : public Control
 		{
+		public:
+			ButtonRow(const Point& position, float width, const List<String>& titles);
+			~ButtonRow();
+
+			virtual void Initialize(RenderDevice* device);
+
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
+			int getSelectedIndex() const { return m_selectedIndex; }
 		private:
 			int m_selectedIndex;
 
@@ -176,15 +186,6 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle* m_btRect;
 
 			int m_hoverIndex;
-
-		public:
-			ButtonRow(const Point& position, float width, const List<String>& titles);
-			~ButtonRow();
-
-			virtual void Initialize(RenderDevice* device);
-
-			virtual void Update(const GameTime* const time);
-			virtual void Draw(Sprite* sprite);
 
 		};
 

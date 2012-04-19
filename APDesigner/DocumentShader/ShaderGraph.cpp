@@ -740,14 +740,14 @@ namespace APDesigner
 
 		m_currentVisisbleNodes.FastClear();
 
-		GLint viewport[4];
-		glGetIntegerv(GL_VIEWPORT, viewport);
+		//GLint viewport[4];
+		//glGetIntegerv(GL_VIEWPORT, viewport);
 
 		// get the world coord of 2 corner of viewport
-		Vector3 topLeft = Vector3Utils::LDVector((float)viewport[0],(float)viewport[1],0);
+		Vector3 topLeft = Vector3Utils::LDVector((float)Viewport.X,(float)Viewport.Y,0);
 		topLeft = Vector3Utils::TransformCoordinate(topLeft, result);
 
-		Vector3 buttomRight = Vector3Utils::LDVector((float)viewport[2],(float)viewport[3],0);
+		Vector3 buttomRight = Vector3Utils::LDVector((float)Viewport.getBottom(),(float)Viewport.getRight(),0);
 		buttomRight = Vector3Utils::TransformCoordinate(buttomRight, result);
 
 		Apoc3D::Math::RectangleF area(_V3X(topLeft)-16, _V3Y(topLeft)-16, 
@@ -853,8 +853,8 @@ namespace APDesigner
 
 	void ShaderGraph::GetViewMatrix(Matrix& mtrx)
 	{
-		GLint viewport[4];
-		glGetIntegerv(GL_VIEWPORT, viewport);
+		//GLint viewport[4];
+		//glGetIntegerv(GL_VIEWPORT, viewport);
 
 		Matrix preTrans;
 		preTrans.LoadIdentity();
@@ -869,8 +869,8 @@ namespace APDesigner
 
 		view.SetTranslation(
 			Vector3Utils::LDVector(
-			viewport[2]*0.5f, 
-			viewport[3]*0.5f, 0));
+			Viewport.getRight()*0.5f, 
+			Viewport.getBottom()*0.5f, 0));
 
 		
 		Matrix::Multiply(mtrx, preTrans, view);

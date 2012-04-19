@@ -77,12 +77,12 @@ namespace APDesigner
 
 		Vector2 force = Vector2Utils::Zero;
 		
-		if (m_graph->getTechnique() == Graph::TECH_Quad)
+		if (m_graph->getTechnique() == ShaderGraph::TECH_Quad)
 		{
 			// gravitational force by recursively walking in the quad tree
 			RecursiveRepulsiveForce(m_tree, force);
 		}
-		else if (m_graph->getTechnique() == Graph::TECH_BruteForce)
+		else if (m_graph->getTechnique() == ShaderGraph::TECH_BruteForce)
 		{
 			// the brute force method just calculate repulsive force from other nodes one by one
 			// the time is O(n^2) for each iteration
@@ -105,7 +105,7 @@ namespace APDesigner
 			Vector2 dv = Vector2Utils::Multiply(force, dt);
 			m_velocity = Vector2Utils::Add(m_velocity, dv);
 		}
-		else if (m_graph->getTechnique() == Graph::TECH_Fuzzy)
+		else if (m_graph->getTechnique() == ShaderGraph::TECH_Fuzzy)
 		{
 			// Here, the neighbor forces, as a part of the TECH_Fuzzy method,
 			// are calculated. The center of mass's force is done by the Graph class.

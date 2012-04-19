@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "ShaderDocumentData.h"
+#include "ShaderDataIO.h"
 
 #include "Config/XmlConfiguration.h"
 #include "Config/ConfigurationSection.h"

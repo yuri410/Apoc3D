@@ -143,6 +143,9 @@ namespace APDesigner
 
 		void GetViewMatrix(Matrix& mtrx);
 		
+
+		Rectangle Viewport;
+
 		/** Converts a world coord to the quad tree's block coord system,
 		 *  a pair of integer representing the grid in a plane divided all
 		 *  the quad tree's leaf node, i.e. the flatten leaf nodes to a 2D array.
@@ -198,6 +201,7 @@ namespace APDesigner
 		/** Center of mass of the entire graph, only calculated and used for TECH_Fuzzy
 		*/
 		Vector2 m_centerOfMass;
+
 
 		Technique m_technique;
 
