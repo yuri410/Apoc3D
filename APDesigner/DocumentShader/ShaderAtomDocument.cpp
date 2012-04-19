@@ -92,6 +92,7 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_tbName);
 		getDocumentForm()->getControls().Add(m_tbCode);
 		getDocumentForm()->getControls().Add(m_cbShaderType);
+		getDocumentForm()->getControls().Add(m_cbProfile);
 
 		for (int i=0;i<m_labels.getCount();i++)
 		{
