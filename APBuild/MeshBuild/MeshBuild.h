@@ -17,6 +17,12 @@ namespace APBuild
 	public:
 		static void Build(const ConfigurationSection* sect);
 	};
+
+	class TAnimBuild
+	{
+	public:
+		static void Build(const ConfigurationSection* sect);
+	};
 }
 
 #endif

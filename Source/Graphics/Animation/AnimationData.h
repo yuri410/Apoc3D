@@ -57,10 +57,6 @@ namespace Apoc3D
 				ClipTable m_skinnedAnimationClips;
 				MtrlClipTable m_mtrlAnimationClips;
 
-				//FastList<Matrix> m_bindPose;
-				//FastList<Matrix> m_invBindPose;
-				//FastList<int32> m_skeletonHierarchy;
-
 				//bool m_hasBindPose;
 				//bool m_hasSkeleton;
 				bool m_hasMtrlClip;

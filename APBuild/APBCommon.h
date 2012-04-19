@@ -10,6 +10,8 @@
 
 #include "squish-1.10/squish.h"
 
+#define TIXML_USE_STL
+
 namespace APBuild
 {
 	struct TextureBuildConfig;
@@ -17,6 +19,7 @@ namespace APBuild
 	struct PakBuildConfig;
 	struct AFXBuildConfig;
 	struct MeshBuildConfig;
+	struct TransformAnimBuildConfig;
 }
 
 #endif

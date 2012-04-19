@@ -157,7 +157,16 @@ namespace APBuild
 		MeshBuildMethod Method;
 
 		void Parse(const ConfigurationSection* sect);
-		
+	};
+
+	struct TransformAnimBuildConfig
+	{
+		String SrcFile;
+		String DstFile;
+
+		FastMap<String, int> ObjectIndexMapping;
+
+		void Parse(const ConfigurationSection* sect);
 	};
 }
 #endif

@@ -303,5 +303,22 @@ namespace APBuild
 			Method = MESHBUILD_D3D;
 		}
 	}
+	void TransformAnimBuildConfig::Parse(const ConfigurationSection* sect)
+	{
+		SrcFile = sect->getAttribute(L"SourceFile");
+		DstFile = sect->getAttribute(L"DestinationFile");
+
+
+		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
+			iter.MoveNext();)
+		{
+			const ConfigurationSection* ss = *iter.getCurrentValue();
+
+			String name = ss->getName();
+			int objIdx = StringUtils::ParseInt32(ss->getValue());
+
+			ObjectIndexMapping.Add(name, objIdx);
+		}
+	}
 	
 }
