@@ -181,6 +181,19 @@ namespace APDesigner
 			m_mainMenu->Add(buildMenu, buildSubMenu);
 		}
 		{
+			MenuItem* toolsMenu = new MenuItem(L"Tools");
+
+
+			SubMenu* toolSubMenu = new SubMenu(0);
+			toolSubMenu->SetSkin(m_UIskin);
+
+			MenuItem* mi=new MenuItem(L"Model Editor...");
+			mi->event().bind(this, &MainWindow::Menu_ToolModel);
+			toolSubMenu->Add(mi,0);
+
+			m_mainMenu->Add(toolsMenu,toolSubMenu);
+		}
+		{
 			m_mainMenu->Initialize(m_device);
 			UIRoot::setMainMenu(m_mainMenu);
 		}
@@ -392,6 +405,26 @@ namespace APDesigner
 
 			UpdateProjectEffect();
 		}
+	}
+	
+	void MainWindow::Menu_ToolModel(Control* ctl)
+	{
+		OpenFileDialog dlg;
+		dlg.SetFilter(L"Apoc3D Mesh file(*.mesh)\0*.mesh\0\0");
+
+		if (dlg.ShowDialog() == DLGRES_OK)
+		{
+			String name = PathUtils::GetDirectory(dlg.getFilePath()[0]);
+			String animFile = PathUtils::GetFileNameNoExt(dlg.getFilePath()[0]);
+			animFile.append(L".anim");
+
+			bool haveAnim = File::FileExists(animFile);
+
+			ModelDocument* md = new ModelDocument(this, name, dlg.getFilePath()[0], haveAnim ? animFile : L"");
+			md->LoadRes();
+			this->AddDocument(md);
+		}
+		
 	}
 
 	void MainWindow::Document_Activated(Document* doc)

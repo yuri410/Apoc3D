@@ -302,6 +302,35 @@ namespace APBuild
 		{
 			Method = MESHBUILD_D3D;
 		}
+
+		UseVertexFormatConversion = false;
+		CollapseMeshs = false;
+
+		ConfigurationSection* subs = sect->getSection(L"VertexFormatConversion");
+		if (subs && subs->getSubSectionCount()>0)
+		{
+			UseVertexFormatConversion = true;
+			for (ConfigurationSection::SubSectionEnumerator iter = subs->GetSubSectionEnumrator();
+				iter.MoveNext();)
+			{
+				const ConfigurationSection* ent = *iter.getCurrentValue();
+
+				VertexElementUsage usage = GraphicsCommonUtils::ParseVertexElementUsage(ent->getName());
+				int index = 0;
+				if (usage == VEU_TextureCoordinate)
+				{
+					index = StringUtils::ParseInt32( ent->getValue() );
+				}
+				// the vertex elements here only has usage and index. 
+				// They only store info here, not for normal use in graphics
+				VertexElements.Add(VertexElement(0,VEF_Count,usage,index));
+			}
+		}
+		subs = sect->getSection(L"CollapseMeshs");
+		if (subs)
+		{
+			CollapseMeshs = true;
+		}
 	}
 	void TransformAnimBuildConfig::Parse(const ConfigurationSection* sect)
 	{

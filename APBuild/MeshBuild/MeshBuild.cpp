@@ -53,11 +53,11 @@ namespace APBuild
 		AIImporter importer;
 		ModelData* data = importer.Import(config);
 
+		ConvertVertexData(data, config);
+		CollapseMeshs(data, config);
+
 		FileOutStream* fs = new FileOutStream(config.DstFile);
-
 		data->Save(fs);
-
-
 		delete data;
 
 		CompileLog::WriteInformation(config.SrcFile, L">");
@@ -67,10 +67,11 @@ namespace APBuild
 		XImporter importer;
 		ModelData* data = importer.Import(config);
 
+		ConvertVertexData(data, config);
+		CollapseMeshs(data, config);
+
 		FileOutStream* fs = new FileOutStream(config.DstFile);
-
 		data->Save(fs);
-
 		delete data;
 
 		CompileLog::WriteInformation(config.SrcFile, L">");
@@ -103,6 +104,174 @@ namespace APBuild
 		}
 	}
 
+	void MeshBuild::ConvertVertexData(ModelData* data, const MeshBuildConfig& config)
+	{
+		if (config.UseVertexFormatConversion)
+		{
+			for (int i=0;i<data->Entities.getCount();i++)
+			{
+				FastList<VertexElement> newElements; // to new data buffer
+				FastList<VertexElement> extractingElements; // from source
+
+				MeshData* md = data->Entities[i];
+				
+				for (int j=0;j<md->VertexElements.getCount();j++)
+				{
+					const VertexElement& srcElement = md->VertexElements[j];
+
+					for (int k=0;k<config.VertexElements.getCount();k++)
+					{
+						const VertexElement& targetElement = config.VertexElements[k];
+
+						if (srcElement.getUsage()==targetElement.getUsage())
+						{
+							if (targetElement.getUsage() == VEU_TextureCoordinate && 
+								targetElement.getIndex() == srcElement.getIndex())
+							{
+								extractingElements.Add(srcElement);
+							}
+							else if (targetElement.getUsage() != VEU_TextureCoordinate)
+							{
+								extractingElements.Add(srcElement);
+							}
+						}
+					}
+				}
+
+				// this will also keep newElements is one to one to extractingElements
+				int newOffset = 0;
+				for (int j=0;j<extractingElements.getCount();j++)
+				{
+					const VertexElement& ve = extractingElements[j];
+					
+					VertexElement newVe(newOffset, ve.getType(), ve.getUsage(), ve.getIndex());
+					newElements.Add(newVe);
+
+					newOffset += ve.getSize();
+				}
+				int newVertexSize = newOffset;
+
+				char* newVertexData = new char[newVertexSize*md->VertexCount];
+
+				for (uint j=0;j<md->VertexCount;j++)
+				{
+					int dstOffset = newVertexSize * j;
+					int srcOffset = md->VertexSize*j;
+
+					for (int k=0;k<newElements.getCount();k++)
+					{
+						const VertexElement& vextr = extractingElements[k];
+						const VertexElement& vstore = newElements[k];
+
+						memcpy(newVertexData+dstOffset + vstore.getOffset(), 
+							md->VertexData+srcOffset + vextr.getOffset(), 
+							vextr.getSize());
+					}
+				}
+
+				delete[] md->VertexData;
+				md->VertexData = newVertexData;
+				md->VertexElements = newElements;
+				md->VertexSize = newVertexSize;
+			}
+		}
+	}
+	void MeshBuild::CollapseMeshs(ModelData* data, const MeshBuildConfig& config)
+	{
+		if (config.CollapseMeshs && data->Entities.getCount()>1)
+		{
+			MeshData* firstMd=data->Entities[0];
+
+			uint totalVertexCount = 0;
+			uint totalMaterialCount = 0;
+			uint refVertexSize = firstMd->VertexSize;
+			int totalFaceCount = 0; // for preserving container space only
+
+			int* indexShifters = new int[data->Entities.getCount()];
+			int* materialShifters = new int[data->Entities.getCount()];
+
+			for (int i=0;i<data->Entities.getCount();i++)
+			{
+				MeshData* md=data->Entities[i];
+
+
+				indexShifters[i] = totalVertexCount;
+				materialShifters[i] = totalMaterialCount;
+
+				totalVertexCount += md->VertexCount;
+				totalMaterialCount +=  md->Materials.getMaterialCount();
+				totalFaceCount += md->Faces.getCount();
+
+				if (refVertexSize!=md->VertexSize)
+				{
+					CompileLog::WriteError(config.SrcFile, 
+						L"The mesh collapse only works with meshes that have the same vertex format.");
+					delete[] indexShifters;
+					delete[] materialShifters;
+					return;
+				}
+			}
+
+			MeshData* newMD = new MeshData();
+			newMD->VertexData = new char[totalVertexCount*firstMd->VertexSize];
+			newMD->VertexCount = totalVertexCount;
+			newMD->VertexElements = firstMd->VertexElements;
+			newMD->VertexSize = refVertexSize;
+			newMD->Faces.ResizeDiscard(totalFaceCount);
+			newMD->Materials.Reserve((int32)totalMaterialCount);
+			newMD->BoundingSphere.Center = Vector3Utils::Zero;
+			newMD->BoundingSphere.Radius = 0;
+
+
+			int vertexBufferOffset = 0;
+			for (int i=0;i<data->Entities.getCount();i++)
+			{
+				MeshData* md=data->Entities[i];
+
+				memcpy(newMD->VertexData+vertexBufferOffset, md->VertexData, refVertexSize*md->VertexCount);
+				vertexBufferOffset += refVertexSize*md->VertexCount;
+
+				for (int j=0;j<md->Faces.getCount();j++)
+				{
+					MeshFace f=md->Faces[j];
+
+					f.IndexA += indexShifters[i];
+					f.IndexB += indexShifters[i];
+					f.IndexC += indexShifters[i];
+
+					f.MaterialID += materialShifters[i];
+
+					newMD->Faces.Add(f);
+				}
+
+				for (uint j=0;j<md->Materials.getMaterialCount();j++)
+				{
+					Apoc3D::IO::MaterialData& mtrlData = md->Materials.getMaterial(j);
+					newMD->Materials.Add(mtrlData);
+
+					for (uint k=1;k<md->Materials.getFrameCount(j);k++)
+					{
+						Apoc3D::IO::MaterialData& mtrlData = md->Materials.getMaterial(j,k);
+						newMD->Materials.AddFrame(mtrlData,j);
+					}
+				}
+
+				BoundingSphere result;
+				BoundingSphere::Merge(result, newMD->BoundingSphere, md->BoundingSphere);
+				newMD->BoundingSphere = result;
+			}
+
+			delete[] indexShifters;
+			delete[] materialShifters;
+
+			for (int i=0;i<data->Entities.getCount();i++)
+			{
+				delete data->Entities[i];
+			}
+			data->Entities.Clear();
+			data->Entities.Add(newMD);
+		}
+	}
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/

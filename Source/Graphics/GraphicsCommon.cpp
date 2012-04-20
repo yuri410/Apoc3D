@@ -202,8 +202,6 @@ namespace Apoc3D
 				 return L"None";
 			 }
 
-
-
 			 TextureAddressMode GraphicsCommonUtils::ParseTextureAddressMode(const String& value)
 			 {
 				 String v = value;
@@ -280,7 +278,6 @@ namespace Apoc3D
 				 }
 				 return TFLT_None;
 			 }
-			 
 			 String GraphicsCommonUtils::ToString(TextureFilter filter)
 			 {
 				 switch (filter)
@@ -326,6 +323,105 @@ namespace Apoc3D
 					 return L"VertexShader";
 				 }
 				 return L"VertexShader";
+			 }
+
+			 VertexElementUsage GraphicsCommonUtils::ParseVertexElementUsage(const String& value)
+			 {
+				 String v = value;
+				 StringUtils::ToLowerCase(v);
+
+				 if (v==L"veu_position")
+				 {
+					 return VEU_Position;
+				 }
+				 else if (v==L"veu_blendweight")
+				 {
+					 return VEU_BlendWeight;
+				 }
+				 else if (v==L"veu_blendindices")
+				 {
+					 return VEU_BlendIndices;
+				 }
+				 else if (v==L"veu_normal")
+				 {
+					 return VEU_Normal;
+				 }
+				 else if (v==L"veu_pointsize")
+				 {
+					 return VEU_PointSize;
+				 }
+				 else if (v==L"veu_texturecoordinate")
+				 {
+					 return VEU_TextureCoordinate;
+				 }
+				 else if (v==L"veu_tangent")
+				 {
+					 return VEU_Tangent;
+				 }
+				 else if (v==L"veu_binormal")
+				 {
+					 return VEU_Binormal;
+				 }
+				 else if (v==L"veu_tessellatefactor")
+				 {
+					 return VEU_TessellateFactor;
+				 }
+				 else if (v==L"veu_positiontransformed")
+				 {
+					 return VEU_PositionTransformed;
+				 }
+				 else if (v==L"veu_color")
+				 {
+					 return VEU_Color;
+				 }
+				 else if (v==L"veu_fog")
+				 {
+					 return VEU_Fog;
+				 }
+				 else if (v==L"veu_depth")
+				 {
+					 return VEU_Depth;
+				 }
+				 else if (v==L"veu_sample")
+				 {
+					 return VEU_Sample;
+				 }
+				 return VEU_Position;
+			 }
+			 String GraphicsCommonUtils::ToString(VertexElementUsage usage)
+			 {
+				 switch (usage)
+				 {
+					case VEU_Position:
+						return L"VEU_Position";
+					case VEU_BlendWeight:
+						return L"VEU_BlendWeight";
+					case VEU_BlendIndices:
+						return L"VEU_BlendIndices";
+					case VEU_Normal:
+						return L"VEU_Normal";
+					case VEU_PointSize:
+						return L"VEU_PointSize";
+					case VEU_TextureCoordinate:
+						return L"VEU_TextureCoordinate";
+					case VEU_Tangent:
+						return L"VEU_Tangent";
+					case VEU_Binormal:
+						return L"VEU_Binormal";
+					case VEU_TessellateFactor:
+						return L"VEU_TessellateFactor";
+					case VEU_PositionTransformed:
+						return L"VEU_PositionTransformed";
+					case VEU_Color:
+						return L"VEU_Color";
+					case VEU_Fog:
+						return L"VEU_Fog";
+					case VEU_Depth:
+						return L"VEU_Depth";
+					case VEU_Sample:
+						return L"VEU_Sample";
+				 }
+				 return L"VEU_Position";
 			 }
 		}
 	}

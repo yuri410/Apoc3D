@@ -7,6 +7,8 @@
 #include "IOLib/MaterialData.h"
 #include "IOLib/ModelData.h"
 
+#include "MeshBuild.h"
+
 using namespace Apoc3D::Utility;
 
 #ifdef IOS_REF
@@ -1452,7 +1454,9 @@ namespace APBuild
 				modelData.Entities.Add(meshData);
 			}
 		}
-		
+		MeshBuild::ConvertVertexData(&modelData, config);
+		MeshBuild::CollapseMeshs(&modelData, config);
+
 		// animation
 		if (!config.DstAnimationFile.empty())
 		{

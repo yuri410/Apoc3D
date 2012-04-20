@@ -170,7 +170,7 @@ namespace APBuild
 			FastList<char*> vertices(totalVertex);
 			FastList<MeshFace> faces(totalFaces);
 
-			for (uint j=0;j<totalFaces;j+=3)
+			for (uint j=0;j<totalFaces;j++)
 			{
 				if (attData[j] == i)
 				{

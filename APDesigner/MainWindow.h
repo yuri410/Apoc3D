@@ -42,46 +42,6 @@ namespace APDesigner
 	*/
 	class MainWindow : public RenderWindowHandler
 	{
-	private:
-		StyleSkin* m_UIskin;
-
-		RenderWindow* m_window;
-		RenderDevice* m_device;
-
-		Sprite* m_sprite;
-
-		Document* m_currentDocument;
-		FastList<Document*> m_documentList;
-		//Font* m_font;
-		Console* m_console;
-		//ControlContainer* m_pane;
-		//Button* m_btn;
-		//Form* m_form;
-		Menu* m_mainMenu;
-
-		ResourcePane* m_resourcePane;
-		ToolsPane* m_toolsPane;
-		Project* m_project;
-		String m_projectFilePath;
-
-		Point m_lastSize;
-
-		
-
-		void Menu_OpenProject(Control* ctl);
-		void Menu_SaveProject(Control* ctl);
-		void Menu_CloseProject(Control* ctl);
-		void Menu_Insert(Control* ctl);
-		void Menu_Exit(Control* ctl);
-		void Menu_BuildAll(Control* ctl);
-		void OpenProject(const String& path);
-		void SaveProject(const String& path);
-		void CloseProject();
-
-		void Document_Activated(Document* doc);
-		void Document_Deactivated(Document* doc);
-		void UpdateProjectEffect(const FastList<ProjectItem*>& items);
-		void UpdateProjectEffect();
 	public:
 		const StyleSkin* getUISkin() const { return m_UIskin; }
 		const Point& getUIAreaSize() const { return m_lastSize; }
@@ -108,6 +68,49 @@ namespace APDesigner
 
 		virtual void OnFrameStart();
 		virtual void OnFrameEnd();
+
+	private:
+		void Menu_ToolModel(Control* ctl);
+
+		StyleSkin* m_UIskin;
+
+		RenderWindow* m_window;
+		RenderDevice* m_device;
+
+		Sprite* m_sprite;
+
+		Document* m_currentDocument;
+		FastList<Document*> m_documentList;
+		//Font* m_font;
+		Console* m_console;
+		//ControlContainer* m_pane;
+		//Button* m_btn;
+		//Form* m_form;
+		Menu* m_mainMenu;
+
+		ResourcePane* m_resourcePane;
+		ToolsPane* m_toolsPane;
+		Project* m_project;
+		String m_projectFilePath;
+
+		Point m_lastSize;
+
+
+
+		void Menu_OpenProject(Control* ctl);
+		void Menu_SaveProject(Control* ctl);
+		void Menu_CloseProject(Control* ctl);
+		void Menu_Insert(Control* ctl);
+		void Menu_Exit(Control* ctl);
+		void Menu_BuildAll(Control* ctl);
+		void OpenProject(const String& path);
+		void SaveProject(const String& path);
+		void CloseProject();
+
+		void Document_Activated(Document* doc);
+		void Document_Deactivated(Document* doc);
+		void UpdateProjectEffect(const FastList<ProjectItem*>& items);
+		void UpdateProjectEffect();
 	};
 }
 

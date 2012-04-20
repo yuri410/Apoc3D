@@ -179,6 +179,9 @@ namespace Apoc3D
 			}
 			else // other cases: use the slow way
 			{
+				// TODO: this can be optimized if using a buffer for the final mesh vertex
+				// instead of allocating room for each vertex
+
 				FastList<char*>* entVertexData = new FastList<char*>[index];
 				MeshData** ents = new MeshData*[index];
 				index = 0;

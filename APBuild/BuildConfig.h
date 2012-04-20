@@ -29,11 +29,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/PixelFormat.h"
 #include "Collections/FastList.h"
 #include "Collections/FastMap.h"
+#include "Graphics/RenderSystem/VertexElement.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace APBuild
 {
@@ -153,6 +155,11 @@ namespace APBuild
 		String SrcFile;
 		String DstFile;
 		String DstAnimationFile;
+
+		bool UseVertexFormatConversion;
+		FastList<VertexElement> VertexElements;
+
+		bool CollapseMeshs;
 
 		MeshBuildMethod Method;
 

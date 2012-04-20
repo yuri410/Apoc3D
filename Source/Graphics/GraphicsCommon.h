@@ -532,6 +532,9 @@ namespace Apoc3D
 
 				static ShaderType ParseShaderType(const String& value);
 				static String ToString(ShaderType type);
+
+				static VertexElementUsage ParseVertexElementUsage(const String& value);
+				static String ToString(VertexElementUsage usage);
 			protected:
 			private:
 			};
