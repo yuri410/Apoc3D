@@ -23,8 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "ExtensionShader.h"
 
-#include "ShaderNetDocument.h"
-#include "ShaderAtomDocument.h"
+#include "docShaderNet.h"
+#include "docShaderAtom.h"
 
 #include "Project/Project.h"
 #include "Vfs/File.h"

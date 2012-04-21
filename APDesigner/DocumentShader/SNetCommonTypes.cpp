@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "ShaderNetworkTypes.h"
+#include "SNetCommonTypes.h"
 
 #include "Config/ConfigurationSection.h"
 

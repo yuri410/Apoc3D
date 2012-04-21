@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define SHADERATOMTYPE_H
 
 #include "APDCommon.h"
-#include "ShaderNetworkTypes.h"
+#include "SNetCommonTypes.h"
 
 #include "Core/Singleton.h"
 #include "Collections/FastMap.h"
@@ -58,6 +58,9 @@ namespace APDesigner
 		EffectParamUsage Usage;
 
 		bool IsTypeCompatible(ShaderAtomDataExchangeType other);
+
+		void Parse(ConfigurationSection* sect);
+		ConfigurationSection* Save();
 	};
 
 	/** Represents a shader atom type
@@ -72,6 +75,7 @@ namespace APDesigner
 
 		void CopyFrom(const ShaderAtomType* newOne);
 
+
 		const String& getName() const { return m_name; }
 		const String& getCodeBody() const { return m_codeBody; }
 
@@ -82,7 +86,12 @@ namespace APDesigner
 		int getMajorSMVersion() const { return m_majorSMVersion; }
 		int getMinorSMVersion() const { return m_minorSMVersion; }
 
+
+		void Load(const String& filePath);
+		void Save(const String& filePath);
 	private:
+		List<ShaderAtomPort> m_ports;
+
 		String m_codeBody;
 		String m_name;
 		

@@ -26,7 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define SHADERDOCUMENTDATA_H
 
 #include "APDCommon.h"
-#include "ShaderNetworkTypes.h"
+#include "SNetCommonTypes.h"
+#include "ShaderAtomType.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;
@@ -64,6 +65,8 @@ namespace APDesigner
 		void Load(const String& filePath);
 		void Save(const String& filePath);
 	};
+
+
 
 }
 

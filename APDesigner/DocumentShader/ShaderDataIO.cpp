@@ -94,5 +94,7 @@ namespace APDesigner
 		sect->TryGetAttributeInt(L"InputNodeIndex", InputNodeIndex);
 		sect->TryGetAttributeInt(L"OutputNodeIndex", OutputNodeIndex);
 
+		
 	}
+
 }

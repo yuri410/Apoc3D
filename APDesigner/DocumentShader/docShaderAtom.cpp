@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "ShaderAtomDocument.h"
+#include "docShaderAtom.h"
 
 #include "ShaderAtomType.h"
 #include "MainWindow.h"

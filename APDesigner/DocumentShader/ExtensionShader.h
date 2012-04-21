@@ -68,7 +68,7 @@ namespace APDesigner
 
 		virtual bool SupportsItem(const ProjectItem* item);
 
-		virtual bool SupportsIndependentEditing() { return true; };
+		virtual bool SupportsIndependentEditing() { return false; };
 
 		virtual std::vector<String> GetFileExtensions()
 		{

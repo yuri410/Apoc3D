@@ -83,16 +83,7 @@
     <ClInclude Include="DocumentShader\ShaderAtomType.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DocumentShader\ShaderNetworkTypes.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DocumentShader\ShaderAtomDocument.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="CommonDialog\Win32InputBox.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DocumentShader\ShaderNetDocument.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DocumentShader\ShaderDataIO.h">
@@ -102,6 +93,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DocumentShader\ExtensionShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentShader\SNetCommonTypes.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentShader\docShaderAtom.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentShader\docShaderNet.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -157,16 +157,7 @@
     <ClCompile Include="DocumentShader\ShaderAtomType.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DocumentShader\ShaderAtomDocument.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="CommonDialog\Win32InputBox.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DocumentShader\ShaderNetDocument.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DocumentShader\ShaderNetworkTypes.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DocumentShader\ShaderDataIO.cpp">
@@ -176,6 +167,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DocumentShader\ExtensionShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentShader\SNetCommonTypes.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentShader\docShaderAtom.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentShader\docShaderNet.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -41,7 +41,7 @@ using namespace Apoc3D::Collections;
 
 namespace APDesigner
 {
-	class APDAPI EditorExtension
+	class EditorExtension
 	{
 	public:
 		virtual String GetName() = 0;
@@ -60,12 +60,12 @@ namespace APDesigner
 		virtual std::vector<String> GetFileExtensions() = 0;
 	};
 
-	class APDAPI EditorExtensionManager : public Singleton<EditorExtensionManager>
+	class EditorExtensionManager : public Apoc3D::Core::Singleton<EditorExtensionManager>
 	{
 	public:
 		typedef FastMap<String, EditorExtension*>::Enumerator ExtensionEnumerator;
 
-		SINGLETON_DECL_HEARDER(APDesigner::EditorExtensionManager);
+		SINGLETON_DECL_HEARDER(EditorExtensionManager);
 
 		EditorExtension* FindExtension(const String& id)
 		{
@@ -80,9 +80,16 @@ namespace APDesigner
 		void UnregisterExtension(EditorExtension* ext);
 
 		ExtensionEnumerator GetEnumerator() const { return m_extensions.GetEnumerator(); }
+
+		EditorExtensionManager() { }
 	private:
 		FastMap<String, EditorExtension*> m_extensions;
 	};
 }
+extern "C"
+{
+	void RegisterExtension(APDesigner::EditorExtension* ext);
+	void UnregisterExtension(APDesigner::EditorExtension* ext);
+};
 
 #endif

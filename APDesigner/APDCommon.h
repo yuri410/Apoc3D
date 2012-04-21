@@ -52,6 +52,9 @@ namespace APDesigner
 
 	class ShaderAtomType;
 	class ShaderAtomDocument;
+
+	class ShaderAtomTypeData;
+	class ShaderDocumentData;
 }
 
 #endif

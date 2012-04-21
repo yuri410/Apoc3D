@@ -21,7 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "ShaderNetDocument.h"
+#include "docShaderNet.h"
 
 #include "Utility/StringUtils.h"
 #include "UILib/Form.h"

@@ -197,13 +197,23 @@ namespace APDesigner
 			{
 				EditorExtension* ext = *e.getCurrentValue();
 				
-				mi=new MenuItem(ext->GetName() + L"...");
-				mi->event().bind(this, &MainWindow::Menu_ToolItem);
-				mi->UserPointer = ext;
-				toolSubMenu->Add(mi,0);	
+				if (ext->SupportsIndependentEditing())
+				{
+					mi=new MenuItem(ext->GetName() + L"...");
+					mi->event().bind(this, &MainWindow::Menu_ToolItem);
+					mi->UserPointer = ext;
+					toolSubMenu->Add(mi,0);	
+				}
 			}
 
-			
+
+			mi=new MenuItem(L"_");
+			toolSubMenu->Add(mi,0);
+
+			mi=new MenuItem(L"Shader Atom Manager");
+			mi->event().bind(this, &MainWindow::Menu_Tools_AtomManager);
+			toolSubMenu->Add(mi,0);
+
 			m_mainMenu->Add(toolsMenu,toolSubMenu);
 		}
 		{
@@ -464,7 +474,10 @@ namespace APDesigner
 			}
 		}
 	}
+	void MainWindow::Menu_Tools_AtomManager(Control* ctl)
+	{
 
+	}
 	void MainWindow::Document_Activated(Document* doc)
 	{
 		m_currentDocument = doc;

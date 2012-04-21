@@ -46,3 +46,14 @@ namespace APDesigner
 
 	}
 }
+extern "C"
+{
+	void RegisterExtension(APDesigner::EditorExtension* ext)
+	{
+		APDesigner::EditorExtensionManager::getSingleton().RegisterExtension(ext);
+	}
+	void UnregisterExtension(APDesigner::EditorExtension* ext)
+	{
+		APDesigner::EditorExtensionManager::getSingleton().UnregisterExtension(ext);
+	}
+};

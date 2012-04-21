@@ -355,7 +355,7 @@ namespace Apoc3D
 		virtual std::vector<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
-		virtual bool IsEarlierThan(time_t t) { return true; }
+		virtual bool IsEarlierThan(time_t t);
 	};
 
 	/** Represents font assets.

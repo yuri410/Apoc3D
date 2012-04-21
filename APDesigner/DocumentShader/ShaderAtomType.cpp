@@ -23,6 +23,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "ShaderAtomType.h"
+#include "ShaderDataIO.h"
+
+#include "Config/XmlConfiguration.h"
+#include "Config/ConfigurationSection.h"
+
+#include "Vfs/PathUtils.h"
+
+using namespace Apoc3D::Config;
+using namespace Apoc3D::VFS;
 
 SINGLETON_DECL(APDesigner::ShaderAtomLibraryManager);
 
@@ -87,6 +96,15 @@ namespace APDesigner
 		return !!r;
 	}
 
+	void ShaderAtomPort::Parse(ConfigurationSection* sect)
+	{
+
+	}
+	ConfigurationSection* ShaderAtomPort::Save()
+	{
+		return 0;
+	}
+
 	/************************************************************************/
 	/*  ShaderAtomType                                                      */
 	/************************************************************************/
@@ -103,13 +121,67 @@ namespace APDesigner
 		m_majorSMVersion = newOne->m_majorSMVersion;
 	}
 
+	void ShaderAtomType::Load(const String& filePath)
+	{
+		XMLConfiguration* config = new XMLConfiguration(filePath);
+
+		ConfigurationSection* sect = config->get(L"Basic");
+		m_name = sect->GetInt(L"Name");
+		m_type = GraphicsCommonUtils::ParseShaderType(sect->getValue(L"Type"));
+		m_majorSMVersion = sect->GetInt(L"MajorSMVersion");
+		m_minorSMVersion = sect->GetInt(L"MinorSMVersion");
+		m_codeBody = sect->getValue(L"Code");
+
+		sect = config->get(L"Ports");
+		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
+		{
+			ShaderAtomPort port;
+			port.Parse(sect);
+			m_ports.Add(port);
+		}
+		
+		delete config;
+	}
+	void ShaderAtomType::Save(const String& filePath)
+	{
+		XMLConfiguration* config = new XMLConfiguration(filePath);
+
+		ConfigurationSection* sect = new ConfigurationSection(L"Basic");
+		config->Add(sect);
+
+		sect = new ConfigurationSection(L"Ports");
+		config->Add(sect);
+		for (int i=0;i<m_ports.getCount();i++)
+		{
+			ConfigurationSection* subs = m_ports[i].Save();
+			sect->AddSection(subs);
+		}
+
+		config->Save(filePath);
+		delete config;
+	}
 	/************************************************************************/
 	/*  ShaderAtomLibraryManager                                            */
 	/************************************************************************/
 
 	void ShaderAtomLibraryManager::Load(const String& atomLib)
 	{
+		String basePath = PathUtils::GetDirectory(atomLib);
 
+		XMLConfiguration* config = new XMLConfiguration(atomLib);
+
+		for (Configuration::ChildTable::Enumerator e = config->GetEnumerator();e.MoveNext();)
+		{
+			String file = (*e.getCurrentValue())->getValue();
+			String filePath = PathUtils::Combine(basePath, file);
+
+			ShaderAtomType* type = new ShaderAtomType();
+			type->Load(filePath);
+
+			m_table.Add(type->getName(), type);
+		}
+
+		delete config;
 	}
 
 	void ShaderAtomLibraryManager::AddAtomType(ShaderAtomType* type)
