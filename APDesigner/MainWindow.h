@@ -70,7 +70,7 @@ namespace APDesigner
 		virtual void OnFrameEnd();
 
 	private:
-		void Menu_ToolModel(Control* ctl);
+		void Menu_ToolItem(Control* ctl);
 
 		StyleSkin* m_UIskin;
 

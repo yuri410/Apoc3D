@@ -97,6 +97,8 @@ namespace Apoc3D
 			SubMenu* m_submenu;
 
 		public:
+			void* UserPointer;
+
 			const String& getText() const { return m_text; }
 			void setText(const String& txt);
 			const String& getCleanText() const { return m_cleanText; }
@@ -110,7 +112,7 @@ namespace Apoc3D
 			void setSubMenu(SubMenu* sm) { m_submenu = sm; }
 
 			MenuItem(const String& text)
-				: m_submenu(0)
+				: m_submenu(0), UserPointer(0)
 			{
 				setText(text);
 			}
@@ -118,6 +120,27 @@ namespace Apoc3D
 
 		class APAPI SubMenu : public Control
 		{
+		public:
+			MenuState getState() const { return m_state; }
+			Control* getParent() const { return m_parent; }
+			void setParent(Control* ctrl) { m_parent = ctrl; }
+
+			SubMenu(ControlContainer* owner);
+			~SubMenu();
+
+			void Add(MenuItem* item, SubMenu* submenu);
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
+			void Open(const Point& position);
+			void Close();
+
+			bool IsCursorInside();
+
+			int getHoverIndex() const { return m_hoverIndex; }
+			const FastList<MenuItem*>& getItems() const { return m_items; }
 		private:
 			Control* m_parent;
 			FastList<MenuItem*> m_items;
@@ -144,25 +167,6 @@ namespace Apoc3D
 			void CalcualteSize();
 			void CloseSubMenus();
 			void CheckSelection();
-		public:
-			MenuState getState() const { return m_state; }
-			Control* getParent() const { return m_parent; }
-			void setParent(Control* ctrl) { m_parent = ctrl; }
-
-			SubMenu(ControlContainer* owner);
-			~SubMenu();
-
-			void Add(MenuItem* item, SubMenu* submenu);
-
-			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
-			virtual void Draw(Sprite* sprite);
-
-			void Open(const Point& position);
-			void Close();
-
-			bool IsCursorInside();
-
 		};
 	}
 }

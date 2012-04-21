@@ -52,6 +52,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/PathUtils.h"
 #include "Math/ColorValue.h"
 
+#include "EditorExtensionManager.h"
+
 #include "Document.h"
 #include "ModelDocument.h"
 #include "TextureViewer.h"
@@ -183,14 +185,25 @@ namespace APDesigner
 		{
 			MenuItem* toolsMenu = new MenuItem(L"Tools");
 
-
 			SubMenu* toolSubMenu = new SubMenu(0);
 			toolSubMenu->SetSkin(m_UIskin);
 
 			MenuItem* mi=new MenuItem(L"Model Editor...");
-			mi->event().bind(this, &MainWindow::Menu_ToolModel);
+			mi->event().bind(this, &MainWindow::Menu_ToolItem);
+			mi->UserPointer = 0;
 			toolSubMenu->Add(mi,0);
 
+			for (EditorExtensionManager::ExtensionEnumerator e = EditorExtensionManager::getSingleton().GetEnumerator();e.MoveNext();)
+			{
+				EditorExtension* ext = *e.getCurrentValue();
+				
+				mi=new MenuItem(ext->GetName() + L"...");
+				mi->event().bind(this, &MainWindow::Menu_ToolItem);
+				mi->UserPointer = ext;
+				toolSubMenu->Add(mi,0);	
+			}
+
+			
 			m_mainMenu->Add(toolsMenu,toolSubMenu);
 		}
 		{
@@ -407,24 +420,49 @@ namespace APDesigner
 		}
 	}
 	
-	void MainWindow::Menu_ToolModel(Control* ctl)
+	void MainWindow::Menu_ToolItem(Control* ctl)
 	{
-		OpenFileDialog dlg;
-		dlg.SetFilter(L"Apoc3D Mesh file(*.mesh)\0*.mesh\0\0");
+		SubMenu* sm = dynamic_cast<SubMenu*>(ctl);
 
-		if (dlg.ShowDialog() == DLGRES_OK)
+		if (sm)
 		{
-			String name = PathUtils::GetDirectory(dlg.getFilePath()[0]);
-			String animFile = PathUtils::GetFileNameNoExt(dlg.getFilePath()[0]);
-			animFile.append(L".anim");
+			int id = sm->getHoverIndex();
+			if (id!=-1)
+			{
+				MenuItem* item = sm->getItems()[id]; 
 
-			bool haveAnim = File::FileExists(animFile);
+				if (item->UserPointer == 0)
+				{
+					OpenFileDialog dlg;
+					dlg.SetFilter(L"Apoc3D Mesh file(*.mesh)\0*.mesh\0\0");
 
-			ModelDocument* md = new ModelDocument(this, name, dlg.getFilePath()[0], haveAnim ? animFile : L"");
-			md->LoadRes();
-			this->AddDocument(md);
+					if (dlg.ShowDialog() == DLGRES_OK)
+					{
+						String name = PathUtils::GetDirectory(dlg.getFilePath()[0]);
+						String animFile = PathUtils::GetFileNameNoExt(dlg.getFilePath()[0]);
+						animFile.append(L".anim");
+
+						bool haveAnim = File::FileExists(animFile);
+
+						ModelDocument* md = new ModelDocument(this, name, dlg.getFilePath()[0], haveAnim ? animFile : L"");
+						md->LoadRes();
+						this->AddDocument(md);
+					}
+				}
+				else
+				{
+					EditorExtension* eext = static_cast<EditorExtension*>(item->UserPointer);
+
+					OpenFileDialog dlg;
+					dlg.SetFilter(L"Apoc3D Mesh file(*.mesh)\0*.mesh\0\0");
+
+					if (dlg.ShowDialog() == DLGRES_OK)
+					{
+						
+					}
+				}
+			}
 		}
-		
 	}
 
 	void MainWindow::Document_Activated(Document* doc)

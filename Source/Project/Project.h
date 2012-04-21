@@ -52,6 +52,7 @@ namespace Apoc3D
 		PRJITEM_Effect,
 		PRJITEM_EffectList,
 		PRJITEM_CustomEffect,
+		PRJITEM_ShaderNetwork,
 		PRJITEM_Font
 	};
 	
@@ -326,6 +327,28 @@ namespace Apoc3D
 		String DestFile;
 
 		virtual ProjectItemType getType() const { return PRJITEM_EffectList; }
+		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual std::vector<String> GetAllOutputFiles();
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t) { return true; }
+	};
+
+	class ProjectResShaderNetwork : public ProjectResource
+	{
+	public:
+		ProjectResShaderNetwork(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
+		String SrcFile;
+		String DestFile;
+
+		virtual ProjectItemType getType() const { return PRJITEM_ShaderNetwork; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 

@@ -41,16 +41,30 @@ using namespace Apoc3D::Collections;
 
 namespace APDesigner
 {
-	class EditorExtension
+	class APDAPI EditorExtension
 	{
 	public:
 		virtual String GetName() = 0;
-		virtual Document* OpenItem(const ProjectCustomItem* item);
+		virtual Document* OpenItem(const ProjectItem* item) = 0;
+
+		virtual bool SupportsItem(const ProjectItem* item) = 0;
+
+		/** Should this tool appears in the tools menu?
+		*/
+		virtual bool SupportsIndependentEditing() { return false; };
+
+		virtual Document* DirectOpen(const String& filePath) { return 0; }
+
+		/** Extension to use when opening the file dialog
+		*/
+		virtual std::vector<String> GetFileExtensions() = 0;
 	};
 
 	class APDAPI EditorExtensionManager : public Singleton<EditorExtensionManager>
 	{
 	public:
+		typedef FastMap<String, EditorExtension*>::Enumerator ExtensionEnumerator;
+
 		SINGLETON_DECL_HEARDER(APDesigner::EditorExtensionManager);
 
 		EditorExtension* FindExtension(const String& id)
@@ -64,6 +78,8 @@ namespace APDesigner
 		}
 		void RegisterExtension(EditorExtension* ext);
 		void UnregisterExtension(EditorExtension* ext);
+
+		ExtensionEnumerator GetEnumerator() const { return m_extensions.GetEnumerator(); }
 	private:
 		FastMap<String, EditorExtension*> m_extensions;
 	};

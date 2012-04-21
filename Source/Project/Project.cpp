@@ -698,6 +698,49 @@ namespace Apoc3D
 	/*                                                                      */
 	/************************************************************************/
 
+	void ProjectResShaderNetwork::Parse(const ConfigurationSection* sect)
+	{
+		SrcFile = sect->getAttribute(L"SourceFile");
+		DestFile = sect->getAttribute(L"DestinationFile");
+	}
+	void ProjectResShaderNetwork::Save(ConfigurationSection* sect, bool savingBuild)
+	{
+		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
+		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+	}
+	std::vector<String> ProjectResShaderNetwork::GetAllOutputFiles()
+	{
+		std::vector<String> e;
+		if (DestFile.size())
+			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+		return e;
+	}
+	bool ProjectResShaderNetwork::IsEarlierThan(time_t t)
+	{
+		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+
+		if (destFileTime < t)
+			return true;
+
+		String path = PathUtils::Combine(m_project->getBasePath(), SrcFile);
+		if (File::FileExists(path))
+		{
+			if (File::GetFileModifiyTime(path) > destFileTime)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	bool ProjectResShaderNetwork::IsNotBuilt()
+	{
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+	}
+
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+
 	void ProjectResModel::Parse(const ConfigurationSection* sect)
 	{
 		SrcFile = sect->getAttribute(L"SourceFile");
@@ -872,6 +915,9 @@ namespace Apoc3D
 			case PRJITEM_Folder:
 				sect->AddAttribute(L"Type", L"folder");
 				break;
+			case PRJITEM_ShaderNetwork:
+				sect->AddAttribute(L"Type", L"ShaderNet");
+				break;
 			}
 			
 			m_typeData->Save(sect, savingBuild);
@@ -926,6 +972,12 @@ namespace Apoc3D
 			ProjectFolder* folder = new ProjectFolder(m_project);
 			folder->Parse(sect);
 			m_typeData = folder;
+		}
+		else if (buildType == L"shadernet")
+		{
+			ProjectResShaderNetwork* snet = new ProjectResShaderNetwork(m_project);
+			snet->Parse(sect);
+			m_typeData = snet;
 		}
 		//else if (buildType == L"pak")
 		//{
