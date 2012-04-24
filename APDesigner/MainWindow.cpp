@@ -54,6 +54,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "EditorExtensionManager.h"
 
+#include "DocumentShader/dlgAtomManager.h"
+#include "DocumentShader/ShaderAtomType.h"
+
 #include "Document.h"
 #include "ModelDocument.h"
 #include "TextureViewer.h"
@@ -99,10 +102,13 @@ namespace APDesigner
 		icp.UseMouse = true;
 
 		InputAPIManager::getSingleton().InitializeInput(m_window, icp);
-
+		ShaderAtomLibraryManager::Initialize();
+		EditorExtensionManager::Initialize();
 	}
 	void MainWindow::Finalize()
 	{
+		EditorExtensionManager::Finalize();
+		ShaderAtomLibraryManager::Finalize();
 		InputAPIManager::getSingleton().FinalizeInput();
 	}
 
@@ -130,13 +136,18 @@ namespace APDesigner
 			FontManager::getSingleton().LoadFont(m_device, L"english", fl);
 		}
 
+		{
+			FileLocation* fl = FileSystem::getSingleton().Locate(L"SysShaderLib.xml", FileLocateRule::Default);
+			ShaderAtomLibraryManager::getSingleton().Load(fl);
+			delete fl;
+		}
+		
+
 		//m_font = FontManager::getSingleton().getFont(L"english");
 
 		ObjectFactory* fac = m_device->getObjectFactory();
 		m_sprite = fac->CreateSprite();
 
-
-		
 
 		m_mainMenu = new Menu();
 		m_mainMenu->SetSkin(m_UIskin);
@@ -224,11 +235,13 @@ namespace APDesigner
 
 		m_resourcePane = new ResourcePane(this);
 		m_toolsPane = new ToolsPane(this);
+		m_atomManager = new AtomManagerDialog(this);
 
 		UIRoot::Initialize(m_device);
 		//UIRoot::Add(m_form);
 		m_resourcePane->Initialize(m_device);
 		m_toolsPane->Initialize(m_device);
+		m_atomManager->Initialize(m_device);
 
 		m_console = new Console(m_device, m_UIskin, Point(600,100), Point(400,400));
 	}
@@ -240,6 +253,7 @@ namespace APDesigner
 
 		delete m_console;
 		delete m_resourcePane;
+		delete m_atomManager;
 		UIResources::Finalize();
 	}
 	void MainWindow::Update(const GameTime* const time)
@@ -253,6 +267,7 @@ namespace APDesigner
 		m_console->Update(time);
 		m_resourcePane->Update(time);
 		m_toolsPane->Update(time);
+		m_atomManager->Update(time);
 
 		list<Document*> recycleList;
 
@@ -476,7 +491,7 @@ namespace APDesigner
 	}
 	void MainWindow::Menu_Tools_AtomManager(Control* ctl)
 	{
-
+		m_atomManager->Show();
 	}
 	void MainWindow::Document_Activated(Document* doc)
 	{

@@ -129,10 +129,15 @@
     </None>
     <None Include="ReadMe.txt" />
     <None Include="small.ico" />
+    <None Include="SysShaderLib.xml" />
+    <None Include="SysShaderLib\all_mod2.xml" />
+    <None Include="SysShaderLib\vs_trans_pn.xml" />
+    <None Include="SysShaderLib\vs_vtxNdl.xml" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APDCommon.h" />
     <ClInclude Include="CommonDialog\Win32InputBox.h" />
+    <ClInclude Include="DocumentShader\dlgAtomManager.h" />
     <ClInclude Include="DocumentShader\ExtensionShader.h" />
     <ClInclude Include="DocumentShader\docShaderNet.h" />
     <ClInclude Include="BuildService\BuildService.h" />
@@ -160,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonDialog\Win32InputBox.cpp" />
+    <ClCompile Include="DocumentShader\dlgAtomManager.cpp" />
     <ClCompile Include="DocumentShader\ExtensionShader.cpp" />
     <ClCompile Include="DocumentShader\ShaderDataIO.cpp" />
     <ClCompile Include="DocumentShader\docShaderNet.cpp" />

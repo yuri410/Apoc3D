@@ -508,8 +508,9 @@ namespace Apoc3D
 			};
 			enum ShaderType
 			{
-				SHDT_Vertex,
-				SHDT_Pixel
+				SHDT_Vertex=1<<0,
+				SHDT_Pixel=1<<1,
+				SHDT_All = SHDT_Pixel | SHDT_Vertex
 			};
 
 			class GraphicsCommonUtils

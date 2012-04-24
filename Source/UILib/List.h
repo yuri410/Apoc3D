@@ -261,6 +261,8 @@ namespace Apoc3D
 			bool getHoverSelection() const { return m_hoverSelection; }
 			void setHoverSelection(bool v) { m_hoverSelection = v; }
 
+			int getSelectedRowIndex() const { return m_selectedRow; }
+
 			ListViewSelectionHandler& eventSelected() { return m_eSelect; }
 		private:
 			int GetVisibleItems();

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <VertexTransform_PN>SysShaderLib/vs_trans_pn.xml</VertexTransform_PN>
+  
+  <VertexNDL_VS>SysShaderLib/vs_vtxNdl.xml</VertexNDL_VS>
+
+  <Modulate2>SysShaderLib/all_mod2.xml</Modulate2>
+</Root>

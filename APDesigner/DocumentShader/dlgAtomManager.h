@@ -21,40 +21,55 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef DLGATOMMANAGER_H
+#define DLGATOMMANAGER_H
 
-#ifndef APDCOMMON_H
-#define APDCOMMON_H
+#include "APDCommon.h"
 
-#include "Engine.h"
-
-#pragma comment(lib, "Apoc3D.lib")
-#pragma comment(lib, "Apoc3D.D3D9RenderSystem.lib")
-#pragma comment(lib, "Apoc3D.WindowsInput.lib")
+using namespace Apoc3D;
+using namespace Apoc3D::Collections;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::UI;
+using namespace Apoc3D::Core;
 
 namespace APDesigner
 {
-	class ResourcePane;
-	class PropertyPane;
-	class ToolsPane;
-	class AtomManagerDialog;
+	class AtomManagerDialog
+	{
+	public:
 
-	class ObjectTools;
-	class ObjectPropertyEditor;
+		AtomManagerDialog(MainWindow* window);
+		~AtomManagerDialog();
 
-	class Document;
+		void Initialize(RenderDevice* device);
 
-	class MainWindow;
-	
-	class ShaderNetDocument;
-	class ShaderGraph;
-	class GraphNode;
-	class QuadTreeNode;
+		void Update(const GameTime* const time);
 
-	class ShaderAtomType;
-	class ShaderAtomDocument;
+		void UpdateToNewProject(Project* prj);
 
-	class ShaderAtomTypeData;
-	class ShaderDocumentData;
+		void Show();
+		void Hide();
+	private:
+		void UpdateAtomListView();
+
+		void BtnAdd_Release(Control* ctrl);
+		void BtnRemove_Release(Control* ctrl);
+		void BtnEdit_Release(Control* ctrl);
+
+
+		MainWindow* m_mainWindow;
+		const StyleSkin* m_skin;
+
+		Form* m_form;
+
+		ListView* m_atomList;
+		Button* m_addItem;
+		Button* m_removeItem;
+		Button* m_editItem;
+
+		Project* m_currentProject;
+	};
 }
 
 #endif

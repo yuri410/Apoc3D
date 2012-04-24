@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Config/ConfigurationSection.h"
 
 #include "Vfs/PathUtils.h"
+#include "Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::Config;
 using namespace Apoc3D::VFS;
@@ -98,7 +99,16 @@ namespace APDesigner
 
 	void ShaderAtomPort::Parse(ConfigurationSection* sect)
 	{
+		Name = sect->getName();
+		IsInputOrOutput = sect->GetAttributeBool(L"Input");
 
+		sect->tryGetAttribute(L"Varying", VaringTypeName);
+
+		String usage;
+		if (sect->tryGetAttribute(L"Usage", usage))
+		{
+			Usage = EffectParameter::ParseParamUsage(usage);
+		}
 	}
 	ConfigurationSection* ShaderAtomPort::Save()
 	{
@@ -123,10 +133,11 @@ namespace APDesigner
 
 	void ShaderAtomType::Load(const String& filePath)
 	{
-		XMLConfiguration* config = new XMLConfiguration(filePath);
+		FileLocation* fl = new FileLocation(filePath);
+		XMLConfiguration* config = new XMLConfiguration(fl);
 
 		ConfigurationSection* sect = config->get(L"Basic");
-		m_name = sect->GetInt(L"Name");
+		m_name = sect->getValue(L"Name");
 		m_type = GraphicsCommonUtils::ParseShaderType(sect->getValue(L"Type"));
 		m_majorSMVersion = sect->GetInt(L"MajorSMVersion");
 		m_minorSMVersion = sect->GetInt(L"MinorSMVersion");
@@ -136,15 +147,16 @@ namespace APDesigner
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
 		{
 			ShaderAtomPort port;
-			port.Parse(sect);
+			port.Parse(*e.getCurrentValue());
 			m_ports.Add(port);
 		}
 		
 		delete config;
+		delete fl;
 	}
 	void ShaderAtomType::Save(const String& filePath)
 	{
-		XMLConfiguration* config = new XMLConfiguration(filePath);
+		XMLConfiguration* config = new XMLConfiguration(L"Root");
 
 		ConfigurationSection* sect = new ConfigurationSection(L"Basic");
 		config->Add(sect);
@@ -164,11 +176,11 @@ namespace APDesigner
 	/*  ShaderAtomLibraryManager                                            */
 	/************************************************************************/
 
-	void ShaderAtomLibraryManager::Load(const String& atomLib)
+	void ShaderAtomLibraryManager::Load(const FileLocation* fl)
 	{
-		String basePath = PathUtils::GetDirectory(atomLib);
+		String basePath = PathUtils::GetDirectory(fl->getPath());
 
-		XMLConfiguration* config = new XMLConfiguration(atomLib);
+		XMLConfiguration* config = new XMLConfiguration(fl);
 
 		for (Configuration::ChildTable::Enumerator e = config->GetEnumerator();e.MoveNext();)
 		{

@@ -115,6 +115,8 @@ namespace APDesigner
 
 			m_currentWorkingCopy = new ShaderAtomType(*requested);
 			
+			m_tbCode->setText(m_currentWorkingCopy->getCodeBody());
+			m_tbName->setText(m_currentWorkingCopy->getName());
 		}
 	}
 	void ShaderAtomDocument::SaveRes()

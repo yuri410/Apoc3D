@@ -88,6 +88,7 @@ namespace APDesigner
 		//Form* m_form;
 		Menu* m_mainMenu;
 
+		AtomManagerDialog* m_atomManager;
 		ResourcePane* m_resourcePane;
 		ToolsPane* m_toolsPane;
 		Project* m_project;

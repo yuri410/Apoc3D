@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <Basic>
+    <Name>Vertex NDL</Name>
+    <Description></Description>
+    <Type>VertexShader</Type>
+    <MajorSMVersion>1</MajorSMVersion>
+    <MinorSMVersion>0</MinorSMVersion>
+    <Code>
+      float ndl = dot(Normal_IN, LightDir_IN);
+      OUT = max(0, ndl);
+    </Code>
+  </Basic>
+  <Ports>
+    <Normal_IN Input="true" DataType="float3" Varying="TransformedNormal"/>
+    <LightDir_IN Input="true" DataType="float3" Usage="lv3_LightDir"/>
+    <OUT Input="true" DataType="float"/>
+  </Ports>
+</Root>

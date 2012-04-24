@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <Basic>
+    <Name>VertexTransform_PN</Name>
+    <Description></Description>
+    <Type>VertexShader</Type>
+    <MajorSMVersion>1</MajorSMVersion>
+    <MinorSMVersion>0</MinorSMVersion>
+    <Code>
+
+      PositionOUT = mul(PositionIN, WVP);
+      NormalOUT = normalize((float3)mul(float4(NormalIN,0), World));
+
+    </Code>
+  </Basic>
+  <Ports>
+    <PositionIN Input="true" DataType="float4" Varying="SYS_Position0"/>
+    <NormalIN Input="true" DataType="float3" Varying="SYS_Normal"/>
+    
+    <PositionOUT Input="false" DataType="float4" Varying="TransformedPosition" />
+    <NormalOUT Input="false" DataType="float3" Varying="TransformedNormal"/>
+
+    <WVP Input="true" DataType="float4x4" Usage="tr_WorldViewProj"/>
+    <World Input="true" DataType="float4x4" Usage="tr_World" />
+  </Ports>
+</Root>

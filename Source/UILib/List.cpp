@@ -1313,7 +1313,7 @@ namespace Apoc3D
 		void ListView::DrawSelectionBox(Sprite* sprite, const Point& position, int x, int y)
 		{
 			if (m_fullRowSelect)
-				m_selectionRect.Width = m_srcRect.Width + 2;
+				m_selectionRect.Width = Size.X;//m_srcRect.Width + 2;
 			else
 				m_selectionRect.Width = m_columnHeader[x].Width + 2;
 

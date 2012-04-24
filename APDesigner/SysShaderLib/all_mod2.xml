@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <Basic>
+    <Name>Modulate2</Name>
+    <Description></Description>
+    <Type>All</Type>
+    <MajorSMVersion>1</MajorSMVersion>
+    <MinorSMVersion>0</MinorSMVersion>
+    <Code>
+      OUT = A_IN * B_IN;
+    </Code>
+  </Basic>
+  <Ports>
+    <A_IN Input="true" DataType="float4"/>
+    <B_IN Input="true" DataType="float4"/>
+    <OUT Input="true" DataType="float4"/>
+  </Ports>
+</Root>

@@ -37,6 +37,7 @@ using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics::EffectSystem;
+using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {
@@ -110,16 +111,19 @@ namespace APDesigner
 	public:
 		SINGLETON_DECL_HEARDER(APDesigner::ShaderAtomLibraryManager);
 
+		typedef FastMap<String, ShaderAtomType*>::Enumerator LibraryEnumerator;
+
 		/** Load all atom types from give file.
 		 *  Before that all previous loaded atom types will be unloaded,
 		 *  if any.
 		 */
-		void Load(const String& atomLib);
+		void Load(const FileLocation* fl);
 		void AddAtomType(ShaderAtomType* type);
 		void RemoveAtomType(ShaderAtomType* type);
 
 		ShaderAtomType* FindAtomType(const String& name);
 
+		LibraryEnumerator GetEnumerator() { return m_table.GetEnumerator(); }
 	private:
 		FastMap<String, ShaderAtomType*> m_table;
 	};

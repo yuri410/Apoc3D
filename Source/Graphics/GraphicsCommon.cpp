@@ -311,6 +311,10 @@ namespace Apoc3D
 				 {
 					 return SHDT_Pixel;
 				 }
+				 else if (v==L"all")
+				 {
+					 return SHDT_All;
+				 }
 				 return SHDT_Pixel;
 			 }
 			 String GraphicsCommonUtils::ToString(ShaderType type)
@@ -321,6 +325,8 @@ namespace Apoc3D
 					 return L"PixelShader";
 				 case SHDT_Vertex:
 					 return L"VertexShader";
+				 case SHDT_All:
+					 return L"All";
 				 }
 				 return L"VertexShader";
 			 }
