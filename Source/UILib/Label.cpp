@@ -405,12 +405,14 @@ namespace Apoc3D
 
 			if (m_vscrollBar)
 			{
+				m_vscrollBar->SetSkin(m_skin);
 				m_vscrollBar->setOwner(getOwner());
 				m_vscrollBar->eventValueChanged().bind(this, &TextBox::vScrollbar_OnChangeValue);
 				m_vscrollBar->Initialize(device);
 			}
 			if (m_hscrollBar)
 			{
+				m_hscrollBar->SetSkin(m_skin);
 				m_hscrollBar->setOwner(getOwner());
 				m_hscrollBar->eventValueChanged().bind(this, &TextBox::hScrollbar_OnChangeValue);
 				m_hscrollBar->Initialize(device);

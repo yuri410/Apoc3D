@@ -43,22 +43,29 @@ namespace APDesigner
 		: Document(window), m_atomName(name), m_currentWorkingCopy(0)
 	{
 		getDocumentForm()->setTitle(L"Shader Atom: " + name);
+		getDocumentForm()->setMinimumSize(Point(570,635));
 
 		{
-			Label* lbl = new Label(Point(23, 33), L"Name", 100);
+			Label* lbl = new Label(Point(23, 33), L"Name", 80);
 			lbl->SetSkin(window->getUISkin());
 			m_labels.Add(lbl);
 
-			m_tbName = new TextBox(Point(125, 33), 100);
+			m_tbName = new TextBox(Point(100, 33), 120);
 			m_tbName->SetSkin(window->getUISkin());
+
+			lbl = new Label(Point(250, 33), L"Type", 80);
+			lbl->SetSkin(window->getUISkin());
+			m_labels.Add(lbl);
 
 			List<String> items;
 			items.Add(GraphicsCommonUtils::ToString(SHDT_Vertex));
 			items.Add(GraphicsCommonUtils::ToString(SHDT_Pixel));
-			m_cbShaderType = new ComboBox(Point(250, 33), 120, items);
+			items.Add(GraphicsCommonUtils::ToString(SHDT_All));
+			m_cbShaderType = new ComboBox(Point(330, 33), 120, items);
 			m_cbShaderType->SetSkin(window->getUISkin());
 
-			lbl = new Label(Point(260, 33), L"Name", 100);
+
+			lbl = new Label(Point(23, 66), L"Profile", 80);
 			lbl->SetSkin(window->getUISkin());
 			m_labels.Add(lbl);
 
@@ -67,10 +74,13 @@ namespace APDesigner
 			items.Add(L"Shader Model 2");
 			items.Add(L"Shader Model 3");
 
-			m_cbProfile = new ComboBox(Point(360, 33), 120, items);
+			m_cbProfile = new ComboBox(Point(100, 66), 120, items);
 			m_cbProfile->SetSkin(window->getUISkin());
 
+
+
 			m_tbCode = new TextBox(Point(33, 100),500,500,L"");
+			m_tbCode->setScrollbarType(TextBox::SBT_Both);
 			m_tbCode->SetSkin(window->getUISkin());
 
 		}
@@ -117,6 +127,26 @@ namespace APDesigner
 			
 			m_tbCode->setText(m_currentWorkingCopy->getCodeBody());
 			m_tbName->setText(m_currentWorkingCopy->getName());
+
+			if (m_currentWorkingCopy->getMajorSMVersion()>0 && 
+				m_currentWorkingCopy->getMajorSMVersion()-1<m_cbProfile->getItems().getCount())
+			{
+				m_cbProfile->setSelectedIndex(m_currentWorkingCopy->getMajorSMVersion()-1);
+			}
+
+			switch (m_currentWorkingCopy->getShaderType())
+			{
+			case SHDT_All:
+				m_cbShaderType->setSelectedIndex(2);
+				break;
+			case SHDT_Pixel:
+				m_cbShaderType->setSelectedIndex(1);
+				break;
+			case SHDT_Vertex:
+				m_cbShaderType->setSelectedIndex(0);
+				break;
+			}
+			
 		}
 	}
 	void ShaderAtomDocument::SaveRes()
