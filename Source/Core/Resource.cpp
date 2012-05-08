@@ -153,6 +153,11 @@ namespace Apoc3D
 								setState(RS_PendingLoad);
 								m_manager->AddTask(m_resLoader);
 							}
+							else
+							{
+								// rewind state if successfully neutralized
+								setState(RS_Loaded);
+							}
 							break;
 						}
 					default:
@@ -194,6 +199,11 @@ namespace Apoc3D
 							{
 								setState(RS_PendingUnload);
 								m_manager->AddTask(m_resUnloader);
+							}
+							else
+							{
+								// rewind state if successfully neutralized
+								setState(RS_Unloaded);
 							}
 							break;
 						}

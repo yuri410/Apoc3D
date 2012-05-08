@@ -80,8 +80,6 @@ namespace Apoc3D
 		 */
 		class APAPI Resource
 		{
-		
-			
 		public: 
 			friend class GenerationTable;
 			typedef Resource ResHandleTemplateConstraint;   

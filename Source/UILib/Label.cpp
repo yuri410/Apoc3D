@@ -228,7 +228,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				if (Text.find_first_of('\n',0)!=String::npos)
+				if (text.find_first_of('\n',0)!=String::npos)
 				{
 					std::vector<String> lines = StringUtils::Split(text, L"\n");
 					for (size_t i=0;i<lines.size();i++)
