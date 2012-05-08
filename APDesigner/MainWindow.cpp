@@ -172,7 +172,7 @@ namespace APDesigner
 			mi->event().bind(this, &MainWindow::Menu_Insert);
 			pojSubMenu->Add(mi,0);
 
-			mi=new MenuItem(L"_");
+			mi=new MenuItem(L"-");
 			pojSubMenu->Add(mi,0);
 
 			mi=new MenuItem(L"Exit");
@@ -218,7 +218,7 @@ namespace APDesigner
 			}
 
 
-			mi=new MenuItem(L"_");
+			mi=new MenuItem(L"-");
 			toolSubMenu->Add(mi,0);
 
 			mi=new MenuItem(L"Shader Atom Manager");

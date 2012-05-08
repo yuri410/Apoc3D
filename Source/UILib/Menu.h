@@ -112,7 +112,7 @@ namespace Apoc3D
 			void setSubMenu(SubMenu* sm) { m_submenu = sm; }
 
 			MenuItem(const String& text)
-				: m_submenu(0), UserPointer(0)
+				: m_submenu(0), UserPointer(0), m_key(KEY_UNASSIGNED), m_keyIndex(-1)
 			{
 				setText(text);
 			}

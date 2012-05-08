@@ -606,7 +606,7 @@ namespace Apoc3D
 				if (!m_itemArea.Width)
 					m_itemArea.Width = Size.X;
 
-				if (m_items[i]->getText().length() && m_items[i]->getText() != L"_")
+				if (m_items[i]->getText().length() && m_items[i]->getText() != L"-")
 				{
 					if (!m_itemArea.Height)
 						m_itemArea.Height = m_fontRef->getLineHeight();
