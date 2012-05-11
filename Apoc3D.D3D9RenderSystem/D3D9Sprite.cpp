@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9VertexDeclaration.h"
 #include "Buffer/D3D9VertexBuffer.h"
 #include "D3D9RenderStateManager.h"
+#include "Graphics/RenderSystem/Shader.h"
 
 namespace Apoc3D
 {
@@ -38,7 +39,7 @@ namespace Apoc3D
 			int FlushThreshold = MaxVertices/5;
 
 			D3D9Sprite::D3D9Sprite(D3D9RenderDevice* device)
-				: Sprite(device), m_device(device), m_rawDevice(device->getDevice()), m_alphaEnabled(false)
+				: Sprite(device), m_device(device), m_rawDevice(device->getDevice())
 			{
 				FastList<VertexElement> elements;
 				elements.Add(VertexElement(0, VEF_Vector4, VEU_PositionTransformed));
@@ -49,25 +50,88 @@ namespace Apoc3D
 
 				int test = m_vtxDecl->GetVertexSize();
 				m_quadBuffer = new D3D9VertexBuffer(device, MaxVertices * m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic|BU_WriteOnly));
+
+				m_storedState.oldBlendFactor = 0;
 			}
 			D3D9Sprite::~D3D9Sprite()
 			{
 				delete m_vtxDecl;
 				delete m_quadBuffer;
 			}
-			void D3D9Sprite::Begin(bool alphabled, bool useStack)
+			void D3D9Sprite::Begin(SpriteSettings settings)
 			{
-				Sprite::Begin(alphabled, useStack);
-
-				m_alphaEnabled = alphabled;
+				Sprite::Begin(settings);
 
 				D3DVIEWPORT9 vp;
 				m_rawDevice->GetViewport(&vp);
 
+				SetRenderState();
 			}
 			void D3D9Sprite::End()
 			{
 				Flush();
+				RestoreRenderState();
+			}
+			void D3D9Sprite::SetRenderState()
+			{
+				NativeD3DStateManager* mgr = m_device->getNativeStateManager();
+
+				if ((getSettings() & SPR_RestoreState) == SPR_RestoreState)
+				{
+					m_storedState.oldAlphaBlendEnable = mgr->getAlphaBlendEnable();
+					m_storedState.oldBlendFunc = mgr->getAlphaBlendOperation();
+					m_storedState.oldSrcBlend = mgr->getAlphaSourceBlend();
+					m_storedState.oldDstBlend = mgr->getAlphaDestinationBlend();
+					m_storedState.oldBlendFactor = mgr->getAlphaBlendFactor();
+					m_storedState.oldDepthEnabled = mgr->getDepthBufferEnabled();
+					m_storedState.oldCull = mgr->getCullMode();
+				}
+
+				if (getSettings() & SPR_ChangeState)
+				{
+					mgr->SetDepth(false, mgr->getDepthBufferWriteEnabled());
+					mgr->SetCullMode(CULL_None);
+
+					if ((getSettings() & SPR_AlphaBlended) == SPR_AlphaBlended)
+						mgr->SetAlphaBlend(true, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, m_storedState.oldBlendFactor);
+
+					ShaderSamplerState state = mgr->getPixelSampler(0);
+					state.MinFilter = TFLT_Linear;
+					state.MagFilter = TFLT_Linear;
+					state.MipFilter = TFLT_Linear;
+					state.AddressU = TA_Clamp;
+					state.AddressV = TA_Clamp;
+					state.MaxMipLevel = 0;
+					state.MipMapLODBias = 0;
+
+					mgr->SetPixelSampler(0, state);
+
+					m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
+					m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
+					m_rawDevice->SetVertexShader(NULL); m_rawDevice->SetPixelShader(NULL);
+					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+					//m_rawDevice->SetTexture(0,0);
+				}
+
+				
+				
+				//mgr->SetAlphaBlend(false, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, oldBlendFactor);
+				
+			}
+			void D3D9Sprite::RestoreRenderState()
+			{
+				if ((getSettings() & SPR_RestoreState) == SPR_RestoreState)
+				{
+					NativeD3DStateManager* mgr = m_device->getNativeStateManager();
+
+					if ((getSettings() & SPR_AlphaBlended) == SPR_AlphaBlended)
+						mgr->SetAlphaBlend(m_storedState.oldAlphaBlendEnable, m_storedState.oldBlendFunc, m_storedState.oldSrcBlend, m_storedState.oldDstBlend, m_storedState.oldBlendFactor);
+
+					mgr->SetDepth(m_storedState.oldDepthEnabled, mgr->getDepthBufferWriteEnabled());
+					mgr->SetCullMode(m_storedState.oldCull);
+				}
 			}
 
 			// Auto resizing to fit the target rectangle is implemented in this method.
@@ -189,30 +253,9 @@ namespace Apoc3D
 
 				m_quadBuffer->Unlock();
 
-				NativeD3DStateManager* mgr = m_device->getNativeStateManager();
+				//NativeD3DStateManager* mgr = m_device->getNativeStateManager();
 
-				bool oldEnable = mgr->getAlphaBlendEnable();
-				BlendFunction oldFunc = mgr->getAlphaBlendOperation();
-				Blend oldSrcBlend = mgr->getAlphaSourceBlend();
-				Blend oldDstBlend = mgr->getAlphaDestinationBlend();
-				uint oldBlendFactor = mgr->getAlphaBlendFactor();
-				bool oldDepthEnabled = mgr->getDepthBufferEnabled();
-				CullMode cull = mgr->getCullMode();
-
-				mgr->SetDepth(false, mgr->getDepthBufferWriteEnabled());
-				mgr->SetAlphaBlend(true, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, oldBlendFactor);
-				//mgr->SetAlphaBlend(false, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, oldBlendFactor);
-				mgr->SetCullMode(CULL_None);
-
-				//m_rawDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
-				m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
-				m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
-				m_rawDevice->SetVertexShader(NULL); m_rawDevice->SetPixelShader(NULL);
-				m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-				m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-				m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 				m_rawDevice->SetTexture(0,0);
-
 				D3D9Texture* currentTexture = NULL;
 				for (int i=0;i<m_deferredDraws.getCount();i++)
 				{
@@ -224,10 +267,7 @@ namespace Apoc3D
 					m_rawDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i*4, 2);
 				}
 
-				//m_rawDevice->SetFVF(0);
-				mgr->SetAlphaBlend(oldEnable, oldFunc, oldSrcBlend, oldDstBlend, oldBlendFactor);
-				mgr->SetDepth(oldDepthEnabled, mgr->getDepthBufferWriteEnabled());
-				mgr->SetCullMode(cull);
+
 
 				m_deferredDraws.Clear();
 			}
@@ -238,10 +278,7 @@ namespace Apoc3D
 				DrawEntry drawE;
 				drawE.Tex = static_cast<D3D9Texture*>(texture);
 				
-				drawE.TL.Diffuse = color;
-				drawE.TR.Diffuse = color;
-				drawE.BL.Diffuse = color;
-				drawE.BR.Diffuse = color;
+				drawE.TL.Diffuse = drawE.TR.Diffuse = drawE.BL.Diffuse = drawE.BR.Diffuse = color;
 
 				const Matrix& trans = t;//getTransform();
 
@@ -284,6 +321,7 @@ namespace Apoc3D
 					drawE.BR.Position[2] = _V3Z(br);
 					drawE.BR.Position[3] = 1;
 
+
 					width = (float)texture->getWidth();
 					height = (float)texture->getHeight();
 
@@ -306,6 +344,7 @@ namespace Apoc3D
 					tr = Vector3Utils::TransformCoordinate(tr, trans);
 					bl = Vector3Utils::TransformCoordinate(bl, trans);
 					br = Vector3Utils::TransformCoordinate(br, trans);
+
 
 					drawE.TL.Position[0] = _V3X(tl)-0.5f;
 					drawE.TL.Position[1] = _V3Y(tl)-0.5f;
@@ -383,10 +422,7 @@ namespace Apoc3D
 				drawE.BR.Position[2] = _V3Z(br);
 				drawE.BR.Position[3] = 1;
 
-				drawE.TL.Diffuse = color;
-				drawE.TR.Diffuse = color;
-				drawE.BL.Diffuse = color;
-				drawE.BR.Diffuse = color;
+				drawE.TL.Diffuse = drawE.TR.Diffuse = drawE.BL.Diffuse = drawE.BR.Diffuse = color;
 
 				drawE.TL.TexCoord[0] = 0; drawE.TL.TexCoord[1] = 0;
 				drawE.TR.TexCoord[0] = 1; drawE.TR.TexCoord[1] = 0;

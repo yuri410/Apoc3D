@@ -31,7 +31,8 @@ namespace Apoc3D
 		namespace RenderSystem
 		{
 			Sprite::Sprite(RenderDevice* rd)
-				: m_renderDevice(rd), m_transform(Matrix::Identity), m_stack(10)
+				: m_renderDevice(rd), m_transform(Matrix::Identity), m_stack(10), 
+				m_currentSettings((SpriteSettings)(SPR_ChangeState | SPR_AlphaBlended))
 			{
 				
 			}
@@ -43,13 +44,13 @@ namespace Apoc3D
 
 			void Sprite::PopTransform()
 			{
-				if (m_useStack)
+				if (m_currentSettings & SPR_UsePostTransformStack)
 				{
 					m_stack.PopMatrix();
 				}
 				else
 				{
-					throw Apoc3DException::createException(EX_InvalidOperation, L"The sprite is not begun width useStack=true.");
+					throw Apoc3DException::createException(EX_InvalidOperation, L"The sprite is not begun with SPR_UsePostTransformStack.");
 				}
 			}
 		}

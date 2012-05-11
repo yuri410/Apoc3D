@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9Common.h"
 #include "Graphics/RenderSystem/Sprite.h"
+#include "Graphics/GraphicsCommon.h"
 #include "Collections/FastList.h"
 
 using namespace Apoc3D::Collections;
@@ -45,7 +46,7 @@ namespace Apoc3D
 				D3D9Sprite(D3D9RenderDevice* device);
 				~D3D9Sprite();
 
-				virtual void Begin(bool alphabled, bool useStack);
+				virtual void Begin(SpriteSettings settings);
 				virtual void End();
 
 				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color)
@@ -65,6 +66,9 @@ namespace Apoc3D
 				void AddNormalDraw(Texture* texture, float x, float y, uint color);
 				void AddTransformedDraw(Texture* texture, const Matrix& t, const RECT* srcRect, uint color);
 
+				void SetRenderState();
+				void RestoreRenderState();
+
 				struct QuadVertex
 				{
 					float Position[4];
@@ -80,17 +84,26 @@ namespace Apoc3D
 					QuadVertex BL;
 					QuadVertex BR;
 				};
+				struct  
+				{
+					bool oldAlphaBlendEnable;
+					BlendFunction oldBlendFunc;
+					Blend oldSrcBlend;
+					Blend oldDstBlend;
+					uint oldBlendFactor;
+					bool oldDepthEnabled;
+					CullMode oldCull;
+				} m_storedState;
 
 				D3D9VertexDeclaration* m_vtxDecl;
 				D3D9VertexBuffer* m_quadBuffer;
 
 				D3D9RenderDevice* m_device;
 				D3DDevice* m_rawDevice;
-				bool m_alphaEnabled;
+				SpriteSettings m_currentSettings;
 
 
 				FastList<DrawEntry> m_deferredDraws;
-
 
 			};
 		}

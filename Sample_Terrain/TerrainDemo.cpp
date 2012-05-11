@@ -283,7 +283,7 @@ namespace SampleTerrain
 
 		Game::Draw(time);
 		
-		m_sprite->Begin(true, false);
+		m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_RestoreState));
 		DrawUI(m_sprite);
 
 

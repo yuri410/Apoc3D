@@ -417,6 +417,8 @@ namespace Apoc3D
 				}
 
 			}
+			const ShaderSamplerState& NativeD3DStateManager::getPixelSampler(int samplerIndex) const { return m_pixelSamplers[samplerIndex]; }
+			const ShaderSamplerState& NativeD3DStateManager::getVertexSampler(int samplerIndex) const { return m_vertexSamplers[samplerIndex]; }
 
 			void NativeD3DStateManager::InitializeDefaultState()
 			{

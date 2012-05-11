@@ -135,6 +135,8 @@ namespace Apoc3D
 				void SetVertexSampler(int samplerIndex, const ShaderSamplerState& sampler);
 				void SetPixelSampler(int samplerIndex, const ShaderSamplerState& sampler);
 
+				const ShaderSamplerState& getPixelSampler(int samplerIndex) const;
+				const ShaderSamplerState& getVertexSampler(int samplerIndex) const;
 
 			private:
 				D3D9RenderDevice* m_device;

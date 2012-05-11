@@ -46,15 +46,35 @@ namespace Apoc3D
 			class APAPI Sprite
 			{
 			public:
+				enum SpriteSettings
+				{
+					/** Modify render states, but not restore them
+					*/
+					SPR_ChangeState=1,  // 01
+					/** Keep render states unchanged
+					*/
+					SPR_KeepState=2,	// 10
+					/** Modify render states when Begin() and restore when calling End()
+					*/
+					SPR_RestoreState=3,	// 11
+					
+					
+
+
+					SPR_AlphaBlended =4,
+					SPR_UsePostTransformStack=8
+				};
+
+
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
-				bool isUsingStack() const { return m_useStack; }
+				bool isUsingStack() const { return !!(m_currentSettings & SPR_UsePostTransformStack); }
 
 
 				virtual ~Sprite();
 
-				virtual void Begin(bool alphabled, bool useStack)
+				virtual void Begin(SpriteSettings settings)
 				{
-					m_useStack = useStack;
+					m_currentSettings = settings;
 				}
 
 				virtual void End() = 0;
@@ -70,7 +90,7 @@ namespace Apoc3D
 
 				const Matrix& getTransform() const 
 				{
-					if (m_useStack)
+					if (m_currentSettings & SPR_UsePostTransformStack)
 					{
 						if (m_stack.getCount())
 							return m_stack.Peek();
@@ -98,7 +118,7 @@ namespace Apoc3D
 				*/
 				virtual void SetTransform(const Matrix& matrix)
 				{
-					if (m_useStack)
+					if (m_currentSettings & SPR_UsePostTransformStack)
 					{
 						m_stack.PushMatrix(matrix);
 					}
@@ -113,11 +133,12 @@ namespace Apoc3D
 				Matrix m_transform;
 				MatrixStack m_stack;
 
-				bool m_useStack;
+				SpriteSettings m_currentSettings;
 
 			protected:
 				Sprite(RenderDevice* rd);
 
+				SpriteSettings getSettings() const { return m_currentSettings; }
 			};
 		}
 	}
