@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Apoc3DException.h"
 #include "D3D9Texture.h"
 #include "D3D9Utils.h"
+#include "D3D9RenderStateManager.h"
 
 #include "Utility/StringUtils.h"
 
@@ -294,7 +295,7 @@ namespace Apoc3D
 				D3DBaseTexture* value = 0;
 				if (tex)
 				{
-					if (tex->getState() == RS_Loaded || !tex->isManaged())
+					if (!tex->isManaged() || tex->getState() == RS_Loaded)
 					{
 						D3D9Texture* d3dTex = static_cast<D3D9Texture*>(tex);
 
@@ -316,25 +317,7 @@ namespace Apoc3D
 			}
 			void D3D9PixelShader::SetSamplerState(int samIndex, const ShaderSamplerState &state) 
 			{
-				D3DDevice* dev = m_device->getDevice();
-
-				dev->SetSamplerState(samIndex, D3DSAMP_ADDRESSU, D3D9Utils::ConvertTextureAddress(state.AddressU));
-				dev->SetSamplerState(samIndex, D3DSAMP_ADDRESSV, D3D9Utils::ConvertTextureAddress(state.AddressV));
-				dev->SetSamplerState(samIndex, D3DSAMP_ADDRESSW, D3D9Utils::ConvertTextureAddress(state.AddressW));
-
-				dev->SetSamplerState(samIndex, D3DSAMP_BORDERCOLOR, state.BorderColor);
-				dev->SetSamplerState(samIndex, D3DSAMP_MAGFILTER, D3D9Utils::ConvertTextureFilter(state.MagFilter));
-				dev->SetSamplerState(samIndex, D3DSAMP_MINFILTER, D3D9Utils::ConvertTextureFilter(state.MinFilter));
-				dev->SetSamplerState(samIndex, D3DSAMP_MIPFILTER, D3D9Utils::ConvertTextureFilter(state.MipFilter));
-
-				if (state.MaxAnisotropy < 1)
-					dev->SetSamplerState(samIndex, D3DSAMP_MAXANISOTROPY, 1);
-				else
-					dev->SetSamplerState(samIndex, D3DSAMP_MAXANISOTROPY, state.MaxAnisotropy);
-
-				dev->SetSamplerState(samIndex, D3DSAMP_MAXMIPLEVEL, state.MaxMipLevel);
-				dev->SetSamplerState(samIndex, D3DSAMP_MIPMAPLODBIAS, state.MipMapLODBias);
-
+				m_device->getNativeStateManager()->SetPixelSampler(samIndex, state);
 			}
 
 

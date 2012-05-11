@@ -48,18 +48,14 @@ namespace Apoc3D
 				inline D3DDevice* getDevice() const;
 				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
 
-
 				
 				bool isInitialized() const { return !!m_stateManager; }
-
-
 
 				D3D9RenderDevice(GraphicsDeviceManager* devManager);
 				~D3D9RenderDevice();
 				
 				void OnDeviceReset();
 				void OnDeviceLost();
-
 
 
 				virtual void Initialize();
@@ -86,6 +82,8 @@ namespace Apoc3D
 				virtual void setViewport(const Viewport& vp);
 
 				virtual Capabilities* const getCapabilities() const;
+
+				NativeD3DStateManager* getNativeStateManager() const { return m_nativeState; }
 			private:
 				friend class VolatileResource;
 

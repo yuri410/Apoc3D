@@ -99,10 +99,10 @@
     <ClInclude Include="D3D9RenderViewSet.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3D9Sprite.h">
+    <ClInclude Include="D3D9InstancingData.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3D9InstancingData.h">
+    <ClInclude Include="D3D9Sprite.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -176,10 +176,10 @@
     <ClCompile Include="D3D9RenderViewSet.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D3D9Sprite.cpp">
+    <ClCompile Include="D3D9InstancingData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="D3D9InstancingData.cpp">
+    <ClCompile Include="D3D9Sprite.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

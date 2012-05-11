@@ -27,8 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9Common.h"
 #include "Graphics/RenderSystem/Sprite.h"
-#include "VolatileResource.h"
+#include "Collections/FastList.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
 
@@ -38,11 +39,8 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9Sprite : public Sprite, public VolatileResource
+			class D3D9Sprite : public Sprite
 			{
-			private:
-				D3DSprite* m_sprite;
-
 			public:
 				D3D9Sprite(D3D9RenderDevice* device);
 				~D3D9Sprite();
@@ -63,10 +61,37 @@ namespace Apoc3D
 				virtual void Flush();
 
 				virtual void SetTransform(const Matrix& matrix);
+			private:
+				void AddNormalDraw(Texture* texture, float x, float y, uint color);
+				void AddTransformedDraw(Texture* texture, const Matrix& t, const RECT* srcRect, uint color);
+
+				struct QuadVertex
+				{
+					float Position[4];
+					uint Diffuse;
+					float TexCoord[2];
+				};
+				struct DrawEntry
+				{
+					D3D9Texture* Tex;
+
+					QuadVertex TL;
+					QuadVertex TR;
+					QuadVertex BL;
+					QuadVertex BR;
+				};
+
+				D3D9VertexDeclaration* m_vtxDecl;
+				D3D9VertexBuffer* m_quadBuffer;
+
+				D3D9RenderDevice* m_device;
+				D3DDevice* m_rawDevice;
+				bool m_alphaEnabled;
 
 
-				virtual void ReleaseVolatileResource();
-				virtual void ReloadVolatileResource();
+				FastList<DrawEntry> m_deferredDraws;
+
+
 			};
 		}
 	}

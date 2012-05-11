@@ -60,13 +60,17 @@ namespace Apoc3D
 				if (getUsage() & BU_Dynamic)
 				{
 					if (m_tempData)
+					{
 						delete[] m_tempData;
-					m_tempData = new char[getSize()];
+						m_tempData = NULL;
+					}
 
 					HRESULT hr;
 
 					if ((getUsage() & BU_WriteOnly) == 0)
 					{
+						m_tempData = new char[getSize()];
+
 						void* data;
 						hr = m_indexBuffer->Lock(0, getSize(), &data, D3DLOCK_READONLY);
 						assert(SUCCEEDED(hr));
@@ -87,7 +91,7 @@ namespace Apoc3D
 					HRESULT hr = dev->CreateIndexBuffer(getSize(), 
 						D3D9Utils::ConvertBufferUsage(getUsage()), 
 						getIndexType() == IBT_Bit16 ? D3DFMT_INDEX16 : D3DFMT_INDEX32, 
-						D3DPOOL_MANAGED, &m_indexBuffer, NULL);
+						D3DPOOL_DEFAULT, &m_indexBuffer, NULL);
 					assert(SUCCEEDED(hr));
 
 					if (m_tempData)

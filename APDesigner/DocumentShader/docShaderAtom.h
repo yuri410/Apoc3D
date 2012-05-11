@@ -58,6 +58,8 @@ namespace APDesigner
 		ComboBox* m_cbProfile;
 		ComboBox* m_cbShaderType;
 
+		ListView* m_lbPorts;
+
 		FastList<Label*> m_labels;
 
 	};

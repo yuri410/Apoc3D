@@ -24,6 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Sprite.h"
 #include "D3D9RenderDevice.h"
 #include "D3D9Texture.h"
+#include "D3D9VertexDeclaration.h"
+#include "Buffer/D3D9VertexBuffer.h"
+#include "D3D9RenderStateManager.h"
 
 namespace Apoc3D
 {
@@ -31,65 +34,40 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			int MaxVertices = 1024;
+			int FlushThreshold = MaxVertices/5;
+
 			D3D9Sprite::D3D9Sprite(D3D9RenderDevice* device)
-				: Sprite(device), VolatileResource(device)
+				: Sprite(device), m_device(device), m_rawDevice(device->getDevice()), m_alphaEnabled(false)
 			{
-				HRESULT hr = D3DXCreateSprite(device->getDevice(), &m_sprite);
-				assert(SUCCEEDED(hr));
+				FastList<VertexElement> elements;
+				elements.Add(VertexElement(0, VEF_Vector4, VEU_PositionTransformed));
+				elements.Add(VertexElement(16, VEF_Color, VEU_Color));
+				elements.Add(VertexElement(20, VEF_Vector2, VEU_TextureCoordinate,0));
+
+				m_vtxDecl = new D3D9VertexDeclaration(device, elements);
+
+				int test = m_vtxDecl->GetVertexSize();
+				m_quadBuffer = new D3D9VertexBuffer(device, MaxVertices * m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic|BU_WriteOnly));
 			}
 			D3D9Sprite::~D3D9Sprite()
 			{
-				m_sprite->Release();
-				m_sprite = 0;
+				delete m_vtxDecl;
+				delete m_quadBuffer;
 			}
 			void D3D9Sprite::Begin(bool alphabled, bool useStack)
 			{
-				HRESULT hr = m_sprite->Begin(alphabled ? D3DXSPRITE_ALPHABLEND : 0);
-				assert(SUCCEEDED(hr));
 				Sprite::Begin(alphabled, useStack);
+
+				m_alphaEnabled = alphabled;
+
+				D3DVIEWPORT9 vp;
+				m_rawDevice->GetViewport(&vp);
+
 			}
 			void D3D9Sprite::End()
 			{
-				HRESULT hr = m_sprite->End();
-				assert(SUCCEEDED(hr));
-			}
-
-
-			void D3D9Sprite::Draw(Texture* texture, Vector2 pos, uint color)
-			{
-				D3DVector3 position;
-				position.x = Vector2Utils::GetX(pos);
-				position.y = Vector2Utils::GetY(pos);
-				position.z = 0;
-
-				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-					0, 0, &position, color);
-				assert(SUCCEEDED(hr));
-				
-			}
-			void D3D9Sprite::Draw(Texture* texture, const Point& pos, uint color)
-			{
-				D3DVector3 position;
-				position.x = (float)pos.X;
-				position.y = (float)pos.Y;
-				position.z = 0;
-				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-					0, 0, &position, color);
-				assert(SUCCEEDED(hr));
-			}
-			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
-			{
-				D3DVector3 position;
-				position.x = pos.X;
-				position.y = pos.Y;
-				position.z = 0;
-				HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-					0, 0, &position, color);
-				assert(SUCCEEDED(hr));
-			}
-			void D3D9Sprite::Draw(Texture* texture, int x, int y, uint color)
-			{
-				Draw(texture, Point(x,y), color);
+				Flush();
 			}
 
 			// Auto resizing to fit the target rectangle is implemented in this method.
@@ -97,16 +75,9 @@ namespace Apoc3D
 			void D3D9Sprite::Draw(Texture* texture, 
 				const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
 			{
-				
-				D3DVector3 position;
-				position.x = static_cast<float>(dstRect.X);
-				position.y = static_cast<float>(dstRect.Y);
-				position.z = 0;
+				float position[3] = { (float)dstRect.X, (float)dstRect.Y, 0 };
 
-				//D3DVector3 center;
-				//center.x = static_cast<float>(position.x + dstRect.Width * 0.5f);
-				//center.y = static_cast<float>(position.y + dstRect.Height * 0.5f);
-				//center.z = 0;
+				Matrix tempM;
 
 				if (srcRect)
 				{
@@ -129,105 +100,312 @@ namespace Apoc3D
 						LONG temp = r.right;
 						r.right = r.left;
 						r.left = temp;
-						position.x -= (float)( r.left - r.right);
+						position[0] -= (float)( r.left - r.right);
 					}
 					if (r.top>r.bottom)
 					{
 						LONG temp = r.bottom;
 						r.bottom = r.top;
 						r.top = temp;
-						position.y -= (float)( r.top - r.bottom);
+						position[1] -= (float)( r.top - r.bottom);
 					}
 
-					// scaling is required when the 2 rects' size do not match
-					if (srcRect->Width != dstRect.Width || srcRect->Height != dstRect.Height)
+					//// scaling is required when the 2 rects' size do not match
+					//if (srcRect->Width != dstRect.Width || srcRect->Height != dstRect.Height)
 					{
 						// calculate a scaling and translation matrix
-						D3DMatrix trans;
-						D3DXMatrixTranslation(&trans, position.x, position.y, position.z);
-						trans._11 = (float)dstRect.Width / (float)srcRect->Width;
-						trans._22 = (float)dstRect.Height / (float)srcRect->Height;
+						Matrix trans;
+						Matrix::CreateTranslation(trans, position[0], position[1], position[2]);
+						trans.M11 = (float)dstRect.Width / (float)srcRect->Width;
+						trans.M22 = (float)dstRect.Height / (float)srcRect->Height;
 
 						// add "trans" at the the beginning for the result
-						D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-						D3DXMatrixMultiply(&trans, &trans,&baseTrans);
-						
-						m_sprite->SetTransform(&trans);
+						const Matrix& baseTrans = getTransform();
+						Matrix::Multiply(tempM, trans, baseTrans);
 
 						// As the position have been added to the transform, 
 						// draw the texture at the origin
-						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-							&r, NULL, NULL, color);
-						assert(SUCCEEDED(hr));
+						AddTransformedDraw(texture, tempM, &r, color);
 
-						// restore the normal transform to keep others working well
-						m_sprite->SetTransform(&baseTrans);
 					}
-					else
-					{
-						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-							&r, NULL, &position, color);
-						assert(SUCCEEDED(hr));
-					}
+					//else
+					//{
+					//	//AddTransformedDraw(texture, tempM, &r, color);
+					//	//AddNormalDraw(texture, position[0], position[1], color);
+					//}
 				}
 				else
 				{
-					// scaling is required when the dstRect's size do not match the texture's
-
-					if (texture->getWidth() != dstRect.Width || texture->getHeight() != dstRect.Height)
+					//// scaling is required when the dstRect's size do not match the texture's
+					//if (texture->getWidth() != dstRect.Width || texture->getHeight() != dstRect.Height)
 					{
-						D3DMatrix trans;
-						D3DXMatrixTranslation(&trans, position.x, position.y, position.z);
-						trans._11 = (float)dstRect.Width / (float)texture->getWidth();
-						trans._22 = (float)dstRect.Height / (float)texture->getHeight();
-						
-						D3DMatrix baseTrans = reinterpret_cast<const D3DMatrix&>(getTransform());
-						D3DXMatrixMultiply(&trans,  &trans, &baseTrans);
+						Matrix trans;
+						Matrix::CreateTranslation(trans, position[0], position[1], position[2]);
+						trans.M11 = (float)dstRect.Width / (float)texture->getWidth();
+						trans.M22 = (float)dstRect.Height / (float)texture->getHeight();
 
-						m_sprite->SetTransform(&trans);
+						const Matrix& baseTrans = getTransform();
+						Matrix::Multiply(tempM, trans, baseTrans);
 
-						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-							NULL, NULL, NULL, color);
-						assert(SUCCEEDED(hr));
-
-						m_sprite->SetTransform(&baseTrans);
+						// As the position have been added to the transform, 
+						// draw the texture at the origin
+						AddTransformedDraw(texture, tempM, NULL, color);
 					}
-					else
-					{
-						HRESULT hr = m_sprite->Draw(static_cast<D3D9Texture*>(texture)->getInternal2D(),
-							NULL, NULL, &position, color);
-						assert(SUCCEEDED(hr));
-						
-					}
+					//else
+					//{
+						//AddNormalDraw(texture, position[0], position[1], color);
+					//}
 				}
+			}
+
+
+			void D3D9Sprite::Draw(Texture* texture, Vector2 pos, uint color)
+			{
+				AddNormalDraw(texture, Vector2Utils::GetX(pos), Vector2Utils::GetY(pos), color);
+			}
+			void D3D9Sprite::Draw(Texture* texture, const Point& pos, uint color)
+			{
+				AddNormalDraw(texture, (float)pos.X, (float)pos.Y, color);
+			}
+			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
+			{
+				AddNormalDraw(texture, pos.X, pos.Y, color);
+			}
+			void D3D9Sprite::Draw(Texture* texture, int x, int y, uint color)
+			{
+				AddNormalDraw(texture, (float)x, (float)y, color);
 			}
 
 			void D3D9Sprite::Flush()
 			{
-				HRESULT hr = m_sprite->Flush();
-				assert(SUCCEEDED(hr));
+				char* vtxData = (char*)m_quadBuffer->Lock(0, m_deferredDraws.getCount()*4*sizeof(QuadVertex), LOCK_Discard);
+
+				for (int i=0;i<m_deferredDraws.getCount();i++)
+				{
+					memcpy(vtxData, &m_deferredDraws[i].TL, sizeof(QuadVertex)*4);
+
+					vtxData+= sizeof(QuadVertex)*4;
+				}
+
+				m_quadBuffer->Unlock();
+
+				NativeD3DStateManager* mgr = m_device->getNativeStateManager();
+
+				bool oldEnable = mgr->getAlphaBlendEnable();
+				BlendFunction oldFunc = mgr->getAlphaBlendOperation();
+				Blend oldSrcBlend = mgr->getAlphaSourceBlend();
+				Blend oldDstBlend = mgr->getAlphaDestinationBlend();
+				uint oldBlendFactor = mgr->getAlphaBlendFactor();
+				bool oldDepthEnabled = mgr->getDepthBufferEnabled();
+				CullMode cull = mgr->getCullMode();
+
+				mgr->SetDepth(false, mgr->getDepthBufferWriteEnabled());
+				mgr->SetAlphaBlend(true, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, oldBlendFactor);
+				//mgr->SetAlphaBlend(false, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, oldBlendFactor);
+				mgr->SetCullMode(CULL_None);
+
+				//m_rawDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+				m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
+				m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
+				m_rawDevice->SetVertexShader(NULL); m_rawDevice->SetPixelShader(NULL);
+				m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+				m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+				m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+				m_rawDevice->SetTexture(0,0);
+
+				D3D9Texture* currentTexture = NULL;
+				for (int i=0;i<m_deferredDraws.getCount();i++)
+				{
+					if (m_deferredDraws[i].Tex != currentTexture)
+					{
+						m_rawDevice->SetTexture(0, m_deferredDraws[i].Tex->getInternal2D());
+					}
+
+					m_rawDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i*4, 2);
+				}
+
+				//m_rawDevice->SetFVF(0);
+				mgr->SetAlphaBlend(oldEnable, oldFunc, oldSrcBlend, oldDstBlend, oldBlendFactor);
+				mgr->SetDepth(oldDepthEnabled, mgr->getDepthBufferWriteEnabled());
+				mgr->SetCullMode(cull);
+
+				m_deferredDraws.Clear();
+			}
+
+			void D3D9Sprite::AddTransformedDraw(Texture* texture, const Matrix& t, const RECT* srcRect, uint color)
+			{
+			
+				DrawEntry drawE;
+				drawE.Tex = static_cast<D3D9Texture*>(texture);
+				
+				drawE.TL.Diffuse = color;
+				drawE.TR.Diffuse = color;
+				drawE.BL.Diffuse = color;
+				drawE.BR.Diffuse = color;
+
+				const Matrix& trans = t;//getTransform();
+
+				if (srcRect)
+				{
+					float width = (float)(srcRect->right-srcRect->left);
+					float height = (float)(srcRect->bottom-srcRect->top);
+
+					//Vector3 tl = Vector3Utils::LDVector((float)srcRect->left, (float)srcRect->top,0);
+					//Vector3 tr = Vector3Utils::LDVector((float)srcRect->right, (float)srcRect->top,0);
+					//Vector3 bl = Vector3Utils::LDVector((float)srcRect->left, (float)srcRect->bottom,0);
+					//Vector3 br = Vector3Utils::LDVector((float)srcRect->right, (float)srcRect->bottom, 0);
+					Vector3 tl = Vector3Utils::LDVector(0, 0,0);
+					Vector3 tr = Vector3Utils::LDVector(width, 0,0);
+					Vector3 bl = Vector3Utils::LDVector(0, height,0);
+					Vector3 br = Vector3Utils::LDVector(width, height, 0);
+
+					tl = Vector3Utils::TransformCoordinate(tl, trans);
+					tr = Vector3Utils::TransformCoordinate(tr, trans);
+					bl = Vector3Utils::TransformCoordinate(bl, trans);
+					br = Vector3Utils::TransformCoordinate(br, trans);
+					
+					drawE.TL.Position[0] = _V3X(tl)-0.5f;
+					drawE.TL.Position[1] = _V3Y(tl)-0.5f;
+					drawE.TL.Position[2] = _V3Z(tl);
+					drawE.TL.Position[3] = 1;
+
+					drawE.TR.Position[0] = _V3X(tr)-0.5f;
+					drawE.TR.Position[1] = _V3Y(tr)-0.5f;
+					drawE.TR.Position[2] = _V3Z(tr);
+					drawE.TR.Position[3] = 1;
+
+					drawE.BL.Position[0] = _V3X(bl)-0.5f;
+					drawE.BL.Position[1] = _V3Y(bl)-0.5f;
+					drawE.BL.Position[2] = _V3Z(bl);
+					drawE.BL.Position[3] = 1;
+
+					drawE.BR.Position[0] = _V3X(br)-0.5f;
+					drawE.BR.Position[1] = _V3Y(br)-0.5f;
+					drawE.BR.Position[2] = _V3Z(br);
+					drawE.BR.Position[3] = 1;
+
+					width = (float)texture->getWidth();
+					height = (float)texture->getHeight();
+
+					drawE.TL.TexCoord[0] = srcRect->left/width ;		drawE.TL.TexCoord[1] = srcRect->top/height;
+					drawE.TR.TexCoord[0] = srcRect->right/width;		drawE.TR.TexCoord[1] = srcRect->top/height;
+					drawE.BL.TexCoord[0] = srcRect->left/width ;		drawE.BL.TexCoord[1] = srcRect->bottom/height;
+					drawE.BR.TexCoord[0] = srcRect->right/width;		drawE.BR.TexCoord[1] = srcRect->bottom/height;
+				}
+				else
+				{
+					float width = (float)texture->getWidth();
+					float height = (float)texture->getHeight();
+
+					Vector3 tl = Vector3Utils::LDVector(0,0,0);
+					Vector3 tr = Vector3Utils::LDVector(width, 0,0);
+					Vector3 bl = Vector3Utils::LDVector(0, height,0);
+					Vector3 br = Vector3Utils::LDVector(width, height, 0);
+
+					tl = Vector3Utils::TransformCoordinate(tl, trans);
+					tr = Vector3Utils::TransformCoordinate(tr, trans);
+					bl = Vector3Utils::TransformCoordinate(bl, trans);
+					br = Vector3Utils::TransformCoordinate(br, trans);
+
+					drawE.TL.Position[0] = _V3X(tl)-0.5f;
+					drawE.TL.Position[1] = _V3Y(tl)-0.5f;
+					drawE.TL.Position[2] = _V3Z(tl);
+					drawE.TL.Position[3] = 1;
+
+					drawE.TR.Position[0] = _V3X(tr)-0.5f;
+					drawE.TR.Position[1] = _V3Y(tr)-0.5f;
+					drawE.TR.Position[2] = _V3Z(tr);
+					drawE.TR.Position[3] = 1;
+
+					drawE.BL.Position[0] = _V3X(bl)-0.5f;
+					drawE.BL.Position[1] = _V3Y(bl)-0.5f;
+					drawE.BL.Position[2] = _V3Z(bl);
+					drawE.BL.Position[3] = 1;
+
+					drawE.BR.Position[0] = _V3X(br)-0.5f;
+					drawE.BR.Position[1] = _V3Y(br)-0.5f;
+					drawE.BR.Position[2] = _V3Z(br);
+					drawE.BR.Position[3] = 1;
+
+
+					drawE.TL.TexCoord[0] = 0; drawE.TL.TexCoord[1] = 0;
+					drawE.TR.TexCoord[0] = 1; drawE.TR.TexCoord[1] = 0;
+					drawE.BL.TexCoord[0] = 0; drawE.BL.TexCoord[1] = 1;
+					drawE.BR.TexCoord[0] = 1; drawE.BR.TexCoord[1] = 1;
+
+				}
+
+				m_deferredDraws.Add(drawE);
+
+				if (m_deferredDraws.getCount()>FlushThreshold)
+				{
+					Flush();
+				}
+			}
+			void D3D9Sprite::AddNormalDraw(Texture* texture, float x, float y, uint color)
+			{
+				float width = (float)texture->getWidth();
+				float height = (float)texture->getHeight();
+
+				const Matrix& trans = getTransform();
+
+				Vector3 tl = Vector3Utils::LDVector(x,y,0);
+				Vector3 tr = Vector3Utils::LDVector(width+x, y,0);
+				Vector3 bl = Vector3Utils::LDVector(x, height+y,0);
+				Vector3 br = Vector3Utils::LDVector(width+x, height+y, 0);
+
+				tl = Vector3Utils::TransformCoordinate(tl, trans);
+				tr = Vector3Utils::TransformCoordinate(tr, trans);
+				bl = Vector3Utils::TransformCoordinate(bl, trans);
+				br = Vector3Utils::TransformCoordinate(br, trans);
+
+
+				DrawEntry drawE;
+
+				drawE.Tex = static_cast<D3D9Texture*>(texture);
+				drawE.TL.Position[0] = _V3X(tl)-0.5f;
+				drawE.TL.Position[1] = _V3Y(tl)-0.5f;
+				drawE.TL.Position[2] = _V3Z(tl);
+				drawE.TL.Position[3] = 1;
+
+				drawE.TR.Position[0] = _V3X(tr)-0.5f;
+				drawE.TR.Position[1] = _V3Y(tr)-0.5f;
+				drawE.TR.Position[2] = _V3Z(tr);
+				drawE.TR.Position[3] = 1;
+
+				drawE.BL.Position[0] = _V3X(bl)-0.5f;
+				drawE.BL.Position[1] = _V3Y(bl)-0.5f;
+				drawE.BL.Position[2] = _V3Z(bl);
+				drawE.BL.Position[3] = 1;
+
+				drawE.BR.Position[0] = _V3X(br)-0.5f;
+				drawE.BR.Position[1] = _V3Y(br)-0.5f;
+				drawE.BR.Position[2] = _V3Z(br);
+				drawE.BR.Position[3] = 1;
+
+				drawE.TL.Diffuse = color;
+				drawE.TR.Diffuse = color;
+				drawE.BL.Diffuse = color;
+				drawE.BR.Diffuse = color;
+
+				drawE.TL.TexCoord[0] = 0; drawE.TL.TexCoord[1] = 0;
+				drawE.TR.TexCoord[0] = 1; drawE.TR.TexCoord[1] = 0;
+				drawE.BL.TexCoord[0] = 0; drawE.BL.TexCoord[1] = 1;
+				drawE.BR.TexCoord[0] = 1; drawE.BR.TexCoord[1] = 1;
+
+				m_deferredDraws.Add(drawE);
+
+				if (m_deferredDraws.getCount()>FlushThreshold)
+				{
+					Flush();
+				}
 			}
 
 			void D3D9Sprite::SetTransform(const Matrix& matrix)
 			{
 				Sprite::SetTransform(matrix);
-
-				// This will set the transformation. 
-				// When using stack, the top matrix will be used.
-				HRESULT hr = m_sprite->SetTransform(reinterpret_cast<const D3DMatrix*>(&getTransform()));
-				assert(SUCCEEDED(hr));
 			}
 
-			void D3D9Sprite::ReleaseVolatileResource()
-			{
-				HRESULT hr = m_sprite->OnLostDevice();
-				assert(SUCCEEDED(hr));
-			}
-			void D3D9Sprite::ReloadVolatileResource()
-			{
-				HRESULT hr = m_sprite->OnResetDevice();
-				assert(SUCCEEDED(hr));
-			}
 		}
 	}
 }

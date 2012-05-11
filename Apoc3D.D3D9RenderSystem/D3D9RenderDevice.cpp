@@ -177,16 +177,17 @@ namespace Apoc3D
 					L"[D3D9]Initializing D3D9 Render Device. ", 
 					LOGLVL_Infomation);
 
+				D3DDevice* dev = getDevice();
+				D3DCAPS9 caps;
+				dev->GetDeviceCaps(&caps);
+
 				m_nativeState = new NativeD3DStateManager(this);
 				m_stateManager = new D3D9RenderStateManager(this, m_nativeState);
 				m_renderStates = m_stateManager;
 				m_objectFactory = new D3D9ObjectFactory(this);
 
-				D3DDevice* dev = getDevice();
 
-				D3DCAPS9 caps;
-				dev->GetDeviceCaps(&caps);
-
+				//caps.MaxSimultaneousTextures
 				m_cachedRenderTarget = new D3D9RenderTarget*[caps.NumSimultaneousRTs];
 				memset(m_cachedRenderTarget, 0, sizeof(D3D9RenderTarget*) * caps.NumSimultaneousRTs);
 

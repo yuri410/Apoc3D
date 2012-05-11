@@ -566,7 +566,7 @@ namespace Apoc3D
 				{
 					result |= D3DUSAGE_WRITEONLY;
 				}
-				else if ((usage & BU_Dynamic) == BU_Dynamic)
+				if ((usage & BU_Dynamic) == BU_Dynamic)
 				{
 					result |= D3DUSAGE_DYNAMIC;
 				}

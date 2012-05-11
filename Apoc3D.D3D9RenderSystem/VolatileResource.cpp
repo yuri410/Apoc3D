@@ -33,13 +33,13 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			VolatileResource::VolatileResource(D3D9RenderDevice* device)
-				: m_device(device)
+				: m_rawDevice(device)
 			{
-				m_device->TrackVolatileResource(this);
+				m_rawDevice->TrackVolatileResource(this);
 			}
 			VolatileResource::~VolatileResource()
 			{
-				m_device->UntrackVolatileResource(this);
+				m_rawDevice->UntrackVolatileResource(this);
 			}
 
 		}

@@ -53,12 +53,16 @@ namespace Apoc3D
 				if (getUsage() & BU_Dynamic)
 				{
 					if (m_tempData)
+					{
 						delete[] m_tempData;
-					m_tempData = new char[getSize()];
+						m_tempData = NULL;
+					}
 
 					HRESULT hr;
 					if ((getUsage() & BU_WriteOnly)==0)
 					{
+						m_tempData = new char[getSize()];
+
 						void* data;
 						hr = m_vertexBuffer->Lock(0,getSize(), &data, D3DLOCK_READONLY);
 						assert(SUCCEEDED(hr));
@@ -78,7 +82,7 @@ namespace Apoc3D
 				{
 					D3DDevice* dev = m_device->getDevice();
 					HRESULT hr = dev->CreateVertexBuffer(getSize(), 
-						D3D9Utils::ConvertBufferUsage(getUsage()), 0, D3DPOOL_MANAGED, &m_vertexBuffer, NULL);
+						D3D9Utils::ConvertBufferUsage(getUsage()), 0, D3DPOOL_DEFAULT, &m_vertexBuffer, NULL);
 					assert(SUCCEEDED(hr));
 
 					if (m_tempData)

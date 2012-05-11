@@ -38,7 +38,7 @@ namespace Apoc3D
 			class VolatileResource
 			{
 			private:
-				D3D9RenderDevice* m_device;
+				D3D9RenderDevice* m_rawDevice;
 			public:
 				VolatileResource(D3D9RenderDevice* device);
 				virtual ~VolatileResource();

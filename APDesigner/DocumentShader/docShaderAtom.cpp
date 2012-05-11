@@ -27,6 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ShaderAtomType.h"
 #include "MainWindow.h"
 
+#include "Collections/List2D.h"
+
 #include "UILib/Form.h"
 #include "UILib/Button.h"
 #include "UILib/PictureBox.h"
@@ -35,6 +37,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/ComboBox.h"
 #include "UILib/StyleSkin.h"
 #include "UILib/CheckBox.h"
+#include "UILib/List.h"
 #include "Utility/StringUtils.h"
 
 namespace APDesigner
@@ -43,7 +46,7 @@ namespace APDesigner
 		: Document(window), m_atomName(name), m_currentWorkingCopy(0)
 	{
 		getDocumentForm()->setTitle(L"Shader Atom: " + name);
-		getDocumentForm()->setMinimumSize(Point(570,635));
+		getDocumentForm()->setMinimumSize(Point(970,635));
 
 		{
 			Label* lbl = new Label(Point(23, 33), L"Name", 80);
@@ -77,11 +80,21 @@ namespace APDesigner
 			m_cbProfile = new ComboBox(Point(100, 66), 120, items);
 			m_cbProfile->SetSkin(window->getUISkin());
 
-
-
 			m_tbCode = new TextBox(Point(33, 100),500,500,L"");
 			m_tbCode->setScrollbarType(TextBox::SBT_Both);
 			m_tbCode->SetSkin(window->getUISkin());
+		}
+		{
+			List2D<String> emptyList(3, 2);
+
+			m_lbPorts = new ListView(Point(550, 25), Point(400, 550), emptyList);
+			m_lbPorts->SetSkin(window->getUISkin());
+
+			m_lbPorts->getColumnHeader().Add(ListView::Header(L"Name",150));
+			m_lbPorts->getColumnHeader().Add(ListView::Header(L"Type",75));
+			m_lbPorts->getColumnHeader().Add(ListView::Header(L"Format",75));
+			m_lbPorts->getColumnHeader().Add(ListView::Header(L"Usage",100));
+			m_lbPorts->setFullRowSelect(true);
 
 		}
 	}
@@ -103,6 +116,7 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_tbCode);
 		getDocumentForm()->getControls().Add(m_cbShaderType);
 		getDocumentForm()->getControls().Add(m_cbProfile);
+		getDocumentForm()->getControls().Add(m_lbPorts);
 
 		for (int i=0;i<m_labels.getCount();i++)
 		{

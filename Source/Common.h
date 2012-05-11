@@ -340,6 +340,7 @@ namespace Apoc3D
 			class GraphicsAPIManager;
 			class GraphicsAPIFactory;
 
+			struct ShaderSamplerState;
 			struct RenderParameters;
 			class DeviceContent;
 			

@@ -41,59 +41,6 @@ namespace Apoc3D
 			 */
 			class NativeD3DStateManager
 			{
-			private:
-				D3D9RenderDevice* m_device;
-
-				bool m_cachedAlphaTestEnable;
-				CompareFunction m_cachedAlphaTestFunction;
-				uint32 m_cachedAlphaReference;
-
-				bool m_cachedAlphaBlendEnable;
-				BlendFunction m_cachedAlphaBlendFunction;
-				Blend m_cachedAlphaSourceBlend;
-				Blend m_cachedAlphaDestBlend;
-				uint32 m_cachedAlphaBlendFactor;
-
-				bool m_cachedSepAlphaBlendEnable;
-				BlendFunction m_cachedSepAlphaBlendFunction;
-				Blend m_cachedSepAlphaSourceBlend;
-				Blend m_cachedSepAlphaDestBlend;
-				//uint32 m_cachedSepAlphaBlendFactor;
-
-				float m_cachedDepthBias;
-				float m_cachedSlopeScaleDepthBias;
-				CompareFunction m_cachedDepthBufferFunction;
-				bool m_cachedDepthBufferWriteEnabled;
-				bool m_cachedDepthBufferEnabled;
-
-				CullMode m_cachedCullMode;
-				FillMode m_cachedFillMode;
-
-				float m_cachedPointSize;
-				float m_cachedPointSizeMax;
-				float m_cachedPointSizeMin;
-				bool m_cachedPointSpriteEnabled;
-
-				bool m_cachedStencilEnabled;
-				StencilOperation m_cachedStencilFail;
-				StencilOperation m_cachedStencilPass;
-				StencilOperation m_cachedStencilDepthFail;
-				uint32 m_cachedRefrenceStencil;
-				CompareFunction m_cachedStencilFunction;
-				uint32 m_cachedStencilMask;
-				uint32 m_cachedStencilWriteMask;
-
-				bool m_cachedTwoSidedStencilMode;
-
-				StencilOperation m_cachedCounterClockwiseStencilFail;
-				StencilOperation m_cachedCounterClockwiseStencilPass;
-				StencilOperation m_cachedCounterClockwiseStencilDepthBufferFail;
-
-				CompareFunction m_cachedCounterClockwiseStencilFunction;
-
-
-				void InitializeDefaultState();
-
 			public:
 				NativeD3DStateManager(D3D9RenderDevice* device);
 				~NativeD3DStateManager();
@@ -181,17 +128,74 @@ namespace Apoc3D
 
 				CompareFunction getCounterClockwiseStencilFunction() { return m_cachedCounterClockwiseStencilFunction; }
 
+
+				/************************************************************************/
+				/* Samplers                                                             */
+				/************************************************************************/
+				void SetVertexSampler(int samplerIndex, const ShaderSamplerState& sampler);
+				void SetPixelSampler(int samplerIndex, const ShaderSamplerState& sampler);
+
+
+			private:
+				D3D9RenderDevice* m_device;
+
+				bool m_cachedAlphaTestEnable;
+				CompareFunction m_cachedAlphaTestFunction;
+				uint32 m_cachedAlphaReference;
+
+				bool m_cachedAlphaBlendEnable;
+				BlendFunction m_cachedAlphaBlendFunction;
+				Blend m_cachedAlphaSourceBlend;
+				Blend m_cachedAlphaDestBlend;
+				uint32 m_cachedAlphaBlendFactor;
+
+				bool m_cachedSepAlphaBlendEnable;
+				BlendFunction m_cachedSepAlphaBlendFunction;
+				Blend m_cachedSepAlphaSourceBlend;
+				Blend m_cachedSepAlphaDestBlend;
+				//uint32 m_cachedSepAlphaBlendFactor;
+
+				float m_cachedDepthBias;
+				float m_cachedSlopeScaleDepthBias;
+				CompareFunction m_cachedDepthBufferFunction;
+				bool m_cachedDepthBufferWriteEnabled;
+				bool m_cachedDepthBufferEnabled;
+
+				CullMode m_cachedCullMode;
+				FillMode m_cachedFillMode;
+
+				float m_cachedPointSize;
+				float m_cachedPointSizeMax;
+				float m_cachedPointSizeMin;
+				bool m_cachedPointSpriteEnabled;
+
+				bool m_cachedStencilEnabled;
+				StencilOperation m_cachedStencilFail;
+				StencilOperation m_cachedStencilPass;
+				StencilOperation m_cachedStencilDepthFail;
+				uint32 m_cachedRefrenceStencil;
+				CompareFunction m_cachedStencilFunction;
+				uint32 m_cachedStencilMask;
+				uint32 m_cachedStencilWriteMask;
+
+				bool m_cachedTwoSidedStencilMode;
+
+				StencilOperation m_cachedCounterClockwiseStencilFail;
+				StencilOperation m_cachedCounterClockwiseStencilPass;
+				StencilOperation m_cachedCounterClockwiseStencilDepthBufferFail;
+
+				CompareFunction m_cachedCounterClockwiseStencilFunction;
+
+				ShaderSamplerState* m_pixelSamplers;
+				ShaderSamplerState* m_vertexSamplers;
+
+				void InitializeDefaultState();
+
 			};
 
 
 			class D3D9ClipPlane : public ClipPlane
 			{
-			private:
-				D3D9RenderStateManager* m_manager;
-				D3D9RenderDevice* m_device;
-				int32 m_index;
-				Plane m_cachedPlane;
-
 			public:
 				D3D9ClipPlane() {}
 				D3D9ClipPlane(D3D9RenderDevice* device, D3D9RenderStateManager* mgr, int index);
@@ -200,18 +204,17 @@ namespace Apoc3D
 
 				virtual void setEnabled(bool value);
 				virtual void setPlane(const Plane& plane);
+
+			private:
+				D3D9RenderStateManager* m_manager;
+				D3D9RenderDevice* m_device;
+				int32 m_index;
+				Plane m_cachedPlane;
+
 			};
 
 			class D3D9RenderStateManager : public RenderStateManager
 			{
-			private:
-				D3D9RenderDevice* m_device;
-
-				D3D9ClipPlane m_clipPlanes[32];
-
-				NativeD3DStateManager* m_stMgr;
-
-
 			public:
 				DWORD clipPlaneEnable;
 
@@ -331,6 +334,14 @@ namespace Apoc3D
 				virtual bool getScissorTestEnabled();
 				virtual Apoc3D::Math::Rectangle getScissorTestRect();
 				virtual void setScissorTest(bool enable, const Apoc3D::Math::Rectangle* rect);
+
+			private:
+				D3D9RenderDevice* m_device;
+
+				D3D9ClipPlane m_clipPlanes[32];
+
+				NativeD3DStateManager* m_stMgr;
+
 			};
 		}
 	}
