@@ -562,35 +562,57 @@ namespace Apoc3D
 						(LONG)r->getBottom()
 					};
 
-					D3DVIEWPORT9 vp;
-					if (SUCCEEDED(m_device->getDevice()->GetViewport(&vp)))
-					{
-						if ((DWORD)rect.bottom > (vp.Y + vp.Height))
-						{
-							rect.bottom = vp.Y + vp.Height;
-						}
-						if ((DWORD)rect.right > (vp.X + vp.Width))
-						{
-							rect.right = vp.X + vp.Width;
-						}
-
-					}
-
-					// In some cases, the X,Y of the rect is not always the top-left corner,
-					// when the Width or Height is negative. Standardize it.
+					// standardize rect ( make sure top left corner is at the top left, i.e. no negative w/h)
 					if (rect.left>rect.right)
 					{
 						swap(rect.left, rect.right);
 					}
-					if (rect.top > rect.bottom)
+					if (rect.top >rect.bottom)
 					{
 						swap(rect.top, rect.bottom);
 					}
 
-					if (rect.left<0)
-						rect.left = 0;
-					if (rect.top<0)
-						rect.top = 0;
+					// crop it
+					D3DVIEWPORT9 vp;
+					if (SUCCEEDED(m_device->getDevice()->GetViewport(&vp)))
+					{
+						if (rect.right > (LONG)(vp.X + vp.Width))
+						{
+							rect.right = vp.X + vp.Width;
+						}
+						if (rect.bottom > (LONG)(vp.Y + vp.Height))
+						{
+							rect.bottom = vp.Y + vp.Height;
+						}
+						if (rect.right < (LONG)vp.X)
+						{
+							rect.right = vp.X;
+						}
+						if (rect.bottom < (LONG)vp.Y)
+						{
+							rect.bottom = vp.Y;
+						}
+
+
+						if (rect.left > (LONG)(vp.X + vp.Width))
+						{
+							rect.left = vp.X + vp.Width;
+						}
+						if (rect.top > (LONG)(vp.Y + vp.Height))
+						{
+							rect.top = vp.Y + vp.Height;
+						}
+						if (rect.left < (LONG)vp.X)
+						{
+							rect.left = vp.X;
+						}
+						if (rect.top < (LONG)vp.Y)
+						{
+							rect.top = vp.Y;
+						}
+
+					}
+
 					
 					HRESULT hr = m_device->getDevice()->SetScissorRect(&rect);
 					assert(SUCCEEDED(hr));

@@ -31,8 +31,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/PathUtils.h"
 #include "Vfs/ResourceLocation.h"
 
+#include "Utility/StringUtils.h"
+
 using namespace Apoc3D::Config;
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::Utility;
 
 SINGLETON_DECL(APDesigner::ShaderAtomLibraryManager);
 
@@ -109,10 +112,20 @@ namespace APDesigner
 		{
 			Usage = EffectParameter::ParseParamUsage(usage);
 		}
+		else
+		{
+			Usage = EPUSAGE_Unknown;
+		}
 	}
 	ConfigurationSection* ShaderAtomPort::Save()
 	{
-		return 0;
+		ConfigurationSection* sect = new ConfigurationSection(Name);
+		sect->AddAttribute(L"Input", StringUtils::ToString(IsInputOrOutput));
+		sect->AddAttribute(L"Varying", VaringTypeName);
+		sect->AddAttribute(L"Usage", EffectParameter::ToString(Usage));
+
+
+		return sect;
 	}
 
 	/************************************************************************/

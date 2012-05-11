@@ -96,7 +96,7 @@ namespace APDesigner
 	/** Defines type of shader input data.
 	 *  This is only used in raw inputs.
 	 */
-	enum ShaderNetVaringType
+	enum ShaderNetVaryingType
 	{
 
 	};
@@ -127,16 +127,19 @@ namespace APDesigner
 		/** If the node is a effect param(constant or uniform)(SIPT_AutoContant), it is specified here
 		*/
 		EffectParamUsage Usage;
-		/** OR */
-		String CustomUsage; // when SIPT_CustomConstant
-		/** OR */
-		/** In an input node, this is only used when fetching data from vertex stream.
+		/** OR when SIPT_CustomConstant. 
+			EffectParamUsage falls back to this when the usage name is not built in supported. 
 		*/
-		ShaderNetVaringType VaringType; // when SIPT_OutsideIOVarying
-		/** OR */
-		/** Used when passing data between shaders.
+		String CustomUsage; 
+		/** OR when SIPT_OutsideIOVarying 
+			In an input node, this is only used when fetching data from vertex stream.
 		*/
-		String VaringTypeName; // when SIPT_PreviousStageVarying
+		ShaderNetVaryingType VaringType;
+		/** OR when SIPT_PreviousStageVarying 
+			Used when passing data between shaders. 
+			ShaderNetVaryingType falls back to this when the varying name is not built in supported.
+		*/
+		String VaringTypeName;
 
 		void Parse(ConfigurationSection* sect);
 	};
@@ -145,14 +148,15 @@ namespace APDesigner
 	{
 		String Name;
 
-
-		ShaderNetOutputType Type; // when SIPT_OutsideIOVarying
-		/** OR */
-		/** If this is not empty, the output data will be passed via shader result. This name is used as identification.
+		/** when SIPT_OutsideIOVarying
+		*/
+		ShaderNetOutputType Type; 
+		/** OR when SIPT_PreviousStageVarying
+		 *  If this is not empty, the output data will be passed via shader result. This name is used as identification.
 		 *  varying data will be passed as texture coords to PS. 
 		 *  The coord slot number will be determined based on this name and the output nodes in the previous stage.
 		 */
-		String VaringTypeName; // when SIPT_PreviousStageVarying
+		String VaringTypeName; 
 
 		void Parse(ConfigurationSection* sect);
 	};

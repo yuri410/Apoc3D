@@ -167,17 +167,17 @@ namespace APDesigner
 				String row[4];
 				row[0] = port.Name;
 
-				row[2] = port.IsInputOrOutput ? L"Input" : L"Output";
+				row[1] = port.IsInputOrOutput ? L"In" : L"Out";
 
 				row[3] = port.Usage == EPUSAGE_Unknown ? port.VaringTypeName : EffectParameter::ToString(port.Usage);
 
 				if (port.Usage == EPUSAGE_Unknown)
 				{
-					row[2].append(L"[Const]");
+					row[1].append(L"[Const]");
 				}
 				else
 				{
-					row[2].append(L"[Vary]");
+					row[1].append(L"[Vary]");
 				}
 
 				m_lbPorts->getItems().AddRow(row);
