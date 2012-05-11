@@ -87,6 +87,7 @@ namespace APDesigner
 		int getMajorSMVersion() const { return m_majorSMVersion; }
 		int getMinorSMVersion() const { return m_minorSMVersion; }
 
+		List<ShaderAtomPort>& Ports() { return m_ports; }
 
 		void Load(const String& filePath);
 		void Save(const String& filePath);

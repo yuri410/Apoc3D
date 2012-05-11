@@ -106,7 +106,7 @@ namespace Apoc3D
 
 			//}
 			D3D9VertexBuffer::D3D9VertexBuffer(D3D9RenderDevice* device, int32 size, BufferUsageFlags usage)
-				: VertexBuffer(size, D3D9Utils::GetBufferUsage(usage)), VolatileResource(device), m_device(device), m_tempData(0)
+				: VertexBuffer(size, usage), VolatileResource(device), m_device(device), m_tempData(0)
 			{
 				D3DDevice* dev = device->getDevice();
 

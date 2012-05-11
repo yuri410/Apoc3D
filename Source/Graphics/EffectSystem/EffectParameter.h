@@ -197,7 +197,7 @@ namespace Apoc3D
 				~EffectParameter(void);
 
 				static EffectParamUsage ParseParamUsage(const String& val);
-
+				static String ToString(EffectParamUsage usage);
 			private:
 
 			};

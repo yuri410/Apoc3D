@@ -24,9 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "EffectParameter.h"
 
 #include "Core/Logging.h"
+#include "Collections/FastMap.h"
 #include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -35,6 +37,69 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
+			class EParamConvHelper
+			{
+			public:
+				EParamConvHelper()
+					: CastTable(50, &m_comparer1), InvCastTable(50, &m_comparer2)
+				{
+					AddPair(L"mc4_ambient", EPUSAGE_MtrlC4_Ambient);
+					AddPair(L"mc4_diffuse", EPUSAGE_MtrlC4_Diffuse);
+					AddPair(L"mc4_emissive", EPUSAGE_MtrlC4_Emissive);
+					AddPair(L"mc4_specular", EPUSAGE_MtrlC4_Specular);
+					AddPair(L"mc_power", EPUSAGE_MtrlC_Power);
+
+					AddPair(L"tr_worldviewproj", EPUSAGE_Trans_WorldViewProj);
+					AddPair(L"tr_worldvieworiproj", EPUSAGE_Trans_WorldViewOriProj);
+					AddPair(L"tr_world", EPUSAGE_Trans_World);
+					AddPair(L"tr_worldview", EPUSAGE_Trans_WorldView);
+					AddPair(L"tr_view", EPUSAGE_Trans_View);
+					AddPair(L"tr_instanceworld", EPUSAGE_Trans_InstanceWorlds);
+					AddPair(L"tr_proj", EPUSAGE_Trans_Projection);
+
+					AddPair(L"m4x3_bonestransform", EPUSAGE_M4X3_BoneTrans);
+					AddPair(L"m4x4_bonestransform", EPUSAGE_M4X4_BoneTrans);
+
+					AddPair(L"tex_0", EPUSAGE_Tex0);
+					AddPair(L"tex_1", EPUSAGE_Tex1);
+					AddPair(L"tex_2", EPUSAGE_Tex2);
+					AddPair(L"tex_3", EPUSAGE_Tex3);
+					AddPair(L"tex_4", EPUSAGE_Tex4);
+					AddPair(L"tex_5", EPUSAGE_Tex5);
+					AddPair(L"tex_6", EPUSAGE_Tex6);
+					AddPair(L"tex_7", EPUSAGE_Tex7);
+					AddPair(L"tex_8", EPUSAGE_Tex8);
+					AddPair(L"tex_9", EPUSAGE_Tex9);
+					AddPair(L"tex_10", EPUSAGE_Tex10);
+					AddPair(L"tex_11", EPUSAGE_Tex11);
+					AddPair(L"tex_12", EPUSAGE_Tex12);
+					AddPair(L"tex_13", EPUSAGE_Tex13);
+					AddPair(L"tex_14", EPUSAGE_Tex14);
+					AddPair(L"tex_15", EPUSAGE_Tex15);
+
+					AddPair(L"lv3_lightdir", EPUSAGE_LV3_LightDir);
+					AddPair(L"lc4_ambient", EPUSAGE_LC4_Ambient);
+					AddPair(L"lc4_diffuse", EPUSAGE_LC4_Diffuse);
+					AddPair(L"lc4_specular", EPUSAGE_LC4_Specular);
+					AddPair(L"pv3_viewpos", EPUSAGE_PV3_ViewPos);
+					AddPair(L"sv2_viewportsize", EPUSAGE_SV2_ViewportSize);
+					AddPair(L"s_unifiedtime", EPUSAGE_S_UnifiedTime);
+				}
+
+				StringEuqlityComparer m_comparer1;
+				Int32EqualityComparer m_comparer2;
+
+				FastMap<String, EffectParamUsage> CastTable;
+				FastMap<int, String> InvCastTable;
+			private:
+				void AddPair(const String& name, EffectParamUsage usage)
+				{
+					CastTable.Add(name, usage);
+					InvCastTable.Add((int)usage, name);
+				}
+			};
+			static EParamConvHelper EffectParameterUsageConverter;
+			
 			EffectParameter::EffectParameter(const String& name)
 				: Name(name), IsCustomUsage(false), TypicalUsage(EPUSAGE_Unknown),
 				RegisterIndex(-1), SamplerIndex(-1)
@@ -51,166 +116,22 @@ namespace Apoc3D
 				String v = val;
 				StringUtils::ToLowerCase(v);
 
-				if (v == L"mc4_ambient")
-				{
-					return EPUSAGE_MtrlC4_Ambient;
-				}
-				else if (v == L"mc4_diffuse")
-				{
-					return EPUSAGE_MtrlC4_Diffuse;
-				}
-				else if (v == L"mc4_emissive")
-				{
-					return EPUSAGE_MtrlC4_Emissive;
-				}
-				else if (v == L"mc4_specular")
-				{
-					return EPUSAGE_MtrlC4_Specular;
-				}
-				else if (v == L"mc_power")
-				{
-					return EPUSAGE_MtrlC_Power;
-				}
+				EffectParamUsage usage;
+				if (EffectParameterUsageConverter.CastTable.TryGetValue(v, usage))
+					return usage;
 				
-
-				else if (v == L"tr_worldviewproj")
-				{
-					return EPUSAGE_Trans_WorldViewProj;
-				}
-				else if (v == L"tr_worldvieworiproj")
-				{
-					return EPUSAGE_Trans_WorldViewOriProj;
-				}
-				else if (v == L"tr_world")
-				{
-					return EPUSAGE_Trans_World;
-				}
-				else if (v == L"tr_worldview")
-				{
-					return EPUSAGE_Trans_WorldView;
-				}
-				else if (v == L"tr_view")
-				{
-					return EPUSAGE_Trans_View;
-				}
-				else if (v == L"tr_instanceworld")
-				{
-					return EPUSAGE_Trans_InstanceWorlds;
-				}
-				else if (v == L"tr_proj")
-				{
-					return EPUSAGE_Trans_Projection;
-				}
-				else if (v == L"m4x3_bonestransform")
-				{
-					return EPUSAGE_M4X3_BoneTrans;
-				}
-				else if (v == L"m4x4_bonestransform")
-				{
-					return EPUSAGE_M4X4_BoneTrans;
-				}
-
-
-				
-				else if (v == L"tex_0")
-				{
-					return EPUSAGE_Tex0;
-				}
-				else if (v == L"tex_1")
-				{
-					return EPUSAGE_Tex1;
-				}
-				else if (v == L"tex_2")
-				{
-					return EPUSAGE_Tex2;
-				}
-				else if (v == L"tex_3")
-				{
-					return EPUSAGE_Tex3;
-				}
-				else if (v == L"tex_4")
-				{
-					return EPUSAGE_Tex4;
-				}
-				else if (v == L"tex_5")
-				{
-					return EPUSAGE_Tex5;
-				}
-				else if (v == L"tex_6")
-				{
-					return EPUSAGE_Tex6;
-				}
-				else if (v == L"tex_7")
-				{
-					return EPUSAGE_Tex7;
-				}
-				else if (v == L"tex_8")
-				{
-					return EPUSAGE_Tex8;
-				}
-				else if (v == L"tex_9")
-				{
-					return EPUSAGE_Tex9;
-				}
-				else if (v == L"tex_10")
-				{
-					return EPUSAGE_Tex10;
-				}
-				else if (v == L"tex_11")
-				{
-					return EPUSAGE_Tex11;
-				}
-				else if (v == L"tex_12")
-				{
-					return EPUSAGE_Tex12;
-				}
-				else if (v == L"tex_13")
-				{
-					return EPUSAGE_Tex13;
-				}
-				else if (v == L"tex_14")
-				{
-					return EPUSAGE_Tex14;
-				}
-				else if (v == L"tex_15")
-				{
-					return EPUSAGE_Tex15;
-				}
-
-
-
-				else if (v==L"lv3_lightdir")
-				{
-					return EPUSAGE_LV3_LightDir;
-				}
-				else if (v==L"lc4_ambient")
-				{
-					return EPUSAGE_LC4_Ambient;
-				}
-				else if (v==L"lc4_diffuse")
-				{
-					return EPUSAGE_LC4_Diffuse;
-				}
-				else if (v==L"lc4_specular")
-				{
-					return EPUSAGE_LC4_Specular;
-				}
-				else if (v==L"pv3_viewpos")
-				{
-					return EPUSAGE_PV3_ViewPos;
-				}
-				else if (v==L"sv2_viewportsize")
-				{
-					return EPUSAGE_SV2_ViewportSize;
-				}
-				else if (v==L"s_unifiedtime")
-				{
-					return EPUSAGE_S_UnifiedTime;
-				}
 				LogManager::getSingleton().Write(LOG_Graphics, L"Unknown effect parameter usage: " + val, LOGLVL_Infomation );
 				return EPUSAGE_Unknown;
 			}
-
+			String EffectParameter::ToString(EffectParamUsage usage)
+			{
+				String result;
+				if (EffectParameterUsageConverter.InvCastTable.TryGetValue(usage, result))
+				{
+					return result;
+				}
+				return L"unknown";
+			}
 
 			/************************************************************************/
 			/*                                                                      */
