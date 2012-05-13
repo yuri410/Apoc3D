@@ -168,9 +168,9 @@ namespace APDesigner
 			mi->event().bind(this, &MainWindow::Menu_SaveProject);
 			pojSubMenu->Add(mi,0);
 			
-			mi=new MenuItem(L"Insert...");
-			mi->event().bind(this, &MainWindow::Menu_Insert);
-			pojSubMenu->Add(mi,0);
+			//mi=new MenuItem(L"Insert...");
+			//mi->event().bind(this, &MainWindow::Menu_Insert);
+			//pojSubMenu->Add(mi,0);
 
 			mi=new MenuItem(L"-");
 			pojSubMenu->Add(mi,0);
@@ -408,13 +408,13 @@ namespace APDesigner
 	{
 
 	}
-	void MainWindow::Menu_Insert(Control* ctl)
-	{
-		if (m_project)
-		{
+	//void MainWindow::Menu_Insert(Control* ctl)
+	//{
+	//	if (m_project)
+	//	{
 
-		}
-	}
+	//	}
+	//}
 	void MainWindow::Menu_OpenProject(Control* ctl)
 	{
 		OpenFileDialog dlg;

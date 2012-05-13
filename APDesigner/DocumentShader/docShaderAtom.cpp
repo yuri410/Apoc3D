@@ -169,8 +169,6 @@ namespace APDesigner
 
 				row[1] = port.IsInputOrOutput ? L"In" : L"Out";
 
-				row[3] = port.Usage == EPUSAGE_Unknown ? port.VaringTypeName : EffectParameter::ToString(port.Usage);
-
 				if (port.Usage == EPUSAGE_Unknown)
 				{
 					row[1].append(L"[Const]");
@@ -179,6 +177,10 @@ namespace APDesigner
 				{
 					row[1].append(L"[Vary]");
 				}
+
+				row[2] = ShaderNetUtils::ToString(port.DataType);
+
+				row[3] = port.Usage == EPUSAGE_Unknown ? port.VaringTypeName : EffectParameter::ToString(port.Usage);
 
 				m_lbPorts->getItems().AddRow(row);
 			}

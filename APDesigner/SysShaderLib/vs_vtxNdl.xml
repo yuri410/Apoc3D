@@ -13,8 +13,8 @@
     </Code>
   </Basic>
   <Ports>
-    <Normal_IN Input="true" DataType="float3" Varying="TransformedNormal"/>
-    <LightDir_IN Input="true" DataType="float3" Usage="lv3_LightDir"/>
-    <OUT Input="true" DataType="float"/>
+    <Normal_IN Input="true" Format="float3" Varying="TransformedNormal"/>
+    <LightDir_IN Input="true" Format="float3" Usage="lv3_LightDir"/>
+    <OUT Input="true" Format="float"/>
   </Ports>
 </Root>

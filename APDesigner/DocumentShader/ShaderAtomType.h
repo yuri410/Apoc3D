@@ -48,7 +48,7 @@ namespace APDesigner
 	{
 		bool IsInputOrOutput;
 		String Name;
-		ShaderAtomDataExchangeType DataType;
+		ShaderAtomDataFormat DataType;
 
 		/** used for auto binding a varying input node
 		*/
@@ -58,7 +58,7 @@ namespace APDesigner
 		 */
 		EffectParamUsage Usage;
 
-		bool IsTypeCompatible(ShaderAtomDataExchangeType other);
+		bool IsTypeCompatible(ShaderAtomDataFormat other);
 
 		void Parse(ConfigurationSection* sect);
 		ConfigurationSection* Save();

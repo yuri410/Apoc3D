@@ -12,8 +12,8 @@
     </Code>
   </Basic>
   <Ports>
-    <A_IN Input="true" DataType="float4"/>
-    <B_IN Input="true" DataType="float4"/>
-    <OUT Input="true" DataType="float4"/>
+    <A_IN Input="true" Format="float4"/>
+    <B_IN Input="true" Format="float4"/>
+    <OUT Input="true" Format="float4"/>
   </Ports>
 </Root>

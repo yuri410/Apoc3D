@@ -90,7 +90,7 @@ namespace APDesigner
 
 	};
 
-	bool ShaderAtomPort::IsTypeCompatible(ShaderAtomDataExchangeType other)
+	bool ShaderAtomPort::IsTypeCompatible(ShaderAtomDataFormat other)
 	{
 		byte r = CompatibleTable[DataType][other];
 		if (r==4)
@@ -116,6 +116,8 @@ namespace APDesigner
 		{
 			Usage = EPUSAGE_Unknown;
 		}
+
+		DataType = ShaderNetUtils::Parse(sect->getAttribute(L"Format"));
 	}
 	ConfigurationSection* ShaderAtomPort::Save()
 	{
@@ -123,7 +125,7 @@ namespace APDesigner
 		sect->AddAttribute(L"Input", StringUtils::ToString(IsInputOrOutput));
 		sect->AddAttribute(L"Varying", VaringTypeName);
 		sect->AddAttribute(L"Usage", EffectParameter::ToString(Usage));
-
+		sect->AddAttribute(L"Format", ShaderNetUtils::ToString(DataType));
 
 		return sect;
 	}

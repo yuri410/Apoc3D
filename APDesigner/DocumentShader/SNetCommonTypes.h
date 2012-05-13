@@ -33,7 +33,7 @@ using namespace Apoc3D::Graphics::EffectSystem;
 
 namespace APDesigner
 {
-	enum ShaderAtomDataExchangeType
+	enum ShaderAtomDataFormat
 	{
 		ATOMDATA_Int1,
 		ATOMDATA_Int2,
@@ -81,6 +81,7 @@ namespace APDesigner
 		ATOMDATA_Count
 	};
 
+	
 	enum ShaderInterfaceParamType
 	{
 		SIPT_AutoContant,
@@ -159,6 +160,14 @@ namespace APDesigner
 		String VaringTypeName; 
 
 		void Parse(ConfigurationSection* sect);
+	};
+
+
+	class ShaderNetUtils
+	{
+	public:
+		static ShaderAtomDataFormat Parse(const String& value);
+		static String ToString(ShaderAtomDataFormat value);
 	};
 }
 
