@@ -52,15 +52,10 @@ namespace APDesigner
 		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->Size.X,getDocumentForm()->Size.Y, FMT_X8R8G8B8, DEPFMT_Depth24X8);
 
 		List<String> items;
-		items.Add(L"Basic");
-		items.Add(L"Entities");
-		items.Add(L"GridPlanes");
-		items.Add(L"Collision Shapes");
-		items.Add(L"Waves");
+		items.Add(L"Vertex Shader");
+		items.Add(L"Pixel Shader");
 
-		items.Add(L"Events");
-
-		m_shaderSwitch = new ButtonRow(Point(5, 18), items.getCount()*100, items);
+		m_shaderSwitch = new ButtonRow(Point(5, 18), items.getCount()*200, items);
 		m_shaderSwitch->SetSkin(window->getUISkin());
 	}
 

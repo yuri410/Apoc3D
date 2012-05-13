@@ -52,6 +52,7 @@ namespace APDesigner
 		{
 			ShaderNetInputNode inp;
 			inp.Parse(*e.getCurrentValue());
+			InputNodes.Add(inp);
 		}
 
 		sect = config->get(L"Outputs");
@@ -59,13 +60,15 @@ namespace APDesigner
 		{
 			ShaderNetOutputNode oup;
 			oup.Parse(*e.getCurrentValue());
+			OutputNodes.Add(oup);
 		}
 
 		sect = config->get(L"Links");
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
 		{
-			ShaderNetOutputNode oup;
-			oup.Parse(*e.getCurrentValue());
+			ShaderAtomLinkInfo lnk;
+			lnk.Parse(*e.getCurrentValue());
+			Links.Add(lnk);
 		}
 
 

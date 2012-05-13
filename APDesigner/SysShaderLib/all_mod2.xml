@@ -8,7 +8,7 @@
     <MajorSMVersion>1</MajorSMVersion>
     <MinorSMVersion>0</MinorSMVersion>
     <Code>
-      OUT = A_IN * B_IN;
+      OUT = A_IN * B_IN; 
     </Code>
   </Basic>
   <Ports>

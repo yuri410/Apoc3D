@@ -45,6 +45,7 @@ namespace APDesigner
 		{
 			std::vector<String> r;
 			r.push_back(L".snet");
+			r.push_back(L".xml");
 			return r;
 		}
 

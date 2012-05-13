@@ -8,10 +8,9 @@
     <MajorSMVersion>1</MajorSMVersion>
     <MinorSMVersion>0</MinorSMVersion>
     <Code>
-      
-      PositionOUT = mul(PositionIN, WVP);
-      NormalOUT = normalize((float3)mul(float4(NormalIN,0), World));
 
+      PositionOUT = mul(PositionIN, WVP); 
+      NormalOUT = normalize((float3)mul(float4(NormalIN,0), World)); 
     </Code>
   </Basic>
   <Ports>

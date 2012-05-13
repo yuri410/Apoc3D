@@ -157,7 +157,7 @@ namespace APDesigner
 		m_majorSMVersion = sect->GetInt(L"MajorSMVersion");
 		m_minorSMVersion = sect->GetInt(L"MinorSMVersion");
 		m_codeBody = sect->getValue(L"Code");
-
+		
 		sect = config->get(L"Ports");
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
 		{
