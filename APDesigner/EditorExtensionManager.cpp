@@ -31,19 +31,29 @@ namespace APDesigner
 	void EditorExtensionManager::RegisterExtension(EditorExtension* ext)
 	{
 		String name = ext->GetName();
-		if (m_extensions.Contains(name))
+		if (!m_extensions.Contains(name))
 		{
-
+			m_extensions.Add(name, ext);
+			LogManager::getSingleton().Write(LOG_System, L"[APD]Editor extension added: " + name);
 		}
 		else
 		{
-			LogManager::getSingleton().Write(LOG_System, L"" + name);
+			LogManager::getSingleton().Write(LOG_System, L"[APD]Editor extension already registered: " + name, LOGLVL_Warning);
 		}
 	}
 
 	void EditorExtensionManager::UnregisterExtension(EditorExtension* ext)
 	{
-
+		String name = ext->GetName();
+		if (m_extensions.Contains(name))
+		{
+			m_extensions.Remove(name);
+			LogManager::getSingleton().Write(LOG_System, L"[APD]Editor extension removed: " + name);
+		}
+		else
+		{
+			LogManager::getSingleton().Write(LOG_System, L"[APD]Editor extension not registered: " + name, LOGLVL_Warning);
+		}
 	}
 }
 extern "C"

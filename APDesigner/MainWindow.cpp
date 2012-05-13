@@ -56,6 +56,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "DocumentShader/dlgAtomManager.h"
 #include "DocumentShader/ShaderAtomType.h"
+#include "DocumentShader/ExtensionShader.h"
 
 #include "Document.h"
 #include "ModelDocument.h"
@@ -142,7 +143,7 @@ namespace APDesigner
 			delete fl;
 		}
 		
-
+		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionShaderNetwork(this));
 		//m_font = FontManager::getSingleton().getFont(L"english");
 
 		ObjectFactory* fac = m_device->getObjectFactory();
@@ -478,8 +479,38 @@ namespace APDesigner
 				{
 					EditorExtension* eext = static_cast<EditorExtension*>(item->UserPointer);
 
+					String name = eext->GetName();
+					std::vector<String> fexts = eext->GetFileExtensions();
+
 					OpenFileDialog dlg;
-					dlg.SetFilter(L"Apoc3D Mesh file(*.mesh)\0*.mesh\0\0");
+
+					// make filter
+					wchar_t filter[512];
+					memset(filter, 0, sizeof(filter));
+
+					
+					String right;
+					//*.a;*.b
+					for (size_t i=0;i<fexts.size();i++)
+					{
+						right.append(L"*");
+						right.append(fexts[i]);
+						if (i+1<fexts.size())
+						{
+							right.append(L";");
+						}
+					}
+
+					String left = name;
+					left.append(L"Files (");
+					left.append(right);
+					left.append(L")");
+					memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
+					filter[left.length()] = 0;
+
+					memcpy(filter+(left.length()+1),right.c_str(), sizeof(wchar_t)*right.length());
+
+					dlg.SetFilter(filter);
 
 					if (dlg.ShowDialog() == DLGRES_OK)
 					{
