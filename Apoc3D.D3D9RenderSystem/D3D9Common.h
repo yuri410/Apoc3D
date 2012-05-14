@@ -26,6 +26,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
+#if _DEBUG
+#define D3D_DEBUG_INFO
+#endif
+
 #include <Windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -33,7 +37,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #pragma comment(lib, "Apoc3D.lib")
 #pragma comment(lib, "d3d9.lib")
+#if _DEBUG
+#pragma comment(lib, "d3dx9d.lib")
+#else
 #pragma comment(lib, "d3dx9.lib")
+#endif
 #pragma comment(lib, "dxguid.lib")
 
 typedef D3DXMATRIX D3DMatrix;

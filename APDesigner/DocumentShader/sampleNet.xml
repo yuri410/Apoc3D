@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <Basic>
+    <Name>Per Vertex Lighting</Name>
+    
+    <MajorSMVersion>1</MajorSMVersion>
+    <MinorSMVersion>0</MinorSMVersion>
+    
+  </Basic>
+  <Nodes>
+    
+  </Nodes>
+  <Inputs>
+    
+  </Inputs>
+  <Outputs>
+    
+  </Outputs>
+  <Links>
+    
+  </Links>
+</Root>

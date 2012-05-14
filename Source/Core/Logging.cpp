@@ -175,9 +175,11 @@ namespace Apoc3D
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 				//if (g_StandardOutput!= INVALID_HANDLE_VALUE)
 				//{
+#if _DEBUG
 				OutputDebugString(msg.c_str());
 					//WriteFile(g_StandardOutput, msg.c_str(), msg.size() * sizeof(wchar_t), NULL, NULL );
 				//}
+#endif
 #endif
 			}
 		}
