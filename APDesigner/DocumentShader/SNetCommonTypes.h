@@ -93,81 +93,160 @@ namespace APDesigner
 		SIPT_OutsideIOVarying,
 		SIPT_PreviousStageVarying
 	};
+	
+	///** Auto generated input parameter node
+	//*/
+	//struct ShaderNetInputNode
+	//{
+	//	String Name;
 
-	/** Defines type of shader input data.
-	 *  This is only used in raw inputs.
-	 */
+
+	//	ShaderInterfaceParamType InterfaceType;
+
+	//	/** If the node is a effect param(constant or uniform)(SIPT_AutoContant), it is specified here
+	//	*/
+	//	EffectParamUsage Usage;
+	//	/** OR when SIPT_CustomConstant. 
+	//		EffectParamUsage falls back to this when the usage name is not built in supported. 
+	//	*/
+	//	String CustomUsage; 
+	//	/** OR when SIPT_OutsideIOVarying 
+	//		In an input node, this is only used when fetching data from vertex stream.
+	//	*/
+	//	ShaderNetVaryingType VaringType;
+	//	/** OR when SIPT_PreviousStageVarying 
+	//		Used when passing data between shaders. 
+	//		ShaderNetVaryingType falls back to this when the varying name is not built in supported.
+	//	*/
+	//	String VaringTypeName;
+
+	//	void Parse(ConfigurationSection* sect);
+	//};
+
+	//struct ShaderNetOutputNode
+	//{
+	//	String Name;
+
+	//	/** when SIPT_OutsideIOVarying
+	//	*/
+	//	ShaderNetOutputType Type; 
+	//	/** OR when SIPT_PreviousStageVarying
+	//	 *  If this is not empty, the output data will be passed via shader result. This name is used as identification.
+	//	 *  varying data will be passed as texture coords to PS. 
+	//	 *  The coord slot number will be determined based on this name and the output nodes in the previous stage.
+	//	 */
+	//	String VaringTypeName; 
+
+	//	void Parse(ConfigurationSection* sect);
+	//};
+
+
+
 	enum ShaderNetVaryingType
 	{
+		/** Common
+		*/
+		SNVT_COLOR0,
+		SNVT_COLOR1,
 
-	};
+		SNVT_TEXCOORD0,
+		SNVT_TEXCOORD1,
+		SNVT_TEXCOORD2,
+		SNVT_TEXCOORD3,
+		SNVT_TEXCOORD4,
+		SNVT_TEXCOORD5,
+		SNVT_TEXCOORD6,
+		SNVT_TEXCOORD7,
 
-	/** Shader final output type
-	*/
-	enum ShaderNetOutputType
-	{
 		/** Pixel shaders
 		*/
-		SNOUT_Color0,
-		SNOUT_Depth0,
+		
+		SNVT_DEPTH0,
+
+		SNVT_VFACE,
 
 		/** Vertex shaders
 		*/
-		SNOUT_Position0
+		SNVT_POSITION0,
+		SNVT_POSITION1,
+
+		SNVT_POSITIONT,
+
+		SNVT_NORMAL0,
+		SNVT_NORMAL1,
+
+		SNVT_BINORMAL0,
+		SNVT_BINORMAL1,
+
+		SNVT_TANGENT0,
+		SNVT_TANGENT1,
+
+		SNVT_PSIZE0,
+		SNVT_PSIZE1,
+
+		SNVT_BLENDINDICES0,
+		SNVT_BLENDINDICES1,
+		SNVT_BLENDWEIGHT0,
+		SNVT_BLENDWEIGHT1,
+
+		/** In this case custom varying name string will be matched
+		*/
+		SNVT_OTHER
 	};
+
+	enum ShaderNetVaryingStage
+	{
+		SNVStage_PreVS,
+		SNVStage_PrePS,
+		SNVStage_Final
+	};
+
 	
-	/** Auto generated input parameter node
-	*/
-	struct ShaderNetInputNode
+	/** Represents any input/output nodes with stream data.
+	 *  Used when passing data between shaders. 
+	 */
+	struct ShaderNetVaryingNode
 	{
 		String Name;
 
+		ShaderNetVaryingStage Stage;
 
-		ShaderInterfaceParamType InterfaceType;
-
-		/** If the node is a effect param(constant or uniform)(SIPT_AutoContant), it is specified here
-		*/
-		EffectParamUsage Usage;
-		/** OR when SIPT_CustomConstant. 
-			EffectParamUsage falls back to this when the usage name is not built in supported. 
-		*/
-		String CustomUsage; 
-		/** OR when SIPT_OutsideIOVarying 
-			In an input node, this is only used when fetching data from vertex stream.
-		*/
-		ShaderNetVaryingType VaringType;
-		/** OR when SIPT_PreviousStageVarying 
-			Used when passing data between shaders. 
-			ShaderNetVaryingType falls back to this when the varying name is not built in supported.
-		*/
-		String VaringTypeName;
-
-		void Parse(ConfigurationSection* sect);
-	};
-
-	struct ShaderNetOutputNode
-	{
-		String Name;
-
-		/** when SIPT_OutsideIOVarying
-		*/
-		ShaderNetOutputType Type; 
-		/** OR when SIPT_PreviousStageVarying
-		 *  If this is not empty, the output data will be passed via shader result. This name is used as identification.
-		 *  varying data will be passed as texture coords to PS. 
+		ShaderNetVaryingType Type;
+		/** If this is not empty, this will be the name used as identification.
+		 *  And varying data will be passed as texture coords to PS. 
 		 *  The coord slot number will be determined based on this name and the output nodes in the previous stage.
 		 */
-		String VaringTypeName; 
+		String CustomVaryingType;
 
 		void Parse(ConfigurationSection* sect);
 	};
 
+	/** Represents any effect parameter(constant or aka uniform)
+	*/
+	struct ShaderNetConstantNode
+	{
+		String Name;
+
+
+		EffectParamUsage Usage;
+		/** EffectParamUsage falls back to this when the usage name is not built in supported. 
+		*/
+		String CustomUsage;
+
+		void Parse(ConfigurationSection* sect);
+	};
 
 	class ShaderNetUtils
 	{
 	public:
-		static ShaderAtomDataFormat Parse(const String& value);
+		static ShaderAtomDataFormat ParseAtomDataFormat(const String& value);
 		static String ToString(ShaderAtomDataFormat value);
+
+		static ShaderNetVaryingStage ParseVaryingStage(const String& value);
+		static String ToString(ShaderNetVaryingStage value);
+
+		static ShaderNetVaryingType ParseVaryingType(const String& value);
+		static String ToString(ShaderNetVaryingType value);
 	};
 }
 

@@ -514,7 +514,9 @@ namespace APDesigner
 
 					if (dlg.ShowDialog() == DLGRES_OK)
 					{
-						
+						Document* doc = eext->DirectOpen(dlg.getFilePath()[0]);
+						doc->LoadRes();
+						this->AddDocument(doc);
 					}
 				}
 			}

@@ -29,14 +29,29 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Collections/FastList.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector.h"
+#include "UILib/Control.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;
+using namespace Apoc3D::UI;
 using namespace Apoc3D;
 
 namespace APDesigner
 {
+	class StageGraph 
+	{
+	public:
+
+
+
+	private:
+		ShaderGraph* m_vsGraph;
+		ShaderGraph* m_psGraph;
+
+
+	};
+
 	/** Class holds the data for the graph, with features
 	 *  like layout, display and loading/saving files.
 	 *

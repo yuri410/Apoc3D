@@ -43,7 +43,7 @@ using namespace Apoc3D::Graphics::RenderSystem;
 namespace APDesigner
 {
 	ShaderNetDocument::ShaderNetDocument(MainWindow* window, const String& file)
-		: Document(window), m_filePath(file), m_vsGraph(0), m_psGraph(0)
+		: Document(window), m_filePath(file), m_stateGraph(0)
 	{
 		getDocumentForm()->setTitle(file);
 		getDocumentForm()->eventResized().bind(this, &ShaderNetDocument::Form_Resized);
@@ -51,40 +51,29 @@ namespace APDesigner
 		ObjectFactory* fac = window->getDevice()->getObjectFactory();
 		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->Size.X,getDocumentForm()->Size.Y, FMT_X8R8G8B8, DEPFMT_Depth24X8);
 
-		List<String> items;
-		items.Add(L"Vertex Shader");
-		items.Add(L"Pixel Shader");
-
-		m_shaderSwitch = new ButtonRow(Point(5, 18), items.getCount()*200, items);
-		m_shaderSwitch->SetSkin(window->getUISkin());
 	}
 
 	ShaderNetDocument::~ShaderNetDocument()
 	{
-		if (m_vsGraph)
-			delete m_vsGraph;
-		if (m_psGraph)
-			delete m_psGraph;
+		if (m_stateGraph)
+			delete m_stateGraph;
 
-		delete m_shaderSwitch;
+
 	}
 	void ShaderNetDocument::Initialize(RenderDevice* device)
 	{
-		getDocumentForm()->getControls().Add(m_shaderSwitch);
+
 
 		Document::Initialize(device);
 
 	}
 	void ShaderNetDocument::LoadRes()
 	{
-		if (m_vsGraph)
+		if (m_stateGraph)
 		{
-			delete m_vsGraph;
+			delete m_stateGraph;
 		}
-		if (m_psGraph)
-		{
-			delete m_psGraph;
-		}
+
 
 		ShaderDocumentData data;
 		data.Load(m_filePath);
@@ -105,34 +94,23 @@ namespace APDesigner
 		RenderDevice* device = getMainWindow()->getDevice();
 
 		device->SetRenderTarget(0, m_renderTarget);
-		if (m_shaderSwitch->getSelectedIndex()==0)
+		
+		if (m_stateGraph)
 		{
-			if (m_vsGraph)
-			{
-				m_vsGraph->Draw();
-			}
+			m_stateGraph->Draw();
 		}
-		else
-		{
-			if (m_psGraph)
-			{
-				m_psGraph->Draw();
-			}
-		}
+		
 		device->SetRenderTarget(0,0);
 
 		m_graphRender = m_renderTarget->GetColorTexture();
 	}
 	void ShaderNetDocument::Update(const GameTime* const time)
 	{
-		if (m_vsGraph)
+		if (m_stateGraph)
 		{
-			m_vsGraph->Update(time);
+			m_stateGraph->Update(time);
 		}
-		if (m_psGraph)
-		{
-			m_psGraph->Update(time);
-		}
+
 		Document::Update(time);
 	}
 	void ShaderNetDocument::Form_Resized(Control* ctrl)

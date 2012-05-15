@@ -56,10 +56,10 @@ namespace APDesigner
 	private:
 		void Form_Resized(Control* ctrl);
 
-		ButtonRow* m_shaderSwitch;
+		//ButtonRow* m_shaderSwitch;
 		
-		ShaderGraph* m_vsGraph;
-		ShaderGraph* m_psGraph;
+		ShaderGraph* m_stateGraph;
+		//ShaderGraph* m_psGraph;
 		String m_filePath;
 
 		RenderTarget* m_renderTarget;

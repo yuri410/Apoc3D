@@ -117,7 +117,7 @@ namespace APDesigner
 			Usage = EPUSAGE_Unknown;
 		}
 
-		DataType = ShaderNetUtils::Parse(sect->getAttribute(L"Format"));
+		DataType = ShaderNetUtils::ParseAtomDataFormat(sect->getAttribute(L"Format"));
 	}
 	ConfigurationSection* ShaderAtomPort::Save()
 	{

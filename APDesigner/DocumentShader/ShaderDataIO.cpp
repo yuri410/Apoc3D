@@ -26,14 +26,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Config/XmlConfiguration.h"
 #include "Config/ConfigurationSection.h"
+#include "Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::Config;
+using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {
 	void ShaderDocumentData::Load(const String& filePath)
 	{
-		XMLConfiguration* config = new XMLConfiguration(filePath);
+		FileLocation* fl = new FileLocation(filePath);
+		XMLConfiguration* config = new XMLConfiguration(fl);
+		delete fl;
 
 		ConfigurationSection* sect = config->get(L"Basic");
 		MajorSMVersion = sect->GetInt(L"MajorSMVersion");
@@ -47,20 +51,20 @@ namespace APDesigner
 			);
 		}
 
-		sect = config->get(L"Inputs");
+		sect = config->get(L"Varyings");
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
 		{
-			ShaderNetInputNode inp;
+			ShaderNetVaryingNode inp;
 			inp.Parse(*e.getCurrentValue());
-			InputNodes.Add(inp);
+			VaryingNodes.Add(inp);
 		}
 
-		sect = config->get(L"Outputs");
+		sect = config->get(L"Constants");
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
 		{
-			ShaderNetOutputNode oup;
+			ShaderNetConstantNode oup;
 			oup.Parse(*e.getCurrentValue());
-			OutputNodes.Add(oup);
+			ConstantNodes.Add(oup);
 		}
 
 		sect = config->get(L"Links");
@@ -93,9 +97,9 @@ namespace APDesigner
 		sect->TryGetAttributeInt(L"SourcePortID", SourcePortID);
 		sect->TryGetAttributeInt(L"TargetPortID", TargetPortID);
 
-		InputNodeIndex = OutputNodeIndex = -1;
-		sect->TryGetAttributeInt(L"InputNodeIndex", InputNodeIndex);
-		sect->TryGetAttributeInt(L"OutputNodeIndex", OutputNodeIndex);
+		VaryingNodeIndex = ConstNodeIndex = -1;
+		sect->TryGetAttributeInt(L"VaryingNodeIndex", VaryingNodeIndex);
+		sect->TryGetAttributeInt(L"ConstNodeIndex", ConstNodeIndex);
 
 		
 	}

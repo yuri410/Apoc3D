@@ -42,8 +42,8 @@ namespace APDesigner
 		int SourceNodeIndex;
 		int TargetNodeIndex;
 
-		int InputNodeIndex;
-		int OutputNodeIndex;
+		int VaryingNodeIndex;
+		int ConstNodeIndex;
 
 		void Parse(ConfigurationSection* sect);
 	};
@@ -59,8 +59,8 @@ namespace APDesigner
 		int MajorSMVersion;
 		int MinorSMVersion;
 
-		List<ShaderNetInputNode> InputNodes;
-		List<ShaderNetOutputNode> OutputNodes;
+		List<ShaderNetVaryingNode> VaryingNodes;
+		List<ShaderNetConstantNode> ConstantNodes;
 
 		void Load(const String& filePath);
 		void Save(const String& filePath);
