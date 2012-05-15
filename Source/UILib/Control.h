@@ -111,12 +111,12 @@ namespace Apoc3D
 			}
 
 			Control()
-				: Position(Point::Zero), Size(15,15), m_owner(0), m_skin(0), Enabled(true), Visible(true), UserData(0), m_fontRef(0)
+				: Position(Point::Zero), Size(0,0), m_owner(0), m_skin(0), Enabled(true), Visible(true), UserData(0), m_fontRef(0)
 			{
 
 			}
 			Control(const Point& position)
-				: Position(position), Size(15,15), m_owner(0), m_skin(0), Enabled(true), Visible(true), UserData(0), m_fontRef(0)
+				: Position(position), Size(0,0), m_owner(0), m_skin(0), Enabled(true), Visible(true), UserData(0), m_fontRef(0)
 			{
 
 			}
