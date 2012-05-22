@@ -131,8 +131,12 @@
     <None Include="small.ico" />
     <None Include="SysShaderLib.xml" />
     <None Include="SysShaderLib\all_mod2.xml" />
-    <None Include="SysShaderLib\vs_trans_pn.xml" />
-    <None Include="SysShaderLib\vs_vtxNdl.xml" />
+    <None Include="SysShaderLib\vs_trans_pn.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="SysShaderLib\vs_vtxNdl.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APDCommon.h" />

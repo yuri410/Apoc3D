@@ -14,8 +14,8 @@
     </Code>
   </Basic>
   <Ports>
-    <PositionIN Input="true" Format="float4" Varying="SYS_Position0"/>
-    <NormalIN Input="true" Format="float3" Varying="SYS_Normal"/>
+    <PositionIN Input="true" Format="float4" Varying="POSITION0"/>
+    <NormalIN Input="true" Format="float3" Varying="NORMAL0"/>
     
     <PositionOUT Input="false" Format="float4" Varying="TransformedPosition" />
     <NormalOUT Input="false" Format="float3" Varying="TransformedNormal"/>

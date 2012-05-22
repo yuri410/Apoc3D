@@ -8,16 +8,45 @@
     <MinorSMVersion>0</MinorSMVersion>
     
   </Basic>
+  
   <Nodes>
-    
+    <VertexNDL_VS />
+    <VertexTransform_PN />
   </Nodes>
-  <Inputs>
-    
-  </Inputs>
-  <Outputs>
-    
-  </Outputs>
+  
+  <Varyings>
+    <VV0 Name="POSITION0" Stage="PreVS" Type="POSITION0" />
+    <VV1 Name="NORMAL0" Stage="PreVS" Type="NORMAL0" />
+    <VV2 Name="TEXCOORD0" State="PrePS" Type="TEXCOORD0" />
+    <VV3 Name="POSITION0" Stage="PrePS" Type="POSITION0" />
+    <VV4 Name="NORMAL0" Stage="PrePS" Type="NORMAL0" />
+  </Varyings>
+  <Constants>
+    <Const0 Name="wvp" Type="tr_worldvieworiproj" />
+    <Const1 Name="lightDir" Type="lv3_LightDir" />
+    <Const2 Name="world" Type="tr_World" />
+  </Constants>
   <Links>
-    
+    <!--Lit value Output-->
+    <Lnk1 Source="0" Target="2" SourcePortID="2" VaryingNodeIndex="2" />
+    <!--Normal input-->
+    <Lnk2 Source="-1" Target="0" TargetPortID="0" VaryingNodeIndex="1" />
+    <!--lightDir input-->
+    <Lnk3 Source="-1" Target="0" TargetPortID="1" ConstNodeIndex="1" />
+
+    <!--wvp input-->
+    <Lnk4 Source="-1" Target="1" TargetPortID="4" ConstNodeIndex="0" />
+    <!--world input-->
+    <Lnk5 Source="-1" Target="1" TargetPortID="5" ConstNodeIndex="2" />
+    <!--Position input-->
+    <Lnk6 Source="-1" Target="1" TargetPortID="0" VaryingNodeIndex="0" />
+    <!--Normal input-->
+    <Lnk7 Source="-1" Target="1" TargetPortID="1" VaryingNodeIndex="1" />
+    <!--Position Output-->
+    <Lnk8 Source="1" Target="-1" SourcePortID="2" VaryingNodeIndex="3" />
+    <!--Normal Output-->
+    <Lnk9 Source="1" Target="-1" SourcePortID="3" VaryingNodeIndex="4" />
+
   </Links>
+
 </Root>

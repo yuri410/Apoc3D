@@ -67,7 +67,8 @@ namespace APDesigner
 	{
 	public:
 		EnumConvHelper()
-			: CastTable(50, &m_comparer1), InvCastTable(50, &m_comparer2)
+			: CastTable(50, &m_comparer1), InvCastTable(50, &m_comparer2),
+			CastTable_SNVT(50, &m_comparer1), InvCastTable_SNVT(50, &m_comparer2)
 		{
 			AddPair(L"int1", ATOMDATA_Int1);
 			AddPair(L"int2", ATOMDATA_Int2);
