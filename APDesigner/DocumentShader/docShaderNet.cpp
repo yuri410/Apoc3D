@@ -46,6 +46,8 @@ namespace APDesigner
 		: Document(window), m_filePath(file), m_stateGraph(0)
 	{
 		getDocumentForm()->setTitle(file);
+		getDocumentForm()->setMinimumSize(Point(970,635));
+
 		getDocumentForm()->eventResized().bind(this, &ShaderNetDocument::Form_Resized);
 
 		ObjectFactory* fac = window->getDevice()->getObjectFactory();

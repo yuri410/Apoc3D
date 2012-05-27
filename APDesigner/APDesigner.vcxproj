@@ -130,7 +130,9 @@
     <None Include="ReadMe.txt" />
     <None Include="small.ico" />
     <None Include="SysShaderLib.xml" />
-    <None Include="SysShaderLib\all_mod2.xml" />
+    <None Include="SysShaderLib\all_mod2.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="SysShaderLib\vs_trans_pn.xml">
       <SubType>Designer</SubType>
     </None>
