@@ -33,7 +33,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
-
+using namespace Apoc3D::VFS;
 using namespace std;
 
 namespace Apoc3D
@@ -126,8 +126,12 @@ namespace Apoc3D
 			MaterialData(void) { }
 			~MaterialData(void) { }
 
-			void Load(TaggedDataReader *data);
-			TaggedDataWriter* Save();
+			void LoadData(TaggedDataReader *data);
+			TaggedDataWriter* SaveData();
+
+
+			void Load(const ResourceLocation* rl);
+			void Save(Stream* strm);
 		};
 
 	}

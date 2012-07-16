@@ -68,7 +68,7 @@ namespace Apoc3D
 			}
 			return vertexSize;
 		}
-		void MeshData::Load(TaggedDataReader* data)
+		void MeshData::LoadData(TaggedDataReader* data)
 		{
 			uint32 materialCount = data->GetDataUInt32(TAG_3_MaterialCountTag);
 			Materials.Reserve(materialCount);
@@ -87,7 +87,7 @@ namespace Apoc3D
 						TaggedDataReader* matData = br->ReadTaggedDataBlock();
 
 						MaterialData mtrl;
-						mtrl.Load(matData);
+						mtrl.LoadData(matData);
 
 						if (i==0)
 						{
@@ -218,7 +218,7 @@ namespace Apoc3D
 
 		}
 
-		TaggedDataWriter* MeshData::Save()
+		TaggedDataWriter* MeshData::SaveData()
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
@@ -235,7 +235,7 @@ namespace Apoc3D
 					bw->Write(frameCount);
 					for (int j = 0; j < frameCount; j++)
 					{
-						TaggedDataWriter* matData = Materials.getMaterial(i, j).Save();
+						TaggedDataWriter* matData = Materials.getMaterial(i, j).SaveData();
 						bw->Write(matData);
 						delete matData;
 					}
@@ -368,7 +368,7 @@ namespace Apoc3D
 				TaggedDataReader* meshData = br->ReadTaggedDataBlock();
 
 				MeshData* mesh = new MeshData();
-				mesh->Load(meshData);
+				mesh->LoadData(meshData);
 				Entities.Add(mesh);
 
 				meshData->Close();
@@ -439,7 +439,7 @@ namespace Apoc3D
 				tag = TAG_3_EntityPrefix + tag;
 				BinaryWriter* bw = data->AddEntry(tag);
 
-				TaggedDataWriter* meshData = Entities[i]->Save();
+				TaggedDataWriter* meshData = Entities[i]->SaveData();
 				bw->Write(meshData);
 				delete meshData;
 

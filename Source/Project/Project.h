@@ -46,9 +46,11 @@ namespace Apoc3D
 	{
 		PRJITEM_Custom,
 		PRJITEM_Folder,
+		PRJITEM_Material,
 		PRJITEM_Texture,
 		PRJITEM_Model,
 		PRJITEM_Animation,
+		PRJITEM_TransformAnimation,
 		PRJITEM_Effect,
 		PRJITEM_EffectList,
 		PRJITEM_CustomEffect,
@@ -216,6 +218,28 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t);
 
 	};
+
+	class ProjectResMaterial : public ProjectResource
+	{
+	public:
+		ProjectResMaterial(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
+		String DestinationFile;
+
+		virtual ProjectItemType getType() const { return PRJITEM_Material; }
+		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual std::vector<String> GetAllOutputFiles();
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+	};
+
 
 	/** Represents model with animation
 	 *  When building, a model is converted into a .mesh file, and a .anim file.
@@ -393,6 +417,30 @@ namespace Apoc3D
 		String DestFile;
 
 		virtual ProjectItemType getType() const { return PRJITEM_Font; }
+		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual std::vector<String> GetAllOutputFiles();
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+	};
+
+	class ProjectResTAnim : public ProjectResource
+	{
+	public:
+		ProjectResTAnim(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
+		String SourceFile;
+		String DestinationFile;
+
+		FastMap<String, int> ObjectIndexMapping;
+
+		virtual ProjectItemType getType() const { return PRJITEM_TransformAnimation; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MESHBUILD_H
-#define MESHBUILD_H
+#ifndef MATERIALSTUB_H
+#define MATERIALSTUB_H
 
 #include "APBCommon.h"
 
@@ -32,23 +32,11 @@ using namespace Apoc3D::IO;
 
 namespace APBuild
 {
-	class MeshBuild
-	{
-	private:
-		static void BuildByASS(const MeshBuildConfig& config);
-		static void BuildByFBX(const MeshBuildConfig& config);
-		static void BuildByD3D(const MeshBuildConfig& config);
-	public:
-		static void Build(const ConfigurationSection* sect);
-
-		static void ConvertVertexData(ModelData* data, const MeshBuildConfig& config);
-		static void CollapseMeshs(ModelData* data, const MeshBuildConfig& config);
-	};
-
-	class TAnimBuild
+	class MaterialStub
 	{
 	public:
 		static void Build(const ConfigurationSection* sect);
+
 	};
 }
 

@@ -332,6 +332,12 @@ namespace APBuild
 			CollapseMeshs = true;
 		}
 	}
+
+	void MaterialBuildConfig::Parse(const ConfigurationSection* sect)
+	{
+		DstFile = sect->getAttribute(L"DestinationFile");
+	}
+
 	void TransformAnimBuildConfig::Parse(const ConfigurationSection* sect)
 	{
 		SrcFile = sect->getAttribute(L"SourceFile");

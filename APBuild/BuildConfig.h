@@ -165,7 +165,12 @@ namespace APBuild
 
 		void Parse(const ConfigurationSection* sect);
 	};
+	struct MaterialBuildConfig
+	{
+		String DstFile;
 
+		void Parse(const ConfigurationSection* sect);
+	};
 	struct TransformAnimBuildConfig
 	{
 		String SrcFile;

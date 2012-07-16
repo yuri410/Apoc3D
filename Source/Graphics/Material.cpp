@@ -220,7 +220,7 @@ namespace Apoc3D
 		void Material::Load(TaggedDataReader* data)
 		{
 			MaterialData mdata;
-			mdata.Load(data);
+			mdata.LoadData(data);
 
 			Load(mdata);
 		}
@@ -230,7 +230,7 @@ namespace Apoc3D
 			
 			Save(data);
 
-			return data.Save();
+			return data.SaveData();
 		}
 
 		void Material::Reload()

@@ -82,8 +82,8 @@ namespace Apoc3D
 
 			static uint32 ComputeVertexSize(const FastList<VertexElement>& elements);
 
-			void Load(TaggedDataReader* data);
-			TaggedDataWriter* Save();
+			void LoadData(TaggedDataReader* data);
+			TaggedDataWriter* SaveData();
 
 			MeshData();
 			~MeshData();

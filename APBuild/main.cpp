@@ -17,6 +17,7 @@
 #include "Utility/StringUtils.h"
 #include "CompileLog.h"
 
+#include "MaterialStub.h"
 #include "TextureBuild/TextureBuild.h"
 #include "FontBuild/FontBuild.h"
 #include "MeshBuild/MeshBuild.h"
@@ -111,8 +112,11 @@ int Build(ConfigurationSection* sect)
 
 	StringUtils::ToLowerCase(buildType);
 
-
-	if (buildType == L"texture")
+	if (buildType == L"material")
+	{
+		MaterialStub::Build(sect);
+	}
+	else if (buildType == L"texture")
 	{
 		TextureBuild::Build(sect);
 	}

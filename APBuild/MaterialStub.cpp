@@ -21,35 +21,36 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MESHBUILD_H
-#define MESHBUILD_H
+#include "MaterialStub.h"
 
-#include "APBCommon.h"
+#include "Config/ConfigurationSection.h"
+#include "BuildConfig.h"
+#include "CompileLog.h"
+#include "Vfs/File.h"
+#include "Vfs/PathUtils.h"
+#include "BuildEngine.h"
+#include "IOLib/MaterialData.h"
+#include "IOLib/Streams.h"
 
-using namespace Apoc3D;
-using namespace Apoc3D::Config;
+using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;
+using namespace Apoc3D::Graphics;
 
 namespace APBuild
 {
-	class MeshBuild
+	void MaterialStub::Build(const ConfigurationSection* sect)
 	{
-	private:
-		static void BuildByASS(const MeshBuildConfig& config);
-		static void BuildByFBX(const MeshBuildConfig& config);
-		static void BuildByD3D(const MeshBuildConfig& config);
-	public:
-		static void Build(const ConfigurationSection* sect);
+		MaterialBuildConfig config;
+		config.Parse(sect);
 
-		static void ConvertVertexData(ModelData* data, const MeshBuildConfig& config);
-		static void CollapseMeshs(ModelData* data, const MeshBuildConfig& config);
-	};
+		EnsureDirectory(PathUtils::GetDirectory(config.DstFile));
 
-	class TAnimBuild
-	{
-	public:
-		static void Build(const ConfigurationSection* sect);
-	};
+		MaterialData empty;
+		empty.SetDefaults();
+
+		FileOutStream* fs = new FileOutStream(config.DstFile);
+		empty.Save(fs);
+		delete fs;
+
+	}
 }
-
-#endif

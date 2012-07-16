@@ -30,7 +30,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryWriter.h"
 #include "Apoc3DException.h"
 #include "Utility/StringUtils.h"
-
+#include "Core/Logging.h"
+#include "Vfs/ResourceLocation.h"
 #include "Graphics/Material.h"
 
 using namespace Apoc3D::Utility;
@@ -39,6 +40,10 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		/** Used only when storing a material as a file
+		*/
+		static const int MtrlId_V3 = ((byte)'M' << 24) | ((byte)'T' << 16) | ((byte)'R' << 8) | ((byte)'L');
+
 		static String TAG_2_IsTransparent = L"IsTransparent";
 		static String TAG_2_CullMode = L"CullMode";
 		static String TAG_2_ZEnabled = L"ZEnabled";
@@ -346,7 +351,7 @@ namespace Apoc3D
 			}
 		}
 
-		void MaterialData::Load(TaggedDataReader* data)
+		void MaterialData::LoadData(TaggedDataReader* data)
 		{
 			int version = 3;
 			if (data->Contains(TAG_2_AlphaRef))
@@ -360,7 +365,7 @@ namespace Apoc3D
 				LoadV3(data);
 
 		}
-		TaggedDataWriter* MaterialData::Save()
+		TaggedDataWriter* MaterialData::SaveData()
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
@@ -467,6 +472,42 @@ namespace Apoc3D
 				delete bw;
 			}
 			return data;
+		}
+
+		void MaterialData::Load(const ResourceLocation* rl)
+		{
+			BinaryReader* br = new BinaryReader(rl->GetReadStream());
+
+			int32 id = br->ReadInt32();
+			if (id == MtrlId_V3)
+			{
+				TaggedDataReader* data = br->ReadTaggedDataBlock();
+
+				LoadData(data);
+
+				data->Close();
+				delete data;
+			}
+			else
+			{
+				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid material file. " + rl->getName(), LOGLVL_Error);
+			}
+
+			br->Close();
+			delete br;
+		}
+		void MaterialData::Save(Stream* strm)
+		{
+			BinaryWriter* bw = new BinaryWriter(strm);
+
+			bw->Write(MtrlId_V3);
+
+			TaggedDataWriter* mdlData = SaveData();
+			bw->Write(mdlData);
+			delete mdlData;
+
+			bw->Close();
+			delete bw;
 		}
 	}
 }

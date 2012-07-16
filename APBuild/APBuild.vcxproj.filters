@@ -84,6 +84,9 @@
     <ClInclude Include="MeshBuild\XafImporter.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MaterialStub.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -144,6 +147,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MeshBuild\XafImporter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialStub.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
