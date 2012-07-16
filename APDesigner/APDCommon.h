@@ -55,6 +55,9 @@ namespace APDesigner
 
 	class ShaderAtomTypeData;
 	class ShaderDocumentData;
+
+	class ColorField;
+	class PassFlagDialog;
 }
 
 #endif

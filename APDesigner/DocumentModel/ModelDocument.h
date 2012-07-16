@@ -65,47 +65,7 @@ namespace APDesigner
 			}
 
 		};
-		class ColorField : public Control
-		{
-		public:
-			ColorField(const Point& position, ColorValue defaultColor);
-			~ColorField();
-			
-			virtual void Initialize(RenderDevice* device);
-			virtual void Draw(Sprite* sprite);
-			virtual void Update(const GameTime* const time);
 
-			UIEventHandler& eventColorSelected() { return m_selected; }
-
-			void SetValue(const Color4& color);
-			ColorValue GetValue() const { return m_color; }
-		private:
-			Label* m_lblAmbient;
-			PictureBox* m_pbAmbient;
-			Button* m_btnAmbient;
-			ColorValue m_color;
-			UIEventHandler m_selected;
-
-			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-			void Button_Press(Control* ctrl);
-		};
-		class PassFlagDialog
-		{
-		public:
-			PassFlagDialog(MainWindow* window, RenderDevice* device);
-			~PassFlagDialog();
-
-			void ShowModal(Material* mtrl);
-
-		private:
-			
-			Form* m_form;
-			FastList<Label*> m_lblTable;
-			FastList<TextBox*> m_tbTable;
-
-			Material* m_mtrl;
-			void Form_Closed(Control* ctrl);
-		};
 
 		String m_name;
 		String m_filePath;
@@ -117,6 +77,7 @@ namespace APDesigner
 
 		ModelSharedData* m_modelSData;
 		Model* m_model;
+
 		const AnimationData* m_animData;
 
 		ChaseCamera* m_camera;

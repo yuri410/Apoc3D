@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MODELDOCUMENT_H
-#define MODELDOCUMENT_H
+#ifndef MATERIALDOCUMENT_H
+#define MATERIALDOCUMENT_H
 
 #include "Document.h"
 #include "Scene/SimpleSceneManager.h"
@@ -36,11 +36,11 @@ using namespace Apoc3D::Scene;
 
 namespace APDesigner
 {
-	class ModelDocument : public Document
+	class MaterialDocument : public Document
 	{
 	public:
-		ModelDocument(MainWindow* window, const String& name, const String& file, const String& animationFile);
-		~ModelDocument();
+		MaterialDocument(MainWindow* window, const String& name, const String& file);
+		~MaterialDocument();
 
 		virtual void LoadRes();
 		virtual void SaveRes();
@@ -65,51 +65,9 @@ namespace APDesigner
 			}
 
 		};
-		class ColorField : public Control
-		{
-		public:
-			ColorField(const Point& position, ColorValue defaultColor);
-			~ColorField();
-			
-			virtual void Initialize(RenderDevice* device);
-			virtual void Draw(Sprite* sprite);
-			virtual void Update(const GameTime* const time);
-
-			UIEventHandler& eventColorSelected() { return m_selected; }
-
-			void SetValue(const Color4& color);
-			ColorValue GetValue() const { return m_color; }
-		private:
-			Label* m_lblAmbient;
-			PictureBox* m_pbAmbient;
-			Button* m_btnAmbient;
-			ColorValue m_color;
-			UIEventHandler m_selected;
-
-			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-			void Button_Press(Control* ctrl);
-		};
-		class PassFlagDialog
-		{
-		public:
-			PassFlagDialog(MainWindow* window, RenderDevice* device);
-			~PassFlagDialog();
-
-			void ShowModal(Material* mtrl);
-
-		private:
-			
-			Form* m_form;
-			FastList<Label*> m_lblTable;
-			FastList<TextBox*> m_tbTable;
-
-			Material* m_mtrl;
-			void Form_Closed(Control* ctrl);
-		};
-
+		
 		String m_name;
 		String m_filePath;
-		String m_animPath;
 
 		ModelWrapper m_object;
 		SimpleSceneManager m_scene;
@@ -117,7 +75,7 @@ namespace APDesigner
 
 		ModelSharedData* m_modelSData;
 		Model* m_model;
-		const AnimationData* m_animData;
+		Material* m_material;
 
 		ChaseCamera* m_camera;
 		float m_xang;
@@ -127,31 +85,6 @@ namespace APDesigner
 		PictureBox* m_modelViewer;
 
 		FastList<Label*> m_labels;
-
-		PictureBox* m_pbTime;
-		TextBox* m_tbMKeyTime;
-		TextBox* m_tbMKeyIndex;
-		Button* m_btnRefreshTimeLine;
-		Button* m_btnModify;
-		Button* m_btnAddMkey;
-		Button* m_btnRemoveMKey;
-		
-		Button* m_recenterModel;
-		Button* m_revertZ;
-		Button* m_swapYZ;
-		Button* m_rotateY;
-		Button* m_zoomIn;
-		Button* m_zoomOut;
-
-		ComboBox* m_cbMesh;
-		ComboBox* m_cbMeshPart;
-		ComboBox* m_cbSubMtrl;
-
-		Button* m_applyAllMtrl;
-		Button* m_applyMtrl;
-		Button* m_addMtrlFrame;
-		Button* m_removeMtrlFrame;
-		TextBox* m_tbMeshName;
 
 		// material specific parameters
 
@@ -193,31 +126,54 @@ namespace APDesigner
 		PassFlagDialog* m_passEditor;
 
 		void PassButton_Pressed(Control* ctrl);
-		void CBMesh_SelectionChanged(Control* ctrl);
-		void CBMeshPart_SelectionChanged(Control* ctrl);
-		void CBSubMtrl_SelectionChanged(Control* ctrl);
-		void PBTime_Pressed(Control* ctrl);
-
-		void BtnApplyAllMtrl_Pressed(Control* ctrl);
 		void BtnApplyMtrl_Pressed(Control* ctrl);
-		void BtnAddMtrl_Pressed(Control* ctrl);
-		void BtnRemoveMtrl_Pressed(Control* ctrl);
 
 		void ModelView_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
-		void Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 		void PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 
-		void Transform(const Matrix& transform);
-
-		void RecenterModel_Pressed(Control* ctrl);
-		void RevertZ_Pressed(Control* ctrl);
-		void RevertYZ_Pressed(Control* ctrl);
-		void RotY_Pressed(Control* ctrl);
-		void ZoomIn_Pressed(Control* ctrl);
-		void ZoomOut_Pressed(Control* ctrl);
-
 		void DisplayMaterialEditor(Material* mtrl);
+	};
 
+	class PassFlagDialog
+	{
+	public:
+		PassFlagDialog(MainWindow* window, RenderDevice* device);
+		~PassFlagDialog();
+
+		void ShowModal(Material* mtrl);
+
+	private:
+
+		Form* m_form;
+		FastList<Label*> m_lblTable;
+		FastList<TextBox*> m_tbTable;
+
+		Material* m_mtrl;
+		void Form_Closed(Control* ctrl);
+	};
+	class ColorField : public Control
+	{
+	public:
+		ColorField(const Point& position, ColorValue defaultColor);
+		~ColorField();
+
+		virtual void Initialize(RenderDevice* device);
+		virtual void Draw(Sprite* sprite);
+		virtual void Update(const GameTime* const time);
+
+		UIEventHandler& eventColorSelected() { return m_selected; }
+
+		void SetValue(const Color4& color);
+		ColorValue GetValue() const { return m_color; }
+	private:
+		Label* m_lblAmbient;
+		PictureBox* m_pbAmbient;
+		Button* m_btnAmbient;
+		ColorValue m_color;
+		UIEventHandler m_selected;
+
+		void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
+		void Button_Press(Control* ctrl);
 	};
 }
 

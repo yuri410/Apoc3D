@@ -114,6 +114,12 @@
     <ClInclude Include="DocumentModel\ExtensionModel.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DocumentModel\MaterialDocument.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentModel\ExtensionMaterial.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -192,6 +198,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DocumentModel\ExtensionModel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentModel\ExtensionMaterial.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentModel\MaterialDocument.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
