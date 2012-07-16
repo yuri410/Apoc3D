@@ -63,7 +63,7 @@ namespace Apoc3D
 	class ProjectItemData
 	{
 	private:
-		ProjectItemType m_type;
+		//ProjectItemType m_type;
 	protected:
 		Project* m_project;
 

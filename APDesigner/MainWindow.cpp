@@ -58,6 +58,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "DocumentShader/ShaderAtomType.h"
 #include "DocumentShader/ExtensionShader.h"
 #include "DocumentModel/ExtensionModel.h"
+#include "DocumentModel/ExtensionMaterial.h"
 
 #include "Document.h"
 #include "TextureViewer.h"
@@ -89,8 +90,8 @@ namespace APDesigner
 	{
 		UIRoot::Add(document->getDocumentForm());
 		document->Initialize(m_device);
-		document->eventDocumentActivated().bind(this,&MainWindow::Document_Activated);
-		document->eventDocumentDeactivated().bind(this,&MainWindow::Document_Deactivated);
+		document->eventDocumentActivated().bind(this, &MainWindow::Document_Activated);
+		document->eventDocumentDeactivated().bind(this, &MainWindow::Document_Deactivated);
 		m_documentList.Add(document);
 	}
 
@@ -145,6 +146,7 @@ namespace APDesigner
 		
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionShaderNetwork(this));
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionModel(this));
+		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionMaterial(this));
 		//m_font = FontManager::getSingleton().getFont(L"english");
 
 		ObjectFactory* fac = m_device->getObjectFactory();

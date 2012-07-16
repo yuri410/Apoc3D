@@ -101,6 +101,15 @@ namespace APDesigner
 		m_camera->setNear(1);
 		m_sceneRenderer->RegisterCamera(m_camera);
 
+		
+		fl = new FileLocation(L"ball.mesh");
+		m_modelSData = ModelManager::getSingleton().CreateInstanceUnmanaged(getMainWindow()->getDevice(), fl);
+
+
+		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData),0);
+
+		m_object.setmdl(m_model);
+
 		m_scene.AddObject(&m_object);
 
 		m_modelViewer = new PictureBox(Point(10,10 + 17), 1);
@@ -296,10 +305,24 @@ namespace APDesigner
 	MaterialDocument::~MaterialDocument()
 	{
 		delete m_modelViewer;
-		if (m_model)
+		
+		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
 		{
-			delete m_model;
+			MeshMaterialSet<Material*>* mtrls = m_modelSData->getEntities()[i]->getMaterials();
+			for (uint j=0;j<mtrls->getMaterialCount();j++)
+				for (uint k=0;k<mtrls->getFrameCount(j);k++)
+				{
+					mtrls->getMaterial(j,k) = 0;
+				}
 		}
+
+		delete m_model;
+		
+		if (m_material)
+		{
+			delete m_material;
+		}
+
 		delete m_sceneRenderer;
 		delete m_camera;
 		for (int i=0;i<m_labels.getCount();i++)
@@ -347,27 +370,28 @@ namespace APDesigner
 
 	void MaterialDocument::LoadRes()
 	{
-		if (m_model)
+		if (m_material)
 		{
-			m_object.setmdl(0);
-			delete m_model;
-			//delete m_modelSData;
+			delete m_material;
 		}
+
 		FileLocation* fl = new FileLocation(m_filePath);
+		MaterialData md;
+		md.Load(fl);
+		m_material->Load(md);
 		
-		m_modelSData = ModelManager::getSingleton().CreateInstanceUnmanaged(getMainWindow()->getDevice(), fl);
-		
-		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData,true), 0);
-		m_object.setmdl(m_model);
-		m_model->PlayAnimation();
-		
-		float maxR = 7;
 		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
 		{
-			if (m_modelSData->getEntities()[i]->getBoundingSphere().Radius > maxR)
-				maxR = m_modelSData->getEntities()[i]->getBoundingSphere().Radius;
+			MeshMaterialSet<Material*>* mtrls = m_modelSData->getEntities()[i]->getMaterials();
+			for (uint j=0;j<mtrls->getMaterialCount();j++)
+				for (uint k=0;k<mtrls->getFrameCount(j);k++)
+				{
+					mtrls->getMaterial(j,k) = m_material;
+				}
 		}
-		m_distance = maxR * 1.5f;
+		m_model->RebuildROPCache();
+
+		m_distance = 12;
 
 		DisplayMaterialEditor(m_material);
 	}
@@ -490,6 +514,8 @@ namespace APDesigner
 	void MaterialDocument::PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
 		Material* mtrl = m_material;
+		if (!mtrl)
+			return;
 
 		uint64 flag = mtrl->getPassFlags();
 
@@ -506,6 +532,8 @@ namespace APDesigner
 	void MaterialDocument::BtnApplyMtrl_Pressed(Control* ctrl)
 	{
 		Material* mtrl = m_material;
+		if (!mtrl)
+			return;
 
 		mtrl->Ambient = Color4(m_cfAmbient->GetValue());
 		mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EXTENSIONMODEL_H
-#define EXTENSIONMODEL_H
+#ifndef EXTENSIONMATERAIL_H
+#define EXTENSIONMATERAIL_H
 
 #include "EditorExtensionManager.h"
 

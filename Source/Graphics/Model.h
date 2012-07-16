@@ -57,6 +57,7 @@ namespace Apoc3D
 		public:
 			FastList<Mesh*>& getEntities() { return m_entities; }
 
+			ModelSharedData(RenderDevice* device, const FastList<Mesh*>& entities);
 			ModelSharedData(RenderDevice* device, const ModelData* mdlData);
 			ModelSharedData(RenderDevice* device, ResourceLocation* rl, bool managed = true);
 			virtual ~ModelSharedData();
@@ -147,6 +148,7 @@ namespace Apoc3D
 			~Model(void);
 
 			void ReloadMaterialAnimation();			
+			void RebuildROPCache() { m_isOpBufferBuilt = false; m_opBuffer.FastClear(); }
 
 			virtual RenderOperationBuffer* GetRenderOperation(int lod);
 			virtual RenderOperationBuffer* GetRenderOperationSubEntity(int index);

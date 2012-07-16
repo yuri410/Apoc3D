@@ -459,14 +459,16 @@ namespace APDesigner
 
 		Label* label = new Label(Point(5, top), name, 100);
 		ComboBox* combo = new ComboBox(Point(110, top), 100, list);
-		if (selectedIndex != -1)
-			combo->setSelectedIndex(selectedIndex);
+		
 		m_propLeft.Add(label);
 		m_propRight.Add(combo);
 		label->SetSkin(m_skin);
 		label->Initialize(m_form->getRenderDevice());
 		combo->SetSkin(m_skin);
 		combo->Initialize(m_form->getRenderDevice());
+
+		if (selectedIndex != -1)
+			combo->setSelectedIndex(selectedIndex);
 
 		m_form->getControls().Add(label);
 		m_form->getControls().Add(combo);
@@ -488,13 +490,16 @@ namespace APDesigner
 
 		Label* label = new Label(Point(5, top), name, 100);
 		ComboBox* combo = new ComboBox(Point(110, top), 100, items);
-		combo->setSelectedIndex(selectedIndex);
+		
 		m_propLeft.Add(label);
 		m_propRight.Add(combo);
 		label->SetSkin(m_skin);
 		label->Initialize(m_form->getRenderDevice());
 		combo->SetSkin(m_skin);
 		combo->Initialize(m_form->getRenderDevice());
+
+		if (selectedIndex!=-1)
+			combo->setSelectedIndex(selectedIndex);
 
 		m_form->getControls().Add(label);
 		m_form->getControls().Add(combo);
@@ -693,9 +698,11 @@ namespace APDesigner
 				default:
 					{
 						EditorExtension* ext = EditorExtensionManager::getSingleton().FindSuitableExtension(item);
-						if (item)
+						if (ext)
 						{
-							ext->OpenItem(item);
+							Document* doc = ext->OpenItem(item);
+							doc->LoadRes();
+							m_mainWindow->AddDocument(doc);
 						}
 						
 					}

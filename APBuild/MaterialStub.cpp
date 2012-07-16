@@ -48,9 +48,8 @@ namespace APBuild
 		MaterialData empty;
 		empty.SetDefaults();
 
-		FileOutStream* fs = new FileOutStream(config.DstFile);
-		empty.Save(fs);
-		delete fs;
+		empty.Save(new FileOutStream(config.DstFile));
+
 
 	}
 }

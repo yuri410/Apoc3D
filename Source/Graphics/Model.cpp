@@ -57,6 +57,11 @@ namespace Apoc3D
 				load();
 			}
 		}
+		ModelSharedData::ModelSharedData(RenderDevice* device, const FastList<Mesh*>& entities)
+			: Resource(), m_resourceLocation(0), m_renderDevice(device), m_entities(entities)
+		{
+
+		}
 		ModelSharedData::~ModelSharedData()
 		{
 			delete m_resourceLocation;
