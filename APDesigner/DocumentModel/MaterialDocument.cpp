@@ -112,7 +112,7 @@ namespace APDesigner
 
 			m_applyMtrl = new Button(Point(21 + 522+100+220, 159),150, L"Apply Changes");
 			m_applyMtrl->SetSkin(window->getUISkin());
-			m_applyMtrl->eventRelease().bind(this, &ModelDocument::BtnApplyMtrl_Pressed);
+			m_applyMtrl->eventRelease().bind(this, &MaterialDocument::BtnApplyMtrl_Pressed);
 
 		}
 		{

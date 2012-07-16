@@ -30,10 +30,10 @@ namespace APDesigner
 {
 	/** Model editor extension
 	*/
-	class ExtensionModel : public EditorExtension
+	class ExtensionMaterial : public EditorExtension
 	{
 	public:
-		virtual String GetName() { return L"Model Editor"; }
+		virtual String GetName() { return L"Material Editor"; }
 		virtual Document* OpenItem(const ProjectItem* item);
 		virtual Document* DirectOpen(const String& filePath);
 
@@ -44,11 +44,11 @@ namespace APDesigner
 		virtual std::vector<String> GetFileExtensions() 
 		{
 			std::vector<String> r;
-			r.push_back(L".mesh");
+			r.push_back(L".mtrl");
 			return r;
 		}
 
-		ExtensionModel(MainWindow* wnd)
+		ExtensionMaterial(MainWindow* wnd)
 			: m_mainWindow(wnd)
 		{
 

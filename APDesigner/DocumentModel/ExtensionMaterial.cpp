@@ -21,9 +21,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "ExtensionModel.h"
+#include "ExtensionMaterial.h"
 
-#include "ModelDocument.h"
+#include "MaterialDocument.h"
 
 #include "Project/Project.h"
 #include "Vfs/File.h"
@@ -33,38 +33,34 @@ using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {
-	Document* ExtensionModel::OpenItem(const ProjectItem* item)
+	Document* ExtensionMaterial::OpenItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_Model)
+		if (item->getType() == PRJITEM_Material)
 		{
 			const Project* prj = item->getProject();
-			ProjectResModel* mdl = static_cast<ProjectResModel*>(item->getData());
-			String path = PathUtils::Combine(prj->getOutputPath(), mdl->DstFile);
-			String pathAnim = PathUtils::Combine(prj->getOutputPath(), mdl->DstAnimationFile);
+			ProjectResMaterial* mtrl = static_cast<ProjectResMaterial*>(item->getData());
+			String path = PathUtils::Combine(prj->getOutputPath(), mtrl->DestinationFile);
+			
 			if (File::FileExists(path))
 			{
-				ModelDocument* md = new ModelDocument(m_mainWindow, mdl->DstFile, path, File::FileExists(pathAnim) ? pathAnim : L"");
+				MaterialDocument* md = new MaterialDocument(m_mainWindow, mtrl->DestinationFile, path);
 				return md;
 			}
 		}
 		return 0;
 	}
-	Document* ExtensionModel::DirectOpen(const String& filePath)
+	Document* ExtensionMaterial::DirectOpen(const String& filePath)
 	{
 		String name = PathUtils::GetDirectory(filePath);
-		String animFile = PathUtils::GetFileNameNoExt(filePath);
-		animFile.append(L".anim");
-
-		bool haveAnim = File::FileExists(animFile);
-
-		ModelDocument* md = new ModelDocument(m_mainWindow, name, filePath, haveAnim ? animFile : L"");
+		
+		MaterialDocument* md = new MaterialDocument(m_mainWindow, name, filePath);
 		return md;
 	}
 
 
-	bool ExtensionModel::SupportsItem(const ProjectItem* item)
+	bool ExtensionMaterial::SupportsItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_Model)
+		if (item->getType() == PRJITEM_Material)
 			return true;
 		return false;
 	}

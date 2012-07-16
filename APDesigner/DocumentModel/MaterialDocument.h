@@ -77,6 +77,7 @@ namespace APDesigner
 		Model* m_model;
 		Material* m_material;
 
+
 		ChaseCamera* m_camera;
 		float m_xang;
 		float m_yang;
@@ -85,6 +86,8 @@ namespace APDesigner
 		PictureBox* m_modelViewer;
 
 		FastList<Label*> m_labels;
+
+		Button* m_applyMtrl;
 
 		// material specific parameters
 
