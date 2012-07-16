@@ -57,9 +57,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "DocumentShader/dlgAtomManager.h"
 #include "DocumentShader/ShaderAtomType.h"
 #include "DocumentShader/ExtensionShader.h"
+#include "DocumentModel/ExtensionModel.h"
 
 #include "Document.h"
-#include "ModelDocument.h"
 #include "TextureViewer.h"
 #include "UIResources.h"
 
@@ -144,6 +144,7 @@ namespace APDesigner
 		}
 		
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionShaderNetwork(this));
+		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionModel(this));
 		//m_font = FontManager::getSingleton().getFont(L"english");
 
 		ObjectFactory* fac = m_device->getObjectFactory();
@@ -200,10 +201,6 @@ namespace APDesigner
 			SubMenu* toolSubMenu = new SubMenu(0);
 			toolSubMenu->SetSkin(m_UIskin);
 
-			MenuItem* mi=new MenuItem(L"Model Editor...");
-			mi->event().bind(this, &MainWindow::Menu_ToolItem);
-			mi->UserPointer = 0;
-			toolSubMenu->Add(mi,0);
 
 			for (EditorExtensionManager::ExtensionEnumerator e = EditorExtensionManager::getSingleton().GetEnumerator();e.MoveNext();)
 			{
@@ -211,7 +208,7 @@ namespace APDesigner
 				
 				if (ext->SupportsIndependentEditing())
 				{
-					mi=new MenuItem(ext->GetName() + L"...");
+					MenuItem* mi=new MenuItem(ext->GetName() + L"...");
 					mi->event().bind(this, &MainWindow::Menu_ToolItem);
 					mi->UserPointer = ext;
 					toolSubMenu->Add(mi,0);	
@@ -219,7 +216,7 @@ namespace APDesigner
 			}
 
 
-			mi=new MenuItem(L"-");
+			MenuItem* mi=new MenuItem(L"-");
 			toolSubMenu->Add(mi,0);
 
 			mi=new MenuItem(L"Shader Atom Manager");
@@ -457,68 +454,48 @@ namespace APDesigner
 			{
 				MenuItem* item = sm->getItems()[id]; 
 
-				if (item->UserPointer == 0)
-				{
-					OpenFileDialog dlg;
-					dlg.SetFilter(L"Apoc3D Mesh file(*.mesh)\0*.mesh\0\0");
+				EditorExtension* eext = static_cast<EditorExtension*>(item->UserPointer);
 
-					if (dlg.ShowDialog() == DLGRES_OK)
-					{
-						String name = PathUtils::GetDirectory(dlg.getFilePath()[0]);
-						String animFile = PathUtils::GetFileNameNoExt(dlg.getFilePath()[0]);
-						animFile.append(L".anim");
+				String name = eext->GetName();
+				std::vector<String> fexts = eext->GetFileExtensions();
 
-						bool haveAnim = File::FileExists(animFile);
+				OpenFileDialog dlg;
 
-						ModelDocument* md = new ModelDocument(this, name, dlg.getFilePath()[0], haveAnim ? animFile : L"");
-						md->LoadRes();
-						this->AddDocument(md);
-					}
-				}
-				else
-				{
-					EditorExtension* eext = static_cast<EditorExtension*>(item->UserPointer);
-
-					String name = eext->GetName();
-					std::vector<String> fexts = eext->GetFileExtensions();
-
-					OpenFileDialog dlg;
-
-					// make filter
-					wchar_t filter[512];
-					memset(filter, 0, sizeof(filter));
+				// make filter
+				wchar_t filter[512];
+				memset(filter, 0, sizeof(filter));
 
 					
-					String right;
-					//*.a;*.b
-					for (size_t i=0;i<fexts.size();i++)
+				String right;
+				//*.a;*.b
+				for (size_t i=0;i<fexts.size();i++)
+				{
+					right.append(L"*");
+					right.append(fexts[i]);
+					if (i+1<fexts.size())
 					{
-						right.append(L"*");
-						right.append(fexts[i]);
-						if (i+1<fexts.size())
-						{
-							right.append(L";");
-						}
-					}
-
-					String left = name;
-					left.append(L"Files (");
-					left.append(right);
-					left.append(L")");
-					memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
-					filter[left.length()] = 0;
-
-					memcpy(filter+(left.length()+1),right.c_str(), sizeof(wchar_t)*right.length());
-
-					dlg.SetFilter(filter);
-
-					if (dlg.ShowDialog() == DLGRES_OK)
-					{
-						Document* doc = eext->DirectOpen(dlg.getFilePath()[0]);
-						doc->LoadRes();
-						this->AddDocument(doc);
+						right.append(L";");
 					}
 				}
+
+				String left = name;
+				left.append(L"Files (");
+				left.append(right);
+				left.append(L")");
+				memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
+				filter[left.length()] = 0;
+
+				memcpy(filter+(left.length()+1),right.c_str(), sizeof(wchar_t)*right.length());
+
+				dlg.SetFilter(filter);
+
+				if (dlg.ShowDialog() == DLGRES_OK)
+				{
+					Document* doc = eext->DirectOpen(dlg.getFilePath()[0]);
+					doc->LoadRes();
+					this->AddDocument(doc);
+				}
+				
 			}
 		}
 	}

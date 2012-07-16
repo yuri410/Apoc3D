@@ -291,6 +291,8 @@ namespace Apoc3D
 	};
 	namespace Graphics
 	{
+		enum PixelFormat;
+
 		class Camera;
 		class FpsCamera;
 		class ChaseCamera;

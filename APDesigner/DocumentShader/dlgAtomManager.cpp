@@ -34,7 +34,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Project/Project.h"
 #include "UIResources.h"
 #include "Document.h"
-#include "ModelDocument.h"
 #include "ShaderAtomType.h"
 #include "Graphics/GraphicsCommon.h"
 #include "docShaderAtom.h"

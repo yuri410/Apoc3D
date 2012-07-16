@@ -107,7 +107,11 @@ namespace APDesigner
 		void TreeView_SelectionChanged(Control* ctrl);
 
 		void NukePropertyList();
-		void AddPropertyPair(const String& a, const String& b);
+		void AddPropertyPair(const String& name, const String& b);
+		void AddPropertyDropdown(const String& name, const List<String>& list, int selectedIndex = -1);
+		void AddPropertyDropdown_PixelFormat(const String& name, const PixelFormat& selectedFmt);
+		void AddPropertyCollection(const String& name);
+		void AddPropertyCheckbox(const String& name, bool checked);
 		void ListNewProperties(ProjectItemData* data);
 		//static const int ItemHeight = 60;
 		MainWindow* m_mainWindow;
@@ -125,7 +129,7 @@ namespace APDesigner
 		Project* m_currentProject;
 
 		FastList<Label*> m_propLeft;
-		FastList<TextBox*> m_propRight;
+		FastList<Control*> m_propRight;
 
 	};
 

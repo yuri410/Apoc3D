@@ -467,6 +467,7 @@ namespace Apoc3D
 		const String& getName() const { return m_name; }
 		ProjectItemType getType() const { return m_typeData->getType(); }
 		ProjectItemData* getData() const { return m_typeData; }
+		Project* getProject() const { return m_project; }
 		virtual void Rename(const String& newName)
 		{
 			m_name = newName;

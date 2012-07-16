@@ -67,6 +67,8 @@ namespace APDesigner
 
 		SINGLETON_DECL_HEARDER(EditorExtensionManager);
 
+		EditorExtension* FindSuitableExtension(const ProjectItem* item);
+		
 		EditorExtension* FindExtension(const String& id)
 		{
 			EditorExtension* ext;

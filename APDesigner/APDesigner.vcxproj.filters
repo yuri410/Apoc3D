@@ -69,9 +69,6 @@
     <ClInclude Include="ObjectEditor.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ModelDocument.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="BuildService\BuildService.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -111,6 +108,12 @@
     <ClInclude Include="DocumentShader\dlgAtomManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DocumentModel\ModelDocument.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DocumentModel\ExtensionModel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -138,9 +141,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ObjectEditor.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelDocument.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CommonDialog\DialogCommon.cpp">
@@ -186,6 +186,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DocumentShader\dlgAtomManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentModel\ModelDocument.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentModel\ExtensionModel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

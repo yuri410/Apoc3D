@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="APDCommon.h" />
     <ClInclude Include="CommonDialog\Win32InputBox.h" />
+    <ClInclude Include="DocumentModel\ExtensionModel.h" />
     <ClInclude Include="DocumentShader\dlgAtomManager.h" />
     <ClInclude Include="DocumentShader\ExtensionShader.h" />
     <ClInclude Include="DocumentShader\docShaderNet.h" />
@@ -160,7 +161,7 @@
     <ClInclude Include="DocumentShader\SNetCommonTypes.h" />
     <ClInclude Include="EditorExtensionManager.h" />
     <ClInclude Include="MainWindow.h" />
-    <ClInclude Include="ModelDocument.h" />
+    <ClInclude Include="DocumentModel\ModelDocument.h" />
     <ClInclude Include="ObjectEditor.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Panes.h" />
@@ -171,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonDialog\Win32InputBox.cpp" />
+    <ClCompile Include="DocumentModel\ExtensionModel.cpp" />
     <ClCompile Include="DocumentShader\dlgAtomManager.cpp" />
     <ClCompile Include="DocumentShader\ExtensionShader.cpp" />
     <ClCompile Include="DocumentShader\ShaderDataIO.cpp" />
@@ -190,7 +192,7 @@
     <ClCompile Include="Document.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
-    <ClCompile Include="ModelDocument.cpp" />
+    <ClCompile Include="DocumentModel\ModelDocument.cpp" />
     <ClCompile Include="ObjectEditor.cpp" />
     <ClCompile Include="Panes.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -31,10 +31,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/List.h"
 #include "UILib/Button.h"
 #include "UILib/Label.h"
+#include "UILib/ComboBox.h"
+#include "UILib/CheckBox.h"
 #include "Project/Project.h"
 #include "UIResources.h"
 #include "Document.h"
-#include "ModelDocument.h"
+#include "EditorExtensionManager.h"
 
 #include "TextureViewer.h"
 
@@ -451,6 +453,68 @@ namespace APDesigner
 		m_form->getControls().Add(label);
 		m_form->getControls().Add(tb);
 	}
+	void ResourcePane::AddPropertyDropdown(const String& name, const List<String>& list, int selectedIndex)
+	{
+		int top = m_openItem->Position.Y + m_openItem->Size.Y + 15 + m_propLeft.getCount() * 25;
+
+		Label* label = new Label(Point(5, top), name, 100);
+		ComboBox* combo = new ComboBox(Point(110, top), 100, list);
+		if (selectedIndex != -1)
+			combo->setSelectedIndex(selectedIndex);
+		m_propLeft.Add(label);
+		m_propRight.Add(combo);
+		label->SetSkin(m_skin);
+		label->Initialize(m_form->getRenderDevice());
+		combo->SetSkin(m_skin);
+		combo->Initialize(m_form->getRenderDevice());
+
+		m_form->getControls().Add(label);
+		m_form->getControls().Add(combo);
+	}
+	void ResourcePane::AddPropertyDropdown_PixelFormat(const String& name, const PixelFormat& selectedFmt)
+	{
+		int top = m_openItem->Position.Y + m_openItem->Size.Y + 15 + m_propLeft.getCount() * 25;
+
+		List<String> items;
+
+		int selectedIndex = -1;
+		for (int i=0;i<FMT_Count;i++)
+		{
+			PixelFormat cfmt = static_cast<PixelFormat>(i);
+			items.Add(PixelFormatUtils::ToString(cfmt));
+			if (selectedFmt == i)
+				selectedIndex = i;
+		}
+
+		Label* label = new Label(Point(5, top), name, 100);
+		ComboBox* combo = new ComboBox(Point(110, top), 100, items);
+		combo->setSelectedIndex(selectedIndex);
+		m_propLeft.Add(label);
+		m_propRight.Add(combo);
+		label->SetSkin(m_skin);
+		label->Initialize(m_form->getRenderDevice());
+		combo->SetSkin(m_skin);
+		combo->Initialize(m_form->getRenderDevice());
+
+		m_form->getControls().Add(label);
+		m_form->getControls().Add(combo);
+	}
+	void ResourcePane::AddPropertyCheckbox(const String& name, bool checked)
+	{
+		int top = m_openItem->Position.Y + m_openItem->Size.Y + 15 + m_propLeft.getCount() * 25;
+
+		Label* label = new Label(Point(5, top), L"", 100); // dummy one
+		CheckBox* cb = new CheckBox(Point(5, top), name, checked);
+		m_propLeft.Add(label);
+		m_propRight.Add(cb);
+		label->SetSkin(m_skin);
+		label->Initialize(m_form->getRenderDevice());
+		cb->SetSkin(m_skin);
+		cb->Initialize(m_form->getRenderDevice());
+
+		m_form->getControls().Add(label);
+		m_form->getControls().Add(cb);
+	}
 	void ResourcePane::ListNewProperties(ProjectItemData* data)
 	{
 		NukePropertyList();
@@ -465,13 +529,23 @@ namespace APDesigner
 				AddPropertyPair(L"DestinationFile", tex->DestinationFile);
 				AddPropertyPair(L"SourceFile", tex->SourceFile);
 
-				AddPropertyPair(L"GenerateMipmaps", StringUtils::ToString(tex->GenerateMipmaps));
-				AddPropertyPair(L"Method", ProjectResTexture::ToString(tex->Method));
+				AddPropertyCheckbox(L"GenerateMipmaps", tex->GenerateMipmaps);
+
+				List<String> items;
+				items.Add(ProjectResTexture::ToString(ProjectResTexture::TEXBUILD_D3D));
+				items.Add(ProjectResTexture::ToString(ProjectResTexture::TEXBUILD_Devil));
+				items.Add(ProjectResTexture::ToString(ProjectResTexture::TEXBUILD_BuiltIn));
+				AddPropertyDropdown(L"Method", items, items.IndexOf(ProjectResTexture::ToString(tex->Method)));
 				
-				AddPropertyPair(L"Resize", StringUtils::ToString(tex->Resize));
-				AddPropertyPair(L"ResizeFilterType", ProjectResTexture::ToString(tex->ResizeFilterType));
-				
-				AddPropertyPair(L"NewFormat", PixelFormatUtils::ToString(tex->NewFormat));
+				AddPropertyCheckbox(L"Resize", tex->Resize);
+
+				items.Clear();
+				items.Add(ProjectResTexture::ToString(ProjectResTexture::TFLT_Nearest));
+				items.Add(ProjectResTexture::ToString(ProjectResTexture::TFLT_Box));
+				items.Add(ProjectResTexture::ToString(ProjectResTexture::TFLT_BSpline));
+				AddPropertyDropdown(L"ResizeFilterType", items, items.IndexOf(ProjectResTexture::ToString(tex->ResizeFilterType)));
+
+				AddPropertyDropdown_PixelFormat(L"NewFormat", tex->NewFormat);
 			}
 			break;
 		case PRJITEM_Model:
@@ -481,7 +555,13 @@ namespace APDesigner
 				AddPropertyPair(L"DstFile", mdl->DstFile);
 				AddPropertyPair(L"DstAnimationFile", mdl->DstAnimationFile);
 				AddPropertyPair(L"SrcFile", mdl->SrcFile);
-				AddPropertyPair(L"Method", ProjectResModel::ToString(mdl->Method));
+
+
+				List<String> items;
+				items.Add(ProjectResModel::ToString(ProjectResModel::MESHBUILD_ASS));
+				items.Add(ProjectResModel::ToString(ProjectResModel::MESHBUILD_FBX));
+				items.Add(ProjectResModel::ToString(ProjectResModel::MESHBUILD_D3D));
+				AddPropertyDropdown(L"Method", items, items.IndexOf(ProjectResModel::ToString(mdl->Method)));
 			}
 			break;
 		case PRJITEM_Font:
@@ -492,8 +572,32 @@ namespace APDesigner
 			}
 			break;
 		case PRJITEM_Folder:
+			{
+				ProjectFolder* folder = static_cast<ProjectFolder*>(data);
+				AddPropertyPair(L"DstPack", folder->DestinationPack);
+				AddPropertyPair(L"PackType", folder->PackType);
+			}
 			break;
 		case PRJITEM_Effect:
+			{
+
+			}
+			break;
+		case PRJITEM_Material:
+			{
+				ProjectResMaterial* mtrl = static_cast<ProjectResMaterial*>(data);
+
+				AddPropertyPair(L"DstFile", mtrl->DestinationFile);
+			}
+			break;
+		case PRJITEM_TransformAnimation:
+			{
+				ProjectResTAnim* ta = static_cast<ProjectResTAnim*>(data);
+				AddPropertyPair(L"DstFile", ta->DestinationFile);
+				AddPropertyPair(L"SrcFile", ta->SourceFile);
+
+
+			}
 			break;
 		}
 	}
@@ -586,19 +690,15 @@ namespace APDesigner
 
 					}
 					break;
-				case PRJITEM_Model:
+				default:
 					{
-						ProjectResModel* mdl = static_cast<ProjectResModel*>(item->getData());
-						String path = PathUtils::Combine(m_currentProject->getOutputPath(), mdl->DstFile);
-						String pathAnim = PathUtils::Combine(m_currentProject->getOutputPath(), mdl->DstAnimationFile);
-						if (File::FileExists(path))
+						EditorExtension* ext = EditorExtensionManager::getSingleton().FindSuitableExtension(item);
+						if (item)
 						{
-							ModelDocument* md = new ModelDocument(m_mainWindow, mdl->DstFile, path, File::FileExists(pathAnim) ? pathAnim : L"");
-							md->LoadRes();
-							m_mainWindow->AddDocument(md);
+							ext->OpenItem(item);
 						}
+						
 					}
-					break;
 				}
 			}
 			
