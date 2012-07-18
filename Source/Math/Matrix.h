@@ -329,7 +329,12 @@ namespace Apoc3D
 				Row3 = Identity.Row3;
 				Row4 = Identity.Row4;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				memcpy(Elements, Identity.Elements, sizeof(Elements));
+				M11 = M22 = M33 = M44 = 1;
+				M12 = M13 = M14 = 0;
+				M21 = M23 = M24 = 0;
+				M31 = M32 = M34 = 0;
+				M41 = M42 = M43 = 0;
+				//memcpy(Elements, Identity.Elements, sizeof(Elements));
 			#endif
 			}
 
