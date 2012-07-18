@@ -137,7 +137,9 @@ namespace Apoc3D
 
 	template class APAPI fastdelegate::FastDelegate0<void>;
 	typedef fastdelegate::FastDelegate0<void> EventHandler;
-	
+
+	typedef fastdelegate::FastDelegate1<int&, void> RandomSampleEventHandler;
+
 	typedef std::wstring String;
 
 //#	define StringCompare(a, b) !a.compare(b)

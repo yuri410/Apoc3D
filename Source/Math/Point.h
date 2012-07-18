@@ -76,6 +76,7 @@ namespace Apoc3D
 			{
 				return Point(a.X - b.X, a.Y - b.Y);
 			}
+
 			const static Point Zero;
 		};
 		class APAPI PointF

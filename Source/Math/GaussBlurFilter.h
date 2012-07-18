@@ -50,11 +50,15 @@ namespace Apoc3D
 			}
 			void ComputeFilter(float dx, float dy, float* &sampleWeights, Vector4* &sampleOffsets)
 			{
+				int count = SampleCount;
+				if ((count % 2)==0)
+					count++;
+
 				// Create temporary arrays for computing our filter settings.
 				if (!sampleWeights)
-					sampleWeights = new float[SampleCount];
+					sampleWeights = new float[count];
 				if (!sampleOffsets)
-					sampleOffsets = new Vector4[SampleCount];
+					sampleOffsets = new Vector4[count];
 
 				// The first sample always has a zero offset.
 				sampleWeights[0] = ComputeGaussian(0);
@@ -65,7 +69,7 @@ namespace Apoc3D
 
 				// Add pairs of additional sample taps, positioned
 				// along a line in both directions from the center.
-				for (int i = 0; i < SampleCount / 2; i++)
+				for (int i = 0; i < count / 2; i++)
 				{
 					// Store weights for the positive and negative taps.
 					float weight = ComputeGaussian(static_cast<float>(i + 1));
@@ -85,7 +89,7 @@ namespace Apoc3D
 					// positioning us nicely in between two texels.
 					float sampleOffset = i * 2 + 1.5f;
 
-					Vector4 delta = Vector4(dx* sampleOffset, dy* sampleOffset,0,0);
+					Vector4 delta = Vector4Utils::LDVector(dx*sampleOffset, dy*sampleOffset,0,0);
 
 					// Store texture coordinate offsets for the positive and negative taps.
 					sampleOffsets[i * 2 + 1] = delta;
@@ -93,7 +97,7 @@ namespace Apoc3D
 				}
 
 				// Normalize the list of sample weightings, so they will always sum to one.
-				for (int i = 0; i < SampleCount; i++)
+				for (int i = 0; i < count; i++)
 				{
 					sampleWeights[i] /= totalWeights;
 				}

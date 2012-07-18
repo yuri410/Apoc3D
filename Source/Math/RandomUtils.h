@@ -23,61 +23,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef RANDOMUTILS_H
 #define RANDOMUTILS_H
-#include "Common.h"
 
-#pragma once
+#include "Common.h"
 
 namespace Apoc3D
 {
 	namespace Math
 	{
-		class APAPI Random
+		class Random
 		{
-		private:
-			int32 m_inext;
-			int32 m_inextp;
-			//int32 m_mbig;
-			//int32 m_mseed;
-			//int32 m_mz;
-			int32 m_seedArray[0x38];
-
-			int32 InternalSample()
-			{
-				int inext = m_inext;
-				int inextp = m_inextp;
-				if (++inext >= 0x38)
-				{
-					inext = 1;
-				}
-				if (++inextp >= 0x38)
-				{
-					inextp = 1;
-				}
-				int num = m_seedArray[inext] - m_seedArray[inextp];
-				if (num < 0)
-				{
-					num += 0x7fffffff;
-				}
-				m_seedArray[inext] = num;
-				m_inext = inext;
-				m_inextp = inextp;
-				return num;
-			}
-			float GetSampleForLargeRange()
-			{
-				int num = InternalSample();
-				if ((((InternalSample() % 2) == 0) ? 1 : 0) != 0)
-				{
-					num = -num;
-				}
-				float num2 = static_cast<float>(num);
-				num2 += 2147483646.0f;
-				return (num2 / 4294967293.f);
-			}
-			float Sample()
-			{
-				return (InternalSample() * 4.6566128752457969E-10f);
-			}
 		public:
 			Random()
 				//: m_mbig(0), m_mseed(0), m_mz(0)
@@ -118,6 +72,8 @@ namespace Apoc3D
 				//delete[] m_seedArray;
 			}
 
+			RandomSampleEventHandler& eventSampled() { return m_eSample; };
+
 			int32 Next()
 			{
 				return InternalSample();
@@ -142,10 +98,59 @@ namespace Apoc3D
 			{
 				return Sample();
 			}
+		private:
+			RandomSampleEventHandler m_eSample;
 
+			int32 m_inext;
+			int32 m_inextp;
+			//int32 m_mbig;
+			//int32 m_mseed;
+			//int32 m_mz;
+			int32 m_seedArray[0x38];
+
+			int32 InternalSample()
+			{
+				int inext = m_inext;
+				int inextp = m_inextp;
+				if (++inext >= 0x38)
+				{
+					inext = 1;
+				}
+				if (++inextp >= 0x38)
+				{
+					inextp = 1;
+				}
+				int num = m_seedArray[inext] - m_seedArray[inextp];
+				if (num < 0)
+				{
+					num += 0x7fffffff;
+				}
+				m_seedArray[inext] = num;
+				m_inext = inext;
+				m_inextp = inextp;
+
+				if (!m_eSample.empty())
+					m_eSample(num);
+				return num;
+			}
+			float GetSampleForLargeRange()
+			{
+				int num = InternalSample();
+				if ((((InternalSample() % 2) == 0) ? 1 : 0) != 0)
+				{
+					num = -num;
+				}
+				float num2 = static_cast<float>(num);
+				num2 += 2147483646.0f;
+				return (num2 / 4294967293.f);
+			}
+			float Sample()
+			{
+				return (InternalSample() * 4.6566128752457969E-10f);
+			}
 		};
 
-		class APAPI Randomizer
+		class Randomizer
 		{
 		private:
 			static Random m_randomizer;
@@ -153,13 +158,36 @@ namespace Apoc3D
 			Randomizer() {}
 			~Randomizer() {}
 		public:
+			static RandomSampleEventHandler& eventSampled() { return m_randomizer.eventSampled(); };
+
 			static int32 Next() { return m_randomizer.Next(); }
 			static int32 Next(int32 max) { return m_randomizer.Next(max); }
 			static int32 Next(int32 minValue, int32 maxValue) { return m_randomizer.Next(minValue, maxValue); }
 
 			static float NextFloat() { return m_randomizer.NextFloat(); }
-		};
 
+			static int Choose(const float* p, int count)
+			{
+				float total = 0;
+				for (int i = 0; i < count; i++)
+				{
+					total += p[i];
+				}
+
+				float rnd = NextFloat() * total;
+
+				float cmp = 0;
+				for (int i = 0; i < count; i++)
+				{
+					cmp += p[i];
+					if (rnd < cmp)
+					{
+						return i;
+					}
+				}
+				return 0;
+			}
+		};
 
 	}
 
