@@ -1448,6 +1448,23 @@ namespace Apoc3D
 				res.Inverse();
 			}
 
+			operator float*() 
+			{
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+#pragma error "Not implemented"
+#else
+				return reinterpret_cast<float*>(this);
+#endif
+			}
+			operator const float*() const
+			{
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+#pragma error "Not implemented"
+#else
+				return reinterpret_cast<const float*>(this);
+#endif
+			}
+
 			bool operator ==(const Matrix& value)
 			{
 				return (M11 == value.M11 && M12 == value.M12 && M13 == value.M13 && M14 == value.M14 &&
