@@ -74,8 +74,8 @@ namespace Apoc3D
 				vector = Vector3Utils::Divide(vector, a);
 			}
 			_V3X(vector) = (_V3X(vector) + 1.0f) * 0.5f * Width + X;
-			_V3X(vector) = (-_V3Y(vector) + 1.0f) * 0.5f * Height + Y;
-			_V3X(vector) = _V3Z(vector) * (MaxZ - MinZ) + MinZ;
+			_V3Y(vector) = (-_V3Y(vector) + 1.0f) * 0.5f * Height + Y;
+			_V3Z(vector) = _V3Z(vector) * (MaxZ - MinZ) + MinZ;
 			return vector;
 		}
 
