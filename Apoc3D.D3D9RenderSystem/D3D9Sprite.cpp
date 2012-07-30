@@ -37,7 +37,7 @@ namespace Apoc3D
 		{
 			int MaxVertices = 1024;
 			int FlushThreshold = MaxVertices/5;
-
+			
 			D3D9Sprite::D3D9Sprite(D3D9RenderDevice* device)
 				: Sprite(device), m_device(device), m_rawDevice(device->getDevice())
 			{

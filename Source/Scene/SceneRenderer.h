@@ -134,6 +134,7 @@ namespace Apoc3D
 			*/
 			void RenderBatch(int selectorID);
 
+			
 			/** Gets the index of selected SceneProcedure.
 			 *  If no SceneProcedure is selected, returns -1.
 			 */
@@ -147,6 +148,10 @@ namespace Apoc3D
 					return m_procFallbacks[m_selectedProc];
 				return 0;
 			}
+
+			/** Renders a particular batch data
+			*/
+			static void RenderBatch(RenderDevice* device, const BatchData& data, int selectorID);
 
 		private:
 			RenderDevice* m_renderDevice;

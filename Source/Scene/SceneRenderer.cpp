@@ -218,13 +218,18 @@ namespace Apoc3D
 
 		void SceneRenderer::RenderBatch(int selectorID)
 		{
+			RenderBatch(m_renderDevice, m_batchData, selectorID);
+		}
+
+		void SceneRenderer::RenderBatch(RenderDevice* device, const BatchData& data, int selectorID)
+		{
 			uint64 selectorMask;
 			if (selectorID == -1)
 				selectorMask = 0xffffffffffffffff;
 			else
 				selectorMask = (uint64)1<<selectorID;
 
-			const PriorityTable& table = m_batchData.getTable();
+			const PriorityTable& table = data.getTable();
 
 			for (PriorityTable::Enumerator i = table.GetEnumerator();i.MoveNext();)
 			{
@@ -242,7 +247,7 @@ namespace Apoc3D
 							const OperationList* opList = *k.getCurrentValue();
 							if (opList->getCount())
 							{
-								m_renderDevice->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
+								device->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
 							}
 						}
 					}
