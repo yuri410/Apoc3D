@@ -98,6 +98,7 @@ namespace APDesigner
 
 		void Menu_Tools_AtomManager(Control* ctl);
 
+		void Menu_NewProject(Control* ctl);
 		void Menu_OpenProject(Control* ctl);
 		void Menu_SaveProject(Control* ctl);
 		void Menu_CloseProject(Control* ctl);

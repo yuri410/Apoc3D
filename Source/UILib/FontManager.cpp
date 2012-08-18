@@ -66,13 +66,38 @@ namespace Apoc3D
 
 			int charCount = br->ReadInt32();
 			
-			for (int i=0;i<charCount;i++)
+			bool newVersion = false;
+			if (((uint)charCount & 0xffffff00) == 0xffffff00)
 			{
-				Character ch;
-				ch._Character = static_cast<wchar_t>( br->ReadInt32());
-				ch.GlyphIndex = br->ReadInt32();
-				m_charTable.Add(ch._Character, ch);
+				newVersion = true;
+				charCount = br->ReadInt32();
 			}
+
+			if (newVersion)
+			{
+				for (int i=0;i<charCount;i++)
+				{
+					Character ch;
+					ch._Character = static_cast<wchar_t>( br->ReadInt32());
+					ch.GlyphIndex = br->ReadInt32();
+					ch.Left = br->ReadInt16();
+					ch.Top = br->ReadInt16();
+					ch.AdcanceX = br->ReadInt16();
+					m_charTable.Add(ch._Character, ch);
+				}
+			}
+			else
+			{
+				for (int i=0;i<charCount;i++)
+				{
+					Character ch;
+					ch._Character = static_cast<wchar_t>( br->ReadInt32());
+					ch.GlyphIndex = br->ReadInt32();
+					ch.Left = ch.Top = 0;
+					m_charTable.Add(ch._Character, ch);
+				}
+			}
+			
 
 			int maxHeight = 1;
 			int maxWidth = 1;
@@ -172,6 +197,17 @@ namespace Apoc3D
 
 			br->Close();
 			delete br;
+
+			if (!newVersion)
+			{
+				for (FastMap<wchar_t, Character>::Enumerator i=m_charTable.GetEnumerator();i.MoveNext();)
+				{
+					Character* ch = i.getCurrentValue();
+					Glyph& g = m_glyphList[ch->GlyphIndex];
+					ch->AdcanceX = g.Width;
+				}
+			}
+			
 		}
 		Font::~Font()
 		{
@@ -208,7 +244,12 @@ namespace Apoc3D
 					if (m_charTable.TryGetValue(ch, chdef))
 					{
 						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
-
+						
+						if (glyph.Width == 0 || glyph.Height == 0)
+						{
+							x += chdef.AdcanceX + chdef.Left;
+							continue;
+						}
 
 						if (!glyph.IsMapped)
 						{
@@ -216,8 +257,8 @@ namespace Apoc3D
 						}
 
 						Apoc3D::Math::Rectangle rect;
-						rect.X = x;
-						rect.Y = y;
+						rect.X = x + chdef.Left;
+						rect.Y = y + chdef.Top;
 						rect.Width = glyph.Width;
 						rect.Height = glyph.Height;
 						//glyph.LastTimeUsed = (float)time(0);
@@ -225,7 +266,7 @@ namespace Apoc3D
 
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
 
-						x += glyph.Width - 1;
+						x += chdef.AdcanceX + chdef.Left;// glyph.Width - 1;
 					}
 					
 				}
@@ -244,14 +285,17 @@ namespace Apoc3D
 				{
 					Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
+					if (glyph.Width == 0 || glyph.Height == 0)
+						return;
+
 					if (!glyph.IsMapped)
 					{
 						EnsureGlyph(glyph);
 					}
 
 					Apoc3D::Math::Rectangle rect;
-					rect.X = x;
-					rect.Y = y;
+					rect.X = x + chdef.Left;
+					rect.Y = y + chdef.Top;
 					rect.Width = glyph.Width;
 					rect.Height = glyph.Height;
 					//glyph.LastTimeUsed = (float)time(0);
@@ -275,6 +319,11 @@ namespace Apoc3D
 					{
 						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
+						if (glyph.Width == 0 || glyph.Height == 0)
+						{
+							x += chdef.AdcanceX;
+							continue;
+						}
 
 						if (!glyph.IsMapped)
 						{
@@ -282,8 +331,8 @@ namespace Apoc3D
 						}
 
 						Apoc3D::Math::Rectangle rect;
-						rect.X = x;
-						rect.Y = y;
+						rect.X = x + chdef.Left;
+						rect.Y = y + chdef.Top;
 						rect.Width = glyph.Width;
 						rect.Height = glyph.Height;
 						//glyph.LastTimeUsed = (float)time(0);
@@ -291,7 +340,7 @@ namespace Apoc3D
 
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
 
-						x += glyph.Width - 1;
+						x += chdef.AdcanceX + chdef.Left;
 						if (x>=width)
 						{
 							x=std;
@@ -323,7 +372,7 @@ namespace Apoc3D
 					{
 						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
-						x += glyph.Width - 1;
+						x += chdef.AdcanceX;
 						if (x>=width)
 						{
 							x=std;
@@ -355,7 +404,7 @@ namespace Apoc3D
 					{
 						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
-						x += glyph.Width - 1;
+						x += chdef.AdcanceX;
 					}
 				}
 				else

@@ -32,7 +32,8 @@ namespace APBuild
 	class FontBuild
 	{
 	private:
-
+		static void BuildByGDIPlus(const FontBuildConfig& config);
+		static void BuildByFreeType(const FontBuildConfig& config);
 	public:
 		static void Build(const ConfigurationSection* sect);
 	};

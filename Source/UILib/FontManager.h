@@ -79,6 +79,9 @@ namespace Apoc3D
 			{
 				wchar_t _Character;
 				int GlyphIndex;
+				short Left;
+				short Top;
+				short AdcanceX;
 			};
 			struct Glyph
 			{

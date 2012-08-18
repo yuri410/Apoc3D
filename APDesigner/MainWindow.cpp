@@ -65,6 +65,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UIResources.h"
 
 #include "CommonDialog/FileDialog.h"
+#include "CommonDialog/Win32InputBox.h"
 #include "BuildService/BuildService.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
@@ -164,7 +165,11 @@ namespace APDesigner
 			SubMenu* pojSubMenu = new SubMenu(0);
 			pojSubMenu->SetSkin(m_UIskin);
 			
-			MenuItem* mi=new MenuItem(L"Open Project...");
+			MenuItem* mi=new MenuItem(L"New Project...");
+			mi->event().bind(this, &MainWindow::Menu_NewProject);
+			pojSubMenu->Add(mi,0);
+
+			mi=new MenuItem(L"Open Project...");
 			mi->event().bind(this, &MainWindow::Menu_OpenProject);
 			pojSubMenu->Add(mi,0);
 
@@ -415,6 +420,45 @@ namespace APDesigner
 
 	//	}
 	//}
+	void MainWindow::Menu_NewProject(Control* ctl)
+	{
+		wchar_t nameBuffer[512] = { 0 };
+
+		if (CWin32InputBox::InputBox(L"Project Name", L"Please enter a name for your project.", nameBuffer, 512))
+		{
+			SaveFileDialog dlg;
+			dlg.SetFilter(L"Project file(*.aproj;*.xml)\0*.aproj;*.xml\0\0");
+			dlg.Title = L"Save Project";
+			if (dlg.ShowDialog() == DLGRES_OK)
+			{
+				String path = dlg.getFilePath()[0];
+				m_project = new Project();
+				m_projectFilePath = path;
+
+				m_resourcePane->UpdateToNewProject(m_project);
+				m_project->setBasePath(PathUtils::GetDirectory(path));
+
+				FileSystem::getSingleton().AddWrokingDirectory(m_project->getOutputPath());
+
+				m_project->setTexturePath(PathUtils::Combine(path, L"textures"));
+
+				// project has default texture dirs
+				// this directory is added to the FileLocateRule by APDesigner, so that
+				// textures can be correctly used
+				if (m_project->getTexturePath().size())
+				{
+					LocateCheckPoint cp;
+					cp.AddPath(m_project->getTexturePath());
+					FileLocateRule::Textures.AddCheckPoint(cp);
+					LogManager::getSingleton().Write(LOG_System, L"Adding texture dir: '" + m_project->getTexturePath() + L"'");
+				}
+				// Once a project is loaded or built, the effects used will be registered/updated in the EffectSystem.
+				// So the editing tools using these effect will work perfectly
+				UpdateProjectEffect();
+			}
+		}
+		
+	}
 	void MainWindow::Menu_OpenProject(Control* ctl)
 	{
 		OpenFileDialog dlg;

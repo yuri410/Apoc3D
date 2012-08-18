@@ -92,7 +92,7 @@ namespace APBuild
 		float Size;
 
 		String DestFile;
-
+		
 		void Parse(const ConfigurationSection* sect);
 	};
 	struct PakBuildConfig

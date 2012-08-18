@@ -546,6 +546,9 @@ namespace Apoc3D
 		 *  The sequence is based on the dependency of project items.
 		 */
 		void GenerateBuildScripts(FastList<ConfigurationSection*>& result);
+
+
+		void setTexturePath(const String& path) { m_texturePath = path; }
 	};
 
 

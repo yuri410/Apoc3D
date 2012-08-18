@@ -65,7 +65,12 @@ namespace Apoc3D
 #define ToRadian(x) (x * (Apoc3D::Math::PI/180.0f))
 #define ToDegree(x) (x * (180.0f/Apoc3D::Math::PI))
 
-		static inline float Sign(float value);
+		static inline float Sign(float value)
+		{
+			if (value>0)
+				return 1.0f;
+			return value<0 ? -1.0f : 0.0f;
+		}
 		static inline float Lerp(float a, float b, float amount)
 		{
 			return a + (b-a)*amount;

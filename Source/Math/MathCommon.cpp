@@ -32,12 +32,6 @@ namespace Apoc3D
 		extern const float POSINF_Float = std::numeric_limits<float>::infinity();
 		extern const float NEGINF_Float = -std::numeric_limits<float>::infinity();
 
-		float Sign(float value)
-		{
-			if (value>0)
-				return 1.0f;
-			return value<0 ? -1.0f : 0.0f;
-		}
 
 		//float Lerp(float a, float b, float amount)
 		//{
