@@ -87,6 +87,9 @@
     <ClInclude Include="MaterialStub.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MaterialScript\MaterialBuild.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -150,6 +153,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MaterialStub.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialScript\MaterialBuild.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

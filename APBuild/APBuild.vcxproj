@@ -136,6 +136,7 @@
     <ClInclude Include="EffectCompiler\HLSLCompileService.h" />
     <ClInclude Include="FontBuild\FontBuild.h" />
     <ClInclude Include="ErrorCode.h" />
+    <ClInclude Include="MaterialScript\MaterialBuild.h" />
     <ClInclude Include="MaterialStub.h" />
     <ClInclude Include="MeshBuild\FbxBaker.h" />
     <ClInclude Include="MeshBuild\FbxImporter.h" />
@@ -159,6 +160,7 @@
     <ClCompile Include="CompileLog.cpp" />
     <ClCompile Include="D3DHelper.cpp" />
     <ClCompile Include="FontBuild\FontBuild.cpp" />
+    <ClCompile Include="MaterialScript\MaterialBuild.cpp" />
     <ClCompile Include="MaterialStub.cpp" />
     <ClCompile Include="MeshBuild\FbxBaker.cpp" />
     <ClCompile Include="MeshBuild\FbxImporter.cpp" />
