@@ -148,6 +148,7 @@ namespace APDesigner
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionShaderNetwork(this));
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionModel(this));
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionMaterial(this));
+		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionEffect(this));
 		//m_font = FontManager::getSingleton().getFont(L"english");
 
 		ObjectFactory* fac = m_device->getObjectFactory();

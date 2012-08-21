@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "docShaderNet.h"
 #include "docShaderAtom.h"
+#include "docEffectCoding.h"
 
 #include "Project/Project.h"
 #include "Vfs/File.h"
@@ -79,4 +80,35 @@ namespace APDesigner
 		return false;
 	}
 
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+
+	Document* ExtensionEffect::OpenItem(const ProjectItem* item)
+	{
+		if (item->getType() == PRJITEM_Effect)
+		{
+			ProjectResEffect* shaderNet = static_cast<ProjectResEffect*>(item->getData());
+
+			String filePath = shaderNet->GetAllOutputFiles()[0];
+
+			if (File::FileExists(filePath))
+			{
+				
+			}
+		}
+		return 0;
+	}
+	Document* ExtensionEffect::DirectOpen(const String& filePath)
+	{
+		return new EffectDocument(m_mainWindow, filePath);
+	}
+
+
+	bool ExtensionEffect::SupportsItem(const ProjectItem* item)
+	{
+		if (item->getType() == PRJITEM_Effect)
+			return true;
+		return false;
+	}
 }

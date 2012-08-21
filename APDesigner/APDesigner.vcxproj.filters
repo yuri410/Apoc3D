@@ -120,6 +120,9 @@
     <ClInclude Include="DocumentModel\ExtensionMaterial.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DocumentShader\docEffectCoding.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -204,6 +207,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DocumentModel\MaterialDocument.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DocumentShader\docEffectCoding.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

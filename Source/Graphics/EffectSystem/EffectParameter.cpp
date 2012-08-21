@@ -133,6 +133,10 @@ namespace Apoc3D
 				return L"unknown";
 			}
 
+			FastMap<String, EffectParamUsage>::Enumerator EffectParameter::getParameterUsageEnumeration()
+			{
+				return EffectParameterUsageConverter.CastTable.GetEnumerator();
+			}
 			/************************************************************************/
 			/*                                                                      */
 			/************************************************************************/

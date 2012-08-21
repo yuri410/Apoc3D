@@ -25,10 +25,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define EFFECTPARAMETERS_H
 
 #include "Common.h"
+#include "Collections/FastMap.h"
 #include "Math/Color.h"
 #include "Math/Vector.h"
 #include "Graphics/RenderSystem/Shader.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
 
@@ -198,6 +200,8 @@ namespace Apoc3D
 
 				static EffectParamUsage ParseParamUsage(const String& val);
 				static String ToString(EffectParamUsage usage);
+
+				static FastMap<String, EffectParamUsage>::Enumerator getParameterUsageEnumeration();
 			private:
 
 			};

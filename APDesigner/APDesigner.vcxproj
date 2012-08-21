@@ -147,6 +147,7 @@
     <ClInclude Include="DocumentModel\MaterialDocument.h" />
     <ClInclude Include="DocumentModel\ExtensionModel.h" />
     <ClInclude Include="DocumentShader\dlgAtomManager.h" />
+    <ClInclude Include="DocumentShader\docEffectCoding.h" />
     <ClInclude Include="DocumentShader\ExtensionShader.h" />
     <ClInclude Include="DocumentShader\docShaderNet.h" />
     <ClInclude Include="BuildService\BuildService.h" />
@@ -178,6 +179,7 @@
     <ClCompile Include="DocumentModel\MaterialDocument.cpp" />
     <ClCompile Include="DocumentModel\ExtensionModel.cpp" />
     <ClCompile Include="DocumentShader\dlgAtomManager.cpp" />
+    <ClCompile Include="DocumentShader\docEffectCoding.cpp" />
     <ClCompile Include="DocumentShader\ExtensionShader.cpp" />
     <ClCompile Include="DocumentShader\ShaderDataIO.cpp" />
     <ClCompile Include="DocumentShader\docShaderNet.cpp" />

@@ -87,6 +87,34 @@ namespace APDesigner
 	private:
 		MainWindow* m_mainWindow;
 	};
+
+
+	class ExtensionEffect : public EditorExtension
+	{
+	public:
+		virtual String GetName() { return L"Effect Code Editor"; }
+		virtual Document* OpenItem(const ProjectItem* item);
+		virtual Document* DirectOpen(const String& filePath);
+
+		virtual bool SupportsItem(const ProjectItem* item);
+
+		virtual bool SupportsIndependentEditing() { return true; };
+
+		virtual std::vector<String> GetFileExtensions()
+		{
+			std::vector<String> r;
+			r.push_back(L".xml");
+			return r;
+		}
+
+		ExtensionEffect(MainWindow* wnd)
+			: m_mainWindow(wnd)
+		{
+
+		}
+	private:
+		MainWindow* m_mainWindow;
+	};
 }
 
 #endif
