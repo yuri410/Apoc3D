@@ -117,7 +117,7 @@ namespace Apoc3D
 			static FileLocateRule Textures;
 			static FileLocateRule Effects;
 			static FileLocateRule Default;
-
+			static FileLocateRule Materials;
 
 			vector<LocateCheckPoint> pathChkPt;
 

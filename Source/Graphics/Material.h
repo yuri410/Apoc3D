@@ -59,6 +59,8 @@ namespace Apoc3D
 		class APAPI Material : public HashHandleObject
 		{
 		public:
+			String ExternalReferenceName;
+
 			bool UsePointSprite;
 
 			Blend SourceBlend;

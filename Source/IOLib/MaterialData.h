@@ -58,6 +58,11 @@ namespace Apoc3D
 			*/
 			void LoadV3(TaggedDataReader* data);
 		public:
+			/** Name for retiring material reference
+			*/
+			String ExternalRefName;
+
+
 			String EffectName[MaxScenePass];
 
 			CustomParamTable CustomParametrs;

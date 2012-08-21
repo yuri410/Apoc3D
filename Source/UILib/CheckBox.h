@@ -52,6 +52,8 @@ namespace Apoc3D
 
 			bool getCanUncheck() const { return m_canUncheck; }
 			void setCanUncheck(bool v) { m_canUncheck = v; }
+
+			UIEventHandler& eventToggled() { return m_eToggled; }
 		private:
 			
 			bool m_mouseDown;
@@ -60,6 +62,8 @@ namespace Apoc3D
 			bool m_check;
 			bool m_canUncheck;
 			Point m_textOffset;
+
+			UIEventHandler m_eToggled;
 
 			void UpdateEvents();
 		};

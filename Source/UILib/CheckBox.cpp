@@ -84,9 +84,17 @@ namespace Apoc3D
 		void CheckBox::Toggle()
 		{
 			if (m_check && m_canUncheck)
+			{
 				m_check = false;
+				if (!m_eToggled.empty())
+					m_eToggled(this);
+			}
 			else if (!m_check)
+			{
 				m_check = true;
+				if (!m_eToggled.empty())
+					m_eToggled(this);
+			}
 		}
 
 		void CheckBox::Draw(Sprite* sprite)

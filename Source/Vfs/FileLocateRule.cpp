@@ -32,6 +32,7 @@ namespace Apoc3D
 		FileLocateRule FileLocateRule::Textures;
 		FileLocateRule FileLocateRule::Effects;
 		FileLocateRule FileLocateRule::Default;
+		FileLocateRule FileLocateRule::Materials;
 
 		void FileLocateRule::Initialize()
 		{
@@ -65,6 +66,16 @@ namespace Apoc3D
 				pts.push_back(pt);
 
 				Effects = FileLocateRule(pts);
+			}
+			/********************************************************************************/
+			{
+				LocateCheckPoint pt;
+				pt.AddPath(L"materials");
+
+				vector<LocateCheckPoint> pts;
+				pts.push_back(pt);
+
+				Materials = FileLocateRule(pts);
 			}
 		}
 

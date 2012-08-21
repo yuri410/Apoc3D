@@ -34,6 +34,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/MaterialData.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/FileLocateRule.h"
+#include "Vfs/ResourceLocation.h"
 #include "TextureManager.h"
 
 using namespace Apoc3D::VFS;
@@ -145,6 +146,20 @@ namespace Apoc3D
 
 		void Material::Load(const MaterialData& mdata)
 		{
+			if (mdata.ExternalRefName.size())
+			{
+				// re load using a newly loaded MaterialData
+
+				MaterialData newData;
+				FileLocation* fl = FileSystem::getSingleton().TryLocate(mdata.ExternalRefName, FileLocateRule::Materials);
+
+				newData.Load(fl);
+				Load(newData);
+				delete fl;
+				return;
+			}
+			ExternalReferenceName = mdata.ExternalRefName;
+
 			m_customParametrs = mdata.CustomParametrs;
 			m_passFlags = mdata.PassFlags;
 			m_priority = mdata.Priority;
@@ -180,6 +195,7 @@ namespace Apoc3D
 		}
 		void Material::Save(MaterialData& data)
 		{
+			data.ExternalRefName = ExternalReferenceName;
 			data.CustomParametrs = m_customParametrs;
 			data.PassFlags = m_passFlags;
 			data.Priority = m_priority;

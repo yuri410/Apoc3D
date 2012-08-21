@@ -114,6 +114,8 @@ namespace APDesigner
 		Button* m_removeMtrlFrame;
 		TextBox* m_tbMeshName;
 
+		CheckBox* m_cbUseRef;
+		TextBox* m_tbRefMaterialName;
 		// material specific parameters
 
 		ColorField* m_cfAmbient;
@@ -177,7 +179,9 @@ namespace APDesigner
 		void ZoomIn_Pressed(Control* ctrl);
 		void ZoomOut_Pressed(Control* ctrl);
 
-		void DisplayMaterialEditor(Material* mtrl);
+		void CBUseRef_Checked(Control* ctrl);
+
+		void DisplayMaterialEditor(Material* mtrl, bool usingRef);
 
 	};
 }

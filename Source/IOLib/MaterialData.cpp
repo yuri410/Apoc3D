@@ -89,7 +89,7 @@ namespace Apoc3D
 		static String TAG_3_DepthWriteEnabled = L"DepthWriteEnabled";
 
 		static String TAG_3_MaterialColorTag = L"MaterialColor";
-
+		static String TAG_3_MaterialRefName = L"MaterialRefName";
 
 		void MaterialData::LoadEffect(BinaryReader* br, int32 index)
 		{
@@ -230,6 +230,7 @@ namespace Apoc3D
 		}
 		void MaterialData::LoadV3(TaggedDataReader* data)
 		{
+
 			// load custom material parameters
 			uint32 cmpCount = 0;
 			data->TryGetDataUInt32(TAG_3_CustomParamCount, cmpCount);
@@ -349,6 +350,15 @@ namespace Apoc3D
 				br->Close();
 				delete br;
 			}
+
+
+			{
+				BinaryReader* br = data->TryGetData(TAG_3_MaterialRefName);
+				ExternalRefName = br->ReadString();
+				br->Close();
+				delete br;
+			}
+			
 		}
 
 		void MaterialData::LoadData(TaggedDataReader* data)

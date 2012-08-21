@@ -209,6 +209,16 @@ namespace APDesigner
 		{
 			int sx = 21 + 522;
 			int sy = 210;
+
+			m_cbUseRef = new CheckBox(Point(sx,sy), L"Use External", false);
+			m_cbUseRef->SetSkin(window->getUISkin());
+			m_cbUseRef->eventToggled().bind(this, &ModelDocument::CBUseRef_Checked);
+
+			m_tbRefMaterialName = new TextBox(Point(sx,sy), 125);
+			m_tbRefMaterialName->SetSkin(window->getUISkin());
+
+			sy+=30;
+
 			m_cfAmbient = new ColorField(Point(sx, sy), CV_Red);
 			m_cfAmbient->Text = L"Ambient";
 			m_cfAmbient->SetSkin(window->getUISkin());
@@ -461,6 +471,9 @@ namespace APDesigner
 		delete m_removeMtrlFrame;
 		delete m_tbMeshName;
 
+		delete m_cbUseRef;
+		delete m_tbRefMaterialName;
+
 		delete m_cfAmbient;
 		delete m_cfDiffuse;
 		delete m_cfEmissive;
@@ -581,6 +594,10 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_zoomIn);
 		getDocumentForm()->getControls().Add(m_zoomOut);
 
+		{
+			getDocumentForm()->getControls().Add(m_cbUseRef);
+			getDocumentForm()->getControls().Add(m_tbRefMaterialName);
+		}
 		{
 			getDocumentForm()->getControls().Add(m_cfAmbient);
 			getDocumentForm()->getControls().Add(m_cfDiffuse);
@@ -826,7 +843,7 @@ namespace APDesigner
 			int frameIndex = m_cbSubMtrl->getSelectedIndex();
 			if (partIdx != -1 && frameIndex != -1)
 			{
-				DisplayMaterialEditor(mtrls->getMaterial(partIdx, frameIndex));
+				DisplayMaterialEditor(mtrls->getMaterial(partIdx, frameIndex), m_cbUseRef->getValue());
 			}
 		}
 	}
@@ -837,66 +854,80 @@ namespace APDesigner
 			//const MaterialAnimationClip* clip = m_animData->getMaterialAnimationClips();
 		}
 	}
-	void ModelDocument::DisplayMaterialEditor(Material* mtrl)
+
+	void ModelDocument::CBUseRef_Checked(Control* ctrl)
 	{
-		if (mtrl)
+		CBSubMtrl_SelectionChanged(ctrl);
+	}
+
+	void ModelDocument::DisplayMaterialEditor(Material* mtrl, bool usingRef)
+	{
+		if (mtrl && usingRef)
 		{
 			for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
 			{
 				m_mtrlPanelLabels[i]->Visible = true;
 			}
-			m_cfAmbient->Visible = true;
-			m_cfDiffuse->Visible = true;
-			m_cfSpecular->Visible = true;
-			m_cfEmissive->Visible = true;
+			
+			m_cbUseRef->Visible = usingRef;
+			m_tbRefMaterialName->Visible = usingRef;
+			
+			if (usingRef)
+			{
+				m_cfAmbient->Visible = true;
+				m_cfDiffuse->Visible = true;
+				m_cfSpecular->Visible = true;
+				m_cfEmissive->Visible = true;
 
-			m_tbShinness->Visible = true;
+				m_tbShinness->Visible = true;
 
-			m_tbTex1->Visible = true;
-			m_tbTex2->Visible = true;
-			m_tbTex3->Visible = true;
-			m_tbTex4->Visible = true;
-			m_tbTex5->Visible = true;
+				m_tbTex1->Visible = true;
+				m_tbTex2->Visible = true;
+				m_tbTex3->Visible = true;
+				m_tbTex4->Visible = true;
+				m_tbTex5->Visible = true;
 
-			m_tbPriority->Visible = true;
-			m_tbAlphaTest->Visible = true;
+				m_tbPriority->Visible = true;
+				m_tbAlphaTest->Visible = true;
 
-			m_cbDepthTest->Visible = true;
-			m_cbDepthWrite->Visible = true;
+				m_cbDepthTest->Visible = true;
+				m_cbDepthWrite->Visible = true;
 
-			m_cbTransparent->Visible = true;
+				m_cbTransparent->Visible = true;
 
-			m_cbSrcBlend->Visible = true;
-			m_cbDstBlend->Visible = true;
-			m_cbBlendFunction->Visible = true;
-			m_cbCull->Visible = true;
+				m_cbSrcBlend->Visible = true;
+				m_cbDstBlend->Visible = true;
+				m_cbBlendFunction->Visible = true;
+				m_cbCull->Visible = true;
 
 
-			m_cfAmbient->SetValue(mtrl->Ambient);
-			m_cfDiffuse->SetValue(mtrl->Diffuse);
-			m_cfSpecular->SetValue(mtrl->Specular);
-			m_cfEmissive->SetValue(mtrl->Emissive);
+				m_cfAmbient->SetValue(mtrl->Ambient);
+				m_cfDiffuse->SetValue(mtrl->Diffuse);
+				m_cfSpecular->SetValue(mtrl->Specular);
+				m_cfEmissive->SetValue(mtrl->Emissive);
 
-			m_tbShinness->Text = StringUtils::ToString(mtrl->Power);
+				m_tbShinness->Text = StringUtils::ToString(mtrl->Power);
 
-			m_tbTex1->setText(mtrl->getTextureName(0));
-			m_tbTex2->setText(mtrl->getTextureName(1));
-			m_tbTex3->setText(mtrl->getTextureName(2));
-			m_tbTex4->setText(mtrl->getTextureName(3));
-			m_tbTex5->setText(mtrl->getTextureName(4));
+				m_tbTex1->setText(mtrl->getTextureName(0));
+				m_tbTex2->setText(mtrl->getTextureName(1));
+				m_tbTex3->setText(mtrl->getTextureName(2));
+				m_tbTex4->setText(mtrl->getTextureName(3));
+				m_tbTex5->setText(mtrl->getTextureName(4));
 
-			m_tbPriority->setText(StringUtils::ToString(mtrl->getPriority()));
-			m_tbAlphaTest->setText(StringUtils::ToString(mtrl->AlphaReference));
+				m_tbPriority->setText(StringUtils::ToString(mtrl->getPriority()));
+				m_tbAlphaTest->setText(StringUtils::ToString(mtrl->AlphaReference));
 
-			m_cbDepthTest->setValue(mtrl->DepthTestEnabled);
-			m_cbDepthWrite->setValue(mtrl->DepthWriteEnabled);
+				m_cbDepthTest->setValue(mtrl->DepthTestEnabled);
+				m_cbDepthWrite->setValue(mtrl->DepthWriteEnabled);
 
-			m_cbTransparent->setValue(mtrl->IsBlendTransparent);
+				m_cbTransparent->setValue(mtrl->IsBlendTransparent);
 
-			m_cbSrcBlend->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->SourceBlend));
-			m_cbDstBlend->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->DestinationBlend));
-			m_cbBlendFunction->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->BlendFunction));
-			m_cbCull->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->Cull));
+				m_cbSrcBlend->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->SourceBlend));
+				m_cbDstBlend->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->DestinationBlend));
+				m_cbBlendFunction->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->BlendFunction));
+				m_cbCull->SetSelectedByName(GraphicsCommonUtils::ToString(mtrl->Cull));
+			}
+			
 		}
 		else
 		{
@@ -904,6 +935,9 @@ namespace APDesigner
 			{
 				m_mtrlPanelLabels[i]->Visible = false;
 			}
+			m_cbUseRef->Visible = false;
+			m_tbRefMaterialName->Visible = false;
+
 			m_cfAmbient->Visible = false;
 			m_cfDiffuse->Visible = false;
 			m_cfSpecular->Visible = false;
@@ -933,6 +967,7 @@ namespace APDesigner
 
 		}
 	}
+
 
 	void ModelDocument::BtnApplyAllMtrl_Pressed(Control* ctrl)
 	{
@@ -1055,49 +1090,57 @@ namespace APDesigner
 			{
 				Material* mtrl = mtrls->getMaterial(partIdx, frameIndex);
 
-				mtrl->Ambient = Color4(m_cfAmbient->GetValue());
-				mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
-				mtrl->Specular = Color4(m_cfSpecular->GetValue());
-				mtrl->Emissive = Color4(m_cfEmissive->GetValue());
-				mtrl->Power = StringUtils::ParseSingle(m_tbShinness->Text);
-
-				mtrl->setTextureName(0, m_tbTex1->Text);
-				mtrl->setTextureName(1, m_tbTex2->Text);
-				mtrl->setTextureName(2, m_tbTex3->Text);
-				mtrl->setTextureName(3, m_tbTex4->Text);
-				mtrl->setTextureName(4, m_tbTex5->Text);
-
-				mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->Text));
-				mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->Text);
-				
-				mtrl->DepthTestEnabled = m_cbDepthTest->getValue();
-				mtrl->DepthWriteEnabled = m_cbDepthWrite->getValue();
-				
-				mtrl->IsBlendTransparent = m_cbTransparent->getValue();
-				
-				if (m_cbSrcBlend->getSelectedIndex()!=-1)
+				if (m_cbUseRef->getValue())
 				{
-					mtrl->SourceBlend = GraphicsCommonUtils::ParseBlend(
-						m_cbSrcBlend->getItems()[m_cbSrcBlend->getSelectedIndex()]);
+					mtrl->ExternalReferenceName = m_tbRefMaterialName->Text;
 				}
-				if (m_cbDstBlend->getSelectedIndex()!=-1)
+				else
 				{
-					mtrl->DestinationBlend = GraphicsCommonUtils::ParseBlend(
-						m_cbDstBlend->getItems()[m_cbDstBlend->getSelectedIndex()]);
-				}
-				if (m_cbBlendFunction->getSelectedIndex() !=-1)
-				{
-					mtrl->BlendFunction = GraphicsCommonUtils::ParseBlendFunction(
-						m_cbBlendFunction->getItems()[m_cbBlendFunction->getSelectedIndex()]);
-				}
-
-				if (m_cbCull->getSelectedIndex() !=-1)
-				{
-					mtrl->Cull = GraphicsCommonUtils::ParseCullMode(
-						m_cbCull->getItems()[m_cbCull->getSelectedIndex()]);
-				}
+					mtrl->ExternalReferenceName = L"";
 				
+					mtrl->Ambient = Color4(m_cfAmbient->GetValue());
+					mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
+					mtrl->Specular = Color4(m_cfSpecular->GetValue());
+					mtrl->Emissive = Color4(m_cfEmissive->GetValue());
+					mtrl->Power = StringUtils::ParseSingle(m_tbShinness->Text);
 
+					mtrl->setTextureName(0, m_tbTex1->Text);
+					mtrl->setTextureName(1, m_tbTex2->Text);
+					mtrl->setTextureName(2, m_tbTex3->Text);
+					mtrl->setTextureName(3, m_tbTex4->Text);
+					mtrl->setTextureName(4, m_tbTex5->Text);
+
+					mtrl->setPriority(StringUtils::ParseUInt32(m_tbPriority->Text));
+					mtrl->AlphaReference = StringUtils::ParseUInt32(m_tbAlphaTest->Text);
+				
+					mtrl->DepthTestEnabled = m_cbDepthTest->getValue();
+					mtrl->DepthWriteEnabled = m_cbDepthWrite->getValue();
+				
+					mtrl->IsBlendTransparent = m_cbTransparent->getValue();
+				
+					if (m_cbSrcBlend->getSelectedIndex()!=-1)
+					{
+						mtrl->SourceBlend = GraphicsCommonUtils::ParseBlend(
+							m_cbSrcBlend->getItems()[m_cbSrcBlend->getSelectedIndex()]);
+					}
+					if (m_cbDstBlend->getSelectedIndex()!=-1)
+					{
+						mtrl->DestinationBlend = GraphicsCommonUtils::ParseBlend(
+							m_cbDstBlend->getItems()[m_cbDstBlend->getSelectedIndex()]);
+					}
+					if (m_cbBlendFunction->getSelectedIndex() !=-1)
+					{
+						mtrl->BlendFunction = GraphicsCommonUtils::ParseBlendFunction(
+							m_cbBlendFunction->getItems()[m_cbBlendFunction->getSelectedIndex()]);
+					}
+
+					if (m_cbCull->getSelectedIndex() !=-1)
+					{
+						mtrl->Cull = GraphicsCommonUtils::ParseCullMode(
+							m_cbCull->getItems()[m_cbCull->getSelectedIndex()]);
+					}
+				
+				}
 				mtrl->Reload();
 			}
 		}
