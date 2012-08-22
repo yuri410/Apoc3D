@@ -594,7 +594,7 @@ namespace Apoc3D
 			Point baseOffset = Point(m_sRect.X, m_sRect.Y);
 			int cursorLeft = m_fontRef->MeasureString(L"|").X/2;
 			if (m_curorLocation.X==0)
-				cursorLeft=-cursorLeft;
+				cursorLeft=1;//-cursorLeft;
 
 			//baseOffset.X += m_sRect.X; baseOffset.X += m_sRect.Y;
 			if (!m_multiline)

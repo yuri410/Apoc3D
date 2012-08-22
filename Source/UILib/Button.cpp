@@ -39,6 +39,9 @@ namespace Apoc3D
 	{
 		void Button::UpdateEvents()
 		{
+			if (!Visible)
+				return;
+
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			Keyboard* keyb = InputAPIManager::getSingleton().getKeyboard();
 

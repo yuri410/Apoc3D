@@ -23,6 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "MaterialBuild.h"
 #include "Config/ConfigurationSection.h"
+#include "Config/XmlConfiguration.h"
+#include "Vfs/ResourceLocation.h"
 
 namespace APBuild
 {
@@ -31,6 +33,14 @@ namespace APBuild
 		String srcFile = sect->getAttribute(L"SourceFile");
 		String destFile = sect->getAttribute(L"DestinationFile");
 
+		FileLocation* fl = new FileLocation(srcFile);
+		XMLConfiguration* config = new XMLConfiguration(fl);
 
+		ConfigurationSection* sect = config->get(L"Pallet");
+
+		FastMap<String, Color4> palColors;
+		
+		delete config;
+		delete fl;
 	}
 }

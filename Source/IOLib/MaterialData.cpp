@@ -354,9 +354,12 @@ namespace Apoc3D
 
 			{
 				BinaryReader* br = data->TryGetData(TAG_3_MaterialRefName);
-				ExternalRefName = br->ReadString();
-				br->Close();
-				delete br;
+				if (br)
+				{
+					ExternalRefName = br->ReadString();
+					br->Close();
+					delete br;
+				}
 			}
 			
 		}
