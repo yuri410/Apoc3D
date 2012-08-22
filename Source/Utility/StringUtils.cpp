@@ -96,6 +96,18 @@ namespace Apoc3D
 
 			return ret;
 		}
+		uint64 StringUtils::ParseUInt64Bin(const String& val)
+		{
+			uint64 result = 0;
+
+			for (size_t i=0;i<val.size();i++)
+			{
+				result |= (val[i]=='1') ? 1 : 0;
+				result <<=1;
+			}
+
+			return result;
+		}
 		int16 StringUtils::ParseInt16(const String& val)
 		{
 			wistringstream str(val);

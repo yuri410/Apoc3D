@@ -48,6 +48,7 @@ namespace Apoc3D
 			static uint32 ParseUInt32(const String& val);
 			static uint32 ParseUInt32Hex(const String& val);
 			static uint64 ParseUInt64(const String& val);
+			static uint64 ParseUInt64Bin(const String& val);
 			static int16 ParseInt16(const String& val);
 			static int32 ParseInt32(const String& val);
 			static int64 ParseInt64(const String& val);

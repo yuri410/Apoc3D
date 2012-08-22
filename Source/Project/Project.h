@@ -47,6 +47,7 @@ namespace Apoc3D
 		PRJITEM_Custom,
 		PRJITEM_Folder,
 		PRJITEM_Material,
+		PRJITEM_MaterialSet,
 		PRJITEM_Texture,
 		PRJITEM_Model,
 		PRJITEM_Animation,
@@ -240,6 +241,28 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t);
 	};
 
+	class ProjectResMaterialSet : public ProjectResource
+	{
+	public:
+		ProjectResMaterialSet(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
+		String SourceFile;
+		String DestinationLocation;
+		String DestinationToken;
+
+		virtual ProjectItemType getType() const { return PRJITEM_MaterialSet; }
+		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual std::vector<String> GetAllOutputFiles();
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+	};
 
 	/** Represents model with animation
 	 *  When building, a model is converted into a .mesh file, and a .anim file.

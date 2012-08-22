@@ -128,6 +128,7 @@ namespace Apoc3D
 			}
 
 			//MaterialData(const Material* mtrl);
+			MaterialData(const MaterialData& other);
 			MaterialData(void) { }
 			~MaterialData(void) { }
 

@@ -440,6 +440,48 @@ namespace Apoc3D
 		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
 	}
 
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+
+	void ProjectResMaterialSet::Parse(const ConfigurationSection* sect)
+	{
+		DestinationLocation = sect->getAttribute(L"DestinationLocation");
+		DestinationToken = sect->getAttribute(L"DestionationToken");
+	}
+	void ProjectResMaterialSet::Save(ConfigurationSection* sect, bool savingBuild)
+	{
+		sect->AddAttribute(L"DestinationLocation", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationLocation) : DestinationLocation);
+		sect->AddAttribute(L"DestinationToken", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationToken) : DestinationToken);
+	}
+	std::vector<String> ProjectResMaterialSet::GetAllOutputFiles()
+	{
+		std::vector<String> e;
+		if (DestinationToken.size())
+			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestinationToken));
+		return e;
+	}
+	bool ProjectResMaterialSet::IsEarlierThan(time_t t)
+	{
+		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationToken));
+
+		if (destFileTime < t)
+			return true;
+
+		String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
+		if (File::FileExists(path))
+		{
+			if (File::GetFileModifiyTime(path) > destFileTime)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	bool ProjectResMaterialSet::IsNotBuilt()
+	{
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationToken));
+	}
 
 	/************************************************************************/
 	/*                                                                      */
@@ -975,6 +1017,9 @@ namespace Apoc3D
 			case PRJITEM_Material:
 				sect->AddAttribute(L"Type", L"material");
 				break;
+			case PRJITEM_MaterialSet:
+				sect->AddAttribute(L"Type", L"materialset");
+				break;
 			case PRJITEM_Texture:
 				sect->AddAttribute(L"Type", L"texture");
 				break;
@@ -1033,6 +1078,12 @@ namespace Apoc3D
 			ProjectResMaterial* mtrl = new ProjectResMaterial(m_project);
 			mtrl->Parse(sect);
 			m_typeData = mtrl;
+		}
+		else if (buildType == L"materialset")
+		{
+			ProjectResMaterialSet* mtrlSet = new ProjectResMaterialSet(m_project);
+			mtrlSet->Parse(sect);
+			m_typeData = mtrlSet;
 		}
 		else if (buildType == L"texture")
 		{
@@ -1103,6 +1154,9 @@ namespace Apoc3D
 	{
 		m_name = sect->getAttribute(L"Name");
 		sect->tryGetAttribute(L"TexturePath", m_texturePath);
+
+		sect->tryGetAttribute(L"ExplicitBuildPath", m_outputPath);
+
 		ProjectParse(this, m_items, sect);
 	}
 	void Project::Save(const String& file)
@@ -1123,6 +1177,8 @@ namespace Apoc3D
 
 		sect->AddAttribute(L"Name", m_name);
 		sect->AddAttribute(L"TexturePath", m_texturePath);
+		if (m_outputPath != m_basePath)
+			sect->AddAttribute(L"ExplicitBuildPath", m_outputPath);
 		ProjectSave(sect, m_items, false);
 
 		return sect;
@@ -1200,7 +1256,8 @@ namespace Apoc3D
 	void Project::setBasePath(const String& path)
 	{
 		m_basePath = path; 
-		m_outputPath = m_basePath;
+		if (m_outputPath.size() == 0)
+			m_outputPath = m_basePath;
 		PathUtils::Append(m_outputPath, L"build");
 	}
 

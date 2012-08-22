@@ -522,5 +522,19 @@ namespace Apoc3D
 			bw->Close();
 			delete bw;
 		}
+
+		MaterialData::MaterialData(const MaterialData& other)
+			: ExternalRefName(other.ExternalRefName), CustomParametrs(other.CustomParametrs), PassFlags(other.PassFlags),
+			Priority(other.Priority), SourceBlend(other.SourceBlend), DestinationBlend(other.DestinationBlend),
+			BlendFunction(other.BlendFunction), IsBlendTransparent(other.IsBlendTransparent), Cull(other.Cull), 
+			AlphaTestEnabled(other.AlphaTestEnabled), AlphaReference(other.AlphaReference), DepthWriteEnabled(other.DepthWriteEnabled), 
+			DepthTestEnabled(other.DepthTestEnabled), Ambient(other.Ambient), Diffuse(other.Diffuse), 
+			Emissive(other.Emissive), Specular(other.Specular), Power(other.Power)
+		{
+			for (int i=0;i<MaxScenePass;i++)
+				EffectName[i] = other.EffectName[i];
+			for (int i=0;i<MaxTextures;i++)
+				TextureName[i] = other.TextureName[i];
+		}
 	}
 }
