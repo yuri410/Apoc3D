@@ -44,6 +44,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/List.h"
 #include "Utility/StringUtils.h"
 #include "Vfs/PathUtils.h"
+#include "CommonDialog/Win32InputBox.h"
+
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace APDesigner
 {
@@ -62,8 +66,6 @@ namespace APDesigner
 			lbl = new Label(Point(525, 22), L"Pixel Shader" , 100);
 			lbl->SetSkin(window->getUISkin());
 			m_labels.Add(lbl);
-
-
 
 
 			m_tbVertexCode = new TextBox(Point(10, 45),240,600,L"");
@@ -85,8 +87,7 @@ namespace APDesigner
 			m_vsParams->getColumnHeader().Add(ListView::Header(L"Name",120));
 			m_vsParams->getColumnHeader().Add(ListView::Header(L"Usage",120));
 			m_vsParams->setFullRowSelect(true);
-
-
+			m_vsParams->eventSelected().bind(this, &EffectDocument::VSParams_Selected);
 
 			m_psParams = new ListView(Point(775, 45), Point(240, 200), emptyList);
 			m_psParams->SetSkin(window->getUISkin());
@@ -94,8 +95,7 @@ namespace APDesigner
 			m_psParams->getColumnHeader().Add(ListView::Header(L"Name",120));
 			m_psParams->getColumnHeader().Add(ListView::Header(L"Usage",120));
 			m_psParams->setFullRowSelect(true);
-
-
+			m_psParams->eventSelected().bind(this, &EffectDocument::PSParams_Selected);
 
 			Label* lbl = new Label(Point(260, 22), L"Parameters(VS)" , 200);
 			lbl->SetSkin(window->getUISkin());
@@ -105,139 +105,15 @@ namespace APDesigner
 			lbl->SetSkin(window->getUISkin());
 			m_labels.Add(lbl);
 
-
-			int sy = 250;
-			int lineHeight = 25;
-			m_vsAddParam = new Button(Point(260, sy), 100, L"Add");
-			m_vsAddParam->SetSkin(window->getUISkin());
-
-			m_vsRemoveParam = new Button(Point(260+140, sy), 100, L"Remove");
-			m_vsRemoveParam->SetSkin(window->getUISkin());
-
-
-			sy+= lineHeight+15;
-			lbl = new Label(Point(260, sy), L"Usage" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-
-			List<String> items;
-			for (FastMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
-				items.Add(*e.getCurrentKey());
-			m_cbUsage = new ComboBox(Point(260+100, sy), 130, items);
-			m_cbUsage->SetSkin(window->getUISkin());
-
-			
-			sy+= lineHeight;
-			m_cbIsCustom = new CheckBox(Point(260, sy), L"Use Custom Usage", false);
-			m_cbIsCustom->SetSkin(window->getUISkin());
-			
-			sy+= lineHeight;
-			lbl = new Label(Point(260, sy), L"Custom" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-			m_tbCustomUsage = new TextBox(Point(260+100, sy), 140);
-			m_tbCustomUsage->SetSkin(window->getUISkin());
-
-			sy+= lineHeight;
-			m_cbHasSamplerState = new CheckBox(Point(260, sy), L"Has Sampler", false);
-			m_cbHasSamplerState->SetSkin(window->getUISkin());
-
-
-			sy += lineHeight;
-			lbl = new Label(Point(260, sy), L"AddressU" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-			
-			items.Clear();
-			items.Add(GraphicsCommonUtils::ToString(TA_Wrap));
-			items.Add(GraphicsCommonUtils::ToString(TA_Clamp));
-			items.Add(GraphicsCommonUtils::ToString(TA_Border));
-			items.Add(GraphicsCommonUtils::ToString(TA_Mirror));
-			items.Add(GraphicsCommonUtils::ToString(TA_MirrorOnce));
-			m_cbAddressU = new ComboBox(Point(260+100, sy), 140, items);
-			m_cbAddressU->SetSkin(window->getUISkin());
-
-			sy+= lineHeight;
-			lbl = new Label(Point(260, sy), L"AddressV" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-
-			m_cbAddressV = new ComboBox(Point(260+100, sy), 140, items);
-			m_cbAddressV->SetSkin(window->getUISkin());
-
-			sy+= lineHeight;
-			lbl = new Label(Point(260, sy), L"AddressW" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-
-			m_cbAddressW = new ComboBox(Point(260+100, sy), 140, items);
-			m_cbAddressW->SetSkin(window->getUISkin());
-
-			sy+= lineHeight;
-			lbl = new Label(Point(260, sy), L"BorderColor" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-
-			m_cfBorderColor = new ColorField(Point(260, sy), CV_Black);
-			m_cfBorderColor->SetSkin(window->getUISkin());
-
-			sy+= lineHeight;
-			lbl = new Label(Point(260, sy), L"MagFilter" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-
-			items.Clear();
-			items.Add(GraphicsCommonUtils::ToString(TFLT_Point));
-			items.Add(GraphicsCommonUtils::ToString(TFLT_Linear));
-			items.Add(GraphicsCommonUtils::ToString(TFLT_Anisotropic));
-			items.Add(GraphicsCommonUtils::ToString(TFLT_PyramidalQuad));
-			items.Add(GraphicsCommonUtils::ToString(TFLT_GaussianQuad));
-			m_cbMagFilter = new ComboBox(Point(260+100, sy), 140, items);
-			m_cbMagFilter->SetSkin(window->getUISkin());
-
-			sy+= lineHeight;
-			lbl = new Label(Point(260, sy), L"MinFilter" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-			m_cbMinFilter = new ComboBox(Point(260+100, sy), 140, items);
-			m_cbMinFilter->SetSkin(window->getUISkin());
-
-			sy+= lineHeight;
-			lbl = new Label(Point(260, sy), L"MipFilter" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-
-			items.Clear();
-			items.Add(GraphicsCommonUtils::ToString(TFLT_None));
-			items.Add(GraphicsCommonUtils::ToString(TFLT_Point));
-			items.Add(GraphicsCommonUtils::ToString(TFLT_Linear));
-			m_cbMipFilter = new ComboBox(Point(260+100, sy), 140, items);
-			m_cbMipFilter->SetSkin(window->getUISkin());
-
-			sy+= lineHeight;
-			lbl = new Label(Point(260, sy), L"MaxAniso." , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-			m_tbMaxAnisotropy = new TextBox(Point(260+100, sy), 140);
-			m_tbMaxAnisotropy->SetSkin(window->getUISkin());
-
-			sy+= lineHeight;
-			lbl = new Label(Point(260, sy), L"MaxMipLevel" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-			m_tbMaxMipLevel = new TextBox(Point(260+100, sy), 140);
-			m_tbMaxMipLevel->SetSkin(window->getUISkin());
-
-			sy+= lineHeight;
-			lbl = new Label(Point(260, sy), L"MipLODBias" , 100);
-			lbl->SetSkin(window->getUISkin());
-			m_labels.Add(lbl);
-			m_tbMipMapLODBias = new TextBox(Point(260+100, sy), 140);
-			m_tbMipMapLODBias->SetSkin(window->getUISkin());
-
 		}
+		// pixel shader params
 		{
-
+			CreatePSParamPanel(window);
+			
+		}
+		// vertex shader params
+		{
+			CreateVSParamPanel(window);
 		}
 	}
 
@@ -256,26 +132,51 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_tbPixelCode);
 		getDocumentForm()->getControls().Add(m_vsParams);
 		getDocumentForm()->getControls().Add(m_psParams);
-		getDocumentForm()->getControls().Add(m_cbUsage);
-		getDocumentForm()->getControls().Add(m_cbIsCustom);
-		getDocumentForm()->getControls().Add(m_tbCustomUsage);
-		getDocumentForm()->getControls().Add(m_cbHasSamplerState);
 
-		getDocumentForm()->getControls().Add(m_cbAddressU);
-		getDocumentForm()->getControls().Add(m_cbAddressV);
-		getDocumentForm()->getControls().Add(m_cbAddressW);
-		getDocumentForm()->getControls().Add(m_cfBorderColor);
-		getDocumentForm()->getControls().Add(m_cbMagFilter);
-		getDocumentForm()->getControls().Add(m_cbMinFilter);
-		getDocumentForm()->getControls().Add(m_cbMipFilter);
+		getDocumentForm()->getControls().Add(m_cbVsUsage);
+		getDocumentForm()->getControls().Add(m_cbVsIsCustom);
+		getDocumentForm()->getControls().Add(m_tbVsCustomUsage);
+		getDocumentForm()->getControls().Add(m_cbVsHasSamplerState);
 
-		getDocumentForm()->getControls().Add(m_tbMaxAnisotropy);
-		getDocumentForm()->getControls().Add(m_tbMaxMipLevel);
-		getDocumentForm()->getControls().Add(m_tbMipMapLODBias);
+		getDocumentForm()->getControls().Add(m_cbVsAddressU);
+		getDocumentForm()->getControls().Add(m_cbVsAddressV);
+		getDocumentForm()->getControls().Add(m_cbVsAddressW);
+		getDocumentForm()->getControls().Add(m_cfVsBorderColor);
+		getDocumentForm()->getControls().Add(m_cbVsMagFilter);
+		getDocumentForm()->getControls().Add(m_cbVsMinFilter);
+		getDocumentForm()->getControls().Add(m_cbVsMipFilter);
+
+		getDocumentForm()->getControls().Add(m_tbVsMaxAnisotropy);
+		getDocumentForm()->getControls().Add(m_tbVsMaxMipLevel);
+		getDocumentForm()->getControls().Add(m_tbVsMipMapLODBias);
 
 
 		getDocumentForm()->getControls().Add(m_vsAddParam);
 		getDocumentForm()->getControls().Add(m_vsRemoveParam);
+
+		getDocumentForm()->getControls().Add(m_psAddParam);
+		getDocumentForm()->getControls().Add(m_psRemoveParam);
+
+
+		getDocumentForm()->getControls().Add(m_cbPsUsage);
+		getDocumentForm()->getControls().Add(m_cbPsIsCustom);
+		getDocumentForm()->getControls().Add(m_tbPsCustomUsage);
+		getDocumentForm()->getControls().Add(m_cbPsHasSamplerState);
+
+		getDocumentForm()->getControls().Add(m_cbPsAddressU);
+		getDocumentForm()->getControls().Add(m_cbPsAddressV);
+		getDocumentForm()->getControls().Add(m_cbPsAddressW);
+		getDocumentForm()->getControls().Add(m_cfPsBorderColor);
+		getDocumentForm()->getControls().Add(m_cbPsMagFilter);
+		getDocumentForm()->getControls().Add(m_cbPsMinFilter);
+		getDocumentForm()->getControls().Add(m_cbPsMipFilter);
+
+		getDocumentForm()->getControls().Add(m_tbPsMaxAnisotropy);
+		getDocumentForm()->getControls().Add(m_tbPsMaxMipLevel);
+		getDocumentForm()->getControls().Add(m_tbPsMipMapLODBias);
+
+
+
 
 
 		for (int i=0;i<m_labels.getCount();i++)
@@ -369,9 +270,471 @@ namespace APDesigner
 		Document::Update(time);
 	}
 
+	void EffectDocument::CreateVSParamPanel(MainWindow* window)
+	{
+		int sx = 260;
+		int sy = 250;
+		int lineHeight = 25;
+		m_vsAddParam = new Button(Point(sx, sy), 100, L"Add");
+		m_vsAddParam->SetSkin(window->getUISkin());
+		m_vsAddParam->eventPress().bind(this, &EffectDocument::VSAddParam_Clicked);
+		
+		m_vsRemoveParam = new Button(Point(sx+140, sy), 100, L"Remove");
+		m_vsRemoveParam->SetSkin(window->getUISkin());
+		m_vsRemoveParam->eventPress().bind(this, &EffectDocument::VSRemoveParam_Clicked);
+
+		sy+= lineHeight+15;
+		Label* lbl = new Label(Point(sx, sy), L"Usage" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		List<String> items;
+		for (FastMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
+			items.Add(*e.getCurrentKey());
+		m_cbVsUsage = new ComboBox(Point(sx+100, sy), 130, items);
+		m_cbVsUsage->SetSkin(window->getUISkin());
+
+
+		sy+= lineHeight;
+		m_cbVsIsCustom = new CheckBox(Point(sx, sy), L"Use Custom Usage", false);
+		m_cbVsIsCustom->SetSkin(window->getUISkin());
+		m_cbVsIsCustom->eventToggled().bind(this, &EffectDocument::CBVSIsCustom_Changed);
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"Custom" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+		m_tbVsCustomUsage = new TextBox(Point(sx+100, sy), 140);
+		m_tbVsCustomUsage->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		m_cbVsHasSamplerState = new CheckBox(Point(sx, sy), L"Has Sampler", false);
+		m_cbVsHasSamplerState->SetSkin(window->getUISkin());
+		m_cbVsHasSamplerState->eventToggled().bind(this, &EffectDocument::CBVSHasSampler_Changed);
+
+		sy += lineHeight;
+		lbl = new Label(Point(sx, sy), L"AddressU" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		items.Clear();
+		items.Add(GraphicsCommonUtils::ToString(TA_Wrap));
+		items.Add(GraphicsCommonUtils::ToString(TA_Clamp));
+		items.Add(GraphicsCommonUtils::ToString(TA_Border));
+		items.Add(GraphicsCommonUtils::ToString(TA_Mirror));
+		items.Add(GraphicsCommonUtils::ToString(TA_MirrorOnce));
+		m_cbVsAddressU = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbVsAddressU->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"AddressV" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		m_cbVsAddressV = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbVsAddressV->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"AddressW" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		m_cbVsAddressW = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbVsAddressW->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"BorderColor" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		m_cfVsBorderColor = new ColorField(Point(sx, sy), CV_Black);
+		m_cfVsBorderColor->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MagFilter" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		items.Clear();
+		items.Add(GraphicsCommonUtils::ToString(TFLT_Point));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_Linear));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_Anisotropic));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_PyramidalQuad));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_GaussianQuad));
+		m_cbVsMagFilter = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbVsMagFilter->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MinFilter" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+		m_cbVsMinFilter = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbVsMinFilter->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MipFilter" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		items.Clear();
+		items.Add(GraphicsCommonUtils::ToString(TFLT_None));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_Point));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_Linear));
+		m_cbVsMipFilter = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbVsMipFilter->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MaxAniso." , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+		m_tbVsMaxAnisotropy = new TextBox(Point(sx+100, sy), 140);
+		m_tbVsMaxAnisotropy->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MaxMipLevel" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+		m_tbVsMaxMipLevel = new TextBox(Point(sx+100, sy), 140);
+		m_tbVsMaxMipLevel->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MipLODBias" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+		m_tbVsMipMapLODBias = new TextBox(Point(sx+100, sy), 140);
+		m_tbVsMipMapLODBias->SetSkin(window->getUISkin());
+	}
+	void EffectDocument::CreatePSParamPanel(MainWindow* window)
+	{
+		int sx = 260 + 525;
+		int sy = 250;
+		int lineHeight = 25;
+		m_psAddParam = new Button(Point(sx, sy), 100, L"Add");
+		m_psAddParam->SetSkin(window->getUISkin());
+		m_psAddParam->eventPress().bind(this, &EffectDocument::PSAddParam_Clicked);
+
+		m_psRemoveParam = new Button(Point(sx+140, sy), 100, L"Remove");
+		m_psRemoveParam->SetSkin(window->getUISkin());
+		m_psRemoveParam->eventPress().bind(this, &EffectDocument::PSRemoveParam_Clicked);
+
+		sy+= lineHeight+15;
+		Label* lbl = new Label(Point(sx, sy), L"Usage" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		List<String> items;
+		for (FastMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
+			items.Add(*e.getCurrentKey());
+		m_cbPsUsage = new ComboBox(Point(sx+100, sy), 130, items);
+		m_cbPsUsage->SetSkin(window->getUISkin());
+
+
+		sy+= lineHeight;
+		m_cbPsIsCustom = new CheckBox(Point(sx, sy), L"Use Custom Usage", false);
+		m_cbPsIsCustom->SetSkin(window->getUISkin());
+		m_cbPsIsCustom->eventToggled().bind(this, &EffectDocument::CBPSIsCustom_Changed);
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"Custom" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+		m_tbPsCustomUsage = new TextBox(Point(sx+100, sy), 140);
+		m_tbPsCustomUsage->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		m_cbPsHasSamplerState = new CheckBox(Point(sx, sy), L"Has Sampler", false);
+		m_cbPsHasSamplerState->SetSkin(window->getUISkin());
+		m_cbPsHasSamplerState->eventToggled().bind(this, &EffectDocument::CBPSHasSampler_Changed);
+
+		sy += lineHeight;
+		lbl = new Label(Point(sx, sy), L"AddressU" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		items.Clear();
+		items.Add(GraphicsCommonUtils::ToString(TA_Wrap));
+		items.Add(GraphicsCommonUtils::ToString(TA_Clamp));
+		items.Add(GraphicsCommonUtils::ToString(TA_Border));
+		items.Add(GraphicsCommonUtils::ToString(TA_Mirror));
+		items.Add(GraphicsCommonUtils::ToString(TA_MirrorOnce));
+		m_cbPsAddressU = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbPsAddressU->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"AddressV" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		m_cbPsAddressV = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbPsAddressV->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"AddressW" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		m_cbPsAddressW = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbPsAddressW->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"BorderColor" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		m_cfPsBorderColor = new ColorField(Point(sx, sy), CV_Black);
+		m_cfPsBorderColor->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MagFilter" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		items.Clear();
+		items.Add(GraphicsCommonUtils::ToString(TFLT_Point));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_Linear));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_Anisotropic));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_PyramidalQuad));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_GaussianQuad));
+		m_cbPsMagFilter = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbPsMagFilter->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MinFilter" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+		m_cbPsMinFilter = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbPsMinFilter->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MipFilter" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+
+		items.Clear();
+		items.Add(GraphicsCommonUtils::ToString(TFLT_None));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_Point));
+		items.Add(GraphicsCommonUtils::ToString(TFLT_Linear));
+		m_cbPsMipFilter = new ComboBox(Point(sx+100, sy), 140, items);
+		m_cbPsMipFilter->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MaxAniso." , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+		m_tbPsMaxAnisotropy = new TextBox(Point(sx+100, sy), 140);
+		m_tbPsMaxAnisotropy->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MaxMipLevel" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+		m_tbPsMaxMipLevel = new TextBox(Point(sx+100, sy), 140);
+		m_tbPsMaxMipLevel->SetSkin(window->getUISkin());
+
+		sy+= lineHeight;
+		lbl = new Label(Point(sx, sy), L"MipLODBias" , 100);
+		lbl->SetSkin(window->getUISkin());
+		m_labels.Add(lbl);
+		m_tbPsMipMapLODBias = new TextBox(Point(sx+100, sy), 140);
+		m_tbPsMipMapLODBias->SetSkin(window->getUISkin());
+	}
+
 	void EffectDocument::Form_Resized(Control* ctrl)
 	{
 		//m_tbCode->setWidth(getDocumentForm()->Size.X-50);
 		//m_tbCode->Size.Y = getDocumentForm()->Size.Y;
+	}
+
+	void EffectDocument::RefreshParameterList()
+	{
+		m_parameters.Clear();
+		for (int i=0;i<m_parameters.getCount();i++)
+		{
+			String usage;
+
+			if (m_parameters[i].IsCustomUsage)
+			{
+				usage = m_parameters[i].CustomUsage;
+			}
+			else
+			{
+				usage = EffectParameter::ToString(m_parameters[i].TypicalUsage);
+			}
+
+			String items[2] = {m_parameters[i].Name, usage};
+			
+			if (m_parameters[i].ProgramType == SHDT_Vertex)
+			{
+				m_vsParams->getItems().AddRow(items);
+			}
+			else
+			{
+				m_psParams->getItems().AddRow(items);
+			}
+		}
+	}
+	void EffectDocument::UploadPSParameter(EffectParameter& p)
+	{
+
+	}
+	void EffectDocument::UploadVSParameter(EffectParameter& p)
+	{
+
+	}
+	void EffectDocument::DownloadPSParameter(const EffectParameter& p)
+	{
+
+	}
+	void EffectDocument::DownloadVSParameter(const EffectParameter& p)
+	{
+		int idx = -1;
+		String strV = EffectParameter::ToString(p.TypicalUsage);
+		for (int i=0;i<m_cbVsUsage->getItems().getCount();i++)
+			if (m_cbVsUsage->getItems()[i]==strV)
+			{
+				idx = i;break;
+			}
+		m_cbVsUsage->setSelectedIndex(idx);
+		m_cbVsIsCustom->setValue(p.IsCustomUsage);
+		
+		m_tbVsCustomUsage->Text = p.CustomUsage;
+
+		
+	}
+
+	void EffectDocument::VSParams_Selected(int x, int y)
+	{
+		String name = m_vsParams->getItems().at(x,0);
+		for (int i=0;i<m_parameters.getCount();i++)
+		{
+			if (m_parameters[i].ProgramType == SHDT_Vertex && 
+				m_parameters[i].Name == name)
+			{
+				DownloadVSParameter(m_parameters[i]);
+			}
+		}
+	}
+	void EffectDocument::PSParams_Selected(int x, int y)
+	{
+		String name = m_psParams->getItems().at(x,0);
+		for (int i=0;i<m_parameters.getCount();i++)
+		{
+			if (m_parameters[i].ProgramType == SHDT_Pixel && 
+				m_parameters[i].Name == name)
+			{
+				DownloadVSParameter(m_parameters[i]);
+			}
+		}
+	}
+
+	void EffectDocument::VSAddParam_Clicked(Control* ctrl)
+	{
+		wchar_t buffer[260] = {0};
+		if (CWin32InputBox::InputBox(L"Name", L"", buffer, 260) )
+		{
+			String name = buffer;
+			if (name.size())
+			{
+				EffectParameter ep(name);
+				ep.ProgramType = SHDT_Vertex;
+				m_parameters.Add(ep);
+				RefreshParameterList();
+			}
+		}
+	}
+	void EffectDocument::VSRemoveParam_Clicked(Control* ctrl)
+	{
+		if (m_vsParams->getSelectedRowIndex() !=-1)
+		{
+			String name = m_vsParams->getItems().at(m_vsParams->getSelectedRowIndex(),0);
+
+			for (int i=0;i<m_parameters.getCount();i++)
+			{
+				if (m_parameters[i].ProgramType == SHDT_Vertex && 
+					m_parameters[i].Name == name)
+				{
+					m_parameters.RemoveAt(i);
+					break;
+				}
+			}
+			RefreshParameterList();
+		}
+	}
+	void EffectDocument::PSAddParam_Clicked(Control* ctrl)
+	{
+		wchar_t buffer[260] = {0};
+		if (CWin32InputBox::InputBox(L"Name", L"", buffer, 260) )
+		{
+			String name = buffer;
+			if (name.size())
+			{
+				EffectParameter ep(name);
+				ep.ProgramType = SHDT_Pixel;
+				m_parameters.Add(ep);
+				RefreshParameterList();
+			}
+		}
+	}
+	void EffectDocument::PSRemoveParam_Clicked(Control* ctrl)
+	{
+		if (m_psParams->getSelectedRowIndex() !=-1)
+		{
+			String name = m_psParams->getItems().at(m_psParams->getSelectedRowIndex(),0);
+
+			for (int i=0;i<m_parameters.getCount();i++)
+			{
+				if (m_parameters[i].ProgramType == SHDT_Pixel && 
+					m_parameters[i].Name == name)
+				{
+					m_parameters.RemoveAt(i);
+					break;
+				}
+			}
+			RefreshParameterList();
+		}
+	}
+
+	void EffectDocument::CBVSHasSampler_Changed(Control* ctrl)
+	{
+		bool v = m_cbVsHasSamplerState->getValue();
+		m_cbVsAddressU->Visible = v;
+		m_cbVsAddressV->Visible = v;
+		m_cbVsAddressW->Visible = v;
+		m_cbVsMagFilter->Visible = v;
+		m_cbVsMinFilter->Visible = v;
+		m_cbVsMipFilter->Visible = v;
+		m_cfVsBorderColor->Visible = v;
+		m_tbVsMipMapLODBias->Visible = v;
+		m_tbVsMaxMipLevel->Visible = v;
+		m_tbVsMaxAnisotropy->Visible = v;
+	}
+	void EffectDocument::CBVSIsCustom_Changed(Control* ctrl)
+	{
+		bool v = m_cbVsIsCustom->getValue();
+
+		m_tbVsCustomUsage->Visible = v;
+		m_cbVsUsage->Visible = !v;
+	}
+
+	void EffectDocument::CBPSHasSampler_Changed(Control* ctrl)
+	{
+		bool v = m_cbPsHasSamplerState->getValue();
+		m_cbPsAddressU->Visible = v;
+		m_cbPsAddressV->Visible = v;
+		m_cbPsAddressW->Visible = v;
+		m_cbPsMagFilter->Visible = v;
+		m_cbPsMinFilter->Visible = v;
+		m_cbPsMipFilter->Visible = v;
+		m_cfPsBorderColor->Visible = v;
+		m_tbPsMipMapLODBias->Visible = v;
+		m_tbPsMaxMipLevel->Visible = v;
+		m_tbPsMaxAnisotropy->Visible = v;
+	}
+	void EffectDocument::CBPSIsCustom_Changed(Control* ctrl)
+	{
+		bool v = m_cbPsIsCustom->getValue();
+
+		m_tbPsCustomUsage->Visible = v;
+		m_cbPsUsage->Visible = !v;
 	}
 }

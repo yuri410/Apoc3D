@@ -22,6 +22,7 @@
 #include "FontBuild/FontBuild.h"
 #include "MeshBuild/MeshBuild.h"
 #include "PakBuild/PakBuild.h"
+#include "MaterialScript/MaterialBuild.h"
 #include "EffectCompiler/AFXBuild.h"
 #include "EffectCompiler/CFXBuild.h"
 #include "EffectCompiler/FXListBuild.h"
@@ -115,6 +116,10 @@ int Build(ConfigurationSection* sect)
 	if (buildType == L"material")
 	{
 		MaterialStub::Build(sect);
+	}
+	else if (buildType == L"materialset")
+	{
+		MaterialBuild::Build(sect);
 	}
 	else if (buildType == L"texture")
 	{

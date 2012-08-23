@@ -446,11 +446,13 @@ namespace Apoc3D
 
 	void ProjectResMaterialSet::Parse(const ConfigurationSection* sect)
 	{
+		SourceFile = sect->getAttribute(L"SourceFile");
 		DestinationLocation = sect->getAttribute(L"DestinationLocation");
-		DestinationToken = sect->getAttribute(L"DestionationToken");
+		DestinationToken = sect->getAttribute(L"DestinationToken");
 	}
 	void ProjectResMaterialSet::Save(ConfigurationSection* sect, bool savingBuild)
 	{
+		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
 		sect->AddAttribute(L"DestinationLocation", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationLocation) : DestinationLocation);
 		sect->AddAttribute(L"DestinationToken", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationToken) : DestinationToken);
 	}
@@ -533,7 +535,7 @@ namespace Apoc3D
 	}
 	void ProjectResFont::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"Name", Name);
+		sect->AddAttribute(L"Name", savingBuild ? PathUtils::Combine(m_project->getBasePath(), Name) : Name);
 		sect->AddAttribute(L"Size", StringUtils::ToString(Size));
 
 		if (Style != FONTSTYLE_Regular)
@@ -1258,6 +1260,13 @@ namespace Apoc3D
 		m_basePath = path; 
 		if (m_outputPath.size() == 0)
 			m_outputPath = m_basePath;
+		else
+		{
+			if (StringUtils::StartsWidth(m_outputPath, L".."))
+			{
+				m_outputPath = PathUtils::Combine(m_basePath, m_outputPath);
+			}
+		}
 		PathUtils::Append(m_outputPath, L"build");
 	}
 

@@ -47,7 +47,7 @@ namespace APBuild
 	};
 
 	Color4 ResolveColor4(const String& text, const FastMap<String, Pallet*>& pallets);
-	void ParseMaterialTree(FastMap<String, MaterialData*>& table, MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const FastMap<String, Pallet*>& pallets);
+	void ParseMaterialTree(FastMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const FastMap<String, Pallet*>& pallets);
 
 	void MaterialBuild::Build(ConfigurationSection* sect)
 	{
@@ -56,7 +56,7 @@ namespace APBuild
 		String desinationToken = sect->getAttribute(L"DestinationToken");
 
 
-		EnsureDirectory(PathUtils::GetDirectory(destination));
+		EnsureDirectory(destination);
 
 		FileLocation* fl = new FileLocation(srcFile);
 		XMLConfiguration* config = new XMLConfiguration(fl);
@@ -71,29 +71,32 @@ namespace APBuild
 
 			Pallet* p = new Pallet();
 			p->Name = palName;
-			
+
+			palColors.Add(palName, p);
+
 			ConfigurationSection* subSect = *e.getCurrentValue();
 			for (ConfigurationSection::SubSectionEnumerator e1 = subSect->GetSubSectionEnumrator(); e1.MoveNext();)
 			{
-				std::vector<String> vals = StringUtils::Split((*e1.getCurrentValue())->getValue(), L",");
+				Color4 r = ResolveColor4((*e1.getCurrentValue())->getValue(), palColors);
+				p->Colors.Add(r);
+				//std::vector<String> vals = StringUtils::Split((*e1.getCurrentValue())->getValue(), L",");
 
-				assert(vals.size() == 3 || vals.size() == 4);
+				//assert(vals.size() == 3 || vals.size() == 4);
 
-				if (vals.size() == 4)
-				{
-					p->Colors.Add(Color4(
-						StringUtils::ParseInt32(vals[0]),
-						StringUtils::ParseInt32(vals[1]),
-						StringUtils::ParseInt32(vals[2]), 
-						StringUtils::ParseInt32(vals[3])));
-				}
-				else
-				{
-					p->Colors.Add(Color4(StringUtils::ParseInt32(vals[0]),StringUtils::ParseInt32(vals[1]),StringUtils::ParseInt32(vals[2])));
-				}
+				//if (vals.size() == 4)
+				//{
+					//p->Colors.Add(Color4(
+						//StringUtils::ParseInt32(vals[0]),
+						//StringUtils::ParseInt32(vals[1]),
+						//StringUtils::ParseInt32(vals[2]), 
+						//StringUtils::ParseInt32(vals[3])));
+				//}
+				//else
+				//{
+					//p->Colors.Add(Color4(StringUtils::ParseInt32(vals[0]),StringUtils::ParseInt32(vals[1]),StringUtils::ParseInt32(vals[2])));
+				//}
 			}
 
-			palColors.Add(palName, p);
 		}
 
 		
@@ -184,7 +187,26 @@ namespace APBuild
 		if (sect->tryGetAttribute(L"Specular", temp))			newNode->Specular = ResolveColor4(temp, pallets);
 		sect->TryGetAttributeSingle(L"Power", newNode->Power);
 
+		sect->tryGetAttribute(L"Texture1", newNode->TextureName[0]);
+		sect->tryGetAttribute(L"Texture2", newNode->TextureName[1]);
+		sect->tryGetAttribute(L"Texture3", newNode->TextureName[2]);
+		sect->tryGetAttribute(L"Texture4", newNode->TextureName[3]);
 
+		String effString;
+		if (sect->tryGetAttribute(L"Effect",effString))
+		{
+			std::vector<String> defs = StringUtils::Split(effString);
+
+			for (size_t i=0;i<defs.size();i++)
+			{
+				std::vector<String> lr = StringUtils::Split(defs[i], L":");
+
+				int ord = StringUtils::ParseInt32(lr[0].substr(1));
+				String name = lr[1];
+
+				newNode->EffectName[ord] = name;
+			}
+		}
 		//newNode->SourceBlend = GraphicsCommonUtils::ParseBlend(sect->getAttribute(L"SourceBlend"));
 		//newNode->DestinationBlend = GraphicsCommonUtils::ParseBlend(sect->getAttribute(L"DestinationBlend"));
 		//newNode->BlendFunction = GraphicsCommonUtils::ParseBlendFunction(sect->getAttribute(L"BlendFunction"));
@@ -214,6 +236,100 @@ namespace APBuild
 
 	Color4 ResolveColor4(const String& text, const FastMap<String, Pallet*>& pallets)
 	{
+		bool hasOperation = text.find('*') != String::npos;
+
+		if (hasOperation)
+		{
+			String::size_type posL = text.find_first_of('[');
+			String::size_type posR = text.find_first_of(']');
+
+			if (posL != String::npos && posR != String::npos)
+			{
+				String palName = text.substr(0, posL);
+				StringUtils::Trim(palName);
+
+				String sIndx = text.substr(posL+1,posR-posL-1);
+				int index = StringUtils::ParseInt32(sIndx);
+
+				Pallet* result;
+				if (pallets.TryGetValue(palName, result))
+				{
+					// now channel operation needs to be done
+					String::size_type mPos = text.find_first_of('*');
+					String leftPart = text.substr(0, mPos);
+
+					String::size_type ldotPos = leftPart.find_first_of('.');
+
+					byte channelMask = 0;
+
+					if (ldotPos != String::npos)
+					{
+						String chns = leftPart.substr(ldotPos + 1);
+
+						StringUtils::Trim(chns);
+						StringUtils::ToLowerCase(chns);
+						for (size_t i=0;i<chns.size();i++)
+						{
+							switch (chns[i])
+							{
+							case 'r':
+								channelMask |= 8;
+								break;
+							case 'g':
+								channelMask |= 4;
+								break;
+							case 'b':
+								channelMask |= 2;
+								break;
+							case 'a':
+								channelMask |= 1;
+								break;
+							}
+						}
+					}
+					else
+					{
+						channelMask = 1+2+4+8;// 1111
+					}
+
+					float factor[4] = {1.0f,1.0f,1.0f,1.0f};
+
+					String rightPart = text.substr(mPos +1);
+					StringUtils::Trim(rightPart);
+
+					if (StringUtils::StartsWidth(rightPart, L"(") && StringUtils::EndsWidth(rightPart, L")"))
+					{
+						String facts = rightPart.substr(1, rightPart.size()-2);
+						std::vector<String> vals = StringUtils::Split(facts, L",");
+						assert(vals.size()<=4);
+						for (size_t i=0;i<vals.size();i++)
+							factor[i] = StringUtils::ParseSingle(vals[i]);
+					}
+					else
+					{
+						float fact = StringUtils::ParseSingle(rightPart);
+						for (int i=0;i<4;i++) factor[i] = fact;
+					}
+
+					Color4 source = result->Colors[index];
+					if ((channelMask & 8) == 8)
+						source.Red *= factor[0];
+					if ((channelMask & 4) == 4)
+						source.Green *= factor[1];
+					if ((channelMask & 2) == 2)
+						source.Blue *= factor[2];
+					if ((channelMask & 1) == 1)
+						source.Alpha *= factor[3];
+					return source;
+				}
+				else
+					CompileLog::WriteError(String(L"Pallet not found ") + palName, L"");
+			}
+			
+			CompileLog::WriteError(String(L"Cannot parse ") + text, L"");
+			return Color4();
+		}
+		
 		std::vector<String> vals = StringUtils::Split(text, L",");
 
 		switch (vals.size())
@@ -258,5 +374,7 @@ namespace APBuild
 			CompileLog::WriteError(String(L"Cannot parse ") + text, L"");
 			return Color4();
 		}
+		
+	
 	}
 }

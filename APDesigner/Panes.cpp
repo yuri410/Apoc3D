@@ -391,6 +391,22 @@ namespace APDesigner
 					}
 				}
 				break;
+			case PRJITEM_MaterialSet:
+				{
+					ProjectResMaterialSet* fnt = static_cast<ProjectResMaterialSet*>(data);
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_import1"));
+					newNode->UserData = items[i];
+
+					if (parentNode)
+					{
+						parentNode->getNodes().Add(newNode);
+					}
+					else
+					{
+						m_resourceView->getNodes().Add(newNode);
+					}
+				}
+				break;
 			case PRJITEM_TransformAnimation:
 				{
 					ProjectResTAnim* fnt = static_cast<ProjectResTAnim*>(data);
@@ -637,6 +653,9 @@ namespace APDesigner
 					break;
 				case PRJITEM_Material:
 					m_infoDisplay->Text.append(L"[Material]\n");
+					break;
+				case PRJITEM_MaterialSet:
+					m_infoDisplay->Text.append(L"[MaterialSet]\n");
 					break;
 				case PRJITEM_TransformAnimation:
 					m_infoDisplay->Text.append(L"[TransformAnim]\n");

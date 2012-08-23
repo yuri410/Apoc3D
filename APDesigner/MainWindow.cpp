@@ -363,6 +363,11 @@ namespace APDesigner
 				cp.AddPath(m_project->getTexturePath());
 				FileLocateRule::Textures.AddCheckPoint(cp);
 				LogManager::getSingleton().Write(LOG_System, L"Adding texture dir: '" + m_project->getTexturePath() + L"'");
+
+				if (m_project->getOutputPath() != m_project->getBasePath())
+				{
+					LogManager::getSingleton().Write(LOG_System, L"This project is using an alternative output directory: '" + m_project->getOutputPath() + L"'");
+				}
 			}
 			// Once a project is loaded or built, the effects used will be registered/updated in the EffectSystem.
 			// So the editing tools using these effect will work perfectly

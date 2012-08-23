@@ -52,7 +52,27 @@ namespace APDesigner
 		virtual void Update(const GameTime* const time);
 		virtual void Render();
 	private:
+		void CreateVSParamPanel(MainWindow* window);
+		void CreatePSParamPanel(MainWindow* window);
+		void RefreshParameterList();
+		void DownloadVSParameter(const EffectParameter& p);
+		void DownloadPSParameter(const EffectParameter& p);
+		void UploadVSParameter(EffectParameter& p);
+		void UploadPSParameter(EffectParameter& p);
+
+
+
 		void Form_Resized(Control* ctrl);
+		void CBVSHasSampler_Changed(Control* ctrl);
+		void CBVSIsCustom_Changed(Control* ctrl);
+		void CBPSHasSampler_Changed(Control* ctrl);
+		void CBPSIsCustom_Changed(Control* ctrl);
+		void PSAddParam_Clicked(Control* ctrl);
+		void PSRemoveParam_Clicked(Control* ctrl);
+		void VSAddParam_Clicked(Control* ctrl);
+		void VSRemoveParam_Clicked(Control* ctrl);
+		void VSParams_Selected(int x, int y);
+		void PSParams_Selected(int x, int y);
 
 		String m_filePath;
 
@@ -65,27 +85,47 @@ namespace APDesigner
 		ListView* m_vsParams;
 		ListView* m_psParams;
 
-		// 
-		ComboBox* m_cbUsage;
-		CheckBox* m_cbIsCustom;
-		TextBox* m_tbCustomUsage;
-
-		// sampler state editor
-		CheckBox* m_cbHasSamplerState;
-		ComboBox* m_cbAddressU;
-		ComboBox* m_cbAddressV;
-		ComboBox* m_cbAddressW;
-		ColorField* m_cfBorderColor;
-		ComboBox* m_cbMagFilter;
-		ComboBox* m_cbMinFilter;
-		ComboBox* m_cbMipFilter;
-		TextBox* m_tbMaxAnisotropy;
-		TextBox* m_tbMaxMipLevel;
-		TextBox* m_tbMipMapLODBias;
 
 		Button* m_vsAddParam;
 		Button* m_vsRemoveParam;
+		// 
+		ComboBox* m_cbVsUsage;
+		CheckBox* m_cbVsIsCustom;
+		TextBox* m_tbVsCustomUsage;
 
+		// sampler state editor
+		CheckBox* m_cbVsHasSamplerState;
+		ComboBox* m_cbVsAddressU;
+		ComboBox* m_cbVsAddressV;
+		ComboBox* m_cbVsAddressW;
+		ColorField* m_cfVsBorderColor;
+		ComboBox* m_cbVsMagFilter;
+		ComboBox* m_cbVsMinFilter;
+		ComboBox* m_cbVsMipFilter;
+		TextBox* m_tbVsMaxAnisotropy;
+		TextBox* m_tbVsMaxMipLevel;
+		TextBox* m_tbVsMipMapLODBias;
+
+		Button* m_psAddParam;
+		Button* m_psRemoveParam;
+
+		// 
+		ComboBox* m_cbPsUsage;
+		CheckBox* m_cbPsIsCustom;
+		TextBox* m_tbPsCustomUsage;
+
+		// sampler state editor
+		CheckBox* m_cbPsHasSamplerState;
+		ComboBox* m_cbPsAddressU;
+		ComboBox* m_cbPsAddressV;
+		ComboBox* m_cbPsAddressW;
+		ColorField* m_cfPsBorderColor;
+		ComboBox* m_cbPsMagFilter;
+		ComboBox* m_cbPsMinFilter;
+		ComboBox* m_cbPsMipFilter;
+		TextBox* m_tbPsMaxAnisotropy;
+		TextBox* m_tbPsMaxMipLevel;
+		TextBox* m_tbPsMipMapLODBias;
 
 		FastList<Label*> m_labels;
 
