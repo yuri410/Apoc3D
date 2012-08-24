@@ -55,10 +55,8 @@ namespace APDesigner
 		void CreateVSParamPanel(MainWindow* window);
 		void CreatePSParamPanel(MainWindow* window);
 		void RefreshParameterList();
-		void DownloadVSParameter(const EffectParameter& p);
-		void DownloadPSParameter(const EffectParameter& p);
-		void UploadVSParameter(EffectParameter& p);
-		void UploadPSParameter(EffectParameter& p);
+		void DownloadParameter(const EffectParameter& p, bool isVS);
+		void UploadParameter(EffectParameter& p, bool isVS);
 
 
 
@@ -69,8 +67,10 @@ namespace APDesigner
 		void CBPSIsCustom_Changed(Control* ctrl);
 		void PSAddParam_Clicked(Control* ctrl);
 		void PSRemoveParam_Clicked(Control* ctrl);
+		void PSApplyParam_Clicked(Control* ctrl);
 		void VSAddParam_Clicked(Control* ctrl);
 		void VSRemoveParam_Clicked(Control* ctrl);
+		void VSApplyParam_Clicked(Control* ctrl);
 		void VSParams_Selected(int x, int y);
 		void PSParams_Selected(int x, int y);
 
@@ -88,6 +88,7 @@ namespace APDesigner
 
 		Button* m_vsAddParam;
 		Button* m_vsRemoveParam;
+		Button* m_vsApplyParam;
 		// 
 		ComboBox* m_cbVsUsage;
 		CheckBox* m_cbVsIsCustom;
@@ -108,7 +109,7 @@ namespace APDesigner
 
 		Button* m_psAddParam;
 		Button* m_psRemoveParam;
-
+		Button* m_psApplyParam;
 		// 
 		ComboBox* m_cbPsUsage;
 		CheckBox* m_cbPsIsCustom;

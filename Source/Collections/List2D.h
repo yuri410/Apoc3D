@@ -77,7 +77,7 @@ namespace Apoc3D
 			}
 			List2D& List2D::operator=(const List2D &rhs)
 			{
-				for (int i=0;i<h;i++)
+				for (int i=0;i<m_internalPointer;i++)
 				{
 					delete[] m_data[i];
 				}
@@ -88,7 +88,7 @@ namespace Apoc3D
 				m_height = rhs.m_height;
 
 				m_data = new T[m_height];
-				for (int i=0;i<m_height;i++)
+				for (int i=0;i<m_internalPointer;i++)
 				{
 					m_data[i] = new T[m_width];
 					for (int j=0;j<m_width;j++)
@@ -107,6 +107,7 @@ namespace Apoc3D
 				{
 					ResizeRows(!m_height ? 4 : (m_height * 2));
 				}
+				m_data[m_internalPointer] = new T[m_width];
 				for (int i=0;i<m_width;i++)
 				{
 					m_data[m_internalPointer][i] = val[i];
@@ -166,10 +167,10 @@ namespace Apoc3D
 				memcpy(newArr, m_data, m_height*sizeof(T*));
 				delete[] m_data;
 				m_data = newArr;
-				for (int i=m_height;i<newSize;i++)
-				{
-					newArr[i] = new T[m_width];
-				}
+				//for (int i=m_height;i<newSize;i++)
+				//{
+					//newArr[i] = new T[m_width];
+				//}
 				m_height = newSize;
 			}
 		};

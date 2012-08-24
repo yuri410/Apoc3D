@@ -46,6 +46,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/PathUtils.h"
 #include "CommonDialog/Win32InputBox.h"
 
+using namespace Apoc3D::Utility;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 
@@ -190,74 +191,11 @@ namespace APDesigner
 
 	void EffectDocument::LoadRes()
 	{
-		//ShaderAtomType* requested = ShaderAtomLibraryManager::getSingleton().FindAtomType(m_atomName);
-		//if (requested)
-		//{
-		//	if (m_currentWorkingCopy)
-		//	{
-		//		delete m_currentWorkingCopy;
-		//	}
 
-		//	m_currentWorkingCopy = new ShaderAtomType(*requested);
-
-		//	m_tbCode->setText(m_currentWorkingCopy->getCodeBody());
-		//	m_tbName->setText(m_currentWorkingCopy->getName());
-
-		//	if (m_currentWorkingCopy->getMajorSMVersion()>0 && 
-		//		m_currentWorkingCopy->getMajorSMVersion()-1<m_cbProfile->getItems().getCount())
-		//	{
-		//		m_cbProfile->setSelectedIndex(m_currentWorkingCopy->getMajorSMVersion()-1);
-		//	}
-
-		//	switch (m_currentWorkingCopy->getShaderType())
-		//	{
-		//	case SHDT_All:
-		//		m_cbShaderType->setSelectedIndex(2);
-		//		break;
-		//	case SHDT_Pixel:
-		//		m_cbShaderType->setSelectedIndex(1);
-		//		break;
-		//	case SHDT_Vertex:
-		//		m_cbShaderType->setSelectedIndex(0);
-		//		break;
-		//	}
-
-		//	for (int i=0;i<m_currentWorkingCopy->Ports().getCount();i++)
-		//	{
-		//		ShaderAtomPort& port = m_currentWorkingCopy->Ports()[i];
-		//		String row[4];
-		//		row[0] = port.Name;
-
-		//		row[1] = port.IsInputOrOutput ? L"In" : L"Out";
-
-		//		if (port.Usage == EPUSAGE_Unknown)
-		//		{
-		//			row[1].append(L"[Const]");
-		//		}
-		//		else
-		//		{
-		//			row[1].append(L"[Vary]");
-		//		}
-
-		//		row[2] = ShaderNetUtils::ToString(port.DataType);
-
-		//		row[3] = port.Usage == EPUSAGE_Unknown ? port.VaringTypeName : EffectParameter::ToString(port.Usage);
-
-		//		m_lbPorts->getItems().AddRow(row);
-		//	}
-
-		//}
 	}
 	void EffectDocument::SaveRes()
 	{
-		//if (m_currentWorkingCopy)
-		//{
-		//	ShaderAtomType* requested = ShaderAtomLibraryManager::getSingleton().FindAtomType(m_atomName);
-		//	if (requested)
-		//	{
-		//		requested->CopyFrom(m_currentWorkingCopy);
-		//	}
-		//}
+
 	}
 
 	void EffectDocument::Render()
@@ -275,13 +213,19 @@ namespace APDesigner
 		int sx = 260;
 		int sy = 250;
 		int lineHeight = 25;
-		m_vsAddParam = new Button(Point(sx, sy), 100, L"Add");
+		m_vsAddParam = new Button(Point(sx, sy), 60, L"Add");
 		m_vsAddParam->SetSkin(window->getUISkin());
 		m_vsAddParam->eventPress().bind(this, &EffectDocument::VSAddParam_Clicked);
 		
-		m_vsRemoveParam = new Button(Point(sx+140, sy), 100, L"Remove");
+		m_vsRemoveParam = new Button(Point(sx+70, sy), 90, L"Remove");
 		m_vsRemoveParam->SetSkin(window->getUISkin());
 		m_vsRemoveParam->eventPress().bind(this, &EffectDocument::VSRemoveParam_Clicked);
+
+		m_vsApplyParam = new Button(Point(sx+170, sy), 90, L"Apply");
+		m_vsApplyParam->SetSkin(window->getUISkin());
+		m_vsApplyParam->eventPress().bind(this, &EffectDocument::VSApplyParam_Clicked);
+
+
 
 		sy+= lineHeight+15;
 		Label* lbl = new Label(Point(sx, sy), L"Usage" , 100);
@@ -409,13 +353,18 @@ namespace APDesigner
 		int sx = 260 + 525;
 		int sy = 250;
 		int lineHeight = 25;
-		m_psAddParam = new Button(Point(sx, sy), 100, L"Add");
+		m_psAddParam = new Button(Point(sx, sy), 60, L"Add");
 		m_psAddParam->SetSkin(window->getUISkin());
 		m_psAddParam->eventPress().bind(this, &EffectDocument::PSAddParam_Clicked);
 
-		m_psRemoveParam = new Button(Point(sx+140, sy), 100, L"Remove");
+		m_psRemoveParam = new Button(Point(sx+70, sy), 90, L"Remove");
 		m_psRemoveParam->SetSkin(window->getUISkin());
 		m_psRemoveParam->eventPress().bind(this, &EffectDocument::PSRemoveParam_Clicked);
+
+		m_psApplyParam = new Button(Point(sx+170, sy), 90, L"Apply");
+		m_psApplyParam->SetSkin(window->getUISkin());
+		m_psApplyParam->eventPress().bind(this, &EffectDocument::PSApplyParam_Clicked);
+
 
 		sy+= lineHeight+15;
 		Label* lbl = new Label(Point(sx, sy), L"Usage" , 100);
@@ -547,7 +496,9 @@ namespace APDesigner
 
 	void EffectDocument::RefreshParameterList()
 	{
-		m_parameters.Clear();
+		m_vsParams->getItems().Clear();
+		m_psParams->getItems().Clear();
+
 		for (int i=0;i<m_parameters.getCount();i++)
 		{
 			String usage;
@@ -561,7 +512,9 @@ namespace APDesigner
 				usage = EffectParameter::ToString(m_parameters[i].TypicalUsage);
 			}
 
-			String items[2] = {m_parameters[i].Name, usage};
+			String items[2];
+			items[0] = m_parameters[i].Name;
+			items[1] = usage;
 			
 			if (m_parameters[i].ProgramType == SHDT_Vertex)
 			{
@@ -573,33 +526,163 @@ namespace APDesigner
 			}
 		}
 	}
-	void EffectDocument::UploadPSParameter(EffectParameter& p)
-	{
 
-	}
-	void EffectDocument::UploadVSParameter(EffectParameter& p)
-	{
 
-	}
-	void EffectDocument::DownloadPSParameter(const EffectParameter& p)
+	void EffectDocument::UploadParameter(EffectParameter& p, bool isVS)
 	{
+		ComboBox* cbTemp;
+		CheckBox* chTemp;
 
+
+		chTemp = isVS ? m_cbVsIsCustom : m_cbPsIsCustom;
+		cbTemp = isVS ? m_cbVsUsage : m_cbPsUsage;
+		p.IsCustomUsage = chTemp->getValue();
+		if (p.IsCustomUsage)
+		{
+			p.TypicalUsage = EPUSAGE_Unknown;
+			p.CustomUsage = isVS ? m_tbVsCustomUsage->Text : m_tbPsCustomUsage->Text;
+		}
+		else
+		{
+			p.TypicalUsage = EffectParameter::ParseParamUsage(cbTemp->Text);
+			p.CustomUsage = L"";
+		}
+
+		chTemp = isVS ? m_cbVsHasSamplerState : m_cbPsHasSamplerState;
+
+		if (chTemp->getValue())
+		{
+			p.SamplerState.AddressU = GraphicsCommonUtils::ParseTextureAddressMode((isVS ? m_cbVsAddressU : m_cbPsAddressU)->Text);
+			p.SamplerState.AddressV = GraphicsCommonUtils::ParseTextureAddressMode((isVS ? m_cbVsAddressV : m_cbPsAddressV)->Text);
+			p.SamplerState.AddressW = GraphicsCommonUtils::ParseTextureAddressMode((isVS ? m_cbVsAddressW : m_cbPsAddressW)->Text);
+
+			p.SamplerState.BorderColor = (isVS? m_cfVsBorderColor : m_cfPsBorderColor)->GetValue();
+			p.SamplerState.MagFilter = GraphicsCommonUtils::ParseTextureFilter((isVS ? m_cbVsMagFilter : m_cbPsMagFilter)->Text);
+			p.SamplerState.MinFilter = GraphicsCommonUtils::ParseTextureFilter((isVS ? m_cbVsMinFilter : m_cbPsMinFilter)->Text);
+			p.SamplerState.MipFilter = GraphicsCommonUtils::ParseTextureFilter((isVS ? m_cbVsMipFilter : m_cbPsMipFilter)->Text);
+
+			p.SamplerState.MaxAnisotropy = StringUtils::ParseInt32((isVS ? m_tbVsMaxAnisotropy : m_tbPsMaxAnisotropy)->Text);
+			p.SamplerState.MaxMipLevel = StringUtils::ParseInt32((isVS ? m_tbVsMaxMipLevel : m_tbPsMaxMipLevel)->Text);
+			p.SamplerState.MipMapLODBias = StringUtils::ParseInt32((isVS ? m_tbVsMipMapLODBias : m_tbPsMipMapLODBias)->Text);
+
+		}
+		else
+		{
+			p.SamplerState = ShaderSamplerState();
+		}
 	}
-	void EffectDocument::DownloadVSParameter(const EffectParameter& p)
+
+	void EffectDocument::DownloadParameter(const EffectParameter& p, bool isVS)
 	{
+		ComboBox* cbTemp;
+		CheckBox* chTemp;
 		int idx = -1;
 		String strV = EffectParameter::ToString(p.TypicalUsage);
-		for (int i=0;i<m_cbVsUsage->getItems().getCount();i++)
-			if (m_cbVsUsage->getItems()[i]==strV)
+		cbTemp = isVS ? m_cbVsUsage : m_cbPsUsage;
+		for (int i=0;i<cbTemp->getItems().getCount();i++)
+			if (cbTemp->getItems()[i]==strV)
 			{
 				idx = i;break;
 			}
-		m_cbVsUsage->setSelectedIndex(idx);
-		m_cbVsIsCustom->setValue(p.IsCustomUsage);
-		
-		m_tbVsCustomUsage->Text = p.CustomUsage;
+		cbTemp->setSelectedIndex(idx);
 
+		chTemp = isVS ? m_cbVsIsCustom : m_cbPsIsCustom;
+		chTemp->setValue(p.IsCustomUsage);
+		if (idx == -1)
+			chTemp->setValue(true);
+
+		if (isVS)
+			CBVSIsCustom_Changed(0);
+		else
+			CBPSIsCustom_Changed(0);
 		
+		(isVS? m_tbVsCustomUsage : m_tbPsCustomUsage)->Text = p.CustomUsage;
+
+		bool hasSamplerState = false;
+		idx = -1;
+		strV = GraphicsCommonUtils::ToString(p.SamplerState.AddressU);
+		cbTemp = isVS ? m_cbVsAddressU : m_cbPsAddressU;
+		for (int i=0;i<cbTemp->getItems().getCount();i++)
+			if (cbTemp->getItems()[i]==strV)
+			{
+				idx = i;break;
+			}
+		cbTemp->setSelectedIndex(idx);
+		hasSamplerState |= p.SamplerState.AddressU != TA_Wrap;
+
+		idx = -1;
+		strV = GraphicsCommonUtils::ToString(p.SamplerState.AddressV);
+		cbTemp = isVS ? m_cbVsAddressV : m_cbPsAddressV;
+		for (int i=0;i<cbTemp->getItems().getCount();i++)
+			if (cbTemp->getItems()[i]==strV)
+			{
+				idx = i;break;
+			}
+		cbTemp->setSelectedIndex(idx);
+		hasSamplerState |= p.SamplerState.AddressV != TA_Wrap;
+
+		idx = -1;
+		strV = GraphicsCommonUtils::ToString(p.SamplerState.AddressW);
+		cbTemp = isVS ? m_cbVsAddressW : m_cbPsAddressW;
+		for (int i=0;i<cbTemp->getItems().getCount();i++)
+			if (cbTemp->getItems()[i]==strV)
+			{
+				idx = i;break;
+			}
+		cbTemp->setSelectedIndex(idx);
+		hasSamplerState |= p.SamplerState.AddressW != TA_Wrap;
+
+		(isVS? m_cfVsBorderColor : m_cfPsBorderColor)->SetValue(Color4(p.SamplerState.BorderColor));
+		hasSamplerState |= !!p.SamplerState.BorderColor;
+
+		idx = -1;
+		strV = GraphicsCommonUtils::ToString(p.SamplerState.MagFilter);
+		cbTemp = isVS ? m_cbVsMagFilter : m_cbPsMagFilter;
+		for (int i=0;i<cbTemp->getItems().getCount();i++)
+			if (cbTemp->getItems()[i]==strV)
+			{
+				idx = i;break;
+			}
+		cbTemp->setSelectedIndex(idx);
+		hasSamplerState |= p.SamplerState.MagFilter != TFLT_Point;
+
+		idx = -1;
+		strV = GraphicsCommonUtils::ToString(p.SamplerState.MinFilter);
+		cbTemp = isVS ? m_cbVsMinFilter : m_cbPsMinFilter;
+		for (int i=0;i<cbTemp->getItems().getCount();i++)
+			if (cbTemp->getItems()[i]==strV)
+			{
+				idx = i;break;
+			}
+		cbTemp->setSelectedIndex(idx);
+		hasSamplerState |= p.SamplerState.MinFilter != TFLT_Point;
+
+		idx = -1;
+		strV = GraphicsCommonUtils::ToString(p.SamplerState.MipFilter);
+		cbTemp = isVS ? m_cbVsMipFilter : m_cbPsMipFilter;
+		for (int i=0;i<cbTemp->getItems().getCount();i++)
+			if (cbTemp->getItems()[i]==strV)
+			{
+				idx = i;break;
+			}
+		cbTemp->setSelectedIndex(idx);
+		hasSamplerState |= p.SamplerState.MipFilter != TFLT_None;
+
+		(isVS ? m_tbVsMaxAnisotropy : m_tbPsMaxAnisotropy)->Text = StringUtils::ToString(p.SamplerState.MaxAnisotropy);
+		hasSamplerState |= p.SamplerState.MaxAnisotropy!=1;
+
+		(isVS ? m_tbVsMaxMipLevel : m_tbPsMaxMipLevel)->Text = StringUtils::ToString(p.SamplerState.MaxMipLevel);
+		hasSamplerState |= !!p.SamplerState.MaxMipLevel;
+
+		(isVS ? m_tbVsMipMapLODBias : m_tbPsMipMapLODBias)->Text = StringUtils::ToString(p.SamplerState.MipMapLODBias);
+		hasSamplerState |= !!p.SamplerState.MipMapLODBias;
+
+		(isVS ? m_cbVsHasSamplerState : m_cbPsHasSamplerState) ->setValue(hasSamplerState);
+
+		if (isVS)
+			CBVSHasSampler_Changed(0);
+		else
+			CBPSHasSampler_Changed(0);
 	}
 
 	void EffectDocument::VSParams_Selected(int x, int y)
@@ -610,7 +693,8 @@ namespace APDesigner
 			if (m_parameters[i].ProgramType == SHDT_Vertex && 
 				m_parameters[i].Name == name)
 			{
-				DownloadVSParameter(m_parameters[i]);
+				DownloadParameter(m_parameters[i], true);
+				break;
 			}
 		}
 	}
@@ -622,7 +706,8 @@ namespace APDesigner
 			if (m_parameters[i].ProgramType == SHDT_Pixel && 
 				m_parameters[i].Name == name)
 			{
-				DownloadVSParameter(m_parameters[i]);
+				DownloadParameter(m_parameters[i], false);
+				break;
 			}
 		}
 	}
@@ -660,6 +745,23 @@ namespace APDesigner
 			RefreshParameterList();
 		}
 	}
+	void EffectDocument::VSApplyParam_Clicked(Control* ctrl)
+	{
+		int x = m_vsParams->getSelectedRowIndex();
+		if (x!=-1)
+		{
+			String name = m_vsParams->getItems().at(x,0);
+			for (int i=0;i<m_parameters.getCount();i++)
+			{
+				if (m_parameters[i].ProgramType == SHDT_Pixel && 
+					m_parameters[i].Name == name)
+				{
+					UploadParameter(m_parameters[i], true);
+				}
+			}
+		}
+	}
+
 	void EffectDocument::PSAddParam_Clicked(Control* ctrl)
 	{
 		wchar_t buffer[260] = {0};
@@ -693,7 +795,22 @@ namespace APDesigner
 			RefreshParameterList();
 		}
 	}
-
+	void EffectDocument::PSApplyParam_Clicked(Control* ctrl)
+	{
+		int x = m_psParams->getSelectedRowIndex();
+		if (x!=-1)
+		{
+			String name = m_psParams->getItems().at(x,0);
+			for (int i=0;i<m_parameters.getCount();i++)
+			{
+				if (m_parameters[i].ProgramType == SHDT_Pixel && 
+					m_parameters[i].Name == name)
+				{
+					UploadParameter(m_parameters[i], false);
+				}
+			}
+		}
+	}
 	void EffectDocument::CBVSHasSampler_Changed(Control* ctrl)
 	{
 		bool v = m_cbVsHasSamplerState->getValue();

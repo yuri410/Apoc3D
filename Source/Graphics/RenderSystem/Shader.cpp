@@ -54,6 +54,12 @@ namespace Apoc3D
 
 			}
 
+			ShaderSamplerState::ShaderSamplerState()
+				: AddressU(TA_Wrap), AddressV(TA_Wrap), AddressW(TA_Wrap),
+				BorderColor(0), MagFilter(TFLT_Point), MinFilter(TFLT_Point), MipFilter(TFLT_None), MaxAnisotropy(1), MaxMipLevel(0), MipMapLODBias(0)
+			{
+
+			}
 			void ShaderSamplerState::Parse(ConfigurationSection* sect)
 			{
 				String v = GraphicsCommonUtils::ToString(TA_Wrap);
@@ -73,11 +79,11 @@ namespace Apoc3D
 				sect->tryGetAttribute(L"BorderColor", v);
 				BorderColor = StringUtils::ParseUInt32Hex(v);
 				
-				v = GraphicsCommonUtils::ToString(TFLT_None);
+				v = GraphicsCommonUtils::ToString(TFLT_Point);
 				sect->tryGetAttribute(L"MagFilter", v);
 				MagFilter = GraphicsCommonUtils::ParseTextureFilter(v);
 
-				v = GraphicsCommonUtils::ToString(TFLT_None);
+				v = GraphicsCommonUtils::ToString(TFLT_Point);
 				sect->tryGetAttribute(L"MinFilter", v);
 				MinFilter = GraphicsCommonUtils::ParseTextureFilter(v);
 
@@ -86,7 +92,7 @@ namespace Apoc3D
 				MipFilter = GraphicsCommonUtils::ParseTextureFilter(v);
 
 
-				MaxAnisotropy = 0;
+				MaxAnisotropy = 1;
 				sect->TryGetAttributeInt(L"MaxAnisotropy", MaxAnisotropy);
 
 				MaxMipLevel = 0;

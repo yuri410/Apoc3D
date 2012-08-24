@@ -55,6 +55,7 @@ namespace Apoc3D
 				int MaxMipLevel;
 				uint32 MipMapLODBias;
 
+				ShaderSamplerState();
 				void Parse(ConfigurationSection* sect);
 			};
 			class APAPI Shader
