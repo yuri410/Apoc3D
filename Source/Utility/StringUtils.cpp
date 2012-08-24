@@ -36,19 +36,41 @@ namespace Apoc3D
 		{
 			char* buffer = new char[str.length()+1];
 			buffer[str.length()] = 0;
-			wcstombs(buffer, str.c_str(), str.length());
+			size_t res = wcstombs(buffer, str.c_str(), str.length());
 			string result = buffer;
 			delete[] buffer;
 			return result;
+		}
+		string StringUtils::toString(const wchar_t* str)
+		{
+			return toString(String(str));
+			//size_t len = wcslen(str);
+			//char* buffer = new char[len+1];
+			//buffer[len] = 0;
+			//wcstombs(buffer, str, len);
+			//string result = buffer;
+			//delete[] buffer;
+			//return result;
 		}
 		String StringUtils::toWString(const string& str)
 		{
 			wchar_t* buffer = new wchar_t[str.length()+1];
 			buffer[str.length()] = 0;
-			mbstowcs(buffer, str.c_str(), str.length());
+			size_t res = mbstowcs(buffer, str.c_str(), str.length());
 			String result = buffer;
 			delete[] buffer;
 			return result;
+		}
+		String StringUtils::toWString(const char* str)
+		{
+			return toWString(string(str));
+			//size_t len = strlen(str);
+			//wchar_t* buffer = new wchar_t[len+1];
+			//buffer[len] = 0;
+			//mbstowcs(buffer, str, len);
+			//String result = buffer;
+			//delete[] buffer;
+			//return result;
 		}
 
 		bool StringUtils::ParseBool(const String& val)
@@ -209,6 +231,17 @@ namespace Apoc3D
 			stream.imbue(locale::classic());
 
 			stream.setf(flags, ios::floatfield);
+			stream << val;
+			return stream.str();
+		}
+		String StringUtils::ToStringHex(uint32 val, unsigned short width/* =0 */)
+		{
+			wostringstream stream;
+			stream.width(width);
+			stream.fill('0');
+			stream.imbue(locale::classic());
+			stream.setf ( ios::hex, ios::basefield );       // set hex as the basefield
+			stream.setf ( ios::showbase ); 
 			stream << val;
 			return stream.str();
 		}

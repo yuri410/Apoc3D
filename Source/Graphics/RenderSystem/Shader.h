@@ -56,7 +56,8 @@ namespace Apoc3D
 				uint32 MipMapLODBias;
 
 				ShaderSamplerState();
-				void Parse(ConfigurationSection* sect);
+				void Parse(const ConfigurationSection* sect);
+				void Save(ConfigurationSection* sect);
 			};
 			class APAPI Shader
 			{

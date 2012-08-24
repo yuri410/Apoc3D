@@ -32,6 +32,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "DocumentModel/MaterialDocument.h"
 
+#include "Config/ConfigurationSection.h"
+#include "Config/XmlConfiguration.h"
+#include "IOLib/BinaryReader.h"
+#include "IOLib/Streams.h"
 #include "UILib/Form.h"
 #include "UILib/Button.h"
 #include "UILib/PictureBox.h"
@@ -44,11 +48,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/List.h"
 #include "Utility/StringUtils.h"
 #include "Vfs/PathUtils.h"
+#include "Vfs/ResourceLocation.h"
 #include "CommonDialog/Win32InputBox.h"
 
+using namespace Apoc3D::Config;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {
@@ -191,11 +198,113 @@ namespace APDesigner
 
 	void EffectDocument::LoadRes()
 	{
+		FileLocation* fl = new FileLocation(m_filePath);
+		XMLConfiguration* plist = new XMLConfiguration(fl);
+
+		ConfigurationSection* s = plist->get(L"VS");
+		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
+		{
+			ConfigurationSection* ps = *iter.getCurrentValue();
+			EffectParameter ep(ps->getName());
+
+			String usage = ps->getAttribute(L"Usage");
+			ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
+			if (ep.TypicalUsage == EPUSAGE_Unknown)
+			{
+				ep.IsCustomUsage = true;
+				ep.CustomUsage = usage;
+			}
+			ep.ProgramType = SHDT_Vertex;
+			ep.SamplerState.Parse(ps);
+			m_parameters.Add(ep);
+		}
+
+		s = plist->get(L"PS");
+
+		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
+		{
+			ConfigurationSection* ps = *iter.getCurrentValue();
+			EffectParameter ep(ps->getName());
+
+			String usage = ps->getAttribute(L"Usage");
+			ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
+			if (ep.TypicalUsage == EPUSAGE_Unknown)
+			{
+				ep.IsCustomUsage = true;
+				ep.CustomUsage = usage;
+			}
+			ep.ProgramType = SHDT_Pixel;
+			ep.SamplerState.Parse(ps);
+			m_parameters.Add(ep);
+		}
+
+		delete fl;
+		delete plist;
+
+		String temp;
+		String base;
+		
+		PathUtils::SplitFileNameExtension(m_filePath, base, temp);
+		FileStream* fs = new FileStream(base + L".vs");
+		BinaryReader* br = new BinaryReader(fs);
+
+		int64 len = fs->getLength();
+		char* code = new char[(int)len+1];
+		br->ReadBytes(code, len);
+		code[len] = 0;
+
+		m_tbVertexCode->setText( StringUtils::toWString(code) );
+
+		delete[] code;
+
+		br->Close();
+		delete br;
+
+
+		fs = new FileStream(base + L".ps");
+		br = new BinaryReader(fs);
+
+		len = fs->getLength();
+		code = new char[(int)len+1];
+		br->ReadBytes(code, len);
+		code[len] = 0;
+
+		m_tbPixelCode->setText( StringUtils::toWString(code) );
+
+		delete[] code;
+
+		br->Close();
+		delete br;
+
+		RefreshParameterList();
 
 	}
 	void EffectDocument::SaveRes()
 	{
+		XMLConfiguration* plist = new XMLConfiguration(L"Root");
 
+		ConfigurationSection* vs = new ConfigurationSection(L"VS");
+		ConfigurationSection* ps = new ConfigurationSection(L"PS");
+		for (int i=0;i<m_parameters.getCount();i++)
+		{
+			ConfigurationSection* sect = new ConfigurationSection(m_parameters[i].Name);
+			if (m_parameters[i].IsCustomUsage)
+				sect->AddAttribute(L"Usage", m_parameters[i].CustomUsage);
+			else
+				sect->AddAttribute(L"Usage", EffectParameter::ToString(m_parameters[i].TypicalUsage));
+
+			m_parameters[i].SamplerState.Save(sect);
+
+			if (m_parameters[i].ProgramType == SHDT_Vertex)
+				vs->AddSection(sect);
+			else
+				ps->AddSection(sect);
+		}
+		plist->Add(vs);
+		plist->Add(ps);
+
+		plist->Save(m_filePath);
+		delete plist;
 	}
 
 	void EffectDocument::Render()
@@ -676,6 +785,9 @@ namespace APDesigner
 
 		(isVS ? m_tbVsMipMapLODBias : m_tbPsMipMapLODBias)->Text = StringUtils::ToString(p.SamplerState.MipMapLODBias);
 		hasSamplerState |= !!p.SamplerState.MipMapLODBias;
+
+		if (p.TypicalUsage >= EPUSAGE_Tex0 && p.TypicalUsage <= EPUSAGE_Tex16)
+			hasSamplerState = true;
 
 		(isVS ? m_cbVsHasSamplerState : m_cbPsHasSamplerState) ->setValue(hasSamplerState);
 

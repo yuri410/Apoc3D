@@ -60,7 +60,7 @@ namespace Apoc3D
 			{
 
 			}
-			void ShaderSamplerState::Parse(ConfigurationSection* sect)
+			void ShaderSamplerState::Parse(const ConfigurationSection* sect)
 			{
 				String v = GraphicsCommonUtils::ToString(TA_Wrap);
 
@@ -100,6 +100,24 @@ namespace Apoc3D
 
 				MipMapLODBias = 0;
 				sect->TryGetAttributeUInt(L"MipMapLODBias", MipMapLODBias);
+			}
+			void ShaderSamplerState::Save(ConfigurationSection* sect)
+			{
+				sect->AddAttribute(L"AddressU", GraphicsCommonUtils::ToString(AddressU));
+				sect->AddAttribute(L"AddressV", GraphicsCommonUtils::ToString(AddressU));
+				sect->AddAttribute(L"AddressW", GraphicsCommonUtils::ToString(AddressU));
+
+				sect->AddAttribute(L"MagFilter", GraphicsCommonUtils::ToString(MagFilter));
+				sect->AddAttribute(L"MinFilter", GraphicsCommonUtils::ToString(MinFilter));
+				sect->AddAttribute(L"MipFilter", GraphicsCommonUtils::ToString(MipFilter));
+
+				sect->AddAttribute(L"BorderColor", StringUtils::ToStringHex(BorderColor));
+
+				sect->AddAttribute(L"MaxAnisotropy", StringUtils::ToString(MaxAnisotropy));
+				sect->AddAttribute(L"MaxMipLevel", StringUtils::ToString(MaxMipLevel));
+				sect->AddAttribute(L"MipMapLODBias", StringUtils::ToString(MipMapLODBias));
+
+
 			}
 		}
 	}

@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Project/Project.h"
 #include "Vfs/File.h"
+#include "Vfs/PathUtils.h"
 
 using namespace Apoc3D::VFS;
 
@@ -90,11 +91,11 @@ namespace APDesigner
 		{
 			ProjectResEffect* shaderNet = static_cast<ProjectResEffect*>(item->getData());
 
-			String filePath = shaderNet->GetAllOutputFiles()[0];
+			String filePath = PathUtils::Combine(item->getProject()->getBasePath(), shaderNet->PListFile);
 
 			if (File::FileExists(filePath))
 			{
-				
+				return new EffectDocument(m_mainWindow, filePath);
 			}
 		}
 		return 0;

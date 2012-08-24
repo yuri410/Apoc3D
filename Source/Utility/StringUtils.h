@@ -40,7 +40,9 @@ namespace Apoc3D
 			static const String Empty;
 
 			static string toString(const String& str);
+			static string toString(const wchar_t* str);
 			static String toWString(const string& str);
+			static String toWString(const char* str);
 
 			static bool ParseBool(const String& val);
 
@@ -82,6 +84,7 @@ namespace Apoc3D
 			{
 				return ToString(static_cast<uint64>(val), width, fill, flags);
 			}
+			static String ToStringHex(uint32 val, unsigned short width=0);
 			static String ToString(uint64 val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
 
