@@ -535,6 +535,7 @@ namespace Apoc3D
 		String m_texturePath;
 		String m_basePath;
 		String m_outputPath;
+		String m_originalOutputPath;
 
 		ConfigurationSection* Save();
 	public:

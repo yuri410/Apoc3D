@@ -1001,7 +1001,7 @@ namespace Apoc3D
 	ConfigurationSection* ProjectItem::Save(bool savingBuild)
 	{
 		if (savingBuild && 
-			(m_typeData->getType() == PRJITEM_Model || m_typeData->getType() == PRJITEM_Texture) &&
+			(m_typeData->getType() == PRJITEM_Model || m_typeData->getType() == PRJITEM_Texture || m_typeData->getType() == PRJITEM_MaterialSet) &&
 			!IsOutDated())
 		{
 			return 0;
@@ -1157,7 +1157,8 @@ namespace Apoc3D
 		m_name = sect->getAttribute(L"Name");
 		sect->tryGetAttribute(L"TexturePath", m_texturePath);
 
-		sect->tryGetAttribute(L"ExplicitBuildPath", m_outputPath);
+		sect->tryGetAttribute(L"ExplicitBuildPath", m_originalOutputPath);
+		m_outputPath = m_originalOutputPath;
 
 		ProjectParse(this, m_items, sect);
 	}
@@ -1179,8 +1180,8 @@ namespace Apoc3D
 
 		sect->AddAttribute(L"Name", m_name);
 		sect->AddAttribute(L"TexturePath", m_texturePath);
-		if (m_outputPath != m_basePath)
-			sect->AddAttribute(L"ExplicitBuildPath", m_outputPath);
+		if (m_originalOutputPath.size())
+			sect->AddAttribute(L"ExplicitBuildPath", m_originalOutputPath);
 		ProjectSave(sect, m_items, false);
 
 		return sect;

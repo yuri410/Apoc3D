@@ -822,7 +822,7 @@ namespace APBuild
 				lvlData.Depth = 1;
 				lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format) * 6;
 				lvlData.ContentData  = new char[lvlData.LevelSize];
-				int faceSize = data.Levels[i].LevelSize / 6;
+				int faceSize = lvlData.LevelSize / 6;
 
 
 
@@ -831,7 +831,7 @@ namespace APBuild
 				HRESULT hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_X, i, &rect, NULL, D3DLOCK_READONLY);
 				assert(SUCCEEDED(hr));
 
-				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
 					desc.Format, desc.Width, desc.Height, false);
 				startPos += faceSize;
 
@@ -843,7 +843,7 @@ namespace APBuild
 				hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i, &rect, NULL, D3DLOCK_READONLY);
 				assert(SUCCEEDED(hr));
 
-				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
 					desc.Format, desc.Width, desc.Height, false);
 				startPos += faceSize;
 
@@ -855,7 +855,7 @@ namespace APBuild
 				hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i, &rect, NULL, D3DLOCK_READONLY);
 				assert(SUCCEEDED(hr));
 
-				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
 					desc.Format, desc.Width, desc.Height, false);
 				startPos += faceSize;
 
@@ -866,7 +866,7 @@ namespace APBuild
 				hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i, &rect, NULL, D3DLOCK_READONLY);
 				assert(SUCCEEDED(hr));
 
-				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
 					desc.Format, desc.Width, desc.Height, false);
 				startPos += faceSize;
 
@@ -878,7 +878,7 @@ namespace APBuild
 				hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i, &rect, NULL, D3DLOCK_READONLY);
 				assert(SUCCEEDED(hr));
 
-				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
 					desc.Format, desc.Width, desc.Height, false);
 				startPos += faceSize;
 
@@ -888,7 +888,7 @@ namespace APBuild
 				hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i, &rect, NULL, D3DLOCK_READONLY);
 				assert(SUCCEEDED(hr));
 
-				copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
+				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
 					desc.Format, desc.Width, desc.Height, false);
 				startPos += faceSize;
 
