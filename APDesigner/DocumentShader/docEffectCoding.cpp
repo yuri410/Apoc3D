@@ -59,8 +59,8 @@ using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {
-	EffectDocument::EffectDocument(MainWindow* window, const String& file)
-		: Document(window), m_filePath(file)
+	EffectDocument::EffectDocument(MainWindow* window, const String& file, const String& vsPath, const String& psPath)
+		: Document(window), m_filePath(file), m_vsPath(vsPath), m_psPath(psPath)
 	{
 		String name = PathUtils::GetFileNameNoExt(file);
 		getDocumentForm()->setTitle(L"Effect: " + name);
@@ -241,11 +241,8 @@ namespace APDesigner
 		delete fl;
 		delete plist;
 
-		String temp;
-		String base;
-		
-		PathUtils::SplitFileNameExtension(m_filePath, base, temp);
-		FileStream* fs = new FileStream(base + L".vs");
+
+		FileStream* fs = new FileStream(m_vsPath);
 		BinaryReader* br = new BinaryReader(fs);
 
 		int64 len = fs->getLength();
@@ -261,7 +258,7 @@ namespace APDesigner
 		delete br;
 
 
-		fs = new FileStream(base + L".ps");
+		fs = new FileStream(m_psPath);
 		br = new BinaryReader(fs);
 
 		len = fs->getLength();
@@ -344,7 +341,7 @@ namespace APDesigner
 		List<String> items;
 		for (FastMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
 			items.Add(*e.getCurrentKey());
-		m_cbVsUsage = new ComboBox(Point(sx+100, sy), 130, items);
+		m_cbVsUsage = new ComboBox(Point(sx+100, sy), 140, items);
 		m_cbVsUsage->SetSkin(window->getUISkin());
 
 
@@ -483,7 +480,7 @@ namespace APDesigner
 		List<String> items;
 		for (FastMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
 			items.Add(*e.getCurrentKey());
-		m_cbPsUsage = new ComboBox(Point(sx+100, sy), 130, items);
+		m_cbPsUsage = new ComboBox(Point(sx+100, sy), 140, items);
 		m_cbPsUsage->SetSkin(window->getUISkin());
 
 

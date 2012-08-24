@@ -89,20 +89,27 @@ namespace APDesigner
 	{
 		if (item->getType() == PRJITEM_Effect)
 		{
-			ProjectResEffect* shaderNet = static_cast<ProjectResEffect*>(item->getData());
+			ProjectResEffect* data = static_cast<ProjectResEffect*>(item->getData());
 
-			String filePath = PathUtils::Combine(item->getProject()->getBasePath(), shaderNet->PListFile);
+			String filePath = PathUtils::Combine(item->getProject()->getBasePath(), data->PListFile);
+			String vsPath = PathUtils::Combine(item->getProject()->getBasePath(), data->SrcVSFile);
+			String psPath = PathUtils::Combine(item->getProject()->getBasePath(), data->SrcPSFile);
 
 			if (File::FileExists(filePath))
 			{
-				return new EffectDocument(m_mainWindow, filePath);
+				return new EffectDocument(m_mainWindow, filePath, vsPath, psPath);
 			}
 		}
 		return 0;
 	}
 	Document* ExtensionEffect::DirectOpen(const String& filePath)
 	{
-		return new EffectDocument(m_mainWindow, filePath);
+		String temp;
+		String base;
+
+		PathUtils::SplitFileNameExtension(filePath, base, temp);
+
+		return new EffectDocument(m_mainWindow, filePath, base + L".vs", base + L".ps");
 	}
 
 

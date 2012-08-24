@@ -41,7 +41,7 @@ namespace APDesigner
 	class EffectDocument : public Document
 	{
 	public:
-		EffectDocument(MainWindow* window, const String& file);
+		EffectDocument(MainWindow* window, const String& file, const String& vsPath, const String& psPath);
 		~EffectDocument();
 
 		virtual void LoadRes();
@@ -75,6 +75,8 @@ namespace APDesigner
 		void PSParams_Selected(int x, int y);
 
 		String m_filePath;
+		String m_vsPath;
+		String m_psPath;
 
 		List<EffectParameter> m_parameters;
 
