@@ -58,8 +58,8 @@ namespace APBuild
 			spf = isVS ? L"vs_1_1" : L"ps_1_1";
 		}
 
-		ID3DXBuffer* error;
-		ID3DXBuffer* shader;
+		ID3DXBuffer* error = 0;
+		ID3DXBuffer* shader = 0;
 		ID3DXConstantTable* constants;
 
 		HRESULT hr = D3DXCompileShaderFromFile(src.c_str(), 0, 0, 
@@ -68,16 +68,24 @@ namespace APBuild
 
 		if (hr != S_OK)
 		{
-			string errmsg = string(reinterpret_cast<const char*>(error->GetBufferPointer()), error->GetBufferSize());
-
-			std::vector<String> errs = StringUtils::Split(StringUtils::toWString(errmsg), L"\n\r");
-
-			for (size_t i=0;i<errs.size();i++)
+			if (error)
 			{
-				CompileLog::WriteError(errs[i], src);
+				string errmsg = string(reinterpret_cast<const char*>(error->GetBufferPointer()), error->GetBufferSize());
+
+				std::vector<String> errs = StringUtils::Split(StringUtils::toWString(errmsg), L"\n\r");
+
+				for (size_t i=0;i<errs.size();i++)
+				{
+					CompileLog::WriteError(errs[i], src);
+				}
+				error->Release();
+				return false;
 			}
-			error->Release();
-			return false;
+			else
+			{
+				CompileLog::WriteError(L"Failed due to unknown problem.", src);
+				return false;
+			}
 		}
 		constants->Release();
 

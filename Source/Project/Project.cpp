@@ -1001,7 +1001,7 @@ namespace Apoc3D
 	ConfigurationSection* ProjectItem::Save(bool savingBuild)
 	{
 		if (savingBuild && 
-			(m_typeData->getType() == PRJITEM_Model || m_typeData->getType() == PRJITEM_Texture || m_typeData->getType() == PRJITEM_MaterialSet) &&
+			(m_typeData->getType() == PRJITEM_Model || m_typeData->getType() == PRJITEM_Texture || m_typeData->getType() == PRJITEM_MaterialSet || m_typeData->getType() == PRJITEM_TransformAnimation) &&
 			!IsOutDated())
 		{
 			return 0;
