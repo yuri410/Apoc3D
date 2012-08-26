@@ -570,6 +570,10 @@ namespace Apoc3D
 				{
 					result |= D3DUSAGE_DYNAMIC;
 				}
+				if ((usage & BU_PointSpriteVertex) == BU_PointSpriteVertex)
+				{
+					result |= D3DUSAGE_POINTS;
+				}
 
 				return result;
 			}

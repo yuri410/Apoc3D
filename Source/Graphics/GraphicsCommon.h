@@ -60,7 +60,8 @@ namespace Apoc3D
 			{
 				BU_Static = 1,
 				BU_Dynamic = 2,
-				BU_WriteOnly = 4
+				BU_WriteOnly = 4,
+				BU_PointSpriteVertex = 8
 			};
 			/* 
 			*/
