@@ -906,7 +906,8 @@ namespace Apoc3D
 			return L"ass";
 		case MESHBUILD_FBX:
 			return L"fbx";
-			break;
+		case MESHBUILD_D3D:
+			return L"d3d";
 		}
 		return L"ass";
 	}

@@ -90,8 +90,9 @@ namespace Apoc3D
 		}
 		ConfigurationSection* ConfigurationSection::getSection(const String& name) const
 		{
-			assert(m_subSection.Contains(name));
-			ConfigurationSection* sect = m_subSection[name];
+			//assert(m_subSection.Contains(name));
+			ConfigurationSection* sect = 0;
+			m_subSection.TryGetValue(name, sect);
 			return sect;
 		}
 		
