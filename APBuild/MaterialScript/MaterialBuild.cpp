@@ -167,6 +167,7 @@ namespace APBuild
 		// parse attributes
 		String temp;
 
+		sect->TryGetAttributeBool(L"UsePointSprite", newNode->UsePointSprite);
 		sect->tryGetAttribute(L"ExternalRefName", newNode->ExternalRefName);
 		sect->TryGetAttributeInt(L"Priority", newNode->Priority);
 		sect->TryGetAttributeBool(L"IsBlendTransparent", newNode->IsBlendTransparent);

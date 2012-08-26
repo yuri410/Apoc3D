@@ -169,6 +169,8 @@ namespace Apoc3D
 			BlendFunction = mdata.BlendFunction;
 			IsBlendTransparent = mdata.IsBlendTransparent;
 
+			UsePointSprite = mdata.UsePointSprite;
+
 			Cull = mdata.Cull;
 			AlphaTestEnabled = mdata.AlphaTestEnabled;
 			AlphaReference = mdata.AlphaReference;
@@ -204,6 +206,8 @@ namespace Apoc3D
 			data.DestinationBlend = DestinationBlend;
 			data.BlendFunction = BlendFunction;
 			data.IsBlendTransparent = IsBlendTransparent;
+
+			data.UsePointSprite = UsePointSprite;
 
 			data.Cull = Cull;
 			data.AlphaTestEnabled = AlphaTestEnabled;

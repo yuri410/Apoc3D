@@ -326,7 +326,10 @@ namespace Apoc3D
 				{
 					m_nativeState->SetCullMode(mtrl->Cull);
 				}
-
+				if (m_nativeState->getPointSpriteEnabled() != mtrl->UsePointSprite)
+				{
+					m_nativeState->SetPointParameters(m_nativeState->getPointSize(), m_nativeState->getPointSizeMax(), m_nativeState->getPointSizeMin(), mtrl->UsePointSprite);
+				}
 
 
 				if (m_nativeState->getAlphaTestEnable() != mtrl->AlphaTestEnabled ||

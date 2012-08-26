@@ -434,7 +434,7 @@ namespace Apoc3D
 
 				float psize;
 				dev->GetRenderState(D3DRS_POINTSIZE, reinterpret_cast<DWORD*>(&psize));
-				SetPointParameters(psize, 1, 64, false);
+				SetPointParameters(psize, 1, 256, false);
 
 				SetStencil(false, STOP_Keep, STOP_Keep, STOP_Keep, 0, COMFUN_Always, 0xFFFFFFFF, 0xFFFFFFFF);
 				SetStencilTwoSide(false, STOP_Keep, STOP_Keep, STOP_Keep, COMFUN_Always);

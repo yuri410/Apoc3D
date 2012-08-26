@@ -74,6 +74,8 @@ namespace Apoc3D
 			*/
 			int32 Priority;
 			
+			bool UsePointSprite;
+
 			Blend SourceBlend;
 			Blend DestinationBlend;
 			BlendFunction BlendFunction;
@@ -116,6 +118,7 @@ namespace Apoc3D
 				DestinationBlend = BLEND_Zero;
 				Priority = 0;
 				PassFlags = 1;
+				UsePointSprite = false;
 
 				AlphaReference = 0;
 				AlphaTestEnabled = false;
