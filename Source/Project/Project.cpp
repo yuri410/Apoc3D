@@ -1157,6 +1157,7 @@ namespace Apoc3D
 	{
 		m_name = sect->getAttribute(L"Name");
 		sect->tryGetAttribute(L"TexturePath", m_texturePath);
+		sect->tryGetAttribute(L"MaterialPath", m_materialPath);
 
 		sect->tryGetAttribute(L"ExplicitBuildPath", m_originalOutputPath);
 		m_outputPath = m_originalOutputPath;
@@ -1181,6 +1182,8 @@ namespace Apoc3D
 
 		sect->AddAttribute(L"Name", m_name);
 		sect->AddAttribute(L"TexturePath", m_texturePath);
+		sect->AddAttribute(L"MaterialPath", m_materialPath);
+
 		if (m_originalOutputPath.size())
 			sect->AddAttribute(L"ExplicitBuildPath", m_originalOutputPath);
 		ProjectSave(sect, m_items, false);

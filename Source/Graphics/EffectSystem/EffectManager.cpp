@@ -104,6 +104,22 @@ namespace Apoc3D
 				
 
 			}
+
+			void EffectManager::RegisterCustomEffect(CustomShaderEffect* effect)
+			{
+				if (!HasEffect(effect->getName()))
+				{
+					m_fxTable.insert(std::make_pair(effect->getName(), effect));
+				}
+				else
+				{
+					Effect* eff = getEffect(effect->getName());
+
+					LogManager::getSingleton().Write(LOG_Graphics, 
+						L"EffectManager: A custom effect with the same name '" + effect->getName() + L"' is already loaded. Cannot load effect.", LOGLVL_Error);
+					delete effect;
+				}
+			}
 		}
 	}
 }

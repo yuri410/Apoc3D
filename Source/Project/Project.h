@@ -533,6 +533,8 @@ namespace Apoc3D
 		String m_name;
 
 		String m_texturePath;
+		String m_materialPath;
+
 		String m_basePath;
 		String m_outputPath;
 		String m_originalOutputPath;
@@ -544,6 +546,12 @@ namespace Apoc3D
 		/** Gets the relative path for textures
 		*/
 		const String& getTexturePath() const { return m_texturePath; }
+		/** Gets the relative path for materials
+		*/
+		const String& getMaterialPath() const { return m_materialPath; }
+		
+
+
 		/** Gets the absolute path for placing imported assets or project items
 		*/
 		const String& getOutputPath() const { return m_outputPath; }

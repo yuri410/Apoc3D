@@ -48,6 +48,7 @@ namespace APBuild
 
 	Color4 ResolveColor4(const String& text, const FastMap<String, Pallet*>& pallets);
 	void ParseMaterialTree(FastMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const FastMap<String, Pallet*>& pallets);
+	void ParseMaterialCustomParams(MaterialData& data, const String& value);
 
 	void MaterialBuild::Build(ConfigurationSection* sect)
 	{
@@ -145,6 +146,9 @@ namespace APBuild
 		palColors.Clear();
 	}
 
+
+
+
 	void ParseMaterialTree(FastMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const FastMap<String, Pallet*>& pallets)
 	{
 		MaterialData* newNode;
@@ -193,6 +197,12 @@ namespace APBuild
 		sect->tryGetAttribute(L"Texture3", newNode->TextureName[2]);
 		sect->tryGetAttribute(L"Texture4", newNode->TextureName[3]);
 
+		String customString;
+		if (sect->tryGetAttribute(L"Custom", customString))
+		{
+			ParseMaterialCustomParams(*newNode, customString);
+		}
+
 		String effString;
 		if (sect->tryGetAttribute(L"Effect",effString))
 		{
@@ -233,6 +243,75 @@ namespace APBuild
 		}
 
 		table.Add(name, newNode);
+	}
+
+	void ParseMaterialCustomParams(MaterialData& data, const String& value)
+	{
+		std::vector<String> vals = StringUtils::Split(value, L";");
+		for (size_t i=0;i<vals.size();i++)
+		{
+			std::vector<String> vals2 = StringUtils::Split(vals[i], L":");
+
+			String& v = vals[1];
+			MaterialCustomParameter mcp;
+			mcp.Usage = v[0];
+			memset(mcp.Value, 0, sizeof(mcp.Value));
+
+			if (StringUtils::StartsWidth(v, L"(") && StringUtils::EndsWidth(v, L")"))
+			{
+				String vec = v.substr(1, v.length()-2);
+				std::vector<String> vals3 = StringUtils::Split(vals[i], L",");	
+				
+				assert(vals3.size() == 2 || vals3.size()==4);
+
+				if (vals3.size() == 2)
+				{
+					mcp.Type = MTRLPT_Vector2;
+					float data[2] = { StringUtils::ParseSingle(vals3[0]), StringUtils::ParseSingle(vals3[1]) };
+					memcpy(mcp.Value, data, sizeof(data));
+				}
+				else
+				{
+					mcp.Type = MTRLPT_Vector4;
+					float data[4] = 
+					{
+						StringUtils::ParseSingle(vals3[0]), StringUtils::ParseSingle(vals3[1]),
+						StringUtils::ParseSingle(vals3[2]), StringUtils::ParseSingle(vals3[3])
+					};
+					memcpy(mcp.Value, data, sizeof(data));
+				}
+			}
+			else
+			{
+				StringUtils::Trim(v);
+				StringUtils::ToLowerCase(v);
+
+				if (v==L"true" || v == L"false")
+				{
+					mcp.Type = MTRLPT_Boolean;
+					mcp.Value[0] = v == L"true" ? 1 : 0;
+				}
+				else
+				{
+					String::size_type pos = v.find('.');
+					if (pos != String::npos)
+					{
+						mcp.Type = MTRLPT_Float;
+						float data = StringUtils::ParseSingle(v);
+						memcpy(mcp.Value, &data, sizeof(data));
+					}
+					else
+					{
+						mcp.Type = MTRLPT_Integer;
+						int data = StringUtils::ParseInt32(v);
+						memcpy(mcp.Value, &data, sizeof(data));
+					}
+				}
+				
+			}
+
+			data.CustomParametrs.insert(std::make_pair(mcp.Usage, mcp));
+		}
 	}
 
 	Color4 ResolveColor4(const String& text, const FastMap<String, Pallet*>& pallets)

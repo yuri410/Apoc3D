@@ -165,7 +165,7 @@ namespace Apoc3D
 			{
 			public:
 				CustomShaderEffect(RenderDevice* device, const ResourceLocation* rl);
-				~CustomShaderEffect();
+				virtual ~CustomShaderEffect();
 
 			protected:
 				VertexShader* m_vertexShader;

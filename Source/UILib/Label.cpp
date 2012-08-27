@@ -224,6 +224,9 @@ namespace Apoc3D
 		{
 			if (!m_multiline)
 			{
+				if (m_curorLocation.X > Text.size())
+					m_curorLocation.X = Text.size();
+
 				Text = Text.insert(m_curorLocation.X, text);
 			}
 			else

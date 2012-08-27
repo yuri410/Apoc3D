@@ -161,10 +161,11 @@ namespace APDesigner
 
 		getDocumentForm()->getControls().Add(m_vsAddParam);
 		getDocumentForm()->getControls().Add(m_vsRemoveParam);
+		getDocumentForm()->getControls().Add(m_vsApplyParam);
 
 		getDocumentForm()->getControls().Add(m_psAddParam);
 		getDocumentForm()->getControls().Add(m_psRemoveParam);
-
+		getDocumentForm()->getControls().Add(m_psApplyParam);
 
 		getDocumentForm()->getControls().Add(m_cbPsUsage);
 		getDocumentForm()->getControls().Add(m_cbPsIsCustom);
@@ -290,7 +291,8 @@ namespace APDesigner
 			else
 				sect->AddAttribute(L"Usage", EffectParameter::ToString(m_parameters[i].TypicalUsage));
 
-			m_parameters[i].SamplerState.Save(sect);
+			if (m_parameters[i].RegisterIndex == 99)
+				m_parameters[i].SamplerState.Save(sect);
 
 			if (m_parameters[i].ProgramType == SHDT_Vertex)
 				vs->AddSection(sect);
@@ -642,7 +644,7 @@ namespace APDesigner
 
 		chTemp = isVS ? m_cbVsIsCustom : m_cbPsIsCustom;
 		cbTemp = isVS ? m_cbVsUsage : m_cbPsUsage;
-		p.IsCustomUsage = chTemp->getValue();
+		p.IsCustomUsage = chTemp->getValue() && cbTemp->getSelectedIndex();
 		if (p.IsCustomUsage)
 		{
 			p.TypicalUsage = EPUSAGE_Unknown;
@@ -650,7 +652,7 @@ namespace APDesigner
 		}
 		else
 		{
-			p.TypicalUsage = EffectParameter::ParseParamUsage(cbTemp->Text);
+			p.TypicalUsage =  EffectParameter::ParseParamUsage(cbTemp->getItems()[cbTemp->getSelectedIndex()]);// EffectParameter::ParseParamUsage(cbTemp->Text);
 			p.CustomUsage = L"";
 		}
 
@@ -658,14 +660,32 @@ namespace APDesigner
 
 		if (chTemp->getValue())
 		{
-			p.SamplerState.AddressU = GraphicsCommonUtils::ParseTextureAddressMode((isVS ? m_cbVsAddressU : m_cbPsAddressU)->Text);
-			p.SamplerState.AddressV = GraphicsCommonUtils::ParseTextureAddressMode((isVS ? m_cbVsAddressV : m_cbPsAddressV)->Text);
-			p.SamplerState.AddressW = GraphicsCommonUtils::ParseTextureAddressMode((isVS ? m_cbVsAddressW : m_cbPsAddressW)->Text);
+			p.RegisterIndex = 99;
+			cbTemp = (isVS ? m_cbVsAddressU : m_cbPsAddressU);
+			if (cbTemp->getSelectedIndex() !=-1)
+				p.SamplerState.AddressU = GraphicsCommonUtils::ParseTextureAddressMode(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+
+			cbTemp = (isVS ? m_cbVsAddressV : m_cbPsAddressV);
+			if (cbTemp->getSelectedIndex() !=-1)
+				p.SamplerState.AddressV = GraphicsCommonUtils::ParseTextureAddressMode(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+
+			cbTemp = (isVS ? m_cbVsAddressW : m_cbPsAddressW);
+			if (cbTemp->getSelectedIndex() !=-1)
+				p.SamplerState.AddressW = GraphicsCommonUtils::ParseTextureAddressMode(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
 
 			p.SamplerState.BorderColor = (isVS? m_cfVsBorderColor : m_cfPsBorderColor)->GetValue();
-			p.SamplerState.MagFilter = GraphicsCommonUtils::ParseTextureFilter((isVS ? m_cbVsMagFilter : m_cbPsMagFilter)->Text);
-			p.SamplerState.MinFilter = GraphicsCommonUtils::ParseTextureFilter((isVS ? m_cbVsMinFilter : m_cbPsMinFilter)->Text);
-			p.SamplerState.MipFilter = GraphicsCommonUtils::ParseTextureFilter((isVS ? m_cbVsMipFilter : m_cbPsMipFilter)->Text);
+
+			cbTemp = (isVS ? m_cbVsMagFilter : m_cbPsMagFilter);
+			if (cbTemp->getSelectedIndex() !=-1)
+				p.SamplerState.MagFilter = GraphicsCommonUtils::ParseTextureFilter(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+
+			cbTemp = (isVS ? m_cbVsMinFilter : m_cbPsMinFilter);
+			if (cbTemp->getSelectedIndex() !=-1)
+				p.SamplerState.MinFilter = GraphicsCommonUtils::ParseTextureFilter(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+
+			cbTemp = (isVS ? m_cbVsMipFilter : m_cbPsMipFilter);
+			if (cbTemp->getSelectedIndex() !=-1)
+				p.SamplerState.MipFilter = GraphicsCommonUtils::ParseTextureFilter(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
 
 			p.SamplerState.MaxAnisotropy = StringUtils::ParseInt32((isVS ? m_tbVsMaxAnisotropy : m_tbPsMaxAnisotropy)->Text);
 			p.SamplerState.MaxMipLevel = StringUtils::ParseInt32((isVS ? m_tbVsMaxMipLevel : m_tbPsMaxMipLevel)->Text);
@@ -702,7 +722,7 @@ namespace APDesigner
 		else
 			CBPSIsCustom_Changed(0);
 		
-		(isVS? m_tbVsCustomUsage : m_tbPsCustomUsage)->Text = p.CustomUsage;
+		(isVS? m_tbVsCustomUsage : m_tbPsCustomUsage)->setText(p.CustomUsage);
 
 		bool hasSamplerState = false;
 		idx = -1;
@@ -774,13 +794,13 @@ namespace APDesigner
 		cbTemp->setSelectedIndex(idx);
 		hasSamplerState |= p.SamplerState.MipFilter != TFLT_None;
 
-		(isVS ? m_tbVsMaxAnisotropy : m_tbPsMaxAnisotropy)->Text = StringUtils::ToString(p.SamplerState.MaxAnisotropy);
+		(isVS ? m_tbVsMaxAnisotropy : m_tbPsMaxAnisotropy)->setText(StringUtils::ToString(p.SamplerState.MaxAnisotropy));
 		hasSamplerState |= p.SamplerState.MaxAnisotropy!=1;
 
-		(isVS ? m_tbVsMaxMipLevel : m_tbPsMaxMipLevel)->Text = StringUtils::ToString(p.SamplerState.MaxMipLevel);
+		(isVS ? m_tbVsMaxMipLevel : m_tbPsMaxMipLevel)->setText(StringUtils::ToString(p.SamplerState.MaxMipLevel));
 		hasSamplerState |= !!p.SamplerState.MaxMipLevel;
 
-		(isVS ? m_tbVsMipMapLODBias : m_tbPsMipMapLODBias)->Text = StringUtils::ToString(p.SamplerState.MipMapLODBias);
+		(isVS ? m_tbVsMipMapLODBias : m_tbPsMipMapLODBias)->setText(StringUtils::ToString(p.SamplerState.MipMapLODBias));
 		hasSamplerState |= !!p.SamplerState.MipMapLODBias;
 
 		if (p.TypicalUsage >= EPUSAGE_Tex0 && p.TypicalUsage <= EPUSAGE_Tex16)
@@ -862,12 +882,14 @@ namespace APDesigner
 			String name = m_vsParams->getItems().at(x,0);
 			for (int i=0;i<m_parameters.getCount();i++)
 			{
-				if (m_parameters[i].ProgramType == SHDT_Pixel && 
+				if (m_parameters[i].ProgramType == SHDT_Vertex && 
 					m_parameters[i].Name == name)
 				{
 					UploadParameter(m_parameters[i], true);
+					break;
 				}
 			}
+			RefreshParameterList();
 		}
 	}
 
@@ -916,8 +938,10 @@ namespace APDesigner
 					m_parameters[i].Name == name)
 				{
 					UploadParameter(m_parameters[i], false);
+					break;
 				}
 			}
+			RefreshParameterList();
 		}
 	}
 	void EffectDocument::CBVSHasSampler_Changed(Control* ctrl)

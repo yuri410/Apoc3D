@@ -58,6 +58,8 @@ namespace Apoc3D
 
 				//void ReloadEffect(RenderDevice* device, const ResourceLocation* fl);
 				void LoadEffect(RenderDevice* device, const ResourceLocation* rl);
+				
+				void RegisterCustomEffect(CustomShaderEffect* effect);
 
 				/** Loads all of a project's effects from a APBuild-generated xml list automatically.
 				*/

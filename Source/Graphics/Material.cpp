@@ -152,11 +152,13 @@ namespace Apoc3D
 
 				MaterialData newData;
 				FileLocation* fl = FileSystem::getSingleton().TryLocate(mdata.ExternalRefName, FileLocateRule::Materials);
-
-				newData.Load(fl);
-				Load(newData);
-				delete fl;
-				return;
+				if (fl)
+				{
+					newData.Load(fl);
+					Load(newData);
+					delete fl;
+					return;
+				}
 			}
 			ExternalReferenceName = mdata.ExternalRefName;
 
