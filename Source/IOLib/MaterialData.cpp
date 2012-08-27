@@ -91,6 +91,8 @@ namespace Apoc3D
 		static String TAG_3_MaterialColorTag = L"MaterialColor";
 		static String TAG_3_MaterialRefName = L"MaterialRefName";
 
+		static String TAG_3_UsePointSprite = L"UsePointSprite";
+
 		void MaterialData::LoadEffect(BinaryReader* br, int32 index)
 		{
 			EffectName[index] = br->ReadString();
@@ -336,6 +338,7 @@ namespace Apoc3D
 			DepthTestEnabled = data->GetDataBool(TAG_3_DepthTestEnabled);
 			DepthWriteEnabled = data->GetDataBool(TAG_3_DepthWriteEnabled);
 
+			UsePointSprite = data->GetDataBool(TAG_3_UsePointSprite);
 
 			// load material basic color
 			{
@@ -468,7 +471,7 @@ namespace Apoc3D
 
 			data->AddEntry(TAG_3_DepthTestEnabled, DepthTestEnabled);
 			data->AddEntry(TAG_3_DepthWriteEnabled, DepthWriteEnabled);
-
+			data->AddEntry(TAG_3_UsePointSprite, UsePointSprite);
 
 			// save material basic color
 			{
@@ -529,7 +532,7 @@ namespace Apoc3D
 			BlendFunction(other.BlendFunction), IsBlendTransparent(other.IsBlendTransparent), Cull(other.Cull), 
 			AlphaTestEnabled(other.AlphaTestEnabled), AlphaReference(other.AlphaReference), DepthWriteEnabled(other.DepthWriteEnabled), 
 			DepthTestEnabled(other.DepthTestEnabled), Ambient(other.Ambient), Diffuse(other.Diffuse), 
-			Emissive(other.Emissive), Specular(other.Specular), Power(other.Power)
+			Emissive(other.Emissive), Specular(other.Specular), Power(other.Power), UsePointSprite(other.UsePointSprite)
 		{
 			for (int i=0;i<MaxScenePass;i++)
 				EffectName[i] = other.EffectName[i];

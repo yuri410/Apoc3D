@@ -124,7 +124,7 @@ namespace Apoc3D
 				AlphaTestEnabled = false;
 
 				Ambient = Color4(0,0,0,0);
-				Diffuse = Color4(1,1,1,1);
+				Diffuse = Color4(1.f,1.f,1.f,1.f);
 				Emissive = Color4(0,0,0,0);
 				Specular = Color4(0,0,0,0);
 				Power = 0;

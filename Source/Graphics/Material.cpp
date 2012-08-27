@@ -51,7 +51,7 @@ namespace Apoc3D
 			SourceBlend(BLEND_SourceAlpha), DestinationBlend(BLEND_InverseSourceAlpha),
 			AlphaTestEnabled(false),
 			DepthWriteEnabled(true), DepthTestEnabled(true),
-			Ambient(0,0,0,0), Diffuse(1,1,1,1), Specular(0,0,0,0), Emissive(0,0,0,0), Power(0),
+			Ambient(0,0,0,0), Diffuse(1.f,1.f,1.f,1.f), Specular(0,0,0,0), Emissive(0,0,0,0), Power(0),
 			Cull(CULL_None),
 			UsePointSprite(false)
 		{
