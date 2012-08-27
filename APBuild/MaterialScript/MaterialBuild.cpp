@@ -215,7 +215,7 @@ namespace APBuild
 				int ord = StringUtils::ParseInt32(lr[0].substr(1));
 				String name = lr[1];
 
-				newNode->EffectName[ord] = name;
+				newNode->EffectName[ord-1] = name;
 			}
 		}
 		//newNode->SourceBlend = GraphicsCommonUtils::ParseBlend(sect->getAttribute(L"SourceBlend"));
