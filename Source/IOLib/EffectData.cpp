@@ -60,7 +60,6 @@ namespace Apoc3D
 
 				TaggedDataReader* data = br->ReadTaggedDataBlock();
 
-
 				int count = data->GetDataInt32(TAG_3_ParameterCountTag);
 				Parameters.ResizeDiscard(count);
 
@@ -127,6 +126,7 @@ namespace Apoc3D
 
 				}
 
+
 				BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeLengthTag);
 				VSLength = br3->ReadInt32();
 				PSLength = br3->ReadInt32();
@@ -186,7 +186,7 @@ namespace Apoc3D
 			if (IsCustom)
 			{
 				BinaryWriter* bw = new BinaryWriter(strm);
-				bw->Write((int32)AfxId_V3);
+				bw->Write((int32)CfxID_V3);
 				bw->Write((int32)MajorVer);
 				bw->Write((int32)MinorVer);
 				bw->Write(Name);

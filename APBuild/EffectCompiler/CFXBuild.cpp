@@ -55,7 +55,7 @@ namespace APBuild
 
 	void CFXBuild::Build(const ConfigurationSection* sect)
 	{
-		AFXBuildConfig config;
+		CFXBuildConfig config;
 		config.Parse(sect);
 
 		if (!File::FileExists(config.SrcVSFile))
@@ -63,9 +63,9 @@ namespace APBuild
 			CompileLog::WriteError(config.SrcVSFile, L"Could not find source file.");
 			return;
 		}
-		if (!File::FileExists(config.PListFile))
+		if (!File::FileExists(config.SrcPSFile))
 		{
-			CompileLog::WriteError(config.PListFile, L"Could not find param list file.");
+			CompileLog::WriteError(config.SrcPSFile, L"Could not find source file.");
 			return;
 		}
 		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
@@ -99,6 +99,7 @@ namespace APBuild
 
 		FileOutStream* fos = new FileOutStream(config.DestFile);
 		data.Save(fos);
+
 
 	}
 }

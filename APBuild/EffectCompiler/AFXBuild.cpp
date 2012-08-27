@@ -62,6 +62,11 @@ namespace APBuild
 			CompileLog::WriteError(config.SrcVSFile, L"Could not find source file.");
 			return;
 		}
+		if (!File::FileExists(config.SrcPSFile))
+		{
+			CompileLog::WriteError(config.SrcPSFile, L"Could not find source file.");
+			return;
+		}
 		if (!File::FileExists(config.PListFile))
 		{
 			CompileLog::WriteError(config.PListFile, L"Could not find param list file.");

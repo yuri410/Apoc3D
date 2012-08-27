@@ -1107,6 +1107,12 @@ namespace Apoc3D
 			eff->Parse(sect);
 			m_typeData = eff;
 		}
+		else if (buildType == L"customeffect")
+		{
+			ProjectResCustomEffect* eff = new ProjectResCustomEffect(m_project);
+			eff->Parse(sect);
+			m_typeData = eff;
+		}
 		else if (buildType == L"font")
 		{
 			ProjectResFont* font = new ProjectResFont(m_project);
