@@ -90,6 +90,8 @@ namespace Apoc3DEx
 		RenderWindow* getWindow() const { return m_window; }
 
 		const StyleSkin* getSystemUISkin() const { return m_UIskin; }
+
+		Console* getConsole() const { return m_console; }
 	protected:
 		RenderWindow* m_window;
 		RenderDevice* m_device;
