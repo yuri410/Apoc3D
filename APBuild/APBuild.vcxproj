@@ -138,6 +138,7 @@
     <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="MaterialScript\MaterialBuild.h" />
     <ClInclude Include="MaterialStub.h" />
+    <ClInclude Include="Border\BorderBuilder.h" />
     <ClInclude Include="MeshBuild\FbxBaker.h" />
     <ClInclude Include="MeshBuild\FbxImporter.h" />
     <ClInclude Include="MeshBuild\MeshBuild.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="TextureBuild\TextureBuild.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Border\BorderBuilder.cpp" />
     <ClCompile Include="EffectCompiler\AFXBuild.cpp" />
     <ClCompile Include="EffectCompiler\CFXBuild.cpp" />
     <ClCompile Include="EffectCompiler\FXListBuild.cpp" />

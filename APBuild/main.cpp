@@ -18,6 +18,7 @@
 #include "CompileLog.h"
 
 #include "MaterialStub.h"
+#include "Border/BorderBuilder.h"
 #include "TextureBuild/TextureBuild.h"
 #include "FontBuild/FontBuild.h"
 #include "MeshBuild/MeshBuild.h"
@@ -167,6 +168,10 @@ int Build(ConfigurationSection* sect)
 	else if (buildType == L"projectfxlist")
 	{
 		FXListBuild::Build(sect);
+	}
+	else if (buildType == L"border")
+	{
+		BorderBuilder::Build(sect);
 	}
 	else
 	{

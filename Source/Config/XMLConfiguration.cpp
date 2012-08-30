@@ -183,11 +183,17 @@ namespace Apoc3D
 			{
 				node->ToElement()->SetAttribute(StringUtils::toString(*iter.getCurrentKey()), StringUtils::toString(*iter.getCurrentValue()));
 			}
-
+			
 			for (ConfigurationSection::SubSectionEnumerator iter = parent->GetSubSectionEnumrator();iter.MoveNext();)
 			{
 				ConfigurationSection* s = *iter.getCurrentValue();
 				TiXmlElement* elem = new TiXmlElement(StringUtils::toString(s->getName()));
+				if (s->getValue().size())
+				{
+					TiXmlText* txt = new TiXmlText(StringUtils::toString(s->getValue()));
+					elem->LinkEndChild(txt);
+				}
+				//elem->SetText(StringUtils::toString(s->getValue()));
 				node->LinkEndChild(elem);
 				SaveNode(elem, s);
 			}

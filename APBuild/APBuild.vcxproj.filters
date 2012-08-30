@@ -90,6 +90,9 @@
     <ClInclude Include="MaterialScript\MaterialBuild.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Border\BorderBuilder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -156,6 +159,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MaterialScript\MaterialBuild.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Border\BorderBuilder.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
