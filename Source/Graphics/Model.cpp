@@ -492,8 +492,8 @@ namespace Apoc3D
 
 						if (m_skinPlayer)
 						{
-							m_opBuffer[opid].BoneTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
-							m_opBuffer[opid].BoneTransform.Count = m_skinPlayer->getTransformCount();
+							m_opBuffer[opid].PartTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
+							m_opBuffer[opid].PartTransform.Count = m_skinPlayer->getTransformCount();
 						}
 						if (m_animInstance.getCount())
 						{
@@ -565,8 +565,8 @@ namespace Apoc3D
 					
 					if (m_skinPlayer)
 					{
-						rop.BoneTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
-						rop.BoneTransform.Count = m_skinPlayer->getTransformCount();
+						rop.PartTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
+						rop.PartTransform.Count = m_skinPlayer->getTransformCount();
 					}
 				}
 
@@ -595,8 +595,8 @@ namespace Apoc3D
 
 				if (m_skinPlayer)
 				{
-					m_opBuffer[opid].BoneTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
-					m_opBuffer[opid].BoneTransform.Count = m_skinPlayer->getTransformCount();
+					m_opBuffer[opid].PartTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
+					m_opBuffer[opid].PartTransform.Count = m_skinPlayer->getTransformCount();
 				}
 				if (m_animInstance.getCount())
 				{

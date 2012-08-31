@@ -179,7 +179,6 @@ int Build(ConfigurationSection* sect)
 	}
 
 
-
 	for (size_t i=0;i<CompileLog::Logs.size();i++)
 	{
 		switch (CompileLog::Logs[i].Type)

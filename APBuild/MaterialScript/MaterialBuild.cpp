@@ -135,7 +135,7 @@ namespace APBuild
 			md->Save(fos);
 
 			delete md;
-			CompileLog::WriteInformation(desinationToken, L">");
+			CompileLog::WriteInformation(*e.getCurrentKey(), L">");
 		}
 		mtrlTable.Clear();
 

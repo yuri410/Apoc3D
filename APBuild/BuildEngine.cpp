@@ -24,6 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "BuildEngine.h"
 
+#include "Core/Logging.h"
+
 #include "Vfs/PathUtils.h"
 #include "Vfs/File.h"
 
@@ -34,11 +36,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <GdiPlus.h>
 
 using namespace APBuild;
+using namespace Apoc3D::Core;
 using namespace Apoc3D::VFS;
 using namespace Gdiplus;
 
 static GdiplusStartupInput gdiplusStartupInput;
 static ULONG_PTR           gdiplusToken;
+
+void NewLog(LogEntry e);
 
 int Initialize()
 {
@@ -46,7 +51,7 @@ int Initialize()
 		iluGetInteger(ILU_VERSION_NUM) < ILU_VERSION ||
 		ilutGetInteger(ILUT_VERSION_NUM) < ILUT_VERSION)
 	{
-		printf("DevIL version is different...!\n");
+		wcout << L"DevIL version is different...!\n";
 		return 1;
 	}
 
@@ -60,11 +65,15 @@ int Initialize()
 	GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
 
+	LogManager::Initialize();
+	LogManager::getSingleton().eventNewLogWritten().bind(NewLog);
+
 	return 0;
 }
 void Finalize()
 {
 	GdiplusShutdown(gdiplusToken);
+	LogManager::Finalize();
 	D3DHelper::Finalize();
 }
 
@@ -83,4 +92,9 @@ void EnsureDirectory(const String& path)
 		}
 	}
 
+}
+
+void NewLog(LogEntry e)
+{
+	wcout << e.ToString() << endl;
 }

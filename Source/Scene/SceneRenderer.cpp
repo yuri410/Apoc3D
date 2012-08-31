@@ -84,10 +84,13 @@ namespace Apoc3D
 					// rop with no material or geo is not eligible
 					if (mtrl && geoData)
 					{
-						Matrix temp;
-						Matrix::Multiply(temp, op.RootTransform, obj->getTrasformation());
-						op.RootTransform = temp;
-
+						if (!op.RootTransformIsFinal)
+						{
+							Matrix temp;
+							Matrix::Multiply(temp, op.RootTransform, obj->getTrasformation());
+							op.RootTransform = temp;
+						}
+						
 						uint priority = min(mtrl->getPriority(), MaxPriority);
 
 						// add the rop from outer table to inner table(top down)

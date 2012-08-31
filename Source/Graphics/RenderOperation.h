@@ -33,14 +33,14 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/** The current-frame transformations for all bones in a sequential order. 
+		/** The current-frame transformations for all bones/objects in a sequential order. 
 		*/
-		struct APAPI BoneTransforms
+		struct APAPI PartTransforms
 		{
 			const Matrix* Transfroms;
 			int32 Count;
 			
-			friend static bool operator ==(const BoneTransforms& left, const BoneTransforms& right)
+			friend static bool operator ==(const PartTransforms& left, const PartTransforms& right)
 			{
 				return left.Count == right.Count &&
 					!memcmp(left.Transfroms, right.Transfroms, sizeof(Matrix) * left.Count);
@@ -60,13 +60,16 @@ namespace Apoc3D
 			GeometryData* GeometryData;
 			Material* Material;
 			Matrix RootTransform;
-			BoneTransforms BoneTransform;
-
+			/** Let the renderer use RootTransform as the final transformation, not multiplying obj's transform
+			*/
+			bool RootTransformIsFinal;
+			PartTransforms PartTransform;
+			
 			RenderOperation(void)
-				: GeometryData(0), Material(0)
+				: GeometryData(0), Material(0), RootTransformIsFinal(false)
 			{
 				memset(&RootTransform, 0, sizeof(Matrix));
-				memset(&BoneTransform, 0, sizeof(BoneTransforms));
+				memset(&PartTransform, 0, sizeof(PartTransforms));
 			}
 			~RenderOperation(void) { }
 
@@ -75,14 +78,16 @@ namespace Apoc3D
 				return GeometryData == other.GeometryData && 
 					Material == other.Material && 
 					RootTransform == other.RootTransform &&
-					BoneTransform == other.BoneTransform;
+					PartTransform == other.PartTransform &&
+					RootTransformIsFinal == other.RootTransformIsFinal;
 			}
 			friend static bool operator ==(const RenderOperation& left, const RenderOperation& right)
 			{
 				return left.GeometryData == right.GeometryData && 
 					left.Material == right.Material && 
 					left.RootTransform == right.RootTransform &&
-					left.BoneTransform == right.BoneTransform;
+					left.PartTransform == right.PartTransform &&
+					left.RootTransformIsFinal == right.RootTransformIsFinal;
 			}
 		};
 	};

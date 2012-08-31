@@ -261,10 +261,10 @@ namespace Apoc3D
 							}
 							break;
 						case EPUSAGE_M4X3_BoneTrans:
-							Set4X3Matrix(ep, rop->BoneTransform.Transfroms, rop->BoneTransform.Count);
+							Set4X3Matrix(ep, rop->PartTransform.Transfroms, rop->PartTransform.Count);
 							break;
 						case EPUSAGE_M4X4_BoneTrans:
-							SetMatrix(ep, rop->BoneTransform.Transfroms, rop->BoneTransform.Count);
+							SetMatrix(ep, rop->PartTransform.Transfroms, rop->PartTransform.Count);
 							break;
 						case EPUSAGE_Tex0:
 							SetSamplerState(ep);
