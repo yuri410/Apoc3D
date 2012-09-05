@@ -56,6 +56,7 @@ namespace Apoc3D
 					AddPair(L"tr_view", EPUSAGE_Trans_View);
 					AddPair(L"tr_instanceworld", EPUSAGE_Trans_InstanceWorlds);
 					AddPair(L"tr_proj", EPUSAGE_Trans_Projection);
+					AddPair(L"tr_invproj", EPUSAGE_Trans_InvProj);
 
 					AddPair(L"m4x3_bonestransform", EPUSAGE_M4X3_BoneTrans);
 					AddPair(L"m4x4_bonestransform", EPUSAGE_M4X4_BoneTrans);
@@ -83,7 +84,11 @@ namespace Apoc3D
 					AddPair(L"lc4_specular", EPUSAGE_LC4_Specular);
 					AddPair(L"pv3_viewpos", EPUSAGE_PV3_ViewPos);
 					AddPair(L"sv2_viewportsize", EPUSAGE_SV2_ViewportSize);
+					AddPair(L"sv2_invviewportsize", EPUSAGE_SV2_InvViewportSize);
 					AddPair(L"s_unifiedtime", EPUSAGE_S_UnifiedTime);
+
+					AddPair(L"s_farplane", EPUSAGE_S_FarPlane);
+					AddPair(L"s_nearplane", EPUSAGE_S_NearPlane);
 				}
 
 				StringEuqlityComparer m_comparer1;

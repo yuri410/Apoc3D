@@ -250,16 +250,7 @@ namespace Apoc3D
 								}
 							}
 							break;
-						case EPUSAGE_Trans_View:
-							{
-								SetValue(ep, RendererEffectParams::CurrentCamera->getViewMatrix());
-							}
-							break;
-						case EPUSAGE_Trans_Projection:
-							{
-								SetValue(ep, RendererEffectParams::CurrentCamera->getProjMatrix());
-							}
-							break;
+						
 						case EPUSAGE_M4X3_BoneTrans:
 							Set4X3Matrix(ep, rop->PartTransform.Transfroms, rop->PartTransform.Count);
 							break;
@@ -575,7 +566,53 @@ namespace Apoc3D
 							SetVector2(m_parameters[i], size);
 						}
 						break;
-
+					case EPUSAGE_SV2_InvViewportSize:
+						{
+							Viewport vp = m_device->getViewport();
+							Vector2 size = Vector2Utils::LDVector(1.f/(float)vp.Width, 1.f/(float)vp.Height);
+							SetVector2(m_parameters[i], size);
+						}
+						break;
+					case EPUSAGE_S_FarPlane:
+						{
+							//SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->);
+							const Matrix& view = RendererEffectParams::CurrentCamera->getViewMatrix();
+							float n = -view.M34 * view.M43 / view.M33;
+							if (view.M34<0)
+							{
+								// RH
+								SetValue(m_parameters[i], (float)(view.M33 * n /(view.M33*n+1)));
+							}
+							else
+							{
+								SetValue(m_parameters[i], (float)(view.M33 * n /(view.M33*n-1)));
+							}
+						}
+						break;
+					case EPUSAGE_S_NearPlane:
+						{
+							const Matrix& view = RendererEffectParams::CurrentCamera->getViewMatrix();
+							float n = - view.M34 * view.M43 / view.M33;
+							SetValue(m_parameters[i], n);
+						}
+						break;
+					case EPUSAGE_Trans_View:
+						{
+							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getViewMatrix());
+						}
+						break;
+					case EPUSAGE_Trans_Projection:
+						{
+							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getProjMatrix());
+						}
+						break;
+					case EPUSAGE_Trans_InvProj:
+						{
+							Matrix invProj;
+							Matrix::Inverse(invProj, RendererEffectParams::CurrentCamera->getProjMatrix());
+							SetValue(m_parameters[i], invProj);
+						}
+						break;
 					case EPUSAGE_Tex0:
 					case EPUSAGE_Tex1:
 					case EPUSAGE_Tex2:

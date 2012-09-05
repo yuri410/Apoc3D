@@ -74,6 +74,7 @@ namespace Apoc3D
 			VARTYPE_Vector3,
 			VARTYPE_Vector2,
 			VARTYPE_Texture,
+			VARTYPE_Single,
 			//VARTYPE_Camera,
 			VARTYPE_Integer,
 			VARTYPE_Boolean,

@@ -94,6 +94,10 @@ namespace Apoc3D
 				/** tr_proj
 				*/
 				EPUSAGE_Trans_Projection,
+				/** tr_invproj
+				*/
+				EPUSAGE_Trans_InvProj,
+
 				/** m4x3_bonestransform
 				*/
 				EPUSAGE_M4X3_BoneTrans,
@@ -141,10 +145,20 @@ namespace Apoc3D
 				/** sv2_viewportSize
 				*/
 				EPUSAGE_SV2_ViewportSize,
+				/** sv2_invviewportSize
+				*/
+				EPUSAGE_SV2_InvViewportSize,
 
 				/** s_unifiedTime. A time from 0 to 5pi will be assigned to the parameter
 				*/
-				EPUSAGE_S_UnifiedTime
+				EPUSAGE_S_UnifiedTime,
+
+				/** s_farPlane
+				*/
+				EPUSAGE_S_FarPlane,
+				/** s_nearPlane
+				*/
+				EPUSAGE_S_NearPlane
 			};
 
 			/** Includes all global scene render resources such as the current camera, lighting that could 

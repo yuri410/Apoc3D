@@ -994,7 +994,7 @@ namespace Apoc3D
 					vector<String> elems = StringUtils::Split(StringUtils::toWString(e1->GetText()), L" ,", 4);
 					if (elems.size() != 4)
 					{
-						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector4.", LOGLVL_Warning);
+						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector4." + name, LOGLVL_Warning);
 					}
 					else
 					{
@@ -1020,7 +1020,7 @@ namespace Apoc3D
 					vector<String> elems = StringUtils::Split(StringUtils::toWString(e1->GetText()), L" ,", 4);
 					if (elems.size() != 3)
 					{
-						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector3.", LOGLVL_Warning);
+						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector3." + name, LOGLVL_Warning);
 					}
 					else
 					{
@@ -1046,7 +1046,7 @@ namespace Apoc3D
 					vector<String> elems = StringUtils::Split(StringUtils::toWString(e1->GetText()), L" ,", 2);
 					if (elems.size() != 2)
 					{
-						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector4.", LOGLVL_Warning);
+						LogManager::getSingleton().Write(LOG_Scene, L"Invalid value for vector2." + name, LOGLVL_Warning);
 					}
 					else
 					{
@@ -1056,6 +1056,21 @@ namespace Apoc3D
 							var->Value[i] = reinterpret_cast<const uint&>(v);
 						}
 					}
+				}
+
+				GlobalVars.Add(var);
+			}
+			else if (tstr == string("float"))
+			{
+				SceneVariable* var = new SceneVariable();
+				var->Type = VARTYPE_Single;
+				var->Name = StringUtils::toWString(name);
+
+				const TiXmlElement* e1 = node->FirstChildElement("Value");
+				if (e1)
+				{
+					float v = StringUtils::ParseSingle(e1->GetText());
+					var->Value[0] = reinterpret_cast<const uint&>(v);
 				}
 
 				GlobalVars.Add(var);
@@ -1103,7 +1118,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					LogManager::getSingleton().Write(LOG_Scene, L"Can not find texture source.", LOGLVL_Warning);
+					LogManager::getSingleton().Write(LOG_Scene, L"Texture source not defined for " + name, LOGLVL_Warning);
 				}
 			}
 			//else if (tstr == string("camera"))
