@@ -846,7 +846,8 @@ namespace APDesigner
 			int frameIndex = m_cbSubMtrl->getSelectedIndex();
 			if (partIdx != -1 && frameIndex != -1)
 			{
-				DisplayMaterialEditor(mtrls->getMaterial(partIdx, frameIndex), m_cbUseRef->getValue());
+				Material* m = mtrls->getMaterial(partIdx, frameIndex);
+				DisplayMaterialEditor(m, !m->ExternalReferenceName.empty());
 			}
 		}
 	}
@@ -860,7 +861,19 @@ namespace APDesigner
 
 	void ModelDocument::CBUseRef_Checked(Control* ctrl)
 	{
-		CBSubMtrl_SelectionChanged(ctrl);
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx!=-1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			int frameIndex = m_cbSubMtrl->getSelectedIndex();
+			if (partIdx != -1 && frameIndex != -1)
+			{
+				Material* m = mtrls->getMaterial(partIdx, frameIndex);
+				DisplayMaterialEditor(m, m_cbUseRef->getValue());
+			}
+		}
 	}
 
 	void ModelDocument::DisplayMaterialEditor(Material* mtrl, bool usingRef)
@@ -868,6 +881,7 @@ namespace APDesigner
 		if (mtrl)
 		{
 			m_cbUseRef->Visible = true;
+			m_cbUseRef->setValue(usingRef);
 			m_tbRefMaterialName->Visible = usingRef;
 			
 			bool v = !usingRef;

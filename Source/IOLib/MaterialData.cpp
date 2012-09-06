@@ -487,6 +487,14 @@ namespace Apoc3D
 				bw->Close();
 				delete bw;
 			}
+
+			{
+				BinaryWriter* bw = data->AddEntry(TAG_3_MaterialRefName);
+				bw->Write(ExternalRefName);
+				bw->Close();
+				delete bw;
+			}
+
 			return data;
 		}
 

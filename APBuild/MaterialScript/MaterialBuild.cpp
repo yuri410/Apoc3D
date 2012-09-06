@@ -180,7 +180,8 @@ namespace APBuild
 		sect->TryGetAttributeBool(L"DepthWriteEnabled", newNode->DepthWriteEnabled);
 		sect->TryGetAttributeBool(L"DepthTestEnabled", newNode->DepthTestEnabled);
 
-		if (sect->tryGetAttribute(L"PassFlags", temp))			newNode->PassFlags = StringUtils::ParseUInt64Bin(temp);
+		if (sect->tryGetAttribute(L"PassFlag", temp))
+			newNode->PassFlags = StringUtils::ParseUInt64Bin(temp);
 		if (sect->tryGetAttribute(L"SourceBlend", temp))		newNode->SourceBlend = GraphicsCommonUtils::ParseBlend(temp);
 		if (sect->tryGetAttribute(L"DestinationBlend", temp))	newNode->DestinationBlend = GraphicsCommonUtils::ParseBlend(temp);
 		if (sect->tryGetAttribute(L"BlendFunction", temp))		newNode->BlendFunction = GraphicsCommonUtils::ParseBlendFunction(temp);
@@ -206,7 +207,7 @@ namespace APBuild
 		String effString;
 		if (sect->tryGetAttribute(L"Effect",effString))
 		{
-			std::vector<String> defs = StringUtils::Split(effString);
+			std::vector<String> defs = StringUtils::Split(effString, L";");
 
 			for (size_t i=0;i<defs.size();i++)
 			{

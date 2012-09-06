@@ -124,8 +124,8 @@ namespace Apoc3D
 
 			for (size_t i=0;i<val.size();i++)
 			{
-				result |= (val[i]=='1') ? 1 : 0;
 				result <<=1;
+				result |= (val[i]=='1') ? 1 : 0;
 			}
 
 			return result;

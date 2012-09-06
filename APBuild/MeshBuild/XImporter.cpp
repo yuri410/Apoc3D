@@ -203,7 +203,7 @@ namespace APBuild
 					}
 					idxC = realIdx;
 
-					faces.Add(MeshFace(idxA,idxB,idxC, (int)i));
+					faces.Add(MeshFace(idxA,idxB,idxC, (int)0));
 				}
 			}
 

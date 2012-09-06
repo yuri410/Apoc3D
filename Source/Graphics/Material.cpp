@@ -157,6 +157,8 @@ namespace Apoc3D
 					newData.Load(fl);
 					Load(newData);
 					delete fl;
+
+					ExternalReferenceName = mdata.ExternalRefName;
 					return;
 				}
 			}
