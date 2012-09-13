@@ -429,13 +429,13 @@ namespace Apoc3D
 							{
 								const float* weights = filter->getSampleWeights();
 								memset(m_floatBuffer,0, sizeof(m_floatBuffer));
-								for (int i=0;i<filter->getSampleCount();i++)
+								for (int j=0;j<filter->getSampleCount();j++)
 								{
-									assert((i*4+3) < (sizeof(m_floatBuffer) / sizeof(m_floatBuffer[0])) );
-									m_floatBuffer[i*4   ] = weights[i];
-									m_floatBuffer[i*4+1 ] = weights[i];
-									m_floatBuffer[i*4+2 ] = weights[i];
-									m_floatBuffer[i*4+3 ] = weights[i];
+									assert((j*4+3) < (sizeof(m_floatBuffer) / sizeof(m_floatBuffer[0])) );
+									m_floatBuffer[j*4   ] = weights[j];
+									m_floatBuffer[j*4+1 ] = weights[j];
+									m_floatBuffer[j*4+2 ] = weights[j];
+									m_floatBuffer[j*4+3 ] = weights[j];
 									
 								}
 								autoFx->SetParameterValue(idx, m_floatBuffer, filter->getSampleCount() * 4);
