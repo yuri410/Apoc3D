@@ -265,6 +265,11 @@ namespace Apoc3D
 			{
 				if ((count%4))
 				{
+					if (count == 1)
+					{
+						SetValue(reg, *value);
+						return;
+					}
 					throw Apoc3DException::createException(EX_Argument, L"count");
 				}
 				for (int i=0;i<count;i++)
@@ -277,6 +282,11 @@ namespace Apoc3D
 			{
 				if ((count%4))
 				{
+					if (count == 1)
+					{
+						SetValue(reg, *value);
+						return;
+					}
 					throw Apoc3DException::createException(EX_Argument, L"count");
 				}
 				m_device->getDevice()->SetPixelShaderConstantF(reg, value, count / 4);
@@ -285,6 +295,11 @@ namespace Apoc3D
 			{
 				if ((count%4))
 				{
+					if (count == 1)
+					{
+						SetValue(reg, *value);
+						return;
+					}
 					throw Apoc3DException::createException(EX_Argument, L"count");
 				}
 				m_device->getDevice()->SetPixelShaderConstantI(reg, value, count / 4);

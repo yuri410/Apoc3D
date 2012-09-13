@@ -1266,7 +1266,7 @@ namespace Apoc3D
 									String wvalue = StringUtils::toWString(value);
 									pos = wvalue.find_last_of(':');
 
-									String typeString = wvalue.substr(pos);
+									String typeString = wvalue.substr(pos+1);
 									StringUtils::Trim(typeString);
 									StringUtils::ToLowerCase(typeString);
 
