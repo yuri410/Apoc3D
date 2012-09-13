@@ -1312,13 +1312,13 @@ namespace Apoc3D
 									{
 										switch (type)
 										{
-										case SPFX_TYPE_BOOLS:
+										case SPFX_TYPE_FLOATS:
 											{
 												float d = StringUtils::ParseSingle(vals[i]);
 												arg.DefaultValue[i + 2] = reinterpret_cast<const uint&>(d);
 											}
 											break;
-										case SPFX_TYPE_FLOATS:
+										case SPFX_TYPE_BOOLS:
 											{
 												bool d = StringUtils::ParseBool(vals[i]);
 												arg.DefaultValue[i + 2] = d ? 1 : 0;
