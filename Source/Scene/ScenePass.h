@@ -89,7 +89,7 @@ namespace Apoc3D
 			List<SceneInstruction> m_instuctions;
 			Stack<ExecutionValue> m_execStack;
 
-			float m_floatBuffer[25];
+			float m_floatBuffer[60];
 
 			Camera* m_currentCamera;
 

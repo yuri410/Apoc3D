@@ -431,11 +431,12 @@ namespace Apoc3D
 								memset(m_floatBuffer,0, sizeof(m_floatBuffer));
 								for (int i=0;i<filter->getSampleCount();i++)
 								{
+									assert((i*4+3) < (sizeof(m_floatBuffer) / sizeof(m_floatBuffer[0])) );
 									m_floatBuffer[i*4   ] = weights[i];
 									m_floatBuffer[i*4+1 ] = weights[i];
 									m_floatBuffer[i*4+2 ] = weights[i];
 									m_floatBuffer[i*4+3 ] = weights[i];
-
+									
 								}
 								autoFx->SetParameterValue(idx, m_floatBuffer, filter->getSampleCount() * 4);
 							}

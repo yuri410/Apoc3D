@@ -283,6 +283,11 @@ namespace Apoc3D
 
 		bool PathUtils::ComparePath(const String& _left, const String& _right)
 		{
+			if (_left.empty() || _right.empty())
+			{
+				return _left ==_right;
+			}
+
 			// a compare based on the path's depth after normalizing them
 			// duplicated DirectorySeparator will be counted as one
 
