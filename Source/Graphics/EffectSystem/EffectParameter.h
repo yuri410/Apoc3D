@@ -86,6 +86,9 @@ namespace Apoc3D
 				/** tr_view
 				*/
 				EPUSAGE_Trans_View,
+				/** tr_viewproj
+				*/
+				EPUSAGE_Trans_ViewProj,
 				/** tr_instanceworld
 				 *  This parameter is supposed to be a 4x4 matrix array in the shader with a length of
 				 *  InstancingData::MaxOneTimeInstances

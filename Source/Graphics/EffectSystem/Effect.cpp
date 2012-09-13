@@ -601,6 +601,12 @@ namespace Apoc3D
 							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getViewMatrix());
 						}
 						break;
+					case EPUSAGE_Trans_ViewProj:
+						{
+							Matrix vp;
+							Matrix::Multiply(vp, RendererEffectParams::CurrentCamera->getViewMatrix(), RendererEffectParams::CurrentCamera->getProjMatrix());
+							SetValue(m_parameters[i], vp);
+						}
 					case EPUSAGE_Trans_Projection:
 						{
 							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getProjMatrix());

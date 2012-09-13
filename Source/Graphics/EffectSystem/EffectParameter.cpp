@@ -54,6 +54,7 @@ namespace Apoc3D
 					AddPair(L"tr_world", EPUSAGE_Trans_World);
 					AddPair(L"tr_worldview", EPUSAGE_Trans_WorldView);
 					AddPair(L"tr_view", EPUSAGE_Trans_View);
+					AddPair(L"tr_viewproj", EPUSAGE_Trans_ViewProj);
 					AddPair(L"tr_instanceworld", EPUSAGE_Trans_InstanceWorlds);
 					AddPair(L"tr_proj", EPUSAGE_Trans_Projection);
 					AddPair(L"tr_invproj", EPUSAGE_Trans_InvProj);
