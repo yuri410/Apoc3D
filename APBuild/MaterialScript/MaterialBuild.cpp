@@ -48,7 +48,7 @@ namespace APBuild
 
 	Color4 ResolveColor4(const String& text, const FastMap<String, Pallet*>& pallets);
 	void ParseMaterialTree(FastMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const FastMap<String, Pallet*>& pallets);
-	void ParseMaterialCustomParams(MaterialData& data, const String& value);
+	void ParseMaterialCustomParams(MaterialData& data, const String& value, const FastMap<String, Pallet*>& pallets);
 
 	void MaterialBuild::Build(ConfigurationSection* sect)
 	{
@@ -201,7 +201,7 @@ namespace APBuild
 		String customString;
 		if (sect->tryGetAttribute(L"Custom", customString))
 		{
-			ParseMaterialCustomParams(*newNode, customString);
+			ParseMaterialCustomParams(*newNode, customString, pallets);
 		}
 
 		String effString;
@@ -246,21 +246,23 @@ namespace APBuild
 		table.Add(name, newNode);
 	}
 
-	void ParseMaterialCustomParams(MaterialData& data, const String& value)
+	void ParseMaterialCustomParams(MaterialData& data, const String& value, const FastMap<String, Pallet*>& pallets)
 	{
 		std::vector<String> vals = StringUtils::Split(value, L";");
 		for (size_t i=0;i<vals.size();i++)
 		{
-			std::vector<String> vals2 = StringUtils::Split(vals[i], L":");
+			std::vector<String> vals2 = StringUtils::Split(vals[i], L"=");
 
-			String& v = vals[1];
+			String& usageName = vals2[0];
+			String& valueStr = vals2[1];
 			MaterialCustomParameter mcp;
-			mcp.Usage = v[0];
+			mcp.Usage = usageName;
+
 			memset(mcp.Value, 0, sizeof(mcp.Value));
 
-			if (StringUtils::StartsWidth(v, L"(") && StringUtils::EndsWidth(v, L")"))
+			if (StringUtils::StartsWidth(valueStr, L"(") && StringUtils::EndsWidth(valueStr, L")"))
 			{
-				String vec = v.substr(1, v.length()-2);
+				String vec = valueStr.substr(1, valueStr.length()-2);
 				std::vector<String> vals3 = StringUtils::Split(vals[i], L",");	
 				
 				assert(vals3.size() == 2 || vals3.size()==4);
@@ -284,28 +286,52 @@ namespace APBuild
 			}
 			else
 			{
-				StringUtils::Trim(v);
-				StringUtils::ToLowerCase(v);
+				StringUtils::Trim(valueStr);
+				StringUtils::ToLowerCase(valueStr);
 
-				if (v==L"true" || v == L"false")
+				if (valueStr==L"true" || valueStr == L"false")
 				{
 					mcp.Type = MTRLPT_Boolean;
-					mcp.Value[0] = v == L"true" ? 1 : 0;
+					mcp.Value[0] = valueStr == L"true" ? 1 : 0;
 				}
 				else
 				{
-					String::size_type pos = v.find('.');
+					String::size_type pos = valueStr.find('.');
 					if (pos != String::npos)
 					{
 						mcp.Type = MTRLPT_Float;
-						float data = StringUtils::ParseSingle(v);
+						float data = StringUtils::ParseSingle(valueStr);
 						memcpy(mcp.Value, &data, sizeof(data));
 					}
 					else
 					{
-						mcp.Type = MTRLPT_Integer;
-						int data = StringUtils::ParseInt32(v);
-						memcpy(mcp.Value, &data, sizeof(data));
+						// check if the value str is numerical 
+						bool isNumber = true;
+						for (size_t i=0;i<valueStr.size();i++)
+						{
+							if (i==0 && valueStr[i] == '-')
+							{
+								continue;
+							}
+							if (valueStr[i] <'0' || valueStr[i] > '9' || valueStr[i] != ' ')
+							{
+								isNumber = false;
+							}
+						}
+
+						if (isNumber)
+						{
+							mcp.Type = MTRLPT_Integer;
+							int data = StringUtils::ParseInt32(valueStr);
+							memcpy(mcp.Value, &data, sizeof(data));
+						}
+						else
+						{
+							mcp.Type = MTRLPT_Vector4;
+							Color4 v = ResolveColor4(valueStr, pallets);
+							memcpy(mcp.Value, &v, sizeof(v));
+						}
+						
 					}
 				}
 				

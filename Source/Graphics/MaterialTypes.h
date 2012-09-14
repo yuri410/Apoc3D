@@ -26,8 +26,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define MATERIALTPYES_H
 
 #include "Common.h"
+#include "Math/Vector.h"
 
 using namespace std;
+using namespace Apoc3D::Math;
 
 namespace Apoc3D
 {
@@ -75,8 +77,26 @@ namespace Apoc3D
 			{
 				*reinterpret_cast<bool*>(Value) = value;
 			}
-
-
+			MaterialCustomParameter(float value, const String usage = L"")
+				: Type(MTRLPT_Float), Usage(usage)
+			{
+				*reinterpret_cast<float*>(Value) = value;
+			}
+			MaterialCustomParameter(int value, const String usage = L"")
+				: Type(MTRLPT_Integer), Usage(usage)
+			{
+				*reinterpret_cast<int*>(Value) = value;
+			}
+			MaterialCustomParameter(Vector2 value, const String usage = L"")
+				: Type(MTRLPT_Integer), Usage(usage)
+			{
+				*reinterpret_cast<Vector2*>(Value) = value;
+			}
+			MaterialCustomParameter(Vector4 value, const String usage = L"")
+				: Type(MTRLPT_Integer), Usage(usage)
+			{
+				*reinterpret_cast<Vector4*>(Value) = value;
+			}
 		};
 		typedef unordered_map<String, MaterialCustomParameter> CustomParamTable;
 	}

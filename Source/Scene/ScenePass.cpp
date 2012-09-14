@@ -169,7 +169,7 @@ namespace Apoc3D
 						ExecutionValue val = m_execStack.Pop();
 						if (val.Value[0] || val.Value[1])
 						{
-							i = inst.Next;
+							i = inst.Next-1;
 						}
 					}
 					break;
@@ -179,7 +179,7 @@ namespace Apoc3D
 						ExecutionValue val = m_execStack.Pop();
 						if (!val.Value[0] && !val.Value[1])
 						{
-							i = inst.Next;
+							i = inst.Next-1;
 						}
 					}
 					break;

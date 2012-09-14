@@ -717,9 +717,9 @@ namespace Apoc3D
 
 					if (lowStrName == String(L"if"))
 					{
-						FillInstructions(elem->Attribute("Cond"), data->Instructions);
+						FillInstructions(elem->Attribute("E"), data->Instructions);
 
-						SceneInstruction inst(SOP_JNZ);
+						SceneInstruction inst(SOP_JZ);
 						data->Instructions.push_back(inst);
 						
 						size_t refIdx = data->Instructions.size()-1;
