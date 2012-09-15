@@ -58,6 +58,9 @@ namespace Apoc3D
 
 		RenderOperationBuffer* Entity::GetRenderOperation(int lod)
 		{
+			if (!Visible)
+				return 0;
+
 			while (!m_models[lod] && lod>0)
 			{
 				lod--;
