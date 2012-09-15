@@ -281,9 +281,16 @@ namespace Apoc3D
 			{
 				if ((count%4))
 				{
-					if (count == 1)
+					switch (count)
 					{
+					case 1:
 						SetValue(reg, *value);
+						return;
+					case 2:
+						SetVector2(reg, *reinterpret_cast<const Vector2*>(value));
+						return;
+					case 3:
+						SetVector3(reg, *reinterpret_cast<const Vector3*>(value));
 						return;
 					}
 					throw Apoc3DException::createException(EX_Argument, L"count");

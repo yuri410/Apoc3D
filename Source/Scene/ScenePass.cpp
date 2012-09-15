@@ -404,6 +404,9 @@ namespace Apoc3D
 					case VARTYPE_Vector2:
 						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 2);
 						break;
+					case VARTYPE_Single:
+						autoFx->SetParameterValue(idx, reinterpret_cast<const float*>(var->Value), 1);
+						break;
 					case VARTYPE_Texture:
 						autoFx->SetParameterTexture(idx, var->TextureValue);
 						break;
