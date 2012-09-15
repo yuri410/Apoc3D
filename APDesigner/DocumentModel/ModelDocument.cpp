@@ -883,7 +883,8 @@ namespace APDesigner
 			m_cbUseRef->Visible = true;
 			m_cbUseRef->setValue(usingRef);
 			m_tbRefMaterialName->Visible = usingRef;
-			
+			m_tbRefMaterialName->setText(mtrl->ExternalReferenceName);
+
 			bool v = !usingRef;
 
 			for (int i=0;i<m_mtrlPanelLabels.getCount();i++)
