@@ -589,6 +589,8 @@ namespace Apoc3D
 
 			RenderOperationBuffer* opBuf = entities[index]->GetRenderOperation(0);
 			m_opBuffer.FastClear();
+			m_opBuffer.Add(&opBuf->operator [](0), opBuf->getCount());
+
 			for (int j = 0; j < opBuf->getCount(); j++)
 			{
 				int opid = j;
