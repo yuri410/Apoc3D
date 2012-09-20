@@ -295,8 +295,8 @@ namespace Apoc3D
 				if (!op || count == 0)
 					return;
 
-				getDevice()->SetVertexShader(0);
-				getDevice()->SetPixelShader(0);
+				//getDevice()->SetVertexShader(0);
+				//getDevice()->SetPixelShader(0);
 
 				Effect* fx = mtrl->getPassEffect(passSelID);
 				if (!fx)
