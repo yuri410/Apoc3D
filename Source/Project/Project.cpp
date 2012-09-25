@@ -920,6 +920,8 @@ namespace Apoc3D
 	{
 		SourceFile = sect->getAttribute(L"SourceFile");
 		DestinationFile = sect->getAttribute(L"DestinationFile");
+		Reverse = false;
+		sect->TryGetAttributeBool(L"Reverse", Reverse);
 
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
@@ -936,6 +938,7 @@ namespace Apoc3D
 	{
 		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
 		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
+		sect->AddAttribute(L"Reverse", StringUtils::ToString(Reverse));
 
 		for (FastMap<String, int>::Enumerator e = ObjectIndexMapping.GetEnumerator(); e.MoveNext(); )
 		{

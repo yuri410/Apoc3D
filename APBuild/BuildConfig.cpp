@@ -342,7 +342,7 @@ namespace APBuild
 	{
 		SrcFile = sect->getAttribute(L"SourceFile");
 		DstFile = sect->getAttribute(L"DestinationFile");
-
+		Reverse = sect->GetAttributeBool(L"Reverse");
 
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
 			iter.MoveNext();)

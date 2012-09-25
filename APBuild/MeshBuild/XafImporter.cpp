@@ -118,12 +118,27 @@ namespace APBuild
 						FastList<ModelKeyframe> keyFrames((int)track.size());
 
 						for (size_t i=0;i<track.size();i++)
-						{
 							if (track[i].Time>duration)
 								duration = track[i].Time;
+						
 
-							ModelKeyframe f(index,track[i].Time,track[i].Transformation);
-							keyFrames.Add(f);
+						for (size_t i=0;i<track.size();i++)
+						{
+							if (config.Reverse)
+							{
+								ModelKeyframe f(index,duration - track[i].Time,track[i].Transformation);
+								keyFrames.Add(f);
+							}
+							else
+							{
+								ModelKeyframe f(index,track[i].Time,track[i].Transformation);
+								keyFrames.Add(f);
+							}
+						}
+
+						if (config.Reverse)
+						{
+							keyFrames.Reverse();
 						}
 
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, keyFrames);

@@ -460,6 +460,7 @@ namespace Apoc3D
 
 		String SourceFile;
 		String DestinationFile;
+		bool Reverse;
 
 		FastMap<String, int> ObjectIndexMapping;
 

@@ -175,6 +175,7 @@ namespace APBuild
 	{
 		String SrcFile;
 		String DstFile;
+		bool Reverse;
 
 		FastMap<String, int> ObjectIndexMapping;
 
