@@ -287,7 +287,7 @@ namespace APBuild
 			else
 			{
 				StringUtils::Trim(valueStr);
-				StringUtils::ToLowerCase(valueStr);
+				//StringUtils::ToLowerCase(valueStr);
 
 				if (valueStr==L"true" || valueStr == L"false")
 				{
