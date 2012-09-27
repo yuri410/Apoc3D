@@ -43,7 +43,7 @@ namespace Apoc3D
 			typedef typename ResType::ResHandleTemplateConstraint CF_XXX;
 		public:
 			ResourceHandle(ResType* res)
-				: m_resource(res), m_dummy(false)
+				: m_resource(res), m_dummy(false), m_disposal(true)
 			{
 				_Ref();
 			}
