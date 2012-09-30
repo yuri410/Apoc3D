@@ -60,10 +60,11 @@ namespace Apoc3D
 
 			}
 
+			void LoadContentTo(void* dest, TaggedDataReader* data);
 
-
-			void LoadData(TaggedDataReader* data);
+			void LoadData(TaggedDataReader* data, bool doNotLoadContent = false);
 			void SaveData(TaggedDataWriter* data) const;
+		private:
 		};
 
 		/** Defines one entire texture's data stored in binary form and procedures to load/save them
@@ -72,6 +73,8 @@ namespace Apoc3D
 		class APAPI TextureData
 		{
 		public:
+			static const int32 FileID = 'A' << 24 | 'T' << 16 | 'E' << 8 | 'X';
+
 			TextureType Type;
 			vector<TextureLevelData> Levels;
 			PixelFormat Format;
@@ -89,7 +92,9 @@ namespace Apoc3D
 					Levels.push_back(TextureLevelData(Levels[i]))]
 				}
 			}*/
+			TaggedDataReader* RetriveTaggedData(const ResourceLocation* rl);
 
+			void LoadFromData(TaggedDataReader* data, bool doNotLoadLevel, bool doNotLoadLevelContent);
 
 			void Load(const ResourceLocation* rl);
 			void Save(Stream* strm) const;

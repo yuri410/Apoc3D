@@ -45,22 +45,36 @@ namespace Apoc3D
 		static const String ContentTag = L"Content";
 		static const String LevelSizeTag = L"LevelSize";
 
-		void TextureLevelData::LoadData(TaggedDataReader* data)
+		void TextureLevelData::LoadContentTo(void* dest, TaggedDataReader* data)
+		{
+			BinaryReader* br = data->GetData(ContentTag);
+
+			int64 ret = br->ReadBytes(reinterpret_cast<char*>(dest), LevelSize);
+			assert(ret == LevelSize);
+
+			br->Close();
+			delete br;
+		}
+		void TextureLevelData::LoadData(TaggedDataReader* data, bool doNotLoadContent)
 		{
 			Width = data->GetDataInt32(WidthTag);
 			Height = data->GetDataInt32(HeightTag);
 			Depth = data->GetDataInt32(DepthTag);
 			LevelSize = data->GetDataInt32(LevelSizeTag);
 
-			BinaryReader* br = data->GetData(ContentTag);
+			if (!doNotLoadContent)
+			{
+				BinaryReader* br = data->GetData(ContentTag);
 
-			ContentData = new char[LevelSize];
-			
-			int64 ret = br->ReadBytes(ContentData, LevelSize);
-			assert(ret == LevelSize);
+				ContentData = new char[LevelSize];
 
-			br->Close();
-			delete br;
+				int64 ret = br->ReadBytes(ContentData, LevelSize);
+				assert(ret == LevelSize);
+
+
+				br->Close();
+				delete br;
+			}
 		}
 		void TextureLevelData::SaveData(TaggedDataWriter* data) const
 		{
@@ -76,7 +90,7 @@ namespace Apoc3D
 		}
 
 
-		static const int32 FileID = 'A' << 24 | 'T' << 16 | 'E' << 8 | 'X';
+		
 		static const String TypeTag = L"Type";
 		static const String FormatTag = L"Format";
 		static const String ContentSizeTag = L"ContentSize";
@@ -92,32 +106,7 @@ namespace Apoc3D
 			{
 				TaggedDataReader* data = br->ReadTaggedDataBlock();
 
-				Type = static_cast<TextureType>(data->GetDataInt32(TypeTag));
-
-				Format = static_cast<PixelFormat>(data->GetDataInt32(FormatTag));
-				ContentSize = data->GetDataInt32(ContentSizeTag);
-				LevelCount = data->GetDataInt32(LevelCountTag);
-
-
-				for (int i = 0; i < LevelCount; i++)
-				{
-					String levelName = LevelTag;
-					const String temp = StringUtils::ToString(i);
-					levelName.append(temp);
-
-					BinaryReader* br2 = data->GetData(levelName);
-					TaggedDataReader* data2 = br2->ReadTaggedDataBlock();
-					
-					TextureLevelData lvl;
-					lvl.LoadData(data2);
-					Levels.push_back(lvl);
-
-					data2->Close();
-					br2->Close();
-
-					delete data2;
-					delete br2;
-				}
+				LoadFromData(data, false, false);
 
 				data->Close();
 				delete data;
@@ -167,7 +156,37 @@ namespace Apoc3D
 			delete bw;
 		}
 
+		void TextureData::LoadFromData(TaggedDataReader* data, bool doNotLoadLevel, bool doNotLoadLevelContent)
+		{
+			Type = static_cast<TextureType>(data->GetDataInt32(TypeTag));
 
+			Format = static_cast<PixelFormat>(data->GetDataInt32(FormatTag));
+			ContentSize = data->GetDataInt32(ContentSizeTag);
+			LevelCount = data->GetDataInt32(LevelCountTag);
+
+			if (!doNotLoadLevel)
+			{
+				for (int i = 0; i < LevelCount; i++)
+				{
+					String levelName = LevelTag;
+					const String temp = StringUtils::ToString(i);
+					levelName.append(temp);
+
+					BinaryReader* br2 = data->GetData(levelName);
+					TaggedDataReader* data2 = br2->ReadTaggedDataBlock();
+
+					TextureLevelData lvl;
+					lvl.LoadData(data2, doNotLoadLevelContent);
+					Levels.push_back(lvl);
+
+					data2->Close();
+					br2->Close();
+
+					delete data2;
+					delete br2;
+				}
+			}
+		}
 
 	}
 }
