@@ -23,7 +23,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Win32Mouse.h"
 #include "Core/GameTime.h"
-#include <Windows.h>
 
 namespace Apoc3D
 {
@@ -31,23 +30,30 @@ namespace Apoc3D
 	{
 		namespace Win32
 		{
-			OldSchoolMouse::OldSchoolMouse()
+			OldSchoolMouse* OldSchoolMouse::m_instance = 0;
+
+			OldSchoolMouse::OldSchoolMouse(HWND hwnd)
+				: m_hwnd(hwnd)
 			{
+				m_instance = this;
+
+				m_oldWndProc = GetWindowLongPtr(hwnd, GWLP_WNDPROC);
+
+				SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG)(void*)WndProcStatic);
 			}
 			OldSchoolMouse::~OldSchoolMouse()
 			{
+				m_instance = 0;
 			}
 
 			void OldSchoolMouse::Update(const GameTime* const time)
 			{
-				HWND hwnd = GetForegroundWindow();
-
-				if (hwnd)
+				if (m_hwnd)
 				{
 					POINT pt;
 					GetCursorPos(&pt);
 					
-					ScreenToClient(hwnd, &pt);
+					ScreenToClient(m_hwnd, &pt);
 
 					m_lastPosition = m_currentPos;
 					m_lastZ = m_z;
@@ -57,7 +63,6 @@ namespace Apoc3D
 
 					m_currentPos.X = static_cast<int32>(pt.x);
 					m_currentPos.Y = static_cast<int32>(pt.y);
-					m_z = 0;
 
 					m_btnState[0] = !!GetAsyncKeyState(VK_LBUTTON);
 					m_btnState[1] = !!GetAsyncKeyState(VK_MBUTTON);
@@ -65,7 +70,17 @@ namespace Apoc3D
 				}
 
 			}
+			LRESULT OldSchoolMouse::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+			{
+				switch (message)
+				{
+				case WM_MOUSEWHEEL:
+					m_z += (int16) (wParam >> 0x10);
+				}
+				return CallWindowProc((WNDPROC)m_oldWndProc, hWnd, message, wParam, lParam);
+			}
 
+			//////////////////////////////////////////////////////////////////////////
 
 
 			Win32Mouse::Win32Mouse(OIS::InputManager* manager)

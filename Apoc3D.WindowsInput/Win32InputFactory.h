@@ -26,7 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "WinInputCommon.h"
 #include "Input/InputAPI.h"
+#include "Math/Point.h"
 
+using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
@@ -37,19 +39,43 @@ namespace Apoc3D
 		{
 			class Win32InputFactory : public InputAPIFactory
 			{
-			private:
-				OIS::InputManager* m_InputManager;
-
-				static APIDescription GetDescription();
-
 			public:
 				Win32InputFactory()
-					: InputAPIFactory(GetDescription())
-				{ }
+					: InputAPIFactory(GetDescription()), m_hwnd(0)
+				{
+					m_instance = this;
+				}
+				~Win32InputFactory()
+				{
+					m_instance = 0;
+				}
 
 				virtual void Initialize(RenderWindow* window);
 				virtual Mouse* CreateMouse();
 				virtual Keyboard* CreateKeyboard();
+
+			private:
+				OIS::InputManager* m_InputManager;
+				HWND m_hwnd;
+
+				String m_tempTitleParam;
+				Size m_tempClientSizeParam;
+
+				BOOL EnumWindowsProc(_In_  HWND hwnd, _In_  LPARAM lParam);
+
+
+				static Win32InputFactory* m_instance;
+				static BOOL CALLBACK EnumWindowsProcStatic(_In_  HWND hwnd, _In_  LPARAM lParam)
+				{
+					if (m_instance)
+					{
+						m_instance->EnumWindowsProc(hwnd, lParam);
+					}
+					return FALSE;
+				}
+
+				static APIDescription GetDescription();
+
 			};
 		}
 	}

@@ -37,13 +37,27 @@ namespace Apoc3D
 		{
 			class OldSchoolMouse : public Mouse
 			{
-			private:
 			public:
-				OldSchoolMouse();
+				OldSchoolMouse(HWND hwnd);
 				~OldSchoolMouse();
 
 				void Update(const GameTime* const time);
+			private:
+				
+				LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+				LONG m_oldWndProc;
+				HWND m_hwnd;
 
+				static LRESULT CALLBACK WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+				{
+					if (m_instance)
+					{
+						return m_instance->WndProc(hWnd, message, wParam, lParam);
+					}
+					return 0;
+				}
+
+				static OldSchoolMouse* m_instance;
 			};
 			class Win32Mouse : public Mouse, public OIS::MouseListener
 			{
@@ -52,15 +66,15 @@ namespace Apoc3D
 				OIS::Mouse* m_mouse;
 				
 
-				int32 m_x;
-				int32 m_y;
-				int32 m_z;
+				//int32 m_x;
+				//int32 m_y;
+				//int32 m_z;
 
-				int32 m_lastX;
-				int32 m_lastY;
-				int32 m_lastZ;
-				bool m_buttons[3];
-				bool m_lastButtons[3];
+				//int32 m_lastX;
+				//int32 m_lastY;
+				//int32 m_lastZ;
+				//bool m_buttons[3];
+				//bool m_lastButtons[3];
 			public:
 				Win32Mouse(OIS::InputManager* manager);
 				~Win32Mouse();

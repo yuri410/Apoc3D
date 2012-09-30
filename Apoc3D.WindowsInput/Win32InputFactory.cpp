@@ -25,8 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Apoc3DException.h"
 #include "Win32Mouse.h"
 #include "Win32Keyboard.h"
-#include <Windows.h>
+#include "Graphics/RenderSystem/RenderWindow.h"
+#include "Utility/StringUtils.h"
 
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -34,6 +36,8 @@ namespace Apoc3D
 	{
 		namespace Win32
 		{
+			Win32InputFactory* Win32InputFactory::m_instance = 0;
+
 			APIDescription Win32InputFactory::GetDescription()
 			{
 				PlatformAPISupport platform = { 100, L"WINDOWS" };
@@ -45,27 +49,63 @@ namespace Apoc3D
 			}
 			void Win32InputFactory::Initialize(RenderWindow* window)
 			{
-				HWND hwnd = GetForegroundWindow();
-				if (hwnd)
+				m_tempClientSizeParam = window->getClientSize();
+				m_tempTitleParam = window->getTitle();
+
+				EnumThreadWindows(GetCurrentThreadId(), EnumWindowsProcStatic, 0);
+				if (m_hwnd)
 				{
 					OIS::ParamList pl;
 
 
 					std::ostringstream wnd;
-					wnd << (size_t)hwnd;
+					wnd << (size_t)m_hwnd;
 					pl.insert(make_pair("WINDOW", wnd.str()));
 
 					m_InputManager = OIS::InputManager::createInputSystem(pl);
 					m_InputManager->enableAddOnFactory(OIS::InputManager::AddOn_All);
 				}
-				else
-				{
-					throw Apoc3DException::createException(EX_InvalidData, L"The Input System requires an active window to be initialized.");
-				}
+				
+				//HWND hwnd = FindWindow(L"Apoc3D Engine", window->getTitle().c_str());// GetForegroundWindow();
 			}
+
+			BOOL Win32InputFactory::EnumWindowsProc(
+				_In_  HWND hwnd,
+				_In_  LPARAM lParam)
+			{
+				WINDOWINFO info;
+				info.cbSize = sizeof(WINDOWINFO);
+				GetWindowInfo(hwnd, &info);
+
+				if (m_tempClientSizeParam.Width == info.rcClient.right - info.rcClient.left &&
+					m_tempClientSizeParam.Height == info.rcClient.bottom - info.rcClient.top)
+				{
+					int len = GetWindowTextLength(hwnd);
+					len += 8;
+					wchar_t* title = new wchar_t[len];
+					GetWindowText(hwnd, title, len);
+
+					if (String(title)==m_tempTitleParam)
+					{
+						delete[] title;
+						wchar_t buffer[32];
+						GetClassName(hwnd, buffer, 32);
+						if (StringUtils::StartsWidth(String(buffer), L"Apoc3D Engine"))
+						{
+							m_hwnd = hwnd;
+
+							return FALSE;
+						}
+					}
+
+					delete[] title;
+				}
+				return TRUE;
+			}
+
 			Mouse* Win32InputFactory::CreateMouse()
 			{
-				return new OldSchoolMouse();
+				return new OldSchoolMouse(m_hwnd);
 			}
 			Keyboard* Win32InputFactory::CreateKeyboard()
 			{

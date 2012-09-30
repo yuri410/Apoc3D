@@ -36,6 +36,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <ois-v1-3/includes/OISJoyStick.h>
 #include <ois-v1-3/includes/OISEvents.h>
 
+#include <Windows.h>
+
 #pragma comment(lib, "Apoc3D.lib")
 
 
