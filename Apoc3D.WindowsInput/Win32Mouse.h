@@ -43,7 +43,8 @@ namespace Apoc3D
 
 				void Update(const GameTime* const time);
 			private:
-				
+				int m_accumlatedMouseWheel;
+
 				LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 				LONG m_oldWndProc;
 				HWND m_hwnd;

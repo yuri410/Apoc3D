@@ -33,7 +33,7 @@ namespace Apoc3D
 			OldSchoolMouse* OldSchoolMouse::m_instance = 0;
 
 			OldSchoolMouse::OldSchoolMouse(HWND hwnd)
-				: m_hwnd(hwnd)
+				: m_hwnd(hwnd), m_accumlatedMouseWheel(0)
 			{
 				m_instance = this;
 
@@ -57,7 +57,7 @@ namespace Apoc3D
 
 					m_lastPosition = m_currentPos;
 					m_lastZ = m_z;
-
+					m_z = m_accumlatedMouseWheel;
 					
 					memcpy(m_lastBtnState, m_btnState, sizeof(m_btnState));
 
@@ -75,7 +75,7 @@ namespace Apoc3D
 				switch (message)
 				{
 				case WM_MOUSEWHEEL:
-					m_z += (int16) (wParam >> 0x10);
+					m_accumlatedMouseWheel += (int16) (wParam >> 0x10);
 				}
 				return CallWindowProc((WNDPROC)m_oldWndProc, hWnd, message, wParam, lParam);
 			}
