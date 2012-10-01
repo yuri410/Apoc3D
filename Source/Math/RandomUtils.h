@@ -37,7 +37,15 @@ namespace Apoc3D
 				//: m_mbig(0), m_mseed(0), m_mz(0)
 			{
 				const int32 seed = static_cast<int32>(time(0));
-				//m_seedArray = new int[0x38];
+				SetSeed(seed);
+			}
+			~Random()
+			{
+				//delete[] m_seedArray;
+			}
+
+			void SetSeed(int32 seed)
+			{
 				int num2 = 0x9a4ec86 - abs(seed);
 				m_seedArray[0x37] = num2;
 				int num3 = 1;
@@ -65,11 +73,6 @@ namespace Apoc3D
 				}
 				m_inext = 0;
 				m_inextp = 0x15;
-
-			}
-			~Random()
-			{
-				//delete[] m_seedArray;
 			}
 
 			RandomSampleEventHandler& eventSampled() { return m_eSample; };
