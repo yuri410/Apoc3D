@@ -115,6 +115,17 @@ namespace Apoc3D
 					}
 				}
 			}
+			void SetBooleanVar(const String& name, bool val)
+			{
+				for (int i=0;i<m_varCount;i++)
+				{
+					if (m_vars[i]->Name == name)
+					{
+						m_vars[i]->Value[0] = val ? 1:0;
+						break;
+					}
+				}
+			}
 
 			SceneProcedure(RenderDevice* device);
 			~SceneProcedure(void);
