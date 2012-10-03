@@ -104,6 +104,17 @@ namespace Apoc3D
 				}
 				return 0;
 			}
+			void SetTextureVar(const String& name, ResourceHandle<Texture>* tex)
+			{
+				for (int i=0;i<m_varCount;i++)
+				{
+					if (m_vars[i]->Name == name)
+					{
+						m_vars[i]->TextureValue = tex;
+						break;
+					}
+				}
+			}
 
 			SceneProcedure(RenderDevice* device);
 			~SceneProcedure(void);

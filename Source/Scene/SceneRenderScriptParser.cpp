@@ -70,7 +70,7 @@ namespace Apoc3D
 			int P1;
 			int P2;
 		};
-		static const PriorInfo pList[7] = {
+		static const PriorInfo pList[6] = {
 			{ OpAnd, 2, 1 },
 			{ OpOr, 2, 1 },
 			{ OpNot, 4, 3 },
