@@ -120,5 +120,17 @@ namespace Apoc3D
 			return 1.0 - double(t) * 0.931322574615478515625e-9;/// 1073741824.0);
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+
+		double PerlinNoise1D::Interpolate(double x, double y, double a) const
+		{
+			double negA = 1.0 - a;
+			double negASqr = negA * negA;
+			double fac1 = 3.0 * (negASqr) - 2.0 * (negASqr * negA);
+			double aSqr = a * a;
+			double fac2 = 3.0 * aSqr - 2.0 * (aSqr * a);
+
+			return x * fac1 + y * fac2; //add the weighted factors
+		}
 	}
 }
