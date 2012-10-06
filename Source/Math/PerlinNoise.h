@@ -69,7 +69,7 @@ namespace Apoc3D
 			}
 
 
-			double GetNoise(double x)
+			double GetNoise(double x) const
 			{
 				double total = 0;
 				double freq = m_frequency;
@@ -80,7 +80,7 @@ namespace Apoc3D
 					total += InterpolatedNoise(x * freq) * _amplitude;
 
 					_amplitude *= m_persistence;
-					m_frequency *= 2;
+					freq *= 2;
 				}
 				return total;
 			}
