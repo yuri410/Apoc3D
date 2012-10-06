@@ -49,6 +49,26 @@ namespace Apoc3D
 		class APAPI PerlinNoise1D
 		{
 		public:
+			PerlinNoise1D()
+				: m_persistence(0), m_frequency(0), m_octaves(0), m_randomSeed(0)
+			{ }
+			PerlinNoise1D(double _persistence, double _frequency, int _octaves, int _randomseed)
+				: m_persistence(_persistence), m_frequency(_frequency), m_octaves(_octaves), m_randomSeed(_randomseed)
+			{ }
+
+			// Get
+			double getPersistence() const { return m_persistence; }
+			double getFrequency()   const { return m_frequency;   }
+			int    getOctaves()     const { return m_octaves;     }
+			int    getRandomSeed()  const { return m_randomSeed;  }
+
+			// Set
+			void SetParams(double _persistence, double _frequency, int _octaves, int _randomseed)
+			{
+				m_persistence = _persistence; m_frequency = _frequency; m_octaves = _octaves; m_randomSeed = _randomseed;
+			}
+
+
 			double GetNoise(double x)
 			{
 				double total = 0;
@@ -89,7 +109,7 @@ namespace Apoc3D
 			double m_persistence;
 			double m_frequency;
 			int m_octaves;
-
+			int m_randomSeed;
 		};
 	}
 }
