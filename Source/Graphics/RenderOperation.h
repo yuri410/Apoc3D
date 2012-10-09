@@ -64,9 +64,10 @@ namespace Apoc3D
 			*/
 			bool RootTransformIsFinal;
 			PartTransforms PartTransform;
-			
+			void* UserData;
+
 			RenderOperation(void)
-				: GeometryData(0), Material(0), RootTransformIsFinal(false)
+				: GeometryData(0), Material(0), RootTransformIsFinal(false), UserData(0)
 			{
 				memset(&RootTransform, 0, sizeof(Matrix));
 				memset(&PartTransform, 0, sizeof(PartTransforms));
@@ -79,7 +80,8 @@ namespace Apoc3D
 					Material == other.Material && 
 					RootTransform == other.RootTransform &&
 					PartTransform == other.PartTransform &&
-					RootTransformIsFinal == other.RootTransformIsFinal;
+					RootTransformIsFinal == other.RootTransformIsFinal &&
+					UserData == other.UserData;
 			}
 			friend static bool operator ==(const RenderOperation& left, const RenderOperation& right)
 			{
@@ -87,7 +89,8 @@ namespace Apoc3D
 					left.Material == right.Material && 
 					left.RootTransform == right.RootTransform &&
 					left.PartTransform == right.PartTransform &&
-					left.RootTransformIsFinal == right.RootTransformIsFinal;
+					left.RootTransformIsFinal == right.RootTransformIsFinal &&
+					left.UserData == right.UserData;
 			}
 		};
 	};
