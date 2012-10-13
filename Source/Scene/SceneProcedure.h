@@ -27,6 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 #include "Collections/FastList.h"
 #include "ScenePassTypes.h"
+
+#include "Math/Vector.h"
 //#include "Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Collections;
