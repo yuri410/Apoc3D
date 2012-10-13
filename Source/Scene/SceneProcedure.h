@@ -110,6 +110,7 @@ namespace Apoc3D
 				{
 					if (m_vars[i]->Name == name)
 					{
+						assert(m_vars[i]->Type == VARTYPE_Texture);
 						m_vars[i]->TextureValue = tex;
 						break;
 					}
@@ -121,7 +122,32 @@ namespace Apoc3D
 				{
 					if (m_vars[i]->Name == name)
 					{
+						assert(m_vars[i]->Type == VARTYPE_Boolean);
 						m_vars[i]->Value[0] = val ? 1:0;
+						break;
+					}
+				}
+			}
+			void SetVector4Var(const String& name, const Vector4& val)
+			{
+				for (int i=0;i<m_varCount;i++)
+				{
+					if (m_vars[i]->Name == name)
+					{
+						assert(m_vars[i]->Type == VARTYPE_Vector4);
+						memcpy(m_vars[i]->Value, &val, sizeof(float)*4);
+						break;
+					}
+				}
+			}
+			void SetFloatVar(const String& name, const float val)
+			{
+				for (int i=0;i<m_varCount;i++)
+				{
+					if (m_vars[i]->Name == name)
+					{
+						assert(m_vars[i]->Type == VARTYPE_Single);
+						*reinterpret_cast<float*>(m_vars[i]->Value) = val;
 						break;
 					}
 				}
