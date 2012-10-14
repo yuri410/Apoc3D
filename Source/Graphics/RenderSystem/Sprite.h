@@ -113,6 +113,12 @@ namespace Apoc3D
 					Matrix::Multiply(result, getTransform(), matrix);
 					SetTransform(result);
 				}
+				void PreMultiplyTransform(const Matrix& matrix)
+				{
+					Matrix result;
+					Matrix::Multiply(result, matrix, getTransform());
+					SetTransform(result);
+				}
 
 				/** Set current transform. If using matrix stack, pushes the matrix onto the stack as well.
 				*/
