@@ -142,6 +142,18 @@ namespace Apoc3D
 					}
 				}
 			}
+			void SetVector2Var(const String& name, const Vector2& val)
+			{
+				for (int i=0;i<m_varCount;i++)
+				{
+					if (m_vars[i]->Name == name)
+					{
+						assert(m_vars[i]->Type == VARTYPE_Vector2);
+						memcpy(m_vars[i]->Value, &val, sizeof(float)*2);
+						break;
+					}
+				}
+			}
 			void SetFloatVar(const String& name, const float val)
 			{
 				for (int i=0;i<m_varCount;i++)
