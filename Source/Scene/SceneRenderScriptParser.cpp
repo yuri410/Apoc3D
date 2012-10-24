@@ -767,6 +767,11 @@ namespace Apoc3D
 			String stat = StringUtils::toWString(node->Attribute("S"));
 			StringUtils::Trim(stat);
 			StringUtils::ToLowerCase(stat);
+			SceneOpArg zeroArg;
+			zeroArg.Var = 0;
+			zeroArg.IsImmediate = true;
+			zeroArg.StrData = L"0";
+			memset(zeroArg.DefaultValue, 0, sizeof(zeroArg.DefaultValue));
 
 			if (stat ==  L"clear")
 			{
@@ -827,6 +832,18 @@ namespace Apoc3D
 
 				if (node->Attribute("RT") && ParseCallArgRef(node, "RT", arg, GlobalVars))
 					inst.Args.push_back(arg);
+				else
+					inst.Args.push_back(zeroArg);
+				
+				if (node->Attribute("Mask") && ParseCallArgUintHexImm(node, "Mask", arg))
+					inst.Args.push_back(arg);
+				else
+				{
+					arg.DefaultValue[0] = 0x1111;
+					arg.Var = 0;
+					arg.IsImmediate = true;
+					arg.StrData = L"";
+				}
 
 				instructions.push_back(inst);
 			}

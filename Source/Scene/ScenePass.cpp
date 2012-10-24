@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneManager.h"
 #include "Core/Logging.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
+#include "Graphics/RenderSystem/RenderStateManager.h"
 #include "Graphics/RenderSystem/RenderTarget.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
 #include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
@@ -489,6 +490,8 @@ namespace Apoc3D
 		}
 		void ScenePass::UseRT(const SceneInstruction& inst)
 		{
+			assert(inst.Args.size() == 3);
+
 			int index;
 			if (inst.Args[0].IsImmediate)
 			{
@@ -499,8 +502,9 @@ namespace Apoc3D
 				index = reinterpret_cast<const int&>(inst.Args[0].Var->Value[0]);
 			}
 
-
-			if (inst.Args.size() > 1)
+			
+			
+			if (!inst.Args[1].IsImmediate)
 			{
 				m_renderDevice->SetRenderTarget(
 					index,
@@ -508,11 +512,14 @@ namespace Apoc3D
 			}
 			else
 			{
-
+				// if Immediate then it can only be null
 				m_renderDevice->SetRenderTarget(
 					index,
 					0);
 			}
+
+			uint colorFlags = inst.Args[2].DefaultValue[0];
+			m_renderDevice->getRenderState()->setColorWriteEnabled(index, colorFlags&0x0100, colorFlags&0x0010, colorFlags&0x0001, colorFlags&0x1000);
 		}
 	};
 };

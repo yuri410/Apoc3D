@@ -144,6 +144,12 @@ namespace Apoc3D
 				virtual Apoc3D::Math::Rectangle getScissorTestRect() = 0;
 				virtual void setScissorTest(bool enable, const Apoc3D::Math::Rectangle* rect) = 0;
 				
+				/************************************************************************/
+				/* ColorWrite                                                           */
+				/************************************************************************/
+				virtual void getColorWriteEnabled(int rtIndex, bool& r, bool& g, bool& b, bool& a) = 0;
+				virtual void setColorWriteEnabled(int rtIndex, bool r, bool g, bool b, bool a) = 0;
+				
 			};
 		}
 	}

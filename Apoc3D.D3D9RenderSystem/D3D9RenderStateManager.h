@@ -130,6 +130,18 @@ namespace Apoc3D
 
 
 				/************************************************************************/
+				/* Color Write                                                          */
+				/************************************************************************/
+				virtual void getColorWriteEnabled0(bool& r, bool& g, bool& b, bool& a);
+				virtual void setColorWriteEnabled0(bool r, bool g, bool b, bool a);
+				virtual void getColorWriteEnabled1(bool& r, bool& g, bool& b, bool& a);
+				virtual void setColorWriteEnabled1(bool r, bool g, bool b, bool a);
+				virtual void getColorWriteEnabled2(bool& r, bool& g, bool& b, bool& a);
+				virtual void setColorWriteEnabled2(bool r, bool g, bool b, bool a);
+				virtual void getColorWriteEnabled3(bool& r, bool& g, bool& b, bool& a);
+				virtual void setColorWriteEnabled3(bool r, bool g, bool b, bool a);
+
+				/************************************************************************/
 				/* Samplers                                                             */
 				/************************************************************************/
 				void SetVertexSampler(int samplerIndex, const ShaderSamplerState& sampler);
@@ -190,6 +202,11 @@ namespace Apoc3D
 
 				ShaderSamplerState* m_pixelSamplers;
 				ShaderSamplerState* m_vertexSamplers;
+
+				bool m_colorWrite0[4];
+				bool m_colorWrite1[4];
+				bool m_colorWrite2[4];
+				bool m_colorWrite3[4];
 
 				void InitializeDefaultState();
 
@@ -336,6 +353,13 @@ namespace Apoc3D
 				virtual bool getScissorTestEnabled();
 				virtual Apoc3D::Math::Rectangle getScissorTestRect();
 				virtual void setScissorTest(bool enable, const Apoc3D::Math::Rectangle* rect);
+
+				/************************************************************************/
+				/* Color Write                                                          */
+				/************************************************************************/
+				virtual void getColorWriteEnabled(int rtIndex, bool& r, bool& g, bool& b, bool& a);
+				virtual void setColorWriteEnabled(int rtIndex, bool r, bool g, bool b, bool a);
+
 
 			private:
 				D3D9RenderDevice* m_device;
