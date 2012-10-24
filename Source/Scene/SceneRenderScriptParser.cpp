@@ -843,6 +843,7 @@ namespace Apoc3D
 					arg.Var = 0;
 					arg.IsImmediate = true;
 					arg.StrData = L"";
+					inst.Args.push_back(arg);
 				}
 
 				instructions.push_back(inst);
