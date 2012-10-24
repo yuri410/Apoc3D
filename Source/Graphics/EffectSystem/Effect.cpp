@@ -576,7 +576,7 @@ namespace Apoc3D
 					case EPUSAGE_S_FarPlane:
 						{
 							//SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->);
-							const Matrix& view = RendererEffectParams::CurrentCamera->getViewMatrix();
+							const Matrix& view = RendererEffectParams::CurrentCamera->getProjMatrix();
 							float n = -view.M34 * view.M43 / view.M33;
 							if (view.M34<0)
 							{
@@ -591,7 +591,7 @@ namespace Apoc3D
 						break;
 					case EPUSAGE_S_NearPlane:
 						{
-							const Matrix& view = RendererEffectParams::CurrentCamera->getViewMatrix();
+							const Matrix& view = RendererEffectParams::CurrentCamera->getProjMatrix();
 							float n = - view.M34 * view.M43 / view.M33;
 							SetValue(m_parameters[i], n);
 						}
