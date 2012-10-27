@@ -219,11 +219,11 @@ namespace Apoc3D
 		}
 
 
-		void Font::DrawString(Sprite* sprite, const String& text, const Point& pt, uint color)
+		void Font::DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, int hozShrink)
 		{
-			DrawStringEx(sprite, text, pt.X, pt.Y, color);
+			DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, -1, 0, hozShrink);
 		}
-		void Font::DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length, int lineSpace,wchar_t suffix)
+		void Font::DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length, int lineSpace,wchar_t suffix, int hozShrink)
 		{
 			int std = x;
 			size_t len = text.length();
@@ -266,7 +266,7 @@ namespace Apoc3D
 
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
 
-						x += chdef.AdcanceX + chdef.Left;// glyph.Width - 1;
+						x += chdef.AdcanceX + chdef.Left + hozShrink;// glyph.Width - 1;
 					}
 					
 				}
