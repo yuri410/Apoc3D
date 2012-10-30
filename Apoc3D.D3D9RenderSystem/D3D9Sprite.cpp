@@ -149,6 +149,7 @@ namespace Apoc3D
 				m_deferredDraws[index].BR.TexCoord[1] *= vScale;
 				m_deferredDraws[index].TL.TexCoord[1] *= vScale;
 				m_deferredDraws[index].TR.TexCoord[1] *= vScale;
+				m_deferredDraws[index].IsUVExtended = true;
 			}
 
 			// Auto resizing to fit the target rectangle is implemented in this method.
@@ -270,6 +271,7 @@ namespace Apoc3D
 				m_deferredDraws[index].BR.TexCoord[1] *= vScale;
 				m_deferredDraws[index].TL.TexCoord[1] *= vScale;
 				m_deferredDraws[index].TR.TexCoord[1] *= vScale;
+				m_deferredDraws[index].IsUVExtended = true;
 			}
 
 
@@ -292,9 +294,30 @@ namespace Apoc3D
 				D3D9Texture* currentTexture = NULL;
 				for (int i=0;i<m_deferredDraws.getCount();i++)
 				{
-					if (m_deferredDraws[i].Tex != currentTexture)
+					if (m_deferredDraws[i].IsUVExtended)
 					{
-						m_rawDevice->SetTexture(0, m_deferredDraws[i].Tex->getInternal2D());
+						NativeD3DStateManager* mgr = m_device->getNativeStateManager();
+
+						ShaderSamplerState state = mgr->getPixelSampler(0);
+						state.AddressU = TA_Wrap;
+						state.AddressV = TA_Wrap;
+						mgr->SetPixelSampler(0, state);
+
+						if (m_deferredDraws[i].Tex != currentTexture)
+						{
+							m_rawDevice->SetTexture(0, m_deferredDraws[i].Tex->getInternal2D());
+						}
+
+						state.AddressU = TA_Clamp;
+						state.AddressV = TA_Clamp;
+						mgr->SetPixelSampler(0, state);
+					}
+					else
+					{
+						if (m_deferredDraws[i].Tex != currentTexture)
+						{
+							m_rawDevice->SetTexture(0, m_deferredDraws[i].Tex->getInternal2D());
+						}
 					}
 
 					m_rawDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i*4, 2);
@@ -362,6 +385,7 @@ namespace Apoc3D
 					drawE.TR.TexCoord[0] = srcRect->right/width;		drawE.TR.TexCoord[1] = srcRect->top/height;
 					drawE.BL.TexCoord[0] = srcRect->left/width ;		drawE.BL.TexCoord[1] = srcRect->bottom/height;
 					drawE.BR.TexCoord[0] = srcRect->right/width;		drawE.BR.TexCoord[1] = srcRect->bottom/height;
+					drawE.IsUVExtended = false;
 				}
 				else
 				{
@@ -404,7 +428,7 @@ namespace Apoc3D
 					drawE.TR.TexCoord[0] = 1; drawE.TR.TexCoord[1] = 0;
 					drawE.BL.TexCoord[0] = 0; drawE.BL.TexCoord[1] = 1;
 					drawE.BR.TexCoord[0] = 1; drawE.BR.TexCoord[1] = 1;
-
+					drawE.IsUVExtended = false;
 				}
 
 				m_deferredDraws.Add(drawE);
@@ -461,7 +485,7 @@ namespace Apoc3D
 				drawE.TR.TexCoord[0] = 1; drawE.TR.TexCoord[1] = 0;
 				drawE.BL.TexCoord[0] = 0; drawE.BL.TexCoord[1] = 1;
 				drawE.BR.TexCoord[0] = 1; drawE.BR.TexCoord[1] = 1;
-
+				drawE.IsUVExtended = false;
 				m_deferredDraws.Add(drawE);
 
 				if (m_deferredDraws.getCount()>FlushThreshold)

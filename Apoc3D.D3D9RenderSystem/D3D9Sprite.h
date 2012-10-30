@@ -85,6 +85,8 @@ namespace Apoc3D
 					QuadVertex TR;
 					QuadVertex BL;
 					QuadVertex BR;
+
+					bool IsUVExtended;
 				};
 				struct  
 				{
