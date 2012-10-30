@@ -134,12 +134,13 @@ namespace Apoc3D
 				}
 			}
 
-			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, float uScale, float vScale, uint color)
+			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, float uScale, float vScale, float uBias, float vBias, uint color)
 			{
 				Draw(texture, dstRect, 0, color);
 
 				// scale the uv of last 4 vertices
 				int index = m_deferredDraws.getCount() - 1;
+
 				m_deferredDraws[index].BL.TexCoord[0] *= uScale;
 				m_deferredDraws[index].BR.TexCoord[0] *= uScale;
 				m_deferredDraws[index].TL.TexCoord[0] *= uScale;
@@ -149,6 +150,17 @@ namespace Apoc3D
 				m_deferredDraws[index].BR.TexCoord[1] *= vScale;
 				m_deferredDraws[index].TL.TexCoord[1] *= vScale;
 				m_deferredDraws[index].TR.TexCoord[1] *= vScale;
+
+				m_deferredDraws[index].BL.TexCoord[0] += uBias;
+				m_deferredDraws[index].BR.TexCoord[0] += uBias;
+				m_deferredDraws[index].TL.TexCoord[0] += uBias;
+				m_deferredDraws[index].TR.TexCoord[0] += uBias;
+
+				m_deferredDraws[index].BL.TexCoord[1] += vBias;
+				m_deferredDraws[index].BR.TexCoord[1] += vBias;
+				m_deferredDraws[index].TL.TexCoord[1] += vBias;
+				m_deferredDraws[index].TR.TexCoord[1] += vBias;
+
 				m_deferredDraws[index].IsUVExtended = true;
 			}
 
@@ -257,11 +269,12 @@ namespace Apoc3D
 			{
 				AddNormalDraw(texture, (float)x, (float)y, color);
 			}
-			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, float uScale, float vScale, uint color)
+			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color)
 			{
 				AddNormalDraw(texture, pos.X, pos.Y, color);
 				// scale the uv of last 4 vertices
 				int index = m_deferredDraws.getCount() - 1;
+
 				m_deferredDraws[index].BL.TexCoord[0] *= uScale;
 				m_deferredDraws[index].BR.TexCoord[0] *= uScale;
 				m_deferredDraws[index].TL.TexCoord[0] *= uScale;
@@ -271,6 +284,18 @@ namespace Apoc3D
 				m_deferredDraws[index].BR.TexCoord[1] *= vScale;
 				m_deferredDraws[index].TL.TexCoord[1] *= vScale;
 				m_deferredDraws[index].TR.TexCoord[1] *= vScale;
+
+
+				m_deferredDraws[index].BL.TexCoord[0] += uBias;
+				m_deferredDraws[index].BR.TexCoord[0] += uBias;
+				m_deferredDraws[index].TL.TexCoord[0] += uBias;
+				m_deferredDraws[index].TR.TexCoord[0] += uBias;
+
+				m_deferredDraws[index].BL.TexCoord[1] += vBias;
+				m_deferredDraws[index].BR.TexCoord[1] += vBias;
+				m_deferredDraws[index].TL.TexCoord[1] += vBias;
+				m_deferredDraws[index].TR.TexCoord[1] += vBias;
+
 				m_deferredDraws[index].IsUVExtended = true;
 			}
 
@@ -288,39 +313,37 @@ namespace Apoc3D
 
 				m_quadBuffer->Unlock();
 
-				//NativeD3DStateManager* mgr = m_device->getNativeStateManager();
+				NativeD3DStateManager* mgr = m_device->getNativeStateManager();
 
 				m_rawDevice->SetTexture(0,0);
 				D3D9Texture* currentTexture = NULL;
 				for (int i=0;i<m_deferredDraws.getCount();i++)
 				{
+					ShaderSamplerState state;
 					if (m_deferredDraws[i].IsUVExtended)
 					{
-						NativeD3DStateManager* mgr = m_device->getNativeStateManager();
-
-						ShaderSamplerState state = mgr->getPixelSampler(0);
+						
+						state = mgr->getPixelSampler(0);
 						state.AddressU = TA_Wrap;
 						state.AddressV = TA_Wrap;
 						mgr->SetPixelSampler(0, state);
 
-						if (m_deferredDraws[i].Tex != currentTexture)
-						{
-							m_rawDevice->SetTexture(0, m_deferredDraws[i].Tex->getInternal2D());
-						}
 
+					}
+
+					if (m_deferredDraws[i].Tex != currentTexture)
+					{
+						m_rawDevice->SetTexture(0, m_deferredDraws[i].Tex->getInternal2D());
+					}
+					
+					m_rawDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i*4, 2);
+
+					if (m_deferredDraws[i].IsUVExtended)
+					{
 						state.AddressU = TA_Clamp;
 						state.AddressV = TA_Clamp;
 						mgr->SetPixelSampler(0, state);
 					}
-					else
-					{
-						if (m_deferredDraws[i].Tex != currentTexture)
-						{
-							m_rawDevice->SetTexture(0, m_deferredDraws[i].Tex->getInternal2D());
-						}
-					}
-
-					m_rawDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i*4, 2);
 				}
 
 
