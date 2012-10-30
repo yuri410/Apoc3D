@@ -134,6 +134,23 @@ namespace Apoc3D
 				}
 			}
 
+			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, float uScale, float vScale, uint color)
+			{
+				Draw(texture, dstRect, 0, color);
+
+				// scale the uv of last 4 vertices
+				int index = m_deferredDraws.getCount() - 1;
+				m_deferredDraws[index].BL.TexCoord[0] *= uScale;
+				m_deferredDraws[index].BR.TexCoord[0] *= uScale;
+				m_deferredDraws[index].TL.TexCoord[0] *= uScale;
+				m_deferredDraws[index].TR.TexCoord[0] *= uScale;
+
+				m_deferredDraws[index].BL.TexCoord[1] *= vScale;
+				m_deferredDraws[index].BR.TexCoord[1] *= vScale;
+				m_deferredDraws[index].TL.TexCoord[1] *= vScale;
+				m_deferredDraws[index].TR.TexCoord[1] *= vScale;
+			}
+
 			// Auto resizing to fit the target rectangle is implemented in this method.
 			// 
 			void D3D9Sprite::Draw(Texture* texture, 
@@ -239,6 +256,22 @@ namespace Apoc3D
 			{
 				AddNormalDraw(texture, (float)x, (float)y, color);
 			}
+			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, float uScale, float vScale, uint color)
+			{
+				AddNormalDraw(texture, pos.X, pos.Y, color);
+				// scale the uv of last 4 vertices
+				int index = m_deferredDraws.getCount() - 1;
+				m_deferredDraws[index].BL.TexCoord[0] *= uScale;
+				m_deferredDraws[index].BR.TexCoord[0] *= uScale;
+				m_deferredDraws[index].TL.TexCoord[0] *= uScale;
+				m_deferredDraws[index].TR.TexCoord[0] *= uScale;
+
+				m_deferredDraws[index].BL.TexCoord[1] *= vScale;
+				m_deferredDraws[index].BR.TexCoord[1] *= vScale;
+				m_deferredDraws[index].TL.TexCoord[1] *= vScale;
+				m_deferredDraws[index].TR.TexCoord[1] *= vScale;
+			}
+
 
 			void D3D9Sprite::Flush()
 			{
