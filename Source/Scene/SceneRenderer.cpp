@@ -126,6 +126,7 @@ namespace Apoc3D
 
 			// this will only clear the rop list inside. The hashtables are remained as 
 			// it is highly possible the next time the buckets in them are reused.
+			// TODO: memory problem
 			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
 			{
 				MaterialTable* mtrlTbl = *i.getCurrentValue();
@@ -138,6 +139,25 @@ namespace Apoc3D
 						(*(k.getCurrentValue()))->FastClear();
 					}
 				}
+
+			}
+		}
+		void BatchData::Reset()
+		{
+			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
+			{
+				MaterialTable* mtrlTbl = *i.getCurrentValue();
+				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
+				{
+					GeometryTable* geoTbl = *j.getCurrentValue();
+
+					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext(); )
+					{
+						(*(k.getCurrentValue()))->FastClear();
+					}
+					geoTbl->Clear();
+				}
+				mtrlTbl->Clear();
 			}
 		}
 		bool BatchData::HasObject(uint64 selectMask)
@@ -239,23 +259,40 @@ namespace Apoc3D
 				MaterialTable* mtrlTbl = *i.getCurrentValue();
 				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
 				{
-					Material* mtrl = *j.getCurrentKey();
-
-					if (mtrl->getPassFlags() & selectorMask)
+					bool isUsed = false;
+					GeometryTable* geoTbl = *(j.getCurrentValue());
+					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
 					{
-						GeometryTable* geoTbl = *(j.getCurrentValue());
-
-						for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
+						const OperationList* opList = *k.getCurrentValue();
+						if (opList->getCount())
 						{
-							const OperationList* opList = *k.getCurrentValue();
-							if (opList->getCount())
+							isUsed = true;
+						}
+					}
+
+					if (isUsed)
+					{
+						Material* mtrl = *j.getCurrentKey();
+
+						if (mtrl->getPassFlags() & selectorMask)
+						{
+							for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
 							{
-								device->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
+								const OperationList* opList = *k.getCurrentValue();
+								if (opList->getCount())
+								{
+									device->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
+								}
 							}
 						}
 					}
 				}
 			}
+		}
+
+		void SceneRenderer::ResetBatchTable()
+		{
+			m_batchData.Reset();
 		}
 	};
 

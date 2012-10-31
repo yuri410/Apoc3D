@@ -84,6 +84,8 @@ namespace Apoc3D
 			*/
 			int getObjectCount() const { return m_objectCount; }
 
+			void Reset();
+
 		private:
 			PriorityTable m_priTable;
 			//MaterialList m_mtrlList;			
@@ -148,6 +150,8 @@ namespace Apoc3D
 					return m_procFallbacks[m_selectedProc];
 				return 0;
 			}
+
+			void ResetBatchTable();
 
 			/** Renders a particular batch data
 			*/
