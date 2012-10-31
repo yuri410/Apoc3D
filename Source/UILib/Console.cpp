@@ -148,6 +148,11 @@ namespace Apoc3D
 		{
 			m_form->Restore();
 		}
+		void Console::Close()
+		{
+			m_form->Close();
+		}
+
 		void Console::Submit_Pressed(Control* ctrl)
 		{
 			const String& c = m_inputText->Text;

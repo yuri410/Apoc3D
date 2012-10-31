@@ -54,6 +54,8 @@ namespace Apoc3D
 			void Minimize();
 			void Restore();
 			void Maximize();
+			void Close();
+
 			void Update(const GameTime* const time);
 		private:
 			void TextBox_ReturnPressed(Control* ctrl);
