@@ -42,7 +42,8 @@ namespace Apoc3D
 				m_exiting(false),
 				m_accumulatedElapsedGameTime(0), m_lastFrameElapsedGameTime(0), m_lastFrameElapsedRealTime(0),
 				m_totalGameTime(0), m_forceElapsedTimeToZero(false), m_drawRunningSlowly(false), m_lastUpdateFrame(0),
-				m_lastUpdateTime(0), m_fps(0)
+				m_lastUpdateTime(0), m_fps(0),
+				m_maxSkipFrameCount(10)
 			{
 				m_gameClock = new GameClock();
 
@@ -189,10 +190,13 @@ namespace Apoc3D
 
 				m_drawRunningSlowly = m_updatesSinceRunningSlowly2 < 20;
 
-		#if _DEBUG
-				if (ratio>10)
+#if _DEBUG
+				if (ratio>m_maxSkipFrameCount)
 					ratio=0;
-		#endif
+#else
+				if (ratio>m_maxSkipFrameCount)
+					ratio=m_maxSkipFrameCount;
+#endif
 
 				// keep up update calls:
 				// update until it's time to draw the next frame

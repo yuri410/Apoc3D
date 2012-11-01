@@ -80,6 +80,7 @@ namespace Apoc3D
 
 
 			private:
+				int m_maxSkipFrameCount;
 				GameClock* m_gameClock;
 				float m_maxElapsedTime;
 				float m_totalGameTime;

@@ -101,8 +101,10 @@ namespace Apoc3D
 				settings.RefreshRate = 0;
 				settings.Windowed = params.IsWindowd;				
 
+
 				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager());
 				m_window->setDevice(device);
+				m_window->m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
 
 				LogManager::getSingleton().Write(LOG_Graphics, 
 					L"[D3D9]Creating render window. ", 
@@ -123,6 +125,8 @@ namespace Apoc3D
 				: RenderWindow(device, pm), m_dc(dc)
 			{
 				m_game = new D3D9Game(this, dc->getD3D());
+
+				
 			}
 			D3D9RenderWindow::~D3D9RenderWindow()
 			{
@@ -149,6 +153,8 @@ namespace Apoc3D
 				settings.RefreshRate = 0;
 				settings.Windowed = params.IsWindowd;				
 
+				m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
+				
 				m_game->getGraphicsDeviceManager()->ChangeDevice(settings);
 
 			}

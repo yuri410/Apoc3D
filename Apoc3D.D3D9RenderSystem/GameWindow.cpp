@@ -213,6 +213,23 @@ namespace Apoc3D
 
 				DestroyWindow(m_hWnd);
 			}
+			void GameWindow::MakeFixedSize(bool v)
+			{
+				LONG style = GetWindowLong(m_hWnd, GWL_STYLE);
+
+				if (!v)
+				{
+					style |= WS_MAXIMIZEBOX;
+					style |= WS_SIZEBOX;
+				}
+				else
+				{
+					style &= (~ WS_MAXIMIZEBOX);
+					style &= (~ WS_SIZEBOX);
+				}
+				
+				SetWindowLong(m_hWnd, GWL_STYLE, style);
+			}
 
 			LRESULT CALLBACK GameWindow::WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{

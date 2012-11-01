@@ -64,6 +64,9 @@ namespace Apoc3D
 			struct APAPI RenderParameters
 			{
 				bool IsWindowd;
+
+				bool IsFixedWindow;
+
 				/** Represents when not full screen rendering, whether
 				 *  the engine should create a RenderWindow or(true), or
 				 *  using a user specified render area as a RenderView(false).
@@ -90,7 +93,7 @@ namespace Apoc3D
 				RenderParameters()
 					: IsWindowd(false), IsFullForm(false), BackBufferWidth(0), BackBufferHeight(0),
 					DepthBufferFormat(DEPFMT_Depth16), ColorBufferFormat(FMT_Unknown), FSAASampleCount(0), EnableVSync(false),
-					TargetHandle(0), UserData(0)
+					TargetHandle(0), UserData(0), IsFixedWindow(false)
 				{
 					
 				}
