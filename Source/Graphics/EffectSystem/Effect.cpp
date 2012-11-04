@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Effect.h"
 
+#include "Core/GameTime.h"
 #include "Graphics/Material.h"
 #include "Graphics/Camera.h"
 #include "Graphics/RenderSystem/Shader.h"
@@ -160,6 +161,19 @@ namespace Apoc3D
 			{
 				return m_supportsInstancing;
 			}
+
+			void AutomaticEffect::Update(const GameTime* const time)
+			{
+				float t = m_lastTime + time->getElapsedTime();//(float)( clock() / CLOCKS_PER_SEC);
+				m_unifiedTime += t - m_lastTime;
+				m_lastTime = t;
+
+				while (m_unifiedTime > Math::PI * 10)
+				{
+					m_unifiedTime -= Math::PI * 10;
+				}
+			}
+
 			void AutomaticEffect::Setup(Material* mtrl, const RenderOperation* rop, int count)
 			{
 				// set the param's value one by one. 
@@ -522,15 +536,7 @@ namespace Apoc3D
 				// The amount is much smaller than render operations.
 				// As a result, data sending to the GPU will be fewer.
 
-				float t = m_lastTime + 0.016f;//(float)( clock() / CLOCKS_PER_SEC);
-				m_unifiedTime += t - m_lastTime;
-				m_lastTime = t;
-
-				while (m_unifiedTime > Math::PI * 10)
-				{
-					m_unifiedTime -= Math::PI * 10;
-				}
-
+				
 				m_device->BindPixelShader(m_pixelShader);
 				m_device->BindVertexShader(m_vertexShader);
 

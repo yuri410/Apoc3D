@@ -120,6 +120,15 @@ namespace Apoc3D
 					//delete effect;
 				}
 			}
+
+			void EffectManager::Update(const GameTime* const time)
+			{
+				for (EffectTable::iterator iter = m_fxTable.begin(); iter != m_fxTable.end(); iter++)
+				{
+					Effect* e = iter->second;
+					e->Update(time);
+				}
+			}
 		}
 	}
 }

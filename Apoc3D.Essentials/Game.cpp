@@ -102,6 +102,7 @@ namespace Apoc3DEx
 	{
 		
 		InputAPIManager::getSingleton().Update(time);
+		EffectManager::getSingleton().Update(time);
 
 		m_console->Update(time);
 

@@ -48,6 +48,9 @@ namespace Apoc3D
 				Effect(void);
 				virtual ~Effect(void);
 
+
+				virtual void Update(const GameTime* const time) { }
+
 				/** Begins a effect.
 				 *  Ordinarily this is call by the RenderDevice when drawing a list of render operations.
 				 *  As the nature of batching, that is to say, this is called per material and geometry shape.
@@ -128,6 +131,8 @@ namespace Apoc3D
 				void SetParameterValue(int index, T* value, int count);
 				void SetParameterTexture(int index, ResourceHandle<Texture>* value);
 				void SetParameterTexture(int index, Texture* value);
+
+				virtual void Update(const GameTime* const time);
 			protected:
 				virtual int begin();
 				virtual void end();
