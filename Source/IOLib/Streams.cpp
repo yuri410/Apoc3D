@@ -32,6 +32,7 @@ namespace Apoc3D
 		FileStream::FileStream(const String& filename)
 		{
 			m_in = new ifstream(filename.c_str(), ios::in | ios::binary);
+			m_in->exceptions( std::ios::failbit ); 
 
 			uint64 oldPos = m_in->tellg();
 			m_in->seekg(0, ios::end);

@@ -80,6 +80,7 @@ namespace Apoc3D
 			FastMap<String, PakArchiveEntry> m_entries;
 
 			FileLocation* m_file;
+			Stream* m_fileStream;
 		public:
 			PakArchive(FileLocation* fl);
 			~PakArchive();

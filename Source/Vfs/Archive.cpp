@@ -65,9 +65,12 @@ namespace Apoc3D
 			}
 			br->Close();
 			delete br;
+
+			m_fileStream = m_file->GetReadStream();
 		}
 		PakArchive::~PakArchive()
 		{
+			delete m_fileStream;
 			delete m_file;
 		}
 
@@ -97,7 +100,7 @@ namespace Apoc3D
 				//{
 				//	thStream = m_file->GetStream();
 				//}
-				VirtualStream* res = new VirtualStream(m_file->GetReadStream(), lpkEnt.Offset, lpkEnt.Size);
+				VirtualStream* res = new VirtualStream(m_fileStream, lpkEnt.Offset, lpkEnt.Size);
 				res->setPosition( 0 );
 				return res;
 			}

@@ -297,7 +297,7 @@ namespace Apoc3D
 			}
 
 			VirtualStream(Stream* strm, int64 baseOffset, int64 length)
-				: m_baseStream(strm), m_length(length), m_baseOffset(baseOffset)
+				: m_baseStream(strm), m_length(length), m_baseOffset(baseOffset), m_isOutput(false)
 			{
 				strm->setPosition(baseOffset);
 			}
