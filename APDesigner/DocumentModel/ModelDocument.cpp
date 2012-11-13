@@ -427,6 +427,11 @@ namespace APDesigner
 			m_zoomOut->SetSkin(window->getUISkin());
 			m_zoomOut->eventPress().bind(this, &ModelDocument::ZoomOut_Pressed);
 
+			sx += 60;
+			m_setSequenceImages = new Button(Point(sx, sy),100, L"Set Sequence Material");
+			m_setSequenceImages->SetSkin(window->getUISkin());
+			m_setSequenceImages->eventPress().bind(this, &ModelDocument::SetSequenceImages_Pressed);
+
 		}
 		getDocumentForm()->setMinimumSize(Point(1070,512+137+50));
 		
@@ -434,6 +439,7 @@ namespace APDesigner
 		getDocumentForm()->setTitle(file);
 
 		m_passEditor = new PassFlagDialog(window, window->getDevice());
+		m_batchCopyMtrl = new CopyMaterialDialog(this, window, window->getDevice());
 	}
 
 	ModelDocument::~ModelDocument()
@@ -511,6 +517,7 @@ namespace APDesigner
 		delete m_rotateY;
 		delete m_zoomIn;
 		delete m_zoomOut;
+		delete m_setSequenceImages;
 	}
 	
 
@@ -596,6 +603,7 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_rotateY);
 		getDocumentForm()->getControls().Add(m_zoomIn);
 		getDocumentForm()->getControls().Add(m_zoomOut);
+		getDocumentForm()->getControls().Add(m_setSequenceImages);
 
 		{
 			getDocumentForm()->getControls().Add(m_cbUseRef);
@@ -699,6 +707,11 @@ namespace APDesigner
 		m_sceneRenderer->RenderScene(&m_scene);
 	}
 
+	void ModelDocument::UpdateSelectedPart()
+	{
+		CBMeshPart_SelectionChanged(m_cbMeshPart);
+	}
+
 	void ModelDocument::PassButton_Pressed(Control* ctrl)
 	{
 		const FastList<Mesh*> ents = m_modelSData->getEntities();
@@ -789,7 +802,7 @@ namespace APDesigner
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
 			if (m_cbMeshPart->getSelectedIndex() !=-1)
 			{
-
+				
 			}
 		}
 	}
@@ -1334,4 +1347,154 @@ namespace APDesigner
 		m_distance += 10;
 	}
 
+	void ModelDocument::SetSequenceImages_Pressed(Control* ctrl)
+	{
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx !=-1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+		
+			m_batchCopyMtrl->ShowModal(mtrls, partIdx);
+		}
+	}
+
+	/************************************************************************/
+	/*                                                                      */
+	/************************************************************************/
+
+	CopyMaterialDialog::CopyMaterialDialog(ModelDocument* parent, MainWindow* window,RenderDevice* device)
+		: m_parent(parent), m_dialogResult(false)
+	{
+		m_form = new Form(FBS_Fixed, L"Name Pattern");
+
+		Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
+		m_form->Size = Point(400, 250);
+		m_form->Position = Point(rect.Width, rect.Height) - m_form->Size;
+		m_form->Position.X /= 2;
+		m_form->Position.Y /= 2;
+		m_form->SetSkin(window->getUISkin());
+		m_form->eventClosed().bind(this, &CopyMaterialDialog::Form_Closed);
+		
+		m_lblTextureName = new Label(Point(15, 22), L"Texture Name (C style)", 180);
+		m_lblTextureName->SetSkin(window->getUISkin());
+		m_form->getControls().Add(m_lblTextureName);
+
+		m_tbTextureName = new TextBox(Point(15+190, 22), 150);
+		m_tbTextureName->SetSkin(window->getUISkin());
+		m_tbTextureName->eventContentChanged().bind(this, &CopyMaterialDialog::Config_Changed);
+		m_form->getControls().Add(m_tbTextureName);
+
+		m_lblPreview = new Label(Point(15, 62), L"[Preview] ", 350);
+		m_lblPreview->SetSkin(window->getUISkin());
+		m_form->getControls().Add(m_lblPreview);
+
+		m_lblStartNumber = new Label(Point(15, 102), L"Start No.", 120);
+		m_lblStartNumber->SetSkin(window->getUISkin());
+		m_form->getControls().Add(m_lblStartNumber);
+
+		m_tbStartNumber = new TextBox(Point(15+190, 102), 150);
+		m_tbStartNumber->SetSkin(window->getUISkin());
+		m_tbStartNumber->setText(L"0");
+		m_tbStartNumber->eventContentChanged().bind(this, &CopyMaterialDialog::Config_Changed);
+		m_form->getControls().Add(m_tbStartNumber);
+
+
+		m_lblEndNumber = new Label(Point(15, 142), L"End No.", 120);
+		m_lblEndNumber->SetSkin(window->getUISkin());
+		m_form->getControls().Add(m_lblEndNumber);
+
+		m_tbEndNumber = new TextBox(Point(15+190, 142), 150);
+		m_tbEndNumber->SetSkin(window->getUISkin());
+		m_tbEndNumber->setText(L"0");
+		m_form->getControls().Add(m_tbEndNumber);
+
+		m_btnOK = new Button(Point(m_form->Size.X - 150 - 25, 162), 150, L"OK");
+		m_btnOK->SetSkin(window->getUISkin());
+		m_btnOK->eventPress().bind(this, &CopyMaterialDialog::ButtonOK_Pressed);
+		m_form->getControls().Add(m_btnOK);
+
+		m_form->Initialize(device);
+		UIRoot::Add(m_form);
+	}
+
+	CopyMaterialDialog::~CopyMaterialDialog()
+	{
+		UIRoot::Remove(m_form);
+		
+		delete m_form;
+		delete m_lblTextureName;
+		delete m_tbTextureName;
+		delete m_lblPreview;
+		delete m_lblStartNumber;
+		delete m_tbStartNumber;
+		delete m_lblEndNumber;
+		delete m_tbEndNumber;
+	}
+
+	void CopyMaterialDialog::ShowModal(MeshMaterialSet<Material*>* mtrl, int selectedSet)
+	{
+		m_mtrl = mtrl;
+		m_selectedSet = selectedSet;
+		m_dialogResult = false;
+		m_form->ShowModal();
+	}
+
+	void CopyMaterialDialog::ButtonOK_Pressed(Control* ctrl)
+	{
+		m_dialogResult = true;
+		m_form->Close();
+	}
+	void CopyMaterialDialog::Config_Changed(Control* ctrl)
+	{
+		int startNo = StringUtils::ParseInt32(m_tbStartNumber->Text);
+		std::string formatString = StringUtils::toString(m_tbTextureName->Text);
+
+		char buffer[256];
+		memset(buffer, 0, sizeof(buffer));
+		if (sprintf(buffer, formatString.c_str(), startNo)>0)
+		{
+			String texName = StringUtils::toWString(buffer);
+
+			m_lblPreview->Text = L"[Preview]" + texName;
+		}
+		else
+		{
+			m_lblPreview->Text = L"[INVALID]";
+		}
+	}
+
+	void CopyMaterialDialog::Form_Closed(Control* ctrl)
+	{
+		if (!m_dialogResult)
+			return;
+
+		// copy frames
+		int startNo = StringUtils::ParseInt32(m_tbStartNumber->Text);
+		int endNo = StringUtils::ParseInt32(m_tbEndNumber->Text);
+
+		std::string formatString = StringUtils::toString(m_tbTextureName->Text);
+
+		Material* baseMtrl = m_mtrl->getMaterial(m_selectedSet, m_mtrl->getFrameCount(m_selectedSet)-1);
+
+		char buffer[256];
+		for (int i=startNo;i<=endNo;i++)
+		{
+			memset(buffer, 0, sizeof(buffer));
+			sprintf_s(buffer, formatString.c_str(), i);
+
+			String texName = StringUtils::toWString(buffer);
+
+			Material* newMtrl = new Material(*baseMtrl);
+			newMtrl->setTextureName(0, texName);
+			newMtrl->Reload();
+
+			m_mtrl->AddFrame(newMtrl, m_selectedSet);
+		}
+
+		m_mtrl = 0;
+
+		m_parent->UpdateSelectedPart();
+	}
 }

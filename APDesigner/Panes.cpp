@@ -410,7 +410,23 @@ namespace APDesigner
 			case PRJITEM_TransformAnimation:
 				{
 					ProjectResTAnim* fnt = static_cast<ProjectResTAnim*>(data);
-					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_rebuild_all_32X32"));
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_skinning"));
+					newNode->UserData = items[i];
+
+					if (parentNode)
+					{
+						parentNode->getNodes().Add(newNode);
+					}
+					else
+					{
+						m_resourceView->getNodes().Add(newNode);
+					}
+				}
+				break;
+			case PRJITEM_MaterialAnimation:
+				{
+					ProjectResTAnim* fnt = static_cast<ProjectResTAnim*>(data);
+					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_surface"));
 					newNode->UserData = items[i];
 
 					if (parentNode)

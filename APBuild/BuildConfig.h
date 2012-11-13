@@ -181,5 +181,13 @@ namespace APBuild
 
 		void Parse(const ConfigurationSection* sect);
 	};
+
+	struct MaterialAnimBuildConfig
+	{
+		String SrcFile;
+		String DstFile;
+
+		void Parse(const ConfigurationSection* sect);
+	};
 }
 #endif

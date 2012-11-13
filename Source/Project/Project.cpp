@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/GraphicsCommon.h"
 #include "Vfs/File.h"
 #include "Vfs/PathUtils.h"
+#include "Vfs/ResourceLocation.h"
 #include "Math/RandomUtils.h"
 
 using namespace Apoc3D::VFS;
@@ -456,12 +457,56 @@ namespace Apoc3D
 		sect->AddAttribute(L"DestinationLocation", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationLocation) : DestinationLocation);
 		sect->AddAttribute(L"DestinationToken", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationToken) : DestinationToken);
 	}
+
+	void ParseMaterialTree(List<String>& mtrlList, const String& baseMtrlName, const ConfigurationSection* sect)
+	{
+		String name = baseMtrlName;
+		if (name.size())
+		{
+			name.append(L"_");
+		}
+		name.append(sect->getName());
+
+		// go into sub sections
+		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
+		{
+			ParseMaterialTree(mtrlList, name, *e.getCurrentValue());
+		}
+
+		mtrlList.Add(name);
+	}
+
 	std::vector<String> ProjectResMaterialSet::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		std::vector<String> res;
+
+		String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
+		if (File::FileExists(path))
+		{
+			FileLocation* fl = new FileLocation(path);
+			XMLConfiguration* config = new XMLConfiguration(fl);
+			ConfigurationSection* mSect = config->get(L"Materials");
+
+			List<String> names;
+			for (ConfigurationSection::SubSectionEnumerator e = mSect->GetSubSectionEnumrator(); e.MoveNext();)
+			{
+				ParseMaterialTree(names, L"", *e.getCurrentValue());
+			} 
+
+			delete config;
+			delete fl;
+
+			String basePath = PathUtils::Combine(m_project->getOutputPath(), DestinationLocation);
+
+			for (int i=0;i<names.getCount();i++)
+			{
+				res.push_back(PathUtils::Combine(basePath, names[i] + L".mtrl"));
+			}
+		}
+
 		if (DestinationToken.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestinationToken));
-		return e;
+			res.push_back(PathUtils::Combine(m_project->getOutputPath(),DestinationToken));
+		return res;
 	}
 	bool ProjectResMaterialSet::IsEarlierThan(time_t t)
 	{
@@ -913,6 +958,38 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
+	/*           ProjectResMAnim                                            */
+	/************************************************************************/
+
+
+	void ProjectResMAnim::Parse(const ConfigurationSection* sect)
+	{
+		SourceFile = sect->getAttribute(L"SourceFile");
+		DestinationFile = sect->getAttribute(L"DestinationFile");
+	}
+	void ProjectResMAnim::Save(ConfigurationSection* sect, bool savingBuild)
+	{
+		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
+		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
+	}
+	std::vector<String> ProjectResMAnim::GetAllOutputFiles()
+	{
+		std::vector<String> e;
+		if (DestinationFile.size())
+			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+		return e;
+	}
+	bool ProjectResMAnim::IsEarlierThan(time_t t)
+	{
+		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile)) < t;
+	}
+	bool ProjectResMAnim::IsNotBuilt()
+	{
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+	}
+
+
+	/************************************************************************/
 	/*           ProjectResTAnim                                            */
 	/************************************************************************/
 
@@ -1056,6 +1133,9 @@ namespace Apoc3D
 			case PRJITEM_ShaderNetwork:
 				sect->AddAttribute(L"Type", L"ShaderNet");
 				break;
+			case PRJITEM_MaterialAnimation:
+				sect->AddAttribute(L"Type", L"manim");
+				break;
 			}
 			
 			m_typeData->Save(sect, savingBuild);
@@ -1138,6 +1218,12 @@ namespace Apoc3D
 		else if (buildType == L"tanim")
 		{
 			ProjectResTAnim* ta = new ProjectResTAnim(m_project);
+			ta->Parse(sect);
+			m_typeData = ta;
+		}
+		else if (buildType == L"manim")
+		{
+			ProjectResMAnim* ta = new ProjectResMAnim(m_project);
 			ta->Parse(sect);
 			m_typeData = ta;
 		}

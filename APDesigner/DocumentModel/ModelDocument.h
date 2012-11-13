@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Scene/SimpleSceneManager.h"
 #include "Scene/SceneObject.h"
 #include "UILib/Control.h"
+#include "Graphics/ModelTypes.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;
@@ -36,6 +37,8 @@ using namespace Apoc3D::Scene;
 
 namespace APDesigner
 {
+	class CopyMaterialDialog;
+
 	class ModelDocument : public Document
 	{
 	public:
@@ -49,6 +52,8 @@ namespace APDesigner
 		virtual void Initialize(RenderDevice* device);
 		virtual void Update(const GameTime* const time);
 		virtual void Render();
+
+		void UpdateSelectedPart();
 	private:
 		class ModelWrapper : public Entity 
 		{
@@ -103,6 +108,7 @@ namespace APDesigner
 		Button* m_rotateY;
 		Button* m_zoomIn;
 		Button* m_zoomOut;
+		Button* m_setSequenceImages;
 
 		ComboBox* m_cbMesh;
 		ComboBox* m_cbMeshPart;
@@ -154,6 +160,7 @@ namespace APDesigner
 
 		ComboBox* m_cbCull;
 		PassFlagDialog* m_passEditor;
+		CopyMaterialDialog* m_batchCopyMtrl;
 
 		void PassButton_Pressed(Control* ctrl);
 		void CBMesh_SelectionChanged(Control* ctrl);
@@ -178,11 +185,46 @@ namespace APDesigner
 		void RotY_Pressed(Control* ctrl);
 		void ZoomIn_Pressed(Control* ctrl);
 		void ZoomOut_Pressed(Control* ctrl);
+		void SetSequenceImages_Pressed(Control* ctrl);
 
 		void CBUseRef_Checked(Control* ctrl);
 
 		void DisplayMaterialEditor(Material* mtrl, bool usingRef);
 
+	};
+
+	class CopyMaterialDialog
+	{
+	public:
+		CopyMaterialDialog(ModelDocument* parent, MainWindow* window, RenderDevice* device);
+		~CopyMaterialDialog();
+
+		void ShowModal(MeshMaterialSet<Material*>* mtrl, int selectedSet);
+
+	private:
+		ModelDocument* m_parent;
+		Form* m_form;
+
+		Label* m_lblTextureName;
+		TextBox* m_tbTextureName;
+
+		Label* m_lblPreview;
+
+		Label* m_lblStartNumber;
+		TextBox* m_tbStartNumber;
+		Label* m_lblEndNumber;
+		TextBox* m_tbEndNumber;
+
+		Button* m_btnOK;
+
+		bool m_dialogResult;
+
+		MeshMaterialSet<Material*>* m_mtrl;
+		int m_selectedSet;
+
+		void ButtonOK_Pressed(Control* ctrl);
+		void Form_Closed(Control* ctrl);
+		void Config_Changed(Control* ctrl);
 	};
 }
 

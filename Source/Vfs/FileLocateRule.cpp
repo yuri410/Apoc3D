@@ -51,6 +51,7 @@ namespace Apoc3D
 			{
 				LocateCheckPoint pt;
 				pt.AddPath(L"textures");
+				pt.AddPath(L"textures.pak");
 
 				vector<LocateCheckPoint> pts;
 				pts.push_back(pt);
@@ -61,6 +62,7 @@ namespace Apoc3D
 			{
 				LocateCheckPoint pt;
 				pt.AddPath(L"effects");
+				pt.AddPath(L"effects.pak");
 
 				vector<LocateCheckPoint> pts;
 				pts.push_back(pt);
@@ -71,6 +73,7 @@ namespace Apoc3D
 			{
 				LocateCheckPoint pt;
 				pt.AddPath(L"materials");
+				pt.AddPath(L"materials.pak");
 
 				vector<LocateCheckPoint> pts;
 				pts.push_back(pt);

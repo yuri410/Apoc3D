@@ -332,7 +332,7 @@ namespace Apoc3D
 			m_dRect = Apoc3D::Math::Rectangle(0,0,Size.X,Size.Y);
 
 			m_keyboard.eventKeyPress().bind(this, &TextBox::Keyboard_OnPress);
-			m_keyboard.eventKeyPress().bind(this, &TextBox::Keyboard_OnPress);
+			m_keyboard.eventKeyPaste().bind(this, &TextBox::Keyboard_OnPaste);
 
 			if (m_multiline && m_scrollBar != SBT_None)
 			{
@@ -677,6 +677,7 @@ namespace Apoc3D
 
 		void TextBox::Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e)
 		{
+			bool changed = false;
 			switch(code)
 			{
 			case KEY_LEFT:
@@ -785,6 +786,7 @@ namespace Apoc3D
 							Text = Text.erase(m_curorLocation.X - 1, 1);
 							m_curorLocation.X -= 1;
 						}
+						changed = true;
 					}
 					else if (m_multiline)
 					{
@@ -792,6 +794,8 @@ namespace Apoc3D
 						{
 							m_lines[m_curorLocation.Y] = m_lines[m_curorLocation.Y].erase(m_curorLocation.X - 1, 1);
 							m_curorLocation.X -= 1;
+
+							changed = true;
 						}
 						else
 						{
@@ -801,6 +805,8 @@ namespace Apoc3D
 								m_lines[m_curorLocation.Y - 1] += m_lines[m_curorLocation.Y];
 								m_lines.RemoveAt(m_curorLocation.Y);
 								m_curorLocation.Y -= 1;
+
+								changed = true;
 							}
 						}
 					}
@@ -814,17 +820,25 @@ namespace Apoc3D
 							Text = Text.erase(m_curorLocation.X, 2);
 						else
 							Text = Text.erase(m_curorLocation.X, 1);
+
+						changed = true;
 					}
 					else if (m_multiline)
 					{
 						if (m_curorLocation.X < (int)m_lines[m_curorLocation.Y].size())
+						{
 							m_lines[m_curorLocation.Y] = m_lines[m_curorLocation.Y].erase(m_curorLocation.X, 1);
+
+							changed = true;
+						}
 						else if (m_curorLocation.X == (int)m_lines[m_curorLocation.Y].size())
 							if (m_curorLocation.Y < m_lines.getCount() - 1)
 							{
 								if (m_lines[m_curorLocation.Y + 1].size() > 0)
 									m_lines[m_curorLocation.Y] += m_lines[m_curorLocation.Y + 1];
 								m_lines.RemoveAt(m_curorLocation.Y + 1);
+
+								changed = true;
 							}
 					}
 				}
@@ -867,6 +881,8 @@ namespace Apoc3D
 						m_lines.Insert(m_curorLocation.Y + 1, lineEnd);
 						m_curorLocation.X = 0;
 						m_curorLocation.Y += 1;
+
+						changed = true;
 					}
 					else
 					{
@@ -878,212 +894,263 @@ namespace Apoc3D
 			case KEY_SPACE:
 				Add(L" ");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_DECIMAL:
 				Add(L".");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_DIVIDE:
 				Add(L"/");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_BACKSLASH:
 				if (e.ShiftDown) Add(L"|"); else Add(L"\\");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 				// " ~
 			case KEY_COMMA:
 				if (e.ShiftDown) Add(L"<"); else Add(L",");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_MINUS:
 				if (e.ShiftDown) Add(L"_"); else Add(L"-");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_LBRACKET:
 				if (e.ShiftDown) Add(L"{"); else Add(L"[");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_RBRACKET:
 				if (e.ShiftDown) Add(L"}"); else Add(L"]");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_PERIOD:
 				if (e.ShiftDown) Add(L">"); else Add(L".");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_ADD:
 				if (e.ShiftDown) Add(L"+"); else Add(L"=");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_SLASH:
 				if (e.ShiftDown) Add(L"?"); else Add(L"/");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_SEMICOLON:
 				if (e.ShiftDown) Add(L":"); else Add(L"'");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_SUBTRACT:
 				Add(L"-");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_MULTIPLY:
 				Add(L"*");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_TAB:
 				Add(L"      ");
 				m_curorLocation.X+=6;
+				changed = true;
 				break;
 
 			case KEY_0:
 				if (e.ShiftDown) Add(L")"); else Add(L"0");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_1:
 				if (e.ShiftDown) Add(L"!"); else Add(L"1");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_2:
 				if (e.ShiftDown) Add(L"@"); else Add(L"2");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_3:
 				if (e.ShiftDown) Add(L"#"); else Add(L"3");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_4:
 				if (e.ShiftDown) Add(L"$"); else Add(L"4");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_5:
 				if (e.ShiftDown) Add(L"%"); else Add(L"5");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_6:
 				if (e.ShiftDown) Add(L"^"); else Add(L"6");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_7:
 				if (e.ShiftDown) Add(L"&"); else Add(L"7");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_8:
 				if (e.ShiftDown) Add(L"*"); else Add(L"8");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_9:
 				if (e.ShiftDown) Add(L"("); else Add(L"9");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 
 			case KEY_A:
 				if (e.ShiftDown || e.CapsLock) Add(L"A"); else Add(L"a");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_B:
 				if (e.ShiftDown || e.CapsLock) Add(L"B"); else Add(L"b");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_C:
 				if (e.ShiftDown || e.CapsLock) Add(L"C"); else Add(L"c");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_D:
 				if (e.ShiftDown || e.CapsLock) Add(L"D"); else Add(L"d");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_E:
 				if (e.ShiftDown || e.CapsLock) Add(L"E"); else Add(L"e");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_F:
 				if (e.ShiftDown || e.CapsLock) Add(L"F"); else Add(L"f");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_G:
 				if (e.ShiftDown || e.CapsLock) Add(L"G"); else Add(L"g");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 
 			case KEY_H:
 				if (e.ShiftDown || e.CapsLock) Add(L"H"); else Add(L"h");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_I:
 				if (e.ShiftDown || e.CapsLock) Add(L"I"); else Add(L"i");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_J:
 				if (e.ShiftDown || e.CapsLock) Add(L"J"); else Add(L"j");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_K:
 				if (e.ShiftDown || e.CapsLock) Add(L"K"); else Add(L"k");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_L:
 				if (e.ShiftDown || e.CapsLock) Add(L"L"); else Add(L"l");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_M:
 				if (e.ShiftDown || e.CapsLock) Add(L"M"); else Add(L"m");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_N:
 				if (e.ShiftDown || e.CapsLock) Add(L"N"); else Add(L"n");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 
 			case KEY_O:
 				if (e.ShiftDown || e.CapsLock) Add(L"O"); else Add(L"o");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_P:
 				if (e.ShiftDown || e.CapsLock) Add(L"P"); else Add(L"p");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_Q:
 				if (e.ShiftDown || e.CapsLock) Add(L"Q"); else Add(L"q");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_R:
 				if (e.ShiftDown || e.CapsLock) Add(L"R"); else Add(L"r");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_S:
 				if (e.ShiftDown || e.CapsLock) Add(L"S"); else Add(L"s");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_T:
 				if (e.ShiftDown || e.CapsLock) Add(L"T"); else Add(L"t");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 
 			case KEY_U:
 				if (e.ShiftDown || e.CapsLock) Add(L"U"); else Add(L"u");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_V:
 				if (e.ShiftDown || e.CapsLock) Add(L"V"); else Add(L"v");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_W:
 				if (e.ShiftDown || e.CapsLock) Add(L"W"); else Add(L"w");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_X:
 				if (e.ShiftDown || e.CapsLock) Add(L"X"); else Add(L"x");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_Y:
 				if (e.ShiftDown || e.CapsLock) Add(L"Y"); else Add(L"y");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 			case KEY_Z:
 				if (e.ShiftDown || e.CapsLock) Add(L"Z"); else Add(L"z");
 				m_curorLocation.X++;
+				changed = true;
 				break;
 
 			default:
@@ -1093,6 +1160,14 @@ namespace Apoc3D
 			UpdateScrolling();
 			m_cursorVisible = true;
 			m_timerStarted = true;
+
+			if (changed)
+			{
+				if (!m_eContentChanged.empty())
+				{
+					m_eContentChanged(this);
+				}
+			}
 		}
 		void TextBox::Keyboard_OnPaste(String value)
 		{
@@ -1122,6 +1197,11 @@ namespace Apoc3D
 				m_curorLocation.X += (int)lines[len-1].size();
 
 				UpdateScrolling();
+				
+				if (!m_eContentChanged.empty())
+				{
+					m_eContentChanged(this);
+				}
 			}
 		}
 

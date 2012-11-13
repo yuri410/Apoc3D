@@ -140,10 +140,14 @@ namespace Apoc3D
 								hr = dataObj->EnumFormatEtc(DATADIR_GET, &ienum);
 								if (SUCCEEDED(hr))
 								{
-									FORMATETC fmt;
+									FORMATETC fmts[16];
+									ULONG amount;
+									ienum->Next(16, fmts, &amount);
+
 									
-									while (SUCCEEDED(ienum->Next(1, &fmt, 0)))
+									for (ULONG i=0;i<amount;i++)
 									{
+										FORMATETC& fmt = fmts[i];
 										if (fmt.cfFormat == CF_UNICODETEXT)
 										{
 											STGMEDIUM medium;
@@ -176,7 +180,8 @@ namespace Apoc3D
 										}
 										else if (fmt.cfFormat == CF_TEXT)
 										{
-
+											
+											break;
 										}
 									}
 									ienum->Release();

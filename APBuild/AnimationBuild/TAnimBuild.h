@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MESHBUILD_H
-#define MESHBUILD_H
+#ifndef TANIMBUILD_H
+#define TANIMBUILD_H
 
 #include "APBCommon.h"
 
@@ -32,19 +32,12 @@ using namespace Apoc3D::IO;
 
 namespace APBuild
 {
-	class MeshBuild
+
+	class TAnimBuild
 	{
-	private:
-		static void BuildByASS(const MeshBuildConfig& config);
-		static void BuildByFBX(const MeshBuildConfig& config);
-		static void BuildByD3D(const MeshBuildConfig& config);
 	public:
 		static void Build(const ConfigurationSection* sect);
-
-		static void ConvertVertexData(ModelData* data, const MeshBuildConfig& config);
-		static void CollapseMeshs(ModelData* data, const MeshBuildConfig& config);
 	};
-
 }
 
 #endif

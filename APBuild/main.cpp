@@ -27,6 +27,8 @@
 #include "EffectCompiler/AFXBuild.h"
 #include "EffectCompiler/CFXBuild.h"
 #include "EffectCompiler/FXListBuild.h"
+#include "AnimationBuild/MAnimBuild.h"
+#include "AnimationBuild/TAnimBuild.h"
 //#include <Windows.h>
 
 using namespace std;
@@ -145,6 +147,10 @@ int Build(ConfigurationSection* sect)
 	else if (buildType == L"tanim")
 	{
 		TAnimBuild::Build(sect);
+	}
+	else if (buildType == L"manim")
+	{
+		MAnimBuild::Build(sect);
 	}
 	else if (buildType == L"uilayout")
 	{

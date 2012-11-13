@@ -384,7 +384,7 @@ namespace Apoc3D
 				{
 					m_mtrlPlayer = new MaterialAnimationPlayer();
 					
-					m_animInstance.Add(m_rigidPlayer);
+					//m_animInstance.Add(m_rigidPlayer);
 
 					m_mtrlPlayer->eventCompleted().bind(this, &Model::MtrlAnim_Completed);
 				}

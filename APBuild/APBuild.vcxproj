@@ -125,6 +125,8 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationBuild\MAnimBuild.h" />
+    <ClInclude Include="AnimationBuild\TAnimBuild.h" />
     <ClInclude Include="APBCommon.h" />
     <ClInclude Include="BuildConfig.h" />
     <ClInclude Include="CompileLog.h" />
@@ -143,7 +145,7 @@
     <ClInclude Include="MeshBuild\FbxImporter.h" />
     <ClInclude Include="MeshBuild\MeshBuild.h" />
     <ClInclude Include="MeshBuild\AIImporter.h" />
-    <ClInclude Include="MeshBuild\XafImporter.h" />
+    <ClInclude Include="AnimationBuild\XafImporter.h" />
     <ClInclude Include="MeshBuild\XImporter.h" />
     <ClInclude Include="PakBuild\PakBuild.h" />
     <ClInclude Include="stdafx.h" />
@@ -152,6 +154,8 @@
     <ClInclude Include="TextureBuild\TextureBuild.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationBuild\MAnimBuild.cpp" />
+    <ClCompile Include="AnimationBuild\TAnimBuild.cpp" />
     <ClCompile Include="Border\BorderBuilder.cpp" />
     <ClCompile Include="EffectCompiler\AFXBuild.cpp" />
     <ClCompile Include="EffectCompiler\CFXBuild.cpp" />
@@ -168,7 +172,7 @@
     <ClCompile Include="MeshBuild\FbxImporter.cpp" />
     <ClCompile Include="MeshBuild\MeshBuild.cpp" />
     <ClCompile Include="MeshBuild\AIImporter.cpp" />
-    <ClCompile Include="MeshBuild\XafImporter.cpp" />
+    <ClCompile Include="AnimationBuild\XafImporter.cpp" />
     <ClCompile Include="MeshBuild\XImporter.cpp" />
     <ClCompile Include="PakBuild\PakBuild.cpp" />
     <ClCompile Include="stdafx.cpp" />

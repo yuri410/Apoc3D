@@ -137,6 +137,8 @@ namespace APDesigner
 		void DisplayMaterialEditor(Material* mtrl);
 	};
 
+
+
 	class PassFlagDialog
 	{
 	public:

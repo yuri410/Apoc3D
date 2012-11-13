@@ -355,5 +355,10 @@ namespace APBuild
 			ObjectIndexMapping.Add(name, objIdx);
 		}
 	}
+	void MaterialAnimBuildConfig::Parse(const ConfigurationSection* sect)
+	{
+		SrcFile = sect->getAttribute(L"SourceFile");
+		DstFile = sect->getAttribute(L"DestinationFile");
+	}
 	
 }

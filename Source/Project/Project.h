@@ -52,6 +52,7 @@ namespace Apoc3D
 		PRJITEM_Model,
 		PRJITEM_Animation,
 		PRJITEM_TransformAnimation,
+		PRJITEM_MaterialAnimation,
 		PRJITEM_Effect,
 		PRJITEM_EffectList,
 		PRJITEM_CustomEffect,
@@ -465,6 +466,28 @@ namespace Apoc3D
 		FastMap<String, int> ObjectIndexMapping;
 
 		virtual ProjectItemType getType() const { return PRJITEM_TransformAnimation; }
+		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual std::vector<String> GetAllOutputFiles();
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+	};
+
+	class ProjectResMAnim : public ProjectResource
+	{
+	public:
+		ProjectResMAnim(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
+		String SourceFile;
+		String DestinationFile;
+
+		virtual ProjectItemType getType() const { return PRJITEM_MaterialAnimation; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 

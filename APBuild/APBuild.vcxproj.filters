@@ -81,9 +81,6 @@
     <ClInclude Include="EffectCompiler\FXListBuild.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MeshBuild\XafImporter.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MaterialStub.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -91,6 +88,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Border\BorderBuilder.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationBuild\TAnimBuild.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationBuild\XafImporter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationBuild\MAnimBuild.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -152,9 +158,6 @@
     <ClCompile Include="EffectCompiler\FXListBuild.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MeshBuild\XafImporter.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MaterialStub.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -162,6 +165,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Border\BorderBuilder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationBuild\TAnimBuild.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationBuild\XafImporter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationBuild\MAnimBuild.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

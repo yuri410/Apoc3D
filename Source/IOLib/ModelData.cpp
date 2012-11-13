@@ -95,7 +95,7 @@ namespace Apoc3D
 						}
 						else
 						{
-							Materials.AddFrame(mtrl, i);
+							Materials.AddFrame(mtrl, j);
 						}
 
 						matData->Close();

@@ -57,6 +57,7 @@ namespace Apoc3D
 		{
 			memset(m_tex, 0, sizeof(m_tex));
 			memset(m_effects, 0, sizeof(m_effects));
+			memset(m_texDirty, 0, sizeof(m_texDirty));
 		}
 
 		Material::Material(const Material& m)
@@ -64,13 +65,16 @@ namespace Apoc3D
 			m_passFlags(m.m_passFlags), m_priority(m.m_priority),
 			BlendFunction(m.BlendFunction), IsBlendTransparent(m.IsBlendTransparent),
 			SourceBlend(m.SourceBlend), DestinationBlend(m.DestinationBlend),
-			AlphaTestEnabled(m.AlphaTestEnabled),
+			AlphaTestEnabled(m.AlphaTestEnabled), AlphaReference(m.AlphaReference),
 			DepthWriteEnabled(m.DepthWriteEnabled), DepthTestEnabled(m.DepthTestEnabled),
 			Ambient(m.Ambient), Diffuse(m.Diffuse), Specular(m.Specular), Emissive(m.Emissive), Power(m.Power),
 			Cull(m.Cull),
-			UsePointSprite(m.UsePointSprite)
+			UsePointSprite(m.UsePointSprite),
+			ExternalReferenceName(m.ExternalReferenceName)
 		{
+			memcpy(m_texDirty, m.m_texDirty, sizeof(m_texDirty));
 
+			m_customParametrs = m.m_customParametrs;
 			m_effectName = m.m_effectName;
 			for (int i=0;i<MaxScenePass;i++)
 			{
