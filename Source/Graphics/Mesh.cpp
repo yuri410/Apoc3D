@@ -48,7 +48,7 @@ namespace Apoc3D
 			{
 				for (uint j=0;j<mtrls.getFrameCount(i);j++)
 				{
-					const MaterialData& md = mtrls.getMaterial(i);
+					const MaterialData& md = mtrls.getMaterial(i, j);
 					
 					Material* m = new Material(m_renderDevice);
 

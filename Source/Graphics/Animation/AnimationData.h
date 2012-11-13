@@ -129,7 +129,8 @@ namespace Apoc3D
 				void Save(Stream* strm) const;
 
 				AnimationData()
-					: m_hasSkinnedClip(false), m_hasRigidClip(false), m_hasMtrlClip(false), RigidEntityCount(0)
+					: m_hasSkinnedClip(false), m_hasRigidClip(false), m_hasMtrlClip(false), 
+					RigidEntityCount(0), m_rootBone(-1)
 				{
 
 				}

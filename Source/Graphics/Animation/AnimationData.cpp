@@ -150,6 +150,8 @@ namespace Apoc3D
 
 				if (data->Contains(TAG_3_MaterialAnimationTag))
 				{
+					m_hasMtrlClip = true;
+
 					int count = data->GetDataInt32(TAG_3_MaterialAnimationCountTag);
 
 					m_mtrlAnimationClips.rehash(count);
@@ -166,7 +168,7 @@ namespace Apoc3D
 						int frameCount = br->ReadInt32();
 						keyframes.ResizeDiscard(frameCount);
 						
-						for (int j=0;j<frameCount;i++)
+						for (int j=0;j<frameCount;j++)
 						{
 							float time = br->ReadSingle();
 							int32 mid = br->ReadInt32();
@@ -262,7 +264,7 @@ namespace Apoc3D
 				}
 
 				// rigid animation clip tag
-				if (data->GetData(TAG_3_RigidAnimationClipCountTag))
+				if (data->Contains(TAG_3_RigidAnimationClipCountTag))
 				{
 					m_hasRigidClip = true;
 
