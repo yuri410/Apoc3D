@@ -258,6 +258,11 @@ namespace Apoc3D
 				{
 					m_meshTransforms = new Matrix[count];
 					m_initialTransforms = new Matrix[count];
+					for (int i=0;i<count;i++)
+					{
+						m_meshTransforms[i].LoadIdentity();
+						m_initialTransforms[i].LoadIdentity();
+					}
 				}
 				~RigidAnimationPlayer()
 				{

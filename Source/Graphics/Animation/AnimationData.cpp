@@ -154,11 +154,11 @@ namespace Apoc3D
 
 					m_mtrlAnimationClips.rehash(count);
 
-					FastList<MaterialAnimationKeyframe> keyframes;
 					BinaryReader* br = data->GetData(TAG_3_MaterialAnimationTag);
 					
 					for (int i=0;i<count;i++)
 					{
+						FastList<MaterialAnimationKeyframe> keyframes;
 						String key = br->ReadString();
 
 						float duration = br->ReadSingle();
@@ -219,48 +219,6 @@ namespace Apoc3D
 					delete br2;
 					m_rootBone = data->GetDataInt32(TAG_3_RootBoneTag);
 				}
-				//// bind pose
-				//if (data->Contains(TAG_3_BindPoseTag))
-				//{
-				//	m_hasBindPose = true;
-
-				//	int count = data->GetDataInt32(TAG_3_BindPoseCountTag);
-				//	m_bindPose.ResizeDiscard(count);
-
-				//	BinaryReader* br = data->GetData(TAG_3_BindPoseTag);
-
-				//	for (int i=0;i<count;i++)
-				//	{
-				//		Matrix transfrom;
-				//		br->ReadMatrix(transfrom);
-
-				//		m_bindPose.Add(transfrom);
-				//	}
-
-				//	br->Close();
-				//	delete br;
-				//}
-
-				//// inv bind pose
-				//if (data->Contains(TAG_3_InvBindPoseTag))
-				//{
-				//	m_hasBindPose = true;
-
-				//	int count = data->GetDataInt32(TAG_3_InvBindPoseCountTag);
-				//	m_invBindPose.ResizeDiscard(count);
-
-				//	BinaryReader* br = data->GetData(TAG_3_InvBindPoseTag);
-				//	for (int i=0;i<count;i++)
-				//	{
-				//		Matrix transfrom;
-				//		br->ReadMatrix(transfrom);
-
-				//		m_invBindPose.Add(transfrom);
-				//	}
-
-				//	br->Close();
-				//	delete br;
-				//}
 
 				// skinned animation clip tag
 				if (data->Contains(TAG_3_SkinnedAnimationClipCountTag))
@@ -342,23 +300,6 @@ namespace Apoc3D
 					}
 				}
 
-				//// bone hierarchy tag
-				//if (data->GetData(TAG_3_BoneHierarchyCountTag))
-				//{
-				//	int count = data->GetDataInt32(TAG_3_BoneHierarchyCountTag);
-				//	m_hasSkeleton = true;
-				//	
-				//	m_skeletonHierarchy.ResizeDiscard(count);
-
-				//	BinaryReader* br = data->GetData(TAG_3_BoneHierarchyTag);
-				//	for (int i=0;i<count;i++)
-				//	{
-				//		m_skeletonHierarchy.Add(br->ReadInt32());
-				//	}
-				//	br->Close();
-				//	delete br;
-				//}
-
 			}
 
 			TaggedDataWriter* AnimationData::WriteData() const
@@ -369,7 +310,7 @@ namespace Apoc3D
 
 				if (m_hasMtrlClip)
 				{
-					data->AddEntry(TAG_3_MaterialAnimationCountTag, m_mtrlAnimationClips.size());
+					data->AddEntry(TAG_3_MaterialAnimationCountTag, (int32)m_mtrlAnimationClips.size());
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_MaterialAnimationTag);
 					for (MtrlClipTable::const_iterator iter = m_mtrlAnimationClips.begin(); iter != m_mtrlAnimationClips.end(); iter++)
@@ -421,34 +362,6 @@ namespace Apoc3D
 					data->AddEntry(TAG_3_RootBoneTag, m_rootBone);
 				}
 
-				/*if (m_hasBindPose)
-				{
-					{
-						data->AddEntry(TAG_3_BindPoseCountTag, static_cast<int32>(m_bindPose.getCount()));
-
-						BinaryWriter* bw = data->AddEntry(TAG_3_BindPoseTag);
-
-						for (int32 i=0;i<m_bindPose.getCount();i++)
-						{
-							bw->Write(m_bindPose[i]);
-						}
-
-						bw->Close();
-						delete bw;
-					}
-					{
-						data->AddEntry(TAG_3_InvBindPoseCountTag, static_cast<int32>(m_invBindPose.getCount()));
-
-						BinaryWriter* bw = data->AddEntry(TAG_3_InvBindPoseTag);
-						for (int32 i = 0; i < m_invBindPose.getCount(); i++)
-						{
-							bw->Write(m_invBindPose[i]);
-						}
-						bw->Close();
-						delete bw;
-					}
-				}*/
-				
 				if (m_hasSkinnedClip)
 				{
 					data->AddEntry(TAG_3_SkinnedAnimationClipCountTag, m_skinnedAnimationClips.size());
@@ -503,18 +416,6 @@ namespace Apoc3D
 					delete bw;
 				}
 
-				//if (m_hasSkeleton)
-				//{
-				//	data->AddEntry(TAG_3_BoneHierarchyCountTag, static_cast<int32>(m_skeletonHierarchy.getCount()));
-
-				//	BinaryWriter* bw = data->AddEntry(TAG_3_BoneHierarchyTag);
-				//	for (int i = 0; i < m_skeletonHierarchy.getCount(); i++)
-				//	{
-				//		bw->Write(m_skeletonHierarchy[i]);
-				//	}
-				//	bw->Close();
-				//	delete bw;
-				//}
 				return data;
 			}
 
