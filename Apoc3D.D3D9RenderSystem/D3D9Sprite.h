@@ -65,12 +65,6 @@ namespace Apoc3D
 
 				virtual void SetTransform(const Matrix& matrix);
 			private:
-				void AddNormalDraw(Texture* texture, float x, float y, uint color);
-				void AddTransformedDraw(Texture* texture, const Matrix& t, const RECT* srcRect, uint color);
-
-				void SetRenderState();
-				void RestoreRenderState();
-
 				struct QuadVertex
 				{
 					float Position[4];
@@ -88,6 +82,19 @@ namespace Apoc3D
 
 					bool IsUVExtended;
 				};
+
+				void AddNormalDraw(Texture* texture, float x, float y, uint color);
+				void AddTransformedDraw(Texture* texture, const Matrix& t, const RECT* srcRect, uint color);
+				void AddUVDraw(Texture* texture, float x, float y, uint color, float uScale, float vScale, float uBias, float vBias);
+				void AddTransformedUVDraw(DrawEntry& entry, float uScale, float vScale, float uBias, float vBias);
+
+				void _DrawAsEntry(DrawEntry& result, Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color);
+				void _FillNormalDraw(DrawEntry& entry, Texture* texture, float x, float y, uint color);
+				void _FillTransformedDraw(DrawEntry& entry, Texture* texture, const Matrix& t, const RECT* srcRect, uint color);
+
+				void SetRenderState();
+				void RestoreRenderState();
+
 				struct  
 				{
 					bool oldAlphaBlendEnable;
