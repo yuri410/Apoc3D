@@ -139,7 +139,7 @@ namespace APBuild
 				: m_pModelParent(pModelParent), m_pMaterial(pMaterial),
 				m_bSkinnedModel(false)
 			{
-
+				assert(pMaterial);
 			}
 			~FIMeshPart() { }
 
@@ -199,16 +199,17 @@ namespace APBuild
 			std::string m_strName;
 
 			Matrix m_matAbsoluteTransform;
-			Matrix m_matGeometricOffset;
-			Matrix m_matAnimationTransform;
+			Matrix m_parentRelativeTransform;
+			//Matrix m_matGeometricOffset;
+			//Matrix m_matAnimationTransform;
 		public:
 			
 			FIMesh(const std::string& strName)
 				: m_strName(strName)
 			{
 				m_matAbsoluteTransform = Matrix::Identity;
-				m_matGeometricOffset = Matrix::Identity;
-				m_matAbsoluteTransform = Matrix::Identity;
+				m_parentRelativeTransform = Matrix::Identity;
+				//m_matAbsoluteTransform = Matrix::Identity;
 			}
 			~FIMesh()
 			{
@@ -292,11 +293,13 @@ namespace APBuild
 			//void UpdateAnimation(CBTTAnimationController* pAnimationController);
 			//void Render(ID3D10Device* pd3dDevice, CBTTEffect* pBTTEffect, bool bEnableAnimation);
 
+			void SetParentRelativeTransform(const Matrix& m) { m_parentRelativeTransform = m; }
 			void SetAbsoluteTransform(const Matrix& matAbsoluteTransform)   { m_matAbsoluteTransform = matAbsoluteTransform; }
-			void SetGeometricOffset(const Matrix& matGeometricOffset)		{ m_matGeometricOffset = matGeometricOffset; }
+			//void SetGeometricOffset(const Matrix& matGeometricOffset)		{ m_matGeometricOffset = matGeometricOffset; }
 			const Matrix& GetAbsoluteTransform() const { return m_matAbsoluteTransform; }
-			const Matrix& GetGeometricOffset() const	{ return m_matGeometricOffset; }
-			const Matrix& GetAnimationTransform() const { return m_matAnimationTransform; }
+			const Matrix& GetParentRelativeTransform() const { return m_parentRelativeTransform; }
+			//const Matrix& GetGeometricOffset() const	{ return m_matGeometricOffset; }
+			//const Matrix& GetAnimationTransform() const { return m_matAnimationTransform; }
 			const std::vector<FIMeshPart*>& getParts() const { return m_ModelParts; }
 
 			const std::string& GetName() const { return m_strName; }
@@ -557,6 +560,7 @@ namespace APBuild
 		};
 	private:
 		String m_sourceFile;
+		bool m_bakeTransform;
 
 		KFbxSdkManager* m_pFBXSdkManager;
 		KFbxScene* m_pFBXScene;
@@ -680,13 +684,15 @@ namespace APBuild
 		}
 	public:
 		FbxImporter()
-			: m_pSkeleton(0), m_FBXMaterials(0), m_pFBXScene(0)
+			: m_pSkeleton(0), m_FBXMaterials(0), m_pFBXScene(0), m_bakeTransform(false)
 		{
 
 		}
 		~FbxImporter();
 		bool Initialize(const String& pFilename);
 		
+		void SetBakeTransform(bool v);
+
 		static void Import(const MeshBuildConfig& config);
 	};
 }

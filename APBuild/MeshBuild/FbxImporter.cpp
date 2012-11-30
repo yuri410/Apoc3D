@@ -540,6 +540,18 @@ namespace APBuild
 		ProcessBoneWeights(pFBXMesh, boneWeights);
 
 		FIMesh* mesh = new FIMesh(pNode->GetName());
+
+		Matrix matAbsoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode, 0);
+		
+		Matrix matParentAbsoluteTransform = GetAbsoluteTransformFromCurrentTake(pNode->GetParent(), 0);
+		Matrix matInvParentAbsoluteTransform;
+		Matrix::Inverse(matInvParentAbsoluteTransform, matParentAbsoluteTransform);
+		Matrix matTransform;
+		Matrix::Multiply(matTransform, matAbsoluteTransform, matInvParentAbsoluteTransform);
+
+		mesh->SetAbsoluteTransform(matAbsoluteTransform);
+		mesh->SetParentRelativeTransform(matTransform);
+
 		//mesh->Name = toWString( pNode->GetName() );
 		//mesh->VertexCount = nVertexCount;
 		
@@ -1151,6 +1163,7 @@ namespace APBuild
 		AnimationData animData;
 
 		FbxImporter fbx;
+		fbx.m_bakeTransform = config.DstAnimationFile.empty();
 		fbx.Initialize(config.SrcFile);
 		
 		// mesh
@@ -1199,7 +1212,9 @@ namespace APBuild
 				{
 					for (int j=0;j<materialData.getCount();j++)
 					{
-						meshData->Materials.Add(*materialData[j]);
+						MaterialData* mtrlData = materialData[j];
+						mtrlData->Cull = CULL_Clockwise;
+						meshData->Materials.Add(*mtrlData);
 					}
 				}
 				meshData->Name = StringUtils::toWString(mesh->GetName());
@@ -1212,7 +1227,8 @@ namespace APBuild
 				FastMap<FIVertex, int> vtxHashTable(totalVertexCount, &comparer);
 				FastList<FIVertex> vertexList(totalVertexCount);
 				meshData->Faces.ResizeDiscard(totalVertexCount/3+2);
-				
+
+				// vertex hashing & add to list
 				for (size_t j=0;j<parts.size();j++)
 				{
 					FIMeshPart* part= parts[j];
@@ -1385,6 +1401,59 @@ namespace APBuild
 					VEF_Vector2, VEU_TextureCoordinate, 1));
 				
 				meshData->VertexSize = meshData->ComputeVertexSize(vtxElem);
+
+				// make the vertex to the final position in mesh when needed
+				if (fbx.m_bakeTransform)
+				{
+					Matrix absTransform = mesh->GetAbsoluteTransform();
+					
+					Matrix postTransform0;
+					Matrix::CreateRotationX(postTransform0, Math::Half_PI);
+
+					Matrix postTransform1;
+					Matrix::CreateRotationY(postTransform1, Math::PI);
+
+					Matrix postTransfrom;
+					Matrix::Multiply(postTransfrom, postTransform0, postTransform1);
+
+
+					for (int j=0;j<vertexList.getCount();j++)
+					{
+						for (int k=0;k<vtxElem.getCount();k++)
+						{
+							const VertexElement& e = vtxElem[k];
+							switch (e.getUsage())
+							{
+							case VEU_Position:
+								{
+									Vector3 p = Vector3Utils::LDVectorPtr(vertexList[j].Position);
+									p = Vector3Utils::TransformCoordinate(p, absTransform);
+
+									v3z(p) = -v3z(p);
+
+									p = Vector3Utils::TransformCoordinate(p, postTransfrom);
+
+									Vector3Utils::Store(p, vertexList[j].Position);
+									break;
+								}
+							case VEU_Normal:
+								{
+									Vector3 p = Vector3Utils::LDVectorPtr(vertexList[j].Normal);
+									p = Vector3Utils::TransformNormal(p, absTransform);
+
+									v3x(p) = -v3x(p);
+									v3y(p) = -v3y(p);
+
+									p = Vector3Utils::TransformNormal(p, postTransfrom);
+
+									Vector3Utils::Store(p, vertexList[j].Normal);
+									break;
+								}
+							}
+						}
+					}
+				}
+
 
 				// Fill vertex data. foreach vertex, pass the vertex elements array, 
 				// fill data according to the element definition,

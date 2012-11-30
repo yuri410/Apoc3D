@@ -160,6 +160,7 @@ namespace APBuild
 		FastList<VertexElement> VertexElements;
 
 		bool CollapseMeshs;
+		
 
 		MeshBuildMethod Method;
 
