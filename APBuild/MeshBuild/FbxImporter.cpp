@@ -1408,7 +1408,7 @@ namespace APBuild
 					Matrix absTransform = mesh->GetAbsoluteTransform();
 					
 					Matrix postTransform0;
-					Matrix::CreateRotationX(postTransform0, Math::Half_PI);
+					Matrix::CreateRotationX(postTransform0, -Math::Half_PI);
 
 					Matrix postTransform1;
 					Matrix::CreateRotationY(postTransform1, Math::PI);
