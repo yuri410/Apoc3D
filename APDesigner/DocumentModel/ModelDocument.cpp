@@ -68,7 +68,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/ResourceLocation.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/FileLocateRule.h"
-
+#include "Vfs/PathUtils.h"
+#include "Vfs/File.h"
 #include "MaterialDocument.h"
 
 //#include <d3dx9.h>
@@ -532,13 +533,26 @@ namespace APDesigner
 		FileLocation* fl = new FileLocation(m_filePath);
 		
 		m_modelSData = ModelManager::getSingleton().CreateInstanceUnmanaged(getMainWindow()->getDevice(), fl);
+
+		if (m_animPath.empty())
+		{
+			String fn;
+			String ext;
+			PathUtils::SplitFileNameExtension(m_filePath, fn, ext);
+
+			fn.append(L".anim");
+			if (File::FileExists(fn))
+			{
+				m_animPath = fn;
+			}
+		}
+
 		if (m_animPath.size())
 		{
 			FileLocation* afl = new FileLocation(m_animPath);
 			m_animData = AnimationManager::getSingleton().CreateInstance(afl);
 			delete afl;
 		}
-		
 		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData,true), m_animData);
 		m_object.setmdl(m_model);
 		m_model->PlayAnimation();

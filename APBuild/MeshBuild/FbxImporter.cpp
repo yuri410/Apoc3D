@@ -412,12 +412,12 @@ namespace APBuild
 
 				KTime KStart;
 				KTime KStop;
-				if (lCurrentTakeInfo)
-				{
-					KStart = lCurrentTakeInfo->mLocalTimeSpan.GetStart();
-					KStop = lCurrentTakeInfo->mLocalTimeSpan.GetStop();
-				}
-				else
+				//if (lCurrentTakeInfo)
+				//{
+				//	KStart = lCurrentTakeInfo->mLocalTimeSpan.GetStart();
+				//	KStop = lCurrentTakeInfo->mLocalTimeSpan.GetStop();
+				//}
+				//else
 				{
 					// Take the time line value
 					KTimeSpan lTimeLineTimeSpan;
