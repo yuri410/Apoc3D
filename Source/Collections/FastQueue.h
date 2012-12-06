@@ -80,7 +80,7 @@ namespace Apoc3D
 				m_tail = (m_size == capacity) ? 0 : m_size;
 			}
 
-			FastQueue& FastQueue::operator=(const FastQueue &rhs)
+			FastQueue& operator=(const FastQueue &rhs)
 			{
 				return *this; 
 			}

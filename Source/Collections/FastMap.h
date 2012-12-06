@@ -228,7 +228,7 @@ namespace Apoc3D
 				delete[] m_entries;
 				delete[] m_buckets;
 			}
-			FastMap& FastMap::operator=(const FastMap &another)
+			FastMap& operator=(const FastMap &another)
 			{
 				delete[] m_entries;
 				delete[] m_buckets;

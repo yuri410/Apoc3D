@@ -75,7 +75,7 @@ namespace Apoc3D
 				assert(j<m_width);
 				return m_data[i][j];
 			}
-			List2D& List2D::operator=(const List2D &rhs)
+			List2D& operator=(const List2D &rhs)
 			{
 				for (int i=0;i<m_internalPointer;i++)
 				{

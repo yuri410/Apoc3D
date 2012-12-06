@@ -184,7 +184,7 @@ namespace Apoc3D
 				}
 				return -1;
 			}
-			ExistTable& ExistTable::operator=(const ExistTable& rhs)
+			ExistTable& operator=(const ExistTable& rhs)
 			{
 				return *this; 
 			}

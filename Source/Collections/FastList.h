@@ -60,7 +60,7 @@ namespace Apoc3D
 			{
 				delete[] m_elements;
 			}
-			List& List::operator=(const List &rhs)
+			List& operator=(const List &rhs)
 			{
 				delete[] m_elements;
 				m_internalPointer = rhs.m_internalPointer;
