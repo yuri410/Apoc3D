@@ -256,7 +256,7 @@ namespace Apoc3D
 			{
 				delete[] m_elements;
 			}
-			FastList& FastList::operator=(const FastList &rhs)
+			FastList& operator=(const FastList &rhs)
 			{
 				delete[] m_elements;
 				m_internalPointer = rhs.m_internalPointer;

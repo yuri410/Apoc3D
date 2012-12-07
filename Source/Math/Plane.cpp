@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		void Plane::ProjectLine(const Vector3& start, const Vector3& end, Vector3& ps, Vector3 pe)
+		void Plane::ProjectLine(const Vector3& start, const Vector3& end, Vector3& ps, Vector3 pe) const
 		{
 			Plane pl = Plane::Normalize(*this);
 
@@ -45,6 +45,16 @@ namespace Apoc3D
 			prj = pl.Dot3(end);
 			pe = Vector3Utils::Subtract(start, Vector3Utils::Multiply(normal, prj));
 
+		}
+
+		Vector3 Plane::ProjectVector(const Vector3& vec) const
+		{
+			Plane pl = Plane::Normalize(*this);
+			Vector3 normal = Vector3Utils::LDVector(pl.X, pl.Y, pl.Z);
+
+			Vector3 result = Vector3Utils::Cross(vec, normal);
+			result = Vector3Utils::Cross(normal, result);
+			return result;
 		}
 
 		PlaneIntersectionType Plane::Intersects(const Plane& plane, const BoundingBox& box)
