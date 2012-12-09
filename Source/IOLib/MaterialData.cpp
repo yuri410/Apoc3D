@@ -95,21 +95,24 @@ namespace Apoc3D
 
 		void MaterialData::LoadEffect(BinaryReader* br, int32 index)
 		{
+			assert(index<MaxScenePass);
+
 			EffectName[index] = br->ReadString();
-			if (EffectName[index].empty())
-				EffectName[index] = L"Standard";
 		}
 		void MaterialData::SaveEffect(BinaryWriter* bw, int32 index)
 		{
+			assert(index<MaxScenePass);
 			bw->Write(EffectName[index]);
 		}
 
 		void MaterialData::LoadTexture(BinaryReader* br, int32 index)
 		{
+			assert(index<MaxTextures);
 			TextureName[index] = br->ReadString();
 		}
 		void MaterialData::SaveTexture(BinaryWriter* bw, int32 index)
 		{
+			assert(index<MaxTextures);
 			bw->Write(TextureName[index]);
 		}
 
@@ -436,14 +439,14 @@ namespace Apoc3D
 				BinaryWriter* bw = data->AddEntry(TAG_3_HasEffect);
 				for (int32 i=0;i<MaxScenePass;i++)
 				{
-					bw->Write(!EffectName[i].empty());
+					bw->Write(EffectName.find(i) != EffectName.end());
 				}
 				bw->Close();
 				delete bw;
 
 				for (int32 i=0;i<MaxScenePass;i++)
 				{
-					if (!EffectName[i].empty())
+					if (EffectName.find(i) != EffectName.end())
 					{
 						String tag = StringUtils::ToString(i);
 						tag = tag + TAG_3_Effect;
@@ -540,12 +543,9 @@ namespace Apoc3D
 			BlendFunction(other.BlendFunction), IsBlendTransparent(other.IsBlendTransparent), Cull(other.Cull), 
 			AlphaTestEnabled(other.AlphaTestEnabled), AlphaReference(other.AlphaReference), DepthWriteEnabled(other.DepthWriteEnabled), 
 			DepthTestEnabled(other.DepthTestEnabled), Ambient(other.Ambient), Diffuse(other.Diffuse), 
-			Emissive(other.Emissive), Specular(other.Specular), Power(other.Power), UsePointSprite(other.UsePointSprite)
+			Emissive(other.Emissive), Specular(other.Specular), Power(other.Power), UsePointSprite(other.UsePointSprite),
+			EffectName(other.EffectName), TextureName(other.TextureName)
 		{
-			for (int i=0;i<MaxScenePass;i++)
-				EffectName[i] = other.EffectName[i];
-			for (int i=0;i<MaxTextures;i++)
-				TextureName[i] = other.TextureName[i];
 		}
 	}
 }

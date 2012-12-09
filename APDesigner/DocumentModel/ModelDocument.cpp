@@ -1093,7 +1093,8 @@ namespace APDesigner
 					mtrl->setPassFlags(currentMtrl->getPassFlags());
 					for (int i=0;i<MaxScenePass;i++)
 					{
-						mtrl->getPassEffectName(i) = currentMtrl->getPassEffectName(i);
+						mtrl->setPassEffectName(i, currentMtrl->getPassEffectName(i));
+						//mtrl->getPassEffectName(i) = currentMtrl->getPassEffectName(i);
 						if (mtrl->getPassEffectName(i).size())
 						{
 							mtrl->setPassEffect(i, EffectManager::getSingleton().getEffect(mtrl->getPassEffectName(i)));

@@ -190,17 +190,24 @@ namespace Apoc3D
 			Specular = mdata.Specular;
 			Power = mdata.Power;
 
+			m_effectName = mdata.EffectName;
+			m_texName = mdata.TextureName;
+
 			for (int i=0;i<MaxScenePass;i++)
 			{
-				if (mdata.EffectName[i].size())
-					m_effectName[i] = mdata.EffectName[i];
-				LoadEffect(i);
+				if (m_effectName.find(i) != m_effectName.end())
+				{
+					LoadEffect(i);
+				}
 			}
 			for (int i=0;i<MaxTextures;i++)
 			{
-				if(mdata.TextureName[i].size())
-					m_texName[i] = mdata.TextureName[i];
-				LoadTexture(i);
+				//if(mdata.TextureName[i].size())
+				//	m_texName[i] = mdata.TextureName[i];
+				if (m_texName.find(i) != m_texName.end())
+				{
+					LoadTexture(i);
+				}
 			}
 		}
 		void Material::Save(MaterialData& data)
@@ -228,22 +235,8 @@ namespace Apoc3D
 			data.Specular = Specular;
 			data.Power = Power;
 
-
-			for (int i=0;i<MaxScenePass;i++)
-			{
-				if (m_effectName.find(i) == m_effectName.end())
-					data.EffectName[i] = L"";
-				else
-					data.EffectName[i] = m_effectName[i];
-			}
-			for (int i=0;i<MaxTextures;i++)
-			{
-				if (m_texName.find(i) == m_texName.end())
-					data.TextureName[i] = L"";
-				else
-					data.TextureName[i] = m_texName[i];
-			}
-
+			data.EffectName = m_effectName;
+			data.TextureName = m_texName;
 		}
 		void Material::Load(TaggedDataReader* data)
 		{

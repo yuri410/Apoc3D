@@ -63,10 +63,10 @@ namespace Apoc3D
 			String ExternalRefName;
 
 
-			String EffectName[MaxScenePass];
+			unordered_map<int, String> EffectName;//[MaxScenePass];
 
 			CustomParamTable CustomParametrs;
-			String TextureName[MaxTextures];
+			unordered_map<int, String> TextureName;//[MaxTextures];
 
 			uint64 PassFlags;
 

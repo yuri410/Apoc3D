@@ -831,7 +831,7 @@ namespace APDesigner
 				passFlags |= (uint64)1<<i;
 			}
 			//passFlags = passFlags << (uint)1;
-			m_mtrl->getPassEffectName(i) = m_tbTable[i]->Text;
+			m_mtrl->setPassEffectName(i, m_tbTable[i]->Text);
 			if (m_tbTable[i]->Text.size())
 			{
 				m_mtrl->setPassEffect(i, EffectManager::getSingleton().getEffect(m_mtrl->getPassEffectName(i)));

@@ -96,8 +96,8 @@ namespace Apoc3D
 			const MaterialCustomParameter* getCustomParameter(const String& usage) const;
 			void AddCustomParameter(const MaterialCustomParameter& value);
 
-			String& getPassEffectName(int index) { assert(index<MaxScenePass); return  m_effectName[index]; }
-
+			const String& getPassEffectName(int index) { assert(index<MaxScenePass); return  m_effectName[index]; }
+			void setPassEffectName(int index, const String& en) { assert(index<MaxScenePass); m_effectName[index]=en; }
 			/** Gets the material's texture's name at given index.
 			 * 
 			 *  The texture name is the file name. The engine will try to locate
