@@ -119,19 +119,34 @@ namespace Apoc3D
 
 		}
 
-		void Log::Write(const String& message, LogMessageLevel level)
+		bool Log::Write(const String& message, LogMessageLevel level)
 		{
+			bool result = false;
 			m_lock.lock();
 
-			time_t t = time(0);
-			m_entries.push_back(LogEntry(t, message, level, m_type));
-
-			while (m_entries.size()>MaxEntries)
+			bool discard = false;
+			if (m_entries.size())
 			{
-				m_entries.erase(m_entries.begin());
+				if (m_entries.back().Content == message)
+				{
+					discard = true;
+				}
+			}
+			
+			if (!discard)
+			{
+				time_t t = time(0);
+
+				while (m_entries.size()>MaxEntries)
+				{
+					m_entries.erase(m_entries.begin());
+				}
+				m_entries.push_back(LogEntry(t, message, level, m_type));
+				result = true;
 			}
 
 			m_lock.unlock();
+			return result;
 		}
 
 		LogManager::LogManager()
@@ -159,29 +174,33 @@ namespace Apoc3D
 
 		void LogManager::Write(LogType type, const String& message, LogMessageLevel level) const
 		{
-			m_logs[static_cast<int32>(type)]->Write(message, level);
+			bool ret = m_logs[static_cast<int32>(type)]->Write(message, level);
 
-			const LogEntry& lastest = *(--m_logs[static_cast<int32>(type)]->end());
+			if (ret)
+			{
+				const LogEntry& lastest = *(--m_logs[static_cast<int32>(type)]->end());
 
-			if (!m_eNewLog.empty())
-			{
-				m_eNewLog(lastest);
-			}
-			if (WriteLogToStd)
-			{
-				String msg = lastest.ToString();
-				cout << ( msg.c_str() );
+				if (!m_eNewLog.empty())
+				{
+					m_eNewLog(lastest);
+				}
+				if (WriteLogToStd)
+				{
+					String msg = lastest.ToString();
+					cout << ( msg.c_str() );
 				
-#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-				//if (g_StandardOutput!= INVALID_HANDLE_VALUE)
-				//{
-#if _DEBUG
-				OutputDebugString(msg.c_str());
-					//WriteFile(g_StandardOutput, msg.c_str(), msg.size() * sizeof(wchar_t), NULL, NULL );
-				//}
-#endif
-#endif
+	#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+					//if (g_StandardOutput!= INVALID_HANDLE_VALUE)
+					//{
+	#if _DEBUG
+					OutputDebugString(msg.c_str());
+						//WriteFile(g_StandardOutput, msg.c_str(), msg.size() * sizeof(wchar_t), NULL, NULL );
+					//}
+	#endif
+	#endif
+				}
 			}
+
 		}
 	}
 }

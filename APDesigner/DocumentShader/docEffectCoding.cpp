@@ -197,6 +197,18 @@ namespace APDesigner
 
 	}
 
+	void Parse(ConfigurationSection* ps, EffectParameter& ep)
+	{
+		ep.Usage = EffectParameter::ParseParamUsage(ps->getAttribute(L"Usage"));
+		if (ep.Usage == EPUSAGE_CustomMaterialParam)
+		{
+			ep.CustomMaterialParamName = ps->getAttribute(L"CustomUsage");
+		}
+		else if (ep.Usage == EPUSAGE_InstanceBlob)
+		{
+			ep.InstanceBlobIndex = ps->GetAttributeInt(L"BlobIndex");
+		}
+	}
 	void EffectDocument::LoadRes()
 	{
 		FileLocation* fl = new FileLocation(m_filePath);
@@ -208,13 +220,8 @@ namespace APDesigner
 			ConfigurationSection* ps = *iter.getCurrentValue();
 			EffectParameter ep(ps->getName());
 
-			String usage = ps->getAttribute(L"Usage");
-			ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
-			if (ep.TypicalUsage == EPUSAGE_Unknown)
-			{
-				ep.IsCustomUsage = true;
-				ep.CustomUsage = usage;
-			}
+			Parse(ps, ep);
+
 			ep.ProgramType = SHDT_Vertex;
 			ep.SamplerState.Parse(ps);
 			m_parameters.Add(ep);
@@ -227,13 +234,8 @@ namespace APDesigner
 			ConfigurationSection* ps = *iter.getCurrentValue();
 			EffectParameter ep(ps->getName());
 
-			String usage = ps->getAttribute(L"Usage");
-			ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
-			if (ep.TypicalUsage == EPUSAGE_Unknown)
-			{
-				ep.IsCustomUsage = true;
-				ep.CustomUsage = usage;
-			}
+			Parse(ps, ep);
+
 			ep.ProgramType = SHDT_Pixel;
 			ep.SamplerState.Parse(ps);
 			m_parameters.Add(ep);
@@ -285,16 +287,20 @@ namespace APDesigner
 		ConfigurationSection* ps = new ConfigurationSection(L"PS");
 		for (int i=0;i<m_parameters.getCount();i++)
 		{
-			ConfigurationSection* sect = new ConfigurationSection(m_parameters[i].Name);
-			if (m_parameters[i].IsCustomUsage)
-				sect->AddAttribute(L"Usage", m_parameters[i].CustomUsage);
-			else
-				sect->AddAttribute(L"Usage", EffectParameter::ToString(m_parameters[i].TypicalUsage));
+			EffectParameter& ep = m_parameters[i];
 
-			if (m_parameters[i].RegisterIndex == 99)
-				m_parameters[i].SamplerState.Save(sect);
+			ConfigurationSection* sect = new ConfigurationSection(ep.Name);
+			sect->AddAttribute(L"Usage", EffectParameter::ToString(ep.Usage));
 
-			if (m_parameters[i].ProgramType == SHDT_Vertex)
+			if (ep.Usage == EPUSAGE_CustomMaterialParam)
+				sect->AddAttribute(L"CustomUsage", ep.CustomMaterialParamName);
+			else if (ep.Usage == EPUSAGE_CustomMaterialParam)
+				sect->AddAttribute(L"BlobIndex", StringUtils::ToString(ep.InstanceBlobIndex));
+
+			if (ep.RegisterIndex == 99)
+				ep.SamplerState.Save(sect);
+
+			if (ep.ProgramType == SHDT_Vertex)
 				vs->AddSection(sect);
 			else
 				ps->AddSection(sect);
@@ -611,14 +617,8 @@ namespace APDesigner
 		{
 			String usage;
 
-			if (m_parameters[i].IsCustomUsage)
-			{
-				usage = m_parameters[i].CustomUsage;
-			}
-			else
-			{
-				usage = EffectParameter::ToString(m_parameters[i].TypicalUsage);
-			}
+			usage = EffectParameter::ToString(m_parameters[i].Usage);
+			
 
 			String items[2];
 			items[0] = m_parameters[i].Name;
@@ -644,17 +644,19 @@ namespace APDesigner
 
 		chTemp = isVS ? m_cbVsIsCustom : m_cbPsIsCustom;
 		cbTemp = isVS ? m_cbVsUsage : m_cbPsUsage;
-		p.IsCustomUsage = chTemp->getValue() && cbTemp->getSelectedIndex();
-		if (p.IsCustomUsage)
-		{
-			p.TypicalUsage = EPUSAGE_Unknown;
-			p.CustomUsage = isVS ? m_tbVsCustomUsage->Text : m_tbPsCustomUsage->Text;
-		}
-		else
-		{
-			p.TypicalUsage =  EffectParameter::ParseParamUsage(cbTemp->getItems()[cbTemp->getSelectedIndex()]);// EffectParameter::ParseParamUsage(cbTemp->Text);
-			p.CustomUsage = L"";
-		}
+		bool isCustomUsage = chTemp->getValue() && cbTemp->getSelectedIndex();
+		//if (p.IsCustomUsage)
+		//{
+		//	p.Usage = EPUSAGE_Unknown;
+		//	p.CustomUsage = isVS ? m_tbVsCustomUsage->Text : m_tbPsCustomUsage->Text;
+		//}
+		//else
+		//{
+		//	p.Usage =  EffectParameter::ParseParamUsage(cbTemp->getItems()[cbTemp->getSelectedIndex()]);// EffectParameter::ParseParamUsage(cbTemp->Text);
+		//	p.CustomUsage = L"";
+		//}
+		p.Usage = isCustomUsage ?  EPUSAGE_CustomMaterialParam :  EffectParameter::ParseParamUsage(cbTemp->getItems()[cbTemp->getSelectedIndex()]);
+		p.CustomMaterialParamName = isVS ? m_tbVsCustomUsage->Text : m_tbPsCustomUsage->Text;
 
 		chTemp = isVS ? m_cbVsHasSamplerState : m_cbPsHasSamplerState;
 
@@ -703,7 +705,7 @@ namespace APDesigner
 		ComboBox* cbTemp;
 		CheckBox* chTemp;
 		int idx = -1;
-		String strV = EffectParameter::ToString(p.TypicalUsage);
+		String strV = EffectParameter::ToString(p.Usage);
 		cbTemp = isVS ? m_cbVsUsage : m_cbPsUsage;
 		for (int i=0;i<cbTemp->getItems().getCount();i++)
 			if (cbTemp->getItems()[i]==strV)
@@ -713,7 +715,7 @@ namespace APDesigner
 		cbTemp->setSelectedIndex(idx);
 
 		chTemp = isVS ? m_cbVsIsCustom : m_cbPsIsCustom;
-		chTemp->setValue(p.IsCustomUsage);
+		chTemp->setValue(p.Usage == EPUSAGE_CustomMaterialParam);
 		if (idx == -1)
 			chTemp->setValue(true);
 
@@ -722,7 +724,7 @@ namespace APDesigner
 		else
 			CBPSIsCustom_Changed(0);
 		
-		(isVS? m_tbVsCustomUsage : m_tbPsCustomUsage)->setText(p.CustomUsage);
+		(isVS? m_tbVsCustomUsage : m_tbPsCustomUsage)->setText(p.CustomMaterialParamName);
 
 		bool hasSamplerState = false;
 		idx = -1;
@@ -803,7 +805,7 @@ namespace APDesigner
 		(isVS ? m_tbVsMipMapLODBias : m_tbPsMipMapLODBias)->setText(StringUtils::ToString(p.SamplerState.MipMapLODBias));
 		hasSamplerState |= !!p.SamplerState.MipMapLODBias;
 
-		if (p.TypicalUsage >= EPUSAGE_Tex0 && p.TypicalUsage <= EPUSAGE_Tex16)
+		if (p.Usage >= EPUSAGE_Tex0 && p.Usage <= EPUSAGE_Tex16)
 			hasSamplerState = true;
 
 		(isVS ? m_cbVsHasSamplerState : m_cbPsHasSamplerState) ->setValue(hasSamplerState);

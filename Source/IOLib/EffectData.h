@@ -63,11 +63,11 @@ namespace Apoc3D
 			/** Indicates whether this effect is from a AFX or CFX. 
 				AFX is loaded by AutomaticEffect, while CFX is the custom one.
 			*/
-			bool IsCustom;
+			bool IsCFX;
 
 			List<EffectParameter> Parameters;
 
-			EffectData() : VSCode(0), PSCode(0), VSLength(0),PSLength(0),MajorVer(0), MinorVer(0),IsCustom(false) { }
+			EffectData() : VSCode(0), PSCode(0), VSLength(0),PSLength(0),MajorVer(0), MinorVer(0),IsCFX(false) { }
 			~EffectData() 
 			{
 				if (VSCode) delete[] VSCode; 
@@ -76,6 +76,10 @@ namespace Apoc3D
 
 			void Load(const ResourceLocation* rl);
 			void Save(Stream* strm) const;
+
+		private:
+			void LoadAFXV3(BinaryReader* br);
+			void LoadAFXV3_1(BinaryReader* br);
 		};
 	}
 }

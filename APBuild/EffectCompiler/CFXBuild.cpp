@@ -95,7 +95,7 @@ namespace APBuild
 		if (!CompileShader(config.SrcPSFile, config.EntryPointPS, config.Profile, data.PSCode, data.PSLength, false))
 			return;
 
-		data.IsCustom=true;
+		data.IsCFX=true;
 
 		FileOutStream* fos = new FileOutStream(config.DestFile);
 		data.Save(fos);

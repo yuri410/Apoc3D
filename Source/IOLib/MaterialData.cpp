@@ -250,7 +250,7 @@ namespace Apoc3D
 				BinaryReader* br = data->GetData(tag);
 
 				MaterialCustomParameter mcp;
-				mcp.Type = static_cast<MaterialCustomParameterType>(br->ReadUInt32());
+				mcp.Type = static_cast<CustomEffectParameterType>(br->ReadUInt32());
 
 				br->ReadBytes(reinterpret_cast<char*>(mcp.Value), sizeof(mcp.Value));
 
@@ -394,7 +394,7 @@ namespace Apoc3D
 			{				
 				const MaterialCustomParameter& mcp = iter->second;
 
-				if (!mcp.IsReference())
+				if (!EffectParameter::IsReference(mcp.Type))
 				{
 					String tag = StringUtils::ToString(index++);
 					tag = TAG_3_CustomParam + tag;// tag + TAG_3_CustomParam;

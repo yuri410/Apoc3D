@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Math/Vector.h"
+#include "Graphics/EffectSystem/EffectParameter.h"
 
 using namespace std;
 using namespace Apoc3D::Math;
@@ -37,28 +38,14 @@ namespace Apoc3D
 	{
 		static const int32 MaxTextures = 16;
 
-		enum MaterialCustomParameterType
-		{
-			MTRLPT_Float = 0,
-			MTRLPT_Vector2 = 1,
-			MTRLPT_Vector4 = 2,
-			MTRLPT_Boolean = 3,
-			MTRLPT_Integer = 4,
-			MTRLPT_Ref_Vector2 = 5,
-			MTRLPT_Ref_Vector3 = 6,
-			MTRLPT_Ref_Vector4 = 7,
-			MTRLPT_Ref_Texture = 8,
-			MTRLPT_Ref_TextureHandle = 9,
-		};
-
 		/** Defines custom material parameters. 
 		*/
 		struct MaterialCustomParameter
 		{
 			/** The data type of the parameter.
 			*/
-			MaterialCustomParameterType Type;
-			byte Value[16];
+			EffectSystem::CustomEffectParameterType Type;
+			uint Value[16];
 
 			void* RefValue;
 
@@ -66,34 +53,30 @@ namespace Apoc3D
 			*/
 			String Usage;
 
-			bool IsReference() const 
-			{
-				return Type == MTRLPT_Ref_Texture || Type == MTRLPT_Ref_Vector2 || Type == MTRLPT_Ref_Vector3 || Type == MTRLPT_Ref_Vector4;
-			}
 
 			MaterialCustomParameter() { }
 			MaterialCustomParameter(bool value, const String usage = L"")
-				: Type(MTRLPT_Boolean), Usage(usage)
+				: Type(EffectSystem::CEPT_Boolean), Usage(usage)
 			{
 				*reinterpret_cast<bool*>(Value) = value;
 			}
 			MaterialCustomParameter(float value, const String usage = L"")
-				: Type(MTRLPT_Float), Usage(usage)
+				: Type(EffectSystem::CEPT_Float), Usage(usage)
 			{
 				*reinterpret_cast<float*>(Value) = value;
 			}
 			MaterialCustomParameter(int value, const String usage = L"")
-				: Type(MTRLPT_Integer), Usage(usage)
+				: Type(EffectSystem::CEPT_Integer), Usage(usage)
 			{
 				*reinterpret_cast<int*>(Value) = value;
 			}
 			MaterialCustomParameter(Vector2 value, const String usage = L"")
-				: Type(MTRLPT_Integer), Usage(usage)
+				: Type(EffectSystem::CEPT_Integer), Usage(usage)
 			{
 				*reinterpret_cast<Vector2*>(Value) = value;
 			}
 			MaterialCustomParameter(Vector4 value, const String usage = L"")
-				: Type(MTRLPT_Integer), Usage(usage)
+				: Type(EffectSystem::CEPT_Integer), Usage(usage)
 			{
 				*reinterpret_cast<Vector4*>(Value) = value;
 			}

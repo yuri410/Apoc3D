@@ -43,6 +43,7 @@ namespace Apoc3D
 				EParamConvHelper()
 					: CastTable(50, &m_comparer1), InvCastTable(50, &m_comparer2)
 				{
+					AddPair(L"unknown", EPUSAGE_Unknown);
 					AddPair(L"mc4_ambient", EPUSAGE_MtrlC4_Ambient);
 					AddPair(L"mc4_diffuse", EPUSAGE_MtrlC4_Diffuse);
 					AddPair(L"mc4_emissive", EPUSAGE_MtrlC4_Emissive);
@@ -90,6 +91,9 @@ namespace Apoc3D
 
 					AddPair(L"s_farplane", EPUSAGE_S_FarPlane);
 					AddPair(L"s_nearplane", EPUSAGE_S_NearPlane);
+
+					AddPair(L"instanceblob", EPUSAGE_InstanceBlob);
+					AddPair(L"cmtrlparam", EPUSAGE_CustomMaterialParam);
 				}
 
 				StringEuqlityComparer m_comparer1;
@@ -107,8 +111,8 @@ namespace Apoc3D
 			static EParamConvHelper EffectParameterUsageConverter;
 			
 			EffectParameter::EffectParameter(const String& name)
-				: Name(name), IsCustomUsage(false), TypicalUsage(EPUSAGE_Unknown),
-				RegisterIndex(-1), SamplerIndex(-1)
+				: Name(name), Usage(EPUSAGE_Unknown),
+				RegisterIndex(-1), SamplerIndex(-1), InstanceBlobIndex(-1), ProgramType(SHDT_Vertex)
 			{
 			}
 
@@ -126,7 +130,10 @@ namespace Apoc3D
 				if (EffectParameterUsageConverter.CastTable.TryGetValue(v, usage))
 					return usage;
 				
-				LogManager::getSingleton().Write(LOG_Graphics, L"Unknown effect parameter usage: " + val, LOGLVL_Infomation );
+				if (val.size())
+				{
+					LogManager::getSingleton().Write(LOG_Graphics, L"Unknown effect parameter usage: " + val, LOGLVL_Warning );
+				}
 				return EPUSAGE_Unknown;
 			}
 			String EffectParameter::ToString(EffectParamUsage usage)

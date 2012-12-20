@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Collections/FastMap.h"
+#include "Collections/FastList.h"
 #include "Math/Color.h"
 #include "Math/Vector.h"
 #include "Graphics/RenderSystem/Shader.h"
@@ -40,18 +41,22 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			/** Defines typical usage of a effect parameters.
+			/** Defines usage of a effect parameters.
 				When the engine auto bind a parameter, it first checks the parameter's usage to
 				find the corresponding data, then assign it to the param. 
 				
-				Alternatively, custom usage in a String format is also accepted by EffectParameter.
-				Internally, parameters using automatic(normal usages) can be manipulated 
-				faster than those using custom param usages. See EffectParameter for the definition.
+				EffectParamUsage has 3 special usages as follows:
+				1. EPUSAGE_Unknow.
+				2. EPUSAGE_InstanceBlob
+				3. EPUSAGE_CustomMaterialParam
+				See the fields for detailed description.
 			*/
 			enum EffectParamUsage
 			{
 				/** The unknown usage means the binding for typical usage is unavailable, 
-					the engine will check custom usage.
+					the engine will do nothing.
+					This is useful in occasions like the effect is a post effect without materials, the value of custom
+					effect can be assigned by scene rendering scripts.
 				*/
 				EPUSAGE_Unknown=0,
 				/** mc4_ambient
@@ -161,7 +166,23 @@ namespace Apoc3D
 				EPUSAGE_S_FarPlane,
 				/** s_nearPlane
 				*/
-				EPUSAGE_S_NearPlane
+				EPUSAGE_S_NearPlane,
+
+				/** The engine will get the value for the parameter from UserData pointer 
+					which is expected pointing to a InstanceInfoBlob struct.
+					The value will be obtained from the list inside the struct.
+				*/
+				EPUSAGE_InstanceBlob,
+
+				/** The engine will look up the entry(MaterialCustomParameter)
+					with the same name from material's CustomParamTable in render operation.
+					Custom material param need to be specified in a String format in EffectParameter 
+					as CustomMaterialParamName. 
+					
+					Internally, parameters using automatic(typical usages) will be manipulated 
+					faster than this.
+				*/
+				EPUSAGE_CustomMaterialParam
 			};
 
 			/** Includes all global scene render resources such as the current camera, lighting that could 
@@ -182,27 +203,40 @@ namespace Apoc3D
 				}
 			};
 
+
+			enum CustomEffectParameterType
+			{
+				CEPT_Float = 0,
+				CEPT_Vector2 = 1,
+				CEPT_Vector4 = 2,
+				CEPT_Boolean = 3,
+				CEPT_Integer = 4,
+				CEPT_Ref_Vector2 = 5,
+				CEPT_Ref_Vector3 = 6,
+				CEPT_Ref_Vector4 = 7,
+				CEPT_Ref_Texture = 8,
+				CEPT_Ref_TextureHandle = 9,
+			};
+
 			/** Defines a parameter in an effect containing effect param mapping info.
 
-				A custom parameter is recognized when the usage string in the effect parameter listing file can not be parsed
-				by this class. A custom parameter is bond to the parameter with the same name in the corresponding material if 
-				material is used. In other occasions like the effect is a post effect without materials, the value of custom
-				effect can be assigned by scene rendering scripts.
+				CustomMaterialParamName and InstanceBlobIndex will be used based on the Usage of the EffectParameter. 
+				See EPUSAGE_CustomMaterialParam for details.
+				
+				When EPUSAGE_InstanceBlob or EPUSAGE_CustomMaterialParam is unused in effect, 
+				no more attention from application developer is needed on setting the effect parameter.
 
-				A typical parameter's usage string can be understood by the engine as a matter of fact the engine can only supports
-				a finite range of predefined usage names. When this type of parameters are used, 
-				no more attention from application developer is needed.
-
-				The so called parameter's usage string is written in the effect parameter listing file along with the shader code,
+				The parameter's usage is configured by the effect parameter listing file along with the shader code,
 				when building resources using APBuild or APDesigner.
 			*/
 			class APAPI EffectParameter
 			{	
 			public:
 				String Name;
-				EffectParamUsage TypicalUsage;
-				String CustomUsage;
-				bool IsCustomUsage;
+				EffectParamUsage Usage;
+
+				String CustomMaterialParamName;
+				int32 InstanceBlobIndex;
 
 				ShaderType ProgramType;
 
@@ -211,7 +245,7 @@ namespace Apoc3D
 				int SamplerIndex;
 				ShaderSamplerState SamplerState;
 
-				EffectParameter() : RegisterIndex(-1), SamplerIndex(-1), IsCustomUsage(false) { }
+				EffectParameter() : RegisterIndex(-1), SamplerIndex(-1) { }
 				EffectParameter(const String& name);
 				~EffectParameter(void);
 
@@ -219,8 +253,58 @@ namespace Apoc3D
 				static String ToString(EffectParamUsage usage);
 
 				static FastMap<String, EffectParamUsage>::Enumerator getParameterUsageEnumeration();
+
+
+				static bool IsReference(CustomEffectParameterType t)
+				{
+					return t == CEPT_Ref_Texture || t == CEPT_Ref_Vector2 || t == CEPT_Ref_Vector3 || t == CEPT_Ref_Vector4;
+				}
 			private:
 
+			};
+
+
+			struct APAPI InstanceInfoBlob
+			{
+				struct CustomValue
+				{
+					/** The data type of the value.
+					*/
+					CustomEffectParameterType Type;
+					uint Value[16];
+					void* RefValue;
+
+					CustomValue() 
+					{ }
+
+					CustomValue(float val)
+						: RefValue(nullptr), Type(CEPT_Float)
+					{ AsSingle() = val; }
+
+					CustomValue(const Vector2& val)
+						: RefValue(nullptr), Type(CEPT_Vector2)
+					{ AsVector2() = val; }
+
+					CustomValue(const Vector4& val)
+						: RefValue(nullptr), Type(CEPT_Vector4)
+					{ AsVector4() = val; }
+
+					CustomValue(bool val)
+						: RefValue(nullptr), Type(CEPT_Boolean)
+					{ AsBoolean() = val; }
+
+					CustomValue(int val)
+						: RefValue(nullptr), Type(CEPT_Integer)
+					{ AsInteger() = val; }
+
+					float& AsSingle() { return reinterpret_cast<float&>(Value); }
+					Vector2& AsVector2() { return reinterpret_cast<Vector2&>(Value); }
+					Vector4& AsVector4() { return reinterpret_cast<Vector4&>(Value); }
+					bool& AsBoolean() { return reinterpret_cast<bool&>(Value); }
+					int& AsInteger() { return reinterpret_cast<int&>(Value); }
+				};
+
+				FastList<CustomValue> DataList;
 			};
 		};
 	};

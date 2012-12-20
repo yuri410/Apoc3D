@@ -38,7 +38,10 @@ namespace Apoc3D
 	namespace IO
 	{
 		static const int AfxId_V3 = ((byte)'A' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
+		static const int AfxId_V31 = ((byte)'A' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)'0');
+
 		static const int CfxID_V3 = ((byte)'C' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
+
 		static const String TAG_3_ParameterCountTag = L"ParameterCount";
 		static const String TAG_3_ParameterTag = L"Parameter";
 		static const String TAG_3_ParameterSamplerStateTag = L"SamplerState";
@@ -54,100 +57,15 @@ namespace Apoc3D
 
 			if (id == AfxId_V3)
 			{
-				MajorVer = br->ReadInt32();
-				MinorVer = br->ReadInt32();
-				Name = br->ReadString();
-
-				TaggedDataReader* data = br->ReadTaggedDataBlock();
-
-				int count = data->GetDataInt32(TAG_3_ParameterCountTag);
-				Parameters.ResizeDiscard(count);
-
-				for (int i=0;i<count;i++)
-				{
-					String tag = StringUtils::ToString(i);
-
-					tag = TAG_3_ParameterTag + tag;
-
-					BinaryReader* br2 = data->GetData(tag);
-
-					// load parameter
-					String name = br2->ReadString();
-
-					EffectParameter params(name);
-					//params.TypicalUsage = static_cast<EffectParamUsage>(br2->ReadUInt32());
-					//params.IsCustomUsage = br->ReadBoolean();
-					params.CustomUsage = br->ReadString();
-					params.ProgramType = static_cast<ShaderType>(br->ReadInt32());
-					
-					params.TypicalUsage = EffectParameter::ParseParamUsage(params.CustomUsage);
-					params.IsCustomUsage = params.TypicalUsage == EPUSAGE_Unknown;
-
-					br2->Close();
-					delete br2;
-
-					tag = StringUtils::ToString(i);
-					tag = TAG_3_ParameterSamplerStateTag + tag;
-
-					if (data->Contains(tag))
-					{
-						br2 = data->GetData(tag);
-
-						params.SamplerState.AddressU = static_cast<TextureAddressMode>(br2->ReadUInt32());
-						params.SamplerState.AddressV = static_cast<TextureAddressMode>(br2->ReadUInt32());
-						params.SamplerState.AddressW = static_cast<TextureAddressMode>(br2->ReadUInt32());
-						params.SamplerState.BorderColor = br2->ReadUInt32();
-						params.SamplerState.MagFilter = static_cast<TextureFilter>(br2->ReadUInt32());
-						params.SamplerState.MaxAnisotropy = br2->ReadInt32();
-						params.SamplerState.MaxMipLevel = br2->ReadInt32();
-						params.SamplerState.MinFilter = static_cast<TextureFilter>(br2->ReadUInt32());
-						params.SamplerState.MipFilter = static_cast<TextureFilter>(br2->ReadUInt32());
-						params.SamplerState.MipMapLODBias = br2->ReadUInt32();
-
-						br2->Close();
-						delete br2;
-					}
-					else
-					{
-						params.SamplerState.AddressU = TA_Wrap;
-						params.SamplerState.AddressV = TA_Wrap;
-						params.SamplerState.AddressW = TA_Wrap;
-						params.SamplerState.BorderColor = 0;
-						params.SamplerState.MagFilter = TFLT_Linear;
-						params.SamplerState.MaxAnisotropy = 0;
-						params.SamplerState.MaxMipLevel = 0;
-						params.SamplerState.MinFilter = TFLT_Linear;
-						params.SamplerState.MipFilter = TFLT_Linear;
-						params.SamplerState.MipMapLODBias = 0;
-
-					}
-
-					Parameters.Add(params);
-
-				}
-
-
-				BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeLengthTag);
-				VSLength = br3->ReadInt32();
-				PSLength = br3->ReadInt32();
-				br3->Close();
-				delete br3;
-
-				VSCode = new char[VSLength];
-				PSCode = new char[PSLength];
-				br3 = data->GetData(TAG_3_ShaderCodeTag);
-				br3->ReadBytes(VSCode, VSLength);
-				br3->ReadBytes(PSCode, PSLength);
-				br3->Close();
-				delete br3;
-
-				data->Close();
-				delete data;
-
+				LoadAFXV3(br);
+			}
+			else if (id == AfxId_V31)
+			{
+				LoadAFXV3_1(br);
 			}
 			else if (id == CfxID_V3)
 			{
-				IsCustom = true;
+				IsCFX = true;
 
 				MajorVer = br->ReadInt32();
 				MinorVer = br->ReadInt32();
@@ -181,9 +99,199 @@ namespace Apoc3D
 			br->Close();
 			delete br;
 		}
+
+		void EffectData::LoadAFXV3(BinaryReader* br)
+		{
+			MajorVer = br->ReadInt32();
+			MinorVer = br->ReadInt32();
+			Name = br->ReadString();
+
+			TaggedDataReader* data = br->ReadTaggedDataBlock();
+
+			int count = data->GetDataInt32(TAG_3_ParameterCountTag);
+			Parameters.ResizeDiscard(count);
+
+			for (int i=0;i<count;i++)
+			{
+				String tag = StringUtils::ToString(i);
+
+				tag = TAG_3_ParameterTag + tag;
+
+				BinaryReader* br2 = data->GetData(tag);
+
+				// load parameter
+				String name = br2->ReadString();
+
+				EffectParameter params(name);
+				//params.TypicalUsage = static_cast<EffectParamUsage>(br2->ReadUInt32());
+				//params.IsCustomUsage = br->ReadBoolean();
+				params.CustomMaterialParamName = br->ReadString();
+				params.ProgramType = static_cast<ShaderType>(br->ReadInt32());
+
+				params.Usage = EffectParameter::ParseParamUsage(params.CustomMaterialParamName);
+				if (params.Usage == EPUSAGE_Unknown)
+				{
+					params.Usage = EPUSAGE_CustomMaterialParam;
+				}
+				//params.IsCustomUsage = params.Usage == EPUSAGE_Unknown;
+
+				br2->Close();
+				delete br2;
+
+				tag = StringUtils::ToString(i);
+				tag = TAG_3_ParameterSamplerStateTag + tag;
+
+				if (data->Contains(tag))
+				{
+					br2 = data->GetData(tag);
+
+					params.SamplerState.AddressU = static_cast<TextureAddressMode>(br2->ReadUInt32());
+					params.SamplerState.AddressV = static_cast<TextureAddressMode>(br2->ReadUInt32());
+					params.SamplerState.AddressW = static_cast<TextureAddressMode>(br2->ReadUInt32());
+					params.SamplerState.BorderColor = br2->ReadUInt32();
+					params.SamplerState.MagFilter = static_cast<TextureFilter>(br2->ReadUInt32());
+					params.SamplerState.MaxAnisotropy = br2->ReadInt32();
+					params.SamplerState.MaxMipLevel = br2->ReadInt32();
+					params.SamplerState.MinFilter = static_cast<TextureFilter>(br2->ReadUInt32());
+					params.SamplerState.MipFilter = static_cast<TextureFilter>(br2->ReadUInt32());
+					params.SamplerState.MipMapLODBias = br2->ReadUInt32();
+
+					br2->Close();
+					delete br2;
+				}
+				else
+				{
+					params.SamplerState.AddressU = TA_Wrap;
+					params.SamplerState.AddressV = TA_Wrap;
+					params.SamplerState.AddressW = TA_Wrap;
+					params.SamplerState.BorderColor = 0;
+					params.SamplerState.MagFilter = TFLT_Linear;
+					params.SamplerState.MaxAnisotropy = 0;
+					params.SamplerState.MaxMipLevel = 0;
+					params.SamplerState.MinFilter = TFLT_Linear;
+					params.SamplerState.MipFilter = TFLT_Linear;
+					params.SamplerState.MipMapLODBias = 0;
+
+				}
+
+				Parameters.Add(params);
+
+			}
+
+
+			BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeLengthTag);
+			VSLength = br3->ReadInt32();
+			PSLength = br3->ReadInt32();
+			br3->Close();
+			delete br3;
+
+			VSCode = new char[VSLength];
+			PSCode = new char[PSLength];
+			br3 = data->GetData(TAG_3_ShaderCodeTag);
+			br3->ReadBytes(VSCode, VSLength);
+			br3->ReadBytes(PSCode, PSLength);
+			br3->Close();
+			delete br3;
+
+			data->Close();
+			delete data;
+
+		}
+		void EffectData::LoadAFXV3_1(BinaryReader* br)
+		{
+			MajorVer = br->ReadInt32();
+			MinorVer = br->ReadInt32();
+			Name = br->ReadString();
+
+			TaggedDataReader* data = br->ReadTaggedDataBlock();
+
+			int count = data->GetDataInt32(TAG_3_ParameterCountTag);
+			Parameters.ResizeDiscard(count);
+
+			for (int i=0;i<count;i++)
+			{
+				String tag = StringUtils::ToString(i);
+
+				tag = TAG_3_ParameterTag + tag;
+
+				BinaryReader* br2 = data->GetData(tag);
+
+				// load parameter
+				String name = br2->ReadString();
+
+				EffectParameter params(name);
+				
+				params.Usage = EffectParameter::ParseParamUsage(br->ReadString());
+				params.CustomMaterialParamName = br->ReadString();
+				params.InstanceBlobIndex = br->ReadInt32();
+				params.ProgramType = static_cast<ShaderType>(br->ReadInt32());
+
+				br2->Close();
+				delete br2;
+
+				tag = StringUtils::ToString(i);
+				tag = TAG_3_ParameterSamplerStateTag + tag;
+
+				if (data->Contains(tag))
+				{
+					br2 = data->GetData(tag);
+
+					params.SamplerState.AddressU = static_cast<TextureAddressMode>(br2->ReadUInt32());
+					params.SamplerState.AddressV = static_cast<TextureAddressMode>(br2->ReadUInt32());
+					params.SamplerState.AddressW = static_cast<TextureAddressMode>(br2->ReadUInt32());
+					params.SamplerState.BorderColor = br2->ReadUInt32();
+					params.SamplerState.MagFilter = static_cast<TextureFilter>(br2->ReadUInt32());
+					params.SamplerState.MaxAnisotropy = br2->ReadInt32();
+					params.SamplerState.MaxMipLevel = br2->ReadInt32();
+					params.SamplerState.MinFilter = static_cast<TextureFilter>(br2->ReadUInt32());
+					params.SamplerState.MipFilter = static_cast<TextureFilter>(br2->ReadUInt32());
+					params.SamplerState.MipMapLODBias = br2->ReadUInt32();
+
+					br2->Close();
+					delete br2;
+				}
+				else
+				{
+					params.SamplerState.AddressU = TA_Wrap;
+					params.SamplerState.AddressV = TA_Wrap;
+					params.SamplerState.AddressW = TA_Wrap;
+					params.SamplerState.BorderColor = 0;
+					params.SamplerState.MagFilter = TFLT_Linear;
+					params.SamplerState.MaxAnisotropy = 0;
+					params.SamplerState.MaxMipLevel = 0;
+					params.SamplerState.MinFilter = TFLT_Linear;
+					params.SamplerState.MipFilter = TFLT_Linear;
+					params.SamplerState.MipMapLODBias = 0;
+
+				}
+
+				Parameters.Add(params);
+
+			}
+
+
+			BinaryReader* br3 = data->GetData(TAG_3_ShaderCodeLengthTag);
+			VSLength = br3->ReadInt32();
+			PSLength = br3->ReadInt32();
+			br3->Close();
+			delete br3;
+
+			VSCode = new char[VSLength];
+			PSCode = new char[PSLength];
+			br3 = data->GetData(TAG_3_ShaderCodeTag);
+			br3->ReadBytes(VSCode, VSLength);
+			br3->ReadBytes(PSCode, PSLength);
+			br3->Close();
+			delete br3;
+
+			data->Close();
+			delete data;
+
+		}
+
 		void EffectData::Save(Stream* strm) const
 		{
-			if (IsCustom)
+			if (IsCFX)
 			{
 				BinaryWriter* bw = new BinaryWriter(strm);
 				bw->Write((int32)CfxID_V3);
@@ -218,7 +326,7 @@ namespace Apoc3D
 			else
 			{
 				BinaryWriter* bw = new BinaryWriter(strm);
-				bw->Write((int32)AfxId_V3);
+				bw->Write((int32)AfxId_V31);
 				bw->Write((int32)MajorVer);
 				bw->Write((int32)MinorVer);
 				bw->Write(Name);
@@ -238,9 +346,10 @@ namespace Apoc3D
 						BinaryWriter* bw2 = data->AddEntry(tag);
 
 						bw2->Write(pm.Name);
-						//bw2->Write(static_cast<uint>(pm.TypicalUsage));
-						//bw2->Write(pm.IsCustomUsage);
-						bw2->Write(pm.CustomUsage);
+
+						bw2->Write(EffectParameter::ToString(pm.Usage));
+						bw2->Write(pm.CustomMaterialParamName);
+						bw2->Write(pm.InstanceBlobIndex);
 						bw2->Write(static_cast<int>(pm.ProgramType));
 
 						bw2->Close();

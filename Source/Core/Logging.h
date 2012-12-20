@@ -115,7 +115,15 @@ namespace Apoc3D
 
 			LogType getType() const { return m_type; }
 
-			void Write(const String& message, LogMessageLevel level = LOGLVL_Infomation);
+			int getCount()
+			{
+				m_lock.lock();
+				int result = (int)m_entries.size();
+				m_lock.unlock();
+				return result;
+			}
+
+			bool Write(const String& message, LogMessageLevel level = LOGLVL_Infomation);
 		};
 
 		/** A singleton providing possibilities to log messages anywhere in the code.

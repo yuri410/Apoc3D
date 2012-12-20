@@ -52,6 +52,9 @@ using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
+
+	void Parse(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep);
+
 	void AFXBuild::Build(const ConfigurationSection* sect)
 	{
 		AFXBuildConfig config;
@@ -109,14 +112,8 @@ namespace APBuild
 			ConfigurationSection* ps = *iter.getCurrentValue();
 			EffectParameter ep(ps->getName());
 			
-			//String usage = ps->getAttribute(L"Usage");
-			//ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
-			//if (ep.TypicalUsage == EPUSAGE_Unknown)
-			//{
-				//ep.IsCustomUsage = true;
-				//ep.CustomUsage = usage;
-			//}
-			ep.CustomUsage = ps->getAttribute(L"Usage");
+			Parse(config, ps, ep);
+
 			ep.ProgramType = SHDT_Vertex;
 			ep.SamplerState.Parse(ps);
 			data.Parameters.Add(ep);
@@ -129,14 +126,8 @@ namespace APBuild
 			ConfigurationSection* ps = *iter.getCurrentValue();
 			EffectParameter ep(ps->getName());
 
-			//String usage = ps->getAttribute(L"Usage");
-			//ep.TypicalUsage = EffectParameter::ParseParamUsage(usage);
-			//if (ep.TypicalUsage == EPUSAGE_Unknown)
-			//{
-			//	ep.IsCustomUsage = true;
-			//	ep.CustomUsage = usage;
-			//}
-			ep.CustomUsage = ps->getAttribute(L"Usage");
+			Parse(config, ps, ep);
+
 			ep.ProgramType = SHDT_Pixel;
 			ep.SamplerState.Parse(ps);
 			data.Parameters.Add(ep);
@@ -148,5 +139,33 @@ namespace APBuild
 		FileOutStream* fos = new FileOutStream(config.DestFile);
 		data.Save(fos);
 
+	}
+
+	void Parse(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep)
+	{
+		ep.Usage = EffectParameter::ParseParamUsage(ps->getAttribute(L"Usage"));
+		if (ep.Usage == EPUSAGE_CustomMaterialParam)
+		{
+			if (!ps->hasAttribute(L"CustomUsage"))
+			{
+				CompileLog::WriteError(config.PListFile, L"Could not find CustomUsage for param " + ep.Name);
+			}
+			else
+			{
+				ep.CustomMaterialParamName = ps->getAttribute(L"CustomUsage");
+			}
+		}
+		else if (ep.Usage == EPUSAGE_InstanceBlob)
+		{
+			if (!ps->hasAttribute(L"BlobIndex"))
+			{
+				CompileLog::WriteError(config.PListFile, L"Could not find BlobIndex for param " + ep.Name);
+			}
+			else
+			{
+				ep.InstanceBlobIndex = ps->GetAttributeInt(L"BlobIndex");
+			}
+			
+		}
 	}
 }

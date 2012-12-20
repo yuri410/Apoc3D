@@ -148,6 +148,11 @@ namespace Apoc3D
 				void Set4X3Matrix(EffectParameter& param, const Matrix* transfroms, int count);
 				void SetMatrix(EffectParameter& param, const Matrix* transfroms, int count);
 
+				void SetInstanceBlobParameter(EffectParameter& param, const InstanceInfoBlob::CustomValue& v);
+				void SetMaterialCustomParameter(EffectParameter& param, Material* mtrl);
+				void SetSingleCustomParameter(EffectParameter& param, CustomEffectParameterType type, void* data);
+				void SetSingleCustomParameter(EffectParameter& param, CustomEffectParameterType type, const uint* data);
+
 				VertexShader* m_vertexShader;
 				PixelShader* m_pixelShader;
 

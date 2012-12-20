@@ -519,7 +519,7 @@ namespace Apoc3D
 			}
 
 			uint colorFlags = inst.Args[2].DefaultValue[0];
-			m_renderDevice->getRenderState()->setColorWriteEnabled(index, colorFlags&0x0100, colorFlags&0x0010, colorFlags&0x0001, colorFlags&0x1000);
+			m_renderDevice->getRenderState()->setColorWriteEnabled(index, !!(colorFlags&0x0100), !!(colorFlags&0x0010), !!(colorFlags&0x0001), !!(colorFlags&0x1000));
 		}
 	};
 };

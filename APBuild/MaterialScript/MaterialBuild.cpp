@@ -36,6 +36,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Utility;
+using namespace Apoc3D::Graphics::EffectSystem;
 
 namespace APBuild
 {
@@ -80,22 +81,6 @@ namespace APBuild
 			{
 				Color4 r = ResolveColor4((*e1.getCurrentValue())->getValue(), palColors);
 				p->Colors.Add(r);
-				//std::vector<String> vals = StringUtils::Split((*e1.getCurrentValue())->getValue(), L",");
-
-				//assert(vals.size() == 3 || vals.size() == 4);
-
-				//if (vals.size() == 4)
-				//{
-					//p->Colors.Add(Color4(
-						//StringUtils::ParseInt32(vals[0]),
-						//StringUtils::ParseInt32(vals[1]),
-						//StringUtils::ParseInt32(vals[2]), 
-						//StringUtils::ParseInt32(vals[3])));
-				//}
-				//else
-				//{
-					//p->Colors.Add(Color4(StringUtils::ParseInt32(vals[0]),StringUtils::ParseInt32(vals[1]),StringUtils::ParseInt32(vals[2])));
-				//}
 			}
 
 		}
@@ -219,21 +204,6 @@ namespace APBuild
 				newNode->EffectName[ord-1] = name;
 			}
 		}
-		//newNode->SourceBlend = GraphicsCommonUtils::ParseBlend(sect->getAttribute(L"SourceBlend"));
-		//newNode->DestinationBlend = GraphicsCommonUtils::ParseBlend(sect->getAttribute(L"DestinationBlend"));
-		//newNode->BlendFunction = GraphicsCommonUtils::ParseBlendFunction(sect->getAttribute(L"BlendFunction"));
-		//newNode->IsBlendTransparent = sect->GetAttributeBool(L"IsBlendTransparent");
-		//newNode->Cull = GraphicsCommonUtils::ParseCullMode(sect->getAttribute(L"Cull"));
-		//newNode->AlphaTestEnabled = sect->GetAttributeBool(L"AlphaTestEnabled");
-		//newNode->AlphaReference = sect->GetAttributeUInt(L"AlphaReference");
-		//newNode->DepthWriteEnabled = sect->GetAttributeBool(L"DepthWriteEnabled");
-		//newNode->DepthTestEnabled = sect->GetAttributeBool(L"DepthTestEnabled");
-
-		//newNode->Ambient = ResolveColor4(sect->getAttribute(L"Ambient"), pallets);
-		//newNode->Diffuse = ResolveColor4(sect->getAttribute(L"Diffuse"), pallets);
-		//newNode->Emissive = ResolveColor4(sect->getAttribute(L"Emissive"), pallets);
-		//newNode->Specular = ResolveColor4(sect->getAttribute(L"Specular"), pallets);
-		//newNode->Power = sect->GetAttributeSingle(L"Power");
 
 
 
@@ -269,13 +239,13 @@ namespace APBuild
 
 				if (vals3.size() == 2)
 				{
-					mcp.Type = MTRLPT_Vector2;
+					mcp.Type = CEPT_Vector2;
 					float data[2] = { StringUtils::ParseSingle(vals3[0]), StringUtils::ParseSingle(vals3[1]) };
 					memcpy(mcp.Value, data, sizeof(data));
 				}
 				else
 				{
-					mcp.Type = MTRLPT_Vector4;
+					mcp.Type = CEPT_Vector4;
 					float data[4] = 
 					{
 						StringUtils::ParseSingle(vals3[0]), StringUtils::ParseSingle(vals3[1]),
@@ -291,7 +261,7 @@ namespace APBuild
 
 				if (valueStr==L"true" || valueStr == L"false")
 				{
-					mcp.Type = MTRLPT_Boolean;
+					mcp.Type = CEPT_Boolean;
 					mcp.Value[0] = valueStr == L"true" ? 1 : 0;
 				}
 				else
@@ -299,7 +269,7 @@ namespace APBuild
 					String::size_type pos = valueStr.find('.');
 					if (pos != String::npos)
 					{
-						mcp.Type = MTRLPT_Float;
+						mcp.Type = CEPT_Float;
 						float data = StringUtils::ParseSingle(valueStr);
 						memcpy(mcp.Value, &data, sizeof(data));
 					}
@@ -321,13 +291,13 @@ namespace APBuild
 
 						if (isNumber)
 						{
-							mcp.Type = MTRLPT_Integer;
+							mcp.Type = CEPT_Integer;
 							int data = StringUtils::ParseInt32(valueStr);
 							memcpy(mcp.Value, &data, sizeof(data));
 						}
 						else
 						{
-							mcp.Type = MTRLPT_Vector4;
+							mcp.Type = CEPT_Vector4;
 							Color4 v = ResolveColor4(valueStr, pallets);
 							memcpy(mcp.Value, &v, sizeof(v));
 						}

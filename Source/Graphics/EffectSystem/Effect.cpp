@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Effect.h"
 
+#include "Core/Logging.h"
 #include "Core/GameTime.h"
 #include "Graphics/Material.h"
 #include "Graphics/Camera.h"
@@ -110,7 +111,7 @@ namespace Apoc3D
 				EffectData data;
 				data.Load(rl);
 				m_name = data.Name;
-				assert(!data.IsCustom);
+				assert(!data.IsCFX);
 
 				Capabilities* caps = device->getCapabilities();
 				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
@@ -139,7 +140,7 @@ namespace Apoc3D
 				{
 					for (int i=0;i<m_parameters.getCount();i++)
 					{
-						if (m_parameters[i].TypicalUsage == EPUSAGE_Trans_InstanceWorlds)
+						if (m_parameters[i].Usage == EPUSAGE_Trans_InstanceWorlds)
 						{
 							m_supportsInstancing = true;
 							break;
@@ -185,7 +186,7 @@ namespace Apoc3D
 				for (int i=0;i<m_parameters.getCount();i++)
 				{
 					EffectParameter& ep = m_parameters[i];
-					switch (ep.TypicalUsage)
+					switch (ep.Usage)
 					{
 						case EPUSAGE_MtrlC4_Ambient:
 							SetValue(ep, mtrl->Ambient);
@@ -336,93 +337,29 @@ namespace Apoc3D
 							SetTexture(ep, mtrl->getTexture(15));
 							break;
 
-						case EPUSAGE_Unknown:
-							if (m_parameters[i].IsCustomUsage && mtrl)
+						case EPUSAGE_InstanceBlob:
 							{
-								const MaterialCustomParameter* mcp = mtrl->getCustomParameter(m_parameters[i].CustomUsage);
-								if (mcp)
+								if (SupportsInstancing())
 								{
-									switch (mcp->Type)
-									{
-									case MTRLPT_Float:
-										if (mcp->IsReference())
-										{
-											SetValue(ep, *reinterpret_cast<const float*>(mcp->RefValue));
-										}
-										else
-										{
-											SetValue(ep, *reinterpret_cast<const float*>(mcp->Value));
-										}
-										break;
-									case MTRLPT_Vector2:
-									case MTRLPT_Ref_Vector2:
-										if (mcp->IsReference())
-										{
-											SetVector2(ep, *reinterpret_cast<const Vector2*>(mcp->RefValue));
-										}
-										else
-										{
-											SetVector2(ep, *reinterpret_cast<const Vector2*>(mcp->Value));
-										}
-										break;
-									case MTRLPT_Ref_Vector3:
-										if (mcp->IsReference())
-										{
-											SetVector3(ep, *reinterpret_cast<const Vector3*>(mcp->RefValue));
-										}
-										else
-										{
-											SetVector3(ep, *reinterpret_cast<const Vector3*>(mcp->Value));
-										}
-										break;
-
-									case MTRLPT_Ref_Vector4:
-									case MTRLPT_Vector4:
-										if (mcp->IsReference())
-										{
-											SetVector4(ep, *reinterpret_cast<const Vector4*>(mcp->RefValue));
-										}
-										else
-										{
-											SetVector4(ep, *reinterpret_cast<const Vector4*>(mcp->Value));
-										}
-										break;
-									case MTRLPT_Boolean:
-										if (mcp->IsReference())
-										{
-											SetValue(ep, *reinterpret_cast<const bool*>(mcp->RefValue));
-										}
-										else
-										{
-											SetValue(ep, *reinterpret_cast<const bool*>(mcp->Value));
-										}
-										break;
-									case MTRLPT_Integer:
-										if (mcp->IsReference())
-										{
-											SetValue(ep, *reinterpret_cast<const int*>(mcp->RefValue));
-										}
-										else
-										{
-											SetValue(ep, *reinterpret_cast<const int*>(mcp->Value));
-										}
-										break;
-									case MTRLPT_Ref_TextureHandle:
-										if (mcp->IsReference())
-										{
-											SetTexture(ep, reinterpret_cast<ResourceHandle<Texture>*>(mcp->RefValue));
-										}
-										break;
-									case MTRLPT_Ref_Texture:
-										if (mcp->IsReference())
-										{
-											SetTexture(ep, reinterpret_cast<Texture*>(mcp->RefValue));
-										}
-										break;
-									}
+									LogManager::getSingleton().Write(LOG_Graphics, L"[" + m_name + L"] Setting per-instance data for the instanced effect. Parameter is not setup per-instance.", LOGLVL_Warning);
+								}
+								if (rop->UserData)
+								{
+									const InstanceInfoBlob* blob = reinterpret_cast<const InstanceInfoBlob*>(rop->UserData);
+									SetInstanceBlobParameter(ep, blob->DataList[ep.InstanceBlobIndex]);
+								}
+								else
+								{
+									LogManager::getSingleton().Write(LOG_Graphics, L"[" + m_name + L"] No InfoBlob Obtained.", LOGLVL_Error);
 								}
 							}
 							
+							break;
+						case EPUSAGE_CustomMaterialParam:
+							if (mtrl && ep.CustomMaterialParamName.size())
+							{
+								SetMaterialCustomParameter(ep, mtrl);
+							}
 							break;
 					}
 
@@ -542,7 +479,7 @@ namespace Apoc3D
 
 				for (int i=0;i<m_parameters.getCount();i++)
 				{
-					switch (m_parameters[i].TypicalUsage)
+					switch (m_parameters[i].Usage)
 					{
 					case EPUSAGE_LC4_Ambient:
 						
@@ -837,6 +774,113 @@ namespace Apoc3D
 				shader->SetValue(param.RegisterIndex, transfroms, count);
 			}
 
+			void AutomaticEffect::SetInstanceBlobParameter(EffectParameter& ep, const InstanceInfoBlob::CustomValue& v)
+			{
+				if (EffectParameter::IsReference(v.Type))
+					SetSingleCustomParameter(ep, v.Type, v.RefValue);
+				else
+					SetSingleCustomParameter(ep, v.Type, v.Value);
+			}
+			void AutomaticEffect::SetMaterialCustomParameter(EffectParameter& ep, Material* mtrl)
+			{
+				const MaterialCustomParameter* mcp = mtrl->getCustomParameter(ep.CustomMaterialParamName);
+				if (mcp)
+				{
+					if (EffectParameter::IsReference(mcp->Type))
+						SetSingleCustomParameter(ep, mcp->Type, mcp->RefValue);
+					else
+						SetSingleCustomParameter(ep, mcp->Type, mcp->Value);
+				}
+			}
+			void AutomaticEffect::SetSingleCustomParameter(EffectParameter& ep, CustomEffectParameterType type, void* data)
+			{
+				switch (type)
+				{
+				case CEPT_Ref_TextureHandle:
+					if (EffectParameter::IsReference(type))
+					{
+						SetTexture(ep, reinterpret_cast<ResourceHandle<Texture>*>(data));
+					}
+					break;
+				case CEPT_Ref_Texture:
+					if (EffectParameter::IsReference(type))
+					{
+						SetTexture(ep, reinterpret_cast<Texture*>(data));
+					}
+					break;
+				}
+			}
+			void AutomaticEffect::SetSingleCustomParameter(EffectParameter& ep, CustomEffectParameterType type, const uint* data)
+			{
+				switch (type)
+				{
+				case CEPT_Float:
+					SetValue(ep, *reinterpret_cast<const float*>(data));
+					if (EffectParameter::IsReference(type))
+					{
+
+					}
+					else
+					{
+						SetValue(ep, *reinterpret_cast<const float*>(data));
+					}
+					break;
+				case CEPT_Vector2:
+				case CEPT_Ref_Vector2:
+					if (EffectParameter::IsReference(type))
+					{
+						SetVector2(ep, *reinterpret_cast<const Vector2*>(data));
+					}
+					else
+					{
+						SetVector2(ep, *reinterpret_cast<const Vector2*>(data));
+					}
+					break;
+				case CEPT_Ref_Vector3:
+					if (EffectParameter::IsReference(type))
+					{
+						SetVector3(ep, *reinterpret_cast<const Vector3*>(data));
+					}
+					else
+					{
+						SetVector3(ep, *reinterpret_cast<const Vector3*>(data));
+					}
+					break;
+
+				case CEPT_Ref_Vector4:
+				case CEPT_Vector4:
+					if (EffectParameter::IsReference(type))
+					{
+						SetVector4(ep, *reinterpret_cast<const Vector4*>(data));
+					}
+					else
+					{
+						SetVector4(ep, *reinterpret_cast<const Vector4*>(data));
+					}
+					break;
+				case CEPT_Boolean:
+					if (EffectParameter::IsReference(type))
+					{
+						SetValue(ep, *reinterpret_cast<const bool*>(data));
+					}
+					else
+					{
+						SetValue(ep, *reinterpret_cast<const bool*>(data));
+					}
+					break;
+				case CEPT_Integer:
+					if (EffectParameter::IsReference(type))
+					{
+						SetValue(ep, *reinterpret_cast<const int*>(data));
+					}
+					else
+					{
+						SetValue(ep, *reinterpret_cast<const int*>(data));
+					}
+					break;
+				}
+			}
+
 			/************************************************************************/
 			/*                                                                      */
 			/************************************************************************/
@@ -847,7 +891,7 @@ namespace Apoc3D
 				data.Load(rl);
 				m_name = data.Name;
 
-				assert(data.IsCustom);
+				assert(data.IsCFX);
 
 				Capabilities* caps = device->getCapabilities();
 				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
