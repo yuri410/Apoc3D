@@ -157,7 +157,7 @@ namespace APBuild
 			bw->Write(entries[i].Name);
 			bw->Write(entries[i].Offset);
 			bw->Write(entries[i].Size);
-			bw->Write(entries[i].Flag);
+			bw->Write((int32)0);
 		}
 
 		for (int i=0;i<count;i++)
@@ -167,7 +167,7 @@ namespace APBuild
 
 			entries[i].Offset = (uint)fs->getPosition();
 			entries[i].Size = (uint)fs2->getLength();
-			entries[i].Flag = 0;
+			//entries[i].Flag = 0;
 
 			char* buffer = new char[entries[i].Size];
 			br->ReadBytes(buffer, entries[i].Size);
@@ -186,7 +186,7 @@ namespace APBuild
 			bw->Write(entries[i].Name);
 			bw->Write(entries[i].Offset);
 			bw->Write(entries[i].Size);
-			bw->Write(entries[i].Flag);
+			bw->Write((int32)0);
 		}
 		
 
