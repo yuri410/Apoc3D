@@ -25,8 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "MainWindow.h"
 
 #include "Core/GameTime.h"
-#include "Config/XmlConfiguration.h"
-
+#include "Config/XmlConfigurationFormat.h"
+#include "Config/ConfigurationManager.h"
 #include "Graphics/RenderSystem/RenderWindow.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
 #include "Graphics/RenderSystem/ObjectFactory.h"
@@ -343,7 +343,7 @@ namespace APDesigner
 			m_project = new Project();
 			m_projectFilePath = path;
 			FileLocation* fl = new FileLocation(path);
-			XMLConfiguration* conf = new XMLConfiguration(fl);
+			Configuration* conf = ConfigurationManager::getSingleton().CreateInstance(fl);// XMLConfigurationFormat::Instance.Load(fl);
 
 			m_project->Parse(conf->get(L"Project"));
 			delete conf;

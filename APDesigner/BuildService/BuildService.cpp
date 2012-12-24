@@ -2,8 +2,9 @@
 
 #include "Project/Project.h"
 #include "Config/ConfigurationSection.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Utility/StringUtils.h"
+#include "IOLib/Streams.h"
 #include "Core/Logging.h"
 #include <Windows.h>
 
@@ -20,11 +21,12 @@ namespace APDesigner
 	{
 		ConfigurationSection* sect = item->Save(true);
 
-		XMLConfiguration* xml = new XMLConfiguration(L"Build");
+		Configuration* xml = new Configuration(L"Build");
 		xml->Add(sect);
 
-
-		xml->Save(L"build.xml");
+		
+		XMLConfigurationFormat::Instance.Save(xml, new FileOutStream(L"build.xml"));
+		//xml->Save(L"build.xml");
 
 		ExecuteBuildOperation();
 	}
@@ -37,9 +39,10 @@ namespace APDesigner
 		String allresult;
 		for (int i=0;i<scripts.getCount();i++)
 		{
-			XMLConfiguration* xc = new XMLConfiguration(L"Root");
+			Configuration* xc = new Configuration(L"Root");
 			xc->Add(scripts[i]);
-			xc->Save(L"build.xml");
+			XMLConfigurationFormat::Instance.Save(xc, new FileOutStream(L"build.xml"));
+			//xc->Save(L"build.xml");
 			delete xc;
 			if (ExecuteBuildOperation())
 			{

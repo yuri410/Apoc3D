@@ -9,7 +9,7 @@
 #include <direct.h>
 
 #include "ErrorCode.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Config/ConfigurationSection.h"
 #include "Vfs/File.h"
 #include "Vfs/ResourceLocation.h"
@@ -56,7 +56,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		r = Build(argc, argv);
 	}
-	catch (const Apoc3DException& e)
+	catch (Apoc3DException e)
 	{
 		
 	}
@@ -89,7 +89,7 @@ int Build(int argc, _TCHAR* argv[])
 			return ERR_CONFIG_FILE_NOT_FOUND;
 		}
 		FileLocation* fl = new FileLocation(configPath);
-		XMLConfiguration* config = new XMLConfiguration(fl);
+		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 
 		// find the first section in the build config
 		Configuration::ChildTable::Enumerator e = config->GetEnumerator();

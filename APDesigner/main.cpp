@@ -58,6 +58,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
                      LPTSTR    lpCmdLine,
                      int       nCmdShow)
 {
+	
 	wchar_t workingDir[260];
 	DWORD len = GetCurrentDirectory(260, workingDir);
 

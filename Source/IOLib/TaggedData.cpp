@@ -48,7 +48,7 @@ namespace Apoc3D
 
 				uint size = br->ReadUInt32();
 
-				m_positions.insert(pair<String, Entry>(name, Entry(name, strm->getPosition(), size)));
+				m_positions.Add(name, Entry(name, strm->getPosition(), size));
 				strm->Seek(size, SEEK_Current);
 			}
 
@@ -63,14 +63,14 @@ namespace Apoc3D
 		{
 			const Entry* ent = FindEntry(name);
 			m_stream->setPosition(ent->Offset);
-			m_stream->Read(m_buffer, len);
+			m_stream->Read(reinterpret_cast<char*>(m_buffer), len);
 		}
 		bool TaggedDataReader::TryFillBuffer(const String& name, uint32 len)
 		{
 			const Entry* ent = FindEntry(name);
 			if (!ent) return false;
 			m_stream->setPosition(ent->Offset);
-			m_stream->Read(m_buffer, len);
+			m_stream->Read(reinterpret_cast<char*>(m_buffer), len);
 			return true;
 		}
 
@@ -227,6 +227,14 @@ namespace Apoc3D
 		{
 			m_stream->Close();
 		}
+
+		void TaggedDataReader::FillTagList(List<String>& nameTags) const
+		{
+			for (SectionTable::Enumerator e = m_positions.GetEnumerator();e.MoveNext();)
+			{
+				nameTags.Add(*e.getCurrentKey());
+			}
+		}
 		
 		/************************************************************************/
 		/* TaggedDataWriter                                                     */
@@ -242,12 +250,17 @@ namespace Apoc3D
 
 		TaggedDataWriter::~TaggedDataWriter()
 		{
-			for (auto e = m_positions.begin(); e!= m_positions.end(); e++)
+			//for (auto e = m_positions.begin(); e!= m_positions.end(); e++)
+			//{
+			//	MemoryOutStream* ee = e->second.Buffer;
+			//	delete ee;
+			//}
+			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
 			{
-				MemoryOutStream* ee = e->second.Buffer;
+				MemoryOutStream* ee = e.getCurrentValue()->Buffer;
 				delete ee;
 			}
-			m_positions.clear();
+			m_positions.Clear();
 		}
 
 
@@ -255,13 +268,13 @@ namespace Apoc3D
 		BinaryWriter* TaggedDataWriter::AddEntry(const String& name)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 			return new BinaryWriter(new VirtualStream(ent.Buffer, 0));
 		}
 		Stream* TaggedDataWriter::AddEntryStream(const String& name)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 			return (new VirtualStream(ent.Buffer, 0));
 		}
 
@@ -271,7 +284,7 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntry(const String& name, int64 value)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 
 			if (m_endianDependent)
 			{
@@ -287,7 +300,7 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntry(const String& name, uint64 value)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 
 			if (m_endianDependent)
 			{
@@ -303,7 +316,7 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntry(const String& name, int32 value)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 
 			if (m_endianDependent)
 			{
@@ -319,7 +332,7 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntry(const String& name, uint32 value)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 
 			if (m_endianDependent)
 			{
@@ -335,7 +348,7 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntry(const String& name, int16 value)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 
 			if (m_endianDependent)
 			{
@@ -351,7 +364,7 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntry(const String& name, uint16 value)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 
 			if (m_endianDependent)
 			{
@@ -367,7 +380,7 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntry(const String& name, float value)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 
 			if (m_endianDependent)
 			{
@@ -383,7 +396,7 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntry(const String& name, double value)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 
 			if (m_endianDependent)
 			{
@@ -399,7 +412,7 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntry(const String& name, bool value)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 
 			m_buffer[0] = value ? 1 : 0;
 
@@ -535,7 +548,7 @@ namespace Apoc3D
 		void TaggedDataWriter::SetData(const String& name, bool value)
 		{
 			Entry ent = Entry(name);
-			m_positions.insert(pair<String, Entry>(name, ent));
+			m_positions.Add(name, ent);
 
 			m_buffer[0] = value ? 1 : 0;
 
@@ -549,35 +562,44 @@ namespace Apoc3D
 		{
 			BinaryWriter* bw = new BinaryWriter(stream);
 
-			bw->Write(static_cast<uint32>(m_positions.size()));
+			bw->Write(static_cast<uint32>(m_positions.getCount()));
 
 			//int simulatedLen = 0;
-			for (auto i = m_positions.begin();i!=m_positions.end();i++)
+			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
 			{
-				const MemoryOutStream* e = i->second.Buffer;
-				bw->Write(i->first);
-				bw->Write(static_cast<uint32>(e->getLength()));
-				bw->Write(e->getPointer(), e->getLength());
-				//char buffer[4096];
-				//int bi = 0;
-				//for (auto j=0;j<e->getLength();j++)
-				//{
-				//	buffer[bi++] = static_cast<char>(e->getPointer()[j]);
-				//	if (bi==4096)
-				//	{
-				//		bw->Write(buffer, 4096);
-				//		//simulatedLen += 4096;
-				//		//assert(simulatedLen + 76 == ((VirtualStream*)stream)->getBaseStream()->getLength());
-				//		bi = 0;
-				//	}
-				//	
-				//	//bw->Write(
-				//		//static_cast<char>(e->getPointer()->operator[](j)));
-				//}
-				//if (bi)
-				//	bw->Write(buffer, bi);
+				Entry* ent = e.getCurrentValue();
+				MemoryOutStream* memBlock = ent->Buffer;
 
+				bw->Write(*e.getCurrentKey());
+				bw->Write(static_cast<uint32>(memBlock->getLength()));
+				bw->Write(memBlock->getPointer(), memBlock->getLength());
 			}
+			//for (auto i = m_positions.begin();i!=m_positions.end();i++)
+			//{
+			//	const MemoryOutStream* e = i->second.Buffer;
+			//	bw->Write(i->first);
+			//	bw->Write(static_cast<uint32>(e->getLength()));
+			//	bw->Write(e->getPointer(), e->getLength());
+			//	//char buffer[4096];
+			//	//int bi = 0;
+			//	//for (auto j=0;j<e->getLength();j++)
+			//	//{
+			//	//	buffer[bi++] = static_cast<char>(e->getPointer()[j]);
+			//	//	if (bi==4096)
+			//	//	{
+			//	//		bw->Write(buffer, 4096);
+			//	//		//simulatedLen += 4096;
+			//	//		//assert(simulatedLen + 76 == ((VirtualStream*)stream)->getBaseStream()->getLength());
+			//	//		bi = 0;
+			//	//	}
+			//	//	
+			//	//	//bw->Write(
+			//	//		//static_cast<char>(e->getPointer()->operator[](j)));
+			//	//}
+			//	//if (bi)
+			//	//	bw->Write(buffer, bi);
+
+			//}
 
 			bw->Close();
 			delete bw;

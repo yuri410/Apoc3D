@@ -1,7 +1,7 @@
 #include "TerrainDemo.h"
 
 #include "Core/GameTime.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 
 #include "Graphics/RenderSystem/RenderWindow.h"
 #include "Graphics/RenderSystem/RenderDevice.h"
@@ -113,7 +113,7 @@ namespace SampleTerrain
 		// The scene render script is located
 		fl = FileSystem::getSingleton().Locate(L"Renderer.xml", FileLocateRule::Default);
 		// Then loaded by SceneRenderer
-		XMLConfiguration* config = new XMLConfiguration(fl);
+		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 		m_sceneRenderer->Load(config);
 		delete config;
 		delete fl;

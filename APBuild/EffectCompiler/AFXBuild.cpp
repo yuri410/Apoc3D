@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Collections/CollectionsCommon.h"
 #include "Config/ConfigurationSection.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Collections/FastList.h"
 #include "Collections/ExistTable.h"
 #include "Collections/FastMap.h"
@@ -103,7 +103,7 @@ namespace APBuild
 			return;
 
 		FileLocation* fl = new FileLocation(config.PListFile);
-		XMLConfiguration* plist = new XMLConfiguration(fl);
+		Configuration* plist = XMLConfigurationFormat::Instance.Load(fl);
 
 		ConfigurationSection* s = plist->get(L"VS");
 

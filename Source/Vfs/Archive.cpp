@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Archive.h"
 
+#include "Core/Logging.h"
 #include "ResourceLocation.h"
 #include "IOLib/Streams.h"
 #include "IOLib/BinaryReader.h"
@@ -33,17 +34,18 @@ namespace Apoc3D
 	namespace VFS
 	{
 
-		static const int PakFileID = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
+		static const int PakFileID1 = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
+		static const int PakFileID2 = ((byte)1 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
 
 		PakArchive::PakArchive(FileLocation* fl)
-			: Archive(fl->getPath(), fl->getSize(), fl->isInArchive()), m_file(fl)
+			: Archive(fl->getPath(), fl->getSize(), fl->isInArchive()), m_file(fl), m_compression(PCT_None)
 		{
 			Stream* stream = fl->GetReadStream();
 			stream->setPosition(0);
 
 			BinaryReader* br = new BinaryReader(stream);
 			
-			if (br->ReadInt32() == PakFileID)
+			if (br->ReadInt32() == PakFileID1)
 			{
 				int fileCount = br->ReadInt32();
 
@@ -54,14 +56,30 @@ namespace Apoc3D
 					ent.Name = br->ReadString();
 					ent.Offset = br->ReadUInt32();
 					ent.Size = br->ReadUInt32();
-					ent.Flag = br->ReadUInt32();
+					br->ReadUInt32();
+
+					m_entries.Add(ent.Name, ent);
+				}
+			}
+			else if (br->ReadInt32() == PakFileID2)
+			{
+				m_compression = static_cast<PakCompressionType>(br->ReadInt32());
+				int fileCount = br->ReadInt32();
+
+				for (int i = 0; i < fileCount; i++)
+				{
+					PakArchiveEntry ent;
+
+					ent.Name = br->ReadString();
+					ent.Offset = br->ReadUInt32();
+					ent.Size = br->ReadUInt32();
 
 					m_entries.Add(ent.Name, ent);
 				}
 			}
 			else
 			{
-				
+				LogManager::getSingleton().Write(LOG_System, L"Pak archive format is invalid " + fl->getPath(), LOGLVL_Warning);
 			}
 			br->Close();
 			delete br;

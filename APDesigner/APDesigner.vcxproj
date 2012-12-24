@@ -127,7 +127,6 @@
     <None Include="ModelViewSceneScript.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="ReadMe.txt" />
     <None Include="small.ico" />
     <None Include="SysShaderLib.xml" />
     <None Include="SysShaderLib\all_mod2.xml">

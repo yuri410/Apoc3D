@@ -91,9 +91,6 @@ namespace Apoc3D
 		*/
 		class APAPI FileStream : public Stream
 		{
-		private:
-			ifstream* m_in;
-			int64 m_length;
 		public:
 			FileStream(const String& filename);
 			virtual ~FileStream();
@@ -125,6 +122,10 @@ namespace Apoc3D
 			virtual void Close();
 
 			virtual void Flush() { }
+
+		private:
+			ifstream* m_in;
+			int64 m_length;
 		};
 		/** Provides write-only access to a file as a stream
 		*/
@@ -252,13 +253,6 @@ namespace Apoc3D
 		 */
 		class APAPI VirtualStream : public Stream
 		{
-		private:
-			Stream* m_baseStream;
-			int64 m_length;
-			int64 m_baseOffset;
-			
-			bool m_isOutput;
-
 		public:
 
 			virtual bool IsReadEndianDependent() const { return m_baseStream->IsReadEndianDependent(); }
@@ -365,6 +359,14 @@ namespace Apoc3D
 			virtual void Close() { }
 
 			virtual void Flush() { m_baseStream->Flush(); }
+
+		private:
+			Stream* m_baseStream;
+			int64 m_length;
+			int64 m_baseOffset;
+
+			bool m_isOutput;
+
 		};
 
 		/** Provides access to a dynamic length of space in memory as a stream
@@ -465,6 +467,7 @@ namespace Apoc3D
 
 			virtual void Flush(){}
 		};
+
 	};
 }
 

@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Core/ResourceHandle.h"
 
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "CommonDialog/ChooseColor.h"
 
 #include "Input/InputAPI.h"
@@ -88,7 +88,7 @@ namespace APDesigner
 
 		FileLocation* fl = FileSystem::getSingleton().Locate(L"ModelViewSceneRenderer.xml", FileLocateRule::Default);
 
-		XMLConfiguration* config = new XMLConfiguration(fl);
+		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 		m_sceneRenderer->Load(config);
 		delete config;
 		delete fl;

@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Collections/CollectionsCommon.h"
 #include "Config/ConfigurationSection.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Collections/FastList.h"
 #include "Collections/ExistTable.h"
 #include "Collections/FastMap.h"
@@ -56,7 +56,7 @@ namespace APBuild
 
 		EnsureDirectory(PathUtils::GetDirectory(config.Name));
 
-		XMLConfiguration* xml = new XMLConfiguration(L"FXList");
+		Configuration* xml = new Configuration(L"FXList");
 
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();iter.MoveNext();)
 		{
@@ -64,7 +64,8 @@ namespace APBuild
 			xml->Add(ss);
 		}
 
-		xml->Save(config.DestFile);
+		//xml->Save(config.DestFile);
+		XMLConfigurationFormat::Instance.Save(xml, new FileOutStream(config.DestFile));
 		delete xml;
 	}
 }

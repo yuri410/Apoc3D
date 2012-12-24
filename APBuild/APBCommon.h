@@ -10,8 +10,6 @@
 
 #include "squish-1.10/squish.h"
 
-#define TIXML_USE_STL
-
 namespace APBuild
 {
 	struct TextureBuildConfig;

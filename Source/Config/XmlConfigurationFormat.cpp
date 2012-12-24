@@ -21,16 +21,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "XmlConfiguration.h"
+#include "XmlConfigurationFormat.h"
 
-#include "Vfs/ResourceLocation.h"
-#include "IOLib/Streams.h"
 #include "ConfigurationSection.h"
+#include "IOLib/Streams.h"
 #include "Utility/StringUtils.h"
 #include "VFS/PathUtils.h"
+#include "Vfs/ResourceLocation.h"
 
-#include <tinyxml/tinyxml.h>
-#include <tinyxml/tinystr.h>
+#include "tinyxml.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
@@ -39,29 +38,56 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		String getElementName(const TiXmlElement* elem)
-		{
-			string str = elem->ValueStr();
+		XMLConfigurationFormat XMLConfigurationFormat::Instance = XMLConfigurationFormat();
 
-			return StringUtils::toWString(str);
-		}
-		String getNodeText(const TiXmlText* text)
+		String getElementName(const TiXmlElement* elem);
+		String getNodeText(const TiXmlText* text);
+		String getAttribName(const TiXmlAttribute* attrib);
+		String getAttribValue(const TiXmlAttribute* attrib);
+
+		Configuration* XMLConfigurationFormat::Load(const ResourceLocation* rl)
 		{
-			string str = text->ValueStr();
-			return StringUtils::toWString(str);
+			Configuration* config = new Configuration(rl->getName());
+
+			TiXmlDocument doc;
+
+			Stream* strm = rl->GetReadStream();
+
+			char* buffer = new char[(uint)strm->getLength()];
+			strm->Read(buffer, strm->getLength());
+
+			doc.Parse(buffer);
+
+			strm->Close();
+			delete strm;
+			delete buffer;
+
+			BuildXml(config, &doc);
+
+			return config;
 		}
-		String getAttribName(const TiXmlAttribute* attrib)
+		void XMLConfigurationFormat::Save(Configuration* config, Stream* strm)
 		{
-			string str = attrib->NameTStr();
-			return StringUtils::toWString(str);
-		}
-		String getAttribValue(const TiXmlAttribute* attrib)
-		{
-			string str = attrib->ValueStr();
-			return StringUtils::toWString(str);
+			TiXmlDocument doc;
+			TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );  
+			doc.LinkEndChild( decl );  
+
+			TiXmlElement* root = new TiXmlElement("Root");
+			doc.LinkEndChild(root);
+
+			for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator();iter.MoveNext();)
+			{
+				ConfigurationSection* sect = *iter.getCurrentValue();
+				TiXmlElement* elem = new TiXmlElement(StringUtils::toString(sect->getName()));
+				root->LinkEndChild(elem);
+				SaveNode(elem, sect);
+			}
+
+			doc.Save(strm);
+			//doc.SaveFile(StringUtils::toString(filePath));
 		}
 
-		void XMLConfiguration::BuildNode(const TiXmlNode* node, ConfigurationSection* parent)
+		void XMLConfigurationFormat::BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent)
 		{
 			int type = node->Type();
 
@@ -84,7 +110,7 @@ namespace Apoc3D
 
 					for (const TiXmlNode* i = node->FirstChild(); i!=0; i=i->NextSibling())
 					{
-						BuildNode(i, section);
+						BuildNode(config, i, section);
 					}
 					if (parent)
 					{
@@ -93,7 +119,7 @@ namespace Apoc3D
 					}
 					else
 					{
-						m_sections.Add(strName, section);
+						config->Add(strName, section);
 					}
 				}
 				break;
@@ -101,83 +127,26 @@ namespace Apoc3D
 				{
 					const TiXmlText* text = node->ToText();
 					
-					String strText = getNodeText(text);;
+					String strText = getNodeText(text);
 					
 					parent->SetValue(strText);
 				}
 				break;
 			}
 		}
-		void XMLConfiguration::BuildXml(const TiXmlDocument* doc)
+		void XMLConfigurationFormat::BuildXml(Configuration* config, const TiXmlDocument* doc)
 		{
 			const TiXmlNode* i = doc->FirstChildElement();
 			if (i)
 			{
 				for (const TiXmlNode* j = i->FirstChild(); j!=0; j=j->NextSibling())
 				{
-					BuildNode(j, 0);
+					BuildNode(config, j, nullptr);
 				}
 			}
 		}
 
-		XMLConfiguration::XMLConfiguration(const String& name)
-			: Configuration(name)
-		{
-
-		}
-		XMLConfiguration::XMLConfiguration(const ResourceLocation* rl)
-			: Configuration(rl->getName())
-		{
-			TiXmlDocument doc;
-			
-			Stream* strm = rl->GetReadStream();
-			
-			char* buffer = new char[(uint)strm->getLength()];
-			strm->Read(buffer, strm->getLength());
-
-			doc.Parse(buffer);
-
-			strm->Close();
-			delete strm;
-			delete buffer;
-
-			BuildXml(&doc);
-		}
-
-		Configuration* XMLConfiguration::Clone() const
-		{
-			return 0;
-		}
-		void XMLConfiguration::Merge(Configuration* config)
-		{
-
-		}
-		void XMLConfiguration::Add(ConfigurationSection* sect)
-		{
-			m_sections.Add(sect->getName(), sect);
-		}
-
-		void XMLConfiguration::Save(const String& filePath)
-		{
-			TiXmlDocument doc;
-			TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );  
-			doc.LinkEndChild( decl );  
-
-			TiXmlElement* root = new TiXmlElement("Root");
-			doc.LinkEndChild(root);
-
-			for (ChildTable::Enumerator iter = m_sections.GetEnumerator();iter.MoveNext();)
-			{
-				ConfigurationSection* sect = *iter.getCurrentValue();
-				TiXmlElement* elem = new TiXmlElement(StringUtils::toString(sect->getName()));
-				root->LinkEndChild(elem);
-				SaveNode(elem, sect);
-			}
-			
-			doc.SaveFile(StringUtils::toString(filePath));
-		}
-
-		void XMLConfiguration::SaveNode(TiXmlNode* node, ConfigurationSection* parent)
+		void XMLConfigurationFormat::SaveNode(TiXmlNode* node, ConfigurationSection* parent)
 		{
 			for (ConfigurationSection::AttributeEnumerator iter = parent->GetAttributeEnumrator();iter.MoveNext();)
 			{
@@ -197,6 +166,28 @@ namespace Apoc3D
 				node->LinkEndChild(elem);
 				SaveNode(elem, s);
 			}
+		}
+
+		String getElementName(const TiXmlElement* elem)
+		{
+			string str = elem->ValueStr();
+
+			return StringUtils::toWString(str);
+		}
+		String getNodeText(const TiXmlText* text)
+		{
+			string str = text->ValueStr();
+			return StringUtils::toWString(str);
+		}
+		String getAttribName(const TiXmlAttribute* attrib)
+		{
+			string str = attrib->NameTStr();
+			return StringUtils::toWString(str);
+		}
+		String getAttribValue(const TiXmlAttribute* attrib)
+		{
+			string str = attrib->ValueStr();
+			return StringUtils::toWString(str);
 		}
 	}
 }

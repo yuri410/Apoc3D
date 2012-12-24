@@ -35,7 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "IOLib/Streams.h"
 #include "Utility/StringUtils.h"
 
-#include "tinyxml/tinyxml.h"
+#include "tinyxml.h"
 
 using namespace Apoc3D::Utility;
 

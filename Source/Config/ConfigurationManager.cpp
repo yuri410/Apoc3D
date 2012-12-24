@@ -23,8 +23,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "ConfigurationManager.h"
-#include "Config/XmlConfiguration.h"
+#include "Core/Logging.h"
+#include "Config/XmlConfigurationFormat.h"
+#include "Config/ABCConfigurationFormat.h"
 #include "Vfs/ResourceLocation.h"
+#include "Vfs/PathUtils.h"
+#include "Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 SINGLETON_DECL(Apoc3D::Config::ConfigurationManager);
 
@@ -34,12 +40,79 @@ namespace Apoc3D
 	{
 		ConfigurationManager::ConfigurationManager()
 		{
-
+			RegisterFormat(new ABCConfigurationFormat());
+			RegisterFormat(new XMLConfigurationFormat());
 		}
-		void ConfigurationManager::LoadConfig(const String& name, const ResourceLocation* rl)
+		ConfigurationManager::~ConfigurationManager()
 		{
-			XMLConfiguration* conf = new XMLConfiguration(rl);
-			m_configs.insert(std::make_pair(name, conf));
+			for (ConfigTable::Enumerator e = m_configs.GetEnumerator(); e.MoveNext();)
+			{
+				Configuration* config = *e.getCurrentValue();
+				delete config;
+			}
+			for (FormatTable::Enumerator e = m_formats.GetEnumerator(); e.MoveNext(); )
+			{
+				ConfigurationFormat* fmt = *e.getCurrentValue();
+				delete fmt;
+			}
+		}
+
+		void ConfigurationManager::LoadConfig(const String& name, const ResourceLocation* rl, ConfigurationFormat* fmt)
+		{
+			Configuration* conf = CreateInstance(rl, fmt);
+			//XMLConfiguration* conf = new XMLConfiguration(rl);
+			m_configs.Add(name, conf);
+		}
+
+		Configuration* ConfigurationManager::CreateInstance(const ResourceLocation* rl, ConfigurationFormat* fmt)
+		{
+			if (fmt)
+			{
+				return fmt->Load(rl);
+			}
+
+			const FileLocation* fl = dynamic_cast<const FileLocation*>(rl);
+			if (fl)
+			{
+				String temp;
+				String ext;
+				PathUtils::SplitFileNameExtension(fl->getPath(), temp, ext);
+				StringUtils::ToLowerCase(ext);
+
+				if (m_formats.TryGetValue(ext, fmt))
+				{
+					return fmt->Load(rl);
+				}
+				throw Apoc3DException::createException(EX_NotSupported, ext + L" files are not supported");
+			}
+			throw Apoc3DException::createException(EX_Argument, L"Either a FileLocation or a ConfigurationFormat is required.");
+		}
+
+
+		void ConfigurationManager::RegisterFormat(ConfigurationFormat* fmt)
+		{
+			std::vector<String> exts = fmt->GetSupportedFileSystemExtensions();
+			for (size_t i=0;i<exts.size();i++)
+			{
+				if (!m_formats.Contains(exts[i]))
+					m_formats.Add(exts[i], fmt);
+				else
+				{
+					LogManager::getSingleton().Write(LOG_System, L"[ConfigurationManager] FileSys extension " + exts[i] + L" cannot be registered because it is already supported.", LOGLVL_Warning);
+				}
+			}
+		}
+		void ConfigurationManager::UnregisterFormat(ConfigurationFormat* fmt)
+		{
+			std::vector<String> exts = fmt->GetSupportedFileSystemExtensions();
+			for (size_t i=0;i<exts.size();i++)
+			{
+				ConfigurationFormat* cf;
+				if (m_formats.TryGetValue(exts[i], cf) && cf == fmt)
+				{
+					m_formats.Remove(exts[i]);
+				}
+			}
 		}
 	}
 }

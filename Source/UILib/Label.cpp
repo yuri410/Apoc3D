@@ -224,8 +224,8 @@ namespace Apoc3D
 		{
 			if (!m_multiline)
 			{
-				if (m_curorLocation.X > Text.size())
-					m_curorLocation.X = Text.size();
+				if (m_curorLocation.X > static_cast<int>(Text.size()))
+					m_curorLocation.X = static_cast<int>(Text.size());
 
 				Text = Text.insert(m_curorLocation.X, text);
 			}
@@ -967,52 +967,61 @@ namespace Apoc3D
 				m_curorLocation.X+=6;
 				changed = true;
 				break;
-
+			case KEY_NUMPAD0:
 			case KEY_0:
 				if (e.ShiftDown) Add(L")"); else Add(L"0");
 				m_curorLocation.X++;
 				changed = true;
 				break;
+			case KEY_NUMPAD1:
 			case KEY_1:
 				if (e.ShiftDown) Add(L"!"); else Add(L"1");
 				m_curorLocation.X++;
 				changed = true;
 				break;
+			case KEY_NUMPAD2:
 			case KEY_2:
 				if (e.ShiftDown) Add(L"@"); else Add(L"2");
 				m_curorLocation.X++;
 				changed = true;
 				break;
+			case KEY_NUMPAD3:
 			case KEY_3:
 				if (e.ShiftDown) Add(L"#"); else Add(L"3");
 				m_curorLocation.X++;
 				changed = true;
 				break;
+			case KEY_NUMPAD4:
 			case KEY_4:
 				if (e.ShiftDown) Add(L"$"); else Add(L"4");
 				m_curorLocation.X++;
 				changed = true;
 				break;
+			case KEY_NUMPAD5:
 			case KEY_5:
 				if (e.ShiftDown) Add(L"%"); else Add(L"5");
 				m_curorLocation.X++;
 				changed = true;
 				break;
+			case KEY_NUMPAD6:
 			case KEY_6:
 				if (e.ShiftDown) Add(L"^"); else Add(L"6");
 				m_curorLocation.X++;
 				changed = true;
 				break;
+			case KEY_NUMPAD7:
 			case KEY_7:
 				if (e.ShiftDown) Add(L"&"); else Add(L"7");
 				m_curorLocation.X++;
 				changed = true;
 				break;
+			case KEY_NUMPAD8:
 			case KEY_8:
 				if (e.ShiftDown) Add(L"*"); else Add(L"8");
 				m_curorLocation.X++;
 				changed = true;
 				break;
+			case KEY_NUMPAD9:
 			case KEY_9:
 				if (e.ShiftDown) Add(L"("); else Add(L"9");
 				m_curorLocation.X++;

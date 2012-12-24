@@ -90,7 +90,7 @@ namespace Apoc3D
 			uint32 len = ReadUInt32();
 
 			//wchar_t* const chars = new wchar_t[len];
-			String str = String(len, ' ');
+			String str(len, ' ');
 			for (size_t i=0;i<len;i++)
 			{
 				str[i] = ReadInt16();
@@ -98,6 +98,17 @@ namespace Apoc3D
 			//String str = String(chars, len);
 
 			//delete chars;
+			return str;
+		}
+		std::string BinaryReader::ReadMBString()
+		{
+			uint32 len = ReadUInt32();
+
+			std::string str(len, ' ');
+			for (size_t i=0;i<len;i++)
+			{
+				str[i] = ReadByte();
+			}
 			return str;
 		}
 

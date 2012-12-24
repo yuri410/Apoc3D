@@ -338,7 +338,15 @@ namespace Apoc3D
 				}
 				return false;
 			}
-
+			S* TryGetValue(const T& key) const
+			{
+				int index = FindEntry(key);
+				if (index>=0)
+				{
+					return &m_entries[index].value;
+				}
+				return nullptr;
+			}
 			Enumerator GetEnumerator() const
 			{
 				return Enumerator(this);

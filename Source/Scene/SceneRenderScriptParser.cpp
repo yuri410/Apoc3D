@@ -37,7 +37,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Graphics/EffectSystem/EffectManager.h"
 #include "Graphics/EffectSystem/Effect.h"
 #include "Math/GaussBlurFilter.h"
-#include "tinyxml/tinyxml.h"
+#include "tinyxml.h"
 #include "IOLib/Streams.h"
 #include "VFS/ResourceLocation.h"
 

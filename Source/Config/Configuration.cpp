@@ -30,6 +30,18 @@ namespace Apoc3D
 {
 	namespace Config
 	{
+		Configuration::Configuration(const Configuration& another)
+			: m_name(another.m_name), m_sections(another.m_sections)
+		{
+			for (ChildTable::Enumerator e = m_sections.GetEnumerator(); e.MoveNext(); )
+			{
+				ConfigurationSection* newSect = new ConfigurationSection(**e.getCurrentValue());
+
+				*e.getCurrentValue() = newSect;
+			}
+		}
+
+
 		Configuration::~Configuration()
 		{
 			for (Configuration::ChildTable::Enumerator e = m_sections.GetEnumerator();
@@ -40,5 +52,16 @@ namespace Apoc3D
 			}
 
 		}
+
+		void Configuration::Add(ConfigurationSection* sect)
+		{
+			Add(sect->getName(), sect);
+		}
+
+		void Configuration::Merge(Configuration* config)
+		{
+
+		}
+
 	}
 }

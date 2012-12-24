@@ -34,6 +34,16 @@ namespace Apoc3D
 {
 	namespace Config
 	{
+		ConfigurationSection::ConfigurationSection(const ConfigurationSection& another)
+			: m_attributes(another.m_attributes), m_subSection(another.m_subSection), m_name(another.m_name), m_value(another.m_value)
+		{
+			for (SubSectionTable::Enumerator e = another.GetSubSectionEnumrator(); e.MoveNext(); )
+			{
+				ConfigurationSection* newSect = new ConfigurationSection(**e.getCurrentValue());
+
+				*e.getCurrentValue() = newSect;
+			}
+		}
 
 		void ConfigurationSection::AddSection(ConfigurationSection* section)
 		{
@@ -52,9 +62,14 @@ namespace Apoc3D
 				m_attributes.Add(name, value);
 				//m_attributes.insert(make_pair(name, value));
 			}
-			catch (const Apoc3DException& e)
+			catch (Apoc3DException e)
 			{
-				LogManager::getSingleton().Write(LOG_System,  L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
+				switch (e.getType())
+				{
+				case EX_Duplicate:
+					LogManager::getSingleton().Write(LOG_System,  L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
+					break;
+				}
 			}
 		}
 		void ConfigurationSection::SetValue( const String& value)

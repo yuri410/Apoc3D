@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "ShaderDataIO.h"
 
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Config/ConfigurationSection.h"
 #include "Vfs/ResourceLocation.h"
 
@@ -36,7 +36,7 @@ namespace APDesigner
 	void ShaderDocumentData::Load(const String& filePath)
 	{
 		FileLocation* fl = new FileLocation(filePath);
-		XMLConfiguration* config = new XMLConfiguration(fl);
+		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 		delete fl;
 
 		ConfigurationSection* sect = config->get(L"Basic");

@@ -61,6 +61,7 @@ namespace Apoc3D
 			double ReadDouble();
 			float ReadSingle();
 			String ReadString();
+			std::string ReadMBString();
 
 			int16 ReadInt16();
 			int32 ReadInt32();

@@ -78,6 +78,7 @@ namespace Apoc3D
 			ConfigurationSection(const String& name)
 				: m_name(name) 
 			{ }
+			ConfigurationSection(const ConfigurationSection& another);
 			~ConfigurationSection()
 			{
 				for (SubSectionTable::Enumerator e = m_subSection.GetEnumerator();e.MoveNext();)
@@ -86,6 +87,7 @@ namespace Apoc3D
 					delete sect;
 				}
 			}
+
 			AttributeTable::Enumerator GetAttributeEnumrator() const { return m_attributes.GetEnumerator(); }
 			SubSectionTable::Enumerator GetSubSectionEnumrator() const { return m_subSection.GetEnumerator(); }
 
@@ -150,7 +152,7 @@ namespace Apoc3D
 			bool TryGetAttributeUInt(const String& key, uint32& result) const;
 			bool TryGetAttributeColorValue(const String& key, ColorValue& result) const;
 
-
+			int getAttributeCount() const { return m_attributes.getCount(); }
 			int getSubSectionCount() const { return m_subSection.getCount(); }
 		};
 	}

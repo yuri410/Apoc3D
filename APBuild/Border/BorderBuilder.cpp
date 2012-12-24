@@ -1,6 +1,6 @@
 #include "BorderBuilder.h"
 
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Config/ConfigurationSection.h"
 #include "Collections/FastQueue.h"
 #include "Graphics/PixelFormat.h"
@@ -325,7 +325,7 @@ namespace APBuild
 
 		if (outputFormat == L"xml")
 		{
-			XMLConfiguration* xml = new XMLConfiguration(L"Root");
+			Configuration* xml = new Configuration(L"Root");
 
 			
 			for (int i=0;i<borderData.getCount();i++)
@@ -379,7 +379,8 @@ namespace APBuild
 				xml->Add(sect);
 			}
 
-			xml->Save(dstFile);
+			//xml->Save(dstFile);
+			XMLConfigurationFormat::Instance.Save(xml, new FileOutStream(dstFile));
 
 			delete xml;
 			

@@ -52,7 +52,8 @@ namespace Apoc3D
 
 			void Write(double value) const;
 			void Write(float value) const;
-			void Write(const String& value) const;			
+			void Write(const String& value) const;
+			void Write(const std::string& value) const;
 			void Write(int16 value) const;
 			void Write(int32 value) const;
 			void Write(int64 value) const;

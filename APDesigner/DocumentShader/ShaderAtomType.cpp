@@ -25,15 +25,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ShaderAtomType.h"
 #include "ShaderDataIO.h"
 
-#include "Config/XmlConfiguration.h"
+#include "Config/ABCConfigurationFormat.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Config/ConfigurationSection.h"
 
 #include "Vfs/PathUtils.h"
 #include "Vfs/ResourceLocation.h"
 
+#include "IOLib/Streams.h"
+
 #include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Config;
+using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
 
@@ -149,7 +153,7 @@ namespace APDesigner
 	void ShaderAtomType::Load(const String& filePath)
 	{
 		FileLocation* fl = new FileLocation(filePath);
-		XMLConfiguration* config = new XMLConfiguration(fl);
+		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 
 		ConfigurationSection* sect = config->get(L"Basic");
 		m_name = sect->getValue(L"Name");
@@ -171,7 +175,7 @@ namespace APDesigner
 	}
 	void ShaderAtomType::Save(const String& filePath)
 	{
-		XMLConfiguration* config = new XMLConfiguration(L"Root");
+		Configuration* config = new Configuration(L"Root");
 
 		ConfigurationSection* sect = new ConfigurationSection(L"Basic");
 		config->Add(sect);
@@ -184,7 +188,8 @@ namespace APDesigner
 			sect->AddSection(subs);
 		}
 
-		config->Save(filePath);
+		//config->Save(filePath);
+		XMLConfigurationFormat::Instance.Save(config, new FileOutStream(filePath));
 		delete config;
 	}
 	/************************************************************************/
@@ -195,7 +200,7 @@ namespace APDesigner
 	{
 		String basePath = PathUtils::GetDirectory(fl->getPath());
 
-		XMLConfiguration* config = new XMLConfiguration(fl);
+		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 
 		for (Configuration::ChildTable::Enumerator e = config->GetEnumerator();e.MoveNext();)
 		{

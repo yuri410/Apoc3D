@@ -23,14 +23,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Project.h"
 #include "Config/ConfigurationSection.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/ABCConfigurationFormat.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Utility/StringUtils.h"
 #include "Graphics/GraphicsCommon.h"
 #include "Vfs/File.h"
 #include "Vfs/PathUtils.h"
 #include "Vfs/ResourceLocation.h"
+#include "IOLib/Streams.h"
 #include "Math/RandomUtils.h"
 
+using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
 
@@ -484,7 +487,7 @@ namespace Apoc3D
 		if (File::FileExists(path))
 		{
 			FileLocation* fl = new FileLocation(path);
-			XMLConfiguration* config = new XMLConfiguration(fl);
+			Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 			ConfigurationSection* mSect = config->get(L"Materials");
 
 			List<String> names;
@@ -1263,9 +1266,12 @@ namespace Apoc3D
 	{
 		ConfigurationSection* s = Save();
 
-		XMLConfiguration* xc = new XMLConfiguration(m_name);
+		Configuration* xc = new Configuration(m_name);
 		xc->Add(s);
-		xc->Save(file);
+		//xc->Save(file);
+		FileOutStream* fs = new FileOutStream(file);
+		XMLConfigurationFormat::Instance.Save(xc, fs);
+		
 		delete xc;
 	}
 

@@ -38,40 +38,37 @@ namespace Apoc3D
 			 
 		class APAPI ConfigurationManager : public Singleton<ConfigurationManager>
 		{
-		private:
-			typedef unordered_map<String, Configuration*> ConfigTable;
-			ConfigTable m_configs;
 		public:
 			ConfigurationManager();
-		
-			virtual ~ConfigurationManager()
-			{
-				for(ConfigTable::iterator iter = m_configs.begin(); 
-					iter != m_configs.end(); iter++)
-				{
-					Configuration* config = iter->second;
-					delete config;
-				}
-			}
+			virtual ~ConfigurationManager();
+
 			/** Loads a config from given location. Then stores it in the
 			 *  manager with the given name as an identifier, which can be 
 			 *  used to retrieve the config using the getConfiguration method.
 			 */
-			void LoadConfig(const String& name, const ResourceLocation* rl);
+			void LoadConfig(const String& name, const ResourceLocation* rl, ConfigurationFormat* fmt = nullptr);
 
 			/** Gets a pre-loaded configuration with the given name
 			*/
 			Configuration* getConfiguration(const String& name) const
 			{
-				ConfigTable::const_iterator iter = m_configs.find(name);
-				if (iter != m_configs.end())
-				{
-					return iter->second;
-				}
-				return 0;
+				Configuration* result = nullptr;
+				m_configs.TryGetValue(name, result);
+				return result;
 			}
 
+			Configuration* CreateInstance(const ResourceLocation* rl, ConfigurationFormat* fmt = nullptr);
+
+			void RegisterFormat(ConfigurationFormat* fmt);
+			void UnregisterFormat(ConfigurationFormat* fmt);
+
 			SINGLETON_DECL_HEARDER(ConfigurationManager);
+		private:
+			typedef FastMap<String, Configuration*> ConfigTable;
+			typedef FastMap<String, ConfigurationFormat*> FormatTable;
+
+			ConfigTable m_configs;
+			FormatTable m_formats;
 		};
 	}
 }

@@ -22,6 +22,6 @@ namespace Apoc3D
 
 		LogManager::getSingleton().Write(LOG_System, perfix, LOGLVL_Fatal);
 
-		return Apoc3DException(perfix.c_str());	
+		return Apoc3DException(perfix.c_str(), type);	
 	}
 }

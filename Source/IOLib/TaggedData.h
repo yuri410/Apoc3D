@@ -25,7 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define BINARYDATA_H
 
 #include "Common.h"
+#include "Collections/FastMap.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
 
 using namespace std;
@@ -46,43 +48,6 @@ namespace Apoc3D
 		 */
 		class APAPI TaggedDataReader
 		{
-		private:
-			struct Entry
-			{
-				String Name;
-				int64 Offset;
-				uint32 Size;
-
-				Entry(String name, int64 offset, uint32 size)
-					: Name(name), Offset(offset), Size(size)
-				{
-
-				}
-			};
-			//template class APAPI unordered_map<String, Entry>;
-			typedef unordered_map<String, Entry> SectionTable;
-			
-			bool m_endianDependent;
-			int m_sectCount;
-			SectionTable m_positions;
-			Stream* m_stream;
-
-			char m_buffer[32];
-
-
-			inline void FillBuffer(const String& name, uint32 len);
-
-			inline bool TryFillBuffer(const String& name, uint32 len);
-
-			const Entry* FindEntry(const String& name) const
-			{
-				SectionTable::const_iterator iter = m_positions.find(name);
-				if (iter != m_positions.end())
-				{
-					return &iter->second;
-				}
-				return 0;
-			}
 		public:
 			Stream* getBaseStream() const { return m_stream; }
 
@@ -91,8 +56,9 @@ namespace Apoc3D
 
 			bool Contains(const String& name) const
 			{
-				SectionTable::const_iterator iter = m_positions.find(name);
-				return (iter != m_positions.end());
+				return m_positions.Contains(name);
+				//SectionTable::const_iterator iter = m_positions.find(name);
+				//return (iter != m_positions.end());
 			}
 
 			BinaryReader* TryGetData(const String& name) const;
@@ -125,35 +91,52 @@ namespace Apoc3D
 
 			void Close();
 
+			void FillTagList(List<String>& nameTags) const;
+		private:
+			struct Entry
+			{
+				String Name;
+				int64 Offset;
+				uint32 Size;
+
+				Entry(String name, int64 offset, uint32 size)
+					: Name(name), Offset(offset), Size(size)
+				{
+
+				}
+				Entry() { }
+			};
+			//template class APAPI unordered_map<String, Entry>;
+			typedef FastMap<String, Entry> SectionTable;
+
+			bool m_endianDependent;
+			int m_sectCount;
+			SectionTable m_positions;
+			Stream* m_stream;
+
+			char m_buffer[32];
+
+
+			inline void FillBuffer(const String& name, uint32 len);
+
+			inline bool TryFillBuffer(const String& name, uint32 len);
+
+			const Entry* FindEntry(const String& name) const
+			{
+				return m_positions.TryGetValue(name);
+				//SectionTable::const_iterator iter = m_positions.find(name);
+				//if (iter != m_positions.end())
+				//{
+				//	return &iter->second;
+				//}
+				//return 0;
+			}
 		};
 
 		/** This class implements a writer for Tagged Data.
 		*/
 		class APAPI TaggedDataWriter
 		{
-		private:
-			struct Entry
-			{
-				String Name;
-				MemoryOutStream* Buffer;
-				Entry(const String& name);
-			};
-
-			typedef unordered_map<String, Entry> SectionTable;
-
-			bool m_endianDependent;
-			SectionTable m_positions;
-			char m_buffer[32];
-
-			const Entry* FindEntry(const String& name) const
-			{
-				SectionTable::const_iterator iter = m_positions.find(name);
-				if (iter != m_positions.end())
-				{
-					return &iter->second;
-				}
-				return 0;
-			}
 		public:
 			TaggedDataWriter(bool isWritringFile)
 				: m_endianDependent(!isWritringFile)
@@ -187,6 +170,33 @@ namespace Apoc3D
 			void SetData(const String& name, bool value);
 
 			void Save(Stream* stream) const;
+
+		private:
+			struct Entry
+			{
+				String Name;
+				MemoryOutStream* Buffer;
+				Entry(const String& name);
+
+				Entry() { }
+			};
+
+			typedef FastMap<String, Entry> SectionTable;
+
+			bool m_endianDependent;
+			SectionTable m_positions;
+			char m_buffer[32];
+
+			const Entry* FindEntry(const String& name) const
+			{
+				return m_positions.TryGetValue(name);
+				//SectionTable::const_iterator iter = m_positions.find(name);
+				//if (iter != m_positions.end())
+				//{
+				//	return &iter->second;
+				//}
+				//return 0;
+			}
 		};
 	}
 }

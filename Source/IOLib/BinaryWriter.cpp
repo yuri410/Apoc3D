@@ -287,10 +287,18 @@ namespace Apoc3D
 				Write(reinterpret_cast<const int16&>(value[i]));
 			}
 		}
+		void BinaryWriter::Write(const std::string& value) const
+		{
+			Write(static_cast<uint32>( value.size()));
+
+			Write(value.c_str(), value.size());
+		}
 
 		void BinaryWriter::Close() const
 		{
 			m_baseStream->Close();
 		}
+
+
 	}
 }

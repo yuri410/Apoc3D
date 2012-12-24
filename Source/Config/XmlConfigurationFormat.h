@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef XMLCONFIGURATION_H
-#define XMLCONFIGURATION_H
+#ifndef XMLCONFIGURATIONFORMAT_H
+#define XMLCONFIGURATIONFORMAT_H
 
 #include "Common.h"
 #include "Configuration.h"
@@ -36,33 +36,30 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		/** Loads a xml file, and stores it as described in Configuration
+		/** a xml format configuration storing as described in Configuration
 		*/
-		class APAPI XMLConfiguration : public Configuration
+		class APAPI XMLConfigurationFormat : public ConfigurationFormat
 		{
+		public:
+			static XMLConfigurationFormat Instance;
+
+			virtual Configuration* Load(const ResourceLocation* rl);
+			virtual void Save(Configuration* config, Stream* strm);
+
+			std::vector<String> GetSupportedFileSystemExtensions()
+			{
+				std::vector<String> result;
+				result.push_back(L"xml");
+				return result;
+			}
 		private:
 			/** Saves a ConfigurationSection sub tree to the tiny xml node, recursively.
 			*/
 			void SaveNode(TiXmlNode* node, ConfigurationSection* parent);
 			/** Read xml node recursively, while add data into ConfigurationSection
 			*/
-			void BuildNode(const TiXmlNode* node, ConfigurationSection* parent);
-			void BuildXml(const TiXmlDocument* doc);
-		public:
-			XMLConfiguration(const ResourceLocation* rl);
-			/** Initializes the empty configuration with a given name
-			*/
-			XMLConfiguration(const String& name);
-
-			/** Not supported
-			*/
-			virtual Configuration* Clone() const;
-			/** Not supported
-			*/
-			virtual void Merge(Configuration* config);
-
-			void Add(ConfigurationSection* sect);
-			void Save(const String& filePath);
+			void BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent);
+			void BuildXml(Configuration* config, const TiXmlDocument* doc);
 		};
 	}
 }

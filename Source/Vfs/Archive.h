@@ -70,17 +70,11 @@ namespace Apoc3D
 			String Name;
 			uint Offset;
 			uint Size;
-			uint Flag;
 		};
 
 		// the engine has built in support for a kind of uncompressed pak file.
 		class PakArchive : public Archive
 		{
-		private:
-			FastMap<String, PakArchiveEntry> m_entries;
-
-			FileLocation* m_file;
-			Stream* m_fileStream;
 		public:
 			PakArchive(FileLocation* fl);
 			~PakArchive();
@@ -90,6 +84,18 @@ namespace Apoc3D
 			virtual int getFileCount() const;
 			virtual Stream* GetEntryStream(const String& file);
 			virtual String GetEntryName(int index);
+
+			enum PakCompressionType
+			{
+				PCT_None,
+				PCT_RLEPerEntry
+			};
+		private:
+			FastMap<String, PakArchiveEntry> m_entries;
+
+			FileLocation* m_file;
+			Stream* m_fileStream;
+			PakCompressionType m_compression;
 		};
 
 		class PakArchiveFactory : public ArchiveFactory

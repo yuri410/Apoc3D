@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Collections/FastMap.h"
 
 using namespace Apoc3D::Collections;
+using namespace Apoc3D::IO;
+using namespace Apoc3D::VFS;
 using namespace std;
 
 namespace Apoc3D
@@ -35,6 +37,14 @@ namespace Apoc3D
 	namespace Config
 	{
 		//template class APAPI unordered_map<String, ConfigurationSection*>;
+		class ConfigurationFormat
+		{
+		public:
+			virtual Configuration* Load(const ResourceLocation* rl) = 0;
+			virtual void Save(Configuration* config, Stream* strm) = 0;
+
+			virtual std::vector<String> GetSupportedFileSystemExtensions() = 0;
+		};
 
 		/** Represents a configuration
 		 *
@@ -50,17 +60,14 @@ namespace Apoc3D
 		{
 		public:
 			typedef FastMap<String, ConfigurationSection*> ChildTable;
-		private:			
-			String m_name;			
-		protected:
-			ChildTable m_sections;
+			
 
 			Configuration(const String& name)
 				: m_name(name)
 			{
-				
-			}			
-		public:
+
+			}
+			Configuration(const Configuration& another);
 			virtual ~Configuration();
 
 			const String& getName() const { return m_name; }
@@ -81,10 +88,18 @@ namespace Apoc3D
 			*/
 			ChildTable::Enumerator GetEnumerator() { return m_sections.GetEnumerator(); }
 
-			virtual Configuration* Clone() const = 0;
-			virtual void Merge(Configuration* config) = 0;
-
+			void Merge(Configuration* config);
 			
+			void Add(const String& name, ConfigurationSection* sect)
+			{
+				m_sections.Add(name, sect);
+			}
+			void Add(ConfigurationSection* sect);
+		private:
+			String m_name;
+			ChildTable m_sections;
+
+			friend class ConfigurationFormat;
 		};
 	}
 }

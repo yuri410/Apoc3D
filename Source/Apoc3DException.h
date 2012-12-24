@@ -48,11 +48,9 @@ namespace Apoc3D
 
 	class APAPI Apoc3DException
 	{
-	private:
-		String m_message;
 	public:
-		Apoc3DException(const wchar_t* const &msg)
-			: m_message(msg)
+		Apoc3DException(const String& msg, Apoc3DExceptionType type)
+			: m_message(msg), m_type(type)
 		{
 
 		}
@@ -61,9 +59,14 @@ namespace Apoc3D
 		{
 		}
 
+		const String& getMessage() const { return m_message; }
+		const Apoc3DExceptionType getType() const { return m_type; }
+
 		static Apoc3DException createException(Apoc3DExceptionType type, const String& msg);
-		
-		
+
+	private:
+		String m_message;
+		Apoc3DExceptionType m_type;
 	};
 };
 

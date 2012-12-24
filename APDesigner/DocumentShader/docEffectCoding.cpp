@@ -33,7 +33,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "DocumentModel/MaterialDocument.h"
 
 #include "Config/ConfigurationSection.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "IOLib/BinaryReader.h"
 #include "IOLib/Streams.h"
 #include "UILib/Form.h"
@@ -212,7 +212,7 @@ namespace APDesigner
 	void EffectDocument::LoadRes()
 	{
 		FileLocation* fl = new FileLocation(m_filePath);
-		XMLConfiguration* plist = new XMLConfiguration(fl);
+		Configuration* plist = XMLConfigurationFormat::Instance.Load(fl);
 
 		ConfigurationSection* s = plist->get(L"VS");
 		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
@@ -281,7 +281,7 @@ namespace APDesigner
 	}
 	void EffectDocument::SaveRes()
 	{
-		XMLConfiguration* plist = new XMLConfiguration(L"Root");
+		Configuration* plist = new Configuration(L"Root");
 
 		ConfigurationSection* vs = new ConfigurationSection(L"VS");
 		ConfigurationSection* ps = new ConfigurationSection(L"PS");
@@ -308,7 +308,9 @@ namespace APDesigner
 		plist->Add(vs);
 		plist->Add(ps);
 
-		plist->Save(m_filePath);
+		//plist->Save(m_filePath);
+		XMLConfigurationFormat::Instance.Save(plist, new FileOutStream(m_filePath));
+
 		delete plist;
 	}
 

@@ -13,7 +13,7 @@
 #include "Graphics/Animation/AnimationData.h"
 #include "Collections/FastList.h"
 #include "Config/ConfigurationSection.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Vfs/ResourceLocation.h"
 #include "Vfs/PathUtils.h"
 #include "Utility/StringUtils.h"
@@ -49,7 +49,7 @@ namespace APBuild
 		AnimationData::MtrlClipTable mtrlClip;
 
 		FileLocation* fl = new FileLocation(config.SrcFile);
-		XMLConfiguration* script = new XMLConfiguration(fl);
+		Configuration* script = XMLConfigurationFormat::Instance.Load(fl);
 
 		ConfigurationSection* animSect = script->get(L"Animation");
 

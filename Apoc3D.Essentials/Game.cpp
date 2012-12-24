@@ -2,7 +2,7 @@
 #include "Game.h"
 
 #include "Core/GameTime.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 
 #include "Graphics/RenderSystem/RenderWindow.h"
 #include "Graphics/RenderSystem/RenderDevice.h"

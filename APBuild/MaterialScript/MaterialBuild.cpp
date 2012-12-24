@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/Color.h"
 #include "Collections/FastList.h"
 #include "Config/ConfigurationSection.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Vfs/ResourceLocation.h"
 #include "Vfs/PathUtils.h"
 #include "Utility/StringUtils.h"
@@ -61,7 +61,7 @@ namespace APBuild
 		EnsureDirectory(destination);
 
 		FileLocation* fl = new FileLocation(srcFile);
-		XMLConfiguration* config = new XMLConfiguration(fl);
+		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 
 		ConfigurationSection* palSect = config->get(L"Pallet");
 
@@ -99,14 +99,16 @@ namespace APBuild
 		delete config;
 		delete fl;
 
-		XMLConfiguration* tokenFile = new XMLConfiguration(L"MtrlToken");
+		Configuration* tokenFile = new Configuration(L"MtrlToken");
 		for (FastMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
 		{
 			ConfigurationSection* s = new ConfigurationSection(*e.getCurrentKey());
 			tokenFile->Add(s);
 		}
-		tokenFile->Save(desinationToken);
+		//tokenFile->Save(desinationToken);
+		XMLConfigurationFormat::Instance.Save(tokenFile, new FileOutStream(desinationToken));
 		delete tokenFile;
+
 		CompileLog::WriteInformation(desinationToken, L">");
 
 

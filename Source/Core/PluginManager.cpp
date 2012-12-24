@@ -110,7 +110,7 @@ namespace Apoc3D
 				m_libraries.push_back(lib);
 				m_plugins.insert(make_pair(name, plugin));
 			}
-			catch (Apoc3DException& e)
+			catch (Apoc3DException e)
 			{
 				OnPluginError(0);
 			}
@@ -129,7 +129,7 @@ namespace Apoc3D
 
 					m_plugins.insert(make_pair(plugin->GetName(), plugin));
 				}
-				catch (Apoc3DException& e)
+				catch (Apoc3DException e)
 				{
 					OnPluginError(0);
 				}
@@ -160,7 +160,7 @@ namespace Apoc3D
 				{
 					iter->second->Unload();
 				}
-				catch (Apoc3DException& e)
+				catch (Apoc3DException e)
 				{
 					OnPluginError(iter->second);
 				}

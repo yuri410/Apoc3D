@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "EffectManager.h"
 #include "Effect.h"
 #include "Core/Logging.h"
-#include "Config/XmlConfiguration.h"
+#include "Config/XmlConfigurationFormat.h"
 #include "Config/ConfigurationSection.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/FileLocateRule.h"
@@ -58,8 +58,8 @@ namespace Apoc3D
 
 			void EffectManager::LoadEffectFromList(RenderDevice* device, const ResourceLocation* rl)
 			{
-				XMLConfiguration* config = new XMLConfiguration(rl);
-				for (XMLConfiguration::ChildTable::Enumerator iter = config->GetEnumerator();iter.MoveNext();)
+				Configuration* config = XMLConfigurationFormat::Instance.Load(rl);
+				for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator();iter.MoveNext();)
 				{
 					ConfigurationSection* lstEntry = *iter.getCurrentValue();
 

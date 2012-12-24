@@ -152,10 +152,10 @@ namespace Apoc3D
 			m_position += count;
 		}
 
-
 		void VirtualStream::setPosition(int64 offset)
 		{
 			m_baseStream->setPosition( offset + m_baseOffset );
 		}
+
 	};
 };
