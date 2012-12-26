@@ -87,6 +87,12 @@ namespace Apoc3D
 				v = _max;
 			return (v < _min) ? _min : v;
 		}
+		static inline int Clamp(int v, int _min, int _max)
+		{
+			if (v > _max)
+				v = _max;
+			return (v<_min) ? _min : v;
+		}
 	}
 }
 

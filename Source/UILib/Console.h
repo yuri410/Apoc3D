@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UICommon.h"
 #include "Core/Logging.h"
 #include "Collections/FastQueue.h"
+#include "Math/ColorValue.h"
 #include "tthread/tinythread.h"
 #include "tthread/fast_mutex.h"
 
@@ -44,6 +45,8 @@ namespace Apoc3D
 		class APAPI Console
 		{
 		public:
+			static const int MaxLogEntries = 200;
+
 			Console(RenderDevice* device, StyleSkin* skin, const Point& position, const Point& size);
 			~Console();
 
@@ -61,6 +64,7 @@ namespace Apoc3D
 			void TextBox_ReturnPressed(Control* ctrl);
 			void Submit_Pressed(Control* ctrl);
 
+			void Form_Resized(Control* ctrl);
 			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 			void Log_New(LogEntry e);
 
@@ -72,6 +76,16 @@ namespace Apoc3D
 			ScrollBar* m_scrollBar;
 			std::list<LogEntry> m_logs;
 			FastQueue<LogEntry> m_queuedNewLogs;
+
+			bool m_needsUpdateLineInfo;
+			int m_contendLineCount;
+			struct 
+			{
+				int LineCount;
+				String Message;
+				ColorValue Color;
+			} m_entryInfo[MaxLogEntries];
+
 
 			ConsoleCommandHandler m_eCommandSubmited;
 

@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "PictureBox.h"
 #include "FontManager.h"
 #include "Scrollbar.h"
+#include "Input/InputAPI.h"
+#include "Input/Mouse.h"
 #include "Graphics/RenderSystem/Sprite.h"
 #include "StyleSkin.h"
 #include "Utility/StringUtils.h"
@@ -40,7 +42,7 @@ namespace Apoc3D
 	namespace UI
 	{
 		Console::Console(RenderDevice* device,StyleSkin* skin,const Point& position, const Point& size)
-			: m_skin(skin)
+			: m_skin(skin), m_needsUpdateLineInfo(false), m_contendLineCount(0)
 		{
 			m_form = new Form(FBS_Sizable, L"Console");
 			m_form->Position = position;
@@ -70,6 +72,7 @@ namespace Apoc3D
 
 			m_form->setMinimumSize(Point(400,300));
 			m_form->Initialize(device);
+			m_form->eventResized().bind(this, &Console::Form_Resized);
 
 			{
 				Log* log = LogManager::getSingleton().getLogSet(LOG_System);
@@ -110,20 +113,26 @@ namespace Apoc3D
 			m_scrollBar->setPosition(Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 12, m_pictureBox->Position.Y));
 			m_scrollBar->setHeight(m_pictureBox->Size.Y);
 
-
 			m_logLock.lock();
 			while (m_queuedNewLogs.getCount()>0)
 			{
 				LogEntry e = m_queuedNewLogs.Dequeue();
 				m_logs.push_back(e);
+				m_needsUpdateLineInfo = true;
 
-				while (m_logs.size()>200)
+				while (m_logs.size()>MaxLogEntries)
 				{
 					m_logs.erase(m_logs.begin());
 				}
 			}
 			m_logLock.unlock();
 
+
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+			if (mouse->getDZ() && m_pictureBox->getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
+			{
+				m_scrollBar->setValue(Math::Clamp(m_scrollBar->getValue() + mouse->getDZ() / 60, 0, m_scrollBar->getMax()));
+			}
 		}
 		void Console::TextBox_ReturnPressed(Control* ctrl)
 		{
@@ -212,7 +221,7 @@ namespace Apoc3D
 				}
 
 				LogEntry le(0, c, LOGLVL_Default, LOG_Command);
-				m_logs.push_back(le);
+				Log_New(le);
 
 				if (!m_eCommandSubmited.empty())
 				{
@@ -230,8 +239,6 @@ namespace Apoc3D
 			if (m_form->getState() == Form::FWS_Minimized)
 				return;
 
-			int lineCount = dstRect->Height / m_form->getFontRef()->getLineHeight();
-			m_scrollBar->setMax(m_logs.size() - lineCount);
 			
 			//int lineCount = dstRect->Height / m_form->getFontRef()->getLineHeight();
 			//int maxLineCount = 200;
@@ -240,46 +247,108 @@ namespace Apoc3D
 
 			Font* font = m_form->getFontRef();
 
+
+			if (m_needsUpdateLineInfo)
+			{
+				m_contendLineCount = 0;
+				int counter = 0;
+				for (list<LogEntry>::iterator iter = m_logs.begin(); iter != m_logs.end(); iter++ )
+				{
+					const LogEntry& e = *iter;
+					String str = e.ToString();
+					Point size = font->MeasureString(str,dstRect->Width- 10);
+
+					m_entryInfo[counter].LineCount = size.Y / font->getLineHeight();
+					m_entryInfo[counter].Message = str;
+					m_contendLineCount+= m_entryInfo[counter].LineCount;
+
+					ColorValue color = 0;
+					switch (e.Level)
+					{
+					case LOGLVL_Fatal:
+						color = CV_Purple;
+						break;
+					case LOGLVL_Error:
+						color = CV_Red;
+						break;
+					case LOGLVL_Warning:
+						color = CV_Orange;
+						break;
+					case LOGLVL_Infomation:
+						color = CV_White;
+						break;
+					case LOGLVL_Default:
+						color = CV_Green;
+						break;
+					}
+					m_entryInfo[counter].Color = color;
+					counter++;
+				}
+				m_needsUpdateLineInfo = false;
+			}
+			
+
+			int windowLineCount = dstRect->Height / m_form->getFontRef()->getLineHeight();
+			m_scrollBar->setMax(m_contendLineCount - windowLineCount);
+
+			int startIndex = (int)m_logs.size() - 1;
+			if (startIndex>=0)
+			{
+				for (int i=0;i<m_scrollBar->getValue() && startIndex>=0;)
+				{
+					i += m_entryInfo[startIndex].LineCount;
+					startIndex--;
+				}
+			}
+
 			int x = dstRect->X + 5;
 			int y = dstRect->Y + dstRect->Height - 5;
-
-			std::list<LogEntry>::reverse_iterator iter = m_logs.rbegin();
-			for (int i=0;i<m_scrollBar->getValue();i++)
+			for (int i=startIndex;i>=0;i--)
 			{
-				iter++;
+				y -= (m_entryInfo[i].LineCount-1) * font->getLineHeight();
+
+				font->DrawString(sprite, m_entryInfo[i].Message, x,y,dstRect->Width - 10, m_entryInfo[i].Color);
 			}
-			for (;iter!=m_logs.rend()&&y>0;iter++)
-			{
-				const LogEntry& e = *iter;
+			//std::list<LogEntry>::reverse_iterator iter = m_logs.rbegin();
+			//for (int i=0;i<m_scrollBar->getValue() && iter != m_logs.rend();i++)
+			//{
+			//	iter++;
+			//}
+			//if (iter != m_logs.rend())
+			//{
+			//	for (;iter!=m_logs.rend()&&y>0;iter++)
+			//	{
+			//		const LogEntry& e = *iter;
 
-				ColorValue color = 0;
-				switch (e.Level)
-				{
-				case LOGLVL_Fatal:
-					color = CV_Purple;
-					break;
-				case LOGLVL_Error:
-					color = CV_Red;
-					break;
-				case LOGLVL_Warning:
-					color = CV_Orange;
-					break;
-				case LOGLVL_Infomation:
-					color = CV_White;
-					break;
-				case LOGLVL_Default:
-					color = CV_Green;
-					break;
-				}
+			//		ColorValue color = 0;
+			//		switch (e.Level)
+			//		{
+			//		case LOGLVL_Fatal:
+			//			color = CV_Purple;
+			//			break;
+			//		case LOGLVL_Error:
+			//			color = CV_Red;
+			//			break;
+			//		case LOGLVL_Warning:
+			//			color = CV_Orange;
+			//			break;
+			//		case LOGLVL_Infomation:
+			//			color = CV_White;
+			//			break;
+			//		case LOGLVL_Default:
+			//			color = CV_Green;
+			//			break;
+			//		}
 
-				String str = e.ToString();
-				Point size = font->MeasureString(str,dstRect->Width- 10);// font->DrawString(sprite, e.ToString(), x,y,dstRect->Width - 10, color);
-				
+			//		String str = e.ToString();
+			//		Point size = font->MeasureString(str,dstRect->Width- 10);
 
-				y -= size.Y-font->getLineHeight();
+			//		y -= size.Y - font->getLineHeight();
 
-				font->DrawString(sprite, e.ToString(), x,y,dstRect->Width - 10, color);
-			}
+			//		font->DrawString(sprite, e.ToString(), x,y,dstRect->Width - 10, color);
+			//	}
+			//}
+
 		}
 
 		void Console::Log_New(LogEntry e)
@@ -287,6 +356,11 @@ namespace Apoc3D
 			m_logLock.lock();
 			m_queuedNewLogs.Enqueue(e);
 			m_logLock.unlock();
+		}
+
+		void Console::Form_Resized(Control* ctrl)
+		{
+			m_needsUpdateLineInfo = true;
 		}
 	}
 }

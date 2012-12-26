@@ -453,6 +453,7 @@ namespace Apoc3D
 		}
 		void TextBox::UpdateScrollbars(const GameTime* const time)
 		{
+ 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			if (m_vscrollBar)
 			{
 				if (m_hscrollBar && m_hscrollBar->getMax()>0)
@@ -469,6 +470,11 @@ namespace Apoc3D
 					m_vscrollBar->setHeight(Size.Y - 2);
 
 				m_vscrollBar->Update(time);
+
+				if (mouse->getDZ() && m_dRect.Contains(mouse->GetCurrentPosition()))
+				{
+					m_vscrollBar->setValue(Math::Clamp(m_vscrollBar->getValue() + mouse->getDZ() / 60, 0, m_vscrollBar->getMax()));
+				}
 			}
 
 			if (m_hscrollBar && m_hscrollBar->getMax()>0)
@@ -497,6 +503,7 @@ namespace Apoc3D
 					m_hasFocus = false;
 				}
 			}
+
 		}
 		void TextBox::Draw(Sprite* sprite)
 		{
