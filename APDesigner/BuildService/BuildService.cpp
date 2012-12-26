@@ -15,7 +15,7 @@ using namespace Apoc3D::Utility;
 
 namespace APDesigner
 {
-	String BuildInterface::LastResult;
+	std::vector<String> BuildInterface::LastResult;
 
 	void BuildInterface::BuildSingleItem(ProjectItem* item)
 	{
@@ -36,7 +36,7 @@ namespace APDesigner
 		FastList<ConfigurationSection*> scripts;
 		project->GenerateBuildScripts(scripts);
 
-		String allresult;
+		std::vector<String> allresult;
 		for (int i=0;i<scripts.getCount();i++)
 		{
 			Configuration* xc = new Configuration(L"Root");
@@ -46,11 +46,13 @@ namespace APDesigner
 			delete xc;
 			if (ExecuteBuildOperation())
 			{
-				allresult.append(LastResult);
+				for (size_t i=0;i<LastResult.size();i++)
+					allresult.push_back(LastResult[i]);
 				LogManager::getSingleton().Write(LOG_System, L"Build failed.", LOGLVL_Error);
 				break;
 			}
-			allresult.append(LastResult);
+			for (size_t i=0;i<LastResult.size();i++)
+				allresult.push_back(LastResult[i]);
 		}
 
 		LastResult = allresult;
@@ -91,23 +93,31 @@ namespace APDesigner
 
 		LastResult.clear();
 
-		while (WaitForSingleObject(procInfo.hProcess, 10) == WAIT_TIMEOUT)
+		WaitForSingleObject(procInfo.hProcess, INFINITE);
+		
+		String buildOutput;
 		{
 			char buffer[1024];
-			//memset(buffer,0,sizeof(buffer));
+
+			int readSize = sizeof(buffer) - 1;
 			DWORD actul;
-			ReadFile(writePipe, buffer, sizeof(buffer), &actul,0);
-
-			if (actul<sizeof(buffer))
+			do 
 			{
-				memset(buffer+actul,0, sizeof(buffer)-actul);
-			}
 
-			if (actul)
-			{
-				LastResult.append(StringUtils::toWString(buffer));
-			}
+				memset(buffer, 0, sizeof(buffer));
+
+
+				ReadFile(writePipe, buffer, readSize, &actul,0);
+
+				if (actul)
+				{
+					buildOutput.append(StringUtils::toWString(buffer));
+					//LastResult.append(StringUtils::toWString(buffer));
+				}
+			} while (actul == readSize);
 		}
+
+		LastResult = StringUtils::Split(buildOutput, L"\n\r");
 
 		//GetFileSize(writePipe, );
 

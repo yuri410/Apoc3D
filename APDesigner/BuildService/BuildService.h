@@ -14,7 +14,7 @@ namespace APDesigner
 	private:
 		static int ExecuteBuildOperation();
 	public:
-		static String LastResult;
+		static std::vector<String> LastResult;
 		static void BuildSingleItem(ProjectItem* item);
 		static void BuildAll(Project* project);
 	};

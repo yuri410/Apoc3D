@@ -711,7 +711,8 @@ namespace APDesigner
 				{
 					LogManager::getSingleton().Write(LOG_System, String(L"Building asset '") + item->getName() + String(L"'..."));
 					BuildInterface::BuildSingleItem(item);
-					LogManager::getSingleton().Write(LOG_System, BuildInterface::LastResult);
+					for (size_t i=0;i<BuildInterface::LastResult.size();i++)
+						LogManager::getSingleton().Write(LOG_System, BuildInterface::LastResult[i]);
 				}
 
 				switch (item->getType())
