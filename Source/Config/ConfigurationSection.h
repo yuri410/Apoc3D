@@ -161,11 +161,18 @@ namespace Apoc3D
 			void AddAttributeInt(const String& name, int32 val);
 			void AddAttributeUInt(const String& name, uint32 val);
 			void AddAttributeColorValue(const String& name, ColorValue val);
-			void AddAttributeStrings(const String& name, const std::vector<String>& v);
-			void AddAttributeSingles(const String& name, const std::vector<float>& v);
-			void AddAttributePercentages(const String& name, const std::vector<float>& v);
-			void AddAttributeInts(const String& name, const std::vector<int32>& v);
-			void AddAttributeUInts(const String& name, const std::vector<uint32>& v);
+
+			void AddAttributeStrings(const String& name, const String* v, int count);
+			void AddAttributeSingles(const String& name, const float* v, int count);
+			void AddAttributePercentages(const String& name, const float* v, int count);
+			void AddAttributeInts(const String& name, const int32* v, int count);
+			void AddAttributeUInts(const String& name, const uint32* v, int count);
+
+			void AddAttributeStrings(const String& name, const std::vector<String>& v) { AddAttributeStrings(name, &v[0], static_cast<int>(v.size())); }
+			void AddAttributeSingles(const String& name, const std::vector<float>& v) { AddAttributeSingles(name, &v[0], static_cast<int>(v.size())); }
+			void AddAttributePercentages(const String& name, const std::vector<float>& v) { AddAttributePercentages(name, &v[0], static_cast<int>(v.size())); }
+			void AddAttributeInts(const String& name, const std::vector<int32>& v) { AddAttributeInts(name, &v[0], static_cast<int>(v.size())); }
+			void AddAttributeUInts(const String& name, const std::vector<uint32>& v) { AddAttributeUInts(name, &v[0], static_cast<int>(v.size())); }
 		};
 	}
 }

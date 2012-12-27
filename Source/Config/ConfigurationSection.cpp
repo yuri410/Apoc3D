@@ -47,6 +47,8 @@ namespace Apoc3D
 
 		void ConfigurationSection::AddSection(ConfigurationSection* section)
 		{
+			assert(section != this);
+
 			if (m_subSection.Contains(section->getName()))
 			{
 				LogManager::getSingleton().Write(LOG_System,  L"Configuration Section with name '" + section->getName() + L"' already exists. Ignored.", LOGLVL_Warning);
@@ -468,27 +470,67 @@ namespace Apoc3D
 		}
 		void ConfigurationSection::AddAttributeColorValue(const String& name, ColorValue val)
 		{
-
+			AddAttributeString(name, ColorValueToString(val));
 		}
-		void ConfigurationSection::AddAttributeStrings(const String& name, const std::vector<String>& v)
-		{
 
+		void ConfigurationSection::AddAttributeStrings(const String& name, const String* v, int count)
+		{
+			String result;
+			for (int i=0;i<count;i++)
+			{
+				result.append(1, '"');
+				result.append(v[i]);
+				result.append(1, '"');
+				if (i != count - 1)
+					result.append(1, ',');
+			}
+			AddAttributeString(name, result);
 		}
-		void ConfigurationSection::AddAttributeSingles(const String& name, const std::vector<float>& v)
-		{
 
+
+		void ConfigurationSection::AddAttributeSingles(const String& name, const float* v, int count)
+		{
+			String result;
+			for (int i=0;i<count;i++)
+			{
+				result.append(StringUtils::ToString(v[i]));
+				if (i != count - 1)
+					result.append(1, ',');
+			}
+			AddAttributeString(name, result);
 		}
-		void ConfigurationSection::AddAttributePercentages(const String& name, const std::vector<float>& v)
+		void ConfigurationSection::AddAttributePercentages(const String& name, const float* v, int count)
 		{
-
+			String result;
+			for (int i=0;i<count;i++)
+			{
+				result.append(PercentageToString(v[i]));
+				if (i != count - 1)
+					result.append(1, ',');
+			}
+			AddAttributeString(name, result);
 		}
-		void ConfigurationSection::AddAttributeInts(const String& name, const std::vector<int32>& v)
+		void ConfigurationSection::AddAttributeInts(const String& name, const int32* v, int count)
 		{
-
+			String result;
+			for (int i=0;i<count;i++)
+			{
+				result.append(StringUtils::ToString(v[i]));
+				if (i != count - 1)
+					result.append(1, ',');
+			}
+			AddAttributeString(name, result);
 		}
-		void ConfigurationSection::AddAttributeUInts(const String& name, const std::vector<uint32>& v)
+		void ConfigurationSection::AddAttributeUInts(const String& name, const uint32* v, int count)
 		{
-
+			String result;
+			for (int i=0;i<count;i++)
+			{
+				result.append(StringUtils::ToString(v[i]));
+				if (i != count - 1)
+					result.append(1, ',');
+			}
+			AddAttributeString(name, result);
 		}
 
 		float ParsePercentage(const String& val)
