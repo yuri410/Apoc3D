@@ -178,7 +178,7 @@ namespace Apoc3D
 					{
 						String key = br2->ReadString();
 						String val = br2->ReadString();
-						section->AddAttribute(key, val);
+						section->AddAttributeString(key, val);
 					}
 					br2->Close();
 					delete br2;

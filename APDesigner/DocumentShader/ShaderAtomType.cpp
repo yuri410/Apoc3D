@@ -126,10 +126,10 @@ namespace APDesigner
 	ConfigurationSection* ShaderAtomPort::Save()
 	{
 		ConfigurationSection* sect = new ConfigurationSection(Name);
-		sect->AddAttribute(L"Input", StringUtils::ToString(IsInputOrOutput));
-		sect->AddAttribute(L"Varying", VaringTypeName);
-		sect->AddAttribute(L"Usage", EffectParameter::ToString(Usage));
-		sect->AddAttribute(L"Format", ShaderNetUtils::ToString(DataType));
+		sect->AddAttributeBool(L"Input", IsInputOrOutput);
+		sect->AddAttributeString(L"Varying", VaringTypeName);
+		sect->AddAttributeString(L"Usage", EffectParameter::ToString(Usage));
+		sect->AddAttributeString(L"Format", ShaderNetUtils::ToString(DataType));
 
 		return sect;
 	}

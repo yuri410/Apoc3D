@@ -103,19 +103,19 @@ namespace Apoc3D
 			}
 			void ShaderSamplerState::Save(ConfigurationSection* sect)
 			{
-				sect->AddAttribute(L"AddressU", GraphicsCommonUtils::ToString(AddressU));
-				sect->AddAttribute(L"AddressV", GraphicsCommonUtils::ToString(AddressU));
-				sect->AddAttribute(L"AddressW", GraphicsCommonUtils::ToString(AddressU));
+				sect->AddAttributeString(L"AddressU", GraphicsCommonUtils::ToString(AddressU));
+				sect->AddAttributeString(L"AddressV", GraphicsCommonUtils::ToString(AddressU));
+				sect->AddAttributeString(L"AddressW", GraphicsCommonUtils::ToString(AddressU));
 
-				sect->AddAttribute(L"MagFilter", GraphicsCommonUtils::ToString(MagFilter));
-				sect->AddAttribute(L"MinFilter", GraphicsCommonUtils::ToString(MinFilter));
-				sect->AddAttribute(L"MipFilter", GraphicsCommonUtils::ToString(MipFilter));
+				sect->AddAttributeString(L"MagFilter", GraphicsCommonUtils::ToString(MagFilter));
+				sect->AddAttributeString(L"MinFilter", GraphicsCommonUtils::ToString(MinFilter));
+				sect->AddAttributeString(L"MipFilter", GraphicsCommonUtils::ToString(MipFilter));
 
-				sect->AddAttribute(L"BorderColor", StringUtils::ToStringHex(BorderColor));
+				sect->AddAttributeString(L"BorderColor", StringUtils::ToStringHex(BorderColor));
 
-				sect->AddAttribute(L"MaxAnisotropy", StringUtils::ToString(MaxAnisotropy));
-				sect->AddAttribute(L"MaxMipLevel", StringUtils::ToString(MaxMipLevel));
-				sect->AddAttribute(L"MipMapLODBias", StringUtils::ToString(MipMapLODBias));
+				sect->AddAttributeString(L"MaxAnisotropy", StringUtils::ToString(MaxAnisotropy));
+				sect->AddAttributeString(L"MaxMipLevel", StringUtils::ToString(MaxMipLevel));
+				sect->AddAttributeString(L"MipMapLODBias", StringUtils::ToString(MipMapLODBias));
 
 
 			}

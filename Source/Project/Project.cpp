@@ -59,15 +59,15 @@ namespace Apoc3D
 	{
 		if (PackType.size())
 		{
-			sect->AddAttribute(L"Pack", PackType);
-			sect->AddAttribute(L"DestinationPack", DestinationPack);
+			sect->AddAttributeString(L"Pack", PackType);
+			sect->AddAttributeString(L"DestinationPack", DestinationPack);
 		}
 		ProjectSave(sect, SubItems, savingBuild);
 	}
 	void ProjectFolder::SavePackBuildConfig(ConfigurationSection* sect)
 	{
-		sect->AddAttribute(L"Type", PackType);
-		sect->AddAttribute(L"DestinationFile", PathUtils::Combine(m_project->getOutputPath(),DestinationPack));
+		sect->AddAttributeString(L"Type", PackType);
+		sect->AddAttributeString(L"DestinationFile", PathUtils::Combine(m_project->getOutputPath(),DestinationPack));
 
 		// a package file/archive build config section needs every item's path
 		int pakEntryIndex = 0;
@@ -79,7 +79,7 @@ namespace Apoc3D
 				for (size_t j=0;j<itemOutputs.size();j++)
 				{
 					ConfigurationSection* e = new ConfigurationSection(L"Entry" + StringUtils::ToString(pakEntryIndex++));
-					e->AddAttribute(L"FilePath", itemOutputs[j]);
+					e->AddAttributeString(L"FilePath", itemOutputs[j]);
 					sect->AddSection(e);
 				}
 			}
@@ -207,68 +207,68 @@ namespace Apoc3D
 	}
 	void ProjectResTexture::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"Method", ToString(Method));
+		sect->AddAttributeString(L"Method", ToString(Method));
 
 		if (AssembleCubemap || AssembleVolumeMap)
 		{
 			if (AssembleCubemap)
 			{
-				sect->AddAttribute(L"Assemble", L"cubemap");
+				sect->AddAttributeString(L"Assemble", L"cubemap");
 
-				sect->AddAttribute(L"NegX", savingBuild ?
+				sect->AddAttributeString(L"NegX", savingBuild ?
 					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_NegativeX]) : SubMapTable[CUBE_NegativeX]);
-				sect->AddAttribute(L"NegY", savingBuild ?
+				sect->AddAttributeString(L"NegY", savingBuild ?
 					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_NegativeY]) : SubMapTable[CUBE_NegativeY]);
-				sect->AddAttribute(L"NegZ", savingBuild ?
+				sect->AddAttributeString(L"NegZ", savingBuild ?
 					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_NegativeZ]) :SubMapTable[CUBE_NegativeZ]);
-				sect->AddAttribute(L"PosX", savingBuild ?
+				sect->AddAttributeString(L"PosX", savingBuild ?
 					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_PositiveX]) :SubMapTable[CUBE_PositiveX]);
-				sect->AddAttribute(L"PosY", savingBuild ?
+				sect->AddAttributeString(L"PosY", savingBuild ?
 					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_PositiveY]) :SubMapTable[CUBE_PositiveY]);
-				sect->AddAttribute(L"PosZ", savingBuild ?
+				sect->AddAttributeString(L"PosZ", savingBuild ?
 					PathUtils::Combine(m_project->getBasePath(), SubMapTable[CUBE_PositiveZ]) :SubMapTable[CUBE_PositiveZ]);
 
 				if (SubAlphaMapTable.Contains(CUBE_NegativeX))
 				{
-					sect->AddAttribute(L"NegXAlpha", savingBuild ?
+					sect->AddAttributeString(L"NegXAlpha", savingBuild ?
 						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_NegativeX]) : SubAlphaMapTable[CUBE_NegativeX]);
 				}
 				if (SubAlphaMapTable.Contains(CUBE_NegativeY))
 				{
-					sect->AddAttribute(L"NegYAlpha", savingBuild ?
+					sect->AddAttributeString(L"NegYAlpha", savingBuild ?
 						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_NegativeY]) : SubAlphaMapTable[CUBE_NegativeY]);
 				}
 				if (SubAlphaMapTable.Contains(CUBE_NegativeZ))
 				{
-					sect->AddAttribute(L"NegZAlpha", savingBuild ?
+					sect->AddAttributeString(L"NegZAlpha", savingBuild ?
 						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_NegativeZ]) : SubAlphaMapTable[CUBE_NegativeZ]);
 				}
 
 				if (SubAlphaMapTable.Contains(CUBE_PositiveX))
 				{
-					sect->AddAttribute(L"PosXAlpha", savingBuild ?
+					sect->AddAttributeString(L"PosXAlpha", savingBuild ?
 						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_PositiveX]) : SubAlphaMapTable[CUBE_PositiveX]);
 				}
 				if (SubAlphaMapTable.Contains(CUBE_PositiveY))
 				{
-					sect->AddAttribute(L"PosYAlpha", savingBuild ?
+					sect->AddAttributeString(L"PosYAlpha", savingBuild ?
 						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_PositiveY]) : SubAlphaMapTable[CUBE_PositiveY]);
 				}
 				if (SubAlphaMapTable.Contains(CUBE_PositiveZ))
 				{
-					sect->AddAttribute(L"PosZAlpha", savingBuild ?
+					sect->AddAttributeString(L"PosZAlpha", savingBuild ?
 						PathUtils::Combine(m_project->getBasePath(), SubAlphaMapTable[CUBE_PositiveZ]) : SubAlphaMapTable[CUBE_PositiveZ]);
 				}
 			}
 			else
 			{
-				sect->AddAttribute(L"Assemble", L"volume");
+				sect->AddAttributeString(L"Assemble", L"volume");
 				uint i =0;
 				ConfigurationSection* srcsect = new ConfigurationSection(L"Source");
 				for (int i=0;i<SubMapTable.getCount();i++)
 				{
 					ConfigurationSection* es = new ConfigurationSection(String(L"Slice") + StringUtils::ToString(i));
-					es->AddAttribute(L"FilePath", SubMapTable[i]);
+					es->AddAttributeString(L"FilePath", SubMapTable[i]);
 
 					srcsect->AddSection(es);
 				}
@@ -278,7 +278,7 @@ namespace Apoc3D
 				for (int i=0;i<SubAlphaMapTable.getCount();i++)
 				{
 					ConfigurationSection* es = new ConfigurationSection(String(L"Slice") + StringUtils::ToString(i));
-					es->AddAttribute(L"FilePath", SubAlphaMapTable[i]);
+					es->AddAttributeString(L"FilePath", SubAlphaMapTable[i]);
 
 					srcsect->AddSection(es);
 				}
@@ -288,24 +288,24 @@ namespace Apoc3D
 		}
 		else
 		{
-			sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(),SourceFile) : SourceFile);
+			sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(),SourceFile) : SourceFile);
 		}
-		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationFile) : DestinationFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationFile) : DestinationFile);
 		if (GenerateMipmaps)
-			sect->AddAttribute(L"GenerateMipmaps", StringUtils::ToString(GenerateMipmaps));
+			sect->AddAttributeString(L"GenerateMipmaps", StringUtils::ToString(GenerateMipmaps));
 
 		if (Resize)
 		{
-			sect->AddAttribute(L"Width", StringUtils::ToString(NewWidth));
-			sect->AddAttribute(L"Height", StringUtils::ToString(NewHeight));
-			sect->AddAttribute(L"Depth", StringUtils::ToString(NewDepth));
+			sect->AddAttributeString(L"Width", StringUtils::ToString(NewWidth));
+			sect->AddAttributeString(L"Height", StringUtils::ToString(NewHeight));
+			sect->AddAttributeString(L"Depth", StringUtils::ToString(NewDepth));
 
-			sect->AddAttribute(L"ResizeFilter", ToString(ResizeFilterType));
+			sect->AddAttributeString(L"ResizeFilter", ToString(ResizeFilterType));
 		}
 
 		if (NewFormat != FMT_Unknown)
 		{
-			sect->AddAttribute(L"PixelFormat", PixelFormatUtils::ToString(NewFormat));
+			sect->AddAttributeString(L"PixelFormat", PixelFormatUtils::ToString(NewFormat));
 		}
 	}
 	std::vector<String> ProjectResTexture::GetAllOutputFiles()
@@ -426,7 +426,7 @@ namespace Apoc3D
 	}
 	void ProjectResMaterial::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationFile) : DestinationFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationFile) : DestinationFile);
 	}
 	std::vector<String> ProjectResMaterial::GetAllOutputFiles()
 	{
@@ -456,9 +456,9 @@ namespace Apoc3D
 	}
 	void ProjectResMaterialSet::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
-		sect->AddAttribute(L"DestinationLocation", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationLocation) : DestinationLocation);
-		sect->AddAttribute(L"DestinationToken", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationToken) : DestinationToken);
+		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
+		sect->AddAttributeString(L"DestinationLocation", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationLocation) : DestinationLocation);
+		sect->AddAttributeString(L"DestinationToken", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationToken) : DestinationToken);
 	}
 
 	void ParseMaterialTree(List<String>& mtrlList, const String& baseMtrlName, const ConfigurationSection* sect)
@@ -583,36 +583,36 @@ namespace Apoc3D
 	}
 	void ProjectResFont::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"Name", savingBuild ? PathUtils::Combine(m_project->getBasePath(), Name) : Name);
-		sect->AddAttribute(L"Size", StringUtils::ToString(Size));
+		sect->AddAttributeString(L"Name", savingBuild ? PathUtils::Combine(m_project->getBasePath(), Name) : Name);
+		sect->AddAttributeString(L"Size", StringUtils::ToString(Size));
 
 		if (Style != FONTSTYLE_Regular)
 		{
 			switch (Style)
 			{
 			case FONTSTYLE_Bold:
-				sect->AddAttribute(L"Style", L"Bold");
+				sect->AddAttributeString(L"Style", L"Bold");
 				break;
 			case FONTSTYLE_Italic:
-				sect->AddAttribute(L"Style", L"Italic");
+				sect->AddAttributeString(L"Style", L"Italic");
 				break;
 			case FONTSTYLE_BoldItalic:
-				sect->AddAttribute(L"Style", L"BoldItalic");
+				sect->AddAttributeString(L"Style", L"BoldItalic");
 				break;
 			case FONTSTYLE_Strikeout:
-				sect->AddAttribute(L"Style", L"Underline");
+				sect->AddAttributeString(L"Style", L"Underline");
 				break;
 				
 			}
 		}
 
-		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 
 		for (int i=0;i<Ranges.getCount();i++)
 		{
 			ConfigurationSection* ss = new ConfigurationSection(String(L"Range") + StringUtils::ToString(i));
-			ss->AddAttribute(L"Start", StringUtils::ToString( Ranges[i].MinChar));
-			ss->AddAttribute(L"End", StringUtils::ToString( Ranges[i].MaxChar));
+			ss->AddAttributeString(L"Start", StringUtils::ToString( Ranges[i].MinChar));
+			ss->AddAttributeString(L"End", StringUtils::ToString( Ranges[i].MaxChar));
 
 			sect->AddSection(ss);
 		}
@@ -649,14 +649,14 @@ namespace Apoc3D
 	}
 	void ProjectResEffect::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"VSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcVSFile) : SrcVSFile);
-		sect->AddAttribute(L"PSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcPSFile) : SrcPSFile);
+		sect->AddAttributeString(L"VSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcVSFile) : SrcVSFile);
+		sect->AddAttributeString(L"PSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcPSFile) : SrcPSFile);
 
-		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
-		sect->AddAttribute(L"ParamList", savingBuild ? PathUtils::Combine(m_project->getBasePath(), PListFile) : PListFile);
-		sect->AddAttribute(L"EntryPointVS", EntryPointVS);
-		sect->AddAttribute(L"EntryPointPS", EntryPointPS);
-		sect->AddAttribute(L"Profile", Profile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttributeString(L"ParamList", savingBuild ? PathUtils::Combine(m_project->getBasePath(), PListFile) : PListFile);
+		sect->AddAttributeString(L"EntryPointVS", EntryPointVS);
+		sect->AddAttributeString(L"EntryPointPS", EntryPointPS);
+		sect->AddAttributeString(L"Profile", Profile);
 	}
 	std::vector<String> ProjectResEffect::GetAllOutputFiles()
 	{
@@ -716,13 +716,13 @@ namespace Apoc3D
 	}
 	void ProjectResCustomEffect::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"VSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcVSFile) : SrcVSFile);
-		sect->AddAttribute(L"PSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcPSFile) : SrcPSFile);
+		sect->AddAttributeString(L"VSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcVSFile) : SrcVSFile);
+		sect->AddAttributeString(L"PSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcPSFile) : SrcPSFile);
 
-		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
-		sect->AddAttribute(L"EntryPointVS", EntryPointVS);
-		sect->AddAttribute(L"EntryPointPS", EntryPointPS);
-		sect->AddAttribute(L"Profile", Profile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttributeString(L"EntryPointVS", EntryPointVS);
+		sect->AddAttributeString(L"EntryPointPS", EntryPointPS);
+		sect->AddAttributeString(L"Profile", Profile);
 	}
 	std::vector<String> ProjectResCustomEffect::GetAllOutputFiles()
 	{
@@ -788,7 +788,7 @@ namespace Apoc3D
 	}
 	void ProjectResEffectList::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 
 		if (savingBuild)
 		{
@@ -826,8 +826,8 @@ namespace Apoc3D
 	}
 	void ProjectResShaderNetwork::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
-		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 	}
 	std::vector<String> ProjectResShaderNetwork::GetAllOutputFiles()
 	{
@@ -877,13 +877,13 @@ namespace Apoc3D
 	}
 	void ProjectResModel::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
-		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstFile) : DstFile);
+		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstFile) : DstFile);
 		if (DstAnimationFile.size())
 		{
-			sect->AddAttribute(L"DestinationAnimFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstAnimationFile) :DstAnimationFile);
+			sect->AddAttributeString(L"DestinationAnimFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstAnimationFile) :DstAnimationFile);
 		}
-		sect->AddAttribute(L"Method", ToString(Method));
+		sect->AddAttributeString(L"Method", ToString(Method));
 	}
 	std::vector<String> ProjectResModel::GetAllOutputFiles()
 	{
@@ -972,8 +972,8 @@ namespace Apoc3D
 	}
 	void ProjectResMAnim::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
-		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
+		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
 	}
 	std::vector<String> ProjectResMAnim::GetAllOutputFiles()
 	{
@@ -1016,9 +1016,9 @@ namespace Apoc3D
 	}
 	void ProjectResTAnim::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
-		sect->AddAttribute(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
-		sect->AddAttribute(L"Reverse", StringUtils::ToString(Reverse));
+		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
+		sect->AddAttributeString(L"Reverse", StringUtils::ToString(Reverse));
 
 		for (FastMap<String, int>::Enumerator e = ObjectIndexMapping.GetEnumerator(); e.MoveNext(); )
 		{
@@ -1056,10 +1056,10 @@ namespace Apoc3D
 	}
 	void ProjectCustomItem::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttribute(L"DestinationFile", DestFile);
+		sect->AddAttributeString(L"DestinationFile", DestFile);
 		if (EditorExtension.size())
 		{
-			sect->AddAttribute(L"EditorExtension", EditorExtension);
+			sect->AddAttributeString(L"EditorExtension", EditorExtension);
 		}
 	}
 	std::vector<String> ProjectCustomItem::GetAllOutputFiles()
@@ -1094,50 +1094,50 @@ namespace Apoc3D
 
 		if (!savingBuild)
 		{
-			sect->AddAttribute(L"LastModTime", StringUtils::ToString(m_timeStamp));
+			sect->AddAttributeString(L"LastModTime", StringUtils::ToString(m_timeStamp));
 		}
 		if (m_typeData)
 		{
 			switch (m_typeData->getType())
 			{
 			case PRJITEM_Material:
-				sect->AddAttribute(L"Type", L"material");
+				sect->AddAttributeString(L"Type", L"material");
 				break;
 			case PRJITEM_MaterialSet:
-				sect->AddAttribute(L"Type", L"materialset");
+				sect->AddAttributeString(L"Type", L"materialset");
 				break;
 			case PRJITEM_Texture:
-				sect->AddAttribute(L"Type", L"texture");
+				sect->AddAttributeString(L"Type", L"texture");
 				break;
 			case PRJITEM_Model:
-				sect->AddAttribute(L"Type", L"mesh");
+				sect->AddAttributeString(L"Type", L"mesh");
 				break;
 			case PRJITEM_Effect:
-				sect->AddAttribute(L"Type", L"effect");
+				sect->AddAttributeString(L"Type", L"effect");
 				break;
 			case PRJITEM_TransformAnimation:
-				sect->AddAttribute(L"Type", L"tanim");
+				sect->AddAttributeString(L"Type", L"tanim");
 				break;
 			//case PRJITEM_Animation:
 				//sect->AddAttribute(L"Type", L"animation");
 				//break;
 			case PRJITEM_EffectList:
-				sect->AddAttribute(L"Type", L"ProjectFXList");
+				sect->AddAttributeString(L"Type", L"ProjectFXList");
 				break;
 			case PRJITEM_CustomEffect:
-				sect->AddAttribute(L"Type", L"CustomEffect");
+				sect->AddAttributeString(L"Type", L"CustomEffect");
 				break;
 			case PRJITEM_Font:
-				sect->AddAttribute(L"Type", L"font");
+				sect->AddAttributeString(L"Type", L"font");
 				break;
 			case PRJITEM_Folder:
-				sect->AddAttribute(L"Type", L"folder");
+				sect->AddAttributeString(L"Type", L"folder");
 				break;
 			case PRJITEM_ShaderNetwork:
-				sect->AddAttribute(L"Type", L"ShaderNet");
+				sect->AddAttributeString(L"Type", L"ShaderNet");
 				break;
 			case PRJITEM_MaterialAnimation:
-				sect->AddAttribute(L"Type", L"manim");
+				sect->AddAttributeString(L"Type", L"manim");
 				break;
 			}
 			
@@ -1281,12 +1281,12 @@ namespace Apoc3D
 	{
 		ConfigurationSection* sect = new ConfigurationSection(L"Project", m_items.getCount() * 2);
 
-		sect->AddAttribute(L"Name", m_name);
-		sect->AddAttribute(L"TexturePath", m_texturePath);
-		sect->AddAttribute(L"MaterialPath", m_materialPath);
+		sect->AddAttributeString(L"Name", m_name);
+		sect->AddAttributeString(L"TexturePath", m_texturePath);
+		sect->AddAttributeString(L"MaterialPath", m_materialPath);
 
 		if (m_originalOutputPath.size())
-			sect->AddAttribute(L"ExplicitBuildPath", m_originalOutputPath);
+			sect->AddAttributeString(L"ExplicitBuildPath", m_originalOutputPath);
 		ProjectSave(sect, m_items, false);
 
 		return sect;
@@ -1295,11 +1295,11 @@ namespace Apoc3D
 	{
 		ConfigurationSection* sect = new ConfigurationSection(L"Build", m_items.getCount() * 2);
 
-		sect->AddAttribute(L"Name", m_name);
+		sect->AddAttributeString(L"Name", m_name);
 
 		ProjectSave(sect, m_items, true);
 
-		sect->AddAttribute(L"Type", L"Project");
+		sect->AddAttributeString(L"Type", L"Project");
 		result.Add(sect);
 		
 		int startNo = Randomizer::Next(65535);

@@ -92,7 +92,6 @@ namespace Apoc3D
 			SubSectionTable::Enumerator GetSubSectionEnumrator() const { return m_subSection.GetEnumerator(); }
 
 			void AddSection(ConfigurationSection* section);
-			void AddAttribute(const String& name, const String& value);
 			void SetValue( const String& value);
 			void SetValue(const String& name, const String& value);
 
@@ -154,6 +153,19 @@ namespace Apoc3D
 
 			int getAttributeCount() const { return m_attributes.getCount(); }
 			int getSubSectionCount() const { return m_subSection.getCount(); }
+
+
+			void AddAttributeString(const String& name, const String& value);
+			void AddAttributeBool(const String& name, bool val);
+			void AddAttributeSingle(const String& name, float val);
+			void AddAttributeInt(const String& name, int32 val);
+			void AddAttributeUInt(const String& name, uint32 val);
+			void AddAttributeColorValue(const String& name, ColorValue val);
+			void AddAttributeStrings(const String& name, const std::vector<String>& v);
+			void AddAttributeSingles(const String& name, const std::vector<float>& v);
+			void AddAttributePercentages(const String& name, const std::vector<float>& v);
+			void AddAttributeInts(const String& name, const std::vector<int32>& v);
+			void AddAttributeUInts(const String& name, const std::vector<uint32>& v);
 		};
 	}
 }

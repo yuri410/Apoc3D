@@ -104,7 +104,7 @@ namespace Apoc3D
 
 					for (const TiXmlAttribute* i = elem->FirstAttribute(); i!=0; i=i->Next())
 					{
-						section->AddAttribute(getAttribName(i), getAttribValue(i));
+						section->AddAttributeString(getAttribName(i), getAttribValue(i));
 					}
 
 

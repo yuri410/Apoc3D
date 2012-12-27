@@ -290,12 +290,12 @@ namespace APDesigner
 			EffectParameter& ep = m_parameters[i];
 
 			ConfigurationSection* sect = new ConfigurationSection(ep.Name);
-			sect->AddAttribute(L"Usage", EffectParameter::ToString(ep.Usage));
+			sect->AddAttributeString(L"Usage", EffectParameter::ToString(ep.Usage));
 
 			if (ep.Usage == EPUSAGE_CustomMaterialParam)
-				sect->AddAttribute(L"CustomUsage", ep.CustomMaterialParamName);
+				sect->AddAttributeString(L"CustomUsage", ep.CustomMaterialParamName);
 			else if (ep.Usage == EPUSAGE_CustomMaterialParam)
-				sect->AddAttribute(L"BlobIndex", StringUtils::ToString(ep.InstanceBlobIndex));
+				sect->AddAttributeString(L"BlobIndex", StringUtils::ToString(ep.InstanceBlobIndex));
 
 			if (ep.RegisterIndex == 99)
 				ep.SamplerState.Save(sect);

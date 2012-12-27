@@ -55,23 +55,6 @@ namespace Apoc3D
 			}
 			m_subSection.Add(section->getName(), section);
 		}
-		void ConfigurationSection::AddAttribute(const String& name, const String& value)
-		{
-			try
-			{
-				m_attributes.Add(name, value);
-				//m_attributes.insert(make_pair(name, value));
-			}
-			catch (Apoc3DException e)
-			{
-				switch (e.getType())
-				{
-				case EX_Duplicate:
-					LogManager::getSingleton().Write(LOG_System,  L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
-					break;
-				}
-			}
-		}
 		void ConfigurationSection::SetValue( const String& value)
 		{
 			if (m_value != value && !m_value.empty())
@@ -192,17 +175,8 @@ namespace Apoc3D
 			return false;
 		}
 
-		float ParsePercentage(const String& val)
-		{
-			size_t pos = val.find_last_of('%');
-			if (pos != String::npos)
-			{
-				String ss = val.substr(0, pos);
-				return StringUtils::ParseSingle(ss);
-			}
-			throw Apoc3DException::createException(EX_FormatException, val.c_str());
-		}
-		
+		float ParsePercentage(const String& val);
+		String PercentageToString(float v);
 
 		float ConfigurationSection::GetPercentage(const String& key) const
 		{
@@ -291,29 +265,8 @@ namespace Apoc3D
 			return false;
 		}
 
-		ColorValue ParseColorValue(const String& str)
-		{
-			const vector<String>& val = StringUtils::Split(str, L",");
-			if (val.size() == 4)
-			{				
-				const uint r = StringUtils::ParseUInt32(val[0]);
-				const uint g = StringUtils::ParseUInt32(val[1]);
-				const uint b = StringUtils::ParseUInt32(val[2]);
-				const uint a = StringUtils::ParseUInt32(val[3]);
-
-				return PACK_COLOR(r,g,b,a);
-			}
-			else if (val.size() == 3)
-			{
-				const uint r = StringUtils::ParseUInt32(val[0]);
-				const uint g = StringUtils::ParseUInt32(val[1]);
-				const uint b = StringUtils::ParseUInt32(val[2]);
-				const uint a = 0xff;
-
-				return PACK_COLOR(r,g,b,a);
-			}
-			throw Apoc3DException::createException(EX_FormatException, L"Wrong number of channels");
-		}
+		ColorValue ParseColorValue(const String& str);
+		String ColorValueToString(ColorValue v);
 
 		ColorValue ConfigurationSection::GetColorValue(const String& key) const
 		{
@@ -478,5 +431,128 @@ namespace Apoc3D
 			return result;
 		}
 
+
+
+		void ConfigurationSection::AddAttributeString(const String& name, const String& value)
+		{
+			try
+			{
+				m_attributes.Add(name, value);
+				//m_attributes.insert(make_pair(name, value));
+			}
+			catch (Apoc3DException e)
+			{
+				switch (e.getType())
+				{
+				case EX_Duplicate:
+					LogManager::getSingleton().Write(LOG_System,  L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
+					break;
+				}
+			}
+		}
+		void ConfigurationSection::AddAttributeBool(const String& name, bool val)
+		{
+			AddAttributeString(name, StringUtils::ToString(val));
+		}
+		void ConfigurationSection::AddAttributeSingle(const String& name, float val)
+		{
+			AddAttributeString(name, StringUtils::ToString(val));
+		}
+		void ConfigurationSection::AddAttributeInt(const String& name, int32 val)
+		{
+			AddAttributeString(name, StringUtils::ToString(val));
+		}
+		void ConfigurationSection::AddAttributeUInt(const String& name, uint32 val)
+		{
+			AddAttributeString(name, StringUtils::ToString(val));
+		}
+		void ConfigurationSection::AddAttributeColorValue(const String& name, ColorValue val)
+		{
+
+		}
+		void ConfigurationSection::AddAttributeStrings(const String& name, const std::vector<String>& v)
+		{
+
+		}
+		void ConfigurationSection::AddAttributeSingles(const String& name, const std::vector<float>& v)
+		{
+
+		}
+		void ConfigurationSection::AddAttributePercentages(const String& name, const std::vector<float>& v)
+		{
+
+		}
+		void ConfigurationSection::AddAttributeInts(const String& name, const std::vector<int32>& v)
+		{
+
+		}
+		void ConfigurationSection::AddAttributeUInts(const String& name, const std::vector<uint32>& v)
+		{
+
+		}
+
+		float ParsePercentage(const String& val)
+		{
+			size_t pos = val.find_last_of('%');
+			if (pos != String::npos)
+			{
+				String ss = val.substr(0, pos);
+				return StringUtils::ParseSingle(ss);
+			}
+			throw Apoc3DException::createException(EX_FormatException, val.c_str());
+		}
+		String PercentageToString(float v)
+		{
+			String result = StringUtils::ToString(v);
+			result.append(L"%");
+			return result;
+		}
+
+		ColorValue ParseColorValue(const String& str)
+		{
+			const vector<String>& val = StringUtils::Split(str, L",");
+			if (val.size() == 4)
+			{				
+				const uint r = StringUtils::ParseUInt32(val[0]);
+				const uint g = StringUtils::ParseUInt32(val[1]);
+				const uint b = StringUtils::ParseUInt32(val[2]);
+				const uint a = StringUtils::ParseUInt32(val[3]);
+
+				return PACK_COLOR(r,g,b,a);
+			}
+			else if (val.size() == 3)
+			{
+				const uint r = StringUtils::ParseUInt32(val[0]);
+				const uint g = StringUtils::ParseUInt32(val[1]);
+				const uint b = StringUtils::ParseUInt32(val[2]);
+				const uint a = 0xff;
+
+				return PACK_COLOR(r,g,b,a);
+			}
+			throw Apoc3DException::createException(EX_FormatException, L"Wrong number of channels");
+		}
+		String ColorValueToString(ColorValue v)
+		{
+			uint a = GetColorA(v);
+			uint r = GetColorR(v);
+			uint g = GetColorG(v);
+			uint b = GetColorB(v);
+
+			String result;
+			if (a == 0xff)
+			{
+				result.append(StringUtils::ToString(r));
+				result.append(StringUtils::ToString(g));
+				result.append(StringUtils::ToString(b));
+			}
+			else
+			{
+				result.append(StringUtils::ToString(r));
+				result.append(StringUtils::ToString(g));
+				result.append(StringUtils::ToString(b));
+				result.append(StringUtils::ToString(a));
+			}
+			return result;
+		}
 	}
 }
