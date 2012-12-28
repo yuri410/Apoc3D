@@ -58,17 +58,10 @@ namespace Apoc3D
 		 */
 		class APAPI ConfigurationSection
 		{
-		protected:
+		public:
 			typedef FastMap<String, String> AttributeTable;
 			typedef FastMap<String, ConfigurationSection*> SubSectionTable;
 
-			String m_name;
-			String m_value;
-
-			AttributeTable m_attributes;
-			SubSectionTable m_subSection;
-
-		public:
 			typedef SubSectionTable::Enumerator SubSectionEnumerator;
 			typedef AttributeTable::Enumerator AttributeEnumerator;
 
@@ -93,7 +86,6 @@ namespace Apoc3D
 
 			void AddSection(ConfigurationSection* section);
 			void SetValue( const String& value);
-			void SetValue(const String& name, const String& value);
 
 			const String& getName() const { return m_name; }
 			/** Gets the value of the sub-section with the given name.
@@ -154,10 +146,32 @@ namespace Apoc3D
 			int getAttributeCount() const { return m_attributes.getCount(); }
 			int getSubSectionCount() const { return m_subSection.getCount(); }
 
+			void AddStringValue(const String& name, const String& value);
+
+			void AddBool(const String& key, bool value);
+			void AddSingle(const String& key, float value);
+			void AddPercentage(const String& key, float value);
+			void AddInt(const String& key, int32 value);
+			void AddUInt(const String& key, uint32 value);
+			void AddColorValue(const String& key, ColorValue value);
+			
+			void AddStrings(const String& key, const String* v, int count);
+			void AddSingles(const String& key, const float* v, int count);
+			void AddPercentages(const String& key, const float* v, int count);
+			void AddInts(const String& key, const int32* v, int count);
+			void AddUInts(const String& key, const uint32* v, int count);
+			
+			void AddStrings(const String& key, const std::vector<String>& v) { AddStrings(key, &v[0], static_cast<int>(v.size())); }
+			void AddSingles(const String& key, const std::vector<float>& v) { AddSingles(key, &v[0], static_cast<int>(v.size())); }
+			void AddPercentages(const String& key, const std::vector<float>& v) { AddPercentages(key, &v[0], static_cast<int>(v.size())); }
+			void AddInts(const String& key, const std::vector<int32>& v) { AddInts(key, &v[0], static_cast<int>(v.size())); }
+			void AddUInts(const String& key, const std::vector<uint32>& v) { AddUInts(key, &v[0], static_cast<int>(v.size())); }
+
 
 			void AddAttributeString(const String& name, const String& value);
 			void AddAttributeBool(const String& name, bool val);
 			void AddAttributeSingle(const String& name, float val);
+			void AddAttributePercentage(const String& name, float val);
 			void AddAttributeInt(const String& name, int32 val);
 			void AddAttributeUInt(const String& name, uint32 val);
 			void AddAttributeColorValue(const String& name, ColorValue val);
@@ -173,6 +187,15 @@ namespace Apoc3D
 			void AddAttributePercentages(const String& name, const std::vector<float>& v) { AddAttributePercentages(name, &v[0], static_cast<int>(v.size())); }
 			void AddAttributeInts(const String& name, const std::vector<int32>& v) { AddAttributeInts(name, &v[0], static_cast<int>(v.size())); }
 			void AddAttributeUInts(const String& name, const std::vector<uint32>& v) { AddAttributeUInts(name, &v[0], static_cast<int>(v.size())); }
+
+		protected:
+			
+			String m_name;
+			String m_value;
+
+			AttributeTable m_attributes;
+			SubSectionTable m_subSection;
+
 		};
 	}
 }

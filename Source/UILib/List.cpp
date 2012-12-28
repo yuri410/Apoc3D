@@ -175,6 +175,11 @@ namespace Apoc3D
 						OnMouseOver();
 					}
 
+					if (mouse->getDZ())
+					{
+						m_vscrollbar->setValue(Math::Clamp(m_vscrollbar->getValue() - mouse->getDZ() / 60, 0, m_vscrollbar->getMax()));
+					}
+
 					if (mouse->IsLeftPressed())
 						OnPress();
 					else if (mouse->IsLeftUp())
@@ -550,6 +555,11 @@ namespace Apoc3D
 					{
 						m_mouseOver = true;
 						OnMouseOver();
+					}
+					
+					if (mouse->getDZ())
+					{
+						m_vscrollbar->setValue(Math::Clamp(m_vscrollbar->getValue() - mouse->getDZ() / 60, 0, m_vscrollbar->getMax()));
 					}
 
 					if (mouse->IsLeftPressed())

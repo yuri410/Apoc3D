@@ -343,7 +343,7 @@ namespace APBuild
 					value.append(L",");
 					value.append(StringUtils::ToString(v3z(borderData[i].Vertices[j]), 4, 10, ' ', ios::right | ios::fixed));
 
-					sectV->SetValue(L"Vertex" + StringUtils::ToString(j, 4, '0', ios::right),
+					sectV->AddStringValue(L"Vertex" + StringUtils::ToString(j, 4, '0', ios::right),
 						value);
 				}
 					
@@ -353,7 +353,7 @@ namespace APBuild
 					value.append(L",");
 					value.append(StringUtils::ToString(borderData[i].BorderDef[j].LargerIDVertex, 3, ' ', ios::right));
 					
-					sectB->SetValue(L"Border" + StringUtils::ToString(j, 4, '0', ios::right),
+					sectB->AddStringValue(L"Border" + StringUtils::ToString(j, 4, '0', ios::right),
 						value);
 				}
 
@@ -365,7 +365,7 @@ namespace APBuild
 					value.append(L",");
 					value.append(StringUtils::ToString(v3z(borderData[i].FlattenVertices[j]), 4, 10, ' ', ios::right | ios::fixed));
 
-					sectFV->SetValue(L"Vertex" + StringUtils::ToString(j, 4, '0', ios::right),
+					sectFV->AddStringValue(L"Vertex" + StringUtils::ToString(j, 4, '0', ios::right),
 						value);
 				}
 

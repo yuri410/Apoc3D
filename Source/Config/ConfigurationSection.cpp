@@ -34,6 +34,29 @@ namespace Apoc3D
 {
 	namespace Config
 	{
+		/** Actual parsing/printing functions
+		*/
+		float ParsePercentage(const String& val);
+		String PercentageToString(float v);
+		
+		ColorValue ParseColorValue(const String& str);
+		String ColorValueToString(ColorValue v);
+		
+		void CombineString(const String* v, int count, String& result);
+		void SplitString(const String& str, vector<String>& result);
+
+		void SinglesToString(const float* v, int count, String& result);
+		void PrecentagesToString(const float* v, int count, String& result);
+		void IntsToString(const int32* v, int count, String& result);
+		void UIntsToString(const uint32* v, int count, String& result);
+
+		void SplitSingles(const vector<String>& vals, std::vector<float>& result);
+		void SplitPercentages(const vector<String>& vals, std::vector<float>& result);
+		void SplitInt(const vector<String>& vals, std::vector<int32>& result);
+		void SplitUint(const vector<String>& vals, std::vector<uint32>& result);
+
+
+
 		ConfigurationSection::ConfigurationSection(const ConfigurationSection& another)
 			: m_attributes(another.m_attributes), m_subSection(another.m_subSection), m_name(another.m_name), m_value(another.m_value)
 		{
@@ -64,12 +87,6 @@ namespace Apoc3D
 				LogManager::getSingleton().Write(LOG_System,  L"Overwriting the value of configuration section '" + m_name + L"'. ", LOGLVL_Warning);
 			}
 			m_value = value;
-		}
-		void ConfigurationSection::SetValue(const String& name, const String& value)
-		{
-			ConfigurationSection* ss = new ConfigurationSection(name);
-			ss->SetValue(value);
-			AddSection(ss);
 		}
 
 		bool ConfigurationSection::hasAttribute(const String& name) const
@@ -177,8 +194,6 @@ namespace Apoc3D
 			return false;
 		}
 
-		float ParsePercentage(const String& val);
-		String PercentageToString(float v);
 
 		float ConfigurationSection::GetPercentage(const String& key) const
 		{
@@ -267,8 +282,7 @@ namespace Apoc3D
 			return false;
 		}
 
-		ColorValue ParseColorValue(const String& str);
-		String ColorValueToString(ColorValue v);
+
 
 		ColorValue ConfigurationSection::GetColorValue(const String& key) const
 		{
@@ -299,6 +313,214 @@ namespace Apoc3D
 			return false;
 		}
 
+
+		vector<String> ConfigurationSection::GetStrings(const String& key) const
+		{			
+			vector<String> result;
+			SplitString(getValue(key), result);
+			return result;
+		}
+		vector<String> ConfigurationSection::GetAttributeStrings(const String& key) const
+		{
+			vector<String> result;
+			SplitString(getAttribute(key), result);
+			return result;
+		}
+
+		vector<float> ConfigurationSection::GetSingles(const String& key) const
+		{
+			vector<String> vals = StringUtils::Split(getValue(key), L",");
+			vector<float> result(vals.size());
+			SplitSingles(vals, result);
+			return result;
+		}
+		vector<float> ConfigurationSection::GetAttributeSingles(const String& key) const
+		{
+			vector<String> vals = StringUtils::Split(getAttribute(key), L",");
+			vector<float> result(vals.size());
+			SplitSingles(vals, result);
+			return result;
+		}
+		
+		vector<float> ConfigurationSection::GetPercentages(const String& key) const
+		{
+			vector<String> vals = StringUtils::Split(getValue(key), L",");
+			vector<float> result(vals.size());
+			SplitPercentages(vals, result);
+			return result;
+		}
+		vector<float> ConfigurationSection::GetAttributePercentages(const String& key) const
+		{
+			vector<String> vals = StringUtils::Split(getAttribute(key), L",");
+			vector<float> result(vals.size());
+			SplitPercentages(vals, result);
+			return result;
+		}
+
+		vector<int32> ConfigurationSection::GetInts(const String& name) const 
+		{
+			vector<String> vals = StringUtils::Split(getValue(name), L",");
+			vector<int32> result(vals.size());
+			SplitInt(vals, result);
+			return result;
+		}
+		vector<int32> ConfigurationSection::GetAttributeInts(const String& name) const 
+		{
+			vector<String> vals = StringUtils::Split(getAttribute(name), L",");
+			vector<int32> result(vals.size());
+			SplitInt(vals, result);
+			return result;
+		}
+
+		vector<uint32> ConfigurationSection::GetUInts(const String& name) const 
+		{
+			vector<String> vals = StringUtils::Split(getValue(name), L",");
+			vector<uint32> result(vals.size());
+			SplitUint(vals, result);
+			return result;
+		}
+		vector<uint32> ConfigurationSection::GetAttributeUInts(const String& name) const 
+		{
+			vector<String> vals = StringUtils::Split(getAttribute(name), L",");
+			vector<uint32> result(vals.size());
+			SplitUint(vals, result);
+			return result;
+		}
+
+
+
+		void ConfigurationSection::AddStringValue(const String& name, const String& value)
+		{
+			ConfigurationSection* ss = new ConfigurationSection(name);
+			ss->SetValue(value);
+			AddSection(ss);
+		}
+
+		void ConfigurationSection::AddBool(const String& key, bool value)
+		{
+			AddStringValue(key, StringUtils::ToString(value));
+		}
+		void ConfigurationSection::AddSingle(const String& key, float value)
+		{
+			AddStringValue(key, StringUtils::ToString(value));
+		}
+		void ConfigurationSection::AddPercentage(const String& key, float value)
+		{
+			AddStringValue(key, StringUtils::ToString(value));
+		}
+		void ConfigurationSection::AddInt(const String& key, int32 value)
+		{
+			AddStringValue(key, StringUtils::ToString(value));
+		}
+		void ConfigurationSection::AddUInt(const String& key, uint32 value)
+		{
+			AddStringValue(key, StringUtils::ToString(value));
+		}
+		void ConfigurationSection::AddColorValue(const String& key, ColorValue value)
+		{
+			AddStringValue(key, ColorValueToString(value));
+		}
+
+		void ConfigurationSection::AddStrings(const String& key, const String* v, int count)
+		{
+			String result;
+			CombineString(v, count, result);
+			AddAttributeString(key, result);
+		}
+		void ConfigurationSection::AddSingles(const String& key, const float* v, int count)
+		{
+			String result;
+			SinglesToString(v, count, result);
+			AddStringValue(key, result);
+		}
+		void ConfigurationSection::AddPercentages(const String& key, const float* v, int count)
+		{
+			String result;
+			SinglesToString(v, count, result);
+			AddStringValue(key, result);
+		}
+		void ConfigurationSection::AddInts(const String& key, const int32* v, int count)
+		{
+			String result;
+			IntsToString(v, count, result);
+			AddStringValue(key, result);
+		}
+		void ConfigurationSection::AddUInts(const String& key, const uint32* v, int count)
+		{
+			String result;
+			UIntsToString(v, count, result);
+			AddStringValue(key, result);
+		}
+
+
+
+		void ConfigurationSection::AddAttributeString(const String& name, const String& value)
+		{
+			try
+			{
+				m_attributes.Add(name, value);
+				//m_attributes.insert(make_pair(name, value));
+			}
+			catch (Apoc3DException e)
+			{
+				switch (e.getType())
+				{
+				case EX_Duplicate:
+					LogManager::getSingleton().Write(LOG_System,  L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
+					break;
+				}
+			}
+		}
+		void ConfigurationSection::AddAttributeBool(const String& name, bool val) { AddAttributeString(name, StringUtils::ToString(val)); }
+		void ConfigurationSection::AddAttributeSingle(const String& name, float val) { AddAttributeString(name, StringUtils::ToString(val)); }
+		void ConfigurationSection::AddAttributePercentage(const String& name, float val) { AddAttributeString(name, PercentageToString(val)); }
+		void ConfigurationSection::AddAttributeInt(const String& name, int32 val) { AddAttributeString(name, StringUtils::ToString(val)); }
+		void ConfigurationSection::AddAttributeUInt(const String& name, uint32 val) { AddAttributeString(name, StringUtils::ToString(val)); }
+		void ConfigurationSection::AddAttributeColorValue(const String& name, ColorValue val) { AddAttributeString(name, ColorValueToString(val)); }
+
+		void ConfigurationSection::AddAttributeStrings(const String& name, const String* v, int count)
+		{
+			String result;
+			CombineString(v, count, result);
+			AddAttributeString(name, result);
+		}
+		void ConfigurationSection::AddAttributeSingles(const String& name, const float* v, int count)
+		{
+			String result;
+			SinglesToString(v, count, result);
+			AddAttributeString(name, result);
+		}
+		void ConfigurationSection::AddAttributePercentages(const String& name, const float* v, int count)
+		{
+			String result;
+			PrecentagesToString(v, count, result);
+			AddAttributeString(name, result);
+		}
+		void ConfigurationSection::AddAttributeInts(const String& name, const int32* v, int count)
+		{
+			String result;
+			IntsToString(v, count, result);
+			AddAttributeString(name, result);
+		}
+		void ConfigurationSection::AddAttributeUInts(const String& name, const uint32* v, int count)
+		{
+			String result;
+			UIntsToString(v, count, result);
+			AddAttributeString(name, result);
+		}
+
+
+		void CombineString(const String* v, int count, String& result)
+		{
+			for (int i=0;i<count;i++)
+			{
+				result.append(1, '"');
+				result.append(v[i]);
+				result.append(1, '"');
+				if (i != count - 1)
+					result.append(1, ',');
+			}
+		}
 		void SplitString(const String& str, vector<String>& result)
 		{
 			bool isIn = false;
@@ -326,211 +548,70 @@ namespace Apoc3D
 			}
 		}
 
-		vector<String> ConfigurationSection::GetStrings(const String& key) const
-		{			
-			vector<String> result;
-			SplitString(getValue(key), result);
-			
-			return result;
-		}
-		vector<String> ConfigurationSection::GetAttributeStrings(const String& key) const
+		void SinglesToString(const float* v, int count, String& result)
 		{
-			vector<String> result;
-			SplitString(getAttribute(key), result);
-			
-			return result;
-		}
-
-		vector<float> ConfigurationSection::GetSingles(const String& key) const
-		{
-			String val = getValue(key);
-			vector<String> vals = StringUtils::Split(val, L",");
-			vector<float> result(vals.size());
-			for (size_t i=0;i<vals.size();i++)
-			{
-				result[i] = StringUtils::ParseSingle(vals[i]);
-			}
-			return result;
-		}
-		vector<float> ConfigurationSection::GetAttributeSingles(const String& key) const
-		{
-			String val = getAttribute(key);
-			vector<String> vals = StringUtils::Split(val, L",");
-			vector<float> result(vals.size());
-			for (size_t i=0;i<vals.size();i++)
-			{
-				result[i] = StringUtils::ParseSingle(vals[i]);
-			}
-			return result;
-		}
-		
-		vector<float> ConfigurationSection::GetPercentages(const String& key) const
-		{
-			String val = getValue(key);
-			vector<String> vals = StringUtils::Split(val, L",");
-			vector<float> result(vals.size());
-			for (size_t i=0;i<vals.size();i++)
-			{
-				result[i] = ParsePercentage(vals[i]);
-			}
-			return result;
-		}
-		vector<float> ConfigurationSection::GetAttributePercentages(const String& key) const
-		{
-			String val = getAttribute(key);
-			vector<String> vals = StringUtils::Split(val, L",");
-			vector<float> result(vals.size());
-			for (size_t i=0;i<vals.size();i++)
-			{
-				result[i] = ParsePercentage(vals[i]);
-			}
-			return result;
-		}
-
-		vector<int32> ConfigurationSection::GetInts(const String& name) const 
-		{
-			String val = getValue(name);
-			vector<String> vals = StringUtils::Split(val, L",");
-			vector<int32> result(vals.size());
-			for (size_t i=0;i<vals.size();i++)
-			{
-				result[i] = StringUtils::ParseInt32(vals[i]);
-			}
-			return result;
-		}
-		vector<int32> ConfigurationSection::GetAttributeInts(const String& name) const 
-		{
-			String val = getAttribute(name);
-			vector<String> vals = StringUtils::Split(val, L",");
-			vector<int32> result(vals.size());
-			for (size_t i=0;i<vals.size();i++)
-			{
-				result[i] = StringUtils::ParseInt32(vals[i]);
-			}
-			return result;
-		}
-
-		vector<uint32> ConfigurationSection::GetUInts(const String& name) const 
-		{
-			String val = getValue(name);
-			vector<String> vals = StringUtils::Split(val, L",");
-			vector<uint32> result(vals.size());
-			for (size_t i=0;i<vals.size();i++)
-			{
-				result[i] = StringUtils::ParseInt32(vals[i]);
-			}
-			return result;
-		}
-		vector<uint32> ConfigurationSection::GetAttributeUInts(const String& name) const 
-		{
-			String val = getAttribute(name);
-			vector<String> vals = StringUtils::Split(val, L",");
-			vector<uint32> result(vals.size());
-			for (size_t i=0;i<vals.size();i++)
-			{
-				result[i] = StringUtils::ParseInt32(vals[i]);
-			}
-			return result;
-		}
-
-
-
-		void ConfigurationSection::AddAttributeString(const String& name, const String& value)
-		{
-			try
-			{
-				m_attributes.Add(name, value);
-				//m_attributes.insert(make_pair(name, value));
-			}
-			catch (Apoc3DException e)
-			{
-				switch (e.getType())
-				{
-				case EX_Duplicate:
-					LogManager::getSingleton().Write(LOG_System,  L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
-					break;
-				}
-			}
-		}
-		void ConfigurationSection::AddAttributeBool(const String& name, bool val)
-		{
-			AddAttributeString(name, StringUtils::ToString(val));
-		}
-		void ConfigurationSection::AddAttributeSingle(const String& name, float val)
-		{
-			AddAttributeString(name, StringUtils::ToString(val));
-		}
-		void ConfigurationSection::AddAttributeInt(const String& name, int32 val)
-		{
-			AddAttributeString(name, StringUtils::ToString(val));
-		}
-		void ConfigurationSection::AddAttributeUInt(const String& name, uint32 val)
-		{
-			AddAttributeString(name, StringUtils::ToString(val));
-		}
-		void ConfigurationSection::AddAttributeColorValue(const String& name, ColorValue val)
-		{
-			AddAttributeString(name, ColorValueToString(val));
-		}
-
-		void ConfigurationSection::AddAttributeStrings(const String& name, const String* v, int count)
-		{
-			String result;
-			for (int i=0;i<count;i++)
-			{
-				result.append(1, '"');
-				result.append(v[i]);
-				result.append(1, '"');
-				if (i != count - 1)
-					result.append(1, ',');
-			}
-			AddAttributeString(name, result);
-		}
-
-
-		void ConfigurationSection::AddAttributeSingles(const String& name, const float* v, int count)
-		{
-			String result;
 			for (int i=0;i<count;i++)
 			{
 				result.append(StringUtils::ToString(v[i]));
 				if (i != count - 1)
 					result.append(1, ',');
 			}
-			AddAttributeString(name, result);
 		}
-		void ConfigurationSection::AddAttributePercentages(const String& name, const float* v, int count)
+		void PrecentagesToString(const float* v, int count, String& result)
 		{
-			String result;
 			for (int i=0;i<count;i++)
 			{
 				result.append(PercentageToString(v[i]));
 				if (i != count - 1)
 					result.append(1, ',');
 			}
-			AddAttributeString(name, result);
 		}
-		void ConfigurationSection::AddAttributeInts(const String& name, const int32* v, int count)
+		void IntsToString(const int32* v, int count, String& result)
 		{
-			String result;
 			for (int i=0;i<count;i++)
 			{
 				result.append(StringUtils::ToString(v[i]));
 				if (i != count - 1)
 					result.append(1, ',');
 			}
-			AddAttributeString(name, result);
 		}
-		void ConfigurationSection::AddAttributeUInts(const String& name, const uint32* v, int count)
+		void UIntsToString(const uint32* v, int count, String& result)
 		{
-			String result;
 			for (int i=0;i<count;i++)
 			{
 				result.append(StringUtils::ToString(v[i]));
 				if (i != count - 1)
 					result.append(1, ',');
 			}
-			AddAttributeString(name, result);
+		}
+
+		void SplitSingles(const vector<String>& vals, std::vector<float>& result)
+		{
+			for (size_t i=0;i<vals.size();i++)
+			{
+				result[i] = StringUtils::ParseSingle(vals[i]);
+			}
+		}
+		void SplitPercentages(const vector<String>& vals, std::vector<float>& result)
+		{
+			for (size_t i=0;i<vals.size();i++)
+			{
+				result[i] = ParsePercentage(vals[i]);
+			}
+		}
+		void SplitInt(const vector<String>& vals, std::vector<int32>& result)
+		{
+			for (size_t i=0;i<vals.size();i++)
+			{
+				result[i] = StringUtils::ParseInt32(vals[i]);
+			}
+		}
+		void SplitUint(const vector<String>& vals, std::vector<uint32>& result)
+		{
+			for (size_t i=0;i<vals.size();i++)
+			{
+				result[i] = StringUtils::ParseUInt32(vals[i]);
+			}
 		}
 
 		float ParsePercentage(const String& val)
