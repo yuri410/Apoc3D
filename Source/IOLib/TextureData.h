@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef TEXTUREDATA_H
-#define TEXTUREDATA_H
+#ifndef APOC3D_TEXTUREDATA_H
+#define APOC3D_TEXTUREDATA_H
 
 #include "Common.h"
 #include "Graphics/PixelFormat.h"

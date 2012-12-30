@@ -22,9 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef EFFECTDATA_H
-#define EFFECTDATA_H
-
+#ifndef APOC3D_EFFECTDATA_H
+#define APOC3D_EFFECTDATA_H
 
 #include "Common.h"
 #include "Collections/FastList.h"

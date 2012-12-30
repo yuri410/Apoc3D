@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef GEOMETRYDATA_H
-#define GEOMETRYDATA_H
+#ifndef APOC3D_GEOMETRYDATA_H
+#define APOC3D_GEOMETRYDATA_H
 
 #include "Common.h"
 #include "Core\HashHandleObject.h"

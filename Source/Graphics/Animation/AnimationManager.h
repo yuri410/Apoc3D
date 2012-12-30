@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef ANIMATIONMANAGER_H
-#define ANIMATIONMANAGER_H
+#ifndef APOC3D_ANIMATIONMANAGER_H
+#define APOC3D_ANIMATIONMANAGER_H
 
 #include "Core/Singleton.h"
 #include "Core/ResourceManager.h"

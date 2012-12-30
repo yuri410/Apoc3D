@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef PARTICLESYSTEM_H
-#define PARTICLESYSTEM_H
+#ifndef APOC3D_PARTICLESYSTEM_H
+#define APOC3D_PARTICLESYSTEM_H
 
 
 #include "Common.h"

@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef ANIMATIONPLAYERS_H
-#define ANIMATIONPLAYERS_H
+#ifndef APOC3D_ANIMATIONPLAYERS_H
+#define APOC3D_ANIMATIONPLAYERS_H
 
 #include "Common.h"
 #include "Math/Matrix.h"

@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef APOC3D_CAMERA_H
+#define APOC3D_CAMERA_H
 
 #include "Common.h"
 #include "Math\Frustum.h"

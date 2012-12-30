@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef LABEL_H
-#define LABEL_H
+#ifndef APOC3D_LABEL_H
+#define APOC3D_LABEL_H
 
 #include "Control.h"
 #include "Collections/FastList.h"

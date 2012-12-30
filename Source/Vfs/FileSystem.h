@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef FILESYSTEM_H
-#define FILESYSTEM_H
+#ifndef APOC3D_FILESYSTEM_H
+#define APOC3D_FILESYSTEM_H
 
 #include "Common.h"
 #include "Core/Singleton.h"

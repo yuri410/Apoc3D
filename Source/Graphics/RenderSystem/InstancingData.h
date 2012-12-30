@@ -21,9 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef INSTANCINGDATA_H
-#define INSTANCINGDATA_H
-
+#ifndef APOC3D_INSTANCINGDATA_H
+#define APOC3D_INSTANCINGDATA_H
 
 #include "Common.h"
 #include "Collections/FastMap.h"

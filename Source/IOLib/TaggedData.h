@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef BINARYDATA_H
-#define BINARYDATA_H
+#ifndef APOC3D_BINARYDATA_H
+#define APOC3D_BINARYDATA_H
 
 #include "Common.h"
 #include "Collections/FastMap.h"

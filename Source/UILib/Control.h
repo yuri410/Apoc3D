@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef CONTROL_H
-#define CONTROL_H
+#ifndef APOC3D_CONTROL_H
+#define APOC3D_CONTROL_H
 
 #include "UICommon.h"
 

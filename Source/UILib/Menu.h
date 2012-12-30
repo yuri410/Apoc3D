@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef MENU_H
-#define MENU_H
+#ifndef APOC3D_MENU_H
+#define APOC3D_MENU_H
 
 #include "UICommon.h"
 #include "Control.h"

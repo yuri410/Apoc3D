@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef FASTLIST_H
-#define FASTLIST_H
+#ifndef APOC3D_FASTLIST_H
+#define APOC3D_FASTLIST_H
 
 #include "Common.h"
 

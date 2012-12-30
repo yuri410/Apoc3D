@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MATRIX_H
-#define MATRIX_H
+#ifndef APOC3D_MATRIX_H
+#define APOC3D_MATRIX_H
 
 
 #include "Common.h"

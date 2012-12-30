@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EXISTTABLE_H
-#define EXISTTABLE_H
+#ifndef APOC3D_EXISTTABLE_H
+#define APOC3D_EXISTTABLE_H
 
 #include "Common.h"
 #include "CollectionsCommon.h"

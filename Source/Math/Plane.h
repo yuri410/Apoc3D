@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef PLANE_H
-#define PLANE_H
+#ifndef APOC3D_PLANE_H
+#define APOC3D_PLANE_H
 
 #include "Common.h"
 #include "Vector.h"

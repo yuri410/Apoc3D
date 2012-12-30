@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef MOUSE_H
-#define MOUSE_H
+#ifndef APOC3D_MOUSE_H
+#define APOC3D_MOUSE_H
 
 #include "Common.h"
 #include "Math/Point.h"

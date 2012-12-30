@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef MATERIALTPYES_H
-#define MATERIALTPYES_H
+#ifndef APOC3D_MATERIALTPYES_H
+#define APOC3D_MATERIALTPYES_H
 
 #include "Common.h"
 #include "Math/Vector.h"

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MESH_H
-#define MESH_H
+#ifndef APOC3D_MESH_H
+#define APOC3D_MESH_H
 
 #include "Common.h"
 #include "ModelTypes.h"

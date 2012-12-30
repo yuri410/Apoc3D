@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef CLASSICSTYLESKIN_H
-#define CLASSICSTYLESKIN_H
+#ifndef APOC3D_CLASSICSTYLESKIN_H
+#define APOC3D_CLASSICSTYLESKIN_H
 
 #include "UICommon.h"
 #include "Math/Rectangle.h"

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef GAUSSBLURFILTER_H
-#define GAUSSBLURFILTER_H
+#ifndef APOC3D_GAUSSBLURFILTER_H
+#define APOC3D_GAUSSBLURFILTER_H
 
 #include "Common.h"
 #include "Vector.h"

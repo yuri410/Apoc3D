@@ -22,9 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef ARCHIVE_H
-#define ARCHIVE_H
-
+#ifndef APOC3D_ARCHIVE_H
+#define APOC3D_ARCHIVE_H
 
 #include "Common.h"
 #include "File.h"

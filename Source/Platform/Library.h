@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef LIBRARY_H
-#define LIBRARY_H
+#ifndef APOC3D_LIBRARY_H
+#define APOC3D_LIBRARY_H
 
 #include "Common.h"
 

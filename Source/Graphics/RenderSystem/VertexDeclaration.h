@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef VERTEXDECLARATION_H
-#define VERTEXDECLARATION_H
+#ifndef APOC3D_VERTEXDECLARATION_H
+#define APOC3D_VERTEXDECLARATION_H
 
 #include "Common.h"
 #include "Graphics/GraphicsCommon.h"

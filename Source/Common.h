@@ -23,8 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef APOC3D_COMMON_H
+#define APOC3D_COMMON_H
 
 typedef __int16 int16;
 typedef __int32 int32;

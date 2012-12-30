@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef RAY_H
-#define RAY_H
+#ifndef APOC3D_RAY_H
+#define APOC3D_RAY_H
 
 #include "Common.h"
 #include "Vector.h"

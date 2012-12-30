@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef STREAM_H
-#define STREAM_H
+#ifndef APOC3D_STREAM_H
+#define APOC3D_STREAM_H
 
 #include "Common.h"
 #include "Collections/FastList.h"

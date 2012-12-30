@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef POINT_H
-#define POINT_H
+#ifndef APOC3D_POINT_H
+#define APOC3D_POINT_H
 
 #include "Common.h"
 

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef CHECKBOX_H
-#define CHECKBOX_H
+#ifndef APOC3D_CHECKBOX_H
+#define APOC3D_CHECKBOX_H
 
 #include "Control.h"
 #include "Collections/FastList.h"

@@ -21,9 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RENDERWINDOW_H
-#define RENDERWINDOW_H
-
+#ifndef APOC3D_RENDERWINDOW_H
+#define APOC3D_RENDERWINDOW_H
 
 #include "Common.h"
 #include "DeviceContent.h"

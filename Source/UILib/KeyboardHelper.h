@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef KEYBOARDHELPER_H
-#define KEYBOARDHELPER_H
+#ifndef APOC3D_KEYBOARDHELPER_H
+#define APOC3D_KEYBOARDHELPER_H
 
 #include "UICommon.h"
 #include "Input/Keyboard.h"

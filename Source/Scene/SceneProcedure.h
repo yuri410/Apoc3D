@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENE_PROCEDURE_H
-#define SCENE_PROCEDURE_H
+#ifndef APOC3D_SCENE_PROCEDURE_H
+#define APOC3D_SCENE_PROCEDURE_H
 
 #include "Common.h"
 #include "Collections/FastList.h"

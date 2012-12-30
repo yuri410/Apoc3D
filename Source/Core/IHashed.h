@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef IHASHED_H
-#define IHASHED_H
+#ifndef APOC3D_IHASHED_H
+#define APOC3D_IHASHED_H
 
 #include "Common.h"
 

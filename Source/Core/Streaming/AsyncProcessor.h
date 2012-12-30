@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef ASYNCPROCESSOR_H
-#define ASYNCPROCESSOR_H
+#ifndef APOC3D_ASYNCPROCESSOR_H
+#define APOC3D_ASYNCPROCESSOR_H
 
 #include "Common.h"
 #include "tthread/tinythread.h"

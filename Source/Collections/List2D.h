@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef LIST2D_H
-#define LIST2D_H
+#ifndef APOC3D_LIST2D_H
+#define APOC3D_LIST2D_H
 
 #include "Common.h"
 

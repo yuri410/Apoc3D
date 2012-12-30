@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENEPASSTYPES_H
-#define SCENEPASSTYPES_H
+#ifndef APOC3D_SCENEPASSTYPES_H
+#define APOC3D_SCENEPASSTYPES_H
 
 #include "Common.h"
 #include "Collections/FastList.h"

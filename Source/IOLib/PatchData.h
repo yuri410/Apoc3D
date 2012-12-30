@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef PATCHDATA_H
-#define PATCHDATA_H
+#ifndef APOC3D_PATCHDATA_H
+#define APOC3D_PATCHDATA_H
 
 #include "Common.h"
 #include "Vector.h"

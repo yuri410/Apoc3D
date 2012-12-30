@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef OCTREEBOX_H
-#define OCTREEBOX_H
+#ifndef APOC3D_OCTREEBOX_H
+#define APOC3D_OCTREEBOX_H
 
 #include "Common.h"
 #include "Vector.h"

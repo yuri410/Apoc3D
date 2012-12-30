@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef LIST_H
-#define LIST_H
+#ifndef APOC3D_LIST_H
+#define APOC3D_LIST_H
 
 #include "UICommon.h"
 #include "Control.h"

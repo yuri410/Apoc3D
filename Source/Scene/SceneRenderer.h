@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENERENDERER_H
-#define SCENERENDERER_H
+#ifndef APOC3D_SCENERENDERER_H
+#define APOC3D_SCENERENDERER_H
 
 #include "Common.h"
 #include "Collections/FastList.h"

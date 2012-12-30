@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RESOURCE_H
-#define RESOURCE_H
+#ifndef APOC3D_RESOURCE_H
+#define APOC3D_RESOURCE_H
 
 #include "Common.h"
 #include "Core/Streaming/AsyncProcessor.h"

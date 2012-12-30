@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef GRAPHICSDEVICEMANAGER_H
-#define GRAPHICSDEVICEMANAGER_H
+#ifndef APOC3D_D3D9_GRAPHICSDEVICEMANAGER_H
+#define APOC3D_D3D9_GRAPHICSDEVICEMANAGER_H
 
 #include "D3D9Common.h"
 #include "DeviceSettings.h"

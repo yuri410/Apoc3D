@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef FASTQUEUE_H
-#define FASTQUEUE_H
+#ifndef APOC3D_FASTQUEUE_H
+#define APOC3D_FASTQUEUE_H
 
 #include "Common.h"
 

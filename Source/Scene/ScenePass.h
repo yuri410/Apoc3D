@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENEPASS_H
-#define SCENEPASS_H
+#ifndef APOC3D_SCENEPASS_H
+#define APOC3D_SCENEPASS_H
 
 #include "Common.h"
 #include "ScenePassTypes.h"

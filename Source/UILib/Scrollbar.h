@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef SCROLLBAR_H
-#define SCROLLBAR_H
+#ifndef APOC3D_SCROLLBAR_H
+#define APOC3D_SCROLLBAR_H
 
 #include "UICommon.h"
 #include "Control.h"

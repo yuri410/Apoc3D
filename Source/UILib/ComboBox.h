@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef COMBOBOX_H
-#define COMBOBOX_H
+#ifndef APOC3D_COMBOBOX_H
+#define APOC3D_COMBOBOX_H
 
 #include "Control.h"
 #include "Collections/FastList.h"

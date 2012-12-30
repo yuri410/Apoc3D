@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef APOC3D_BUTTON_H
+#define APOC3D_BUTTON_H
 
 #include "Control.h"
 #include "Collections/FastList.h"

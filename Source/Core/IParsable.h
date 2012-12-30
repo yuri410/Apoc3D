@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef IPARSABLE_H
-#define IPARSABLE_H
+#ifndef APOC3D_IPARSABLE_H
+#define APOC3D_IPARSABLE_H
 
 #include "Common.h"
 

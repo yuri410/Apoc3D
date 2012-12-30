@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef APOC3DEXCEPTION_H
-#define APOC3DEXCEPTION_H
+#ifndef APOC3D_APOC3DEXCEPTION_H
+#define APOC3D_APOC3DEXCEPTION_H
 
 
 #include "Common.h"

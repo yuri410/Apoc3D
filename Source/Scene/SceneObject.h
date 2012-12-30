@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENEOBJECT_H
-#define SCENEOBJECT_H
+#ifndef APOC3D_SCENEOBJECT_H
+#define APOC3D_SCENEOBJECT_H
 
 #include "Common.h"
 #include "Math\Matrix.h"

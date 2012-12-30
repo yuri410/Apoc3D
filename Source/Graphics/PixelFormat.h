@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef PIXELFORMAT_H
-#define PIXELFORMAT_H
+#ifndef APOC3D_PIXELFORMAT_H
+#define APOC3D_PIXELFORMAT_H
 
 
 #include "Common.h"

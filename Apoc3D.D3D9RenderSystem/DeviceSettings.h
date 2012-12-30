@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef D3D9DEVICESETTINGS_H
-#define D3D9DEVICESETTINGS_H
+#ifndef APOC3D_D3D9DEVICESETTINGS_H
+#define APOC3D_D3D9DEVICESETTINGS_H
 
 #include "D3D9Common.h"
 

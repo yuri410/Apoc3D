@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef OCTREESCENEMANAGER_H
-#define OCTREESCENEMANAGER_H
+#ifndef APOC3D_OCTREESCENEMANAGER_H
+#define APOC3D_OCTREESCENEMANAGER_H
 
 #include "Common.h"
 #include "Collections\FastList.h"

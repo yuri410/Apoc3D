@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef VIEWPORT_H
-#define VIEWPORT_H
+#ifndef APOC3D_VIEWPORT_H
+#define APOC3D_VIEWPORT_H
 
 #include "Common.h"
 #include "Vector.h"

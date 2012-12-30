@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef APOC3D_ENGINE_H
+#define APOC3D_ENGINE_H
 
 #include "Common.h"
 #include "Collections/FastList.h"

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef HASHHANDLEOBJECT_H
-#define HASHHANDLEOBJECT_H
+#ifndef APOC3D_HASHHANDLEOBJECT_H
+#define APOC3D_HASHHANDLEOBJECT_H
 
 #include "Common.h"
 

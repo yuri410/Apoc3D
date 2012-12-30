@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef ABCCONFIGURATIONFORMAT_H
-#define ABCCONFIGURATIONFORMAT_H
+#ifndef APOC3D_ABCCONFIGURATIONFORMAT_H
+#define APOC3D_ABCCONFIGURATIONFORMAT_H
 
 #include "Common.h"
 #include "Configuration.h"

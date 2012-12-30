@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef BINARYWRITER_H
-#define BINARYWRITER_H
+#ifndef APOC3D_BINARYWRITER_H
+#define APOC3D_BINARYWRITER_H
 
 #include "Common.h"
 

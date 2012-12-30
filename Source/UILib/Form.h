@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef FORM_H
-#define FORM_H
+#ifndef APOC3D_FORM_H
+#define APOC3D_FORM_H
 
 #include "UICommon.h"
 #include "Control.h"

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef FONTMANAGER_H
-#define FONTMANAGER_H
+#ifndef APOC3D_FONTMANAGER_H
+#define APOC3D_FONTMANAGER_H
 
 #include "Common.h"
 #include "Collections/FastMap.h"
@@ -62,8 +62,8 @@ namespace Apoc3D
 			
 			Font(RenderDevice* device, ResourceLocation* fl);
 			~Font();
-			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0, int hozShrink = 0);
-			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, int hozShrink = 0);
+			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
+			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink = 0);
 
 			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
 			Point MeasureString(const String& text, int width);
@@ -81,7 +81,7 @@ namespace Apoc3D
 				int GlyphIndex;
 				short Left;
 				short Top;
-				short AdcanceX;
+				float AdcanceX;
 			};
 			struct Glyph
 			{

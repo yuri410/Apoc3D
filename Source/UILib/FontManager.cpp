@@ -82,7 +82,7 @@ namespace Apoc3D
 					ch.GlyphIndex = br->ReadInt32();
 					ch.Left = br->ReadInt16();
 					ch.Top = br->ReadInt16();
-					ch.AdcanceX = br->ReadInt16();
+					ch.AdcanceX = br->ReadSingle();
 					m_charTable.Add(ch._Character, ch);
 				}
 			}
@@ -204,7 +204,7 @@ namespace Apoc3D
 				{
 					Character* ch = i.getCurrentValue();
 					Glyph& g = m_glyphList[ch->GlyphIndex];
-					ch->AdcanceX = g.Width;
+					ch->AdcanceX = static_cast<float>(g.Width);
 				}
 			}
 			
@@ -219,13 +219,15 @@ namespace Apoc3D
 		}
 
 
-		void Font::DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, int hozShrink)
+		void Font::DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink)
 		{
 			DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, -1, 0, hozShrink);
 		}
-		void Font::DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length, int lineSpace,wchar_t suffix, int hozShrink)
+		void Font::DrawStringEx(Sprite* sprite, const String& text, int _x, int y, uint color, int length, int lineSpace, wchar_t suffix, float hozShrink)
 		{
-			int std = x;
+			float std = static_cast<float>(_x);
+			float x = std;
+
 			size_t len = text.length();
 			if (length !=-1)
 			{
@@ -247,7 +249,7 @@ namespace Apoc3D
 						
 						if (glyph.Width == 0 || glyph.Height == 0)
 						{
-							x += chdef.AdcanceX + chdef.Left;
+							x += chdef.AdcanceX;// + chdef.Left;
 							continue;
 						}
 
@@ -257,7 +259,7 @@ namespace Apoc3D
 						}
 
 						Apoc3D::Math::Rectangle rect;
-						rect.X = x + chdef.Left;
+						rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
 						rect.Y = y + chdef.Top;
 						rect.Width = glyph.Width;
 						rect.Height = glyph.Height;
@@ -294,7 +296,7 @@ namespace Apoc3D
 					}
 
 					Apoc3D::Math::Rectangle rect;
-					rect.X = x + chdef.Left;
+					rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
 					rect.Y = y + chdef.Top;
 					rect.Width = glyph.Width;
 					rect.Height = glyph.Height;
@@ -305,10 +307,12 @@ namespace Apoc3D
 				}
 			}
 		}
-		void Font::DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color)
+		void Font::DrawString(Sprite* sprite, const String& text, int _x, int y, int width, uint color)
 		{
 			int stdY = y;
-			int std = x;
+			float std = static_cast<float>(_x);
+			float x = std;
+
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
@@ -331,7 +335,7 @@ namespace Apoc3D
 						}
 
 						Apoc3D::Math::Rectangle rect;
-						rect.X = x + chdef.Left;
+						rect.X = static_cast<int>(x+0.5f) + chdef.Left;
 						rect.Y = y + chdef.Top;
 						rect.Width = glyph.Width;
 						rect.Height = glyph.Height;
@@ -340,7 +344,7 @@ namespace Apoc3D
 
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
 
-						x += chdef.AdcanceX + chdef.Left;
+						x += chdef.AdcanceX;
 						if (x>=width)
 						{
 							x=std;
@@ -358,10 +362,10 @@ namespace Apoc3D
 		}
 		Point Font::MeasureString(const String& text, int width)
 		{
-			int x =0;
+			float x =0;
 			int y =0;
 			int stdY = y;
-			int std = x;
+			float std = x;
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
@@ -387,13 +391,14 @@ namespace Apoc3D
 					y += m_height;
 				}
 			}
-			return Point(width-std, y+m_height-stdY);
+			return Point(width, y+m_height-stdY);
 		}
 		Point Font::MeasureString(const String& text)
 		{
-			Point result = Point(0, m_height);
+			PointF result = PointF(0, static_cast<float>(m_height));
 
-			int x = 0, y = m_height;
+			float x = 0.f;
+			float y = static_cast<float>(m_height);
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
@@ -419,7 +424,7 @@ namespace Apoc3D
 					result.Y = y;
 			}
 
-			return result;
+			return Point(static_cast<int32>(result.X), static_cast<int32>(result.Y));
 		}
 
 		void Font::FrameStartReset()

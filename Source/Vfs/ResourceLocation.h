@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RESOURCELOCATION_H
-#define RESOURCELOCATION_H
+#ifndef APOC3D_RESOURCELOCATION_H
+#define APOC3D_RESOURCELOCATION_H
 
 
 #include "Common.h"

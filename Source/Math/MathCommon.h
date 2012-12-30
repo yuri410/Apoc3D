@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MATHCOMMON_H
-#define MATHCOMMON_H
+#ifndef APOC3D_MATHCOMMON_H
+#define APOC3D_MATHCOMMON_H
 
 #include "Common.h"
 

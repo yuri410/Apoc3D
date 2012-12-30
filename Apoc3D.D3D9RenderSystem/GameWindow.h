@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef GAMEWINDOW_H
-#define GAMEWINDOW_H
+#ifndef APOC3D_D3D9_GAMEWINDOW_H
+#define APOC3D_D3D9_GAMEWINDOW_H
 
 #include "D3D9Common.h"
 #include "Math/Point.h"

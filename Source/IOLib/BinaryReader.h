@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef BINARYREADER_H
-#define BINARYREADER_H
+#ifndef APOC3D_BINARYREADER_H
+#define APOC3D_BINARYREADER_H
 
 #include "Common.h"
 

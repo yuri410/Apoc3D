@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef VERTEXELEMENT_H
-#define VERTEXELEMENT_H
+#ifndef APOC3D_VERTEXELEMENT_H
+#define APOC3D_VERTEXELEMENT_H
 
 #include "Common.h"
 #include "Graphics\GraphicsCommon.h"

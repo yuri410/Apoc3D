@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef THREAD_H
-#define THREAD_H
+#ifndef APOC3D_THREAD_H
+#define APOC3D_THREAD_H
 
 #include "Common.h"
 #include "tthread/tinythread.h"

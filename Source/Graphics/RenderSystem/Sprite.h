@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SPRITE_H
-#define SPRITE_H
+#ifndef APOC3D_SPRITE_H
+#define APOC3D_SPRITE_H
 
 #include "Common.h"
 #include "Math/Vector.h"

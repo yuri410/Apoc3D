@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef BOX_H
-#define BOX_H
+#ifndef APOC3D_BOX_H
+#define APOC3D_BOX_H
 
 #include "Common.h"
 

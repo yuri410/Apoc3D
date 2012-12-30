@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef ESSENTIALCOMMON_H
-#define ESSENTIALCOMMON_H
+#ifndef APOC3DEX_ESSENTIALCOMMON_H
+#define APOC3DEX_ESSENTIALCOMMON_H
 
 #include "Common.h"
 

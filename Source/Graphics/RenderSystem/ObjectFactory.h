@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef OBJECTFACTORY_H
-#define OBJECTFACTORY_H
+#ifndef APOC3D_OBJECTFACTORY_H
+#define APOC3D_OBJECTFACTORY_H
 
 #include "Common.h"
 #include "Graphics/PixelFormat.h"

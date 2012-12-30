@@ -21,6 +21,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef APOC3D_CONFIGURATIONMANAGER_H
+#define APOC3D_CONFIGURATIONMANAGER_H
+
 #include "Common.h"
 #include "Core/Singleton.h"
 #include "Configuration.h"
@@ -72,3 +75,4 @@ namespace Apoc3D
 		};
 	}
 }
+#endif

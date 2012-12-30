@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EFFECTPARAMETERS_H
-#define EFFECTPARAMETERS_H
+#ifndef APOC3D_EFFECTPARAMETERS_H
+#define APOC3D_EFFECTPARAMETERS_H
 
 #include "Common.h"
 #include "Collections/FastMap.h"

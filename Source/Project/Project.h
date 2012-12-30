@@ -21,6 +21,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef APOC3D_PROJECT_H
+#define APOC3D_PROJECT_H
+
 #include "Common.h"
 
 #include "Graphics/PixelFormat.h"
@@ -607,5 +610,5 @@ namespace Apoc3D
 		void setTexturePath(const String& path) { m_texturePath = path; }
 	};
 
-
 }
+#endif

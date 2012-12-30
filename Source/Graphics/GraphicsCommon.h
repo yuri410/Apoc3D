@@ -23,9 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 
-#ifndef GR_ENUMS_H
-#define GR_ENUMS_H
-
+#ifndef APOC3D_GR_ENUMS_H
+#define APOC3D_GR_ENUMS_H
 
 #include "Common.h"
 

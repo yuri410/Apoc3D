@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RENDERDEVICE_H
-#define RENDERDEVICE_H
+#ifndef APOC3D_RENDERDEVICE_H
+#define APOC3D_RENDERDEVICE_H
 
 #include "Common.h"
 //#include "RenderDeviceCaps.h"

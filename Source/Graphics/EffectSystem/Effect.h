@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef EFFECT_H
-#define EFFECT_H
+#ifndef APOC3D_EFFECT_H
+#define APOC3D_EFFECT_H
 
 #include "Common.h"
 #include "EffectParameter.h"

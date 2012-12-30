@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef AEGAME_H
-#define AEGAME_H
+#ifndef APOC3DEX_GAME_H
+#define APOC3DEX_GAME_H
 
 #include "Common.h"
 

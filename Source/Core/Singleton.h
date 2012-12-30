@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SINGLETON_H
-#define SINGLETON_H
+#ifndef APOC3D_SINGLETON_H
+#define APOC3D_SINGLETON_H
 
 #include "Common.h"
 

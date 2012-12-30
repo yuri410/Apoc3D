@@ -22,9 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef VFSCOMMON_H
-#define VFSCOMMON_H
-#pragma once
+#ifndef APOC3D_VFSCOMMON_H
+#define APOC3D_VFSCOMMON_H
 
 namespace Apoc3D
 {

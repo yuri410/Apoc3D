@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RENDERTARGET_H
-#define RENDERTARGET_H
+#ifndef APOC3D_RENDERTARGET_H
+#define APOC3D_RENDERTARGET_H
 
 #include "Common.h"
 #include "Graphics/GraphicsCommon.h"

@@ -21,9 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef STRINGTABLE_H
-#define STRINGTABLE_H
-#pragma once
+#ifndef APOC3D_STRINGTABLE_H
+#define APOC3D_STRINGTABLE_H
 
 #include "Common.h"
 

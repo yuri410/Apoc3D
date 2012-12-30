@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef MATERIALDATA_H
-#define MATERIALDATA_H
+#ifndef APOC3D_MATERIALDATA_H
+#define APOC3D_MATERIALDATA_H
 
 #include "Common.h"
 #include "Graphics/GraphicsCommon.h"

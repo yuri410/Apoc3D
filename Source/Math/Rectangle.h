@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RECTANGLE_H
-#define RECTANGLE_H
+#ifndef APOC3D_RECTANGLE_H
+#define APOC3D_RECTANGLE_H
 
 
 #include "Point.h"

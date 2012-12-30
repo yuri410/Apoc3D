@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef HALF_H
-#define HALF_H
+#ifndef APOC3D_HALF_H
+#define APOC3D_HALF_H
 
 #include "Common.h"
 

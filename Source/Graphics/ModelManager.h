@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef MODELMANAGER_H
-#define MODELMANAGER_H
+#ifndef APOC3D_MODELMANAGER_H
+#define APOC3D_MODELMANAGER_H
 
 #include "Common.h"
 #include "Core/ResourceManager.h"

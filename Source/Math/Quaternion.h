@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef QUATERNION_H
-#define QUATERNION_H
+#ifndef APOC3D_QUATERNION_H
+#define APOC3D_QUATERNION_H
 
 #include "Common.h"
 #include "Vector.h"

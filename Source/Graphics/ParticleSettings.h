@@ -21,6 +21,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef APOC3D_PARTICLESETTINGS_H
+#define APOC3D_PARTICLESETTINGS_H
+
 #include "Common.h"
 #include "Math/Color.h"
 #include "Math/Vector.h"
@@ -151,3 +154,4 @@ namespace Apoc3D
 
 	}
 }
+#endif

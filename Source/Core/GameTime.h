@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef GAMETIME_H
-#define GAMETIME_H
+#ifndef APOC3D_GAMETIME_H
+#define APOC3D_GAMETIME_H
 
 #include "Common.h"
 

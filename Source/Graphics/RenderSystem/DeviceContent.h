@@ -21,9 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef DEVICECONTENT_H
-#define DEVICECONTENT_H
-
+#ifndef APOC3D_DEVICECONTENT_H
+#define APOC3D_DEVICECONTENT_H
 
 #include "Common.h"
 #include "Graphics/GraphicsCommon.h"

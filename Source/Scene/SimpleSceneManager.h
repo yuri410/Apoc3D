@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SIMPLESCENEMANAGER_H
-#define SIMPLESCENEMANAGER_H
+#ifndef APOC3D_SIMPLESCENEMANAGER_H
+#define APOC3D_SIMPLESCENEMANAGER_H
 
 #include "Common.h"
 #include "SceneManager.h"

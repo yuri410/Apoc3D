@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+#ifndef APOC3D_CONFIGURATION_H
+#define APOC3D_CONFIGURATION_H
 
 #include "Common.h"
 #include "Collections/FastMap.h"

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef BOUNDINGSPHERE_H
-#define BOUNDINGSPHERE_H
+#ifndef APOC3D_BOUNDINGSPHERE_H
+#define APOC3D_BOUNDINGSPHERE_H
 
 #include "Common.h"
 #include "Vector.h"

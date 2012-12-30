@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef MODELTYPES_H
-#define MODELTYPES_H
+#ifndef APOC3D_MODELTYPES_H
+#define APOC3D_MODELTYPES_H
 
 #include "Common.h"
 #include "Math/Vector.h"

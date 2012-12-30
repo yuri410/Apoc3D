@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef TEXTUREMANAGER_H
-#define TEXTUREMANAGER_H
+#ifndef APOC3D_TEXTUREMANAGER_H
+#define APOC3D_TEXTUREMANAGER_H
 
 #include "Common.h"
 #include "Core/ResourceManager.h"

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef CONFIGURATIONSECTION_H
-#define CONFIGURATIONSECTION_H
+#ifndef APOC3D_CONFIGURATIONSECTION_H
+#define APOC3D_CONFIGURATIONSECTION_H
 
 #include "Common.h"
 #include "Math/ColorValue.h"

@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef PATHUTILS_H
-#define PATHUTILS_H
+#ifndef APOC3D_PATHUTILS_H
+#define APOC3D_PATHUTILS_H
 
 #include "Common.h"
 

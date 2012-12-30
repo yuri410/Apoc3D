@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef CONFIGURABLE_H
-#define CONFIGURABLE_H
+#ifndef APOC3D_CONFIGURABLE_H
+#define APOC3D_CONFIGURABLE_H
 #include "Common.h"
 
 namespace Apoc3D

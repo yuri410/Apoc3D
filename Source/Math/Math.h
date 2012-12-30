@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MATH_H
-#define MATH_H
+#ifndef APOC3D_MATH_H
+#define APOC3D_MATH_H
 
 #include "Vector.h"
 #include "Matrix.h"

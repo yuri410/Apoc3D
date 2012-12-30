@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef FILELOCATERULE_H
-#define FILELOCATERULE_H
+#ifndef APOC3D_FILELOCATERULE_H
+#define APOC3D_FILELOCATERULE_H
 
 #include "Common.h"
 

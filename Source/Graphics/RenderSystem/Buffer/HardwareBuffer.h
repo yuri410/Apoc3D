@@ -22,9 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-
-#ifndef HARDWAREBUFFER_H
-#define HARDWAREBUFFER_H
+#ifndef APOC3D_HARDWAREBUFFER_H
+#define APOC3D_HARDWAREBUFFER_H
 
 #include "Common.h"
 #include "Graphics\GraphicsCommon.h"

@@ -157,7 +157,7 @@ namespace APBuild
 
 		short Left;
 		short Top;
-		short AdvanceX;
+		float AdvanceX;
 	};
 
 
@@ -518,7 +518,7 @@ namespace APBuild
 				}
 
 				{
-					CharMapping m = { ch, glyphMap.Index, (short)bitmap_glyph->left, (short)(config.Size-bitmap_glyph->top), (short)face->glyph->advance.x / 64 };
+					CharMapping m = { ch, glyphMap.Index, (short)bitmap_glyph->left, (short)(config.Size-bitmap_glyph->top), (face->glyph->advance.x / 64.0f) };
 					charMap.Add(m);
 				}
 			}
@@ -545,7 +545,7 @@ namespace APBuild
 
 			bw->Write((short)charMap[i].Left);
 			bw->Write((short)charMap[i].Top);
-			bw->Write((short)charMap[i].AdvanceX);
+			bw->Write((float)charMap[i].AdvanceX);
 
 		}
 

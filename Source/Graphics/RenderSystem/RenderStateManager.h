@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RENDERSTATEMANAGER_H
-#define RENDERSTATEMANAGER_H
+#ifndef APOC3D_RENDERSTATEMANAGER_H
+#define APOC3D_RENDERSTATEMANAGER_H
 
 #include "Common.h"
 #include "Graphics\GraphicsCommon.h"

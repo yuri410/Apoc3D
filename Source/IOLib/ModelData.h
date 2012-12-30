@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef MODELDATA_H
-#define MODELDATA_H
+#ifndef APOC3D_MODELDATA_H
+#define APOC3D_MODELDATA_H
 
 #include "Common.h"
 #include "Graphics/GraphicsCommon.h"

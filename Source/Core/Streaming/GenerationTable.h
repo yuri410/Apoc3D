@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef GENERATIONTABLE_H
-#define GENERATIONTABLE_H
+#ifndef APOC3D_GENERATIONTABLE_H
+#define APOC3D_GENERATIONTABLE_H
 
 #include "Common.h"
 #include "Collections/FastList.h"

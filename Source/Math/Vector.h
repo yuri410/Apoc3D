@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef APOC3D_VECTOR_H
+#define APOC3D_VECTOR_H
 
 #include "Common.h"
 

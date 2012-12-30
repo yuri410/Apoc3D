@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef INPUTAPI_H
-#define INPUTAPI_H
+#ifndef APOC3D_INPUTAPI_H
+#define APOC3D_INPUTAPI_H
 
 #include "Common.h"
 

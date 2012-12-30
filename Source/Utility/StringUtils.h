@@ -21,10 +21,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef STRINGUTILS_H
-#define STRINGUTILS_H
+#ifndef APOC3D_STRINGUTILS_H
+#define APOC3D_STRINGUTILS_H
 
-#pragma once
 #include "Common.h"
 
 using namespace std;

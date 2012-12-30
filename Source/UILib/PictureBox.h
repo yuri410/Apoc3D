@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef PICTUREBOX_H
-#define PICTUREBOX_H
+#ifndef APOC3D_PICTUREBOX_H
+#define APOC3D_PICTUREBOX_H
 
 #include "Control.h"
 

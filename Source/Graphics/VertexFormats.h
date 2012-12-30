@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef VERTEXFORMATS_H
-#define VERTEXFORMATS_H
+#ifndef APOC3D_VERTEXFORMATS_H
+#define APOC3D_VERTEXFORMATS_H
 
 #include "Common.h"
 #include "Collections/FastList.h"

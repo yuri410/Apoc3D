@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef VOLATILERESOURCE_H
-#define VOLATILERESOURCE_H
+#ifndef APOC3D_D3D9_VOLATILERESOURCE_H
+#define APOC3D_D3D9_VOLATILERESOURCE_H
 
 #include "D3D9Common.h"
 

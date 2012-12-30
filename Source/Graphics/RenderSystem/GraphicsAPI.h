@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef GRAPHICSAPI_H
-#define GRAPHICSAPI_H
+#ifndef APOC3D_GRAPHICSAPI_H
+#define APOC3D_GRAPHICSAPI_H
 
 #include "Core/Singleton.h"
 #include "Platform/API.h"

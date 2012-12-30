@@ -22,6 +22,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
+#ifndef APOC3D_STACK_H
+#define APOC3D_STACK_H
+
 namespace Apoc3D
 {
 	namespace Collections
@@ -102,3 +105,5 @@ namespace Apoc3D
 		};
 	}
 }
+
+#endif

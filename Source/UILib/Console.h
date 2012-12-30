@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef CONSOLE_H
-#define CONSOLE_H
+#ifndef APOC3D_CONSOLE_H
+#define APOC3D_CONSOLE_H
 
 #include "UICommon.h"
 #include "Core/Logging.h"

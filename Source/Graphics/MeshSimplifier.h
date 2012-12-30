@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef MESHSIMPLIFIER_H
-#define MESHSIMPLIFIER_H
+#ifndef APOC3D_MESHSIMPLIFIER_H
+#define APOC3D_MESHSIMPLIFIER_H
 
 #include "Common.h"
 #include "Math/Vector.h"

@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef RENDEROPERATIONTABLE_H
-#define RENDEROPERATIONTABLE_H
+#ifndef APOC3D_RENDEROPERATIONTABLE_H
+#define APOC3D_RENDEROPERATIONTABLE_H
 
 #include "Common.h"
 #include "Collections/FastList.h"

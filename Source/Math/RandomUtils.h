@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RANDOMUTILS_H
-#define RANDOMUTILS_H
+#ifndef APOC3D_RANDOMUTILS_H
+#define APOC3D_RANDOMUTILS_H
 
 #include "Common.h"
 

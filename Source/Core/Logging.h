@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef LOGGING_H
-#define LOGGING_H
+#ifndef APOC3D_LOGGING_H
+#define APOC3D_LOGGING_H
 
 #include "Common.h"
 #include "Singleton.h"

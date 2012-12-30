@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef XMLCONFIGURATIONFORMAT_H
-#define XMLCONFIGURATIONFORMAT_H
+#ifndef APOC3D_XMLCONFIGURATIONFORMAT_H
+#define APOC3D_XMLCONFIGURATIONFORMAT_H
 
 #include "Common.h"
 #include "Configuration.h"

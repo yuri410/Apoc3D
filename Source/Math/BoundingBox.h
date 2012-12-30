@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef BOUNDINGBOX_H
-#define BOUNDINGBOX_H
+#ifndef APOC3D_BOUNDINGBOX_H
+#define APOC3D_BOUNDINGBOX_H
 
 #include "Common.h"
 #include "Vector.h"

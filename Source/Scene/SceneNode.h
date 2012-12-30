@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SCENENODE_H
-#define SCENENODE_H
+#ifndef APOC3D_SCENENODE_H
+#define APOC3D_SCENENODE_H
 
 #include "Common.h"
 #include "Collections/FastList.h"

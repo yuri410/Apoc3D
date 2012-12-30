@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RENDEROPERATION_H
-#define RENDEROPERATION_H
+#ifndef APOC3D_RENDEROPERATION_H
+#define APOC3D_RENDEROPERATION_H
 
 #include "Common.h"
 #include "Math\Matrix.h"

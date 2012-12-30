@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef FASTMAP_H
-#define FASTMAP_H
+#ifndef APOC3D_FASTMAP_H
+#define APOC3D_FASTMAP_H
 
 #include "Common.h"
 #include "CollectionsCommon.h"

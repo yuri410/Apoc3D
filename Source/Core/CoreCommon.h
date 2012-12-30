@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef CORECOMMON_H
-#define CORECOMMON_H
+#ifndef APOC3D_CORECOMMON_H
+#define APOC3D_CORECOMMON_H
 
 #include "Common.h"
 

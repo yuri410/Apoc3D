@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EFFECTSYSTEM_H
-#define EFFECTSYSTEM_H
+#ifndef APOC3D_EFFECTSYSTEM_H
+#define APOC3D_EFFECTSYSTEM_H
 
 #include "Common.h"
 #include "Core/Singleton.h"

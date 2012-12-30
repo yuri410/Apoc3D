@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef KEYBOARD_H
-#define KEYBOARD_H
+#ifndef APOC3D_KEYBOARD_H
+#define APOC3D_KEYBOARD_H
 
 #include "Common.h"
 

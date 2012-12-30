@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef APOC3D_SHADER_H
+#define APOC3D_SHADER_H
 
 #include "Common.h"
 #include "Math\Vector.h"

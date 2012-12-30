@@ -1,6 +1,6 @@
 
-#ifndef UICOMMON_H
-#define UICOMMON_H
+#ifndef APOC3D_UICOMMON_H
+#define APOC3D_UICOMMON_H
 
 #include "Common.h"
 

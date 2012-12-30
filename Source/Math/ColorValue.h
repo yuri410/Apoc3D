@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef COLORVALUE_H
-#define COLORVALUE_H
+#ifndef APOC3D_COLORVALUE_H
+#define APOC3D_COLORVALUE_H
 
 #include "Common.h"
 

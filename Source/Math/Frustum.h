@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef FRUSTUM_H
-#define FRUSTUM_H
+#ifndef APOC3D_FRUSTUM_H
+#define APOC3D_FRUSTUM_H
 
 
 #include "Common.h"

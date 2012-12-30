@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef GAMECLOCK_H
-#define GAMECLOCK_H
+#ifndef APOC3D_D3D9_GAMECLOCK_H
+#define APOC3D_D3D9_GAMECLOCK_H
 
 #include "D3D9Common.h"
 

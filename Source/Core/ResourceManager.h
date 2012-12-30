@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef RESOURCEMANAGER_H
-#define RESOURCEMANAGER_H
+#ifndef APOC3D_RESOURCEMANAGER_H
+#define APOC3D_RESOURCEMANAGER_H
 
 #include "Common.h"
 

@@ -1,6 +1,6 @@
 
-#ifndef PERLINNOISE_H
-#define PERLINNOISE_H
+#ifndef APOC3D_PERLINNOISE_H
+#define APOC3D_PERLINNOISE_H
 
 #include "Common.h"
 
