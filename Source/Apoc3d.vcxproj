@@ -350,6 +350,7 @@
     <ClCompile Include="Math\OctreeBox.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
+    <ClCompile Include="Platform\API.cpp" />
     <ClCompile Include="Platform\Thread.cpp" />
     <ClCompile Include="Project\Project.cpp" />
     <ClCompile Include="Scene\OctreeSceneManager.cpp" />

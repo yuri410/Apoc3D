@@ -54,6 +54,7 @@ namespace Apoc3D
 			vector<PlatformAPISupport> SupportedPlatforms;
 		};
 
+		uint64 GetInstalledSystemMemorySizeInKB();
 	}
 }
 
