@@ -542,6 +542,9 @@ namespace Apoc3D
 		Name = sect->getAttribute(L"Name");
 		Size = sect->GetAttributeSingle(L"Size");
 
+		AntiAlias = true;
+		sect->TryGetAttributeBool(L"AntiAlias", AntiAlias);
+
 		Style = FONTSTYLE_Regular;
 		String strStyle;
 		if (sect->tryGetAttribute(L"Style", strStyle))
@@ -585,6 +588,8 @@ namespace Apoc3D
 	{
 		sect->AddAttributeString(L"Name", savingBuild ? PathUtils::Combine(m_project->getBasePath(), Name) : Name);
 		sect->AddAttributeString(L"Size", StringUtils::ToString(Size));
+
+		sect->AddAttributeBool(L"AntiAlias", AntiAlias);
 
 		if (Style != FONTSTYLE_Regular)
 		{

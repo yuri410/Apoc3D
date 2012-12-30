@@ -90,6 +90,7 @@ namespace APBuild
 		uint Style;
 		String Name;
 		float Size;
+		bool AntiAlias;
 
 		String DestFile;
 		

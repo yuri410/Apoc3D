@@ -61,6 +61,8 @@ namespace Apoc3D
 		public:
 			virtual int getFileCount() const = 0;
 			virtual Stream* GetEntryStream(const String& file) = 0;
+			virtual int64 GetEntrySize(const String& file) = 0;
+			virtual bool HasEntry(const String& file) = 0;
 			virtual String GetEntryName(int index) = 0;
 		};
 
@@ -82,6 +84,8 @@ namespace Apoc3D
 
 			virtual int getFileCount() const;
 			virtual Stream* GetEntryStream(const String& file);
+			virtual bool HasEntry(const String& file);
+			virtual int64 GetEntrySize(const String& file);
 			virtual String GetEntryName(int index);
 
 			enum PakCompressionType

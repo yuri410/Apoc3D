@@ -180,6 +180,9 @@ namespace APBuild
 		Name = sect->getAttribute(L"Name");
 		Size = sect->GetAttributeSingle(L"Size");
 
+		AntiAlias = true;
+		sect->TryGetAttributeBool(L"AntiAlias", AntiAlias);
+
 		Style = Gdiplus::FontStyleRegular;
 		String strStyle;
 		if (sect->tryGetAttribute(L"Style", strStyle))

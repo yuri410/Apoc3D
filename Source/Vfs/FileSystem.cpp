@@ -290,12 +290,10 @@ namespace Apoc3D
 										// if the archive is in a parent archive
 										//if (parent)
 										{
-											Stream* entStm = parent->GetEntryStream(locs[i]);
-
-											if (entStm)
+											if (parent->HasEntry(locs[i]))
 											{
 												entry = CreateArchive(
-													new FileLocation(parent, fPath, entStm));
+													new FileLocation(parent, fPath, locs[i]));
 												m_openedPack.insert(pair<String, Archive*>(fPath, entry));
 											}
 											else
@@ -322,13 +320,11 @@ namespace Apoc3D
 								}
 								if (found && entry)
 								{
-									
-									Stream* entStm = entry->GetEntryStream(locs[locs.size() - 1]);
-
-									if (entStm)
+									const String& entName = locs[locs.size()-1];
+									if (entry->HasEntry(entName))
 									{
 										String afp = PathUtils::Combine(entry->getDirectory(), entry->getFileName());
-										return new FileLocation(entry, PathUtils::Combine(afp, filePath), entStm);
+										return new FileLocation(entry, PathUtils::Combine(afp, filePath), entName);
 									}
 								}
 							}
@@ -345,12 +341,10 @@ namespace Apoc3D
 								}
 								if (entry)
 								{
-									Stream* entStm = entry->GetEntryStream(locs[0]);
-
-									if (entStm)
+									if (entry->HasEntry(locs[0]))
 									{
 										String afp = PathUtils::Combine(entry->getDirectory(), entry->getFileName());
-										return new FileLocation(entry, PathUtils::Combine(afp, filePath), entStm);
+										return new FileLocation(entry, PathUtils::Combine(afp, filePath), locs[0]);
 									}
 								}
 							}

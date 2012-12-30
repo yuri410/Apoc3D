@@ -180,7 +180,7 @@ namespace Apoc3D
 				D3DDevice* dev = getDevice();
 				D3DCAPS9 caps;
 				dev->GetDeviceCaps(&caps);
-
+				
 				m_nativeState = new NativeD3DStateManager(this);
 				m_stateManager = new D3D9RenderStateManager(this, m_nativeState);
 				m_renderStates = m_stateManager;

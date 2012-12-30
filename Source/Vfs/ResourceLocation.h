@@ -72,14 +72,14 @@ namespace Apoc3D
 		private:
 			Archive* m_parent;
 			String m_path;
-			Stream* m_stream;
+			String m_entryName;
 
 		protected:
 			FileLocation(const String& filePath, int64 size);
 		public:
 			FileLocation(const String& filePath);
 			FileLocation(const FileLocation& fl);
-			FileLocation(Archive* pack, const String& filePath, Stream* stm);
+			FileLocation(Archive* pack, const String& filePath, const String& entryName);
 			~FileLocation();
 
 			virtual Stream* GetWriteStream() const { return 0;}

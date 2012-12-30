@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "ResourceLocation.h"
 
+#include "Archive.h"
 #include "Utility/StringUtils.h"
 #include "PathUtils.h"
 #include "File.h"
@@ -39,48 +40,49 @@ namespace Apoc3D
 			return StringUtils::GetHashCode(m_name);
 		}
 
-		FileLocation::FileLocation(Archive* pack, const String& filePath, Stream* stm)
-			: ResourceLocation(filePath, stm->getLength()), 
-			m_parent(pack), m_path(filePath), m_stream(stm)
+		FileLocation::FileLocation(Archive* pack, const String& filePath, const String& entryName)
+			: ResourceLocation(filePath, pack->GetEntrySize(entryName)), 
+			m_parent(pack), m_path(filePath), m_entryName(entryName)
 		{
 
 		}
 		FileLocation::FileLocation(const FileLocation& fl)
 			: ResourceLocation(fl.getName(), fl.getSize()), 
-			m_parent(fl.m_parent), m_path(fl.m_path), m_stream(0)
+			m_parent(fl.m_parent), m_path(fl.m_path), m_entryName(fl.m_entryName)
 		{
 		}
 		
 		FileLocation::FileLocation(const String& filePath, int64 size)
 			: ResourceLocation(filePath, size), 
-			m_parent(0), m_path(filePath), m_stream(0)
+			m_parent(0), m_path(filePath)
 		{
 
 		}
 		FileLocation::FileLocation(const String& filePath)
 			: ResourceLocation(filePath, File::GetFileSize(filePath)),
-			m_parent(0), m_path(filePath), m_stream(0)
+			m_parent(0), m_path(filePath)
 		{
 
 		}
 		FileLocation::~FileLocation()
 		{
-			if (m_stream)
-				delete m_stream;
 		}
 		Stream* FileLocation::GetReadStream() const
 		{
-			if (m_stream)
+			if (m_parent)
 			{
-				VirtualStream* strm = dynamic_cast<VirtualStream*>(m_stream);
+				Stream* s = m_parent->GetEntryStream(m_entryName);
+				assert(s);
 
-				if (strm)
+				VirtualStream* strm = dynamic_cast<VirtualStream*>(s);
+
+				if (!strm)
 				{
 					return new VirtualStream(*strm);
 				}
 				else
 				{
-					return new VirtualStream(m_stream);
+					return strm;
 				}
 			}
 			

@@ -299,10 +299,10 @@ namespace Apoc3D
 
 			virtual int64 Read(char* dest, int64 count)
 			{
-				if (getPosition() + count > getLength())
-				{
-					count = getLength() - getPosition();
-				}
+				//if (getPosition() + count > getLength())
+				//{
+				//	count = getLength() - getPosition();
+				//}
 				if (count)
 				{
 					m_baseStream->Read(dest, count);

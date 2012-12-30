@@ -93,16 +93,7 @@ namespace Apoc3D
 						// then finalize
 						m_window->OnFinalize();
 					}
-					virtual void Initialize()
-					{
-						// The window will be only initialized once, even in some cases, like device losts
-						// when this is called again.
-						if (!((D3D9RenderDevice*)m_window->getRenderDevice())->isInitialized())
-						{
-							m_window->getRenderDevice()->Initialize();
-							m_window->OnInitialize(); // will make the event handler interface to process the event
-						}
-					}
+					virtual void Initialize();
 					virtual void LoadContent()
 					{
 						m_window->OnLoad();
@@ -162,13 +153,14 @@ namespace Apoc3D
 				virtual Size getClientSize();
 
 				virtual bool getIsActive() const;
+
+				const String& getHardwareName() const { return m_hardwareName; }
 			private:
 				D3D9Game* m_game;
 				D3D9DeviceContent* m_dc;
-				void setDevice(RenderDevice* device)
-				{
-					m_renderDevice = device;
-				}
+				String m_hardwareName;
+
+				void setDevice(RenderDevice* device);
 			};
 		}
 	}

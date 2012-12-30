@@ -234,7 +234,10 @@ namespace APBuild
 				Bitmap* bitmap = new Bitmap((INT)width, (INT)height, PixelFormat32bppARGB);
 
 				Gdiplus::Graphics* g = Gdiplus::Graphics::FromImage(bitmap);
-				g->SetTextRenderingHint(TextRenderingHintAntiAliasGridFit);
+				if (config.AntiAlias)
+					g->SetTextRenderingHint(TextRenderingHintAntiAliasGridFit);
+				else
+					g->SetTextRenderingHint(TextRenderingHintSingleBitPerPixel);
 				g->Clear(Gdiplus::Color(0));
 
 
@@ -475,7 +478,11 @@ namespace APBuild
 					throw std::runtime_error("FT_Get_Glyph failed");
 
 				//Convert the glyph to a bitmap.
-				FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_NORMAL, 0, 1 );
+				if (config.AntiAlias)
+					FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_NORMAL, nullptr, 1 );
+				else
+					FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_MONO, nullptr, 1 );
+
 				FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph)glyph;
 
 				//This reference will make accessing the bitmap easier
@@ -489,19 +496,41 @@ namespace APBuild
 
 
 				//assert(sy>=0);
-				int srcofs = 0;
-				int dstofs = 0;
-				for (int k=0;k<bitmap.rows;k++)
+				if (config.AntiAlias)
 				{
-					for (int j=0;j<bitmap.width;j++)
+					int srcofs = 0;
+					int dstofs = 0;
+					for (int k=0;k<bitmap.rows;k++)
 					{
-						buffer[dstofs+j] = bitmap.buffer[srcofs + j];
+						for (int j=0;j<bitmap.width;j++)
+						{
+							buffer[dstofs+j] = bitmap.buffer[srcofs + j];
+						}
+
+						srcofs += bitmap.width;
+						dstofs += width;
 					}
-
-					srcofs += bitmap.width;
-					dstofs += width;
 				}
+				else
+				{
+					int srcofs = 0;
+					int dstofs = 0;
+					for (int k=0;k<bitmap.rows;k++)
+					{
+						for (int j=0;j<bitmap.width;j++)
+						{
+							int ofs = srcofs + j;
+							int ofsByte = ofs/8;
+							int ofsBit = ofs % 8;
 
+							buffer[dstofs+j] = (bitmap.buffer[ofsByte] & (0x80>>ofsBit)) ? 0xff : 0x00;
+						}
+
+						srcofs += bitmap.width;
+						dstofs += width;
+					}
+				}
+				
 				// check duplicated glyphs using hash table
 				// use the previous glyph if a same one already exists
 				GlyphBitmap result;

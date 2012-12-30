@@ -26,9 +26,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9RenderDevice.h"
 #include "D3D9RenderWindow.h"
+#include "GraphicsDeviceManager.h"
+#include "Utility/StringUtils.h"
 #include "Apoc3DException.h"
 
-
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -41,6 +43,9 @@ namespace Apoc3D
 			{
 				m_d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 
+				D3DADAPTER_IDENTIFIER9 did;
+				m_d3d9->GetAdapterIdentifier(0, NULL, &did);
+				m_hardwareName = StringUtils::toWString(did.Description);
 			}
 			D3D9DeviceContent::~D3D9DeviceContent()
 			{
@@ -76,7 +81,7 @@ namespace Apoc3D
 					}
 				}
 				// keep the compiler happy
-				return 0;
+				return NULL;
 			}
 
 			RenderDevice* D3D9DeviceContent::getRenderDevice()
@@ -84,6 +89,15 @@ namespace Apoc3D
 				if (m_window)
 					return m_window->getRenderDevice();
 				return 0;
+			}
+
+			String D3D9DeviceContent::GetHardwareName()
+			{
+				if (m_window && !m_window->getHardwareName().empty())
+				{
+					return m_window->getHardwareName();
+				}
+				return m_hardwareName; 
 			}
 		}
 	}

@@ -124,6 +124,20 @@ namespace Apoc3D
 			}
 			return 0;
 		}
+		bool PakArchive::HasEntry(const String& file)
+		{
+			return m_entries.Contains(file);
+		}
+		int64 PakArchive::GetEntrySize(const String& file)
+		{
+			PakArchiveEntry lpkEnt;
+
+			if (m_entries.TryGetValue(file, lpkEnt))
+			{
+				return lpkEnt.Size;
+			}
+			return 0;
+		}
 		String PakArchive::GetEntryName(int index)
 		{
 			int i=0;

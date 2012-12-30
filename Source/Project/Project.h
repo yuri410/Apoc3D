@@ -440,6 +440,7 @@ namespace Apoc3D
 		FontStyle Style;
 		String Name;
 		float Size;
+		bool AntiAlias;
 
 		String DestFile;
 

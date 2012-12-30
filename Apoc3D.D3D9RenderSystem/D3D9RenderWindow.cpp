@@ -32,7 +32,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9RenderViewSet.h"
 #include "DeviceSettings.h"
 #include "Core/Logging.h"
+#include "Utility/StringUtils.h"
 
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -119,6 +121,20 @@ namespace Apoc3D
 
 				//device->Initialize();
 			}
+			void D3D9RenderWindow::D3D9Game::Initialize()
+			{
+				D3DADAPTER_IDENTIFIER9 did;
+				getGraphicsDeviceManager()->getDirect3D()->GetAdapterIdentifier(getGraphicsDeviceManager()->getCurrentSetting()->D3D9.AdapterOrdinal, NULL, &did);
+				m_window->m_hardwareName = StringUtils::toWString(did.Description);
+
+				// The window will be only initialized once, even in some cases, like device losts
+				// when this is called again.
+				if (!((D3D9RenderDevice*)m_window->getRenderDevice())->isInitialized())
+				{
+					m_window->getRenderDevice()->Initialize();
+					m_window->OnInitialize(); // will make the event handler interface to process the event
+				}
+			}
 
 
 			D3D9RenderWindow::D3D9RenderWindow(D3D9RenderDevice* device, D3D9DeviceContent* dc, const RenderParameters& pm)
@@ -174,7 +190,7 @@ namespace Apoc3D
 				
 				// Creates almost every thing
 				m_game->Create();
-				
+
 				m_game->Run();
 				// Releases almost every thing
 				m_game->Release();
@@ -196,6 +212,12 @@ namespace Apoc3D
 			bool D3D9RenderWindow::getIsActive() const
 			{
 				return m_game->getIsActive();
+			}
+
+			void D3D9RenderWindow::setDevice(RenderDevice* device)
+			{
+				m_renderDevice = device;
+
 			}
 		}
 	}

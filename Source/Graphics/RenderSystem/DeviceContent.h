@@ -117,6 +117,8 @@ namespace Apoc3D
 				void Destroy(RenderView* rc);
 
 				virtual RenderDevice* getRenderDevice() = 0;
+
+				virtual String GetHardwareName() = 0;
 			protected:
 				virtual RenderView* create(const RenderParameters &pm) = 0;
 
