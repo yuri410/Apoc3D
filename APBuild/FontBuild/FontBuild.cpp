@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "freetype/ftglyph.h"
 #include "freetype/ftoutln.h"
 #include "freetype/fttrigon.h"
+#include "freetype/ftbitmap.h"
 
 #include "Collections/CollectionsCommon.h"
 #include "Config/ConfigurationSection.h"
@@ -486,49 +487,46 @@ namespace APBuild
 				FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph)glyph;
 
 				//This reference will make accessing the bitmap easier
-				FT_Bitmap& bitmap=bitmap_glyph->bitmap;
+				//FT_Bitmap& bitmap = bitmap_glyph->bitmap;
 
-				int height = bitmap.rows;
-				int width = bitmap.width;
+				FT_Bitmap tempbitmap;
+				if (!config.AntiAlias)
+				{
+					FT_Bitmap_New(&tempbitmap);
+					FT_Error ret = FT_Bitmap_Convert( library, &bitmap_glyph->bitmap, &tempbitmap, 1);
+					assert(ret == 0);
+				}
+
+				FT_Bitmap& readSource = config.AntiAlias ? bitmap_glyph->bitmap : tempbitmap;
+
+				int height = readSource.rows;
+				int width = readSource.width;
 
 				char* buffer = new char[width * height];
 				memset(buffer, 0, width*height);
-
-
+				
+				
 				//assert(sy>=0);
-				if (config.AntiAlias)
+				
+				int srcofs = 0;
+				int dstofs = 0;
+				for (int k=0;k<readSource.rows;k++)
 				{
-					int srcofs = 0;
-					int dstofs = 0;
-					for (int k=0;k<bitmap.rows;k++)
+					for (int j=0;j<readSource.width;j++)
 					{
-						for (int j=0;j<bitmap.width;j++)
-						{
-							buffer[dstofs+j] = bitmap.buffer[srcofs + j];
-						}
-
-						srcofs += bitmap.width;
-						dstofs += width;
+						if (config.AntiAlias)
+							buffer[dstofs+j] = readSource.buffer[srcofs + j];
+						else
+							buffer[dstofs+j] = readSource.buffer[srcofs + j] ? 0xff : 0;
 					}
+
+					srcofs += readSource.width;
+					dstofs += width;
 				}
-				else
+
+				if (!config.AntiAlias)
 				{
-					int srcofs = 0;
-					int dstofs = 0;
-					for (int k=0;k<bitmap.rows;k++)
-					{
-						for (int j=0;j<bitmap.width;j++)
-						{
-							int ofs = srcofs + j;
-							int ofsByte = ofs/8;
-							int ofsBit = ofs % 8;
-
-							buffer[dstofs+j] = (bitmap.buffer[ofsByte] & (0x80>>ofsBit)) ? 0xff : 0x00;
-						}
-
-						srcofs += bitmap.width;
-						dstofs += width;
-					}
+					FT_Bitmap_Done( library, &tempbitmap );
 				}
 				
 				// check duplicated glyphs using hash table
