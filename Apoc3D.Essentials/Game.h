@@ -28,12 +28,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Common.h"
 
 #include "Graphics/RenderSystem/RenderWindowHandler.h"
-
+#include "Input/InputAPI.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::UI;
+using namespace Apoc3D::Input;
 
 namespace Apoc3DEx
 {
@@ -98,6 +99,8 @@ namespace Apoc3DEx
 
 		StyleSkin* m_UIskin;
 		Console* m_console;
+
+		InputCreationParameters m_inputCreationParam;
 	};
 }
 #endif

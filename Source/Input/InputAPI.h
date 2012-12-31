@@ -42,6 +42,7 @@ namespace Apoc3D
 		{
 			bool UseMouse;
 			bool UseKeyboard;
+			int PreferredGamepadCount;
 		};
 		class APAPI InputAPIFactory
 		{

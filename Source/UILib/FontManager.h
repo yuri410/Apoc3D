@@ -62,10 +62,14 @@ namespace Apoc3D
 			
 			Font(RenderDevice* device, ResourceLocation* fl);
 			~Font();
+
 			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink = 0);
+			//void DrawStringFixed(Sprite* sprite, const String& text, const Point& pt, uint color, int fixedAdvanceX);
+
 
 			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
+
 			Point MeasureString(const String& text, int width);
 			Point MeasureString(const String& text);
 

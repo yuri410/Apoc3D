@@ -18,7 +18,6 @@
 #include "UILib/List.h"
 #include "UILib/Console.h"
 
-#include "Input/InputAPI.h"
 #include "Vfs/FileLocateRule.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/Archive.h"
@@ -26,7 +25,6 @@
 #include "Vfs/PathUtils.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
-using namespace Apoc3D::Input;
 using namespace Apoc3D::VFS;
 
 namespace Apoc3DEx
@@ -34,7 +32,9 @@ namespace Apoc3DEx
 	Game::Game(RenderWindow* wnd)
 		: m_window(wnd), m_console(0), m_device(0), m_UIskin(0)
 	{
-		
+		m_inputCreationParam.UseKeyboard = true;
+		m_inputCreationParam.UseMouse = true;
+
 	}
 
 	Game::~Game()
@@ -62,11 +62,8 @@ namespace Apoc3DEx
 	void Game::Initialize()
 	{
 		m_device = m_window->getRenderDevice();
-		InputCreationParameters icp;
-		icp.UseKeyboard = true;
-		icp.UseMouse = true;
-
-		InputAPIManager::getSingleton().InitializeInput(m_window, icp);
+		
+		InputAPIManager::getSingleton().InitializeInput(m_window, m_inputCreationParam);
 	}
 	void Game::Finalize()
 	{
