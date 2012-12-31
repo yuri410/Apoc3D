@@ -39,7 +39,7 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			D3D9DeviceContent::D3D9DeviceContent()
-				: DeviceContent(true), m_window(0)
+				: DeviceContext(true), m_window(0)
 			{
 				m_d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
 

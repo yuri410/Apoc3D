@@ -228,7 +228,7 @@
     <ClInclude Include="UILib\UICommon.h" />
     <ClInclude Include="Utility\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
-    <ClInclude Include="Graphics\RenderSystem\DeviceContent.h" />
+    <ClInclude Include="Graphics\RenderSystem\DeviceContext.h" />
     <ClInclude Include="Graphics\RenderSystem\GraphicsAPI.h" />
     <ClInclude Include="Graphics\RenderSystem\ObjectFactory.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderDevice.h" />
@@ -322,7 +322,7 @@
     <ClCompile Include="Graphics\ParticleSystem.cpp" />
     <ClCompile Include="Graphics\Patch.cpp" />
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
-    <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp" />
+    <ClCompile Include="Graphics\RenderSystem\DeviceContext.cpp" />
     <ClCompile Include="Graphics\RenderSystem\InstancingData.cpp" />
     <ClCompile Include="Graphics\RenderSystem\ObjectFactory.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderDevice.cpp" />

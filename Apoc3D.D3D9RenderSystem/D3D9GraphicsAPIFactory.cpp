@@ -41,7 +41,7 @@ namespace Apoc3D
 				return desc;
 			}
 
-			DeviceContent* D3D9GraphicsAPIFactory::CreateDeviceContent()
+			DeviceContext* D3D9GraphicsAPIFactory::CreateDeviceContext()
 			{
 				return new D3D9DeviceContent();
 			}

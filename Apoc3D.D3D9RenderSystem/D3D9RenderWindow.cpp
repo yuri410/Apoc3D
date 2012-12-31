@@ -42,8 +42,8 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			D3D9RenderView::D3D9RenderView(D3D9RenderDevice* device, D3D9RenderViewSet* viewSet, IDirect3DSwapChain9* chain, const RenderParameters& pm)
-				: RenderView(device, pm), m_viewSet(viewSet),  m_swapChain(chain)//, m_deviceLost(false)
+			D3D9RenderView::D3D9RenderView(D3D9RenderDevice* device, D3D9DeviceContent* dc, D3D9RenderViewSet* viewSet, IDirect3DSwapChain9* chain, const RenderParameters& pm)
+				: RenderView(dc, device, pm), m_viewSet(viewSet),  m_swapChain(chain)//, m_deviceLost(false)
 			{
 				m_controlHandle = reinterpret_cast<HANDLE>(pm.TargetHandle);
 			}
@@ -138,7 +138,7 @@ namespace Apoc3D
 
 
 			D3D9RenderWindow::D3D9RenderWindow(D3D9RenderDevice* device, D3D9DeviceContent* dc, const RenderParameters& pm)
-				: RenderWindow(device, pm), m_dc(dc)
+				: RenderWindow(dc, device, pm), m_dc(dc)
 			{
 				m_game = new D3D9Game(this, dc->getD3D());
 

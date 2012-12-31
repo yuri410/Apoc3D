@@ -21,8 +21,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef APOC3D_DEVICECONTENT_H
-#define APOC3D_DEVICECONTENT_H
+#ifndef APOC3D_DEVICECONTEXT_H
+#define APOC3D_DEVICECONTEXT_H
 
 #include "Common.h"
 #include "Graphics/GraphicsCommon.h"
@@ -100,11 +100,8 @@ namespace Apoc3D
 
 			/* Represent a graphics device of a graphics API. It can create one or more RenderViews.
 			*/
-			class APAPI DeviceContent
+			class APAPI DeviceContext
 			{
-			private:
-				vector<RenderView*> m_renderPorts;
-				bool m_supportsRenderControl;
 			public:
 				/** Indicates whether if the API can draw in pre-existing windows or areas.
 				*/
@@ -122,10 +119,14 @@ namespace Apoc3D
 			protected:
 				virtual RenderView* create(const RenderParameters &pm) = 0;
 
-				DeviceContent(bool supportsRenderCtrl)
+				DeviceContext(bool supportsRenderCtrl)
 					: m_supportsRenderControl(supportsRenderCtrl)
 				{
 				}
+
+			private:
+				vector<RenderView*> m_renderPorts;
+				bool m_supportsRenderControl;
 			};
 
 

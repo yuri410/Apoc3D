@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9DDEVICECONTNET_H
 
 #include "D3D9Common.h"
-#include "Graphics/RenderSystem/DeviceContent.h"
+#include "Graphics/RenderSystem/DeviceContext.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 
@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9DeviceContent : public DeviceContent
+			class D3D9DeviceContent : public DeviceContext
 			{
 			public:
 				void NotifyWindowClosed(D3D9RenderWindow* wnd);

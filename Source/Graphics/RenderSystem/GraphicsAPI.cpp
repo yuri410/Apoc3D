@@ -155,9 +155,9 @@ namespace Apoc3D
 				//return a.PlatformMark < b.PlatformMark ? -1 : 1;
 			}
 
-			/** Find a best suited a Graphics API for current platform and create a device content.
+			/** Find a best suited a Graphics API for current platform and create a device context.
 			*/
-			DeviceContent* GraphicsAPIManager::CreateDeviceContent()
+			DeviceContext* GraphicsAPIManager::CreateDeviceContext()
 			{
 				const String OSName = APOC3D_PLATFORM_NAME;
 				
@@ -171,7 +171,7 @@ namespace Apoc3D
 
 						int idx = list->size();
 						idx--;
-						return list->operator[](idx).Factory->CreateDeviceContent();
+						return list->operator[](idx).Factory->CreateDeviceContext();
 					}
 					throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
 				}

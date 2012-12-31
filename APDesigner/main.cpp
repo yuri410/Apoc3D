@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "APDCommon.h"
 
 #include "Graphics/RenderSystem/GraphicsAPI.h"
-#include "Graphics/RenderSystem/DeviceContent.h"
+#include "Graphics/RenderSystem/DeviceContext.h"
 #include "Graphics/RenderSystem/RenderWindow.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/Archive.h"
@@ -86,7 +86,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	PakArchiveFactory* pakSupport = new PakArchiveFactory();
 	FileSystem::getSingletonPtr()->RegisterArchiveType(pakSupport);
 
-	DeviceContent* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContent();
+	DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();
 
 	RenderParameters params;
 	params.BackBufferHeight = 720;

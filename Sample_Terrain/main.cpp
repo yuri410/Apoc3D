@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/RandomUtils.h"
 
 #include "Graphics/RenderSystem/GraphicsAPI.h"
-#include "Graphics/RenderSystem/DeviceContent.h"
+#include "Graphics/RenderSystem/DeviceContext.h"
 #include "Graphics/RenderSystem/RenderWindow.h"
 #include "Vfs/FileSystem.h"
 #include "Vfs/Archive.h"
@@ -97,7 +97,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	FileSystem::getSingletonPtr()->RegisterArchiveType(pakSupport);
 
 	// now move on the creation of render window
-	DeviceContent* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContent();
+	DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();
 
 	// fill the params
 	RenderParameters params;

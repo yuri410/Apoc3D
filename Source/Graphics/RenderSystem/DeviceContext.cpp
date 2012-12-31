@@ -21,7 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "DeviceContent.h"
+#include "DeviceContext.h"
 
 #include "RenderWindow.h"
 
@@ -31,13 +31,13 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			RenderView* DeviceContent::Create(const RenderParameters &pm)
+			RenderView* DeviceContext::Create(const RenderParameters &pm)
 			{
 				RenderView* rc = create(pm);
 				m_renderPorts.push_back(rc);
 				return rc;
 			}
-			void DeviceContent::Destroy(RenderView* rc)
+			void DeviceContext::Destroy(RenderView* rc)
 			{
 				m_renderPorts.erase(find(m_renderPorts.begin(), m_renderPorts.end(), rc));
 				delete rc;

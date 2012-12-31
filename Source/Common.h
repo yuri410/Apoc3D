@@ -347,7 +347,7 @@ namespace Apoc3D
 
 			struct ShaderSamplerState;
 			struct RenderParameters;
-			class DeviceContent;
+			class DeviceContext;
 			
 			template class APAPI fastdelegate::FastDelegate1<const Apoc3D::Core::GameTime*, void>;
 			typedef fastdelegate::FastDelegate0<void> UpdateEventHandler;

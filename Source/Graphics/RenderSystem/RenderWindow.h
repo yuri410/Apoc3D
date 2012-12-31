@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_RENDERWINDOW_H
 
 #include "Common.h"
-#include "DeviceContent.h"
+#include "DeviceContext.h"
 #include "Math\Point.h"
 
 using namespace Apoc3D::Math;
@@ -55,40 +55,39 @@ namespace Apoc3D
 			*/
 			class APAPI RenderView
 			{
-			private:
-				RenderTarget* m_renderTarget;
-				RenderParameters m_presentParams;
-
-				FPSCounter m_fpsCounter;
-
-
-			protected:
-				RenderDevice* m_renderDevice;
-
-				RenderView(RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
-					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(rt)
-				{
-				}
-				RenderView(RenderDevice* rd, const RenderParameters &pm)
-					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(0)
-				{
-
-				}
-
 			public:
+				virtual ~RenderView(){}
+
+				float getFPS() const { return m_fpsCounter.getFPS(); }
+
+				virtual void Present(const GameTime* const time);
+
 				void* UserData;
 
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
 				const RenderParameters& getRenderParams() const { return m_presentParams; }
 				virtual void ChangeRenderParameters(const RenderParameters& params) { m_presentParams = params; }
+				DeviceContext* getDeviceContext() const { return m_deviceContext; }
 
-				virtual ~RenderView(){}
+			protected:
+				RenderDevice* m_renderDevice;
 
-				
-				float getFPS() const { return m_fpsCounter.getFPS(); }
+				RenderView(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
+					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(rt), m_deviceContext(dc)
+				{
+				}
+				RenderView(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm)
+					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(0), m_deviceContext(dc)
+				{
 
-				virtual void Present(const GameTime* const time);
-				
+				}
+
+			private:
+				RenderTarget* m_renderTarget;
+				RenderParameters m_presentParams;
+
+				FPSCounter m_fpsCounter;
+				DeviceContext* m_deviceContext;
 
 			};
 
@@ -129,13 +128,13 @@ namespace Apoc3D
 
 			protected:
 
-				RenderWindow(RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
-					: RenderView(rd, pm, rt), m_evtHandler(0), m_isExiting(false)
+				RenderWindow(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
+					: RenderView(dc, rd, pm, rt), m_evtHandler(0), m_isExiting(false)
 				{
 
 				}
-				RenderWindow(RenderDevice* rd, const RenderParameters &pm)
-					: RenderView(rd, pm), m_evtHandler(0), m_isExiting(false)
+				RenderWindow(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm)
+					: RenderView(dc, rd, pm), m_evtHandler(0), m_isExiting(false)
 				{
 
 				}

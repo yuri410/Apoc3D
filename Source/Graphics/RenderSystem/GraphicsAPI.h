@@ -67,13 +67,13 @@ namespace Apoc3D
 				void UnregisterGraphicsAPI(const String& name);
 				void UnregisterGraphicsAPI(GraphicsAPIFactory* fac);
 				
-				DeviceContent* CreateDeviceContent();
+				DeviceContext* CreateDeviceContext();
 			
 				SINGLETON_DECL_HEARDER(GraphicsAPIManager);
 			};
 
 
-			/* Factory that create device content of particular Graphics API.
+			/* Factory that create device context of particular Graphics API.
 			*/
 			class APAPI GraphicsAPIFactory
 			{
@@ -94,7 +94,7 @@ namespace Apoc3D
 
 				/** Create the device content of the Graphics API.
 				*/
-				virtual DeviceContent* CreateDeviceContent() = 0;
+				virtual DeviceContext* CreateDeviceContext() = 0;
 			};
 		}
 	}

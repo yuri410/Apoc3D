@@ -41,21 +41,22 @@ namespace Apoc3D
 		{
 			class D3D9RenderView : public RenderView
 			{
-			private:
-				D3D9RenderViewSet* m_viewSet;
-				D3D9RenderDevice* m_device;
-				IDirect3DSwapChain9* m_swapChain;
-				HANDLE m_controlHandle;
-
 			public:
 
-				D3D9RenderView(D3D9RenderDevice* device, D3D9RenderViewSet* viewSet, IDirect3DSwapChain9* chain, const RenderParameters& pm);
+				D3D9RenderView(D3D9RenderDevice* device, D3D9DeviceContent* dc, D3D9RenderViewSet* viewSet, IDirect3DSwapChain9* chain, const RenderParameters& pm);
 				~D3D9RenderView();
 
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
 
 				virtual void Present(const GameTime* const time);
+
+			private:
+				D3D9RenderViewSet* m_viewSet;
+				D3D9RenderDevice* m_device;
+				IDirect3DSwapChain9* m_swapChain;
+				HANDLE m_controlHandle;
+
 			};
 
 

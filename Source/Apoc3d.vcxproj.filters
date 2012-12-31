@@ -123,9 +123,6 @@
     <ClInclude Include="Graphics\RenderSystem\RenderWindowHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\RenderSystem\DeviceContent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\RenderSystem\RenderWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -474,6 +471,9 @@
     <ClInclude Include="tinyxml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Graphics\RenderSystem\DeviceContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -615,9 +615,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\RenderSystem\VertexElement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics\RenderSystem\DeviceContent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\LockData.cpp">
@@ -831,6 +828,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Platform\API.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics\RenderSystem\DeviceContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
