@@ -541,163 +541,163 @@ namespace APBuild
 
 		}
 
-		byte GetExpectedByteSizeFromFormat(D3DFORMAT format)
-		{
-			switch (format)
-			{
-			case D3DFMT_X8R8G8B8:// SurfaceFormat.Bgr32:
-				return 4;
-
-			case D3DFMT_A2R10G10B10:// 0x23:
-				return 4;
-
-			case D3DFMT_A8R8G8B8:// SurfaceFormat.Rgba32:
-				return 4;
-
-
-			case D3DFMT_X8B8G8R8:// SurfaceFormat.Rgb32:
-				return 4;
-
-			case D3DFMT_A2B10G10R10:// SurfaceFormat.Rgba1010102:
-				return 4;
-
-			case D3DFMT_G16R16:// SurfaceFormat.Rg32:
-				return 4;
-
-			case D3DFMT_A16B16G16R16:// SurfaceFormat.Rgba64:
-				return 4;
-
-			case D3DFMT_R5G6B5:// SurfaceFormat.Bgr565:
-				return 8;
-
-			case D3DFMT_A1R5G5B5:// SurfaceFormat.Bgra5551:
-				return 2;
-
-			case D3DFMT_X1R5G5B5:// SurfaceFormat.Bgr555:
-				return 2;
-
-			case D3DFMT_A4R4G4B4://SurfaceFormat.Bgra4444:
-				return 2;
-
-			case D3DFMT_X4R4G4B4: // SurfaceFormat.Bgr444:
-				return 2;
-
-			case D3DFMT_A8R3G3B2:// SurfaceFormat.Bgra2338:
-				return 2;
-
-			case D3DFMT_A8://SurfaceFormat.Alpha8:
-				return 2;
-
-			case D3DFMT_R3G3B2://SurfaceFormat.Bgr233:
-				return 1;
-
-			case D3DFMT_R8G8B8:// 20:// SurfaceFormat.Bgr24:
-				return 1;
-
-			case D3DFMT_V8U8://SurfaceFormat.NormalizedByte2:
-				return 3;
-
-			case D3DFMT_Q8W8V8U8://SurfaceFormat.NormalizedByte4:
-				return 2;
-
-			case D3DFMT_V16U16://SurfaceFormat.NormalizedShort2:
-				return 4;
-
-			case D3DFMT_Q16W16V16U16://SurfaceFormat.NormalizedShort4:
-				return 4;
-
-			case D3DFMT_R32F:
-				return 8;
-
-			case D3DFMT_G32R32F:
-				return 4;
-
-			case D3DFMT_A32B32G32R32F:// SurfaceFormat.Vector4:
-				return 8;
-
-			case D3DFMT_R16F:// SurfaceFormat.HalfSingle:
-				return 0x10;
-
-			case D3DFMT_G16R16F:// SurfaceFormat.HalfVector2:
-				return 2;
-
-			case D3DFMT_A16B16G16R16F:// SurfaceFormat.HalfVector4:
-				return 4;
-
-			case D3DFMT_DXT1:
-				return 8;
-
-			case D3DFMT_DXT2:
-				return 1;
-
-			case D3DFMT_DXT3:
-				return 1;
-
-			case D3DFMT_DXT4:
-				return 1;
-
-			case D3DFMT_DXT5:
-				return 1;
-
-			case D3DFMT_L8:// SurfaceFormat.Luminance8:
-				return 1;
-
-			case D3DFMT_L16:// SurfaceFormat.Luminance16:
-				return 1;
-
-			case D3DFMT_A4L4:// SurfaceFormat.LuminanceAlpha8:
-				return 2;
-
-			case D3DFMT_A8L8:// SurfaceFormat.LuminanceAlpha16:
-				return 1;
-
-			case D3DFMT_P8:// SurfaceFormat.Palette8:
-				return 2;
-
-			case D3DFMT_A8P8:// SurfaceFormat.PaletteAlpha16:
-				return 1;
-
-			case D3DFMT_L6V5U5://0x3d://SurfaceFormat.NormalizedLuminance16:
-				return 2;
-
-			case D3DFMT_X8L8V8U8://0x3e://SurfaceFormat.NormalizedLuminance32:
-				return 2;
-
-			case D3DFMT_A2W10V10U10://0x43://SurfaceFormat.NormalizedAlpha1010102:
-				return 4;
-
-			case D3DFMT_CxV8U8://0x75://SurfaceFormat.NormalizedByte2Computed:
-				return 4;
-
-				//case 0x3154454d://SurfaceFormat.Multi2Bgra32:
-				//	return 2;
-			}
-			throw Apoc3DException::createException(EX_NotSupported,  L"");
-		}
+		//byte GetExpectedByteSizeFromFormat(D3DFORMAT format)
+		//{
+		//	switch (format)
+		//	{
+		//	case D3DFMT_X8R8G8B8:// SurfaceFormat.Bgr32:
+		//		return 4;
+		//
+		//	case D3DFMT_A2R10G10B10:// 0x23:
+		//		return 4;
+		//
+		//	case D3DFMT_A8R8G8B8:// SurfaceFormat.Rgba32:
+		//		return 4;
+		//
+		//
+		//	case D3DFMT_X8B8G8R8:// SurfaceFormat.Rgb32:
+		//		return 4;
+		//
+		//	case D3DFMT_A2B10G10R10:// SurfaceFormat.Rgba1010102:
+		//		return 4;
+		//
+		//	case D3DFMT_G16R16:// SurfaceFormat.Rg32:
+		//		return 4;
+		//
+		//	case D3DFMT_A16B16G16R16:// SurfaceFormat.Rgba64:
+		//		return 4;
+		//
+		//	case D3DFMT_R5G6B5:// SurfaceFormat.Bgr565:
+		//		return 8;
+		//
+		//	case D3DFMT_A1R5G5B5:// SurfaceFormat.Bgra5551:
+		//		return 2;
+		//
+		//	case D3DFMT_X1R5G5B5:// SurfaceFormat.Bgr555:
+		//		return 2;
+		//
+		//	case D3DFMT_A4R4G4B4://SurfaceFormat.Bgra4444:
+		//		return 2;
+		//
+		//	case D3DFMT_X4R4G4B4: // SurfaceFormat.Bgr444:
+		//		return 2;
+		//
+		//	case D3DFMT_A8R3G3B2:// SurfaceFormat.Bgra2338:
+		//		return 2;
+		//
+		//	case D3DFMT_A8://SurfaceFormat.Alpha8:
+		//		return 2;
+		//
+		//	case D3DFMT_R3G3B2://SurfaceFormat.Bgr233:
+		//		return 1;
+		//
+		//	case D3DFMT_R8G8B8:// 20:// SurfaceFormat.Bgr24:
+		//		return 1;
+		//
+		//	case D3DFMT_V8U8://SurfaceFormat.NormalizedByte2:
+		//		return 3;
+		//
+		//	case D3DFMT_Q8W8V8U8://SurfaceFormat.NormalizedByte4:
+		//		return 2;
+		//
+		//	case D3DFMT_V16U16://SurfaceFormat.NormalizedShort2:
+		//		return 4;
+		//
+		//	case D3DFMT_Q16W16V16U16://SurfaceFormat.NormalizedShort4:
+		//		return 4;
+		//
+		//	case D3DFMT_R32F:
+		//		return 8;
+		//
+		//	case D3DFMT_G32R32F:
+		//		return 4;
+		//
+		//	case D3DFMT_A32B32G32R32F:// SurfaceFormat.Vector4:
+		//		return 8;
+		//
+		//	case D3DFMT_R16F:// SurfaceFormat.HalfSingle:
+		//		return 0x10;
+		//
+		//	case D3DFMT_G16R16F:// SurfaceFormat.HalfVector2:
+		//		return 2;
+		//
+		//	case D3DFMT_A16B16G16R16F:// SurfaceFormat.HalfVector4:
+		//		return 4;
+		//
+		//	case D3DFMT_DXT1:
+		//		return 8;
+		//
+		//	case D3DFMT_DXT2:
+		//		return 1;
+		//
+		//	case D3DFMT_DXT3:
+		//		return 1;
+		//
+		//	case D3DFMT_DXT4:
+		//		return 1;
+		//
+		//	case D3DFMT_DXT5:
+		//		return 1;
+		//
+		//	case D3DFMT_L8:// SurfaceFormat.Luminance8:
+		//		return 1;
+		//
+		//	case D3DFMT_L16:// SurfaceFormat.Luminance16:
+		//		return 1;
+		//
+		//	case D3DFMT_A4L4:// SurfaceFormat.LuminanceAlpha8:
+		//		return 2;
+		//
+		//	case D3DFMT_A8L8:// SurfaceFormat.LuminanceAlpha16:
+		//		return 1;
+		//
+		//	case D3DFMT_P8:// SurfaceFormat.Palette8:
+		//		return 2;
+		//
+		//	case D3DFMT_A8P8:// SurfaceFormat.PaletteAlpha16:
+		//		return 1;
+		//
+		//	case D3DFMT_L6V5U5://0x3d://SurfaceFormat.NormalizedLuminance16:
+		//		return 2;
+		//
+		//	case D3DFMT_X8L8V8U8://0x3e://SurfaceFormat.NormalizedLuminance32:
+		//		return 2;
+		//
+		//	case D3DFMT_A2W10V10U10://0x43://SurfaceFormat.NormalizedAlpha1010102:
+		//		return 4;
+		//
+		//	case D3DFMT_CxV8U8://0x75://SurfaceFormat.NormalizedByte2Computed:
+		//		return 4;
+		//
+		//		//case 0x3154454d://SurfaceFormat.Multi2Bgra32:
+		//		//	return 2;
+		//	}
+		//	throw Apoc3DException::createException(EX_NotSupported,  L"");
+		//}
 
 		void copyData(void* tex, 
-			int pitch, void* texData, D3DFORMAT surfaceFormat,
+			int pitch, void* texData, PixelFormat surfaceFormat,
 			DWORD dwLockWidth, DWORD dwLockHeight, bool isSetting)
 		{
 			byte* texPtr = reinterpret_cast<byte*>(tex);
 			byte* texDataPtr = reinterpret_cast<byte*>(texData);
 
-			byte bytesPerPixel = GetExpectedByteSizeFromFormat(surfaceFormat);
+			byte bytesPerPixel = PixelFormatUtils::GetBPP(surfaceFormat);// GetExpectedByteSizeFromFormat(surfaceFormat);
 
 
 			bool isDxt = false;
-			if (surfaceFormat == D3DFMT_DXT1 || 
-				surfaceFormat == D3DFMT_DXT2 || 
-				surfaceFormat == D3DFMT_DXT3 || 
-				surfaceFormat == D3DFMT_DXT4 ||
-				surfaceFormat == D3DFMT_DXT5)
+			if (surfaceFormat == FMT_DXT1 || //D3DFMT_DXT1 || 
+				surfaceFormat == FMT_DXT2 || 
+				surfaceFormat == FMT_DXT3 || 
+				surfaceFormat == FMT_DXT4 ||
+				surfaceFormat == FMT_DXT5)
 			{
 				isDxt = true;
 
 				dwLockWidth = (dwLockWidth + 3) >> 2;
 				dwLockHeight = (dwLockHeight + 3) >> 2;
 
-				bytesPerPixel = surfaceFormat == D3DFMT_DXT1 ? 8 : 16;
+				bytesPerPixel = surfaceFormat == FMT_DXT1 ? 8 : 16;
 			}
 			if (dwLockHeight)
 			{
@@ -724,28 +724,28 @@ namespace APBuild
 		}
 		void copyData(void* tex,
 			int rowPitch, int slicePitch, void* texData,
-			D3DFORMAT surfaceFormat,
+			PixelFormat surfaceFormat,
 			DWORD dwLockWidth, DWORD dwLockHeight, DWORD dwLockDepth,
 			bool isSetting)
 		{
 			byte* texPtr = reinterpret_cast<byte*>(tex);
 			byte* texDataPtr = reinterpret_cast<byte*>(texData);
 
-			byte bytesPerPixel = GetExpectedByteSizeFromFormat(surfaceFormat);
+			byte bytesPerPixel = PixelFormatUtils::GetBPP(surfaceFormat);
 
 			bool isDxt = false;
-			if (surfaceFormat == D3DFMT_DXT1 || 
-				surfaceFormat == D3DFMT_DXT2 || 
-				surfaceFormat == D3DFMT_DXT3 || 
-				surfaceFormat == D3DFMT_DXT4 ||
-				surfaceFormat == D3DFMT_DXT5)
+			if (surfaceFormat == FMT_DXT1 || 
+				surfaceFormat == FMT_DXT2 || 
+				surfaceFormat == FMT_DXT3 || 
+				surfaceFormat == FMT_DXT4 ||
+				surfaceFormat == FMT_DXT5)
 			{
 				isDxt = true;
 
 				dwLockWidth = (dwLockWidth + 3) >> 2;
 				dwLockHeight = (dwLockHeight + 3) >> 2;
 
-				bytesPerPixel = surfaceFormat == D3DFMT_DXT1 ? 8 : 16;
+				bytesPerPixel = surfaceFormat == FMT_DXT1 ? 8 : 16;
 			}
 
 			if (dwLockDepth)
@@ -799,7 +799,7 @@ namespace APBuild
 				lvlData.Depth = 1;
 				lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format);
 				lvlData.ContentData  = new char[lvlData.LevelSize];
-				copyData(rect.pBits, rect.Pitch, lvlData.ContentData, desc.Format, desc.Width, desc.Height, false);
+				copyData(rect.pBits, rect.Pitch, lvlData.ContentData, ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
 
 				hr = tex->UnlockRect(i);
 				assert(SUCCEEDED(hr));
@@ -832,7 +832,7 @@ namespace APBuild
 				assert(SUCCEEDED(hr));
 
 				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					desc.Format, desc.Width, desc.Height, false);
+					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
 				startPos += faceSize;
 
 				hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_X, i);
@@ -844,7 +844,7 @@ namespace APBuild
 				assert(SUCCEEDED(hr));
 
 				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					desc.Format, desc.Width, desc.Height, false);
+					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
 				startPos += faceSize;
 
 				hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i);
@@ -856,7 +856,7 @@ namespace APBuild
 				assert(SUCCEEDED(hr));
 
 				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					desc.Format, desc.Width, desc.Height, false);
+					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
 				startPos += faceSize;
 
 				hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i);
@@ -867,7 +867,7 @@ namespace APBuild
 				assert(SUCCEEDED(hr));
 
 				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					desc.Format, desc.Width, desc.Height, false);
+					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
 				startPos += faceSize;
 
 				hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i);
@@ -879,7 +879,7 @@ namespace APBuild
 				assert(SUCCEEDED(hr));
 
 				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					desc.Format, desc.Width, desc.Height, false);
+					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
 				startPos += faceSize;
 
 				hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i);
@@ -889,7 +889,7 @@ namespace APBuild
 				assert(SUCCEEDED(hr));
 
 				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					desc.Format, desc.Width, desc.Height, false);
+					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
 				startPos += faceSize;
 
 				hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i);
@@ -921,7 +921,7 @@ namespace APBuild
 				assert(SUCCEEDED(hr));
 
 				copyData(box.pBits, box.RowPitch, box.SlicePitch,
-					data.Levels[i].ContentData, desc.Format,
+					data.Levels[i].ContentData, ConvertBackPixelFormat(desc.Format),
 					desc.Width, desc.Height, desc.Depth, false);
 
 				hr = tex->UnlockBox(i);
