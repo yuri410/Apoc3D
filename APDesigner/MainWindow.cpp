@@ -496,8 +496,7 @@ namespace APDesigner
 		{
 			LogManager::getSingleton().Write(LOG_System, String(L"Building project '") + m_project->getName() + String(L"'..."));
 			BuildInterface::BuildAll(m_project);
-			for (size_t i=0;i<BuildInterface::LastResult.size();i++)
-				LogManager::getSingleton().Write(LOG_System, BuildInterface::LastResult[i]);
+			LogBuildMessages();
 
 			UpdateProjectEffect();
 		}
@@ -573,6 +572,49 @@ namespace APDesigner
 		if (m_currentDocument == doc)
 		{
 			m_currentDocument = 0;
+		}
+	}
+
+	void MainWindow::LogBuildMessages()
+	{
+		bool hasWarning = false;
+		bool hasFailed = false;
+		String allWarningLines;
+		String allErrorLines;
+		for (size_t i=0;i<BuildInterface::LastResult.size();i++)
+		{
+			bool isError = BuildInterface::LastResult[i].find(L"[Error]") != String::npos;
+			bool isWarning = BuildInterface::LastResult[i].find(L"[Warning]") != String::npos;
+
+			LogMessageLevel level = LOGLVL_Infomation;
+			if (isWarning)
+			{
+				level = LOGLVL_Warning;
+				allWarningLines.append(BuildInterface::LastResult[i]);
+				allWarningLines.append(L"\n");
+			}
+			if (isError)
+			{
+				level = LOGLVL_Error;
+				allErrorLines.append(BuildInterface::LastResult[i]);
+				allErrorLines.append(L"\n");
+			}
+			LogManager::getSingleton().Write(LOG_System, BuildInterface::LastResult[i], level);
+
+			hasFailed |= isError;
+			hasWarning |= hasWarning;
+		}
+
+		if (hasFailed || hasWarning)
+		{
+			String msg = hasFailed ? L"There are build errors." : L"There are some potential build issues.";
+			msg.append(L"\n");
+			msg.append(L"\n");
+			msg.append(allErrorLines);
+			msg.append(L"\n");
+			msg.append(allWarningLines);
+
+			ShowMessageBox(msg, L"Build Result", hasFailed, hasWarning, false);
 		}
 	}
 

@@ -113,6 +113,8 @@ namespace APDesigner
 		void Document_Deactivated(Document* doc);
 		void UpdateProjectEffect(const FastList<ProjectItem*>& items);
 		void UpdateProjectEffect();
+
+		void LogBuildMessages();
 	};
 }
 
