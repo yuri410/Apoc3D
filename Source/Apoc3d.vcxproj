@@ -314,6 +314,7 @@
     <ClCompile Include="Graphics\Animation\AnimationData.cpp" />
     <ClCompile Include="Graphics\Animation\AnimationManager.cpp" />
     <ClCompile Include="Graphics\Animation\AnimationPlayers.cpp" />
+    <ClCompile Include="Graphics\Animation\AnimationTypes.cpp" />
     <ClCompile Include="Graphics\BatchModelBuilder.cpp" />
     <ClCompile Include="Graphics\Camera.cpp" />
     <ClCompile Include="Graphics\GraphicsCommon.cpp" />

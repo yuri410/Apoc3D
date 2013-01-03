@@ -47,53 +47,6 @@ namespace Apoc3D
 			*/
 			class APAPI ModelAnimationPlayerBase
 			{
-			private:
-				/** Clip currently being played
-				*/
-				const ModelAnimationClip* m_currentClipValue;
-
-				/** Current timeindex and keyframe in the clip
-				*/
-				float m_currentTimeValue;
-				int m_currentKeyframe;
-
-				/** Speed of playback
-				*/
-				float m_playbackRate;
-
-				/** The amount of time for which the animation will play.
-				*/
-				float m_duration;
-
-				/** Amount of time elapsed while playing
-				*/
-				float m_elapsedPlaybackTime;
-
-				/** Whether or not playback is paused
-				*/
-				bool m_paused;
-				
-				AnimationCompeletedHandler m_eventCompeleted;
-			protected:
-				/** Virtual method allowing subclasses to do any initialization of data when the clip is initialized.
-				*/
-				virtual void InitClip(bool newClip = false) { }
-
-				/** Virtual method allowing subclasses to set any data associated with a particular keyframe.
-				*/
-				virtual void SetKeyframe(const ModelKeyframe& keyframe) { }
-
-				/** Virtual method allowing subclasses to perform data needed after the animation 
-					has been updated for a new time index.
-				*/
-				virtual void OnUpdate() { }
-
-				ModelAnimationPlayerBase()
-					: m_currentClipValue(0), m_currentTimeValue(0), m_currentKeyframe(0), m_playbackRate(0),
-					m_duration(0), m_elapsedPlaybackTime(0), m_paused(false)
-				{
-
-				}
 			public:
 				/** Invoked when playback has completed.
 				*/
@@ -159,22 +112,59 @@ namespace Apoc3D
 				virtual void Update(const GameTime* const time);
 
 				virtual void GetTransform(int boneID, Matrix& result) = 0;
+				
+			protected:
+				/** Virtual method allowing subclasses to do any initialization of data when the clip is initialized.
+				*/
+				virtual void InitClip(bool newClip = false) { }
+
+				/** Virtual method allowing subclasses to set any data associated with a particular keyframe.
+				*/
+				virtual void SetKeyframe(const ModelKeyframe& keyframe) { }
+
+				/** Virtual method allowing subclasses to perform data needed after the animation 
+					has been updated for a new time index.
+				*/
+				virtual void OnUpdate() { }
+
+				ModelAnimationPlayerBase()
+					: m_currentClipValue(0), m_currentTimeValue(0), m_currentKeyframe(0), m_playbackRate(0),
+					m_duration(0), m_elapsedPlaybackTime(0), m_paused(false)
+				{
+
+				}
+				
+			private:
+				/** Clip currently being played
+				*/
+				const ModelAnimationClip* m_currentClipValue;
+
+				/** Current timeindex and keyframe in the clip
+				*/
+				float m_currentTimeValue;
+				int m_currentKeyframe;
+
+				/** Speed of playback
+				*/
+				float m_playbackRate;
+
+				/** The amount of time for which the animation will play.
+				*/
+				float m_duration;
+
+				/** Amount of time elapsed while playing
+				*/
+				float m_elapsedPlaybackTime;
+
+				/** Whether or not playback is paused
+				*/
+				bool m_paused;
+				
+				AnimationCompeletedHandler m_eventCompeleted;
 			};
 
 			class APAPI TransformAdjuster : public ModelAnimationPlayerBase
 			{
-			private:
-				Matrix m_currentTransfrom;
-
-			protected:
-				/** Initializes the transformation to the identity
-				*/
-				virtual void InitClip(bool newClip = false) { }
-
-				/** Sets the key frame by storing the current transform
-				*/
-				virtual void SetKeyframe(const ModelKeyframe& keyframe) { }
-				
 			public:
 				TransformAdjuster(const Matrix& m)
 					: m_currentTransfrom(m)
@@ -191,6 +181,19 @@ namespace Apoc3D
 				{
 					result = m_currentTransfrom;
 				}
+				
+			protected:
+				/** Initializes the transformation to the identity
+				*/
+				virtual void InitClip(bool newClip = false) { }
+
+				/** Sets the key frame by storing the current transform
+				*/
+				virtual void SetKeyframe(const ModelKeyframe& keyframe) { }
+				
+			private:
+				Matrix m_currentTransfrom;
+
 			};
 
 			/** The animation player contains a single transformation that is used to move/position/scale
@@ -198,18 +201,6 @@ namespace Apoc3D
 			*/
 			class APAPI RootAnimationPlayer : public ModelAnimationPlayerBase
 			{
-			private:
-				Matrix m_currentTransfrom;
-
-			protected:
-				/** Initializes the transformation to the identity
-				*/
-				virtual void InitClip(bool newClip = false);
-
-				/** Sets the key frame by storing the current transform
-				*/
-				virtual void SetKeyframe(const ModelKeyframe& keyframe);
-				
 			public:
 				RootAnimationPlayer()
 				{
@@ -226,6 +217,19 @@ namespace Apoc3D
 				{
 					result = m_currentTransfrom;
 				}
+				
+			protected:
+				/** Initializes the transformation to the identity
+				*/
+				virtual void InitClip(bool newClip = false);
+
+				/** Sets the key frame by storing the current transform
+				*/
+				virtual void SetKeyframe(const ModelKeyframe& keyframe);
+
+			private:
+				Matrix m_currentTransfrom;
+
 			};
 
 			/** This animation player knows how to play an animation on a rigid model, applying transformations
@@ -233,23 +237,6 @@ namespace Apoc3D
 			*/
 			class APAPI RigidAnimationPlayer : public ModelAnimationPlayerBase
 			{
-			private:
-				/** This is an array of the transforms to each object in the model
-				*/
-				Matrix* m_meshTransforms;
-				Matrix* m_initialTransforms;
-				int32 m_meshTransformCount;
-
-				/** Initializes all the bone transforms to the identity
-				*/
-				virtual void InitClip(bool newClip = false);
-
-				/** Sets the key frame for a bone to a transform
-				*/
-				virtual void SetKeyframe(const ModelKeyframe& keyframe)
-				{
-					m_meshTransforms[keyframe.getObjectIndex()] = keyframe.getTransform();
-				}
 			public:
 				/** Create a new rigid animation player
 				*/
@@ -284,35 +271,29 @@ namespace Apoc3D
 					}
 					result.LoadIdentity();
 				}
+			private:
+				/** This is an array of the transforms to each object in the model
+				*/
+				Matrix* m_meshTransforms;
+				Matrix* m_initialTransforms;
+				int32 m_meshTransformCount;
+
+				/** Initializes all the bone transforms to the identity
+				*/
+				virtual void InitClip(bool newClip = false);
+
+				/** Sets the key frame for a bone to a transform
+				*/
+				virtual void SetKeyframe(const ModelKeyframe& keyframe)
+				{
+					m_meshTransforms[keyframe.getObjectIndex()] = keyframe.getTransform();
+				}
 			};
 
 			/** The animation player manipulates a skinned model
 			*/
 			class APAPI SkinnedAnimationPlayer : public ModelAnimationPlayerBase
 			{
-			private:
-
-				Matrix* m_boneTransforms;
-				Matrix* m_worldTransforms;
-				Matrix* m_skinTransforms;
-
-				bool m_useQuaternionInterpolation;
-				const List<Bone>* m_bones;
-				//const FastList<Matrix>* m_inverseBindPose;
-				//const FastList<int32>* m_skeletonHierarchy;
-
-			protected:
-				/** Initializes the animation clip
-				*/
-				virtual void InitClip(bool newClip = false);
-
-				/** Sets the key frame for the passed in frame
-				*/
-				virtual void SetKeyframe(const ModelKeyframe& keyframe);
-
-				/** Updates the transformations ultimately needed for rendering
-				*/
-				virtual void OnUpdate();
 			public:
 				SkinnedAnimationPlayer(const List<Bone>* bones, bool useQuaternionSlerp = false)
 					: m_bones(bones), m_useQuaternionInterpolation(useQuaternionSlerp)
@@ -351,6 +332,31 @@ namespace Apoc3D
 				{
 					result.LoadIdentity();
 				}
+				
+			protected:
+				/** Initializes the animation clip
+				*/
+				virtual void InitClip(bool newClip = false);
+
+				/** Sets the key frame for the passed in frame
+				*/
+				virtual void SetKeyframe(const ModelKeyframe& keyframe);
+
+				/** Updates the transformations ultimately needed for rendering
+				*/
+				virtual void OnUpdate();
+
+			private:
+
+				Matrix* m_boneTransforms;
+				Matrix* m_worldTransforms;
+				Matrix* m_skinTransforms;
+
+				bool m_useQuaternionInterpolation;
+				const List<Bone>* m_bones;
+				//const FastList<Matrix>* m_inverseBindPose;
+				//const FastList<int32>* m_skeletonHierarchy;
+
 			};
 
 			class APAPI MixedAnimationPlayer : public SkinnedAnimationPlayer
@@ -362,40 +368,6 @@ namespace Apoc3D
 			*/
 			class APAPI MaterialAnimationPlayer
 			{
-			private:
-				/** Clip currently being played
-				*/
-				const MaterialAnimationClip* m_currentClipValue;
-
-				/** Current time and keyframe index in the clip
-				*/
-				float m_currentTimeValue;
-				int m_currentKeyframe;
-
-				/** Speed of playback
-				*/
-				float m_playbackRate;
-
-				/** The amount of time for which the animation will play.
-				*/
-				float m_duration;
-
-				/** Amount of time elapsed while playing
-				*/
-				float m_elapsedPlaybackTime;
-
-				/** Whether or not playback is paused
-				*/
-				bool m_paused;
-				
-				AnimationCompeletedHandler m_eventCompeleted;
-
-				int m_currentFrame;
-
-
-				void InitClip() { }
-				inline void SetKeyframe(const MaterialAnimationKeyframe& keyframe);
-				
 			public:
 				int getCurrentMaterialFrame() const { return m_currentFrame; }
 				/** Invoked when playback has completed.
@@ -467,7 +439,41 @@ namespace Apoc3D
 				virtual void Update(const GameTime* const gameTime);
 
 
+				
+			private:
+				/** Clip currently being played
+				*/
+				const MaterialAnimationClip* m_currentClipValue;
 
+				/** Current time and keyframe index in the clip
+				*/
+				float m_currentTimeValue;
+				int m_currentKeyframe;
+
+				/** Speed of playback
+				*/
+				float m_playbackRate;
+
+				/** The amount of time for which the animation will play.
+				*/
+				float m_duration;
+
+				/** Amount of time elapsed while playing
+				*/
+				float m_elapsedPlaybackTime;
+
+				/** Whether or not playback is paused
+				*/
+				bool m_paused;
+				
+				AnimationCompeletedHandler m_eventCompeleted;
+
+				int m_currentFrame;
+
+
+				void InitClip() { }
+				inline void SetKeyframe(const MaterialAnimationKeyframe& keyframe);
+				
 			};
 		}
 	}

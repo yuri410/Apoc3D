@@ -50,9 +50,6 @@ namespace Apoc3D
 			 */
 			class APAPI AnimationManager : public Singleton<AnimationManager>
 			{
-			private:
-				AnimHashTable m_hashTable;
-
 			public:
 				AnimationManager();
 				~AnimationManager();
@@ -60,6 +57,10 @@ namespace Apoc3D
 				const AnimationData* CreateInstance(const ResourceLocation* rl);
 
 				SINGLETON_DECL_HEARDER(AnimationManager);
+
+			private:
+				AnimHashTable m_hashTable;
+
 			};
 		}
 	}

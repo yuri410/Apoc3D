@@ -52,25 +52,6 @@ namespace Apoc3D
 			public:
 				typedef unordered_map<String, ModelAnimationClip*> ClipTable;
 				typedef unordered_map<String, MaterialAnimationClip*> MtrlClipTable;
-			private:
-				ClipTable m_rigidAnimationClips;
-				ClipTable m_skinnedAnimationClips;
-				MtrlClipTable m_mtrlAnimationClips;
-
-				//bool m_hasBindPose;
-				//bool m_hasSkeleton;
-				bool m_hasMtrlClip;
-				bool m_hasSkinnedClip;
-				bool m_hasRigidClip;
-
-
-				List<Bone> m_bones;
-				int32 m_rootBone;
-
-
-				void LoadMtrlAnimation2(TaggedDataReader* data);
-				TaggedDataWriter* SaveMtrlAnimation2();
-
 			public:
 				int RigidEntityCount;
 				//bool hasBindPose() const { return m_hasBindPose; }
@@ -150,6 +131,26 @@ namespace Apoc3D
 				//}
 
 				~AnimationData(){}
+
+			private:
+				ClipTable m_rigidAnimationClips;
+				ClipTable m_skinnedAnimationClips;
+				MtrlClipTable m_mtrlAnimationClips;
+
+				//bool m_hasBindPose;
+				//bool m_hasSkeleton;
+				bool m_hasMtrlClip;
+				bool m_hasSkinnedClip;
+				bool m_hasRigidClip;
+
+
+				List<Bone> m_bones;
+				int32 m_rootBone;
+
+
+				void LoadMtrlAnimation2(TaggedDataReader* data);
+				TaggedDataWriter* SaveMtrlAnimation2();
+
 			};
 		}
 	}

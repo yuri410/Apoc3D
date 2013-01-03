@@ -47,12 +47,6 @@ namespace Apoc3D
 			 */
 			class APAPI Bone
 			{
-			private:
-				Matrix m_bindPoseTransfrom;
-				Matrix m_boneReferenceTransform;
-				Matrix m_invBindPoseTransfrom;
-				Matrix m_invBoneReferenceTransform;
-
 			public:
 				String Name;
 				int32 Parent;
@@ -96,6 +90,13 @@ namespace Apoc3D
 				}
 
 				~Bone() { }
+
+			private:
+				Matrix m_bindPoseTransfrom;
+				Matrix m_boneReferenceTransform;
+				Matrix m_invBindPoseTransfrom;
+				Matrix m_invBoneReferenceTransform;
+
 			};
 
 
@@ -109,12 +110,6 @@ namespace Apoc3D
 			*/
 			class APAPI ModelKeyframe
 			{
-			private:
-				int32 m_nextFrameIndex;
-				int32 m_objIndex;
-				float m_time;
-				Matrix m_transform;
-				
 			public:
 				/** Gets the index of the target bone(skinned) or mesh(rigid) that is animated by this keyframe.
 				*/
@@ -149,6 +144,13 @@ namespace Apoc3D
 				{
 					m_nextFrameIndex = idx;
 				}
+
+			private:
+				int32 m_nextFrameIndex;
+				int32 m_objIndex;
+				float m_time;
+				Matrix m_transform;
+
 			};
 
 			/** Describes the material key frame at a single point in time.
@@ -156,10 +158,6 @@ namespace Apoc3D
 			 */
 			class APAPI MaterialAnimationKeyframe
 			{
-			private:
-				float m_time;
-				int32 m_materialFrame;
-
 			public:
 				float getTime() const { return m_time; }
 				int32 getMaterialFrame() const { return m_materialFrame; }
@@ -169,6 +167,11 @@ namespace Apoc3D
 				{
 				}
 				MaterialAnimationKeyframe() { }
+
+			private:
+				float m_time;
+				int32 m_materialFrame;
+
 			};
 
 			template class vector<ModelKeyframe>;
@@ -177,11 +180,16 @@ namespace Apoc3D
 			*/
 			class APAPI ModelAnimationClip
 			{
-			private:
-				float m_duration;
-				FastList<ModelKeyframe> m_keyFrames;
-
 			public:
+				ModelAnimationClip(float duration, const FastList<ModelKeyframe>& keyframes)
+					: m_duration(duration), m_keyFrames(keyframes)
+				{
+
+				}
+				~ModelAnimationClip() { }
+
+				void Transform(const Matrix& t);
+				
 				/** Gets the total length of the model animation clip
 				*/
 				float getDuration() const { return m_duration; }
@@ -190,12 +198,10 @@ namespace Apoc3D
 				*/
 				const FastList<ModelKeyframe>& getKeyframes() const { return m_keyFrames; }
 
-				ModelAnimationClip(float duration, const FastList<ModelKeyframe>& keyframes)
-					: m_duration(duration), m_keyFrames(keyframes)
-				{
+			private:
+				float m_duration;
+				FastList<ModelKeyframe> m_keyFrames;
 
-				}
-				~ModelAnimationClip() { }
 			};
 
 			//template class APAPI vector<MaterialAnimationKeyframe>;
