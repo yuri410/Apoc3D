@@ -129,8 +129,10 @@ inline __m128 VecNegate(__m128 va)
 
 /*	NewtonRaphson Reciprocal Square Root
 0.5 * rsqrtps * (3 - x * rsqrtps(x) * rsqrtps(x)) */
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4640)
+#endif
 inline __m128 rsqrt_nr(__m128 a)
 {
 	static const __m128 fvecf0pt5 = VecLoad(0.5f);
@@ -146,8 +148,9 @@ inline __m128 rsqrt_nr(__m128 a)
 
 	return _mm_sub_ps(l,r);// (fvecf0pt5 * Ra0) * (fvecf3pt0 - (a * Ra0) * Ra0);
 }
+#ifdef _MSC_VER
 #pragma warning(pop)
-
+#endif
 
 		
 /* Returns a vector containing the smallest components of the specified vectors.

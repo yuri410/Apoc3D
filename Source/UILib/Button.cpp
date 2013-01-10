@@ -43,7 +43,7 @@ namespace Apoc3D
 				return;
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			Keyboard* keyb = InputAPIManager::getSingleton().getKeyboard();
+			//Keyboard* keyb = InputAPIManager::getSingleton().getKeyboard();
 
 			Apoc3D::Math::Rectangle rect = getAbsoluteArea();
 			

@@ -28,6 +28,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #define PLUGIN __declspec(dllexport)
 
+
+#pragma warning ( push )
+#pragma warning ( disable:4512 )
+
 #include <ois-v1-3/includes/OIS.h>
 #include <ois-v1-3/includes/OISInputManager.h>
 #include <ois-v1-3/includes/OISException.h>
@@ -35,6 +39,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <ois-v1-3/includes/OISKeyboard.h>
 #include <ois-v1-3/includes/OISJoyStick.h>
 #include <ois-v1-3/includes/OISEvents.h>
+
+#pragma warning (pop)
+
 
 #include <Windows.h>
 

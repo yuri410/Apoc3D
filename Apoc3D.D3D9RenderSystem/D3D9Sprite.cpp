@@ -48,7 +48,7 @@ namespace Apoc3D
 
 				m_vtxDecl = new D3D9VertexDeclaration(device, elements);
 
-				int test = m_vtxDecl->GetVertexSize();
+				//int test = m_vtxDecl->GetVertexSize();
 				m_quadBuffer = new D3D9VertexBuffer(device, MaxVertices * m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic|BU_WriteOnly));
 
 				m_storedState.oldBlendFactor = 0;
@@ -134,18 +134,20 @@ namespace Apoc3D
 				}
 			}
 
-			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, float uScale, float vScale, float uBias, float vBias, uint color)
+			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color)
 			{
 				DrawEntry drawE;
 				_DrawAsEntry(drawE, texture, dstRect, NULL, color);
 				AddTransformedUVDraw(drawE, uScale, vScale, uBias, vBias);
 			}
 
+			
+
 			// Auto resizing to fit the target rectangle is implemented in this method.
 			// 
-			void D3D9Sprite::_DrawAsEntry(DrawEntry& result, Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
+			void D3D9Sprite::_DrawAsEntry(DrawEntry& result, Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color)
 			{
-				float position[3] = { (float)dstRect.X, (float)dstRect.Y, 0 };
+				float position[3] = { dstRect.X, dstRect.Y, 0 };
 
 				Matrix tempM;
 
@@ -156,29 +158,44 @@ namespace Apoc3D
 					// LONG    top;
 					// LONG    right;
 					// LONG    bottom;
-					RECT r = { 
-						(LONG)srcRect->X, 
-						(LONG)srcRect->Y,
-						(LONG)srcRect->getRight(),
-						(LONG)srcRect->getBottom()
-					};
+					Apoc3D::Math::RectangleF r = *srcRect;
+					//RECTF r = { 
+					//	(LONG)srcRect->X, 
+					//	(LONG)srcRect->Y,
+					//	(LONG)srcRect->getRight(),
+					//	(LONG)srcRect->getBottom()
+					//};
 
 					// In some cases, the X,Y of the rect is not always the top-left corner,
 					// when the Width or Height is negative. Standardize it.
-					if (r.left > r.right)
+					if (r.getLeft()>r.getRight())
 					{
-						LONG temp = r.right;
-						r.right = r.left;
-						r.left = temp;
-						position[0] -= (float)( r.left - r.right);
+						r.X += r.Width;
+						position[0] += r.Width;
+
+						r.Width = -r.Width;
 					}
-					if (r.top>r.bottom)
+					if (r.getTop()>r.getBottom())
 					{
-						LONG temp = r.bottom;
-						r.bottom = r.top;
-						r.top = temp;
-						position[1] -= (float)( r.top - r.bottom);
+						r.Y += r.Height;
+						position[1] += r.Height;
+
+						r.Height = -r.Height;
 					}
+					//if (r.left > r.right)
+					//{
+					//	LONG temp = r.right;
+					//	r.right = r.left;
+					//	r.left = temp;
+					//	position[0] -= (float)( r.left - r.right);
+					//}
+					//if (r.top>r.bottom)
+					//{
+					//	LONG temp = r.bottom;
+					//	r.bottom = r.top;
+					//	r.top = temp;
+					//	position[1] -= (float)( r.top - r.bottom);
+					//}
 
 					// calculate a scaling and translation matrix
 					Matrix trans;
@@ -213,7 +230,7 @@ namespace Apoc3D
 			}
 
 			void D3D9Sprite::Draw(Texture* texture, 
-				const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
+				const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color)
 			{
 				DrawEntry drawE;
 				_DrawAsEntry(drawE, texture, dstRect, srcRect, color);
@@ -230,17 +247,9 @@ namespace Apoc3D
 			{
 				AddNormalDraw(texture, Vector2Utils::GetX(pos), Vector2Utils::GetY(pos), color);
 			}
-			void D3D9Sprite::Draw(Texture* texture, const Point& pos, uint color)
-			{
-				AddNormalDraw(texture, (float)pos.X, (float)pos.Y, color);
-			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
 			{
 				AddNormalDraw(texture, pos.X, pos.Y, color);
-			}
-			void D3D9Sprite::Draw(Texture* texture, int x, int y, uint color)
-			{
-				AddNormalDraw(texture, (float)x, (float)y, color);
 			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color)
 			{
@@ -365,7 +374,7 @@ namespace Apoc3D
 					Flush();
 				}
 			}
-			void D3D9Sprite::AddTransformedDraw(Texture* texture, const Matrix& t, const RECT* srcRect, uint color)
+			void D3D9Sprite::AddTransformedDraw(Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color)
 			{
 				DrawEntry drawE;
 				_FillTransformedDraw(drawE, texture, t, srcRect, color);
@@ -435,7 +444,7 @@ namespace Apoc3D
 				drawE.BR.TexCoord[0] = 1; drawE.BR.TexCoord[1] = 1;
 				drawE.IsUVExtended = false;
 			}
-			void D3D9Sprite::_FillTransformedDraw(DrawEntry& drawE, Texture* texture, const Matrix& t, const RECT* srcRect, uint color)
+			void D3D9Sprite::_FillTransformedDraw(DrawEntry& drawE, Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color)
 			{
 				drawE.Tex = static_cast<D3D9Texture*>(texture);
 
@@ -445,8 +454,8 @@ namespace Apoc3D
 
 				if (srcRect)
 				{
-					float width = (float)(srcRect->right-srcRect->left);
-					float height = (float)(srcRect->bottom-srcRect->top);
+					float width = srcRect->Width;//(float)(srcRect->right-srcRect->left);
+					float height = srcRect->Height;//(float)(srcRect->bottom-srcRect->top);
 
 					Vector3 tl = Vector3Utils::LDVector(0, 0,0);
 					Vector3 tr = Vector3Utils::LDVector(width, 0,0);
@@ -482,10 +491,10 @@ namespace Apoc3D
 					width = (float)texture->getWidth();
 					height = (float)texture->getHeight();
 
-					drawE.TL.TexCoord[0] = srcRect->left/width ;		drawE.TL.TexCoord[1] = srcRect->top/height;
-					drawE.TR.TexCoord[0] = srcRect->right/width;		drawE.TR.TexCoord[1] = srcRect->top/height;
-					drawE.BL.TexCoord[0] = srcRect->left/width ;		drawE.BL.TexCoord[1] = srcRect->bottom/height;
-					drawE.BR.TexCoord[0] = srcRect->right/width;		drawE.BR.TexCoord[1] = srcRect->bottom/height;
+					drawE.TL.TexCoord[0] = srcRect->getLeft()/width ;		drawE.TL.TexCoord[1] = srcRect->getTop()/height;
+					drawE.TR.TexCoord[0] = srcRect->getRight()/width;		drawE.TR.TexCoord[1] = srcRect->getTop()/height;
+					drawE.BL.TexCoord[0] = srcRect->getLeft()/width ;		drawE.BL.TexCoord[1] = srcRect->getBottom()/height;
+					drawE.BR.TexCoord[0] = srcRect->getRight()/width;		drawE.BR.TexCoord[1] = srcRect->getBottom()/height;
 					drawE.IsUVExtended = false;
 				}
 				else

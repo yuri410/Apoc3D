@@ -1,10 +1,18 @@
 #ifndef FBXIMPORTER_H
 #define FBXIMPORTER_H
+
 #include "APBCommon.h"
 
-#pragma warning(disable:4100)
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable:4512)
+#endif
 
 #include <fbxsdk.h>
+
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
 
 #include "Collections/FastList.h"
 #include "Collections/FastMap.h"

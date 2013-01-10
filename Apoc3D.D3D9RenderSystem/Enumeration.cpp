@@ -544,7 +544,7 @@ namespace Apoc3D
 			{
 				float ranking = 0.0f;
 
-				if(combo->AdapterOrdinal == optimal.AdapterOrdinal)
+				if(combo->AdapterOrdinal == (int32)optimal.AdapterOrdinal)
 					ranking += 1000.0f;
 
 				if(combo->DeviceType == optimal.DeviceType)
@@ -634,7 +634,7 @@ namespace Apoc3D
 				if(find(dsfmts.begin(), dsfmts.end(), optimal.PresentParameters.AutoDepthStencilFormat) != dsfmts.end())
 					ranking += 1.0f;
 
-				const vector<D3DDISPLAYMODE>& modes2 =  combo->AdapterInfo->DisplayModes;
+				//const vector<D3DDISPLAYMODE>& modes2 =  combo->AdapterInfo->DisplayModes;
 				for (size_t i=0;i<modes.size();i++)
 				{
 					const D3DDISPLAYMODE& displayMode = modes[i];
@@ -802,7 +802,13 @@ namespace Apoc3D
 
 			D3DDISPLAYMODE Enumeration::FindValidResolution(const SettingsCombo* combo, const Direct3D9Settings& input)
 			{
+				if (combo->AdapterInfo->DisplayModes.size())
+				{
+					throw Apoc3DException::createException(EX_NotSupported, L"No device modes available");
+				}
+
 				D3DDISPLAYMODE bestMode;
+				bestMode.Width = 0;
 
 				if(combo->Windowed)
 				{

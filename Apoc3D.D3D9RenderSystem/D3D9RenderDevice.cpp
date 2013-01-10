@@ -391,7 +391,7 @@ namespace Apoc3D
 
 
 								getDevice()->SetStreamSourceFreq(1,
-									(D3DSTREAMSOURCE_INSTANCEDATA | 1));
+									(D3DSTREAMSOURCE_INSTANCEDATA | 1U));
 								getDevice()->SetStreamSource(1, m_instancingData->GetInstanceBuffer(), 0, m_instancingData->getInstanceDataSize());
 
 

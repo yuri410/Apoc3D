@@ -282,7 +282,7 @@ namespace Apoc3D
 					for (size_t i=0;i<adapters.size();i++)
 					{
 						if (adapters[i]->AdapterOrdinal
-							== m_currentSetting->D3D9.AdapterOrdinal)
+							== (int32)m_currentSetting->D3D9.AdapterOrdinal)
 						{
 							wss << L": ";
 							wss << adapters[i]->Description;

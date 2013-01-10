@@ -51,10 +51,10 @@ namespace Apoc3D
 		//static const float MinFloat = std::numeric_limits<float>::min();
 		//static const float POSINF_Float = std::numeric_limits<float>::infinity();
 		//static const float NEGINF_Float = -std::numeric_limits<float>::infinity();
-		static const float MaxFloat;
-		static const float MinFloat;
-		static const float POSINF_Float;
-		static const float NEGINF_Float;
+		//static const float MaxFloat;
+		//static const float MinFloat;
+		//static const float POSINF_Float;
+		//static const float NEGINF_Float;
 
 		const float PI = float( 4.0 * atan( 1.0 ) );
 		const float Two_PI = PI * 2;

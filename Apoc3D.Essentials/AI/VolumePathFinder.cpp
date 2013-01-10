@@ -122,8 +122,8 @@ namespace Apoc3DEx
 				return new VolumePathFinderResult(emptyList, false);
 			}
 
-			int ofsX = min(sx, tx);
-			int ofxY = min(sy, ty);
+			//int ofsX = min(sx, tx);
+			//int ofxY = min(sy, ty);
 
 			FastList<AStarNode3*> enQueueBuffer(10);
 

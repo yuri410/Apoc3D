@@ -90,10 +90,10 @@ namespace Apoc3D
 						const VertexElement& e = decl->getElement(i);
 						elems[i].Method = D3DDECLMETHOD_DEFAULT;
 						elems[i].Stream = 0;
-						elems[i].Offset = e.getOffset();
-						elems[i].Usage = D3D9Utils::ConvertVertexElementUsage(e.getUsage());
-						elems[i].Type = D3D9Utils::ConvertVertexElementFormat(e.getType());
-						elems[i].UsageIndex = e.getIndex();
+						elems[i].Offset = (WORD)e.getOffset();
+						elems[i].Usage = (BYTE)D3D9Utils::ConvertVertexElementUsage(e.getUsage());
+						elems[i].Type = (BYTE)D3D9Utils::ConvertVertexElementFormat(e.getType());
+						elems[i].UsageIndex = (BYTE)e.getIndex();
 					}
 
 					elems[decl->getElementCount()] = Elements[0];

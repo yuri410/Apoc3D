@@ -1468,7 +1468,15 @@ namespace APDesigner
 
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
-		if (sprintf(buffer, formatString.c_str(), startNo)>0)
+
+		int ret;
+#ifdef _MSC_VER
+		ret = sprintf_s(buffer, sizeof(buffer), formatString.c_str(), startNo);
+#else
+		ret = sprintf(buffer, formatString.c_str(), startNo);
+#endif
+
+		if (ret>0)
 		{
 			String texName = StringUtils::toWString(buffer);
 

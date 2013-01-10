@@ -67,21 +67,27 @@ namespace Apoc3D
 #define COL_INDEX(x) (x-1)
 #define ELEM_ADDR(i,j) ((i-1)*4*4 + (j-1)*4)
 #define ME(i,j) ((i-1)*4+j-1)
+
+#if APOC3D_MATH_IMPL == APOC3D_SSE
 #pragma pack(push, 16)
+#endif
+
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable : 4201 )
+#endif
+
 		/* Defines a 4x4 matrix.
 		*/
 		class APAPI Matrix
 		{
-		private:
-			
-
 		public:
 			const static Matrix Identity;
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 			union
 			{
-				struct 
+				struct
 				{
 					float M11, M12, M13, M14;
 					float M21, M22, M23, M24;
@@ -103,7 +109,7 @@ namespace Apoc3D
 				{
 					float Elements[16];
 				};
-				struct 
+				struct
 				{
 					float M11, M12, M13, M14;
 					float M21, M22, M23, M24;
@@ -1491,8 +1497,15 @@ namespace Apoc3D
 			#endif
 			}
 		};
-	
+
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
+
+#if APOC3D_MATH_IMPL == APOC3D_SSE
 #pragma pack(pop)
+#endif
+
 
 	}
 }

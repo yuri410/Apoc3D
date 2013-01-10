@@ -266,17 +266,17 @@ namespace Apoc3D
 				// to start. And in windows error dialogs cannot display.
 				return;
 //#endif
-				// the paint event may be raised before device init -- just created wnd class
-				if (getDevice())
-				{
+				//// the paint event may be raised before device init -- just created wnd class
+				//if (getDevice())
+				//{
 
-					const float elapsedRealTime = (float)m_gameClock->getElapsedTime();
-					const float totalRealTime = (float)m_gameClock->getCurrentTime();
+				//	const float elapsedRealTime = (float)m_gameClock->getElapsedTime();
+				//	const float totalRealTime = (float)m_gameClock->getCurrentTime();
 
-					GameTime gt(m_targetElapsedTime, m_totalGameTime,
-						elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
-					DrawFrame(&gt);
-				}		
+				//	GameTime gt(m_targetElapsedTime, m_totalGameTime,
+				//		elapsedRealTime,totalRealTime, m_fps, m_drawRunningSlowly);
+				//	DrawFrame(&gt);
+				//}		
 			}
 		}
 	}	

@@ -34,43 +34,41 @@ namespace Apoc3D
 
 		string StringUtils::toString(const String& str)
 		{
-			char* buffer = new char[str.length()+1];
-			buffer[str.length()] = 0;
-			size_t res = wcstombs(buffer, str.c_str(), str.length());
-			string result = buffer;
-			delete[] buffer;
-			return result;
+			size_t bufSize = wcstombs(nullptr, str.c_str(), 0);
+			if (bufSize != static_cast<size_t>(-1))
+			{
+				char* buffer = new char[bufSize+1];
+				buffer[bufSize] = 0;
+				wcstombs(buffer, str.c_str(), bufSize);
+
+				string result = buffer;
+				delete[] buffer;
+				return result;
+			}
+			return string();
 		}
 		string StringUtils::toString(const wchar_t* str)
 		{
 			return toString(String(str));
-			//size_t len = wcslen(str);
-			//char* buffer = new char[len+1];
-			//buffer[len] = 0;
-			//wcstombs(buffer, str, len);
-			//string result = buffer;
-			//delete[] buffer;
-			//return result;
 		}
 		String StringUtils::toWString(const string& str)
 		{
-			wchar_t* buffer = new wchar_t[str.length()+1];
-			buffer[str.length()] = 0;
-			size_t res = mbstowcs(buffer, str.c_str(), str.length());
-			String result = buffer;
-			delete[] buffer;
-			return result;
+			size_t bufSize = mbstowcs(nullptr, str.c_str(), 0);
+			if (bufSize != static_cast<size_t>(-1))
+			{
+				wchar_t* buffer = new wchar_t[bufSize+1];
+				buffer[bufSize] = 0;
+				mbstowcs(buffer, str.c_str(), bufSize);
+				
+				String result = buffer;
+				delete[] buffer;
+				return result;
+			}
+			return Empty;
 		}
 		String StringUtils::toWString(const char* str)
 		{
 			return toWString(string(str));
-			//size_t len = strlen(str);
-			//wchar_t* buffer = new wchar_t[len+1];
-			//buffer[len] = 0;
-			//mbstowcs(buffer, str, len);
-			//String result = buffer;
-			//delete[] buffer;
-			//return result;
 		}
 
 		bool StringUtils::ParseBool(const String& val)

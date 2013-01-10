@@ -292,7 +292,7 @@ namespace APDesigner
 				break;
 			case PRJITEM_Model:
 				{
-					ProjectResModel* mdl = static_cast<ProjectResModel*>(data);
+					//ProjectResModel* mdl = static_cast<ProjectResModel*>(data);
 					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_Scene"));
 					newNode->UserData = items[i];
 
@@ -309,7 +309,7 @@ namespace APDesigner
 				break;
 			case PRJITEM_Texture:
 				{
-					ProjectResTexture* tex = static_cast<ProjectResTexture*>(data);
+					//ProjectResTexture* tex = static_cast<ProjectResTexture*>(data);
 					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_Image"));
 					newNode->UserData = items[i];
 
@@ -326,7 +326,7 @@ namespace APDesigner
 				break;
 			case PRJITEM_Effect:
 				{
-					ProjectResEffect* eff = static_cast<ProjectResEffect*>(data);
+					//ProjectResEffect* eff = static_cast<ProjectResEffect*>(data);
 					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_effects_file"));
 					newNode->UserData = items[i];
 
@@ -343,7 +343,7 @@ namespace APDesigner
 				break;
 			case PRJITEM_CustomEffect:
 				{
-					ProjectResCustomEffect* eff = static_cast<ProjectResCustomEffect*>(data);
+					//ProjectResCustomEffect* eff = static_cast<ProjectResCustomEffect*>(data);
 					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_effects_file"));
 					newNode->UserData = items[i];
 
@@ -360,7 +360,7 @@ namespace APDesigner
 				break;
 			case PRJITEM_Font:
 				{
-					ProjectResFont* fnt = static_cast<ProjectResFont*>(data);
+					//ProjectResFont* fnt = static_cast<ProjectResFont*>(data);
 					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_new_document"));
 					newNode->UserData = items[i];
 
@@ -377,7 +377,7 @@ namespace APDesigner
 				break;
 			case PRJITEM_Material:
 				{
-					ProjectResMaterial* fnt = static_cast<ProjectResMaterial*>(data);
+					//ProjectResMaterial* fnt = static_cast<ProjectResMaterial*>(data);
 					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_material_32x32"));
 					newNode->UserData = items[i];
 
@@ -393,7 +393,7 @@ namespace APDesigner
 				break;
 			case PRJITEM_MaterialSet:
 				{
-					ProjectResMaterialSet* fnt = static_cast<ProjectResMaterialSet*>(data);
+					//ProjectResMaterialSet* fnt = static_cast<ProjectResMaterialSet*>(data);
 					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_import1"));
 					newNode->UserData = items[i];
 
@@ -409,7 +409,7 @@ namespace APDesigner
 				break;
 			case PRJITEM_TransformAnimation:
 				{
-					ProjectResTAnim* fnt = static_cast<ProjectResTAnim*>(data);
+					//ProjectResTAnim* fnt = static_cast<ProjectResTAnim*>(data);
 					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_skinning"));
 					newNode->UserData = items[i];
 
@@ -425,7 +425,7 @@ namespace APDesigner
 				break;
 			case PRJITEM_MaterialAnimation:
 				{
-					ProjectResTAnim* fnt = static_cast<ProjectResTAnim*>(data);
+					//ProjectResTAnim* fnt = static_cast<ProjectResTAnim*>(data);
 					TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(L"adui_surface"));
 					newNode->UserData = items[i];
 
@@ -603,7 +603,7 @@ namespace APDesigner
 			break;
 		case PRJITEM_Font:
 			{
-				ProjectResFont* fnt = static_cast<ProjectResFont*>(data);
+				//ProjectResFont* fnt = static_cast<ProjectResFont*>(data);
 
 
 			}

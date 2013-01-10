@@ -72,10 +72,10 @@ namespace Apoc3D
 				{
 					delems[i].Method = D3DDECLMETHOD_DEFAULT;
 					delems[i].Stream = 0;
-					delems[i].Offset = elements[i].getOffset();
-					delems[i].Usage = D3D9Utils::ConvertVertexElementUsage(elements[i].getUsage());
-					delems[i].Type = D3D9Utils::ConvertVertexElementFormat(elements[i].getType());
-					delems[i].UsageIndex = elements[i].getIndex();
+					delems[i].Offset = (WORD)elements[i].getOffset();
+					delems[i].Usage = (BYTE) D3D9Utils::ConvertVertexElementUsage(elements[i].getUsage());
+					delems[i].Type = (BYTE) D3D9Utils::ConvertVertexElementFormat(elements[i].getType());
+					delems[i].UsageIndex = (BYTE) elements[i].getIndex();
 				}
 
 				const D3DVERTEXELEMENT9 declend = D3DDECL_END();

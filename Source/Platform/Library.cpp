@@ -80,10 +80,11 @@ namespace Apoc3D
 			LIB_HANDLE handle;
 			memcpy(&handle, &m_handle, sizeof(LIB_HANDLE));
 			
-			char sname[64];
-			wcstombs(sname, name.c_str(), 64);
-			
-			return (void*)LIB_GETSYM( handle, sname );
+			//char sname[64];
+			//wcstombs(sname, name.c_str(), 64);
+			std::string sname = StringUtils::toString(name);
+
+			return (void*)LIB_GETSYM( handle, sname.c_str() );
 		}
 	}
 }

@@ -263,7 +263,7 @@ namespace Apoc3D
 			else
 			{
 				sect->AddAttributeString(L"Assemble", L"volume");
-				uint i =0;
+				
 				ConfigurationSection* srcsect = new ConfigurationSection(L"Source");
 				for (int i=0;i<SubMapTable.getCount();i++)
 				{

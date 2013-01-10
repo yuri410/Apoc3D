@@ -308,7 +308,7 @@ namespace Apoc3D
 		SceneObject* OctreeSceneManager::FindObject(const Ray& ray, IObjectFilter* filter)
 		{
 			SceneObject* result = 0;
-			float nearest = Math::MaxFloat;
+			float nearest = FLT_MAX;
 			assert(m_bfsQueue.getCount()==0);
 
 			m_bfsQueue.Enqueue(m_octRootNode);

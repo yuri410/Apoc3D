@@ -93,7 +93,7 @@ namespace Apoc3D
 		SceneObject* SimpleSceneManager::FindObject(const Ray& ray, IObjectFilter* filter)
 		{
 			SceneObject* result = 0;
-			float nearest = Math::MaxFloat;
+			float nearest = FLT_MAX;
 			for (int i =0; i<m_defaultNode->getCount();i++)
 			{
 				SceneObject* obj = m_defaultNode->operator[](i);

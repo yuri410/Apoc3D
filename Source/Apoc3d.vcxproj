@@ -76,6 +76,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <SmallerTypeCheck>true</SmallerTypeCheck>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -99,6 +100,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -121,6 +123,7 @@
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -306,7 +309,6 @@
     <ClCompile Include="Core\Logging.cpp" />
     <ClCompile Include="Core\PluginManager.cpp" />
     <ClCompile Include="Core\Resource.cpp" />
-    <ClCompile Include="Core\ResourceHandle.cpp" />
     <ClCompile Include="Core\ResourceManager.cpp" />
     <ClCompile Include="Core\Streaming\AsyncProcessor.cpp" />
     <ClCompile Include="Core\Streaming\GenerationTable.cpp" />
@@ -346,8 +348,6 @@
     <ClCompile Include="IOLib\Streams.cpp" />
     <ClCompile Include="IOLib\TaggedData.cpp" />
     <ClCompile Include="IOLib\TextureData.cpp" />
-    <ClCompile Include="Math\ColorValue.cpp" />
-    <ClCompile Include="Math\MathCommon.cpp" />
     <ClCompile Include="Math\OctreeBox.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
@@ -388,7 +388,6 @@
     <ClCompile Include="Math\Plane.cpp" />
     <ClCompile Include="Math\Quaternion.cpp" />
     <ClCompile Include="Math\Ray.cpp" />
-    <ClCompile Include="Math\sse_functions.cpp" />
     <ClCompile Include="Math\Vector.cpp" />
     <ClCompile Include="Math\Viewport.cpp" />
     <ClCompile Include="Platform\Library.cpp" />

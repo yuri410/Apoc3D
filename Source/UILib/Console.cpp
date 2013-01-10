@@ -215,7 +215,7 @@ namespace Apoc3D
 						
 					}
 				}
-				if (lastPos != c.size()-1)
+				if (lastPos != static_cast<int>(c.size())-1)
 				{
 					args.Add(c.substr(lastPos+1, c.size()-lastPos-1));
 				}

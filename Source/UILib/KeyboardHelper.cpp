@@ -245,7 +245,7 @@ namespace Apoc3D
 					}
 					else if (kb->IsKeyUp(InputKeys[i]))
 					{
-						if (m_currentKey = InputKeys[i])
+						if (m_currentKey == InputKeys[i])
 							m_currentKey = KEY_UNASSIGNED;
 
 						m_timerStarted = false;

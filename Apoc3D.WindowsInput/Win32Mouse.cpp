@@ -114,7 +114,7 @@ namespace Apoc3D
 			}
 			bool Win32Mouse::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id ) 
 			{
-				const OIS::MouseState& s = arg.state;
+				//const OIS::MouseState& s = arg.state;
 				m_btnState[(int)id] = true;
 
 				//std::cout << "\nMouse button #" << id << " pressed. Abs("
@@ -124,7 +124,7 @@ namespace Apoc3D
 			}
 			bool Win32Mouse::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 			{
-				const OIS::MouseState& s = arg.state;
+				//const OIS::MouseState& s = arg.state;
 
 				m_btnState[(int)id] = false;
 

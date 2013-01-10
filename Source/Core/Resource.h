@@ -334,6 +334,10 @@ namespace Apoc3D
 				m_lock.unlock();
 			}
 
+			Resource& operator=(const Resource &rhs)
+			{
+				return *this; 
+			}
 		};
 	};
 };

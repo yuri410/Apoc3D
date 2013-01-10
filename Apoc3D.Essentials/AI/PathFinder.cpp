@@ -116,8 +116,8 @@ namespace Apoc3DEx
 				return new PathFinderResult(emptyList, false);
 			}
 
-			int ofsX = min(sx, tx);
-			int ofxY = min(sy, ty);
+			//int ofsX = min(sx, tx);
+			//int ofxY = min(sy, ty);
 
 			FastList<AStarNode*> enQueueBuffer(10);
 

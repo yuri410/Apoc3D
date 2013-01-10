@@ -356,7 +356,7 @@ namespace Apoc3D
 					SceneVariable* var = arg.Var;
 					assert(var);
 
-					bool propNotFountErr = false;
+					//bool propNotFountErr = false;
 					int idx = static_cast<int>(arg.DefaultValue[15]);
 					switch (var->Type)
 					{

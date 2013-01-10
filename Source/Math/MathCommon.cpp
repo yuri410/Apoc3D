@@ -27,10 +27,10 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		extern const float MaxFloat = std::numeric_limits<float>::max();
-		extern const float MinFloat = std::numeric_limits<float>::min();
-		extern const float POSINF_Float = std::numeric_limits<float>::infinity();
-		extern const float NEGINF_Float = -std::numeric_limits<float>::infinity();
+		//extern const float MaxFloat = std::numeric_limits<float>::max();
+		//extern const float MinFloat = std::numeric_limits<float>::min();
+		//extern const float POSINF_Float = std::numeric_limits<float>::infinity();
+		//extern const float NEGINF_Float = -std::numeric_limits<float>::infinity();
 
 
 		//float Lerp(float a, float b, float amount)

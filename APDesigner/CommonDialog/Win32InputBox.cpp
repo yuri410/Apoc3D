@@ -1,6 +1,7 @@
 #include "Win32InputBox.h"
 #include <stdio.h>
 
+#pragma warning (push)
 #pragma warning (disable: 4312)
 
 /*
@@ -329,3 +330,4 @@ LRESULT CALLBACK CWin32InputBox::DlgProc(HWND hDlg, UINT message, WPARAM wParam,
   }
   return FALSE;
 }
+#pragma warning (pop)

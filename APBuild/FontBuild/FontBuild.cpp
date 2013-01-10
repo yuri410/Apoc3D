@@ -285,7 +285,7 @@ namespace APBuild
 						{
 							Gdiplus::BitmapData bmpData2;
 							Gdiplus::Rect lr2 = Gdiplus::Rect( 0, 0, width2, height );
-							Gdiplus::Status ret2 = altBmp->LockBits(&lr2, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bmpData2);
+							altBmp->LockBits(&lr2, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bmpData2);
 
 							char* data2 = reinterpret_cast<char*>(bmpData2.Scan0);
 							int srcofs = 0;

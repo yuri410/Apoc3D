@@ -359,10 +359,10 @@ namespace Apoc3D
 
 			};
 
-			class APAPI MixedAnimationPlayer : public SkinnedAnimationPlayer
-			{
+			//class APAPI MixedAnimationPlayer : public SkinnedAnimationPlayer
+			//{
 
-			};
+			//};
 
 			/**
 			*/

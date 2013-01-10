@@ -536,9 +536,6 @@
     <ClCompile Include="Math\Vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Math\sse_functions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Math\Ray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -653,9 +650,6 @@
     <ClCompile Include="Scene\SceneProcedure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\ResourceHandle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Logging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -681,9 +675,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Animation\AnimationManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Math\MathCommon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\VertexFormats.cpp">
@@ -753,9 +744,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IOLib\EffectData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Math\ColorValue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UILib\Form.cpp">

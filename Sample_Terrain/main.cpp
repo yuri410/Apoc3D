@@ -62,7 +62,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	// the following code is the usual and typical way to initialize the engine for an render window
 
 	wchar_t workingDir[260];
-	DWORD len = GetCurrentDirectory(260, workingDir);
+	GetCurrentDirectory(260, workingDir);
 
 	// manually add these plugins, since the library is built statically.
 	// dynamic lib loading is not practical

@@ -315,7 +315,7 @@ namespace Apoc3D
 
 		void Font::DrawString(Sprite* sprite, const String& text, int _x, int y, int width, uint color)
 		{
-			int stdY = y;
+			//int stdY = y;
 			float std = static_cast<float>(_x);
 			float x = std;
 
@@ -380,7 +380,7 @@ namespace Apoc3D
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
 					{
-						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+						//const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
 						x += chdef.AdcanceX;
 						if (x>=width)
@@ -413,7 +413,7 @@ namespace Apoc3D
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
 					{
-						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+						//const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
 						x += chdef.AdcanceX;
 					}

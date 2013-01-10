@@ -49,17 +49,11 @@ namespace Apoc3D
 				virtual void Begin(SpriteSettings settings);
 				virtual void End();
 
-				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color)
-				{
-					Draw(texture, rect, 0, color);
-				}
 				virtual void Draw(Texture* texture, Vector2 pos, uint color);
 				virtual void Draw(Texture* texture, const PointF& pos, uint color);
-				virtual void Draw(Texture* texture, const Point& pos, uint color);
-				virtual void Draw(Texture* texture, int x, int y, uint color);
-				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color);
-				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, float uScale, float vScale, float uBias, float vBias, uint color);
-				virtual void Draw(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color);
+				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color);
+				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color);
+				virtual void Draw(Texture* texture, const PointF& pos, float uBias, float vBias, float uScale, float vScale, uint color);
 
 				virtual void Flush();
 
@@ -84,13 +78,13 @@ namespace Apoc3D
 				};
 
 				void AddNormalDraw(Texture* texture, float x, float y, uint color);
-				void AddTransformedDraw(Texture* texture, const Matrix& t, const RECT* srcRect, uint color);
+				void AddTransformedDraw(Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color);
 				void AddUVDraw(Texture* texture, float x, float y, uint color, float uScale, float vScale, float uBias, float vBias);
 				void AddTransformedUVDraw(DrawEntry& entry, float uScale, float vScale, float uBias, float vBias);
 
-				void _DrawAsEntry(DrawEntry& result, Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color);
+				void _DrawAsEntry(DrawEntry& result, Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color);
 				void _FillNormalDraw(DrawEntry& entry, Texture* texture, float x, float y, uint color);
-				void _FillTransformedDraw(DrawEntry& entry, Texture* texture, const Matrix& t, const RECT* srcRect, uint color);
+				void _FillTransformedDraw(DrawEntry& entry, Texture* texture, const Matrix& t, const Apoc3D::Math::RectangleF* srcRect, uint color);
 
 				void SetRenderState();
 				void RestoreRenderState();

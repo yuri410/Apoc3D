@@ -66,10 +66,6 @@ namespace Apoc3D
 				};
 
 
-				RenderDevice* getRenderDevice() const { return m_renderDevice; }
-				bool isUsingStack() const { return !!(m_currentSettings & SPR_UsePostTransformStack); }
-
-
 				virtual ~Sprite();
 
 				virtual void Begin(SpriteSettings settings)
@@ -79,13 +75,46 @@ namespace Apoc3D
 
 				virtual void End() = 0;
 				//virtual void DrawQuad(const GeometryData* quad, PostEffect* effect) = 0;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color) = 0;
+				void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color)
+				{
+					Draw(texture, Apoc3D::Math::RectangleF(static_cast<float>(rect.X), static_cast<float>(rect.Y), 
+						static_cast<float>(rect.Width), static_cast<float>(rect.Height)), 
+						color);
+				}
+				void Draw(Texture* texture, const Point& pos, uint color)
+				{
+					Draw(texture, PointF(static_cast<float>(pos.X), static_cast<float>(pos.Y)), color);
+				}
+				void Draw(Texture* texture, int x, int y, uint color)
+				{
+					Draw(texture, PointF(static_cast<float>(x), static_cast<float>(y)), color);
+				}
+				void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color)
+				{
+					Apoc3D::Math::RectangleF dstRectF(static_cast<float>(dstRect.X), static_cast<float>(dstRect.Y), 
+						static_cast<float>(dstRect.Width), static_cast<float>(dstRect.Height));
+
+					if (srcRect)
+					{
+						Apoc3D::Math::RectangleF srcRectF(static_cast<float>(srcRect->X), static_cast<float>(srcRect->Y), 
+							static_cast<float>(srcRect->Width), static_cast<float>(srcRect->Height));
+
+						Draw(texture, dstRectF, &srcRectF, color);
+					}
+					else
+					{
+						Draw(texture, dstRectF, nullptr, color);
+					}
+				}
+				void Draw(Texture* texture, const Apoc3D::Math::RectangleF &rect, uint color)
+				{
+					Draw(texture, rect, nullptr, color);
+				}
+
 				virtual void Draw(Texture* texture, Vector2 pos, uint color) = 0;
 				virtual void Draw(Texture* texture, const PointF& pos, uint color) = 0;
-				virtual void Draw(Texture* texture, const Point& pos, uint color) = 0;
-				virtual void Draw(Texture* texture, int x, int y, uint color) = 0;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, const Apoc3D::Math::Rectangle* srcRect, uint color) = 0;
-				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
+				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color) = 0;
+				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) = 0;
 				virtual void Draw(Texture* texture, const PointF& pos, float uBias, float vBias, float uScale, float vScale, uint color) = 0;
 
 				virtual void Flush() = 0;
@@ -135,6 +164,10 @@ namespace Apoc3D
 						m_transform = matrix;
 					}
 				}
+
+				RenderDevice* getRenderDevice() const { return m_renderDevice; }
+				bool isUsingStack() const { return !!(m_currentSettings & SPR_UsePostTransformStack); }
+
 
 			private:
 				RenderDevice* m_renderDevice;

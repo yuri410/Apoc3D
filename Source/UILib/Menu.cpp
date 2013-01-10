@@ -310,7 +310,7 @@ namespace Apoc3D
 
 		KeyboardKeyCode GetKey(wchar_t ch)
 		{
-			ch = tolower(ch);
+			ch = static_cast<wchar_t>(tolower(ch));
 			switch (ch)
 			{
 			case 'a':

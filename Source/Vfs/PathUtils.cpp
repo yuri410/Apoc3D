@@ -184,7 +184,7 @@ namespace Apoc3D
 			wchar_t ch = path1[len1 - 1];
 			if (((ch != DirectorySeparator) && (ch != AltDirectorySeparator)) && (ch != VolumeSeparatorChar))
 			{
-				path1.append(&AltDirectorySeparator, 1);
+				path1.append(1, AltDirectorySeparator);
 				path1.append(path2);
 				return;
 			}
@@ -315,12 +315,12 @@ namespace Apoc3D
 			bool isLastSepL = false;
 			bool isLastSepR = false;
 
-			bool finished = false;
+			//bool finished = false;
 
 			int lvll = 0;
 			int lvlr = 0;
 
-			while (1)
+			for(;;)
 			{
 				wchar_t lch = left[i];
 				wchar_t rch = right[j];

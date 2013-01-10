@@ -405,7 +405,7 @@ namespace APBuild
 
 			if( std::string(takeName->Buffer()) != "Default" )
 			{
-				KFbxTakeInfo* lCurrentTakeInfo = pScene->GetTakeInfo(*takeName);
+				//KFbxTakeInfo* lCurrentTakeInfo = pScene->GetTakeInfo(*takeName);
 
 				//pScene->SetCurrentTake(takeName->Buffer());
 				pScene->ActiveAnimStackName.Set(*takeName);
@@ -436,7 +436,7 @@ namespace APBuild
 
 				if( fStart < fStop )
 				{
-					int nKeyFrames = static_cast<int>((fStop-fStart)*fFrameRate);
+					//int nKeyFrames = static_cast<int>((fStop-fStart)*fFrameRate);
 
 					//CBTTAnimation* pAnimation = new CBTTAnimation(takeName->Buffer(), nKeyFrames, fFrameRate);
 					//m_pAnimationController->AddAnimation(pAnimation);
@@ -496,7 +496,7 @@ namespace APBuild
 	}
 	void FbxImporter::ProcessSkeleton(KFbxNode* pNode)
 	{
-		bool isAnimated = HasFBXAnimation(pNode);
+		//bool isAnimated = HasFBXAnimation(pNode);
 
 		KFbxSkeleton* pFBXSkeleton = pNode->GetSkeleton();
 		if( !pFBXSkeleton )
@@ -522,7 +522,7 @@ namespace APBuild
 	}
 	void FbxImporter::ProcessMesh(KFbxNode* pNode)
 	{
-		bool isAnimated = HasFBXAnimation(pNode);
+		//bool isAnimated = HasFBXAnimation(pNode);
 		
 		KFbxGeometryConverter GeometryConverter(m_pFBXSdkManager);
 		if( !GeometryConverter.TriangulateInPlace( pNode ) )

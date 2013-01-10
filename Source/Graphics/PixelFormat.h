@@ -226,11 +226,14 @@ namespace Apoc3D
 			static int sizeTable[FMT_Count];
 			static int depSizeTable[DEPFMT_Count];
 
+#ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4251)
+#endif
 			static auto_ptr<PixelFormatUtils> initializer;
+#ifdef _MSC_VER
 #pragma warning(pop)
-
+#endif
 			PixelFormatUtils();
 		public:
 			/** Check if a PixelFormat is a compressed format

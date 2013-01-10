@@ -356,7 +356,7 @@ namespace Apoc3D
 				byte* texPtr = reinterpret_cast<byte*>(tex);
 				byte* texDataPtr = reinterpret_cast<byte*>(texData);
 
-				byte bytesPerPixel = PixelFormatUtils::GetBPP(surfaceFormat);// GetExpectedByteSizeFromFormat(surfaceFormat);
+				byte bytesPerPixel = (byte)PixelFormatUtils::GetBPP(surfaceFormat);// GetExpectedByteSizeFromFormat(surfaceFormat);
 
 
 				bool isDxt = false;
@@ -405,7 +405,7 @@ namespace Apoc3D
 				byte* texPtr = reinterpret_cast<byte*>(tex);
 				byte* texDataPtr = reinterpret_cast<byte*>(texData);
 
-				byte bytesPerPixel = PixelFormatUtils::GetBPP(surfaceFormat);//(surfaceFormat);
+				byte bytesPerPixel = (byte)PixelFormatUtils::GetBPP(surfaceFormat);//(surfaceFormat);
 
 				bool isDxt = false;
 				if (surfaceFormat == FMT_DXT1 || 
@@ -735,7 +735,7 @@ namespace Apoc3D
 
 				D3DFORMAT newFmt;
 				{
-					DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
+					//DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
 					D3DFORMAT fmt = D3D9Utils::ConvertPixelFormat(data.Format);
 					UINT width = data.Levels[0].Width;
 					UINT height = data.Levels[0].Height;

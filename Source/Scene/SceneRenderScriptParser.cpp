@@ -227,10 +227,10 @@ namespace Apoc3D
 					}
 					else
 					{
-						switch (Precede(optrStack.Peek(), lookahead))
+						switch (Precede(optrStack.Peek(), static_cast<char>(lookahead)))
 						{
 						case '<':
-							optrStack.Push(lookahead);
+							optrStack.Push(static_cast<char>(lookahead));
 							lookahead = GetNextSymbol();
 							break;
 						case '=':

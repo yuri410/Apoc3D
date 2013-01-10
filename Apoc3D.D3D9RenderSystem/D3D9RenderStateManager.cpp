@@ -654,6 +654,7 @@ namespace Apoc3D
 			{
 				RECT rect;
 				HRESULT hr = m_device->getDevice()->GetScissorRect(&rect);
+				assert(SUCCEEDED(hr));
 				return Apoc3D::Math::Rectangle((int)rect.left, (int)rect.top, (int)(rect.right-rect.left), (int)(rect.bottom-rect.top));
 			}
 			void D3D9RenderStateManager::setScissorTest(bool enable, const Apoc3D::Math::Rectangle* r)

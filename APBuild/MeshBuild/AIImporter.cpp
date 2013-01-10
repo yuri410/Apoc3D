@@ -24,9 +24,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "AIImporter.h"
 
+#ifdef _MSC_VER
+#pragma warning (push)
+#pragma warning (disable : 4819)
+#endif
+
 #include <assimp/include/assimp.hpp>
 #include <assimp/include/aiPostProcess.h>
 #include <assimp/include/aiScene.h>
+
+#ifdef _MSC_VER
+#pragma warning (pop)
+#endif
 
 #include "Collections/FastList.h"
 #include "Collections/FastMap.h"
@@ -47,7 +56,7 @@ namespace APBuild
 	Color4 ConvertPropertyColor4(aiMaterialProperty* prop)
 	{
 		Color4 result;
-		assert(prop->mType = aiPTI_Float);
+		assert(prop->mType == aiPTI_Float);
 		if (prop->mDataLength == sizeof(float) * 3)
 		{
 			result.Alpha = 1;
@@ -66,7 +75,7 @@ namespace APBuild
 	}
 	float ConvertPropertyFloat(aiMaterialProperty* prop)
 	{
-		assert(prop->mType = aiPTI_Float);
+		assert(prop->mType == aiPTI_Float);
 		return *reinterpret_cast<const float*>(prop->mData);
 	}
 	ModelData* AIImporter::Import(const MeshBuildConfig& config)
@@ -141,8 +150,8 @@ namespace APBuild
 			
 			FastList<VertexElement>& vtxelems = data->VertexElements;
 			int offset = 0;
-			int blendIndexOffset = -1;
-			int blendWeightOffset = -1;
+			//int blendIndexOffset = -1;
+			//int blendWeightOffset = -1;
 
 			if (m->HasPositions())
 			{
