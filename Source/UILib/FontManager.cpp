@@ -144,7 +144,7 @@ namespace Apoc3D
 					//bk.Y = i;
 					bk.BucketIndex = i * m_edgeCount+j;
 					bk.CurrentGlyph = -1;
-					bk.SrcRect = Apoc3D::Math::Rectangle(j*m_height, i*m_height, m_height, m_height);
+					bk.SrcRect = Apoc3D::Math::RectangleF(static_cast<float>(j*m_height), static_cast<float>(i*m_height), static_cast<float>(m_height), static_cast<float>(m_height));
 				}
 			}
 			m_lineBucketsFreqClassificationCount = new int[m_edgeCount*MaxFreq];
@@ -218,14 +218,9 @@ namespace Apoc3D
 			delete m_resource;
 		}
 
-
-		void Font::DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink)
+		void Font::DrawStringEx(Sprite* sprite, const String& text, float _x, float y, uint color, int length, int lineSpace, wchar_t suffix, float hozShrink)
 		{
-			DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, -1, 0, hozShrink);
-		}
-		void Font::DrawStringEx(Sprite* sprite, const String& text, int _x, int y, uint color, int length, int lineSpace, wchar_t suffix, float hozShrink)
-		{
-			float std = static_cast<float>(_x);
+			float std = _x;
 			float x = std;
 
 			size_t len = text.length();
@@ -258,11 +253,11 @@ namespace Apoc3D
 							EnsureGlyph(glyph);
 						}
 
-						Apoc3D::Math::Rectangle rect;
-						rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
+						Apoc3D::Math::RectangleF rect;
+						rect.X = x + chdef.Left;
 						rect.Y = y + chdef.Top;
-						rect.Width = glyph.Width;
-						rect.Height = glyph.Height;
+						rect.Width = static_cast<float>(glyph.Width);
+						rect.Height = static_cast<float>(glyph.Height);
 						//glyph.LastTimeUsed = (float)time(0);
 						SetUseFreq(glyph);
 
@@ -295,11 +290,11 @@ namespace Apoc3D
 						EnsureGlyph(glyph);
 					}
 
-					Apoc3D::Math::Rectangle rect;
-					rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
+					Apoc3D::Math::RectangleF rect;
+					rect.X = x + chdef.Left;
 					rect.Y = y + chdef.Top;
-					rect.Width = glyph.Width;
-					rect.Height = glyph.Height;
+					rect.Width = static_cast<float>(glyph.Width);
+					rect.Height = static_cast<float>(glyph.Height);
 					//glyph.LastTimeUsed = (float)time(0);
 					SetUseFreq(glyph);
 
@@ -313,10 +308,10 @@ namespace Apoc3D
 		//	DrawString(sprite, text, pt, color);
 		//}
 
-		void Font::DrawString(Sprite* sprite, const String& text, int _x, int y, int width, uint color)
+		void Font::DrawString(Sprite* sprite, const String& text, float _x, float y, int width, uint color)
 		{
 			//int stdY = y;
-			float std = static_cast<float>(_x);
+			float std = _x;
 			float x = std;
 
 			for (size_t i = 0; i < text.length(); i++)
@@ -340,11 +335,11 @@ namespace Apoc3D
 							EnsureGlyph(glyph);
 						}
 
-						Apoc3D::Math::Rectangle rect;
-						rect.X = static_cast<int>(x+0.5f) + chdef.Left;
+						Apoc3D::Math::RectangleF rect;
+						rect.X = x + chdef.Left;
 						rect.Y = y + chdef.Top;
-						rect.Width = glyph.Width;
-						rect.Height = glyph.Height;
+						rect.Width = static_cast<float>(glyph.Width);
+						rect.Height = static_cast<float>(glyph.Height);
 						//glyph.LastTimeUsed = (float)time(0);
 						SetUseFreq(glyph);
 
@@ -450,7 +445,9 @@ namespace Apoc3D
 			//br->getBaseStream()->setPosition(glyph.Offset);
 			br->getBaseStream()->Seek(glyph.Offset, SEEK_Begin);
 
-			DataRectangle dataRect = m_font->Lock(0, LOCK_None, glyph.MappedRect);
+			Apoc3D::Math::Rectangle lockRect(static_cast<int32>(glyph.MappedRect.X), static_cast<int32>(glyph.MappedRect.Y),
+				static_cast<int32>(glyph.MappedRect.Width), static_cast<int32>(glyph.MappedRect.Height));
+			DataRectangle dataRect = m_font->Lock(0, LOCK_None, lockRect);
 
 			char* buf = new char[glyph.Width * glyph.Height];
 			br->ReadBytes(buf, glyph.Width * glyph.Height);
@@ -550,7 +547,7 @@ namespace Apoc3D
 			// if amount > 0 then use buckets, otherwise clears the given range of buckets(g should be 0 in this case)
 			if (amount>0)
 			{
-				const Apoc3D::Math::Rectangle& bukRect = m_buckets[i*m_edgeCount+j].SrcRect;
+				const Apoc3D::Math::RectangleF& bukRect = m_buckets[i*m_edgeCount+j].SrcRect;
 
 				g->NumberOfBucketUsing = amount;
 				g->StartingParentBucket = i*m_edgeCount+j;
@@ -558,7 +555,7 @@ namespace Apoc3D
 				{
 					m_buckets[i*m_edgeCount+j+k].CurrentGlyph = g->Index;
 				}
-				g->MappedRect = Apoc3D::Math::Rectangle(bukRect.X, bukRect.Y, g->Width, g->Height);
+				g->MappedRect = Apoc3D::Math::RectangleF(bukRect.X, bukRect.Y, static_cast<float>(g->Width), static_cast<float>(g->Height));
 				g->IsMapped = true;
 			}
 			else

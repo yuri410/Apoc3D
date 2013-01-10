@@ -63,12 +63,25 @@ namespace Apoc3D
 			Font(RenderDevice* device, ResourceLocation* fl);
 			~Font();
 
-			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
-			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink = 0);
-			//void DrawStringFixed(Sprite* sprite, const String& text, const Point& pt, uint color, int fixedAdvanceX);
+			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
+			void DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color);
 
-
-			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
+			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0, float hozShrink = 0)
+			{
+				DrawStringEx(sprite, text, static_cast<float>(x), static_cast<float>(y), color, length, lineSpace, suffix, hozShrink);
+			}
+			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink = 0)
+			{
+				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, -1, 0, hozShrink);
+			}
+			void DrawString(Sprite* sprite, const String& text, const PointF& pt, uint color, float hozShrink = 0)
+			{
+				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, -1, 0, hozShrink);
+			}
+			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color)
+			{
+				DrawString(sprite, text, static_cast<float>(x), static_cast<float>(y), width, color);
+			}
 
 			Point MeasureString(const String& text, int width);
 			Point MeasureString(const String& text);
@@ -95,7 +108,7 @@ namespace Apoc3D
 				int64 Offset;
 
 				bool IsMapped;
-				Apoc3D::Math::Rectangle MappedRect;
+				Apoc3D::Math::RectangleF MappedRect;
 
 				/** The number of consecutive buckets that the glyph is using.
 				*/
@@ -106,7 +119,7 @@ namespace Apoc3D
 			struct Bucket
 			{
 				int CurrentGlyph;
-				Apoc3D::Math::Rectangle SrcRect;
+				Apoc3D::Math::RectangleF SrcRect;
 				int BucketIndex;
 			};
 
