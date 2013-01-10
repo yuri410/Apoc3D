@@ -261,7 +261,7 @@ namespace Apoc3D
 						//glyph.LastTimeUsed = (float)time(0);
 						SetUseFreq(glyph);
 
-						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
+						sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
 
 						x += chdef.AdcanceX + hozShrink;// glyph.Width - 1;
 					}
@@ -298,16 +298,10 @@ namespace Apoc3D
 					//glyph.LastTimeUsed = (float)time(0);
 					SetUseFreq(glyph);
 
-					sprite->Draw(m_font, rect, &glyph.MappedRect, color);
+					sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
 				}
 			}
 		}
-
-		//void Font::DrawStringFixed(Sprite* sprite, const String& text, const Point& pt, uint color, int fixedAdvanceX)
-		//{
-		//	DrawString(sprite, text, pt, color);
-		//}
-
 		void Font::DrawString(Sprite* sprite, const String& text, float _x, float y, int width, uint color)
 		{
 			//int stdY = y;
@@ -343,6 +337,144 @@ namespace Apoc3D
 						//glyph.LastTimeUsed = (float)time(0);
 						SetUseFreq(glyph);
 
+						sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
+
+						x += chdef.AdcanceX;
+						if (x>=width)
+						{
+							x=std;
+							y+=m_height;
+						}
+					}
+
+				}
+				else
+				{
+					x = std;
+					y += m_height;
+				}
+			}
+		}
+
+		void Font::DrawStringEx(Sprite* sprite, const String& text, int _x, int y, uint color, int length, int lineSpace, wchar_t suffix, float hozShrink)
+		{
+			float std = static_cast<float>(_x);
+			float x = std;
+
+			size_t len = text.length();
+			if (length !=-1)
+			{
+				if ((size_t)length<len)
+					len = (size_t)length;
+			}
+			int ls = m_height;
+			if (lineSpace!=-1)
+				ls=lineSpace;
+			for (size_t i = 0; i < text.length(); i++)
+			{
+				wchar_t ch = text[i];
+				if (ch != '\n')
+				{
+					Character chdef;
+					if (m_charTable.TryGetValue(ch, chdef))
+					{
+						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+
+						if (glyph.Width == 0 || glyph.Height == 0)
+						{
+							x += chdef.AdcanceX;// + chdef.Left;
+							continue;
+						}
+
+						if (!glyph.IsMapped)
+						{
+							EnsureGlyph(glyph);
+						}
+
+						Apoc3D::Math::Rectangle rect;
+						rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
+						rect.Y = y + chdef.Top;
+						rect.Width = glyph.Width;
+						rect.Height = glyph.Height;
+						//glyph.LastTimeUsed = (float)time(0);
+						SetUseFreq(glyph);
+
+						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
+
+						x += chdef.AdcanceX + hozShrink;// glyph.Width - 1;
+					}
+
+				}
+				else
+				{
+					x = std;
+					y += ls;
+				}
+			}
+			if (suffix)
+			{
+				wchar_t ch = suffix;
+
+				Character chdef;
+				if (m_charTable.TryGetValue(ch, chdef))
+				{
+					Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+
+					if (glyph.Width == 0 || glyph.Height == 0)
+						return;
+
+					if (!glyph.IsMapped)
+					{
+						EnsureGlyph(glyph);
+					}
+
+					Apoc3D::Math::Rectangle rect;
+					rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
+					rect.Y = y + chdef.Top;
+					rect.Width = glyph.Width;
+					rect.Height = glyph.Height;
+					//glyph.LastTimeUsed = (float)time(0);
+					SetUseFreq(glyph);
+
+					sprite->Draw(m_font, rect, &glyph.MappedRect, color);
+				}
+			}
+		}
+		void Font::DrawString(Sprite* sprite, const String& text, int _x, int y, int width, uint color)
+		{
+			//int stdY = y;
+			float std = static_cast<float>(_x);
+			float x = std;
+
+			for (size_t i = 0; i < text.length(); i++)
+			{
+				wchar_t ch = text[i];
+				if (ch != '\n')
+				{
+					Character chdef;
+					if (m_charTable.TryGetValue(ch, chdef))
+					{
+						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+
+						if (glyph.Width == 0 || glyph.Height == 0)
+						{
+							x += chdef.AdcanceX;
+							continue;
+						}
+
+						if (!glyph.IsMapped)
+						{
+							EnsureGlyph(glyph);
+						}
+
+						Apoc3D::Math::Rectangle rect;
+						rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
+						rect.Y = y + chdef.Top;
+						rect.Width = glyph.Width;
+						rect.Height = glyph.Height;
+						//glyph.LastTimeUsed = (float)time(0);
+						SetUseFreq(glyph);
+
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
 
 						x += chdef.AdcanceX;
@@ -361,6 +493,8 @@ namespace Apoc3D
 				}
 			}
 		}
+
+
 		Point Font::MeasureString(const String& text, int width)
 		{
 			float x =0;
@@ -555,7 +689,8 @@ namespace Apoc3D
 				{
 					m_buckets[i*m_edgeCount+j+k].CurrentGlyph = g->Index;
 				}
-				g->MappedRect = Apoc3D::Math::RectangleF(bukRect.X, bukRect.Y, static_cast<float>(g->Width), static_cast<float>(g->Height));
+				g->MappedRect = Apoc3D::Math::Rectangle(static_cast<int>(bukRect.X), static_cast<int>(bukRect.Y), g->Width, g->Height);
+				g->MappedRectF = Apoc3D::Math::RectangleF(bukRect.X, bukRect.Y, static_cast<float>(g->Width), static_cast<float>(g->Height));
 				g->IsMapped = true;
 			}
 			else
