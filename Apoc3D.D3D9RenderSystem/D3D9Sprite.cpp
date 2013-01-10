@@ -141,7 +141,13 @@ namespace Apoc3D
 				AddTransformedUVDraw(drawE, uScale, vScale, uBias, vBias);
 			}
 
-			
+			struct RECTF
+			{
+				float left;
+				float top;
+				float right;
+				float bottom;
+			};
 
 			// Auto resizing to fit the target rectangle is implemented in this method.
 			// 
@@ -158,44 +164,51 @@ namespace Apoc3D
 					// LONG    top;
 					// LONG    right;
 					// LONG    bottom;
-					Apoc3D::Math::RectangleF r = *srcRect;
+					//Apoc3D::Math::RectangleF r2 = *srcRect;
 					//RECTF r = { 
 					//	(LONG)srcRect->X, 
 					//	(LONG)srcRect->Y,
 					//	(LONG)srcRect->getRight(),
 					//	(LONG)srcRect->getBottom()
 					//};
+					RECTF r = { 
+						srcRect->X, 
+						srcRect->Y,
+						srcRect->getRight(),
+						srcRect->getBottom()
+					};
 
 					// In some cases, the X,Y of the rect is not always the top-left corner,
 					// when the Width or Height is negative. Standardize it.
-					if (r.getLeft()>r.getRight())
-					{
-						r.X += r.Width;
-						position[0] += r.Width;
-
-						r.Width = -r.Width;
-					}
-					if (r.getTop()>r.getBottom())
-					{
-						r.Y += r.Height;
-						position[1] += r.Height;
-
-						r.Height = -r.Height;
-					}
-					//if (r.left > r.right)
+					//if (r2.getLeft()>r2.getRight())
 					//{
-					//	LONG temp = r.right;
-					//	r.right = r.left;
-					//	r.left = temp;
-					//	position[0] -= (float)( r.left - r.right);
+					//	r2.X += r2.Width;
+					//	r2.Width = -r2.Width;
+
+					//	position[0] -= r2.Width;
 					//}
-					//if (r.top>r.bottom)
+					//if (r2.getTop()>r2.getBottom())
 					//{
-					//	LONG temp = r.bottom;
-					//	r.bottom = r.top;
-					//	r.top = temp;
-					//	position[1] -= (float)( r.top - r.bottom);
+					//	r2.Y += r2.Height;
+					//	r2.Height = -r2.Height;
+
+					//	position[1] -= r2.Height;
 					//}
+					if (r.left > r.right)
+					{
+						float temp = r.right;
+						r.right = r.left;
+						r.left = temp;
+						position[0] -= ( r.left - r.right);
+					}
+					if (r.top>r.bottom)
+					{
+						float temp = r.bottom;
+						r.bottom = r.top;
+						r.top = temp;
+						position[1] -= ( r.top - r.bottom);
+					}
+					Apoc3D::Math::RectangleF r2(r.left, r.top, r.right-r.left,r.bottom-r.top);
 
 					// calculate a scaling and translation matrix
 					Matrix trans;
@@ -210,7 +223,7 @@ namespace Apoc3D
 					// As the position have been added to the transform, 
 					// draw the texture at the origin
 					//AddTransformedDraw(texture, tempM, &r, color);
-					_FillTransformedDraw(result, texture, tempM, &r, color);
+					_FillTransformedDraw(result, texture, tempM, &r2, color);
 				}
 				else
 				{

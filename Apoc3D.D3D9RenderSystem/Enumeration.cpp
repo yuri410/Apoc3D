@@ -802,7 +802,7 @@ namespace Apoc3D
 
 			D3DDISPLAYMODE Enumeration::FindValidResolution(const SettingsCombo* combo, const Direct3D9Settings& input)
 			{
-				if (combo->AdapterInfo->DisplayModes.size())
+				if (combo->AdapterInfo->DisplayModes.empty())
 				{
 					throw Apoc3DException::createException(EX_NotSupported, L"No device modes available");
 				}
