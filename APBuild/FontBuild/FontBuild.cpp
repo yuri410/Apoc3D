@@ -458,12 +458,22 @@ namespace APBuild
 		if (FT_New_Face( library, name.c_str(), 0, &face )) 
 			throw std::runtime_error("FT_New_Face failed (there is probably a problem with your font file)");
 
+		FT_Select_Charmap(face, FT_ENCODING_UNICODE );
+			
+
 		//For some twisted reason, Freetype measures font size
 		//in terms of 1/64ths of pixels.  Thus, to make a font
 		//h pixels high, we need to request a size of h*64.
 		//(h << 6 is just a prettier way of writting h*64)
-		FT_Set_Char_Size( face, config.Size * 64.0f, config.Size * 64.0f, 96, 96);
+		FT_Set_Char_Size( face, static_cast<int>(config.Size * 64.0f), 0, 96, 96);
 
+		FT_Size_Metrics metrics = face->size->metrics; 
+
+		float ascender = metrics.ascender / 64.f; //(metrics.ascender >> 6) / 100.0f;
+		float descender = metrics.descender / 64.f; //(metrics.descender >> 6) / 100.0f;
+		float height = metrics.height / 64.f; //(metrics.height >> 6) / 100.0f;
+		float lineGap = height - ascender + descender;
+		
 		for (int i=0;i<config.Ranges.getCount();i++)
 		{
 			for (wchar_t ch = (wchar_t)config.Ranges[i].MinChar; 
@@ -485,9 +495,6 @@ namespace APBuild
 					FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_MONO, nullptr, 1 );
 
 				FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph)glyph;
-
-				//This reference will make accessing the bitmap easier
-				//FT_Bitmap& bitmap = bitmap_glyph->bitmap;
 
 				FT_Bitmap tempbitmap;
 				if (!config.AntiAlias)
@@ -563,8 +570,14 @@ namespace APBuild
 		BinaryWriter* bw = new BinaryWriter(fs);
 
 		bw->Write((uint)0xffffff01); // new version id
+		
+		bw->Write(static_cast<int32>(charMap.getCount()));
+		bw->Write(static_cast<float>(height));
+		bw->Write(static_cast<float>(lineGap));
+		bw->Write(static_cast<float>(-ascender));
+		bw->Write(static_cast<float>(-descender));
 
-		bw->Write(charMap.getCount());
+
 		for (int i=0;i<charMap.getCount();i++)
 		{
 			bw->Write((int32)charMap[i].Character);
@@ -573,7 +586,6 @@ namespace APBuild
 			bw->Write((short)charMap[i].Left);
 			bw->Write((short)charMap[i].Top);
 			bw->Write((float)charMap[i].AdvanceX);
-
 		}
 
 		bw->Write(glyphHashTable.getCount());

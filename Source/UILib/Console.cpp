@@ -246,6 +246,7 @@ namespace Apoc3D
 			sprite->Draw(m_skin->WhitePixelTexture, *dstRect,0, PACK_COLOR(25,25,25,255));
 
 			Font* font = m_form->getFontRef();
+			float lineSpacing = font->getLineHeight() + m_form->getFontRef()->getLineGap();
 
 
 			if (m_needsUpdateLineInfo)
@@ -256,9 +257,8 @@ namespace Apoc3D
 				{
 					const LogEntry& e = *iter;
 					String str = e.ToString();
-					Point size = font->MeasureString(str,dstRect->Width- 10);
-
-					m_entryInfo[counter].LineCount = size.Y / font->getLineHeight();
+					
+					m_entryInfo[counter].LineCount = font->CalculateLineCount(str,dstRect->Width-m_scrollBar->getWidth());
 					m_entryInfo[counter].Message = str;
 					m_contendLineCount+= m_entryInfo[counter].LineCount;
 
@@ -278,7 +278,7 @@ namespace Apoc3D
 						color = CV_White;
 						break;
 					case LOGLVL_Default:
-						color = CV_Green;
+						color = 0xffa3ff91;//CV_Green;
 						break;
 					}
 					m_entryInfo[counter].Color = color;
@@ -288,7 +288,7 @@ namespace Apoc3D
 			}
 			
 
-			int windowLineCount = dstRect->Height / m_form->getFontRef()->getLineHeight();
+			int windowLineCount = static_cast<int>( dstRect->Height / lineSpacing);
 			m_scrollBar->setMax(m_contendLineCount - windowLineCount);
 
 			int startIndex = (int)m_logs.size() - 1;
@@ -305,7 +305,7 @@ namespace Apoc3D
 			int y = dstRect->Y + dstRect->Height - 5;
 			for (int i=startIndex;i>=0;i--)
 			{
-				y -= (m_entryInfo[i].LineCount-1) * font->getLineHeight();
+				y -= m_entryInfo[i].LineCount * static_cast<int>(lineSpacing);
 
 				font->DrawString(sprite, m_entryInfo[i].Message, x,y,dstRect->Width - 10, m_entryInfo[i].Color);
 			}

@@ -50,19 +50,11 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	Initialize();
 
-	int r = 0;
+	int r = Build(argc, argv);;
 
-	try
-	{
-		r = Build(argc, argv);
-	}
-	catch (Apoc3DException e)
-	{
-		
-	}
-	
+	printf("built\n");
 	Finalize();
-
+	printf("finalized\n");
 //#ifdef _DEBUG
 //	getchar();
 //#endif

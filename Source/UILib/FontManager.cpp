@@ -70,11 +70,17 @@ namespace Apoc3D
 			if (((uint)charCount & 0xffffff00) == 0xffffff00)
 			{
 				newVersion = true;
+
 				charCount = br->ReadInt32();
 			}
 
 			if (newVersion)
 			{
+				m_height = br->ReadSingle();
+				m_lineGap = br->ReadSingle();
+				m_ascender = br->ReadSingle();
+				m_descender = br->ReadSingle();
+
 				for (int i=0;i<charCount;i++)
 				{
 					Character ch;
@@ -88,6 +94,8 @@ namespace Apoc3D
 			}
 			else
 			{
+				m_lineGap = m_ascender = m_descender = 0;
+
 				for (int i=0;i<charCount;i++)
 				{
 					Character ch;
@@ -98,10 +106,8 @@ namespace Apoc3D
 				}
 			}
 			
-
-			int maxHeight = 1;
 			int maxWidth = 1;
-
+			int maxHeight = 1;
 			int glyphCount = br->ReadInt32();
 			m_glyphList = new Glyph[glyphCount];
 			for (int i=0;i<glyphCount;i++)
@@ -114,6 +120,8 @@ namespace Apoc3D
 				glyph.IsMapped = false;
 				glyph.NumberOfBucketUsing = 0;
 				glyph.StartingParentBucket = -1;
+
+				assert(glyph.Index<glyphCount);
 				m_glyphList[glyph.Index] = glyph;
 
 				if (glyph.Width > maxWidth)
@@ -125,8 +133,14 @@ namespace Apoc3D
 					maxHeight = glyph.Height;
 				}
 			}
-			m_height = maxHeight;
+			if (!newVersion)
+			{
+				m_height = static_cast<float>(maxHeight);
+			}
+			m_heightInt = static_cast<int>(m_height+0.5f);
+
 			m_maxWidth = maxWidth;
+			m_maxHeight = maxHeight;
 
 			m_edgeCount = FontManager::TextureSize / maxHeight;
 			m_buckets = new Bucket[m_edgeCount*m_edgeCount];
@@ -144,7 +158,7 @@ namespace Apoc3D
 					//bk.Y = i;
 					bk.BucketIndex = i * m_edgeCount+j;
 					bk.CurrentGlyph = -1;
-					bk.SrcRect = Apoc3D::Math::RectangleF(static_cast<float>(j*m_height), static_cast<float>(i*m_height), static_cast<float>(m_height), static_cast<float>(m_height));
+					bk.SrcRect = Apoc3D::Math::RectangleF(static_cast<float>(j*maxHeight), static_cast<float>(i*maxHeight), static_cast<float>(maxHeight), static_cast<float>(maxHeight));
 				}
 			}
 			m_lineBucketsFreqClassificationCount = new int[m_edgeCount*MaxFreq];
@@ -175,7 +189,7 @@ namespace Apoc3D
 					int startX = buckX[buckY];
 
 					Glyph& glyph = tempList[i];
-					int bucketsNeeded = (int)ceil((double)glyph.Width/m_height);
+					int bucketsNeeded = (int)ceil((double)glyph.Width/maxHeight);
 
 					if (startX+bucketsNeeded-1<m_edgeCount)
 					{
@@ -218,10 +232,12 @@ namespace Apoc3D
 			delete m_resource;
 		}
 
-		void Font::DrawStringEx(Sprite* sprite, const String& text, float _x, float y, uint color, int length, int lineSpace, wchar_t suffix, float hozShrink)
+		void Font::DrawStringEx(Sprite* sprite, const String& text, float _x, float y, uint color, int length, float extLineSpace, wchar_t suffix, float hozShrink)
 		{
 			float std = _x;
 			float x = std;
+
+			y += m_descender;
 
 			size_t len = text.length();
 			if (length !=-1)
@@ -229,9 +245,11 @@ namespace Apoc3D
 				if ((size_t)length<len)
 					len = (size_t)length;
 			}
-			int ls = m_height;
-			if (lineSpace!=-1)
-				ls=lineSpace;
+
+			float lineSpacing = m_height + m_lineGap;
+			if (extLineSpace!=-1)
+				lineSpacing=extLineSpace;
+
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
@@ -270,7 +288,7 @@ namespace Apoc3D
 				else
 				{
 					x = std;
-					y += ls;
+					y += lineSpacing;
 				}
 			}
 			if (suffix)
@@ -304,9 +322,12 @@ namespace Apoc3D
 		}
 		void Font::DrawString(Sprite* sprite, const String& text, float _x, float y, int width, uint color)
 		{
-			//int stdY = y;
 			float std = _x;
 			float x = std;
+
+			float lineSpacing = m_height + m_lineGap;
+			
+			y += m_descender;
 
 			for (size_t i = 0; i < text.length(); i++)
 			{
@@ -342,8 +363,8 @@ namespace Apoc3D
 						x += chdef.AdcanceX;
 						if (x>=width)
 						{
-							x=std;
-							y+=m_height;
+							x = std;
+							y += lineSpacing;
 						}
 					}
 
@@ -351,12 +372,12 @@ namespace Apoc3D
 				else
 				{
 					x = std;
-					y += m_height;
+					y += lineSpacing;
 				}
 			}
 		}
 
-		void Font::DrawStringEx(Sprite* sprite, const String& text, int _x, int y, uint color, int length, int lineSpace, wchar_t suffix, float hozShrink)
+		void Font::DrawStringEx(Sprite* sprite, const String& text, int _x, int y, uint color, int length, int extLineSpace, wchar_t suffix, float hozShrink)
 		{
 			float std = static_cast<float>(_x);
 			float x = std;
@@ -367,9 +388,13 @@ namespace Apoc3D
 				if ((size_t)length<len)
 					len = (size_t)length;
 			}
-			int ls = m_height;
-			if (lineSpace!=-1)
-				ls=lineSpace;
+
+			int lineSpacing = static_cast<int>(m_height + m_lineGap+0.5f);
+			if (extLineSpace!=-1)
+				lineSpacing=extLineSpace;
+
+			y += static_cast<int>(m_descender);
+
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
@@ -408,7 +433,7 @@ namespace Apoc3D
 				else
 				{
 					x = std;
-					y += ls;
+					y += lineSpacing;
 				}
 			}
 			if (suffix)
@@ -442,9 +467,12 @@ namespace Apoc3D
 		}
 		void Font::DrawString(Sprite* sprite, const String& text, int _x, int y, int width, uint color)
 		{
-			//int stdY = y;
 			float std = static_cast<float>(_x);
 			float x = std;
+
+			int ls = static_cast<int>(m_height + m_lineGap+0.5f);
+
+			y += static_cast<int>(m_descender);
 
 			for (size_t i = 0; i < text.length(); i++)
 			{
@@ -481,7 +509,7 @@ namespace Apoc3D
 						if (x>=width)
 						{
 							x=std;
-							y+=m_height;
+							y += ls;
 						}
 					}
 
@@ -489,18 +517,15 @@ namespace Apoc3D
 				else
 				{
 					x = std;
-					y += m_height;
+					y += ls;
 				}
 			}
 		}
 
-
-		Point Font::MeasureString(const String& text, int width)
+		int Font::CalculateLineCount(const String& text, int width)
 		{
-			float x =0;
-			int y =0;
-			int stdY = y;
-			float std = x;
+			int lineCount=0;
+			float x = 0;
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
@@ -509,31 +534,29 @@ namespace Apoc3D
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
 					{
-						//const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
-
 						x += chdef.AdcanceX;
 						if (x>=width)
 						{
-							x=std;
-							y+=m_height;
+							x =0;
+							lineCount++;
 						}
 					}
 
 				}
 				else
 				{
-					x = std;
-					y += m_height;
+					x = 0;
+					lineCount++;
 				}
 			}
-			return Point(width, y+m_height-stdY);
+			return lineCount;
 		}
 		Point Font::MeasureString(const String& text)
 		{
-			PointF result = PointF(0, static_cast<float>(m_height));
+			PointF result = PointF(0, m_height);
 
 			float x = 0.f;
-			float y = static_cast<float>(m_height);
+			float y = m_height + m_lineGap + m_descender;
 			for (size_t i = 0; i < text.length(); i++)
 			{
 				wchar_t ch = text[i];
@@ -584,6 +607,9 @@ namespace Apoc3D
 			DataRectangle dataRect = m_font->Lock(0, LOCK_None, lockRect);
 
 			char* buf = new char[glyph.Width * glyph.Height];
+			assert(glyph.Width <= FontManager::TextureSize && glyph.Width >=0);
+			assert(glyph.Height <= FontManager::TextureSize && glyph.Height >=0);
+
 			br->ReadBytes(buf, glyph.Width * glyph.Height);
 
 
@@ -602,6 +628,8 @@ namespace Apoc3D
 				//memcpy((char*)dataRect.getDataPointer()+j*dataRect.getPitch(),
 				//buf+j*glyph.Width, glyph.Width);
 			}
+
+
 			m_font->Unlock(0);
 			delete[] buf;
 		}

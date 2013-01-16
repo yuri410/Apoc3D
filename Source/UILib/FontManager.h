@@ -63,7 +63,7 @@ namespace Apoc3D
 			Font(RenderDevice* device, ResourceLocation* fl);
 			~Font();
 
-			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
+			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length=-1, float lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color);
 
 			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
@@ -75,14 +75,20 @@ namespace Apoc3D
 			}
 			void DrawString(Sprite* sprite, const String& text, const PointF& pt, uint color, float hozShrink = 0)
 			{
-				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, -1, 0, hozShrink);
+				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, -1.f, 0, hozShrink);
 			}
 
-
-			Point MeasureString(const String& text, int width);
 			Point MeasureString(const String& text);
 
-			int getLineHeight() const { return m_height; }
+			int CalculateLineCount(const String& text, int width);
+
+			float getLineHeight() const { return m_height; }
+			int getLineHeightInt() const { return m_heightInt; }
+
+			float getLineGap() const { return m_lineGap; }
+			
+			float getLineBackgroundHeight() const { return m_height + m_lineGap + m_descender; }
+			float getTextBackgroundHeight(int lineCount) const { return m_descender + (m_height+m_lineGap) * lineCount; }
 
 			static int qsort_comparer(const void* a, const void* b);
 
@@ -122,8 +128,14 @@ namespace Apoc3D
 
 
 			Texture* m_font;
-			int m_height;
+			float m_height;
+			float m_ascender;
+			float m_descender;
+			float m_lineGap;
+			int m_heightInt;
+
 			int m_maxWidth;
+			int m_maxHeight;
 			int m_edgeCount;
 			ResourceLocation* m_resource;
 

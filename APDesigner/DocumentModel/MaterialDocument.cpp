@@ -486,7 +486,7 @@ namespace APDesigner
 
 		if (getDocumentForm()->getFontRef())
 		{
-			m_pbPassFlag->Size.Y = getDocumentForm()->getFontRef()->getLineHeight();
+			m_pbPassFlag->Size.Y = static_cast<int>(getDocumentForm()->getFontRef()->getLineBackgroundHeight());
 		}
 		Document::Update(time);
 	}

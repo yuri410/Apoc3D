@@ -100,6 +100,17 @@ namespace Apoc3D
 			//delete chars;
 			return str;
 		}
+		String BinaryReader::ReadStringFromMB()
+		{
+			uint32 len = ReadUInt32();
+
+			String str(len, ' ');
+			for (size_t i=0;i<len;i++)
+			{
+				str[i] = ReadByte();
+			}
+			return str;
+		}
 		std::string BinaryReader::ReadMBString()
 		{
 			uint32 len = ReadUInt32();

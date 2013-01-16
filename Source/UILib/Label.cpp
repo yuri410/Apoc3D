@@ -57,14 +57,17 @@ namespace Apoc3D
 		{
 			Control::Initialize(device);
 			UpdateText();
-			if (m_lines.getCount())
-			{
-				Size.Y = m_fontRef->getLineHeight() * m_lines.getCount();
-			}
-			else
-			{
-				Size.Y = m_fontRef->getLineHeight();
-			}
+
+			Size.Y = static_cast<int>( m_fontRef->getTextBackgroundHeight(m_lines.getCount()) );
+
+			//if (m_lines.getCount())
+			//{
+			//	Size.Y = m_fontRef->getLineHeightInt() * m_lines.getCount();
+			//}
+			//else
+			//{
+			//	Size.Y = m_fontRef->getLineHeightInt();
+			//}
 
 			m_backgroundRect.Width = Size.X;
 			m_backgroundRect.Height = Size.Y;
@@ -177,7 +180,7 @@ namespace Apoc3D
 						m_drawPos.X = Position.X;
 						break;
 					}
-					m_drawPos.Y = Position.Y + i * m_fontRef->getLineHeight();
+					m_drawPos.Y = Position.Y + i * m_fontRef->getLineHeightInt();
 					m_fontRef->DrawString(sprite, m_lines[i], m_drawPos, m_skin->ForeColor);
 				}
 			}
@@ -298,24 +301,24 @@ namespace Apoc3D
 
 				if (m_fontRef)
 				{
-					int offsetY = m_scrollOffset.Y / m_fontRef->getLineHeight();
+					int offsetY = m_scrollOffset.Y / m_fontRef->getLineHeightInt();
 					if (m_hscrollBar && m_hscrollBar->getMax()>0)
 					{
 						if (m_curorLocation.Y > offsetY + m_visibleLines -2)
-							m_scrollOffset.Y = (m_curorLocation.Y - (m_visibleLines - 2)) * m_fontRef->getLineHeight();
+							m_scrollOffset.Y = (m_curorLocation.Y - (m_visibleLines - 2)) * m_fontRef->getLineHeightInt();
 						else if (m_curorLocation.Y < offsetY)
-							m_scrollOffset.Y = m_curorLocation.Y * m_fontRef->getLineHeight();
+							m_scrollOffset.Y = m_curorLocation.Y * m_fontRef->getLineHeightInt();
 					}
 					else
 					{
 						if (m_curorLocation.Y > offsetY + m_visibleLines -1)
-							m_scrollOffset.Y = (m_curorLocation.Y - (m_visibleLines - 1)) * m_fontRef->getLineHeight();
+							m_scrollOffset.Y = (m_curorLocation.Y - (m_visibleLines - 1)) * m_fontRef->getLineHeightInt();
 						else if (m_curorLocation.Y < offsetY)
-							m_scrollOffset.Y = m_curorLocation.Y * m_fontRef->getLineHeight();
+							m_scrollOffset.Y = m_curorLocation.Y * m_fontRef->getLineHeightInt();
 					}
 
 					if (m_vscrollBar)
-						m_vscrollBar->setValue(m_scrollOffset.Y / m_fontRef->getLineHeight());
+						m_vscrollBar->setValue(m_scrollOffset.Y / m_fontRef->getLineHeightInt());
 				}
 				
 			}
@@ -325,7 +328,8 @@ namespace Apoc3D
 		{
 			Control::Initialize(device);
 			Texture* texture = m_skin->TextBox;
-			m_textOffset = Point(5, (texture->getHeight() - m_fontRef->getLineHeight()) /2 );
+
+			m_textOffset = Point(5, static_cast<int>((texture->getHeight() - m_fontRef->getLineBackgroundHeight()) /2 ));
 
 			InitDstRect();
 
@@ -353,9 +357,9 @@ namespace Apoc3D
 			}
 			else
 			{
-				m_visibleLines = (int)ceilf((float)Size.Y / m_fontRef->getLineHeight());
+				m_visibleLines = (int)ceilf((float)Size.Y / m_fontRef->getLineHeightInt());
 
-				Size.Y = m_visibleLines * m_fontRef->getLineHeight() + 2;
+				Size.Y = m_visibleLines * m_fontRef->getLineHeightInt() + 2;
 
 				m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
 					m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
@@ -603,8 +607,8 @@ namespace Apoc3D
 		{
 			Point baseOffset = Point(m_sRect.X, m_sRect.Y);
 			int cursorLeft = m_fontRef->MeasureString(L"|").X/2;
-			if (m_curorLocation.X==0)
-				cursorLeft=1;//-cursorLeft;
+			//if (m_curorLocation.X==0)
+			//	cursorLeft=1;//-cursorLeft;
 
 			//baseOffset.X += m_sRect.X; baseOffset.X += m_sRect.Y;
 			if (!m_multiline)
@@ -612,7 +616,7 @@ namespace Apoc3D
 				if (m_curorLocation.X>0)
 				{
 					m_cursorOffset.X = m_fontRef->MeasureString(
-						Text.substr(0, m_curorLocation.X-1)).X+cursorLeft;
+						Text.substr(0, m_curorLocation.X)).X+cursorLeft;
 				}
 				else
 				{
@@ -635,7 +639,7 @@ namespace Apoc3D
 				{
 					Point lineSize = m_fontRef->MeasureString(m_lines[i]);
 
-					m_lineOffset.Y = i*m_fontRef->getLineHeight();
+					m_lineOffset.Y = i*m_fontRef->getLineHeightInt();
 
 					m_fontRef->DrawString(sprite, m_lines[i], m_textOffset+m_lineOffset-m_scrollOffset + baseOffset, CV_Black);
 
@@ -667,7 +671,7 @@ namespace Apoc3D
 
 					m_cursorOffset.X = m_fontRef->MeasureString(
 						m_lines[m_curorLocation.Y].substr(0, m_curorLocation.X>0 ? m_curorLocation.X-1 : 0)).X+cursorLeft;
-					m_cursorOffset.Y = m_fontRef->getLineHeight() * m_curorLocation.Y + 1;
+					m_cursorOffset.Y = m_fontRef->getLineHeightInt() * m_curorLocation.Y + 1;
 
 					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, CV_Black);
 				}
@@ -1206,7 +1210,7 @@ namespace Apoc3D
 				Add(newText);
 
 				Point textSize = m_fontRef->MeasureString(newText);
-				m_cursorOffset.Y += (int)(textSize.Y / m_fontRef->getLineHeight()) - 1;
+				m_cursorOffset.Y += (int)(textSize.Y / m_fontRef->getLineHeightInt()) - 1;
 				
 				std::vector<String> lines = StringUtils::Split(newText, L"\n");
 				int len = (int)lines.size();
@@ -1223,7 +1227,7 @@ namespace Apoc3D
 
 		void TextBox::vScrollbar_OnChangeValue(Control* ctrl)
 		{
-			m_scrollOffset.Y = m_vscrollBar->getValue() * m_fontRef->getLineHeight();
+			m_scrollOffset.Y = m_vscrollBar->getValue() * m_fontRef->getLineHeightInt();
 			m_hasFocus = true;
 		}
 		void TextBox::hScrollbar_OnChangeValue(Control* ctrl)

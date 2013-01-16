@@ -31,8 +31,15 @@ namespace Apoc3D
 {
 	namespace VFS
 	{
-		const wchar_t PathUtils::DirectorySeparator = '\\';
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 		const wchar_t PathUtils::AltDirectorySeparator = '/';
+		const wchar_t PathUtils::DirectorySeparator = '\\';
+#else
+		const wchar_t PathUtils::AltDirectorySeparator = '\\';
+		const wchar_t PathUtils::DirectorySeparator = '/';
+#endif
+
+		
 		const wchar_t PathUtils::VolumeSeparatorChar = ':';
 
 		String PathUtils::GetDirectory(const String& filePath)
@@ -77,10 +84,10 @@ namespace Apoc3D
 		{
 			String path = filePath;
 			// Replace \ with / first
-			std::replace( path.begin(), path.end(), DirectorySeparator, AltDirectorySeparator );
+			std::replace( path.begin(), path.end(), AltDirectorySeparator, DirectorySeparator );
 
 			// split based on final /
-			size_t i = path.find_last_of(AltDirectorySeparator);
+			size_t i = path.find_last_of(DirectorySeparator);
 
 			if (i == String::npos)
 			{
@@ -91,9 +98,9 @@ namespace Apoc3D
 			{
 				if (i==path.size()-1)
 				{
-					size_t pos = path.find_last_not_of(AltDirectorySeparator);
+					size_t pos = path.find_last_not_of(DirectorySeparator);
 					path = path.substr(0, pos+1);
-					i = path.find_last_of(AltDirectorySeparator);
+					i = path.find_last_of(DirectorySeparator);
 					if (i == String::npos)
 					{
 						parentDir.clear();
@@ -116,7 +123,7 @@ namespace Apoc3D
 		{
 			String result = filePath;
 			// Replace \ with / first
-			std::replace( result.begin(), result.end(), DirectorySeparator, AltDirectorySeparator );
+			std::replace( result.begin(), result.end(), AltDirectorySeparator, DirectorySeparator );
 			return result;
 		}
 		vector<String> PathUtils::Split(const String& path)
@@ -124,9 +131,9 @@ namespace Apoc3D
 			String str = path;
 			for (size_t i=0;i<str.length();i++)
 			{
-				if (str[i] == AltDirectorySeparator)
+				if (str[i] == DirectorySeparator)
 				{
-					str[i] = DirectorySeparator;
+					str[i] = AltDirectorySeparator;
 				}
 			}
 			std::vector<String> ret;
@@ -138,7 +145,7 @@ namespace Apoc3D
 			start = 0;
 			do 
 			{
-				pos = str.find_first_of(DirectorySeparator, start);
+				pos = str.find_first_of(AltDirectorySeparator, start);
 				if (pos == start)
 				{
 					// Do nothing
@@ -157,7 +164,7 @@ namespace Apoc3D
 					start = pos + 1;
 				}
 				// parse up to next real data
-				start = str.find_first_not_of(DirectorySeparator, start);
+				start = str.find_first_not_of(AltDirectorySeparator, start);
 				++numSplits;
 
 			} while (pos != String::npos);
@@ -182,9 +189,9 @@ namespace Apoc3D
 			}
 			size_t len1 = path1.length();
 			wchar_t ch = path1[len1 - 1];
-			if (((ch != DirectorySeparator) && (ch != AltDirectorySeparator)) && (ch != VolumeSeparatorChar))
+			if (((ch != AltDirectorySeparator) && (ch != DirectorySeparator)) && (ch != VolumeSeparatorChar))
 			{
-				path1.append(1, AltDirectorySeparator);
+				path1.append(1, DirectorySeparator);
 				path1.append(path2);
 				return;
 			}
@@ -205,9 +212,9 @@ namespace Apoc3D
 			}
 
 			wchar_t ch = path1[len1 - 1];
-			if (((ch != DirectorySeparator) && (ch != AltDirectorySeparator)))//&& (ch != VolumeSeparatorChar)
+			if (((ch != AltDirectorySeparator) && (ch != DirectorySeparator)))//&& (ch != VolumeSeparatorChar)
 			{
-				return (path1 + AltDirectorySeparator + path2);
+				return (path1 + DirectorySeparator + path2);
 			}
 			return (path1 + path2);
 		}
@@ -299,12 +306,12 @@ namespace Apoc3D
 			StringUtils::ToLowerCase(right);
 #endif
 			if (left.size() &&
-				(left[left.size() - 1] == DirectorySeparator || left[left.size() - 1] == AltDirectorySeparator))
+				(left[left.size() - 1] == AltDirectorySeparator || left[left.size() - 1] == DirectorySeparator))
 			{
 				left = left.substr(0, left.size() - 1);
 			}
 			if (right.size() &&
-				(right[right.size() - 1] == DirectorySeparator || right[right.size() - 1] == AltDirectorySeparator))
+				(right[right.size() - 1] == AltDirectorySeparator || right[right.size() - 1] == DirectorySeparator))
 			{
 				right = right.substr(0, right.size() - 1);
 			}
@@ -327,7 +334,7 @@ namespace Apoc3D
 
 				//if (!isLastSepL)
 				{
-					if  (lch == DirectorySeparator || lch == AltDirectorySeparator)
+					if  (lch == AltDirectorySeparator || lch == DirectorySeparator)
 					{
 						i++;
 						if (!isLastSepL)
@@ -344,7 +351,7 @@ namespace Apoc3D
 				}
 				//if (isLastSepR)
 				{
-					if (rch == DirectorySeparator || rch == AltDirectorySeparator)
+					if (rch == AltDirectorySeparator || rch == DirectorySeparator)
 					{
 						j++;
 						if (!isLastSepR)

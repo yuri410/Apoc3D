@@ -44,7 +44,7 @@ namespace Apoc3D
 
 			for (int i=0; i<m_sectCount; i++)
 			{
-				String name = br->ReadString();
+				String name = br->ReadStringFromMB();
 
 				uint size = br->ReadUInt32();
 
@@ -570,7 +570,7 @@ namespace Apoc3D
 				Entry* ent = e.getCurrentValue();
 				MemoryOutStream* memBlock = ent->Buffer;
 
-				bw->Write(*e.getCurrentKey());
+				bw->WriteStringAsMB(*e.getCurrentKey());
 				bw->Write(static_cast<uint32>(memBlock->getLength()));
 				bw->Write(memBlock->getPointer(), memBlock->getLength());
 			}

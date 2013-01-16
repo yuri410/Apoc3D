@@ -60,30 +60,31 @@ namespace APDesigner
 
 	int BuildInterface::ExecuteBuildOperation()
 	{
-		STARTUPINFO startUpInfo;
-		ZeroMemory(&startUpInfo, sizeof(STARTUPINFO));
-		//CreatePipe()
-		startUpInfo.cb = sizeof(STARTUPINFO);
-		startUpInfo.dwFlags |= STARTF_USESTDHANDLES;
-
-
 		SECURITY_ATTRIBUTES pipeAttr;
 		ZeroMemory(&pipeAttr, sizeof(SECURITY_ATTRIBUTES));
 		pipeAttr.bInheritHandle = TRUE;
 
+		
+		HANDLE readPipe;
 		HANDLE writePipe;
-		BOOL result = CreatePipe(&writePipe, &startUpInfo.hStdOutput, &pipeAttr,0);
+		BOOL result = CreatePipe(&writePipe, &readPipe, &pipeAttr, 4096);
+		SetHandleInformation(writePipe, HANDLE_FLAG_INHERIT, 0);
+
+		
+		STARTUPINFO startUpInfo;
+		ZeroMemory(&startUpInfo, sizeof(STARTUPINFO));
+		startUpInfo.cb = sizeof(STARTUPINFO);
+		startUpInfo.dwFlags |= STARTF_USESTDHANDLES;
 		startUpInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-		startUpInfo.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+		startUpInfo.hStdError = writePipe;
+		startUpInfo.hStdOutput = writePipe;
 
-		wchar_t workingDir[260];
-		GetCurrentDirectory(260, workingDir);
-
+		
 		PROCESS_INFORMATION procInfo;
 
 		wchar_t cmdLine[] = L"apbuild.exe build.xml\0";
-		result = 
-			CreateProcess(0, cmdLine, 0,0,TRUE, CREATE_NO_WINDOW, 0, workingDir, &startUpInfo, &procInfo);
+		result =
+			CreateProcess(0, cmdLine, 0,0,TRUE, CREATE_NO_WINDOW, 0, 0, &startUpInfo, &procInfo);
 		if (!result)
 		{
 			DWORD ecode = GetLastError();
@@ -93,31 +94,33 @@ namespace APDesigner
 
 		LastResult.clear();
 
-		WaitForSingleObject(procInfo.hProcess, INFINITE);
+		//WaitForSingleObject(procInfo.hProcess, INFINITE);
 		
 		String buildOutput;
 		{
 			char buffer[1024];
 
 			int readSize = sizeof(buffer) - 1;
-			DWORD actul;
-			do 
+			
+			for (;;)
 			{
-
 				memset(buffer, 0, sizeof(buffer));
 
+				DWORD actul;
+				BOOL bSuccess = ReadFile(writePipe, buffer, readSize, &actul, NULL);
 
-				ReadFile(writePipe, buffer, readSize, &actul,0);
+				if( ! bSuccess || actul == 0 ) break; 
 
 				if (actul)
 				{
 					buildOutput.append(StringUtils::toWString(buffer));
-					//LastResult.append(StringUtils::toWString(buffer));
 				}
-			} while (actul == readSize);
+			}
 		}
 
 		LastResult = StringUtils::Split(buildOutput, L"\n\r");
+
+
 
 		//GetFileSize(writePipe, );
 
@@ -132,9 +135,9 @@ namespace APDesigner
 
 		CloseHandle(procInfo.hProcess);
 		CloseHandle(procInfo.hThread);
-		CloseHandle(startUpInfo.hStdError);
-		CloseHandle(startUpInfo.hStdInput);
-		CloseHandle(startUpInfo.hStdOutput);
+		//CloseHandle(startUpInfo.hStdError);
+		//CloseHandle(startUpInfo.hStdInput);
+		//CloseHandle(startUpInfo.hStdOutput);
 		return code;
 	}
 }

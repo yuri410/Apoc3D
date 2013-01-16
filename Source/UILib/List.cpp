@@ -60,7 +60,7 @@ namespace Apoc3D
 		void ListBox::Initialize(RenderDevice* device)
 		{
 			Control::Initialize(device);
-			m_textOffset = Point(5, m_skin->TextBox->getHeight()-m_fontRef->getLineHeight()/2);
+			m_textOffset = Point(5, m_skin->TextBox->getHeight()-m_fontRef->getLineHeightInt()/2);
 
 			m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
 				m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
@@ -79,8 +79,8 @@ namespace Apoc3D
 			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
 			m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 
-			m_visisbleItems = (int)ceilf((float)Size.Y / m_fontRef->getLineHeight());
-			Size.Y = m_visisbleItems * m_fontRef->getLineHeight();
+			m_visisbleItems = (int)ceilf((float)Size.Y / m_fontRef->getLineHeightInt());
+			Size.Y = m_visisbleItems * m_fontRef->getLineHeightInt();
 
 			UpdateHScrollbar();
 			InitScrollbars(device);
@@ -243,7 +243,7 @@ namespace Apoc3D
 				else
 					m_textOffset.X = 2;
 
-				m_textOffset.Y = (i - m_vscrollbar->getValue()) * m_fontRef->getLineHeight();
+				m_textOffset.Y = (i - m_vscrollbar->getValue()) * m_fontRef->getLineHeightInt();
 				if (UIRoot::getTopMostForm() == getOwner())
 					RenderSelectionBox(sprite,i);
 
@@ -274,7 +274,7 @@ namespace Apoc3D
 
 			m_selectionRect.X = 0;
 			m_selectionRect.Y = m_textOffset.Y;
-			m_selectionRect.Height = m_fontRef->getLineHeight();
+			m_selectionRect.Height = m_fontRef->getLineHeightInt();
 
 			if (m_vscrollbar->getMax()>0)
 				m_selectionRect.Width = Size.X - 13;
@@ -900,8 +900,8 @@ namespace Apoc3D
 
 			if (m_headerStyle != LHSTYLE_None)
 			{
-				m_selectionArea.Y += m_fontRef->getLineHeight();
-				m_selectionArea.Height -= m_fontRef->getLineHeight();
+				m_selectionArea.Y += m_fontRef->getLineHeightInt();
+				m_selectionArea.Height -= m_fontRef->getLineHeightInt();
 			}
 
 			if (m_vScrollBar->getMax()>0)
@@ -1064,7 +1064,7 @@ namespace Apoc3D
 				for (int i=0;i<m_columnHeader.getCount();i++)
 				{
 					m_headerArea.Width = m_columnHeader[i].Width;
-					m_headerArea.Height = m_fontRef->getLineHeight();
+					m_headerArea.Height = m_fontRef->getLineHeightInt();
 					totalWidth += m_headerArea.Width;
 					
 					UpdateHeaderSize(m_headerArea, i, sprite);
@@ -1213,7 +1213,7 @@ namespace Apoc3D
 		void ListView::DrawHeaderEnd(Sprite* sprite, int width)
 		{
 			m_headerArea.Width = width;
-			m_headerArea.Height = m_fontRef->getLineHeight();
+			m_headerArea.Height = m_fontRef->getLineHeightInt();
 			sprite->Draw(m_skin->WhitePixelTexture, m_headerArea, CV_Black);
 
 			m_headerArea.Width--;
@@ -1233,7 +1233,7 @@ namespace Apoc3D
 			m_lineRect.Y = 0;
 
 			m_gridSize.X = m_columnHeader.getCount()+1;
-			m_gridSize.Y = Size.Y / m_fontRef->getLineHeight();
+			m_gridSize.Y = Size.Y / m_fontRef->getLineHeightInt();
 
 			if (m_headerStyle != LHSTYLE_None)
 				m_gridSize.Y --;
@@ -1244,9 +1244,9 @@ namespace Apoc3D
 			for (int y=1;y<m_gridSize.Y;y++)
 			{
 				if (m_headerStyle != LHSTYLE_None)
-					m_lineRect.Y = y * m_fontRef->getLineHeight() + m_fontRef->getLineHeight();
+					m_lineRect.Y = y * m_fontRef->getLineHeightInt() + m_fontRef->getLineHeightInt();
 				else
-					m_lineRect.Y = y * m_fontRef->getLineHeight();
+					m_lineRect.Y = y * m_fontRef->getLineHeightInt();
 
 				sprite->Draw(m_skin->WhitePixelTexture, m_lineRect, CV_LightGray);
 			}
@@ -1254,7 +1254,7 @@ namespace Apoc3D
 			m_lineRect.Width = 1;
 			m_lineRect.Height = Size.Y;
 			if (m_headerStyle != LHSTYLE_None)
-				m_lineRect.Y = m_fontRef->getLineHeight();
+				m_lineRect.Y = m_fontRef->getLineHeightInt();
 			else
 				m_lineRect.Y = 0;
 
@@ -1280,9 +1280,9 @@ namespace Apoc3D
 					if (y > m_vScrollBar->getValue() -1)
 					{
 						if (m_headerStyle == LHSTYLE_None)
-							textPos.Y = (y - m_vScrollBar->getValue()) * m_fontRef->getLineHeight();
+							textPos.Y = (y - m_vScrollBar->getValue()) * m_fontRef->getLineHeightInt();
 						else
-							textPos.Y = (y - m_vScrollBar->getValue()) * m_fontRef->getLineHeight() + m_fontRef->getLineHeight();
+							textPos.Y = (y - m_vScrollBar->getValue()) * m_fontRef->getLineHeightInt() + m_fontRef->getLineHeightInt();
 
 						if (m_fullRowSelect && x ==0 && y == m_selectedRow)
 							DrawSelectedBox(sprite, Point(0, textPos.Y));
@@ -1327,7 +1327,7 @@ namespace Apoc3D
 			else
 				m_selectionRect.Width = m_columnHeader[x].Width + 2;
 
-			m_selectionRect.Height = m_fontRef->getLineHeight();
+			m_selectionRect.Height = m_fontRef->getLineHeightInt();
 
 			Point absp = GetAbsolutePosition();
 			m_selectionRect.X = position.X + absp.X - 4;
@@ -1369,7 +1369,7 @@ namespace Apoc3D
 				m_selectionRect.X = position.X - 4;
 				m_selectionRect.Width = m_columnHeader[m_selectedRow].Width;
 			}
-			m_selectionRect.Height = m_fontRef->getLineHeight();
+			m_selectionRect.Height = m_fontRef->getLineHeightInt();
 			m_selectionRect.Y = position.Y;
 
 			sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_Silver);

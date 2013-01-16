@@ -49,7 +49,7 @@ namespace Apoc3D
 			m_button->Initialize(device);
 			
 
-			m_listBox = new ListBox(Position + Point(0,19), Size.X, 8*m_fontRef->getLineHeight(), m_items);
+			m_listBox = new ListBox(Position + Point(0,19), Size.X, 8*m_fontRef->getLineHeightInt(), m_items);
 			m_listBox->SetSkin(m_skin);
 			m_listBox->setOwner(getOwner());
 			m_listBox->Visible = false;

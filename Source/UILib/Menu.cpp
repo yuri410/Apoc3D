@@ -45,7 +45,7 @@ namespace Apoc3D
 		{
 			m_helper.eventKeyPress().bind(this, &Menu::Keyboard_OnPress);
 			m_helper.eventKeyRelease().bind(this, &Menu::Keyboard_OnRelease);
-
+			
 		}
 		void Menu::Initialize(RenderDevice* device)
 		{
@@ -58,6 +58,7 @@ namespace Apoc3D
 					m_items[i]->getSubMenu()->Initialize(device);
 				}
 			}
+			Size.Y = static_cast<int>(m_fontRef->getLineBackgroundHeight());
 		}
 		void Menu::Add(MenuItem* item, SubMenu* submenu)
 		{
@@ -204,7 +205,7 @@ namespace Apoc3D
 			else
 			{
 				Size.X = UIRoot::GetUIArea(sprite->getRenderDevice()).Width;
-				Size.Y = 17;
+				Size.Y = static_cast<int>(m_fontRef->getLineBackgroundHeight());
 			}
 			{
 				Apoc3D::Math::Rectangle area(Position.X+1,Position.Y,Size.X,Size.Y);
@@ -224,7 +225,7 @@ namespace Apoc3D
 				m_itemArea.X = m_itemPos.X - 4;
 				m_itemArea.Y = m_itemPos.Y;
 				m_itemArea.Width = cleanTextSize.X + 10;
-				m_itemArea.Height = m_fontRef->getLineHeight();
+				m_itemArea.Height = static_cast<int>(m_fontRef->getLineBackgroundHeight());
 
 				if (!getOwner())
 				{
@@ -419,7 +420,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					Size.Y += m_fontRef->getLineHeight();
+					Size.Y += static_cast<int>(m_fontRef->getLineBackgroundHeight());
 				}
 
 				Point txtSize = m_fontRef->MeasureString(m_items[i]->getText());
@@ -609,7 +610,7 @@ namespace Apoc3D
 				if (m_items[i]->getText().length() && m_items[i]->getText() != L"-")
 				{
 					if (!m_itemArea.Height)
-						m_itemArea.Height = m_fontRef->getLineHeight();
+						m_itemArea.Height = static_cast<int>(m_fontRef->getLineBackgroundHeight());
 
 					Point cursorLoc;
 					if (!getOwner())
@@ -660,7 +661,7 @@ namespace Apoc3D
 					m_textPos = m_itemPos;
 					m_textPos.X += 2;
 					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_textPos, CV_Black);
-					m_itemPos.Y += m_fontRef->getLineHeight();
+					m_itemPos.Y += static_cast<int>(m_fontRef->getLineBackgroundHeight());
 
 					if (m_items[i]->getKeyCode() != KEY_UNASSIGNED)
 					{

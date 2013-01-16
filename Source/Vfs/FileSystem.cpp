@@ -272,7 +272,7 @@ namespace Apoc3D
 								{
 									if (i > 0)
 									{
-										sb.append(1, PathUtils::DirectorySeparator);
+										sb.append(1, PathUtils::AltDirectorySeparator);
 										sb.append(locs[i]);
 									}
 									else

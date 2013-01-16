@@ -37,8 +37,8 @@ namespace Apoc3D
 		class APAPI PathUtils
 		{
 		public:
-			static const wchar_t DirectorySeparator;
 			static const wchar_t AltDirectorySeparator;
+			static const wchar_t DirectorySeparator;
 			static const wchar_t VolumeSeparatorChar;
 
 			/** Returns the parent directory path for the specified path string.

@@ -293,6 +293,15 @@ namespace Apoc3D
 
 			Write(value.c_str(), value.size());
 		}
+		void BinaryWriter::WriteStringAsMB(const String& value) const
+		{
+			Write(static_cast<uint32>( value.size()));
+
+			for (size_t i=0;i<value.size();i++)
+			{
+				Write(reinterpret_cast<const char&>(value[i]));
+			}
+		}
 
 		void BinaryWriter::Close() const
 		{

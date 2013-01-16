@@ -33,6 +33,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "UILib/Label.h"
 #include "UILib/ComboBox.h"
 #include "UILib/CheckBox.h"
+#include "UILib/Menu.h"
 #include "Project/Project.h"
 #include "UIResources.h"
 #include "Document.h"
@@ -63,9 +64,9 @@ namespace APDesigner
 		
 		m_pane->setMinimumSize(Point(50,50));
 		m_pane->Size = Point(50,600);
-		m_pane->Position = Point(0, 17);
+		m_pane->Position = Point(0, window->getMenuBar()->Size.Y);
 
-		m_pane->Text = L"Tools.";
+		m_pane->Text = L"";
 		//m_pane->setTitle(m_pane->Text);
 
 		m_btSave = new Button(Point(5,20), L"");
@@ -120,8 +121,9 @@ namespace APDesigner
 		}
 
 		m_pane->Position.X = m_mainWindow->getUIAreaSize().X - m_pane->Size.X;
-		m_pane->Position.Y = 17;
-		m_pane->Size.Y = m_mainWindow->getUIAreaSize().Y - 17;
+		m_pane->Position.Y = m_mainWindow->getMenuBar()->Size.Y;
+
+		m_pane->Size.Y = m_mainWindow->getUIAreaSize().Y - m_pane->Position.Y;
 		//Point newSize = m_pane->Size;
 		//newSize.X -= 10;
 		//newSize.Y -= 30+300;
@@ -140,7 +142,7 @@ namespace APDesigner
 
 
 		m_form->Size = Point(225,600);
-		m_form->Position = Point(0, 17);
+		m_form->Position = Point(0, window->getMenuBar()->Size.Y);
 		
 		m_form->Text = L"Resource Explorer.";
 		m_form->setTitle(m_form->Text);
@@ -209,8 +211,8 @@ namespace APDesigner
 	void ResourcePane::Update(const GameTime* const time)
 	{
 		m_form->Position.X = 0;
-		m_form->Position.Y = 17;
-		m_form->Size.Y = m_mainWindow->getUIAreaSize().Y - 17-1;
+		m_form->Position.Y = m_mainWindow->getMenuBar()->Size.Y;
+		m_form->Size.Y = m_mainWindow->getUIAreaSize().Y - m_form->Position.Y;
 		Point newSize = m_form->Size;
 		newSize.X -= 10;
 		newSize.Y -= 30+400;

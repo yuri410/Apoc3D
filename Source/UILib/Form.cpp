@@ -48,7 +48,7 @@ namespace Apoc3D
 	{
 
 		Form::Form(BorderStyle border, const String& title)
-			: m_titleOffset(12,2), m_minimumSize(100, 40), m_minimizedSize(100, 20),
+			: m_titleOffset(12,0), m_minimumSize(100, 40), m_minimizedSize(100, 20),
 			m_maximumSize(0,0), m_maximizedPos(0,0), m_isMinimized(false), m_isMaximized(false),
 			m_previousPosition(0,0), m_previousSize(0,0), m_minimizedPos(0,0), 
 			m_hasMinimizeButton(true), m_hasMaximizeButton(true), 
