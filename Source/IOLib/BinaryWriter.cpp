@@ -280,11 +280,39 @@ namespace Apoc3D
 		}
 		void BinaryWriter::Write(const String& value) const
 		{
-			Write(static_cast<uint32>( value.size()));
-
+			bool isMB = true;
+			
 			for (size_t i=0;i<value.size();i++)
 			{
-				Write(reinterpret_cast<const int16&>(value[i]));
+				if (value[i]>0xff)
+				{
+					isMB = false;
+				}
+			}
+
+			uint32 sizeBits = static_cast<uint32>( value.size());
+			assert(sizeBits<0x80000000U);
+
+			if (isMB)
+			{
+				sizeBits |= 0x80000000U;
+			}
+
+			Write(sizeBits);
+
+			if (isMB)
+			{
+				for (size_t i=0;i<value.size();i++)
+				{
+					Write(reinterpret_cast<const char&>(value[i]));
+				}
+			}
+			else
+			{
+				for (size_t i=0;i<value.size();i++)
+				{
+					Write(reinterpret_cast<const int16&>(value[i]));
+				}
 			}
 		}
 		void BinaryWriter::Write(const std::string& value) const
@@ -292,15 +320,6 @@ namespace Apoc3D
 			Write(static_cast<uint32>( value.size()));
 
 			Write(value.c_str(), value.size());
-		}
-		void BinaryWriter::WriteStringAsMB(const String& value) const
-		{
-			Write(static_cast<uint32>( value.size()));
-
-			for (size_t i=0;i<value.size();i++)
-			{
-				Write(reinterpret_cast<const char&>(value[i]));
-			}
 		}
 
 		void BinaryWriter::Close() const

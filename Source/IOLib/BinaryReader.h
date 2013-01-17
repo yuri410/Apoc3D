@@ -36,18 +36,7 @@ namespace Apoc3D
 	{
 		class APAPI BinaryReader
 		{
-		private:
-			bool m_isEndianDependent;
-			Stream* m_baseStream;
-
-			char m_buffer[32];
-
-			inline void FillBuffer(int32 len);
-
 		public:
-
-			Stream* getBaseStream() const { return m_baseStream; }
-
 			BinaryReader(Stream* baseStream);
 			BinaryReader(const ResourceLocation* baseStream);
 
@@ -61,7 +50,6 @@ namespace Apoc3D
 			double ReadDouble();
 			float ReadSingle();
 			String ReadString();
-			String ReadStringFromMB();
 			std::string ReadMBString();
 
 			int16 ReadInt16();
@@ -96,6 +84,15 @@ namespace Apoc3D
 			TaggedDataReader* ReadTaggedDataBlock();
 
 			void Close() const;
+
+			Stream* getBaseStream() const { return m_baseStream; }
+		private:
+			bool m_isEndianDependent;
+			Stream* m_baseStream;
+
+			char m_buffer[32];
+
+			inline void FillBuffer(int32 len);
 		};
 	};
 };

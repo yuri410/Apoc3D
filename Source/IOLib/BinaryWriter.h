@@ -35,10 +35,6 @@ namespace Apoc3D
 	{
 		class APAPI BinaryWriter
 		{
-		private:
-			bool m_endianDependent;
-			Stream* m_baseStream;
-
 		public:
 			Stream* getBaseStream() const { return m_baseStream; }
 
@@ -54,7 +50,6 @@ namespace Apoc3D
 			void Write(float value) const;
 			void Write(const String& value) const;
 			void Write(const std::string& value) const;
-			void WriteStringAsMB(const String& value) const;
 
 			void Write(int16 value) const;
 			void Write(int32 value) const;
@@ -82,6 +77,10 @@ namespace Apoc3D
 
 			void Write(const TaggedDataWriter* data) const;
 			void Close() const;
+
+		private:
+			bool m_endianDependent;
+			Stream* m_baseStream;
 		};
 	}
 }

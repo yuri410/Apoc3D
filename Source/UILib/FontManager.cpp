@@ -361,7 +361,7 @@ namespace Apoc3D
 						sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
 
 						x += chdef.AdcanceX;
-						if (x>=width)
+						if (x>=width + std)
 						{
 							x = std;
 							y += lineSpacing;
@@ -506,7 +506,7 @@ namespace Apoc3D
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
 
 						x += chdef.AdcanceX;
-						if (x>=width)
+						if (x>=width + std)
 						{
 							x=std;
 							y += ls;
@@ -534,6 +534,14 @@ namespace Apoc3D
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
 					{
+						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+
+						if (glyph.Width == 0 || glyph.Height == 0)
+						{
+							x += chdef.AdcanceX;
+							continue;
+						}
+
 						x += chdef.AdcanceX;
 						if (x>=width)
 						{

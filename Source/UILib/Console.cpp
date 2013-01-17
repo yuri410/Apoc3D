@@ -140,7 +140,10 @@ namespace Apoc3D
 		}
 		void Console::Console_CommandSubmited(String cmd, List<String>* args)
 		{
-
+			if (cmd == L"clear")
+			{
+				m_logs.clear();
+			}
 		}
 
 		void Console::setPosition(const Point& pt)
@@ -228,14 +231,16 @@ namespace Apoc3D
 				LogEntry le(0, c, LOGLVL_Default, LOG_Command);
 				Log_New(le);
 
-				if (!m_eCommandSubmited.empty())
 				{
 					String cmd = args[0];
 					StringUtils::ToLowerCase(cmd);
 
 					Console_CommandSubmited(cmd, &args);
 
-					m_eCommandSubmited(cmd, &args);
+					if (!m_eCommandSubmited.empty())
+					{
+						m_eCommandSubmited(cmd, &args);
+					}
 				}
 			}
 
@@ -253,6 +258,7 @@ namespace Apoc3D
 			Font* font = m_form->getFontRef();
 			float lineSpacing = font->getLineHeight() + m_form->getFontRef()->getLineGap();
 
+			int textWidth = dstRect->Width - m_scrollBar->getBarWidth() - 15;
 
 			if (m_needsUpdateLineInfo)
 			{
@@ -263,7 +269,7 @@ namespace Apoc3D
 					const LogEntry& e = *iter;
 					String str = e.ToString();
 					
-					m_entryInfo[counter].LineCount = font->CalculateLineCount(str,dstRect->Width-m_scrollBar->getWidth());
+					m_entryInfo[counter].LineCount = font->CalculateLineCount(str,textWidth);
 					m_entryInfo[counter].Message = str;
 					m_contendLineCount+= m_entryInfo[counter].LineCount;
 
@@ -312,48 +318,8 @@ namespace Apoc3D
 			{
 				y -= m_entryInfo[i].LineCount * static_cast<int>(lineSpacing);
 
-				font->DrawString(sprite, m_entryInfo[i].Message, x,y,dstRect->Width - 10, m_entryInfo[i].Color);
+				font->DrawString(sprite, m_entryInfo[i].Message, x,y,textWidth, m_entryInfo[i].Color);
 			}
-			//std::list<LogEntry>::reverse_iterator iter = m_logs.rbegin();
-			//for (int i=0;i<m_scrollBar->getValue() && iter != m_logs.rend();i++)
-			//{
-			//	iter++;
-			//}
-			//if (iter != m_logs.rend())
-			//{
-			//	for (;iter!=m_logs.rend()&&y>0;iter++)
-			//	{
-			//		const LogEntry& e = *iter;
-
-			//		ColorValue color = 0;
-			//		switch (e.Level)
-			//		{
-			//		case LOGLVL_Fatal:
-			//			color = CV_Purple;
-			//			break;
-			//		case LOGLVL_Error:
-			//			color = CV_Red;
-			//			break;
-			//		case LOGLVL_Warning:
-			//			color = CV_Orange;
-			//			break;
-			//		case LOGLVL_Infomation:
-			//			color = CV_White;
-			//			break;
-			//		case LOGLVL_Default:
-			//			color = CV_Green;
-			//			break;
-			//		}
-
-			//		String str = e.ToString();
-			//		Point size = font->MeasureString(str,dstRect->Width- 10);
-
-			//		y -= size.Y - font->getLineHeight();
-
-			//		font->DrawString(sprite, e.ToString(), x,y,dstRect->Width - 10, color);
-			//	}
-			//}
-
 		}
 
 		void Console::Log_New(LogEntry e)

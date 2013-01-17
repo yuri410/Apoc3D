@@ -268,6 +268,15 @@ namespace Apoc3D
 				return 0;
 			}
 
+			int getBarWidth() const
+			{
+				if (m_hsbar)
+					return m_hsbar->Size.Y;
+				if (m_vsbar)
+					return m_vsbar->Size.X;
+				return 0;
+			}
+
 			ScrollBar(const Point& position, ScrollBarType type, int size)
 				: m_hsbar(0), m_vsbar(0), m_type(type)
 			{
