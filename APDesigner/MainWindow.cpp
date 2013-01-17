@@ -107,12 +107,14 @@ namespace APDesigner
 		InputAPIManager::getSingleton().InitializeInput(m_window, icp);
 		ShaderAtomLibraryManager::Initialize();
 		EditorExtensionManager::Initialize();
+		BuildInterface::Initialize();
 	}
 	void MainWindow::Finalize()
 	{
 		EditorExtensionManager::Finalize();
 		ShaderAtomLibraryManager::Finalize();
 		InputAPIManager::getSingleton().FinalizeInput();
+		BuildInterface::Finalize();
 	}
 
 	void MainWindow::Load()
@@ -290,6 +292,8 @@ namespace APDesigner
 			m_documentList.Remove(*iter);
 			delete *iter;
 		}
+
+		BuildInterface::getSingleton().MainThreadUpdate(time);
 	}
 	void MainWindow::Draw(const GameTime* const time)
 	{
@@ -495,10 +499,10 @@ namespace APDesigner
 		if (m_project)
 		{
 			LogManager::getSingleton().Write(LOG_System, String(L"Building project '") + m_project->getName() + String(L"'..."));
-			BuildInterface::BuildAll(m_project);
-			LogBuildMessages();
-
-			UpdateProjectEffect();
+			BuildInterface::getSingleton().AddBuild(m_project);
+			BuildInterface::getSingleton().Execute();
+			
+			//UpdateProjectEffect();
 		}
 	}
 	
@@ -577,45 +581,45 @@ namespace APDesigner
 
 	void MainWindow::LogBuildMessages()
 	{
-		bool hasWarning = false;
-		bool hasFailed = false;
-		String allWarningLines;
-		String allErrorLines;
-		for (size_t i=0;i<BuildInterface::LastResult.size();i++)
-		{
-			bool isError = BuildInterface::LastResult[i].find(L"[Error]") != String::npos;
-			bool isWarning = BuildInterface::LastResult[i].find(L"[Warning]") != String::npos;
+		//bool hasWarning = false;
+		//bool hasFailed = false;
+		//String allWarningLines;
+		//String allErrorLines;
+		//for (size_t i=0;i<BuildInterface::LastResult.size();i++)
+		//{
+		//	bool isError = BuildInterface::LastResult[i].find(L"[Error]") != String::npos;
+		//	bool isWarning = BuildInterface::LastResult[i].find(L"[Warning]") != String::npos;
 
-			LogMessageLevel level = LOGLVL_Infomation;
-			if (isWarning)
-			{
-				level = LOGLVL_Warning;
-				allWarningLines.append(BuildInterface::LastResult[i]);
-				allWarningLines.append(L"\n");
-			}
-			if (isError)
-			{
-				level = LOGLVL_Error;
-				allErrorLines.append(BuildInterface::LastResult[i]);
-				allErrorLines.append(L"\n");
-			}
-			LogManager::getSingleton().Write(LOG_System, BuildInterface::LastResult[i], level);
+		//	LogMessageLevel level = LOGLVL_Infomation;
+		//	if (isWarning)
+		//	{
+		//		level = LOGLVL_Warning;
+		//		allWarningLines.append(BuildInterface::LastResult[i]);
+		//		allWarningLines.append(L"\n");
+		//	}
+		//	if (isError)
+		//	{
+		//		level = LOGLVL_Error;
+		//		allErrorLines.append(BuildInterface::LastResult[i]);
+		//		allErrorLines.append(L"\n");
+		//	}
+		//	LogManager::getSingleton().Write(LOG_System, BuildInterface::LastResult[i], level);
 
-			hasFailed |= isError;
-			hasWarning |= hasWarning;
-		}
+		//	hasFailed |= isError;
+		//	hasWarning |= hasWarning;
+		//}
 
-		if (hasFailed || hasWarning)
-		{
-			String msg = hasFailed ? L"There are build errors." : L"There are some potential build issues.";
-			msg.append(L"\n");
-			msg.append(L"\n");
-			msg.append(allErrorLines);
-			msg.append(L"\n");
-			msg.append(allWarningLines);
+		//if (hasFailed || hasWarning)
+		//{
+		//	String msg = hasFailed ? L"There are build errors." : L"There are some potential build issues.";
+		//	msg.append(L"\n");
+		//	msg.append(L"\n");
+		//	msg.append(allErrorLines);
+		//	msg.append(L"\n");
+		//	msg.append(allWarningLines);
 
-			ShowMessageBox(msg, L"Build Result", hasFailed, hasWarning, false);
-		}
+		//	ShowMessageBox(msg, L"Build Result", hasFailed, hasWarning, false);
+		//}
 	}
 
 	Form* MainWindow::getToolsPane() const

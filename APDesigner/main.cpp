@@ -125,6 +125,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	delete input;
 	delete d3d;
 
+	
 
 	return 0;
 }

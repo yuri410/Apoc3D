@@ -52,12 +52,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	int r = Build(argc, argv);;
 
-	printf("built\n");
 	Finalize();
-	printf("finalized\n");
-//#ifdef _DEBUG
-//	getchar();
-//#endif
+	
+	fflush(stdout);
+
 	return r;
 }
 
@@ -94,6 +92,7 @@ int Build(int argc, _TCHAR* argv[])
 	{
 		cout << "Usage: APBuild [ConfigFile]\n";
 	}
+
 	return 0;
 }
 
@@ -176,19 +175,22 @@ int Build(ConfigurationSection* sect)
 		return ERR_UNSUPPORTED_BUILD;
 	}
 
-
+	bool thereAreWarnings = false;
+	bool thereAreErrors = false;
 	for (size_t i=0;i<CompileLog::Logs.size();i++)
 	{
 		switch (CompileLog::Logs[i].Type)
 		{
 		case COMPILE_Warning:
 			wcout << L"[Warning]";
+			thereAreWarnings = true;
 			break;
 		case COMPILE_Information:
 
 			break;
 		case COMPILE_Error:
 			wcout << L"[Error]";
+			thereAreErrors = true;
 			break;
 		}
 		wcout << CompileLog::Logs[i].Location;
@@ -198,5 +200,9 @@ int Build(ConfigurationSection* sect)
 	}
 
 	CompileLog::Clear();
+	if (thereAreErrors)
+		return ERR_THERE_ARE_ERRORS;
+	if (thereAreWarnings)
+		return ERR_THERE_ARE_WARNINGS;
 	return 0;
 }

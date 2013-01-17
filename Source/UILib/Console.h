@@ -45,7 +45,7 @@ namespace Apoc3D
 		class APAPI Console
 		{
 		public:
-			static const int MaxLogEntries = 200;
+			static const int MaxLogEntries = 500;
 
 			Console(RenderDevice* device, StyleSkin* skin, const Point& position, const Point& size);
 			~Console();
@@ -67,6 +67,8 @@ namespace Apoc3D
 			void Form_Resized(Control* ctrl);
 			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 			void Log_New(LogEntry e);
+
+			void Console_CommandSubmited(String cmd, List<String>* args);
 
 			Form* m_form;
 			TextBox* m_inputText;

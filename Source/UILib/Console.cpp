@@ -138,6 +138,11 @@ namespace Apoc3D
 		{
 			Submit_Pressed(ctrl);
 		}
+		void Console::Console_CommandSubmited(String cmd, List<String>* args)
+		{
+
+		}
+
 		void Console::setPosition(const Point& pt)
 		{
 			m_form->Position = pt;
@@ -227,6 +232,9 @@ namespace Apoc3D
 				{
 					String cmd = args[0];
 					StringUtils::ToLowerCase(cmd);
+
+					Console_CommandSubmited(cmd, &args);
+
 					m_eCommandSubmited(cmd, &args);
 				}
 			}
@@ -240,9 +248,6 @@ namespace Apoc3D
 				return;
 
 			
-			//int lineCount = dstRect->Height / m_form->getFontRef()->getLineHeight();
-			//int maxLineCount = 200;
-
 			sprite->Draw(m_skin->WhitePixelTexture, *dstRect,0, PACK_COLOR(25,25,25,255));
 
 			Font* font = m_form->getFontRef();
@@ -303,7 +308,7 @@ namespace Apoc3D
 
 			int x = dstRect->X + 5;
 			int y = dstRect->Y + dstRect->Height - 5;
-			for (int i=startIndex;i>=0;i--)
+			for (int i=startIndex; i>=0 && y>=0 ;i--)
 			{
 				y -= m_entryInfo[i].LineCount * static_cast<int>(lineSpacing);
 

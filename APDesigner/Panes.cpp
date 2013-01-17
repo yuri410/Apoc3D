@@ -712,9 +712,9 @@ namespace APDesigner
 				if (item->IsOutDated())
 				{
 					LogManager::getSingleton().Write(LOG_System, String(L"Building asset '") + item->getName() + String(L"'..."));
-					BuildInterface::BuildSingleItem(item);
-					for (size_t i=0;i<BuildInterface::LastResult.size();i++)
-						LogManager::getSingleton().Write(LOG_System, BuildInterface::LastResult[i]);
+					BuildInterface::getSingleton().AddSingleBuildItem(item);
+					BuildInterface::getSingleton().Execute();
+					BuildInterface::getSingleton().BlockedWait();
 				}
 
 				switch (item->getType())

@@ -97,6 +97,7 @@ namespace APDesigner
 
 		Point m_lastSize;
 
+
 		void Menu_Tools_AtomManager(Control* ctl);
 
 		void Menu_NewProject(Control* ctl);
