@@ -231,6 +231,7 @@ namespace Apoc3D
 				LogEntry le(0, c, LOGLVL_Default, LOG_Command);
 				Log_New(le);
 
+				if (args.getCount()>0)
 				{
 					String cmd = args[0];
 					StringUtils::ToLowerCase(cmd);

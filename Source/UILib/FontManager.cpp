@@ -524,7 +524,7 @@ namespace Apoc3D
 
 		int Font::CalculateLineCount(const String& text, int width)
 		{
-			int lineCount=0;
+			int lineCount=1;
 			float x = 0;
 			for (size_t i = 0; i < text.length(); i++)
 			{
@@ -536,18 +536,13 @@ namespace Apoc3D
 					{
 						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
-						if (glyph.Width == 0 || glyph.Height == 0)
-						{
-							x += chdef.AdcanceX;
-							continue;
-						}
-
-						x += chdef.AdcanceX;
 						if (x>=width)
 						{
 							x =0;
 							lineCount++;
 						}
+
+						x += chdef.AdcanceX;
 					}
 
 				}

@@ -102,7 +102,7 @@ namespace Apoc3D
 				break;
 			}
 			wss << Content;
-			wss << L"\n";
+			//wss << L"\n";
 
 			return wss.str();
 		}
