@@ -232,6 +232,18 @@ namespace Apoc3D
 			stream << val;
 			return stream.str();
 		}
+
+		String StringUtils::ToStringHex(uint64 val, unsigned short width/* =0 */)
+		{
+			wostringstream stream;
+			stream.width(width);
+			stream.fill('0');
+			stream.imbue(locale::classic());
+			stream.setf ( ios::hex, ios::basefield );       // set hex as the basefield
+			stream.setf ( ios::showbase ); 
+			stream << val;
+			return stream.str();
+		}
 		String StringUtils::ToStringHex(uint32 val, unsigned short width/* =0 */)
 		{
 			wostringstream stream;
