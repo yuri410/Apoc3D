@@ -47,12 +47,25 @@ namespace Apoc3D
 			{
 				wss.width(2);
 				wss.fill('0');
+				wss.imbue(locale::classic());
+				wss.setf(std::ios::right);
 				wss << t->tm_hour;
+
+				wss.width(2);
+				wss.fill('0');
+				wss.imbue(locale::classic());
+				wss.setf(std::ios::right);
 				wss << t->tm_min;
+
+				wss.width(2);
+				wss.fill('0');
+				wss.imbue(locale::classic());
+				wss.setf(std::ios::right);
 				wss << t->tm_sec;
+
 				wss.width(0);
 				wss.fill(' ');
-
+				wss.setf(0);
 
 				wss << L" [";
 				switch (Type)
