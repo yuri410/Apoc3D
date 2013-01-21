@@ -31,16 +31,19 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Represents drawable object in the scene.
-		*/
+		/**
+		 *  Represents drawable object in the scene.
+		 */
 		class APAPI Renderable
 		{
 		public:
-			/* Gets the render operation of this renderable object at a ceratin LOD level
-			*/
+			/**
+			 *  Gets the render operation of this renderable object at a ceratin LOD level
+			 */
 			virtual RenderOperationBuffer* GetRenderOperation(int level) = 0;
-			/* Gets the render operation of this renderable object at the default LOD level
-			*/
+			/**
+			 *  Gets the render operation of this renderable object at the default LOD level
+			 */
 			virtual RenderOperationBuffer* GetRenderOperation() { return GetRenderOperation(0); }
 
 		protected:

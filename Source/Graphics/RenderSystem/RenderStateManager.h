@@ -37,8 +37,9 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/** Represents a user clip plane of a RenderDevice
-			*/
+			/**
+			 *  Represents a user clip plane of a RenderDevice
+			 */
 			class APAPI ClipPlane
 			{
 			public:

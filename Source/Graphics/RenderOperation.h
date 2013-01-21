@@ -33,8 +33,9 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/** The current-frame transformations for all bones/objects in a sequential order. 
-		*/
+		/** 
+		 *  The current-frame transformations for all bones/objects in a sequential order. 
+		 */
 		struct APAPI PartTransforms
 		{
 			const Matrix* Transfroms;
@@ -46,7 +47,8 @@ namespace Apoc3D
 					!memcmp(left.Transfroms, right.Transfroms, sizeof(Matrix) * left.Count);
 			}
 		};
-		/** Represents an operation to render a mesh part in the scene.
+		/**
+		 *  Represents an operation to render a mesh part in the scene.
 		 *
 		 *  Usually, transformations data, material and GeometryData including buffers and declarations are part of 
 		 *  this operation. Each operation is in equivalent to a DrawPrimitive or DrawIndexedPrimitive call in D3D when not
@@ -60,8 +62,9 @@ namespace Apoc3D
 			GeometryData* GeometryData;
 			Material* Material;
 			Matrix RootTransform;
-			/** Let the renderer use RootTransform as the final transformation, not multiplying obj's transform
-			*/
+			/**
+			 *  Let the renderer use RootTransform as the final transformation, not multiplying obj's transform
+			 */
 			bool RootTransformIsFinal;
 			PartTransforms PartTransform;
 			void* UserData;

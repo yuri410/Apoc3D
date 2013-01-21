@@ -36,8 +36,9 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		/** a xml format configuration storing as described in Configuration
-		*/
+		/**
+		 *  a xml format configuration storing as described in Configuration
+		 */
 		class APAPI XMLConfigurationFormat : public ConfigurationFormat
 		{
 		public:
@@ -53,11 +54,13 @@ namespace Apoc3D
 				return result;
 			}
 		private:
-			/** Saves a ConfigurationSection sub tree to the tiny xml node, recursively.
-			*/
+			/**
+			 *  Saves a ConfigurationSection sub tree to the tiny xml node, recursively.
+			 */
 			void SaveNode(TiXmlNode* node, ConfigurationSection* parent);
-			/** Read xml node recursively, while add data into ConfigurationSection
-			*/
+			/**
+			 *  Read xml node recursively, while add data into ConfigurationSection
+			 */
 			void BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent);
 			void BuildXml(Configuration* config, const TiXmlDocument* doc);
 		};

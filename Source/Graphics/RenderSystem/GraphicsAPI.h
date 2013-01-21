@@ -37,13 +37,15 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/* Manages all registered graphics APIs. 
-			 * Creates device content best suited for the platform.
+			/**
+			 *  Manages all registered graphics APIs. 
+			 *  Creates device content best suited for the platform.
 			 */
 			class APAPI GraphicsAPIManager : public Singleton<GraphicsAPIManager>
 			{
 			private:
-				/** Obtains the information for each graphics API.h
+				/**
+				 *  Obtains the information for each graphics API.h
 				 *  Platform mark is the API's score indicating how the API fits the current platform running on, scaled to 0-100.
 				 */
 				struct Entry
@@ -73,8 +75,9 @@ namespace Apoc3D
 			};
 
 
-			/* Factory that create device context of particular Graphics API.
-			*/
+			/**
+			 *  Factory that create device context of particular Graphics API.
+			 */
 			class APAPI GraphicsAPIFactory
 			{
 			private:
@@ -88,12 +91,14 @@ namespace Apoc3D
 			public:
 				const APIDescription& getDescription() const { return m_description; }
 
-				/** Gets the name of the graphics API.
-				*/
+				/**
+				 *  Gets the name of the graphics API.
+				 */
 				const String& getName() { return m_description.Name; }
 
-				/** Create the device content of the Graphics API.
-				*/
+				/**
+				 *  Create the device content of the Graphics API.
+				 */
 				virtual DeviceContext* CreateDeviceContext() = 0;
 			};
 		}

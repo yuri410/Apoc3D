@@ -35,8 +35,9 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/** Defines the triangle of triangle mesh
-		*/
+		/**
+		 *  Defines the triangle of triangle mesh
+		 */
 		struct APAPI MeshFace 
 		{
 			int32 IndexA;

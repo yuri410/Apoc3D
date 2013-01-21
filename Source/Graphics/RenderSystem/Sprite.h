@@ -37,7 +37,8 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/** Sprite is a utility used to draw textured rectangles in viewport. 
+			/**
+			 *  Sprite is a utility used to draw textured rectangles in viewport. 
 			 *
 			 *  Sprite can work with a built-in matrix stack. When using matrix 
 			 *  stack, please notice that you should keep the stack balanced. 
@@ -48,14 +49,17 @@ namespace Apoc3D
 			public:
 				enum SpriteSettings
 				{
-					/** Modify render states, but not restore them
-					*/
+					/**
+					 *   Modify render states, but not restore them
+					 */
 					SPR_ChangeState=1,  // 01
-					/** Keep render states unchanged
-					*/
+					/**
+					 *   Keep render states unchanged
+					 */
 					SPR_KeepState=2,	// 10
-					/** Modify render states when Begin() and restore when calling End()
-					*/
+					/**
+					 *  Modify render states when Begin() and restore when calling End()
+					 */
 					SPR_RestoreState=3,	// 11
 					
 					
@@ -130,14 +134,16 @@ namespace Apoc3D
 					return m_transform; 
 				}
 
-				/** When using matrix stack, pop the current matrix and restore to a previous transform
-					state. Throws exception if not using matrix stack.
-				*/
+				/**
+				 *  When using matrix stack, pop the current matrix and restore to a previous transform
+				 *  state. Throws exception if not using matrix stack.
+				 */
 				void PopTransform();
 
-				/** Multiply the current transform matrix by a given matrix. If using matrix stack, push
-					the result onto the stack as well.
-				*/
+				/**
+				 *  Multiply the current transform matrix by a given matrix. If using matrix stack, push
+				 *  the result onto the stack as well.
+				 */
 				void MultiplyTransform(const Matrix& matrix)
 				{
 					Matrix result;
@@ -151,8 +157,9 @@ namespace Apoc3D
 					SetTransform(result);
 				}
 
-				/** Set current transform. If using matrix stack, pushes the matrix onto the stack as well.
-				*/
+				/**
+				 *  Set current transform. If using matrix stack, pushes the matrix onto the stack as well.
+				 */
 				virtual void SetTransform(const Matrix& matrix)
 				{
 					if (m_currentSettings & SPR_UsePostTransformStack)

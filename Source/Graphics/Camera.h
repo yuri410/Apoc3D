@@ -35,8 +35,9 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Represents a view into a 3D scene. 
-		*/
+		/**
+		 *  Represents a view into a 3D scene. 
+		 */
 		class APAPI Camera
 		{
 		protected:
@@ -48,34 +49,42 @@ namespace Apoc3D
 			Frustum m_frustum;
 		public:
 			Frustum& getFrustum() { return m_frustum; }
-			/* Gets the view transform matrix
-			*/
+			/**
+			 *  Gets the view transform matrix
+			 */
 			const Matrix &getViewMatrix() const { return m_view; }
-			/* Gets the projection matrix
-			*/
+			/** 
+			 *  Gets the projection matrix
+			 */
 			const Matrix &getProjMatrix() const { return m_proj; }
 
 			const Matrix& getInvViewMatrix() const { return m_invView; }
 
-			/* Gets the up vector of the camera view
-			*/
+			/**
+			 *  Gets the up vector of the camera view
+			 */
 			Vector3 getUp() const { return Vector3Utils::LDVector(m_invView.M21, m_invView.M22, m_invView.M23); }
-			/* Gets the right vector of the camera view
-			*/
+			/**
+			 *   Gets the right vector of the camera view
+			 */
 			Vector3 getRight() const { return Vector3Utils::LDVector(m_invView.M11, m_view.M12, m_invView.M13); }
-			/* Gets the forward vector of the camera view
-			*/
+			/**
+			 *   Gets the forward vector of the camera view
+			 */
 			Vector3 getForward() const { return Vector3Utils::LDVector(m_invView.M31, m_invView.M32, m_invView.M33); }
 
-			/* Sets the view transform matrix
-			*/
+			/**
+			 *  Sets the view transform matrix
+			 */
 			void setViewMatrix(const Matrix &value) { m_view = value; }
-			/* Sets the projection transform matrix
-			*/
+			/**
+			 *  Sets the projection transform matrix
+			 */
 			void setProjMatrix(const Matrix &value) { m_proj = value; }
 
-			/* Update the camera's state. 
-			*/
+			/**
+			 *  Update the camera's state. 
+			 */
 			virtual void Update(const GameTime* const time) 
 			{
 				Matrix::Inverse(m_invView, m_view);				
@@ -95,8 +104,9 @@ namespace Apoc3D
 			FpsCamera(float aspectRatio);
 			~FpsCamera(void);
 
-			/* Gets the position of the view point
-			*/
+			/**
+			 *  Gets the position of the view point
+			 */
 			const Vector3 &getPosition() const { return m_position; }
 			
 			const float getAspectRatio() const { return m_aspectRatio; }

@@ -45,14 +45,16 @@ namespace Apoc3D
 			ConfigurationManager();
 			virtual ~ConfigurationManager();
 
-			/** Loads a config from given location. Then stores it in the
+			/**
+			 *  Loads a config from given location. Then stores it in the
 			 *  manager with the given name as an identifier, which can be 
 			 *  used to retrieve the config using the getConfiguration method.
 			 */
 			void LoadConfig(const String& name, const ResourceLocation* rl, ConfigurationFormat* fmt = nullptr);
 
-			/** Gets a pre-loaded configuration with the given name
-			*/
+			/** 
+			 *  Gets a pre-loaded configuration with the given name
+			 */
 			Configuration* getConfiguration(const String& name) const
 			{
 				Configuration* result = nullptr;

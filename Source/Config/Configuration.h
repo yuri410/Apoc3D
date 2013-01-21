@@ -46,7 +46,8 @@ namespace Apoc3D
 			virtual std::vector<String> GetSupportedFileSystemExtensions() = 0;
 		};
 
-		/** Represents a configuration
+		/** 
+		 *  Represents a configuration
 		 *
 		 * @remarks
 		 *  A configuration is a tree structure, containing sections as portions, which
@@ -72,8 +73,9 @@ namespace Apoc3D
 
 			const String& getName() const { return m_name; }
 
-			/** Gets the top level sections with a name.
-			*/
+			/**
+			 *   Gets the top level sections with a name.
+			 */
 			ConfigurationSection* get(const String& name) const
 			{
 				ConfigurationSection* result;
@@ -84,8 +86,9 @@ namespace Apoc3D
 				return 0;
 			}
 
-			/** Gets the top section enumerator
-			*/
+			/**
+			 *  Gets the top section enumerator
+			 */
 			ChildTable::Enumerator GetEnumerator() { return m_sections.GetEnumerator(); }
 
 			void Merge(Configuration* config);

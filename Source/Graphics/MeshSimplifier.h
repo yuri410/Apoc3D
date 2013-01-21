@@ -47,23 +47,29 @@ namespace Apoc3D
 			private:
 				MeshSimplifier* m_parent;
 			public:
-				/** location of point in euclidean space
-				*/
+				/**
+				 *  location of point in euclidean space
+				 */
 				Vector3 m_position;
-				/** place of vertex in original list
-				*/
+				/**
+				 *  place of vertex in original list
+				 */
 				int m_id;
-				/** adjacent vertices
-				*/
+				/**
+				 *  adjacent vertices
+				 */
 				FastList<Vertex*> m_neighbour;
-				/** adjacent triangles
-				*/
+				/**
+				 *  adjacent triangles
+				 */
 				FastList<Triangle*> m_face;
-				/** cached cost of collapsing edge
-				*/
+				/**
+				 *  cached cost of collapsing edge
+				 */
 				float m_objdist;
-				/** candidate vertex for collapse
-				*/
+				/**
+				 *  candidate vertex for collapse
+				 */
 				Vertex* m_collapse;
 
 				Vertex(MeshSimplifier* parent, Vector3 v, int _id)
@@ -101,11 +107,13 @@ namespace Apoc3D
 			private:
 				MeshSimplifier* m_parent;
 			public:
-				/** the 3 points that make this triangle
-				*/
+				/**
+				 *  the 3 points that make this triangle
+				 */
 				Vertex* m_vertex[3]; 
-				/** unit vector orthogonal to this face
-				*/
+				/**
+				 *  unit vector orthogonal to this face
+				 */
 				Vector3 m_normal;
 
 				Triangle(MeshSimplifier* parent, Vertex *v0, Vertex *v1, Vertex *v2)

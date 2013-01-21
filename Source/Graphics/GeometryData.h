@@ -36,23 +36,28 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Define buffers and information used to render a geometry
-		*/
+		/**
+		 *  Define buffers and information used to render a geometry
+		 */
 		class APAPI GeometryData : public HashHandleObject
 		{
 		public:
-			/** the vertex buffer used to draw the geometry
-			*/
+			/**
+			 *  the vertex buffer used to draw the geometry
+			 */
 			VertexBuffer* VertexBuffer;
-			/** the index buffer used to draw the geometry
-			*/
+			/**
+			 *  the index buffer used to draw the geometry
+			 */
 			IndexBuffer* IndexBuffer;
-			/** the vertex declaration for vertex in the geometry
-			*/
+			/**
+			 *  the vertex declaration for vertex in the geometry
+			 */
 			VertexDeclaration* VertexDecl;
 			int32 PrimitiveCount;
-			/** The starting index offset
-			*/
+			/**
+			 *  The starting index offset
+			 */
 			int32 BaseVertex;
 			int32 VertexCount;
 			int32 VertexSize;

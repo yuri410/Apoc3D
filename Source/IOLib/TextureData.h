@@ -38,19 +38,23 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		/** Defines one entire texture level's data stored in binary form and procedures to load/save them.
-		*/
+		/** 
+		 * Defines one entire texture level's data stored in binary form and procedures to load/save them.
+		 */
 		class APAPI TextureLevelData
 		{
 		public:
 			int32 Height;
 			int32 Width;
 			int32 Depth;
-			/** The size of the content data in bytes.
-			*/
+			/**
+			 *  The size of the content data in bytes.
+			 */
 			int32 LevelSize;
-			/** Packed pixel data.
-			*/
+			/**
+			 *  Packed pixel data.
+			 *  This SHOULD be manually released.
+			 */
 			char* ContentData;
 
 			TextureLevelData()
@@ -67,7 +71,8 @@ namespace Apoc3D
 		private:
 		};
 
-		/** Defines one entire texture's data stored in binary form and procedures to load/save them
+		/** 
+		 *  Defines one entire texture's data stored in binary form and procedures to load/save them
 		 *  from ResourceLocations and Streams.
 		 */
 		class APAPI TextureData
@@ -83,15 +88,6 @@ namespace Apoc3D
 
 			TextureData() {}
 			~TextureData() {}
-			/*TextureData(const TextureData& data)
-				: Type(data.Type), Format(data.Format), ContentSize(data.ContentSize), LevelCount(data.LevelCount)
-			{
-				Levels.reserve(data.LevelCount);
-				for (int i=0;i<data.LevelCount;i++)
-				{
-					Levels.push_back(TextureLevelData(Levels[i]))]
-				}
-			}*/
 			TaggedDataReader* RetriveTaggedData(const ResourceLocation* rl);
 
 			void LoadFromData(TaggedDataReader* data, bool doNotLoadLevel, bool doNotLoadLevelContent);

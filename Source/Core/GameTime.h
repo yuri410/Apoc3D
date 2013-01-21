@@ -31,8 +31,9 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		/* Contains the current timing state of the game.
-		*/
+		/**
+		 *  Contains the current timing state of the game.
+		 */
 		class APAPI GameTime
 		{
 		private:
@@ -45,15 +46,18 @@ namespace Apoc3D
 
 			bool m_slowly;
 		public:
-			/*  Gets the amount of game time since the start of the game, in seconds.
-			*/
+			/**
+			 *  Gets the amount of game time since the start of the game, in seconds.
+			 */
 			float getTotalTime() const { return m_totalTime; }
-			/* Gets the elapsed game time since last update, in seconds.
-			*/
+			/**
+			 *  Gets the elapsed game time since last update, in seconds.
+			 */
 			float getElapsedTime() const { return m_elapsedTime; }
 			
 			float getTotalRealTime() const { return m_totalRealTime; }
-			/* Gets the elapsed real game time since last update, in seconds.
+			/**
+			 * Gets the elapsed real game time since last update, in seconds.
 			 *
 			 * Why real? Sometimes(based on the config) 
 			 * more times of Update() is called in the main loop

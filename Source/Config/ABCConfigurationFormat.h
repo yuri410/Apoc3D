@@ -34,7 +34,8 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		/** An Apoc3d Binary Configuration format. Due to the text requirements of ConfigurationSection,
+		/** 
+		 *  An Apoc3d Binary Configuration format. Due to the text requirements of ConfigurationSection,
 		 *  values are store as Strings. Compared to XML config, no XML parsing and cant be edited using text editors.
 		 */
 		class APAPI ABCConfigurationFormat : public ConfigurationFormat
@@ -52,11 +53,13 @@ namespace Apoc3D
 				return result;
 			}
 		private:
-			/** Saves a ConfigurationSection sub tree to a section of tagged data, recursively.
-			*/
+			/** 
+			 *  Saves a ConfigurationSection sub tree to a section of tagged data, recursively.
+			 */
 			void SaveNode(ConfigurationSection* parent, BinaryWriter* bw);
-			/** Read tagged data section recursively, while add data into ConfigurationSection
-			*/
+			/** 
+			 *  Read tagged data section recursively, while add data into ConfigurationSection
+			 */
 			void BuildNode(Configuration* config, const String& sectionName, BinaryReader* br, ConfigurationSection* parent);
 			void BuildHierarchy(Configuration* config, TaggedDataReader* doc);
 		};

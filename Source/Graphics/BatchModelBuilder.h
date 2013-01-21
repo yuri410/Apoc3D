@@ -44,30 +44,34 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/** A static model batching combiner.
+		/**
+		 *  A static model batching combiner.
 		 *  This class joins several small models into a big one with each transformed by a matrix.
 		 *  All input models are expected to have the same vertex format.
 		 */
 		class APAPI BatchModelBuilder
 		{
 		public:
-			/** Add an instance of a given source, with a given transform matrix.
-			*/
+			/** 
+			 *  Add an instance of a given source, with a given transform matrix.
+			 */
 			void AddEntry(int source, const Matrix& transform)
 			{
 				Entry ent = { source, transform };
 				m_entires.Add(ent);
 			}
 
-			/** Add the sources of models represented by FileLocation
-			*/
+			/**
+			 *  Add the sources of models represented by FileLocation
+			 */
 			void AddSource(FileLocation* fl)
 			{
 				m_modelTable.Add(fl);
 			}
 
-			/** Build the model data, when finished adding sources and entries.
-			*/
+			/** 
+			 *  Build the model data, when finished adding sources and entries.
+			 */
 			ModelData* BuildData();
 
 			BatchModelBuilder(){}

@@ -40,23 +40,29 @@ namespace Apoc3D
 		{
 			enum APAPI PresentInterval
 			{
-				/** The device will present immediately without waiting for the refresh.
-				*/
+				/**
+				 *  The device will present immediately without waiting for the refresh.
+				 */
 				Immediate = -1,
-				/** The device will wait for the vertical retrace period.
-				*/
+				/**
+				 *  The device will wait for the vertical retrace period.
+				 */
 				Default = 0, 
-				/** The device will wait for the vertical retrace period.
-				*/
+				/**
+				 *  The device will wait for the vertical retrace period.
+				 */
 				One = 1,
-				/**  Present operations will not be affected more than twice every screen refresh.
-				*/
+				/** 
+				 *  Present operations will not be affected more than twice every screen refresh.
+				 */
 				Two = 2,
-				/** Present operations will not be affected more than three times every screen refresh
-				*/
+				/**
+				 *  Present operations will not be affected more than three times every screen refresh
+				 */
 				Three = 4,
-				/** Present operations will not be affected more than four times every screen refresh.
-				*/
+				/**
+				 *  Present operations will not be affected more than four times every screen refresh.
+				 */
 				Four = 8,
 			};			
 
@@ -66,7 +72,8 @@ namespace Apoc3D
 
 				bool IsFixedWindow;
 
-				/** Represents when not full screen rendering, whether
+				/** 
+				 *  Represents when not full screen rendering, whether
 				 *  the engine should create a RenderWindow or(true), or
 				 *  using a user specified render area as a RenderView(false).
 				 */
@@ -81,7 +88,8 @@ namespace Apoc3D
 				uint32 FSAASampleCount;
 				bool EnableVSync;
 
-				/** When IsFullForm==true, this is used to indicate the target area
+				/** 
+				 *  When IsFullForm==true, this is used to indicate the target area
 				 *  to present the render result.
 				 *  On console targets, this is not really likely to use.
 				 */
@@ -98,16 +106,19 @@ namespace Apoc3D
 				}
 			};
 
-			/* Represent a graphics device of a graphics API. It can create one or more RenderViews.
-			*/
+			/**
+			 *  Represent a graphics device of a graphics API. It can create one or more RenderViews.
+			 */
 			class APAPI DeviceContext
 			{
 			public:
-				/** Indicates whether if the API can draw in pre-existing windows or areas.
-				*/
+				/** 
+				 *  Indicates whether if the API can draw in pre-existing windows or areas.
+				 */
 				virtual bool SupportsRenderControl() { return m_supportsRenderControl; }
 
-				/** Creates a render view. The creation can create a render window or render view. 
+				/**
+				 *  Creates a render view. The creation can create a render window or render view. 
 				 *  See RenderParameters for details.
 				 */
 				RenderView* Create(const RenderParameters &pm);

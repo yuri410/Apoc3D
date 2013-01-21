@@ -45,8 +45,9 @@ namespace Apoc3D
 			//template class APAPI unordered_map<String, ModelAnimationClip*>;
 			//template class APAPI unordered_map<String, MaterialAnimationClip*>;
 
-			/** Combines all the animation data needed to animate a object.
-			*/
+			/**
+			 *  Combines all the animation data needed to animate a object.
+			 */
 			class APAPI AnimationData
 			{
 			public:
@@ -64,15 +65,16 @@ namespace Apoc3D
 				const List<Bone>& getBones() const { return m_bones; }
 				const int32 getRootBone() const { return m_rootBone; }
 
-				/** Gets a collection of animation clips that operate a whole mesh entity in a model.
-					These are stored by name in a map, so there could for instance be 
-					clips for "Walk", "Run", "JumpReallyHigh", etc.
-				*/
+				/**
+				 *  Gets a collection of animation clips that operate a whole mesh entity in a model.
+				 *  These are stored by name in a map, so there could for instance be 
+				 *  clips for "Walk", "Run", "JumpReallyHigh", etc.
+				 */
 				const ClipTable& getRigidAnimationClips() const { return m_rigidAnimationClips; }
 				/** Gets a collection of model animation clips. These are stored by name in a
-					map, so there could for instance be clips for "Walk", "Run",
-					"JumpReallyHigh", etc.
-				*/
+				 *  map, so there could for instance be clips for "Walk", "Run",
+				 *  "JumpReallyHigh", etc.
+				 */
 				const ClipTable& getSkinnedAnimationClips() const { return m_skinnedAnimationClips; }
 				
 				const MtrlClipTable& getMaterialAnimationClips() const { return m_mtrlAnimationClips; }
@@ -100,8 +102,9 @@ namespace Apoc3D
 				//*/
 				//const FastList<int32>& getSkeletonHierarchy() const { return m_skeletonHierarchy; }
 
-				/** Load animation data from a Tagged Data Block
-				*/
+				/**
+				 *  Load animation data from a Tagged Data Block
+				 */
 				void ReadData(TaggedDataReader* data);
 				TaggedDataWriter* WriteData() const;
 

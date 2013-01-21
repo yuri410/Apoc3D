@@ -47,7 +47,8 @@ namespace Apoc3D
 		//template class APAPI unordered_map<uint64, Effect*>;
 		//template class APAPI unordered_map<String, uint64>;
 
-		/** Defines colors, textures, effect and etc. for a geometry.
+		/** 
+		 *  Defines colors, textures, effect and etc. for a geometry.
 		 *
 		 *  Material have multiple Effects. Scene will be rendered in single or
 		 *  multiple pass. Each pass has sequence number and its corresponding mask value.
@@ -76,20 +77,25 @@ namespace Apoc3D
 			bool DepthWriteEnabled;
 			bool DepthTestEnabled;
 
-			/** the ambient component of this material
-			*/
+			/**
+			 *   the ambient component of this material
+			 */
 			Color4 Ambient;
-			/** the diffuse component of this material
-			*/
+			/**
+			 *   the diffuse component of this material
+			 */
 			Color4 Diffuse;
-			/** the emissive component of this material
-			*/
+			/**
+			 *  the emissive component of this material
+			 */
 			Color4 Emissive;
-			/** the specular component of this material
-			*/
+			/** 
+			 *  the specular component of this material
+			 */
 			Color4 Specular;
-			/** the specular shininess
-			*/
+			/**
+			 *  the specular shininess
+			 */
 			float Power;
 
 
@@ -98,7 +104,8 @@ namespace Apoc3D
 
 			const String& getPassEffectName(int index) { assert(index<MaxScenePass); return  m_effectName[index]; }
 			void setPassEffectName(int index, const String& en) { assert(index<MaxScenePass); m_effectName[index]=en; }
-			/** Gets the material's texture's name at given index.
+			/** 
+			 *  Gets the material's texture's name at given index.
 			 * 
 			 *  The texture name is the file name. The engine will try to locate
 			 *  the texture file with the rule "FileLocateRule::Textures".
@@ -111,8 +118,9 @@ namespace Apoc3D
 					return Empty;
 				return m_texName.at(index); 
 			}
-			/** Sets the material's texture's name at given index.
-			 * 
+			/** 
+			 *  Sets the material's texture's name at given index.
+			 *
 			 *  The texture name is the file name. The engine will try to locate
 			 *  the texture file with the rule "FileLocateRule::Textures".
 			 */
@@ -125,34 +133,40 @@ namespace Apoc3D
 				}
 			}
 
-			/** Get the first effect appeared when passing the mtrl's effect 
+			/** 
+			 *  Get the first effect appeared when passing the mtrl's effect 
 			 *  table from beginning to end.
 			 */
 			Effect* GetFirstValidEffect() const;
 
-			/** Get the effect at the given index in the mtrl's effect table.
-			*/
+			/** 
+			 *  Get the effect at the given index in the mtrl's effect table.
+			 */
 			Effect* getPassEffect(int index) const { if (index==-1) return GetFirstValidEffect(); return m_effects[index]; }
 			void setPassEffect(int index, Effect* eff) { m_effects[index] = eff; }
 
-			/* Gets the texture at texture layer idx
-			*/
+			/**
+			 *  Gets the texture at texture layer idx
+			 */
 			ResourceHandle<Texture>* getTexture(int idx) const { return m_tex[idx]; }
-			/* Sets the texture at texture layer idx
-			*/
+			/**
+			 *  Sets the texture at texture layer idx
+ 			 */
 			void setTexture(int idx, ResourceHandle<Texture>* value) { m_tex[idx] = value; }
 
-			/** Gets the priority of this material. The legal range should be from 0 to BatchData::MaxPriority.
+			/** 
+			 *  Gets the priority of this material. The legal range should be from 0 to BatchData::MaxPriority.
 			 *  Higher priority will make the geometry assigned drawn earlier before the other.
 			 */
 			const uint32 getPriority() const { return m_priority; }
 			void setPriority(uint32 value) { m_priority = value; }
 
-			/** Gets the pass flags.
-				The pass flag is a bit field used for selecting material when rendering.
-				If a bit is one, objects with this material will be rendered when the 
-				scene render script has requested that bit.
-			*/
+			/** 
+			 *  Gets the pass flags.
+			 *  The pass flag is a bit field used for selecting material when rendering.
+			 *  If a bit is one, objects with this material will be rendered when the 
+			 *  scene render script has requested that bit.
+			 */
 			uint64 getPassFlags() const { return m_passFlags; }
 			void setPassFlags(uint64 val) { m_passFlags = val; }
 
@@ -161,7 +175,8 @@ namespace Apoc3D
 			void Save(MaterialData& data);
 
 			void Load(TaggedDataReader* data);
-			/** Packs the material to a MaterialData. Then save it as
+			/** 
+			 *  Packs the material to a MaterialData. Then save it as
 			 *  TaggedData.
 			 */
 			TaggedDataWriter* Save();
@@ -170,22 +185,25 @@ namespace Apoc3D
 			Material(RenderDevice* device);
 			~Material(void);
 
-			/** Reloads all textures in this material if their name have been changed.
-			*/
+			/** 
+			 *  Reloads all textures in this material if their name have been changed.
+			 */
 			void Reload();
 
 		private:
 			RenderDevice* m_device;
 
-			/** An array of effect, initialized from m_effectName, is use to store multiple effect
+			/** 
+			 *  An array of effect, initialized from m_effectName, is use to store multiple effect
 			 *  for the material
 			 */
 			Effect* m_effects[MaxScenePass];
 			// NB: it is found that an array of Strings will use up considerable
 			// amount of memory as the Stl String will initialize their inner objects. 
 			// Thousands of Materials are space consuming if not using map.
-			/** A map of effect names
-			*/
+			/** 
+			 *  A map of effect names
+			 */
 			unordered_map<int, String> m_effectName;//[MaxScenePass];
 
 			CustomParamTable m_customParametrs;
@@ -193,7 +211,8 @@ namespace Apoc3D
 			unordered_map<int, String> m_texName;//[MaxTextures];
 			bool m_texDirty[MaxTextures];
 
-			/** The bit field used for object selection during scene rendering, 
+			/** 
+			 *  The bit field used for object selection during scene rendering, 
 			 *  as mentioned in the Material class's description.
 			 */
 			uint64 m_passFlags;

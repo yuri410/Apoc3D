@@ -37,7 +37,8 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		/** Represents a section in a configuration.
+		/** 
+		 * Represents a section in a configuration.
 		 *
 		 * @remarks
 		 *  As tree node in configuration, each section can have a name, a value
@@ -88,7 +89,8 @@ namespace Apoc3D
 			void SetValue( const String& value);
 
 			const String& getName() const { return m_name; }
-			/** Gets the value of the sub-section with the given name.
+			/**
+			 *  Gets the value of the sub-section with the given name.
 			 */
 			const String& getValue(const String& name) const;
 			const String& getValue() const { return m_value; }

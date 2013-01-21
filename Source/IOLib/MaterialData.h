@@ -40,8 +40,9 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		/** Defines all of one material's data stored in binary form and procedures to load them.
-		*/
+		/**
+		 *  Defines all of one material's data stored in binary form and procedures to load them.
+		 */
 		class APAPI MaterialData
 		{
 		private:
@@ -51,15 +52,18 @@ namespace Apoc3D
 			void LoadEffect(BinaryReader* br, int32 index);
 			void SaveEffect(BinaryWriter* bw, int32 index);
 
-			/** Load with format version 2. The version used in making ZoneLink 2
-			*/
+			/**
+			 *  Load with format version 2. The version used in making ZoneLink 2
+			 */
 			void LoadV2(TaggedDataReader* data);
-			/** Load with format version 3
-			*/
+			/**
+			 *  Load with format version 3
+			 */
 			void LoadV3(TaggedDataReader* data);
 		public:
-			/** Name for retiring material reference
-			*/
+			/**
+			 *  Name for retiring material reference
+			 */
 			String ExternalRefName;
 
 
@@ -71,7 +75,7 @@ namespace Apoc3D
 			uint64 PassFlags;
 
 			/** 
-			*/
+			 */
 			int32 Priority;
 			
 			bool UsePointSprite;
@@ -89,20 +93,25 @@ namespace Apoc3D
 			bool DepthWriteEnabled;
 			bool DepthTestEnabled;
 
-			/** the ambient component of this material
-			*/
+			/** 
+			 *  the ambient component of this material
+			 */
 			Color4 Ambient;
-			/** the diffuse component of this material
-			*/
+			/** 
+			 *  the diffuse component of this material
+			 */
 			Color4 Diffuse;
-			/** the emissive component of this material
-			*/
+			/** 
+			 *  the emissive component of this material
+			 */
 			Color4 Emissive;
-			/** the specular component of this material
-			*/
+			/** 
+			 *  the specular component of this material
+			 */
 			Color4 Specular;
-			/** the specular shininess
-			*/
+			/**
+			 *  the specular shininess
+			 */
 			float Power;
 
 			

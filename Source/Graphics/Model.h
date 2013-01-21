@@ -44,7 +44,8 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/** Model's geometry part, which is considered as resources of the vertex and index data.
+		/** 
+		 *  Model's geometry part, which is considered as resources of the vertex and index data.
          *  
 		 *  Internally, models can share the same ModelSharedData, if the geometry is from the same source(i.e. the same model .mesh file).
 		 *  At the same time, they can use different animation files. 

@@ -51,29 +51,34 @@ namespace Apoc3D
 				VertexDeclaration(const vector<VertexElement> &e);
 
 			public:
-				/*  Gets the number of elements in the declaration.
-				*/
+				/**
+				 *  Gets the number of elements in the declaration.
+				 */
 				int getElementCount() const;
 
-				/* Finds a VertexElement with the given semantic, and index if there is more than 
-				 * one element with the same semantic. 
-				*/
+				/**
+				 *  Finds a VertexElement with the given semantic, and index if there is more than 
+				 *  one element with the same semantic. 
+				 */
 				bool FindElementBySemantic(VertexElementUsage semantic, VertexElement& result) const
 				{
 					return FindElementBySemantic(semantic, 0, result);
 				}
 
-				/* Finds a VertexElement with the given semantic, and index if there is more than 
-				 * one element with the same semantic. 
-				*/
+				/** 
+				 *  Finds a VertexElement with the given semantic, and index if there is more than 
+				 *  one element with the same semantic. 
+				 */
 				virtual bool FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result) const;
 
-				/* Gets the VertexElement at the specified index.
-				*/
+				/**
+				 *  Gets the VertexElement at the specified index.
+				 */
 				const VertexElement &getElement(int index) const;
 
-				/* Gets the vertex size defined by this declaration.
-				*/
+				/**
+				 *  Gets the vertex size defined by this declaration.
+				 */
 				virtual int GetVertexSize() const;
 			};
 		}

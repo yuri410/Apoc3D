@@ -41,7 +41,8 @@ namespace Apoc3D
 		{
 			//template class APAPI vector<int32>;
 
-			/** Defines a bone in model. 
+			/** 
+			 *  Defines a bone in model. 
 			 *
 			 *  Bind poses for animation purposes are stored with this class.
 			 */
@@ -101,32 +102,39 @@ namespace Apoc3D
 
 
 
-			/** Describes the position of a single animated object(bone, mesh) at a single point in time.
-				The build engine will flatten the animation frames, each keyframe here
-				only represents one transform for one entity(bone, mesh) at a specific time.
-				Unlike regular keyframe definition, each keyframe have multiple transformation
-				for multiple entities. The build engine will split 'regular keyframe' 
-				into the keyframes with a same time.
-			*/
+			/**
+			 *  Describes the position of a single animated object(bone, mesh) at a single point in time.
+			 * 
+			 *  The build engine will flatten the animation frames, each keyframe here
+			 *  only represents one transform for one entity(bone, mesh) at a specific time.
+			 *
+			 *  Unlike regular keyframe definition, each keyframe have multiple transformation
+			 *  for multiple entities. The build engine will split 'regular keyframe' 
+			 *  into the keyframes with a same time. 
+			 */
 			class APAPI ModelKeyframe
 			{
 			public:
-				/** Gets the index of the target bone(skinned) or mesh(rigid) that is animated by this keyframe.
-				*/
+				/** 
+				 *  Gets the index of the target bone(skinned) or mesh(rigid) that is animated by this keyframe.
+				 */
 				int32 getObjectIndex() const { return m_objIndex; }
 
-				/** Gets the time offset from the start of the animation to this keyframe.
-				*/
+				/**
+				 *  Gets the time offset from the start of the animation to this keyframe.
+				 */
 				float getTime() const { return m_time; }
 
-				/** Gets the bone transform for this keyframe.
-				*/
+				/**
+				 *  Gets the bone transform for this keyframe.
+				 */
 				const Matrix& getTransform() const { return m_transform; }
 
-				/** Gets the next frame index of the animation for this animated object. 
-					The value can be used for interpolation between frames.
-					A value of -1 means the player cannot use interpolation for this object right now.
-				*/
+				/**
+				 *  Gets the next frame index of the animation for this animated object. 
+				 *  The value can be used for interpolation between frames.
+				 *  A value of -1 means the player cannot use interpolation for this object right now.
+				 */
 				int32 getNextFrameIndex() const
 				{
 					return m_nextFrameIndex;
@@ -153,7 +161,8 @@ namespace Apoc3D
 
 			};
 
-			/** Describes the material key frame at a single point in time.
+			/**
+			 *  Describes the material key frame at a single point in time.
 			 *  For more information about material key frame, please see Mesh.
 			 */
 			class APAPI MaterialAnimationKeyframe
@@ -176,8 +185,9 @@ namespace Apoc3D
 
 			template class vector<ModelKeyframe>;
 
-			/** A model animation clip holds all the keyframes needed to describe a single model animation.
-			*/
+			/**
+			 *  A model animation clip holds all the keyframes needed to describe a single model animation.
+			 */
 			class APAPI ModelAnimationClip
 			{
 			public:
@@ -190,12 +200,14 @@ namespace Apoc3D
 
 				void Transform(const Matrix& t);
 				
-				/** Gets the total length of the model animation clip
-				*/
+				/**
+				 *  Gets the total length of the model animation clip
+				 */
 				float getDuration() const { return m_duration; }
-				/** Gets a combined list containing all the keyframes for all bones,
-					sorted by time.
-				*/
+				/**
+				 *  Gets a combined list containing all the keyframes for all bones,
+				 *  sorted by time.
+				 */
 				const FastList<ModelKeyframe>& getKeyframes() const { return m_keyFrames; }
 
 			private:

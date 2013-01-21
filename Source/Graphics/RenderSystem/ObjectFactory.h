@@ -38,8 +38,9 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/* Factory that can create resources like textures, buffers and shaders. 
-			 * Application can use this to create resources not managed by resource managers.
+			/** 
+			 *  Factory that can create resources like textures, buffers and shaders. 
+			 *  Application can use this to create resources not managed by resource managers.
 			 */
 			class APAPI ObjectFactory
 			{
@@ -50,7 +51,8 @@ namespace Apoc3D
 				ObjectFactory(RenderDevice* rd);
 
 			public:
-				/** Creates a texture from a ResourceLocation. 
+				/**
+				 *  Creates a texture from a ResourceLocation. 
 				 * @param managed tell if the Texture will be managed.
 				 * @remarks
 				 *  Texture Manager use this to create managed textures, with managed=true. 
@@ -67,7 +69,8 @@ namespace Apoc3D
 				virtual Texture* CreateTexture(ResourceLocation* rl, TextureUsage usage, bool managed) = 0;
 
 
-				/** Creates a blank 2D or 1D texture.
+				/**
+				 *  Creates a blank 2D or 1D texture.
 				 *  An 1D texture will be created if either width or height is one.
 				 * @remarks
 				 *  This as well as all the following methods has nothing to do with any kind of Resource Managers.
@@ -76,25 +79,30 @@ namespace Apoc3D
 				 */
 				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format) = 0;
 
-				/** Creates a blank 2D, 1D or 3D texture.
+				/**
+				 *  Creates a blank 2D, 1D or 3D texture.
 				 *  In addition to the above one, a volume texture will be created if depth is more than 1.
 				 */
 				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format) = 0;
 
-				/** Creates a blank Cube map.
-				*/
+				/**
+				 *  Creates a blank Cube map.
+				 */
 				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format) = 0;
 
 
-				/** Creates a RenderTarget with a depth buffer and a color buffer.
+				/**
+				 *  Creates a RenderTarget with a depth buffer and a color buffer.
 				 */
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt) = 0;
 
-				/** Creates a RenderTarget with a color buffer only.
+				/**
+				 *  Creates a RenderTarget with a color buffer only.
 				 */
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt) = 0;
 
-				/** Creates a RenderTarget with a depth buffer and a color buffer. 
+				/**
+				 *  Creates a RenderTarget with a depth buffer and a color buffer. 
 				 *  If sampleCount is more than 0, the render target will be multisampled. 
 				 *  A value of 1 will take as a 2 sample RT.
 				 *
@@ -115,14 +123,16 @@ namespace Apoc3D
 
 				// TODO: Pre-built multi-profile shader data for different type of API shaders.
 
-				/** Creates a vertex shader from a ResourceLocation.
+				/**
+				 *  Creates a vertex shader from a ResourceLocation.
 				 *  The entire data will be treated as the code for the shader.
 				 *  See CreateVertexShader(const byte* byteCode) for details.
 				 */
 				virtual VertexShader* CreateVertexShader(const ResourceLocation* resLoc) = 0;
 				virtual PixelShader* CreatePixelShader(const ResourceLocation* resLoc) = 0;
 
-				/** Creates a vertex shader from a piece of code.
+				/** 
+				 *  Creates a vertex shader from a piece of code.
 				 *  The code could be byteCode(D3D9) or source(OpenGL) depends on 
 				 *  the specific API.
 				 */

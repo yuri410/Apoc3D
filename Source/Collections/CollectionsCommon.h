@@ -42,8 +42,9 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-		/** Defines methods to support the comparison of objects for equality.
-		*/
+		/** 
+		 *  Defines methods to support the comparison of objects for equality.
+		 */
 		template<typename T>
 		class IEqualityComparer
 		{
@@ -52,11 +53,13 @@ namespace Apoc3D
 			virtual ~IEqualityComparer() { }
 
 			//static const IEqualityComparer* Default;
-			/** Determines whether the specified objects are equal.
-			*/
+			/** 
+			 *  Determines whether the specified objects are equal.
+			 */
 			virtual bool Equals(const T& x, const T& y) const = 0;
-			/** Returns a hash code for the specified object.
-			*/
+			/** 
+			 *  Returns a hash code for the specified object.
+			 */
 			virtual int64 GetHashCode(const T& obj) const = 0;
 		};
 

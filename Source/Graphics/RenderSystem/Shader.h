@@ -39,8 +39,9 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/** Contains the parameters required for texture samplers.
-			*/
+			/**
+			 *  Contains the parameters required for texture samplers.
+			 */
 			struct APAPI ShaderSamplerState 
 			{
 				TextureAddressMode AddressU;
@@ -128,8 +129,9 @@ namespace Apoc3D
 				virtual void SetTexture(const String& paramName, Texture* tex) = 0;
 				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState& state) = 0;
 
-				/** This method is obsolete
-				*/
+				/**
+				 *  This method is obsolete
+				 */
 				virtual void AutoSetParameters(const Material* mtrl) = 0;
 			};
 

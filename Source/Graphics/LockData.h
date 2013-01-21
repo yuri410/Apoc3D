@@ -63,9 +63,11 @@ namespace Apoc3D
 					return PixelFormatUtils::IsCompressed(m_format);
 				}
 				void* getDataPointer() const { return m_pointer; }
-				/** Return whether this buffer is laid out consecutive in memory (ie the pitches
-					are equal to the dimensions)
-				*/ 
+				
+				/**
+				 *  Return whether this buffer is laid out consecutive in memory (ie the pitches
+				 *  are equal to the dimensions)
+				 */
 				bool isConsecutive() const
 				{
 					return m_pitch == m_width;
@@ -101,9 +103,10 @@ namespace Apoc3D
 				{
 					return PixelFormatUtils::IsCompressed(m_format);
 				}
-				/** Return whether this buffer is laid out consecutive in memory (ie the pitches
-					are equal to the dimensions)
-				*/
+				/** 
+				 *  Return whether this buffer is laid out consecutive in memory (ie the pitches
+				 *  are equal to the dimensions)
+				 */
 				bool isConsecutive() const
 				{
 					return m_rowPitch == m_width && m_slicePitch == (m_width*m_height);

@@ -38,19 +38,22 @@ namespace Apoc3D
 	{
 		static const int32 MaxTextures = 16;
 
-		/** Defines custom material parameters. 
-		*/
+		/**
+		 *  Defines custom material parameters. 
+		 */
 		struct MaterialCustomParameter
 		{
-			/** The data type of the parameter.
-			*/
+			/**
+			 *  The data type of the parameter.
+			 */
 			EffectSystem::CustomEffectParameterType Type;
 			uint Value[16];
 
 			void* RefValue;
 
-			/** The usage of this parameter. Effect check this for auto binding effect parameters.
-			*/
+			/**
+			 *  The usage of this parameter. Effect check this for auto binding effect parameters.
+			 */
 			String Usage;
 
 

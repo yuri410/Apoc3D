@@ -45,30 +45,37 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/*  Custom vertex structure for drawing point sprite particles.
-		*/
+		/**
+		 *  Custom vertex structure for drawing point sprite particles.
+		 */
 		struct APAPI ParticleVertex
 		{
-			/* Stores the starting position of the particle.
-			*/
+			/**
+			 *  Stores the starting position of the particle.
+			 */
 			Vector3 Position;
-			/* Stores the starting velocity of the particle.
-			*/
+			/**
+			 *  Stores the starting velocity of the particle.
+			 */
 			Vector3 Velocity;
-			/* Four random values, used to make each particle look slightly different.
-			*/
+			/**
+			 *  Four random values, used to make each particle look slightly different.
+			 */
 			uint32 Random;
-			/* The time (in seconds) at which this particle was created.
-			*/
+			/**
+			 *  The time (in seconds) at which this particle was created.
+			 */
 			float Time;
 
-			/* Describe the layout of this vertex structure.
-			*/
+			/**
+			 * Describe the layout of this vertex structure.
+			 */
 			static const VertexElement VtxElements[];
 		};
 
-		/* in charge of displaying particles.
-		*/
+		/**
+		 *  in charge of displaying particles.
+		 */
 		class APAPI ParticleSystem : public Renderable
 		{
 		public:
@@ -116,8 +123,9 @@ namespace Apoc3D
 
 			RenderDevice* m_device;
 
-			/* Settings class controls the appearance and animation of this particle system.
-			*/
+			/**
+			 *  Settings class controls the appearance and animation of this particle system.
+			 */
 			ParticleSettings m_settings;
 
 			RenderOperationBuffer m_opBuffer;
@@ -125,16 +133,20 @@ namespace Apoc3D
 			GeometryData m_geoData;
 			GeometryData m_geoData2;
 
-			/* An array of particles, treated as a circular queue.*/
+			/**
+			 * An array of particles, treated as a circular queue.
+			 */
 			ParticleVertex* m_particles;
 			int32 m_particleCount;
 
-			/* A vertex buffer holding our particles. This contains the same data as
-			   the particles array, but copied across to where the GPU can access it.
-			*/
+			/**
+			 *  A vertex buffer holding our particles. This contains the same data as
+			 *  the particles array, but copied across to where the GPU can access it.
+			 */
 			VertexBuffer* m_vertexBuffer;
-			/* Vertex declaration describes the format of our ParticleVertex structure.
-			*/
+			/**
+			 *  Vertex declaration describes the format of our ParticleVertex structure.
+			 */
 			VertexDeclaration* m_vertexDeclaration;
 
 			/* The particles array and vertex buffer are treated as a circular queue.
@@ -213,33 +225,37 @@ namespace Apoc3D
 			int32 m_firstFreeParticle;
 			int32 m_firstRetiredParticle;
 
-			/* Store the current time, in seconds.
-			*/
+			/**
+			 * Store the current time, in seconds.
+			 */
 			float m_currentTime;
 
-			/* Count how many times Draw has been called. This is used to know
-			   when it is safe to retire old particles back into the free list.
-			*/
+			/**
+			 *  Count how many times Draw has been called. This is used to know
+			 *  when it is safe to retire old particles back into the free list.
+			 */
 			int32 m_drawCounter;
 
 
-			/* uploading new particles from our managed
-			   array to the GPU vertex buffer.
-			*/
+			/**
+			 *  uploading new particles from our managed
+			 *  array to the GPU vertex buffer.
+			 */
 			void AddNewParticlesToVertexBuffer();
-			/* setting the render states used to draw particles.
-			*/
+			/**
+			 *  setting the render states used to draw particles.
+			 */
 			void SetParticleRenderStates();
 
-			/* checking when active particles have reached the end of
-			   their life. It moves old particles from the active area of the queue
-			   to the retired section. 
-			*/
+			/** checking when active particles have reached the end of
+			 *  their life. It moves old particles from the active area of the queue
+			 *  to the retired section. 
+			 */
 			void RetireActiveParticles();
-			/* checking when retired particles have been kept around long
-			   enough that we can be sure the GPU is no longer using them. It moves
-			   old particles from the retired area of the queue to the free section.
-			*/
+			/** checking when retired particles have been kept around long
+			 *  enough that we can be sure the GPU is no longer using them. It moves
+			 *  old particles from the retired area of the queue to the free section.
+			 */
 			void FreeRetiredParticles();
 
 		};

@@ -44,17 +44,21 @@ namespace Apoc3D
 				VertexElementUsage m_semantic;
 				int m_index;
 			public:
-				/* Gets the offset in the buffer that this element starts at.
-				*/
+				/**
+				 *  Gets the offset in the buffer that this element starts at.
+				 */
 				int getOffset() const { return m_offset; }
-				/* Gets the type of element.
-				*/
+				/**
+				 *  Gets the type of element.
+				 */
 				VertexElementFormat getType() const { return m_type; }
-				/* Gets the meaning of the element.
-				*/
+				/**
+				 *  Gets the meaning of the element.
+				 */
 				VertexElementUsage getUsage() const { return m_semantic; }
-				/* Gets index of the item, only applicable for some elements like texture coords
-				*/
+				/** 
+				 *  Gets index of the item, only applicable for some elements like texture coords
+				 */
 				int getIndex() const { return m_index; }
 				int getSize() const { return GetTypeSize(m_type); }
 
@@ -73,12 +77,14 @@ namespace Apoc3D
 				
 				static bool Compare(const vector<VertexElement> &e1, const vector<VertexElement> &e2);
 
-				/* Calculate the size of a specified vertex element format
-				*/
+				/**
+				 *  Calculate the size of a specified vertex element format
+				 */
 				static int GetTypeSize(VertexElementFormat type);
 		
-				/* Utility method which returns the count of values in a given type.
-				*/
+				/**
+				 *  Utility method which returns the count of values in a given type.
+				 */
 				static int GetTypeCount(VertexElementFormat type);
 
 				friend static bool operator ==(const VertexElement& left, const VertexElement& right)

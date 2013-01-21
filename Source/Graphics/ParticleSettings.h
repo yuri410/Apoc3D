@@ -38,9 +38,9 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/* Settings class describes all the tweakable options used
-		   to control the appearance of a particle system.
-		*/
+		/** Settings class describes all the tweakable options used
+		 * to control the appearance of a particle system.
+		 */
 		class ParticleSettings
 		{
 		public:

@@ -35,7 +35,8 @@ namespace Apoc3D
 		//template class APAPI std::unordered_map<String, Resource*>;
 		typedef std::unordered_map<String, Resource*> ResHashTable;
 
-		/** A resource manager keeps track of certain type of resources. It does 2 jobs:
+		/**
+		 *  A resource manager keeps track of certain type of resources. It does 2 jobs:
 		 *    1. Ensure a resource is only loaded onces. In the case of textures, a wall texture used everywhere 
 		 *		 is supposed to be loaded only once so that the memory will not be wasted.
 		 *	  2. When async streaming is turn on for this resource manager, it also participate in loading
@@ -53,7 +54,8 @@ namespace Apoc3D
 		class APAPI ResourceManager
 		{
 		public:
-			/** Initializes the resource manager. 
+			/**
+			 * Initializes the resource manager. 
 			 * &param name  The name for the resource manager. See getName() for details.
 			 * &param cacheSize  See getTotalCacheSize() and setTotalCacheSize() for details. Can be any number if not using async mode.
 			 * &param useAsync  True if using async mode.
@@ -61,11 +63,13 @@ namespace Apoc3D
 			ResourceManager(const String& name, int64 cacheSize, bool useAsync = true);
 			~ResourceManager();
 
-			/** Finalizes the resource manager.
-			*/
+			/**
+			 * Finalizes the resource manager.
+			 */
 			void Shutdown();
 
-			/** [Only applicable when working in async mode.]
+			/**
+			 *  [Only applicable when working in async mode.]
 			 *  If a resource is IsIndependent(), this cancels(or removes) the corresponding opposite resource operation
 			 *  from the task queue. Say a load ResourceOperation can cancel an unload ResourceOperation for the same resources
 			 *  if the unload ResourceOperation is yet to be processed.
@@ -73,62 +77,75 @@ namespace Apoc3D
 			 * &return True if successfully canceled.
 			 */
 			bool NeutralizeTask(ResourceOperation* op) const;
-			/** [Only applicable when working in async mode.]
+			/**
+			 *  [Only applicable when working in async mode.]
 			 *  Adds a task represented by a ResourceOperation object to the task queue, waiting to be processed.
-			*/
+			 */
 			void AddTask(ResourceOperation* op) const;
-			/** [Only applicable when working in async mode.]
+			/**
+			 *  [Only applicable when working in async mode.]
 			 *  Remove a task from the task queue, if the it is not the operation's turn in the background.
 			*/
 			void RemoveTask(ResourceOperation* op) const;
 
-			/** [Only applicable when working in async mode.]
+			/**
+			 *  [Only applicable when working in async mode.]
 			 *  Check if no async processing task is running in the background. (i.e. check if queue is empty)
 			 */
 			bool IsIdle() const;
-			/** [Only applicable when working in async mode.]
+			/**
+			 *  [Only applicable when working in async mode.]
 			 *  Suspend the current thread until the background tasks are all finished.
 			 */
 			void WaitForIdle() const;
-			/** [Only applicable when working in async mode.]
+			/**
+			 *  [Only applicable when working in async mode.]
 			 *  Gets the number of background tasks currently.
 			*/
 			int GetCurrentOperationCount() const;
 
-			/** Check if a resource identified by a string is already loaded before.
+			/**
+			 * Check if a resource identified by a string is already loaded before.
 			 *
 			 * @return The pointer to the resource object if it is loaded before, otherwise 0.
 			 */
 			Resource* Exists(const String& hashString);
 
-			/** Gets the name of the resource manager. 
+			/**
+			 *  Gets the name of the resource manager. 
 			 *  The name usually tells what kind of resources the manager takes care of.
 			 */
 			const String& getName() const { return m_name; }
 
-			/** Check if the resource manager is working in async mode.
+			/**
+			 *  Check if the resource manager is working in async mode.
 			 */
 			bool usesAsync() const { return !!m_asyncProc; }
 
-			/** Notifies the resource manager a new resource is created, and should be managed.
+			/**
+			 *  Notifies the resource manager a new resource is created, and should be managed.
 			 */
 			void NotifyNewResource(Resource* res);
-			/** Notifies the resource manager a resource is release, and should be removed from management.
+			/**
+			 *  Notifies the resource manager a resource is release, and should be removed from management.
 			 */
 			void NotifyReleaseResource(Resource* res);
 
 			GenerationTable* getTable() const { return m_generationTable; }
 
-			/** [Only applicable when working in async mode.]
+			/**
+			 *  [Only applicable when working in async mode.]
 			 *  Gets the reference limits that resources can use. 
 			 */
 			int64 getTotalCacheSize() const { return m_totalCacheSize; }
-			/** [Only applicable when working in async mode.]
+			/**
+			 *  [Only applicable when working in async mode.]
 			 *  Sets the reference limits that resources can use. 
 			 *  Once the space usage is over using, the resource manager will unload the inactive resources.
 			 */
 			void setTotalCacheSize(int64 size) { m_totalCacheSize = size; }
-			/** [Only applicable when working in async mode.]
+			/**
+			 *  [Only applicable when working in async mode.]
 			 *  Gets the currently used spaces by the resources.
 			 */
 			int64 getUsedCacheSize() const { return m_curUsedCache; }

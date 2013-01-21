@@ -38,7 +38,8 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		/** The resource manager for textures.
+		/**
+		 *  The resource manager for textures.
 		 * 
 		 *  In addition, this class can also create unmanaged resource. 
 		 *  CreateUnmanagedInstance directly loads a texture; then return it. Instances created in this

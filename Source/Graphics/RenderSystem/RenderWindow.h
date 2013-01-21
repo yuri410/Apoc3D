@@ -39,8 +39,9 @@ namespace Apoc3D
 		{
 			//template class APAPI list<float>;
 
-			/* Implements a simple FPS counter
-			*/
+			/**
+			 * Implements a simple FPS counter
+			 */
 			class APAPI FPSCounter
 			{
 			private:
@@ -51,8 +52,9 @@ namespace Apoc3D
 				void Step(const GameTime* const time);
 			};
 
-			/* Represents a view of rendered graphics.
-			*/
+			/**
+			 *  Represents a view of rendered graphics.
+			 */
 			class APAPI RenderView
 			{
 			public:
@@ -91,8 +93,9 @@ namespace Apoc3D
 
 			};
 
-			/** Represents a window with rendered graphics displayed in its client area.
-			*/
+			/**
+			 *  Represents a window with rendered graphics displayed in its client area.
+			 */
 			class APAPI RenderWindow : public RenderView
 			{
 			private:

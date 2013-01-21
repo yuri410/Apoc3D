@@ -223,7 +223,8 @@ namespace Apoc3D
 			int m_length;
 		};
 
-		/** Fast list is only suitable for simple types such as int, 
+		/** 
+		 *  Fast list is only suitable for simple types such as int, 
 		 *	or structures, classes which can be copied without the
 		 *  overloading of copy constructor or assigned operator.
 		 *

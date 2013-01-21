@@ -36,7 +36,8 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		/** Tagged data is a collection of key and values. 
+		/**
+		 *  Tagged data is a collection of key and values. 
 		 *  The keys are name of the corresponding value in string form. 
 		 *  The value is a series of binary bytes which can represent anything.
 		 *  
@@ -133,11 +134,16 @@ namespace Apoc3D
 			}
 		};
 
-		/** This class implements a writer for Tagged Data.
-		*/
+		/**
+		 * This class implements a writer for Tagged Data.
+		 */
 		class APAPI TaggedDataWriter
 		{
 		public:
+			/**
+			 * param isEndianIndependent true if the data medium is a fixed Endianness across platform.
+			 *		 false for situations like CPU memory.
+			 */
 			TaggedDataWriter(bool isEndianIndependent)
 				: m_endianDependent(!isEndianIndependent)
 			{ }

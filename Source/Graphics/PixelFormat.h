@@ -50,8 +50,9 @@ namespace Apoc3D
 			DEPFMT_Depth32Single = 9,
 			DEPFMT_Count = 10
 		};
-		/* The pixel format used for images.
-		*/		
+		/**
+		 *  The pixel format used for images.
+		 */		
 		enum APAPI PixelFormat
 		{
 			/*  Unknown pixel format.
@@ -218,8 +219,9 @@ namespace Apoc3D
 			FMT_Count = 41
 		};
 	
-		/** Some functions for PixelFormat
-		*/
+		/**
+		 *  Some functions for PixelFormat
+		 */
 		class APAPI PixelFormatUtils
 		{
 		private:
@@ -236,8 +238,9 @@ namespace Apoc3D
 #endif
 			PixelFormatUtils();
 		public:
-			/** Check if a PixelFormat is a compressed format
-			*/
+			/**
+			 *  Check if a PixelFormat is a compressed format
+			 */
 			static bool IsCompressed(PixelFormat format)
 			{
 				return (format == FMT_DXT1 ||
@@ -278,8 +281,9 @@ namespace Apoc3D
 				return width * height * depth * bytepp;
 			}
 
-			/** Gets the num of bytes per pixel of a given format
-			*/
+			/** 
+			 *  Gets the num of bytes per pixel of a given format
+			 */
 			static int GetBPP(PixelFormat fmt)
 			{
 				return sizeTable[(int)fmt];
@@ -304,8 +308,9 @@ namespace Apoc3D
 				}
 				return 0;
 			}
-			/** Converts a PixelFormat value to a string representation
-			*/
+			/** 
+			 *  Converts a PixelFormat value to a string representation
+			 */
 			static String ToString(PixelFormat format)
 			{
 				switch (format)
@@ -389,8 +394,9 @@ namespace Apoc3D
 				}
 				return L"Unknown";
 			}
-			/** Converts a PixelFormat's string representation to the PixelFormat enum
-			*/
+			/** 
+			 *  Converts a PixelFormat's string representation to the PixelFormat enum
+			 */
 			static PixelFormat ConvertFormat(const String& fmt)
 			{
 				if (fmt == String(L"L8"))
@@ -547,8 +553,9 @@ namespace Apoc3D
 				}
 				return FMT_Unknown;
 			}
-			/** Converts a DepthFormat's string representation to the DepthFormat enum
-			*/
+			/**
+			 *  Converts a DepthFormat's string representation to the DepthFormat enum
+			 */
 			static DepthFormat ConvertDepthFormat(const String& fmt)
 			{
 				if (fmt == String(L"D15S1"))
@@ -595,8 +602,9 @@ namespace Apoc3D
 				return DEPFMT_Depth16;
 			}
 
-			/** Converts some pixels from a source format to a destination format
-			*/
+			/** 
+			 *  Converts some pixels from a source format to a destination format
+			 */
 			static int ConvertPixels(const DataBox& src, const DataBox& dst);
 
 

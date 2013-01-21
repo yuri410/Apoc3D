@@ -35,8 +35,9 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		/** Defines the level of importance for the messages.
-		*/
+		/**
+		 *  Defines the level of importance for the messages.
+		 */
 		enum APAPI LogMessageLevel
 		{
 			LOGLVL_Default,
@@ -45,8 +46,9 @@ namespace Apoc3D
 			LOGLVL_Error,
 			LOGLVL_Fatal
 		};
-		/** Defines the field that the messages are related to.
-		*/
+		/**
+		 *  Defines the field that the messages are related to.
+		 */
 		enum APAPI LogType
 		{
 			LOG_System = 0,
@@ -60,8 +62,9 @@ namespace Apoc3D
 		};
 
 		
-		/** Defines a piece of message in the log system. 
-		*/
+		/** 
+		 *  Defines a piece of message in the log system. 
+		 */
 		struct APAPI LogEntry
 		{
 			time_t Time;
@@ -90,7 +93,8 @@ namespace Apoc3D
 		
 		typedef fastdelegate::FastDelegate1<LogEntry, void> NewLogWrittenHandler;
 
-		/** A log is a set of LogEntries with the same LogType. 
+		/** 
+		 *  A log is a set of LogEntries with the same LogType. 
 		 *  Log only keep the most recent 200 messages, the earlier ones are 
 		 *  deleted once the the limit has been reached and new messages come in.
 		 */
@@ -126,8 +130,9 @@ namespace Apoc3D
 			bool Write(const String& message, LogMessageLevel level = LOGLVL_Infomation);
 		};
 
-		/** A singleton providing possibilities to log messages anywhere in the code.
-		*/
+		/** 
+		 *  A singleton providing possibilities to log messages anywhere in the code.
+		 */
 		class APAPI LogManager : public Singleton<LogManager>
 		{
 		private:

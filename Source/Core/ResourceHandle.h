@@ -32,14 +32,16 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		/** A proxy class to access a managed resources.
+		/**
+		 *   A proxy class to access a managed resources.
 		 *  It helps informing resources accessing records and the change of reference count.
 		 */
 		template <class ResType>
 		class APAPI ResourceHandle
 		{
-			/** used to make sure the ResType are derived from the Resource class
-			*/
+			/** 
+			 *  used to make sure the ResType are derived from the Resource class
+			 */
 			typedef typename ResType::ResHandleTemplateConstraint CF_XXX;
 		public:
 			ResourceHandle(ResType* res)
@@ -76,8 +78,9 @@ namespace Apoc3D
 
 			//void Build(ResType* res);
 
-			/** Notify the resource that it will be, or being used.
-			*/
+			/**
+			 *  Notify the resource that it will be, or being used.
+			 */
 			void Touch()
 			{
 				if (!m_dummy)
@@ -85,7 +88,8 @@ namespace Apoc3D
 					m_resource->Use();
 				}
 			}
-			/** Notify the resource that it will be, or being used.
+			/**
+			 *  Notify the resource that it will be, or being used.
 			 *  If the resource is not loaded, the caller's thread will be suspended until the resource is ready.
 			 */
 			void TouchSync()
@@ -96,14 +100,16 @@ namespace Apoc3D
 				}
 			}
 
-			/** Gets the resource's state.
-			*/
+			/** 
+			 *  Gets the resource's state.
+			 */
 			inline ResourceState getState() const
 			{
 				return m_resource->getState();
 			}
 
-			/** Gets the pointer to the resource object without informing it.
+			/**
+			 *  Gets the pointer to the resource object without informing it.
 			 *  This is used in special cases where the resource objects contains data that is not changed during any load/unload operations.
 			 */
 			ResType* getWeakRef() const { return m_resource; }

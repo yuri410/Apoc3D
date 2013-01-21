@@ -73,76 +73,94 @@ namespace Apoc3D
 			*/
 			enum CullMode
 			{
-				/** Do not cull back faces.
-				*/
+				/** 
+				 *  Do not cull back faces.
+				 */
 				CULL_None = 0,
 				
-				/** Cull back faces with clockwise vertices.
-				*/
+				/**
+				 *  Cull back faces with clockwise vertices.
+				 */
 				CULL_Clockwise = 1,
 				
-				/** Cull back faces with counterclockwise vertices.
-				*/
+				/**
+				 *  Cull back faces with counterclockwise vertices.
+				 */
 				CULL_CounterClockwise = 2,
 				CULL_Count = 3
 			};
 			enum FillMode
 			{
-				/* Draw a point at each vertex.
-				*/
+				/**
+				 *  Draw a point at each vertex.
+				 */
 				FILL_Point = 0,
 
-				/* Draw lines connecting the vertices that define a primitive face.
-				*/
+				/**
+				 *  Draw lines connecting the vertices that define a primitive face.
+				 */
 				FILL_WireFrame = 1,
 				
-				/* Draw solid faces for each primitive.
-				*/
+				/**
+				 *  Draw solid faces for each primitive.
+				 */
 				FILL_Solid = 2,
 				FILL_Count = 3
 			};
 			
 			enum PrimitiveType
 			{
-				/* Render the vertices as individual points.
-				*/
+				/**
+				 *  Render the vertices as individual points.
+				 */
 				PT_PointList = 0,
-				/* Render the vertices as a series of individual lines.
-				*/
+				/**
+				 *  Render the vertices as a series of individual lines.
+				 */
 				PT_LineList = 1,
-				/* Render the vertices as a continuous line.
-				*/
+				/**
+				 *  Render the vertices as a continuous line.
+				 */
 				PT_LineStrip = 2,
-				/* Render the vertices as a series of individual triangles.
-				*/
+				/**
+				 *  Render the vertices as a series of individual triangles.
+				 */
 				PT_TriangleList = 3,				
-				/* Render the vertices as a continous set of triangles in a zigzag type fashion.
-				*/
+				/** 
+				 *  Render the vertices as a continous set of triangles in a zigzag type fashion.
+				 */
 				PT_TriangleStrip = 4,
-				/* Render the vertices as a set of trinagles in a fan like formation.
-				*/
+				/**
+				 *  Render the vertices as a set of trinagles in a fan like formation.
+				 */
 				PT_TriangleFan = 5,
 				PT_Count = 6
 			};
 			enum CubeMapFace
 			{
-				/* Positive x-face of the cube map.
-				*/
+				/**
+				 *  Positive x-face of the cube map.
+				 */
 				CUBE_PositiveX = 0,
-				/* Negative x-face of the cube map.
-				*/
+				/**
+				 *  Negative x-face of the cube map.
+				 */
 				CUBE_NegativeX = 1,
-				/* Positive y-face of the cube map.
-				*/
+				/**
+				 *  Positive y-face of the cube map.
+				 */
 				CUBE_PositiveY = 2,
-				/* Negative y-face of the cube map.
-				*/
+				/**
+				 *  Negative y-face of the cube map.
+				 */
 				CUBE_NegativeY = 3,
-				/* Positive z-face of the cube map.
-				*/
+				/**
+				 *  Positive z-face of the cube map.
+				 */
 				CUBE_PositiveZ = 4,
-				/* Negative z-face of the cube map.
-				*/
+				/**
+				 *  Negative z-face of the cube map.
+				 */
 				CUBE_NegativeZ = 5,
 				CUBE_Count = 6
 			};
@@ -156,47 +174,57 @@ namespace Apoc3D
 				CLEAR_All = CLEAR_ColorBuffer | CLEAR_DepthBuffer | CLEAR_Stencil
 			};
 
-			/* Defines stencil buffer operations.
-			*/
+			/**
+			 *  Defines stencil buffer operations.
+			 */
 			enum StencilOperation
 			{
-				/* Does not update the stencil-buffer entry. This is the default value.
-				*/
+				/**
+				 *  Does not update the stencil-buffer entry. This is the default value.
+				 */
 				STOP_Keep = 0,
-				/* Sets the stencil-buffer entry to 0.
-				*/
+				/**
+				 *  Sets the stencil-buffer entry to 0.
+				 */
 				STOP_Zero = 1,
 
-				/* Replaces the stencil-buffer entry with a reference value.
-				*/
+				/**
+				 *  Replaces the stencil-buffer entry with a reference value.
+				 */
 				STOP_Replace = 2,
 				
-				/* Increments the stencil-buffer entry, clamping to the maximum value.
-				*/
+				/**
+				 *  Increments the stencil-buffer entry, clamping to the maximum value.
+				 */
 				STOP_IncrementSaturation = 3,
 				
-				/*  Decrements the stencil-buffer entry, clamping to 0.
-				*/
+				/**
+				 *  Decrements the stencil-buffer entry, clamping to 0.
+				 */
 				STOP_DecrementSaturation = 4,
 
-				/* Inverts the bits in the stencil-buffer entry.
-				*/
+				/**
+				 *  Inverts the bits in the stencil-buffer entry.
+				 */
 				STOP_Invert = 5,
 
-				/* Increments the stencil-buffer entry, wrapping to 0 if the new value exceeds
-				*  the maximum value.
-				*/
+				/**
+				 *  Increments the stencil-buffer entry, wrapping to 0 if the new value exceeds
+				 *  the maximum value.
+				 */
 				STOP_Increment = 6,
 				
-				/* Decrements the stencil-buffer entry, wrapping to the maximum value if the
-				*  new value is less than 0.
-				*/
+				/**
+				 *  Decrements the stencil-buffer entry, wrapping to the maximum value if the
+				 *  new value is less than 0.
+				 */
 				STOP_Decrement = 7,
 				STOP_Count = 8
 			};
 
-			/** Defines constants that describe supported texture-addressing modes.
-			*/
+			/**
+			 *  Defines constants that describe supported texture-addressing modes.
+			 */
 			enum TextureAddressMode
 			{
 				/** Tile the texture at every integer junction. For example, for u values between
@@ -229,8 +257,9 @@ namespace Apoc3D
 				TA_MirrorOnce = 4,
 				TA_Count = 5
 			};
-			/* Defines how a texture will be filtered as it is minified for each mipmap level.
-			*/
+			/**
+			 *  Defines how a texture will be filtered as it is minified for each mipmap level.
+			 */
 			enum TextureFilter
 			{
 				/* Mipmapping disabled. The rasterizer uses the magnification filter instead.
@@ -269,66 +298,82 @@ namespace Apoc3D
 			};
 
 
-			/* Defines format of vertex element
-			*/
+			/**
+			 *  Defines format of vertex element
+			 */
 			enum VertexElementFormat
 			{				
-				/* One-component, float expanded to (float, 0, 0, 1)
-				*/
+				/**
+				 *   One-component, float expanded to (float, 0, 0, 1)
+				 */
 				VEF_Single = 0,
-				/* Two-component, float expanded to (float, float, 0, 1)
-				*/
+				/**
+				 *  Two-component, float expanded to (float, float, 0, 1)
+				 */
 				VEF_Vector2 = 1,
-				/* Three-component, float expanded to (float, float, float, 1)
-				*/
+				/**
+				 *  Three-component, float expanded to (float, float, float, 1)
+				 */
 				VEF_Vector3 = 2,
-				/* Four-component, float expanded to (float, float, float, float)
-				*/
+				/**
+				 *  Four-component, float expanded to (float, float, float, float)
+				 */
 				VEF_Vector4 = 3,
-				/* Four-component, packed byte to (R, G, B, A)
-				*/
+				/**
+				 *  Four-component, packed byte to (R, G, B, A)
+				 */
 				VEF_Color = 4,
 
-				/* Four-component, byte.
-				*/
+				/**
+				 *  Four-component, byte.
+				 */
 				VEF_Byte4 = 5,
-				/* Two-component, signed short expanded to (value, value, 0, 1).
-				*/
+				/**
+				 *  Two-component, signed short expanded to (value, value, 0, 1).
+				 */
 				VEF_Short2 = 6,
-				/* Four-component, signed short expanded to (value, value, value, value).
-				*/
+				/**
+				 *  Four-component, signed short expanded to (value, value, value, value).
+				 */
 				VEF_Short4 = 7,
 				
-				/* Four-component byte with each byte normalized by dividing the component with
-				*  255.0f. This type is valid for vertex shader version 2.0 or higher.
-				*/
+				/**
+				 *  Four-component byte with each byte normalized by dividing the component with
+				 *  255.0f. This type is valid for vertex shader version 2.0 or higher.
+				 */
 				VEF_NormalizedByte4 = 8,
 
-				/* Normalized, two-component, signed short, expanded to (first short/32767.0,
-				*  second short/32767.0, 0, 1). This type is valid for vertex shader version
-				*  2.0 or higher.
-				*/
+				/**
+				 *  Normalized, two-component, signed short, expanded to (first short/32767.0,
+				 *  second short/32767.0, 0, 1). This type is valid for vertex shader version
+				 *  2.0 or higher.
+				 */
 				VEF_NormalizedShort2 = 9,
-				/*  Normalized, four-component, signed short, expanded to (first short/32767.0,
-				*   second short/32767.0, third short/32767.0, fourth short/32767.0). This type
-				*   is valid for vertex shader version 2.0 or higher.
-				*/
+				/*
+				 *  Normalized, four-component, signed short, expanded to (first short/32767.0,
+				 *   second short/32767.0, third short/32767.0, fourth short/32767.0). This type
+				 *   is valid for vertex shader version 2.0 or higher.
+				 */
 				VEF_NormalizedShort4 = 10,
 
-				/** Three-component, unsigned, 10 10 10 format expanded to (value, value, value, 1).
-				*/
+				/**
+				 *  Three-component, unsigned, 10 10 10 format expanded to (value, value, value, 1).
+				 */
 				VEF_UInt101010 = 11,
-				/*  Three-component, signed, 10 10 10 format normalized and expanded to (v[0]/511.0,
-				*   v[1]/511.0, v[2]/511.0, 1).
-				*/
+				/**
+				 *  Three-component, signed, 10 10 10 format normalized and expanded to (v[0]/511.0,
+				 *   v[1]/511.0, v[2]/511.0, 1).
+				 */
 				VEF_Normalized101010 = 12,
-				/*  Two-component, 16-bit floating point expanded to (value, value, value, value).
-				*   This type is valid for vertex shader version 2.0 or higher.
-				*/
+				/** 
+				 *  Two-component, 16-bit floating point expanded to (value, value, value, value).
+				 *   This type is valid for vertex shader version 2.0 or higher.
+				 */
 				VEF_HalfVector2 = 13,
-				/*  Four-component, 16-bit floating-point expanded to (value, value, value, value).
-				*   This type is valid for vertex shader version 2.0 or higher.
-				*/
+				/**
+				 *   Four-component, 16-bit floating-point expanded to (value, value, value, value).
+				 *   This type is valid for vertex shader version 2.0 or higher.
+				 */
 				VEF_HalfVector4 = 14,
 				
 				VEF_Count = 15,
@@ -354,8 +399,9 @@ namespace Apoc3D
 				VEU_Count = 14
 			};
 			
-			/* Specifies how a texture is to be used in the engine.
-			*/
+			/**
+			 *  Specifies how a texture is to be used in the engine.
+			 */
 			enum TextureUsage
 			{
 				TU_Static = BU_Static,
@@ -371,35 +417,43 @@ namespace Apoc3D
 
 			enum CompareFunction
 			{
-				/** Always fail
-				*/
+				/**
+				 *   Always fail
+				 */
 				COMFUN_Never = 1,
 
-				/** Pass if the determined pixel is less than current pixel.
-				*/
+				/**
+				 *  Pass if the determined pixel is less than current pixel.
+				 */
 				COMFUN_Less = 2,
 
-				/** Pass if the determined pixel is equal to current pixel.
-				*/
+				/**
+				 *  Pass if the determined pixel is equal to current pixel.
+				 */
 				COMFUN_Equal = 3,
-				/** Pass if the determined pixel is equal or less than current pixel.
-				*/
+				/**
+				 *  Pass if the determined pixel is equal or less than current pixel.
+				 */
 				COMFUN_LessEqual = 4,
 
-				/** Pass if the determined pixel is greater than current pixel.
-				*/
+				/**
+				 *  Pass if the determined pixel is greater than current pixel.
+				 */
 				COMFUN_Greater = 5,
 
-				/** Pass if the determined pixel is not equal to current pixel.
-				*/
+				/**
+				 *  Pass if the determined pixel is not equal to current pixel.
+				 */
 				COMFUN_NotEqual = 6,
 
-				/** Pass if the determined pixel is equal or greater than current pixel.
-				*/
+				/**
+				 *  Pass if the determined pixel is equal or greater than current pixel.
+				 */
 				COMFUN_GreaterEqual = 7,
 
-				/** Always pass
-				*/
+				/**
+				 *  Always pass
+				 */
 				COMFUN_Always = 8,
 				COMFUN_Count = 9
 			};
@@ -501,8 +555,9 @@ namespace Apoc3D
 				*/
 				BLEND_BothSourceAlpha = 11,
 
-				/** Each component of the color is multiplied by BlendFactor.
-				*/
+				/**
+				 *  Each component of the color is multiplied by BlendFactor.
+				 */
 				BLEND_BlendFactor = 12,
 				BLEND_Count = 13
 			};

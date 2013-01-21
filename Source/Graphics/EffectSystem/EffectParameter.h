@@ -41,22 +41,26 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			/** Defines usage of a effect parameters.
-				When the engine auto bind a parameter, it first checks the parameter's usage to
-				find the corresponding data, then assign it to the param. 
-				
-				EffectParamUsage has 3 special usages as follows:
-				1. EPUSAGE_Unknow.
-				2. EPUSAGE_InstanceBlob
-				3. EPUSAGE_CustomMaterialParam
-				See the fields for detailed description.
-			*/
+			/**
+			 *   Defines usage of a effect parameters.
+			 *
+			 *   When the engine auto bind a parameter, it first checks the parameter's usage to
+			 *   find the corresponding data, then assign it to the param. 
+			 *
+			 *   EffectParamUsage has 3 special usages as follows:
+			 *   1. EPUSAGE_Unknow.
+			 *   2. EPUSAGE_InstanceBlob
+			 *   3. EPUSAGE_CustomMaterialParam
+			 *   See the fields for detailed description.
+			 */
 			enum EffectParamUsage
 			{
-				/** The unknown usage means the binding for typical usage is unavailable, 
-					the engine will do nothing.
-					This is useful in occasions like the effect is a post effect without materials, the value of custom
-					effect can be assigned by scene rendering scripts.
+				/**
+				 *  The unknown usage means the binding for typical usage is unavailable, 
+				 *  the engine will do nothing.
+				 *
+				 *  This is useful in occasions like the effect is a post effect without materials, the value of custom
+				 *  effect can be assigned by scene rendering scripts.
 				*/
 				EPUSAGE_Unknown=0,
 				/** mc4_ambient
@@ -94,7 +98,8 @@ namespace Apoc3D
 				/** tr_viewproj
 				*/
 				EPUSAGE_Trans_ViewProj,
-				/** tr_instanceworld
+				/**
+				 * tr_instanceworld
 				 *  This parameter is supposed to be a 4x4 matrix array in the shader with a length of
 				 *  InstancingData::MaxOneTimeInstances
 				 */
@@ -168,26 +173,28 @@ namespace Apoc3D
 				*/
 				EPUSAGE_S_NearPlane,
 
-				/** The engine will get the value for the parameter from UserData pointer 
-					which is expected pointing to a InstanceInfoBlob struct.
-					The value will be obtained from the list inside the struct.
+				/**
+				 *  The engine will get the value for the parameter from UserData pointer 
+				 *  which is expected pointing to a InstanceInfoBlob struct.
+				 *  The value will be obtained from the list inside the struct.
 				*/
 				EPUSAGE_InstanceBlob,
 
 				/** The engine will look up the entry(MaterialCustomParameter)
-					with the same name from material's CustomParamTable in render operation.
-					Custom material param need to be specified in a String format in EffectParameter 
-					as CustomMaterialParamName. 
-					
-					Internally, parameters using automatic(typical usages) will be manipulated 
-					faster than this.
+				 *	with the same name from material's CustomParamTable in render operation.
+				 *  Custom material param need to be specified in a String format in EffectParameter 
+				 *  as CustomMaterialParamName. 
+				 * 
+				 *  Internally, parameters using automatic(typical usages) will be manipulated 
+				 *  faster than this.
 				*/
 				EPUSAGE_CustomMaterialParam
 			};
 
-			/** Includes all global scene render resources such as the current camera, lighting that could 
-				be used in effects.
-			*/
+			/**
+			 *  Includes all global scene render resources such as the current camera, lighting that could 
+			 *  be used in effects.
+			 */
 			class APAPI RendererEffectParams
 			{
 			public:
@@ -219,16 +226,16 @@ namespace Apoc3D
 			};
 
 			/** Defines a parameter in an effect containing effect param mapping info.
-
-				CustomMaterialParamName and InstanceBlobIndex will be used based on the Usage of the EffectParameter. 
-				See EPUSAGE_CustomMaterialParam for details.
-				
-				When EPUSAGE_InstanceBlob or EPUSAGE_CustomMaterialParam is unused in effect, 
-				no more attention from application developer is needed on setting the effect parameter.
-
-				The parameter's usage is configured by the effect parameter listing file along with the shader code,
-				when building resources using APBuild or APDesigner.
-			*/
+			 * 
+			 *  CustomMaterialParamName and InstanceBlobIndex will be used based on the Usage of the EffectParameter. 
+			 *  See EPUSAGE_CustomMaterialParam for details.
+			 *
+			 *  When EPUSAGE_InstanceBlob or EPUSAGE_CustomMaterialParam is unused in effect, 
+			 *  no more attention from application developer is needed on setting the effect parameter.
+			 *
+			 *  The parameter's usage is configured by the effect parameter listing file along with the shader code,
+			 *  when building resources using APBuild or APDesigner.
+			 */
 			class APAPI EffectParameter
 			{	
 			public:
@@ -268,8 +275,9 @@ namespace Apoc3D
 			{
 				struct CustomValue
 				{
-					/** The data type of the value.
-					*/
+					/** 
+					 *  The data type of the value.
+					 */
 					CustomEffectParameterType Type;
 					uint Value[16];
 					void* RefValue;

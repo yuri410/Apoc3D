@@ -40,7 +40,9 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/** A render target.
+			/**
+			 *  A render target.
+			 *
 			 *  Render target must have a color buffer. An additional depth buffer can be created as well.
 			 *  Additional depth buffer is useful when multisample is preferred.
 			 *

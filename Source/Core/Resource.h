@@ -38,7 +38,8 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		/** Defines some states used when a resource is being processed.
+		/**
+		 *  Defines some states used when a resource is being processed.
 		 *
 		 *  When async streaming is turn on in the corresponding resource manager, 
 		 *	RS_PendingLoad and RS_PendingUnload may occur. Otherwise, the state will only
@@ -46,20 +47,30 @@ namespace Apoc3D
 		 */
 		enum APAPI ResourceState
 		{
-			/** Represents the resource is already unloaded or not loaded yet. */
+			/** 
+			 *  Represents the resource is already unloaded or not loaded yet. 
+			 */
 			RS_Unloaded = 0,
-			/** Represents the resource is already loaded. */
+			/**
+			 *  Represents the resource is already loaded.
+			 */
 			RS_Loaded = 1,
-			/** Represents the resource is currently being loaded */
+			/**
+			 *  Represents the resource is currently being loaded 
+			 */
 			RS_Loading = 2,			
-			/** Represents the resource is currently being unloaded */
+			/**
+			 *  Represents the resource is currently being unloaded 
+			 */
 			RS_Unloading = 3,
-			/** Represents the resource is in the waiting queue to be loaded, 
+			/**
+			 *  Represents the resource is in the waiting queue to be loaded, 
 			 *  when a resource is pending, no more load or unload operation is processed
 			 *  unless future updates are made for the resource managements system.
 			 */
 			RS_PendingLoad = 4,
-			/** Represents the resource is in the waiting queue to be unloaded. 
+			/** 
+			 *  Represents the resource is in the waiting queue to be unloaded. 
 			 *  This is just opposed to RS_PendingLoad.
 			 */
 			RS_PendingUnload = 5,
@@ -69,7 +80,8 @@ namespace Apoc3D
 		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
 		typedef fastdelegate::FastDelegate1<Resource*, void> ResourceEventHandler;
 
-		/** A resource is data or operation that uses hardware provided resources, which is limited.
+		/**
+		 *  A resource is data or operation that uses hardware provided resources, which is limited.
 		 *  Typical example for resources are textures and models. Both uses video card memory.
 		 *  
 		 *  A resource controlled by a resource manager is a managed resource. See resource manager for details.
@@ -91,7 +103,7 @@ namespace Apoc3D
 
 			/** 
 			 *  Get the generation number.
-			 *   Only returns valid if the resource is managed and async.
+			 *  Only returns valid if the resource is managed and async.
 			 */
 			int GetGeneration() const 
 			{
@@ -101,7 +113,8 @@ namespace Apoc3D
 			}
 			int getReferenceCount() const { return m_refCount; }
 
-			/** [ASync resource only]
+			/** 
+			 *  [ASync resource only]
 			 *  Tells if the resource can be unloaded when inactive.
 			 */
 			virtual bool IsUnloadable()
@@ -116,11 +129,13 @@ namespace Apoc3D
 
 			virtual bool IsIndependent() const { return true; }
 
-			/** Get the memory token by the resource in bytes.
-			*/
+			/** 
+			 *  Get the memory token by the resource in bytes.
+			 */
 			virtual uint32 getSize() = 0;
 
-			/** [Managed resource only]
+			/**
+			 *  [Managed resource only]
 			 *  Touches the resource. 
 			 *  If the resource is not loaded yet, this will cause the resource to load.
 			 *  This is not necessary called since the resource handle will do the work unless
@@ -129,29 +144,36 @@ namespace Apoc3D
 			void Use();
 			void UseSync();
 
-			/** Makes this resource not unloadable by the resource collector
-			*/
+			/** 
+			 *  Makes this resource not unloadable by the resource collector
+			 */
 			void Lock_Unloadable() { m_lock.lock(); m_unloadableLock = true; m_lock.unlock(); }
-			/** Makes this resource unloadable by the resource collector
-			*/
+			/**
+			 *  Makes this resource unloadable by the resource collector
+			 */
 			void Unlock_Unloadable() { m_lock.lock(); m_unloadableLock = false; m_lock.unlock(); }
 
 
-			/** Load the resource
-			*/
+			/**
+			 *  Load the resource
+			 */
 			void Load();
-			/** Unload the resource
-			*/
+			/**
+			 *  Unload the resource
+			 */
 			void Unload();
 
-			/** Gets a string uniquely represents the resource
-			*/
+			/**
+			 *  Gets a string uniquely represents the resource
+			 */
 			const String& getHashString() const { return m_hashString; }
-			/** Check if the resource's state is RS_Loaded.
-			*/
+			/**
+			 *  Check if the resource's state is RS_Loaded.
+			 */
 			bool isLoaded() { return getState() == RS_Loaded; }
-			/** Gets the resource's current state.
-			*/
+			/**
+			 *  Gets the resource's current state.
+			 */
 			ResourceState getState()
 			{
 				ResourceState state;
@@ -163,10 +185,12 @@ namespace Apoc3D
 			
 
 
-			/** Check if the resource is managed.
-			*/
+			/**
+			 *  Check if the resource is managed.
+			 */
 			bool isManaged() const { return !!m_manager; }
-			/** Gets the corresponding resource manager. 
+			/**
+			 *  Gets the corresponding resource manager. 
 			 *  &return The pointer to the resource manager object, 0 if the resource is not managed.
 			 */
 			ResourceManager* getManager() const { return m_manager; }
@@ -192,23 +216,28 @@ namespace Apoc3D
 				}
 			}
 		protected:
-			/** implement load processing here
-			*/
+			/**
+			 *  implement load processing here
+			 */
 			virtual void load() = 0;
-			/** implement unload processing here
-			*/
+			/**
+			 *  implement unload processing here
+			 */
 			virtual void unload() = 0;
 
-			/** Create a unmanaged resource
-			*/
+			/**
+			 *  Create a unmanaged resource
+			 */
 			Resource();
-			/** If manager is not 0, creates a managed resource.
-			*/
+			/**
+			 *  If manager is not 0, creates a managed resource.
+			 */
 			Resource(ResourceManager* manager, const String& hashString);
 
 		private:
-			/** Implements a general resource loading operation
-			*/
+			/** 
+			 *  Implements a general resource loading operation
+			 */
 			class ResourceLoadOperation : public ResourceOperation
 			{
 			public:
@@ -237,8 +266,9 @@ namespace Apoc3D
 
 				virtual OperationType getType() const { return RESOP_Load; }
 			};
-			/** Implements a general resource unloading operation
-			*/
+			/** 
+			 *  Implements a general resource unloading operation
+			 */
 			class ResourceUnloadOperation : public ResourceOperation
 			{
 			public:
@@ -264,8 +294,9 @@ namespace Apoc3D
 
 				virtual OperationType getType() const { return RESOP_Unload; }
 			};
-			/** A utility used for calculating generation number for resources based on
-			 * the visit history.
+			/** 
+			 *  A utility used for calculating generation number for resources based on
+			 *  the visit history.
 			 */
 			class GenerationCalculator
 			{
