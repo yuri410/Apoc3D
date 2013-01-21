@@ -49,18 +49,21 @@ namespace Apoc3D
 					float D;
 
 				};
-				/** The distance of the plane along its normal from the origin.
-				*/
+				/**
+				 *  The distance of the plane along its normal from the origin.
+				 */
 				Vector4 Normal;
 			};
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/** The normal vector of the plane.
-			*/
+			/** 
+			 *  The normal vector of the plane.
+			 */
 			float X;
 			float Y;
 			float Z;
-			/** The distance of the plane along its normal from the origin.
-			*/
+			/**
+			 *  The distance of the plane along its normal from the origin.
+			 */
 			float D;
 
 #endif
@@ -140,26 +143,30 @@ namespace Apoc3D
 			
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Calculates the dot product of a specified vector and the normal of the plane plus the distance value of the plane.
-			*/
+			/**
+			 *  Calculates the dot product of a specified vector and the normal of the plane plus the distance value of the plane.
+			 */
 			float Dot3(Vector3 a) const
 			{
 				return Vec3Dot(a, Normal) + D;
 			}
-			/* Calculates the dot product of the specified vector and plane.
-			*/
+			/**
+			 *  Calculates the dot product of the specified vector and plane.
+			 */
 			float Dot4(Vector4 a) const
 			{
 				return Vec4Dot(a, Normal);
 			}
-			/* Calculates the dot product of the specified vector and the normal of the plane.
-			*/
+			/**
+			 *  Calculates the dot product of the specified vector and the normal of the plane.
+			 */
 			float DotNormal(Vector3 n) const
 			{
 				return Vec3Dot(n, Normal);
 			}
-			/* Changes the coefficients of the normal vector of the plane to make it of unit length.
-			*/
+			/**
+			 *  Changes the coefficients of the normal vector of the plane to make it of unit length.
+			 */
 			void Normalize()
 			{
 				float mag = Vec3Length(Normal);
@@ -175,30 +182,34 @@ namespace Apoc3D
 				}
 			}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Calculates the dot product of a specified vector and the normal of the plane plus the distance value of the plane.
-			*/
+			/**
+			 *  Calculates the dot product of a specified vector and the normal of the plane plus the distance value of the plane.
+			 */
 			float Dot3(const Vector3& a) const
 			{
 				return X * a.X + Y * a.Y + Z * a.Z + D;
 			}
-			/* Calculates the dot product of the specified vector and plane.
-			*/
+			/**
+			 *  Calculates the dot product of the specified vector and plane.
+			 */
 			float Dot4(const Vector4& a) const
 			{
 				return X * a.X + Y * a.Y + Z * a.Z + D * a.W;
 			}
-			/* Calculates the dot product of the specified vector and the normal of the plane.
-			*/
+			/**
+			 *  Calculates the dot product of the specified vector and the normal of the plane.
+			 */
 			float DotNormal(const Vector3& n) const
 			{
 				return X * n.X + Y * n.Y + Z * n.Z;
 			}
-			/* Changes the coefficients of the normal vector of the plane to make it of unit length.
-			*/
+			/**
+			 *  Changes the coefficients of the normal vector of the plane to make it of unit length.
+			 */
 			void Normalize()
 			{
 				float mag = sqrtf(X * X + Y * Y + Z * Z);
-
+ 
 				if (mag>EPSILON)
 				{
 					mag = 1.0f / mag;
@@ -214,10 +225,14 @@ namespace Apoc3D
 
 			void ProjectLine(const Vector3& start, const Vector3& end, Vector3& ps, Vector3 pe) const;
 
+			/**
+			 *  Projects a directional vector on to the plane surface
+			 */
 			Vector3 ProjectVector(const Vector3& vec) const;
 
-			/* Changes the coefficients of the normal vector of the plane to make it of unit length.
-			*/
+			/**
+			 *  Changes the coefficients of the normal vector of the plane to make it of unit length.
+			 */
 			static Plane Normalize(const Plane &plane)
 			{
 				Plane np = plane;
@@ -226,8 +241,9 @@ namespace Apoc3D
 			}
 
 
-			/* Scales the plane by the given scaling factor.
-			*/
+			/**
+			 *  Scales the plane by the given scaling factor.
+			 */
 			static Plane Multiply(const Plane &plane, float scale)
 			{
 				Plane result;
@@ -238,8 +254,9 @@ namespace Apoc3D
 				return result;
 			}
 			
-			/* Scales the plane by the given scaling factor.
-			*/
+			/**
+			 *  Scales the plane by the given scaling factor.
+			 */
 			static void Multiply(Plane& result, const Plane &plane, float scale)
 			{				
 				result.D = plane.D * scale;
@@ -248,8 +265,9 @@ namespace Apoc3D
 				result.Z = plane.Z * scale;				
 			}
 
-			/* Transforms a normalized plane by a quaternion rotation.
-			*/
+			/**
+			 * Transforms a normalized plane by a quaternion rotation.
+			 */
 			static Plane Transform(const Plane &plane, const Matrix &transformation)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -281,8 +299,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Transforms an array of normalized planes by a quaternion rotation.
-			*/
+			/**
+			 *   Transforms an array of normalized planes by a quaternion rotation.
+			 */
 			static void Transform(Plane* result, const Plane* planes, int count, const Matrix &transformation)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -317,12 +336,14 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Transforms a normalized plane by a quaternion rotation.
-			*/
+			/**
+			 *  Transforms a normalized plane by a quaternion rotation.
+			 */
 			static Plane Transform(const Plane &plane, const Quaternion &rotation);
 
-			/* Finds the intersection between a plane and a line.
-			*/
+			/**
+			 *  Finds the intersection between a plane and a line.
+			 */
 			static bool Intersects(const Plane &plane, Vector3 start, Vector3 end, Vector3 &intersectPoint)
 			{
 				Vector3 dir = Vector3Utils::Subtract(end, start);
@@ -357,11 +378,13 @@ namespace Apoc3D
 				intersectPoint = Vector3Utils::Add(start, off);
 				return true;
 			}
-			/* Finds the intersection between a plane and a box.
-			*/
+			/**
+			 *  Finds the intersection between a plane and a box.
+			 */
 			static PlaneIntersectionType Intersects(const Plane &plane, const BoundingBox& box);
-			/* Finds the intersection between a plane and a sphere.
-			*/
+			/**
+			 *  Finds the intersection between a plane and a sphere.
+			 */
 			static PlaneIntersectionType Intersects(const Plane &plane, const BoundingSphere& sphere);
 		};
 	}

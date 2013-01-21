@@ -38,12 +38,14 @@ namespace Apoc3D
 		class APAPI Ray
 		{
 		public:
-			/* Specifies the location of the ray's origin.
-			*/
+			/**
+			 *  Specifies the location of the ray's origin.
+			 */
 			Vector3 Position;
 
-			/* A unit vector specifying the direction in which the ray is pointing.
-			*/
+			/**
+			 *  A unit vector specifying the direction in which the ray is pointing.
+			 */
 			Vector3 Direction;
 
 			Ray() { }
@@ -51,8 +53,9 @@ namespace Apoc3D
 				: Position(position), Direction(direction)
 			{ }
 
-			/* Determines whether a ray intersects the specified object.
-			*/
+			/**
+			 *  Determines whether a ray intersects the specified object.
+			 */
 			static bool Intersects(const Ray& ray, const Plane& plane, float& distance)
 			{
 				float dotDirection = plane.DotNormal(ray.Direction);
@@ -80,12 +83,14 @@ namespace Apoc3D
 				return true;
 			}
 
-			/* Determines whether a ray intersects the specified object.
-			*/
+			/** 
+			 *  Determines whether a ray intersects the specified object.
+			 */
 			static bool Intersects(const Ray& ray, const BoundingBox& box, float& distance);
 
-			/* Determines whether a ray intersects the specified object.
-			*/
+			/**
+			 *  Determines whether a ray intersects the specified object.
+			 */
 			static bool Intersects(const Ray& ray, const BoundingSphere& sphere, float& distance);
 		};
 	}

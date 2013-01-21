@@ -32,29 +32,36 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		/** Defines a rectangular region of a render-target surface onto which 
-			a 3D rendering is projected.
-		*/
+		/**
+		 *  Defines a rectangular region of a render-target surface onto which 
+		 *	a 3D rendering is projected.
+		 */
 		class APAPI Viewport
 		{
 		public:
-			/** the viewport's X position.
-			*/
+			/**
+			 *  the viewport's X position.
+			 */
 			int X;
-			/** the viewport's Y position.
-			*/
+			/**
+			 *  the viewport's Y position.
+			 */
 			int Y;
-			/** the viewport's width.
-			*/
+			/**
+			 *  the viewport's width.
+			 */
 			int Width;
-			/** the viewport's height.
-			*/
+			/**
+			 *  the viewport's height.
+			 */
 			int Height;
-			/** the viewport's minimum Z depth.
-			*/
+			/**
+			 *  the viewport's minimum Z depth.
+			 */
 			float MinZ;
-			/** the viewport's maximum Z depth.
-			*/
+			/**
+			 *  the viewport's maximum Z depth.
+			 */
 			float MaxZ;
 
 			Viewport(int x, int y, int width, int height)
@@ -68,11 +75,13 @@ namespace Apoc3D
 			{
 			}
 
-			/** Converts a screen space point into a corresponding point in world space.
-			*/
+			/**
+			 *  Converts a screen space point into a corresponding point in world space.
+			 */
 			Vector3 Unproject(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world);
-			/** Projects a 3D vector from object space into screen space.
-			*/
+			/**
+			 *  Projects a 3D vector from object space into screen space.
+			 */
 			Vector3 Project(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world);
 		};
 	}

@@ -43,7 +43,8 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		/** This class contains the glyphs of a font. When rendering font, it pack
+		/**
+		 *  This class contains the glyphs of a font. When rendering font, it pack
 		 *  required glyphs into a font texture, and calculate the texture coordinates
 		 *  used for locating them.
 		 *
@@ -113,8 +114,9 @@ namespace Apoc3D
 				Apoc3D::Math::Rectangle MappedRect;
 				Apoc3D::Math::RectangleF MappedRectF;
 
-				/** The number of consecutive buckets that the glyph is using.
-				*/
+				/**
+				 *  The number of consecutive buckets that the glyph is using.
+				 */
 				int NumberOfBucketUsing;
 				int StartingParentBucket;
 
@@ -145,47 +147,55 @@ namespace Apoc3D
 			//list<Glyph*> m_activeGlyph;
 			//FastList<Bucket*> m_buckets;
 
-			/** The entire texture area is divided into a 2x2 buckets, which records
+			/** 
+			 *  The entire texture area is divided into a 2x2 buckets, which records
 			 *  the use of every small texture region
 			 */
 			Bucket* m_buckets;
 			
-			/** A one to one array containing the frequency of each bucket.
+			/** 
+			 *  A one to one array containing the frequency of each bucket.
 			 *  The frequency here indicates that approximately how many time the 
 			 *  bucket is used since the beginning of the last frame.
 			 */
 			int* m_currentFreqTable;
-			/** A one to one array containing the last-frame frequency of each bucket.
+			/** 
+			 *  A one to one array containing the last-frame frequency of each bucket.
 			 *  This is statistical as the string is drawn.
 			 */
 			int* m_lastFreqTable;
-			/** An array of m_edgeCount*MaxFreq, 
+			/** 
+			 *  An array of m_edgeCount*MaxFreq, 
 			 *  indicates how many buckets with specific freqs in each line.
 			 */
 			int* m_lineBucketsFreqClassificationCount;
-			/** The back up copy of last-frame m_lineBucketsFreqClassificationCount
-			*/
+			/** 
+			 *  The back up copy of last-frame m_lineBucketsFreqClassificationCount
+			 */
 			int* m_lasttime_lineBucketsFreqClassificationCount;
 
 			void LoadGlyphData(BinaryReader* br, Glyph& glyph);
 			void EnsureGlyph(Glyph& glyph);
-			/** Marks a glyph and its buckets using by the given glyph or 
+			/**
+			 *  Marks a glyph and its buckets using by the given glyph or 
 			 *  clears the use when the given glyph pointer is 0
 			 */
 			void UseBuckets(Glyph* g, int i, int j, int amount);
 			
 			void FrameStartReset();
 
-			/** Increase the frequency of use of the buckets used by the given glyph, by one
-			*/
+			/**
+			 *  Increase the frequency of use of the buckets used by the given glyph, by one
+			 */
 			void SetUseFreq(const Glyph& g);
 			
 			friend class FontManager;
 		
 		};
 
-		/** Manages font resources, creating them from font files.
-		*/
+		/**
+		 *  Manages font resources, creating them from font files.
+		 */
 		class APAPI FontManager : public Singleton<FontManager>
 		{
 		public:
@@ -197,7 +207,8 @@ namespace Apoc3D
 			FontManager();
 			~FontManager();
 
-			/** Should be called at the beginning of each frame to 
+			/**
+			 *  Should be called at the beginning of each frame to 
 			 *  reset every Font's internal frequency statistics
 			 */
 			void StartFrame();

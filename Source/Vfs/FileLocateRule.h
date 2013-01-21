@@ -32,8 +32,9 @@ namespace Apoc3D
 {	
 	namespace VFS
 	{
-		/** Contains several paths to look when searching file.
-		*/
+		/**
+		 *  Contains several paths to look when searching file.
+		 */
 		class APAPI LocateCheckPoint
 		{
 		private:
@@ -52,14 +53,16 @@ namespace Apoc3D
 			vector<Entry> pathList;
 			
 		public:	
-			/** [Obsolete] Indicates whether the file system should search for file in standard archive set when using this rule
-			*/
+			/**
+			 *  [Obsolete] Indicates whether the file system should search for file in standard archive set when using this rule
+			 */
 			bool SearchesCurrectArchiveSet;
 
 			LocateCheckPoint() : SearchesCurrectArchiveSet(false) { }
 
-			/** Add a check point path
-			*/ 
+			/**
+			 *  Add a check point path
+			 */ 
 			void AddPath(const String& path);
 
 			void Clear()
@@ -68,29 +71,33 @@ namespace Apoc3D
 			}
 
 
-			/** Check if check point at index is pointed to a archvie file
-			*/
+			/**
+			 *  Check if check point at index is pointed to a archvie file
+			 */
 			bool hasArchivePath(int index) const
 			{
 				return !!pathList[index].ArchivePath.length();
 			}
 
-			/** Get the path of the check point at index
-			*/
+			/**
+			 *  Get the path of the check point at index
+			 */
 			const String& GetPath(int index) const
 			{
 				return pathList[index].Path;
 			}
 
-			/** Get the archive path of the check point at index
-			*/
+			/**
+			 *  Get the archive path of the check point at index
+			 */
 			const String& GetArchivePath(int index) const
 			{
 				return pathList[index].ArchivePath;
 			}
 
-			/** Get the number of check point in this rule.
-			*/
+			/**
+			 *  Get the number of check point in this rule.
+			 */
 			int getCount() const
 			{
 				return pathList.size();
@@ -100,15 +107,16 @@ namespace Apoc3D
 
 		//template class APAPI vector<LocateCheckPoint>;
 
-		/** Defines the rule used for locate files in FileSystem.
-			The rule is a sequence of operations, called a check point(LocateCheckPoint), 
-			which contains one location, such as directory/archive used to looks for the file. 
-			The check point first added will always have the highest priority to search the file.
-			The later ones will only get checked if the attempt to search file failed in checking the previous locations.
-
-			Using the locating rule is the only way to locate files inside archives.
-			Simply using DirectorySeprator to indicate archive location in the file path when locating will not work.
-		*/
+		/**
+		 *  Defines the rule used for locate files in FileSystem.
+		 * 	The rule is a sequence of operations, called a check point(LocateCheckPoint), 
+		 *	which contains one location, such as directory/archive used to looks for the file. 
+		 *	The check point first added will always have the highest priority to search the file.
+		 *	The later ones will only get checked if the attempt to search file failed in checking the previous locations.
+		 *
+		 *	Using the locating rule is the only way to locate files inside archives.
+		 *	Simply using DirectorySeprator to indicate archive location in the file path when locating will not work.
+		 */
 		class APAPI FileLocateRule
 		{
 		public:

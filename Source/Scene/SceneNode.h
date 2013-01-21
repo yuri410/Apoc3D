@@ -36,8 +36,9 @@ namespace Apoc3D
 		//template class APAPI std::vector<SceneObject*>;
 		typedef FastList<SceneObject*> ObjectList;
 
-		/* Represents a collection of scene objects in the scene
-		*/
+		/**
+		 *  Represents a collection of scene objects in the scene
+		 */
 		class APAPI SceneNode
 		{
 		protected:

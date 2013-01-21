@@ -53,8 +53,9 @@ namespace Apoc3D
 
 			SceneRenderScriptParser(RenderDevice* dev);
 
-			/** Build the script from xml config.
-			*/
+			/**
+			 *  Build the script from xml config.
+			 */
 			void Parse(const ResourceLocation* rl);
 
 			const String& getSceneName() const { return m_sceneName; }
@@ -63,22 +64,27 @@ namespace Apoc3D
 			String m_sceneName;
 			RenderDevice* m_renderDevice;
 			
-			/** Build instructions for expressions
-			*/
+			/**
+			 *  Build instructions for expressions
+			 */
 			void FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions);
-			/** Build instructions for commands.
-			*/
+			/**
+			 *  Build instructions for commands.
+			 */
 			void FillFunctionCall(const TiXmlElement* node, std::vector<SceneInstruction>& instructions);
 
-			/** Parse and add all the global vars to the list
-			*/
+			/**
+			 *  Parse and add all the global vars to the list
+			 */
 			void ParseGlocalVarNode(const TiXmlElement* node);
 
-			/** Build instructions for the RenderQuad command
-			*/
+			/**
+			 *  Build instructions for the RenderQuad command
+			 */
 			void FillRenderQuad(const TiXmlElement* node, std::vector<SceneInstruction>& instructions);
-			/** Build instructions for code blocks
-			*/
+			/**
+			 *  Build instructions for code blocks
+			 */
 			void BuildInstructions(const TiXmlElement* node, ScenePassData* data);
 
 			void BuildPass(const TiXmlElement* node);

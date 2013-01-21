@@ -45,7 +45,8 @@ namespace Apoc3D
 		typedef FastMap<Material*, GeometryTable*> MaterialTable;
 		typedef FastMap<uint32, MaterialTable*> PriorityTable;
 
-		/** A hirerachy of tables to store classified render operations.
+		/**
+		 *  A hirerachy of tables to store classified render operations.
 		 *
 		 *  At the time visible objects are detected, their render operations will
 		 *  be inserted into this sheet, grouped according to their sources, materials, priorities..
@@ -63,25 +64,30 @@ namespace Apoc3D
 
 			BatchData();
 
-			/** Adds an object's render operations into the internal table.
-			*/
+			/**
+			 *  Adds an object's render operations into the internal table.
+			 */
 			void AddVisisbleObject(SceneObject* obj, int level);
 
-			/** Check if any materials with passFlag corresponding to selectMask are already added
+			/**
+			 *  Check if any materials with passFlag corresponding to selectMask are already added
 			 *  into the table.
 			 */
 			bool HasObject(uint64 selectMask);
 
-			/** Clears all the render operations added.
-			*/
+			/**
+			 *  Clears all the render operations added.
+			 */
 			void Clear();
 
-			/** Gets a reference to the internal table
-			*/
+			/**
+			 *  Gets a reference to the internal table
+			 */
 			const PriorityTable& getTable() const { return m_priTable; }
 
-			/** Gets the total number of objects added since last Clear
-			*/
+			/**
+			 *  Gets the total number of objects added since last Clear
+			 */
 			int getObjectCount() const { return m_objectCount; }
 
 			void Reset();
@@ -94,7 +100,8 @@ namespace Apoc3D
 
 		};
 
-		/* Renders a scene with a particular render script.
+		/**
+		 *  Renders a scene with a particular render script.
 		 * 
 		 * @remarks
 		 *  For the script listing config, please refer to the sample file.
@@ -105,7 +112,8 @@ namespace Apoc3D
 			SceneRenderer(RenderDevice* dev);
 			~SceneRenderer(void);
 
-			/** The scene renderer loads from a config which lists several render script (SceneProcedure) files.
+			/**
+			 *  The scene renderer loads from a config which lists several render script (SceneProcedure) files.
 			 *  What the config has, are all options as SceneProcedure xmls for the renders to 
 			 *  choose from. The input list is expected to be sorted form high ended SceneProcedures
 			 *  to low ended ones. A fall back will be performed if the prior ones are 
@@ -127,21 +135,25 @@ namespace Apoc3D
 				m_cameraList.Remove(camera);
 			}
 
-			/** Begin the whole rendering process. The client application should use this method to
+			/**
+			 *  Begin the whole rendering process. The client application should use this method to
 			 *  draw the scene.
 			 */
 			void RenderScene(SceneManager* sceMgr);
 
-			/** Renders the current batch data produced by instructions in the scene pass.
-			*/
+			/** 
+			 *  Renders the current batch data produced by instructions in the scene pass.
+			 */
 			void RenderBatch(int selectorID);
 
 			
-			/** Gets the index of selected SceneProcedure.
+			/**
+			 *  Gets the index of selected SceneProcedure.
 			 *  If no SceneProcedure is selected, returns -1.
 			 */
 			int getSelectedProcID() const { return m_selectedProc; }
-			/** Gets the selected SceneProcedure.
+			/**
+			 *  Gets the selected SceneProcedure.
 			 *  If no SceneProcedure is selected, returns 0.
 			 */
 			SceneProcedure* getSelectedProc() const
@@ -153,8 +165,9 @@ namespace Apoc3D
 
 			void ResetBatchTable();
 
-			/** Renders a particular batch data
-			*/
+			/**
+			 *  Renders a particular batch data
+			 */
 			static void RenderBatch(RenderDevice* device, const BatchData& data, int selectorID);
 
 		private:

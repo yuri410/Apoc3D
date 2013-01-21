@@ -89,18 +89,21 @@ namespace Apoc3D
 				//ForeColor = foreColor;
 			}
 		
-			/** Gets the modulation color for custom button in normal state.
-			*/
+			/** 
+			 *  Gets the modulation color for custom button in normal state.
+			 */
 			ColorValue getCustomModColor() const { return m_modColor; }
 			void setCustomModColor(ColorValue clr) { m_modColor = clr; }
 
-			/** Gets the modulation color for custom button when mouse hover.
-			*/
+			/**
+			 *  Gets the modulation color for custom button when mouse hover.
+			 */
 			ColorValue getCustomModColorMouseOver() const { return m_modMouseOverColor; }
 			void setCustomModColorMouseOver(ColorValue clr) { m_modMouseOverColor = clr; }
 
-			/** Gets the modulation color for custom button when mouse down.
-			*/
+			/** 
+			 *  Gets the modulation color for custom button when mouse down.
+			 */
 			ColorValue getCustomModColorMouseDown() const { return m_modMouseDownColor; }
 			void setCustomModColorMouseDown(ColorValue clr) { m_modMouseDownColor = clr; }
 			

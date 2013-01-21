@@ -33,8 +33,9 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		/* Defines the plane indexes of a frustum
-		*/
+		/**
+		 * Defines the plane indexes of a frustum
+		 */
 		enum APAPI FrustumPlane
 		{
 			FPL_Right = 0,
@@ -45,8 +46,9 @@ namespace Apoc3D
 			FPL_Near = 5
 		};
 
-		/* Defines a frustum
-		*/
+		/**
+		 *  Defines a frustum
+		 */
 		class APAPI Frustum
 		{
 		private:
@@ -57,8 +59,9 @@ namespace Apoc3D
 			Frustum(void);
 			~Frustum(void);
 
-			/* Check if a bouding sphere is intersecting the frustum
-			*/
+			/*
+			 *  Check if a bounding sphere is intersecting the frustum
+			 */
 			bool Intersects(const BoundingSphere& sp) const
 			{
 				for (int i=0;i<ClipPlaneCount;i++)
@@ -74,12 +77,14 @@ namespace Apoc3D
 			
 			
 
-			/* Update the frustum with new view and projection matrix.
-			*/
+			/**
+			 *  Update the frustum with new view and projection matrix.
+			 */
 			void Update(const Matrix& view, const Matrix& proj);
 
-			/* Update the frustum with new view-pojection matrix.
-			*/
+			/**
+			 *  Update the frustum with new view-projection matrix.
+			 */
 			void Update(const Matrix& viewProj);
 		};
 	};

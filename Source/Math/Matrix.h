@@ -77,8 +77,9 @@ namespace Apoc3D
 #pragma warning( disable : 4201 )
 #endif
 
-		/* Defines a 4x4 matrix.
-		*/
+		/**
+		 *  Defines a 4x4 matrix.
+		 */
 		class APAPI Matrix
 		{
 		public:
@@ -344,8 +345,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Transposes the matrix
-			*/
+			/**
+			 * Transposes the matrix
+			 */
 			void Transpose()
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -371,13 +373,15 @@ namespace Apoc3D
 				memcpy(Elements, e, sizeof(e));				
 			#endif
 			}
-			/* Inverts the matrix.
-			*/
+			/**
+			 *  Inverts the matrix.
+			 */
 			float Inverse(); // TODO: Rewrite
 			
 
-			/* Calculates the determinant of the matrix.
-			*/
+			/**
+			 *  Calculates the determinant of the matrix.
+			 */
 			float Determinant() const// TODO: Rewrite
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -433,8 +437,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Determines the product of two matrices.
-				The result matrix cannot reference to the memory that ma or mb is referring to, or the result is not correct.
+			/**
+			 *  Determines the product of two matrices.
+			 *  The result matrix cannot reference to the memory that ma or mb is referring to, or the result is not correct.
 			*/
 			static void Multiply(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
@@ -542,8 +547,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Scales a matrix by the given value.
-			*/
+			/**
+			 *  Scales a matrix by the given value.
+			 */
 			static void Multiply(Matrix& res, const Matrix& ma, float mb)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -572,8 +578,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Determines the sum of two matrices.
-			*/
+			/** 
+			 *  Determines the sum of two matrices.
+			 */
 			static void Add(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -601,8 +608,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Determines the difference between two matrices.
-			*/
+			/**
+			 *  Determines the difference between two matrices.
+			 */
 			static void Subtract(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -630,8 +638,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Negates a matrix.
-			*/
+			/** 
+			 *  Negates a matrix.
+			 */
 			static void Negate(Matrix& res, const Matrix& m)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -699,8 +708,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Creates a matrix that rotates around the x-axis.
-			*/
+			/**
+			 *  Creates a matrix that rotates around the x-axis.
+			 */
 			static void CreateRotationX(Matrix& res, float angle)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -740,8 +750,9 @@ namespace Apoc3D
 
 			#endif
 			}
-			/* Creates a matrix that rotates around the y-axis.
-			*/
+			/**
+			 *  Creates a matrix that rotates around the y-axis.
+			 */
 			static void CreateRotationY(Matrix& res, float angle)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -780,8 +791,9 @@ namespace Apoc3D
 				res.M42 = res.M43 = 0.0f;
 			#endif
 			}
-			/* Creates a matrix that rotates around the z-axis.
-			*/
+			/**
+			 *  Creates a matrix that rotates around the z-axis.
+			 */
 			static void CreateRotationZ(Matrix& res, float angle)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -821,8 +833,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Creates a matrix that rotates around an arbitary axis.
-			*/
+			/** 
+			 *  Creates a matrix that rotates around an arbitary axis.
+			 */
 			static void CreateRotationAxis(Matrix& res, Vector3 axis, float angle)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -944,8 +957,9 @@ namespace Apoc3D
 			{
 				CreateTranslation(res, _V3X(pos), _V3Y(pos), _V3Z(pos));
 			}
-			/* Creates a translation matrix using the specified offsets.
-			*/
+			/**
+			 *  Creates a translation matrix using the specified offsets.
+			 */
 			static void CreateTranslation(Matrix& res, float x, float y, float z)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -976,8 +990,9 @@ namespace Apoc3D
 				res.M41 = x;	res.M42 = y;	res.M43 = z;	res.M44 = 1.0f;
 			#endif
 			}
-			/* Creates a matrix that scales along the x-axis, y-axis, and y-axis.
-			*/
+			/**
+			 *  Creates a matrix that scales along the x-axis, y-axis, and y-axis.
+			 */
 			static void CreateScale(Matrix& res, float x, float y, float z)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -1012,8 +1027,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Creates a left-handed, look-at matrix.
-			*/
+			/**
+			 *  Creates a left-handed, look-at matrix.
+			 */
 			static void CreateLookAtLH(Matrix& res, Vector3 cameraPosition, Vector3 cameraTarget, Vector3 up)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -1099,8 +1115,9 @@ namespace Apoc3D
 				res.M44 = 1.0f;
 			#endif
 			}
-			/* Creates a right-handed, look-at matrix.
-			*/
+			/** 
+			 *  Creates a right-handed, look-at matrix.
+			 */
 			static void CreateLookAtRH(Matrix& res, Vector3 cameraPosition, Vector3 cameraTarget, Vector3 up)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -1187,19 +1204,20 @@ namespace Apoc3D
 			#endif
 			}
 			
-			/* Creates a left-handed, perspective projection matrix based on a field of view.
-			*  
-			*  This function computes the returned matrix as shown:
-			*  
-			*  xScale     0          0               0
-			*  0        yScale       0               0
-			*  0          0       zf/(zf-zn)         1
-			*  0          0       -zn*zf/(zf-zn)     0
-			*  where:
-			*  yScale = cot(fovY/2)
-			*  
-			*  xScale = yScale / aspect ratio
-			*/
+			/**
+			 *  Creates a left-handed, perspective projection matrix based on a field of view.
+			 *  
+			 *  This function computes the returned matrix as shown:
+			 *  
+			 *  xScale     0          0               0
+			 *  0        yScale       0               0
+			 *  0          0       zf/(zf-zn)         1
+			 *  0          0       -zn*zf/(zf-zn)     0
+			 *  where:
+			 *  yScale = cot(fovY/2)
+			 *  
+			 *  xScale = yScale / aspect ratio
+			 */
 			static void CreatePerspectiveFovLH(Matrix& res, float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -1258,19 +1276,20 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Creates a right-handed, perspective projection matrix based on a field of view.
-			*  
-			*  This function computes the returned matrix as shown:
-			*  
-			*  xScale     0          0               0
-			*  0        yScale       0               0
-			*  0          0       zf/(zn-zf)        -1
-			*  0          0       zn*zf/(zn-zf)      0
-			*  where:
-			*  yScale = cot(fovY/2)
-			*  
-			*  xScale = yScale / aspect ratio
-			*/
+			/**
+			 *  Creates a right-handed, perspective projection matrix based on a field of view.
+			 *  
+			 *  This function computes the returned matrix as shown:
+			 *  
+			 *  xScale     0          0               0
+			 *  0        yScale       0               0
+			 *  0          0       zf/(zn-zf)        -1
+			 *  0          0       zn*zf/(zn-zf)      0
+			 *  where:
+			 *  yScale = cot(fovY/2)
+			 *  
+			 *  xScale = yScale / aspect ratio
+			 */
 			static void CreatePerspectiveFovRH(Matrix& res, float fieldOfView, float aspectRatio, float nearPlaneDistance, float farPlaneDistance)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -1331,14 +1350,15 @@ namespace Apoc3D
 			}
 
 
-			/* Creates a left-handed, orthographic projection matrix.
-			*  
-			*  All the parameters of the function are distances in camera space. The parameters describe the dimensions of the view volume.
-			*   2/w  0    0           0
-			*   0    2/h  0           0
-			*   0    0    1/(zf-zn)   0
-			*   0    0   -zn/(zf-zn)  1
-			*/
+			/**
+			 *  Creates a left-handed, orthographic projection matrix.
+			 *  
+			 *  All the parameters of the function are distances in camera space. The parameters describe the dimensions of the view volume.
+			 *   2/w  0    0           0
+			 *   0    2/h  0           0
+			 *   0    0    1/(zf-zn)   0
+			 *   0    0   -zn/(zf-zn)  1
+			 */
 			static void CreateOrthoLH(Matrix& res, float width, float height, float zNearPlane, float zFarPlane)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -1389,17 +1409,18 @@ namespace Apoc3D
 			#endif
 			}
 
-			/*  Creates a right-handed, orthographic projection matrix.
-			*  
-			*  All the parameters of the function are distances in camera space.
-			*  The parameters describe the dimensions of the view volume.
-			*  
-			*  This function uses the following formula to compute the result matrix. 
-			*   2/w  0    0           0
-			*   0    2/h  0           0
-			*   0    0    1/(zn-zf)   0
-			*   0    0    zn/(zn-zf)  l
-			*/
+			/**
+			 *  Creates a right-handed, orthographic projection matrix.
+			 *  
+			 *  All the parameters of the function are distances in camera space.
+			 *  The parameters describe the dimensions of the view volume.
+			 *  
+			 *  This function uses the following formula to compute the result matrix. 
+			 *   2/w  0    0           0
+			 *   0    2/h  0           0
+			 *   0    0    1/(zn-zf)   0
+			 *   0    0    zn/(zn-zf)  l
+			 */
 			static void CreateOrthoRH(Matrix& res, float width, float height, float zNearPlane, float zFarPlane)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -1449,8 +1470,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Creates a spherical billboard that rotates around a specified object position.
-			*/
+			/**
+			 *  Creates a spherical billboard that rotates around a specified object position.
+			 */
 			static void CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix& res);
 
 			static void Inverse(Matrix& res, const Matrix& matrix)

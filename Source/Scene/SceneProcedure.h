@@ -57,7 +57,8 @@ namespace Apoc3D
 
 		*/
 
-		/** Represent a sequence of scene passes that can finally 
+		/**
+		 *  Represent a sequence of scene passes that can finally 
 		 *  generate the end result.
 		 *
 		 *  A SceneProcedure can be either normal passes (like shadow
@@ -90,7 +91,8 @@ namespace Apoc3D
 		class APAPI SceneProcedure
 		{
 		public:
-			/** Find a variable define in the procedure script by name; 
+			/**
+			 *  Find a variable define in the procedure script by name; 
 			 *  then returns as a RenderTarget.
 			 */
 			RenderTarget* FindRenderTargetVar(const String& name) const
@@ -170,18 +172,21 @@ namespace Apoc3D
 			SceneProcedure(RenderDevice* device);
 			~SceneProcedure(void);
 
-			/** Check if the SceneProcedure is available. A SceneProcedure is unavailable if the techniques
+			/**
+			 *  Check if the SceneProcedure is available. A SceneProcedure is unavailable if the techniques
 			 *  used is not supported. (eg. A type of render target format is not supported)
 			 */
 			bool IsAvailable();
 
 			void Load(SceneRenderer* renderer, const ResourceLocation* rl);
 
-			/** Execute the procedure, respectively invoking a series of Scene Passes.
-			*/
+			/** 
+			 *  Execute the procedure, respectively invoking a series of Scene Passes.
+			 */
 			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
 			
-			/** Gets the current camera in the rendering process.
+			/**
+			 *  Gets the current camera in the rendering process.
 			 *  If this method is call when not rendering, eg. updating, the last camera use will be returned.
 			 */
 			const Camera* getLastCamera() const { return m_lastCamera; }

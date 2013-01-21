@@ -34,7 +34,8 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		/** Define a sequence of operation for a rendering result.
+		/**
+		 *  Define a sequence of operation for a rendering result.
 		 *
 		 *  A scene pass is a scene rendering operation that usually 
 		 *  renders objects to a RenderTarget (or the like) which can 
@@ -53,20 +54,24 @@ namespace Apoc3D
 			ScenePass(RenderDevice* dev, SceneRenderer* renderer, SceneProcedure* parent, const ScenePassData* passData);
 			~ScenePass(void);
 
-			/** Begins executing the pass' procedure for once.
-			*/
+			/**
+			 *  Begins executing the pass' procedure for once.
+			 */
 			void Invoke(const FastList<Camera*>& cameras, SceneManager* sceMgr, BatchData* batchData);
 			
-			/** Gets the camera used in this scene pass.
+			/** 
+			 *  Gets the camera used in this scene pass.
 			 */
 			const Camera* getCurrentCamera() const { return m_currentCamera; }
 
-			/** Gets the sequence of this pass in a entire scene rendering process.
-			*/
+			/** 
+			 *  Gets the sequence of this pass in a entire scene rendering process.
+			 */
 			int32 getSelectorID() const { return m_selectorID; }
 
-			/** Gets the name of this pass.
-			*/
+			/**
+			 *  Gets the name of this pass.
+			 */
 			String getName() const { return m_name; }
 
 		private:

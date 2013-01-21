@@ -37,31 +37,36 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		/** A callback interface used for ray-based selection check.
-		*/
+		/** 
+		 *  A callback interface used for ray-based selection check.
+		 */
 		class IObjectFilter
 		{
 		public:
-			/** Check if an intersected object should be accepted
-			*/
+			/**
+			 *  Check if an intersected object should be accepted
+			 */
 			virtual bool Check(SceneObject* obj) = 0;
 			virtual bool Check(SceneNode* node) { return true; }
 		};
 
 
-		/* SceneManager keeps tracks of all scene objects.
-		*/
+		/**
+		 *  SceneManager keeps tracks of all scene objects.
+		 */
 		class APAPI SceneManager
 		{
 		public:
 			SceneManager(void);
 			virtual ~SceneManager(void);
 		
-			/* Adds a new scene object into scene
-			*/
+			/**
+			 *  Adds a new scene object into scene
+			 */
 			virtual void AddObject(SceneObject* const obj);
-			/* Removes a scene object from scene
-			*/
+			/**
+			 *  Removes a scene object from scene
+			 */
 			virtual bool RemoveObject(SceneObject* const obj);
 
 			virtual void PrepareVisibleObjects(Camera* camera, BatchData* batchData) = 0;

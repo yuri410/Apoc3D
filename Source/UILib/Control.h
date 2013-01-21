@@ -71,10 +71,11 @@ namespace Apoc3D
 			String Name;
 			String Text;
 			
-			/** Specifies the position of the control in screen coordinate.
-				This coordinate is relative to owner containers. 
-				Except those have no owner or root containers.
-			*/
+			/** 
+			 *  Specifies the position of the control in screen coordinate.
+			 *	This coordinate is relative to owner containers. 
+			 *	Except those have no owner or root containers.
+			 */
 			Point Position;
 			Point Size;
 
@@ -95,8 +96,9 @@ namespace Apoc3D
 
 			Point GetAbsolutePosition() const;
 
-			/** Gets a bool indicating if the control is blocking its parent
-			*/
+			/**
+			 *  Gets a bool indicating if the control is blocking its parent
+			 */
 			virtual bool IsOverriding() { return false; }
 
 			const Apoc3D::Math::Rectangle getAbsoluteArea() const

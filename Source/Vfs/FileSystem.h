@@ -38,7 +38,8 @@ namespace Apoc3D
 		//template class APAPI unordered_map<String, Archive*>;
 		//template class APAPI unordered_map<String, ArchiveFactory*>;
 
-		/** A services class providing file locating, 
+		/**
+		 *  A services class providing file locating, 
 		 *  multiple working directories and archive file features.
 		 * 
 		 *  Ordinarily FileSystem::Locate or FileSystem::TryLocate 
@@ -102,9 +103,10 @@ namespace Apoc3D
 			~FileSystem(void);
 
 			//static void Initialize();
-			/** Adds an absolute path as a new working directory. 
+			/**
+			 *  Adds an absolute path as a new working directory. 
 			 *
-			 * @remark
+			 *  @remark
 			 *   Duplicated dir is not check. (TODO: check it)
 			 */
 			void AddWrokingDirectory(const String& path);

@@ -34,12 +34,14 @@ using namespace std;
 
 namespace Apoc3D
 {
-	/** The engine's initialization config. 
+	/**
+	 *  The engine's initialization config. 
 	 *  When this is specified, this will override the engine's default settings.
 	 */
 	struct APAPI ManualStartConfig
 	{
-		/** A list of dir of config files which is used as basic configuration 
+		/**
+		 *  A list of dir of config files which is used as basic configuration 
 		 *  and loaded, putted into ConfigurationManager.
 		 *  ConfigurationManager::getConfiguration can be used to retrive theses configs
 		 *  later.
@@ -48,33 +50,41 @@ namespace Apoc3D
 		///** Defines a list of effects which can be setup fully using scripts.
 		//*/
 		//List<String> EffectList;
-		/** A list of absolute directories to be used in the engine's file system.
-		*/
+		/**
+		 *  A list of absolute directories to be used in the engine's file system.
+		 */
 		List<String> WorkingDirectories;
-		/** A list of file names of plugin dynamic libraries to be loaded.
-		*/
+		/**
+		 *  A list of file names of plugin dynamic libraries to be loaded.
+		 */
 		List<String> PluginDynLibList;
-		/** A list of user specified pre-loaded plugins.
-		*/
+		/**
+		 *  A list of user specified pre-loaded plugins.
+		 */
 		FastList<Plugin*> PluginList;
 
-		/** Specified whether the incoming new log entries should be forwarded to standard output.
+		/**
+		 *  Specified whether the incoming new log entries should be forwarded to standard output.
 		 *  Useful when debugging.
 		 */
 		bool WriteLogToStd;
 
-		/** Specified whether the TextureManager will be actuated to use async processing
-		*/
+		/** 
+		 *  Specified whether the TextureManager will be actuated to use async processing
+		 */
 		bool TextureAsync;
-		/** If using async processing, specifies the total cache size in bytes.
-		*/
+		/**
+		 *  If using async processing, specifies the total cache size in bytes.
+		 */
 		uint TextureCacheSize;
 
-		/** Specified whether the ModelManager will be actuated to use async processing
-		*/
+		/**
+		 *  Specified whether the ModelManager will be actuated to use async processing
+		 */
 		bool ModelAsync;
-		/** If using async processing, specifies the total cache size in bytes.
-		*/
+		/**
+		 *  If using async processing, specifies the total cache size in bytes.
+		 */
 		uint ModelCacheSize;
 
 		ManualStartConfig()
@@ -85,18 +95,21 @@ namespace Apoc3D
 		}
 	};
 
-	/** Includes elementary operation on the engine like Initialize and Showdown
-	*/
+	/**
+	 *  Includes elementary operation on the engine like Initialize and Showdown
+	 */
 	class APAPI Engine
 	{
 	public:
-		/** Initializes all fundamental services like resource management, file system, plugins, graphics API..
+		/** 
+		 *  Initializes all fundamental services like resource management, file system, plugins, graphics API..
 		 *  to prepare the engine ready for use.
 		 */
 		static void Initialize(const ManualStartConfig* mconf = 0);
 
-		/** Releases all services, freeing the hardware resources used.
-		*/
+		/**
+		 *  Releases all services, freeing the hardware resources used.
+		 */
 		static void Shutdown();
 	};
 }

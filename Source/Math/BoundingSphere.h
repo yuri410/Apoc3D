@@ -37,11 +37,13 @@ namespace Apoc3D
 		class APAPI BoundingSphere
 		{
 		public:
-			/** Specifies the center point of the sphere.
-			*/
+			/** 
+			 *  Specifies the center point of the sphere.
+			 */
 			Vector3 Center;
-			/** The radius of the sphere.
-			*/
+			/**
+			 *  The radius of the sphere.
+			 */
 			float Radius;
 
 			BoundingSphere() { }
@@ -51,24 +53,25 @@ namespace Apoc3D
 				Radius = radius;
 			}
 
-			/** Determines whether the sphere contains the specified box.
-				@param
-					sphere The sphere that will be checked for containment.
-					box The box that will be checked for containment.
-				@return
-					A member of the ContainmentType enumeration indicating whether 
-					the two objects intersect, are contained, or don't meet at all.
-			*/
+			/**
+			 *  Determines whether the sphere contains the specified box.
+			 *	@param
+			 *		sphere The sphere that will be checked for containment.
+			 *		box The box that will be checked for containment.
+			 *	@return
+			 *		A member of the ContainmentType enumeration indicating whether 
+			 * 		the two objects intersect, are contained, or don't meet at all.
+			 */
 			static ContainmentType Contains(const BoundingSphere& sphere, const BoundingBox& box);
 
 			/** Determines whether the sphere contains the specified sphere.			
-				@param
-					sphere The first sphere that will be checked for containment.
-					sphere2 The second sphere that will be checked for containment.
-				@returns
-					A member of the ContainmentType enumeration indicating whether 
-					the two objects intersect, are contained, or don't meet at all.
-			*/
+			 *	@param
+			 * 		sphere The first sphere that will be checked for containment.
+			 * 		sphere2 The second sphere that will be checked for containment.
+			 * 	@returns
+			 * 		A member of the ContainmentType enumeration indicating whether 
+			 * 		the two objects intersect, are contained, or don't meet at all.
+			 */
 			static ContainmentType Contains(const BoundingSphere& sphere1, const BoundingSphere& sphere2)
 			{
 				float distance = Vector3Utils::Distance(sphere1.Center, sphere2.Center);
@@ -85,8 +88,9 @@ namespace Apoc3D
 				return CONTAIN_Contains;
 			}
 
-			/** Determines whether the sphere contains the specified point.
-			*/
+			/**
+			 *  Determines whether the sphere contains the specified point.
+			 */
 			static ContainmentType Contains(const BoundingSphere& sphere, Vector3 vector)
 			{
 				float distance = Vector3Utils::Distance(vector, sphere.Center);
@@ -97,12 +101,14 @@ namespace Apoc3D
 				return CONTAIN_Contains;
 			}
 
-			/** Constructs a BoundingSphere from a given box.
-			*/
+			/**
+			 *  Constructs a BoundingSphere from a given box.
+			 */
 			static void CreateFromBox(BoundingSphere& res, const BoundingBox& box);
 
-			/** Constructs a BoundingSphere that fully contains the given points.
-			*/
+			/**
+			 *  Constructs a BoundingSphere that fully contains the given points.
+			 */
 			static void FromPoints(BoundingSphere& res, const Vector3* points, int count)
 			{
 				Vector3 center = Vector3Utils::Zero;
@@ -125,8 +131,9 @@ namespace Apoc3D
 
 			}
 
-			/** Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres.
-			*/
+			/**
+			 *  Constructs a BoundingSphere that is the as large as the total combined area of the two specified spheres.
+			 */
 			static void Merge(BoundingSphere& res, const BoundingSphere& sphere1, const BoundingSphere& sphere2)
 			{
 				Vector3 difference = Vector3Utils::Subtract(sphere2.Center, sphere1.Center);
@@ -158,12 +165,14 @@ namespace Apoc3D
 				res.Center = Vector3Utils::Add(sphere1.Center, vector);// + vector * (maxv + minv);
 				res.Radius = maxv;
 			}
-			/** Determines whether a sphere intersects the specified object.
-			*/
+			/**
+			 *  Determines whether a sphere intersects the specified object.
+			 */
 			static bool Intersects(const BoundingSphere& sphere, const BoundingBox& box);
 			
-			/** Determines whether a sphere intersects the specified object.
-			*/
+			/**
+			 *  Determines whether a sphere intersects the specified object.
+			 */
 			static bool Intersects(const BoundingSphere& sphere1, const BoundingSphere& sphere2)
 			{
 				float distance = Vector3Utils::DistanceSquared(sphere1.Center, sphere2.Center);
@@ -175,15 +184,17 @@ namespace Apoc3D
 
 				return true;
 			}
-			/** Determines whether a sphere intersects the specified object.
-			*/
+			/**
+			 *  Determines whether a sphere intersects the specified object.
+			 */
 			static bool Intersects(const BoundingSphere& sphere, const Ray& ray, float& distance);
 
 
 			static bool Intersects(const BoundingSphere& sphere, const Ray& ray, Vector3& p1);
 
-			/* Finds the intersection between a plane and a sphere.
-			*/
+			/**
+			 *  Finds the intersection between a plane and a sphere.
+			 */
 			static PlaneIntersectionType Intersects(const BoundingSphere& sphere, const Plane& plane)
 			{
 				return Plane::Intersects(plane, sphere);

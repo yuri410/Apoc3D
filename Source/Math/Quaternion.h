@@ -31,22 +31,27 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		/** Defines a four dimensional mathematical quaternion.
-		*/
+		/**
+		 *  Defines a four dimensional mathematical quaternion.
+		 */
 		class APAPI Quaternion
 		{
 		public:
-			/** The X component of the quaternion.
-			*/
+			/**
+			 *  The X component of the quaternion.
+			 */
 			float X;
-			/** The Y component of the quaternion.
-			*/
+			/**
+			 *  The Y component of the quaternion.
+			 */
 			float Y;
-			/** The Z component of the quaternion.
-			*/
+			/**
+			 *  The Z component of the quaternion.
+			 */
 			float Z;
-			/** The W component of the quaternion.
-			*/
+			/**
+			 *  The W component of the quaternion.
+			 */
 			float W;
 
 			static const Quaternion Identity;
@@ -54,11 +59,11 @@ namespace Apoc3D
 			Quaternion() {}
 
 			/**
-            @param
-                x The X component of the quaternion.
-				y The Y component of the quaternion.
-				z The Z component of the quaternion.
-				w The W component of the quaternion.
+             *  
+             *  @param x The X component of the quaternion.
+			 *	@param y The Y component of the quaternion.
+			 *	@param z The Z component of the quaternion.
+			 *	@param w The W component of the quaternion.
 			*/
 			Quaternion(float x, float y, float z, float w)
 				: X(x), Y(y), Z(z), W(w)
@@ -73,8 +78,9 @@ namespace Apoc3D
 				return (W == 1.0f);
 			}
 
-			/** Gets the axis components of the quaternion.
-			*/
+			/**
+			 *  Gets the axis components of the quaternion.
+			 */
 			Vector3 getAxis() const
 			{
 				float len = LengthSquared();
@@ -84,8 +90,9 @@ namespace Apoc3D
 				}
 				return Vector3Utils::Zero;
 			}
-			/** Gets the angle of the quaternion.
-			*/
+			/**
+			 *  Gets the angle of the quaternion.
+			 */
 			float getAngle() const
 			{
 				float len = LengthSquared();
@@ -118,20 +125,23 @@ namespace Apoc3D
 					_V3Z(axis) = 0;
 				}
 			}
-			/** Calculates the length of the quaternion.
-			*/
+			/**
+			 *  Calculates the length of the quaternion.
+			 */
 			float Length() const
 			{
 				return sqrtf(X * X + Y * Y + Z * Z + W * W);
 			}
-			/** Calculates the squared length of the quaternion.
-			*/
+			/**
+			 *  Calculates the squared length of the quaternion.
+			 */
 			float LengthSquared() const
 			{
 				return X * X + Y * Y + Z * Z + W * W;
 			}
-			/** Converts the quaternion into a unit quaternion.
-			*/
+			/**
+			 *  Converts the quaternion into a unit quaternion.
+			 */
 			void Normalize()
 			{
 				float length = Length();
@@ -150,16 +160,18 @@ namespace Apoc3D
 					X = Y = Z = W = 0;
 				}
 			}
-			/** Conjugates the quaternion.
-			*/
+			/**
+			 *  Conjugates the quaternion.
+			 */
 			void Conjugate()
 			{
 				X = -X;
 				Y = -Y;
 				Z = -Z;
 			}
-			/** Conjugates and renormalizes the quaternion.
-			*/
+			/**
+			 *  Conjugates and renormalizes the quaternion.
+			 */
 			void Invert()
 			{
 				float lengthSq = LengthSquared();
@@ -176,8 +188,9 @@ namespace Apoc3D
 				}
 			}
 
-			/** Adds two quaternions.
-			*/
+			/** 
+			 *  Adds two quaternions.
+			 */
 			static void Add(Quaternion& r, const Quaternion& left, const Quaternion& right)
 			{
 				r.X = left.X + right.X;
@@ -185,8 +198,9 @@ namespace Apoc3D
 				r.Z = left.Z + right.Z;
 				r.W = left.W + right.W;
 			}
-			/** Subtracts two quaternions.
-			*/
+			/**
+			 *  Subtracts two quaternions.
+			 */
 			static void Subtract(Quaternion& result, const Quaternion& left, const Quaternion& right)
 			{
 				result.X = left.X - right.X;
@@ -194,8 +208,9 @@ namespace Apoc3D
 				result.Z = left.Z - right.Z;
 				result.W = left.W - right.W;
 			}
-			/** Modulates a quaternion by another.
-			*/
+			/**
+			 *  Modulates a quaternion by another.
+			 */
 			static void Multiply(Quaternion& result, const Quaternion& left, const Quaternion& right)
 			{
 				const float& rx = right.X;
@@ -216,8 +231,9 @@ namespace Apoc3D
 				result.Z = ((rz * lw) + (lz * rw)) + xy;
 				result.W = (rw * lw) - lengthSq;
 			}
-			/** Scales a quaternion by the given value.
-			*/
+			/**
+			 *  Scales a quaternion by the given value.
+			 */
 			static void Multiply(Quaternion& result, const Quaternion& quaternion, float scale)
 			{
 				result.X = quaternion.X * scale;
@@ -225,8 +241,9 @@ namespace Apoc3D
 				result.Z = quaternion.Z * scale;
 				result.W = quaternion.W * scale;
 			}
-			/** Reverses the direction of a given quaternion.
-			*/
+			/**
+			 *  Reverses the direction of a given quaternion.
+			 */
 			static void Negate(Quaternion& result, const Quaternion& quaternion)
 			{
 				result.X = -quaternion.X;
@@ -234,8 +251,9 @@ namespace Apoc3D
 				result.Z = -quaternion.Z;
 				result.W = -quaternion.W;
 			}
-			/* Divides a quaternion by another.
-			*/
+			/**
+			 *  Divides a quaternion by another.
+			 */
 			static void Divide(Quaternion& result, const Quaternion& left, const Quaternion& right)
 			{
 				result.X = left.X / right.X;
@@ -244,8 +262,9 @@ namespace Apoc3D
 				result.W = left.W / right.W;
 			}
 
-			/** Concatenates two quaternions.
-			*/
+			/**
+			 *  Concatenates two quaternions.
+			 */
 			static void Concatenate(Quaternion& r, const Quaternion& left, const Quaternion& right)
 			{
 				const float& rx = right.X;
@@ -267,8 +286,9 @@ namespace Apoc3D
 				r.W = (rw * lw) - lengthSq;
 			}
 
-			/** Conjugates a quaternion.
-			*/
+			/**
+			 *  Conjugates a quaternion.
+			 */
 			static void Conjugate(Quaternion& result, const Quaternion& quaternion)
 			{				
 				result.X = -quaternion.X;
@@ -278,14 +298,16 @@ namespace Apoc3D
 			}
 
 
-			/* Calculates the dot product of two quaternions.
-			*/
+			/**
+			 *  Calculates the dot product of two quaternions.
+			 */
 			static float Dot(const Quaternion& left, const Quaternion& right)
 			{
 				return (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
 			}
-			/* Conjugates and renormalizes the quaternion.
-			*/
+			/**
+			 *  Conjugates and renormalizes the quaternion.
+			 */
 			static void Invert(Quaternion& result, const Quaternion& quaternion)
 			{
 				float lengthSq = 1.0f / ((quaternion.X * quaternion.X) + (quaternion.Y * quaternion.Y) + (quaternion.Z * quaternion.Z) + (quaternion.W * quaternion.W));
@@ -296,8 +318,9 @@ namespace Apoc3D
 				result.W = quaternion.W * lengthSq;
 			}
 
-			/** Performs a linear interpolation between two quaternion.
-			*/
+			/**
+			 *  Performs a linear interpolation between two quaternion.
+			 */
 			static void Lerp(Quaternion& result, const Quaternion& start, const Quaternion& end, float amount)
 			{				
 				float inverse = 1.0f - amount;
@@ -327,8 +350,9 @@ namespace Apoc3D
 
 			}
 
-			/** Converts the quaternion into a unit quaternion.
-			*/
+			/**
+			 *  Converts the quaternion into a unit quaternion.
+			 */
 			static void Normalize(Quaternion& result, const Quaternion& quaternion)
 			{
 				float length = 1.0f / quaternion.Length();
@@ -339,8 +363,9 @@ namespace Apoc3D
 			}
 
 
-			/** Creates a quaternion given a rotation and an axis.
-			*/
+			/**
+			 *  Creates a quaternion given a rotation and an axis.
+			 */
 			static void CreateRotationAxis(Quaternion& result, const Vector3& axis, float angle)
 			{
 				Vector3 axis2 = Vector3Utils::Normalize(axis);
@@ -355,11 +380,13 @@ namespace Apoc3D
 				result.W = cos;
 
 			}
-			/** Creates a quaternion given a rotation matrix.
-			*/
+			/**
+			 *  Creates a quaternion given a rotation matrix.
+			 */
 			static void CreateRotationMatrix(Quaternion& result, const Matrix& matrix);
-			/** Creates a quaternion given a yaw, pitch, and roll value.
-			*/
+			/**
+			 *  Creates a quaternion given a yaw, pitch, and roll value.
+			 */
 			static void CreateRotationYawPitchRoll(Quaternion& result, float yaw, float pitch, float roll)
 			{
 				float halfRoll = roll * 0.5f;
@@ -378,8 +405,9 @@ namespace Apoc3D
 				result.W = cosYaw * cosPitch * cosRoll + sinYaw * sinPitch * sinRoll;
 			}
 
-			/** Interpolates between two quaternions, using spherical linear interpolation.
-			*/
+			/**
+			 *  Interpolates between two quaternions, using spherical linear interpolation.
+			 */
 			static void Slerp(Quaternion& result, const Quaternion& start,  const Quaternion& end, float amount)
 			{
 				float opposite;

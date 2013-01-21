@@ -88,8 +88,9 @@ namespace Apoc3D
 
 			Point m_previousPosition;
 			Point m_previousSize;
-			/** The position to display form title when minimized
-			*/
+			/**
+			 *  The position to display form title when minimized
+			 */
 			Point m_minimizedPos;
 			Point m_maximizedPos;
 
@@ -110,21 +111,25 @@ namespace Apoc3D
 			bool m_hasMinimizeButton;
 			bool m_hasMaximizeButton;
 
-			/** Specify the form's drag area, where can be dragged to move the form
-			*/
+			/**
+			 *  Specify the form's drag area, where can be dragged to move the form
+			 */
 			Apoc3D::Math::Rectangle m_dragArea;
-			/** Specify the form's resize area, where can be dragged to resize the form
-			*/
+			/**
+			 *  Specify the form's resize area, where can be dragged to resize the form
+			 */
 			Apoc3D::Math::Rectangle m_resizeArea;
 			
 			bool m_isDragging;
 			bool m_isResizeing;
 
-			/** Tells if the form is on the minimizing animation process.
-			*/
+			/** 
+			 *  Tells if the form is on the minimizing animation process.
+			 */
 			bool m_isMinimizing;
-			/** Tells if current cursor position is in the form's resize area, where can be dragged to resize the form
-			*/
+			/**
+			 *  Tells if current cursor position is in the form's resize area, where can be dragged to resize the form
+			 */
 			bool m_isInReiszeArea;
 
 			/** Specify the cursor position difference since last frame when dragging or resizing the form.
@@ -207,7 +212,8 @@ namespace Apoc3D
 			
 		};
 
-		/** The manager class for Forms and Panels. And it is also responsible
+		/**
+		 *  The manager class for Forms and Panels. And it is also responsible
 		 *  for drawing and updating them.
 		 *  Any forms should be added to this class.
 		 */
@@ -226,12 +232,14 @@ namespace Apoc3D
 
 			static void Form_SizeChanged(Control* ctl);
 		public:
-			/** Specifies the area to display UI in the viewport. In unified coordinates.
-			*/
+			/** 
+			 *  Specifies the area to display UI in the viewport. In unified coordinates.
+			 */
 			static RectangleF UIArea;
 
-			/** Return the area to display UI in the viewport. In screen coordinates.
-			*/
+			/**
+			 *  Return the area to display UI in the viewport. In screen coordinates.
+			 */
 			static Apoc3D::Math::Rectangle GetUIArea(RenderDevice* device);
 
 			static FastList<Form*>& getForms() { return m_forms; }

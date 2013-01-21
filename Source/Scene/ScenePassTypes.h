@@ -38,17 +38,20 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		/* Now the type system used inside scene script is hard coded. All types are check and 
+		/**
+		 * Currently the type system used inside scene script is hard coded. All types are check and 
 		 * interpreted by fixed logic inside the engine. 
 		 * In the future, a object-oriented type system may be implemented. Custom types,
 		 * object handling may be easier to use/test. And the code will be more readable and less redundant.
 		 */
 
-		/** Defines the type
-		*/
+		/**
+		 *  Defines the type
+		 */
 		enum SceneVariableType
 		{
-			/** Represents a render target.
+			/**
+			 ** Represents a render target.
 			 *
 			 *  Properties:
 			 *  These are parameters required to declare the variable.
@@ -64,8 +67,8 @@ namespace Apoc3D
 			 *   Height
 			 */
 			VARTYPE_RenderTarget,
-			/** A 4x4 float matrix
-			 *  
+			/**
+			 *  A 4x4 float matrix 
 			 *  Properties:
 			 *  
 			 */
@@ -82,8 +85,9 @@ namespace Apoc3D
 			VARTYPE_GaussBlurFilter
 		};
 
-		/** The information for the global variables used in a scene script
-		*/
+		/** 
+		 *  The information for the global variables used in a scene script
+		 */
 		struct SceneVariable
 		{
 			String Name;
@@ -124,8 +128,9 @@ namespace Apoc3D
 			}
 		};
 
-		/** Defines sorts of opcodes
-		*/
+		/**
+		 *  Defines sorts of opcodes
+		 */
 		enum SceneOpCode
 		{
 			SOP_Add,
@@ -147,7 +152,8 @@ namespace Apoc3D
 			SOP_RenderQuad
 		};
 
-		/** Used to indicate the type of DrawQuad command's additional parameters, which is used 
+		/**
+		 *  Used to indicate the type of DrawQuad command's additional parameters, which is used 
 		 *  to set up PostEffect's parameters.
 		 */
 		enum ScenePostEffectParamType
@@ -159,26 +165,30 @@ namespace Apoc3D
 			SPFX_TYPE_VECTOR
 		};
 
-		/** The information for operands in op code in scene rendering
-		*/
+		/**
+		 *  The information for operands in op code in scene rendering
+		 */
 		struct SceneOpArg
 		{
-			/** Specifies if the argument is immediate or not.
+			/**
+			 *  Specifies if the argument is immediate or not.
 			 *  An immediate is accessed directly on its value in DefaultValue, whereas
 			 *  the value of others is from the referenced variable.
 			 */
 			bool IsImmediate;
 			uint DefaultValue[16];
 
-			/** This StrData is used to store the name of the object's property to access. 
+			/**
+			 *  This StrData is used to store the name of the object's property to access. 
 			 *  in the future, when type system is built up, this will be removed.
 			 */
 			String StrData;
 			SceneVariable* Var;
 		};
 
-		/** The information for the minimum operation in the scene rendering procedure
-		*/
+		/**
+		 *  The information for the minimum operation in the scene rendering procedure
+		 */
 		struct SceneInstruction
 		{
 			SceneOpCode Operation;
@@ -210,8 +220,9 @@ namespace Apoc3D
 			}
 		};
 
-		/** Includes the data for a ScenePass. 
-		 * Object SelectorID, Name, a list of Instructions and CameraID make up this.
+		/**
+		 *  Includes the data for a ScenePass. 
+		 *  Object SelectorID, Name, a list of Instructions and CameraID make up this.
 		 */
 		struct ScenePassData
 		{

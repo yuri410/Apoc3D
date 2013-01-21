@@ -33,8 +33,9 @@ namespace Apoc3D
 	namespace Math
 	{
 #pragma pack(push, 16)
-		/** A four component color represented using 4 floats from 0 to 1
-		*/
+		/**
+		 *  A four component color represented using 4 floats from 0 to 1
+		 */
 		class APAPI Color4
 		{
 		public:
@@ -43,39 +44,47 @@ namespace Apoc3D
 			{
 				struct  
 				{
-					/* the color's red component.
-					*/
+					/**
+					 * the color's red component.
+					 */
 					float Red;
 
-					/* the color's green component.
-					*/
+					/**
+					 *  the color's green component.
+					 */
 					float Green;
 
-					/* the color's blue component.
-					*/
+					/**
+					 *  the color's blue component.
+					 */
 					float Blue;
 
-					/* the color's alpha component.
-					*/
+					/**
+					 *  the color's alpha component.
+					 */
 					float Alpha;
 				};
 				__m128 vector;
 			};
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* the color's red component.
-			*/
+			/**
+			 * the color's red component.
+			 */
 			float Red;
 
-			/* the color's green component.
-			*/
+			/**
+			 *  the color's green component.
+			 */
 			float Green;
 
-			/* the color's blue component.
-			*/
+			/**
+			 *  the color's blue component.
+			 */
 			float Blue;
 
-			/* the color's alpha component.
-			*/
+			/**
+			 *  the color's alpha component.
+			 */ 
 			float Alpha;
 #endif
 
@@ -133,8 +142,9 @@ namespace Apoc3D
 				Blue = blue;
 			}
 
-			/* Converts the color into a packed integer.
-			*/
+			/**
+			 *  Converts the color into a packed integer.
+			 */
 			ColorValue ToArgb() const
 			{
 				uint a = static_cast<uint>(Alpha * 255.0f);
@@ -148,15 +158,17 @@ namespace Apoc3D
 				return result;
 			}
 
-			/* Converts the color into a vector.
-			*/
+			/**
+			 *  Converts the color into a vector.
+			 */
 			Vector3 ToVector() const
 			{
 				return Vector3Utils::LDVector(Red, Green, Blue);
 			}
 
-			/* Adds two colors.
-			*/
+			/**
+			 *  Adds two colors.
+			 */
 			static void Add(Color4& result, const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -169,8 +181,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Adds two colors.
-			*/
+			/**
+			 *  Adds two colors.
+			 */
 			static Color4 Add(const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -184,8 +197,9 @@ namespace Apoc3D
 			}
 
 			
-			/* Subtracts two colors.
-			*/
+			/**
+			 *  Subtracts two colors.
+			 */
 			static Color4 Subtract(const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -198,8 +212,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Subtracts two colors.
-			*/
+			/**
+			 *  Subtracts two colors.
+			 */
 			static void Subtract(Color4& result, const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -212,8 +227,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Modulates two colors.
-			*/
+			/**
+			 *  Modulates two colors.
+			 */
 			static void Modulate(Color4& result,  const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -225,8 +241,9 @@ namespace Apoc3D
 					color1.Alpha * color2.Alpha);
 			#endif
 			}
-			/* Modulates two colors.
-			*/
+			/**
+			 *  Modulates two colors.
+			 */
 			static Color4 Modulate(const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -239,8 +256,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Performs a linear interpolation between two colors.
-			*/
+			/**
+			 *  Performs a linear interpolation between two colors.
+			 */
 			static Color4 Lerp(const Color4 &color1, const Color4 &color2, float amount)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -256,8 +274,9 @@ namespace Apoc3D
 				return Color4(red, green, blue, alpha);
 			#endif
 			}
-			/* Performs a linear interpolation between two colors.
-			*/
+			/**
+			 *  Performs a linear interpolation between two colors.
+			 */
 			static void Lerp(Color4& result, const Color4 &color1, const Color4 &color2, float amount)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -273,8 +292,9 @@ namespace Apoc3D
 				result = Color4(red, green, blue, alpha);
 			#endif
 			}
-			/* Negates a color.
-			*/
+			/**
+			 *  Negates a color.
+			 */
 			static void Negate(Color4& result, const Color4 &color)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -285,8 +305,9 @@ namespace Apoc3D
 			#endif
 			}
 			
-			/* Scales a color by the specified amount.
-			*/
+			/**
+			 *  Scales a color by the specified amount.
+			 */
 			static void Scale(Color4& result,  const Color4 &color, float scale)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -296,8 +317,9 @@ namespace Apoc3D
 				result = Color4(color.Red * scale, color.Green * scale, color.Blue * scale, color.Alpha);
 			#endif
 			}
-			/* Scales a color by the specified amount.
-			*/
+			/** 
+			 *  Scales a color by the specified amount.
+			 */
 			static Color4 Scale(const Color4 &color, float scale)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -308,8 +330,9 @@ namespace Apoc3D
 				return Color4(color.Red * scale, color.Green * scale, color.Blue * scale, color.Alpha);
 			#endif
 			}
-			/* Adjusts the contrast of a color.
-			*/
+			/**
+			 *  Adjusts the contrast of a color.
+			 */
 			static void AdjustContrast(Color4& result, const Color4 &color, float contrast)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -329,8 +352,9 @@ namespace Apoc3D
 				result = Color4(r, g, b, color.Alpha);
 			#endif
 			}
-			/* Adjusts the contrast of a color.
-			*/
+			/** 
+			 *  Adjusts the contrast of a color.
+			 */
 			static Color4 AdjustContrast(const Color4 &color, float contrast)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -351,8 +375,9 @@ namespace Apoc3D
 				return Color4(r, g, b, color.Alpha);
 			#endif
 			}
-			/* Adjusts the saturation of a color.
-			*/
+			/**
+			 *  Adjusts the saturation of a color.
+			 */
 			static void AdjustSaturation(Color4& result, const Color4 &color, float saturation)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -377,8 +402,9 @@ namespace Apoc3D
 			#endif
 			}
 
-			/* Adjusts the saturation of a color.
-			*/
+			/**
+			 *  Adjusts the saturation of a color.
+			 */
 			static Color4 AdjustSaturation(const Color4 &color, float saturation)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE

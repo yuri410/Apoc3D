@@ -30,8 +30,9 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		/** Packed ARGB value, 8 bit per channel
-		*/
+		/**
+		 *  Packed ARGB value, 8 bit per channel
+		 */
 		typedef uint ColorValue;
 #define UNPACK_COLOR(color, r,g,b,a) a = (color>>24); r = (0xff & (color>>16)); g = (0xff & (color>>8)); b = (0xff & color);
 #define PACK_COLOR(r,g,b,a) ( (static_cast<uint>(a)<<24) | (static_cast<uint>(r)<<16) | (static_cast<uint>(g)<<8) | (static_cast<uint>(b)) )

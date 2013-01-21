@@ -37,9 +37,10 @@ using namespace Apoc3D::Graphics;
 
 namespace Apoc3D
 {
-	/** Presents and provides load and save operation for project configuration file.
-		Includes project directory structure, and all parameters used to compile assets to
-		final formats.
+	/**
+	 *  Presents and provides load and save operation for project configuration file.
+	 *  Includes project directory structure, and all parameters used to compile assets to
+	 *  final formats.
 	*/
 
 
@@ -63,8 +64,9 @@ namespace Apoc3D
 		PRJITEM_Font
 	};
 	
-	/** Represent the build configuration for a specific type of assert in the project.
-	*/
+	/**
+	 *  Represent the build configuration for a specific type of assert in the project.
+	 */
 	class ProjectItemData
 	{
 	private:
@@ -121,8 +123,9 @@ namespace Apoc3D
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 	};
 
-	/** Represents the type of resource that is natively supported by the engine.
-	*/
+	/**
+	 *  Represents the type of resource that is natively supported by the engine.
+	 */
 	class ProjectResource : public ProjectItemData
 	{
 	protected:
@@ -132,7 +135,9 @@ namespace Apoc3D
 
 		}
 	};
-	/** Represents a project folder 
+	/** 
+	 *  Represents a project folder 
+	 *
 	 *  When building, a project folder can either be converted into a archive file, or
 	 *  just as a folder as a result
 	 */
@@ -162,7 +167,8 @@ namespace Apoc3D
 		void SavePackBuildConfig(ConfigurationSection* sect);
 	};
 
-	/** A texture
+	/**
+	 *  A texture
 	 *  When building, a texture can come from 2 type of sources.
 	 *   1. For cubemaps and volume maps, a series of 2D images/textures can be used to 
 	 *      assemble the final result. Each 2D texture is used as a cubemap face or a slice.
@@ -268,7 +274,8 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t);
 	};
 
-	/** Represents model with animation
+	/**
+	 *  Represents model with animation
 	 *  When building, a model is converted into a .mesh file, and a .anim file.
 	 *  .mesh file only contains the geometry, material information of the model, while in the anim file
 	 *  frames, bones are included.
@@ -409,7 +416,8 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t);
 	};
 
-	/** Represents font assets.
+	/**
+	 *  Represents font assets.
 	 *  Font asset can only be built from system fonts so far.
 	 *  When using languages like Chinese, Korean, the generated font file could be up to MBs in size.
 	 */
@@ -501,7 +509,8 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t);
 	};
 
-	/** Represents one asset in the project.
+	/**
+	 *  Represents one asset in the project.
 	 *  A ProjectItem is one to one to a ProjectItemData, which means
 	 *  the specific data used in specific type of item. A texture
 	 *  item will use the ProjectResTexture for the data.
@@ -527,8 +536,9 @@ namespace Apoc3D
 		void Parse(const ConfigurationSection* sect);
 		ConfigurationSection* Save(bool savingBuild);
 
-		/** Check if the item's built version is outdated
-		*/
+		/**
+		 *  Check if the item's built version is outdated
+		 */
 		bool IsOutDated() const 
 		{
 			if (m_typeData)
@@ -550,8 +560,9 @@ namespace Apoc3D
 
 		String m_name;
 		
-		/** The time of the last modification time
-		*/
+		/**
+		 *  The time of the last modification time
+		 */
 		time_t m_timeStamp;
 	};
 	class Project
@@ -571,38 +582,46 @@ namespace Apoc3D
 	public:
 		const String& getName() const { return m_name; }
 		
-		/** Gets the relative path for textures
-		*/
+		/** 
+		 *  Gets the relative path for textures
+		 */
 		const String& getTexturePath() const { return m_texturePath; }
-		/** Gets the relative path for materials
-		*/
+		/**
+		 *  Gets the relative path for materials
+		 */
 		const String& getMaterialPath() const { return m_materialPath; }
 		
 
 
-		/** Gets the absolute path for placing imported assets or project items
-		*/
+		/**
+		 *  Gets the absolute path for placing imported assets or project items
+		 */
 		const String& getOutputPath() const { return m_outputPath; }
 
-		/** Sets the absolute path for the project's source assets. 
+		/**
+		 *  Sets the absolute path for the project's source assets. 
 		 *  Once this is set, OutputPath will be changed to "build" sub folder under this path
 		 */
 		void setBasePath(const String& path);
-		/** Gets the absolute path for the project's source assets. 
-		*/
+		/**
+		 *  Gets the absolute path for the project's source assets. 
+		 */
 		const String& getBasePath() const { return m_basePath; }
 
 		const FastList<ProjectItem*>& getItems() const { return m_items; }
 
-		/** Load the project from a ConfigurationSection
-		*/
+		/**
+		 *  Load the project from a ConfigurationSection
+		 */
 		void Parse(const ConfigurationSection* sect);
 		
-		/** Saves the project into a file
-		*/
+		/**
+		 *  Saves the project into a file
+		 */
 		void Save(const String& file);
 
-		/** Generate a series of build action represented by ConfigurationSection object.
+		/**
+		 *  Generate a series of build action represented by ConfigurationSection object.
 		 *  The sequence is based on the dependency of project items.
 		 */
 		void GenerateBuildScripts(FastList<ConfigurationSection*>& result);
