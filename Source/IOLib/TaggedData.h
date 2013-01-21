@@ -138,8 +138,8 @@ namespace Apoc3D
 		class APAPI TaggedDataWriter
 		{
 		public:
-			TaggedDataWriter(bool isWritringFile)
-				: m_endianDependent(!isWritringFile)
+			TaggedDataWriter(bool isEndianIndependent)
+				: m_endianDependent(!isEndianIndependent)
 			{ }
 			~TaggedDataWriter();
 
