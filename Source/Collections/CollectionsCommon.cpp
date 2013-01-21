@@ -58,6 +58,7 @@ namespace Apoc3D
 			const void* s = obj;
 			return reinterpret_cast<int64>(s);
 		}
+
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
@@ -73,9 +74,11 @@ namespace Apoc3D
 		{
 			return reinterpret_cast<int64>(obj);
 		}
+
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
+
 		const IEqualityComparer<wchar_t>*
 			WCharEqualityComparer::BuiltIn::Default = new WCharEqualityComparer();
 
@@ -91,8 +94,6 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
-
-
 
 		const IEqualityComparer<string>* 
 			stlstringEqualityComparer::BuiltIn::Default = new stlstringEqualityComparer();
@@ -110,6 +111,21 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
+		const IEqualityComparer<uint64>* 
+			Uint64EqualityComparer::BuiltIn::Default = new Uint64EqualityComparer();
+
+		bool Uint64EqualityComparer::Equals(const uint64& x, const uint64& y) const
+		{
+			return x==y;
+		}
+		int64 Uint64EqualityComparer::GetHashCode(const uint64& obj) const
+		{
+			return static_cast<int64>(obj);
+		}
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
 
 		const IEqualityComparer<uint32>* 
 			Uint32EqualityComparer::BuiltIn::Default = new Uint32EqualityComparer();
@@ -122,9 +138,11 @@ namespace Apoc3D
 		{
 			return obj;
 		}
+
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
+
 		const IEqualityComparer<int32>* 
 			Int32EqualityComparer::BuiltIn::Default = new Int32EqualityComparer();
 
@@ -136,6 +154,7 @@ namespace Apoc3D
 		{
 			return obj;
 		}
+
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/

@@ -71,49 +71,45 @@ namespace Apoc3D
 		class APAPI PointerEqualityComparer : public IEqualityComparer<LPVoid>
 		{
 		public:
-			class BuiltIn : public IBuiltInEqualityComparer<LPVoid>
-			{
+			class BuiltIn : public IBuiltInEqualityComparer<LPVoid> { };
 
-			};
 			virtual bool Equals(const LPVoid& x, const LPVoid& y) const;
-
 			virtual int64 GetHashCode(const LPVoid& obj) const;
+		};
+
+		class APAPI Uint64EqualityComparer : public IEqualityComparer<uint64>
+		{
+		public:
+			class BuiltIn : public IBuiltInEqualityComparer<uint64> { };
+
+			virtual bool Equals(const uint64& x, const uint64& y) const;
+			virtual int64 GetHashCode(const uint64& obj) const;
 		};
 
 		class APAPI Uint32EqualityComparer : public IEqualityComparer<uint32>
 		{
 		public:
-			class BuiltIn : public IBuiltInEqualityComparer<uint32>
-			{
+			class BuiltIn : public IBuiltInEqualityComparer<uint32> { };
 
-			};
 			virtual bool Equals(const uint32& x, const uint32& y) const;
-
 			virtual int64 GetHashCode(const uint32& obj) const;
 		};
 
 		class APAPI Int32EqualityComparer : public IEqualityComparer<int32>
 		{
 		public:
-			class BuiltIn : public IBuiltInEqualityComparer<int32>
-			{
+			class BuiltIn : public IBuiltInEqualityComparer<int32> { };
 
-			};
 			virtual bool Equals(const int32& x, const int32& y) const;
-
 			virtual int64 GetHashCode(const int32& obj) const;
 		};
 
 		class APAPI WCharEqualityComparer : public IEqualityComparer<wchar_t>
 		{
 		public:
-			class BuiltIn : public IBuiltInEqualityComparer<wchar_t>
-			{
-
-			};
+			class BuiltIn : public IBuiltInEqualityComparer<wchar_t> { };
 
 			virtual bool Equals(const wchar_t& x, const wchar_t& y) const;
-
 			virtual int64 GetHashCode(const wchar_t& obj) const;
 		};
 
@@ -121,40 +117,30 @@ namespace Apoc3D
 		class APAPI ResourceEqualityComparer : public IEqualityComparer<LPResource>
 		{
 		public:
-			class BuiltIn : public IBuiltInEqualityComparer<LPResource>
-			{
+			class BuiltIn : public IBuiltInEqualityComparer<LPResource> { };
 
-			};
 			virtual bool Equals(const LPResource& x, const LPResource& y) const;
-			
 			virtual int64 GetHashCode(const LPResource& obj) const;
 		};
 
 		class APAPI stlstringEqualityComparer : public IEqualityComparer<string>
 		{
-		private:
-			
-			unordered_map<string, string> m_hasher;
 		public:
-			class BuiltIn : public IBuiltInEqualityComparer<string>
-			{
-
-			};
+			class BuiltIn : public IBuiltInEqualityComparer<string> { };
 
 			virtual bool Equals(const string& x, const string& y) const;
-
 			virtual int64 GetHashCode(const string& obj) const;
+
+		private:
+			unordered_map<string, string> m_hasher;
 		};
 
 		class APAPI StringEuqlityComparer : public IEqualityComparer<String>
 		{
 		public:
-			class BuiltIn : public IBuiltInEqualityComparer<String>
-			{
+			class BuiltIn : public IBuiltInEqualityComparer<String> { };
 
-			};
 			virtual bool Equals(const String& x, const String& y) const;
-
 			virtual int64 GetHashCode(const String& obj) const;
 		};
 
