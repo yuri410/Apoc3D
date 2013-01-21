@@ -171,6 +171,7 @@ namespace Apoc3D
 
 			void Save(Stream* stream) const;
 
+			bool Contains(const String& name) const;
 		private:
 			struct Entry
 			{

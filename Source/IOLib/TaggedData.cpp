@@ -279,7 +279,11 @@ namespace Apoc3D
 		}
 
 		
-		
+		bool TaggedDataWriter::Contains(const String& name) const
+		{
+			return !!FindEntry(name);
+		}
+
 
 		void TaggedDataWriter::AddEntry(const String& name, int64 value)
 		{
