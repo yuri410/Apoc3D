@@ -45,21 +45,6 @@ namespace Apoc3D
 		 */
 		class APAPI MaterialData
 		{
-		private:
-			void LoadTexture(BinaryReader* br, int32 index);
-			void SaveTexture(BinaryWriter* bw, int32 index);
-
-			void LoadEffect(BinaryReader* br, int32 index);
-			void SaveEffect(BinaryWriter* bw, int32 index);
-
-			/**
-			 *  Load with format version 2. The version used in making ZoneLink 2
-			 */
-			void LoadV2(TaggedDataReader* data);
-			/**
-			 *  Load with format version 3
-			 */
-			void LoadV3(TaggedDataReader* data);
 		public:
 			/**
 			 *  Name for retiring material reference
@@ -150,6 +135,22 @@ namespace Apoc3D
 
 			void Load(const ResourceLocation* rl);
 			void Save(Stream* strm);
+			
+		private:
+			//void LoadTexture(BinaryReader* br, int32 index);
+			//void SaveTexture(BinaryWriter* bw, int32 index);
+
+			//void LoadEffect(BinaryReader* br, int32 index);
+			//void SaveEffect(BinaryWriter* bw, int32 index);
+
+			/**
+			 *  Load with format version 2. The version used in making ZoneLink 2
+			 */
+			void LoadV2(TaggedDataReader* data);
+			/**
+			 *  Load with format version 3
+			 */
+			void LoadV3(TaggedDataReader* data);
 		};
 
 	}

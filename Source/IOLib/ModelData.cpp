@@ -125,14 +125,7 @@ namespace Apoc3D
 			}
 
 			// read name
-			{
-				BinaryReader* br = data->GetData(TAG_3_NameTag);
-
-				Name = br->ReadString();
-
-				br->Close();
-				delete br;
-			}
+			data->GetDataString(TAG_3_NameTag, Name);
 
 			// read faces
 			{
@@ -254,13 +247,8 @@ namespace Apoc3D
 			}
 
 			// write name
-			{
-				BinaryWriter* bw = data->AddEntry(TAG_3_NameTag);
-				bw->Write(Name);
-				bw->Close();
-				delete bw;
-			}
-
+			data->AddEntryString(TAG_3_NameTag, Name);
+			
 			data->AddEntry(TAG_3_FaceCountTag, static_cast<uint32>(Faces.getCount()));
 
 			// write faces

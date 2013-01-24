@@ -40,18 +40,20 @@ namespace Apoc3D
 	namespace IO
 	{
 		BinaryReader::BinaryReader(Stream* baseStream)
-			: m_baseStream(baseStream)
+			: m_baseStream(baseStream), m_shouldDeleteStream(true)
 		{
 			m_isEndianDependent = baseStream->IsReadEndianDependent();
 		}
 		BinaryReader::BinaryReader(const ResourceLocation* rl)
+			: m_shouldDeleteStream(true)
 		{
 			m_baseStream = rl->GetReadStream();
 			m_isEndianDependent = m_baseStream->IsReadEndianDependent();
 		}
 		BinaryReader::~BinaryReader()
 		{
-			delete m_baseStream;
+			if (m_shouldDeleteStream)
+				delete m_baseStream;
 		}
 		void BinaryReader::FillBuffer(int32 len)
 		{
@@ -89,7 +91,7 @@ namespace Apoc3D
 		{
 			uint32 len = ReadUInt32();
 
-			if ((len & 0x80000000U) == 0x80000000)
+			if ((len & 0x80000000U) == 0x80000000U)
 			{
 				len &= 0x7FFFFFFFU;
 

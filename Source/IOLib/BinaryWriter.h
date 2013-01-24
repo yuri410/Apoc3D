@@ -36,8 +36,6 @@ namespace Apoc3D
 		class APAPI BinaryWriter
 		{
 		public:
-			Stream* getBaseStream() const { return m_baseStream; }
-
 			BinaryWriter(Stream* baseStream);
 			~BinaryWriter();
 
@@ -78,8 +76,17 @@ namespace Apoc3D
 			void Write(const TaggedDataWriter* data) const;
 			void Close() const;
 
+			/**
+			 * Ask the BinaryWriter not to delete the base stream upon release
+			 */
+			void SuspendStreamRelease() { m_shouldDeleteStream = false; }
+
+			Stream* getBaseStream() const { return m_baseStream; }
+
 		private:
 			bool m_endianDependent;
+			bool m_shouldDeleteStream;
+
 			Stream* m_baseStream;
 		};
 	}

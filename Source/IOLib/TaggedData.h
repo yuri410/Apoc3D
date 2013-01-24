@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 #include "Collections/FastMap.h"
+#include "Math/Vector.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
@@ -50,17 +51,13 @@ namespace Apoc3D
 		class APAPI TaggedDataReader
 		{
 		public:
-			Stream* getBaseStream() const { return m_stream; }
-
 			TaggedDataReader(Stream* strm);
 			~TaggedDataReader();
 
-			bool Contains(const String& name) const
-			{
-				return m_positions.Contains(name);
-				//SectionTable::const_iterator iter = m_positions.find(name);
-				//return (iter != m_positions.end());
-			}
+			/**
+			 *  Check if the data chunk has a key name of the specified
+			 */
+			bool Contains(const String& name) const { return m_positions.Contains(name); }
 
 			BinaryReader* TryGetData(const String& name) const;
 			BinaryReader* GetData(const String& name) const;
@@ -77,7 +74,6 @@ namespace Apoc3D
 			float GetDataSingle(const String& name);
 			double GetDataDouble(const String& name);
 
-
 			bool TryGetDataInt64(const String& name, int64& v);
 			bool TryGetDataUInt64(const String& name, uint64& v);
 			bool TryGetDataInt32(const String& name, int32& v);
@@ -88,11 +84,33 @@ namespace Apoc3D
 			bool TryGetDataSingle(const String& name, float& v);
 			bool TryGetDataDouble(const String& name, double& v);
 
+
+			void GetDataVector2(const String& name, Vector2& vec);
+			void GetDataVector3(const String& name, Vector3& vec);
+			void GetDataVector4(const String& name, Vector4& vec);
+			void GetDataMatrix(const String& name, Matrix& mat);
+			void GetDataColor4(const String& name, Color4& clr);
+			void GetDataString(const String& name, String& str);
+
+			bool TryGetVector2(const String& name, Vector2& vec);
+			bool TryGetVector3(const String& name, Vector3& vec);
+			bool TryGetVector4(const String& name, Vector4& vec);
+			bool TryGetMatrix(const String& name, Matrix& mat);
+			bool TryGetColor4(const String& name, Color4& clr);
+			bool TryGetString(const String& name, String& str);
+
+
 			int64 GetChunkOffset(const String& name) const;
 
 			void Close();
 
+			/** 
+			 * Exports a list of key names to the specified list.
+			 */
 			void FillTagList(List<String>& nameTags) const;
+
+
+			Stream* getBaseStream() const { return m_stream; }
 		private:
 			struct Entry
 			{
@@ -107,8 +125,26 @@ namespace Apoc3D
 				}
 				Entry() { }
 			};
-			//template class APAPI unordered_map<String, Entry>;
+
 			typedef FastMap<String, Entry> SectionTable;
+
+			inline void FillBuffer(const String& name, uint32 len);
+
+			inline bool TryFillBuffer(const String& name, uint32 len);
+
+			inline void GetBufferVector2(Vector2& vec);
+			inline void GetBufferVector3(Vector3& vec);
+			inline void GetBufferVector4(Vector4& vec);
+			inline void GetEntryMatrix(const Entry* e, Matrix& mat);
+			inline void GetBufferColor4(Color4& clr);
+			inline void GetEntryString(const Entry* e, String& str);
+
+
+			const Entry* FindEntry(const String& name) const
+			{
+				return m_positions.TryGetValue(name);
+			}
+
 
 			bool m_endianDependent;
 			int m_sectCount;
@@ -117,21 +153,6 @@ namespace Apoc3D
 
 			char m_buffer[32];
 
-
-			inline void FillBuffer(const String& name, uint32 len);
-
-			inline bool TryFillBuffer(const String& name, uint32 len);
-
-			const Entry* FindEntry(const String& name) const
-			{
-				return m_positions.TryGetValue(name);
-				//SectionTable::const_iterator iter = m_positions.find(name);
-				//if (iter != m_positions.end())
-				//{
-				//	return &iter->second;
-				//}
-				//return 0;
-			}
 		};
 
 		/**
@@ -144,9 +165,7 @@ namespace Apoc3D
 			 * param isEndianIndependent true if the data medium is a fixed Endianness across platform.
 			 *		 false for situations like CPU memory.
 			 */
-			TaggedDataWriter(bool isEndianIndependent)
-				: m_endianDependent(!isEndianIndependent)
-			{ }
+			TaggedDataWriter(bool isEndianIndependent);
 			~TaggedDataWriter();
 
 
@@ -162,7 +181,14 @@ namespace Apoc3D
 			void AddEntry(const String& name, float value);
 			void AddEntry(const String& name, double value);
 			void AddEntry(const String& name, bool value);
-			
+
+			void AddEntryVector2(const String& name, const Vector2& vec);
+			void AddEntryVector3(const String& name, const Vector3& vec);
+			void AddEntryVector4(const String& name, const Vector4& vec);
+			void AddEntryMatrix(const String& name, const Matrix& mat);
+			void AddEntryColor4(const String& name, const Color4& clr);
+			void AddEntryString(const String& name, const String& str);
+
 			BinaryWriter* GetData(const String& name);
 
 			void SetData(const String& name, int64 value);
@@ -174,6 +200,14 @@ namespace Apoc3D
 			void SetData(const String& name, float value);
 			void SetData(const String& name, double value);
 			void SetData(const String& name, bool value);
+			
+			void SetDataVector2(const String& name, const Vector2& vec);
+			void SetDataVector3(const String& name, const Vector3& vec);
+			void SetDataVector4(const String& name, const Vector4& vec);
+			void SetDataMatrix(const String& name, const Matrix& mat);
+			void SetDataColor4(const String& name, const Color4& clr);
+			void SetDataString(const String& name, const String& str);
+
 
 			void Save(Stream* stream) const;
 
@@ -186,24 +220,39 @@ namespace Apoc3D
 				Entry(const String& name);
 
 				Entry() { }
+				void ResetWritePosition() const;
 			};
 
 			typedef FastMap<String, Entry> SectionTable;
+
+			const Entry* FindEntry(const String& name) const
+			{
+				return m_positions.TryGetValue(name);
+			}
+
+			void _SetEntryDataInt64(const Entry& ent, int64 value);
+			void _SetEntryDataUInt64(const Entry& ent, uint64 value);
+			void _SetEntryDataInt32(const Entry& ent, int32 value);
+			void _SetEntryDataUInt32(const Entry& ent, uint32 value);
+			void _SetEntryDataInt16(const Entry& ent, int16 value);
+			void _SetEntryDataUInt16(const Entry& ent, uint16 value);
+			void _SetEntryDataSingle(const Entry& ent, float value);
+			void _SetEntryDataDouble(const Entry& ent, double value);
+			void _SetEntryDataBool(const Entry& ent, bool value);
+
+			void _SetEntryDataVector2(const Entry& ent, const Vector2& vec);
+			void _SetEntryDataVector3(const Entry& ent, const Vector3& vec);
+			void _SetEntryDataVector4(const Entry& ent, const Vector4& vec);
+			void _SetEntryDataMatrix(const Entry& ent, const Matrix& mat);
+			void _SetEntryDataColor4(const Entry& ent, const Color4& clr);
+			void _SetEntryDataString(const Entry& ent, const String& str);
+
+
 
 			bool m_endianDependent;
 			SectionTable m_positions;
 			char m_buffer[32];
 
-			const Entry* FindEntry(const String& name) const
-			{
-				return m_positions.TryGetValue(name);
-				//SectionTable::const_iterator iter = m_positions.find(name);
-				//if (iter != m_positions.end())
-				//{
-				//	return &iter->second;
-				//}
-				//return 0;
-			}
 		};
 	}
 }

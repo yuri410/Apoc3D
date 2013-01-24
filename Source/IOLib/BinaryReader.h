@@ -86,13 +86,21 @@ namespace Apoc3D
 			void Close() const;
 
 			Stream* getBaseStream() const { return m_baseStream; }
+
+			/**
+			 * Ask the BinaryWriter not to delete the base stream upon release
+			 */
+			void SuspendStreamRelease() { m_shouldDeleteStream = false; }
 		private:
+			inline void FillBuffer(int32 len);
+
 			bool m_isEndianDependent;
+			bool m_shouldDeleteStream;
+
 			Stream* m_baseStream;
 
 			char m_buffer[32];
 
-			inline void FillBuffer(int32 len);
 		};
 	};
 };

@@ -36,13 +36,14 @@ namespace Apoc3D
 	namespace IO
 	{
 		BinaryWriter::BinaryWriter(Stream* baseStream)
-			: m_baseStream(baseStream)
+			: m_baseStream(baseStream), m_shouldDeleteStream(true)
 		{
 			m_endianDependent = baseStream->IsWriteEndianDependent();
 		}
 		BinaryWriter::~BinaryWriter()
 		{
-			delete m_baseStream;
+			if (m_shouldDeleteStream)
+				delete m_baseStream;
 		}
 
 		void BinaryWriter::Write(const char* bytes, int64 count) const

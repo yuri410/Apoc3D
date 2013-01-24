@@ -93,28 +93,28 @@ namespace Apoc3D
 
 		static String TAG_3_UsePointSprite = L"UsePointSprite";
 
-		void MaterialData::LoadEffect(BinaryReader* br, int32 index)
-		{
-			assert(index<MaxScenePass);
+		//void MaterialData::LoadEffect(BinaryReader* br, int32 index)
+		//{
+		//	assert(index<MaxScenePass);
 
-			EffectName[index] = br->ReadString();
-		}
-		void MaterialData::SaveEffect(BinaryWriter* bw, int32 index)
-		{
-			assert(index<MaxScenePass);
-			bw->Write(EffectName[index]);
-		}
+		//	EffectName[index] = br->ReadString();
+		//}
+		//void MaterialData::SaveEffect(BinaryWriter* bw, int32 index)
+		//{
+		//	assert(index<MaxScenePass);
+		//	bw->Write(EffectName[index]);
+		//}
 
-		void MaterialData::LoadTexture(BinaryReader* br, int32 index)
-		{
-			assert(index<MaxTextures);
-			TextureName[index] = br->ReadString();
-		}
-		void MaterialData::SaveTexture(BinaryWriter* bw, int32 index)
-		{
-			assert(index<MaxTextures);
-			bw->Write(TextureName[index]);
-		}
+		//void MaterialData::LoadTexture(BinaryReader* br, int32 index)
+		//{
+		//	assert(index<MaxTextures);
+		//	TextureName[index] = br->ReadString();
+		//}
+		//void MaterialData::SaveTexture(BinaryWriter* bw, int32 index)
+		//{
+		//	assert(index<MaxTextures);
+		//	bw->Write(TextureName[index]);
+		//}
 
 
 		void MaterialData::AddCustomParameter(const MaterialCustomParameter& value)
@@ -200,12 +200,13 @@ namespace Apoc3D
 				delete br;
 			}
 			// load effect
-			{
-				BinaryReader* br = data->GetData(TAG_2_Effect);
-				LoadEffect(br, 0);
-				br->Close();
-				delete br;
-			}
+			data->GetDataString(TAG_2_Effect, EffectName[0]);
+			//{
+				//BinaryReader* br = data->GetData(TAG_2_Effect);
+				//LoadEffect(br, 0);
+				//br->Close();
+				//delete br;
+			//}
 			// load textures
 			{
 				BinaryReader* br = data->GetData(TAG_2_HasTexture);
@@ -223,12 +224,14 @@ namespace Apoc3D
 					{
 						String tag = StringUtils::ToString(i);
 						tag = TAG_2_Texture + tag;
-						br = data->GetData(tag);
 
-						LoadTexture(br, i);
+						data->GetDataString(TAG_2_Effect, TextureName[i]);
+						//br = data->GetData(tag);
 
-						br->Close();
-						delete br;
+						//LoadTexture(br, i);
+
+						//br->Close();
+						//delete br;
 					}
 				}
 			}
@@ -279,12 +282,14 @@ namespace Apoc3D
 					{
 						String tag = StringUtils::ToString(i);
 						tag = tag + TAG_3_Texture;
-						br = data->GetData(tag);
 
-						LoadTexture(br, i);
+						data->GetDataString(tag, TextureName[i]);
+						//br = data->GetData(tag);
 
-						br->Close();
-						delete br;
+						//LoadTexture(br, i);
+
+						//br->Close();
+						//delete br;
 					}
 				}
 			}
@@ -306,12 +311,15 @@ namespace Apoc3D
 					{
 						String tag = StringUtils::ToString(i);
 						tag = tag + TAG_3_Effect;
-						br = data->GetData(tag);
 
-						LoadEffect(br, i);
+						data->GetDataString(tag, TextureName[i]);
 
-						br->Close();
-						delete br;
+						//br = data->GetData(tag);
+
+						//LoadEffect(br, i);
+
+						//br->Close();
+						//delete br;
 					}
 				}
 			}
@@ -357,17 +365,7 @@ namespace Apoc3D
 				delete br;
 			}
 
-
-			{
-				BinaryReader* br = data->TryGetData(TAG_3_MaterialRefName);
-				if (br)
-				{
-					ExternalRefName = br->ReadString();
-					br->Close();
-					delete br;
-				}
-			}
-			
+			data->TryGetString(TAG_3_MaterialRefName, ExternalRefName);
 		}
 
 		void MaterialData::LoadData(TaggedDataReader* data)
@@ -427,10 +425,11 @@ namespace Apoc3D
 						String tag = StringUtils::ToString(i);
 						tag = tag + TAG_3_Texture;
 
-						bw = data->AddEntry(tag);
-						SaveTexture(bw, i);
-						bw->Close();
-						delete bw;
+						data->AddEntryString(tag, TextureName[i]);
+						//bw = data->AddEntry(tag);
+						//SaveTexture(bw, i);
+						//bw->Close();
+						//delete bw;
 					}
 				}
 			}
@@ -451,10 +450,12 @@ namespace Apoc3D
 						String tag = StringUtils::ToString(i);
 						tag = tag + TAG_3_Effect;
 
-						bw = data->AddEntry(tag);
-						SaveEffect(bw, i);
-						bw->Close();
-						delete bw;
+						data->AddEntryString(tag, EffectName[i]);
+
+						//bw = data->AddEntry(tag);
+						//SaveEffect(bw, i);
+						//bw->Close();
+						//delete bw;
 					}
 				}
 			}
@@ -491,12 +492,7 @@ namespace Apoc3D
 				delete bw;
 			}
 
-			{
-				BinaryWriter* bw = data->AddEntry(TAG_3_MaterialRefName);
-				bw->Write(ExternalRefName);
-				bw->Close();
-				delete bw;
-			}
+			data->AddEntryString(TAG_3_MaterialRefName, ExternalRefName);
 
 			return data;
 		}
