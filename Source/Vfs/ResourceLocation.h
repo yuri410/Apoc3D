@@ -38,7 +38,7 @@ namespace Apoc3D
 	namespace VFS
 	{
 		/**
-		 *  An abstract class representing the location of an asset.
+		 *  An abstract class representing the location of a data storage.
 		 */
 		class APAPI ResourceLocation : public IHashed
 		{
@@ -65,7 +65,7 @@ namespace Apoc3D
 			virtual bool CanWrite() const = 0;
 		};
 		/**
-		 *  Represents the location of an asset which is stored in a file, including
+		 *  Represents the location of a data storage which is stored in a file, including
 		 *  those in archives.
 		 *  The location can be specified manually or provided by the FileSystem.
 		 */
@@ -84,7 +84,7 @@ namespace Apoc3D
 			FileLocation(Archive* pack, const String& filePath, const String& entryName);
 			~FileLocation();
 
-			virtual Stream* GetWriteStream() const { return 0;}
+			virtual Stream* GetWriteStream() const { return nullptr;}
 			virtual Stream* GetReadStream() const;
 
 			bool isInArchive() const { return !!m_parent; }
@@ -94,12 +94,10 @@ namespace Apoc3D
 			virtual bool CanWrite() const { return false; }
 		};
 		/** 
-		 *  Represents the location of an asset which is stored in memory.
+		 *  Represents the location of a data storage which is stored in memory.
 		 */
 		class APAPI MemoryLocation : public ResourceLocation
 		{
-		private:
-			void* m_data;
 		public:
 			MemoryLocation(void* pos, int64 size);
 
@@ -108,7 +106,27 @@ namespace Apoc3D
 
 			virtual Stream* GetWriteStream() const;
 			virtual Stream* GetReadStream() const;
-			
+
+		private:
+			void* m_data;
+		};
+
+		/**
+		 *  Represents the location of a data storage which can be accessed through stream
+		 */
+		class APAPI StreamLocation : public ResourceLocation
+		{
+		public:
+			StreamLocation(Stream* strm);
+
+			virtual bool CanRead() const; 
+			virtual bool CanWrite() const; 
+
+			virtual Stream* GetWriteStream() const;
+			virtual Stream* GetReadStream() const;
+
+		private:
+			Stream* m_stream;
 		};
 	}
 }

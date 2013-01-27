@@ -89,6 +89,8 @@ namespace Apoc3D
 			return new FileStream(m_path);
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+
 		MemoryLocation::MemoryLocation(void* pos, int64 size)
 			: ResourceLocation(L"[ADDR]" + StringUtils::ToString(size), size), m_data(pos)
 		{
@@ -102,5 +104,36 @@ namespace Apoc3D
 		{
 			return new MemoryStream(reinterpret_cast<char*>(m_data), m_size);
 		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		StreamLocation::StreamLocation(Stream* strm)
+			: ResourceLocation(L"[STRM]" + StringUtils::ToStringHex((uint64)strm), strm->getLength()), 
+			m_stream(strm)
+		{
+
+		}
+
+		Stream* StreamLocation::GetReadStream() const
+		{
+			if (m_stream->CanRead())
+			{
+				return new VirtualStream(m_stream);
+			}
+			return nullptr;
+		}
+
+		Stream* StreamLocation::GetWriteStream() const
+		{
+			if (m_stream->CanWrite())
+			{
+				return new VirtualStream(m_stream);
+			}
+			return nullptr;
+		}
+
+		bool StreamLocation::CanRead() const { return m_stream->CanRead(); }
+		bool StreamLocation::CanWrite() const { return m_stream->CanWrite(); }
+
 	}
 }
