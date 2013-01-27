@@ -204,7 +204,6 @@ namespace Apoc3D
 		}
 		void MaterialData::LoadV3(TaggedDataReader* data)
 		{
-
 			// load custom material parameters
 			uint32 cmpCount = 0;
 			data->TryGetDataUInt32(TAG_3_CustomParamCount, cmpCount);
@@ -236,12 +235,6 @@ namespace Apoc3D
 				//BinaryReader* br = data->GetData(TAG_3_HasTexture);
 				bool hasTexture[MaxTextures];
 				data->GetDataBool(TAG_3_HasTexture, hasTexture, MaxTextures);
-				//for (int32 i=0;i<MaxTextures;i++)
-				//{
-				//hasTexture[i] = br->ReadBoolean();
-				//} 
-				//br->Close();
-				//delete br;
 
 				for (int32 i=0;i<MaxTextures;i++)
 				{
@@ -251,12 +244,6 @@ namespace Apoc3D
 						tag = tag + TAG_3_Texture;
 
 						data->GetDataString(tag, TextureName[i]);
-						//br = data->GetData(tag);
-
-						//LoadTexture(br, i);
-
-						//br->Close();
-						//delete br;
 					}
 				}
 			}
@@ -266,12 +253,6 @@ namespace Apoc3D
 				//BinaryReader* br = data->GetData(TAG_3_HasEffect);
 				bool hasEffect[MaxScenePass];
 				data->GetDataBool(TAG_3_HasEffect, hasEffect, MaxScenePass);
-				//for (int32 i=0;i<MaxScenePass;i++)
-				//{
-				//	hasEffect[i] = br->ReadBoolean();
-				//} 
-				//br->Close();
-				//delete br;
 
 				for (int32 i=0;i<MaxScenePass;i++)
 				{
@@ -280,14 +261,7 @@ namespace Apoc3D
 						String tag = StringUtils::ToString(i);
 						tag = tag + TAG_3_Effect;
 
-						data->GetDataString(tag, TextureName[i]);
-
-						//br = data->GetData(tag);
-
-						//LoadEffect(br, i);
-
-						//br->Close();
-						//delete br;
+						data->GetDataString(tag, EffectName[i]);
 					}
 				}
 			}
