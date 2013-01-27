@@ -153,6 +153,15 @@ namespace Apoc3D
 			FillBuffer(name, sizeof(double));
 			return cr64_le(m_buffer);
 		}
+		void TaggedDataReader::GetDataBool(const String& name, bool* value, int32 count)
+		{
+			const Entry* ent = FindEntry(name);
+			assert(ent);
+			_GetEntryBool(ent, value, count);
+		}
+
+
+
 
 		bool TaggedDataReader::TryGetDataInt64(const String& name, int64& v)
 		{
@@ -203,6 +212,16 @@ namespace Apoc3D
 				v = !!m_buffer[0];
 			return e;
 		}
+		bool TaggedDataReader::TryGetDataBool(const String& name, bool* value, int32 count)
+		{
+			const Entry* ent = FindEntry(name);
+			if (ent)
+			{
+				_GetEntryBool(ent, value, count);
+				return true;
+			}
+			return false;
+		}
 		bool TaggedDataReader::TryGetDataSingle(const String& name, float& v)
 		{
 			bool e = TryFillBuffer(name, sizeof(float));
@@ -223,52 +242,52 @@ namespace Apoc3D
 		void TaggedDataReader::GetDataVector2(const String& name, Vector2& vec)
 		{
 			FillBuffer(name, sizeof(float) * 2);
-			GetBufferVector2(vec);
+			_GetBufferVector2(vec);
 		}
 		void TaggedDataReader::GetDataVector3(const String& name, Vector3& vec)
 		{
 			FillBuffer(name, sizeof(float) * 3);
-			GetBufferVector3(vec);
+			_GetBufferVector3(vec);
 		}
 		void TaggedDataReader::GetDataVector4(const String& name, Vector4& vec)
 		{
 			FillBuffer(name, sizeof(float) * 4);
-			GetBufferVector4(vec);
+			_GetBufferVector4(vec);
 		}
 		void TaggedDataReader::GetDataMatrix(const String& name, Matrix& mat)
 		{
 			const Entry* ent = FindEntry(name);
 			assert(ent);
-			GetEntryMatrix(ent, mat);
+			_GetEntryMatrix(ent, mat);
 		}
 		void TaggedDataReader::GetDataColor4(const String& name, Color4& clr)
 		{
 			FillBuffer(name, sizeof(float) * 4);
-			GetBufferColor4(clr);
+			_GetBufferColor4(clr);
 		}
 		void TaggedDataReader::GetDataString(const String& name, String& str)
 		{
 			const Entry* ent = FindEntry(name);
 			assert(ent);
-			GetEntryString(ent, str);
+			_GetEntryString(ent, str);
 		}
 
 		bool TaggedDataReader::TryGetVector2(const String& name, Vector2& vec)
 		{
 			bool e = TryFillBuffer(name, sizeof(float) * 2);
-			if (e) GetBufferVector2(vec); 
+			if (e) _GetBufferVector2(vec); 
 			return e;
 		}
 		bool TaggedDataReader::TryGetVector3(const String& name, Vector3& vec)
 		{
 			bool e = TryFillBuffer(name, sizeof(float) * 3);
-			if (e) GetBufferVector3(vec); 
+			if (e) _GetBufferVector3(vec); 
 			return e;
 		}
 		bool TaggedDataReader::TryGetVector4(const String& name, Vector4& vec)
 		{
 			bool e = TryFillBuffer(name, sizeof(float) * 4);
-			if (e) GetBufferVector4(vec); 
+			if (e) _GetBufferVector4(vec); 
 			return e;
 		}
 		bool TaggedDataReader::TryGetMatrix(const String& name, Matrix& mat)
@@ -276,7 +295,7 @@ namespace Apoc3D
 			const Entry* ent = FindEntry(name);
 			if (ent)
 			{
-				GetEntryMatrix(ent, mat);
+				_GetEntryMatrix(ent, mat);
 				return true;
 			}
 			return false;
@@ -284,7 +303,7 @@ namespace Apoc3D
 		bool TaggedDataReader::TryGetColor4(const String& name, Color4& clr)
 		{
 			bool e = TryFillBuffer(name, sizeof(float) * 4);
-			if (e) GetBufferColor4(clr); 
+			if (e) _GetBufferColor4(clr); 
 			return e;
 		}
 		bool TaggedDataReader::TryGetString(const String& name, String& str)
@@ -292,7 +311,7 @@ namespace Apoc3D
 			const Entry* ent = FindEntry(name);
 			if (ent)
 			{
-				GetEntryString(ent, str);
+				_GetEntryString(ent, str);
 				return true;
 			}
 			return false;
@@ -319,26 +338,36 @@ namespace Apoc3D
 			}
 		}
 		
+		void TaggedDataReader::_GetEntryBool(const Entry* ent, bool* val, int32 len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
 
-		void TaggedDataReader::GetBufferVector2(Vector2& vec)
+			for (int32 i=0;i<len;i++)
+				val[i] = br.ReadBoolean();
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetBufferVector2(Vector2& vec)
 		{
 			v2x(vec) = cr32_le(m_buffer);
 			v2y(vec) = cr32_le(m_buffer + sizeof(float));
 		}
-		void TaggedDataReader::GetBufferVector3(Vector3& vec)
+		void TaggedDataReader::_GetBufferVector3(Vector3& vec)
 		{
 			v3x(vec) = cr32_le(m_buffer);
 			v3y(vec) = cr32_le(m_buffer + sizeof(float));
 			v3z(vec) = cr32_le(m_buffer + sizeof(float) * 2);
 		}
-		void TaggedDataReader::GetBufferVector4(Vector4& vec)
+		void TaggedDataReader::_GetBufferVector4(Vector4& vec)
 		{
 			v4x(vec) = cr32_le(m_buffer);
 			v4y(vec) = cr32_le(m_buffer + sizeof(float));
 			v4z(vec) = cr32_le(m_buffer + sizeof(float) * 2);
 			v4w(vec) = cr32_le(m_buffer + sizeof(float) * 3);
 		}
-		void TaggedDataReader::GetEntryMatrix(const TaggedDataReader::Entry* ent, Matrix& mat)
+		void TaggedDataReader::_GetEntryMatrix(const TaggedDataReader::Entry* ent, Matrix& mat)
 		{
 			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
 			BinaryReader br(&vStrm);
@@ -348,14 +377,14 @@ namespace Apoc3D
 
 			br.Close();
 		}
-		void TaggedDataReader::GetBufferColor4(Color4& clr)
+		void TaggedDataReader::_GetBufferColor4(Color4& clr)
 		{
 			clr.Red = cr32_le(m_buffer);
 			clr.Green = cr32_le(m_buffer + sizeof(float));
 			clr.Blue = cr32_le(m_buffer + sizeof(float) * 2);
 			clr.Alpha = cr32_le(m_buffer + sizeof(float) * 3);
 		}
-		void TaggedDataReader::GetEntryString(const TaggedDataReader::Entry* ent, String& str)
+		void TaggedDataReader::_GetEntryString(const TaggedDataReader::Entry* ent, String& str)
 		{
 			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
 			BinaryReader br(&vStrm);
@@ -461,10 +490,15 @@ namespace Apoc3D
 			Entry ent = Entry(name); m_positions.Add(name, ent);
 			_SetEntryDataDouble(ent, value);
 		}
-		void TaggedDataWriter::AddEntry(const String& name, bool value)
+		void TaggedDataWriter::AddEntryBool(const String& name, bool value)
 		{
 			Entry ent = Entry(name); m_positions.Add(name, ent);
 			_SetEntryDataBool(ent, value);
+		}
+		void TaggedDataWriter::AddEntryBool(const String& name, const bool* value, int32 count)
+		{
+			Entry ent = Entry(name); m_positions.Add(name, ent);
+			_SetEntryDataBool(ent, value, count);
 		}
 
 		void TaggedDataWriter::SetData(const String& name, int64 value)
@@ -694,7 +728,17 @@ namespace Apoc3D
 
 			ent.Buffer->Write(m_buffer, sizeof(value));
 		}
+		void TaggedDataWriter::_SetEntryDataBool(const Entry& ent, const bool* value, int32 count)
+		{
+			VirtualStream vStrm(ent.Buffer, 0);
+			BinaryWriter bw(&vStrm);
+			bw.SuspendStreamRelease();
 
+			for (int32 i=0;i<count;i++)
+				bw.Write(value[i]);
+
+			bw.Close();
+		}
 		void TaggedDataWriter::_SetEntryDataVector2(const TaggedDataWriter::Entry& ent, const Vector2& vec)
 		{
 			if (m_endianDependent)

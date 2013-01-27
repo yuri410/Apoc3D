@@ -101,14 +101,11 @@ namespace Apoc3D
 			// 2 tagged to one
 			TaggedDataWriter* localValues = new TaggedDataWriter(true);
 			{
-				BinaryWriter* bw2 = localValues->AddEntry(L"Value");
-				bw2->Write(section->getValue());
-				bw2->Close();
-				delete bw2;
-
+				localValues->AddEntryString(L"Value", section->getValue());
+				
 				if (section->getAttributeCount()>0)
 				{
-					bw2 = localValues->AddEntry(L"Attributes");
+					BinaryWriter* bw2 = localValues->AddEntry(L"Attributes");
 					bw2->Write(static_cast<int32>(section->getAttributeCount()));
 					for (ConfigurationSection::AttributeEnumerator e = section->GetAttributeEnumrator();e.MoveNext();)
 					{
@@ -165,12 +162,11 @@ namespace Apoc3D
 
 			TaggedDataReader* localValues = br->ReadTaggedDataBlock();
 			{
-				BinaryReader* br2 = localValues->GetData(L"Value");
-				section->SetValue(br2->ReadString());
-				br2->Close();
-				delete br2;
-
-				br2 = localValues->TryGetData(L"Attributes");
+				String svalue;
+				localValues->GetDataString(L"Value", svalue);
+				section->SetValue(svalue);
+				
+				BinaryReader* br2 = localValues->TryGetData(L"Attributes");
 				if (br2)
 				{
 					int count = br2->ReadInt32();

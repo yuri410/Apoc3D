@@ -93,29 +93,6 @@ namespace Apoc3D
 
 		static String TAG_3_UsePointSprite = L"UsePointSprite";
 
-		//void MaterialData::LoadEffect(BinaryReader* br, int32 index)
-		//{
-		//	assert(index<MaxScenePass);
-
-		//	EffectName[index] = br->ReadString();
-		//}
-		//void MaterialData::SaveEffect(BinaryWriter* bw, int32 index)
-		//{
-		//	assert(index<MaxScenePass);
-		//	bw->Write(EffectName[index]);
-		//}
-
-		//void MaterialData::LoadTexture(BinaryReader* br, int32 index)
-		//{
-		//	assert(index<MaxTextures);
-		//	TextureName[index] = br->ReadString();
-		//}
-		//void MaterialData::SaveTexture(BinaryWriter* bw, int32 index)
-		//{
-		//	assert(index<MaxTextures);
-		//	bw->Write(TextureName[index]);
-		//}
-
 
 		void MaterialData::AddCustomParameter(const MaterialCustomParameter& value)
 		{
@@ -201,12 +178,7 @@ namespace Apoc3D
 			}
 			// load effect
 			data->GetDataString(TAG_2_Effect, EffectName[0]);
-			//{
-				//BinaryReader* br = data->GetData(TAG_2_Effect);
-				//LoadEffect(br, 0);
-				//br->Close();
-				//delete br;
-			//}
+
 			// load textures
 			{
 				BinaryReader* br = data->GetData(TAG_2_HasTexture);
@@ -226,12 +198,6 @@ namespace Apoc3D
 						tag = TAG_2_Texture + tag;
 
 						data->GetDataString(TAG_2_Effect, TextureName[i]);
-						//br = data->GetData(tag);
-
-						//LoadTexture(br, i);
-
-						//br->Close();
-						//delete br;
 					}
 				}
 			}
@@ -267,14 +233,15 @@ namespace Apoc3D
 
 			// Load textures
 			{
-				BinaryReader* br = data->GetData(TAG_3_HasTexture);
+				//BinaryReader* br = data->GetData(TAG_3_HasTexture);
 				bool hasTexture[MaxTextures];
-				for (int32 i=0;i<MaxTextures;i++)
-				{
-					hasTexture[i] = br->ReadBoolean();
-				} 
-				br->Close();
-				delete br;
+				data->GetDataBool(TAG_3_HasTexture, hasTexture, MaxTextures);
+				//for (int32 i=0;i<MaxTextures;i++)
+				//{
+				//hasTexture[i] = br->ReadBoolean();
+				//} 
+				//br->Close();
+				//delete br;
 
 				for (int32 i=0;i<MaxTextures;i++)
 				{
@@ -296,14 +263,15 @@ namespace Apoc3D
 
 			// Load effects
 			{
-				BinaryReader* br = data->GetData(TAG_3_HasEffect);
+				//BinaryReader* br = data->GetData(TAG_3_HasEffect);
 				bool hasEffect[MaxScenePass];
-				for (int32 i=0;i<MaxScenePass;i++)
-				{
-					hasEffect[i] = br->ReadBoolean();
-				} 
-				br->Close();
-				delete br;
+				data->GetDataBool(TAG_3_HasEffect, hasEffect, MaxScenePass);
+				//for (int32 i=0;i<MaxScenePass;i++)
+				//{
+				//	hasEffect[i] = br->ReadBoolean();
+				//} 
+				//br->Close();
+				//delete br;
 
 				for (int32 i=0;i<MaxScenePass;i++)
 				{
@@ -410,13 +378,12 @@ namespace Apoc3D
 
 			// save textures
 			{
-				BinaryWriter* bw = data->AddEntry(TAG_3_HasTexture);
+				bool hasTexture[MaxTextures];
 				for (int32 i=0;i<MaxTextures;i++)
 				{
-					bw->Write(!TextureName[i].empty());
+					hasTexture[i] = (!TextureName[i].empty());
 				}
-				bw->Close();
-				delete bw;
+				data->AddEntryBool(TAG_3_HasTexture, hasTexture, MaxTextures);
 
 				for (int32 i=0;i<MaxTextures;i++)
 				{
@@ -426,22 +393,17 @@ namespace Apoc3D
 						tag = tag + TAG_3_Texture;
 
 						data->AddEntryString(tag, TextureName[i]);
-						//bw = data->AddEntry(tag);
-						//SaveTexture(bw, i);
-						//bw->Close();
-						//delete bw;
 					}
 				}
 			}
 			// save effects
 			{
-				BinaryWriter* bw = data->AddEntry(TAG_3_HasEffect);
+				bool hasEffects[MaxScenePass];
 				for (int32 i=0;i<MaxScenePass;i++)
 				{
-					bw->Write(EffectName.find(i) != EffectName.end());
+					hasEffects[i] = (EffectName.find(i) != EffectName.end());
 				}
-				bw->Close();
-				delete bw;
+				data->AddEntryBool(TAG_3_HasEffect, hasEffects, MaxScenePass);
 
 				for (int32 i=0;i<MaxScenePass;i++)
 				{
@@ -451,11 +413,6 @@ namespace Apoc3D
 						tag = tag + TAG_3_Effect;
 
 						data->AddEntryString(tag, EffectName[i]);
-
-						//bw = data->AddEntry(tag);
-						//SaveEffect(bw, i);
-						//bw->Close();
-						//delete bw;
 					}
 				}
 			}

@@ -74,6 +74,8 @@ namespace Apoc3D
 			float GetDataSingle(const String& name);
 			double GetDataDouble(const String& name);
 
+			void GetDataBool(const String& name, bool* value, int32 count);
+
 			bool TryGetDataInt64(const String& name, int64& v);
 			bool TryGetDataUInt64(const String& name, uint64& v);
 			bool TryGetDataInt32(const String& name, int32& v);
@@ -83,6 +85,8 @@ namespace Apoc3D
 			bool TryGetDataBool(const String& name, bool& v);
 			bool TryGetDataSingle(const String& name, float& v);
 			bool TryGetDataDouble(const String& name, double& v);
+
+			bool TryGetDataBool(const String& name, bool* value, int32 count);
 
 
 			void GetDataVector2(const String& name, Vector2& vec);
@@ -132,13 +136,13 @@ namespace Apoc3D
 
 			inline bool TryFillBuffer(const String& name, uint32 len);
 
-			inline void GetBufferVector2(Vector2& vec);
-			inline void GetBufferVector3(Vector3& vec);
-			inline void GetBufferVector4(Vector4& vec);
-			inline void GetEntryMatrix(const Entry* e, Matrix& mat);
-			inline void GetBufferColor4(Color4& clr);
-			inline void GetEntryString(const Entry* e, String& str);
-
+			inline void _GetEntryBool(const Entry* e, bool* val, int32 len);
+			inline void _GetBufferVector2(Vector2& vec);
+			inline void _GetBufferVector3(Vector3& vec);
+			inline void _GetBufferVector4(Vector4& vec);
+			inline void _GetEntryMatrix(const Entry* e, Matrix& mat);
+			inline void _GetBufferColor4(Color4& clr);
+			inline void _GetEntryString(const Entry* e, String& str);
 
 			const Entry* FindEntry(const String& name) const
 			{
@@ -180,7 +184,8 @@ namespace Apoc3D
 			void AddEntry(const String& name, uint16 value);
 			void AddEntry(const String& name, float value);
 			void AddEntry(const String& name, double value);
-			void AddEntry(const String& name, bool value);
+			void AddEntryBool(const String& name, bool value);
+			void AddEntryBool(const String& name, const bool* value, int32 count);
 
 			void AddEntryVector2(const String& name, const Vector2& vec);
 			void AddEntryVector3(const String& name, const Vector3& vec);
@@ -239,6 +244,7 @@ namespace Apoc3D
 			void _SetEntryDataSingle(const Entry& ent, float value);
 			void _SetEntryDataDouble(const Entry& ent, double value);
 			void _SetEntryDataBool(const Entry& ent, bool value);
+			void _SetEntryDataBool(const Entry& ent, const bool* value, int32 count);
 
 			void _SetEntryDataVector2(const Entry& ent, const Vector2& vec);
 			void _SetEntryDataVector3(const Entry& ent, const Vector3& vec);
