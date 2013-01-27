@@ -232,7 +232,6 @@ namespace Apoc3D
 
 			// Load textures
 			{
-				//BinaryReader* br = data->GetData(TAG_3_HasTexture);
 				bool hasTexture[MaxTextures];
 				data->GetDataBool(TAG_3_HasTexture, hasTexture, MaxTextures);
 
@@ -250,7 +249,6 @@ namespace Apoc3D
 
 			// Load effects
 			{
-				//BinaryReader* br = data->GetData(TAG_3_HasEffect);
 				bool hasEffect[MaxScenePass];
 				data->GetDataBool(TAG_3_HasEffect, hasEffect, MaxScenePass);
 
