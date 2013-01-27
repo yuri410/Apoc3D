@@ -263,10 +263,8 @@ namespace Apoc3D
 	}
 	namespace VFS
 	{
-
 		class Archive;
 		class ArchiveFactory;
-
 
 		class FileLocateRule;
 		class FileSystem;
@@ -274,6 +272,7 @@ namespace Apoc3D
 		class ResourceLocation;
 		class FileLocation;
 		class MemoryLocation;
+		class StreamLocation;
 	};
 
 	namespace Scene
