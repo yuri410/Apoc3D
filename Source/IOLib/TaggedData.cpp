@@ -62,13 +62,13 @@ namespace Apoc3D
 		{
 			delete m_stream;
 		}
+		
 		void TaggedDataReader::FillBuffer(const String& name, uint32 len)
 		{
 			const Entry* ent = FindEntry(name);
 			m_stream->setPosition(ent->Offset);
 			m_stream->Read(reinterpret_cast<char*>(m_buffer), len);
 		}
-
 		bool TaggedDataReader::TryFillBuffer(const String& name, uint32 len)
 		{
 			const Entry* ent = FindEntry(name);
@@ -108,170 +108,102 @@ namespace Apoc3D
 			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
 		}
 
-		int64 TaggedDataReader::GetDataInt64(const String& name)
-		{
-			FillBuffer(name, sizeof(int64));
-			return ci64_le(m_buffer);
-		}
-		uint64 TaggedDataReader::GetDataUInt64(const String& name)
-		{
-			FillBuffer(name, sizeof(uint64));
-			return cui64_le(m_buffer);
-		}
-		int32 TaggedDataReader::GetDataInt32(const String& name)
-		{
-			FillBuffer(name, sizeof(int32));
-			return ci32_le(m_buffer);
-		}
-		uint32 TaggedDataReader::GetDataUInt32(const String& name)
-		{
-			FillBuffer(name, sizeof(uint32));
-			return cui32_le(m_buffer);
-		}
-		int16 TaggedDataReader::GetDataInt16(const String& name)
-		{
-			FillBuffer(name, sizeof(int16));
-			return ci16_le(m_buffer);
-		}
-		uint16 TaggedDataReader::GetDataUInt16(const String& name)
-		{
-			FillBuffer(name, sizeof(uint16));
-			return cui16_le(m_buffer);
-		}
-		bool TaggedDataReader::GetDataBool(const String& name)
-		{
-			FillBuffer(name, sizeof(bool));
-			return !!m_buffer[0];
-		}
-		float TaggedDataReader::GetDataSingle(const String& name)
-		{
-			FillBuffer(name, sizeof(float));
-			return cr32_le(m_buffer);
-		}
-		double TaggedDataReader::GetDataDouble(const String& name)
-		{
-			FillBuffer(name, sizeof(double));
-			return cr64_le(m_buffer);
-		}
-		void TaggedDataReader::GetDataBool(const String& name, bool* value, int32 count)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			_GetEntryBool(ent, value, count);
-		}
+		int64 TaggedDataReader::GetDataInt64(const String& name)	{ FillBuffer(name, sizeof(int64)); return ci64_le(m_buffer); }
+		uint64 TaggedDataReader::GetDataUInt64(const String& name)	{ FillBuffer(name, sizeof(uint64)); return cui64_le(m_buffer); }
+		int32 TaggedDataReader::GetDataInt32(const String& name)	{ FillBuffer(name, sizeof(int32)); return ci32_le(m_buffer); }
+		uint32 TaggedDataReader::GetDataUInt32(const String& name)	{ FillBuffer(name, sizeof(uint32)); return cui32_le(m_buffer); }
+		int16 TaggedDataReader::GetDataInt16(const String& name)	{ FillBuffer(name, sizeof(int16)); return ci16_le(m_buffer); }
+		uint16 TaggedDataReader::GetDataUInt16(const String& name)	{ FillBuffer(name, sizeof(uint16)); return cui16_le(m_buffer); }
+		bool TaggedDataReader::GetDataBool(const String& name)		{ FillBuffer(name, sizeof(bool)); return !!m_buffer[0]; }
+		float TaggedDataReader::GetDataSingle(const String& name)	{ FillBuffer(name, sizeof(float)); return cr32_le(m_buffer); }
+		double TaggedDataReader::GetDataDouble(const String& name)	{ FillBuffer(name, sizeof(double)); return cr64_le(m_buffer); }
+
+#define TDR_GETDATA(name, value, getter) const Entry* ent = FindEntry(name); assert(ent); getter(ent, value);
+#define TDR_GETDATA_ARR(name, value, count, getter) const Entry* ent = FindEntry(name); assert(ent); getter(ent, value, count);
+
+		void TaggedDataReader::GetDataInt64(const String& name, int64* value, int32 count)		{ TDR_GETDATA_ARR(name, value, count, _GetEntryInt64); }
+		void TaggedDataReader::GetDataUInt64(const String& name, uint64* value, int32 count)	{ TDR_GETDATA_ARR(name, value, count, _GetEntryUInt64); }
+		void TaggedDataReader::GetDataInt32(const String& name, int32* value, int32 count)		{ TDR_GETDATA_ARR(name, value, count, _GetEntryInt32); }
+		void TaggedDataReader::GetDataUInt32(const String& name, uint32* value, int32 count)	{ TDR_GETDATA_ARR(name, value, count, _GetEntryUInt32); }
+		void TaggedDataReader::GetDataInt16(const String& name, int16* value, int32 count)		{ TDR_GETDATA_ARR(name, value, count, _GetEntryInt16); }
+		void TaggedDataReader::GetDataUInt16(const String& name, uint16* value, int32 count)	{ TDR_GETDATA_ARR(name, value, count, _GetEntryUInt16); }
+		void TaggedDataReader::GetDataSingle(const String& name, float* value, int32 count)	{ TDR_GETDATA_ARR(name, value, count, _GetEntrySingle); }
+		void TaggedDataReader::GetDataDouble(const String& name, double* value, int32 count)	{ TDR_GETDATA_ARR(name, value, count, _GetEntryDouble); }
+		void TaggedDataReader::GetDataBool(const String& name, bool* value, int32 count)		{ TDR_GETDATA_ARR(name, value, count, _GetEntryBool); }
+		
+
+		void TaggedDataReader::GetDataVector2(const String& name, Vector2& vec)	{ FillBuffer(name, sizeof(float) * 2); _GetBufferVector2(vec); }
+		void TaggedDataReader::GetDataVector3(const String& name, Vector3& vec)	{ FillBuffer(name, sizeof(float) * 3); _GetBufferVector3(vec); }
+		void TaggedDataReader::GetDataVector4(const String& name, Vector4& vec)	{ FillBuffer(name, sizeof(float) * 4); _GetBufferVector4(vec); }
+		void TaggedDataReader::GetDataColor4(const String& name, Color4& clr)		{ FillBuffer(name, sizeof(float) * 4); _GetBufferColor4(clr); }
+		void TaggedDataReader::GetDataString(const String& name, String& str)		{ TDR_GETDATA(name, str, _GetEntryString); }
+		void TaggedDataReader::GetDataMatrix(const String& name, Matrix& mat)		{ TDR_GETDATA(name, mat, _GetEntryMatrix); }
 
 
+		void TaggedDataReader::GetDataVector2(const String& name, Vector2* vec, int32 count)	{ TDR_GETDATA_ARR(name, vec, count, _GetEntryVector2); }
+		void TaggedDataReader::GetDataVector3(const String& name, Vector3* vec, int32 count)	{ TDR_GETDATA_ARR(name, vec, count, _GetEntryVector3); }
+		void TaggedDataReader::GetDataVector4(const String& name, Vector4* vec, int32 count)	{ TDR_GETDATA_ARR(name, vec, count, _GetEntryVector4); }
+		void TaggedDataReader::GetDataColor4(const String& name, Color4* clr, int32 count)		{ TDR_GETDATA_ARR(name, clr, count, _GetEntryColor4); }
+		void TaggedDataReader::GetDataString(const String& name, String* str, int32 count)		{ TDR_GETDATA_ARR(name, str, count, _GetEntryString); }
+		void TaggedDataReader::GetDataMatrix(const String& name, Matrix* mat, int32 count)		{ TDR_GETDATA_ARR(name, mat, count, _GetEntryMatrix); }
 
+
+#define TDR_TRYGETDATA(name, value, getter) const Entry* ent = FindEntry(name); if (ent) { getter(ent, value); return true; } return false;
 
 		bool TaggedDataReader::TryGetDataInt64(const String& name, int64& v)
 		{
 			bool e = TryFillBuffer(name, sizeof(int64));
-			if (e)
-				v = ci64_le(m_buffer);
+			if (e) v = ci64_le(m_buffer);
 			return e;
 		}
 		bool TaggedDataReader::TryGetDataUInt64(const String& name, uint64& v)
 		{
 			bool e = TryFillBuffer(name, sizeof(uint64));
-			if (e)
-				v = cui64_le(m_buffer);
+			if (e) v = cui64_le(m_buffer);
 			return e;
 		}
 		bool TaggedDataReader::TryGetDataInt32(const String& name, int32& v)
 		{
 			bool e = TryFillBuffer(name, sizeof(int32));
-			if (e)
-				v = ci32_le(m_buffer);
+			if (e) v = ci32_le(m_buffer);
 			return e;
 		}
 		bool TaggedDataReader::TryGetDataUInt32(const String& name, uint32& v)
 		{
 			bool e = TryFillBuffer(name, sizeof(uint32));
-			if (e)
-				v = cui32_le(m_buffer);
+			if (e) v = cui32_le(m_buffer);
 			return e;
 		}
 		bool TaggedDataReader::TryGetDataInt16(const String& name, int16& v)
 		{
 			bool e = TryFillBuffer(name, sizeof(int16));
-			if (e)
-				v = ci16_le(m_buffer);
+			if (e) v = ci16_le(m_buffer);
 			return e;
 		}
 		bool TaggedDataReader::TryGetDataUInt16(const String& name, uint16& v)
 		{
 			bool e = TryFillBuffer(name, sizeof(uint16));
-			if (e)
-				v = cui16_le(m_buffer);
+			if (e) v = cui16_le(m_buffer);
 			return e;
 		}
 		bool TaggedDataReader::TryGetDataBool(const String& name, bool& v)
 		{
 			bool e = TryFillBuffer(name, sizeof(bool));
-			if (e)
-				v = !!m_buffer[0];
+			if (e) v = !!m_buffer[0];
 			return e;
-		}
-		bool TaggedDataReader::TryGetDataBool(const String& name, bool* value, int32 count)
-		{
-			const Entry* ent = FindEntry(name);
-			if (ent)
-			{
-				_GetEntryBool(ent, value, count);
-				return true;
-			}
-			return false;
 		}
 		bool TaggedDataReader::TryGetDataSingle(const String& name, float& v)
 		{
 			bool e = TryFillBuffer(name, sizeof(float));
-			if (e)
-				v = cr32_le(m_buffer);
+			if (e) v = cr32_le(m_buffer);
 			return e;
 		}
 		bool TaggedDataReader::TryGetDataDouble(const String& name, double& v)
 		{
 			bool e = TryFillBuffer(name, sizeof(double));
-			if (e)
-				v = cr64_le(m_buffer);
+			if (e) v = cr64_le(m_buffer);
 			return e;
 		}
-
-
-
-		void TaggedDataReader::GetDataVector2(const String& name, Vector2& vec)
-		{
-			FillBuffer(name, sizeof(float) * 2);
-			_GetBufferVector2(vec);
-		}
-		void TaggedDataReader::GetDataVector3(const String& name, Vector3& vec)
-		{
-			FillBuffer(name, sizeof(float) * 3);
-			_GetBufferVector3(vec);
-		}
-		void TaggedDataReader::GetDataVector4(const String& name, Vector4& vec)
-		{
-			FillBuffer(name, sizeof(float) * 4);
-			_GetBufferVector4(vec);
-		}
-		void TaggedDataReader::GetDataMatrix(const String& name, Matrix& mat)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			_GetEntryMatrix(ent, mat);
-		}
-		void TaggedDataReader::GetDataColor4(const String& name, Color4& clr)
-		{
-			FillBuffer(name, sizeof(float) * 4);
-			_GetBufferColor4(clr);
-		}
-		void TaggedDataReader::GetDataString(const String& name, String& str)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			_GetEntryString(ent, str);
-		}
-
 		bool TaggedDataReader::TryGetVector2(const String& name, Vector2& vec)
 		{
 			bool e = TryFillBuffer(name, sizeof(float) * 2);
@@ -290,32 +222,36 @@ namespace Apoc3D
 			if (e) _GetBufferVector4(vec); 
 			return e;
 		}
-		bool TaggedDataReader::TryGetMatrix(const String& name, Matrix& mat)
-		{
-			const Entry* ent = FindEntry(name);
-			if (ent)
-			{
-				_GetEntryMatrix(ent, mat);
-				return true;
-			}
-			return false;
-		}
 		bool TaggedDataReader::TryGetColor4(const String& name, Color4& clr)
 		{
 			bool e = TryFillBuffer(name, sizeof(float) * 4);
 			if (e) _GetBufferColor4(clr); 
 			return e;
 		}
-		bool TaggedDataReader::TryGetString(const String& name, String& str)
-		{
-			const Entry* ent = FindEntry(name);
-			if (ent)
-			{
-				_GetEntryString(ent, str);
-				return true;
-			}
-			return false;
-		}
+		bool TaggedDataReader::TryGetMatrix(const String& name, Matrix& mat)  { TDR_TRYGETDATA(name, mat, _GetEntryMatrix); }
+		bool TaggedDataReader::TryGetString(const String& name, String& str) { TDR_TRYGETDATA(name, str, _GetEntryString); }
+		
+
+
+#define TDR_TRYGETDATA_ARR(name, value, count, getter) const Entry* ent = FindEntry(name); if (ent) { getter(ent, value, count); return true; } return false;
+
+		bool TaggedDataReader::TryGetDataInt64(const String& name, int64* value, int32 count)		{ TDR_TRYGETDATA_ARR(name, value, count, _GetEntryInt64); }
+		bool TaggedDataReader::TryGetDataUInt64(const String& name, uint64* value, int32 count)	{ TDR_TRYGETDATA_ARR(name, value, count, _GetEntryUInt64); }
+		bool TaggedDataReader::TryGetDataInt32(const String& name, int32* value, int32 count)		{ TDR_TRYGETDATA_ARR(name, value, count, _GetEntryInt32); }
+		bool TaggedDataReader::TryGetDataUInt32(const String& name, uint32* value, int32 count)	{ TDR_TRYGETDATA_ARR(name, value, count, _GetEntryUInt32); }
+		bool TaggedDataReader::TryGetDataInt16(const String& name, int16* value, int32 count)		{ TDR_TRYGETDATA_ARR(name, value, count, _GetEntryInt16); }
+		bool TaggedDataReader::TryGetDataUInt16(const String& name, uint16* value, int32 count)	{ TDR_TRYGETDATA_ARR(name, value, count, _GetEntryUInt16); }
+		bool TaggedDataReader::TryGetDataBool(const String& name, bool* value, int32 count)		{ TDR_TRYGETDATA_ARR(name, value, count, _GetEntryBool); }
+		bool TaggedDataReader::TryGetDataSingle(const String& name, float* value, int32 count)		{ TDR_TRYGETDATA_ARR(name, value, count, _GetEntrySingle); }
+		bool TaggedDataReader::TryGetDataDouble(const String& name, double* value, int32 count)	{ TDR_TRYGETDATA_ARR(name, value, count, _GetEntryDouble); }
+
+		bool TaggedDataReader::TryGetVector2(const String& name, Vector2* vec, int32 count)	{ TDR_TRYGETDATA_ARR(name, vec, count, _GetEntryVector2); }
+		bool TaggedDataReader::TryGetVector3(const String& name, Vector3* vec, int32 count)	{ TDR_TRYGETDATA_ARR(name, vec, count, _GetEntryVector3); }
+		bool TaggedDataReader::TryGetVector4(const String& name, Vector4* vec, int32 count)	{ TDR_TRYGETDATA_ARR(name, vec, count, _GetEntryVector4); }
+		bool TaggedDataReader::TryGetMatrix(const String& name, Matrix* mat, int32 count)		{ TDR_TRYGETDATA_ARR(name, mat, count, _GetEntryMatrix); }
+		bool TaggedDataReader::TryGetColor4(const String& name, Color4* clr, int32 count)		{ TDR_TRYGETDATA_ARR(name, clr, count, _GetEntryColor4); }
+		bool TaggedDataReader::TryGetString(const String& name, String* str, int32 count)		{ TDR_TRYGETDATA_ARR(name, str, count, _GetEntryString); }
+
 
 		int64 TaggedDataReader::GetChunkOffset(const String& name) const
 		{
@@ -349,6 +285,95 @@ namespace Apoc3D
 
 			br.Close();
 		}
+		void TaggedDataReader::_GetEntryInt64(const Entry* ent, int64* val, int32 len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				val[i] = br.ReadInt64();
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryUInt64(const Entry* ent, uint64* val, int32 len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				val[i] = br.ReadUInt64();
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryInt32(const Entry* ent, int32* val, int32 len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				val[i] = br.ReadInt32();
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryUInt32(const Entry* ent, uint32* val, int32 len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				val[i] = br.ReadUInt32();
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryInt16(const Entry* ent, int16* val, int32 len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				val[i] = br.ReadInt16();
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryUInt16(const Entry* ent, uint16* val, int32 len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				val[i] = br.ReadUInt16();
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntrySingle(const Entry* ent, float* val, int32 len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				val[i] = br.ReadSingle();
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryDouble(const Entry* ent, double* val, int32 len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				val[i] = br.ReadDouble();
+
+			br.Close();
+		}
+
 		void TaggedDataReader::_GetBufferVector2(Vector2& vec)
 		{
 			v2x(vec) = cr32_le(m_buffer);
@@ -367,6 +392,13 @@ namespace Apoc3D
 			v4z(vec) = cr32_le(m_buffer + sizeof(float) * 2);
 			v4w(vec) = cr32_le(m_buffer + sizeof(float) * 3);
 		}
+		void TaggedDataReader::_GetBufferColor4(Color4& clr)
+		{
+			clr.Red = cr32_le(m_buffer);
+			clr.Green = cr32_le(m_buffer + sizeof(float));
+			clr.Blue = cr32_le(m_buffer + sizeof(float) * 2);
+			clr.Alpha = cr32_le(m_buffer + sizeof(float) * 3);
+		}
 		void TaggedDataReader::_GetEntryMatrix(const TaggedDataReader::Entry* ent, Matrix& mat)
 		{
 			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
@@ -377,13 +409,6 @@ namespace Apoc3D
 
 			br.Close();
 		}
-		void TaggedDataReader::_GetBufferColor4(Color4& clr)
-		{
-			clr.Red = cr32_le(m_buffer);
-			clr.Green = cr32_le(m_buffer + sizeof(float));
-			clr.Blue = cr32_le(m_buffer + sizeof(float) * 2);
-			clr.Alpha = cr32_le(m_buffer + sizeof(float) * 3);
-		}
 		void TaggedDataReader::_GetEntryString(const TaggedDataReader::Entry* ent, String& str)
 		{
 			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
@@ -391,6 +416,85 @@ namespace Apoc3D
 			br.SuspendStreamRelease();
 
 			str = br.ReadString();
+
+			br.Close();
+		}
+
+		void TaggedDataReader::_GetEntryVector2(const Entry* ent, Vector2* value, int len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+			{
+				float buf[2];
+				br.ReadVector2(buf);
+				value[i] = Vector2Utils::LDVectorPtr(buf);
+			}
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryVector3(const Entry* ent, Vector3* value, int len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+			{
+				float buf[3];
+				br.ReadVector3(buf);
+				value[i] = Vector3Utils::LDVectorPtr(buf);
+			}
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryVector4(const Entry* ent, Vector4* value, int len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+			{
+				float buf[4];
+				br.ReadVector4(buf);
+				value[i] = Vector4Utils::LDVectorPtr(buf);
+			}
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryMatrix(const Entry* ent, Matrix* value, int len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				br.ReadMatrix(value[i]);
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryColor4(const Entry* ent, Color4* value, int len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				br.ReadColor4(value[i]);
+
+			br.Close();
+		}
+		void TaggedDataReader::_GetEntryString(const Entry* ent, String* value, int len)
+		{
+			VirtualStream vStrm(m_stream, ent->Offset, ent->Size);
+			BinaryReader br(&vStrm);
+			br.SuspendStreamRelease();
+
+			for (int32 i=0;i<len;i++)
+				value[i] = br.ReadString();
 
 			br.Close();
 		}
@@ -449,183 +553,80 @@ namespace Apoc3D
 			return new BinaryWriter(new VirtualStream(ent->Buffer, 0));
 		}
 
+#define TAGW_NEW_ENTRY(name, value, setvalue) Entry ent = Entry(name); m_positions.Add(name, ent); setvalue(ent, value);
+#define TAGW_NEW_ENTRY_ARR(name, value, count, setvalue) Entry ent = Entry(name); m_positions.Add(name, ent); setvalue(ent, value, count);
 
-		void TaggedDataWriter::AddEntry(const String& name, int64 value)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataInt64(ent, value);
-		}
-		void TaggedDataWriter::AddEntry(const String& name, uint64 value)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataUInt64(ent, value);
-		}
-		void TaggedDataWriter::AddEntry(const String& name, int32 value)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataInt32(ent, value);
-		}
-		void TaggedDataWriter::AddEntry(const String& name, uint32 value)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataUInt32(ent, value);
-		}
-		void TaggedDataWriter::AddEntry(const String& name, int16 value)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataInt16(ent, value);
-		}
-		void TaggedDataWriter::AddEntry(const String& name, uint16 value)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataUInt16(ent, value);
-		}
-		void TaggedDataWriter::AddEntry(const String& name, float value)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataSingle(ent, value);
-		}
-		void TaggedDataWriter::AddEntry(const String& name, double value)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataDouble(ent, value);
-		}
-		void TaggedDataWriter::AddEntryBool(const String& name, bool value)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataBool(ent, value);
-		}
-		void TaggedDataWriter::AddEntryBool(const String& name, const bool* value, int32 count)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataBool(ent, value, count);
-		}
+		void TaggedDataWriter::AddEntry(const String& name, int64 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataInt64);  }
+		void TaggedDataWriter::AddEntry(const String& name, uint64 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt64); }
+		void TaggedDataWriter::AddEntry(const String& name, int32 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataInt32);  }
+		void TaggedDataWriter::AddEntry(const String& name, uint32 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt32); }
+		void TaggedDataWriter::AddEntry(const String& name, int16 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataInt16);  }
+		void TaggedDataWriter::AddEntry(const String& name, uint16 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt16); }
+		void TaggedDataWriter::AddEntry(const String& name, float value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataSingle); }
+		void TaggedDataWriter::AddEntry(const String& name, double value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataDouble); }
+		void TaggedDataWriter::AddEntryBool(const String& name, bool value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataBool); }
 
-		void TaggedDataWriter::SetData(const String& name, int64 value)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			ent->ResetWritePosition();
-			_SetEntryDataInt64(*ent, value);
-		}
-		void TaggedDataWriter::SetData(const String& name, uint64 value)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			ent->ResetWritePosition();
-			_SetEntryDataUInt64(*ent, value);
-		}
-		void TaggedDataWriter::SetData(const String& name, int32 value)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			ent->ResetWritePosition();
-			_SetEntryDataInt32(*ent, value);
-		}
-		void TaggedDataWriter::SetData(const String& name, uint32 value)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			ent->ResetWritePosition();
-			_SetEntryDataUInt32(*ent, value);
-		}
-		void TaggedDataWriter::SetData(const String& name, int16 value)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			ent->ResetWritePosition();
-			_SetEntryDataInt16(*ent, value);
-		}
-		void TaggedDataWriter::SetData(const String& name, uint16 value)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			ent->ResetWritePosition();
-			_SetEntryDataUInt16(*ent, value);
-		}
-		void TaggedDataWriter::SetData(const String& name, float value)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			ent->ResetWritePosition();
-			_SetEntryDataSingle(*ent, value);
-		}
-		void TaggedDataWriter::SetData(const String& name, double value)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			ent->ResetWritePosition();
-			_SetEntryDataDouble(*ent, value);
-		}
-		void TaggedDataWriter::SetData(const String& name, bool value)
-		{
-			const Entry* ent = FindEntry(name);
-			assert(ent);
-			ent->ResetWritePosition();
-			_SetEntryDataBool(*ent, value);
-		}
+		void TaggedDataWriter::AddEntryVector2(const String& name, const Vector2& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataVector2); }
+		void TaggedDataWriter::AddEntryVector3(const String& name, const Vector3& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataVector3); }
+		void TaggedDataWriter::AddEntryVector4(const String& name, const Vector4& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataVector4); }
+		void TaggedDataWriter::AddEntryMatrix(const String& name, const Matrix& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataMatrix); }
+		void TaggedDataWriter::AddEntryColor4(const String& name, const Color4& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataColor4); }
+		void TaggedDataWriter::AddEntryString(const String& name, const String& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataString); }
 
-		void TaggedDataWriter::AddEntryVector2(const String& name, const Vector2& vec)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataVector2(ent, vec);
-		}
-		void TaggedDataWriter::AddEntryVector3(const String& name, const Vector3& vec)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataVector3(ent, vec);
-		}
-		void TaggedDataWriter::AddEntryVector4(const String& name, const Vector4& vec)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataVector4(ent, vec);
-		}
-		void TaggedDataWriter::AddEntryMatrix(const String& name, const Matrix& mat)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataMatrix(ent, mat);
-		}
-		void TaggedDataWriter::AddEntryColor4(const String& name, const Color4& clr)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataColor4(ent, clr);
-		}
-		void TaggedDataWriter::AddEntryString(const String& name, const String& str)
-		{
-			Entry ent = Entry(name); m_positions.Add(name, ent);
-			_SetEntryDataString(ent, str);
-		}
+		void TaggedDataWriter::AddEntryInt64(const String& name, const int64* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataInt64); }
+		void TaggedDataWriter::AddEntryUInt64(const String& name, const uint64* value, int32 count){ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataUInt64); }
+		void TaggedDataWriter::AddEntryInt32(const String& name, const int32* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataInt32); }
+		void TaggedDataWriter::AddEntryUInt32(const String& name, const uint32* value, int32 count){ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataUInt32); }
+		void TaggedDataWriter::AddEntryInt16(const String& name, const int16* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataInt16); }
+		void TaggedDataWriter::AddEntryUInt16(const String& name, const uint16* value, int32 count){ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataUInt16); }
+		void TaggedDataWriter::AddEntrySingle(const String& name, const float* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataSingle); }
+		void TaggedDataWriter::AddEntryDouble(const String& name, const double* value, int32 count){ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataDouble); }
+		void TaggedDataWriter::AddEntryBool(const String& name, const bool* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataBool); }
 
-		void TaggedDataWriter::SetDataVector2(const String& name, const Vector2& vec)
-		{
-			const Entry* ent = FindEntry(name); assert(ent);
-			_SetEntryDataVector2(*ent, vec);
-		}
-		void TaggedDataWriter::SetDataVector3(const String& name, const Vector3& vec)
-		{
-			const Entry* ent = FindEntry(name); assert(ent);
-			_SetEntryDataVector3(*ent, vec);
-		}
-		void TaggedDataWriter::SetDataVector4(const String& name, const Vector4& vec)
-		{
-			const Entry* ent = FindEntry(name); assert(ent);
-			_SetEntryDataVector4(*ent, vec);
-		}
-		void TaggedDataWriter::SetDataMatrix(const String& name, const Matrix& mat)
-		{
-			const Entry* ent = FindEntry(name); assert(ent);
-			_SetEntryDataMatrix(*ent, mat);
-		}
-		void TaggedDataWriter::SetDataColor4(const String& name, const Color4& clr)
-		{
-			const Entry* ent = FindEntry(name); assert(ent);
-			_SetEntryDataColor4(*ent, clr);
-		}
-		void TaggedDataWriter::SetDataString(const String& name, const String& str)
-		{
-			const Entry* ent = FindEntry(name); assert(ent);
-			_SetEntryDataString(*ent, str);
-		}
+		void TaggedDataWriter::AddEntryVector2(const String& name, const Vector2* vec, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, vec, count, _SetEntryDataVector2); }
+		void TaggedDataWriter::AddEntryVector3(const String& name, const Vector3* vec, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, vec, count, _SetEntryDataVector3); }
+		void TaggedDataWriter::AddEntryVector4(const String& name, const Vector4* vec, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, vec, count, _SetEntryDataVector4); }
+		void TaggedDataWriter::AddEntryMatrix(const String& name, const Matrix* mat, int32 count)		{ TAGW_NEW_ENTRY_ARR(name, mat, count, _SetEntryDataMatrix); }
+		void TaggedDataWriter::AddEntryColor4(const String& name, const Color4* clr, int32 count)		{ TAGW_NEW_ENTRY_ARR(name, clr, count, _SetEntryDataColor4); }
+		void TaggedDataWriter::AddEntryString(const String& name, const String* str, int32 count)		{ TAGW_NEW_ENTRY_ARR(name, str, count, _SetEntryDataString); }
+
+
+#define TAGW_SETDATA(name, value, setter) const Entry* ent = FindEntry(name); assert(ent); ent->ResetWritePosition(); setter(*ent, value);
+#define TAGW_SETDATA_ARR(name, value, count, setter) const Entry* ent = FindEntry(name); assert(ent); ent->ResetWritePosition(); setter(*ent, value, count);
+
+		void TaggedDataWriter::SetData(const String& name, int64 value)		{ TAGW_SETDATA(name, value, _SetEntryDataInt64); }
+		void TaggedDataWriter::SetData(const String& name, uint64 value)	{ TAGW_SETDATA(name, value, _SetEntryDataUInt64); }
+		void TaggedDataWriter::SetData(const String& name, int32 value)		{ TAGW_SETDATA(name, value, _SetEntryDataInt32); }
+		void TaggedDataWriter::SetData(const String& name, uint32 value)	{ TAGW_SETDATA(name, value, _SetEntryDataUInt32); }
+		void TaggedDataWriter::SetData(const String& name, int16 value)		{ TAGW_SETDATA(name, value, _SetEntryDataInt16); }
+		void TaggedDataWriter::SetData(const String& name, uint16 value)	{ TAGW_SETDATA(name, value, _SetEntryDataUInt16); }
+		void TaggedDataWriter::SetData(const String& name, float value)		{ TAGW_SETDATA(name, value, _SetEntryDataSingle); }
+		void TaggedDataWriter::SetData(const String& name, double value)	{ TAGW_SETDATA(name, value, _SetEntryDataDouble); }
+		void TaggedDataWriter::SetData(const String& name, bool value)		{ TAGW_SETDATA(name, value, _SetEntryDataBool); }
+		
+		void TaggedDataWriter::SetDataInt64(const String& name, const int64* value, int32 count)	{ TAGW_SETDATA_ARR(name, value, count, _SetEntryDataInt64); }
+		void TaggedDataWriter::SetDataUInt64(const String& name, const uint64* value, int32 count)	{ TAGW_SETDATA_ARR(name, value, count, _SetEntryDataUInt64); }
+		void TaggedDataWriter::SetDataInt32(const String& name, const int32* value, int32 count)	{ TAGW_SETDATA_ARR(name, value, count, _SetEntryDataInt32); }
+		void TaggedDataWriter::SetDataUInt32(const String& name, const uint32* value, int32 count)	{ TAGW_SETDATA_ARR(name, value, count, _SetEntryDataUInt32); }
+		void TaggedDataWriter::SetDataInt16(const String& name, const int16* value, int32 count)	{ TAGW_SETDATA_ARR(name, value, count, _SetEntryDataInt16); }
+		void TaggedDataWriter::SetDataUInt16(const String& name, const uint16* value, int32 count)	{ TAGW_SETDATA_ARR(name, value, count, _SetEntryDataUInt16); }
+		void TaggedDataWriter::SetDataSingle(const String& name, const float* value, int32 count)	{ TAGW_SETDATA_ARR(name, value, count, _SetEntryDataSingle); }
+		void TaggedDataWriter::SetDataDouble(const String& name, const double* value, int32 count)	{ TAGW_SETDATA_ARR(name, value, count, _SetEntryDataDouble); }
+		void TaggedDataWriter::SetDataBool(const String& name, const bool* value, int32 count)		{ TAGW_SETDATA_ARR(name, value, count, _SetEntryDataBool); }
+
+		void TaggedDataWriter::SetDataVector2(const String& name, const Vector2& value) { TAGW_SETDATA(name, value, _SetEntryDataVector2); }
+		void TaggedDataWriter::SetDataVector3(const String& name, const Vector3& value) { TAGW_SETDATA(name, value, _SetEntryDataVector3); }
+		void TaggedDataWriter::SetDataVector4(const String& name, const Vector4& value) { TAGW_SETDATA(name, value, _SetEntryDataVector4); }
+		void TaggedDataWriter::SetDataMatrix(const String& name, const Matrix& value) { TAGW_SETDATA(name, value, _SetEntryDataMatrix); }
+		void TaggedDataWriter::SetDataColor4(const String& name, const Color4& value) { TAGW_SETDATA(name, value, _SetEntryDataColor4); }
+		void TaggedDataWriter::SetDataString(const String& name, const String& value) { TAGW_SETDATA(name, value, _SetEntryDataString); }
+
+		void TaggedDataWriter::SetDataVector2(const String& name, const Vector2* vec, int32 count)		{ TAGW_SETDATA_ARR(name, vec, count, _SetEntryDataVector2); }
+		void TaggedDataWriter::SetDataVector3(const String& name, const Vector3* vec, int32 count)		{ TAGW_SETDATA_ARR(name, vec, count, _SetEntryDataVector3); }
+		void TaggedDataWriter::SetDataVector4(const String& name, const Vector4* vec, int32 count)		{ TAGW_SETDATA_ARR(name, vec, count, _SetEntryDataVector4); }
+		void TaggedDataWriter::SetDataMatrix(const String& name, const Matrix* mat, int32 count)		{ TAGW_SETDATA_ARR(name, mat, count, _SetEntryDataMatrix); }
+		void TaggedDataWriter::SetDataColor4(const String& name, const Color4* clr, int32 count)		{ TAGW_SETDATA_ARR(name, clr, count, _SetEntryDataColor4); }
+		void TaggedDataWriter::SetDataString(const String& name, const String* str, int32 count)		{ TAGW_SETDATA_ARR(name, str, count, _SetEntryDataString); }
 
 		void TaggedDataWriter::Save(Stream* stream) const
 		{
@@ -646,8 +647,6 @@ namespace Apoc3D
 			bw->Close();
 			delete bw;
 		}
-
-
 
 
 		void TaggedDataWriter::_SetEntryDataInt64(const TaggedDataWriter::Entry& ent, int64 value)
@@ -728,17 +727,47 @@ namespace Apoc3D
 
 			ent.Buffer->Write(m_buffer, sizeof(value));
 		}
-		void TaggedDataWriter::_SetEntryDataBool(const Entry& ent, const bool* value, int32 count)
+
+
+		void TaggedDataWriter::_SetEntryDataInt64(const TaggedDataWriter::Entry& ent, const int64* value, int32 count)
 		{
-			VirtualStream vStrm(ent.Buffer, 0);
-			BinaryWriter bw(&vStrm);
-			bw.SuspendStreamRelease();
-
-			for (int32 i=0;i<count;i++)
-				bw.Write(value[i]);
-
-			bw.Close();
+			for (int32 i=0;i<count;i++) _SetEntryDataInt64(ent, value[i]);
 		}
+		void TaggedDataWriter::_SetEntryDataUInt64(const TaggedDataWriter::Entry& ent, const uint64* value, int32 count)
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataUInt64(ent, value[i]);
+		}
+		void TaggedDataWriter::_SetEntryDataInt32(const TaggedDataWriter::Entry& ent, const int32* value, int32 count)
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataInt32(ent, value[i]);
+		}
+		void TaggedDataWriter::_SetEntryDataUInt32(const TaggedDataWriter::Entry& ent, const uint32* value, int32 count)
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataUInt32(ent, value[i]);
+		}
+		void TaggedDataWriter::_SetEntryDataInt16(const TaggedDataWriter::Entry& ent, const int16* value, int32 count)
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataInt16(ent, value[i]);
+		}
+		void TaggedDataWriter::_SetEntryDataUInt16(const TaggedDataWriter::Entry& ent, const uint16* value, int32 count)
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataUInt16(ent, value[i]);
+		}
+		void TaggedDataWriter::_SetEntryDataSingle(const TaggedDataWriter::Entry& ent, const float* value, int32 count)
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataSingle(ent, value[i]);
+		}
+		void TaggedDataWriter::_SetEntryDataDouble(const TaggedDataWriter::Entry& ent, const double* value, int32 count)
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataDouble(ent, value[i]);
+		}
+		void TaggedDataWriter::_SetEntryDataBool(const TaggedDataWriter::Entry& ent, const bool* value, int32 count)
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataBool(ent, value[i]);
+		}
+
+
+
 		void TaggedDataWriter::_SetEntryDataVector2(const TaggedDataWriter::Entry& ent, const Vector2& vec)
 		{
 			if (m_endianDependent)
@@ -826,7 +855,44 @@ namespace Apoc3D
 			bw.Close();
 		}
 
+		void TaggedDataWriter::_SetEntryDataVector2(const TaggedDataWriter::Entry& ent, const Vector2* vec, int32 count)
+		{ 
+			for (int32 i=0;i<count;i++) _SetEntryDataVector2(ent, vec[i]); 
+		}
+		void TaggedDataWriter::_SetEntryDataVector3(const TaggedDataWriter::Entry& ent, const Vector3* vec, int32 count)
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataVector3(ent, vec[i]); 
+		}
+		void TaggedDataWriter::_SetEntryDataVector4(const TaggedDataWriter::Entry& ent, const Vector4* vec, int32 count) 
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataVector4(ent, vec[i]);
+		}
+		void TaggedDataWriter::_SetEntryDataMatrix(const TaggedDataWriter::Entry& ent, const Matrix* mat, int32 count) 
+		{
+			VirtualStream vStrm(ent.Buffer, 0);
+			BinaryWriter bw(&vStrm);
+			bw.SuspendStreamRelease();
 
+			for (int32 i=0;i<count;i++)
+				bw.Write(mat[i]);
+
+			bw.Close();
+		}
+		void TaggedDataWriter::_SetEntryDataColor4(const TaggedDataWriter::Entry& ent, const Color4* clr, int32 count) 
+		{
+			for (int32 i=0;i<count;i++) _SetEntryDataColor4(ent, clr[i]);
+		}
+		void TaggedDataWriter::_SetEntryDataString(const TaggedDataWriter::Entry& ent, const String* str, int32 count)
+		{
+			VirtualStream vStrm(ent.Buffer, 0);
+			BinaryWriter bw(&vStrm);
+			bw.SuspendStreamRelease();
+
+			for (int32 i=0;i<count;i++)
+				bw.Write(str[i]);
+
+			bw.Close();
+		}
 
 	}
 }

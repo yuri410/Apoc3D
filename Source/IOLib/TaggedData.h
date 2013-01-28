@@ -74,7 +74,31 @@ namespace Apoc3D
 			float GetDataSingle(const String& name);
 			double GetDataDouble(const String& name);
 
+			void GetDataInt64(const String& name, int64* value, int32 count);
+			void GetDataUInt64(const String& name, uint64* value, int32 count);
+			void GetDataInt32(const String& name, int32* value, int32 count);
+			void GetDataUInt32(const String& name, uint32* value, int32 count);
+			void GetDataInt16(const String& name, int16* value, int32 count);
+			void GetDataUInt16(const String& name, uint16* value, int32 count);
 			void GetDataBool(const String& name, bool* value, int32 count);
+			void GetDataSingle(const String& name, float* value, int32 count);
+			void GetDataDouble(const String& name, double* value, int32 count);
+
+			void GetDataVector2(const String& name, Vector2& vec);
+			void GetDataVector3(const String& name, Vector3& vec);
+			void GetDataVector4(const String& name, Vector4& vec);
+			void GetDataMatrix(const String& name, Matrix& mat);
+			void GetDataColor4(const String& name, Color4& clr);
+			void GetDataString(const String& name, String& str);
+
+			void GetDataVector2(const String& name, Vector2* vec, int32 count);
+			void GetDataVector3(const String& name, Vector3* vec, int32 count);
+			void GetDataVector4(const String& name, Vector4* vec, int32 count);
+			void GetDataMatrix(const String& name, Matrix* mat, int32 count);
+			void GetDataColor4(const String& name, Color4* clr, int32 count);
+			void GetDataString(const String& name, String* str, int32 count);
+
+
 
 			bool TryGetDataInt64(const String& name, int64& v);
 			bool TryGetDataUInt64(const String& name, uint64& v);
@@ -86,15 +110,15 @@ namespace Apoc3D
 			bool TryGetDataSingle(const String& name, float& v);
 			bool TryGetDataDouble(const String& name, double& v);
 
+			bool TryGetDataInt64(const String& name, int64* value, int32 count);
+			bool TryGetDataUInt64(const String& name, uint64* value, int32 count);
+			bool TryGetDataInt32(const String& name, int32* value, int32 count);
+			bool TryGetDataUInt32(const String& name, uint32* value, int32 count);
+			bool TryGetDataInt16(const String& name, int16* value, int32 count);
+			bool TryGetDataUInt16(const String& name, uint16* value, int32 count);
 			bool TryGetDataBool(const String& name, bool* value, int32 count);
-
-
-			void GetDataVector2(const String& name, Vector2& vec);
-			void GetDataVector3(const String& name, Vector3& vec);
-			void GetDataVector4(const String& name, Vector4& vec);
-			void GetDataMatrix(const String& name, Matrix& mat);
-			void GetDataColor4(const String& name, Color4& clr);
-			void GetDataString(const String& name, String& str);
+			bool TryGetDataSingle(const String& name, float* value, int32 count);
+			bool TryGetDataDouble(const String& name, double* value, int32 count);
 
 			bool TryGetVector2(const String& name, Vector2& vec);
 			bool TryGetVector3(const String& name, Vector3& vec);
@@ -102,6 +126,14 @@ namespace Apoc3D
 			bool TryGetMatrix(const String& name, Matrix& mat);
 			bool TryGetColor4(const String& name, Color4& clr);
 			bool TryGetString(const String& name, String& str);
+
+			bool TryGetVector2(const String& name, Vector2* vec, int32 count);
+			bool TryGetVector3(const String& name, Vector3* vec, int32 count);
+			bool TryGetVector4(const String& name, Vector4* vec, int32 count);
+			bool TryGetMatrix(const String& name, Matrix* mat, int32 count);
+			bool TryGetColor4(const String& name, Color4* clr, int32 count);
+			bool TryGetString(const String& name, String* str, int32 count);
+
 
 
 			int64 GetChunkOffset(const String& name) const;
@@ -124,9 +156,7 @@ namespace Apoc3D
 
 				Entry(String name, int64 offset, uint32 size)
 					: Name(name), Offset(offset), Size(size)
-				{
-
-				}
+				{ }
 				Entry() { }
 			};
 
@@ -136,13 +166,31 @@ namespace Apoc3D
 
 			inline bool TryFillBuffer(const String& name, uint32 len);
 
-			inline void _GetEntryBool(const Entry* e, bool* val, int32 len);
+			
+			void _GetEntryInt64(const Entry* e, int64* val, int32 len);
+			void _GetEntryUInt64(const Entry* e, uint64* val, int32 len);
+			void _GetEntryInt32(const Entry* e, int32* val, int32 len);
+			void _GetEntryUInt32(const Entry* e, uint32* val, int32 len);
+			void _GetEntryInt16(const Entry* e, int16* val, int32 len);
+			void _GetEntryUInt16(const Entry* e, uint16* val, int32 len);
+			void _GetEntryBool(const Entry* e, bool* val, int32 len);
+			void _GetEntrySingle(const Entry* e, float* val, int32 len);
+			void _GetEntryDouble(const Entry* e, double* val, int32 len);
+
 			inline void _GetBufferVector2(Vector2& vec);
 			inline void _GetBufferVector3(Vector3& vec);
 			inline void _GetBufferVector4(Vector4& vec);
-			inline void _GetEntryMatrix(const Entry* e, Matrix& mat);
 			inline void _GetBufferColor4(Color4& clr);
-			inline void _GetEntryString(const Entry* e, String& str);
+			void _GetEntryMatrix(const Entry* e, Matrix& mat);
+			void _GetEntryString(const Entry* e, String& str);
+
+			void _GetEntryVector2(const Entry* ent, Vector2* value, int len);
+			void _GetEntryVector3(const Entry* ent, Vector3* value, int len);
+			void _GetEntryVector4(const Entry* ent, Vector4* value, int len);
+			void _GetEntryMatrix(const Entry* ent, Matrix* value, int len);
+			void _GetEntryColor4(const Entry* ent, Color4* value, int len);
+			void _GetEntryString(const Entry* ent, String* value, int len);
+
 
 			const Entry* FindEntry(const String& name) const
 			{
@@ -156,7 +204,6 @@ namespace Apoc3D
 			Stream* m_stream;
 
 			char m_buffer[32];
-
 		};
 
 		/**
@@ -185,6 +232,15 @@ namespace Apoc3D
 			void AddEntry(const String& name, float value);
 			void AddEntry(const String& name, double value);
 			void AddEntryBool(const String& name, bool value);
+
+			void AddEntryInt64(const String& name, const int64* value, int32 count);
+			void AddEntryUInt64(const String& name, const uint64* value, int32 count);
+			void AddEntryInt32(const String& name, const int32* value, int32 count);
+			void AddEntryUInt32(const String& name, const uint32* value, int32 count);
+			void AddEntryInt16(const String& name, const int16* value, int32 count);
+			void AddEntryUInt16(const String& name, const uint16* value, int32 count);
+			void AddEntrySingle(const String& name, const float* value, int32 count);
+			void AddEntryDouble(const String& name, const double* value, int32 count);
 			void AddEntryBool(const String& name, const bool* value, int32 count);
 
 			void AddEntryVector2(const String& name, const Vector2& vec);
@@ -193,6 +249,13 @@ namespace Apoc3D
 			void AddEntryMatrix(const String& name, const Matrix& mat);
 			void AddEntryColor4(const String& name, const Color4& clr);
 			void AddEntryString(const String& name, const String& str);
+
+			void AddEntryVector2(const String& name, const Vector2* vec, int32 count);
+			void AddEntryVector3(const String& name, const Vector3* vec, int32 count);
+			void AddEntryVector4(const String& name, const Vector4* vec, int32 count);
+			void AddEntryMatrix(const String& name, const Matrix* mat, int32 count);
+			void AddEntryColor4(const String& name, const Color4* clr, int32 count);
+			void AddEntryString(const String& name, const String* str, int32 count);
 
 			BinaryWriter* GetData(const String& name);
 
@@ -206,12 +269,30 @@ namespace Apoc3D
 			void SetData(const String& name, double value);
 			void SetData(const String& name, bool value);
 			
+			void SetDataInt64(const String& name, const int64* value, int32 count);
+			void SetDataUInt64(const String& name, const uint64* value, int32 count);
+			void SetDataInt32(const String& name, const int32* value, int32 count);
+			void SetDataUInt32(const String& name, const uint32* value, int32 count);
+			void SetDataInt16(const String& name, const int16* value, int32 count);
+			void SetDataUInt16(const String& name, const uint16* value, int32 count);
+			void SetDataSingle(const String& name, const float* value, int32 count);
+			void SetDataDouble(const String& name, const double* value, int32 count);
+			void SetDataBool(const String& name, const bool* value, int32 count);
+
 			void SetDataVector2(const String& name, const Vector2& vec);
 			void SetDataVector3(const String& name, const Vector3& vec);
 			void SetDataVector4(const String& name, const Vector4& vec);
 			void SetDataMatrix(const String& name, const Matrix& mat);
 			void SetDataColor4(const String& name, const Color4& clr);
 			void SetDataString(const String& name, const String& str);
+			
+			void SetDataVector2(const String& name, const Vector2* vec, int32 count);
+			void SetDataVector3(const String& name, const Vector3* vec, int32 count);
+			void SetDataVector4(const String& name, const Vector4* vec, int32 count);
+			void SetDataMatrix(const String& name, const Matrix* mat, int32 count);
+			void SetDataColor4(const String& name, const Color4* clr, int32 count);
+			void SetDataString(const String& name, const String* str, int32 count);
+
 
 
 			void Save(Stream* stream) const;
@@ -244,7 +325,18 @@ namespace Apoc3D
 			void _SetEntryDataSingle(const Entry& ent, float value);
 			void _SetEntryDataDouble(const Entry& ent, double value);
 			void _SetEntryDataBool(const Entry& ent, bool value);
+			
+			void _SetEntryDataInt64(const Entry& ent, const int64* value, int32 count);
+			void _SetEntryDataUInt64(const Entry& ent, const uint64* value, int32 count);
+			void _SetEntryDataInt32(const Entry& ent, const int32* value, int32 count);
+			void _SetEntryDataUInt32(const Entry& ent, const uint32* value, int32 count);
+			void _SetEntryDataInt16(const Entry& ent, const int16* value, int32 count);
+			void _SetEntryDataUInt16(const Entry& ent, const uint16* value, int32 count);
+			void _SetEntryDataSingle(const Entry& ent, const float* value, int32 count);
+			void _SetEntryDataDouble(const Entry& ent, const double* value, int32 count);
 			void _SetEntryDataBool(const Entry& ent, const bool* value, int32 count);
+
+
 
 			void _SetEntryDataVector2(const Entry& ent, const Vector2& vec);
 			void _SetEntryDataVector3(const Entry& ent, const Vector3& vec);
@@ -252,6 +344,13 @@ namespace Apoc3D
 			void _SetEntryDataMatrix(const Entry& ent, const Matrix& mat);
 			void _SetEntryDataColor4(const Entry& ent, const Color4& clr);
 			void _SetEntryDataString(const Entry& ent, const String& str);
+
+			void _SetEntryDataVector2(const Entry& ent, const Vector2* vec, int32 count);
+			void _SetEntryDataVector3(const Entry& ent, const Vector3* vec, int32 count);
+			void _SetEntryDataVector4(const Entry& ent, const Vector4* vec, int32 count);
+			void _SetEntryDataMatrix(const Entry& ent, const Matrix* mat, int32 count);
+			void _SetEntryDataColor4(const Entry& ent, const Color4* clr, int32 count);
+			void _SetEntryDataString(const Entry& ent, const String* str, int32 count);
 
 
 
