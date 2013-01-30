@@ -593,7 +593,7 @@ namespace Apoc3D
 		}
 		void TaggedDataWriter::AddEntryQuaternion(const String& name, const Quaternion& quad)
 		{
-			float flts[4] = { quad.X, quad.Y, quad.Z, quad.D };
+			float flts[4] = { quad.X, quad.Y, quad.Z, quad.W };
 			AddEntrySingle(name, flts, 4);
 		}
 
