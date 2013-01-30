@@ -64,6 +64,41 @@ namespace Apoc3D
 
 			Stream* GetDataStream(const String& name) const;
 
+
+			void GetAuto(const String& name, int64& value)	{ value = GetDataInt64(name); }
+			void GetAuto(const String& name, uint64& value)	{ value = GetDataUInt64(name); }
+			void GetAuto(const String& name, int32& value)	{ value = GetDataInt32(name); }
+			void GetAuto(const String& name, uint32& value)	{ value = GetDataUInt32(name); }
+			void GetAuto(const String& name, int16& value)	{ value = GetDataInt16(name); }
+			void GetAuto(const String& name, uint16& value)	{ value = GetDataUInt16(name); }
+			void GetAuto(const String& name, float& value)	{ value = GetDataSingle(name); }
+			void GetAuto(const String& name, double& value)	{ value = GetDataDouble(name); }
+			void GetAuto(const String& name, bool& value)	{ value = GetDataBool(name); }
+			void GetAuto(const String& name, Vector2& vec)	{ GetDataVector2(name, vec); }
+			void GetAuto(const String& name, Vector3& vec)	{ GetDataVector3(name, vec); }
+			void GetAuto(const String& name, Vector4& vec)	{ GetDataVector4(name, vec); }
+			void GetAuto(const String& name, Matrix& mat)	{ GetDataMatrix(name, mat); }
+			void GetAuto(const String& name, Color4& clr)	{ GetDataColor4(name, clr); }
+			void GetAuto(const String& name, String& str)	{ GetDataString(name, str); }
+
+			void GetAuto(const String& name, int64* value, int32 count)	{ GetDataInt64(name, value, count); }
+			void GetAuto(const String& name, uint64* value, int32 count)	{ GetDataUInt64(name, value, count); }
+			void GetAuto(const String& name, int32* value, int32 count)	{ GetDataInt32(name, value, count); }
+			void GetAuto(const String& name, uint32* value, int32 count)	{ GetDataUInt32(name, value, count); }
+			void GetAuto(const String& name, int16* value, int32 count)	{ GetDataInt16(name, value, count); }
+			void GetAuto(const String& name, uint16* value, int32 count)	{ GetDataUInt16(name, value, count); }
+			void GetAuto(const String& name, float* value, int32 count)	{ GetDataSingle(name, value, count); }
+			void GetAuto(const String& name, double* value, int32 count)	{ GetDataDouble(name, value, count); }
+			void GetAuto(const String& name, bool* value, int32 count)		{ GetDataBool(name, value, count); }
+			void GetAuto(const String& name, Vector2* vec, int32 count)	{ GetDataVector2(name, vec, count); }
+			void GetAuto(const String& name, Vector3* vec, int32 count)	{ GetDataVector3(name, vec, count); }
+			void GetAuto(const String& name, Vector4* vec, int32 count)	{ GetDataVector4(name, vec, count); }
+			void GetAuto(const String& name, Matrix* mat, int32 count)		{ GetDataMatrix(name, mat, count); }
+			void GetAuto(const String& name, Color4* clr, int32 count)		{ GetDataColor4(name, clr, count); }
+			void GetAuto(const String& name, String* str, int32 count)		{ GetDataString(name, str, count); }
+
+
+
 			int64 GetDataInt64(const String& name);
 			uint64 GetDataUInt64(const String& name);
 			int32 GetDataInt32(const String& name);
@@ -214,23 +249,56 @@ namespace Apoc3D
 		public:
 			/**
 			 * param isEndianIndependent true if the data medium is a fixed Endianness across platform.
-			 *		 false for situations like CPU memory.
+			 *		 false for situations like system memory.
 			 */
 			TaggedDataWriter(bool isEndianIndependent);
 			~TaggedDataWriter();
 
-
 			BinaryWriter* AddEntry(const String& name);
 			Stream* AddEntryStream(const String& name);
 
-			void AddEntry(const String& name, int64 value);
-			void AddEntry(const String& name, uint64 value);
-			void AddEntry(const String& name, int32 value);
-			void AddEntry(const String& name, uint32 value);
-			void AddEntry(const String& name, int16 value);
-			void AddEntry(const String& name, uint16 value);
-			void AddEntry(const String& name, float value);
-			void AddEntry(const String& name, double value);
+
+			void AddAuto(const String& name, int64 value)	{ AddEntryInt64(name, value); }
+			void AddAuto(const String& name, uint64 value)	{ AddEntryUInt64(name, value); }
+			void AddAuto(const String& name, int32 value)	{ AddEntryInt32(name, value); }
+			void AddAuto(const String& name, uint32 value)	{ AddEntryUInt32(name, value); }
+			void AddAuto(const String& name, int16 value)	{ AddEntryInt16(name, value); }
+			void AddAuto(const String& name, uint16 value)	{ AddEntryUInt16(name, value); }
+			void AddAuto(const String& name, float value)	{ AddEntrySingle(name, value); }
+			void AddAuto(const String& name, double value)	{ AddEntryDouble(name, value); }
+			void AddAuto(const String& name, bool value)	{ AddEntryBool(name, value); }
+			void AddAuto(const String& name, const Vector2& vec)	{ AddEntryVector2(name, vec); }
+			void AddAuto(const String& name, const Vector3& vec)	{ AddEntryVector3(name, vec); }
+			void AddAuto(const String& name, const Vector4& vec)	{ AddEntryVector4(name, vec); }
+			void AddAuto(const String& name, const Matrix& mat)	{ AddEntryMatrix(name, mat); }
+			void AddAuto(const String& name, const Color4& clr)	{ AddEntryColor4(name, clr); }
+			void AddAuto(const String& name, const String& str)	{ AddEntryString(name, str); }
+
+			void AddAuto(const String& name, const int64* value, int32 count)	{ AddEntryInt64(name, value, count); }
+			void AddAuto(const String& name, const uint64* value, int32 count)	{ AddEntryUInt64(name, value, count); }
+			void AddAuto(const String& name, const int32* value, int32 count)	{ AddEntryInt32(name, value, count); }
+			void AddAuto(const String& name, const uint32* value, int32 count)	{ AddEntryUInt32(name, value, count); }
+			void AddAuto(const String& name, const int16* value, int32 count)	{ AddEntryInt16(name, value, count); }
+			void AddAuto(const String& name, const uint16* value, int32 count)	{ AddEntryUInt16(name, value, count); }
+			void AddAuto(const String& name, const float* value, int32 count)	{ AddEntrySingle(name, value, count); }
+			void AddAuto(const String& name, const double* value, int32 count)	{ AddEntryDouble(name, value, count); }
+			void AddAuto(const String& name, const bool* value, int32 count)	{ AddEntryBool(name, value, count); }
+			void AddAuto(const String& name, const Vector2* vec, int32 count)	{ AddEntryVector2(name, vec, count); }
+			void AddAuto(const String& name, const Vector3* vec, int32 count)	{ AddEntryVector3(name, vec, count); }
+			void AddAuto(const String& name, const Vector4* vec, int32 count)	{ AddEntryVector4(name, vec, count); }
+			void AddAuto(const String& name, const Matrix* mat, int32 count)	{ AddEntryMatrix(name, mat, count); }
+			void AddAuto(const String& name, const Color4* clr, int32 count)	{ AddEntryColor4(name, clr, count); }
+			void AddAuto(const String& name, const String* str, int32 count)	{ AddEntryString(name, str, count); }
+
+
+			void AddEntryInt64(const String& name, int64 value);
+			void AddEntryUInt64(const String& name, uint64 value);
+			void AddEntryInt32(const String& name, int32 value);
+			void AddEntryUInt32(const String& name, uint32 value);
+			void AddEntryInt16(const String& name, int16 value);
+			void AddEntryUInt16(const String& name, uint16 value);
+			void AddEntrySingle(const String& name, float value);
+			void AddEntryDouble(const String& name, double value);
 			void AddEntryBool(const String& name, bool value);
 
 			void AddEntryInt64(const String& name, const int64* value, int32 count);
@@ -242,7 +310,7 @@ namespace Apoc3D
 			void AddEntrySingle(const String& name, const float* value, int32 count);
 			void AddEntryDouble(const String& name, const double* value, int32 count);
 			void AddEntryBool(const String& name, const bool* value, int32 count);
-
+			
 			void AddEntryVector2(const String& name, const Vector2& vec);
 			void AddEntryVector3(const String& name, const Vector3& vec);
 			void AddEntryVector4(const String& name, const Vector4& vec);

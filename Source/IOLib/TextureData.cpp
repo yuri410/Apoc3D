@@ -78,10 +78,10 @@ namespace Apoc3D
 		}
 		void TextureLevelData::SaveData(TaggedDataWriter* data) const
 		{
-			data->AddEntry(WidthTag, Width);
-			data->AddEntry(HeightTag, Height);
-			data->AddEntry(DepthTag, Depth);
-			data->AddEntry(LevelSizeTag, LevelSize);
+			data->AddEntryInt32(WidthTag, Width);
+			data->AddEntryInt32(HeightTag, Height);
+			data->AddEntryInt32(DepthTag, Depth);
+			data->AddEntryInt32(LevelSizeTag, LevelSize);
 
 			BinaryWriter* bw = data->AddEntry(ContentTag);
 			bw->Write(ContentData, LevelSize);
@@ -127,10 +127,10 @@ namespace Apoc3D
 
 			TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
-			data->AddEntry(TypeTag, (int32)Type);
-			data->AddEntry(FormatTag, (int32)Format);
-			data->AddEntry(ContentSizeTag, ContentSize);
-			data->AddEntry(LevelCountTag, LevelCount);
+			data->AddEntryInt32(TypeTag, (int32)Type);
+			data->AddEntryInt32(FormatTag, (int32)Format);
+			data->AddEntryInt32(ContentSizeTag, ContentSize);
+			data->AddEntryInt32(LevelCountTag, LevelCount);
 
 			for (int i = 0; i < LevelCount; i++)
 			{

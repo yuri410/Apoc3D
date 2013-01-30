@@ -216,7 +216,7 @@ namespace Apoc3D
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
 			uint32 materialCount = Materials.getMaterialCount();
-			data->AddEntry(TAG_3_MaterialCountTag, materialCount);
+			data->AddEntryUInt32(TAG_3_MaterialCountTag, materialCount);
 
 			// save material
 			{
@@ -249,7 +249,7 @@ namespace Apoc3D
 			// write name
 			data->AddEntryString(TAG_3_NameTag, Name);
 			
-			data->AddEntry(TAG_3_FaceCountTag, static_cast<uint32>(Faces.getCount()));
+			data->AddEntryUInt32(TAG_3_FaceCountTag, static_cast<uint32>(Faces.getCount()));
 
 			// write faces
 			{
@@ -282,8 +282,8 @@ namespace Apoc3D
 				delete bw;
 			}
 
-			data->AddEntry(TAG_3_VertexSizeTag, VertexSize);
-			data->AddEntry(TAG_3_VertexCountTag, VertexCount);
+			data->AddEntryUInt32(TAG_3_VertexSizeTag, VertexSize);
+			data->AddEntryUInt32(TAG_3_VertexCountTag, VertexCount);
 
 			// save vertex data
 			{
@@ -419,7 +419,7 @@ namespace Apoc3D
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
-			data->AddEntry(TAG_3_EntityCountTag, static_cast<int32>(Entities.getCount()));
+			data->AddEntryInt32(TAG_3_EntityCountTag, static_cast<int32>(Entities.getCount()));
 
 			for (int i=0;i<Entities.getCount();i++)
 			{

@@ -556,15 +556,15 @@ namespace Apoc3D
 #define TAGW_NEW_ENTRY(name, value, setvalue) Entry ent = Entry(name); m_positions.Add(name, ent); setvalue(ent, value);
 #define TAGW_NEW_ENTRY_ARR(name, value, count, setvalue) Entry ent = Entry(name); m_positions.Add(name, ent); setvalue(ent, value, count);
 
-		void TaggedDataWriter::AddEntry(const String& name, int64 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataInt64);  }
-		void TaggedDataWriter::AddEntry(const String& name, uint64 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt64); }
-		void TaggedDataWriter::AddEntry(const String& name, int32 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataInt32);  }
-		void TaggedDataWriter::AddEntry(const String& name, uint32 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt32); }
-		void TaggedDataWriter::AddEntry(const String& name, int16 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataInt16);  }
-		void TaggedDataWriter::AddEntry(const String& name, uint16 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt16); }
-		void TaggedDataWriter::AddEntry(const String& name, float value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataSingle); }
-		void TaggedDataWriter::AddEntry(const String& name, double value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataDouble); }
-		void TaggedDataWriter::AddEntryBool(const String& name, bool value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataBool); }
+		void TaggedDataWriter::AddEntryInt64(const String& name, int64 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataInt64);  }
+		void TaggedDataWriter::AddEntryUInt64(const String& name, uint64 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt64); }
+		void TaggedDataWriter::AddEntryInt32(const String& name, int32 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataInt32);  }
+		void TaggedDataWriter::AddEntryUInt32(const String& name, uint32 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt32); }
+		void TaggedDataWriter::AddEntryInt16(const String& name, int16 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataInt16);  }
+		void TaggedDataWriter::AddEntryUInt16(const String& name, uint16 value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataUInt16); }
+		void TaggedDataWriter::AddEntrySingle(const String& name, float value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataSingle); }
+		void TaggedDataWriter::AddEntryDouble(const String& name, double value)	{ TAGW_NEW_ENTRY(name, value, _SetEntryDataDouble); }
+		void TaggedDataWriter::AddEntryBool(const String& name, bool value)		{ TAGW_NEW_ENTRY(name, value, _SetEntryDataBool); }
 
 		void TaggedDataWriter::AddEntryVector2(const String& name, const Vector2& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataVector2); }
 		void TaggedDataWriter::AddEntryVector3(const String& name, const Vector3& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataVector3); }

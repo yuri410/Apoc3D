@@ -103,8 +103,8 @@ namespace Apoc3D
 				const MaterialAnimationClip* clip = m_mtrlAnimationClips.begin()->second;
 				const FastList<MaterialAnimationKeyframe>& keyframes = clip->Keyframes;
 
-				data->AddEntry(TAG_2_MaterialAnimationDurationTag, clip->Duration);
-				data->AddEntry(TAG_2_MaterialAnimationKeyframeCountTag, 
+				data->AddEntrySingle(TAG_2_MaterialAnimationDurationTag, clip->Duration);
+				data->AddEntryUInt32(TAG_2_MaterialAnimationKeyframeCountTag, 
 					static_cast<uint32>(keyframes.getCount()));
 
 				BinaryWriter* bw = data->AddEntry(TAG_2_MaterialAnimationKeyframesTag);
@@ -308,11 +308,11 @@ namespace Apoc3D
 			{
 				TaggedDataWriter* data = new TaggedDataWriter(true);
 
-				data->AddEntry(TAG_3_RigidEntityCount, RigidEntityCount);
+				data->AddEntryInt32(TAG_3_RigidEntityCount, RigidEntityCount);
 
 				if (m_hasMtrlClip)
 				{
-					data->AddEntry(TAG_3_MaterialAnimationCountTag, (int32)m_mtrlAnimationClips.size());
+					data->AddEntryInt32(TAG_3_MaterialAnimationCountTag, (int32)m_mtrlAnimationClips.size());
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_MaterialAnimationTag);
 					for (MtrlClipTable::const_iterator iter = m_mtrlAnimationClips.begin(); iter != m_mtrlAnimationClips.end(); iter++)
@@ -338,7 +338,7 @@ namespace Apoc3D
 				// Bones
 				if (m_bones.getCount())
 				{
-					data->AddEntry(TAG_3_BoneCountTag, static_cast<int32>(m_bones.getCount()));
+					data->AddEntryInt32(TAG_3_BoneCountTag, static_cast<int32>(m_bones.getCount()));
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_BonesTag);
 					for (int i = 0; i < m_bones.getCount(); i++)
@@ -361,12 +361,12 @@ namespace Apoc3D
 					bw->Close();
 					delete bw;
 
-					data->AddEntry(TAG_3_RootBoneTag, m_rootBone);
+					data->AddEntryInt32(TAG_3_RootBoneTag, m_rootBone);
 				}
 
 				if (m_hasSkinnedClip)
 				{
-					data->AddEntry(TAG_3_SkinnedAnimationClipCountTag, m_skinnedAnimationClips.size());
+					data->AddEntryUInt32(TAG_3_SkinnedAnimationClipCountTag, m_skinnedAnimationClips.size());
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_SkinnedAnimationClipTag);
 					for (ClipTable::const_iterator iter = m_skinnedAnimationClips.begin(); iter != m_skinnedAnimationClips.end(); iter++)
@@ -393,7 +393,7 @@ namespace Apoc3D
 				}
 				if (m_hasRigidClip)
 				{
-					data->AddEntry(TAG_3_RigidAnimationClipCountTag, m_rigidAnimationClips.size());
+					data->AddEntryUInt32(TAG_3_RigidAnimationClipCountTag, m_rigidAnimationClips.size());
 
 					BinaryWriter* bw = data->AddEntry(TAG_3_RigidAnimationClipTag);
 					for (ClipTable::const_iterator iter = m_rigidAnimationClips.begin(); iter != m_rigidAnimationClips.end(); iter++)

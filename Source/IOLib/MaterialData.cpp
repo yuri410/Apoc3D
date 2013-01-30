@@ -326,7 +326,7 @@ namespace Apoc3D
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
-			data->AddEntry(TAG_3_CustomParamCount, static_cast<uint32>(CustomParametrs.size()));
+			data->AddEntryUInt32(TAG_3_CustomParamCount, static_cast<uint32>(CustomParametrs.size()));
 			int32 index = 0;
 			for (CustomParamTable::iterator iter = CustomParametrs.begin(); iter != CustomParametrs.end(); iter++)
 			{				
@@ -389,22 +389,22 @@ namespace Apoc3D
 				}
 			}
 
-			data->AddEntry(TAG_3_RenderPriority, Priority);
-			data->AddEntry(TAG_3_PassFlags, PassFlags);
+			data->AddEntryInt32(TAG_3_RenderPriority, Priority);
+			data->AddEntryUInt64(TAG_3_PassFlags, PassFlags);
 
-			data->AddEntry(TAG_3_IsBlendTransparent, IsBlendTransparent);
-			data->AddEntry(TAG_3_SourceBlend, static_cast<uint32>(SourceBlend));
-			data->AddEntry(TAG_3_DestinationBlend, static_cast<uint32>(DestinationBlend));
-			data->AddEntry(TAG_3_BlendFunction, static_cast<uint32>(BlendFunction));
+			data->AddEntryBool(TAG_3_IsBlendTransparent, IsBlendTransparent);
+			data->AddEntryUInt32(TAG_3_SourceBlend, static_cast<uint32>(SourceBlend));
+			data->AddEntryUInt32(TAG_3_DestinationBlend, static_cast<uint32>(DestinationBlend));
+			data->AddEntryUInt32(TAG_3_BlendFunction, static_cast<uint32>(BlendFunction));
 
-			data->AddEntry(TAG_3_CullMode, static_cast<uint32>(Cull));			
+			data->AddEntryUInt32(TAG_3_CullMode, static_cast<uint32>(Cull));			
 
-			data->AddEntry(TAG_3_AlphaReference, AlphaReference);
-			data->AddEntry(TAG_3_AlphaTestEnable, AlphaTestEnabled);
+			data->AddEntryUInt32(TAG_3_AlphaReference, AlphaReference);
+			data->AddEntryBool(TAG_3_AlphaTestEnable, AlphaTestEnabled);
 
-			data->AddEntry(TAG_3_DepthTestEnabled, DepthTestEnabled);
-			data->AddEntry(TAG_3_DepthWriteEnabled, DepthWriteEnabled);
-			data->AddEntry(TAG_3_UsePointSprite, UsePointSprite);
+			data->AddEntryBool(TAG_3_DepthTestEnabled, DepthTestEnabled);
+			data->AddEntryBool(TAG_3_DepthWriteEnabled, DepthWriteEnabled);
+			data->AddEntryBool(TAG_3_UsePointSprite, UsePointSprite);
 
 			// save material basic color
 			{

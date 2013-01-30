@@ -333,7 +333,7 @@ namespace Apoc3D
 				{
 					TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
-					data->AddEntry(TAG_3_ParameterCountTag, (int32)Parameters.getCount());
+					data->AddEntryInt32(TAG_3_ParameterCountTag, (int32)Parameters.getCount());
 
 
 					for (int i=0;i<Parameters.getCount();i++)
