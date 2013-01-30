@@ -79,6 +79,7 @@ namespace Apoc3D
 			void GetAuto(const String& name, Vector4& vec)	{ GetDataVector4(name, vec); }
 			void GetAuto(const String& name, Matrix& mat)	{ GetDataMatrix(name, mat); }
 			void GetAuto(const String& name, Color4& clr)	{ GetDataColor4(name, clr); }
+			void GetAuto(const String& name, Plane& plane)	{ GetDataPlane(name, plane); }
 			void GetAuto(const String& name, String& str)	{ GetDataString(name, str); }
 
 			void GetAuto(const String& name, int64* value, int32 count)	{ GetDataInt64(name, value, count); }
@@ -124,6 +125,7 @@ namespace Apoc3D
 			void GetDataVector4(const String& name, Vector4& vec);
 			void GetDataMatrix(const String& name, Matrix& mat);
 			void GetDataColor4(const String& name, Color4& clr);
+			void GetDataPlane(const String& name, Plane& plane);
 			void GetDataString(const String& name, String& str);
 
 			void GetDataVector2(const String& name, Vector2* vec, int32 count);
@@ -272,6 +274,7 @@ namespace Apoc3D
 			void AddAuto(const String& name, const Vector4& vec)	{ AddEntryVector4(name, vec); }
 			void AddAuto(const String& name, const Matrix& mat)	{ AddEntryMatrix(name, mat); }
 			void AddAuto(const String& name, const Color4& clr)	{ AddEntryColor4(name, clr); }
+			void AddAuto(const String& name, const Plane& plane)	{ AddEntryPlane(name, plane); }
 			void AddAuto(const String& name, const String& str)	{ AddEntryString(name, str); }
 
 			void AddAuto(const String& name, const int64* value, int32 count)	{ AddEntryInt64(name, value, count); }
@@ -316,6 +319,7 @@ namespace Apoc3D
 			void AddEntryVector4(const String& name, const Vector4& vec);
 			void AddEntryMatrix(const String& name, const Matrix& mat);
 			void AddEntryColor4(const String& name, const Color4& clr);
+			void AddEntryPlane(const String& name, const Plane& clr);
 			void AddEntryString(const String& name, const String& str);
 
 			void AddEntryVector2(const String& name, const Vector2* vec, int32 count);

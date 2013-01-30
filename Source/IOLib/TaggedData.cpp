@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Math/Matrix.h"
 #include "Math/Color.h"
+#include "Math/Plane.h"
 
 #include "IOUtils.h"
 
@@ -138,7 +139,12 @@ namespace Apoc3D
 		void TaggedDataReader::GetDataColor4(const String& name, Color4& clr)		{ FillBuffer(name, sizeof(float) * 4); _GetBufferColor4(clr); }
 		void TaggedDataReader::GetDataString(const String& name, String& str)		{ TDR_GETDATA(name, str, _GetEntryString); }
 		void TaggedDataReader::GetDataMatrix(const String& name, Matrix& mat)		{ TDR_GETDATA(name, mat, _GetEntryMatrix); }
-
+		void TaggedDataReader::GetDataPlane(const String& name, Plane& plane)
+		{
+			float flts[4]; 
+			GetDataSingle(name, flts, 4); 
+			plane = Plane(flts[0], flts[1], flts[2], flts[3]); 
+		}
 
 		void TaggedDataReader::GetDataVector2(const String& name, Vector2* vec, int32 count)	{ TDR_GETDATA_ARR(name, vec, count, _GetEntryVector2); }
 		void TaggedDataReader::GetDataVector3(const String& name, Vector3* vec, int32 count)	{ TDR_GETDATA_ARR(name, vec, count, _GetEntryVector3); }
@@ -572,6 +578,11 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntryMatrix(const String& name, const Matrix& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataMatrix); }
 		void TaggedDataWriter::AddEntryColor4(const String& name, const Color4& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataColor4); }
 		void TaggedDataWriter::AddEntryString(const String& name, const String& value) { TAGW_NEW_ENTRY(name, value, _SetEntryDataString); }
+		void TaggedDataWriter::AddEntryPlane(const String& name, const Plane& plane)
+		{
+			float flts[4] = { plane.X, plane.Y, plane.Z, plane.D };
+			AddEntrySingle(name, flts, 4);
+		}
 
 		void TaggedDataWriter::AddEntryInt64(const String& name, const int64* value, int32 count)	{ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataInt64); }
 		void TaggedDataWriter::AddEntryUInt64(const String& name, const uint64* value, int32 count){ TAGW_NEW_ENTRY_ARR(name, value, count, _SetEntryDataUInt64); }

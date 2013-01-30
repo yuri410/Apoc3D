@@ -44,8 +44,11 @@ namespace Apoc3D
 		//template<typename T>
 		//const IEqualityComparer<T> IEqualityComparer<T>::Default = 0;
 
-		const IEqualityComparer<Resource*>* 
-			ResourceEqualityComparer::BuiltIn::Default = new ResourceEqualityComparer();
+		//const IEqualityComparer<Resource*>* 
+		//	ResourceEqualityComparer::BuiltIn::Default = new ResourceEqualityComparer();
+
+		template<> const IEqualityComparer<Resource*>*
+			IBuiltInEqualityComparer<Resource*>::Default = new ResourceEqualityComparer();
 
 		bool ResourceEqualityComparer::Equals(const LPResource& x, const LPResource& y) const
 		{
@@ -63,8 +66,8 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		const IEqualityComparer<LPVoid>*
-			PointerEqualityComparer::BuiltIn::Default = new PointerEqualityComparer();
+		template<> const IEqualityComparer<LPVoid>*
+			IBuiltInEqualityComparer<LPVoid>::Default = new PointerEqualityComparer();
 
 		bool PointerEqualityComparer::Equals(const LPVoid& x, const LPVoid& y) const
 		{
@@ -79,8 +82,8 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		const IEqualityComparer<wchar_t>*
-			WCharEqualityComparer::BuiltIn::Default = new WCharEqualityComparer();
+		template<> const IEqualityComparer<wchar_t>*
+			IBuiltInEqualityComparer<wchar_t>::Default = new WCharEqualityComparer();
 
 		bool WCharEqualityComparer::Equals(const wchar_t& x, const wchar_t& y) const
 		{
@@ -95,8 +98,8 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		const IEqualityComparer<string>* 
-			stlstringEqualityComparer::BuiltIn::Default = new stlstringEqualityComparer();
+		template<> const IEqualityComparer<string>* 
+			IBuiltInEqualityComparer<string>::Default = new stlstringEqualityComparer();
 
 		bool stlstringEqualityComparer::Equals(const string& x, const string& y) const
 		{
@@ -111,8 +114,11 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		const IEqualityComparer<uint64>* 
-			Uint64EqualityComparer::BuiltIn::Default = new Uint64EqualityComparer();
+		//const IEqualityComparer<uint64>* 
+		//	Uint64EqualityComparer::BuiltIn::Default = new Uint64EqualityComparer();
+
+		template<> const IEqualityComparer<uint64>*
+			IBuiltInEqualityComparer<uint64>::Default = new Uint64EqualityComparer();
 
 		bool Uint64EqualityComparer::Equals(const uint64& x, const uint64& y) const
 		{
@@ -127,8 +133,10 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		const IEqualityComparer<uint32>* 
-			Uint32EqualityComparer::BuiltIn::Default = new Uint32EqualityComparer();
+		//const IEqualityComparer<uint32>* 
+		//	Uint32EqualityComparer::BuiltIn::Default = new Uint32EqualityComparer();
+		template<> const IEqualityComparer<uint32>*
+			IBuiltInEqualityComparer<uint32>::Default = new Uint32EqualityComparer();
 
 		bool Uint32EqualityComparer::Equals(const uint32& x, const uint32& y) const
 		{
@@ -143,8 +151,8 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		const IEqualityComparer<int32>* 
-			Int32EqualityComparer::BuiltIn::Default = new Int32EqualityComparer();
+		template<> const IEqualityComparer<int32>* 
+			IBuiltInEqualityComparer<int32>::Default = new Int32EqualityComparer();
 
 		bool Int32EqualityComparer::Equals(const int32& x, const int32& y) const
 		{
@@ -159,8 +167,8 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		const IEqualityComparer<String>*
-			StringEuqlityComparer::BuiltIn::Default = new StringEuqlityComparer();
+		template<> const IEqualityComparer<String>*
+			IBuiltInEqualityComparer<String>::Default = new StringEuqlityComparer();
 
 		bool StringEuqlityComparer::Equals(const String& x, const String& y) const
 		{
