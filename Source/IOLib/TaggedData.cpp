@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Math/Matrix.h"
 #include "Math/Color.h"
 #include "Math/Plane.h"
+#include "Math/Quaternion.h"
 
 #include "IOUtils.h"
 
@@ -144,6 +145,13 @@ namespace Apoc3D
 			float flts[4]; 
 			GetDataSingle(name, flts, 4); 
 			plane = Plane(flts[0], flts[1], flts[2], flts[3]); 
+		}
+		void TaggedDataReader::GetDataQuaternion(const String& name, Quaternion& quat)
+		{
+
+			float flts[4]; 
+			GetDataSingle(name, flts, 4); 
+			quat = Quaternion(flts[0], flts[1], flts[2], flts[3]); 
 		}
 
 		void TaggedDataReader::GetDataVector2(const String& name, Vector2* vec, int32 count)	{ TDR_GETDATA_ARR(name, vec, count, _GetEntryVector2); }
@@ -581,6 +589,11 @@ namespace Apoc3D
 		void TaggedDataWriter::AddEntryPlane(const String& name, const Plane& plane)
 		{
 			float flts[4] = { plane.X, plane.Y, plane.Z, plane.D };
+			AddEntrySingle(name, flts, 4);
+		}
+		void TaggedDataWriter::AddEntryQuaternion(const String& name, const Quaternion& quad)
+		{
+			float flts[4] = { quad.X, quad.Y, quad.Z, quad.D };
 			AddEntrySingle(name, flts, 4);
 		}
 
