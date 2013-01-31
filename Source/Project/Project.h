@@ -109,8 +109,10 @@ namespace Apoc3D
 		}
 
 		String EditorExtension;
-
 		String DestFile;
+		String SourceFile;
+
+		FastMap<String, String> Properties;
 
 		virtual bool IsNotBuilt();
 

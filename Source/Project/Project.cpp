@@ -1056,15 +1056,31 @@ namespace Apoc3D
 
 	void ProjectCustomItem::Parse(const ConfigurationSection* sect)
 	{
+		SourceFile = sect->getAttribute(L"SourceFile");
 		DestFile = sect->getAttribute(L"DestinationFile");
 		sect->tryGetAttribute(L"EditorExtension", EditorExtension);
+
+		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
+		{
+			Properties.Add(*e.getCurrentKey(), (*e.getCurrentValue())->getValue());
+		}
 	}
 	void ProjectCustomItem::Save(ConfigurationSection* sect, bool savingBuild)
 	{
+		//SourceFile = sect->getAttribute(L"SourceFile");
+		sect->AddAttributeString(L"SourceFile", SourceFile);
 		sect->AddAttributeString(L"DestinationFile", DestFile);
 		if (EditorExtension.size())
 		{
 			sect->AddAttributeString(L"EditorExtension", EditorExtension);
+		}
+
+		for (FastMap<String, String>::Enumerator e = Properties.GetEnumerator(); e.MoveNext();)
+		{
+			ConfigurationSection* valSect = new ConfigurationSection(*e.getCurrentKey());
+			valSect->SetValue(*e.getCurrentValue());
+
+			sect->AddSection(valSect);
 		}
 	}
 	std::vector<String> ProjectCustomItem::GetAllOutputFiles()
@@ -1203,6 +1219,12 @@ namespace Apoc3D
 			ProjectResCustomEffect* eff = new ProjectResCustomEffect(m_project);
 			eff->Parse(sect);
 			m_typeData = eff;
+		}
+		else if (buildType == L"custom")
+		{
+			ProjectCustomItem* item = new ProjectCustomItem(m_project);
+			item->Parse(sect);
+			m_typeData = item;
 		}
 		else if (buildType == L"font")
 		{
