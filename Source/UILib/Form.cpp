@@ -152,7 +152,7 @@ namespace Apoc3D
 
 			if (m_state == FWS_Normal)
 			{
-				m_previousSize = Position;
+				m_previousPosition = Position;
 				m_previousSize = Size;
 			}
 			
@@ -291,6 +291,9 @@ namespace Apoc3D
 
 		void Form::Update(const GameTime* const time)
 		{
+			if (!Visible)
+				return;
+
 			UpdateState();
 			UpdateTopMost();
 
@@ -502,11 +505,11 @@ namespace Apoc3D
 					Vector2((float)m_maximizedPos.X, (float)m_maximizedPos.Y), 
 					Vector2((float)Position.X, (float)Position.Y))>2.0f)
 				{
-					int dx = (int)(m_maximizedPos.X-Position.X*0.2f);
+					int dx = (int)((m_maximizedPos.X-Position.X)*0.2f);
 					if (!dx) dx = m_maximizedPos.X-Position.X;
 					Position.X += dx;
 
-					int dy = (int)(m_maximizedPos.Y-Position.Y*0.2f);
+					int dy = (int)((m_maximizedPos.Y-Position.Y)*0.2f);
 					if (!dy) dy = m_maximizedPos.Y-Position.Y;
 					Position.Y += dy;
 				}
@@ -567,9 +570,13 @@ namespace Apoc3D
 
 			if (m_isDragging)
 			{
-				Position.X = mouse->GetCurrentPosition().X - m_posOffset.X;
-				Position.Y = mouse->GetCurrentPosition().Y - m_posOffset.Y;
-				
+				Point dif(mouse->GetCurrentPosition().X - m_posOffset.X - Position.X, 
+					mouse->GetCurrentPosition().Y - m_posOffset.Y - Position.Y);
+
+				dif = UIRoot::ClampFormMovementOffset(this, dif);
+				Position.X += dif.X;
+				Position.Y += dif.Y;
+
 				if (mouse->IsLeftReleasedState())
 					m_isDragging = false;
 			}
@@ -596,7 +603,7 @@ namespace Apoc3D
 			{
 				if (mouse->IsLeftPressed())
 				{
-					if (!UIRoot::getActiveForm())
+					if (UIRoot::getActiveForm() != this)
 						UIRoot::setActiveForm(this);
 
 					if (UIRoot::getActiveForm()==this)
@@ -624,7 +631,6 @@ namespace Apoc3D
 				if (m_isInReiszeArea)
 				{
 					m_isInReiszeArea = true;
-					
 				}
 
 				if (mouse->IsLeftPressed() &&
@@ -640,18 +646,24 @@ namespace Apoc3D
 			else if (m_isInReiszeArea && !m_isResizeing)
 			{
 				m_isInReiszeArea = false;
-				
 			}
 
 			if (m_isResizeing)
 			{
-				Size.X = m_oldSize.X + mouse->GetCurrentPosition().X - m_posOffset.X;
-				Size.Y = m_oldSize.Y + mouse->GetCurrentPosition().Y - m_posOffset.Y;
+				Point dif(
+					m_oldSize.X + mouse->GetCurrentPosition().X - m_posOffset.X - Size.X, 
+					m_oldSize.Y + mouse->GetCurrentPosition().Y - m_posOffset.Y - Size.Y);
 
-				if (!m_eResized.empty())
+				dif = UIRoot::ClampFormMovementOffset(this, dif);
+
+				Size.X += dif.X;
+				Size.Y += dif.Y;
+
+				if ((dif.X !=0 || dif.Y !=0) && !m_eResized.empty())
 				{
 					m_eResized(this);
 				}
+				
 				if (mouse->IsLeftReleasedState())
 				{
 					m_isResizeing = false;
@@ -670,6 +682,9 @@ namespace Apoc3D
 
 		void Form::Draw(Sprite* sprite)
 		{
+			if (!Visible)
+				return;
+
 			Apoc3D::Math::Rectangle uiArea = UIRoot::GetUIArea(m_device);
 
 			m_borderAlpha = 0.3f - UIRoot::getForms().IndexOf(this) * 0.04f;
@@ -1065,6 +1080,7 @@ namespace Apoc3D
 		Form* UIRoot::m_activeForm = 0;
 		Form* UIRoot::m_topMostForm = 0;
 		RectangleF UIRoot::UIArea(0,0,1,1);
+		RectangleF UIRoot::MaximizedArea(0,0,1,1);
 		SubMenu* UIRoot::m_contextMenu = 0;
 		Sprite* UIRoot::m_sprite = 0;
 		Menu* UIRoot::m_mainMenu = 0;
@@ -1127,8 +1143,8 @@ namespace Apoc3D
 
 			if (m_mainMenu)
 			{
-				size.Y -= 17;
-				Apoc3D::Math::Rectangle result(0,17,size.X,size.Y);
+				size.Y -= m_mainMenu->Size.Y;
+				Apoc3D::Math::Rectangle result(0, m_mainMenu->Size.Y, size.X, size.Y);
 				return result;
 			}
 			else
@@ -1139,7 +1155,13 @@ namespace Apoc3D
 		}
 		Point UIRoot::GetMaximizedSize(RenderDevice* dev, Form* form)
 		{
-			Apoc3D::Math::Rectangle rect = GetUIArea(dev);
+			Viewport vp = dev->getViewport();
+
+			Apoc3D::Math::Rectangle rect;
+			rect.X = (int)(UIArea.X * MaximizedArea.X * vp.Width);
+			rect.Y = (int)(UIArea.Y * MaximizedArea.Y * vp.Height);
+			rect.Width = (int)(UIArea.Width * MaximizedArea.Width * vp.Width);
+			rect.Height = (int)(UIArea.Height * MaximizedArea.Height * vp.Height);
 
 			for (int i=0;i<m_forms.getCount();i++)
 			{
@@ -1176,6 +1198,38 @@ namespace Apoc3D
 			}
 			return false;
 		}
+		
+		Point UIRoot::ClampFormMovementOffset(Form* frm, const Point& vec)
+		{
+			if (frm->getBorderStyle() == FBS_Sizable && frm != m_modalForm)
+			{
+				RenderDevice* dev = frm->getRenderDevice();
+
+				Apoc3D::Math::Rectangle rect = GetMaximizedRect(dev, frm);
+				Apoc3D::Math::Rectangle formArea = frm->getAbsoluteArea();
+				formArea.Width = 80;
+				formArea.Height = 20;
+
+				Point result = vec;
+				
+				if (formArea.X + result.X < rect.X)
+					result.X = rect.X - formArea.X;
+
+				if (formArea.Y + result.Y < rect.Y)
+					result.Y = rect.Y - formArea.Y;
+
+				if (formArea.getRight() + result.X > rect.getRight())
+					result.X = rect.getRight() - formArea.getRight();
+
+				if (formArea.getBottom() + result.Y > rect.getBottom())
+					result.Y = rect.getBottom() - formArea.getBottom();
+
+				//Apoc3D::Math::Rectangle formArea(newPos.X, newPos.Y, newSize.X, newSize.Y);
+
+				return result;
+			}
+			return vec;
+		}
 		void UIRoot::Form_SizeChanged(Control* ctl)
 		{
 			Form* form = static_cast<Form*>(ctl);
@@ -1204,6 +1258,8 @@ namespace Apoc3D
 				}
 			}
 		}
+
+
 
 		void UIRoot::Initialize(RenderDevice* device)
 		{

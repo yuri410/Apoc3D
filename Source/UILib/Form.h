@@ -75,7 +75,70 @@ namespace Apoc3D
 				FWS_Maximized
 			};
 
+		public:
+
+			Form(BorderStyle border = FBS_Sizable, const String& title = L"");
+			virtual ~Form();
+
+			void ShowModal();
+			virtual void Show();
+			virtual void Hide();
+			virtual void Close();
+			virtual void Focus();
+			virtual void Unfocus();
+			virtual void Minimize();
+			virtual void Maximize();
+			virtual void Restore();
+
+			virtual void Initialize(RenderDevice* device);
+			
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
+
+			RenderDevice* getRenderDevice() const { return m_device; }
+
+			void setMinimumSize(const Point& size) { m_minimumSize = size; }
+			void setMaximumSize(const Point& size) { m_maximumSize = size; }
+
+			bool isResized() const { return m_isResizeing; }
+			bool isDragged() const { return m_isDragging; }
+			bool isMinimizing() const { return m_isMinimizing; }
+
+			bool getHasMinimizeButton() const { return m_hasMinimizeButton; }
+			void setHasMinimizeButton(bool val) { m_hasMinimizeButton = val; }
+
+			bool getHasMaximizeButton() const { return m_hasMaximizeButton; }
+			void setHasMaximizeButton(bool val) { m_hasMaximizeButton = val; }
+
+			const String& getTitle() const { return m_title; }
+			void setTitle(const String& txt) { m_title = txt; }
+
+			WindowState getState() const { return m_state; }
+			BorderStyle getBorderStyle() const { return m_borderStyle; }
+
+			UIEventHandler& eventResized() { return m_eResized; }
+			UIEventHandler& eventClosed() { return m_eClosed; }
+
 		private:
+			void InitializeButtons(RenderDevice* device);
+
+			void DrawTitle(Sprite* sprite);
+			void DrawButtons(Sprite* sprite);
+
+			void UpdateTopMost();
+			void UpdateActive();
+			void UpdateState();
+			void CheckDragging();
+			void CheckDoubleClick(const GameTime* const time);
+			void CheckResize();
+			void ToggleWindowState();
+
+			void btClose_Release(Control* sender);
+			void btMinimize_Release(Control* sender);
+			void btMaximize_Release(Control* sender);
+			void btRestore_Release(Control* sender);
+
 			RenderDevice* m_device;
 
 			Point m_titleOffset;
@@ -144,72 +207,6 @@ namespace Apoc3D
 
 			BorderStyle m_borderStyle;
 			WindowState m_state;
-
-
-			void InitializeButtons(RenderDevice* device);
-
-			void DrawTitle(Sprite* sprite);
-			void DrawButtons(Sprite* sprite);
-
-			void UpdateTopMost();
-			void UpdateActive();
-			void UpdateState();
-			void CheckDragging();
-			void CheckDoubleClick(const GameTime* const time);
-			void CheckResize();
-			void ToggleWindowState();
-
-			void btClose_Release(Control* sender);
-			void btMinimize_Release(Control* sender);
-			void btMaximize_Release(Control* sender);
-			void btRestore_Release(Control* sender);
-		public:
-			
-			RenderDevice* getRenderDevice() const { return m_device; }
-
-			void setMinimumSize(const Point& size) { m_minimumSize = size; }
-			void setMaximumSize(const Point& size) { m_maximumSize = size; }
-
-
-
-			bool isResized() const { return m_isResizeing; }
-			bool isDragged() const { return m_isDragging; }
-			bool isMinimizing() const { return m_isMinimizing; }
-
-			bool getHasMinimizeButton() const { return m_hasMinimizeButton; }
-			void setHasMinimizeButton(bool val) { m_hasMinimizeButton = val; }
-
-			bool getHasMaximizeButton() const { return m_hasMaximizeButton; }
-			void setHasMaximizeButton(bool val) { m_hasMaximizeButton = val; }
-
-			const String& getTitle() const { return m_title; }
-			void setTitle(const String& txt) { m_title = txt; }
-
-			WindowState getState() const { return m_state; }
-
-			UIEventHandler& eventResized() { return m_eResized; }
-			UIEventHandler& eventClosed() { return m_eClosed; }
-
-			Form(BorderStyle border = FBS_Sizable, const String& title = L"");
-			virtual ~Form();
-
-			void ShowModal();
-			virtual void Show();
-			virtual void Hide();
-			virtual void Close();
-			virtual void Focus();
-			virtual void Unfocus();
-			virtual void Minimize();
-			virtual void Maximize();
-			virtual void Restore();
-
-			virtual void Initialize(RenderDevice* device);
-			
-			virtual void Update(const GameTime* const time);
-			virtual void Draw(Sprite* sprite);
-
-
-			
 		};
 
 		/**
@@ -219,23 +216,13 @@ namespace Apoc3D
 		 */
 		class UIRoot
 		{
-		private:
-			static FastList<Form*> m_forms;
-			static FastList<ControlContainer*> m_containers;
-			static Form* m_activeForm;
-			static Form* m_topMostForm;
-			static SubMenu* m_contextMenu;
-			static Sprite* m_sprite;
-			static Menu* m_mainMenu;
-			static Form* m_modalForm;
-			static int m_modalAnim;
-
-			static void Form_SizeChanged(Control* ctl);
 		public:
 			/** 
 			 *  Specifies the area to display UI in the viewport. In unified coordinates.
 			 */
 			static RectangleF UIArea;
+
+			static RectangleF MaximizedArea;
 
 			/**
 			 *  Return the area to display UI in the viewport. In screen coordinates.
@@ -270,6 +257,21 @@ namespace Apoc3D
 
 			static void Draw();
 			static void Update(const GameTime* const time);
+
+			static Point ClampFormMovementOffset(Form* frm, const Point& vec);
+
+		private:
+			static FastList<Form*> m_forms;
+			static FastList<ControlContainer*> m_containers;
+			static Form* m_activeForm;
+			static Form* m_topMostForm;
+			static SubMenu* m_contextMenu;
+			static Sprite* m_sprite;
+			static Menu* m_mainMenu;
+			static Form* m_modalForm;
+			static int m_modalAnim;
+
+			static void Form_SizeChanged(Control* ctl);
 		};
 	}
 }

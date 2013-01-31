@@ -36,38 +36,12 @@ namespace Apoc3D
 	{
 		class APAPI Button : public Control
 		{
-		private:
-			Apoc3D::Math::Rectangle m_btnDestRect[3];
-
-			Texture* m_InvalidTexture;
-			Texture* m_DisabledTexture;
-			Texture* m_MouseDownTexture;
-			Texture* m_MouseOverTexture;
-			Texture* m_NormalTexture;
-			ColorValue m_modColor;
-			ColorValue m_modMouseDownColor;
-			ColorValue m_modMouseOverColor;
-			ColorValue m_modDisabledColor;
-			
-			Point m_textPos;
-			Point m_textSize;
-
-			PointF m_origin;
-			float m_scale;
-
-
-			void DrawDefaultButton(Sprite* spriteBatch);
-			void DrawCustomButton(Sprite* spriteBatch);
-			void UpdateEvents();
-		protected:
-
-			bool m_mouseOver;
-			bool m_mouseDown;
 		public:
 			Button(const Point& position, const String& text)
 				: Control(position, text), m_mouseOver(false), m_mouseDown(false),
 				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f))
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
+				m_rotation(0)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
@@ -75,7 +49,8 @@ namespace Apoc3D
 			Button(const Point& position, int width, const String& text)
 				: Control(position, text, Point(width, 0)), m_mouseOver(false), m_mouseDown(false),
 				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f))
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
+				m_rotation(0)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
@@ -83,12 +58,19 @@ namespace Apoc3D
 			Button(const Point& position, const Point& size, const String& text)
 				: Control(position, text, size), m_mouseOver(false), m_mouseDown(false),
 				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f))
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
+				m_rotation(0)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
 			}
-		
+			
+			virtual void Initialize(RenderDevice* device);
+
+			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* const time);
+
+			
 			/** 
 			 *  Gets the modulation color for custom button in normal state.
 			 */
@@ -125,12 +107,36 @@ namespace Apoc3D
 
 			Texture* getDisabledTexture() const { return m_DisabledTexture; }
 			void setDiabledTexture(Texture* texture) { m_DisabledTexture = texture; }
-			
-			virtual void Initialize(RenderDevice* device);
+		
+			void setRotation(float rot) { m_rotation = rot; }
+			float getRotation() const { return m_rotation; }
+		protected:
 
-			virtual void Draw(Sprite* sprite);
-			virtual void Update(const GameTime* const time);
+			bool m_mouseOver;
+			bool m_mouseDown;
 
+		private:
+			Apoc3D::Math::Rectangle m_btnDestRect[3];
+
+			Texture* m_InvalidTexture;
+			Texture* m_DisabledTexture;
+			Texture* m_MouseDownTexture;
+			Texture* m_MouseOverTexture;
+			Texture* m_NormalTexture;
+			ColorValue m_modColor;
+			ColorValue m_modMouseDownColor;
+			ColorValue m_modMouseOverColor;
+			ColorValue m_modDisabledColor;
+
+			Point m_textPos;
+			Point m_textSize;
+
+			float m_rotation;
+
+
+			void DrawDefaultButton(Sprite* spriteBatch);
+			void DrawCustomButton(Sprite* spriteBatch);
+			void UpdateEvents();
 		};
 
 		class APAPI ButtonGroup : public Control

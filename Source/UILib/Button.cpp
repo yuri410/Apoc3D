@@ -87,8 +87,6 @@ namespace Apoc3D
 					Size.X = m_NormalTexture->getWidth();
 					Size.Y = m_NormalTexture->getHeight();
 				}
-				
-
 			}
 		}
 
@@ -160,43 +158,95 @@ namespace Apoc3D
 
 		void Button::DrawCustomButton(Sprite* spriteBatch)
 		{
-			if (Enabled)
+			if (fabs(m_rotation) > 0.01f)
 			{
-				if (m_mouseDown)
+				Matrix oldTransform;
+				if (!spriteBatch->isUsingStack())
 				{
-					if (m_MouseDownTexture)
-						spriteBatch->Draw(m_MouseDownTexture, getArea(), 0, m_modMouseDownColor);
-					else
-						spriteBatch->Draw(m_NormalTexture, getArea(), 0, m_modMouseDownColor);
+					oldTransform = spriteBatch->getTransform();
 				}
-				else if (m_mouseOver)
+
+				Apoc3D::Math::Rectangle destRect = getArea();
+				Matrix rot; Matrix::CreateRotationZ(rot, m_rotation);
+				Matrix preT; Matrix::CreateTranslation(preT, -0.5f * destRect.Width, -0.5f * destRect.Height, 0);
+				
+				Matrix trans;
+				Matrix::Multiply(trans, preT, rot);
+				trans.SetTranslation(VECTOR3(destRect.X + trans.M41 + 0.5f * destRect.Width, destRect.Y + trans.M42 + 0.5f * destRect.Height, trans.M43));
+				spriteBatch->PreMultiplyTransform(trans);
+
+				Apoc3D::Math::Rectangle newDestRect(0,0, destRect.Width, destRect.Height);
+				
+				if (Enabled)
 				{
-					if (m_MouseOverTexture)
-						spriteBatch->Draw(m_MouseOverTexture, getArea(), 0, m_modMouseOverColor);
+					if (m_mouseDown)
+					{
+						if (m_MouseDownTexture)
+							spriteBatch->Draw(m_MouseDownTexture, newDestRect, nullptr, m_modMouseDownColor);
+						else
+							spriteBatch->Draw(m_NormalTexture, newDestRect, nullptr, m_modMouseDownColor);
+					}
+					else if (m_mouseOver)
+					{
+						if (m_MouseOverTexture)
+							spriteBatch->Draw(m_MouseOverTexture, newDestRect, nullptr, m_modMouseOverColor);
+						else
+							spriteBatch->Draw(m_NormalTexture, newDestRect, nullptr, m_modMouseOverColor);
+					}
 					else
-						spriteBatch->Draw(m_NormalTexture, getArea(), 0, m_modMouseOverColor);
+					{
+						spriteBatch->Draw(m_NormalTexture, newDestRect, nullptr, m_modColor);
+					}
 				}
 				else
 				{
-					spriteBatch->Draw(m_NormalTexture, getArea(), 0, m_modColor);
+					if (m_DisabledTexture)
+						spriteBatch->Draw(m_DisabledTexture, newDestRect, nullptr, m_modDisabledColor);
+					else
+						spriteBatch->Draw(m_NormalTexture, newDestRect, nullptr, m_modDisabledColor);
+				}
+
+
+				if (spriteBatch->isUsingStack())
+				{
+					spriteBatch->PopTransform();
+				}
+				else
+				{
+					spriteBatch->SetTransform(oldTransform);
 				}
 			}
 			else
 			{
-				if (m_DisabledTexture)
-					spriteBatch->Draw(m_DisabledTexture, getArea(), 0, m_modDisabledColor);
+				if (Enabled)
+				{
+					if (m_mouseDown)
+					{
+						if (m_MouseDownTexture)
+							spriteBatch->Draw(m_MouseDownTexture, getArea(), nullptr, m_modMouseDownColor);
+						else
+							spriteBatch->Draw(m_NormalTexture, getArea(), nullptr, m_modMouseDownColor);
+					}
+					else if (m_mouseOver)
+					{
+						if (m_MouseOverTexture)
+							spriteBatch->Draw(m_MouseOverTexture, getArea(), nullptr, m_modMouseOverColor);
+						else
+							spriteBatch->Draw(m_NormalTexture, getArea(), nullptr, m_modMouseOverColor);
+					}
+					else
+					{
+						spriteBatch->Draw(m_NormalTexture, getArea(), nullptr, m_modColor);
+					}
+				}
 				else
-					spriteBatch->Draw(m_NormalTexture, getArea(), 0, m_modDisabledColor);
+				{
+					if (m_DisabledTexture)
+						spriteBatch->Draw(m_DisabledTexture, getArea(), nullptr, m_modDisabledColor);
+					else
+						spriteBatch->Draw(m_NormalTexture, getArea(), nullptr, m_modDisabledColor);
+				}
 			}
-			//if (bMouseOver)
-			//{
-			//	if (bMouseDown)
-			//		spriteBatch.Draw(texture, Position + offset, srcRect[0], dimColor, 0f, Vector2.Zero, scale, effect, 0f);
-			//	else
-			//		spriteBatch.Draw(texture, Position + offset, srcRect[0], highlight, 0f, Vector2.Zero, scale, effect, 0f);
-			//}
-			//else
-			//	spriteBatch.Draw(texture, Position + offset, srcRect[0], BackColor, 0f, Vector2.Zero, scale, effect, 0f);
 		}
 
 		void Button::Draw(Sprite* sprite)

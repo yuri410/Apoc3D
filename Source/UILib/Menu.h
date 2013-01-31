@@ -43,6 +43,23 @@ namespace Apoc3D
 		};
 		class APAPI Menu : public Control
 		{
+		public:
+			const FastList<MenuItem*>& getItems() const { return m_items; }
+			MenuState getState() const { return m_state; }
+
+			Menu();
+			~Menu();
+
+			MenuItem* operator [](int index) const;
+
+			void Add(MenuItem* item, SubMenu* submenu);
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+
+			virtual void Draw(Sprite* sprite);
+
+			void Close();
+
 		private:
 			Point m_drawPos;
 
@@ -65,37 +82,10 @@ namespace Apoc3D
 			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
 			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);
 			void CloseSubMenus();
-		public:
-			const FastList<MenuItem*>& getItems() const { return m_items; }
-			MenuState getState() const { return m_state; }
-
-			Menu();
-			~Menu();
-
-			MenuItem* operator [](int index) const;
-
-			void Add(MenuItem* item, SubMenu* submenu);
-			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
-
-			virtual void Draw(Sprite* sprite);
-
-			void Close();
-
 		};
 
 		class APAPI MenuItem
 		{
-		private:
-			String m_text;
-			String m_cleanText;
-
-			int m_keyIndex;
-			KeyboardKeyCode m_key;
-
-			UIEventHandler m_event;
-			SubMenu* m_submenu;
-
 		public:
 			void* UserPointer;
 
@@ -116,6 +106,17 @@ namespace Apoc3D
 			{
 				setText(text);
 			}
+
+		private:
+			String m_text;
+			String m_cleanText;
+
+			int m_keyIndex;
+			KeyboardKeyCode m_key;
+
+			UIEventHandler m_event;
+			SubMenu* m_submenu;
+
 		};
 
 		class APAPI SubMenu : public Control

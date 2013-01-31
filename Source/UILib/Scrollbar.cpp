@@ -74,8 +74,8 @@ namespace Apoc3D
 			m_btRight->setOwner(getOwner());
 			m_btRight->setNormalTexture(m_skin->HScrollBar_Button);
 			m_btRight->eventPress().bind(this, &HScrollbar::btRight_OnPress);
+			m_btRight->setRotation(ToRadian(180));
 			m_btRight->Initialize(device);
-
 		}
 
 		void HScrollbar::btLeft_OnPress(Control* ctrl)
@@ -278,8 +278,9 @@ namespace Apoc3D
 
 			m_btDown = new Button(Point(Position.X, Position.Y + Size.Y -12),1,L"");
 			m_btDown->setOwner(getOwner());
-			m_btDown->setNormalTexture(m_skin->HScrollBar_Button);
+			m_btDown->setNormalTexture(m_skin->VScrollBar_Button);
 			m_btDown->eventPress().bind(this, &VScrollBar::btDown_OnPress);
+			m_btDown->setRotation(ToRadian(180));
 			m_btDown->Initialize(device);
 
 
