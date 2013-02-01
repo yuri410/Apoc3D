@@ -26,20 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_COMMON_H
 #define APOC3D_COMMON_H
 
-typedef __int16 int16;
-typedef __int32 int32;
-typedef __int64 int64;
-typedef unsigned __int16 uint16;
-typedef unsigned __int32 uint32;
-typedef unsigned __int64 uint64;
-
-typedef unsigned char byte;
-typedef uint16 ushort;
-typedef uint32 uint;
-typedef uint64 ulong;
-typedef unsigned long long BatchHandle;
-typedef BatchHandle HashHandle;
-
 #define APOC3D_DEFAULT 0
 #define APOC3D_SSE 1
 #define APOC3D_MATH_IMPL APOC3D_DEFAULT
@@ -74,10 +60,6 @@ typedef BatchHandle HashHandle;
 #	endif
 #endif
 
-
-
-//#define VER(x,y,z,w) D3DCOLOR_ARGB(x,y,z,w);
-
 #include <cassert>
 
 
@@ -101,9 +83,28 @@ typedef BatchHandle HashHandle;
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <stdint.h>
 
 
 #include "FastDelegate\FastDelegate.h"
+
+
+typedef int16_t int16;
+typedef int32_t int32;
+typedef int64_t int64;
+typedef uint16_t uint16;
+typedef uint32_t uint32;
+typedef uint64_t uint64;
+typedef uintptr_t uintptr;
+
+typedef uint8_t byte;
+typedef uint16 ushort;
+typedef uint32 uint;
+typedef uint64 ulong;
+typedef uint64 BatchHandle;
+typedef BatchHandle HashHandle;
+
+
 
 #define MaxUInt16 std::numeric_limits<uint16>::max();
 #define MinUInt16 std::numeric_limits<uint16>::min();

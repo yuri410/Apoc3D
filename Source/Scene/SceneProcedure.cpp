@@ -190,18 +190,26 @@ namespace Apoc3D
 							//VARTYPE_Vector2,
 					case VARTYPE_Texture:
 						{
-							FileLocation* fl = FileSystem::getSingleton().TryLocate(m_vars[i]->DefaultStringValue, FileLocateRule::Textures);
-							if (fl)
+							if (m_vars[i]->DefaultStringValue.size())
 							{
-								ResourceHandle<Texture>* tex = TextureManager::getSingleton().CreateInstance(m_renderDevice, fl, false);
-								m_vars[i]->TextureValue = tex;
-								m_createdTextures.Add(tex);
+								FileLocation* fl = FileSystem::getSingleton().TryLocate(m_vars[i]->DefaultStringValue, FileLocateRule::Textures);
+								if (fl)
+								{
+									ResourceHandle<Texture>* tex = TextureManager::getSingleton().CreateInstance(m_renderDevice, fl, false);
+									m_vars[i]->TextureValue = tex;
+									m_createdTextures.Add(tex);
+								}
+								else
+								{
+									LogManager::getSingleton().Write(LOG_Scene, 
+										L"Texture resource " + m_vars[i]->DefaultStringValue + L" for Scene Procedure " + m_name + L" is not found", LOGLVL_Warning);
+								}
 							}
 							else
 							{
-								LogManager::getSingleton().Write(LOG_Scene, 
-									L"Texture resource " + m_vars[i]->DefaultStringValue + L" for Scene Procedure " + m_name + L" is not found", LOGLVL_Warning);
+								m_vars[i]->TextureValue = nullptr;
 							}
+							
 						}
 						break;
 					case VARTYPE_Effect:

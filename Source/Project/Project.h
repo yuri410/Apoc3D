@@ -525,6 +525,11 @@ namespace Apoc3D
 		{
 
 		}
+		ProjectItem(Project* prj, const String& name, ProjectItemData* data, ProjectFolder* parent = nullptr)
+			: m_timeStamp(0), m_project(prj), m_parent(parent), m_typeData(data), m_name(name)
+		{
+
+		}
 
 		const String& getName() const { return m_name; }
 		ProjectItemType getType() const { return m_typeData->getType(); }
@@ -611,6 +616,8 @@ namespace Apoc3D
 		const String& getBasePath() const { return m_basePath; }
 
 		const FastList<ProjectItem*>& getItems() const { return m_items; }
+
+		void AddItem(ProjectItem* item) { m_items.Add(item); }
 
 		/**
 		 *  Load the project from a ConfigurationSection
