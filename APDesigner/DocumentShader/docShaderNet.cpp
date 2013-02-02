@@ -42,8 +42,8 @@ using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace APDesigner
 {
-	ShaderNetDocument::ShaderNetDocument(MainWindow* window, const String& file)
-		: Document(window), m_filePath(file), m_stateGraph(0)
+	ShaderNetDocument::ShaderNetDocument(MainWindow* window, EditorExtension* ext, const String& file)
+		: Document(window, ext), m_filePath(file), m_stateGraph(0)
 	{
 		getDocumentForm()->setTitle(file);
 		getDocumentForm()->setMinimumSize(Point(970,635));

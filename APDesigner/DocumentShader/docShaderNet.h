@@ -43,7 +43,7 @@ namespace APDesigner
 	class ShaderNetDocument : public Document
 	{
 	public:
-		ShaderNetDocument(MainWindow* window, const String& file);
+		ShaderNetDocument(MainWindow* window, EditorExtension* ext, const String& file);
 		~ShaderNetDocument();
 
 		virtual void LoadRes();

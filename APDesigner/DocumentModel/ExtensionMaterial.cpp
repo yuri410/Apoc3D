@@ -43,7 +43,7 @@ namespace APDesigner
 			
 			if (File::FileExists(path))
 			{
-				MaterialDocument* md = new MaterialDocument(m_mainWindow, mtrl->DestinationFile, path);
+				MaterialDocument* md = new MaterialDocument(m_mainWindow, this, mtrl->DestinationFile, path);
 				return md;
 			}
 		}
@@ -53,7 +53,7 @@ namespace APDesigner
 	{
 		String name = PathUtils::GetDirectory(filePath);
 		
-		MaterialDocument* md = new MaterialDocument(m_mainWindow, name, filePath);
+		MaterialDocument* md = new MaterialDocument(m_mainWindow, this, name, filePath);
 		return md;
 	}
 

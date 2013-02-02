@@ -156,18 +156,32 @@ namespace APDesigner
 		ObjectFactory* fac = m_device->getObjectFactory();
 		m_sprite = fac->CreateSprite();
 
+		LoadMenus();
 
+		m_resourcePane = new ResourcePane(this);
+		m_toolsPane = new ToolsPane(this);
+		m_atomManager = new AtomManagerDialog(this);
+
+		UIRoot::Initialize(m_device);
+		//UIRoot::Add(m_form);
+		m_resourcePane->Initialize(m_device);
+		m_toolsPane->Initialize(m_device);
+		m_atomManager->Initialize(m_device);
+
+		m_console = new Console(m_device, m_UIskin, Point(600,100), Point(400,400));
+	}
+	void MainWindow::LoadMenus()
+	{
 		m_mainMenu = new Menu();
 		m_mainMenu->SetSkin(m_UIskin);
 
-		
 		{
 			MenuItem* pojMenu = new MenuItem(L"Project");
 
-			
+
 			SubMenu* pojSubMenu = new SubMenu(0);
 			pojSubMenu->SetSkin(m_UIskin);
-			
+
 			MenuItem* mi=new MenuItem(L"New Project...");
 			mi->event().bind(this, &MainWindow::Menu_NewProject);
 			pojSubMenu->Add(mi,0);
@@ -179,7 +193,7 @@ namespace APDesigner
 			mi=new MenuItem(L"Save Project");
 			mi->event().bind(this, &MainWindow::Menu_SaveProject);
 			pojSubMenu->Add(mi,0);
-			
+
 			//mi=new MenuItem(L"Insert...");
 			//mi->event().bind(this, &MainWindow::Menu_Insert);
 			//pojSubMenu->Add(mi,0);
@@ -193,6 +207,18 @@ namespace APDesigner
 
 			m_mainMenu->Add(pojMenu,pojSubMenu);
 		}
+		//{
+		//	MenuItem* fileMenu = new MenuItem(L"File");
+		//	
+		//	SubMenu* fileSubMenu = new SubMenu(0);
+		//	fileSubMenu->SetSkin(m_UIskin);
+		//	
+		//	MenuItem* mi=new MenuItem(L"Save");
+		//	//mi->event().bind(this, &MainWindow::Menu_NewProject);
+		//	fileSubMenu->Add(mi,0);
+
+		//	m_mainMenu->Add(fileMenu,fileSubMenu);
+		//}
 		{
 			MenuItem* buildMenu = new MenuItem(L"Build");
 
@@ -208,30 +234,44 @@ namespace APDesigner
 		{
 			MenuItem* toolsMenu = new MenuItem(L"Tools");
 
-			SubMenu* toolSubMenu = new SubMenu(0);
+			SubMenu* toolSubMenu = new SubMenu(nullptr);
 			toolSubMenu->SetSkin(m_UIskin);
 
 
 			for (EditorExtensionManager::ExtensionEnumerator e = EditorExtensionManager::getSingleton().GetEnumerator();e.MoveNext();)
 			{
 				EditorExtension* ext = *e.getCurrentValue();
-				
+
 				if (ext->SupportsIndependentEditing())
 				{
-					MenuItem* mi=new MenuItem(ext->GetName() + L"...");
-					mi->event().bind(this, &MainWindow::Menu_ToolItem);
+					SubMenu* subMenu = new SubMenu(nullptr);
+					subMenu->SetSkin(m_UIskin);
+
+					MenuItem* mi2 = new MenuItem(L"New Document...");
+					//mi2->event().bind(this, &MainWindow::Menu_ToolItem);
+					mi2->UserPointer = ext;
+					subMenu->Add(mi2, nullptr);
+
+					mi2 = new MenuItem(L"Open Document...");
+					mi2->event().bind(this, &MainWindow::Menu_ToolItemOpen);
+					mi2->UserPointer = ext;
+					subMenu->Add(mi2, nullptr);
+
+					MenuItem* mi=new MenuItem(ext->GetName());
+					//mi->event().bind(this, &MainWindow::Menu_ToolItem);
 					mi->UserPointer = ext;
-					toolSubMenu->Add(mi,0);	
+
+					toolSubMenu->Add(mi,subMenu);	
 				}
 			}
 
 
 			MenuItem* mi=new MenuItem(L"-");
-			toolSubMenu->Add(mi,0);
+			toolSubMenu->Add(mi, nullptr);
 
 			mi=new MenuItem(L"Shader Atom Manager");
 			mi->event().bind(this, &MainWindow::Menu_Tools_AtomManager);
-			toolSubMenu->Add(mi,0);
+			toolSubMenu->Add(mi, nullptr);
 
 			m_mainMenu->Add(toolsMenu,toolSubMenu);
 		}
@@ -239,19 +279,6 @@ namespace APDesigner
 			m_mainMenu->Initialize(m_device);
 			UIRoot::setMainMenu(m_mainMenu);
 		}
-
-
-		m_resourcePane = new ResourcePane(this);
-		m_toolsPane = new ToolsPane(this);
-		m_atomManager = new AtomManagerDialog(this);
-
-		UIRoot::Initialize(m_device);
-		//UIRoot::Add(m_form);
-		m_resourcePane->Initialize(m_device);
-		m_toolsPane->Initialize(m_device);
-		m_atomManager->Initialize(m_device);
-
-		m_console = new Console(m_device, m_UIskin, Point(600,100), Point(400,400));
 	}
 	void MainWindow::Unload()
 	{
@@ -506,7 +533,7 @@ namespace APDesigner
 		}
 	}
 	
-	void MainWindow::Menu_ToolItem(Control* ctl)
+	void MainWindow::Menu_ToolItemOpen(Control* ctl)
 	{
 		SubMenu* sm = dynamic_cast<SubMenu*>(ctl);
 

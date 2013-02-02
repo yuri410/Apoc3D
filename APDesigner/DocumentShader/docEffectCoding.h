@@ -41,7 +41,7 @@ namespace APDesigner
 	class EffectDocument : public Document
 	{
 	public:
-		EffectDocument(MainWindow* window, const String& file, const String& vsPath, const String& psPath);
+		EffectDocument(MainWindow* window, EditorExtension* ext, const String& file, const String& vsPath, const String& psPath);
 		~EffectDocument();
 
 		virtual void LoadRes();

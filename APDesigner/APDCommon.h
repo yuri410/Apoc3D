@@ -37,6 +37,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #	else
 #		define APDAPI __declspec( dllimport )
 #	endif
+#else
+#	define APDAPI
 #endif
 
 namespace APDesigner
@@ -66,6 +68,11 @@ namespace APDesigner
 
 	class ColorField;
 	class PassFlagDialog;
+
+	class EditorExtension;
+	class IndenpendentEditorExtension;
+	class IndenpendentEditor;
+
 }
 
 #endif

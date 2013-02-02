@@ -42,8 +42,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace APDesigner
 {
-	ShaderAtomDocument::ShaderAtomDocument(MainWindow* window, const String& name)
-		: Document(window), m_atomName(name), m_currentWorkingCopy(0)
+	ShaderAtomDocument::ShaderAtomDocument(MainWindow* window, EditorExtension* ext, const String& name)
+		: Document(window, ext), m_atomName(name), m_currentWorkingCopy(0)
 	{
 		getDocumentForm()->setTitle(L"Shader Atom: " + name);
 		getDocumentForm()->setMinimumSize(Point(970,635));

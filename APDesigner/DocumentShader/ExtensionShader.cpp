@@ -45,14 +45,14 @@ namespace APDesigner
 
 			if (File::FileExists(filePath))
 			{
-				return new ShaderNetDocument(m_mainWindow, filePath);
+				return new ShaderNetDocument(m_mainWindow, this, filePath);
 			}
 		}
 		return 0;
 	}
 	Document* ExtensionShaderNetwork::DirectOpen(const String& filePath)
 	{
-		return new ShaderNetDocument(m_mainWindow, filePath);
+		return new ShaderNetDocument(m_mainWindow, this, filePath);
 	}
 
 
@@ -73,7 +73,7 @@ namespace APDesigner
 	}
 	Document* ExtensionShaderAtom::DirectOpen(const String& filePath)
 	{
-		return new ShaderAtomDocument(m_mainWindow, filePath);
+		return new ShaderAtomDocument(m_mainWindow, this, filePath);
 	}
 
 	bool ExtensionShaderAtom::SupportsItem(const ProjectItem* item)
@@ -97,7 +97,7 @@ namespace APDesigner
 
 			if (File::FileExists(filePath))
 			{
-				return new EffectDocument(m_mainWindow, filePath, vsPath, psPath);
+				return new EffectDocument(m_mainWindow, this, filePath, vsPath, psPath);
 			}
 		}
 		return 0;
@@ -109,7 +109,7 @@ namespace APDesigner
 
 		PathUtils::SplitFileNameExtension(filePath, base, temp);
 
-		return new EffectDocument(m_mainWindow, filePath, base + L".vs", base + L".ps");
+		return new EffectDocument(m_mainWindow, this, filePath, base + L".vs", base + L".ps");
 	}
 
 

@@ -59,8 +59,8 @@ using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {
-	EffectDocument::EffectDocument(MainWindow* window, const String& file, const String& vsPath, const String& psPath)
-		: Document(window), m_filePath(file), m_vsPath(vsPath), m_psPath(psPath)
+	EffectDocument::EffectDocument(MainWindow* window, EditorExtension* ext, const String& file, const String& vsPath, const String& psPath)
+		: Document(window, ext), m_filePath(file), m_vsPath(vsPath), m_psPath(psPath)
 	{
 		String name = PathUtils::GetFileNameNoExt(file);
 		getDocumentForm()->setTitle(L"Effect: " + name);

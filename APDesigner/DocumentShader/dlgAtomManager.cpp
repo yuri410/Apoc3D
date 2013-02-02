@@ -184,7 +184,7 @@ namespace APDesigner
 			ShaderAtomType* type =  ShaderAtomLibraryManager::getSingleton().FindAtomType(name);
 			if (type)
 			{
-				ShaderAtomDocument* doc = new ShaderAtomDocument(m_mainWindow, name);
+				ShaderAtomDocument* doc = new ShaderAtomDocument(m_mainWindow, nullptr, name);
 				
 				m_mainWindow->AddDocument(doc);
 				doc->LoadRes();

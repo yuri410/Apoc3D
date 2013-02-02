@@ -42,7 +42,7 @@ namespace APDesigner
 	class ModelDocument : public Document
 	{
 	public:
-		ModelDocument(MainWindow* window, const String& name, const String& file, const String& animationFile);
+		ModelDocument(MainWindow* window, EditorExtension* ext, const String& name, const String& file, const String& animationFile);
 		~ModelDocument();
 
 		virtual void LoadRes();

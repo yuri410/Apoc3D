@@ -45,11 +45,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/PathUtils.h"
 
 #include "BuildService/BuildService.h"
+#include "CommonDialog/FileDialog.h"
 
 #include "Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;
+using namespace APDesigner::CommonDialog;
 
 namespace APDesigner
 {
@@ -86,7 +88,54 @@ namespace APDesigner
 	{
 		if (m_mainWindow->getCurrentDocument())
 		{
-			m_mainWindow->getCurrentDocument()->SaveRes();
+			IndenpendentEditor* ide = dynamic_cast<IndenpendentEditor*>(m_mainWindow->getCurrentDocument());
+
+			if (ide && ide->NeedsSaveAs())
+			{
+				EditorExtension* eext = m_mainWindow->getCurrentDocument()->getExtension();
+				String name = eext->GetName();
+				std::vector<String> fexts = eext->GetFileExtensions();
+
+				SaveFileDialog dlg;
+
+				// make filter
+				wchar_t filter[512];
+				memset(filter, 0, sizeof(filter));
+
+					
+				String right;
+				//*.a;*.b
+				for (size_t i=0;i<fexts.size();i++)
+				{
+					right.append(L"*");
+					right.append(fexts[i]);
+					if (i+1<fexts.size())
+					{
+						right.append(L";");
+					}
+				}
+
+				String left = name;
+				left.append(L"Files (");
+				left.append(right);
+				left.append(L")");
+				memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
+				filter[left.length()] = 0;
+
+				memcpy(filter+(left.length()+1),right.c_str(), sizeof(wchar_t)*right.length());
+
+				dlg.SetFilter(filter);
+
+				if (dlg.ShowDialog() == DLGRES_OK)
+				{
+					ide->SaveAs(dlg.getFilePath()[0]);	
+				}
+			}
+			else
+			{
+				m_mainWindow->getCurrentDocument()->SaveRes();
+			}
+			
 		}
 		//m_mainWindow->SaveProject();
 	}

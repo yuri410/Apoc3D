@@ -36,18 +36,35 @@ namespace APDesigner
 
 	class APDAPI Document
 	{
-	private:
-		bool m_activated;
+	public:
+		virtual ~Document();
 
-		Form* m_docForm;
-		MainWindow* m_mainWindow;
+		
+		/** Initializes the graphical user interface. File loading might be performed before this init.
+		*/
+		virtual void Initialize(RenderDevice* device);
 
-		DocumentActivationHandler m_eDocActivated;
-		DocumentActivationHandler m_eDocDeactivated;
+		virtual void LoadRes() = 0;
+		virtual void SaveRes() = 0;
+		virtual bool IsReadOnly() = 0;
+
+		virtual void Render() { }
+		virtual void Update(const GameTime* const time);
+
+		virtual ObjectPropertyEditor* getRootPropertyEditor() { return nullptr; }
+
+		DocumentActivationHandler& eventDocumentActivated() { return m_eDocActivated; }
+		DocumentActivationHandler& eventDocumentDeactivated() { return m_eDocDeactivated; }
+
+		Form* getDocumentForm() const { return m_docForm; }
+
+		bool isActivated() const { return m_activated; }
+		EditorExtension* getExtension() const { return m_extension; }
+
 	protected:
 		MainWindow* getMainWindow() const { return m_mainWindow; }
 
-		Document(MainWindow* window);
+		Document(MainWindow* window, EditorExtension* ext);
 
 
 		virtual void activate() { }
@@ -69,29 +86,17 @@ namespace APDesigner
 				m_activated = false;
 			}
 		}
-	public:
-		virtual ~Document();
 
-		DocumentActivationHandler& eventDocumentActivated() { return m_eDocActivated; }
-		DocumentActivationHandler& eventDocumentDeactivated() { return m_eDocDeactivated; }
+	private:
+		bool m_activated;
 
+		Form* m_docForm;
+		MainWindow* m_mainWindow;
 
-		Form* getDocumentForm() const { return m_docForm; }
+		DocumentActivationHandler m_eDocActivated;
+		DocumentActivationHandler m_eDocDeactivated;
 
-		bool isActivated() const { return m_activated; }
-
-		/** Initializes the graphical user interface. File loading might be performed before this init.
-		*/
-		virtual void Initialize(RenderDevice* device);
-
-		virtual ObjectPropertyEditor* getRootPropertyEditor() { return 0; }
-		virtual void LoadRes() = 0;
-		virtual void SaveRes() = 0;
-		virtual bool IsReadOnly() = 0;
-
-
-		virtual void Render() { }
-		virtual void Update(const GameTime* const time);
+		EditorExtension* m_extension;
 	};
 }
 

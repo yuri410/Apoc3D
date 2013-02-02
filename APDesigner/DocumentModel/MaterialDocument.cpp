@@ -78,8 +78,8 @@ using namespace APDesigner::CommonDialog;
 
 namespace APDesigner
 {
-	MaterialDocument::MaterialDocument(MainWindow* window, const String& name, const String& file)
-		: Document(window), m_filePath(file), 
+	MaterialDocument::MaterialDocument(MainWindow* window, EditorExtension* ext, const String& name, const String& file)
+		: Document(window, ext), m_filePath(file), 
 		m_name(name), m_model(0), m_modelSData(0), m_material(0),
 		m_distance(7),m_xang(ToRadian(45)),m_yang(ToRadian(45))
 	{

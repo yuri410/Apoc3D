@@ -39,7 +39,7 @@ namespace APDesigner
 	class MaterialDocument : public Document
 	{
 	public:
-		MaterialDocument(MainWindow* window, const String& name, const String& file);
+		MaterialDocument(MainWindow* window, EditorExtension* ext, const String& name, const String& file);
 		~MaterialDocument();
 
 		virtual void LoadRes();

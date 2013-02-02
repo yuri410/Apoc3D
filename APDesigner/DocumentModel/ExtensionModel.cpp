@@ -43,7 +43,7 @@ namespace APDesigner
 			String pathAnim = PathUtils::Combine(prj->getOutputPath(), mdl->DstAnimationFile);
 			if (File::FileExists(path))
 			{
-				ModelDocument* md = new ModelDocument(m_mainWindow, mdl->DstFile, path, File::FileExists(pathAnim) ? pathAnim : L"");
+				ModelDocument* md = new ModelDocument(m_mainWindow, this, mdl->DstFile, path, File::FileExists(pathAnim) ? pathAnim : L"");
 				return md;
 			}
 		}
@@ -57,7 +57,7 @@ namespace APDesigner
 
 		bool haveAnim = File::FileExists(animFile);
 
-		ModelDocument* md = new ModelDocument(m_mainWindow, name, filePath, haveAnim ? animFile : L"");
+		ModelDocument* md = new ModelDocument(m_mainWindow, this, name, filePath, haveAnim ? animFile : L"");
 		return md;
 	}
 

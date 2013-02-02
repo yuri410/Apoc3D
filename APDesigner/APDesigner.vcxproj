@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClInclude Include="APDCommon.h" />
     <ClInclude Include="CommonDialog\Win32InputBox.h" />
+    <ClInclude Include="DevResourceLocation.h" />
     <ClInclude Include="DocumentModel\ExtensionMaterial.h" />
     <ClInclude Include="DocumentModel\MaterialDocument.h" />
     <ClInclude Include="DocumentModel\ExtensionModel.h" />

@@ -81,8 +81,8 @@ using namespace APDesigner::CommonDialog;
 
 namespace APDesigner
 {
-	ModelDocument::ModelDocument(MainWindow* window, const String& name, const String& file, const String& animationFile)
-		: Document(window), m_filePath(file), m_animPath(animationFile), 
+	ModelDocument::ModelDocument(MainWindow* window, EditorExtension* ext, const String& name, const String& file, const String& animationFile)
+		: Document(window, ext), m_filePath(file), m_animPath(animationFile), 
 		m_name(name), m_model(0), m_modelSData(0), m_animData(0),
 		m_distance(7),m_xang(ToRadian(45)),m_yang(ToRadian(45))
 	{

@@ -30,6 +30,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sample_Terrain", "Sample_Te
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.OpenGLRenderSystem", "Apoc3D.OpenGLRenderSystem\Apoc3D.OpenGLRenderSystem.vcxproj", "{4ECF9A4B-40A2-458D-BCDB-B48440527408}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{967EA61A-D303-411C-9D65-6CB72489F5CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -135,5 +137,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6195F83F-DE75-44EC-A53B-265FE3711FA1} = {E38C5C50-5DA2-4675-B6A6-01FDE0512B9A}
+		{B7A302BD-C02D-4BB3-B6D5-B2CBEE6881BF} = {967EA61A-D303-411C-9D65-6CB72489F5CE}
+		{881548E3-B5CD-43EA-85DC-1A93C9E38D14} = {967EA61A-D303-411C-9D65-6CB72489F5CE}
 	EndGlobalSection
 EndGlobal

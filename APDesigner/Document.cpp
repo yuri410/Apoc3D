@@ -5,8 +5,8 @@
 
 namespace APDesigner
 {
-	Document::Document(MainWindow* window)
-		: m_activated(false), m_mainWindow(window)
+	Document::Document(MainWindow* window, EditorExtension* ext)
+		: m_activated(false), m_mainWindow(window), m_extension(ext)
 	{
 		m_docForm = new Form(FBS_Sizable, L"New document");
 		m_docForm->Position.Y = 20;

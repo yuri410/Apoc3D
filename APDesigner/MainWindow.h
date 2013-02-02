@@ -71,7 +71,8 @@ namespace APDesigner
 
 		Menu* getMenuBar() const { return m_mainMenu; }
 	private:
-		void Menu_ToolItem(Control* ctl);
+		void Menu_ToolItemOpen(Control* ctl);
+		void LoadMenus();
 
 		StyleSkin* m_UIskin;
 

@@ -36,7 +36,7 @@ namespace APDesigner
 	class ShaderAtomDocument : public Document
 	{
 	public:
-		ShaderAtomDocument(MainWindow* window, const String& name);
+		ShaderAtomDocument(MainWindow* window, EditorExtension* ext, const String& name);
 		~ShaderAtomDocument();
 
 		virtual void LoadRes();

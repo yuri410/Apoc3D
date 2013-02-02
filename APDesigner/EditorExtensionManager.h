@@ -47,11 +47,29 @@ namespace APDesigner
 		*/
 		virtual bool SupportsIndependentEditing() { return false; };
 
-		virtual Document* DirectOpen(const String& filePath) { return 0; }
+		virtual Document* DirectOpen(const String& filePath) { return nullptr; }
 
 		/** Extension to use when opening the file dialog
 		*/
 		virtual std::vector<String> GetFileExtensions() = 0;
+	};
+
+	class APDAPI IndenpendentEditorExtension : public EditorExtension
+	{
+	public:
+		virtual bool SupportsIndependentEditing() { return true; };
+
+		virtual Document* NewDocument() = 0;
+	};
+
+	class APDAPI IndenpendentEditor
+	{
+	public:
+		virtual bool NeedsSaveAs() { return false; }
+		virtual void SaveAs(const String& filePath);
+
+		virtual void LoadNewDocument() = 0;
+
 	};
 
 	class EditorExtensionManager : public Apoc3D::Core::Singleton<EditorExtensionManager>
