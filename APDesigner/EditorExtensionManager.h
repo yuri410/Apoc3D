@@ -66,7 +66,7 @@ namespace APDesigner
 	{
 	public:
 		virtual bool NeedsSaveAs() { return false; }
-		virtual void SaveAs(const String& filePath);
+		virtual void SaveAs(const String& filePath) = 0;
 
 		virtual void LoadNewDocument() = 0;
 
