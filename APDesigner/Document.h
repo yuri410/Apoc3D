@@ -34,7 +34,7 @@ namespace APDesigner
 {
 	typedef fastdelegate::FastDelegate1<Document*, void> DocumentActivationHandler;
 
-	class Document
+	class APDAPI Document
 	{
 	private:
 		bool m_activated;

@@ -31,6 +31,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma comment(lib, "Apoc3D.D3D9RenderSystem.lib")
 #pragma comment(lib, "Apoc3D.WindowsInput.lib")
 
+#ifdef APOC3D_DYNLIB
+#	ifdef APOC3D_IDE_DYLIB
+#		define APDAPI __declspec( dllexport )
+#	else
+#		define APDAPI __declspec( dllimport )
+#	endif
+#endif
+
 namespace APDesigner
 {
 	class ResourcePane;

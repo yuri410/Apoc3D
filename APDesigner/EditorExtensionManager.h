@@ -29,19 +29,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Core/Singleton.h"
 #include "Collections/FastMap.h"
 
-#if APOC3DES_DLLEX
-#define APDAPI __declspec( dllexport )
-#else
-#define APDAPI __declspec( dllimport )
-#endif
-
 using namespace Apoc3D;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
 
 namespace APDesigner
 {
-	class EditorExtension
+	class APDAPI EditorExtension
 	{
 	public:
 		virtual String GetName() = 0;
