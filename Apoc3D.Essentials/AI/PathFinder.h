@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define PATHFINDER_H
 
 
-#include "Common.h"
+#include "EssentialCommon.h"
 #include "Collections/FastList.h"
 #include "Collections/FastMap.h"
 #include "Collections/FastQueue.h"
@@ -45,7 +45,7 @@ namespace Apoc3DEx
 		class PathFinder;
 		class PathFinderResult;
 	
-		class APAPI PathFinderManager
+		class APEXAPI PathFinderManager
 		{
 		public:
 			PathFinderManager(PathFinderField* fld);
@@ -60,7 +60,7 @@ namespace Apoc3DEx
 			friend class PathFinder;
 		};
 
-		class APAPI PathFinder
+		class APEXAPI PathFinder
 		{
 		public:
 			int MaxStep;
@@ -98,7 +98,7 @@ namespace Apoc3DEx
 			void QuickSort(FastList<AStarNode*>& list, int l, int r);
 		};
 
-		class PathFinderField
+		class APEXAPI PathFinderField
 		{
 		public:
 			PathFinderField(int w, int h);
@@ -116,7 +116,7 @@ namespace Apoc3DEx
 			bool** m_passTable;
 		};
 
-		class APAPI PathFinderResult
+		class APEXAPI PathFinderResult
 		{
 		public:
 
@@ -137,7 +137,7 @@ namespace Apoc3DEx
 			FastList<Point> m_path;
 		};
 
-		class AStarNode
+		class APEXAPI AStarNode
 		{
 		public:
 			int X;

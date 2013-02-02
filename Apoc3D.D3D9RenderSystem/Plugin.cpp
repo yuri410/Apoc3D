@@ -29,12 +29,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics::D3D9RenderSystem;
 
-//static D3D9RSPlugin* plugin = new D3D9RSPlugin();
+#ifdef APOC3D_DYNLIB
+static D3D9RSPlugin* plugin = new D3D9RSPlugin();
 
-//extern "C" PLUGIN Plugin* Apoc3DGetPlugin()
-//{
-//	return plugin;
-//}
+extern "C" PLUGIN Plugin* Apoc3DGetPlugin()
+{
+	return plugin;
+}
+#endif
 
 namespace Apoc3D
 {

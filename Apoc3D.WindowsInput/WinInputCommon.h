@@ -26,8 +26,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
-#define PLUGIN __declspec(dllexport)
-
+#ifndef APOC3D_DYNLIB
+#	define PLUGIN
+#else
+#	ifdef APOC3D_WININP_DYLIB_EXPORT
+#		define PLUGIN __declspec( dllexport )
+#	else
+#		define PLUGIN __declspec( dllimport )
+#	endif
+#endif
 
 #pragma warning ( push )
 #pragma warning ( disable:4512 )
@@ -46,7 +53,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <Windows.h>
 
 #pragma comment(lib, "Apoc3D.lib")
-
 
 
 #ifdef _DEBUG

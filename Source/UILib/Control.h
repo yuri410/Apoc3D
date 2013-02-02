@@ -45,7 +45,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		class Control
+		class APAPI Control
 		{
 		private:
 			UIEventHandler m_eventMouseOver;
@@ -148,7 +148,7 @@ namespace Apoc3D
 
 		};
 
-		class ControlCollection
+		class APAPI ControlCollection
 		{
 		protected:
 			FastList<Control*> m_controls;
@@ -177,7 +177,7 @@ namespace Apoc3D
 		};
 
 
-		class ControlContainer : public Control
+		class APAPI ControlContainer : public Control
 		{
 		protected:
 			ControlCollection* m_controls;

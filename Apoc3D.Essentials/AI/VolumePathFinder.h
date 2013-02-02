@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define VOLUMEPATHFINDER_H
 
 
-#include "Common.h"
+#include "EssentialCommon.h"
 #include "Collections/FastList.h"
 #include "Collections/FastMap.h"
 #include "Collections/FastQueue.h"
@@ -46,7 +46,7 @@ namespace Apoc3DEx
 		class VolumePathFinder;
 		class VolumePathFinderField;
 
-		struct VolumePathFinderResultPoint
+		struct APEXAPI VolumePathFinderResultPoint
 		{
 			int X;
 			int Y;
@@ -55,14 +55,14 @@ namespace Apoc3DEx
 			VolumePathFinderResultPoint() : X(0), Y(0), Z(0) {}
 			VolumePathFinderResultPoint(int _x, int _y, int _z) : X(_x), Y(_y), Z(_z) { }
 		};
-		struct PathFinderLevelPortal
+		struct APEXAPI PathFinderLevelPortal
 		{
 			int TargetZ;
 			int TargetX;
 			int TargetY;
 		};
 
-		class APAPI VolumePathFinderManager
+		class APEXAPI VolumePathFinderManager
 		{
 		public:
 			VolumePathFinderManager(VolumePathFinderField* fld, int maxWidth, int maxHeight, int maxZ);
@@ -81,7 +81,7 @@ namespace Apoc3DEx
 			friend class VolumePathFinder;
 		};
 
-		class APAPI VolumePathFinder
+		class APEXAPI VolumePathFinder
 		{
 		public:
 			int MaxStep;
@@ -119,7 +119,7 @@ namespace Apoc3DEx
 			void QuickSort(FastList<AStarNode3*>& list, int l, int r);
 		};
 
-		class VolumePathFinderField
+		class APEXAPI VolumePathFinderField
 		{
 		public:
 			virtual bool Passable(int x, int y, int z) = 0;;
@@ -129,7 +129,7 @@ namespace Apoc3DEx
 
 	
 
-		class APAPI VolumePathFinderResult
+		class APEXAPI VolumePathFinderResult
 		{
 		public:
 
@@ -150,7 +150,7 @@ namespace Apoc3DEx
 			FastList<VolumePathFinderResultPoint> m_path;
 		};
 
-		class AStarNode3
+		class APEXAPI AStarNode3
 		{
 		public:
 			int X;

@@ -47,9 +47,6 @@ namespace Apoc3D
 		//const IEqualityComparer<Resource*>* 
 		//	ResourceEqualityComparer::BuiltIn::Default = new ResourceEqualityComparer();
 
-		template<> const IEqualityComparer<Resource*>*
-			IBuiltInEqualityComparer<Resource*>::Default = new ResourceEqualityComparer();
-
 		bool ResourceEqualityComparer::Equals(const LPResource& x, const LPResource& y) const
 		{
 			const void* a = x;
@@ -66,14 +63,11 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		template<> const IEqualityComparer<LPVoid>*
-			IBuiltInEqualityComparer<LPVoid>::Default = new PointerEqualityComparer();
-
-		bool PointerEqualityComparer::Equals(const LPVoid& x, const LPVoid& y) const
+		bool PointerEqualityComparer::Equals(const PtrVoid& x, const PtrVoid& y) const
 		{
 			return x==y;
 		}
-		int64 PointerEqualityComparer::GetHashCode(const LPVoid& obj) const
+		int64 PointerEqualityComparer::GetHashCode(const PtrVoid& obj) const
 		{
 			return reinterpret_cast<int64>(obj);
 		}
@@ -81,9 +75,6 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
-
-		template<> const IEqualityComparer<wchar_t>*
-			IBuiltInEqualityComparer<wchar_t>::Default = new WCharEqualityComparer();
 
 		bool WCharEqualityComparer::Equals(const wchar_t& x, const wchar_t& y) const
 		{
@@ -97,9 +88,6 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
-
-		template<> const IEqualityComparer<string>* 
-			IBuiltInEqualityComparer<string>::Default = new stlstringEqualityComparer();
 
 		bool stlstringEqualityComparer::Equals(const string& x, const string& y) const
 		{
@@ -117,9 +105,6 @@ namespace Apoc3D
 		//const IEqualityComparer<uint64>* 
 		//	Uint64EqualityComparer::BuiltIn::Default = new Uint64EqualityComparer();
 
-		template<> const IEqualityComparer<uint64>*
-			IBuiltInEqualityComparer<uint64>::Default = new Uint64EqualityComparer();
-
 		bool Uint64EqualityComparer::Equals(const uint64& x, const uint64& y) const
 		{
 			return x==y;
@@ -135,9 +120,7 @@ namespace Apoc3D
 
 		//const IEqualityComparer<uint32>* 
 		//	Uint32EqualityComparer::BuiltIn::Default = new Uint32EqualityComparer();
-		template<> const IEqualityComparer<uint32>*
-			IBuiltInEqualityComparer<uint32>::Default = new Uint32EqualityComparer();
-
+		
 		bool Uint32EqualityComparer::Equals(const uint32& x, const uint32& y) const
 		{
 			return x==y;
@@ -151,9 +134,6 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		template<> const IEqualityComparer<int32>* 
-			IBuiltInEqualityComparer<int32>::Default = new Int32EqualityComparer();
-
 		bool Int32EqualityComparer::Equals(const int32& x, const int32& y) const
 		{
 			return x==y;
@@ -166,9 +146,6 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
-
-		template<> const IEqualityComparer<String>*
-			IBuiltInEqualityComparer<String>::Default = new StringEuqlityComparer();
 
 		bool StringEuqlityComparer::Equals(const String& x, const String& y) const
 		{

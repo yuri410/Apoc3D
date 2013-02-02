@@ -76,7 +76,7 @@ namespace Apoc3D
 		};
 
 		// the engine has built in support for a kind of uncompressed pak file.
-		class PakArchive : public Archive
+		class APAPI PakArchive : public Archive
 		{
 		public:
 			PakArchive(FileLocation* fl);
@@ -103,7 +103,7 @@ namespace Apoc3D
 			PakCompressionType m_compression;
 		};
 
-		class PakArchiveFactory : public ArchiveFactory
+		class APAPI PakArchiveFactory : public ArchiveFactory
 		{
 		public:
 			Archive* CreateInstance(const String& file);

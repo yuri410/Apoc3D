@@ -39,7 +39,7 @@ namespace Apoc3D
 
 
 		template<class T>
-		class APAPI Singleton
+		class APAPI_E Singleton
 		{
 		protected:
 			static T* ms_instance;

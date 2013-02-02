@@ -568,7 +568,7 @@ namespace Apoc3D
 				SHDT_All = SHDT_Pixel | SHDT_Vertex
 			};
 
-			class GraphicsCommonUtils
+			class APAPI GraphicsCommonUtils
 			{
 			public:
 				static Blend ParseBlend(const String& value);

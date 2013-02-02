@@ -37,7 +37,7 @@ namespace Apoc3D
 		 *  It helps informing resources accessing records and the change of reference count.
 		 */
 		template <class ResType>
-		class APAPI ResourceHandle
+		class ResourceHandle
 		{
 			/** 
 			 *  used to make sure the ResType are derived from the Resource class

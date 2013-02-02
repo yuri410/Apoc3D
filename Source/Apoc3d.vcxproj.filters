@@ -315,12 +315,6 @@
     <ClInclude Include="Graphics\Animation\AnimationPlayers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\extra\tthread\fast_mutex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\extra\tthread\tinythread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Platform\Thread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -665,9 +659,6 @@
     <ClCompile Include="Graphics\Animation\AnimationPlayers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\extra\tthread\tinythread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Platform\Thread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -822,6 +813,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Animation\AnimationTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

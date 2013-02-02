@@ -43,7 +43,7 @@ namespace Apoc3D
 			/**
 			 *  An interface for instancing
 			 */
-			class InstancingData
+			class APAPI InstancingData
 			{
 			public:
 				static const int MaxOneTimeInstances = 50;

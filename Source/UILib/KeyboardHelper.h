@@ -34,7 +34,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		struct KeyboardEventsArgs
+		struct APAPI KeyboardEventsArgs
 		{
 			bool ShiftDown;
 			bool ControlDown;
@@ -52,8 +52,20 @@ namespace Apoc3D
 
 		
 
-		class KeyboardHelper
+		class APAPI KeyboardHelper
 		{
+		public:
+			KeyboardEventHandler& eventKeyPress() { return m_eKeyPress; }
+			KeyboardEventHandler& eventKeyRelease() { return m_eKeyRelease; }
+			PasteEventHandler& eventKeyPaste() { return m_ePaste; }
+
+			KeyboardHelper()
+				: m_pasting(false), m_pressingTime(0), m_timerStarted(false), m_currentKey(KEY_UNASSIGNED), m_previousKey(KEY_UNASSIGNED)
+			{
+
+			}
+			void Update(const GameTime* const time);
+
 		private:
 			KeyboardEventHandler m_eKeyPress;
 			KeyboardEventHandler m_eKeyRelease;
@@ -66,19 +78,6 @@ namespace Apoc3D
 			KeyboardKeyCode m_previousKey;
 			bool m_pasting;
 			
-
-
-		public:
-			KeyboardEventHandler& eventKeyPress() { return m_eKeyPress; }
-			KeyboardEventHandler& eventKeyRelease() { return m_eKeyRelease; }
-			PasteEventHandler& eventKeyPaste() { return m_ePaste; }
-
-			KeyboardHelper()
-				: m_pasting(false), m_pressingTime(0), m_timerStarted(false), m_currentKey(KEY_UNASSIGNED), m_previousKey(KEY_UNASSIGNED)
-			{
-
-			}
-			void Update(const GameTime* const time);
 		};
 	}
 }

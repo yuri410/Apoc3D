@@ -35,12 +35,12 @@ namespace Apoc3D
 		 *  Suspends the calling thread for certain amount of time
 		 *  @param ms The time for suspension in milliseconds
 		 */
-		void ApocSleep(uint32 ms);
+		APAPI void ApocSleep(uint32 ms);
 
 		/**
 		 *  This is only useful when debugging in windows. Works with Visual Studio.
 		 */
-		void SetThreadName(tthread::thread* th, const String& name);
+		APAPI void SetThreadName(tthread::thread* th, const String& name);
 	}
 }
 

@@ -87,13 +87,13 @@ namespace Apoc3D
 				m_width = rhs.m_width;
 				m_height = rhs.m_height;
 
-				m_data = new T[m_height];
+				m_data = new T*[m_height];
 				for (int i=0;i<m_internalPointer;i++)
 				{
 					m_data[i] = new T[m_width];
 					for (int j=0;j<m_width;j++)
 					{
-						m_data[i][j] = another.m_data[i][j];
+						m_data[i][j] = rhs.m_data[i][j];
 					}
 
 				}

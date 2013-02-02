@@ -39,6 +39,9 @@ namespace APBuild
 		int flattenVertexCount;
 	};
 
+
+	template class IEqualityComparer<Vector3>;
+
 	class Vector3EqualityComparer : public IEqualityComparer<Vector3>
 	{
 	public:
@@ -56,6 +59,8 @@ namespace APBuild
 			return reinterpret_cast<const int64&>(x) ^ reinterpret_cast<const int64&>(y) ^ reinterpret_cast<const int64&>(z);
 		}
 	};
+	
+	template class IEqualityComparer<FaceEdge>;
 
 	class FaceEdgeEqualityComparer : public IEqualityComparer<FaceEdge>
 	{

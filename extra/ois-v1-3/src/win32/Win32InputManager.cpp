@@ -149,7 +149,11 @@ BOOL CALLBACK Win32InputManager::_DIEnumDevCallback(LPCDIDEVICEINSTANCE lpddi, L
 		jsInfo.isXInput = false;
 		jsInfo.productGuid = lpddi->guidProduct;
 		jsInfo.deviceID = lpddi->guidInstance;
-		jsInfo.vendor = lpddi->tszInstanceName;
+		
+		char buffer[260];
+		BOOL dummy;
+		WideCharToMultiByte(CP_ACP, 0, lpddi->tszInstanceName, wcslen(lpddi->tszInstanceName), buffer, sizeof(buffer), "-", &dummy);
+		jsInfo.vendor = buffer;
 		jsInfo.devId = _this_->joySticks;
 
 		_this_->joySticks++;

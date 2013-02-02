@@ -36,6 +36,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <d3d9types.h>
 
 #pragma comment(lib, "Apoc3D.lib")
+
 #pragma comment(lib, "d3d9.lib")
 #if _DEBUG
 #pragma comment(lib, "d3dx9d.lib")
@@ -65,7 +66,15 @@ typedef IDirect3DVertexShader9 D3DVertexShader;
 typedef IDirect3DPixelShader9 D3DPixelShader;
 typedef IDirect3DVertexDeclaration9 D3DVertexDeclaration;
 
-#define PLUGIN __declspec(dllexport)
+#ifndef APOC3D_DYNLIB
+#	define PLUGIN
+#else
+#	ifdef APOC3D_D3D9RS_DYLIB_EXPORT
+#		define PLUGIN __declspec( dllexport )
+#	else
+#		define PLUGIN __declspec( dllimport )
+#	endif
+#endif
 
 namespace Apoc3D
 {

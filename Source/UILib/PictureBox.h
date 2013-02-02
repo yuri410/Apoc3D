@@ -34,7 +34,7 @@ namespace Apoc3D
 	{
 		typedef fastdelegate::FastDelegate2<Sprite*, Apoc3D::Math::Rectangle*, void> PictureDrawEventHandler;
 
-		class PictureBox : public Control
+		class APAPI PictureBox : public Control
 		{
 		private:
 			Texture* m_texture;

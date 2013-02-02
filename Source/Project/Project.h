@@ -67,7 +67,7 @@ namespace Apoc3D
 	/**
 	 *  Represent the build configuration for a specific type of assert in the project.
 	 */
-	class ProjectItemData
+	class APAPI ProjectItemData
 	{
 	private:
 		//ProjectItemType m_type;
@@ -99,7 +99,7 @@ namespace Apoc3D
 
 		virtual ~ProjectItemData() { }
 	};
-	class ProjectCustomItem : public ProjectItemData
+	class APAPI ProjectCustomItem : public ProjectItemData
 	{
 	public:
 		ProjectCustomItem(Project* prj)
@@ -128,7 +128,7 @@ namespace Apoc3D
 	/**
 	 *  Represents the type of resource that is natively supported by the engine.
 	 */
-	class ProjectResource : public ProjectItemData
+	class APAPI ProjectResource : public ProjectItemData
 	{
 	protected:
 		ProjectResource(Project* prj)
@@ -143,7 +143,7 @@ namespace Apoc3D
 	 *  When building, a project folder can either be converted into a archive file, or
 	 *  just as a folder as a result
 	 */
-	class ProjectFolder : public ProjectItemData
+	class APAPI ProjectFolder : public ProjectItemData
 	{
 	public:
 		String PackType;
@@ -177,7 +177,7 @@ namespace Apoc3D
 	 *   2. From image/texture files. Pixel conversion, resizing, mipmap generation can be
 	 *      accomplished by the build system when specified.
 	 */
-	class ProjectResTexture : public ProjectResource
+	class APAPI ProjectResTexture : public ProjectResource
 	{
 	public:
 		ProjectResTexture(Project* prj)
@@ -232,7 +232,7 @@ namespace Apoc3D
 
 	};
 
-	class ProjectResMaterial : public ProjectResource
+	class APAPI ProjectResMaterial : public ProjectResource
 	{
 	public:
 		ProjectResMaterial(Project* prj)
@@ -253,7 +253,7 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t);
 	};
 
-	class ProjectResMaterialSet : public ProjectResource
+	class APAPI ProjectResMaterialSet : public ProjectResource
 	{
 	public:
 		ProjectResMaterialSet(Project* prj)
@@ -282,7 +282,7 @@ namespace Apoc3D
 	 *  .mesh file only contains the geometry, material information of the model, while in the anim file
 	 *  frames, bones are included.
 	 */
-	class ProjectResModel : public ProjectResource
+	class APAPI ProjectResModel : public ProjectResource
 	{
 	public:
 		ProjectResModel(Project* prj)
@@ -323,7 +323,7 @@ namespace Apoc3D
 	};
 	
 
-	class ProjectResEffect : public ProjectResource
+	class APAPI ProjectResEffect : public ProjectResource
 	{
 	public:
 		ProjectResEffect(Project* prj)
@@ -350,7 +350,7 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t);
 
 	};
-	class ProjectResCustomEffect : public ProjectResource
+	class APAPI ProjectResCustomEffect : public ProjectResource
 	{
 	public:
 		ProjectResCustomEffect(Project* prj)
@@ -375,7 +375,7 @@ namespace Apoc3D
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
 	};
-	class ProjectResEffectList : public ProjectResource
+	class APAPI ProjectResEffectList : public ProjectResource
 	{
 	public:
 		ProjectResEffectList(Project* prj)
@@ -396,7 +396,7 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t) { return true; }
 	};
 
-	class ProjectResShaderNetwork : public ProjectResource
+	class APAPI ProjectResShaderNetwork : public ProjectResource
 	{
 	public:
 		ProjectResShaderNetwork(Project* prj)
@@ -423,7 +423,7 @@ namespace Apoc3D
 	 *  Font asset can only be built from system fonts so far.
 	 *  When using languages like Chinese, Korean, the generated font file could be up to MBs in size.
 	 */
-	class ProjectResFont : public ProjectResource
+	class APAPI ProjectResFont : public ProjectResource
 	{
 	public:
 		ProjectResFont(Project* prj)
@@ -464,7 +464,7 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t);
 	};
 
-	class ProjectResTAnim : public ProjectResource
+	class APAPI ProjectResTAnim : public ProjectResource
 	{
 	public:
 		ProjectResTAnim(Project* prj)
@@ -489,7 +489,7 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t);
 	};
 
-	class ProjectResMAnim : public ProjectResource
+	class APAPI ProjectResMAnim : public ProjectResource
 	{
 	public:
 		ProjectResMAnim(Project* prj)
@@ -517,7 +517,7 @@ namespace Apoc3D
 	 *  the specific data used in specific type of item. A texture
 	 *  item will use the ProjectResTexture for the data.
 	 */
-	class ProjectItem
+	class APAPI ProjectItem
 	{
 	public:
 		ProjectItem(Project* prj)
@@ -572,7 +572,7 @@ namespace Apoc3D
 		 */
 		time_t m_timeStamp;
 	};
-	class Project
+	class APAPI Project
 	{
 	private:
 		FastList<ProjectItem*> m_items;

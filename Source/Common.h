@@ -52,19 +52,29 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #ifndef APOC3D_DYNLIB
 #	define APAPI
+#	define APAPI_E
 #else
-#	if APOC3D_DLLEX
+#	pragma warning(disable:4251)
+#	if APOC3D_DYLIB_EXPORT
 #		define APAPI __declspec( dllexport )
+#		define APAPI_E __declspec( dllexport )
 #	else
 #		define APAPI __declspec( dllimport )
+#		define APAPI_E
+#	endif
+#endif
+
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+#	ifdef APOC3D_STATIC_RT
+#		pragma comment(lib, "tthread_mt.lib")
+#	else
+#		pragma comment(lib, "tthread.lib")
 #	endif
 #endif
 
 #include <cassert>
 
 
-
-//#pragma warning(disable:4251)
 #include <string>
 #include <vector>
 #include <list>

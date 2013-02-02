@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		class HScrollbar : public Control
+		class APAPI HScrollbar : public Control
 		{
 		private:
 			Button* m_btLeft;
@@ -89,7 +89,7 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite);
 
 		};
-		class VScrollBar : public Control
+		class APAPI VScrollBar : public Control
 		{
 		private:
 			Button* m_btUp;
@@ -146,7 +146,7 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite);
 
 		};
-		class ScrollBar : public Control
+		class APAPI ScrollBar : public Control
 		{
 		public:
 			enum ScrollBarType

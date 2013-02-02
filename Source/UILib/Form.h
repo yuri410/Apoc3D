@@ -43,7 +43,7 @@ namespace Apoc3D
 			FBS_Sizable,
 			FBS_Pane
 		};
-		class Border
+		class APAPI Border
 		{
 		private:
 			Point m_shadowOffset;
@@ -64,7 +64,7 @@ namespace Apoc3D
 			
 
 		};
-		class Form : public ControlContainer
+		class APAPI Form : public ControlContainer
 		{
 		public:
 			
@@ -214,7 +214,7 @@ namespace Apoc3D
 		 *  for drawing and updating them.
 		 *  Any forms should be added to this class.
 		 */
-		class UIRoot
+		class APAPI UIRoot
 		{
 		public:
 			/** 

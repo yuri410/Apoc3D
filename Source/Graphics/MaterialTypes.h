@@ -41,7 +41,7 @@ namespace Apoc3D
 		/**
 		 *  Defines custom material parameters. 
 		 */
-		struct MaterialCustomParameter
+		struct APAPI MaterialCustomParameter
 		{
 			/**
 			 *  The data type of the parameter.

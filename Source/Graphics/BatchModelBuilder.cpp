@@ -33,24 +33,36 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		typedef MeshData* LPMeshData;
-		class APAPI LPMeshDataEqualityComparer : public IEqualityComparer<LPMeshData>
+		typedef MeshData* PtrMeshData;
+		class APAPI LPMeshDataEqualityComparer : public IEqualityComparer<PtrMeshData>
 		{
 		public:
+			class BuiltIn : public IBuiltInEqualityComparer<PtrMeshData> { };
 
-			virtual bool Equals(const LPMeshData& x, const LPMeshData& y) const
+			virtual bool Equals(const PtrMeshData& x, const PtrMeshData& y) const
 			{
 				const void* a = x;
 				const void* b = y;
 				return a==b;
 			}
 
-			virtual int64 GetHashCode(const LPMeshData& obj) const
+			virtual int64 GetHashCode(const PtrMeshData& obj) const
 			{
 				const void* s = obj;
 				return reinterpret_cast<int64>(s);
 			}
 		};
+	}
+
+	namespace Collections
+	{
+		template<> const Apoc3D::Collections::IEqualityComparer<PtrMeshData>*
+			Apoc3D::Collections::IBuiltInEqualityComparer<PtrMeshData>::Default = new LPMeshDataEqualityComparer();
+
+	}
+	
+	namespace Graphics
+	{
 		struct Vertex64B
 		{
 			char data[64];

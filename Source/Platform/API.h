@@ -35,7 +35,7 @@ namespace Apoc3D
 		/** 
 		 *  Define how well a platform is supported based on score.
 		 */
-		struct PlatformAPISupport
+		struct APAPI PlatformAPISupport
 		{
 			/**
 			 *  A score on a scale of 0-100 showing how well the API supports the platform
@@ -47,7 +47,7 @@ namespace Apoc3D
 		/**
 		 *  Contains information of an API
 		 */
-		struct APIDescription
+		struct APAPI APIDescription
 		{
 			/**
 			 *  The name of the graphics API.
@@ -59,7 +59,7 @@ namespace Apoc3D
 			vector<PlatformAPISupport> SupportedPlatforms;
 		};
 
-		uint64 GetInstalledSystemMemorySizeInKB();
+		APAPI uint64 GetInstalledSystemMemorySizeInKB();
 	}
 }
 

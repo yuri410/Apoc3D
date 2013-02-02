@@ -64,20 +64,20 @@ namespace Apoc3D
 		};
 
 		template<typename T>
-		class APAPI IBuiltInEqualityComparer
+		class IBuiltInEqualityComparer
 		{
 		public:
 			static const IEqualityComparer<T>* Default;
 		};
 
-		typedef void* LPVoid;
-		class APAPI PointerEqualityComparer : public IEqualityComparer<LPVoid>
+		typedef void* PtrVoid;
+		class APAPI PointerEqualityComparer : public IEqualityComparer<PtrVoid>
 		{
 		public:
-			class BuiltIn : public IBuiltInEqualityComparer<LPVoid> { };
+			class BuiltIn : public IBuiltInEqualityComparer<PtrVoid> { };
 
-			virtual bool Equals(const LPVoid& x, const LPVoid& y) const;
-			virtual int64 GetHashCode(const LPVoid& obj) const;
+			virtual bool Equals(const PtrVoid& x, const PtrVoid& y) const;
+			virtual int64 GetHashCode(const PtrVoid& obj) const;
 		};
 
 		class APAPI Uint64EqualityComparer : public IEqualityComparer<uint64>
@@ -147,7 +147,33 @@ namespace Apoc3D
 			virtual int64 GetHashCode(const String& obj) const;
 		};
 
-		class HashHelpers
+
+		template<> const IEqualityComparer<Resource*>*
+			IBuiltInEqualityComparer<Resource*>::Default = new ResourceEqualityComparer();
+
+		template<> const IEqualityComparer<PtrVoid>*
+			IBuiltInEqualityComparer<PtrVoid>::Default = new PointerEqualityComparer();
+
+		template<> const IEqualityComparer<wchar_t>*
+			IBuiltInEqualityComparer<wchar_t>::Default = new WCharEqualityComparer();
+
+		template<> const IEqualityComparer<string>* 
+			IBuiltInEqualityComparer<string>::Default = new stlstringEqualityComparer();
+
+		template<> const IEqualityComparer<uint64>*
+			IBuiltInEqualityComparer<uint64>::Default = new Uint64EqualityComparer();
+
+		template<> const IEqualityComparer<uint32>*
+			IBuiltInEqualityComparer<uint32>::Default = new Uint32EqualityComparer();
+
+		template<> const IEqualityComparer<int32>* 
+			IBuiltInEqualityComparer<int32>::Default = new Int32EqualityComparer();
+
+		template<> const IEqualityComparer<String>*
+			IBuiltInEqualityComparer<String>::Default = new StringEuqlityComparer();
+
+
+		class APAPI HashHelpers
 		{
 		public:
 			//static const int primes[72];

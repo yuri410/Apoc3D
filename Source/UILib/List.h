@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		class ListBox : public Control
+		class APAPI ListBox : public Control
 		{
 		private:
 			List<String> m_items;
@@ -99,7 +99,7 @@ namespace Apoc3D
 
 		};
 
-		class TreeViewNode
+		class APAPI TreeViewNode
 		{
 		private:
 			String m_text;
@@ -140,7 +140,7 @@ namespace Apoc3D
 			}
 		};
 
-		class TreeView : public Control
+		class APAPI TreeView : public Control
 		{
 		private:
 			FastList<TreeViewNode*> m_nodes;
@@ -207,7 +207,7 @@ namespace Apoc3D
 
 		typedef fastdelegate::FastDelegate2<int, int, void> ListViewSelectionHandler;
 
-		class ListView : public Control
+		class APAPI ListView : public Control
 		{
 		public:
 			class Header

@@ -97,13 +97,13 @@ namespace Apoc3D
 				bool m_isShutdown;
 
 
-				static void ThreadEntry(void* args)
-				{
-					GenerationTable* table = static_cast<GenerationTable*>(args);
-					table->GenerationUpdate_Main();
-				}
+				//static void ThreadEntry(void* args)
+				//{
+					//GenerationTable* table = static_cast<GenerationTable*>(args);
+					//table->GenerationUpdate_Main();
+				//}
 
-				void GenerationUpdate_Main();
+				//void GenerationUpdate_Main();
 				bool CanUnload(Resource* res) const;
 			};
 		}

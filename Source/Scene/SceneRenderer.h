@@ -185,7 +185,7 @@ namespace Apoc3D
 	namespace Collections
 	{
 		typedef Material* LPMaterial;
-		class MaterialEqualityComparer : public IEqualityComparer<LPMaterial>
+		class APAPI MaterialEqualityComparer : public IEqualityComparer<LPMaterial>
 		{
 		private:
 		public:
@@ -200,7 +200,7 @@ namespace Apoc3D
 		};
 
 		typedef GeometryData* LPGeometryData;
-		class GeometryDataEqualityComparer : public IEqualityComparer<LPGeometryData>
+		class APAPI GeometryDataEqualityComparer : public IEqualityComparer<LPGeometryData>
 		{
 		private:
 

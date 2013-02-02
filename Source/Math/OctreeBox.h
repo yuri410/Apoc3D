@@ -31,7 +31,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class OctreeBox
+		class APAPI OctreeBox
 		{
 		public:
 			OctreeBox()

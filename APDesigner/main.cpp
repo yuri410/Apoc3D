@@ -31,9 +31,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Vfs/PathUtils.h"
 #include "Utility/StringUtils.h"
 
+#ifndef APOC3D_DYNLIB
 #include "../Apoc3D.D3D9RenderSystem/Plugin.h"
 #include "../Apoc3D.WindowsInput/Plugin.h"
-
+#endif
 
 #include "MainWindow.h"
 #include "Math/Matrix.h"
@@ -63,13 +64,19 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	DWORD len = GetCurrentDirectory(260, workingDir);
 
 
+	ManualStartConfig escon;
+
+#ifndef APOC3D_DYNLIB
+	// manually add these plugins, since the library is built statically.
 	Plugin* input = new Apoc3D::Input::Win32::WinInputPlugin();
 	Plugin* d3d = new Apoc3D::Graphics::D3D9RenderSystem::D3D9RSPlugin();
-
-	ManualStartConfig escon;
-	//escon.PluginDyList.Add(L"Apoc3D.D3D9RenderSystem");
 	escon.PluginList.Add(input);
 	escon.PluginList.Add(d3d);
+#else
+	escon.PluginDynLibList.Add(L"Apoc3D.D3D9RenderSystem.dll");
+	escon.PluginDynLibList.Add(L"Apoc3D.WindowsInput.dll");
+#endif
+
 	escon.WorkingDirectories.Add(workingDir);
 	escon.TextureCacheSize = 512 * 1048576;
 	escon.ModelCacheSize = 192 * 1048576;
@@ -122,10 +129,10 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 
 	Engine::Shutdown();
 
+#ifndef APOC3D_DYNLIB
 	delete input;
 	delete d3d;
-
-	
+#endif
 
 	return 0;
 }

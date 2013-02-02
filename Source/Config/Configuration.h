@@ -37,7 +37,7 @@ namespace Apoc3D
 	namespace Config
 	{
 		//template class APAPI unordered_map<String, ConfigurationSection*>;
-		class ConfigurationFormat
+		class APAPI ConfigurationFormat
 		{
 		public:
 			virtual Configuration* Load(const ResourceLocation* rl) = 0;

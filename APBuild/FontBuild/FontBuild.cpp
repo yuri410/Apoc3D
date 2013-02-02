@@ -60,15 +60,15 @@ using namespace Gdiplus;
 
 #if _DEBUG
 #if APOC3D_STATIC_RT
-#pragma comment (lib, "freetype248MT_D.lib")
+#pragma comment (lib, "freetype2411MT_D.lib")
 #else
-#pragma comment (lib, "freetype248_D.lib")
+#pragma comment (lib, "freetype2411_D.lib")
 #endif
 #else
 #if APOC3D_STATIC_RT
-#pragma comment (lib, "freetype248MT.lib")
+#pragma comment (lib, "freetype2411MT.lib")
 #else
-#pragma comment (lib, "freetype248.lib")
+#pragma comment (lib, "freetype2411.lib")
 #endif
 #endif
 

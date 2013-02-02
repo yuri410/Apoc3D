@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3DEX_GAME_H
 #define APOC3DEX_GAME_H
 
-#include "Common.h"
+#include "EssentialCommon.h"
 
 #include "Graphics/RenderSystem/RenderWindowHandler.h"
 #include "Input/InputAPI.h"
@@ -43,7 +43,7 @@ namespace Apoc3DEx
 	 *  all handled in this class.
 	 *
 	 */
-	class APAPI Game : public RenderWindowHandler
+	class APEXAPI Game : public RenderWindowHandler
 	{
 	public:
 		Game(RenderWindow* wnd);

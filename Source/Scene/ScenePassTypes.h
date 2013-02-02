@@ -88,7 +88,7 @@ namespace Apoc3D
 		/** 
 		 *  The information for the global variables used in a scene script
 		 */
-		struct SceneVariable
+		struct APAPI SceneVariable
 		{
 			String Name;
 			SceneVariableType Type;
@@ -168,7 +168,7 @@ namespace Apoc3D
 		/**
 		 *  The information for operands in op code in scene rendering
 		 */
-		struct SceneOpArg
+		struct APAPI SceneOpArg
 		{
 			/**
 			 *  Specifies if the argument is immediate or not.
@@ -189,7 +189,7 @@ namespace Apoc3D
 		/**
 		 *  The information for the minimum operation in the scene rendering procedure
 		 */
-		struct SceneInstruction
+		struct APAPI SceneInstruction
 		{
 			SceneOpCode Operation;
 			int Next;
@@ -224,7 +224,7 @@ namespace Apoc3D
 		 *  Includes the data for a ScenePass. 
 		 *  Object SelectorID, Name, a list of Instructions and CameraID make up this.
 		 */
-		struct ScenePassData
+		struct APAPI ScenePassData
 		{
 			int32 SelectorID;
 			String Name;

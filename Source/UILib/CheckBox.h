@@ -68,7 +68,7 @@ namespace Apoc3D
 			void UpdateEvents();
 		};
 
-		class CheckboxGroup : public Control
+		class APAPI CheckboxGroup : public Control
 		{
 		public:
 			CheckboxGroup(const FastList<CheckBox*>& checkbox);

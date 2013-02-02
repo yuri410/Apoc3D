@@ -27,6 +27,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Common.h"
 
+#ifndef APOC3D_DYNLIB
+#	define APEXAPI
+#else
+#	ifdef APOC3D_ESS_DYLIB_EXPORT
+#		define APEXAPI __declspec( dllexport )
+#	else
+#		define APEXAPI __declspec( dllimport )
+#	endif
+#endif
+
+#pragma comment (lib, "Apoc3d.lib")
+
 namespace Apoc3DEx
 {
 	namespace AI

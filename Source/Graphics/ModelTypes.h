@@ -67,7 +67,7 @@ namespace Apoc3D
 		};
 
 		template<class M>
-		class APAPI MeshMaterialSet
+		class MeshMaterialSet
 		{
 		private:
 			vector< vector<M> > m_set;

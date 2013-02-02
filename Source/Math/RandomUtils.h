@@ -30,7 +30,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class Random
+		class APAPI Random
 		{
 		public:
 			Random()
@@ -153,7 +153,7 @@ namespace Apoc3D
 			}
 		};
 
-		class Randomizer
+		class APAPI Randomizer
 		{
 		private:
 			static Random m_randomizer;

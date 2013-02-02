@@ -33,8 +33,6 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-
-
 		class APAPI Plane
 		{
 		public:

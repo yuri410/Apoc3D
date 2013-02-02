@@ -40,7 +40,7 @@ namespace Apoc3D
 		/** 
 		 *  A callback interface used for ray-based selection check.
 		 */
-		class IObjectFilter
+		class APAPI IObjectFilter
 		{
 		public:
 			/**

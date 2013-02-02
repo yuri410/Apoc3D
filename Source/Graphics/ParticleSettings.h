@@ -41,7 +41,7 @@ namespace Apoc3D
 		/** Settings class describes all the tweakable options used
 		 * to control the appearance of a particle system.
 		 */
-		class ParticleSettings
+		class APAPI ParticleSettings
 		{
 		public:
 			/* the texture used by this particle system.*/
