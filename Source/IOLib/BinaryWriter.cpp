@@ -279,6 +279,59 @@ namespace Apoc3D
 			}
 			m_baseStream->Write(buffer, sizeof(double));
 		}
+
+		void BinaryWriter::WriteVector2(const float* buffer) const
+		{
+			char writeBuffer[sizeof(float) * 2];
+			if (m_endianDependent)
+			{
+				r32tomb_dep(buffer[0], writeBuffer);
+				r32tomb_dep(buffer[1], writeBuffer + sizeof(float));
+			}
+			else
+			{
+				r32tomb_le(buffer[0], writeBuffer);
+				r32tomb_le(buffer[1], writeBuffer + sizeof(float));
+			}
+			m_baseStream->Write(writeBuffer, sizeof(float)*2);
+		}
+		void BinaryWriter::WriteVector3(const float* buffer) const
+		{
+			char writeBuffer[sizeof(float) * 3];
+			if (m_endianDependent)
+			{
+				r32tomb_dep(buffer[0], writeBuffer);
+				r32tomb_dep(buffer[1], writeBuffer + sizeof(float));
+				r32tomb_dep(buffer[2], writeBuffer + sizeof(float) * 2);
+			}
+			else
+			{
+				r32tomb_le(buffer[0], writeBuffer);
+				r32tomb_le(buffer[1], writeBuffer + sizeof(float));
+				r32tomb_le(buffer[2], writeBuffer + sizeof(float) * 2);
+			}
+			m_baseStream->Write(writeBuffer, sizeof(float)*3);
+		}
+		void BinaryWriter::WriteVector4(const float* buffer) const
+		{
+			char writeBuffer[sizeof(float) * 4];
+			if (m_endianDependent)
+			{
+				r32tomb_dep(buffer[0], writeBuffer);
+				r32tomb_dep(buffer[1], writeBuffer + sizeof(float));
+				r32tomb_dep(buffer[2], writeBuffer + sizeof(float) * 2);
+				r32tomb_dep(buffer[3], writeBuffer + sizeof(float) * 3);
+			}
+			else
+			{
+				r32tomb_le(buffer[0], writeBuffer);
+				r32tomb_le(buffer[1], writeBuffer + sizeof(float));
+				r32tomb_le(buffer[2], writeBuffer + sizeof(float) * 2);
+				r32tomb_le(buffer[3], writeBuffer + sizeof(float) * 3);
+			}
+			m_baseStream->Write(writeBuffer, sizeof(float)*4);
+		}
+
 		void BinaryWriter::Write(const String& value) const
 		{
 			bool isMB = true;
