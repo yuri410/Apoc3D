@@ -103,19 +103,20 @@ namespace Apoc3D
 
 			static uint GetHashCode(const String& str)
 			{
-				const wchar_t* chPtr = str.c_str();
+				// This may read "outside" buffer. 
+				// Not really for String because it is null terminated having an extra wchar.
 				uint even = 0x15051505;
 				uint odd = even;
-				const uint* numPtr = reinterpret_cast<const uint*>(chPtr);
+				const uint* data = reinterpret_cast<const uint*>(str.c_str());
 				for (int i = str.size(); i > 0; i -= 4)
 				{
-					even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
+					even = ((even << 5) + even + (even >> 0x1b)) ^ data[0];
 					if (i <= 2)
 					{
 						break;
 					}
-					odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ numPtr[1];
-					numPtr += 2;
+					odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ data[1];
+					data += 2;
 				}
 				return even + odd * 0x5d588b65;
 			}

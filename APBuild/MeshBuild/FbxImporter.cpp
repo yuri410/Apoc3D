@@ -1145,13 +1145,15 @@ namespace APBuild
 			const uint* numPtr = reinterpret_cast<const uint*>(chPtr);
 			for (int i = sizeof(FIVertex); i > 0; i -= 8)
 			{
-				even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
-				if (i <= 7)
-				{
+				if (i < 4)
 					break;
-				}
+
+				even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
+				if (i < 8)
+					break;
+				
 				odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ numPtr[1];
-				numPtr += (sizeof(wchar_t) * 4) / sizeof(uint);
+				numPtr += 2;
 			}
 			return even + odd * 0x5d588b65;
 		}
