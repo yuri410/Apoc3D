@@ -137,9 +137,7 @@ namespace APDesigner
 		void DisplayMaterialEditor(Material* mtrl);
 	};
 
-
-
-	class PassFlagDialog
+	class APDAPI PassFlagDialog
 	{
 	public:
 		PassFlagDialog(MainWindow* window, RenderDevice* device);
@@ -156,7 +154,7 @@ namespace APDesigner
 		Material* m_mtrl;
 		void Form_Closed(Control* ctrl);
 	};
-	class ColorField : public Control
+	class APDAPI ColorField : public Control
 	{
 	public:
 		ColorField(const Point& position, ColorValue defaultColor);

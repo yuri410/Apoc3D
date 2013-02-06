@@ -318,9 +318,15 @@ namespace Apoc3D
 				if (Visible)
 				{
 					if (m_hsbar)
+					{
+						m_hsbar->setOwner(getOwner());
 						m_hsbar->Update(time);
+					}
 					if (m_vsbar)
+					{
+						m_vsbar->setOwner(getOwner());
 						m_vsbar->Update(time);
+					}
 				}
 			}
 			virtual void Draw(Sprite* sprite)

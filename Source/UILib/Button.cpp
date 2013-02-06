@@ -49,7 +49,7 @@ namespace Apoc3D
 			
 			Point cursorPos = mouse->GetCurrentPosition();
 
-			if (m_owner && m_owner->getAbsoluteArea().Contains(rect) && rect.Contains(cursorPos))
+			if (m_owner && rect.Contains(cursorPos))
 			{
 				if (!m_mouseOver)
 				{
@@ -87,6 +87,15 @@ namespace Apoc3D
 					Size.X = m_NormalTexture->getWidth();
 					Size.Y = m_NormalTexture->getHeight();
 				}
+			}
+			else
+			{
+				m_textSize = m_fontRef->MeasureString(Text);
+				if (Size.X < m_textSize.X + m_skin->BtnVertPadding)
+					Size.X = m_textSize.X + m_skin->BtnVertPadding;
+				if (Size.Y < m_textSize.Y + m_skin->BtnHozPadding)
+					Size.Y = m_textSize.Y + m_skin->BtnHozPadding;
+
 			}
 		}
 

@@ -73,7 +73,7 @@ namespace Apoc3D
 			m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
 				m_destRect[1].Width, m_destRect[3].Height);
 			m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
-				m_skin->TextBoxSrcRects[1].Width, m_destRect[3].Height);
+				m_skin->TextBoxSrcRects[0].Width, m_destRect[3].Height);
 
 			m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
@@ -139,6 +139,11 @@ namespace Apoc3D
 		{
 			if (m_selectedIndex>=m_items.getCount())
 				m_selectedIndex=-1;
+
+			if (m_hscrollbar)
+				m_hscrollbar->setOwner(getOwner());
+			if (m_vscrollbar)
+				m_vscrollbar->setOwner(getOwner());
 
 			if (m_vscrollbar && m_vscrollbar->Visible)
 			{
@@ -466,7 +471,7 @@ namespace Apoc3D
 			m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
 				m_destRect[1].Width, m_destRect[3].Height);
 			m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
-				m_skin->TextBoxSrcRects[1].Width, m_destRect[3].Height);
+				m_skin->TextBoxSrcRects[0].Width, m_destRect[3].Height);
 
 			m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
@@ -804,7 +809,12 @@ namespace Apoc3D
 			m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
 				m_destRect[1].Width, m_destRect[3].Height);
 			m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
-				m_skin->TextBoxSrcRects[1].Width, m_destRect[3].Height);
+				m_skin->TextBoxSrcRects[0].Width, m_destRect[3].Height);
+
+			m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
+			m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
+			m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
+
 
 			if (getUseHorizontalScrollbar())
 			{

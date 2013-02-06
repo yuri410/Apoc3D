@@ -34,7 +34,7 @@ namespace Apoc3D
 		class List
 		{
 		public:
-			List(int capacity)
+			explicit List(int capacity)
 				: m_internalPointer(0), m_length(capacity)
 			{
 				m_elements = new T[capacity];
@@ -242,7 +242,7 @@ namespace Apoc3D
 				m_elements = new T[m_length];
 				memcpy(m_elements, another.m_elements, m_length * sizeof(T));
 			}
-			FastList(int capacity)
+			explicit FastList(int capacity)
 				: m_internalPointer(0), m_length(capacity)
 			{
 				m_elements = new T[capacity];

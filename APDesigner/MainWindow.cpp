@@ -190,9 +190,9 @@ namespace APDesigner
 			mi->event().bind(this, &MainWindow::Menu_OpenProject);
 			pojSubMenu->Add(mi,0);
 
-			mi=new MenuItem(L"Save Project");
-			mi->event().bind(this, &MainWindow::Menu_SaveProject);
-			pojSubMenu->Add(mi,0);
+			m_savePrjMemuItem = new MenuItem(L"Save Project");
+			m_savePrjMemuItem->event().bind(this, &MainWindow::Menu_SaveProject);
+			pojSubMenu->Add(m_savePrjMemuItem, 0);
 
 			//mi=new MenuItem(L"Insert...");
 			//mi->event().bind(this, &MainWindow::Menu_Insert);
@@ -225,9 +225,9 @@ namespace APDesigner
 			SubMenu* buildSubMenu = new SubMenu(0);
 			buildSubMenu->SetSkin(m_UIskin);
 
-			MenuItem* mi=new MenuItem(L"Build All");
-			mi->event().bind(this, &MainWindow::Menu_BuildAll);
-			buildSubMenu->Add(mi,0);
+			m_buildMemuItem = new MenuItem(L"Build All");
+			m_buildMemuItem->event().bind(this, &MainWindow::Menu_BuildAll);
+			buildSubMenu->Add(m_buildMemuItem, 0);
 
 			m_mainMenu->Add(buildMenu, buildSubMenu);
 		}
@@ -319,6 +319,9 @@ namespace APDesigner
 			m_documentList.Remove(*iter);
 			delete *iter;
 		}
+
+		m_buildMemuItem->Enabled = !!m_project;
+		m_savePrjMemuItem->Enabled = !!m_project;
 
 		BuildInterface::getSingleton().MainThreadUpdate(time);
 	}

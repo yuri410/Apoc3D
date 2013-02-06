@@ -514,7 +514,7 @@ namespace Apoc3D
 
 			for (int i=0;i<m_items.getCount();i++)
 			{
-				if (key == m_items[i]->getKeyCode())
+				if (key == m_items[i]->getKeyCode() && m_items[i]->Enabled)
 					m_indexToOpen = i;
 			}
 		}
@@ -562,6 +562,9 @@ namespace Apoc3D
 			if (mouse->IsLeftPressed())
 			{
 				int index = m_hoverIndex;
+				if (!m_items[index]->Enabled)
+					return;
+
 				if (!m_items[index]->event().empty())
 					m_items[index]->event()(this);
 
@@ -629,7 +632,7 @@ namespace Apoc3D
 					{
 						sprite->Draw(m_skin->WhitePixelTexture, m_itemArea, CV_LightGray);
 					}
-					else if (m_itemArea.Contains(cursorLoc))
+					else if (m_items[i]->Enabled && m_itemArea.Contains(cursorLoc))
 					{
 						m_hoverIndex = i;
 						m_openPos.X = m_itemArea.X + m_itemArea.Width -3;
@@ -660,7 +663,7 @@ namespace Apoc3D
 
 					m_textPos = m_itemPos;
 					m_textPos.X += 2;
-					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_textPos, CV_Black);
+					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_textPos, m_items[i]->Enabled ? CV_Black : CV_Gray);
 					m_itemPos.Y += static_cast<int>(m_fontRef->getLineBackgroundHeight());
 
 					if (m_items[i]->getKeyCode() != KEY_UNASSIGNED)
@@ -668,7 +671,7 @@ namespace Apoc3D
 						Point underscorePos(
 							m_itemPos.X + m_fontRef->MeasureString(m_items[i]->getCleanText().substr(0,m_items[i]->getKeyIndex())).X,
 							m_itemPos.Y);
-						m_fontRef->DrawString(sprite, L"_", underscorePos, CV_Black);
+						m_fontRef->DrawString(sprite, L"_", underscorePos, m_items[i]->Enabled ? CV_Black : CV_Gray);
 					}
 
 					if (m_items[i]->getSubMenu())

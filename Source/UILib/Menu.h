@@ -88,6 +88,7 @@ namespace Apoc3D
 		{
 		public:
 			void* UserPointer;
+			bool Enabled;
 
 			const String& getText() const { return m_text; }
 			void setText(const String& txt);
@@ -102,7 +103,8 @@ namespace Apoc3D
 			void setSubMenu(SubMenu* sm) { m_submenu = sm; }
 
 			MenuItem(const String& text)
-				: m_submenu(0), UserPointer(0), m_key(KEY_UNASSIGNED), m_keyIndex(-1)
+				: m_submenu(0), UserPointer(0), m_key(KEY_UNASSIGNED), m_keyIndex(-1),
+				Enabled(true)
 			{
 				setText(text);
 			}
@@ -116,7 +118,6 @@ namespace Apoc3D
 
 			UIEventHandler m_event;
 			SubMenu* m_submenu;
-
 		};
 
 		class APAPI SubMenu : public Control
@@ -143,6 +144,13 @@ namespace Apoc3D
 			int getHoverIndex() const { return m_hoverIndex; }
 			const FastList<MenuItem*>& getItems() const { return m_items; }
 		private:
+			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
+			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);
+
+			void CalcualteSize();
+			void CloseSubMenus();
+			void CheckSelection();
+
 			Control* m_parent;
 			FastList<MenuItem*> m_items;
 			Point m_itemPos;
@@ -162,12 +170,6 @@ namespace Apoc3D
 			float m_timerCount;
 			bool m_timerStarted;
 
-			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
-			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);
-
-			void CalcualteSize();
-			void CloseSubMenus();
-			void CheckSelection();
 		};
 	}
 }

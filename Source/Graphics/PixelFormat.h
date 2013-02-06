@@ -24,9 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_PIXELFORMAT_H
 #define APOC3D_PIXELFORMAT_H
 
-
 #include "Common.h"
 #include "Apoc3DException.h"
+#include "Collections/FastList.h"
+#include "Collections/EnumConverterHelper.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 
@@ -219,20 +220,33 @@ namespace Apoc3D
 			FMT_Count = 41
 		};
 	
+		class PixelFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>
+		{
+		public:
+			PixelFormatEnumHelper();
+		};
+		class DepthFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<DepthFormat>
+		{
+		public:
+			DepthFormatEnumHelper();
+		};
+
 		/**
 		 *  Some functions for PixelFormat
 		 */
 		class APAPI PixelFormatUtils
 		{
 		private:
-			static int sizeTable[FMT_Count];
-			static int depSizeTable[DEPFMT_Count];
+			int sizeTable[FMT_Count];
+			int depSizeTable[DEPFMT_Count];
 
+			PixelFormatEnumHelper m_pConvHelper;
+			DepthFormatEnumHelper m_dConvHelper;
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4251)
 #endif
-			static auto_ptr<PixelFormatUtils> initializer;
+			static PixelFormatUtils initializer;
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
@@ -251,7 +265,7 @@ namespace Apoc3D
 			}
 			static int GetMemorySize(int width, int height, DepthFormat format) 
 			{
-				int bytepp = depSizeTable[(int)format];
+				int bytepp = initializer.depSizeTable[(int)format];
 				if (bytepp == -1)
 				{
 					throw Apoc3DException::createException(EX_Default, L"Invalid pixel format");
@@ -273,7 +287,7 @@ namespace Apoc3D
 					return (((uint)width + 3) >> 2) * (((uint)height + 3) >> 2) * 16;
 					//return ((width * 3) / 4) * ((height * 3) / 4) * 16;
 				}
-				int bytepp = sizeTable[(int)format];
+				int bytepp = initializer.sizeTable[(int)format];
 				if (bytepp == -1)
 				{
 					throw Apoc3DException::createException(EX_Default, L"Invalid pixel format");
@@ -286,11 +300,11 @@ namespace Apoc3D
 			 */
 			static int GetBPP(PixelFormat fmt)
 			{
-				return sizeTable[(int)fmt];
+				return initializer.sizeTable[(int)fmt];
 			}
 			static int GetBPP(DepthFormat fmt)
 			{
-				return depSizeTable[(int)fmt];
+				return initializer.depSizeTable[(int)fmt];
 			}
 			static int GetStencilDepth(DepthFormat fmt)
 			{
@@ -313,293 +327,26 @@ namespace Apoc3D
 			 */
 			static String ToString(PixelFormat format)
 			{
-				switch (format)
-				{
-				case FMT_Luminance8:
-					return L"L8";
-				case FMT_Luminance16:
-					return L"L16";
-				case FMT_Alpha8:
-					return L"A8";
-				case FMT_A4L4:
-					return L"A4L4";
-				case FMT_A8L8:
-					return L"A8L8";
-				case FMT_R5G6B5:
-					return L"R5G6B5";
-				case FMT_B5G6R5:
-					return L"B5G6R5";	
-				case FMT_A4R4G4B4:
-					return L"A4R4G4B4";
-				case FMT_A1R5G5B5:
-					return L"A1R5G5B5";
-				case FMT_R8G8B8:
-					return L"R8G8B8";
-				case FMT_B8G8R8:
-					return L"B8G8R8";
-				case FMT_A8R8G8B8:
-					return L"A8R8G8B8";
-				case FMT_A8B8G8R8:
-					return L"A8B8G8R8";
-				case FMT_B8G8R8A8:
-					return L"B8G8R8A8";
-				case FMT_A2R10G10B10:
-					return L"A2R10G10B10";
-				case FMT_A2B10G10R10:
-					return L"A2B10G10R10";
-				case FMT_DXT1:
-					return L"DXT1";
-				case FMT_DXT2:
-					return L"DXT2";
-				case FMT_DXT3:
-					return L"DXT3";
-				case FMT_DXT4:
-					return L"DXT4";
-				case FMT_DXT5:
-					return L"DXT5";
-				case FMT_A16B16G16R16F:
-					return L"A16B16G16R16F";
-				case FMT_A32B32G32R32F:
-					return L"A32B32G32R32F";
-				case FMT_X8R8G8B8:
-					return L"X8R8G8B8";
-				case FMT_X8B8G8R8:
-					return L"X8B8G8R8";
-				case FMT_X1R5G5B5:
-					return L"X1R5G5B5";
-				case FMT_R8G8B8A8:
-					return L"R8G8B8A8";
-				case FMT_A16B16G16R16:
-					return L"A16B16G16R16";
-				case FMT_R3G3B2:
-					return L"R3G3B2";
-				case FMT_R16F:
-					return L"R16F";
-				case FMT_R32F:
-					return L"R32F";
-				case FMT_G16R16:
-					return L"G16R16";
-				case FMT_G16R16F:
-					return L"G16R16F";
-				case FMT_G32R32F:
-					return L"G32R32F";
-				case FMT_R16G16B16:
-					return L"R16G16B16";
-				case FMT_B4G4R4A4:
-					return L"B4G4R4A4";
-				case FMT_Palette8:
-					return L"P8";
-				case FMT_Palette8Alpha8:
-					return L"P8A8";
-				}
-				return L"Unknown";
+				return initializer.m_pConvHelper.ToString(format);
 			}
 			/** 
 			 *  Converts a PixelFormat's string representation to the PixelFormat enum
 			 */
 			static PixelFormat ConvertFormat(const String& fmt)
 			{
-				if (fmt == String(L"L8"))
-				{
-					return FMT_Luminance8;
-				}
-				else if (fmt == String(L"L16"))
-				{
-					return FMT_Luminance16;
-				}
-				else if (fmt == String(L"A8"))
-				{
-					return FMT_Alpha8;
-				}
-				else if (fmt == String(L"A4L4"))
-				{
-					return FMT_A4L4;
-				}
-				else if (fmt == String(L"A8L8"))
-				{
-					return FMT_A8L8;
-				}
-				else if (fmt == String(L"R5G6B5"))
-				{
-					return FMT_R5G6B5;
-				}
-				else if (fmt == String(L"B5G6R5"))
-				{
-					return FMT_B5G6R5;
-				}
-				else if (fmt == String(L"A4R4G4B4"))
-				{
-					return FMT_A4R4G4B4;
-				}
-				else if (fmt == String(L"A1R5G5B5"))
-				{
-					return FMT_A1R5G5B5;
-				}
-				else if (fmt == String(L"R8G8B8"))
-				{
-					return FMT_R8G8B8;
-				}
-				else if (fmt == String(L"B8G8R8"))
-				{
-					return FMT_B8G8R8;
-				}
-				else if (fmt == String(L"A8R8G8B8"))
-				{
-					return FMT_A8R8G8B8;
-				}
-				else if (fmt == String(L"A8B8G8R8"))
-				{
-					return FMT_A8B8G8R8;
-				}
-				else if (fmt == String(L"B8G8R8A8"))
-				{
-					return FMT_B8G8R8A8;
-				}
-				else if (fmt == String(L"A2R10G10B10"))
-				{
-					return FMT_A2R10G10B10;
-				}
-				else if (fmt == String(L"A2B10G10R10"))
-				{
-					return FMT_A2B10G10R10;
-				}
-				else if (fmt == String(L"DXT1"))
-				{
-					return FMT_DXT1;
-				}
-				else if (fmt == String(L"DXT2"))
-				{
-					return FMT_DXT2;
-				}
-				else if (fmt == String(L"DXT3"))
-				{
-					return FMT_DXT3;
-				}
-				else if (fmt == String(L"DXT4"))
-				{
-					return FMT_DXT4;
-				}
-				else if (fmt == String(L"DXT5"))
-				{
-					return FMT_DXT5;
-				}
-				else if (fmt == String(L"A16B16G16R16F"))
-				{
-					return FMT_A16B16G16R16F;
-				}
-				else if (fmt == String(L"A32B32G32R32F"))
-				{
-					return FMT_A32B32G32R32F;
-				}
-				else if (fmt == String(L"X8R8G8B8"))
-				{
-					return FMT_X8R8G8B8;
-				}
-				else if (fmt == String(L"X8B8G8R8"))
-				{
-					return FMT_X8B8G8R8;
-				}
-				else if (fmt == String(L"X1R5G5B5"))
-				{
-					return FMT_X1R5G5B5;
-				}
-				else if (fmt == String(L"R8G8B8A8"))
-				{
-					return FMT_R8G8B8A8;
-				}
-				else if (fmt == String(L"A16B16G16R16"))
-				{
-					return FMT_A16B16G16R16;
-				}
-				else if (fmt == String(L"R3G3B2"))
-				{
-					return FMT_R3G3B2;
-				}
-				else if (fmt == String(L"R16F"))
-				{
-					return FMT_R16F;
-				}
-				else if (fmt == String(L"R32F"))
-				{
-					return FMT_R32F;
-				}
-				else if (fmt == String(L"G16R16"))
-				{
-					return FMT_G16R16;
-				}
-				else if (fmt == String(L"G16R16F"))
-				{
-					return FMT_G16R16F;
-				}
-				else if (fmt == String(L"G32R32F"))
-				{
-					return FMT_G32R32F;
-				}
-				else if (fmt == String(L"R16G16B16"))
-				{
-					return FMT_R16G16B16;
-				}
-				else if (fmt == String(L"B4G4R4A4"))
-				{
-					return FMT_B4G4R4A4;
-				}
-				else if (fmt == String(L"P8"))
-				{
-					return FMT_Palette8;
-				}
-				else if (fmt == String(L"P8A8"))
-				{
-					return FMT_Palette8Alpha8;
-				}
-				return FMT_Unknown;
+				return initializer.m_pConvHelper.Parse(fmt);
 			}
 			/**
 			 *  Converts a DepthFormat's string representation to the DepthFormat enum
 			 */
 			static DepthFormat ConvertDepthFormat(const String& fmt)
 			{
-				if (fmt == String(L"D15S1"))
-				{
-					return DEPFMT_Depth15Stencil1;
-				}
-				else if (fmt == String(L"D16"))
-				{
-					return DEPFMT_Depth16;
-				}
-				else if (fmt == String(L"D16Lockable"))
-				{
-					return DEPFMT_Depth16Lockable;
-				}
-				else if (fmt == String(L"D24"))
-				{
-					return DEPFMT_Depth24X8;
-				}
-				else if (fmt == String(L"D24S4"))
-				{
-					return DEPFMT_Depth24Stencil4;
-				}
-				else if (fmt == String(L"D24S8"))
-				{
-					return DEPFMT_Depth24Stencil8;
-				}
-				else if (fmt == String(L"D24S8F"))
-				{
-					return DEPFMT_Depth24Stencil8Single;
-				}
-				else if (fmt == String(L"D32"))
-				{
-					return DEPFMT_Depth32;
-				}
-				else if (fmt == String(L"D32Lockable"))
-				{
-					return DEPFMT_Depth32Lockable;
-				}
-				else if (fmt == String(L"D32F"))
-				{
-					return DEPFMT_Depth32Single;
-				}
+				return initializer.m_dConvHelper.Parse(fmt);
+			}
 
-				return DEPFMT_Depth16;
+			static void DumpPixelFormatName(Apoc3D::Collections::List<String>& names)
+			{
+				initializer.m_pConvHelper.DumpNames(names);
 			}
 
 			/** 

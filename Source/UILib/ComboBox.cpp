@@ -59,6 +59,13 @@ namespace Apoc3D
 		}
 		void ComboBox::Update(const GameTime* const time)
 		{
+			m_textbox->Position = Position;
+			m_button->Position = Position + Point(Size.X-16,0);
+			m_listBox->Position = Position + Point(0,19);
+			m_textbox->setOwner(getOwner());
+			m_button->setOwner(getOwner());
+			m_listBox->setOwner(getOwner());
+
 			m_textbox->Update(time);
 			m_button->Update(time);
 

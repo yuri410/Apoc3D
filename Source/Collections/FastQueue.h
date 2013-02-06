@@ -92,7 +92,7 @@ namespace Apoc3D
 			{
 				m_array = new T[4];
 			}
-			FastQueue(int capacity)
+			explicit FastQueue(int capacity)
 				: m_head(0), m_tail(0), m_size(0), m_arrLength(capacity)
 			{
 				m_array = new T[capacity];

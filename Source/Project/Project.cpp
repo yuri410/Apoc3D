@@ -102,7 +102,7 @@ namespace Apoc3D
 		String method = L"d3d";
 		sect->tryGetAttribute(L"Method", method);
 
-		Method = ParseBuildMethod(method);
+		Method = ProjectTypeUtils::ParseTextureBuildMethod(method);
 		AssembleCubemap = false;
 		AssembleVolumeMap = false;
 
@@ -192,7 +192,7 @@ namespace Apoc3D
 		String flt;
 		if (sect->tryGetAttribute(L"ResizeFilter", flt))
 		{
-			ResizeFilterType = ParseFilterType(flt);
+			ResizeFilterType = ProjectTypeUtils::ParseTextureFilterType(flt);
 		}
 
 		Resize = passed;
@@ -207,7 +207,7 @@ namespace Apoc3D
 	}
 	void ProjectResTexture::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"Method", ToString(Method));
+		sect->AddAttributeString(L"Method", ProjectTypeUtils::ToString(Method));
 
 		if (AssembleCubemap || AssembleVolumeMap)
 		{
@@ -300,7 +300,7 @@ namespace Apoc3D
 			sect->AddAttributeString(L"Height", StringUtils::ToString(NewHeight));
 			sect->AddAttributeString(L"Depth", StringUtils::ToString(NewDepth));
 
-			sect->AddAttributeString(L"ResizeFilter", ToString(ResizeFilterType));
+			sect->AddAttributeString(L"ResizeFilter", ProjectTypeUtils::ToString(ResizeFilterType));
 		}
 
 		if (NewFormat != FMT_Unknown)
@@ -354,68 +354,7 @@ namespace Apoc3D
 	{
 		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
 	}
-	String ProjectResTexture::ToString(TextureFilterType flt)
-	{
-		switch (flt)
-		{
-		case TFLT_Nearest:
-			return L"nearest";
-		case TFLT_BSpline:
-			return L"bspline";
-		case TFLT_Box:
-			return L"box";
-		}	
-		return L"bspline";
-	}
-	String ProjectResTexture::ToString(TextureBuildMethod method)
-	{
-		switch (method)
-		{
-		case TEXBUILD_BuiltIn:
-			return L"default";
-		case TEXBUILD_D3D:
-			return L"d3d";
-		case TEXBUILD_Devil:
-			return L"devil";
-		}
-		return L"default";
-	}
-
-	ProjectResTexture::TextureFilterType ProjectResTexture::ParseFilterType(const String& str)
-	{
-		String flt = str;
-		StringUtils::ToLowerCase(flt);
-
-		if (flt == L"nearest")
-		{
-			return ProjectResTexture::TFLT_Nearest;
-		}
-		else if (flt == L"box")
-		{
-			return ProjectResTexture::TFLT_Box;
-		}
-		return ProjectResTexture::TFLT_BSpline;
-	}
-	ProjectResTexture::TextureBuildMethod ProjectResTexture::ParseBuildMethod(const String& str)
-	{
-		String method = str;
-		StringUtils::ToLowerCase(method);
-
-		if (method == L"d3d")
-		{
-			return ProjectResTexture::TEXBUILD_D3D;
-		}
-		else if (method == L"devil")
-		{
-			return ProjectResTexture::TEXBUILD_Devil;
-		}
-		else if (method == L"default")
-		{
-			return ProjectResTexture::TEXBUILD_BuiltIn;
-		}
-		return ProjectResTexture::TEXBUILD_BuiltIn;
-	}
-
+	
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
@@ -877,7 +816,7 @@ namespace Apoc3D
 		sect->tryGetAttribute(L"Method", method);
 		StringUtils::ToLowerCase(method);
 
-		Method = ParseBuildMethod(method);
+		Method = ProjectTypeUtils::ParseModelBuildMethod(method);
 
 	}
 	void ProjectResModel::Save(ConfigurationSection* sect, bool savingBuild)
@@ -888,7 +827,7 @@ namespace Apoc3D
 		{
 			sect->AddAttributeString(L"DestinationAnimFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstAnimationFile) :DstAnimationFile);
 		}
-		sect->AddAttributeString(L"Method", ToString(Method));
+		sect->AddAttributeString(L"Method", ProjectTypeUtils::ToString(Method));
 	}
 	std::vector<String> ProjectResModel::GetAllOutputFiles()
 	{
@@ -933,36 +872,6 @@ namespace Apoc3D
 				return true;
 
 		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DstFile)) ;
-	}
-
-	ProjectResModel::MeshBuildMethod ProjectResModel::ParseBuildMethod(const String& str)
-	{
-		if (str == L"ass")
-		{
-			return MESHBUILD_ASS;
-		}
-		else if (str == L"fbx")
-		{
-			return MESHBUILD_FBX;
-		}
-		else if (str == L"d3d")
-		{
-			return MESHBUILD_D3D;
-		}
-		return MESHBUILD_ASS;
-	}
-	String ProjectResModel::ToString(MeshBuildMethod method)
-	{
-		switch (method)
-		{
-		case MESHBUILD_ASS:
-			return L"ass";
-		case MESHBUILD_FBX:
-			return L"fbx";
-		case MESHBUILD_D3D:
-			return L"d3d";
-		}
-		return L"ass";
 	}
 
 	/************************************************************************/
@@ -1403,5 +1312,36 @@ namespace Apoc3D
 		PathUtils::Append(m_outputPath, L"build");
 	}
 
-	
+	//////////////////////////////////////////////////////////////////////////
+
+	ProjectTypeUtils::TextureFilterTypeConv ProjectTypeUtils::TextureFilterTypeConvInst;
+	ProjectTypeUtils::TextureBuildMethodConv ProjectTypeUtils::TextureBuildMethodConvInst;
+	ProjectTypeUtils::MeshBuildMethodConv ProjectTypeUtils::MeshBuildMethodConvInst;
+
+	ProjectResTexture::TextureFilterType ProjectTypeUtils::ParseTextureFilterType(const String& str)
+	{
+		return TextureFilterTypeConvInst.Parse(str);
+	}
+	ProjectResTexture::TextureBuildMethod ProjectTypeUtils::ParseTextureBuildMethod(const String& str)
+	{
+		return TextureBuildMethodConvInst.Parse(str);
+	}
+	String ProjectTypeUtils::ToString(ProjectResTexture::TextureFilterType flt)
+	{
+		return TextureFilterTypeConvInst.ToString(flt);
+	}
+	String ProjectTypeUtils::ToString(ProjectResTexture::TextureBuildMethod method)
+	{
+		return TextureBuildMethodConvInst.ToString(method);
+	}
+
+	ProjectResModel::MeshBuildMethod ProjectTypeUtils::ParseModelBuildMethod(const String& str)
+	{
+		return MeshBuildMethodConvInst.Parse(str);
+	}
+	String ProjectTypeUtils::ToString(ProjectResModel::MeshBuildMethod method)
+	{
+		return MeshBuildMethodConvInst.ToString(method);
+	}
+
 }

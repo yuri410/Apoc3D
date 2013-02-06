@@ -168,6 +168,8 @@ namespace APDesigner
 		while (m_processThread)
 		{
 			Apoc3D::Platform::ApocSleep(1);
+
+			MainThreadUpdate(nullptr);
 		}
 	}
 

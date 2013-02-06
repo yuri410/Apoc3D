@@ -44,7 +44,7 @@ namespace Apoc3D
 			Stack(const Stack& another){}
 		public:
 			
-			Stack(int capacity = 8)
+			explicit Stack(int capacity = 8)
 				: m_length(capacity), m_size(0)
 			{
 				m_array = new T[m_length];

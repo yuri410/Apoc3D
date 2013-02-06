@@ -64,6 +64,7 @@ namespace Apoc3D
 		PRJITEM_Font
 	};
 	
+
 	/**
 	 *  Represent the build configuration for a specific type of assert in the project.
 	 */
@@ -197,11 +198,7 @@ namespace Apoc3D
 			TEXBUILD_Devil,
 			TEXBUILD_BuiltIn
 		};
-		static TextureFilterType ParseFilterType(const String& str);
-		static TextureBuildMethod ParseBuildMethod(const String& str);
-		static String ToString(TextureFilterType flt);
-		static String ToString(TextureBuildMethod method);
-
+		
 		String SourceFile;
 		String DestinationFile;
 		bool GenerateMipmaps;
@@ -299,10 +296,6 @@ namespace Apoc3D
 			MESHBUILD_FBX,
 			MESHBUILD_D3D
 		};
-
-		static MeshBuildMethod ParseBuildMethod(const String& str);
-		static String ToString(MeshBuildMethod method);
-
 
 		String SrcFile;
 		String DstFile;
@@ -639,5 +632,63 @@ namespace Apoc3D
 		void setTexturePath(const String& path) { m_texturePath = path; }
 	};
 
+
+
+	class APAPI ProjectTypeUtils
+	{
+	public:
+		static ProjectResTexture::TextureFilterType ParseTextureFilterType(const String& str);
+		static ProjectResTexture::TextureBuildMethod ParseTextureBuildMethod(const String& str);
+		static String ToString(ProjectResTexture::TextureFilterType flt);
+		static String ToString(ProjectResTexture::TextureBuildMethod method);
+
+		static ProjectResModel::MeshBuildMethod ParseModelBuildMethod(const String& str);
+		static String ToString(ProjectResModel::MeshBuildMethod method);
+
+	private:
+		struct TextureFilterTypeConv : public Apoc3D::Collections::EnumDualConversionHelper<ProjectResTexture::TextureFilterType>
+		{
+			TextureFilterTypeConv() 
+				: EnumDualConversionHelper<ProjectResTexture::TextureFilterType>(10)
+			{
+				AddPair(L"Nearest", ProjectResTexture::TFLT_Nearest);
+				AddPair(L"BSpline", ProjectResTexture::TFLT_BSpline);
+				AddPair(L"Box", ProjectResTexture::TFLT_Box);
+			}
+		};
+
+		struct TextureBuildMethodConv : public Apoc3D::Collections::EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>
+		{
+			TextureBuildMethodConv() 
+				: EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>(10)
+			{
+				AddPair(L"Default", ProjectResTexture::TEXBUILD_BuiltIn);
+				AddPair(L"D3D", ProjectResTexture::TEXBUILD_D3D);
+				AddPair(L"Devil", ProjectResTexture::TEXBUILD_Devil);
+			}
+		};
+
+		struct MeshBuildMethodConv : public Apoc3D::Collections::EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>
+		{
+			MeshBuildMethodConv() 
+				: EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>(10)
+			{
+				AddPair(L"Ass", ProjectResModel::MESHBUILD_ASS);
+				AddPair(L"FBX", ProjectResModel::MESHBUILD_FBX);
+				AddPair(L"D3D", ProjectResModel::MESHBUILD_D3D);
+			}
+		};
+
+		static TextureFilterTypeConv TextureFilterTypeConvInst;
+		static TextureBuildMethodConv TextureBuildMethodConvInst;
+		static MeshBuildMethodConv MeshBuildMethodConvInst;
+
+	public:
+
+		static const TextureFilterTypeConv& GetTextureFilterTypeConverter() { return TextureFilterTypeConvInst; }
+		static const TextureBuildMethodConv& GetTextureBuildMethodConverter() { return TextureBuildMethodConvInst; }
+		static const MeshBuildMethodConv& GetMeshBuildMethodConverter() { return MeshBuildMethodConvInst; }
+
+	};
 }
 #endif

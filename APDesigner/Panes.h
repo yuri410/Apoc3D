@@ -59,26 +59,26 @@ namespace APDesigner
 		void Update(const GameTime* const time);
 	};
 
-	class PropEditor
-	{
-	public:
-		virtual void Show() = 0;
-		virtual void Hide() = 0;
-	};
-	class TexturePropEditor : public PropEditor
-	{
-	public:
-		TexturePropEditor(ResourcePane* pane);
-		~TexturePropEditor();
+	//class PropEditor
+	//{
+	//public:
+	//	virtual void Show() = 0;
+	//	virtual void Hide() = 0;
+	//};
+	//class TexturePropEditor : public PropEditor
+	//{
+	//public:
+	//	TexturePropEditor(ResourcePane* pane);
+	//	~TexturePropEditor();
 
-		virtual void Show();
-		virtual void Hide();
+	//	virtual void Show();
+	//	virtual void Hide();
 
-	private:
-		ComboBox* m_cbMethod;
-		//ComboBox* m_cb
-		
-	};
+	//private:
+	//	ComboBox* m_cbMethod;
+	//	//ComboBox* m_cb
+	//	
+	//};
 
 	class ResourcePane
 	{
@@ -103,17 +103,31 @@ namespace APDesigner
 		void BtnAdd_Release(Control* ctrl);
 		void BtnRemove_Release(Control* ctrl);
 		void BtnOpen_Release(Control* ctrl);
+		void BtnForceBuild_Release(Control* ctrl);
 		void BtnApplyMod_Release(Control* ctrl);
+
+		void BtnBrowseOpen_Release(Control* ctrl);
+		void BtnBrowseSave_Release(Control* ctrl);
+
 		void TreeView_SelectionChanged(Control* ctrl);
 
 		void NukePropertyList();
 		void AddPropertyPair(const String& name, const String& b);
+		void AddPropertyPath(const String& name, const String& b, bool isLoad);
 		void AddPropertyDropdown(const String& name, const List<String>& list, int selectedIndex = -1);
-		void AddPropertyDropdown_PixelFormat(const String& name, const PixelFormat& selectedFmt);
 		void AddPropertyCollection(const String& name);
 		void AddPropertyCheckbox(const String& name, bool checked);
+
 		void ListNewProperties(ProjectItemData* data);
-		//static const int ItemHeight = 60;
+		void ApplyProperties(ProjectItemData* data);
+
+		int getPropertyLabelWidth() const;
+		int getPropertyFieldWidth() const;
+		int getPropertyFieldTop() const;
+
+		static const int32 PropFieldMargin = 5;
+		static const int32 PropFieldSpacing = 25;
+
 		MainWindow* m_mainWindow;
 		const StyleSkin* m_skin;
 
@@ -124,13 +138,35 @@ namespace APDesigner
 		Button* m_addItem;
 		Button* m_removeItem;
 		Button* m_openItem;
+		Button* m_forceBuildItem;
+
 		Button* m_applyModify;
 
 		Project* m_currentProject;
 
-		FastList<Label*> m_propLeft;
-		FastList<Control*> m_propRight;
+		struct PropItem
+		{
+			String Name;
+			Label* Desc;
+			Control* Editor;
 
+			Button* ExtraButton;
+
+			bool LoadOrSave;
+
+			PropItem() : Desc(nullptr), Editor(nullptr), ExtraButton(nullptr), LoadOrSave(false) { }
+			PropItem(const String& name, Label* l, Control* edi, Button* eb)
+				: Name(name), Desc(l), Editor(edi), ExtraButton(eb), LoadOrSave(false)
+			{
+			}
+
+
+			bool getAsTextbox(String& val) const;
+			bool getAsCombo(String& val) const;
+			bool getAsCheckBox(bool& val) const;
+		};
+		
+		FastList<PropItem> m_proplist;
 	};
 
 	//class PropertyPane

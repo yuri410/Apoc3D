@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Apoc3DException.h" />
+    <ClInclude Include="Collections\EnumConverterHelper.h" />
     <ClInclude Include="Collections\List2D.h" />
     <ClInclude Include="Collections\CollectionsCommon.h" />
     <ClInclude Include="Collections\ExistTable.h" />

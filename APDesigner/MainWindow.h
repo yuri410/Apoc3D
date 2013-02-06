@@ -83,12 +83,12 @@ namespace APDesigner
 
 		Document* m_currentDocument;
 		FastList<Document*> m_documentList;
-		//Font* m_font;
 		Console* m_console;
-		//ControlContainer* m_pane;
-		//Button* m_btn;
-		//Form* m_form;
+
 		Menu* m_mainMenu;
+		MenuItem* m_buildMemuItem;
+		MenuItem* m_savePrjMemuItem;
+
 
 		AtomManagerDialog* m_atomManager;
 		ResourcePane* m_resourcePane;

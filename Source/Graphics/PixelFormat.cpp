@@ -9,7 +9,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		static void createSizeTable(int st[])
+		void createSizeTable(int st[])
 		{
 			st[(int)FMT_Unknown] = -1;
             st[(int)FMT_A16B16G16R16] = 8;
@@ -51,7 +51,7 @@ namespace Apoc3D
             st[(int)FMT_Palette8] = 1;
             st[(int)FMT_Palette8Alpha8] = 2;
 		}
-		static void createDepsizeTable(int st[])
+		void createDepsizeTable(int st[])
 		{			
 			st[(int)DEPFMT_Depth15Stencil1] = 2;
             st[(int)DEPFMT_Depth16] = 2;
@@ -65,15 +65,89 @@ namespace Apoc3D
             st[(int)DEPFMT_Depth32Single] = 4;		
 		}
 
-		int PixelFormatUtils::sizeTable[FMT_Count];
-		int PixelFormatUtils::depSizeTable[DEPFMT_Count];
-		auto_ptr<PixelFormatUtils> PixelFormatUtils::initializer (new PixelFormatUtils());
+
+		PixelFormatUtils PixelFormatUtils::initializer;
 
 		PixelFormatUtils::PixelFormatUtils()
 		{
 			createSizeTable(sizeTable);
 			createDepsizeTable(depSizeTable);
 		}
+
+
+		PixelFormatEnumHelper::PixelFormatEnumHelper()
+			: Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>(FMT_Count)
+		{
+			AddPair(L"L8",			FMT_Luminance8);
+			AddPair(L"L16",			FMT_Luminance16);
+			AddPair(L"A8",			FMT_Alpha8);
+			AddPair(L"A4L4",		FMT_A4L4);
+			AddPair(L"A8L8",		FMT_A8L8);
+
+			AddPair(L"R5G6B5",		FMT_R5G6B5);
+			AddPair(L"R8G8B8",		FMT_R8G8B8);
+			AddPair(L"A8R8G8B8",	FMT_A8R8G8B8);
+			AddPair(L"A4R4G4B4",	FMT_A4R4G4B4);
+			AddPair(L"A1R5G5B5",	FMT_A1R5G5B5);
+
+			AddPair(L"B5G6R5",		FMT_B5G6R5);
+			AddPair(L"B8G8R8",		FMT_B8G8R8);
+			AddPair(L"B8G8R8A8",	FMT_B8G8R8A8);
+			AddPair(L"A8B8G8R8",	FMT_A8B8G8R8);
+
+			AddPair(L"A2R10G10B10",	FMT_A2R10G10B10);
+			AddPair(L"A2B10G10R10", FMT_A2B10G10R10);
+
+			AddPair(L"DXT1", FMT_DXT1);
+			AddPair(L"DXT2", FMT_DXT2);
+			AddPair(L"DXT3", FMT_DXT3);
+			AddPair(L"DXT4", FMT_DXT4);
+			AddPair(L"DXT5", FMT_DXT5);
+
+			AddPair(L"R16F",	FMT_R16F);
+			AddPair(L"G16R16F",	FMT_G16R16F);
+			AddPair(L"A16B16G16R16F",	FMT_A16B16G16R16F);
+
+			AddPair(L"R32F",	FMT_R32F);
+			AddPair(L"G32R32F",	FMT_G32R32F);
+			AddPair(L"A32B32G32R32F",	FMT_A32B32G32R32F);
+
+			AddPair(L"X8R8G8B8", FMT_X8R8G8B8);
+			AddPair(L"X8B8G8R8", FMT_X8B8G8R8);
+			AddPair(L"X1R5G5B5", FMT_X1R5G5B5);
+
+			AddPair(L"R8G8B8A8", FMT_R8G8B8A8);
+
+			AddPair(L"A16B16G16R16",	FMT_A16B16G16R16);
+
+			AddPair(L"R3G3B2",	FMT_R3G3B2);
+			AddPair(L"B4G4R4A4",	FMT_B4G4R4A4);
+
+			AddPair(L"G16R16",	FMT_G16R16);
+			AddPair(L"R16G16B16",	FMT_R16G16B16);
+
+			AddPair(L"P8",	FMT_Palette8);
+			AddPair(L"P8A8",	FMT_Palette8Alpha8);
+
+			AddPair(L"Unknown", FMT_Unknown);
+		}
+
+		DepthFormatEnumHelper::DepthFormatEnumHelper()
+			: Apoc3D::Collections::EnumDualConversionHelper<DepthFormat>(DEPFMT_Count)
+		{
+			AddPair(L"D15S1",		DEPFMT_Depth15Stencil1);
+			AddPair(L"D16",			DEPFMT_Depth16);
+			AddPair(L"D16Lockable",	DEPFMT_Depth16Lockable);
+			AddPair(L"D24",			DEPFMT_Depth24X8);
+			AddPair(L"D24S4",		DEPFMT_Depth24Stencil4);
+			AddPair(L"D24S8",		DEPFMT_Depth24Stencil8);
+			AddPair(L"D24S8F",		DEPFMT_Depth24Stencil8Single);
+			AddPair(L"D32",			DEPFMT_Depth32);
+			AddPair(L"D32Lockable", DEPFMT_Depth32Lockable);
+			AddPair(L"D32F",		DEPFMT_Depth32Single);
+		}
+
+
 
 
 #define FMTCONVERTERID(from,to) (((from)<<16)|(to))
