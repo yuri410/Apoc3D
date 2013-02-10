@@ -81,6 +81,14 @@ namespace Apoc3D
 			void ReadVector3(float* buffer);
 			void ReadVector2(float* buffer);
 
+
+			void ReadSingle(float* data, int32 count) { for (int32 i=0;i<count;i++) data[i] = ReadSingle(); }
+			void ReadDouble(double* data, int32 count) { for (int32 i=0;i<count;i++) data[i] = ReadDouble(); }
+			void ReadInt32(int32* data, int32 count) { for (int32 i=0;i<count;i++) data[i] = ReadInt32(); }
+			void ReadBoolean(bool* data, int32 count) { for (int32 i=0;i<count;i++) data[i] = ReadBoolean(); }
+
+
+
 			TaggedDataReader* ReadTaggedDataBlock();
 
 			void Close() const;

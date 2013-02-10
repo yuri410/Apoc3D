@@ -74,6 +74,12 @@ namespace Apoc3D
 			void WriteVector4(const float* buffer) const;
 
 			void Write(const TaggedDataWriter* data) const;
+
+			void Write(const float* data, int32 count) const { for (int32 i=0;i<count;i++) Write(data[i]); }
+			void Write(const double* data, int32 count) const { for (int32 i=0;i<count;i++) Write(data[i]); }
+			void Write(const int32* data, int32 count) const { for (int32 i=0;i<count;i++) Write(data[i]); }
+			void Write(const bool* data, int32 count) const { for (int32 i=0;i<count;i++) Write(data[i]); }
+
 			void Close() const;
 
 			/**
