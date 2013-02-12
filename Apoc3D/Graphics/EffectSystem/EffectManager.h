@@ -24,8 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_EFFECTSYSTEM_H
 #define APOC3D_EFFECTSYSTEM_H
 
-#include "Common.h"
-#include "Core/Singleton.h"
+#include "apoc3d/Common.h"
+#include "apoc3d/Core/Singleton.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Core;

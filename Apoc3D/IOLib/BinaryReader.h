@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_BINARYREADER_H
 #define APOC3D_BINARYREADER_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::VFS;

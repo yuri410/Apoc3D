@@ -25,9 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_MATERIALTPYES_H
 #define APOC3D_MATERIALTPYES_H
 
-#include "Common.h"
-#include "Math/Vector.h"
-#include "Graphics/EffectSystem/EffectParameter.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Math/Vector.h"
+#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
 
 using namespace std;
 using namespace Apoc3D::Math;

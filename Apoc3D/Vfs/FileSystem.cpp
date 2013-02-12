@@ -24,12 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "FileSystem.h"
 
 #include "PathUtils.h"
-#include "Utility/StringUtils.h"
 #include "ResourceLocation.h"
 #include "Archive.h"
-#include "Apoc3DException.h"
 #include "FileLocateRule.h"
 #include "File.h"
+
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Apoc3DException.h"
 
 using namespace Apoc3D::Utility;
 

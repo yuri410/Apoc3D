@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ResourceLocation.h"
 
 #include "Archive.h"
-#include "Utility/StringUtils.h"
 #include "PathUtils.h"
 #include "File.h"
-#include "IOLib/Streams.h"
+
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/IOLib/Streams.h"
 
 using namespace Apoc3D::Utility;
 

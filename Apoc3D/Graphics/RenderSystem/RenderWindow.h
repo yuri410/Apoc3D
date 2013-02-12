@@ -24,9 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_RENDERWINDOW_H
 #define APOC3D_RENDERWINDOW_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
+
 #include "DeviceContext.h"
-#include "Math\Point.h"
+
+#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;

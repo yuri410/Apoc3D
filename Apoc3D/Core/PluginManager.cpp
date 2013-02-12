@@ -25,13 +25,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "PluginManager.h"
 
 #include "Plugin.h"
-#include "Apoc3DException.h"
-#include "Platform/Library.h"
-#include "Config/ConfigurationManager.h"
-#include "Config/Configuration.h"
-#include "Config/ConfigurationSection.h"
+#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Platform/Library.h"
+#include "apoc3d/Config/ConfigurationManager.h"
+#include "apoc3d/Config/Configuration.h"
+#include "apoc3d/Config/ConfigurationSection.h"
 #include "Logging.h"
-#include "Collections/FastList.h"
+#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Platform;

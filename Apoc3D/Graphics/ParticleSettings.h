@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_PARTICLESETTINGS_H
 #define APOC3D_PARTICLESETTINGS_H
 
-#include "Common.h"
-#include "Math/Color.h"
-#include "Math/Vector.h"
-#include "Graphics/GraphicsCommon.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Math/Color.h"
+#include "apoc3d/Math/Vector.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;

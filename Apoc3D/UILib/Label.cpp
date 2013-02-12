@@ -23,18 +23,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "Label.h"
-#include "Utility/StringUtils.h"
-#include "Input/InputAPI.h"
-#include "Input/Mouse.h"
-#include "Core/GameTime.h"
-#include "Graphics/RenderSystem/Sprite.h"
-#include "Graphics/RenderSystem/Texture.h"
-#include "Graphics/RenderSystem/RenderDevice.h"
-#include "Graphics/RenderSystem/RenderStateManager.h"
 #include "StyleSkin.h"
 #include "Scrollbar.h"
 #include "Form.h"
 #include "FontManager.h"
+
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Input/InputAPI.h"
+#include "apoc3d/Input/Mouse.h"
+#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Input;

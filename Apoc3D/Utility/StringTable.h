@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_STRINGTABLE_H
 #define APOC3D_STRINGTABLE_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 using namespace std;
 using namespace Apoc3D::VFS;

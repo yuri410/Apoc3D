@@ -2,7 +2,7 @@
 #ifndef APOC3D_PERLINNOISE_H
 #define APOC3D_PERLINNOISE_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 namespace Apoc3D
 {

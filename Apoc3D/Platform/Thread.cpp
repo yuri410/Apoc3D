@@ -43,7 +43,7 @@ typedef struct tagTHREADNAME_INFO
 #else
 #include <pthread.h>
 #endif
-#include "Utility/StringUtils.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 

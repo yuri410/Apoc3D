@@ -24,8 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Matrix.h"
 
 #include "Quaternion.h"
-#include "Collections/Stack.h"
-#include "Apoc3DException.h"
+#include "apoc3d/Collections/Stack.h"
+#include "apoc3d/Apoc3DException.h"
 
 using namespace Apoc3D::Collections;
 

@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_RENDERSTATEMANAGER_H
 #define APOC3D_RENDERSTATEMANAGER_H
 
-#include "Common.h"
-#include "Graphics\GraphicsCommon.h"
-#include "Math\Plane.h"
-#include "Math\Rectangle.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "apoc3d/Math/Plane.h"
+#include "apoc3d/Math/Rectangle.h"
 
 using namespace Apoc3D::Math;
 

@@ -24,8 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_FRUSTUM_H
 #define APOC3D_FRUSTUM_H
 
+#include "apoc3d/Common.h"
 
-#include "Common.h"
 #include "BoundingSphere.h"
 #include "Plane.h"
 

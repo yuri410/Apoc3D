@@ -25,9 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Patch.h"
 
-#include "Graphics/RenderSystem/VertexDeclaration.h"
-#include "Graphics/RenderSystem/RenderDevice.h"
-#include "Graphics/RenderSystem/ObjectFactory.h"
+#include "apoc3d/Graphics/RenderSystem/VertexDeclaration.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
 #include "RenderOperationBuffer.h"
 #include "RenderOperation.h"
 #include "GeometryData.h"

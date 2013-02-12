@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "RenderDevice.h"
-#include "Graphics\GeometryData.h"
+#include "apoc3d/Graphics/GeometryData.h"
 
 namespace Apoc3D
 {

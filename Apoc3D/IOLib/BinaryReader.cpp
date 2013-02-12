@@ -26,14 +26,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryReader.h"
 
 #include "Streams.h"
-#include "Math/Math.h"
-#include "Math/BoundingBox.h"
-#include "Math/BoundingSphere.h"
+#include "apoc3d/Math/Math.h"
+#include "apoc3d/Math/BoundingBox.h"
+#include "apoc3d/Math/BoundingSphere.h"
 #include "TaggedData.h"
-#include "Vfs/ResourceLocation.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 #include "IOUtils.h"
 
-#include "Apoc3DException.h"
+#include "apoc3d/Apoc3DException.h"
 
 namespace Apoc3D
 {

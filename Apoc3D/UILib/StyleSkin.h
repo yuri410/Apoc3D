@@ -26,8 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_CLASSICSTYLESKIN_H
 
 #include "UICommon.h"
-#include "Math/Rectangle.h"
-#include "Math/ColorValue.h"
+
+#include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/ColorValue.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;

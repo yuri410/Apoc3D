@@ -1,15 +1,15 @@
 #include "CheckBox.h"
 #include "StyleSkin.h"
-#include "Graphics/RenderSystem/Texture.h"
-#include "Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "FontManager.h"
 #include "Label.h"
 #include "Button.h"
 #include "List.h"
 
-#include "Input/InputAPI.h"
-#include "Input/Mouse.h"
-#include "Input/Keyboard.h"
+#include "apoc3d/Input/InputAPI.h"
+#include "apoc3d/Input/Mouse.h"
+#include "apoc3d/Input/Keyboard.h"
 
 using namespace Apoc3D::Input;
 

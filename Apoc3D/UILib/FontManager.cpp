@@ -23,15 +23,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "FontManager.h"
-#include "Graphics/RenderSystem/RenderDevice.h"
-#include "Graphics/RenderSystem/ObjectFactory.h"
-#include "Graphics/RenderSystem/Texture.h"
-#include "Graphics/RenderSystem/Sprite.h"
-#include "Vfs/ResourceLocation.h"
-#include "IOLib/BinaryReader.h"
-#include "IOLib/Streams.h"
-#include "Math/Point.h"
-#include "Core/Logging.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/Math/Point.h"
+#include "apoc3d/Core/Logging.h"
 
 
 using namespace Apoc3D::IO;

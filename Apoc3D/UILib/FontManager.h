@@ -24,12 +24,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_FONTMANAGER_H
 #define APOC3D_FONTMANAGER_H
 
-#include "Common.h"
-#include "Collections/FastMap.h"
-#include "Collections/FastList.h"
-#include "Core/Singleton.h"
-#include "Math/Rectangle.h"
-#include "Math/Point.h"
+#include "apoc3d/Common.h"
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;

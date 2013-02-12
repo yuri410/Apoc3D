@@ -24,13 +24,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_BATCHMODELBUILDER_H
 #define APOC3D_BATCHMODELBUILDER_H
 
-#include "Common.h"
-#include "Core/Resource.h"
+#include "apoc3d/Common.h"
 #include "Renderable.h"
 #include "RenderOperationBuffer.h"
-#include "Collections/FastList.h"
 #include "ModelTypes.h"
 #include "Animation/AnimationTypes.h"
+
+#include "apoc3d/Core/Resource.h"
+#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;

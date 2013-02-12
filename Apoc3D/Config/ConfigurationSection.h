@@ -24,9 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_CONFIGURATIONSECTION_H
 #define APOC3D_CONFIGURATIONSECTION_H
 
-#include "Common.h"
-#include "Math/ColorValue.h"
-#include "Collections/FastMap.h"
+#include "apoc3d/Common.h"
+#include "apoc3d/Math/ColorValue.h"
+#include "apoc3d/Collections/FastMap.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;

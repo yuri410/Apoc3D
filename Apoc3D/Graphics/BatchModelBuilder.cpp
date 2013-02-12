@@ -22,10 +22,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "BatchModelBuilder.h"
-#include "Collections/ExistTable.h"
-#include "Collections/FastMap.h"
-#include "IOLib/ModelData.h"
-#include "Vfs/ResourceLocation.h"
+#include "apoc3d/Collections/ExistTable.h"
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/IOLib/ModelData.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::IO;
 

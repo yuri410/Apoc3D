@@ -24,10 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_ASYNCPROCESSOR_H
 #define APOC3D_ASYNCPROCESSOR_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 #include "tthread/tinythread.h"
 #include "tthread/fast_mutex.h"
-#include "Collections/FastQueue.h"
+#include "apoc3d/Collections/FastQueue.h"
 
 using namespace Apoc3D::Collections;
 

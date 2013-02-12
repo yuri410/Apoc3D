@@ -24,12 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "EffectManager.h"
 #include "Effect.h"
-#include "Core/Logging.h"
-#include "Config/XmlConfigurationFormat.h"
-#include "Config/ConfigurationSection.h"
-#include "Vfs/FileSystem.h"
-#include "Vfs/FileLocateRule.h"
-#include "Vfs/ResourceLocation.h"
+
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Vfs/FileSystem.h"
+#include "apoc3d/Vfs/FileLocateRule.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 
 SINGLETON_DECL(Apoc3D::Graphics::EffectSystem::EffectManager);
 

@@ -27,10 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "UICommon.h"
 
-#include "Math/Math.h"
-#include "Math/Point.h"
-#include "Graphics/Renderable.h"
-#include "Collections/FastList.h"
+#include "apoc3d/Math/Math.h"
+#include "apoc3d/Math/Point.h"
+#include "apoc3d/Graphics/Renderable.h"
+#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;

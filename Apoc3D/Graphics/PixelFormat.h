@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_PIXELFORMAT_H
 #define APOC3D_PIXELFORMAT_H
 
-#include "Common.h"
-#include "Apoc3DException.h"
-#include "Collections/FastList.h"
-#include "Collections/EnumConverterHelper.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/EnumConverterHelper.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 

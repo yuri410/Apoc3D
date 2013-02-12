@@ -24,25 +24,26 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "SceneRenderer.h"
 
-#include "Config/ConfigurationManager.h"
-#include "Config/ConfigurationSection.h"
-
-#include "Graphics/RenderSystem/RenderDevice.h"
-#include "Graphics/EffectSystem/EffectParameter.h"
-#include "Graphics/RenderOperationBuffer.h"
-#include "Graphics/RenderOperation.h"
-#include "Graphics/Material.h"
-#include "Graphics/GeometryData.h"
-#include "Core/GameTime.h"
-
-#include "Vfs/FileSystem.h"
-#include "Vfs/FileLocateRule.h"
-#include "Vfs/ResourceLocation.h"
-
 #include "SceneRenderScriptParser.h"
 #include "SceneProcedure.h"
 #include "SceneObject.h"
 #include "ScenePass.h"
+
+#include "apoc3d/Config/ConfigurationManager.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
+#include "apoc3d/Graphics/RenderOperationBuffer.h"
+#include "apoc3d/Graphics/RenderOperation.h"
+#include "apoc3d/Graphics/Material.h"
+#include "apoc3d/Graphics/GeometryData.h"
+#include "apoc3d/Core/GameTime.h"
+
+#include "apoc3d/Vfs/FileSystem.h"
+#include "apoc3d/Vfs/FileLocateRule.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+
 
 using namespace Apoc3D::Config;
 using namespace Apoc3D::VFS;

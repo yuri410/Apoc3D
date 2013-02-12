@@ -23,8 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "KeyboardHelper.h"
 
-#include "Core/GameTime.h"
-#include "Input/InputAPI.h"
+#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Input/InputAPI.h"
 
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 #include <windows.h>

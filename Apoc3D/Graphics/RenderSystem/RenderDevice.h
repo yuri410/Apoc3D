@@ -24,13 +24,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_RENDERDEVICE_H
 #define APOC3D_RENDERDEVICE_H
 
-#include "Common.h"
-//#include "RenderDeviceCaps.h"
+#include "apoc3d/Common.h"
 
-#include "Graphics\GraphicsCommon.h"
-#include "Math\Viewport.h"
-#include "Graphics\RenderOperation.h"
-#include "Graphics\PixelFormat.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "apoc3d/Graphics/RenderOperation.h"
+#include "apoc3d/Graphics/PixelFormat.h"
+#include "apoc3d/Math/Viewport.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Math;

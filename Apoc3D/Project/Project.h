@@ -24,11 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_PROJECT_H
 #define APOC3D_PROJECT_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
-#include "Graphics/PixelFormat.h"
-#include "Collections/FastList.h"
-#include "Collections/FastMap.h"
+#include "apoc3d/Graphics/PixelFormat.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/FastMap.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;

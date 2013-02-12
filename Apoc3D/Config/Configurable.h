@@ -23,7 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef APOC3D_CONFIGURABLE_H
 #define APOC3D_CONFIGURABLE_H
-#include "Common.h"
+
+#include "apoc3d/Common.h"
 
 namespace Apoc3D
 {

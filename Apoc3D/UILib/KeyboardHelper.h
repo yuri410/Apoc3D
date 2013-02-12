@@ -25,7 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_KEYBOARDHELPER_H
 
 #include "UICommon.h"
-#include "Input/Keyboard.h"
+
+#include "apoc3d/Input/Keyboard.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Input;

@@ -24,8 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_CONFIGURATIONMANAGER_H
 #define APOC3D_CONFIGURATIONMANAGER_H
 
-#include "Common.h"
-#include "Core/Singleton.h"
+#include "apoc3d/Common.h"
+#include "apoc3d/Core/Singleton.h"
 #include "Configuration.h"
 
 using namespace Apoc3D::Core;

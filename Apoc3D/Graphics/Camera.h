@@ -25,8 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_CAMERA_H
 #define APOC3D_CAMERA_H
 
-#include "Common.h"
-#include "Math\Frustum.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Math/Frustum.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;

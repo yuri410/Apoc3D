@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_SCROLLBAR_H
 
 #include "UICommon.h"
+
 #include "Control.h"
 
 namespace Apoc3D

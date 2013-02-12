@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_RENDERTARGET_H
 #define APOC3D_RENDERTARGET_H
 
-#include "Common.h"
-#include "Graphics/GraphicsCommon.h"
-#include "Graphics/PixelFormat.h"
-#include "Graphics/LockData.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "apoc3d/Graphics/PixelFormat.h"
+#include "apoc3d/Graphics/LockData.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Core;

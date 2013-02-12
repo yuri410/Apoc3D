@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_HASHHANDLEOBJECT_H
 #define APOC3D_HASHHANDLEOBJECT_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 namespace Apoc3D
 {

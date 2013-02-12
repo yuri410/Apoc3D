@@ -24,8 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_ANIMATIONMANAGER_H
 #define APOC3D_ANIMATIONMANAGER_H
 
-#include "Core/Singleton.h"
-#include "Core/ResourceManager.h"
+#include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Core/ResourceManager.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::VFS;

@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_FILE_H
 #define APOC3D_FILE_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 namespace Apoc3D
 {

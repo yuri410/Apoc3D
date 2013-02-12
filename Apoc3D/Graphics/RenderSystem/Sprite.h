@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_SPRITE_H
 #define APOC3D_SPRITE_H
 
-#include "Common.h"
-#include "Math/Vector.h"
-#include "Math/Rectangle.h"
-#include "Math/Matrix.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Math/Vector.h"
+#include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/Matrix.h"
 
 using namespace Apoc3D::Math;
 

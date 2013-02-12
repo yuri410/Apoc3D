@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "File.h"
 
-#include "Vfs/PathUtils.h"
+#include "apoc3d/Vfs/PathUtils.h"
 #include <sys/types.h> 
 #include <sys/stat.h> 
 #include <io.h>

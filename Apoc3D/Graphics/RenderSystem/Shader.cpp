@@ -23,9 +23,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "Shader.h"
-#include "Graphics/GraphicsCommon.h"
-#include "Config/ConfigurationSection.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Utility;

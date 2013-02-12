@@ -26,15 +26,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_PARTICLESYSTEM_H
 
 
-#include "Common.h"
+#include "apoc3d/Common.h"
+
 #include "ParticleSettings.h"
 #include "Material.h"
 #include "GeometryData.h"
 #include "RenderSystem/VertexElement.h"
 #include "Renderable.h"
-#include "Math/Vector.h"
-#include "Math/Color.h"
 #include "RenderOperationBuffer.h"
+
+#include "apoc3d/Math/Vector.h"
+#include "apoc3d/Math/Color.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Graphics::RenderSystem;

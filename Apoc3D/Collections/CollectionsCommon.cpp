@@ -23,8 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "CollectionsCommon.h"
 
-#include "Core/Resource.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Core/Resource.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 

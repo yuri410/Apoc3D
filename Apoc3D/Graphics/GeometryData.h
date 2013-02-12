@@ -24,9 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_GEOMETRYDATA_H
 #define APOC3D_GEOMETRYDATA_H
 
-#include "Common.h"
-#include "Core\HashHandleObject.h"
+#include "apoc3d/Common.h"
+
 #include "GraphicsCommon.h"
+
+#include "apoc3d/Core/HashHandleObject.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Scene;

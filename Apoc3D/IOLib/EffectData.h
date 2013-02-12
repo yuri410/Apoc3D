@@ -25,9 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_EFFECTDATA_H
 #define APOC3D_EFFECTDATA_H
 
-#include "Common.h"
-#include "Collections/FastList.h"
-#include "Graphics/EffectSystem/EffectParameter.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Collections;

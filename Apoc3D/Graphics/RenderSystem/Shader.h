@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_SHADER_H
 #define APOC3D_SHADER_H
 
-#include "Common.h"
-#include "Math\Vector.h"
-#include "Math\Color.h"
-#include "Graphics\GraphicsCommon.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Math/Vector.h"
+#include "apoc3d/Math/Color.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Math;

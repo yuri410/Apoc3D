@@ -26,8 +26,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_FORM_H
 
 #include "UICommon.h"
+
 #include "Control.h"
-#include "Collections/FastList.h"
+
+#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;

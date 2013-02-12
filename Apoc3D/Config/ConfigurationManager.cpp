@@ -23,12 +23,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "ConfigurationManager.h"
-#include "Core/Logging.h"
-#include "Config/XmlConfigurationFormat.h"
-#include "Config/ABCConfigurationFormat.h"
-#include "Vfs/ResourceLocation.h"
-#include "Vfs/PathUtils.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Config/ABCConfigurationFormat.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 

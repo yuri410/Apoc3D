@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RenderWindow.h"
 
 #include "RenderWindowHandler.h"
-#include "Core\GameTime.h"
+#include "apoc3d/Core/GameTime.h"
 
 namespace Apoc3D
 {

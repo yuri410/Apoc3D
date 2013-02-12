@@ -25,10 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_LIST_H
 
 #include "UICommon.h"
+
 #include "Control.h"
 
-#include "Collections/FastList.h"
-#include "Collections/List2D.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List2D.h"
 
 using namespace Apoc3D::Collections;
 

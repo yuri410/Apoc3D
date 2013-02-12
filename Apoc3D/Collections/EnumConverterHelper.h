@@ -24,9 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_ENUMCONVERTERHELPER_H
 #define APOC3D_ENUMCONVERTERHELPER_H
 
-#include "Collections/CollectionsCommon.h"
-#include "Collections/FastMap.h"
-#include "Utility/StringUtils.h"
+#include "CollectionsCommon.h"
+#include "FastMap.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 namespace Apoc3D
 {

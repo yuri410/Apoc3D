@@ -23,15 +23,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Texture.h"
 
-#include "Graphics/TextureManager.h"
 #include "VertexElement.h"
-
 #include "RenderDevice.h"
-#include "IOLib/TextureData.h"
-#include "Math/Rectangle.h"
-#include "Math/Box.h"
-#include "Apoc3DException.h"
-#include "VFS/ResourceLocation.h"
+
+#include "apoc3d/Graphics/TextureManager.h"
+#include "apoc3d/IOLib/TextureData.h"
+#include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/Box.h"
+#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/VFS/ResourceLocation.h"
 
 namespace Apoc3D
 {

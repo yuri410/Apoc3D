@@ -25,11 +25,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_VERTEXFORMATS_H
 #define APOC3D_VERTEXFORMATS_H
 
-#include "Common.h"
-#include "Collections/FastList.h"
+#include "apoc3d/Common.h"
+
 #include "RenderSystem/VertexElement.h"
-#include "Core/IHashed.h"
-#include "Math/Vector.h"
+
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Core/IHashed.h"
+#include "apoc3d/Math/Vector.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;

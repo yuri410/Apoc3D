@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneObject.h"
 
 #include "SceneNode.h"
-#include "Graphics/Model.h"
+#include "apoc3d/Graphics/Model.h"
 
 namespace Apoc3D
 {

@@ -24,9 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_RESOURCELOCATION_H
 #define APOC3D_RESOURCELOCATION_H
 
-
-#include "Common.h"
-#include "Core/IHashed.h"
+#include "apoc3d/Common.h"
+#include "apoc3d/Core/IHashed.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::IO;

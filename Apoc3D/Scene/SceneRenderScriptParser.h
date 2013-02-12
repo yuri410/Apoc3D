@@ -24,7 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_SCENERENDERSCRIPTPARSER_H
 #define APOC3D_SCENERENDERSCRIPTPARSER_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
+
 #include "ScenePassTypes.h"
 
 using namespace Apoc3D::Collections;

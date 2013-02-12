@@ -25,9 +25,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_CONSOLE_H
 
 #include "UICommon.h"
-#include "Core/Logging.h"
-#include "Collections/FastQueue.h"
-#include "Math/ColorValue.h"
+
+
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Math/ColorValue.h"
+
 #include "tthread/tinythread.h"
 #include "tthread/fast_mutex.h"
 

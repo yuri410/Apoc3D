@@ -2,7 +2,7 @@
 #ifndef APOC3D_UICOMMON_H
 #define APOC3D_UICOMMON_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 

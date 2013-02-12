@@ -25,8 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_MODELTYPES_H
 #define APOC3D_MODELTYPES_H
 
-#include "Common.h"
-#include "Math/Vector.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Math/Vector.h"
 
 using namespace Apoc3D::Math;
 using namespace std;

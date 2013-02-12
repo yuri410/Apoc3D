@@ -24,9 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_BINARYDATA_H
 #define APOC3D_BINARYDATA_H
 
-#include "Common.h"
-#include "Collections/FastMap.h"
-#include "Math/Vector.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Math/Vector.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;

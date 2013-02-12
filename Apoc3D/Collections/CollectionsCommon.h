@@ -24,8 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_COLLECTIONSCOMMON_H
 #define APOC3D_COLLECTIONSCOMMON_H
 
-#include "Common.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Common.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Core;
 

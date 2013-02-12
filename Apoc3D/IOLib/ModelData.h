@@ -25,14 +25,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_MODELDATA_H
 #define APOC3D_MODELDATA_H
 
-#include "Common.h"
-#include "Graphics/GraphicsCommon.h"
-#include "Graphics/MaterialTypes.h"
-#include "Graphics/ModelTypes.h"
-#include "Graphics/RenderSystem/VertexElement.h"
-#include "Collections/FastList.h"
-#include "Math/Color.h"
-#include "Math/BoundingSphere.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "apoc3d/Graphics/MaterialTypes.h"
+#include "apoc3d/Graphics/ModelTypes.h"
+#include "apoc3d/Graphics/RenderSystem/VertexElement.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Math/Color.h"
+#include "apoc3d/Math/BoundingSphere.h"
+
 #include "MaterialData.h"
 
 using namespace Apoc3D::Collections;

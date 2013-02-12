@@ -24,11 +24,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Scrollbar.h"
 #include "FontManager.h"
 #include "StyleSkin.h"
-#include "Input/Mouse.h"
-#include "Input/InputAPI.h"
 #include "Button.h"
-#include "Graphics/RenderSystem/Texture.h"
-#include "Graphics/RenderSystem/Sprite.h"
+
+#include "apoc3d/Input/Mouse.h"
+#include "apoc3d/Input/InputAPI.h"
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
 
 using namespace Apoc3D::Input;
 

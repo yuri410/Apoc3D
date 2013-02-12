@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_LOGGING_H
 #define APOC3D_LOGGING_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 #include "Singleton.h"
 #include "tthread/tinythread.h"
 #include "tthread/fast_mutex.h"

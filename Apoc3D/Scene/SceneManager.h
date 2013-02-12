@@ -24,8 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_SCENEMANAGER_H
 #define APOC3D_SCENEMANAGER_H
 
-#include "Common.h"
-#include "Collections/FastList.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Collections/FastList.h"
 
 using namespace std;
 using namespace Apoc3D::Graphics;

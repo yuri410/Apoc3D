@@ -1,7 +1,7 @@
 
 #include "PixelFormat.h"
 #include "LockData.h"
-#include "Math/Half.h"
+#include "apoc3d/Math/Half.h"
 
 using namespace Apoc3D::Math;
 

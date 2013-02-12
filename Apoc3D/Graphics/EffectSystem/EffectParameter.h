@@ -24,12 +24,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_EFFECTPARAMETERS_H
 #define APOC3D_EFFECTPARAMETERS_H
 
-#include "Common.h"
-#include "Collections/FastMap.h"
-#include "Collections/FastList.h"
-#include "Math/Color.h"
-#include "Math/Vector.h"
-#include "Graphics/RenderSystem/Shader.h"
+#include "apoc3d/Common.h"
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Math/Color.h"
+#include "apoc3d/Math/Vector.h"
+#include "apoc3d/Graphics/RenderSystem/Shader.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;

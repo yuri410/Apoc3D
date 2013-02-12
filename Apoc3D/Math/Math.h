@@ -34,6 +34,4 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "MathCommon.h"
 
 
-
-
 #endif

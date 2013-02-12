@@ -24,13 +24,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_MODEL_H
 #define APOC3D_MODEL_H
 
-#include "Common.h"
-#include "Core/Resource.h"
+#include "apoc3d/Common.h"
+
 #include "Renderable.h"
 #include "RenderOperationBuffer.h"
-#include "Collections/FastList.h"
 #include "ModelTypes.h"
 #include "Animation/AnimationTypes.h"
+
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Core/Resource.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;

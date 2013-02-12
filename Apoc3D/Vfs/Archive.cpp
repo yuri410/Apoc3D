@@ -23,11 +23,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Archive.h"
 
-#include "Core/Logging.h"
 #include "ResourceLocation.h"
-#include "IOLib/Streams.h"
-#include "IOLib/BinaryReader.h"
-#include "Collections/FastList.h"
+
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/BinaryReader.h"
 
 namespace Apoc3D
 {

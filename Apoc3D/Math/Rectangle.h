@@ -24,7 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_RECTANGLE_H
 #define APOC3D_RECTANGLE_H
 
-
 #include "Point.h"
 
 namespace Apoc3D

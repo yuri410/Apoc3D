@@ -24,11 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_PATCH_H
 #define APOC3D_PATCH_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
+
 #include "Renderable.h"
 #include "RenderSystem/Buffer/HardwareBuffer.h"
 #include "RenderSystem/VertexElement.h"
-#include "Math/Matrix.h"
+
+#include "apoc3d/Math/Matrix.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Collections;

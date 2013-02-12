@@ -23,8 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "GraphicsAPI.h"
 
-#include "Apoc3DException.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Utility;

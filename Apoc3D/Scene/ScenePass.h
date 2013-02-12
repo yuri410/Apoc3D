@@ -24,9 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_SCENEPASS_H
 #define APOC3D_SCENEPASS_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
+
 #include "ScenePassTypes.h"
-#include "Collections/Stack.h"
+
+#include "apoc3d/Collections/Stack.h"
 
 using namespace Apoc3D::Collections;
 

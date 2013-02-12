@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_RESOURCEHANDLE_H
 #define APOC3D_RESOURCEHANDLE_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 #include "Resource.h"
 #include "ResourceManager.h"
 

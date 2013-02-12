@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Color.h"
 #include "Point.h"
 #include "Rectangle.h"
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 namespace Apoc3D
 {

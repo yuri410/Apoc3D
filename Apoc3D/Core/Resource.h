@@ -24,9 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_RESOURCE_H
 #define APOC3D_RESOURCE_H
 
-#include "Common.h"
-#include "Core/Streaming/AsyncProcessor.h"
-#include "Collections/FastQueue.h"
+#include "apoc3d/Common.h"
+#include "Streaming/AsyncProcessor.h"
+#include "apoc3d/Collections/FastQueue.h"
 #include "tthread/tinythread.h"
 
 using namespace Apoc3D::Collections;

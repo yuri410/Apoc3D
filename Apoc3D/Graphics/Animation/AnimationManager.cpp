@@ -23,8 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "AnimationManager.h"
-#include "Core/Logging.h"
-#include "Vfs/ResourceLocation.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 #include "AnimationData.h"
 
 SINGLETON_DECL(Apoc3D::Graphics::Animation::AnimationManager);

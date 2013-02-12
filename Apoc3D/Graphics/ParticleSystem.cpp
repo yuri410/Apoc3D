@@ -23,18 +23,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "ParticleSystem.h"
 
-#include "Core/GameTime.h"
-#include "Core/ResourceHandle.h"
-#include "Collections/FastList.h"
-#include "Math/RandomUtils.h"
-#include "Math/MathCommon.h"
-#include "Math\Matrix.h"
-#include "VFS\PathUtils.h"
+#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/ResourceHandle.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Math/RandomUtils.h"
+#include "apoc3d/Math/MathCommon.h"
+#include "apoc3d/Math/Matrix.h"
+#include "apoc3d/VFS/PathUtils.h"
 
-#include "Graphics\LockData.h"
-#include "Graphics\RenderSystem\RenderDevice.h"
-#include "Graphics\RenderSystem\ObjectFactory.h"
-#include "Graphics\RenderSystem\Buffer\HardwareBuffer.h"
+#include "LockData.h"
+#include "RenderSystem/RenderDevice.h"
+#include "RenderSystem/ObjectFactory.h"
+#include "RenderSystem/Buffer/HardwareBuffer.h"
 
 namespace Apoc3D
 {

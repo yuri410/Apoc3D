@@ -24,10 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_INPUTAPI_H
 #define APOC3D_INPUTAPI_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
-#include "Core/Singleton.h"
-#include "Platform/API.h"
+#include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Platform/API.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Graphics::RenderSystem;

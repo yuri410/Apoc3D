@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Resource.h"
 #include "ResourceManager.h"
 #include "Streaming/GenerationTable.h"
-#include "Math/MathCommon.h"
+#include "apoc3d/Math/MathCommon.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core::Streaming;

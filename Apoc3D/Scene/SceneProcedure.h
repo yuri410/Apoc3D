@@ -24,11 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_SCENE_PROCEDURE_H
 #define APOC3D_SCENE_PROCEDURE_H
 
-#include "Common.h"
-#include "Collections/FastList.h"
+#include "apoc3d/Common.h"
+
 #include "ScenePassTypes.h"
 
-#include "Math/Vector.h"
+#include "apoc3d/Math/Vector.h"
+#include "apoc3d/Collections/FastList.h"
+
 //#include "Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Collections;

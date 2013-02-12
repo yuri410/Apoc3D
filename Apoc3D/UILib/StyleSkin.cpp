@@ -23,13 +23,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "StyleSkin.h"
-#include "Graphics/RenderSystem/Texture.h"
-#include "Graphics/RenderSystem/ObjectFactory.h"
-#include "Graphics/RenderSystem/RenderDevice.h"
-#include "Graphics/TextureManager.h"
-#include "Vfs/FileSystem.h"
-#include "Vfs/FileLocateRule.h"
-#include "Math/ColorValue.h"
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/TextureManager.h"
+#include "apoc3d/Vfs/FileSystem.h"
+#include "apoc3d/Vfs/FileLocateRule.h"
+#include "apoc3d/Math/ColorValue.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Math;

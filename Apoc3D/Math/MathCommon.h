@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_MATHCOMMON_H
 #define APOC3D_MATHCOMMON_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 using namespace std;
 

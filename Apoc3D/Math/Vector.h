@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_VECTOR_H
 #define APOC3D_VECTOR_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 #include "sse_functions.h"
 

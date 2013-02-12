@@ -25,8 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_MOUSE_H
 #define APOC3D_MOUSE_H
 
-#include "Common.h"
-#include "Math/Point.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;

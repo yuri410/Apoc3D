@@ -24,13 +24,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_MESH_H
 #define APOC3D_MESH_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
+
 #include "ModelTypes.h"
 #include "RenderOperationBuffer.h"
-#include "Math/BoundingSphere.h"
-#include "Collections/FastList.h"
 #include "Renderable.h"
 #include "RenderSystem/VertexElement.h"
+
+#include "apoc3d/Math/BoundingSphere.h"
+#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;

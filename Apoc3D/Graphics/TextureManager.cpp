@@ -25,10 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RenderSystem/RenderDevice.h"
 #include "RenderSystem/ObjectFactory.h"
 #include "RenderSystem/Texture.h"
-#include "Vfs/ResourceLocation.h"
-#include "Core/ResourceHandle.h"
-#include "Core/Logging.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Core/ResourceHandle.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 

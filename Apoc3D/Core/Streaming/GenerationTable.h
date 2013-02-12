@@ -25,9 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_GENERATIONTABLE_H
 #define APOC3D_GENERATIONTABLE_H
 
-#include "Common.h"
-#include "Collections/FastList.h"
-#include "Collections/ExistTable.h"
+#include "apoc3d/Common.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/ExistTable.h"
 #include "tthread/fast_mutex.h"
 #include "tthread/tinythread.h"
 

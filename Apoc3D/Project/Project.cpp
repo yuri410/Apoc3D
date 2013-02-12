@@ -22,16 +22,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Project.h"
-#include "Config/ConfigurationSection.h"
-#include "Config/ABCConfigurationFormat.h"
-#include "Config/XmlConfigurationFormat.h"
-#include "Utility/StringUtils.h"
-#include "Graphics/GraphicsCommon.h"
-#include "Vfs/File.h"
-#include "Vfs/PathUtils.h"
-#include "Vfs/ResourceLocation.h"
-#include "IOLib/Streams.h"
-#include "Math/RandomUtils.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Config/ABCConfigurationFormat.h"
+#include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/Math/RandomUtils.h"
 
 using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;

@@ -25,8 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_RENDEROPERATIONTABLE_H
 #define APOC3D_RENDEROPERATIONTABLE_H
 
-#include "Common.h"
-#include "Collections/FastList.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Collections/FastList.h"
+
 #include "RenderOperation.h"
 
 using namespace Apoc3D::Collections;

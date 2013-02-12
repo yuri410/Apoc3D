@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_TEXTUREMANAGER_H
 #define APOC3D_TEXTUREMANAGER_H
 
-#include "Common.h"
-#include "Core/ResourceManager.h"
-#include "Core/Singleton.h"
-#include "PixelFormat.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Core/ResourceManager.h"
+#include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Graphics/PixelFormat.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Graphics;

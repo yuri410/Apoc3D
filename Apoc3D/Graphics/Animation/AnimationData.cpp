@@ -24,12 +24,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "AnimationData.h"
 
-#include "IOLib/BinaryReader.h"
-#include "IOLib/BinaryWriter.h"
-#include "IOLib/TaggedData.h"
-#include "Core/Logging.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
+#include "apoc3d/IOLib/TaggedData.h"
+#include "apoc3d/Core/Logging.h"
 
-#include "VFS/ResourceLocation.h"
+#include "apoc3d/VFS/ResourceLocation.h"
 
 namespace Apoc3D
 {

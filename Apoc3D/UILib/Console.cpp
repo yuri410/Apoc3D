@@ -28,11 +28,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "PictureBox.h"
 #include "FontManager.h"
 #include "Scrollbar.h"
-#include "Input/InputAPI.h"
-#include "Input/Mouse.h"
-#include "Graphics/RenderSystem/Sprite.h"
 #include "StyleSkin.h"
-#include "Utility/StringUtils.h"
+
+#include "apoc3d/Input/InputAPI.h"
+#include "apoc3d/Input/Mouse.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Core;

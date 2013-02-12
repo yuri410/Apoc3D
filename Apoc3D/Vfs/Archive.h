@@ -25,9 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_ARCHIVE_H
 #define APOC3D_ARCHIVE_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
+
 #include "File.h"
-#include "Collections/FastMap.h"
+
+#include "apoc3d/Collections/FastMap.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::IO;

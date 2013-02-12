@@ -24,14 +24,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ABCConfigurationFormat.h"
 
 #include "ConfigurationSection.h"
-#include "Core/Logging.h"
-#include "IOLib/Streams.h"
-#include "IOLib/BinaryReader.h"
-#include "IOLib/BinaryWriter.h"
-#include "IOLib/TaggedData.h"
-#include "Utility/StringUtils.h"
-#include "VFS/PathUtils.h"
-#include "Vfs/ResourceLocation.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
+#include "apoc3d/IOLib/TaggedData.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/VFS/PathUtils.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;

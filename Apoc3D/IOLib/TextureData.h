@@ -24,9 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_TEXTUREDATA_H
 #define APOC3D_TEXTUREDATA_H
 
-#include "Common.h"
-#include "Graphics/PixelFormat.h"
-#include "Graphics/GraphicsCommon.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Graphics/PixelFormat.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics;

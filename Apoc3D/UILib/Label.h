@@ -25,8 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_LABEL_H
 
 #include "Control.h"
-#include "Collections/FastList.h"
+
 #include "KeyboardHelper.h"
+
+#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D::Collections;
 

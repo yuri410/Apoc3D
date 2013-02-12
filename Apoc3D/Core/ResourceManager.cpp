@@ -24,11 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ResourceManager.h"
 #include "Resource.h"
 
-#include "Core/Logging.h"
+#include "Logging.h"
 #include "Streaming/AsyncProcessor.h"
 #include "Streaming/GenerationTable.h"
 
-#include "Apoc3DException.h"
+#include "apoc3d/Apoc3DException.h"
 
 namespace Apoc3D
 {

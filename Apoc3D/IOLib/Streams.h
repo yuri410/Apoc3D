@@ -25,8 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_STREAM_H
 #define APOC3D_STREAM_H
 
-#include "Common.h"
-#include "Collections/FastList.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D::Collections;
 using namespace std;

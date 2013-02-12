@@ -23,11 +23,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "GenerationTable.h"
-#include "Platform/Thread.h"
-#include "Core/ResourceManager.h"
-#include "Core/Resource.h"
-#include "Core/Logging.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Platform/Thread.h"
+#include "apoc3d/Core/ResourceManager.h"
+#include "apoc3d/Core/Resource.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Platform;
 using namespace Apoc3D::Utility;

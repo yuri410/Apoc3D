@@ -28,9 +28,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryWriter.h"
 #include "TaggedData.h"
 #include "Streams.h"
-#include "Core/Logging.h"
-#include "Utility/StringUtils.h"
-#include "Vfs/ResourceLocation.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Utility;

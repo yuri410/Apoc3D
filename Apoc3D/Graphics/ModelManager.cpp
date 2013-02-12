@@ -24,10 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "ModelManager.h"
 
-#include "Core/Logging.h"
-#include "Core/ResourceHandle.h"
-#include "Utility/StringUtils.h"
-#include "Vfs/ResourceLocation.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Core/ResourceHandle.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 #include "Model.h"
 
 using namespace Apoc3D::Utility;

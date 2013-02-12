@@ -1,6 +1,6 @@
 #include "StringTable.h"
 
-#include "VFS\ResourceLocation.h"
+#include "apoc3d/VFS/ResourceLocation.h"
 
 namespace Apoc3D
 {

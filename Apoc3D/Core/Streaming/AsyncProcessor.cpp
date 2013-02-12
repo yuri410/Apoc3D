@@ -1,7 +1,7 @@
 #include "AsyncProcessor.h"
-#include "Platform/Thread.h"
+#include "apoc3d/Platform/Thread.h"
 #include "GenerationTable.h"
-#include "Core/Resource.h"
+#include "apoc3d/Core/Resource.h"
 
 using namespace Apoc3D::Platform;
 

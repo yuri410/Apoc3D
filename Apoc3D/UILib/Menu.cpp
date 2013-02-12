@@ -22,14 +22,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Menu.h"
-#include "Utility/StringUtils.h"
-#include "Input/InputAPI.h"
-#include "Input/Mouse.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Input/InputAPI.h"
+#include "apoc3d/Input/Mouse.h"
 #include "FontManager.h"
-#include "Graphics/RenderSystem/Sprite.h"
-#include "Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "StyleSkin.h"
-#include "Core/GameTime.h"
+#include "apoc3d/Core/GameTime.h"
 #include "Form.h"
 
 using namespace Apoc3D::Utility;

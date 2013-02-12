@@ -24,13 +24,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_OCTREESCENEMANAGER_H
 #define APOC3D_OCTREESCENEMANAGER_H
 
-#include "Common.h"
-#include "Collections\FastList.h"
-#include "Collections\FastQueue.h"
+#include "apoc3d/Common.h"
+
 #include "SceneManager.h"
 #include "SceneNode.h"
-#include "Math\OctreeBox.h"
-#include "Math\BoundingSphere.h"
+
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Math/OctreeBox.h"
+#include "apoc3d/Math/BoundingSphere.h"
 
 using namespace std;
 using namespace Apoc3D::Graphics;

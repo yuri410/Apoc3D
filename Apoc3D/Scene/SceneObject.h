@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_SCENEOBJECT_H
 #define APOC3D_SCENEOBJECT_H
 
-#include "Common.h"
-#include "Math\Matrix.h"
-#include "Math\BoundingSphere.h"
-#include "Graphics\Renderable.h"
+#include "apoc3d/Common.h"
+
+#include "apoc3d/Math/Matrix.h"
+#include "apoc3d/Math/BoundingSphere.h"
+#include "apoc3d/Graphics/Renderable.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Core;

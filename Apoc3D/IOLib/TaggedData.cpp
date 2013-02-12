@@ -25,12 +25,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
 #include "Streams.h"
-#include "Apoc3DException.h"
+#include "apoc3d/Apoc3DException.h"
 
-#include "Math/Matrix.h"
-#include "Math/Color.h"
-#include "Math/Plane.h"
-#include "Math/Quaternion.h"
+#include "apoc3d/Math/Matrix.h"
+#include "apoc3d/Math/Color.h"
+#include "apoc3d/Math/Plane.h"
+#include "apoc3d/Math/Quaternion.h"
 
 #include "IOUtils.h"
 

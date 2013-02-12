@@ -24,9 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryWriter.h"
 
 #include "Streams.h"
-#include "Math/Math.h"
-#include "Math/BoundingBox.h"
-#include "Math/BoundingSphere.h"
+#include "apoc3d/Math/Math.h"
+#include "apoc3d/Math/BoundingBox.h"
+#include "apoc3d/Math/BoundingSphere.h"
 #include "TaggedData.h"
 
 #include "IOUtils.h"

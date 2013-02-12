@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "VertexElement.h"
-#include "Collections/FastList.h"
+#include "apoc3d/Collections/FastList.h"
 
 namespace Apoc3D
 {

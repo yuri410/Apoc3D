@@ -28,14 +28,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RenderSystem/Texture.h"
 #include "EffectSystem/Effect.h"
 #include "EffectSystem/EffectManager.h"
-#include "Core/ResourceHandle.h"
-#include "Core/Logging.h"
-#include "Utility/StringUtils.h"
-#include "IOLib/MaterialData.h"
-#include "Vfs/FileSystem.h"
-#include "Vfs/FileLocateRule.h"
-#include "Vfs/ResourceLocation.h"
 #include "TextureManager.h"
+
+#include "apoc3d/Core/ResourceHandle.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/IOLib/MaterialData.h"
+#include "apoc3d/Vfs/FileSystem.h"
+#include "apoc3d/Vfs/FileLocateRule.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;

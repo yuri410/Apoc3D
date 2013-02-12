@@ -25,12 +25,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_MATERIAL_H
 #define APOC3D_MATERIAL_H
 
-#include "Common.h"
-#include "Core/HashHandleObject.h"
-#include "Math/Color.h"
+#include "apoc3d/Common.h"
+
 #include "GraphicsCommon.h"
 #include "MaterialTypes.h"
-#include "IOLib/MaterialData.h"
+
+#include "apoc3d/Core/HashHandleObject.h"
+#include "apoc3d/Math/Color.h"
+#include "apoc3d/IOLib/MaterialData.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Core;

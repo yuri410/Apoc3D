@@ -28,11 +28,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "TaggedData.h"
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
-#include "Apoc3DException.h"
-#include "Utility/StringUtils.h"
-#include "Core/Logging.h"
-#include "Vfs/ResourceLocation.h"
-#include "Graphics/Material.h"
+#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Graphics/Material.h"
 
 using namespace Apoc3D::Utility;
 
