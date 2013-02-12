@@ -148,25 +148,25 @@ namespace Apoc3D
 
 #endif
 
-#define _V3X(x) (Vector3Utils::GetX(x))
-#define _V3Y(x) (Vector3Utils::GetY(x))
-#define _V3Z(x) (Vector3Utils::GetZ(x))
+#define _V3X(x) (Apoc3D::Math::Vector3Utils::GetX(x))
+#define _V3Y(x) (Apoc3D::Math::Vector3Utils::GetY(x))
+#define _V3Z(x) (Apoc3D::Math::Vector3Utils::GetZ(x))
 
-#define v3x(x) (Vector3Utils::GetX(x))
-#define v3y(x) (Vector3Utils::GetY(x))
-#define v3z(x) (Vector3Utils::GetZ(x))
+#define v3x(x) (Apoc3D::Math::Vector3Utils::GetX(x))
+#define v3y(x) (Apoc3D::Math::Vector3Utils::GetY(x))
+#define v3z(x) (Apoc3D::Math::Vector3Utils::GetZ(x))
 
-#define v2x(x) (Vector2Utils::GetX(x))
-#define v2y(x) (Vector2Utils::GetY(x))
+#define v2x(x) (Apoc3D::Math::Vector2Utils::GetX(x))
+#define v2y(x) (Apoc3D::Math::Vector2Utils::GetY(x))
 
-#define v4x(x) (Vector4Utils::GetX(x))
-#define v4y(x) (Vector4Utils::GetY(x))
-#define v4z(x) (Vector4Utils::GetZ(x))
-#define v4w(x) (Vector4Utils::GetW(x))
+#define v4x(x) (Apoc3D::Math::Vector4Utils::GetX(x))
+#define v4y(x) (Apoc3D::Math::Vector4Utils::GetY(x))
+#define v4z(x) (Apoc3D::Math::Vector4Utils::GetZ(x))
+#define v4w(x) (Apoc3D::Math::Vector4Utils::GetW(x))
 
-#define VECTOR2(x,y)		(Vector2Utils::LDVector(x,y))
-#define VECTOR3(x,y,z)		(Vector3Utils::LDVector(x,y,z))
-#define VECTOR4(x,y,z,w)	(Vector4Utils::LDVector(x,y,z,w))
+#define VECTOR2(x,y)		(Apoc3D::Math::Vector2Utils::LDVector(x,y))
+#define VECTOR3(x,y,z)		(Apoc3D::Math::Vector3Utils::LDVector(x,y,z))
+#define VECTOR4(x,y,z,w)	(Apoc3D::Math::Vector4Utils::LDVector(x,y,z,w))
 
 		class APAPI Vector2Utils
 		{
