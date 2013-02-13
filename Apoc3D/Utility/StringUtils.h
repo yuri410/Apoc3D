@@ -69,7 +69,7 @@ namespace Apoc3D
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
 			static String ToString(float val, unsigned short precision = 10, 
 				unsigned short width = 0, char fill = ' ', 
-				std::ios::fmtflags flags = std::ios::fmtflags(0) );
+				std::ios::fmtflags flags = std::ios::fmtflags(ios::fixed) );
 			static String ToString(const wchar_t* val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
 

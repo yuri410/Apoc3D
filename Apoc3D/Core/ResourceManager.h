@@ -159,6 +159,8 @@ namespace Apoc3D
 			 */
 			int64 getUsedCacheSize() const { return m_curUsedCache; }
 			
+			int32 getResourceCount() const { return static_cast<int32>(m_hashTable.size()); }
+
 			static const ManagerList& getManagerInstances() { return m_managers; }
 		private:
 			void Resource_Loaded(Resource* res);

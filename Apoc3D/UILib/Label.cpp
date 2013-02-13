@@ -607,7 +607,8 @@ namespace Apoc3D
 		void TextBox::_DrawText(Sprite* sprite)
 		{
 			Point baseOffset = Point(m_sRect.X, m_sRect.Y);
-			int cursorLeft = m_fontRef->MeasureString(L"|").X/2;
+			
+			int32 cursorLeft = m_fontRef->MeasureString(L"|").X/2;
 			//if (m_curorLocation.X==0)
 			//	cursorLeft=1;//-cursorLeft;
 
@@ -624,7 +625,7 @@ namespace Apoc3D
 					m_cursorOffset.X = cursorLeft;
 				}
 				
-				m_cursorOffset.Y = 1;
+				m_cursorOffset.Y = m_textOffset.Y;
 
 				//Point pos(m_textOffset.X - m_scrollOffset.X, m_textOffset.Y - m_scrollOffset.Y);
 				m_fontRef->DrawString(sprite, Text, m_textOffset-m_scrollOffset + baseOffset, CV_Black);

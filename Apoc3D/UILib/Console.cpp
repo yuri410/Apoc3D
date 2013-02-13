@@ -160,6 +160,49 @@ namespace Apoc3D
 							LogManager::getSingleton().Write(LOG_CommandResponse, L"  " + StringUtils::ToString(i+1) + L". " + list[i]->getName(), LOGLVL_Infomation);
 						}
 					}
+					else 
+					{
+						int32 index = StringUtils::ParseInt32(args->operator[](1))-1;
+						const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
+						if (index >=0 && index < list.getCount())
+						{
+							ResourceManager* mgr = list[index];
+							String msg = mgr->getName();
+							msg.append(L"  |  [");
+							msg.append(StringUtils::ToString(mgr->getUsedCacheSize() / 1048576.0f, 1, 0, ' '));
+							msg.append(L"MB / ");
+							msg.append(StringUtils::ToString(mgr->getTotalCacheSize() / 1048576.0f, 1, 0, ' '));
+							msg.append(L"MB] [OP = ");
+							msg.append(StringUtils::ToString(mgr->GetCurrentOperationCount()));
+							msg.append(L"] ");
+							if (mgr->usesAsync())
+							{
+								msg.append(L"[Async]");
+							}
+
+							LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
+
+							msg = L"Managing ";
+							msg.append(StringUtils::ToString(mgr->getResourceCount()));
+							msg.append(L" resources.");
+							
+							LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
+						}
+						else LogManager::getSingleton().Write(LOG_CommandResponse, L"No such ordinal.", LOGLVL_Error);
+
+					}
+				}
+				else if (args->getCount() == 3)
+				{
+					if (args->operator[](1) == L"info")
+					{
+
+					}
+					else if (args->operator[](1) == L"list")
+					{
+
+					}
+
 				}
 			}
 		}
