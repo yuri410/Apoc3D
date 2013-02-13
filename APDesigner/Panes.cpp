@@ -23,31 +23,33 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Panes.h"
 
-#include "Core/Logging.h"
-#include "Config/ConfigurationSection.h"
-#include "Graphics/RenderSystem/Sprite.h"
-#include "MainWindow.h"
-#include "UILib/Form.h"
-#include "UILib/List.h"
-#include "UILib/Button.h"
-#include "UILib/Label.h"
-#include "UILib/ComboBox.h"
-#include "UILib/CheckBox.h"
-#include "UILib/Menu.h"
-#include "Project/Project.h"
 #include "UIResources.h"
 #include "Document.h"
 #include "EditorExtensionManager.h"
 
 #include "TextureViewer.h"
 
-#include "Vfs/File.h"
-#include "Vfs/PathUtils.h"
-
 #include "BuildService/BuildService.h"
 #include "CommonDialog/FileDialog.h"
 
-#include "Utility/StringUtils.h"
+
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "MainWindow.h"
+#include "apoc3d/UILib/Form.h"
+#include "apoc3d/UILib/List.h"
+#include "apoc3d/UILib//Button.h"
+#include "apoc3d/UILib/Label.h"
+#include "apoc3d/UILib/ComboBox.h"
+#include "apoc3d/UILib/CheckBox.h"
+#include "apoc3d/UILib/Menu.h"
+#include "apoc3d/Project/Project.h"
+
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
+
+#include "apoc3d/Utility/StringUtils.h"
 
 #include <Shlwapi.h>
 

@@ -26,8 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define EDITOREXTENSIONMANAGER
 
 #include "APDCommon.h"
-#include "Core/Singleton.h"
-#include "Collections/FastMap.h"
+
+#include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Collections/FastMap.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;

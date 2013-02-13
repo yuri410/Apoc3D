@@ -1,6 +1,6 @@
 #include "FileDialog.h"
-#include "Utility/StringUtils.h"
-#include "Vfs/PathUtils.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Vfs/PathUtils.h"
 
 #include <Windows.h>
 

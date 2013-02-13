@@ -175,6 +175,7 @@
     <ClInclude Include="ObjectEditor.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Panes.h" />
+    <ClInclude Include="ServWindow.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextureViewer.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="DocumentShader\ShaderGraph.cpp" />
     <ClCompile Include="DocumentShader\SNetCommonTypes.cpp" />
     <ClCompile Include="EditorExtensionManager.cpp" />
+    <ClCompile Include="ServWindow.cpp" />
     <ClCompile Include="UIResources.cpp" />
     <ClCompile Include="Document.cpp" />
     <ClCompile Include="main.cpp" />

@@ -24,6 +24,25 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "MainWindow.h"
 
+
+#include "Panes.h"
+
+#include "EditorExtensionManager.h"
+
+#include "DocumentShader/dlgAtomManager.h"
+#include "DocumentShader/ShaderAtomType.h"
+#include "DocumentShader/ExtensionShader.h"
+#include "DocumentModel/ExtensionModel.h"
+#include "DocumentModel/ExtensionMaterial.h"
+
+#include "Document.h"
+#include "TextureViewer.h"
+#include "UIResources.h"
+
+#include "CommonDialog/FileDialog.h"
+#include "CommonDialog/Win32InputBox.h"
+#include "BuildService/BuildService.h"
+
 #include "apoc3d/Core/GameTime.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/Config/ConfigurationManager.h"
@@ -50,23 +69,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Math/ColorValue.h"
 
-#include "Panes.h"
-
-#include "EditorExtensionManager.h"
-
-#include "DocumentShader/dlgAtomManager.h"
-#include "DocumentShader/ShaderAtomType.h"
-#include "DocumentShader/ExtensionShader.h"
-#include "DocumentModel/ExtensionModel.h"
-#include "DocumentModel/ExtensionMaterial.h"
-
-#include "Document.h"
-#include "TextureViewer.h"
-#include "UIResources.h"
-
-#include "CommonDialog/FileDialog.h"
-#include "CommonDialog/Win32InputBox.h"
-#include "BuildService/BuildService.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Input;

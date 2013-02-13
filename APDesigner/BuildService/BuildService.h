@@ -1,7 +1,7 @@
 #ifndef BUILDSERVICE_H
 #define BUILDSERVICE_H
 
-#include "APDCommon.h"
+#include "../APDCommon.h"
 #include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Collections/FastList.h"
 #include "apoc3d/Collections/FastQueue.h"

@@ -53,10 +53,19 @@ using namespace Apoc3D::Utility;
 using namespace Apoc3D::Math;
 using namespace APDesigner;
 
+struct StartupParameters
+{
+	bool ServiceMode;
+	String ProjectFile;
+
+	StartupParameters() : ServiceMode(false) { }
+
+	void Parse(wchar_t** argv, int count);
+};
 
 INT WINAPI wWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
-                     LPTSTR    lpCmdLine,
+                     LPWSTR    lpCmdLine,
                      int       nCmdShow)
 {
 	
@@ -93,36 +102,64 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	PakArchiveFactory* pakSupport = new PakArchiveFactory();
 	FileSystem::getSingletonPtr()->RegisterArchiveType(pakSupport);
 
-	DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();
+	int numOfArgs;
+	LPWSTR* argv = CommandLineToArgvW(lpCmdLine, &numOfArgs);
+
+	StartupParameters startupParams;
+	startupParams.Parse(argv, numOfArgs);
+
 
 	RenderParameters params;
-	params.BackBufferHeight = 720;
-	params.BackBufferWidth = 1280;
 	params.ColorBufferFormat = FMT_X8R8G8B8;
 	params.DepthBufferFormat = DEPFMT_Depth24Stencil8;
 	params.EnableVSync = true;
 	params.FSAASampleCount = 4;
 	params.IsFullForm = true;
 	params.IsWindowd = true;
-
-
-	RenderView* view =  devContent->Create(params);
-
-	RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
-
-	//MainWindow* mainWnd = new MainWindow(wnd);
-	wnd->setEventHandler(new MainWindow(wnd));
-
-	if (wnd)
+	if (!startupParams.ServiceMode)
 	{
-		wnd->Run();
-		delete wnd;
+		DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();
+
+		params.BackBufferHeight = 720;
+		params.BackBufferWidth = 1280;
+
+		RenderView* view =  devContent->Create(params);
+
+		RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
+
+		//MainWindow* mainWnd = new MainWindow(wnd);
+		wnd->setEventHandler(new MainWindow(wnd));
+
+		if (wnd)
+		{
+			wnd->Run();
+			delete wnd;
+		}
+
+		delete devContent;
+	}
+	else
+	{
+		DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();
+
+		params.BackBufferHeight = 450;
+		params.BackBufferWidth = 300;
+
+		RenderView* view =  devContent->Create(params);
+
+		RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
+
+		wnd->setEventHandler(new MainWindow(wnd));
+
+		if (wnd)
+		{
+			wnd->Run();
+			delete wnd;
+		}
+
+		delete devContent;
 	}
 
-	//delete mainWnd;
-	//delete wnd;
-
-	delete devContent;
 
 	FileSystem::getSingletonPtr()->UnregisterArchiveType(pakSupport);
 	delete pakSupport;
@@ -138,3 +175,16 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 }
 
 
+void StartupParameters::Parse(wchar_t** argv, int count)
+{
+	for (int i=0;i<=count;i++)
+	{
+		if (!argv[i])
+			break;
+
+		if (!_wcsicmp(argv[i], L"-serv"))
+		{
+			ProjectFile = argv[++i];
+		}
+	}
+}
