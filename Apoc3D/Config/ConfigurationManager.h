@@ -26,9 +26,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Common.h"
 #include "apoc3d/Core/Singleton.h"
-#include "Configuration.h"
+#include "apoc3d/Collections/FastMap.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::VFS;
 
 using namespace std;
@@ -38,7 +39,7 @@ namespace Apoc3D
 	namespace Config
 	{
 		//template class APAPI unordered_map<String, Configuration*>;
-			 
+		
 		class APAPI ConfigurationManager : public Singleton<ConfigurationManager>
 		{
 		public:

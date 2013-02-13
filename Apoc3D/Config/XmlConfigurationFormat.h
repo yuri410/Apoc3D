@@ -25,7 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_XMLCONFIGURATIONFORMAT_H
 
 #include "apoc3d/Common.h"
-#include "Configuration.h"
 
 using namespace Apoc3D::VFS;
 

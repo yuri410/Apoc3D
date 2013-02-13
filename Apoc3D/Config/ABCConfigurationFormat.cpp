@@ -24,6 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ABCConfigurationFormat.h"
 
 #include "ConfigurationSection.h"
+#include "Configuration.h"
+
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/IOLib/BinaryReader.h"

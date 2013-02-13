@@ -26,8 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_ANIMATIONPLAYERS_H
 
 #include "apoc3d/Common.h"
-#include "apoc3d/Math/Matrix.h"
-#include "apoc3d/Collections/FastList.h"
 #include "AnimationTypes.h"
 
 using namespace Apoc3D::Collections;

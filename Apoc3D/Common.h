@@ -207,9 +207,9 @@ namespace Apoc3D
 	{
 		class Configuration;
 		class ConfigurationSection;
+		class ConfigurationFormat;
 
 		class ConfigurationManager;
-		
 	};
 	namespace Math
 	{	

@@ -25,8 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Apoc3DException.h"
 #include "apoc3d/Core/IParsable.h"
-#include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
+
 
 using namespace Apoc3D::Utility;
 
