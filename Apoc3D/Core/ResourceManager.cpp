@@ -36,6 +36,8 @@ namespace Apoc3D
 
 	namespace Core
 	{
+		ResourceManager::ManagerList ResourceManager::m_managers;
+
 		void ResourceManager::Resource_Loaded(Resource* res)
 		{
 			m_curUsedCache += res->getSize();
@@ -86,6 +88,8 @@ namespace Apoc3D
 			{
 				m_asyncProc = 0; m_generationTable = 0;
 			}
+
+			m_managers.Add(this);
 		}
 		ResourceManager::~ResourceManager()
 		{
@@ -106,6 +110,8 @@ namespace Apoc3D
 				delete m_asyncProc;
 			if (m_generationTable)
 				delete m_generationTable;
+
+			m_managers.Remove(this);
 		}
 
 		void ResourceManager::ReloadAll()

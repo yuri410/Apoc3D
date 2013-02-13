@@ -233,6 +233,10 @@ namespace Apoc3D
 
 			static FastList<Form*>& getForms() { return m_forms; }
 
+			/**
+			 *  The active form is the one that is currently being dragged/clicked.
+			 *  Used to mark the first form being touched.
+			 */
 			static Form* getActiveForm() { return m_activeForm; }
 			static void setActiveForm(Form* frm) { m_activeForm = frm; }
 			

@@ -52,7 +52,7 @@ namespace APDesigner
 		FastQueue<Configuration*> m_taskList;
 
 		tthread::fast_mutex m_flagLock;
-		bool m_finished;
+		volatile bool m_finished;
 		
 		tthread::fast_mutex m_processLock;
 

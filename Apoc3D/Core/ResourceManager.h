@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_RESOURCEMANAGER_H
 
 #include "apoc3d/Common.h"
+#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D::Core::Streaming;
 
@@ -53,7 +54,10 @@ namespace Apoc3D
 		 */
 		class APAPI ResourceManager
 		{
+			friend class Resource;
 		public:
+			typedef Apoc3D::Collections::FastList<ResourceManager*> ManagerList;
+
 			/**
 			 * Initializes the resource manager. 
 			 * &param name  The name for the resource manager. See getName() for details.
@@ -61,7 +65,7 @@ namespace Apoc3D
 			 * &param useAsync  True if using async mode.
 			 */
 			ResourceManager(const String& name, int64 cacheSize, bool useAsync = true);
-			~ResourceManager();
+			virtual ~ResourceManager();
 
 			/**
 			 * Finalizes the resource manager.
@@ -155,9 +159,13 @@ namespace Apoc3D
 			 */
 			int64 getUsedCacheSize() const { return m_curUsedCache; }
 			
+			static const ManagerList& getManagerInstances() { return m_managers; }
 		private:
-			ResHashTable m_hashTable;
+			void Resource_Loaded(Resource* res);
+			void Resource_Unloaded(Resource* res);
 
+			ResHashTable m_hashTable;
+			
 			int64 m_totalCacheSize;
 			int64 m_curUsedCache;
 
@@ -169,10 +177,8 @@ namespace Apoc3D
 
 			String m_name;
 
-			void Resource_Loaded(Resource* res);
-			void Resource_Unloaded(Resource* res);
-
-			friend class Resource;
+			
+			static ManagerList m_managers;			
 		protected:
 		};
 	}

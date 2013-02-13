@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Input/InputAPI.h"
 #include "apoc3d/Input/Mouse.h"
+#include "apoc3d/Graphics/TextureManager.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Utility/StringUtils.h"
 
@@ -144,6 +145,22 @@ namespace Apoc3D
 			if (cmd == L"clear")
 			{
 				m_logs.clear();
+			}
+			else if (cmd == L"res")
+			{
+				if (args->getCount() == 2)
+				{
+					if (args->operator[](1) == L"list")
+					{
+						LogManager::getSingleton().Write(LOG_CommandResponse, L"Listing ResourceManagers...", LOGLVL_Infomation);
+
+						const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
+						for (int32 i=0;i<list.getCount();i++)
+						{
+							LogManager::getSingleton().Write(LOG_CommandResponse, L"  " + StringUtils::ToString(i+1) + L". " + list[i]->getName(), LOGLVL_Infomation);
+						}
+					}
+				}
 			}
 		}
 

@@ -30,6 +30,7 @@
 #include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Math/PerlinNoise.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/UILib/Form.h"
 #include "apoc3d/UILib/FontManager.h"
 #include "apoc3d/UILib/Console.h"
 #include "apoc3d/Platform/Thread.h"
@@ -301,39 +302,43 @@ namespace SampleTerrain
 
 		if (!m_isLoading)
 		{
-			Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();
-			if (kb->IsPressing(KEY_W))
+			if (!UIRoot::getActiveForm() && !UIRoot::getTopMostForm())
 			{
-				m_camera->MoveForward();
-				m_isMoving = true;
-			}
-			if (kb->IsPressing(KEY_A))
-			{
-				m_camera->MoveLeft();
-				m_isMoving = true;
-			}
-			if (kb->IsPressing(KEY_D))
-			{
-				m_camera->MoveRight();
-				m_isMoving = true;
-			}
-			if (kb->IsPressing(KEY_S))
-			{
-				m_camera->MoveBackward();
-				m_isMoving = true;
-			}
-			if (kb->IsPressing(KEY_LSHIFT))
-				m_camera->Sprint();
-			if (kb->IsKeyDown(KEY_SPACE))
-				m_camera->Jump();
+				Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();
+				if (kb->IsPressing(KEY_W))
+				{
+					m_camera->MoveForward();
+					m_isMoving = true;
+				}
+				if (kb->IsPressing(KEY_A))
+				{
+					m_camera->MoveLeft();
+					m_isMoving = true;
+				}
+				if (kb->IsPressing(KEY_D))
+				{
+					m_camera->MoveRight();
+					m_isMoving = true;
+				}
+				if (kb->IsPressing(KEY_S))
+				{
+					m_camera->MoveBackward();
+					m_isMoving = true;
+				}
+				if (kb->IsPressing(KEY_LSHIFT))
+					m_camera->Sprint();
+				if (kb->IsKeyDown(KEY_SPACE))
+					m_camera->Jump();
 
 
 
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			if (mouse->IsLeftPressedState())
-			{
-				m_camera->Turn(mouse->getDX()*0.25f, mouse->getDY()*0.25f);
+				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
+				if (mouse->IsLeftPressedState())
+				{
+					m_camera->Turn(mouse->getDX()*0.25f, mouse->getDY()*0.25f);
+				}
 			}
+
 
 		}
 		

@@ -97,8 +97,9 @@ namespace Apoc3DEx
 
 	void Game::Update(const GameTime* const time)
 	{
+		if (m_window->getIsActive())
+			InputAPIManager::getSingleton().Update(time);
 		
-		InputAPIManager::getSingleton().Update(time);
 		EffectManager::getSingleton().Update(time);
 
 		m_console->Update(time);

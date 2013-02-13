@@ -43,7 +43,8 @@ namespace Apoc3D
 
 			wstringstream wss;
 
-			if (Type != LOG_Command)
+			bool isCommandRelated = Type == LOG_Command || Type == LOG_CommandResponse;
+			if (!isCommandRelated)
 			{
 				wss.width(2);
 				wss.fill('0');
@@ -92,28 +93,31 @@ namespace Apoc3D
 				wss << L"] ";
 
 			}
-			else
+			else if (Type != LOG_CommandResponse)
 			{
 				wss << L" >";
 			}
 			
 
-			
-			switch (Level)
+			if (!isCommandRelated)
 			{
-			case LOGLVL_Error:
-				wss << L"<Err> ";
-				break;
-			case LOGLVL_Warning:
-				wss << L"<Warn> ";
-				break;
-			case LOGLVL_Fatal:
-				wss << L"<Critical> ";
-				break;
-			case LOGLVL_Infomation:
-				wss << L"<Info> ";
-				break;
+				switch (Level)
+				{
+				case LOGLVL_Error:
+					wss << L"[Err] ";
+					break;
+				case LOGLVL_Warning:
+					wss << L"[Warn] ";
+					break;
+				case LOGLVL_Fatal:
+					wss << L"[Critical] ";
+					break;
+				case LOGLVL_Infomation:
+					wss << L"[I] ";
+					break;
+				}
 			}
+
 			wss << Content;
 			//wss << L"\n";
 

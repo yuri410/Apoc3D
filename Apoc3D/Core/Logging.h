@@ -58,7 +58,8 @@ namespace Apoc3D
 			LOG_Game = 4,
 			LOG_Network = 5,
 			LOG_Command = 6,
-			LOG_Count = 7
+			LOG_CommandResponse = 7,
+			LOG_Count = 8
 		};
 
 		

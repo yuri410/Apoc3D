@@ -322,7 +322,7 @@ namespace Apoc3D
 
 			int m_refCount;
 
-			ResourceState m_state;
+			volatile ResourceState m_state;
 
 			ResourceLoadOperation* m_resLoader;
 			ResourceUnloadOperation* m_resUnloader;
