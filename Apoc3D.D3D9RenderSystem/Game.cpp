@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Apoc3DException.h"
 #include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 
 //using namespace Apoc3D::Graphics;
 
@@ -62,9 +63,9 @@ namespace Apoc3D
 			{
 				m_graphicsDeviceManager->ReleaseDevice();
 			}
-			void Game::Create()
+			void Game::Create(const RenderParameters& params)
 			{
-				m_gameWindow->Load();
+				m_gameWindow->Load(params.BackBufferWidth, params.BackBufferHeight, params.IsFixedWindow);
 			}
 			Game::~Game()
 			{		

@@ -86,7 +86,7 @@ namespace Apoc3D
 						: Game(L"Apoc3D Engine - Direct3D9", d3d9), m_window(wnd)
 					{
 					}
-					virtual void Create();
+					virtual void Create(const RenderParameters& params);
 					
 					virtual void Release() 
 					{
@@ -157,6 +157,8 @@ namespace Apoc3D
 				virtual bool getIsActive() const;
 
 				const String& getHardwareName() const { return m_hardwareName; }
+
+				virtual void SetVisible(bool v);
 			private:
 				D3D9Game* m_game;
 				D3D9DeviceContent* m_dc;

@@ -83,13 +83,11 @@ namespace Apoc3D
 			// The implementation of the D3D9Game class is just as the way labtd once uses it to initialize D3DDevice.
 			// Despite some more features like the device enumeration were added to the GraphicsDeviceManager to 
 			// increase reliability on latency hardwares, the way to use it almost remains unchanged.
-			void D3D9RenderWindow::D3D9Game::Create()
+			void D3D9RenderWindow::D3D9Game::Create(const RenderParameters& params)
 			{
-				// with this call, the RenderWindow and Game object are created.
-				Game::Create();
+				// with this call, the RenderWindow and the Game object are created.
+				Game::Create(params);			
 				
-				const RenderParameters& params = m_window->getRenderParams();
-
 				DeviceSettings settings;
 				settings.AdapterOrdinal = 0;
 				settings.BackBufferCount = 1;
@@ -107,7 +105,7 @@ namespace Apoc3D
 
 				D3D9RenderDevice* device = new D3D9RenderDevice(getGraphicsDeviceManager());
 				m_window->setDevice(device);
-				m_window->m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
+				//m_window->m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
 
 				LogManager::getSingleton().Write(LOG_Graphics, 
 					L"[D3D9]Creating render window. ", 
@@ -190,7 +188,7 @@ namespace Apoc3D
 				// needed. 
 				
 				// Creates almost every thing
-				m_game->Create();
+				m_game->Create(getRenderParams());
 
 				m_game->Run();
 				// Releases almost every thing
@@ -218,7 +216,13 @@ namespace Apoc3D
 			void D3D9RenderWindow::setDevice(RenderDevice* device)
 			{
 				m_renderDevice = device;
+			}
 
+			void D3D9RenderWindow::SetVisible(bool v)
+			{
+				ShowWindow(m_game->getWindow()->getHandle(), v ? SW_NORMAL : SW_HIDE);
+
+				m_visisble = v;
 			}
 		}
 	}

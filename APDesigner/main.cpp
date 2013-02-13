@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Graphics/RenderSystem/GraphicsAPI.h"
 #include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
+#include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Vfs/FileSystem.h"
 #include "apoc3d/Vfs/Archive.h"
 #include "apoc3d/Vfs/PathUtils.h"
@@ -37,7 +38,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #endif
 
 #include "MainWindow.h"
-#include "apoc3d/Math/Matrix.h"
+#include "ServWindow.h"
 
 #include <direct.h>
 #include <Windows.h>
@@ -140,16 +141,22 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	}
 	else
 	{
+		if (!File::FileExists(startupParams.ProjectFile))
+		{
+			
+		}
+
 		DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();
 
-		params.BackBufferHeight = 450;
-		params.BackBufferWidth = 300;
+		params.BackBufferHeight = 300;
+		params.BackBufferWidth = 220;
+		params.IsFixedWindow = true;
 
 		RenderView* view =  devContent->Create(params);
 
 		RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
-
-		wnd->setEventHandler(new MainWindow(wnd));
+		
+		wnd->setEventHandler(new ServWindow(wnd, startupParams.ProjectFile));
 
 		if (wnd)
 		{
@@ -185,6 +192,7 @@ void StartupParameters::Parse(wchar_t** argv, int count)
 		if (!_wcsicmp(argv[i], L"-serv"))
 		{
 			ProjectFile = argv[++i];
+			ServiceMode = true;
 		}
 	}
 }

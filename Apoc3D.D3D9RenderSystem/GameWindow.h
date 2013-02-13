@@ -70,7 +70,7 @@ namespace Apoc3D
 
 				static GameWindow* ms_Window;
 
-				BOOL InitInstance(HINSTANCE hInstance, const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
+				BOOL InitInstance(HINSTANCE hInstance, int32 width, int32 height, bool fixed, const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
 				ATOM MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass);
 
 
@@ -107,7 +107,7 @@ namespace Apoc3D
 				void setWindowTitle(const String& txt);
 				Size getCurrentSize() const;
 
-				void Load();
+				void Load(int32 width, int32 height, bool fixed);
 
 				EventHandler* eventResume() { return &m_eResume; }
 				EventHandler* eventUserResized() { return &m_eUserResized; }

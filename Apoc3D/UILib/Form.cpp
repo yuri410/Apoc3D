@@ -300,7 +300,7 @@ namespace Apoc3D
 
 			if (m_state == FWS_Normal && !m_isMaximized && !m_isMinimized)
 			{
-				if (!m_isResizeing)
+				if (!m_isResizeing && m_borderStyle != FBS_Pane)
 				{
 					CheckDragging();
 				}

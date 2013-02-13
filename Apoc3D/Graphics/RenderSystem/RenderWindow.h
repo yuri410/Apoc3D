@@ -103,7 +103,6 @@ namespace Apoc3D
 			private:
 				RenderWindowHandler* m_evtHandler;
 				bool m_isExiting;
-				
 			public:
 
 				virtual void Exit()
@@ -114,7 +113,6 @@ namespace Apoc3D
 				virtual void Run() = 0;
 
 				virtual ~RenderWindow();
-
 
 				virtual Size getClientSize() = 0;
 				virtual String getTitle() = 0;
@@ -130,16 +128,18 @@ namespace Apoc3D
 				*/
 				virtual bool getIsActive() const = 0;
 
+				bool getVisisble() const { return m_visisble; }
+				virtual void SetVisible(bool v) = 0;
 
 			protected:
 
 				RenderWindow(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
-					: RenderView(dc, rd, pm, rt), m_evtHandler(0), m_isExiting(false)
+					: RenderView(dc, rd, pm, rt), m_evtHandler(0), m_isExiting(false), m_visisble(true)
 				{
 
 				}
 				RenderWindow(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm)
-					: RenderView(dc, rd, pm), m_evtHandler(0), m_isExiting(false)
+					: RenderView(dc, rd, pm), m_evtHandler(0), m_isExiting(false), m_visisble(true)
 				{
 
 				}
@@ -153,7 +153,8 @@ namespace Apoc3D
 				void OnUnload();
 				void OnUpdate(const GameTime* const time);
 				void OnDraw(const GameTime* const time);
-				
+
+				bool m_visisble;
 			};
 
 		}

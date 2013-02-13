@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Common.h"
 
 using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Core;
 using namespace fastdelegate;
 
@@ -49,7 +50,7 @@ namespace Apoc3D
 				 *  As GraphicsDeviceManager has creates the device, Game::LoadContent and Game::Initialize
 				 *  will be called.
 				 */
-				virtual void Create();
+				virtual void Create(const RenderParameters& params);
 
 				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
 				EventHandler* eventFrameEnd() { return &m_eFrameEnd; }		

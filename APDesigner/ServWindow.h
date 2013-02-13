@@ -52,7 +52,12 @@ namespace APDesigner
 		virtual void Update(const GameTime* const time);
 		virtual void Draw(const GameTime* const time);
 
+		virtual void OnFrameStart() { }
+		virtual void OnFrameEnd() { }
 	private:
+		void BtnHide_Release(Control* ctrl);
+		void BtnExit_Release(Control* ctrl);
+
 		StyleSkin* m_UIskin;
 
 		RenderWindow* m_window;
@@ -61,6 +66,16 @@ namespace APDesigner
 		Sprite* m_sprite;
 		String m_projectFilePath;
 
+		Form* m_baseForm;
+		Label* m_lblDescription;
+		Label* m_lblLoadedProject;
+		Label* m_lblStatus;
+
+		Label* m_lblHide;
+		Button* m_btnHide;
+		Button* m_btnExit;
+
+		bool m_lastHotKeyPressed;
 	};
 }
 

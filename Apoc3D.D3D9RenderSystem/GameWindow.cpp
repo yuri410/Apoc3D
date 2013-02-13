@@ -64,15 +64,35 @@ namespace Apoc3D
 			//        在此函数中，我们在全局变量中保存实例句柄并
 			//        创建和显示主程序窗口。
 			//
-			BOOL GameWindow::InitInstance(HINSTANCE hInstance, 
+			BOOL GameWindow::InitInstance(HINSTANCE hInstance, int32 width, int32 height, bool fixed,
 				const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
 			{
 				HWND hWnd;
 				
 				m_title = wndTitle;
 
-				hWnd = CreateWindow(wndClass, wndTitle, WS_OVERLAPPEDWINDOW,
-					CW_USEDEFAULT, 0, 1280, 720, NULL, NULL, hInstance, NULL);
+				RECT dstRect;
+
+				int scrnWidth = GetSystemMetrics(SM_CXFULLSCREEN);   
+				int scrnHeight = GetSystemMetrics(SM_CYFULLSCREEN);
+
+				dstRect.left = (scrnWidth - width)>>1;
+				dstRect.top = (scrnHeight - height)>>1;
+				dstRect.right = dstRect.left + width;
+				dstRect.bottom = dstRect.top + height;
+
+				DWORD style = WS_OVERLAPPEDWINDOW;
+				if (fixed)
+				{
+					style &= (~ WS_MAXIMIZEBOX);
+					style &= (~ WS_SIZEBOX);
+				}
+
+				AdjustWindowRect(&dstRect, style, FALSE);
+
+				hWnd = CreateWindow(wndClass, wndTitle, style,
+					dstRect.left, dstRect.top, dstRect.right - dstRect.left, dstRect.bottom - dstRect.top,
+					NULL, NULL, hInstance, NULL);
 
 				if (!hWnd)
 				{
@@ -82,21 +102,17 @@ namespace Apoc3D
 
 				m_currentMonitor = MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY);
 
+
+				//RECT rect;
+				//GetClientRect(hWnd, &rect);
+				//int clientWidth = rect.right - rect.left;
+				//int clientHeight = rect.bottom - rect.top;
+
+				
+
+
 				ShowWindow(hWnd, SW_NORMAL);
-				UpdateWindow(hWnd);
-
-				RECT rect;
-				GetClientRect(hWnd, &rect);
-				int clientWidth = rect.right - rect.left;
-				int clientHeight = rect.bottom - rect.top;
-
-				int scrnWidth = GetSystemMetrics(SM_CXFULLSCREEN);   
-				int scrnHeight = GetSystemMetrics(SM_CYFULLSCREEN);
-
-				SetWindowPos(hWnd, 0, 
-					(scrnWidth - clientWidth)>>1, (scrnHeight - clientHeight)>>1, 
-					clientWidth, clientHeight, SWP_NOZORDER);
-
+				//UpdateWindow(hWnd);
 
 
 				return TRUE;
@@ -118,11 +134,11 @@ namespace Apoc3D
 					ms_Window = NULL;
 			}
 
-			void GameWindow::Load()
+			void GameWindow::Load(int32 width, int32 height, bool fixed)
 			{
 				MyRegisterClass(m_hInstance, m_className.c_str());
 
-				if (!InitInstance (m_hInstance, m_className.c_str(), m_title.c_str()))
+				if (!InitInstance (m_hInstance, width, height, fixed, m_className.c_str(), m_title.c_str()))
 				{
 					assert(FALSE);
 				}
@@ -216,7 +232,12 @@ namespace Apoc3D
 			}
 			void GameWindow::MakeFixedSize(bool v)
 			{
+				RECT oldRect;
+				GetClientRect(m_hWnd, &oldRect);
+
 				LONG style = GetWindowLong(m_hWnd, GWL_STYLE);
+
+				style &= ~WS_CLIPSIBLINGS;
 
 				if (!v)
 				{
@@ -228,8 +249,10 @@ namespace Apoc3D
 					style &= (~ WS_MAXIMIZEBOX);
 					style &= (~ WS_SIZEBOX);
 				}
-				
+
 				SetWindowLong(m_hWnd, GWL_STYLE, style);
+
+				SetWindowPos(m_hWnd, 0, oldRect.left, oldRect.top, oldRect.right-oldRect.left, oldRect.bottom-oldRect.top, SWP_NOZORDER);
 			}
 
 			LRESULT CALLBACK GameWindow::WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

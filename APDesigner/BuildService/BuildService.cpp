@@ -22,7 +22,7 @@ SINGLETON_DECL(APDesigner::BuildInterface);
 namespace APDesigner
 {
 	BuildInterface::BuildInterface()
-		: m_hasLastError(false), m_finished(false), m_isBuildPending(false)
+		: m_hasLastError(false), m_finished(true), m_isBuildPending(false)
 	{
 
 	}
