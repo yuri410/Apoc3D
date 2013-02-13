@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "WinInputCommon.h"
 #include "Win32InputFactory.h"
-#include "Core/Plugin.h"
+#include "apoc3d/Core/Plugin.h"
 
 using namespace Apoc3D::Core;
 

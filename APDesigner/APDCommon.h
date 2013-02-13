@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APDCOMMON_H
 #define APDCOMMON_H
 
-#include "Engine.h"
+#include "apoc3d/Engine.h"
 
 #pragma comment(lib, "Apoc3D.lib")
 

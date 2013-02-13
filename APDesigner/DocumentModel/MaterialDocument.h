@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MATERIALDOCUMENT_H
 #define MATERIALDOCUMENT_H
 
-#include "Document.h"
-#include "Scene/SimpleSceneManager.h"
-#include "Scene/SceneObject.h"
-#include "UILib/Control.h"
+#include "APDesigner/Document.h"
+
+#include "apoc3d/Scene/SimpleSceneManager.h"
+#include "apoc3d/Scene/SceneObject.h"
+#include "apoc3d/UILib/Control.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;

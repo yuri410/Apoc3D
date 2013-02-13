@@ -22,17 +22,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "MaterialBuild.h"
-#include "Math/Color.h"
-#include "Collections/FastList.h"
-#include "Config/ConfigurationSection.h"
-#include "Config/XmlConfigurationFormat.h"
-#include "Vfs/ResourceLocation.h"
-#include "Vfs/PathUtils.h"
-#include "Utility/StringUtils.h"
-#include "IOLib/MaterialData.h"
-#include "IOLib/Streams.h"
-#include "CompileLog.h"
-#include "BuildEngine.h"
+
+#include "apoc3d/Math/Color.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/IOLib/MaterialData.h"
+#include "apoc3d/IOLib/Streams.h"
+
+#include "../CompileLog.h"
+#include "../BuildEngine.h"
 
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Utility;

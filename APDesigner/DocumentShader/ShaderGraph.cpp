@@ -24,13 +24,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "ShaderGraph.h"
 
-#include "Core/GameTime.h"
-#include "Collections/FastQueue.h"
 #include "GraphNode.h"
 #include "QuadTree.h"
-#include "Math/Matrix.h"
-#include "Math/MathCommon.h"
-#include "Utility/StringUtils.h"
+
+#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Math/Matrix.h"
+#include "apoc3d/Math/MathCommon.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 

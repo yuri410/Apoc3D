@@ -25,7 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9RENDERSTATEMANAGER_H
 
 #include "D3D9Common.h"
-#include "Graphics/RenderSystem/RenderStateManager.h"
+
+#include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;

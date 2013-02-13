@@ -22,11 +22,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Game.h"
-#include "Core\GameTime.h"
+
 #include "GameClock.h"
 #include "GraphicsDeviceManager.h"
 #include "GameWindow.h"
-#include "Apoc3DException.h"
+
+#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Core/GameTime.h"
 
 //using namespace Apoc3D::Graphics;
 

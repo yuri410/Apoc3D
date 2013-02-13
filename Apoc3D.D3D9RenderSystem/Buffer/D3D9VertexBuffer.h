@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef D3D9VERTEXBUFFER_H
 #define D3D9VERTEXBUFFER_H
 
-#include "D3D9Common.h"
-#include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
-#include "Graphics/GraphicsCommon.h"
-#include "VolatileResource.h"
+#include "../D3D9Common.h"
+#include "../VolatileResource.h"
+
+#include "apoc3d/Graphics/RenderSystem/Buffer/HardwareBuffer.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;

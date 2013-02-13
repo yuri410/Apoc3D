@@ -24,8 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "SNetCommonTypes.h"
 
-#include "Config/ConfigurationSection.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Utility;

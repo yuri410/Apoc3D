@@ -25,8 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9INSTANCINGDATA_H
 
 #include "D3D9Common.h"
-#include "Math/Math.h"
-#include "Graphics/RenderSystem/InstancingData.h"
+#include "apoc3d/Math/Math.h"
+#include "apoc3d/Graphics/RenderSystem/InstancingData.h"
 
 #include "VolatileResource.h"
 

@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MANIMBUILD_H
 #define MANIMBUILD_H
 
-#include "APBCommon.h"
+#include "../APBCommon.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Config;

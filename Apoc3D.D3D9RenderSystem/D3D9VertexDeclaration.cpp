@@ -21,12 +21,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "Collections/FastList.h"
 #include "D3D9VertexDeclaration.h"
 
 #include "D3D9RenderDevice.h"
-
 #include "D3D9Utils.h"
+
+#include "apoc3d/Collections/FastList.h"
 
 namespace Apoc3D
 {

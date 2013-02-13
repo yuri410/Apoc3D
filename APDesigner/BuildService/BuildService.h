@@ -2,9 +2,9 @@
 #define BUILDSERVICE_H
 
 #include "APDCommon.h"
-#include "Core/Singleton.h"
-#include "Collections/FastList.h"
-#include "Collections/FastQueue.h"
+#include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/FastQueue.h"
 
 #include "tthread/fast_mutex.h"
 #include "tthread/tinythread.h"

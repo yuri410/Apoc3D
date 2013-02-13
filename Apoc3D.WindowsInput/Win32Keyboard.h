@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define WIN32KEYBOARD_H
 
 #include "WinInputCommon.h"
-#include "Input/Keyboard.h"
+#include "apoc3d/Input/Keyboard.h"
 
 using namespace Apoc3D::Core;
 

@@ -2,7 +2,8 @@
 #ifndef OPENFILEDIALOG_H
 #define OPENFILEDIALOG_H
 
-#include "APDCommon.h"
+#include "APDesigner/APDCommon.h"
+
 #include "DialogCommon.h"
 
 using namespace Apoc3D;

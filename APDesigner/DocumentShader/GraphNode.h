@@ -25,9 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GRAPHNODE_H
 #define GRAPHNODE_H
 
-#include "APDCommon.h"
-#include "Collections/FastList.h"
-#include "Math/Vector.h"
+#include "APDesigner/APDCommon.h"
+
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Math/Vector.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;

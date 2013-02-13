@@ -25,11 +25,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef SHADERGRAPH_H
 #define SHADERGRAPH_H
 
-#include "APDCommon.h"
-#include "Collections/FastList.h"
-#include "Math/Rectangle.h"
-#include "Math/Vector.h"
-#include "UILib/Control.h"
+#include "APDesigner/APDCommon.h"
+
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/Vector.h"
+#include "apoc3d/UILib/Control.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;

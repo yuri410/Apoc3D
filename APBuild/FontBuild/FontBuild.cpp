@@ -23,6 +23,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "FontBuild.h"
 
+#include "../BuildConfig.h"
+#include "../BuildEngine.h"
+#include "../CompileLog.h"
+
 #include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
@@ -34,19 +38,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "freetype/fttrigon.h"
 #include "freetype/ftbitmap.h"
 
-#include "Collections/CollectionsCommon.h"
-#include "Config/ConfigurationSection.h"
-#include "Collections/FastList.h"
-#include "Collections/ExistTable.h"
-#include "Collections/FastMap.h"
-#include "IOLib/Streams.h"
-#include "IOLib/BinaryWriter.h"
-#include "Vfs/File.h"
-#include "Vfs/PathUtils.h"
-#include "BuildConfig.h"
-#include "BuildEngine.h"
-#include "CompileLog.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Collections/CollectionsCommon.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/ExistTable.h"
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::IO;

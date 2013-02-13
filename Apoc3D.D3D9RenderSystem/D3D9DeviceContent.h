@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9DDEVICECONTNET_H
 
 #include "D3D9Common.h"
-#include "Graphics/RenderSystem/DeviceContext.h"
+#include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 

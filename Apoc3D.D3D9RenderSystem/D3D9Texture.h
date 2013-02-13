@@ -25,9 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9TEXTURE_H
 
 #include "D3D9Common.h"
-#include "Graphics/RenderSystem/Texture.h"
-#include "Graphics/GraphicsCommon.h"
 #include "VolatileResource.h"
+
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;

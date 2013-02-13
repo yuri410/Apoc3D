@@ -23,16 +23,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "docShaderNet.h"
 
-#include "Utility/StringUtils.h"
-#include "UILib/Form.h"
-#include "UILib/Button.h"
-#include "Graphics/RenderSystem/RenderDevice.h"
-#include "Graphics/RenderSystem/ObjectFactory.h"
-#include "Graphics/RenderSystem/RenderTarget.h"
-
-#include "MainWindow.h"
+#include "APDesigner/MainWindow.h"
 #include "ShaderGraph.h"
 #include "ShaderDataIO.h"
+
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/UILib/Form.h"
+#include "apoc3d/UILib/Button.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
+#include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
 
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Utility;

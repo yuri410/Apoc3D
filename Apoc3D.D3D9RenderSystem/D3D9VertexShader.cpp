@@ -26,15 +26,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9RenderDevice.h"
 
-#include "IOLib/BinaryReader.h"
-#include "Vfs/ResourceLocation.h"
-#include "IOLib/Streams.h"
 #include "ConstantTable.h"
 #include "D3D9Utils.h"
 #include "D3D9Texture.h"
 #include "D3D9RenderStateManager.h"
 
-#include "Utility/StringUtils.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 

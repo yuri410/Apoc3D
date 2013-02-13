@@ -23,21 +23,21 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "APDCommon.h"
 
-#include "Graphics/RenderSystem/GraphicsAPI.h"
-#include "Graphics/RenderSystem/DeviceContext.h"
-#include "Graphics/RenderSystem/RenderWindow.h"
-#include "Vfs/FileSystem.h"
-#include "Vfs/Archive.h"
-#include "Vfs/PathUtils.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Graphics/RenderSystem/GraphicsAPI.h"
+#include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
+#include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
+#include "apoc3d/Vfs/FileSystem.h"
+#include "apoc3d/Vfs/Archive.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 #ifndef APOC3D_DYNLIB
-#include "../Apoc3D.D3D9RenderSystem/Plugin.h"
-#include "../Apoc3D.WindowsInput/Plugin.h"
+#include "Apoc3D.D3D9RenderSystem/Plugin.h"
+#include "Apoc3D.WindowsInput/Plugin.h"
 #endif
 
 #include "MainWindow.h"
-#include "Math/Matrix.h"
+#include "apoc3d/Math/Matrix.h"
 
 #include <direct.h>
 #include <Windows.h>

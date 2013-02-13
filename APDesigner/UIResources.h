@@ -2,7 +2,7 @@
 #define UIRESOURCE_H
 
 #include "APDCommon.h"
-#include "Collections/FastMap.h"
+#include "apoc3d/Collections/FastMap.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;

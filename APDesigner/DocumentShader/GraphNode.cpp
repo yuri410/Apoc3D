@@ -24,11 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "GraphNode.h"
 
-#include "Core/GameTime.h"
-#include "Math/RandomUtils.h"
-#include "Math/MathCommon.h"
 #include "ShaderGraph.h"
 #include "QuadTree.h"
+
+#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Math/RandomUtils.h"
+#include "apoc3d/Math/MathCommon.h"
+
 
 namespace APDesigner
 {

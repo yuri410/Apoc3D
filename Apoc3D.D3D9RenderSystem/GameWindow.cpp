@@ -22,7 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "GameWindow.h"
-#include "Resource.h"
+
+#include "apoc3d/Resource.h"
 
 namespace Apoc3D
 {
@@ -43,7 +44,7 @@ namespace Apoc3D
 				wcex.cbClsExtra		= 0;
 				wcex.cbWndExtra		= 0;
 				wcex.hInstance		= hInstance;
-				wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_LABTD));
+				wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APOC3D));
 				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 				wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
 				wcex.lpszMenuName	= 0;

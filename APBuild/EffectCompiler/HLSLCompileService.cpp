@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 
 #include "HLSLCompileService.h"
-#include "BuildConfig.h"
-#include "BuildEngine.h"
-#include "Utility/StringUtils.h"
-#include "CompileLog.h"
+
+#include "../BuildConfig.h"
+#include "../BuildEngine.h"
+#include "../CompileLog.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 #include <d3d9.h>
 #include <d3dx9.h>

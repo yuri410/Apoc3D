@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef DLGATOMMANAGER_H
 #define DLGATOMMANAGER_H
 
-#include "APDCommon.h"
+#include "APDesigner/APDCommon.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;

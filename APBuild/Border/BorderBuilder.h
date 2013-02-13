@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef BORDERBUILDER_H
 #define BORDERBUILDER_H
 
-#include "APBCommon.h"
+#include "../APBCommon.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;

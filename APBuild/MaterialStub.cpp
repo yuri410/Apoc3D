@@ -23,14 +23,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "MaterialStub.h"
 
-#include "Config/ConfigurationSection.h"
 #include "BuildConfig.h"
 #include "CompileLog.h"
-#include "Vfs/File.h"
-#include "Vfs/PathUtils.h"
 #include "BuildEngine.h"
-#include "IOLib/MaterialData.h"
-#include "IOLib/Streams.h"
+
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/IOLib/MaterialData.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;

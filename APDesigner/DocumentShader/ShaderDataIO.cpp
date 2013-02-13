@@ -24,9 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "ShaderDataIO.h"
 
-#include "Config/XmlConfigurationFormat.h"
-#include "Config/ConfigurationSection.h"
-#include "Vfs/ResourceLocation.h"
+#include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::Config;
 using namespace Apoc3D::VFS;

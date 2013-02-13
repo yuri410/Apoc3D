@@ -3,9 +3,9 @@
 
 #include "TerrainCommon.h"
 
-#include "Graphics/RenderSystem/RenderWindowHandler.h"
-#include "Graphics/Material.h"
-#include "UILib/CheckBox.h"
+#include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
+#include "apoc3d/Graphics/Material.h"
+#include "apoc3d/UILib/CheckBox.h"
 #include "Apoc3D.Essentials/Game.h"
 
 using namespace Apoc3DEx;

@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GAMECOMMON_H
 #define GAMECOMMON_H
 
-#include "Engine.h"
+#include "apoc3d/Engine.h"
 
 #pragma comment(lib, "Apoc3D.lib")
 #pragma comment(lib, "Apoc3D.D3D9RenderSystem.lib")

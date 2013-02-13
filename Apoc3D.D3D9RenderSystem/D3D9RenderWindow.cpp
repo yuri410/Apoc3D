@@ -31,8 +31,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Enumeration.h"
 #include "D3D9RenderViewSet.h"
 #include "DeviceSettings.h"
-#include "Core/Logging.h"
-#include "Utility/StringUtils.h"
+
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 

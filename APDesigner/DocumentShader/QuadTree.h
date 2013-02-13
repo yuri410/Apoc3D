@@ -25,10 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
-#include "APDCommon.h"
-#include "Collections/FastList.h"
-#include "Math/Vector.h"
-#include "Math/Rectangle.h"
+#include "APDesigner/APDCommon.h"
+
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Math/Vector.h"
+#include "apoc3d/Math/Rectangle.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;

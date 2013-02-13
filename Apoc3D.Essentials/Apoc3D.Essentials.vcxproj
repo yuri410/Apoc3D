@@ -25,6 +25,11 @@
     <ClCompile Include="AI\VolumePathFinder.cpp" />
     <ClCompile Include="Game.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Apoc3D\Apoc3d.vcxproj">
+      <Project>{db9f1707-9349-4171-b670-cc5ac4ee4170}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A834AD24-93AB-4F33-9172-D8F920E58E6C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

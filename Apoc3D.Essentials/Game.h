@@ -27,8 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "EssentialCommon.h"
 
-#include "Graphics/RenderSystem/RenderWindowHandler.h"
-#include "Input/InputAPI.h"
+#include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
+#include "apoc3d/Input/InputAPI.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics::RenderSystem;

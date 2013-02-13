@@ -25,8 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9PIXELSHADER_H
 
 #include "D3D9Common.h"
-#include "Math/Math.h"
-#include "Graphics/RenderSystem/Shader.h"
+#include "apoc3d/Math/Math.h"
+#include "apoc3d/Graphics/RenderSystem/Shader.h"
 
 using namespace std;
 using namespace Apoc3D::Graphics;

@@ -24,12 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #ifndef BUILDCONFIG_H
 #define BUILDCONFIG_H
+
 #include "APBCommon.h"
 
-#include "Graphics/PixelFormat.h"
-#include "Collections/FastList.h"
-#include "Collections/FastMap.h"
-#include "Graphics/RenderSystem/VertexElement.h"
+#include "apoc3d/Graphics/PixelFormat.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Graphics/RenderSystem/VertexElement.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;

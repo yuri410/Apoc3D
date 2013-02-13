@@ -39,16 +39,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9VertexDeclaration.h"
 #include "D3D9Sprite.h"
 #include "VolatileResource.h"
-#include "Apoc3DException.h"
 
-#include "Graphics/Camera.h"
-#include "Graphics/Material.h"
-#include "Graphics/GeometryData.h"
-#include "Graphics/EffectSystem/Effect.h"
-#include "Graphics/EffectSystem/EffectParameter.h"
-#include "Core/Logging.h"
-#include "Core/ResourceHandle.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Apoc3DException.h"
+
+#include "apoc3d/Graphics/Camera.h"
+#include "apoc3d/Graphics/Material.h"
+#include "apoc3d/Graphics/GeometryData.h"
+#include "apoc3d/Graphics/EffectSystem/Effect.h"
+#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Core/ResourceHandle.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Core;

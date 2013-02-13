@@ -24,10 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "BuildConfig.h"
 
-#include "Config/ConfigurationSection.h"
-#include "Graphics/PixelFormat.h"
-#include "Utility/StringUtils.h"
-#include "Graphics/GraphicsCommon.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Graphics/PixelFormat.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "apoc3d/Utility/StringUtils.h"
 #include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>

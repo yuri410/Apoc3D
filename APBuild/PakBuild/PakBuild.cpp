@@ -22,14 +22,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "PakBuild.h"
-#include "IOLib/Streams.h"
-#include "IOLib/BinaryReader.h"
-#include "IOLib/BinaryWriter.h"
-#include "Utility/StringUtils.h"
-#include "CompileLog.h"
-#include "Vfs/PathUtils.h"
-#include "Vfs/Archive.h"
-#include "BuildEngine.h"
+
+#include "../CompileLog.h"
+#include "../BuildEngine.h"
+#include "../BuildConfig.h"
+
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Vfs/Archive.h"
 
 #include <dirent.h>
 

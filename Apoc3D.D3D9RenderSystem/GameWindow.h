@@ -25,7 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_D3D9_GAMEWINDOW_H
 
 #include "D3D9Common.h"
-#include "Math/Point.h"
+
+#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D::Math;
 

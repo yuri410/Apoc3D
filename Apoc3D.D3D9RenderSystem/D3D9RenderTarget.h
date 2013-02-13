@@ -25,9 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9RENDERTARGET_H
 
 #include "D3D9Common.h"
-#include "Graphics/RenderSystem/RenderTarget.h"
-#include "Graphics/GraphicsCommon.h"
 #include "VolatileResource.h"
+
+#include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;

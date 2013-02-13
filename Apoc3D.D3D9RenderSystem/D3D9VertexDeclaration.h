@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9VERTEXDECLARATION_H
 
 #include "D3D9Common.h"
-#include "Graphics\RenderSystem\VertexDeclaration.h"
+#include "apoc3d/Graphics/RenderSystem/VertexDeclaration.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics;

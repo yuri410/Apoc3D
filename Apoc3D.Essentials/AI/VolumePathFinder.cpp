@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "VolumePathFinder.h"
-#include "Math/MathCommon.h"
+#include "apoc3d/Math/MathCommon.h"
 
 namespace Apoc3DEx
 {

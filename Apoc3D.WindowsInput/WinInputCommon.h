@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef WININPUTCOMMON_H
 #define WININPUTCOMMON_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 #ifndef APOC3D_DYNLIB
 #	define PLUGIN

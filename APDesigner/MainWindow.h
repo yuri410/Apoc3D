@@ -27,8 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDCommon.h"
 
-#include "Graphics/RenderSystem/RenderWindowHandler.h"
-#include "Math/Point.h"
+#include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
+#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::UI;

@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MESHBUILD_H
 #define MESHBUILD_H
 
-#include "APBCommon.h"
+#include "../APBCommon.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Config;

@@ -3,13 +3,13 @@
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;
 
-#include "Vfs/Archive.h"
-#include "Vfs/FileSystem.h"
-#include "Vfs/PathUtils.h"
-#include "Vfs/FileLocateRule.h"
-#include "Vfs/ResourceLocation.h"
-#include "Graphics/TextureManager.h"
-#include "Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Vfs/Archive.h"
+#include "apoc3d/Vfs/FileSystem.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Vfs/FileLocateRule.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Graphics/TextureManager.h"
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
 
 namespace APDesigner
 {

@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef D3DCOMMON_H
 #define D3DCOMMON_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 #if _DEBUG
 #define D3D_DEBUG_INFO

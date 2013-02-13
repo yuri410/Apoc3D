@@ -1,20 +1,22 @@
 #include "BorderBuilder.h"
 
-#include "Config/XmlConfigurationFormat.h"
-#include "Config/ConfigurationSection.h"
-#include "Collections/FastQueue.h"
-#include "Graphics/PixelFormat.h"
-#include "Utility/StringUtils.h"
-#include "Graphics/GraphicsCommon.h"
-#include "MeshBuild/XImporter.h"
-#include "MeshBuild/MeshBuild.h"
-#include "IOLib/Streams.h"
-#include "IOLib/ModelData.h"
-#include "CompileLog.h"
-#include "Vfs/File.h"
-#include "Vfs/PathUtils.h"
-#include "BuildEngine.h"
-#include "BuildConfig.h"
+#include "../CompileLog.h"
+#include "../BuildEngine.h"
+#include "../BuildConfig.h"
+#include "../MeshBuild/XImporter.h"
+#include "../MeshBuild/MeshBuild.h"
+
+#include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Graphics/PixelFormat.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/ModelData.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
+
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;

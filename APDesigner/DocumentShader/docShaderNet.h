@@ -24,8 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef AUTOEFFECTDOCUMENT_H
 #define AUTOEFFECTDOCUMENT_H
 
-#include "Document.h"
-#include "UILib/Control.h"
+#include "APDesigner/Document.h"
+
+#include "apoc3d/UILib/Control.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;

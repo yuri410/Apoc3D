@@ -25,12 +25,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef SHADERATOMTYPE_H
 #define SHADERATOMTYPE_H
 
-#include "APDCommon.h"
+#include "APDesigner/APDCommon.h"
 #include "SNetCommonTypes.h"
 
-#include "Core/Singleton.h"
-#include "Collections/FastMap.h"
-#include "Graphics/EffectSystem/EffectParameter.h"
+#include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;

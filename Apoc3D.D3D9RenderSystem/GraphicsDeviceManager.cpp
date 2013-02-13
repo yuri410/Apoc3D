@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GameWindow.h"
 #include "Enumeration.h"
 
-#include "Core/Logging.h"
+#include "apoc3d/Core/Logging.h"
 
 using namespace Apoc3D::Core;
 

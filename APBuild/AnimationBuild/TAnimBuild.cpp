@@ -1,15 +1,16 @@
 #include "TAnimBuild.h"
 
-#include "Config/ConfigurationSection.h"
-#include "BuildConfig.h"
+#include "../BuildEngine.h"
+#include "../BuildConfig.h"
+#include "../CompileLog.h"
 #include "XafImporter.h"
-#include "IOLib/Streams.h"
-#include "IOLib/ModelData.h"
-#include "CompileLog.h"
-#include "Vfs/File.h"
-#include "Vfs/PathUtils.h"
-#include "BuildEngine.h"
-#include "Graphics/Animation/AnimationData.h"
+
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/ModelData.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Graphics/Animation/AnimationData.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;

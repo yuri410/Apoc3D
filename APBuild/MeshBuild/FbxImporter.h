@@ -1,7 +1,7 @@
 #ifndef FBXIMPORTER_H
 #define FBXIMPORTER_H
 
-#include "APBCommon.h"
+#include "../APBCommon.h"
 
 #ifdef _MSC_VER
 #pragma warning (push)
@@ -14,13 +14,13 @@
 #pragma warning (pop)
 #endif
 
-#include "Collections/FastList.h"
-#include "Collections/FastMap.h"
-#include "Collections/ExistTable.h"
-#include "Math/Matrix.h"
-#include "Graphics/Animation/AnimationTypes.h"
-#include "Graphics/Animation/AnimationData.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/ExistTable.h"
+#include "apoc3d/Math/Matrix.h"
+#include "apoc3d/Graphics/Animation/AnimationTypes.h"
+#include "apoc3d/Graphics/Animation/AnimationData.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 #define MAXBONES_PER_VERTEX 4
 

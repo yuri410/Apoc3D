@@ -25,11 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define PATHFINDER_H
 
 
-#include "EssentialCommon.h"
-#include "Collections/FastList.h"
-#include "Collections/FastMap.h"
-#include "Collections/FastQueue.h"
-#include "Math/Point.h"
+#include "../EssentialCommon.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;

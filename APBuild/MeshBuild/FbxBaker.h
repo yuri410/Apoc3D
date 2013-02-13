@@ -1,7 +1,7 @@
 #ifndef FBXBAKER_H
 #define FBXBAKER_H
 
-#include "APBCommon.h"
+#include "../APBCommon.h"
 
 #include <fbxsdk.h>
 

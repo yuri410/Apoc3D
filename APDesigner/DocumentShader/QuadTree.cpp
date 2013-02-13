@@ -24,10 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "QuadTree.h"
 
-#include "Core/GameTime.h"
-#include "Math/Rectangle.h"
-
 #include "GraphNode.h"
+
+#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Math/Rectangle.h"
 
 namespace APDesigner
 {

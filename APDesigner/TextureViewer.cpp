@@ -23,22 +23,24 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "TextureViewer.h"
 
-#include "Graphics/RenderSystem/Sprite.h"
-#include "Graphics/RenderSystem/Texture.h"
-#include "Graphics/RenderSystem/RenderDevice.h"
-#include "Graphics/RenderSystem/ObjectFactory.h"
-#include "Graphics/RenderSystem/RenderStateManager.h"
-#include "Graphics/TextureManager.h"
-#include "Math/ColorValue.h"
-#include "Math/Box.h"
-#include "UILib/Form.h"
-#include "UILib/Button.h"
-#include "UILib/PictureBox.h"
-#include "UILib/FontManager.h"
 #include "MainWindow.h"
-#include "Vfs/ResourceLocation.h"
-#include "Utility/StringUtils.h"
 #include "UIResources.h"
+
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
+#include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
+#include "apoc3d/Graphics/TextureManager.h"
+#include "apoc3d/Math/ColorValue.h"
+#include "apoc3d/Math/Box.h"
+#include "apoc3d/UILib/Form.h"
+#include "apoc3d/UILib/Button.h"
+#include "apoc3d/UILib/PictureBox.h"
+#include "apoc3d/UILib/FontManager.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Utility/StringUtils.h"
+
 
 using namespace Apoc3D::Utility;
 

@@ -201,7 +201,7 @@
     <ClCompile Include="VolatileResource.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Source\Apoc3d.vcxproj">
+    <ProjectReference Include="..\Apoc3D\Apoc3d.vcxproj">
       <Project>{db9f1707-9349-4171-b670-cc5ac4ee4170}</Project>
     </ProjectReference>
   </ItemGroup>

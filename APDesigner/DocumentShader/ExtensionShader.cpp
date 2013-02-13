@@ -27,9 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "docShaderAtom.h"
 #include "docEffectCoding.h"
 
-#include "Project/Project.h"
-#include "Vfs/File.h"
-#include "Vfs/PathUtils.h"
+#include "apoc3d/Project/Project.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
 
 using namespace Apoc3D::VFS;
 

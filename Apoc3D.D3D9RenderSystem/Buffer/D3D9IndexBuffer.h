@@ -24,9 +24,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef D3D9INDEXBUFFER_H
 #define D3D9INDEXBUFFER_H
 
-#include "D3D9Common.h"
-#include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
-#include "VolatileResource.h"
+#include "../D3D9Common.h"
+
+#include "apoc3d/Graphics/RenderSystem/Buffer/HardwareBuffer.h"
+
+#include "../VolatileResource.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;

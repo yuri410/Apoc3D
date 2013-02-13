@@ -25,8 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3DPLUGIN_H
 
 #include "D3D9Common.h"
-#include "Core/Plugin.h"
 #include "D3D9GraphicsAPIFactory.h"
+
+#include "apoc3d/Core/Plugin.h"
 
 using namespace Apoc3D::Core;
 

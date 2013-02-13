@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "TerrainCommon.h"
 
-#include "Graphics/Camera.h"
+#include "apoc3d/Graphics/Camera.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Math;

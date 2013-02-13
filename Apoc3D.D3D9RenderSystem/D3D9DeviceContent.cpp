@@ -27,8 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9RenderDevice.h"
 #include "D3D9RenderWindow.h"
 #include "GraphicsDeviceManager.h"
-#include "Utility/StringUtils.h"
-#include "Apoc3DException.h"
+
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Apoc3DException.h"
 
 using namespace Apoc3D::Utility;
 

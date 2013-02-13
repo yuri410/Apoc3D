@@ -24,9 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef EFFECTDOCUMENT_H
 #define EFFECTDOCUMENT_H
 
-#include "Document.h"
-#include "UILib/Control.h"
-#include "Graphics/EffectSystem/EffectParameter.h"
+#include "APDesigner/Document.h"
+
+#include "apoc3d/UILib/Control.h"
+#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;

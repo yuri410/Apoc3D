@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define WIN32MOUSE_H
 
 #include "WinInputCommon.h"
-#include "Input/Mouse.h"
+#include "apoc3d/Input/Mouse.h"
 
 using namespace Apoc3D::Core;
 

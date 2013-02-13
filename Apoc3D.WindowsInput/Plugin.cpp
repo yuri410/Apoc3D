@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Plugin.h"
 
-#include "Input/InputAPI.h"
+#include "apoc3d/Input/InputAPI.h"
 
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Input::Win32;

@@ -21,7 +21,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "APBCommon.h"
+#include "../APBCommon.h"
 
 using namespace Apoc3D;
 

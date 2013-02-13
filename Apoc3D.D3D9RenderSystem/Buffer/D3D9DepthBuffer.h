@@ -24,8 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef D3D9DEPTHBUFFER_H
 #define D3D9DEPTHBUFFER_H
 
-#include "D3D9Common.h"
-#include "Graphics/RenderSystem/Buffer/HardwareBuffer.h"
+#include "../D3D9Common.h"
+#include "apoc3d/Graphics/RenderSystem/Buffer/HardwareBuffer.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;

@@ -24,8 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9IndexBuffer.h"
 
-#include "D3D9RenderDevice.h"
-#include "D3D9Utils.h"
+#include "../D3D9RenderDevice.h"
+#include "../D3D9Utils.h"
 
 namespace Apoc3D
 {

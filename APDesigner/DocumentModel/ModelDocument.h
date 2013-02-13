@@ -24,11 +24,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MODELDOCUMENT_H
 #define MODELDOCUMENT_H
 
-#include "Document.h"
-#include "Scene/SimpleSceneManager.h"
-#include "Scene/SceneObject.h"
-#include "UILib/Control.h"
-#include "Graphics/ModelTypes.h"
+#include "APDesigner/Document.h"
+
+#include "apoc3d/Scene/SimpleSceneManager.h"
+#include "apoc3d/Scene/SceneObject.h"
+#include "apoc3d/UILib/Control.h"
+#include "apoc3d/Graphics/ModelTypes.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;

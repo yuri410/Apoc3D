@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneObject.h"
 #include "ScenePass.h"
 
+#include "apoc3d/Config/Configuration.h"
 #include "apoc3d/Config/ConfigurationManager.h"
 #include "apoc3d/Config/ConfigurationSection.h"
 

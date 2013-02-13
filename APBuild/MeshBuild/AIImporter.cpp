@@ -24,6 +24,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "AIImporter.h"
 
+#include "../BuildConfig.h"
+
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Math/Matrix.h"
+#include "apoc3d/Graphics/Animation/AnimationTypes.h"
+#include "apoc3d/IOLib/MaterialData.h"
+#include "apoc3d/IOLib/ModelData.h"
+#include "apoc3d/Graphics/Animation/AnimationData.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/Utility/StringUtils.h"
+
 #ifdef _MSC_VER
 #pragma warning (push)
 #pragma warning (disable : 4819)
@@ -36,17 +48,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifdef _MSC_VER
 #pragma warning (pop)
 #endif
-
-#include "Collections/FastList.h"
-#include "Collections/FastMap.h"
-#include "Math/Matrix.h"
-#include "BuildConfig.h"
-#include "Graphics/Animation/AnimationTypes.h"
-#include "IOLib/MaterialData.h"
-#include "IOLib/ModelData.h"
-#include "Graphics/Animation/AnimationData.h"
-#include "IOLib/Streams.h"
-#include "Utility/StringUtils.h"
 
 using namespace Assimp;
 using namespace Apoc3D::Utility;

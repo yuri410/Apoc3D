@@ -22,11 +22,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Win32InputFactory.h"
-#include "Apoc3DException.h"
 #include "Win32Mouse.h"
 #include "Win32Keyboard.h"
-#include "Graphics/RenderSystem/RenderWindow.h"
-#include "Utility/StringUtils.h"
+
+#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 

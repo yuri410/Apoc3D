@@ -27,7 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9VertexDeclaration.h"
 #include "Buffer/D3D9VertexBuffer.h"
 #include "D3D9RenderStateManager.h"
-#include "Graphics/RenderSystem/Shader.h"
+
+#include "apoc3d/Graphics/RenderSystem/Shader.h"
 
 namespace Apoc3D
 {

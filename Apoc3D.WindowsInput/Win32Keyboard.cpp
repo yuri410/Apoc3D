@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Win32Keyboard.h"
-#include "Core/GameTime.h"
+#include "apoc3d/Core/GameTime.h"
 
 namespace Apoc3D
 {

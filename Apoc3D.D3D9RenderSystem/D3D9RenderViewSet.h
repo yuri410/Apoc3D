@@ -25,8 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9RENDERVIEWSET
 
 #include "D3D9Common.h"
-#include "Graphics/RenderSystem/RenderWindow.h"
 #include "DeviceSettings.h"
+
+#include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;

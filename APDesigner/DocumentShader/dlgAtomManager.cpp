@@ -23,27 +23,28 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "dlgAtomManager.h"
 
-#include "Core/Logging.h"
-#include "Config/ConfigurationSection.h"
-#include "Graphics/RenderSystem/Sprite.h"
-#include "MainWindow.h"
-#include "UILib/Form.h"
-#include "UILib/List.h"
-#include "UILib/Button.h"
-#include "UILib/Label.h"
-#include "Project/Project.h"
-#include "UIResources.h"
-#include "Document.h"
 #include "ShaderAtomType.h"
-#include "Graphics/GraphicsCommon.h"
 #include "docShaderAtom.h"
+#include "APDesigner/MainWindow.h"
+#include "APDesigner/BuildService/BuildService.h"
+#include "APDesigner/UIResources.h"
+#include "APDesigner/Document.h"
 
-#include "Vfs/File.h"
-#include "Vfs/PathUtils.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/UILib/Form.h"
+#include "apoc3d/UILib/List.h"
+#include "apoc3d/UILib/Button.h"
+#include "apoc3d/UILib/Label.h"
+#include "apoc3d/Project/Project.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
-#include "BuildService/BuildService.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
 
-#include "Utility/StringUtils.h"
+
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;

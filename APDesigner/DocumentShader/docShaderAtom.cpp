@@ -25,20 +25,20 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "docShaderAtom.h"
 
 #include "ShaderAtomType.h"
-#include "MainWindow.h"
+#include "APDesigner/MainWindow.h"
 
-#include "Collections/List2D.h"
+#include "apoc3d/Collections/List2D.h"
 
-#include "UILib/Form.h"
-#include "UILib/Button.h"
-#include "UILib/PictureBox.h"
-#include "UILib/Label.h"
-#include "UILib/FontManager.h"
-#include "UILib/ComboBox.h"
-#include "UILib/StyleSkin.h"
-#include "UILib/CheckBox.h"
-#include "UILib/List.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/UILib/Form.h"
+#include "apoc3d/UILib/Button.h"
+#include "apoc3d/UILib/PictureBox.h"
+#include "apoc3d/UILib/Label.h"
+#include "apoc3d/UILib/FontManager.h"
+#include "apoc3d/UILib/ComboBox.h"
+#include "apoc3d/UILib/StyleSkin.h"
+#include "apoc3d/UILib/CheckBox.h"
+#include "apoc3d/UILib/List.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 namespace APDesigner
 {

@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef EXTENSIONMODEL_H
 #define EXTENSIONMODEL_H
 
-#include "EditorExtensionManager.h"
+#include "APDesigner/EditorExtensionManager.h"
 
 namespace APDesigner
 {

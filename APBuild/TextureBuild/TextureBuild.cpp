@@ -22,19 +22,20 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "TextureBuild.h"
-#include "Config/ConfigurationSection.h"
 
-#include "IOLib/TextureData.h"
-#include "IOLib/Streams.h"
-#include "Vfs/File.h"
-#include "Vfs/PathUtils.h"
-#include "Apoc3DException.h"
-#include "CompileLog.h"
-#include "D3DHelper.h"
-#include "Graphics/LockData.h"
-#include "BuildEngine.h"
+#include "../CompileLog.h"
+#include "../D3DHelper.h"
+#include "../BuildEngine.h"
 
-#include "dds.h"
+#include "../dds.h"
+
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/IOLib/TextureData.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Graphics/LockData.h"
+#include "apoc3d/Apoc3DException.h"
 
 #include <IL/il.h>
 #include <IL/ilu.h>

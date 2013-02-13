@@ -24,10 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "BuildEngine.h"
 
-#include "Core/Logging.h"
+#include "apoc3d/Core/Logging.h"
 
-#include "Vfs/PathUtils.h"
-#include "Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Vfs/File.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"

@@ -25,7 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9RenderDevice.h"
 #include "D3D9VertexDeclaration.h"
 #include "D3D9Utils.h"
-#include "Graphics/RenderOperationBuffer.h"
+
+#include "apoc3d/Graphics/RenderOperationBuffer.h"
 
 namespace Apoc3D
 {

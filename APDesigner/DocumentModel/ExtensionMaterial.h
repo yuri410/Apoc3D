@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef EXTENSIONMATERAIL_H
 #define EXTENSIONMATERAIL_H
 
-#include "EditorExtensionManager.h"
+#include "APDesigner/EditorExtensionManager.h"
 
 namespace APDesigner
 {

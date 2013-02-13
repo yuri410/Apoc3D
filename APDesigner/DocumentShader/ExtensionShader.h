@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef EXTENSIONSHADER_H
 #define EXTENSIONSHADER_H
 
-#include "EditorExtensionManager.h"
+#include "APDesigner/EditorExtensionManager.h"
 
 namespace APDesigner
 {

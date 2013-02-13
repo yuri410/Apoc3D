@@ -22,9 +22,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Enumeration.h"
-#include "Utility/StringUtils.h"
 
-#include "Apoc3DException.h"
+#include "apoc3d/Utility/StringUtils.h"
+
+#include "apoc3d/Apoc3DException.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D;

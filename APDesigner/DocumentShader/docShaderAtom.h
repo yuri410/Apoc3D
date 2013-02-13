@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef SHADERATOMDOCUMENT_H
 #define SHADERATOMDOCUMENT_H
 
-#include "Document.h"
+#include "APDesigner/Document.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;

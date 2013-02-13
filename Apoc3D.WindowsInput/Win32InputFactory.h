@@ -25,8 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define WIN32INPUTFACTORY_H
 
 #include "WinInputCommon.h"
-#include "Input/InputAPI.h"
-#include "Math/Point.h"
+#include "apoc3d/Input/InputAPI.h"
+#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;

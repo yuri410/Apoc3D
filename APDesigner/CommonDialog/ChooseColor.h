@@ -2,9 +2,11 @@
 #ifndef CHOOSECOLOR_H
 #define CHOOSECOLOR_H
 
-#include "APDCommon.h"
+#include "APDesigner/APDCommon.h"
+
 #include "DialogCommon.h"
-#include "Math/ColorValue.h"
+
+#include "apoc3d/Math/ColorValue.h"
 
 using namespace Apoc3D::Math;
 

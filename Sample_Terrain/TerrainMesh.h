@@ -2,14 +2,14 @@
 #define TERRAINMESH_H
 
 #include "TerrainCommon.h"
-#include "Scene/SceneObject.h"
-#include "Core/Resource.h"
-#include "Core/ResourceManager.h"
-#include "Core/Singleton.h"
-#include "Graphics/Renderable.h"
-#include "Graphics/Material.h"
-#include "Graphics/GeometryData.h"
-#include "Graphics/RenderOperationBuffer.h"
+#include "apoc3d/Scene/SceneObject.h"
+#include "apoc3d/Core/Resource.h"
+#include "apoc3d/Core/ResourceManager.h"
+#include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Graphics/Renderable.h"
+#include "apoc3d/Graphics/Material.h"
+#include "apoc3d/Graphics/GeometryData.h"
+#include "apoc3d/Graphics/RenderOperationBuffer.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;

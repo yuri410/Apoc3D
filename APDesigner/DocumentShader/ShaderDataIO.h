@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef SHADERDOCUMENTDATA_H
 #define SHADERDOCUMENTDATA_H
 
-#include "APDCommon.h"
+#include "APDesigner/APDCommon.h"
 #include "SNetCommonTypes.h"
 #include "ShaderAtomType.h"
 

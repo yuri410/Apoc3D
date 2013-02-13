@@ -6,15 +6,7 @@
 
 #include "APBCommon.h"
 
-#include <direct.h>
-
 #include "ErrorCode.h"
-#include "Config/XmlConfigurationFormat.h"
-#include "Config/ConfigurationSection.h"
-#include "Vfs/File.h"
-#include "Vfs/ResourceLocation.h"
-#include "Vfs/PathUtils.h"
-#include "Utility/StringUtils.h"
 #include "CompileLog.h"
 
 #include "MaterialStub.h"
@@ -30,6 +22,15 @@
 #include "AnimationBuild/MAnimBuild.h"
 #include "AnimationBuild/TAnimBuild.h"
 //#include <Windows.h>
+
+#include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Utility/StringUtils.h"
+
+#include <direct.h>
 
 using namespace std;
 using namespace APBuild;

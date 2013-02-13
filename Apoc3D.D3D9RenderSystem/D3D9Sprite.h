@@ -26,9 +26,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9SPRITE_H
 
 #include "D3D9Common.h"
-#include "Graphics/RenderSystem/Sprite.h"
-#include "Graphics/GraphicsCommon.h"
-#include "Collections/FastList.h"
+
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;

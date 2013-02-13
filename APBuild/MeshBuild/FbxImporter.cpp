@@ -1,11 +1,12 @@
 #include "FbxImporter.h"
 
-#include "CompileLog.h"
-#include "BuildConfig.h"
-#include "Utility/StringUtils.h"
-#include "IOLib/Streams.h"
-#include "IOLib/MaterialData.h"
-#include "IOLib/ModelData.h"
+#include "../CompileLog.h"
+#include "../BuildConfig.h"
+
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/MaterialData.h"
+#include "apoc3d/IOLib/ModelData.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 #include "MeshBuild.h"
 

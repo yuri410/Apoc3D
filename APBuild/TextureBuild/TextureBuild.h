@@ -25,8 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef TEXTUREBUILD_H
 #define TEXTUREBUILD_H
 
-#include "APBCommon.h"
-#include "BuildConfig.h"
+#include "../APBCommon.h"
+#include "../BuildConfig.h"
 
 using namespace Apoc3D::Config;
 

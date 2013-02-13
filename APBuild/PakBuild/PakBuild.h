@@ -24,8 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef PAKBUILDER_H
 #define PAKBUILDER_H
 
-#include "APBCommon.h"
-#include "BuildConfig.h"
+#include "../APBCommon.h"
+
+using namespace Apoc3D::Config;
 
 namespace APBuild
 {

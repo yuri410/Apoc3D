@@ -24,24 +24,25 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "CFXBuild.h"
 
-#include "Collections/CollectionsCommon.h"
-#include "Config/ConfigurationSection.h"
-#include "Config/XmlConfigurationFormat.h"
-#include "Collections/FastList.h"
-#include "Collections/ExistTable.h"
-#include "Collections/FastMap.h"
-#include "IOLib/Streams.h"
-#include "IOLib/BinaryWriter.h"
-#include "IOLib/EffectData.h"
-#include "BuildConfig.h"
-#include "BuildEngine.h"
-#include "CompileLog.h"
-#include "Utility/StringUtils.h"
-#include "Vfs/File.h"
-#include "Vfs/ResourceLocation.h"
-#include "Vfs/PathUtils.h"
-
+#include "../BuildConfig.h"
+#include "../BuildEngine.h"
+#include "../CompileLog.h"
 #include "HLSLCompileService.h"
+
+#include "apoc3d/Collections/CollectionsCommon.h"
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/ExistTable.h"
+#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
+#include "apoc3d/IOLib/EffectData.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Vfs/PathUtils.h"
+
 
 #include <d3d9.h>
 #include <d3dx9.h>

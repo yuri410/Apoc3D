@@ -23,17 +23,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "MeshBuild.h"
 
-#include "Config/ConfigurationSection.h"
-#include "BuildConfig.h"
+#include "../BuildEngine.h"
+#include "../BuildConfig.h"
+#include "../CompileLog.h"
+
 #include "AIImporter.h"
 #include "XImporter.h"
 #include "FbxImporter.h"
-#include "IOLib/Streams.h"
-#include "IOLib/ModelData.h"
-#include "CompileLog.h"
-#include "Vfs/File.h"
-#include "Vfs/PathUtils.h"
-#include "BuildEngine.h"
+
+#include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/ModelData.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;

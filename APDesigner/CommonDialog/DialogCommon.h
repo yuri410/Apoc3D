@@ -1,7 +1,7 @@
 #ifndef DIALOGCOMMON_H
 #define DIALOGCOMMON_H
 
-#include "APDCommon.h"
+#include "APDesigner/APDCommon.h"
 
 using namespace Apoc3D;
 

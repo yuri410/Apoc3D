@@ -23,7 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #ifndef FONTBUILD_H
 #define FONTBUILD_H
-#include "APBCommon.h"
+
+#include "../APBCommon.h"
 
 using namespace Apoc3D::Config;
 
