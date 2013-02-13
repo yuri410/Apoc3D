@@ -143,7 +143,8 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	{
 		if (!File::FileExists(startupParams.ProjectFile))
 		{
-			
+			MessageBox(0, (L"Can not file the project file:\n" + startupParams.ProjectFile).c_str(), L"Error", MB_OK | MB_ICONEXCLAMATION);
+			return 0;
 		}
 
 		DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();

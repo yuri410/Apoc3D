@@ -32,9 +32,10 @@
 namespace APDesigner
 {
 	ServWindow::ServWindow(RenderWindow* wnd, const String& projectFilePath)
-		: m_window(wnd), m_UIskin(0), m_projectFilePath(projectFilePath), m_lastHotKeyPressed(false)
+		: m_window(wnd), m_UIskin(0), m_projectFilePath(projectFilePath), m_lastHotKeyPressed(false),
+		m_changeBuffer(8192), m_currentProject(nullptr)
 	{
-		
+		UpdateProject();
 	}
 
 	ServWindow::~ServWindow()
@@ -165,6 +166,10 @@ namespace APDesigner
 			m_window->SetVisible(!m_window->getVisisble());
 		}
 		m_lastHotKeyPressed = pressed;
+
+		{
+			//ReadDirectoryChangesW();
+		}
 	}
 	void ServWindow::Draw(const GameTime* const time)
 	{
@@ -176,6 +181,21 @@ namespace APDesigner
 
 		m_device->EndFrame();
 
+	}
+
+	void ServWindow::UpdateProject()
+	{
+		FileLocation fl(m_projectFilePath);
+		Configuration* conf = XMLConfigurationFormat::Instance.Load(&fl);
+
+		Project* prj = new Project();
+		prj->Parse(conf->get(L"Project"));
+
+		delete conf;
+
+		if (m_currentProject)
+			delete m_currentProject;
+		m_currentProject = prj;
 	}
 
 	void ServWindow::BtnHide_Release(Control* ctrl)

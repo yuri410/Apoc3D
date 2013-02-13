@@ -69,6 +69,11 @@ namespace Apoc3D
 			void Shutdown();
 
 			/**
+			 *  Make all managed resources to reload.
+			 */
+			void ReloadAll();
+
+			/**
 			 *  [Only applicable when working in async mode.]
 			 *  If a resource is IsIndependent(), this cancels(or removes) the corresponding opposite resource operation
 			 *  from the task queue. Say a load ResourceOperation can cancel an unload ResourceOperation for the same resources

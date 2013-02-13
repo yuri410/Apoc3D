@@ -116,8 +116,6 @@ namespace Apoc3D
 				{
 				case RS_Loading:
 				case RS_Unloading:
-				case RS_PendingLoad:
-				case RS_PendingUnload:
 				case RS_Loaded:
 					break;
 				case RS_Unloaded:
@@ -136,44 +134,29 @@ namespace Apoc3D
 				{
 					//assert(getState() == RS_Unloaded || getState() == RS_PendingUnload);
 
-					m_generation->Use(this);
-
 					ResourceState state = getState();
 					switch (state)
 					{
 					case RS_Loading:
 					case RS_Unloading:
-					case RS_PendingLoad:
 					case RS_Loaded:
 						return;
-					case RS_PendingUnload:
+					default:
 						{
 							if (!m_manager->NeutralizeTask(m_resLoader))
 							{
-								setState(RS_PendingLoad);
 								m_manager->AddTask(m_resLoader);
 							}
-							else
-							{
-								// rewind state if successfully neutralized
-								setState(RS_Loaded);
-							}
-							break;
-						}
-					default:
-						{
-							setState(RS_PendingLoad);
-							m_manager->AddTask(m_resLoader);
 							break;
 						}
 					}
 
-					
 				}
 				else
 				{
 					LoadSync();
 				}
+				
 			}
 		}
 
@@ -183,38 +166,25 @@ namespace Apoc3D
 			{
 				if (m_manager->usesAsync())
 				{
-					assert(getState() == RS_Loaded || getState() == RS_PendingLoad);
+					assert(getState() == RS_Loaded);
 
 					ResourceState state = getState();
 					switch (state)
 					{
 					case RS_Loading:
 					case RS_Unloading:
-					case RS_PendingUnload:
 					case RS_Unloaded:
 						return;
-					case RS_PendingLoad:
-						{
-							if (!m_manager->NeutralizeTask(m_resUnloader))
-							{
-								setState(RS_PendingUnload);
-								m_manager->AddTask(m_resUnloader);
-							}
-							else
-							{
-								// rewind state if successfully neutralized
-								setState(RS_Unloaded);
-							}
-							break;
-						}
 					default:
 						{
-							setState(RS_PendingUnload);
-							m_manager->AddTask(m_resUnloader);
+
+							if (!m_manager->NeutralizeTask(m_resUnloader))
+							{
+								m_manager->AddTask(m_resUnloader);
+							}
 							break;
 						}
 					}
-
 				}
 				else
 				{
@@ -223,10 +193,9 @@ namespace Apoc3D
 					{
 					case RS_Loading:
 					case RS_Unloading:
-					case RS_PendingLoad:
-					case RS_PendingUnload:
-					case RS_Loaded:
 					case RS_Unloaded:
+						return;
+					default:
 						setState(RS_Unloading);
 						unload();
 						setState(RS_Unloaded);
@@ -234,6 +203,30 @@ namespace Apoc3D
 					}
 				}
 				
+			}
+		}
+
+		void Resource::Reload()
+		{
+			if (isManaged())
+			{
+				if (m_manager->usesAsync())
+				{
+					if (getState() == RS_Loaded)
+					{
+						m_manager->AddTask(m_resUnloader);
+						m_manager->AddTask(m_resLoader);
+					}
+				}
+				else
+				{
+					setState(RS_Unloading);
+					unload();
+					setState(RS_Unloaded);
+					setState(RS_Loading);
+					load();
+					setState(RS_Loaded);
+				}
 			}
 		}
 

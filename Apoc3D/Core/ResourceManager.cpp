@@ -107,6 +107,20 @@ namespace Apoc3D
 			if (m_generationTable)
 				delete m_generationTable;
 		}
+
+		void ResourceManager::ReloadAll()
+		{
+			for (ResHashTable::iterator iter = m_hashTable.begin();iter!=m_hashTable.end();iter++)
+			{
+				Resource* res = iter->second;
+
+				if (res->getState() == RS_Loaded)
+				{
+					res->Reload();
+				}
+			}
+		}
+
 		Resource* ResourceManager::Exists(const String& hashString)
 		{
 			ResHashTable::iterator iter = m_hashTable.find(hashString);

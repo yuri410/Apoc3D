@@ -58,6 +58,8 @@ namespace APDesigner
 		void BtnHide_Release(Control* ctrl);
 		void BtnExit_Release(Control* ctrl);
 
+		void UpdateProject();
+
 		StyleSkin* m_UIskin;
 
 		RenderWindow* m_window;
@@ -76,6 +78,10 @@ namespace APDesigner
 		Button* m_btnExit;
 
 		bool m_lastHotKeyPressed;
+
+
+		FastList<char*> m_changeBuffer;
+		Project* m_currentProject;
 	};
 }
 

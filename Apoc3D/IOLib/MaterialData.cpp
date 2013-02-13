@@ -289,7 +289,8 @@ namespace Apoc3D
 			DepthTestEnabled = data->GetDataBool(TAG_3_DepthTestEnabled);
 			DepthWriteEnabled = data->GetDataBool(TAG_3_DepthWriteEnabled);
 
-			UsePointSprite = data->GetDataBool(TAG_3_UsePointSprite);
+			UsePointSprite = false;
+			data->TryGetDataBool(TAG_3_UsePointSprite, UsePointSprite);
 
 			// load material basic color
 			{

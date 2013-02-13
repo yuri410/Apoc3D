@@ -64,18 +64,7 @@ namespace Apoc3D
 			/**
 			 *  Represents the resource is currently being unloaded 
 			 */
-			RS_Unloading = 3,
-			/**
-			 *  Represents the resource is in the waiting queue to be loaded, 
-			 *  when a resource is pending, no more load or unload operation is processed
-			 *  unless future updates are made for the resource managements system.
-			 */
-			RS_PendingLoad = 4,
-			/** 
-			 *  Represents the resource is in the waiting queue to be unloaded. 
-			 *  This is just opposed to RS_PendingLoad.
-			 */
-			RS_PendingUnload = 5,
+			RS_Unloading = 3
 
 		};
 		
@@ -166,6 +155,11 @@ namespace Apoc3D
 			void Unload();
 
 			/**
+			 *  Reload the resource if it is already loaded.
+			 */
+			void Reload();
+
+			/**
 			 *  Gets a string uniquely represents the resource
 			 */
 			const String& getHashString() const { return m_hashString; }
@@ -252,11 +246,9 @@ namespace Apoc3D
 				void Process()
 				{ 
 					Resource* res = getResource();
-					
 					ResourceState state = res->getState();
 					
-
-					if (state != RS_PendingLoad)
+					if (state != RS_Unloaded)
 						return;
 					
 					res->setState(RS_Loading);
@@ -283,9 +275,9 @@ namespace Apoc3D
 				void Process()
 				{ 
 					Resource* res = getResource();
-
+					
 					ResourceState state = res->getState();
-					if (state != RS_PendingUnload)
+					if (state != RS_Loaded)
 						return;
 					res->setState(RS_Unloading);
 					res->unload();
