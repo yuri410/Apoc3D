@@ -30,10 +30,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Scrollbar.h"
 #include "StyleSkin.h"
 
-#include "apoc3d/Input/InputAPI.h"
-#include "apoc3d/Input/Mouse.h"
+#include "apoc3d/Core/CommandInterpreter.h"
 #include "apoc3d/Graphics/TextureManager.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Input/InputAPI.h"
+#include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
@@ -76,6 +77,8 @@ namespace Apoc3D
 			m_form->Initialize(device);
 			m_form->eventResized().bind(this, &Console::Form_Resized);
 
+			RegisterCommands();
+
 			{
 				Log* log = LogManager::getSingleton().getLogSet(LOG_System);
 				for (Log::Iterator iter = log->begin();iter!=log->end();iter++)
@@ -83,7 +86,6 @@ namespace Apoc3D
 					Log_New(*iter);
 				}
 			}
-			
 			
 			
 			LogManager::getSingleton().eventNewLogWritten().bind(this, &Console::Log_New);
@@ -140,75 +142,6 @@ namespace Apoc3D
 		{
 			Submit_Pressed(ctrl);
 		}
-		void Console::Console_CommandSubmited(String cmd, List<String>* args)
-		{
-			if (cmd == L"clear")
-			{
-				m_logs.clear();
-			}
-			else if (cmd == L"res")
-			{
-				if (args->getCount() == 2)
-				{
-					if (args->operator[](1) == L"list")
-					{
-						LogManager::getSingleton().Write(LOG_CommandResponse, L"Listing ResourceManagers...", LOGLVL_Infomation);
-
-						const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
-						for (int32 i=0;i<list.getCount();i++)
-						{
-							LogManager::getSingleton().Write(LOG_CommandResponse, L"  " + StringUtils::ToString(i+1) + L". " + list[i]->getName(), LOGLVL_Infomation);
-						}
-					}
-					else 
-					{
-						int32 index = StringUtils::ParseInt32(args->operator[](1))-1;
-						const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
-						if (index >=0 && index < list.getCount())
-						{
-							ResourceManager* mgr = list[index];
-							String msg = mgr->getName();
-							msg.append(L"  |  [");
-							msg.append(StringUtils::ToString(mgr->getUsedCacheSize() / 1048576.0f, 1, 0, ' '));
-							msg.append(L"MB / ");
-							msg.append(StringUtils::ToString(mgr->getTotalCacheSize() / 1048576.0f, 1, 0, ' '));
-							msg.append(L"MB] [OP = ");
-							msg.append(StringUtils::ToString(mgr->GetCurrentOperationCount()));
-							msg.append(L"] ");
-							if (mgr->usesAsync())
-							{
-								msg.append(L"[Async]");
-							}
-
-							LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
-
-							msg = L"Managing ";
-							msg.append(StringUtils::ToString(mgr->getResourceCount()));
-							msg.append(L" resources.");
-							
-							LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
-						}
-						else LogManager::getSingleton().Write(LOG_CommandResponse, L"No such ordinal.", LOGLVL_Error);
-
-					}
-				}
-				else if (args->getCount() == 3)
-				{
-					if (args->operator[](1) == L"reload")
-					{
-						int32 index = StringUtils::ParseInt32(args->operator[](2))-1;
-						const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
-						if (index >=0 && index < list.getCount())
-						{
-							list[index]->ReloadAll();
-						}
-						else LogManager::getSingleton().Write(LOG_CommandResponse, L"No such ordinal.", LOGLVL_Error);
-					}
-
-				}
-			}
-		}
-
 		void Console::setPosition(const Point& pt)
 		{
 			m_form->Position = pt;
@@ -240,72 +173,10 @@ namespace Apoc3D
 
 			if (c.size())
 			{
-				List<String> args;
-
-				int lastPos = -1;
-				bool isInQuote = false;
-				bool isSingleQuote = false;
-				for (size_t i=0;i<c.size();i++)
-				{
-					wchar_t ch = c[i];
-					if (ch == '\'')
-					{
-						if (!isInQuote)
-						{
-							isInQuote = true;
-							isSingleQuote = true;
-						}
-						else if (isSingleQuote)
-						{
-							isInQuote = false;
-						}
-					}
-					else if (ch == '"')
-					{
-						if (!isInQuote)
-						{
-							isInQuote = true;
-							isSingleQuote = false;
-						}
-						else if (!isSingleQuote)
-						{
-							isInQuote = false;
-						}
-					}
-					else if (ch == ' ' && !isInQuote)
-					{
-						if (i && (int)i-1 != lastPos)
-						{
-							args.Add(c.substr(lastPos+1, i-lastPos-1));
-							lastPos = i;
-						}
-						else
-						{
-							lastPos = i;
-						}
-						
-					}
-				}
-				if (lastPos != static_cast<int>(c.size())-1)
-				{
-					args.Add(c.substr(lastPos+1, c.size()-lastPos-1));
-				}
-
 				LogEntry le(0, c, LOGLVL_Default, LOG_Command);
 				Log_New(le);
 
-				if (args.getCount()>0)
-				{
-					String cmd = args[0];
-					StringUtils::ToLowerCase(cmd);
-
-					Console_CommandSubmited(cmd, &args);
-
-					if (!m_eCommandSubmited.empty())
-					{
-						m_eCommandSubmited(cmd, &args);
-					}
-				}
+				CommandInterpreter::getSingleton().RunLine(c, true);
 			}
 
 			m_inputText->setText(L"");
@@ -397,5 +268,67 @@ namespace Apoc3D
 		{
 			m_needsUpdateLineInfo = true;
 		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		class ClearCommand : public Command
+		{
+		public:
+			ClearCommand(Console* c);
+
+			virtual void Execute(const Apoc3D::Collections::List<String>& args);
+
+		private:
+			Console* m_console;
+		};
+
+		class ConsoleCommandSet : public Command
+		{
+		public:
+			ConsoleCommandSet(Console* c);
+
+			virtual void Execute(const Apoc3D::Collections::List<String>& args);
+		
+		private:
+			ClearCommand m_clearCmd;
+			Console* m_console;
+		};
+
+
+		void Console::RegisterCommands()
+		{
+			ConsoleCommandSet* s = new ConsoleCommandSet(this);
+			CommandInterpreter::getSingleton().RegisterCommand(s);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		
+		ConsoleCommandSet::ConsoleCommandSet(Console* c)
+			: m_console(c), m_clearCmd(c)
+		{
+			m_desc.Name = L"Console Command Set";
+			m_desc.CommandName = L"console";
+			m_desc.NumOfParameters = 0;
+			m_desc.SubCommands.Add(&m_clearCmd);
+		}
+
+		void ConsoleCommandSet::Execute(const Apoc3D::Collections::List<String>& args)
+		{
+			LogManager::getSingleton().Write(LOG_CommandResponse, m_desc.Name, LOGLVL_Infomation);
+		}
+
+		ClearCommand::ClearCommand(Console* c)
+			: m_console(c)
+		{
+			m_desc.Name = L"Console Clear";
+			m_desc.CommandName = L"clear";
+			m_desc.NumOfParameters = 0;
+		}
+		void ClearCommand::Execute(const Apoc3D::Collections::List<String>& args)
+		{
+			m_console->m_logs.clear();
+		}
+
+
 	}
 }

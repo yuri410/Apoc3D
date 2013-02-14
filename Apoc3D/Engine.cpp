@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Core/PluginManager.h"
 #include "Core/Logging.h"
+#include "Core/CommandInterpreter.h"
 #include "Config/ConfigurationManager.h"
 #include "Graphics/Animation/AnimationManager.h"
 #include "Graphics/EffectSystem/EffectManager.h"
@@ -68,6 +69,7 @@ namespace Apoc3D
 		{
 			LogManager::getSingleton().WriteLogToStd = mconf->WriteLogToStd;
 		}
+		CommandInterpreter::Initialize();
 
 		FileSystem::Initialize();
 		if (mconf && mconf->WorkingDirectories.getCount())
@@ -148,6 +150,8 @@ namespace Apoc3D
 		GraphicsAPIManager::Finalize();
 		ConfigurationManager::Finalize();
 		FileSystem::Finalize();
+		
+		CommandInterpreter::Finalize();
 		LogManager::Finalize();
 	}
 }

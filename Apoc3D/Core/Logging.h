@@ -128,7 +128,7 @@ namespace Apoc3D
 				return result;
 			}
 
-			bool Write(const String& message, LogMessageLevel level = LOGLVL_Infomation);
+			bool Write(const String& message, LogMessageLevel level = LOGLVL_Infomation, bool checkDuplicate = true);
 		};
 
 		/** 

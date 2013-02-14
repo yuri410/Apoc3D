@@ -195,6 +195,9 @@ namespace Apoc3D
 
 		class Log;
 
+		class Command;
+		struct CommandDescription;
+
 		namespace Streaming
 		{
 			class ResourceOperation;

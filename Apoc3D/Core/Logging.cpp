@@ -28,6 +28,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <Windows.h>
 #endif
 
+#include "apoc3d/Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
+
 SINGLETON_DECL(Apoc3D::Core::LogManager);
 
 namespace Apoc3D
@@ -136,13 +140,13 @@ namespace Apoc3D
 
 		}
 
-		bool Log::Write(const String& message, LogMessageLevel level)
+		bool Log::Write(const String& message, LogMessageLevel level, bool checkDuplicate)
 		{
 			bool result = false;
 			m_lock.lock();
 
 			bool discard = false;
-			if (m_entries.size())
+			if (checkDuplicate && m_entries.size())
 			{
 				if (m_entries.back().Content == message)
 				{
@@ -191,7 +195,8 @@ namespace Apoc3D
 
 		void LogManager::Write(LogType type, const String& message, LogMessageLevel level) const
 		{
-			bool ret = m_logs[static_cast<int32>(type)]->Write(message, level);
+			bool ret = m_logs[static_cast<int32>(type)]->Write(message, level, 
+				type != LOG_CommandResponse && type != LOG_Command && type != LOG_Game);
 
 			if (ret)
 			{
@@ -204,6 +209,9 @@ namespace Apoc3D
 				if (WriteLogToStd)
 				{
 					String msg = lastest.ToString();
+					if (!StringUtils::EndsWidth(msg, L"\n"))
+						msg.append(L"\n");
+
 					cout << ( msg.c_str() );
 				
 	#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS

@@ -43,17 +43,16 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		typedef fastdelegate::FastDelegate2<String, List<String>*> ConsoleCommandHandler;
-
+		
 		class APAPI Console
 		{
+			friend class ClearCommand;
 		public:
 			static const int MaxLogEntries = 500;
 
 			Console(RenderDevice* device, StyleSkin* skin, const Point& position, const Point& size);
 			~Console();
 
-			ConsoleCommandHandler& eventCommandSubmited() { return m_eCommandSubmited; }
 			void setPosition(const Point& pt);
 			const Point& getSize() const;
 
@@ -71,7 +70,8 @@ namespace Apoc3D
 			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
 			void Log_New(LogEntry e);
 
-			void Console_CommandSubmited(String cmd, List<String>* args);
+			void RegisterCommands();
+			//void Console_CommandSubmited(String cmd, List<String>* args);
 
 			Form* m_form;
 			TextBox* m_inputText;
@@ -91,8 +91,6 @@ namespace Apoc3D
 				ColorValue Color;
 			} m_entryInfo[MaxLogEntries];
 
-
-			ConsoleCommandHandler m_eCommandSubmited;
 
 			tthread::fast_mutex m_logLock;
 
