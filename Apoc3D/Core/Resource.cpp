@@ -177,7 +177,6 @@ namespace Apoc3D
 						return;
 					default:
 						{
-
 							if (!m_manager->NeutralizeTask(m_resUnloader))
 							{
 								m_manager->AddTask(m_resUnloader);

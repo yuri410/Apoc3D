@@ -50,7 +50,7 @@ namespace Apoc3D
 			m_passFlags(0), m_priority(2), 
 			BlendFunction(BLFUN_Add), IsBlendTransparent(false), 
 			SourceBlend(BLEND_SourceAlpha), DestinationBlend(BLEND_InverseSourceAlpha),
-			AlphaTestEnabled(false),
+			AlphaTestEnabled(false), AlphaReference(0),
 			DepthWriteEnabled(true), DepthTestEnabled(true),
 			Ambient(0,0,0,0), Diffuse(1.f,1.f,1.f,1.f), Specular(0,0,0,0), Emissive(0,0,0,0), Power(0),
 			Cull(CULL_None),

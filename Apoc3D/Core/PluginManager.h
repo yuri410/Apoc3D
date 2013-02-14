@@ -46,21 +46,6 @@ namespace Apoc3D
 		*/
 		class APAPI PluginManager : public Singleton<PluginManager>
 		{
-		private:
-			typedef unordered_map<String, Plugin*> PluginTable;
-			typedef vector<Library*> LibraryList;
-
-			PluginLoadCallBack m_eventPluginLoad;
-			PluginErrorBack m_eventPluginError;
-			
-			PluginTable m_plugins;
-			LibraryList m_libraries;
-
-			void LoadPlugin(const String& name);
-
-			void OnPluginLoad(const Plugin* plg, int32 index, int32 count);
-			void OnPluginError(const Plugin* plg);
-		
 		public:
 			PluginManager() { }
 			~PluginManager();
@@ -78,6 +63,22 @@ namespace Apoc3D
 			const Plugin* getPlugin(const String& name) const;
 			
 			SINGLETON_DECL_HEARDER(PluginManager);
+
+		private:
+			typedef unordered_map<String, Plugin*> PluginTable;
+			typedef vector<Library*> LibraryList;
+
+			void LoadPlugin(const String& name);
+
+			void OnPluginLoad(const Plugin* plg, int32 index, int32 count);
+			void OnPluginError(const Plugin* plg);
+			
+			PluginLoadCallBack m_eventPluginLoad;
+			PluginErrorBack m_eventPluginError;
+
+			PluginTable m_plugins;
+			LibraryList m_libraries;
+
 		};
 	}
 }

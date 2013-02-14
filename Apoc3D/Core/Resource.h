@@ -230,6 +230,20 @@ namespace Apoc3D
 			 */
 			Resource(ResourceManager* manager, const String& hashString);
 
+			virtual void OnLoaded()
+			{
+				if (!m_eventLoaded.empty())
+				{
+					m_eventLoaded(this);
+				}
+			}
+			virtual void OnUnloaded()
+			{
+				if (!m_eventUnloaded.empty())
+				{
+					m_eventUnloaded(this);
+				}
+			}
 		private:
 			/** 
 			 *  Implements a general resource loading operation
@@ -334,20 +348,6 @@ namespace Apoc3D
 
 			bool m_unloadableLock;
 
-			void OnLoaded()
-			{
-				if (!m_eventLoaded.empty())
-				{
-					m_eventLoaded(this);
-				}
-			}
-			void OnUnloaded()
-			{
-				if (!m_eventUnloaded.empty())
-				{
-					m_eventUnloaded(this);
-				}
-			}
 
 			void LoadSync();
 

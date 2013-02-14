@@ -99,7 +99,7 @@ namespace Apoc3D
 			
 		protected:
 			Entity()
-				: m_position(Vector3Utils::Zero)
+				: m_position(Vector3Utils::Zero), Visible(true)
 			{
 				memset(m_models, 0, sizeof(Model*)*3);
 				memset(&BoundingSphereOffset, 0, sizeof(BoundingSphereOffset));

@@ -16,6 +16,7 @@
 #include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Graphics/ModelManager.h"
 #include "apoc3d/Graphics/Model.h"
+#include "apoc3d/Graphics/Mesh.h"
 #include "apoc3d/Scene/OctreeSceneManager.h"
 #include "apoc3d/Scene/SceneRenderer.h"
 #include "apoc3d/Input/InputAPI.h"
@@ -384,7 +385,7 @@ namespace SampleTerrain
 		y+=35;
 		fnt->DrawString(m_sprite, L"Primitive Count: " + StringUtils::ToString(m_device->getPrimitiveCount()), Point(x,y), CV_White);
 		y+=35;
-		fnt->DrawString(m_sprite, L"FPS: " + StringUtils::ToString(m_window->getFPS(), 2, 2), Point(x,y), CV_White);
+		fnt->DrawString(m_sprite, L"FPS: " + StringUtils::ToString(m_window->getFPS(), 0, 0), Point(x,y), CV_White);
 
 		x = vp.Width - 180;
 		y = vp.Height - 120;

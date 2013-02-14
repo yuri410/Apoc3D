@@ -52,13 +52,30 @@ namespace Apoc3D
 		class APAPI Mesh : public Renderable
 		{
 		public:
-			VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
-			const FastList<IndexBuffer*>& getIndexBuffers() const { return m_indexBuffers; }
-			int32 getIndexCount() const { return m_primitiveCount * 3; }
+			Mesh(RenderDevice* device, const MeshData* data);
+			~Mesh(void);
+
+
 			/**
 			 *  Copies the indices to a given buffer.
 			 */
 			void GetIndices(uint* dest) const;
+
+			virtual RenderOperationBuffer* GetRenderOperation(int level);
+
+			void Save(MeshData* data);
+
+			/** 
+			 *  Passes triangle primitives one by one, while call the callback for each one.
+			 */
+			void ProcessAllTriangles(IMeshTriangleCallBack* callback) const;
+
+			int32 CalculateSizeInBytes() const;
+
+
+			VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
+			const FastList<IndexBuffer*>& getIndexBuffers() const { return m_indexBuffers; }
+			int32 getIndexCount() const { return m_primitiveCount * 3; }
 
 			const FastList<VertexElement>& getVertexElement() const { return m_vertexElements; }
 			const int32* getPartPrimitiveCount() const { return m_partPrimitiveCount; }
@@ -86,22 +103,6 @@ namespace Apoc3D
 
 			const BoundingSphere& getBoundingSphere() const { return m_boundingSphere; }
 			void setBoundingSphere(const BoundingSphere& sphere) { m_boundingSphere = sphere; }
-
-			/** 
-			 *  Passes triangle primitives one by one, while call the callback for each one.
-			 */
-			void ProcessAllTriangles(IMeshTriangleCallBack* callback) const;
-
-			int32 CalculateSizeInBytes() const;
-
-
-
-			virtual RenderOperationBuffer* GetRenderOperation(int level);
-			
-			void Save(MeshData* data);
-
-			Mesh(RenderDevice* device, const MeshData* data);
-			~Mesh(void);
 
 		private:
 			VertexDeclaration* m_vtxDecl;

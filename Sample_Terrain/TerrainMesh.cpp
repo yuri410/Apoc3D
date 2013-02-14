@@ -72,6 +72,7 @@ namespace SampleTerrain
 		m_primitiveCount = size * size*2;
 
 		m_sharedIndex = TerrainMeshManager::getSingleton().getIndexData(size)->getIndexBuffer();
+
 	}
 
 	RenderOperationBuffer* TerrainMesh::GetRenderOperation(int lod)
@@ -85,7 +86,6 @@ namespace SampleTerrain
 			op.GeometryData = &m_geoData;
 			Matrix::CreateTranslation(op.RootTransform, m_bx*Terrain::BlockLength,0,m_bz*Terrain::BlockLength);
 			m_opBuffer.Add(op);
-
 
 			return &m_opBuffer;
 		}
@@ -190,11 +190,14 @@ namespace SampleTerrain
 		m_geoData.VertexCount = vertexCount;
 		m_geoData.PrimitiveType = PT_TriangleList;
 		m_geoData.BaseVertex = 0;
+		m_geoData.Discard = false;
 
 		m_opBuffer.ReserveDiscard(100);
 	}
 	void TerrainMesh::unload()
 	{
+		m_geoData.Discard = true;
+
 		delete m_vertexBuffer;
 		delete m_vtxDecl;
 		m_vertexBuffer = 0;

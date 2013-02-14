@@ -194,13 +194,15 @@ namespace Apoc3D
 				}
 				else if (args->getCount() == 3)
 				{
-					if (args->operator[](1) == L"info")
+					if (args->operator[](1) == L"reload")
 					{
-
-					}
-					else if (args->operator[](1) == L"list")
-					{
-
+						int32 index = StringUtils::ParseInt32(args->operator[](2))-1;
+						const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
+						if (index >=0 && index < list.getCount())
+						{
+							list[index]->ReloadAll();
+						}
+						else LogManager::getSingleton().Write(LOG_CommandResponse, L"No such ordinal.", LOGLVL_Error);
 					}
 
 				}

@@ -67,6 +67,7 @@ namespace Apoc3D
 			PrimitiveType PrimitiveType;
 			void* UserData;
 
+			bool Discard;
 
 			bool usesIndex() const { return !!IndexBuffer; }
 
@@ -74,7 +75,7 @@ namespace Apoc3D
 				: UserData(0), BaseVertex(0), PrimitiveCount(0), 
 				VertexDecl(0), IndexBuffer(0), VertexBuffer(0),
 				VertexCount(0), VertexSize(0),
-				PrimitiveType(PT_PointList)
+				PrimitiveType(PT_PointList), Discard(false)
 			{ }
 			~GeometryData(void){}
 		};

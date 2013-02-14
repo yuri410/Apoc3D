@@ -29,6 +29,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneObject.h"
 #include "ScenePass.h"
 
+#include "apoc3d/Core/Logging.h"
+
 #include "apoc3d/Config/Configuration.h"
 #include "apoc3d/Config/ConfigurationManager.h"
 #include "apoc3d/Config/ConfigurationSection.h"
@@ -128,7 +130,6 @@ namespace Apoc3D
 
 			// this will only clear the rop list inside. The hashtables are remained as 
 			// it is highly possible the next time the buckets in them are reused.
-			// TODO: memory problem
 			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
 			{
 				MaterialTable* mtrlTbl = *i.getCurrentValue();
@@ -254,28 +255,87 @@ namespace Apoc3D
 			else
 				selectorMask = (uint64)1<<selectorID;
 
+			//const PriorityTable& table = data.getTable();
+
+			//for (PriorityTable::Enumerator i = table.GetEnumerator();i.MoveNext();)
+			//{
+			//	MaterialTable* mtrlTbl = *(i.getCurrentValue());
+			//	for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
+			//	{
+			//		Material* mtrl = *j.getCurrentKey();
+			//		GeometryTable* geoTbl = *(j.getCurrentValue());
+
+			//		if (mtrl->getPassFlags() & selectorMask)
+			//		{
+			//			for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
+			//			{
+			//				const OperationList* opList = *k.getCurrentValue();
+			//				if (opList->getCount())
+			//				{
+			//					device->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+
+			typedef std::list<GeometryData*> InvalidGeoPointerList;
+			typedef std::list<Material*> InvalidMtrlPointerList;
+
+			InvalidMtrlPointerList* invalidMtrlPointers = nullptr;
+			InvalidGeoPointerList* invalidGeoPointers = nullptr;
+
 			const PriorityTable& table = data.getTable();
 
 			for (PriorityTable::Enumerator i = table.GetEnumerator();i.MoveNext();)
 			{
-				MaterialTable* mtrlTbl = *i.getCurrentValue();
+				MaterialTable* mtrlTbl = *(i.getCurrentValue());
 				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
 				{
-					bool isUsed = false;
+					bool isMtrlUsed = false;
 					GeometryTable* geoTbl = *(j.getCurrentValue());
 					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
 					{
+						GeometryData* geoData = *k.getCurrentKey();
+
 						const OperationList* opList = *k.getCurrentValue();
 						if (opList->getCount())
 						{
-							isUsed = true;
+							if (geoData->Discard)
+							{
+								break;
+							}
+
+							isMtrlUsed = true;
+						}
+						else
+						{
+							if (!invalidGeoPointers)
+								invalidGeoPointers = new InvalidGeoPointerList();
+							
+							invalidGeoPointers->push_back(geoData);
 						}
 					}
 
-					if (isUsed)
-					{
-						Material* mtrl = *j.getCurrentKey();
 
+					if (invalidGeoPointers && invalidGeoPointers->size())
+					{
+						for (InvalidGeoPointerList::iterator iter = invalidGeoPointers->begin(); iter != invalidGeoPointers->end(); iter++)
+						{
+							GeometryData* item = *iter;
+							OperationList* list = geoTbl->operator[](item);
+							assert(list->getCount()==0);
+							delete list;
+							geoTbl->Remove(item);
+						}
+
+						invalidGeoPointers->clear();
+					}
+
+
+					Material* mtrl = *j.getCurrentKey();
+					if (isMtrlUsed)
+					{
 						if (mtrl->getPassFlags() & selectorMask)
 						{
 							for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
@@ -288,7 +348,41 @@ namespace Apoc3D
 							}
 						}
 					}
+					else
+					{
+						if (!invalidMtrlPointers)
+							invalidMtrlPointers = new InvalidMtrlPointerList();
+						invalidMtrlPointers->push_back(mtrl);
+					}
 				}
+
+				if (invalidMtrlPointers && invalidMtrlPointers->size())
+				{
+					for (InvalidMtrlPointerList::iterator iter = invalidMtrlPointers->begin(); iter != invalidMtrlPointers->end(); iter++)
+					{
+						Material* item = *iter;
+						GeometryTable* geoTbl = mtrlTbl->operator[](item);
+						for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
+						{
+							OperationList* opList = *k.getCurrentValue();
+							delete opList;
+						}
+						delete geoTbl;
+						mtrlTbl->Remove(item);
+					}
+					invalidMtrlPointers->clear();
+				}
+
+			}
+			
+			if (invalidGeoPointers)
+			{
+				delete invalidGeoPointers;
+			}
+
+			if (invalidMtrlPointers)
+			{
+				delete invalidMtrlPointers;
 			}
 		}
 

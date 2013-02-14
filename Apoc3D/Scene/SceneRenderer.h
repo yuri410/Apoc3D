@@ -164,6 +164,8 @@ namespace Apoc3D
 				return 0;
 			}
 
+			const BatchData& getBatchData() const { return m_batchData; }
+
 			void ResetBatchTable();
 
 			/**
