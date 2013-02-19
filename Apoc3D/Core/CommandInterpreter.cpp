@@ -140,7 +140,7 @@ namespace Apoc3D
 					delete fl;
 
 					istringstream readStrm(binaryBuffer, std::ios::in | std::ios::out | std::ios::binary);
-					while (readStrm.eof())
+					while (!readStrm.eof())
 					{
 						std::string line;
 						getline(readStrm, line);
