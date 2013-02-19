@@ -3,9 +3,14 @@
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Core/ResourceManager.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/Vfs/FileSystem.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Vfs/FileLocateRule.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Utility;
+using namespace Apoc3D::VFS;
 
 SINGLETON_DECL(Apoc3D::Core::CommandInterpreter);
 
@@ -106,6 +111,49 @@ namespace Apoc3D
 			}
 		};
 
+		class ExecCommand : public Command
+		{
+		public:
+			ExecCommand()
+			{
+				m_desc.Name = L"Execute Script";
+				m_desc.CommandName = L"exec";
+				m_desc.NumOfParameters = 1;
+			}
+			virtual void Execute(const Apoc3D::Collections::List<String>& args)
+			{
+				FileLocation* fl = FileSystem::getSingleton().TryLocate(args[0], FileLocateRule::Default);
+
+				if (fl)
+				{
+					String msg = L"Executing ";
+					msg.append(args[0]);
+					msg.append(L" ...");
+
+					LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
+
+					Stream* inStrm = fl->GetReadStream();
+					char* binaryBuffer = new char[static_cast<int32>(inStrm->getLength())];
+					inStrm->Read(binaryBuffer, inStrm->getLength());
+					inStrm->Close();
+					delete inStrm;
+					delete fl;
+
+					istringstream readStrm(binaryBuffer, std::ios::in | std::ios::out | std::ios::binary);
+					while (readStrm.eof())
+					{
+						std::string line;
+						getline(readStrm, line);
+
+						CommandInterpreter::getSingleton().RunLine(StringUtils::toWString(line), false);
+					}
+					
+					delete[] binaryBuffer;
+				}
+				else LogManager::getSingleton().Write(LOG_CommandResponse, String(L"Script '") + args[0] + String(L"'not found."), LOGLVL_Error);
+			}
+		};
+
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
@@ -113,6 +161,7 @@ namespace Apoc3D
 		CommandInterpreter::CommandInterpreter()
 		{
 			RegisterCommand(new ResourceManagementCommands());
+			RegisterCommand(new ExecCommand());
 		}
 
 		CommandInterpreter::~CommandInterpreter()
