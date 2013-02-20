@@ -1,3 +1,8 @@
+#pragma once
+
+#ifndef APOC3D_STACK_H
+#define APOC3D_STACK_H
+
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,9 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#ifndef APOC3D_STACK_H
-#define APOC3D_STACK_H
 
 namespace Apoc3D
 {

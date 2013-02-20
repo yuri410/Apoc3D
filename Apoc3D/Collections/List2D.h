@@ -1,3 +1,8 @@
+#pragma once
+
+#ifndef APOC3D_LIST2D_H
+#define APOC3D_LIST2D_H
+
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,9 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef APOC3D_LIST2D_H
-#define APOC3D_LIST2D_H
-
 #include "apoc3d/Common.h"
 
 namespace Apoc3D

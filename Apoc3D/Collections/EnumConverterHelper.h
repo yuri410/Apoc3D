@@ -1,3 +1,8 @@
+#pragma once
+
+#ifndef APOC3D_ENUMCONVERTERHELPER_H
+#define APOC3D_ENUMCONVERTERHELPER_H
+
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,8 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef APOC3D_ENUMCONVERTERHELPER_H
-#define APOC3D_ENUMCONVERTERHELPER_H
 
 #include "CollectionsCommon.h"
 #include "FastMap.h"

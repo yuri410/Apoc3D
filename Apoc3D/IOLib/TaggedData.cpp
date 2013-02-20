@@ -442,9 +442,7 @@ namespace Apoc3D
 
 			for (int32 i=0;i<len;i++)
 			{
-				float buf[2];
-				br.ReadVector2(buf);
-				value[i] = Vector2Utils::LDVectorPtr(buf);
+				br.ReadVector2(value[i]);
 			}
 
 			br.Close();
@@ -457,9 +455,7 @@ namespace Apoc3D
 
 			for (int32 i=0;i<len;i++)
 			{
-				float buf[3];
-				br.ReadVector3(buf);
-				value[i] = Vector3Utils::LDVectorPtr(buf);
+				br.ReadVector3(value[i]);
 			}
 
 			br.Close();
@@ -472,9 +468,7 @@ namespace Apoc3D
 
 			for (int32 i=0;i<len;i++)
 			{
-				float buf[4];
-				br.ReadVector4(buf);
-				value[i] = Vector4Utils::LDVectorPtr(buf);
+				br.ReadVector4(value[i]);
 			}
 
 			br.Close();

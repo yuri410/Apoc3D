@@ -1,3 +1,6 @@
+#pragma once
+#ifndef APOC3D_RESOURCEHANDLE_H
+#define APOC3D_RESOURCEHANDLE_H
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,8 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef APOC3D_RESOURCEHANDLE_H
-#define APOC3D_RESOURCEHANDLE_H
 
 #include "apoc3d/Common.h"
 #include "Resource.h"

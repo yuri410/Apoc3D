@@ -26,14 +26,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryReader.h"
 
 #include "Streams.h"
-#include "apoc3d/Math/Math.h"
-#include "apoc3d/Math/BoundingBox.h"
-#include "apoc3d/Math/BoundingSphere.h"
 #include "TaggedData.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
 #include "IOUtils.h"
 
 #include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Math/Ray.h"
+#include "apoc3d/Math/BoundingBox.h"
+#include "apoc3d/Math/BoundingSphere.h"
+#include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/Quaternion.h"
+#include "apoc3d/Math/Color.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 
 namespace Apoc3D
 {
@@ -247,53 +250,53 @@ namespace Apoc3D
 			
 		}
 
-		void BinaryReader::ReadVector2(float* buffer)
+		void BinaryReader::ReadVector2(Vector2& vec)
 		{
 			FillBuffer(sizeof(float)*2);
 			if (m_isEndianDependent)
 			{
-				buffer[0] = cr32_dep(&m_buffer[0]);
-				buffer[1] = cr32_dep(&m_buffer[sizeof(float)]);
+				v2x(vec) = cr32_dep(&m_buffer[0]);
+				v2y(vec) = cr32_dep(&m_buffer[sizeof(float)]);
 			}
 			else
 			{
-				buffer[0] = cr32_le(&m_buffer[0]);
-				buffer[1] = cr32_le(&m_buffer[sizeof(float)]);
+				v2x(vec) = cr32_le(&m_buffer[0]);
+				v2y(vec) = cr32_le(&m_buffer[sizeof(float)]);
 			}
 		}
-		void BinaryReader::ReadVector3(float* buffer)
+		void BinaryReader::ReadVector3(Vector3& vec)
 		{
 			FillBuffer(sizeof(float)*2);
 			if (m_isEndianDependent)
 			{
-				buffer[0] = cr32_dep(&m_buffer[0]);
-				buffer[1] = cr32_dep(&m_buffer[sizeof(float)]);
-				buffer[2] = cr32_dep(&m_buffer[sizeof(float)*2]);
+				v3x(vec) = cr32_dep(&m_buffer[0]);
+				v3y(vec) = cr32_dep(&m_buffer[sizeof(float)]);
+				v3z(vec) = cr32_dep(&m_buffer[sizeof(float)*2]);
 			}
 			else
 			{
-				buffer[0] = cr32_le(&m_buffer[0]);
-				buffer[1] = cr32_le(&m_buffer[sizeof(float)]);
-				buffer[2] = cr32_le(&m_buffer[sizeof(float)*2]);
+				v3x(vec) = cr32_le(&m_buffer[0]);
+				v3y(vec) = cr32_le(&m_buffer[sizeof(float)]);
+				v3z(vec) = cr32_le(&m_buffer[sizeof(float)*2]);
 			}
 
 		}
-		void BinaryReader::ReadVector4(float* buffer)
+		void BinaryReader::ReadVector4(Vector4& vec)
 		{
 			FillBuffer(sizeof(float)*2);
 			if (m_isEndianDependent)
 			{
-				buffer[0] = cr32_dep(&m_buffer[0]);
-				buffer[1] = cr32_dep(&m_buffer[sizeof(float)]);
-				buffer[2] = cr32_dep(&m_buffer[sizeof(float)*2]);
-				buffer[3] = cr32_dep(&m_buffer[sizeof(float)*3]);
+				v4x(vec) = cr32_dep(&m_buffer[0]);
+				v4y(vec) = cr32_dep(&m_buffer[sizeof(float)]);
+				v4z(vec) = cr32_dep(&m_buffer[sizeof(float)*2]);
+				v4w(vec) = cr32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
 			{
-				buffer[0] = cr32_le(&m_buffer[0]);
-				buffer[1] = cr32_le(&m_buffer[sizeof(float)]);
-				buffer[2] = cr32_le(&m_buffer[sizeof(float)*2]);
-				buffer[3] = cr32_le(&m_buffer[sizeof(float)*3]);
+				v4x(vec) = cr32_le(&m_buffer[0]);
+				v4y(vec) = cr32_le(&m_buffer[sizeof(float)]);
+				v4z(vec) = cr32_le(&m_buffer[sizeof(float)*2]);
+				v4w(vec) = cr32_le(&m_buffer[sizeof(float)*3]);
 			}
 		}
 

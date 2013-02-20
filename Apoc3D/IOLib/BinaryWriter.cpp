@@ -24,12 +24,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryWriter.h"
 
 #include "Streams.h"
-#include "apoc3d/Math/Math.h"
+#include "TaggedData.h"
+#include "IOUtils.h"
+
+#include "apoc3d/Math/Ray.h"
 #include "apoc3d/Math/BoundingBox.h"
 #include "apoc3d/Math/BoundingSphere.h"
-#include "TaggedData.h"
+#include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/Quaternion.h"
+#include "apoc3d/Math/Color.h"
 
-#include "IOUtils.h"
+
 
 namespace Apoc3D
 {
@@ -280,54 +285,54 @@ namespace Apoc3D
 			m_baseStream->Write(buffer, sizeof(double));
 		}
 
-		void BinaryWriter::WriteVector2(const float* buffer) const
+		void BinaryWriter::WriteVector2(const Vector2& vec) const
 		{
 			char writeBuffer[sizeof(float) * 2];
 			if (m_endianDependent)
 			{
-				r32tomb_dep(buffer[0], writeBuffer);
-				r32tomb_dep(buffer[1], writeBuffer + sizeof(float));
+				r32tomb_dep(v2x(vec), writeBuffer);
+				r32tomb_dep(v2y(vec), writeBuffer + sizeof(float));
 			}
 			else
 			{
-				r32tomb_le(buffer[0], writeBuffer);
-				r32tomb_le(buffer[1], writeBuffer + sizeof(float));
+				r32tomb_le(v2x(vec), writeBuffer);
+				r32tomb_le(v2y(vec), writeBuffer + sizeof(float));
 			}
 			m_baseStream->Write(writeBuffer, sizeof(float)*2);
 		}
-		void BinaryWriter::WriteVector3(const float* buffer) const
+		void BinaryWriter::WriteVector3(const Vector3& vec) const
 		{
 			char writeBuffer[sizeof(float) * 3];
 			if (m_endianDependent)
 			{
-				r32tomb_dep(buffer[0], writeBuffer);
-				r32tomb_dep(buffer[1], writeBuffer + sizeof(float));
-				r32tomb_dep(buffer[2], writeBuffer + sizeof(float) * 2);
+				r32tomb_dep(v3x(vec), writeBuffer);
+				r32tomb_dep(v3y(vec), writeBuffer + sizeof(float));
+				r32tomb_dep(v3z(vec), writeBuffer + sizeof(float) * 2);
 			}
 			else
 			{
-				r32tomb_le(buffer[0], writeBuffer);
-				r32tomb_le(buffer[1], writeBuffer + sizeof(float));
-				r32tomb_le(buffer[2], writeBuffer + sizeof(float) * 2);
+				r32tomb_le(v3x(vec), writeBuffer);
+				r32tomb_le(v3y(vec), writeBuffer + sizeof(float));
+				r32tomb_le(v3z(vec), writeBuffer + sizeof(float) * 2);
 			}
 			m_baseStream->Write(writeBuffer, sizeof(float)*3);
 		}
-		void BinaryWriter::WriteVector4(const float* buffer) const
+		void BinaryWriter::WriteVector4(const Vector4& vec) const
 		{
 			char writeBuffer[sizeof(float) * 4];
 			if (m_endianDependent)
 			{
-				r32tomb_dep(buffer[0], writeBuffer);
-				r32tomb_dep(buffer[1], writeBuffer + sizeof(float));
-				r32tomb_dep(buffer[2], writeBuffer + sizeof(float) * 2);
-				r32tomb_dep(buffer[3], writeBuffer + sizeof(float) * 3);
+				r32tomb_dep(v4x(vec), writeBuffer);
+				r32tomb_dep(v4y(vec), writeBuffer + sizeof(float));
+				r32tomb_dep(v4z(vec), writeBuffer + sizeof(float) * 2);
+				r32tomb_dep(v4w(vec), writeBuffer + sizeof(float) * 3);
 			}
 			else
 			{
-				r32tomb_le(buffer[0], writeBuffer);
-				r32tomb_le(buffer[1], writeBuffer + sizeof(float));
-				r32tomb_le(buffer[2], writeBuffer + sizeof(float) * 2);
-				r32tomb_le(buffer[3], writeBuffer + sizeof(float) * 3);
+				r32tomb_le(v4x(vec), writeBuffer);
+				r32tomb_le(v4y(vec), writeBuffer + sizeof(float));
+				r32tomb_le(v4z(vec), writeBuffer + sizeof(float) * 2);
+				r32tomb_le(v4w(vec), writeBuffer + sizeof(float) * 3);
 			}
 			m_baseStream->Write(writeBuffer, sizeof(float)*4);
 		}

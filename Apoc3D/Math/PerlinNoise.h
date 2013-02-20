@@ -1,4 +1,4 @@
-
+#pragma once
 #ifndef APOC3D_PERLINNOISE_H
 #define APOC3D_PERLINNOISE_H
 
