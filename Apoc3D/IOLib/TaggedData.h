@@ -188,7 +188,7 @@ namespace Apoc3D
 			 */
 			void FillTagList(List<String>& nameTags) const;
 
-
+			bool isEndianIndependent() const { return !m_endianDependent; }
 			Stream* getBaseStream() const { return m_stream; }
 		private:
 			struct Entry
@@ -378,6 +378,9 @@ namespace Apoc3D
 			void Save(Stream* stream) const;
 
 			bool Contains(const String& name) const;
+
+			bool isEndianIndependent() const { return !m_endianDependent; }
+
 		private:
 			struct Entry
 			{

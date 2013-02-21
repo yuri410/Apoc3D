@@ -46,7 +46,6 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		
 		class APAPI Console
 		{
 			friend class ClearCommand;
