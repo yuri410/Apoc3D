@@ -405,7 +405,7 @@ namespace Apoc3D
 		}
 		int64 MaterialEqualityComparer::GetHashCode(const LPMaterial& obj) const
 		{
-			return obj->getBatchHandle();
+			return static_cast<int64>(reinterpret_cast<uintptr>(obj));//->getBatchHandle();
 		}
 
 
@@ -421,7 +421,7 @@ namespace Apoc3D
 		}
 		int64 GeometryDataEqualityComparer::GetHashCode(const LPGeometryData& obj) const
 		{
-			return obj->getBatchHandle();
+			return static_cast<int64>(reinterpret_cast<uintptr>(obj));//->getBatchHandle();
 		}
 	}
 };

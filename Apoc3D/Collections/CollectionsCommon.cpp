@@ -56,7 +56,7 @@ namespace Apoc3D
 		int64 ResourceEqualityComparer::GetHashCode(const LPResource& obj) const
 		{
 			const void* s = obj;
-			return reinterpret_cast<int64>(s);
+			return static_cast<int64>(reinterpret_cast<uintptr>(s));
 		}
 
 		/************************************************************************/
@@ -69,7 +69,7 @@ namespace Apoc3D
 		}
 		int64 PointerEqualityComparer::GetHashCode(const PtrVoid& obj) const
 		{
-			return reinterpret_cast<int64>(obj);
+			return static_cast<int64>(reinterpret_cast<uintptr>(obj));
 		}
 
 		/************************************************************************/

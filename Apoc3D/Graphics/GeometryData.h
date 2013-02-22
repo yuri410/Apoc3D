@@ -44,7 +44,7 @@ namespace Apoc3D
 		/**
 		 *  Define buffers and information used to render a geometry
 		 */
-		class APAPI GeometryData : public HashHandleObject
+		class APAPI GeometryData
 		{
 		public:
 			/**

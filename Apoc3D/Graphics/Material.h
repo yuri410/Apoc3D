@@ -61,7 +61,7 @@ namespace Apoc3D
 		 *  a pass effect will be retrieved from the effect map inside the material,
 		 *  with the pass sequence number as an index.
 		 */
-		class APAPI Material : public HashHandleObject
+		class APAPI Material
 		{
 		public:
 			String ExternalReferenceName;
