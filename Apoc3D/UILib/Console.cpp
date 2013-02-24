@@ -309,7 +309,7 @@ namespace Apoc3D
 			m_desc.Name = L"Console Command Set";
 			m_desc.CommandName = L"console";
 			m_desc.NumOfParameters = 0;
-			m_desc.SubCommands.Add(&m_clearCmd);
+			m_desc.SubCommands.Add(new ClearCommand(c));
 		}
 
 		void ConsoleCommandSet::Execute(const Apoc3D::Collections::List<String>& args)

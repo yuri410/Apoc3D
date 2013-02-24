@@ -45,7 +45,7 @@ namespace Apoc3D
 						LogManager::getSingleton().Write(LOG_CommandResponse, L"  " + StringUtils::ToString(i+1) + L". " + list[i]->getName(), LOGLVL_Infomation);
 					}
 				}
-			} m_listCommand;
+			};
 
 			class ReloadCommand : public Command
 			{
@@ -76,8 +76,8 @@ namespace Apoc3D
 				m_desc.Name = L"Resource Management Command Set";
 				m_desc.CommandName = L"res";
 				m_desc.NumOfParameters = 1;
-				m_desc.SubCommands.Add(&m_listCommand);
-				m_desc.SubCommands.Add(&m_reloadCommand);
+				m_desc.SubCommands.Add(new ListCommand());
+				m_desc.SubCommands.Add(new ReloadCommand());
 			}
 			virtual void Execute(const Apoc3D::Collections::List<String>& args)
 			{
