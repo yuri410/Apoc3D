@@ -212,6 +212,10 @@ namespace Apoc3D
 				{
 					m_currentTimeValue = 0;
 					InitClip();
+					if (m_currentClipValue && m_currentClipValue->Keyframes.getCount()>0)
+					{
+						m_currentFrame = 0;
+					}
 				}
 
 				m_currentTimeValue = time;
