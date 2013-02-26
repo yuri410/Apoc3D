@@ -64,66 +64,102 @@ namespace Apoc3D
 				 *
 				 *  This is useful in occasions like the effect is a post effect without materials, the value of custom
 				 *  effect can be assigned by scene rendering scripts.
-				*/
+				 */
 				EPUSAGE_Unknown=0,
-				/** mc4_ambient
-				*/
+				/** 
+				 *  mc4_ambient
+				 */
 				EPUSAGE_MtrlC4_Ambient,
-				/** mc4_diffuse
-				*/
+				/**
+				 *  mc4_diffuse
+				 */
 				EPUSAGE_MtrlC4_Diffuse,
-				/** mc4_emissive
-				*/
+				/**
+				 *  mc4_emissive
+				 */
 				EPUSAGE_MtrlC4_Emissive,
-				/** mc4_specular
-				*/
+				/**
+				 *  mc4_specular
+				 */
 				EPUSAGE_MtrlC4_Specular,
-				/** mc_power
-				*/
+				/**
+				 *  mc_power
+				 */
 				EPUSAGE_MtrlC_Power,
 				
 
-				/** tr_worldviewproj
-				*/
+				/**
+				 *  tr_worldviewproj
+				 */
 				EPUSAGE_Trans_WorldViewProj=100,
-				/** tr_worldvieworiproj
-				*/
+				/**
+				 *  tr_worldvieworiproj
+				 */
 				EPUSAGE_Trans_WorldViewOriProj,
-				/** tr_world
-				*/
+				/**
+				 *  tr_world
+				 */
 				EPUSAGE_Trans_World,
-				/** tr_worldview
-				*/
+				/**
+				 * tr_worldview
+				 */
 				EPUSAGE_Trans_WorldView,
-				/** tr_view
-				*/
+				/**
+				 * tr_view
+				 */
 				EPUSAGE_Trans_View,
-				/** tr_viewproj
-				*/
+				/**
+				 * tr_viewproj
+				 */
 				EPUSAGE_Trans_ViewProj,
+				/**
+				 * tr_invview
+				 */
+				EPUSAGE_Trans_InvView,
+
 				/**
 				 * tr_instanceworld
 				 *  This parameter is supposed to be a 4x4 matrix array in the shader with a length of
 				 *  InstancingData::MaxOneTimeInstances
 				 */
 				EPUSAGE_Trans_InstanceWorlds,
-				/** tr_proj
-				*/
+				/**
+				 * tr_proj
+				 */
 				EPUSAGE_Trans_Projection,
-				/** tr_invproj
-				*/
+				/**
+				 * tr_invproj
+				 */
 				EPUSAGE_Trans_InvProj,
 
-				/** m4x3_bonestransform
-				*/
+				
+				/**
+				 * m4x3_bonestransform
+				 */
 				EPUSAGE_M4X3_BoneTrans,
-				/** m4x4_bonestransform
-				*/
+				/**
+				 * m4x4_bonestransform
+				 */
 				EPUSAGE_M4X4_BoneTrans,
 
 
-				/** tex_0
-				*/
+				/**
+				 * v3_camerax
+				 */
+				EPUSAGE_V3_CameraX,
+				/**
+				 * v3_cameray
+				 */
+				EPUSAGE_V3_CameraY,
+				/**
+				 * v3_cameraz
+				 */
+				EPUSAGE_V3_CameraZ,
+
+
+				/**
+				 * tex_0
+				 */
 				EPUSAGE_Tex0=200,
 				EPUSAGE_Tex1,
 				EPUSAGE_Tex2,
@@ -142,38 +178,48 @@ namespace Apoc3D
 				EPUSAGE_Tex15,
 				EPUSAGE_Tex16,
 
-				/** lv3_lightDir
-				*/
+				/**
+				 *  lv3_lightDir
+				 */
 				EPUSAGE_LV3_LightDir=500,
-				/** lc4_ambient
-				*/
+				/**
+				 *  lc4_ambient
+				 */
 				EPUSAGE_LC4_Ambient,
-				/** lc4_diffuse
-				*/
+				/**
+				 *  lc4_diffuse
+				 */
 				EPUSAGE_LC4_Diffuse,
-				/** lc4_specular
-				*/
+				/** 
+				 *  lc4_specular
+				 */
 				EPUSAGE_LC4_Specular,
 
-				/** pv3_viewPos
-				*/
+				/**
+				 *  pv3_viewPos
+				 */
 				EPUSAGE_PV3_ViewPos=1000,
-				/** sv2_viewportSize
-				*/
+				/** 
+				 *  sv2_viewportSize
+				 */
 				EPUSAGE_SV2_ViewportSize,
-				/** sv2_invviewportSize
-				*/
+				/**
+				 *  sv2_invviewportSize
+				 */
 				EPUSAGE_SV2_InvViewportSize,
 
-				/** s_unifiedTime. A time from 0 to 5pi will be assigned to the parameter
-				*/
+				/**
+				 *  s_unifiedTime. A time from 0 to 5pi will be assigned to the parameter
+				 */
 				EPUSAGE_S_UnifiedTime,
 
-				/** s_farPlane
-				*/
+				/**
+				 *  s_farPlane
+				 */
 				EPUSAGE_S_FarPlane,
-				/** s_nearPlane
-				*/
+				/**
+				 *  s_nearPlane
+				 */
 				EPUSAGE_S_NearPlane,
 
 				/**
@@ -183,7 +229,8 @@ namespace Apoc3D
 				*/
 				EPUSAGE_InstanceBlob,
 
-				/** The engine will look up the entry(MaterialCustomParameter)
+				/** 
+				 *  The engine will look up the entry(MaterialCustomParameter)
 				 *	with the same name from material's CustomParamTable in render operation.
 				 *  Custom material param need to be specified in a String format in EffectParameter 
 				 *  as CustomMaterialParamName. 
@@ -228,7 +275,8 @@ namespace Apoc3D
 				CEPT_Ref_TextureHandle = 9,
 			};
 
-			/** Defines a parameter in an effect containing effect param mapping info.
+			/** 
+			 *  Defines a parameter in an effect containing effect param mapping info.
 			 * 
 			 *  CustomMaterialParamName and InstanceBlobIndex will be used based on the Usage of the EffectParameter. 
 			 *  See EPUSAGE_CustomMaterialParam for details.

@@ -255,6 +255,28 @@ namespace Apoc3D
 			stream << val;
 			return stream.str();
 		}
+
+		String StringUtils::ToStringBin(uint64 val)
+		{
+			//uint64 result = 0;
+			String result(64, '0');
+
+			for (size_t i=0;i<64;i++)
+			{
+				//if ((val & (1UL << i)))
+				//{
+				//	result[64 - i] = '1';
+				//}
+				val >>= 1;
+				if (val & 1)
+				{
+					result[63-i] = '1';
+				}
+			}
+
+			return result;
+		}
+
 		void StringUtils::Trim(String& str, const String& delims)
 		{
 			str.erase(str.find_last_not_of(delims)+1);

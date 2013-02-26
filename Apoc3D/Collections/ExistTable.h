@@ -70,8 +70,8 @@ namespace Apoc3D
 					return false;
 				}
 			};
+
 		private:
-			
 			struct Entry
 			{
 				int hashCode;
@@ -106,10 +106,10 @@ namespace Apoc3D
 			void Resize()
 			{
 				int prime = HashHelpers::GetPrime(m_count * 2);
-				int* numArray = new int[prime];
+				int* newBuckets = new int[prime];
 				for (int i = 0; i < prime; i++)
 				{
-					numArray[i] = -1;
+					newBuckets[i] = -1;
 				}
 				Entry* destinationArray = new Entry[prime];
 				//memcpy(destinationArray, m_entries, m_count * sizeof(Entry));
@@ -117,11 +117,11 @@ namespace Apoc3D
 				{
 					destinationArray[j] = m_entries[j];
 					int index = destinationArray[j].hashCode % prime;
-					destinationArray[j].next = numArray[index];
-					numArray[index] = j;
+					destinationArray[j].next = newBuckets[index];
+					newBuckets[index] = j;
 				}
 				delete[] m_buckets;
-				m_buckets = numArray;
+				m_buckets = newBuckets;
 				m_bucketsLength = prime;
 				delete[] m_entries;
 				m_entries = destinationArray;
@@ -134,11 +134,11 @@ namespace Apoc3D
 				{
 					Initialize(0);
 				}
-				int num = m_comparer->GetHashCode(item) & 2147483647;
-				int index = num % m_bucketsLength;
+				int hash = m_comparer->GetHashCode(item) & 2147483647;
+				int index = hash % m_bucketsLength;
 				for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 				{
-					if ((m_entries[i].hashCode == num) &&
+					if ((m_entries[i].hashCode == hash) &&
 						m_comparer->Equals(m_entries[i].data, item))
 					{
 						if (add)
@@ -160,12 +160,12 @@ namespace Apoc3D
 					if (m_count == m_entryLength)
 					{
 						Resize();
-						index = num % m_bucketsLength;
+						index = hash % m_bucketsLength;
 					}
 					freeList = m_count;
 					m_count++;
 				}
-				m_entries[freeList].hashCode = num;
+				m_entries[freeList].hashCode = hash;
 				m_entries[freeList].next = m_buckets[index];
 				m_entries[freeList].data = item;
 				m_buckets[index] = freeList;
@@ -175,10 +175,10 @@ namespace Apoc3D
 			{
 				if (m_buckets)
 				{
-					int num = m_comparer->GetHashCode(item) & 2147483647;
-					for (int i = m_buckets[num % m_bucketsLength]; i >= 0; i = m_entries[i].next)
+					int hash = m_comparer->GetHashCode(item) & 2147483647;
+					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == num) && m_comparer->Equals(m_entries[i].data, item))
+						if ((m_entries[i].hashCode == hash) && m_comparer->Equals(m_entries[i].data, item))
 						{
 							return i;
 						}
@@ -186,14 +186,23 @@ namespace Apoc3D
 				}
 				return -1;
 			}
-			ExistTable& operator=(const ExistTable& rhs)
-			{
-				return *this; 
-			}
 		public:
 			int32 getCount() const { return m_count - m_freeCount; }
 
-			ExistTable(const IEqualityComparer<T>* comparer = IBuiltInEqualityComparer<T>::Default)
+			ExistTable(const ExistTable& another)
+				: m_comparer(another.m_comparer), m_bucketsLength(another.m_bucketsLength),
+				m_count(another.m_count), m_entryLength(another.m_entryLength), m_freeCount(another.m_freeCount),
+				m_freeList(another.m_freeList)
+			{
+				m_buckets = new int[m_bucketsLength];
+				memcpy(m_buckets, another.m_buckets, sizeof(int)*m_bucketsLength);
+
+				m_entries = new Entry[m_entryLength];
+				for (int i=0;i<m_entryLength;i++)
+					m_entries[i] = another.m_entries[i];
+			}
+
+			explicit ExistTable(const IEqualityComparer<T>* comparer = IBuiltInEqualityComparer<T>::Default)
 				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
 				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
 			{
@@ -221,6 +230,33 @@ namespace Apoc3D
 				delete[] m_buckets;
 				delete[] m_entries;
 			}
+
+			ExistTable& operator=(const ExistTable& another)
+			{
+				if (this == &another)
+					return *this;
+
+				delete[] m_entries;
+				delete[] m_buckets;
+
+				m_comparer = another.m_comparer;
+				m_bucketsLength = another.m_bucketsLength;
+
+				m_count = another.m_count;
+				m_entryLength = another.m_entryLength;
+				m_freeCount = another.m_freeCount;
+				m_freeList = another.m_freeList;
+
+				m_buckets = new int[m_bucketsLength];
+				memcpy(m_buckets, another.m_buckets, sizeof(int)*m_bucketsLength);
+
+				m_entries = new Entry[m_entryLength];
+				for (int i=0;i<m_entryLength;i++)
+					m_entries[i] = another.m_entries[i];
+
+				return *this; 
+			}
+
 			void Add(const T& item)
 			{
 				Insert(item, true);

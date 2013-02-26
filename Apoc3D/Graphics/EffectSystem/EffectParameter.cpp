@@ -56,12 +56,18 @@ namespace Apoc3D
 					AddPair(L"tr_worldview", EPUSAGE_Trans_WorldView);
 					AddPair(L"tr_view", EPUSAGE_Trans_View);
 					AddPair(L"tr_viewproj", EPUSAGE_Trans_ViewProj);
+					AddPair(L"tr_invview", EPUSAGE_Trans_InvView);
 					AddPair(L"tr_instanceworld", EPUSAGE_Trans_InstanceWorlds);
 					AddPair(L"tr_proj", EPUSAGE_Trans_Projection);
 					AddPair(L"tr_invproj", EPUSAGE_Trans_InvProj);
 
 					AddPair(L"m4x3_bonestransform", EPUSAGE_M4X3_BoneTrans);
 					AddPair(L"m4x4_bonestransform", EPUSAGE_M4X4_BoneTrans);
+
+					AddPair(L"v3_camerax", EPUSAGE_V3_CameraX);
+					AddPair(L"v3_cameray", EPUSAGE_V3_CameraY);
+					AddPair(L"v3_cameraz", EPUSAGE_V3_CameraZ);
+
 
 					AddPair(L"tex_0", EPUSAGE_Tex0);
 					AddPair(L"tex_1", EPUSAGE_Tex1);

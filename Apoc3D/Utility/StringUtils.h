@@ -87,6 +87,8 @@ namespace Apoc3D
 			}
 			static String ToStringHex(uint32 val, unsigned short width=0);
 			static String ToStringHex(uint64 val, unsigned short width=0);
+			static String ToStringBin(uint64 val);
+
 			static String ToString(uint64 val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
 

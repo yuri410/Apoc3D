@@ -204,7 +204,7 @@ namespace Apoc3D
 				for (int i=0;i<m_entryLength;i++)
 					m_entries[i] = another.m_entries[i];
 			}
-			FastMap(const IEqualityComparer<T>* comparer = IBuiltInEqualityComparer<T>::Default)
+			explicit FastMap(const IEqualityComparer<T>* comparer = IBuiltInEqualityComparer<T>::Default)
 				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
 				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
 			{
@@ -230,8 +230,11 @@ namespace Apoc3D
 				delete[] m_entries;
 				delete[] m_buckets;
 			}
-			FastMap& operator=(const FastMap &another)
+			FastMap& operator=(const FastMap& another)
 			{
+				if (this == &another)
+					return *this;
+
 				delete[] m_entries;
 				delete[] m_buckets;
 
@@ -252,6 +255,7 @@ namespace Apoc3D
 
 				return *this; 
 			}
+
 			void Add(const T& item, const S& value)
 			{
 				Insert(item, value, true);

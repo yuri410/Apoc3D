@@ -352,9 +352,8 @@ namespace Apoc3D
 								{
 									LogManager::getSingleton().Write(LOG_Graphics, L"[" + m_name + L"] No InfoBlob Obtained.", LOGLVL_Error);
 								}
+								break;
 							}
-							
-							break;
 						case EPUSAGE_CustomMaterialParam:
 							if (mtrl && ep.CustomMaterialParamName.size())
 							{
@@ -482,7 +481,6 @@ namespace Apoc3D
 					switch (m_parameters[i].Usage)
 					{
 					case EPUSAGE_LC4_Ambient:
-						
 						SetValue(m_parameters[i], RendererEffectParams::LightAmbient);
 						break;
 					case EPUSAGE_LC4_Diffuse:
@@ -499,23 +497,22 @@ namespace Apoc3D
 						{
 							Vector3 pos = RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation();
 							SetVector3(m_parameters[i], pos);
+							break;
 						}
-						break;
-
 					case EPUSAGE_SV2_ViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
 							Vector2 size = Vector2Utils::LDVector((float)vp.Width, (float)vp.Height);
 							SetVector2(m_parameters[i], size);
+							break;
 						}
-						break;
 					case EPUSAGE_SV2_InvViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
 							Vector2 size = Vector2Utils::LDVector(1.f/(float)vp.Width, 1.f/(float)vp.Height);
 							SetVector2(m_parameters[i], size);
+							break;
 						}
-						break;
 					case EPUSAGE_S_FarPlane:
 						{
 							//SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->);
@@ -530,56 +527,77 @@ namespace Apoc3D
 							{
 								SetValue(m_parameters[i], (float)(view.M33 * n /(view.M33*n-1)));
 							}
+							break;
 						}
-						break;
 					case EPUSAGE_S_NearPlane:
 						{
 							const Matrix& view = RendererEffectParams::CurrentCamera->getProjMatrix();
 							float n = - view.M34 * view.M43 / view.M33;
 							SetValue(m_parameters[i], n);
+							break;
 						}
-						break;
 					case EPUSAGE_Trans_View:
 						{
 							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getViewMatrix());
+							break;
 						}
-						break;
+					case EPUSAGE_Trans_InvView:
+						{
+							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getInvViewMatrix());
+							break;
+						}
 					case EPUSAGE_Trans_ViewProj:
 						{
 							Matrix vp;
 							Matrix::Multiply(vp, RendererEffectParams::CurrentCamera->getViewMatrix(), RendererEffectParams::CurrentCamera->getProjMatrix());
 							SetValue(m_parameters[i], vp);
+							break;
 						}
 					case EPUSAGE_Trans_Projection:
 						{
 							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getProjMatrix());
+							break;
 						}
-						break;
 					case EPUSAGE_Trans_InvProj:
 						{
 							Matrix invProj;
 							Matrix::Inverse(invProj, RendererEffectParams::CurrentCamera->getProjMatrix());
 							SetValue(m_parameters[i], invProj);
+							break;
 						}
-						break;
-					case EPUSAGE_Tex0:
-					case EPUSAGE_Tex1:
-					case EPUSAGE_Tex2:
-					case EPUSAGE_Tex3:
-					case EPUSAGE_Tex4:
-					case EPUSAGE_Tex5:
-					case EPUSAGE_Tex6:
-					case EPUSAGE_Tex7:
-					case EPUSAGE_Tex8:
-					case EPUSAGE_Tex9:
-					case EPUSAGE_Tex10:
-					case EPUSAGE_Tex11:
-					case EPUSAGE_Tex12:
-					case EPUSAGE_Tex13:
-					case EPUSAGE_Tex14:
-					case EPUSAGE_Tex15:
-						//SetSamplerState(m_parameters[i]);
-						break;
+					case EPUSAGE_V3_CameraX:
+						{
+							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getInvViewMatrix().GetX());
+							break;
+						}
+					case EPUSAGE_V3_CameraY:
+						{
+							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getInvViewMatrix().GetY());
+							break;
+						}
+					case EPUSAGE_V3_CameraZ:
+						{
+							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ());
+							break;
+						}
+					//case EPUSAGE_Tex0:
+					//case EPUSAGE_Tex1:
+					//case EPUSAGE_Tex2:
+					//case EPUSAGE_Tex3:
+					//case EPUSAGE_Tex4:
+					//case EPUSAGE_Tex5:
+					//case EPUSAGE_Tex6:
+					//case EPUSAGE_Tex7:
+					//case EPUSAGE_Tex8:
+					//case EPUSAGE_Tex9:
+					//case EPUSAGE_Tex10:
+					//case EPUSAGE_Tex11:
+					//case EPUSAGE_Tex12:
+					//case EPUSAGE_Tex13:
+					//case EPUSAGE_Tex14:
+					//case EPUSAGE_Tex15:
+					//	//SetSamplerState(m_parameters[i]);
+					//	break;
 					case EPUSAGE_S_UnifiedTime:
 						SetValue(m_parameters[i], m_unifiedTime);
 						break;
