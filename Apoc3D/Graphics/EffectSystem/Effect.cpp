@@ -567,17 +567,17 @@ namespace Apoc3D
 						}
 					case EPUSAGE_V3_CameraX:
 						{
-							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getInvViewMatrix().GetX());
+							SetVector3(m_parameters[i], RendererEffectParams::CurrentCamera->getInvViewMatrix().GetX());
 							break;
 						}
 					case EPUSAGE_V3_CameraY:
 						{
-							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getInvViewMatrix().GetY());
+							SetVector3(m_parameters[i], RendererEffectParams::CurrentCamera->getInvViewMatrix().GetY());
 							break;
 						}
 					case EPUSAGE_V3_CameraZ:
 						{
-							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ());
+							SetVector3(m_parameters[i], RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ());
 							break;
 						}
 					//case EPUSAGE_Tex0:
