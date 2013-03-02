@@ -54,10 +54,6 @@ namespace Apoc3D
 		 */
 		class APAPI Frustum
 		{
-		private:
-			const static int ClipPlaneCount = 6;
-			Plane m_planes[ClipPlaneCount];
-
 		public:
 			Frustum(void);
 			~Frustum(void);
@@ -77,8 +73,6 @@ namespace Apoc3D
 				}
 				return true;
 			}
-			
-			
 
 			/**
 			 *  Update the frustum with new view and projection matrix.
@@ -89,6 +83,12 @@ namespace Apoc3D
 			 *  Update the frustum with new view-projection matrix.
 			 */
 			void Update(const Matrix& viewProj);
+
+			const Plane& getPlane(FrustumPlane p) const { return m_planes[static_cast<int32>(p)]; }
+		private:
+			const static int ClipPlaneCount = 6;
+			Plane m_planes[ClipPlaneCount];
+
 		};
 	};
 };
