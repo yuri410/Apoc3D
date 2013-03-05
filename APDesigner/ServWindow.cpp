@@ -29,6 +29,8 @@
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Math/ColorValue.h"
 
+using namespace Apoc3D::Graphics::EffectSystem;
+
 namespace APDesigner
 {
 	ServWindow::ServWindow(RenderWindow* wnd, const String& projectFilePath)
@@ -142,6 +144,8 @@ namespace APDesigner
 	{
 		if (m_window->getIsActive())
 			InputAPIManager::getSingleton().Update(time);
+
+		EffectManager::getSingleton().Update(time);
 
 		m_baseForm->Size = Point(m_window->getClientSize().Width, m_window->getClientSize().Height);
 

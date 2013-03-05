@@ -102,8 +102,10 @@ namespace APDesigner
 	}
 
 
-	void BuildInterface::MainThreadUpdate(const GameTime* const time)
+	bool BuildInterface::MainThreadUpdate(const GameTime* const time)
 	{
+		bool justEnded = false;
+
 		String msg;
 		while (BuildInterface::getSingleton().PopLastResult(msg))
 		{
@@ -141,6 +143,7 @@ namespace APDesigner
 				}
 				
 				LogManager::getSingleton().Write(LOG_System, L"Build Ended", LOGLVL_Default);
+				justEnded = true;
 
 				if (m_hasLastError)
 				{
@@ -162,6 +165,7 @@ namespace APDesigner
 				m_buildWarningMessages.clear();
 			}
 		}
+		return justEnded;
 	}
 
 

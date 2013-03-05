@@ -298,6 +298,8 @@ namespace APDesigner
 		if (m_window->getIsActive())
 			InputAPIManager::getSingleton().Update(time);
 
+		EffectManager::getSingleton().Update(time);
+
 		//m_pane->Update(time);
 		//m_form->Update(time);
 		UIRoot::Update(time);
@@ -325,7 +327,10 @@ namespace APDesigner
 		m_buildMemuItem->Enabled = !!m_project;
 		m_savePrjMemuItem->Enabled = !!m_project;
 
-		BuildInterface::getSingleton().MainThreadUpdate(time);
+		if (BuildInterface::getSingleton().MainThreadUpdate(time))
+		{
+			UpdateProjectEffect();
+		}
 	}
 	void MainWindow::Draw(const GameTime* const time)
 	{
@@ -533,8 +538,6 @@ namespace APDesigner
 			LogManager::getSingleton().Write(LOG_System, String(L"Building project '") + m_project->getName() + String(L"'..."));
 			BuildInterface::getSingleton().AddBuild(m_project);
 			BuildInterface::getSingleton().Execute();
-			
-			//UpdateProjectEffect();
 		}
 	}
 	
