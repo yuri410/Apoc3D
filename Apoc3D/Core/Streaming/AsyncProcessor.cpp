@@ -150,7 +150,7 @@ namespace Apoc3D
 				m_syncMutex.lock();
 				result = m_opQueue.getCount() == 0;
 				m_syncMutex.unlock();
-				return true;
+				return result;
 			}
 			int AsyncProcessor::GetOperationCount()
 			{
