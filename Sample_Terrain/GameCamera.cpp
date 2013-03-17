@@ -30,6 +30,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace SampleTerrain
 {
+	float GameCamera::JumpVelocity = 25;
+
 	GameCamera::GameCamera(float aspectRatio)
 		: FpsCamera(aspectRatio), m_isOnGround(false), m_isSprinting(false)//m_height(100), m_fallSpeed(0)
 	{
@@ -143,7 +145,7 @@ namespace SampleTerrain
 	{
 		if (m_isOnGround)
 		{
-			_V3Y(m_velocity) = 25.0f;
+			_V3Y(m_velocity) = JumpVelocity;
 			m_isOnGround = false;
 		}
 	}

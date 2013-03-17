@@ -22,33 +22,42 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#ifndef APSAM_TERDEMO_TERRAINCOMMANDS
+#define APSAM_TERDEMO_TERRAINCOMMANDS
 
-#ifndef GAMECOMMON_H
-#define GAMECOMMON_H
+#include "TerrainCommon.h"
+#include "apoc3d/Core/CommandInterpreter.h"
 
-#include "apoc3d/Engine.h"
-
-#pragma comment(lib, "Apoc3D.lib")
-#pragma comment(lib, "Apoc3D.D3D9RenderSystem.lib")
-#pragma comment(lib, "Apoc3D.WindowsInput.lib")
-#pragma comment(lib, "Apoc3D.Essentials.lib")
-
-// Forward Declarations
 namespace SampleTerrain
 {
-	typedef fastdelegate::FastDelegate0<void> EventHandler;
-	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
+	class GenGetCommand : public Command
+	{
+	public:
+		GenGetCommand();
+		virtual void Execute(const Apoc3D::Collections::List<String>& args);
 
-	class TerrainDemo;
-	class GameCamera;
-	class Terrain;
-	class TerrainMesh;
-	class TerrainMeshManager;
-	class SharedIndexData;
+	};
+	class GenSetCommand : public Command
+	{
+	public:
+		GenSetCommand();
+		virtual void Execute(const Apoc3D::Collections::List<String>& args);
 
+	};
 
-};
+	class GenCommand : public Command
+	{
+	public:
+		GenCommand();
+		virtual void Execute(const Apoc3D::Collections::List<String>& args);
+	};
 
-using namespace Apoc3D;
+	class JumpHeightCommand  : public Command
+	{
+	public:
+		JumpHeightCommand();
+		virtual void Execute(const Apoc3D::Collections::List<String>& args);
+	};
+}
 
 #endif

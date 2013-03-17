@@ -98,6 +98,7 @@ namespace SampleTerrain
 		*/
 		static float GetNoise(int x, int y);
 
+		static PerlinNoise& GetNoiseGenerator() { return Noiser; }
 	private:
 		struct TreeInfo
 		{

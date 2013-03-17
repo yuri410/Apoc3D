@@ -1,6 +1,7 @@
 #include "TerrainDemo.h"
 
 #include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/CommandInterpreter.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
@@ -39,6 +40,7 @@
 #include "GameCamera.h"
 #include "Terrain.h"
 #include "TerrainMesh.h"
+#include "TerrainCommands.h"
 
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics;
@@ -133,6 +135,9 @@ namespace SampleTerrain
 		Terrain::NewSeed();
 
 		m_scene = new OctreeSceneManager(OctreeBox(20000), 20000/256);
+
+		CommandInterpreter::getSingleton().RegisterCommand(new GenCommand());
+		CommandInterpreter::getSingleton().RegisterCommand(new JumpHeightCommand());
 
 		
 		LoadUI();

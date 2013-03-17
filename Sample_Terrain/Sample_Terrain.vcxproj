@@ -134,6 +134,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TerrainCommands.h" />
     <ClInclude Include="TerrainCommon.h" />
     <ClInclude Include="TerrainDemo.h" />
     <ClInclude Include="TerrainMesh.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="GameCamera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TerrainCommands.cpp" />
     <ClCompile Include="TerrainDemo.cpp" />
     <ClCompile Include="TerrainMesh.cpp" />
   </ItemGroup>

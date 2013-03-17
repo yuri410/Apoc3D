@@ -52,12 +52,16 @@ namespace SampleTerrain
 		void Jump();
 
 		bool isSprinting() const { return m_isSprinting; }
+
+
+		static float JumpVelocity;
 	private:
 		//float m_height;
 		//float m_lastHeight;
 		//float m_fallSpeed;
 		bool m_isSprinting;
 		bool m_isOnGround;
+
 	};
 	
 }
