@@ -133,22 +133,35 @@ namespace Apoc3D
 					LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
 
 					Stream* inStrm = fl->GetReadStream();
-					char* binaryBuffer = new char[static_cast<int32>(inStrm->getLength())];
+					int32 streamLength = static_cast<int32>(inStrm->getLength());
+					char* binaryBuffer = new char[streamLength+1];
 					inStrm->Read(binaryBuffer, inStrm->getLength());
 					inStrm->Close();
 					delete inStrm;
 					delete fl;
 
-					istringstream readStrm(binaryBuffer, std::ios::in | std::ios::out | std::ios::binary);
-					while (!readStrm.eof())
-					{
-						std::string line;
-						getline(readStrm, line);
+					binaryBuffer[streamLength] = 0;
 
-						CommandInterpreter::getSingleton().RunLine(StringUtils::toWString(line), false);
+					istringstream readStrm(binaryBuffer, std::ios::in);
+					readStrm.exceptions(std::ios::failbit);
+
+
+					std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(readStrm), std::istreambuf_iterator<char>( ) );
+					buffer.push_back('\0');
+					delete[] binaryBuffer;
+
+					const char* allContent = &buffer[0];
+					String allContentStr = StringUtils::toWString(allContent);
+					std::vector<String> lines = StringUtils::Split(allContentStr, L"\n\r", 50);
+
+					for (size_t i=0;i<lines.size();i++)
+					{
+						String& lineW = lines[i];
+						StringUtils::Trim(lineW);
+
+						CommandInterpreter::getSingleton().RunLine(lineW, false);
 					}
 					
-					delete[] binaryBuffer;
 				}
 				else LogManager::getSingleton().Write(LOG_CommandResponse, String(L"Script '") + args[0] + String(L"'not found."), LOGLVL_Error);
 			}
