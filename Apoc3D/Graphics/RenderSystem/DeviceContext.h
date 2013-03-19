@@ -74,8 +74,13 @@ namespace Apoc3D
 			{
 				bool IsWindowd;
 
+				/**
+				 *  Can the window created be resized.
+				 */
 				bool IsFixedWindow;
 
+				bool IgnoreMonitorChange;
+				
 				/** 
 				 *  Represents when not full screen rendering, whether
 				 *  the engine should create a RenderWindow or(true), or
@@ -91,7 +96,7 @@ namespace Apoc3D
 
 				uint32 FSAASampleCount;
 				bool EnableVSync;
-
+				
 				/** 
 				 *  When IsFullForm==true, this is used to indicate the target area
 				 *  to present the render result.
@@ -104,7 +109,7 @@ namespace Apoc3D
 				RenderParameters()
 					: IsWindowd(false), IsFullForm(false), BackBufferWidth(0), BackBufferHeight(0),
 					DepthBufferFormat(DEPFMT_Depth16), ColorBufferFormat(FMT_Unknown), FSAASampleCount(0), EnableVSync(false),
-					TargetHandle(0), UserData(0), IsFixedWindow(false)
+					TargetHandle(0), UserData(0), IsFixedWindow(false), IgnoreMonitorChange(false)
 				{
 					
 				}

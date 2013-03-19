@@ -73,11 +73,12 @@ namespace Apoc3D
 			 *  Gets the sequence of this pass in a entire scene rendering process.
 			 */
 			int32 getSelectorID() const { return m_selectorID; }
+			void setSelectorID(int32 id) { m_selectorID = id; }
 
 			/**
 			 *  Gets the name of this pass.
 			 */
-			String getName() const { return m_name; }
+			const String& getName() const { return m_name; }
 
 		private:
 			struct ExecutionValue

@@ -91,9 +91,13 @@ namespace Apoc3D
 			else
 			{
 				m_textSize = m_fontRef->MeasureString(Text);
-				if (Size.X < m_textSize.X + m_skin->BtnVertPadding)
+				//if (Size.X < m_textSize.X + m_skin->BtnVertPadding)
+				//if (Size.Y < m_textSize.Y + m_skin->BtnHozPadding)
+
+				if (Size.X == 0)
 					Size.X = m_textSize.X + m_skin->BtnVertPadding;
-				if (Size.Y < m_textSize.Y + m_skin->BtnHozPadding)
+				
+				if (Size.Y == 0)
 					Size.Y = m_textSize.Y + m_skin->BtnHozPadding;
 
 			}
@@ -120,28 +124,24 @@ namespace Apoc3D
 			if (Text.size())
 			{
 				m_textSize = m_fontRef->MeasureString(Text);
-				if (Size.X < m_textSize.X + m_skin->BtnVertPadding)
-					Size.X = m_textSize.X + m_skin->BtnVertPadding;
-				if (Size.Y < m_textSize.Y + m_skin->BtnHozPadding)
-					Size.Y = m_textSize.Y + m_skin->BtnHozPadding;
 
 				m_textPos.X = (int)(m_btnDestRect[0].X + (Size.X - m_textSize.X) / 2.0f);
 				m_textPos.Y = (int)(m_btnDestRect[0].Y + (m_btnDestRect[0].Height - m_textSize.Y) / 2.0f);
 			}
 
-			if (Size.X < m_textSize.X+20)
-			{
-				Size.X = m_textSize.X + 20;
-			}
-			if (Size.Y < m_skin->ButtonTexture->getHeight())
-			{
-				Size.Y = m_skin->ButtonTexture->getHeight();
-			}
-			if (Size.Y < m_textSize.Y + 5)
-			{
-				Size.Y = m_textSize.Y + 5;
-			}
-			
+			//if (Size.X < m_textSize.X+20)
+			//{
+			//	Size.X = m_textSize.X + 20;
+			//}
+			//if (Size.Y < m_skin->ButtonTexture->getHeight())
+			//{
+			//	Size.Y = m_skin->ButtonTexture->getHeight();
+			//}
+			//if (Size.Y < m_textSize.Y + 5)
+			//{
+			//	Size.Y = m_textSize.Y + 5;
+			//}
+			//
 
 			if (m_mouseOver)
 			{

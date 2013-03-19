@@ -52,14 +52,18 @@ namespace Apoc3D
 			m_form->Size = size;
 			m_form->SetSkin(skin);
 
+			int32 lineHeight = static_cast<int32>( FontManager::getSingleton().getFont(skin->ControlFontName)->getLineHeight());
+
 			m_inputText = new TextBox(Point(10, size.Y - 40), size.X - 100, L"");
 			m_inputText->SetSkin(skin);
 			m_inputText->eventReturnPressed().bind(this, &Console::TextBox_ReturnPressed);
 			m_form->getControls().Add(m_inputText);
 
-			m_submit = new Button(Point(size.X - 100, size.Y - 30), L"Submit");
+			m_submit = new Button(Point(size.X - 100, size.Y - 30-2), L"Submit");
 			m_submit->SetSkin(skin);
 			m_submit->eventRelease().bind(this,&Console::Submit_Pressed);
+			m_submit->Size.Y = lineHeight;
+
 			m_form->getControls().Add(m_submit);
 
 			m_pictureBox = new PictureBox(Point(10,10+17), 1);
@@ -107,11 +111,11 @@ namespace Apoc3D
 		void Console::Update(const GameTime* const time)
 		{
 			const Point& size = m_form->Size;
-			m_inputText->Position.Y = size.Y - 45;
+			m_inputText->Position.Y = size.Y - 35;
 			m_inputText->setWidth(size.X - 100);
 			
-			m_submit->Position = Point(size.X - 75, size.Y - 45);
-			m_pictureBox->Size = size-Point(20, 80);
+			m_submit->Position = Point(size.X - 75, size.Y - 35);
+			m_pictureBox->Size = size-Point(20, 75);
 
 			//m_scrollBar->Position = Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 14, m_pictureBox->Position.Y);
 			m_scrollBar->setPosition(Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 12, m_pictureBox->Position.Y));

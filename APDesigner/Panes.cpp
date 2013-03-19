@@ -28,22 +28,23 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "EditorExtensionManager.h"
 
 #include "TextureViewer.h"
+#include "MainWindow.h"
 
 #include "BuildService/BuildService.h"
 #include "CommonDialog/FileDialog.h"
 
-
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
-#include "MainWindow.h"
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/List.h"
-#include "apoc3d/UILib//Button.h"
-#include "apoc3d/UILib/Label.h"
+#include "apoc3d/UILib/Button.h"
 #include "apoc3d/UILib/ComboBox.h"
 #include "apoc3d/UILib/CheckBox.h"
+#include "apoc3d/UILib/FontManager.h"
+#include "apoc3d/UILib/Form.h"
+#include "apoc3d/UILib/List.h"
+#include "apoc3d/UILib/Label.h"
 #include "apoc3d/UILib/Menu.h"
+#include "apoc3d/UILib/StyleSkin.h"
 #include "apoc3d/Project/Project.h"
 
 #include "apoc3d/Vfs/File.h"
@@ -490,6 +491,8 @@ namespace APDesigner
 		Label* label = new Label(Point(PropFieldMargin, top), a, lw);
 		TextBox* tb = new TextBox(Point(PropFieldMargin*2+lw, top), fw-30, b);
 		Button* bb = new Button(Point(tb->Position.X+tb->Size.X, top), 30, L"...");
+		bb->Size.Y = static_cast<int32>( FontManager::getSingleton().getFont(m_skin->ControlFontName)->getLineHeight());
+;
 
 		PropItem item(a, label, tb, bb);
 		item.LoadOrSave = isLoad;

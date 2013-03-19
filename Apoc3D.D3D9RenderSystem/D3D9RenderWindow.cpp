@@ -111,6 +111,8 @@ namespace Apoc3D
 					L"[D3D9]Creating render window. ", 
 					LOGLVL_Infomation);
 
+				getGraphicsDeviceManager()->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
+
 				// Initialize() and Load() are called as the device is being created.
 				getGraphicsDeviceManager()->ChangeDevice(settings);
 
@@ -169,7 +171,8 @@ namespace Apoc3D
 				settings.Windowed = params.IsWindowd;				
 
 				m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
-				
+
+				m_game->getGraphicsDeviceManager()->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
 				m_game->getGraphicsDeviceManager()->ChangeDevice(settings);
 
 			}

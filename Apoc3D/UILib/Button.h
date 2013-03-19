@@ -47,6 +47,7 @@ namespace Apoc3D
 				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
 				m_rotation(0)
 			{
+				Size.X = Size.Y = 0;
 				//BackColor = backColor;
 				//ForeColor = foreColor;
 			}

@@ -96,84 +96,6 @@ namespace Apoc3D
 		class APAPI SceneProcedure
 		{
 		public:
-			/**
-			 *  Find a variable define in the procedure script by name; 
-			 *  then returns as a RenderTarget.
-			 */
-			RenderTarget* FindRenderTargetVar(const String& name) const
-			{
-				if (!m_isAvailable)
-					return 0;
-				for (int i=0;i<m_varCount;i++)
-				{
-					if (m_vars[i]->Name==name)
-					{
-						return m_vars[i]->RTValue;
-					}
-				}
-				return 0;
-			}
-			void SetTextureVar(const String& name, ResourceHandle<Texture>* tex)
-			{
-				for (int i=0;i<m_varCount;i++)
-				{
-					if (m_vars[i]->Name == name)
-					{
-						assert(m_vars[i]->Type == VARTYPE_Texture);
-						m_vars[i]->TextureValue = tex;
-						break;
-					}
-				}
-			}
-			void SetBooleanVar(const String& name, bool val)
-			{
-				for (int i=0;i<m_varCount;i++)
-				{
-					if (m_vars[i]->Name == name)
-					{
-						assert(m_vars[i]->Type == VARTYPE_Boolean);
-						m_vars[i]->Value[0] = val ? 1:0;
-						break;
-					}
-				}
-			}
-			void SetVector4Var(const String& name, const Vector4& val)
-			{
-				for (int i=0;i<m_varCount;i++)
-				{
-					if (m_vars[i]->Name == name)
-					{
-						assert(m_vars[i]->Type == VARTYPE_Vector4);
-						memcpy(m_vars[i]->Value, &val, sizeof(float)*4);
-						break;
-					}
-				}
-			}
-			void SetVector2Var(const String& name, const Vector2& val)
-			{
-				for (int i=0;i<m_varCount;i++)
-				{
-					if (m_vars[i]->Name == name)
-					{
-						assert(m_vars[i]->Type == VARTYPE_Vector2);
-						memcpy(m_vars[i]->Value, &val, sizeof(float)*2);
-						break;
-					}
-				}
-			}
-			void SetFloatVar(const String& name, const float val)
-			{
-				for (int i=0;i<m_varCount;i++)
-				{
-					if (m_vars[i]->Name == name)
-					{
-						assert(m_vars[i]->Type == VARTYPE_Single);
-						*reinterpret_cast<float*>(m_vars[i]->Value) = val;
-						break;
-					}
-				}
-			}
-
 			SceneProcedure(RenderDevice* device);
 			~SceneProcedure(void);
 
@@ -195,6 +117,21 @@ namespace Apoc3D
 			 *  If this method is call when not rendering, eg. updating, the last camera use will be returned.
 			 */
 			const Camera* getLastCamera() const { return m_lastCamera; }
+
+			ScenePass* getPass(int32 index) const { return m_passes[index]; }
+			int32 getPassCount() const { return m_passes.getCount(); }
+			
+			/**
+			 *  Find a variable define in the procedure script by name; 
+			 *  then returns as a RenderTarget.
+			 */
+			RenderTarget* FindRenderTargetVar(const String& name) const;
+
+			void SetTextureVar(const String& name, ResourceHandle<Texture>* tex);
+			void SetBooleanVar(const String& name, bool val);
+			void SetVector4Var(const String& name, const Vector4& val);
+			void SetVector2Var(const String& name, const Vector2& val);
+			void SetFloatVar(const String& name, const float val);
 
 		private:
 			RenderDevice* m_renderDevice;

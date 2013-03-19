@@ -39,7 +39,7 @@ namespace Apoc3D
 			GraphicsDeviceManager::GraphicsDeviceManager(Game* game, IDirect3D9* d3d9)
 				: m_currentSetting(0),m_device(0),
 				m_deviceLost(false), m_ignoreSizeChanges(false), m_doNotStoreBufferSize(false), m_renderingOccluded(false),
-				m_direct3D9(d3d9)
+				m_direct3D9(d3d9), m_userIgnoreMoniorChanges(false)
 			{
 				assert(game);
 
@@ -218,6 +218,9 @@ namespace Apoc3D
 			void GraphicsDeviceManager::Window_MonitorChanged()
 			{
 				if (!EnsureDevice() || !m_currentSetting->Windowed || m_ignoreSizeChanges)
+					return;
+
+				if (m_userIgnoreMoniorChanges)
 					return;
 
 				HMONITOR windowMonitor = MonitorFromWindow(m_game->getWindow()->getHandle(), MONITOR_DEFAULTTOPRIMARY);

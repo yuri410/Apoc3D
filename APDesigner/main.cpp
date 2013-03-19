@@ -117,6 +117,8 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	params.FSAASampleCount = 4;
 	params.IsFullForm = true;
 	params.IsWindowd = true;
+	params.IgnoreMonitorChange = true;
+
 	if (!startupParams.ServiceMode)
 	{
 		DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();

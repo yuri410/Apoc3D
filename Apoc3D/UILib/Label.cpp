@@ -358,10 +358,22 @@ namespace Apoc3D
 			}
 			else
 			{
-				m_visibleLines = (int)ceilf((float)Size.Y / m_fontRef->getLineHeightInt());
+				//if (Size.Y == 0)
+				{
+					m_visibleLines = (int)ceilf((float)Size.Y / m_fontRef->getLineHeightInt());
 
-				Size.Y = m_visibleLines * m_fontRef->getLineHeightInt() + 2;
+					Size.Y = m_visibleLines * m_fontRef->getLineHeightInt() + 2;
+				}
+				//else
+				//{
+				//	m_visibleLines = static_cast<int32>(0.5f + Size.Y / m_fontRef->getLineHeight());
 
+				//	if (m_visibleLines == 0)
+				//	{
+				//		m_visibleLines = 1;
+				//	}
+				//}
+				
 				m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
 					m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
 				m_destRect[1] = Apoc3D::Math::Rectangle(0,0, 

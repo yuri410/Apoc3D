@@ -700,14 +700,18 @@ namespace APDesigner
 
 	void ColorField::Initialize(RenderDevice* device)
 	{
+		assert(m_skin);
+		int32 lineHeight = static_cast<int32>( FontManager::getSingleton().getFont(m_skin->ControlFontName)->getLineHeight());
+
 		m_lblAmbient = new Label(Position, Text, 80);
 		m_lblAmbient->SetSkin(m_skin);
 		m_lblAmbient->setOwner(getOwner());
 		m_lblAmbient->Initialize(device);
+		m_lblAmbient->Size.Y = lineHeight;
 		
 		m_pbAmbient = new PictureBox(Position + Point(100, 0), 1);
 		m_pbAmbient->SetSkin(m_skin);
-		m_pbAmbient->Size = Point(50, m_lblAmbient->Size.Y);
+		m_pbAmbient->Size = Point(50, lineHeight);
 		m_pbAmbient->eventPictureDraw().bind(this, &ColorField::PictureBox_Draw);
 		m_pbAmbient->setOwner(getOwner());
 		m_pbAmbient->Initialize(device);
@@ -719,6 +723,7 @@ namespace APDesigner
 		
 		m_btnAmbient->SetSkin(m_skin);
 		m_btnAmbient->setOwner(getOwner());
+		m_btnAmbient->Size.Y = lineHeight;
 		m_btnAmbient->Initialize(device);
 		m_btnAmbient->Position.Y += (m_lblAmbient->Size.Y - m_btnAmbient->Size.Y)/2;
 		m_btnAmbient->eventPress().bind(this, &ColorField::Button_Press);

@@ -259,5 +259,81 @@ namespace Apoc3D
 			}
 
 		}
+
+		RenderTarget* SceneProcedure::FindRenderTargetVar(const String& name) const
+		{
+			if (!m_isAvailable)
+				return 0;
+			for (int i=0;i<m_varCount;i++)
+			{
+				if (m_vars[i]->Name==name)
+				{
+					return m_vars[i]->RTValue;
+				}
+			}
+			return nullptr;
+		}
+
+		void SceneProcedure::SetTextureVar(const String& name, ResourceHandle<Texture>* tex)
+		{
+			for (int i=0;i<m_varCount;i++)
+			{
+				if (m_vars[i]->Name == name)
+				{
+					assert(m_vars[i]->Type == VARTYPE_Texture);
+					m_vars[i]->TextureValue = tex;
+					break;
+				}
+			}
+		}
+		void SceneProcedure::SetBooleanVar(const String& name, bool val)
+		{
+			for (int i=0;i<m_varCount;i++)
+			{
+				if (m_vars[i]->Name == name)
+				{
+					assert(m_vars[i]->Type == VARTYPE_Boolean);
+					m_vars[i]->Value[0] = val ? 1:0;
+					break;
+				}
+			}
+		}
+		void SceneProcedure::SetVector4Var(const String& name, const Vector4& val)
+		{
+			for (int i=0;i<m_varCount;i++)
+			{
+				if (m_vars[i]->Name == name)
+				{
+					assert(m_vars[i]->Type == VARTYPE_Vector4);
+					memcpy(m_vars[i]->Value, &val, sizeof(float)*4);
+					break;
+				}
+			}
+		}
+		void SceneProcedure::SetVector2Var(const String& name, const Vector2& val)
+		{
+			for (int i=0;i<m_varCount;i++)
+			{
+				if (m_vars[i]->Name == name)
+				{
+					assert(m_vars[i]->Type == VARTYPE_Vector2);
+					memcpy(m_vars[i]->Value, &val, sizeof(float)*2);
+					break;
+				}
+			}
+		}
+		void SceneProcedure::SetFloatVar(const String& name, const float val)
+		{
+			for (int i=0;i<m_varCount;i++)
+			{
+				if (m_vars[i]->Name == name)
+				{
+					assert(m_vars[i]->Type == VARTYPE_Single);
+					*reinterpret_cast<float*>(m_vars[i]->Value) = val;
+					break;
+				}
+			}
+		}
+
 	};
 };

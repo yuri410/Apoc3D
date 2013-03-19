@@ -92,7 +92,8 @@ namespace APDesigner
 		float m_distance;
 
 		PictureBox* m_modelViewer;
-
+		ComboBox* m_passViewSelect;
+		
 		FastList<Label*> m_labels;
 
 		PictureBox* m_pbTime;
@@ -103,6 +104,7 @@ namespace APDesigner
 		Button* m_btnAddMkey;
 		Button* m_btnRemoveMKey;
 		
+		// utilities
 		Button* m_recenterModel;
 		Button* m_revertZ;
 		Button* m_swapYZ;
@@ -187,6 +189,7 @@ namespace APDesigner
 		void ZoomIn_Pressed(Control* ctrl);
 		void ZoomOut_Pressed(Control* ctrl);
 		void SetSequenceImages_Pressed(Control* ctrl);
+		void PassViewSelect_SelectionChanged(Control* ctrl);
 
 		void CBUseRef_Checked(Control* ctrl);
 

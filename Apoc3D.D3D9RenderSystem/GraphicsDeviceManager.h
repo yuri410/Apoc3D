@@ -43,6 +43,8 @@ namespace Apoc3D
 
 				Game* m_game;
 
+				bool m_userIgnoreMoniorChanges;
+
 				bool m_ignoreSizeChanges;
 				bool m_deviceLost;
 
@@ -80,6 +82,7 @@ namespace Apoc3D
 				D3DDevice* getDevice() const { return m_device; }
 				IDirect3D9* getDirect3D() const { return m_direct3D9; }
 
+				bool& UserIgnoreMonitorChanges() { return m_userIgnoreMoniorChanges; }
 
 				/* Ensures that the device is properly initialized and ready to render.
 				*/
