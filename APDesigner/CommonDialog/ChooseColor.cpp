@@ -1,6 +1,15 @@
 #include "ChooseColor.h"
 
+#include "Apoc3D/Vfs/File.h"
+#include "Apoc3D/IOLib/BinaryReader.h"
+#include "Apoc3D/IOLib/BinaryWriter.h"
+#include "Apoc3D/IOLib/Streams.h"
+
 #include <Windows.h>
+
+using namespace Apoc3D::IO;
+using namespace Apoc3D::VFS;
+
 #undef GetGValue
 #define GetGValue(rgb) (LOBYTE((rgb) >> 8))
 
@@ -11,8 +20,29 @@ namespace APDesigner
 
 		DialogResult ChooseColorDialog::ShowDialog()
 		{
+			static const String SettingsFileName = L"apd_colordialog.bin";
+			static const int32 CustomColorCount = 16;
+			static const int32 FileID = 'ADCD';
+
+			static COLORREF acrCustClr[CustomColorCount]; // array of custom colors 
 			CHOOSECOLOR cc;                 // common dialog box structure 
-			static COLORREF acrCustClr[16]; // array of custom colors 
+			
+			if (File::FileExists(SettingsFileName))
+			{
+				FileStream* fs = new FileStream(SettingsFileName);
+				BinaryReader* br = new BinaryReader(fs);
+
+				if (br->ReadInt32() == FileID)
+				{
+					for (int32 i=0;i<CustomColorCount;i++)
+					{
+						acrCustClr[i] = br->ReadUInt32();
+					}
+				}
+
+				br->Close();
+				delete br;
+			}
 
 			static DWORD rgbCurrent;        // initial color selection
 			rgbCurrent = RGB(GetColorR(m_selectedColor), GetColorG(m_selectedColor), GetColorB(m_selectedColor));
@@ -33,6 +63,20 @@ namespace APDesigner
 					GetGValue(cc.rgbResult)&0xff,
 					GetBValue(cc.rgbResult)&0xff,
 					0xff);
+
+
+				FileOutStream* fs = new FileOutStream(SettingsFileName);
+				BinaryWriter* bw = new BinaryWriter(fs);
+
+				bw->Write(FileID);
+				for (int32 i=0;i<CustomColorCount;i++)
+				{
+					bw->Write(static_cast<uint32>(acrCustClr[i]));
+				}
+
+				bw->Close();
+				delete bw;
+
 				return DLGRES_OK;
 			}
 			m_selectedColor = 0;
