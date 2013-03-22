@@ -182,8 +182,8 @@ namespace Apoc3D
 			int GetExpandedNodeCount() const { return GetExpandedNodeCount(m_nodes); }
 			int GetExpandedNodeCount(const FastList<TreeViewNode*>& node) const;
 			int GetExpandedNodeMaxRight(const FastList<TreeViewNode*>& node) const;
-			int GetAllNodeCount(const FastList<TreeViewNode*>& node) const;
-			int GetAllNodeCount() const;
+			int GetAllVisibleNodeCount(const FastList<TreeViewNode*>& node) const;
+			int GetAllVisibleNodeCount() const;
 			int MeasureExpandedNodeWidth() const;
 			int MeasureExpandedModeHeight() const;
 		public:

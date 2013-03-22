@@ -389,20 +389,21 @@ namespace Apoc3D
 				delete m_vscrollbar;
 		}
 
-		int TreeView::GetAllNodeCount(const FastList<TreeViewNode*>& node) const
+		int TreeView::GetAllVisibleNodeCount(const FastList<TreeViewNode*>& node) const
 		{
 			int result = node.getCount();
 
 			for (int i=0;i<node.getCount();i++)
 			{
-				result+=GetAllNodeCount( node[i]->getNodes());
+				if (node[i]->isExpanded())
+					result += GetAllVisibleNodeCount( node[i]->getNodes());
 			}
 			
 			return result;
 		}
-		int TreeView::GetAllNodeCount() const
+		int TreeView::GetAllVisibleNodeCount() const
 		{
-			return GetAllNodeCount(m_nodes);
+			return GetAllVisibleNodeCount(m_nodes);
 		}
 		int TreeView::GetExpandedNodeMaxRight(const FastList<TreeViewNode*>& node) const
 		{
@@ -502,7 +503,7 @@ namespace Apoc3D
 
 			if (getUseHorizontalScrollbar())
 			{
-				if (GetAllNodeCount()>m_visisbleItems)
+				if (GetAllVisibleNodeCount()>m_visisbleItems)
 				{
 					m_hscrollbar = new ScrollBar(Point(Position.X+1,Position.Y+Size.Y-13-12),ScrollBar::SCRBAR_Horizontal,Size.X -14);
 				}
@@ -595,8 +596,10 @@ namespace Apoc3D
 		void TreeView::UpdateHScrollbar()
 		{
 			m_hScrollWidth = MeasureExpandedNodeWidth();
+			int barmax = m_hScrollWidth - Size.X;
+			if (barmax<0) barmax = 0;
 			if (m_hscrollbar)
-				m_hscrollbar->setMax(m_hScrollWidth);
+				m_hscrollbar->setMax(barmax);
 		}
 
 		void TreeView::DrawNodes(Sprite* sprite, const FastList<TreeViewNode*>& nodes, int depth, int& counter, int maxCount)
@@ -760,7 +763,15 @@ namespace Apoc3D
 		}
 		void TreeView::DrawScrollbar(Sprite* sprite)
 		{
-			m_vscrollbar->setMax(max(0, GetAllNodeCount()-m_visisbleItems));
+			if (m_hscrollbar && m_vscrollbar->getMax()>0)
+			{
+				m_vscrollbar->setMax(max(0, GetAllVisibleNodeCount()-m_visisbleItems+1));
+			}
+			else
+			{
+				m_vscrollbar->setMax(max(0, GetAllVisibleNodeCount()-m_visisbleItems));
+			}
+
 			if (m_vscrollbar->getValue()>m_vscrollbar->getMax())
 				m_vscrollbar->setValue(m_vscrollbar->getMax());
 
@@ -785,12 +796,12 @@ namespace Apoc3D
 				m_vscrollbar->setHeight(Size.Y - 12-12);
 				m_hscrollbar->setMax(m_hScrollWidth);
 				m_hscrollbar->Draw(sprite);
-				m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight())-1;
+				//m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight())-1;
 			}
 			else if ((!m_hscrollbar || !m_hscrollbar->getMax()) && m_vscrollbar->getHeight() != Size.Y-2)
 			{
 				m_vscrollbar->setHeight(Size.Y - 2-12);
-				m_visisbleItems++;
+				//m_visisbleItems++;
 			}
 		}
 
@@ -820,7 +831,7 @@ namespace Apoc3D
 
 			if (getUseHorizontalScrollbar())
 			{
-				if (GetAllNodeCount()>m_visisbleItems)
+				if (GetAllVisibleNodeCount()>m_visisbleItems)
 				{
 					m_hscrollbar->setPosition( Point(Position.X+1,Position.Y+Size.Y-13));
 				}
