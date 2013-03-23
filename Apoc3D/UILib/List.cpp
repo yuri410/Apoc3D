@@ -535,6 +535,8 @@ namespace Apoc3D
 		}
 		void TreeView::Update(const GameTime* const time)
 		{
+			m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight());
+
 			if (m_vscrollbar && m_vscrollbar->Visible)
 			{
 				m_vscrollbar->Update(time);
