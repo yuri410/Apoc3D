@@ -145,7 +145,7 @@ namespace APDesigner
 				LogManager::getSingleton().Write(LOG_System, L"Build Ended", LOGLVL_Default);
 				justEnded = true;
 
-				if (m_hasLastError)
+				if (m_hasLastError || m_buildErrorMessages.size() || m_buildWarningMessages.size())
 				{
 					LogManager::getSingleton().Write(LOG_System, L"Build has some issues.", LOGLVL_Error);
 
