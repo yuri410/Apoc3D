@@ -1202,7 +1202,7 @@ namespace Apoc3D
 		
 		Point UIRoot::ClampFormMovementOffset(Form* frm, const Point& vec)
 		{
-			if (frm->getBorderStyle() == FBS_Sizable && frm != m_modalForm)
+			if (frm != m_modalForm)
 			{
 				RenderDevice* dev = frm->getRenderDevice();
 
