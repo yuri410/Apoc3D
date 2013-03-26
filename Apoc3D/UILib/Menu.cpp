@@ -47,6 +47,12 @@ namespace Apoc3D
 			m_helper.eventKeyRelease().bind(this, &Menu::Keyboard_OnRelease);
 			
 		}
+
+		Menu::~Menu()
+		{
+
+		}
+
 		void Menu::Initialize(RenderDevice* device)
 		{
 			Control::Initialize(device);
