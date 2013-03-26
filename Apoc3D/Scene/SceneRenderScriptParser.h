@@ -50,7 +50,6 @@ namespace Apoc3D
 		typedef unordered_map<String, String> BlockArgs;
 		class APAPI SceneRenderScriptParser
 		{
-		
 		public:
 			List<ScenePassData> PassData;
 			FastList<SceneVariable*> GlobalVars;

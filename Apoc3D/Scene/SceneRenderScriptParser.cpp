@@ -67,7 +67,9 @@ namespace Apoc3D
 		struct PriorInfo
 		{
 			char OperatorChar;
+			// left side priority
 			int P1;
+			// right side priority
 			int P2;
 		};
 		static const PriorInfo pList[6] = {
@@ -102,6 +104,11 @@ namespace Apoc3D
 		PixelFormat ConvertFormat(const string& fmt);
 		DepthFormat ConvertDepthFormat(const string& fmt);
 
+		String getElementName(const TiXmlElement* elem) { return StringUtils::toWString(elem->ValueStr()); }
+		String getNodeText(const TiXmlText* text) { return StringUtils::toWString(text->ValueStr()); }
+		String getAttribName(const TiXmlAttribute* attrib) { return StringUtils::toWString(attrib->NameTStr()); }
+		String getAttribValue(const TiXmlAttribute* attrib) { return StringUtils::toWString(attrib->ValueStr()); }
+
 
 		SceneVariable* FindVar(const FastList<SceneVariable*>& vars, const String& name)
 		{
@@ -110,7 +117,7 @@ namespace Apoc3D
 				if (vars[i]->Name == name)
 					return vars[i];
 			}
-			return 0;
+			return nullptr;
 		}
 
 		class ExpressionCompiler
@@ -487,20 +494,12 @@ namespace Apoc3D
 			}
 		};
 
-		String getElementName(const TiXmlElement* elem) { return StringUtils::toWString(elem->ValueStr()); }
-		String getNodeText(const TiXmlText* text) { return StringUtils::toWString(text->ValueStr()); }
-		String getAttribName(const TiXmlAttribute* attrib) { return StringUtils::toWString(attrib->NameTStr()); }
-		String getAttribValue(const TiXmlAttribute* attrib) { return StringUtils::toWString(attrib->ValueStr()); }
 
 		SceneRenderScriptParser::SceneRenderScriptParser(RenderDevice* dev)
 			: m_renderDevice(dev)
 		{
 
 		}
-
-		
-	
-
 
 		// the parsing processing is done recursively as the structure of xml
 		// first the outer element, then the inside ScenePass and Commands
@@ -1622,156 +1621,20 @@ namespace Apoc3D
 
 		PixelFormat ConvertFormat(const string& fmt)
 		{
-			if (fmt == string("L8"))
-			{
-				return FMT_Luminance8;
-			}
-			else if (fmt == string("L16"))
-			{
-				return FMT_Luminance16;
-			}
-			else if (fmt == string("A8"))
-			{
-				return FMT_Alpha8;
-			}
-			else if (fmt == string("A8L8"))
-			{
-				return FMT_A8L8;
-			}
-			else if (fmt == string("R5G6B5"))
-			{
-				return FMT_R5G6B5;
-			}
-			else if (fmt == string("B5G6R5"))
-			{
-				return FMT_B5G6R5;
-			}
-			else if (fmt == string("A4R4G4B4"))
-			{
-				return FMT_A4R4G4B4;
-			}
-			else if (fmt == string("A1R5G5B5"))
-			{
-				return FMT_A1R5G5B5;
-			}
-			else if (fmt == string("R8G8B8"))
-			{
-				return FMT_R8G8B8;
-			}
-			else if (fmt == string("B8G8R8"))
-			{
-				return FMT_B8G8R8;
-			}
-			else if (fmt == string("A8R8G8B8"))
-			{
-				return FMT_A8R8G8B8;
-			}
-			else if (fmt == string("A8B8G8R8"))
-			{
-				return FMT_A8B8G8R8;
-			}
-			else if (fmt == string("B8G8R8A8"))
-			{
-				return FMT_B8G8R8A8;
-			}
-			else if (fmt == string("A2R10G10B10"))
-			{
-				return FMT_A2R10G10B10;
-			}
-			else if (fmt == string("A2B10G10R10"))
-			{
-				return FMT_A2B10G10R10;
-			}
-			else if (fmt == string("A16B16G16R16F"))
-			{
-				return FMT_A16B16G16R16F;
-			}
-			else if (fmt == string("A32B32G32R32F"))
-			{
-				return FMT_A32B32G32R32F;
-			}
-			else if (fmt == string("X8R8G8B8"))
-			{
-				return FMT_X8R8G8B8;
-			}
-			else if (fmt == string("X8B8G8R8"))
-			{
-				return FMT_X8B8G8R8;
-			}
-			else if (fmt == string("R8G8B8A8"))
-			{
-				return FMT_R8G8B8A8;
-			}
-			else if (fmt == string("A16B16G16R16"))
-			{
-				return FMT_A16B16G16R16;
-			}
-			else if (fmt == string("R3G3B2"))
-			{
-				return FMT_R3G3B2;
-			}
-			else if (fmt == string("R16F"))
-			{
-				return FMT_R16F;
-			}
-			else if (fmt == string("R32F"))
-			{
-				return FMT_R32F;
-			}
-			else if (fmt == string("G16R16"))
-			{
-				return FMT_G16R16;
-			}
-			else if (fmt == string("G16R16F"))
-			{
-				return FMT_G16R16F;
-			}
-			else if (fmt == string("G32R32F"))
-			{
-				return FMT_G32R32F;
-			}
-			else if (fmt == string("R16G16B16"))
-			{
-				return FMT_R16G16B16;
-			}
-			else if (fmt == string("B4G4R4A4"))
-			{
-				return FMT_B4G4R4A4;
-			}
-			return FMT_Unknown;
-		}
-		DepthFormat ConvertDepthFormat(const string& fmt)
-		{
-			if (fmt == string("D15S1"))
-			{
-				return DEPFMT_Depth15Stencil1;
-			}
-			else if (fmt == string("D16"))
-			{
-				return DEPFMT_Depth16;
-			}
-			else if (fmt == string("D24"))
-			{
-				return DEPFMT_Depth24X8;
-			}
-			else if (fmt == string("D24S4"))
-			{
-				return DEPFMT_Depth24Stencil4;
-			}
-			else if (fmt == string("D24S8"))
-			{
-				return DEPFMT_Depth24Stencil8;
-			}
-			else if (fmt == string("D24S8F"))
-			{
-				return DEPFMT_Depth24Stencil8Single;
-			}
-			else if (fmt == string("D32"))
-			{
-				return DEPFMT_Depth32;
-			}
-			return DEPFMT_Count;
+			String fmt2(fmt.size(), ' ');
+			for (size_t i=0;i<fmt.size();i++)
+				fmt2[i] = fmt[i];
+
+			return PixelFormatUtils::ConvertFormat(fmt2);
 		}
 
+		DepthFormat ConvertDepthFormat(const string& fmt)
+		{
+			String fmt2(fmt.size(), ' ');
+			for (size_t i=0;i<fmt.size();i++)
+				fmt2[i] = fmt[i];
+
+			return PixelFormatUtils::ConvertDepthFormat(fmt2);
+		}
 	}
 }
