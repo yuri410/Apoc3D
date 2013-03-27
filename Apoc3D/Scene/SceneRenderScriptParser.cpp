@@ -1630,6 +1630,9 @@ namespace Apoc3D
 
 		DepthFormat ConvertDepthFormat(const string& fmt)
 		{
+			if (fmt.empty())
+				return DEPFMT_Count;
+
 			String fmt2(fmt.size(), ' ');
 			for (size_t i=0;i<fmt.size();i++)
 				fmt2[i] = fmt[i];
