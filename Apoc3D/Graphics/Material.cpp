@@ -71,21 +71,19 @@ namespace Apoc3D
 			Ambient(m.Ambient), Diffuse(m.Diffuse), Specular(m.Specular), Emissive(m.Emissive), Power(m.Power),
 			Cull(m.Cull),
 			UsePointSprite(m.UsePointSprite),
-			ExternalReferenceName(m.ExternalReferenceName)
+			ExternalReferenceName(m.ExternalReferenceName),
+			m_customParametrs(m.m_customParametrs), m_effectName(m.m_effectName), m_texName(m.m_texName)
 		{
 			memcpy(m_texDirty, m.m_texDirty, sizeof(m_texDirty));
+			memset(m_tex, 0, sizeof(m_tex));
+			memset(m_effects, 0, sizeof(m_effects));
 
-			m_customParametrs = m.m_customParametrs;
-			m_effectName = m.m_effectName;
 			for (int i=0;i<MaxScenePass;i++)
 			{
-				//m_effectName[i] = m.m_effectName.at(i);
 				LoadEffect(i);
 			}
-			m_texName = m.m_texName;
 			for (int i=0;i<MaxTextures;i++)
 			{
-				//m_texName[i] = m.m_texName.at(i);
 				LoadTexture(i);
 			}
 		}
