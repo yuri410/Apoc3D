@@ -6,7 +6,7 @@
  * -----------------------------------------------------------------------------
  * This source file is part of Apoc3D Engine
  * 
- * Copyright (c) 2009+ Tao Games
+ * Copyright (c) 2009+ Tao Xin
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,10 +70,17 @@ namespace Apoc3D
 			const Camera* getCurrentCamera() const { return m_currentCamera; }
 
 			/** 
-			 *  Gets the sequence of this pass in a entire scene rendering process.
+			 *  Gets the object select ID of this pass during its rendering process.
 			 */
 			int32 getSelectorID() const { return m_selectorID; }
 			void setSelectorID(int32 id) { m_selectorID = id; }
+
+			/**
+			 *  The scene pass will use the camera at the given index(ID) 
+			 *  registered at SceneRenderer next rendering.
+			 */
+			int32 getPreferredCameraID() const { return m_cameraID; }
+			void setPreferredCameraID(int32 id) { m_cameraID = id; }
 
 			/**
 			 *  Gets the name of this pass.

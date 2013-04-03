@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
 This source file is part of labtd
 
-Copyright (c) 2009+ Tao Games
+Copyright (c) 2009+ Tao Xin
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

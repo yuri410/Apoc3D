@@ -2,7 +2,7 @@
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
 
-Copyright (c) 2009+ Tao Games
+Copyright (c) 2009+ Tao Xin
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -85,8 +85,6 @@ namespace Apoc3D
 			vtxData[5].Position[0] = 0; vtxData[5].Position[1] = 1; vtxData[5].Position[2] = 0;
 
 			m_quadBuffer->Unlock();
-
-
 		}
 
 
