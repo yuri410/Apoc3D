@@ -191,6 +191,8 @@ namespace Apoc3D
 			 *  Increase the frequency of use of the buckets used by the given glyph, by one
 			 */
 			void SetUseFreq(const Glyph& g);
+
+			static bool IgnoreCharDrawing(wchar_t ch) { return ch == '\r'; }
 			
 			friend class FontManager;
 		

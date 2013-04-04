@@ -255,6 +255,9 @@ namespace Apoc3D
 				wchar_t ch = text[i];
 				if (ch != '\n')
 				{
+					if (IgnoreCharDrawing(ch))
+						continue;
+
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
 					{
@@ -283,7 +286,6 @@ namespace Apoc3D
 
 						x += chdef.AdcanceX + hozShrink;// glyph.Width - 1;
 					}
-					
 				}
 				else
 				{
@@ -334,6 +336,9 @@ namespace Apoc3D
 				wchar_t ch = text[i];
 				if (ch != '\n')
 				{
+					if (IgnoreCharDrawing(ch))
+						continue;
+
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
 					{
@@ -400,6 +405,9 @@ namespace Apoc3D
 				wchar_t ch = text[i];
 				if (ch != '\n')
 				{
+					if (IgnoreCharDrawing(ch))
+						continue;
+
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
 					{
@@ -479,6 +487,9 @@ namespace Apoc3D
 				wchar_t ch = text[i];
 				if (ch != '\n')
 				{
+					if (IgnoreCharDrawing(ch))
+						continue;
+
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
 					{
@@ -565,6 +576,9 @@ namespace Apoc3D
 				wchar_t ch = text[i];
 				if (ch != '\n')
 				{
+					if (IgnoreCharDrawing(ch))
+						continue;
+
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
 					{

@@ -1363,16 +1363,18 @@ namespace Apoc3D
 				m_selectionRect.Contains(mouse->GetCurrentPosition()) &&
 				UIRoot::getTopMostForm() == getOwner())
 			{
-				if (m_fullRowSelect)
-				{
-					m_hoverRowIndex = y;
-					m_hoverColumnIndex = x;
-				}
-				else
-				{
-					m_hoverRowIndex = x;
-					m_hoverColumnIndex = y;
-				}
+				//if (m_fullRowSelect)
+				//{
+				//	m_hoverRowIndex = y;
+				//	m_hoverColumnIndex = x;
+				//}
+				//else
+				//{
+				//}
+
+				m_hoverRowIndex = y;
+				m_hoverColumnIndex = x;
+
 				if (m_hoverSelection)
 				{
 					m_selectionRect.X = position.X - 4;
