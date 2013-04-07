@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GL1PLUGIN_H
 
 #include "GL1Common.h"
-#include "Core/Plugin.h"
+#include "apoc3d/Core/Plugin.h"
 #include "GL1GraphicsAPIFactory.h"
 
 using namespace Apoc3D::Core;
@@ -37,7 +37,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			class GL1RSPlugin : public Plugin
 			{

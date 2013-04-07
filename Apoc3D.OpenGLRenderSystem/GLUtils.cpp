@@ -29,7 +29,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			// pre-calculated fast type cast tables
 			GLenum GLUtils::comfunTable[COMFUN_Count];

@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Game.h"
 #include "Win32GameWindow.h"
 
-#include "Core/Logging.h"
+#include "apoc3d/Core/Logging.h"
 
 #include "GL1DeviceContent.h"
 
@@ -35,7 +35,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			GraphicsDeviceManager::GraphicsDeviceManager(Game* game)
 				: m_currentSetting(0), m_ignoreSizeChanges(false), m_doNotStoreBufferSize(false), m_renderingOccluded(false),

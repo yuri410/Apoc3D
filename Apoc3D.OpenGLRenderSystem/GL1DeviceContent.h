@@ -26,8 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "GL1Common.h"
 
-#include "Collections/FastMap.h"
-#include "Graphics/RenderSystem/DeviceContent.h"
+#include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -36,9 +36,9 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
-			class GL1DeviceContent : public DeviceContent
+			class GL1DeviceContent : public DeviceContext
 			{
 			protected:
 				virtual RenderView* create(const RenderParameters &pm);

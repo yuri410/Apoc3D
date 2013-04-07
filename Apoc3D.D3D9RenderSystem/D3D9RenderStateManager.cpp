@@ -671,11 +671,11 @@ namespace Apoc3D
 					// standardize rect ( make sure top left corner is at the top left, i.e. no negative w/h)
 					if (rect.left>rect.right)
 					{
-						swap(rect.left, rect.right);
+						std::swap(rect.left, rect.right);
 					}
 					if (rect.top >rect.bottom)
 					{
-						swap(rect.top, rect.bottom);
+						std::swap(rect.top, rect.bottom);
 					}
 
 					// crop it

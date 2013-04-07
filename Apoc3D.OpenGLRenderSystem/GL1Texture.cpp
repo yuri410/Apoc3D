@@ -25,15 +25,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GL1Texture.h"
 #include "GL1RenderDevice.h"
 #include "GLUtils.h"
-#include "Math/Rectangle.h"
-#include "Math/Box.h"
-#include "Vfs/ResourceLocation.h"
-#include "IOLib/TextureData.h"
-#include "Utility/StringUtils.h"
-#include "Apoc3DException.h"
-#include "Core/Logging.h"
-#include "IOLib/Streams.h"
-#include "Vfs/PathUtils.h"
+#include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/Box.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/IOLib/TextureData.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/Vfs/PathUtils.h"
 
 
 using namespace Apoc3D::VFS;
@@ -45,7 +45,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			/**
 			  You are probably looking for glGetTexImage

@@ -203,7 +203,7 @@ namespace APBuild
 			friend class FbxImporter;
 			std::vector<FIMeshPart*> m_ModelParts;
 
-			HashMap<string, FIPartialAnimation*> m_AnimationKeyFrames;
+			HashMap<std::string, FIPartialAnimation*> m_AnimationKeyFrames;
 
 			std::string m_strName;
 
@@ -226,7 +226,7 @@ namespace APBuild
 				{
 					delete m_ModelParts[i];
 				}
-				for (HashMap<string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
+				for (HashMap<std::string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
 				{
 					FIPartialAnimation* akf = *e.getCurrentValue();
 					delete akf;
@@ -378,7 +378,7 @@ namespace APBuild
 			}
 			~FISkeletonBone()
 			{
-				for (HashMap<string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
+				for (HashMap<std::string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
 				{
 					FIPartialAnimation* akf = *e.getCurrentValue();
 					delete akf;
@@ -478,7 +478,7 @@ namespace APBuild
 
 			void FlattenAnimation(AnimationData::ClipTable* clipTable)
 			{
-				ExistTable<string> seenAnimation;
+				ExistTable<std::string> seenAnimation;
 				
 				for (int i=0;i<m_SkeletonBones.getCount();i++)
 				{
@@ -487,7 +487,7 @@ namespace APBuild
 					{
 						FIPartialAnimation* anim = *j.getCurrentValue();
 
-						const string& name = anim->GetAnimationName();
+						const std::string& name = anim->GetAnimationName();
 
 						if (!seenAnimation.Exists(name))
 						{
@@ -496,9 +496,9 @@ namespace APBuild
 					}
 				}
 
-				for (ExistTable<string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
+				for (ExistTable<std::string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
 				{
-					const string& animName = *e.getCurrent();
+					const std::string& animName = *e.getCurrent();
 					
 					uint frameIndex = 0;
 					bool finished = false;
@@ -581,7 +581,7 @@ namespace APBuild
 		FastList<MaterialData*> m_materials;
 		
 
-		HashMap<string, FIMesh*> m_meshes;
+		HashMap<std::string, FIMesh*> m_meshes;
 		FISkeleton* m_pSkeleton;
 
 
@@ -619,16 +619,16 @@ namespace APBuild
 		void FlattenAnimation(AnimationData::ClipTable* clipTable)
 		{
 			const FIMesh** meshList = new const FIMesh*[m_meshes.getCount()];
-			ExistTable<string> seenAnimation;
+			ExistTable<std::string> seenAnimation;
 			int idxCounter = 0;
-			for (HashMap<string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
+			for (HashMap<std::string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
 			{
 				const FIMesh* mesh = *i.getCurrentValue();
 				for (HashMap<std::string, FIPartialAnimation*>::Enumerator j=mesh->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
 				{
 					FIPartialAnimation* anim = *j.getCurrentValue();
 
-					const string& name = anim->GetAnimationName();
+					const std::string& name = anim->GetAnimationName();
 
 					if (!seenAnimation.Exists(name))
 					{
@@ -638,9 +638,9 @@ namespace APBuild
 				meshList[idxCounter++] = mesh;
 			}
 
-			for (ExistTable<string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
+			for (ExistTable<std::string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
 			{
-				const string& animName = *e.getCurrent();
+				const std::string& animName = *e.getCurrent();
 
 				uint frameIndex = 0;
 				bool finished = false;

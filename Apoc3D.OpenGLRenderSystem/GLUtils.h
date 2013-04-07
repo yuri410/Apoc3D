@@ -26,8 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GLUTILS_H
 
 #include "GL1Common.h"
-#include "Graphics/PixelFormat.h"
-#include "Graphics/GraphicsCommon.h"
+#include "apoc3d/Graphics/PixelFormat.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			class GLUtils
 			{

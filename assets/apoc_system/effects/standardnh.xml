@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <VS>
+    <mvp Usage="tr_worldviewproj"/>
+    <world Usage="tr_world"/>
+    <viewPos Usage="pv3_viewPos"/>
+  </VS>
+  <PS>
+    <texDif Usage="tex_0"/>
+    <k_d Usage="mc4_diffuse"/>
+    <k_a Usage="mc4_ambient"/>
+    <k_s Usage="mc4_specular"/>
+    <k_e Usage="mc4_emissive"/>
+    <k_power Usage="mc_power"/>
+    <i_a Usage="lc4_ambient"/>
+    <i_d Usage="lc4_diffuse"/>
+    <i_s Usage="lc4_specular"/>
+    <lightDir Usage="lv3_lightDir"/>
+  </PS>
+</Root>

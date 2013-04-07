@@ -30,7 +30,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			GL1Sprite::GL1Sprite(GL1RenderDevice* device)
 				: Sprite(device), m_gl1device(device), m_alphaEnabled(false),

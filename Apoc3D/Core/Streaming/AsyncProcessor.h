@@ -80,16 +80,6 @@ namespace Apoc3D
 			 */
 			class APAPI AsyncProcessor
 			{
-			private:
-				Queue<ResourceOperation*> m_opQueue;
-				GenerationTable* m_genTable;
-				tthread::thread* m_processThread;
-				tthread::mutex* m_syncMutex;
-
-				bool m_closed;
-
-				static void ThreadEntry(void* arg);
-				void Main();
 			public:
 				/**
 				 *  If a resource is IsIndependent(), this cancels(or removes) the corresponding opposite resource operation
@@ -128,6 +118,16 @@ namespace Apoc3D
 				AsyncProcessor(GenerationTable* gTable,const String& name);
 				~AsyncProcessor(void);
 
+			private:
+				Queue<ResourceOperation*> m_opQueue;
+				GenerationTable* m_genTable;
+				tthread::thread* m_processThread;
+				tthread::mutex* m_syncMutex;
+
+				bool m_closed;
+
+				static void ThreadEntry(void* arg);
+				void Main();
 
 			};
 		}

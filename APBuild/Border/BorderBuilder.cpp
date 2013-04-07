@@ -17,7 +17,7 @@
 #include "apoc3d/Vfs/File.h"
 #include "apoc3d/Vfs/PathUtils.h"
 
-
+using namespace std;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;

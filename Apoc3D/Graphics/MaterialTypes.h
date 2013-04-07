@@ -29,7 +29,6 @@
 #include "apoc3d/Math/Vector.h"
 #include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
 
-using namespace std;
 using namespace Apoc3D::Math;
 
 namespace Apoc3D

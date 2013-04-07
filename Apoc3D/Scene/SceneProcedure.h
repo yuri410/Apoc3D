@@ -30,16 +30,12 @@
 
 #include "apoc3d/Math/Vector.h"
 
-//#include "Graphics/GraphicsCommon.h"
-
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics::EffectSystem;
-
-using namespace std;
 
 namespace Apoc3D
 {

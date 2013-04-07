@@ -35,7 +35,6 @@
 #include "apoc3d/Math/OctreeBox.h"
 #include "apoc3d/Math/BoundingSphere.h"
 
-using namespace std;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;

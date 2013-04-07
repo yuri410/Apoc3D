@@ -26,8 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GL1SPRITE_H
 
 #include "GL1Common.h"
-#include "Graphics/RenderSystem/Sprite.h"
-#include "Graphics/GraphicsCommon.h"
+#include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Math;
@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			class GL1Sprite : public Sprite
 			{

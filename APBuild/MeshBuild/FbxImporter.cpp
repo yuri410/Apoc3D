@@ -131,7 +131,7 @@ namespace APBuild
 		bool lStatus;
 		//char lPassword[256];
 
-		string mbFilename = StringUtils::toString(pFilename);
+		std::string mbFilename = StringUtils::toString(pFilename);
 
 		// Get the file version number generate by the FBX SDK.
 		KFbxSdkManager::GetFileFormatVersion(lSDKMajor, lSDKMinor, lSDKRevision);
@@ -992,7 +992,7 @@ namespace APBuild
 		{
 			delete m_materials[i];
 		}
-		for (HashMap<string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
+		for (HashMap<std::string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
 		{
 			delete *i.getCurrentValue();
 		}
@@ -1171,7 +1171,7 @@ namespace APBuild
 		
 		// mesh
 		{
-			for (HashMap<string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
+			for (HashMap<std::string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
 			{
 				FIMesh* mesh = *i.getCurrentValue();
 				const std::vector<FIMeshPart*>& parts = mesh->getParts();

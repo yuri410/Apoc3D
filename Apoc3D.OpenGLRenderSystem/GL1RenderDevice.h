@@ -26,8 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "GL1Common.h"
 
-#include "Graphics/RenderSystem/RenderDevice.h"
-#include "Graphics/EffectSystem/Effect.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/EffectSystem/Effect.h"
 
 using namespace std;
 using namespace Apoc3D::Graphics;
@@ -38,7 +38,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			class GL1Capabilities;
 

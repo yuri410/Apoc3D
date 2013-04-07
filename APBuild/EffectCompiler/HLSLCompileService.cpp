@@ -71,7 +71,7 @@ namespace APBuild
 		{
 			if (error)
 			{
-				string errmsg = string(reinterpret_cast<const char*>(error->GetBufferPointer()), error->GetBufferSize());
+				std::string errmsg(reinterpret_cast<const char*>(error->GetBufferPointer()), error->GetBufferSize());
 
 				List<String> errs;
 				StringUtils::Split(StringUtils::toWString(errmsg), errs, L"\n\r");

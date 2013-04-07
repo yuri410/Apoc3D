@@ -290,7 +290,7 @@ namespace Apoc3D
 			if (m_cursorOffset.X > m_scrollOffset.X + m_sRect.Width - 20)
 				m_scrollOffset.X = m_cursorOffset.X - (m_sRect.Width - 20);
 			else if (m_cursorOffset.X - 20 < m_scrollOffset.X)
-				m_scrollOffset.X = max(0, m_cursorOffset.X - 20);
+				m_scrollOffset.X = std::max(0, m_cursorOffset.X - 20);
 
 			if (m_scrollOffset.X < 0)
 				m_scrollOffset.X = 0;
@@ -476,9 +476,9 @@ namespace Apoc3D
 			if (m_vscrollBar)
 			{
 				if (m_hscrollBar && m_hscrollBar->getMax()>0)
-					m_vscrollBar->setMax(max(0, m_lines.getCount() - (m_visibleLines-1)));
+					m_vscrollBar->setMax(std::max(0, m_lines.getCount() - (m_visibleLines-1)));
 				else
-					m_vscrollBar->setMax(max(0, m_lines.getCount() - m_visibleLines));
+					m_vscrollBar->setMax(std::max(0, m_lines.getCount() - m_visibleLines));
 			}
 
 			if (m_vscrollBar && m_vscrollBar->getMax()>0)
@@ -678,7 +678,7 @@ namespace Apoc3D
 
 					if (m_vscrollBar && m_vscrollBar->getMax()>0 && m_hscrollBar->getMax()>0)
 						m_hscrollBar->setMax(m_hscrollBar->getMax()+20);
-					m_hscrollBar->setStep(max(1, m_hscrollBar->getMax()/15));
+					m_hscrollBar->setStep(std::max(1, m_hscrollBar->getMax()/15));
 				}
 				if (m_hasFocus && !m_locked && m_cursorVisible && getOwner() == UIRoot::getTopMostForm())
 				{

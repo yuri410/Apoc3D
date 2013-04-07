@@ -303,6 +303,7 @@ namespace Apoc3D
 			public:
 
 				GenerationCalculator(const GenerationTable* table);
+				~GenerationCalculator();
 
 				void Use(Resource* resource);
 				void UpdateGeneration(float time);

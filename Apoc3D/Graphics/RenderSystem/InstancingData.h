@@ -33,8 +33,6 @@
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics;
 
-using namespace std;
-
 namespace Apoc3D
 {
 	namespace Graphics

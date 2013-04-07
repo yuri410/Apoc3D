@@ -25,8 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GL1RENDERWINDOW_H
 
 #include "GL1Common.h"
-#include "Graphics/RenderSystem/RenderWindow.h"
-#include "Graphics/RenderSystem/RenderWindowHandler.h"
+#include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
+#include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
 #include "Game.h"
 #include "GL1RenderDevice.h"
 
@@ -37,7 +37,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			class GL1RenderView : public RenderView
 			{

@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef GL1COMMON_H
 #define GL1COMMON_H
 
-#include "Common.h"
+#include "apoc3d/Common.h"
 
 #include <Windows.h>
 #include "gl/GLee.h"
@@ -44,7 +44,7 @@ namespace Apoc3D
 
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			class GameClock;
 			class Game;

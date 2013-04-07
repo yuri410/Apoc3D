@@ -29,7 +29,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Math/Math.h"
 #include "apoc3d/Graphics/RenderSystem/InstancingData.h"
 
-using namespace std;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;

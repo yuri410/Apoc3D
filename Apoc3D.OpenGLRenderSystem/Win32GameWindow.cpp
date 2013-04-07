@@ -29,7 +29,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			Win32GameWindow* Win32GameWindow::ms_Window = 0;
 

@@ -211,7 +211,7 @@ namespace Apoc3D
 
 		void HScrollbar::DrawCursor(Sprite* sprite)
 		{
-			m_cursorArea.Width = max(20, m_backArea.Width - max(20, m_max/4));
+			m_cursorArea.Width = std::max(20, m_backArea.Width - std::max(20, m_max/4));
 			m_cursorArea.Height = 12;
 			m_cursorPos.Y = Position.Y;
 			if (!m_isScrolling)
@@ -417,7 +417,7 @@ namespace Apoc3D
 
 		void VScrollBar::DrawCursor(Sprite* sprite)
 		{
-			m_cursorArea.Height = max(20, m_backArea.Height - max(20, m_max/4));
+			m_cursorArea.Height = std::max(20, m_backArea.Height - std::max(20, m_max/4));
 			m_cursorArea.Width = 12;
 			m_cursorPos.X = Position.X;
 			if (!m_isScrolling)

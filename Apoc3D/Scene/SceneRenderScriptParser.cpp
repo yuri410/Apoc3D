@@ -82,26 +82,26 @@ namespace Apoc3D
 		};
 
 
-		bool ParseCallArgAsVar(const string& value, SceneOpArg& arg, 
+		bool ParseCallArgAsVar(const std::string& value, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars);
 
-		bool ParseCallArgBool(const TiXmlElement* node,  const string& name, SceneOpArg& arg, 
+		bool ParseCallArgBool(const TiXmlElement* node,  const std::string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, bool def);
-		bool ParseCallArgFloat(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+		bool ParseCallArgFloat(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, float def);
-		bool ParseCallArgUint(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+		bool ParseCallArgUint(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, uint def);
-		bool ParseCallArgInt(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+		bool ParseCallArgInt(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, int def);
-		bool ParseCallArgRef(const TiXmlElement* node, const string& name, SceneOpArg& arg,
+		bool ParseCallArgRef(const TiXmlElement* node, const std::string& name, SceneOpArg& arg,
 			const FastList<SceneVariable*>& vars);
-		bool ParseCallArgUintHexImm(const TiXmlElement* node, const string& name, SceneOpArg& arg);
-		bool ParseCallArgVector2(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+		bool ParseCallArgUintHexImm(const TiXmlElement* node, const std::string& name, SceneOpArg& arg);
+		bool ParseCallArgVector2(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, Vector2 def);
-		void ParseCallArgRenderStates(const string& value, List<SceneOpArg>& args);
+		void ParseCallArgRenderStates(const std::string& value, List<SceneOpArg>& args);
 
-		PixelFormat ConvertFormat(const string& fmt);
-		DepthFormat ConvertDepthFormat(const string& fmt);
+		PixelFormat ConvertFormat(const std::string& fmt);
+		DepthFormat ConvertDepthFormat(const std::string& fmt);
 
 		String getElementName(const TiXmlElement* elem) { return StringUtils::toWString(elem->ValueStr()); }
 		String getNodeText(const TiXmlText* text) { return StringUtils::toWString(text->ValueStr()); }
@@ -166,11 +166,11 @@ namespace Apoc3D
 			/** 当GetNextSymbol()为NUM时，该字段为参数值
 			*/
 			int tokenval;
-			List<string> expStruct;
+			List<std::string> expStruct;
 
 			int position;
-			HashMap<string, int> parameters;
-			List<string> paramList;
+			HashMap<std::string, int> parameters;
+			List<std::string> paramList;
 
 			/** 比较栈顶运算符与下一输入运算符优先关系
 			*/
@@ -202,7 +202,7 @@ namespace Apoc3D
 			*/
 			int GetNextSymbol()
 			{
-				string str = expStruct[position++];
+				std::string str = expStruct[position++];
 
 				if (str.length() == 1 &&
 					(str[0] == LBracket || str[0] == RBracket || str[0] == OpAnd || 
@@ -350,9 +350,9 @@ namespace Apoc3D
 				}
 			}
 
-			void Parse(string expression)
+			void Parse(std::string expression)
 			{
-				string sb;
+				std::string sb;
 
 				bool ended = false;
 
@@ -364,11 +364,11 @@ namespace Apoc3D
 					switch (cc)
 					{
 					case LBracket:
-						expStruct.Add(string(1, LBracket));
+						expStruct.Add(std::string(1, LBracket));
 
 						if (sb.length() > 0)
 						{
-							string typeName = sb;
+							std::string typeName = sb;
 							expStruct.Add(typeName);
 							if (!parameters.Contains(typeName))
 							{
@@ -378,12 +378,12 @@ namespace Apoc3D
 						}
 						ended = true;
 
-						sb = string();
+						sb = std::string();
 						break;
 					case RBracket:
 						if (sb.length() > 0)
 						{
-							string typeName = sb;
+							std::string typeName = sb;
 							expStruct.Add(typeName);
 							if (!parameters.Contains(typeName))
 							{
@@ -392,16 +392,16 @@ namespace Apoc3D
 							}
 						}
 
-						expStruct.Add(string(1, RBracket));
+						expStruct.Add(std::string(1, RBracket));
 
 						ended = true;
 
-						sb = string();
+						sb = std::string();
 						break;
 					case OpAnd:
 						if (sb.length() > 0)
 						{
-							string typeName = sb;
+							std::string typeName = sb;
 							expStruct.Add(typeName);
 							if (!parameters.Contains(typeName))
 							{
@@ -410,16 +410,16 @@ namespace Apoc3D
 							}
 						}
 
-						expStruct.Add(string(1, OpAnd));
+						expStruct.Add(std::string(1, OpAnd));
 
 						ended = true;
 
-						sb = string();
+						sb = std::string();
 						break;
 					case OpOr:
 						if (sb.length() > 0)
 						{
-							string typeName = sb;
+							std::string typeName = sb;
 							expStruct.Add(typeName);
 							if (!parameters.Contains(typeName))
 							{
@@ -427,16 +427,16 @@ namespace Apoc3D
 								parameters.Add(typeName, paramIndex++);
 							}
 						}
-						expStruct.Add(string(1, OpOr));
+						expStruct.Add(std::string(1, OpOr));
 
 						ended = true;
 
-						sb = string();
+						sb = std::string();
 						break;
 					case OpNot:
 						if (sb.length() > 0)
 						{
-							string typeName = sb;
+							std::string typeName = sb;
 							expStruct.Add(typeName);
 							if (!parameters.Contains(typeName))
 							{
@@ -445,11 +445,11 @@ namespace Apoc3D
 							}
 						}
 
-						expStruct.Add(string(1, OpNot));
+						expStruct.Add(std::string(1, OpNot));
 
 						ended = true;
 
-						sb = string();
+						sb = std::string();
 						break;
 					case ' ':
 						break;
@@ -464,7 +464,7 @@ namespace Apoc3D
 
 				if (!ended)
 				{
-					string typeName = sb;
+					std::string typeName = sb;
 					expStruct.Add(typeName);
 					if (!parameters.Contains(typeName))
 					{
@@ -480,10 +480,10 @@ namespace Apoc3D
 			{
 				
 			}
-			void FillInstrunctions(const string& expression, List<SceneInstruction>& insts, const FastList<SceneVariable*>& vars)
+			void FillInstrunctions(const std::string& expression, List<SceneInstruction>& insts, const FastList<SceneVariable*>& vars)
 			{
 				Parse(expression);
-				expStruct.Add(string(1,EndSym));
+				expStruct.Add(std::string(1,EndSym));
 
 				ExpressionNode* tree = CreateBinaryTree();
 
@@ -689,7 +689,7 @@ namespace Apoc3D
 		{
 			ScenePassData passData;
 			node->Attribute("SelectorID", &passData.SelectorID);
-			string strName = node->Attribute("Name");
+			std::string strName = node->Attribute("Name");
 			passData.Name = StringUtils::toWString(strName);
 
 			passData.CameraID=0;
@@ -876,7 +876,7 @@ namespace Apoc3D
 
 		}
 
-		void SceneRenderScriptParser::FillInstructions(const string& cmd, List<SceneInstruction>& instructions)
+		void SceneRenderScriptParser::FillInstructions(const std::string& cmd, List<SceneInstruction>& instructions)
 		{
 			ExpressionCompiler compiler;
 
@@ -886,11 +886,11 @@ namespace Apoc3D
 
 		void SceneRenderScriptParser::ParseGlocalVarNode(const TiXmlElement* node)
 		{
-			string tstr = node->Attribute("Type");
+			std::string tstr = node->Attribute("Type");
 			std::transform(tstr.begin(), tstr.end(), tstr.begin(), tolower);
-			string name = node->Attribute("Name");
+			std::string name = node->Attribute("Name");
 
-			if (tstr == string("rendertarget"))
+			if (tstr == "rendertarget")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_RenderTarget;
@@ -966,7 +966,7 @@ namespace Apoc3D
 
 				GlobalVars.Add(var);
 			}
-			else if (tstr == string("matrix"))
+			else if (tstr == "matrix")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Matrix;
@@ -999,7 +999,7 @@ namespace Apoc3D
 
 				GlobalVars.Add(var);
 			}
-			else if (tstr == string("vector4"))
+			else if (tstr == "vector4")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Vector4;
@@ -1026,7 +1026,7 @@ namespace Apoc3D
 
 				GlobalVars.Add(var);
 			}
-			else if (tstr == string("vector3"))
+			else if (tstr == "vector3")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Vector3;
@@ -1053,7 +1053,7 @@ namespace Apoc3D
 
 				GlobalVars.Add(var);
 			}
-			else if (tstr == string("vector2"))
+			else if (tstr == "vector2")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Vector2;
@@ -1080,7 +1080,7 @@ namespace Apoc3D
 
 				GlobalVars.Add(var);
 			}
-			else if (tstr == string("float"))
+			else if (tstr == "float")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Single;
@@ -1095,7 +1095,7 @@ namespace Apoc3D
 
 				GlobalVars.Add(var);
 			}
-			else if (tstr == string("integer"))
+			else if (tstr == "integer")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Integer;
@@ -1110,7 +1110,7 @@ namespace Apoc3D
 
 				GlobalVars.Add(var);
 			}
-			else if (tstr == string("boolean"))
+			else if (tstr == "boolean")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Boolean;
@@ -1124,7 +1124,7 @@ namespace Apoc3D
 
 				GlobalVars.Add(var);
 			}
-			else if (tstr == string("texture"))
+			else if (tstr == "texture")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Texture;
@@ -1148,7 +1148,7 @@ namespace Apoc3D
 
 			//	GlobalVars.Add(var);
 			//}
-			else if (tstr == string("effect"))
+			else if (tstr == "effect")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_Effect;
@@ -1165,7 +1165,7 @@ namespace Apoc3D
 					LogManager::getSingleton().Write(LOG_Scene, L"Can not find effect name.", LOGLVL_Warning);
 				}
 			}
-			else if (tstr == string("gaussblurfilter"))
+			else if (tstr == "gaussblurfilter")
 			{
 				SceneVariable* var = new SceneVariable();
 				var->Type = VARTYPE_GaussBlurFilter;
@@ -1265,18 +1265,18 @@ namespace Apoc3D
 					const TiXmlAttribute* att = node->FirstAttribute();
 					while (att)
 					{
-						string name = att->Name();
+						std::string name = att->Name();
 						if (name != "Size" && name != "Effect" && name != "S" && name != "RenderStates")
 						{
-							string value = att->Value();
-							string::size_type pos = value.find_last_of(':');
+							std::string value = att->Value();
+							std::string::size_type pos = value.find_last_of(':');
 
 							String paramName = StringUtils::toWString(name);
 							int idx = autoFx->FindParameterIndex(paramName);
 
 							if (idx!=-1)
 							{
-								if (pos != string::npos)
+								if (pos != std::string::npos)
 								{
 									SceneOpArg arg;
 									arg.IsImmediate = true;
@@ -1406,7 +1406,7 @@ namespace Apoc3D
 		/************************************************************************/
 
 
-		bool ParseCallArgBool(const TiXmlElement* node,  const string& name, SceneOpArg& arg, 
+		bool ParseCallArgBool(const TiXmlElement* node,  const std::string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, bool def)
 		{
 			bool flag;
@@ -1427,7 +1427,7 @@ namespace Apoc3D
 
 			return false;
 		}
-		bool ParseCallArgFloat(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+		bool ParseCallArgFloat(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, float def)
 		{
 			float flag;
@@ -1448,7 +1448,7 @@ namespace Apoc3D
 
 			return false;
 		}
-		bool ParseCallArgUintHexImm(const TiXmlElement* node, const string& name, SceneOpArg& arg)
+		bool ParseCallArgUintHexImm(const TiXmlElement* node, const std::string& name, SceneOpArg& arg)
 		{
 			uint flag;
 			const char* v = node->Attribute(name.c_str());
@@ -1463,7 +1463,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool ParseCallArgUint(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+		bool ParseCallArgUint(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, uint def)
 		{
 			uint flag;
@@ -1484,7 +1484,7 @@ namespace Apoc3D
 
 			return false;
 		}
-		bool ParseCallArgInt(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+		bool ParseCallArgInt(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, int def)
 		{
 			int flag;
@@ -1505,16 +1505,16 @@ namespace Apoc3D
 
 			return false;
 		}
-		bool ParseCallArgRef(const TiXmlElement* node, const string& name, SceneOpArg& arg,
+		bool ParseCallArgRef(const TiXmlElement* node, const std::string& name, SceneOpArg& arg,
 			const FastList<SceneVariable*>& vars)
 		{
 			return ParseCallArgAsVar(*node->Attribute(name), arg,vars);
 		}
 
-		bool ParseCallArgVector2(const TiXmlElement* node, const string& name, SceneOpArg& arg, 
+		bool ParseCallArgVector2(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars, Vector2 def)
 		{
-			const string* result = node->Attribute(name);
+			const std::string* result = node->Attribute(name);
 
 			if (result)
 			{
@@ -1547,7 +1547,7 @@ namespace Apoc3D
 		}
 
 
-		bool ParseCallArgAsVar(const string& value, SceneOpArg& arg, 
+		bool ParseCallArgAsVar(const std::string& value, SceneOpArg& arg, 
 			const FastList<SceneVariable*>& vars)
 		{
 			//arg.IsImmediate = false;
@@ -1591,7 +1591,7 @@ namespace Apoc3D
 			return true;
 		}
 
-		void ParseCallArgRenderStates(const string& value, List<SceneOpArg>& args)
+		void ParseCallArgRenderStates(const std::string& value, List<SceneOpArg>& args)
 		{
 			String val = StringUtils::toWString(value);
 			List<String> vals;
@@ -1625,7 +1625,7 @@ namespace Apoc3D
 
 		}
 
-		PixelFormat ConvertFormat(const string& fmt)
+		PixelFormat ConvertFormat(const std::string& fmt)
 		{
 			String fmt2(fmt.size(), ' ');
 			for (size_t i=0;i<fmt.size();i++)
@@ -1634,7 +1634,7 @@ namespace Apoc3D
 			return PixelFormatUtils::ConvertFormat(fmt2);
 		}
 
-		DepthFormat ConvertDepthFormat(const string& fmt)
+		DepthFormat ConvertDepthFormat(const std::string& fmt)
 		{
 			if (fmt.empty())
 				return DEPFMT_Count;

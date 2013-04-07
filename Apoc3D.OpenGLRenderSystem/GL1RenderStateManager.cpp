@@ -31,7 +31,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 
 			NativeGL1StateManager::NativeGL1StateManager(GL1RenderDevice* device)

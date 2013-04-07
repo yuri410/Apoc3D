@@ -29,7 +29,6 @@
 #include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Collections;
-using namespace std;
 
 namespace Apoc3D
 {

@@ -37,8 +37,6 @@ using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics::EffectSystem;
 
-using namespace std;
-
 class TiXmlNode;
 class TiXmlElement;
 
@@ -70,7 +68,7 @@ namespace Apoc3D
 			/**
 			 *  Build instructions for expressions
 			 */
-			void FillInstructions(const string& cmd, List<SceneInstruction>& instructions);
+			void FillInstructions(const std::string& cmd, List<SceneInstruction>& instructions);
 			/**
 			 *  Build instructions for commands.
 			 */

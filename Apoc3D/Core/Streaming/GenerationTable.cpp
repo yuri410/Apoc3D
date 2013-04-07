@@ -54,6 +54,8 @@ namespace Apoc3D
 			GenerationTable::~GenerationTable()
 			{
 				delete[] m_generations;
+				delete m_genLock;
+				m_genLock = nullptr;
 			}
 
 			void GenerationTable::SubTask_GenUpdate()

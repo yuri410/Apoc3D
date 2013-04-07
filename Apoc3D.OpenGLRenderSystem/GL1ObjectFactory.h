@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GL1OBJECTFACTORY_H
 
 #include "GL1Common.h"
-#include "Graphics\RenderSystem\ObjectFactory.h"
+#include "apoc3d/Graphics\RenderSystem\ObjectFactory.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -35,7 +35,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			/** The place for creating graphics objects under OpenGL.
 			 *  See ObjectFactory for general description.

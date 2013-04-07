@@ -37,7 +37,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			GL1ObjectFactory::GL1ObjectFactory(GL1RenderDevice* device)
 				: ObjectFactory(device), m_device(device)

@@ -33,7 +33,7 @@ namespace Apoc3D
 			Control::Initialize(device);
 
 			Size.X = m_skin->CheckBoxTextures[0]->getWidth() + m_fontRef->MeasureString(Text).X + 15;
-			Size.Y = max(m_skin->CheckBoxTextures[0]->getHeight(), m_fontRef->getLineHeightInt());
+			Size.Y = std::max(m_skin->CheckBoxTextures[0]->getHeight(), m_fontRef->getLineHeightInt());
 
 			m_textOffset.X = m_skin->CheckBoxTextures[0]->getWidth() + 5;
 			m_textOffset.Y = (m_skin->CheckBoxTextures[0]->getHeight() - m_fontRef->getLineHeightInt())/2 ;

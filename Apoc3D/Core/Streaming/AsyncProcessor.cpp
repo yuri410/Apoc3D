@@ -190,6 +190,8 @@ namespace Apoc3D
 			AsyncProcessor::~AsyncProcessor(void)
 			{
 				delete m_processThread;
+				delete m_syncMutex;
+				m_syncMutex = nullptr;
 			}
 		}
 	}

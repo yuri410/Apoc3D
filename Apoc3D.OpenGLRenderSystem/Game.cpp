@@ -23,8 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Game.h"
 
-#include "Core\GameTime.h"
-#include "Apoc3DException.h"
+#include "apoc3d/Core\GameTime.h"
+#include "apoc3d/Apoc3DException.h"
 
 #include "GameClock.h"
 #include "Win32GameWindow.h"
@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			Game::Game(GL1DeviceContent* devCont, const String& name)
 				: m_maxElapsedTime(0.5f), m_targetElapsedTime(1.0f / 60.0f), m_inactiveSleepTime(20),

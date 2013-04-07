@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define WIN32GAMEWINDOW_H
 
 #include "GL1Common.h"
-#include "Math/Point.h"
+#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D::Math;
 
@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			/* Implements a specialized window for games and rendering.
 			*/

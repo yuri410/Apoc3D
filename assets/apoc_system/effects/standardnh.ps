@@ -1,0 +1,53 @@
+
+sampler2D texDif : register(s0);
+float4 k_d : register(c0);
+float4 k_a : register(c1);
+float4 k_s : register(c2);
+float4 k_e : register(c3);
+float k_power : register(c4);
+
+float4 i_a : register(c5);
+float4 i_d : register(c6);
+float4 i_s : register(c7);
+float3 lightDir : register(c8);
+
+struct PSInput
+{
+    float2 TexCoord : TEXCOORD0;
+    float3 Normal : TEXCOORD1; 
+    float3 ViewDir : TEXCOORD5;
+    
+};
+
+struct PSOutput
+{
+    float4 Color : COLOR;
+};
+
+PSOutput main(PSInput ip)
+{
+    PSOutput o;
+    
+    float ndl = dot(ip.Normal, lightDir);
+	
+    float3 R = normalize(2 * ndl * ip.Normal + lightDir);
+
+	float4 amb = i_a * k_a;
+	float4 dif = i_d * k_d;
+	dif.xyz *= max(0, ndl);
+	
+	float4 spec = i_s * k_s * pow(max(0, dot(R, ip.ViewDir)), k_power);
+	
+   
+	float shd = 1; 
+	
+	float4 p = amb+dif+k_e;
+	p.a = saturate(p.a);
+	
+    o.Color = tex2D(texDif, ip.TexCoord) * p;
+    o.Color.rgb *= shd;
+    
+    o.Color.rgb += spec.xyz;
+	//o.Color.rgb = o.Color.rgb * 0.001 + 0.5 * ip.Normal + 0.5;
+    return o;
+}

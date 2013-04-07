@@ -27,13 +27,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GL1GraphicsAPIFactory.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Graphics::GL1RenderSystem;
+using namespace Apoc3D::Graphics::GLRenderSystem;
 
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			GL1RSPlugin::GL1RSPlugin()
 				: m_factory()

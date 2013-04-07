@@ -28,8 +28,6 @@
 
 #include "Plane.h"
 
-using namespace std;
-
 namespace Apoc3D
 {
 	namespace Math

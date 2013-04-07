@@ -368,7 +368,10 @@ namespace Apoc3D
 			{
 				for (int i=0;i<m_internalPointer/2;i++)
 				{
-					swap(m_elements[i], m_elements[m_internalPointer-i-1]);
+					int32 another = m_internalPointer-i-1;
+					T temp = m_elements[i];
+					m_elements[i] = m_elements[another];
+					m_elements[another] = temp;
 				}
 			}
 			T& operator [](int32 i) const

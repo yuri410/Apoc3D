@@ -115,7 +115,7 @@ namespace APBuild
 				}
 				else if (elem->ValueStr() == "Node")
 				{
-					string objName = elem->Attribute("name");
+					std::string objName = elem->Attribute("name");
 					
 					String wobjName = StringUtils::toWString(objName);
 

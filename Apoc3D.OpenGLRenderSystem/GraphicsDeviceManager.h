@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GRAPHICSDEVICEMANAGER_H
 
 #include "GL1Common.h"
-#include "Graphics/RenderSystem/DeviceContent.h"
+#include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 
@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			class GraphicsDeviceManager
 			{

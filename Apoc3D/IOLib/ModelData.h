@@ -47,8 +47,6 @@ using namespace Apoc3D::Math;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
 
-using namespace std;
-
 namespace Apoc3D
 {
 	namespace IO

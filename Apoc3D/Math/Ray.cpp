@@ -57,8 +57,8 @@ namespace Apoc3D
 					maxv = temp;
 				}
 
-				d = max(minv, d);
-				maxValue = min(maxv, maxValue);
+				d = std::max<float>(minv, d);
+				maxValue = std::min<float>(maxv, maxValue);
 
 				if (d > maxValue)
 				{
@@ -88,8 +88,8 @@ namespace Apoc3D
 					maxv = temp;
 				}
 
-				d = max(minv, d);
-				maxValue = min(maxv, maxValue);
+				d = std::max<float>(minv, d);
+				maxValue = std::min<float>(maxv, maxValue);
 
 				if (d > maxValue)
 				{
@@ -119,8 +119,8 @@ namespace Apoc3D
 					maxv = temp;
 				}
 
-				d = max(minv, d);
-				maxValue = min(maxv, maxValue);
+				d = std::max<float>(minv, d);
+				maxValue = std::min<float>(maxv, maxValue);
 
 				if (d > maxValue)
 				{

@@ -91,6 +91,11 @@ namespace Apoc3D
 				m_manager->RemoveTask(m_resUnloader);
 				delete m_resUnloader;
 			}
+			if (m_lock)
+			{
+				delete m_lock;
+				m_lock = nullptr;
+			}
 		}
 
 		void Resource::Use()		
@@ -293,6 +298,11 @@ namespace Apoc3D
 			: m_table(table), Generation(GenerationTable::MaxGeneration - 1)
 		{
 			m_queueLock = new tthread::mutex();
+		}
+		Resource::GenerationCalculator::~GenerationCalculator()
+		{
+			delete m_queueLock;
+			m_queueLock = nullptr;
 		}
 
 		void Resource::GenerationCalculator::Use(Resource* resource)

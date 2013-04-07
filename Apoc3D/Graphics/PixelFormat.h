@@ -30,8 +30,6 @@
 
 using namespace Apoc3D::Graphics::RenderSystem;
 
-using namespace std;
-
 namespace Apoc3D
 {
 	namespace Graphics

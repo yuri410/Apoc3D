@@ -36,7 +36,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace GL1RenderSystem
+		namespace GLRenderSystem
 		{
 			GL1DeviceContent::GL1DeviceContent()
 				: DeviceContent(true), m_window(0)
