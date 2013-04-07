@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<TestBuild>
+  <Build Type="Project">
+    <Item001 Type ="PAK" 
+             DestinationFile="apoc_manual_build\classic_skin.pak">
+      <Entry01 DirPath="apoc_manual_build\classic_skin" Flatten="true" />
+    </Item001>
+    <Item002 Type ="PAK" 
+             DestinationFile="apoc_manual_build\effects.pak">
+      <Entry01 DirPath="apoc_manual_build\effects" Flatten="true" />
+    </Item002>
+    <Item003 Type ="PAK" 
+             DestinationFile="apoc_manual_build\apdgui.pak">
+      <Entry01 DirPath="apoc_manual_build\gui" Flatten="true" />
+    </Item003>
+    <Item004 Type ="PAK" 
+             DestinationFile="apoc_manual_build\system.pak">
+      <Entry01 FilePath="apoc_manual_build\classic_skin.pak" />
+      <Entry02 FilePath="apoc_manual_build\effects.pak" />
+      <Entry03 FilePath="apoc_manual_build\apdgui.pak" />
+    </Item004>
+  </Build>
+</TestBuild>

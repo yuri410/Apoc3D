@@ -1,0 +1,343 @@
+<?xml version="1.0" ?>
+<TestBuild>
+  <Project Name="Apoc3D System Assets" Type="project">
+    <system Type="Folder" Pack="pak" DestinationPack="apoc_system\system.pak">
+      <skin Type="Folder" Pack="pak" DestinationPack="apoc_system\classic_skin.pak">
+        <english Type ="Font"
+               Name="apoc_system\SourceSansPro-Regular.otf"
+               Size="11"
+               Style="Regular"
+               DestinationFile="apoc_system\classic_skin\english.fnt">
+          <Range1 Start="0" End="255"/>
+        </english>
+
+        <ctl_arrow
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_arrow.png" DestinationFile="apoc_system\classic_skin\ctl_arrow.tex" />
+        <ctl_btn_close
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_btn_close.png" DestinationFile="apoc_system\classic_skin\ctl_btn_close.tex" />
+        <ctl_btn_default
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_btn_default.png" DestinationFile="apoc_system\classic_skin\ctl_btn_default.tex" />
+        <ctl_btn_maximize
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_btn_maximize.png" DestinationFile="apoc_system\classic_skin\ctl_btn_maximize.tex" />
+        <ctl_btn_minimize
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_btn_minimize.png" DestinationFile="apoc_system\classic_skin\ctl_btn_minimize.tex" />
+        <ctl_btn_restore
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_btn_restore.png" DestinationFile="apoc_system\classic_skin\ctl_btn_restore.tex" />
+        <ctl_checkbox_checked
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_checkbox_checked.png" DestinationFile="apoc_system\classic_skin\ctl_checkbox_checked.tex" />
+        <ctl_checkbox_unchecked
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_checkbox_unchecked.png" DestinationFile="apoc_system\classic_skin\ctl_checkbox_unchecked.tex" />
+        <ctl_combobox_button
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_combobox_button.png" DestinationFile="apoc_system\classic_skin\ctl_combobox_button.tex" />
+        <ctl_frm_default_lowercenter
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_lowercenter.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_lowercenter.tex" />
+        <ctl_frm_default_lowerleft
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_lowerleft.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_lowerleft.tex" />
+        <ctl_frm_default_lowerright
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_lowerright.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_lowerright.tex" />
+        <ctl_frm_default_lowerright_resize
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_lowerright_resize.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_lowerright_resize.tex" />
+        <ctl_frm_default_midcenter
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_midcenter.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_midcenter.tex" />
+        <ctl_frm_default_midleft
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_midleft.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_midleft.tex" />
+        <ctl_frm_default_midright
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_midright.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_midright.tex" />
+        <ctl_frm_default_uppercenter
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_uppercenter.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_uppercenter.tex" />
+        <ctl_frm_default_upperleft
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_upperleft.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_upperleft.tex" />
+        <ctl_frm_default_upperright
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_upperright.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_upperright.tex" />
+        <ctl_potentiometer
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_potentiometer.png" DestinationFile="apoc_system\classic_skin\ctl_potentiometer.tex" />
+        <ctl_radiobtn_checked
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_radiobtn_checked.png" DestinationFile="apoc_system\classic_skin\ctl_radiobtn_checked.tex" />
+        <ctl_radiobtn_unchecked
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_radiobtn_unchecked.png" DestinationFile="apoc_system\classic_skin\ctl_radiobtn_unchecked.tex" />
+        <ctl_scrollbar_base
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_base.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_base.tex" />
+        <ctl_scrollbar_button
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_button.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_button.tex" />
+        <ctl_scrollbar_hscrollbar_back
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_back.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_back.tex" />
+        <ctl_scrollbar_hscrollbar_button
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_button.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_button.tex" />
+        <ctl_scrollbar_hscrollbar_cursor
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_cursor.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_cursor.tex" />
+        <ctl_scrollbar_hscrollbar_highlight_left
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_left.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_left.tex" />
+        <ctl_scrollbar_hscrollbar_highlight_middle
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_middle.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_middle.tex" />
+        <ctl_scrollbar_hscrollbar_highlight_right
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_right.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_right.tex" />
+        <ctl_scrollbar_hscrollbar_left
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_left.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_left.tex" />
+        <ctl_scrollbar_hscrollbar_middle
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_middle.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_middle.tex" />
+        <ctl_scrollbar_hscrollbar_right
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_right.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_right.tex" />
+        <ctl_scrollbar_scrollbar_cursor
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_scrollbar_cursor.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_scrollbar_cursor.tex" />
+        <ctl_scrollbar_scroller
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_scroller.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_scroller.tex" />
+        <ctl_scrollbar_vscrollbar_back
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_back.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_back.tex" />
+        <ctl_scrollbar_vscrollbar_bottom
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_bottom.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_bottom.tex" />
+        <ctl_scrollbar_vscrollbar_button
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_button.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_button.tex" />
+        <ctl_scrollbar_vscrollbar_cursor
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_cursor.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_cursor.tex" />
+        <ctl_scrollbar_vscrollbar_highlight_bottom
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_bottom.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_bottom.tex" />
+        <ctl_scrollbar_vscrollbar_highlight_middle
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_middle.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_middle.tex" />
+        <ctl_scrollbar_vscrollbar_highlight_top
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_top.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_top.tex" />
+        <ctl_scrollbar_vscrollbar_middle
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_middle.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_middle.tex" />
+        <ctl_scrollbar_vscrollbar_top
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_top.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_top.tex" />
+        <ctl_slider_center
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_slider_center.png" DestinationFile="apoc_system\classic_skin\ctl_slider_center.tex" />
+        <ctl_slider_cursor
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_slider_cursor.png" DestinationFile="apoc_system\classic_skin\ctl_slider_cursor.tex" />
+        <ctl_slider_left
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_slider_left.png" DestinationFile="apoc_system\classic_skin\ctl_slider_left.tex" />
+        <ctl_textbox
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_textbox.png" DestinationFile="apoc_system\classic_skin\ctl_textbox.tex" />
+        <cursor_circle
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\cursor_circle.png" DestinationFile="apoc_system\classic_skin\cursor_circle.tex" />
+        <cursor_default
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\cursor_default.png" DestinationFile="apoc_system\classic_skin\cursor_default.tex" />
+        <cursor_resize
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\cursor_resize.png" DestinationFile="apoc_system\classic_skin\cursor_resize.tex" />
+
+
+      </skin>
+      <gui Type="Folder" Pack="pak" DestinationPack="apoc_system\apdgui.pak">
+        <add_ambientlight
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_ambientlight.ico" DestinationFile="apoc_system\gui\adui_add_ambientlight.tex" />
+        <add_ambientlight_32X32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_ambientlight_32X32.ico" DestinationFile="apoc_system\gui\adui_add_ambientlight_32X32.tex" />
+        <add_dirlight
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_dirlight.ico" DestinationFile="apoc_system\gui\adui_add_dirlight.tex" />
+        <add_dirlight_32X32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_dirlight_32X32.ico" DestinationFile="apoc_system\gui\adui_add_dirlight_32X32.tex" />
+        <add_exisiting_document
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_exisiting_document.ico" DestinationFile="apoc_system\gui\adui_add_exisiting_document.tex" />
+        <add_orthographic_camera
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_orthographic_camera.ico" DestinationFile="apoc_system\gui\adui_add_orthographic_camera.tex" />
+        <add_orthographic_camera_32x32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_orthographic_camera_32x32.ico" DestinationFile="apoc_system\gui\adui_add_orthographic_camera_32x32.tex" />
+        <add_perspective_camera
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_perspective_camera.ico" DestinationFile="apoc_system\gui\adui_add_perspective_camera.tex" />
+        <add_perspective_camera_32x32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_perspective_camera_32x32.ico" DestinationFile="apoc_system\gui\adui_add_perspective_camera_32x32.tex" />
+        <add_plane
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_plane.ico" DestinationFile="apoc_system\gui\adui_add_plane.tex" />
+
+        <add_plane_32X32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_plane_32X32.ico" DestinationFile="apoc_system\gui\adui_add_plane_32X32.tex" />
+        <add_pointlight
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_pointlight.ico" DestinationFile="apoc_system\gui\adui_add_pointlight.tex" />
+        <add_pointlight_32X32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_pointlight_32X32.ico" DestinationFile="apoc_system\gui\adui_add_pointlight_32X32.tex" />
+        <add_sphere
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_sphere.ico" DestinationFile="apoc_system\gui\adui_add_sphere.tex" />
+        <add_sphere_32X32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_sphere_32X32.ico"  DestinationFile="apoc_system\gui\adui_add_sphere_32X32.tex" />
+        <add_spotlight
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_spotlight.ico" DestinationFile="apoc_system\gui\adui_add_spotlight.tex" />
+        <add_spotlight_32x32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_spotlight_32x32.ico" DestinationFile="apoc_system\gui\adui_add_spotlight_32x32.tex" />
+        <add_teapot
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_teapot.ico" DestinationFile="apoc_system\gui\adui_add_teapot.tex" />
+        <add_teapot_32x32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_teapot_32x32.ico" DestinationFile="apoc_system\gui\adui_add_teapot_32x32.tex" />
+        <add_torus
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_torus.ico" DestinationFile="apoc_system\gui\adui_add_torustex" />
+
+        <add_torus_32x32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_torus_32x32.ico" DestinationFile="apoc_system\gui\adui_add_torus_32x32.tex" />
+        <AddNewImage
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\AddNewImage.png" DestinationFile="apoc_system\gui\adui_AddNewImage.tex" />
+        <Auto_Layout
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\Auto Layout.png" DestinationFile="apoc_system\gui\adui_Auto_Layout.tex" />
+        <Camera
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\Camera.ico" DestinationFile="apoc_system\gui\adui_Camera.tex" />
+        <CameraInstance
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\CameraInstance.ico" DestinationFile="apoc_system\gui\adui_CameraInstance.tex" />
+        <Color
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\Color.png" DestinationFile="apoc_system\gui\adui_Color.tex" />
+        <controller
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\controller.ico" DestinationFile="apoc_system\gui\adui_controller.tex" />
+        <DeleteImage
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\DeleteImage.png" DestinationFile="apoc_system\gui\adui_DeleteImage.tex" />
+        <EditImage
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\EditImage.png" DestinationFile="apoc_system\gui\adui_EditImage.tex" />
+        <Effect
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\Effect.ico" DestinationFile="apoc_system\gui\adui_Effect.tex" />
+
+        <EffectInstance
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\EffectInstance.ico" DestinationFile="apoc_system\gui\adui_EffectInstance.tex" />
+        <effects
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\effects.ico" DestinationFile="apoc_system\gui\adui_effects.tex" />
+        <effects_file
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\effects_file.ico" DestinationFile="apoc_system\gui\adui_effects_file.tex" />
+        <effects_file_16
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\effects_file_16.ico" DestinationFile="apoc_system\gui\adui_effects_file_16.tex" />
+        <Geometry
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\Geometry.ico" DestinationFile="apoc_system\gui\adui_Geometry.tex" />
+        <GeometryInstance
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\GeometryInstance.ico" DestinationFile="apoc_system\gui\adui_GeometryInstance.tex" />
+
+        <Horizontal_Layout
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\Horizontal Layout.png" DestinationFile="apoc_system\gui\adui_Horizontal_Layout.tex" />
+        <Image
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\Image.ico"  DestinationFile="apoc_system\gui\adui_Image.tex" />
+        <ImageFilter
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\ImageFilter.png" DestinationFile="apoc_system\gui\adui_ImageFilter.tex" />
+        <ImageInstance
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\ImageInstance.ico" DestinationFile="apoc_system\gui\adui_ImageInstance.tex" />
+        <ImageList
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\ImageList.png"  DestinationFile="apoc_system\gui\adui_ImageList.tex" />
+        <ImagePreview
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\ImagePreview.png"  DestinationFile="apoc_system\gui\adui_ImagePreview.tex" />
+        <ImageSize
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\ImageSize.png"  DestinationFile="apoc_system\gui\adui_ImageSize.tex" />
+        <import1
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\import1.ico" DestinationFile="apoc_system\gui\adui_import1.tex" />
+        <lambert
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\lambert.ico" DestinationFile="apoc_system\gui\adui_lambert.tex" />
+        <Large_Thumbnails
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\Large Thumbnails.png" DestinationFile="apoc_system\gui\adui_Large_Thumbnails.tex" />
+        <light
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\light.ico" DestinationFile="apoc_system\gui\adui_light.tex" />
+        <light_binding
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\light_binding.ico" DestinationFile="apoc_system\gui\adui_light_binding.tex" />
+        <LightInstance
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\LightInstance.ico" DestinationFile="apoc_system\gui\adui_LightInstance.tex" />
+
+        <LightPrio
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\LightPrio.png"  DestinationFile="apoc_system\gui\adui_LightPrio.tex" />
+        <material
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\material.ico"  DestinationFile="apoc_system\gui\adui_material.tex" />
+        <material_32x32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\material_32x32.ico" DestinationFile="apoc_system\gui\adui_material_32x32.tex" />
+        <material2
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\material2.ico"  DestinationFile="apoc_system\gui\adui_material2.tex" />
+        <MaterialInstance
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\MaterialInstance.ico"  DestinationFile="apoc_system\gui\adui_MaterialInstance.tex" />
+        <materialtextures
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\materialtextures.png" DestinationFile="apoc_system\gui\adui_materialtextures.tex" />
+        <Medium_Thumbnails
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\Medium Thumbnails.png" DestinationFile="apoc_system\gui\adui_Medium_Thumbnails.tex" />
+        <Minus
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\Minus.png" DestinationFile="apoc_system\gui\adui_Minus.tex" />
+        <ModifierGravity
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\ModifierGravity.png" DestinationFile="apoc_system\gui\adui_ModifierGravity.tex" />
+        <ModifierRotate
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\ModifierRotate.png" DestinationFile="apoc_system\gui\adui_ModifierRotate.tex" />
+        <new_document
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\new_document.ico"  DestinationFile="apoc_system\gui\adui_new_document.tex" />
+
+        <NewProject1
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\NewProject1.ico" DestinationFile="apoc_system\gui\adui_NewProject1.tex" />
+        <Node
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\Node.ico" DestinationFile="apoc_system\gui\adui_Node.tex" />
+        <NodeInstance
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\NodeInstance.ico" DestinationFile="apoc_system\gui\adui_NodeInstance.tex" />
+        <nodes
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\nodes.png" DestinationFile="apoc_system\gui\adui_nodes.tex" />
+        <openGL_32x32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\openGL_32x32.ico" DestinationFile="apoc_system\gui\adui_openGL_32x32.tex" />
+        <OpenProject
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\OpenProject.ico" DestinationFile="apoc_system\gui\adui_OpenProject.tex" />
+        <Particles
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\Particles.png" DestinationFile="apoc_system\gui\adui_Particles.tex" />
+        <ParticlesInstance
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\ParticlesInstance.png" DestinationFile="apoc_system\gui\adui_ParticlesInstance.tex" />
+        <Pass
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\Pass.ico" DestinationFile="apoc_system\gui\adui_Pass.tex" />
+        <pause1
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\pause1.ico" DestinationFile="apoc_system\gui\adui_pause1.tex" />
+
+        <play1
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\play1.ico" DestinationFile="apoc_system\gui\adui_play1.tex" />
+        <Plus
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\Plus.png" DestinationFile="apoc_system\gui\adui_Plus.tex" />
+        <rebuild_all_32X32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\rebuild_all_32X32.ico" DestinationFile="apoc_system\gui\adui_rebuild_all_32X32.tex" />
+        <redo_32x32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\redo_32x32.ico" DestinationFile="apoc_system\gui\adui_redo_32x32.tex" />
+        <remove
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\remove.ico" DestinationFile="apoc_system\gui\adui_remove.tex" />
+        <RenameImage
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\RenameImage.png" DestinationFile="apoc_system\gui\adui_RenameImage.tex" />
+        <ResetPanning
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\ResetPanning.png" DestinationFile="apoc_system\gui\adui_ResetPanning.tex" />
+        <save
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\save.ico" DestinationFile="apoc_system\gui\adui_save.tex" />
+        <save_32x32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\save_32x32.ico" DestinationFile="apoc_system\gui\adui_save_32x32.tex" />
+        <save_all
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\save_all.ico" DestinationFile="apoc_system\gui\adui_save_all.tex" />
+
+        <save_all_32X32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\save_all_32X32.ico" DestinationFile="apoc_system\gui\adui_save_all_32X32.tex" />
+        <Scene
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\Scene.ico" DestinationFile="apoc_system\gui\adui_Scene.tex" />
+        <SceneInstance
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\SceneInstance.ico" DestinationFile="apoc_system\gui\adui_SceneInstance.tex" />
+        <showalpha
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\showalpha.png" DestinationFile="apoc_system\gui\adui_showalpha.tex" />
+        <showblue
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\showblue.png" DestinationFile="apoc_system\gui\adui_showblue.tex" />
+        <showgreen
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\showgreen.png" DestinationFile="apoc_system\gui\adui_showgreen.tex" />
+        <showred
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\showred.png" DestinationFile="apoc_system\gui\adui_showred.tex" />
+        <skinning
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\skinning.ico" DestinationFile="apoc_system\gui\adui_skinning.tex" />
+        <skinning_arrow
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\skinning_arrow.ico" DestinationFile="apoc_system\gui\adui_skinning_arrow.tex" />
+        <Item090 Small_Thumbnails=""
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\Small Thumbnails.png" DestinationFile="apoc_system\gui\adui_Small_Thumbnails.tex" />
+
+        <stop1
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\stop1.ico" DestinationFile="apoc_system\gui\adui_stop1.tex" />
+        <surface
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\surface.ico" DestinationFile="apoc_system\gui\adui_surface.tex" />
+        <undo_32x32
+          Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\undo_32x32.ico" DestinationFile="apoc_system\gui\adui_undo_32x32.tex" />
+        <Vertical_Layout
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\Vertical Layout.png" DestinationFile="apoc_system\gui\adui_Vertical_Layout.tex" />
+        <ViewImage
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\ViewImage.png" DestinationFile="apoc_system\gui\adui_ViewImage.tex" />
+        <VisualModel
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\VisualModel.png" DestinationFile="apoc_system\gui\adui_VisualModel.tex" />
+        <VisualModel_Instance
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\VisualModel_Instance.png" DestinationFile="apoc_system\gui\adui_VisualModel_Instance.tex" />
+        <VisualStyle
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\VisualStyle.png" DestinationFile="apoc_system\gui\adui_VisualStyle.tex" />
+        <VisualStyle_Instance
+          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\icons\VisualStyle_Instance.png" DestinationFile="apoc_system\gui\adui_VisualStyle_Instance.tex" />
+
+
+        <alphagrid Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\alphagrid.png" DestinationFile="apoc_system\gui\alphagrid.tex" />
+
+      </gui>
+      <effects Type="Folder" Pack="pak" DestinationPack="apoc_system\effects.pak">
+        <Standard Type="effect" VSSource="apoc_system\effects\standardnh.vs"
+                  PSSource="apoc_system\effects\standardnh.ps"
+                  ParamList="apoc_system\effects\standardnh.xml"
+                  DestinationFile="apoc_system\effects\standard.afx"
+                  EntryPointVS="main" EntryPointPS="main" Profile="SM2.0">
+        </Standard>
+      </effects>
+    </system>
+
+  </Project>
+</TestBuild>
