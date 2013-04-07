@@ -29,13 +29,11 @@
 
 #include "apoc3d/Common.h"
 
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Math/Vector.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
-
-using namespace std;
 
 namespace Apoc3D
 {
@@ -203,7 +201,7 @@ namespace Apoc3D
 				Entry() { }
 			};
 
-			typedef FastMap<String, Entry> SectionTable;
+			typedef HashMap<String, Entry> SectionTable;
 
 			inline void FillBuffer(const String& name, uint32 len);
 
@@ -392,7 +390,7 @@ namespace Apoc3D
 				void ResetWritePosition() const;
 			};
 
-			typedef FastMap<String, Entry> SectionTable;
+			typedef HashMap<String, Entry> SectionTable;
 
 			const Entry* FindEntry(const String& name) const
 			{

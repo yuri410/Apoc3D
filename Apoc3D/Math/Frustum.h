@@ -27,8 +27,6 @@
  */
 
 
-#include "apoc3d/Common.h"
-
 #include "BoundingSphere.h"
 #include "Plane.h"
 

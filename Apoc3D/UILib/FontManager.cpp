@@ -30,9 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/Math/Point.h"
 #include "apoc3d/Core/Logging.h"
-
 
 using namespace Apoc3D::IO;
 
@@ -214,7 +212,7 @@ namespace Apoc3D
 
 			if (!newVersion)
 			{
-				for (FastMap<wchar_t, Character>::Enumerator i=m_charTable.GetEnumerator();i.MoveNext();)
+				for (HashMap<wchar_t, Character>::Enumerator i=m_charTable.GetEnumerator();i.MoveNext();)
 				{
 					Character* ch = i.getCurrentValue();
 					Glyph& g = m_glyphList[ch->GlyphIndex];
@@ -763,7 +761,7 @@ namespace Apoc3D
 		}
 		FontManager::~FontManager()
 		{
-			for (FastMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
+			for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
 			{
 				delete *iter.getCurrentValue();
 			}
@@ -782,7 +780,7 @@ namespace Apoc3D
 		}
 		void FontManager::StartFrame()
 		{
-			for (FastMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
+			for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
 			{
 				Font* fnt = *iter.getCurrentValue();
 				fnt->FrameStartReset();

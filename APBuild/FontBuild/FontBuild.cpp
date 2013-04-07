@@ -40,9 +40,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Collections/CollectionsCommon.h"
 #include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/ExistTable.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/IOLib/BinaryWriter.h"
 #include "apoc3d/Vfs/File.h"
@@ -212,7 +212,7 @@ namespace APBuild
 	{
 		GlyphBitmapEqualityComparer* comparer = new GlyphBitmapEqualityComparer();
 		FastList<CharMapping> charMap(0xffff);
-		FastMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, comparer);
+		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, comparer);
 		//bool* passCheck = new bool[0xffff];
 		//memset(passCheck,0,sizeof(bool)*0xffff);
 
@@ -408,7 +408,7 @@ namespace APBuild
 		}
 		int64 baseOfs = fs->getPosition();
 
-		for (FastMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 
@@ -420,7 +420,7 @@ namespace APBuild
 
 		fs->Seek(glyRecPos, SEEK_Begin);
 
-		for (FastMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 
@@ -443,7 +443,7 @@ namespace APBuild
 	{
 		GlyphBitmapEqualityComparer* comparer = new GlyphBitmapEqualityComparer();
 		FastList<CharMapping> charMap(0xffff);
-		FastMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, comparer);
+		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, comparer);
 		
 		//Create and initilize a freetype font library.
 		FT_Library library;
@@ -602,7 +602,7 @@ namespace APBuild
 		}
 		int64 baseOfs = fs->getPosition();
 
-		for (FastMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 
@@ -614,7 +614,7 @@ namespace APBuild
 
 		fs->Seek(glyRecPos, SEEK_Begin);
 
-		for (FastMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 

@@ -26,15 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "UICommon.h"
-
 #include "Control.h"
 #include "KeyboardHelper.h"
-
-#include "apoc3d/Collections/FastList.h"
-
-using namespace Apoc3D::Collections;
+#include "apoc3d/Math/ColorValue.h"
 
 namespace Apoc3D
 {

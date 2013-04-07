@@ -24,9 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "HardwareBuffer.h"
 
-#include "apoc3d/Apoc3DException.h"
-
-
 using namespace Apoc3D;
 
 namespace Apoc3D

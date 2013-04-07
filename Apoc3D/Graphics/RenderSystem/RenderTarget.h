@@ -26,11 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
-#include "apoc3d/Graphics/GraphicsCommon.h"
-#include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Graphics/LockData.h"
 
 using namespace Apoc3D::VFS;

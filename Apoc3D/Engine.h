@@ -28,11 +28,10 @@
 
 
 #include "Common.h"
-#include "Collections/FastList.h"
+#include "Collections/List.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
-using namespace std;
 
 namespace Apoc3D
 {

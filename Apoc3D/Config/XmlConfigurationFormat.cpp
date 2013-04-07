@@ -171,23 +171,23 @@ namespace Apoc3D
 
 		String getElementName(const TiXmlElement* elem)
 		{
-			string str = elem->ValueStr();
+			std::string str = elem->ValueStr();
 
 			return StringUtils::toWString(str);
 		}
 		String getNodeText(const TiXmlText* text)
 		{
-			string str = text->ValueStr();
+			std::string str = text->ValueStr();
 			return StringUtils::toWString(str);
 		}
 		String getAttribName(const TiXmlAttribute* attrib)
 		{
-			string str = attrib->NameTStr();
+			std::string str = attrib->NameTStr();
 			return StringUtils::toWString(str);
 		}
 		String getAttribValue(const TiXmlAttribute* attrib)
 		{
-			string str = attrib->ValueStr();
+			std::string str = attrib->ValueStr();
 			return StringUtils::toWString(str);
 		}
 	}

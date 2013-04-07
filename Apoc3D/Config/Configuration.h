@@ -28,12 +28,11 @@
 
 
 #include "apoc3d/Common.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
-using namespace std;
 
 namespace Apoc3D
 {
@@ -46,7 +45,7 @@ namespace Apoc3D
 			virtual Configuration* Load(const ResourceLocation* rl) = 0;
 			virtual void Save(Configuration* config, Stream* strm) = 0;
 
-			virtual std::vector<String> GetSupportedFileSystemExtensions() = 0;
+			virtual List<String> GetSupportedFileSystemExtensions() = 0;
 		};
 
 		/** 
@@ -63,7 +62,7 @@ namespace Apoc3D
 		class APAPI Configuration
 		{
 		public:
-			typedef FastMap<String, ConfigurationSection*> ChildTable;
+			typedef HashMap<String, ConfigurationSection*> ChildTable;
 			
 
 			Configuration(const String& name)

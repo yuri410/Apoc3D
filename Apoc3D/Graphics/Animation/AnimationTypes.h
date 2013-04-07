@@ -27,9 +27,8 @@
  */
 
 
-#include "apoc3d/Common.h"
 #include "apoc3d/Math/Matrix.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
@@ -42,8 +41,6 @@ namespace Apoc3D
 	{
 		namespace Animation
 		{
-			//template class APAPI vector<int32>;
-
 			/** 
 			 *  Defines a bone in model. 
 			 *
@@ -185,8 +182,6 @@ namespace Apoc3D
 				int32 m_materialFrame;
 
 			};
-
-			template class vector<ModelKeyframe>;
 
 			/**
 			 *  A model animation clip holds all the keyframes needed to describe a single model animation.

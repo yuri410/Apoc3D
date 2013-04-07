@@ -26,8 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "../BuildConfig.h"
 #include "../D3DHelper.h"
 
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Graphics/Animation/AnimationTypes.h"
 #include "apoc3d/IOLib/MaterialData.h"
@@ -166,7 +166,7 @@ namespace APBuild
 		
 		for (uint i=0;i<partCount;i++)
 		{
-			FastMap<int,int> vertexTable((int)totalVertex, Apoc3D::Collections::IBuiltInEqualityComparer<int>::Default);
+			HashMap<int,int> vertexTable((int)totalVertex, Apoc3D::Collections::IBuiltInEqualityComparer<int>::Default);
 			FastList<char*> vertices(totalVertex);
 			FastList<MeshFace> faces(totalFaces);
 
@@ -211,15 +211,15 @@ namespace APBuild
 				continue;
 
 			D3DXMATERIAL d3dmtrl = *(((D3DXMATERIAL*)materials->GetBufferPointer()) + i);
-			MaterialData mtrl;
-			mtrl.SetDefaults();
-			mtrl.Ambient = ToColor4( d3dmtrl.MatD3D.Ambient);
-			mtrl.Diffuse = ToColor4( d3dmtrl.MatD3D.Diffuse);
-			mtrl.Specular = ToColor4( d3dmtrl.MatD3D.Specular);
-			mtrl.Emissive = ToColor4( d3dmtrl.MatD3D.Emissive);
-			mtrl.Power = d3dmtrl.MatD3D.Power;
+			MaterialData* mtrl = new MaterialData();
+			mtrl->SetDefaults();
+			mtrl->Ambient = ToColor4( d3dmtrl.MatD3D.Ambient);
+			mtrl->Diffuse = ToColor4( d3dmtrl.MatD3D.Diffuse);
+			mtrl->Specular = ToColor4( d3dmtrl.MatD3D.Specular);
+			mtrl->Emissive = ToColor4( d3dmtrl.MatD3D.Emissive);
+			mtrl->Power = d3dmtrl.MatD3D.Power;
 			if (d3dmtrl.pTextureFilename)
-				mtrl.TextureName[0] = StringUtils::toWString(d3dmtrl.pTextureFilename);
+				mtrl->TextureName.Add(0, StringUtils::toWString(d3dmtrl.pTextureFilename));
 
 			MeshData* data = new MeshData();
 			data->Name = L"Part" + StringUtils::ToString(i,2,'0');

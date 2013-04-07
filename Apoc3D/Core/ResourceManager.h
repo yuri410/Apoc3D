@@ -26,10 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
+#include "apoc3d/Collections/HashMap.h"
 
-#include "apoc3d/Common.h"
-#include "apoc3d/Collections/FastList.h"
-
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core::Streaming;
 
 namespace Apoc3D
@@ -37,7 +36,7 @@ namespace Apoc3D
 	namespace Core
 	{
 		//template class APAPI std::unordered_map<String, Resource*>;
-		typedef std::unordered_map<String, Resource*> ResHashTable;
+		typedef HashMap<String, Resource*> ResHashTable;
 
 		/**
 		 *  A resource manager keeps track of certain type of resources. It does 2 jobs:
@@ -162,7 +161,7 @@ namespace Apoc3D
 			 */
 			int64 getUsedCacheSize() const { return m_curUsedCache; }
 			
-			int32 getResourceCount() const { return static_cast<int32>(m_hashTable.size()); }
+			int32 getResourceCount() const { return m_hashTable.getCount(); }
 
 			static const ManagerList& getManagerInstances() { return m_managers; }
 		private:

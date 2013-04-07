@@ -181,7 +181,7 @@ namespace Apoc3D
 
 			if (sceObj->IsDynamicObject())
 			{
-				m_dynObjs.push_back(sceObj);
+				m_dynObjs.PushBack(sceObj);
 			}
 			else
 			{
@@ -192,21 +192,21 @@ namespace Apoc3D
 		}
 		void OctreeSceneManager::AddStaticObject(SceneObject* sceObj)
 		{
-			list<SceneObject*>::iterator iter = find(m_farObjs.begin(), m_farObjs.end(), sceObj);
+			LinkedList<SceneObject*>::Iterator iter = m_farObjs.Find(sceObj);
 
 			if (!QualifiesFarObject(sceObj))
 			{
 				m_octRootNode->AddObject(sceObj);
-				if (iter != m_farObjs.end())
+				if (iter != m_farObjs.End())
 				{
-					m_farObjs.erase(iter);
+					m_farObjs.Remove(*iter);
 				}
 			}
 			else
 			{
-				if (iter == m_farObjs.end())
+				if (iter == m_farObjs.End())
 				{
-					m_farObjs.push_back(sceObj);
+					m_farObjs.PushBack(sceObj);
 				}
 			}
 		}
@@ -215,13 +215,13 @@ namespace Apoc3D
 			
 			if (sceObj->IsDynamicObject())
 			{
-				m_dynObjs.remove(sceObj);
+				m_dynObjs.Remove(sceObj);
 			}
 			else
 			{
 				m_octRootNode->RemoveObject(sceObj);
 				
-				m_farObjs.remove(sceObj);
+				m_farObjs.Remove(sceObj);
 				//list<SceneObject*>::iterator iter = find(m_farObjs.begin(), m_farObjs.end(), sceObj);
 				//if (iter != m_farObjs.end())
 				//{
@@ -282,7 +282,7 @@ namespace Apoc3D
 					}
 				}
 			}
-			for (list<SceneObject*>::iterator iter = m_farObjs.begin();iter!=m_farObjs.end();iter++)
+			for (LinkedList<SceneObject*>::Iterator iter = m_farObjs.Begin();iter!=m_farObjs.End();iter++)
 			{
 				SceneObject* obj = *iter;
 				if (frus.Intersects(obj->getBoundingSphere()))
@@ -292,7 +292,7 @@ namespace Apoc3D
 					batchData->AddVisisbleObject(obj, level);
 				}
 			}
-			for (list<SceneObject*>::iterator iter = m_dynObjs.begin();iter!=m_dynObjs.end();iter++)
+			for (LinkedList<SceneObject*>::Iterator iter = m_dynObjs.Begin();iter!=m_dynObjs.End();iter++)
 			{
 				SceneObject* obj = *iter;
 				if (frus.Intersects(obj->getBoundingSphere()))
@@ -344,7 +344,7 @@ namespace Apoc3D
 				}
 			}
 
-			for (list<SceneObject*>::iterator iter = m_farObjs.begin();iter!=m_farObjs.end();iter++)
+			for (LinkedList<SceneObject*>::Iterator iter = m_farObjs.Begin();iter!=m_farObjs.End();iter++)
 			{
 				SceneObject* obj = *iter;
 				if ((filter && filter->Check(obj) || !filter) && 
@@ -358,7 +358,7 @@ namespace Apoc3D
 					}
 				}
 			}
-			for (list<SceneObject*>::iterator iter = m_dynObjs.begin();iter!=m_dynObjs.end();iter++)
+			for (LinkedList<SceneObject*>::Iterator iter = m_dynObjs.Begin();iter!=m_dynObjs.End();iter++)
 			{
 				SceneObject* obj = *iter;
 				if ((filter && filter->Check(obj) || !filter) && 

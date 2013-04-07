@@ -181,9 +181,9 @@ namespace APDesigner
 					// no sub node.
 					// That mean this node is a leaf node
 
-					const std::list<GraphNode*>& nodes = node->getAttachedNodes();
-					for (std::list<GraphNode*>::const_iterator iter = nodes.cbegin();
-						iter!=nodes.cend();iter++)
+					const LinkedList<GraphNode*>& nodes = node->getAttachedNodes();
+					for (LinkedList<GraphNode*>::Iterator iter = nodes.Begin();
+						iter!=nodes.End();iter++)
 					{
 						const GraphNode* nde = *iter;
 						d = Vector2Utils::Subtract(nde->getPosition(), getPosition());

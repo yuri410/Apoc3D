@@ -32,8 +32,6 @@
 using namespace Apoc3D::Core;
 using namespace Apoc3D::IO;
 
-using namespace std;
-
 namespace Apoc3D
 {	
 	namespace VFS

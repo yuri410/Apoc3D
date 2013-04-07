@@ -148,9 +148,10 @@
     <ClInclude Include="Collections\List2D.h" />
     <ClInclude Include="Collections\CollectionsCommon.h" />
     <ClInclude Include="Collections\ExistTable.h" />
-    <ClInclude Include="Collections\FastList.h" />
-    <ClInclude Include="Collections\FastMap.h" />
-    <ClInclude Include="Collections\FastQueue.h" />
+    <ClInclude Include="Collections\List.h" />
+    <ClInclude Include="Collections\HashMap.h" />
+    <ClInclude Include="Collections\Queue.h" />
+    <ClInclude Include="Collections\LinkedList.h" />
     <ClInclude Include="Collections\Stack.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Config\ABCConfigurationFormat.h" />

@@ -26,9 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "apoc3d/Math/Vector.h"
 #include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
 
@@ -87,7 +84,7 @@ namespace Apoc3D
 				*reinterpret_cast<Vector4*>(Value) = value;
 			}
 		};
-		typedef unordered_map<String, MaterialCustomParameter> CustomParamTable;
+		typedef HashMap<String, MaterialCustomParameter> CustomParamTable;
 	}
 }
 

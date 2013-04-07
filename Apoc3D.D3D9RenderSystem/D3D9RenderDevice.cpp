@@ -151,7 +151,7 @@ namespace Apoc3D
 			
 			void D3D9RenderDevice::OnDeviceLost()
 			{
-				for (size_t i=0;i<m_volatileResources.size();i++)
+				for (int32 i=0;i<m_volatileResources.getCount();i++)
 				{
 					m_volatileResources[i]->ReleaseVolatileResource();
 				}
@@ -165,7 +165,7 @@ namespace Apoc3D
 				D3DDevice* dev = m_devManager->getDevice();
 				dev->GetRenderTarget(0, &m_defaultRT);
 				dev->GetDepthStencilSurface(&m_defaultDS);
-				for (size_t i=0;i<m_volatileResources.size();i++)
+				for (int32 i=0;i<m_volatileResources.getCount();i++)
 				{
 					m_volatileResources[i]->ReloadVolatileResource();
 				}

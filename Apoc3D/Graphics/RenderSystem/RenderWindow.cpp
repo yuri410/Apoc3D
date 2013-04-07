@@ -36,32 +36,30 @@ namespace Apoc3D
 		{
 			void FPSCounter::Step(const GameTime* const time)
 			{
-				m_frameTimes.push_back(time->getTotalRealTime());
+				m_frameTimes.PushBack(time->getTotalRealTime());
 
-				if (m_frameTimes.size()>1)
+				if (m_frameTimes.Size()>1)
 				{
-					float begin = *m_frameTimes.begin();
+					float begin = *m_frameTimes.Begin();
 
-					list<float>::iterator iter = m_frameTimes.end();
-					iter--;
-					float end = *iter;
+					float end = m_frameTimes.Back();
 
 					float timeLen = end - begin;
 
 					if (timeLen<0)
 					{
-						m_frameTimes.clear();
+						m_frameTimes.Clear();
 						return;
 					}
 
-					m_fps = static_cast<float>(m_frameTimes.size())/(timeLen);
+					m_fps = static_cast<float>(m_frameTimes.Size())/(timeLen);
 
 					if (timeLen>1)
 					{
 						float stamp = end - 1;
-						while (*m_frameTimes.begin()<stamp && !m_frameTimes.empty())
+						while (m_frameTimes.Front()<stamp && !m_frameTimes.IsEmpty())
 						{
-							m_frameTimes.erase(m_frameTimes.begin());
+							m_frameTimes.PopFront();
 						}
 					}
 				}

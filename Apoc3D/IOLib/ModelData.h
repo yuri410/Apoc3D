@@ -33,7 +33,7 @@
 #include "apoc3d/Graphics/MaterialTypes.h"
 #include "apoc3d/Graphics/ModelTypes.h"
 #include "apoc3d/Graphics/RenderSystem/VertexElement.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Math/BoundingSphere.h"
 
@@ -81,7 +81,7 @@ namespace Apoc3D
 			 *  When not using any material animation, this should be a set of arrays with a length of 1.
 			 *  That is in equivalent to a set of MaterialData.
 			 */
-			MeshMaterialSet<MaterialData> Materials;
+			MeshMaterialSet<MaterialData*> Materials;
 
 			/** A list of triangle faces. Only triangle list is supported as primitive at this stage.
 			*/

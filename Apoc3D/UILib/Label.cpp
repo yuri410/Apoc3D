@@ -76,9 +76,10 @@ namespace Apoc3D
 
 		void Label::UpdateText()
 		{
-			std::vector<String> lines = StringUtils::Split(Text, L"\n\r");
+			List<String> lines;
+			StringUtils::Split(Text, lines, L"\n\r");
 			m_lines.Clear();
-			for (size_t i=0;i<lines.size();i++)
+			for (int32 i=0;i<lines.getCount();i++)
 			{
 				m_lines.Add(lines[i]);
 			}
@@ -237,8 +238,9 @@ namespace Apoc3D
 			{
 				if (text.find_first_of('\n',0)!=String::npos)
 				{
-					std::vector<String> lines = StringUtils::Split(text, L"\n");
-					for (size_t i=0;i<lines.size();i++)
+					List<String> lines;
+					StringUtils::Split(text, lines, L"\n");
+					for (int32 i=0;i<lines.getCount();i++)
 					{
 						for (size_t j=0;j<lines[i].size();j++)
 						{
@@ -1226,8 +1228,9 @@ namespace Apoc3D
 				Point textSize = m_fontRef->MeasureString(newText);
 				m_cursorOffset.Y += (int)(textSize.Y / m_fontRef->getLineHeightInt()) - 1;
 				
-				std::vector<String> lines = StringUtils::Split(newText, L"\n");
-				int len = (int)lines.size();
+				List<String> lines;
+				StringUtils::Split(newText, lines, L"\n");
+				int len = (int)lines.getCount();
 				m_curorLocation.X += (int)lines[len-1].size();
 
 				UpdateScrolling();

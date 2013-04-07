@@ -26,12 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "File.h"
 
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::IO;
@@ -100,7 +97,7 @@ namespace Apoc3D
 				PCT_RLEPerEntry
 			};
 		private:
-			FastMap<String, PakArchiveEntry> m_entries;
+			HashMap<String, PakArchiveEntry> m_entries;
 
 			FileLocation* m_file;
 			Stream* m_fileStream;

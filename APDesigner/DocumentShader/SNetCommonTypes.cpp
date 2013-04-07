@@ -160,11 +160,11 @@ namespace APDesigner
 		StringEuqlityComparer m_comparer1;
 		Int32EqualityComparer m_comparer2;
 
-		FastMap<String, ShaderAtomDataFormat> CastTable;
-		FastMap<int, String> InvCastTable;
+		HashMap<String, ShaderAtomDataFormat> CastTable;
+		HashMap<int, String> InvCastTable;
 
-		FastMap<String, ShaderNetVaryingType> CastTable_SNVT;
-		FastMap<int, String> InvCastTable_SNVT;
+		HashMap<String, ShaderNetVaryingType> CastTable_SNVT;
+		HashMap<int, String> InvCastTable_SNVT;
 
 
 	private:

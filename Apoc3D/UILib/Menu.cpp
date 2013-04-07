@@ -358,12 +358,13 @@ namespace Apoc3D
 
 			if (m_text.find('&') != String::npos)
 			{
-				std::vector<String> split = StringUtils::Split(m_text, L"&");
+				List<String> split;
+				StringUtils::Split(m_text, split, L"&");
 
 				m_keyIndex = (int)split[0].length();
 				m_key = GetKey(split[1][0]);
 				m_cleanText.reserve(m_text.size());
-				for (size_t i=0;i<split.size();i++)
+				for (int32 i=0;i<split.getCount();i++)
 				{
 					m_cleanText+=split[i];
 				}

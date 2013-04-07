@@ -853,7 +853,7 @@ namespace APDesigner
 			
 			m_tbMeshName->setText(ents[selMeshIdx]->getName());
 
-			for (uint i=0;i<mtrls->getMaterialCount();i++)
+			for (int32 i=0;i<mtrls->getMaterialCount();i++)
 			{
 				m_cbMeshPart->getItems().Add(L"Part(Material Set)" + StringUtils::ToString(i, 4, '0'));
 			}
@@ -872,7 +872,7 @@ namespace APDesigner
 			int partIdx = m_cbMeshPart->getSelectedIndex();
 			if (partIdx != -1)
 			{
-				for (uint i=0;i<mtrls->getFrameCount(partIdx);i++)
+				for (int32 i=0;i<mtrls->getFrameCount(partIdx);i++)
 				{
 					m_cbSubMtrl->getItems().Add(L"Frame(Material)" + StringUtils::ToString(i, 4, '0'));
 				}
@@ -1059,9 +1059,9 @@ namespace APDesigner
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[i]->getMaterials();
 			
-			for (uint j=0;j<mtrls->getMaterialCount();j++)
+			for (int32 j=0;j<mtrls->getMaterialCount();j++)
 			{
-				for (uint k=0;k<mtrls->getFrameCount(j);k++)
+				for (int32 k=0;k<mtrls->getFrameCount(j);k++)
 				{
 					Material* mtrl = mtrls->getMaterial(j,k);
 

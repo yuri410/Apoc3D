@@ -27,8 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_D3D9_CONSTANTTABLE_H
 
 #include "D3D9Common.h"
+#include "apoc3d/Collections/HashMap.h"
 
-using namespace std;
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
@@ -94,7 +95,7 @@ namespace Apoc3D
 			class ConstantTable
 			{
 			private:
-				unordered_map<String, ShaderConstant> m_table;
+				HashMap<String, ShaderConstant> m_table;
 				
 				void ThrowKeyNotFoundEx(const String& name) const;
 			public:
@@ -105,12 +106,12 @@ namespace Apoc3D
 			};
 
 			const ShaderConstant& ConstantTable::getConstant(const String& name) const
-			{				
-				unordered_map<String, ShaderConstant>::const_iterator iter = m_table.find(name);
-			
-				if (iter != m_table.end())
+			{
+				ShaderConstant* sc = m_table.TryGetValue(name);
+				
+				if (sc)
 				{
-					return iter->second;
+					return *sc;
 				}
 				ThrowKeyNotFoundEx(name);
 				throw; // keep the compiler happy

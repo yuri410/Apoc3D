@@ -29,18 +29,19 @@
 
 #include "UICommon.h"
 
-
 #include "apoc3d/Core/Logging.h"
-#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Math/ColorValue.h"
-
-#include "tthread/tinythread.h"
-#include "tthread/fast_mutex.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
+
+namespace tthread
+{
+	class mutex;
+}
 
 namespace Apoc3D
 {
@@ -81,8 +82,8 @@ namespace Apoc3D
 			PictureBox* m_pictureBox;
 			StyleSkin* m_skin;
 			ScrollBar* m_scrollBar;
-			std::list<LogEntry> m_logs;
-			FastQueue<LogEntry> m_queuedNewLogs;
+			LinkedList<LogEntry> m_logs;
+			Queue<LogEntry> m_queuedNewLogs;
 
 			bool m_needsUpdateLineInfo;
 			int m_contendLineCount;
@@ -94,7 +95,7 @@ namespace Apoc3D
 			} m_entryInfo[MaxLogEntries];
 
 
-			tthread::fast_mutex m_logLock;
+			tthread::mutex* m_logLock;
 
 		};
 	}

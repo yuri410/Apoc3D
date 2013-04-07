@@ -28,14 +28,15 @@
  */
 
 #include "apoc3d/Common.h"
-#include "tthread/tinythread.h"
-#include "tthread/fast_mutex.h"
-#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Collections/Queue.h"
 
 using namespace Apoc3D::Collections;
 
-using namespace std;
-using namespace tthread;
+namespace tthread
+{
+	class thread;
+	class mutex;
+}
 
 namespace Apoc3D
 {
@@ -80,10 +81,10 @@ namespace Apoc3D
 			class APAPI AsyncProcessor
 			{
 			private:
-				FastQueue<ResourceOperation*> m_opQueue;
+				Queue<ResourceOperation*> m_opQueue;
 				GenerationTable* m_genTable;
-				thread* m_processThread;
-				fast_mutex m_syncMutex;
+				tthread::thread* m_processThread;
+				tthread::mutex* m_syncMutex;
 
 				bool m_closed;
 

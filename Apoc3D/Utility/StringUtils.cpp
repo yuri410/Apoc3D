@@ -22,9 +22,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "StringUtils.h"
+#include "apoc3d/Collections/List.h"
 #include <strstream>
+#include <sstream>
+#include <algorithm>
 
 using namespace std;
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
@@ -290,12 +294,8 @@ namespace Apoc3D
 		{
 			str.erase(str.find_last_not_of(delims)+1);
 		}
-		vector<String> StringUtils::Split(const String& str, const String& delims, int32 preserve)
+		void StringUtils::Split(const String& str, List<String>& result, const String& delims)
 		{
-			std::vector<String> ret;
-		
-			ret.reserve(preserve ? preserve : 4);
-
 			unsigned int numSplits = 0;
 
 			// Use STL methods 
@@ -312,13 +312,13 @@ namespace Apoc3D
 				else if (pos == String::npos)
 				{
 					// Copy the rest of the string
-					ret.push_back( str.substr(start) );
+					result.Add( str.substr(start) );
 					break;
 				}
 				else
 				{
 					// Copy up to delimiter
-					ret.push_back( str.substr(start, pos - start) );
+					result.Add( str.substr(start, pos - start) );
 					start = pos + 1;
 				}
 				// parse up to next real data
@@ -326,8 +326,6 @@ namespace Apoc3D
 				++numSplits;
 
 			} while (pos != String::npos);
-
-			return ret;
 		}
 
 		bool StringUtils::StartsWidth(const String& str, const String& v, bool caseInsensitive)

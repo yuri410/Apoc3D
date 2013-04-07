@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "D3D9DeviceContent.h"
+#include "D3D9DeviceContext.h"
 
 #include "D3D9RenderDevice.h"
 #include "D3D9RenderWindow.h"
@@ -39,7 +39,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			D3D9DeviceContent::D3D9DeviceContent()
+			D3D9DeviceContext::D3D9DeviceContext()
 				: DeviceContext(true), m_window(0)
 			{
 				m_d3d9 = Direct3DCreate9(D3D_SDK_VERSION);
@@ -48,20 +48,20 @@ namespace Apoc3D
 				m_d3d9->GetAdapterIdentifier(0, NULL, &did);
 				m_hardwareName = StringUtils::toWString(did.Description);
 			}
-			D3D9DeviceContent::~D3D9DeviceContent()
+			D3D9DeviceContext::~D3D9DeviceContext()
 			{
 				m_d3d9->Release();
 				m_d3d9 = 0;
 			}
 
 
-			void D3D9DeviceContent::NotifyWindowClosed(D3D9RenderWindow* wnd)
+			void D3D9DeviceContext::NotifyWindowClosed(D3D9RenderWindow* wnd)
 			{
 				if (m_window != wnd)
 					m_window = NULL;
 			}
 
-			RenderView* D3D9DeviceContent::create(const RenderParameters &pm)
+			RenderView* D3D9DeviceContext::create(const RenderParameters &pm)
 			{
 				if (m_window)
 				{
@@ -85,14 +85,14 @@ namespace Apoc3D
 				return NULL;
 			}
 
-			RenderDevice* D3D9DeviceContent::getRenderDevice()
+			RenderDevice* D3D9DeviceContext::getRenderDevice()
 			{
 				if (m_window)
 					return m_window->getRenderDevice();
 				return 0;
 			}
 
-			String D3D9DeviceContent::GetHardwareName()
+			String D3D9DeviceContext::GetHardwareName()
 			{
 				if (m_window && !m_window->getHardwareName().empty())
 				{

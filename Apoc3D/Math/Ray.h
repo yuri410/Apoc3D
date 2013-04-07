@@ -26,10 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
-#include "Vector.h"
 #include "Plane.h"
 
 using namespace std;

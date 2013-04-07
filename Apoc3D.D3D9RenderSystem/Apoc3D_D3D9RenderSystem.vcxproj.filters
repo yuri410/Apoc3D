@@ -21,9 +21,6 @@
     <ClInclude Include="D3D9Common.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="D3D9DeviceContent.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="D3D9GraphicsAPIFactory.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -105,6 +102,9 @@
     <ClInclude Include="D3D9Sprite.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="D3D9DeviceContext.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D3D9Utils.cpp">
@@ -135,9 +135,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="D3D9GraphicsAPIFactory.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D9DeviceContent.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="D3D9RenderWindow.cpp">
@@ -183,6 +180,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D9DeviceContext.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

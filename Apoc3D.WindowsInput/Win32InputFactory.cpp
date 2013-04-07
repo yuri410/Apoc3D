@@ -29,6 +29,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Utility/StringUtils.h"
 
+#include <strstream>
+#include <sstream>
+
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -45,7 +48,7 @@ namespace Apoc3D
 
 				APIDescription desc;
 				desc.Name = L"Win32 Input";
-				desc.SupportedPlatforms.push_back(platform);
+				desc.SupportedPlatforms.Add(platform);
 				return desc;
 			}
 			void Win32InputFactory::Initialize(RenderWindow* window)

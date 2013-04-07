@@ -2,7 +2,7 @@
 
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Core/ResourceHandle.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Graphics/EffectSystem/EffectManager.h"
 #include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"

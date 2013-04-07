@@ -26,8 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "../BuildConfig.h"
 
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Graphics/Animation/AnimationTypes.h"
 #include "apoc3d/IOLib/MaterialData.h"
@@ -99,33 +99,33 @@ namespace APBuild
 			{
 				aiMaterial* amtrl = scene->mMaterials[m->mMaterialIndex];
 
-				MaterialData mtrl;
-				mtrl.SetDefaults();
+				MaterialData* mtrl = new MaterialData();
+				mtrl->SetDefaults();
 
 				for (uint j=0;j<amtrl->mNumProperties;j++)
 				{
 					aiMaterialProperty* prop = amtrl->mProperties[j];
 					if (std::string(prop->mKey.data) == std::string("$clr.ambient"))
 					{
-						mtrl.Ambient = ConvertPropertyColor4(prop);
+						mtrl->Ambient = ConvertPropertyColor4(prop);
 					}
 					else if (std::string(prop->mKey.data) == std::string("$clr.diffuse"))
 					{
-						mtrl.Diffuse = ConvertPropertyColor4(prop);
+						mtrl->Diffuse = ConvertPropertyColor4(prop);
 					}
 					else if (std::string(prop->mKey.data) == std::string("$clr.specular"))
 					{
-						mtrl.Specular = ConvertPropertyColor4(prop);
+						mtrl->Specular = ConvertPropertyColor4(prop);
 					}
 					else if (std::string(prop->mKey.data) == std::string("$mat.shininess"))
 					{
-						mtrl.Power = ConvertPropertyFloat(prop);
+						mtrl->Power = ConvertPropertyFloat(prop);
 					}
 					else if (std::string(prop->mKey.data) == std::string("$tex.file"))
 					{
 						String texFile = StringUtils::toWString(prop->mData);
 						StringUtils::Trim(texFile, L" \t\r\n\07");
-						mtrl.TextureName[0] = texFile;
+						mtrl->TextureName[0] = texFile;
 					}
 				}
 

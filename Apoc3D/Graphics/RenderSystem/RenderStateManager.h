@@ -26,9 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Math/Plane.h"
 #include "apoc3d/Math/Rectangle.h"

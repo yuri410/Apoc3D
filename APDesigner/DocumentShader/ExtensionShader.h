@@ -41,11 +41,11 @@ namespace APDesigner
 
 		virtual bool SupportsIndependentEditing() { return true; };
 
-		virtual std::vector<String> GetFileExtensions() 
+		virtual List<String> GetFileExtensions() 
 		{
-			std::vector<String> r;
-			r.push_back(L".snet");
-			r.push_back(L".xml");
+			List<String> r;
+			r.Add(L".snet");
+			r.Add(L".xml");
 			return r;
 		}
 
@@ -71,10 +71,10 @@ namespace APDesigner
 
 		virtual bool SupportsIndependentEditing() { return false; };
 
-		virtual std::vector<String> GetFileExtensions()
+		virtual List<String> GetFileExtensions()
 		{
-			std::vector<String> r;
-			r.push_back(L".sam");
+			List<String> r;
+			r.Add(L".sam");
 			return r;
 		}
 
@@ -100,10 +100,10 @@ namespace APDesigner
 
 		virtual bool SupportsIndependentEditing() { return true; };
 
-		virtual std::vector<String> GetFileExtensions()
+		virtual List<String> GetFileExtensions()
 		{
-			std::vector<String> r;
-			r.push_back(L".xml");
+			List<String> r;
+			r.Add(L".xml");
 			return r;
 		}
 

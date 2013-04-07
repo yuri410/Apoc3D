@@ -25,11 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SceneManager.h"
 
 #include "SceneObject.h"
-#include "apoc3d/Graphics/RenderOperationBuffer.h"
-#include "apoc3d/Graphics/RenderOperation.h"
-#include "apoc3d/Graphics/Material.h"
-#include "apoc3d/Graphics/GeometryData.h"
-#include "apoc3d/Core/GameTime.h"
 
 using namespace Apoc3D::Graphics;
 

@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Scene/SimpleSceneManager.h"
 #include "apoc3d/Scene/SceneObject.h"
 #include "apoc3d/UILib/Control.h"
+#include "apoc3d/Math/ColorValue.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics;

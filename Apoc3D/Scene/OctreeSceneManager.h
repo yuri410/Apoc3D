@@ -27,13 +27,11 @@
  */
 
 
-#include "apoc3d/Common.h"
-
 #include "SceneManager.h"
 #include "SceneNode.h"
 
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Collections/LinkedList.h"
+#include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Math/OctreeBox.h"
 #include "apoc3d/Math/BoundingSphere.h"
 
@@ -134,10 +132,10 @@ namespace Apoc3D
 			bool QualifiesFarObject(const SceneObject* obj) const;
 
 		private:
-			list<SceneObject*> m_dynObjs;
-			list<SceneObject*> m_farObjs;
+			LinkedList<SceneObject*> m_dynObjs;
+			LinkedList<SceneObject*> m_farObjs;
 
-			FastQueue<OctreeSceneNode*> m_bfsQueue;
+			Queue<OctreeSceneNode*> m_bfsQueue;
 
 			OctreeBox m_range;
 			Vector3 m_min;

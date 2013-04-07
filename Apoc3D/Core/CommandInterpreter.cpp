@@ -8,6 +8,12 @@
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Vfs/FileLocateRule.h"
 
+#include <strstream>
+#include <sstream>
+#include <vector>
+
+using namespace std;
+
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;
@@ -152,9 +158,10 @@ namespace Apoc3D
 
 					const char* allContent = &buffer[0];
 					String allContentStr = StringUtils::toWString(allContent);
-					std::vector<String> lines = StringUtils::Split(allContentStr, L"\n\r", 50);
+					List<String> lines(50);
+					StringUtils::Split(allContentStr, lines, L"\n\r");
 
-					for (size_t i=0;i<lines.size();i++)
+					for (int32 i=0;i<lines.getCount();i++)
 					{
 						String& lineW = lines[i];
 						StringUtils::Trim(lineW);

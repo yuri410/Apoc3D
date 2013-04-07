@@ -27,8 +27,6 @@
  */
 
 
-#include "apoc3d/Common.h"
-
 #include "Vector.h"
 
 namespace Apoc3D

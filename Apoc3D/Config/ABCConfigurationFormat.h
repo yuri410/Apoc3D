@@ -26,8 +26,7 @@
  * 
  * -----------------------------------------------------------------------------
  */
-
-#include "apoc3d/Common.h"
+#include "apoc3d/Collections/List.h"
 #include "Configuration.h"
 
 using namespace Apoc3D::IO;
@@ -49,10 +48,10 @@ namespace Apoc3D
 			virtual Configuration* Load(const ResourceLocation* rl);
 			virtual void Save(Configuration* config, Stream* strm);
 
-			std::vector<String> GetSupportedFileSystemExtensions()
+			List<String> GetSupportedFileSystemExtensions()
 			{
-				std::vector<String> result;
-				result.push_back(L"abc");
+				List<String> result;
+				result.Add(L"abc");
 				return result;
 			}
 		private:

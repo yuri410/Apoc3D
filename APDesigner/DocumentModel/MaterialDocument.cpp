@@ -310,8 +310,8 @@ namespace APDesigner
 		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
 		{
 			MeshMaterialSet<Material*>* mtrls = m_modelSData->getEntities()[i]->getMaterials();
-			for (uint j=0;j<mtrls->getMaterialCount();j++)
-				for (uint k=0;k<mtrls->getFrameCount(j);k++)
+			for (int j=0;j<mtrls->getMaterialCount();j++)
+				for (int k=0;k<mtrls->getFrameCount(j);k++)
 				{
 					mtrls->getMaterial(j,k) = 0;
 				}
@@ -384,8 +384,8 @@ namespace APDesigner
 		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
 		{
 			MeshMaterialSet<Material*>* mtrls = m_modelSData->getEntities()[i]->getMaterials();
-			for (uint j=0;j<mtrls->getMaterialCount();j++)
-				for (uint k=0;k<mtrls->getFrameCount(j);k++)
+			for (int j=0;j<mtrls->getMaterialCount();j++)
+				for (int k=0;k<mtrls->getFrameCount(j);k++)
 				{
 					mtrls->getMaterial(j,k) = m_material;
 				}

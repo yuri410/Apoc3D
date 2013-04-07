@@ -31,10 +31,6 @@
 
 #include "KeyboardHelper.h"
 
-#include "apoc3d/Collections/FastList.h"
-
-using namespace Apoc3D::Collections;
-
 namespace Apoc3D
 {
 	namespace UI

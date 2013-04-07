@@ -308,17 +308,17 @@ namespace APDesigner
 		m_toolsPane->Update(time);
 		m_atomManager->Update(time);
 
-		list<Document*> recycleList;
+		LinkedList<Document*> recycleList;
 
 		for (int i=0;i<m_documentList.getCount();i++)
 		{
 			m_documentList[i]->Update(time);
 			if (!m_documentList[i]->getDocumentForm()->Visible)
 			{
-				recycleList.push_back(m_documentList[i]);
+				recycleList.PushBack(m_documentList[i]);
 			}
 		}
-		for (list<Document*>::iterator iter = recycleList.begin();iter!=recycleList.end();iter++)
+		for (LinkedList<Document*>::Iterator iter = recycleList.Begin();iter!=recycleList.End();iter++)
 		{
 			m_documentList.Remove(*iter);
 			delete *iter;
@@ -555,7 +555,7 @@ namespace APDesigner
 				EditorExtension* eext = static_cast<EditorExtension*>(item->UserPointer);
 
 				String name = eext->GetName();
-				std::vector<String> fexts = eext->GetFileExtensions();
+				List<String> fexts = eext->GetFileExtensions();
 
 				OpenFileDialog dlg;
 
@@ -566,11 +566,11 @@ namespace APDesigner
 					
 				String right;
 				//*.a;*.b
-				for (size_t i=0;i<fexts.size();i++)
+				for (int32 i=0;i<fexts.getCount();i++)
 				{
 					right.append(L"*");
 					right.append(fexts[i]);
-					if (i+1<fexts.size())
+					if (i+1<fexts.getCount())
 					{
 						right.append(L";");
 					}

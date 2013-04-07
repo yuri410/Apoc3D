@@ -8,7 +8,7 @@
 
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
@@ -124,7 +124,7 @@ namespace APBuild
 
 			uint totalVertexCount = mesh->VertexCount;
 
-			FastMap<Vector3, int> vtxHashTable(totalVertexCount, &vec3Comparer);
+			HashMap<Vector3, int> vtxHashTable(totalVertexCount, &vec3Comparer);
 			FastList<Vector3> newVertexList(totalVertexCount);
 
 			// vertex reduction - welding same vertices
@@ -164,7 +164,7 @@ namespace APBuild
 			}
 
 			// =================== do the unique edge detection ============================== 
-			FastMap<FaceEdge, int> edgeUsageCounter(&faceEdgeComparer);
+			HashMap<FaceEdge, int> edgeUsageCounter(&faceEdgeComparer);
 
 			for (int j=0;j<mesh->Faces.getCount();j++)
 			{
@@ -207,7 +207,7 @@ namespace APBuild
 
 			FastList<FaceEdge> border; // the border edges, unsorted
 			// dump out from the map
-			for (FastMap<FaceEdge, int>::Enumerator e = edgeUsageCounter.GetEnumerator();e.MoveNext();)
+			for (HashMap<FaceEdge, int>::Enumerator e = edgeUsageCounter.GetEnumerator();e.MoveNext();)
 			{
 				if ((*e.getCurrentValue()) == 1)
 					border.Add(*e.getCurrentKey());
@@ -246,9 +246,9 @@ namespace APBuild
 				FastList<Vector3> flattenVertices;
 
 				FastList<FaceEdge*> sortedEdge;
-				FastMap<void*, int> passedEdge;
+				HashMap<void*, int> passedEdge;
 
-				FastQueue<FaceEdge*> bfsQueue;
+				Queue<FaceEdge*> bfsQueue;
 				bfsQueue.Enqueue(&border[0]);
 				passedEdge.Add(&border[0], 0);
 				bool firstPass = true;

@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Config/ABCConfigurationFormat.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Collections/EnumConverterHelper.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Vfs/File.h"
@@ -32,6 +33,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Math/RandomUtils.h"
+
+
+#include <ctime>
 
 using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
@@ -75,8 +79,8 @@ namespace Apoc3D
 		{
 			if (SubItems[i]->getData())
 			{
-				std::vector<String> itemOutputs = SubItems[i]->getData()->GetAllOutputFiles();
-				for (size_t j=0;j<itemOutputs.size();j++)
+				List<String> itemOutputs = SubItems[i]->getData()->GetAllOutputFiles();
+				for (int32 j=0;j<itemOutputs.getCount();j++)
 				{
 					ConfigurationSection* e = new ConfigurationSection(L"Entry" + StringUtils::ToString(pakEntryIndex++));
 					e->AddAttributeString(L"FilePath", itemOutputs[j]);
@@ -85,11 +89,11 @@ namespace Apoc3D
 			}
 		}
 	}
-	std::vector<String> ProjectFolder::GetAllOutputFiles()
+	List<String> ProjectFolder::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (PackType.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestinationPack));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationPack));
 		return e;
 	}
 
@@ -308,11 +312,11 @@ namespace Apoc3D
 			sect->AddAttributeString(L"PixelFormat", PixelFormatUtils::ToString(NewFormat));
 		}
 	}
-	std::vector<String> ProjectResTexture::GetAllOutputFiles()
+	List<String> ProjectResTexture::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DestinationFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
 		return e;
 	}
 	bool ProjectResTexture::IsEarlierThan(time_t t)
@@ -367,11 +371,11 @@ namespace Apoc3D
 	{
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationFile) : DestinationFile);
 	}
-	std::vector<String> ProjectResMaterial::GetAllOutputFiles()
+	List<String> ProjectResMaterial::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DestinationFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
 		return e;
 	}
 	bool ProjectResMaterial::IsEarlierThan(time_t t)
@@ -418,9 +422,9 @@ namespace Apoc3D
 		mtrlList.Add(name);
 	}
 
-	std::vector<String> ProjectResMaterialSet::GetAllOutputFiles()
+	List<String> ProjectResMaterialSet::GetAllOutputFiles()
 	{
-		std::vector<String> res;
+		List<String> res;
 
 		String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
 		if (File::FileExists(path))
@@ -442,12 +446,12 @@ namespace Apoc3D
 
 			for (int i=0;i<names.getCount();i++)
 			{
-				res.push_back(PathUtils::Combine(basePath, names[i] + L".mtrl"));
+				res.Add(PathUtils::Combine(basePath, names[i] + L".mtrl"));
 			}
 		}
 
 		if (DestinationToken.size())
-			res.push_back(PathUtils::Combine(m_project->getOutputPath(),DestinationToken));
+			res.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationToken));
 		return res;
 	}
 	bool ProjectResMaterialSet::IsEarlierThan(time_t t)
@@ -561,11 +565,11 @@ namespace Apoc3D
 			sect->AddSection(ss);
 		}
 	}
-	std::vector<String> ProjectResFont::GetAllOutputFiles()
+	List<String> ProjectResFont::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DestFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
 		return e;
 	}
 	bool ProjectResFont::IsEarlierThan(time_t t)
@@ -602,11 +606,11 @@ namespace Apoc3D
 		sect->AddAttributeString(L"EntryPointPS", EntryPointPS);
 		sect->AddAttributeString(L"Profile", Profile);
 	}
-	std::vector<String> ProjectResEffect::GetAllOutputFiles()
+	List<String> ProjectResEffect::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DestFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
 		return e;
 	}
 	bool ProjectResEffect::IsEarlierThan(time_t t)
@@ -668,11 +672,11 @@ namespace Apoc3D
 		sect->AddAttributeString(L"EntryPointPS", EntryPointPS);
 		sect->AddAttributeString(L"Profile", Profile);
 	}
-	std::vector<String> ProjectResCustomEffect::GetAllOutputFiles()
+	List<String> ProjectResCustomEffect::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DestFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
 		return e;
 	}
 	bool ProjectResCustomEffect::IsEarlierThan(time_t t)
@@ -747,11 +751,11 @@ namespace Apoc3D
 		}
 		
 	}
-	std::vector<String> ProjectResEffectList::GetAllOutputFiles()
+	List<String> ProjectResEffectList::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DestFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
 		return e;
 	}
 	bool ProjectResEffectList::IsNotBuilt()
@@ -773,11 +777,11 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 	}
-	std::vector<String> ProjectResShaderNetwork::GetAllOutputFiles()
+	List<String> ProjectResShaderNetwork::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DestFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
 		return e;
 	}
 	bool ProjectResShaderNetwork::IsEarlierThan(time_t t)
@@ -829,13 +833,13 @@ namespace Apoc3D
 		}
 		sect->AddAttributeString(L"Method", ProjectTypeUtils::ToString(Method));
 	}
-	std::vector<String> ProjectResModel::GetAllOutputFiles()
+	List<String> ProjectResModel::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DstAnimationFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DstAnimationFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DstAnimationFile));
 		if (DstFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DstFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DstFile));
 		return e;
 	}
 	bool ProjectResModel::IsEarlierThan(time_t t)
@@ -889,11 +893,11 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
 	}
-	std::vector<String> ProjectResMAnim::GetAllOutputFiles()
+	List<String> ProjectResMAnim::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DestinationFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
 		return e;
 	}
 	bool ProjectResMAnim::IsEarlierThan(time_t t)
@@ -934,7 +938,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
 		sect->AddAttributeString(L"Reverse", StringUtils::ToString(Reverse));
 
-		for (FastMap<String, int>::Enumerator e = ObjectIndexMapping.GetEnumerator(); e.MoveNext(); )
+		for (HashMap<String, int>::Enumerator e = ObjectIndexMapping.GetEnumerator(); e.MoveNext(); )
 		{
 			ConfigurationSection* ss = new ConfigurationSection(*e.getCurrentKey());
 			
@@ -943,11 +947,11 @@ namespace Apoc3D
 			sect->AddSection(ss);
 		}
 	}
-	std::vector<String> ProjectResTAnim::GetAllOutputFiles()
+	List<String> ProjectResTAnim::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DestinationFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
 		return e;
 	}
 	bool ProjectResTAnim::IsEarlierThan(time_t t)
@@ -984,7 +988,7 @@ namespace Apoc3D
 			sect->AddAttributeString(L"EditorExtension", EditorExtension);
 		}
 
-		for (FastMap<String, String>::Enumerator e = Properties.GetEnumerator(); e.MoveNext();)
+		for (HashMap<String, String>::Enumerator e = Properties.GetEnumerator(); e.MoveNext();)
 		{
 			ConfigurationSection* valSect = new ConfigurationSection(*e.getCurrentKey());
 			valSect->SetValue(*e.getCurrentValue());
@@ -992,11 +996,11 @@ namespace Apoc3D
 			sect->AddSection(valSect);
 		}
 	}
-	std::vector<String> ProjectCustomItem::GetAllOutputFiles()
+	List<String> ProjectCustomItem::GetAllOutputFiles()
 	{
-		std::vector<String> e;
+		List<String> e;
 		if (DestFile.size())
-			e.push_back(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
 		return e;
 	}
 	bool ProjectCustomItem::IsEarlierThan(time_t t)
@@ -1312,11 +1316,46 @@ namespace Apoc3D
 		PathUtils::Append(m_outputPath, L"build");
 	}
 
+	void ProjectItem::NotifyModified()
+	{
+		m_timeStamp = time(0);
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 
-	ProjectTypeUtils::TextureFilterTypeConv ProjectTypeUtils::TextureFilterTypeConvInst;
-	ProjectTypeUtils::TextureBuildMethodConv ProjectTypeUtils::TextureBuildMethodConvInst;
-	ProjectTypeUtils::MeshBuildMethodConv ProjectTypeUtils::MeshBuildMethodConvInst;
+
+	struct TextureFilterTypeConv : public EnumDualConversionHelper<ProjectResTexture::TextureFilterType>
+	{
+		TextureFilterTypeConv() 
+			: EnumDualConversionHelper<ProjectResTexture::TextureFilterType>(10)
+		{
+			AddPair(L"Nearest", ProjectResTexture::TFLT_Nearest);
+			AddPair(L"BSpline", ProjectResTexture::TFLT_BSpline);
+			AddPair(L"Box", ProjectResTexture::TFLT_Box);
+		}
+	} TextureFilterTypeConvInst;
+
+	struct TextureBuildMethodConv : public EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>
+	{
+		TextureBuildMethodConv() 
+			: EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>(10)
+		{
+			AddPair(L"Default", ProjectResTexture::TEXBUILD_BuiltIn);
+			AddPair(L"D3D", ProjectResTexture::TEXBUILD_D3D);
+			AddPair(L"Devil", ProjectResTexture::TEXBUILD_Devil);
+		}
+	} TextureBuildMethodConvInst;
+
+	struct MeshBuildMethodConv : public EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>
+	{
+		MeshBuildMethodConv() 
+			: EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>(10)
+		{
+			AddPair(L"Ass", ProjectResModel::MESHBUILD_ASS);
+			AddPair(L"FBX", ProjectResModel::MESHBUILD_FBX);
+			AddPair(L"D3D", ProjectResModel::MESHBUILD_D3D);
+		}
+	} MeshBuildMethodConvInst;
 
 	ProjectResTexture::TextureFilterType ProjectTypeUtils::ParseTextureFilterType(const String& str)
 	{
@@ -1343,5 +1382,8 @@ namespace Apoc3D
 	{
 		return MeshBuildMethodConvInst.ToString(method);
 	}
+	const EnumDualConversionHelper<ProjectResTexture::TextureFilterType>& ProjectTypeUtils::GetTextureFilterTypeConverter() { return TextureFilterTypeConvInst; }
+	const EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>& ProjectTypeUtils::GetTextureBuildMethodConverter() { return TextureBuildMethodConvInst; }
+	const EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>& ProjectTypeUtils::GetMeshBuildMethodConverter() { return MeshBuildMethodConvInst; }
 
 }

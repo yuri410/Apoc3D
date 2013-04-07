@@ -74,7 +74,6 @@ namespace Apoc3D
 
 			T& Peek()
 			{
-
 				return m_array[m_size - 1];
 			}
 

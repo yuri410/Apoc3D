@@ -26,15 +26,12 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Graphics/PixelFormat.h"
+#include "apoc3d/Collections/List.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics;
-
-using namespace std;
 
 namespace Apoc3D
 {
@@ -145,7 +142,7 @@ namespace Apoc3D
 				}
 
 			private:
-				vector<RenderView*> m_renderPorts;
+				FastList<RenderView*> m_renderPorts;
 				bool m_supportsRenderControl;
 			};
 

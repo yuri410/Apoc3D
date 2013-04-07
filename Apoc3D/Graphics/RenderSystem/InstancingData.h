@@ -26,10 +26,7 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Graphics/PixelFormat.h"
 

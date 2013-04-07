@@ -25,15 +25,10 @@
  * 
  * -----------------------------------------------------------------------------
  */
-
-
-#include "apoc3d/Common.h"
-
 #include "RenderSystem/VertexElement.h"
-
-#include "apoc3d/Collections/FastList.h"
 #include "apoc3d/Core/IHashed.h"
 #include "apoc3d/Math/Vector.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;

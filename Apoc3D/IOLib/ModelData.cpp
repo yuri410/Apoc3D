@@ -86,8 +86,8 @@ namespace Apoc3D
 					{
 						TaggedDataReader* matData = br->ReadTaggedDataBlock();
 
-						MaterialData mtrl;
-						mtrl.LoadData(matData);
+						MaterialData* mtrl = new MaterialData();
+						mtrl->LoadData(matData);
 
 						if (i==0)
 						{
@@ -228,7 +228,7 @@ namespace Apoc3D
 					bw->Write(frameCount);
 					for (int j = 0; j < frameCount; j++)
 					{
-						TaggedDataWriter* matData = Materials.getMaterial(i, j).SaveData();
+						TaggedDataWriter* matData = Materials.getMaterial(i, j)->SaveData();
 						bw->Write(matData);
 						delete matData;
 					}
@@ -305,6 +305,15 @@ namespace Apoc3D
 		{
 			if (VertexData)
 				delete[] VertexData;
+
+			for (int32 i=0;i<Materials.getMaterialCount();i++)
+			{
+				for (int32 j=0;j<Materials.getFrameCount(i);j++)
+				{
+					MaterialData* md = Materials.getMaterial(i,j);
+					delete md;
+				}
+			}
 		}
 
 		/************************************************************************/

@@ -33,7 +33,7 @@ namespace Apoc3D
 	namespace Collections
 	{
 		template<typename T>
-		class FastQueue
+		class Queue
 		{
 		private:
 			//static const int DefaultCapacity = 4;
@@ -46,7 +46,7 @@ namespace Apoc3D
 			int32 m_tail;
 			int32 m_size;
 
-			FastQueue(const FastQueue& another) { }
+			Queue(const Queue& another) { }
 
 			void SetCapacity(int capacity)
 			{
@@ -82,24 +82,24 @@ namespace Apoc3D
 				m_tail = (m_size == capacity) ? 0 : m_size;
 			}
 
-			FastQueue& operator=(const FastQueue &rhs)
+			Queue& operator=(const Queue &rhs)
 			{
 				return *this; 
 			}
 		public:
 			int getCount() const { return m_size; }
 
-			FastQueue()
+			Queue()
 				: m_head(0), m_tail(0), m_size(0), m_arrLength(4)
 			{
 				m_array = new T[4];
 			}
-			explicit FastQueue(int capacity)
+			explicit Queue(int capacity)
 				: m_head(0), m_tail(0), m_size(0), m_arrLength(capacity)
 			{
 				m_array = new T[capacity];
 			}
-			~FastQueue()
+			~Queue()
 			{
 				delete[] m_array;
 			}

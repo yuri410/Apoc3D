@@ -29,8 +29,6 @@
 
 #include "apoc3d/Common.h"
 
-using namespace std;
-
 namespace Apoc3D
 {
 	namespace Math

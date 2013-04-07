@@ -28,8 +28,8 @@
 
 
 #include "apoc3d/Common.h"
-#include "apoc3d/Collections/FastMap.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Math/Vector.h"
 #include "apoc3d/Graphics/RenderSystem/Shader.h"
@@ -310,7 +310,7 @@ namespace Apoc3D
 				static EffectParamUsage ParseParamUsage(const String& val);
 				static String ToString(EffectParamUsage usage);
 
-				static FastMap<String, EffectParamUsage>::Enumerator getParameterUsageEnumeration();
+				static HashMap<String, EffectParamUsage>::Enumerator getParameterUsageEnumeration();
 
 
 				static bool IsReference(CustomEffectParameterType t)

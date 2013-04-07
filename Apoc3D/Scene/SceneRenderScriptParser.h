@@ -27,9 +27,9 @@
  */
 
 
-#include "apoc3d/Common.h"
-
 #include "ScenePassTypes.h"
+
+#include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::VFS;
@@ -47,7 +47,7 @@ namespace Apoc3D
 	namespace Scene
 	{
 		//template class APAPI unordered_map<String, String>;
-		typedef unordered_map<String, String> BlockArgs;
+		typedef HashMap<String, String> BlockArgs;
 		class APAPI SceneRenderScriptParser
 		{
 		public:
@@ -70,11 +70,11 @@ namespace Apoc3D
 			/**
 			 *  Build instructions for expressions
 			 */
-			void FillInstructions(const string& cmd, std::vector<SceneInstruction>& instructions);
+			void FillInstructions(const string& cmd, List<SceneInstruction>& instructions);
 			/**
 			 *  Build instructions for commands.
 			 */
-			void FillFunctionCall(const TiXmlElement* node, std::vector<SceneInstruction>& instructions);
+			void FillFunctionCall(const TiXmlElement* node, List<SceneInstruction>& instructions);
 
 			/**
 			 *  Parse and add all the global vars to the list
@@ -84,7 +84,7 @@ namespace Apoc3D
 			/**
 			 *  Build instructions for the RenderQuad command
 			 */
-			void FillRenderQuad(const TiXmlElement* node, std::vector<SceneInstruction>& instructions);
+			void FillRenderQuad(const TiXmlElement* node, List<SceneInstruction>& instructions);
 			/**
 			 *  Build instructions for code blocks
 			 */

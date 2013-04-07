@@ -3,6 +3,10 @@
 #include "GenerationTable.h"
 #include "apoc3d/Core/Resource.h"
 
+#include "tthread/tinythread.h"
+
+#include <ctime>
+
 using namespace Apoc3D::Platform;
 
 namespace Apoc3D
@@ -35,13 +39,13 @@ namespace Apoc3D
 					bool rest = true;
 
 					ResourceOperation* resOp = 0;
-					m_syncMutex.lock();
+					m_syncMutex->lock();
 					if (m_opQueue.getCount())
 					{
 						resOp = m_opQueue.Dequeue();
 					}
 
-					m_syncMutex.unlock();
+					m_syncMutex->unlock();
 
 					if (resOp)
 					{
@@ -89,7 +93,7 @@ namespace Apoc3D
 				{
 					if (type == ResourceOperation::RESOP_Load)
 					{
-						m_syncMutex.lock();
+						m_syncMutex->lock();
 
 						for (int i=0;i<m_opQueue.getCount();i++)
 						{
@@ -102,11 +106,11 @@ namespace Apoc3D
 							}
 						}
 
-						m_syncMutex.unlock();
+						m_syncMutex->unlock();
 					}
 					else if (type == ResourceOperation::RESOP_Unload)
 					{
-						m_syncMutex.lock();
+						m_syncMutex->lock();
 
 						for (int i=0;i<m_opQueue.getCount();i++)
 						{
@@ -119,7 +123,7 @@ namespace Apoc3D
 							}
 						}
 
-						m_syncMutex.unlock();
+						m_syncMutex->unlock();
 					}
 				}
 				return passed;
@@ -129,35 +133,35 @@ namespace Apoc3D
 				
 				//if (!ignored)
 				{
-					m_syncMutex.lock();
+					m_syncMutex->lock();
 
 					m_opQueue.Enqueue(op);
 
-					m_syncMutex.unlock();
+					m_syncMutex->unlock();
 				}
 			}
 			void AsyncProcessor::RemoveTask(ResourceOperation* op)
 			{
-				m_syncMutex.lock();
+				m_syncMutex->lock();
 
 				m_opQueue.Replace(op, 0);
 
-				m_syncMutex.unlock();
+				m_syncMutex->unlock();
 			}
 			bool AsyncProcessor::TaskCompleted()
 			{
 				bool result;
-				m_syncMutex.lock();
+				m_syncMutex->lock();
 				result = m_opQueue.getCount() == 0;
-				m_syncMutex.unlock();
+				m_syncMutex->unlock();
 				return result;
 			}
 			int AsyncProcessor::GetOperationCount()
 			{
 				int result;
-				m_syncMutex.lock();
+				m_syncMutex->lock();
 				result = m_opQueue.getCount();
-				m_syncMutex.unlock();
+				m_syncMutex->unlock();
 				return result;
 			}
 			void AsyncProcessor::WaitForCompletion()
@@ -178,7 +182,8 @@ namespace Apoc3D
 			AsyncProcessor::AsyncProcessor(GenerationTable* gtable, const String& name)
 				: m_closed(false), m_genTable(gtable)
 			{
-				m_processThread = new thread(&AsyncProcessor::ThreadEntry, this);
+				m_syncMutex = new tthread::mutex();
+				m_processThread = new tthread::thread(&AsyncProcessor::ThreadEntry, this);
 				SetThreadName(m_processThread, name);
 			}
 

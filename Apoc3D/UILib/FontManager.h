@@ -26,13 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-#include "apoc3d/Collections/FastMap.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Math/Rectangle.h"
-#include "apoc3d/Math/Point.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
@@ -144,7 +140,7 @@ namespace Apoc3D
 			int m_edgeCount;
 			ResourceLocation* m_resource;
 
-			FastMap<wchar_t, Character> m_charTable;
+			HashMap<wchar_t, Character> m_charTable;
 			Glyph* m_glyphList;
 
 			//list<Glyph*> m_activeGlyph;
@@ -206,7 +202,7 @@ namespace Apoc3D
 		public:
 			static int TextureSize;
 		private:
-			FastMap<String, Font*> m_fontTable;
+			HashMap<String, Font*> m_fontTable;
 
 		public:
 			FontManager();

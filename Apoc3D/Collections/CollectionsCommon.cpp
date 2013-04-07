@@ -25,7 +25,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Core/Resource.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include <unordered_map>
 
+using namespace std;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -88,6 +90,7 @@ namespace Apoc3D
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
+		std::unordered_map<string, int>::hasher stlStringHasher;
 
 		bool stlstringEqualityComparer::Equals(const string& x, const string& y) const
 		{
@@ -95,7 +98,7 @@ namespace Apoc3D
 		}
 		int64 stlstringEqualityComparer::GetHashCode(const string& obj) const
 		{
-			return m_hasher.hash_function()(obj);
+			return stlStringHasher(obj);
 		}
 
 		/************************************************************************/

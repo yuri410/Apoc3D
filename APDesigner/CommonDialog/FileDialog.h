@@ -49,11 +49,11 @@ namespace APDesigner
 		class OpenFileDialog : public FileDialog
 		{
 		private:
-			std::vector<String> m_filePath;
+			List<String> m_filePath;
 		public:
 			bool MultiSelect;
 
-			const std::vector<String>& getFilePath() const { return m_filePath; }
+			const List<String>& getFilePath() const { return m_filePath; }
 
 
 			OpenFileDialog() : MultiSelect(false) 
@@ -66,10 +66,10 @@ namespace APDesigner
 		class SaveFileDialog : public FileDialog
 		{
 		private:
-			std::vector<String> m_filePath;
+			List<String> m_filePath;
 		public:
 
-			const std::vector<String>& getFilePath() const { return m_filePath; }
+			const List<String>& getFilePath() const { return m_filePath; }
 			
 
 			SaveFileDialog()

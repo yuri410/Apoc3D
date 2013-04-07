@@ -26,9 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "SceneManager.h"
 #include "SceneNode.h"
 

@@ -57,7 +57,7 @@ namespace Apoc3D
 			{
 				delete[] m_elements;
 			}
-			List& operator=(const List &rhs)
+			List& operator=(const List& rhs)
 			{
 				if (&rhs == this)
 					return *this;
@@ -109,24 +109,6 @@ namespace Apoc3D
 			{
 				if (index < m_internalPointer-1)
 				{
-					//T* destinationArray = new T[m_length - 1];
-					//for (int i=0;i<index;i++)
-					//{
-					//	destinationArray[i] = m_elements[i];
-					//}
-					//
-					//if (m_internalPointer - ++index > 0)
-					//{
-					//	for (int i=index;i<m_internalPointer;i++)
-					//	{
-					//		destinationArray[i-1] = m_elements[i];
-					//	}
-					//	//memcpy(destinationArray+ index-1, m_elements+index, (m_internalPointer-index)*sizeof(T));
-					//}
-					//delete[] m_elements;
-					//m_elements = destinationArray;
-					//
-					//m_length--;
 					for (int i=index+1 ;i<m_internalPointer; i++)
 					{
 						m_elements[i-1] = m_elements[i];
@@ -137,23 +119,17 @@ namespace Apoc3D
 			}
 			void RemoveRange(int32 start, int32 count)
 			{
-				if (count > 0)
+				if (count>0)
 				{
 					m_internalPointer -= count;
 
 					if (start < m_internalPointer)
 					{
-						for (int i=start;i<m_internalPointer;i++)
+						for (int i=start; i<m_internalPointer; i++)
 						{
 							m_elements[i] = m_elements[i+count];
 						}
-						//memcpy( m_elements+start, m_elements+start + count, (m_internalPointer-start)*sizeof(T));
 					}
-					for (int i=0;i<count;i++)
-					{
-						m_elements[i+m_internalPointer] = T();
-					}
-					//memset(m_elements+m_internalPointer, 0, count*sizeof(T));
 				}
 			}
 			void ResizeDiscard(int newSize)
@@ -170,7 +146,6 @@ namespace Apoc3D
 				{
 					newArr[i] = m_elements[i];
 				}
-				//memcpy(newArr, m_elements, m_internalPointer*sizeof(T));
 				delete[] m_elements;
 				m_elements = newArr;
 				m_length = newSize;
@@ -184,11 +159,10 @@ namespace Apoc3D
 				}
 				if (index<m_internalPointer)
 				{
-					for (int i=index;i<m_internalPointer;i++)
+					for (int i=m_internalPointer;i>index;i--)
 					{
-						m_elements[i+1] = m_elements[i];
+						m_elements[i] = m_elements[i-1];
 					}
-					//memcpy(m_elements+index+1, m_elements+index, sizeof(T)*(m_internalPointer-index));
 				}
 				m_elements[index] = item;
 				m_internalPointer++;
@@ -288,23 +262,6 @@ namespace Apoc3D
 					 Resize(m_internalPointer);
 				}
 			}
-			/** 
-			 * Set the unused preserved space to zero. This is used in special cases.
-			 */
-			void TrimClear()
-			{
-				if (m_internalPointer<m_length)
-				{
-					memset(m_elements + m_internalPointer, 0, (m_length - m_internalPointer)*sizeof(T));
-				}
-			}
-			/**
-			 * Clears content by set the new insert point at the beginning without setting the contents to zero.
-			 */
-			void FastClear()
-			{
-				m_internalPointer = 0;
-			}
 
 			void Clear()
 			{
@@ -335,35 +292,28 @@ namespace Apoc3D
 			}
 			void RemoveAt(int32 index)
 			{
-				if (index == m_internalPointer - 1)
-				{
-					m_internalPointer--;
-					memset(m_elements+index,0, sizeof(T));
-				}
-				else
+				if (index < m_internalPointer - 1)
 				{
 					for (int i=index;i<m_internalPointer-1;i++)
 					{
 						m_elements[i] = m_elements[i+1];
 					}
-					
-					m_internalPointer--;
-
-					memset(m_elements+m_internalPointer,0, sizeof(T));
 				}
+				m_internalPointer--;
 			}
 			void RemoveRange(int32 start, int32 count)
 			{
-				if (count > 0)
+				if (count>0)
 				{
 					m_internalPointer -= count;
 
 					if (start < m_internalPointer)
 					{
-						memcpy( m_elements+start, m_elements+start + count, (m_internalPointer-start)*sizeof(T));
+						for (int i=start; i<m_internalPointer; i++)
+						{
+							m_elements[i] = m_elements[i+count];
+						}
 					}
-
-					memset(m_elements+m_internalPointer, 0, count*sizeof(T));
 				}
 			}
 			/**
@@ -393,7 +343,10 @@ namespace Apoc3D
 				}
 				if (index<m_internalPointer)
 				{
-					memcpy(m_elements+index+1, m_elements+index, sizeof(T)*(m_internalPointer-index));
+					for (int i=m_internalPointer;i>index;i--)
+					{
+						m_elements[i] = m_elements[i-1];
+					}
 				}
 				m_elements[index] = item;
 				m_internalPointer++;
@@ -420,12 +373,10 @@ namespace Apoc3D
 			}
 			T& operator [](int32 i) const
 			{
+				assert(i>=0);
+				assert(i<m_internalPointer);
 				return m_elements[i];
 			}
-			//const T& operator [](int32 i) const
-			//{
-			//	return m_elements[i];
-			//}
 
 		private:
 			T* m_elements;

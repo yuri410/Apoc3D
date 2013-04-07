@@ -42,25 +42,24 @@ namespace Apoc3D
 
 			AnimationManager::~AnimationManager(void)
 			{
-				for (AnimHashTable::iterator iter = m_hashTable.begin(); iter != m_hashTable.end(); iter++)
+				for (AnimHashTable::Enumerator e = m_hashTable.GetEnumerator(); e.MoveNext();)
 				{
-					delete iter->second;
+					delete (*e.getCurrentValue());
 				}
 			}
 
 			const AnimationData* AnimationManager::CreateInstance(const ResourceLocation* rl)
 			{
 				AnimationData* res;
-				AnimHashTable::iterator iter = m_hashTable.find(rl->GetHashString());
+				//AnimHashTable::Enumerator e = m_hashTable(rl->GetHashString());
 
-				if (iter != m_hashTable.end())
-				{
-					return iter->second;
-				}
+				if (m_hashTable.TryGetValue(rl->GetHashString(), res))
+					return res;
+
 				res = new AnimationData();
 
 				res->Load(rl);
-				m_hashTable.insert(AnimHashTable::value_type(rl->GetHashString(), res));
+				m_hashTable.Add(rl->GetHashString(), res);
 
 				return res;
 			}

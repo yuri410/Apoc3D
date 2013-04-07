@@ -42,19 +42,19 @@ namespace Apoc3D
 		{
 			bool EffectManager::HasEffect(const String& name) const
 			{
-				EffectTable::const_iterator iter = m_fxTable.find(name);
-				return (iter != m_fxTable.end());
+				return m_fxTable.Contains(name);
 			}
 			Effect* EffectManager::getEffect(const String& name) const
 			{
-				EffectTable::const_iterator iter = m_fxTable.find(name);
-				if (iter != m_fxTable.end())
+				Effect* fx;
+				if (m_fxTable.TryGetValue(name, fx))
 				{
-					return iter->second;
+					return fx;
 				}
+
 				LogManager::getSingleton().Write(LOG_Graphics, 
 					L"EffectManager: Attempted to get effect '" + name + L"' which does not exist.", LOGLVL_Warning);
-				return 0;
+				return nullptr;
 			}
 
 			void EffectManager::LoadEffectFromList(RenderDevice* device, const ResourceLocation* rl)
@@ -80,7 +80,7 @@ namespace Apoc3D
 
 				if (!HasEffect(effect->getName()))
 				{
-					m_fxTable.insert(std::make_pair(effect->getName(), effect));
+					m_fxTable.Add(effect->getName(), effect);
 				}
 				else
 				{
@@ -110,7 +110,7 @@ namespace Apoc3D
 			{
 				if (!HasEffect(effect->getName()))
 				{
-					m_fxTable.insert(std::make_pair(effect->getName(), effect));
+					m_fxTable.Add(effect->getName(), effect);
 				}
 				else
 				{
@@ -124,10 +124,10 @@ namespace Apoc3D
 
 			void EffectManager::Update(const GameTime* const time)
 			{
-				for (EffectTable::iterator iter = m_fxTable.begin(); iter != m_fxTable.end(); iter++)
+				for (EffectTable::Enumerator e = m_fxTable.GetEnumerator(); e.MoveNext();)
 				{
-					Effect* e = iter->second;
-					e->Update(time);
+					Effect* fx = *e.getCurrentValue();
+					fx->Update(time);
 				}
 			}
 		}

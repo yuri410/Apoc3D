@@ -27,6 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Streaming/GenerationTable.h"
 #include "apoc3d/Math/MathCommon.h"
 
+#include "tthread/tinythread.h"
+
+#include <ctime>
+
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core::Streaming;
 
@@ -39,12 +43,19 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 		Resource::Resource()
-			: m_refCount(0), m_manager(0), m_resLoader(0), m_resUnloader(0), m_state(RS_Unloaded),  m_generation(0), m_unloadableLock(false)
+			: m_refCount(0), 
+			m_state(RS_Unloaded), 
+			m_manager(nullptr), 
+			m_resLoader(nullptr), m_resUnloader(nullptr), 
+			m_generation(nullptr), m_lock(nullptr), 
+			m_unloadableLock(false)
 		{
 
 		}
 		Resource::Resource(ResourceManager* manager, const String& hashString)
-			: m_manager(manager), m_hashString(hashString), m_refCount(0), m_state(RS_Unloaded), m_resLoader(0), m_resUnloader(0), m_generation(0), m_unloadableLock(false)
+			: m_manager(manager), m_hashString(hashString), m_refCount(0), m_state(RS_Unloaded), 
+			m_resLoader(nullptr), m_resUnloader(nullptr), m_generation(nullptr), m_lock(nullptr), 
+			m_unloadableLock(false)
 		{
 			if (isManaged())
 			{
@@ -54,6 +65,8 @@ namespace Apoc3D
 					m_resUnloader = new ResourceUnloadOperation(this);
 
 					m_generation = new GenerationCalculator(manager->m_generationTable);
+
+					m_lock = new tthread::mutex();
 				}
 			}
 			
@@ -229,30 +242,74 @@ namespace Apoc3D
 			}
 		}
 
+		bool Resource::IsUnloadable()
+		{
+			if (m_lock)
+			{
+				bool ul;
+				m_lock->lock(); 
+				ul = m_unloadableLock;
+				m_lock->unlock();
+
+				return !ul;
+			}
+			return m_unloadableLock;
+		}
+
+		ResourceState Resource::getState() const
+		{
+			if (m_lock)
+			{
+				ResourceState state;
+				m_lock->lock();
+				state = m_state;
+				m_lock->unlock();
+				return state;
+			}
+			return m_state;
+		}
+
+		void Resource::setState(ResourceState st)
+		{
+			if (m_lock)
+			{
+				m_lock->lock();
+				m_state = st;
+				m_lock->unlock();
+			}
+			else
+			{
+				m_state = st;
+			}
+		}
+
+		void Resource::Lock_Unloadable() { assert(m_lock); m_lock->lock(); m_unloadableLock = true; m_lock->unlock(); }
+		void Resource::Unlock_Unloadable() { assert(m_lock); m_lock->lock(); m_unloadableLock = false; m_lock->unlock(); }
+
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
 		Resource::GenerationCalculator::GenerationCalculator(const GenerationTable* table)
 			: m_table(table), Generation(GenerationTable::MaxGeneration - 1)
 		{
-
+			m_queueLock = new tthread::mutex();
 		}
 
 		void Resource::GenerationCalculator::Use(Resource* resource)
 		{
 			clock_t t = clock();
 
-			m_queueLock.lock();
+			m_queueLock->lock();
 			m_timeQueue.Enqueue((float)t / CLOCKS_PER_SEC);
 			while (m_timeQueue.getCount()>5)
 				m_timeQueue.Dequeue();
-			m_queueLock.unlock();
+			m_queueLock->unlock();
 		}
 		void Resource::GenerationCalculator::UpdateGeneration(float time)
 		{
 			float result = -9999999;
 
-			m_queueLock.lock();
+			m_queueLock->lock();
 
 			if (m_timeQueue.getCount())
 			{
@@ -263,7 +320,7 @@ namespace Apoc3D
 				}
 				result /= (float)m_timeQueue.getCount();
 			}
-			m_queueLock.unlock();
+			m_queueLock->unlock();
 
 			//clock_t t = clock();
 
@@ -297,11 +354,11 @@ namespace Apoc3D
 		{
 			bool notEmpty;
 			float topVal = 0;
-			m_queueLock.lock();
+			m_queueLock->lock();
 			notEmpty = !!m_timeQueue.getCount();
 			if (notEmpty)
 				topVal = m_timeQueue.Tail();
-			m_queueLock.unlock();
+			m_queueLock->unlock();
 
 			if (notEmpty)
 			{

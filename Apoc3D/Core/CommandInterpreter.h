@@ -28,8 +28,8 @@
  */
 
 #include "apoc3d/Common.h"
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 
 #include "Singleton.h"
 
@@ -78,7 +78,7 @@ namespace Apoc3D
 		private:
 			struct CommandRecord
 			{
-				typedef Apoc3D::Collections::FastMap<String, CommandRecord*> SubCommandTable;
+				typedef Apoc3D::Collections::HashMap<String, CommandRecord*> SubCommandTable;
 				Command* Cmd;
 				SubCommandTable SubCommands;
 

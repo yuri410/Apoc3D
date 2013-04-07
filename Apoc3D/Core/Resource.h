@@ -30,13 +30,10 @@
 
 #include "Streaming/AsyncProcessor.h"
 
-#include "apoc3d/Collections/FastQueue.h"
-#include "tthread/tinythread.h"
+#include "apoc3d/Collections/Queue.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core::Streaming;
-
-using namespace tthread;
 
 namespace Apoc3D
 {
@@ -110,15 +107,7 @@ namespace Apoc3D
 			 *  [ASync resource only]
 			 *  Tells if the resource can be unloaded when inactive.
 			 */
-			virtual bool IsUnloadable()
-			{
-				bool ul;
-				m_lock.lock(); 
-				ul = m_unloadableLock;
-				m_lock.unlock();
-
-				return !ul;
-			}
+			virtual bool IsUnloadable();
 
 			virtual bool IsIndependent() const { return true; }
 
@@ -140,11 +129,11 @@ namespace Apoc3D
 			/** 
 			 *  Makes this resource not unloadable by the resource collector
 			 */
-			void Lock_Unloadable() { m_lock.lock(); m_unloadableLock = true; m_lock.unlock(); }
+			void Lock_Unloadable();
 			/**
 			 *  Makes this resource unloadable by the resource collector
 			 */
-			void Unlock_Unloadable() { m_lock.lock(); m_unloadableLock = false; m_lock.unlock(); }
+			void Unlock_Unloadable();
 
 
 			/**
@@ -172,14 +161,7 @@ namespace Apoc3D
 			/**
 			 *  Gets the resource's current state.
 			 */
-			ResourceState getState()
-			{
-				ResourceState state;
-				m_lock.lock();
-				state = m_state;
-				m_lock.unlock();
-				return state;
-			}
+			ResourceState getState() const;
 			
 
 
@@ -314,9 +296,9 @@ namespace Apoc3D
 				volatile int Generation;
 			private:
 				const GenerationTable* m_table;
-				FastQueue<float> m_timeQueue;
+				Queue<float> m_timeQueue;
 
-				fast_mutex m_queueLock;
+				tthread::mutex* m_queueLock;
 				
 			public:
 
@@ -343,7 +325,7 @@ namespace Apoc3D
 			ResourceLoadOperation* m_resLoader;
 			ResourceUnloadOperation* m_resUnloader;
 			
-			fast_mutex m_lock;
+			tthread::mutex* m_lock;
 
 			ResourceEventHandler m_eventLoaded;
 			ResourceEventHandler m_eventUnloaded;
@@ -354,12 +336,7 @@ namespace Apoc3D
 			void LoadSync();
 
 
-			void setState(ResourceState st)
-			{
-				m_lock.lock();
-				m_state = st;
-				m_lock.unlock();
-			}
+			void setState(ResourceState st);
 
 			Resource& operator=(const Resource &rhs)
 			{

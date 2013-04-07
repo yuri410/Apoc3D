@@ -805,7 +805,7 @@ namespace APBuild
 				hr = tex->UnlockRect(i);
 				assert(SUCCEEDED(hr));
 
-				data.Levels.push_back(lvlData);
+				data.Levels.Add(lvlData);
 				data.ContentSize += lvlData.LevelSize;
 			}
 		}
@@ -897,7 +897,7 @@ namespace APBuild
 				assert(SUCCEEDED(hr));
 
 				// ======================================================================
-				data.Levels.push_back(lvlData);
+				data.Levels.Add(lvlData);
 				data.ContentSize += lvlData.LevelSize;
 
 			}
@@ -1484,9 +1484,9 @@ LFail:
 		}
 
 
-		void AssembleCubeMap(const FastMap<uint, String>& maps, const FastMap<uint, String>* alphaMaps = 0)
+		void AssembleCubeMap(const HashMap<uint, String>& maps, const HashMap<uint, String>* alphaMaps = 0)
 		{
-			for (FastMap<uint, String>::Enumerator e = maps.GetEnumerator(); e.MoveNext();)
+			for (HashMap<uint, String>::Enumerator e = maps.GetEnumerator(); e.MoveNext();)
 			{
 				String alpha;
 				bool hasAlpha = alphaMaps->TryGetValue(*e.getCurrentKey(), alpha);
@@ -1494,9 +1494,9 @@ LFail:
 				OpenCubeFace(*e.getCurrentValue(), hasAlpha? &alpha:0, ConvertCubemapFace((CubeMapFace)*e.getCurrentKey()));
 			}
 		}
-		void AssembleVolumeMap(const FastMap<uint, String>& maps, const FastMap<uint, String>* alphaMaps = 0)
+		void AssembleVolumeMap(const HashMap<uint, String>& maps, const HashMap<uint, String>* alphaMaps = 0)
 		{
-			for (FastMap<uint, String>::Enumerator e = maps.GetEnumerator(); e.MoveNext();)
+			for (HashMap<uint, String>::Enumerator e = maps.GetEnumerator(); e.MoveNext();)
 			{
 				String alpha;
 				bool hasAlpha = alphaMaps->TryGetValue(*e.getCurrentKey(), alpha);
@@ -1793,7 +1793,7 @@ LFail:
 			texData.Format = ConvertFormat(dxtFormat, 0, 0);
 		}
 
-		texData.Levels.resize(mipCount);
+		texData.Levels.Resize(mipCount);
 		for (int i=0;i<mipCount;i++)
 		{
 			ilBindImage(image);
@@ -1879,7 +1879,7 @@ LFail:
 			newdata.ContentSize = 0;
 			newdata.LevelCount = texData.LevelCount;
 			newdata.Type = texData.Type;
-			newdata.Levels.reserve(texData.LevelCount);
+			newdata.Levels.ResizeDiscard(texData.LevelCount);
 
 			
 			for (int i=0;i<newdata.LevelCount;i++)
@@ -1920,7 +1920,7 @@ LFail:
 				assert(r);
 				delete[] srcLvl.ContentData;
 
-				newdata.Levels.push_back(dstLvl);
+				newdata.Levels.Add(dstLvl);
 			}
 
 			texData = newdata;

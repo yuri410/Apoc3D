@@ -28,7 +28,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
 
-
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -44,17 +43,17 @@ namespace Apoc3D
 		String ColorValueToString(ColorValue v);
 		
 		void CombineString(const String* v, int count, String& result);
-		void SplitString(const String& str, vector<String>& result);
+		void SplitString(const String& str, List<String>& result);
 
 		void SinglesToString(const float* v, int count, String& result);
 		void PrecentagesToString(const float* v, int count, String& result);
 		void IntsToString(const int32* v, int count, String& result);
 		void UIntsToString(const uint32* v, int count, String& result);
 
-		void SplitSingles(const vector<String>& vals, std::vector<float>& result);
-		void SplitPercentages(const vector<String>& vals, std::vector<float>& result);
-		void SplitInt(const vector<String>& vals, std::vector<int32>& result);
-		void SplitUint(const vector<String>& vals, std::vector<uint32>& result);
+		void SplitSingles(const List<String>& vals, List<float>& result);
+		void SplitPercentages(const List<String>& vals, List<float>& result);
+		void SplitInt(const List<String>& vals, List<int32>& result);
+		void SplitUint(const List<String>& vals, List<uint32>& result);
 
 
 
@@ -315,75 +314,83 @@ namespace Apoc3D
 		}
 
 
-		vector<String> ConfigurationSection::GetStrings(const String& key) const
+		List<String> ConfigurationSection::GetStrings(const String& key) const
 		{			
-			vector<String> result;
+			List<String> result;
 			SplitString(getValue(key), result);
 			return result;
 		}
-		vector<String> ConfigurationSection::GetAttributeStrings(const String& key) const
+		List<String> ConfigurationSection::GetAttributeStrings(const String& key) const
 		{
-			vector<String> result;
+			List<String> result;
 			SplitString(getAttribute(key), result);
 			return result;
 		}
 
-		vector<float> ConfigurationSection::GetSingles(const String& key) const
+		List<float> ConfigurationSection::GetSingles(const String& key) const
 		{
-			vector<String> vals = StringUtils::Split(getValue(key), L",");
-			vector<float> result(vals.size());
+			List<String> vals;
+			StringUtils::Split(getValue(key), vals, L",");
+			List<float> result(vals.getCount());
 			SplitSingles(vals, result);
 			return result;
 		}
-		vector<float> ConfigurationSection::GetAttributeSingles(const String& key) const
+		List<float> ConfigurationSection::GetAttributeSingles(const String& key) const
 		{
-			vector<String> vals = StringUtils::Split(getAttribute(key), L",");
-			vector<float> result(vals.size());
+			List<String> vals;
+			StringUtils::Split(getAttribute(key), vals, L",");
+			List<float> result(vals.getCount());
 			SplitSingles(vals, result);
 			return result;
 		}
 		
-		vector<float> ConfigurationSection::GetPercentages(const String& key) const
+		List<float> ConfigurationSection::GetPercentages(const String& key) const
 		{
-			vector<String> vals = StringUtils::Split(getValue(key), L",");
-			vector<float> result(vals.size());
+			List<String> vals;
+			StringUtils::Split(getValue(key), vals, L",");
+			List<float> result(vals.getCount());
 			SplitPercentages(vals, result);
 			return result;
 		}
-		vector<float> ConfigurationSection::GetAttributePercentages(const String& key) const
+		List<float> ConfigurationSection::GetAttributePercentages(const String& key) const
 		{
-			vector<String> vals = StringUtils::Split(getAttribute(key), L",");
-			vector<float> result(vals.size());
+			List<String> vals;
+			StringUtils::Split(getAttribute(key), vals, L",");
+			List<float> result(vals.getCount());
 			SplitPercentages(vals, result);
 			return result;
 		}
 
-		vector<int32> ConfigurationSection::GetInts(const String& name) const 
+		List<int32> ConfigurationSection::GetInts(const String& name) const 
 		{
-			vector<String> vals = StringUtils::Split(getValue(name), L",");
-			vector<int32> result(vals.size());
+			List<String> vals;
+			StringUtils::Split(getValue(name), vals, L",");
+			List<int32> result(vals.getCount());
 			SplitInt(vals, result);
 			return result;
 		}
-		vector<int32> ConfigurationSection::GetAttributeInts(const String& name) const 
+		List<int32> ConfigurationSection::GetAttributeInts(const String& name) const 
 		{
-			vector<String> vals = StringUtils::Split(getAttribute(name), L",");
-			vector<int32> result(vals.size());
+			List<String> vals;
+			StringUtils::Split(getAttribute(name), vals, L",");
+			List<int32> result(vals.getCount());
 			SplitInt(vals, result);
 			return result;
 		}
 
-		vector<uint32> ConfigurationSection::GetUInts(const String& name) const 
+		List<uint32> ConfigurationSection::GetUInts(const String& name) const 
 		{
-			vector<String> vals = StringUtils::Split(getValue(name), L",");
-			vector<uint32> result(vals.size());
+			List<String> vals;
+			StringUtils::Split(getValue(name), vals, L",");
+			List<uint32> result(vals.getCount());
 			SplitUint(vals, result);
 			return result;
 		}
-		vector<uint32> ConfigurationSection::GetAttributeUInts(const String& name) const 
+		List<uint32> ConfigurationSection::GetAttributeUInts(const String& name) const 
 		{
-			vector<String> vals = StringUtils::Split(getAttribute(name), L",");
-			vector<uint32> result(vals.size());
+			List<String> vals;
+			StringUtils::Split(getAttribute(name), vals, L",");
+			List<uint32> result(vals.getCount());
 			SplitUint(vals, result);
 			return result;
 		}
@@ -462,7 +469,7 @@ namespace Apoc3D
 				m_attributes.Add(name, value);
 				//m_attributes.insert(make_pair(name, value));
 			}
-			catch (Apoc3DException e)
+			catch (const Apoc3DException& e)
 			{
 				switch (e.getType())
 				{
@@ -522,7 +529,7 @@ namespace Apoc3D
 					result.append(1, ',');
 			}
 		}
-		void SplitString(const String& str, vector<String>& result)
+		void SplitString(const String& str, List<String>& result)
 		{
 			bool isIn = false;
 			String buffer;
@@ -535,7 +542,7 @@ namespace Apoc3D
 				}
 				else if (ch == ',' && !isIn)
 				{
-					result.push_back(buffer);
+					result.Add(buffer);
 					buffer = String();
 				}
 				else
@@ -545,7 +552,7 @@ namespace Apoc3D
 			}
 			if (buffer.size())
 			{
-				result.push_back(buffer);
+				result.Add(buffer);
 			}
 		}
 
@@ -586,32 +593,32 @@ namespace Apoc3D
 			}
 		}
 
-		void SplitSingles(const vector<String>& vals, std::vector<float>& result)
+		void SplitSingles(const List<String>& vals, List<float>& result)
 		{
-			for (size_t i=0;i<vals.size();i++)
+			for (int32 i=0;i<vals.getCount();i++)
 			{
-				result[i] = StringUtils::ParseSingle(vals[i]);
+				result.Add( StringUtils::ParseSingle(vals[i]) );
 			}
 		}
-		void SplitPercentages(const vector<String>& vals, std::vector<float>& result)
+		void SplitPercentages(const List<String>& vals, List<float>& result)
 		{
-			for (size_t i=0;i<vals.size();i++)
+			for (int32 i=0;i<vals.getCount();i++)
 			{
-				result[i] = ParsePercentage(vals[i]);
+				result.Add( ParsePercentage(vals[i]) );
 			}
 		}
-		void SplitInt(const vector<String>& vals, std::vector<int32>& result)
+		void SplitInt(const List<String>& vals, List<int32>& result)
 		{
-			for (size_t i=0;i<vals.size();i++)
+			for (int32 i=0;i<vals.getCount();i++)
 			{
-				result[i] = StringUtils::ParseInt32(vals[i]);
+				result.Add( StringUtils::ParseInt32(vals[i]) );
 			}
 		}
-		void SplitUint(const vector<String>& vals, std::vector<uint32>& result)
+		void SplitUint(const List<String>& vals, List<uint32>& result)
 		{
-			for (size_t i=0;i<vals.size();i++)
+			for (int32 i=0;i<vals.getCount();i++)
 			{
-				result[i] = StringUtils::ParseUInt32(vals[i]);
+				result.Add( StringUtils::ParseUInt32(vals[i]) );
 			}
 		}
 
@@ -634,8 +641,9 @@ namespace Apoc3D
 
 		ColorValue ParseColorValue(const String& str)
 		{
-			const vector<String>& val = StringUtils::Split(str, L",");
-			if (val.size() == 4)
+			List<String> val;
+			StringUtils::Split(str, val, L",");
+			if (val.getCount() == 4)
 			{				
 				const uint r = StringUtils::ParseUInt32(val[0]);
 				const uint g = StringUtils::ParseUInt32(val[1]);
@@ -644,7 +652,7 @@ namespace Apoc3D
 
 				return PACK_COLOR(r,g,b,a);
 			}
-			else if (val.size() == 3)
+			else if (val.getCount() == 3)
 			{
 				const uint r = StringUtils::ParseUInt32(val[0]);
 				const uint g = StringUtils::ParseUInt32(val[1]);

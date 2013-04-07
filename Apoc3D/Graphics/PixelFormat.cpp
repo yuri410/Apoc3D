@@ -2,6 +2,7 @@
 #include "PixelFormat.h"
 #include "LockData.h"
 #include "apoc3d/Math/Half.h"
+#include "apoc3d/Collections/EnumConverterHelper.h"
 
 using namespace Apoc3D::Math;
 
@@ -9,6 +10,17 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
+		class PixelFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>
+		{
+		public:
+			PixelFormatEnumHelper();
+		};
+		class DepthFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<DepthFormat>
+		{
+		public:
+			DepthFormatEnumHelper();
+		};
+
 		void createSizeTable(int st[])
 		{
 			st[(int)FMT_Unknown] = -1;
@@ -72,8 +84,29 @@ namespace Apoc3D
 		{
 			createSizeTable(sizeTable);
 			createDepsizeTable(depSizeTable);
+
+
+			m_pConvHelper = new PixelFormatEnumHelper();
+			m_dConvHelper = new DepthFormatEnumHelper();
 		}
 
+		String PixelFormatUtils::ToString(PixelFormat format)
+		{
+			return initializer.m_pConvHelper->ToString(format);
+		}
+		PixelFormat PixelFormatUtils::ConvertFormat(const String& fmt)
+		{
+			return initializer.m_pConvHelper->Parse(fmt);
+		}
+
+		DepthFormat PixelFormatUtils::ConvertDepthFormat(const String& fmt)
+		{
+			return initializer.m_dConvHelper->Parse(fmt);
+		}
+		void PixelFormatUtils::DumpPixelFormatName(Apoc3D::Collections::List<String>& names)
+		{
+			initializer.m_pConvHelper->DumpNames(names);
+		}
 
 		PixelFormatEnumHelper::PixelFormatEnumHelper()
 			: Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>(FMT_Count)
@@ -146,6 +179,7 @@ namespace Apoc3D
 			AddPair(L"D32Lockable", DEPFMT_Depth32Lockable);
 			AddPair(L"D32F",		DEPFMT_Depth32Single);
 		}
+
 
 
 

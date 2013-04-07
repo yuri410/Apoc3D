@@ -28,14 +28,16 @@
  */
 
 #include "apoc3d/Common.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/ExistTable.h"
-#include "tthread/fast_mutex.h"
-#include "tthread/tinythread.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
-using namespace tthread;
+
+namespace tthread
+{
+	class mutex;
+}
 
 namespace Apoc3D
 {
@@ -55,7 +57,6 @@ namespace Apoc3D
 				static const float GenerationLifeTime[];
 
 			public:
-				fast_mutex m_genLock;
 
 				GenerationTable(ResourceManager* mgr);
 				~GenerationTable();
@@ -91,21 +92,12 @@ namespace Apoc3D
 				 *  A list of all pointers to resource objects.
 				 */
 				FastList<Resource*> m_generationList;
-
-				//thread* m_thread;
-
+				
 				ResourceManager* m_manager;
 
 				bool m_isShutdown;
+				tthread::mutex* m_genLock;
 
-
-				//static void ThreadEntry(void* args)
-				//{
-					//GenerationTable* table = static_cast<GenerationTable*>(args);
-					//table->GenerationUpdate_Main();
-				//}
-
-				//void GenerationUpdate_Main();
 				bool CanUnload(Resource* res) const;
 			};
 		}

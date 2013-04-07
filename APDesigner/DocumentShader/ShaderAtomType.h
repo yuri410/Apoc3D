@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SNetCommonTypes.h"
 
 #include "apoc3d/Core/Singleton.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
 
 using namespace Apoc3D;
@@ -112,7 +112,7 @@ namespace APDesigner
 	public:
 		SINGLETON_DECL_HEARDER(APDesigner::ShaderAtomLibraryManager);
 
-		typedef FastMap<String, ShaderAtomType*>::Enumerator LibraryEnumerator;
+		typedef HashMap<String, ShaderAtomType*>::Enumerator LibraryEnumerator;
 
 		/** Load all atom types from give file.
 		 *  Before that all previous loaded atom types will be unloaded,
@@ -126,7 +126,7 @@ namespace APDesigner
 
 		LibraryEnumerator GetEnumerator() { return m_table.GetEnumerator(); }
 	private:
-		FastMap<String, ShaderAtomType*> m_table;
+		HashMap<String, ShaderAtomType*> m_table;
 	};
 
 }

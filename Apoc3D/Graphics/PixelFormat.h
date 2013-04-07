@@ -26,12 +26,7 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "apoc3d/Apoc3DException.h"
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/EnumConverterHelper.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 
@@ -224,16 +219,8 @@ namespace Apoc3D
 			FMT_Count = 41
 		};
 	
-		class PixelFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>
-		{
-		public:
-			PixelFormatEnumHelper();
-		};
-		class DepthFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<DepthFormat>
-		{
-		public:
-			DepthFormatEnumHelper();
-		};
+		class PixelFormatEnumHelper;
+		class DepthFormatEnumHelper;
 
 		/**
 		 *  Some functions for PixelFormat
@@ -244,8 +231,8 @@ namespace Apoc3D
 			int sizeTable[FMT_Count];
 			int depSizeTable[DEPFMT_Count];
 
-			PixelFormatEnumHelper m_pConvHelper;
-			DepthFormatEnumHelper m_dConvHelper;
+			PixelFormatEnumHelper* m_pConvHelper;
+			DepthFormatEnumHelper* m_dConvHelper;
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable:4251)
@@ -329,29 +316,18 @@ namespace Apoc3D
 			/** 
 			 *  Converts a PixelFormat value to a string representation
 			 */
-			static String ToString(PixelFormat format)
-			{
-				return initializer.m_pConvHelper.ToString(format);
-			}
+			static String ToString(PixelFormat format);
 			/** 
 			 *  Converts a PixelFormat's string representation to the PixelFormat enum
 			 */
-			static PixelFormat ConvertFormat(const String& fmt)
-			{
-				return initializer.m_pConvHelper.Parse(fmt);
-			}
+			static PixelFormat ConvertFormat(const String& fmt);
+
 			/**
 			 *  Converts a DepthFormat's string representation to the DepthFormat enum
 			 */
-			static DepthFormat ConvertDepthFormat(const String& fmt)
-			{
-				return initializer.m_dConvHelper.Parse(fmt);
-			}
+			static DepthFormat ConvertDepthFormat(const String& fmt);
 
-			static void DumpPixelFormatName(Apoc3D::Collections::List<String>& names)
-			{
-				initializer.m_pConvHelper.DumpNames(names);
-			}
+			static void DumpPixelFormatName(Apoc3D::Collections::List<String>& names);
 
 			/** 
 			 *  Converts some pixels from a source format to a destination format

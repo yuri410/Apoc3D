@@ -26,9 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "Vector.h"
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE

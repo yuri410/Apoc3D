@@ -61,7 +61,7 @@ namespace Apoc3D
 			: m_parentProc(parnetProc), m_cameraID(passData->CameraID), m_name(passData->Name), m_selectorID(passData->SelectorID),
 			m_renderDevice(device), m_renderer(renderer)
 		{
-			for (size_t i=0;i<passData->Instructions.size();i++)
+			for (int32 i=0;i<passData->Instructions.getCount();i++)
 			{
 				m_instuctions.Add(passData->Instructions[i]);
 			}
@@ -309,7 +309,7 @@ namespace Apoc3D
 			AutomaticEffect* autoFx = dynamic_cast<AutomaticEffect*>(effect);
 
 			// assign the parameters
-			for (size_t i=2;i<inst.Args.size();i++)
+			for (int32 i=2;i<inst.Args.getCount();i++)
 			{
 				const SceneOpArg& arg = inst.Args[i];
 				if (arg.IsImmediate)
@@ -489,7 +489,7 @@ namespace Apoc3D
 		}
 		void ScenePass::UseRT(const SceneInstruction& inst)
 		{
-			assert(inst.Args.size() == 3);
+			assert(inst.Args.getCount() == 3);
 
 			int index;
 			if (inst.Args[0].IsImmediate)

@@ -36,15 +36,9 @@ namespace Apoc3D
 		class APAPI Random
 		{
 		public:
-			Random()
-				//: m_mbig(0), m_mseed(0), m_mz(0)
-			{
-				const int32 seed = static_cast<int32>(time(0));
-				SetSeed(seed);
-			}
+			Random();
 			~Random()
 			{
-				//delete[] m_seedArray;
 			}
 
 			void SetSeed(int32 seed)

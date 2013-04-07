@@ -294,16 +294,7 @@
     <ClInclude Include="Graphics\Patch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collections\FastList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Collections\FastQueue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Collections\ExistTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Collections\FastMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Collections\CollectionsCommon.h">
@@ -472,6 +463,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\CommandInterpreter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collections\LinkedList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collections\List.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collections\HashMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collections\Queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -26,14 +26,10 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "apoc3d/Graphics/PixelFormat.h"
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 
-using namespace Apoc3D;
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics;
@@ -99,7 +95,7 @@ namespace Apoc3D
 		 *  @param savingBuild If true, build information in the section will be generated.
 		 */
 		virtual void Save(ConfigurationSection* sect, bool savingBuild) = 0;
-		virtual std::vector<String> GetAllOutputFiles() =0;
+		virtual List<String> GetAllOutputFiles() =0;
 
 		virtual ~ProjectItemData() { }
 	};
@@ -116,13 +112,13 @@ namespace Apoc3D
 		String DestFile;
 		String SourceFile;
 
-		FastMap<String, String> Properties;
+		HashMap<String, String> Properties;
 
 		virtual bool IsNotBuilt();
 
 		virtual bool IsEarlierThan(time_t t);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual ProjectItemType getType() const { return PRJITEM_Custom; }
 		virtual void Parse(const ConfigurationSection* sect);
@@ -165,7 +161,7 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t) { return true; }
 
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 		
 		virtual ProjectItemType getType() const { return PRJITEM_Folder; }
 		virtual void Parse(const ConfigurationSection* sect);
@@ -215,8 +211,8 @@ namespace Apoc3D
 		bool AssembleCubemap;
 		bool AssembleVolumeMap;
 
-		FastMap<uint, String> SubMapTable;
-		FastMap<uint, String> SubAlphaMapTable;
+		HashMap<uint, String> SubMapTable;
+		HashMap<uint, String> SubAlphaMapTable;
 
 		TextureBuildMethod Method;
 
@@ -225,7 +221,7 @@ namespace Apoc3D
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -247,7 +243,7 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -270,7 +266,7 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -311,7 +307,7 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -340,7 +336,7 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -366,7 +362,7 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -386,7 +382,7 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t) { return true; }
@@ -408,7 +404,7 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -454,7 +450,7 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -473,13 +469,13 @@ namespace Apoc3D
 		String DestinationFile;
 		bool Reverse;
 
-		FastMap<String, int> ObjectIndexMapping;
+		HashMap<String, int> ObjectIndexMapping;
 
 		virtual ProjectItemType getType() const { return PRJITEM_TransformAnimation; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -501,7 +497,7 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
-		virtual std::vector<String> GetAllOutputFiles();
+		virtual List<String> GetAllOutputFiles();
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
@@ -550,10 +546,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		void NotifyModified()
-		{
-			m_timeStamp = time(0);
-		}
+		void NotifyModified();
 
 	private:
 		Project* m_project;
@@ -648,49 +641,11 @@ namespace Apoc3D
 		static ProjectResModel::MeshBuildMethod ParseModelBuildMethod(const String& str);
 		static String ToString(ProjectResModel::MeshBuildMethod method);
 
-	private:
-		struct TextureFilterTypeConv : public Apoc3D::Collections::EnumDualConversionHelper<ProjectResTexture::TextureFilterType>
-		{
-			TextureFilterTypeConv() 
-				: EnumDualConversionHelper<ProjectResTexture::TextureFilterType>(10)
-			{
-				AddPair(L"Nearest", ProjectResTexture::TFLT_Nearest);
-				AddPair(L"BSpline", ProjectResTexture::TFLT_BSpline);
-				AddPair(L"Box", ProjectResTexture::TFLT_Box);
-			}
-		};
-
-		struct TextureBuildMethodConv : public Apoc3D::Collections::EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>
-		{
-			TextureBuildMethodConv() 
-				: EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>(10)
-			{
-				AddPair(L"Default", ProjectResTexture::TEXBUILD_BuiltIn);
-				AddPair(L"D3D", ProjectResTexture::TEXBUILD_D3D);
-				AddPair(L"Devil", ProjectResTexture::TEXBUILD_Devil);
-			}
-		};
-
-		struct MeshBuildMethodConv : public Apoc3D::Collections::EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>
-		{
-			MeshBuildMethodConv() 
-				: EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>(10)
-			{
-				AddPair(L"Ass", ProjectResModel::MESHBUILD_ASS);
-				AddPair(L"FBX", ProjectResModel::MESHBUILD_FBX);
-				AddPair(L"D3D", ProjectResModel::MESHBUILD_D3D);
-			}
-		};
-
-		static TextureFilterTypeConv TextureFilterTypeConvInst;
-		static TextureBuildMethodConv TextureBuildMethodConvInst;
-		static MeshBuildMethodConv MeshBuildMethodConvInst;
-
 	public:
 
-		static const TextureFilterTypeConv& GetTextureFilterTypeConverter() { return TextureFilterTypeConvInst; }
-		static const TextureBuildMethodConv& GetTextureBuildMethodConverter() { return TextureBuildMethodConvInst; }
-		static const MeshBuildMethodConv& GetMeshBuildMethodConverter() { return MeshBuildMethodConvInst; }
+		static const EnumDualConversionHelper<ProjectResTexture::TextureFilterType>& GetTextureFilterTypeConverter();
+		static const EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>& GetTextureBuildMethodConverter();
+		static const EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>& GetMeshBuildMethodConverter();
 
 	};
 }

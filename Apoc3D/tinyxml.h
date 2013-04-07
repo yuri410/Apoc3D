@@ -34,20 +34,11 @@ distribution.
 #pragma warning( disable : 4786 )
 #endif
 
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <assert.h>
-
 // Help out windows:
 #if defined( _DEBUG ) && !defined( DEBUG )
 #define DEBUG
 #endif
 
-#include <string>
-#include <iostream>
-#include <sstream>
 #define TIXML_STRING		std::string
 
 // Deprecated library function hell. Compilers want to use the

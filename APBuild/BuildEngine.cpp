@@ -35,10 +35,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3DHelper.h"
 #include <GdiPlus.h>
 
+#include <iostream>
+
 using namespace APBuild;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::VFS;
 using namespace Gdiplus;
+
+using namespace std;
 
 static GdiplusStartupInput gdiplusStartupInput;
 static ULONG_PTR           gdiplusToken;
@@ -79,10 +83,10 @@ void Finalize()
 
 void EnsureDirectory(const String& path)
 {
-	std::vector<String> paths = PathUtils::Split(path);
+	List<String> paths = PathUtils::Split(path);
 	String subPath;
 	subPath.reserve(path.size());
-	for (size_t i=0;i<paths.size();i++)
+	for (int32 i=0;i<paths.getCount();i++)
 	{
 		PathUtils::Append(subPath, paths[i]);
 

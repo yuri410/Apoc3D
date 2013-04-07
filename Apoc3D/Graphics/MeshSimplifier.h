@@ -26,14 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "ModelTypes.h"
 
-#include "apoc3d/Math/Vector.h"
 #include "apoc3d/Math/MathCommon.h"
-#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;

@@ -47,7 +47,7 @@ namespace APDesigner
 			{
 				if (MultiSelect)
 				{
-					m_filePath.clear();
+					m_filePath.Clear();
 
 					// the first one is either the file path(when only one is selected) or the base path of all the files selected
 					String basePath;
@@ -69,11 +69,11 @@ namespace APDesigner
 							{
 								if (!basePath.empty())
 								{
-									m_filePath.push_back(PathUtils::Combine(basePath, name));
+									m_filePath.Add(PathUtils::Combine(basePath, name));
 								}
 								else
 								{
-									m_filePath.push_back(name);
+									m_filePath.Add(name);
 								}
 								name.clear();
 							}
@@ -88,15 +88,15 @@ namespace APDesigner
 					}
 
 					// add the only when file when only one item is selected in the dialog
-					if (m_filePath.empty())
+					if (m_filePath.getCount()==0)
 					{
-						m_filePath.push_back(basePath);
+						m_filePath.Add(basePath);
 					}
 				}
 				else
 				{
-					m_filePath.clear();
-					m_filePath.push_back(ofn.lpstrFile);//StringUtils::Split(ofn.lpstrFile, L"\0");
+					m_filePath.Clear();
+					m_filePath.Add(ofn.lpstrFile);//StringUtils::Split(ofn.lpstrFile, L"\0");
 				}
 
 				//hf = CreateFile(ofn.lpstrFile, 
@@ -134,10 +134,10 @@ namespace APDesigner
 			ofn.Flags = OFN_OVERWRITEPROMPT | OFN_LONGNAMES | OFN_NOCHANGEDIR;
 			ofn.lpstrTitle = Title.c_str();
 
-			m_filePath.clear();
+			m_filePath.Clear();
 			if (GetSaveFileName(&ofn)==TRUE) 
 			{
-				m_filePath.push_back(ofn.lpstrFile);
+				m_filePath.Add(ofn.lpstrFile);
 				//hf = CreateFile(ofn.lpstrFile, 
 				//GENERIC_READ,
 				//0,

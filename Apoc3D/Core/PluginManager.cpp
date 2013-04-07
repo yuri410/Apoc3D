@@ -31,7 +31,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Config/Configuration.h"
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "Logging.h"
-#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Platform;
@@ -55,11 +54,10 @@ namespace Apoc3D
 
 		const Plugin* PluginManager::getPlugin(const String& name) const
 		{
-			PluginTable::const_iterator iter = m_plugins.find(name);
-
-			if (iter != m_plugins.end())
+			Plugin* plg;
+			if (m_plugins.TryGetValue(name, plg))
 			{
-				return iter->second;
+				return plg;
 			}
 			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
 		}
@@ -107,8 +105,8 @@ namespace Apoc3D
 				
 				plugin->Load();
 
-				m_libraries.push_back(lib);
-				m_plugins.insert(make_pair(name, plugin));
+				m_libraries.Add(lib);
+				m_plugins.Add(name, plugin);
 			}
 			catch (Apoc3DException e)
 			{
@@ -127,7 +125,7 @@ namespace Apoc3D
 
 					plugin->Load();
 
-					m_plugins.insert(make_pair(plugin->GetName(), plugin));
+					m_plugins.Add(plugin->GetName(), plugin);
 				}
 				catch (Apoc3DException e)
 				{
@@ -154,25 +152,25 @@ namespace Apoc3D
 		}
 		void PluginManager::UnloadPlugins()
 		{
-			for (PluginTable::iterator iter = m_plugins.begin(); iter != m_plugins.end(); iter++)
+			for (PluginTable::Enumerator e = m_plugins.GetEnumerator(); e.MoveNext();)
 			{
 				try
 				{
-					iter->second->Unload();
+					(*e.getCurrentValue())->Unload();
 				}
-				catch (Apoc3DException e)
+				catch (Apoc3DException ex)
 				{
-					OnPluginError(iter->second);
+					OnPluginError((*e.getCurrentValue()));
 				}
 			}
-			m_plugins.clear();
+			m_plugins.Clear();
 
-			for (LibraryList::iterator iter = m_libraries.begin(); iter != m_libraries.end(); iter++)
+			for (int32 i=0;i<m_libraries.getCount();i++)
 			{
-				Library* lib = *iter;
-				lib->Unload();
-				delete lib;
+				m_libraries[i]->Unload();
+				delete m_libraries[i];
 			}
+			m_libraries.Clear();
 		}
 
 	}

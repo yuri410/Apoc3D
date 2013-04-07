@@ -24,6 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "BoundingBox.h"
 
+#include "Plane.h"
+
 #include "BoundingSphere.h"
 #include "Ray.h"
 
@@ -74,6 +76,11 @@ namespace Apoc3D
 			float dist = Vector3Utils::DistanceSquared(sphere.Center, clamped);
 
 			return (dist <= (sphere.Radius * sphere.Radius));
+		}
+
+		PlaneIntersectionType BoundingBox::Intersects(const BoundingBox& box, const Plane& plane)
+		{
+			return Plane::Intersects(plane, box);
 		}
 	}
 }

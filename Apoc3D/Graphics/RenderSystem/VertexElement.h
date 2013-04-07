@@ -26,9 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "apoc3d/Graphics/GraphicsCommon.h"
 
 using namespace Apoc3D::Collections;
@@ -79,7 +76,7 @@ namespace Apoc3D
 
 				static VertexElement* FindElementBySemantic(const FastList<VertexElement>& elem, VertexElementUsage semantic);
 				
-				static bool Compare(const vector<VertexElement> &e1, const vector<VertexElement> &e2);
+				static bool Compare(const List<VertexElement> &e1, const List<VertexElement> &e2);
 
 				/**
 				 *  Calculate the size of a specified vertex element format

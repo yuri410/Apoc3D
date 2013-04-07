@@ -26,10 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
+#include "apoc3d/Collections/HashMap.h"
 
-#include "apoc3d/Common.h"
-
-using namespace std;
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::IO;
 
@@ -41,12 +40,18 @@ namespace Apoc3D
 
 		class APAPI StringTable
 		{
-		private:
-			unordered_map<String, pair<String, String>> m_entryTable;
-
 		public:
 			StringTable(void) {}
 			~StringTable(void) {}
+
+		private:
+			struct Entry
+			{
+				String Text;
+				String Extra;
+			};
+			HashMap<String, Entry> m_entryTable;
+
 		};
 
 		class APAPI StringTableLoader
@@ -58,7 +63,7 @@ namespace Apoc3D
 			virtual void Read(StringTable* data, Stream* stm) = 0;
 			virtual void Write(StringTable* data, Stream* stm) = 0;
 
-			virtual vector<String> getFilters() = 0;
+			virtual List<String> getFilters() = 0;
 		};
 	}
 }

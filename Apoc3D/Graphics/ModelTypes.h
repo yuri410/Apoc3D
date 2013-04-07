@@ -26,13 +26,11 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Math/Vector.h"
 
 using namespace Apoc3D::Math;
-using namespace std;
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
@@ -72,41 +70,49 @@ namespace Apoc3D
 		template<class M>
 		class MeshMaterialSet
 		{
-		private:
-			vector< vector<M> > m_set;
-
 		public:
 			void AddFrame(M& mtrl, int index)
 			{
-				m_set[index].push_back(mtrl);
+				m_set[index]->Add(mtrl);
 			}
 			void Add(M& mtrl)
 			{
-				m_set.push_back(vector<M>());
-				int idx = static_cast<int>(m_set.size());
+				m_set.Add(new List<M>());
+				int idx = m_set.getCount();
 				idx--;
-				m_set[idx].push_back(mtrl);
+				m_set[idx]->Add(mtrl);
 			}
 			void RemoveFrame(int index, int frameIndex)
 			{
-
-				m_set[index].erase(m_set[index].cbegin() + frameIndex);
+				m_set[index]->RemoveAt(frameIndex);
 			}
-			M& getMaterial(int index, int frame = 0) {	return m_set[index][frame]; }
-			const M& getMaterial(int index, int frame = 0) const { return m_set[index][frame]; }
+			M& getMaterial(int index, int frame = 0) {	return m_set[index]->operator[](frame); }
+			const M& getMaterial(int index, int frame = 0) const { return m_set[index]->operator[](frame); }
 
 
 			void Reserve(int32 mtrlCount)
 			{
-				m_set.reserve(mtrlCount);
+				m_set.Resize(mtrlCount);
 			}
 			void Reserve(int32 index, int32 frameCount)
 			{
-				m_set[index].reserve(frameCount);
+				m_set[index]->Resize(frameCount);
 			}
 
-			uint32 getMaterialCount() const { return m_set.size(); }
-			uint32 getFrameCount(int index) const { return m_set[index].size(); }
+			int32 getMaterialCount() const { return m_set.getCount(); }
+			int32 getFrameCount(int index) const { return m_set[index]->getCount(); }
+
+			~MeshMaterialSet()
+			{
+				for (int32 i=0;i<m_set.getCount();i++)
+				{
+					delete m_set[i];
+				}
+				m_set.Clear();
+			}
+		private:
+			List< List<M>* > m_set;
+
 		};
 	}
 }

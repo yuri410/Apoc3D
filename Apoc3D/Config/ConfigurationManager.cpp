@@ -23,7 +23,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "ConfigurationManager.h"
-
 #include "Configuration.h"
 
 #include "apoc3d/Core/Logging.h"
@@ -94,8 +93,8 @@ namespace Apoc3D
 
 		void ConfigurationManager::RegisterFormat(ConfigurationFormat* fmt)
 		{
-			std::vector<String> exts = fmt->GetSupportedFileSystemExtensions();
-			for (size_t i=0;i<exts.size();i++)
+			List<String> exts = fmt->GetSupportedFileSystemExtensions();
+			for (int32 i=0;i<exts.getCount();i++)
 			{
 				if (!m_formats.Contains(exts[i]))
 					m_formats.Add(exts[i], fmt);
@@ -107,8 +106,8 @@ namespace Apoc3D
 		}
 		void ConfigurationManager::UnregisterFormat(ConfigurationFormat* fmt)
 		{
-			std::vector<String> exts = fmt->GetSupportedFileSystemExtensions();
-			for (size_t i=0;i<exts.size();i++)
+			List<String> exts = fmt->GetSupportedFileSystemExtensions();
+			for (int32 i=0;i<exts.getCount();i++)
 			{
 				ConfigurationFormat* cf;
 				if (m_formats.TryGetValue(exts[i], cf) && cf == fmt)

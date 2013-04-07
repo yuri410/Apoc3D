@@ -5,7 +5,7 @@
 #include "apoc3d/Scene/SceneObject.h"
 #include "apoc3d/Core/Resource.h"
 #include "apoc3d/Core/ResourceManager.h"
-#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Math/BoundingSphere.h"
 #include "apoc3d/Math/PerlinNoise.h"
 #include "apoc3d/Graphics/RenderOperationBuffer.h"

@@ -27,6 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Apoc3DException.h"
 
+#include <vector>
+#include <algorithm>
+
 using namespace Apoc3D::Utility;
 using namespace Apoc3D;
 
@@ -61,7 +64,7 @@ namespace Apoc3D
 
 			bool Enumeration::m_hasMinimumSettings = false;
 			DeviceSettings Enumeration::m_minimumSettings;
-			vector<AdapterInfo*> Enumeration::m_adapters;
+			FastList<AdapterInfo*> Enumeration::m_adapters;
 			bool Enumeration::m_hasEnumerated = false;
 
 			void Enumeration::Enumerate(IDirect3D9* d3d9)
@@ -70,7 +73,7 @@ namespace Apoc3D
 				D3DFORMAT allowedAdapterFormat[] =  { D3DFMT_X8R8G8B8, D3DFMT_X1R5G5B5, D3DFMT_R5G6B5, 
 					D3DFMT_A2R10G10B10 };
 
-				vector<D3DFORMAT> adapterFormats;
+				FastList<D3DFORMAT> adapterFormats;
 
 				UINT count = d3d9->GetAdapterCount();
 
@@ -105,11 +108,11 @@ namespace Apoc3D
 								}
 							}
 
-							info->DisplayModes.push_back(mode);
+							info->DisplayModes.Add(mode);
 
-							if (find(adapterFormats.begin(), adapterFormats.end(), mode.Format) == adapterFormats.end())
+							if (adapterFormats.IndexOf(mode.Format) == -1)
 							{
-								adapterFormats.push_back(mode.Format);
+								adapterFormats.Add(mode.Format);
 							}
 						}
 					}
@@ -118,26 +121,36 @@ namespace Apoc3D
 					hr = d3d9->GetAdapterDisplayMode(i, &currentMode);
 					assert(SUCCEEDED(hr));
 
-					if (find(adapterFormats.begin(), adapterFormats.end(), currentMode.Format) == adapterFormats.end())
+					if (adapterFormats.IndexOf(currentMode.Format) == -1)
 					{
-						adapterFormats.push_back(currentMode.Format);
+						adapterFormats.Add(currentMode.Format);
 					}
 
 					// sort info.DisplayModes
-					sort(info->DisplayModes.begin(), info->DisplayModes.end(), CompareDisplayMode);
+					//sort(info->DisplayModes.begin(), info->DisplayModes.end(), CompareDisplayMode);
+					std::vector<D3DDISPLAYMODE> dmodes(info->DisplayModes.getCount());
+					for (int32 i=0;i<info->DisplayModes.getCount();i++)
+					{
+						dmodes[i] = info->DisplayModes[i];
+					}
+					std::sort(dmodes.begin(), dmodes.end(), CompareDisplayMode);
+					for (int32 i=0;i<info->DisplayModes.getCount();i++)
+					{
+						info->DisplayModes[i] = dmodes[i];
+					}
 
 					EnumerateDevices(d3d9, info, adapterFormats);
 
-					if (info->Devices.size())
+					if (info->Devices.getCount())
 					{
-						m_adapters.push_back(info);
+						m_adapters.Add(info);
 					}
 				}
 				
 				bool unique = false;
-				for (size_t i=0;i<m_adapters.size() && !unique; i++)
+				for (int32 i=0;i<m_adapters.getCount() && !unique; i++)
 				{
-					for (size_t j=i+1;j<m_adapters.size();j++)
+					for (int32 j=i+1;j<m_adapters.getCount();j++)
 					{
 						if (!strcmp(m_adapters[i]->Details.Description, m_adapters[j]->Details.Description))
 						{
@@ -146,7 +159,7 @@ namespace Apoc3D
 						}
 					}
 				}
-				for (size_t i=0;i<m_adapters.size(); i++)
+				for (int32 i=0;i<m_adapters.getCount(); i++)
 				{
 					wchar_t buffer[512];
 					mbstowcs(buffer, m_adapters[i]->Details.Description, 512);
@@ -160,7 +173,7 @@ namespace Apoc3D
 				}
 			}
 
-			void Enumeration::EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, vector<D3DFORMAT>& adapterFormats)
+			void Enumeration::EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, FastList<D3DFORMAT>& adapterFormats)
 			{
 				D3DDEVTYPE devTypes[] = { D3DDEVTYPE_HAL, D3DDEVTYPE_REF };
 
@@ -179,26 +192,26 @@ namespace Apoc3D
 					
 					EnumerateSettingsCombos(d3d9, info, devInfo, adapterFormats);
 
-					if (devInfo->DeviceSettings.size())
+					if (devInfo->DeviceSettings.getCount())
 					{
-						info->Devices.push_back(devInfo);
+						info->Devices.Add(devInfo);
 					}
 				}
 			}
 
 			void Enumeration::EnumerateSettingsCombos(IDirect3D9* d3d9, AdapterInfo* adapterInfo, 
-				DeviceInfo* deviceInfo, vector<D3DFORMAT>& adapterFormats)
+				DeviceInfo* deviceInfo, FastList<D3DFORMAT>& adapterFormats)
 			{
 				D3DFORMAT backBufferFormats[] = { D3DFMT_A8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_A2R10G10B10,
 					D3DFMT_R5G6B5, D3DFMT_A1R5G5B5, D3DFMT_X1R5G5B5 };
 
-				for (size_t i=0;i<adapterFormats.size();i++)
+				for (int32 i=0;i<adapterFormats.getCount();i++)
 				{
-					for (size_t j=0;j<sizeof(backBufferFormats)/sizeof(D3DFORMAT);j++)
+					for (int32 j=0;j<sizeof(backBufferFormats)/sizeof(D3DFORMAT);j++)
 					{
 						for (int windowed = 0; windowed < 2; windowed++)
 						{
-							if (windowed == 0 && adapterInfo->DisplayModes.empty())
+							if (windowed == 0 && adapterInfo->DisplayModes.getCount() == 0)
 								continue;
 
 							HRESULT hr = d3d9->CheckDeviceType(adapterInfo->AdapterOrdinal, deviceInfo->DeviceType,
@@ -227,7 +240,7 @@ namespace Apoc3D
 							BuildDepthStencilFormatList(d3d9, combo);
 							BuildMultisampleTypeList(d3d9, combo);
 
-							if (combo->MultisampleTypes.empty())
+							if (combo->MultisampleTypes.getCount()==0)
 								continue;
 
 							if (m_hasMinimumSettings)
@@ -240,23 +253,18 @@ namespace Apoc3D
 
 								// check depth stencil format against D3DFMT_UNKNOWN
 								if (m_minimumSettings.DepthStencilFormat != D3DFMT_UNKNOWN &&
-									find(combo->DepthStencilFormats.begin(), 
-									combo->DepthStencilFormats.end(), 
-									m_minimumSettings.DepthStencilFormat) == combo->DepthStencilFormats.end())
+									combo->DepthStencilFormats.IndexOf(m_minimumSettings.DepthStencilFormat) == -1)
 								{
 									continue;
 								}
 
-								if (find(combo->MultisampleTypes.begin(), 
-									combo->MultisampleTypes.end(), 
-									m_minimumSettings.MultiSampleType)
-									== combo->MultisampleTypes.end())
+								if (combo->MultisampleTypes.IndexOf(m_minimumSettings.MultiSampleType) == -1)
 								{
 									continue;
 								}
 							}
 
-							deviceInfo->DeviceSettings.push_back(combo);
+							deviceInfo->DeviceSettings.Add(combo);
 						}
 					}
 				}
@@ -287,7 +295,7 @@ namespace Apoc3D
 						continue;
 					}
 					
-					combo->DepthStencilFormats.push_back(format);
+					combo->DepthStencilFormats.Add(format);
 				}
 			}
 
@@ -314,8 +322,8 @@ namespace Apoc3D
 
 					if (SUCCEEDED(hr))
 					{
-						combo->MultisampleTypes.push_back(type);
-						combo->MultisampleQualities.push_back(quality);
+						combo->MultisampleTypes.Add(type);
+						combo->MultisampleQualities.Add(quality);
 					}
 				}
 
@@ -341,7 +349,7 @@ namespace Apoc3D
 
 					if (interval == D3DPRESENT_INTERVAL_DEFAULT || (combo->DeviceInfo->Capabilities.PresentationIntervals & interval) != 0)
 					{
-						combo->PresentIntervals.push_back(interval);
+						combo->PresentIntervals.Add(interval);
 					}
 				}
 
@@ -361,7 +369,7 @@ namespace Apoc3D
 
 				float bestRanking = -1.0f;
 				const SettingsCombo* bestCombo = 0;
-				for (size_t i=0; i<m_adapters.size(); i++)
+				for (int32 i=0; i<m_adapters.getCount(); i++)
 				{
 					const AdapterInfo* adapterInfo = m_adapters[i];
 
@@ -369,10 +377,10 @@ namespace Apoc3D
 					HRESULT hr = d3d9->GetAdapterDisplayMode(adapterInfo->AdapterOrdinal, &desktopMode);
 					assert(SUCCEEDED(hr));
 
-					for (size_t j=0; j<adapterInfo->Devices.size(); j++)
+					for (int32 j=0; j<adapterInfo->Devices.getCount(); j++)
 					{
 						const DeviceInfo* deviceInfo = adapterInfo->Devices[j];
-						for (size_t k=0; k<deviceInfo->DeviceSettings.size(); k++)
+						for (int32 k=0; k<deviceInfo->DeviceSettings.getCount(); k++)
 						{
 							const SettingsCombo* combo = deviceInfo->DeviceSettings[k];
 
@@ -590,9 +598,9 @@ namespace Apoc3D
 				if((combo->DeviceInfo->Capabilities.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) != 0)
 					ranking += 0.1f;
 
-				const vector<D3DDISPLAYMODE>& modes =  combo->AdapterInfo->DisplayModes;
+				const List<D3DDISPLAYMODE>& modes =  combo->AdapterInfo->DisplayModes;
 
-				for (size_t i=0;i<modes.size();i++)
+				for (int32 i=0;i<modes.getCount();i++)
 				{
 					const D3DDISPLAYMODE& displayMode = modes[i];
 					if(displayMode.Format == combo->AdapterFormat &&
@@ -619,7 +627,7 @@ namespace Apoc3D
 				if(combo->BackBufferFormat == combo->AdapterFormat)
 					ranking += 0.1f;
 
-				for(size_t i = 0; i < combo->MultisampleTypes.size(); i++)
+				for(int32 i = 0; i < combo->MultisampleTypes.getCount(); i++)
 				{
 					D3DMULTISAMPLE_TYPE type = combo->MultisampleTypes[i];
 					int quality = combo->MultisampleQualities[i];
@@ -631,12 +639,12 @@ namespace Apoc3D
 					}
 				}
 
-				const vector<D3DFORMAT>& dsfmts = combo->DepthStencilFormats;
-				if(find(dsfmts.begin(), dsfmts.end(), optimal.PresentParameters.AutoDepthStencilFormat) != dsfmts.end())
+				const FastList<D3DFORMAT>& dsfmts = combo->DepthStencilFormats;
+				if(dsfmts.IndexOf(optimal.PresentParameters.AutoDepthStencilFormat) != -1)
 					ranking += 1.0f;
 
 				//const vector<D3DDISPLAYMODE>& modes2 =  combo->AdapterInfo->DisplayModes;
-				for (size_t i=0;i<modes.size();i++)
+				for (int32 i=0;i<modes.getCount();i++)
 				{
 					const D3DDISPLAYMODE& displayMode = modes[i];
 					if(displayMode.Format == combo->AdapterFormat &&
@@ -647,9 +655,8 @@ namespace Apoc3D
 					}
 				}
 
-				const vector<uint32>& presentIntervals = combo->PresentIntervals;
-				if(find(presentIntervals.begin(), presentIntervals.end(), 
-					optimal.PresentParameters.PresentationInterval) != presentIntervals.end())
+				const FastList<uint32>& presentIntervals = combo->PresentIntervals;
+				if(presentIntervals.IndexOf(optimal.PresentParameters.PresentationInterval) != -1)
 					ranking += 1.0f;
 
 				return ranking;
@@ -705,7 +712,7 @@ namespace Apoc3D
 					D3DMULTISAMPLE_TYPE bestType = D3DMULTISAMPLE_NONE;
 					int bestQuality = 0;
 
-					for(size_t i = 0; i < combo->MultisampleTypes.size(); i++)
+					for(int32 i = 0; i < combo->MultisampleTypes.getCount(); i++)
 					{
 						D3DMULTISAMPLE_TYPE type = combo->MultisampleTypes[i];
 						int quality = combo->MultisampleQualities[i];
@@ -722,11 +729,11 @@ namespace Apoc3D
 					settings.PresentParameters.MultiSampleQuality = bestQuality;
 				}
 
-				vector<int> rankings;
+				FastList<int> rankings;
 				int inputDepthBitDepth = GetDepthBits(input.PresentParameters.AutoDepthStencilFormat);
 				int inputStencilBitDepth = GetStencilBits(input.PresentParameters.AutoDepthStencilFormat);
 
-				for (size_t i=0;i<combo->DepthStencilFormats.size();i++)
+				for (int32 i=0;i<combo->DepthStencilFormats.getCount();i++)
 				{
 					D3DFORMAT format = combo->DepthStencilFormats[i];
 					int currentBitDepth = GetDepthBits(format);
@@ -734,12 +741,12 @@ namespace Apoc3D
 
 					int ranking = abs(currentBitDepth - inputDepthBitDepth);
 					ranking += abs(currentStencilDepth - inputStencilBitDepth);
-					rankings.push_back(ranking);
+					rankings.Add(ranking);
 				}
 
 				int bestIndex = -1;
 				int bestRanking = MAXINT32;
-				for (size_t i=0;i<rankings.size();i++)
+				for (int32 i=0;i<rankings.getCount();i++)
 				{
 					if(rankings[i] < bestRanking)
 					{
@@ -769,8 +776,8 @@ namespace Apoc3D
 					{
 						bestRanking = 100000;
 
-						const vector<D3DDISPLAYMODE>& displayModes = combo->AdapterInfo->DisplayModes;
-						for (size_t i=0;i<displayModes.size();i++)
+						const List<D3DDISPLAYMODE>& displayModes = combo->AdapterInfo->DisplayModes;
+						for (int32 i=0;i<displayModes.getCount();i++)
 						{
 							const D3DDISPLAYMODE& mode = displayModes[i];
 							if(mode.Format != combo->AdapterFormat ||
@@ -794,8 +801,8 @@ namespace Apoc3D
 					settings.PresentParameters.FullScreen_RefreshRateInHz = bestDisplayMode.RefreshRate;
 				}
 
-				const vector<uint32> prIntrvls = combo->PresentIntervals;
-				if(find(prIntrvls.begin(), prIntrvls.end(), input.PresentParameters.PresentationInterval) != prIntrvls.end())
+				const FastList<uint32> prIntrvls = combo->PresentIntervals;
+				if(prIntrvls.IndexOf(input.PresentParameters.PresentationInterval) != -1)
 					settings.PresentParameters.PresentationInterval = input.PresentParameters.PresentationInterval;
 				else
 					settings.PresentParameters.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
@@ -803,7 +810,7 @@ namespace Apoc3D
 
 			D3DDISPLAYMODE Enumeration::FindValidResolution(const SettingsCombo* combo, const Direct3D9Settings& input)
 			{
-				if (combo->AdapterInfo->DisplayModes.empty())
+				if (combo->AdapterInfo->DisplayModes.getCount() == 0)
 				{
 					throw Apoc3DException::createException(EX_NotSupported, L"No device modes available");
 				}
@@ -821,7 +828,7 @@ namespace Apoc3D
 				int bestRanking = 100000;
 				int ranking;
 
-				for (size_t i=0; i<combo->AdapterInfo->DisplayModes.size();i++)
+				for (int32 i=0; i<combo->AdapterInfo->DisplayModes.getCount();i++)
 				{
 					const D3DDISPLAYMODE& mode = combo->AdapterInfo->DisplayModes[i];
 

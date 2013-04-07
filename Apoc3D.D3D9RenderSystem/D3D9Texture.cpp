@@ -479,7 +479,7 @@ namespace Apoc3D
 					hr = tex->UnlockRect(i);
 					assert(SUCCEEDED(hr));
 
-					data.Levels.push_back(lvlData);
+					data.Levels.Add(lvlData);
 					data.ContentSize += lvlData.LevelSize;
 				}
 			}
@@ -571,7 +571,7 @@ namespace Apoc3D
 					assert(SUCCEEDED(hr));
 
 					// ======================================================================
-					data.Levels.push_back(lvlData);
+					data.Levels.Add(lvlData);
 					data.ContentSize += lvlData.LevelSize;
 
 				}
@@ -817,7 +817,7 @@ namespace Apoc3D
 						newdata.ContentSize = 0;
 						newdata.LevelCount = data.LevelCount;
 						newdata.Type = data.Type;
-						newdata.Levels.reserve(data.LevelCount);
+						newdata.Levels.ResizeDiscard(data.LevelCount);
 
 						String name;
 						const FileLocation* fl = dynamic_cast<const FileLocation*>(getResourceLocation());
@@ -874,7 +874,7 @@ namespace Apoc3D
 							assert(r);
 							delete[] srcLvl.ContentData;
 
-							newdata.Levels.push_back(dstLvl);
+							newdata.Levels.Add(dstLvl);
 						}
 
 						data = newdata;

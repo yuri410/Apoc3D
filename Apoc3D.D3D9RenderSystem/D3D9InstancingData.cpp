@@ -64,7 +64,7 @@ namespace Apoc3D
 
 			D3D9InstancingData::~D3D9InstancingData()
 			{
-				for (FastMap<void*, IDirect3DVertexDeclaration9*>::Enumerator e 
+				for (HashMap<void*, IDirect3DVertexDeclaration9*>::Enumerator e 
 					= m_vtxDeclExpansionTable.GetEnumerator(); e.MoveNext();)
 				{
 					IDirect3DVertexDeclaration9* decl = *e.getCurrentValue();

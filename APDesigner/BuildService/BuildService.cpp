@@ -10,6 +10,8 @@
 
 #include "APDesigner/CommonDialog/DialogCommon.h"
 
+#include "tthread/tinythread.h"
+
 #include <Windows.h>
 
 using namespace Apoc3D;
@@ -24,7 +26,18 @@ namespace APDesigner
 	BuildInterface::BuildInterface()
 		: m_hasLastError(false), m_finished(true), m_isBuildPending(false)
 	{
+		m_resultLock = new tthread::mutex();
+		m_taskLock = new tthread::mutex();
+		m_flagLock = new tthread::mutex();
+		m_processLock = new tthread::mutex();
+	}
 
+	BuildInterface::~BuildInterface()
+	{
+		delete m_resultLock;
+		delete m_taskLock;
+		delete m_flagLock;
+		delete m_processLock;
 	}
 
 	void BuildInterface::AddSingleBuildItem(ProjectItem* item)
@@ -34,9 +47,9 @@ namespace APDesigner
 		Configuration* xml = new Configuration(L"Build");
 		xml->Add(sect);
 
-		m_taskLock.lock();
+		m_taskLock->lock();
 		m_taskList.Enqueue(xml);
-		m_taskLock.unlock();
+		m_taskLock->unlock();
 
 		//XMLConfigurationFormat::Instance.Save(xml, new FileOutStream(L"build.xml"));
 
@@ -54,9 +67,9 @@ namespace APDesigner
 			Configuration* xc = new Configuration(L"Root");
 			xc->Add(scripts[i]);
 
-			m_taskLock.lock();
+			m_taskLock->lock();
 			m_taskList.Enqueue(xc);
-			m_taskLock.unlock();
+			m_taskLock->unlock();
 			//XMLConfigurationFormat::Instance.Save(xc, new FileOutStream(L"build.xml"));
 			//delete xc;
 
@@ -71,7 +84,7 @@ namespace APDesigner
 	bool BuildInterface::PopLastResult(String& res)
 	{
 		bool result = false;
-		m_resultLock.lock();
+		m_resultLock->lock();
 
 		result = m_lastResult.getCount()>0;
 
@@ -80,7 +93,7 @@ namespace APDesigner
 			res = m_lastResult.Dequeue();
 		}
 
-		m_resultLock.unlock();
+		m_resultLock->unlock();
 
 		return result;
 	}
@@ -91,13 +104,13 @@ namespace APDesigner
 		m_hasLastError = false;
 		m_isBuildPending = true;
 
-		m_processLock.lock();
+		m_processLock->lock();
 		m_processThread = new tthread::thread(&BuildInterface::ThreadEntry, this);
 		Apoc3D::Platform::SetThreadName(m_processThread, L"Apoc3D Designer Build Service");
 
 		LogManager::getSingleton().Write(LOG_System, L"Build Started", LOGLVL_Default);
 
-		m_processLock.unlock();
+		m_processLock->unlock();
 
 	}
 
@@ -182,9 +195,9 @@ namespace APDesigner
 	bool BuildInterface::IsRunning()
 	{
 		bool result;
-		m_flagLock.lock();
+		m_flagLock->lock();
 		result = !m_finished;
-		m_flagLock.unlock();
+		m_flagLock->unlock();
 
 		return result;
 	}
@@ -252,18 +265,18 @@ namespace APDesigner
 	void BuildInterface::Thread_Main()
 	{
 		Configuration* buildScript;
-		m_processLock.lock();
+		m_processLock->lock();
 
 		for (;;) 
 		{
 			buildScript = nullptr;
 
-			m_taskLock.lock();
+			m_taskLock->lock();
 			if (m_taskList.getCount())
 			{
 				buildScript = m_taskList.Dequeue();
 			}
-			m_taskLock.unlock();
+			m_taskLock->unlock();
 
 			if (buildScript)
 			{
@@ -278,18 +291,18 @@ namespace APDesigner
 			else break;
 		}
 
-		m_taskLock.lock();
+		m_taskLock->lock();
 		while (m_taskList.getCount()>0)
 		{
 			delete m_taskList.Dequeue();
 		}
-		m_taskLock.unlock();
+		m_taskLock->unlock();
 
-		m_flagLock.lock();
+		m_flagLock->lock();
 		m_finished = true;
-		m_flagLock.unlock();
+		m_flagLock->unlock();
 
-		m_processLock.unlock();
+		m_processLock->unlock();
 	}
 
 	void BuildInterface::ReadPipe(void* stdoutRead)
@@ -324,12 +337,13 @@ namespace APDesigner
 
 		if (buildOutput.size())
 		{
-			std::vector<String> lines = StringUtils::Split(buildOutput, L"\n\r");
-			for (size_t i=0;i<lines.size();i++)
+			List<String> lines;
+			StringUtils::Split(buildOutput, lines, L"\n\r");
+			for (int32 i=0;i<lines.getCount();i++)
 			{
-				m_resultLock.lock();
+				m_resultLock->lock();
 				m_lastResult.Enqueue(lines[i]);
-				m_resultLock.unlock();
+				m_resultLock->unlock();
 			}
 		}
 	}

@@ -77,23 +77,23 @@
 
 
 #include <string>
-#include <vector>
-#include <list>
-#include <map>
-
-#include <queue>
-#include <deque>
-#include <unordered_set>
-#include <unordered_map>
-
-#include <algorithm>
-#include <functional>
-#include <limits>
-
-#include <fstream>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
+//#include <vector>
+//#include <list>
+//#include <map>
+//
+//#include <queue>
+//#include <deque>
+//#include <unordered_set>
+//#include <unordered_map>
+//
+//#include <algorithm>
+//#include <functional>
+//#include <limits>
+//
+//#include <fstream>
+//#include <iostream>
+//#include <iomanip>
+//#include <sstream>
 #include <stdint.h>
 
 
@@ -145,8 +145,6 @@ typedef BatchHandle HashHandle;
 // Forward Declarations
 namespace Apoc3D
 {
-	void* memcpy_sse( char* pDest, const char* pSrc, size_t nBytes );
-
 	template class APAPI fastdelegate::FastDelegate0<void>;
 	typedef fastdelegate::FastDelegate0<void> EventHandler;
 
@@ -173,10 +171,12 @@ namespace Apoc3D
 		template<typename T> class List;
 		template<typename T> class List2D;
 		template<typename T> class FastList;
-		template<typename T> class FastQueue;
-		template<typename T, typename S> class FastMap;
+		template<typename T> class Queue;
+		template<typename T, typename S> class HashMap;
 		template<typename T> class ExistTable;
 		template<typename T> class Stack;
+
+		template<typename T> class EnumDualConversionHelper;
 	}
 	namespace Core
 	{		
@@ -227,6 +227,7 @@ namespace Apoc3D
 		class Ray;
 
 		class Point;
+		class PointF;
 		class Size;
 
 		class Rectangle;

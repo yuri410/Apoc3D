@@ -101,8 +101,8 @@ namespace Apoc3D
 			int32 D3D9RenderViewSet::GetAdapterOrdinal(HMONITOR mon)
 			{
 				const AdapterInfo* adapter = 0;
-				const vector<AdapterInfo*> adInfo = Enumeration::getAdapters();
-				for (size_t i=0;i<adInfo.size();i++)
+				const FastList<AdapterInfo*> adInfo = Enumeration::getAdapters();
+				for (int32 i=0;i<adInfo.getCount();i++)
 				{
 					if (m_direct3D9->GetAdapterMonitor(adInfo[i]->AdapterOrdinal) == mon)
 					{

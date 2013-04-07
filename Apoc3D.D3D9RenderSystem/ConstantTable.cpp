@@ -180,7 +180,7 @@ namespace Apoc3D
 					//	constant.SamplerIndex[j] < 
 					//	constant.SamplerIndex[j] = -1;
 					//}
-					m_table.insert(pair<String, ShaderConstant>(constant.Name, constant));
+					m_table.Add(constant.Name, constant);
 				}
 
 				constants->Release();

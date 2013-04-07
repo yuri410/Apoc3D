@@ -26,9 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "Renderable.h"
 #include "RenderSystem/Buffer/HardwareBuffer.h"
 #include "RenderSystem/VertexElement.h"

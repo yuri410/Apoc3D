@@ -29,20 +29,16 @@
 
 #include "apoc3d/Common.h"
 #include "apoc3d/Core/Singleton.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::VFS;
 
-using namespace std;
-
 namespace Apoc3D
 {
 	namespace Config
 	{
-		//template class APAPI unordered_map<String, Configuration*>;
-		
 		class APAPI ConfigurationManager : public Singleton<ConfigurationManager>
 		{
 		public:
@@ -73,8 +69,8 @@ namespace Apoc3D
 
 			SINGLETON_DECL_HEARDER(ConfigurationManager);
 		private:
-			typedef FastMap<String, Configuration*> ConfigTable;
-			typedef FastMap<String, ConfigurationFormat*> FormatTable;
+			typedef HashMap<String, Configuration*> ConfigTable;
+			typedef HashMap<String, ConfigurationFormat*> FormatTable;
 
 			ConfigTable m_configs;
 			FormatTable m_formats;

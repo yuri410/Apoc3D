@@ -25,11 +25,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef APOC3D_D3D9_ENUMERATION_H
 #define APOC3D_D3D9_ENUMERATION_H
 
-
 #include "D3D9Common.h"
 #include "DeviceSettings.h"
 
-using namespace std;
+#include "apoc3D/Collections/List.h"
+
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
@@ -56,11 +57,11 @@ namespace Apoc3D
 
 				bool Windowed;
 
-				vector<D3DFORMAT> DepthStencilFormats;
+				FastList<D3DFORMAT> DepthStencilFormats;
 
-				vector<D3DMULTISAMPLE_TYPE> MultisampleTypes;
-				vector<int32> MultisampleQualities;
-				vector<uint32> PresentIntervals;
+				FastList<D3DMULTISAMPLE_TYPE> MultisampleTypes;
+				FastList<int32> MultisampleQualities;
+				FastList<uint32> PresentIntervals;
 
 				AdapterInfo* AdapterInfo;
 
@@ -79,7 +80,7 @@ namespace Apoc3D
 
 				D3DCAPS9 Capabilities;
 
-				vector<SettingsCombo*> DeviceSettings;
+				FastList<SettingsCombo*> DeviceSettings;
 
 			};
 			class AdapterInfo
@@ -94,9 +95,9 @@ namespace Apoc3D
 
 				String Description;
 
-				vector<D3DDISPLAYMODE> DisplayModes;
+				List<D3DDISPLAYMODE> DisplayModes;
 
-				vector<DeviceInfo*> Devices;
+				FastList<DeviceInfo*> Devices;
 
 			};
 
@@ -107,15 +108,15 @@ namespace Apoc3D
 
 				static bool m_hasMinimumSettings;
 				static DeviceSettings m_minimumSettings;
-				static vector<AdapterInfo*> m_adapters;
+				static FastList<AdapterInfo*> m_adapters;
 				static bool m_hasEnumerated;
 
 
 				
-				static void EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, vector<D3DFORMAT>& adapterFormats);
+				static void EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, FastList<D3DFORMAT>& adapterFormats);
 
 				static void EnumerateSettingsCombos(IDirect3D9* d3d9, AdapterInfo* adapterInfo, 
-					DeviceInfo* deviceInfo, vector<D3DFORMAT>& adapterFormats);
+					DeviceInfo* deviceInfo, FastList<D3DFORMAT>& adapterFormats);
 
 				static void BuildDepthStencilFormatList(IDirect3D9* d3d9, SettingsCombo* combo);
 
@@ -131,7 +132,7 @@ namespace Apoc3D
 				static void BuildOptimalSettings(IDirect3D9* d3d9, const DeviceSettings& settings, Direct3D9Settings& optimal);
 			public:
 
-				static const vector<AdapterInfo*>& getAdapters() { return m_adapters; }
+				static const FastList<AdapterInfo*>& getAdapters() { return m_adapters; }
 				static bool getHasEnumerated()
 				{
 					return m_hasEnumerated;

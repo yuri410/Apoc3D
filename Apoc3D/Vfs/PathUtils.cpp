@@ -25,6 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "PathUtils.h"
 #include "apoc3d/Utility/StringUtils.h"
 
+#include <algorithm>
+
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -126,7 +128,7 @@ namespace Apoc3D
 			std::replace( result.begin(), result.end(), AltDirectorySeparator, DirectorySeparator );
 			return result;
 		}
-		vector<String> PathUtils::Split(const String& path)
+		List<String> PathUtils::Split(const String& path)
 		{
 			String str = path;
 			for (size_t i=0;i<str.length();i++)
@@ -136,7 +138,7 @@ namespace Apoc3D
 					str[i] = AltDirectorySeparator;
 				}
 			}
-			std::vector<String> ret;
+			List<String> ret;
 		
 			unsigned int numSplits = 0;
 
@@ -154,13 +156,13 @@ namespace Apoc3D
 				else if (pos == String::npos)
 				{
 					// Copy the rest of the string
-					ret.push_back( str.substr(start) );
+					ret.Add( str.substr(start) );
 					break;
 				}
 				else
 				{
 					// Copy up to delimiter
-					ret.push_back( str.substr(start, pos - start) );
+					ret.Add( str.substr(start, pos - start) );
 					start = pos + 1;
 				}
 				// parse up to next real data
@@ -170,10 +172,10 @@ namespace Apoc3D
 			} while (pos != String::npos);
 
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-			if (ret.size()>1 && ret[0].find(VolumeSeparatorChar,0) != String::npos)
+			if (ret.getCount()>1 && ret[0].find(VolumeSeparatorChar,0) != String::npos)
 			{
 				ret[1] = Combine(ret[0],ret[1]);
-				ret.erase(ret.begin());
+				ret.RemoveAt(0);
 			}
 #endif
 

@@ -27,14 +27,11 @@
  */
 
 
-#include "apoc3d/Common.h"
-
 #include "Renderable.h"
 #include "RenderOperationBuffer.h"
 #include "ModelTypes.h"
 #include "Animation/AnimationTypes.h"
 
-#include "apoc3d/Collections/FastList.h"
 #include "apoc3d/Core/Resource.h"
 
 using namespace Apoc3D::Collections;

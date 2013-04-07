@@ -29,10 +29,9 @@
 
 #include "UICommon.h"
 
-#include "apoc3d/Math/Math.h"
 #include "apoc3d/Math/Point.h"
-#include "apoc3d/Graphics/Renderable.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/math/Rectangle.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;

@@ -27,9 +27,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "../EssentialCommon.h"
 
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastMap.h"
-#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Math/Point.h"
 #include "apoc3d/Math/Vector.h"
 
@@ -99,15 +99,15 @@ namespace Apoc3DEx
 
 			/** bfs search queue
 			*/
-			FastQueue<AStarNode3*> m_queue;
+			Queue<AStarNode3*> m_queue;
 			
 			/** used to fast check if a node is in the queue
 			*/
-			FastMap<int, AStarNode3*> m_inQueueTable;
+			HashMap<int, AStarNode3*> m_inQueueTable;
 			
 			/** used to fast check if a node is already passed by the algorithm
 			*/
-			FastMap<int, AStarNode3*> m_passedTable;
+			HashMap<int, AStarNode3*> m_passedTable;
 
 
 			FastList<VolumePathFinderResultPoint> m_result;

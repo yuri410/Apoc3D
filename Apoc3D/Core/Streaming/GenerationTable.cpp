@@ -29,6 +29,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
 
+#include "tthread/tinythread.h"
+
+#include <ctime>
+
 using namespace Apoc3D::Platform;
 using namespace Apoc3D::Utility;
 
@@ -45,8 +49,7 @@ namespace Apoc3D
 			{
 				m_generations = new ExistTable<Resource*>[MaxGeneration];
 
-				//m_thread = new thread(&GenerationTable::ThreadEntry, this);
-				//SetThreadName(m_thread, mgr->getName() + L" Generation");
+				m_genLock = new tthread::mutex();
 			}
 			GenerationTable::~GenerationTable()
 			{
@@ -58,21 +61,21 @@ namespace Apoc3D
 				clock_t timeStart = clock();
 
 				int count;
-				m_genLock.lock();
+				m_genLock->lock();
 				count = m_generationList.getCount();
-				m_genLock.unlock();
+				m_genLock->unlock();
 
 				{
 					for (int j=0;j<count;j++)
 					{
 						Resource* res;
-						m_genLock.lock();
+						m_genLock->lock();
 						count = m_generationList.getCount();
 						if (j<count)
 							res = m_generationList[j];
 						else
 							break;
-						m_genLock.unlock();
+						m_genLock->unlock();
 
 						if (res->m_generation->IsGenerationOutOfTime((float)timeStart/CLOCKS_PER_SEC))
 						{
@@ -98,7 +101,7 @@ namespace Apoc3D
 				{
 					for (int i=MaxGeneration-1;i>1 && predictSize > m_manager->getTotalCacheSize(); i--)
 					{
-						m_genLock.lock();
+						m_genLock->lock();
 						ExistTable<Resource*>::Enumerator iter = m_generations[i].GetEnumerator();
 
 						while (iter.MoveNext())
@@ -116,11 +119,11 @@ namespace Apoc3D
 								}
 							}
 						}
-						m_genLock.unlock();
+						m_genLock->unlock();
 					}
 				}
 				{
-					m_genLock.lock();
+					m_genLock->lock();
 					for (ExistTable<Resource*>::Enumerator iter = m_generations[MaxGeneration-1].GetEnumerator();iter.MoveNext();)
 					{
 						Resource* r = *iter.getCurrent();
@@ -132,7 +135,7 @@ namespace Apoc3D
 							}
 						}
 					}
-					m_genLock.unlock();
+					m_genLock->unlock();
 				}
 			}
 			bool GenerationTable::CanUnload(Resource* res) const
@@ -140,31 +143,16 @@ namespace Apoc3D
 				ResourceState state = res->getState();
 				return state == RS_Loaded;
 			}
-			//void GenerationTable::GenerationUpdate_Main()
-			//{
-			//	static const int ManageInterval = 10;
-
-			//	int times = 0;
-			//	while (!m_isShutdown)
-			//	{
-			//		SubTask_GenUpdate();
-			//		if ((times++) % ManageInterval == 0)
-			//		{
-			//			SubTask_Manage();
-			//		}
-			//		ApocSleep(100);
-			//	}
-			//}
 
 			void GenerationTable::AddResource(Resource* res)
 			{
 				int g = res->GetGeneration();
 				if (g!=-1)
 				{
-					m_genLock.lock();
+					m_genLock->lock();
 					m_generations[g].Add(res);
 					m_generationList.Add(res);
-					m_genLock.unlock();
+					m_genLock->unlock();
 				}
 			}
 
@@ -173,16 +161,16 @@ namespace Apoc3D
 				int g = res->GetGeneration();
 				if (g!=-1)
 				{
-					m_genLock.lock();
+					m_genLock->lock();
 					m_generations[g].Remove(res);
 					m_generationList.Remove(res);
-					m_genLock.unlock();
+					m_genLock->unlock();
 				}
 			}
 
 			void GenerationTable::UpdateGeneration(int oldGeneration, int newGeneration, Resource* resource)
 			{
-				m_genLock.lock();
+				m_genLock->lock();
 
 				if (oldGeneration != -1 && m_generations[oldGeneration].Exists(resource))
 				{
@@ -193,7 +181,7 @@ namespace Apoc3D
 					m_generations[newGeneration].Add(resource);
 				}
 
-				m_genLock.unlock();
+				m_genLock->unlock();
 			}
 		}
 	}

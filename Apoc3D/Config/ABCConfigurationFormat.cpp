@@ -37,7 +37,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
 
-const int FileID = ('A' << 24) | ('p' << 16) | ('B' << 8) | 'C';
+const int32 FileID = 'ApBC';
 
 namespace Apoc3D
 {

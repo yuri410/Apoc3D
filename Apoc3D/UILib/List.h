@@ -26,15 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "UICommon.h"
-
 #include "Control.h"
 
-#include "apoc3d/Collections/FastList.h"
 #include "apoc3d/Collections/List2D.h"
-
-using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {

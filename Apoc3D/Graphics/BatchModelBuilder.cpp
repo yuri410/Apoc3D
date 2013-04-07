@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "BatchModelBuilder.h"
 #include "apoc3d/Collections/ExistTable.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/IOLib/ModelData.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 
@@ -72,7 +72,7 @@ namespace Apoc3D
 		{
 			LPMeshDataEqualityComparer comparer;
 			// mapping from MeshData in Models to the index in the sources list
-			FastMap<MeshData*, int> targets(10, &comparer);
+			HashMap<MeshData*, int> targets(10, &comparer);
 			
 			FastList<ModelData*> sources(m_modelTable.getCount());
 			int index = 0;

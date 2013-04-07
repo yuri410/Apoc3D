@@ -139,7 +139,7 @@ namespace Apoc3D
 
 					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext(); )
 					{
-						(*(k.getCurrentValue()))->FastClear();
+						(*(k.getCurrentValue()))->Clear();
 					}
 				}
 
@@ -156,7 +156,7 @@ namespace Apoc3D
 
 					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext(); )
 					{
-						(*(k.getCurrentValue()))->FastClear();
+						(*(k.getCurrentValue()))->Clear();
 					}
 					geoTbl->Clear();
 				}
@@ -279,8 +279,8 @@ namespace Apoc3D
 			//	}
 			//}
 
-			typedef std::list<GeometryData*> InvalidGeoPointerList;
-			typedef std::list<Material*> InvalidMtrlPointerList;
+			typedef LinkedList<GeometryData*> InvalidGeoPointerList;
+			typedef LinkedList<Material*> InvalidMtrlPointerList;
 
 			InvalidMtrlPointerList* invalidMtrlPointers = nullptr;
 			InvalidGeoPointerList* invalidGeoPointers = nullptr;
@@ -313,14 +313,14 @@ namespace Apoc3D
 							if (!invalidGeoPointers)
 								invalidGeoPointers = new InvalidGeoPointerList();
 							
-							invalidGeoPointers->push_back(geoData);
+							invalidGeoPointers->PushBack(geoData);
 						}
 					}
 
 
-					if (invalidGeoPointers && invalidGeoPointers->size())
+					if (invalidGeoPointers && invalidGeoPointers->Size())
 					{
-						for (InvalidGeoPointerList::iterator iter = invalidGeoPointers->begin(); iter != invalidGeoPointers->end(); iter++)
+						for (InvalidGeoPointerList::Iterator iter = invalidGeoPointers->Begin(); iter != invalidGeoPointers->End(); iter++)
 						{
 							GeometryData* item = *iter;
 							OperationList* list = geoTbl->operator[](item);
@@ -329,7 +329,7 @@ namespace Apoc3D
 							geoTbl->Remove(item);
 						}
 
-						invalidGeoPointers->clear();
+						invalidGeoPointers->Clear();
 					}
 
 
@@ -352,13 +352,13 @@ namespace Apoc3D
 					{
 						if (!invalidMtrlPointers)
 							invalidMtrlPointers = new InvalidMtrlPointerList();
-						invalidMtrlPointers->push_back(mtrl);
+						invalidMtrlPointers->PushBack(mtrl);
 					}
 				}
 
-				if (invalidMtrlPointers && invalidMtrlPointers->size())
+				if (invalidMtrlPointers && invalidMtrlPointers->Size())
 				{
-					for (InvalidMtrlPointerList::iterator iter = invalidMtrlPointers->begin(); iter != invalidMtrlPointers->end(); iter++)
+					for (InvalidMtrlPointerList::Iterator iter = invalidMtrlPointers->Begin(); iter != invalidMtrlPointers->End(); iter++)
 					{
 						Material* item = *iter;
 						GeometryTable* geoTbl = mtrlTbl->operator[](item);
@@ -370,7 +370,7 @@ namespace Apoc3D
 						delete geoTbl;
 						mtrlTbl->Remove(item);
 					}
-					invalidMtrlPointers->clear();
+					invalidMtrlPointers->Clear();
 				}
 
 			}

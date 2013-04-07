@@ -29,8 +29,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Math/Math.h"
 #include "apoc3d/Graphics/RenderSystem/InstancingData.h"
 
-#include "VolatileResource.h"
-
 using namespace std;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -63,7 +61,7 @@ namespace Apoc3D
 
 				int getInstanceDataSize() const { return sizeof(float); }
 			private:
-				FastMap<void*, IDirect3DVertexDeclaration9*> m_vtxDeclExpansionTable;
+				HashMap<void*, IDirect3DVertexDeclaration9*> m_vtxDeclExpansionTable;
 
 				/** Per-instance index stored in this vertex buffer
 				*/

@@ -26,16 +26,15 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Platform/API.h"
 
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Platform;
-using namespace std;
 
 namespace Apoc3D
 {
@@ -76,8 +75,8 @@ namespace Apoc3D
 				int PlatformMark;
 
 			};
-			typedef vector<const Entry> APIList;
-			typedef unordered_map<String, APIList*> PlatformTable;
+			typedef List<Entry> APIList;
+			typedef HashMap<String, APIList*> PlatformTable;
 			PlatformTable m_factories;
 
 			InputAPIFactory* m_selectedAPI;

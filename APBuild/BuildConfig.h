@@ -28,8 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "APBCommon.h"
 
 #include "apoc3d/Graphics/PixelFormat.h"
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Graphics/RenderSystem/VertexElement.h"
 
 using namespace Apoc3D;
@@ -71,8 +71,8 @@ namespace APBuild
 		bool AssembleCubemap;
 		bool AssembleVolumeMap;
 
-		FastMap<uint, String> SubMapTable;
-		FastMap<uint, String> SubAlphaMapTable;
+		HashMap<uint, String> SubMapTable;
+		HashMap<uint, String> SubAlphaMapTable;
 
 		TextureBuildMethod Method;
 
@@ -180,7 +180,7 @@ namespace APBuild
 		String DstFile;
 		bool Reverse;
 
-		FastMap<String, int> ObjectIndexMapping;
+		HashMap<String, int> ObjectIndexMapping;
 
 		void Parse(const ConfigurationSection* sect);
 	};

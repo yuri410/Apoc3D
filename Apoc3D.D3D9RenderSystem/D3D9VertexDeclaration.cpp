@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9RenderDevice.h"
 #include "D3D9Utils.h"
 
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 
 namespace Apoc3D
 {
@@ -34,7 +34,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			vector<VertexElement> GetElements(D3DVertexDeclaration* vtxdecl)
+			List<VertexElement> GetElements(D3DVertexDeclaration* vtxdecl)
 			{
 				UINT count;
 				HRESULT hr = vtxdecl->GetDeclaration(NULL, &count);
@@ -44,17 +44,17 @@ namespace Apoc3D
 				hr = vtxdecl->GetDeclaration(elements, &count);
 				assert(SUCCEEDED(hr));
 
-				vector<VertexElement> result;
+				List<VertexElement> result;
 				if (count)
 				{
-					result.reserve(count);
+					result.ResizeDiscard(count);
 
 					for (size_t i=0;i<count-1;i++)
 					{
 						VertexElement elem(static_cast<int32>(elements[i].Offset), 
 							D3D9Utils::ConvertBackVertexElementFormat((D3DDECLTYPE)elements[i].Type), 
 							D3D9Utils::ConvertBackVertexElementUsage((D3DDECLUSAGE)elements[i].Usage), elements[i].UsageIndex);
-						result.push_back(elem);
+						result.Add(elem);
 					}
 
 				}

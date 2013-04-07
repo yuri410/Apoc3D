@@ -59,7 +59,7 @@ namespace APDesigner
 	EditorExtension* EditorExtensionManager::FindSuitableExtension(const ProjectItem* item)
 	{
 		EditorExtension* result = 0;
-		for (FastMap<String, EditorExtension*>::Enumerator e = m_extensions.GetEnumerator();e.MoveNext();)
+		for (HashMap<String, EditorExtension*>::Enumerator e = m_extensions.GetEnumerator();e.MoveNext();)
 		{
 			EditorExtension* ee = *e.getCurrentValue();
 			if (ee->SupportsItem(item))

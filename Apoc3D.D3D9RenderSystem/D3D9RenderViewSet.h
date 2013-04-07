@@ -27,9 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9Common.h"
 #include "DeviceSettings.h"
-
+#include "Apoc3D/Collections/List.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 
@@ -44,7 +45,7 @@ namespace Apoc3D
 			private:
 				DeviceSettings* m_currentSetting;
 
-				vector<D3D9RenderView*> m_views;
+				FastList<D3D9RenderView*> m_views;
 				IDirect3D9* m_direct3D9;
 				D3DDevice* m_device;
 				D3D9RenderDevice* m_apiDevice;

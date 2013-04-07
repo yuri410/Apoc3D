@@ -26,8 +26,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "../BuildConfig.h"
 
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Graphics/Animation/AnimationTypes.h"
 #include "apoc3d/IOLib/MaterialData.h"
@@ -38,6 +38,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/tinyxml.h"
 
+#include <fstream>
+#include <vector>
 
 using namespace Apoc3D::Utility;
 
@@ -49,7 +51,7 @@ namespace APBuild
 		Matrix Transformation;
 	};
 
-	void ParseMatrixList(const TiXmlElement* element, std::vector<Frame>& nodes, double invTickTime);
+	void ParseMatrixList(const TiXmlElement* element, List<Frame>& nodes, double invTickTime);
 
 	AnimationData* XafImporter::Import(const TransformAnimBuildConfig& config)
 	{
@@ -60,16 +62,23 @@ namespace APBuild
 		// tinyXml have bug handling non-english path
 		// thus, here we load the content on our own
 		{
-			std::ifstream stm(xafFile.c_str(), std::ios::binary | std::ios::in);
-			if (stm)
-			{
-				stm.seekg(0,ios::end);
-				std::streampos length = stm.tellg();
-				stm.seekg(0,ios::beg);
+			std::ifstream strm(xafFile.c_str(), std::ios::in);
+			strm.exceptions(std::ios::failbit);
 
-				content = new char[(uint32)length];
-				stm.read(content, length);
-			}
+			std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(strm), std::istreambuf_iterator<char>( ) );
+			buffer.push_back('\0');
+			content = new char[buffer.size()];
+			memcpy(content, &buffer[0], sizeof(char) * buffer.size());
+			//std::ifstream stm(xafFile.c_str(), std::ios::binary | std::ios::in);
+			//if (stm)
+			//{
+			//	stm.seekg(0,ios::end);
+			//	std::streampos length = stm.tellg();
+			//	stm.seekg(0,ios::beg);
+
+			//	content = new char[(uint32)length];
+			//	stm.read(content, length);
+			//}
 		}
 
 		if (!content)
@@ -113,18 +122,18 @@ namespace APBuild
 					int index = -1;
 					if (config.ObjectIndexMapping.TryGetValue(wobjName, index))
 					{
-						std::vector<Frame> track;
+						List<Frame> track;
 						ParseMatrixList(elem->FirstChildElement("Samples"), track, 1.0/(frameRate*tickpf));
 						
 						float duration = 0;
-						FastList<ModelKeyframe> keyFrames((int)track.size());
+						FastList<ModelKeyframe> keyFrames((int)track.getCount());
 
-						for (size_t i=0;i<track.size();i++)
+						for (int32 i=0;i<track.getCount();i++)
 							if (track[i].Time>duration)
 								duration = track[i].Time;
 						
 
-						for (size_t i=0;i<track.size();i++)
+						for (int32 i=0;i<track.getCount();i++)
 						{
 							if (config.Reverse)
 							{
@@ -144,7 +153,7 @@ namespace APBuild
 						}
 
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, keyFrames);
-						rigidAnim.insert(std::make_pair(wobjName, clip));
+						rigidAnim.Add(wobjName, clip);
 					}
 
 				}
@@ -156,12 +165,12 @@ namespace APBuild
 	}
 
 
-	void ParseMatrixList(const TiXmlElement* element, std::vector<Frame>& nodes, double invTickTime)
+	void ParseMatrixList(const TiXmlElement* element, List<Frame>& nodes, double invTickTime)
 	{
 		if (!element)
 			return;
 
-		uint index = 0;
+		int index = 0;
 		for (const TiXmlElement* j = element->FirstChildElement(); j!=0; j=j->NextSiblingElement())
 		{
 			if (j->ValueStr() == "S")
@@ -170,8 +179,9 @@ namespace APBuild
 				j->Attribute("t",&t);
 
 				String v = Apoc3D::Utility::StringUtils::toWString(j->Attribute("v"));
-				std::vector<String> values = Apoc3D::Utility::StringUtils::Split(v);
-				assert(values.size() == 12);
+				List<String> values(12);
+				Apoc3D::Utility::StringUtils::Split(v, values);
+				assert(values.getCount() == 12);
 
 				Matrix trans;
 				trans.LoadIdentity();
@@ -206,7 +216,7 @@ namespace APBuild
 				//D3DXMatrixMultiply(&trans, &spaceSwitcher, &trans);
 				//D3DXMatrixMultiply(&trans, &trans, &spaceSwitcher);
 
-				if (index<nodes.size())
+				if (index<nodes.getCount())
 				{
 					nodes[index].Transformation = trans;
 				}
@@ -218,7 +228,7 @@ namespace APBuild
 
 					node.Transformation = trans;
 
-					nodes.push_back(node);
+					nodes.Add(node);
 				}
 
 				index++;

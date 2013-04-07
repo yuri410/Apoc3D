@@ -39,60 +39,53 @@ namespace Apoc3D
 	{
 		InputAPIManager::~InputAPIManager()
 		{
-			for (PlatformTable::iterator iter = m_factories.begin();
-				iter != m_factories.end(); iter++)
+			for (PlatformTable::Enumerator e = m_factories.GetEnumerator();
+				e.MoveNext(); )
 			{
-				APIList* list = iter->second;
+				APIList* list = *e.getCurrentValue();
 				delete list;
 			}
 		}
 
 		void InputAPIManager::RegisterInputAPI(InputAPIFactory* fac)
 		{
-			if (m_factories.find(fac->getName()) != m_factories.end())
+			if (m_factories.Contains(fac->getName()))
 			{
 				throw Apoc3DException::createException(EX_InvalidOperation, L"Input API Already registered");
 			}
-			const vector<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
+			const List<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
 
-			for (size_t i = 0; i<plats.size();i++)
+			for (int32 i = 0; i<plats.getCount();i++)
 			{
 				APIList* facList;
 
 				String pName = plats[i].PlatformName;
 				StringUtils::ToLowerCase(pName);
 
-				PlatformTable::iterator iter = m_factories.find(pName);
-				if (iter == m_factories.end())
+				if (!m_factories.TryGetValue(pName, facList))
 				{
 					facList = new APIList();
-					m_factories.insert(pair<String, APIList*>(pName, facList));
-				}
-				else
-				{
-					facList = iter->second;
+					m_factories.Add(pName, facList);
 				}
 
 				const Entry ent ={ fac, plats[i].Score };
-				facList->push_back(ent);
+				facList->Add(ent);
 			}
 		}
 		void InputAPIManager::UnregisterInputAPI(const String& name)
 		{
 			bool passed = false;
 
-			for (PlatformTable::iterator iter = m_factories.begin();
-				iter != m_factories.end(); iter++)
+			for (PlatformTable::Enumerator e = m_factories.GetEnumerator();
+				e.MoveNext(); )
 			{
-				APIList* list = static_cast<APIList*>(iter->second);
+				APIList* list = *e.getCurrentValue();
 
-				for (int i=static_cast<int>(list->size())-1; i>=0;i--)
+				for (int32 i=list->getCount()-1; i>=0;i--)
 				{
 					if (list->operator[](i).Factory->getName() == name)
 					{
-						APIList::iterator i2 = list->begin();
-						i2+=i;
-						list->erase(i2);
+						list->RemoveAt(i);
 						passed = true;
 					}
 				}
@@ -107,25 +100,21 @@ namespace Apoc3D
 		{
 			bool passed = false;
 
-			const vector<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
-			for (size_t i = 0; i < plats.size(); i++)
+			const List<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
+			for (int32 i = 0; i < plats.getCount(); i++)
 			{
 
 				String pName = plats[i].PlatformName;
 				StringUtils::ToLowerCase(pName);
 
-				PlatformTable::iterator iter = m_factories.find(pName);
-
-				if (iter != m_factories.end())
+				APIList* facList;
+				if (m_factories.TryGetValue(pName, facList))
 				{
-					APIList* facList = iter->second;
-					for (int j = facList->size()-1; j >=0; j--)
+					for (int j = facList->getCount()-1; j >=0; j--)
 					{
 						if (facList->operator[](j).Factory == fac)
 						{
-							APIList::iterator i2 = facList->begin();
-							i2+=i;
-							facList->erase(i2);
+							facList->RemoveAt(j);
 							passed = true;
 							break;
 						}
@@ -147,17 +136,24 @@ namespace Apoc3D
 		{
 			const String OSName = APOC3D_PLATFORM_NAME;
 
-			PlatformTable::iterator iter = m_factories.find(OSName);
-			if (iter != m_factories.end())
+			APIList* list;
+			if (m_factories.TryGetValue(OSName, list))
 			{
-				APIList* list = iter->second;
-				if (!list->empty())
+				if (list->getCount()>0)
 				{
-					std::sort(list->begin(), list->end(), InputAPIManager::Comparison);
+					int32 bestIdx = -1;
+					int32 bestMark = 0;
+					for (int32 i=0;i<list->getCount();i++)
+					{
+						int32 m = list->operator[](i).PlatformMark;
+						if (m>bestMark)
+						{
+							bestMark = m;
+							bestIdx = i;
+						}
+					}
 
-					int idx = list->size();
-					idx--;
-					m_selectedAPI = list->operator[](idx).Factory;
+					m_selectedAPI = list->operator[](bestIdx).Factory;
 					m_selectedAPI->Initialize(window);
 
 					if (params.UseMouse)
@@ -168,11 +164,10 @@ namespace Apoc3D
 					{
 						m_keyboard = CreateKeyboard();
 					}
-					return;
 				}
-				throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
+				else throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
 			}
-			throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
+			else throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
 		}
 		void InputAPIManager::FinalizeInput()
 		{

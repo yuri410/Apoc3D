@@ -26,16 +26,13 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
 #include "AnimationTypes.h"
+#include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
-
-using namespace std;
 
 namespace Apoc3D
 {
@@ -43,17 +40,14 @@ namespace Apoc3D
 	{
 		namespace Animation
 		{
-			//template class APAPI unordered_map<String, ModelAnimationClip*>;
-			//template class APAPI unordered_map<String, MaterialAnimationClip*>;
-
 			/**
 			 *  Combines all the animation data needed to animate a object.
 			 */
 			class APAPI AnimationData
 			{
 			public:
-				typedef unordered_map<String, ModelAnimationClip*> ClipTable;
-				typedef unordered_map<String, MaterialAnimationClip*> MtrlClipTable;
+				typedef HashMap<String, ModelAnimationClip*> ClipTable;
+				typedef HashMap<String, MaterialAnimationClip*> MtrlClipTable;
 			public:
 				int RigidEntityCount;
 				//bool hasBindPose() const { return m_hasBindPose; }
@@ -87,9 +81,9 @@ namespace Apoc3D
 					
 					m_bones = bones;
 				}
-				void setRigidAnimationClips(const ClipTable& table) { m_rigidAnimationClips = table; m_hasRigidClip = !table.empty();}
-				void setSkinnedAnimationClips(const ClipTable& table) { m_skinnedAnimationClips = table; m_hasSkinnedClip = !table.empty(); }
-				void setMaterialAnimationClips(const MtrlClipTable& table) { m_mtrlAnimationClips = table; m_hasMtrlClip = !table.empty(); }
+				void setRigidAnimationClips(const ClipTable& table) { m_rigidAnimationClips = table; m_hasRigidClip = !!table.getCount();}
+				void setSkinnedAnimationClips(const ClipTable& table) { m_skinnedAnimationClips = table; m_hasSkinnedClip = !!table.getCount(); }
+				void setMaterialAnimationClips(const MtrlClipTable& table) { m_mtrlAnimationClips = table; m_hasMtrlClip = !!table.getCount(); }
 				
 
 				///** Bindpose matrices for each bone in the skeleton,
@@ -150,10 +144,6 @@ namespace Apoc3D
 
 				List<Bone> m_bones;
 				int32 m_rootBone;
-
-
-				void LoadMtrlAnimation2(TaggedDataReader* data);
-				TaggedDataWriter* SaveMtrlAnimation2();
 
 			};
 		}

@@ -29,7 +29,7 @@
 
 #include "apoc3d/Common.h"
 
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;

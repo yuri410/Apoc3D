@@ -100,22 +100,18 @@ namespace Apoc3D
 
 				D3D9Capabilities* m_caps;
 
-				vector<VolatileResource*> m_volatileResources;
+				FastList<VolatileResource*> m_volatileResources;
 
 				D3D9InstancingData* m_instancingData;
 
 				// This is called by the VolatileResource itself
 				void TrackVolatileResource(VolatileResource* res)
 				{
-					m_volatileResources.push_back(res);
+					m_volatileResources.Add(res);
 				}
 				void UntrackVolatileResource(VolatileResource* res)
 				{
-					vector<VolatileResource*>::iterator iter = find(m_volatileResources.begin(), m_volatileResources.end(), res);
-					if (iter != m_volatileResources.end())
-					{
-						m_volatileResources.erase(iter);
-					}
+					m_volatileResources.Remove(res);
 				}
 			};
 

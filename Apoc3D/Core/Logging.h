@@ -26,12 +26,15 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Common.h"
+#include "apoc3D/Collections/LinkedList.h"
 #include "Singleton.h"
-#include "tthread/tinythread.h"
-#include "tthread/fast_mutex.h"
 
-using namespace std;
+using namespace Apoc3D::Collections;
+
+namespace tthread
+{
+	class mutex;
+}
 
 namespace Apoc3D
 {
@@ -105,30 +108,26 @@ namespace Apoc3D
 		{
 		private:			
 			LogType m_type;
-			list<LogEntry> m_entries;
+			LinkedList<LogEntry> m_entries;
 
-			tthread::fast_mutex m_lock;
+			tthread::mutex* m_lock;
 
 		public:
-			typedef list<LogEntry>::const_iterator Iterator;
+			typedef LinkedList<LogEntry>::Iterator Iterator;
 
 			static const int32 MaxEntries = 200;
 
-			Iterator begin() const { return m_entries.begin(); }
-			Iterator end() const { return m_entries.end(); }
+			Iterator begin() const { return m_entries.Begin(); }
+			Iterator end() const { return m_entries.End(); }
+
+			LogEntry* LastEntry() { return &m_entries.Back(); }
 
 			Log(LogType type);
 			~Log();
 
 			LogType getType() const { return m_type; }
 
-			int getCount()
-			{
-				m_lock.lock();
-				int result = (int)m_entries.size();
-				m_lock.unlock();
-				return result;
-			}
+			int getCount();
 
 			bool Write(const String& message, LogMessageLevel level = LOGLVL_Infomation, bool checkDuplicate = true);
 		};

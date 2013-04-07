@@ -28,7 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "CollectionsCommon.h"
-#include "FastMap.h"
+#include "HashMap.h"
+#include "List.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 namespace Apoc3D
@@ -51,7 +52,7 @@ namespace Apoc3D
 			void DumpNames(List<String>& names) const
 			{
 				names.ResizeDiscard(m_cast.getCount());
-				for (FastMap<int32, String>::Enumerator e = m_invCast.GetEnumerator(); e.MoveNext();)
+				for (HashMap<int32, String>::Enumerator e = m_invCast.GetEnumerator(); e.MoveNext();)
 				{
 					names.Add(*e.getCurrentValue());
 				}
@@ -66,8 +67,8 @@ namespace Apoc3D
 			}
 
 		private:
-			FastMap<String, int32> m_cast;
-			FastMap<int32, String> m_invCast;
+			HashMap<String, int32> m_cast;
+			HashMap<int32, String> m_invCast;
 		};
 	}
 }

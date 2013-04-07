@@ -26,9 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "UICommon.h"
-
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/ColorValue.h"
 

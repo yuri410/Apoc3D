@@ -28,21 +28,18 @@
 
 #include "apoc3d/Common.h"
 
-using namespace std;
-
 namespace Apoc3D
 {
 	namespace Utility
 	{
-
 		class APAPI StringUtils
 		{
 		public:
 			static const String Empty;
 
-			static string toString(const String& str);
-			static string toString(const wchar_t* str);
-			static String toWString(const string& str);
+			static std::string toString(const String& str);
+			static std::string toString(const wchar_t* str);
+			static String toWString(const std::string& str);
 			static String toWString(const char* str);
 
 			static bool ParseBool(const String& val);
@@ -71,7 +68,7 @@ namespace Apoc3D
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
 			static String ToString(float val, unsigned short precision = 10, 
 				unsigned short width = 0, char fill = ' ', 
-				std::ios::fmtflags flags = std::ios::fmtflags(ios::fixed) );
+				std::ios::fmtflags flags = std::ios::fmtflags(std::ios::fixed) );
 			static String ToString(const wchar_t* val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
 
@@ -97,7 +94,7 @@ namespace Apoc3D
 			static void Trim(String& str, const String& delims = L" \t\r");
 			static void TrimLeft(String& str, const String& delims = L" \t\r");
 			static void TrimRight(String& str, const String& delims = L" \t\r");
-			static vector<String> StringUtils::Split(const String& str, const String& delims = L" ", const int32 preserve = 4);
+			static void StringUtils::Split(const String& str, Apoc3D::Collections::List<String>& results, const String& delims = L" ");
 
 			static bool StartsWidth(const String& str, const String& v, bool caseInsensitive = false);
 			static bool EndsWidth(const String& str, const String& v, bool caseInsensitive = false);

@@ -26,14 +26,13 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Common.h"
 #include "Singleton.h"
+
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Platform;
 using namespace Apoc3D::Collections;
-
-using namespace std;
-using namespace fastdelegate;
 
 namespace Apoc3D
 {
@@ -59,15 +58,15 @@ namespace Apoc3D
 			void LoadPlugins();
 			void UnloadPlugins();
 
-			int32 getPluginCount() const { return static_cast<int32>(m_plugins.size()); }
+			int32 getPluginCount() const { return m_plugins.getCount(); }
 			
 			const Plugin* getPlugin(const String& name) const;
 			
 			SINGLETON_DECL_HEARDER(PluginManager);
 
 		private:
-			typedef unordered_map<String, Plugin*> PluginTable;
-			typedef vector<Library*> LibraryList;
+			typedef HashMap<String, Plugin*> PluginTable;
+			typedef List<Library*> LibraryList;
 
 			void LoadPlugin(const String& name);
 

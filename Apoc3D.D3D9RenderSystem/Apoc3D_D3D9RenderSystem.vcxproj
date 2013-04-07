@@ -146,7 +146,7 @@
     <ClInclude Include="ConstantTable.h" />
     <ClInclude Include="D3D9InstancingData.h" />
     <ClInclude Include="D3D9Common.h" />
-    <ClInclude Include="D3D9DeviceContent.h" />
+    <ClInclude Include="D3D9DeviceContext.h" />
     <ClInclude Include="D3D9GraphicsAPIFactory.h" />
     <ClInclude Include="Buffer\D3D9IndexBuffer.h" />
     <ClInclude Include="D3D9ObjectFactory.h" />
@@ -184,7 +184,7 @@
     <ClCompile Include="D3D9RenderViewSet.cpp" />
     <ClCompile Include="D3D9Sprite.cpp" />
     <ClCompile Include="D3D9VertexShader.cpp" />
-    <ClCompile Include="D3D9DeviceContent.cpp" />
+    <ClCompile Include="D3D9DeviceContext.cpp" />
     <ClCompile Include="D3D9GraphicsAPIFactory.cpp" />
     <ClCompile Include="D3D9RenderDevice.cpp" />
     <ClCompile Include="D3D9RenderTarget.cpp" />

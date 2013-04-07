@@ -28,8 +28,7 @@
 
 
 #include "apoc3d/Common.h"
-
-using namespace std;
+#include "apoc3d/Collections/List.h"
 
 namespace Apoc3D
 {
@@ -59,7 +58,7 @@ namespace Apoc3D
 			/**
 			 *  A vector containing all platform supported by this API.
 			 */
-			vector<PlatformAPISupport> SupportedPlatforms;
+			Apoc3D::Collections::List<PlatformAPISupport> SupportedPlatforms;
 		};
 
 		APAPI uint64 GetInstalledSystemMemorySizeInKB();

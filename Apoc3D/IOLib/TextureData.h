@@ -28,15 +28,14 @@
 
 
 #include "apoc3d/Common.h"
-
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::VFS;
-
-using namespace std;
 
 namespace Apoc3D
 {
@@ -85,7 +84,7 @@ namespace Apoc3D
 			static const int32 FileID = 'A' << 24 | 'T' << 16 | 'E' << 8 | 'X';
 
 			TextureType Type;
-			vector<TextureLevelData> Levels;
+			List<TextureLevelData> Levels;
 			PixelFormat Format;
 			int32 ContentSize;
 			int32 LevelCount;

@@ -34,12 +34,12 @@ namespace Apoc3D
 			RenderView* DeviceContext::Create(const RenderParameters &pm)
 			{
 				RenderView* rc = create(pm);
-				m_renderPorts.push_back(rc);
+				m_renderPorts.Add(rc);
 				return rc;
 			}
 			void DeviceContext::Destroy(RenderView* rc)
 			{
-				m_renderPorts.erase(find(m_renderPorts.begin(), m_renderPorts.end(), rc));
+				m_renderPorts.Remove(rc);
 				delete rc;
 			}
 		}

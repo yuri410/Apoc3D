@@ -73,9 +73,10 @@ namespace APBuild
 			{
 				string errmsg = string(reinterpret_cast<const char*>(error->GetBufferPointer()), error->GetBufferSize());
 
-				std::vector<String> errs = StringUtils::Split(StringUtils::toWString(errmsg), L"\n\r");
+				List<String> errs;
+				StringUtils::Split(StringUtils::toWString(errmsg), errs, L"\n\r");
 
-				for (size_t i=0;i<errs.size();i++)
+				for (int32 i=0;i<errs.getCount();i++)
 				{
 					CompileLog::WriteError(errs[i], src);
 				}

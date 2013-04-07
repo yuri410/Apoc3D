@@ -26,21 +26,17 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
 #include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Core;
-using namespace std;
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
 	namespace VFS
 	{
-		//template class APAPI vector<String>;
-		//template class APAPI unordered_map<String, Archive*>;
-		//template class APAPI unordered_map<String, ArchiveFactory*>;
-
 		/**
 		 *  A services class providing file locating, 
 		 *  multiple working directories and archive file features.
@@ -65,37 +61,35 @@ namespace Apoc3D
 		class APAPI FileSystem : public Singleton<FileSystem>
 		{
 		private:
-			typedef unordered_map<String, Archive*> PackTable;
-			typedef unordered_map<String, ArchiveFactory*> PackFactoryTable;
+			typedef HashMap<String, Archive*> PackTable;
+			typedef HashMap<String, ArchiveFactory*> PackFactoryTable;
 
 			PackTable m_openedPack;
 			PackFactoryTable m_factories;
-			vector<String> m_workingDirs;
+			List<String> m_workingDirs;
 
 			
 			ArchiveFactory* FindArchiveFactory(const String& ext)
 			{
-				if (m_factories.empty())
-					return 0;
+				if (m_factories.getCount() == 0)
+					return nullptr;
 
-				PackFactoryTable::const_iterator iter = m_factories.find(ext);
+				ArchiveFactory* fac;
+				if (m_factories.TryGetValue(ext, fac))
+					return fac;
 
-				if (iter != m_factories.end())
-				{
-					return iter->second;
-				}
-				return 0;
+				return nullptr;
 			}
 
 			bool IsOpened(String filePath, Archive** entry) const
 			{
-				PackTable::const_iterator iter = m_openedPack.find(filePath);
-				
-				if (iter != m_openedPack.end())
+				Archive* pack;
+				if (m_openedPack.TryGetValue(filePath, pack))
 				{
-					(*entry) = iter->second;
+					(*entry) = pack;
 					return true;
 				}
+
 				return false;
 			}
 			Archive* CreateArchive(FileLocation* fl);
@@ -114,7 +108,7 @@ namespace Apoc3D
 			 */
 			void AddWrokingDirectory(const String& path);
 			const String& getWorkingDirectory(int i) const { return m_workingDirs[i]; }
-			int getNumWorkingDirectories() const { return (int)m_workingDirs.size(); }
+			int getNumWorkingDirectories() const { return m_workingDirs.getCount(); }
 
 			void RegisterArchiveType(ArchiveFactory* factory);			
 			bool UnregisterArchiveType(ArchiveFactory* factory);
@@ -122,9 +116,9 @@ namespace Apoc3D
 
 			bool DirectoryExists(const String& path) const;
 			bool DirectoryExists(const String& path, String& result) const;
-			bool SplitExistingDirectories(const String& path, vector<String>& result, vector<String>& archivePath) const;
+			bool SplitExistingDirectories(const String& path, List<String>& result, List<String>& archivePath) const;
 
-			vector<String> SearchFile(const String& path);
+			List<String> SearchFile(const String& path);
 			
 			Archive* LocateArchive(const String& filePath, const FileLocateRule& rule);
 			FileLocation* Locate(const String& filePath, const FileLocateRule& rule);

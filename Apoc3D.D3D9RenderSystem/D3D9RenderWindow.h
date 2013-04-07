@@ -45,7 +45,7 @@ namespace Apoc3D
 			{
 			public:
 
-				D3D9RenderView(D3D9RenderDevice* device, D3D9DeviceContent* dc, D3D9RenderViewSet* viewSet, IDirect3DSwapChain9* chain, const RenderParameters& pm);
+				D3D9RenderView(D3D9RenderDevice* device, D3D9DeviceContext* dc, D3D9RenderViewSet* viewSet, IDirect3DSwapChain9* chain, const RenderParameters& pm);
 				~D3D9RenderView();
 
 
@@ -144,7 +144,7 @@ namespace Apoc3D
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
 
-				D3D9RenderWindow(D3D9RenderDevice* device, D3D9DeviceContent* dc, const RenderParameters& pm);
+				D3D9RenderWindow(D3D9RenderDevice* device, D3D9DeviceContext* dc, const RenderParameters& pm);
 				~D3D9RenderWindow();
 
 				virtual void Exit();
@@ -162,7 +162,7 @@ namespace Apoc3D
 				virtual void SetVisible(bool v);
 			private:
 				D3D9Game* m_game;
-				D3D9DeviceContent* m_dc;
+				D3D9DeviceContext* m_dc;
 				String m_hardwareName;
 
 				void setDevice(RenderDevice* device);

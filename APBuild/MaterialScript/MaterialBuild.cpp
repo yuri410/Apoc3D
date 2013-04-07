@@ -24,7 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "MaterialBuild.h"
 
 #include "apoc3d/Math/Color.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -49,9 +49,9 @@ namespace APBuild
 		FastList<Color4> Colors;
 	};
 
-	Color4 ResolveColor4(const String& text, const FastMap<String, Pallet*>& pallets);
-	void ParseMaterialTree(FastMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const FastMap<String, Pallet*>& pallets);
-	void ParseMaterialCustomParams(MaterialData& data, const String& value, const FastMap<String, Pallet*>& pallets);
+	Color4 ResolveColor4(const String& text, const HashMap<String, Pallet*>& pallets);
+	void ParseMaterialTree(HashMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const HashMap<String, Pallet*>& pallets);
+	void ParseMaterialCustomParams(MaterialData& data, const String& value, const HashMap<String, Pallet*>& pallets);
 
 	void MaterialBuild::Build(ConfigurationSection* sect)
 	{
@@ -67,7 +67,7 @@ namespace APBuild
 
 		ConfigurationSection* palSect = config->get(L"Pallet");
 
-		FastMap<String, Pallet*> palColors;
+		HashMap<String, Pallet*> palColors;
 		
 		for (ConfigurationSection::SubSectionEnumerator e = palSect->GetSubSectionEnumrator(); e.MoveNext();)
 		{
@@ -91,7 +91,7 @@ namespace APBuild
 		// inherit structure
 		// every node is expected to be a material definition where mtrl attribs are as XML attribs
 		ConfigurationSection* mSect = config->get(L"Materials");
-		FastMap<String, MaterialData*> mtrlTable;
+		HashMap<String, MaterialData*> mtrlTable;
 
 		for (ConfigurationSection::SubSectionEnumerator e = mSect->GetSubSectionEnumrator(); e.MoveNext();)
 		{
@@ -102,7 +102,7 @@ namespace APBuild
 		delete fl;
 
 		Configuration* tokenFile = new Configuration(L"MtrlToken");
-		for (FastMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
+		for (HashMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
 		{
 			ConfigurationSection* s = new ConfigurationSection(*e.getCurrentKey());
 			tokenFile->Add(s);
@@ -114,7 +114,7 @@ namespace APBuild
 		CompileLog::WriteInformation(desinationToken, L">");
 
 
-		for (FastMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
+		for (HashMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
 		{
 			String destPath = PathUtils::Combine(destination, *e.getCurrentKey());
 			destPath.append(L".mtrl");
@@ -128,7 +128,7 @@ namespace APBuild
 		}
 		mtrlTable.Clear();
 
-		for (FastMap<String, Pallet*>::Enumerator e = palColors.GetEnumerator();e.MoveNext();)
+		for (HashMap<String, Pallet*>::Enumerator e = palColors.GetEnumerator();e.MoveNext();)
 		{
 			delete *e.getCurrentValue();
 		}
@@ -138,7 +138,7 @@ namespace APBuild
 
 
 
-	void ParseMaterialTree(FastMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const FastMap<String, Pallet*>& pallets)
+	void ParseMaterialTree(HashMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const HashMap<String, Pallet*>& pallets)
 	{
 		MaterialData* newNode;
 		
@@ -182,10 +182,35 @@ namespace APBuild
 		if (sect->tryGetAttribute(L"Specular", temp))			newNode->Specular = ResolveColor4(temp, pallets);
 		sect->TryGetAttributeSingle(L"Power", newNode->Power);
 
-		sect->tryGetAttribute(L"Texture1", newNode->TextureName[0]);
-		sect->tryGetAttribute(L"Texture2", newNode->TextureName[1]);
-		sect->tryGetAttribute(L"Texture3", newNode->TextureName[2]);
-		sect->tryGetAttribute(L"Texture4", newNode->TextureName[3]);
+		
+		if (sect->tryGetAttribute(L"Texture1", temp)) 
+		{
+			if (newNode->TextureName.Contains(0))
+				newNode->TextureName[0] = temp;
+			else
+				newNode->TextureName.Add(0, temp);
+		}
+		if (sect->tryGetAttribute(L"Texture2", temp))
+		{
+			if (newNode->TextureName.Contains(1))
+				newNode->TextureName[1] = temp;
+			else
+				newNode->TextureName.Add(1, temp);
+		}
+		if (sect->tryGetAttribute(L"Texture3", temp))
+		{
+			if (newNode->TextureName.Contains(2))
+				newNode->TextureName[2] = temp;
+			else
+				newNode->TextureName.Add(2, temp);
+		}
+		if (sect->tryGetAttribute(L"Texture4", temp))
+		{
+			if (newNode->TextureName.Contains(3))
+				newNode->TextureName[3] = temp;
+			else
+				newNode->TextureName.Add(3, temp);
+		}
 
 		String customString;
 		if (sect->tryGetAttribute(L"Custom", customString))
@@ -196,16 +221,21 @@ namespace APBuild
 		String effString;
 		if (sect->tryGetAttribute(L"Effect",effString))
 		{
-			std::vector<String> defs = StringUtils::Split(effString, L";");
+			List<String> defs;
+			StringUtils::Split(effString, defs, L";");
 
-			for (size_t i=0;i<defs.size();i++)
+			for (int32 i=0;i<defs.getCount();i++)
 			{
-				std::vector<String> lr = StringUtils::Split(defs[i], L":");
+				List<String> lr;
+				StringUtils::Split(defs[i], lr, L":");
 
 				int ord = StringUtils::ParseInt32(lr[0].substr(1));
 				String name = lr[1];
 
-				newNode->EffectName[ord-1] = name;
+				if (!newNode->EffectName.Contains(ord-1))
+					newNode->EffectName.Add(ord-1, name);
+				else
+					newNode->EffectName[ord-1] = name;
 			}
 		}
 
@@ -220,12 +250,14 @@ namespace APBuild
 		table.Add(name, newNode);
 	}
 
-	void ParseMaterialCustomParams(MaterialData& data, const String& value, const FastMap<String, Pallet*>& pallets)
+	void ParseMaterialCustomParams(MaterialData& data, const String& value, const HashMap<String, Pallet*>& pallets)
 	{
-		std::vector<String> vals = StringUtils::Split(value, L";");
-		for (size_t i=0;i<vals.size();i++)
+		List<String> vals;
+		StringUtils::Split(value, vals, L";");
+		for (int32 i=0;i<vals.getCount();i++)
 		{
-			std::vector<String> vals2 = StringUtils::Split(vals[i], L"=");
+			List<String> vals2;
+			StringUtils::Split(vals[i], vals2, L"=");
 
 			String& usageName = vals2[0];
 			String& valueStr = vals2[1];
@@ -237,11 +269,12 @@ namespace APBuild
 			if (StringUtils::StartsWidth(valueStr, L"(") && StringUtils::EndsWidth(valueStr, L")"))
 			{
 				String vec = valueStr.substr(1, valueStr.length()-2);
-				std::vector<String> vals3 = StringUtils::Split(vals[i], L",");	
+				List<String> vals3;
+				StringUtils::Split(vals[i], vals3, L",");	
 				
-				assert(vals3.size() == 2 || vals3.size()==4);
+				assert(vals3.getCount() == 2 || vals3.getCount()==4);
 
-				if (vals3.size() == 2)
+				if (vals3.getCount() == 2)
 				{
 					mcp.Type = CEPT_Vector2;
 					float data[2] = { StringUtils::ParseSingle(vals3[0]), StringUtils::ParseSingle(vals3[1]) };
@@ -311,11 +344,11 @@ namespace APBuild
 				
 			}
 
-			data.CustomParametrs.insert(std::make_pair(mcp.Usage, mcp));
+			data.CustomParametrs.Add(mcp.Usage, mcp);
 		}
 	}
 
-	Color4 ResolveColor4(const String& text, const FastMap<String, Pallet*>& pallets)
+	Color4 ResolveColor4(const String& text, const HashMap<String, Pallet*>& pallets)
 	{
 		bool hasOperation = text.find('*') != String::npos;
 
@@ -381,9 +414,10 @@ namespace APBuild
 					if (StringUtils::StartsWidth(rightPart, L"(") && StringUtils::EndsWidth(rightPart, L")"))
 					{
 						String facts = rightPart.substr(1, rightPart.size()-2);
-						std::vector<String> vals = StringUtils::Split(facts, L",");
-						assert(vals.size()<=4);
-						for (size_t i=0;i<vals.size();i++)
+						List<String> vals;
+						StringUtils::Split(facts, vals, L",");
+						assert(vals.getCount()<=4);
+						for (int32 i=0;i<vals.getCount();i++)
 							factor[i] = StringUtils::ParseSingle(vals[i]);
 					}
 					else
@@ -411,9 +445,10 @@ namespace APBuild
 			return Color4();
 		}
 		
-		std::vector<String> vals = StringUtils::Split(text, L",");
+		List<String> vals;
+		StringUtils::Split(text, vals, L",");
 
-		switch (vals.size())
+		switch (vals.getCount())
 		{
 		case 1:
 			{

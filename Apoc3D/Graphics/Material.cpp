@@ -101,12 +101,7 @@ namespace Apoc3D
 		}
 		const MaterialCustomParameter* Material::getCustomParameter(const String& usage) const
 		{
-			CustomParamTable::const_iterator iter =  m_customParametrs.find(usage);
-			if (iter != m_customParametrs.end())
-			{
-				return &iter->second;
-			}
-			return 0;
+			return m_customParametrs.TryGetValue(usage);
 		}
 		void Material::AddCustomParameter(const MaterialCustomParameter& value)
 		{
@@ -114,25 +109,29 @@ namespace Apoc3D
 			{
 				throw Apoc3DException::createException(EX_Argument, L"usage can not be empty");
 			}
-			m_customParametrs.insert(CustomParamTable::value_type(value.Usage, value));
+			m_customParametrs.Add(value.Usage, value);
 		}
 
 		void Material::LoadEffect(int32 index)
 		{
-			if (m_effectName.find(index)!=m_effectName.end() && !m_effectName[index].empty())
-				m_effects[index] = EffectManager::getSingleton().getEffect(m_effectName[index]);
+			const String* name = m_effectName.TryGetValue(index);
+			if (name && name->size())
+			{
+				m_effects[index] = EffectManager::getSingleton().getEffect(*name);
+			}	
 		}
 
 
 		void Material::LoadTexture(int32 index)
 		{
-			if (m_texName.find(index) == m_texName.end() || m_texName[index].empty())
+			const String* name = m_texName.TryGetValue(index);
+			if (!name)
 			{
-				m_tex[index] = 0;
+				m_tex[index] = nullptr;
 				return;
 			}
 			// load texture
-			FileLocation* fl = FileSystem::getSingleton().TryLocate(m_texName[index], FileLocateRule::Textures);
+			FileLocation* fl = FileSystem::getSingleton().TryLocate(*name, FileLocateRule::Textures);
 
 			if (fl)
 			{
@@ -141,7 +140,7 @@ namespace Apoc3D
 			else
 			{
 				m_tex[index] = 0;
-				LogManager::getSingleton().Write(LOG_Graphics, L"Missing texture '" + m_texName[index] + L"'. ",
+				LogManager::getSingleton().Write(LOG_Graphics, L"Missing texture '" + *name + L"'. ",
 					LOGLVL_Error);
 			}
 			
@@ -192,21 +191,13 @@ namespace Apoc3D
 			m_effectName = mdata.EffectName;
 			m_texName = mdata.TextureName;
 
-			for (int i=0;i<MaxScenePass;i++)
+			for (HashMap<int, String>::Enumerator e = m_effectName.GetEnumerator(); e.MoveNext();)
 			{
-				if (m_effectName.find(i) != m_effectName.end())
-				{
-					LoadEffect(i);
-				}
+				LoadEffect(*e.getCurrentKey());
 			}
-			for (int i=0;i<MaxTextures;i++)
+			for (HashMap<int, String>::Enumerator e = m_texName.GetEnumerator(); e.MoveNext();)
 			{
-				//if(mdata.TextureName[i].size())
-				//	m_texName[i] = mdata.TextureName[i];
-				if (m_texName.find(i) != m_texName.end())
-				{
-					LoadTexture(i);
-				}
+				LoadTexture(*e.getCurrentKey());
 			}
 		}
 		void Material::Save(MaterialData& data)

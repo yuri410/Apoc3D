@@ -2,7 +2,7 @@
 #define UIRESOURCE_H
 
 #include "APDCommon.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;
@@ -13,7 +13,7 @@ namespace APDesigner
 	class UIResources
 	{
 	private:
-		static FastMap<String, Texture*>* m_maps;
+		static HashMap<String, Texture*>* m_maps;
 	public:
 		static void Initialize(RenderDevice* device);
 		static void Finalize();

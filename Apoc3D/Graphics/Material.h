@@ -26,14 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "GraphicsCommon.h"
 #include "MaterialTypes.h"
 
-#include "apoc3d/Core/HashHandleObject.h"
-#include "apoc3d/Math/Color.h"
 #include "apoc3d/IOLib/MaterialData.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
@@ -42,15 +37,10 @@ using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::IO;
 
-using namespace std;
-
 namespace Apoc3D
 {
 	namespace Graphics
 	{
-		//template class APAPI unordered_map<uint64, Effect*>;
-		//template class APAPI unordered_map<String, uint64>;
-
 		/** 
 		 *  Defines colors, textures, effect and etc. for a geometry.
 		 *
@@ -118,9 +108,9 @@ namespace Apoc3D
 			{
 				static String Empty = L"";
 				assert(index<MaxTextures);
-				if (m_texName.find(index) == m_texName.end())
+				if (m_texName.Contains(index))
 					return Empty;
-				return m_texName.at(index); 
+				return m_texName[index];
 			}
 			/** 
 			 *  Sets the material's texture's name at given index.
@@ -130,10 +120,15 @@ namespace Apoc3D
 			 */
 			void setTextureName(int index, const String& name)
 			{
-				if (m_texName[index] != name)
+				if (!m_texName.Contains(index))
+					m_texName.Add(index, name);
+				else
 				{
-					m_texName[index] = name; 
-					m_texDirty[index] = true;
+					if (m_texName[index] != name)
+					{
+						m_texName[index] = name; 
+						m_texDirty[index] = true;
+					}
 				}
 			}
 
@@ -208,11 +203,11 @@ namespace Apoc3D
 			/** 
 			 *  A map of effect names
 			 */
-			unordered_map<int, String> m_effectName;//[MaxScenePass];
+			HashMap<int, String> m_effectName;//[MaxScenePass];
 
 			CustomParamTable m_customParametrs;
 			ResourceHandle<Texture>* m_tex[MaxTextures];
-			unordered_map<int, String> m_texName;//[MaxTextures];
+			HashMap<int, String> m_texName;//[MaxTextures];
 			bool m_texDirty[MaxTextures];
 
 			/** 

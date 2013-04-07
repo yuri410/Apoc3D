@@ -40,8 +40,8 @@ namespace Apoc3D
 				LocateCheckPoint pt;
 				pt.AddPath(L"");
 
-				vector<LocateCheckPoint> pts;
-				pts.push_back(pt);
+				List<LocateCheckPoint> pts;
+				pts.Add(pt);
 
 				Default = FileLocateRule(pts);
 
@@ -53,8 +53,8 @@ namespace Apoc3D
 				pt.AddPath(L"textures");
 				pt.AddPath(L"textures.pak");
 
-				vector<LocateCheckPoint> pts;
-				pts.push_back(pt);
+				List<LocateCheckPoint> pts;
+				pts.Add(pt);
 
 				Textures = FileLocateRule(pts);
 			}
@@ -64,8 +64,8 @@ namespace Apoc3D
 				pt.AddPath(L"effects");
 				pt.AddPath(L"effects.pak");
 
-				vector<LocateCheckPoint> pts;
-				pts.push_back(pt);
+				List<LocateCheckPoint> pts;
+				pts.Add(pt);
 
 				Effects = FileLocateRule(pts);
 			}
@@ -75,8 +75,8 @@ namespace Apoc3D
 				pt.AddPath(L"materials");
 				pt.AddPath(L"materials.pak");
 
-				vector<LocateCheckPoint> pts;
-				pts.push_back(pt);
+				List<LocateCheckPoint> pts;
+				pts.Add(pt);
 
 				Materials = FileLocateRule(pts);
 			}
@@ -84,14 +84,14 @@ namespace Apoc3D
 
 		void LocateCheckPoint::AddPath(const String& path)
 		{
-			vector<String> fullPath;
-			vector<String> arcPath;
+			List<String> fullPath;
+			List<String> arcPath;
 
 			if (FileSystem::getSingleton().SplitExistingDirectories(path, fullPath, arcPath))
 			{
-				for (size_t i = 0; i < fullPath.size(); i++)
+				for (int32 i = 0; i < fullPath.getCount(); i++)
 				{
-					pathList.push_back(Entry(fullPath[i], arcPath[i]));
+					pathList.Add(Entry(fullPath[i], arcPath[i]));
 				}
 			}
 		}

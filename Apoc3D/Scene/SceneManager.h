@@ -26,12 +26,8 @@
  * -----------------------------------------------------------------------------
  */
 
+#include "apoc3d/Collections/List.h"
 
-#include "apoc3d/Common.h"
-
-#include "apoc3d/Collections/FastList.h"
-
-using namespace std;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;

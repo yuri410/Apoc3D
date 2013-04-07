@@ -69,7 +69,7 @@ namespace Apoc3D
 			{
 				delete m_entities[i];
 			}
-			m_entities.FastClear();
+			m_entities.Clear();
 		}
 
 		void ModelSharedData::load()
@@ -196,10 +196,11 @@ namespace Apoc3D
 			if (m_animData->hasSkinnedClip())
 			{
 				const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
-				AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
-				if (iter != table.end())
+				//AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
+				//if (iter != table.end())
+				ModelAnimationClip* clip;
+				if (table.TryGetValue(m_selectedClipName, clip))
 				{
-					const ModelAnimationClip* clip = iter->second;
 					switch (ctrl)
 					{
 					case AC_Play:
@@ -229,10 +230,10 @@ namespace Apoc3D
 			if (m_animData->hasRigidClip())
 			{
 				const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
-				AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
-				if (iter != table.end())
+				ModelAnimationClip* clip;
+
+				if (table.TryGetValue(m_selectedClipName, clip))
 				{
-					const ModelAnimationClip* clip = iter->second;
 					switch (ctrl)
 					{
 					case AC_Play:
@@ -263,10 +264,10 @@ namespace Apoc3D
 			if (m_animData->hasMtrlClip())
 			{
 				const AnimationData::MtrlClipTable& table = m_animData->getMaterialAnimationClips();
-				AnimationData::MtrlClipTable::const_iterator iter = table.find(m_selectedClipName);
-				if (iter != table.end())
+				MaterialAnimationClip* clip;
+
+				if (table.TryGetValue(m_selectedClipName, clip))
 				{
-					const MaterialAnimationClip* clip = iter->second;
 					switch (ctrl)
 					{
 					case AC_Play:
@@ -296,12 +297,12 @@ namespace Apoc3D
 
 			const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
 
-			if (table.size())
+			if (table.getCount())
 			{
-				AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
-				if (iter != table.end())
+				ModelAnimationClip* clip;
+
+				if (table.TryGetValue(m_selectedClipName, clip))
 				{
-					const ModelAnimationClip* clip = iter->second;
 					return clip->getDuration();
 				}
 			}
@@ -346,7 +347,7 @@ namespace Apoc3D
 			{
 				const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
 				
-				if (table.size())
+				if (table.getCount())
 				{
 					//m_rootPlayer = new RootAnimationPlayer();
 					//
@@ -365,7 +366,7 @@ namespace Apoc3D
 			{
 				const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
 
-				if (table.size())
+				if (table.getCount())
 				{
 					const List<Bone>* bones = &m_animData->getBones();
 					
@@ -380,7 +381,7 @@ namespace Apoc3D
 			if (m_animData->hasMtrlClip())
 			{
 				const AnimationData::MtrlClipTable& table = m_animData->getMaterialAnimationClips();
-				if (table.size())
+				if (table.getCount())
 				{
 					m_mtrlPlayer = new MaterialAnimationPlayer();
 					
@@ -403,7 +404,7 @@ namespace Apoc3D
 			if (m_animData->hasMtrlClip())
 			{
 				const AnimationData::MtrlClipTable& table = m_animData->getMaterialAnimationClips();
-				if (table.size())
+				if (table.getCount())
 				{
 					m_mtrlPlayer = new MaterialAnimationPlayer();
 					m_mtrlPlayer->eventCompleted().bind(this, &Model::MtrlAnim_Completed);

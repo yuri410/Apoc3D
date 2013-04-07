@@ -29,9 +29,6 @@
 
 #include "Control.h"
 
-#include "apoc3d/Collections/FastList.h"
-
-using namespace Apoc3D::Collections;
 using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D

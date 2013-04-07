@@ -26,14 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "Vector.h"
-#include "Plane.h"
-#include "MathCommon.h"
 
-using namespace std;
+#include "MathCommon.h"
 
 namespace Apoc3D
 {
@@ -199,10 +194,7 @@ namespace Apoc3D
 			/**
 			 *  Finds the intersection between a plane and a box.
 			 */
-			static PlaneIntersectionType Intersects(const BoundingBox& box, const Plane& plane)
-			{
-				return Plane::Intersects(plane, box);
-			}
+			static PlaneIntersectionType Intersects(const BoundingBox& box, const Plane& plane);
 			static bool Intersects(const BoundingBox& box, const Ray& ray, float& distance);
 
 			/**

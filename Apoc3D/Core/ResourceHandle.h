@@ -25,7 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "apoc3d/Common.h"
 #include "Resource.h"
 #include "ResourceManager.h"
 

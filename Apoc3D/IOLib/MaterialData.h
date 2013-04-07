@@ -55,10 +55,10 @@ namespace Apoc3D
 			String ExternalRefName;
 
 
-			unordered_map<int, String> EffectName;//[MaxScenePass];
+			HashMap<int, String> EffectName;//[MaxScenePass];
 
 			CustomParamTable CustomParametrs;
-			unordered_map<int, String> TextureName;//[MaxTextures];
+			HashMap<int, String> TextureName;//[MaxTextures];
 
 			uint64 PassFlags;
 
@@ -146,10 +146,6 @@ namespace Apoc3D
 			//void LoadEffect(BinaryReader* br, int32 index);
 			//void SaveEffect(BinaryWriter* bw, int32 index);
 
-			/**
-			 *  Load with format version 2. The version used in making ZoneLink 2
-			 */
-			void LoadV2(TaggedDataReader* data);
 			/**
 			 *  Load with format version 3
 			 */

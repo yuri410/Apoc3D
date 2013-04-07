@@ -29,7 +29,9 @@
 
 #include "apoc3d/Common.h"
 
-using namespace std;
+#include "apoc3d/Collections/List.h"
+
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {	
@@ -46,6 +48,7 @@ namespace Apoc3D
 				String Path;
 				String ArchivePath;
 
+				Entry() { }
 				Entry(const String& path, const String& ap)
 				{
 					Path = path;
@@ -53,7 +56,7 @@ namespace Apoc3D
 				}
 			};
 
-			vector<Entry> pathList;
+			List<Entry> pathList;
 			
 		public:	
 			/**
@@ -70,7 +73,7 @@ namespace Apoc3D
 
 			void Clear()
 			{
-				pathList.clear();
+				pathList.Clear();
 			}
 
 
@@ -103,7 +106,7 @@ namespace Apoc3D
 			 */
 			int getCount() const
 			{
-				return pathList.size();
+				return pathList.getCount();
 			}
 
 		};
@@ -130,25 +133,25 @@ namespace Apoc3D
 			static FileLocateRule Default;
 			static FileLocateRule Materials;
 
-			vector<LocateCheckPoint> pathChkPt;
+			List<LocateCheckPoint> pathChkPt;
 
 			FileLocateRule()
 			{
 			}
 
-			FileLocateRule(vector<LocateCheckPoint> checkPoints)
+			FileLocateRule(const List<LocateCheckPoint>& checkPoints)
 				: pathChkPt(checkPoints)
 			{
 			}
 
 			void AddCheckPoint(const LocateCheckPoint& coll)
 			{
-				pathChkPt.push_back(coll);
+				pathChkPt.Add(coll);
 			}
 
 			int getCount() const
 			{
-				return pathChkPt.size();
+				return pathChkPt.getCount();
 			}
 			LocateCheckPoint getCheckPoint(int index) const
 			{

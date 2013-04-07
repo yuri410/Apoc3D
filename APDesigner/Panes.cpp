@@ -35,6 +35,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Collections/EnumConverterHelper.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/UILib/Button.h"
 #include "apoc3d/UILib/ComboBox.h"
@@ -101,7 +102,7 @@ namespace APDesigner
 			{
 				EditorExtension* eext = m_mainWindow->getCurrentDocument()->getExtension();
 				String name = eext->GetName();
-				std::vector<String> fexts = eext->GetFileExtensions();
+				List<String> fexts = eext->GetFileExtensions();
 
 				SaveFileDialog dlg;
 
@@ -112,11 +113,11 @@ namespace APDesigner
 					
 				String right;
 				//*.a;*.b
-				for (size_t i=0;i<fexts.size();i++)
+				for (int32 i=0;i<fexts.getCount();i++)
 				{
 					right.append(L"*");
 					right.append(fexts[i]);
-					if (i+1<fexts.size())
+					if (i+1<fexts.getCount())
 					{
 						right.append(L";");
 					}
@@ -256,7 +257,7 @@ namespace APDesigner
 			m_lookupTable.Add(type, itemInfo);
 		}
 
-		FastMap<int, ItemTypeInformation> m_lookupTable;
+		HashMap<int, ItemTypeInformation> m_lookupTable;
 	};
 
 	static ResourcePaneHelper ResPaneHelperInstance;

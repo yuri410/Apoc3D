@@ -23,7 +23,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "Configuration.h"
-
 #include "ConfigurationSection.h"
 
 namespace Apoc3D

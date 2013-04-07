@@ -26,13 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Collections;
-using namespace std;
 
 namespace Apoc3D
 {
@@ -112,14 +108,8 @@ namespace Apoc3D
 				return m_length;
 			}
 
-			virtual void setPosition(int64 offset)
-			{
-				m_in->seekg(offset, ios::beg); 
-			}
-			virtual int64 getPosition() const
-			{ 
-				return m_in->tellg(); 
-			}
+			virtual void setPosition(int64 offset);
+			virtual int64 getPosition() const;
 
 			virtual int64 Read(char* dest, int64 count);
 			virtual void Write(const char* src, int64 count);
@@ -130,7 +120,7 @@ namespace Apoc3D
 			virtual void Flush() { }
 
 		private:
-			ifstream* m_in;
+			void* m_in; //std::ifstream
 			int64 m_length;
 		};
 		/**
@@ -138,9 +128,6 @@ namespace Apoc3D
 		 */
 		class APAPI FileOutStream : public Stream
 		{
-		private:
-			ofstream* m_out;
-			int64 m_length;
 		public:
 			FileOutStream(const String& filename);
 			virtual ~FileOutStream();
@@ -156,16 +143,8 @@ namespace Apoc3D
 				return m_length;
 			}
 
-			virtual void setPosition(int64 offset)
-			{
-				m_out->seekp(offset, ios::beg); 
-				if (m_length<offset)
-					m_length = offset;
-			}
-			virtual int64 getPosition() const
-			{
-				return m_out->tellp(); 
-			}
+			virtual void setPosition(int64 offset);
+			virtual int64 getPosition() const;
 
 			virtual int64 Read(char* dest, int64 count);
 			virtual void Write(const char* src, int64 count);
@@ -174,17 +153,16 @@ namespace Apoc3D
 			virtual void Close();
 
 			virtual void Flush();
-			
+
+		private:
+			void* m_out; // ofstream
+			int64 m_length;
 		};
 		/**
 		 *  Provides access to a space in memory as a stream
 		 */
 		class APAPI MemoryStream : public Stream
 		{
-		private:
-			int64 m_length;
-			char* m_data;
-			int64 m_position;
 		public:
 			char* getInternalPointer() const { return m_data; }
 
@@ -254,6 +232,11 @@ namespace Apoc3D
 			virtual void Close() { }
 
 			virtual void Flush() { }
+
+		private:
+			int64 m_length;
+			char* m_data;
+			int64 m_position;
 		};
 
 		/** 
@@ -383,10 +366,6 @@ namespace Apoc3D
 		 */
 		class APAPI MemoryOutStream : public Stream
 		{
-		private:
-			int64 m_length;
-			FastList<char> m_data;
-			int64 m_position;
 		public:
 			const char* getPointer() const { return m_data.getInternalPointer(); }
 
@@ -476,6 +455,11 @@ namespace Apoc3D
 			virtual void Close() {}
 
 			virtual void Flush(){}
+
+		private:
+			int64 m_length;
+			FastList<char> m_data;
+			int64 m_position;
 		};
 
 	};

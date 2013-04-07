@@ -27,15 +27,12 @@
  */
 
 
-#include "apoc3d/Common.h"
-
 #include "ModelTypes.h"
 #include "RenderOperationBuffer.h"
 #include "Renderable.h"
 #include "RenderSystem/VertexElement.h"
 
 #include "apoc3d/Math/BoundingSphere.h"
-#include "apoc3d/Collections/FastList.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Math;

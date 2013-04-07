@@ -33,9 +33,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/CommandInterpreter.h"
 #include "apoc3d/Graphics/TextureManager.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
+#include "apoc3d/Math/Math.h"
 #include "apoc3d/Input/InputAPI.h"
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Utility/StringUtils.h"
+
+#include "tthread/tinythread.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Core;
@@ -47,6 +50,8 @@ namespace Apoc3D
 		Console::Console(RenderDevice* device,StyleSkin* skin,const Point& position, const Point& size)
 			: m_skin(skin), m_needsUpdateLineInfo(false), m_contendLineCount(0)
 		{
+			m_logLock = new tthread::mutex();
+
 			m_form = new Form(FBS_Sizable, L"Console");
 			m_form->Position = position;
 			m_form->Size = size;
@@ -106,6 +111,7 @@ namespace Apoc3D
 			delete m_pictureBox;
 			delete m_submit;
 			delete m_inputText;
+			delete m_logLock;
 		}
 
 		void Console::Update(const GameTime* const time)
@@ -121,19 +127,19 @@ namespace Apoc3D
 			m_scrollBar->setPosition(Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 12, m_pictureBox->Position.Y));
 			m_scrollBar->setHeight(m_pictureBox->Size.Y);
 
-			m_logLock.lock();
+			m_logLock->lock();
 			while (m_queuedNewLogs.getCount()>0)
 			{
 				LogEntry e = m_queuedNewLogs.Dequeue();
-				m_logs.push_back(e);
+				m_logs.PushBack(e);
 				m_needsUpdateLineInfo = true;
 
-				while (m_logs.size()>MaxLogEntries)
+				while (m_logs.Size()>MaxLogEntries)
 				{
-					m_logs.erase(m_logs.begin());
+					m_logs.PopFront();
 				}
 			}
-			m_logLock.unlock();
+			m_logLock->unlock();
 
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
@@ -203,7 +209,7 @@ namespace Apoc3D
 			{
 				m_contendLineCount = 0;
 				int counter = 0;
-				for (list<LogEntry>::iterator iter = m_logs.begin(); iter != m_logs.end(); iter++ )
+				for (LinkedList<LogEntry>::Iterator iter = m_logs.Begin(); iter != m_logs.End(); iter++ )
 				{
 					const LogEntry& e = *iter;
 					String str = e.ToString();
@@ -241,7 +247,7 @@ namespace Apoc3D
 			int windowLineCount = static_cast<int>( dstRect->Height / lineSpacing);
 			m_scrollBar->setMax(m_contendLineCount - windowLineCount);
 
-			int startIndex = (int)m_logs.size() - 1;
+			int startIndex = (int)m_logs.Size() - 1;
 			if (startIndex>=0)
 			{
 				for (int i=0;i<m_scrollBar->getValue() && startIndex>=0;)
@@ -263,9 +269,9 @@ namespace Apoc3D
 
 		void Console::Log_New(LogEntry e)
 		{
-			m_logLock.lock();
+			m_logLock->lock();
 			m_queuedNewLogs.Enqueue(e);
-			m_logLock.unlock();
+			m_logLock->unlock();
 		}
 
 		void Console::Form_Resized(Control* ctrl)
@@ -330,7 +336,7 @@ namespace Apoc3D
 		}
 		void ClearCommand::Execute(const Apoc3D::Collections::List<String>& args)
 		{
-			m_console->m_logs.clear();
+			m_console->m_logs.Clear();
 		}
 
 

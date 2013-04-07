@@ -27,7 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDesigner/APDCommon.h"
 
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/LinkedList.h"
 #include "apoc3d/Math/Vector.h"
 #include "apoc3d/Math/Rectangle.h"
 
@@ -79,7 +80,7 @@ namespace APDesigner
 		void Attach(GraphNode* node)
 		{
 			assert(m_isLeafNode);
-			m_attachedGraphNodes.push_back(node);
+			m_attachedGraphNodes.PushBack(node);
 			MarkDirty();
 		}
 		/** [leaf node only]
@@ -88,10 +89,8 @@ namespace APDesigner
 		void Detach(GraphNode* node)
 		{
 			assert(m_isLeafNode);
-			std::list<GraphNode*>::iterator iter = 
-				std::find(m_attachedGraphNodes.begin(), m_attachedGraphNodes.end(), node);
-			if (iter != m_attachedGraphNodes.end())
-				m_attachedGraphNodes.erase(iter);
+			
+			m_attachedGraphNodes.Remove(node);
 			MarkDirty();
 		}
 
@@ -110,7 +109,7 @@ namespace APDesigner
 		void FillIntersectingNodesAttachment(FastList<GraphNode*>& list, const Apoc3D::Math::RectangleF& area);
 
 		const RectangleF& getArea() const { return m_area; }
-		const std::list<GraphNode*>& getAttachedNodes() { return m_attachedGraphNodes; }
+		const LinkedList<GraphNode*>& getAttachedNodes() { return m_attachedGraphNodes; }
 		const Vector2& getCenterOfMass() const { return m_centerOfMass; }
 		const float getMass() const { return m_equviliantMass; }
 
@@ -119,7 +118,7 @@ namespace APDesigner
 		QuadTreeNode* m_parent;
 		QuadTreeNode* m_subNodes[4];
 
-		std::list<GraphNode*> m_attachedGraphNodes;
+		LinkedList<GraphNode*> m_attachedGraphNodes;
 		bool m_isLeafNode;
 
 		RectangleF m_area;

@@ -28,6 +28,8 @@ distribution.
 #include "IOLib/BinaryReader.h"
 #include "IOLib/BinaryWriter.h"
 
+using namespace std;
+
 bool TiXmlBase::condenseWhiteSpace = true;
 
 

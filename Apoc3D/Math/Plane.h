@@ -29,7 +29,6 @@
 
 #include "apoc3d/Common.h"
 
-#include "Vector.h"
 #include "Matrix.h"
 #include "MathCommon.h"
 

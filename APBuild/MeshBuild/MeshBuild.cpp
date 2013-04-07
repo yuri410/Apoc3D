@@ -245,14 +245,14 @@ namespace APBuild
 					newMD->Faces.Add(f);
 				}
 
-				for (uint j=0;j<md->Materials.getMaterialCount();j++)
+				for (int32 j=0;j<md->Materials.getMaterialCount();j++)
 				{
-					Apoc3D::IO::MaterialData& mtrlData = md->Materials.getMaterial(j);
+					Apoc3D::IO::MaterialData* mtrlData = md->Materials.getMaterial(j);
 					newMD->Materials.Add(mtrlData);
 
-					for (uint k=1;k<md->Materials.getFrameCount(j);k++)
+					for (int32 k=1;k<md->Materials.getFrameCount(j);k++)
 					{
-						Apoc3D::IO::MaterialData& mtrlData = md->Materials.getMaterial(j,k);
+						Apoc3D::IO::MaterialData* mtrlData = md->Materials.getMaterial(j,k);
 						newMD->Materials.AddFrame(mtrlData,j);
 					}
 				}

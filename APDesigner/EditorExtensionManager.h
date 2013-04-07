@@ -28,7 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "APDCommon.h"
 
 #include "apoc3d/Core/Singleton.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;
@@ -52,7 +53,7 @@ namespace APDesigner
 
 		/** Extension to use when opening the file dialog
 		*/
-		virtual std::vector<String> GetFileExtensions() = 0;
+		virtual List<String> GetFileExtensions() = 0;
 	};
 
 	class APDAPI IndenpendentEditorExtension : public EditorExtension
@@ -76,7 +77,7 @@ namespace APDesigner
 	class EditorExtensionManager : public Apoc3D::Core::Singleton<EditorExtensionManager>
 	{
 	public:
-		typedef FastMap<String, EditorExtension*>::Enumerator ExtensionEnumerator;
+		typedef HashMap<String, EditorExtension*>::Enumerator ExtensionEnumerator;
 
 		SINGLETON_DECL_HEARDER(EditorExtensionManager);
 
@@ -98,7 +99,7 @@ namespace APDesigner
 
 		EditorExtensionManager() { }
 	private:
-		FastMap<String, EditorExtension*> m_extensions;
+		HashMap<String, EditorExtension*> m_extensions;
 	};
 }
 extern "C"

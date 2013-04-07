@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ResourceLocation.h"
 
 #include "apoc3d/Core/Logging.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 
@@ -95,7 +95,7 @@ namespace Apoc3D
 
 		void PakArchive::FillEntries(FastList<PakArchiveEntry>& entries)
 		{
-			for (FastMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
+			for (HashMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
 				e.MoveNext();)
 			{
 				entries.Add(*e.getCurrentValue());
@@ -142,7 +142,7 @@ namespace Apoc3D
 		String PakArchive::GetEntryName(int index)
 		{
 			int i=0;
-			FastMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
+			HashMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
 			
 			e.MoveNext();
 			while (i<index)

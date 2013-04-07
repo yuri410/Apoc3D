@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "QuadTree.h"
 
 #include "apoc3d/Core/GameTime.h"
-#include "apoc3d/Collections/FastQueue.h"
+#include "apoc3d/Collections/Queue.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Math/MathCommon.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -214,7 +214,7 @@ namespace APDesigner
 		bool* passed = new bool[m_nodes.getCount()];
 		memset(passed, 0, sizeof(bool)*m_nodes.getCount());
 
-		FastQueue<GraphNode*> bfsQueue;
+		Queue<GraphNode*> bfsQueue;
 		FastList<GraphNode*> islandNodes;
 
 
@@ -739,7 +739,7 @@ namespace APDesigner
 		GetViewMatrix(result);
 		result.Inverse();
 
-		m_currentVisisbleNodes.FastClear();
+		m_currentVisisbleNodes.Clear();
 
 		//GLint viewport[4];
 		//glGetIntegerv(GL_VIEWPORT, viewport);

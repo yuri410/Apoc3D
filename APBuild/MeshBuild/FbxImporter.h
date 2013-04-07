@@ -14,8 +14,8 @@
 #pragma warning (pop)
 #endif
 
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/ExistTable.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Graphics/Animation/AnimationTypes.h"
@@ -24,6 +24,7 @@
 
 #define MAXBONES_PER_VERTEX 4
 
+#include <vector>
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;
@@ -202,7 +203,7 @@ namespace APBuild
 			friend class FbxImporter;
 			std::vector<FIMeshPart*> m_ModelParts;
 
-			FastMap<string, FIPartialAnimation*> m_AnimationKeyFrames;
+			HashMap<string, FIPartialAnimation*> m_AnimationKeyFrames;
 
 			std::string m_strName;
 
@@ -225,7 +226,7 @@ namespace APBuild
 				{
 					delete m_ModelParts[i];
 				}
-				for (FastMap<string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
+				for (HashMap<string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
 				{
 					FIPartialAnimation* akf = *e.getCurrentValue();
 					delete akf;
@@ -367,7 +368,7 @@ namespace APBuild
 
 			int m_nParentBoneIndex;
 
-			FastMap<std::string, FIPartialAnimation*> m_AnimationKeyFrames;
+			HashMap<std::string, FIPartialAnimation*> m_AnimationKeyFrames;
 		public:
 			FISkeletonBone(std::string strName, int nParentBoneIndex)
 				: m_strName(strName), m_nParentBoneIndex(nParentBoneIndex)
@@ -377,7 +378,7 @@ namespace APBuild
 			}
 			~FISkeletonBone()
 			{
-				for (FastMap<string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
+				for (HashMap<string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
 				{
 					FIPartialAnimation* akf = *e.getCurrentValue();
 					delete akf;
@@ -482,7 +483,7 @@ namespace APBuild
 				for (int i=0;i<m_SkeletonBones.getCount();i++)
 				{
 					const FISkeletonBone* bone = m_SkeletonBones[i];
-					for (FastMap<std::string, FIPartialAnimation*>::Enumerator j=bone->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
+					for (HashMap<std::string, FIPartialAnimation*>::Enumerator j=bone->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
 					{
 						FIPartialAnimation* anim = *j.getCurrentValue();
 
@@ -539,7 +540,7 @@ namespace APBuild
 					if (frames.getCount())
 					{
 						ModelAnimationClip* clip = new ModelAnimationClip(frames[frames.getCount()-1].getTime(), frames);
-						clipTable->insert(std::make_pair(StringUtils::toWString(animName), clip));
+						clipTable->Add(StringUtils::toWString(animName), clip);
 					}					
 				}
 			}
@@ -580,7 +581,7 @@ namespace APBuild
 		FastList<MaterialData*> m_materials;
 		
 
-		FastMap<string, FIMesh*> m_meshes;
+		HashMap<string, FIMesh*> m_meshes;
 		FISkeleton* m_pSkeleton;
 
 
@@ -620,10 +621,10 @@ namespace APBuild
 			const FIMesh** meshList = new const FIMesh*[m_meshes.getCount()];
 			ExistTable<string> seenAnimation;
 			int idxCounter = 0;
-			for (FastMap<string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
+			for (HashMap<string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
 			{
 				const FIMesh* mesh = *i.getCurrentValue();
-				for (FastMap<std::string, FIPartialAnimation*>::Enumerator j=mesh->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
+				for (HashMap<std::string, FIPartialAnimation*>::Enumerator j=mesh->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
 				{
 					FIPartialAnimation* anim = *j.getCurrentValue();
 
@@ -683,7 +684,7 @@ namespace APBuild
 				if (frames.getCount())
 				{
 					ModelAnimationClip* clip = new ModelAnimationClip(frames[frames.getCount()-1].getTime(), frames);
-					clipTable->insert(std::make_pair(StringUtils::toWString(animName), clip));
+					clipTable->Add(StringUtils::toWString(animName), clip);
 				}					
 			}
 			

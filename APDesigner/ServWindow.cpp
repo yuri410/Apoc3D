@@ -29,6 +29,8 @@
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Math/ColorValue.h"
 
+#include <Windows.h>
+
 using namespace Apoc3D::Graphics::EffectSystem;
 
 namespace APDesigner

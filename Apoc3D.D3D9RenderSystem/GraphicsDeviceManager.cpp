@@ -28,6 +28,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Core/Logging.h"
 
+#include <strstream>
+#include <sstream>
+
 using namespace Apoc3D::Core;
 
 namespace Apoc3D
@@ -120,8 +123,8 @@ namespace Apoc3D
 			int32 GraphicsDeviceManager::GetAdapterOrdinal(HMONITOR mon)
 			{
 				const AdapterInfo* adapter = 0;
-				const vector<AdapterInfo*> adInfo = Enumeration::getAdapters();
-				for (size_t i=0;i<adInfo.size();i++)
+				const FastList<AdapterInfo*> adInfo = Enumeration::getAdapters();
+				for (int32 i=0;i<adInfo.getCount();i++)
 				{
 					if (m_direct3D9->GetAdapterMonitor(adInfo[i]->AdapterOrdinal) == mon)
 					{
@@ -253,7 +256,7 @@ namespace Apoc3D
 				PropogateSettings();
 
 				{
-					wstringstream wss;
+					std::wstringstream wss;
 
 					if (m_currentSetting->D3D9.DeviceType == D3DDEVTYPE_HAL)
 						wss << L"HAL";
@@ -281,8 +284,8 @@ namespace Apoc3D
 						wss << L" (sw vp)";
 					}
 
-					std::vector<AdapterInfo*> adapters = Enumeration::getAdapters();
-					for (size_t i=0;i<adapters.size();i++)
+					const FastList<AdapterInfo*> adapters = Enumeration::getAdapters();
+					for (int32 i=0;i<adapters.getCount();i++)
 					{
 						if (adapters[i]->AdapterOrdinal
 							== (int32)m_currentSetting->D3D9.AdapterOrdinal)

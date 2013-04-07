@@ -27,8 +27,6 @@
  */
 
 
-#include "apoc3d/Common.h"
-
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Math/BoundingSphere.h"
 #include "apoc3d/Graphics/Renderable.h"

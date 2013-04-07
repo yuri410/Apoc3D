@@ -30,6 +30,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Utility/StringUtils.h"
 
+#include "tthread/tinythread.h"
+#include <ctime>
+
+#include <strstream>
+#include <sstream>
+#include <iostream>
+
+using namespace std;
 using namespace Apoc3D::Utility;
 
 SINGLETON_DECL(Apoc3D::Core::LogManager);
@@ -132,23 +140,24 @@ namespace Apoc3D
 		Log::Log(LogType type)
 			: m_type(type)
 		{
-
+			m_lock = new tthread::mutex();
 		}
 
 		Log::~Log()
 		{
-
+			delete m_lock;
+			m_lock = nullptr;
 		}
 
 		bool Log::Write(const String& message, LogMessageLevel level, bool checkDuplicate)
 		{
 			bool result = false;
-			m_lock.lock();
+			m_lock->lock();
 
 			bool discard = false;
-			if (checkDuplicate && m_entries.size())
+			if (checkDuplicate && m_entries.Size())
 			{
-				if (m_entries.back().Content == message)
+				if (m_entries.Back().Content == message)
 				{
 					discard = true;
 				}
@@ -158,15 +167,15 @@ namespace Apoc3D
 			{
 				time_t t = time(0);
 
-				while (m_entries.size()>MaxEntries)
+				while (m_entries.Size()>MaxEntries)
 				{
-					m_entries.erase(m_entries.begin());
+					m_entries.PopFront();
 				}
-				m_entries.push_back(LogEntry(t, message, level, m_type));
+				m_entries.PushBack(LogEntry(t, message, level, m_type));
 				result = true;
 			}
 
-			m_lock.unlock();
+			m_lock->unlock();
 			return result;
 		}
 
@@ -200,7 +209,7 @@ namespace Apoc3D
 
 			if (ret)
 			{
-				const LogEntry& lastest = *(--m_logs[static_cast<int32>(type)]->end());
+				const LogEntry& lastest = *m_logs[(int32)type]->LastEntry();// *(--m_logs[static_cast<int32>(type)]->end());
 
 				if (!m_eNewLog.empty())
 				{
@@ -226,6 +235,14 @@ namespace Apoc3D
 				}
 			}
 
+		}
+
+		int32 Log::getCount()
+		{
+			m_lock->lock();
+			int result = (int)m_entries.Size();
+			m_lock->unlock();
+			return result;
 		}
 	}
 }

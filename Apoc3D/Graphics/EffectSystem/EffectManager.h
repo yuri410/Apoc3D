@@ -26,14 +26,13 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
 #include "apoc3d/Core/Singleton.h"
+#include "apoc3d/Collections/HashMap.h"
 
-using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
+using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::VFS;
-using namespace std;
 
 namespace Apoc3D
 {
@@ -42,7 +41,7 @@ namespace Apoc3D
 		namespace EffectSystem
 		{
 			//template class APAPI unordered_map<String, Effect*>;
-			typedef unordered_map<String, Effect*> EffectTable;
+			typedef HashMap<String, Effect*> EffectTable;
 
 			/**
 			 *  Keeps track of all shader effects.

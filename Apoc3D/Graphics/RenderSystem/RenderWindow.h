@@ -26,12 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "DeviceContext.h"
 
-#include "apoc3d/Math/Point.h"
+#include "apoc3d/Collections/LinkedList.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;
@@ -42,15 +39,13 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			//template class APAPI list<float>;
-
 			/**
 			 * Implements a simple FPS counter
 			 */
 			class APAPI FPSCounter
 			{
 			private:
-				list<float> m_frameTimes;
+				LinkedList<float> m_frameTimes;
 				float m_fps;
 			public:
 				float getFPS() const { return m_fps; }

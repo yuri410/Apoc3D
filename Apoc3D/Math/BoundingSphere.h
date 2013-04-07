@@ -27,10 +27,7 @@
  */
 
 
-#include "apoc3d/Common.h"
-
 #include "Vector.h"
-#include "Plane.h"
 #include "MathCommon.h"
 
 namespace Apoc3D
@@ -199,10 +196,7 @@ namespace Apoc3D
 			/**
 			 *  Finds the intersection between a plane and a sphere.
 			 */
-			static PlaneIntersectionType Intersects(const BoundingSphere& sphere, const Plane& plane)
-			{
-				return Plane::Intersects(plane, sphere);
-			}
+			static PlaneIntersectionType Intersects(const BoundingSphere& sphere, const Plane& plane);
 		};
 	}
 }

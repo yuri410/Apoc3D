@@ -31,6 +31,7 @@
 #include "apoc3d/Utility/StringUtils.h"
 
 #include <direct.h>
+#include <iostream>
 
 using namespace std;
 using namespace APBuild;
@@ -178,7 +179,7 @@ int Build(ConfigurationSection* sect)
 
 	bool thereAreWarnings = false;
 	bool thereAreErrors = false;
-	for (size_t i=0;i<CompileLog::Logs.size();i++)
+	for (int32 i=0;i<CompileLog::Logs.getCount();i++)
 	{
 		switch (CompileLog::Logs[i].Type)
 		{

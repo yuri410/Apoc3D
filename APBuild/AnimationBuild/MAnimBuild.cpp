@@ -11,7 +11,7 @@
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Graphics/Animation/AnimationData.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -94,7 +94,7 @@ namespace APBuild
 
 		MaterialAnimationClip* clip = new MaterialAnimationClip(maxTime, keyFrames);
 
-		mtrlClip.insert(std::make_pair(takeName, clip));
+		mtrlClip.Add(takeName, clip);
 		
 		delete script;
 		delete fl;

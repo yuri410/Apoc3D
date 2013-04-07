@@ -28,11 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "apoc3d/Common.h"
-#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Core;
-
-using namespace std;
 
 static const int SmallPrimeTable[72] = { 
 	3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 
@@ -130,16 +127,13 @@ namespace Apoc3D
 			virtual int64 GetHashCode(const LPResource& obj) const;
 		};
 
-		class APAPI stlstringEqualityComparer : public IEqualityComparer<string>
+		class APAPI stlstringEqualityComparer : public IEqualityComparer<std::string>
 		{
 		public:
-			class BuiltIn : public IBuiltInEqualityComparer<string> { };
+			class BuiltIn : public IBuiltInEqualityComparer<std::string> { };
 
-			virtual bool Equals(const string& x, const string& y) const;
-			virtual int64 GetHashCode(const string& obj) const;
-
-		private:
-			unordered_map<string, string> m_hasher;
+			virtual bool Equals(const std::string& x, const std::string& y) const;
+			virtual int64 GetHashCode(const std::string& obj) const;
 		};
 
 		class APAPI StringEuqlityComparer : public IEqualityComparer<String>
@@ -161,8 +155,8 @@ namespace Apoc3D
 		template<> const IEqualityComparer<wchar_t>*
 			IBuiltInEqualityComparer<wchar_t>::Default = new WCharEqualityComparer();
 
-		template<> const IEqualityComparer<string>* 
-			IBuiltInEqualityComparer<string>::Default = new stlstringEqualityComparer();
+		template<> const IEqualityComparer<std::string>* 
+			IBuiltInEqualityComparer<std::string>::Default = new stlstringEqualityComparer();
 
 		template<> const IEqualityComparer<uint64>*
 			IBuiltInEqualityComparer<uint64>::Default = new Uint64EqualityComparer();

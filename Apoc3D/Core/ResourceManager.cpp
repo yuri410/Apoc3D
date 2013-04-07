@@ -93,16 +93,15 @@ namespace Apoc3D
 		}
 		ResourceManager::~ResourceManager()
 		{
-			if (m_hashTable.size())
+			if (m_hashTable.getCount())
 			{
-				for (ResHashTable::iterator iter = m_hashTable.begin();iter!=m_hashTable.end();iter++)
+				for (ResHashTable::Enumerator e = m_hashTable.GetEnumerator();e.MoveNext();)
 				{
-					if (iter->second->getState() == RS_Loaded)
+					if ((*e.getCurrentValue())->getState() == RS_Loaded)
 					{
 						LogManager::getSingleton().Write(LOG_System, 
-							L"ResMgr: Resource leak detected: " + iter->first, LOGLVL_Warning);
+							L"ResMgr: Resource leak detected: " + (*e.getCurrentKey()), LOGLVL_Warning);
 					}
-					
 				}
 				
 			}
@@ -116,9 +115,9 @@ namespace Apoc3D
 
 		void ResourceManager::ReloadAll()
 		{
-			for (ResHashTable::iterator iter = m_hashTable.begin();iter!=m_hashTable.end();iter++)
+			for (ResHashTable::Enumerator e = m_hashTable.GetEnumerator();e.MoveNext();)
 			{
-				Resource* res = iter->second;
+				Resource* res = (*e.getCurrentValue());
 
 				if (res->getState() == RS_Loaded)
 				{
@@ -129,21 +128,17 @@ namespace Apoc3D
 
 		Resource* ResourceManager::Exists(const String& hashString)
 		{
-			ResHashTable::iterator iter = m_hashTable.find(hashString);
-
-			if (iter != m_hashTable.end())
-			{
-				return iter->second;
-			}
-
-			return 0;
+			Resource* result;
+			if (m_hashTable.TryGetValue(hashString, result))
+				return result;
+			return nullptr;
 		}
 		void ResourceManager::NotifyNewResource(Resource* res)
 		{
 			//assert(!res->isManaged());
 			if (!m_isShutDown)
 			{
-				m_hashTable.insert(ResHashTable::value_type(res->getHashString(), res));
+				m_hashTable.Add(res->getHashString(), res);
 
 				if (m_generationTable)
 					m_generationTable->AddResource(res);
@@ -167,7 +162,7 @@ namespace Apoc3D
 				//	res->Unload();
 				//}
 
-				m_hashTable.erase(res->getHashString());
+				m_hashTable.Remove(res->getHashString());
 
 				if (m_generationTable)
 					m_generationTable->RemoveResource(res);

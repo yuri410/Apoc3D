@@ -3,16 +3,19 @@
 
 #include "../APDCommon.h"
 #include "apoc3d/Core/Singleton.h"
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastQueue.h"
-
-#include "tthread/fast_mutex.h"
-#include "tthread/tinythread.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/Queue.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Collections;
+
+namespace tthread
+{
+	class thread;
+	class mutex;
+}
 
 namespace APDesigner
 {
@@ -22,6 +25,7 @@ namespace APDesigner
 		SINGLETON_DECL_HEARDER(BuildInterface);
 
 		BuildInterface();
+		~BuildInterface();
 
 		void AddSingleBuildItem(ProjectItem* item);
 		void AddBuild(Project* project);
@@ -44,17 +48,17 @@ namespace APDesigner
 		
 		tthread::thread* m_processThread;
 
-		tthread::fast_mutex m_resultLock;
-		FastQueue<String> m_lastResult;
+		tthread::mutex* m_resultLock;
+		Queue<String> m_lastResult;
 		bool m_hasLastError;
 
-		tthread::fast_mutex m_taskLock;
-		FastQueue<Configuration*> m_taskList;
+		tthread::mutex* m_taskLock;
+		Queue<Configuration*> m_taskList;
 
-		tthread::fast_mutex m_flagLock;
+		tthread::mutex* m_flagLock;
 		volatile bool m_finished;
 		
-		tthread::fast_mutex m_processLock;
+		tthread::mutex* m_processLock;
 
 
 		String m_buildWarningMessages;

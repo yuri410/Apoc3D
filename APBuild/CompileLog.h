@@ -2,9 +2,10 @@
 #define COMPILELOG_H
 
 #include "APBCommon.h"
+#include "apoc3D/Collections/List.h"
 
 using namespace Apoc3D;
-using namespace std;
+using namespace Apoc3D::Collections;
 
 namespace APBuild
 {
@@ -23,12 +24,12 @@ namespace APBuild
 	class CompileLog
 	{
 	public:
-		static vector<CompileLogEntry> Logs;
+		static List<CompileLogEntry> Logs;
 
 		static void Write(CompileLogType type, const String& message, const String& location)
 		{
 			CompileLogEntry ent = {type, location, message};
-			Logs.push_back(ent);
+			Logs.Add(ent);
 		}
 		static  void WriteInformation(const String& message, const String& location)
 		{
@@ -45,7 +46,7 @@ namespace APBuild
 
 		static void Clear()
 		{
-			Logs.clear();
+			Logs.Clear();
 		}
 
 	};

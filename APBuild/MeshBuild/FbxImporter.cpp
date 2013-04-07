@@ -992,7 +992,7 @@ namespace APBuild
 		{
 			delete m_materials[i];
 		}
-		for (FastMap<string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
+		for (HashMap<string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
 		{
 			delete *i.getCurrentValue();
 		}
@@ -1171,7 +1171,7 @@ namespace APBuild
 		
 		// mesh
 		{
-			for (FastMap<string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
+			for (HashMap<string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
 			{
 				FIMesh* mesh = *i.getCurrentValue();
 				const std::vector<FIMeshPart*>& parts = mesh->getParts();
@@ -1217,7 +1217,7 @@ namespace APBuild
 					{
 						MaterialData* mtrlData = materialData[j];
 						mtrlData->Cull = CULL_Clockwise;
-						meshData->Materials.Add(*mtrlData);
+						meshData->Materials.Add(mtrlData);
 					}
 				}
 				meshData->Name = StringUtils::toWString(mesh->GetName());
@@ -1227,7 +1227,7 @@ namespace APBuild
 				// duplicated vertex removal using hashtable
 				// build face data at the same time
 				FIVertexEqualityComparer comparer;
-				FastMap<FIVertex, int> vtxHashTable(totalVertexCount, &comparer);
+				HashMap<FIVertex, int> vtxHashTable(totalVertexCount, &comparer);
 				FastList<FIVertex> vertexList(totalVertexCount);
 				meshData->Faces.ResizeDiscard(totalVertexCount/3+2);
 

@@ -24,11 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "EffectParameter.h"
 
 #include "apoc3d/Core/Logging.h"
-#include "apoc3d/Collections/FastMap.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Core;
-using namespace Apoc3D::Collections;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -105,8 +103,8 @@ namespace Apoc3D
 				StringEuqlityComparer m_comparer1;
 				Int32EqualityComparer m_comparer2;
 
-				FastMap<String, EffectParamUsage> CastTable;
-				FastMap<int, String> InvCastTable;
+				HashMap<String, EffectParamUsage> CastTable;
+				HashMap<int, String> InvCastTable;
 			private:
 				void AddPair(const String& name, EffectParamUsage usage)
 				{
@@ -152,7 +150,7 @@ namespace Apoc3D
 				return L"unknown";
 			}
 
-			FastMap<String, EffectParamUsage>::Enumerator EffectParameter::getParameterUsageEnumeration()
+			HashMap<String, EffectParamUsage>::Enumerator EffectParameter::getParameterUsageEnumeration()
 			{
 				return EffectParameterUsageConverter.CastTable.GetEnumerator();
 			}

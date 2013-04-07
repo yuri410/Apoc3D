@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "BoundingSphere.h"
 
+#include "Plane.h"
 #include "BoundingBox.h"
 #include "Ray.h"
 
@@ -148,6 +149,11 @@ namespace Apoc3D
 			}
 
 			return false;
+		}
+
+		PlaneIntersectionType BoundingSphere::Intersects(const BoundingSphere& sphere, const Plane& plane)
+		{
+			return Plane::Intersects(plane, sphere);
 		}
 	}
 }

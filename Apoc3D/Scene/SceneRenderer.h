@@ -29,8 +29,8 @@
 
 #include "apoc3d/Common.h"
 
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Config;
@@ -45,9 +45,9 @@ namespace Apoc3D
 	namespace Scene
 	{
 		typedef FastList<RenderOperation> OperationList;
-		typedef FastMap<GeometryData*, OperationList*> GeometryTable;
-		typedef FastMap<Material*, GeometryTable*> MaterialTable;
-		typedef FastMap<uint32, MaterialTable*> PriorityTable;
+		typedef HashMap<GeometryData*, OperationList*> GeometryTable;
+		typedef HashMap<Material*, GeometryTable*> MaterialTable;
+		typedef HashMap<uint32, MaterialTable*> PriorityTable;
 
 		/**
 		 *  A hirerachy of tables to store classified render operations.

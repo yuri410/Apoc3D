@@ -27,16 +27,11 @@
  */
 
 
-#include "apoc3d/Common.h"
 #include "VertexElement.h"
-
-#include "apoc3d/Collections/FastList.h"
-#include "apoc3d/Graphics/GraphicsCommon.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
-
-using namespace std;
 
 namespace Apoc3D
 {
@@ -44,7 +39,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{			
-			typedef vector<const VertexElement> VertexElementList;
+			typedef List<VertexElement> VertexElementList;
 
 			class APAPI VertexDeclaration
 			{
@@ -52,7 +47,7 @@ namespace Apoc3D
 				VertexElementList elements;
 
 				VertexDeclaration(const FastList<VertexElement> &e);
-				VertexDeclaration(const vector<VertexElement> &e);
+				VertexDeclaration(const List<VertexElement> &e);
 
 			public:
 				/**

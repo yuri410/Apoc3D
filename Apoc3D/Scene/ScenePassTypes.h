@@ -29,7 +29,7 @@
 
 #include "apoc3d/Common.h"
 
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
@@ -197,7 +197,7 @@ namespace Apoc3D
 		{
 			SceneOpCode Operation;
 			int Next;
-			std::vector<SceneOpArg> Args;
+			List<SceneOpArg> Args;
 
 			SceneInstruction() 
 			{
@@ -233,7 +233,7 @@ namespace Apoc3D
 			int32 SelectorID;
 			String Name;
 			int32 CameraID;
-			std::vector<SceneInstruction> Instructions;
+			List<SceneInstruction> Instructions;
 
 			ScenePassData()
 			{

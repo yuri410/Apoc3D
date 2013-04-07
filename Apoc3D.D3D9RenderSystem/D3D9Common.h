@@ -96,7 +96,7 @@ namespace Apoc3D
 			class D3D9RenderWindow;
 			class D3D9RenderView;
 			class D3D9RenderViewSet;
-			class D3D9DeviceContent;
+			class D3D9DeviceContext;
 
 			class D3D9Texture;
 			class D3D9RenderTarget;

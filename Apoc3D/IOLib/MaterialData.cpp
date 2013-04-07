@@ -44,22 +44,6 @@ namespace Apoc3D
 		*/
 		static const int MtrlId_V3 = ((byte)'M' << 24) | ((byte)'T' << 16) | ((byte)'R' << 8) | ((byte)'L');
 
-		static String TAG_2_IsTransparent = L"IsTransparent";
-		static String TAG_2_CullMode = L"CullMode";
-		static String TAG_2_ZEnabled = L"ZEnabled";
-		static String TAG_2_ZWriteEnabled = L"ZWriteEnabled";
-		static String TAG_2_AlphaRef = L"AlphaRef";
-		static String TAG_2_IsVegetation = L"IsVegetation";
-		static String TAG_2_RenderPriority = L"RenderPriority";
-
-		static String TAG_2_MaterialColorTag = L"MaterialColor";
-
-		static String TAG_2_MaterialFlag = L"Flags";
-		static String TAG_2_HasTexture = L"HasTexture";
-		static String TAG_2_Texture = L"Texture";
-		static String TAG_2_Effect = L"Effect";
-
-
 		// =============================================================
 
 		static String TAG_3_CustomParamCount = L"CustomParamCount";
@@ -100,115 +84,16 @@ namespace Apoc3D
 			{
 				throw Apoc3DException::createException(EX_Argument, L"usage can not be empty");
 			}
-			CustomParametrs.insert(CustomParamTable::value_type(value.Usage, value));
+			CustomParametrs.Add(value.Usage, value);
 		}
 
-		void MaterialData::LoadV2(TaggedDataReader* data)
-		{
-			SetDefaults();
-			AlphaReference = static_cast<uint32>(data->GetDataSingle(TAG_2_AlphaRef)*255);
-			if (AlphaReference > 255)
-				AlphaReference = 255;
-
-			AlphaTestEnabled = !!AlphaReference;
-
-
-			bool isVegetation = false;
-			data->TryGetDataBool(TAG_2_IsVegetation, isVegetation);
-			if (isVegetation)
-			{
-				this->AddCustomParameter(MaterialCustomParameter(isVegetation, L"veg"));
-			}
-
-
-			int32 val = static_cast<int32>(CULL_None);
-			data->TryGetDataInt32(TAG_2_CullMode, val);
-			Cull = static_cast<CullMode>(val);
-
-
-			IsBlendTransparent = false;
-			data->TryGetDataBool(TAG_2_IsTransparent, IsBlendTransparent);
-
-			DepthTestEnabled = true;
-			data->TryGetDataBool(TAG_2_ZEnabled, DepthTestEnabled);
-
-
-			DepthWriteEnabled = true;
-			data->TryGetDataBool(TAG_2_ZWriteEnabled, DepthWriteEnabled);
-
-			Priority = 1;
-			data->TryGetDataInt32(TAG_2_RenderPriority, Priority);
-			Priority++;
-
-			// backward compatibility
-			{
-				int32 flags = data->GetDataInt32(TAG_2_MaterialFlag);
-
-				if (flags == 2)
-				{
-					SourceBlend = BLEND_SourceAlpha;
-					DestinationBlend = BLEND_One;
-				}
-				else if (flags == 3)
-				{
-					SourceBlend = BLEND_SourceColor;
-					DestinationBlend = BLEND_One;
-				}
-				else
-				{
-					SourceBlend = BLEND_SourceAlpha;
-					DestinationBlend = BLEND_InverseSourceAlpha;
-				}
-			}
-
-			PassFlags = 1;
-
-			// load material basic color
-			{
-				BinaryReader* br = data->GetData(TAG_2_MaterialColorTag);
-
-				br->ReadColor4(Ambient);
-				br->ReadColor4(Diffuse);
-				br->ReadColor4(Emissive);
-				br->ReadColor4(Specular);
-				Power = br->ReadSingle();
-
-				br->Close();
-				delete br;
-			}
-			// load effect
-			data->GetDataString(TAG_2_Effect, EffectName[0]);
-
-			// load textures
-			{
-				BinaryReader* br = data->GetData(TAG_2_HasTexture);
-				bool hasTexture[MaxTextures];
-				for (int32 i=0;i<MaxTextures;i++)
-				{
-					hasTexture[i] = br->ReadBoolean();
-				} 
-				br->Close();
-				delete br;
-
-				for (int32 i=0;i<MaxTextures;i++)
-				{
-					if (hasTexture[i])
-					{
-						String tag = StringUtils::ToString(i);
-						tag = TAG_2_Texture + tag;
-
-						data->GetDataString(TAG_2_Effect, TextureName[i]);
-					}
-				}
-			}
-		}
 		void MaterialData::LoadV3(TaggedDataReader* data)
 		{
 			// load custom material parameters
 			uint32 cmpCount = 0;
 			data->TryGetDataUInt32(TAG_3_CustomParamCount, cmpCount);
 			//m_customParametrs.reserve(cmpCount);
-			CustomParametrs.rehash(cmpCount);
+			CustomParametrs.Resize(cmpCount);
 
 			for (uint32 i=0;i<cmpCount;i++)
 			{
@@ -242,7 +127,14 @@ namespace Apoc3D
 						String tag = StringUtils::ToString(i);
 						tag = tag + TAG_3_Texture;
 
-						data->GetDataString(tag, TextureName[i]);
+						String name;
+						data->GetDataString(tag, name);
+
+						if (!TextureName.Contains(i))
+							TextureName.Add(i, name);
+						else
+							TextureName[i] = name;
+
 					}
 				}
 			}
@@ -259,7 +151,15 @@ namespace Apoc3D
 						String tag = StringUtils::ToString(i);
 						tag = tag + TAG_3_Effect;
 
-						data->GetDataString(tag, EffectName[i]);
+						String name;
+						data->GetDataString(tag, name);
+
+						if (!EffectName.Contains(i))
+							EffectName.Add(i, name);
+						else
+							EffectName[i] = name;
+
+						//data->GetDataString(tag, EffectName[i]);
 					}
 				}
 			}
@@ -311,27 +211,17 @@ namespace Apoc3D
 
 		void MaterialData::LoadData(TaggedDataReader* data)
 		{
-			int version = 3;
-			if (data->Contains(TAG_2_AlphaRef))
-			{
-				version = 2;
-			}
-
-			if (version == 2)
-				LoadV2(data);
-			else
-				LoadV3(data);
-
+			LoadV3(data);
 		}
 		TaggedDataWriter* MaterialData::SaveData()
 		{
 			TaggedDataWriter* data = new TaggedDataWriter(true);
 
-			data->AddEntryUInt32(TAG_3_CustomParamCount, static_cast<uint32>(CustomParametrs.size()));
+			data->AddEntryInt32(TAG_3_CustomParamCount, CustomParametrs.getCount());
 			int32 index = 0;
-			for (CustomParamTable::iterator iter = CustomParametrs.begin(); iter != CustomParametrs.end(); iter++)
+			for (CustomParamTable::Enumerator e = CustomParametrs.GetEnumerator(); e.MoveNext();)
 			{				
-				const MaterialCustomParameter& mcp = iter->second;
+				const MaterialCustomParameter& mcp = *e.getCurrentValue();
 
 				if (!EffectParameter::IsReference(mcp.Type))
 				{
@@ -354,13 +244,21 @@ namespace Apoc3D
 				bool hasTexture[MaxTextures];
 				for (int32 i=0;i<MaxTextures;i++)
 				{
-					hasTexture[i] = (!TextureName[i].empty());
+					if (TextureName.Contains(i))
+					{
+						String name = TextureName[i];
+						hasTexture[i] = !!name.size();
+					}
+					else
+					{
+						hasTexture[i] = false;
+					}
 				}
 				data->AddEntryBool(TAG_3_HasTexture, hasTexture, MaxTextures);
 
 				for (int32 i=0;i<MaxTextures;i++)
 				{
-					if (!TextureName[i].empty())
+					if (hasTexture[i])
 					{
 						String tag = StringUtils::ToString(i);
 						tag = tag + TAG_3_Texture;
@@ -374,13 +272,21 @@ namespace Apoc3D
 				bool hasEffects[MaxScenePass];
 				for (int32 i=0;i<MaxScenePass;i++)
 				{
-					hasEffects[i] = (EffectName.find(i) != EffectName.end());
+					if (EffectName.Contains(i))
+					{
+						String name = EffectName[i];
+						hasEffects[i] = !!name.size();
+					}
+					else
+					{
+						hasEffects[i] = false;
+					}
 				}
 				data->AddEntryBool(TAG_3_HasEffect, hasEffects, MaxScenePass);
 
 				for (int32 i=0;i<MaxScenePass;i++)
 				{
-					if (EffectName.find(i) != EffectName.end())
+					if (hasEffects[i])
 					{
 						String tag = StringUtils::ToString(i);
 						tag = tag + TAG_3_Effect;

@@ -26,9 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "apoc3d/Core/ResourceManager.h"
 #include "apoc3d/Core/Singleton.h"
 

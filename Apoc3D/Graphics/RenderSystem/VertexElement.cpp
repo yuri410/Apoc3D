@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "VertexElement.h"
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 
 namespace Apoc3D
 {
@@ -41,11 +41,11 @@ namespace Apoc3D
 				return 0;
 			}
 
-			bool VertexElement::Compare(const vector<VertexElement> &e1, const vector<VertexElement> &e2)
+			bool VertexElement::Compare(const List<VertexElement> &e1, const List<VertexElement> &e2)
 			{
-				if (e1.size()==e2.size())
+				if (e1.getCount()==e2.getCount())
 				{
-					for (size_t i=0;i<e1.size();i++)
+					for (int32 i=0;i<e1.getCount();i++)
 					{
 						if (e1[i]!=e2[i])
 						{

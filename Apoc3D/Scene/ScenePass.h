@@ -26,9 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "ScenePassTypes.h"
 
 #include "apoc3d/Collections/Stack.h"

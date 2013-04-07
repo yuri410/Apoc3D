@@ -203,7 +203,7 @@ namespace Apoc3DEx
 					{
 						m_queue.Enqueue(enQueueBuffer[i]);
 					}
-					enQueueBuffer.FastClear();
+					enQueueBuffer.Clear();
 				}
 			}
 

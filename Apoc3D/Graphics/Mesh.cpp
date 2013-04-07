@@ -43,17 +43,17 @@ namespace Apoc3D
 
 			// Add the materials from MeshData to the Mesh's material table,
 			// which is used for material animations. See getMaterials for details.
-			const MeshMaterialSet<MaterialData>& mtrls = data->Materials;
+			const MeshMaterialSet<MaterialData*>& mtrls = data->Materials;
 
-			for (uint i=0;i<mtrls.getMaterialCount();i++)
+			for (int32 i=0;i<mtrls.getMaterialCount();i++)
 			{
-				for (uint j=0;j<mtrls.getFrameCount(i);j++)
+				for (int32 j=0;j<mtrls.getFrameCount(i);j++)
 				{
-					const MaterialData& md = mtrls.getMaterial(i, j);
+					const MaterialData* md = mtrls.getMaterial(i, j);
 					
 					Material* m = new Material(m_renderDevice);
 
-					m->Load(md);
+					m->Load(*md);
 
 					if (j)
 					{
@@ -195,9 +195,9 @@ namespace Apoc3D
 			}
 			delete m_vtxDecl;
 
-			for (uint i=0;i<m_materials.getMaterialCount();i++)
+			for (int32 i=0;i<m_materials.getMaterialCount();i++)
 			{
-				for (uint j=0;j<m_materials.getFrameCount(i);j++)
+				for (int32 j=0;j<m_materials.getFrameCount(i);j++)
 				{
 					delete m_materials.getMaterial(i,j);
 				}
@@ -219,13 +219,13 @@ namespace Apoc3D
 			//data->ParentBoneID = m_parentBoneID;
 
 			//data.Materials;
-			for (uint i=0;i<m_materials.getMaterialCount();i++)
+			for (int32 i=0;i<m_materials.getMaterialCount();i++)
 			{
-				for (uint j=0;j<m_materials.getFrameCount(i);j++)
+				for (int32 j=0;j<m_materials.getFrameCount(i);j++)
 				{
-					MaterialData mdata;
+					MaterialData* mdata = new MaterialData();
 					Material* mtrl = m_materials.getMaterial(i,j);
-					mtrl->Save(mdata);
+					mtrl->Save(*mdata);
 
 					if (j)
 					{

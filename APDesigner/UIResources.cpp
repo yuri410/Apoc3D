@@ -13,7 +13,7 @@ using namespace Apoc3D::IO;
 
 namespace APDesigner
 {
-	FastMap<String, Texture*>* UIResources::m_maps = 0;
+	HashMap<String, Texture*>* UIResources::m_maps = 0;
 
 	void UIResources::Initialize(RenderDevice* device)
 	{
@@ -25,7 +25,7 @@ namespace APDesigner
 		Archive* arc = FileSystem::getSingleton().LocateArchive(L"apdgui.pak", rule);
 		int count = arc->getFileCount();
 		
-		m_maps = new FastMap<String, Texture*>(count, IBuiltInEqualityComparer<String>::Default);
+		m_maps = new HashMap<String, Texture*>(count, IBuiltInEqualityComparer<String>::Default);
 
 		for (int i=0;i<count;i++)
 		{
@@ -39,7 +39,7 @@ namespace APDesigner
 	}
 	void UIResources::Finalize()
 	{
-		for (FastMap<String, Texture*>::Enumerator e = m_maps->GetEnumerator();e.MoveNext();)
+		for (HashMap<String, Texture*>::Enumerator e = m_maps->GetEnumerator();e.MoveNext();)
 		{
 			delete *e.getCurrentValue();
 		}

@@ -50,6 +50,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 
+#include <fstream>
+#include <vector>
+
 using namespace Apoc3D::Config;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Graphics;
@@ -243,38 +246,26 @@ namespace APDesigner
 		delete fl;
 		delete plist;
 
+		{
+			std::ifstream strm(m_vsPath.c_str(), std::ios::in);
+			strm.exceptions(std::ios::failbit);
 
-		FileStream* fs = new FileStream(m_vsPath);
-		BinaryReader* br = new BinaryReader(fs);
+			std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(strm), std::istreambuf_iterator<char>( ) );
+			buffer.push_back('\0');
 
-		int64 len = fs->getLength();
-		char* code = new char[(int)len+1];
-		br->ReadBytes(code, len);
-		code[len] = 0;
+			m_tbVertexCode->setText(StringUtils::toWString(&buffer[0]));
 
-		m_tbVertexCode->setText( StringUtils::toWString(code) );
+		}
+		{
+			std::ifstream strm(m_psPath.c_str(), std::ios::in);
+			strm.exceptions(std::ios::failbit);
 
-		delete[] code;
+			std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(strm), std::istreambuf_iterator<char>( ) );
+			buffer.push_back('\0');
 
-		br->Close();
-		delete br;
-
-
-		fs = new FileStream(m_psPath);
-		br = new BinaryReader(fs);
-
-		len = fs->getLength();
-		code = new char[(int)len+1];
-		br->ReadBytes(code, len);
-		code[len] = 0;
-
-		m_tbPixelCode->setText( StringUtils::toWString(code) );
-
-		delete[] code;
-
-		br->Close();
-		delete br;
-
+			m_tbPixelCode->setText(StringUtils::toWString(&buffer[0]));
+		}
+		
 		RefreshParameterList();
 
 	}
@@ -348,7 +339,7 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		List<String> items;
-		for (FastMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
+		for (HashMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
 			items.Add(*e.getCurrentKey());
 		m_cbVsUsage = new ComboBox(Point(sx+100, sy), 140, items);
 		m_cbVsUsage->SetSkin(window->getUISkin());
@@ -487,7 +478,7 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		List<String> items;
-		for (FastMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
+		for (HashMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
 			items.Add(*e.getCurrentKey());
 		m_cbPsUsage = new ComboBox(Point(sx+100, sy), 140, items);
 		m_cbPsUsage->SetSkin(window->getUISkin());

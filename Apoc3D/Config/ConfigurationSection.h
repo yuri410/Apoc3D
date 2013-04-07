@@ -26,15 +26,14 @@
  * -----------------------------------------------------------------------------
  */
 
-
 #include "apoc3d/Common.h"
 #include "apoc3d/Math/ColorValue.h"
-#include "apoc3d/Collections/FastMap.h"
+#include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
-using namespace std;
 
 namespace Apoc3D
 {
@@ -63,8 +62,8 @@ namespace Apoc3D
 		class APAPI ConfigurationSection
 		{
 		public:
-			typedef FastMap<String, String> AttributeTable;
-			typedef FastMap<String, ConfigurationSection*> SubSectionTable;
+			typedef HashMap<String, String> AttributeTable;
+			typedef HashMap<String, ConfigurationSection*> SubSectionTable;
 
 			typedef SubSectionTable::Enumerator SubSectionEnumerator;
 			typedef AttributeTable::Enumerator AttributeEnumerator;
@@ -115,11 +114,11 @@ namespace Apoc3D
 			int32 GetInt(const String& key) const;
 			uint32 GetUInt(const String& key) const;
 			ColorValue GetColorValue(const String& key) const;
-			vector<String> GetStrings(const String& key) const;
-			vector<float> GetSingles(const String& key) const;			
-			vector<float> GetPercentages(const String& key) const;
-			vector<int32> GetInts(const String& key) const;
-			vector<uint32> GetUInts(const String& key) const;
+			List<String> GetStrings(const String& key) const;
+			List<float> GetSingles(const String& key) const;			
+			List<float> GetPercentages(const String& key) const;
+			List<int32> GetInts(const String& key) const;
+			List<uint32> GetUInts(const String& key) const;
 
 
 			bool GetAttributeBool(const String& key) const;
@@ -128,11 +127,11 @@ namespace Apoc3D
 			int32 GetAttributeInt(const String& key) const;
 			uint32 GetAttributeUInt(const String& key) const;
 			ColorValue GetAttributeColorValue(const String& key) const;
-			vector<String> GetAttributeStrings(const String& key) const;
-			vector<float> GetAttributeSingles(const String& key) const;
-			vector<float> GetAttributePercentages(const String& key) const;
-			vector<int32> GetAttributeInts(const String& key) const;
-			vector<uint32> GetAttributeUInts(const String& key) const;
+			List<String> GetAttributeStrings(const String& key) const;
+			List<float> GetAttributeSingles(const String& key) const;
+			List<float> GetAttributePercentages(const String& key) const;
+			List<int32> GetAttributeInts(const String& key) const;
+			List<uint32> GetAttributeUInts(const String& key) const;
 
 			bool TryGetBool(const String& key, bool& result) const;
 			bool TryGetSingle(const String& key, float& result) const;
@@ -166,11 +165,11 @@ namespace Apoc3D
 			void AddInts(const String& key, const int32* v, int count);
 			void AddUInts(const String& key, const uint32* v, int count);
 			
-			void AddStrings(const String& key, const std::vector<String>& v) { AddStrings(key, &v[0], static_cast<int>(v.size())); }
-			void AddSingles(const String& key, const std::vector<float>& v) { AddSingles(key, &v[0], static_cast<int>(v.size())); }
-			void AddPercentages(const String& key, const std::vector<float>& v) { AddPercentages(key, &v[0], static_cast<int>(v.size())); }
-			void AddInts(const String& key, const std::vector<int32>& v) { AddInts(key, &v[0], static_cast<int>(v.size())); }
-			void AddUInts(const String& key, const std::vector<uint32>& v) { AddUInts(key, &v[0], static_cast<int>(v.size())); }
+			void AddStrings(const String& key, const List<String>& v) { AddStrings(key, &v[0], v.getCount()); }
+			void AddSingles(const String& key, const List<float>& v) { AddSingles(key, &v[0],  v.getCount()); }
+			void AddPercentages(const String& key, const List<float>& v) { AddPercentages(key, &v[0],  v.getCount()); }
+			void AddInts(const String& key, const List<int32>& v) { AddInts(key, &v[0],  v.getCount()); }
+			void AddUInts(const String& key, const List<uint32>& v) { AddUInts(key, &v[0],  v.getCount()); }
 
 
 			void AddAttributeString(const String& name, const String& value);
@@ -187,11 +186,11 @@ namespace Apoc3D
 			void AddAttributeInts(const String& name, const int32* v, int count);
 			void AddAttributeUInts(const String& name, const uint32* v, int count);
 
-			void AddAttributeStrings(const String& name, const std::vector<String>& v) { AddAttributeStrings(name, &v[0], static_cast<int>(v.size())); }
-			void AddAttributeSingles(const String& name, const std::vector<float>& v) { AddAttributeSingles(name, &v[0], static_cast<int>(v.size())); }
-			void AddAttributePercentages(const String& name, const std::vector<float>& v) { AddAttributePercentages(name, &v[0], static_cast<int>(v.size())); }
-			void AddAttributeInts(const String& name, const std::vector<int32>& v) { AddAttributeInts(name, &v[0], static_cast<int>(v.size())); }
-			void AddAttributeUInts(const String& name, const std::vector<uint32>& v) { AddAttributeUInts(name, &v[0], static_cast<int>(v.size())); }
+			void AddAttributeStrings(const String& name, const List<String>& v) { AddAttributeStrings(name, &v[0], v.getCount()); }
+			void AddAttributeSingles(const String& name, const List<float>& v) { AddAttributeSingles(name, &v[0], v.getCount()); }
+			void AddAttributePercentages(const String& name, const List<float>& v) { AddAttributePercentages(name, &v[0], v.getCount()); }
+			void AddAttributeInts(const String& name, const List<int32>& v) { AddAttributeInts(name, &v[0], v.getCount()); }
+			void AddAttributeUInts(const String& name, const List<uint32>& v) { AddAttributeUInts(name, &v[0], v.getCount()); }
 
 		protected:
 			

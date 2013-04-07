@@ -26,9 +26,9 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Common.h"
+#include "apoc3d/Collections/List.h"
 
-using namespace std;
+using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {	
@@ -61,7 +61,7 @@ namespace Apoc3D
 			static void SplitFileNameExtension(const String& fileName, String& noext, String& ext);
 			static void SplitFilePath(const String& path, String& fileName, String& parentDir);
 			static void SplitFilePathNameExtension(const String& path, String& parentDir, String& noext, String& ext);
-			static vector<String> Split(const String& path);
+			static List<String> Split(const String& path);
 			/**
 			 *  Combines two path strings
 			 */

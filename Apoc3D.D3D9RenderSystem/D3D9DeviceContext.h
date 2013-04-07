@@ -22,8 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9DDEVICECONTNET_H
-#define D3D9DDEVICECONTNET_H
+#ifndef D3D9DDEVICECONTEXT_H
+#define D3D9DDEVICECONTEXT_H
 
 #include "D3D9Common.h"
 #include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
@@ -36,7 +36,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9DeviceContent : public DeviceContext
+			class D3D9DeviceContext : public DeviceContext
 			{
 			public:
 				void NotifyWindowClosed(D3D9RenderWindow* wnd);
@@ -45,8 +45,8 @@ namespace Apoc3D
 
 				IDirect3D9* getD3D() const { return m_d3d9; }
 
-				D3D9DeviceContent();
-				~D3D9DeviceContent();
+				D3D9DeviceContext();
+				~D3D9DeviceContext();
 
 				virtual RenderDevice* getRenderDevice();
 

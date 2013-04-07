@@ -41,10 +41,10 @@ namespace APDesigner
 
 		virtual bool SupportsIndependentEditing() { return true; };
 
-		virtual std::vector<String> GetFileExtensions() 
+		virtual List<String> GetFileExtensions() 
 		{
-			std::vector<String> r;
-			r.push_back(L".mtrl");
+			List<String> r;
+			r.Add(L".mtrl");
 			return r;
 		}
 

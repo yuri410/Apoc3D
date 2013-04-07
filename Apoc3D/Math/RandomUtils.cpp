@@ -23,10 +23,18 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "RandomUtils.h"
 
+#include <ctime>
+
 namespace Apoc3D
 {
 	namespace Math
 	{
 		Random Randomizer::m_randomizer;
+
+		Random::Random()
+		{
+			const int32 seed = static_cast<int32>(time(0));
+			SetSeed(seed);
+		}
 	}
 }

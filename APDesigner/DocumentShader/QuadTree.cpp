@@ -83,7 +83,7 @@ namespace APDesigner
 
 	void QuadTreeNode::Clear()
 	{
-		m_attachedGraphNodes.clear();
+		m_attachedGraphNodes.Clear();
 
 		for (int i=0;i<4;i++)
 		{
@@ -118,8 +118,8 @@ namespace APDesigner
 			Vector2 expectedPos = Vector2Utils::Zero;
 
 			// Go through all GraphNode
-			for (std::list<GraphNode*>::iterator iter = m_attachedGraphNodes.begin();
-				iter != m_attachedGraphNodes.end(); iter++)
+			for (LinkedList<GraphNode*>::Iterator iter = m_attachedGraphNodes.Begin();
+				iter != m_attachedGraphNodes.End(); iter++)
 			{
 				GraphNode* nde = *iter;
 				const float m = nde->getMass();
@@ -174,8 +174,8 @@ namespace APDesigner
 
 	GraphNode* QuadTreeNode::IntersectNodes(const Vector2& pt)
 	{
-		for (std::list<GraphNode*>::iterator iter = m_attachedGraphNodes.begin();
-			iter != m_attachedGraphNodes.end(); iter++)
+		for (LinkedList<GraphNode*>::Iterator iter = m_attachedGraphNodes.Begin();
+			iter != m_attachedGraphNodes.End(); iter++)
 		{
 			GraphNode* nde = *iter;
 			
@@ -209,8 +209,8 @@ namespace APDesigner
 
 	void QuadTreeNode::FillIntersectingNodesAttachment(FastList<GraphNode*>& list, const Apoc3D::Math::RectangleF& area)
 	{
-		for (std::list<GraphNode*>::iterator iter = m_attachedGraphNodes.begin();
-			iter != m_attachedGraphNodes.end(); iter++)
+		for (LinkedList<GraphNode*>::Iterator iter = m_attachedGraphNodes.Begin();
+			iter != m_attachedGraphNodes.End(); iter++)
 		{
 			list.Add(*iter);
 		}

@@ -177,7 +177,7 @@ namespace Apoc3D
 
 					TextureLevelData lvl;
 					lvl.LoadData(data2, doNotLoadLevelContent);
-					Levels.push_back(lvl);
+					Levels.Add(lvl);
 
 					data2->Close();
 					br2->Close();

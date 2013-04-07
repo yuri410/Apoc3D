@@ -26,10 +26,7 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
-#include "apoc3d/Collections/FastList.h"
+#include "apoc3d/Collections/List.h"
 
 #include "RenderOperation.h"
 
@@ -87,7 +84,7 @@ namespace Apoc3D
 			
 			void FastClear()
 			{
-				m_oplist.FastClear();
+				m_oplist.Clear();
 			}
 			void ReserveDiscard(int count)
 			{
