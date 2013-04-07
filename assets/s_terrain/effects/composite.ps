@@ -1,0 +1,31 @@
+
+#define FocusFar 0.15
+#define FocusNear 0.033
+
+sampler2D colorTex : register(s0);
+sampler2D blurredTex : register(s1);
+sampler2D depthTex : register(s2);
+
+//float FocusNear : register(c0);
+
+struct PSInput
+{
+	float2 TexCoord : TEXCOORD0;
+};
+
+float4 main(float2 texCoord : TEXCOORD0) : COLOR0
+{
+    // Look up the bloom and original base image colors.
+    float4 color = tex2D(colorTex, texCoord);
+    float4 blurred = tex2D(blurredTex, texCoord);
+    float depth = tex2D(depthTex, texCoord).a;
+    
+    
+    float nearBlurFactor = clamp((FocusNear - depth) / FocusNear * 2, 0.0, 1.0);
+    float farBlurFactor = clamp((depth - FocusFar) / (1.0 - FocusFar) * 2, 0.0, 1.0);
+    
+    float blurFactor = max(nearBlurFactor, farBlurFactor);
+    
+    float3 result = lerp(color.rgb, blurred.rgb, blurFactor);
+	return float4(result, blurred.a);
+}

@@ -1,0 +1,13 @@
+#define FOG_COLOR  float3(156,200, 156)/255.0
+//float3(0.035,0.756, 0.96)
+#define SFUMATO_PERCENTAGE 90.0
+
+#define FadeFogNear 1200.0
+#define FadeFogFar 1450.0
+
+
+float GetFogFade(float depth)
+{
+    float fogFade = clamp((depth - FadeFogNear) / (FadeFogFar - FadeFogNear), 0, SFUMATO_PERCENTAGE / 100.0);
+    return fogFade;
+}

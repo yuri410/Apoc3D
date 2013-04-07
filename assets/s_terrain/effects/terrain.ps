@@ -1,0 +1,97 @@
+#include "fog.psh"
+
+sampler2D texDif1 : register(s0);
+sampler2D texDif2 : register(s1);
+sampler2D texDif3 : register(s2);
+sampler2D texDif4 : register(s3);
+sampler2D texEdge : register(s4);
+
+float4 k_d : register(c0);
+float4 k_a : register(c1);
+float4 k_e : register(c3);
+
+float4 i_a : register(c5);
+float4 i_d : register(c6);
+float3 lightDir : register(c8);
+
+struct PSInput
+{
+    float4 TexCoord : TEXCOORD0;
+    float3 Normal : TEXCOORD1;
+};
+
+struct PSOutput
+{
+    float4 Color : COLOR0;
+	float4 Color2 : COLOR1;
+};
+
+PSOutput main(PSInput ip)
+{
+	PSOutput o;
+    
+	float ndl = dot(ip.Normal, lightDir);
+
+	float height = ip.TexCoord.z / 75.0;
+
+	// sand center  -0.6,  spr 0.4
+	// grass center   0.0,  spr 0.2
+	// stone center   0.25, spr 0.05
+	// snow center    0.65, spr 0.35
+
+	// stone center  -0.7,  spr 0.3
+	// sand center   -0.3,  spr 0.1
+	// grass center   0.05, spr 0.25
+	// snow center    0.65, spr 0.35
+	float l1 = 1 - saturate(abs(height - (-0.7)) / (0.4*1.8)); // sand
+	float l2 = 1 - saturate(abs(height - ( 0.0 )) / (0.2*1.8)); // grass
+	float l3 = 1 - saturate(abs(height - ( 0.25)) / (0.05*1.8)); // stone
+	float l4 = 1 - saturate(abs(height - ( 0.65)) / (0.35*1.65)); 
+	
+	float2 nsize = (ip.Normal.xz);
+
+	
+	l3 += pow(length(nsize)*2.0f, 6) ;
+	
+
+
+	float mod = l1 + l2 + l3 + l4;
+	mod = 1.0/mod;
+	l1 *= mod; l2 *= mod; l3 *= mod; l4 *= mod;
+
+	//float2 ofs = (ip.TexCoord.xy/16.0)-float2(0.5,0.5);
+	//float aux = atan(ofs.y, ofs.x);
+	
+	l1 = tex2D(texEdge, float2(l1, 0)).r;
+	l2 = tex2D(texEdge, float2(l2, 0)).r;
+	l3 = tex2D(texEdge, float2(l3, 0)).r;
+	l4 = tex2D(texEdge, float2(l4, 0)).r;
+
+
+	float4 amb = i_a * k_a;
+	float4 dif = i_d * k_d * max(0, ndl);
+	float4 p = amb+dif+k_e;
+	
+
+
+	float4 texColor = 0;
+	if (l1 >0) texColor += l1 * tex2D(texDif2, ip.TexCoord.xy);
+	if (l2 >0) 
+	{
+		texColor += l2 * tex2D(texDif3, ip.TexCoord.xy);
+	}
+	if (l3 >0) texColor += l3 * tex2D(texDif1, ip.TexCoord.xy);
+	if (l4 >0) texColor += l4 * tex2D(texDif4, ip.TexCoord.xy);
+
+	o.Color = texColor * p;
+	
+
+	float depth = ip.TexCoord.w;
+	//o.Color.rgb = lerp(o.Color.rgb, float3(1,1,1), GetFogFade((0.4-height) * 1400));
+	o.Color.rgb = lerp(o.Color.rgb, FOG_COLOR, GetFogFade(depth));
+	o.Color.a = 1;
+
+	o.Color2 = float4(ip.Normal*0.5+0.5, saturate(depth/1500));
+
+	return o;
+}

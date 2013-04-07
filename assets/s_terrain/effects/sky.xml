@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <VS>
+    <mvp Usage="tr_worldvieworiproj"/>
+  </VS>
+  <PS>
+    <texDif1 Usage="tex_0"  MinFilter="Linear" MagFilter="Linear" AddressU="Wrap" AddressV="Wrap"/>
+  </PS>
+</Root>

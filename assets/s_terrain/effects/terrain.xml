@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <VS>
+    <mvp Usage="tr_worldviewproj"/>
+    <world Usage="tr_world"/>
+    <mv Usage="tr_worldview" />
+  </VS>
+  <PS>
+    <texDif1 Usage="tex_0"  MinFilter="Linear" MagFilter="Linear" AddressU="Wrap" AddressV="Wrap"/>
+    <texDif2 Usage="tex_1"  MinFilter="Linear" MagFilter="Linear" AddressU="Wrap" AddressV="Wrap"/>
+    <texDif3 Usage="tex_2"  MinFilter="Linear" MagFilter="Linear" AddressU="Wrap" AddressV="Wrap"/>
+    <texDif4 Usage="tex_3"  MinFilter="Linear" MagFilter="Linear" AddressU="Wrap" AddressV="Wrap"/>
+    <texEdge Usage="tex_4"  MinFilter="Linear" MagFilter="Linear" AddressU="Clamp" AddressV="Wrap"/>
+    <k_d Usage="mc4_diffuse"/>
+    <k_a Usage="mc4_ambient"/>
+    <k_e Usage="mc4_emissive"/>
+    <i_a Usage="lc4_ambient"/>
+    <i_d Usage="lc4_diffuse"/>
+    <lightDir Usage="lv3_lightDir"/>
+  </PS>
+</Root>

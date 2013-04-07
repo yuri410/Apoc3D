@@ -1,0 +1,57 @@
+#include "fog.psh"
+
+sampler2D texDif : register(s0);
+sampler2D texFColor : register(s1);
+
+float4 k_d : register(c0);
+float4 k_a : register(c1);
+float4 k_e : register(c3);
+
+float4 i_a : register(c5);
+float4 i_d : register(c6);
+float3 lightDir : register(c8);
+
+struct PSInput
+{
+    float3 TexCoord : TEXCOORD0;
+    float3 Normal : TEXCOORD1;
+	float3 WPos : TEXCOORD2;
+};
+
+struct PSOutput
+{
+    float4 Color : COLOR0;
+	float4 Color2 : COLOR1;
+};
+
+PSOutput main(PSInput ip)
+{
+	PSOutput o;
+    
+	float ndl = dot(ip.Normal, lightDir);
+	
+    float3 R = normalize(2 * ndl * ip.Normal + lightDir);
+
+	float4 amb = i_a * k_a;
+	float4 dif = i_d * k_d;
+	dif.xyz *= trunc(max(ndl,0) * 4)/4;
+
+	float4 p = amb+dif+k_e;
+	p.a = saturate(p.a);
+	
+	float4 modColor = tex2D(texFColor, ip.WPos.xz/256 + float2(ip.WPos.y/100,0));
+
+    o.Color = tex2D(texDif, ip.TexCoord.xy) * p;
+	o.Color.rgb *= modColor.rgb;
+
+
+	o.Color.rgb = 0.5 + (o.Color.rgb -0.5) / 1.3;
+	
+
+	float depth = ip.TexCoord.z;
+    o.Color.rgb = lerp(o.Color.rgb, FOG_COLOR, GetFogFade(depth));
+
+	o.Color2 = float4(ip.Normal*0.5+0.5, saturate(depth/1500));
+
+	return o;
+}

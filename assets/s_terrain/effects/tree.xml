@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Root>
+  <VS>
+    <proj Usage="tr_proj"/>
+    <view Usage="tr_view" />
+    <InstanceWorld Usage="tr_instanceWorld" />
+    <time Usage="s_unifiedTime" />
+  </VS>
+  <PS>
+    <texDif Usage="tex_0"  MinFilter="Linear" MagFilter="Linear" AddressU="Wrap" AddressV="Wrap"/>
+    <texFColor Usage="tex_1"  MinFilter="Linear" MagFilter="Linear" AddressU="Wrap" AddressV="Wrap"/>
+    <k_d Usage="mc4_diffuse"/>
+    <k_a Usage="mc4_ambient"/>
+    <k_e Usage="mc4_emissive"/>
+    <i_a Usage="lc4_ambient"/>
+    <i_d Usage="lc4_diffuse"/>
+    <lightDir Usage="lv3_lightDir"/>
+  </PS>
+</Root>

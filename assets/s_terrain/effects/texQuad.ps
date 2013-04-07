@@ -1,0 +1,21 @@
+
+
+#define SAMPLE_COUNT 5
+
+sampler2D tex : register(s0);
+
+
+struct PSInput
+{
+	float2 TexCoord : TEXCOORD0;
+};
+
+struct PSOutput
+{
+    float4 Color : COLOR;
+};
+
+float4 main(PSInput ip) : COLOR
+{
+    return tex2D(tex, ip.TexCoord);
+}
