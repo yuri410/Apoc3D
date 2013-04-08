@@ -28,6 +28,8 @@ namespace Apoc3D
 
 				T& operator*() const { assert(m_referenceNode); return m_referenceNode->Data; }
 
+				T* operator->() const { assert(m_referenceNode); return &m_referenceNode->Data; }
+
 				bool operator==(const Iterator &other) const
 				{
 					return other.m_owner == m_owner && other.m_referenceNode == m_referenceNode; 
