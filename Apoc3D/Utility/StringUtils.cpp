@@ -296,6 +296,8 @@ namespace Apoc3D
 		}
 		void StringUtils::Split(const String& str, List<String>& result, const String& delims)
 		{
+			assert(result.getCount() == 0);
+
 			unsigned int numSplits = 0;
 
 			// Use STL methods 
