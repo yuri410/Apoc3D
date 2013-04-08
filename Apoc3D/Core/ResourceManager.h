@@ -27,6 +27,7 @@
  */
 
 #include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core::Streaming;

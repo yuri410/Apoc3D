@@ -289,6 +289,45 @@ namespace Apoc3D
 				return false;
 			}
 
+			void RemoveAt(const Iterator& iter)
+			{
+				assert(iter.m_owner == this);
+				assert(iter != End());
+
+				Iterator prev = End();
+				Iterator cur = Begin();
+
+				while (cur != End())
+				{
+					if (cur == iter)
+					{
+						Node* curNode = cur.m_referenceNode;
+						Node* prevNode = prev.m_referenceNode;
+
+						if (prevNode)
+						{
+							prevNode->Next = curNode->Next;
+						}
+						if (curNode == m_firstNode)
+						{
+							m_firstNode = curNode->Next;
+						}
+						if (curNode == m_lastNode)
+						{
+							m_lastNode = prevNode;
+						}
+
+						delete curNode;
+
+						assert(m_size>0);
+						m_size--;
+						break;
+					}
+
+					prev = cur;
+					++cur;
+				}
+			}
 
 			/**
 			 * Returns a bool value indicating whether the list contains any items.

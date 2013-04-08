@@ -199,7 +199,7 @@ namespace Apoc3D
 				m_octRootNode->AddObject(sceObj);
 				if (iter != m_farObjs.End())
 				{
-					m_farObjs.Remove(*iter);
+					m_farObjs.RemoveAt(iter);
 				}
 			}
 			else
