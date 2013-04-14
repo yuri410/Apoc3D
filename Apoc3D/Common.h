@@ -73,8 +73,10 @@
 #	endif
 #endif
 
+#ifndef CASSERT_INCLUDED
+#define CASSERT_INCLUDED
 #include <cassert>
-
+#endif
 
 #include <string>
 //#include <vector>
@@ -94,7 +96,7 @@
 //#include <iostream>
 //#include <iomanip>
 //#include <sstream>
-#include <stdint.h>
+#include <cstdint>
 
 
 #include "FastDelegate\FastDelegate.h"
@@ -138,9 +140,11 @@ typedef BatchHandle HashHandle;
 #define MaxInt64 std::numeric_limits<int64>::max();
 #define MinInt64 std::numeric_limits<int64>::min();
 
-
-
-
+namespace std
+{
+	template class basic_string<char, char_traits<char>, allocator<char> >;
+	template class basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> >;
+};
 
 // Forward Declarations
 namespace Apoc3D
