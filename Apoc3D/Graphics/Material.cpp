@@ -266,5 +266,51 @@ namespace Apoc3D
 			}
 			return 0;
 		}
+
+		const String& Material::getTextureName(int index) const 
+		{
+			static String Empty = L"";
+			assert(index<MaxTextures);
+			if (!m_texName.Contains(index))
+				return Empty;
+			return m_texName[index];
+		}
+
+		void Material::setTextureName(int index, const String& name)
+		{
+			assert(index<MaxTextures);
+			if (!m_texName.Contains(index))
+				m_texName.Add(index, name);
+			else
+			{
+				String& tn = m_texName[index];
+				if (tn != name)
+				{
+					tn.operator=(name);
+					m_texDirty[index] = true;
+				}
+			}
+		}
+
+		const String& Material::getPassEffectName(int index) 
+		{
+			static String Empty = L"";
+			assert(index<MaxScenePass); 
+			if (!m_effectName.Contains(index))
+				return Empty;
+			return m_effectName[index]; 
+		}
+		void Material::setPassEffectName(int index, const String& en) 
+		{
+			assert(index<MaxScenePass); 
+
+			if (!m_effectName.Contains(index))
+				m_effectName.Add(index, en);
+			else
+			{
+				m_effectName[index] = en;
+			}
+			
+		}
 	}
 };

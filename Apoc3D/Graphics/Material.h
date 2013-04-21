@@ -96,41 +96,22 @@ namespace Apoc3D
 			const MaterialCustomParameter* getCustomParameter(const String& usage) const;
 			void AddCustomParameter(const MaterialCustomParameter& value);
 
-			const String& getPassEffectName(int index) { assert(index<MaxScenePass); return  m_effectName[index]; }
-			void setPassEffectName(int index, const String& en) { assert(index<MaxScenePass); m_effectName[index]=en; }
+			const String& getPassEffectName(int index);
+			void setPassEffectName(int index, const String& en);
 			/** 
 			 *  Gets the material's texture's name at given index.
 			 * 
 			 *  The texture name is the file name. The engine will try to locate
 			 *  the texture file with the rule "FileLocateRule::Textures".
 			 */
-			const String& getTextureName(int index) const 
-			{
-				static String Empty = L"";
-				assert(index<MaxTextures);
-				if (m_texName.Contains(index))
-					return Empty;
-				return m_texName[index];
-			}
+			const String& getTextureName(int index) const;
 			/** 
 			 *  Sets the material's texture's name at given index.
 			 *
 			 *  The texture name is the file name. The engine will try to locate
 			 *  the texture file with the rule "FileLocateRule::Textures".
 			 */
-			void setTextureName(int index, const String& name)
-			{
-				if (!m_texName.Contains(index))
-					m_texName.Add(index, name);
-				else
-				{
-					if (m_texName[index] != name)
-					{
-						m_texName[index] = name; 
-						m_texDirty[index] = true;
-					}
-				}
-			}
+			void setTextureName(int index, const String& name);
 
 			/** 
 			 *  Get the first effect appeared when passing the mtrl's effect 
