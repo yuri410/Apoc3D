@@ -421,7 +421,7 @@ namespace APDesigner
 			m_recenterModel->eventPress().bind(this, &ModelDocument::RecenterModel_Pressed);
 
 			sx += btnWidth+10;
-			m_swapYZ = new Button(Point(sx, sy),btnWidth, L"Swap TZ");
+			m_swapYZ = new Button(Point(sx, sy),btnWidth, L"Swap YZ");
 			m_swapYZ->SetSkin(window->getUISkin());
 			m_swapYZ->eventPress().bind(this, &ModelDocument::RevertYZ_Pressed);
 
@@ -429,6 +429,11 @@ namespace APDesigner
 			m_rotateY = new Button(Point(sx, sy),btnWidth, L"Rotation Y 90");
 			m_rotateY->SetSkin(window->getUISkin());
 			m_rotateY->eventPress().bind(this, &ModelDocument::RotY_Pressed);
+			
+			sx += btnWidth+10;
+			m_rotateZ = new Button(Point(sx, sy),btnWidth, L"Rotation Z 90");
+			m_rotateZ->SetSkin(window->getUISkin());
+			m_rotateZ->eventPress().bind(this, &ModelDocument::RotZ_Pressed);
 
 
 			sx += btnWidth+10;
@@ -631,6 +636,7 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_revertZ);
 		getDocumentForm()->getControls().Add(m_swapYZ);
 		getDocumentForm()->getControls().Add(m_rotateY);
+		getDocumentForm()->getControls().Add(m_rotateZ);
 		getDocumentForm()->getControls().Add(m_zoomIn);
 		getDocumentForm()->getControls().Add(m_zoomOut);
 		getDocumentForm()->getControls().Add(m_setSequenceImages);
@@ -1368,6 +1374,12 @@ namespace APDesigner
 	{
 		Matrix rot;
 		Matrix::CreateRotationY(rot, Math::Half_PI);
+		Transform(rot);
+	}
+	void ModelDocument::RotZ_Pressed(Control* ctrl)
+	{
+		Matrix rot;
+		Matrix::CreateRotationZ(rot, Math::Half_PI);
 		Transform(rot);
 	}
 	void ModelDocument::ZoomIn_Pressed(Control* ctrl)

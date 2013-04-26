@@ -109,6 +109,7 @@ namespace APDesigner
 		Button* m_revertZ;
 		Button* m_swapYZ;
 		Button* m_rotateY;
+		Button* m_rotateZ;
 		Button* m_zoomIn;
 		Button* m_zoomOut;
 		Button* m_setSequenceImages;
@@ -186,6 +187,7 @@ namespace APDesigner
 		void RevertZ_Pressed(Control* ctrl);
 		void RevertYZ_Pressed(Control* ctrl);
 		void RotY_Pressed(Control* ctrl);
+		void RotZ_Pressed(Control* ctrl);
 		void ZoomIn_Pressed(Control* ctrl);
 		void ZoomOut_Pressed(Control* ctrl);
 		void SetSequenceImages_Pressed(Control* ctrl);
