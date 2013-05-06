@@ -1,9 +1,9 @@
 /*
 ---------------------------------------------------------------------------
-Open Asset Import Library (ASSIMP)
+Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2010, ASSIMP Development Team
+Copyright (c) 2006-2012, assimp team
 
 All rights reserved.
 
@@ -20,10 +20,10 @@ conditions are met:
   following disclaimer in the documentation and/or other
   materials provided with the distribution.
 
-* Neither the name of the ASSIMP team, nor the names of its
+* Neither the name of the assimp team, nor the names of its
   contributors may be used to endorse or promote products
   derived from this software without specific prior
-  written permission of the ASSIMP Development Team.
+  written permission of the assimp team.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
@@ -54,7 +54,14 @@ private:
 
 	// default constructor
 	CMaterialManager() 
-		:	m_iShaderCount (0) {}
+		:	m_iShaderCount (0), sDefaultTexture() {}
+
+	~CMaterialManager() {
+		if (sDefaultTexture) {
+			sDefaultTexture->Release();
+		}
+		Reset();
+	}
 
 public:
 
@@ -139,6 +146,10 @@ public:
 	inline void Reset()
 	{
 		this->m_iShaderCount = 0;
+		for (TextureCache::iterator it = sCachedTextures.begin(); it != sCachedTextures.end(); ++it) {
+			(*it).second->Release();
+		}
+		sCachedTextures.clear();
 	}
 
 private:
@@ -182,8 +193,10 @@ private:
 	// each time a shader isn't found in cache and needs to be created
 	//
 	unsigned int m_iShaderCount;
+	IDirect3DTexture9* sDefaultTexture;
 
-
+	typedef std::map<std::string,IDirect3DTexture9*> TextureCache;
+	TextureCache sCachedTextures;
 };
 
 #endif //!! include guard

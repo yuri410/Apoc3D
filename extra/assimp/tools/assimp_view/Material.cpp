@@ -1,9 +1,9 @@
 /*
 ---------------------------------------------------------------------------
-Open Asset Import Library (ASSIMP)
+Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2010, ASSIMP Development Team
+Copyright (c) 2006-2012, assimp team
 
 All rights reserved.
 
@@ -20,10 +20,10 @@ conditions are met:
   following disclaimer in the documentation and/or other
   materials provided with the distribution.
 
-* Neither the name of the ASSIMP team, nor the names of its
+* Neither the name of the assimp team, nor the names of its
   contributors may be used to endorse or promote products
   derived from this software without specific prior
-  written permission of the ASSIMP Development Team.
+  written permission of the assimp team.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
@@ -107,6 +107,11 @@ int CMaterialManager::UpdateSpecularMaterials()
 //-------------------------------------------------------------------------------
 int CMaterialManager::SetDefaultTexture(IDirect3DTexture9** p_ppiOut)
 {
+	if  (sDefaultTexture) {
+		sDefaultTexture->AddRef();
+		*p_ppiOut = sDefaultTexture;
+		return 1;
+	}
 	if(FAILED(g_piDevice->CreateTexture(
 		256,
 		256,
@@ -121,8 +126,11 @@ int CMaterialManager::SetDefaultTexture(IDirect3DTexture9** p_ppiOut)
 			D3DCOLOR_ARGB(0xFF,0xFF,0,0));
 
 		*p_ppiOut = NULL;
+		return 0;
 	}
 	D3DXFillTexture(*p_ppiOut,&FillFunc,NULL);
+	sDefaultTexture = *p_ppiOut;
+	sDefaultTexture->AddRef();
 
 	// {9785DA94-1D96-426b-B3CB-BADC36347F5E}
 	static const GUID guidPrivateData = 
@@ -322,6 +330,14 @@ int CMaterialManager::LoadTexture(IDirect3DTexture9** p_ppiOut,aiString* szPath)
 
 	*p_ppiOut = NULL;
 
+	const std::string s = szPath->data;
+	TextureCache::iterator ff;
+	if ((ff = sCachedTextures.find(s)) != sCachedTextures.end()) {
+		*p_ppiOut = (*ff).second;
+		(*p_ppiOut)->AddRef();
+		return 1;
+	}
+
 	// first get a valid path to the texture
 	if( 5 == FindValidPath(szPath))
 	{
@@ -390,6 +406,8 @@ int CMaterialManager::LoadTexture(IDirect3DTexture9** p_ppiOut,aiString* szPath)
 				(*p_ppiOut)->UnlockRect(0);
 				(*p_ppiOut)->GenerateMipSubLevels();
 			}
+			sCachedTextures[s] = *p_ppiOut;
+			(*p_ppiOut)->AddRef();
 			return 1;
 		}
 		else
@@ -427,6 +445,9 @@ int CMaterialManager::LoadTexture(IDirect3DTexture9** p_ppiOut,aiString* szPath)
 
 		this->SetDefaultTexture(p_ppiOut);
 	}
+	sCachedTextures[s] = *p_ppiOut;
+	(*p_ppiOut)->AddRef();
+
 	return 1;
 }
 //-------------------------------------------------------------------------------

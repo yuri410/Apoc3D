@@ -105,61 +105,63 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\tools\shared\assimp_tools_icon.ico">
+    <Image Include="..\..\tools\shared\assimp_tools_icon.ico">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\assimp_view.ico">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\assimp_view.ico">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\banner.bmp">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\banner.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\base_anim.bmp">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\base_anim.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\base_display.bmp">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\base_display.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\base_inter.bmp">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\base_inter.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\base_rendering.bmp">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\base_rendering.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\base_stats.bmp">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\base_stats.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\fx.bmp">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\fx.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\HUD.png">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\HUD.png">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\HUDMask.png">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\HUDMask.png">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\n.bmp">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\n.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\root.bmp">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\root.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\small.ico">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\small.ico">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\text1.bin">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\tx.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\tx.bmp">
+    </Image>
+    <Image Include="..\..\tools\assimp_view\txi.bmp">
       <Filter>resources</Filter>
-    </None>
-    <None Include="..\..\tools\assimp_view\txi.bmp">
-      <Filter>resources</Filter>
-    </None>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\tools\assimp_view\assimp_view.rc">
       <Filter>resources</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\tools\assimp_view\text1.bin">
+      <Filter>resources</Filter>
+    </None>
   </ItemGroup>
 </Project>

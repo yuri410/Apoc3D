@@ -1,9 +1,9 @@
 /*
 ---------------------------------------------------------------------------
-Open Asset Import Library (ASSIMP)
+Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2010, ASSIMP Development Team
+Copyright (c) 2006-2012, assimp team
 
 All rights reserved.
 
@@ -20,10 +20,10 @@ conditions are met:
   following disclaimer in the documentation and/or other
   materials provided with the distribution.
 
-* Neither the name of the ASSIMP team, nor the names of its
+* Neither the name of the assimp team, nor the names of its
   contributors may be used to endorse or promote products
   derived from this software without specific prior
-  written permission of the ASSIMP Development Team.
+  written permission of the assimp team.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
@@ -44,12 +44,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "Main.h"
+#include <../code/fast_atof.h>
+#include <../code/StringComparison.h>
 
 const char* AICMD_MSG_DUMP_HELP_E = 
 "assimp extract <model> [<out>] [-t<n>] [-f<fmt>] [-ba] [-s] [common parameters]\n"
 "\t -ba   Writes BMP's with alpha channel\n"
 "\t -t<n> Zero-based index of the texture to be extracted \n"
-"\t -f<f> Specify the file format if <out> is ommitted  \n"
+"\t -f<f> Specify the file format if <out> is omitted  \n"
 "\t[See the assimp_cmd docs for a full list of all common parameters]  \n"
 "\t -cfast    Fast post processing preset, runs just a few important steps \n"
 "\t -cdefault Default post processing: runs all recommended steps\n"
@@ -57,7 +59,7 @@ const char* AICMD_MSG_DUMP_HELP_E =
 ;
 
 #define AI_EXTRACT_WRITE_BMP_ALPHA 0x1
-#include "Compiler/pushpack1.h"
+#include <assimp/Compiler/pushpack1.h>
 
 // -----------------------------------------------------------------------------------
 // Data structure for the first header of a BMP
@@ -112,13 +114,15 @@ struct TGA_HEADER
 } PACK_STRUCT;
 
 
-#include "Compiler/poppack1.h"
+#include <assimp/Compiler/poppack1.h>
 
 // -----------------------------------------------------------------------------------
 // Save a texture as bitmap
 int SaveAsBMP (FILE* file, const aiTexel* data, unsigned int width, unsigned int height, bool SaveAlpha = false)
 {
-	if (!file || !data)return 1;
+	if (!file || !data) {
+		return 1;
+	}
 
 	const unsigned int numc = (SaveAlpha ? 4 : 3);
 	unsigned char* buffer = new unsigned char[width*height*numc];
@@ -175,10 +179,12 @@ int SaveAsBMP (FILE* file, const aiTexel* data, unsigned int width, unsigned int
 // Save a texture as tga
 int SaveAsTGA (FILE* file, const aiTexel* data, unsigned int width, unsigned int height)
 {
-	if (!file || !data)return 1;
+	if (!file || !data) {
+		return 1;
+	}
 
-
-	TGA_HEADER head = {0};
+	TGA_HEADER head;
+	memset(&head, 0, sizeof(head));
 	head.bits   = 32;
 	head.height = (uint16_t)height;
 	head.width  = (uint16_t)width;
@@ -220,8 +226,9 @@ int DoExport(const aiTexture* tx, FILE* p, const std::string& extension,
 // Implementation of the assimp extract utility
 int Assimp_Extract (const char* const* params, unsigned int num)
 {
+	const char* const invalid = "assimp extract: Invalid number of arguments. See \'assimp extract --help\'\n"; 
 	if (num < 1) {
-		printf("assimp extract: Invalid number of arguments. See \'assimp extract --help\'\n");
+		printf(invalid);
 		return 1;
 	}
 
@@ -233,7 +240,7 @@ int Assimp_Extract (const char* const* params, unsigned int num)
 
 	// asssimp extract in out [options]
 	if (num < 1) {
-		printf("assimp extract: Invalid number of arguments. See \'assimp extract --help\'\n");
+		printf(invalid);
 		return 1;
 	}
 
@@ -250,7 +257,9 @@ int Assimp_Extract (const char* const* params, unsigned int num)
 	// process other flags
 	std::string extension = "bmp";
 	for (unsigned int i = (out[0] == '-' ? 1 : 2); i < num;++i)		{
-		if (!params[i])continue;
+		if (!params[i]) {
+			continue;
+		}
 
 		if (!strncmp( params[i], "-f",2)) {
 			extension = std::string(params[i]+2);
@@ -262,10 +271,10 @@ int Assimp_Extract (const char* const* params, unsigned int num)
 			nosuffix = true;
 		}
 		else if ( !strncmp( params[i], "--texture=",10)) {
-			texIdx = ::strtol10(params[i]+10);
+			texIdx = Assimp::strtoul10(params[i]+10);
 		}
 		else if ( !strncmp( params[i], "-t",2)) {
-			texIdx = ::strtol10(params[i]+2);
+			texIdx = Assimp::strtoul10(params[i]+2);
 		}
 		else if ( !strcmp( params[i], "-ba") ||  !strcmp( params[i], "--bmp-with-alpha")) {
 			flags |= AI_EXTRACT_WRITE_BMP_ALPHA;
@@ -277,9 +286,9 @@ int Assimp_Extract (const char* const* params, unsigned int num)
 		}
 #endif
 	}
-	for (std::string::iterator it = extension.begin();it != extension.end();++it)
-		*it = ::tolower(*it); 
 
+	std::transform(extension.begin(),extension.end(),extension.begin(),::tolower);
+	
 	if (out[0] == '-') {
 		// take file name from input file
 		std::string::size_type s = in.find_last_of('.');
@@ -330,7 +339,7 @@ int Assimp_Extract (const char* const* params, unsigned int num)
 		if (!nosuffix || (texIdx == 0xffffffff)) {
 			out_cpy.append  ("_img");
 			char tmp[10];
-			ASSIMP_itoa10(tmp,i);
+			Assimp::ASSIMP_itoa10(tmp,i);
 
 			out_cpy.append(std::string(tmp));
 		}

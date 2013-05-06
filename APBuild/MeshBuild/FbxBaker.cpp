@@ -1,11 +1,11 @@
 
 #include "FbxBaker.h"
 
-void InitializeSdkObjects(KFbxSdkManager*& pSdkManager, KFbxScene*& pScene)
+void InitializeSdkObjects(FbxManager*& pSdkManager, FbxScene*& pScene)
 {
 	// The first thing to do is to create the FBX SDK manager which is the 
 	// object allocator for almost all the classes in the SDK.
-	pSdkManager = KFbxSdkManager::Create();
+	pSdkManager = FbxManager::Create();
 
 	if (!pSdkManager)
 	{
@@ -14,25 +14,19 @@ void InitializeSdkObjects(KFbxSdkManager*& pSdkManager, KFbxScene*& pScene)
 	}
 
 	// create an IOSettings object
-	KFbxIOSettings * ios = KFbxIOSettings::Create(pSdkManager, IOSROOT );
+	FbxIOSettings * ios = FbxIOSettings::Create(pSdkManager, IOSROOT );
 	pSdkManager->SetIOSettings(ios);
 
 	// Load plugins from the executable directory
-	KString lPath = KFbxGetApplicationDirectory();
-#if defined(KARCH_ENV_WIN)
-	KString lExtension = "dll";
-#elif defined(KARCH_ENV_MACOSX)
-	KString lExtension = "dylib";
-#elif defined(KARCH_ENV_LINUX)
-	KString lExtension = "so";
-#endif
-	pSdkManager->LoadPluginsDirectory(lPath.Buffer(), lExtension.Buffer());
+	FbxString lPath = FbxGetApplicationDirectory();
+
+	pSdkManager->LoadPluginsDirectory(lPath.Buffer());
 
 	// Create the entity that will hold the scene.
-	pScene = KFbxScene::Create(pSdkManager,"");
+	pScene = FbxScene::Create(pSdkManager,"");
 }
 
-void DestroySdkObjects(KFbxSdkManager* pSdkManager)
+void DestroySdkObjects(FbxManager* pSdkManager)
 {
 	// Delete the FBX SDK manager. All the objects that have been allocated 
 	// using the FBX SDK manager and that haven't been explicitly destroyed 

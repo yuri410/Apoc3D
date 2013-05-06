@@ -2,6 +2,7 @@
 include_directories (
 	${Assimp_SOURCE_DIR}/include
 	${Assimp_SOURCE_DIR}/code
+	${DX9_INCLUDE_PATH}
 )
 
 # Make sure the linker can find the Hello library once it is built.
@@ -40,6 +41,8 @@ add_executable(  assimp_viewer WIN32
 	txi.bmp
 )
 
+SET_PROPERTY(TARGET assimp_viewer PROPERTY DEBUG_POSTFIX ${DEBUG_POSTFIX})
+
 IF( WIN32 )
 	SET( PSDK_PATH "C:/Program Files/Microsoft Platform SDK/Bin" )
 	SET( PSDK_INC "C:/Program Files/Microsoft Platform SDK/Include" )
@@ -69,9 +72,14 @@ IF( WIN32 )
 		PATHS 
 			"C:/Programme/Microsoft Platform SDK for Windows Server 2003 R2/Lib" 	
 		DOC "Path to psdk"
-	) 
+	)
+	ADD_DEFINITIONS( -D_SCL_SECURE_NO_WARNINGS )
+	ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
 ENDIF( WIN32 )
 
 # Link the executable to the Hello library.
 target_link_libraries ( assimp_viewer assimp ${DX9_LIBRARIES} comctl32.lib Winmm.lib  ) 
 
+INSTALL( TARGETS assimp_viewer
+	DESTINATION "${BIN_INSTALL_DIR}" COMPONENT assimp-dev
+) 

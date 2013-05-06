@@ -11,6 +11,10 @@
 		PreprocessorDefinitions="ASSIMP_BUILD_DLL_EXPORT"
 	/>
 	<Tool
+		Name="VCLinkerTool"
+		ImportLibrary="$(ProjectDir)..\..\lib\$(ProjectName)_$(ConfigurationName)_$(PlatformName)\assimp.lib"
+	/>
+	<Tool
 		Name="VCPostBuildEventTool"
 		CommandLine=""
 	/>

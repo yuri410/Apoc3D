@@ -1,9 +1,9 @@
 /*
 ---------------------------------------------------------------------------
-Open Asset Import Library (ASSIMP)
+Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2010, ASSIMP Development Team
+Copyright (c) 2006-2012, assimp team
 
 All rights reserved.
 
@@ -20,10 +20,10 @@ conditions are met:
   following disclaimer in the documentation and/or other
   materials provided with the distribution.
 
-* Neither the name of the ASSIMP team, nor the names of its
+* Neither the name of the assimp team, nor the names of its
   contributors may be used to endorse or promote products
   derived from this software without specific prior
-  written permission of the ASSIMP Development Team.
+  written permission of the assimp team.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
@@ -288,7 +288,7 @@ int CDisplay::ReplaceCurrentTexture(const char* szPath)
 		m_pcCurrentTexture->hTreeItem);
 
 	// change this in the old aiMaterial structure, too
-	Assimp::MaterialHelper* pcMat = (Assimp::MaterialHelper*)
+	aiMaterial* pcMat = (aiMaterial*)
 		g_pcAsset->pcScene->mMaterials[m_pcCurrentTexture->iMatIndex];
  	
 	// update all meshes referencing this material
@@ -364,26 +364,7 @@ int CDisplay::ReplaceCurrentTexture(const char* szPath)
 			//}
 		}
 	}
-	// now update the material itself
-	aiString szOld;
 
-	aiGetMaterialString(pcMat,AI_MATKEY_TEXTURE(m_pcCurrentTexture->iType,0),&szOld);
-	pcMat->AddProperty(&szString,AI_MATKEY_TEXTURE(m_pcCurrentTexture->iType,0));
-
-#if 0
-	char szBuffer[512];
-	sprintf(szBuffer,"%s%s",szKey,"_old");
-
-	if (AI_SUCCESS != aiGetMaterialString(pcMat, szBuffer, &szOld))
-	{
-		pcMat->AddProperty(&szOld,szBuffer );
-	}
-	else if (szString.length == szOld.length && 
-		0 == ASSIMP_stricmp(szString.data,szOld.data))
-	{
-		pcMat->RemoveProperty(szBuffer);
-	}
-#endif
 	return 1;
 }
 //-------------------------------------------------------------------------------
@@ -397,7 +378,6 @@ int CDisplay::AddTextureToDisplayList(unsigned int iType,
 	unsigned int iMesh		/*= 0*/)
 {
 	ai_assert(NULL != szPath);
-	ai_assert(NULL != pcMat);
 
 	char chTemp[512];
 	char chTempEmb[256];
@@ -904,12 +884,12 @@ int CDisplay::OnSetupNormalView()
 	}
 
 	// now ... change the meaning of the statistics fields back
-	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMVERTS),"Verts:");
+	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMVERTS),"Vertices:");
 	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMNODES),"Nodes:");
 	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMFACES),"Faces:");
-	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMSHADERS),"Shd:");
-	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMMATS),"Mats:");
-	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMMESHES),"Mesh:");
+	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMSHADERS),"Shaders:");
+	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMMATS),"Materials:");
+	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMMESHES),"Meshes:");
 	SetWindowText(GetDlgItem(g_hDlg,IDC_LOADTIME),"Time:");
 
 	FillDefaultStatistics();
@@ -931,12 +911,12 @@ int CDisplay::OnSetupNodeView(NodeInfo* pcNew)
 	ai_assert(NULL != pcNew);
 
 	if (m_pcCurrentNode == pcNew)return 2;
-	
+
 	// now ... change the meaning of the statistics fields back
-	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMVERTS),"Verts:");
+	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMVERTS),"Vertices:");
 	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMFACES),"Faces:");
-	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMMATS),"Mats:");
-	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMMESHES),"Mesh:");
+	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMMATS),"Materials:");
+	SetWindowText(GetDlgItem(g_hDlg,IDC_NUMMESHES),"Meshes:");
 
 	ShowWindow(GetDlgItem(g_hDlg,IDC_NUMNODES),SW_HIDE);
 	ShowWindow(GetDlgItem(g_hDlg,IDC_ENODEWND),SW_HIDE);
@@ -1297,7 +1277,7 @@ int CDisplay::HandleTreeViewPopup(WPARAM wParam,LPARAM lParam)
 		}
 
 		// change the material key ...
-		Assimp::MaterialHelper* pcMat = (Assimp::MaterialHelper*)g_pcAsset->pcScene->mMaterials[
+		aiMaterial* pcMat = (aiMaterial*)g_pcAsset->pcScene->mMaterials[
 			this->m_pcCurrentMaterial->iIndex];
 		pcMat->AddProperty<aiColor4D>(&clrOld,1,szMatKey,0,0);
 
@@ -1430,7 +1410,7 @@ int CDisplay::HandleTreeViewPopup2(WPARAM wParam,LPARAM lParam)
 			return 1;
 		}
 
-		Assimp::MaterialHelper* pcMat = (Assimp::MaterialHelper*)g_pcAsset->pcScene->mMaterials[
+		aiMaterial* pcMat = (aiMaterial*)g_pcAsset->pcScene->mMaterials[
 			m_pcCurrentTexture->iMatIndex];
 
 		unsigned int s;

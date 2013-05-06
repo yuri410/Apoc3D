@@ -1,9 +1,9 @@
 /*
 ---------------------------------------------------------------------------
-Open Asset Import Library (ASSIMP)
+Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2010, ASSIMP Development Team
+Copyright (c) 2006-2012, assimp team
 
 All rights reserved.
 
@@ -20,10 +20,10 @@ conditions are met:
   following disclaimer in the documentation and/or other
   materials provided with the distribution.
 
-* Neither the name of the ASSIMP team, nor the names of its
+* Neither the name of the assimp team, nor the names of its
   contributors may be used to endorse or promote products
   derived from this software without specific prior
-  written permission of the ASSIMP Development Team.
+  written permission of the assimp team.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
@@ -105,9 +105,15 @@ inline uint32_t WriteMagic(uint32_t magic)
 	return ftell(out)-4;
 }
 
+// use template specializations rather than regular overloading to be able to 
+// explicitly select the right 'overload' to leave no doubts on what is called,
+// retaining the possibility of letting the compiler select.
+template <typename T> uint32_t Write(const T&);
+
 // -----------------------------------------------------------------------------------
 // Serialize an aiString
-inline uint32_t WriteAiString(const aiString& s)
+template <>
+inline uint32_t Write<aiString>(const aiString& s)
 {
 	const uint32_t s2 = (uint32_t)s.length;
 	fwrite(&s,4,1,out);
@@ -117,56 +123,122 @@ inline uint32_t WriteAiString(const aiString& s)
 
 // -----------------------------------------------------------------------------------
 // Serialize an unsigned int as uint32_t
-inline uint32_t WriteInteger(unsigned int w)
+template <>
+inline uint32_t Write<unsigned int>(const unsigned int& w)
 {
 	const uint32_t t = (uint32_t)w;
+	if (w > t) {
+		// this shouldn't happen, integers in Assimp data structures never exceed 2^32
+		printf("loss of data due to 64 -> 32 bit integer conversion");
+	}
+	
 	fwrite(&t,4,1,out);
 	return 4;
 }
 
 // -----------------------------------------------------------------------------------
 // Serialize an unsigned int as uint16_t
-inline uint32_t WriteShort(unsigned int w)
+template <>
+inline uint32_t Write<uint16_t>(const uint16_t& w)
 {
-	const uint16_t t = (uint16_t)w;
-	fwrite(&t,2,1,out);
+	fwrite(&w,2,1,out);
 	return 2;
 }
 
 // -----------------------------------------------------------------------------------
 // Serialize a float
-inline uint32_t WriteFloat(float f)
+template <>
+inline uint32_t Write<float>(const float& f)
 {
+	BOOST_STATIC_ASSERT(sizeof(float)==4);
 	fwrite(&f,4,1,out);
 	return 4;
 }
 
 // -----------------------------------------------------------------------------------
 // Serialize a double
-inline uint32_t WriteDouble(double f)
+template <>
+inline uint32_t Write<double>(const double& f)
 {
+	BOOST_STATIC_ASSERT(sizeof(double)==8);
 	fwrite(&f,8,1,out);
 	return 8;
 }
 
 // -----------------------------------------------------------------------------------
 // Serialize a vec3
-inline uint32_t WriteVec3(const aiVector3D& v)
+template <>
+inline uint32_t Write<aiVector3D>(const aiVector3D& v)
 {
-	fwrite(&v,12,1,out);
-	return 12;
+	uint32_t t = Write<float>(v.x);
+	t += Write<float>(v.y);
+	t += Write<float>(v.z);
+	return t;
+}
+
+// -----------------------------------------------------------------------------------
+// Serialize a color value
+template <>
+inline uint32_t Write<aiColor4D>(const aiColor4D& v)
+{
+	uint32_t t = Write<float>(v.r);
+	t += Write<float>(v.g);
+	t += Write<float>(v.b);
+	t += Write<float>(v.a);
+	return t;
+}
+
+// -----------------------------------------------------------------------------------
+// Serialize a quaternion
+template <>
+inline uint32_t Write<aiQuaternion>(const aiQuaternion& v)
+{
+	uint32_t t = Write<float>(v.w);
+	t += Write<float>(v.x);
+	t += Write<float>(v.y);
+	t += Write<float>(v.z);
+	return 16;
+}
+
+
+// -----------------------------------------------------------------------------------
+// Serialize a vertex weight
+template <>
+inline uint32_t Write<aiVertexWeight>(const aiVertexWeight& v)
+{
+	uint32_t t = Write<unsigned int>(v.mVertexId);
+	return t+Write<float>(v.mWeight);
 }
 
 // -----------------------------------------------------------------------------------
 // Serialize a mat4x4
-inline uint32_t WriteMat4x4(const aiMatrix4x4& m)
+template <>
+inline uint32_t Write<aiMatrix4x4>(const aiMatrix4x4& m)
 {
 	for (unsigned int i = 0; i < 4;++i) {
 		for (unsigned int i2 = 0; i2 < 4;++i2) {
-			WriteFloat(m[i][i2]);
+			Write<float>(m[i][i2]);
 		}
 	}
 	return 64;
+}
+
+// -----------------------------------------------------------------------------------
+// Serialize an aiVectorKey
+template <>
+inline uint32_t Write<aiVectorKey>(const aiVectorKey& v)
+{
+	const uint32_t t = Write<double>(v.mTime);
+	return t + Write<aiVector3D>(v.mValue);
+}
+
+// -----------------------------------------------------------------------------------
+// Serialize an aiQuatKey
+template <>
+inline uint32_t Write<aiQuatKey>(const aiQuatKey& v)
+{
+	const uint32_t t = Write<double>(v.mTime);
+	return t + Write<aiQuaternion>(v.mValue);
 }
 
 // -----------------------------------------------------------------------------------
@@ -175,11 +247,13 @@ template <typename T>
 inline uint32_t WriteBounds(const T* in, unsigned int size)
 {
 	T minc,maxc;
-	ArrayBounds(in,size,minc,maxc);
-	fwrite(&minc,sizeof(T),1,out);
-	fwrite(&maxc,sizeof(T),1,out);
-	return sizeof(T)*2;
+	Assimp::ArrayBounds(in,size,minc,maxc);
+
+	const uint32_t t = Write<T>(minc);
+	return t + Write<T>(maxc);
 }
+
+
 
 // -----------------------------------------------------------------------------------
 void ChangeInteger(uint32_t ofs,uint32_t n)
@@ -194,13 +268,13 @@ void ChangeInteger(uint32_t ofs,uint32_t n)
 uint32_t WriteBinaryNode(const aiNode* node)
 {
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AINODE);
-	len += WriteAiString(node->mName);
-	len += WriteMat4x4(node->mTransformation);
-	len += WriteInteger(node->mNumChildren);
-	len += WriteInteger(node->mNumMeshes);
+	len += Write<aiString>(node->mName);
+	len += Write<aiMatrix4x4>(node->mTransformation);
+	len += Write<unsigned int>(node->mNumChildren);
+	len += Write<unsigned int>(node->mNumMeshes);
 
 	for (unsigned int i = 0; i < node->mNumMeshes;++i) {
-		len += WriteInteger(node->mMeshes[i]);
+		len += Write<unsigned int>(node->mMeshes[i]);
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren;++i) {
@@ -216,8 +290,8 @@ uint32_t WriteBinaryTexture(const aiTexture* tex)
 {
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AITEXTURE);
 
-	len += WriteInteger(tex->mWidth);
-	len += WriteInteger(tex->mHeight);
+	len += Write<unsigned int>(tex->mWidth);
+	len += Write<unsigned int>(tex->mHeight);
 	len += fwrite(tex->achFormatHint,1,4,out);
 
 	if(!shortened) {
@@ -238,9 +312,9 @@ uint32_t WriteBinaryBone(const aiBone* b)
 {
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AIBONE);
 
-	len += WriteAiString(b->mName);
-	len += WriteInteger(b->mNumWeights);
-	len += WriteMat4x4(b->mOffsetMatrix);
+	len += Write<aiString>(b->mName);
+	len += Write<unsigned int>(b->mNumWeights);
+	len += Write<aiMatrix4x4>(b->mOffsetMatrix);
 
 	// for the moment we write dumb min/max values for the bones, too.
 	// maybe I'll add a better, hash-like solution later
@@ -258,11 +332,11 @@ uint32_t WriteBinaryMesh(const aiMesh* mesh)
 {
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AIMESH);
 
-	len += WriteInteger(mesh->mPrimitiveTypes);
-	len += WriteInteger(mesh->mNumVertices);
-	len += WriteInteger(mesh->mNumFaces);
-	len += WriteInteger(mesh->mNumBones);
-	len += WriteInteger(mesh->mMaterialIndex);
+	len += Write<unsigned int>(mesh->mPrimitiveTypes);
+	len += Write<unsigned int>(mesh->mNumVertices);
+	len += Write<unsigned int>(mesh->mNumFaces);
+	len += Write<unsigned int>(mesh->mNumBones);
+	len += Write<unsigned int>(mesh->mMaterialIndex);
 
 	// first of all, write bits for all existent vertex components
 	unsigned int c = 0;
@@ -287,7 +361,7 @@ uint32_t WriteBinaryMesh(const aiMesh* mesh)
 		}
 		c |= ASSBIN_MESH_HAS_COLOR(n);
 	}
-	len += WriteInteger(c);
+	len += Write<unsigned int>(c);
 
 	aiVector3D minVec, maxVec;
 	if (mesh->mVertices) {
@@ -326,7 +400,7 @@ uint32_t WriteBinaryMesh(const aiMesh* mesh)
 			break;
 
 		// write number of UV components
-		len += WriteInteger(mesh->mNumUVComponents[n]);
+		len += Write<unsigned int>(mesh->mNumUVComponents[n]);
 
 		if (shortened) {
 			len += WriteBounds(mesh->mTextureCoords[n],mesh->mNumVertices);
@@ -340,16 +414,21 @@ uint32_t WriteBinaryMesh(const aiMesh* mesh)
 	// using Assimp's standard hashing function.
 	if (shortened) {
 		unsigned int processed = 0;
-		for (unsigned int job;job = std::min(mesh->mNumFaces-processed,512u);processed += job) {
+		for (unsigned int job;(job = std::min(mesh->mNumFaces-processed,512u));processed += job) {
 
-			unsigned int hash = 0;
+			uint32_t hash = 0;
 			for (unsigned int a = 0; a < job;++a) {
 
 				const aiFace& f = mesh->mFaces[processed+a];
-				hash = SuperFastHash((const char*)&f.mNumIndices,sizeof(unsigned int),hash);
-				hash = SuperFastHash((const char*) f.mIndices,f.mNumIndices*sizeof(unsigned int),hash);
+				uint32_t tmp = f.mNumIndices;
+				hash = SuperFastHash(reinterpret_cast<const char*>(&tmp),sizeof tmp,hash);
+				for (unsigned int i = 0; i < f.mNumIndices; ++i) {
+					BOOST_STATIC_ASSERT(AI_MAX_VERTICES <= 0xffffffff);
+					tmp = static_cast<uint32_t>( f.mIndices[i] );
+					hash = SuperFastHash(reinterpret_cast<const char*>(&tmp),sizeof tmp,hash);
+				}
 			}
-			len += WriteInteger(hash);
+			len += Write<unsigned int>(hash);
 		}
 	}
 	else // else write as usual
@@ -358,17 +437,14 @@ uint32_t WriteBinaryMesh(const aiMesh* mesh)
 		for (unsigned int i = 0; i < mesh->mNumFaces;++i) {
 			const aiFace& f = mesh->mFaces[i];
 
-			if (f.mNumIndices >= (1u<<16)) {
-				printf("The assbin format doesn't support polygons with more than 65536 vertices");
-				return -1;
-			}
+			BOOST_STATIC_ASSERT(AI_MAX_FACE_INDICES <= 0xffff);
+			len += Write<uint16_t>(f.mNumIndices);
 
-			len += WriteShort(f.mNumIndices);
 			for (unsigned int a = 0; a < f.mNumIndices;++a) {
 				if (mesh->mNumVertices < (1u<<16)) {
-					len += WriteShort(f.mIndices[a]);
+					len += Write<uint16_t>(f.mIndices[a]);
 				}
-				else len += WriteInteger(f.mIndices[a]);
+				else len += Write<unsigned int>(f.mIndices[a]);
 			}
 		}
 	}
@@ -390,12 +466,12 @@ uint32_t WriteBinaryMaterialProperty(const aiMaterialProperty* prop)
 {
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AIMATERIALPROPERTY);
 
-	len += WriteAiString(prop->mKey);
-	len += WriteInteger(prop->mSemantic);
-	len += WriteInteger(prop->mIndex);
+	len += Write<aiString>(prop->mKey);
+	len += Write<unsigned int>(prop->mSemantic);
+	len += Write<unsigned int>(prop->mIndex);
 
-	len += WriteInteger(prop->mDataLength);
-	len += WriteInteger((unsigned int)prop->mType);
+	len += Write<unsigned int>(prop->mDataLength);
+	len += Write<unsigned int>((unsigned int)prop->mType);
 	len += fwrite(prop->mData,1,prop->mDataLength,out);
 
 	ChangeInteger(old,len);
@@ -407,7 +483,7 @@ uint32_t WriteBinaryMaterial(const aiMaterial* mat)
 {
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AIMATERIAL);
 
-	len += WriteInteger(mat->mNumProperties);
+	len += Write<unsigned int>(mat->mNumProperties);
 	for (unsigned int i = 0; i < mat->mNumProperties;++i) {
 		len += WriteBinaryMaterialProperty(mat->mProperties[i])+8;
 	}
@@ -421,12 +497,12 @@ uint32_t WriteBinaryNodeAnim(const aiNodeAnim* nd)
 {
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AINODEANIM);
 
-	len += WriteAiString(nd->mNodeName);
-	len += WriteInteger(nd->mNumPositionKeys);
-	len += WriteInteger(nd->mNumRotationKeys);
-	len += WriteInteger(nd->mNumScalingKeys);
-	len += WriteInteger(nd->mPreState);
-	len += WriteInteger(nd->mPostState);
+	len += Write<aiString>(nd->mNodeName);
+	len += Write<unsigned int>(nd->mNumPositionKeys);
+	len += Write<unsigned int>(nd->mNumRotationKeys);
+	len += Write<unsigned int>(nd->mNumScalingKeys);
+	len += Write<unsigned int>(nd->mPreState);
+	len += Write<unsigned int>(nd->mPostState);
 
 	if (nd->mPositionKeys) {
 		if (shortened) {
@@ -460,10 +536,10 @@ uint32_t WriteBinaryAnim(const aiAnimation* anim)
 {
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AIANIMATION);
 
-	len += WriteAiString (anim->mName);
-	len += WriteDouble (anim->mDuration);
-	len += WriteDouble (anim->mTicksPerSecond);
-	len += WriteInteger(anim->mNumChannels);
+	len += Write<aiString> (anim->mName);
+	len += Write<double> (anim->mDuration);
+	len += Write<double> (anim->mTicksPerSecond);
+	len += Write<unsigned int>(anim->mNumChannels);
 
 	for (unsigned int a = 0; a < anim->mNumChannels;++a) {
 		const aiNodeAnim* nd = anim->mChannels[a];
@@ -479,22 +555,22 @@ uint32_t WriteBinaryLight(const aiLight* l)
 {
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AILIGHT);
 
-	len += WriteAiString(l->mName);
-	len += WriteInteger(l->mType);
+	len += Write<aiString>(l->mName);
+	len += Write<unsigned int>(l->mType);
 
 	if (l->mType != aiLightSource_DIRECTIONAL) { 
-		len += WriteFloat(l->mAttenuationConstant);
-		len += WriteFloat(l->mAttenuationLinear);
-		len += WriteFloat(l->mAttenuationQuadratic);
+		len += Write<float>(l->mAttenuationConstant);
+		len += Write<float>(l->mAttenuationLinear);
+		len += Write<float>(l->mAttenuationQuadratic);
 	}
 
-	len += WriteVec3((const aiVector3D&)l->mColorDiffuse);
-	len += WriteVec3((const aiVector3D&)l->mColorSpecular);
-	len += WriteVec3((const aiVector3D&)l->mColorAmbient);
+	len += Write<aiVector3D>((const aiVector3D&)l->mColorDiffuse);
+	len += Write<aiVector3D>((const aiVector3D&)l->mColorSpecular);
+	len += Write<aiVector3D>((const aiVector3D&)l->mColorAmbient);
 
 	if (l->mType == aiLightSource_SPOT) {
-		len += WriteFloat(l->mAngleInnerCone);
-		len += WriteFloat(l->mAngleOuterCone);
+		len += Write<float>(l->mAngleInnerCone);
+		len += Write<float>(l->mAngleOuterCone);
 	}
 
 	ChangeInteger(old,len);
@@ -506,14 +582,14 @@ uint32_t WriteBinaryCamera(const aiCamera* cam)
 {
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AICAMERA);
 
-	len += WriteAiString(cam->mName);
-	len += WriteVec3(cam->mPosition);
-	len += WriteVec3(cam->mLookAt);
-	len += WriteVec3(cam->mUp);
-	len += WriteFloat(cam->mHorizontalFOV);
-	len += WriteFloat(cam->mClipPlaneNear);
-	len += WriteFloat(cam->mClipPlaneFar);
-	len += WriteFloat(cam->mAspect);
+	len += Write<aiString>(cam->mName);
+	len += Write<aiVector3D>(cam->mPosition);
+	len += Write<aiVector3D>(cam->mLookAt);
+	len += Write<aiVector3D>(cam->mUp);
+	len += Write<float>(cam->mHorizontalFOV);
+	len += Write<float>(cam->mClipPlaneNear);
+	len += Write<float>(cam->mClipPlaneFar);
+	len += Write<float>(cam->mAspect);
 
 	ChangeInteger(old,len);
 	return len;
@@ -525,13 +601,13 @@ uint32_t WriteBinaryScene(const aiScene* scene)
 	uint32_t len = 0, old = WriteMagic(ASSBIN_CHUNK_AISCENE);
 
 	// basic scene information
-	len += WriteInteger(scene->mFlags);
-	len += WriteInteger(scene->mNumMeshes);
-	len += WriteInteger(scene->mNumMaterials);
-	len += WriteInteger(scene->mNumAnimations);
-	len += WriteInteger(scene->mNumTextures);
-	len += WriteInteger(scene->mNumLights);
-	len += WriteInteger(scene->mNumCameras);
+	len += Write<unsigned int>(scene->mFlags);
+	len += Write<unsigned int>(scene->mNumMeshes);
+	len += Write<unsigned int>(scene->mNumMaterials);
+	len += Write<unsigned int>(scene->mNumAnimations);
+	len += Write<unsigned int>(scene->mNumTextures);
+	len += Write<unsigned int>(scene->mNumLights);
+	len += Write<unsigned int>(scene->mNumCameras);
 	
 	// write node graph
 	len += WriteBinaryNode(scene->mRootNode)+8;
@@ -592,12 +668,12 @@ void WriteBinaryDump(const aiScene* scene, FILE* _out, const char* src, const ch
 	fprintf(out,"ASSIMP.binary-dump.%s",asctime(p));
 	// == 44 bytes
 
-	WriteInteger(ASSBIN_VERSION_MAJOR);
-	WriteInteger(ASSBIN_VERSION_MINOR);
-	WriteInteger(aiGetVersionRevision());
-	WriteInteger(aiGetCompileFlags());
-	WriteShort(shortened);
-	WriteShort(compressed);
+	Write<unsigned int>(ASSBIN_VERSION_MAJOR);
+	Write<unsigned int>(ASSBIN_VERSION_MINOR);
+	Write<unsigned int>(aiGetVersionRevision());
+	Write<unsigned int>(aiGetCompileFlags());
+	Write<uint16_t>(shortened);
+	Write<uint16_t>(compressed);
 	// ==  20 bytes
 
 	char buff[256]; 
@@ -613,7 +689,7 @@ void WriteBinaryDump(const aiScene* scene, FILE* _out, const char* src, const ch
 	// == 435 bytes
 
 	// ==== total header size: 512 bytes
-	assert(ftell(out)==ASSBIN_HEADER_LENGTH);
+	ai_assert(ftell(out)==ASSBIN_HEADER_LENGTH);
 
 	// Up to here the data is uncompressed. For compressed files, the rest
 	// is compressed using standard DEFLATE from zlib.
@@ -692,6 +768,46 @@ void WriteNode(const aiNode* node, FILE* out, unsigned int depth)
 	fprintf(out,"%s</Node>\n",prefix);
 }
 
+
+// -------------------------------------------------------------------------------
+const char* TextureTypeToString(aiTextureType in)
+{
+	switch (in)
+	{
+	case aiTextureType_NONE:
+		return "n/a";
+	case aiTextureType_DIFFUSE:
+		return "Diffuse";
+	case aiTextureType_SPECULAR:
+		return "Specular";
+	case aiTextureType_AMBIENT:
+		return "Ambient";
+	case aiTextureType_EMISSIVE:
+		return "Emissive";
+	case aiTextureType_OPACITY:
+		return "Opacity";
+	case aiTextureType_NORMALS:
+		return "Normals";
+	case aiTextureType_HEIGHT:
+		return "Height";
+	case aiTextureType_SHININESS:
+		return "Shininess";
+	case aiTextureType_DISPLACEMENT:
+		return "Displacement";
+	case aiTextureType_LIGHTMAP:
+		return "Lightmap";
+	case aiTextureType_REFLECTION:
+		return "Reflection";
+	case aiTextureType_UNKNOWN:
+		return "Unknown";
+	default:
+		break;
+	}
+	ai_assert(false); 
+	return  "BUG";    
+}
+
+
 // -----------------------------------------------------------------------------------
 // Write a text model dump
 void WriteDump(const aiScene* scene, FILE* out, const char* src, const char* cmd, bool shortened)
@@ -699,6 +815,14 @@ void WriteDump(const aiScene* scene, FILE* out, const char* src, const char* cmd
 	time_t tt = ::time(NULL);
 	tm* p     = ::gmtime(&tt);
 
+	std::string c = cmd;
+	std::string::size_type s; 
+
+	// https://sourceforge.net/tracker/?func=detail&aid=3167364&group_id=226462&atid=1067632
+	// -- not allowed in XML comments
+	while((s = c.find("--")) != std::string::npos) {
+		c[s] = '?';
+	}
 	aiString name;
 
 	// write header
@@ -715,7 +839,7 @@ void WriteDump(const aiScene* scene, FILE* out, const char* src, const char* cmd
 		" \n\n"
 		"<Scene flags=\"%i\" postprocessing=\"%i\">\n",
 		
-		aiGetVersionMajor(),aiGetVersionMinor(),aiGetVersionRevision(),src,cmd,asctime(p),
+		aiGetVersionMajor(),aiGetVersionMinor(),aiGetVersionRevision(),src,c.c_str(),asctime(p),
 		scene->mFlags,
 		0 /*globalImporter->GetEffectivePostProcessing()*/);
 
@@ -815,7 +939,7 @@ void WriteDump(const aiScene* scene, FILE* out, const char* src, const char* cmd
 			else if (!shortened){
 				fprintf(out,"\t\t<Data length=\"%i\"> \n",tex->mWidth*tex->mHeight*4);
 
-				const unsigned int width = (unsigned int)log10((double)std::max(tex->mHeight,tex->mWidth))+1;
+				// const unsigned int width = (unsigned int)log10((double)std::max(tex->mHeight,tex->mWidth))+1;
 				for (unsigned int y = 0; y < tex->mHeight;++y) {
 					for (unsigned int x = 0; x < tex->mWidth;++x) {
 						aiTexel* tx = tex->pcData + y*tex->mWidth+x;
@@ -860,7 +984,7 @@ void WriteDump(const aiScene* scene, FILE* out, const char* src, const char* cmd
 
 				fprintf(out,"\t\t\t<MatProperty key=\"%s\" \n\t\t\ttype=\"%s\" tex_usage=\"%s\" tex_index=\"%i\"",
 					prop->mKey.data, sz,
-					TextureTypeToString((aiTextureType)prop->mSemantic),prop->mIndex);
+					::TextureTypeToString((aiTextureType)prop->mSemantic),prop->mIndex);
 
 				if (prop->mType == aiPTI_Float) {
 					fprintf(out," size=\"%i\">\n\t\t\t\t",
@@ -972,7 +1096,7 @@ void WriteDump(const aiScene* scene, FILE* out, const char* src, const char* cmd
 		fprintf(out,"<MeshList num=\"%i\">\n",scene->mNumMeshes);
 		for (unsigned int i = 0; i < scene->mNumMeshes;++i) {
 			aiMesh* mesh = scene->mMeshes[i];
-			const unsigned int width = (unsigned int)log10((double)mesh->mNumVertices)+1;
+			// const unsigned int width = (unsigned int)log10((double)mesh->mNumVertices)+1;
 
 			// mesh header
 			fprintf(out,"\t<Mesh types=\"%s %s %s %s\" material_index=\"%i\">\n",
@@ -1150,7 +1274,7 @@ int Assimp_Dump (const char* const* params, unsigned int num)
 	const char* fail = "assimp dump: Invalid number of arguments. "
 			"See \'assimp dump --help\'\r\n";
 	if (num < 1) {
-		printf(fail);
+		printf("%s", fail);
 		return 1;
 	}
 
@@ -1162,7 +1286,7 @@ int Assimp_Dump (const char* const* params, unsigned int num)
 
 	// asssimp dump in out [options]
 	if (num < 1) {
-		printf(fail);
+		printf("%s", fail);
 		return 1;
 	}
 

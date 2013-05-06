@@ -51,9 +51,6 @@
     <ClInclude Include="BuildConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MeshBuild\FbxImporter.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MeshBuild\AIImporter.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -99,6 +96,9 @@
     <ClInclude Include="AnimationBuild\MAnimBuild.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MeshBuild\FbxConverter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -129,9 +129,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="BuildConfig.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshBuild\FbxImporter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MeshBuild\AIImporter.cpp">
@@ -174,6 +171,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="AnimationBuild\MAnimBuild.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshBuild\FbxConverter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

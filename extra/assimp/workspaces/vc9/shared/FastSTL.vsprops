@@ -6,6 +6,6 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		PreprocessorDefinitions="_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0"
+		PreprocessorDefinitions=""
 	/>
 </VisualStudioPropertySheet>

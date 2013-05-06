@@ -1,9 +1,9 @@
 /*
 ---------------------------------------------------------------------------
-Open Asset Import Library (ASSIMP)
+Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2010, ASSIMP Development Team
+Copyright (c) 2006-2012, assimp team
 
 All rights reserved.
 
@@ -20,10 +20,10 @@ conditions are met:
   following disclaimer in the documentation and/or other
   materials provided with the distribution.
 
-* Neither the name of the ASSIMP team, nor the names of its
+* Neither the name of the assimp team, nor the names of its
   contributors may be used to endorse or promote products
   derived from this software without specific prior
-  written permission of the ASSIMP Development Team.
+  written permission of the assimp team.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
@@ -48,21 +48,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "resource.h"
 
 // Include ASSIMP headers (XXX: do we really need all of them?)
-#include "assimp.h"
-#include "assimp.hpp"
-#include "aiAssert.h"
-#include "aiFileIO.h"
-#include "aiPostProcess.h"
-#include "aiScene.h"
-#include "IOSystem.h"
-#include "IOStream.h"
-#include "LogStream.h"
-#include "DefaultLogger.h"
+#include <assimp/cimport.h>
+#include <assimp/Importer.hpp>
+#include <assimp/ai_assert.h>
+#include <assimp/cfileio.h>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <assimp/IOSystem.hpp>
+#include <assimp/IOStream.hpp>
+#include <assimp/LogStream.hpp>
+#include <assimp/DefaultLogger.hpp>
 
 #include "../../code/AssimpPCH.h" /* HACK */
  
-#include "MaterialSystem.h"   // MaterialHelper clas
-#include "StringComparison.h" // ASSIMP_stricmp and ASSIMP_strincmp
+#include "../../code/MaterialSystem.h"   // aiMaterial class
+#include "../../code/StringComparison.h" // ASSIMP_stricmp and ASSIMP_strincmp
 
 // in order for std::min and std::max to behave properly
 #ifdef min 

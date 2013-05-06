@@ -41,9 +41,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma warning (disable : 4819)
 #endif
 
-#include <assimp/include/assimp.hpp>
-#include <assimp/include/aiPostProcess.h>
-#include <assimp/include/aiScene.h>
+//#include <assimp/assimp.hpp>
+#include "assimp/postProcess.h"
+#include "assimp/scene.h"
+#include "assimp/Importer.hpp"
 
 #ifdef _MSC_VER
 #pragma warning (pop)

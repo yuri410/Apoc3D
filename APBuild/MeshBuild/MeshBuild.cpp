@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "AIImporter.h"
 #include "XImporter.h"
-#include "FbxImporter.h"
+#include "FbxConverter.h"
 
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/IOLib/Streams.h"
@@ -45,7 +45,7 @@ namespace APBuild
 {
 	void MeshBuild::BuildByFBX(const MeshBuildConfig& config)
 	{
-		FbxImporter::Import(config);
+		FbxConverter::Import(config);
 
 		CompileLog::WriteInformation(config.SrcFile, L">");
 	}

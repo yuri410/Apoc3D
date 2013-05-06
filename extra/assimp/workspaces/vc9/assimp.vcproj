@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="DEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
@@ -87,6 +87,7 @@
 			OutputDirectory="./../../lib/$(ProjectName)_$(ConfigurationName)_$(PlatformName)"
 			IntermediateDirectory="./../../obj/$(ProjectName)_$(ConfigurationName)_$(PlatformName)"
 			ConfigurationType="4"
+			InheritedPropertySheets=".\shared\FastSTL.vsprops;.\shared\LibShared.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -107,7 +108,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="DEBUG, _SCL_SECURE_NO_WARNINGS, _CRT_SECURE_NO_WARNINGS,WIN32"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
@@ -146,7 +147,7 @@
 		</Configuration>
 		<Configuration
 			Name="release|Win32"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="./../../obj/$(ProjectName)_$(ConfigurationName)_$(PlatformName)"
 			ConfigurationType="4"
 			InheritedPropertySheets=".\shared\LibShared.vsprops;.\shared\FastSTL.vsprops"
 			WholeProgramOptimization="0"
@@ -173,7 +174,7 @@
 				FavorSizeOrSpeed="0"
 				OmitFramePointers="true"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="NDEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;WIN32"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -216,7 +217,7 @@
 		<Configuration
 			Name="release|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets=".\shared\LibShared.vsprops"
+			InheritedPropertySheets=".\shared\LibShared.vsprops;.\shared\FastSTL.vsprops"
 			WholeProgramOptimization="0"
 			>
 			<Tool
@@ -240,12 +241,13 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="NDEBUG, _SCL_SECURE_NO_WARNINGS, _CRT_SECURE_NO_WARNINGS,WIN32"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableEnhancedInstructionSet="0"
+				FloatingPointModel="2"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="AssimpPCH.h"
 				WarningLevel="3"
@@ -305,7 +307,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="0"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="NDEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;ASSIMP_BUILD_DLL_EXPORT"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -332,7 +334,6 @@
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(SolutionDir)..\..\lib\$(ProjectName)_$(ConfigurationName)_$(PlatformName)\assimp.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -354,14 +355,14 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir &quot;$(SolutionDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(SolutionDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(SolutionDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="release-dll|x64"
 			ConfigurationType="2"
-			InheritedPropertySheets=".\shared\DllShared.vsprops"
-			WholeProgramOptimization="1"
+			InheritedPropertySheets=".\shared\DllShared.vsprops;.\shared\FastSTL.vsprops"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -385,12 +386,13 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="NDEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;ASSIMP_BUILD_DLL_EXPORT"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableEnhancedInstructionSet="0"
+				FloatingPointModel="2"
 				WarningLevel="3"
 			/>
 			<Tool
@@ -405,7 +407,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\Assimp64.dll"
-				ImportLibrary="$(SolutionDir)..\..\lib\$(ProjectName)_$(ConfigurationName)_$(PlatformName)\assimp.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -428,7 +429,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir &quot;$(SolutionDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(SolutionDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(SolutionDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -454,7 +455,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="DEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;ASSIMP_BUILD_DLL_EXPORT"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
@@ -482,7 +483,6 @@
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(SolutionDir)..\..\lib\$(ProjectName)_$(ConfigurationName)_$(PlatformName)\assimp.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -504,13 +504,13 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir &quot;$(SolutionDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(SolutionDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(SolutionDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
 			Name="debug-dll|x64"
 			ConfigurationType="2"
-			InheritedPropertySheets=".\shared\DllShared.vsprops"
+			InheritedPropertySheets=".\shared\DllShared.vsprops;.\shared\FastSTL.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -531,7 +531,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="DEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;ASSIMP_BUILD_DLL_EXPORT"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
@@ -552,7 +552,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)\Assimp64d.dll"
-				ImportLibrary="$(SolutionDir)..\..\lib\$(ProjectName)_$(ConfigurationName)_$(PlatformName)\assimp.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -575,7 +574,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir &quot;$(SolutionDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(SolutionDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(SolutionDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(SolutionDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)&quot;&#x0D;&#x0A;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\unit_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\assimpview_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(TargetFileName)&quot; &quot;$(ProjectDir)..\..\bin\assimpcmd_$(ConfigurationName)_$(PlatformName)\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -605,7 +604,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="0"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="..\..\code\BoostWorkaround"
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="NDEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;ASSIMP_BUILD_BOOST_WORKAROUND"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -648,7 +647,7 @@
 		<Configuration
 			Name="release-noboost-st|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets=".\shared\LibShared.vsprops;.\shared\NoBoostShared.vsprops"
+			InheritedPropertySheets=".\shared\LibShared.vsprops;.\shared\NoBoostShared.vsprops;.\shared\FastSTL.vsprops"
 			WholeProgramOptimization="0"
 			>
 			<Tool
@@ -672,7 +671,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="..\..\code\BoostWorkaround"
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="NDEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;ASSIMP_BUILD_BOOST_WORKAROUND"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -733,7 +732,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\code\BoostWorkaround"
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="DEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;ASSIMP_BUILD_BOOST_WORKAROUND"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
@@ -777,7 +776,7 @@
 		<Configuration
 			Name="debug-noboost-st|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets=".\shared\LibShared.vsprops;.\shared\NoBoostShared.vsprops"
+			InheritedPropertySheets=".\shared\LibShared.vsprops;.\shared\NoBoostShared.vsprops;.\shared\FastSTL.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -798,7 +797,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\code\BoostWorkaround"
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="DEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;ASSIMP_BUILD_BOOST_WORKAROUND"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
@@ -858,7 +857,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="DEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
@@ -902,7 +901,7 @@
 		<Configuration
 			Name="debug-st|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets=".\shared\LibShared.vsprops;.\shared\SingleThreadedShared.vsprops"
+			InheritedPropertySheets=".\shared\LibShared.vsprops;.\shared\SingleThreadedShared.vsprops;.\shared\FastSTL.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -923,7 +922,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="DEBUG, _SCL_SECURE_NO_WARNINGS, _CRT_SECURE_NO_WARNINGS,WIN32"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
@@ -987,7 +986,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="0"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="NDEBUG;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -1030,7 +1029,7 @@
 		<Configuration
 			Name="release-st|x64"
 			ConfigurationType="4"
-			InheritedPropertySheets=".\shared\LibShared.vsprops;.\shared\SingleThreadedShared.vsprops"
+			InheritedPropertySheets=".\shared\LibShared.vsprops;.\shared\SingleThreadedShared.vsprops;.\shared\FastSTL.vsprops"
 			WholeProgramOptimization="0"
 			>
 			<Tool
@@ -1054,7 +1053,7 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="..\..\contrib\unzip"
 				PreprocessorDefinitions="NDEBUG, _SCL_SECURE_NO_WARNINGS, _CRT_SECURE_NO_WARNINGS,WIN32"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -1103,55 +1102,51 @@
 				Name="Compiler"
 				>
 				<File
-					RelativePath="..\..\include\Compiler\poppack1.h"
+					RelativePath="..\..\include\assimp\Compiler\poppack1.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\code\pstdint.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\include\Compiler\pushpack1.h"
+					RelativePath="..\..\include\assimp\Compiler\pushpack1.h"
 					>
 				</File>
 			</Filter>
 			<Filter
-				Name="Cpp"
+				Name="C++"
 				>
 				<File
-					RelativePath="..\..\include\aiAssert.h"
+					RelativePath="..\..\include\assimp\DefaultLogger.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\assimp.hpp"
+					RelativePath="..\..\include\assimp\Exporter.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\DefaultLogger.h"
+					RelativePath="..\..\include\assimp\Importer.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\IOStream.h"
+					RelativePath="..\..\include\assimp\IOStream.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\IOSystem.h"
+					RelativePath="..\..\include\assimp\IOSystem.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\Logger.h"
+					RelativePath="..\..\include\assimp\Logger.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\LogStream.h"
+					RelativePath="..\..\include\assimp\LogStream.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\NullLogger.h"
+					RelativePath="..\..\include\assimp\NullLogger.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\ProgressHandler.h"
+					RelativePath="..\..\include\assimp\ProgressHandler.hpp"
 					>
 				</File>
 			</Filter>
@@ -1159,15 +1154,15 @@
 				Name="C"
 				>
 				<File
-					RelativePath="..\..\include\aiFileIO.h"
+					RelativePath="..\..\include\assimp\cexport.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiVersion.h"
+					RelativePath="..\..\include\assimp\cfileio.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\assimp.h"
+					RelativePath="..\..\include\assimp\cimport.h"
 					>
 				</File>
 			</Filter>
@@ -1175,91 +1170,111 @@
 				Name="Common"
 				>
 				<File
-					RelativePath="..\..\include\aiAnim.h"
+					RelativePath="..\..\include\assimp\ai_assert.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiCamera.h"
+					RelativePath="..\..\include\assimp\anim.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiColor4D.h"
+					RelativePath="..\..\include\assimp\camera.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiColor4D.inl"
+					RelativePath="..\..\include\assimp\color4.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiConfig.h"
+					RelativePath="..\..\include\assimp\color4.inl"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiDefines.h"
+					RelativePath="..\..\include\assimp\config.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiLight.h"
+					RelativePath="..\..\include\assimp\defs.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiMaterial.h"
+					RelativePath="..\..\include\assimp\importerdesc.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiMaterial.inl"
+					RelativePath="..\..\include\assimp\light.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiMatrix3x3.h"
+					RelativePath="..\..\include\assimp\material.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiMatrix3x3.inl"
+					RelativePath="..\..\include\assimp\material.inl"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiMatrix4x4.h"
+					RelativePath="..\..\include\assimp\matrix3x3.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiMatrix4x4.inl"
+					RelativePath="..\..\include\assimp\matrix3x3.inl"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiMesh.h"
+					RelativePath="..\..\include\assimp\matrix4x4.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiPostProcess.h"
+					RelativePath="..\..\include\assimp\matrix4x4.inl"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiQuaternion.h"
+					RelativePath="..\..\include\assimp\mesh.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiScene.h"
+					RelativePath="..\..\include\assimp\postprocess.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiTexture.h"
+					RelativePath="..\..\include\assimp\quaternion.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiTypes.h"
+					RelativePath="..\..\include\assimp\quaternion.inl"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiVector2D.h"
+					RelativePath="..\..\include\assimp\scene.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiVector3D.h"
+					RelativePath="..\..\include\assimp\texture.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\include\aiVector3D.inl"
+					RelativePath="..\..\include\assimp\types.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\include\assimp\vector2.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\include\assimp\vector2.inl"
+					>
+				</File>
+				<File
+					RelativePath="..\..\include\assimp\vector3.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\include\assimp\vector3.inl"
+					>
+				</File>
+				<File
+					RelativePath="..\..\include\assimp\version.h"
 					>
 				</File>
 			</Filter>
@@ -1268,15 +1283,7 @@
 			Name="sources"
 			>
 			<Filter
-				Name="extra"
-				>
-				<File
-					RelativePath="..\..\code\MD4FileData.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="import"
+				Name="importers"
 				>
 				<Filter
 					Name="3ds"
@@ -1550,6 +1557,10 @@
 					Name="dxf"
 					>
 					<File
+						RelativePath="..\..\code\DXFHelper.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\code\DXFLoader.cpp"
 						>
 					</File>
@@ -1649,26 +1660,6 @@
 						RelativePath="..\..\code\LWSLoader.h"
 						>
 					</File>
-					<Filter
-						Name="md2"
-						>
-						<File
-							RelativePath="..\..\code\MD2FileData.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\code\MD2Loader.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\code\MD2Loader.h"
-							>
-						</File>
-						<File
-							RelativePath="..\..\code\MD2NormalTable.h"
-							>
-						</File>
-					</Filter>
 				</Filter>
 				<Filter
 					Name="bvh"
@@ -1818,15 +1809,27 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\code\OgreImporter.h"
+						RelativePath="..\..\code\OgreImporter.hpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\code\OgreImporterMaterial.cpp"
+						RelativePath="..\..\code\OgreMaterial.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\OgreMesh.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\OgreSkeleton.cpp"
 						>
 					</File>
 					<File
 						RelativePath="..\..\code\OgreXmlHelper.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\OgreXmlHelper.hpp"
 						>
 					</File>
 				</Filter>
@@ -1938,10 +1941,126 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="md2"
+					>
+					<File
+						RelativePath="..\..\code\MD2FileData.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\MD2Loader.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\MD2Loader.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\MD2NormalTable.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="ifc"
+					>
+					<File
+						RelativePath="..\..\code\IFCCurve.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\IFCGeometry.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\IFCLoader.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\IFCLoader.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\IFCMaterial.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\IFCProfile.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\IFCReaderGen.cpp"
+						>
+						<FileConfiguration
+							Name="debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalOptions="/bigobj"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\code\IFCReaderGen.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\IFCUtil.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\IFCUtil.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\STEPFile.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\STEPFileReader.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\STEPFileReader.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="m3"
+					>
+					<File
+						RelativePath="..\..\code\M3Importer.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\M3Importer.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="xgl"
+					>
+					<File
+						RelativePath="..\..\code\XGLLoader.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\XGLLoader.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
-				Name="process"
+				Name="postprocessing"
 				>
+				<File
+					RelativePath="..\..\code\BaseProcess.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\BaseProcess.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\code\CalcTangentsProcess.cpp"
 					>
@@ -1964,6 +2083,14 @@
 				</File>
 				<File
 					RelativePath="..\..\code\ConvertToLHProcess.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\DeboneProcess.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\DeboneProcess.h"
 					>
 				</File>
 				<File
@@ -2039,6 +2166,102 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\code\MakeVerboseFormat.cpp"
+					>
+					<FileConfiguration
+						Name="debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release-dll|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="debug-dll|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release-noboost-st|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release-noboost-st|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="debug-noboost-st|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="debug-st|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release-st|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="release-st|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\code\MakeVerboseFormat.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\code\OptimizeGraph.cpp"
 					>
 				</File>
@@ -2060,6 +2283,10 @@
 				</File>
 				<File
 					RelativePath="..\..\code\PretransformVertices.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\ProcessHelper.cpp"
 					>
 				</File>
 				<File
@@ -2088,6 +2315,14 @@
 				</File>
 				<File
 					RelativePath="..\..\code\SortByPTypeProcess.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\SplitByBoneCountProcess.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\SplitByBoneCountProcess.h"
 					>
 				</File>
 				<File
@@ -2124,7 +2359,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="pch"
+				Name="core"
 				>
 				<File
 					RelativePath="..\..\code\AssimpPCH.cpp"
@@ -2230,6 +2465,70 @@
 					RelativePath="..\..\code\AssimpPCH.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\code\ByteSwap.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\Exceptional.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\GenericProperty.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\Hash.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\LogAux.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\MaterialSystem.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\MaterialSystem.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\PolyTools.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\Profiler.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\qnan.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\ScenePrivate.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\StandardShapes.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\StandardShapes.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\StringComparison.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\TinyFormatter.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\Vertex.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="logging"
@@ -2252,8 +2551,12 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="fs"
+				Name="filesystem"
 				>
+				<File
+					RelativePath="..\..\code\CInterfaceIOWrapper.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\code\DefaultIOStream.cpp"
 					>
@@ -2274,14 +2577,14 @@
 					RelativePath="..\..\code\FileSystemFilter.h"
 					>
 				</File>
-			</Filter>
-			<Filter
-				Name="core"
-				>
 				<File
-					RelativePath="..\..\code\aiAssert.cpp"
+					RelativePath="..\..\code\MemoryIOWrapper.h"
 					>
 				</File>
+			</Filter>
+			<Filter
+				Name="core_import"
+				>
 				<File
 					RelativePath="..\..\code\Assimp.cpp"
 					>
@@ -2295,35 +2598,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\code\BaseProcess.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\BaseProcess.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\ByteSwap.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\code\DefaultProgressHandler.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\code\Exceptional.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\code\fast_atof.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\GenericProperty.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\Hash.h"
 					>
 				</File>
 				<File
@@ -2335,111 +2614,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\code\Importer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\ImporterRegistry.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\code\LineSplitter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\MakeVerboseFormat.cpp"
-					>
-					<FileConfiguration
-						Name="debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="release|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="release-dll|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="debug-dll|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="release-noboost-st|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="release-noboost-st|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="debug-noboost-st|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="debug-st|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="release-st|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="release-st|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\code\MakeVerboseFormat.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\MaterialSystem.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\MaterialSystem.h"
 					>
 				</File>
 				<File
@@ -2447,11 +2630,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\code\Profiler.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\qnan.h"
+					RelativePath="..\..\code\PostStepRegistry.cpp"
 					>
 				</File>
 				<File
@@ -2511,19 +2690,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\code\StandardShapes.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\StandardShapes.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\code\StreamReader.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\StringComparison.h"
 					>
 				</File>
 				<File
@@ -2540,14 +2707,6 @@
 				</File>
 				<File
 					RelativePath="..\..\code\TargetAnimation.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\TinyFormatter.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\code\Vertex.h"
 					>
 				</File>
 				<File
@@ -3978,6 +4137,838 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="poly2tri"
+					>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\sweep\advancing_front.cc"
+						>
+						<FileConfiguration
+							Name="debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\sweep\advancing_front.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\sweep\cdt.cc"
+						>
+						<FileConfiguration
+							Name="debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\sweep\cdt.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\poly2tri.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\common\shapes.cc"
+						>
+						<FileConfiguration
+							Name="debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\common\shapes.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\sweep\sweep.cc"
+						>
+						<FileConfiguration
+							Name="debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\sweep\sweep.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\sweep\sweep_context.cc"
+						>
+						<FileConfiguration
+							Name="debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\sweep\sweep_context.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\contrib\poly2tri\poly2tri\common\utils.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="clipper"
+					>
+					<File
+						RelativePath="..\..\contrib\clipper\clipper.cpp"
+						>
+						<FileConfiguration
+							Name="debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-dll|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-noboost-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="debug-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="release-st|x64"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\contrib\clipper\clipper.hpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="noboost"
@@ -3992,6 +4983,10 @@
 				</File>
 				<File
 					RelativePath="..\..\code\BoostWorkaround\boost\lexical_cast.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\BoostWorkaround\boost\make_shared.hpp"
 					>
 				</File>
 				<File
@@ -4031,6 +5026,74 @@
 					>
 					<File
 						RelativePath="..\..\code\BoostWorkaround\boost\math\common_factor_rt.hpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="core_export"
+				>
+				<File
+					RelativePath="..\..\code\AssimpCExport.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\BlobIOSystem.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\code\Exporter.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="exporters"
+				>
+				<Filter
+					Name="collada"
+					>
+					<File
+						RelativePath="..\..\code\ColladaExporter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\ColladaExporter.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="obj"
+					>
+					<File
+						RelativePath="..\..\code\ObjExporter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\ObjExporter.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="stl"
+					>
+					<File
+						RelativePath="..\..\code\STLExporter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\STLExporter.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="ply"
+					>
+					<File
+						RelativePath="..\..\code\PlyExporter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\code\PlyExporter.h"
 						>
 					</File>
 				</Filter>

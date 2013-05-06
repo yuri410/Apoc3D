@@ -1,9 +1,9 @@
 /*
 ---------------------------------------------------------------------------
-Open Asset Import Library (ASSIMP)
+Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2010, ASSIMP Development Team
+Copyright (c) 2006-2012, assimp team
 
 All rights reserved.
 
@@ -20,10 +20,10 @@ copyright notice, this list of conditions and the
 following disclaimer in the documentation and/or other
 materials provided with the distribution.
 
-* Neither the name of the ASSIMP team, nor the names of its
+* Neither the name of the assimp team, nor the names of its
 contributors may be used to endorse or promote products
 derived from this software without specific prior
-written permission of the ASSIMP Development Team.
+written permission of the assimp team.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
@@ -89,6 +89,7 @@ unsigned int ppsteps = aiProcess_CalcTangentSpace | // calculate tangents and bi
 		aiProcess_FindInstances            | // search for instanced meshes and remove them by references to one master
 		aiProcess_LimitBoneWeights         | // limit bone weights to 4 per vertex
 		aiProcess_OptimizeMeshes		   | // join small meshes, if possible;
+		aiProcess_SplitByBoneCount         | // split meshes with too many bones. Necessary for our (limited) hardware skinning shader
 		0;
 
 unsigned int ppstepsdefault = ppsteps;
@@ -147,15 +148,16 @@ DWORD WINAPI LoadThreadProc(LPVOID lpParameter)
 	// get current time
 	double fCur = (double)timeGetTime();
 
-	aiSetImportPropertyInteger(AI_CONFIG_IMPORT_TER_MAKE_UVS,1);
-	aiSetImportPropertyFloat(AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE,g_smoothAngle);
-	aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE,nopointslines ? aiPrimitiveType_LINE | aiPrimitiveType_POINT : 0 );
+	aiPropertyStore* props = aiCreatePropertyStore();
+	aiSetImportPropertyInteger(props,AI_CONFIG_IMPORT_TER_MAKE_UVS,1);
+	aiSetImportPropertyFloat(props,AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE,g_smoothAngle);
+	aiSetImportPropertyInteger(props,AI_CONFIG_PP_SBP_REMOVE,nopointslines ? aiPrimitiveType_LINE | aiPrimitiveType_POINT : 0 );
 
-	aiSetImportPropertyInteger(AI_CONFIG_GLOB_MEASURE_TIME,1);
-	//aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_KEEP_HIERARCHY,1);
+	aiSetImportPropertyInteger(props,AI_CONFIG_GLOB_MEASURE_TIME,1);
+	//aiSetImportPropertyInteger(props,AI_CONFIG_PP_PTV_KEEP_HIERARCHY,1);
 
 	// Call ASSIMPs C-API to load the file
-	g_pcAsset->pcScene = (aiScene*)aiImportFile(g_szFileName,
+	g_pcAsset->pcScene = (aiScene*)aiImportFileExWithProperties(g_szFileName,
 
 		ppsteps | /* configurable pp steps */
 		aiProcess_GenSmoothNormals		   | // generate smooth normal vectors if not existing
@@ -163,7 +165,11 @@ DWORD WINAPI LoadThreadProc(LPVOID lpParameter)
 		aiProcess_Triangulate			   | // triangulate polygons with more than 3 edges
 		aiProcess_ConvertToLeftHanded	   | // convert everything to D3D left handed space
 		aiProcess_SortByPType              | // make 'clean' meshes which consist of a single typ of primitives
-		0);
+		0,
+		NULL,
+		props);
+
+	aiReleasePropertyStore(props);
 
 	// get the end time of zje operation, calculate delta t
 	double fEnd = (double)timeGetTime();
@@ -182,6 +188,7 @@ DWORD WINAPI LoadThreadProc(LPVOID lpParameter)
 			D3DCOLOR_ARGB(0xFF,0xFF,0,0));
 		return 1;
 	}
+
 	return 0;
 }
 
@@ -498,7 +505,7 @@ int CreateAssetData()
 				nidx = 2;break;
 			case aiPrimitiveType_TRIANGLE:
 				nidx = 3;break;
-			default: assert(false);
+			default: ai_assert(false);
 		};
 
 		// check whether we can use 16 bit indices

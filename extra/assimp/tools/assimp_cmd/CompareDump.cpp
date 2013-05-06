@@ -1,9 +1,9 @@
 /*
 ---------------------------------------------------------------------------
-Open Asset Import Library (ASSIMP)
+Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2010, ASSIMP Development Team
+Copyright (c) 2006-2012, assimp team
 
 All rights reserved.
 
@@ -20,10 +20,10 @@ conditions are met:
   following disclaimer in the documentation and/or other
   materials provided with the distribution.
 
-* Neither the name of the ASSIMP team, nor the names of its
+* Neither the name of the assimp team, nor the names of its
   contributors may be used to endorse or promote products
   derived from this software without specific prior
-  written permission of the ASSIMP Development Team.
+  written permission of the assimp team.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
@@ -113,8 +113,8 @@ public:
 		, expect(expect)
 		, cnt_chunks(0)
 	{
-		assert(actual);
-		assert(expect);
+		ai_assert(actual);
+		ai_assert(expect);
 
 		fseek(actual,0,SEEK_END);
 		lengths.push(std::make_pair(static_cast<uint32_t>(ftell(actual)),0));
@@ -142,7 +142,7 @@ public:
 
 	/* leave current scope */
 	void pop_elem() {
-		assert(history.size());
+		ai_assert(history.size());
 		history.pop_back();
 	}
 
@@ -155,19 +155,19 @@ public:
 
 	/* pop the chunk length stack */
 	void pop_length() {
-		assert(lengths.size());
+		ai_assert(lengths.size());
 		lengths.pop();
 	}
 
 	/* access the current chunk length */
 	uint32_t get_latest_chunk_length() {
-		assert(lengths.size());
+		ai_assert(lengths.size());
 		return lengths.top().first;
 	}
 
 	/* access the current chunk start offset */
 	uint32_t get_latest_chunk_start() {
-		assert(lengths.size());
+		ai_assert(lengths.size());
 		return lengths.top().second;
 	}
 
@@ -605,6 +605,9 @@ void CompareOnTheFlyMaterialProperty(comparer_context& comp)	{
 		case aiPTI_Buffer:
 			comp.cmp<uint8_t>(length,"mData");
 			break;
+
+		default:
+			break;
 	};
 }
 
@@ -642,9 +645,9 @@ void CompareOnTheFlyNodeAnim(comparer_context& comp)	{
 	comp.cmp<uint32_t>("mPreState");
 	comp.cmp<uint32_t>("mPostState");
 
-	comp.cmp_bounds<aiVector3D>("mPositionKeys");
-	comp.cmp_bounds<aiVector3D>("mRotationKeys");
-	comp.cmp_bounds<aiVector3D>("mScalingKeys");
+	comp.cmp_bounds<aiVectorKey>("mPositionKeys");
+	comp.cmp_bounds<aiQuatKey>("mRotationKeys");
+	comp.cmp_bounds<aiVectorKey>("mScalingKeys");
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -759,6 +762,7 @@ void CompareOnTheFlyTexture(comparer_context& comp)	{
 
 	const uint32_t w = comp.cmp<uint32_t>("mWidth");
 	const uint32_t h = comp.cmp<uint32_t>("mHeight");
+	(void)w; (void)h;
 	comp.cmp<char>("achFormatHint[0]");
 	comp.cmp<char>("achFormatHint[1]");
 	comp.cmp<char>("achFormatHint[2]");
@@ -842,7 +846,7 @@ void CheckHeader(comparer_context& comp)
 int Assimp_CompareDump (const char* const* params, unsigned int num)
 {
 	// --help
-	if (num == 1 && !strcmp( params[0], "-h") || !strcmp( params[0], "--help") || !strcmp( params[0], "-?") ) {
+	if ((num == 1 && !strcmp( params[0], "-h")) || !strcmp( params[0], "--help") || !strcmp( params[0], "-?") ) {
 		printf("%s",AICMD_MSG_CMPDUMP_HELP);
 		return 0;
 	}
