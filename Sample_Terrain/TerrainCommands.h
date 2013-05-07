@@ -26,38 +26,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APSAM_TERDEMO_TERRAINCOMMANDS
 
 #include "TerrainCommon.h"
-#include "apoc3d/Core/CommandInterpreter.h"
 
 namespace SampleTerrain
 {
-	class GenGetCommand : public Command
-	{
-	public:
-		GenGetCommand();
-		virtual void Execute(const Apoc3D::Collections::List<String>& args);
-
-	};
-	class GenSetCommand : public Command
-	{
-	public:
-		GenSetCommand();
-		virtual void Execute(const Apoc3D::Collections::List<String>& args);
-
-	};
-
-	class GenCommand : public Command
-	{
-	public:
-		GenCommand();
-		virtual void Execute(const Apoc3D::Collections::List<String>& args);
-	};
-
-	class JumpHeightCommand  : public Command
-	{
-	public:
-		JumpHeightCommand();
-		virtual void Execute(const Apoc3D::Collections::List<String>& args);
-	};
+	void RegisterTerrainCommands();
 }
 
 #endif

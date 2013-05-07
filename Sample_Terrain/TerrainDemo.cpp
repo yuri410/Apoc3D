@@ -136,9 +136,7 @@ namespace SampleTerrain
 
 		m_scene = new OctreeSceneManager(OctreeBox(20000), 20000/256);
 
-		CommandInterpreter::getSingleton().RegisterCommand(new GenCommand());
-		CommandInterpreter::getSingleton().RegisterCommand(new JumpHeightCommand());
-
+		RegisterTerrainCommands();
 		
 		LoadUI();
 

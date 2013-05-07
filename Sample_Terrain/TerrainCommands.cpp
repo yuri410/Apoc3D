@@ -2,35 +2,19 @@
 #include "Terrain.h"
 #include "GameCamera.h"
 
-#include "Apoc3D/Core/Logging.h"
-#include "Apoc3D/Utility/StringUtils.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Core/CommandInterpreter.h"
 
 using namespace Apoc3D::Utility;
 
 namespace SampleTerrain
 {
-	GenCommand::GenCommand()
-	{
-		m_desc.Name = L"Noise Generator";
-		m_desc.CommandName = L"gen";
-		m_desc.NumOfParameters = 0;
-		m_desc.SubCommands.Add(new GenGetCommand());
-		m_desc.SubCommands.Add(new GenSetCommand());
-	}
-	void GenCommand::Execute(const Apoc3D::Collections::List<String>& args)
+	void GenCommand(CommandArgsConstRef args)
 	{
 		LogManager::getSingleton().Write(LOG_CommandResponse, L"Use gen get/set.", LOGLVL_Infomation);
 	}
-
-	//////////////////////////////////////////////////////////////////////////
-
-	GenGetCommand::GenGetCommand()
-	{
-		m_desc.Name = L"Noise Generator Get params. [persistence, frequency, octaves, seed]";
-		m_desc.CommandName = L"get";
-		m_desc.NumOfParameters = 0;
-	}
-	void GenGetCommand::Execute(const Apoc3D::Collections::List<String>& args)
+	void GenGetCommand(CommandArgsConstRef args)
 	{
 		PerlinNoise& pn = Terrain::GetNoiseGenerator();
 		LogManager::getSingleton().Write(LOG_CommandResponse, L"persistence = " + StringUtils::ToString((float)pn.Persistence(), 4), LOGLVL_Infomation);
@@ -38,17 +22,7 @@ namespace SampleTerrain
 		LogManager::getSingleton().Write(LOG_CommandResponse, L"octaves = " + StringUtils::ToString(pn.Octaves()), LOGLVL_Infomation);
 		LogManager::getSingleton().Write(LOG_CommandResponse, L"seed = " + StringUtils::ToString(pn.RandomSeed()), LOGLVL_Infomation);
 	}
-	
-	//////////////////////////////////////////////////////////////////////////
-
-	GenSetCommand::GenSetCommand()
-	{
-		m_desc.Name = L"Noise Generator Set params. [persistence, frequency, octaves, seed]";
-		m_desc.CommandName = L"set";
-		m_desc.NumOfParameters = 4;
-	}
-
-	void GenSetCommand::Execute(const Apoc3D::Collections::List<String>& args)
+	void GenSetCommand(CommandArgsConstRef args)
 	{
 		PerlinNoise& pn = Terrain::GetNoiseGenerator();
 
@@ -59,17 +33,22 @@ namespace SampleTerrain
 
 		pn.Set(persistence, frequency, pn.Amplitude(), octaves, seed);
 	}
-
-	//////////////////////////////////////////////////////////////////////////
-
-	JumpHeightCommand::JumpHeightCommand()
-	{
-		m_desc.Name = L"Jump Velocity";
-		m_desc.CommandName = L"jumpvel";
-		m_desc.NumOfParameters = 1;
-	}
-	void JumpHeightCommand::Execute(const Apoc3D::Collections::List<String>& args)
+	void JumpHeightCommand(CommandArgsConstRef args)
 	{
 		GameCamera::JumpVelocity = StringUtils::ParseSingle(args[0]);
+	}
+	
+	void RegisterTerrainCommands()
+	{
+		{
+			CommandDescription desc(L"gen", 0, GenCommand, L"Noise Generator", L"");
+
+			desc.SubCommands.PushBack(CommandDescription(L"get", 0, GenGetCommand, L"Noise Generator Get params. [persistence, frequency, octaves, seed]", L""));
+			desc.SubCommands.PushBack(CommandDescription(L"set", 4, GenSetCommand, L"Noise Generator Set params. [persistence, frequency, octaves, seed]", L""));
+
+			CommandInterpreter::getSingleton().RegisterCommand(desc);
+		}
+
+		CommandInterpreter::getSingleton().RegisterCommand(CommandDescription(L"jumpvel", 1, JumpHeightCommand, L"Jump Velocity", L""));
 	}
 }

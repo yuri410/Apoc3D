@@ -80,30 +80,33 @@ namespace Apoc3D
 				wss.fill(' ');
 				wss.setf(0);
 
-				wss << L" [";
-				switch (Type)
+				if (Type != LOG_Game)
 				{
-				case LOG_System:
-					wss << L"SYS";
-					break;
-				case LOG_Graphics:
-					wss << L"GRP";
-					break;
-				case LOG_Audio:
-					wss << L"AUD";
-					break;
-				case LOG_Scene:
-					wss << L"SCE";
-					break;
-				case LOG_Game:
-					wss << L"GAM";
-					break;
-				case LOG_Network:
-					wss << L"NET";
-					break;
+					wss << L" [";
+					switch (Type)
+					{
+					case LOG_System:
+						wss << L"SYS";
+						break;
+					case LOG_Graphics:
+						wss << L"GRP";
+						break;
+					case LOG_Audio:
+						wss << L"AUD";
+						break;
+					case LOG_Scene:
+						wss << L"SCE";
+						break;
+					case LOG_Network:
+						wss << L"NET";
+						break;
+					}
+					wss << L"] ";
 				}
-				wss << L"] ";
-
+				else
+				{
+					wss << L" ";
+				}
 			}
 			else if (Type != LOG_CommandResponse)
 			{
@@ -125,7 +128,7 @@ namespace Apoc3D
 					wss << L"[Critical] ";
 					break;
 				case LOGLVL_Infomation:
-					wss << L"[I] ";
+					wss << L" ";
 					break;
 				}
 			}

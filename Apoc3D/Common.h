@@ -79,23 +79,6 @@
 #endif
 
 #include <string>
-//#include <vector>
-//#include <list>
-//#include <map>
-//
-//#include <queue>
-//#include <deque>
-//#include <unordered_set>
-//#include <unordered_map>
-//
-//#include <algorithm>
-//#include <functional>
-//#include <limits>
-//
-//#include <fstream>
-//#include <iostream>
-//#include <iomanip>
-//#include <sstream>
 #include <cstdint>
 
 
@@ -200,7 +183,6 @@ namespace Apoc3D
 
 		class Log;
 
-		class Command;
 		struct CommandDescription;
 
 		namespace Streaming

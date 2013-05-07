@@ -49,7 +49,6 @@ namespace Apoc3D
 	{
 		class APAPI Console
 		{
-			friend class ClearCommand;
 		public:
 			static const int MaxLogEntries = 500;
 
@@ -74,6 +73,7 @@ namespace Apoc3D
 			void Log_New(LogEntry e);
 
 			void RegisterCommands();
+			void ClearCommand(const List<String>& args);
 			//void Console_CommandSubmited(String cmd, List<String>* args);
 
 			Form* m_form;

@@ -42,8 +42,8 @@ namespace Apoc3D
 		{
 		public:
 			EnumDualConversionHelper(int32 capacity)
-				: m_cast(capacity, IBuiltInEqualityComparer<String>::Default), 
-				m_invCast(capacity, IBuiltInEqualityComparer<int32>::Default)
+				: m_cast(capacity, &m_comparer1), 
+				m_invCast(capacity, &m_comparer2)
 			{ }
 
 			T Parse(const String& name) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return static_cast<T>(m_cast[n]); }
@@ -69,6 +69,9 @@ namespace Apoc3D
 		private:
 			HashMap<String, int32> m_cast;
 			HashMap<int32, String> m_invCast;
+
+			StringEuqlityComparer m_comparer1;
+			Int32EqualityComparer m_comparer2;
 		};
 	}
 }

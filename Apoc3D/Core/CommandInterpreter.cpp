@@ -25,154 +25,13 @@ namespace Apoc3D
 	namespace Core
 	{
 		/************************************************************************/
-		/* Engine Built-in Commands                                             */
+		/*  Engine Built-in Commands                                            */
 		/************************************************************************/
 
-		class ResourceManagementCommands : public Command
-		{
-		public:
-			class ListCommand : public Command
-			{
-			public:
-				ListCommand()
-				{
-					m_desc.Name = L"List ResourceManager";
-					m_desc.CommandName = L"list";
-					m_desc.NumOfParameters = 0;
-				}
-
-				virtual void Execute(const Apoc3D::Collections::List<String>& args)
-				{
-					LogManager::getSingleton().Write(LOG_CommandResponse, L"Listing ResourceManagers...", LOGLVL_Infomation);
-
-					const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
-					for (int32 i=0;i<list.getCount();i++)
-					{
-						LogManager::getSingleton().Write(LOG_CommandResponse, L"  " + StringUtils::ToString(i+1) + L". " + list[i]->getName(), LOGLVL_Infomation);
-					}
-				}
-			};
-
-			class ReloadCommand : public Command
-			{
-			public:
-				ReloadCommand()
-				{
-					m_desc.Name = L"Reload Resources";
-					m_desc.CommandName = L"reload";
-					m_desc.NumOfParameters = 1;
-				}
-
-				virtual void Execute(const Apoc3D::Collections::List<String>& args)
-				{
-					int32 index = StringUtils::ParseInt32(args[0])-1;
-					const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
-					if (index >=0 && index < list.getCount())
-					{
-						LogManager::getSingleton().Write(LOG_CommandResponse, L"Reloading " + list[index]->getName() + L" ...", LOGLVL_Infomation);
-						 
-						list[index]->ReloadAll();
-					}
-					else LogManager::getSingleton().Write(LOG_CommandResponse, L"No such ordinal.", LOGLVL_Error);		
-				}
-			} m_reloadCommand;
-
-			ResourceManagementCommands()
-			{
-				m_desc.Name = L"Resource Management Command Set";
-				m_desc.CommandName = L"res";
-				m_desc.NumOfParameters = 1;
-				m_desc.SubCommands.Add(new ListCommand());
-				m_desc.SubCommands.Add(new ReloadCommand());
-			}
-			virtual void Execute(const Apoc3D::Collections::List<String>& args)
-			{
-				int32 index = StringUtils::ParseInt32(args[0])-1;
-				const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
-				if (index >=0 && index < list.getCount())
-				{
-					ResourceManager* mgr = list[index];
-					String msg = mgr->getName();
-					msg.append(L"  |  [");
-					msg.append(StringUtils::ToString(mgr->getUsedCacheSize() / 1048576.0f, 1, 0, ' '));
-					msg.append(L"MB / ");
-					msg.append(StringUtils::ToString(mgr->getTotalCacheSize() / 1048576.0f, 1, 0, ' '));
-					msg.append(L"MB] [OP = ");
-					msg.append(StringUtils::ToString(mgr->GetCurrentOperationCount()));
-					msg.append(L"] ");
-					if (mgr->usesAsync())
-					{
-						msg.append(L"[Async]");
-					}
-
-					LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
-
-					msg = L"Managing ";
-					msg.append(StringUtils::ToString(mgr->getResourceCount()));
-					msg.append(L" resources.");
-
-					LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
-				}
-				else LogManager::getSingleton().Write(LOG_CommandResponse, L"No such ordinal.", LOGLVL_Error);
-			}
-		};
-
-		class ExecCommand : public Command
-		{
-		public:
-			ExecCommand()
-			{
-				m_desc.Name = L"Execute Script";
-				m_desc.CommandName = L"exec";
-				m_desc.NumOfParameters = 1;
-			}
-			virtual void Execute(const Apoc3D::Collections::List<String>& args)
-			{
-				FileLocation* fl = FileSystem::getSingleton().TryLocate(args[0], FileLocateRule::Default);
-
-				if (fl)
-				{
-					String msg = L"Executing ";
-					msg.append(args[0]);
-					msg.append(L" ...");
-
-					LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
-
-					Stream* inStrm = fl->GetReadStream();
-					int32 streamLength = static_cast<int32>(inStrm->getLength());
-					char* binaryBuffer = new char[streamLength+1];
-					inStrm->Read(binaryBuffer, inStrm->getLength());
-					inStrm->Close();
-					delete inStrm;
-					delete fl;
-
-					binaryBuffer[streamLength] = 0;
-
-					istringstream readStrm(binaryBuffer, std::ios::in);
-					readStrm.exceptions(std::ios::failbit);
-
-
-					std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(readStrm), std::istreambuf_iterator<char>( ) );
-					buffer.push_back('\0');
-					delete[] binaryBuffer;
-
-					const char* allContent = &buffer[0];
-					String allContentStr = StringUtils::toWString(allContent);
-					List<String> lines(50);
-					StringUtils::Split(allContentStr, lines, L"\n\r");
-
-					for (int32 i=0;i<lines.getCount();i++)
-					{
-						String& lineW = lines[i];
-						StringUtils::Trim(lineW);
-
-						CommandInterpreter::getSingleton().RunLine(lineW, false);
-					}
-					
-				}
-				else LogManager::getSingleton().Write(LOG_CommandResponse, String(L"Script '") + args[0] + String(L"'not found."), LOGLVL_Error);
-			}
-		};
+		void ResCommand(CommandArgsConstRef args);
+		void ResListCommand(CommandArgsConstRef args);
+		void ResReloadCommand(CommandArgsConstRef args);
+		void ExecCommand(CommandArgsConstRef args);
 
 		/************************************************************************/
 		/*                                                                      */
@@ -180,8 +39,16 @@ namespace Apoc3D
 		
 		CommandInterpreter::CommandInterpreter()
 		{
-			RegisterCommand(new ResourceManagementCommands());
-			RegisterCommand(new ExecCommand());
+			{
+				CommandDescription desc(L"res", 1, ResCommand, L"Resource Management Command Set", L"");
+				desc.SubCommands.PushBack(CommandDescription(L"list", 0, ResListCommand, L"List ResourceManager", L""));
+				desc.SubCommands.PushBack(CommandDescription(L"reload", 1, ResReloadCommand, L"Reload Resources", L""));
+
+				RegisterCommand(desc);
+			}
+
+
+			RegisterCommand(CommandDescription(L"exec", 1, ExecCommand, L"Execute Script", L""));
 		}
 
 		CommandInterpreter::~CommandInterpreter()
@@ -309,14 +176,14 @@ namespace Apoc3D
 						if (cmdRec->Cmd)
 						{
 							int32 remainingArgCount = args.getCount() - startingIndex - 1;
-							if (cmdRec->Cmd->getDescription().NumOfParameters == remainingArgCount)
+							if (cmdRec->Cmd->NumOfParameters == remainingArgCount)
 							{
 								List<String> finalArgs(args.getCount() - startingIndex);
 
 								for (int32 i=startingIndex+1;i<args.getCount();i++)
 									finalArgs.Add(args[i]);
 
-								cmdRec->Cmd->Execute(finalArgs);
+								cmdRec->Cmd->Handler(finalArgs);
 
 								return CMR_OK;
 							}
@@ -329,43 +196,43 @@ namespace Apoc3D
 			return CMR_NoSuchCommand;
 		}
 
-		void CommandInterpreter::RegisterCommand(Command* cmd)
+		void CommandInterpreter::RegisterCommand(const CommandDescription& cmd)
 		{
 			AddCommandTree(cmd, m_rootNode.SubCommands);
 		}
-		void CommandInterpreter::UnregisterCommand(Command* cmd)
+		void CommandInterpreter::UnregisterCommand(const CommandDescription& cmd)
 		{
 			DestoryCommandTree(cmd, m_rootNode.SubCommands);
 		}
 
-		void CommandInterpreter::AddCommandTree(Command* cmd, CommandRecord::SubCommandTable& table)
+		
+		void CommandInterpreter::AddCommandTree(const CommandDescription& cmd, CommandRecord::SubCommandTable& table)
 		{
-			const CommandDescription& desc = cmd->getDescription();
 			CommandRecord* rec = new CommandRecord();
-			rec->Cmd = cmd;
+			rec->Cmd = new CommandDescription(cmd);
 
-			for (int32 i=0;i<desc.SubCommands.getCount();i++)
+			for (LinkedList<CommandDescription>::Iterator iter = cmd.SubCommands.Begin(); iter != cmd.SubCommands.End(); ++iter)
 			{
-				AddCommandTree(desc.SubCommands[i], rec->SubCommands);
+				const CommandDescription& subCmd = *iter;
+				AddCommandTree(subCmd, rec->SubCommands);
 			}
 
-			String cmdName = desc.CommandName;
+			String cmdName = cmd.CommandName;
 			StringUtils::ToLowerCase(cmdName);
 			table.Add(cmdName, rec);
 		}
-		void CommandInterpreter::DestoryCommandTree(Command* cmd, CommandRecord::SubCommandTable& table)
+		void CommandInterpreter::DestoryCommandTree(const CommandDescription& cmd, CommandRecord::SubCommandTable& table)
 		{
-			const CommandDescription& desc = cmd->getDescription();
-
-			String cmdName = desc.CommandName;
+			String cmdName = cmd.CommandName;
 			StringUtils::ToLowerCase(cmdName);
 
 			CommandRecord* rec;
 			if (table.TryGetValue(cmdName, rec))
 			{
-				for (int32 i=0;i<desc.SubCommands.getCount();i++)
+				for (LinkedList<CommandDescription>::Iterator iter = cmd.SubCommands.Begin(); iter != cmd.SubCommands.End(); ++iter)
 				{
-					DestoryCommandTree(desc.SubCommands[i], rec->SubCommands);
+					const CommandDescription& subCmd = *iter;
+					DestoryCommandTree(subCmd, rec->SubCommands);
 				}
 
 				table.Remove(cmdName);
@@ -387,7 +254,112 @@ namespace Apoc3D
 				delete rec;
 			}
 		}
-		
 
+		/************************************************************************/
+		/*  Engine Built-in Commands                                            */
+		/************************************************************************/
+
+		void ResCommand(CommandArgsConstRef args)
+		{
+			int32 index = StringUtils::ParseInt32(args[0])-1;
+			const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
+			if (index >=0 && index < list.getCount())
+			{
+				ResourceManager* mgr = list[index];
+				String msg = mgr->getName();
+				msg.append(L"  |  [");
+				msg.append(StringUtils::ToString(mgr->getUsedCacheSize() / 1048576.0f, 1, 0, ' '));
+				msg.append(L"MB / ");
+				msg.append(StringUtils::ToString(mgr->getTotalCacheSize() / 1048576.0f, 1, 0, ' '));
+				msg.append(L"MB] [OP = ");
+				msg.append(StringUtils::ToString(mgr->GetCurrentOperationCount()));
+				msg.append(L"] ");
+				if (mgr->usesAsync())
+				{
+					msg.append(L"[Async]");
+				}
+
+				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
+
+				msg = L"Managing ";
+				msg.append(StringUtils::ToString(mgr->getResourceCount()));
+				msg.append(L" resources.");
+
+				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
+			}
+			else LogManager::getSingleton().Write(LOG_CommandResponse, L"No such ordinal.", LOGLVL_Error);
+		}
+		void ResListCommand(CommandArgsConstRef args)
+		{
+			LogManager::getSingleton().Write(LOG_CommandResponse, L"Listing ResourceManagers...", LOGLVL_Infomation);
+
+			const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
+			for (int32 i=0;i<list.getCount();i++)
+			{
+				LogManager::getSingleton().Write(LOG_CommandResponse, L"  " + StringUtils::ToString(i+1) + L". " + list[i]->getName(), LOGLVL_Infomation);
+			}
+		}
+		void ResReloadCommand(CommandArgsConstRef args)
+		{
+			int32 index = StringUtils::ParseInt32(args[0])-1;
+			const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
+			if (index >=0 && index < list.getCount())
+			{
+				LogManager::getSingleton().Write(LOG_CommandResponse, L"Reloading " + list[index]->getName() + L" ...", LOGLVL_Infomation);
+
+				list[index]->ReloadAll();
+			}
+			else LogManager::getSingleton().Write(LOG_CommandResponse, L"No such ordinal.", LOGLVL_Error);	
+		}
+
+		void ExecCommand(CommandArgsConstRef args)
+		{
+			FileLocation* fl = FileSystem::getSingleton().TryLocate(args[0], FileLocateRule::Default);
+
+			if (fl)
+			{
+				String msg = L"Executing ";
+				msg.append(args[0]);
+				msg.append(L" ...");
+
+				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
+
+				Stream* inStrm = fl->GetReadStream();
+				int32 streamLength = static_cast<int32>(inStrm->getLength());
+				char* binaryBuffer = new char[streamLength+1];
+				inStrm->Read(binaryBuffer, inStrm->getLength());
+				inStrm->Close();
+				delete inStrm;
+				delete fl;
+
+				binaryBuffer[streamLength] = 0;
+
+				istringstream readStrm(binaryBuffer, std::ios::in);
+				readStrm.exceptions(std::ios::failbit);
+
+
+				std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(readStrm), std::istreambuf_iterator<char>( ) );
+				buffer.push_back('\0');
+				delete[] binaryBuffer;
+
+				const char* allContent = &buffer[0];
+				String allContentStr = StringUtils::toWString(allContent);
+				List<String> lines(50);
+				StringUtils::Split(allContentStr, lines, L"\n\r");
+
+				for (int32 i=0;i<lines.getCount();i++)
+				{
+					String& lineW = lines[i];
+					StringUtils::Trim(lineW);
+
+					CommandInterpreter::getSingleton().RunLine(lineW, false);
+				}
+
+			}
+			else LogManager::getSingleton().Write(LOG_CommandResponse, String(L"Script '") + args[0] + String(L"'not found."), LOGLVL_Error);
+		}
+
+
+		
 	}
 }

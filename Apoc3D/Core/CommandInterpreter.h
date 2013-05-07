@@ -27,7 +27,7 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Common.h"
+#include "apoc3d/Collections/LinkedList.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
 
@@ -37,31 +37,35 @@ namespace Apoc3D
 {
 	namespace Core
 	{
+		typedef const Apoc3D::Collections::List<String>& CommandArgsConstRef;
+		typedef fastdelegate::FastDelegate1<CommandArgsConstRef> CommandHandler;
+
+
 		struct CommandDescription
 		{
 			String Name;
 			String Description;
-			
+
 			String CommandName;
 
 			int32 NumOfParameters;
+			CommandHandler Handler;
 
-			Apoc3D::Collections::FastList<Command*> SubCommands;
+			Apoc3D::Collections::LinkedList<CommandDescription> SubCommands;
+
+			CommandDescription()
+				: NumOfParameters(0)
+			{ }
+			CommandDescription(const String& cmdName, int paramCount, const CommandHandler& handler)
+				: Name(cmdName), CommandName(cmdName), NumOfParameters(paramCount), Handler(handler)
+			{ }
+			CommandDescription(const String& command, int paramCount, const CommandHandler& handler, const String& name, const String& description)
+				: Name(name), Description(description), CommandName(command), NumOfParameters(paramCount), Handler(handler)
+			{ }
 		};
 
-		class Command
-		{
-		public:
-			virtual void Execute(const Apoc3D::Collections::List<String>& args) = 0;
-
-			const CommandDescription& getDescription() const { return m_desc; }
-		protected:
-			CommandDescription m_desc;
-		};
-
-		typedef fastdelegate::FastDelegate2<String, Apoc3D::Collections::List<String>*> CommandHandler;
-
-		class CommandInterpreter : public Singleton<CommandInterpreter>
+		typedef fastdelegate::FastDelegate2<String, Apoc3D::Collections::List<String>*> RawCommandHandler;
+		class APAPI CommandInterpreter : public Singleton<CommandInterpreter>
 		{
 		public:
 			CommandInterpreter();
@@ -69,17 +73,19 @@ namespace Apoc3D
 
 			bool RunLine(const String& line, bool triggersEvent = false);
 
-			void RegisterCommand(Command* cmd);
-			void UnregisterCommand(Command* cmd);
+			void RegisterCommand(const CommandDescription& cmd);
+			void UnregisterCommand(const CommandDescription& cmd);
 
-			CommandHandler& eventCommandSubmited() { return m_eCommandSubmited; }
+			RawCommandHandler& eventCommandSubmited() { return m_eCommandSubmited; }
 
 			SINGLETON_DECL_HEARDER(CommandInterpreter);
 		private:
+
+
 			struct CommandRecord
 			{
 				typedef Apoc3D::Collections::HashMap<String, CommandRecord*> SubCommandTable;
-				Command* Cmd;
+				CommandDescription* Cmd;
 				SubCommandTable SubCommands;
 
 				CommandRecord() : Cmd(nullptr) { }
@@ -94,15 +100,14 @@ namespace Apoc3D
 
 			CommandMatchingResult RunCommand(int32 startingIndex, const CommandRecord::SubCommandTable& table, const Apoc3D::Collections::List<String>& args);
 
-			void AddCommandTree(Command* cmd, CommandRecord::SubCommandTable& table);
-			void DestoryCommandTree(Command* cmd, CommandRecord::SubCommandTable& table);
+			void AddCommandTree(const CommandDescription& cmd, CommandRecord::SubCommandTable& table);
+			void DestoryCommandTree(const CommandDescription& cmd, CommandRecord::SubCommandTable& table);
 
 			void DesturctCommandTree(CommandRecord::SubCommandTable& table);
 
 
 			CommandRecord m_rootNode;
-			CommandHandler m_eCommandSubmited;
-
+			RawCommandHandler m_eCommandSubmited;
 		};
 	}
 }

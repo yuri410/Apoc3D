@@ -279,66 +279,16 @@ namespace Apoc3D
 			m_needsUpdateLineInfo = true;
 		}
 
-		//////////////////////////////////////////////////////////////////////////
-
-		class ClearCommand : public Command
-		{
-		public:
-			ClearCommand(Console* c);
-
-			virtual void Execute(const Apoc3D::Collections::List<String>& args);
-
-		private:
-			Console* m_console;
-		};
-
-		class ConsoleCommandSet : public Command
-		{
-		public:
-			ConsoleCommandSet(Console* c);
-
-			virtual void Execute(const Apoc3D::Collections::List<String>& args);
-		
-		private:
-			ClearCommand m_clearCmd;
-			Console* m_console;
-		};
-
-
 		void Console::RegisterCommands()
 		{
-			ConsoleCommandSet* s = new ConsoleCommandSet(this);
-			CommandInterpreter::getSingleton().RegisterCommand(s);
+			//ConsoleCommandSet* s = new ConsoleCommandSet(this);
+			CommandInterpreter::getSingleton().RegisterCommand(CommandDescription(L"clear", 0, CommandHandler(this, &Console::ClearCommand)));
 		}
 
-		//////////////////////////////////////////////////////////////////////////
-		
-		ConsoleCommandSet::ConsoleCommandSet(Console* c)
-			: m_console(c), m_clearCmd(c)
+		void Console::ClearCommand(const List<String>& args)
 		{
-			m_desc.Name = L"Console Command Set";
-			m_desc.CommandName = L"console";
-			m_desc.NumOfParameters = 0;
-			m_desc.SubCommands.Add(new ClearCommand(c));
+			m_logs.Clear();
 		}
-
-		void ConsoleCommandSet::Execute(const Apoc3D::Collections::List<String>& args)
-		{
-			LogManager::getSingleton().Write(LOG_CommandResponse, m_desc.Name, LOGLVL_Infomation);
-		}
-
-		ClearCommand::ClearCommand(Console* c)
-			: m_console(c)
-		{
-			m_desc.Name = L"Console Clear";
-			m_desc.CommandName = L"clear";
-			m_desc.NumOfParameters = 0;
-		}
-		void ClearCommand::Execute(const Apoc3D::Collections::List<String>& args)
-		{
-			m_console->m_logs.Clear();
-		}
-
 
 	}
 }
