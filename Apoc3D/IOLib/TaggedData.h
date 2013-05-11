@@ -372,7 +372,7 @@ namespace Apoc3D
 			void SetDataString(const String& name, const String* str, int32 count);
 
 
-
+			Apoc3D::Config::ConfigurationSection* MakeDigest(const String& name) const;
 			void Save(Stream* stream) const;
 
 			bool Contains(const String& name) const;

@@ -25,14 +25,21 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
 #include "Streams.h"
-#include "apoc3d/Apoc3DException.h"
 
+#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Math/Plane.h"
 #include "apoc3d/Math/Quaternion.h"
+#include "apoc3d/Utility/StringUtils.h"
+
+#include <sstream>
 
 #include "IOUtils.h"
+
+using namespace Apoc3D::Config;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -665,7 +672,41 @@ namespace Apoc3D
 			bw->Close();
 			delete bw;
 		}
+		ConfigurationSection* TaggedDataWriter::MakeDigest(const String& name) const
+		{
+			ConfigurationSection* sect = new ConfigurationSection(name);
+			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
+			{
+				Entry* ent = e.getCurrentValue();
+				MemoryOutStream* memBlock = ent->Buffer;
 
+				String text;
+
+				if (memBlock->getLength()>8)
+				{
+					text = StringUtils::ToString(memBlock->getLength()) + L" bytes";
+				}
+				else
+				{
+					const byte* data = reinterpret_cast<const byte*>(memBlock->getPointer());
+
+					for (int64 i=0;i<memBlock->getLength();i++)
+					{
+						std::wostringstream stream;
+						stream.width(2);
+						stream.fill('0');
+						stream.imbue(std::locale::classic());
+						stream.setf ( std::ios::hex, std::ios::basefield );       // set hex as the basefield
+						stream << data[i];
+
+						text.append(stream.str());
+					}
+				}
+
+				sect->AddStringValue(*e.getCurrentKey(), text);
+			}
+			return sect;
+		}
 
 		void TaggedDataWriter::_SetEntryDataInt64(const TaggedDataWriter::Entry& ent, int64 value)
 		{
