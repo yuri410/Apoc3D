@@ -50,7 +50,7 @@ namespace Apoc3D
 				: m_internalPointer(another.m_internalPointer), m_length(another.m_length)
 			{
 				m_elements = new T[m_length];
-				for (int i=0;i<m_length;i++)
+				for (int i=0;i<m_internalPointer;i++)
 					m_elements[i] = another.m_elements[i];
 			}
 			~List()
@@ -66,7 +66,7 @@ namespace Apoc3D
 				m_internalPointer = rhs.m_internalPointer;
 				m_length = rhs.m_length;
 				m_elements = new T[m_length];
-				for (int i=0;i<m_length;i++)
+				for (int i=0;i<m_internalPointer;i++)
 					m_elements[i] = rhs.m_elements[i];
 				return *this; 
 			}
@@ -216,7 +216,7 @@ namespace Apoc3D
 				: m_internalPointer(another.m_internalPointer), m_length(another.m_length)
 			{
 				m_elements = new T[m_length];
-				memcpy(m_elements, another.m_elements, m_length * sizeof(T));
+				memcpy(m_elements, another.m_elements, m_internalPointer * sizeof(T));
 			}
 			explicit FastList(int capacity)
 				: m_internalPointer(0), m_length(capacity)
@@ -241,7 +241,7 @@ namespace Apoc3D
 				m_internalPointer = rhs.m_internalPointer;
 				m_length = rhs.m_length;
 				m_elements = new T[m_length];
-				memcpy(m_elements, rhs.m_elements, m_length * sizeof(T));
+				memcpy(m_elements, rhs.m_elements, m_internalPointer * sizeof(T));
 				return *this; 
 			}
 			void Add(const T& val)

@@ -34,29 +34,46 @@ namespace Apoc3D
 		template<typename T>
 		class Stack
 		{
-		private:
-			T* m_array;
-			int m_size;
-			int m_length;
-		private:
-			Stack& operator=(const Stack &rhs)
-			{
-				return *this; 
-			}
-			Stack(const Stack& another){}
-		public:
-			
+		public:	
 			explicit Stack(int capacity = 8)
 				: m_length(capacity), m_size(0)
 			{
 				m_array = new T[m_length];
+			}
+			~Stack()
+			{
+				delete[] m_array;
+			}
+
+
+			Stack(const Stack& another)
+				: m_size(another.m_size), m_length(another.m_length)
+			{
+				m_array = new T[m_length];
+				for (int i=0;i<m_length;i++)
+					m_array[i] = another.m_array[i];
+			}
+
+			Stack& operator=(const Stack& rhs)
+			{
+				delete[] m_array;
+				
+				m_size = rhs.m_size;
+				m_length = rhs.m_length;
+				m_array = new T[m_length];
+
+				for (int i=0;i<m_length;i++)
+					m_array[i] = another.m_array[i];
+
+				return *this; 
 			}
 
 			int getCount() const { return m_size; }
 
 			void Clear()
 			{
-				memset(m_array, 0, sizeof(T) * m_size)
+				m_size = 0;
+				//memset(m_array, 0, sizeof(T) * m_size)
 			}
 
 			bool Contains(const T& item)
@@ -80,7 +97,7 @@ namespace Apoc3D
 			T Pop()
 			{
 				T local = m_array[--m_size];
-				memset(&m_array[m_size], 0, sizeof(T));
+				//memset(&m_array[m_size], 0, sizeof(T));
 				return local;
 			}
 			void FastPop()
@@ -96,13 +113,22 @@ namespace Apoc3D
 						m_length = 1;
 					else
 						m_length *= 2;
+
 					T* destinationArray = new T[m_length * 2];
-					memcpy(destinationArray, m_array, m_size*sizeof(T));
+					for (int i=0;i<m_size;i++)
+						destinationArray[i] = m_array[i];
+
+					//memcpy(destinationArray, m_array, m_size*sizeof(T));
 					delete[] m_array;
 					m_array = destinationArray;
 				}
 				m_array[m_size++] = item;
 			}
+
+		private:
+			T* m_array;
+			int m_size;
+			int m_length;
 		};
 	}
 }

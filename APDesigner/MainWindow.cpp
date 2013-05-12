@@ -24,6 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "MainWindow.h"
 
+#include "IDEConfig.h"
 
 #include "Panes.h"
 
@@ -101,7 +102,9 @@ namespace APDesigner
 	void MainWindow::Initialize()
 	{
 		m_device = m_window->getRenderDevice();
-		m_window->setTitle(L"Apoc3D Designer");
+		
+		UpdateWindowTitle();
+
 		InputCreationParameters icp;
 		icp.UseKeyboard = true;
 		icp.UseMouse = true;
@@ -117,10 +120,14 @@ namespace APDesigner
 		ShaderAtomLibraryManager::Finalize();
 		InputAPIManager::getSingleton().FinalizeInput();
 		BuildInterface::Finalize();
+
+		cfFlushConfig();
 	}
 
 	void MainWindow::Load()
 	{
+		cfInitializeConfig();
+
 		{
 			FileLocateRule rule;
 			LocateCheckPoint pt;
@@ -195,6 +202,13 @@ namespace APDesigner
 			m_savePrjMemuItem = new MenuItem(L"Save Project");
 			m_savePrjMemuItem->event().bind(this, &MainWindow::Menu_SaveProject);
 			pojSubMenu->Add(m_savePrjMemuItem, 0);
+
+
+			m_recentPrjSubMenu = new SubMenu(nullptr);
+			m_recentPrjSubMenu->SetSkin(m_UIskin);
+
+			mi = new MenuItem(L"Recent Projects");
+			pojSubMenu->Add(mi, m_recentPrjSubMenu);
 
 			//mi=new MenuItem(L"Insert...");
 			//mi->event().bind(this, &MainWindow::Menu_Insert);
@@ -281,6 +295,8 @@ namespace APDesigner
 			m_mainMenu->Initialize(m_device);
 			UIRoot::setMainMenu(m_mainMenu);
 		}
+
+		UpdateRecentProjects();
 	}
 	void MainWindow::Unload()
 	{
@@ -390,6 +406,8 @@ namespace APDesigner
 			delete conf;
 			delete fl;
 
+			UpdateWindowTitle();
+			
 			m_resourcePane->UpdateToNewProject(m_project);
 			m_project->setBasePath(PathUtils::GetDirectory(path));
 
@@ -420,6 +438,9 @@ namespace APDesigner
 			// Once a project is loaded or built, the effects used will be registered/updated in the EffectSystem.
 			// So the editing tools using these effect will work perfectly
 			UpdateProjectEffect();
+
+			cfAddRecentProject(m_project->getName(), path);
+			UpdateRecentProjects();
 		}
 	}
 	void MainWindow::CloseProject()
@@ -463,7 +484,35 @@ namespace APDesigner
 			}
 		}
 	}
-	void MainWindow::Menu_CloseProject(Control* ctl)
+	void MainWindow::UpdateWindowTitle()
+	{
+		String newTitle = L"Apoc3D IDE";
+		if (m_project)
+		{
+			newTitle.append(L" - ");
+			newTitle.append(m_project->getName());
+		}
+		m_window->setTitle(newTitle);
+	}
+	void MainWindow::UpdateRecentProjects()
+	{
+		m_recentPrjSubMenu->Clear();
+		
+		const Queue<std::pair<String, String>>& recents = cfGetRecentProjects();
+
+		for (int i=0;i<recents.getCount();i++)
+		{
+			const std::pair<String, String>& p = recents.GetElement(i);
+			String fileName = PathUtils::GetFileName(p.second);
+			MenuItem* mi = new MenuItem(p.first + L" (" + fileName + L")");
+
+			mi->event().bind(this, &MainWindow::Menu_OpenRecentProject);
+			mi->UserPointer = reinterpret_cast<void*>(static_cast<uintptr>(i));
+			m_recentPrjSubMenu->Add(mi, nullptr);
+		}
+	}
+
+	void MainWindow::Menu_CloseProject(MenuItem* itm)
 	{
 
 	}
@@ -474,7 +523,7 @@ namespace APDesigner
 
 	//	}
 	//}
-	void MainWindow::Menu_NewProject(Control* ctl)
+	void MainWindow::Menu_NewProject(MenuItem* itm)
 	{
 		wchar_t nameBuffer[512] = { 0 };
 
@@ -513,7 +562,7 @@ namespace APDesigner
 		}
 		
 	}
-	void MainWindow::Menu_OpenProject(Control* ctl)
+	void MainWindow::Menu_OpenProject(MenuItem* itm)
 	{
 		OpenFileDialog dlg;
 		dlg.SetFilter(L"Project file(*.aproj;*.xml)\0*.aproj;*.xml\0\0");
@@ -522,16 +571,16 @@ namespace APDesigner
 			OpenProject(dlg.getFilePath()[0]);
 		}
 	}
-	void MainWindow::Menu_SaveProject(Control* ctl)
+	void MainWindow::Menu_SaveProject(MenuItem* itm)
 	{
 		if (m_project)
 			SaveProject(m_projectFilePath);
 	}
-	void MainWindow::Menu_Exit(Control* ctl)
+	void MainWindow::Menu_Exit(MenuItem* itm)
 	{
 		m_window->Exit();
 	}
-	void MainWindow::Menu_BuildAll(Control* ctl)
+	void MainWindow::Menu_BuildAll(MenuItem* itm)
 	{
 		if (m_project)
 		{
@@ -541,63 +590,71 @@ namespace APDesigner
 		}
 	}
 	
-	void MainWindow::Menu_ToolItemOpen(Control* ctl)
+	void MainWindow::Menu_OpenRecentProject(MenuItem* itm)
 	{
-		SubMenu* sm = dynamic_cast<SubMenu*>(ctl);
+		int32 idx = static_cast<int32>(reinterpret_cast<uintptr>(itm->UserPointer));
 
-		if (sm)
+		const Queue<std::pair<String, String>>& prjs = cfGetRecentProjects();
+		if (idx < prjs.getCount())
 		{
-			int id = sm->getHoverIndex();
-			if (id!=-1)
+			String path = prjs.GetElement(idx).second;
+			if (File::FileExists(path))
+				OpenProject(path);
+			else
 			{
-				MenuItem* item = sm->getItems()[id]; 
-
-				EditorExtension* eext = static_cast<EditorExtension*>(item->UserPointer);
-
-				String name = eext->GetName();
-				List<String> fexts = eext->GetFileExtensions();
-
-				OpenFileDialog dlg;
-
-				// make filter
-				wchar_t filter[512];
-				memset(filter, 0, sizeof(filter));
-
-					
-				String right;
-				//*.a;*.b
-				for (int32 i=0;i<fexts.getCount();i++)
-				{
-					right.append(L"*");
-					right.append(fexts[i]);
-					if (i+1<fexts.getCount())
-					{
-						right.append(L";");
-					}
-				}
-
-				String left = name;
-				left.append(L"Files (");
-				left.append(right);
-				left.append(L")");
-				memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
-				filter[left.length()] = 0;
-
-				memcpy(filter+(left.length()+1),right.c_str(), sizeof(wchar_t)*right.length());
-
-				dlg.SetFilter(filter);
-
-				if (dlg.ShowDialog() == DLGRES_OK)
-				{
-					Document* doc = eext->DirectOpen(dlg.getFilePath()[0]);
-					doc->LoadRes();
-					this->AddDocument(doc);
-				}
-				
+				ShowMessageBox(L"File not found", L"Error", true);
+				cfRemoveRecentProject(idx);
 			}
 		}
 	}
-	void MainWindow::Menu_Tools_AtomManager(Control* ctl)
+
+	void MainWindow::Menu_ToolItemOpen(MenuItem* itm)
+	{
+		MenuItem* item = itm; 
+
+		EditorExtension* eext = static_cast<EditorExtension*>(item->UserPointer);
+
+		String name = eext->GetName();
+		List<String> fexts = eext->GetFileExtensions();
+
+		OpenFileDialog dlg;
+
+		// make filter
+		wchar_t filter[512];
+		memset(filter, 0, sizeof(filter));
+
+					
+		String right;
+		//*.a;*.b
+		for (int32 i=0;i<fexts.getCount();i++)
+		{
+			right.append(L"*");
+			right.append(fexts[i]);
+			if (i+1<fexts.getCount())
+			{
+				right.append(L";");
+			}
+		}
+
+		String left = name;
+		left.append(L"Files (");
+		left.append(right);
+		left.append(L")");
+		memcpy(filter, left.c_str(), sizeof(wchar_t)*left.length());
+		filter[left.length()] = 0;
+
+		memcpy(filter+(left.length()+1),right.c_str(), sizeof(wchar_t)*right.length());
+
+		dlg.SetFilter(filter);
+
+		if (dlg.ShowDialog() == DLGRES_OK)
+		{
+			Document* doc = eext->DirectOpen(dlg.getFilePath()[0]);
+			doc->LoadRes();
+			this->AddDocument(doc);
+		}
+	}
+	void MainWindow::Menu_Tools_AtomManager(MenuItem* itm)
 	{
 		m_atomManager->Show();
 	}

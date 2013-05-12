@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,9 +22,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#ifndef APD_SERV_WINDOW_H
-#define APD_SERV_WINDOW_H
 
 #include "APDCommon.h"
 
@@ -84,5 +82,3 @@ namespace APDesigner
 		Project* m_currentProject;
 	};
 }
-
-#endif

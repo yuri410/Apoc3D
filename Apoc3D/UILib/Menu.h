@@ -95,7 +95,7 @@ namespace Apoc3D
 			KeyboardKeyCode getKeyCode() const { return m_key; }
 			int getKeyIndex() const { return m_keyIndex; }
 
-			UIEventHandler& event() { return m_event; }
+			MenuItemEventHandler& event() { return m_event; }
 
 			SubMenu* getSubMenu() const { return m_submenu; }
 			void setSubMenu(SubMenu* sm) { m_submenu = sm; }
@@ -114,7 +114,7 @@ namespace Apoc3D
 			int m_keyIndex;
 			KeyboardKeyCode m_key;
 
-			UIEventHandler m_event;
+			MenuItemEventHandler m_event;
 			SubMenu* m_submenu;
 		};
 
@@ -129,6 +129,8 @@ namespace Apoc3D
 			~SubMenu();
 
 			void Add(MenuItem* item, SubMenu* submenu);
+
+			void Clear();
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time);

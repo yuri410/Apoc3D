@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,8 +22,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef PANES_H
-#define PANES_H
 
 #include "APDCommon.h"
 
@@ -183,5 +182,3 @@ namespace APDesigner
 	//	void Update(const GameTime* const time);
 	//};
 }
-
-#endif

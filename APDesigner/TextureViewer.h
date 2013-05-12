@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,8 +22,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef TEXTUREVIEWER_H
-#define TEXTUREVIEWER_H
 
 #include "APDCommon.h"
 #include "Document.h"
@@ -88,5 +87,3 @@ namespace APDesigner
 		void BtnZoomOut_Pressed(Control* ctrl);
 	};
 }
-
-#endif

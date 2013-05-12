@@ -1,5 +1,4 @@
-#ifndef UIRESOURCE_H
-#define UIRESOURCE_H
+#pragma once
 
 #include "APDCommon.h"
 #include "apoc3d/Collections/HashMap.h"
@@ -21,4 +20,3 @@ namespace APDesigner
 		static Texture* GetTexture(const String& name) { return m_maps->operator[](name); }
 	};
 }
-#endif

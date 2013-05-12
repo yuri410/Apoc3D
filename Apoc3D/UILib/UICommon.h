@@ -36,6 +36,7 @@ namespace Apoc3D
 	{
 		typedef fastdelegate::FastDelegate1<Control*, void> UIEventHandler;
 
+		typedef fastdelegate::FastDelegate1<MenuItem*, void> MenuItemEventHandler;
 
 	}
 }

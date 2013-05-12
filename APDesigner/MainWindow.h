@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,9 +22,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
 
 #include "APDCommon.h"
 
@@ -70,7 +68,6 @@ namespace APDesigner
 
 		Menu* getMenuBar() const { return m_mainMenu; }
 	private:
-		void Menu_ToolItemOpen(Control* ctl);
 		void LoadMenus();
 
 		StyleSkin* m_UIskin;
@@ -87,7 +84,7 @@ namespace APDesigner
 		Menu* m_mainMenu;
 		MenuItem* m_buildMemuItem;
 		MenuItem* m_savePrjMemuItem;
-
+		SubMenu* m_recentPrjSubMenu;
 
 		AtomManagerDialog* m_atomManager;
 		ResourcePane* m_resourcePane;
@@ -98,15 +95,19 @@ namespace APDesigner
 		Point m_lastSize;
 
 
-		void Menu_Tools_AtomManager(Control* ctl);
+		void Menu_Tools_AtomManager(MenuItem* itm);
 
-		void Menu_NewProject(Control* ctl);
-		void Menu_OpenProject(Control* ctl);
-		void Menu_SaveProject(Control* ctl);
-		void Menu_CloseProject(Control* ctl);
-		void Menu_Insert(Control* ctl);
-		void Menu_Exit(Control* ctl);
-		void Menu_BuildAll(Control* ctl);
+		void Menu_ToolItemOpen(MenuItem* itm);
+
+		void Menu_NewProject(MenuItem* itm);
+		void Menu_OpenProject(MenuItem* itm);
+		void Menu_SaveProject(MenuItem* itm);
+		void Menu_CloseProject(MenuItem* itm);
+		void Menu_Insert(MenuItem* itm);
+		void Menu_Exit(MenuItem* itm);
+		void Menu_BuildAll(MenuItem* itm);
+		void Menu_OpenRecentProject(MenuItem* itm);
+
 		void OpenProject(const String& path);
 		void SaveProject(const String& path);
 		void CloseProject();
@@ -116,8 +117,9 @@ namespace APDesigner
 		void UpdateProjectEffect(const FastList<ProjectItem*>& items);
 		void UpdateProjectEffect();
 
+		void UpdateWindowTitle();
+		void UpdateRecentProjects();
+
 		void LogBuildMessages();
 	};
 }
-
-#endif

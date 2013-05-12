@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,9 +22,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#ifndef APDCOMMON_H
-#define APDCOMMON_H
 
 #include "apoc3d/Engine.h"
 
@@ -74,5 +72,3 @@ namespace APDesigner
 	class IndenpendentEditor;
 
 }
-
-#endif

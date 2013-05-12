@@ -78,6 +78,7 @@ namespace Apoc3D
 
 			m_items.Add(item);
 		}
+
 		void Menu::CheckSelection()
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
@@ -277,7 +278,7 @@ namespace Apoc3D
 				{
 					if (!m_items[i]->event().empty())
 					{
-						m_items[i]->event()(this);
+						m_items[i]->event()(m_items[i]);
 					}
 
 					if (m_items[i]->getSubMenu() &&
@@ -404,6 +405,13 @@ namespace Apoc3D
 			}
 			item->setSubMenu(submenu);
 			m_items.Add(item);
+		}
+
+		void SubMenu::Clear()
+		{
+			for (int i=0;i<m_items.getCount();i++)
+				delete m_items[i];
+			m_items.Clear();
 		}
 
 		void SubMenu::Initialize(RenderDevice* device)
@@ -573,7 +581,7 @@ namespace Apoc3D
 					return;
 
 				if (!m_items[index]->event().empty())
-					m_items[index]->event()(this);
+					m_items[index]->event()(m_items[index]);
 
 				if (m_items[index]->getSubMenu())
 				{
@@ -663,7 +671,7 @@ namespace Apoc3D
 						}
 						else if (!m_items[i]->event().empty())
 						{
-							m_items[i]->event()(this);
+							m_items[i]->event()(m_items[i]);
 						}
 
 					}

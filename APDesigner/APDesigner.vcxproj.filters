@@ -29,9 +29,6 @@
     <None Include="SysShaderLib\vs_vtxNdl.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -125,11 +122,11 @@
     <ClInclude Include="ServWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="IDEConfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -215,6 +212,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ServWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="IDEConfig.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

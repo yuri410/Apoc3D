@@ -173,13 +173,13 @@
     <ClInclude Include="DocumentShader\ShaderGraph.h" />
     <ClInclude Include="DocumentShader\SNetCommonTypes.h" />
     <ClInclude Include="EditorExtensionManager.h" />
+    <ClInclude Include="IDEConfig.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="DocumentModel\ModelDocument.h" />
     <ClInclude Include="ObjectEditor.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Panes.h" />
     <ClInclude Include="ServWindow.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextureViewer.h" />
     <ClInclude Include="UIResources.h" />
@@ -205,6 +205,7 @@
     <ClCompile Include="DocumentShader\ShaderGraph.cpp" />
     <ClCompile Include="DocumentShader\SNetCommonTypes.cpp" />
     <ClCompile Include="EditorExtensionManager.cpp" />
+    <ClCompile Include="IDEConfig.cpp" />
     <ClCompile Include="ServWindow.cpp" />
     <ClCompile Include="UIResources.cpp" />
     <ClCompile Include="Document.cpp" />
@@ -213,11 +214,6 @@
     <ClCompile Include="DocumentModel\ModelDocument.cpp" />
     <ClCompile Include="ObjectEditor.cpp" />
     <ClCompile Include="Panes.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="TextureViewer.cpp" />
   </ItemGroup>
   <ItemGroup>
