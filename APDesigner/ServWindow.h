@@ -52,10 +52,13 @@ namespace APDesigner
 
 		virtual void OnFrameStart() { }
 		virtual void OnFrameEnd() { }
+
 	private:
 		void BtnHide_Release(Control* ctrl);
+		void BtnBuild_Release(Control* ctrl);
 		void BtnExit_Release(Control* ctrl);
 
+		void Notify(const String& title, const String& message);
 		void UpdateProject();
 
 		StyleSkin* m_UIskin;
@@ -71,12 +74,15 @@ namespace APDesigner
 		Label* m_lblLoadedProject;
 		Label* m_lblStatus;
 
-		Label* m_lblHide;
+		Label* m_lblHotKeys;
 		Button* m_btnHide;
 		Button* m_btnExit;
+		Button* m_btnBuild;
 
-		bool m_lastHotKeyPressed;
+		bool m_lastHideKeyPressed;
+		bool m_lastBuildKeyPressed;
 
+		String m_queuedMessage;
 
 		FastList<char*> m_changeBuffer;
 		Project* m_currentProject;

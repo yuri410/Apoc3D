@@ -115,7 +115,7 @@ namespace APDesigner
 	}
 
 
-	bool BuildInterface::MainThreadUpdate(const GameTime* const time)
+	bool BuildInterface::MainThreadUpdate(const GameTime* const time, BuildResult* result)
 	{
 		bool justEnded = false;
 
@@ -158,6 +158,12 @@ namespace APDesigner
 				LogManager::getSingleton().Write(LOG_System, L"Build Ended", LOGLVL_Default);
 				justEnded = true;
 
+				if (result)
+				{
+					result->HasError = false;
+					result->HasWarning = false;
+				}
+
 				if (m_hasLastError || m_buildErrorMessages.size() || m_buildWarningMessages.size())
 				{
 					LogManager::getSingleton().Write(LOG_System, L"Build has some issues.", LOGLVL_Error);
@@ -171,7 +177,16 @@ namespace APDesigner
 						msg.append(L"\n");
 						msg.append(m_buildWarningMessages);
 
-						APDesigner::CommonDialog::ShowMessageBox(msg, L"Build Result", !m_buildErrorMessages.empty(), !m_buildWarningMessages.empty(), false);
+						if (result)
+						{
+							result->Message = msg;
+							result->HasError = !!m_buildErrorMessages.size();
+							result->HasWarning = !!m_buildWarningMessages.size();
+						}
+						else
+						{
+							APDesigner::CommonDialog::ShowMessageBox(msg, L"Build Result", !m_buildErrorMessages.empty(), !m_buildWarningMessages.empty(), false);
+						}
 					}
 				}
 				m_buildErrorMessages.clear();
@@ -188,7 +203,7 @@ namespace APDesigner
 		{
 			Apoc3D::Platform::ApocSleep(1);
 
-			MainThreadUpdate(nullptr);
+			MainThreadUpdate(nullptr, nullptr);
 		}
 	}
 

@@ -85,6 +85,7 @@ namespace APDesigner
 		MenuItem* m_buildMemuItem;
 		MenuItem* m_savePrjMemuItem;
 		SubMenu* m_recentPrjSubMenu;
+		SubMenu* m_quickbuildSubMenu;
 
 		AtomManagerDialog* m_atomManager;
 		ResourcePane* m_resourcePane;
@@ -107,6 +108,7 @@ namespace APDesigner
 		void Menu_Exit(MenuItem* itm);
 		void Menu_BuildAll(MenuItem* itm);
 		void Menu_OpenRecentProject(MenuItem* itm);
+		void Menu_QuickBuildRecentProject(MenuItem* item);
 
 		void OpenProject(const String& path);
 		void SaveProject(const String& path);

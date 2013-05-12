@@ -22,6 +22,13 @@ namespace APDesigner
 	class BuildInterface : public Singleton<BuildInterface>
 	{
 	public:
+		struct BuildResult
+		{
+			String Message;
+			bool HasWarning;
+			bool HasError;
+		};
+
 		SINGLETON_DECL_HEARDER(BuildInterface);
 
 		BuildInterface();
@@ -31,7 +38,7 @@ namespace APDesigner
 		void AddBuild(Project* project);
 		void Execute();
 
-		bool MainThreadUpdate(const GameTime* const time);
+		bool MainThreadUpdate(const GameTime* const time, BuildResult* result);
 
 		bool PopLastResult(String& res);
 

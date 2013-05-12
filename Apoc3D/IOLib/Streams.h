@@ -170,7 +170,7 @@ namespace Apoc3D
 			virtual bool IsWriteEndianDependent() const { return false; }
 
 			MemoryStream(char* data, int64 length)
-				: m_data(data), m_length(length)
+				: m_data(data), m_length(length), m_position(0)
 			{ }
 			virtual ~MemoryStream()
 			{

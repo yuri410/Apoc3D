@@ -238,8 +238,18 @@ namespace APDesigner
 		{
 			MenuItem* buildMenu = new MenuItem(L"Build");
 
-			SubMenu* buildSubMenu = new SubMenu(0);
+			SubMenu* buildSubMenu = new SubMenu(nullptr);
 			buildSubMenu->SetSkin(m_UIskin);
+
+
+			m_quickbuildSubMenu = new SubMenu(nullptr);
+			m_quickbuildSubMenu->SetSkin(m_UIskin);
+
+			MenuItem* mi=new MenuItem(L"QuickBuild");
+			buildSubMenu->Add(mi,m_quickbuildSubMenu);
+
+			mi=new MenuItem(L"-");
+			buildSubMenu->Add(mi,nullptr);
 
 			m_buildMemuItem = new MenuItem(L"Build All");
 			m_buildMemuItem->event().bind(this, &MainWindow::Menu_BuildAll);
@@ -343,7 +353,7 @@ namespace APDesigner
 		m_buildMemuItem->Enabled = !!m_project;
 		m_savePrjMemuItem->Enabled = !!m_project;
 
-		if (BuildInterface::getSingleton().MainThreadUpdate(time))
+		if (BuildInterface::getSingleton().MainThreadUpdate(time, nullptr))
 		{
 			UpdateProjectEffect();
 		}
@@ -497,7 +507,8 @@ namespace APDesigner
 	void MainWindow::UpdateRecentProjects()
 	{
 		m_recentPrjSubMenu->Clear();
-		
+		m_quickbuildSubMenu->Clear();
+
 		const Queue<std::pair<String, String>>& recents = cfGetRecentProjects();
 
 		for (int i=0;i<recents.getCount();i++)
@@ -509,12 +520,18 @@ namespace APDesigner
 			mi->event().bind(this, &MainWindow::Menu_OpenRecentProject);
 			mi->UserPointer = reinterpret_cast<void*>(static_cast<uintptr>(i));
 			m_recentPrjSubMenu->Add(mi, nullptr);
-		}
-	}
 
+			MenuItem* mi2 = new MenuItem(*mi);
+			mi2->event().bind(this, &MainWindow::Menu_QuickBuildRecentProject);
+			m_quickbuildSubMenu->Add(mi2, nullptr);
+		}
+
+	}
+	
 	void MainWindow::Menu_CloseProject(MenuItem* itm)
 	{
-
+		//delete m_project;
+		//m_project = nullptr;
 	}
 	//void MainWindow::Menu_Insert(Control* ctl)
 	//{
@@ -600,6 +617,35 @@ namespace APDesigner
 			String path = prjs.GetElement(idx).second;
 			if (File::FileExists(path))
 				OpenProject(path);
+			else
+			{
+				ShowMessageBox(L"File not found", L"Error", true);
+				cfRemoveRecentProject(idx);
+			}
+		}
+	}
+	void MainWindow::Menu_QuickBuildRecentProject(MenuItem* item)
+	{
+		int32 idx = static_cast<int32>(reinterpret_cast<uintptr>(item->UserPointer));
+
+		const Queue<std::pair<String, String>>& prjs = cfGetRecentProjects();
+		if (idx < prjs.getCount())
+		{
+			String path = prjs.GetElement(idx).second;
+			if (File::FileExists(path))
+			{
+				Project* prj = new Project();
+				FileLocation fl(path);
+				Configuration* conf = ConfigurationManager::getSingleton().CreateInstance(&fl);
+				
+				prj->Parse(conf->get(L"Project"));
+
+				prj->setBasePath(PathUtils::GetDirectory(path));
+				delete conf;
+
+				BuildInterface::getSingleton().AddBuild(prj);
+				BuildInterface::getSingleton().Execute();
+			}
 			else
 			{
 				ShowMessageBox(L"File not found", L"Error", true);

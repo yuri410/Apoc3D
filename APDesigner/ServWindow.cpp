@@ -1,6 +1,7 @@
 #include "ServWindow.h"
 
 #include "BuildService/BuildService.h"
+#include "CommonDialog/DialogCommon.h"
 
 #include "apoc3d/Core/GameTime.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
@@ -36,7 +37,8 @@ using namespace Apoc3D::Graphics::EffectSystem;
 namespace APDesigner
 {
 	ServWindow::ServWindow(RenderWindow* wnd, const String& projectFilePath)
-		: m_window(wnd), m_UIskin(0), m_projectFilePath(projectFilePath), m_lastHotKeyPressed(false),
+		: m_window(wnd), m_UIskin(0), m_projectFilePath(projectFilePath), 
+		m_lastHideKeyPressed(false), m_lastBuildKeyPressed(false),
 		m_changeBuffer(8192), m_currentProject(nullptr)
 	{
 		UpdateProject();
@@ -93,31 +95,37 @@ namespace APDesigner
 			m_lblDescription = new Label(Point(10, 5), L"Automatic Content Build Service", m_baseForm->Size.X-10);
 			m_lblDescription->SetSkin(m_UIskin);
 
-			m_lblLoadedProject = new Label(Point(10, 22+25), L"Project: " + m_projectFilePath, m_baseForm->Size.X-10);
+			m_lblLoadedProject = new Label(Point(10, 22+25), L"Project: ", m_baseForm->Size.X-10);
 			m_lblLoadedProject->SetSkin(m_UIskin);
 
 			m_lblStatus = new Label(Point(10, 22+25*2), L"Status: ", m_baseForm->Size.X-10);
 			m_lblStatus->SetSkin(m_UIskin);
 
 
-			m_lblHide = new Label(Point(10, m_baseForm->Size.Y - 60), L"Toggle Hide: Ctrl + Alt + H ", m_baseForm->Size.X-10);
-			m_lblHide->SetSkin(m_UIskin);
+			m_lblHotKeys = new Label(Point(10, m_baseForm->Size.Y - 90), L"Toggle Hide: Ctrl + Alt + H\nForce Build: Ctrl + Alt + B", m_baseForm->Size.X-10);
+			m_lblHotKeys->SetSkin(m_UIskin);
 
-			int32 btnWidth = (m_baseForm->Size.X-30)/2;
+			int32 btnWidth = (m_baseForm->Size.X-40)/3;
 			m_btnHide = new Button(Point(10, m_baseForm->Size.Y - 35), btnWidth, L"Hide");
 			m_btnHide->SetSkin(m_UIskin);
 			m_btnHide->eventRelease().bind(this, &ServWindow::BtnHide_Release);
 
-			m_btnExit = new Button(Point(m_btnHide->Position.X + btnWidth + 10, m_baseForm->Size.Y - 35), (m_baseForm->Size.X-30)/2, L"Exit");
+			m_btnBuild = new Button(Point(m_btnHide->Position.X + btnWidth + 10, m_baseForm->Size.Y - 35), btnWidth, L"Build");
+			m_btnBuild->SetSkin(m_UIskin);
+			m_btnBuild->eventRelease().bind(this, &ServWindow::BtnBuild_Release);
+
+			m_btnExit = new Button(Point(m_btnHide->Position.X + btnWidth * 2 + 20, m_baseForm->Size.Y - 35), btnWidth, L"Exit");
 			m_btnExit->SetSkin(m_UIskin);
 			m_btnExit->eventRelease().bind(this, &ServWindow::BtnExit_Release);
+
 
 			m_baseForm->getControls().Add(m_lblDescription);
 			m_baseForm->getControls().Add(m_lblLoadedProject);
 			m_baseForm->getControls().Add(m_lblStatus);
-			m_baseForm->getControls().Add(m_lblHide);
+			m_baseForm->getControls().Add(m_lblHotKeys);
 			m_baseForm->getControls().Add(m_btnExit);
 			m_baseForm->getControls().Add(m_btnHide);
+			m_baseForm->getControls().Add(m_btnBuild);
 
 			m_baseForm->Initialize(m_device);
 
@@ -137,7 +145,7 @@ namespace APDesigner
 		delete m_lblDescription;
 		delete m_lblLoadedProject;
 		delete m_lblStatus;
-		delete m_lblHide;
+		delete m_lblHotKeys;
 		delete m_btnExit;
 		delete m_btnHide;
 	}
@@ -150,6 +158,12 @@ namespace APDesigner
 		EffectManager::getSingleton().Update(time);
 
 		m_baseForm->Size = Point(m_window->getClientSize().Width, m_window->getClientSize().Height);
+
+
+		m_lblLoadedProject->Text = L"Project: " + m_currentProject->getName();
+		m_lblLoadedProject->Text.append(L" (");
+		m_lblLoadedProject->Text.append(PathUtils::GetFileName(m_projectFilePath));
+		m_lblLoadedProject->Text.append(L")");
 
 		m_lblStatus->Position.Y = m_lblLoadedProject->Position.Y + m_lblLoadedProject->Size.Y;
 		m_lblStatus->Text = L"Status: ";
@@ -164,14 +178,40 @@ namespace APDesigner
 
 		UIRoot::Update(time);
 
-		BuildInterface::getSingleton().MainThreadUpdate(time);
+		BuildInterface::BuildResult result;
+		if (BuildInterface::getSingleton().MainThreadUpdate(time, &result))
+		{
+			if (result.Message.size() || result.HasError || result.HasWarning)
+			{
+				Notify(L"Build Failed - " + m_currentProject->getName(), result.Message);
+				m_queuedMessage = result.Message;
+			}
+			else
+			{
+				Notify(L"Build Success - " + m_currentProject->getName(), L" - Apoc3D Build Service");
+			}
+		}
 
 		bool pressed = (GetAsyncKeyState(VK_CONTROL) && GetAsyncKeyState(VK_MENU) && GetAsyncKeyState('H'));
-		if (!m_lastHotKeyPressed && pressed)
+		if (!m_lastHideKeyPressed && pressed)
 		{
 			m_window->SetVisible(!m_window->getVisisble());
 		}
-		m_lastHotKeyPressed = pressed;
+		m_lastHideKeyPressed = pressed;
+
+		pressed = (GetAsyncKeyState(VK_CONTROL) && GetAsyncKeyState(VK_MENU) && GetAsyncKeyState('B'));
+		if (!m_lastBuildKeyPressed && pressed)
+		{
+			BtnBuild_Release(nullptr);
+		}
+		m_lastBuildKeyPressed = pressed;
+
+
+		if (m_window->getVisisble() && m_queuedMessage.size())
+		{
+			CommonDialog::ShowMessageBox(m_queuedMessage, L"Build Issues", false, true);
+			m_queuedMessage.clear();
+		}
 
 		{
 			//ReadDirectoryChangesW();
@@ -196,6 +236,7 @@ namespace APDesigner
 
 		Project* prj = new Project();
 		prj->Parse(conf->get(L"Project"));
+		prj->setBasePath(PathUtils::GetDirectory(m_projectFilePath));
 
 		delete conf;
 
@@ -203,10 +244,53 @@ namespace APDesigner
 			delete m_currentProject;
 		m_currentProject = prj;
 	}
+	void ServWindow::Notify(const String& title, const String& message)
+	{
+		if (!m_window->getVisisble())
+		{
+			String cmdLine = L"notifu.exe /i parent";
+			cmdLine.append(L" /p \"");
+			cmdLine.append(title);
+			cmdLine.append(L"\"");
+
+			cmdLine.append(L" /m \"");
+			cmdLine.append(message);
+			cmdLine.append(L"\"");
+
+			STARTUPINFO startUpInfo;
+			ZeroMemory(&startUpInfo, sizeof(STARTUPINFO));
+			startUpInfo.cb = sizeof(STARTUPINFO);
+			
+			size_t len = cmdLine.size() + 1;
+			wchar_t* chars = new wchar_t[cmdLine.size() + 1];
+			memcpy(chars, cmdLine.c_str(), sizeof(wchar_t) * len);
+
+			PROCESS_INFORMATION procInfo;
+
+			BOOL res = CreateProcess(nullptr, chars, nullptr, nullptr, FALSE, 0 ,nullptr, nullptr, &startUpInfo, &procInfo);
+
+			CloseHandle(procInfo.hProcess);
+			CloseHandle(procInfo.hThread);
+
+			delete[] chars;
+			//ShellExecute(GetForegroundWindow(), nullptr, cmdLine.c_str(), nullptr, nullptr, SW_SHOWNA);
+		}
+	}
 
 	void ServWindow::BtnHide_Release(Control* ctrl)
 	{
 		m_window->SetVisible(false);
+	}
+	void ServWindow::BtnBuild_Release(Control* ctrl)
+	{
+		if (!BuildInterface::getSingleton().IsRunning())
+		{
+			Notify(L"Build Started - " + m_currentProject->getName(), L" - Apoc3D Build Service");
+
+			UpdateProject();
+			BuildInterface::getSingleton().AddBuild(m_currentProject);
+			BuildInterface::getSingleton().Execute();
+		}
 	}
 	void ServWindow::BtnExit_Release(Control* ctrl)
 	{
