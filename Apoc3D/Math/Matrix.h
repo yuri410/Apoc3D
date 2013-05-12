@@ -122,7 +122,7 @@ namespace Apoc3D
 			
 				
 			Matrix() {  ZeroMatrix(); }
-			Matrix(const float elements[16])
+			explicit Matrix(const float elements[16])
 			{				
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				SSEVecLoader buffer;
@@ -1480,7 +1480,7 @@ namespace Apoc3D
 				res.Inverse();
 			}
 
-			operator float*() 
+			operator float* ()
 			{
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 #pragma error "Not implemented"
@@ -1519,6 +1519,7 @@ namespace Apoc3D
 //					left.M41 == right.M41 && left.M42 == right.M42 && left.M43 == right.M43 && left.M44 == right.M44);
 //			#endif
 //			}
+
 		};
 
 #ifdef _MSC_VER

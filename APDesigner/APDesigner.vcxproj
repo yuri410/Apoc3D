@@ -227,9 +227,6 @@
     <ProjectReference Include="..\Apoc3D.D3D9RenderSystem\Apoc3D_D3D9RenderSystem.vcxproj">
       <Project>{54915473-0627-4a72-9939-2588588ff585}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Apoc3D.WindowsInput\Apoc3D.WindowsInput.vcxproj">
-      <Project>{bb441c8f-5157-43a9-b180-dfa4207adc37}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Apoc3D\Apoc3d.vcxproj">
       <Project>{db9f1707-9349-4171-b670-cc5ac4ee4170}</Project>
     </ProjectReference>

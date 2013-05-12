@@ -17,8 +17,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APDesigner", "APDesigner\AP
 		{84FF48B6-E1C8-447E-A1A1-B7D67E045E68} = {84FF48B6-E1C8-447E-A1A1-B7D67E045E68}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.WindowsInput", "Apoc3D.WindowsInput\Apoc3D.WindowsInput.vcxproj", "{BB441C8F-5157-43A9-B180-DFA4207ADC37}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.Essentials", "Apoc3D.Essentials\Apoc3D.Essentials.vcxproj", "{A834AD24-93AB-4F33-9172-D8F920E58E6C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DB9F1707-9349-4171-B670-CC5AC4EE4170} = {DB9F1707-9349-4171-B670-CC5AC4EE4170}
@@ -33,6 +31,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{967EA61A-D303-411C-9D65-6CB72489F5CE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MiscTools", "MiscTools", "{45ED24E8-AA1C-445A-B295-DDF16DDB16B8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Apoc3D.WindowsInput", "Apoc3D.WindowsInput\Apoc3D.WindowsInput.vcxproj", "{BB441C8F-5157-43A9-B180-DFA4207ADC37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,15 +88,6 @@ Global
 		{B87E9487-0D55-4B74-B0B8-B69A03F9F544}.Release_Static|Win32.ActiveCfg = Release_Static|Win32
 		{B87E9487-0D55-4B74-B0B8-B69A03F9F544}.Release_Static|Win32.Build.0 = Release_Static|Win32
 		{B87E9487-0D55-4B74-B0B8-B69A03F9F544}.Release_Static|x64.ActiveCfg = Release_Static|Win32
-		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Debug|Win32.ActiveCfg = Debug|Win32
-		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Debug|Win32.Build.0 = Debug|Win32
-		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Debug|x64.ActiveCfg = Debug|Win32
-		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_DynLib|Win32.ActiveCfg = Release_DynLib|Win32
-		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_DynLib|Win32.Build.0 = Release_DynLib|Win32
-		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_DynLib|x64.ActiveCfg = Release_DynLib|Win32
-		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_Static|Win32.ActiveCfg = Release_Static|Win32
-		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_Static|Win32.Build.0 = Release_Static|Win32
-		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_Static|x64.ActiveCfg = Release_Static|Win32
 		{A834AD24-93AB-4F33-9172-D8F920E58E6C}.Debug|Win32.ActiveCfg = Debug|Win32
 		{A834AD24-93AB-4F33-9172-D8F920E58E6C}.Debug|Win32.Build.0 = Debug|Win32
 		{A834AD24-93AB-4F33-9172-D8F920E58E6C}.Debug|x64.ActiveCfg = Debug|Win32
@@ -133,6 +124,15 @@ Global
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|Win32.ActiveCfg = Release|Win32
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|Win32.Build.0 = Release|Win32
 		{4ECF9A4B-40A2-458D-BCDB-B48440527408}.Release_Static|x64.ActiveCfg = Release|Win32
+		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Debug|Win32.Build.0 = Debug|Win32
+		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Debug|x64.ActiveCfg = Debug|Win32
+		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_DynLib|Win32.ActiveCfg = Release_DynLib|Win32
+		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_DynLib|Win32.Build.0 = Release_DynLib|Win32
+		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_DynLib|x64.ActiveCfg = Release_DynLib|Win32
+		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_Static|Win32.ActiveCfg = Release_Static|Win32
+		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_Static|Win32.Build.0 = Release_Static|Win32
+		{BB441C8F-5157-43A9-B180-DFA4207ADC37}.Release_Static|x64.ActiveCfg = Release_Static|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
