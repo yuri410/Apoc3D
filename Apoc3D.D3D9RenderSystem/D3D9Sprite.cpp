@@ -70,6 +70,8 @@ namespace Apoc3D
 			}
 			void D3D9Sprite::End()
 			{
+				Sprite::End();
+
 				Flush();
 				RestoreRenderState();
 			}
@@ -137,6 +139,8 @@ namespace Apoc3D
 
 			void D3D9Sprite::Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color)
 			{
+				assert(m_began);
+
 				DrawEntry drawE;
 				_DrawAsEntry(drawE, texture, dstRect, NULL, color);
 				AddTransformedUVDraw(drawE, uScale, vScale, uBias, vBias);
@@ -246,6 +250,8 @@ namespace Apoc3D
 			void D3D9Sprite::Draw(Texture* texture, 
 				const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color)
 			{
+				assert(m_began);
+
 				DrawEntry drawE;
 				_DrawAsEntry(drawE, texture, dstRect, srcRect, color);
 				m_deferredDraws.Add(drawE);
@@ -259,14 +265,20 @@ namespace Apoc3D
 
 			void D3D9Sprite::Draw(Texture* texture, Vector2 pos, uint color)
 			{
+				assert(m_began);
+
 				AddNormalDraw(texture, Vector2Utils::GetX(pos), Vector2Utils::GetY(pos), color);
 			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
 			{
+				assert(m_began);
+
 				AddNormalDraw(texture, pos.X, pos.Y, color);
 			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, float uScale, float vScale, float uBias, float vBias, uint color)
 			{
+				assert(m_began);
+
 				AddUVDraw(texture, pos.X, pos.Y, color, uScale, vScale, uBias, vBias);
 			}
 

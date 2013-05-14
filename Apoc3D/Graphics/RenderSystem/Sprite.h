@@ -74,10 +74,17 @@ namespace Apoc3D
 
 				virtual void Begin(SpriteSettings settings)
 				{
+					assert(!m_began);
+					m_began = true;
 					m_currentSettings = settings;
 				}
 
-				virtual void End() = 0;
+				virtual void End()
+				{
+					assert(m_began);
+					m_began = false;
+				}
+
 				//virtual void DrawQuad(const GeometryData* quad, PostEffect* effect) = 0;
 				void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color)
 				{
@@ -175,7 +182,12 @@ namespace Apoc3D
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
 				bool isUsingStack() const { return !!(m_currentSettings & SPR_UsePostTransformStack); }
 
+			protected:
+				Sprite(RenderDevice* rd);
 
+				SpriteSettings getSettings() const { return m_currentSettings; }
+
+				bool m_began;
 			private:
 				RenderDevice* m_renderDevice;
 				Matrix m_transform;
@@ -183,10 +195,6 @@ namespace Apoc3D
 
 				SpriteSettings m_currentSettings;
 
-			protected:
-				Sprite(RenderDevice* rd);
-
-				SpriteSettings getSettings() const { return m_currentSettings; }
 			};
 		}
 	}
