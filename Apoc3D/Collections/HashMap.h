@@ -154,7 +154,6 @@ namespace Apoc3D
 					{
 						m_buckets[i] = -1;
 					}
-					memset(m_entries, 0, m_count*sizeof(Entry));
 					m_freeList = -1;
 					m_count = 0;
 					m_freeCount = 0;
@@ -182,7 +181,6 @@ namespace Apoc3D
 							}
 							m_entries[i].hashCode = -1;
 							m_entries[i].next = m_freeList;
-							//memset(&m_entries[i].data,0,sizeof(T));
 							m_freeList = i;
 							m_freeCount++;
 							return true;

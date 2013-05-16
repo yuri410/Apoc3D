@@ -265,7 +265,6 @@ namespace Apoc3D
 
 			void Clear()
 			{
-				memset(m_elements, 0, m_internalPointer*sizeof(T));
 				m_internalPointer = 0;
 			}
 
