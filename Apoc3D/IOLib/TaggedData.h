@@ -149,8 +149,8 @@ namespace Apoc3D
 			void GetDataColor4(const String& name, Color4& clr);
 			void GetDataPlane(const String& name, Plane& plane);
 			void GetDataString(const String& name, String& str);
-			void GetDataRectangle(const String& name, Rectangle& rect);
-			void GetDataRectangleF(const String& name, RectangleF& rect);
+			void GetDataRectangle(const String& name, Apoc3D::Math::Rectangle& rect);
+			void GetDataRectangleF(const String& name, Apoc3D::Math::RectangleF& rect);
 			void GetDataPoint(const String& name, Point& pt);
 			void GetDataPointF(const String& name, PointF& pt);
 			void GetDataMathSize(const String& name, Apoc3D::Math::Size& sz);
@@ -167,8 +167,8 @@ namespace Apoc3D
 			void GetDataColor4(const String& name, Color4* clr, int32 count);
 			void GetDataPlane(const String& name, Plane* plane, int32 count);
 			void GetDataString(const String& name, String* str, int32 count);
-			void GetDataRectangle(const String& name, Rectangle* rect, int32 count);
-			void GetDataRectangleF(const String& name, RectangleF* rect, int32 count);
+			void GetDataRectangle(const String& name, Apoc3D::Math::Rectangle* rect, int32 count);
+			void GetDataRectangleF(const String& name, Apoc3D::Math::RectangleF* rect, int32 count);
 			void GetDataPoint(const String& name, Point* pt, int32 count);
 			void GetDataPointF(const String& name, PointF* pt, int32 count);
 			void GetDataMathSize(const String& name, Apoc3D::Math::Size* sz, int32 count);
@@ -369,6 +369,15 @@ namespace Apoc3D
 			void AddAuto(const String& name, const Plane& plane)	{ AddEntryPlane(name, plane); }
 			void AddAuto(const String& name, const Quaternion& quad)	{ AddEntryQuaternion(name, quad); }
 			void AddAuto(const String& name, const String& str)	{ AddEntryString(name, str); }
+			void AddAuto(const String& name, const Apoc3D::Math::Rectangle& rect)  { AddEntryRectangle(name, rect); }
+			void AddAuto(const String& name, const Apoc3D::Math::RectangleF& rect) { AddEntryRectangleF(name, rect); }
+			void AddAuto(const String& name, const Point& pt)		{ AddEntryPoint(name, pt); }
+			void AddAuto(const String& name, const PointF& pt)	{ AddEntryPointF(name, pt); }
+			void AddAuto(const String& name, const Apoc3D::Math::Size& sz)	{ AddEntryMathSize(name, sz); }
+			void AddAuto(const String& name, const BoundingBox& bb)			{ AddEntryBoundingBox(name, bb); }
+			void AddAuto(const String& name, const BoundingSphere& bs)		{ AddEntryBoundingSphere(name, bs); }
+			void AddAuto(const String& name, const Ray& r)		{ AddEntryRay(name, r); }
+			void AddAuto(const String& name, const Viewport& vp)	{ AddEntryViewport(name, vp); }
 
 			void AddAuto(const String& name, const int64* value, int32 count)	{ AddEntryInt64(name, value, count); }
 			void AddAuto(const String& name, const uint64* value, int32 count)	{ AddEntryUInt64(name, value, count); }
@@ -386,8 +395,9 @@ namespace Apoc3D
 			void AddAuto(const String& name, const Color4* clr, int32 count)	{ AddEntryColor4(name, clr, count); }
 			void AddAuto(const String& name, const Plane* plane, int32 count)	{ AddEntryPlane(name, plane, count); }
 			void AddAuto(const String& name, const Quaternion* quad, int32 count)	{ AddEntryQuaternion(name, quad, count); }
-			void AddAuto(const String& name, const Rectangle* rect, int32 count)  { AddEntryRectangle(name, rect, count); }
-			void AddAuto(const String& name, const RectangleF* rect, int32 count) { AddEntryRectangleF(name, rect, count); }
+			void AddAuto(const String& name, const String* str, int32 count)	{ AddEntryString(name, str, count); }
+			void AddAuto(const String& name, const Apoc3D::Math::Rectangle* rect, int32 count)  { AddEntryRectangle(name, rect, count); }
+			void AddAuto(const String& name, const Apoc3D::Math::RectangleF* rect, int32 count) { AddEntryRectangleF(name, rect, count); }
 			void AddAuto(const String& name, const Point* pt, int32 count)		{ AddEntryPoint(name, pt, count); }
 			void AddAuto(const String& name, const PointF* pt, int32 count)	{ AddEntryPointF(name, pt, count); }
 			void AddAuto(const String& name, const Apoc3D::Math::Size* sz, int32 count)	{ AddEntryMathSize(name, sz, count); }
@@ -395,8 +405,7 @@ namespace Apoc3D
 			void AddAuto(const String& name, const BoundingSphere* bs, int32 count)		{ AddEntryBoundingSphere(name, bs, count); }
 			void AddAuto(const String& name, const Ray* r, int32 count)		{ AddEntryRay(name, r, count); }
 			void AddAuto(const String& name, const Viewport* vp, int32 count)	{ AddEntryViewport(name, vp, count); }
-			void AddAuto(const String& name, const String* str, int32 count)	{ AddEntryString(name, str, count); }
-
+			
 
 			void AddEntryInt64(const String& name, int64 value);
 			void AddEntryUInt64(const String& name, uint64 value);

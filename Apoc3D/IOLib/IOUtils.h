@@ -91,7 +91,7 @@ inline int32 ci32_le(const char* const src)
 #else
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
 	uint32 r = (src2[3] << 24) | (src2[2] << 16) | (src2[1] << 8) | src2[0];
-	return reinterpret_cast<int32>(r);
+	return reinterpret_cast<const int32&>(r);
 #endif
 }
 inline int16 ci16_le(const char* const src)
@@ -100,8 +100,8 @@ inline int16 ci16_le(const char* const src)
 	return *reinterpret_cast<const int16*>(src);
 #else
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
-	uint16 r = return (src2[1] << 8) | src2[0];
-	return reinterpret_cast<int16>(r);
+	uint16 r = (src2[1] << 8) | src2[0];
+	return reinterpret_cast<const int16&>(r);
 #endif
 }
 inline int64 ci64_le(const char* const src) 
@@ -112,6 +112,7 @@ inline int64 ci64_le(const char* const src)
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
 	uint64 r = ((uint64)src2[7] << 56) | ((uint64)src2[6] << 48) | ((uint64)src2[5] << 40) | ((uint64)src2[4] << 32) | 
 		((uint64)src2[3] << 24) | ((uint64)src2[2] << 16) | ((uint64)src2[1] << 8) | (uint64)src2[0];
+	return reinterpret_cast<const int64&>(r);
 #endif
 }
 inline uint32 cui32_le(const char* const src) 
@@ -169,7 +170,7 @@ inline void i16tomb_le(int16 v, char* dest)
 #if LITTLE_ENDIAN
 	reinterpret_cast<int16&>(dest[0]) = v;
 #else
-	uint16 v2 = reinterpret_cast<uint16>(v);
+	uint16 v2 = reinterpret_cast<const uint16&>(v);
 	byte* dest2 = reinterpret_cast<byte*>(dest);
 	dest2[0] = 0xff & (v2 >> 8);
 	dest2[1] = 0xff & v2;
@@ -180,7 +181,7 @@ inline void i32tomb_le(int32 v, char* dest)
 #if LITTLE_ENDIAN
 	reinterpret_cast<int32&>(dest[0]) = v;
 #else
-	uint32 v2 = reinterpret_cast<uint32>(v);
+	uint32 v2 = reinterpret_cast<const uint32&>(v);
 	byte* dest2 = reinterpret_cast<byte*>(dest);
 
 	dest2[0] = 0xff & (v2 >> 24);
@@ -194,7 +195,7 @@ inline void i64tomb_le(int64 v, char* dest)
 #if LITTLE_ENDIAN
 	reinterpret_cast<int64&>(dest[0]) = v;
 #else
-	uint64 v2 = reinterpret_cast<uint64>(v);
+	uint64 v2 = reinterpret_cast<const uint64&>(v);
 	byte* dest2 = reinterpret_cast<byte*>(dest);
 
 	dest2[0] = 0xff & (v2 >> 56);
