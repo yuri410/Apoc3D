@@ -190,6 +190,13 @@ namespace Apoc3D
 				}
 			}
 
+			bool operator==(const Quaternion &other) const
+			{
+				return other.X == X && other.Y == Y && other.Z == Z && other.W == W; 
+			}
+			bool operator!=(const Quaternion &other) const { return !(*this == other); }
+
+
 			/** 
 			 *  Adds two quaternions.
 			 */

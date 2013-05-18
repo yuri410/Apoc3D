@@ -34,8 +34,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Math/Quaternion.h"
 #include "apoc3d/Math/Color.h"
 
-
-
 namespace Apoc3D
 {
 	namespace IO
@@ -183,11 +181,13 @@ namespace Apoc3D
 		void BinaryWriter::Write(uint64 value) const
 		{
 			char buffer[sizeof(uint64)];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				ui64tomb_dep(value, buffer);
 			}
 			else
+#endif
 			{
 				ui64tomb_le(value, buffer);				
 			}
@@ -196,11 +196,13 @@ namespace Apoc3D
 		void BinaryWriter::Write(uint32 value) const
 		{
 			char buffer[sizeof(uint32)];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				ui32tomb_dep(value, buffer);
 			}
 			else
+#endif
 			{
 				ui32tomb_le(value, buffer);				
 			}
@@ -209,11 +211,13 @@ namespace Apoc3D
 		void BinaryWriter::Write(uint16 value) const
 		{
 			char buffer[sizeof(uint16)];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				ui16tomb_dep(value, buffer);
 			}
 			else
+#endif
 			{
 				ui16tomb_le(value, buffer);				
 			}
@@ -222,11 +226,13 @@ namespace Apoc3D
 		void BinaryWriter::Write(int64 value) const
 		{
 			char buffer[sizeof(int64)];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				i64tomb_dep(value, buffer);
 			}
 			else
+#endif
 			{
 				i64tomb_le(value, buffer);				
 			}
@@ -235,11 +241,13 @@ namespace Apoc3D
 		void BinaryWriter::Write(int32 value) const
 		{
 			char buffer[sizeof(int32)];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				i32tomb_dep(value, buffer);
 			}
 			else
+#endif
 			{
 				i32tomb_le(value, buffer);				
 			}
@@ -248,11 +256,13 @@ namespace Apoc3D
 		void BinaryWriter::Write(int16 value) const
 		{
 			char buffer[sizeof(int16)];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				i16tomb_dep(value, buffer);
 			}
 			else
+#endif
 			{
 				i16tomb_le(value, buffer);				
 			}
@@ -261,11 +271,13 @@ namespace Apoc3D
 		void BinaryWriter::Write(float value) const
 		{
 			char buffer[sizeof(float)];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				r32tomb_dep(value, buffer);
 			}
 			else
+#endif
 			{
 				r32tomb_le(value, buffer);				
 			}
@@ -274,11 +286,13 @@ namespace Apoc3D
 		void BinaryWriter::Write(double value) const
 		{
 			char buffer[sizeof(double)];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				r64tomb_dep(value, buffer);
 			}
 			else
+#endif
 			{
 				r64tomb_le(value, buffer);				
 			}
@@ -288,12 +302,14 @@ namespace Apoc3D
 		void BinaryWriter::WriteVector2(const Vector2& vec) const
 		{
 			char writeBuffer[sizeof(float) * 2];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				r32tomb_dep(v2x(vec), writeBuffer);
 				r32tomb_dep(v2y(vec), writeBuffer + sizeof(float));
 			}
 			else
+#endif
 			{
 				r32tomb_le(v2x(vec), writeBuffer);
 				r32tomb_le(v2y(vec), writeBuffer + sizeof(float));
@@ -303,6 +319,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteVector3(const Vector3& vec) const
 		{
 			char writeBuffer[sizeof(float) * 3];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				r32tomb_dep(v3x(vec), writeBuffer);
@@ -310,6 +327,7 @@ namespace Apoc3D
 				r32tomb_dep(v3z(vec), writeBuffer + sizeof(float) * 2);
 			}
 			else
+#endif
 			{
 				r32tomb_le(v3x(vec), writeBuffer);
 				r32tomb_le(v3y(vec), writeBuffer + sizeof(float));
@@ -320,6 +338,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteVector4(const Vector4& vec) const
 		{
 			char writeBuffer[sizeof(float) * 4];
+#if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
 				r32tomb_dep(v4x(vec), writeBuffer);
@@ -328,6 +347,7 @@ namespace Apoc3D
 				r32tomb_dep(v4w(vec), writeBuffer + sizeof(float) * 3);
 			}
 			else
+#endif
 			{
 				r32tomb_le(v4x(vec), writeBuffer);
 				r32tomb_le(v4y(vec), writeBuffer + sizeof(float));

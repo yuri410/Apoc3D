@@ -232,6 +232,8 @@ namespace Apoc3D
 		class PerlinNoise1D;
 
 		class GaussBlurFilter;
+
+		class Viewport;
 	};
 	namespace IO
 	{

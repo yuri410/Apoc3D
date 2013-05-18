@@ -692,9 +692,6 @@
     <ClCompile Include="IOLib\BinaryWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IOLib\IOUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IOLib\MaterialData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

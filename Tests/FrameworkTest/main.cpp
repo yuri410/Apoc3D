@@ -1,268 +1,155 @@
-// FrameworkTest.cpp : 定义控制台应用程序的入口点。
-//
 
-#include "stdafx.h"
+#include "apoc3d/Engine.h"
+#include "apoc3d/IOLib/TaggedData.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/Math/Matrix.h"
+#include "apoc3d/Math/Color.h"
+#include "apoc3d/Math/Plane.h"
+#include "apoc3d/Math/Quaternion.h"
+#include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/BoundingBox.h"
+#include "apoc3d/Math/BoundingSphere.h"
+#include "apoc3d/Math/Ray.h"
+#include "apoc3d/Math/Viewport.h"
 
-#include <d3d9.h>
-#include <d3dx9.h>
-
-#include "Math/Math.h"
-#include "Utility/StringUtils.h"
-#include "Math/RandomUtils.h"
-
-using namespace std;
 using namespace Apoc3D;
 using namespace Apoc3D::Math;
-using namespace Apoc3D::Utility;
+using namespace Apoc3D::IO;
+using namespace Apoc3D::VFS;
 
-void PrintString(const wchar_t* name)
+void TestTaggedData();
+
+void main()
 {
-	wprintf(name);  wprintf(L"\n");
-}
-void PrintValue(const wchar_t* name, uint64 v)
-{
-	wprintf(name); wprintf(StringUtils::ToString(v).c_str()); wprintf(L"\n");
-}
-void PrintValue(const wchar_t* name, float v)
-{
-	wprintf(name); wprintf(StringUtils::ToString(v, 10).c_str()); wprintf(L"\n");
-}
-
-void PrintVector(const wchar_t* name, const Vector2& v)
-{
-	wprintf(name); wprintf(Vector2Utils::ToTextString(v).c_str()); wprintf(L"\n");
-}
-
-void PrintVector(const wchar_t* name, const D3DXVECTOR2& v)
-{
-	wprintf(name);
-	wprintf(StringUtils::ToString(v.x,10, 0,' ', 0).c_str()); wprintf(L", ");
-	wprintf(StringUtils::ToString(v.y,10, 0,' ', 0).c_str()); wprintf(L"\n");
-}
-
-void StringUtilsTest()
-{
-	const bool a0 = true;
-
-	const float a1 = 1.234567890123f;
-	const wchar_t* a2 = L"Test 1234567中";
-
-	const int32 a3 = -12;
-
-	const int64 a4 = -1 * ((int64)1 << 32);
-	const uint64 a5 = (uint64)1<<35;
 	
-	// StringUtils::ToString
-	PrintString(L"StringUtils::ToString");
-	PrintString(StringUtils::ToString(a0).c_str());
-	PrintString(StringUtils::ToString(a1).c_str());
-	PrintString(StringUtils::ToString(a2).c_str());
-	PrintString(StringUtils::ToString(a3).c_str());
-	PrintString(StringUtils::ToString(a4).c_str());
-	PrintString(StringUtils::ToString(a5).c_str());
+	TestTaggedData();
+}
 
-	PrintString(L"");
-	
-
-	// StringUtils::StartsWidth
-	PrintString(L"StringUtils::StartsWidth");
-	PrintString(StringUtils::ToString(
-		StringUtils::StartsWidth(L"Abcdefg", L"Abc", false)
-		).c_str());
-	PrintString(StringUtils::ToString(
-		StringUtils::StartsWidth(L"Abcdefg", L"abc", true)
-		).c_str());
-	PrintString(StringUtils::ToString(
-		StringUtils::StartsWidth(L"Abcdefg", L"xbc", false)
-		).c_str());
-
-	// StringUtils::EndsWidth
-	PrintString(L"StringUtils::EndsWidth");
-	PrintString(StringUtils::ToString(
-		StringUtils::EndsWidth(L"Abcdefg", L"EFG", false)
-		).c_str());
-	PrintString(StringUtils::ToString(
-		StringUtils::EndsWidth(L"Abcdefg", L"EFG", true)
-		).c_str());
-	PrintString(StringUtils::ToString(
-		StringUtils::EndsWidth(L"Abcdefg", L"dfg", false)
-		).c_str());
-
-
-	// StringUtils::GetHashCode
-	PrintString(L"StringUtils::GetHashCode");
-	PrintValue(L"hash('APOC3D')=", StringUtils::GetHashCode(L"APOC3D"));
-	PrintValue(L"hash('APoC3D')=", StringUtils::GetHashCode(L"APoC3D"));
-	PrintValue(L"hash('APOC3D ')=", StringUtils::GetHashCode(L"APOC3D "));
-	PrintValue(L"hash('APOC3D Engine')=", StringUtils::GetHashCode(L"APOC3D Engine"));
-
-
-	// StringUtils::Trim*
-	PrintString(L"StringUtils::Trim*");
-	
-	String temp = L"		content ,		";
-	PrintString(temp.c_str());
-	PrintString(L"StringUtils::Trim:");
-	StringUtils::Trim(temp, L"		");
-	temp.append(L"[]");
-	PrintString(temp.c_str());
-
-	temp = L"		content ,		";
-	PrintString(L"StringUtils::TrimLeft:");
-	StringUtils::TrimLeft(temp, L"		");
-	temp.append(L"[]");
-	PrintString(temp.c_str());
-
-
-	temp = L"		content ,		";
-	PrintString(L"StringUtils::TrimRight");
-	StringUtils::TrimRight(temp, L"		");
-	temp.append(L"[]");
-	PrintString(temp.c_str());
-
-
-	// StringUtils::ToLowerCase
-	PrintString(L"StringUtils::ToLowerCase");
-	temp = L"CONTENT2";
-	PrintString(temp.c_str());
-	StringUtils::ToLowerCase(temp);
-	PrintString(temp.c_str());
-
-	PrintString(L"StringUtils::ToUpperCase");
-	temp = L"content12";
-	PrintString(temp.c_str());
-	StringUtils::ToUpperCase(temp);
-	PrintString(temp.c_str());
-
-
-	// StringUtils::Split
-	PrintString(L"StringUtils::Split");
-	temp = L"2, 3, ,4,,, 5";
-	
-	vector<String> args = StringUtils::Split(temp, L" ,");
-	for (size_t i=0;i<args.size();i++)
+template <typename T>
+void CheckEqual(const T* a, const T* b, int count)
+{
+	for (int i=0;i<count;i++)
 	{
-		PrintString(args[i].c_str());
+		if (a[i] != b[i])
+		{
+			throw std::exception();
+		}
 	}
-	PrintString(L"");
-
-
-
-	getchar();
 }
 
-void MathTest()
+void TestTaggedData()
 {
-	// vector2
-	Vector2 a = Vector2Utils::LDVector(3, 4);
-	Vector2 b = Vector2Utils::LDVector(2, 5);
-	PrintVector(L"a       = ", a);
-	PrintVector(L"b       = ", b);
+	char sourceBuffer[1024];
+	for (int i=0;i<1024;i++) sourceBuffer[i] = (char)(i % 3);
 
-	PrintValue (L"len(a)  = ", Vector2Utils::Length(a));
-	PrintValue (L"len(b)  = ", Vector2Utils::Length(b));
+	TaggedDataWriter* outData = new TaggedDataWriter(true);
+	//outData->AddEntryBool(L"Bool", (bool*)sourceBuffer, sizeof(sourceBuffer)/sizeof(bool));
+	outData->AddEntryBoundingBox(L"BoundingBox", (BoundingBox*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingBox));
+	outData->AddEntryBoundingSphere(L"BoundingSphere", (BoundingSphere*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingSphere));
+	outData->AddEntryColor4(L"Color4", (Color4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Color4));
+	outData->AddEntryDouble(L"Double", (double*)sourceBuffer, sizeof(sourceBuffer)/sizeof(double));
+	outData->AddEntryInt16(L"Int16", (int16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int16));
+	outData->AddEntryInt32(L"Int32", (int32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int32));
+	outData->AddEntryInt64(L"Int64", (int64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int64));
+	outData->AddEntryMathSize(L"MathSize", (Size*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Size));
+	outData->AddEntryMatrix(L"Matrix", (Matrix*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Matrix));
+	outData->AddEntryPlane(L"Plane", (Plane*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Plane));
+	outData->AddEntryPoint(L"Point", (Point*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Point));
+	outData->AddEntryPointF(L"PointF", (PointF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(PointF));
+	outData->AddEntryQuaternion(L"Quaternion", (Quaternion*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Quaternion));
+	outData->AddEntryRay(L"Ray", (Ray*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Ray));
+	outData->AddEntryRectangle(L"Rectangle", (Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Rectangle));
+	outData->AddEntryRectangleF(L"RectangleF", (RectangleF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(RectangleF));
+	outData->AddEntrySingle(L"Single", (float*)sourceBuffer, sizeof(sourceBuffer)/sizeof(float));
+	outData->AddEntryUInt16(L"UInt16", (uint16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint16));
+	outData->AddEntryUInt32(L"UInt32", (uint32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint32));
+	outData->AddEntryUInt64(L"UInt64", (uint64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint64));
+	outData->AddEntryVector2(L"Vector2", (Vector2*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector2));
+	outData->AddEntryVector3(L"Vector3", (Vector3*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector3));
+	outData->AddEntryVector4(L"Vector4", (Vector4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector4));
+	outData->AddEntryViewport(L"Viewport", (Viewport*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Viewport));
 
-	PrintValue (L"lensq(a)= ", Vector2Utils::LengthSquared(a));
-	PrintValue (L"lensq(b)= ", Vector2Utils::LengthSquared(b));
-
-	PrintVector(L"max(a,b)= ", Vector2Utils::Maximize(a, b));
-	PrintVector(L"min(a,b)= ", Vector2Utils::Minimize(a, b));
-	PrintValue (L"crs(a,b)= ", Vector2Utils::Cross(a, b));
-	PrintVector(L"a + b   = ", Vector2Utils::Add(a, b));
-	PrintVector(L"a - b   = ", Vector2Utils::Subtract(a, b));
-	PrintValue (L"dst(a,b)= ", Vector2Utils::Distance(a, b));
-	PrintValue (L"dot(a,b)= ", Vector2Utils::Dot(a, b));
-	PrintVector(L"n(a)    = ", Vector2Utils::Normalize(a));
-	PrintVector(L"n(b)    = ", Vector2Utils::Normalize(b));
-	PrintVector(L"-(a)    = ", Vector2Utils::Negate(a));
-	PrintVector(L"-(b)    = ", Vector2Utils::Negate(b));
-	PrintVector(L"3(a)    = ", Vector2Utils::Multiply(a, 3));
-	PrintVector(L"2(b)    = ", Vector2Utils::Multiply(b, 2));
-	PrintVector(L"mod(a,b)= ", Vector2Utils::Modulate(a, b));
-	//PrintVector(L"div(a,b)= ", Vector2Utils::Divide(a, b));
-	PrintVector(L"do2(a,b)= ", Vector2Utils::Dot2(a, b));
-
-	float buffer[4];
-	Vector2Utils::Store(a, buffer);
-	PrintValue(L"st(a)x   =", buffer[0]);
-	PrintValue(L"st(a)y   =", buffer[1]);
-
-
-	wprintf(L"\n");wprintf(L"\n");
-
-
-
-
-
-	D3DXVECTOR2 da = D3DXVECTOR2(3,4);
-	D3DXVECTOR2 db = D3DXVECTOR2(2,5);
-	PrintVector(L"a       = ", da); 
-	PrintVector(L"b       = ", db);
-
-
-	PrintValue (L"len(a)  = ", D3DXVec2Length(&da));
-	PrintValue (L"len(b)  = ", D3DXVec2Length(&db));
-
-
-	PrintValue (L"lensq(a)= ", D3DXVec2LengthSq(&da));
-	PrintValue (L"lensq(b)= ", D3DXVec2LengthSq(&db));
-
-
-	D3DXVECTOR2 dc;
-	D3DXVec2Maximize(&dc, &da, &db);
-	PrintVector(L"max(a,b)= ", dc);
-	D3DXVec2Minimize(&dc, &da, &db);
-	PrintVector(L"min(a,b)= ", dc);
-	PrintValue (L"crs(a,b)= ", D3DXVec2CCW(&da, &db));
-
-
-	D3DXVec2Add(&dc, &da, &db);
-	PrintVector(L"a + b   = ", dc);
-
-	D3DXVec2Subtract(&dc, &da, &db);
-	PrintVector(L"a - b   = ", dc);
-	PrintValue (L"dst(a,b)= ", D3DXVec2Length(&dc));
-	float dot = D3DXVec2Dot(&da, &db);
-	PrintValue (L"dot(a,b)= ", dot);
-
-	D3DXVec2Normalize(&dc, &da);
-	PrintVector(L"n(a)    = ", dc);
-	D3DXVec2Normalize(&dc, &db);
-	PrintVector(L"n(b)    = ", dc);
-
-	dc = -da;
-	PrintVector(L"-(a)    = ", dc);
-	dc = -db;
-	PrintVector(L"-(b)    = ", dc);
-
-	dc = da * 3;
-	PrintVector(L"3(a)    = ", dc);
-
-	dc = db * 2;
-	PrintVector(L"2(b)    = ", dc);
-
-	dc = da;
-	dc.x *= db.x; dc.y *= db.y;
-	PrintVector(L"mod(a,b)= ", dc);
-	//dc = da;
-	//dc.x /= db.x; dc.y /= db.y;
-	//PrintVector(L"div(a,b)= ", dc);
-	PrintVector(L"do2(a,b)= ", D3DXVECTOR2(dot, dot));
-
-	getchar();
-}
-
-void RandomTest()
-{
-
-}
-
-int _tmain(int argc, _TCHAR* argv[])
-{
-	//MathTest();
+	MemoryOutStream* buffer = new MemoryOutStream(0xffff);
+	outData->Save(new VirtualStream(buffer));
+	buffer->setPosition(0);
+	char tempBuffer[1024];
+	TaggedDataReader* inData = new TaggedDataReader(buffer);
+	//inData->GetDataBool(L"Bool", (bool*)tempBuffer, sizeof(tempBuffer)/sizeof(bool));
+	//CheckEqual((bool*)tempBuffer, (bool*)sourceBuffer, sizeof(sourceBuffer)/sizeof(bool));
 	
+	inData->GetDataBoundingBox(L"BoundingBox", (BoundingBox*)tempBuffer, sizeof(tempBuffer)/sizeof(BoundingBox));
+	CheckEqual((BoundingBox*)tempBuffer, (BoundingBox*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingBox));
 
-	
-	return 0;
+	inData->GetDataBoundingSphere(L"BoundingSphere", (BoundingSphere*)tempBuffer, sizeof(tempBuffer)/sizeof(BoundingSphere));
+	CheckEqual((BoundingSphere*)tempBuffer, (BoundingSphere*)sourceBuffer, sizeof(sourceBuffer)/sizeof(BoundingSphere));
+
+	inData->GetDataColor4(L"Color4", (Color4*)tempBuffer, sizeof(tempBuffer)/sizeof(Color4));
+	CheckEqual((Color4*)tempBuffer, (Color4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Color4));
+
+	inData->GetDataDouble(L"Double", (double*)tempBuffer, sizeof(tempBuffer)/sizeof(double));
+	CheckEqual((double*)tempBuffer, (double*)sourceBuffer, sizeof(sourceBuffer)/sizeof(double));
+
+	inData->GetDataInt16(L"Int16", (int16*)tempBuffer, sizeof(tempBuffer)/sizeof(int16));
+	CheckEqual((int16*)tempBuffer, (int16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int16));
+
+	inData->GetDataInt32(L"Int32", (int32*)tempBuffer, sizeof(tempBuffer)/sizeof(int32));
+	CheckEqual((int32*)tempBuffer, (int32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int32));
+
+	inData->GetDataInt64(L"Int64", (int64*)tempBuffer, sizeof(tempBuffer)/sizeof(int64));
+	CheckEqual((int64*)tempBuffer, (int64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(int64));
+
+	inData->GetDataMathSize(L"MathSize", (Size*)tempBuffer, sizeof(tempBuffer)/sizeof(Size));
+	CheckEqual((Size*)tempBuffer, (Size*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Size));
+
+	inData->GetDataMatrix(L"Matrix", (Matrix*)tempBuffer, sizeof(tempBuffer)/sizeof(Matrix));
+	CheckEqual((Matrix*)tempBuffer, (Matrix*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Matrix));
+
+	inData->GetDataPlane(L"Plane", (Plane*)tempBuffer, sizeof(tempBuffer)/sizeof(Plane));
+	CheckEqual((Plane*)tempBuffer, (Plane*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Plane));
+
+	inData->GetDataPoint(L"Point", (Point*)tempBuffer, sizeof(tempBuffer)/sizeof(Point));
+	CheckEqual((Point*)tempBuffer, (Point*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Point));
+
+	inData->GetDataPointF(L"PointF", (PointF*)tempBuffer, sizeof(tempBuffer)/sizeof(PointF));
+	CheckEqual((PointF*)tempBuffer, (PointF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(PointF));
+
+	inData->GetDataQuaternion(L"Quaternion", (Quaternion*)tempBuffer, sizeof(tempBuffer)/sizeof(Quaternion));
+	CheckEqual((Quaternion*)tempBuffer, (Quaternion*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Quaternion));
+
+	inData->GetDataRay(L"Ray", (Ray*)tempBuffer, sizeof(tempBuffer)/sizeof(Ray));
+	CheckEqual((Ray*)tempBuffer, (Ray*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Ray));
+
+	inData->GetDataRectangle(L"Rectangle", (Rectangle*)tempBuffer, sizeof(tempBuffer)/sizeof(Rectangle));
+	CheckEqual((Rectangle*)tempBuffer, (Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Rectangle));
+
+	inData->GetDataRectangleF(L"RectangleF", (RectangleF*)tempBuffer, sizeof(tempBuffer)/sizeof(RectangleF));
+	CheckEqual((RectangleF*)tempBuffer, (RectangleF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(RectangleF));
+
+	inData->GetDataSingle(L"Single", (float*)tempBuffer, sizeof(tempBuffer)/sizeof(float));
+	CheckEqual((float*)tempBuffer, (float*)sourceBuffer, sizeof(sourceBuffer)/sizeof(float));
+
+	inData->GetDataUInt16(L"UInt16", (uint16*)tempBuffer, sizeof(tempBuffer)/sizeof(uint16));
+	CheckEqual((uint16*)tempBuffer, (uint16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint16));
+
+	inData->GetDataUInt32(L"UInt32", (uint32*)tempBuffer, sizeof(tempBuffer)/sizeof(uint32));
+	CheckEqual((uint32*)tempBuffer, (uint32*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint32));
+
+	inData->GetDataUInt64(L"UInt64", (uint64*)tempBuffer, sizeof(tempBuffer)/sizeof(uint64));
+	CheckEqual((uint64*)tempBuffer, (uint64*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint64));
+
+	inData->GetDataVector2(L"Vector2", (Vector2*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector2));
+	CheckEqual((Vector2*)tempBuffer, (Vector2*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector2));
+
+	inData->GetDataVector3(L"Vector3", (Vector3*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector3));
+	CheckEqual((Vector3*)tempBuffer, (Vector3*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector3));
+
+	inData->GetDataVector4(L"Vector4", (Vector4*)tempBuffer, sizeof(tempBuffer)/sizeof(Vector4));
+	CheckEqual((Vector4*)tempBuffer, (Vector4*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Vector4));
+
+	inData->GetDataViewport(L"Viewport", (Viewport*)tempBuffer, sizeof(tempBuffer)/sizeof(Viewport));
+	CheckEqual((Viewport*)tempBuffer, (Viewport*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Viewport));
+
+	delete inData;
+	delete outData;
 }
 

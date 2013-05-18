@@ -54,6 +54,13 @@ namespace Apoc3D
 				Radius = radius;
 			}
 
+			bool operator==(const BoundingSphere &other) const
+			{
+				return other.Center == Center && other.Radius == Radius; 
+			}
+			bool operator!=(const BoundingSphere &other) const { return !(*this == other); }
+
+
 			/**
 			 *  Determines whether the sphere contains the specified box.
 			 *	@param

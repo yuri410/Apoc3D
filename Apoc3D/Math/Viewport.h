@@ -83,6 +83,13 @@ namespace Apoc3D
 			 *  Projects a 3D vector from object space into screen space.
 			 */
 			Vector3 Project(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world);
+
+			bool operator==(const Viewport &other) const
+			{
+				return other.X == X && other.Y == Y && other.Width == Width && other.Height == Height && other.MinZ == MinZ && other.MaxZ == MaxZ; 
+			}
+			bool operator!=(const Viewport &other) const { return !(*this == other); }
+
 		};
 	}
 }

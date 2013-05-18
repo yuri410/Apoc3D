@@ -48,7 +48,6 @@ namespace Apoc3D
 					float Y;
 					float Z;
 					float D;
-
 				};
 				/**
 				 *  The distance of the plane along its normal from the origin.
@@ -230,6 +229,12 @@ namespace Apoc3D
 			 *  Projects a directional vector on to the plane surface
 			 */
 			Vector3 ProjectVector(const Vector3& vec) const;
+
+			bool operator==(const Plane &other) const
+			{
+				return other.X == X && other.Y == Y && other.Z == Z && other.D == D; 
+			}
+			bool operator!=(const Plane &other) const { return !(*this == other); }
 
 			/**
 			 *  Changes the coefficients of the normal vector of the plane to make it of unit length.

@@ -58,14 +58,6 @@ namespace Apoc3D
 		*/
 		class APAPI Vector2
 		{
-		private:
-			
-			/* the X component of the vector
-			*/
-			float X;
-			/* the Y component of the vector
-			*/
-			float Y;
 		public:
 			friend class Vector2Utils;
 
@@ -77,11 +69,13 @@ namespace Apoc3D
 			Vector2(float x, float y)
 				: X(x), Y(y)
 			{ }
-		};
-		/* Defines a three component vector.
-		*/
-		class APAPI Vector3
-		{
+
+			bool operator==(const Vector2 &other) const
+			{
+				return other.X == X && other.Y == Y; 
+			}
+			bool operator!=(const Vector2 &other) const { return !(*this == other); }
+
 		private:
 			
 			/* the X component of the vector
@@ -90,10 +84,11 @@ namespace Apoc3D
 			/* the Y component of the vector
 			*/
 			float Y;
-			/* the Z component of the vector
-			*/
-			float Z;
-
+		};
+		/* Defines a three component vector.
+		*/
+		class APAPI Vector3
+		{
 		public:
 			friend class Vector3Utils;
 			friend class Matrix;
@@ -111,11 +106,52 @@ namespace Apoc3D
 			{
 
 			}
+
+			bool operator==(const Vector3 &other) const
+			{
+				return other.X == X && other.Y == Y && other.Z == Z; 
+			}
+			bool operator!=(const Vector3 &other) const { return !(*this == other); }
+
+		private:
+			
+			/* the X component of the vector
+			*/
+			float X;
+			/* the Y component of the vector
+			*/
+			float Y;
+			/* the Z component of the vector
+			*/
+			float Z;
+
 		};
 		/* Defines a four component vector.
 		*/
 		class APAPI Vector4
 		{
+		public:
+			friend class Vector4Utils;
+			friend class Plane;
+
+			Vector4(){}
+
+			Vector4(float value)
+				: X(value), Y(value), Z(value), W(value)
+			{				
+			}
+			Vector4(float x,float y,float z,float w)
+				: X(x), Y(y), Z(z), W(w)
+			{
+
+			}
+
+			bool operator==(const Vector4 &other) const
+			{
+				return other.X == X && other.Y == Y && other.Z == Z && other.W == W; 
+			}
+			bool operator!=(const Vector4 &other) const { return !(*this == other); }
+
 		private:
 			/* The X component of the vector.
 			*/
@@ -132,21 +168,6 @@ namespace Apoc3D
 			/* The W component of the vector.
 			*/
 			float W;
-		public:
-			friend class Vector4Utils;
-			friend class Plane;
-
-			Vector4(){}
-
-			Vector4(float value)
-				: X(value), Y(value), Z(value), W(value)
-			{				
-			}
-			Vector4(float x,float y,float z,float w)
-				: X(x), Y(y), Z(z), W(w)
-			{
-
-			}
 		};
 
 #endif

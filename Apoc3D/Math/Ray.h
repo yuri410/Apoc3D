@@ -50,6 +50,13 @@ namespace Apoc3D
 				: Position(position), Direction(direction)
 			{ }
 
+			bool operator==(const Ray &other) const
+			{
+				return other.Position == Position && other.Direction == Direction; 
+			}
+			bool operator!=(const Ray &other) const { return !(*this == other); }
+
+
 			/**
 			 *  Determines whether a ray intersects the specified object.
 			 */

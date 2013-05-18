@@ -408,7 +408,7 @@ namespace Apoc3D
 					count = m_length;
 				}
 
-				for (int64 i=0;i<m_position;i++)
+				for (int64 i=0;i<count;i++)
 					dest[i] = m_data[static_cast<int32>(i+m_position)];
 				
 				m_position += count;

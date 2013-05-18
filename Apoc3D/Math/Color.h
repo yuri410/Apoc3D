@@ -170,6 +170,19 @@ namespace Apoc3D
 				return Vector3Utils::LDVector(Red, Green, Blue);
 			}
 
+#if APOC3D_MATH_IMPL == APOC3D_SSE
+			bool operator==(const Color4 &other) const
+			{
+				return other.vector == vector; 
+			}
+#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			bool operator==(const Color4 &other) const
+			{
+				return other.Red == Red && other.Green == Green && other.Blue == Blue && other.Alpha == Alpha; 
+			}
+#endif
+			bool operator!=(const Color4 &other) const { return !(*this == other); }
+
 			/**
 			 *  Adds two colors.
 			 */

@@ -75,19 +75,23 @@ namespace Apoc3D
 		double BinaryReader::ReadDouble()
 		{
 			FillBuffer(sizeof(double));
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return cr64_dep(m_buffer);
 			}
+#endif
 			return cr64_le(m_buffer);
 		}
 		float BinaryReader::ReadSingle()
 		{
 			FillBuffer(sizeof(float));
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return cr32_dep(m_buffer);
 			}
+#endif
 			return cr32_le(m_buffer);
 		}
 		String BinaryReader::ReadString()
@@ -130,56 +134,68 @@ namespace Apoc3D
 		int16 BinaryReader::ReadInt16() 
 		{
 			FillBuffer(sizeof(int16));
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return ci16_dep(m_buffer);
 			}
+#endif
 			return ci16_le(m_buffer);
 		}
 		int32 BinaryReader::ReadInt32() 
 		{
 			FillBuffer(sizeof(int32));
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return ci32_dep(m_buffer);
 			}
+#endif
 			return ci32_le(m_buffer);
 		}
 		int64 BinaryReader::ReadInt64() 
 		{
 			FillBuffer(sizeof(int64));
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return ci64_dep(m_buffer);
 			}
+#endif
 			return ci64_le(m_buffer);
 		}
 
 		uint16 BinaryReader::ReadUInt16() 
 		{
 			FillBuffer(sizeof(uint16));
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return cui16_dep(m_buffer);
 			}
+#endif
 			return cui16_le(m_buffer);
 		}
 		uint32 BinaryReader::ReadUInt32() 
 		{
 			FillBuffer(sizeof(uint32));
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return cui32_dep(m_buffer);
 			}
+#endif
 			return cui32_le(m_buffer);
 		}
 		uint64 BinaryReader::ReadUInt64() 
 		{
 			FillBuffer(sizeof(uint64));
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return cui64_dep(m_buffer);
 			}
+#endif
 			return cui64_le(m_buffer);
 		}
 
@@ -201,6 +217,7 @@ namespace Apoc3D
 		void BinaryReader::ReadMatrix(Matrix& matrix)
 		{
 			FillBuffer(sizeof(float)*8);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				matrix.M11 = cr32_dep(&m_buffer[0]);
@@ -213,6 +230,7 @@ namespace Apoc3D
 				matrix.M24 = cr32_dep(&m_buffer[sizeof(float)*7]);
 			}
 			else
+#endif
 			{
 				matrix.M11 = cr32_le(&m_buffer[0]);
 				matrix.M12 = cr32_le(&m_buffer[sizeof(float)]);
@@ -225,6 +243,7 @@ namespace Apoc3D
 			}
 			
 			FillBuffer(sizeof(float)*8);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				matrix.M31 = cr32_dep(&m_buffer[0]);
@@ -237,6 +256,7 @@ namespace Apoc3D
 				matrix.M44 = cr32_dep(&m_buffer[sizeof(float)*7]);
 			}
 			else
+#endif
 			{
 				matrix.M31 = cr32_le(&m_buffer[0]);
 				matrix.M32 = cr32_le(&m_buffer[sizeof(float)]);
@@ -253,12 +273,14 @@ namespace Apoc3D
 		void BinaryReader::ReadVector2(Vector2& vec)
 		{
 			FillBuffer(sizeof(float)*2);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				v2x(vec) = cr32_dep(&m_buffer[0]);
 				v2y(vec) = cr32_dep(&m_buffer[sizeof(float)]);
 			}
 			else
+#endif
 			{
 				v2x(vec) = cr32_le(&m_buffer[0]);
 				v2y(vec) = cr32_le(&m_buffer[sizeof(float)]);
@@ -267,6 +289,7 @@ namespace Apoc3D
 		void BinaryReader::ReadVector3(Vector3& vec)
 		{
 			FillBuffer(sizeof(float)*2);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				v3x(vec) = cr32_dep(&m_buffer[0]);
@@ -274,6 +297,7 @@ namespace Apoc3D
 				v3z(vec) = cr32_dep(&m_buffer[sizeof(float)*2]);
 			}
 			else
+#endif
 			{
 				v3x(vec) = cr32_le(&m_buffer[0]);
 				v3y(vec) = cr32_le(&m_buffer[sizeof(float)]);
@@ -284,6 +308,7 @@ namespace Apoc3D
 		void BinaryReader::ReadVector4(Vector4& vec)
 		{
 			FillBuffer(sizeof(float)*2);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				v4x(vec) = cr32_dep(&m_buffer[0]);
@@ -292,6 +317,7 @@ namespace Apoc3D
 				v4w(vec) = cr32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
+#endif
 			{
 				v4x(vec) = cr32_le(&m_buffer[0]);
 				v4y(vec) = cr32_le(&m_buffer[sizeof(float)]);
@@ -303,6 +329,7 @@ namespace Apoc3D
 		void BinaryReader::ReadColor4(Color4& color)
 		{
 			FillBuffer(sizeof(float)*4);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				color.Red = cr32_dep(&m_buffer[0]);
@@ -311,6 +338,7 @@ namespace Apoc3D
 				color.Alpha = cr32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
+#endif
 			{
 				color.Red = cr32_le(&m_buffer[0]);
 				color.Green = cr32_le(&m_buffer[sizeof(float)]);
@@ -321,6 +349,7 @@ namespace Apoc3D
 		void BinaryReader::ReadPlane(Plane& plane)
 		{
 			FillBuffer(sizeof(float)*4);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				plane.X = cr32_dep(&m_buffer[0]);
@@ -329,6 +358,7 @@ namespace Apoc3D
 				plane.D = cr32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
+#endif
 			{
 				plane.X = cr32_le(&m_buffer[0]);
 				plane.Y = cr32_le(&m_buffer[sizeof(float)]);
@@ -339,6 +369,7 @@ namespace Apoc3D
 		void BinaryReader::ReadQuaternion(Quaternion& quat)
 		{
 			FillBuffer(sizeof(float)*4);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				quat.X = cr32_dep(&m_buffer[0]);
@@ -347,6 +378,7 @@ namespace Apoc3D
 				quat.W = cr32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
+#endif
 			{
 				quat.X = cr32_le(&m_buffer[0]);
 				quat.Y = cr32_le(&m_buffer[sizeof(float)]);
@@ -357,12 +389,14 @@ namespace Apoc3D
 		void BinaryReader::ReadPoint(Point& point)
 		{
 			FillBuffer(sizeof(int32)*2);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				point.X = ci32_dep(&m_buffer[0]);
 				point.Y = ci32_dep(&m_buffer[sizeof(int32)]);
 			}
 			else
+#endif
 			{
 				point.X = ci32_le(&m_buffer[0]);
 				point.Y = ci32_le(&m_buffer[sizeof(int32)]);
@@ -371,12 +405,14 @@ namespace Apoc3D
 		void BinaryReader::ReadSize(Size& size)
 		{
 			FillBuffer(sizeof(int32)*2);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				size.Width = ci32_dep(&m_buffer[0]);
 				size.Height = ci32_dep(&m_buffer[sizeof(int32)]);
 			}
 			else
+#endif
 			{
 				size.Width = ci32_le(&m_buffer[0]);
 				size.Height = ci32_le(&m_buffer[sizeof(int32)]);
@@ -385,6 +421,7 @@ namespace Apoc3D
 		void BinaryReader::ReadRectangle(Rectangle& rect)
 		{
 			FillBuffer(sizeof(int32)*4);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				rect.X = ci32_dep(&m_buffer[0]);
@@ -393,6 +430,7 @@ namespace Apoc3D
 				rect.Height = ci32_dep(&m_buffer[sizeof(int32)*3]);
 			}
 			else
+#endif
 			{
 				rect.X = ci32_le(&m_buffer[0]);
 				rect.Y = ci32_le(&m_buffer[sizeof(int32)]);
@@ -403,6 +441,7 @@ namespace Apoc3D
 		void BinaryReader::ReadRectangleF(RectangleF& rect)
 		{
 			FillBuffer(sizeof(float)*4);
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				rect.X = cr32_dep(&m_buffer[0]);
@@ -411,6 +450,7 @@ namespace Apoc3D
 				rect.Height = cr32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
+#endif
 			{
 				rect.X = cr32_le(&m_buffer[0]);
 				rect.Y = cr32_le(&m_buffer[sizeof(float)]);
@@ -421,7 +461,7 @@ namespace Apoc3D
 		void BinaryReader::ReadRay(Ray& ray)
 		{
 			FillBuffer(sizeof(float)*6);
-
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				float x = cr32_dep(&m_buffer[0]);
@@ -432,9 +472,9 @@ namespace Apoc3D
 				y = cr32_dep(&m_buffer[sizeof(float)]);
 				z = cr32_dep(&m_buffer[sizeof(float)*2]);
 				ray.Direction = Vector3Utils::LDVector(x,y,z);
-
 			}
 			else
+#endif
 			{
 				float x = cr32_le(&m_buffer[0]);
 				float y = cr32_le(&m_buffer[sizeof(float)]);
@@ -451,7 +491,7 @@ namespace Apoc3D
 		void BinaryReader::ReadBoundingBox(BoundingBox& box)
 		{
 			FillBuffer(sizeof(float)*6);
-
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				float x = cr32_dep(&m_buffer[0]);
@@ -464,6 +504,7 @@ namespace Apoc3D
 				box.Maximum = Vector3Utils::LDVector(x,y,z);
 			}
 			else
+#endif
 			{
 				float x = cr32_le(&m_buffer[0]);
 				float y = cr32_le(&m_buffer[sizeof(float)]);
@@ -478,7 +519,7 @@ namespace Apoc3D
 		void BinaryReader::ReadBoundingSphere(BoundingSphere& sphere)
 		{
 			FillBuffer(sizeof(float)*4);
-
+#if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
 				float x = cr32_dep(&m_buffer[0]);
@@ -488,6 +529,7 @@ namespace Apoc3D
 				sphere.Radius = cr32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
+#endif
 			{
 				float x = cr32_le(&m_buffer[0]);
 				float y = cr32_le(&m_buffer[sizeof(float)]);

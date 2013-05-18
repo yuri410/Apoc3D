@@ -121,6 +121,13 @@ namespace Apoc3D
 				return CONTAIN_Intersects;
 			}
 
+			bool operator==(const BoundingBox &other) const
+			{
+				return other.Minimum == Minimum && other.Maximum == Maximum; 
+			}
+			bool operator!=(const BoundingBox &other) const { return !(*this == other); }
+
+
 			/**
 			 *  Determines whether the box contains the specified point.
 			 */
