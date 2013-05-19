@@ -83,8 +83,8 @@ namespace Apoc3D
 			void GetAuto(const String& name, Quaternion& quad)	{ GetDataQuaternion(name, quad); }
 			void GetAuto(const String& name, Color4& clr)	{ GetDataColor4(name, clr); }
 			void GetAuto(const String& name, Plane& plane)	{ GetDataPlane(name, plane); }
-			void GetAuto(const String& name, Rectangle& rect)		{ GetDataRectangle(name, rect); }
-			void GetAuto(const String& name, RectangleF& rect)		{ GetDataRectangleF(name, rect); }
+			void GetAuto(const String& name, Apoc3D::Math::Rectangle& rect)		{ GetDataRectangle(name, rect); }
+			void GetAuto(const String& name, Apoc3D::Math::RectangleF& rect)		{ GetDataRectangleF(name, rect); }
 			void GetAuto(const String& name, Point& pt)				{ GetDataPoint(name, pt); }
 			void GetAuto(const String& name, PointF& pt)			{ GetDataPointF(name, pt); }
 			void GetAuto(const String& name, Apoc3D::Math::Size& sz)	{ GetDataMathSize(name, sz); }
@@ -110,8 +110,8 @@ namespace Apoc3D
 			void GetAuto(const String& name, Quaternion* quad, int32 count)	{ GetDataQuaternion(name, quad, count); }
 			void GetAuto(const String& name, Color4* clr, int32 count)		{ GetDataColor4(name, clr, count); }
 			void GetAuto(const String& name, Plane* plane, int32 count)	{ GetDataPlane(name, plane, count); }
-			void GetAuto(const String& name, Rectangle* rect, int32 count)		{ GetDataRectangle(name, rect, count); }
-			void GetAuto(const String& name, RectangleF* rect, int32 count)	{ GetDataRectangleF(name, rect, count); }
+			void GetAuto(const String& name, Apoc3D::Math::Rectangle* rect, int32 count)		{ GetDataRectangle(name, rect, count); }
+			void GetAuto(const String& name, Apoc3D::Math::RectangleF* rect, int32 count)	{ GetDataRectangleF(name, rect, count); }
 			void GetAuto(const String& name, Point* pt, int32 count)			{ GetDataPoint(name, pt, count); }
 			void GetAuto(const String& name, PointF* pt, int32 count)			{ GetDataPointF(name, pt, count); }
 			void GetAuto(const String& name, Apoc3D::Math::Size* sz, int32 count)		{ GetDataMathSize(name, sz, count); }
@@ -206,8 +206,8 @@ namespace Apoc3D
 			bool TryGetQuaternion(const String& name, Quaternion& quat);
 			bool TryGetColor4(const String& name, Color4& clr);
 			bool TryGetPlane(const String& name, Plane& plane);
-			void TryGetRectangle(const String& name, Rectangle& rect);
-			void TryGetRectangleF(const String& name, RectangleF& rect);
+			void TryGetRectangle(const String& name, Apoc3D::Math::Rectangle& rect);
+			void TryGetRectangleF(const String& name, Apoc3D::Math::RectangleF& rect);
 			void TryGetPoint(const String& name, Point& pt);
 			void TryGetPointF(const String& name, PointF& pt);
 			void TryGetSize(const String& name, Apoc3D::Math::Size& sz);
@@ -224,8 +224,8 @@ namespace Apoc3D
 			bool TryGetQuaternion(const String& name, Quaternion* quat, int32 count);
 			bool TryGetColor4(const String& name, Color4* clr, int32 count);
 			bool TryGetPlane(const String& name, Plane* plane, int32 count);
-			void TryGetRectangle(const String& name, Rectangle* rect, int32 count);
-			void TryGetRectangleF(const String& name, RectangleF* rect, int32 count);
+			void TryGetRectangle(const String& name, Apoc3D::Math::Rectangle* rect, int32 count);
+			void TryGetRectangleF(const String& name, Apoc3D::Math::RectangleF* rect, int32 count);
 			void TryGetPoint(const String& name, Point* pt, int32 count);
 			void TryGetPointF(const String& name, PointF* pt, int32 count);
 			void TryGetSize(const String& name, Apoc3D::Math::Size* sz, int32 count);
@@ -297,8 +297,8 @@ namespace Apoc3D
 			void _GetEntryString(const Entry* e, String& str);
 			void _GetEntryPlane(const Entry* e, Plane& plane);
 			void _GetEntryQuaternion(const Entry* e, Quaternion& quat);
-			void _GetEntryRectangle(const Entry* e, Rectangle& rect);
-			void _GetEntryRectangleF(const Entry* e, RectangleF& rect);
+			void _GetEntryRectangle(const Entry* e, Apoc3D::Math::Rectangle& rect);
+			void _GetEntryRectangleF(const Entry* e, Apoc3D::Math::RectangleF& rect);
 			void _GetEntryPoint(const Entry* e, Point& pt);
 			void _GetEntryPointF(const Entry* e, PointF& pt);
 			void _GetEntryMathSize(const Entry* e, Apoc3D::Math::Size& sz);
@@ -315,8 +315,8 @@ namespace Apoc3D
 			void _GetEntryString(const Entry* ent, String* value, int len);
 			void _GetEntryPlane(const Entry* e, Plane* plane, int len);
 			void _GetEntryQuaternion(const Entry* e, Quaternion* quat, int len);
-			void _GetEntryRectangle(const Entry* e, Rectangle* rect, int len);
-			void _GetEntryRectangleF(const Entry* e, RectangleF* rect, int len);
+			void _GetEntryRectangle(const Entry* e, Apoc3D::Math::Rectangle* rect, int len);
+			void _GetEntryRectangleF(const Entry* e, Apoc3D::Math::RectangleF* rect, int len);
 			void _GetEntryPoint(const Entry* e, Point* pt, int len);
 			void _GetEntryPointF(const Entry* e, PointF* pt, int len);
 			void _GetEntryMathSize(const Entry* e, Apoc3D::Math::Size* sz, int len);
@@ -435,8 +435,8 @@ namespace Apoc3D
 			void AddEntryString(const String& name, const String& str);
 			void AddEntryPlane(const String& name, const Plane& plane);
 			void AddEntryQuaternion(const String& name, const Quaternion& quad);
-			void AddEntryRectangle(const String& name,  const Rectangle& rect);
-			void AddEntryRectangleF(const String& name, const RectangleF& rect);
+			void AddEntryRectangle(const String& name,  const Apoc3D::Math::Rectangle& rect);
+			void AddEntryRectangleF(const String& name, const Apoc3D::Math::RectangleF& rect);
 			void AddEntryPoint(const String& name, const Point& pt);
 			void AddEntryPointF(const String& name, const PointF& pt);
 			void AddEntryMathSize(const String& name, const Apoc3D::Math::Size& sz);
@@ -454,8 +454,8 @@ namespace Apoc3D
 			void AddEntryString(const String& name, const String* str, int32 count);
 			void AddEntryPlane(const String& name, const Plane* plane, int32 count);
 			void AddEntryQuaternion(const String& name, const Quaternion* quad, int32 count);
-			void AddEntryRectangle(const String& name, const Rectangle* rect, int32 count);
-			void AddEntryRectangleF(const String& name, const RectangleF* rect, int32 count);
+			void AddEntryRectangle(const String& name, const Apoc3D::Math::Rectangle* rect, int32 count);
+			void AddEntryRectangleF(const String& name, const Apoc3D::Math::RectangleF* rect, int32 count);
 			void AddEntryPoint(const String& name, const Point* pt, int32 count);
 			void AddEntryPointF(const String& name, const  PointF* pt, int32 count);
 			void AddEntryMathSize(const String& name, const Apoc3D::Math::Size* sz, int32 count);
@@ -494,8 +494,8 @@ namespace Apoc3D
 			void SetDataString(const String& name, const String& str);
 			void SetDataPlane(const String& name, const Plane& plane);
 			void SetDataQuaternion(const String& name, const Quaternion& quad);
-			void SetDataRectangle(const String& name,  const Rectangle& rect);
-			void SetDataRectangleF(const String& name, const RectangleF& rect);
+			void SetDataRectangle(const String& name,  const Apoc3D::Math::Rectangle& rect);
+			void SetDataRectangleF(const String& name, const Apoc3D::Math::RectangleF& rect);
 			void SetDataPoint(const String& name, const Point& pt);
 			void SetDataPointF(const String& name, const PointF& pt);
 			void SetDataMathSize(const String& name, const Apoc3D::Math::Size& sz);
@@ -512,8 +512,8 @@ namespace Apoc3D
 			void SetDataString(const String& name, const String* str, int32 count);
 			void SetDataPlane(const String& name, const Plane* plane, int32 count);
 			void SetDataQuaternion(const String& name, const Quaternion* quad, int32 count);
-			void SetDataRectangle(const String& name, const Rectangle* rect, int32 count);
-			void SetDataRectangleF(const String& name, const RectangleF* rect, int32 count);
+			void SetDataRectangle(const String& name, const Apoc3D::Math::Rectangle* rect, int32 count);
+			void SetDataRectangleF(const String& name, const Apoc3D::Math::RectangleF* rect, int32 count);
 			void SetDataPoint(const String& name, const Point* pt, int32 count);
 			void SetDataPointF(const String& name, const PointF* pt, int32 count);
 			void SetDataMathSize(const String& name, const Apoc3D::Math::Size* sz, int32 count);
@@ -578,8 +578,8 @@ namespace Apoc3D
 			void _SetEntryDataString(const Entry& ent, const String& str);
 			void _SetEntryDataPlane(const Entry& ent, const Plane& plane);
 			void _SetEntryDataQuaternion(const Entry& ent, const Quaternion& quat);
-			void _SetEntryDataRectangle(const Entry& ent, const Rectangle& rect);
-			void _SetEntryDataRectangleF(const Entry& ent, const RectangleF& rect);
+			void _SetEntryDataRectangle(const Entry& ent, const Apoc3D::Math::Rectangle& rect);
+			void _SetEntryDataRectangleF(const Entry& ent, const Apoc3D::Math::RectangleF& rect);
 			void _SetEntryDataPoint(const Entry& ent, const Point& pt);
 			void _SetEntryDataPointF(const Entry& ent, const PointF& pt);
 			void _SetEntryDataMathSize(const Entry& ent, const Apoc3D::Math::Size& sz);
@@ -596,8 +596,8 @@ namespace Apoc3D
 			void _SetEntryDataString(const Entry& ent, const String* str, int32 count);
 			void _SetEntryDataPlane(const Entry& ent, const Plane* plane, int32 count);
 			void _SetEntryDataQuaternion(const Entry& ent, const Quaternion* quat, int32 count);
-			void _SetEntryDataRectangle(const Entry& ent, const Rectangle* rect, int32 count);
-			void _SetEntryDataRectangleF(const Entry& ent, const RectangleF* rect, int32 count);
+			void _SetEntryDataRectangle(const Entry& ent, const Apoc3D::Math::Rectangle* rect, int32 count);
+			void _SetEntryDataRectangleF(const Entry& ent, const Apoc3D::Math::RectangleF* rect, int32 count);
 			void _SetEntryDataPoint(const Entry& ent, const Point* pt, int32 count);
 			void _SetEntryDataPointF(const Entry& ent, const PointF* pt, int32 count);
 			void _SetEntryDataMathSize(const Entry& ent, const Apoc3D::Math::Size* sz, int32 count);
