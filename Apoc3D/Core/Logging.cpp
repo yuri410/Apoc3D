@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <Windows.h>
 #endif
 
+#include "apoc3d/Collections/List.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 #include "tthread/tinythread.h"
@@ -46,9 +47,148 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-//#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-		//HANDLE g_StandardOutput;
-//#endif
+		static uint64 LogItemSerialCounter = 1;
+
+		LogManager::LogManager()
+		{
+			for (size_t i=0;i<LOG_Count;i++)
+			{
+				m_logs[i] = new LogSet(static_cast<LogType>(i));
+			}
+		}
+		LogManager::~LogManager()
+		{
+			for (size_t i=0;i<LOG_Count;i++)
+			{
+				delete m_logs[i];
+				m_logs[i] = nullptr;
+			}
+		}
+
+		void LogManager::Write(LogType type, const String& message, LogMessageLevel level) const
+		{
+			bool ret = m_logs[static_cast<int32>(type)]->Write(message, level, 
+				type != LOG_CommandResponse && type != LOG_Command && type != LOG_Game);
+
+			if (ret)
+			{
+				const LogEntry& lastest = *m_logs[(int32)type]->LastEntry();
+
+				if (!eventNewLogWritten.empty())
+				{
+					eventNewLogWritten(lastest);
+				}
+				if (WriteLogToStd)
+				{
+					String msg = lastest.ToString();
+					if (!StringUtils::EndsWidth(msg, L"\n"))
+						msg.append(L"\n");
+
+					cout << ( msg.c_str() );
+
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+#if _DEBUG
+					OutputDebugString(msg.c_str());
+#endif
+#endif
+				}
+			}
+
+		}
+
+		int compareLogEntrySequence (const LogEntry* const & a, const LogEntry* const & b)
+		{
+			if ( a->SerialIndex < b->SerialIndex ) return -1;
+			if ( a->SerialIndex == b->SerialIndex ) return 0;
+			return 1;
+		}
+
+		void LogManager::DumpLogs(String& result)
+		{
+			int32 totalEntryCount = 0;
+			for (size_t i=0;i<LOG_Count;i++)
+			{
+				totalEntryCount += m_logs[i]->getCount();
+			}
+
+			FastList<const LogEntry*> allEntries(totalEntryCount);
+			for (size_t i=0;i<LOG_Count;i++)
+			{
+				LogSet* ls = m_logs[i];
+				for (LogSet::Iterator iter = ls->begin(); iter != ls->end(); ++iter)
+				{
+					const LogEntry& e = *iter;
+					allEntries.Add(&e);
+				}
+			}
+
+			allEntries.Sort(compareLogEntrySequence);
+			//qsort(allEntries.getInternalPointer(), allEntries.getCount(), sizeof(const LogEntry*), compareLogEntrySequence);
+			
+			result.reserve(10240);
+			for (int32 i=0;i<allEntries.getCount();i++)
+			{
+				String str = allEntries[i]->ToString();
+				result.append(str);
+				result.append(L"\n");
+			}
+		}
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
+
+		LogSet::LogSet(LogType type)
+			: m_type(type)
+		{
+			m_lock = new tthread::mutex();
+		}
+
+		LogSet::~LogSet()
+		{
+			delete m_lock;
+			m_lock = nullptr;
+		}
+
+		bool LogSet::Write(const String& message, LogMessageLevel level, bool checkDuplicate)
+		{
+			bool result = false;
+			m_lock->lock();
+
+			bool discard = false;
+			if (checkDuplicate && m_entries.Size())
+			{
+				if (m_entries.Back().Content == message)
+				{
+					discard = true;
+				}
+			}
+
+			if (!discard)
+			{
+				time_t t = time(0);
+
+				while (m_entries.Size()>MaxEntries)
+				{
+					m_entries.PopFront();
+				}
+				m_entries.PushBack(LogEntry(LogItemSerialCounter++, t, message, level, m_type));
+				result = true;
+			}
+
+			m_lock->unlock();
+			return result;
+		}
+
+		int32 LogSet::getCount()
+		{
+			m_lock->lock();
+			int result = (int)m_entries.Size();
+			m_lock->unlock();
+			return result;
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
+
 		String LogEntry::ToString() const
 		{
 			tm* t = localtime(&Time);
@@ -139,113 +279,11 @@ namespace Apoc3D
 			return wss.str();
 		}
 
-
-		Log::Log(LogType type)
-			: m_type(type)
+		bool LogEntry::operator ==(const LogEntry& b) const
 		{
-			m_lock = new tthread::mutex();
+			return SerialIndex == b.SerialIndex && Type == b.Type && 
+				Time == b.Time && Level == b.Level && Content == b.Content;
 		}
 
-		Log::~Log()
-		{
-			delete m_lock;
-			m_lock = nullptr;
-		}
-
-		bool Log::Write(const String& message, LogMessageLevel level, bool checkDuplicate)
-		{
-			bool result = false;
-			m_lock->lock();
-
-			bool discard = false;
-			if (checkDuplicate && m_entries.Size())
-			{
-				if (m_entries.Back().Content == message)
-				{
-					discard = true;
-				}
-			}
-			
-			if (!discard)
-			{
-				time_t t = time(0);
-
-				while (m_entries.Size()>MaxEntries)
-				{
-					m_entries.PopFront();
-				}
-				m_entries.PushBack(LogEntry(t, message, level, m_type));
-				result = true;
-			}
-
-			m_lock->unlock();
-			return result;
-		}
-
-		LogManager::LogManager()
-		{
-			for (size_t i=0;i<LOG_Count;i++)
-			{
-				m_logs[i] = new Log(reinterpret_cast<LogType&>(i));
-			}
-			//g_StandardOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-
-		}
-		LogManager::~LogManager()
-		{
-			for (size_t i=0;i<LOG_Count;i++)
-			{
-				delete m_logs[i];	
-			}
-////#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-			//if (g_StandardOutput!= INVALID_HANDLE_VALUE)
-			//{
-				//CloseHandle(g_StandardOutput);
-			//}
-//#endif
-		}
-
-		void LogManager::Write(LogType type, const String& message, LogMessageLevel level) const
-		{
-			bool ret = m_logs[static_cast<int32>(type)]->Write(message, level, 
-				type != LOG_CommandResponse && type != LOG_Command && type != LOG_Game);
-
-			if (ret)
-			{
-				const LogEntry& lastest = *m_logs[(int32)type]->LastEntry();// *(--m_logs[static_cast<int32>(type)]->end());
-
-				if (!m_eNewLog.empty())
-				{
-					m_eNewLog(lastest);
-				}
-				if (WriteLogToStd)
-				{
-					String msg = lastest.ToString();
-					if (!StringUtils::EndsWidth(msg, L"\n"))
-						msg.append(L"\n");
-
-					cout << ( msg.c_str() );
-				
-	#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-					//if (g_StandardOutput!= INVALID_HANDLE_VALUE)
-					//{
-	#if _DEBUG
-					OutputDebugString(msg.c_str());
-						//WriteFile(g_StandardOutput, msg.c_str(), msg.size() * sizeof(wchar_t), NULL, NULL );
-					//}
-	#endif
-	#endif
-				}
-			}
-
-		}
-
-		int32 Log::getCount()
-		{
-			m_lock->lock();
-			int result = (int)m_entries.Size();
-			m_lock->unlock();
-			return result;
-		}
 	}
 }

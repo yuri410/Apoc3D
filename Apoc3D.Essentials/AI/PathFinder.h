@@ -72,6 +72,8 @@ namespace Apoc3DEx
 			void Continue();
 			PathFinderResult* FindPath(int sx, int sy, int tx, int ty);
 		private:
+			void QuickSort(FastList<AStarNode*>& list, int l, int r);
+
 			AStarNode*** m_units;
 			PathFinderField* m_terrain;
 
@@ -95,7 +97,6 @@ namespace Apoc3DEx
 			static int stateEnum[8][2];
 			static float stateEnumCost[];
 
-			void QuickSort(FastList<AStarNode*>& list, int l, int r);
 		};
 
 		class APEXAPI PathFinderField

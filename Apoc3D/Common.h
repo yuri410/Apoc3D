@@ -181,7 +181,7 @@ namespace Apoc3D
 
 		class IParsable;
 
-		class Log;
+		class LogSet;
 
 		struct CommandDescription;
 

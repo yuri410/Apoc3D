@@ -39,6 +39,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Utility/StringUtils.h"
 
 #include "tthread/tinythread.h"
+#include <ctime>
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Core;
@@ -89,22 +90,22 @@ namespace Apoc3D
 			RegisterCommands();
 
 			{
-				Log* log = LogManager::getSingleton().getLogSet(LOG_System);
-				for (Log::Iterator iter = log->begin();iter!=log->end();iter++)
+				LogSet* log = LogManager::getSingleton().getLogSet(LOG_System);
+				for (LogSet::Iterator iter = log->begin();iter!=log->end();iter++)
 				{
 					Log_New(*iter);
 				}
 			}
 			
 			
-			LogManager::getSingleton().eventNewLogWritten().bind(this, &Console::Log_New);
+			LogManager::getSingleton().eventNewLogWritten.bind(this, &Console::Log_New);
 			UIRoot::Add(m_form);
 			m_form->Show();
 		}
 
 		Console::~Console()
 		{
-			LogManager::getSingleton().eventNewLogWritten().clear();
+			LogManager::getSingleton().eventNewLogWritten.clear();
 			UIRoot::Remove(m_form);
 
 			delete m_form;
@@ -183,7 +184,8 @@ namespace Apoc3D
 
 			if (c.size())
 			{
-				LogEntry le(0, c, LOGLVL_Default, LOG_Command);
+				// this is OK. this is just sent to the GUI only.
+				LogEntry le(0, 0, c, LOGLVL_Default, LOG_Command);
 				Log_New(le);
 
 				CommandInterpreter::getSingleton().RunLine(c, true);

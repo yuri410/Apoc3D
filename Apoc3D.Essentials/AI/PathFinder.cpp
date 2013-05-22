@@ -256,37 +256,29 @@ namespace Apoc3DEx
 			return 0;
 		}
 
-		void PathFinder::QuickSort(FastList<AStarNode*>& list, int l, int r)
+		void PathFinder::QuickSort(FastList<AStarNode*>& list, int left, int right)
 		{
-			int i;
-			int j;
-			do 
+			int i = left, j = right;
+			const AStarNode* pivot = list[(left + right) / 2];
+
+			while (i<=j)
 			{
-				i = l;
-				j = r;
-				AStarNode* p = list[(l+r) >> 1];
+				while (list[i]->f < pivot->f)
+					i++;
+				while (list[j]->f > pivot->f)
+					j--;
 
-				do 
+				if (i<=j)
 				{
-					while (list[i]->f < p->f)
-						i++;
-					while (list[i]->f > p->f)
-						j++;
+					AStarNode* tmp = list[i];
+					list[i] = list[j];
+					list[j] = tmp;
+					i++; j--;
+				}
+			}
 
-					if (i<=j)
-					{
-						AStarNode* t = list[i];
-						list[i] = list[j];
-						list[j] = t;
-						i++;
-						j--;
-					}
-
-				} while (i<=j);
-				if (l<j)
-					QuickSort(list,l,j);
-				l = i;
-			} while (i<r);
+			if (left < j) QuickSort(list, left, j);
+			if (i < right) QuickSort(list, i, right);
 		}
 
 		/************************************************************************/

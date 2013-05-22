@@ -51,6 +51,7 @@ namespace Apoc3D
 			LOGLVL_Error,
 			LOGLVL_Fatal
 		};
+
 		/**
 		 *  Defines the field that the messages are related to.
 		 */
@@ -68,50 +69,65 @@ namespace Apoc3D
 		};
 
 		
+		
 		/** 
 		 *  Defines a piece of message in the log system. 
 		 */
 		struct APAPI LogEntry
 		{
+			uint64 SerialIndex;
+
 			time_t Time;
 			LogMessageLevel Level;
 			String Content;
 			LogType Type;
 
-			LogEntry(){}
-			LogEntry(time_t time, const String& content, LogMessageLevel level, LogType type)
-				: Time(time), Level(level), Content(content), Type(type)
+			LogEntry() { }
+			LogEntry(uint64 serIdx, time_t time, const String& content, LogMessageLevel level, LogType type)
+				: SerialIndex(serIdx), Time(time), Level(level), Content(content), Type(type)
 			{
 			}
 
-			friend bool operator <(const LogEntry& a, const LogEntry& b)
-			{
-				return a.Time < b.Time || a.Level < b.Level || a.Content < b.Content;
-			}
-
-			friend bool operator ==(const LogEntry& a, const LogEntry& b)
-			{
-				return a.Time == b.Time && a.Level == b.Level && a.Content == b.Content;
-			}
+			bool operator ==(const LogEntry& b) const;
+			bool operator !=(const LogEntry& b) const { return !(this->operator==(b)); }
 
 			String ToString() const;
 		};
-		
+
 		typedef fastdelegate::FastDelegate1<LogEntry, void> NewLogWrittenHandler;
 
 		/** 
-		 *  A log is a set of LogEntries with the same LogType. 
-		 *  Log only keep the most recent 200 messages, the earlier ones are 
-		 *  deleted once the the limit has been reached and new messages come in.
+		 *  A singleton providing possibilities to log messages anywhere in the code.
 		 */
-		class APAPI Log
+		class APAPI LogManager : public Singleton<LogManager>
 		{
-		private:			
-			LogType m_type;
-			LinkedList<LogEntry> m_entries;
+		public:
+			LogManager();
+			~LogManager();
 
-			tthread::mutex* m_lock;
+			LogSet* getDefaultLog() const;
+			LogSet* getLogSet(LogType type) { return m_logs[static_cast<int32>(type)]; }
 
+			void Write(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation) const;
+
+			void DumpLogs(String& result);
+
+			SINGLETON_DECL_HEARDER(LogManager);
+
+			bool WriteLogToStd;
+			NewLogWrittenHandler eventNewLogWritten;
+		private:
+			LogSet* m_logs[LOG_Count];
+		};
+
+		
+		/** 
+		 *  A LogSet is a set of LogEntries with the same LogType. 
+		 *  LogSet only keep the most recent 200 messages, the earlier ones are 
+		 *  deleted once it reaches the limit as new messages cme in.
+		 */
+		class APAPI LogSet
+		{
 		public:
 			typedef LinkedList<LogEntry>::Iterator Iterator;
 
@@ -122,39 +138,22 @@ namespace Apoc3D
 
 			LogEntry* LastEntry() { return &m_entries.Back(); }
 
-			Log(LogType type);
-			~Log();
+			LogSet(LogType type);
+			~LogSet();
 
 			LogType getType() const { return m_type; }
 
 			int getCount();
 
 			bool Write(const String& message, LogMessageLevel level = LOGLVL_Infomation, bool checkDuplicate = true);
+
+		private:			
+			LogType m_type;
+			LinkedList<LogEntry> m_entries;
+
+			tthread::mutex* m_lock;
 		};
 
-		/** 
-		 *  A singleton providing possibilities to log messages anywhere in the code.
-		 */
-		class APAPI LogManager : public Singleton<LogManager>
-		{
-		private:
-			Log* m_logs[LOG_Count];
-			NewLogWrittenHandler m_eNewLog;
-		public:
-			bool WriteLogToStd;
-
-			NewLogWrittenHandler& eventNewLogWritten() { return m_eNewLog; }
-
-			LogManager();
-			~LogManager();
-
-			Log* getDefaultLog() const;
-			Log* getLogSet(LogType type) { return m_logs[static_cast<int32>(type)]; }
-
-			void Write(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation) const;
-
-			SINGLETON_DECL_HEARDER(LogManager);
-		};
 	}
 }
 

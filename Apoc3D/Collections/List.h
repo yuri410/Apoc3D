@@ -33,6 +33,59 @@ namespace Apoc3D
 	namespace Collections
 	{
 		template<typename T>
+		void QuickSort(T* arr, int left, int right)
+		{
+			int i = left, j = right;
+			const T pivot = arr[(left + right) / 2];
+
+			while (i<=j)
+			{
+				while (arr[i] < pivot)
+					i++;
+				while (arr[j] > pivot)
+					j--;
+
+				if (i<=j)
+				{
+					const T tmp = arr[i];
+					arr[i] = arr[j];
+					arr[j] = tmp;
+					i++; j--;
+				}
+			}
+
+			if (left < j) QuickSort(arr, left, j);
+			if (i < right) QuickSort(arr, i, right);
+		}
+
+		template<typename T>
+		void QuickSort(T* arr, int left, int right, int (* comparer)(const T& a, const T& b))
+		{
+			int i = left, j = right;
+			const T pivot = arr[(left + right) / 2];
+
+			while (i<=j)
+			{
+				while (comparer(arr[i], pivot) < 0)
+					i++;
+				while (comparer(arr[j], pivot) > 0)
+					j--;
+
+				if (i<=j)
+				{
+					const T tmp = arr[i];
+					arr[i] = arr[j];
+					arr[j] = tmp;
+					i++; j--;
+				}
+			}
+
+			if (left < j) QuickSort(arr, left, j, comparer);
+			if (i < right) QuickSort(arr, i, right, comparer);
+		}
+
+
+		template<typename T>
 		class List
 		{
 		public:
@@ -180,6 +233,19 @@ namespace Apoc3D
 				return false;
 			}
 
+			void Reverse()
+			{
+				for (int i=0;i<m_internalPointer/2;i++)
+				{
+					int32 another = m_internalPointer-i-1;
+					T temp = m_elements[i];
+					m_elements[i] = m_elements[another];
+					m_elements[another] = temp;
+				}
+			}
+
+			void Sort() { QuickSort(m_elements, 0, m_internalPointer-1); }
+			void Sort(int (* comparer)(const T& a, const T& b)) { QuickSort(m_elements, 0, m_internalPointer-1, comparer); }
 
 			T& operator [](int32 i) const
 			{
@@ -191,6 +257,7 @@ namespace Apoc3D
 			int32 getCount() const { return m_internalPointer; }
 			T* getInternalPointer() const { return m_elements; }
 		private:
+
 			T* m_elements;
 
 			int m_internalPointer;
@@ -209,8 +276,7 @@ namespace Apoc3D
 		class FastList
 		{
 		public:
-			int32 getCount() const { return m_internalPointer; }
-			T* getInternalPointer() const { return m_elements; }
+			typedef int (* ComparerFunction)(const T& a, const T& b);
 
 			FastList(const FastList& another)
 				: m_internalPointer(another.m_internalPointer), m_length(another.m_length)
@@ -373,21 +439,26 @@ namespace Apoc3D
 					m_elements[another] = temp;
 				}
 			}
+
+			void Sort() { QuickSort(m_elements, 0, m_internalPointer-1); }
+			void Sort(int (* comparer)(const T& a, const T& b)) { QuickSort(m_elements, 0, m_internalPointer-1, comparer); }
+
 			T& operator [](int32 i) const
 			{
 				assert(i>=0);
 				assert(i<m_internalPointer);
 				return m_elements[i];
 			}
+			int32 getCount() const { return m_internalPointer; }
+			T* getInternalPointer() const { return m_elements; }
 
 		private:
+			
 			T* m_elements;
 
 			int m_internalPointer;
 
 			int m_length;
-
-
 		};
 	}
 }
