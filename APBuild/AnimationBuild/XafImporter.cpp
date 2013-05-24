@@ -57,43 +57,9 @@ namespace APBuild
 	{
 		String xafFile = config.SrcFile;
 
-		char* content = NULL;
-
-		// tinyXml have bug handling non-english path
-		// thus, here we load the content on our own
-		{
-			std::ifstream strm(xafFile.c_str(), std::ios::in);
-			strm.exceptions(std::ios::failbit);
-
-			std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(strm), std::istreambuf_iterator<char>( ) );
-			buffer.push_back('\0');
-			content = new char[buffer.size()];
-			memcpy(content, &buffer[0], sizeof(char) * buffer.size());
-			//std::ifstream stm(xafFile.c_str(), std::ios::binary | std::ios::in);
-			//if (stm)
-			//{
-			//	stm.seekg(0,ios::end);
-			//	std::streampos length = stm.tellg();
-			//	stm.seekg(0,ios::beg);
-
-			//	content = new char[(uint32)length];
-			//	stm.read(content, length);
-			//}
-		}
-
-		if (!content)
-		{
-#if _DEBUG
-			_wassert(L"Warning: failed to load animation track", _CRT_WIDE(__FILE__), __LINE__);
-#endif
-			return 0;
-		}
-
 		TiXmlDocument doc;
-		doc.Parse(content);
-		//doc.LoadFile(filePath);
-		delete[] content;
-
+		doc.Load(new FileStream(xafFile), TIXML_ENCODING_UNKNOWN);
+		
 		double frameRate = 0;
 		double tickpf = 0;
 

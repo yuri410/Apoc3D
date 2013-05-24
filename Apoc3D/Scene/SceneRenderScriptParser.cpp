@@ -506,16 +506,7 @@ namespace Apoc3D
 		{
 			TiXmlDocument doc;
 
-			Stream* strm = rl->GetReadStream();
-
-			char* buffer = new char[static_cast<int>(strm->getLength())];
-			strm->Read(buffer, strm->getLength());
-
-			doc.Parse(buffer);
-
-			strm->Close();
-			delete strm;
-			delete buffer;
+			doc.Load(rl->GetReadStream(), TIXML_ENCODING_UNKNOWN);
 
 			for (const TiXmlNode* i = doc.FirstChild(); i!=0; i=i->NextSibling())
 			{
