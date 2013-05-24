@@ -318,7 +318,7 @@ namespace Apoc3D
 					}
 
 
-					if (invalidGeoPointers && invalidGeoPointers->Size())
+					if (invalidGeoPointers && invalidGeoPointers->getCount())
 					{
 						for (InvalidGeoPointerList::Iterator iter = invalidGeoPointers->Begin(); iter != invalidGeoPointers->End(); iter++)
 						{
@@ -356,7 +356,7 @@ namespace Apoc3D
 					}
 				}
 
-				if (invalidMtrlPointers && invalidMtrlPointers->Size())
+				if (invalidMtrlPointers && invalidMtrlPointers->getCount())
 				{
 					for (InvalidMtrlPointerList::Iterator iter = invalidMtrlPointers->Begin(); iter != invalidMtrlPointers->End(); iter++)
 					{

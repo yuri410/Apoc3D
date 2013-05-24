@@ -53,16 +53,8 @@ namespace Apoc3D
 			TiXmlDocument doc;
 
 			Stream* strm = rl->GetReadStream();
-
-			char* buffer = new char[(uint)strm->getLength()];
-			strm->Read(buffer, strm->getLength());
-
-			doc.Parse(buffer);
-
-			strm->Close();
-			delete strm;
-			delete buffer;
-
+			doc.Load(strm, TIXML_ENCODING_UNKNOWN);
+			
 			BuildXml(config, &doc);
 
 			return config;

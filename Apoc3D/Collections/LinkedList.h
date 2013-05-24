@@ -336,9 +336,9 @@ namespace Apoc3D
 			 */
 			bool IsEmpty() const { return !m_size; }
 			/**
-			 * Returns the number of items in the list as an uint32.
+			 * Returns the number of items in the list as an int32.
 			 */
-			uint32 Size() const { return m_size; }
+			int32 getCount() const { return m_size; }
 		private:
 			/** 
 			 * Represents a node in the linked list containing the item data;
@@ -399,7 +399,7 @@ namespace Apoc3D
 			Node* m_lastNode;
 			/** @see Size()
 			 */
-			uint32 m_size;
+			int32 m_size;
 		};
 	}
 

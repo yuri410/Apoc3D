@@ -38,7 +38,7 @@ namespace Apoc3D
 			{
 				m_frameTimes.PushBack(time->getTotalRealTime());
 
-				if (m_frameTimes.Size()>1)
+				if (m_frameTimes.getCount()>1)
 				{
 					float begin = *m_frameTimes.Begin();
 
@@ -52,7 +52,7 @@ namespace Apoc3D
 						return;
 					}
 
-					m_fps = static_cast<float>(m_frameTimes.Size())/(timeLen);
+					m_fps = static_cast<float>(m_frameTimes.getCount())/(timeLen);
 
 					if (timeLen>1)
 					{

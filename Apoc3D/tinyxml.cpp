@@ -930,137 +930,6 @@ TiXmlDocument& TiXmlDocument::operator=( const TiXmlDocument& copy )
 	return *this;
 }
 
-
-//bool TiXmlDocument::LoadFile( TiXmlEncoding encoding )
-//{
-//	return LoadFile( Value(), encoding );
-//}
-//
-//
-//bool TiXmlDocument::SaveFile() const
-//{
-//	return SaveFile( Value() );
-//}
-//
-//bool TiXmlDocument::LoadFile( const char* _filename, TiXmlEncoding encoding )
-//{
-//	TIXML_STRING filename( _filename );
-//	value = filename;
-//
-//	// reading in binary mode so that tinyxml can normalize the EOL
-//	FILE* file = TiXmlFOpen( value.c_str (), "rb" );	
-//
-//	if ( file )
-//	{
-//		bool result = LoadFile( file, encoding );
-//		fclose( file );
-//		return result;
-//	}
-//	else
-//	{
-//		SetError( TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN );
-//		return false;
-//	}
-//}
-//
-//bool TiXmlDocument::LoadFile( FILE* file, TiXmlEncoding encoding )
-//{
-//	if ( !file ) 
-//	{
-//		SetError( TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN );
-//		return false;
-//	}
-//
-//	// Delete the existing data:
-//	Clear();
-//	location.Clear();
-//
-//	// Get the file size, so we can pre-allocate the string. HUGE speed impact.
-//	long length = 0;
-//	fseek( file, 0, SEEK_END );
-//	length = ftell( file );
-//	fseek( file, 0, SEEK_SET );
-//
-//	// Strange case, but good to handle up front.
-//	if ( length <= 0 )
-//	{
-//		SetError( TIXML_ERROR_DOCUMENT_EMPTY, 0, 0, TIXML_ENCODING_UNKNOWN );
-//		return false;
-//	}
-//
-//	// Subtle bug here. TinyXml did use fgets. But from the XML spec:
-//	// 2.11 End-of-Line Handling
-//	// <snip>
-//	// <quote>
-//	// ...the XML processor MUST behave as if it normalized all line breaks in external 
-//	// parsed entities (including the document entity) on input, before parsing, by translating 
-//	// both the two-character sequence #xD #xA and any #xD that is not followed by #xA to 
-//	// a single #xA character.
-//	// </quote>
-//	//
-//	// It is not clear fgets does that, and certainly isn't clear it works cross platform. 
-//	// Generally, you expect fgets to translate from the convention of the OS to the c/unix
-//	// convention, and not work generally.
-//
-//	/*
-//	while( fgets( buf, sizeof(buf), file ) )
-//	{
-//		data += buf;
-//	}
-//	*/
-//
-//	char* buf = new char[ length+1 ];
-//	buf[0] = 0;
-//
-//	if ( fread( buf, length, 1, file ) != 1 ) {
-//		delete [] buf;
-//		SetError( TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN );
-//		return false;
-//	}
-//
-//	// Process the buffer in place to normalize new lines. (See comment above.)
-//	// Copies from the 'p' to 'q' pointer, where p can advance faster if
-//	// a newline-carriage return is hit.
-//	//
-//	// Wikipedia:
-//	// Systems based on ASCII or a compatible character set use either LF  (Line feed, '\n', 0x0A, 10 in decimal) or 
-//	// CR (Carriage return, '\r', 0x0D, 13 in decimal) individually, or CR followed by LF (CR+LF, 0x0D 0x0A)...
-//	//		* LF:    Multics, Unix and Unix-like systems (GNU/Linux, AIX, Xenix, Mac OS X, FreeBSD, etc.), BeOS, Amiga, RISC OS, and others
-//    //		* CR+LF: DEC RT-11 and most other early non-Unix, non-IBM OSes, CP/M, MP/M, DOS, OS/2, Microsoft Windows, Symbian OS
-//    //		* CR:    Commodore 8-bit machines, Apple II family, Mac OS up to version 9 and OS-9
-//
-//	const char* p = buf;	// the read head
-//	char* q = buf;			// the write head
-//	const char CR = 0x0d;
-//	const char LF = 0x0a;
-//
-//	buf[length] = 0;
-//	while( *p ) {
-//		assert( p < (buf+length) );
-//		assert( q <= (buf+length) );
-//		assert( q <= p );
-//
-//		if ( *p == CR ) {
-//			*q++ = LF;
-//			p++;
-//			if ( *p == LF ) {		// check for CR+LF (and skip LF)
-//				p++;
-//			}
-//		}
-//		else {
-//			*q++ = *p++;
-//		}
-//	}
-//	assert( q <= (buf+length) );
-//	*q = 0;
-//
-//	Parse( buf, 0, encoding );
-//
-//	delete [] buf;
-//	return !Error();
-//}
-//
-//
 //bool TiXmlDocument::SaveFile( const char * filename ) const
 //{
 //	// The old c stuff lives on...
@@ -1090,6 +959,61 @@ TiXmlDocument& TiXmlDocument::operator=( const TiXmlDocument& copy )
 //	Print( fp, 0 );
 //	return (ferror(fp) == 0);
 //}
+bool TiXmlDocument::Load(Apoc3D::IO::Stream* strm, TiXmlEncoding encoding)
+{
+	// Delete the existing data:
+	Clear();
+	location.Clear();
+
+	int32 length = (int32)strm->getLength();
+	char* buf = new char[ length+1 ];
+	buf[length] = 0;
+
+	strm->Read(buf, length);
+
+
+	// Process the buffer in place to normalize new lines. (See comment above.)
+	// Copies from the 'p' to 'q' pointer, where p can advance faster if
+	// a newline-carriage return is hit.
+	//
+	// Wikipedia:
+	// Systems based on ASCII or a compatible character set use either LF  (Line feed, '\n', 0x0A, 10 in decimal) or 
+	// CR (Carriage return, '\r', 0x0D, 13 in decimal) individually, or CR followed by LF (CR+LF, 0x0D 0x0A)...
+	//		* LF:    Multics, Unix and Unix-like systems (GNU/Linux, AIX, Xenix, Mac OS X, FreeBSD, etc.), BeOS, Amiga, RISC OS, and others
+	//		* CR+LF: DEC RT-11 and most other early non-Unix, non-IBM OSes, CP/M, MP/M, DOS, OS/2, Microsoft Windows, Symbian OS
+	//		* CR:    Commodore 8-bit machines, Apple II family, Mac OS up to version 9 and OS-9
+
+	const char* p = buf;	// the read head
+	char* q = buf;			// the write head
+	const char CR = 0x0d;
+	const char LF = 0x0a;
+
+	buf[length] = 0;
+	while( *p ) {
+		assert( p < (buf+length) );
+		assert( q <= (buf+length) );
+		assert( q <= p );
+
+		if ( *p == CR ) {
+			*q++ = LF;
+			p++;
+			if ( *p == LF ) {		// check for CR+LF (and skip LF)
+				p++;
+			}
+		}
+		else {
+			*q++ = *p++;
+		}
+	}
+	assert( q <= (buf+length) );
+	*q = 0;
+
+	Parse( buf, 0, encoding );
+
+	delete [] buf;
+	delete strm;
+	return !Error();
+}
 void TiXmlDocument::Save(Apoc3D::IO::Stream* strm)
 {
 	Apoc3D::IO::BinaryWriter* bw = new Apoc3D::IO::BinaryWriter(strm);

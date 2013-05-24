@@ -135,7 +135,7 @@ namespace Apoc3D
 				m_logs.PushBack(e);
 				m_needsUpdateLineInfo = true;
 
-				while (m_logs.Size()>MaxLogEntries)
+				while (m_logs.getCount()>MaxLogEntries)
 				{
 					m_logs.PopFront();
 				}
@@ -249,7 +249,7 @@ namespace Apoc3D
 			int windowLineCount = static_cast<int>( dstRect->Height / lineSpacing);
 			m_scrollBar->setMax(m_contendLineCount - windowLineCount);
 
-			int startIndex = (int)m_logs.Size() - 1;
+			int startIndex = m_logs.getCount() - 1;
 			if (startIndex>=0)
 			{
 				for (int i=0;i<m_scrollBar->getValue() && startIndex>=0;)

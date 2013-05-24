@@ -154,7 +154,7 @@ namespace Apoc3D
 			m_lock->lock();
 
 			bool discard = false;
-			if (checkDuplicate && m_entries.Size())
+			if (checkDuplicate && m_entries.getCount())
 			{
 				if (m_entries.Back().Content == message)
 				{
@@ -166,7 +166,7 @@ namespace Apoc3D
 			{
 				time_t t = time(0);
 
-				while (m_entries.Size()>MaxEntries)
+				while (m_entries.getCount()>MaxEntries)
 				{
 					m_entries.PopFront();
 				}
@@ -181,7 +181,7 @@ namespace Apoc3D
 		int32 LogSet::getCount()
 		{
 			m_lock->lock();
-			int result = (int)m_entries.Size();
+			int result = m_entries.getCount();
 			m_lock->unlock();
 			return result;
 		}
