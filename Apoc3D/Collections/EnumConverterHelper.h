@@ -41,6 +41,9 @@ namespace Apoc3D
 		class EnumDualConversionHelper
 		{
 		public:
+			typedef HashMap<String, int32> CastTable;
+			typedef HashMap<int32, String> InverseCastTable;
+
 			EnumDualConversionHelper(int32 capacity)
 				: m_cast(capacity, &m_comparer1), 
 				m_invCast(capacity, &m_comparer2)
@@ -57,6 +60,10 @@ namespace Apoc3D
 					names.Add(*e.getCurrentValue());
 				}
 			}
+
+			CastTable::Enumerator GetCastTableEnumerator() { return m_cast.GetEnumerator(); }
+			InverseCastTable::Enumerator GetInverseTableEnumerator() const { return m_invCast.GetEnumerator(); }
+
 		protected:
 			void AddPair(const String& name, T v)
 			{
@@ -67,8 +74,8 @@ namespace Apoc3D
 			}
 
 		private:
-			HashMap<String, int32> m_cast;
-			HashMap<int32, String> m_invCast;
+			CastTable m_cast;
+			InverseCastTable m_invCast;
 
 			StringEuqlityComparer m_comparer1;
 			Int32EqualityComparer m_comparer2;
