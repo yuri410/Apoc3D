@@ -230,9 +230,9 @@ namespace Apoc3D
 
 					BinaryWriter* bw = data->AddEntry(tag);
 
-					bw->Write(static_cast<uint32>(mcp.Type));
+					bw->WriteUInt32(static_cast<uint32>(mcp.Type));
 					bw->Write(reinterpret_cast<const char*>(mcp.Value), sizeof(mcp.Value));
-					bw->Write(mcp.Usage);
+					bw->WriteString(mcp.Usage);
 
 					bw->Close();
 					delete bw;
@@ -317,11 +317,11 @@ namespace Apoc3D
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_MaterialColorTag);
 
-				bw->Write(Ambient);
-				bw->Write(Diffuse);
-				bw->Write(Emissive);
-				bw->Write(Specular);
-				bw->Write(Power);
+				bw->WriteColor4(Ambient);
+				bw->WriteColor4(Diffuse);
+				bw->WriteColor4(Emissive);
+				bw->WriteColor4(Specular);
+				bw->WriteSingle(Power);
 
 
 				bw->Close();
@@ -359,10 +359,10 @@ namespace Apoc3D
 		{
 			BinaryWriter* bw = new BinaryWriter(strm);
 
-			bw->Write(MtrlId_V3);
+			bw->WriteInt32(MtrlId_V3);
 
 			TaggedDataWriter* mdlData = SaveData();
-			bw->Write(mdlData);
+			bw->WriteTaggedDataBlock(mdlData);
 			delete mdlData;
 
 			bw->Close();

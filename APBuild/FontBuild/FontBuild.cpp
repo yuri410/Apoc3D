@@ -390,21 +390,21 @@ namespace APBuild
 		FileOutStream* fs = new FileOutStream(config.DestFile);
 		BinaryWriter* bw = new BinaryWriter(fs);
 
-		bw->Write(charMap.getCount());
+		bw->WriteInt32(charMap.getCount());
 		for (int i=0;i<charMap.getCount();i++)
 		{
-			bw->Write((int32)charMap[i].Character);
-			bw->Write((int32)charMap[i].GlyphIndex);
+			bw->WriteInt32((int32)charMap[i].Character);
+			bw->WriteInt32((int32)charMap[i].GlyphIndex);
 		}
 
-		bw->Write(glyphHashTable.getCount());
+		bw->WriteInt32(glyphHashTable.getCount());
 		int64 glyRecPos = fs->getPosition();
 		for (int i=0;i<glyphHashTable.getCount();i++)
 		{
-			bw->Write((int32)0);
-			bw->Write((int32)0);
-			bw->Write((int32)0);
-			bw->Write((int64)0);
+			bw->WriteInt32((int32)0);
+			bw->WriteInt32((int32)0);
+			bw->WriteInt32((int32)0);
+			bw->WriteInt64((int64)0);
 		}
 		int64 baseOfs = fs->getPosition();
 
@@ -424,10 +424,10 @@ namespace APBuild
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 
-			bw->Write((int32)g->Index);
-			bw->Write((int32)g->Width);
-			bw->Write((int32)g->Height);
-			bw->Write((int64)baseOfs);
+			bw->WriteInt32((int32)g->Index);
+			bw->WriteInt32((int32)g->Width);
+			bw->WriteInt32((int32)g->Height);
+			bw->WriteInt64((int64)baseOfs);
 			baseOfs += g->Width * g->Height;
 			delete[] g->PixelData;
 		}
@@ -572,33 +572,33 @@ namespace APBuild
 		FileOutStream* fs = new FileOutStream(config.DestFile);
 		BinaryWriter* bw = new BinaryWriter(fs);
 
-		bw->Write((uint)0xffffff01); // new version id
+		bw->WriteUInt32(0xffffff01U); // new version id
 		
-		bw->Write(static_cast<int32>(charMap.getCount()));
-		bw->Write(static_cast<float>(height));
-		bw->Write(static_cast<float>(lineGap));
-		bw->Write(static_cast<float>(-ascender));
-		bw->Write(static_cast<float>(-descender));
+		bw->WriteInt32(static_cast<int32>(charMap.getCount()));
+		bw->WriteSingle(static_cast<float>(height));
+		bw->WriteSingle(static_cast<float>(lineGap));
+		bw->WriteSingle(static_cast<float>(-ascender));
+		bw->WriteSingle(static_cast<float>(-descender));
 
 
 		for (int i=0;i<charMap.getCount();i++)
 		{
-			bw->Write((int32)charMap[i].Character);
-			bw->Write((int32)charMap[i].GlyphIndex);
+			bw->WriteInt32((int32)charMap[i].Character);
+			bw->WriteInt32((int32)charMap[i].GlyphIndex);
 
-			bw->Write((short)charMap[i].Left);
-			bw->Write((short)charMap[i].Top);
-			bw->Write((float)charMap[i].AdvanceX);
+			bw->WriteInt16((short)charMap[i].Left);
+			bw->WriteInt16((short)charMap[i].Top);
+			bw->WriteSingle((float)charMap[i].AdvanceX);
 		}
 
-		bw->Write(glyphHashTable.getCount());
+		bw->WriteInt32(glyphHashTable.getCount());
 		int64 glyRecPos = fs->getPosition();
 		for (int i=0;i<glyphHashTable.getCount();i++)
 		{
-			bw->Write((int32)0);
-			bw->Write((int32)0);
-			bw->Write((int32)0);
-			bw->Write((int64)0);
+			bw->WriteInt32((int32)0);
+			bw->WriteInt32((int32)0);
+			bw->WriteInt32((int32)0);
+			bw->WriteInt64((int64)0);
 		}
 		int64 baseOfs = fs->getPosition();
 
@@ -618,10 +618,10 @@ namespace APBuild
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 
-			bw->Write((int32)g->Index);
-			bw->Write((int32)g->Width);
-			bw->Write((int32)g->Height);
-			bw->Write((int64)baseOfs);
+			bw->WriteInt32((int32)g->Index);
+			bw->WriteInt32((int32)g->Width);
+			bw->WriteInt32((int32)g->Height);
+			bw->WriteInt64((int64)baseOfs);
 			baseOfs += g->Width * g->Height;
 			delete[] g->PixelData;
 		}

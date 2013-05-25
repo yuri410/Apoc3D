@@ -75,7 +75,7 @@ namespace Apoc3D
 		{
 			BinaryWriter* bw = new BinaryWriter(strm);
 
-			bw->Write(static_cast<int>(FileID));
+			bw->WriteInt32(static_cast<int>(FileID));
 
 			TaggedDataWriter* root = new TaggedDataWriter(true);
 
@@ -90,7 +90,7 @@ namespace Apoc3D
 				delete bw2;
 			}
 
-			bw->Write(root);
+			bw->WriteTaggedDataBlock(root);
 			delete root;
 
 			bw->Close();
@@ -107,17 +107,17 @@ namespace Apoc3D
 				if (section->getAttributeCount()>0)
 				{
 					BinaryWriter* bw2 = localValues->AddEntry(L"Attributes");
-					bw2->Write(static_cast<int32>(section->getAttributeCount()));
+					bw2->WriteInt32(static_cast<int32>(section->getAttributeCount()));
 					for (ConfigurationSection::AttributeEnumerator e = section->GetAttributeEnumrator();e.MoveNext();)
 					{
-						bw2->Write(*e.getCurrentKey());
-						bw2->Write(*e.getCurrentValue());
+						bw2->WriteString(*e.getCurrentKey());
+						bw2->WriteString(*e.getCurrentValue());
 					}
 					bw2->Close();
 					delete bw2;
 				}
 			}
-			bw->Write(localValues);
+			bw->WriteTaggedDataBlock(localValues);
 			delete localValues;
 
 			//////////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ namespace Apoc3D
 					delete bw2;
 				}
 			}
-			bw->Write(subTreeData);
+			bw->WriteTaggedDataBlock(subTreeData);
 			delete subTreeData;
 		}
 

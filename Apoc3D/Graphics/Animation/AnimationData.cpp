@@ -238,18 +238,18 @@ namespace Apoc3D
 					{
 						const String& name = *e.getCurrentKey();
 
-						bw->Write(name);
+						bw->WriteString(name);
 
 						const MaterialAnimationClip* clip = *e.getCurrentValue();
-						bw->Write(clip->Duration);
+						bw->WriteSingle(clip->Duration);
 
 						const FastList<MaterialAnimationKeyframe>& keyFrames = clip->Keyframes;
-						bw->Write(static_cast<int32>(keyFrames.getCount()));
+						bw->WriteInt32(keyFrames.getCount());
 
 						for (int i = 0; i < keyFrames.getCount(); i++)
 						{
-							bw->Write(keyFrames[i].getTime());
-							bw->Write(keyFrames[i].getMaterialFrame());
+							bw->WriteSingle(keyFrames[i].getTime());
+							bw->WriteInt32(keyFrames[i].getMaterialFrame());
 						}
 					}
 					bw->Close();
@@ -264,18 +264,18 @@ namespace Apoc3D
 					BinaryWriter* bw = data->AddEntry(TAG_3_BonesTag);
 					for (int i = 0; i < m_bones.getCount(); i++)
 					{
-						bw->Write(m_bones[i].Index);
-						bw->Write(m_bones[i].Name);
-						bw->Write(m_bones[i].getBindPoseTransform());
-						bw->Write(m_bones[i].getBoneReferenceTransform());
-						bw->Write(m_bones[i].Parent);
+						bw->WriteInt32(m_bones[i].Index);
+						bw->WriteString(m_bones[i].Name);
+						bw->WriteMatrix(m_bones[i].getBindPoseTransform());
+						bw->WriteMatrix(m_bones[i].getBoneReferenceTransform());
+						bw->WriteInt32(m_bones[i].Parent);
 
 						int cldCount = static_cast<int32>(m_bones[i].Children.getCount());
-						bw->Write(cldCount);
+						bw->WriteInt32(cldCount);
 
 						for (int j = 0; j < cldCount; j++)
 						{
-							bw->Write(m_bones[i].Children[j]);
+							bw->WriteInt32(m_bones[i].Children[j]);
 						}
 
 					}
@@ -293,21 +293,21 @@ namespace Apoc3D
 					for (ClipTable::Enumerator e = m_skinnedAnimationClips.GetEnumerator(); e.MoveNext();)
 					{
 						const String& name = *e.getCurrentKey();
-						bw->Write(name);
+						bw->WriteString(name);
 
 						const ModelAnimationClip* clip = *e.getCurrentValue();
-						bw->Write(static_cast<double>(clip->getDuration()));
+						bw->WriteDouble(static_cast<double>(clip->getDuration()));
 
 						const FastList<ModelKeyframe>& keyFrames = clip->getKeyframes();
 
-						bw->Write(static_cast<int32>(keyFrames.getCount()));
+						bw->WriteInt32(keyFrames.getCount());
 
 						for (int32 i = 0; i < keyFrames.getCount(); i++)
 						{
-							bw->Write(static_cast<int32>(keyFrames[i].getObjectIndex()));
-							bw->Write(static_cast<double>(keyFrames[i].getTime()));
-							bw->Write(keyFrames[i].getTransform());
-							bw->Write(static_cast<int32>(keyFrames[i].getNextFrameIndex()));
+							bw->WriteInt32(static_cast<int32>(keyFrames[i].getObjectIndex()));
+							bw->WriteDouble(static_cast<double>(keyFrames[i].getTime()));
+							bw->WriteMatrix(keyFrames[i].getTransform());
+							bw->WriteInt32(static_cast<int32>(keyFrames[i].getNextFrameIndex()));
 						}
 					}
 					bw->Close();
@@ -320,21 +320,21 @@ namespace Apoc3D
 					BinaryWriter* bw = data->AddEntry(TAG_3_RigidAnimationClipTag);
 					for (ClipTable::Enumerator e = m_rigidAnimationClips.GetEnumerator(); e.MoveNext();)
 					{
-						const String& name = *e.getCurrentKey();\
-						bw->Write(name);
+						const String& name = *e.getCurrentKey();
+						bw->WriteString(name);
 
 						const ModelAnimationClip* clip = *e.getCurrentValue();
-						bw->Write(static_cast<double>(clip->getDuration()));
+						bw->WriteDouble(static_cast<double>(clip->getDuration()));
 						
 						const FastList<ModelKeyframe>& keyFrames = clip->getKeyframes();
-						bw->Write(static_cast<int32>(keyFrames.getCount()));
+						bw->WriteInt32(keyFrames.getCount());
 
 						for (int i = 0; i < keyFrames.getCount(); i++)
 						{
-							bw->Write(static_cast<int32>(keyFrames[i].getObjectIndex()));
-							bw->Write(static_cast<double>(keyFrames[i].getTime()));
-							bw->Write(keyFrames[i].getTransform());
-							bw->Write(static_cast<int32>(keyFrames[i].getNextFrameIndex()));
+							bw->WriteInt32(static_cast<int32>(keyFrames[i].getObjectIndex()));
+							bw->WriteDouble(static_cast<double>(keyFrames[i].getTime()));
+							bw->WriteMatrix(keyFrames[i].getTransform());
+							bw->WriteInt32(static_cast<int32>(keyFrames[i].getNextFrameIndex()));
 						}
 					}
 					bw->Close();
@@ -370,10 +370,10 @@ namespace Apoc3D
 			{
 				BinaryWriter* bw = new BinaryWriter(strm);
 
-				bw->Write(MANI_ID);
+				bw->WriteInt32(MANI_ID);
 
 				TaggedDataWriter* mdlData = WriteData();
-				bw->Write(mdlData);
+				bw->WriteTaggedDataBlock(mdlData);
 				delete mdlData;
 
 				bw->Close();

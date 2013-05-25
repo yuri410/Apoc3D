@@ -68,10 +68,10 @@ namespace APDesigner
 				FileOutStream* fs = new FileOutStream(SettingsFileName);
 				BinaryWriter* bw = new BinaryWriter(fs);
 
-				bw->Write(FileID);
+				bw->WriteInt32(FileID);
 				for (int32 i=0;i<CustomColorCount;i++)
 				{
-					bw->Write(static_cast<uint32>(acrCustClr[i]));
+					bw->WriteUInt32(static_cast<uint32>(acrCustClr[i]));
 				}
 
 				bw->Close();

@@ -1498,15 +1498,15 @@ namespace Apoc3D
 		{
 			BinaryWriter* bw = new BinaryWriter(stream);
 
-			bw->Write(static_cast<uint32>(m_positions.getCount()));
+			bw->WriteUInt32(static_cast<uint32>(m_positions.getCount()));
 
 			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
 			{
 				Entry* ent = e.getCurrentValue();
 				MemoryOutStream* memBlock = ent->Buffer;
 
-				bw->Write(*e.getCurrentKey());
-				bw->Write(static_cast<uint32>(memBlock->getLength()));
+				bw->WriteString(*e.getCurrentKey());
+				bw->WriteUInt32(static_cast<uint32>(memBlock->getLength()));
 				bw->Write(memBlock->getPointer(), memBlock->getLength());
 			}
 
@@ -1927,7 +1927,7 @@ namespace Apoc3D
 			BinaryWriter bw(&vStrm);
 			bw.SuspendStreamRelease();
 
-			bw.Write(str);
+			bw.WriteString(str);
 
 			bw.Close();
 		}
@@ -2176,7 +2176,7 @@ namespace Apoc3D
 			bw.SuspendStreamRelease();
 
 			for (int32 i=0;i<count;i++)
-				bw.Write(str[i]);
+				bw.WriteString(str[i]);
 
 			bw.Close();
 		}

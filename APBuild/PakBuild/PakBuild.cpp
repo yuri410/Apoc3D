@@ -101,7 +101,7 @@ namespace APBuild
 		FileOutStream* fs = new FileOutStream(config.DestFile);
 		BinaryWriter* bw = new BinaryWriter(fs);
 
-		bw->Write(PakFileID);
+		bw->WriteInt32(PakFileID);
 
 		
 		sourceFiles.ResizeDiscard(config.Files.getCount());
@@ -149,7 +149,7 @@ namespace APBuild
 			}
 		}
 		int count = sourceFiles.getCount();
-		bw->Write(count);
+		bw->WriteInt32(count);
 
 		int64 oldPos = bw->getBaseStream()->getPosition();
 
@@ -157,10 +157,10 @@ namespace APBuild
 		for (int i=0;i<count;i++)
 		{
 			entries[i].Name = PathUtils::GetFileName(sourceFiles[i]);
-			bw->Write(entries[i].Name);
-			bw->Write(entries[i].Offset);
-			bw->Write(entries[i].Size);
-			bw->Write((int32)0);
+			bw->WriteString(entries[i].Name);
+			bw->WriteUInt32(entries[i].Offset);
+			bw->WriteUInt32(entries[i].Size);
+			bw->WriteInt32((int32)0);
 		}
 
 		for (int i=0;i<count;i++)
@@ -186,10 +186,10 @@ namespace APBuild
 		fs->Seek(oldPos, SEEK_Begin);
 		for (int i=0;i<count;i++)
 		{
-			bw->Write(entries[i].Name);
-			bw->Write(entries[i].Offset);
-			bw->Write(entries[i].Size);
-			bw->Write((int32)0);
+			bw->WriteString(entries[i].Name);
+			bw->WriteUInt32(entries[i].Offset);
+			bw->WriteUInt32(entries[i].Size);
+			bw->WriteInt32((int32)0);
 		}
 		
 

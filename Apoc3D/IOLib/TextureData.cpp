@@ -123,7 +123,7 @@ namespace Apoc3D
 		{
 			BinaryWriter* bw = new BinaryWriter(strm);
 
-			bw->Write(FileID);
+			bw->WriteInt32(FileID);
 
 			TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
@@ -142,14 +142,14 @@ namespace Apoc3D
 				TaggedDataWriter* data2 = new TaggedDataWriter(strm->IsWriteEndianDependent());
 				Levels[i].SaveData(data2);
 
-				bw2->Write(data2);
+				bw2->WriteTaggedDataBlock(data2);
 
 				delete data2;
 				bw2->Close();
 				delete bw2;
 			}
 
-			bw->Write(data);
+			bw->WriteTaggedDataBlock(data);
 			delete data;
 
 			bw->Close();

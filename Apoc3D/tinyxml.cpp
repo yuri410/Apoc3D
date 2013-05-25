@@ -777,7 +777,7 @@ void TiXmlElement::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 	const TiXmlAttribute* attrib;
 	for ( attrib = attributeSet.First(); attrib; attrib = attrib->Next() )
 	{
-		bw->Write((char)' ');
+		bw->WriteByte((char)' ');
 		//fprintf( cfile, " " );
 		attrib->Print( bw, depth );
 	}
@@ -796,7 +796,7 @@ void TiXmlElement::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 	else if ( firstChild == lastChild && firstChild->ToText() )
 	{
 		//fprintf( cfile, ">" );
-		bw->Write((char)'>');
+		bw->WriteByte((char)'>');
 		firstChild->Print( bw, depth + 1 );
 		
 		//fprintf( cfile, "</%s>", value.c_str() );
@@ -806,19 +806,19 @@ void TiXmlElement::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 	else
 	{
 		//fprintf( cfile, ">" );
-		bw->Write((char)'>');
+		bw->WriteByte((char)'>');
 
 		for ( node = firstChild; node; node=node->NextSibling() )
 		{
 			if ( !node->ToText() )
 			{
-				bw->Write((char)'\n');
+				bw->WriteByte((char)'\n');
 				//fprintf( cfile, "\n" );
 			}
 			node->Print( bw, depth+1 );
 		}
 		//fprintf( cfile, "\n" );
-		bw->Write((char)'\n');
+		bw->WriteByte((char)'\n');
 		for( i=0; i<depth; ++i )
 		{
 			TIXML_STRING m1("    ");
@@ -1023,9 +1023,9 @@ void TiXmlDocument::Save(Apoc3D::IO::Stream* strm)
 		const unsigned char TIXML_UTF_LEAD_1 = 0xbbU;
 		const unsigned char TIXML_UTF_LEAD_2 = 0xbfU;
 
-		bw->Write(TIXML_UTF_LEAD_0);
-		bw->Write(TIXML_UTF_LEAD_1);
-		bw->Write(TIXML_UTF_LEAD_2);
+		bw->WriteByte(TIXML_UTF_LEAD_0);
+		bw->WriteByte(TIXML_UTF_LEAD_1);
+		bw->WriteByte(TIXML_UTF_LEAD_2);
 	}
 	
 	Print(bw, 0);
@@ -1071,7 +1071,7 @@ void TiXmlDocument::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 	{
 		node->Print( bw, depth );
 		//fprintf( cfile, "\n" );
-		bw->Write((char)'\n');
+		bw->WriteByte((char)'\n');
 	}
 }
 
@@ -1141,10 +1141,10 @@ void TiXmlAttribute::Print( Apoc3D::IO::BinaryWriter* bw, int /*depth*/, TIXML_S
 		if ( bw )
 		{
 			bw->Write(n.c_str(), n.size());
-			bw->Write((char)'=');
-			bw->Write((char)'"');
+			bw->WriteByte((char)'=');
+			bw->WriteByte((char)'"');
 			bw->Write(v.c_str(), v.size());
-			bw->Write((char)'"');
+			bw->WriteByte((char)'"');
 
 			//fprintf (cfile, "%s=\"%s\"", n.c_str(), v.c_str() );
 		}
@@ -1156,10 +1156,10 @@ void TiXmlAttribute::Print( Apoc3D::IO::BinaryWriter* bw, int /*depth*/, TIXML_S
 		if ( bw )
 		{
 			bw->Write(n.c_str(), n.size());
-			bw->Write((char)'=');
-			bw->Write((char)'"');
+			bw->WriteByte((char)'=');
+			bw->WriteByte((char)'"');
 			bw->Write(v.c_str(), v.size());
-			bw->Write((char)'"');
+			bw->WriteByte((char)'"');
 
 			//fprintf (cfile, "%s='%s'", n.c_str(), v.c_str() );
 		}
@@ -1278,7 +1278,7 @@ void TiXmlText::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 	{
 		int i;
 		//fprintf( cfile, "\n" );
-		bw->Write((char)'\n');
+		bw->WriteByte((char)'\n');
 
 		for ( i=0; i<depth; i++ )
 		{
@@ -1453,7 +1453,7 @@ void TiXmlUnknown::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 		bw->Write(m1.c_str(), m1.size());
 		//fprintf( cfile, "    " );
 	}
-	bw->Write((char)'<'); bw->Write(value.c_str(), value.size()); bw->Write((char)'>');
+	bw->WriteByte((char)'<'); bw->Write(value.c_str(), value.size()); bw->WriteByte((char)'>');
 	//fprintf( cfile, "<%s>", value.c_str() );
 }
 

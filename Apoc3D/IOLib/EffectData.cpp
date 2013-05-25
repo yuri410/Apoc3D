@@ -294,16 +294,16 @@ namespace Apoc3D
 			if (IsCFX)
 			{
 				BinaryWriter* bw = new BinaryWriter(strm);
-				bw->Write((int32)CfxID_V3);
-				bw->Write((int32)MajorVer);
-				bw->Write((int32)MinorVer);
-				bw->Write(Name);
+				bw->WriteInt32((int32)CfxID_V3);
+				bw->WriteInt32((int32)MajorVer);
+				bw->WriteInt32((int32)MinorVer);
+				bw->WriteString(Name);
 				{
 					TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
 					BinaryWriter* bw3 = data->AddEntry(TAG_3_ShaderCodeLengthTag);
-					bw3->Write((int32)VSLength);
-					bw3->Write((int32)PSLength);
+					bw3->WriteInt32((int32)VSLength);
+					bw3->WriteInt32((int32)PSLength);
 					bw3->Close();
 					delete bw3;
 
@@ -316,7 +316,7 @@ namespace Apoc3D
 
 
 
-					bw->Write(data);
+					bw->WriteTaggedDataBlock(data);
 					delete data;
 				}
 
@@ -326,10 +326,10 @@ namespace Apoc3D
 			else
 			{
 				BinaryWriter* bw = new BinaryWriter(strm);
-				bw->Write((int32)AfxId_V31);
-				bw->Write((int32)MajorVer);
-				bw->Write((int32)MinorVer);
-				bw->Write(Name);
+				bw->WriteInt32((int32)AfxId_V31);
+				bw->WriteInt32((int32)MajorVer);
+				bw->WriteInt32((int32)MinorVer);
+				bw->WriteString(Name);
 				{
 					TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
@@ -345,12 +345,12 @@ namespace Apoc3D
 
 						BinaryWriter* bw2 = data->AddEntry(tag);
 
-						bw2->Write(pm.Name);
+						bw2->WriteString(pm.Name);
 
-						bw2->Write(EffectParameter::ToString(pm.Usage));
-						bw2->Write(pm.CustomMaterialParamName);
-						bw2->Write(pm.InstanceBlobIndex);
-						bw2->Write(static_cast<int>(pm.ProgramType));
+						bw2->WriteString(EffectParameter::ToString(pm.Usage));
+						bw2->WriteString(pm.CustomMaterialParamName);
+						bw2->WriteInt32(pm.InstanceBlobIndex);
+						bw2->WriteInt32(static_cast<int>(pm.ProgramType));
 
 						bw2->Close();
 						delete bw2;
@@ -358,24 +358,24 @@ namespace Apoc3D
 						tag = StringUtils::ToString(i);
 						tag = TAG_3_ParameterSamplerStateTag + tag;
 						bw2 = data->AddEntry(tag);
-						bw2->Write((uint)pm.SamplerState.AddressU);
-						bw2->Write((uint)pm.SamplerState.AddressV);
-						bw2->Write((uint)pm.SamplerState.AddressW);
-						bw2->Write((uint)pm.SamplerState.BorderColor);
-						bw2->Write((uint)pm.SamplerState.MagFilter);
-						bw2->Write((int)pm.SamplerState.MaxAnisotropy);
-						bw2->Write((int)pm.SamplerState.MaxMipLevel);
-						bw2->Write((uint)pm.SamplerState.MinFilter);
-						bw2->Write((uint)pm.SamplerState.MipFilter);
-						bw2->Write((uint)pm.SamplerState.MipMapLODBias);
+						bw2->WriteUInt32((uint)pm.SamplerState.AddressU);
+						bw2->WriteUInt32((uint)pm.SamplerState.AddressV);
+						bw2->WriteUInt32((uint)pm.SamplerState.AddressW);
+						bw2->WriteUInt32((uint)pm.SamplerState.BorderColor);
+						bw2->WriteUInt32((uint)pm.SamplerState.MagFilter);
+						bw2->WriteInt32((int)pm.SamplerState.MaxAnisotropy);
+						bw2->WriteInt32((int)pm.SamplerState.MaxMipLevel);
+						bw2->WriteUInt32((uint)pm.SamplerState.MinFilter);
+						bw2->WriteUInt32((uint)pm.SamplerState.MipFilter);
+						bw2->WriteUInt32((uint)pm.SamplerState.MipMapLODBias);
 
 						bw2->Close();
 						delete bw2;
 					}
 
 					BinaryWriter* bw3 = data->AddEntry(TAG_3_ShaderCodeLengthTag);
-					bw3->Write((int32)VSLength);
-					bw3->Write((int32)PSLength);
+					bw3->WriteInt32((int32)VSLength);
+					bw3->WriteInt32((int32)PSLength);
 					bw3->Close();
 					delete bw3;
 
@@ -388,7 +388,7 @@ namespace Apoc3D
 
 
 
-					bw->Write(data);
+					bw->WriteTaggedDataBlock(data);
 					delete data;
 				}
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<Root>
+    <Terrain />
+    <Tree />
+    <Sky />
+    <Blur />
+    <Composite />
+    <TexturedQuad />
+</Root>

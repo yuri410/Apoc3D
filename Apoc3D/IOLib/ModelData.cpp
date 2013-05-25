@@ -225,11 +225,11 @@ namespace Apoc3D
 				{
 					int frameCount = Materials.getFrameCount(static_cast<int32>(i));
 
-					bw->Write(frameCount);
+					bw->WriteInt32(frameCount);
 					for (int j = 0; j < frameCount; j++)
 					{
 						TaggedDataWriter* matData = Materials.getMaterial(i, j)->SaveData();
-						bw->Write(matData);
+						bw->WriteTaggedDataBlock(matData);
 						delete matData;
 					}
 				}
@@ -241,7 +241,7 @@ namespace Apoc3D
 
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_BoundingSphereTag);
-				bw->Write(BoundingSphere);
+				bw->WriteBoundingSphere(BoundingSphere);
 				bw->Close();
 				delete bw;
 			}
@@ -256,10 +256,10 @@ namespace Apoc3D
 				BinaryWriter* bw = data->AddEntry(TAG_3_FacesTag);
 				for (int i=0;i<Faces.getCount();i++)
 				{
-					bw->Write(Faces[i].IndexA);
-					bw->Write(Faces[i].IndexB);
-					bw->Write(Faces[i].IndexC);
-					bw->Write(Faces[i].MaterialID);
+					bw->WriteInt32(Faces[i].IndexA);
+					bw->WriteInt32(Faces[i].IndexB);
+					bw->WriteInt32(Faces[i].IndexC);
+					bw->WriteInt32(Faces[i].MaterialID);
 				}
 				bw->Close();
 				delete bw;
@@ -269,13 +269,13 @@ namespace Apoc3D
 			{
 				BinaryWriter* bw = data->AddEntry(TAG_3_VertexDeclTag);
 
-				bw->Write(static_cast<uint32>(VertexElements.getCount()));
+				bw->WriteUInt32(static_cast<uint32>(VertexElements.getCount()));
 				for (int i = 0; i < VertexElements.getCount(); i++)
 				{
-					bw->Write(VertexElements[i].getOffset());
-					bw->Write(static_cast<uint32>(VertexElements[i].getType()));
-					bw->Write(static_cast<uint32>(VertexElements[i].getUsage()));
-					bw->Write(VertexElements[i].getIndex());
+					bw->WriteInt32(VertexElements[i].getOffset());
+					bw->WriteUInt32(static_cast<uint32>(VertexElements[i].getType()));
+					bw->WriteUInt32(static_cast<uint32>(VertexElements[i].getUsage()));
+					bw->WriteInt32(VertexElements[i].getIndex());
 				}
 
 				bw->Close();
@@ -437,7 +437,7 @@ namespace Apoc3D
 				BinaryWriter* bw = data->AddEntry(tag);
 
 				TaggedDataWriter* meshData = Entities[i]->SaveData();
-				bw->Write(meshData);
+				bw->WriteTaggedDataBlock(meshData);
 				delete meshData;
 
 				bw->Close();
@@ -484,10 +484,10 @@ namespace Apoc3D
 		{
 			BinaryWriter* bw = new BinaryWriter(strm);
 
-			bw->Write(MdlId_V3);
+			bw->WriteInt32(MdlId_V3);
 
 			TaggedDataWriter* mdlData = WriteData();
-			bw->Write(mdlData);
+			bw->WriteTaggedDataBlock(mdlData);
 			delete mdlData;
 
 			bw->Close();
