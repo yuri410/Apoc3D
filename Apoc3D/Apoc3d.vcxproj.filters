@@ -228,9 +228,6 @@
     <ClInclude Include="Core\IHashed.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\IParsable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Vfs\FileSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>

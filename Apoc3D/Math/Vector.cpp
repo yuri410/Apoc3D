@@ -61,9 +61,9 @@ namespace Apoc3D
 		}
 		String Vector2Utils::ToParsableString(const Vector2& v)
 		{
-			String result = StringUtils::ToString(GetX(v), 10);
+			String result = StringUtils::ToString(GetX(v), 11);
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(StringUtils::ToString(GetY(v), 11));
 			return result;
 		}
 
@@ -80,11 +80,11 @@ namespace Apoc3D
 		}
 		String Vector3Utils::ToParsableString(const Vector3& v)
 		{
-			String result = StringUtils::ToString(GetX(v), 10);
+			String result = StringUtils::ToString(GetX(v), 11);
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(StringUtils::ToString(GetY(v), 11));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetZ(v), 10));
+			result.append(StringUtils::ToString(GetZ(v), 11));
 			return result;
 		}
 
@@ -103,13 +103,13 @@ namespace Apoc3D
 		}
 		String Vector4Utils::ToParsableString(const Vector4& v)
 		{
-			String result = StringUtils::ToString(GetX(v), 10);
+			String result = StringUtils::ToString(GetX(v), 11);
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(StringUtils::ToString(GetY(v), 11));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetZ(v), 10));
+			result.append(StringUtils::ToString(GetZ(v), 11));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetW(v), 10));
+			result.append(StringUtils::ToString(GetW(v), 11));
 			return result;
 		}
 

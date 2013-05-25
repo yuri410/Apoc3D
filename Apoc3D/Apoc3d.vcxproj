@@ -165,7 +165,6 @@
     <ClInclude Include="Config\XmlConfigurationFormat.h" />
     <ClInclude Include="Core\CommandInterpreter.h" />
     <ClInclude Include="Core\IHashed.h" />
-    <ClInclude Include="Core\IParsable.h" />
     <ClInclude Include="Core\Logging.h" />
     <ClInclude Include="Core\Plugin.h" />
     <ClInclude Include="Core\PluginManager.h" />

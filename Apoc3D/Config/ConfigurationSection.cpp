@@ -24,7 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ConfigurationSection.h"
 
 #include "apoc3d/Apoc3DException.h"
-#include "apoc3d/Core/IParsable.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
 
@@ -50,13 +49,17 @@ namespace Apoc3D
 		void IntsToString(const int32* v, int count, String& result);
 		void UIntsToString(const uint32* v, int count, String& result);
 
-		void SplitSingles(const List<String>& vals, List<float>& result);
-		void SplitPercentages(const List<String>& vals, List<float>& result);
-		void SplitInt(const List<String>& vals, List<int32>& result);
-		void SplitUint(const List<String>& vals, List<uint32>& result);
+		void SplitSingles(const List<String>& vals, FastList<float>& result);
+		void SplitPercentages(const List<String>& vals, FastList<float>& result);
+		void SplitInt(const List<String>& vals, FastList<int32>& result);
+		void SplitUint(const List<String>& vals, FastList<uint32>& result);
 
-
-
+		ConfigurationSection::ConfigurationSection(const String& name, int capacity)
+			: m_name(name), m_subSection(capacity, Apoc3D::Collections::IBuiltInEqualityComparer<String>::Default)
+		{ }
+		ConfigurationSection::ConfigurationSection(const String& name)
+			: m_name(name)
+		{ }
 		ConfigurationSection::ConfigurationSection(const ConfigurationSection& another)
 			: m_attributes(another.m_attributes), m_subSection(another.m_subSection), m_name(another.m_name), m_value(another.m_value)
 		{
@@ -65,6 +68,14 @@ namespace Apoc3D
 				ConfigurationSection* newSect = new ConfigurationSection(**e.getCurrentValue());
 
 				*e.getCurrentValue() = newSect;
+			}
+		}
+		ConfigurationSection::~ConfigurationSection()
+		{
+			for (SubSectionTable::Enumerator e = m_subSection.GetEnumerator();e.MoveNext();)
+			{
+				ConfigurationSection* sect = *e.getCurrentValue();
+				delete sect;
 			}
 		}
 
@@ -89,10 +100,7 @@ namespace Apoc3D
 			m_value = value;
 		}
 
-		bool ConfigurationSection::hasAttribute(const String& name) const
-		{
-			return m_attributes.Contains(name);
-		}
+		bool ConfigurationSection::hasAttribute(const String& name) const { return m_attributes.Contains(name); }
 
 		const String& ConfigurationSection::getValue(const String& name) const
 		{
@@ -107,8 +115,7 @@ namespace Apoc3D
 		}
 		ConfigurationSection* ConfigurationSection::getSection(const String& name) const
 		{
-			//assert(m_subSection.Contains(name));
-			ConfigurationSection* sect = 0;
+			ConfigurationSection* sect = nullptr;
 			m_subSection.TryGetValue(name, sect);
 			return sect;
 		}
@@ -125,25 +132,13 @@ namespace Apoc3D
 		}
 		bool ConfigurationSection::tryGetAttribute(const String& name, String& result) const
 		{
-			return (m_attributes.TryGetValue(name, result));
+			return m_attributes.TryGetValue(name, result);
 		}
 
-		void ConfigurationSection::Get(const String& key, IParsable* value) const
-		{
-			assert(value);
-			const String& str = getValue(key);
 
-			value->Parse(str);
-		}
-
-		bool ConfigurationSection::GetBool(const String& key) const
-		{
-			return StringUtils::ParseBool(getValue(key));
-		}
-		bool ConfigurationSection::GetAttributeBool(const String& key) const
-		{
-			return StringUtils::ParseBool(getAttribute(key));
-		}
+		bool ConfigurationSection::GetBool() const { return StringUtils::ParseBool(m_value); }
+		bool ConfigurationSection::GetBool(const String& key) const { return StringUtils::ParseBool(getValue(key)); }
+		bool ConfigurationSection::GetAttributeBool(const String& key) const { return StringUtils::ParseBool(getAttribute(key)); }
 		bool ConfigurationSection::TryGetBool(const String& key, bool& result) const
 		{
 			String str;
@@ -165,14 +160,9 @@ namespace Apoc3D
 			return false;
 		}
 
-		float ConfigurationSection::GetSingle(const String& name) const
-		{
-			return StringUtils::ParseSingle(getValue(name));
-		}
-		float ConfigurationSection::GetAttributeSingle(const String& key) const
-		{
-			return StringUtils::ParseSingle(getAttribute(key));
-		}
+		float ConfigurationSection::GetSingle() const { return StringUtils::ParseSingle(m_value); }
+		float ConfigurationSection::GetSingle(const String& name) const { return StringUtils::ParseSingle(getValue(name)); }
+		float ConfigurationSection::GetAttributeSingle(const String& key) const { return StringUtils::ParseSingle(getAttribute(key)); }
 		bool ConfigurationSection::TryGetSingle(const String& key, float& result) const
 		{
 			String str;
@@ -194,15 +184,9 @@ namespace Apoc3D
 			return false;
 		}
 
-
-		float ConfigurationSection::GetPercentage(const String& key) const
-		{
-			return ParsePercentage(getValue(key));
-		}
-		float ConfigurationSection::GetAttributePercentage(const String& key) const
-		{
-			return ParsePercentage(getAttribute(key));
-		}
+		float ConfigurationSection::GetPercentage() const { return ParsePercentage(m_value); }
+		float ConfigurationSection::GetPercentage(const String& key) const { return ParsePercentage(getValue(key)); }
+		float ConfigurationSection::GetAttributePercentage(const String& key) const { return ParsePercentage(getAttribute(key)); }
 		bool ConfigurationSection::TryGetPercentage(const String& key, float& result) const
 		{
 			String str;
@@ -224,14 +208,9 @@ namespace Apoc3D
 			return false;
 		}
 
-		int32 ConfigurationSection::GetInt(const String& key) const
-		{
-			return StringUtils::ParseInt32(getValue(key));
-		}
-		int32 ConfigurationSection::GetAttributeInt(const String& key) const
-		{
-			return StringUtils::ParseInt32(getAttribute(key));
-		}
+		int32 ConfigurationSection::GetInt() const { return StringUtils::ParseInt32(m_value); }
+		int32 ConfigurationSection::GetInt(const String& key) const { return StringUtils::ParseInt32(getValue(key)); }
+		int32 ConfigurationSection::GetAttributeInt(const String& key) const { return StringUtils::ParseInt32(getAttribute(key)); }
 		bool ConfigurationSection::TryGetInt(const String& key, int32& result) const
 		{
 			String str;
@@ -253,14 +232,9 @@ namespace Apoc3D
 			return false;
 		}
 
-		uint32 ConfigurationSection::GetUInt(const String& key) const
-		{
-			return StringUtils::ParseUInt32(getValue(key));
-		}
-		uint32 ConfigurationSection::GetAttributeUInt(const String& key) const
-		{
-			return StringUtils::ParseUInt32(getAttribute(key));
-		}
+		uint32 ConfigurationSection::GetUInt() const { return StringUtils::ParseUInt32(m_value); }
+		uint32 ConfigurationSection::GetUInt(const String& key) const { return StringUtils::ParseUInt32(getValue(key)); }
+		uint32 ConfigurationSection::GetAttributeUInt(const String& key) const { return StringUtils::ParseUInt32(getAttribute(key)); }
 		bool ConfigurationSection::TryGetUInt(const String& key, uint32& result) const
 		{
 			String str;
@@ -282,16 +256,9 @@ namespace Apoc3D
 			return false;
 		}
 
-
-
-		ColorValue ConfigurationSection::GetColorValue(const String& key) const
-		{
-			return ParseColorValue(getValue(key));
-		}
-		ColorValue ConfigurationSection::GetAttributeColorValue(const String& key) const
-		{
-			return ParseColorValue(getAttribute(key));
-		}
+		ColorValue ConfigurationSection::GetColorValue() const { return ParseColorValue(m_value); }
+		ColorValue ConfigurationSection::GetColorValue(const String& key) const { return ParseColorValue(getValue(key)); }
+		ColorValue ConfigurationSection::GetAttributeColorValue(const String& key) const { return ParseColorValue(getAttribute(key)); }
 		bool ConfigurationSection::TryGetColorValue(const String& key, ColorValue& result) const
 		{
 			String str;
@@ -314,6 +281,12 @@ namespace Apoc3D
 		}
 
 
+		List<String> ConfigurationSection::GetStrings() const
+		{
+			List<String> result;
+			SplitString(m_value, result);
+			return result;
+		}
 		List<String> ConfigurationSection::GetStrings(const String& key) const
 		{			
 			List<String> result;
@@ -327,70 +300,106 @@ namespace Apoc3D
 			return result;
 		}
 
-		List<float> ConfigurationSection::GetSingles(const String& key) const
+
+		FastList<float> ConfigurationSection::GetSingles() const
 		{
 			List<String> vals;
-			StringUtils::Split(getValue(key), vals, L",");
-			List<float> result(vals.getCount());
+			StringUtils::Split(m_value, vals, L",");
+			FastList<float> result(vals.getCount());
 			SplitSingles(vals, result);
 			return result;
 		}
-		List<float> ConfigurationSection::GetAttributeSingles(const String& key) const
+		FastList<float> ConfigurationSection::GetSingles(const String& key) const
+		{
+			List<String> vals;
+			StringUtils::Split(getValue(key), vals, L",");
+			FastList<float> result(vals.getCount());
+			SplitSingles(vals, result);
+			return result;
+		}
+		FastList<float> ConfigurationSection::GetAttributeSingles(const String& key) const
 		{
 			List<String> vals;
 			StringUtils::Split(getAttribute(key), vals, L",");
-			List<float> result(vals.getCount());
+			FastList<float> result(vals.getCount());
 			SplitSingles(vals, result);
 			return result;
 		}
 		
-		List<float> ConfigurationSection::GetPercentages(const String& key) const
+
+		FastList<float> ConfigurationSection::GetPercentages() const
+		{
+			List<String> vals;
+			StringUtils::Split(m_value, vals, L",");
+			FastList<float> result(vals.getCount());
+			SplitPercentages(vals, result);
+			return result;
+		}
+		FastList<float> ConfigurationSection::GetPercentages(const String& key) const
 		{
 			List<String> vals;
 			StringUtils::Split(getValue(key), vals, L",");
-			List<float> result(vals.getCount());
+			FastList<float> result(vals.getCount());
 			SplitPercentages(vals, result);
 			return result;
 		}
-		List<float> ConfigurationSection::GetAttributePercentages(const String& key) const
+		FastList<float> ConfigurationSection::GetAttributePercentages(const String& key) const
 		{
 			List<String> vals;
 			StringUtils::Split(getAttribute(key), vals, L",");
-			List<float> result(vals.getCount());
+			FastList<float> result(vals.getCount());
 			SplitPercentages(vals, result);
 			return result;
 		}
 
-		List<int32> ConfigurationSection::GetInts(const String& name) const 
+
+		FastList<int32> ConfigurationSection::GetInts() const 
 		{
 			List<String> vals;
-			StringUtils::Split(getValue(name), vals, L",");
-			List<int32> result(vals.getCount());
+			StringUtils::Split(m_value, vals, L",");
+			FastList<int32> result(vals.getCount());
 			SplitInt(vals, result);
 			return result;
 		}
-		List<int32> ConfigurationSection::GetAttributeInts(const String& name) const 
+		FastList<int32> ConfigurationSection::GetInts(const String& name) const 
+		{
+			List<String> vals;
+			StringUtils::Split(getValue(name), vals, L",");
+			FastList<int32> result(vals.getCount());
+			SplitInt(vals, result);
+			return result;
+		}
+		FastList<int32> ConfigurationSection::GetAttributeInts(const String& name) const 
 		{
 			List<String> vals;
 			StringUtils::Split(getAttribute(name), vals, L",");
-			List<int32> result(vals.getCount());
+			FastList<int32> result(vals.getCount());
 			SplitInt(vals, result);
 			return result;
 		}
 
-		List<uint32> ConfigurationSection::GetUInts(const String& name) const 
+
+		FastList<uint32> ConfigurationSection::GetUInts() const 
 		{
 			List<String> vals;
-			StringUtils::Split(getValue(name), vals, L",");
-			List<uint32> result(vals.getCount());
+			StringUtils::Split(m_value, vals, L",");
+			FastList<uint32> result(vals.getCount());
 			SplitUint(vals, result);
 			return result;
 		}
-		List<uint32> ConfigurationSection::GetAttributeUInts(const String& name) const 
+		FastList<uint32> ConfigurationSection::GetUInts(const String& name) const 
+		{
+			List<String> vals;
+			StringUtils::Split(getValue(name), vals, L",");
+			FastList<uint32> result(vals.getCount());
+			SplitUint(vals, result);
+			return result;
+		}
+		FastList<uint32> ConfigurationSection::GetAttributeUInts(const String& name) const 
 		{
 			List<String> vals;
 			StringUtils::Split(getAttribute(name), vals, L",");
-			List<uint32> result(vals.getCount());
+			FastList<uint32> result(vals.getCount());
 			SplitUint(vals, result);
 			return result;
 		}
@@ -404,30 +413,12 @@ namespace Apoc3D
 			AddSection(ss);
 		}
 
-		void ConfigurationSection::AddBool(const String& key, bool value)
-		{
-			AddStringValue(key, StringUtils::ToString(value));
-		}
-		void ConfigurationSection::AddSingle(const String& key, float value)
-		{
-			AddStringValue(key, StringUtils::ToString(value));
-		}
-		void ConfigurationSection::AddPercentage(const String& key, float value)
-		{
-			AddStringValue(key, StringUtils::ToString(value));
-		}
-		void ConfigurationSection::AddInt(const String& key, int32 value)
-		{
-			AddStringValue(key, StringUtils::ToString(value));
-		}
-		void ConfigurationSection::AddUInt(const String& key, uint32 value)
-		{
-			AddStringValue(key, StringUtils::ToString(value));
-		}
-		void ConfigurationSection::AddColorValue(const String& key, ColorValue value)
-		{
-			AddStringValue(key, ColorValueToString(value));
-		}
+		void ConfigurationSection::AddBool(const String& key, bool value)				{ AddStringValue(key, StringUtils::ToString(value)); }
+		void ConfigurationSection::AddSingle(const String& key, float value)			{ AddStringValue(key, StringUtils::ToString(value)); }
+		void ConfigurationSection::AddPercentage(const String& key, float value)		{ AddStringValue(key, PercentageToString(value)); }
+		void ConfigurationSection::AddInt(const String& key, int32 value)				{ AddStringValue(key, StringUtils::ToString(value)); }
+		void ConfigurationSection::AddUInt(const String& key, uint32 value)				{ AddStringValue(key, StringUtils::ToString(value)); }
+		void ConfigurationSection::AddColorValue(const String& key, ColorValue value)	{ AddStringValue(key, ColorValueToString(value)); }
 
 		void ConfigurationSection::AddStrings(const String& key, const String* v, int count)
 		{
@@ -444,7 +435,7 @@ namespace Apoc3D
 		void ConfigurationSection::AddPercentages(const String& key, const float* v, int count)
 		{
 			String result;
-			SinglesToString(v, count, result);
+			PrecentagesToString(v, count, result);
 			AddStringValue(key, result);
 		}
 		void ConfigurationSection::AddInts(const String& key, const int32* v, int count)
@@ -479,12 +470,12 @@ namespace Apoc3D
 				}
 			}
 		}
-		void ConfigurationSection::AddAttributeBool(const String& name, bool val) { AddAttributeString(name, StringUtils::ToString(val)); }
-		void ConfigurationSection::AddAttributeSingle(const String& name, float val) { AddAttributeString(name, StringUtils::ToString(val)); }
-		void ConfigurationSection::AddAttributePercentage(const String& name, float val) { AddAttributeString(name, PercentageToString(val)); }
-		void ConfigurationSection::AddAttributeInt(const String& name, int32 val) { AddAttributeString(name, StringUtils::ToString(val)); }
-		void ConfigurationSection::AddAttributeUInt(const String& name, uint32 val) { AddAttributeString(name, StringUtils::ToString(val)); }
-		void ConfigurationSection::AddAttributeColorValue(const String& name, ColorValue val) { AddAttributeString(name, ColorValueToString(val)); }
+		void ConfigurationSection::AddAttributeBool(const String& name, bool val)				{ AddAttributeString(name, StringUtils::ToString(val)); }
+		void ConfigurationSection::AddAttributeSingle(const String& name, float val)			{ AddAttributeString(name, StringUtils::ToString(val)); }
+		void ConfigurationSection::AddAttributePercentage(const String& name, float val)		{ AddAttributeString(name, PercentageToString(val)); }
+		void ConfigurationSection::AddAttributeInt(const String& name, int32 val)				{ AddAttributeString(name, StringUtils::ToString(val)); }
+		void ConfigurationSection::AddAttributeUInt(const String& name, uint32 val)			{ AddAttributeString(name, StringUtils::ToString(val)); }
+		void ConfigurationSection::AddAttributeColorValue(const String& name, ColorValue val)	{ AddAttributeString(name, ColorValueToString(val)); }
 
 		void ConfigurationSection::AddAttributeStrings(const String& name, const String* v, int count)
 		{
@@ -516,6 +507,32 @@ namespace Apoc3D
 			UIntsToString(v, count, result);
 			AddAttributeString(name, result);
 		}
+
+
+		void ConfigurationSection::SetStringValue(const String& name, const String& value)
+		{
+			ConfigurationSection* ss = getSection(name); assert(ss);
+			ss->SetValue(value);
+		}
+
+		void ConfigurationSection::SetBool(bool value)									{ m_value = StringUtils::ToString(value); }
+		void ConfigurationSection::SetBool(const String& name, bool value)				{ SetStringValue(name, StringUtils::ToString(value)); }
+		void ConfigurationSection::SetSingle(float value)								{ m_value = StringUtils::ToString(value); }
+		void ConfigurationSection::SetSingle(const String& name, float value)			{ SetStringValue(name, StringUtils::ToString(value)); }
+		void ConfigurationSection::SetPercentage(float value)							{ m_value = PercentageToString(value); }
+		void ConfigurationSection::SetPercentage(const String& name, float value)		{ SetStringValue(name, PercentageToString(value)); }
+		void ConfigurationSection::SetInt(int32 value)									{ m_value = StringUtils::ToString(value); }
+		void ConfigurationSection::SetInt(const String& name, int32 value)				{ SetStringValue(name, StringUtils::ToString(value)); }
+		void ConfigurationSection::SetUInt(uint32 value)								{ m_value = StringUtils::ToString(value); }
+		void ConfigurationSection::SetUInt(const String& name, uint32 value)			{ SetStringValue(name, StringUtils::ToString(value)); }
+		void ConfigurationSection::SetColorValue(ColorValue value)						{ m_value = ColorValueToString(value); }
+		void ConfigurationSection::SetColorValue(const String& name, ColorValue value)	{ SetStringValue(name, ColorValueToString(value)); }
+
+		void ConfigurationSection::SetStrings(const String* v, int count)				{ CombineString(v, count, m_value); }
+		void ConfigurationSection::SetSingles(const float* v, int count)				{ SinglesToString(v, count, m_value); }
+		void ConfigurationSection::SetPercentages(const float* v, int count)			{ PrecentagesToString(v, count, m_value); }
+		void ConfigurationSection::SetInts(const int32* v, int count)					{ IntsToString(v, count, m_value); }
+		void ConfigurationSection::SetUInts(const uint32* v, int count)					{ UIntsToString(v, count, m_value); }
 
 
 		void CombineString(const String* v, int count, String& result)
@@ -593,28 +610,28 @@ namespace Apoc3D
 			}
 		}
 
-		void SplitSingles(const List<String>& vals, List<float>& result)
+		void SplitSingles(const List<String>& vals, FastList<float>& result)
 		{
 			for (int32 i=0;i<vals.getCount();i++)
 			{
 				result.Add( StringUtils::ParseSingle(vals[i]) );
 			}
 		}
-		void SplitPercentages(const List<String>& vals, List<float>& result)
+		void SplitPercentages(const List<String>& vals, FastList<float>& result)
 		{
 			for (int32 i=0;i<vals.getCount();i++)
 			{
 				result.Add( ParsePercentage(vals[i]) );
 			}
 		}
-		void SplitInt(const List<String>& vals, List<int32>& result)
+		void SplitInt(const List<String>& vals, FastList<int32>& result)
 		{
 			for (int32 i=0;i<vals.getCount();i++)
 			{
 				result.Add( StringUtils::ParseInt32(vals[i]) );
 			}
 		}
-		void SplitUint(const List<String>& vals, List<uint32>& result)
+		void SplitUint(const List<String>& vals, FastList<uint32>& result)
 		{
 			for (int32 i=0;i<vals.getCount();i++)
 			{
