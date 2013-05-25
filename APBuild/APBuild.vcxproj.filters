@@ -42,9 +42,6 @@
     <ClInclude Include="CompileLog.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MeshBuild\FbxBaker.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="D3DHelper.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -120,9 +117,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CompileLog.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshBuild\FbxBaker.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="D3DHelper.cpp">

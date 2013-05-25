@@ -161,7 +161,7 @@ namespace APBuild
 
 		// Create an importer.
 		FbxImporter* lImporter = FbxImporter::Create(m_pFBXSdkManager,"");
-
+		
 
 		// Initialize the importer by providing a filename.
 		const bool lImportStatus = lImporter->Initialize(
@@ -171,10 +171,10 @@ namespace APBuild
 		if( !lImportStatus )
 		{
 			CompileLog::WriteError(L"Unable to initialize FBX", pFilename);
-			CompileLog::WriteError(StringUtils::toWString(lImporter->GetLastErrorString()), pFilename);
-
-			if (lImporter->GetLastErrorID() == FbxIO::eFileVersionNotSupportedYet ||
-				lImporter->GetLastErrorID() == FbxIO::eFileVersionNotSupportedAnymore)
+			CompileLog::WriteError(StringUtils::toWString(lImporter->GetStatus().GetErrorString()), pFilename);
+			
+			if (lImporter->GetStatus() == FbxStatus::eInvalidFile ||
+				lImporter->GetStatus() == FbxStatus::eInvalidFileVersion)
 			{
 				CompileLog::WriteError(
 					L"File version is probably newer than the version supported.", pFilename);
@@ -226,11 +226,11 @@ namespace APBuild
 
 		// Import the scene.
 		lStatus = lImporter->Import(m_pFBXScene);
-
-		if(lStatus == false && lImporter->GetLastErrorID() == FbxIOBase::ePasswordError)
+		
+		if(lStatus == false && lImporter->GetStatus() == FbxStatus::ePasswordError)
 		{
 			CompileLog::WriteError(L"Cannot import files with password.", pFilename);
-
+			
 			return false;
 		}
 
@@ -548,13 +548,14 @@ namespace APBuild
 	{
 		//bool isAnimated = HasFBXAnimation(pNode);
 		
-		FbxGeometryConverter GeometryConverter(m_pFBXSdkManager);
-		if( !GeometryConverter.TriangulateInPlace( pNode ) )
-			return;
-
 		FbxMesh* pFBXMesh = pNode->GetMesh();
 		if( !pFBXMesh )
 			return;
+
+		FbxGeometryConverter GeometryConverter(m_pFBXSdkManager);
+		if( !GeometryConverter.Triangulate( pFBXMesh, true ) )
+			return;
+
 
 		int nVertexCount = pFBXMesh->GetControlPointsCount();
 		if( nVertexCount <= 0 )
