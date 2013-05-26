@@ -792,10 +792,20 @@ namespace Apoc3D
 				}
 				break;
 			case KEY_UP:
+				if (!m_multiline)
+				{
+					if (!eventUpPressedSingleline.empty())
+						eventUpPressedSingleline(this);
+				}
 				if (m_curorLocation.Y > 0)
 					m_curorLocation.Y--;
 				break;
 			case KEY_DOWN:
+				if (!m_multiline)
+				{
+					if (!eventDownPressedSingleline.empty())
+						eventDownPressedSingleline(this);
+				}
 				if (m_curorLocation.Y < m_lines.getCount()-1)
 					m_curorLocation.Y++;
 				break;
@@ -892,6 +902,7 @@ namespace Apoc3D
 						m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();
 				}
 				break;
+			case KEY_NUMPADENTER:
 			case KEY_RETURN:
 				{
 					if (m_multiline)
@@ -913,8 +924,8 @@ namespace Apoc3D
 					}
 					else
 					{
-						if (!m_eEnterPressed.empty())
-							m_eEnterPressed(this);
+						if (!eventEnterPressed.empty())
+							eventEnterPressed(this);
 					}
 				}
 				break;
@@ -1199,9 +1210,9 @@ namespace Apoc3D
 
 			if (changed)
 			{
-				if (!m_eContentChanged.empty())
+				if (!eventContentChanged.empty())
 				{
-					m_eContentChanged(this);
+					eventContentChanged(this);
 				}
 			}
 		}
@@ -1235,9 +1246,9 @@ namespace Apoc3D
 
 				UpdateScrolling();
 				
-				if (!m_eContentChanged.empty())
+				if (!eventContentChanged.empty())
 				{
-					m_eContentChanged(this);
+					eventContentChanged(this);
 				}
 			}
 		}

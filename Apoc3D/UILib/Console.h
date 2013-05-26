@@ -66,7 +66,12 @@ namespace Apoc3D
 			void Update(const GameTime* const time);
 		private:
 			void TextBox_ReturnPressed(Control* ctrl);
+			void TextBox_UpPressed(Control* ctrl);
+			void TextBox_DownPressed(Control* ctrl);
+
 			void Submit_Pressed(Control* ctrl);
+
+			
 
 			void Form_Resized(Control* ctrl);
 			void PictureBox_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect);
@@ -84,6 +89,9 @@ namespace Apoc3D
 			ScrollBar* m_scrollBar;
 			LinkedList<LogEntry> m_logs;
 			Queue<LogEntry> m_queuedNewLogs;
+
+			Queue<String> m_previousCommands;
+			int32 m_currentSelectedPreviousCommands;
 
 			bool m_needsUpdateLineInfo;
 			int m_contendLineCount;

@@ -49,7 +49,7 @@ namespace Apoc3D
 	namespace UI
 	{
 		Console::Console(RenderDevice* device,StyleSkin* skin,const Point& position, const Point& size)
-			: m_skin(skin), m_needsUpdateLineInfo(false), m_contendLineCount(0)
+			: m_skin(skin), m_needsUpdateLineInfo(false), m_contendLineCount(0), m_currentSelectedPreviousCommands(-1)
 		{
 			m_logLock = new tthread::mutex();
 
@@ -62,7 +62,9 @@ namespace Apoc3D
 
 			m_inputText = new TextBox(Point(10, size.Y - 40), size.X - 100, L"");
 			m_inputText->SetSkin(skin);
-			m_inputText->eventReturnPressed().bind(this, &Console::TextBox_ReturnPressed);
+			m_inputText->eventEnterPressed.bind(this, &Console::TextBox_ReturnPressed);
+			m_inputText->eventUpPressedSingleline.bind(this, &Console::TextBox_UpPressed);
+			m_inputText->eventDownPressedSingleline.bind(this, &Console::TextBox_DownPressed);
 			m_form->getControls().Add(m_inputText);
 
 			m_submit = new Button(Point(size.X - 100, size.Y - 30-2), L"Submit");
@@ -153,6 +155,40 @@ namespace Apoc3D
 		{
 			Submit_Pressed(ctrl);
 		}
+		void Console::TextBox_UpPressed(Control* ctrl)
+		{
+			if (m_previousCommands.getCount()>0)
+			{
+				if (m_currentSelectedPreviousCommands == -1)
+				{
+					m_currentSelectedPreviousCommands = m_previousCommands.getCount()-1;
+				}
+				else if (m_currentSelectedPreviousCommands>0)
+				{
+					m_currentSelectedPreviousCommands--;
+				}
+
+				m_inputText->setText(m_previousCommands.GetElement(m_currentSelectedPreviousCommands));
+			}
+			
+		}
+		void Console::TextBox_DownPressed(Control* ctrl)
+		{
+			if (m_previousCommands.getCount()>0)
+			{
+				if (m_currentSelectedPreviousCommands == -1)
+				{
+					m_currentSelectedPreviousCommands = 0;
+				}
+				else if (m_currentSelectedPreviousCommands<m_previousCommands.getCount()-1)
+				{
+					m_currentSelectedPreviousCommands++;
+				}
+
+				m_inputText->setText(m_previousCommands.GetElement(m_currentSelectedPreviousCommands));
+			}
+		}
+
 		void Console::setPosition(const Point& pt)
 		{
 			m_form->Position = pt;
@@ -191,6 +227,11 @@ namespace Apoc3D
 				CommandInterpreter::getSingleton().RunLine(c, true);
 			}
 
+			
+			m_previousCommands.Enqueue(m_inputText->Text);
+			while (m_previousCommands.getCount()>100)
+				m_previousCommands.DequeueOnly();
+			m_currentSelectedPreviousCommands = -1;
 			m_inputText->setText(L"");
 		}
 

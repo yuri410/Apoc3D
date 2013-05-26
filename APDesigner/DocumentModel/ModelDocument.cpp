@@ -1440,7 +1440,7 @@ namespace APDesigner
 
 		m_tbTextureName = new TextBox(Point(15+190, 22), 150);
 		m_tbTextureName->SetSkin(window->getUISkin());
-		m_tbTextureName->eventContentChanged().bind(this, &CopyMaterialDialog::Config_Changed);
+		m_tbTextureName->eventContentChanged.bind(this, &CopyMaterialDialog::Config_Changed);
 		m_form->getControls().Add(m_tbTextureName);
 
 		m_lblPreview = new Label(Point(15, 62), L"[Preview] ", 350);
@@ -1454,7 +1454,7 @@ namespace APDesigner
 		m_tbStartNumber = new TextBox(Point(15+190, 102), 150);
 		m_tbStartNumber->SetSkin(window->getUISkin());
 		m_tbStartNumber->setText(L"0");
-		m_tbStartNumber->eventContentChanged().bind(this, &CopyMaterialDialog::Config_Changed);
+		m_tbStartNumber->eventContentChanged.bind(this, &CopyMaterialDialog::Config_Changed);
 		m_form->getControls().Add(m_tbStartNumber);
 
 

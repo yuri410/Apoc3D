@@ -169,6 +169,8 @@ namespace Apoc3D
 
 			void ResetBatchTable();
 
+			int GlobalCameraOverride;
+
 			/**
 			 *  Renders a particular batch data
 			 */
@@ -183,7 +185,6 @@ namespace Apoc3D
 			int m_selectedProc;
 
 			FastList<Camera*> m_cameraList;
-
 		};
 	};
 	namespace Collections

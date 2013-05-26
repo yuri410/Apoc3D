@@ -98,8 +98,16 @@ namespace Apoc3D
 		void ScenePass::Invoke(const FastList<Camera*>& cameras, SceneManager* sceMgr, BatchData* batchData)
 		{
 			//uint64 selectorMask = 1<<m_selectorID;
-			m_currentCamera = cameras[m_cameraID];
+			if (m_renderer->GlobalCameraOverride != -1)
+			{
+				m_currentCamera = cameras[m_renderer->GlobalCameraOverride];
+			}
+			else
+			{
+				m_currentCamera = cameras[m_cameraID];
+			}
 			RendererEffectParams::CurrentCamera = m_currentCamera;
+
 			if (m_currentCamera != m_parentProc->getLastCamera())
 			{
 				// only re add visible objects into table when the camera is changed.

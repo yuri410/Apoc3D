@@ -185,7 +185,7 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 		SceneRenderer::SceneRenderer(RenderDevice* device)
-			: m_renderDevice(device)
+			: m_renderDevice(device), GlobalCameraOverride(-1)
 		{
 		}
 
