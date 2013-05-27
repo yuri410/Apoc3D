@@ -36,14 +36,15 @@ namespace Apoc3D
 	{
 		const String StringUtils::Empty;
 
-		string StringUtils::toString(const String& str)
+		string StringUtils::toString(const String& str) { return toString(str.c_str()); }
+		string StringUtils::toString(const wchar_t* str)
 		{
-			size_t bufSize = wcstombs(nullptr, str.c_str(), 0);
+			size_t bufSize = wcstombs(nullptr, str, 0);
 			if (bufSize != static_cast<size_t>(-1))
 			{
 				char* buffer = new char[bufSize+1];
 				buffer[bufSize] = 0;
-				wcstombs(buffer, str.c_str(), bufSize);
+				wcstombs(buffer, str, bufSize);
 
 				string result = buffer;
 				delete[] buffer;
@@ -51,29 +52,24 @@ namespace Apoc3D
 			}
 			return string();
 		}
-		string StringUtils::toString(const wchar_t* str)
+		String StringUtils::toWString(const string& str) { return toWString(str.c_str()); }
+		String StringUtils::toWString(const char* str)
 		{
-			return toString(String(str));
-		}
-		String StringUtils::toWString(const string& str)
-		{
-			size_t bufSize = mbstowcs(nullptr, str.c_str(), 0);
+			size_t bufSize = mbstowcs(nullptr, str, 0);
 			if (bufSize != static_cast<size_t>(-1))
 			{
 				wchar_t* buffer = new wchar_t[bufSize+1];
 				buffer[bufSize] = 0;
-				mbstowcs(buffer, str.c_str(), bufSize);
-				
+				mbstowcs(buffer, str, bufSize);
+
 				String result = buffer;
 				delete[] buffer;
 				return result;
 			}
 			return Empty;
 		}
-		String StringUtils::toWString(const char* str)
-		{
-			return toWString(string(str));
-		}
+
+		//////////////////////////////////////////////////////////////////////////
 
 		bool StringUtils::ParseBool(const String& val)
 		{
@@ -178,6 +174,129 @@ namespace Apoc3D
 
 			return ret;
 		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		bool startsWidth(const std::string& str, const std::string& v)
+		{
+			size_t len = str.length();
+			size_t vlen = v.length();
+			if (len<vlen || !vlen)
+			{
+				return false;
+			}
+
+			std::string startOfThis = str.substr(0, vlen);
+			return (startOfThis == v);
+		}
+
+		bool StringUtils::ParseBool(const std::string& val)
+		{
+			std::string v = val;
+			std::transform(v.begin(), v.end(), v.begin(), tolower);
+			
+			return (startsWidth(v, "true") || startsWidth(v, "yes")
+				|| startsWidth(v, "1"));
+		}
+		uint16 StringUtils::ParseUInt16(const std::string& val)
+		{
+			istringstream str(val);
+			str.imbue(locale::classic());
+			uint16 ret = 0;
+			str >> ret;
+
+			return ret;
+		}
+		uint32 StringUtils::ParseUInt32(const std::string& val)
+		{
+			istringstream str(val);
+			str.imbue(locale::classic());
+			uint32 ret = 0;
+			str >> ret;
+
+			return ret;
+		}
+		uint32 StringUtils::ParseUInt32Hex(const std::string& val)
+		{
+			istringstream str(val);
+			str.imbue(locale::classic());
+			str.setf ( ios::hex, ios::basefield );       // set hex as the basefield
+			str.setf ( ios::showbase ); 
+			uint32 ret = 0;
+			str >> ret;
+
+			return ret;
+		}
+		uint64 StringUtils::ParseUInt64(const std::string& val)
+		{
+			istringstream str(val);
+			str.imbue(locale::classic());
+			uint64 ret = 0;
+			str >> ret;
+
+			return ret;
+		}
+		uint64 StringUtils::ParseUInt64Bin(const std::string& val)
+		{
+			uint64 result = 0;
+
+			for (size_t i=0;i<val.size();i++)
+			{
+				result <<=1;
+				result |= (val[i]=='1') ? 1 : 0;
+			}
+
+			return result;
+		}
+		int16 StringUtils::ParseInt16(const std::string& val)
+		{
+			istringstream str(val);
+			str.imbue(locale::classic());
+			int16 ret = 0;
+			str >> ret;
+
+			return ret;
+		}
+		int32 StringUtils::ParseInt32(const std::string& val)
+		{
+			istringstream str(val);
+			str.imbue(locale::classic());
+			int32 ret = 0;
+			str >> ret;
+
+			return ret;
+		}
+		int64 StringUtils::ParseInt64(const std::string& val)
+		{
+			istringstream str(val);
+			str.imbue(locale::classic());
+			int64 ret = 0;
+			str >> ret;
+
+			return ret;
+		}
+		float StringUtils::ParseSingle(const std::string& val)
+		{
+			istringstream str(val);
+			str.imbue(locale::classic());
+
+			float ret = 0;
+			str >> ret;
+
+			return ret;
+		}
+		double StringUtils::ParseDouble(const std::string& val)
+		{
+			istringstream str(val);
+			str.imbue(locale::classic());
+			double ret = 0;
+			str >> ret;
+
+			return ret;
+		}
+
+
+		//////////////////////////////////////////////////////////////////////////
 
 		String StringUtils::ToString(bool val)
 		{

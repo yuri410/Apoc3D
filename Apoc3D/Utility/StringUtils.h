@@ -43,7 +43,6 @@ namespace Apoc3D
 			static String toWString(const char* str);
 
 			static bool ParseBool(const String& val);
-
 			static uint16 ParseUInt16(const String& val);
 			static uint32 ParseUInt32(const String& val);
 			static uint32 ParseUInt32Hex(const String& val);
@@ -54,6 +53,20 @@ namespace Apoc3D
 			static int64 ParseInt64(const String& val);
 			static float ParseSingle(const String& val);
 			static double ParseDouble(const String& val);
+
+			static bool ParseBool(const std::string& val);
+			static uint16 ParseUInt16(const std::string& val);
+			static uint32 ParseUInt32(const std::string& val);
+			static uint32 ParseUInt32Hex(const std::string& val);
+			static uint64 ParseUInt64(const std::string& val);
+			static uint64 ParseUInt64Bin(const std::string& val);
+			static int16 ParseInt16(const std::string& val);
+			static int32 ParseInt32(const std::string& val);
+			static int64 ParseInt64(const std::string& val);
+			static float ParseSingle(const std::string& val);
+			static double ParseDouble(const std::string& val);
+
+
 			static String ToString(int16 val, 
 				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0))
 			{
