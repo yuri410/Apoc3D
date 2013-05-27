@@ -84,7 +84,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			uint16 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		uint32 StringUtils::ParseUInt32(const String& val)
@@ -93,7 +93,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			uint32 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		uint32 StringUtils::ParseUInt32Hex(const String& val)
@@ -104,7 +104,7 @@ namespace Apoc3D
 			str.setf ( ios::showbase ); 
 			uint32 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		uint64 StringUtils::ParseUInt64(const String& val)
@@ -113,7 +113,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			uint64 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		uint64 StringUtils::ParseUInt64Bin(const String& val)
@@ -134,7 +134,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			int16 ret = 0;
 			str >> ret;
-			
+			assert(!str.fail());
 			return ret;
 		}
 		int32 StringUtils::ParseInt32(const String& val)
@@ -143,7 +143,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			int32 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		int64 StringUtils::ParseInt64(const String& val)
@@ -152,7 +152,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			int64 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		float StringUtils::ParseSingle(const String& val)
@@ -162,7 +162,7 @@ namespace Apoc3D
 			
 			float ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		double StringUtils::ParseDouble(const String& val)
@@ -171,7 +171,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			double ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 
@@ -204,7 +204,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			uint16 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		uint32 StringUtils::ParseUInt32(const std::string& val)
@@ -213,7 +213,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			uint32 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		uint32 StringUtils::ParseUInt32Hex(const std::string& val)
@@ -224,7 +224,7 @@ namespace Apoc3D
 			str.setf ( ios::showbase ); 
 			uint32 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		uint64 StringUtils::ParseUInt64(const std::string& val)
@@ -233,7 +233,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			uint64 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		uint64 StringUtils::ParseUInt64Bin(const std::string& val)
@@ -254,7 +254,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			int16 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		int32 StringUtils::ParseInt32(const std::string& val)
@@ -263,7 +263,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			int32 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		int64 StringUtils::ParseInt64(const std::string& val)
@@ -272,7 +272,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			int64 ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		float StringUtils::ParseSingle(const std::string& val)
@@ -282,7 +282,7 @@ namespace Apoc3D
 
 			float ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 		double StringUtils::ParseDouble(const std::string& val)
@@ -291,7 +291,7 @@ namespace Apoc3D
 			str.imbue(locale::classic());
 			double ret = 0;
 			str >> ret;
-
+			assert(!str.fail());
 			return ret;
 		}
 
