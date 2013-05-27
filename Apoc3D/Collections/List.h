@@ -203,6 +203,18 @@ namespace Apoc3D
 				m_elements = newArr;
 				m_length = newSize;
 			}
+			void Reserve(int newCount)
+			{
+				if (m_length < newCount)
+					Reserve(newCount);
+				m_internalPointer = newCount;
+			}
+			void ReserveDiscard(int newSize)
+			{
+				if (m_length < newCount)
+					ResizeDiscard(newCount);
+				m_internalPointer = newCount;
+			}
 
 			void Insert(int32 index, const T& item)
 			{
@@ -399,6 +411,19 @@ namespace Apoc3D
 				m_elements = newArr;
 				m_length = newSize;
 			}
+			void Reserve(int newCount)
+			{
+				if (m_length < newCount)
+					Reserve(newCount);
+				m_internalPointer = newCount;
+			}
+			void ReserveDiscard(int newSize)
+			{
+				if (m_length < newCount)
+					ResizeDiscard(newCount);
+				m_internalPointer = newCount;
+			}
+
 
 			void Insert(int32 index, const T& item)
 			{
