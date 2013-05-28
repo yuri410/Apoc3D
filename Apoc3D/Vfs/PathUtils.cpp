@@ -372,7 +372,7 @@ namespace Apoc3D
 				if (lch != rch)
 					return false;
 				if (i+1>=left.size() && j+1>=right.size())
-					return lvlr == lvlr;
+					return lvll == lvlr;
 
 				if (i+1>=left.size())
 					return false;
