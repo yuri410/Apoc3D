@@ -227,10 +227,12 @@ namespace Apoc3D
 				CommandInterpreter::getSingleton().RunLine(c, true);
 			}
 
-			
-			m_previousCommands.Enqueue(m_inputText->Text);
-			while (m_previousCommands.getCount()>100)
-				m_previousCommands.DequeueOnly();
+			if (!m_previousCommands.Contains(m_inputText->Text))
+			{
+				m_previousCommands.Enqueue(m_inputText->Text);
+				while (m_previousCommands.getCount()>100)
+					m_previousCommands.DequeueOnly();
+			}
 			m_currentSelectedPreviousCommands = -1;
 			m_inputText->setText(L"");
 		}
