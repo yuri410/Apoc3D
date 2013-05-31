@@ -36,6 +36,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Graphics/LockData.h"
 #include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Utility/Compression.h"
 
 #include <IL/il.h>
 #include <IL/ilu.h>
@@ -45,6 +46,7 @@ using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::Utility;
 
 #ifndef ReleasePpo
 #define ReleasePpo(ppo) \
@@ -1505,7 +1507,7 @@ LFail:
 			}
 		}
 
-		void Save(const String& path)
+		void Save(const String& path, TextureDataCompressionType cmp)
 		{
 			LPDIRECT3DBASETEXTURE9 ptex;
 			ptex = (m_ptexNew == NULL ? m_ptexOrig : m_ptexNew);
@@ -1513,7 +1515,8 @@ LFail:
 
 			TextureData data;
 			data.LevelCount = (int32)m_numMips;
-
+			data.Flags = TextureData::TDF_None;
+			
 			D3DFORMAT fmt;
 			if (IsCubeMap())
 			{
@@ -1565,6 +1568,21 @@ LFail:
 				break;
 			}
 
+			if (cmp == TDCT_RLE)
+				data.Flags = TextureData::TDF_RLECompressed;
+			else if (cmp == TDCT_Auto)
+			{
+				int32 compressedSize = 0;
+				for (int32 i=0;i<data.Levels.getCount();i++)
+				{
+					compressedSize += rleEvalCompressedSize(data.Levels[i].ContentData, data.Levels[i].LevelSize);
+				}
+				float ratio = (float)compressedSize / data.ContentSize;
+				if (ratio < 0.75f)
+				{
+					data.Flags = TextureData::TDF_RLECompressed;
+				}
+			}
 
 			FileOutStream* fs = new FileOutStream(path);
 			data.Save(fs);
@@ -1601,7 +1619,7 @@ LFail:
 					return;
 			}
 
-			tex.Save(config.DestinationFile);
+			tex.Save(config.DestinationFile, config.CompressionType);
 		}
 		else
 		{
@@ -1629,7 +1647,7 @@ LFail:
 				
 			}
 			
-			tex.Save(config.DestinationFile);
+			tex.Save(config.DestinationFile, config.CompressionType);
 
 		}
 	}
@@ -1777,6 +1795,7 @@ LFail:
 		texData.LevelCount = mipCount;
 		texData.ContentSize = 0;
 		texData.Format = ConvertFormat(ilFormat, dataType, bytePP);
+		texData.Flags = TextureData::TDF_None;
 
 		if (cubeFlags)
 		{
@@ -1880,8 +1899,8 @@ LFail:
 			newdata.LevelCount = texData.LevelCount;
 			newdata.Type = texData.Type;
 			newdata.Levels.ResizeDiscard(texData.LevelCount);
+			newdata.Flags = TextureData::TDF_None;
 
-			
 			for (int i=0;i<newdata.LevelCount;i++)
 			{
 				TextureLevelData& srcLvl = texData.Levels[i];
@@ -1926,8 +1945,25 @@ LFail:
 			texData = newdata;
 		}
 
+		if (config.CompressionType == TDCT_RLE)
+			texData.Flags = TextureData::TDF_RLECompressed;
+		else if (config.CompressionType == TDCT_Auto)
+		{
+			int32 compressedSize = 0;
+			for (int32 i=0;i<texData.Levels.getCount();i++)
+			{
+				compressedSize += rleEvalCompressedSize(texData.Levels[i].ContentData, texData.Levels[i].LevelSize);
+			}
+			float ratio = (float)compressedSize / texData.ContentSize;
+			if (ratio < 0.75f)
+			{
+				texData.Flags = TextureData::TDF_RLECompressed;
+			}
+		}
+
 		FileOutStream* fs = new FileOutStream(config.DestinationFile);
 		texData.Save(fs);
+
 
 		for (int i=0;i<mipCount;i++)
 		{

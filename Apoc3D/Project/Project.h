@@ -197,9 +197,16 @@ namespace Apoc3D
 			TEXBUILD_Devil,
 			TEXBUILD_BuiltIn
 		};
-		
+		enum TextureDataCompressionType
+		{
+			TDCT_None,
+			TDCT_RLE,
+			TDCT_Auto
+		};
+
 		String SourceFile;
 		String DestinationFile;
+		TextureDataCompressionType CompressionType;
 		bool GenerateMipmaps;
 		bool Resize;
 		int NewWidth;

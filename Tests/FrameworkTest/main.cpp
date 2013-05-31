@@ -12,16 +12,19 @@
 #include "apoc3d/Math/Ray.h"
 #include "apoc3d/Math/Viewport.h"
 #include "apoc3d/Math/RandomUtils.h"
+#include "apoc3d/Utility/Compression.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
+using namespace Apoc3D::Utility;
 
 void TestTaggedData();
 void TestListReverse();
 void TestListSort();
 void TestListSort2();
+void TestRLE();
 
 void main()
 {
@@ -29,6 +32,7 @@ void main()
 	TestListSort();
 	TestListSort2();
 	TestTaggedData();
+	TestRLE();
 }
 
 template <typename T>
@@ -256,4 +260,41 @@ void TestListSort2()
 	}
 
 	assert(memcmp(counter, counter2, sizeof(counter))==0);
+}
+
+void TestRLE()
+{
+	FileStream fs(L"Apoc3d.lib");
+	char* buffer = new char[fs.getLength()];
+	fs.Read(buffer, fs.getLength());
+
+	int32 compressedSize = rleEvalCompressedSize(buffer, fs.getLength());
+	MemoryOutStream compressedStream(compressedSize);
+	rleCompress(buffer, fs.getLength(), &compressedStream);
+
+	assert(compressedStream.getLength() == compressedSize);
+
+	char* compressedData = new char[compressedSize];
+	int ret = rleCompress(compressedData, compressedSize, buffer, fs.getLength());
+	assert(ret == compressedSize);
+
+	//////////////////////////////////////////////////////////////////////////
+
+	int32 decompSize = rleEvalDecompressedSize(compressedData, compressedSize);
+	assert(decompSize == fs.getLength());
+
+	char* decompressedData = new char[decompSize];
+	ret = rleDecompress(decompressedData, decompSize, compressedData, compressedSize);
+	assert(ret == decompSize);
+
+	CheckEqual(buffer, decompressedData, decompSize);
+
+	MemoryStream ms(compressedData, compressedSize);
+	ret = rleDecompress(decompressedData, decompSize, &ms);
+	assert(ret == decompSize);
+
+	CheckEqual(buffer, decompressedData, decompSize);
+
+	fs.Close();
+	delete[] buffer;
 }

@@ -208,6 +208,21 @@ namespace Apoc3D
 			NewFormat = PixelFormatUtils::ConvertFormat(fmt);
 		}
 
+		CompressionType = TDCT_None;
+		String cmp;
+		if (sect->tryGetAttribute(L"Compression", cmp))
+		{
+			StringUtils::ToLowerCase(cmp);
+			if (cmp == L"rle")
+			{
+				CompressionType = TDCT_RLE;
+			}
+			else if (cmp == L"auto")
+			{
+				CompressionType = TDCT_Auto;
+			}
+		}
+
 	}
 	void ProjectResTexture::Save(ConfigurationSection* sect, bool savingBuild)
 	{
@@ -310,6 +325,18 @@ namespace Apoc3D
 		if (NewFormat != FMT_Unknown)
 		{
 			sect->AddAttributeString(L"PixelFormat", PixelFormatUtils::ToString(NewFormat));
+		}
+
+		if (CompressionType != TDCT_None)
+		{
+			if (CompressionType == TDCT_RLE)
+			{
+				sect->AddAttributeString(L"Compression", L"RLE");
+			}
+			else if (CompressionType == TDCT_Auto)
+			{
+				sect->AddAttributeString(L"Compression", L"Auto");
+			}
 		}
 	}
 	List<String> ProjectResTexture::GetAllOutputFiles()

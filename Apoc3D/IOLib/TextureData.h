@@ -69,8 +69,8 @@ namespace Apoc3D
 
 			void LoadContentTo(void* dest, TaggedDataReader* data);
 
-			void LoadData(TaggedDataReader* data, bool doNotLoadContent = false);
-			void SaveData(TaggedDataWriter* data) const;
+			void LoadData(TaggedDataReader* data, bool doNotLoadContent = false, int32 flags = 0);
+			void SaveData(TaggedDataWriter* data, int32 flags = 0) const;
 		private:
 		};
 
@@ -83,11 +83,18 @@ namespace Apoc3D
 		public:
 			static const int32 FileID = 'A' << 24 | 'T' << 16 | 'E' << 8 | 'X';
 
+			enum TextureDataFlags
+			{
+				TDF_None = 0,
+				TDF_RLECompressed = 1U << 0
+			};
+
 			TextureType Type;
 			List<TextureLevelData> Levels;
 			PixelFormat Format;
 			int32 ContentSize;
 			int32 LevelCount;
+			uint32 Flags;
 
 			TextureData() {}
 			~TextureData() {}

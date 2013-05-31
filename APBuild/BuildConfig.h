@@ -56,6 +56,12 @@ namespace APBuild
 		TEXBUILD_Devil,
 		TEXBUILD_BuiltIn
 	};
+	enum TextureDataCompressionType
+	{
+		TDCT_None,
+		TDCT_RLE,
+		TDCT_Auto
+	};
 	struct TextureBuildConfig 
 	{
 		String SourceFile;
@@ -67,6 +73,8 @@ namespace APBuild
 		int NewDepth;
 		TextureFilterType ResizeFilterType;
 		Apoc3D::Graphics::PixelFormat NewFormat;
+		
+		TextureDataCompressionType CompressionType;
 
 		bool AssembleCubemap;
 		bool AssembleVolumeMap;

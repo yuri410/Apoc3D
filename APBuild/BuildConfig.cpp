@@ -173,6 +173,19 @@ namespace APBuild
 			NewFormat = PixelFormatUtils::ConvertFormat(fmt);
 		}
 		
+		String cmp;
+		if (sect->tryGetAttribute(L"Compression", cmp))
+		{
+			StringUtils::ToLowerCase(cmp);
+			if (cmp == L"rle")
+			{
+				CompressionType = TDCT_RLE;
+			}
+			else if (cmp == L"auto")
+			{
+				CompressionType = TDCT_Auto;
+			}
+		}
 	}
 
 	void FontBuildConfig::Parse(const ConfigurationSection* sect)

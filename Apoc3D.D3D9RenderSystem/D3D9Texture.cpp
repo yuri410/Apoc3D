@@ -818,6 +818,7 @@ namespace Apoc3D
 						newdata.LevelCount = data.LevelCount;
 						newdata.Type = data.Type;
 						newdata.Levels.ResizeDiscard(data.LevelCount);
+						newdata.Flags = data.Flags;
 
 						String name;
 						const FileLocation* fl = dynamic_cast<const FileLocation*>(getResourceLocation());
@@ -968,6 +969,7 @@ namespace Apoc3D
 				data.Type = getType();
 				data.Format = getFormat();
 				data.ContentSize = 0;
+				data.Flags = TextureData::TDF_None;
 				switch (data.Type)
 				{
 				case (int)TT_Texture1D:

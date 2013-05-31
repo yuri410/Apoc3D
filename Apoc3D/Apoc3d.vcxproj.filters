@@ -477,6 +477,9 @@
     <ClInclude Include="String.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Utility\Compression.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -825,6 +828,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\CommandInterpreter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\Compression.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Streams.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Utility/Compression.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::Core;
@@ -39,15 +40,15 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		static const String WidthTag = L"Width";
-		static const String HeightTag = L"Height";
-		static const String DepthTag = L"Depth";
-		static const String ContentTag = L"Content";
-		static const String LevelSizeTag = L"LevelSize";
-
+		static const String Tag1_Width = L"Width";
+		static const String Tag_Height = L"Height";
+		static const String Tag_Depth = L"Depth";
+		static const String Tag_Content = L"Content";
+		static const String Tag_LevelSize = L"LevelSize";
+		
 		void TextureLevelData::LoadContentTo(void* dest, TaggedDataReader* data)
 		{
-			BinaryReader* br = data->GetData(ContentTag);
+			BinaryReader* br = data->GetData(Tag_Content);
 
 			int64 ret = br->ReadBytes(reinterpret_cast<char*>(dest), LevelSize);
 			assert(ret == LevelSize);
@@ -55,48 +56,62 @@ namespace Apoc3D
 			br->Close();
 			delete br;
 		}
-		void TextureLevelData::LoadData(TaggedDataReader* data, bool doNotLoadContent)
+		void TextureLevelData::LoadData(TaggedDataReader* data, bool doNotLoadContent, int32 flags)
 		{
-			Width = data->GetDataInt32(WidthTag);
-			Height = data->GetDataInt32(HeightTag);
-			Depth = data->GetDataInt32(DepthTag);
-			LevelSize = data->GetDataInt32(LevelSizeTag);
+			Width = data->GetDataInt32(Tag1_Width);
+			Height = data->GetDataInt32(Tag_Height);
+			Depth = data->GetDataInt32(Tag_Depth);
+			LevelSize = data->GetDataInt32(Tag_LevelSize);
 
 			if (!doNotLoadContent)
 			{
-				BinaryReader* br = data->GetData(ContentTag);
+				Stream* strm = data->GetDataStream(Tag_Content);
 
 				ContentData = new char[LevelSize];
 
-				int64 ret = br->ReadBytes(ContentData, LevelSize);
-				assert(ret == LevelSize);
+				if ((flags & TextureData::TDF_RLECompressed) == TextureData::TDF_RLECompressed)
+				{
+					int32 ret = rleDecompress(ContentData, LevelSize, strm);
+					assert(ret == LevelSize);
+				}
+				else
+				{
+					int64 ret = strm->Read(ContentData, LevelSize);
+					assert(ret == LevelSize);
+				}
 
-
-				br->Close();
-				delete br;
+				strm->Close();
+				delete strm;
 			}
 		}
-		void TextureLevelData::SaveData(TaggedDataWriter* data) const
+		void TextureLevelData::SaveData(TaggedDataWriter* data, int32 flags) const
 		{
-			data->AddEntryInt32(WidthTag, Width);
-			data->AddEntryInt32(HeightTag, Height);
-			data->AddEntryInt32(DepthTag, Depth);
-			data->AddEntryInt32(LevelSizeTag, LevelSize);
+			data->AddEntryInt32(Tag1_Width, Width);
+			data->AddEntryInt32(Tag_Height, Height);
+			data->AddEntryInt32(Tag_Depth, Depth);
+			data->AddEntryInt32(Tag_LevelSize, LevelSize);
 
-			BinaryWriter* bw = data->AddEntry(ContentTag);
-			bw->Write(ContentData, LevelSize);
-			bw->Close();
-			delete bw;
+			Stream* strm = data->AddEntryStream(Tag_Content);
+			if ((flags & TextureData::TDF_RLECompressed) == TextureData::TDF_RLECompressed)
+			{
+				rleCompress(ContentData, LevelSize, strm);
+			}
+			else
+			{
+				strm->Write(ContentData, LevelSize);
+			}
+			strm->Close();
+			delete strm;
 		}
 
 
 		
-		static const String TypeTag = L"Type";
-		static const String FormatTag = L"Format";
-		static const String ContentSizeTag = L"ContentSize";
-		static const String LevelCountTag = L"LevelCount";
-		static const String LevelTag = L"Level";
-
+		static const String Tag_Type = L"Type";
+		static const String Tag_Format = L"Format";
+		static const String Tag_ContentSize = L"ContentSize";
+		static const String Tag_LevelCount = L"LevelCount";
+		static const String Tag_Level = L"Level";
+		static const String Tag_Flags = L"Flags";
 
 		void TextureData::Load(const ResourceLocation* rl)
 		{
@@ -127,20 +142,21 @@ namespace Apoc3D
 
 			TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
-			data->AddEntryInt32(TypeTag, (int32)Type);
-			data->AddEntryInt32(FormatTag, (int32)Format);
-			data->AddEntryInt32(ContentSizeTag, ContentSize);
-			data->AddEntryInt32(LevelCountTag, LevelCount);
+			data->AddEntryInt32(Tag_Type, (int32)Type);
+			data->AddEntryInt32(Tag_Format, (int32)Format);
+			data->AddEntryInt32(Tag_ContentSize, ContentSize);
+			data->AddEntryInt32(Tag_LevelCount, LevelCount);
+			data->AddEntryInt32(Tag_Flags, Flags);
 
 			for (int i = 0; i < LevelCount; i++)
 			{
-				String levelName = LevelTag;
+				String levelName = Tag_Level;
 				const String temp = StringUtils::ToString(i);
 				levelName.append(temp);
 
 				BinaryWriter* bw2 = data->AddEntry(levelName);
 				TaggedDataWriter* data2 = new TaggedDataWriter(strm->IsWriteEndianDependent());
-				Levels[i].SaveData(data2);
+				Levels[i].SaveData(data2, Flags);
 
 				bw2->WriteTaggedDataBlock(data2);
 
@@ -158,17 +174,22 @@ namespace Apoc3D
 
 		void TextureData::LoadFromData(TaggedDataReader* data, bool doNotLoadLevel, bool doNotLoadLevelContent)
 		{
-			Type = static_cast<TextureType>(data->GetDataInt32(TypeTag));
+			Type = static_cast<TextureType>(data->GetDataInt32(Tag_Type));
 
-			Format = static_cast<PixelFormat>(data->GetDataInt32(FormatTag));
-			ContentSize = data->GetDataInt32(ContentSizeTag);
-			LevelCount = data->GetDataInt32(LevelCountTag);
+			Format = static_cast<PixelFormat>(data->GetDataInt32(Tag_Format));
+			ContentSize = data->GetDataInt32(Tag_ContentSize);
+			LevelCount = data->GetDataInt32(Tag_LevelCount);
+
+			if (!data->TryGetDataUInt32(Tag_Flags, Flags))
+			{
+				Flags = TDF_None;
+			}
 
 			if (!doNotLoadLevel)
 			{
 				for (int i = 0; i < LevelCount; i++)
 				{
-					String levelName = LevelTag;
+					String levelName = Tag_Level;
 					const String temp = StringUtils::ToString(i);
 					levelName.append(temp);
 
@@ -176,7 +197,7 @@ namespace Apoc3D
 					TaggedDataReader* data2 = br2->ReadTaggedDataBlock();
 
 					TextureLevelData lvl;
-					lvl.LoadData(data2, doNotLoadLevelContent);
+					lvl.LoadData(data2, doNotLoadLevelContent, Flags);
 					Levels.Add(lvl);
 
 					data2->Close();
