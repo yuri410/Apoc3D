@@ -60,6 +60,8 @@ using namespace Apoc3D::Utility;
 
 namespace APBuild
 {
+	static const float RLECompressRatioThreshold = 0.67f;
+
 	D3DFORMAT ConvertFormat(PixelFormat fmt)
 	{
 		static D3DFORMAT pixFmtTable[FMT_Count];
@@ -1578,7 +1580,7 @@ LFail:
 					compressedSize += rleEvalCompressedSize(data.Levels[i].ContentData, data.Levels[i].LevelSize);
 				}
 				float ratio = (float)compressedSize / data.ContentSize;
-				if (ratio < 0.75f)
+				if (ratio < RLECompressRatioThreshold)
 				{
 					data.Flags = TextureData::TDF_RLECompressed;
 				}
@@ -1955,7 +1957,7 @@ LFail:
 				compressedSize += rleEvalCompressedSize(texData.Levels[i].ContentData, texData.Levels[i].LevelSize);
 			}
 			float ratio = (float)compressedSize / texData.ContentSize;
-			if (ratio < 0.75f)
+			if (ratio < RLECompressRatioThreshold)
 			{
 				texData.Flags = TextureData::TDF_RLECompressed;
 			}
