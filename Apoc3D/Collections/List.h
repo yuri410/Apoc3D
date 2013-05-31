@@ -209,7 +209,7 @@ namespace Apoc3D
 					Reserve(newCount);
 				m_internalPointer = newCount;
 			}
-			void ReserveDiscard(int newSize)
+			void ReserveDiscard(int newCount)
 			{
 				if (m_length < newCount)
 					ResizeDiscard(newCount);
