@@ -60,6 +60,7 @@ namespace Apoc3D
 		{
 			throw Apoc3DException::createException(EX_NotSupported, L"Can't write");
 		}
+
 		void FileStream::Seek(int64 offset, SeekMode mode)
 		{
 			ios::seekdir dir;

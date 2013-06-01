@@ -25,6 +25,7 @@ void TestListReverse();
 void TestListSort();
 void TestListSort2();
 void TestRLE();
+void TestLZ();
 
 void main()
 {
@@ -265,17 +266,18 @@ void TestListSort2()
 void TestRLE()
 {
 	FileStream fs(L"Apoc3d.lib");
-	char* buffer = new char[fs.getLength()];
+	char* buffer = new char[(int32)fs.getLength()];
 	fs.Read(buffer, fs.getLength());
+	fs.Close();
 
-	int32 compressedSize = rleEvalCompressedSize(buffer, fs.getLength());
+	int32 compressedSize = rleEvalCompressedSize(buffer, (int32)fs.getLength());
 	MemoryOutStream compressedStream(compressedSize);
-	rleCompress(buffer, fs.getLength(), &compressedStream);
+	rleCompress(buffer, (int32)fs.getLength(), &compressedStream);
 
 	assert(compressedStream.getLength() == compressedSize);
 
 	char* compressedData = new char[compressedSize];
-	int ret = rleCompress(compressedData, compressedSize, buffer, fs.getLength());
+	int ret = rleCompress(compressedData, compressedSize, buffer, (int32)fs.getLength());
 	assert(ret == compressedSize);
 
 	//////////////////////////////////////////////////////////////////////////
@@ -295,6 +297,6 @@ void TestRLE()
 
 	CheckEqual(buffer, decompressedData, decompSize);
 
-	fs.Close();
 	delete[] buffer;
+	delete[] decompressedData;
 }

@@ -57,20 +57,44 @@ namespace Apoc3D
 
 			BinaryReader* br = new BinaryReader(new VirtualStream(strm, 0, strm->getLength()));
 
-			m_sectCount = br->ReadInt32();
-
-			for (int i=0; i<m_sectCount; i++)
+			uint32 firstInt = br->ReadUInt32();
+			if ((firstInt & 0x80000000) == 0x80000000)
 			{
-				String name = br->ReadString();
+				// new format, first int is flag then
+				m_sectCount = br->ReadInt32();
 
-				uint size = br->ReadUInt32();
+				for (int i=0; i<m_sectCount; i++)
+				{
+					String name = br->ReadString();
+					m_positions.Add(name, Entry(name, 0, 0));
+				}
 
-				m_positions.Add(name, Entry(name, strm->getPosition(), size));
-				strm->Seek(size, SEEK_Current);
+				for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
+				{
+					Entry& ent = *e.getCurrentValue();
+					ent.Offset = br->ReadUInt32();
+					ent.Size = br->ReadUInt32();
+				}
+
+				br->Close();
+				delete br;
 			}
+			else
+			{
+				m_sectCount = (int32)firstInt;// br->ReadInt32();
 
-			br->Close();
-			delete br;
+				for (int i=0; i<m_sectCount; i++)
+				{
+					String name = br->ReadString();
+					uint size = br->ReadUInt32();
+
+					m_positions.Add(name, Entry(name, strm->getPosition(), size));
+					strm->Seek(size, SEEK_Current);
+				}
+
+				br->Close();
+				delete br;
+			}
 		}
 		TaggedDataReader::~TaggedDataReader()
 		{
@@ -1498,15 +1522,52 @@ namespace Apoc3D
 		{
 			BinaryWriter* bw = new BinaryWriter(stream);
 
-			bw->WriteUInt32(static_cast<uint32>(m_positions.getCount()));
+			//uint32 firstInt = br->ReadUInt32();
+			//if ((firstInt & 0x80000000 == 0x80000000))
+			//{
+			//	// new format, first int is flag then
+			//	m_sectCount = br->ReadInt32();
 
+			//	for (int i=0; i<m_sectCount; i++)
+			//	{
+			//		String name = br->ReadString();
+			//		uint size = br->ReadUInt32();
+			//		m_positions.Add(name, Entry(name, strm->getPosition(), size));
+			//	}
+			//	br->Close();
+			//	delete br;
+			//}
+
+			// always write as the lastest format
+			bw->WriteUInt32(0x80000000U);
+			bw->WriteInt32(m_positions.getCount());
+
+			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
+			{
+				Entry* ent = e.getCurrentValue();
+				
+				bw->WriteString(*e.getCurrentKey());
+			}
+
+			uint32 baseOffset = static_cast<uint32>( stream->getPosition() ) + sizeof(uint32) * 2 * static_cast<uint32>(m_positions.getCount());
+			uint32 offset = 0;
 			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
 			{
 				Entry* ent = e.getCurrentValue();
 				MemoryOutStream* memBlock = ent->Buffer;
 
-				bw->WriteString(*e.getCurrentKey());
-				bw->WriteUInt32(static_cast<uint32>(memBlock->getLength()));
+				uint32 blockSize = static_cast<uint32>(memBlock->getLength());
+
+				bw->WriteUInt32(offset + baseOffset); // place holder offset
+				bw->WriteUInt32(blockSize); // place holder size 
+
+				offset += blockSize;
+			}
+
+			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
+			{
+				Entry* ent = e.getCurrentValue();
+				MemoryOutStream* memBlock = ent->Buffer;
 				bw->Write(memBlock->getPointer(), memBlock->getLength());
 			}
 

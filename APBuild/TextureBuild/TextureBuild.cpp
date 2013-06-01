@@ -1814,7 +1814,7 @@ LFail:
 			texData.Format = ConvertFormat(dxtFormat, 0, 0);
 		}
 
-		texData.Levels.Resize(mipCount);
+		texData.Levels.Reserve(mipCount);
 		for (int i=0;i<mipCount;i++)
 		{
 			ilBindImage(image);

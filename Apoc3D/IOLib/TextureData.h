@@ -67,7 +67,8 @@ namespace Apoc3D
 
 			}
 
-			void LoadContentTo(void* dest, TaggedDataReader* data);
+			void LoadData(BinaryReader* br, bool doNotLoadContent = false, int32 flags = 0);
+			void SaveData(BinaryWriter* bw, int32 flags = 0) const;
 
 			void LoadData(TaggedDataReader* data, bool doNotLoadContent = false, int32 flags = 0);
 			void SaveData(TaggedDataWriter* data, int32 flags = 0) const;
@@ -81,7 +82,8 @@ namespace Apoc3D
 		class APAPI TextureData
 		{
 		public:
-			static const int32 FileID = 'A' << 24 | 'T' << 16 | 'E' << 8 | 'X';
+			static const int32 FileID1 = 'A' << 24 | 'T' << 16 | 'E' << 8 | 'X';
+			static const int32 FileID2 = '1TEX';
 
 			enum TextureDataFlags
 			{
@@ -98,12 +100,10 @@ namespace Apoc3D
 
 			TextureData() {}
 			~TextureData() {}
-			TaggedDataReader* RetriveTaggedData(const ResourceLocation* rl);
 
-			void LoadFromData(TaggedDataReader* data, bool doNotLoadLevel, bool doNotLoadLevelContent);
-
-			void Load(const ResourceLocation* rl);
+			void Load(const ResourceLocation* rl, bool doNotLoadLevel = false, bool doNotLoadContent = false);
 			void Save(Stream* strm) const;
+			void SaveAsTagged(Stream* strm) const;
 		};
 	}
 }

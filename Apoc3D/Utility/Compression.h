@@ -17,6 +17,7 @@ namespace Apoc3D
 
 		int32 rleEvalDecompressedSize(const char* srcBuffer, int32 srcBufferSize);
 		int32 rleEvalCompressedSize(const char* srcBuffer, int32 srcBufferSize);
+
 	}
 }
 

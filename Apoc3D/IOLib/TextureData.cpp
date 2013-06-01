@@ -46,16 +46,6 @@ namespace Apoc3D
 		static const String Tag_Content = L"Content";
 		static const String Tag_LevelSize = L"LevelSize";
 		
-		void TextureLevelData::LoadContentTo(void* dest, TaggedDataReader* data)
-		{
-			BinaryReader* br = data->GetData(Tag_Content);
-
-			int64 ret = br->ReadBytes(reinterpret_cast<char*>(dest), LevelSize);
-			assert(ret == LevelSize);
-
-			br->Close();
-			delete br;
-		}
 		void TextureLevelData::LoadData(TaggedDataReader* data, bool doNotLoadContent, int32 flags)
 		{
 			Width = data->GetDataInt32(Tag1_Width);
@@ -83,6 +73,10 @@ namespace Apoc3D
 				strm->Close();
 				delete strm;
 			}
+			else
+			{
+				ContentData = nullptr;
+			}
 		}
 		void TextureLevelData::SaveData(TaggedDataWriter* data, int32 flags) const
 		{
@@ -104,6 +98,51 @@ namespace Apoc3D
 			delete strm;
 		}
 
+		void TextureLevelData::LoadData(BinaryReader* br, bool doNotLoadContent, int32 flags)
+		{
+			Width = br->ReadInt32();
+			Height = br->ReadInt32();
+			Depth = br->ReadInt32();
+			LevelSize = br->ReadInt32();
+
+			if (!doNotLoadContent)
+			{
+				Stream* strm = br->getBaseStream();
+
+				ContentData = new char[LevelSize];
+				if ((flags & TextureData::TDF_RLECompressed) == TextureData::TDF_RLECompressed)
+				{
+					int32 ret = rleDecompress(ContentData, LevelSize, strm);
+					assert(ret == LevelSize);
+				}
+				else
+				{
+					int64 ret = strm->Read(ContentData, LevelSize);
+					assert(ret == LevelSize);
+				}
+			}
+			else
+			{
+				ContentData = nullptr;
+			}
+		}
+		void TextureLevelData::SaveData(BinaryWriter* bw, int32 flags) const
+		{
+			bw->WriteInt32(Width);
+			bw->WriteInt32(Height);
+			bw->WriteInt32(Depth);
+			bw->WriteInt32(LevelSize);
+
+			Stream* strm = bw->getBaseStream();
+			if ((flags & TextureData::TDF_RLECompressed) == TextureData::TDF_RLECompressed)
+			{
+				rleCompress(ContentData, LevelSize, strm);
+			}
+			else
+			{
+				strm->Write(ContentData, LevelSize);
+			}
+		}
 
 		
 		static const String Tag_Type = L"Type";
@@ -113,18 +152,70 @@ namespace Apoc3D
 		static const String Tag_Level = L"Level";
 		static const String Tag_Flags = L"Flags";
 
-		void TextureData::Load(const ResourceLocation* rl)
+		void TextureData::Load(const ResourceLocation* rl, bool doNotLoadLevel, bool doNotLoadContent)
 		{
 			BinaryReader* br = new BinaryReader(rl);
 
-			if (br->ReadInt32() == FileID)
+			int32 id = br->ReadInt32();
+			if (id == FileID1)
 			{
 				TaggedDataReader* data = br->ReadTaggedDataBlock();
 
-				LoadFromData(data, false, false);
+				Type = static_cast<TextureType>(data->GetDataInt32(Tag_Type));
+
+				Format = static_cast<PixelFormat>(data->GetDataInt32(Tag_Format));
+				ContentSize = data->GetDataInt32(Tag_ContentSize);
+				LevelCount = data->GetDataInt32(Tag_LevelCount);
+
+				if (!data->TryGetDataUInt32(Tag_Flags, Flags))
+				{
+					Flags = TDF_None;
+				}
+
+				if (!doNotLoadLevel)
+				{
+					for (int i = 0; i < LevelCount; i++)
+					{
+						String levelName = Tag_Level;
+						const String temp = StringUtils::ToString(i);
+						levelName.append(temp);
+
+						BinaryReader* br2 = data->GetData(levelName);
+						TaggedDataReader* data2 = br2->ReadTaggedDataBlock();
+
+						TextureLevelData lvl;
+						lvl.LoadData(data2, doNotLoadContent, Flags);
+						Levels.Add(lvl);
+
+						data2->Close();
+						br2->Close();
+
+						delete data2;
+						delete br2;
+					}
+				}
 
 				data->Close();
 				delete data;
+			}
+			else if (id == FileID2)
+			{
+				Type = static_cast<TextureType>(br->ReadInt32());
+				Format = static_cast<PixelFormat>(br->ReadInt32());
+
+				ContentSize = br->ReadInt32();
+				LevelCount = br->ReadInt32();
+
+				Flags = static_cast<TextureDataFlags>(br->ReadUInt32());
+
+				if (!doNotLoadLevel)
+				{
+					Levels.ReserveDiscard(LevelCount);
+					for (int i = 0; i < LevelCount; i++)
+					{
+						Levels[i].LoadData(br, doNotLoadContent, Flags);
+					}
+				}
 			}
 			else
 			{
@@ -137,8 +228,28 @@ namespace Apoc3D
 		void TextureData::Save(Stream* strm) const
 		{
 			BinaryWriter* bw = new BinaryWriter(strm);
+			bw->WriteInt32(FileID2);
 
-			bw->WriteInt32(FileID);
+			bw->WriteInt32(static_cast<int32>(Type));
+			bw->WriteInt32(static_cast<int32>(Format));
+
+			bw->WriteInt32(ContentSize);
+			bw->WriteInt32(LevelCount);
+
+			bw->WriteInt32(static_cast<int32>(Flags));
+
+			for (int i = 0; i < LevelCount; i++)
+			{
+				Levels[i].SaveData(bw, Flags);
+			}
+
+			bw->Close();
+			delete bw;
+		}
+		void TextureData::SaveAsTagged(Stream* strm) const
+		{
+			BinaryWriter* bw = new BinaryWriter(strm);
+			bw->WriteInt32(FileID1);
 
 			TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
 
@@ -171,43 +282,5 @@ namespace Apoc3D
 			bw->Close();
 			delete bw;
 		}
-
-		void TextureData::LoadFromData(TaggedDataReader* data, bool doNotLoadLevel, bool doNotLoadLevelContent)
-		{
-			Type = static_cast<TextureType>(data->GetDataInt32(Tag_Type));
-
-			Format = static_cast<PixelFormat>(data->GetDataInt32(Tag_Format));
-			ContentSize = data->GetDataInt32(Tag_ContentSize);
-			LevelCount = data->GetDataInt32(Tag_LevelCount);
-
-			if (!data->TryGetDataUInt32(Tag_Flags, Flags))
-			{
-				Flags = TDF_None;
-			}
-
-			if (!doNotLoadLevel)
-			{
-				for (int i = 0; i < LevelCount; i++)
-				{
-					String levelName = Tag_Level;
-					const String temp = StringUtils::ToString(i);
-					levelName.append(temp);
-
-					BinaryReader* br2 = data->GetData(levelName);
-					TaggedDataReader* data2 = br2->ReadTaggedDataBlock();
-
-					TextureLevelData lvl;
-					lvl.LoadData(data2, doNotLoadLevelContent, Flags);
-					Levels.Add(lvl);
-
-					data2->Close();
-					br2->Close();
-
-					delete data2;
-					delete br2;
-				}
-			}
-		}
-
 	}
 }

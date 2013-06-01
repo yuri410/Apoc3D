@@ -64,7 +64,7 @@ namespace Apoc3D
 			virtual int64 getPosition() const = 0;
 
 			virtual int64 Read(char* dest, int64 count) = 0;
-			virtual int ReadByte()
+			int ReadByte()
 			{
 				char buffer;
 				if (Read(&buffer, 1) == 0)
@@ -76,10 +76,9 @@ namespace Apoc3D
 
 			
 			virtual void Write(const char* src, int64 count) = 0;
-			virtual void WriteByte(byte value)
-			{
-				Write(reinterpret_cast<const char*>(&value), 1);
-			}
+
+			void WriteByte(byte value) { Write(reinterpret_cast<const char*>(&value), 1); }
+
 
 			virtual void Seek(int64 offset, SeekMode mode) = 0;
 
@@ -103,10 +102,7 @@ namespace Apoc3D
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return false; }
 
-			virtual int64 getLength() const
-			{
-				return m_length;
-			}
+			virtual int64 getLength() const { return m_length; }
 
 			virtual void setPosition(int64 offset);
 			virtual int64 getPosition() const;
@@ -138,10 +134,7 @@ namespace Apoc3D
 			virtual bool CanRead() const { return false; }
 			virtual bool CanWrite() const { return true; }
 
-			virtual int64 getLength() const
-			{
-				return m_length;
-			}
+			virtual int64 getLength() const { return m_length; }
 
 			virtual void setPosition(int64 offset);
 			virtual int64 getPosition() const;
@@ -180,19 +173,9 @@ namespace Apoc3D
 			virtual bool CanWrite() const { return true; }
 
 
-			virtual int64 getLength() const
-			{
-				return m_length;
-			}
-
-			virtual void setPosition(int64 offset)
-			{
-				m_position = offset;
-			}
-			virtual int64 getPosition() const
-			{ 
-				return m_position;
-			}
+			virtual int64 getLength() const { return m_length; }
+			virtual void setPosition(int64 offset) { m_position = offset; }
+			virtual int64 getPosition() const { return m_position; }
 
 
 			virtual int64 Read(char* dest, int64 count)
@@ -367,7 +350,7 @@ namespace Apoc3D
 		class APAPI MemoryOutStream : public Stream
 		{
 		public:
-			const char* getPointer() const { return m_data.getInternalPointer(); }
+			char* getPointer() const { return m_data.getInternalPointer(); }
 
 			virtual bool IsReadEndianDependent() const { return false; }
 			virtual bool IsWriteEndianDependent() const { return false; }
@@ -385,20 +368,10 @@ namespace Apoc3D
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return true; }
 
+			virtual int64 getLength() const { return m_length; }
 
-			virtual int64 getLength() const
-			{
-				return m_length;
-			}
-
-			virtual void setPosition(int64 offset)
-			{
-				m_position = offset;
-			}
-			virtual int64 getPosition() const
-			{ 
-				return m_position;
-			}
+			virtual void setPosition(int64 offset) { m_position = offset; }
+			virtual int64 getPosition() const { return m_position; }
 
 
 			virtual int64 Read(char* dest, int64 count)
@@ -452,16 +425,15 @@ namespace Apoc3D
 				if (m_position > m_length)
 					m_position = m_length;
 			}
-			virtual void Close() {}
+			virtual void Close() { }
 
-			virtual void Flush(){}
+			virtual void Flush() { }
 
 		private:
 			int64 m_length;
 			FastList<char> m_data;
 			int64 m_position;
 		};
-
 	};
 }
 
