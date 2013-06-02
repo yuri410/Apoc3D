@@ -217,6 +217,8 @@ namespace Apoc3D
 			virtual void Flush() { }
 
 		private:
+			NoInline static void throwEndofStreamException();
+
 			int64 m_length;
 			char* m_data;
 			int64 m_position;

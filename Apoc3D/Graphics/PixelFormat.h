@@ -257,7 +257,7 @@ namespace Apoc3D
 				int bytepp = initializer.depSizeTable[(int)format];
 				if (bytepp == -1)
 				{
-					throw Apoc3DException::createException(EX_Default, L"Invalid pixel format");
+					throw AP_EXCEPTION(EX_Default, L"Invalid pixel format");
 				}
 				return width * height * bytepp;
 			}
@@ -279,7 +279,7 @@ namespace Apoc3D
 				int bytepp = initializer.sizeTable[(int)format];
 				if (bytepp == -1)
 				{
-					throw Apoc3DException::createException(EX_Default, L"Invalid pixel format");
+					throw AP_EXCEPTION(EX_Default, L"Invalid pixel format");
 				}
 				return width * height * depth * bytepp;
 			}

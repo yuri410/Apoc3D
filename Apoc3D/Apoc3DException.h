@@ -63,12 +63,14 @@ namespace Apoc3D
 		const String& getMessage() const { return m_message; }
 		const Apoc3DExceptionType getType() const { return m_type; }
 
-		static Apoc3DException createException(Apoc3DExceptionType type, const String& msg);
+		static Apoc3DException createException(Apoc3DExceptionType type, const String& msg, const wchar_t* file, int line);
 
 	private:
 		String m_message;
 		Apoc3DExceptionType m_type;
 	};
+
+#define AP_EXCEPTION(type, msg) (Apoc3DException::createException(type, msg, _CRT_WIDE(__FILE__), __LINE__))
 };
 
 

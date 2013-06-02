@@ -58,12 +58,14 @@ namespace Apoc3D
 			if (m_shouldDeleteStream)
 				delete m_baseStream;
 		}
+
+
 		void BinaryReader::FillBuffer(int32 len)
 		{
 			int64 result = m_baseStream->Read(&m_buffer[0], len); 
 			if (len != result)
 			{
-				throw Apoc3DException::createException(EX_EndOfStream, L"");
+				throwEndofStreamException();
 			}
 		}
 
@@ -209,7 +211,7 @@ namespace Apoc3D
 			int r = m_baseStream->ReadByte();
 			if (r == -1)
 			{
-				throw Apoc3DException::createException(EX_EndOfStream, L"");
+				 throwEndofStreamException();
 			}
 			return reinterpret_cast<const char&>(r);
 		}
@@ -556,6 +558,13 @@ namespace Apoc3D
 		void BinaryReader::Close() const
 		{
 			m_baseStream->Close();
+		}
+
+
+
+		void BinaryReader::throwEndofStreamException()
+		{
+			throw AP_EXCEPTION(EX_EndOfStream, L"");
 		}
 	}
 }

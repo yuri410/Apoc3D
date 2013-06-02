@@ -183,7 +183,7 @@ namespace APBuild
 		case D3DFMT_A8R3G3B2:
 			return FMT_Unknown;
 		}
-		throw Apoc3DException::createException(EX_NotSupported, L"");
+		throw AP_EXCEPTION(EX_NotSupported, L"ConvertBackPixelFormat");
 	}
 	D3DCUBEMAP_FACES ConvertCubemapFace(CubeMapFace face)
 	{
@@ -1741,7 +1741,7 @@ LFail:
 		case IL_DXT5:
 			return FMT_DXT5;
 		}
-		throw Apoc3DException::createException(EX_NotSupported, L"");
+		throw AP_EXCEPTION(EX_NotSupported, L"ConvertFormat");
 		//return FMT_Unknown;
 	}
 	int ConvertFilter(TextureFilterType flt)
@@ -1755,7 +1755,7 @@ LFail:
 		case TFLT_BSpline:
 			return ILU_SCALE_BSPLINE;
 		}
-		throw Apoc3DException::createException(EX_NotSupported, L"Not supported filter type");
+		throw AP_EXCEPTION(EX_NotSupported, L"Not supported filter type");
 	}
 	void TextureBuild::BuildByDevIL(const TextureBuildConfig& config)
 	{

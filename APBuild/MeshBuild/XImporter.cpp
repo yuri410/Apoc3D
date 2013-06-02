@@ -81,7 +81,7 @@ namespace APBuild
 		case D3DDECLTYPE_FLOAT16_4:
 			return VEF_HalfVector4;
 		}
-		throw Apoc3DException::createException(EX_NotSupported, L"");
+		throw AP_EXCEPTION(EX_NotSupported, L"ConvertVEFormat");
 			//D3DDECLTYPE_USHORT2N    = 11,
 			//D3DDECLTYPE_USHORT4N    = 12,
 	}
@@ -118,7 +118,7 @@ namespace APBuild
 		case D3DDECLUSAGE_SAMPLE:
 			return VEU_Sample;
 		}
-		throw Apoc3DException::createException(EX_NotSupported, L"");
+		throw AP_EXCEPTION(EX_NotSupported, L"ConvertVEUsage");
 	}
 	ModelData* XImporter::Import(const MeshBuildConfig& config)
 	{

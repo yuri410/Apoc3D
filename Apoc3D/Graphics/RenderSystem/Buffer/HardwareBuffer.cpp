@@ -40,7 +40,7 @@ namespace Apoc3D
 					m_isLocked = true;
 					return ptr;
 				}
-				throw Apoc3DException::createException(EX_InvalidOperation, L"Buffer already Locked.");
+				throw AP_EXCEPTION(EX_InvalidOperation, L"Buffer already Locked.");
 			}
 			void* HardwareBuffer::Lock(int offset, int size, LockMode mode)
 			{
@@ -50,7 +50,7 @@ namespace Apoc3D
 					m_isLocked = true;
 					return ptr;
 				}
-				throw Apoc3DException::createException(EX_InvalidOperation, L"Buffer already Locked.");
+				throw AP_EXCEPTION(EX_InvalidOperation, L"Buffer already Locked.");
 			}
 
 			void HardwareBuffer::Unlock()
@@ -62,7 +62,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw Apoc3DException::createException(EX_InvalidOperation, L"Buffer is not locked");
+					throw AP_EXCEPTION(EX_InvalidOperation, L"Buffer is not locked");
 				}
 			}
 

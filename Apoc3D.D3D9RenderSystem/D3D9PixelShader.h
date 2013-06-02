@@ -41,16 +41,6 @@ namespace Apoc3D
 		{
 			class D3D9PixelShader : public PixelShader
 			{
-			private:
-				float m_buffer[192];
-				int m_intBuffer[32];
-				BOOL m_boolBuffer[8];
-
-				D3D9RenderDevice* m_device;
-				IDirect3DPixelShader9* m_shader;
-				
-				ConstantTable* m_constantTable;
-
 			public:
 				IDirect3DPixelShader9* getD3DPS() const { return m_shader; }
 
@@ -116,6 +106,18 @@ namespace Apoc3D
 				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState &state);
 
 				virtual void AutoSetParameters(const Material* mtrl);
+
+			private:
+				NoInline static void ThrowKeyNotFoundEx(const String& name);
+
+				float m_buffer[192];
+				int m_intBuffer[32];
+				BOOL m_boolBuffer[8];
+
+				D3D9RenderDevice* m_device;
+				IDirect3DPixelShader9* m_shader;
+
+				ConstantTable* m_constantTable;
 			};
 		}
 	}

@@ -237,7 +237,7 @@ namespace Apoc3D
 				{
 					return m_entries[index].value;
 				}
-				throw Apoc3DException::createException(EX_KeyNotFound, L"");
+				throw AP_EXCEPTION(EX_KeyNotFound, L"");
 			}
 
 			bool TryGetValue(const T& key, S& value) const
@@ -313,7 +313,7 @@ namespace Apoc3D
 					{
 						if (add)
 						{
-							throw Apoc3DException::createException(EX_Duplicate, L"");
+							throw AP_EXCEPTION(EX_Duplicate, L"");
 						}
 						m_entries[i].data = item;
 						return;

@@ -73,6 +73,12 @@
 #	endif
 #endif
 
+#if defined(_MSC_VER)
+#define NoInline __declspec(noinline) 
+#elif defined(__GCC__)
+#define NoInline __attribute__((noinline)) 
+#endif
+
 #ifndef CASSERT_INCLUDED
 #define CASSERT_INCLUDED
 #include <cassert>

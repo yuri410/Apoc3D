@@ -33,6 +33,10 @@ namespace Apoc3D
 {
 	namespace IO
 	{
+		/************************************************************************/
+		/*  FileStream                                                          */
+		/************************************************************************/
+
 #define IFSTREAM(x) ((ifstream*&)x)
 
 		FileStream::FileStream(const String& filename)
@@ -58,7 +62,7 @@ namespace Apoc3D
 		}
 		void FileStream::Write(const char* src, int64 count)
 		{
-			throw Apoc3DException::createException(EX_NotSupported, L"Can't write");
+			throw AP_EXCEPTION(EX_NotSupported, L"Can't write");
 		}
 
 		void FileStream::Seek(int64 offset, SeekMode mode)
@@ -94,9 +98,11 @@ namespace Apoc3D
 		{ 
 			return IFSTREAM(m_in)->tellg(); 
 		}
+
 		/************************************************************************/
-		/*                                                                      */
+		/*  FileOutStream                                                       */
 		/************************************************************************/
+
 #define OFSTREAM(x) ((ofstream*&)x)
 
 		FileOutStream::FileOutStream(const String& filename)
@@ -111,7 +117,7 @@ namespace Apoc3D
 
 		int64 FileOutStream::Read(char* dest, int64 count)
 		{
-			throw Apoc3DException::createException(EX_NotSupported, L"Can't read");
+			throw AP_EXCEPTION(EX_NotSupported, L"Can't read");
 		}
 		void FileOutStream::Write(const char* src, int64 count)
 		{
@@ -163,19 +169,28 @@ namespace Apoc3D
 			return OFSTREAM(m_out)->tellp(); 
 		}
 		/************************************************************************/
-		/*                                                                      */
+		/*  MemoryStream                                                        */
 		/************************************************************************/
 
 		void MemoryStream::Write(const char* src, int64 count)
 		{
 			if (count > m_length)
 			{
-				throw Apoc3DException::createException(EX_EndOfStream, L"");
+				throwEndofStreamException();
 			}
 			
 			memcpy(m_data + m_position, src, static_cast<size_t>(count));			
 			m_position += count;
 		}
+
+		void MemoryStream::throwEndofStreamException()
+		{
+			throw AP_EXCEPTION(EX_EndOfStream, L"");
+		}
+
+		/************************************************************************/
+		/*  VirtualStream                                                       */
+		/************************************************************************/
 
 		void VirtualStream::setPosition(int64 offset)
 		{

@@ -670,7 +670,7 @@ namespace Apoc3D
 				((byte*)dest)[1] = floatToU8Channel(a);
 				break;
 			default:
-				throw Apoc3DException::createException(EX_NotSupported,L"");
+				throw AP_EXCEPTION(EX_NotSupported, L"Not supported for unpacking");
 				break;
 			}
 		}
@@ -729,7 +729,7 @@ namespace Apoc3D
 				*a =  reinterpret_cast<const uint16*>(src)[1] / (255.0f);
 				break;
 			default:
-				throw Apoc3DException::createException(EX_NotSupported,L"");
+				throw AP_EXCEPTION(EX_NotSupported, L"Not supported for unpacking");
 				break;
 			}
 		}

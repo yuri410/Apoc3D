@@ -105,7 +105,7 @@ namespace Apoc3D
 		{
 			const Entry* ent = FindEntry(name);
 			if (!ent)
-				throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
+				throw AP_EXCEPTION(EX_KeyNotFound, name);
 
 			return ent->Offset;
 		}
@@ -163,7 +163,8 @@ namespace Apoc3D
 			const Entry* ent = FindEntry(name);
 			if (ent)
 				return new BinaryReader(new VirtualStream(m_stream, ent->Offset, ent->Size));
-			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
+			throwKeynotFoundException(name);
+			throw; // keep the compiler happy
 		}
 
 
@@ -172,7 +173,8 @@ namespace Apoc3D
 			const Entry* ent = FindEntry(name);
 			if (ent)
 				return new VirtualStream(m_stream, ent->Offset, ent->Size);
-			throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
+			throwKeynotFoundException(name);
+			throw; // keep the compiler happy
 		}
 
 
@@ -1486,6 +1488,11 @@ namespace Apoc3D
 					v.MaxZ = cr32_le(m_buffer + sizeof(float));
 				}
 			}
+		}
+
+		void TaggedDataReader::throwKeynotFoundException(const String& key)
+		{
+			throw AP_EXCEPTION(EX_KeyNotFound, key);
 		}
 
 		//////////////////////////////////////////////////////////////////////////

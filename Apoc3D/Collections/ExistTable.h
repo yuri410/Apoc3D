@@ -143,7 +143,7 @@ namespace Apoc3D
 					{
 						if (add)
 						{
-							throw Apoc3DException::createException(EX_Duplicate, L"");
+							throw AP_EXCEPTION(EX_Duplicate, L"");
 						}
 						m_entries[i].data = item;
 						return;

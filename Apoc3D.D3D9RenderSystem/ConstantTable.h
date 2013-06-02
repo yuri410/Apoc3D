@@ -94,15 +94,16 @@ namespace Apoc3D
 
 			class ConstantTable
 			{
-			private:
-				HashMap<String, ShaderConstant> m_table;
-				
-				void ThrowKeyNotFoundEx(const String& name) const;
 			public:
 				ConstantTable(const DWORD* bytes);
 				~ConstantTable();
 
 				inline const ShaderConstant& getConstant(const String& name) const;
+
+			private:
+				HashMap<String, ShaderConstant> m_table;
+
+				NoInline static void ThrowKeyNotFoundEx(const String& name);
 			};
 
 			const ShaderConstant& ConstantTable::getConstant(const String& name) const

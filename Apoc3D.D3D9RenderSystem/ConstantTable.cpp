@@ -34,9 +34,9 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			void ConstantTable::ThrowKeyNotFoundEx(const String& name) const
+			void ConstantTable::ThrowKeyNotFoundEx(const String& name)
 			{
-				throw Apoc3DException::createException(EX_KeyNotFound, name.c_str());
+				throw AP_EXCEPTION(EX_KeyNotFound, name);
 			}
 			
 

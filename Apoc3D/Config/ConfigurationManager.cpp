@@ -85,9 +85,9 @@ namespace Apoc3D
 				{
 					return fmt->Load(rl);
 				}
-				throw Apoc3DException::createException(EX_NotSupported, ext + L" files are not supported");
+				throw AP_EXCEPTION(EX_NotSupported, ext + L" files are not supported");
 			}
-			throw Apoc3DException::createException(EX_Argument, L"Either a FileLocation or a ConfigurationFormat is required.");
+			throw AP_EXCEPTION(EX_Argument, L"Either a FileLocation or a ConfigurationFormat is required.");
 		}
 
 

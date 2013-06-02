@@ -65,7 +65,7 @@ namespace Apoc3D
 			{
 				if (m_window)
 				{
-					throw Apoc3DException::createException(EX_InvalidOperation, L"Cannot create more render view when a render window has been created.");
+					throw AP_EXCEPTION(EX_InvalidOperation, L"Cannot create more render view when a render window has been created.");
 				}
 
 				if (!pm.IsFullForm)

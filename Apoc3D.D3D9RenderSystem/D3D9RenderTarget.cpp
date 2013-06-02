@@ -124,7 +124,7 @@ namespace Apoc3D
 						sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertPixelFormat(getColorFormat()), sets->D3D9.PresentParameters.Windowed, mms, &quality);
 					if (hr != S_OK)
 					{
-						throw Apoc3DException::createException(EX_NotSupported, L"");
+						throw AP_EXCEPTION(EX_NotSupported, L"");
 					}
 					DWORD quality2;
 					hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
@@ -132,7 +132,7 @@ namespace Apoc3D
 
 					if (hr != S_OK)
 					{
-						throw Apoc3DException::createException(EX_NotSupported, L"");
+						throw AP_EXCEPTION(EX_NotSupported, L"");
 					}
 
 					quality = min(quality,quality2);
@@ -264,7 +264,7 @@ namespace Apoc3D
 						sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertPixelFormat(format), sets->D3D9.PresentParameters.Windowed, mms, &quality);
 					if (hr != S_OK)
 					{
-						throw Apoc3DException::createException(EX_NotSupported, L"");
+						throw AP_EXCEPTION(EX_NotSupported, L"");
 					}
 					DWORD quality2;
 					hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
@@ -272,7 +272,7 @@ namespace Apoc3D
 
 					if (hr != S_OK)
 					{
-						throw Apoc3DException::createException(EX_NotSupported, L"");
+						throw AP_EXCEPTION(EX_NotSupported, L"");
 					}
 
 					hr = dev->CreateRenderTarget(width, height, 
@@ -319,7 +319,7 @@ namespace Apoc3D
 			{
 				if (!m_d3dTexture)
 				{
-					throw Apoc3DException::createException(EX_InvalidOperation, L"Cannot get texture from default render target");
+					throw AP_EXCEPTION(EX_InvalidOperation, L"Cannot get texture from default render target");
 				}
 				return m_d3dTexture;
 			}

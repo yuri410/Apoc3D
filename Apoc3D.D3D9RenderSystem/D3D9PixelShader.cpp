@@ -85,7 +85,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				return cons.RegisterIndex;
 			}
@@ -271,7 +271,7 @@ namespace Apoc3D
 						SetValue(reg, *value);
 						return;
 					}
-					throw Apoc3DException::createException(EX_Argument, L"count");
+					throw AP_EXCEPTION(EX_Argument, L"count");
 				}
 				for (int i=0;i<count;i++)
 				{
@@ -296,7 +296,7 @@ namespace Apoc3D
 						return;
 					}
 					
-					throw Apoc3DException::createException(EX_Argument, L"count");
+					throw AP_EXCEPTION(EX_Argument, L"count");
 				}
 				m_device->getDevice()->SetPixelShaderConstantF(reg, value, count / 4);
 			}
@@ -309,7 +309,7 @@ namespace Apoc3D
 						SetValue(reg, *value);
 						return;
 					}
-					throw Apoc3DException::createException(EX_Argument, L"count");
+					throw AP_EXCEPTION(EX_Argument, L"count");
 				}
 				m_device->getDevice()->SetPixelShaderConstantI(reg, value, count / 4);
 			}
@@ -350,7 +350,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				Vector2Utils::Store(value, m_buffer);
 				m_buffer[2] = m_buffer[3] = 0;
@@ -362,7 +362,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				Vector3Utils::Store(value, m_buffer);
 				m_buffer[3] = 0;
@@ -373,7 +373,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				m_device->getDevice()->SetPixelShaderConstantF(cons.RegisterIndex, Vector4Utils::GetElementAddress(value), 1);
 			}
@@ -382,7 +382,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value);
 			}
@@ -391,7 +391,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value);
 			}
@@ -400,7 +400,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value);
 			}
@@ -409,7 +409,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value);
 			}
@@ -421,7 +421,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetVector2(cons.RegisterIndex, value, count);
 			}
@@ -430,7 +430,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetVector3(cons.RegisterIndex, value, count);
 			}
@@ -439,7 +439,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetVector4(cons.RegisterIndex, value, count);
 			}
@@ -448,7 +448,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
@@ -457,7 +457,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
@@ -466,7 +466,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
@@ -475,7 +475,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
@@ -485,7 +485,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value);
 			}
@@ -494,7 +494,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value);
 			}
@@ -503,7 +503,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value);
 			}
@@ -512,7 +512,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
@@ -521,7 +521,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
@@ -530,7 +530,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				if (!cons.RegisterCount)
 				{
-					throw Apoc3DException::createException(EX_KeyNotFound, paramName.c_str());
+					ThrowKeyNotFoundEx(paramName);
 				}
 				SetValue(cons.RegisterIndex, value, count);
 			}
@@ -549,6 +549,11 @@ namespace Apoc3D
 			void D3D9PixelShader::AutoSetParameters(const Material* mtrl)
 			{
 
+			}
+
+			void D3D9PixelShader::ThrowKeyNotFoundEx(const String& name)
+			{
+				throw AP_EXCEPTION(EX_KeyNotFound, name);
 			}
 		}
 	}

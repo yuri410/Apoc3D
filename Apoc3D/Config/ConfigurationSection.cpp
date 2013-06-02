@@ -647,7 +647,7 @@ namespace Apoc3D
 				String ss = val.substr(0, pos);
 				return StringUtils::ParseSingle(ss);
 			}
-			throw Apoc3DException::createException(EX_FormatException, val.c_str());
+			throw AP_EXCEPTION(EX_FormatException, val);
 		}
 		String PercentageToString(float v)
 		{
@@ -678,7 +678,7 @@ namespace Apoc3D
 
 				return PACK_COLOR(r,g,b,a);
 			}
-			throw Apoc3DException::createException(EX_FormatException, L"Wrong number of channels");
+			throw AP_EXCEPTION(EX_FormatException, L"Wrong number of channels: " + str);
 		}
 		String ColorValueToString(ColorValue v)
 		{

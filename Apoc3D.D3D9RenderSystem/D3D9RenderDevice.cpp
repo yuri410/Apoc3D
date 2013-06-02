@@ -232,7 +232,7 @@ namespace Apoc3D
 					{
 						if (index)
 						{
-							throw Apoc3DException::createException(EX_InvalidOperation, L"Render targets with a depth buffer can only be set at index 0.");
+							throw AP_EXCEPTION(EX_InvalidOperation, L"Render targets with a depth buffer can only be set at index 0.");
 						}
 						dev->SetDepthStencilSurface(drt->getDepthSurface());
 					}

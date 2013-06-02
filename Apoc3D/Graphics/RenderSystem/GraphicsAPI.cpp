@@ -51,7 +51,7 @@ namespace Apoc3D
 			{
 				if (m_factories.Contains(fac->getName()))
 				{
-					Apoc3DException::createException(EX_InvalidOperation, L"Graphics API Already registered");
+					throw AP_EXCEPTION(EX_InvalidOperation, L"The Graphics API " + fac->getName() + L" is already registered");
 				}
 
 
@@ -94,7 +94,7 @@ namespace Apoc3D
 				}
 				if (!passed)
 				{
-					Apoc3DException::createException(EX_InvalidOperation, L"Graphics API not registered");
+					throw AP_EXCEPTION(EX_InvalidOperation, L"The graphics API " + name + L" is not registered");
 				}
 			}
 			void GraphicsAPIManager::UnregisterGraphicsAPI(GraphicsAPIFactory* fac)
@@ -124,7 +124,7 @@ namespace Apoc3D
 				}
 				if (!passed)
 				{
-					Apoc3DException::createException(EX_InvalidOperation, L"Graphics API not registered");
+					throw AP_EXCEPTION(EX_InvalidOperation, L"Graphics API not registered");
 				}
 			}
 
@@ -161,9 +161,9 @@ namespace Apoc3D
 						}
 						return list->operator[](bestIdx).Factory->CreateDeviceContext();
 					}
-					throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
+					throw AP_EXCEPTION(EX_NotSupported, L"Platform not supported");
 				}
-				throw Apoc3DException::createException(EX_NotSupported, L"Platform not supported");
+				throw AP_EXCEPTION(EX_NotSupported, L"Platform not supported");
 			}
 		}
 	}

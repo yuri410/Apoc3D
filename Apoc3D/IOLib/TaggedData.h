@@ -327,6 +327,8 @@ namespace Apoc3D
 
 			const Entry* FindEntry(const String& name) const { return m_positions.TryGetValue(name); }
 
+			NoInline static void throwKeynotFoundException(const String& key);
+
 			bool m_endianDependent;
 			int m_sectCount;
 			SectionTable m_positions;

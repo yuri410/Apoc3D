@@ -165,7 +165,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw Apoc3DException::createException(EX_NotSupported, L"The format version of this mesh data is out of date.");
+					throw AP_EXCEPTION(EX_NotSupported, L"The format version of this mesh data is out of date.");
 				}
 			}
 			else

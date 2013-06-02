@@ -104,6 +104,7 @@ namespace Apoc3D
 			void SuspendStreamRelease() { m_shouldDeleteStream = false; }
 		private:
 			inline void FillBuffer(int32 len);
+			NoInline static void throwEndofStreamException();
 
 			bool m_isEndianDependent;
 			bool m_shouldDeleteStream;
