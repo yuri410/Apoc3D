@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "InputAPI.h"
 
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "Mouse.h"
 #include "Keyboard.h"

@@ -26,9 +26,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+
 #include "apoc3d/Common.h"
+#include "apoc3d/ApocException.h"
 #include "CollectionsCommon.h"
-#include "apoc3d/Apoc3DException.h"
 
 namespace Apoc3D
 {

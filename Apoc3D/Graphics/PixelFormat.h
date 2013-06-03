@@ -26,7 +26,7 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 

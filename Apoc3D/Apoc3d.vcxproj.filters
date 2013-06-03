@@ -21,9 +21,6 @@
     <ClInclude Include="nedmalloc\malloc.c">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Apoc3DException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scene\SceneObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -456,9 +453,6 @@
     <ClInclude Include="Collections\EnumConverterHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CommandInterpreter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -474,10 +468,16 @@
     <ClInclude Include="Collections\Queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="String.h">
+    <ClInclude Include="Utility\Compression.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utility\Compression.h">
+    <ClInclude Include="tinythread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ApocString.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ApocException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -519,9 +519,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\RenderSystem\Buffer\HardwareBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Apoc3DException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\PixelFormat.cpp">
@@ -833,18 +830,16 @@
     <ClCompile Include="Utility\Compression.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tinythread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ApocException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="apoc3d.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="apoc3d.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

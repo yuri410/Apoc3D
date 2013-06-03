@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Win32Mouse.h"
 #include "Win32Keyboard.h"
 
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Utility/StringUtils.h"
 

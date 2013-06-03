@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Collections/Stack.h"
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 #include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"

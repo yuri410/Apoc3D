@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryWriter.h"
 #include "Streams.h"
 
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Math/Color.h"

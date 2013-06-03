@@ -146,7 +146,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Apoc3DException.h" />
+    <ClInclude Include="ApocException.h" />
     <ClInclude Include="Collections\EnumConverterHelper.h" />
     <ClInclude Include="Collections\List2D.h" />
     <ClInclude Include="Collections\CollectionsCommon.h" />
@@ -216,11 +216,11 @@
     <ClInclude Include="Platform\API.h" />
     <ClInclude Include="Platform\Thread.h" />
     <ClInclude Include="Project\Project.h" />
-    <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene\OctreeSceneManager.h" />
     <ClInclude Include="Scene\ScenePassTypes.h" />
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />
-    <ClInclude Include="String.h" />
+    <ClInclude Include="ApocString.h" />
+    <ClInclude Include="tinythread.h" />
     <ClInclude Include="tinyxml.h" />
     <ClInclude Include="UILib\Button.h" />
     <ClInclude Include="UILib\CheckBox.h" />
@@ -303,7 +303,7 @@
     <ClInclude Include="Vfs\VFSCommon.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Apoc3DException.cpp" />
+    <ClCompile Include="ApocException.cpp" />
     <ClCompile Include="Collections\CollectionsCommon.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Config\ABCConfigurationFormat.cpp" />
@@ -364,6 +364,7 @@
     <ClCompile Include="Project\Project.cpp" />
     <ClCompile Include="Scene\OctreeSceneManager.cpp" />
     <ClCompile Include="Scene\SceneRenderScriptParser.cpp" />
+    <ClCompile Include="tinythread.cpp" />
     <ClCompile Include="tinyxml.cpp" />
     <ClCompile Include="tinyxmlerror.cpp" />
     <ClCompile Include="tinyxmlparser.cpp" />
@@ -422,11 +423,7 @@
     <ClCompile Include="Vfs\ResourceLocation.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="apoc3d.ico" />
     <None Include="small.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="apoc3d.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

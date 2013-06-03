@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/IOLib/TextureData.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/Box.h"
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 #include "apoc3d/VFS/ResourceLocation.h"
 
 namespace Apoc3D

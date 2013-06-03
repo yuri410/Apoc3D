@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GraphicsDeviceManager.h"
 #include "GameWindow.h"
 
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 #include "apoc3d/Core/GameTime.h"
 #include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 

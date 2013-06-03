@@ -1,5 +1,5 @@
 
-#include "Apoc3DException.h"
+#include "ApocException.h"
 #include "Core/Logging.h"
 #include "Collections/EnumConverterHelper.h"
 #include "Utility/StringUtils.h"
@@ -10,7 +10,7 @@ using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
-	class Apoc3DExceptionTypeConverter : public EnumDualConversionHelper<Apoc3DExceptionType>
+	class Apoc3DExceptionTypeConverter : public EnumDualConversionHelper<ApocExceptionType>
 	{
 	public:
 		Apoc3DExceptionTypeConverter()
@@ -31,7 +31,7 @@ namespace Apoc3D
 		}
 	} exceptTypeConverter;
 
-	Apoc3DException Apoc3DException::createException(Apoc3DExceptionType type, const String& msg, const wchar_t* file, int line)
+	ApocException ApocException::createException(ApocExceptionType type, const String& msg, const wchar_t* file, int line)
 	{
 		String text = exceptTypeConverter.ToString(type);
 
@@ -45,6 +45,6 @@ namespace Apoc3D
 
 		LogManager::getSingleton().Write(LOG_System, text, LOGLVL_Fatal);
 
-		return Apoc3DException(msg, type);	
+		return ApocException(msg, type);	
 	}
 }

@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "TaggedData.h"
 #include "IOUtils.h"
 
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 #include "apoc3d/Math/Ray.h"
 #include "apoc3d/Math/BoundingBox.h"
 #include "apoc3d/Math/BoundingSphere.h"

@@ -32,7 +32,7 @@
 namespace Apoc3D
 {
 
-	enum Apoc3DExceptionType
+	enum ApocExceptionType
 	{
 		EX_Default,
 		EX_InvalidOperation,
@@ -47,30 +47,30 @@ namespace Apoc3D
 		EX_ScriptCompileError
 	};
 
-	class APAPI Apoc3DException
+	class APAPI ApocException
 	{
 	public:
-		Apoc3DException(const String& msg, Apoc3DExceptionType type)
+		ApocException(const String& msg, ApocExceptionType type)
 			: m_message(msg), m_type(type)
 		{
 
 		}
-		Apoc3DException(const Apoc3DException &another)
+		ApocException(const ApocException &another)
 			: m_message(another.m_message)
 		{
 		}
 
 		const String& getMessage() const { return m_message; }
-		const Apoc3DExceptionType getType() const { return m_type; }
+		const ApocExceptionType getType() const { return m_type; }
 
-		static Apoc3DException createException(Apoc3DExceptionType type, const String& msg, const wchar_t* file, int line);
+		static ApocException createException(ApocExceptionType type, const String& msg, const wchar_t* file, int line);
 
 	private:
 		String m_message;
-		Apoc3DExceptionType m_type;
+		ApocExceptionType m_type;
 	};
 
-#define AP_EXCEPTION(type, msg) (Apoc3DException::createException(type, msg, _CRT_WIDE(__FILE__), __LINE__))
+#define AP_EXCEPTION(type, msg) (ApocException::createException(type, msg, _CRT_WIDE(__FILE__), __LINE__))
 };
 
 

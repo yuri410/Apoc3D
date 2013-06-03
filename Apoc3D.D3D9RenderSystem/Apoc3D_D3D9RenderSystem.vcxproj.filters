@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="D3D9Common.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -90,9 +87,6 @@
     <ClInclude Include="VolatileResource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="D3D9RenderViewSet.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -103,6 +97,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="D3D9DeviceContext.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -185,5 +182,15 @@
     <ClCompile Include="D3D9DeviceContext.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="apoc3d.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="apoc3d.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

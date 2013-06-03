@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 #include "ConstantTable.h"

@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Buffer/D3D9DepthBuffer.h"
 #include "GraphicsDeviceManager.h"
 
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 
 namespace Apoc3D
 {

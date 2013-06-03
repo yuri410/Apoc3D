@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "GameWindow.h"
 
-#include "apoc3d/Resource.h"
+#include "Resource.h"
 
 namespace Apoc3D
 {

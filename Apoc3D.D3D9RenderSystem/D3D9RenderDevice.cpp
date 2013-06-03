@@ -40,7 +40,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Sprite.h"
 #include "VolatileResource.h"
 
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 
 #include "apoc3d/Graphics/Camera.h"
 #include "apoc3d/Graphics/Material.h"
