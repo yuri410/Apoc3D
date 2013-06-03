@@ -837,9 +837,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="small.ico">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
 </Project>

@@ -422,9 +422,6 @@
     <ClCompile Include="Vfs\PathUtils.cpp" />
     <ClCompile Include="Vfs\ResourceLocation.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="small.ico" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
