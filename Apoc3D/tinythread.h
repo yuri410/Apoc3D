@@ -24,7 +24,7 @@ freely, subject to the following restrictions:
 #ifndef _TINYTHREAD_H_
 #define _TINYTHREAD_H_
 
-#include "ExportSettings.h"
+#include "ApocExportSettings.h"
 
 /// @file
 /// @mainpage TinyThread++ API Reference

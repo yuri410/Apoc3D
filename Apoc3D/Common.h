@@ -51,7 +51,7 @@
 #	define APOC3D_PLATFORM_NAME L"linux"
 #endif
 
-#include "ExportSettings.h"
+#include "ApocExportSettings.h"
 
 //#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 //#	ifdef APOC3D_STATIC_RT
