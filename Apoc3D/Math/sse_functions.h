@@ -57,66 +57,51 @@ struct __declspec(align(16)) SSEVecLoader
 #pragma pack(pop)
 static __m128 _MASKSIGN_;
 
-inline __m128 VecLoad(const SSEVecLoader& vec)
-{
-	return _mm_load_ps(reinterpret_cast<const float*>(&vec));
-};
-inline __m128 VecLoad(float f)
+inline __m128 _VecLoad(const SSEVecLoader& vec) { return _mm_load_ps(reinterpret_cast<const float*>(&vec)); };
+inline __m128 _VecLoad(float f)
 {
 	return _mm_set1_ps(f);
 };
-inline __m128 VecLoad(float x, float y, float z)
+inline __m128 _VecLoad(float x, float y, float z)
 {
 	float vec[4] = {x,y,z,0};
 	return _mm_load_ps(vec);
 };
-inline __m128 VecLoad(float x, float y, float z, float w)
+inline __m128 _VecLoad(float x, float y, float z, float w)
 {
 	float vec[4] = {x,y,z,w};
 	return _mm_load_ps(vec);
 };
 /* Adds two vectors.
 */
-inline __m128 VecAdd(__m128 va, __m128 vb)
-{
-	return _mm_add_ps(va, vb);
-};
+inline __m128 _VecAdd(__m128 va, __m128 vb) { return _mm_add_ps(va, vb); };
 
 /* Subtracts two vectors.
 */
-inline __m128 VecSub(__m128 va, __m128 vb)
-{
-	return _mm_sub_ps(va, vb);
-};
+inline __m128 _VecSub(__m128 va, __m128 vb) { return _mm_sub_ps(va, vb); };
 
 /* Modulates a vector by another.
 */
-inline __m128 VecMul(__m128 va, __m128 vb)
-{
-	return _mm_mul_ps(va, vb);
-};
+inline __m128 _VecMul(__m128 va, __m128 vb) { return _mm_mul_ps(va, vb); };
 
 /* Scales a vector by the given value.
 */
-inline __m128 VecMul(__m128 va, float vb)
+inline __m128 _VecMul(__m128 va, float vb)
 {
 	__m128 scale = _mm_set1_ps(vb);
 	return _mm_mul_ps(va, scale);			
 }
 
 
-inline __m128 VecDiv(__m128 va, __m128 vb)
-{
-	return _mm_div_ps(va, vb);
-};
+inline __m128 _VecDiv(__m128 va, __m128 vb) { return _mm_div_ps(va, vb); };
 		
-inline __m128 VecDiv(__m128 va, float vb)
+inline __m128 _VecDiv(__m128 va, float vb)
 {
 	__m128 dd = _mm_set1_ps(vb);
 	return _mm_div_ps(va, dd);
 };
 
-inline __m128 VecStore(float* pVec, __m128 v)
+inline __m128 _VecStore(float* pVec, __m128 v)
 {
 	SSEVecLoader buffer;
 	_mm_store_ps(reinterpret_cast<float*>(&buffer), v);
@@ -125,7 +110,7 @@ inline __m128 VecStore(float* pVec, __m128 v)
 
 /* Reverses the direction of a given vector.
 */
-inline __m128 VecNegate(__m128 va)
+inline __m128 _VecNegate(__m128 va)
 {
 	return _mm_xor_ps(_MASKSIGN_, va);
 }
@@ -139,8 +124,8 @@ inline __m128 VecNegate(__m128 va)
 #endif
 inline __m128 rsqrt_nr(__m128 a)
 {
-	static const __m128 fvecf0pt5 = VecLoad(0.5f);
-	static const __m128 fvecf3pt0 = VecLoad(3.0f);
+	static const __m128 fvecf0pt5 = _VecLoad(0.5f);
+	static const __m128 fvecf3pt0 = _VecLoad(3.0f);
 	__m128 Ra0 = _mm_rsqrt_ps(a);
 
 	__m128 l = _mm_mul_ps(fvecf0pt5 , Ra0);
@@ -159,17 +144,11 @@ inline __m128 rsqrt_nr(__m128 a)
 		
 /* Returns a vector containing the smallest components of the specified vectors.
 */
-inline __m128 VecMin(__m128 va, __m128 vb)
-{
-	return _mm_min_ps(va, vb);
-};
+inline __m128 _VecMin(__m128 va, __m128 vb) { return _mm_min_ps(va, vb); };
 
 /* Returns a vector containing the largest components of the specified vectors.
 */
-inline __m128 VecMax(__m128 va, __m128 vb)
-{
-	return _mm_max_ps(va, vb);
-};
+inline __m128 _VecMax(__m128 va, __m128 vb) { return _mm_max_ps(va, vb); };
 
 
 /* Element Count Dependent */
@@ -177,7 +156,7 @@ inline __m128 VecMax(__m128 va, __m128 vb)
 
 /* Calculates the cross product of two vectors.
 */
-inline float Vec2Cross(__m128 va, __m128 vb)
+inline float _Vec2Cross(__m128 va, __m128 vb)
 {
 	// a.X * b.Y - b.X * a.Y;
 	__m128 l1, l2, m1, m2;
@@ -190,7 +169,7 @@ inline float Vec2Cross(__m128 va, __m128 vb)
 
 	return reinterpret_cast<const float&>(r);
 }
-inline __m128 Vec3Cross(__m128 va, __m128 vb)
+inline __m128 _Vec3Cross(__m128 va, __m128 vb)
 {
 	__m128 l1, l2, m1, m2;
 	l1 = _mm_shuffle_ps(va,va, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
@@ -204,7 +183,7 @@ inline __m128 Vec3Cross(__m128 va, __m128 vb)
 
 /*  Calculates the dot product of two vectors.
 */
-inline float Vec2Dot(__m128 va, __m128 vb)
+inline float _Vec2Dot(__m128 va, __m128 vb)
 {
 	__m128 t0 = _mm_mul_ps(va, vb);
 
@@ -213,7 +192,7 @@ inline float Vec2Dot(__m128 va, __m128 vb)
 
 	return reinterpret_cast<const float&>(dot);
 };
-inline float Vec3Dot(__m128 va, __m128 vb)
+inline float _Vec3Dot(__m128 va, __m128 vb)
 {
 	__m128 t0 = _mm_mul_ps(va, vb);
 
@@ -224,7 +203,7 @@ inline float Vec3Dot(__m128 va, __m128 vb)
 			
 	return reinterpret_cast<const float&>(dot);
 };
-inline float Vec4Dot(__m128 va, __m128 vb)
+inline float _Vec4Dot(__m128 va, __m128 vb)
 {
 	__m128 t0 = _mm_mul_ps(va, vb);
 
@@ -240,7 +219,7 @@ inline float Vec4Dot(__m128 va, __m128 vb)
 		
 /*  Calculates the dot product of two vectors.
 */
-inline __m128 Vec2Dot2(__m128 va, __m128 vb)
+inline __m128 _Vec2Dot2(__m128 va, __m128 vb)
 {
 	__m128 t0 = _mm_mul_ps(va, vb);
 			
@@ -249,7 +228,7 @@ inline __m128 Vec2Dot2(__m128 va, __m128 vb)
 
 	return dot;
 };
-inline __m128 Vec3Dot2(__m128 va, __m128 vb)
+inline __m128 _Vec3Dot2(__m128 va, __m128 vb)
 {
 	__m128 t0 = _mm_mul_ps(va, vb);
 			
@@ -260,7 +239,7 @@ inline __m128 Vec3Dot2(__m128 va, __m128 vb)
 
 	return dot;
 };
-inline __m128 Vec4Dot2(__m128 va, __m128 vb)
+inline __m128 _Vec4Dot2(__m128 va, __m128 vb)
 {
 	__m128 t0 = _mm_mul_ps(va, vb);
 
@@ -276,25 +255,25 @@ inline __m128 Vec4Dot2(__m128 va, __m128 vb)
 		
 /* Calculates the length of a specified vector.
 */
-inline float Vec2Length(__m128 va)
+inline float _Vec2Length(__m128 va)
 {			
-	__m128 dot = Vec2Dot2(va,va);
+	__m128 dot = _Vec2Dot2(va,va);
 
 	dot = _mm_sqrt_ps(dot);
 			
 	return reinterpret_cast<const float&>(dot);
 };
-inline float Vec3Length(__m128 va)
+inline float _Vec3Length(__m128 va)
 {			
-	__m128 dot = Vec3Dot2(va,va);
+	__m128 dot = _Vec3Dot2(va,va);
 
 	dot = _mm_sqrt_ps(dot);
 			
 	return reinterpret_cast<const float&>(dot);
 };
-inline float Vec4Length(__m128 va)
+inline float _Vec4Length(__m128 va)
 {			
-	__m128 dot = Vec4Dot2(va,va);
+	__m128 dot = _Vec4Dot2(va,va);
 
 	dot = _mm_sqrt_ps(dot);
 			
@@ -303,60 +282,60 @@ inline float Vec4Length(__m128 va)
 
 /* Calculates the squared length of a specified vector.
 */
-inline float Vec2LengthSquared(__m128 va)
+inline float _Vec2LengthSquared(__m128 va)
 {
-	return Vec2Dot(va, va);
+	return _Vec2Dot(va, va);
 };
-inline float Vec3LengthSquared(__m128 va)
+inline float _Vec3LengthSquared(__m128 va)
 {
-	return Vec3Dot(va, va);
+	return _Vec3Dot(va, va);
 };
-inline float Vec4LengthSquared(__m128 va)
+inline float _Vec4LengthSquared(__m128 va)
 {
-	return Vec4Dot(va, va);
+	return _Vec4Dot(va, va);
 };
 
 /* Calculates the distance between two vectors.
 */
-inline float Vec2Distance(__m128 va, __m128 vb)
+inline float _Vec2Distance(__m128 va, __m128 vb)
 {
 	__m128 d = _mm_sub_ps(va, vb);
-	return Vec2Length(d);
+	return _Vec2Length(d);
 }
-inline float Vec3Distance(__m128 va, __m128 vb)
+inline float _Vec3Distance(__m128 va, __m128 vb)
 {
 	__m128 d = _mm_sub_ps(va, vb);
-	return Vec3Length(d);
+	return _Vec3Length(d);
 }
-inline float Vec4Distance(__m128 va, __m128 vb)
+inline float _Vec4Distance(__m128 va, __m128 vb)
 {
 	__m128 d = _mm_sub_ps(va, vb);
-	return Vec4Length(d);
+	return _Vec4Length(d);
 }
 
 /* Calculates the squared distance between two vectors.
 */
-inline float Vec2DistanceSquared(__m128 va, __m128 vb)
+inline float _Vec2DistanceSquared(__m128 va, __m128 vb)
 {
 	__m128 d = _mm_sub_ps(va, vb);
-	return Vec2LengthSquared(d);
+	return _Vec2LengthSquared(d);
 }
-inline float Vec3DistanceSquared(__m128 va, __m128 vb)
+inline float _Vec3DistanceSquared(__m128 va, __m128 vb)
 {
 	__m128 d = _mm_sub_ps(va, vb);
-	return Vec3LengthSquared(d);
+	return _Vec3LengthSquared(d);
 }
-inline float Vec4DistanceSquared(__m128 va, __m128 vb)
+inline float _Vec4DistanceSquared(__m128 va, __m128 vb)
 {
 	__m128 d = _mm_sub_ps(va, vb);
-	return Vec4LengthSquared(d);
+	return _Vec4LengthSquared(d);
 }
 
 /* Converts a specified vector into a unit vector.
 */
-inline __m128 Vec2Normalize(__m128 va)
+inline __m128 _Vec2Normalize(__m128 va)
 {
-	__m128 t = Vec2Dot2(va, va);
+	__m128 t = _Vec2Dot2(va, va);
 #ifdef ZERO_VECTOR
 
 	static const __m128 vecZero = _mm_setzero_ps();
@@ -366,9 +345,9 @@ inline __m128 Vec2Normalize(__m128 va)
 #endif
 	return _mm_mul_ps(va, _mm_shuffle_ps(t,t,0x00));
 };
-inline __m128 Vec3Normalize(__m128 va)
+inline __m128 _Vec3Normalize(__m128 va)
 {
-	__m128 t = Vec3Dot2(va, va);
+	__m128 t = _Vec3Dot2(va, va);
 #ifdef ZERO_VECTOR
 
 	static const __m128 vecZero = _mm_setzero_ps();
@@ -378,9 +357,9 @@ inline __m128 Vec3Normalize(__m128 va)
 #endif
 	return _mm_mul_ps(va, _mm_shuffle_ps(t,t,0x00));
 };
-inline __m128 Vec4Normalize(__m128 va)
+inline __m128 _Vec4Normalize(__m128 va)
 {
-	__m128 t = Vec4Dot2(va, va);
+	__m128 t = _Vec4Dot2(va, va);
 #ifdef ZERO_VECTOR
 
 	static const __m128 vecZero = _mm_setzero_ps();
@@ -396,53 +375,53 @@ inline __m128 Vec4Normalize(__m128 va)
 
 /* Returns the reflection of a vector off a surface that has the specified normal. 
 */
-inline __m128 Vec2Reflect(__m128 Incident, __m128 Normal)
+inline __m128 _Vec2Reflect(__m128 Incident, __m128 Normal)
 {
 	// Result = Incident - (2 * dot(Incident, Normal)) * Normal
-	__m128 Result = Vec2Dot2(Incident,Normal);
+	__m128 Result = _Vec2Dot2(Incident,Normal);
 	Result = _mm_add_ps(Result,Result);
 	Result = _mm_mul_ps(Result,Normal);
 	Result = _mm_sub_ps(Incident,Result);
 	return Result;
 };
-inline __m128 Vec3Reflect(__m128 Incident, __m128 Normal)
+inline __m128 _Vec3Reflect(__m128 Incident, __m128 Normal)
 {
 	// Result = Incident - (2 * dot(Incident, Normal)) * Normal
-	__m128 Result = Vec3Dot2(Incident,Normal);
+	__m128 Result = _Vec3Dot2(Incident,Normal);
 	Result = _mm_add_ps(Result,Result);
 	Result = _mm_mul_ps(Result,Normal);
 	Result = _mm_sub_ps(Incident,Result);
 	return Result;
 };
-inline __m128 Vec4Reflect(__m128 Incident, __m128 Normal)
+inline __m128 _Vec4Reflect(__m128 Incident, __m128 Normal)
 {
 	// Result = Incident - (2 * dot(Incident, Normal)) * Normal
-	__m128 Result = Vec4Dot2(Incident,Normal);
+	__m128 Result = _Vec4Dot2(Incident,Normal);
 	Result = _mm_add_ps(Result,Result);
 	Result = _mm_mul_ps(Result,Normal);
 	Result = _mm_sub_ps(Incident,Result);
 	return Result;
 };
 
-inline bool Vec3LessEqual(__m128 a, __m128 b)
+inline bool _Vec3LessEqual(__m128 a, __m128 b)
 {
 	__m128 result = _mm_cmple_ss(a,b);
 	const bool* bc = reinterpret_cast<const bool*>(&result);
 	return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
 };
-inline bool Vec3Less(__m128 a, __m128 b)
+inline bool _Vec3Less(__m128 a, __m128 b)
 {
 	__m128 result = _mm_cmplt_ss(a,b);
 	const bool* bc = reinterpret_cast<const bool*>(&result);
 		return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
 };
-inline bool Vec3Greater(__m128 a, __m128 b)
+inline bool _Vec3Greater(__m128 a, __m128 b)
 {
 	__m128 result = _mm_cmpgt_ss(a,b);
 	const bool* bc = reinterpret_cast<const bool*>(&result);
 		return bc[VEC_ADDR_X] & bc[VEC_ADDR_Y] & bc[VEC_ADDR_Z];
 };
-inline bool Vec3GreaterEqual(__m128 a, __m128 b)
+inline bool _Vec3GreaterEqual(__m128 a, __m128 b)
 {
 	__m128 result = _mm_cmpge_ss(a,b);
 	const bool* bc = reinterpret_cast<const bool*>(&result);

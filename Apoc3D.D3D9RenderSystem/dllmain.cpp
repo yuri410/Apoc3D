@@ -1,7 +1,7 @@
 
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS && APOC3D_DYNLIB
 
-#include "stdafx.h"
+#include <Windows.h>
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,

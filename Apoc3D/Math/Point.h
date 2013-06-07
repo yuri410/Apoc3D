@@ -50,7 +50,7 @@ namespace Apoc3D
 			const static Size Zero;
 		};
 
-		class Point
+		class APAPI Point
 		{
 		public:
 			int X;
@@ -81,7 +81,7 @@ namespace Apoc3D
 			}
 			const static Point Zero;
 		};
-		class PointF
+		class APAPI PointF
 		{
 		public:
 			float X;

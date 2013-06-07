@@ -43,20 +43,24 @@ namespace Apoc3D
 		class Vector4Utils;
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-		/* Defines a two component vector.
-		*/
+		/* 
+		 * Defines a two component vector.
+		 */
 		typedef __m128 Vector2;
-		/* Defines a three component vector.
-		*/
+		/*
+		 * Defines a three component vector.
+		 */
 		typedef __m128 Vector3;
-		/* Defines a four component vector.
-		*/
+		/*
+		 * Defines a four component vector.
+		 */
 		typedef __m128 Vector4;
 
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-		/* Defines a two component vector.
-		*/
-		class APAPI Vector2
+		/*
+		 * Defines a two component vector.
+		 */
+		class Vector2
 		{
 		public:
 			friend class Vector2Utils;
@@ -82,9 +86,10 @@ namespace Apoc3D
 			*/
 			float Y;
 		};
-		/* Defines a three component vector.
-		*/
-		class APAPI Vector3
+		/*
+		 * Defines a three component vector.
+		 */
+		class Vector3
 		{
 		public:
 			friend class Vector3Utils;
@@ -120,9 +125,10 @@ namespace Apoc3D
 			float Z;
 
 		};
-		/* Defines a four component vector.
-		*/
-		class APAPI Vector4
+		/*
+		 * Defines a four component vector.
+		 */
+		class Vector4
 		{
 		public:
 			friend class Vector4Utils;
@@ -163,38 +169,21 @@ namespace Apoc3D
 
 #endif
 
-#define _V3X(x) (Apoc3D::Math::Vector3Utils::GetX(x))
-#define _V3Y(x) (Apoc3D::Math::Vector3Utils::GetY(x))
-#define _V3Z(x) (Apoc3D::Math::Vector3Utils::GetZ(x))
-
-#define v3x(x) (Apoc3D::Math::Vector3Utils::GetX(x))
-#define v3y(x) (Apoc3D::Math::Vector3Utils::GetY(x))
-#define v3z(x) (Apoc3D::Math::Vector3Utils::GetZ(x))
-
-#define v2x(x) (Apoc3D::Math::Vector2Utils::GetX(x))
-#define v2y(x) (Apoc3D::Math::Vector2Utils::GetY(x))
-
-#define v4x(x) (Apoc3D::Math::Vector4Utils::GetX(x))
-#define v4y(x) (Apoc3D::Math::Vector4Utils::GetY(x))
-#define v4z(x) (Apoc3D::Math::Vector4Utils::GetZ(x))
-#define v4w(x) (Apoc3D::Math::Vector4Utils::GetW(x))
-
-#define VECTOR2(x,y)		(Apoc3D::Math::Vector2Utils::LDVector(x,y))
-#define VECTOR3(x,y,z)		(Apoc3D::Math::Vector3Utils::LDVector(x,y,z))
-#define VECTOR4(x,y,z,w)	(Apoc3D::Math::Vector4Utils::LDVector(x,y,z,w))
-
 		class APAPI Vector2Utils
 		{
 		public:
 			
-			/* a Vector2 with all of its components set to zero.
-			*/
+			/* 
+			 * a Vector2 with all of its components set to zero.
+			 */
 			static const Vector2 Zero;
-			/* X unit Vector2 (1, 0).
-			*/
+			/*
+			 * X unit Vector2 (1, 0).
+			 */
 			static const Vector2 UnitX;
-			/* Y unit Vector2 (0, 1).
-			*/
+			/*
+			 * Y unit Vector2 (0, 1).
+			 */
 			static const Vector2 UnitY;
 
 			static const Vector2 One;
@@ -205,30 +194,12 @@ namespace Apoc3D
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 
-			static const float* GetElementAddress(const Vector2& v)
-			{
-				return reinterpret_cast<const float*>(&v);
-			}
-			static float GetX(const Vector2& v)
-			{
-				return *(reinterpret_cast<const float*>(&v)+0);
-			}
-			static float GetY(const Vector2& v)
-			{
-				return *(reinterpret_cast<const float*>(&v) + 1);
-			}
-			static float& GetX(Vector2& v)
-			{
-				return *(reinterpret_cast<float*>(&v)+0);
-			}
-			static float& GetY(Vector2& v)
-			{
-				return *(reinterpret_cast<float*>(&v) + 1);
-			}
-			static float& GetElement(Vector2& v, int i)
-			{
-				return *(reinterpret_cast<float*>(&v) + i);
-			}
+			static const float* GetElementAddress(const Vector2& v) { return reinterpret_cast<const float*>(&v); }
+			static float GetX(const Vector2& v) { return *(reinterpret_cast<const float*>(&v)+0); }
+			static float GetY(const Vector2& v) { return *(reinterpret_cast<const float*>(&v) + 1); }
+			static float& GetX(Vector2& v) { return *(reinterpret_cast<float*>(&v)+0); }
+			static float& GetY(Vector2& v) { return *(reinterpret_cast<float*>(&v) + 1); }
+			static float& GetElement(Vector2& v, int i) { return *(reinterpret_cast<float*>(&v) + i); }
 			static void Store(Vector2 v, float* dest)
 			{
 				SSEVecLoader buffer;
@@ -252,31 +223,22 @@ namespace Apoc3D
 			}
 
 			
-			/* Calculates the length of the vector.
-			*/
-			static float Length(Vector2 v)
-			{
-				return Vec2Length(v);
-			}
-			/* Calculates the squared length of the vector.
-			*/
-			static float LengthSquared(Vector2 v)
-			{
-				return Vec2LengthSquared(v);
-			}
+			/* 
+			 * Calculates the length of the vector.
+			 */
+			static float Length(Vector2 v) { return _Vec2Length(v); }
+			/*
+			 * Calculates the squared length of the vector.
+			 */
+			static float LengthSquared(Vector2 v) { return _Vec2LengthSquared(v); }
 
-			/* Converts the vector into a unit vector.
-			*/
-			static Vector2 Normalize(Vector2 vector)
-			{
-				return Vec2Normalize(vector);
-			}
+			/*
+			 * Converts the vector into a unit vector.
+			 */
+			static Vector2 Normalize(Vector2 vector) { return _Vec2Normalize(vector); }
 
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			static const float* GetElementAddress(const Vector2& v)
-			{
-				return &(v.X);
-			}
+			static const float* GetElementAddress(const Vector2& v) { return &(v.X); }
 			static float GetX(const Vector2& v) { return v.X; }
 			static float GetY(const Vector2& v) { return v.Y; }
 			static float& GetX(Vector2& v) { return v.X; }
@@ -294,32 +256,18 @@ namespace Apoc3D
 			{
 				return *(reinterpret_cast<float*>(&v.X) + i);
 			}
-			static Vector2 LDVectorPtr(const float* v)
-			{
-				return Vector2(v[0], v[1]);
-			}
-			static Vector2 LDVector(float v)
-			{
-				return Vector2(v);
-			}
-			static Vector2 LDVector(float x, float y)
-			{
-				return Vector2(x,y);
-			}
+			static Vector2 LDVectorPtr(const float* v) { return Vector2(v[0], v[1]); }
+			static Vector2 LDVector(float v) { return Vector2(v); }
+			static Vector2 LDVector(float x, float y) { return Vector2(x,y); }
 
 			
 			/* Calculates the length of the vector.
 			*/
-			static float Length(const Vector2& v)
-			{
-				return sqrtf(v.X*v.X + v.Y*v.Y);
-			}
+			static float Length(const Vector2& v) { return sqrtf(v.X*v.X + v.Y*v.Y); }
+
 			/* Calculates the squared length of the vector.
 			*/
-			static float LengthSquared(const Vector2& v)
-			{
-				return v.X*v.X + v.Y*v.Y;
-			}
+			static float LengthSquared(const Vector2& v) { return v.X*v.X + v.Y*v.Y; }
 
 			/* Converts the vector into a unit vector.
 			*/
@@ -336,109 +284,82 @@ namespace Apoc3D
 #endif
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Adds two vectors.
-			*/
-			static Vector2 Add(Vector2 left, Vector2 right)
-			{
-				return VecAdd(left, right);
-			}
-			/* Subtracts two vectors.
-			*/
-			static Vector2 Subtract(Vector2 left, Vector2 right)
-			{
-				return VecSub(left, right);
-			}
-			/* Scales a vector by the given value.
-			*/
-			static Vector2 Multiply(Vector2 value, float scale)
-			{
-				return VecMul(value, scale);
-			}
-			/* Modulates a vector by another.
-			*/
-			static Vector2 Modulate(Vector2 left, Vector2 right)
-			{
-				return VecMul(left, right);
-			}
-			/* Scales a vector by the given value.
-			*/
-			static Vector2 Divide(Vector2 value, float scale)
-			{
-				return VecDiv(value, scale);
-			}
-			static float Cross(Vector2 a, Vector2 b)
-			{
-				return Vec2Cross(a,b);
-			}
+			/*
+			 * Adds two vectors.
+			 */
+			static Vector2 Add(Vector2 left, Vector2 right) { return _VecAdd(left, right); }
 
-			/* Reverses the direction of a given vector.
-			*/
-			static Vector2 Negate(Vector2 value)
-			{
-				return VecNegate(value);
-			}
+			/*
+			 * Subtracts two vectors.
+			 */
+			static Vector2 Subtract(Vector2 left, Vector2 right) { return _VecSub(left, right); }
+			/*
+			 * Scales a vector by the given value.
+			 */
+			static Vector2 Multiply(Vector2 value, float scale) { return _VecMul(value, scale); }
+			/*
+			 * Modulates a vector by another.
+			 */
+			static Vector2 Modulate(Vector2 left, Vector2 right) { return _VecMul(left, right); }
+			/*
+			 * Scales a vector by the given value.
+			 */
+			static Vector2 Divide(Vector2 value, float scale) { return _VecDiv(value, scale); }
+			static float Cross(Vector2 a, Vector2 b) { return _Vec2Cross(a,b); }
+
+			/*
+			 * Reverses the direction of a given vector.
+			 */
+			static Vector2 Negate(Vector2 value) { return _VecNegate(value); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Adds two vectors.
-			*/
-			static Vector2 Add(const Vector2& left, const Vector2& right)
-			{
-				return Vector2(left.X + right.X, left.Y + right.Y);
-			}
-			/* Subtracts two vectors.
-			*/
-			static Vector2 Subtract(const Vector2& left, const Vector2& right)
-			{
-				return Vector2(left.X - right.X, left.Y - right.Y);
-			}
-			/* Scales a vector by the given value.
-			*/
-			static Vector2 Multiply(const Vector2& value, float scale)
-			{
-				return Vector2(value.X * scale, value.Y * scale);
-			}
-			/* Modulates a vector by another.
-			*/
-			static Vector2 Modulate(const Vector2& left, const Vector2& right)
-			{
-				return Vector2(left.X * right.X, left.Y * right.Y);
-			}
-			/* Scales a vector by the given value.
-			*/
-			static Vector2 Divide(const Vector2& value, float scale)
-			{
-				return Vector2(value.X / scale, value.Y / scale);
-			}
-			static float Cross(const Vector2& a, const Vector2& b)
-			{
-				return a.X * b.Y - b.X * a.Y;
-			}
+			/* 
+			 * Adds two vectors.
+			 */
+			static Vector2 Add(const Vector2& left, const Vector2& right) { return Vector2(left.X + right.X, left.Y + right.Y); }
+			/*
+			 * Subtracts two vectors.
+			 */
+			static Vector2 Subtract(const Vector2& left, const Vector2& right) { return Vector2(left.X - right.X, left.Y - right.Y); }
+			/*
+			 * Scales a vector by the given value.
+			 */
+			static Vector2 Multiply(const Vector2& value, float scale) { return Vector2(value.X * scale, value.Y * scale); }
+			/*
+			 * Modulates a vector by another.
+			 */
+			static Vector2 Modulate(const Vector2& left, const Vector2& right) { return Vector2(left.X * right.X, left.Y * right.Y); }
+			/*
+			 * Scales a vector by the given value.
+			 */
+			static Vector2 Divide(const Vector2& value, float scale) { return Vector2(value.X / scale, value.Y / scale); }
+			static float Cross(const Vector2& a, const Vector2& b) { return a.X * b.Y - b.X * a.Y; }
 
-			/* Reverses the direction of a given vector.
-			*/
-			static Vector2 Negate(const Vector2& value)
-			{
-				return Vector2(-value.X, -value.Y);
-			}
-#endif			
-						
+			/*
+			 * Reverses the direction of a given vector.
+			 */
+			static Vector2 Negate(const Vector2& value) { return Vector2(-value.X, -value.Y); }
+#endif
+
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Returns a Vector2 containing the 2D Cartesian coordinates of a point 
-			* specified in Barycentric coordinates relative to a 2D triangle.
-			*/
+			/* 
+			 * Returns a Vector2 containing the 2D Cartesian coordinates of a point 
+			 * specified in Barycentric coordinates relative to a 2D triangle.
+			 */
 			static Vector2 Barycentric(Vector2 value1, Vector2 value2, 
 				Vector2 value3, float amount1, float amount2)
 			{
-				__m128 t1 = VecSub(value2,value1);
-				__m128 t2 = VecSub(value3,value1);
-				t1 = VecMul(t1, amount1);
-				t2 = VecMul(t2, amount2);
+				__m128 t1 = _VecSub(value2,value1);
+				__m128 t2 = _VecSub(value3,value1);
+				t1 = _VecMul(t1, amount1);
+				t2 = _VecMul(t2, amount2);
 
-				__m128 result = VecAdd(value1, t1);
-				result = VecAdd(result, t2);
+				__m128 result = _VecAdd(value1, t1);
+				result = _VecAdd(result, t2);
 				return result;
 			}
-			/* Performs a Catmull-Rom interpolation using the specified positions.
-			*/
+			/* 
+			 * Performs a Catmull-Rom interpolation using the specified positions.
+			 */
 			static Vector2 CatmullRom(Vector2 value1, Vector2 value2, 
 				Vector2 value3, const Vector2& value4, float amount)
 			{
@@ -449,34 +370,34 @@ namespace Apoc3D
 				__m128 t2, t3;
 				
 				__m128 result;
-				__m128 t1 = VecMul(value2, 2);
-				__m128 lsum = VecSub(value3, value1);
+				__m128 t1 = _VecMul(value2, 2);
+				__m128 lsum = _VecSub(value3, value1);
 
-				lsum = VecMul(lsum, amount);
+				lsum = _VecMul(lsum, amount);
 
-				result = VecAdd(t1, lsum);
+				result = _VecAdd(t1, lsum);
 
-				t1 = VecMul(value1, 2);
-				t2 = VecMul(value2, -5);
-				t3 = VecMul(value3, 4);
+				t1 = _VecMul(value1, 2);
+				t2 = _VecMul(value2, -5);
+				t3 = _VecMul(value3, 4);
 				
-				lsum = VecAdd(t1, t2);
-				lsum = VecAdd(lsum, t3);
-				lsum = VecSub(lsum, value4);
-				lsum = VecMul(t2, squared);
+				lsum = _VecAdd(t1, t2);
+				lsum = _VecAdd(lsum, t3);
+				lsum = _VecSub(lsum, value4);
+				lsum = _VecMul(t2, squared);
 
-				result = VecAdd(result, lsum);
+				result = _VecAdd(result, lsum);
 
-				t1 = VecMul(value2, 3);
-				t2 = VecMul(value3, -3);
+				t1 = _VecMul(value2, 3);
+				t2 = _VecMul(value3, -3);
 							
-				lsum = VecAdd(t1, t2);
-				lsum = VecSub(lsum, value1);
-				lsum = VecAdd(lsum, value4);
-				lsum = VecMul(t2, cubed);
+				lsum = _VecAdd(t1, t2);
+				lsum = _VecSub(lsum, value1);
+				lsum = _VecAdd(lsum, value4);
+				lsum = _VecMul(t2, cubed);
 
-				result = VecAdd(result, lsum);
-				result = VecMul(result, 0.5f);
+				result = _VecAdd(result, lsum);
+				result = _VecMul(result, 0.5f);
 
 				//vector.X = 0.5f * (2.0f * value2.X + (value3.X - value1.X) * amount +
 				//	(2.0f * value1.X - 5.0f * value2.X + 4.0f * value3.X - value4.X) * squared + 
@@ -488,8 +409,9 @@ namespace Apoc3D
 
 				return result;
 			}
-			/* Performs a Hermite spline interpolation.
-			*/
+			/* 
+			 * Performs a Hermite spline interpolation.
+			 */
 			static Vector2 Hermite(Vector2 value1, Vector2 tangent1,
 				Vector2 value2, const Vector2& tangent2, float amount)
 			{
@@ -501,52 +423,56 @@ namespace Apoc3D
 				float part4 = cubed - squared;
 
 
-				__m128 t1 = VecMul(value1, part1);
-				__m128 t2 = VecMul(value2, part2);
-				__m128 t3 = VecMul(tangent1, part3);
-				__m128 t4 = VecMul(tangent2, part4);
+				__m128 t1 = _VecMul(value1, part1);
+				__m128 t2 = _VecMul(value2, part2);
+				__m128 t3 = _VecMul(tangent1, part3);
+				__m128 t4 = _VecMul(tangent2, part4);
 
-				__m128 result = VecAdd(t1, t2);
-				result = VecAdd(result, t3);
-				result = VecAdd(result, t4);
+				__m128 result = _VecAdd(t1, t2);
+				result = _VecAdd(result, t3);
+				result = _VecAdd(result, t4);
 
 				return result;
 			}
-			/* Performs a linear interpolation between two vectors.
-			*/
+			/*
+			 * Performs a linear interpolation between two vectors.
+			 */
 			static Vector2 Lerp(Vector2 start, Vector2 end, float amount)
 			{				
-				__m128 t1 = VecSub(end, start);
-				t1 = VecMul(t1, amount);
-				t1 = VecAdd(start, t1);
+				__m128 t1 = _VecSub(end, start);
+				t1 = _VecMul(t1, amount);
+				t1 = _VecAdd(start, t1);
 				return t1;
 			}
-			/* Performs a cubic interpolation between two vectors.
-			*/
+			/*
+			 * Performs a cubic interpolation between two vectors.
+			 */
 			static Vector2 SmoothStep(Vector2 start, Vector2 end, float amount)
 			{			
 				amount = (amount > 1.0f) ? 1.0f : ((amount < 0.0f) ? 0.0f : amount);
 				amount = (amount * amount) * (3.0f - (2.0f * amount));
 
-				__m128 t1 = VecSub(end, start);
-				t1 = VecMul(t1, amount);
-				t1 = VecAdd(start, t1);
+				__m128 t1 = _VecSub(end, start);
+				t1 = _VecMul(t1, amount);
+				t1 = _VecAdd(start, t1);
 
 				return t1;
 			}
-			/* Restricts a value to be within a specified range.
-			*/
+			/* 
+			 * Restricts a value to be within a specified range.
+			 */
 			static Vector2 Clamp(Vector2 value, Vector2 min, Vector2 max)
 			{
-				__m128 t1 = VecMax(min, value);
-				t1 = VecMin(max, value);
+				__m128 t1 = _VecMax(min, value);
+				t1 = _VecMin(max, value);
 
 				return t1;
 			}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Returns a Vector2 containing the 2D Cartesian coordinates of a point 
-			* specified in Barycentric coordinates relative to a 2D triangle.
-			*/
+			/*
+			 * Returns a Vector2 containing the 2D Cartesian coordinates of a point 
+			 * specified in Barycentric coordinates relative to a 2D triangle.
+			 */
 			static Vector2 Barycentric(const Vector2& value1, const Vector2& value2, 
 				const Vector2& value3, float amount1, float amount2)
 			{
@@ -555,8 +481,9 @@ namespace Apoc3D
 				vector.Y = (value1.Y + (amount1 * (value2.Y - value1.Y))) + (amount2 * (value3.Y - value1.Y));
 				return vector;
 			}
-			/* Performs a Catmull-Rom interpolation using the specified positions.
-			*/
+			/* 
+			 * Performs a Catmull-Rom interpolation using the specified positions.
+			 */
 			static Vector2 CatmullRom(const Vector2& value1, const Vector2& value2, 
 				const Vector2& value3, const Vector2& value4, float amount)
 			{
@@ -574,8 +501,9 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/* Performs a Hermite spline interpolation.
-			*/
+			/*
+			 * Performs a Hermite spline interpolation.
+			 */
 			static Vector2 Hermite(const Vector2& value1, const Vector2& tangent1,
 				const Vector2& value2, const Vector2& tangent2, float amount)
 			{
@@ -592,8 +520,9 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/* Performs a linear interpolation between two vectors.
-			*/
+			/* 
+			 * Performs a linear interpolation between two vectors.
+			 */
 			static Vector2 Lerp(const Vector2& start, const Vector2& end, float amount)
 			{
 				Vector2 vector;
@@ -603,8 +532,9 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/* Performs a cubic interpolation between two vectors.
-			*/
+			/*
+			 * Performs a cubic interpolation between two vectors.
+			 */
 			static Vector2 SmoothStep(const Vector2& start, const Vector2& end, float amount)
 			{
 				Vector2 vector;
@@ -617,8 +547,9 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/* Restricts a value to be within a specified range.
-			*/
+			/*
+			 * Restricts a value to be within a specified range.
+			 */
 			static Vector2 Clamp(const Vector2& value, const Vector2& min, const Vector2& max)
 			{
 				float x = value.X;
@@ -631,47 +562,35 @@ namespace Apoc3D
 
 				return Vector2(x, y);
 			}
-#endif	
-						
+#endif
+
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Calculates the distance between two vectors.
-			*/
-			static float Distance(Vector2 value1, Vector2 value2)
-			{
-				return Vec2Distance(value1, value2);				
-			}
-			/* Calculates the dot product of two vectors.
-			*/
-			static float Dot(Vector2 value1, Vector2 value2)
-			{
-				return Vec2Dot(value1, value2);
-			}
-			/* Calculates the dot product of two vectors.
-			*/
-			static Vector2 Dot2(Vector2 left, Vector2 right)
-			{
-				return Vec2Dot2(left, right);
-			}
+			/*
+			 * Calculates the distance between two vectors.
+			 */
+			static float Distance(Vector2 value1, Vector2 value2) { return _Vec2Distance(value1, value2);	}
+			/*
+			 * Calculates the dot product of two vectors.
+			 */
+			static float Dot(Vector2 value1, Vector2 value2) { return _Vec2Dot(value1, value2); }
+			/*
+			 * Calculates the dot product of two vectors.
+			 */
+			static Vector2 Dot2(Vector2 left, Vector2 right) { return _Vec2Dot2(left, right); }
 			
-			static Vector2 Reflect(Vector2 vector, Vector2 normal)
-			{
-				return Vec2Reflect(vector, normal);
-			}
-			/* Returns a vector containing the smallest components of the specified vectors.
-			*/
-			static Vector2 Minimize(Vector2 left, Vector2 right)
-			{
-				return VecMin(left, right);
-			}
-			/* Returns a vector containing the largest components of the specified vectors.
-			*/
-			static Vector2 Maximize(Vector2 left, Vector2 right)
-			{
-				return VecMax(left, right);
-			}
+			static Vector2 Reflect(Vector2 vector, Vector2 normal) { return _Vec2Reflect(vector, normal); }
+			/*
+			 * Returns a vector containing the smallest components of the specified vectors.
+			 */
+			static Vector2 Minimize(Vector2 left, Vector2 right) { return _VecMin(left, right); }
+			/*
+			 * Returns a vector containing the largest components of the specified vectors.
+			 */
+			static Vector2 Maximize(Vector2 left, Vector2 right) { return _VecMax(left, right); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Calculates the distance between two vectors.
-			*/
+			/*
+			 * Calculates the distance between two vectors.
+			 */
 			static float Distance(const Vector2& value1, const Vector2& value2)
 			{
 				float x = value1.X - value2.X;
@@ -679,14 +598,16 @@ namespace Apoc3D
 
 				return sqrtf(x * x + y * y);
 			}
-			/* Calculates the dot product of two vectors.
-			*/
+			/*
+			 * Calculates the dot product of two vectors.
+			 */
 			static float Dot(const Vector2& left, const Vector2& right)
 			{
 				return left.X * right.X + left.Y * right.Y;
 			}
-			/* Calculates the dot product of two vectors.
-			*/
+			/*
+			 * Calculates the dot product of two vectors.
+			 */
 			static Vector2 Dot2(const Vector2& left, const Vector2& right)
 			{
 				float f= left.X * right.X + left.Y * right.Y;
@@ -701,8 +622,9 @@ namespace Apoc3D
 				vector2.Y = vector.Y - ((2.0f * num) * normal.Y);
 				return vector2;
 			}
-			/* Returns a vector containing the smallest components of the specified vectors.
-			*/
+			/*
+			 * Returns a vector containing the smallest components of the specified vectors.
+			 */
 			static Vector2 Minimize(const Vector2& left, const Vector2& right)
 			{
 				Vector2 vector;
@@ -710,8 +632,9 @@ namespace Apoc3D
 				vector.Y = (left.Y < right.Y) ? left.Y : right.Y;
 				return vector;
 			}
-			/* Returns a vector containing the largest components of the specified vectors.
-			*/
+			/* 
+			 * Returns a vector containing the largest components of the specified vectors.
+			 */
 			static Vector2 Maximize(const Vector2& left, const Vector2& right)
 			{
 				Vector2 vector;
@@ -736,17 +659,21 @@ namespace Apoc3D
 		class APAPI Vector3Utils
 		{
 		public:			
-			/* a Vector3 with all of its components set to zero.
-			*/
+			/* 
+			 * a Vector3 with all of its components set to zero.
+			 */
 			static const Vector3 Zero;
-			/* X unit Vector3 (1, 0, 0).
-			*/
+			/*
+			 * X unit Vector3 (1, 0, 0).
+			 */
 			static const Vector3 UnitX;
-			/* Y unit Vector3 (0, 1, 0).
-			*/
+			/*
+			 * Y unit Vector3 (0, 1, 0).
+			 */
 			static const Vector3 UnitY;
-			/* Z unit Vector3 (0, 0, 1).
-			*/
+			/*
+			 * Z unit Vector3 (0, 0, 1).
+			 */
 			static const Vector3 UnitZ;
 			static const Vector3 One;
 
@@ -754,38 +681,14 @@ namespace Apoc3D
 			static String ToParsableString(const Vector3& v);
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			static const float* GetElementAddress(const Vector3& v)
-			{
-				return reinterpret_cast<const float*>(&v);
-			}
-			static float& GetElement(Vector3& v, int i)
-			{
-				return *(reinterpret_cast<float*>(&v)+i);
-			}
-			static float& GetX(Vector3& v)
-			{
-				return *(reinterpret_cast<float*>(&v)+0);
-			}
-			static float& GetY(Vector3& v)
-			{
-				return *(reinterpret_cast<float*>(&v)+1);
-			}
-			static float& GetZ(Vector3& v)
-			{
-				return *(reinterpret_cast<float*>(&v)+2);
-			}
-			static float GetX(const Vector3& v)
-			{
-				return *(reinterpret_cast<const float*>(&v)+0);
-			}
-			static float GetY(const Vector3&  v)
-			{
-				return *(reinterpret_cast<const float*>(&v) + 1);
-			}
-			static float GetZ(const Vector3&  v)
-			{
-				return *(reinterpret_cast<const float*>(&v)+2);
-			}
+			static const float* GetElementAddress(const Vector3& v) { return reinterpret_cast<const float*>(&v); }
+			static float& GetElement(Vector3& v, int i) { return *(reinterpret_cast<float*>(&v)+i); }
+			static float& GetX(Vector3& v) { return *(reinterpret_cast<float*>(&v)+0); }
+			static float& GetY(Vector3& v) { return *(reinterpret_cast<float*>(&v)+1); }
+			static float& GetZ(Vector3& v) { return *(reinterpret_cast<float*>(&v)+2); }
+			static float GetX(const Vector3& v) { return *(reinterpret_cast<const float*>(&v)+0); }
+			static float GetY(const Vector3&  v) { return *(reinterpret_cast<const float*>(&v) + 1); }
+			static float GetZ(const Vector3&  v) { return *(reinterpret_cast<const float*>(&v)+2); }
 			static void Store(Vector3 v, float* dest)
 			{
 				SSEVecLoader buffer;
@@ -796,109 +699,61 @@ namespace Apoc3D
 			{
 				const SSEVecLoader buffer = { v[0], v[1], v[2], 0 };
 
-				return VecLoad(buffer);
+				return _VecLoad(buffer);
 			}
-			static Vector3 LDVector(float v)
-			{
-				return VecLoad(v);
-			}
+			static Vector3 LDVector(float v) { return _VecLoad(v); }
 			static Vector3 LDVector(float x, float y, float z)
 			{
 				const SSEVecLoader buffer = { x, y, z, 0 };
 
-				return VecLoad(buffer);
+				return _VecLoad(buffer);
 			}
 
-			/* Calculates the length of the vector.
-			*/
-			static float Length(Vector3 v)
-			{
-				return Vec3Length(v);
-			}
-			/* Calculates the squared length of the vector.
-			*/
-			static float LengthSquared(Vector3 v)
-			{
-				return Vec3LengthSquared(v);
-			}
+			/*
+			 * Calculates the length of the vector.
+			 */
+			static float Length(Vector3 v) { return _Vec3Length(v); }
+			/*
+			 * Calculates the squared length of the vector.
+			 */
+			static float LengthSquared(Vector3 v) { return _Vec3LengthSquared(v); }
 
-			/* Converts the vector into a unit vector.
-			*/
-			static Vector3 Normalize(Vector3 vector)
-			{
-				return Vec3Normalize(vector);
-			}
+			/*
+			 * Converts the vector into a unit vector.
+			 */
+			static Vector3 Normalize(Vector3 vector) { return _Vec3Normalize(vector); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			static const float* GetElementAddress(const Vector3& v)
-			{
-				return &v.X;
-			}
-			static float GetElement(const Vector3& v, int i)
-			{
-				return *(reinterpret_cast<const float*>(&v.X) + i);
-			}
-			static float GetX(const Vector3& v)
-			{
-				return v.X;
-			}
-			static float GetY(const Vector3& v)
-			{
-				return v.Y;
-			}
-			static float GetZ(const Vector3& v)
-			{
-				return v.Z;
-			}
-			static float& GetElement(Vector3& v, int i)
-			{
-				return *(reinterpret_cast<float*>(&v.X) + i);
-			}
-			static float& GetX(Vector3& v)
-			{
-				return v.X;
-			}
-			static float& GetY(Vector3& v)
-			{
-				return v.Y;
-			}
-			static float& GetZ(Vector3& v)
-			{
-				return v.Z;
-			}
+			static const float* GetElementAddress(const Vector3& v) { return &v.X; }
+			static float GetElement(const Vector3& v, int i) { return *(reinterpret_cast<const float*>(&v.X) + i); }
+			static float GetX(const Vector3& v) { return v.X; }
+			static float GetY(const Vector3& v) { return v.Y; }
+			static float GetZ(const Vector3& v) { return v.Z; }
+			static float& GetElement(Vector3& v, int i) { return *(reinterpret_cast<float*>(&v.X) + i); }
+			static float& GetX(Vector3& v) { return v.X; }
+			static float& GetY(Vector3& v) { return v.Y; }
+			static float& GetZ(Vector3& v) { return v.Z; }
 			static void Store(const Vector3& v, float* dest)
 			{
 				dest[0] = v.X;
 				dest[1] = v.Y;
 				dest[2] = v.Z;
 			}
-			static Vector3 LDVectorPtr(const float* v)
-			{
-				return Vector3(v[0], v[1], v[2]);
-			}
-			static Vector3 LDVector(float v)
-			{
-				return Vector3(v);
-			}
-			static Vector3 LDVector(float x, float y, float z)
-			{
-				return Vector3(x, y, z);
-			}
+			static Vector3 LDVectorPtr(const float* v) { return Vector3(v[0], v[1], v[2]); }
+			static Vector3 LDVector(float v) { return Vector3(v); }
+			static Vector3 LDVector(float x, float y, float z) { return Vector3(x, y, z); }
 
-			/* Calculates the length of the vector.
-			*/
-			static float Length(const Vector3& v)
-			{
-				return sqrtf(v.X*v.X + v.Y*v.Y+v.Z*v.Z);
-			}
-			/* Calculates the squared length of the vector.
-			*/
-			static float LengthSquared(const Vector3& v)
-			{
-				return v.X*v.X + v.Y*v.Y+v.Z*v.Z;
-			}
+			/*
+			 * Calculates the length of the vector.
+			 */
+			static float Length(const Vector3& v) { return sqrtf(v.X*v.X + v.Y*v.Y+v.Z*v.Z); }
+			/*
+			 * Calculates the squared length of the vector.
+			 */
+			static float LengthSquared(const Vector3& v) { return v.X*v.X + v.Y*v.Y+v.Z*v.Z; }
 
-			/* Converts the vector into a unit vector.
-			*/
+			/* 
+			 * Converts the vector into a unit vector.
+			 */
 			static Vector3 Normalize(const Vector3& vector)
 			{
 				float length = Length(vector);
@@ -912,100 +767,78 @@ namespace Apoc3D
 #endif
 			
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Adds two vectors.
-			*/
-			static Vector3 Add(Vector3 left, Vector3 right)
-			{
-				return VecAdd(left, right);
-			}
-			/* Subtracts two vectors.
-			*/
-			static Vector3 Subtract(Vector3 left, Vector3 right)
-			{
-				return VecSub(left, right);
-			}
-			/* Scales a vector by the given value.
-			*/
-			static Vector3 Multiply(Vector3 value, float scale)
-			{
-				return VecMul(value, scale);
-			}
-			/* Modulates a vector by another.
-			*/
-			static Vector3 Modulate(Vector3 left, Vector3 right)
-			{
-				return VecMul(left, right);
-			}
-			/* Scales a vector by the given value.
-			*/
-			static Vector3 Divide(Vector3 value, float scale)
-			{
-				return VecDiv(value, scale);
-			}
-			/* Reverses the direction of a given vector.
-			*/
-			static Vector3 Negate(Vector3 value)
-			{
-				return VecNegate(value);
-			}
+			/* 
+			 * Adds two vectors.
+			 */
+			static Vector3 Add(Vector3 left, Vector3 right) { return _VecAdd(left, right); }
+			/*
+			 * Subtracts two vectors.
+			 */
+			static Vector3 Subtract(Vector3 left, Vector3 right) { return _VecSub(left, right); }
+			/*
+			 * Scales a vector by the given value.
+			 */
+			static Vector3 Multiply(Vector3 value, float scale) { return _VecMul(value, scale); }
+			/*
+			 * Modulates a vector by another.
+			 */
+			static Vector3 Modulate(Vector3 left, Vector3 right) { return _VecMul(left, right); }
+			/*
+			 * Scales a vector by the given value.
+			 */
+			static Vector3 Divide(Vector3 value, float scale) { return _VecDiv(value, scale); }
+			/*
+			 * Reverses the direction of a given vector.
+			 */
+			static Vector3 Negate(Vector3 value) { return _VecNegate(value); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Adds two vectors.
-			*/
-			static Vector3 Add(const Vector3& left, const Vector3& right)
-			{
-				return Vector3(left.X + right.X, left.Y + right.Y, left.Z + right.Z);
-			}
-			/* Subtracts two vectors.
-			*/
-			static Vector3 Subtract(const Vector3& left, const Vector3& right)
-			{
-				return Vector3(left.X - right.X, left.Y - right.Y, left.Z - right.Z);
-			}
-			/* Scales a vector by the given value.
-			*/
-			static Vector3 Multiply(const Vector3& value, float scale)
-			{
-				return Vector3(value.X * scale, value.Y * scale, value.Z * scale);
-			}
-			/* Modulates a vector by another.
-			*/
-			static Vector3 Modulate(const Vector3& left, const Vector3& right)
-			{
-				return Vector3(left.X * right.X, left.Y * right.Y, left.Z * right.Z);
-			}
-			/* Scales a vector by the given value.
-			*/
-			static Vector3 Divide(const Vector3& value, float scale)
-			{
-				return Vector3(value.X / scale, value.Y / scale, value.Z / scale);
-			}
-			/* Reverses the direction of a given vector.
-			*/
-			static Vector3 Negate(const Vector3& value)
-			{
-				return Vector3(-value.X, -value.Y, -value.Z);
-			}
+			/* 
+			 * Adds two vectors.
+			 */
+			static Vector3 Add(const Vector3& left, const Vector3& right) { return Vector3(left.X + right.X, left.Y + right.Y, left.Z + right.Z); }
+			/*
+			 * Subtracts two vectors.
+			 */
+			static Vector3 Subtract(const Vector3& left, const Vector3& right) { return Vector3(left.X - right.X, left.Y - right.Y, left.Z - right.Z); }
+			/*
+			 * Scales a vector by the given value.
+			 */
+			static Vector3 Multiply(const Vector3& value, float scale) { return Vector3(value.X * scale, value.Y * scale, value.Z * scale); }
+			/*
+			 * Modulates a vector by another.
+			 */
+			static Vector3 Modulate(const Vector3& left, const Vector3& right) { return Vector3(left.X * right.X, left.Y * right.Y, left.Z * right.Z); }
+			/*
+			 * Scales a vector by the given value.
+			 */
+			static Vector3 Divide(const Vector3& value, float scale) { return Vector3(value.X / scale, value.Y / scale, value.Z / scale); }
+			/*
+			 * Reverses the direction of a given vector.
+			 */
+			static Vector3 Negate(const Vector3& value) { return Vector3(-value.X, -value.Y, -value.Z); }
 #endif
 			
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Returns a Vector3 containing the 3D Cartesian coordinates of 
-			* a point specified in Barycentric coordinates relative to a 3D triangle.
-			*/
+			/*
+			 * Returns a Vector3 containing the 3D Cartesian coordinates of 
+			 * a point specified in Barycentric coordinates relative to a 3D triangle.
+			 */
 			static Vector3 Barycentric(Vector3 value1, Vector3 value2, 
 				Vector3 value3, float amount1, float amount2)
 			{
-				__m128 t1 = VecSub(value2,value1);
-				__m128 t2 = VecSub(value3,value1);
-				t1 = VecMul(t1, amount1);
-				t2 = VecMul(t2, amount2);
+				__m128 t1 = _VecSub(value2,value1);
+				__m128 t2 = _VecSub(value3,value1);
+				t1 = _VecMul(t1, amount1);
+				t2 = _VecMul(t2, amount2);
 
-				__m128 result = VecAdd(value1, t1);
-				result = VecAdd(result, t2);
+				__m128 result = _VecAdd(value1, t1);
+				result = _VecAdd(result, t2);
 				return result;
 			}
 
-			/* Performs a Catmull-Rom interpolation using the specified positions.
-			*/
+			/* 
+			 * Performs a Catmull-Rom interpolation using the specified positions.
+			 */
 			static Vector3 CatmullRom(Vector3 value1, Vector3 value2, 
 				Vector3 value3, const Vector3& value4, float amount)
 			{
@@ -1015,38 +848,39 @@ namespace Apoc3D
 				__m128 t2, t3;
 				
 				__m128 result;
-				__m128 t1 = VecMul(value2, 2);
-				__m128 lsum = VecSub(value3, value1);
+				__m128 t1 = _VecMul(value2, 2);
+				__m128 lsum = _VecSub(value3, value1);
 
-				lsum = VecMul(lsum, amount);
+				lsum = _VecMul(lsum, amount);
 
-				result = VecAdd(t1, lsum);
+				result = _VecAdd(t1, lsum);
 
-				t1 = VecMul(value1, 2);
-				t2 = VecMul(value2, -5);
-				t3 = VecMul(value3, 4);
+				t1 = _VecMul(value1, 2);
+				t2 = _VecMul(value2, -5);
+				t3 = _VecMul(value3, 4);
 				
-				lsum = VecAdd(t1, t2);
-				lsum = VecAdd(lsum, t3);
-				lsum = VecSub(lsum, value4);
-				lsum = VecMul(t2, squared);
+				lsum = _VecAdd(t1, t2);
+				lsum = _VecAdd(lsum, t3);
+				lsum = _VecSub(lsum, value4);
+				lsum = _VecMul(t2, squared);
 
-				result = VecAdd(result, lsum);
+				result = _VecAdd(result, lsum);
 
-				t1 = VecMul(value2, 3);
-				t2 = VecMul(value3, -3);
+				t1 = _VecMul(value2, 3);
+				t2 = _VecMul(value3, -3);
 							
-				lsum = VecAdd(t1, t2);
-				lsum = VecSub(lsum, value1);
-				lsum = VecAdd(lsum, value4);
-				lsum = VecMul(t2, cubed);
+				lsum = _VecAdd(t1, t2);
+				lsum = _VecSub(lsum, value1);
+				lsum = _VecAdd(lsum, value4);
+				lsum = _VecMul(t2, cubed);
 
-				result = VecAdd(result, lsum);
-				result = VecMul(result, 0.5f);
+				result = _VecAdd(result, lsum);
+				result = _VecMul(result, 0.5f);
 				return result;
 			}
-			/* Performs a Hermite spline interpolation.
-			*/
+			/* 
+			 * Performs a Hermite spline interpolation.
+			 */
 			static Vector3 Hermite(Vector3 value1, Vector3 tangent1, 
 				Vector3 value2, const Vector3& tangent2, float amount)
 			{
@@ -1058,52 +892,56 @@ namespace Apoc3D
 				float part4 = cubed - squared;
 
 
-				__m128 t1 = VecMul(value1, part1);
-				__m128 t2 = VecMul(value2, part2);
-				__m128 t3 = VecMul(tangent1, part3);
-				__m128 t4 = VecMul(tangent2, part4);
+				__m128 t1 = _VecMul(value1, part1);
+				__m128 t2 = _VecMul(value2, part2);
+				__m128 t3 = _VecMul(tangent1, part3);
+				__m128 t4 = _VecMul(tangent2, part4);
 
-				__m128 result = VecAdd(t1, t2);
-				result = VecAdd(result, t3);
-				result = VecAdd(result, t4);
+				__m128 result = _VecAdd(t1, t2);
+				result = _VecAdd(result, t3);
+				result = _VecAdd(result, t4);
 
 				return result;
 			}
-			/* Performs a linear interpolation between two vectors.
-			*/
+			/* 
+			 * Performs a linear interpolation between two vectors.
+			 */
 			static Vector3 Lerp(Vector3 start, Vector3 end, float amount)
 			{
-				__m128 t1 = VecSub(end, start);
-				t1 = VecMul(t1, amount);
-				t1 = VecAdd(start, t1);
+				__m128 t1 = _VecSub(end, start);
+				t1 = _VecMul(t1, amount);
+				t1 = _VecAdd(start, t1);
 				return t1;
 			}
-			/* Performs a cubic interpolation between two vectors.
-			*/
+			/*
+			 * Performs a cubic interpolation between two vectors.
+			 */
 			static Vector3 SmoothStep(Vector3 start, Vector3 end, float amount)
 			{
 				amount = (amount > 1.0f) ? 1.0f : ((amount < 0.0f) ? 0.0f : amount);
 				amount = (amount * amount) * (3.0f - (2.0f * amount));
 
-				__m128 t1 = VecSub(end, start);
-				t1 = VecMul(t1, amount);
-				t1 = VecAdd(start, t1);
+				__m128 t1 = _VecSub(end, start);
+				t1 = _VecMul(t1, amount);
+				t1 = _VecAdd(start, t1);
 
 				return t1;
 			}
-			/* Restricts a value to be within a specified range.
-			*/
+			/* 
+			 * Restricts a value to be within a specified range.
+			 */
 			static Vector3 Clamp(Vector3 value, Vector3 min, Vector3 max)
 			{
-				__m128 t1 = VecMax(min, value);
-				t1 = VecMin(max, value);
+				__m128 t1 = _VecMax(min, value);
+				t1 = _VecMin(max, value);
 
 				return t1;
 			}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Returns a Vector3 containing the 3D Cartesian coordinates of 
-			* a point specified in Barycentric coordinates relative to a 3D triangle.
-			*/
+			/* 
+			 * Returns a Vector3 containing the 3D Cartesian coordinates of 
+			 * a point specified in Barycentric coordinates relative to a 3D triangle.
+			 */
 			static Vector3 Barycentric(const Vector3& value1, const Vector3& value2, 
 				const Vector3& value3, float amount1, float amount2)
 			{
@@ -1114,8 +952,9 @@ namespace Apoc3D
 				return vector;
 			}
 
-			/* Performs a Catmull-Rom interpolation using the specified positions.
-			*/
+			/* 
+			 * Performs a Catmull-Rom interpolation using the specified positions.
+			 */
 			static Vector3 CatmullRom(const Vector3& value1, Vector3 value2, 
 				const Vector3& value3, const Vector3& value4, float amount)
 			{
@@ -1137,8 +976,9 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/* Performs a Hermite spline interpolation.
-			*/
+			/* 
+			 * Performs a Hermite spline interpolation.
+			 */
 			static Vector3 Hermite(const Vector3& value1, const Vector3& tangent1, 
 				const Vector3& value2, const Vector3& tangent2, float amount)
 			{
@@ -1156,8 +996,9 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/* Performs a linear interpolation between two vectors.
-			*/
+			/* 
+			 * Performs a linear interpolation between two vectors.
+			 */
 			static Vector3 Lerp(const Vector3& start, const Vector3& end, float amount)
 			{
 				Vector3 vector;
@@ -1168,8 +1009,9 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/* Performs a cubic interpolation between two vectors.
-			*/
+			/* 
+			 * Performs a cubic interpolation between two vectors.
+			 */
 			static Vector3 SmoothStep(const Vector3& start, const Vector3& end, float amount)
 			{
 				Vector3 vector;
@@ -1183,8 +1025,9 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/* Restricts a value to be within a specified range.
-			*/
+			/*
+			 * Restricts a value to be within a specified range.
+			 */
 			static Vector3 Clamp(const Vector3& value, const Vector3& min, const Vector3& max)
 			{
 				float x = value.X;
@@ -1204,56 +1047,43 @@ namespace Apoc3D
 #endif
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Calculates the distance between two vectors.
-			*/
-			static float Distance(Vector3 value1, Vector3 value2)
-			{
-				return Vec3Distance(value1, value2);
-			}
-			/* Calculates the squared distance between two vectors.
-			*/
-			static float DistanceSquared(Vector3 value1, Vector3 value2)
-			{
-				return Vec3DistanceSquared(value1, value2);
-			}
+			/*
+			 * Calculates the distance between two vectors.
+			 */
+			static float Distance(Vector3 value1, Vector3 value2) { return _Vec3Distance(value1, value2); }
+			/*
+			 * Calculates the squared distance between two vectors.
+			 */
+			static float DistanceSquared(Vector3 value1, Vector3 value2) { return _Vec3DistanceSquared(value1, value2); }
 
-			/* Calculates the dot product of two vectors.
-			*/
-			static float Dot(Vector3 left, Vector3 right)
-			{
-				return Vec3Dot(left, right);
-			}
+			/*
+			 * Calculates the dot product of two vectors.
+			 */
+			static float Dot(Vector3 left, Vector3 right) { return _Vec3Dot(left, right); }
 
-			/* Calculates the cross product of two vectors.
-			*/
-			static Vector3 Cross(Vector3 left, Vector3 right)
-			{
-				return Vec3Cross(left, right);
-			}
+			/*
+			 * Calculates the cross product of two vectors.
+			 */
+			static Vector3 Cross(Vector3 left, Vector3 right) { return _Vec3Cross(left, right); }
 
-			/* Returns the reflection of a vector off a surface that has the specified normal. 
-			*/
-			static Vector3 Reflect(Vector3 vector, Vector3 normal)
-			{
-				return Vec3Reflect(vector, normal);
-			}
+			/*
+			 * Returns the reflection of a vector off a surface that has the specified normal. 
+			 */
+			static Vector3 Reflect(Vector3 vector, Vector3 normal) { return _Vec3Reflect(vector, normal); }
 
 
-			/* Returns a vector containing the smallest components of the specified vectors.
-			*/
-			static Vector3 Minimize(Vector3 left, Vector3 right)
-			{
-				return VecMin(left, right);
-			}
-			/* Returns a vector containing the largest components of the specified vectors.
-			*/
-			static Vector3 Maximize(Vector3 left, Vector3 right)
-			{
-				return VecMax(left, right);
-			}
+			/*
+			 * Returns a vector containing the smallest components of the specified vectors.
+			 */
+			static Vector3 Minimize(Vector3 left, Vector3 right) { return _VecMin(left, right); }
+			/*
+			 * Returns a vector containing the largest components of the specified vectors.
+			 */
+			static Vector3 Maximize(Vector3 left, Vector3 right) { return _VecMax(left, right); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Calculates the distance between two vectors.
-			*/
+			/*
+			 * Calculates the distance between two vectors.
+			 */
 			static float Distance(const Vector3& value1, const Vector3& value2)
 			{
 				float x = value1.X - value2.X;
@@ -1262,8 +1092,9 @@ namespace Apoc3D
 
 				return sqrtf(x * x + y * y + z * z);
 			}
-			/* Calculates the squared distance between two vectors.
-			*/
+			/*
+			 * Calculates the squared distance between two vectors.
+			 */
 			static float DistanceSquared(const Vector3& value1, const Vector3& value2)
 			{
 				float x = value1.X - value2.X;
@@ -1273,15 +1104,17 @@ namespace Apoc3D
 				return (x * x) + (y * y) + (z * z);
 			}
 
-			/* Calculates the dot product of two vectors.
-			*/
+			/*
+			 * Calculates the dot product of two vectors.
+			 */
 			static float Dot(const Vector3& left, const Vector3& right)
 			{
 				return left.X * right.X + left.Y * right.Y + left.Z * right.Z;
 			}
 
-			/* Calculates the cross product of two vectors.
-			*/
+			/*
+			 * Calculates the cross product of two vectors.
+			 */
 			static Vector3 Cross(const Vector3& left, const Vector3& right)
 			{
 				Vector3 result;
@@ -1291,8 +1124,9 @@ namespace Apoc3D
 				return result;
 			}
 
-			/* Returns the reflection of a vector off a surface that has the specified normal. 
-			*/
+			/*
+			 * Returns the reflection of a vector off a surface that has the specified normal. 
+			 */
 			static Vector3 Reflect(const Vector3& vector, const Vector3& normal)
 			{
 				Vector3 result;
@@ -1306,8 +1140,9 @@ namespace Apoc3D
 			}
 
 
-			/* Returns a vector containing the smallest components of the specified vectors.
-			*/
+			/* 
+			 * Returns a vector containing the smallest components of the specified vectors.
+			 */
 			static Vector3 Minimize(const Vector3& left, const Vector3& right)
 			{
 				Vector3 vector;
@@ -1316,8 +1151,9 @@ namespace Apoc3D
 				vector.Z = (left.Z < right.Z) ? left.Z : right.Z;
 				return vector;
 			}
-			/* Returns a vector containing the largest components of the specified vectors.
-			*/
+			/* 
+			 * Returns a vector containing the largest components of the specified vectors.
+			 */
 			static Vector3 Maximize(const Vector3& left, const Vector3& right)
 			{
 				Vector3 vector;
@@ -1329,38 +1165,46 @@ namespace Apoc3D
 #endif
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Transforms a 3D vector by the given Matrix
-			*/
+			/* 
+			 * Transforms a 3D vector by the given Matrix
+			 */
 			static Vector4 Transform(Vector3 vector, const Matrix& transform);
-			/* Performs a coordinate transformation using the given Matrix. can not project
-			*/
+			/*
+			 * Performs a coordinate transformation using the given Matrix. can not project
+			 */
 			static Vector3 TransformSimple(Vector3 vector, const Matrix& transform);
-			/* Performs a coordinate transformation using the given Matrix
-			*/
+			/*
+			 * Performs a coordinate transformation using the given Matrix
+			 */
 			static Vector3 TransformCoordinate(Vector3 vector, const Matrix& transform);
-			/* Performs a normal transformation using the given Matrix
-			*/
+			/*
+			 * Performs a normal transformation using the given Matrix
+			 */
 			static Vector3 TransformNormal(Vector3 vector, const Matrix& transform);
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Transforms a 3D vector by the given Matrix
-			*/
+			/*
+			 * Transforms a 3D vector by the given Matrix
+			 */
 			static Vector4 Transform(const Vector3& vector, const Matrix& transform);
-			/* Performs a coordinate transformation using the given Matrix. can not project
-			*/
+			/*
+			 * Performs a coordinate transformation using the given Matrix. can not project
+			 */
 			static Vector3 TransformSimple(const Vector3& vector, const Matrix& transform);
-			/* Performs a coordinate transformation using the given Matrix
-			*/
+			/*
+			 * Performs a coordinate transformation using the given Matrix
+			 */
 			static Vector3 TransformCoordinate(const Vector3& vector, const Matrix& transform);
-			/* Performs a normal transformation using the given Matrix
-			*/
+			/*
+			 * Performs a normal transformation using the given Matrix
+			 */
 			static Vector3 TransformNormal(const Vector3& vector, const Matrix& transform);
 #endif
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			static bool IsLess(Vector3 left, Vector3 right) { return Vec3Less(left, right); }
-			static bool IsLessEqual(Vector3 left, Vector3 right) { return Vec3LessEqual(left, right); }
-			static bool IsGreater(Vector3 left, Vector3 right) { return Vec3Greater(left, right); }
-			static bool IsGreaterEqual(Vector3 left, Vector3 right) { return Vec3GreaterEqual(left, right); }
+			static bool IsLess(Vector3 left, Vector3 right) { return _Vec3Less(left, right); }
+			static bool IsLessEqual(Vector3 left, Vector3 right) { return _Vec3LessEqual(left, right); }
+			static bool IsGreater(Vector3 left, Vector3 right) { return _Vec3Greater(left, right); }
+			static bool IsGreaterEqual(Vector3 left, Vector3 right) { return _Vec3GreaterEqual(left, right); }
 
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			static bool IsLess(const Vector3& left, const Vector3& right)
@@ -1401,20 +1245,25 @@ namespace Apoc3D
 		class APAPI Vector4Utils
 		{
 		public:			
-			/* a Vector4 with all of its components set to zero.
-			*/
+			/* 
+			 * a Vector4 with all of its components set to zero.
+			 */
 			static const Vector4 Zero;
-			/* X unit Vector4 (1, 0, 0, 0).
-			*/
+			/*
+			 * X unit Vector4 (1, 0, 0, 0).
+			 */
 			static const Vector4 UnitX;
-			/* Y unit Vector4 (0, 1, 0, 0).
-			*/
+			/*
+			 * Y unit Vector4 (0, 1, 0, 0).
+			 */
 			static const Vector4 UnitY;
-			/* Z unit Vector4 (0, 0, 1, 0).
-			*/
+			/*
+			 * Z unit Vector4 (0, 0, 1, 0).
+			 */
 			static const Vector4 UnitZ;
-			/* W unit Vector4 (0, 0, 0, 1).
-			*/
+			/*
+			 * W unit Vector4 (0, 0, 0, 1).
+			 */
 			static const Vector4 UnitW;
 			static const Vector4 One;
 
@@ -1422,46 +1271,16 @@ namespace Apoc3D
 			static String ToParsableString(const Vector4& v);
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			static const float* GetElementAddress(const Vector4& v)
-			{
-				return reinterpret_cast<const float*>(&v);
-			}
-			static float& GetElement(Vector4& v, int i)
-			{
-				return *(reinterpret_cast<float*>(&v)+i);
-			}
-			static float& GetX(Vector4& v)
-			{
-				return *(reinterpret_cast<float*>(&v)+0);
-			}
-			static float& GetY(Vector4& v)
-			{
-				return *(reinterpret_cast<float*>(&v)+1);
-			}
-			static float& GetZ(Vector4& v)
-			{
-				return *(reinterpret_cast<float*>(&v)+2);
-			}
-			static float& GetW(Vector4& v)
-			{
-				return *(reinterpret_cast<float*>(&v)+3);
-			}
-			static float GetX(const Vector4& v)
-			{
-				return *(reinterpret_cast<const float*>(&v)+0);
-			}
-			static float GetY(const Vector4& v)
-			{
-				return *(reinterpret_cast<const float*>(&v) + 1);
-			}
-			static float GetZ(const Vector4& v)
-			{
-				return *(reinterpret_cast<const float*>(&v)+2);
-			}
-			static float GetW(const Vector4& v)
-			{
-				return *(reinterpret_cast<const float*>(&v)+3);
-			}
+			static const float* GetElementAddress(const Vector4& v) { return reinterpret_cast<const float*>(&v); }
+			static float& GetElement(Vector4& v, int i) { return *(reinterpret_cast<float*>(&v)+i); }
+			static float& GetX(Vector4& v) { return *(reinterpret_cast<float*>(&v)+0); }
+			static float& GetY(Vector4& v) { return *(reinterpret_cast<float*>(&v)+1); }
+			static float& GetZ(Vector4& v) { return *(reinterpret_cast<float*>(&v)+2); }
+			static float& GetW(Vector4& v) { return *(reinterpret_cast<float*>(&v)+3); }
+			static float GetX(const Vector4& v) { return *(reinterpret_cast<const float*>(&v) + 0); }
+			static float GetY(const Vector4& v) { return *(reinterpret_cast<const float*>(&v) + 1); }
+			static float GetZ(const Vector4& v) { return *(reinterpret_cast<const float*>(&v) + 2); }
+			static float GetW(const Vector4& v) { return *(reinterpret_cast<const float*>(&v) + 3); }
 			static void Store(Vector4 v, float* dest)
 			{
 				SSEVecLoader buffer;
@@ -1471,82 +1290,40 @@ namespace Apoc3D
 			static Vector4 LDVectorPtr(const float* v)
 			{
 				const SSEVecLoader buffer = {v[0],v[1],v[2],v[3]};
-				return VecLoad(buffer);
+				return _VecLoad(buffer);
 			}
-			static Vector4 LDVector(float v)
-			{
-				return VecLoad(v);
-			}
+			static Vector4 LDVector(float v) { return _VecLoad(v); }
 			static Vector4 LDVector(float x, float y, float z, float w)
 			{
 				const SSEVecLoader buffer = {x,y,z,w};
-				return VecLoad(buffer);
+				return _VecLoad(buffer);
 			}
-			/* Calculates the length of the vector.
-			*/
-			static float Length(Vector4 v)
-			{
-				return Vec4Length(v);
-			}
-			/* Calculates the squared length of the vector.
-			*/
-			static float LengthSquared(Vector4 v)
-			{
-				return Vec4LengthSquared(v);
-			}
+			/*
+			 * Calculates the length of the vector.
+			 */
+			static float Length(Vector4 v) { return _Vec4Length(v); }
+			/*
+			 * Calculates the squared length of the vector.
+			 */
+			static float LengthSquared(Vector4 v) { return _Vec4LengthSquared(v); }
 
-			/* Converts the vector into a unit vector.
-			*/
-			static Vector4 Normalize(Vector4 vector)
-			{
-				return Vec3Normalize(vector);
-			}
+			/*
+			 * Converts the vector into a unit vector.
+			 */
+			static Vector4 Normalize(Vector4 vector) { return _Vec3Normalize(vector); }
 
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			static const float* GetElementAddress(const Vector4& v)
-			{
-				return &v.X;
-			}
-			static float GetElement(const Vector4& v, int i)
-			{
-				return *(reinterpret_cast<const float*>(&v.X) + i);
-			}
-			static float& GetElement(Vector4& v, int i)
-			{
-				return *(reinterpret_cast<float*>(&v.X) + i);
-			}
-			static float GetX(const Vector4& v)
-			{
-				return v.X;
-			}
-			static float GetY(const Vector4& v)
-			{
-				return v.Y;
-			}
-			static float GetZ(const Vector4& v)
-			{
-				return v.Z;
-			}
-			static float GetW(const Vector4& v)
-			{
-				return v.W;
-			}
-			static float& GetX(Vector4& v)
-			{
-				return v.X;
-			}
-			static float& GetY(Vector4& v)
-			{
-				return v.Y;
-			}
-			static float& GetZ(Vector4& v)
-			{
-				return v.Z;
-			}
-			static float& GetW(Vector4& v)
-			{
-				return v.W;
-			}
+			static const float* GetElementAddress(const Vector4& v) { return &v.X; }
+			static float GetElement(const Vector4& v, int i) { return *(reinterpret_cast<const float*>(&v.X) + i); }
+			static float& GetElement(Vector4& v, int i) { return *(reinterpret_cast<float*>(&v.X) + i); }
+			static float GetX(const Vector4& v) { return v.X; }
+			static float GetY(const Vector4& v) { return v.Y; }
+			static float GetZ(const Vector4& v) { return v.Z; }
+			static float GetW(const Vector4& v) { return v.W; }
+			static float& GetX(Vector4& v) { return v.X; }
+			static float& GetY(Vector4& v) { return v.Y; }
+			static float& GetZ(Vector4& v) { return v.Z; }
+			static float& GetW(Vector4& v) { return v.W; }
 			static void Store(const Vector4& v, float* dest)
 			{
 				dest[0] = v.X;
@@ -1554,33 +1331,21 @@ namespace Apoc3D
 				dest[2] = v.Z;
 				dest[3] = v.W;
 			}
-			static Vector4 LDVectorPtr(const float* v)
-			{
-				return Vector4(v[0], v[1], v[2], v[3]);
-			}
-			static Vector4 LDVector(float v)
-			{
-				return Vector4(v);
-			}
-			static Vector4 LDVector(float x, float y, float z, float w)
-			{
-				return Vector4(x, y, z, w);
-			}
-			/* Calculates the length of the vector.
-			*/
-			static float Length(const Vector4& v)
-			{
-				return sqrtf(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W);
-			}
-			/* Calculates the squared length of the vector.
-			*/
-			static float LengthSquared(const Vector4& v)
-			{
-				return v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W;
-			}
+			static Vector4 LDVectorPtr(const float* v) { return Vector4(v[0], v[1], v[2], v[3]); }
+			static Vector4 LDVector(float v) { return Vector4(v); }
+			static Vector4 LDVector(float x, float y, float z, float w) { return Vector4(x, y, z, w); }
+			/*
+			 * Calculates the length of the vector.
+			 */
+			static float Length(const Vector4& v) { return sqrtf(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W); }
+			/*
+			 * Calculates the squared length of the vector.
+			 */
+			static float LengthSquared(const Vector4& v) { return v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W; }
 
-			/* Converts the vector into a unit vector.
-			*/
+			/*
+			 * Converts the vector into a unit vector.
+			 */
 			static Vector4 Normalize(const Vector4& vector)
 			{
 				float length = Length(vector);
@@ -1595,75 +1360,69 @@ namespace Apoc3D
 #endif
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Adds two vectors.
-			*/
-			static Vector4 Add(Vector4 left, Vector4 right)
-			{
-				return VecAdd(left, right);
-			}
-			/* Subtracts two vectors.
-			*/
-			static Vector4 Subtract(Vector4 left, Vector4 right)
-			{
-				return VecSub(left, right);
-			}
-			/* Scales a vector by the given value.
-			*/
-			static Vector4 Multiply(Vector4 value, float scale)
-			{
-				return VecMul(value, scale);
-			}
-			/* Modulates a vector by another.
-			*/
-			static Vector4 Modulate(Vector4 left, Vector4 right)
-			{
-				return VecMul(left, right);
-			}
-			/* Scales a vector by the given value.
-			*/
-			static Vector4 Divide(Vector4 value, float scale)
-			{
-				return VecDiv(value, scale);
-			}
-			/* Reverses the direction of a given vector.
-			*/
-			static Vector4 Negate(Vector4 value)
-			{
-				return VecNegate(value);
-			}
+			/*
+			 * Adds two vectors.
+			 */
+			static Vector4 Add(Vector4 left, Vector4 right) { return _VecAdd(left, right); }
+			/* 
+			 * Subtracts two vectors.
+			 */
+			static Vector4 Subtract(Vector4 left, Vector4 right) { return _VecSub(left, right); }
+			/*
+			 * Scales a vector by the given value.
+			 */
+			static Vector4 Multiply(Vector4 value, float scale) { return _VecMul(value, scale); }
+			/*
+			 * Modulates a vector by another.
+			 */
+			static Vector4 Modulate(Vector4 left, Vector4 right) { return _VecMul(left, right); }
+			/*
+			 * Scales a vector by the given value.
+			 */
+			static Vector4 Divide(Vector4 value, float scale) { return _VecDiv(value, scale); }
+			/*
+			 * Reverses the direction of a given vector.
+			 */
+			static Vector4 Negate(Vector4 value) { return _VecNegate(value); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Adds two vectors.
-			*/
+			/*
+			 * Adds two vectors.
+			 */
 			static Vector4 Add(const Vector4& left, const Vector4& right)
 			{
 				return Vector4(left.X + right.X, left.Y + right.Y, left.Z + right.Z, left.W + right.W);
 			}
-			/* Subtracts two vectors.
-			*/
+			/*
+			 * Subtracts two vectors.
+			 */
 			static Vector4 Subtract(const Vector4& left, const Vector4& right)
 			{
 				return Vector4(left.X - right.X, left.Y - right.Y, left.Z - right.Z, left.W - right.W);
 			}
-			/* Scales a vector by the given value.
-			*/
+			/*
+			 * Scales a vector by the given value.
+			 */
 			static Vector4 Multiply(const Vector4& value, float scale)
 			{
 				return Vector4(value.X * scale, value.Y * scale, value.Z * scale, value.W * scale);
 			}
-			/* Modulates a vector by another.
-			*/
+			/*
+			 * Modulates a vector by another.
+			 */
 			static Vector4 Modulate(const Vector4& left, const Vector4& right)
 			{
 				return Vector4(left.X * right.X, left.Y * right.Y, left.Z * right.Z, left.W * right.W);
 			}
-			/* Scales a vector by the given value.
-			*/
+			/*
+			 * Scales a vector by the given value.
+			 */
 			static Vector4 Divide(const Vector4& value, float scale)
 			{
 				return Vector4(value.X / scale, value.Y / scale, value.Z / scale, value.W / scale);
 			}
-			/* Reverses the direction of a given vector.
-			*/
+			/*
+			 * Reverses the direction of a given vector.
+			 */
 			static Vector4 Negate(const Vector4& value)
 			{
 				return Vector4(-value.X, -value.Y, -value.Z, -value.W);
@@ -1671,23 +1430,25 @@ namespace Apoc3D
 #endif
 			
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Returns a Vector4 containing the 4D Cartesian coordinates of 
-			* a point specified in Barycentric coordinates relative to a 4D triangle.
-			*/
+			/*
+			 * Returns a Vector4 containing the 4D Cartesian coordinates of 
+			 * a point specified in Barycentric coordinates relative to a 4D triangle.
+			 */
 			static Vector4 Barycentric(Vector4 value1, Vector4 value2, 
 				Vector4 value3, float amount1, float amount2)
 			{
-				__m128 t1 = VecSub(value2,value1);
-				__m128 t2 = VecSub(value3,value1);
-				t1 = VecMul(t1, amount1);
-				t2 = VecMul(t2, amount2);
+				__m128 t1 = _VecSub(value2,value1);
+				__m128 t2 = _VecSub(value3,value1);
+				t1 = _VecMul(t1, amount1);
+				t2 = _VecMul(t2, amount2);
 
-				__m128 result = VecAdd(value1, t1);
-				result = VecAdd(result, t2);
+				__m128 result = _VecAdd(value1, t1);
+				result = _VecAdd(result, t2);
 				return result;
 			}
-			/* Performs a Catmull-Rom interpolation using the specified positions.
-			*/
+			/* 
+			 * Performs a Catmull-Rom interpolation using the specified positions.
+			 */
 			static Vector4 CatmullRom(Vector4 value1, Vector4 value2, 
 				Vector4 value3, const Vector4& value4, float amount)
 			{
@@ -1697,39 +1458,40 @@ namespace Apoc3D
 				__m128 t2, t3;
 				
 				__m128 result;
-				__m128 t1 = VecMul(value2, 2);
-				__m128 lsum = VecSub(value3, value1);
+				__m128 t1 = _VecMul(value2, 2);
+				__m128 lsum = _VecSub(value3, value1);
 
-				lsum = VecMul(lsum, amount);
+				lsum = _VecMul(lsum, amount);
 
-				result = VecAdd(t1, lsum);
+				result = _VecAdd(t1, lsum);
 
-				t1 = VecMul(value1, 2);
-				t2 = VecMul(value2, -5);
-				t3 = VecMul(value3, 4);
+				t1 = _VecMul(value1, 2);
+				t2 = _VecMul(value2, -5);
+				t3 = _VecMul(value3, 4);
 				
-				lsum = VecAdd(t1, t2);
-				lsum = VecAdd(lsum, t3);
-				lsum = VecSub(lsum, value4);
-				lsum = VecMul(t2, squared);
+				lsum = _VecAdd(t1, t2);
+				lsum = _VecAdd(lsum, t3);
+				lsum = _VecSub(lsum, value4);
+				lsum = _VecMul(t2, squared);
 
-				result = VecAdd(result, lsum);
+				result = _VecAdd(result, lsum);
 
-				t1 = VecMul(value2, 3);
-				t2 = VecMul(value3, -3);
+				t1 = _VecMul(value2, 3);
+				t2 = _VecMul(value3, -3);
 							
-				lsum = VecAdd(t1, t2);
-				lsum = VecSub(lsum, value1);
-				lsum = VecAdd(lsum, value4);
-				lsum = VecMul(t2, cubed);
+				lsum = _VecAdd(t1, t2);
+				lsum = _VecSub(lsum, value1);
+				lsum = _VecAdd(lsum, value4);
+				lsum = _VecMul(t2, cubed);
 
-				result = VecAdd(result, lsum);
-				result = VecMul(result, 0.5f);
+				result = _VecAdd(result, lsum);
+				result = _VecMul(result, 0.5f);
 				return result;
 			}
 
-			/* Performs a Hermite spline interpolation.
-			*/
+			/* 
+			 * Performs a Hermite spline interpolation.
+			 */
 			static Vector4 Hermite(Vector4 value1, Vector4 tangent1, 
 				Vector4 value2, const Vector4& tangent2, float amount)
 			{
@@ -1741,55 +1503,59 @@ namespace Apoc3D
 				float part4 = cubed - squared;
 
 
-				__m128 t1 = VecMul(value1, part1);
-				__m128 t2 = VecMul(value2, part2);
-				__m128 t3 = VecMul(tangent1, part3);
-				__m128 t4 = VecMul(tangent2, part4);
+				__m128 t1 = _VecMul(value1, part1);
+				__m128 t2 = _VecMul(value2, part2);
+				__m128 t3 = _VecMul(tangent1, part3);
+				__m128 t4 = _VecMul(tangent2, part4);
 
-				__m128 result = VecAdd(t1, t2);
-				result = VecAdd(result, t3);
-				result = VecAdd(result, t4);
+				__m128 result = _VecAdd(t1, t2);
+				result = _VecAdd(result, t3);
+				result = _VecAdd(result, t4);
 
 				return result;
 			}
 
-			/* Restricts a value to be within a specified range.
-			*/
+			/* 
+			 * Restricts a value to be within a specified range.
+			 */
 			static Vector4 Clamp(Vector4 value, Vector4 min, Vector4 max)
 			{
-				__m128 t1 = VecMax(min, value);
-				t1 = VecMin(max, value);
+				__m128 t1 = _VecMax(min, value);
+				t1 = _VecMin(max, value);
 
 				return t1;
 			}
 			
-			/* Performs a linear interpolation between two vectors.
-			*/
+			/*
+			 * Performs a linear interpolation between two vectors.
+			 */
 			static Vector4 Lerp(Vector4 start, Vector4 end, float amount)
 			{
-				__m128 t1 = VecSub(end, start);
-				t1 = VecMul(t1, amount);
-				t1 = VecAdd(start, t1);
+				__m128 t1 = _VecSub(end, start);
+				t1 = _VecMul(t1, amount);
+				t1 = _VecAdd(start, t1);
 				return t1;
 			}
-			/* Performs a cubic interpolation between two vectors.
-			*/
+			/*
+			 * Performs a cubic interpolation between two vectors.
+			 */
 			static Vector4 SmoothStep(Vector4 start, Vector4 end, float amount)
 			{
 				amount = (amount > 1.0f) ? 1.0f : ((amount < 0.0f) ? 0.0f : amount);
 				amount = (amount * amount) * (3.0f - (2.0f * amount));
 
-				__m128 t1 = VecSub(end, start);
-				t1 = VecMul(t1, amount);
-				t1 = VecAdd(start, t1);
+				__m128 t1 = _VecSub(end, start);
+				t1 = _VecMul(t1, amount);
+				t1 = _VecAdd(start, t1);
 
 				return t1;
 			}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			
-			/* Returns a Vector4 containing the 4D Cartesian coordinates of 
-			* a point specified in Barycentric coordinates relative to a 4D triangle.
-			*/
+			/* 
+			 * Returns a Vector4 containing the 4D Cartesian coordinates of 
+			 * a point specified in Barycentric coordinates relative to a 4D triangle.
+			 */
 			static Vector4 Barycentric(const Vector4& value1, const Vector4& value2, 
 				const Vector4& value3, float amount1, float amount2)
 			{
@@ -1800,8 +1566,9 @@ namespace Apoc3D
 				vector.W = value1.W + amount1 * (value2.W - value1.W) + amount2 * (value3.W - value1.W);
 				return vector;
 			}
-			/* Performs a Catmull-Rom interpolation using the specified positions.
-			*/
+			/* 
+			 * Performs a Catmull-Rom interpolation using the specified positions.
+			 */
 			static Vector4 CatmullRom(const Vector4& value1, const Vector4& value2, 
 				const Vector4& value3, const Vector4& value4, float amount)
 			{
@@ -1828,8 +1595,9 @@ namespace Apoc3D
 				return vector;
 			}
 
-			/* Performs a Hermite spline interpolation.
-			*/
+			/*
+			 * Performs a Hermite spline interpolation.
+			 */
 			static Vector4 Hermite(const Vector4& value1, const Vector4& tangent1, 
 				const Vector4& value2, const Vector4& tangent2, float amount)
 			{
@@ -1849,8 +1617,9 @@ namespace Apoc3D
 				return vector;
 			}
 
-			/* Restricts a value to be within a specified range.
-			*/
+			/* 
+			 * Restricts a value to be within a specified range.
+			 */
 			static Vector4 Clamp(const Vector4& value, const Vector4& min, const Vector4& max)
 			{
 				float x = value.X;
@@ -1872,8 +1641,9 @@ namespace Apoc3D
 				return Vector4(x, y, z, w);
 			}
 			
-			/* Performs a linear interpolation between two vectors.
-			*/
+			/*
+			 * Performs a linear interpolation between two vectors.
+			 */
 			static Vector4 Lerp(const Vector4& start, const Vector4& end, float amount)
 			{
 				Vector4 vector;
@@ -1885,8 +1655,9 @@ namespace Apoc3D
 
 				return vector;
 			}
-			/* Performs a cubic interpolation between two vectors.
-			*/
+			/*
+			 * Performs a cubic interpolation between two vectors.
+			 */
 			static Vector4 SmoothStep(const Vector4& start, const Vector4& end, float amount)
 			{
 				Vector4 vector;
@@ -1904,41 +1675,32 @@ namespace Apoc3D
 #endif
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Calculates the distance between two vectors.
-			*/
-			static float Distance(Vector4 value1, Vector4 value2)
-			{
-				return Vec4Distance(value1, value2);
-			}
-			/* Calculates the squared distance between two vectors.
-			*/
-			static float DistanceSquared(Vector4 value1, Vector4 value2)
-			{
-				return Vec4DistanceSquared(value1, value2);
-			}
-			/* Calculates the dot product of two vectors.
-			*/
-			static float Dot(Vector4 left, Vector4 right)
-			{
-				return Vec4Dot(left, right);
-			}
+			/*
+			 * Calculates the distance between two vectors.
+			 */
+			static float Distance(Vector4 value1, Vector4 value2) { return _Vec4Distance(value1, value2); }
+			/*
+			 * Calculates the squared distance between two vectors.
+			 */
+			static float DistanceSquared(Vector4 value1, Vector4 value2) { return _Vec4DistanceSquared(value1, value2); }
+			/* 
+			 * Calculates the dot product of two vectors.
+			 */
+			static float Dot(Vector4 left, Vector4 right) { return _Vec4Dot(left, right); }
 
-			/* Returns a vector containing the smallest components of the specified vectors.
-			*/
-			static Vector4 Minimize(Vector4 left, Vector4 right)
-			{
-				return VecMin(left, right);
-			}
+			/*
+			 * Returns a vector containing the smallest components of the specified vectors.
+			 */
+			static Vector4 Minimize(Vector4 left, Vector4 right) { return _VecMin(left, right); }
 
-			/* Returns a vector containing the largest components of the specified vectors.
-			*/
-			static Vector4 Maximize(Vector4 left, Vector4 right)
-			{
-				return VecMax(left, right);
-			}
+			/*
+			 * Returns a vector containing the largest components of the specified vectors.
+			 */
+			static Vector4 Maximize(Vector4 left, Vector4 right) { return _VecMax(left, right); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Calculates the distance between two vectors.
-			*/
+			/*
+			 * Calculates the distance between two vectors.
+			 */
 			static float Distance(const Vector4& value1, const Vector4& value2)
 			{
 				float x = value1.X - value2.X;
@@ -1948,8 +1710,9 @@ namespace Apoc3D
 
 				return sqrtf(x * x + y * y + z * z + w * w);
 			}
-			/* Calculates the squared distance between two vectors.
-			*/
+			/*
+			 * Calculates the squared distance between two vectors.
+			 */
 			static float DistanceSquared(const Vector4& value1, const Vector4& value2)
 			{
 				float x = value1.X - value2.X;
@@ -1959,15 +1722,17 @@ namespace Apoc3D
 
 				return x * x + y * y + z * z + w * w;
 			}
-			/* Calculates the dot product of two vectors.
-			*/
+			/* 
+			 * Calculates the dot product of two vectors.
+			 */
 			static float Dot(const Vector4& left, const Vector4& right)
 			{
 				return left.X * right.X + left.Y * right.Y + left.Z * right.Z + left.W * right.W;
 			}
 
-			/* Returns a vector containing the smallest components of the specified vectors.
-			*/
+			/*
+			 * Returns a vector containing the smallest components of the specified vectors.
+			 */
 			static Vector4 Minimize(const Vector4& left, const Vector4& right)
 			{
 				Vector4 vector;
@@ -1978,8 +1743,9 @@ namespace Apoc3D
 				return vector;
 			}
 
-			/* Returns a vector containing the largest components of the specified vectors.
-			*/
+			/*
+			 * Returns a vector containing the largest components of the specified vectors.
+			 */
 			static Vector4 Maximize(const Vector4& left, const Vector4& right)
 			{
 				Vector4 vector;
@@ -1992,30 +1758,38 @@ namespace Apoc3D
 #endif
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			/* Transforms a 3D vector by the given Matrix
-			*/
+			/*
+			 * Transforms a 3D vector by the given Matrix
+			 */
 			static Vector4 Transform(Vector4 vector, const Matrix& transform);
-			/* Performs a coordinate transformation using the given Matrix. can not project
-			*/
+			/*
+			 * Performs a coordinate transformation using the given Matrix. can not project
+			 */
 			static Vector4 TransformSimple(Vector4 vector, const Matrix& transform);
-			/* Performs a coordinate transformation using the given Matrix
-			*/
+			/*
+			 * Performs a coordinate transformation using the given Matrix
+			 */
 			static Vector4 TransformCoordinate(Vector4 vector, const Matrix& transform);
-			/* Performs a normal transformation using the given Matrix
-			*/
+			/*
+			 * Performs a normal transformation using the given Matrix
+			 */
 			static Vector4 TransformNormal(Vector4 vector, const Matrix& transform);
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			/* Transforms a 3D vector by the given Matrix
-			*/
+			/*
+			 * Transforms a 3D vector by the given Matrix
+			 */
 			static Vector4 Transform(const Vector4& vector, const Matrix& transform);
-			/* Performs a coordinate transformation using the given Matrix. can not project
-			*/
+			/*
+			 * Performs a coordinate transformation using the given Matrix. can not project
+			 */
 			static Vector4 TransformSimple(const Vector4& vector, const Matrix& transform);
-			/* Performs a coordinate transformation using the given Matrix
-			*/
+			/*
+			 * Performs a coordinate transformation using the given Matrix
+			 */
 			static Vector4 TransformCoordinate(const Vector4& vector, const Matrix& transform);
-			/* Performs a normal transformation using the given Matrix
-			*/
+			/*
+			 * Performs a normal transformation using the given Matrix
+			 */
 			static Vector4 TransformNormal(const Vector4& vector, const Matrix& transform);
 #endif
 
@@ -2039,6 +1813,132 @@ namespace Apoc3D
 #endif
 		};
 
+#define _V3X(x) (Apoc3D::Math::Vector3Utils::GetX(x))
+#define _V3Y(x) (Apoc3D::Math::Vector3Utils::GetY(x))
+#define _V3Z(x) (Apoc3D::Math::Vector3Utils::GetZ(x))
+
+#define v3x(x) (Apoc3D::Math::Vector3Utils::GetX(x))
+#define v3y(x) (Apoc3D::Math::Vector3Utils::GetY(x))
+#define v3z(x) (Apoc3D::Math::Vector3Utils::GetZ(x))
+
+#define v2x(x) (Apoc3D::Math::Vector2Utils::GetX(x))
+#define v2y(x) (Apoc3D::Math::Vector2Utils::GetY(x))
+
+#define v4x(x) (Apoc3D::Math::Vector4Utils::GetX(x))
+#define v4y(x) (Apoc3D::Math::Vector4Utils::GetY(x))
+#define v4z(x) (Apoc3D::Math::Vector4Utils::GetZ(x))
+#define v4w(x) (Apoc3D::Math::Vector4Utils::GetW(x))
+
+#define VECTOR2(x,y)		(Apoc3D::Math::Vector2Utils::LDVector(x,y))
+#define VECTOR3(x,y,z)		(Apoc3D::Math::Vector3Utils::LDVector(x,y,z))
+#define VECTOR4(x,y,z,w)	(Apoc3D::Math::Vector4Utils::LDVector(x,y,z,w))
+
+#define v2Length(v) (Apoc3D::Math::Vector2Utils::Length(v))
+#define v3Length(v) (Apoc3D::Math::Vector3Utils::Length(v))
+#define v4Length(v) (Apoc3D::Math::Vector4Utils::Length(v))
+
+#define v2LengthSquared(v) (Apoc3D::Math::Vector2Utils::LengthSquared(v))
+#define v3LengthSquared(v) (Apoc3D::Math::Vector3Utils::LengthSquared(v))
+#define v4LengthSquared(v) (Apoc3D::Math::Vector4Utils::LengthSquared(v))
+
+#define v2Normalize(v) (Apoc3D::Math::Vector2Utils::Normalize(v))
+#define v3Normalize(v) (Apoc3D::Math::Vector3Utils::Normalize(v))
+#define v4Normalize(v) (Apoc3D::Math::Vector4Utils::Normalize(v))
+
+#define v2Load(x) (Apoc3D::Math::Vector2Utils::LDVector(v))
+#define v3Load(x) (Apoc3D::Math::Vector3Utils::LDVector(v))
+#define v4Load(x) (Apoc3D::Math::Vector4Utils::LDVector(v))
+
+#define v2LoadPtr(v) (Apoc3D::Math::Vector2Utils::LDVectorPtr(v))
+#define v3LoadPtr(v) (Apoc3D::Math::Vector3Utils::LDVectorPtr(v))
+#define v4LoadPtr(v) (Apoc3D::Math::Vector4Utils::LDVectorPtr(v))
+
+#define v2Store(v, dest) (Apoc3D::Math::Vector2Utils::Store(v, dest))
+#define v3Store(v, dest) (Apoc3D::Math::Vector3Utils::Store(v, dest))
+#define v4Store(v, dest) (Apoc3D::Math::Vector4Utils::Store(v, dest))
+
+#define v2Element(v, i) (Apoc3D::Math::Vector2Utils::GetElement(v, i))
+#define v3Element(v, i) (Apoc3D::Math::Vector3Utils::GetElement(v, i))
+#define v4Element(v, i) (Apoc3D::Math::Vector4Utils::GetElement(v, i))
+
+#define v2Elements(v) (Apoc3D::Math::Vector2Utils::GetElements(v))
+#define v3Elements(v) (Apoc3D::Math::Vector3Utils::GetElements(v))
+#define v4Elements(v) (Apoc3D::Math::Vector4Utils::GetElements(v))
+
+#define v2Add(left, right) (Apoc3D::Math::Vector2Utils::Add(left, right))
+#define v3Add(left, right) (Apoc3D::Math::Vector3Utils::Add(left, right))
+#define v4Add(left, right) (Apoc3D::Math::Vector4Utils::Add(left, right))
+
+#define v2Subtract(left, right) (Apoc3D::Math::Vector2Utils::Subtract(left, right))
+#define v3Subtract(left, right) (Apoc3D::Math::Vector3Utils::Subtract(left, right))
+#define v4Subtract(left, right) (Apoc3D::Math::Vector4Utils::Subtract(left, right))
+
+#define v2Multiply(value, scale) (Apoc3D::Math::Vector2Utils::Multiply(value, scale))
+#define v3Multiply(value, scale) (Apoc3D::Math::Vector3Utils::Multiply(value, scale))
+#define v4Multiply(value, scale) (Apoc3D::Math::Vector4Utils::Multiply(value, scale))
+
+#define v2Modulate(left, right) (Apoc3D::Math::Vector2Utils::Modulate(left, right))
+#define v3Modulate(left, right) (Apoc3D::Math::Vector3Utils::Modulate(left, right))
+#define v4Modulate(left, right) (Apoc3D::Math::Vector4Utils::Modulate(left, right))
+
+#define v2Divide(left, right) (Apoc3D::Math::Vector2Utils::Divide(left, right))
+#define v3Divide(left, right) (Apoc3D::Math::Vector3Utils::Divide(left, right))
+#define v4Divide(left, right) (Apoc3D::Math::Vector4Utils::Divide(left, right))
+
+#define v2Cross(left, right) (Apoc3D::Math::Vector2Utils::Cross(left, right))
+#define v3Cross(left, right) (Apoc3D::Math::Vector3Utils::Cross(left, right))
+#define v4Cross(left, right) (Apoc3D::Math::Vector4Utils::Cross(left, right))
+
+#define v2Negate(left, right) (Apoc3D::Math::Vector2Utils::Negate(left, right))
+#define v3Negate(left, right) (Apoc3D::Math::Vector3Utils::Negate(left, right))
+#define v4Negate(left, right) (Apoc3D::Math::Vector4Utils::Negate(left, right))
+
+#define v2Barycentric(value1, value2, value3, amount1, amount2) (Apoc3D::Math::Vector2Utils::Barycentric(value1, value2, value3, amount1, amount2))
+#define v3Barycentric(value1, value2, value3, amount1, amount2) (Apoc3D::Math::Vector3Utils::Barycentric(value1, value2, value3, amount1, amount2))
+#define v4Barycentric(value1, value2, value3, amount1, amount2) (Apoc3D::Math::Vector4Utils::Barycentric(value1, value2, value3, amount1, amount2))
+
+#define v2CatmullRom(value1, value2, value3, value4, amount) (Apoc3D::Math::Vector2Utils::CatmullRom(value1, value2, value3, value4, amount))
+#define v3CatmullRom(value1, value2, value3, value4, amount) (Apoc3D::Math::Vector3Utils::CatmullRom(value1, value2, value3, value4, amount))
+#define v4CatmullRom(value1, value2, value3, value4, amount) (Apoc3D::Math::Vector4Utils::CatmullRom(value1, value2, value3, value4, amount))
+
+#define v2Hermite(value1, tangent1, value2, tangent2, amount) (Apoc3D::Math::Vector2Utils::Hermite(value1, tangent1, value2, tangent2, amount))
+#define v3Hermite(value1, tangent1, value2, tangent2, amount) (Apoc3D::Math::Vector3Utils::Hermite(value1, tangent1, value2, tangent2, amount))
+#define v4Hermite(value1, tangent1, value2, tangent2, amount) (Apoc3D::Math::Vector4Utils::Hermite(value1, tangent1, value2, tangent2, amount))
+
+#define v2Lerp(start, end, amount) (Apoc3D::Math::Vector2Utils::Lerp(start, end, amount))
+#define v3Lerp(start, end, amount) (Apoc3D::Math::Vector3Utils::Lerp(start, end, amount))
+#define v4Lerp(start, end, amount) (Apoc3D::Math::Vector4Utils::Lerp(start, end, amount))
+
+#define v2SmoothStep(start, end, amount) (Apoc3D::Math::Vector2Utils::SmoothStep(start, end, amount))
+#define v3SmoothStep(start, end, amount) (Apoc3D::Math::Vector3Utils::SmoothStep(start, end, amount))
+#define v4SmoothStep(start, end, amount) (Apoc3D::Math::Vector4Utils::SmoothStep(start, end, amount))
+
+#define v2Clamp(value, min, max) (Apoc3D::Math::Vector2Utils::Clamp(value, min, max))
+#define v3Clamp(value, min, max) (Apoc3D::Math::Vector3Utils::Clamp(value, min, max))
+#define v4Clamp(value, min, max) (Apoc3D::Math::Vector4Utils::Clamp(value, min, max))
+
+#define v2Distance(value1, value2) (Apoc3D::Math::Vector2Utils::Distance(value1, value2))
+#define v3Distance(value1, value2) (Apoc3D::Math::Vector3Utils::Distance(value1, value2))
+#define v4Distance(value1, value2) (Apoc3D::Math::Vector4Utils::Distance(value1, value2))
+
+#define v2Dot(value1, value2) (Apoc3D::Math::Vector2Utils::Dot(value1, value2))
+#define v3Dot(value1, value2) (Apoc3D::Math::Vector3Utils::Dot(value1, value2))
+#define v4Dot(value1, value2) (Apoc3D::Math::Vector4Utils::Dot(value1, value2))
+#define v2Dot2(value1, value2) (Apoc3D::Math::Vector2Utils::Dot2(value1, value2))
+#define v3Dot2(value1, value2) (Apoc3D::Math::Vector3Utils::Dot2(value1, value2))
+#define v4Dot2(value1, value2) (Apoc3D::Math::Vector4Utils::Dot2(value1, value2))
+
+#define v2Reflect(vector, normal) (Apoc3D::Math::Vector2Utils::Reflect(vector, normal))
+#define v3Reflect(vector, normal) (Apoc3D::Math::Vector3Utils::Reflect(vector, normal))
+#define v4Reflect(vector, normal) (Apoc3D::Math::Vector4Utils::Reflect(vector, normal))
+
+#define v2Minimize(left, right) (Apoc3D::Math::Vector2Utils::Minimize(left, right))
+#define v3Minimize(left, right) (Apoc3D::Math::Vector3Utils::Minimize(left, right))
+#define v4Minimize(left, right) (Apoc3D::Math::Vector4Utils::Minimize(left, right))
+
+#define v2Maximize(left, right) (Apoc3D::Math::Vector2Utils::Maximize(left, right))
+#define v3Maximize(left, right) (Apoc3D::Math::Vector3Utils::Maximize(left, right))
+#define v4Maximize(left, right) (Apoc3D::Math::Vector4Utils::Maximize(left, right))
 
 	}
 }

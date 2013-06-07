@@ -93,7 +93,7 @@ namespace Apoc3D
 #endif
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			Color4() { vector = VecLoad(0.0f); }
+			Color4() { vector = _VecLoad(0.0f); }
 			Color4(Vector3 color)
 			{
 				vector = color;				
@@ -177,7 +177,7 @@ namespace Apoc3D
 			static void Add(Color4& result, const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				result = Color4(VecAdd(color1.vector, color2.vector));
+				result = Color4(_VecAdd(color1.vector, color2.vector));
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				result = Color4(color1.Red + color2.Red, 
 					color1.Green + color2.Green, 
@@ -192,7 +192,7 @@ namespace Apoc3D
 			static Color4 Add(const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				return Color4(VecAdd(color1.vector, color2.vector));
+				return Color4(_VecAdd(color1.vector, color2.vector));
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				return Color4(color1.Red + color2.Red, 
 					color1.Green + color2.Green, 
@@ -208,7 +208,7 @@ namespace Apoc3D
 			static Color4 Subtract(const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				return Color4(VecSub(color1.vector, color2.vector));
+				return Color4(_VecSub(color1.vector, color2.vector));
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				return Color4(color1.Red - color2.Red, 
 					color1.Green - color2.Green, 
@@ -223,7 +223,7 @@ namespace Apoc3D
 			static void Subtract(Color4& result, const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				result = Color4(VecSub(color1.vector, color2.vector));
+				result = Color4(_VecSub(color1.vector, color2.vector));
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				result = Color4(color1.Red - color2.Red, 
 					color1.Green - color2.Green, 
@@ -238,7 +238,7 @@ namespace Apoc3D
 			static void Modulate(Color4& result,  const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				result = VecMul(color1.vector, color2.vector);
+				result = _VecMul(color1.vector, color2.vector);
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				result = Color4(color1.Red * color2.Red, 
 					color1.Green * color2.Green, 
@@ -252,7 +252,7 @@ namespace Apoc3D
 			static Color4 Modulate(const Color4 &color1, const Color4 &color2)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				return VecMul(color1.vector, color2.vector);
+				return _VecMul(color1.vector, color2.vector);
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				return Color4(color1.Red * color2.Red, 
 					color1.Green * color2.Green, 
@@ -267,9 +267,9 @@ namespace Apoc3D
 			static Color4 Lerp(const Color4 &color1, const Color4 &color2, float amount)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				Vector3 b = VecSub(color2.vector, color1.vector);
-				b = VecMul(b, amount);
-				b = VecAdd(color1.vector, b);
+				Vector3 b = _VecSub(color2.vector, color1.vector);
+				b = _VecMul(b, amount);
+				b = _VecAdd(color1.vector, b);
 				return b;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				float alpha = color1.Alpha + (amount * (color2.Alpha - color1.Alpha));
@@ -285,9 +285,9 @@ namespace Apoc3D
 			static void Lerp(Color4& result, const Color4 &color1, const Color4 &color2, float amount)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				Vector3 b = VecSub(color2.vector, color1.vector);
-				b = VecMul(b, amount);
-				b = VecAdd(color1.vector, b);
+				Vector3 b = _VecSub(color2.vector, color1.vector);
+				b = _VecMul(b, amount);
+				b = _VecAdd(color1.vector, b);
 				result = Color4(b);
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				float alpha = color1.Alpha + (amount * (color2.Alpha - color1.Alpha));
@@ -303,8 +303,8 @@ namespace Apoc3D
 			static void Negate(Color4& result, const Color4 &color)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				static const Vector3 one = VecLoad(1);
-				result = Color4(VecSub(one, color.vector));
+				static const Vector3 one = _VecLoad(1);
+				result = Color4(_VecSub(one, color.vector));
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				result = Color4(1.0f - color.Red, 1.0f - color.Green, 1.0f - color.Blue, 1.0f - color.Alpha);
 			#endif
@@ -316,7 +316,7 @@ namespace Apoc3D
 			static void Scale(Color4& result,  const Color4 &color, float scale)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				result = Color4(VecMul(color.vector, scale));
+				result = Color4(_VecMul(color.vector, scale));
 				result.Alpha = color.Alpha;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				result = Color4(color.Red * scale, color.Green * scale, color.Blue * scale, color.Alpha);
@@ -328,7 +328,7 @@ namespace Apoc3D
 			static Color4 Scale(const Color4 &color, float scale)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				Color4 result = Color4(VecMul(color.vector, scale));
+				Color4 result = Color4(_VecMul(color.vector, scale));
 				result.Alpha = color.Alpha;
 				return result;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
@@ -341,11 +341,11 @@ namespace Apoc3D
 			static void AdjustContrast(Color4& result, const Color4 &color, float contrast)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				static const Vector3 half = VecLoad(0.5f);
+				static const Vector3 half = _VecLoad(0.5f);
 
-				Vector3 t = VecSub(color.vector, half);
-				t = VecMul(t, contrast);
-				t = VecAdd(t, half);
+				Vector3 t = _VecSub(color.vector, half);
+				t = _VecMul(t, contrast);
+				t = _VecAdd(t, half);
 
 				result = Color4(t);
 				result.Alpha = color.Alpha;
@@ -363,11 +363,11 @@ namespace Apoc3D
 			static Color4 AdjustContrast(const Color4 &color, float contrast)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				static const Vector3 half = VecLoad(0.5f);
+				static const Vector3 half = _VecLoad(0.5f);
 
-				Vector3 t = VecSub(color.vector, half);
-				t = VecMul(t, contrast);
-				t = VecAdd(t, half);
+				Vector3 t = _VecSub(color.vector, half);
+				t = _VecMul(t, contrast);
+				t = _VecAdd(t, half);
 
 				Color4 result = Color4(t);
 				result.Alpha = color.Alpha;
@@ -387,13 +387,13 @@ namespace Apoc3D
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				static const SSEVecLoader buffer = {0.2125f, 0.7154f, 0.0721f, 0};
-				static const Vector3 hue = VecLoad(buffer);
+				static const Vector3 hue = _VecLoad(buffer);
 			
-				Vector3 grey = Vec3Dot2(hue, color.vector);
+				Vector3 grey = _Vec3Dot2(hue, color.vector);
 
-				Vector3 c = VecSub(color.vector, grey);
-				c = VecMul(c, saturation);
-				c = VecAdd(c, grey);
+				Vector3 c = _VecSub(color.vector, grey);
+				c = _VecMul(c, saturation);
+				c = _VecAdd(c, grey);
 
 				result = Color4(c);
 				result.Alpha = color.Alpha;
@@ -414,13 +414,13 @@ namespace Apoc3D
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				static const SSEVecLoader buffer = {0.2125f, 0.7154f, 0.0721f, 0};
-				static const Vector3 hue = VecLoad(buffer);
+				static const Vector3 hue = _VecLoad(buffer);
 
-				Vector3 grey = Vec3Dot2(hue, color.vector);
+				Vector3 grey = _Vec3Dot2(hue, color.vector);
 
-				Vector3 c = VecSub(color.vector, grey);
-				c = VecMul(c, saturation);
-				c = VecAdd(c, grey);
+				Vector3 c = _VecSub(color.vector, grey);
+				c = _VecMul(c, saturation);
+				c = _VecAdd(c, grey);
 
 				Color4 result = Color4(c);
 				result.Alpha = color.Alpha;

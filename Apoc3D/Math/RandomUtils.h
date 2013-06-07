@@ -26,7 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
 #include "apoc3d/Common.h"
 #include "apoc3d/EventDelegate.h"
 
@@ -155,11 +154,6 @@ namespace Apoc3D
 
 		class APAPI Randomizer
 		{
-		private:
-			static Random m_randomizer;
-
-			Randomizer() {}
-			~Randomizer() {}
 		public:
 			static RandomSampleEventHandler& eventSampled() { return m_randomizer.eventSampled(); };
 
@@ -190,6 +184,12 @@ namespace Apoc3D
 				}
 				return 0;
 			}
+
+		private:
+			static Random m_randomizer;
+
+			Randomizer() {}
+			~Randomizer() {}
 		};
 
 	}

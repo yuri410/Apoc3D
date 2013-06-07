@@ -125,10 +125,10 @@ namespace Apoc3D
 			*(reinterpret_cast<float*>(&v)+3)=1;
 
 			float buffer[4];
-			buffer[0] = Vec3Dot(v, transform.Row1);
-			buffer[1] = Vec3Dot(v, transform.Row2);
-			buffer[2] = Vec3Dot(v, transform.Row3);
-			buffer[3] = Vec3Dot(v, transform.Row4);
+			buffer[0] = _Vec3Dot(v, transform.Row1);
+			buffer[1] = _Vec3Dot(v, transform.Row2);
+			buffer[2] = _Vec3Dot(v, transform.Row3);
+			buffer[3] = _Vec3Dot(v, transform.Row4);
 
 			return Vector4Utils::LDVectorPtr(buffer);
 		}
@@ -138,9 +138,9 @@ namespace Apoc3D
 			__m128 v = vector;
 			*(reinterpret_cast<float*>(&v)+3)=1.0f;
 
-			float x = Vec3Dot(v, transform.Row1);
-			float y = Vec3Dot(v, transform.Row2);
-			float z = Vec3Dot(v, transform.Row3);
+			float x = _Vec3Dot(v, transform.Row1);
+			float y = _Vec3Dot(v, transform.Row2);
+			float z = _Vec3Dot(v, transform.Row3);
 			return Vector3Utils::LDVector(x,y,z);
 		}
 
@@ -149,18 +149,18 @@ namespace Apoc3D
 			__m128 v = vector;
 			*(reinterpret_cast<float*>(&v)+3)=1.0f;
 
-			float x = Vec3Dot(v, transform.Row1);
-			float y = Vec3Dot(v, transform.Row2);
-			float z = Vec3Dot(v, transform.Row3);
+			float x = _Vec3Dot(v, transform.Row1);
+			float y = _Vec3Dot(v, transform.Row2);
+			float z = _Vec3Dot(v, transform.Row3);
 
 			
-			__m128 col4 = VecLoad(transform.M14, transform.M24, transform.M34, transform.M44);
+			__m128 col4 = _VecLoad(transform.M14, transform.M24, transform.M34, transform.M44);
 			
-			float w = 1 / Vec3Dot(col4, v);
+			float w = 1 / _Vec3Dot(col4, v);
 
 			__m128 result = Vector3Utils::LDVector(x,y,z);
 
-			result = VecMul(result, w);
+			result = _VecMul(result, w);
 
 			return result;
 		}
@@ -170,9 +170,9 @@ namespace Apoc3D
 			__m128 v = vector;
 			*(reinterpret_cast<float*>(&v)+3)=0;
 
-			float x = Vec3Dot(v, transform.Row1);
-			float y = Vec3Dot(v, transform.Row2);
-			float z = Vec3Dot(v, transform.Row3);
+			float x = _Vec3Dot(v, transform.Row1);
+			float y = _Vec3Dot(v, transform.Row2);
+			float z = _Vec3Dot(v, transform.Row3);
 			return Vector3Utils::LDVector(x,y,z);
 		}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
@@ -218,10 +218,10 @@ namespace Apoc3D
 		Vector4 Vector4Utils::Transform(Vector4 vector, const Matrix& transform)
 		{
 			float buffer[4];
-			buffer[0] = Vec4Dot(vector, transform.Row1);
-			buffer[1] = Vec4Dot(vector, transform.Row2);
-			buffer[2] = Vec4Dot(vector, transform.Row3);
-			buffer[3] = Vec4Dot(vector, transform.Row4);
+			buffer[0] = _Vec4Dot(vector, transform.Row1);
+			buffer[1] = _Vec4Dot(vector, transform.Row2);
+			buffer[2] = _Vec4Dot(vector, transform.Row3);
+			buffer[3] = _Vec4Dot(vector, transform.Row4);
 			return Vector4Utils::LDVectorPtr(buffer);
 		}
 

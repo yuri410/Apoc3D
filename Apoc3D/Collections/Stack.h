@@ -54,12 +54,12 @@ namespace Apoc3D
 					m_array[i] = another.m_array[i];
 			}
 
-			Stack& operator=(const Stack& rhs)
+			Stack& operator=(const Stack& another)
 			{
 				delete[] m_array;
 				
-				m_size = rhs.m_size;
-				m_length = rhs.m_length;
+				m_size = another.m_size;
+				m_length = another.m_length;
 				m_array = new T[m_length];
 
 				for (int i=0;i<m_length;i++)
