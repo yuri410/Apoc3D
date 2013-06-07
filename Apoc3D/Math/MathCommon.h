@@ -91,23 +91,23 @@ namespace Apoc3D
 		inline int32 Max(int32 a, int32 b);
 		inline int32 Max(int32 a, int32 b)
 		{
-			return a > b ? a : b;
+			return (a > b) ? a : b;
 		}
 		inline int32 Min(int32 a, int32 b);
 		inline int32 Min(int32 a, int32 b)
 		{
-			return a < b ? a : b;
+			return (a < b) ? a : b;
 		}
 
 		inline float Max(float a, float b);
 		inline float Max(float a, float b)
 		{
-			return a > b ? a : b;
+			return (a > b) ? a : b;
 		}
 		inline float Min(float a, float b);
 		inline float Min(float a, float b)
 		{
-			return a < b ? a : b;
+			return (a < b) ? a : b;
 		}
 	}
 }

@@ -33,8 +33,27 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class APAPI GaussBlurFilter
+		class GaussBlurFilter
 		{
+		public:
+			const float* const getSampleWeights() const { return SampleWeights; }
+			const Vector4* const getSampleOffsetX() const { return SampleOffsetsX; }
+			const Vector4* const getSampleOffsetY() const { return SampleOffsetsY; }
+
+			const int32 getSampleCount() const { return SampleCount; }
+
+			GaussBlurFilter(int32 sampleCount, float blurAmount, int32 mapWidth, int32 mapHeight)
+				: SampleCount(sampleCount), BlurAmount(blurAmount), SampleWeights(0), SampleOffsetsX(0), SampleOffsetsY(0)
+			{
+				ComputeFilter(1.0f / (float)mapWidth, 0, SampleWeights, SampleOffsetsX);
+				ComputeFilter(0, 1.0f / (float)mapHeight, SampleWeights, SampleOffsetsY);
+			}
+			~GaussBlurFilter(void)
+			{
+				delete[] SampleWeights;
+				delete[] SampleOffsetsX;
+				delete[] SampleOffsetsY;
+			}
 		private:
 			float BlurAmount;
 			int32 SampleCount;
@@ -104,25 +123,7 @@ namespace Apoc3D
 				}
 			}
 
-		public:
-			const float* const getSampleWeights() const { return SampleWeights; }
-			const Vector4* const getSampleOffsetX() const { return SampleOffsetsX; }
-			const Vector4* const getSampleOffsetY() const { return SampleOffsetsY; }
 
-			const int32 getSampleCount() const { return SampleCount; }
-
-			GaussBlurFilter(int32 sampleCount, float blurAmount, int32 mapWidth, int32 mapHeight)
-				: SampleCount(sampleCount), BlurAmount(blurAmount), SampleWeights(0), SampleOffsetsX(0), SampleOffsetsY(0)
-			{
-				ComputeFilter(1.0f / (float)mapWidth, 0, SampleWeights, SampleOffsetsX);
-				ComputeFilter(0, 1.0f / (float)mapHeight, SampleWeights, SampleOffsetsY);
-			}
-			~GaussBlurFilter(void)
-			{
-				delete[] SampleWeights;
-				delete[] SampleOffsetsX;
-				delete[] SampleOffsetsY;
-			}
 		};
 
 	}

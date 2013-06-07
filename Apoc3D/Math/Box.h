@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class APAPI Box
+		class Box
 		{
 		public:
 			int32 Left;

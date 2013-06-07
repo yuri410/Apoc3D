@@ -70,10 +70,7 @@ namespace Apoc3D
 				: X(x), Y(y)
 			{ }
 
-			bool operator==(const Vector2 &other) const
-			{
-				return other.X == X && other.Y == Y; 
-			}
+			bool operator==(const Vector2 &other) const { return other.X == X && other.Y == Y;  }
 			bool operator!=(const Vector2 &other) const { return !(*this == other); }
 
 		private:
@@ -107,10 +104,7 @@ namespace Apoc3D
 
 			}
 
-			bool operator==(const Vector3 &other) const
-			{
-				return other.X == X && other.Y == Y && other.Z == Z; 
-			}
+			bool operator==(const Vector3 &other) const { return other.X == X && other.Y == Y && other.Z == Z;  }
 			bool operator!=(const Vector3 &other) const { return !(*this == other); }
 
 		private:
@@ -146,10 +140,7 @@ namespace Apoc3D
 
 			}
 
-			bool operator==(const Vector4 &other) const
-			{
-				return other.X == X && other.Y == Y && other.Z == Z && other.W == W; 
-			}
+			bool operator==(const Vector4 &other) const { return other.X == X && other.Y == Y && other.Z == Z && other.W == W; }
 			bool operator!=(const Vector4 &other) const { return !(*this == other); }
 
 		private:
@@ -286,22 +277,10 @@ namespace Apoc3D
 			{
 				return &(v.X);
 			}
-			static float GetX(const Vector2& v)
-			{
-				return v.X;
-			}
-			static float GetY(const Vector2& v)
-			{
-				return v.Y;
-			}
-			static float& GetX(Vector2& v)
-			{
-				return v.X;
-			}
-			static float& GetY(Vector2& v)
-			{
-				return v.Y;
-			}
+			static float GetX(const Vector2& v) { return v.X; }
+			static float GetY(const Vector2& v) { return v.Y; }
+			static float& GetX(Vector2& v) { return v.X; }
+			static float& GetY(Vector2& v) { return v.Y; }
 			static void Store(const Vector2& v, float* dest)
 			{
 				dest[0] = v.X;

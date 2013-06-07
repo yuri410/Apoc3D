@@ -32,7 +32,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class APAPI Rectangle
+		class Rectangle
 		{
 		public:
 			/** Specifies the x-coordinate of the rectangle.
@@ -70,12 +70,11 @@ namespace Apoc3D
 
 			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
 
-			Rectangle() { X=Y=Width=Height=0; }
+			Rectangle() : X(0), Y(0), Width(0), Height(0) { }
 			Rectangle(int x, int y, int width, int height)
-			{
-				X = x; Y = y;
-				Width = width; Height = height;
-			}
+				: X(x), Y(y), Width(width), Height(height)
+			{ }
+
 			/**  Changes the position of the Rectangle.
 			*/
 			void Offset(const Point &amount)
@@ -143,7 +142,7 @@ namespace Apoc3D
 
 				int bbrp_x = b.X + b.Width;
 				int bbrp_y = b.Y + b.Height;
-				int maxX = Max(a.X, a.Y);
+				int maxX = Max(a.X, b.X);
 				int maxY = Max(a.Y, b.Y);
 				int minRight = Min(abrp_x, bbrp_x);
 				int minBottom = Min(abrp_y, bbrp_y);
@@ -155,10 +154,6 @@ namespace Apoc3D
 					rectangle.Height = minBottom - maxY;
 					return rectangle;
 				}
-				rectangle.X = 0;
-				rectangle.Y = 0;
-				rectangle.Width = 0;
-				rectangle.Height = 0;
 				return rectangle;
 			}
 			/** Creates a new Rectangle that exactly contains two other rectangles.
@@ -186,7 +181,7 @@ namespace Apoc3D
 			const static Rectangle Empty;
 		};
 
-		class APAPI RectangleF
+		class RectangleF
 		{
 		public:
 			float X;
@@ -203,12 +198,10 @@ namespace Apoc3D
 
 			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
 
-			RectangleF() { X=Y=Width=Height=0; }
+			RectangleF() : X(0), Y(0), Width(0), Height(0) { }
 			RectangleF(float x, float y, float width, float height)
-			{
-				X = x; Y = y;
-				Width = width; Height = height;
-			}
+				: X(x), Y(y), Width(width), Height(height)
+			{ }
 
 			void Offset(const Point &amount)
 			{
@@ -272,10 +265,6 @@ namespace Apoc3D
 					rectangle.Height = minBottom - maxY;
 					return rectangle;
 				}
-				rectangle.X = 0;
-				rectangle.Y = 0;
-				rectangle.Width = 0;
-				rectangle.Height = 0;
 				return rectangle;
 			}
 			static RectangleF Union(const RectangleF &a, const RectangleF &b)

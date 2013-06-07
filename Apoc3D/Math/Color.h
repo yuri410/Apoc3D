@@ -40,7 +40,7 @@ namespace Apoc3D
 		/**
 		 *  A four component color represented using 4 floats from 0 to 1
 		 */
-		class APAPI Color4
+		class Color4
 		{
 		public:
 #if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -99,14 +99,10 @@ namespace Apoc3D
 				vector = color;				
 			}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			Color4() { Red = Green = Blue = Alpha = 0; }
+			Color4() : Red(0), Green(0), Blue(0), Alpha(0) { }
 			Color4(Vector3 color)
-			{
-				Red = color.X;
-				Green = color.Y;
-				Blue = color.Z;
-				Alpha = 1;
-			}
+				: Red(color.X), Green(color.Y), Blue(color.Z), Alpha(1)
+			{ }
 #endif
 			
 			Color4(ColorValue argb)
@@ -125,26 +121,18 @@ namespace Apoc3D
 				Blue = static_cast<float>(blue / 255.0f);
 			}
 			Color4(int red, int green, int blue)
+				: Alpha(1.0f)
 			{
-				Alpha = 1;
 				Red = static_cast<float>(red / 255.0f);
 				Green = static_cast<float>(green / 255.0f);
 				Blue = static_cast<float>(blue / 255.0f);
 			}
 			Color4(float red, float green, float blue)
-			{
-				Alpha = 1.0f;
-				Red = red;
-				Green = green;
-				Blue = blue;
-			}
+				: Alpha(1.0f), Red(red), Green(green), Blue(blue)
+			{ }
 			Color4(float red, float green, float blue, float alpha)
-			{
-				Alpha = alpha;
-				Red = red;
-				Green = green;
-				Blue = blue;
-			}
+				: Alpha(alpha), Red(red), Green(green), Blue(blue)
+			{ }
 
 			/**
 			 *  Converts the color into a packed integer.

@@ -33,52 +33,39 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class APAPI Size
+		class Size
 		{
 		public:
 			int Width;
 			int Height;
-			Size() { Width =Height =0; }
-			Size(int w, int h) { Width = w; Height = h; }
+			Size() : Width(0), Height(0) { }
+			Size(int w, int h) : Width(w), Height(h) { }
 
-			friend static bool operator ==(const Size& a, const Size& b)
+			bool operator==(const Size &other) const
 			{
-				return (a.Width  == b.Width) && (a.Height == b.Height);
+				return (Width == other.Width) && (Height == other.Height);	
 			}
-			friend static bool operator !=(const Size& a, const Size& b)
-			{
-				return (a.Width != b.Width) || (a.Height != b.Height);
-			}
-			
-		
+			bool operator!=(const Size &other) const { return !(*this == other); }
+
 			const static Size Zero;
 		};
 
-		class APAPI Point
+		class Point
 		{
 		public:
 			int X;
 			int Y;
 
-			Point() { X = Y = 0; }
+			Point() : X(0), Y(0) { X = Y = 0; }
 			Point(int x, int y) { X = x; Y = y; }
 
-			friend static bool operator ==(const Point& a, const Point& b)
-			{
-				return (a.X  == b.X) && (a.Y == b.Y);
-			}
-			friend static bool operator !=(const Point& a, const Point& b)
-			{
-				return (a.X != b.X) || (a.Y != b.Y);
-			}
-			friend static Point operator +(const Point& a, const Point& b)
-			{
-				return Point(a.X + b.X, a.Y + b.Y);
-			}
-			friend static Point operator -(const Point& a, const Point& b)
-			{
-				return Point(a.X - b.X, a.Y - b.Y);
-			}
+
+			bool operator==(const Point &other) const { return (X == other.X) && (Y == other.Y); }
+			bool operator!=(const Point &other) const { return !(*this == other); }
+
+			Point operator+(const Point &other) const { return Point(X + other.X, Y + other.Y); }
+			Point operator-(const Point &other) const { return Point(X - other.X, Y - other.Y); }
+			
 
 			Point& operator +=(const Point& rhs)
 			{
@@ -94,7 +81,7 @@ namespace Apoc3D
 			}
 			const static Point Zero;
 		};
-		class APAPI PointF
+		class PointF
 		{
 		public:
 			float X;
@@ -103,22 +90,13 @@ namespace Apoc3D
 			PointF() { X = Y = 0; }
 			PointF(float x, float y) { X = x; Y = y; }
 
-			friend static bool operator ==(const PointF& a, const PointF& b)
-			{
-				return (a.X  == b.X) && (a.Y == b.Y);
-			}
-			friend static bool operator !=(const PointF& a, const PointF& b)
-			{
-				return (a.X != b.X) || (a.Y != b.Y);
-			}
-			friend static PointF operator +(const PointF& a, const PointF& b)
-			{
-				return PointF(a.X + b.X, a.Y + b.Y);
-			}
-			friend static PointF operator -(const PointF& a, const PointF& b)
-			{
-				return PointF(a.X - b.X, a.Y - b.Y);
-			}
+
+			bool operator==(const PointF &other) const { return (X == other.X) && (Y == other.Y); }
+			bool operator!=(const PointF &other) const { return !(*this == other); }
+
+			PointF operator+(const PointF &other) const { return PointF(X + other.X, Y + other.Y); }
+			PointF operator-(const PointF &other) const { return PointF(X - other.X, Y - other.Y); }
+
 			PointF& operator +=(const PointF& rhs)
 			{
 				X += rhs.X;
