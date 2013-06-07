@@ -48,10 +48,10 @@ namespace Apoc3D
 
 				m_game = game;
 
-				m_game->eventFrameStart()->bind(this, &GraphicsDeviceManager::game_FrameStart);
-				m_game->eventFrameEnd()->bind(this, &GraphicsDeviceManager::game_FrameEnd);
-				m_game->getWindow()->eventUserResized()->bind(this, &GraphicsDeviceManager::Window_UserResized);
-				m_game->getWindow()->eventMonitorChanged()->bind(this, &GraphicsDeviceManager::Window_MonitorChanged);
+				m_game->eventFrameStart()->Bind(this, &GraphicsDeviceManager::game_FrameStart);
+				m_game->eventFrameEnd()->Bind(this, &GraphicsDeviceManager::game_FrameEnd);
+				m_game->getWindow()->eventUserResized()->Bind(this, &GraphicsDeviceManager::Window_UserResized);
+				m_game->getWindow()->eventMonitorChanged()->Bind(this, &GraphicsDeviceManager::Window_MonitorChanged);
 			}
 
 			GraphicsDeviceManager::~GraphicsDeviceManager(void)

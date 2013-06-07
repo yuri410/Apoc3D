@@ -28,11 +28,14 @@
 
 
 #include "apoc3d/Common.h"
+#include "apoc3d/EventDelegate.h"
 
 namespace Apoc3D
 {
 	namespace Math
 	{
+		typedef EventDelegate1<int&> RandomSampleEventHandler;
+
 		class APAPI Random
 		{
 		public:
@@ -43,19 +46,19 @@ namespace Apoc3D
 
 			void SetSeed(int32 seed)
 			{
-				int num2 = 0x9a4ec86 - abs(seed);
-				m_seedArray[0x37] = num2;
-				int num3 = 1;
+				int seed0 = 0x9a4ec86 - abs(seed);
+				m_seedArray[0x37] = seed0;
+				int incr = 1;
 				for (int i = 1; i < 0x37; i++)
 				{
 					int index = (0x15 * i) % 0x37;
-					m_seedArray[index] = num3;
-					num3 = num2 - num3;
-					if (num3 < 0)
+					m_seedArray[index] = incr;
+					incr = seed0 - incr;
+					if (incr < 0)
 					{
-						num3 += 0x7fffffff;
+						incr += 0x7fffffff;
 					}
-					num2 = m_seedArray[index];
+					seed0 = m_seedArray[index];
 				}
 				for (int j = 1; j < 5; j++)
 				{
@@ -87,12 +90,12 @@ namespace Apoc3D
 			{
 				assert(minValue<=maxValue);
 
-				long num = maxValue - minValue;
-				if (num <= 0x7fffffffL)
+				long range = maxValue - minValue;
+				if (range <= 0x7fffffffL)
 				{
-					return static_cast<int32>(Sample() * num) + minValue;
+					return static_cast<int32>(Sample() * range) + minValue;
 				}
-				return static_cast<int32>(GetSampleForLargeRange() * num) + minValue;
+				return static_cast<int32>(GetSampleForLargeRange() * range) + minValue;
 			}
 			float NextFloat()
 			{
@@ -120,29 +123,29 @@ namespace Apoc3D
 				{
 					inextp = 1;
 				}
-				int num = m_seedArray[inext] - m_seedArray[inextp];
-				if (num < 0)
+				int dif = m_seedArray[inext] - m_seedArray[inextp];
+				if (dif < 0)
 				{
-					num += 0x7fffffff;
+					dif += 0x7fffffff;
 				}
-				m_seedArray[inext] = num;
+				m_seedArray[inext] = dif;
 				m_inext = inext;
 				m_inextp = inextp;
 
-				if (!m_eSample.empty())
-					m_eSample(num);
-				return num;
+				m_eSample.Invoke(dif);
+
+				return dif;
 			}
 			float GetSampleForLargeRange()
 			{
-				int num = InternalSample();
+				int intSample = InternalSample();
 				if ((((InternalSample() % 2) == 0) ? 1 : 0) != 0)
 				{
-					num = -num;
+					intSample = -intSample;
 				}
-				float num2 = static_cast<float>(num);
-				num2 += 2147483646.0f;
-				return (num2 / 4294967293.f);
+				float result = static_cast<float>(intSample);
+				result += 2147483646.0f;
+				return (result / 4294967293.f);
 			}
 			float Sample()
 			{

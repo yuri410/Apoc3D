@@ -143,16 +143,16 @@ namespace Apoc3D
 
 				int bbrp_x = b.X + b.Width;
 				int bbrp_y = b.Y + b.Height;
-				int num2 = (a.X > b.X) ? a.X : b.X;
-				int num = (a.Y > b.Y) ? a.Y : b.Y;
-				int num4 = (abrp_x < bbrp_x) ? abrp_x : bbrp_x;
-				int num3 = (abrp_y < bbrp_y) ? abrp_y : bbrp_y;
-				if ((num4 > num2) && (num3 > num))
+				int maxX = Max(a.X, a.Y);
+				int maxY = Max(a.Y, b.Y);
+				int minRight = Min(abrp_x, bbrp_x);
+				int minBottom = Min(abrp_y, bbrp_y);
+				if (minRight > maxX && minBottom > maxY)
 				{
-					rectangle.X = num2;
-					rectangle.Y = num;
-					rectangle.Width = num4 - num2;
-					rectangle.Height = num3 - num;
+					rectangle.X = maxX;
+					rectangle.Y = maxY;
+					rectangle.Width = minRight - maxX;
+					rectangle.Height = minBottom - maxY;
 					return rectangle;
 				}
 				rectangle.X = 0;
@@ -171,25 +171,17 @@ namespace Apoc3D
 
 				int bbrp_x = b.X + b.Width;
 				int bbrp_y = b.Y + b.Height;
-				result.X = (a.X < b.X) ? a.X : b.X;
-				result.Y = (a.Y < b.Y) ? a.Y : b.Y;
-				result.Width = ((abrp_x > bbrp_x) ? abrp_x : bbrp_x) - result.X;
-				result.Height = ((abrp_y > bbrp_y) ? abrp_y : bbrp_y) - result.Y;
+				result.X = Min(a.X, b.X);
+				result.Y = Min(a.Y, b.Y);
+				result.Width = Max(abrp_x , bbrp_x) - result.X;
+				result.Height = Max(abrp_y, bbrp_y) - result.Y;
 				return result;
 			}
-
-			friend static bool operator ==(const Rectangle& a, const Rectangle& b)
+			bool operator==(const Rectangle &other) const
 			{
-				return (a.X  == b.X) && (b.X == b.Y) && (a.Width == b.Width) && (a.Height == b.Height);
+				return (X  == other.X) && (X == other.Y) && (Width == other.Width) && (Height == other.Height);	
 			}
-			friend static bool operator !=(const Rectangle& a, const Rectangle& b)
-			{
-				if ((a.X == b.X) && (a.Y == b.Y) && (a.Width == b.Width))
-				{
-					return (a.Height != b.Height);
-				}
-				return true;
-			}
+			bool operator!=(const Rectangle &other) const { return !(*this == other); }
 
 			const static Rectangle Empty;
 		};
@@ -268,16 +260,16 @@ namespace Apoc3D
 
 				float bbrp_x = b.X + b.Width;
 				float bbrp_y = b.Y + b.Height;
-				float num2 = (a.X > b.X) ? a.X : b.X;
-				float num = (a.Y > b.Y) ? a.Y : b.Y;
-				float num4 = (abrp_x < bbrp_x) ? abrp_x : bbrp_x;
-				float num3 = (abrp_y < bbrp_y) ? abrp_y : bbrp_y;
-				if ((num4 > num2) && (num3 > num))
+				float maxX = Max(a.X, b.X);
+				float maxY = Max(a.Y, b.Y);
+				float minRight = Min(abrp_x, bbrp_x);
+				float minBottom = Min(abrp_y, bbrp_y);
+				if (minRight > maxX && minBottom > maxY)
 				{
-					rectangle.X = num2;
-					rectangle.Y = num;
-					rectangle.Width = num4 - num2;
-					rectangle.Height = num3 - num;
+					rectangle.X = maxX;
+					rectangle.Y = maxY;
+					rectangle.Width = minRight - maxX;
+					rectangle.Height = minBottom - maxY;
 					return rectangle;
 				}
 				rectangle.X = 0;
@@ -294,25 +286,19 @@ namespace Apoc3D
 
 				float bbrp_x = b.X + b.Width;
 				float bbrp_y = b.Y + b.Height;
-				result.X = (a.X < b.X) ? a.X : b.X;
-				result.Y = (a.Y < b.Y) ? a.Y : b.Y;
-				result.Width = ((abrp_x > bbrp_x) ? abrp_x : bbrp_x) - result.X;
-				result.Height = ((abrp_y > bbrp_y) ? abrp_y : bbrp_y) - result.Y;
+				result.X = Min(a.X, b.X);
+				result.Y = Min(a.Y, b.Y);
+				result.Width = Max(abrp_x, bbrp_x) - result.X;
+				result.Height = Max(abrp_y, bbrp_y) - result.Y;
 				return result;
 			}
 
-			friend static bool operator ==(const RectangleF& a, const RectangleF& b)
+			bool operator==(const RectangleF &other) const
 			{
-				return (a.X  == b.X) && (b.X == b.Y) && (a.Width == b.Width) && (a.Height == b.Height);
+				return (X  == other.X) && (X == other.Y) && (Width == other.Width) && (Height == other.Height);	
 			}
-			friend static bool operator !=(const RectangleF& a, const RectangleF& b)
-			{
-				if ((a.X == b.X) && (a.Y == b.Y) && (a.Width == b.Width))
-				{
-					return (a.Height != b.Height);
-				}
-				return true;
-			}
+			bool operator!=(const RectangleF &other) const { return !(*this == other); }
+
 
 			const static RectangleF Empty;
 		};

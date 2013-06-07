@@ -166,8 +166,8 @@ namespace Apoc3D
 				}
 
 				Vector3 vector = Vector3Utils::Divide(difference, length);
-				float minv = minf(-radius, length - radius2);
-				float maxv = (maxf(radius, length + radius2) - minv) * 0.5f;
+				float minv = Min(-radius, length - radius2);
+				float maxv = (Max(radius, length + radius2) - minv) * 0.5f;
 
 				vector = Vector3Utils::Multiply(vector, maxv + minv);
 				res.Center = Vector3Utils::Add(sphere1.Center, vector);// + vector * (maxv + minv);

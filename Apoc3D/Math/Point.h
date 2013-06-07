@@ -27,7 +27,7 @@
  */
 
 
-#include "apoc3d/Common.h"
+#include "MathCommon.h"
 
 namespace Apoc3D
 {

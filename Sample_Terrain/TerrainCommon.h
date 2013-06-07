@@ -36,9 +36,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 // Forward Declarations
 namespace SampleTerrain
 {
-	typedef fastdelegate::FastDelegate0<void> EventHandler;
-	typedef fastdelegate::FastDelegate1<bool*, void> CancellableEventHandler;
-
 	class TerrainDemo;
 	class GameCamera;
 	class Terrain;

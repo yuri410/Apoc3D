@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
 
-#include "tthread/tinythread.h"
+#include "apoc3d/tinythread.h"
 
 #include <ctime>
 

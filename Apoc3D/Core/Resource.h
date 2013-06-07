@@ -46,7 +46,7 @@ namespace Apoc3D
 		 *	RS_PendingLoad and RS_PendingUnload may occur. Otherwise, the state will only
 		 *	be one of the first four.
 		 */
-		enum APAPI ResourceState
+		enum ResourceState
 		{
 			/** 
 			 *  Represents the resource is already unloaded or not loaded yet. 

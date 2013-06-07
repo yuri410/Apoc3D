@@ -27,9 +27,9 @@
  */
 
 
-#include "apoc3d/Common.h"
+#include "../Common.h"
 
-#include "tthread/tinythread.h"
+#include "../tinythread.h"
 
 namespace Apoc3D
 {

@@ -70,7 +70,7 @@ int Initialize()
 
 
 	LogManager::Initialize();
-	LogManager::getSingleton().eventNewLogWritten.bind(NewLog);
+	LogManager::getSingleton().eventNewLogWritten.Bind(NewLog);
 
 	return 0;
 }

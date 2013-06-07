@@ -480,6 +480,12 @@
     <ClInclude Include="ApocException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EventDelegate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExportSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">

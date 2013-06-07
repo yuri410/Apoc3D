@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define DOCUMENT_H
 
 #include "APDCommon.h"
+#include "apoc3d/EventDelegate.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 using namespace Apoc3D::Graphics;
@@ -32,7 +33,7 @@ using namespace Apoc3D::UI;
 
 namespace APDesigner
 {
-	typedef fastdelegate::FastDelegate1<Document*, void> DocumentActivationHandler;
+	typedef Apoc3D::EventDelegate1<Document*> DocumentActivationHandler;
 
 	class APDAPI Document
 	{

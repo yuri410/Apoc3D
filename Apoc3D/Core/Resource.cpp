@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Streaming/GenerationTable.h"
 #include "apoc3d/Math/MathCommon.h"
 
-#include "tthread/tinythread.h"
+#include "../tinythread.h"
 
 #include <ctime>
 

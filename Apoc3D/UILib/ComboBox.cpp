@@ -45,7 +45,7 @@ namespace Apoc3D
 			m_button = new Button(Position + Point(Size.X-16,0), L"");
 			m_button->setOwner(getOwner());
 			m_button->setNormalTexture(m_skin->ComboButton);
-			m_button->eventPress().bind(this, &ComboBox::Button_OnPress);
+			m_button->eventPress().Bind(this, &ComboBox::Button_OnPress);
 			m_button->Initialize(device);
 			
 
@@ -53,8 +53,8 @@ namespace Apoc3D
 			m_listBox->SetSkin(m_skin);
 			m_listBox->setOwner(getOwner());
 			m_listBox->Visible = false;
-			m_listBox->eventSelectionChanged().bind(this, &ComboBox::ListBox_SelectionChanged);
-			m_listBox->eventPress().bind(this, &ComboBox::ListBox_OnPress);
+			m_listBox->eventSelectionChanged().Bind(this, &ComboBox::ListBox_SelectionChanged);
+			m_listBox->eventPress().Bind(this, &ComboBox::ListBox_OnPress);
 			m_listBox->Initialize(device);
 		}
 		void ComboBox::Update(const GameTime* const time)
@@ -131,11 +131,8 @@ namespace Apoc3D
 			{
 				m_textbox->Text = m_listBox->getItems()[m_listBox->getSelectedIndex()];
 
-				if (!m_eSelectionChanged.empty())
-				{
-					m_eSelectionChanged(this);
-				}
-
+				m_eSelectionChanged.Invoke(this);
+				
 				Close();
 			}
 			

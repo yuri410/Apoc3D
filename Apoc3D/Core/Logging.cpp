@@ -31,7 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Utility/StringUtils.h"
 
-#include "tthread/tinythread.h"
+#include "../tinythread.h"
 #include <ctime>
 
 #include <strstream>
@@ -65,7 +65,7 @@ namespace Apoc3D
 			}
 		}
 
-		void LogManager::Write(LogType type, const String& message, LogMessageLevel level) const
+		void LogManager::Write(LogType type, const String& message, LogMessageLevel level)
 		{
 			bool ret = m_logs[static_cast<int32>(type)]->Write(message, level, 
 				type != LOG_CommandResponse && type != LOG_Command && type != LOG_Game);
@@ -74,10 +74,8 @@ namespace Apoc3D
 			{
 				const LogEntry& lastest = *m_logs[(int32)type]->LastEntry();
 
-				if (!eventNewLogWritten.empty())
-				{
-					eventNewLogWritten(lastest);
-				}
+				eventNewLogWritten.Invoke(lastest);
+				
 				if (WriteLogToStd)
 				{
 					String msg = lastest.ToString();

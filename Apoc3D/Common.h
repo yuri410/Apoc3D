@@ -51,19 +51,7 @@
 #	define APOC3D_PLATFORM_NAME L"linux"
 #endif
 
-#ifndef APOC3D_DYNLIB
-#	define APAPI
-#	define APAPI_E
-#else
-#	pragma warning(disable:4251)
-#	if APOC3D_DYLIB_EXPORT
-#		define APAPI __declspec( dllexport )
-#		define APAPI_E __declspec( dllexport )
-#	else
-#		define APAPI __declspec( dllimport )
-#		define APAPI_E
-#	endif
-#endif
+#include "ExportSettings.h"
 
 //#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 //#	ifdef APOC3D_STATIC_RT
@@ -74,9 +62,9 @@
 //#endif
 
 #if defined(_MSC_VER)
-#define NoInline __declspec(noinline) 
+#define NoInline __declspec(noinline)
 #elif defined(__GCC__)
-#define NoInline __attribute__((noinline)) 
+#define NoInline __attribute__((noinline))
 #else
 #define NoInline
 #endif
@@ -89,9 +77,7 @@
 #include <string>
 #include <cstdint>
 
-
 #include "FastDelegate\FastDelegate.h"
-
 
 typedef int16_t int16;
 typedef int32_t int32;
@@ -107,7 +93,6 @@ typedef uint32 uint;
 typedef uint64 ulong;
 typedef uint64 BatchHandle;
 typedef BatchHandle HashHandle;
-
 
 
 #define MaxUInt16 std::numeric_limits<uint16>::max();
@@ -141,13 +126,8 @@ namespace std
 namespace Apoc3D
 {
 	template class APAPI fastdelegate::FastDelegate0<void>;
-	typedef fastdelegate::FastDelegate0<void> EventHandler;
-
-	typedef fastdelegate::FastDelegate1<int&, void> RandomSampleEventHandler;
 
 	typedef std::wstring String;
-
-//#	define StringCompare(a, b) !a.compare(b)
 
 	class Project;
 	class ProjectItemData;
@@ -360,9 +340,6 @@ namespace Apoc3D
 			struct RenderParameters;
 			class DeviceContext;
 			
-			template class APAPI fastdelegate::FastDelegate1<const Apoc3D::Core::GameTime*, void>;
-			typedef fastdelegate::FastDelegate0<void> UpdateEventHandler;
-
 
 			class Capabilities;
 

@@ -282,20 +282,20 @@ namespace Apoc3D
 			{
 				if (m_buckets)
 				{
-					int num = m_comparer->GetHashCode(item) & 2147483647;
-					int index = num % m_bucketsLength;
-					int num3 = -1;
+					int hash = m_comparer->GetHashCode(item) & 2147483647;
+					int index = hash % m_bucketsLength;
+					int slot = -1;
 					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == num) && m_comparer->Equals(m_entries[i].data, item))
+						if ((m_entries[i].hashCode == hash) && m_comparer->Equals(m_entries[i].data, item))
 						{
-							if (num3 < 0)
+							if (slot < 0)
 							{
 								m_buckets[index] = m_entries[i].next;
 							}
 							else
 							{
-								m_entries[num3].next = m_entries[i].next;
+								m_entries[slot].next = m_entries[i].next;
 							}
 							m_entries[i].hashCode = -1;
 							m_entries[i].next = m_freeList;
@@ -304,7 +304,7 @@ namespace Apoc3D
 							m_freeCount++;
 							return true;
 						}
-						num3 = i;
+						slot = i;
 					}
 				}
 				return false;
@@ -313,10 +313,10 @@ namespace Apoc3D
 			{
 				if (m_buckets)
 				{
-					int num = m_comparer->GetHashCode(item) & 2147483647;
-					for (int i = m_buckets[num % m_bucketsLength]; i >= 0; i = m_entries[i].next)
+					int hash = m_comparer->GetHashCode(item) & 2147483647;
+					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == num) && m_comparer->Equals(m_entries[i].data, item))
+						if ((m_entries[i].hashCode == hash) && m_comparer->Equals(m_entries[i].data, item))
 						{
 							return true;
 						}

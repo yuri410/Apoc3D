@@ -31,6 +31,7 @@
 #include "RenderOperationBuffer.h"
 #include "ModelTypes.h"
 #include "Animation/AnimationTypes.h"
+#include "../EventDelegate.h"
 
 #include "apoc3d/Core/Resource.h"
 
@@ -91,7 +92,7 @@ namespace Apoc3D
 			ANIMTYPE_Material
 		};
 
-		typedef fastdelegate::FastDelegate1<AnimationType, void> ModelAnimationCompletedHandler;
+		typedef EventDelegate1<AnimationType> ModelAnimationCompletedHandler;
 
 		/** A model is a set of subsets called Mesh, with additionally animation controller and data.
 		 *
@@ -216,26 +217,22 @@ namespace Apoc3D
 			void RootAnim_Completed()
 			{
 				m_rootAnimCompleted = true;
-				if (!m_eventAnimCompleted.empty())
-					m_eventAnimCompleted(ANIMTYPE_Root);
+				m_eventAnimCompleted.Invoke(ANIMTYPE_Root);
 			}
 			void RigidAnim_Competed()
 			{
 				m_rigidAnimCompleted = true;
-				if (!m_eventAnimCompleted.empty())
-					m_eventAnimCompleted(ANIMTYPE_Root);
+				m_eventAnimCompleted.Invoke(ANIMTYPE_Root);
 			}
 			void SkinAnim_Completed()
 			{
 				m_skinAnimCompleted = true;
-				if (!m_eventAnimCompleted.empty())
-					m_eventAnimCompleted(ANIMTYPE_Root);
+				m_eventAnimCompleted.Invoke(ANIMTYPE_Root);
 			}
 			void MtrlAnim_Completed()
 			{
 				m_mtrlAnimCompleted = true;
-				if (!m_eventAnimCompleted.empty())
-					m_eventAnimCompleted(ANIMTYPE_Root);
+				m_eventAnimCompleted.Invoke(ANIMTYPE_Root);
 			}
 			void InitializeAnimation();
 			void UpdateAnimation();

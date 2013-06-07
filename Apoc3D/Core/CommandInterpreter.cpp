@@ -148,13 +148,10 @@ namespace Apoc3D
 
 				if (triggersEvent)
 				{
-					if (!m_eCommandSubmited.empty())
-					{
-						String cmd = args[0];
-						StringUtils::ToLowerCase(cmd);
+					String cmd = args[0];
+					StringUtils::ToLowerCase(cmd);
 
-						m_eCommandSubmited(cmd, &args);
-					}
+					m_eCommandSubmited.Invoke(cmd, &args);
 				}
 			}
 			return true;

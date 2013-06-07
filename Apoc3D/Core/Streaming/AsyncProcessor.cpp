@@ -3,7 +3,7 @@
 #include "GenerationTable.h"
 #include "apoc3d/Core/Resource.h"
 
-#include "tthread/tinythread.h"
+#include "apoc3d/tinythread.h"
 
 #include <ctime>
 

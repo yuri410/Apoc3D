@@ -62,10 +62,10 @@ namespace Apoc3D
 
 			//Apoc3D::Math::Rectangle m_area;
 
-			virtual void OnMouseOver() {  if (!m_eventMouseOver.empty()) m_eventMouseOver(this); }
-			virtual void OnMouseOut() {  if (!m_eventMouseOut.empty()) m_eventMouseOut(this); }
-			virtual void OnPress() {  if (!m_eventMousePress.empty()) m_eventMousePress(this); }
-			virtual void OnRelease() {  if (!m_eventMouseRelease.empty()) m_eventMouseRelease(this); }
+			virtual void OnMouseOver() { m_eventMouseOver.Invoke(this); }
+			virtual void OnMouseOut() { m_eventMouseOut.Invoke(this); }
+			virtual void OnPress() { m_eventMousePress.Invoke(this); }
+			virtual void OnRelease() { m_eventMouseRelease.Invoke(this); }
 		public:
 			void* UserData;
 

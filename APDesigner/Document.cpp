@@ -35,8 +35,7 @@ namespace APDesigner
 		{
 			if (UIRoot::getTopMostForm() == m_docForm)
 			{
-				if (!m_eDocActivated.empty())
-					m_eDocActivated(this);
+				m_eDocActivated.Invoke(this);
 				DocActivate(this);
 			}
 		}
@@ -44,10 +43,7 @@ namespace APDesigner
 		{
 			if (UIRoot::getTopMostForm() != m_docForm && UIRoot::getTopMostForm() != m_mainWindow->getToolsPane())
 			{
-				if (!m_eDocDeactivated.empty())
-				{
-					m_eDocDeactivated(this);
-				}
+				m_eDocDeactivated.Invoke(this);
 				DocDeactivate(this);
 			}
 		}

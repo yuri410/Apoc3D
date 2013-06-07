@@ -39,7 +39,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			enum APAPI PresentInterval
+			enum PresentInterval
 			{
 				/**
 				 *  The device will present immediately without waiting for the refresh.

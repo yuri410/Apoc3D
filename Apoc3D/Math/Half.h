@@ -37,26 +37,26 @@ namespace Apoc3D
 
 		static Half FloatToHalf(float value)
 		{
-			uint num5 = reinterpret_cast<uint&>(value);
-			uint num3 = (uint)((num5 & 0x80000000) >> 0x10);
-			uint num = num5 & 0x7fffffff;
-			if (num > 0x47ffefff)
+			uint bits = reinterpret_cast<uint&>(value);
+			uint signBit = (uint)((bits & 0x80000000) >> 16);
+			uint absolute = bits & 0x7fffffffU;
+			if (absolute > 0x47ffefffU)  // too big
 			{
-				return (ushort)(num3 | 0x7fff);
+				return (ushort)(signBit | 0x7fff);
 			}
-			if (num < 0x38800000)
+			if (absolute < 0x38800000U)  // Denormal
 			{
-				uint num6 = (num & 0x7fffff) | 0x800000;
-				int num4 = 0x71 - ((int)(num >> 0x17));
-				num = (num4 > 0x1f) ? 0x0 : (num6 >> num4);
-				return (ushort)(num3 | (((num + 0xfff) + ((num >> 0xd) & 0x1)) >> 0xd));
+				uint num6 = (absolute & 0x7fffffU) | 0x800000U;
+				int num4 = 0x71 - ((int)(absolute >> 0x17));
+				absolute = (num4 > 0x1f) ? 0x0 : (num6 >> num4);
+				return (ushort)(signBit | (((absolute + 0xfff) + ((absolute >> 13) & 1)) >> 13));
 			}
-			return (ushort)(num3 | ((((num + 0xc8000000) + 0xfff) + ((num >> 0xd) & 0x1)) >> 0xd));
+			return (ushort)(signBit | ((absolute + 0xc8000000U + 0xfff + ((absolute >> 13) & 1)) >> 13));
 
 		}
 		static float HalfToFloat(Half value)
 		{
-			uint num3;
+			uint bits;
 			if ((value & 0xffff7c00) == 0)
 			{
 				if ((value & 0x3ff) != 0)
@@ -69,18 +69,18 @@ namespace Apoc3D
 						num = num << 0x1;
 					}
 					num &= 0xfffffbff;
-					num3 = (((uint)value & 0x8000) << 0x10) | ((num2 + 0x7f) << 0x17) | (num << 0xd);
+					bits = (((uint)value & 0x8000) << 0x10) | ((num2 + 0x7f) << 0x17) | (num << 0xd);
 				}
 				else
 				{
-					num3 = (uint)((value & 0x8000) << 0x10);
+					bits = (uint)((value & 0x8000) << 0x10);
 				}
 			}
 			else
 			{
-				num3 = (uint)((((value & 0x8000) << 0x10) | (((value >> 0xa) & 0x1f) - 0xf + 0x7f) << 0x17) | ((value & 0x3ff) << 0xd));
+				bits = (uint)((((value & 0x8000) << 0x10) | (((value >> 0xa) & 0x1f) - 0xf + 0x7f) << 0x17) | ((value & 0x3ff) << 0xd));
 			}
-			return reinterpret_cast<const float&>(num3);
+			return reinterpret_cast<const float&>(bits);
 		}
 
 	}

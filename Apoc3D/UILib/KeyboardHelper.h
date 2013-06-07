@@ -51,10 +51,9 @@ namespace Apoc3D
 
 			}
 		};
-		typedef fastdelegate::FastDelegate1<String, void> PasteEventHandler;
-		typedef fastdelegate::FastDelegate2<KeyboardKeyCode, KeyboardEventsArgs, void> KeyboardEventHandler;
-
 		
+		typedef EventDelegate1<String> PasteEventHandler;
+		typedef EventDelegate2<KeyboardKeyCode, KeyboardEventsArgs> KeyboardEventHandler;
 
 		class APAPI KeyboardHelper
 		{

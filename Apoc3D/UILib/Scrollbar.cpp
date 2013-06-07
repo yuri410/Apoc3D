@@ -67,7 +67,7 @@ namespace Apoc3D
 			m_btLeft = new Button(Position,1, L"");
 			m_btLeft->setOwner(getOwner());
 			m_btLeft->setNormalTexture(m_skin->HScrollBar_Button);
-			m_btLeft->eventPress().bind(this, &HScrollbar::btLeft_OnPress);
+			m_btLeft->eventPress().Bind(this, &HScrollbar::btLeft_OnPress);
 			m_btLeft->Initialize(device);
 
 			m_cursorMidDest = Apoc3D::Math::Rectangle(0,0,1, m_skin->HScrollBar_Cursor->getHeight());
@@ -75,7 +75,7 @@ namespace Apoc3D
 			m_btRight = new Button(Point(Position.X + Size.X - 12, Position.Y), 1, L"");
 			m_btRight->setOwner(getOwner());
 			m_btRight->setNormalTexture(m_skin->HScrollBar_Button);
-			m_btRight->eventPress().bind(this, &HScrollbar::btRight_OnPress);
+			m_btRight->eventPress().Bind(this, &HScrollbar::btRight_OnPress);
 			m_btRight->setRotation(ToRadian(180));
 			m_btRight->Initialize(device);
 		}
@@ -87,15 +87,15 @@ namespace Apoc3D
 				if (m_value>0)
 				{
 					m_value -= m_step;
-					if (!m_eChangeValue.empty())
-						m_eChangeValue(this);
+					
+					m_eChangeValue.Invoke(this);
 				}
 			}
 			else if (m_value<m_max)
 			{
 				m_value += m_step;
-				if (!m_eChangeValue.empty())
-					m_eChangeValue(this);
+				
+				m_eChangeValue.Invoke(this);
 			}
 		}
 		void HScrollbar::btRight_OnPress(Control* ctrl)
@@ -105,15 +105,15 @@ namespace Apoc3D
 				if (m_value<m_max)
 				{
 					m_value += m_step;
-					if (!m_eChangeValue.empty())
-						m_eChangeValue(this);
+					
+					m_eChangeValue.Invoke(this);
 				}
 			}
 			else if (m_value>0)
 			{
 				m_value -= m_step;
-				if (!m_eChangeValue.empty())
-					m_eChangeValue(this);
+				
+				m_eChangeValue.Invoke(this);
 			}
 		}
 
@@ -186,10 +186,8 @@ namespace Apoc3D
 			if (m_value != value)
 			{
 				m_value = value;
-				if (!m_eChangeValue.empty())
-				{
-					m_eChangeValue(this);
-				}
+				
+				m_eChangeValue.Invoke(this);
 			}
 		}
 		void HScrollbar::Draw(Sprite* sprite)
@@ -275,13 +273,13 @@ namespace Apoc3D
 			m_btUp = new Button(Position, 1, L"");
 			m_btUp->setOwner(getOwner());
 			m_btUp->setNormalTexture(m_skin->VScrollBar_Button);
-			m_btUp->eventPress().bind(this, &VScrollBar::btUp_OnPress);
+			m_btUp->eventPress().Bind(this, &VScrollBar::btUp_OnPress);
 			m_btUp->Initialize(device);
 
 			m_btDown = new Button(Point(Position.X, Position.Y + Size.Y -12),1,L"");
 			m_btDown->setOwner(getOwner());
 			m_btDown->setNormalTexture(m_skin->VScrollBar_Button);
-			m_btDown->eventPress().bind(this, &VScrollBar::btDown_OnPress);
+			m_btDown->eventPress().Bind(this, &VScrollBar::btDown_OnPress);
 			m_btDown->setRotation(ToRadian(180));
 			m_btDown->Initialize(device);
 
@@ -297,15 +295,15 @@ namespace Apoc3D
 				if (m_value>0)
 				{
 					m_value -= m_step;
-					if (!m_eChangeValue.empty())
-						m_eChangeValue(this);
+					
+					m_eChangeValue.Invoke(this);
 				}
 			}
 			else if (m_value<m_max)
 			{
 				m_value += m_step;
-				if (!m_eChangeValue.empty())
-					m_eChangeValue(this);
+				
+				m_eChangeValue.Invoke(this);
 			}
 		}
 		void VScrollBar::btDown_OnPress(Control* ctrl)
@@ -315,15 +313,15 @@ namespace Apoc3D
 				if (m_value<m_max)
 				{
 					m_value += m_step;
-					if (!m_eChangeValue.empty())
-						m_eChangeValue(this);
+					
+					m_eChangeValue.Invoke(this);
 				}
 			}
 			else if (m_value>0)
 			{
 				m_value -= m_step;
-				if (!m_eChangeValue.empty())
-					m_eChangeValue(this);
+				
+				m_eChangeValue.Invoke(this);
 			}
 		}
 
@@ -394,10 +392,8 @@ namespace Apoc3D
 			if (m_value != value)
 			{
 				m_value = value;
-				if (!m_eChangeValue.empty())
-				{
-					m_eChangeValue(this);
-				}
+				
+				m_eChangeValue.Invoke(this);
 			}
 		}
 		void VScrollBar::Draw(Sprite* sprite)
@@ -445,10 +441,6 @@ namespace Apoc3D
 			dstRect = Apoc3D::Math::Rectangle(
 				m_cursorPos.X, m_cursorPos.Y+m_cursorMidDest.Height, abs(m_skin->VSCursorBottom.Width), abs(m_skin->VSCursorBottom.Height));
 			sprite->Draw(m_skin->VScrollBar_Cursor, dstRect, &m_skin->VSCursorBottom, CV_White);
-
-			
 		}
-
-
 	}
 }

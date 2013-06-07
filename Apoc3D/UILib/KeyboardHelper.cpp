@@ -129,7 +129,7 @@ namespace Apoc3D
 					if (kb->IsKeyDown(KEY_V))
 					{
 						pasting = true;
-						if (!m_ePaste.empty())
+						if (m_ePaste.getCount() > 0)
 						{
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 							IDataObject* dataObj;
@@ -160,7 +160,7 @@ namespace Apoc3D
 
 													String strText = reinterpret_cast<const wchar_t*>(src);
 
-													m_ePaste(strText);
+													m_ePaste.Invoke(strText);
 
 													GlobalFree(medium.hGlobal);
 												}
@@ -228,11 +228,9 @@ namespace Apoc3D
 						{
 							return;
 						}
-						if (!m_eKeyPress.empty())
-						{
-							m_eKeyPress(InputKeys[i], eventArg);
-						}
-
+						
+						m_eKeyPress.Invoke(InputKeys[i], eventArg);
+						
 						m_previousKey = m_currentKey;
 
 						m_currentKey = InputKeys[i];
@@ -251,10 +249,7 @@ namespace Apoc3D
 						m_timerStarted = false;
 						m_pressingTime = 0;
 
-						if (!m_eKeyRelease.empty())
-						{
-							m_eKeyRelease(InputKeys[i], eventArg);
-						}
+						m_eKeyRelease.Invoke(InputKeys[i], eventArg);
 					}
 				}
 				//if (m_currentKey == m_previousKey && m_currentKey != KEY_UNASSIGNED)
@@ -265,10 +260,8 @@ namespace Apoc3D
 						if (m_pressingTime > 15 * 25 * 0.001f)
 						{
 							m_pressingTime -= 0.1f;
-							if (!m_eKeyPress.empty())
-							{
-								m_eKeyPress(m_currentKey, eventArg);
-							}
+							
+							m_eKeyPress.Invoke(m_currentKey, eventArg);
 						}
 					}
 					

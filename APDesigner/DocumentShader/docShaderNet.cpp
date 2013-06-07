@@ -48,7 +48,7 @@ namespace APDesigner
 		getDocumentForm()->setTitle(file);
 		getDocumentForm()->setMinimumSize(Point(970,635));
 
-		getDocumentForm()->eventResized().bind(this, &ShaderNetDocument::Form_Resized);
+		getDocumentForm()->eventResized().Bind(this, &ShaderNetDocument::Form_Resized);
 
 		ObjectFactory* fac = window->getDevice()->getObjectFactory();
 		m_renderTarget = fac->CreateRenderTarget(getDocumentForm()->Size.X,getDocumentForm()->Size.Y, FMT_X8R8G8B8, DEPFMT_Depth24X8);

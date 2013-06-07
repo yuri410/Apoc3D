@@ -168,10 +168,11 @@ namespace Apoc3D
 				{
 					int previousIndex = m_selectedIndex;
 					m_selectedIndex = m_hoverIndex;
-					if (!m_eSelect.empty())
-						m_eSelect(this);
-					if (m_selectedIndex != previousIndex && !m_eSelectionChanged.empty())
-						m_eSelectionChanged(this);
+					
+					m_eSelect.Invoke(this);
+
+					if (m_selectedIndex != previousIndex)
+						m_eSelectionChanged.Invoke(this);
 				}
 
 				if (getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
@@ -554,10 +555,10 @@ namespace Apoc3D
 				{
 					TreeViewNode* previousNode = m_selectedNode;
 					m_selectedNode = m_hoverNode;
-					if (!m_eSelect.empty())
-						m_eSelect(this);
-					if (m_selectedNode != previousNode && !m_eSelectionChanged.empty())
-						m_eSelectionChanged(this);
+					
+					m_eSelect.Invoke(this);
+					if (m_selectedNode != previousNode)
+						m_eSelectionChanged.Invoke(this);
 				}
 				if (getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
 				{
@@ -938,9 +939,9 @@ namespace Apoc3D
 				UpdateSelection();
 
 			if (m_headerStyle == LHSTYLE_Clickable && m_headerHoverIndex != -1 &&
-				mouse->IsLeftUp() && !m_columnHeader[m_headerHoverIndex].enentRelease().empty())
+				mouse->IsLeftUp())
 			{
-				m_columnHeader[m_headerHoverIndex].enentRelease()(this);
+				m_columnHeader[m_headerHoverIndex].enentRelease().Invoke(this);
 				m_headerHoverIndex = -1;
 			}
 		}
@@ -954,13 +955,10 @@ namespace Apoc3D
 				m_selectedRow = m_hoverRowIndex;
 				m_selectedColumn = m_hoverColumnIndex;
 
-				if (!m_eSelect.empty())
-				{
-					if (m_fullRowSelect)
-						m_eSelect(m_selectedRow, 0);
-					else
-						m_eSelect(m_selectedRow, m_selectedColumn);
-				}
+				if (m_fullRowSelect)
+					m_eSelect.Invoke(m_selectedRow, 0);
+				else
+					m_eSelect.Invoke(m_selectedRow, m_selectedColumn);
 			}
 			m_hoverRowIndex = -1;
 			m_hoverColumnIndex = -1;
@@ -1109,9 +1107,9 @@ namespace Apoc3D
 					{
 						m_headerHoverIndex = i;
 
-						if (mouse->IsLeftPressed() && !m_columnHeader[i].eventPress().empty())
+						if (mouse->IsLeftPressed())
 						{
-							m_columnHeader[i].eventPress()(this);
+							m_columnHeader[i].eventPress().Invoke(this);
 						}
 
 						if (mouse->IsLeftReleasedState())

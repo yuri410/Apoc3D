@@ -26,8 +26,8 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3D/Collections/LinkedList.h"
 #include "Singleton.h"
+#include "..\EventDelegate.h"
 
 using namespace Apoc3D::Collections;
 
@@ -43,7 +43,7 @@ namespace Apoc3D
 		/**
 		 *  Defines the level of importance for the messages.
 		 */
-		enum APAPI LogMessageLevel
+		enum LogMessageLevel
 		{
 			LOGLVL_Default,
 			LOGLVL_Infomation,
@@ -55,7 +55,7 @@ namespace Apoc3D
 		/**
 		 *  Defines the field that the messages are related to.
 		 */
-		enum APAPI LogType
+		enum LogType
 		{
 			LOG_System = 0,
 			LOG_Graphics = 1,
@@ -68,8 +68,6 @@ namespace Apoc3D
 			LOG_Count = 8
 		};
 
-		
-		
 		/** 
 		 *  Defines a piece of message in the log system. 
 		 */
@@ -94,7 +92,7 @@ namespace Apoc3D
 			String ToString() const;
 		};
 
-		typedef fastdelegate::FastDelegate1<LogEntry, void> NewLogWrittenHandler;
+		typedef EventDelegate1<LogEntry> NewLogWrittenHandler;
 
 		/** 
 		 *  A singleton providing possibilities to log messages anywhere in the code.
@@ -106,9 +104,9 @@ namespace Apoc3D
 			~LogManager();
 
 			LogSet* getDefaultLog() const;
-			LogSet* getLogSet(LogType type) { return m_logs[static_cast<int32>(type)]; }
+			LogSet* getLogSet(LogType type) const { return m_logs[static_cast<int32>(type)]; }
 
-			void Write(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation) const;
+			void Write(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation);
 
 			void DumpLogs(String& result);
 
@@ -120,11 +118,13 @@ namespace Apoc3D
 			LogSet* m_logs[LOG_Count];
 		};
 
-		
+		inline void Apoc3DLog(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation);
+		inline void Apoc3DLog(LogType type, const String& message, LogMessageLevel level) { LogManager::getSingleton().Write(type, message, level); }
+
 		/** 
 		 *  A LogSet is a set of LogEntries with the same LogType. 
 		 *  LogSet only keep the most recent 200 messages, the earlier ones are 
-		 *  deleted once it reaches the limit as new messages cme in.
+		 *  deleted once it reaches the limit as new messages came in.
 		 */
 		class APAPI LogSet
 		{

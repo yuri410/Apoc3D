@@ -32,6 +32,7 @@
 #include "apoc3d/Collections/HashMap.h"
 
 #include "Singleton.h"
+#include "..\EventDelegate.h"
 
 namespace Apoc3D
 {
@@ -39,7 +40,6 @@ namespace Apoc3D
 	{
 		typedef const Apoc3D::Collections::List<String>& CommandArgsConstRef;
 		typedef fastdelegate::FastDelegate1<CommandArgsConstRef> CommandHandler;
-
 
 		struct CommandDescription
 		{
@@ -64,7 +64,7 @@ namespace Apoc3D
 			{ }
 		};
 
-		typedef fastdelegate::FastDelegate2<String, Apoc3D::Collections::List<String>*> RawCommandHandler;
+		typedef EventDelegate2<String, Apoc3D::Collections::List<String>*> RawCommandHandler;
 		class APAPI CommandInterpreter : public Singleton<CommandInterpreter>
 		{
 		public:

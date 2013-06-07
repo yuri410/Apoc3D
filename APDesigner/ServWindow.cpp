@@ -108,15 +108,15 @@ namespace APDesigner
 			int32 btnWidth = (m_baseForm->Size.X-40)/3;
 			m_btnHide = new Button(Point(10, m_baseForm->Size.Y - 35), btnWidth, L"Hide");
 			m_btnHide->SetSkin(m_UIskin);
-			m_btnHide->eventRelease().bind(this, &ServWindow::BtnHide_Release);
+			m_btnHide->eventRelease().Bind(this, &ServWindow::BtnHide_Release);
 
 			m_btnBuild = new Button(Point(m_btnHide->Position.X + btnWidth + 10, m_baseForm->Size.Y - 35), btnWidth, L"Build");
 			m_btnBuild->SetSkin(m_UIskin);
-			m_btnBuild->eventRelease().bind(this, &ServWindow::BtnBuild_Release);
+			m_btnBuild->eventRelease().Bind(this, &ServWindow::BtnBuild_Release);
 
 			m_btnExit = new Button(Point(m_btnHide->Position.X + btnWidth * 2 + 20, m_baseForm->Size.Y - 35), btnWidth, L"Exit");
 			m_btnExit->SetSkin(m_UIskin);
-			m_btnExit->eventRelease().bind(this, &ServWindow::BtnExit_Release);
+			m_btnExit->eventRelease().Bind(this, &ServWindow::BtnExit_Release);
 
 
 			m_baseForm->getControls().Add(m_lblDescription);

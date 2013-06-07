@@ -94,8 +94,8 @@ namespace APDesigner
 	{
 		UIRoot::Add(document->getDocumentForm());
 		document->Initialize(m_device);
-		document->eventDocumentActivated().bind(this, &MainWindow::Document_Activated);
-		document->eventDocumentDeactivated().bind(this, &MainWindow::Document_Deactivated);
+		document->eventDocumentActivated().Bind(this, &MainWindow::Document_Activated);
+		document->eventDocumentDeactivated().Bind(this, &MainWindow::Document_Deactivated);
 		m_documentList.Add(document);
 	}
 
@@ -192,15 +192,15 @@ namespace APDesigner
 			pojSubMenu->SetSkin(m_UIskin);
 
 			MenuItem* mi=new MenuItem(L"New Project...");
-			mi->event().bind(this, &MainWindow::Menu_NewProject);
+			mi->event().Bind(this, &MainWindow::Menu_NewProject);
 			pojSubMenu->Add(mi,0);
 
 			mi=new MenuItem(L"Open Project...");
-			mi->event().bind(this, &MainWindow::Menu_OpenProject);
+			mi->event().Bind(this, &MainWindow::Menu_OpenProject);
 			pojSubMenu->Add(mi,0);
 
 			m_savePrjMemuItem = new MenuItem(L"Save Project");
-			m_savePrjMemuItem->event().bind(this, &MainWindow::Menu_SaveProject);
+			m_savePrjMemuItem->event().Bind(this, &MainWindow::Menu_SaveProject);
 			pojSubMenu->Add(m_savePrjMemuItem, 0);
 
 
@@ -218,7 +218,7 @@ namespace APDesigner
 			pojSubMenu->Add(mi,0);
 
 			mi=new MenuItem(L"Exit");
-			mi->event().bind(this, &MainWindow::Menu_Exit);
+			mi->event().Bind(this, &MainWindow::Menu_Exit);
 			pojSubMenu->Add(mi,0);
 
 			m_mainMenu->Add(pojMenu,pojSubMenu);
@@ -252,7 +252,7 @@ namespace APDesigner
 			buildSubMenu->Add(mi,nullptr);
 
 			m_buildMemuItem = new MenuItem(L"Build All");
-			m_buildMemuItem->event().bind(this, &MainWindow::Menu_BuildAll);
+			m_buildMemuItem->event().Bind(this, &MainWindow::Menu_BuildAll);
 			buildSubMenu->Add(m_buildMemuItem, 0);
 
 			m_mainMenu->Add(buildMenu, buildSubMenu);
@@ -279,7 +279,7 @@ namespace APDesigner
 					subMenu->Add(mi2, nullptr);
 
 					mi2 = new MenuItem(L"Open Document...");
-					mi2->event().bind(this, &MainWindow::Menu_ToolItemOpen);
+					mi2->event().Bind(this, &MainWindow::Menu_ToolItemOpen);
 					mi2->UserPointer = ext;
 					subMenu->Add(mi2, nullptr);
 
@@ -296,7 +296,7 @@ namespace APDesigner
 			toolSubMenu->Add(mi, nullptr);
 
 			mi=new MenuItem(L"Shader Atom Manager");
-			mi->event().bind(this, &MainWindow::Menu_Tools_AtomManager);
+			mi->event().Bind(this, &MainWindow::Menu_Tools_AtomManager);
 			toolSubMenu->Add(mi, nullptr);
 
 			m_mainMenu->Add(toolsMenu,toolSubMenu);
@@ -517,12 +517,12 @@ namespace APDesigner
 			String fileName = PathUtils::GetFileName(p.second);
 			MenuItem* mi = new MenuItem(p.first + L" (" + fileName + L")");
 
-			mi->event().bind(this, &MainWindow::Menu_OpenRecentProject);
+			mi->event().Bind(this, &MainWindow::Menu_OpenRecentProject);
 			mi->UserPointer = reinterpret_cast<void*>(static_cast<uintptr>(i));
 			m_recentPrjSubMenu->Add(mi, nullptr);
 
 			MenuItem* mi2 = new MenuItem(*mi);
-			mi2->event().bind(this, &MainWindow::Menu_QuickBuildRecentProject);
+			mi2->event().Bind(this, &MainWindow::Menu_QuickBuildRecentProject);
 			m_quickbuildSubMenu->Add(mi2, nullptr);
 		}
 

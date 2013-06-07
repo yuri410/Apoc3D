@@ -43,8 +43,8 @@ namespace Apoc3D
 			: m_drawPos(0,0), m_itemPos(0,0), m_hoverIndex(-1), m_openPos(0,0), m_itemArea(0,0,0,0),
 			m_state(MENU_Closed), m_altDown(false), m_openedMenu(false), m_indexToOpen(-1)
 		{
-			m_helper.eventKeyPress().bind(this, &Menu::Keyboard_OnPress);
-			m_helper.eventKeyRelease().bind(this, &Menu::Keyboard_OnRelease);
+			m_helper.eventKeyPress().Bind(this, &Menu::Keyboard_OnPress);
+			m_helper.eventKeyRelease().Bind(this, &Menu::Keyboard_OnRelease);
 			
 		}
 
@@ -276,11 +276,8 @@ namespace Apoc3D
 
 				if (m_indexToOpen == i)
 				{
-					if (!m_items[i]->event().empty())
-					{
-						m_items[i]->event()(m_items[i]);
-					}
-
+					m_items[i]->event().Invoke(m_items[i]);
+					
 					if (m_items[i]->getSubMenu() &&
 						m_items[i]->getSubMenu()->getState() == MENU_Closed)
 					{
@@ -387,8 +384,8 @@ namespace Apoc3D
 			m_timerStarted(0), m_timerCount(0.5f)
 		{
 			setOwner(owner);
-			m_helper.eventKeyPress().bind(this, &SubMenu::Keyboard_OnPress);
-			m_helper.eventKeyRelease().bind(this, &SubMenu::Keyboard_OnRelease);
+			m_helper.eventKeyPress().Bind(this, &SubMenu::Keyboard_OnPress);
+			m_helper.eventKeyRelease().Bind(this, &SubMenu::Keyboard_OnRelease);
 
 		}
 
@@ -580,8 +577,7 @@ namespace Apoc3D
 				if (!m_items[index]->Enabled)
 					return;
 
-				if (!m_items[index]->event().empty())
-					m_items[index]->event()(m_items[index]);
+				m_items[index]->event().Invoke(m_items[index]);
 
 				if (m_items[index]->getSubMenu())
 				{
@@ -669,9 +665,9 @@ namespace Apoc3D
 							m_items[i]->getSubMenu()->Open(m_openPos);
 							CloseSubMenus();
 						}
-						else if (!m_items[i]->event().empty())
+						else
 						{
-							m_items[i]->event()(m_items[i]);
+							m_items[i]->event().Invoke(m_items[i]);
 						}
 
 					}

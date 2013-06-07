@@ -34,7 +34,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		enum APAPI DepthFormat
+		enum DepthFormat
 		{
 			DEPFMT_Depth15Stencil1 = 0,
 			DEPFMT_Depth16 = 1,
@@ -51,7 +51,7 @@ namespace Apoc3D
 		/**
 		 *  The pixel format used for images.
 		 */		
-		enum APAPI PixelFormat
+		enum PixelFormat
 		{
 			/*  Unknown pixel format.
 			*/			

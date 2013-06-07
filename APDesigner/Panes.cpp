@@ -83,7 +83,7 @@ namespace APDesigner
 		m_btSave->setNormalTexture(UIResources::GetTexture(L"adui_save"));
 		m_btSave->setCustomModColorMouseOver(CV_Silver);
 		
-		m_btSave->eventRelease().bind(this,&ToolsPane::BtnSave_Release);
+		m_btSave->eventRelease().Bind(this,&ToolsPane::BtnSave_Release);
 		m_pane->getControls().Add(m_btSave);
 	}
 	ToolsPane::~ToolsPane()
@@ -289,7 +289,7 @@ namespace APDesigner
 
 			m_form->getControls().Add(treeview);
 			m_resourceView = treeview;
-			m_resourceView->eventSelectionChanged().bind(this, &ResourcePane::TreeView_SelectionChanged);
+			m_resourceView->eventSelectionChanged().Bind(this, &ResourcePane::TreeView_SelectionChanged);
 		}
 
 		m_infoDisplay = new Label(Point(5,355),L"",1);
@@ -298,27 +298,27 @@ namespace APDesigner
 
 		m_addItem = new Button(Point(5,325),L"Add...");
 		m_addItem->SetSkin(window->getUISkin());
-		m_addItem->eventRelease().bind(this, &ResourcePane::BtnAdd_Release);
+		m_addItem->eventRelease().Bind(this, &ResourcePane::BtnAdd_Release);
 		m_form->getControls().Add(m_addItem);
 
 		m_removeItem = new Button(Point(m_addItem->Position.X + m_addItem->Size.X,325),L"Delete");
 		m_removeItem->SetSkin(window->getUISkin());
-		m_removeItem->eventRelease().bind(this, &ResourcePane::BtnRemove_Release);
+		m_removeItem->eventRelease().Bind(this, &ResourcePane::BtnRemove_Release);
 		m_form->getControls().Add(m_removeItem);
 
 		m_openItem = new Button(Point(m_removeItem->Position.X + m_removeItem->Size.X, 325),L"Open");
 		m_openItem->SetSkin(window->getUISkin());
-		m_openItem->eventRelease().bind(this, &ResourcePane::BtnOpen_Release);
+		m_openItem->eventRelease().Bind(this, &ResourcePane::BtnOpen_Release);
 		m_form->getControls().Add(m_openItem);
 
 		m_forceBuildItem = new Button(Point(m_removeItem->Position.X + m_removeItem->Size.X, 325),L"Force Build");
 		m_forceBuildItem->SetSkin(window->getUISkin());
-		m_forceBuildItem->eventRelease().bind(this, &ResourcePane::BtnForceBuild_Release);
+		m_forceBuildItem->eventRelease().Bind(this, &ResourcePane::BtnForceBuild_Release);
 		m_form->getControls().Add(m_forceBuildItem);
 
 		m_applyModify = new Button(Point(5,400),L"Apply Settings");
 		m_applyModify->SetSkin(window->getUISkin());
-		m_applyModify->eventRelease().bind(this, &ResourcePane::BtnApplyMod_Release);
+		m_applyModify->eventRelease().Bind(this, &ResourcePane::BtnApplyMod_Release);
 		m_applyModify->Visible = false;
 		m_form->getControls().Add(m_applyModify);
 	}
@@ -506,9 +506,9 @@ namespace APDesigner
 		bb->SetSkin(m_skin);
 		bb->Initialize(m_form->getRenderDevice());
 		if (isLoad)
-			bb->eventRelease().bind(this, &ResourcePane::BtnBrowseOpen_Release);
+			bb->eventRelease().Bind(this, &ResourcePane::BtnBrowseOpen_Release);
 		else
-			bb->eventRelease().bind(this, &ResourcePane::BtnBrowseSave_Release);
+			bb->eventRelease().Bind(this, &ResourcePane::BtnBrowseSave_Release);
 
 		m_form->getControls().Add(label);
 		m_form->getControls().Add(tb);

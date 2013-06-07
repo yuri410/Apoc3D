@@ -203,7 +203,7 @@ namespace Apoc3D
 			void SetSize(const Point& newSize);
 		};
 
-		typedef fastdelegate::FastDelegate2<int, int, void> ListViewSelectionHandler;
+		typedef EventDelegate2<int, int> ListViewSelectionHandler;
 
 		class APAPI ListView : public Control
 		{

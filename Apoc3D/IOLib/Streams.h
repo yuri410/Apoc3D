@@ -37,7 +37,7 @@ namespace Apoc3D
 		/** 
 		 *  Defines represent reference points in streams for seeking.
 		 */
-		enum APAPI SeekMode
+		enum SeekMode
 		{
 			SEEK_Begin,
 			SEEK_Current,

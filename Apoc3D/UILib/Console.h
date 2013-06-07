@@ -50,13 +50,12 @@ namespace Apoc3D
 		class APAPI Console
 		{
 		public:
+			typedef EventDelegate1<LogEntry*> ConsoleNewLog;
+			
 			static const int MaxLogEntries = 500;
 
 			Console(RenderDevice* device, StyleSkin* skin, const Point& position, const Point& size);
 			~Console();
-
-			void setPosition(const Point& pt);
-			const Point& getSize() const;
 
 			void Minimize();
 			void Restore();
@@ -64,6 +63,12 @@ namespace Apoc3D
 			void Close();
 
 			void Update(const GameTime* const time);
+
+			void setPosition(const Point& pt);
+			const Point& getSize() const;
+
+			ConsoleNewLog eventNewLogReceived;
+
 		private:
 			void TextBox_ReturnPressed(Control* ctrl);
 			void TextBox_UpPressed(Control* ctrl);

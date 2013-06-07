@@ -71,19 +71,19 @@ namespace Apoc3D
 				}
 
 				float dotPosition = plane.DotNormal(ray.Position);
-				float num = (-plane.D - dotPosition) / dotDirection;
+				float d = (-plane.D - dotPosition) / dotDirection;
 
-				if (num < 0.0f)
+				if (d < 0.0f)
 				{
-					if (num < EPSILON)
+					if (d < EPSILON)
 					{
 						distance = 0;
 						return false;
 					}
-					num = 0.0f;
+					d = 0.0f;
 				}
 
-				distance = num;
+				distance = d;
 				return true;
 			}
 

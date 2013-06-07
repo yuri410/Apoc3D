@@ -38,7 +38,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Utility/StringUtils.h"
 
-#include "tthread/tinythread.h"
+#include "../tinythread.h"
 #include <ctime>
 
 using namespace Apoc3D::Utility;
@@ -62,21 +62,21 @@ namespace Apoc3D
 
 			m_inputText = new TextBox(Point(10, size.Y - 40), size.X - 100, L"");
 			m_inputText->SetSkin(skin);
-			m_inputText->eventEnterPressed.bind(this, &Console::TextBox_ReturnPressed);
-			m_inputText->eventUpPressedSingleline.bind(this, &Console::TextBox_UpPressed);
-			m_inputText->eventDownPressedSingleline.bind(this, &Console::TextBox_DownPressed);
+			m_inputText->eventEnterPressed.Bind(this, &Console::TextBox_ReturnPressed);
+			m_inputText->eventUpPressedSingleline.Bind(this, &Console::TextBox_UpPressed);
+			m_inputText->eventDownPressedSingleline.Bind(this, &Console::TextBox_DownPressed);
 			m_form->getControls().Add(m_inputText);
 
 			m_submit = new Button(Point(size.X - 100, size.Y - 30-2), L"Submit");
 			m_submit->SetSkin(skin);
-			m_submit->eventRelease().bind(this,&Console::Submit_Pressed);
+			m_submit->eventRelease().Bind(this,&Console::Submit_Pressed);
 			m_submit->Size.Y = lineHeight;
 
 			m_form->getControls().Add(m_submit);
 
 			m_pictureBox = new PictureBox(Point(10,10+17), 1);
 			m_pictureBox->SetSkin(skin);
-			m_pictureBox->eventPictureDraw().bind(this, &Console::PictureBox_Draw);
+			m_pictureBox->eventPictureDraw().Bind(this, &Console::PictureBox_Draw);
 			m_form->getControls().Add(m_pictureBox);
 
 			m_scrollBar = new ScrollBar(Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 12, m_pictureBox->Position.Y),
@@ -87,7 +87,7 @@ namespace Apoc3D
 
 			m_form->setMinimumSize(Point(400,300));
 			m_form->Initialize(device);
-			m_form->eventResized().bind(this, &Console::Form_Resized);
+			m_form->eventResized().Bind(this, &Console::Form_Resized);
 
 			RegisterCommands();
 
@@ -100,14 +100,14 @@ namespace Apoc3D
 			}
 			
 			
-			LogManager::getSingleton().eventNewLogWritten.bind(this, &Console::Log_New);
+			LogManager::getSingleton().eventNewLogWritten.Bind(this, &Console::Log_New);
 			UIRoot::Add(m_form);
 			m_form->Show();
 		}
 
 		Console::~Console()
 		{
-			LogManager::getSingleton().eventNewLogWritten.clear();
+			LogManager::getSingleton().eventNewLogWritten.Reset();
 			UIRoot::Remove(m_form);
 
 			delete m_form;
@@ -134,6 +134,8 @@ namespace Apoc3D
 			while (m_queuedNewLogs.getCount()>0)
 			{
 				LogEntry e = m_queuedNewLogs.Dequeue();
+				eventNewLogReceived.Invoke(&e);
+				
 				m_logs.PushBack(e);
 				m_needsUpdateLineInfo = true;
 

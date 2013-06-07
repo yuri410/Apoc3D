@@ -37,7 +37,7 @@ namespace Apoc3D
 		/**
 		 * Defines the plane indexes of a frustum
 		 */
-		enum APAPI FrustumPlane
+		enum FrustumPlane
 		{
 			FPL_Right = 0,
 			FPL_Left = 1,

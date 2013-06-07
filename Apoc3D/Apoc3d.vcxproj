@@ -172,6 +172,8 @@
     <ClInclude Include="Core\ResourceManager.h" />
     <ClInclude Include="Core\Streaming\GenerationTable.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="EventDelegate.h" />
+    <ClInclude Include="ExportSettings.h" />
     <ClInclude Include="Graphics\Animation\AnimationData.h" />
     <ClInclude Include="Graphics\Animation\AnimationManager.h" />
     <ClInclude Include="Graphics\Animation\AnimationPlayers.h" />

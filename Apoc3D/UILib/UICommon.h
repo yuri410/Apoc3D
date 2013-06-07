@@ -27,6 +27,7 @@
  */
 
 #include "apoc3d/Common.h"
+#include "..\EventDelegate.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
 
@@ -34,9 +35,9 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		typedef fastdelegate::FastDelegate1<Control*, void> UIEventHandler;
+		typedef EventDelegate1<Control*> UIEventHandler;
 
-		typedef fastdelegate::FastDelegate1<MenuItem*, void> MenuItemEventHandler;
+		typedef EventDelegate1<MenuItem*> MenuItemEventHandler;
 
 	}
 }

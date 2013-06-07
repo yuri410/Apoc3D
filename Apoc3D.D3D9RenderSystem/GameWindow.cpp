@@ -157,54 +157,44 @@ namespace Apoc3D
 
 			void GameWindow::OnUserResized()
 			{
-				if (!m_eUserResized.empty())
-					m_eUserResized();
+				m_eUserResized.Invoke();
 			}
 			void GameWindow::OnSuspend()
 			{
-				if (!m_eSuspend.empty())
-					m_eSuspend();
+				m_eSuspend.Invoke();
 			}
 			void GameWindow::OnResume()
 			{
-				if (!m_eResume.empty())
-					m_eResume();
+				m_eResume.Invoke();
 			}
 			void GameWindow::OnApplicationActivated()
 			{
-				if (!m_eApplicationActivated.empty())
-					m_eApplicationActivated();
+				m_eApplicationActivated.Invoke();
 			}
 			void GameWindow::OnApplicationDeactivated()
 			{
-				if (!m_eApplicationDeactivated.empty())
-					m_eApplicationDeactivated();
+				m_eApplicationDeactivated.Invoke();
 			}
 			void GameWindow::OnSystemSuspend()
 			{
-				if (!m_eSystemSuspend.empty())
-					m_eSystemSuspend();
+				m_eSystemSuspend.Invoke();
 			}
 			void GameWindow::OnSystemResume()
 			{
-				if (!m_eSystemResume.empty())
-					m_eSystemResume();
+				m_eSystemResume.Invoke();
 			}
 			void GameWindow::OnScreensaver(bool * cancel)
 			{
-				if (!m_eScreensaver.empty())
-					m_eScreensaver(cancel);
+				m_eScreensaver.Invoke(cancel);
 			}
 
 			void GameWindow::OnPaint()
 			{
-				if (!m_ePaint.empty())
-					m_ePaint();
+				m_ePaint.Invoke();
 			}
 			void GameWindow::OnMonitorChanged()
 			{
-				if (!m_eMonitorChanged.empty())
-					m_eMonitorChanged();
+				m_eMonitorChanged.Invoke();
 			}
 
 			Size GameWindow::getCurrentSize() const

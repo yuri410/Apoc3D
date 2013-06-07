@@ -114,10 +114,8 @@ namespace Apoc3D
 				UIRoot::setTopMostForm(0);
 
 			Hide();
-			if (!m_eClosed.empty())
-			{
-				m_eClosed(this);
-			}
+			
+			m_eClosed.Invoke(this);
 		}
 		void Form::Focus()
 		{
@@ -234,7 +232,7 @@ namespace Apoc3D
 			m_btClose->setCustomModColor(m_skin->FormControlButtonColor);
 			m_btClose->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
 			m_btClose->setCustomModColorMouseOver(m_skin->BtnDimColor);
-			m_btClose->eventRelease().bind(this, &Form::btClose_Release);
+			m_btClose->eventRelease().Bind(this, &Form::btClose_Release);
 
 			
 			if (m_hasMinimizeButton)
@@ -246,7 +244,7 @@ namespace Apoc3D
 				m_btMinimize->setCustomModColor(m_skin->FormControlButtonColor);
 				m_btMinimize->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
 				m_btMinimize->setCustomModColorMouseOver(m_skin->BtnDimColor);
-				m_btMinimize->eventRelease().bind(this, &Form::btMinimize_Release);
+				m_btMinimize->eventRelease().Bind(this, &Form::btMinimize_Release);
 			}
 			if (m_hasMaximizeButton)
 			{
@@ -257,7 +255,7 @@ namespace Apoc3D
 				m_btMaximize->setCustomModColor(m_skin->FormControlButtonColor);
 				m_btMaximize->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
 				m_btMaximize->setCustomModColorMouseOver(m_skin->BtnDimColor);
-				m_btMaximize->eventRelease().bind(this, &Form::btMaximize_Release);
+				m_btMaximize->eventRelease().Bind(this, &Form::btMaximize_Release);
 			}
 			if (m_hasMinimizeButton || m_hasMaximizeButton)
 			{
@@ -268,7 +266,7 @@ namespace Apoc3D
 				m_btRestore->setCustomModColor(m_skin->FormControlButtonColor);
 				m_btRestore->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
 				m_btRestore->setCustomModColorMouseOver(m_skin->BtnDimColor);
-				m_btRestore->eventRelease().bind(this, &Form::btRestore_Release);
+				m_btRestore->eventRelease().Bind(this, &Form::btRestore_Release);
 			}
 		}
 
@@ -445,10 +443,8 @@ namespace Apoc3D
 					m_isMinimized = false;
 
 					Focus();
-					if (!m_eResized.empty())
-					{
-						m_eResized(this);
-					}
+					
+					m_eResized.Invoke(this);
 				}
 			}
 			 //Minimize the window
@@ -493,10 +489,8 @@ namespace Apoc3D
 					m_isMinimized = true;
 					m_isMaximized = false;
 					m_isMinimizing = false;
-					if (!m_eResized.empty())
-					{
-						m_eResized(this);
-					}
+					
+					m_eResized.Invoke(this);
 				}
 			}
 			//Maximize the window
@@ -541,10 +535,7 @@ namespace Apoc3D
 					m_isMinimized = false;
 					m_isMaximized = true;
 					
-					if (!m_eResized.empty())
-					{
-						m_eResized(this);
-					}
+					m_eResized.Invoke(this);
 				}
 			}
 		}
@@ -660,9 +651,9 @@ namespace Apoc3D
 				Size.X += dif.X;
 				Size.Y += dif.Y;
 
-				if ((dif.X !=0 || dif.Y !=0) && !m_eResized.empty())
+				if ((dif.X !=0 || dif.Y !=0))
 				{
-					m_eResized(this);
+					m_eResized.Invoke(this);
 				}
 				
 				if (mouse->IsLeftReleasedState())

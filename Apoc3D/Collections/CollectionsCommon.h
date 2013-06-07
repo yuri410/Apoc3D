@@ -180,10 +180,10 @@ namespace Apoc3D
 			{
 				for (int i = 0; i < 72; i++)
 				{
-					int num2 = SmallPrimeTable[i];
-					if (num2 >= min)
+					int val = SmallPrimeTable[i];
+					if (val >= min)
 					{
-						return num2;
+						return val;
 					}
 				}
 				for (int j = min | 1; j < 2147483647; j += 2)
@@ -202,8 +202,8 @@ namespace Apoc3D
 				{
 					return (candidate == 2);
 				}
-				int num = (int)sqrtf((float)candidate);
-				for (int i = 3; i <= num; i += 2)
+				int root = (int)sqrtf((float)candidate);
+				for (int i = 3; i <= root; i += 2)
 				{
 					if ((candidate % i) == 0)
 					{

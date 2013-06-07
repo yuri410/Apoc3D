@@ -338,8 +338,8 @@ namespace Apoc3D
 
 			m_dRect = Apoc3D::Math::Rectangle(0,0,Size.X,Size.Y);
 
-			m_keyboard.eventKeyPress().bind(this, &TextBox::Keyboard_OnPress);
-			m_keyboard.eventKeyPaste().bind(this, &TextBox::Keyboard_OnPaste);
+			m_keyboard.eventKeyPress().Bind(this, &TextBox::Keyboard_OnPress);
+			m_keyboard.eventKeyPaste().Bind(this, &TextBox::Keyboard_OnPaste);
 
 			if (m_multiline && m_scrollBar != SBT_None)
 			{
@@ -429,14 +429,14 @@ namespace Apoc3D
 			{
 				m_vscrollBar->SetSkin(m_skin);
 				m_vscrollBar->setOwner(getOwner());
-				m_vscrollBar->eventValueChanged().bind(this, &TextBox::vScrollbar_OnChangeValue);
+				m_vscrollBar->eventValueChanged().Bind(this, &TextBox::vScrollbar_OnChangeValue);
 				m_vscrollBar->Initialize(device);
 			}
 			if (m_hscrollBar)
 			{
 				m_hscrollBar->SetSkin(m_skin);
 				m_hscrollBar->setOwner(getOwner());
-				m_hscrollBar->eventValueChanged().bind(this, &TextBox::hScrollbar_OnChangeValue);
+				m_hscrollBar->eventValueChanged().Bind(this, &TextBox::hScrollbar_OnChangeValue);
 				m_hscrollBar->Initialize(device);
 			}
 		}
@@ -794,8 +794,7 @@ namespace Apoc3D
 			case KEY_UP:
 				if (!m_multiline)
 				{
-					if (!eventUpPressedSingleline.empty())
-						eventUpPressedSingleline(this);
+					eventUpPressedSingleline.Invoke(this);
 				}
 				if (m_curorLocation.Y > 0)
 					m_curorLocation.Y--;
@@ -803,8 +802,7 @@ namespace Apoc3D
 			case KEY_DOWN:
 				if (!m_multiline)
 				{
-					if (!eventDownPressedSingleline.empty())
-						eventDownPressedSingleline(this);
+					eventDownPressedSingleline.Invoke(this);
 				}
 				if (m_curorLocation.Y < m_lines.getCount()-1)
 					m_curorLocation.Y++;
@@ -924,8 +922,7 @@ namespace Apoc3D
 					}
 					else
 					{
-						if (!eventEnterPressed.empty())
-							eventEnterPressed(this);
+						eventEnterPressed.Invoke(this);
 					}
 				}
 				break;
@@ -1210,10 +1207,7 @@ namespace Apoc3D
 
 			if (changed)
 			{
-				if (!eventContentChanged.empty())
-				{
-					eventContentChanged(this);
-				}
+				eventContentChanged.Invoke(this);
 			}
 		}
 		void TextBox::Keyboard_OnPaste(String value)
@@ -1246,10 +1240,7 @@ namespace Apoc3D
 
 				UpdateScrolling();
 				
-				if (!eventContentChanged.empty())
-				{
-					eventContentChanged(this);
-				}
+				eventContentChanged.Invoke(this);
 			}
 		}
 

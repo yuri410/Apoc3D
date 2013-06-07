@@ -86,14 +86,12 @@ namespace Apoc3D
 			if (m_check && m_canUncheck)
 			{
 				m_check = false;
-				if (!m_eToggled.empty())
-					m_eToggled(this);
+				m_eToggled.Invoke(this);
 			}
 			else if (!m_check)
 			{
 				m_check = true;
-				if (!m_eToggled.empty())
-					m_eToggled(this);
+				m_eToggled.Invoke(this);
 			}
 		}
 
@@ -132,7 +130,7 @@ namespace Apoc3D
 				m_checkbox[i]->SetSkin(m_skin);
 				m_checkbox[i]->setOwner(getOwner());
 				m_checkbox[i]->setCanUncheck(false);
-				m_checkbox[i]->eventPress().bind(this, &CheckboxGroup::Checkbox_Press);
+				m_checkbox[i]->eventPress().Bind(this, &CheckboxGroup::Checkbox_Press);
 				m_checkbox[i]->Initialize(device);
 
 				if (m_checkbox[i]->getValue())
@@ -179,8 +177,7 @@ namespace Apoc3D
 
 			if (checkIndex != m_selectedIndex)
 			{
-				if (!m_eSelectionChanged.empty())
-					m_eSelectionChanged(this);
+				m_eSelectionChanged.Invoke(this);
 				m_selectedIndex = checkIndex;
 			}
 

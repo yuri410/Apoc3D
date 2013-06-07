@@ -34,7 +34,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		typedef fastdelegate::FastDelegate2<Sprite*, Apoc3D::Math::Rectangle*, void> PictureDrawEventHandler;
+		typedef EventDelegate2<Sprite*, Apoc3D::Math::Rectangle*> PictureDrawEventHandler;
 
 		class APAPI PictureBox : public Control
 		{

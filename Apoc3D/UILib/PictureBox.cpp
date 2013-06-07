@@ -95,8 +95,7 @@ namespace Apoc3D
 				sprite->Draw(m_texture, destRect, &m_srcRect, CV_White);
 			}
 
-			if (!m_eDraw.empty())
-				m_eDraw(sprite, &destRect);
+			m_eDraw.Invoke(sprite, &destRect);
 		}
 	}
 }

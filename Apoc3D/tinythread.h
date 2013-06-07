@@ -24,6 +24,8 @@ freely, subject to the following restrictions:
 #ifndef _TINYTHREAD_H_
 #define _TINYTHREAD_H_
 
+#include "ExportSettings.h"
+
 /// @file
 /// @mainpage TinyThread++ API Reference
 ///
@@ -389,7 +391,7 @@ class lock_guard {
 ///   cond.notify_all();
 /// }
 /// @endcode
-class condition_variable {
+class APAPI condition_variable {
   public:
     /// Constructor.
 #if defined(_TTHREAD_WIN32_)
@@ -478,7 +480,7 @@ class condition_variable {
 
 
 /// Thread class.
-class thread {
+class APAPI thread {
   public:
 #if defined(_TTHREAD_WIN32_)
     typedef HANDLE native_handle_type;

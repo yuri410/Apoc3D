@@ -55,7 +55,7 @@ namespace APDesigner
 		m_form = new Form(FBS_None, L"Texture thumbnail");
 
 		m_pictureBox = new PictureBox(Point::Zero, 1);
-		m_pictureBox->eventPictureDraw().bind(this, &TextureThumbViewer::PictureBox_Draw);
+		m_pictureBox->eventPictureDraw().Bind(this, &TextureThumbViewer::PictureBox_Draw);
 		m_form->getControls().Add(m_pictureBox);
 		m_form->Initialize(device);
 	}
@@ -240,13 +240,13 @@ namespace APDesigner
 	{
 		m_pictureBox = new PictureBox(Point(5,5 + 17), 1);
 		m_pictureBox->SetSkin(window->getUISkin());
-		m_pictureBox->eventPictureDraw().bind(this, &TextureViewer::PixtureBox_Draw);
+		m_pictureBox->eventPictureDraw().Bind(this, &TextureViewer::PixtureBox_Draw);
 		m_btnZoomIn = new Button(Point(100,17+5), L"+");
 		m_btnZoomIn->SetSkin(window->getUISkin());
-		m_btnZoomIn->eventPress().bind(this, &TextureViewer::BtnZoomIn_Pressed);
+		m_btnZoomIn->eventPress().Bind(this, &TextureViewer::BtnZoomIn_Pressed);
 		m_btnZoomOut = new Button(Point(140,17+5), L"-");
 		m_btnZoomOut->SetSkin(window->getUISkin());
-		m_btnZoomOut->eventPress().bind(this, &TextureViewer::BtnZoomOut_Pressed);
+		m_btnZoomOut->eventPress().Bind(this, &TextureViewer::BtnZoomOut_Pressed);
 
 
 		getDocumentForm()->setTitle(name + String(L"(100%)"));
