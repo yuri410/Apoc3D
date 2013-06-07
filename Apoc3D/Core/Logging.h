@@ -118,8 +118,8 @@ namespace Apoc3D
 			LogSet* m_logs[LOG_Count];
 		};
 
-		inline void Apoc3DLog(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation);
-		inline void Apoc3DLog(LogType type, const String& message, LogMessageLevel level) { LogManager::getSingleton().Write(type, message, level); }
+		inline void ApocLog(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation);
+		inline void ApocLog(LogType type, const String& message, LogMessageLevel level) { LogManager::getSingleton().Write(type, message, level); }
 
 		/** 
 		 *  A LogSet is a set of LogEntries with the same LogType. 

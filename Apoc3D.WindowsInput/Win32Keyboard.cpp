@@ -23,6 +23,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Win32Keyboard.h"
 #include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -51,9 +55,17 @@ namespace Apoc3D
 			bool Win32Keyboard::keyPressed( const OIS::KeyEvent &arg )
 			{
 				m_keyState[arg.key] = true;
+
+				//String msg = L" KeyPressed: ";
+				//msg.append(StringUtils::toWString(((OIS::Keyboard*)(arg.device))->getAsString(arg.key)));
+				//
+				//ApocLog(LOG_CommandResponse, msg);
+
 				//std::cout << " KeyPressed {" << arg.key
 					//<< ", " << ((OIS::Keyboard*)(arg.device))->getAsString(arg.key)
 					//<< "} || Character (" << (char)arg.text << ")" << std::endl;
+
+
 				return true;
 			}
 			bool Win32Keyboard::keyReleased( const OIS::KeyEvent &arg )
@@ -62,6 +74,12 @@ namespace Apoc3D
 				//if( arg.key == OIS::KC_ESCAPE || arg.key == OIS::KC_Q )
 					//appRunning = false;
 				//std::cout << "KeyReleased {" << ((OIS::Keyboard*)(arg.device))->getAsString(arg.key) << "}\n";
+
+				//String msg = L" KeyReleased: ";
+				//msg.append(StringUtils::toWString(((OIS::Keyboard*)(arg.device))->getAsString(arg.key)));
+
+				//ApocLog(LOG_CommandResponse, msg);
+				//
 				return true;
 			}
 		}
