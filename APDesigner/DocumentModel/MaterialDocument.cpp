@@ -807,6 +807,7 @@ namespace APDesigner
 
 	PassFlagDialog::~PassFlagDialog()
 	{
+		m_form->eventClosed().Unbind(this, &PassFlagDialog::Form_Closed);
 		UIRoot::Remove(m_form);
 		delete m_form;
 		for (int i=0;i<m_lblTable.getCount();i++)

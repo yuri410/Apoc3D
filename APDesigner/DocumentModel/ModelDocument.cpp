@@ -1478,6 +1478,8 @@ namespace APDesigner
 
 	CopyMaterialDialog::~CopyMaterialDialog()
 	{
+		m_form->eventClosed().Unbind(this, &CopyMaterialDialog::Form_Closed);
+
 		UIRoot::Remove(m_form);
 		
 		delete m_form;
