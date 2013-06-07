@@ -268,12 +268,12 @@ namespace Apoc3D
 				msg.append(StringUtils::ToString(mgr->getUsedCacheSize() / 1048576.0f, 1, 0, ' '));
 				msg.append(L"MB / ");
 				msg.append(StringUtils::ToString(mgr->getTotalCacheSize() / 1048576.0f, 1, 0, ' '));
-				msg.append(L"MB] [OP = ");
-				msg.append(StringUtils::ToString(mgr->GetCurrentOperationCount()));
-				msg.append(L"] ");
+				msg.append(L"MB]");
 				if (mgr->usesAsync())
 				{
-					msg.append(L"[Async]");
+					msg.append(L" [OP = ");
+					msg.append(StringUtils::ToString(mgr->GetCurrentOperationCount()));
+					msg.append(L"] [Async]");
 				}
 
 				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);

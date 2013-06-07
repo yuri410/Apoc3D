@@ -263,7 +263,7 @@ namespace Apoc3D
 					
 					m_entryInfo[counter].LineCount = font->CalculateLineCount(str,textWidth);
 					m_entryInfo[counter].Message = str;
-					m_contendLineCount+= m_entryInfo[counter].LineCount;
+					m_contendLineCount += m_entryInfo[counter].LineCount;
 
 					ColorValue color = 0;
 					switch (e.Level)
