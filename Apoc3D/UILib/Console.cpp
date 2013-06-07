@@ -107,7 +107,7 @@ namespace Apoc3D
 
 		Console::~Console()
 		{
-			LogManager::getSingleton().eventNewLogWritten.Reset();
+			LogManager::getSingleton().eventNewLogWritten.Unbind(this, &Console::Log_New);
 			UIRoot::Remove(m_form);
 
 			delete m_form;
