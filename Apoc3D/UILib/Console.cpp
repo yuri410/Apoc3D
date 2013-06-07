@@ -248,7 +248,7 @@ namespace Apoc3D
 			sprite->Draw(m_skin->WhitePixelTexture, *dstRect,0, PACK_COLOR(25,25,25,255));
 
 			Font* font = m_form->getFontRef();
-			float lineSpacing = font->getLineHeight() + m_form->getFontRef()->getLineGap();
+			float lineSpacing = font->getLineHeight() + font->getLineGap();
 
 			int textWidth = dstRect->Width - m_scrollBar->getBarWidth() - 15;
 
