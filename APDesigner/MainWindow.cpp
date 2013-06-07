@@ -517,11 +517,15 @@ namespace APDesigner
 			String fileName = PathUtils::GetFileName(p.second);
 			MenuItem* mi = new MenuItem(p.first + L" (" + fileName + L")");
 
+			mi->event().Reset();
+			mi->event().UseDestructProtection = true;
 			mi->event().Bind(this, &MainWindow::Menu_OpenRecentProject);
 			mi->UserPointer = reinterpret_cast<void*>(static_cast<uintptr>(i));
 			m_recentPrjSubMenu->Add(mi, nullptr);
 
 			MenuItem* mi2 = new MenuItem(*mi);
+			mi2->event().Reset();
+			mi2->event().UseDestructProtection = true;
 			mi2->event().Bind(this, &MainWindow::Menu_QuickBuildRecentProject);
 			m_quickbuildSubMenu->Add(mi2, nullptr);
 		}

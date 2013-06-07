@@ -56,6 +56,11 @@ namespace Apoc3D
 
 			GraphicsDeviceManager::~GraphicsDeviceManager(void)
 			{
+				m_game->eventFrameStart()->Unbind(this, &GraphicsDeviceManager::game_FrameStart);
+				m_game->eventFrameEnd()->Unbind(this, &GraphicsDeviceManager::game_FrameEnd);
+				m_game->getWindow()->eventUserResized()->Unbind(this, &GraphicsDeviceManager::Window_UserResized);
+				m_game->getWindow()->eventMonitorChanged()->Unbind(this, &GraphicsDeviceManager::Window_MonitorChanged);
+
 				if (m_currentSetting)
 					delete m_currentSetting;
 			}

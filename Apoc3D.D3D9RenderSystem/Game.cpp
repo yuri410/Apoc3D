@@ -68,7 +68,13 @@ namespace Apoc3D
 				m_gameWindow->Load(params.BackBufferWidth, params.BackBufferHeight, params.IsFixedWindow);
 			}
 			Game::~Game()
-			{		
+			{
+				m_gameWindow->eventApplicationActivated()->Unbind(this, &Game::Window_ApplicationActivated);
+				m_gameWindow->eventApplicationDeactivated()->Unbind(this, &Game::Window_ApplicationDeactivated);
+				m_gameWindow->eventPaint()->Unbind(this, &Game::Window_Paint);
+				m_gameWindow->eventResume()->Unbind(this, &Game::Window_Resume);
+				m_gameWindow->eventSuspend()->Unbind(this, &Game::Window_Suspend);
+
 				delete m_graphicsDeviceManager;
 				delete m_gameWindow;
 
