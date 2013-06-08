@@ -57,10 +57,10 @@ namespace APDesigner
 
 	ShaderNetDocument::~ShaderNetDocument()
 	{
+		getDocumentForm()->eventResized().Unbind(this, &ShaderNetDocument::Form_Resized);
+
 		if (m_stateGraph)
 			delete m_stateGraph;
-
-
 	}
 	void ShaderNetDocument::Initialize(RenderDevice* device)
 	{
