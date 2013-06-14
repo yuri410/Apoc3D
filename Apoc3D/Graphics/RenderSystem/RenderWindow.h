@@ -75,11 +75,11 @@ namespace Apoc3D
 				RenderDevice* m_renderDevice;
 
 				RenderView(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm, RenderTarget* rt)
-					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(rt), m_deviceContext(dc)
+					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(rt), m_deviceContext(dc), UserData(nullptr)
 				{
 				}
 				RenderView(DeviceContext* dc, RenderDevice* rd, const RenderParameters &pm)
-					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(0), m_deviceContext(dc)
+					: m_presentParams(pm), m_renderDevice(rd), m_renderTarget(0), m_deviceContext(dc), UserData(nullptr)
 				{
 
 				}

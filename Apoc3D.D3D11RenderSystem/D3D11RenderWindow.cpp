@@ -24,6 +24,10 @@ namespace rex
 		settings.DriverType = D3D_DRIVER_TYPE_HARDWARE;
 		settings.SyncInterval = params.EnableVSync ? 1 : 0;
 
+		D3D11DeviceSettings minSettings;
+		minSettings.DeviceFeatureLevel = D3D_FEATURE_LEVEL_11_0;
+
+
 		D3D11RenderDevice* device = new D3D11RenderDevice(getGraphicsDeviceManager());
 		m_window->setDevice(device);
 		//m_window->m_game->getWindow()->MakeFixedSize(params.IsFixedWindow);
@@ -33,7 +37,7 @@ namespace rex
 		//getGraphicsDeviceManager()->UserIgnoreMonitorChanges() = params.IgnoreMonitorChange;
 
 		// Initialize() and Load() are called as the device is being created.
-		getGraphicsDeviceManager()->ChangeDevice(settings);
+		getGraphicsDeviceManager()->ChangeDevice(settings, &minSettings);
 
 		OutputDebugString(L"[D3D11]Render window created. ");
 	}

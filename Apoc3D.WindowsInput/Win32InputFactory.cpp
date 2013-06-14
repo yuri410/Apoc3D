@@ -100,6 +100,7 @@ namespace Apoc3D
 
 							return FALSE;
 						}
+						return TRUE;
 					}
 
 					delete[] title;
