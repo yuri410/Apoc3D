@@ -43,6 +43,7 @@ using namespace Apoc3D::Utility;
 
 int Build(ConfigurationSection* sect);
 int Build(int argc, _TCHAR* argv[]);
+void PrintUsage();
 
 // This APBuild program may be executed by Apoc3D Designer multiple time
 // base on the dependency of project items. For instance, a first time build 
@@ -66,39 +67,76 @@ int Build(int argc, _TCHAR* argv[])
 	if (argc>1)
 	{
 		String basePath = argv[0];
-
 		basePath = PathUtils::GetDirectory(basePath);
 
 		_chdir(StringUtils::toString(basePath).c_str());
 
-		String configPath = argv[1];
-
-		if (!File::FileExists(configPath))
+		if (argv[1] == L"/d")
 		{
-			wcout << L"Build file: ";
-			wcout << configPath;
-			wcout << L" does not exist.";
-			return ERR_CONFIG_FILE_NOT_FOUND;
-		}
-		FileLocation* fl = new FileLocation(configPath);
-		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+			if (argc>3)
+			{
+				ConfigurationSection* sect = new ConfigurationSection(L"BuildItem");
+				sect->AddAttributeString(L"Type", argv[2]);
 
-		// find the first section in the build config
-		Configuration::ChildTable::Enumerator e = config->GetEnumerator();
-		e.MoveNext();
+				for (int i=3;i<argc;i++)
+				{
+					String a = argv[i];
+					String::size_type pos = a.find_first_of('=');
+					if (pos != String::npos)
+					{
+						String key = a.substr(0, pos);
+						String value = a.substr(pos+1);
+						sect->AddAttributeString(key, value);
+					}
+					else
+					{
+						CompileLog::WriteError(L"Invalid Parameter: " + a, L"Command line");
+						break;
+					}
+				}
+
+				int ret = Build(sect);
+				delete sect;
+				return ret;
+			}
+			else
+			{
+				PrintUsage();
+			}
+		}
+		else
+		{
+			String configPath = argv[1];
+
+			if (!File::FileExists(configPath))
+			{
+				wcout << L"Build file: ";
+				wcout << configPath;
+				wcout << L" does not exist.";
+				return ERR_CONFIG_FILE_NOT_FOUND;
+			}
+
+			FileLocation fl(configPath);
+			Configuration* config = XMLConfigurationFormat::Instance.Load(&fl);
+
+			// find the first section in the build config
+			Configuration::ChildTable::Enumerator e = config->GetEnumerator();
+			e.MoveNext();
 		
-		// build the node
-		return Build(*e.getCurrentValue());
+			// build the node
+			int ret = Build(*e.getCurrentValue());
+			delete config;
+
+			return ret;
+		}
 	}
 	else
 	{
-		cout << "Usage: APBuild [ConfigFile]\n";
+		PrintUsage();
 	}
 
 	return 0;
 }
-
-
 
 int Build(ConfigurationSection* sect)
 {
@@ -207,4 +245,14 @@ int Build(ConfigurationSection* sect)
 	if (thereAreWarnings)
 		return ERR_THERE_ARE_WARNINGS;
 	return 0;
+}
+
+void PrintUsage()
+{
+	cout << "Apoc3D Build. "; cout << " Software Date: "; cout << __DATE__; cout << "\n";
+	
+	cout << "Usage: APBuild [Options]\n";
+	cout << "  Options:\n";
+	cout << "    /d [Type] [Params]    Directly build from command line.\n";
+	cout << "    [ConfigFile]          Build from project build configuration.\n";
 }

@@ -134,14 +134,14 @@ namespace Apoc3D
 				/************************************************************************/
 				/* Color Write                                                          */
 				/************************************************************************/
-				virtual void getColorWriteEnabled0(bool& r, bool& g, bool& b, bool& a);
-				virtual void setColorWriteEnabled0(bool r, bool g, bool b, bool a);
-				virtual void getColorWriteEnabled1(bool& r, bool& g, bool& b, bool& a);
-				virtual void setColorWriteEnabled1(bool r, bool g, bool b, bool a);
-				virtual void getColorWriteEnabled2(bool& r, bool& g, bool& b, bool& a);
-				virtual void setColorWriteEnabled2(bool r, bool g, bool b, bool a);
-				virtual void getColorWriteEnabled3(bool& r, bool& g, bool& b, bool& a);
-				virtual void setColorWriteEnabled3(bool r, bool g, bool b, bool a);
+				void getColorWriteEnabled0(bool& r, bool& g, bool& b, bool& a);
+				void setColorWriteEnabled0(bool r, bool g, bool b, bool a);
+				void getColorWriteEnabled1(bool& r, bool& g, bool& b, bool& a);
+				void setColorWriteEnabled1(bool r, bool g, bool b, bool a);
+				void getColorWriteEnabled2(bool& r, bool& g, bool& b, bool& a);
+				void setColorWriteEnabled2(bool r, bool g, bool b, bool a);
+				void getColorWriteEnabled3(bool& r, bool& g, bool& b, bool& a);
+				void setColorWriteEnabled3(bool r, bool g, bool b, bool a);
 
 				/************************************************************************/
 				/* Samplers                                                             */
@@ -152,7 +152,12 @@ namespace Apoc3D
 				const ShaderSamplerState& getPixelSampler(int samplerIndex) const;
 				const ShaderSamplerState& getVertexSampler(int samplerIndex) const;
 
+
+				void SetTexture(int i, D3D9Texture* tex);
+
 			private:
+				void InitializeDefaultState();
+
 				D3D9RenderDevice* m_device;
 
 				bool m_cachedAlphaTestEnable;
@@ -210,10 +215,9 @@ namespace Apoc3D
 				bool m_colorWrite2[4];
 				bool m_colorWrite3[4];
 
-				void InitializeDefaultState();
-
+				int m_textureSlotCount;
+				D3D9Texture** m_textureSlots;
 			};
-
 
 			class D3D9ClipPlane : public ClipPlane
 			{

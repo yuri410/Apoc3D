@@ -29,7 +29,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Graphics/Camera.h"
 #include "apoc3d/Graphics/RenderSystem/Shader.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "apoc3d/Graphics/RenderSystem/InstancingData.h"
 #include "apoc3d/IOLib/Streams.h"
@@ -90,7 +89,7 @@ namespace Apoc3D
 			}
 
 			/************************************************************************/
-			/*                                                                      */
+			/*  AutomaticEffect                                                     */
 			/************************************************************************/
 
 			template void AutomaticEffect::SetParameterValue<bool>(int index, bool* value, int count);
@@ -100,9 +99,6 @@ namespace Apoc3D
 			template void AutomaticEffect::SetParameterValue<const bool>(int index, const bool* value, int count);
 			template void AutomaticEffect::SetParameterValue<const int>(int index, const int* value, int count);
 			template void AutomaticEffect::SetParameterValue<const float>(int index, const float* value, int count);
-
-
-
 
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
 				: m_vertexShader(0), m_pixelShader(0), m_device(device), m_supportsInstancing(false), 
@@ -114,22 +110,30 @@ namespace Apoc3D
 				assert(!data.IsCFX);
 
 				Capabilities* caps = device->getCapabilities();
-				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
+
+				const EffectProfileData* profileSelected = nullptr;
+
+				for (int i=data.ProfileCount-1; i>=0; i--)
 				{
-					m_isUnsupported = true;
-					return;
-				}
-				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
-				{
-					m_isUnsupported = true;
-					return;
+					const EffectProfileData& pd = data.Profiles[i];
+					if (!caps->SupportsVertexShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer))
+					{
+						m_isUnsupported = true;
+						return;
+					}
+					if (!caps->SupportsPixelShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer))
+					{
+						m_isUnsupported = true;
+						return;
+					}
+					profileSelected = &pd;
 				}
 
 				ObjectFactory* objFac = device->getObjectFactory();
-				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(data.VSCode));
-				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(data.PSCode));
+				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(profileSelected->VSCode));
+				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(profileSelected->PSCode));
 
-				m_parameters =  data.Parameters;
+				m_parameters =  profileSelected->Parameters;
 				
 				m_texture = objFac->CreateTexture(1,1,1, TU_Static, FMT_A8R8G8B8);
 				DataRectangle rect = m_texture->Lock(0, LOCK_None);
@@ -361,7 +365,6 @@ namespace Apoc3D
 							}
 							break;
 					}
-
 				}
 			}
 			void AutomaticEffect::BeginPass(int passId)
@@ -834,73 +837,29 @@ namespace Apoc3D
 				{
 				case CEPT_Float:
 					SetValue(ep, *reinterpret_cast<const float*>(data));
-					if (EffectParameter::IsReference(type))
-					{
-
-					}
-					else
-					{
-						SetValue(ep, *reinterpret_cast<const float*>(data));
-					}
 					break;
 				case CEPT_Vector2:
 				case CEPT_Ref_Vector2:
-					if (EffectParameter::IsReference(type))
-					{
-						SetVector2(ep, *reinterpret_cast<const Vector2*>(data));
-					}
-					else
-					{
-						SetVector2(ep, *reinterpret_cast<const Vector2*>(data));
-					}
+					SetVector2(ep, *reinterpret_cast<const Vector2*>(data));
 					break;
 				case CEPT_Ref_Vector3:
-					if (EffectParameter::IsReference(type))
-					{
-						SetVector3(ep, *reinterpret_cast<const Vector3*>(data));
-					}
-					else
-					{
-						SetVector3(ep, *reinterpret_cast<const Vector3*>(data));
-					}
+					SetVector3(ep, *reinterpret_cast<const Vector3*>(data));
 					break;
-
 				case CEPT_Ref_Vector4:
 				case CEPT_Vector4:
-					if (EffectParameter::IsReference(type))
-					{
-						SetVector4(ep, *reinterpret_cast<const Vector4*>(data));
-					}
-					else
-					{
-						SetVector4(ep, *reinterpret_cast<const Vector4*>(data));
-					}
+					SetVector4(ep, *reinterpret_cast<const Vector4*>(data));
 					break;
 				case CEPT_Boolean:
-					if (EffectParameter::IsReference(type))
-					{
-						SetValue(ep, *reinterpret_cast<const bool*>(data));
-					}
-					else
-					{
-						SetValue(ep, *reinterpret_cast<const bool*>(data));
-					}
+					SetValue(ep, *reinterpret_cast<const bool*>(data));
 					break;
 				case CEPT_Integer:
-					if (EffectParameter::IsReference(type))
-					{
-						SetValue(ep, *reinterpret_cast<const int*>(data));
-					}
-					else
-					{
-						SetValue(ep, *reinterpret_cast<const int*>(data));
-					}
+					SetValue(ep, *reinterpret_cast<const int*>(data));
 					break;
 				}
 			}
 
 			/************************************************************************/
-			/*                                                                      */
+			/*  CustomShaderEffect                                                  */
 			/************************************************************************/
 
 			CustomShaderEffect::CustomShaderEffect(RenderDevice* device, const ResourceLocation* rl)
@@ -912,21 +871,27 @@ namespace Apoc3D
 				assert(data.IsCFX);
 
 				Capabilities* caps = device->getCapabilities();
-				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
+				const EffectProfileData* profileSelected = nullptr;
+
+				for (int i=data.ProfileCount-1; i>=0; i--)
 				{
-					m_isUnsupported = true;
-					return;
-				}
-				if (!caps->SupportsVertexShader(data.MajorVer, data.MinorVer))
-				{
-					m_isUnsupported = true;
-					return;
+					const EffectProfileData& pd = data.Profiles[i];
+					if (!caps->SupportsVertexShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer))
+					{
+						m_isUnsupported = true;
+						return;
+					}
+					if (!caps->SupportsPixelShader(pd.ImplementationType, pd.MajorVer, pd.MinorVer))
+					{
+						m_isUnsupported = true;
+						return;
+					}
+					profileSelected = &pd;
 				}
 
 				ObjectFactory* objFac = device->getObjectFactory();
-				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(data.VSCode));
-				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(data.PSCode));
-
+				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(profileSelected->VSCode));
+				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(profileSelected->PSCode));
 			}
 
 			CustomShaderEffect::~CustomShaderEffect()

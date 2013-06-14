@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9OBJECTFACTORY_H
 
 #include "D3D9Common.h"
-#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Graphics::RenderSystem;

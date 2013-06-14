@@ -41,7 +41,7 @@ namespace Apoc3D
 		{
 			GraphicsDeviceManager::GraphicsDeviceManager(Game* game, IDirect3D9* d3d9)
 				: m_currentSetting(0),m_device(0),
-				m_deviceLost(false), m_ignoreSizeChanges(false), m_doNotStoreBufferSize(false), m_renderingOccluded(false),
+				m_deviceLost(false), m_ignoreSizeChanges(false),
 				m_direct3D9(d3d9), m_userIgnoreMoniorChanges(false)
 			{
 				assert(game);
@@ -52,6 +52,8 @@ namespace Apoc3D
 				m_game->eventFrameEnd()->Bind(this, &GraphicsDeviceManager::game_FrameEnd);
 				m_game->getWindow()->eventUserResized()->Bind(this, &GraphicsDeviceManager::Window_UserResized);
 				m_game->getWindow()->eventMonitorChanged()->Bind(this, &GraphicsDeviceManager::Window_MonitorChanged);
+
+				m_windowedStyle = GetWindowLong(m_game->getWindow()->getHandle(), GWL_STYLE);
 			}
 
 			GraphicsDeviceManager::~GraphicsDeviceManager(void)
@@ -533,9 +535,6 @@ namespace Apoc3D
 				Enumeration::FindValidSettings(m_direct3D9, settings, validSettings);
 				validSettings.D3D9.PresentParameters.hDeviceWindow = m_game->getWindow()->getHandle();
 				CreateDevice(validSettings);
-
-				
-				
 			}
 			void GraphicsDeviceManager::ChangeDevice(bool windowed, int desiredWidth, int desiredHeight)
 			{

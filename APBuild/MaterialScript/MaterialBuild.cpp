@@ -266,7 +266,7 @@ namespace APBuild
 
 			memset(mcp.Value, 0, sizeof(mcp.Value));
 
-			if (StringUtils::StartsWidth(valueStr, L"(") && StringUtils::EndsWidth(valueStr, L")"))
+			if (StringUtils::StartsWith(valueStr, L"(") && StringUtils::EndsWith(valueStr, L")"))
 			{
 				String vec = valueStr.substr(1, valueStr.length()-2);
 				List<String> vals3;
@@ -411,7 +411,7 @@ namespace APBuild
 					String rightPart = text.substr(mPos +1);
 					StringUtils::Trim(rightPart);
 
-					if (StringUtils::StartsWidth(rightPart, L"(") && StringUtils::EndsWidth(rightPart, L")"))
+					if (StringUtils::StartsWith(rightPart, L"(") && StringUtils::EndsWith(rightPart, L")"))
 					{
 						String facts = rightPart.substr(1, rightPart.size()-2);
 						List<String> vals;

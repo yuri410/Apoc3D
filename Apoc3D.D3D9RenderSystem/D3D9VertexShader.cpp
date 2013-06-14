@@ -544,12 +544,6 @@ namespace Apoc3D
 				SetSamplerState(cons.SamplerIndex[0], state);
 			}
 
-			void D3D9VertexShader::AutoSetParameters(const Material* mtrl)
-			{
-
-			}
-
-
 			void D3D9VertexShader::ThrowKeyNotFoundEx(const String& name)
 			{
 				throw AP_EXCEPTION(EX_KeyNotFound, name);

@@ -26,9 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-
-#include "apoc3d/Common.h"
-
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
 
@@ -41,25 +38,14 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		/** 
-		 *  Defines one entire effect's data stored in binary form and procedures to load/save them.
-		 */
-		class APAPI EffectData
+		class APAPI EffectProfileData
 		{
 		public:
-			String Name;
-			/**
-			 *  The vertex shader code. Could be compiled HLSL microcode or GLSL source 
-			 *  depends on the
-			 */
-			char* VSCode;
-			char* PSCode;
-			/**
-			 *  The length of VSCode in bytes.
-			 */
-			int VSLength;
-			int PSLength;
-			
+			static const char* Imp_HLSL;
+			static const char* Imp_GLSL;
+
+			char ImplementationType[5];
+
 			/**
 			 *  The major version of shader model expected.
 			 */
@@ -67,26 +53,61 @@ namespace Apoc3D
 			int MinorVer;
 
 			/**
+			 *  The length of VSCode in bytes.
+			 */
+			int VSLength;
+			int PSLength;
+			int GSLength;
+
+			/**
+			 *  The vertex shader code. Could be compiled HLSL microcode or GLSL source 
+			 *  depends on the
+			 */
+			char* VSCode;
+			char* PSCode;
+			char* GSCode;
+
+			List<EffectParameter> Parameters;
+
+			EffectProfileData();
+			~EffectProfileData();
+			
+			void Load(BinaryReader* br);
+			void Save(BinaryWriter* bw);
+
+			bool MatchImplType(const char* str) const;
+			void SetImplType(const char* str);
+			void SetImplType(const std::string& str);
+		};
+
+		/** 
+		 *  Defines one entire effect's data stored in binary form and procedures to load/save them.
+		 */
+		class APAPI EffectData
+		{
+		public:
+			String Name;
+
+			int ProfileCount;
+			EffectProfileData* Profiles;
+
+			/**
 			 *  Indicates whether this effect is from a AFX or CFX. 
 			 *  AFX is loaded by AutomaticEffect, while CFX is the custom one.
 			 */
 			bool IsCFX;
 
-			List<EffectParameter> Parameters;
-
-			EffectData() : VSCode(0), PSCode(0), VSLength(0),PSLength(0),MajorVer(0), MinorVer(0),IsCFX(false) { }
-			~EffectData() 
-			{
-				if (VSCode) delete[] VSCode; 
-				if (PSCode) delete[] PSCode;
-			}
+			EffectData();
+			~EffectData();
 
 			void Load(const ResourceLocation* rl);
 			void Save(Stream* strm) const;
 
+			void SortProfiles();
 		private:
 			void LoadAFXV3(BinaryReader* br);
 			void LoadAFXV3_1(BinaryReader* br);
+			void LoadFXV4(BinaryReader* br);
 		};
 	}
 }

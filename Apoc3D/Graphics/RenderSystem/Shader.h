@@ -129,10 +129,6 @@ namespace Apoc3D
 				virtual void SetTexture(const String& paramName, Texture* tex) = 0;
 				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState& state) = 0;
 
-				/**
-				 *  This method is obsolete
-				 */
-				virtual void AutoSetParameters(const Material* mtrl) = 0;
 			};
 
 			class APAPI VertexShader : public Shader

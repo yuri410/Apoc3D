@@ -1306,7 +1306,7 @@ namespace Apoc3D
 									{
 										type = SPFX_TYPE_FLOATS;
 									}
-									else if (StringUtils::StartsWidth(typeString, L"vector"))
+									else if (StringUtils::StartsWith(typeString, L"vector"))
 									{
 										String vDem = typeString.substr(6);
 										int dem = StringUtils::ParseInt32(vDem);
@@ -1560,7 +1560,7 @@ namespace Apoc3D
 			StringUtils::Trim(vname);
 
 			String propName;
-			if (StringUtils::StartsWidth(vname, L"[") && StringUtils::EndsWidth(vname, L"]"))
+			if (StringUtils::StartsWith(vname, L"[") && StringUtils::EndsWith(vname, L"]"))
 			{
 				vname = vname.substr(1, vname.size()-2);
 

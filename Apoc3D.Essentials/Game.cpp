@@ -6,7 +6,6 @@
 
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Graphics/EffectSystem/EffectManager.h"
 #include "apoc3d/UILib/StyleSkin.h"

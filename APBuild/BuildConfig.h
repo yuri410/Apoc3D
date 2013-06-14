@@ -119,17 +119,24 @@ namespace APBuild
 
 		void Parse(const ConfigurationSection* sect);
 	};
+
 	struct AFXBuildConfig
 	{
 		String Name;
 
-		String SrcVSFile;
-		String SrcPSFile;
+		String VS;
+		String PS;
+		String GS;
 		String PListFile;
-		String DestFile;
 		String EntryPointVS;
 		String EntryPointPS;
-		String Profile;
+		String EntryPointGS;
+
+		String DestFile;
+
+		bool IsDebug;
+
+		List<String> Targets;
 
 		void Parse(const ConfigurationSection* sect);
 	};

@@ -330,11 +330,10 @@
 
       </gui>
       <effects Type="Folder" Pack="pak" DestinationPack="apoc_system\effects.pak">
-        <Standard Type="effect" VSSource="apoc_system\effects\standardnh.vs"
-                  PSSource="apoc_system\effects\standardnh.ps"
+        <Standard Type="effect" Source="VS:apoc_system\effects\standardnh.vs | PS:apoc_system\effects\standardnh.ps"
                   ParamList="apoc_system\effects\standardnh.xml"
                   DestinationFile="apoc_system\effects\standard.afx"
-                  EntryPointVS="main" EntryPointPS="main" Profile="SM2.0">
+                  EntryPoints="ALL:main" Profile="sm_2_0">
         </Standard>
       </effects>
     </system>

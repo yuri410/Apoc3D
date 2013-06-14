@@ -69,7 +69,14 @@ namespace Apoc3D
 
 			void Enumeration::Enumerate(IDirect3D9* d3d9)
 			{
-				m_hasEnumerated = true;
+				if (m_hasEnumerated)
+				{
+					for (int i=0;i<m_adapters.getCount();i++)
+					{
+						delete m_adapters[i];
+					}
+					m_adapters.Clear();
+				}
 				D3DFORMAT allowedAdapterFormat[] =  { D3DFMT_X8R8G8B8, D3DFMT_X1R5G5B5, D3DFMT_R5G6B5, 
 					D3DFMT_A2R10G10B10 };
 
@@ -358,10 +365,8 @@ namespace Apoc3D
 			
 			void Enumeration::FindValidSettings(IDirect3D9* d3d9, const DeviceSettings& settings, DeviceSettings& result)
 			{
-				if (!m_hasEnumerated)
-				{
-					Enumerate(d3d9);
-				}
+				Enumerate(d3d9);
+				
 				DeviceSettings newSettings = DeviceSettings(settings);
 
 				Direct3D9Settings optimal;

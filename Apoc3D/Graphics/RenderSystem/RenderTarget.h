@@ -49,13 +49,6 @@ namespace Apoc3D
 			 */
 			class APAPI RenderTarget
 			{
-			private:
-				int32 m_width;
-				int32 m_height;
-				DepthFormat m_depthFormat;
-				PixelFormat m_pixelFormat;
-				uint32 m_sampleCount;
-
 			protected:
 				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, uint32 multiSampleCount);
 				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, uint32 multiSampleCount);
@@ -71,6 +64,13 @@ namespace Apoc3D
 
 				virtual Texture* GetColorTexture() = 0;
 				virtual DepthBuffer* GetDepthBuffer() = 0;
+
+			private:
+				int32 m_width;
+				int32 m_height;
+				DepthFormat m_depthFormat;
+				PixelFormat m_pixelFormat;
+				uint32 m_sampleCount;
 
 			};
 		}

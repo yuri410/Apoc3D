@@ -103,8 +103,24 @@ namespace Apoc3D
 
 			class Enumeration
 			{
-			private:
+			public:
+				static const FastList<AdapterInfo*>& getAdapters() { return m_adapters; }
 				
+				static void Enumerate(IDirect3D9* d3d9);
+				static void FindValidSettings(IDirect3D9* d3d9, const DeviceSettings& settings, DeviceSettings& result);
+
+				static bool hasEnumerated() { return m_hasEnumerated; }
+				static const DeviceSettings& getMiniumSettings() { return m_minimumSettings; }
+				static void setMinimumSettings(const DeviceSettings& settings)
+				{
+					m_minimumSettings = settings;
+					m_hasMinimumSettings = true;
+				}
+				static void ClearMinimumSetting() { m_hasMinimumSettings = false; }
+
+			private:
+				Enumeration(void){ }
+				~Enumeration(void) { }
 
 				static bool m_hasMinimumSettings;
 				static DeviceSettings m_minimumSettings;
@@ -112,7 +128,6 @@ namespace Apoc3D
 				static bool m_hasEnumerated;
 
 
-				
 				static void EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, FastList<D3DFORMAT>& adapterFormats);
 
 				static void EnumerateSettingsCombos(IDirect3D9* d3d9, AdapterInfo* adapterInfo, 
@@ -130,33 +145,6 @@ namespace Apoc3D
 				static void BuildValidSettings(const SettingsCombo* combo, const Direct3D9Settings& input, Direct3D9Settings& result);
 				static D3DDISPLAYMODE FindValidResolution(const SettingsCombo* combo, const Direct3D9Settings& input);
 				static void BuildOptimalSettings(IDirect3D9* d3d9, const DeviceSettings& settings, Direct3D9Settings& optimal);
-			public:
-
-				static const FastList<AdapterInfo*>& getAdapters() { return m_adapters; }
-				static bool getHasEnumerated()
-				{
-					return m_hasEnumerated;
-				}
-
-				static const DeviceSettings& getMiniumSettings()
-				{
-					return m_minimumSettings;
-				}
-				static void setMinimumSettings(const DeviceSettings& settings)
-				{
-					m_minimumSettings = settings;
-					m_hasMinimumSettings = true;
-				}
-				static void ClearMinimumSetting() { m_hasMinimumSettings = false; }
-
-				static void Enumerate(IDirect3D9* d3d9);
-
-				
-				static void FindValidSettings(IDirect3D9* d3d9, const DeviceSettings& settings, DeviceSettings& result);
-
-			private:
-				Enumeration(void){ }
-				~Enumeration(void) { }
 			};
 		}
 		

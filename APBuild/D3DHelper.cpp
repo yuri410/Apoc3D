@@ -27,6 +27,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma comment(lib, "d3dx9.lib")
 #pragma comment(lib, "dxguid.lib")
 
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "d3dx11.lib")
+#pragma comment(lib, "dxerr.lib")
+
 namespace APBuild
 {
 	IDirect3DDevice9* D3DHelper::m_device = 0;

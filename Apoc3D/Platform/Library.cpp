@@ -56,10 +56,10 @@ namespace Apoc3D
 		{
 			String name = m_name;
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-			if (!StringUtils::EndsWidth(name, L".dll", true))
+			if (!StringUtils::EndsWith(name, L".dll", true))
 				name.append(L".dll");
 #elif APOC3D_PLATFORM == APOC3D_PLATFORM_LINUX
-			if (!StringUtils::EndsWidth(name, L".so", true))
+			if (!StringUtils::EndsWith(name, L".so", true))
 				name.append(L".so");
 #elif APOC3D_PLATFORM == APOC3D_PLATFORM_MAC
 #endif

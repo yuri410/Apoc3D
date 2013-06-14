@@ -79,7 +79,7 @@ namespace Apoc3D
 				if (WriteLogToStd)
 				{
 					String msg = lastest.ToString();
-					if (!StringUtils::EndsWidth(msg, L"\n"))
+					if (!StringUtils::EndsWith(msg, L"\n"))
 						msg.append(L"\n");
 
 					cout << ( msg.c_str() );

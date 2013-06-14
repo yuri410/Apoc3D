@@ -23,7 +23,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "TextureManager.h"
 #include "RenderSystem/RenderDevice.h"
-#include "RenderSystem/ObjectFactory.h"
 #include "RenderSystem/Texture.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Core/ResourceHandle.h"

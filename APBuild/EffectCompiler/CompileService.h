@@ -21,19 +21,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
+#include "../APBCommon.h"
+#include "apoc3d/Graphics/GraphicsCommon.h"
 
-#include "ObjectFactory.h"
+using namespace Apoc3D;
+using namespace Apoc3D::Graphics;
+using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::IO;
 
-namespace Apoc3D
+namespace APBuild
 {
-	namespace Graphics
-	{
-		namespace RenderSystem
-		{
-			ObjectFactory::ObjectFactory(RenderDevice* rd)
-					: m_renderDevice(rd)
-			{
-			}
-		}
-	}
+	bool CompileShader(const String& src, const String& entryPoint, EffectProfileData& prof, ShaderType shdType, bool debugEnabled);
+
+	bool ParseShaderProfileString(const String& text, std::string& implType, int& majorVer, int& minorVer);
 }

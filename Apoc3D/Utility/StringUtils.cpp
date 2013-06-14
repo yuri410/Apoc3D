@@ -75,8 +75,8 @@ namespace Apoc3D
 		{
 			String v = val;
 			ToLowerCase(v);
-			return (StartsWidth(v, L"true") || StartsWidth(v, L"yes")
-				|| StartsWidth(v, L"1"));
+			return (StartsWith(v, L"true") || StartsWith(v, L"yes")
+				|| StartsWith(v, L"1"));
 		}
 		uint16 StringUtils::ParseUInt16(const String& val)
 		{
@@ -449,7 +449,7 @@ namespace Apoc3D
 			} while (pos != String::npos);
 		}
 
-		bool StringUtils::StartsWidth(const String& str, const String& v, bool caseInsensitive)
+		bool StringUtils::StartsWith(const String& str, const String& v, bool caseInsensitive)
 		{
 			size_t len = str.length();
 			size_t vlen = v.length();
@@ -470,7 +470,7 @@ namespace Apoc3D
 			return (startOfThis == v);
 		}
 
-		bool StringUtils::EndsWidth(const String& str, const String& v, bool caseInsensitive)
+		bool StringUtils::EndsWith(const String& str, const String& v, bool caseInsensitive)
 		{
 			size_t thisLen = str.length();
 			size_t patternLen = v.length();

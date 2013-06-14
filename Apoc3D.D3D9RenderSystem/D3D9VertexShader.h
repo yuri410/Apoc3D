@@ -107,8 +107,6 @@ namespace Apoc3D
 				virtual void SetTexture(const String& paramName, Texture* tex);
 				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState& state);
 
-				virtual void AutoSetParameters(const Material* mtrl);
-
 			private:
 				NoInline static void ThrowKeyNotFoundEx(const String& name);
 

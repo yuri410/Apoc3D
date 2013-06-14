@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		class Size
+		class APAPI Size
 		{
 		public:
 			int Width;

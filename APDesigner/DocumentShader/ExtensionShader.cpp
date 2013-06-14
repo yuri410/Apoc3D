@@ -92,8 +92,8 @@ namespace APDesigner
 			ProjectResEffect* data = static_cast<ProjectResEffect*>(item->getData());
 
 			String filePath = PathUtils::Combine(item->getProject()->getBasePath(), data->PListFile);
-			String vsPath = PathUtils::Combine(item->getProject()->getBasePath(), data->SrcVSFile);
-			String psPath = PathUtils::Combine(item->getProject()->getBasePath(), data->SrcPSFile);
+			String vsPath = PathUtils::Combine(item->getProject()->getBasePath(), data->VS);
+			String psPath = PathUtils::Combine(item->getProject()->getBasePath(), data->PS);
 
 			if (File::FileExists(filePath))
 			{

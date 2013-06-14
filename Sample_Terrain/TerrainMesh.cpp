@@ -4,7 +4,6 @@
 #include "apoc3d/Core/ResourceHandle.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Graphics/EffectSystem/EffectManager.h"
-#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Graphics/RenderSystem/Buffer/HardwareBuffer.h"
 #include "apoc3d/Graphics/RenderSystem/VertexDeclaration.h"

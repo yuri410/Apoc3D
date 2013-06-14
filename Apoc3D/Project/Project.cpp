@@ -614,24 +614,140 @@ namespace Apoc3D
 
 	void ProjectResEffect::Parse(const ConfigurationSection* sect)
 	{
-		SrcVSFile = sect->getAttribute(L"VSSource");
-		SrcPSFile = sect->getAttribute(L"PSSource");
+		String srcDesc = sect->getAttribute(L"Source");
+		List<String> srcSets;
+		StringUtils::Split(srcDesc, srcSets, L"|");
+
+		for (int i=0;i<srcSets.getCount();i++)
+		{
+			String e = srcSets[i];
+			StringUtils::Trim(e);
+
+			if (e.size() <= 3)
+				continue;
+
+			if (StringUtils::StartsWith(e, L"VS:"))
+			{
+				VS = e.substr(3);
+				StringUtils::Trim(VS);
+			}
+			else if (StringUtils::StartsWith(e, L"PS:"))
+			{
+				PS = e.substr(3);
+				StringUtils::Trim(PS);
+			}
+			else if (StringUtils::StartsWith(e, L"GS:"))
+			{
+				GS = e.substr(3);
+				StringUtils::Trim(GS);
+			}
+			else if (StringUtils::StartsWith(e, L"ALL:"))
+			{
+				String fileName = e.substr(4);
+				StringUtils::Trim(fileName);
+				VS = PS = GS = fileName;
+				break;
+			}
+		}
+
+		String entryPointsDesc = sect->getAttribute(L"EntryPoints");
+		srcSets.Clear();
+		StringUtils::Split(entryPointsDesc, srcSets, L"|");
+		for (int i=0;i<srcSets.getCount();i++)
+		{
+			String e = srcSets[i];
+			StringUtils::Trim(e);
+
+			if (e.size() <= 3)
+				continue;
+
+			if (StringUtils::StartsWith(e, L"VS:"))
+			{
+				EntryPointVS = e.substr(3);
+				StringUtils::Trim(EntryPointVS);
+			}
+			else if (StringUtils::StartsWith(e, L"PS:"))
+			{
+				EntryPointPS = e.substr(3);
+				StringUtils::Trim(EntryPointPS);
+			}
+			else if (StringUtils::StartsWith(e, L"GS:"))
+			{
+				EntryPointGS = e.substr(3);
+				StringUtils::Trim(EntryPointGS);
+			}
+			else if (StringUtils::StartsWith(e, L"ALL:"))
+			{
+				String funcName = e.substr(4);
+				StringUtils::Trim(funcName);
+				EntryPointVS = EntryPointPS = EntryPointGS = funcName;
+				break;
+			}
+		}
+
 		DestFile = sect->getAttribute(L"DestinationFile");
 		PListFile = sect->getAttribute(L"ParamList");
-		EntryPointVS = sect->getAttribute(L"EntryPointVS");
-		EntryPointPS = sect->getAttribute(L"EntryPointPS");
-		Profile = sect->getAttribute(L"Profile");
+
+		StringUtils::Split(sect->getAttribute(L"Targets"), Targets, L"|");
+		for (int i=0;i<Targets.getCount();i++)
+		{
+			StringUtils::Trim(Targets[i]);
+			StringUtils::ToLowerCase(Targets[i]);
+		}
 	}
 	void ProjectResEffect::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"VSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcVSFile) : SrcVSFile);
-		sect->AddAttributeString(L"PSSource", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcPSFile) : SrcPSFile);
+		if (VS == PS && PS == GS)
+		{
+			sect->AddAttributeString(L"Source", L"ALL:" + (savingBuild ? PathUtils::Combine(m_project->getBasePath(), VS) : VS));
+		}
+		else
+		{
+			String srcText = L"VS:";
+			srcText.append(savingBuild ? PathUtils::Combine(m_project->getBasePath(), VS) : VS);
+
+			srcText.append(L" | PS:");
+			srcText.append(savingBuild ? PathUtils::Combine(m_project->getBasePath(), PS) : PS);
+
+			if (GS.size())
+			{
+				srcText.append(L" | GS:");
+				srcText.append(savingBuild ? PathUtils::Combine(m_project->getBasePath(), GS) : GS);
+			}
+			sect->AddAttributeString(L"Source", srcText);
+		}
 
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 		sect->AddAttributeString(L"ParamList", savingBuild ? PathUtils::Combine(m_project->getBasePath(), PListFile) : PListFile);
-		sect->AddAttributeString(L"EntryPointVS", EntryPointVS);
-		sect->AddAttributeString(L"EntryPointPS", EntryPointPS);
-		sect->AddAttributeString(L"Profile", Profile);
+
+		if (EntryPointVS == EntryPointPS && EntryPointGS == EntryPointPS)
+		{
+			sect->AddAttributeString(L"EntryPoints", L"ALL:" + EntryPointVS);
+		}
+		else
+		{
+			String srcText = L"VS:";
+			srcText.append(EntryPointVS);
+
+			srcText.append(L" | PS:");
+			srcText.append(EntryPointPS);
+
+			if (GS.size())
+			{
+				srcText.append(L" | GS:");
+				srcText.append(EntryPointGS);
+			}
+			sect->AddAttributeString(L"EntryPoints", srcText);
+		}
+
+		String targetsStr;
+		for (int i=0;i<Targets.getCount();i++)
+		{
+			targetsStr.append(Targets[i]);
+			if (i!=Targets.getCount()-1)
+				targetsStr.append(L" | ");
+		}
+		sect->AddAttributeString(L"Targets", targetsStr);
 	}
 	List<String> ProjectResEffect::GetAllOutputFiles()
 	{
@@ -647,7 +763,7 @@ namespace Apoc3D
 		if (destFileTime < t)
 			return true;
 
-		String path = PathUtils::Combine(m_project->getBasePath(), SrcVSFile);
+		String path = PathUtils::Combine(m_project->getBasePath(), VS);
 		if (File::FileExists(path))
 		{
 			if (File::GetFileModifiyTime(path) > destFileTime)
@@ -655,7 +771,7 @@ namespace Apoc3D
 				return true;
 			}
 		}
-		path = PathUtils::Combine(m_project->getBasePath(), SrcPSFile);
+		path = PathUtils::Combine(m_project->getBasePath(), PS);
 		if (File::FileExists(path))
 		{
 			if (File::GetFileModifiyTime(path) > destFileTime)
@@ -677,6 +793,7 @@ namespace Apoc3D
 	{
 		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
 	}
+
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
@@ -1053,10 +1170,6 @@ namespace Apoc3D
 		}
 		ConfigurationSection* sect = new ConfigurationSection(m_name);
 
-		if (!savingBuild)
-		{
-			sect->AddAttributeString(L"LastModTime", StringUtils::ToString(m_timeStamp));
-		}
 		if (m_typeData)
 		{
 			switch (m_typeData->getType())
@@ -1103,6 +1216,11 @@ namespace Apoc3D
 			}
 			
 			m_typeData->Save(sect, savingBuild);
+		}
+
+		if (!savingBuild)
+		{
+			sect->AddAttributeString(L"LastModTime", StringUtils::ToString(m_timeStamp));
 		}
 		return sect;
 	}
@@ -1335,7 +1453,7 @@ namespace Apoc3D
 			m_outputPath = m_basePath;
 		else
 		{
-			if (StringUtils::StartsWidth(m_outputPath, L".."))
+			if (StringUtils::StartsWith(m_outputPath, L".."))
 			{
 				m_outputPath = PathUtils::Combine(m_basePath, m_outputPath);
 			}

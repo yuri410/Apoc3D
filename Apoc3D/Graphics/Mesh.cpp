@@ -26,7 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RenderSystem/Buffer/HardwareBuffer.h"
 #include "RenderSystem/RenderDevice.h"
 #include "RenderSystem/VertexDeclaration.h"
-#include "RenderSystem/ObjectFactory.h"
 #include "Material.h"
 #include "GeometryData.h"
 

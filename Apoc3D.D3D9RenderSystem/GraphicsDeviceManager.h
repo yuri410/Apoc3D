@@ -36,43 +36,6 @@ namespace Apoc3D
 		{
 			class GraphicsDeviceManager
 			{
-			private:
-				DeviceSettings* m_currentSetting;
-				IDirect3D9* m_direct3D9;
-				D3DDevice* m_device;
-
-				Game* m_game;
-
-				bool m_userIgnoreMoniorChanges;
-
-				bool m_ignoreSizeChanges;
-				bool m_deviceLost;
-
-				bool m_doNotStoreBufferSize;
-				bool m_renderingOccluded;
-
-				int32 m_fullscreenWindowWidth;
-				int32 m_fullscreenWindowHeight;
-				int32 m_windowedWindowWidth;
-				int32 m_windowedWindowHeight;
-				WINDOWPLACEMENT m_windowedPlacement;
-				int64 m_windowedStyle;
-				//bool m_savedTopmost
-
-				void PropogateSettings();
-				bool CanDeviceBeReset(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
-				void CreateDevice(const DeviceSettings &settings);
-				void game_FrameStart(bool* cancel);
-				void game_FrameEnd();
-				void Window_UserResized();
-				void Window_MonitorChanged();
-
-				void InitializeDevice();
-				HRESULT ResetDevice();
-
-				int32 GetAdapterOrdinal(HMONITOR mon);
-				void UpdateDeviceInformation();
-
 			public:
 				const DeviceSettings* getCurrentSetting() const { return m_currentSetting; }
 
@@ -116,6 +79,40 @@ namespace Apoc3D
 				*/
 				void ToggleFullScreen();
 				void ReleaseDevice();
+
+			private:
+				DeviceSettings* m_currentSetting;
+				IDirect3D9* m_direct3D9;
+				D3DDevice* m_device;
+
+				Game* m_game;
+
+				bool m_userIgnoreMoniorChanges;
+
+				bool m_ignoreSizeChanges;
+				bool m_deviceLost;
+
+				int32 m_fullscreenWindowWidth;
+				int32 m_fullscreenWindowHeight;
+				int32 m_windowedWindowWidth;
+				int32 m_windowedWindowHeight;
+				WINDOWPLACEMENT m_windowedPlacement;
+				int64 m_windowedStyle;
+				//bool m_savedTopmost
+
+				void PropogateSettings();
+				bool CanDeviceBeReset(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
+				void CreateDevice(const DeviceSettings &settings);
+				void game_FrameStart(bool* cancel);
+				void game_FrameEnd();
+				void Window_UserResized();
+				void Window_MonitorChanged();
+
+				void InitializeDevice();
+				HRESULT ResetDevice();
+
+				int32 GetAdapterOrdinal(HMONITOR mon);
+				void UpdateDeviceInformation();
 
 			};
 		}

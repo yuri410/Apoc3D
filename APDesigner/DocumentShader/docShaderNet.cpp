@@ -31,7 +31,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/UILib/Form.h"
 #include "apoc3d/UILib/Button.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
 #include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
 
 using namespace Apoc3D::Input;

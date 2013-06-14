@@ -244,7 +244,6 @@
     <ClInclude Include="Graphics\PixelFormat.h" />
     <ClInclude Include="Graphics\RenderSystem\DeviceContext.h" />
     <ClInclude Include="Graphics\RenderSystem\GraphicsAPI.h" />
-    <ClInclude Include="Graphics\RenderSystem\ObjectFactory.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderDevice.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderStateManager.h" />
     <ClInclude Include="Graphics\RenderSystem\RenderWindow.h" />
@@ -338,7 +337,6 @@
     <ClCompile Include="Graphics\RenderOperationBuffer.cpp" />
     <ClCompile Include="Graphics\RenderSystem\DeviceContext.cpp" />
     <ClCompile Include="Graphics\RenderSystem\InstancingData.cpp" />
-    <ClCompile Include="Graphics\RenderSystem\ObjectFactory.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderDevice.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderStateManager.cpp" />
     <ClCompile Include="Graphics\RenderSystem\RenderTarget.cpp" />

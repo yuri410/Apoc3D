@@ -24,7 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "FontManager.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Vfs/ResourceLocation.h"

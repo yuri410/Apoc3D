@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9RenderDevice.h"
 #include "D3D9Utils.h"
+#include "D3D9Texture.h"
 
 namespace Apoc3D
 {
@@ -45,6 +46,7 @@ namespace Apoc3D
 					delete[] m_vertexSamplers;
 
 				delete[] m_pixelSamplers;
+				delete[] m_textureSlots;
 			}
 
 			void NativeD3DStateManager::SetCullMode(CullMode mode)
@@ -516,6 +518,37 @@ namespace Apoc3D
 				assert(SUCCEEDED(hr));
 			}
 
+			void NativeD3DStateManager::SetTexture(int i, D3D9Texture* tex)
+			{
+				assert(i<m_textureSlotCount);
+				if (m_textureSlots[i] != tex)
+				{
+					D3DBaseTexture* value = NULL;
+					if (tex)
+					{
+						if (!tex->isManaged() || tex->getState() == RS_Loaded)
+						{
+							D3D9Texture* d3dTex = static_cast<D3D9Texture*>(tex);
+
+							if (d3dTex->getInternal2D())
+							{
+								value = d3dTex->getInternal2D();
+							}
+							else if (d3dTex->getInternalCube())
+							{
+								value = d3dTex->getInternalCube();
+							}
+							else if (d3dTex->getInternal3D())
+							{
+								value = d3dTex->getInternal3D();
+							}
+						}
+					}
+					m_device->getDevice()->SetTexture(i, value);
+					m_textureSlots[i] = tex;
+				}
+			}
+
 			void NativeD3DStateManager::InitializeDefaultState()
 			{
 				D3DDevice* dev = m_device->getDevice();
@@ -582,8 +615,12 @@ namespace Apoc3D
 					m_pixelSamplers[i].MaxMipLevel = 0;
 					m_pixelSamplers[i].MaxAnisotropy = 1;
 				}
-			}
 
+				m_textureSlots = new D3D9Texture*[caps.MaxSimultaneousTextures];
+				for (DWORD i=0;i<caps.MaxSimultaneousTextures;i++)
+					m_textureSlots[i] = nullptr;
+				m_textureSlotCount = (int)caps.MaxSimultaneousTextures;
+			}
 
 
 			D3D9ClipPlane::D3D9ClipPlane(D3D9RenderDevice* device, D3D9RenderStateManager* mgr, int index)

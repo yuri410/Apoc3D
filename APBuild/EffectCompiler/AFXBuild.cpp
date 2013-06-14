@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "../BuildConfig.h"
 #include "../BuildEngine.h"
 #include "../CompileLog.h"
-#include "HLSLCompileService.h"
+#include "CompileService.h"
 
 #include "apoc3d/Vfs/File.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -53,7 +53,6 @@ using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
-
 	void Parse(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep);
 
 	void AFXBuild::Build(const ConfigurationSection* sect)
@@ -61,14 +60,19 @@ namespace APBuild
 		AFXBuildConfig config;
 		config.Parse(sect);
 		
-		if (!File::FileExists(config.SrcVSFile))
+		if (!File::FileExists(config.VS))
 		{
-			CompileLog::WriteError(config.SrcVSFile, L"Could not find source file.");
+			CompileLog::WriteError(config.VS, L"Could not find source file.");
 			return;
 		}
-		if (!File::FileExists(config.SrcPSFile))
+		if (!File::FileExists(config.PS))
 		{
-			CompileLog::WriteError(config.SrcPSFile, L"Could not find source file.");
+			CompileLog::WriteError(config.PS, L"Could not find source file.");
+			return;
+		}
+		if (config.GS.size() && !File::FileExists(config.GS))
+		{
+			CompileLog::WriteError(config.GS, L"Could not find source file.");
 			return;
 		}
 		if (!File::FileExists(config.PListFile))
@@ -78,68 +82,83 @@ namespace APBuild
 		}
 		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
-
-		EffectData data;
-		data.Name = config.Name;
-		StringUtils::ToLowerCase(config.Profile);
-		if (config.Profile == L"sm2.0")
-		{
-			data.MajorVer = 2;
-			data.MinorVer = 0;
-		}
-		else if (config.Profile == L"sm3.0")
-		{
-			data.MajorVer = 3;
-			data.MinorVer = 0;
-		}
-		else if (config.Profile == L"sm1.0")
-		{
-			data.MajorVer = 1;
-			data.MinorVer = 1;
-		}
-
-		if (!CompileShader(config.SrcVSFile, config.EntryPointVS, config.Profile, data.VSCode, data.VSLength, true))
-			return;
-		if (!CompileShader(config.SrcPSFile, config.EntryPointPS, config.Profile, data.PSCode, data.PSLength, false))
-			return;
-
 		FileLocation* fl = new FileLocation(config.PListFile);
 		Configuration* plist = XMLConfigurationFormat::Instance.Load(fl);
 
-		ConfigurationSection* s = plist->get(L"VS");
-
-		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
+		EffectData data;
+		data.Name = config.Name;
+		data.ProfileCount = config.Targets.getCount();
+		data.Profiles = new EffectProfileData[data.ProfileCount];
+		
+		for (int i=0;i<config.Targets.getCount();i++)
 		{
-			ConfigurationSection* ps = *iter.getCurrentValue();
-			EffectParameter ep(ps->getName());
-			
-			Parse(config, ps, ep);
+			EffectProfileData& prof = data.Profiles[i];
 
-			ep.ProgramType = SHDT_Vertex;
-			ep.SamplerState.Parse(ps);
-			data.Parameters.Add(ep);
-		}
+			std::string impType;
+			if (ParseShaderProfileString(config.Targets[i], impType, prof.MajorVer, prof.MinorVer))
+			{
+				prof.SetImplType(impType);
 
-		s = plist->get(L"PS");
+				if (!CompileShader(config.VS, config.EntryPointVS, prof, SHDT_Vertex, config.IsDebug))
+					return;
+				if (!CompileShader(config.PS, config.EntryPointPS, prof, SHDT_Pixel, config.IsDebug))
+					return;
 
-		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
-		{
-			ConfigurationSection* ps = *iter.getCurrentValue();
-			EffectParameter ep(ps->getName());
+				if (config.GS.size())
+				{
+					if (!CompileShader(config.GS, config.EntryPointGS, prof, SHDT_Geometry, config.IsDebug))
+						return;
+				}
 
-			Parse(config, ps, ep);
+				ShaderType shaderTypes[3] = { SHDT_Vertex, SHDT_Pixel, SHDT_Geometry };
+				ConfigurationSection* shaderParams[3];
+				ConfigurationSection* profContainer = plist->get(config.Targets[i]);
+				if (profContainer)
+				{
+					shaderParams[0] = profContainer->getSection(L"VS");
+					shaderParams[1] = profContainer->getSection(L"PS");
+					shaderParams[2] = profContainer->getSection(L"GS");
+				}
+				else
+				{
+					shaderParams[0] = plist->get(L"VS");
+					shaderParams[1] = plist->get(L"PS");
+					shaderParams[2] = plist->get(L"GS");
+				}
+				
+				for (int j=0;j<3;j++)
+				{
+					ConfigurationSection* sect = shaderParams[j];
+					if (!sect)
+						continue;
 
-			ep.ProgramType = SHDT_Pixel;
-			ep.SamplerState.Parse(ps);
-			data.Parameters.Add(ep);
+					for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator(); iter.MoveNext();)
+					{
+						ConfigurationSection* psect = *iter.getCurrentValue();
+						EffectParameter ep(psect->getName());
+
+						Parse(config, psect, ep);
+
+						ep.ProgramType = shaderTypes[j];
+						ep.SamplerState.Parse(psect);
+						prof.Parameters.Add(ep);
+					}
+				}
+			}
+			else
+			{
+				CompileLog::WriteError(L"Target profile is not supported "+ config.Targets[i], config.Name);
+				return;
+			}
 		}
 
 		delete fl;
 		delete plist;
 
+		data.SortProfiles();
+
 		FileOutStream* fos = new FileOutStream(config.DestFile);
 		data.Save(fos);
-
 	}
 
 	void Parse(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep)

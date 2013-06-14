@@ -69,9 +69,6 @@
     <ClInclude Include="EffectCompiler\CFXBuild.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="EffectCompiler\HLSLCompileService.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="EffectCompiler\FXListBuild.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -94,6 +91,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MeshBuild\FbxConverter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectCompiler\CompileService.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -143,9 +143,6 @@
     <ClCompile Include="EffectCompiler\CFXBuild.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="EffectCompiler\HLSLCompileService.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="EffectCompiler\FXListBuild.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -168,6 +165,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MeshBuild\FbxConverter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectCompiler\CompileService.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

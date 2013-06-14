@@ -244,6 +244,8 @@ namespace Apoc3D
 		class MeshData;
 		class ModelData;
 		class MaterialData;
+		class EffectProfileData;
+		class EffectData;
 	};
 	namespace Input
 	{

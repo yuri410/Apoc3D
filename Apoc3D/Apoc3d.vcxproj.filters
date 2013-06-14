@@ -123,9 +123,6 @@
     <ClInclude Include="Graphics\RenderSystem\RenderDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\RenderSystem\ObjectFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\RenderSystem\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -630,9 +627,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\RenderSystem\RenderDevice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics\RenderSystem\ObjectFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\RenderSystem\Shader.cpp">

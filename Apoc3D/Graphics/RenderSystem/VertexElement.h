@@ -87,20 +87,14 @@ namespace Apoc3D
 				 */
 				static int GetTypeCount(VertexElementFormat type);
 
-				friend static bool operator ==(const VertexElement& left, const VertexElement& right)
+				bool operator ==(const VertexElement& another)
 				{
-					return left.m_index == right.m_index &&
-						left.m_offset == right.m_offset &&
-						left.m_semantic == right.m_semantic &&
-						left.m_type == right.m_type;
+					return m_index == another.m_index &&
+						m_offset == another.m_offset &&
+						m_semantic == another.m_semantic &&
+						m_type == another.m_type;
 				}
-				friend static bool operator !=(const VertexElement& left, const VertexElement& right)
-				{
-					return left.m_index != right.m_index ||
-						left.m_offset != right.m_offset ||
-						left.m_semantic != right.m_semantic ||
-						left.m_type != right.m_type;
-				}
+				bool operator !=(const VertexElement& another) { return !(this->operator ==(another)); }
 
 			};
 		}

@@ -7,7 +7,6 @@
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
-#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "apoc3d/Graphics/EffectSystem/EffectManager.h"

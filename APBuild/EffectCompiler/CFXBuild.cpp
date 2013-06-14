@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "../BuildConfig.h"
 #include "../BuildEngine.h"
 #include "../CompileLog.h"
-#include "HLSLCompileService.h"
+#include "CompileService.h"
 
 #include "apoc3d/Collections/CollectionsCommon.h"
 #include "apoc3d/Config/ConfigurationSection.h"
@@ -53,7 +53,6 @@ using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
-
 	void CFXBuild::Build(const ConfigurationSection* sect)
 	{
 		CFXBuildConfig config;
@@ -74,33 +73,28 @@ namespace APBuild
 
 		EffectData data;
 		data.Name = config.Name;
-		StringUtils::ToLowerCase(config.Profile);
-		if (config.Profile == L"sm2.0")
+		data.ProfileCount = 1;
+		data.Profiles = new EffectProfileData[1];
+		
+		std::string impType;
+		if (ParseShaderProfileString(config.Profile, impType, data.Profiles->MajorVer, data.Profiles->MinorVer))
 		{
-			data.MajorVer = 2;
-			data.MinorVer = 0;
-		}
-		else if (config.Profile == L"sm3.0")
-		{
-			data.MajorVer = 3;
-			data.MinorVer = 0;
-		}
-		else if (config.Profile == L"sm1.0")
-		{
-			data.MajorVer = 1;
-			data.MinorVer = 1;
-		}
+			data.Profiles->SetImplType(impType);
 
-		if (!CompileShader(config.SrcVSFile, config.EntryPointVS, config.Profile, data.VSCode, data.VSLength, true))
-			return;
-		if (!CompileShader(config.SrcPSFile, config.EntryPointPS, config.Profile, data.PSCode, data.PSLength, false))
-			return;
+			if (!CompileShader(config.SrcVSFile, config.EntryPointVS, data.Profiles[0], SHDT_Vertex, false))
+				return;
+			if (!CompileShader(config.SrcPSFile, config.EntryPointPS, data.Profiles[0], SHDT_Pixel, false))
+				return;
+		}
+		else
+		{
+			CompileLog::WriteError(L"Profile not supported." + config.Profile, config.Name);
+		}
 
 		data.IsCFX=true;
+		data.SortProfiles();
 
 		FileOutStream* fos = new FileOutStream(config.DestFile);
 		data.Save(fos);
-
-
 	}
 }

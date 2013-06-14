@@ -850,7 +850,7 @@ namespace APDesigner
 						String toIgnore(1, '.');
 						toIgnore.append(1, PathUtils::DirectorySeparator);
 
-						if (StringUtils::StartsWidth(result, toIgnore))
+						if (StringUtils::StartsWith(result, toIgnore))
 							result = result.substr(2);
 
 						tb->setText(result);
@@ -903,7 +903,7 @@ namespace APDesigner
 						String toIgnore(1, '.');
 						toIgnore.append(1, PathUtils::DirectorySeparator);
 
-						if (StringUtils::StartsWidth(result, toIgnore))
+						if (StringUtils::StartsWith(result, toIgnore))
 							result = result.substr(2);
 						
 						tb->setText(result);

@@ -316,28 +316,7 @@ namespace Apoc3D
 
 			void D3D9PixelShader::SetTexture(int samIndex, Texture* tex) 
 			{
-				D3DBaseTexture* value = 0;
-				if (tex)
-				{
-					if (!tex->isManaged() || tex->getState() == RS_Loaded)
-					{
-						D3D9Texture* d3dTex = static_cast<D3D9Texture*>(tex);
-
-						if (d3dTex->getInternal2D())
-						{
-							value = d3dTex->getInternal2D();
-						}
-						else if (d3dTex->getInternalCube())
-						{
-							value = d3dTex->getInternalCube();
-						}
-						else if (d3dTex->getInternal3D())
-						{
-							value = d3dTex->getInternalCube();
-						}
-					}
-				}
-				m_device->getDevice()->SetTexture(samIndex, value);
+				m_device->getNativeStateManager()->SetTexture(samIndex, static_cast<D3D9Texture*>(tex));
 			}
 			void D3D9PixelShader::SetSamplerState(int samIndex, const ShaderSamplerState &state) 
 			{
@@ -545,12 +524,7 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				SetSamplerState(cons.SamplerIndex[0], state);
 			}
-
-			void D3D9PixelShader::AutoSetParameters(const Material* mtrl)
-			{
-
-			}
-
+			
 			void D3D9PixelShader::ThrowKeyNotFoundEx(const String& name)
 			{
 				throw AP_EXCEPTION(EX_KeyNotFound, name);

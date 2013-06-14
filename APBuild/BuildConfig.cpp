@@ -268,14 +268,89 @@ namespace APBuild
 	void AFXBuildConfig::Parse(const ConfigurationSection* sect)
 	{
 		Name = sect->getName();
+		IsDebug = false;
+		sect->TryGetAttributeBool(L"Debug", IsDebug);
 
-		SrcVSFile = sect->getAttribute(L"VSSource");
-		SrcPSFile = sect->getAttribute(L"PSSource");
+		String srcDesc = sect->getAttribute(L"Source");
+		List<String> srcSets;
+		StringUtils::Split(srcDesc, srcSets, L"|");
+
+		for (int i=0;i<srcSets.getCount();i++)
+		{
+			String e = srcSets[i];
+			StringUtils::Trim(e);
+
+			if (e.size() <= 3)
+				continue;
+
+			if (StringUtils::StartsWith(e, L"VS:"))
+			{
+				VS = e.substr(3);
+				StringUtils::Trim(VS);
+			}
+			else if (StringUtils::StartsWith(e, L"PS:"))
+			{
+				PS = e.substr(3);
+				StringUtils::Trim(PS);
+			}
+			else if (StringUtils::StartsWith(e, L"GS:"))
+			{
+				GS = e.substr(3);
+				StringUtils::Trim(GS);
+			}
+			else if (StringUtils::StartsWith(e, L"ALL:"))
+			{
+				String fileName = e.substr(4);
+				StringUtils::Trim(fileName);
+				VS = PS = GS = fileName;
+				break;
+			}
+		}
+
+		String entryPointsDesc = sect->getAttribute(L"EntryPoints");
+		srcSets.Clear();
+		StringUtils::Split(entryPointsDesc, srcSets, L"|");
+		for (int i=0;i<srcSets.getCount();i++)
+		{
+			String e = srcSets[i];
+			StringUtils::Trim(e);
+
+			if (e.size() <= 3)
+				continue;
+
+			if (StringUtils::StartsWith(e, L"VS:"))
+			{
+				EntryPointVS = e.substr(3);
+				StringUtils::Trim(EntryPointVS);
+			}
+			else if (StringUtils::StartsWith(e, L"PS:"))
+			{
+				EntryPointPS = e.substr(3);
+				StringUtils::Trim(EntryPointPS);
+			}
+			else if (StringUtils::StartsWith(e, L"GS:"))
+			{
+				EntryPointGS = e.substr(3);
+				StringUtils::Trim(EntryPointGS);
+			}
+			else if (StringUtils::StartsWith(e, L"ALL:"))
+			{
+				String funcName = e.substr(4);
+				StringUtils::Trim(funcName);
+				EntryPointVS = EntryPointPS = EntryPointGS = funcName;
+				break;
+			}
+		}
+
 		DestFile = sect->getAttribute(L"DestinationFile");
 		PListFile = sect->getAttribute(L"ParamList");
-		EntryPointVS = sect->getAttribute(L"EntryPointVS");
-		EntryPointPS = sect->getAttribute(L"EntryPointPS");
-		Profile = sect->getAttribute(L"Profile");
+
+		StringUtils::Split(sect->getAttribute(L"Targets"), Targets, L"|");
+		for (int i=0;i<Targets.getCount();i++)
+		{
+			StringUtils::Trim(Targets[i]);
+			StringUtils::ToLowerCase(Targets[i]);
+		}
 	}
 	void CFXBuildConfig::Parse(const ConfigurationSection* sect)
 	{

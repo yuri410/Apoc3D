@@ -41,7 +41,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Graphics/Animation/AnimationData.h"
 #include "apoc3d/Graphics/Animation/AnimationManager.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/ObjectFactory.h"
 #include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 #include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"

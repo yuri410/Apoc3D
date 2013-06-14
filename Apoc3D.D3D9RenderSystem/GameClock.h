@@ -35,24 +35,15 @@ namespace Apoc3D
 		{
 			class GameClock
 			{
-			private:
-				uint64 m_baseRealTime;
-				uint64 m_lastRealTime;
-				bool m_lastRealTimeValid;
-				uint32 m_suspendCount;
-				uint64 m_suspendStartTime;
-				uint64 m_timeLostToSuspension;
-				float m_currentTimeBase;
-				float m_currentTimeOffset;
-
-				float m_elapsedTime;
-				float m_elapsedAdjustedTime;
-
-				uint64 m_frequency;
 			public:
-				float getElapsedTime() const { return m_elapsedTime; }
-				float getElapsedAdjustedTime() const { return m_elapsedAdjustedTime; }
-				float getCurrentTime() const { return m_currentTimeBase + m_currentTimeOffset; }
+				GameClock(void)
+				{
+					Reset();
+				}
+
+				~GameClock(void)
+				{
+				}
 
 				uint64 GetCounter()
 				{
@@ -87,8 +78,6 @@ namespace Apoc3D
 					m_baseRealTime = 0;
 					m_lastRealTime = 0;
 
-		
-
 
 					m_currentTimeBase = 0;
 					m_currentTimeOffset = 0;
@@ -104,8 +93,9 @@ namespace Apoc3D
 						m_suspendStartTime = GetCounter();
 				}
 
-				/* Resumes a previously suspended clock.
-				*/
+				/* 
+				 * Resumes a previously suspended clock.
+				 */
 				void Resume()
 				{
 					m_suspendCount--;
@@ -115,7 +105,6 @@ namespace Apoc3D
 						m_suspendStartTime = 0;
 					}
 				}
-
 
 				void Step()
 				{
@@ -160,14 +149,23 @@ namespace Apoc3D
 					m_lastRealTime = counter;
 				}
 
-				GameClock(void)
-				{
-					Reset();
-				}
+				float getElapsedTime() const { return m_elapsedTime; }
+				float getElapsedAdjustedTime() const { return m_elapsedAdjustedTime; }
+				float getCurrentTime() const { return m_currentTimeBase + m_currentTimeOffset; }
+			private:
+				uint64 m_baseRealTime;
+				uint64 m_lastRealTime;
+				bool m_lastRealTimeValid;
+				uint32 m_suspendCount;
+				uint64 m_suspendStartTime;
+				uint64 m_timeLostToSuspension;
+				float m_currentTimeBase;
+				float m_currentTimeOffset;
 
-				~GameClock(void)
-				{
-				}
+				float m_elapsedTime;
+				float m_elapsedAdjustedTime;
+
+				uint64 m_frequency;
 			};
 		}
 	}

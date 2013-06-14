@@ -331,13 +331,18 @@ namespace Apoc3D
 
 		}
 
-		String SrcVSFile;
-		String SrcPSFile;
+		String VS;
+		String PS;
+		String GS;
+
 		String PListFile;
 		String DestFile;
+
 		String EntryPointVS;
 		String EntryPointPS;
-		String Profile;
+		String EntryPointGS;
+
+		List<String> Targets;
 
 		virtual ProjectItemType getType() const { return PRJITEM_Effect; }
 		virtual void Parse(const ConfigurationSection* sect);

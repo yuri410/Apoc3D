@@ -173,7 +173,6 @@ namespace Apoc3D
 
 			void D3D9RenderDevice::Initialize()
 			{
-
 				LogManager::getSingleton().Write(LOG_Graphics, 
 					L"[D3D9]Initializing D3D9 Render Device. ", 
 					LOGLVL_Infomation);
@@ -571,15 +570,25 @@ namespace Apoc3D
 				}
 			}
 
-			bool D3D9Capabilities::SupportsPixelShader(int majorVer, int minorVer)
+			bool D3D9Capabilities::SupportsPixelShader(const char* implType, int majorVer, int minorVer)
 			{
+				if (strcmp(implType, "hlsl"))
+				{
+					return false;
+				}
+
 				D3DCAPS9 caps;
 				m_device->getDevice()->GetDeviceCaps(&caps);
 				return caps.PixelShaderVersion >= D3DPS_VERSION((uint)majorVer, (uint)minorVer);
 			}
 
-			bool D3D9Capabilities::SupportsVertexShader(int majorVer, int minorVer)
+			bool D3D9Capabilities::SupportsVertexShader(const char* implType, int majorVer, int minorVer)
 			{
+				if (strcmp(implType, "hlsl"))
+				{
+					return false;
+				}
+
 				D3DCAPS9 caps;
 				m_device->getDevice()->GetDeviceCaps(&caps);
 				return caps.VertexShaderVersion >= D3DVS_VERSION((uint)majorVer, (uint)minorVer);

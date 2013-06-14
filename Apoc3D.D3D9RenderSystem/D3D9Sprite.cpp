@@ -298,25 +298,24 @@ namespace Apoc3D
 
 				NativeD3DStateManager* mgr = m_device->getNativeStateManager();
 
-				m_rawDevice->SetTexture(0,0);
+				//m_rawDevice->SetTexture(0,0);
+				mgr->SetTexture(0,0);
 				D3D9Texture* currentTexture = NULL;
 				for (int i=0;i<m_deferredDraws.getCount();i++)
 				{
 					ShaderSamplerState state;
 					if (m_deferredDraws[i].IsUVExtended)
 					{
-						
 						state = mgr->getPixelSampler(0);
 						state.AddressU = TA_Wrap;
 						state.AddressV = TA_Wrap;
 						mgr->SetPixelSampler(0, state);
-
-
 					}
 
 					if (m_deferredDraws[i].Tex != currentTexture)
 					{
-						m_rawDevice->SetTexture(0, m_deferredDraws[i].Tex->getInternal2D());
+						mgr->SetTexture(0,m_deferredDraws[i].Tex);
+						//m_rawDevice->SetTexture(0, m_deferredDraws[i].Tex->getInternal2D());
 					}
 					
 					m_rawDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i*4, 2);
