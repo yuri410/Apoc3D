@@ -392,6 +392,10 @@ namespace Apoc3D
 				 {
 					 return VEU_Sample;
 				 }
+				 else if (StringUtils::StartsWith(v, L"veu_texturecoordinate"))
+				 {
+					 return VEU_TextureCoordinate;
+				 }
 				 return VEU_Position;
 			 }
 			 String GraphicsCommonUtils::ToString(VertexElementUsage usage)

@@ -40,13 +40,6 @@ namespace Apoc3D
 		 */
 		class APAPI Camera
 		{
-		protected:
-	
-			Matrix m_view;
-			Matrix m_invView;
-			Matrix m_proj;
-
-			Frustum m_frustum;
 		public:
 			Frustum& getFrustum() { return m_frustum; }
 			/**
@@ -97,6 +90,14 @@ namespace Apoc3D
 				m_proj.LoadIdentity();
 			}
 			~Camera(void) {}
+
+		protected:
+
+			Matrix m_view;
+			Matrix m_invView;
+			Matrix m_proj;
+
+			Frustum m_frustum;
 		};
 		class APAPI FpsCamera : public Camera
 		{

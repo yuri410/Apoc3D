@@ -91,7 +91,6 @@ namespace APBuild
 	{
 		int MinChar;
 		int MaxChar;
-
 	};
 	struct FontBuildConfig
 	{
@@ -115,7 +114,6 @@ namespace APBuild
 		List<String> Files;
 		List<PakDirEntryConfig> Dirs;
 		String DestFile;
-		bool UseMemoryTemp;
 
 		void Parse(const ConfigurationSection* sect);
 	};
@@ -138,6 +136,8 @@ namespace APBuild
 
 		List<String> Targets;
 
+		bool CompactBuild;
+
 		void Parse(const ConfigurationSection* sect);
 	};
 	struct CFXBuildConfig
@@ -150,6 +150,8 @@ namespace APBuild
 		String EntryPointVS;
 		String EntryPointPS;
 		String Profile;
+
+		bool CompactBuild;
 
 		void Parse(const ConfigurationSection* sect);
 	};
@@ -173,13 +175,14 @@ namespace APBuild
 		String DstFile;
 		String DstAnimationFile;
 
+		MeshBuildMethod Method;
+
 		bool UseVertexFormatConversion;
 		FastList<VertexElement> VertexElements;
 
 		bool CollapseMeshs;
-		
 
-		MeshBuildMethod Method;
+		bool CompactBuild;
 
 		void Parse(const ConfigurationSection* sect);
 	};

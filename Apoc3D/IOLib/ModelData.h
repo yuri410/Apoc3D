@@ -89,6 +89,7 @@ namespace Apoc3D
 
 			void LoadData(TaggedDataReader* data);
 			TaggedDataWriter* SaveData();
+			void SaveLite(BinaryWriter* bw);
 
 			MeshData();
 			~MeshData();
@@ -113,7 +114,7 @@ namespace Apoc3D
 			
 			void Load(const ResourceLocation* rl);
 			void Save(Stream* strm) const;
-
+			void SaveLite(Stream* strm) const;
 		private:
 			void ReadData(TaggedDataReader* data, int32 id);
 			TaggedDataWriter* WriteData() const;

@@ -351,6 +351,9 @@ namespace APBuild
 			StringUtils::Trim(Targets[i]);
 			StringUtils::ToLowerCase(Targets[i]);
 		}
+
+		CompactBuild = false;
+		sect->TryGetAttributeBool(L"CompactBuild", CompactBuild);
 	}
 	void CFXBuildConfig::Parse(const ConfigurationSection* sect)
 	{
@@ -362,14 +365,14 @@ namespace APBuild
 		EntryPointVS = sect->getAttribute(L"EntryPointVS");
 		EntryPointPS = sect->getAttribute(L"EntryPointPS");
 		Profile = sect->getAttribute(L"Profile");
+
+		CompactBuild = false;
+		sect->TryGetAttributeBool(L"CompactBuild", CompactBuild);
 	}
 	void FXListBuildConfig::Parse(const ConfigurationSection* sect)
 	{
 		Name = sect->getName();
 		DestFile = sect->getAttribute(L"DestinationFile");
-
-
-
 	}
 	void MeshBuildConfig::Parse(const ConfigurationSection* sect)
 	{
@@ -395,7 +398,6 @@ namespace APBuild
 		}
 
 		UseVertexFormatConversion = false;
-		CollapseMeshs = false;
 
 		ConfigurationSection* subs = sect->getSection(L"VertexFormatConversion");
 		if (subs && subs->getSubSectionCount()>0)
@@ -417,10 +419,18 @@ namespace APBuild
 				VertexElements.Add(VertexElement(0,VEF_Count,usage,index));
 			}
 		}
-		subs = sect->getSection(L"CollapseMeshs");
-		if (subs)
+
+		CompactBuild = false;
+		sect->TryGetAttributeBool(L"CompactBuild", CompactBuild);
+
+		if (CompactBuild)
 		{
 			CollapseMeshs = true;
+		}
+		else
+		{
+			CollapseMeshs = false;
+			sect->TryGetAttributeBool(L"CollapseMeshs", CollapseMeshs);
 		}
 	}
 

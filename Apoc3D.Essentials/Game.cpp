@@ -33,7 +33,7 @@ namespace Apoc3DEx
 	{
 		m_inputCreationParam.UseKeyboard = true;
 		m_inputCreationParam.UseMouse = true;
-
+		m_inputCreationParam.PreferredGamepadCount = 0;
 	}
 
 	Game::~Game()

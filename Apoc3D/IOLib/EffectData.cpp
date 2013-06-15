@@ -151,6 +151,24 @@ namespace Apoc3D
 				bw->WriteUInt32((uint32)fxParam.SamplerState.MipMapLODBias);
 			}
 		}
+		void EffectProfileData::SaveLite(BinaryWriter* bw)
+		{
+			bw->Write(ImplementationType, sizeof(ImplementationType));
+
+			bw->WriteInt32(MajorVer);
+			bw->WriteInt32(MinorVer);
+			bw->WriteInt32(VSLength);
+			bw->WriteInt32(PSLength);
+			bw->WriteInt32(GSLength);
+
+			bw->Write(VSCode, VSLength);
+			bw->Write(PSCode, PSLength);
+
+			if (GSLength>0)
+			{
+				bw->Write(GSCode, GSLength);
+			}
+		}
 
 		bool EffectProfileData::MatchImplType(const char* str) const
 		{
@@ -167,6 +185,8 @@ namespace Apoc3D
 		}
 
 		//////////////////////////////////////////////////////////////////////////
+
+		static const int LfxID_V1 = 'LFX1';
 
 		static const int AfxId_V3 = ((byte)'A' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
 		static const int AfxId_V31 = ((byte)'A' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)'0');
@@ -473,6 +493,18 @@ namespace Apoc3D
 			for (int32 i=0;i<ProfileCount;i++)
 			{
 				Profiles[i].Save(bw);
+			}
+			bw->Close();
+			delete bw;
+		}
+		void EffectData::SaveLite(Stream* strm) const
+		{
+			BinaryWriter* bw = new BinaryWriter(strm);
+			bw->WriteInt32(LfxID_V1);
+			bw->WriteInt32(ProfileCount);
+			for (int32 i=0;i<ProfileCount;i++)
+			{
+				Profiles[i].SaveLite(bw);
 			}
 			bw->Close();
 			delete bw;

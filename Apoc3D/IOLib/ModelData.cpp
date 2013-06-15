@@ -25,6 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "TaggedData.h"
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
+#include "apoc3d/Vfs/PathUtils.h"
+
 #include "apoc3d/ApocException.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Graphics/Animation/AnimationData.h"
@@ -39,7 +41,8 @@ namespace Apoc3D
 	{
 		static const int MdlId_V2 = 0;
 		static const int MdlId_V3 = ((byte)'M' << 24) | ((byte)'E' << 16) | ((byte)'S' << 8) | ((byte)'H');
-		
+		static const int MdlLiteID = 'LMDL';
+
 		static const String TAG_3_MaterialCountTag = L"MaterialCount";
 		static const String TAG_3_MaterialsTag = L"Materials";
 
@@ -295,6 +298,34 @@ namespace Apoc3D
 			return data;
 		}
 
+		void MeshData::SaveLite(BinaryWriter* bw)
+		{
+			bw->WriteInt32(Materials.getMaterialCount());
+			for (int i=0;i<Materials.getMaterialCount();i++)
+			{
+				MaterialData* md = Materials.getMaterial(i,0);
+				bw->WriteColor4(md->Ambient);
+				bw->WriteColor4(md->Diffuse);
+				bw->WriteColor4(md->Specular);
+				bw->WriteColor4(md->Emissive);
+				bw->WriteSingle(md->Power);
+				if (md->TextureName.Contains(0))
+					bw->WriteString(PathUtils::GetFileNameNoExt(md->TextureName[0]));
+				else
+					bw->WriteString(PathUtils::GetFileNameNoExt(L""));
+			}
+			bw->WriteInt32(Faces.getCount());
+			for (int i=0;i<Faces.getCount();i++)
+			{
+				bw->WriteInt32(Faces[i].IndexA);
+				bw->WriteInt32(Faces[i].IndexB);
+				bw->WriteInt32(Faces[i].IndexC);
+				bw->WriteInt32(Faces[i].MaterialID);
+			}
+			bw->WriteInt32(VertexSize);
+			bw->WriteInt32(VertexCount);
+			bw->Write(VertexData, VertexSize*VertexCount);
+		}
 
 		MeshData::MeshData()
 			: VertexData(0), VertexSize(0), VertexCount(0)
@@ -328,10 +359,8 @@ namespace Apoc3D
 		static const String TAG_3_EntityCountTag = L"EntityCount";
 		static const String TAG_3_EntityPrefix = L"Ent";
 
-
 		static const String TAG_3_AnimationDataTag = L"AnimationData";
 		
-
 
 		ModelData::~ModelData()
 		{
@@ -444,18 +473,6 @@ namespace Apoc3D
 				delete bw;
 			}
 
-			//if (AnimationData)
-			//{
-			//	BinaryWriter* bw = data->AddEntry(TAG_3_AnimationDataTag);
-
-			//	TaggedDataWriter* ad = AnimationData->Save();
-			//	bw->Write(ad);
-			//	delete ad;
-
-			//	bw->Close();
-			//	delete bw;
-			//}
-
 			return data;
 		}
 		void ModelData::Load(const ResourceLocation* rl)
@@ -490,6 +507,18 @@ namespace Apoc3D
 			bw->WriteTaggedDataBlock(mdlData);
 			delete mdlData;
 
+			bw->Close();
+			delete bw;
+		}
+		void ModelData::SaveLite(Stream* strm) const
+		{
+			BinaryWriter* bw = new BinaryWriter(strm);
+			bw->WriteInt32(MdlLiteID);
+			bw->WriteInt32(Entities.getCount());
+			for (int i=0;i<Entities.getCount();i++)
+			{
+				Entities[i]->SaveLite(bw);
+			}
 			bw->Close();
 			delete bw;
 		}

@@ -45,6 +45,10 @@ int Build(ConfigurationSection* sect);
 int Build(int argc, _TCHAR* argv[]);
 void PrintUsage();
 
+int RunSpecialBuild(const String& type, List<std::pair<String, String>>& params);
+
+int CollectBuildIssues();
+
 // This APBuild program may be executed by Apoc3D Designer multiple time
 // base on the dependency of project items. For instance, a first time build 
 // could used to process basic textures and models. Then a second
@@ -53,7 +57,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	Initialize();
 
-	int r = Build(argc, argv);;
+	int r = Build(argc, argv);
 
 	Finalize();
 	
@@ -99,10 +103,7 @@ int Build(int argc, _TCHAR* argv[])
 				delete sect;
 				return ret;
 			}
-			else
-			{
-				PrintUsage();
-			}
+			else PrintUsage();
 		}
 		else
 		{
@@ -130,10 +131,7 @@ int Build(int argc, _TCHAR* argv[])
 			return ret;
 		}
 	}
-	else
-	{
-		PrintUsage();
-	}
+	else PrintUsage();
 
 	return 0;
 }
@@ -215,6 +213,21 @@ int Build(ConfigurationSection* sect)
 		return ERR_UNSUPPORTED_BUILD;
 	}
 
+	return CollectBuildIssues();
+}
+
+void PrintUsage()
+{
+	cout << "Apoc3D Build. "; cout << " Software Date: "; cout << __DATE__; cout << "\n";
+	
+	cout << "Usage: APBuild [Options]\n";
+	cout << "  Options:\n";
+	cout << "    /d [Type] [Params]    Directly build from command line.\n";
+	cout << "    [ConfigFile]          Build from project build configuration.\n";
+}
+
+int CollectBuildIssues()
+{
 	bool thereAreWarnings = false;
 	bool thereAreErrors = false;
 	for (int32 i=0;i<CompileLog::Logs.getCount();i++)
@@ -245,14 +258,4 @@ int Build(ConfigurationSection* sect)
 	if (thereAreWarnings)
 		return ERR_THERE_ARE_WARNINGS;
 	return 0;
-}
-
-void PrintUsage()
-{
-	cout << "Apoc3D Build. "; cout << " Software Date: "; cout << __DATE__; cout << "\n";
-	
-	cout << "Usage: APBuild [Options]\n";
-	cout << "  Options:\n";
-	cout << "    /d [Type] [Params]    Directly build from command line.\n";
-	cout << "    [ConfigFile]          Build from project build configuration.\n";
 }

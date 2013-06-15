@@ -74,6 +74,7 @@ namespace Apoc3D
 			
 			void Load(BinaryReader* br);
 			void Save(BinaryWriter* bw);
+			void SaveLite(BinaryWriter* bw);
 
 			bool MatchImplType(const char* str) const;
 			void SetImplType(const char* str);
@@ -102,6 +103,7 @@ namespace Apoc3D
 
 			void Load(const ResourceLocation* rl);
 			void Save(Stream* strm) const;
+			void SaveLite(Stream* strm) const;
 
 			void SortProfiles();
 		private:

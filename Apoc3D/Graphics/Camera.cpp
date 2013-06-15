@@ -112,7 +112,7 @@ namespace Apoc3D
 			m_near(1), m_far(1000)
 		{
 			m_lootAtOfs = Vector3Utils::LDVector(0, 3.0f, 0);
-			m_desiredPositionOfs = Vector3Utils::LDVector(0, 2, 2);
+			m_desiredPositionOfs = Vector3Utils::LDVector(0, 0, 2);
 
 			//m_frustum = Frustum(&m_proj);
 		}

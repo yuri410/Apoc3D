@@ -72,7 +72,14 @@ namespace APBuild
 		CollapseMeshs(data, config);
 
 		FileOutStream* fs = new FileOutStream(config.DstFile);
-		data->Save(fs);
+		if (config.CompactBuild)
+		{
+			data->SaveLite(fs);
+		}
+		else
+		{
+			data->Save(fs);
+		}
 		delete data;
 
 		CompileLog::WriteInformation(config.SrcFile, L">");

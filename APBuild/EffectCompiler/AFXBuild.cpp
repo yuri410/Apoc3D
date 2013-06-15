@@ -158,7 +158,14 @@ namespace APBuild
 		data.SortProfiles();
 
 		FileOutStream* fos = new FileOutStream(config.DestFile);
-		data.Save(fos);
+		if (config.CompactBuild)
+		{
+			data.SaveLite(fos);
+		}
+		else
+		{
+			data.Save(fos);
+		}
 	}
 
 	void Parse(const AFXBuildConfig& config, ConfigurationSection* ps, EffectParameter& ep)

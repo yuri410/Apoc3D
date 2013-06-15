@@ -29,6 +29,7 @@
 #include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Graphics/RenderSystem/VertexElement.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Config;
@@ -309,6 +310,11 @@ namespace Apoc3D
 
 		MeshBuildMethod Method;
 
+		bool UseVertexFormatConversion;
+		FastList<VertexElement> VertexElements;
+
+		bool CollapseMeshs;
+
 		virtual bool RequiresPostEdit() { return true; }
 		virtual ProjectItemType getType() const { return PRJITEM_Model; }
 		virtual void Parse(const ConfigurationSection* sect);
@@ -318,7 +324,6 @@ namespace Apoc3D
 
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
-
 	};
 	
 

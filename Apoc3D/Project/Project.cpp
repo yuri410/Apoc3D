@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Collections/EnumConverterHelper.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
+#include "apoc3d/Graphics/VertexFormats.h"
 #include "apoc3d/Vfs/File.h"
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -966,6 +967,29 @@ namespace Apoc3D
 
 		Method = ProjectTypeUtils::ParseModelBuildMethod(method);
 
+		UseVertexFormatConversion = false;
+		ConfigurationSection* subs = sect->getSection(L"VertexFormatConversion");
+		if (subs && subs->getSubSectionCount()>0)
+		{
+			UseVertexFormatConversion = true;
+			for (ConfigurationSection::SubSectionEnumerator iter = subs->GetSubSectionEnumrator();
+				iter.MoveNext();)
+			{
+				const ConfigurationSection* ent = *iter.getCurrentValue();
+
+				VertexElementUsage usage = GraphicsCommonUtils::ParseVertexElementUsage(ent->getName());
+				int index = 0;
+				if (usage == VEU_TextureCoordinate)
+				{
+					index = StringUtils::ParseInt32( ent->getValue() );
+				}
+				// the vertex elements here only has usage and index. 
+				// They only store info here, not for normal use in graphics
+				VertexElements.Add(VertexElement(0,VEF_Count,usage,index));
+			}
+		}
+		CollapseMeshs = false;
+		sect->TryGetAttributeBool(L"CollapseMeshs", CollapseMeshs);
 	}
 	void ProjectResModel::Save(ConfigurationSection* sect, bool savingBuild)
 	{
@@ -976,6 +1000,36 @@ namespace Apoc3D
 			sect->AddAttributeString(L"DestinationAnimFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DstAnimationFile) :DstAnimationFile);
 		}
 		sect->AddAttributeString(L"Method", ProjectTypeUtils::ToString(Method));
+
+		if (UseVertexFormatConversion && VertexElements.getCount() > 0)
+		{
+			ConfigurationSection* subs = new ConfigurationSection(L"VertexFormatConversion");
+			for (int i=0;i<VertexElements.getCount();i++)
+			{
+				const VertexElement& ve = VertexElements[i];
+
+				ConfigurationSection* vs;
+				if (ve.getUsage() == VEU_TextureCoordinate)
+				{
+					String idxText = StringUtils::ToString(ve.getIndex());
+					vs = new ConfigurationSection(GraphicsCommonUtils::ToString(ve.getUsage()) + idxText);
+					vs->SetValue(idxText);
+				}
+				else
+				{
+					vs = new ConfigurationSection(GraphicsCommonUtils::ToString(ve.getUsage()));
+				}
+				
+				subs->AddSection(vs);
+			}
+			sect->AddSection(subs);
+		}
+		
+
+		if (CollapseMeshs)
+		{
+			sect->AddAttributeBool(L"CollapseMeshs", CollapseMeshs);
+		}
 	}
 	List<String> ProjectResModel::GetAllOutputFiles()
 	{
