@@ -41,7 +41,70 @@ namespace Apoc3D
 			*/
 			class GameWindow
 			{
+			public:
+				GameWindow(const String& name, const String& wndTitle);
+				~GameWindow(void);
+				/**
+				 *  Creates a win32 window using the given parameters.
+				 */
+				void Load(int32 width, int32 height, bool fixed);
+
+				void Close();
+				/**
+				 *  Enable/disable the maximum button based on the given value
+				 */
+				void MakeFixedSize(bool v);
+
+				String getWindowTitle() const { return m_title; }
+				void setWindowTitle(const String& txt);
+				/**
+				 *  Gets the current client size
+				 */
+				Size getCurrentSize() const;
+
+				HWND getHandle() const { return m_hWnd; }
+				/**
+				 *  Gets the mouse wheel amount from window message
+				 */
+				int32 getMouseWheel() const { return m_mouseWheel; }
+				bool getIsMinimized() const { return m_minimized; }
+				bool getIsMaximized() const { return m_maximized; }
+
+				EventHandler* eventResume() { return &m_eResume; }
+				EventHandler* eventUserResized() { return &m_eUserResized; }
+				EventHandler* eventSuspend() { return &m_eSuspend; }
+				EventHandler* eventApplicationActivated() { return &m_eApplicationActivated; }
+				EventHandler* eventApplicationDeactivated() { return &m_eApplicationDeactivated; }
+				EventHandler* eventSystemSuspend() { return &m_eSystemSuspend; }
+				EventHandler* eventSystemResume() { return &m_eSystemResume; }
+				CancellableEventHandler* eventScreensaver() { return &m_eScreensaver; }
+				EventHandler* eventPaint() { return &m_ePaint; }
+				EventHandler* eventMonitorChanged() { return &m_eMonitorChanged; }
+
+			protected:
+				virtual void OnUserResized();
+				virtual void OnSuspend();
+				virtual void OnApplicationActivated();
+				virtual void OnApplicationDeactivated();
+				virtual void OnSystemSuspend();
+				virtual void OnSystemResume();
+				virtual void OnScreensaver(bool * cancel);
+				virtual void OnResume();
+				virtual void OnPaint();
+
+				virtual void OnMonitorChanged();
+
 			private:
+				static GameWindow* ms_Window;
+
+				BOOL InitInstance(HINSTANCE hInstance, int32 width, int32 height, bool fixed, const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
+				ATOM MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass);
+
+				static LRESULT CALLBACK WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+				LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+				void UpdateMonitor();
+
 				bool m_minimized;
 				bool m_maximized;
 				bool m_inSizeMove;
@@ -69,60 +132,6 @@ namespace Apoc3D
 
 				int32 m_mouseWheel;
 
-				static GameWindow* ms_Window;
-
-				BOOL InitInstance(HINSTANCE hInstance, int32 width, int32 height, bool fixed, const TCHAR* const &wndClass, const TCHAR* const &wndTitle);
-				ATOM MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass);
-
-
-				static LRESULT CALLBACK WndProcStatic(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-				LRESULT WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-				void UpdateMonitor();
-			protected:
-				virtual void OnUserResized();
-				virtual void OnSuspend();
-				virtual void OnApplicationActivated();
-				virtual void OnApplicationDeactivated();
-				virtual void OnSystemSuspend();
-				virtual void OnSystemResume();
-				virtual void OnScreensaver(bool * cancel);
-				virtual void OnResume();
-				virtual void OnPaint();
-
-				virtual void OnMonitorChanged();
-
-			public:
-				HWND getHandle() const { return m_hWnd; }
-				int32 getMouseWheel() const { return m_mouseWheel; }
-				bool getIsMinimized() const { return m_minimized; }
-				bool getIsMaximized() const { return m_maximized; }
-				void Close();
-				void MakeFixedSize(bool v);
-				//void setTopMost(bool value)
-				//{
-				//	SetWindowPos(m_hWnd, value ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, 3);
-				//}
-				String getWindowTitle() const { return m_title; }
-				void setWindowTitle(const String& txt);
-				Size getCurrentSize() const;
-
-				void Load(int32 width, int32 height, bool fixed);
-
-				EventHandler* eventResume() { return &m_eResume; }
-				EventHandler* eventUserResized() { return &m_eUserResized; }
-				EventHandler* eventSuspend() { return &m_eSuspend; }
-				EventHandler* eventApplicationActivated() { return &m_eApplicationActivated; }
-				EventHandler* eventApplicationDeactivated() { return &m_eApplicationDeactivated; }
-				EventHandler* eventSystemSuspend() { return &m_eSystemSuspend; }
-				EventHandler* eventSystemResume() { return &m_eSystemResume; }
-				CancellableEventHandler* eventScreensaver() { return &m_eScreensaver; }
-				EventHandler* eventPaint() { return &m_ePaint; }
-				EventHandler* eventMonitorChanged() { return &m_eMonitorChanged; }
-
-				GameWindow(const String& name, const String& wndTitle);
-				~GameWindow(void);
 			};
 		}
 	}

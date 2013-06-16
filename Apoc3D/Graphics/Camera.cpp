@@ -142,7 +142,10 @@ namespace Apoc3D
 		}
 		void ChaseCamera::UpdateWorldPositions()
 		{
-			// Construct a matrix to transform from object space to world space
+			// Construct a matrix to transform from the chase space to world space
+			// chase space is the space made up of 3 basis: chase direction , up, and their cross product 
+			// this is required as the provided position offset is in this space
+			
 			Matrix trans;
 			trans.LoadIdentity();
 

@@ -187,20 +187,31 @@ namespace Apoc3D
 
 		class APAPI Keyboard
 		{
+		public:
+			virtual ~Keyboard();
+			/**
+			 *  Is the specified key just pressed
+			 */
+			bool IsKeyDown(KeyboardKeyCode code) const { return m_keyState[(int)code] && !m_lastKeyState[(int)code]; }
+			/**
+			 *  Is the specified key just released
+			 */
+			bool IsKeyUp(KeyboardKeyCode code) const { return !m_keyState[(int)code] && m_lastKeyState[(int)code]; }
+
+			/**
+			 *  Is the specified key currently pressing
+			 */
+			bool IsPressing(KeyboardKeyCode code) const { return m_keyState[(int)code]; }
+			/**
+			 *  Update keyboard state
+			 */
+			virtual void Update(const GameTime* const time) = 0;
+
 		protected:
 			bool m_keyState[KEYCODE_MAX];
 			bool m_lastKeyState[KEYCODE_MAX];
 
 			Keyboard();
-		public:
-			virtual ~Keyboard();
-
-			bool IsKeyDown(KeyboardKeyCode code) const { return m_keyState[(int)code] && !m_lastKeyState[(int)code]; }
-			bool IsKeyUp(KeyboardKeyCode code) const { return !m_keyState[(int)code] && m_lastKeyState[(int)code]; }
-
-			bool IsPressing(KeyboardKeyCode code) const { return m_keyState[(int)code]; }
-
-			virtual void Update(const GameTime* const time) = 0;
 		};
 	}
 }

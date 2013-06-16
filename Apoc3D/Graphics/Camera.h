@@ -205,51 +205,103 @@ namespace Apoc3D
 
 		};
 
+		/**
+		 *  Implements a 3rd person chase camera with inertia
+		 */
 		class APAPI ChaseCamera : public Camera
 		{
 		public:
 			ChaseCamera(float fov = ToRadian(45));
 			~ChaseCamera(void);
 
+			/**
+			 *  Resets the camera to its desired position
+			 */
 			void Reset();
+			/**
+			 *  Update the camera's motion simulation and the view
+			 */
 			virtual void Update(const GameTime* const time);
 
+			void ForceUpdateMatrix() { UpdateMatrices(); }
+
+			/**
+			 *  A unit vector showing the up direction of the camera
+			 *  (0,1,0) will have no rolling
+			 */
 			const Vector3& getChaseUp() const { return m_up; }
+			/**
+			 *  A unit vector representing the view direction to the chase target
+			 */
 			const Vector3& getChaseDirection() const { return m_chaseDirection; }
+			/**
+			 *  The position of the chase target
+			 */
 			const Vector3& getChasePosition() const { return m_chasePosition; }
 
+			/**
+			 *  Gets the camera's current eye position in world space
+			 */
 			const Vector3& getPosition() const { return m_position; }
-			//const Matrix& getView() const { return m_view; }
-			//const Matrix& getProjection() const { return m_proj; }
+			/**
+			 *  Gets the camera's current linear velocity in world space
+			 */
 			const Vector3& getVelocity() const { return m_velocity; }
+			/**
+			 *  Gets the offset from the target to the camera for the camera to move to.
+			 *  This is relative to the chase direction.
+			 */
 			const Vector3& getDesiredOffset() const { return m_desiredPositionOfs; }
+			/**
+			 *  Gets the offset from the target to the look at position, in world space
+			 */
 			const Vector3& getLookAtOffset() const { return m_lootAtOfs; }
+			/**
+			 *  Get the current camera's position desired to be moving to.
+			 */
 			const Vector3& getDesiredPosition() const { return m_desiredPosition; }
+			/**
+			 *  Gets the current camera's look at position in world space
+			 */
 			const Vector3& getLookAt() const { return m_lootAt; }
 
-			const float getStiffness() const { return m_stiffness; }
-			const float getDamping() const { return m_damping; }
-			const float getMass() const { return m_mass; }
-			const float getNear() const { return m_near; }
-			const float getFar() const { return m_far; }
-			const float getAspectRatio() const { return m_aspectRatio; }
-			const float getFieldOfView() const { return m_fieldOfView; }
+			/**
+			 *  How rigid the movement is.
+			 */
+			float getStiffness() const { return m_stiffness; }
+			/**
+			 *  The friction applied to movement using the damping model: f = vel*damp
+			 */
+			float getDamping() const { return m_damping; }
+			/**
+			 *  The mass of the camera
+			 */
+			float getMass() const { return m_mass; }
+			/**
+			 *  The near plane of the frustum
+			 */
+			float getNear() const { return m_near; }
+			/**
+			 *  The far plane of the frustum
+			 */
+			float getFar() const { return m_far; }
+			/**
+			 *  The aspect ratio of the projection
+			 */
+			float getAspectRatio() const { return m_aspectRatio; }
+			/**
+			 *  The y direction fov angle in radians
+			 */
+			float getFieldOfView() const { return m_fieldOfView; }
 
-			//const Vector3* getChaseUpPtr() const { return& m_up; }
-			//const Vector3* getPositionPtr() const { return &m_position; }
-			//const Matrix* getViewPtr() const { return &m_view; }
-			//const Matrix* getProjectionPtr() const { return &m_proj; }
-			//const Vector3* getVelocityPtr() const { return &m_velocity; }
 
-			//const Frustum* getFrustum() const { return &m_frustum; }
-
-			void setStiffness(const float val) { m_stiffness = val; }
-			void setDamping(const float val) { m_damping = val; }
-			void setMass(const float val) { m_mass = val; }
-			void setNear(const float val) { m_near = val; }
-			void setFar(const float val) { m_far = val; }
-			void setAspectRatio(const float val) { m_aspectRatio = val; }
-			void setFieldOfView(const float val) { m_fieldOfView = val; }
+			void setStiffness(float val) { m_stiffness = val; }
+			void setDamping(float val) { m_damping = val; }
+			void setMass(float val) { m_mass = val; }
+			void setNear(float val) { m_near = val; }
+			void setFar(float val) { m_far = val; }
+			void setAspectRatio(float val) { m_aspectRatio = val; }
+			void setFieldOfView(float val) { m_fieldOfView = val; }
 
 			void setChasePosition(const Vector3& val) { m_chasePosition = val; }
 			void setChaseDirection(const Vector3& val) { m_chaseDirection = val; }
@@ -259,10 +311,6 @@ namespace Apoc3D
 			void setDesiredOffset(const Vector3& val) { m_desiredPositionOfs = val; }
 			void setLookAtOffset(const Vector3& val) { m_lootAtOfs = val; }
 
-			void ForceUpdateMatrix()
-			{
-				UpdateMatrices();
-			}
 		private:
 			// Matrix properties
 			//Matrix m_view;

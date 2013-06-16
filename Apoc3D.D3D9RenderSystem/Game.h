@@ -38,6 +38,9 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			/**
+			 *  This implements the game loop and creates graphics device by using GraphicsDeviceManager
+			 */
 			class Game
 			{
 			public:
@@ -67,21 +70,47 @@ namespace Apoc3D
 				virtual void OnDeviceLost() = 0;
 				virtual void UnloadContent() = 0;
 				virtual void OnDeviceReset() = 0;
-				/** This should be overrided to draw a frame
+				/**
+				 * This should be overrided to draw a frame
 				 */
 				virtual void Render(const GameTime* const time) = 0;
-				/** This should be overrided to allow the game to run logic such as updating the world,
+				/**
+				 * This should be overrided to allow the game to run logic such as updating the world,
 				 *  checking for collisions, gathering input, playing audio and etc.
 				 */
 				virtual void Update(const GameTime* const time) = 0;
-				/** Enters the main loop. 
-				*/
+				/**
+				 * Enters the main loop. 
+				 */
 				void Run();
-				void Tick();
 				void Exit();
 
 
+			protected:
+
+				Game(const String& name, IDirect3D9* d3d9);
+				virtual ~Game(void);
+				
+				virtual bool OnFrameStart();
+				virtual void OnFrameEnd();
+
 			private:
+
+				void DrawFrame(const GameTime* const time);
+
+				void Window_ApplicationActivated();
+				void Window_ApplicationDeactivated();
+				void Window_Suspend();
+				void Window_Resume();
+				void Window_Paint();
+				/**
+				 *  Run one frame, which includes one render and X updates
+				 */
+				void Tick();
+
+				GraphicsDeviceManager* m_graphicsDeviceManager;
+				GameWindow* m_gameWindow;
+
 				int m_maxSkipFrameCount;
 				GameClock* m_gameClock;
 				float m_maxElapsedTime;
@@ -102,27 +131,9 @@ namespace Apoc3D
 				bool m_exiting;
 				bool m_active;
 
-				GraphicsDeviceManager* m_graphicsDeviceManager;
-				GameWindow* m_gameWindow;
-
 
 				CancellableEventHandler m_eFrameStart;
 				EventHandler m_eFrameEnd;
-
-				void DrawFrame(const GameTime* const time);
-
-				void Window_ApplicationActivated();
-				void Window_ApplicationDeactivated();
-				void Window_Suspend();
-				void Window_Resume();
-				void Window_Paint();
-
-			protected:
-
-				Game(const String& name, IDirect3D9* d3d9);
-				virtual ~Game(void);
-				virtual bool OnFrameStart();
-				virtual void OnFrameEnd();
 
 
 			};

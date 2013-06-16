@@ -33,6 +33,9 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			/**
+			 *  A clock used to measure time with good accuracy
+			 */
 			class GameClock
 			{
 			public:
@@ -45,30 +48,6 @@ namespace Apoc3D
 				{
 				}
 
-				uint64 GetCounter()
-				{
-					LARGE_INTEGER counter;
-					BOOL res = QueryPerformanceCounter(&counter);
-					assert(res);
-					return counter.QuadPart;
-				}
-
-				uint64 GetFrequency()
-				{
-					LARGE_INTEGER freq;
-					BOOL res = QueryPerformanceFrequency(&freq); 
-					assert(res);
-
-					return freq.QuadPart;
-				}
-
-				bool CounterToTimeSpan(uint64 counter, uint64 base, float* result) const
-				{
-					if (base > counter)
-						return false;
-					*result = (counter - base) / (float)m_frequency;
-					return true;
-				}
 
 				void Reset()
 				{
@@ -85,7 +64,9 @@ namespace Apoc3D
 					m_lastRealTimeValid = false;
 					m_frequency = GetFrequency();
 				}
-
+				/**
+				 *  Suspends the clock.
+				 */
 				void Suspend()
 				{
 					m_suspendCount++;
@@ -105,7 +86,9 @@ namespace Apoc3D
 						m_suspendStartTime = 0;
 					}
 				}
-
+				/**
+				 *  Called every frame to get the time difference
+				 */
 				void Step()
 				{
 					uint64 counter = GetCounter();
@@ -153,6 +136,32 @@ namespace Apoc3D
 				float getElapsedAdjustedTime() const { return m_elapsedAdjustedTime; }
 				float getCurrentTime() const { return m_currentTimeBase + m_currentTimeOffset; }
 			private:
+				
+				bool CounterToTimeSpan(uint64 counter, uint64 base, float* result) const
+				{
+					// this checks overflow
+					if (base > counter)
+						return false;
+					*result = (counter - base) / (float)m_frequency;
+					return true;
+				}
+				uint64 GetCounter()
+				{
+					LARGE_INTEGER counter;
+					BOOL res = QueryPerformanceCounter(&counter);
+					assert(res);
+					return counter.QuadPart;
+				}
+
+				uint64 GetFrequency()
+				{
+					LARGE_INTEGER freq;
+					BOOL res = QueryPerformanceFrequency(&freq); 
+					assert(res);
+
+					return freq.QuadPart;
+				}
+
 				uint64 m_baseRealTime;
 				uint64 m_lastRealTime;
 				bool m_lastRealTimeValid;

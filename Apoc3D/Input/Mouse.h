@@ -40,17 +40,6 @@ namespace Apoc3D
 	{
 		class APAPI Mouse
 		{
-		protected:
-			bool m_lastBtnState[3];
-			bool m_btnState[3];
-
-			Point m_lastPosition;
-			Point m_currentPos;
-
-			int m_z;
-			int m_lastZ;
-
-			Mouse();
 		public:
 
 			virtual ~Mouse();
@@ -102,6 +91,18 @@ namespace Apoc3D
 			bool IsRightReleasedState() const { return !m_btnState[2]; }
 
 			virtual void Update(const GameTime* const time) = 0;
+
+		protected:
+			bool m_lastBtnState[3];
+			bool m_btnState[3];
+
+			Point m_lastPosition;
+			Point m_currentPos;
+
+			int m_z;
+			int m_lastZ;
+
+			Mouse();
 		};
 	}
 }

@@ -34,6 +34,11 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
+			/**
+			 *  A graphics device manager manages the device. It not just takes care of creation 
+			 *  with setting enumeration for a more reliable starting up,
+			 *  but also handle the error and changes happened like DeviceLost.
+			 */
 			class GraphicsDeviceManager
 			{
 			public:
@@ -41,9 +46,6 @@ namespace Apoc3D
 
 				GraphicsDeviceManager(Game* game, IDirect3D9* d3d9);
 				~GraphicsDeviceManager(void);
-
-				D3DDevice* getDevice() const { return m_device; }
-				IDirect3D9* getDirect3D() const { return m_direct3D9; }
 
 				bool& UserIgnoreMonitorChanges() { return m_userIgnoreMoniorChanges; }
 
@@ -80,7 +82,24 @@ namespace Apoc3D
 				void ToggleFullScreen();
 				void ReleaseDevice();
 
+				D3DDevice* getDevice() const { return m_device; }
+				IDirect3D9* getDirect3D() const { return m_direct3D9; }
+
 			private:
+				void PropogateSettings();
+				bool CanDeviceBeReset(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
+				void CreateDevice(const DeviceSettings &settings);
+				void game_FrameStart(bool* cancel);
+				void game_FrameEnd();
+				void Window_UserResized();
+				void Window_MonitorChanged();
+
+				void InitializeDevice();
+				HRESULT ResetDevice();
+
+				int32 GetAdapterOrdinal(HMONITOR mon);
+				void UpdateDeviceInformation();
+
 				DeviceSettings* m_currentSetting;
 				IDirect3D9* m_direct3D9;
 				D3DDevice* m_device;
@@ -100,19 +119,6 @@ namespace Apoc3D
 				int64 m_windowedStyle;
 				//bool m_savedTopmost
 
-				void PropogateSettings();
-				bool CanDeviceBeReset(const DeviceSettings* const oldset, const DeviceSettings* const newset) const;
-				void CreateDevice(const DeviceSettings &settings);
-				void game_FrameStart(bool* cancel);
-				void game_FrameEnd();
-				void Window_UserResized();
-				void Window_MonitorChanged();
-
-				void InitializeDevice();
-				HRESULT ResetDevice();
-
-				int32 GetAdapterOrdinal(HMONITOR mon);
-				void UpdateDeviceInformation();
 
 			};
 		}

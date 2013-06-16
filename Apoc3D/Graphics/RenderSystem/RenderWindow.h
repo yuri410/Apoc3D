@@ -44,12 +44,13 @@ namespace Apoc3D
 			 */
 			class APAPI FPSCounter
 			{
-			private:
-				LinkedList<float> m_frameTimes;
-				float m_fps;
 			public:
 				float getFPS() const { return m_fps; }
 				void Step(const GameTime* const time);
+
+			private:
+				LinkedList<float> m_frameTimes;
+				float m_fps;
 			};
 
 			/**
@@ -60,17 +61,20 @@ namespace Apoc3D
 			public:
 				virtual ~RenderView(){}
 
-				float getFPS() const { return m_fpsCounter.getFPS(); }
-
 				virtual void Present(const GameTime* const time);
+				/**
+				 *  Change the device settings. 
+				 *  This may cause the device to be reseted/recreated depending on how big the change is.
+				 */
+				virtual void ChangeRenderParameters(const RenderParameters& params) { m_presentParams = params; }
 
 				void* UserData;
 
 				RenderDevice* getRenderDevice() const { return m_renderDevice; }
 				const RenderParameters& getRenderParams() const { return m_presentParams; }
-				virtual void ChangeRenderParameters(const RenderParameters& params) { m_presentParams = params; }
 				DeviceContext* getDeviceContext() const { return m_deviceContext; }
 
+				float getFPS() const { return m_fpsCounter.getFPS(); }
 			protected:
 				RenderDevice* m_renderDevice;
 
@@ -102,12 +106,14 @@ namespace Apoc3D
 				RenderWindowHandler* m_evtHandler;
 				bool m_isExiting;
 			public:
-
-				virtual void Exit()
-				{
-					m_isExiting = true;
-				}
-
+				/**
+				 *  Quit the rendering app
+				 */
+				virtual void Exit() { m_isExiting = true; }
+				/**
+				 *  Enter the main loop. 
+				 *  This also include the initialization and finalization in the event handler.
+				 */
 				virtual void Run() = 0;
 
 				virtual ~RenderWindow();
@@ -116,14 +122,12 @@ namespace Apoc3D
 				virtual String getTitle() = 0;
 				virtual void setTitle(const String& name) = 0;
 
-				void setEventHandler(RenderWindowHandler* handler)
-				{
-					m_evtHandler = handler;
-				}
+				void setEventHandler(RenderWindowHandler* handler) { m_evtHandler = handler; }
 
 				bool getIsExiting() const { return m_isExiting; }
-				/** Represents if the window is activated.
-				*/
+				/** 
+				 *  Represents if the window is activated.
+				 */
 				virtual bool getIsActive() const = 0;
 
 				bool getVisisble() const { return m_visisble; }
