@@ -417,6 +417,9 @@ namespace Apoc3D
 		class Console;
 
 		class StyleSkin;
+
+		class MessageDialogBox;
+		class InputDialogBox;
 	}
 };
 

@@ -48,8 +48,8 @@ namespace Apoc3D
 				virtual void Update(const GameTime* const time);
 
 
-				bool Win32Keyboard::keyPressed( const OIS::KeyEvent &arg );
-				bool Win32Keyboard::keyReleased( const OIS::KeyEvent &arg );
+				bool keyPressed( const OIS::KeyEvent &arg );
+				bool keyReleased( const OIS::KeyEvent &arg );
 			};
 		}
 	}

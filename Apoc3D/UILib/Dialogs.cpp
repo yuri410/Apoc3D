@@ -150,6 +150,8 @@ namespace Apoc3D
 			eventInputResponsed.Invoke(m_result);
 		}
 
+		bool MessageDialogBox::isActive() const { return m_form->Visible; }
+
 		//////////////////////////////////////////////////////////////////////////
 
 
@@ -224,5 +226,8 @@ namespace Apoc3D
 		}
 
 		const String& InputDialogBox::getTextInput() const { return m_inputField->Text; }
+
+		bool InputDialogBox::isActive() const { return m_form->Visible; }
+
 	}
 }

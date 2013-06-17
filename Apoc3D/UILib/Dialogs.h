@@ -62,6 +62,7 @@ namespace Apoc3D
 			void ShowModal();
 
 			DialogResult isConfirmed() const { return m_result; }
+			bool isActive() const;
 
 			InputHandler eventInputResponsed;
 		private:
@@ -89,6 +90,7 @@ namespace Apoc3D
 			~InputDialogBox();
 
 			void ShowModal();
+			bool isActive() const;
 
 			DialogResult isConfirmed() const { return m_result; }
 			const String& getTextInput() const;
