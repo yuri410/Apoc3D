@@ -65,7 +65,6 @@ namespace Apoc3D
 		class APAPI Form : public ControlContainer
 		{
 		public:
-			
 			enum WindowState
 			{
 				FWS_Normal,
@@ -118,6 +117,10 @@ namespace Apoc3D
 			UIEventHandler& eventResized() { return m_eResized; }
 			UIEventHandler& eventClosed() { return m_eClosed; }
 
+			/**
+			 *  Background from will never cover other's on top
+			 */
+			bool IsBackgroundForm;
 		private:
 			void InitializeButtons(RenderDevice* device);
 

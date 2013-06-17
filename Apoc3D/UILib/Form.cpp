@@ -57,7 +57,8 @@ namespace Apoc3D
 			m_borderStyle(border), m_state(FWS_Normal), m_title(title),
 			m_borderAlpha(1), m_border(nullptr),
 			m_device(nullptr), m_btClose(nullptr), m_btMinimize(nullptr),
-			m_btMaximize(nullptr), m_btRestore(nullptr)
+			m_btMaximize(nullptr), m_btRestore(nullptr),
+			IsBackgroundForm(false)
 		{
 			Size = Point(200,100);
 			Visible = false;
@@ -1270,25 +1271,42 @@ namespace Apoc3D
 
 			m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_UsePostTransformStack | Sprite::SPR_RestoreState));
 			
+			// first background forms
 			for (int i=m_forms.getCount()-1;i>-1;i--)
 			{
-				if (m_forms[i]->Visible && m_forms[i] != m_topMostForm && 
-					m_forms[i]->getState() != Form::FWS_Minimized)
+				Form* frm = m_forms[i];
+				if (frm->Visible && 
+					frm->getState() != Form::FWS_Minimized && frm->IsBackgroundForm)
 				{
-					m_forms[i]->Draw(m_sprite);
+					frm->Draw(m_sprite);
 				}
 			}
-			if (m_topMostForm && m_topMostForm->Visible)
+
+
+			// regular forms
+			for (int i=m_forms.getCount()-1;i>-1;i--)
+			{
+				Form* frm = m_forms[i];
+				if (frm->Visible && frm != m_topMostForm && 
+					frm->getState() != Form::FWS_Minimized && !frm->IsBackgroundForm)
+				{
+					frm->Draw(m_sprite);
+				}
+			}
+
+			if (m_topMostForm && m_topMostForm->Visible && !m_topMostForm->IsBackgroundForm)
 			{
 				m_topMostForm->Draw(m_sprite);
 			}
 
+			// minimized always last
 			for (int i=m_forms.getCount()-1;i>=0;i--)
 			{
-				if (m_forms[i]->getState() == Form::FWS_Minimized &&
-					m_forms[i]->Visible && m_forms[i] != m_topMostForm)
+				Form* frm = m_forms[i];
+				if (frm->getState() == Form::FWS_Minimized &&
+					frm->Visible && frm != m_topMostForm)
 				{
-					m_forms[i]->Draw(m_sprite);
+					frm->Draw(m_sprite);
 				}
 			}
 
@@ -1346,7 +1364,7 @@ namespace Apoc3D
 			{
 				if (m_activeForm)
 					m_activeForm->Update(time);
-				else if (m_topMostForm)
+				else if (m_topMostForm && !m_topMostForm->IsBackgroundForm)
 					m_topMostForm->Update(time);
 				//else if (!m_topMostForm && m_forms.getCount())
 				//{
@@ -1356,17 +1374,28 @@ namespace Apoc3D
 
 				for (int i=0;i<m_forms.getCount();i++)
 				{
-					if (m_forms[i]->Enabled && m_forms[i] != m_topMostForm && m_forms[i] != m_activeForm)
+					Form* frm = m_forms[i];
+					if (frm->Enabled && frm != m_activeForm
+						&& (frm != m_topMostForm || frm->IsBackgroundForm))
 					{
 						m_forms[i]->Update(time);
 					}
 				}
 
 				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-				if (mouse->IsLeftPressedState() && !m_activeForm && m_topMostForm)
+				if (mouse->IsLeftPressedState())
 				{
-					// empty selection
-					m_topMostForm->Unfocus();
+					if (!m_activeForm && m_topMostForm)
+					{
+						// empty selection
+						m_topMostForm->Unfocus();
+					}
+					if (m_topMostForm && m_topMostForm->IsBackgroundForm && m_topMostForm != m_activeForm)
+					{
+						// deselsect background form
+						m_topMostForm->Unfocus();
+						m_activeForm->Focus();
+					}
 				}
 			}
 			

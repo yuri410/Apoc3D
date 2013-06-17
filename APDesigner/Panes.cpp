@@ -71,7 +71,8 @@ namespace APDesigner
 	{
 		m_pane = new Form(FBS_Pane);
 		m_pane->SetSkin(window->getUISkin());
-		
+		m_pane->IsBackgroundForm = true;
+
 		m_pane->setMinimumSize(Point(50,50));
 		m_pane->Size = Point(50,600);
 		m_pane->Position = Point(0, window->getMenuBar()->Size.Y);
@@ -271,7 +272,7 @@ namespace APDesigner
 	{
 		m_form = new Form(FBS_Pane);
 		m_form->SetSkin(window->getUISkin());
-
+		m_form->IsBackgroundForm = true;
 
 		m_form->Size = Point(300,600);
 		m_form->Position = Point(0, window->getMenuBar()->Size.Y);
