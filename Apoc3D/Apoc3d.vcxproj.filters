@@ -483,6 +483,9 @@
     <ClInclude Include="ApocExportSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UILib\Dialogs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -834,6 +837,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ApocException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UILib\Dialogs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

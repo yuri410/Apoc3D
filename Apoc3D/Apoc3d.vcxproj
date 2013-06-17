@@ -228,6 +228,7 @@
     <ClInclude Include="UILib\CheckBox.h" />
     <ClInclude Include="UILib\ComboBox.h" />
     <ClInclude Include="UILib\Console.h" />
+    <ClInclude Include="UILib\Dialogs.h" />
     <ClInclude Include="UILib\Form.h" />
     <ClInclude Include="UILib\KeyboardHelper.h" />
     <ClInclude Include="UILib\Label.h" />
@@ -373,6 +374,7 @@
     <ClCompile Include="UILib\ComboBox.cpp" />
     <ClCompile Include="UILib\Console.cpp" />
     <ClCompile Include="UILib\Control.cpp" />
+    <ClCompile Include="UILib\Dialogs.cpp" />
     <ClCompile Include="UILib\FontManager.cpp" />
     <ClCompile Include="UILib\Form.cpp" />
     <ClCompile Include="UILib\KeyboardHelper.cpp" />

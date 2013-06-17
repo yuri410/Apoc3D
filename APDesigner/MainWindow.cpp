@@ -59,6 +59,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/UILib/Menu.h"
 #include "apoc3d/UILib/List.h"
 #include "apoc3d/UILib/Console.h"
+#include "apoc3d/UILib/Dialogs.h"
 #include "apoc3d/Project/Project.h"
 
 #include "apoc3d/Input/InputAPI.h"

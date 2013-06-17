@@ -686,7 +686,7 @@ namespace Apoc3D
 						m_curorLocation.X = (int)m_lines[m_curorLocation.Y].size();
 
 					m_cursorOffset.X = m_fontRef->MeasureString(
-						m_lines[m_curorLocation.Y].substr(0, m_curorLocation.X>0 ? m_curorLocation.X-1 : 0)).X+cursorLeft;
+						m_lines[m_curorLocation.Y].substr(0, m_curorLocation.X)).X+cursorLeft;
 					m_cursorOffset.Y = m_fontRef->getLineHeightInt() * m_curorLocation.Y + 1;
 
 					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, CV_Black);
