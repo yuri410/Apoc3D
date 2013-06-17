@@ -48,6 +48,9 @@ namespace Apoc3D
 	void ProjectParse(Project* prj, FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect);
 	void ProjectSave(ConfigurationSection* parentSect, FastList<ProjectItem*>& items, bool savingBuild);
 
+	/************************************************************************/
+	/*  ProjectFolder                                                       */
+	/************************************************************************/
 
 	void ProjectFolder::Parse(const ConfigurationSection* sect)
 	{
@@ -99,7 +102,7 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*                                                                      */
+	/*  ProjectResTexture                                                   */
 	/************************************************************************/
 
 	void ProjectResTexture::Parse(const ConfigurationSection* sect)
@@ -388,7 +391,7 @@ namespace Apoc3D
 	}
 	
 	/************************************************************************/
-	/*                                                                      */
+	/*  ProjectResMaterial                                                  */
 	/************************************************************************/
 
 	void ProjectResMaterial::Parse(const ConfigurationSection* sect)
@@ -416,7 +419,7 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*                                                                      */
+	/*   ProjectResMaterialSet                                              */
 	/************************************************************************/
 
 	void ProjectResMaterialSet::Parse(const ConfigurationSection* sect)
@@ -505,7 +508,7 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*                                                                      */
+	/*   ProjectResFont                                                     */
 	/************************************************************************/
 	
 	void ProjectResFont::Parse(const ConfigurationSection* sect)
@@ -610,7 +613,7 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*                                                                      */
+	/*   ProjectResEffect                                                   */
 	/************************************************************************/
 
 	void ProjectResEffect::Parse(const ConfigurationSection* sect)
@@ -796,7 +799,7 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*                                                                      */
+	/*   ProjectResCustomEffect                                             */
 	/************************************************************************/
 	void ProjectResCustomEffect::Parse(const ConfigurationSection* sect)
 	{
@@ -853,8 +856,9 @@ namespace Apoc3D
 	{
 		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
 	}
+
 	/************************************************************************/
-	/*                                                                      */
+	/*  ProjectResEffectList                                                */
 	/************************************************************************/
 
 	// Finds all effects in the project
@@ -909,7 +913,7 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*                                                                      */
+	/*  ProjectResShaderNetwork                                             */
 	/************************************************************************/
 
 	void ProjectResShaderNetwork::Parse(const ConfigurationSection* sect)
@@ -952,7 +956,7 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*         ProjectResModel                                              */
+	/*  ProjectResModel                                                     */
 	/************************************************************************/
 
 	void ProjectResModel::Parse(const ConfigurationSection* sect)
@@ -1077,9 +1081,8 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*           ProjectResMAnim                                            */
+	/*   ProjectResMAnim                                                    */
 	/************************************************************************/
-
 
 	void ProjectResMAnim::Parse(const ConfigurationSection* sect)
 	{
@@ -1109,7 +1112,7 @@ namespace Apoc3D
 
 
 	/************************************************************************/
-	/*           ProjectResTAnim                                            */
+	/*    ProjectResTAnim                                                   */
 	/************************************************************************/
 
 	void ProjectResTAnim::Parse(const ConfigurationSection* sect)
@@ -1162,7 +1165,38 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*          ProjectCustomItem                                           */
+	/*   ProjectResUILayout                                                 */
+	/************************************************************************/
+
+	void ProjectResUILayout::Parse(const ConfigurationSection* sect)
+	{
+		SourceFile = sect->getAttribute(L"SourceFile");
+		DestinationFile = sect->getAttribute(L"DestinationFile");
+	}
+	void ProjectResUILayout::Save(ConfigurationSection* sect, bool savingBuild)
+	{
+		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
+	}
+	List<String> ProjectResUILayout::GetAllOutputFiles()
+	{
+		List<String> e;
+		if (DestinationFile.size())
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+		return e;
+	}
+	bool ProjectResUILayout::IsEarlierThan(time_t t)
+	{
+		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile)) < t;
+	}
+	bool ProjectResUILayout::IsNotBuilt()
+	{
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+	}
+
+
+	/************************************************************************/
+	/*    ProjectCustomItem                                                 */
 	/************************************************************************/
 
 	void ProjectCustomItem::Parse(const ConfigurationSection* sect)
@@ -1211,7 +1245,7 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
-	/*                                                                      */
+	/*    ProjectItem                                                       */
 	/************************************************************************/
 
 	ConfigurationSection* ProjectItem::Save(bool savingBuild)
@@ -1266,6 +1300,9 @@ namespace Apoc3D
 				break;
 			case PRJITEM_MaterialAnimation:
 				sect->AddAttributeString(L"Type", L"manim");
+				break;
+			case PRJITEM_UILayout:
+				sect->AddAttributeString(L"Type", L"UILayout");
 				break;
 			}
 			
@@ -1365,9 +1402,9 @@ namespace Apoc3D
 		}
 		else if (buildType == L"manim")
 		{
-			ProjectResMAnim* ta = new ProjectResMAnim(m_project);
-			ta->Parse(sect);
-			m_typeData = ta;
+			ProjectResMAnim* ma = new ProjectResMAnim(m_project);
+			ma->Parse(sect);
+			m_typeData = ma;
 		}
 		//else if (buildType == L"animation")
 		//{
@@ -1379,7 +1416,9 @@ namespace Apoc3D
 		//}
 		else if (buildType == L"uilayout")
 		{
-
+			ProjectResUILayout* ul = new ProjectResUILayout(m_project);
+			ul->Parse(sect);
+			m_typeData = ul;
 		}
 		else if (buildType == L"projectfxlist")
 		{
@@ -1389,6 +1428,9 @@ namespace Apoc3D
 		}
 	}
 
+	/************************************************************************/
+	/*    Project                                                           */
+	/************************************************************************/
 
 	void Project::Parse(const ConfigurationSection* sect)
 	{
@@ -1515,10 +1557,7 @@ namespace Apoc3D
 		PathUtils::Append(m_outputPath, L"build");
 	}
 
-	void ProjectItem::NotifyModified()
-	{
-		m_timeStamp = time(0);
-	}
+	void ProjectItem::NotifyModified() { m_timeStamp = time(0); }
 
 	//////////////////////////////////////////////////////////////////////////
 

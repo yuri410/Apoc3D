@@ -61,7 +61,8 @@ namespace Apoc3D
 		PRJITEM_EffectList,
 		PRJITEM_CustomEffect,
 		PRJITEM_ShaderNetwork,
-		PRJITEM_Font
+		PRJITEM_Font,
+		PRJITEM_UILayout
 	};
 	
 
@@ -511,6 +512,28 @@ namespace Apoc3D
 		String DestinationFile;
 
 		virtual ProjectItemType getType() const { return PRJITEM_MaterialAnimation; }
+		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual List<String> GetAllOutputFiles();
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+	};
+
+	class APAPI ProjectResUILayout : public ProjectResource
+	{
+	public:
+		ProjectResUILayout(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
+		String SourceFile;
+		String DestinationFile;
+
+		virtual ProjectItemType getType() const { return PRJITEM_UILayout; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 

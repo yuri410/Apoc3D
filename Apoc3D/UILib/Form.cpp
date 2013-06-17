@@ -55,7 +55,9 @@ namespace Apoc3D
 			m_dragArea(0,0,0,0), m_resizeArea(0,0,15,15), m_isDragging(false), m_isResizeing(false),
 			m_isMinimizing(false), m_isInReiszeArea(false), m_posOffset(0,0), m_oldSize(0,0), m_initialized(false), m_lastClickTime(0),
 			m_borderStyle(border), m_state(FWS_Normal), m_title(title),
-			m_borderAlpha(1), m_border(0)
+			m_borderAlpha(1), m_border(nullptr),
+			m_device(nullptr), m_btClose(nullptr), m_btMinimize(nullptr),
+			m_btMaximize(nullptr), m_btRestore(nullptr)
 		{
 			Size = Point(200,100);
 			Visible = false;

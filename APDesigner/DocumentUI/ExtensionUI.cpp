@@ -1,4 +1,3 @@
-#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -22,41 +21,44 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EXTENSIONMODEL_H
-#define EXTENSIONMODEL_H
+#include "ExtensionUI.h"
 
-#include "APDesigner/EditorExtensionManager.h"
+#include "UIDocument.h"
+
+#include "apoc3d/Project/Project.h"
+#include "apoc3d/Vfs/File.h"
+#include "apoc3d/Vfs/PathUtils.h"
+
+using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {
-	/** Model editor extension
-	*/
-	class ExtensionModel : public EditorExtension
+	Document* ExtensionUI::OpenItem(const ProjectItem* item)
 	{
-	public:
-		virtual String GetName() { return L"Model Editor"; }
-		virtual Document* OpenItem(const ProjectItem* item);
-		virtual Document* DirectOpen(const String& filePath);
-
-		virtual bool SupportsItem(const ProjectItem* item);
-
-		virtual bool SupportsIndependentEditing() { return true; };
-
-		virtual List<String> GetFileExtensions() 
+		if (item->getType() == PRJITEM_UILayout)
 		{
-			List<String> r;
-			r.Add(L".mesh");
-			return r;
-		}
+			const Project* prj = item->getProject();
+			ProjectResUILayout* mtrl = static_cast<ProjectResUILayout*>(item->getData());
+			String path = PathUtils::Combine(prj->getOutputPath(), mtrl->DestinationFile);
 
-		ExtensionModel(MainWindow* wnd)
-			: m_mainWindow(wnd)
-		{
-
+			if (File::FileExists(path))
+			{
+				UIDocument* md = new UIDocument(m_mainWindow, this, mtrl->DestinationFile);
+				return md;
+			}
 		}
-	private:
-		MainWindow* m_mainWindow;
-	};
+		return nullptr;
+	}
+	Document* ExtensionUI::DirectOpen(const String& filePath)
+	{
+		return new UIDocument(m_mainWindow, this, filePath);
+	}
+
+	bool ExtensionUI::SupportsItem(const ProjectItem* item)
+	{
+		if (item->getType() == PRJITEM_UILayout)
+			return true;
+		return false;
+	}
+
 }
-
-#endif

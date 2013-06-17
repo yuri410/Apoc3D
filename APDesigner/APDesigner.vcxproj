@@ -172,6 +172,8 @@
     <ClInclude Include="DocumentShader\ShaderDataIO.h" />
     <ClInclude Include="DocumentShader\ShaderGraph.h" />
     <ClInclude Include="DocumentShader\SNetCommonTypes.h" />
+    <ClInclude Include="DocumentUI\ExtensionUI.h" />
+    <ClInclude Include="DocumentUI\UIDocument.h" />
     <ClInclude Include="EditorExtensionManager.h" />
     <ClInclude Include="IDEConfig.h" />
     <ClInclude Include="MainWindow.h" />
@@ -204,6 +206,8 @@
     <ClCompile Include="DocumentShader\ShaderAtomType.cpp" />
     <ClCompile Include="DocumentShader\ShaderGraph.cpp" />
     <ClCompile Include="DocumentShader\SNetCommonTypes.cpp" />
+    <ClCompile Include="DocumentUI\ExtensionUI.cpp" />
+    <ClCompile Include="DocumentUI\UIDocument.cpp" />
     <ClCompile Include="EditorExtensionManager.cpp" />
     <ClCompile Include="IDEConfig.cpp" />
     <ClCompile Include="ServWindow.cpp" />

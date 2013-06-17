@@ -22,19 +22,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef EXTENSIONMODEL_H
-#define EXTENSIONMODEL_H
+#ifndef APD_EXTENSIONUI_H
+#define APD_EXTENSIONUI_H
 
 #include "APDesigner/EditorExtensionManager.h"
 
 namespace APDesigner
 {
-	/** Model editor extension
+	/** UI editor extension
 	*/
-	class ExtensionModel : public EditorExtension
+	class ExtensionUI : public EditorExtension
 	{
 	public:
-		virtual String GetName() { return L"Model Editor"; }
+		virtual String GetName() { return L"UI Editor"; }
 		virtual Document* OpenItem(const ProjectItem* item);
 		virtual Document* DirectOpen(const String& filePath);
 
@@ -45,11 +45,11 @@ namespace APDesigner
 		virtual List<String> GetFileExtensions() 
 		{
 			List<String> r;
-			r.Add(L".mesh");
+			r.Add(L".ui");
 			return r;
 		}
 
-		ExtensionModel(MainWindow* wnd)
+		ExtensionUI(MainWindow* wnd)
 			: m_mainWindow(wnd)
 		{
 
@@ -58,5 +58,6 @@ namespace APDesigner
 		MainWindow* m_mainWindow;
 	};
 }
+
 
 #endif

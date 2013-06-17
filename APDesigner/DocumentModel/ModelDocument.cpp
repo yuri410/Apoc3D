@@ -73,9 +73,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Vfs/File.h"
 
-
-//#include <d3dx9.h>
-
 using namespace Apoc3D::Input;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::IO;

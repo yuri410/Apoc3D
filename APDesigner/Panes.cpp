@@ -324,8 +324,8 @@ namespace APDesigner
 	}
 	ResourcePane::~ResourcePane()
 	{
-		delete m_form;
 		NukePropertyList();
+		delete m_form;
 		delete m_infoDisplay;
 		delete m_addItem;
 		delete m_removeItem;
