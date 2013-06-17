@@ -78,7 +78,7 @@ namespace SampleTerrain
 	{
 		if (getState() == RS_Loaded)
 		{
-			m_opBuffer.FastClear();
+			m_opBuffer.Clear();
 
 			RenderOperation op;
 			op.Material = &m_material;

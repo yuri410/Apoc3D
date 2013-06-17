@@ -152,7 +152,7 @@ namespace Apoc3D
 			~Model(void);
 
 			void ReloadMaterialAnimation();			
-			void RebuildROPCache() { m_isOpBufferBuilt = false; m_opBuffer.FastClear(); }
+			void RebuildROPCache() { m_isOpBufferBuilt = false; m_opBuffer.Clear(); }
 
 			virtual RenderOperationBuffer* GetRenderOperation(int lod);
 			virtual RenderOperationBuffer* GetRenderOperationSubEntity(int index);

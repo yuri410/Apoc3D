@@ -86,7 +86,7 @@ namespace SampleTerrain
 
 	RenderOperationBuffer* Terrain::GetRenderOperation(int lod)
 	{
-		m_opBuffer.FastClear();
+		m_opBuffer.Clear();
 		if (lod>=4)
 			lod = 3;
 
@@ -141,7 +141,7 @@ namespace SampleTerrain
 				// release the pre-built RenderOperations when lod is far( equals to 3)
 				if (m_treeOPBuffer.getCount() > 10)
 				{
-					m_treeOPBuffer.FastClear();
+					m_treeOPBuffer.Clear();
 					m_treeOPBuffer.ReserveDiscard(4);
 					m_treeROPDirty = true;
 				}
@@ -201,7 +201,7 @@ namespace SampleTerrain
 		bool passed = true;
 
 		{
-			m_treeOPBuffer.FastClear();
+			m_treeOPBuffer.Clear();
 
 			Model* tree = TerrainMeshManager::getSingleton().getTreeModelByLOD(lod);
 			for (int i=0;i<m_trees.getCount();i++)
@@ -214,7 +214,7 @@ namespace SampleTerrain
 					Matrix trans;
 					info.CalculateTransform(trans);
 
-					m_treeOPBuffer.Add(&opbuf->operator[](0), opbuf->getCount(), trans);
+					m_treeOPBuffer.Add(opbuf, trans);
 				}
 				else
 				{

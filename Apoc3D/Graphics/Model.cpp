@@ -589,7 +589,7 @@ namespace Apoc3D
 			FastList<Mesh*> entities = data->getEntities();
 
 			RenderOperationBuffer* opBuf = entities[index]->GetRenderOperation(0);
-			m_opBuffer.FastClear();
+			m_opBuffer.Clear();
 			m_opBuffer.Add(&opBuf->operator [](0), opBuf->getCount());
 
 			for (int j = 0; j < opBuf->getCount(); j++)

@@ -43,24 +43,14 @@ namespace Apoc3D
 		 */
 		class APAPI RenderOperationBuffer
 		{
-		private:
-			FastList<RenderOperation> m_oplist;
 		public:
-			RenderOperationBuffer(void)
-			{
+			RenderOperationBuffer(void) { }
+			~RenderOperationBuffer(void) { }
 
-			}
-			~RenderOperationBuffer(void)
-			{
-
-			}
 			/**
 			 *  Adds a new RenderOperation to the buffer
 			 */
-			void Add(const RenderOperation& op)
-			{
-				m_oplist.Add(op);
-			}
+			void Add(const RenderOperation& op) { m_oplist.Add(op); }
 			/**
 			 *  Adds some new RenderOperation to the buffer
 			 */
@@ -72,22 +62,47 @@ namespace Apoc3D
 				}
 			}
 
-			void Add(const RenderOperation* op, int count, const Matrix& transform);
+			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform);
+			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform, void* userPointer);
+			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform, Material* mtrl, void* userPointer);
+			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform, bool isFinal, Material* mtrl, void* userPointer);
+			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform, bool isFinal, void* userPointer);
+			void AddWithParam(const RenderOperation* op, int count, void* userPointer);
 
-			void Clear()
+			void Add(const RenderOperationBuffer* ops)
 			{
-				m_oplist.Clear();
+				Add(&ops->get(0), ops->getCount()); 
 			}
+			void Add(const RenderOperationBuffer* ops, const Matrix& transform)
+			{
+				AddWithParam(&ops->get(0), ops->getCount(), transform); 
+			}
+			void Add(const RenderOperationBuffer* ops, const Matrix& transform, void* userPointer) 
+			{
+				AddWithParam(&ops->get(0), ops->getCount(), transform, userPointer); 
+			}
+			void Add(const RenderOperationBuffer* ops, int count, const Matrix& transform, Material* mtrl, void* userPointer)
+			{
+				AddWithParam(&ops->get(0), ops->getCount(), transform, mtrl, userPointer);
+			}
+			void Add(const RenderOperationBuffer* ops, int count, const Matrix& transform, bool isFinal, Material* mtrl, void* userPointer)
+			{
+				AddWithParam(&ops->get(0), ops->getCount(), transform, isFinal, mtrl, userPointer);
+			}
+			void Add(const RenderOperationBuffer* ops, int count, const Matrix& transform, bool isFinal, void* userPointer)
+			{
+				AddWithParam(&ops->get(0), ops->getCount(), transform, isFinal, userPointer);
+			}
+			void Add(const RenderOperationBuffer* ops, void* userPointer) 
+			{
+				AddWithParam(&ops->get(0), ops->getCount(), userPointer);
+			}
+
+
+			void Clear() { m_oplist.Clear(); }
 
 			
-			void FastClear()
-			{
-				m_oplist.Clear();
-			}
-			void ReserveDiscard(int count)
-			{
-				m_oplist.ResizeDiscard(count);
-			}
+			void ReserveDiscard(int count) { m_oplist.ResizeDiscard(count); }
 			const RenderOperation& get(int i) const
 			{
 				assert(i>=0 && i<getCount());
@@ -101,6 +116,9 @@ namespace Apoc3D
 			//void MultiplyTransform(const Matrix& m);
 
 			int getCount() const { return m_oplist.getCount(); }
+
+		private:
+			FastList<RenderOperation> m_oplist;
 		};
 
 	}

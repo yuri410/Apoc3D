@@ -257,7 +257,7 @@ namespace Apoc3D
 		}
 		RenderOperationBuffer* ParticleSystem::GetRenderOperation(int lod)
 		{
-			m_opBuffer.FastClear();
+			m_opBuffer.Clear();
 			// If there are any particles waiting in the newly added queue,
 			// we'd better upload them to the GPU ready for drawing.
 			if (m_firstNewParticle != m_firstFreeParticle)
