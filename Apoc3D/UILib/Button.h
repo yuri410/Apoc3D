@@ -175,6 +175,8 @@ namespace Apoc3D
 		class APAPI ButtonRow : public Control
 		{
 		public:
+			typedef EventDelegate1<int> SelectedChangedHandler;
+
 			ButtonRow(const Point& position, float width, const List<String>& titles);
 			~ButtonRow();
 
@@ -184,6 +186,8 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite);
 
 			int getSelectedIndex() const { return m_selectedIndex; }
+
+			SelectedChangedHandler eventSelectedChanging;
 		private:
 			int m_selectedIndex;
 

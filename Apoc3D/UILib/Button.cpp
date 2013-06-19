@@ -517,6 +517,7 @@ namespace Apoc3D
 					else if (m_mouseDown && mouse->IsLeftUp())
 					{
 						m_mouseDown = false;
+						eventSelectedChanging.Invoke(i);
 						m_selectedIndex = i;
 						Text = m_titles[i];
 						OnRelease();

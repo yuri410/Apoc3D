@@ -127,12 +127,12 @@ namespace Apoc3D
 					}
 					virtual bool OnFrameStart()
 					{
-						if (Game::OnFrameStart())
+						if (!Game::OnFrameStart())
 						{
 							m_window->OnFrameStart();
-							return true;
+							return false;
 						}
-						return false;
+						return true;
 					}
 					virtual void OnFrameEnd()
 					{
