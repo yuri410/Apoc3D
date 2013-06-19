@@ -1362,10 +1362,17 @@ namespace Apoc3D
 			
 			if (!menuOverriden)
 			{
+				Form* alreadyUpdatedForm = nullptr;
 				if (m_activeForm)
+				{
+					alreadyUpdatedForm = m_activeForm;
 					m_activeForm->Update(time);
+				}
 				else if (m_topMostForm && !m_topMostForm->IsBackgroundForm)
+				{
+					alreadyUpdatedForm = m_topMostForm;
 					m_topMostForm->Update(time);
+				}
 				//else if (!m_topMostForm && m_forms.getCount())
 				//{
 				//	m_topMostForm = m_forms[0];
@@ -1375,10 +1382,9 @@ namespace Apoc3D
 				for (int i=0;i<m_forms.getCount();i++)
 				{
 					Form* frm = m_forms[i];
-					if (frm->Enabled && frm != m_activeForm
-						&& (frm != m_topMostForm || frm->IsBackgroundForm))
+					if (frm->Enabled && frm != alreadyUpdatedForm)
 					{
-						m_forms[i]->Update(time);
+						frm->Update(time);
 					}
 				}
 

@@ -35,7 +35,8 @@ namespace Apoc3D
 		{
 			if (m_skin)
 			{
-				m_fontRef = FontManager::getSingleton().getFont(m_skin->ControlFontName);
+				if (m_fontRef == nullptr)
+					m_fontRef = FontManager::getSingleton().getFont(m_skin->ControlFontName);
 			}
 			else
 			{
