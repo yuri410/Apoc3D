@@ -45,7 +45,7 @@ namespace Apoc3D
 	namespace UI
 	{
 		Label::Label(const Point& position, const String& text, int width, Align alignment)
-			: Control(position, text), m_alignment(alignment), m_width(width)
+			: Control(position, text), m_alignment(alignment), m_width(width), m_hasColorValue(false)
 		{
 			Size.X = width;
 			
@@ -142,13 +142,6 @@ namespace Apoc3D
 
 		void Label::Draw(Sprite* sprite)
 		{
-			//Apoc3D::Math::Rectangle area = getAbsoluteArea();
-
-			//m_backgroundRect.X = area.X - getOwner()->Position.X;
-			//m_backgroundRect.Y = area.X - getOwner()->Position.Y;
-			//sprite->Draw(m_skin->WhitePixelTexture, area, m_skin->BackColor);
-
-
 			if (m_lines.getCount()<=1)
 			{
 				Point txtSize = m_fontRef->MeasureString(Text);
@@ -163,7 +156,7 @@ namespace Apoc3D
 				}
 
 				m_drawPos = Point(Position.X + m_textOffset.X, Position.Y);
-				m_fontRef->DrawString(sprite, Text, m_drawPos, m_skin->ForeColor);
+				m_fontRef->DrawString(sprite, Text, m_drawPos, m_hasColorValue ? m_colorOverride : m_skin->ForeColor);
 			}
 			else
 			{
@@ -183,9 +176,15 @@ namespace Apoc3D
 						break;
 					}
 					m_drawPos.Y = Position.Y + i * m_fontRef->getLineHeightInt();
-					m_fontRef->DrawString(sprite, m_lines[i], m_drawPos, m_skin->ForeColor);
+					m_fontRef->DrawString(sprite, m_lines[i], m_drawPos, m_hasColorValue ? m_colorOverride : m_skin->ForeColor);
 				}
 			}
+		}
+
+		void Label::SetTextColorOverride(ColorValue cv)
+		{
+			m_colorOverride = cv;
+			m_hasColorValue = true;
 		}
 
 		/************************************************************************/

@@ -30,6 +30,7 @@
 #include "Control.h"
 
 #include "KeyboardHelper.h"
+#include "apoc3d/Math/ColorValue.h"
 
 namespace Apoc3D
 {
@@ -44,6 +45,15 @@ namespace Apoc3D
 				ALIGN_Center,
 				ALIGN_Right
 			};
+		public:
+			Label(const Point& position, const String& text, int width, Align alignment = ALIGN_Left);
+			~Label();
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Draw(Sprite* sprite);
+			virtual void Update(const GameTime* const time);
+
+			void SetTextColorOverride(ColorValue cv);
 		private:
 			Point m_textOffset;
 			Point m_drawPos;
@@ -56,16 +66,12 @@ namespace Apoc3D
 
 			List<String> m_lines;
 
+			bool m_hasColorValue;
+			ColorValue m_colorOverride;
+
 			void UpdateText();
 			void UpdateEvents();
 
-		public:
-			Label(const Point& position, const String& text, int width, Align alignment = ALIGN_Left);
-			~Label();
-
-			virtual void Initialize(RenderDevice* device);
-			virtual void Draw(Sprite* sprite);
-			virtual void Update(const GameTime* const time);
 		};
 
 		class APAPI TextBox : public Control
