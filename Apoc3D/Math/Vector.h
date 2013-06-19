@@ -1830,8 +1830,10 @@ namespace Apoc3D
 #define v4w(x) (Apoc3D::Math::Vector4Utils::GetW(x))
 
 #define VECTOR2(x,y)		(Apoc3D::Math::Vector2Utils::LDVector(x,y))
+#define VECTOR3EX(vec2,z)		(Apoc3D::Math::Vector3Utils::LDVector(v2x(vec2),v2y(vec2),z))
 #define VECTOR3(x,y,z)		(Apoc3D::Math::Vector3Utils::LDVector(x,y,z))
 #define VECTOR4(x,y,z,w)	(Apoc3D::Math::Vector4Utils::LDVector(x,y,z,w))
+#define VECTOR4EX(vec3,w)		(Apoc3D::Math::Vector4Utils::LDVector(v3x(vec3),v3y(vec3),v3z(vec3),w))
 
 #define v2Length(v) (Apoc3D::Math::Vector2Utils::Length(v))
 #define v3Length(v) (Apoc3D::Math::Vector3Utils::Length(v))
