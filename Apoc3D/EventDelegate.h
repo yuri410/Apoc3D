@@ -58,6 +58,8 @@ namespace Apoc3D
 
 		void Reset() { assert(!m_locked); m_delegates.Clear(); }
 
+		//void operator()() { Invoke(); }
+
 		void Invoke()
 		{
 			if (m_delegates.getCount())
@@ -115,6 +117,7 @@ namespace Apoc3D
 
 		void Reset() { assert(!m_locked); m_delegates.Clear(); }
 
+		//void operator()(Arg1Type a1) { Invoke(a1); }
 		void Invoke(Arg1Type a1)
 		{
 			if (m_delegates.getCount())
@@ -171,6 +174,7 @@ namespace Apoc3D
 
 		void Reset() { assert(!m_locked); m_delegates.Clear(); }
 
+		//void operator()(Arg1Type a1, Arg2Type a2) { Invoke(a1, a2); }
 		void Invoke(Arg1Type a1, Arg2Type a2)
 		{
 			if (m_delegates.getCount())
@@ -227,6 +231,7 @@ namespace Apoc3D
 
 		void Reset() { assert(!m_locked); m_delegates.Clear(); }
 
+		//void operator()(Arg1Type a1, Arg2Type a2, Arg3Type a3) { Invoke(a1, a2, a3); }
 		void Invoke(Arg1Type a1, Arg2Type a2, Arg3Type a3)
 		{
 			if (m_delegates.getCount())
@@ -282,6 +287,8 @@ namespace Apoc3D
 
 
 		void Reset() { assert(!m_locked); m_delegates.Clear(); }
+
+		//void operator()(Arg1Type a1, Arg2Type a2, Arg3Type a3, Arg4Type a4) { Invoke(a1, a2, a3, a4); }
 
 		void Invoke(Arg1Type a1, Arg2Type a2, Arg3Type a3, Arg4Type a4)
 		{

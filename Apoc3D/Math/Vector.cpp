@@ -50,12 +50,12 @@ namespace Apoc3D
 		const Vector4 Vector4Utils::UnitW = Vector4Utils::LDVector(0, 0, 0, 1);
 		const Vector4 Vector4Utils::One = Vector4Utils::LDVector(1);
 		
-		String Vector2Utils::ToTextString(const Vector2& v)
+		String Vector2Utils::ToTextString(const Vector2& v, int precision)
 		{
 			String result = L"[";
-			result.append(StringUtils::ToString(GetX(v), 10));
+			result.append(StringUtils::ToString(GetX(v), precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(StringUtils::ToString(GetY(v), precision));
 			result.append(L"]");
 			return result;
 		}
@@ -67,14 +67,14 @@ namespace Apoc3D
 			return result;
 		}
 
-		String Vector3Utils::ToTextString(const Vector3& v)
+		String Vector3Utils::ToTextString(const Vector3& v, int precision)
 		{
 			String result = L"[";
-			result.append(StringUtils::ToString(GetX(v), 10));
+			result.append(StringUtils::ToString(GetX(v), precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(StringUtils::ToString(GetY(v), precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetZ(v), 10));
+			result.append(StringUtils::ToString(GetZ(v), precision));
 			result.append(L"]");
 			return result;
 		}
@@ -88,16 +88,16 @@ namespace Apoc3D
 			return result;
 		}
 
-		String Vector4Utils::ToTextString(const Vector4& v)
+		String Vector4Utils::ToTextString(const Vector4& v, int precision)
 		{
 			String result = L"[";
-			result.append(StringUtils::ToString(GetX(v), 10));
+			result.append(StringUtils::ToString(GetX(v), precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), 10));
+			result.append(StringUtils::ToString(GetY(v), precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetZ(v), 10));
+			result.append(StringUtils::ToString(GetZ(v), precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetW(v), 10));
+			result.append(StringUtils::ToString(GetW(v), precision));
 			result.append(L"]");
 			return result;
 		}

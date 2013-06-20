@@ -188,7 +188,7 @@ namespace Apoc3D
 
 			static const Vector2 One;
 			
-			static String ToTextString(const Vector2& v);
+			static String ToTextString(const Vector2& v, int precision = 10);
 			static String ToParsableString(const Vector2& v);
 
 
@@ -677,7 +677,7 @@ namespace Apoc3D
 			static const Vector3 UnitZ;
 			static const Vector3 One;
 
-			static String ToTextString(const Vector3& v);
+			static String ToTextString(const Vector3& v, int precision = 10);
 			static String ToParsableString(const Vector3& v);
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -1267,7 +1267,7 @@ namespace Apoc3D
 			static const Vector4 UnitW;
 			static const Vector4 One;
 
-			static String ToTextString(const Vector4& v);
+			static String ToTextString(const Vector4& v, int precision = 10);
 			static String ToParsableString(const Vector4& v);
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
