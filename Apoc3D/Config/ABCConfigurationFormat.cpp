@@ -181,7 +181,7 @@ namespace Apoc3D
 					delete br2;
 				}
 			}
-			localValues->Close();
+			localValues->Close(true);
 			delete localValues;
 
 			TaggedDataReader* subTreeData = br->ReadTaggedDataBlock();
@@ -199,7 +199,7 @@ namespace Apoc3D
 					delete br2;
 				}
 			}
-			subTreeData->Close();
+			subTreeData->Close(true);
 			delete subTreeData;
 
 			if (parent)

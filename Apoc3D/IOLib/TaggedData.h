@@ -239,7 +239,7 @@ namespace Apoc3D
 
 			int64 GetChunkOffset(const String& name) const;
 
-			void Close();
+			void Close(bool seekToEnd = false);
 
 			/** 
 			 * Exports a list of key names to the specified list.
@@ -335,6 +335,7 @@ namespace Apoc3D
 			Stream* m_stream;
 
 			char m_buffer[32];
+			uint32 m_sizeInBytes;
 		};
 
 		/**

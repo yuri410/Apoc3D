@@ -490,6 +490,13 @@ namespace Apoc3D
 		}
 		void ButtonRow::Update(const GameTime* const time)
 		{
+			if (!Visible)
+			{
+				m_hoverIndex = -1;
+				m_mouseDown = false;
+				return;
+			}
+
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
 			Point rectPos;

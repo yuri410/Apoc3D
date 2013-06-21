@@ -53,14 +53,17 @@ namespace Apoc3D
 		TaggedDataReader::TaggedDataReader(Stream* strm)
 			: m_stream(strm)
 		{
+			m_sizeInBytes = (uint32)strm->getLength();
 			m_endianDependent = strm->IsReadEndianDependent();
 
 			BinaryReader* br = new BinaryReader(new VirtualStream(strm, 0, strm->getLength()));
 
 			uint32 firstInt = br->ReadUInt32();
-			if ((firstInt & 0x80000000) == 0x80000000)
+			if ((firstInt & 0x80000000U) == 0x80000000U)
 			{
-				// new format, first int is flag then
+				//uint32 flags = firstInt & 0x7fffffffU;
+
+				// format ver 1.1, first int is flag then
 				m_sectCount = br->ReadInt32();
 
 				for (int i=0; i<m_sectCount; i++)
@@ -81,6 +84,7 @@ namespace Apoc3D
 			}
 			else
 			{
+				// original format
 				m_sectCount = (int32)firstInt;// br->ReadInt32();
 
 				for (int i=0; i<m_sectCount; i++)
@@ -109,7 +113,11 @@ namespace Apoc3D
 
 			return ent->Offset;
 		}
-		void TaggedDataReader::Close() { m_stream->Close(); }
+		void TaggedDataReader::Close(bool seekToEnd)
+		{
+			m_stream->Seek(m_sizeInBytes, SEEK_Current);
+			m_stream->Close(); 
+		}
 
 		void TaggedDataReader::FillTagList(List<String>& nameTags) const
 		{

@@ -101,7 +101,7 @@ namespace Apoc3D
 							Materials.AddFrame(mtrl, j);
 						}
 
-						matData->Close();
+						matData->Close(true);
 						delete matData;
 					}
 				}
