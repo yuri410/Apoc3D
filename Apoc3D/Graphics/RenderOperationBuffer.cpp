@@ -67,6 +67,25 @@ namespace Apoc3D
 				rop.UserData = userPointer;
 			}
 		}
+		void RenderOperationBuffer::AddWithParam(const RenderOperation* op, int count, Material* mtrl, void* userPointer)
+		{
+			for (int i=0;i<count;i++)
+			{
+				m_oplist.Add(*(op+i));
+				RenderOperation& rop = m_oplist[m_oplist.getCount()-1];
+				rop.UserData = userPointer;
+				rop.Material = mtrl;
+			}
+		}
+		void RenderOperationBuffer::AddWithParam(const RenderOperation* op, int count, Material* mtrl)
+		{
+			for (int i=0;i<count;i++)
+			{
+				m_oplist.Add(*(op+i));
+				RenderOperation& rop = m_oplist[m_oplist.getCount()-1];
+				rop.Material = mtrl;
+			}
+		}
 
 		//void RenderOperationBuffer::MultiplyTransform(const Matrix& m)
 		//{
