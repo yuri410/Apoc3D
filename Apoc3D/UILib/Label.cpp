@@ -808,7 +808,7 @@ namespace Apoc3D
 				break;
 			case KEY_BACK:
 				{
-					if (!m_multiline && m_curorLocation.X > 0)
+					if (!m_multiline && m_curorLocation.X > 0 && m_curorLocation.X < (int)Text.size() + 1)
 					{
 						if (m_curorLocation.X > 1 && Text.substr(m_curorLocation.X - 2, 2) == L"\n")
 						{

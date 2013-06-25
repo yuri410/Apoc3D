@@ -61,7 +61,7 @@ namespace Apoc3D
 
 			void ShowModal();
 
-			DialogResult isConfirmed() const { return m_result; }
+			DialogResult getResult() const { return m_result; }
 			bool isActive() const;
 
 			InputHandler eventInputResponsed;
@@ -92,7 +92,7 @@ namespace Apoc3D
 			void ShowModal();
 			bool isActive() const;
 
-			DialogResult isConfirmed() const { return m_result; }
+			DialogResult getResult() const { return m_result; }
 			const String& getTextInput() const;
 			ConfirmInputHandler eventInputConfirmed;
 		private:
