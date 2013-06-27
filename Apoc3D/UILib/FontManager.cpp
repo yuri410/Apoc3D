@@ -613,6 +613,9 @@ namespace Apoc3D
 
 		void Font::LoadGlyphData(BinaryReader* br, Glyph& glyph)
 		{
+			if (glyph.Width == 0 || glyph.Height == 0)
+				return;
+
 			//br->getBaseStream()->setPosition(glyph.Offset);
 			br->getBaseStream()->Seek(glyph.Offset, SEEK_Begin);
 

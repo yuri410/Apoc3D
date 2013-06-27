@@ -44,6 +44,8 @@ namespace Apoc3D
 			class APAPI RenderWindowHandler
 			{
 			public:
+				virtual ~RenderWindowHandler() { }
+
 				virtual void Initialize() = 0;
 				virtual void Finalize() = 0;
 

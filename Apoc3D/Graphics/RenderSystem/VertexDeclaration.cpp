@@ -30,34 +30,25 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			int VertexDeclaration::getElementCount() const
-			{
-				return elements.getCount();
-			}
-			const VertexElement& VertexDeclaration::getElement(int index) const
-			{
-				return elements[index];
-			}
-
 			VertexDeclaration::VertexDeclaration(const FastList<VertexElement> &e)
 			{
 				for (int i=0;i<e.getCount();i++)
 				{
-					elements.Add(e[i]);
+					m_elements.Add(e[i]);
 				}
 			}
 			VertexDeclaration::VertexDeclaration(const List<VertexElement> &e)
 			{
 				for (int32 i=0;i<e.getCount();i++)
 				{
-					elements.Add(e[i]);
+					m_elements.Add(e[i]);
 				}
 			}
 			bool VertexDeclaration::FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result) const
 			{
-				for (int32 i = 0; i < elements.getCount(); i++)
+				for (int32 i = 0; i < m_elements.getCount(); i++)
 				{
-					const VertexElement &element = elements[i];
+					const VertexElement &element = m_elements[i];
 
 					// do they match?
 					if (element.getUsage() == semantic && element.getIndex() == index)
@@ -73,14 +64,17 @@ namespace Apoc3D
 			{
 				int size = 0;
 
-				for (int32 i = 0; i < elements.getCount(); i++)
+				for (int32 i = 0; i < m_elements.getCount(); i++)
 				{
-					size += elements[i].getSize();
+					size += m_elements[i].getSize();
 				}
 
 				// return the size
 				return size;
 			}
+
+			int VertexDeclaration::getElementCount() const { return m_elements.getCount(); }
+			const VertexElement& VertexDeclaration::getElement(int index) const { return m_elements[index]; }
 		}
 	}
 }

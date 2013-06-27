@@ -47,7 +47,7 @@ namespace Apoc3DEx
 	{
 	public:
 		Game(RenderWindow* wnd);
-		~Game();
+		virtual ~Game();
 
 		/** This is the place to load or initialize something before any other 
 		 *  events being handled. Remember to call this if overrided.

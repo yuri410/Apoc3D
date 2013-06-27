@@ -132,7 +132,7 @@ namespace Apoc3D
 					return 2;
 				case VEF_HalfVector4:
 					return 4;
-				} // end switch			
+				}
 
 				// keep the compiler happy
 				return 0;
