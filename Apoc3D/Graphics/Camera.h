@@ -53,6 +53,8 @@ namespace Apoc3D
 
 			const Matrix& getInvViewMatrix() const { return m_invView; }
 
+			const Matrix& getViewProjMatrix() const { return m_viewProj; }
+
 			/**
 			 *  Gets the up vector of the camera view
 			 */
@@ -80,7 +82,8 @@ namespace Apoc3D
 			 */
 			virtual void Update(const GameTime* const time) 
 			{
-				Matrix::Inverse(m_invView, m_view);				
+				Matrix::Inverse(m_invView, m_view);
+				Matrix::Multiply(m_viewProj, m_view, m_proj);
 			}
 
 
@@ -88,6 +91,7 @@ namespace Apoc3D
 			{
 				m_view.LoadIdentity();
 				m_proj.LoadIdentity();
+				m_viewProj.LoadIdentity();
 			}
 			~Camera(void) {}
 
@@ -96,6 +100,7 @@ namespace Apoc3D
 			Matrix m_view;
 			Matrix m_invView;
 			Matrix m_proj;
+			Matrix m_viewProj;
 
 			Frustum m_frustum;
 		};

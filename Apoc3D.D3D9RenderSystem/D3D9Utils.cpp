@@ -388,7 +388,6 @@ namespace Apoc3D
 				blendTable[BLEND_DestinationColor] = D3DBLEND_DESTCOLOR;
 				blendTable[BLEND_InverseDestinationColor] = D3DBLEND_INVDESTCOLOR;
 				blendTable[BLEND_SourceAlphaSaturation] = D3DBLEND_SRCALPHASAT;
-				blendTable[BLEND_BothSourceAlpha] = D3DBLEND_BOTHSRCALPHA;
 				blendTable[BLEND_BlendFactor] = D3DBLEND_BLENDFACTOR;
 			}
 			void D3D9Utils::InitCompareFunctionTable()

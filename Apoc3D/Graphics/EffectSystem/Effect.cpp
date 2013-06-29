@@ -92,6 +92,8 @@ namespace Apoc3D
 			/*  AutomaticEffect                                                     */
 			/************************************************************************/
 
+			static Matrix s_instancingWorldBuffer[InstancingData::MaxOneTimeInstances];
+
 			template void AutomaticEffect::SetParameterValue<bool>(int index, bool* value, int count);
 			template void AutomaticEffect::SetParameterValue<int>(int index, int* value, int count);
 			template void AutomaticEffect::SetParameterValue<float>(int index, float* value, int count);
@@ -210,11 +212,8 @@ namespace Apoc3D
 						case EPUSAGE_Trans_WorldViewProj:
 							if (RendererEffectParams::CurrentCamera)
 							{
-								Matrix temp;
-								Matrix::Multiply(temp, rop->RootTransform, RendererEffectParams::CurrentCamera->getViewMatrix());
-
 								Matrix mvp;
-								Matrix::Multiply(mvp, temp, RendererEffectParams::CurrentCamera->getProjMatrix());
+								Matrix::Multiply(mvp, rop->RootTransform, RendererEffectParams::CurrentCamera->getViewProjMatrix());
 
 								SetValue(ep, mvp);
 							}
@@ -265,8 +264,11 @@ namespace Apoc3D
 
 								for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
 								{
-									shader->SetValue(ep.RegisterIndex + i * 4, rop[i].RootTransform);
+									s_instancingWorldBuffer[i] = rop[i].RootTransform;
+									//shader->SetValue(ep.RegisterIndex + i * 4, rop[i].RootTransform);
 								}
+
+								shader->SetValue(ep.RegisterIndex, s_instancingWorldBuffer, count);
 							}
 							break;
 						
@@ -551,9 +553,7 @@ namespace Apoc3D
 						}
 					case EPUSAGE_Trans_ViewProj:
 						{
-							Matrix vp;
-							Matrix::Multiply(vp, RendererEffectParams::CurrentCamera->getViewMatrix(), RendererEffectParams::CurrentCamera->getProjMatrix());
-							SetValue(m_parameters[i], vp);
+							SetValue(m_parameters[i], RendererEffectParams::CurrentCamera->getViewProjMatrix());
 							break;
 						}
 					case EPUSAGE_Trans_Projection:

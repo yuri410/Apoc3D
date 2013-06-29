@@ -82,10 +82,6 @@ namespace Apoc3D
 				 {
 					 return BLEND_SourceAlphaSaturation;
 				 }
-				 else if (v == L"bothsourcealpha")
-				 {
-					 return BLEND_BothSourceAlpha;
-				 }
 				 else if (v == L"blendfactor")
 				 {
 					 return BLEND_BlendFactor;
@@ -118,8 +114,6 @@ namespace Apoc3D
 					 return L"InverseDestinationColor";
 				 case BLEND_SourceAlphaSaturation:
 					 return L"SourceAlphaSaturation";
-				 case BLEND_BothSourceAlpha:
-					 return L"BothSourceAlpha";
 				 case BLEND_BlendFactor:
 					 return L"BlendFactor";
 				 }

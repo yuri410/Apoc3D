@@ -554,7 +554,7 @@ namespace Apoc3D
 					and destination blend factors to SourceAlpha and InverseSourceAlpha in separate
 					calls.
 				*/
-				BLEND_BothSourceAlpha = 11,
+				//BLEND_BothSourceAlpha = 11,
 
 				/**
 				 *  Each component of the color is multiplied by BlendFactor.

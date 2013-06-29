@@ -57,28 +57,28 @@ namespace Apoc3D
 
 
 			MaterialCustomParameter() { }
-			MaterialCustomParameter(bool value, const String usage = L"")
+			MaterialCustomParameter(bool value, const String& usage = L"")
 				: Type(EffectSystem::CEPT_Boolean), Usage(usage)
 			{
 				*reinterpret_cast<bool*>(Value) = value;
 			}
-			MaterialCustomParameter(float value, const String usage = L"")
+			MaterialCustomParameter(float value, const String& usage = L"")
 				: Type(EffectSystem::CEPT_Float), Usage(usage)
 			{
 				*reinterpret_cast<float*>(Value) = value;
 			}
-			MaterialCustomParameter(int value, const String usage = L"")
+			MaterialCustomParameter(int value, const String& usage = L"")
 				: Type(EffectSystem::CEPT_Integer), Usage(usage)
 			{
 				*reinterpret_cast<int*>(Value) = value;
 			}
-			MaterialCustomParameter(Vector2 value, const String usage = L"")
-				: Type(EffectSystem::CEPT_Integer), Usage(usage)
+			MaterialCustomParameter(Vector2 value, const String& usage = L"")
+				: Type(EffectSystem::CEPT_Vector2), Usage(usage)
 			{
 				*reinterpret_cast<Vector2*>(Value) = value;
 			}
-			MaterialCustomParameter(Vector4 value, const String usage = L"")
-				: Type(EffectSystem::CEPT_Integer), Usage(usage)
+			MaterialCustomParameter(Vector4 value, const String& usage = L"")
+				: Type(EffectSystem::CEPT_Vector4), Usage(usage)
 			{
 				*reinterpret_cast<Vector4*>(Value) = value;
 			}

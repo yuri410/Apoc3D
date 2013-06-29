@@ -105,7 +105,6 @@ namespace Apoc3D
 				bool m_isUnsupported;
 				String m_name;
 			private:
-				
 				bool m_begun;
 
 			};

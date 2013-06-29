@@ -363,7 +363,6 @@ namespace APDesigner
 			items.Add(GraphicsCommonUtils::ToString(BLEND_InverseDestinationColor));
 
 			items.Add(GraphicsCommonUtils::ToString(BLEND_SourceAlphaSaturation));
-			items.Add(GraphicsCommonUtils::ToString(BLEND_BothSourceAlpha));
 			items.Add(GraphicsCommonUtils::ToString(BLEND_BlendFactor));
 			
 			sy += 25;
