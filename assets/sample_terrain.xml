@@ -28,7 +28,7 @@
             <TexturedQuad Type="effect" Source="VS:s_terrain\effects\postQuad.vs | PS:s_terrain\effects\texQuad.ps" DestinationFile="s_terrain\effects\TexturedQuad.afx" ParamList="s_terrain\effects\texQuad.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
             <EffectList Type="ProjectFXList" DestinationFile="s_terrain\effects\effectList.xml" LastModTime="1325265047" />
         </effects>
-        <Comic Type="font" Name="s_terrain\comic.ttf" Size="14.000000" AntiAlias="true" DestinationFile="s_terrain\comic.fnt" LastModTime="1325484148">
+        <Comic Type="font" Name="fonts\noredist_nc\GosmickSans.ttf" Size="14.000000" AntiAlias="true" DestinationFile="s_terrain\comic.fnt" LastModTime="1325484148">
             <Range0 Start="0" End="255" />
         </Comic>
         <Loading Type="texture" Method="D3D" SourceFile="s_terrain\loading.png" DestinationFile="s_terrain\loading.tex" LastModTime="1325617097" />

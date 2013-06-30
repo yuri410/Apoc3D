@@ -4,7 +4,7 @@
     <system Type="Folder" Pack="pak" DestinationPack="apoc_system\system.pak">
       <skin Type="Folder" Pack="pak" DestinationPack="apoc_system\classic_skin.pak">
         <english Type ="Font"
-               Name="apoc_system\SourceSansPro-Regular.otf"
+               Name="fonts\SourceSansPro-Regular.otf"
                Size="11"
                Style="Regular"
                DestinationFile="apoc_system\classic_skin\english.fnt">
@@ -333,7 +333,7 @@
         <Standard Type="effect" Source="VS:apoc_system\effects\standardnh.vs | PS:apoc_system\effects\standardnh.ps"
                   ParamList="apoc_system\effects\standardnh.xml"
                   DestinationFile="apoc_system\effects\standard.afx"
-                  EntryPoints="ALL:main" Profile="sm_2_0">
+                  EntryPoints="ALL:main" Targets="sm_2_0">
         </Standard>
       </effects>
     </system>
