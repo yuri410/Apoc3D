@@ -479,11 +479,11 @@ namespace APBuild
 		
 		for (int i=0;i<config.Ranges.getCount();i++)
 		{
-			for (wchar_t ch = (wchar_t)config.Ranges[i].MinChar; 
-				ch <= (wchar_t)config.Ranges[i].MaxChar; ch++)
+			for (int ch = config.Ranges[i].MinChar; 
+				ch <= config.Ranges[i].MaxChar; ch++)
 			{
 				//Load the Glyph for our character.
-				if(FT_Load_Glyph( face, FT_Get_Char_Index( face, ch ), FT_LOAD_DEFAULT ))
+				if(FT_Load_Glyph( face, FT_Get_Char_Index( face, (FT_ULong)ch ), FT_LOAD_DEFAULT ))
 					throw std::runtime_error("FT_Load_Glyph failed");
 
 				//Move the face's glyph into a Glyph object.
@@ -555,7 +555,7 @@ namespace APBuild
 				}
 
 				{
-					CharMapping m = { ch, glyphMap.Index, (short)bitmap_glyph->left, (short)(config.Size-bitmap_glyph->top), (face->glyph->advance.x / 64.0f) };
+					CharMapping m = { (wchar_t)ch, glyphMap.Index, (short)bitmap_glyph->left, (short)(config.Size-bitmap_glyph->top), (face->glyph->advance.x / 64.0f) };
 					charMap.Add(m);
 				}
 			}

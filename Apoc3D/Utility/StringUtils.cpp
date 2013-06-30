@@ -297,7 +297,7 @@ namespace Apoc3D
 
 
 		//////////////////////////////////////////////////////////////////////////
-
+		
 		String StringUtils::ToString(bool val)
 		{
 			wostringstream stream;
@@ -305,8 +305,7 @@ namespace Apoc3D
 			stream << val;
 			return stream.str();
 		}
-		String StringUtils::ToString(const wchar_t* val, 
-			unsigned short width, wchar_t fill, std::ios::fmtflags flags)
+		String StringUtils::ToString(const wchar_t* val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
 		{
 			wostringstream stream;
 			stream.width(width);
@@ -318,8 +317,7 @@ namespace Apoc3D
 			return stream.str();
 		}
 
-		String StringUtils::ToString(int64 val, 
-			unsigned short width, wchar_t fill, std::ios::fmtflags flags)
+		String StringUtils::ToString(int64 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
 		{
 			wostringstream stream;
 			stream.width(width);
@@ -330,8 +328,7 @@ namespace Apoc3D
 			stream << val;
 			return stream.str();
 		}
-		String StringUtils::ToString(uint64 val, 
-			unsigned short width, wchar_t fill, std::ios::fmtflags flags)
+		String StringUtils::ToString(uint64 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
 		{
 			wostringstream stream;
 			stream.width(width);
@@ -342,8 +339,7 @@ namespace Apoc3D
 			stream << val;
 			return stream.str();
 		}
-		String StringUtils::ToString(float val, 
-			unsigned short precision, unsigned short width, char fill, std::ios::fmtflags flags)
+		String StringUtils::ToString(float val, uint16 precision, uint16 width, char fill, std::ios::fmtflags flags)
 		{
 			wostringstream stream;
 			stream.precision(precision);
@@ -356,7 +352,24 @@ namespace Apoc3D
 			return stream.str();
 		}
 
-		String StringUtils::ToStringHex(uint64 val, unsigned short width/* =0 */)
+		String StringUtils::ToString(int16 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
+		{
+			return ToString((int64)val, width, fill, flags); 
+		}
+		String StringUtils::ToString(int32 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
+		{
+			return ToString((int64)val, width, fill, flags);
+		}
+		String StringUtils::ToString(uint16 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
+		{
+			return ToString((uint64)val, width, fill, flags);
+		}
+		String StringUtils::ToString(uint32 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
+		{
+			return ToString((uint64)val, width, fill, flags);
+		}
+
+		String StringUtils::ToStringHex(uint64 val, uint16 width/* =0 */)
 		{
 			wostringstream stream;
 			stream.width(width);
@@ -367,7 +380,7 @@ namespace Apoc3D
 			stream << val;
 			return stream.str();
 		}
-		String StringUtils::ToStringHex(uint32 val, unsigned short width/* =0 */)
+		String StringUtils::ToStringHex(uint32 val, uint16 width/* =0 */)
 		{
 			wostringstream stream;
 			stream.width(width);
@@ -493,19 +506,11 @@ namespace Apoc3D
 
 		void StringUtils::ToLowerCase(String& str)
 		{
-			std::transform(
-				str.begin(),
-				str.end(),
-				str.begin(),
-				tolower);
+			std::transform(str.begin(), str.end(), str.begin(), tolower);
 		}
 		void StringUtils::ToUpperCase(String& str)
 		{
-			std::transform(
-				str.begin(),
-				str.end(),
-				str.begin(),
-				toupper);
+			std::transform(str.begin(), str.end(), str.begin(), toupper);
 		}
 	}
 }

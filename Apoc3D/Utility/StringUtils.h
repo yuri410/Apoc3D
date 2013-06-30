@@ -67,40 +67,21 @@ namespace Apoc3D
 			static double ParseDouble(const std::string& val);
 
 
-			static String ToString(int16 val, 
-				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0))
-			{
-				return ToString(static_cast<int64>(val), width, fill, flags);
-			}
-			static String ToString(int32 val, 
-				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0))
-			{
-				return ToString(static_cast<int64>(val), width, fill, flags);
-			}
-			static String ToString(int64 val, 
-				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
-			static String ToString(float val, unsigned short precision = 10, 
-				unsigned short width = 0, char fill = ' ', 
+			static String ToString(int16 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static String ToString(int32 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static String ToString(int64 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static String ToString(float val, uint16 precision = 6, uint16 width = 0, char fill = ' ', 
 				std::ios::fmtflags flags = std::ios::fmtflags(std::ios::fixed) );
-			static String ToString(const wchar_t* val, 
-				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
+			static String ToString(const wchar_t* val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
-			static String ToString(uint16 val, 
-				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0))
-			{
-				return ToString(static_cast<uint64>(val), width, fill, flags);
-			}
-			static String ToString(uint32 val, 
-				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0))
-			{
-				return ToString(static_cast<uint64>(val), width, fill, flags);
-			}
-			static String ToStringHex(uint32 val, unsigned short width=0);
-			static String ToStringHex(uint64 val, unsigned short width=0);
+			static String ToString(uint16 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static String ToString(uint32 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+
+			static String ToStringHex(uint32 val, uint16 width = 0);
+			static String ToStringHex(uint64 val, uint16 width = 0);
 			static String ToStringBin(uint64 val);
 
-			static String ToString(uint64 val, 
-				unsigned short width=0, wchar_t fill=' ', std::ios::fmtflags flags= std::ios::fmtflags(0));
+			static String ToString(uint64 val, uint16 width = 0, wchar_t fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 			static String ToString(bool val);
 
