@@ -116,7 +116,7 @@ namespace Apoc3D
 				/**
 				 *  The number of consecutive buckets that the glyph is using.
 				 */
-				int NumberOfBucketUsing;
+				int NumberOfBucketsUsing;
 				int StartingParentBucket;
 
 			};
@@ -135,8 +135,12 @@ namespace Apoc3D
 			float m_lineGap;
 			int m_heightInt;
 
-			int m_maxWidth;
-			int m_maxHeight;
+			int m_maxGlyphWidth;
+			int m_maxGlyphHeight;
+
+			/**
+			 *  Number of buckets on one edge
+			 */
 			int m_edgeCount;
 			ResourceLocation* m_resource;
 
@@ -147,8 +151,8 @@ namespace Apoc3D
 			//FastList<Bucket*> m_buckets;
 
 			/** 
-			 *  The entire texture area is divided into a 2x2 buckets, which records
-			 *  the use of every small texture region
+			 *  The entire texture area is divided into 2d plane of buckets(m_edgeCount*m_edgeCount), 
+			 *  which records the use of every small texture region
 			 */
 			Bucket* m_buckets;
 			

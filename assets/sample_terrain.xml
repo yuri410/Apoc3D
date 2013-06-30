@@ -1,38 +1,38 @@
 <?xml version="1.0" ?>
 <Root>
-    <Project Name="Demo" TexturePath="textures">
-        <textures LastModTime="1325265047" Type="folder" Pack="pak" DestinationPack="s_terrain\textures.pak">
-            <TGrass LastModTime="1325265047" Type="texture" Method="d3d" SourceFile="s_terrain\textures\Grass3_tilled.png" DestinationFile="s_terrain\textures\TGrass.tex" GenerateMipmaps="true" PixelFormat="DXT1" />
-            <TRock LastModTime="1325265047" Type="texture" Method="d3d" SourceFile="s_terrain\textures\Rock3_tilled.png" DestinationFile="s_terrain\textures\TRock.tex" GenerateMipmaps="true" PixelFormat="DXT1" />
-            <TSand LastModTime="1325265047" Type="texture" Method="d3d" SourceFile="s_terrain\textures\Sand3_tilled.png" DestinationFile="s_terrain\textures\TSand.tex" GenerateMipmaps="true" PixelFormat="DXT1" />
-            <TSnow LastModTime="1325265047" Type="texture" Method="d3d" SourceFile="s_terrain\textures\Snow.dds" DestinationFile="s_terrain\textures\TSnow.tex" />
-            <TEdge LastModTime="1325265047" Type="texture" Method="d3d" SourceFile="s_terrain\textures\TEdge.png" DestinationFile="s_terrain\textures\TEdge.tex" PixelFormat="L8" />
-            <desert_sky LastModTime="1325265047" Type="texture" Method="d3d" SourceFile="s_terrain\textures\desert_sky.dds" DestinationFile="s_terrain\textures\desert_sky.tex" />
-            <plant3 LastModTime="1325265047" Type="texture" Method="d3d" SourceFile="s_terrain\textures\plant3.png" DestinationFile="s_terrain\textures\plant3.tex" GenerateMipmaps="true" PixelFormat="DXT5" />
-            <plantsnow LastModTime="1325265047" Type="texture" Method="d3d" SourceFile="s_terrain\textures\plantsnow.png" DestinationFile="s_terrain\textures\plantsnow.tex" GenerateMipmaps="true" PixelFormat="DXT5" />
-            <foliagecolor LastModTime="1325265047" Type="texture" Method="d3d" SourceFile="s_terrain\textures\foliagecolor.png" DestinationFile="s_terrain\textures\foliagecolor.tex" GenerateMipmaps="true" PixelFormat="DXT1" />
+    <Project Name="Demo" TexturePath="textures" MaterialPath="">
+        <textures Type="folder" Pack="pak" DestinationPack="s_terrain\textures.pak" LastModTime="1325265047">
+            <TGrass Type="texture" Method="D3D" SourceFile="s_terrain\textures\Grass3_tilled.png" DestinationFile="s_terrain\textures\TGrass.tex" GenerateMipmaps="true" PixelFormat="DXT1" LastModTime="1325265047" />
+            <TRock Type="texture" Method="D3D" SourceFile="s_terrain\textures\Rock3_tilled.png" DestinationFile="s_terrain\textures\TRock.tex" GenerateMipmaps="true" PixelFormat="DXT1" LastModTime="1325265047" />
+            <TSand Type="texture" Method="D3D" SourceFile="s_terrain\textures\Sand3_tilled.png" DestinationFile="s_terrain\textures\TSand.tex" GenerateMipmaps="true" PixelFormat="DXT1" LastModTime="1325265047" />
+            <TSnow Type="texture" Method="D3D" SourceFile="s_terrain\textures\Snow.dds" DestinationFile="s_terrain\textures\TSnow.tex" LastModTime="1325265047" />
+            <TEdge Type="texture" Method="D3D" SourceFile="s_terrain\textures\TEdge.png" DestinationFile="s_terrain\textures\TEdge.tex" PixelFormat="L8" LastModTime="1325265047" />
+            <desert_sky Type="texture" Method="D3D" SourceFile="s_terrain\textures\desert_sky.dds" DestinationFile="s_terrain\textures\desert_sky.tex" LastModTime="1325265047" />
+            <plant3 Type="texture" Method="D3D" SourceFile="s_terrain\textures\plant3.png" DestinationFile="s_terrain\textures\plant3.tex" GenerateMipmaps="true" PixelFormat="DXT5" LastModTime="1325265047" />
+            <plantsnow Type="texture" Method="D3D" SourceFile="s_terrain\textures\plantsnow.png" DestinationFile="s_terrain\textures\plantsnow.tex" GenerateMipmaps="true" PixelFormat="DXT5" LastModTime="1325265047" />
+            <foliagecolor Type="texture" Method="D3D" SourceFile="s_terrain\textures\foliagecolor.png" DestinationFile="s_terrain\textures\foliagecolor.tex" GenerateMipmaps="true" PixelFormat="DXT1" LastModTime="1325265047" />
         </textures>
-        <models LastModTime="1325265047" Type="folder">
-            <SkySphere LastModTime="1325265047" Type="mesh" SourceFile="s_terrain\models\SkySphere.X" DestinationFile="s_terrain\models\SkySphere.mesh" Method="ass" />
-            <tree_l0 LastModTime="1325265047" Type="mesh" SourceFile="s_terrain\models\tree_l0.X" DestinationFile="s_terrain\models\tree_l0.mesh" Method="ass" />
-            <tree_l1 LastModTime="1325265047" Type="mesh" SourceFile="s_terrain\models\tree_l1.X" DestinationFile="s_terrain\models\tree_l1.mesh" Method="ass" />
-            <tree_l2 LastModTime="1325265047" Type="mesh" SourceFile="s_terrain\models\tree_l2.X" DestinationFile="s_terrain\models\tree_l2.mesh" Method="ass" />
-            <tree_l3 LastModTime="1325265047" Type="mesh" SourceFile="s_terrain\models\tree_l3.X" DestinationFile="s_terrain\models\tree_l3.mesh" Method="ass" />
+        <models Type="folder" LastModTime="1325265047">
+            <SkySphere Type="mesh" SourceFile="s_terrain\models\SkySphere.X" DestinationFile="s_terrain\models\SkySphere.mesh" Method="Ass" LastModTime="1325265047" />
+            <tree_l0 Type="mesh" SourceFile="s_terrain\models\tree_l0.X" DestinationFile="s_terrain\models\tree_l0.mesh" Method="Ass" LastModTime="1325265047" />
+            <tree_l1 Type="mesh" SourceFile="s_terrain\models\tree_l1.X" DestinationFile="s_terrain\models\tree_l1.mesh" Method="Ass" LastModTime="1325265047" />
+            <tree_l2 Type="mesh" SourceFile="s_terrain\models\tree_l2.X" DestinationFile="s_terrain\models\tree_l2.mesh" Method="Ass" LastModTime="1325265047" />
+            <tree_l3 Type="mesh" SourceFile="s_terrain\models\tree_l3.X" DestinationFile="s_terrain\models\tree_l3.mesh" Method="Ass" LastModTime="1325265047" />
         </models>
-        <effects LastModTime="1325265047" Type="folder">
-            <Terrain LastModTime="1325265047" Type="effect" Source="VS:s_terrain\effects\terrain.vs | PS:s_terrain\effects\terrain.ps" DestinationFile="s_terrain\effects\terrain.afx" ParamList="s_terrain\effects\terrain.xml" EntryPoints="ALL:main" Profile="sm_3_0" />
-            <Tree LastModTime="1325265047" Type="effect" Source="VS:s_terrain\effects\tree.vs | PS:s_terrain\effects\tree.ps" DestinationFile="s_terrain\effects\tree.afx" ParamList="s_terrain\effects\tree.xml" EntryPoints="ALL:main" Profile="sm_3_0" />
-            <Sky LastModTime="1325265047" Type="effect" Source="VS:s_terrain\effects\sky.vs | PS:s_terrain\effects\sky.ps" DestinationFile="s_terrain\effects\sky.afx" ParamList="s_terrain\effects\sky.xml" EntryPoints="ALL:main" Profile="sm_3_0" />
-            <Blur LastModTime="1325265047" Type="effect" Source="VS:s_terrain\effects\postQuad.vs | PS:s_terrain\effects\blur.ps" DestinationFile="s_terrain\effects\blur.afx" ParamList="s_terrain\effects\blur.xml" EntryPoints="ALL:main" Profile="sm_3_0" />
-            <Composite LastModTime="1325265047" Type="effect" Source="VS:s_terrain\effects\postQuad.vs | PS:s_terrain\effects\composite.ps" DestinationFile="s_terrain\effects\Composite.afx" ParamList="s_terrain\effects\composite.xml" EntryPoints="ALL:main" Profile="sm_3_0" />
-            <TexturedQuad LastModTime="1325265047" Type="effect" Source="VS:s_terrain\effects\postQuad.vs | PS:s_terrain\effects\texQuad.ps" DestinationFile="s_terrain\effects\TexturedQuad.afx" ParamList="s_terrain\effects\texQuad.xml" EntryPoints="ALL:main" Profile="sm_3_0" />
-            <EffectList LastModTime="1325265047" Type="ProjectFXList" DestinationFile="s_terrain\effects\effectList.xml" />
+        <effects Type="folder" LastModTime="1325265047">
+            <Terrain Type="effect" Source="VS:s_terrain\effects\terrain.vs | PS:s_terrain\effects\terrain.ps" DestinationFile="s_terrain\effects\terrain.afx" ParamList="s_terrain\effects\terrain.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
+            <Tree Type="effect" Source="VS:s_terrain\effects\tree.vs | PS:s_terrain\effects\tree.ps" DestinationFile="s_terrain\effects\tree.afx" ParamList="s_terrain\effects\tree.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
+            <Sky Type="effect" Source="VS:s_terrain\effects\sky.vs | PS:s_terrain\effects\sky.ps" DestinationFile="s_terrain\effects\sky.afx" ParamList="s_terrain\effects\sky.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
+            <Blur Type="effect" Source="VS:s_terrain\effects\postQuad.vs | PS:s_terrain\effects\blur.ps" DestinationFile="s_terrain\effects\blur.afx" ParamList="s_terrain\effects\blur.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
+            <Composite Type="effect" Source="VS:s_terrain\effects\postQuad.vs | PS:s_terrain\effects\composite.ps" DestinationFile="s_terrain\effects\Composite.afx" ParamList="s_terrain\effects\composite.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
+            <TexturedQuad Type="effect" Source="VS:s_terrain\effects\postQuad.vs | PS:s_terrain\effects\texQuad.ps" DestinationFile="s_terrain\effects\TexturedQuad.afx" ParamList="s_terrain\effects\texQuad.xml" EntryPoints="ALL:main" Targets="sm_3_0" LastModTime="1325265047" />
+            <EffectList Type="ProjectFXList" DestinationFile="s_terrain\effects\effectList.xml" LastModTime="1325265047" />
         </effects>
-        <Comic LastModTime="1325484148" Type="font" Name="s_terrain\comic.ttf" Size="14" DestinationFile="s_terrain\comic.fnt">
+        <Comic Type="font" Name="s_terrain\comic.ttf" Size="14.000000" AntiAlias="true" DestinationFile="s_terrain\comic.fnt" LastModTime="1325484148">
             <Range0 Start="0" End="255" />
         </Comic>
-        <Loading LastModTime="1325617097" Type="texture" Method="d3d" SourceFile="s_terrain\loading.png" DestinationFile="s_terrain\loading.tex" />
-        <helpmove LastModTime="1325617097" Type="texture" Method="d3d" SourceFile="s_terrain\helpmove.png" DestinationFile="s_terrain\helpmove.tex" />
-        <helplook LastModTime="1325617097" Type="texture" Method="d3d" SourceFile="s_terrain\helplook.png" DestinationFile="s_terrain\helplook.tex" />
+        <Loading Type="texture" Method="D3D" SourceFile="s_terrain\loading.png" DestinationFile="s_terrain\loading.tex" LastModTime="1325617097" />
+        <helpmove Type="texture" Method="D3D" SourceFile="s_terrain\helpmove.png" DestinationFile="s_terrain\helpmove.tex" LastModTime="1325617097" />
+        <helplook Type="texture" Method="D3D" SourceFile="s_terrain\helplook.png" DestinationFile="s_terrain\helplook.tex" LastModTime="1325617097" />
     </Project>
 </Root>

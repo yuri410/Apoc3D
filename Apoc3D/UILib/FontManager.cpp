@@ -115,7 +115,7 @@ namespace Apoc3D
 				glyph.Height = br->ReadInt32();
 				glyph.Offset = br->ReadInt64();
 				glyph.IsMapped = false;
-				glyph.NumberOfBucketUsing = 0;
+				glyph.NumberOfBucketsUsing = 0;
 				glyph.StartingParentBucket = -1;
 
 				assert(glyph.Index<glyphCount);
@@ -136,8 +136,8 @@ namespace Apoc3D
 			}
 			m_heightInt = static_cast<int>(m_height+0.5f);
 
-			m_maxWidth = maxWidth;
-			m_maxHeight = maxHeight;
+			m_maxGlyphWidth = maxWidth;
+			m_maxGlyphHeight = maxHeight;
 
 			m_edgeCount = FontManager::TextureSize / maxHeight;
 			m_buckets = new Bucket[m_edgeCount*m_edgeCount];
@@ -150,9 +150,7 @@ namespace Apoc3D
 				for (int j=0;j<m_edgeCount;j++)
 				{
 					Bucket& bk = m_buckets[i*m_edgeCount+j];
-					//bk.Freq = 0;
-					//bk.X = j;
-					//bk.Y = i;
+					
 					bk.BucketIndex = i * m_edgeCount+j;
 					bk.CurrentGlyph = -1;
 					bk.SrcRect = Apoc3D::Math::RectangleF(static_cast<float>(j*maxHeight), static_cast<float>(i*maxHeight), static_cast<float>(maxHeight), static_cast<float>(maxHeight));
@@ -165,6 +163,11 @@ namespace Apoc3D
 			memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
 			memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
 			memset(m_lastFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
+
+			for (int i=0;i<m_edgeCount;i++)
+			{
+				m_lineBucketsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
+			}
 
 			// now put the glyphs into the buckets. Initially the largest glyphs are inserted.
 			{
@@ -347,6 +350,14 @@ namespace Apoc3D
 							continue;
 						}
 
+						float nextX = x + chdef.AdcanceX;
+						if (nextX>=width + std)
+						{
+							x = std;
+							nextX = x + chdef.AdcanceX;
+							y += lineSpacing;
+						}
+
 						if (!glyph.IsMapped)
 						{
 							EnsureGlyph(glyph);
@@ -362,12 +373,7 @@ namespace Apoc3D
 
 						sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
 
-						x += chdef.AdcanceX;
-						if (x>=width + std)
-						{
-							x = std;
-							y += lineSpacing;
-						}
+						x = nextX;
 					}
 
 				}
@@ -498,6 +504,15 @@ namespace Apoc3D
 							continue;
 						}
 
+						float nextX = x + chdef.AdcanceX;
+						if (nextX>=width + std)
+						{
+							x = std;
+							nextX = x + chdef.AdcanceX;
+							y += ls;
+						}
+
+
 						if (!glyph.IsMapped)
 						{
 							EnsureGlyph(glyph);
@@ -513,12 +528,7 @@ namespace Apoc3D
 
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
 
-						x += chdef.AdcanceX;
-						if (x>=width + std)
-						{
-							x=std;
-							y += ls;
-						}
+						x = nextX;
 					}
 
 				}
@@ -605,6 +615,11 @@ namespace Apoc3D
 			memcpy(m_lasttime_lineBucketsFreqClassificationCount, m_lineBucketsFreqClassificationCount, sizeof(int)*m_edgeCount*MaxFreq);
 			// the reset the current to zero for statistics in the current frame
 			memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
+			// set specific freq of all buckets in each line to the zero feq
+			for (int i=0;i<m_edgeCount;i++)
+			{
+				m_lineBucketsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
+			}
 
 			memcpy(m_lastFreqTable, m_currentFreqTable, sizeof(int)*m_edgeCount*m_edgeCount);
 			memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
@@ -616,7 +631,6 @@ namespace Apoc3D
 			if (glyph.Width == 0 || glyph.Height == 0)
 				return;
 
-			//br->getBaseStream()->setPosition(glyph.Offset);
 			br->getBaseStream()->Seek(glyph.Offset, SEEK_Begin);
 
 			Apoc3D::Math::Rectangle lockRect(static_cast<int32>(glyph.MappedRect.X), static_cast<int32>(glyph.MappedRect.Y),
@@ -642,8 +656,6 @@ namespace Apoc3D
 
 					*pix = highA<<8 | 0xff;
 				}
-				//memcpy((char*)dataRect.getDataPointer()+j*dataRect.getPitch(),
-				//buf+j*glyph.Width, glyph.Width);
 			}
 
 
@@ -660,7 +672,7 @@ namespace Apoc3D
 			{
 				for (int i=0;i<m_edgeCount && !done;i++)
 				{
-					if (m_lineBucketsFreqClassificationCount[freq]>=bucketsNeeded)
+					if (m_lineBucketsFreqClassificationCount[freq + i * MaxFreq]>=bucketsNeeded)
 					{
 						// even though the number of buckets in line is sufficient enough
 						// whether they are consecutive still needed to be checked.
@@ -686,7 +698,7 @@ namespace Apoc3D
 							// load the glyph
 
 							// 1. Clears the buckets
-							UseBuckets(0, i, bucketPosition, bucketsNeeded);
+							UseBuckets(nullptr, i, bucketPosition, bucketsNeeded);
 
 							Stream* strm = m_resource->GetReadStream();
 							BinaryReader* br = new BinaryReader(strm);
@@ -711,24 +723,29 @@ namespace Apoc3D
 		}
 		void Font::SetUseFreq(const Glyph& glyph)
 		{
-			for (int i=0;i<glyph.NumberOfBucketUsing;i++)
+			for (int i=0;i<glyph.NumberOfBucketsUsing;i++)
 			{
 				const Bucket& buk = m_buckets[glyph.StartingParentBucket+i];
 				int& freq = m_currentFreqTable[buk.BucketIndex];
+				int lineIndex = buk.BucketIndex / m_edgeCount;
+				int spFreqLineIdx = lineIndex * MaxFreq;
+				m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]--;
+
 				freq++;
 				if (freq >= MaxFreq)
 					freq = MaxFreq-1;
-				m_lineBucketsFreqClassificationCount[freq]++;
+				
+				m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]++;
 			}
 		}
 		void Font::UseBuckets(Glyph* g, int i, int j, int amount)
 		{
-			// if amount > 0 then use buckets, otherwise clears the given range of buckets(g should be 0 in this case)
-			if (amount>0)
+			if (g)
 			{
+				// use buckets
 				const Apoc3D::Math::RectangleF& bukRect = m_buckets[i*m_edgeCount+j].SrcRect;
 
-				g->NumberOfBucketUsing = amount;
+				g->NumberOfBucketsUsing = amount;
 				g->StartingParentBucket = i*m_edgeCount+j;
 				for (int k=0;k<amount;k++)
 				{
@@ -740,15 +757,22 @@ namespace Apoc3D
 			}
 			else
 			{
-				for (int k=0;k<amount;k++)
+				// clear the requested amount of buckets one by one
+				for (int s = 0; s<amount; s++)
 				{
-					int index = m_buckets[i*m_edgeCount+j].CurrentGlyph;
-					Glyph& oglyph = m_glyphList[index];
-					oglyph.IsMapped = false;
-					oglyph.StartingParentBucket = -1;
-					oglyph.NumberOfBucketUsing = 0;
-
-					m_buckets[i*m_edgeCount+j+k].CurrentGlyph = -1;;
+					int index = m_buckets[i*m_edgeCount+j + s].CurrentGlyph;
+					if (index != -1)
+					{
+						Glyph& oglyph = m_glyphList[index];
+						oglyph.IsMapped = false;
+						
+						for (int k=0;k<oglyph.NumberOfBucketsUsing;k++)
+						{
+							m_buckets[oglyph.StartingParentBucket+k].CurrentGlyph = -1;
+						}
+						oglyph.StartingParentBucket = -1;
+						oglyph.NumberOfBucketsUsing = 0;
+					}
 				}
 			}
 		}
