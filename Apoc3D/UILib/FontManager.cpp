@@ -688,7 +688,7 @@ namespace Apoc3D
 							}
 							else
 							{
-								numOfConsqBuckets=-1; // resets if it meets any obstacle
+								numOfConsqBuckets=0; // resets if it meets any obstacle
 							}
 						}
 
@@ -731,10 +731,17 @@ namespace Apoc3D
 				int spFreqLineIdx = lineIndex * MaxFreq;
 				m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]--;
 
-				freq++;
-				if (freq >= MaxFreq)
-					freq = MaxFreq-1;
-				
+				/*if (max)
+				{
+					freq = MaxFreq -1;
+				}
+				else*/
+				{
+					freq++;
+					if (freq >= MaxFreq)
+						freq = MaxFreq-1;
+				}
+
 				m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]++;
 			}
 		}

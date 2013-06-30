@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <Root>
-    <Project Name="Demo" TexturePath="textures" MaterialPath="">
+    <Project Name="Sample Terrain" TexturePath="textures" MaterialPath="">
         <textures Type="folder" Pack="pak" DestinationPack="s_terrain\textures.pak" LastModTime="1325265047">
             <TGrass Type="texture" Method="D3D" SourceFile="s_terrain\textures\Grass3_tilled.png" DestinationFile="s_terrain\textures\TGrass.tex" GenerateMipmaps="true" PixelFormat="DXT1" LastModTime="1325265047" />
             <TRock Type="texture" Method="D3D" SourceFile="s_terrain\textures\Rock3_tilled.png" DestinationFile="s_terrain\textures\TRock.tex" GenerateMipmaps="true" PixelFormat="DXT1" LastModTime="1325265047" />

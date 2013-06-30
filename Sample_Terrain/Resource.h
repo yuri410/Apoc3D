@@ -10,7 +10,7 @@
 #define IDD_ABOUTBOX			103
 #define IDM_ABOUT				104
 #define IDM_EXIT				105
-#define IDI_SAMPLE_TERRAIN			107
+#define IDI_SAMPLE_FONT			107
 #define IDI_SMALL				108
 #define IDC_SAMPLE_TERRAIN			109
 #define IDC_MYICON				2
