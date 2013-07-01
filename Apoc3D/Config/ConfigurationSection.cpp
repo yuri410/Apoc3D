@@ -539,9 +539,16 @@ namespace Apoc3D
 		{
 			for (int i=0;i<count;i++)
 			{
-				result.append(1, '"');
-				result.append(v[i]);
-				result.append(1, '"');
+				if (v[i].find(',') != String::npos)
+				{
+					result.append(1, '"');
+					result.append(v[i]);
+					result.append(1, '"');
+				}
+				else
+				{
+					result.append(v[i]);
+				}
 				if (i != count - 1)
 					result.append(1, ',');
 			}
