@@ -290,7 +290,7 @@ namespace Apoc3D
 		}
 		void BinaryReader::ReadVector3(Vector3& vec)
 		{
-			FillBuffer(sizeof(float)*2);
+			FillBuffer(sizeof(float)*3);
 #if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
@@ -309,7 +309,7 @@ namespace Apoc3D
 		}
 		void BinaryReader::ReadVector4(Vector4& vec)
 		{
-			FillBuffer(sizeof(float)*2);
+			FillBuffer(sizeof(float)*4);
 #if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
