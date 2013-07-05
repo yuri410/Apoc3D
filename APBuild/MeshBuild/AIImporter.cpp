@@ -140,7 +140,7 @@ namespace APBuild
 				data->Faces.ResizeDiscard(m->mNumFaces);
 				for (uint j=0;j<m->mNumFaces;j++)
 				{
-					aiFace f = m->mFaces[j];
+					const aiFace& f = m->mFaces[j];
 					assert(f.mNumIndices == 3);
 
 					MeshFace face(f.mIndices[0], f.mIndices[1], f.mIndices[2], 0);
