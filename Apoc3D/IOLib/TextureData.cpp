@@ -40,11 +40,11 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		static const String Tag1_Width = L"Width";
-		static const String Tag_Height = L"Height";
-		static const String Tag_Depth = L"Depth";
-		static const String Tag_Content = L"Content";
-		static const String Tag_LevelSize = L"LevelSize";
+		const String Tag1_Width = L"Width";
+		const String Tag_Height = L"Height";
+		const String Tag_Depth = L"Depth";
+		const String Tag_Content = L"Content";
+		const String Tag_LevelSize = L"LevelSize";
 		
 		void TextureLevelData::LoadData(TaggedDataReader* data, bool doNotLoadContent, int32 flags)
 		{
@@ -145,12 +145,12 @@ namespace Apoc3D
 		}
 
 		
-		static const String Tag_Type = L"Type";
-		static const String Tag_Format = L"Format";
-		static const String Tag_ContentSize = L"ContentSize";
-		static const String Tag_LevelCount = L"LevelCount";
-		static const String Tag_Level = L"Level";
-		static const String Tag_Flags = L"Flags";
+		const String Tag_Type = L"Type";
+		const String Tag_Format = L"Format";
+		const String Tag_ContentSize = L"ContentSize";
+		const String Tag_LevelCount = L"LevelCount";
+		const String Tag_Level = L"Level";
+		const String Tag_Flags = L"Flags";
 
 		void TextureData::Load(const ResourceLocation* rl, bool doNotLoadLevel, bool doNotLoadContent)
 		{
