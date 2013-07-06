@@ -45,8 +45,8 @@ using namespace Apoc3D::Utility;
 
 namespace APDesigner
 {
-	static Point MaxSize(300, 300);
-	static Point MinSize(64, 64);
+	const Point MaxSize(300, 300);
+	const Point MinSize(64, 64);
 
 	TextureThumbViewer::TextureThumbViewer(RenderDevice* device)
 		: m_texture(0), m_device(device)
