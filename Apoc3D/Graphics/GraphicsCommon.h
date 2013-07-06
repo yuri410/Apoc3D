@@ -35,7 +35,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			static const int32 MaxScenePass = 64;
+			const int32 MaxScenePass = 64;
 
 			enum TextureType
 			{
