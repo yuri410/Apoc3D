@@ -42,40 +42,40 @@ namespace Apoc3D
 	{
 		/** Used only when storing a material as a file
 		*/
-		static const int MtrlId_V3 = ((byte)'M' << 24) | ((byte)'T' << 16) | ((byte)'R' << 8) | ((byte)'L');
+		const int MtrlId_V3 = ((byte)'M' << 24) | ((byte)'T' << 16) | ((byte)'R' << 8) | ((byte)'L');
 
 		// =============================================================
 
-		static String TAG_3_CustomParamCount = L"CustomParamCount";
-		static String TAG_3_CustomParam = L"CustomParam";
+		String TAG_3_CustomParamCount = L"CustomParamCount";
+		String TAG_3_CustomParam = L"CustomParam";
 
-		static String TAG_3_HasTexture = L"HasTexture";
-		static String TAG_3_Texture = L"Texture";
-		static String TAG_3_HasEffect = L"HasEffect";
-		static String TAG_3_Effect = L"Effect";
-
-
-		static String TAG_3_RenderPriority = L"RenderPriority";
-		static String TAG_3_PassFlags = L"PassFlags";
-
-		static String TAG_3_IsBlendTransparent = L"IsBlendTransparent";
-		static String TAG_3_SourceBlend = L"SourceBlend";
-		static String TAG_3_DestinationBlend = L"DestinationBlend";
-		static String TAG_3_BlendFunction = L"BlendFunction";
-
-		static String TAG_3_CullMode = L"CullMode";
+		String TAG_3_HasTexture = L"HasTexture";
+		String TAG_3_Texture = L"Texture";
+		String TAG_3_HasEffect = L"HasEffect";
+		String TAG_3_Effect = L"Effect";
 
 
-		static String TAG_3_AlphaReference = L"AlphaReference";
-		static String TAG_3_AlphaTestEnable = L"AlphaTestEnable";
+		String TAG_3_RenderPriority = L"RenderPriority";
+		String TAG_3_PassFlags = L"PassFlags";
 
-		static String TAG_3_DepthTestEnabled = L"DepthTestEnabled";
-		static String TAG_3_DepthWriteEnabled = L"DepthWriteEnabled";
+		String TAG_3_IsBlendTransparent = L"IsBlendTransparent";
+		String TAG_3_SourceBlend = L"SourceBlend";
+		String TAG_3_DestinationBlend = L"DestinationBlend";
+		String TAG_3_BlendFunction = L"BlendFunction";
 
-		static String TAG_3_MaterialColorTag = L"MaterialColor";
-		static String TAG_3_MaterialRefName = L"MaterialRefName";
+		String TAG_3_CullMode = L"CullMode";
 
-		static String TAG_3_UsePointSprite = L"UsePointSprite";
+
+		String TAG_3_AlphaReference = L"AlphaReference";
+		String TAG_3_AlphaTestEnable = L"AlphaTestEnable";
+
+		String TAG_3_DepthTestEnabled = L"DepthTestEnabled";
+		String TAG_3_DepthWriteEnabled = L"DepthWriteEnabled";
+
+		String TAG_3_MaterialColorTag = L"MaterialColor";
+		String TAG_3_MaterialRefName = L"MaterialRefName";
+
+		String TAG_3_UsePointSprite = L"UsePointSprite";
 
 
 		void MaterialData::AddCustomParameter(const MaterialCustomParameter& value)
