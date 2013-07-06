@@ -35,7 +35,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		static const int32 MaxTextures = 16;
+		const int32 MaxTextures = 16;
 
 		/**
 		 *  Defines custom material parameters. 
