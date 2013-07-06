@@ -65,7 +65,7 @@ namespace APDesigner
 			}
 		}
 
-		m_centerOfMass = Vector2Utils::LDVector(rect.X+rect.Width/2, rect.Y+rect.Height/2);
+		m_centerOfMass = Vector2(rect.X+rect.Width/2, rect.Y+rect.Height/2);
 	}
 
 	QuadTreeNode::~QuadTreeNode()
@@ -100,7 +100,7 @@ namespace APDesigner
 		{
 			m_totalAttachedInSubtree = 0;
 			m_equviliantMass = 0;
-			m_centerOfMass = Vector2Utils::Zero;
+			m_centerOfMass = Vector2::Zero;
 
 			for (int i=0;i<4;i++)
 			{
@@ -115,7 +115,7 @@ namespace APDesigner
 			// calculate the center of mass using expectation value.
 			// This can be proved mathematically to also work on hierarchy
 			// structures
-			Vector2 expectedPos = Vector2Utils::Zero;
+			Vector2 expectedPos = Vector2::Zero;
 
 			// Go through all GraphNode
 			for (LinkedList<GraphNode*>::Iterator iter = m_attachedGraphNodes.Begin();
@@ -125,7 +125,7 @@ namespace APDesigner
 				const float m = nde->getMass();
 				totalMass += nde->getMass();
 
-				expectedPos = Vector2Utils::Add(expectedPos, Vector2Utils::Multiply(nde->getPosition(), m));
+				expectedPos = Vector2::Add(expectedPos, Vector2::Multiply(nde->getPosition(), m));
 				m_totalAttachedInSubtree++;
 			}
 
@@ -139,14 +139,14 @@ namespace APDesigner
 					m_totalAttachedInSubtree += m_subNodes[i]->m_totalAttachedInSubtree;
 					totalMass += m_subNodes[i]->m_equviliantMass;
 
-					expectedPos = Vector2Utils::Add(expectedPos, Vector2Utils::Multiply(m_subNodes[i]->m_centerOfMass, m_subNodes[i]->getMass()));
+					expectedPos = Vector2::Add(expectedPos, Vector2::Multiply(m_subNodes[i]->m_centerOfMass, m_subNodes[i]->getMass()));
 				}
 			}
 
 			// div by 0 check
 			if (totalMass>0.1f)
 			{
-				expectedPos = Vector2Utils::Divide(expectedPos, totalMass);
+				expectedPos = Vector2::Divide(expectedPos, totalMass);
 
 				m_centerOfMass = expectedPos;
 			}
@@ -179,9 +179,9 @@ namespace APDesigner
 		{
 			GraphNode* nde = *iter;
 			
-			Vector2 d = Vector2Utils::Subtract(pt, nde->getPosition());
-			float x = Vector2Utils::GetX(d);
-			float y = Vector2Utils::GetY(d);
+			Vector2 d = Vector2::Subtract(pt, nde->getPosition());
+			float x = d.X;
+			float y = d.Y;
 
 			// use the ellipse's equation to check the intersection
 
@@ -191,8 +191,8 @@ namespace APDesigner
 
 		// used to add extent to m_area when checking
 		Apoc3D::Math::RectangleF pointRegion(
-			Vector2Utils::GetX(pt)-m_area.Width*0.5f, 
-			Vector2Utils::GetY(pt)-m_area.Height*0.5f, 
+			pt.X-m_area.Width*0.5f, 
+			pt.Y-m_area.Height*0.5f, 
 			m_area.Width, m_area.Height);
 
 		for (int i=0;i<4;i++)

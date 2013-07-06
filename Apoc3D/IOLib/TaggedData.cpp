@@ -614,14 +614,14 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				v2x(vec) = cr32_dep(m_buffer);
-				v2y(vec) = cr32_dep(m_buffer + sizeof(float));
+				vec.X = cr32_dep(m_buffer);
+				vec.Y = cr32_dep(m_buffer + sizeof(float));
 			}
 			else
 #endif
 			{
-				v2x(vec) = cr32_le(m_buffer);
-				v2y(vec) = cr32_le(m_buffer + sizeof(float));
+				vec.X = cr32_le(m_buffer);
+				vec.Y = cr32_le(m_buffer + sizeof(float));
 			}
 		}
 		void TaggedDataReader::_GetEntryVector3(const Entry* ent, Vector3& vec)
@@ -630,16 +630,16 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				v3x(vec) = cr32_dep(m_buffer);
-				v3y(vec) = cr32_dep(m_buffer + sizeof(float));
-				v3z(vec) = cr32_dep(m_buffer + sizeof(float) * 2);
+				vec.X = cr32_dep(m_buffer);
+				vec.Y = cr32_dep(m_buffer + sizeof(float));
+				vec.Z = cr32_dep(m_buffer + sizeof(float) * 2);
 			}
 			else
 #endif
 			{
-				v3x(vec) = cr32_le(m_buffer);
-				v3y(vec) = cr32_le(m_buffer + sizeof(float));
-				v3z(vec) = cr32_le(m_buffer + sizeof(float) * 2);
+				vec.X = cr32_le(m_buffer);
+				vec.Y = cr32_le(m_buffer + sizeof(float));
+				vec.Z = cr32_le(m_buffer + sizeof(float) * 2);
 			}
 		}
 		void TaggedDataReader::_GetEntryVector4(const Entry* ent, Vector4& vec)
@@ -648,18 +648,18 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				v4x(vec) = cr32_dep(m_buffer);
-				v4y(vec) = cr32_dep(m_buffer + sizeof(float));
-				v4z(vec) = cr32_dep(m_buffer + sizeof(float) * 2);
-				v4w(vec) = cr32_dep(m_buffer + sizeof(float) * 3);
+				vec.X = cr32_dep(m_buffer);
+				vec.Y = cr32_dep(m_buffer + sizeof(float));
+				vec.Z = cr32_dep(m_buffer + sizeof(float) * 2);
+				vec.W = cr32_dep(m_buffer + sizeof(float) * 3);
 			}
 			else
 #endif
 			{
-				v4x(vec) = cr32_le(m_buffer);
-				v4y(vec) = cr32_le(m_buffer + sizeof(float));
-				v4z(vec) = cr32_le(m_buffer + sizeof(float) * 2);
-				v4w(vec) = cr32_le(m_buffer + sizeof(float) * 3);
+				vec.X = cr32_le(m_buffer);
+				vec.Y = cr32_le(m_buffer + sizeof(float));
+				vec.Z = cr32_le(m_buffer + sizeof(float) * 2);
+				vec.W = cr32_le(m_buffer + sizeof(float) * 3);
 			}
 		}
 		void TaggedDataReader::_GetEntryColor4(const Entry* ent, Color4& clr)
@@ -875,25 +875,25 @@ namespace Apoc3D
 			if (m_endianDependent)
 			{
 				FillBuffer(*e, sizeof(float)*6);
-				v3x(bb.Minimum) = cr32_dep(m_buffer);
-				v3y(bb.Minimum) = cr32_dep(m_buffer + sizeof(float));
-				v3z(bb.Minimum) = cr32_dep(m_buffer + sizeof(float) * 2);
+				bb.Minimum.X = cr32_dep(m_buffer);
+				bb.Minimum.Y = cr32_dep(m_buffer + sizeof(float));
+				bb.Minimum.Z = cr32_dep(m_buffer + sizeof(float) * 2);
 
-				v3x(bb.Maximum) = cr32_dep(m_buffer + sizeof(float) * 3);
-				v3y(bb.Maximum) = cr32_dep(m_buffer + sizeof(float) * 4);
-				v3z(bb.Maximum) = cr32_dep(m_buffer + sizeof(float) * 5);
+				bb.Maximum.X = cr32_dep(m_buffer + sizeof(float) * 3);
+				bb.Maximum.Y = cr32_dep(m_buffer + sizeof(float) * 4);
+				bb.Maximum.Z = cr32_dep(m_buffer + sizeof(float) * 5);
 			}
 			else
 #endif
 			{
 				FillBuffer(*e, sizeof(float)*6);
-				v3x(bb.Minimum) = cr32_le(m_buffer);
-				v3y(bb.Minimum) = cr32_le(m_buffer + sizeof(float));
-				v3z(bb.Minimum) = cr32_le(m_buffer + sizeof(float) * 2);
+				bb.Minimum.X = cr32_le(m_buffer);
+				bb.Minimum.Y = cr32_le(m_buffer + sizeof(float));
+				bb.Minimum.Z = cr32_le(m_buffer + sizeof(float) * 2);
 
-				v3x(bb.Maximum) = cr32_le(m_buffer + sizeof(float) * 3);
-				v3y(bb.Maximum) = cr32_le(m_buffer + sizeof(float) * 4);
-				v3z(bb.Maximum) = cr32_le(m_buffer + sizeof(float) * 5);
+				bb.Maximum.X = cr32_le(m_buffer + sizeof(float) * 3);
+				bb.Maximum.Y = cr32_le(m_buffer + sizeof(float) * 4);
+				bb.Maximum.Z = cr32_le(m_buffer + sizeof(float) * 5);
 			}
 		}
 		void TaggedDataReader::_GetEntryBoundingSphere(const Entry* e, BoundingSphere& bs)
@@ -902,18 +902,18 @@ namespace Apoc3D
 			if (m_endianDependent)
 			{
 				FillBuffer(*e, sizeof(float)*4);
-				v3x(bs.Center) = cr32_dep(m_buffer);
-				v3y(bs.Center) = cr32_dep(m_buffer + sizeof(float));
-				v3z(bs.Center) = cr32_dep(m_buffer + sizeof(float) * 2);
+				bs.Center.X = cr32_dep(m_buffer);
+				bs.Center.Y = cr32_dep(m_buffer + sizeof(float));
+				bs.Center.Z = cr32_dep(m_buffer + sizeof(float) * 2);
 				bs.Radius = cr32_dep(m_buffer + sizeof(float) * 3);
 			}
 			else
 #endif
 			{
 				FillBuffer(*e, sizeof(float)*4);
-				v3x(bs.Center) = cr32_le(m_buffer);
-				v3y(bs.Center) = cr32_le(m_buffer + sizeof(float));
-				v3z(bs.Center) = cr32_le(m_buffer + sizeof(float) * 2);
+				bs.Center.X = cr32_le(m_buffer);
+				bs.Center.Y = cr32_le(m_buffer + sizeof(float));
+				bs.Center.Z = cr32_le(m_buffer + sizeof(float) * 2);
 				bs.Radius = cr32_le(m_buffer + sizeof(float) * 3);
 			}			
 		}
@@ -923,25 +923,25 @@ namespace Apoc3D
 			if (m_endianDependent)
 			{
 				FillBuffer(*e, sizeof(float)*6);
-				v3x(r.Position) = cr32_dep(m_buffer);
-				v3y(r.Position) = cr32_dep(m_buffer + sizeof(float));
-				v3z(r.Position) = cr32_deps(m_buffer + sizeof(float) * 2);
+				r.Position.X = cr32_dep(m_buffer);
+				r.Position.Y = cr32_dep(m_buffer + sizeof(float));
+				r.Position.Z = cr32_dep(m_buffer + sizeof(float) * 2);
 
-				v3x(r.Direction) = cr32_dep(m_buffer + sizeof(float) * 3);
-				v3y(r.Direction) = cr32_dep(m_buffer + sizeof(float) * 4);
-				v3z(r.Direction) = cr32_dep(m_buffer + sizeof(float) * 5);
+				r.Direction.X = cr32_dep(m_buffer + sizeof(float) * 3);
+				r.Direction.Y = cr32_dep(m_buffer + sizeof(float) * 4);
+				r.Direction.Z = cr32_dep(m_buffer + sizeof(float) * 5);
 			}
 			else
 #endif
 			{
 				FillBuffer(*e, sizeof(float)*6);
-				v3x(r.Position) = cr32_le(m_buffer);
-				v3y(r.Position) = cr32_le(m_buffer + sizeof(float));
-				v3z(r.Position) = cr32_le(m_buffer + sizeof(float) * 2);
+				r.Position.X = cr32_le(m_buffer);
+				r.Position.Y = cr32_le(m_buffer + sizeof(float));
+				r.Position.Z = cr32_le(m_buffer + sizeof(float) * 2);
 
-				v3x(r.Direction) = cr32_le(m_buffer + sizeof(float) * 3);
-				v3y(r.Direction) = cr32_le(m_buffer + sizeof(float) * 4);
-				v3z(r.Direction) = cr32_le(m_buffer + sizeof(float) * 5);
+				r.Direction.X = cr32_le(m_buffer + sizeof(float) * 3);
+				r.Direction.Y = cr32_le(m_buffer + sizeof(float) * 4);
+				r.Direction.Z = cr32_le(m_buffer + sizeof(float) * 5);
 			}
 		}
 		void TaggedDataReader::_GetEntryViewport(const Entry* e, Viewport& vp)
@@ -983,8 +983,8 @@ namespace Apoc3D
 				for (int i=1;i<len;i++)
 				{
 					FillBufferCurrent(sizeof(float)*2);
-					v2x(value[i]) = cr32_dep(m_buffer);
-					v2y(value[i]) = cr32_dep(m_buffer + sizeof(float));
+					value[i].X = cr32_dep(m_buffer);
+					value[i].Y = cr32_dep(m_buffer + sizeof(float));
 				}
 			}
 			else
@@ -993,8 +993,8 @@ namespace Apoc3D
 				for (int i=1;i<len;i++)
 				{
 					FillBufferCurrent(sizeof(float)*2);
-					v2x(value[i]) = cr32_le(m_buffer);
-					v2y(value[i]) = cr32_le(m_buffer + sizeof(float));
+					value[i].X = cr32_le(m_buffer);
+					value[i].Y = cr32_le(m_buffer + sizeof(float));
 				}
 			}
 		}
@@ -1008,9 +1008,9 @@ namespace Apoc3D
 				{
 					Vector3& vec = value[i];
 					FillBufferCurrent(sizeof(float)*3);
-					v3x(vec) = cr32_dep(m_buffer);
-					v3y(vec) = cr32_dep(m_buffer + sizeof(float));
-					v3z(vec) = cr32_dep(m_buffer + sizeof(float) * 2);
+					vec.X = cr32_dep(m_buffer);
+					vec.Y = cr32_dep(m_buffer + sizeof(float));
+					vec.Z = cr32_dep(m_buffer + sizeof(float) * 2);
 				}
 			}
 			else
@@ -1020,9 +1020,9 @@ namespace Apoc3D
 				{
 					Vector3& vec = value[i];
 					FillBufferCurrent(sizeof(float)*3);
-					v3x(vec) = cr32_le(m_buffer);
-					v3y(vec) = cr32_le(m_buffer + sizeof(float));
-					v3z(vec) = cr32_le(m_buffer + sizeof(float) * 2);
+					vec.X = cr32_le(m_buffer);
+					vec.Y = cr32_le(m_buffer + sizeof(float));
+					vec.Z = cr32_le(m_buffer + sizeof(float) * 2);
 				}
 			}
 		}
@@ -1036,10 +1036,10 @@ namespace Apoc3D
 				{
 					Vector4& vec = value[i];
 					FillBufferCurrent(sizeof(float)*4);
-					v4x(vec) = cr32_dep(m_buffer);
-					v4y(vec) = cr32_dep(m_buffer + sizeof(float));
-					v4z(vec) = cr32_dep(m_buffer + sizeof(float) * 2);
-					v4w(vec) = cr32_dep(m_buffer + sizeof(float) * 3);
+					vec.X = cr32_dep(m_buffer);
+					vec.Y = cr32_dep(m_buffer + sizeof(float));
+					vec.Z = cr32_dep(m_buffer + sizeof(float) * 2);
+					vec.W = cr32_dep(m_buffer + sizeof(float) * 3);
 				}
 			}
 			else
@@ -1049,10 +1049,10 @@ namespace Apoc3D
 				{
 					Vector4& vec = value[i];
 					FillBufferCurrent(sizeof(float)*4);
-					v4x(vec) = cr32_le(m_buffer);
-					v4y(vec) = cr32_le(m_buffer + sizeof(float));
-					v4z(vec) = cr32_le(m_buffer + sizeof(float) * 2);
-					v4w(vec) = cr32_le(m_buffer + sizeof(float) * 3);
+					vec.X = cr32_le(m_buffer);
+					vec.Y = cr32_le(m_buffer + sizeof(float));
+					vec.Z = cr32_le(m_buffer + sizeof(float) * 2);
+					vec.W = cr32_le(m_buffer + sizeof(float) * 3);
 				}
 			}
 		}
@@ -1382,14 +1382,14 @@ namespace Apoc3D
 				{
 					BoundingBox& b = bb[i];
 					FillBufferCurrent(sizeof(float)*3);
-					v3x(b.Minimum) = cr32_le(m_buffer);
-					v3y(b.Minimum) = cr32_le(m_buffer + sizeof(float));
-					v3z(b.Minimum) = cr32_le(m_buffer + sizeof(float) * 2);
+					b.Minimum.X = cr32_le(m_buffer);
+					b.Minimum.Y = cr32_le(m_buffer + sizeof(float));
+					b.Minimum.Z = cr32_le(m_buffer + sizeof(float) * 2);
 
 					FillBufferCurrent(sizeof(float)*3);
-					v3x(b.Maximum) = cr32_le(m_buffer);
-					v3y(b.Maximum) = cr32_le(m_buffer + sizeof(float));
-					v3z(b.Maximum) = cr32_le(m_buffer + sizeof(float) * 2);
+					b.Maximum.X = cr32_le(m_buffer);
+					b.Maximum.Y = cr32_le(m_buffer + sizeof(float));
+					b.Maximum.Z = cr32_le(m_buffer + sizeof(float) * 2);
 				}
 			}
 		}
@@ -1403,9 +1403,9 @@ namespace Apoc3D
 				{
 					BoundingSphere& b = bs[i];
 					FillBufferCurrent(sizeof(float)*4);
-					v3x(b.Center) = cr32_dep(m_buffer);
-					v3y(b.Center) = cr32_dep(m_buffer + sizeof(float));
-					v3z(b.Center) = cr32_dep(m_buffer + sizeof(float) * 2);
+					b.Center.X = cr32_dep(m_buffer);
+					b.Center.Y = cr32_dep(m_buffer + sizeof(float));
+					b.Center.Z = cr32_dep(m_buffer + sizeof(float) * 2);
 					b.Radius = cr32_dep(m_buffer + sizeof(float) * 3);
 				}
 			}
@@ -1416,9 +1416,9 @@ namespace Apoc3D
 				{
 					BoundingSphere& b = bs[i];
 					FillBufferCurrent(sizeof(float)*4);
-					v3x(b.Center) = cr32_le(m_buffer);
-					v3y(b.Center) = cr32_le(m_buffer + sizeof(float));
-					v3z(b.Center) = cr32_le(m_buffer + sizeof(float) * 2);
+					b.Center.X = cr32_le(m_buffer);
+					b.Center.Y = cr32_le(m_buffer + sizeof(float));
+					b.Center.Z = cr32_le(m_buffer + sizeof(float) * 2);
 					b.Radius = cr32_le(m_buffer + sizeof(float) * 3);
 				}
 			}
@@ -1433,13 +1433,13 @@ namespace Apoc3D
 				{
 					Ray& cr = r[i];
 					FillBufferCurrent( sizeof(float)*6);
-					v3x(cr.Position) = cr32_dep(m_buffer);
-					v3y(cr.Position) = cr32_dep(m_buffer + sizeof(float));
-					v3z(cr.Position) = cr32_dep(m_buffer + sizeof(float) * 2);
+					cr.Position.X = cr32_dep(m_buffer);
+					cr.Position.Y = cr32_dep(m_buffer + sizeof(float));
+					cr.Position.Z = cr32_dep(m_buffer + sizeof(float) * 2);
 
-					v3x(cr.Direction) = cr32_dep(m_buffer + sizeof(float) * 3);
-					v3y(cr.Direction) = cr32_dep(m_buffer + sizeof(float) * 4);
-					v3z(cr.Direction) = cr32_dep(m_buffer + sizeof(float) * 5);
+					cr.Direction.X = cr32_dep(m_buffer + sizeof(float) * 3);
+					cr.Direction.Y = cr32_dep(m_buffer + sizeof(float) * 4);
+					cr.Direction.Z = cr32_dep(m_buffer + sizeof(float) * 5);
 				}
 			}
 			else
@@ -1449,13 +1449,13 @@ namespace Apoc3D
 				{
 					Ray& cr = r[i];
 					FillBufferCurrent( sizeof(float)*3);
-					v3x(cr.Position) = cr32_le(m_buffer);
-					v3y(cr.Position) = cr32_le(m_buffer + sizeof(float));
-					v3z(cr.Position) = cr32_le(m_buffer + sizeof(float) * 2);
+					cr.Position.X = cr32_le(m_buffer);
+					cr.Position.Y = cr32_le(m_buffer + sizeof(float));
+					cr.Position.Z = cr32_le(m_buffer + sizeof(float) * 2);
 
-					v3x(cr.Direction) = cr32_le(m_buffer + sizeof(float) * 3);
-					v3y(cr.Direction) = cr32_le(m_buffer + sizeof(float) * 4);
-					v3z(cr.Direction) = cr32_le(m_buffer + sizeof(float) * 5);
+					cr.Direction.X = cr32_le(m_buffer + sizeof(float) * 3);
+					cr.Direction.Y = cr32_le(m_buffer + sizeof(float) * 4);
+					cr.Direction.Z = cr32_le(m_buffer + sizeof(float) * 5);
 				}
 			}
 		}
@@ -1879,14 +1879,14 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				r32tomb_dep(v2x(vec), m_buffer);
-				r32tomb_dep(v2y(vec), m_buffer + sizeof(float));
+				r32tomb_dep(vec.X, m_buffer);
+				r32tomb_dep(vec.Y, m_buffer + sizeof(float));
 			}
 			else
 #endif
 			{
-				r32tomb_le(v2x(vec), m_buffer);
-				r32tomb_le(v2y(vec), m_buffer + sizeof(float));
+				r32tomb_le(vec.X, m_buffer);
+				r32tomb_le(vec.Y, m_buffer + sizeof(float));
 			}
 			ent.Buffer->Write(m_buffer, sizeof(float) * 2);
 		}
@@ -1895,16 +1895,16 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				r32tomb_dep(v3x(vec), m_buffer);
-				r32tomb_dep(v3y(vec), m_buffer + sizeof(float));
-				r32tomb_dep(v3z(vec), m_buffer + sizeof(float) * 2);
+				r32tomb_dep(vec.X, m_buffer);
+				r32tomb_dep(vec.Y, m_buffer + sizeof(float));
+				r32tomb_dep(vec.Z, m_buffer + sizeof(float) * 2);
 			}
 			else
 #endif
 			{
-				r32tomb_le(v3x(vec), m_buffer);
-				r32tomb_le(v3y(vec), m_buffer + sizeof(float));
-				r32tomb_le(v3z(vec), m_buffer + sizeof(float) * 2);
+				r32tomb_le(vec.X, m_buffer);
+				r32tomb_le(vec.Y, m_buffer + sizeof(float));
+				r32tomb_le(vec.Z, m_buffer + sizeof(float) * 2);
 			}
 			ent.Buffer->Write(m_buffer, sizeof(float) * 3);
 		}
@@ -1913,18 +1913,18 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				r32tomb_dep(v4x(vec), m_buffer);
-				r32tomb_dep(v4y(vec), m_buffer + sizeof(float));
-				r32tomb_dep(v4z(vec), m_buffer + sizeof(float) * 2);
-				r32tomb_dep(v4w(vec), m_buffer + sizeof(float) * 3);
+				r32tomb_dep(vec.X, m_buffer);
+				r32tomb_dep(vec.Y, m_buffer + sizeof(float));
+				r32tomb_dep(vec.Z, m_buffer + sizeof(float) * 2);
+				r32tomb_dep(vec.W, m_buffer + sizeof(float) * 3);
 			}
 			else
 #endif
 			{
-				r32tomb_le(v4x(vec), m_buffer);
-				r32tomb_le(v4y(vec), m_buffer + sizeof(float));
-				r32tomb_le(v4z(vec), m_buffer + sizeof(float) * 2);
-				r32tomb_le(v4w(vec), m_buffer + sizeof(float) * 3);
+				r32tomb_le(vec.X, m_buffer);
+				r32tomb_le(vec.Y, m_buffer + sizeof(float));
+				r32tomb_le(vec.Z, m_buffer + sizeof(float) * 2);
+				r32tomb_le(vec.W, m_buffer + sizeof(float) * 3);
 			}
 			ent.Buffer->Write(m_buffer, sizeof(float) * 4);
 		}
@@ -2140,25 +2140,25 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				r32tomb_dep(v3x(bb.Minimum), m_buffer);
-				r32tomb_dep(v3y(bb.Minimum), m_buffer + sizeof(float));
-				r32tomb_dep(v3z(bb.Minimum), m_buffer + sizeof(float) * 2);
+				r32tomb_dep(bb.Minimum.X, m_buffer);
+				r32tomb_dep(bb.Minimum.Y, m_buffer + sizeof(float));
+				r32tomb_dep(bb.Minimum.Z, m_buffer + sizeof(float) * 2);
 
-				r32tomb_dep(v3x(bb.Maximum), m_buffer + sizeof(float) * 3);
-				r32tomb_dep(v3y(bb.Maximum), m_buffer + sizeof(float) * 4);
-				r32tomb_dep(v3z(bb.Maximum), m_buffer + sizeof(float) * 5);
+				r32tomb_dep(bb.Maximum.X, m_buffer + sizeof(float) * 3);
+				r32tomb_dep(bb.Maximum.Y, m_buffer + sizeof(float) * 4);
+				r32tomb_dep(bb.Maximum.Z, m_buffer + sizeof(float) * 5);
 				ent.Buffer->Write(m_buffer, sizeof(float) * 6);
 			}
 			else
 #endif
 			{
-				r32tomb_le(v3x(bb.Minimum), m_buffer);
-				r32tomb_le(v3y(bb.Minimum), m_buffer + sizeof(float));
-				r32tomb_le(v3z(bb.Minimum), m_buffer + sizeof(float) * 2);
+				r32tomb_le(bb.Minimum.X, m_buffer);
+				r32tomb_le(bb.Minimum.Y, m_buffer + sizeof(float));
+				r32tomb_le(bb.Minimum.Z, m_buffer + sizeof(float) * 2);
 
-				r32tomb_le(v3x(bb.Maximum), m_buffer + sizeof(float) * 3);
-				r32tomb_le(v3y(bb.Maximum), m_buffer + sizeof(float) * 4);
-				r32tomb_le(v3z(bb.Maximum), m_buffer + sizeof(float) * 5);
+				r32tomb_le(bb.Maximum.X, m_buffer + sizeof(float) * 3);
+				r32tomb_le(bb.Maximum.Y, m_buffer + sizeof(float) * 4);
+				r32tomb_le(bb.Maximum.Z, m_buffer + sizeof(float) * 5);
 				ent.Buffer->Write(m_buffer, sizeof(float) * 6);
 			}
 		}
@@ -2167,17 +2167,17 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				r32tomb_dep(v3x(bs.Center), m_buffer);
-				r32tomb_dep(v3y(bs.Center), m_buffer + sizeof(float));
-				r32tomb_dep(v3z(bs.Center), m_buffer + sizeof(float) * 2);
+				r32tomb_dep(bs.Center.X, m_buffer);
+				r32tomb_dep(bs.Center.Y, m_buffer + sizeof(float));
+				r32tomb_dep(bs.Center.Z, m_buffer + sizeof(float) * 2);
 				r32tomb_dep(bs.Radius, m_buffer + sizeof(float) * 3);
 			}
 			else
 #endif
 			{
-				r32tomb_le(v3x(bs.Center), m_buffer);
-				r32tomb_le(v3y(bs.Center), m_buffer + sizeof(float));
-				r32tomb_le(v3z(bs.Center), m_buffer + sizeof(float) * 2);
+				r32tomb_le(bs.Center.X, m_buffer);
+				r32tomb_le(bs.Center.Y, m_buffer + sizeof(float));
+				r32tomb_le(bs.Center.Z, m_buffer + sizeof(float) * 2);
 				r32tomb_le(bs.Radius, m_buffer + sizeof(float) * 3);
 			}
 			ent.Buffer->Write(m_buffer, sizeof(float) * 4);
@@ -2187,25 +2187,25 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				r32tomb_dep(v3x(r.Position), m_buffer);
-				r32tomb_dep(v3y(r.Position), m_buffer + sizeof(float));
-				r32tomb_dep(v3z(r.Position), m_buffer + sizeof(float) * 2);
+				r32tomb_dep(r.Position.X, m_buffer);
+				r32tomb_dep(r.Position.Y, m_buffer + sizeof(float));
+				r32tomb_dep(r.Position.Z, m_buffer + sizeof(float) * 2);
 				
-				r32tomb_dep(v3x(r.Direction), m_buffer + sizeof(float) * 3);
-				r32tomb_dep(v3y(r.Direction), m_buffer + sizeof(float) * 4);
-				r32tomb_dep(v3z(r.Direction), m_buffer + sizeof(float) * 5);
+				r32tomb_dep(r.Direction.X, m_buffer + sizeof(float) * 3);
+				r32tomb_dep(r.Direction.Y, m_buffer + sizeof(float) * 4);
+				r32tomb_dep(r.Direction.Z, m_buffer + sizeof(float) * 5);
 				ent.Buffer->Write(m_buffer, sizeof(float) * 6);
 			}
 			else
 #endif
 			{
-				r32tomb_le(v3x(r.Position), m_buffer);
-				r32tomb_le(v3y(r.Position), m_buffer + sizeof(float));
-				r32tomb_le(v3z(r.Position), m_buffer + sizeof(float) * 2);
+				r32tomb_le(r.Position.X, m_buffer);
+				r32tomb_le(r.Position.Y, m_buffer + sizeof(float));
+				r32tomb_le(r.Position.Z, m_buffer + sizeof(float) * 2);
 				
-				r32tomb_le(v3x(r.Direction), m_buffer + sizeof(float) * 3);
-				r32tomb_le(v3y(r.Direction), m_buffer + sizeof(float) * 4);
-				r32tomb_le(v3z(r.Direction), m_buffer + sizeof(float) * 5);
+				r32tomb_le(r.Direction.X, m_buffer + sizeof(float) * 3);
+				r32tomb_le(r.Direction.Y, m_buffer + sizeof(float) * 4);
+				r32tomb_le(r.Direction.Z, m_buffer + sizeof(float) * 5);
 				ent.Buffer->Write(m_buffer, sizeof(float) * 6);
 			}
 		}

@@ -93,10 +93,10 @@ namespace APDesigner
 		delete config;
 		delete fl;
 		m_camera = new ChaseCamera();
-		m_camera->setChaseDirection(Vector3Utils::LDVector(0, 0, 1));
-		m_camera->setChasePosition(Vector3Utils::LDVector(0, 0, 0));
-		m_camera->setDesiredOffset(Vector3Utils::LDVector(0, 0, 40));
-		m_camera->setLookAtOffset(Vector3Utils::Zero);
+		m_camera->setChaseDirection(Vector3(0, 0, 1));
+		m_camera->setChasePosition(Vector3(0, 0, 0));
+		m_camera->setDesiredOffset(Vector3(0, 0, 40));
+		m_camera->setLookAtOffset(Vector3::Zero);
 		m_camera->setFar(1000);
 		m_camera->setNear(1);
 		m_sceneRenderer->RegisterCamera(m_camera);
@@ -480,8 +480,8 @@ namespace APDesigner
 
 			m_distance -= 0.5f * mouse->getDZ();
 		}
-		m_camera->setChaseDirection(Vector3Utils::LDVector(cosf(m_xang), -sinf(m_yang), sinf(m_xang)));
-		m_camera->setDesiredOffset(Vector3Utils::LDVector(0,0,m_distance));
+		m_camera->setChaseDirection(Vector3(cosf(m_xang), -sinf(m_yang), sinf(m_xang)));
+		m_camera->setDesiredOffset(Vector3(0,0,m_distance));
 
 		if (getDocumentForm()->getFontRef())
 		{

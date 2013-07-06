@@ -37,7 +37,7 @@ namespace Apoc3D
 			Matrix::Multiply(temp, m_orientation, m_transformation);
 			m_transformation = temp;
 
-			m_BoundingSphere.Center = Vector3Utils::Add(m_position, BoundingSphereOffset);
+			m_BoundingSphere.Center = m_position + BoundingSphereOffset;
 			RequiresNodeUpdate = true;
 		}
 

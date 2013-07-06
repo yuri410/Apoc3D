@@ -55,56 +55,47 @@ namespace Apoc3D
 #define ToRadian(x) (x * (Apoc3D::Math::PI/180.0f))
 #define ToDegree(x) (x * (180.0f/Apoc3D::Math::PI))
 
-		inline float Sign(float value);
 		inline float Sign(float value)
 		{
 			if (value>0)
 				return 1.0f;
 			return value<0 ? -1.0f : 0.0f;
 		}
-		inline float Lerp(float a, float b, float amount);
 		inline float Lerp(float a, float b, float amount)
 		{
 			return a + (b-a)*amount;
 		}
-		inline float Saturate(float v);
 		inline float Saturate(float v)
 		{
 			if (v>1)
 				v=1;
 			return (v<0) ? 0:v;
 		}
-		inline float Clamp(float v, float _min, float _max);
 		inline float Clamp(float v, float _min, float _max)
 		{
 			if (v > _max)
 				v = _max;
 			return (v < _min) ? _min : v;
 		}
-		inline int32 Clamp(int32 v, int32 _min, int32 _max);
 		inline int32 Clamp(int32 v, int32 _min, int32 _max)
 		{
 			if (v > _max)
 				v = _max;
 			return (v<_min) ? _min : v;
 		}
-		inline int32 Max(int32 a, int32 b);
 		inline int32 Max(int32 a, int32 b)
 		{
 			return (a > b) ? a : b;
 		}
-		inline int32 Min(int32 a, int32 b);
 		inline int32 Min(int32 a, int32 b)
 		{
 			return (a < b) ? a : b;
 		}
 
-		inline float Max(float a, float b);
 		inline float Max(float a, float b)
 		{
 			return (a > b) ? a : b;
 		}
-		inline float Min(float a, float b);
 		inline float Min(float a, float b)
 		{
 			return (a < b) ? a : b;

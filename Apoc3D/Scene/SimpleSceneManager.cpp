@@ -101,7 +101,7 @@ namespace Apoc3D
 				if ((filter && filter->Check(obj) || !filter) &&
 					obj->IntersectsSelectionRay(ray))
 				{
-					float dist = Vector3Utils::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
+					float dist = Vector3::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
 					if (dist<nearest)
 					{
 						nearest = dist;

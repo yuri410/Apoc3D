@@ -137,7 +137,7 @@ namespace Apoc3D
 				MaxHorizontalVelocity(0),
 				MinVerticalVelocity(0),
 				MaxVerticalVelocity(0),
-				Gravity(Vector3Utils::Zero),
+				Gravity(Vector3::Zero),
 				EndVelocity(1),
 				MinRotateSpeed(0),
 				MaxRotateSpeed(0),

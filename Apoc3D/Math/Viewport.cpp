@@ -43,18 +43,18 @@ namespace Apoc3D
 			Matrix::Multiply(matrix, temp, projection);
 			matrix.Inverse();
 
-			float x = 2 * (_V3X(source) - X) / static_cast<float>(Width) - 1.0f;
-			float y = -(2 * (_V3Y(source) - Y) / static_cast<float>(Height) - 1.0f);
-			float z = (_V3Z(source) - MinZ) / (MaxZ - MinZ);
+			float x = 2 * (source.X - X) / static_cast<float>(Width) - 1.0f;
+			float y = -(2 * (source.Y - Y) / static_cast<float>(Height) - 1.0f);
+			float z = (source.Z - MinZ) / (MaxZ - MinZ);
 
-			Vector3 ts = Vector3Utils::LDVector(x,y,z);
+			Vector3 ts(x,y,z);
 
-			Vector3 vector = Vector3Utils::TransformSimple(ts, matrix);
-			float a = _V3X(source) * matrix.M14 + _V3Y(source) * matrix.M24 + _V3Z(source) * matrix.M34 + matrix.M44;
+			Vector3 vector = Vector3::TransformSimple(ts, matrix);
+			float a = source.X * matrix.M14 + source.Y * matrix.M24 + source.Z * matrix.M34 + matrix.M44;
 
 			if (!WithinEpsilon(a, 1.0f))
 			{
-				vector = Vector3Utils::Divide(vector, a);
+				vector /= a;
 			}
 			return vector;
 		}
@@ -66,16 +66,16 @@ namespace Apoc3D
 			Matrix::Multiply(temp, world, view);
 			Matrix::Multiply(matrix, temp, projection);
 
-			Vector3 vector = Vector3Utils::TransformSimple(source, matrix);
+			Vector3 vector = Vector3::TransformSimple(source, matrix);
 
-			float a = _V3X(source) * matrix.M14 + _V3Y(source) * matrix.M24 + _V3Z(source) * matrix.M34 + matrix.M44;
+			float a = source.X * matrix.M14 + source.Y * matrix.M24 + source.Z * matrix.M34 + matrix.M44;
 			if (!WithinEpsilon(a, 1.0f))
 			{
-				vector = Vector3Utils::Divide(vector, a);
+				vector /= a;
 			}
-			_V3X(vector) = (_V3X(vector) + 1.0f) * 0.5f * Width + X;
-			_V3Y(vector) = (-_V3Y(vector) + 1.0f) * 0.5f * Height + Y;
-			_V3Z(vector) = _V3Z(vector) * (MaxZ - MinZ) + MinZ;
+			vector.X = (vector.X + 1.0f) * 0.5f * Width + X;
+			vector.Y = (-vector.Y + 1.0f) * 0.5f * Height + Y;
+			vector.Z = vector.Z * (MaxZ - MinZ) + MinZ;
 			return vector;
 		}
 

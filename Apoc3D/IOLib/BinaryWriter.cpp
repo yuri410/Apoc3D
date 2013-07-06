@@ -301,28 +301,28 @@ namespace Apoc3D
 
 		void BinaryWriter::WriteRay(const Ray& ray) const
 		{
-			WriteSingle(static_cast<float>(_V3X(ray.Position)));
-			WriteSingle(static_cast<float>(_V3Y(ray.Position)));
-			WriteSingle(static_cast<float>(_V3Z(ray.Position)));
-			WriteSingle(static_cast<float>(_V3X(ray.Direction)));
-			WriteSingle(static_cast<float>(_V3Y(ray.Direction)));
-			WriteSingle(static_cast<float>(_V3Z(ray.Direction)));
+			WriteSingle(ray.Position.X);
+			WriteSingle(ray.Position.Y);
+			WriteSingle(ray.Position.Z);
+			WriteSingle(ray.Direction.X);
+			WriteSingle(ray.Direction.Y);
+			WriteSingle(ray.Direction.Z);
 		}
 		void BinaryWriter::WriteBoundingBox(const BoundingBox& box) const
 		{
-			WriteSingle(static_cast<float>(v3x(box.Minimum)));
-			WriteSingle(static_cast<float>(v3y(box.Minimum)));
-			WriteSingle(static_cast<float>(v3z(box.Minimum)));
-			WriteSingle(static_cast<float>(v3x(box.Maximum)));
-			WriteSingle(static_cast<float>(v3y(box.Maximum)));
-			WriteSingle(static_cast<float>(v3z(box.Maximum)));
+			WriteSingle(box.Minimum.X);
+			WriteSingle(box.Minimum.Y);
+			WriteSingle(box.Minimum.Z);
+			WriteSingle(box.Maximum.X);
+			WriteSingle(box.Maximum.Y);
+			WriteSingle(box.Maximum.Z);
 		}
 		void BinaryWriter::WriteBoundingSphere(const BoundingSphere& sphere) const
 		{
-			WriteSingle(static_cast<float>(v3x(sphere.Center)));
-			WriteSingle(static_cast<float>(v3y(sphere.Center)));
-			WriteSingle(static_cast<float>(v3z(sphere.Center)));
-			WriteSingle(static_cast<float>(sphere.Radius));
+			WriteSingle(sphere.Center.X);
+			WriteSingle(sphere.Center.Y);
+			WriteSingle(sphere.Center.Z);
+			WriteSingle(sphere.Radius);
 		}
 
 		void BinaryWriter::WriteTaggedDataBlock(const TaggedDataWriter* data) const
@@ -352,14 +352,14 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				r32tomb_dep(v2x(vec), writeBuffer);
-				r32tomb_dep(v2y(vec), writeBuffer + sizeof(float));
+				r32tomb_dep(vec.X, writeBuffer);
+				r32tomb_dep(vec.Y, writeBuffer + sizeof(float));
 			}
 			else
 #endif
 			{
-				r32tomb_le(v2x(vec), writeBuffer);
-				r32tomb_le(v2y(vec), writeBuffer + sizeof(float));
+				r32tomb_le(vec.X, writeBuffer);
+				r32tomb_le(vec.Y, writeBuffer + sizeof(float));
 			}
 			m_baseStream->Write(writeBuffer, sizeof(float)*2);
 		}
@@ -369,16 +369,16 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				r32tomb_dep(v3x(vec), writeBuffer);
-				r32tomb_dep(v3y(vec), writeBuffer + sizeof(float));
-				r32tomb_dep(v3z(vec), writeBuffer + sizeof(float) * 2);
+				r32tomb_dep(vec.X, writeBuffer);
+				r32tomb_dep(vec.Y, writeBuffer + sizeof(float));
+				r32tomb_dep(vec.Z, writeBuffer + sizeof(float) * 2);
 			}
 			else
 #endif
 			{
-				r32tomb_le(v3x(vec), writeBuffer);
-				r32tomb_le(v3y(vec), writeBuffer + sizeof(float));
-				r32tomb_le(v3z(vec), writeBuffer + sizeof(float) * 2);
+				r32tomb_le(vec.X, writeBuffer);
+				r32tomb_le(vec.Y, writeBuffer + sizeof(float));
+				r32tomb_le(vec.Z, writeBuffer + sizeof(float) * 2);
 			}
 			m_baseStream->Write(writeBuffer, sizeof(float)*3);
 		}
@@ -388,18 +388,18 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_endianDependent)
 			{
-				r32tomb_dep(v4x(vec), writeBuffer);
-				r32tomb_dep(v4y(vec), writeBuffer + sizeof(float));
-				r32tomb_dep(v4z(vec), writeBuffer + sizeof(float) * 2);
-				r32tomb_dep(v4w(vec), writeBuffer + sizeof(float) * 3);
+				r32tomb_dep(vec.X, writeBuffer);
+				r32tomb_dep(vec.Y, writeBuffer + sizeof(float));
+				r32tomb_dep(vec.Z, writeBuffer + sizeof(float) * 2);
+				r32tomb_dep(vec.W, writeBuffer + sizeof(float) * 3);
 			}
 			else
 #endif
 			{
-				r32tomb_le(v4x(vec), writeBuffer);
-				r32tomb_le(v4y(vec), writeBuffer + sizeof(float));
-				r32tomb_le(v4z(vec), writeBuffer + sizeof(float) * 2);
-				r32tomb_le(v4w(vec), writeBuffer + sizeof(float) * 3);
+				r32tomb_le(vec.X, writeBuffer);
+				r32tomb_le(vec.Y, writeBuffer + sizeof(float));
+				r32tomb_le(vec.Z, writeBuffer + sizeof(float) * 2);
+				r32tomb_le(vec.W, writeBuffer + sizeof(float) * 3);
 			}
 			m_baseStream->Write(writeBuffer, sizeof(float)*4);
 		}

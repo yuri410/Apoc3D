@@ -227,7 +227,7 @@ namespace APBuild
 			newMD->VertexSize = refVertexSize;
 			newMD->Faces.ResizeDiscard(totalFaceCount);
 			newMD->Materials.Reserve((int32)totalMaterialCount);
-			newMD->BoundingSphere.Center = Vector3Utils::Zero;
+			newMD->BoundingSphere.Center = Vector3::Zero;
 			newMD->BoundingSphere.Radius = 0;
 
 

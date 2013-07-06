@@ -229,7 +229,7 @@ namespace APBuild
 			data->VertexSize = vertexSize;
 			
 			data->BoundingSphere.Radius = 0;
-			data->BoundingSphere.Center = Vector3Utils::Zero;
+			data->BoundingSphere.Center = Vector3::Zero;
 
 			data->VertexElements = elements;
 			
@@ -241,11 +241,11 @@ namespace APBuild
 				if (posElem)
 				{
 					const float* vtx = reinterpret_cast<const float*>(data->VertexData + j*vertexSize + posElem->getOffset());
-					Vector3 p = Vector3Utils::LDVectorPtr(vtx);
+					Vector3 p(vtx);
 				}
 				memcpy(data->VertexData+j*vertexSize, vertices[j], vertexSize);
 			}
-			data->BoundingSphere.Center = Vector3Utils::Divide(data->BoundingSphere.Center, (float)data->VertexCount);
+			data->BoundingSphere.Center = Vector3::Divide(data->BoundingSphere.Center, (float)data->VertexCount);
 
 			result->Entities.Add(data);
 		}

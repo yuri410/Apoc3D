@@ -94,10 +94,10 @@ namespace APDesigner
 		delete config;
 		delete fl;
 		m_camera = new ChaseCamera();
-		m_camera->setChaseDirection(Vector3Utils::LDVector(0, 0, 1));
-		m_camera->setChasePosition(Vector3Utils::LDVector(0, 0, 0));
-		m_camera->setDesiredOffset(Vector3Utils::LDVector(0, 0, 40));
-		m_camera->setLookAtOffset(Vector3Utils::Zero);
+		m_camera->setChaseDirection(Vector3(0, 0, 1));
+		m_camera->setChasePosition(Vector3(0, 0, 0));
+		m_camera->setDesiredOffset(Vector3(0, 0, 40));
+		m_camera->setLookAtOffset(Vector3::Zero);
 		m_camera->setFar(10000);
 		m_camera->setNear(5);
 		m_sceneRenderer->RegisterCamera(m_camera);
@@ -725,8 +725,8 @@ namespace APDesigner
 
 			m_distance -= 0.5f * mouse->getDZ();
 		}
-		m_camera->setChaseDirection(Vector3Utils::LDVector(cosf(m_xang), -sinf(m_yang), sinf(m_xang)));
-		m_camera->setDesiredOffset(Vector3Utils::LDVector(0,0,m_distance));
+		m_camera->setChaseDirection(Vector3(cosf(m_xang), -sinf(m_yang), sinf(m_xang)));
+		m_camera->setDesiredOffset(Vector3(0,0,m_distance));
 
 		if (getDocumentForm()->getFontRef())
 		{
@@ -1236,16 +1236,16 @@ namespace APDesigner
 
 	void ModelDocument::RecenterModel_Pressed(Control* ctrl)
 	{
-		Vector3 center = Vector3Utils::Zero;
+		Vector3 center = Vector3::Zero;
 		int totalVertexCount = 0;
 		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
 		{
 			Mesh* mesh = m_modelSData->getEntities()[i];
-			center = Vector3Utils::Add(center, Vector3Utils::Multiply(mesh->getBoundingSphere().Center, (float)mesh->getVertexCount()));
+			center = Vector3::Add(center, Vector3::Multiply(mesh->getBoundingSphere().Center, (float)mesh->getVertexCount()));
 			totalVertexCount+=mesh->getVertexCount();
 		}
 
-		center = Vector3Utils::Divide(center, (float)totalVertexCount);
+		center = Vector3::Divide(center, (float)totalVertexCount);
 
 		for (int i=0;i<m_modelSData->getEntities().getCount();i++)
 		{
@@ -1260,15 +1260,15 @@ namespace APDesigner
 				for (int j=0;j<mesh->getVertexCount();j++)
 				{
 					float* vtxPosOfs = reinterpret_cast<float*>(vtxData+posElem->getOffset()+j*mesh->getVertexSize());
-					vtxPosOfs[0] -= _V3X(center);
-					vtxPosOfs[1] -= _V3Y(center);
-					vtxPosOfs[2] -= _V3Z(center);
+					vtxPosOfs[0] -= center.X;
+					vtxPosOfs[1] -= center.Y;
+					vtxPosOfs[2] -= center.Z;
 				}
 				mesh->getVertexBuffer()->Unlock();
 			}
 
 			BoundingSphere sphere = mesh->getBoundingSphere();
-			sphere.Center = Vector3Utils::Subtract(sphere.Center, center);
+			sphere.Center = Vector3::Subtract(sphere.Center, center);
 			mesh->setBoundingSphere(sphere);
 		}
 	}
@@ -1290,10 +1290,10 @@ namespace APDesigner
 					{
 						float* dataOfs = reinterpret_cast<float*>(vtxData+posElem->getOffset()+j*mesh->getVertexSize());
 
-						Vector3 pos = Vector3Utils::LDVectorPtr(dataOfs);
-						pos = Vector3Utils::TransformCoordinate(pos, transform);
+						Vector3 pos(dataOfs);
+						pos = Vector3::TransformCoordinate(pos, transform);
 
-						Vector3Utils::Store(pos, dataOfs);
+						pos.Store(dataOfs);
 
 					}
 
@@ -1301,10 +1301,10 @@ namespace APDesigner
 					{
 						float* dataOfs = reinterpret_cast<float*>(vtxData+nrmElem->getOffset()+j*mesh->getVertexSize());
 
-						Vector3 pos = Vector3Utils::LDVectorPtr(dataOfs);
-						pos = Vector3Utils::TransformNormal(pos, transform);
+						Vector3 pos(dataOfs);
+						pos = Vector3::TransformNormal(pos, transform);
 
-						Vector3Utils::Store(pos, dataOfs);
+						pos.Store(dataOfs);
 
 					}
 
@@ -1313,7 +1313,7 @@ namespace APDesigner
 			}
 
 			BoundingSphere sphere = mesh->getBoundingSphere();
-			sphere.Center = Vector3Utils::TransformCoordinate(sphere.Center, transform);
+			sphere.Center = Vector3::TransformCoordinate(sphere.Center, transform);
 
 
 			mesh->setBoundingSphere(sphere);
@@ -1361,7 +1361,7 @@ namespace APDesigner
 			}
 
 			BoundingSphere sphere = mesh->getBoundingSphere();
-			_V3Z(sphere.Center) = -_V3Z(sphere.Center);
+			sphere.Center.Z = -sphere.Center.Z;
 			mesh->setBoundingSphere(sphere);
 		}
 	}

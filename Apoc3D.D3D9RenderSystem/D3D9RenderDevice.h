@@ -45,7 +45,7 @@ namespace Apoc3D
 			class D3D9RenderDevice : public RenderDevice
 			{
 			public:
-				inline D3DDevice* getDevice() const;
+				D3DDevice* getDevice() const;
 				GraphicsDeviceManager* getGraphicsDeviceManager() const { return m_devManager; } 
 
 				

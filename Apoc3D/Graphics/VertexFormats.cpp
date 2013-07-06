@@ -47,11 +47,11 @@ namespace Apoc3D
 
 		String VertexPIBNT1::GetHashString() const
 		{
-			return L"Pos: " + Vector3Utils::ToParsableString(Position) + 
-				L"N: " + Vector4Utils::ToParsableString(BlendIndices) +
-				L"N: " + Vector4Utils::ToParsableString(BlendWeight) +
-				L"N: " + Vector3Utils::ToParsableString(Normal) +
-				L"uv0: " + Vector2Utils::ToParsableString(TexCoord1);
+			return L"Pos: " + Position.ToParsableString() + 
+				L"BIdx: " + BlendIndices.ToParsableString() +
+				L"BWgt: " + BlendWeight.ToParsableString() +
+				L"N: " + Normal.ToParsableString() +
+				L"uv0: " + TexCoord1.ToParsableString();
 		}
 
 		//======================================================================================
@@ -69,7 +69,7 @@ namespace Apoc3D
 
 		String VertexPN::GetHashString() const
 		{
-			return L"Pos: " + Vector3Utils::ToParsableString(Position) + L"N: " + Vector3Utils::ToParsableString(Normal);
+			return L"Pos: " + Position.ToParsableString() + L"N: " + Normal.ToParsableString();
 		}
 
 		//======================================================================================
@@ -87,8 +87,8 @@ namespace Apoc3D
 
 		String VertexPNT1::GetHashString() const
 		{
-			return L"Pos: " + Vector3Utils::ToParsableString(Position) + L"N: " + Vector3Utils::ToParsableString(Normal) +
-				L"uv0: " + Vector2Utils::ToParsableString(TexCoord1);
+			return L"Pos: " + Position.ToParsableString() + L"N: " + Normal.ToParsableString() +
+				L"uv0: " + TexCoord1.ToParsableString();
 		} 
 
 		//======================================================================================
@@ -107,8 +107,8 @@ namespace Apoc3D
 
 		String VertexPNT2::GetHashString() const
 		{
-			return L"Pos: " + Vector3Utils::ToParsableString(Position) + L"N: " + Vector3Utils::ToParsableString(Normal) +
-				L"uv0: " + Vector2Utils::ToParsableString(TexCoord1) + L"uv1: " + Vector2Utils::ToParsableString(TexCoord2);
+			return L"Pos: " + Position.ToParsableString() + L"N: " + Normal.ToParsableString() +
+				L"uv0: " + TexCoord1.ToParsableString() + L"uv1: " + TexCoord2.ToParsableString();
 		}
 
 		//======================================================================================
@@ -126,8 +126,8 @@ namespace Apoc3D
 
 		String VertexPT1::GetHashString() const
 		{
-			return L"Pos: " + Vector3Utils::ToParsableString(Position) +
-				L"uv0: " + Vector2Utils::ToParsableString(TexCoord1);
+			return L"Pos: " + Position.ToParsableString() +
+				L"uv0: " + TexCoord1.ToParsableString();
 		}
 
 		//======================================================================================
@@ -145,8 +145,8 @@ namespace Apoc3D
 
 		String VertexPT2::GetHashString() const
 		{
-			return L"Pos: " + Vector3Utils::ToParsableString(Position) +
-				L"uv0: " + Vector2Utils::ToParsableString(TexCoord1) + L"uv1: " + Vector2Utils::ToParsableString(TexCoord2);
+			return L"Pos: " + Position.ToParsableString() +
+				L"uv0: " + TexCoord1.ToParsableString() + L"uv1: " + TexCoord2.ToParsableString();
 		} 
 		//======================================================================================
 	}

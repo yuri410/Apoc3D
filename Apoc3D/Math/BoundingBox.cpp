@@ -33,25 +33,25 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		ContainmentType BoundingBox::Contains(const BoundingBox& box, const BoundingSphere& sphere)
+		ContainmentType BoundingBox::Contains(const BoundingSphere& sphere)
 		{				
-			Vector3 clamped = Vector3Utils::Clamp(sphere.Center, box.Minimum, box.Maximum);
+			Vector3 clamped = Vector3::Clamp(sphere.Center, Minimum, Maximum);
 
-			float dist = Vector3Utils::DistanceSquared(sphere.Center, clamped);
+			float dist = Vector3::DistanceSquared(sphere.Center, clamped);
 			const float radius = sphere.Radius;
 
 			if (dist > (radius * radius))
 				return CONTAIN_Disjoint;
 
-			Vector3 rrr = Vector3Utils::LDVector(radius, radius, radius);
-			Vector3 boxmax_near = Vector3Utils::Subtract(box.Maximum, rrr);
-			Vector3 boxmin_near = Vector3Utils::Add(box.Minimum, rrr);
+			Vector3 rrr(radius);
+			Vector3 boxmax_near = Maximum - rrr;
+			Vector3 boxmin_near = Minimum + rrr;
 
-			Vector3 ext = Vector3Utils::Subtract(box.Maximum, box.Minimum);
+			Vector3 ext = Maximum - Minimum;
 
-			if (Vector3Utils::IsLessEqual(boxmin_near, sphere.Center) && 
-				Vector3Utils::IsLessEqual(sphere.Center, boxmin_near) && 
-				Vector3Utils::IsGreater(ext, rrr))
+			if (Vector3::IsLessEqual(boxmin_near, sphere.Center) && 
+				Vector3::IsLessEqual(sphere.Center, boxmin_near) && 
+				Vector3::IsGreater(ext, rrr))
 			{
 				return CONTAIN_Contains;
 			}
@@ -61,9 +61,9 @@ namespace Apoc3D
 
 		void BoundingBox::CreateFromSphere(BoundingBox& res, const BoundingSphere& sphere)
 		{
-			Vector3 r = Vector3Utils::LDVector(sphere.Radius);
-			res.Minimum = Vector3Utils::Subtract(sphere.Center, r);
-			res.Maximum = Vector3Utils::Add(sphere.Center, r);
+			Vector3 r(sphere.Radius);
+			res.Minimum = sphere.Center - r;
+			res.Maximum = sphere.Center + r;
 		}
 		bool BoundingBox::Intersects(const BoundingBox& box, const Ray& ray, float& distance)
 		{
@@ -72,8 +72,8 @@ namespace Apoc3D
 
 		bool BoundingBox::Intersects(const BoundingBox& box, const BoundingSphere& sphere)
 		{
-			Vector3 clamped = Vector3Utils::Clamp(sphere.Center, box.Minimum, box.Maximum);
-			float dist = Vector3Utils::DistanceSquared(sphere.Center, clamped);
+			Vector3 clamped = Vector3::Clamp(sphere.Center, box.Minimum, box.Maximum);
+			float dist = Vector3::DistanceSquared(sphere.Center, clamped);
 
 			return (dist <= (sphere.Radius * sphere.Radius));
 		}

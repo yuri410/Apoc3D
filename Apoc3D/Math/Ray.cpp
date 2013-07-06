@@ -31,14 +31,30 @@ namespace Apoc3D
 {
 	namespace Math
 	{
+		bool Ray::IntersectsTriangle(const Vector3& a, const Vector3& b, const Vector3& c, Vector3& result)
+		{
+			Plane p(a,b,c);
+			if (p.IntersectsRay(Position, Direction, result))
+			{
+				Vector3 planeN(p.X, p.Y, p.Z);
+
+				bool res1 = Vector3::Dot(result - a, Vector3::Cross((b - a), planeN)) >= 0;//ab
+				bool res2 = Vector3::Dot(result - b, Vector3::Cross((c - b), planeN)) >= 0;//bc
+				bool res3 = Vector3::Dot(result - c, Vector3::Cross((a - c), planeN)) >= 0;//ca
+
+				return ((!res1 & !res2 & !res3) || (res1 & res2 & res3));
+			}
+			return false;
+		}
+
 		bool Ray::Intersects(const Ray& ray, const BoundingBox& box, float& distance)
 		{
 			float d = 0.0f;
 			float maxValue = FLT_MAX;
 
-			if (fabs(_V3X(ray.Direction)) < EPSILON)
+			if (fabs(ray.Direction.X) < EPSILON)
 			{
-				if (_V3X(ray.Position) < _V3X(box.Minimum) || _V3X(ray.Position) > _V3X(box.Maximum))
+				if (ray.Position.X < box.Minimum.X || ray.Position.X > box.Maximum.X)
 				{
 					distance = 0.0f;
 					return false;
@@ -46,9 +62,9 @@ namespace Apoc3D
 			}
 			else
 			{
-				float inv = 1.0f / _V3X(ray.Direction);
-				float minv = (_V3X(box.Minimum) - _V3X(ray.Position)) * inv;
-				float maxv = (_V3X(box.Maximum) - _V3X(ray.Position)) * inv;
+				float inv = 1.0f / ray.Direction.X;
+				float minv = (box.Minimum.X - ray.Position.X) * inv;
+				float maxv = (box.Maximum.X - ray.Position.X) * inv;
 
 				if (minv > maxv)
 				{
@@ -67,9 +83,9 @@ namespace Apoc3D
 				}
 			}
 
-			if (fabs(_V3Y(ray.Direction)) < EPSILON)
+			if (fabs(ray.Direction.Y) < EPSILON)
 			{
-				if (_V3Y(ray.Position) < _V3Y(box.Minimum) || _V3Y(ray.Position) > _V3Y(box.Maximum))
+				if (ray.Position.Y < box.Minimum.Y || ray.Position.Y > box.Maximum.Y)
 				{
 					distance = 0.0f;
 					return false;
@@ -77,9 +93,9 @@ namespace Apoc3D
 			}
 			else
 			{
-				float inv = 1.0f / _V3Y(ray.Direction);
-				float minv = (_V3Y(box.Minimum) - _V3Y(ray.Position)) * inv;
-				float maxv = (_V3Y(box.Maximum) - _V3Y(ray.Position)) * inv;
+				float inv = 1.0f / ray.Direction.Y;
+				float minv = (box.Minimum.Y - ray.Position.Y) * inv;
+				float maxv = (box.Maximum.Y - ray.Position.Y) * inv;
 
 				if (minv > maxv)
 				{
@@ -98,9 +114,9 @@ namespace Apoc3D
 				}
 			}
 
-			if (fabs(_V3Z(ray.Direction)) < EPSILON)
+			if (fabs(ray.Direction.Z) < EPSILON)
 			{
-				if (_V3Z(ray.Position) < _V3Z(box.Minimum) || _V3Z(ray.Position) > _V3Z(box.Maximum))
+				if (ray.Position.Z < box.Minimum.Z || ray.Position.Z > box.Maximum.Z)
 				{
 					distance = 0.0f;
 					return false;
@@ -108,9 +124,9 @@ namespace Apoc3D
 			}
 			else
 			{
-				float inv = 1.0f / _V3Z(ray.Direction);
-				float minv = (_V3Z(box.Minimum) - _V3Z(ray.Position)) * inv;
-				float maxv = (_V3Z(box.Maximum) - _V3Z(ray.Position)) * inv;
+				float inv = 1.0f / ray.Direction.Z;
+				float minv = (box.Minimum.Z - ray.Position.Z) * inv;
+				float maxv = (box.Maximum.Z - ray.Position.Z) * inv;
 
 				if (minv > maxv)
 				{
@@ -133,34 +149,5 @@ namespace Apoc3D
 			return true;
 		}
 		
-		bool Ray::Intersects(const Ray& ray, const BoundingSphere& sphere, float& distance)
-        {
-			Vector3 diff = Vector3Utils::Subtract(sphere.Center, ray.Position);
-            float pyth = Vector3Utils::LengthSquared(diff);
-            float rr = sphere.Radius * sphere.Radius;
-
-            if (pyth <= rr)
-            {
-                distance = 0.0f;
-                return true;
-            }
-
-            float dot = Vector3Utils::Dot(diff, ray.Direction);
-            if (dot < 0.0f)
-            {
-                distance = 0.0f;
-                return false;
-            }
-
-            float temp = pyth - (dot * dot);
-            if (temp > rr)
-            {
-                distance = 0.0f;
-                return false;
-            }
-
-            distance = dot - (float)sqrtf(rr - temp);
-            return true;
-        }
 	}
 }

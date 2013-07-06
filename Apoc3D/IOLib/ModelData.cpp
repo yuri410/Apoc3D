@@ -39,28 +39,28 @@ namespace Apoc3D
 {
 	namespace IO
 	{
-		static const int MdlId_V2 = 0;
-		static const int MdlId_V3 = ((byte)'M' << 24) | ((byte)'E' << 16) | ((byte)'S' << 8) | ((byte)'H');
-		static const int MdlLiteID = 'LMDL';
+		const int MdlId_V2 = 0;
+		const int MdlId_V3 = ((byte)'M' << 24) | ((byte)'E' << 16) | ((byte)'S' << 8) | ((byte)'H');
+		const int MdlLiteID = 'LMDL';
 
-		static const String TAG_3_MaterialCountTag = L"MaterialCount";
-		static const String TAG_3_MaterialsTag = L"Materials";
+		const String TAG_3_MaterialCountTag = L"MaterialCount";
+		const String TAG_3_MaterialsTag = L"Materials";
 
-		//static const String MaterialAnimationTag = L"MaterialAnimation";
-		static const String TAG_3_FaceCountTag = L"FaceCount";
-		static const String TAG_3_FacesTag = L"Faces";
-		static const String TAG_1_VertexFormatTag = L"VertexFormat";
-		static const String TAG_3_VertexDeclTag = L"VertexDeclaration";
-		static const String TAG_3_VertexCountTag = L"VertexCount";
-		static const String TAG_3_VertexSizeTag = L"VertexSize";
+		//const String MaterialAnimationTag = L"MaterialAnimation";
+		const String TAG_3_FaceCountTag = L"FaceCount";
+		const String TAG_3_FacesTag = L"Faces";
+		const String TAG_1_VertexFormatTag = L"VertexFormat";
+		const String TAG_3_VertexDeclTag = L"VertexDeclaration";
+		const String TAG_3_VertexCountTag = L"VertexCount";
+		const String TAG_3_VertexSizeTag = L"VertexSize";
 
-		static const String TAG_2_MaterialAnimationTag = L"MaterialAnimation2.0";
-		static const String TAG_3_VertexDataTag = L"VertexData";
+		const String TAG_2_MaterialAnimationTag = L"MaterialAnimation2.0";
+		const String TAG_3_VertexDataTag = L"VertexData";
 
-		static const String TAG_3_NameTag = L"Name";
+		const String TAG_3_NameTag = L"Name";
 
-		//static const String TAG_3_ParentBoneTag = L"ParentBone";
-		static const String TAG_3_BoundingSphereTag = L"BoundingSphere";
+		//const String TAG_3_ParentBoneTag = L"ParentBone";
+		const String TAG_3_BoundingSphereTag = L"BoundingSphere";
 
 		uint32 MeshData::ComputeVertexSize(const FastList<VertexElement>& elements)
 		{
@@ -123,7 +123,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				BoundingSphere.Center = Vector3Utils::Zero;
+				BoundingSphere.Center = Vector3::Zero;
 				BoundingSphere.Radius = 0;
 			}
 
@@ -356,10 +356,10 @@ namespace Apoc3D
 		//  all of it.
 
 
-		static const String TAG_3_EntityCountTag = L"EntityCount";
-		static const String TAG_3_EntityPrefix = L"Ent";
+		const String TAG_3_EntityCountTag = L"EntityCount";
+		const String TAG_3_EntityPrefix = L"Ent";
 
-		static const String TAG_3_AnimationDataTag = L"AnimationData";
+		const String TAG_3_AnimationDataTag = L"AnimationData";
 		
 
 		ModelData::~ModelData()

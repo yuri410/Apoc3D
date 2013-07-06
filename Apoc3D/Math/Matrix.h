@@ -196,7 +196,7 @@ namespace Apoc3D
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 				return Row1;
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3Utils::LDVector(M11, M12, M13);
+				return Vector3(M11, M12, M13);
 #endif
 			}
 
@@ -205,7 +205,7 @@ namespace Apoc3D
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 				return Row2;
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3Utils::LDVector(M21, M22, M23);
+				return Vector3(M21, M22, M23);
 #endif
 			}
 
@@ -214,7 +214,7 @@ namespace Apoc3D
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 				return Row3;
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3Utils::LDVector(M31, M32, M33);
+				return Vector3(M31, M32, M33);
 #endif
 			}
 
@@ -224,7 +224,7 @@ namespace Apoc3D
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				return Row1;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3Utils::LDVector(M11, M12, M13);
+				return Vector3(M11, M12, M13);
 			#endif
 			}
 			Vector3 GetLeft() const
@@ -234,7 +234,7 @@ namespace Apoc3D
 				v = _VecNegate(v);
 				return v;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3Utils::LDVector(-M11, -M12, -M13);
+				return Vector3(-M11, -M12, -M13);
 			#endif
 			}
 
@@ -243,7 +243,7 @@ namespace Apoc3D
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				return Row2;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3Utils::LDVector(M21, M22, M23);
+				return Vector3(M21, M22, M23);
 			#endif
 			}
 			Vector3 GetDown() const
@@ -253,7 +253,7 @@ namespace Apoc3D
 				v = _VecNegate(v);
 				return v;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3Utils::LDVector(-M21, -M22, -M23);
+				return Vector3(-M21, -M22, -M23);
 			#endif
 			}
 
@@ -262,7 +262,7 @@ namespace Apoc3D
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				return Row3;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3Utils::LDVector(M31, M32, M33);
+				return Vector3(M31, M32, M33);
 			#endif
 			}
 			Vector3 GetForward() const
@@ -272,7 +272,7 @@ namespace Apoc3D
 				v = _VecNegate(v);
 				return v;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3Utils::LDVector(-M31, -M32, -M33);
+				return Vector3(-M31, -M32, -M33);
 			#endif
 			}
 			
@@ -281,7 +281,7 @@ namespace Apoc3D
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				return Row4;				
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3Utils::LDVector(M41, M42, M43);
+				return Vector3(M41, M42, M43);
 			#endif
 			}
 
@@ -305,21 +305,22 @@ namespace Apoc3D
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 
 
-			void SetX(const Vector3& v) { M11 = Vector3Utils::GetX(v); M12 = Vector3Utils::GetY(v); M13 = Vector3Utils::GetZ(v); }
-			void SetY(const Vector3& v) { M21 = Vector3Utils::GetX(v); M22 = Vector3Utils::GetY(v); M23 = Vector3Utils::GetZ(v); }
-			void SetZ(const Vector3& v) { M31 = Vector3Utils::GetX(v); M32 = Vector3Utils::GetY(v); M33 = Vector3Utils::GetZ(v); }
+			void SetX(const Vector3& v) { M11 = v.X; M12 = v.Y; M13 = v.Z; }
+			void SetY(const Vector3& v) { M21 = v.X; M22 = v.Y; M23 = v.Z; }
+			void SetZ(const Vector3& v) { M31 = v.X; M32 = v.Y; M33 = v.Z; }
 
 
-			void SetRight(const Vector3& v) { M11 = Vector3Utils::GetX(v); M12 = Vector3Utils::GetY(v); M13 = Vector3Utils::GetZ(v); }
-			void SetLeft(const Vector3& v) { M11 = -Vector3Utils::GetX(v); M12 = -Vector3Utils::GetY(v); M13 = -Vector3Utils::GetZ(v); } 
+			void SetRight(const Vector3& v) { M11 = v.X; M12 = v.Y; M13 = v.Z; }
+			void SetLeft(const Vector3& v) { M11 = -v.X; M12 = -v.Y; M13 = -v.Z; } 
 
-			void SetUp(const Vector3& v) { M21 = Vector3Utils::GetX(v); M22 = Vector3Utils::GetY(v); M23 = Vector3Utils::GetZ(v); }
-			void SetDown(const Vector3& v) { M21 = -Vector3Utils::GetX(v); M22 = -Vector3Utils::GetY(v); M23 = -Vector3Utils::GetZ(v); }
+			void SetUp(const Vector3& v) { M21 = v.X; M22 = v.Y; M23 = v.Z; }
+			void SetDown(const Vector3& v) { M21 = -v.X; M22 = -v.Y; M23 = -v.Z; }
 
-			void SetBackward(const Vector3& v) { M31 = Vector3Utils::GetX(v); M32 = Vector3Utils::GetY(v); M33 = Vector3Utils::GetZ(v); }
-			void SetForward(const Vector3& v) { M31 = -Vector3Utils::GetX(v); M32 = -Vector3Utils::GetY(v); M33 = -Vector3Utils::GetZ(v); }
+			void SetBackward(const Vector3& v) { M31 = v.X; M32 = v.Y; M33 = v.Z; }
+			void SetForward(const Vector3& v) { M31 = -v.X; M32 = -v.Y; M33 = -v.Z; }
 
-			void SetTranslation(const Vector3& v) { M41 = Vector3Utils::GetX(v); M42 = Vector3Utils::GetY(v); M43 = Vector3Utils::GetZ(v); }
+			void SetTranslation(const Vector3& v) { M41 = v.X; M42 = v.Y; M43 = v.Z; }
+			void SetTranslation(float x, float y, float z) { M41 = x; M42 = y; M43 = z; }
 
 			#endif
 			void SetXYZ(const Vector3& x, const Vector3& y, const Vector3& z)
@@ -687,22 +688,22 @@ namespace Apoc3D
 
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 
-				res.M11 = ma.M11 + ((mb.M11 - ma.M11) * amount);
-				res.M12 = ma.M12 + ((mb.M12 - ma.M12) * amount);
-				res.M13 = ma.M13 + ((mb.M13 - ma.M13) * amount);
-				res.M14 = ma.M14 + ((mb.M14 - ma.M14) * amount);
-				res.M21 = ma.M21 + ((mb.M21 - ma.M21) * amount);
-				res.M22 = ma.M22 + ((mb.M22 - ma.M22) * amount);
-				res.M23 = ma.M23 + ((mb.M23 - ma.M23) * amount);
-				res.M24 = ma.M24 + ((mb.M24 - ma.M24) * amount);
-				res.M31 = ma.M31 + ((mb.M31 - ma.M31) * amount);
-				res.M32 = ma.M32 + ((mb.M32 - ma.M32) * amount);
-				res.M33 = ma.M33 + ((mb.M33 - ma.M33) * amount);
-				res.M34 = ma.M34 + ((mb.M34 - ma.M34) * amount);
-				res.M41 = ma.M41 + ((mb.M41 - ma.M41) * amount);
-				res.M42 = ma.M42 + ((mb.M42 - ma.M42) * amount);
-				res.M43 = ma.M43 + ((mb.M43 - ma.M43) * amount);
-				res.M44 = ma.M44 + ((mb.M44 - ma.M44) * amount);
+				res.M11 = ma.M11 + (mb.M11 - ma.M11) * amount;
+				res.M12 = ma.M12 + (mb.M12 - ma.M12) * amount;
+				res.M13 = ma.M13 + (mb.M13 - ma.M13) * amount;
+				res.M14 = ma.M14 + (mb.M14 - ma.M14) * amount;
+				res.M21 = ma.M21 + (mb.M21 - ma.M21) * amount;
+				res.M22 = ma.M22 + (mb.M22 - ma.M22) * amount;
+				res.M23 = ma.M23 + (mb.M23 - ma.M23) * amount;
+				res.M24 = ma.M24 + (mb.M24 - ma.M24) * amount;
+				res.M31 = ma.M31 + (mb.M31 - ma.M31) * amount;
+				res.M32 = ma.M32 + (mb.M32 - ma.M32) * amount;
+				res.M33 = ma.M33 + (mb.M33 - ma.M33) * amount;
+				res.M34 = ma.M34 + (mb.M34 - ma.M34) * amount;
+				res.M41 = ma.M41 + (mb.M41 - ma.M41) * amount;
+				res.M42 = ma.M42 + (mb.M42 - ma.M42) * amount;
+				res.M43 = ma.M43 + (mb.M43 - ma.M43) * amount;
+				res.M44 = ma.M44 + (mb.M44 - ma.M44) * amount;
 
 			#endif
 			}
@@ -916,9 +917,9 @@ namespace Apoc3D
 					fstp	float ptr [eax+ELEM_ADDR(3,2)]	// set element _32
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				if (Vector3Utils::LengthSquared(axis) != 1.0f)
+				if (axis.LengthSquared() != 1.0f)
 				{
-					axis = Vector3Utils::Normalize(axis);
+					axis.NormalizeInPlace();
 				}
 				float x = axis.X;
 				float y = axis.Y;
@@ -954,7 +955,7 @@ namespace Apoc3D
 
 			static void CreateTranslation(Matrix& res, const Vector3& pos)
 			{
-				CreateTranslation(res, _V3X(pos), _V3Y(pos), _V3Z(pos));
+				CreateTranslation(res, pos.X, pos.Y, pos.Z);
 			}
 			/**
 			 *  Creates a translation matrix using the specified offsets.
@@ -1088,13 +1089,13 @@ namespace Apoc3D
 					fstp	float ptr [eax+ELEM_ADDR(3,4)]
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				Vector3 zaxis = Vector3Utils::Subtract(cameraTarget,  cameraPosition);
-				zaxis = Vector3Utils::Normalize(zaxis);
+				Vector3 zaxis = cameraTarget - cameraPosition;
+				zaxis.NormalizeInPlace();
 
-				Vector3 xaxis = Vector3Utils::Cross(up, zaxis);
-				xaxis = Vector3Utils::Normalize(xaxis);
+				Vector3 xaxis = Vector3::Cross(up, zaxis);
+				xaxis.NormalizeInPlace();
 
-				Vector3 yaxis = Vector3Utils::Cross(zaxis, xaxis);
+				Vector3 yaxis = Vector3::Cross(zaxis, xaxis);
 
 				res.M11 = xaxis.X;
 				res.M12 = yaxis.X;
@@ -1108,9 +1109,9 @@ namespace Apoc3D
 				res.M32 = yaxis.Z;
 				res.M33 = zaxis.Z;
 				res.M14 = res.M24 = res.M34 = 0.0f;
-				res.M41 = -Vector3Utils::Dot(xaxis, cameraPosition);
-				res.M42 = -Vector3Utils::Dot(yaxis, cameraPosition);
-				res.M43 = -Vector3Utils::Dot(zaxis, cameraPosition);
+				res.M41 = -Vector3::Dot(xaxis, cameraPosition);
+				res.M42 = -Vector3::Dot(yaxis, cameraPosition);
+				res.M43 = -Vector3::Dot(zaxis, cameraPosition);
 				res.M44 = 1.0f;
 			#endif
 			}
@@ -1176,13 +1177,13 @@ namespace Apoc3D
 					fstp	float ptr [eax+ELEM_ADDR(3,4)]
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				Vector3 zaxis = Vector3Utils::Subtract( cameraPosition, cameraTarget);
-				zaxis = Vector3Utils::Normalize(zaxis);
+				Vector3 zaxis = cameraPosition - cameraTarget;
+				zaxis.NormalizeInPlace();
 
-				Vector3 xaxis = Vector3Utils::Cross(up, zaxis);
-				xaxis = Vector3Utils::Normalize(xaxis);
+				Vector3 xaxis = Vector3::Cross(up, zaxis);
+				xaxis.NormalizeInPlace();
 
-				Vector3 yaxis = Vector3Utils::Cross(zaxis, xaxis);
+				Vector3 yaxis = Vector3::Cross(zaxis, xaxis);
 
 				res.M11 = xaxis.X;
 				res.M12 = yaxis.X;
@@ -1196,9 +1197,9 @@ namespace Apoc3D
 				res.M32 = yaxis.Z;
 				res.M33 = zaxis.Z;
 				res.M14 = res.M24 = res.M34 = 0.0f;
-				res.M41 = -Vector3Utils::Dot(xaxis, cameraPosition);
-				res.M42 = -Vector3Utils::Dot(yaxis, cameraPosition);
-				res.M43 = -Vector3Utils::Dot(zaxis, cameraPosition);
+				res.M41 = -Vector3::Dot(xaxis, cameraPosition);
+				res.M42 = -Vector3::Dot(yaxis, cameraPosition);
+				res.M43 = -Vector3::Dot(zaxis, cameraPosition);
 				res.M44 = 1.0f;
 			#endif
 			}

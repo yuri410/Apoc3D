@@ -31,8 +31,8 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		FpsCamera::FpsCamera(float aspectRatio)
-			: m_aspectRatio(aspectRatio), m_maxVelocity(5), m_position(Vector3Utils::Zero),
-			m_fieldOfView(ToRadian(50)), m_near(0.5f), m_far(1500), m_velocity(Vector3Utils::Zero), m_velChange(Vector3Utils::Zero),
+			: m_aspectRatio(aspectRatio), m_maxVelocity(5), m_position(Vector3::Zero),
+			m_fieldOfView(ToRadian(50)), m_near(0.5f), m_far(1500), m_velocity(Vector3::Zero), m_velChange(Vector3::Zero),
 			m_rotX(0), m_rotY(0)
 		{
 			
@@ -45,36 +45,36 @@ namespace Apoc3D
 
 		void FpsCamera::Update(const GameTime* time)
 		{
-			m_velocity = Vector3Utils::Add(m_velChange, m_velocity);
-			m_velChange = Vector3Utils::Zero;
-			Vector2 hozV = Vector2Utils::LDVector(_V3X(m_velocity), _V3Z(m_velocity));
+			m_velocity += m_velChange;
+			m_velChange = Vector3::Zero;
+			Vector2 hozV(m_velocity.X, m_velocity.Z);
 
-			if (Vector2Utils::LengthSquared(hozV)>1)
+			if (hozV.LengthSquared()>1)
 			{
-				hozV = Vector2Utils::Normalize(hozV);
+				hozV.NormalizeInPlace();
 			}
 
 			{
-				float vLen = Vector2Utils::Length(hozV);
+				float vLen = hozV.Length();
 
 				if (vLen > 0.05f)
 				{
 					vLen -= time->getElapsedTime() * 1.5f;
 
-					hozV = Vector2Utils::Normalize(hozV);
-					hozV = Vector2Utils::Multiply(hozV, vLen);
-					_V3X(m_velocity) = Vector2Utils::GetX(hozV);
-					_V3Z(m_velocity) = Vector2Utils::GetY(hozV);
+					hozV.NormalizeInPlace();
+					hozV *= vLen;;
+					m_velocity.X = hozV.X;
+					m_velocity.Z = hozV.Y;
 				}
 				else
 				{
-					_V3X(m_velocity) = 0; _V3Z(m_velocity) = 0;
+					m_velocity.X = m_velocity.Z = 0;
 				}
 
 			}
 
-			Vector3 dp = Vector3Utils::Multiply(m_velocity, time->getElapsedTime() * m_maxVelocity);
-			m_position = Vector3Utils::Add(m_position, dp);
+			Vector3 dp = m_velocity * (time->getElapsedTime() * m_maxVelocity);
+			m_position += dp;
 
 
 			UpdateTransform();
@@ -82,7 +82,7 @@ namespace Apoc3D
 		}
 		void FpsCamera::UpdateTransform()
 		{
-			Vector3 dir = Vector3Utils::UnitZ;
+			Vector3 dir = Vector3::UnitZ;
 
 			Matrix oriX;
 			Matrix::CreateRotationX(oriX, m_rotY);
@@ -91,10 +91,10 @@ namespace Apoc3D
 			Matrix temp;
 			Matrix::Multiply(temp, oriX, oriY);
 
-			dir = Vector3Utils::TransformNormal(dir, temp);
+			dir = Vector3::TransformNormal(dir, temp);
 
-			Vector3 at = Vector3Utils::Add(m_position, dir);
-			Matrix::CreateLookAtLH(m_view, m_position, at, Vector3Utils::UnitY);
+			Vector3 at = m_position + dir;
+			Matrix::CreateLookAtLH(m_view, m_position, at, Vector3::UnitY);
 
 			Matrix::CreatePerspectiveFovLH(m_proj, m_fieldOfView, m_aspectRatio, m_near, m_far);
 
@@ -105,14 +105,14 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 		ChaseCamera::ChaseCamera(float fov)
-			: m_velocity(Vector3Utils::Zero), m_position(Vector3Utils::Zero), m_lootAt(Vector3Utils::Zero), m_desiredPosition(Vector3Utils::Zero),
-			m_up(Vector3Utils::UnitY), m_chasePosition(Vector3Utils::Zero), m_chaseDirection(Vector3Utils::Zero),
+			: m_velocity(Vector3::Zero), m_position(Vector3::Zero), m_lootAt(Vector3::Zero), m_desiredPosition(Vector3::Zero),
+			m_up(Vector3::UnitY), m_chasePosition(Vector3::Zero), m_chaseDirection(Vector3::Zero),
 			m_stiffness(1800), m_damping(600), m_mass(50), 
 			m_fieldOfView(fov), m_aspectRatio(1),
 			m_near(1), m_far(1000)
 		{
-			m_lootAtOfs = Vector3Utils::LDVector(0, 3.0f, 0);
-			m_desiredPositionOfs = Vector3Utils::LDVector(0, 0, 2);
+			m_lootAtOfs = Vector3(0, 3.0f, 0);
+			m_desiredPositionOfs = Vector3(0, 0, 2);
 
 			//m_frustum = Frustum(&m_proj);
 		}
@@ -125,7 +125,7 @@ namespace Apoc3D
 		{
 			UpdateWorldPositions();
 
-			m_velocity = Vector3Utils::Zero;
+			m_velocity = Vector3::Zero;
 			m_position = m_desiredPosition;
 
 			UpdateMatrices();
@@ -149,52 +149,43 @@ namespace Apoc3D
 			Matrix trans;
 			trans.LoadIdentity();
 
-			trans.M31 = -_V3X(m_chaseDirection);
-			trans.M32 = -_V3Y(m_chaseDirection);
-			trans.M33 = -_V3Z(m_chaseDirection);
+			trans.M31 = -m_chaseDirection.X;;
+			trans.M32 = -m_chaseDirection.Y;
+			trans.M33 = -m_chaseDirection.Z;
 
-			trans.M21 = _V3X(m_up);
-			trans.M22 = _V3Y(m_up);
-			trans.M23 = _V3Z(m_up);
+			trans.M21 = m_up.X;
+			trans.M22 = m_up.Y;
+			trans.M23 = m_up.Z;
 
-			Vector3 right = Vector3Utils::Cross(m_up, m_chaseDirection);
-			right = Vector3Utils::Normalize(right);
+			Vector3 right = Vector3::Cross(m_up, m_chaseDirection);
+			right.NormalizeInPlace();
 
-			trans.M11 = _V3X(right);
-			trans.M12 = _V3Y(right);
-			trans.M13 = _V3Z(right);
+			trans.M11 = right.X;
+			trans.M12 = right.Y;
+			trans.M13 = right.Z;
 
 			Vector3 desiredPositionOfsT;
 			Vector3 lookAtOfsT;
-			desiredPositionOfsT = Vector3Utils::TransformNormal(m_desiredPositionOfs, trans);
-			lookAtOfsT = Vector3Utils::TransformNormal(m_lootAtOfs, trans);
+			desiredPositionOfsT = Vector3::TransformNormal(m_desiredPositionOfs, trans);
+			lookAtOfsT = Vector3::TransformNormal(m_lootAtOfs, trans);
 
-			m_desiredPosition = Vector3Utils::Add(m_chasePosition, desiredPositionOfsT);
-			m_lootAt = Vector3Utils::Add(m_chasePosition, lookAtOfsT);
+			m_desiredPosition = m_chasePosition + desiredPositionOfsT;
+			m_lootAt = m_chasePosition + lookAtOfsT;
 		}
 		void ChaseCamera::Update(const GameTime* const time)
 		{
 			UpdateWorldPositions();
 
-			Vector3 stretch = Vector3Utils::Subtract(m_position , m_desiredPosition);
-			Vector3 force = Vector3Utils::Multiply(stretch, -m_stiffness);
-			force = Vector3Utils::Subtract(force, Vector3Utils::Multiply(m_velocity, m_damping));
+			Vector3 stretch = m_position - m_desiredPosition;
+			Vector3 force = stretch * (-m_stiffness);
+			force -= m_velocity * m_damping;
 
-			m_velocity = Vector3Utils::Add(m_velocity, Vector3Utils::Multiply(force, time->getElapsedTime() / m_mass ));
-			m_position = Vector3Utils::Add(m_position, Vector3Utils::Multiply(m_velocity, time->getElapsedTime()));
+			m_velocity += force * (time->getElapsedTime() / m_mass );
+			m_position += m_velocity * time->getElapsedTime();
 
 			UpdateMatrices();
 
 			Camera::Update(time);
-			//D3DXMatrixPerspectiveFovLH(&m_proj, ToRadius(45), LabGame::ScreenWidth/(float)(LabGame::ScreenHeight),1,1000);
-
-			//Vector3  backward;
-			//D3DXVec3Cross(&backward, &UnitY3, &m_right);
-
-
-			//Vector3 eyePos = Vector3(10, 7, 5);// m_position + backward;
-			//
-			//D3DXMatrixLookAtLH(&m_view, &eyePos, &m_position, &UnitY3);
 		}
 
 	};

@@ -36,41 +36,12 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-#pragma pack(push, 16)
 		/**
 		 *  A four component color represented using 4 floats from 0 to 1
 		 */
 		class Color4
 		{
 		public:
-#if APOC3D_MATH_IMPL == APOC3D_SSE
-			union
-			{
-				struct  
-				{
-					/**
-					 * the color's red component.
-					 */
-					float Red;
-
-					/**
-					 *  the color's green component.
-					 */
-					float Green;
-
-					/**
-					 *  the color's blue component.
-					 */
-					float Blue;
-
-					/**
-					 *  the color's alpha component.
-					 */
-					float Alpha;
-				};
-				__m128 vector;
-			};
-#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			/**
 			 * the color's red component.
 			 */
@@ -90,20 +61,11 @@ namespace Apoc3D
 			 *  the color's alpha component.
 			 */ 
 			float Alpha;
-#endif
 
-#if APOC3D_MATH_IMPL == APOC3D_SSE
-			Color4() { vector = _VecLoad(0.0f); }
-			Color4(Vector3 color)
-			{
-				vector = color;				
-			}
-#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			Color4() : Red(0), Green(0), Blue(0), Alpha(0) { }
 			Color4(Vector3 color)
 				: Red(color.X), Green(color.Y), Blue(color.Z), Alpha(1)
 			{ }
-#endif
 			
 			Color4(ColorValue argb)
 			{
@@ -155,20 +117,13 @@ namespace Apoc3D
 			 */
 			Vector3 ToVector() const
 			{
-				return Vector3Utils::LDVector(Red, Green, Blue);
+				return Vector3(Red, Green, Blue);
 			}
 
-#if APOC3D_MATH_IMPL == APOC3D_SSE
-			bool operator==(const Color4 &other) const
-			{
-				return other.vector == vector; 
-			}
-#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			bool operator==(const Color4 &other) const
 			{
 				return other.Red == Red && other.Green == Green && other.Blue == Blue && other.Alpha == Alpha; 
 			}
-#endif
 			bool operator!=(const Color4 &other) const { return !(*this == other); }
 
 			/**
@@ -437,7 +392,6 @@ namespace Apoc3D
 
 
 		};
-#pragma pack(pop)
 
 	}
 }

@@ -28,7 +28,7 @@
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 
-#include "Common.h"
+#include "../Common.h"
 
 #define ZERO_VECTOR
 

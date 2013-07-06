@@ -58,7 +58,7 @@ namespace APDesigner
 		public:
 			ModelWrapper() 
 			{
-				m_position = Vector3Utils::Zero;
+				m_position = Vector3::Zero;
 				m_transformation.LoadIdentity();
 			}
 

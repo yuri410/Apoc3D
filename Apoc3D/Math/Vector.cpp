@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Matrix.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Collections/List.h"
 
 using namespace Apoc3D::Utility;
 
@@ -32,85 +33,185 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		const Vector2 Vector2Utils::Zero = Vector2Utils::LDVector(0);
-		const Vector2 Vector2Utils::UnitX = Vector2Utils::LDVector(1,0);
-		const Vector2 Vector2Utils::UnitY = Vector2Utils::LDVector(0,1);
-		const Vector2 Vector2Utils::One = Vector2Utils::LDVector(1);
+		const Vector2 Vector2::Zero = Vector2(0);
+		const Vector2 Vector2::UnitX = Vector2(1,0);
+		const Vector2 Vector2::UnitY = Vector2(0,1);
+		const Vector2 Vector2::One = Vector2(1);
 
-		const Vector3 Vector3Utils::Zero = Vector3Utils::LDVector(0);
-		const Vector3 Vector3Utils::UnitX = Vector3Utils::LDVector(1, 0, 0);
-		const Vector3 Vector3Utils::UnitY = Vector3Utils::LDVector(0, 1, 0);
-		const Vector3 Vector3Utils::UnitZ = Vector3Utils::LDVector(0, 0, 1);
-		const Vector3 Vector3Utils::One = Vector3Utils::LDVector(1);
+		const Vector3 Vector3::Zero = Vector3(0.0f);
+		const Vector3 Vector3::UnitX = Vector3(1, 0, 0);
+		const Vector3 Vector3::UnitY = Vector3(0, 1, 0);
+		const Vector3 Vector3::UnitZ = Vector3(0, 0, 1);
+		const Vector3 Vector3::One = Vector3(1);
+
+		const Vector4 Vector4::Zero = Vector4(0.0f);
+		const Vector4 Vector4::UnitX = Vector4(1, 0, 0, 0);
+		const Vector4 Vector4::UnitY = Vector4(0, 1, 0, 0);
+		const Vector4 Vector4::UnitZ = Vector4(0, 0, 1, 0);
+		const Vector4 Vector4::UnitW = Vector4(0, 0, 0, 1);
+		const Vector4 Vector4::One = Vector4(1);
 		
-		const Vector4 Vector4Utils::Zero = Vector4Utils::LDVector(0);
-		const Vector4 Vector4Utils::UnitX = Vector4Utils::LDVector(1, 0, 0, 0);
-		const Vector4 Vector4Utils::UnitY = Vector4Utils::LDVector(0, 1, 0, 0);
-		const Vector4 Vector4Utils::UnitZ = Vector4Utils::LDVector(0, 0, 1, 0);
-		const Vector4 Vector4Utils::UnitW = Vector4Utils::LDVector(0, 0, 0, 1);
-		const Vector4 Vector4Utils::One = Vector4Utils::LDVector(1);
-		
-		String Vector2Utils::ToTextString(const Vector2& v, int precision)
+
+		void Vector2::Parse(const String& str)
+		{
+			Apoc3D::Collections::List<String> results;
+			StringUtils::Split(str, results, L", ");
+			X = Y = 0;
+
+			if (results.getCount() > 0)
+			{
+				X = StringUtils::ParseSingle(results[0]);
+			}
+			if (results.getCount() > 1)
+			{
+				Y = StringUtils::ParseSingle(results[1]);
+			}
+		}
+		String Vector2::ToTextString(int precision) const
 		{
 			String result = L"[";
-			result.append(StringUtils::ToString(GetX(v), precision));
+			result.append(StringUtils::ToString(X, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), precision));
+			result.append(StringUtils::ToString(Y, precision));
 			result.append(L"]");
 			return result;
 		}
-		String Vector2Utils::ToParsableString(const Vector2& v)
+		String Vector2::ToParsableString() const
 		{
-			String result = StringUtils::ToString(GetX(v), 11);
+			String result = StringUtils::ToString(X, 11);
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), 11));
+			result.append(StringUtils::ToString(Y, 11));
 			return result;
 		}
 
-		String Vector3Utils::ToTextString(const Vector3& v, int precision)
+
+		void Vector3::Parse(const String& str)
+		{
+			Apoc3D::Collections::List<String> results;
+			StringUtils::Split(str, results, L", ");
+			X = Y = Z = 0;
+
+			if (results.getCount() > 0)
+			{
+				X = StringUtils::ParseSingle(results[0]);
+			}
+			if (results.getCount() > 1)
+			{
+				Y = StringUtils::ParseSingle(results[1]);
+			}
+			if (results.getCount() > 2)
+			{
+				Z = StringUtils::ParseSingle(results[2]);
+			}
+		}
+		String Vector3::ToTextString(int precision) const
 		{
 			String result = L"[";
-			result.append(StringUtils::ToString(GetX(v), precision));
+			result.append(StringUtils::ToString(X, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), precision));
+			result.append(StringUtils::ToString(Y, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetZ(v), precision));
+			result.append(StringUtils::ToString(Z, precision));
 			result.append(L"]");
 			return result;
 		}
-		String Vector3Utils::ToParsableString(const Vector3& v)
+		String Vector3::ToParsableString() const
 		{
-			String result = StringUtils::ToString(GetX(v), 11);
+			String result = StringUtils::ToString(X, 11);
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), 11));
+			result.append(StringUtils::ToString(Y, 11));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetZ(v), 11));
+			result.append(StringUtils::ToString(Z, 11));
 			return result;
 		}
 
-		String Vector4Utils::ToTextString(const Vector4& v, int precision)
+		Vector4 Vector3::Transform(const Vector3& vector, const Matrix& transform)
+		{
+			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31 + transform.M41;
+			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
+			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
+			float w = vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + transform.M44;
+			return Vector4(x,y,z,w);
+		}
+		Vector3 Vector3::TransformSimple(const Vector3& vector, const Matrix& transform)
+		{
+			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31 + transform.M41;
+			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
+			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
+			return Vector3(x,y,z);
+		}
+		Vector3 Vector3::TransformCoordinate(const Vector3& vector, const Matrix& transform)
+		{
+			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31 + transform.M41;
+			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
+			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
+			float w = 1 / (vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + transform.M44);
+			return Vector3(x*w,y*w,z*w);
+		}
+		Vector3 Vector3::TransformNormal(const Vector3& vector, const Matrix& transform)
+		{
+			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31;
+			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32;
+			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33;
+			return Vector3(x,y,z);
+		}
+
+
+		void Vector4::Parse(const String& str)
+		{
+			Apoc3D::Collections::List<String> results;
+			StringUtils::Split(str, results, L", ");
+			X = Y = Z = W = 0;
+
+			if (results.getCount() > 0)
+			{
+				X = StringUtils::ParseSingle(results[0]);
+			}
+			if (results.getCount() > 1)
+			{
+				Y = StringUtils::ParseSingle(results[1]);
+			}
+			if (results.getCount() > 2)
+			{
+				Z = StringUtils::ParseSingle(results[2]);
+			}
+			if (results.getCount() > 3)
+			{
+				W = StringUtils::ParseSingle(results[3]);
+			}
+		}
+		String Vector4::ToTextString(int precision) const
 		{
 			String result = L"[";
-			result.append(StringUtils::ToString(GetX(v), precision));
+			result.append(StringUtils::ToString(X, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), precision));
+			result.append(StringUtils::ToString(Y, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetZ(v), precision));
+			result.append(StringUtils::ToString(Z, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetW(v), precision));
+			result.append(StringUtils::ToString(W, precision));
 			result.append(L"]");
 			return result;
 		}
-		String Vector4Utils::ToParsableString(const Vector4& v)
+		String Vector4::ToParsableString() const
 		{
-			String result = StringUtils::ToString(GetX(v), 11);
+			String result = StringUtils::ToString(X, 11);
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetY(v), 11));
+			result.append(StringUtils::ToString(Y, 11));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetZ(v), 11));
+			result.append(StringUtils::ToString(Z, 11));
 			result.append(L", ");
-			result.append(StringUtils::ToString(GetW(v), 11));
+			result.append(StringUtils::ToString(W, 11));
 			return result;
+		}
+
+		Vector4 Vector4::Transform(const Vector4& vector, const Matrix& transform)
+		{
+			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31 + vector.W * transform.M41;
+			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + vector.W * transform.M42;
+			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + vector.W * transform.M43;
+			float w = vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + vector.W * transform.M44;
+			return Vector4(x,y,z,w);
 		}
 
 
@@ -177,39 +278,6 @@ namespace Apoc3D
 		}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 
-		Vector4 Vector3Utils::Transform(const Vector3& vector, const Matrix& transform)
-		{
-			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31 + transform.M41;
-			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
-			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
-			float w = vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + transform.M44;
-			return Vector4Utils::LDVector(x,y,z,w);
-		}
-
-		Vector3 Vector3Utils::TransformSimple(const Vector3& vector, const Matrix& transform)
-		{
-			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31 + transform.M41;
-			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
-			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
-			return Vector3Utils::LDVector(x,y,z);
-		}
-
-		Vector3 Vector3Utils::TransformCoordinate(const Vector3& vector, const Matrix& transform)
-		{
-			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31 + transform.M41;
-			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
-			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
-			float w = 1 / (vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + transform.M44);
-			return Vector3Utils::LDVector(x*w,y*w,z*w);
-		}
-
-		Vector3 Vector3Utils::TransformNormal(const Vector3& vector, const Matrix& transform)
-		{
-			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31;
-			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32;
-			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33;
-			return Vector3Utils::LDVector(x,y,z);
-		}
 #endif
 		/************************************************************************/
 		/* Vector4Utils                                                         */
@@ -226,21 +294,9 @@ namespace Apoc3D
 		}
 
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-		Vector4 Vector4Utils::Transform(const Vector4& vector, const Matrix& transform)
-		{
-			float x = vector.X * transform.M11 + vector.Y * transform.M21 + vector.Z * transform.M31 + vector.W * transform.M41;
-			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + vector.W * transform.M42;
-			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + vector.W * transform.M43;
-			float w = vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + vector.W * transform.M44;
-			return Vector4Utils::LDVector(x,y,z,w);
-		}
+		
 
 #endif
 
-//#if APOC3D_MATH_IMPL == APOC3D_SSE
-//
-//#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-//
-//#endif
 	}
 }

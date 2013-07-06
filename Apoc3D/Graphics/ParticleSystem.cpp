@@ -221,7 +221,7 @@ namespace Apoc3D
 
 			// Adjust the input velocity based on how much
 			// this particle system wants to be affected by it.
-			velocity = Vector3Utils::Multiply(velocity, m_settings.EmitterVelocitySensitivity);	
+			velocity *= m_settings.EmitterVelocitySensitivity;	
 
 			// Add in some random amount of horizontal velocity.
 			float horizontalVelocity = Math::Lerp(m_settings.MinHorizontalVelocity,
@@ -230,11 +230,11 @@ namespace Apoc3D
 
 			float horizontalAngle = Randomizer::NextFloat() * Math::PI * 2;
 
-			_V3X(velocity) += horizontalVelocity * cosf(horizontalAngle);
-			_V3Z(velocity) += horizontalVelocity * sinf(horizontalAngle);
+			velocity.X += horizontalVelocity * cosf(horizontalAngle);
+			velocity.Z += horizontalVelocity * sinf(horizontalAngle);
 
 			// Add in some random amount of vertical velocity.
-			_V3Y(velocity) += Math::Lerp(m_settings.MinVerticalVelocity,
+			velocity.Y += Math::Lerp(m_settings.MinVerticalVelocity,
 				m_settings.MaxVerticalVelocity,
 				Randomizer::NextFloat());
 

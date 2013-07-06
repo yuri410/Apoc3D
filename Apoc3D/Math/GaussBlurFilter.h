@@ -109,11 +109,11 @@ namespace Apoc3D
 					// positioning us nicely in between two texels.
 					float sampleOffset = i * 2 + 1.5f;
 
-					Vector4 delta = Vector4Utils::LDVector(dx*sampleOffset, dy*sampleOffset,0,0);
+					Vector4 delta(dx*sampleOffset, dy*sampleOffset,0,0);
 
 					// Store texture coordinate offsets for the positive and negative taps.
 					sampleOffsets[i * 2 + 1] = delta;
-					sampleOffsets[i * 2 + 2] = Vector4Utils::Negate(delta);
+					sampleOffsets[i * 2 + 2] = Vector4::Negate(delta);
 				}
 
 				// Normalize the list of sample weightings, so they will always sum to one.

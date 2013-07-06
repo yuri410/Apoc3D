@@ -55,37 +55,37 @@ namespace Apoc3D
 			m_planes[FPL_Right].Y = mvp.M24 - mvp.M21;
 			m_planes[FPL_Right].Z = mvp.M34 - mvp.M31;
 			m_planes[FPL_Right].D = mvp.M44 - mvp.M41;
-			m_planes[FPL_Right].Normalize();
+			m_planes[FPL_Right].NormalizeInPlace();
 
 			m_planes[FPL_Left].X = mvp.M14 + mvp.M11;
 			m_planes[FPL_Left].Y = mvp.M24 + mvp.M21;
 			m_planes[FPL_Left].Z = mvp.M34 + mvp.M31;
 			m_planes[FPL_Left].D = mvp.M44 + mvp.M41;
-			m_planes[FPL_Left].Normalize();			
+			m_planes[FPL_Left].NormalizeInPlace();			
 
 			m_planes[FPL_Bottom].X = mvp.M14 + mvp.M12;
 			m_planes[FPL_Bottom].Y = mvp.M24 + mvp.M22;
 			m_planes[FPL_Bottom].Z = mvp.M34 + mvp.M32;
 			m_planes[FPL_Bottom].D = mvp.M44 + mvp.M42;
-			m_planes[FPL_Bottom].Normalize();			
+			m_planes[FPL_Bottom].NormalizeInPlace();			
 
 			m_planes[FPL_Top].X = mvp.M14 - mvp.M12;
 			m_planes[FPL_Top].Y = mvp.M24 - mvp.M22;
 			m_planes[FPL_Top].Z = mvp.M34 - mvp.M32;
 			m_planes[FPL_Top].D = mvp.M44 - mvp.M42;
-			m_planes[FPL_Top].Normalize();            
+			m_planes[FPL_Top].NormalizeInPlace();            
 
 			m_planes[FPL_Far].X = mvp.M14 - mvp.M13;
 			m_planes[FPL_Far].Y = mvp.M24 - mvp.M23;
 			m_planes[FPL_Far].Z = mvp.M34 - mvp.M33;
 			m_planes[FPL_Far].D = mvp.M44 - mvp.M43;
-			m_planes[FPL_Far].Normalize();            
+			m_planes[FPL_Far].NormalizeInPlace();            
 
 			m_planes[FPL_Near].X = mvp.M14 + mvp.M13;
 			m_planes[FPL_Near].Y = mvp.M24 + mvp.M23;
 			m_planes[FPL_Near].Z = mvp.M34 + mvp.M33;
 			m_planes[FPL_Near].D = mvp.M44 + mvp.M43;
-            m_planes[FPL_Near].Normalize();
+            m_planes[FPL_Near].NormalizeInPlace();
 		}
 
 	};

@@ -49,7 +49,7 @@ namespace APDesigner
 		{
 			int qx, qy;
 
-			Vector2 pos = Vector2Utils::LDVector(node->getArea().X, node->getArea().Y);
+			Vector2 pos = Vector2(node->getArea().X, node->getArea().Y);
 			ShaderGraph::ConvertCoord(pos, qx, qy);
 
 			assert(qx>=0); assert(qy>=0);
@@ -63,7 +63,7 @@ namespace APDesigner
 
 	ShaderGraph::ShaderGraph()
 		: m_zooming(2), m_viewPos(0,0), m_quadTreeUpdateInterval(0), m_adaptiveLayoutIterationPerFrame(0),
-		m_adaptiveTimeScale(1), m_currentKEnergy(0), m_technique(TECH_Quad), m_centerOfMass(Vector2Utils::Zero),
+		m_adaptiveTimeScale(1), m_currentKEnergy(0), m_technique(TECH_Quad), m_centerOfMass(Vector2::Zero),
 		m_highlightingNode(0)
 	{
 		LeafNodeCreatedHandlerImpl handler;
@@ -327,14 +327,14 @@ namespace APDesigner
 					}
 
 					// shift all the island's nodes
-					Vector2 transl = Vector2Utils::LDVector(j*2-edgeLen*0.5f,i*2-edgeLen*0.5f);
+					Vector2 transl(j*2-edgeLen*0.5f,i*2-edgeLen*0.5f);
 					for (int k=0;k<islands[index]->NodeCount;k++)
 					{
-						Vector2 pos = Vector2Utils::Multiply(islands[index]->Nodes[k]->getPosition(), len*0.5f);
-						islands[index]->Nodes[k]->setPosition(Vector2Utils::Add(pos, transl));
+						Vector2 pos = Vector2::Multiply(islands[index]->Nodes[k]->getPosition(), len*0.5f);
+						islands[index]->Nodes[k]->setPosition(Vector2::Add(pos, transl));
 
 						// expand the nodes further
-						islands[index]->Nodes[k]->setPosition(Vector2Utils::Multiply(islands[index]->Nodes[k]->getPosition(), 2.5f));
+						islands[index]->Nodes[k]->setPosition(Vector2::Multiply(islands[index]->Nodes[k]->getPosition(), 2.5f));
 					}
 
 
@@ -390,7 +390,7 @@ namespace APDesigner
 				// TECH_Fuzzy first calculated the center of mass of the entire graph.
 				// Then only the repulsive forces from this point and neighbor graph nodes are taken into account.
 				if (m_technique == TECH_Fuzzy)
-					m_centerOfMass = Vector2Utils::Zero;
+					m_centerOfMass = Vector2::Zero;
 				for (int i=0;i<m_nodes.getCount();i++)
 				{
 					m_nodes[i]->UpdatePhysicsSimulation(&time2);
@@ -407,13 +407,13 @@ namespace APDesigner
 					}
 
 					if (m_technique == TECH_Fuzzy)
-						m_centerOfMass = Vector2Utils::Add(m_centerOfMass, m_nodes[i]->getPosition());
+						m_centerOfMass = Vector2::Add(m_centerOfMass, m_nodes[i]->getPosition());
 				}
 
 				if (m_technique == TECH_Fuzzy)
 				{
 					// do the work on center of mass
-					m_centerOfMass = Vector2Utils::Divide(m_centerOfMass, (float)m_nodes.getCount());
+					m_centerOfMass = Vector2::Divide(m_centerOfMass, (float)m_nodes.getCount());
 					static const float RepelRatio = 1.5f;
 					float totalMass = (float)m_nodes.getCount();
 
@@ -421,10 +421,10 @@ namespace APDesigner
 					{
 						const GraphNode* nde = m_nodes[i];
 
-						Vector2 d = Vector2Utils::Subtract(m_centerOfMass, nde->getPosition());
-						float dist = Vector2Utils::Length(d);
+						Vector2 d = Vector2::Subtract(m_centerOfMass, nde->getPosition());
+						float dist = Vector2::Length(d);
 						if (dist<1) dist = 1.0f/dist;
-						d = Vector2Utils::Multiply(d, -time2.getElapsedTime() * (totalMass*nde->getMass())/(dist*dist*dist));
+						d = Vector2::Multiply(d, -time2.getElapsedTime() * (totalMass*nde->getMass())/(dist*dist*dist));
 						
 						m_nodes[i]->ApplyImpulse(d);
 					}
@@ -745,14 +745,14 @@ namespace APDesigner
 		//glGetIntegerv(GL_VIEWPORT, viewport);
 
 		// get the world coord of 2 corner of viewport
-		Vector3 topLeft = Vector3Utils::LDVector((float)Viewport.X,(float)Viewport.Y,0);
-		topLeft = Vector3Utils::TransformCoordinate(topLeft, result);
+		Vector3 topLeft((float)Viewport.X,(float)Viewport.Y,0);
+		topLeft = Vector3::TransformCoordinate(topLeft, result);
 
-		Vector3 buttomRight = Vector3Utils::LDVector((float)Viewport.getBottom(),(float)Viewport.getRight(),0);
-		buttomRight = Vector3Utils::TransformCoordinate(buttomRight, result);
+		Vector3 buttomRight((float)Viewport.getBottom(),(float)Viewport.getRight(),0);
+		buttomRight = Vector3::TransformCoordinate(buttomRight, result);
 
-		Apoc3D::Math::RectangleF area(_V3X(topLeft)-16, _V3Y(topLeft)-16, 
-			_V3X(buttomRight)-_V3X(topLeft) + 32, _V3Y(buttomRight)-_V3Y(topLeft) + 32);
+		Apoc3D::Math::RectangleF area(topLeft.X-16, topLeft.Y-16, 
+			buttomRight.X-topLeft.X + 32, buttomRight.Y-topLeft.Y + 32);
 
 		m_quadTree->FillIntersectingNodesAttachment(m_currentVisisbleNodes, area);
 	}
@@ -791,8 +791,8 @@ namespace APDesigner
 
 	void ShaderGraph::PanView(float dx, float dy)
 	{
-		m_viewPos = Vector2Utils::Add(m_viewPos, 
-			Vector2Utils::LDVector(dx/powf(2,m_zooming),dy/powf(2,m_zooming)));
+		m_viewPos = Vector2::Add(m_viewPos, 
+			Vector2(dx/powf(2,m_zooming),dy/powf(2,m_zooming)));
 	}
 
 	GraphNode* ShaderGraph::IntersectNodes(int mx, int my)
@@ -801,11 +801,11 @@ namespace APDesigner
 		GetViewMatrix(result);
 		result.Inverse();
 
-		Vector3 pos = Vector3Utils::LDVector((float)mx,(float)my,0);
-		pos = Vector3Utils::TransformCoordinate(pos, result);
+		Vector3 pos = Vector3((float)mx,(float)my,0);
+		pos = Vector3::TransformCoordinate(pos, result);
 
 
-		return m_quadTree->IntersectNodes(Vector2Utils::LDVector(_V3X(pos), _V3Y(pos)));
+		return m_quadTree->IntersectNodes(Vector2(pos.X, pos.Y));
 	}
 
 	void ShaderGraph::AddNode(const String& name, float x, float y)
@@ -848,8 +848,8 @@ namespace APDesigner
 
 	void ShaderGraph::MoveNode(GraphNode* node, float dx, float dy)
 	{
-		node->setPosition(Vector2Utils::Add(node->getPosition(), 
-			Vector2Utils::LDVector(dx/powf(2,m_zooming),dy/powf(2,m_zooming))));
+		node->setPosition(Vector2::Add(node->getPosition(), 
+			Vector2(dx/powf(2,m_zooming),dy/powf(2,m_zooming))));
 	}
 
 	void ShaderGraph::GetViewMatrix(Matrix& mtrx)
@@ -860,8 +860,8 @@ namespace APDesigner
 		Matrix preTrans;
 		preTrans.LoadIdentity();
 		Matrix::CreateTranslation(preTrans, 
-			Vector2Utils::GetX(m_viewPos), 
-			Vector2Utils::GetY(m_viewPos),0);
+			m_viewPos.X, 
+			m_viewPos.Y, 0);
 		Matrix view;
 
 		float scaling = powf(2,m_zooming);
@@ -869,8 +869,7 @@ namespace APDesigner
 		Matrix::CreateScale(view, scaling, scaling,1);
 
 		view.SetTranslation(
-			Vector3Utils::LDVector(
-			Viewport.getRight()*0.5f, 
+			Vector3(Viewport.getRight()*0.5f, 
 			Viewport.getBottom()*0.5f, 0));
 
 		

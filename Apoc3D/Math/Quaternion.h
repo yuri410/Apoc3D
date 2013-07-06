@@ -88,9 +88,9 @@ namespace Apoc3D
 				float len = LengthSquared();
 				if (len > EPSILON)
 				{
-					return Vector3Utils::LDVector(X, Y, Z);
+					return Vector3(X, Y, Z);
 				}
-				return Vector3Utils::Zero;
+				return Vector3::Zero;
 			}
 			/**
 			 *  Gets the angle of the quaternion.
@@ -111,9 +111,9 @@ namespace Apoc3D
 				angle = 0;
 				if (len > EPSILON)
 				{
-					_V3X(axis) = X;
-					_V3Y(axis) = Y;
-					_V3Z(axis) = Z;
+					axis.X = X;
+					axis.Y = Y;
+					axis.Z = Z;
 
 					if (fabs(W) < 1)
 					{
@@ -122,25 +122,17 @@ namespace Apoc3D
 				}
 				else
 				{
-					_V3X(axis) = 0;
-					_V3Y(axis) = 0;
-					_V3Z(axis) = 0;
+					axis.X = axis.Y = axis.Z = 0;
 				}
 			}
 			/**
 			 *  Calculates the length of the quaternion.
 			 */
-			float Length() const
-			{
-				return sqrtf(X * X + Y * Y + Z * Z + W * W);
-			}
+			float Length() const { return sqrtf(X * X + Y * Y + Z * Z + W * W); }
 			/**
 			 *  Calculates the squared length of the quaternion.
 			 */
-			float LengthSquared() const
-			{
-				return X * X + Y * Y + Z * Z + W * W;
-			}
+			float LengthSquared() const { return X * X + Y * Y + Z * Z + W * W; }
 			/**
 			 *  Converts the quaternion into a unit quaternion.
 			 */
@@ -230,15 +222,15 @@ namespace Apoc3D
 				const float& ly = left.Y;
 				const float& lz = left.Z;
 				const float& lw = left.W;
-				float yz = (ry * lz) - (rz * ly);
-				float xz = (rz * lx) - (rx * lz);
-				float xy = (rx * ly) - (ry * lx);
-				float lengthSq = ((rx * lx) + (ry * ly)) + (rz * lz);
+				float yz = ry * lz - rz * ly;
+				float xz = rz * lx - rx * lz;
+				float xy = rx * ly - ry * lx;
+				float lengthSq = rx * lx + ry * ly + rz * lz;
 
-				result.X = ((rx * lw) + (lx * rw)) + yz;
-				result.Y = ((ry * lw) + (ly * rw)) + xz;
-				result.Z = ((rz * lw) + (lz * rw)) + xy;
-				result.W = (rw * lw) - lengthSq;
+				result.X = rx * lw + lx * rw + yz;
+				result.Y = ry * lw + ly * rw + xz;
+				result.Z = rz * lw + lz * rw + xy;
+				result.W = rw * lw - lengthSq;
 			}
 			/**
 			 *  Scales a quaternion by the given value.
@@ -284,15 +276,15 @@ namespace Apoc3D
 				const float& ly = left.Y;
 				const float& lz = left.Z;
 				const float& lw = left.W;
-				float yz = (ry * lz) - (rz * ly);
-				float xz = (rz * lx) - (rx * lz);
-				float xy = (rx * ly) - (ry * lx);
-				float lengthSq = ((rx * lx) + (ry * ly)) + (rz * lz);
+				float yz = ry * lz - rz * ly;
+				float xz = rz * lx - rx * lz;
+				float xy = rx * ly - ry * lx;
+				float lengthSq = rx * lx + ry * ly + rz * lz;
 
-				r.X = ((rx * lw) + (lx * rw)) + yz;
-				r.Y = ((ry * lw) + (ly * rw)) + xz;
-				r.Z = ((rz * lw) + (lz * rw)) + xy;
-				r.W = (rw * lw) - lengthSq;
+				r.X = rx * lw + lx * rw + yz;
+				r.Y = ry * lw + ly * rw + xz;
+				r.Z = rz * lw + lz * rw + xy;
+				r.W = rw * lw - lengthSq;
 			}
 
 			/**
@@ -312,14 +304,14 @@ namespace Apoc3D
 			 */
 			static float Dot(const Quaternion& left, const Quaternion& right)
 			{
-				return (left.X * right.X) + (left.Y * right.Y) + (left.Z * right.Z) + (left.W * right.W);
+				return left.X * right.X + left.Y * right.Y + left.Z * right.Z + left.W * right.W;
 			}
 			/**
 			 *  Conjugates and renormalizes the quaternion.
 			 */
 			static void Invert(Quaternion& result, const Quaternion& quaternion)
 			{
-				float lengthSq = 1.0f / ((quaternion.X * quaternion.X) + (quaternion.Y * quaternion.Y) + (quaternion.Z * quaternion.Z) + (quaternion.W * quaternion.W));
+				float lengthSq = 1.0f / (quaternion.X * quaternion.X + quaternion.Y * quaternion.Y + quaternion.Z * quaternion.Z + quaternion.W * quaternion.W);
 
 				result.X = -quaternion.X * lengthSq;
 				result.Y = -quaternion.Y * lengthSq;
@@ -333,21 +325,21 @@ namespace Apoc3D
 			static void Lerp(Quaternion& result, const Quaternion& start, const Quaternion& end, float amount)
 			{				
 				float inverse = 1.0f - amount;
-				float dot = (start.X * end.X) + (start.Y * end.Y) + (start.Z * end.Z) + (start.W * end.W);
+				float dot = start.X * end.X + start.Y * end.Y + start.Z * end.Z + start.W * end.W;
 
 				if (dot >= 0.0f)
 				{
-					result.X = (inverse * start.X) + (amount * end.X);
-					result.Y = (inverse * start.Y) + (amount * end.Y);
-					result.Z = (inverse * start.Z) + (amount * end.Z);
-					result.W = (inverse * start.W) + (amount * end.W);
+					result.X = inverse * start.X + amount * end.X;
+					result.Y = inverse * start.Y + amount * end.Y;
+					result.Z = inverse * start.Z + amount * end.Z;
+					result.W = inverse * start.W + amount * end.W;
 				}
 				else
 				{
-					result.X = (inverse * start.X) - (amount * end.X);
-					result.Y = (inverse * start.Y) - (amount * end.Y);
-					result.Z = (inverse * start.Z) - (amount * end.Z);
-					result.W = (inverse * start.W) - (amount * end.W);
+					result.X = inverse * start.X - amount * end.X;
+					result.Y = inverse * start.Y - amount * end.Y;
+					result.Z = inverse * start.Z - amount * end.Z;
+					result.W = inverse * start.W - amount * end.W;
 				}
 
 				float invLength = 1.0f / result.Length();
@@ -377,15 +369,15 @@ namespace Apoc3D
 			 */
 			static void CreateRotationAxis(Quaternion& result, const Vector3& axis, float angle)
 			{
-				Vector3 axis2 = Vector3Utils::Normalize(axis);
+				Vector3 axis2 = Vector3::Normalize(axis);
 
 				float half = angle * 0.5f;
 				float sin = sinf(half);
 				float cos = cosf(half);
 
-				result.X = _V3X(axis2) * sin;
-				result.Y = _V3Y(axis2) * sin;
-				result.Z = _V3Z(axis2) * sin;
+				result.X = axis2.X * sin;
+				result.Y = axis2.Y * sin;
+				result.Z = axis2.Z * sin;
 				result.W = cos;
 
 			}
@@ -421,7 +413,7 @@ namespace Apoc3D
 			{
 				float opposite;
 				float inverse;
-				float dot = (start.X * end.X) + (start.Y * end.Y) + (start.Z * end.Z) + (start.W * end.W);
+				float dot = start.X * end.X + start.Y * end.Y + start.Z * end.Z + start.W * end.W;
 				bool flag = false;
 
 				if (dot < 0.0f)
@@ -444,10 +436,10 @@ namespace Apoc3D
 					opposite = flag ? -sinf(amount * acos) * invSin : sinf(amount * acos) * invSin;
 				}
 
-				result.X = (inverse * start.X) + (opposite * end.X);
-				result.Y = (inverse * start.Y) + (opposite * end.Y);
-				result.Z = (inverse * start.Z) + (opposite * end.Z);
-				result.W = (inverse * start.W) + (opposite * end.W);
+				result.X = inverse * start.X + opposite * end.X;
+				result.Y = inverse * start.Y + opposite * end.Y;
+				result.Z = inverse * start.Z + opposite * end.Z;
+				result.W = inverse * start.W + opposite * end.W;
 
 			}
 		};

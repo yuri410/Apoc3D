@@ -36,10 +36,10 @@ namespace Apoc3D
 		{
 		public:
 			OctreeBox()
-				: Length(0), Center(Vector3Utils::Zero)
+				: Length(0), Center(Vector3::Zero)
 			{ }
 			OctreeBox(float length)
-				: Length(length), Center(Vector3Utils::Zero)
+				: Length(length), Center(Vector3::Zero)
 			{ }
 
 			OctreeBox(const BoundingBox& aabb);

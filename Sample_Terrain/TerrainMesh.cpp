@@ -33,7 +33,7 @@ namespace SampleTerrain
 		float Normal[3];
 	};
 
-	static VertexElement Elements[2] =
+	const VertexElement Elements[2] =
 	{
 		VertexElement(0, VEF_Vector3, VEU_Position, 0),
 		VertexElement(12, VEF_Vector3, VEU_Normal, 0)
@@ -144,37 +144,39 @@ namespace SampleTerrain
 			for (int j=0;j<m_edgeVertexCount;j++)
 			{
 				int index = i * m_edgeVertexCount + j;
-				Vector3 pos = Vector3Utils::LDVectorPtr(vtxData[index].Position);
+				Vector3 pos(vtxData[index].Position);
 				Vector3 posB;
 				if (i<m_edgeVertexCount-1)
 				{
 					int indexB = (i+1) * m_edgeVertexCount + j;
-					posB = Vector3Utils::LDVectorPtr(vtxData[indexB].Position);
+					posB = Vector3(vtxData[indexB].Position);
 				}
 				else
 				{
 					float height = (float)Terrain::GetHeightAt((i+1)*cellLength + m_bx*Terrain::BlockLength, j*cellLength+m_bz*Terrain::BlockLength);
-					posB = Vector3Utils::LDVector(cellLength * (i+1), height*HeightScale, cellLength * j);
+					posB = Vector3(cellLength * (i+1), height*HeightScale, cellLength * j);
 				}
 
 				Vector3 posR;
 				if (j<m_edgeVertexCount-1)
 				{
 					int indexR = i * m_edgeVertexCount + j+1;
-					posR = Vector3Utils::LDVectorPtr(vtxData[indexR].Position);
+					posR = Vector3(vtxData[indexR].Position);
 				}
 				else
 				{
 					float height = (float)Terrain::GetHeightAt(i*cellLength + m_bx*Terrain::BlockLength, (j+1)*cellLength+m_bz*Terrain::BlockLength);
-					posR = Vector3Utils::LDVector(cellLength * i, height*HeightScale, cellLength * (j+1));
+					posR = Vector3(cellLength * i, height*HeightScale, cellLength * (j+1));
 				}
 				
-				Vector3 va = Vector3Utils::Subtract(posR, pos);
-				Vector3 vb = Vector3Utils::Subtract(posB, pos);
-				Vector3 n = Vector3Utils::Cross(va, vb);
-				n = Vector3Utils::Normalize(n);
+				Vector3 va = posR - pos;
+				Vector3 vb = posB - pos;
+				Vector3 n = Vector3::Cross(va, vb);
+				n.NormalizeInPlace();
 
-				Vector3Utils::Store(n, vtxData[index].Normal);
+				//Vector3Utils::Store(n, vtxData[index].Normal);
+				n.Store(vtxData[index].Normal);
+				//memcpy(vtxData[index].Normal, (const float*)n, sizeof(vtxData[index].Normal));
 			}
 		}
 

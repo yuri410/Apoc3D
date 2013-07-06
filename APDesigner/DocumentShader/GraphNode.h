@@ -89,7 +89,7 @@ namespace APDesigner
 		void ApplyImpulse(const Vector2& imp)
 		{
 			// apply directly on the velocity as the mass is 1
-			m_velocity = Vector2Utils::Add(m_velocity, imp);
+			m_velocity = Vector2::Add(m_velocity, imp);
 		}
 
 		const String& getName() const { return m_name; }

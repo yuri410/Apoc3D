@@ -108,7 +108,7 @@ namespace SampleTerrain
 		Viewport vp = m_device->getViewport();
 
 		m_camera = new GameCamera(vp.Width/(float)(vp.Height));
-		m_camera->setPosition(Vector3Utils::LDVector(100,0,100));
+		m_camera->setPosition(Vector3(100,0,100));
 		m_camera->UpdateTransform();
 
 		m_sceneRenderer = new SceneRenderer(m_device);
@@ -126,7 +126,7 @@ namespace SampleTerrain
 		// setting the parameters to be used in shader effects here
 		// In this demo, as it is very simple, light source is fixed
 		RendererEffectParams::CurrentCamera = m_camera;
-		RendererEffectParams::LightDirection = Vector3Utils::LDVector(-0.707f,0.707f,0);
+		RendererEffectParams::LightDirection = Vector3(-0.707f,0.707f,0);
 
 		// our terrain mesh manager, see the header file for details
 		TerrainMeshManager::Initialize();

@@ -43,10 +43,10 @@ namespace Apoc3D
 	{
 		Vector3 OctreeSceneNode::OffsetVectorTable[8] = 
 		{ 
-			Vector3Utils::LDVector(-1,-1,-1), Vector3Utils::LDVector(-1,-1,1), 
-			Vector3Utils::LDVector(-1,1,-1),  Vector3Utils::LDVector(-1,1,1), 
-			Vector3Utils::LDVector(1,-1,-1),  Vector3Utils::LDVector(1,-1,1),
-			Vector3Utils::LDVector(1,1,-1),   Vector3Utils::LDVector(1,1,1)
+			Vector3(-1,-1,-1), Vector3(-1,-1,1), 
+			Vector3(-1,1,-1),  Vector3(-1,1,1), 
+			Vector3(1,-1,-1),  Vector3(1,-1,1),
+			Vector3(1,1,-1),   Vector3(1,1,1)
 		};
 
 		OctreeSceneNode::OctreeSceneNode(OctreeSceneManager* mgr, OctreeSceneNode* parent, const OctreeBox& volume)
@@ -84,8 +84,8 @@ namespace Apoc3D
 					OctreeBox box;
 					box.Length = m_boundingVolume.Length*0.5f;
 
-					Vector3 offset = Vector3Utils::Multiply(OffsetVectorTable[ext], ofLen);
-					box.Center = Vector3Utils::Add(m_boundingVolume.Center, offset);
+					Vector3 offset = OffsetVectorTable[ext] * ofLen;
+					box.Center = m_boundingVolume.Center + offset;
 
 					m_childTable[ext] = new OctreeSceneNode(m_manager,this, box);
 				}
@@ -118,7 +118,7 @@ namespace Apoc3D
 			for (int i=0;i<OCTE_Count;i++)
 			{
 				if (m_childTable[i] &&
-					BoundingSphere::Intersects(m_childTable[i]->m_boundingSphere, obj->getBoundingSphere()))
+					m_childTable[i]->m_boundingSphere.Intersects(obj->getBoundingSphere()))
 				{
 					if (m_childTable[i]->RemoveObjectInternal(obj))
 					{
@@ -136,20 +136,20 @@ namespace Apoc3D
 
 		OctreeSceneNode::Extend OctreeSceneNode::GetExtend(const Vector3& pos) const
 		{
-			int i = (_V3X(pos) - _V3X(m_boundingVolume.Center)) > 0 ? 1 : 0;
-			int j = (_V3Y(pos) - _V3Y(m_boundingVolume.Center)) > 0 ? 1 : 0;
-			int k = (_V3Z(pos) - _V3Z(m_boundingVolume.Center)) > 0 ? 1 : 0;
+			int i = (pos.X - m_boundingVolume.Center.X) > 0 ? 1 : 0;
+			int j = (pos.Y - m_boundingVolume.Center.Y) > 0 ? 1 : 0;
+			int k = (pos.Z - m_boundingVolume.Center.Z) > 0 ? 1 : 0;
 			return static_cast<Extend>( (i<<2) | (j<<1) | k );
 		}
 
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
-		static const int WorldLodLevelCount = 4;
-		static const float LodThresold[WorldLodLevelCount] = { 1.4f, 2.5, 4.0f, 5.5f };
+		const int WorldLodLevelCount = 4;
+		const float LodThresold[WorldLodLevelCount] = { 1.4f, 2.5, 4.0f, 5.5f };
 		int GetLevel(const BoundingSphere& sphere, const Vector3& pos)
 		{
-			float dist = Vector3Utils::Distance(sphere.Center, pos);
+			float dist = Vector3::Distance(sphere.Center, pos);
 
 			for (int i = 0; i < WorldLodLevelCount; i++)
 			{
@@ -237,9 +237,9 @@ namespace Apoc3D
 		{
 			Vector3 pos = obj->getBoundingSphere().Center;
 
-			return (_V3X(pos) < _V3X(m_min) || _V3X(pos) > _V3X(m_max) ||
-					_V3Z(pos) < _V3Z(m_min) || _V3Z(pos) > _V3Z(m_max) ||
-					_V3Y(pos) < _V3Y(m_min) || _V3Y(pos) > _V3Y(m_max));
+			return (pos.X < m_min.X || pos.X > m_max.X ||
+					pos.Y < m_min.Y || pos.Y > m_max.Y ||
+					pos.Z < m_min.Z || pos.Z > m_max.Z);
 		}
 		void OctreeSceneManager::PrepareVisibleObjects(Camera* camera, BatchData* batchData)
 		{
@@ -316,8 +316,7 @@ namespace Apoc3D
 			{
 				OctreeSceneNode* node = m_bfsQueue.Dequeue();
 				
-				float d;
-				if (BoundingSphere::Intersects(node->getBoundingSphere(), ray, d))
+				if (node->getBoundingSphere().IntersectsRay(ray, nullptr))
 				{
 					for (int i=0;i<OctreeSceneNode::OCTE_Count;i++)
 					{
@@ -333,7 +332,7 @@ namespace Apoc3D
 						if ((filter && filter->Check(obj) || !filter) &&
 							obj->IntersectsSelectionRay(ray))
 						{
-							float dist = Vector3Utils::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
+							float dist = Vector3::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
 							if (dist<nearest)
 							{
 								nearest = dist;
@@ -350,7 +349,7 @@ namespace Apoc3D
 				if ((filter && filter->Check(obj) || !filter) && 
 					obj->IntersectsSelectionRay(ray))
 				{
-					float dist = Vector3Utils::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
+					float dist = Vector3::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
 					if (dist < nearest)
 					{
 						nearest = dist;
@@ -364,7 +363,7 @@ namespace Apoc3D
 				if ((filter && filter->Check(obj) || !filter) && 
 					obj->IntersectsSelectionRay(ray))
 				{
-					float dist = Vector3Utils::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
+					float dist = Vector3::DistanceSquared(obj->getBoundingSphere().Center, ray.Position);
 					if (dist < nearest)
 					{
 						nearest = dist;

@@ -405,7 +405,7 @@ namespace Apoc3D
 			//Restore the window to its original size and position
 			if (m_state == FWS_Normal && (m_isMaximized || m_isMinimized))
 			{
-				if (Vector2Utils::Distance(
+				if (Vector2::Distance(
 					Vector2((float)Position.X, (float)Position.Y), 
 					Vector2((float)m_previousPosition.X, (float)m_previousPosition.Y))>2.0f)
 				{
@@ -422,7 +422,7 @@ namespace Apoc3D
 					Position = m_previousPosition;
 				}
 
-				if (Vector2Utils::Distance(
+				if (Vector2::Distance(
 					Vector2((float)Size.X,(float)Size.Y), 
 					Vector2((float)m_previousPosition.X, (float)m_previousPosition.Y))>2.0f)
 				{
@@ -452,7 +452,7 @@ namespace Apoc3D
 			 //Minimize the window
 			else if (m_state == FWS_Minimized && !m_isMinimized)
 			{
-				if (Vector2Utils::Distance(
+				if (Vector2::Distance(
 					Vector2((float)Position.X,(float)Position.Y),
 					Vector2((float)m_minimizedPos.X, (float)m_minimizedPos.Y))>2.0f)
 				{
@@ -469,7 +469,7 @@ namespace Apoc3D
 					Position = m_minimizedPos;
 				}
 
-				if (Vector2Utils::Distance(
+				if (Vector2::Distance(
 					Vector2((float)Size.X,(float)Size.Y), 
 					Vector2((float)m_minimizedSize.X, (float)m_minimizedSize.Y))>2.0f)
 				{
@@ -498,7 +498,7 @@ namespace Apoc3D
 			//Maximize the window
 			else if (m_state == FWS_Maximized && !m_isMaximized)
 			{
-				if (Vector2Utils::Distance(
+				if (Vector2::Distance(
 					Vector2((float)m_maximizedPos.X, (float)m_maximizedPos.Y), 
 					Vector2((float)Position.X, (float)Position.Y))>2.0f)
 				{
@@ -515,7 +515,7 @@ namespace Apoc3D
 					Position = m_maximizedPos;
 				}
 				
-				if (Vector2Utils::Distance(
+				if (Vector2::Distance(
 					Vector2((float)Size.X,(float)Size.Y), 
 					Vector2((float)m_maximumSize.X, (float)m_maximumSize.Y))>2.0f)
 				{

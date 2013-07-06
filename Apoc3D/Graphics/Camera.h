@@ -58,15 +58,15 @@ namespace Apoc3D
 			/**
 			 *  Gets the up vector of the camera view
 			 */
-			Vector3 getUp() const { return Vector3Utils::LDVector(m_invView.M21, m_invView.M22, m_invView.M23); }
+			Vector3 getUp() const { return Vector3(m_invView.M21, m_invView.M22, m_invView.M23); }
 			/**
 			 *   Gets the right vector of the camera view
 			 */
-			Vector3 getRight() const { return Vector3Utils::LDVector(m_invView.M11, m_view.M12, m_invView.M13); }
+			Vector3 getRight() const { return Vector3(m_invView.M11, m_view.M12, m_invView.M13); }
 			/**
 			 *   Gets the forward vector of the camera view
 			 */
-			Vector3 getForward() const { return Vector3Utils::LDVector(m_invView.M31, m_invView.M32, m_invView.M33); }
+			Vector3 getForward() const { return Vector3(m_invView.M31, m_invView.M32, m_invView.M33); }
 
 			/**
 			 *  Sets the view transform matrix
@@ -121,7 +121,7 @@ namespace Apoc3D
 			void MoveForward()
 			{
 				Vector3 dir = m_invView.GetBackward();
-				dir = Vector3Utils::Normalize(dir);
+				dir.NormalizeInPlace();
 				Move(dir);
 				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
 				//m_velChange = Vector3Utils::Add(m_velChange, Vector3Utils::UnitZ);
@@ -131,13 +131,13 @@ namespace Apoc3D
 				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
 				//m_velChange = Vector3Utils::Subtract(m_velChange, Vector3Utils::UnitZ);				
 				Vector3 dir = m_invView.GetForward();
-				dir = Vector3Utils::Normalize(dir);
+				dir.NormalizeInPlace();
 				Move(dir);
 			}
 			void MoveLeft()
 			{
 				Vector3 dir = m_invView.GetLeft();
-				dir = Vector3Utils::Normalize(dir);
+				dir.NormalizeInPlace();
 				Move(dir);
 
 				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
@@ -146,7 +146,7 @@ namespace Apoc3D
 			void MoveRight() 
 			{
 				Vector3 dir = m_invView.GetRight();
-				dir = Vector3Utils::Normalize(dir);
+				dir.NormalizeInPlace();
 				Move(dir);
 				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitX, m_velocity);
 				//m_velChange = Vector3Utils::Add(m_velChange, Vector3Utils::UnitX);
@@ -154,7 +154,7 @@ namespace Apoc3D
 			void MoveUp()
 			{
 				Vector3 dir = m_invView.GetUp();
-				dir = Vector3Utils::Normalize(dir);
+				dir.NormalizeInPlace();
 				Move(dir);
 				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
 				//m_velChange = Vector3Utils::Add(m_velChange, Vector3Utils::UnitY);
@@ -162,7 +162,7 @@ namespace Apoc3D
 			void MoveDown() 
 			{
 				Vector3 dir = m_invView.GetDown();
-				dir = Vector3Utils::Normalize(dir);
+				dir.NormalizeInPlace();
 				Move(dir);
 				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitY, m_velocity);
 				//m_velChange = Vector3Utils::Subtract(m_velChange, Vector3Utils::UnitY);
@@ -170,7 +170,7 @@ namespace Apoc3D
 			void Move(const Vector3 &dir)
 			{
 				//Vector3 ofs = Vector3Utils::Multiply(dir, m_velocity);
-				m_velChange = Vector3Utils::Add(m_velChange, dir);
+				m_velChange += dir;
 			}
 			
 			void Turn(float dx, float dy)

@@ -50,20 +50,20 @@ namespace APBuild
 
 	Vector3 ConvertVector3(const FbxVector4& v)
 	{
-		return Vector3Utils::LDVector( 
+		return Vector3( 
 			static_cast<float>(v[0]),
 			static_cast<float>(v[1]),
 			static_cast<float>(v[2]) );
 	}
 	Vector2 ConvertVector2(const FbxVector2& v)
 	{
-		return Vector2Utils::LDVector(
+		return Vector2(
 			static_cast<float>(v[0]),
 			static_cast<float>(v[1]) );
 	}
 	Vector2 ConvertTexCoord(const FbxVector2& v)
 	{
-		return Vector2Utils::LDVector(
+		return Vector2(
 			static_cast<float>(v[0]), 
 			static_cast<float>(1-v[1]) );
 	}
@@ -852,7 +852,7 @@ namespace APBuild
 
 					int index = GetMappingIndex(mappingMode, nPolygonIndex, nPolygonVertexIndex, nVertexIndex);
 					if (index<0)
-						return Vector2Utils::Zero;
+						return Vector2::Zero;
 					
 
 					const FbxLayerElementArrayTemplate<FbxVector2>& pUVArray = pUVs->GetDirectArray();
@@ -925,7 +925,7 @@ namespace APBuild
 				}
 			}
 		}
-		return Vector2Utils::LDVector(0);
+		return Vector2::Zero;
 	}
 
 	MaterialData* FbxConverter::GetMaterial(FbxSurfaceMaterial* pFBXMaterial)
@@ -1072,7 +1072,7 @@ namespace APBuild
 		if( FBXColorProperty.IsValid() )
 		{
 			FbxDouble3 FBXColor = FBXColorProperty.Get();
-			Color = Vector3Utils::LDVector( 
+			Color = Vector3( 
 				static_cast<float>(FBXColor[0]),
 				static_cast<float>(FBXColor[1]),
 				static_cast<float>(FBXColor[2]) );
@@ -1080,7 +1080,7 @@ namespace APBuild
 			if( FBXFactorProperty.IsValid() )
 			{
 				double FBXFactor = FBXFactorProperty.Get();
-				Color = Vector3Utils::Multiply(Color, static_cast<float>(FBXFactor));
+				Color = Vector3::Multiply(Color, static_cast<float>(FBXFactor));
 			}
 		}
 		return Color;
@@ -1097,14 +1097,14 @@ namespace APBuild
 		FIVertex(){}
 		FIVertex(Vector3 pos, Vector3 n, Vector2 t1)
 		{
-			Position[0] = _V3X(pos);
-			Position[1] = _V3Y(pos);
-			Position[2] = _V3Z(pos);
+			Position[0] = pos.X;
+			Position[1] = pos.Y;
+			Position[2] = pos.Z;
 
-			Normal[0] = _V3X(n); Normal[1] = _V3Y(n); Normal[2] = _V3Z(n);
+			Normal[0] = n.X; Normal[1] = n.Y; Normal[2] = n.Z;
 
-			TexCoords[0] = Vector2Utils::GetX(t1);
-			TexCoords[1] = Vector2Utils::GetY(t1);
+			TexCoords[0] = t1.X;
+			TexCoords[1] = t1.Y;
 			TexCoords[2] = TexCoords[3] = 0;
 
 			BlendIndex[0] = BlendIndex[1] = BlendIndex[2] = BlendIndex[3] = 0;
@@ -1112,16 +1112,16 @@ namespace APBuild
 		}
 		FIVertex(Vector3 pos, Vector3 n, Vector2 t1, Vector2 t2)
 		{
-			Position[0] = _V3X(pos);
-			Position[1] = _V3Y(pos);
-			Position[2] = _V3Z(pos);
+			Position[0] = pos.X;
+			Position[1] = pos.Y;
+			Position[2] = pos.Z;
 
-			Normal[0] = _V3X(n); Normal[1] = _V3Y(n); Normal[2] = _V3Z(n);
+			Normal[0] = n.X; Normal[1] = n.Y; Normal[2] = n.Z;
 
-			TexCoords[0] = Vector2Utils::GetX(t1);
-			TexCoords[1] = Vector2Utils::GetY(t1);
-			TexCoords[2] = Vector2Utils::GetX(t2);
-			TexCoords[3] = Vector2Utils::GetY(t2);
+			TexCoords[0] = t1.X;
+			TexCoords[1] = t1.Y;
+			TexCoords[2] = t2.X;
+			TexCoords[3] = t2.Y;
 
 
 			BlendIndex[0] = BlendIndex[1] = BlendIndex[2] = BlendIndex[3] = 0;
@@ -1129,49 +1129,48 @@ namespace APBuild
 		}
 		FIVertex(Vector3 pos, Vector3 n, Vector2 t1, Vector2 t2, Vector4 bi, Vector4 bw)
 		{
-			Position[0] = _V3X(pos);
-			Position[1] = _V3Y(pos);
-			Position[2] = _V3Z(pos);
+			Position[0] = pos.X;
+			Position[1] = pos.Y;
+			Position[2] = pos.Z;
 
-			Normal[0] = _V3X(n); Normal[1] = _V3Y(n); Normal[2] = _V3Z(n);
+			Normal[0] = n.X; Normal[1] = n.Y; Normal[2] = n.Z;
 
-			TexCoords[0] = Vector2Utils::GetX(t1);
-			TexCoords[1] = Vector2Utils::GetY(t1);
-			TexCoords[2] = Vector2Utils::GetX(t2);
-			TexCoords[3] = Vector2Utils::GetY(t2);
+			TexCoords[0] = t1.X;
+			TexCoords[1] = t1.Y;
+			TexCoords[2] = t2.X;
+			TexCoords[3] = t2.Y;
 
-			BlendIndex[0] = Vector4Utils::GetX(bi);
-			BlendIndex[1] = Vector4Utils::GetY(bi);
-			BlendIndex[2] = Vector4Utils::GetZ(bi);
-			BlendIndex[3] = Vector4Utils::GetW(bi);
+			BlendIndex[0] = bi.X;
+			BlendIndex[1] = bi.Y;
+			BlendIndex[2] = bi.Z;
+			BlendIndex[3] = bi.W;
 
-
-			BlendWeight[0] = Vector4Utils::GetX(bw);
-			BlendWeight[1] = Vector4Utils::GetY(bw);
-			BlendWeight[2] = Vector4Utils::GetZ(bw);
-			BlendWeight[3] = Vector4Utils::GetW(bw);
+			BlendWeight[0] = bw.X;
+			BlendWeight[1] = bw.Y;
+			BlendWeight[2] = bw.Z;
+			BlendWeight[3] = bw.W;
 		}
 		FIVertex(Vector3 pos, Vector3 n, Vector2 t1, Vector4 bi, Vector4 bw)
 		{
-			Position[0] = _V3X(pos);
-			Position[1] = _V3Y(pos);
-			Position[2] = _V3Z(pos);
+			Position[0] = pos.X;
+			Position[1] = pos.Y;
+			Position[2] = pos.Z;
 
-			Normal[0] = _V3X(n); Normal[1] = _V3Y(n); Normal[2] = _V3Z(n);
+			Normal[0] = n.X; Normal[1] = n.Y; Normal[2] = n.Z;
 
-			TexCoords[0] = Vector2Utils::GetX(t1);
-			TexCoords[1] = Vector2Utils::GetY(t1);
+			TexCoords[0] = t1.X;
+			TexCoords[1] = t1.Y;
 			TexCoords[2] = TexCoords[3] = 0;
 
-			BlendIndex[0] = Vector4Utils::GetX(bi);
-			BlendIndex[1] = Vector4Utils::GetY(bi);
-			BlendIndex[2] = Vector4Utils::GetZ(bi);
-			BlendIndex[3] = Vector4Utils::GetW(bi);
+			BlendIndex[0] = bi.X;
+			BlendIndex[1] = bi.Y;
+			BlendIndex[2] = bi.Z;
+			BlendIndex[3] = bi.W;
 
-			BlendWeight[0] = Vector4Utils::GetX(bw);
-			BlendWeight[1] = Vector4Utils::GetY(bw);
-			BlendWeight[2] = Vector4Utils::GetZ(bw);
-			BlendWeight[3] = Vector4Utils::GetW(bw);
+			BlendWeight[0] = bw.X;
+			BlendWeight[1] = bw.Y;
+			BlendWeight[2] = bw.Z;
+			BlendWeight[3] = bw.W;
 		}
 	};
 
@@ -1308,7 +1307,7 @@ namespace APBuild
 					}
 				}
 				meshData->Name = StringUtils::toWString(mesh->GetName());
-				meshData->BoundingSphere.Center = Vector3Utils::Zero;
+				meshData->BoundingSphere.Center = Vector3::Zero;
 				meshData->BoundingSphere.Radius = 0;
 
 				// duplicated vertex removal using hashtable
@@ -1370,7 +1369,7 @@ namespace APBuild
 							vertexList.Add(fiv);
 							vtxHashTable.Add(fiv, existA);
 							meshData->BoundingSphere.Center = 
-								Vector3Utils::Add(meshData->BoundingSphere.Center, Positions[k]);
+								Vector3::Add(meshData->BoundingSphere.Center, Positions[k]);
 						}
 
 						//============================================================================
@@ -1411,7 +1410,7 @@ namespace APBuild
 							vertexList.Add(fiv);
 							vtxHashTable.Add(fiv, existB);
 							meshData->BoundingSphere.Center = 
-								Vector3Utils::Add(meshData->BoundingSphere.Center, Positions[k+1]);
+								Vector3::Add(meshData->BoundingSphere.Center, Positions[k+1]);
 						}
 
 						//============================================================================
@@ -1454,13 +1453,13 @@ namespace APBuild
 							vertexList.Add(fiv);
 							vtxHashTable.Add(fiv, existC);
 							meshData->BoundingSphere.Center = 
-								Vector3Utils::Add(meshData->BoundingSphere.Center, Positions[k+2]);
+								Vector3::Add(meshData->BoundingSphere.Center, Positions[k+2]);
 						}
 						meshData->Faces.Add(MeshFace(existA,existB,existC,mtrlIndex));
 					}
 				}
 				meshData->BoundingSphere.Center =
-					Vector3Utils::Divide(meshData->BoundingSphere.Center, static_cast<float>(vertexList.getCount()));
+					Vector3::Divide(meshData->BoundingSphere.Center, static_cast<float>(vertexList.getCount()));
 				
 				meshData->VertexCount = vertexList.getCount();
 
@@ -1516,27 +1515,27 @@ namespace APBuild
 							{
 							case VEU_Position:
 								{
-									Vector3 p = Vector3Utils::LDVectorPtr(vertexList[j].Position);
-									p = Vector3Utils::TransformCoordinate(p, absTransform);
+									Vector3 p(vertexList[j].Position);
+									p = Vector3::TransformCoordinate(p, absTransform);
 
-									v3z(p) = -v3z(p);
+									p.Z = -p.Z;
 
-									p = Vector3Utils::TransformCoordinate(p, postTransfrom);
+									p = Vector3::TransformCoordinate(p, postTransfrom);
 
-									Vector3Utils::Store(p, vertexList[j].Position);
+									p.Store(vertexList[j].Position);
 									break;
 								}
 							case VEU_Normal:
 								{
-									Vector3 p = Vector3Utils::LDVectorPtr(vertexList[j].Normal);
-									p = Vector3Utils::TransformNormal(p, absTransform);
+									Vector3 p(vertexList[j].Normal);
+									p = Vector3::TransformNormal(p, absTransform);
 
-									v3x(p) = -v3x(p);
-									v3y(p) = -v3y(p);
+									p.X = -p.X;
+									p.Y = -p.Y;
 
-									p = Vector3Utils::TransformNormal(p, postTransfrom);
+									p = Vector3::TransformNormal(p, postTransfrom);
 
-									Vector3Utils::Store(p, vertexList[j].Normal);
+									p.Store(vertexList[j].Normal);
 									break;
 								}
 							}
@@ -1563,12 +1562,12 @@ namespace APBuild
 							*(vertexPtr+2) = vertexList[j].Position[2];
 
 							{
-								Vector3 pos = Vector3Utils::LDVector(
+								Vector3 pos(
 									vertexList[j].Position[0], 
 									vertexList[j].Position[1], 
 									vertexList[j].Position[2]);
 
-								float rr = Vector3Utils::DistanceSquared(meshData->BoundingSphere.Center, pos);
+								float rr = Vector3::DistanceSquared(meshData->BoundingSphere.Center, pos);
 								if (rr > meshData->BoundingSphere.Radius)
 								{
 									meshData->BoundingSphere.Radius = rr;

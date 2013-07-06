@@ -234,7 +234,7 @@ namespace Apoc3D
 							if (RendererEffectParams::CurrentCamera)
 							{
 								Matrix view = RendererEffectParams::CurrentCamera->getViewMatrix();
-								view.SetTranslation(Vector3Utils::Zero);
+								view.SetTranslation(Vector3::Zero);
 
 								Matrix temp;
 								Matrix::Multiply(temp, rop->RootTransform, view);
@@ -507,14 +507,14 @@ namespace Apoc3D
 					case EPUSAGE_SV2_ViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
-							Vector2 size = Vector2Utils::LDVector((float)vp.Width, (float)vp.Height);
+							Vector2 size = Vector2((float)vp.Width, (float)vp.Height);
 							SetVector2(m_parameters[i], size);
 							break;
 						}
 					case EPUSAGE_SV2_InvViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
-							Vector2 size = Vector2Utils::LDVector(1.f/(float)vp.Width, 1.f/(float)vp.Height);
+							Vector2 size = Vector2(1.f/(float)vp.Width, 1.f/(float)vp.Height);
 							SetVector2(m_parameters[i], size);
 							break;
 						}

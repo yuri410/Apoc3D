@@ -34,20 +34,20 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace APDesigner
 {
-	static const float Damping = 2.2f;
-	static const float K = 4.0f;
-	static const float NodeMass = 1.0f;
-	static const float OringialSpringLength = 1.5f;
-	static const float Eplison = 0.00001f;
-	static const float MaxVel = 50;
-	static const float RepelRatio = 1.5f;
+	const float Damping = 2.2f;
+	const float K = 4.0f;
+	const float NodeMass = 1.0f;
+	const float OringialSpringLength = 1.5f;
+	const float Eplison = 0.00001f;
+	const float MaxVel = 50;
+	const float RepelRatio = 1.5f;
 
 	GraphNode::GraphNode(ShaderGraph* graph, QuadTreeNode* tree, const String& name, int index)
 		: m_name(name), m_tree(tree), m_graph(graph), m_dockingNode(0),
-		m_position(Vector2Utils::Zero), m_velocity(Vector2Utils::Zero),m_kineticEnergy(0),
+		m_position(Vector2::Zero), m_velocity(Vector2::Zero),m_kineticEnergy(0),
 		m_index(index), m_useable(true)
 	{
-		m_position = Vector2Utils::LDVector(Randomizer::NextFloat() * 2-1, Randomizer::NextFloat() * 2-1);
+		m_position = Vector2(Randomizer::NextFloat() * 2-1, Randomizer::NextFloat() * 2-1);
 		//// node is initially randomly placed on a identity circle
 		//float r = Randomizer::NextFloat() * 1024;
 		//float angle = Randomizer::NextFloat() * Apoc3D::Math::PI * 2;
@@ -67,17 +67,17 @@ namespace APDesigner
 		{
 			const GraphNode* nb = m_neighbour[i];
 
-			Vector2 d = Vector2Utils::Subtract(nb->m_position, m_position);
-			float distance = Vector2Utils::Length(d);
+			Vector2 d = Vector2::Subtract(nb->m_position, m_position);
+			float distance = Vector2::Length(d);
 			float force = (distance-OringialSpringLength) * K;
 
 			float scale = (force * dt);
 			
-			Vector2 dv = Vector2Utils::Multiply(d, scale);
-			m_velocity = Vector2Utils::Add(m_velocity, dv);
+			Vector2 dv = Vector2::Multiply(d, scale);
+			m_velocity = Vector2::Add(m_velocity, dv);
 		}
 
-		Vector2 force = Vector2Utils::Zero;
+		Vector2 force = Vector2::Zero;
 		
 		if (m_graph->getTechnique() == ShaderGraph::TECH_Quad)
 		{
@@ -95,17 +95,17 @@ namespace APDesigner
 			for (int i=0;i<nodes.getCount();i++)
 			{
 				const GraphNode* nde = nodes[i];
-				Vector2 d = Vector2Utils::Subtract(nde->getPosition(), getPosition());
-				float dist = Vector2Utils::Length(d);
+				Vector2 d = Vector2::Subtract(nde->getPosition(), getPosition());
+				float dist = Vector2::Length(d);
 
 				if (dist<0.01f || dist>MaxDist)
 					continue;
 
-				d = Vector2Utils::Multiply(d, RepelRatio * (getMass()*nde->getMass())/(dist*dist*dist));
-				force = Vector2Utils::Subtract(force, d);
+				d = Vector2::Multiply(d, RepelRatio * (getMass()*nde->getMass())/(dist*dist*dist));
+				force = Vector2::Subtract(force, d);
 			}
-			Vector2 dv = Vector2Utils::Multiply(force, dt);
-			m_velocity = Vector2Utils::Add(m_velocity, dv);
+			Vector2 dv = Vector2::Multiply(force, dt);
+			m_velocity = Vector2::Add(m_velocity, dv);
 		}
 		else if (m_graph->getTechnique() == ShaderGraph::TECH_Fuzzy)
 		{
@@ -114,24 +114,24 @@ namespace APDesigner
 			for (int i=0;i<m_neighbour.getCount();i++)
 			{
 				const GraphNode* nde = m_neighbour[i];
-				Vector2 d = Vector2Utils::Subtract(nde->getPosition(), getPosition());
-				float dist = Vector2Utils::LengthSquared(d);
+				Vector2 d = Vector2::Subtract(nde->getPosition(), getPosition());
+				float dist = Vector2::LengthSquared(d);
 
 				if (dist<0.01f) continue;
 
-				d = Vector2Utils::Multiply(d, RepelRatio * (getMass()*nde->getMass())/(dist));
-				force = Vector2Utils::Subtract(force, d);
+				d = Vector2::Multiply(d, RepelRatio * (getMass()*nde->getMass())/(dist));
+				force = Vector2::Subtract(force, d);
 			}
 		}
 
-		Vector2 dv = Vector2Utils::Multiply(force, dt);
-		m_velocity = Vector2Utils::Add(m_velocity, dv);
+		Vector2 dv = Vector2::Multiply(force, dt);
+		m_velocity = Vector2::Add(m_velocity, dv);
 
 
 		// the ordinary way of Euler numerical integration
-		m_velocity = Vector2Utils::Multiply(m_velocity, 1-Damping*dt);
+		m_velocity = Vector2::Multiply(m_velocity, 1-Damping*dt);
 
-		float vl=Vector2Utils::LengthSquared(m_velocity);
+		float vl=Vector2::LengthSquared(m_velocity);
 		m_kineticEnergy = vl * NodeMass;
 
 
@@ -143,10 +143,10 @@ namespace APDesigner
 			// This can help stabilize the simulation
 			if (vl>MaxVel*MaxVel)
 			{
-				m_velocity = Vector2Utils::Multiply(m_velocity, MaxVel / sqrtf(vl));
+				m_velocity = Vector2::Multiply(m_velocity, MaxVel / sqrtf(vl));
 			}
-			Vector2 dp = Vector2Utils::Multiply(m_velocity, dt);
-			m_position = Vector2Utils::Add(m_position, dp);
+			Vector2 dp = Vector2::Multiply(m_velocity, dt);
+			m_position = Vector2::Add(m_position, dp);
 
 			m_isPositionDirty = true;
 		}
@@ -156,9 +156,9 @@ namespace APDesigner
 	{
 		static const float Threshold = 1.0f;
 
-		Vector2 d = Vector2Utils::Subtract(node->getCenterOfMass(), getPosition());
+		Vector2 d = Vector2::Subtract(node->getCenterOfMass(), getPosition());
 
-		float dist = Vector2Utils::Length(d);
+		float dist = Vector2::Length(d);
 		if (dist<0.001f)
 			return;
 
@@ -186,14 +186,14 @@ namespace APDesigner
 						iter!=nodes.End();iter++)
 					{
 						const GraphNode* nde = *iter;
-						d = Vector2Utils::Subtract(nde->getPosition(), getPosition());
-						dist = Vector2Utils::Length(d);
+						d = Vector2::Subtract(nde->getPosition(), getPosition());
+						dist = Vector2::Length(d);
 
 						if (dist<0.0001f)// || dist>MaxDist)
 							continue;
 
-						d = Vector2Utils::Multiply(d, RepelRatio * (getMass()*nde->getMass())/(dist*dist*dist));
-						force = Vector2Utils::Subtract(force, d);
+						d = Vector2::Multiply(d, RepelRatio * (getMass()*nde->getMass())/(dist*dist*dist));
+						force = Vector2::Subtract(force, d);
 					}
 					break;
 				}
@@ -202,8 +202,8 @@ namespace APDesigner
 		else// if (dist<=MaxDist)
 		{
 			// otherwise, use the big QuadTreeNode as a body
-			d = Vector2Utils::Multiply(d, RepelRatio * (getMass()*node->getMass())/(dist*dist*dist));
-			force =  Vector2Utils::Subtract(force, d);
+			d = Vector2::Multiply(d, RepelRatio * (getMass()*node->getMass())/(dist*dist*dist));
+			force =  Vector2::Subtract(force, d);
 		}
 	}
 

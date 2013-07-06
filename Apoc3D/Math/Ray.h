@@ -57,45 +57,14 @@ namespace Apoc3D
 			bool operator!=(const Ray &other) const { return !(*this == other); }
 
 
-			/**
-			 *  Determines whether a ray intersects the specified object.
-			 */
-			static bool Intersects(const Ray& ray, const Plane& plane, float& distance)
-			{
-				float dotDirection = plane.DotNormal(ray.Direction);
+			bool IntersectsTriangle(const Vector3& a, const Vector3& b, const Vector3& c, Vector3& result);
 
-				if (fabs(dotDirection) < EPSILON)
-				{
-					distance = 0;
-					return false;
-				}
-
-				float dotPosition = plane.DotNormal(ray.Position);
-				float d = (-plane.D - dotPosition) / dotDirection;
-
-				if (d < 0.0f)
-				{
-					if (d < EPSILON)
-					{
-						distance = 0;
-						return false;
-					}
-					d = 0.0f;
-				}
-
-				distance = d;
-				return true;
-			}
 
 			/** 
 			 *  Determines whether a ray intersects the specified object.
 			 */
 			static bool Intersects(const Ray& ray, const BoundingBox& box, float& distance);
 
-			/**
-			 *  Determines whether a ray intersects the specified object.
-			 */
-			static bool Intersects(const Ray& ray, const BoundingSphere& sphere, float& distance);
 		};
 	}
 }

@@ -79,14 +79,14 @@ namespace SampleTerrain
 		*/
 		static void GetBlockCoordinate(const Vector3 pos, int& bx, int& bz)
 		{
-			bx = (int)floor(_V3X(pos)/BlockLength);
-			bz = (int)floor(_V3Z(pos)/BlockLength);
+			bx = (int)floor(pos.X/BlockLength);
+			bz = (int)floor(pos.Z/BlockLength);
 		}
 		/** Calculates the bounding sphere in world space for a terrain chunk at given terrain chunk space coords.
 		*/
 		static BoundingSphere GetBoundingSphere(int bx, int bz)
 		{
-			return BoundingSphere(Vector3Utils::LDVector((bx+0.5f) * BlockLength, 0, (bz+0.5f)*BlockLength), BlockLength * Math::Root2 * 0.5f);
+			return BoundingSphere(Vector3((bx+0.5f) * BlockLength, 0, (bz+0.5f)*BlockLength), BlockLength * Math::Root2 * 0.5f);
 		}
 		/** Gets a noise value based on world coordinates
 		*/

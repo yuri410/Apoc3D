@@ -278,14 +278,14 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
-				v2x(vec) = cr32_dep(&m_buffer[0]);
-				v2y(vec) = cr32_dep(&m_buffer[sizeof(float)]);
+				vec.X = cr32_dep(&m_buffer[0]);
+				vec.Y = cr32_dep(&m_buffer[sizeof(float)]);
 			}
 			else
 #endif
 			{
-				v2x(vec) = cr32_le(&m_buffer[0]);
-				v2y(vec) = cr32_le(&m_buffer[sizeof(float)]);
+				vec.X = cr32_le(&m_buffer[0]);
+				vec.Y = cr32_le(&m_buffer[sizeof(float)]);
 			}
 		}
 		void BinaryReader::ReadVector3(Vector3& vec)
@@ -294,16 +294,16 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
-				v3x(vec) = cr32_dep(&m_buffer[0]);
-				v3y(vec) = cr32_dep(&m_buffer[sizeof(float)]);
-				v3z(vec) = cr32_dep(&m_buffer[sizeof(float)*2]);
+				vec.X = cr32_dep(&m_buffer[0]);
+				vec.Y = cr32_dep(&m_buffer[sizeof(float)]);
+				vec.Z = cr32_dep(&m_buffer[sizeof(float)*2]);
 			}
 			else
 #endif
 			{
-				v3x(vec) = cr32_le(&m_buffer[0]);
-				v3y(vec) = cr32_le(&m_buffer[sizeof(float)]);
-				v3z(vec) = cr32_le(&m_buffer[sizeof(float)*2]);
+				vec.X = cr32_le(&m_buffer[0]);
+				vec.Y = cr32_le(&m_buffer[sizeof(float)]);
+				vec.Z = cr32_le(&m_buffer[sizeof(float)*2]);
 			}
 
 		}
@@ -313,18 +313,18 @@ namespace Apoc3D
 #if !LITTLE_ENDIAN
 			if (m_isEndianDependent)
 			{
-				v4x(vec) = cr32_dep(&m_buffer[0]);
-				v4y(vec) = cr32_dep(&m_buffer[sizeof(float)]);
-				v4z(vec) = cr32_dep(&m_buffer[sizeof(float)*2]);
-				v4w(vec) = cr32_dep(&m_buffer[sizeof(float)*3]);
+				vec.X = cr32_dep(&m_buffer[0]);
+				vec.Y = cr32_dep(&m_buffer[sizeof(float)]);
+				vec.Z = cr32_dep(&m_buffer[sizeof(float)*2]);
+				vec.W = cr32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
 #endif
 			{
-				v4x(vec) = cr32_le(&m_buffer[0]);
-				v4y(vec) = cr32_le(&m_buffer[sizeof(float)]);
-				v4z(vec) = cr32_le(&m_buffer[sizeof(float)*2]);
-				v4w(vec) = cr32_le(&m_buffer[sizeof(float)*3]);
+				vec.X = cr32_le(&m_buffer[0]);
+				vec.Y = cr32_le(&m_buffer[sizeof(float)]);
+				vec.Z = cr32_le(&m_buffer[sizeof(float)*2]);
+				vec.W = cr32_le(&m_buffer[sizeof(float)*3]);
 			}
 		}
 
@@ -469,11 +469,11 @@ namespace Apoc3D
 				float x = cr32_dep(&m_buffer[0]);
 				float y = cr32_dep(&m_buffer[sizeof(float)]);
 				float z = cr32_dep(&m_buffer[sizeof(float)*2]);
-				ray.Position = Vector3Utils::LDVector(x,y,z);
+				ray.Position = Vector3(x,y,z);
 				x = cr32_dep(&m_buffer[0]);
 				y = cr32_dep(&m_buffer[sizeof(float)]);
 				z = cr32_dep(&m_buffer[sizeof(float)*2]);
-				ray.Direction = Vector3Utils::LDVector(x,y,z);
+				ray.Direction = Vector3(x,y,z);
 			}
 			else
 #endif
@@ -481,11 +481,11 @@ namespace Apoc3D
 				float x = cr32_le(&m_buffer[0]);
 				float y = cr32_le(&m_buffer[sizeof(float)]);
 				float z = cr32_le(&m_buffer[sizeof(float)*2]);
-				ray.Position = Vector3Utils::LDVector(x,y,z);
+				ray.Position = Vector3(x,y,z);
 				x = cr32_le(&m_buffer[0]);
 				y = cr32_le(&m_buffer[sizeof(float)]);
 				z = cr32_le(&m_buffer[sizeof(float)*2]);
-				ray.Direction = Vector3Utils::LDVector(x,y,z);
+				ray.Direction = Vector3(x,y,z);
 
 			}
 			
@@ -511,11 +511,11 @@ namespace Apoc3D
 				float x = cr32_le(&m_buffer[0]);
 				float y = cr32_le(&m_buffer[sizeof(float)]);
 				float z = cr32_le(&m_buffer[sizeof(float)*2]);
-				box.Minimum = Vector3Utils::LDVector(x,y,z);
+				box.Minimum = Vector3(x,y,z);
 				x = cr32_le(&m_buffer[sizeof(float)*3]);
 				y = cr32_le(&m_buffer[sizeof(float)*4]);
 				z = cr32_le(&m_buffer[sizeof(float)*5]);
-				box.Maximum = Vector3Utils::LDVector(x,y,z);
+				box.Maximum = Vector3(x,y,z);
 			}
 		}
 		void BinaryReader::ReadBoundingSphere(BoundingSphere& sphere)
@@ -527,7 +527,7 @@ namespace Apoc3D
 				float x = cr32_dep(&m_buffer[0]);
 				float y = cr32_dep(&m_buffer[sizeof(float)]);
 				float z = cr32_dep(&m_buffer[sizeof(float)*2]);
-				sphere.Center = Vector3Utils::LDVector(x,y,z);
+				sphere.Center = Vector3(x,y,z);
 				sphere.Radius = cr32_dep(&m_buffer[sizeof(float)*3]);
 			}
 			else
@@ -536,7 +536,7 @@ namespace Apoc3D
 				float x = cr32_le(&m_buffer[0]);
 				float y = cr32_le(&m_buffer[sizeof(float)]);
 				float z = cr32_le(&m_buffer[sizeof(float)*2]);
-				sphere.Center = Vector3Utils::LDVector(x,y,z);
+				sphere.Center = Vector3(x,y,z);
 				sphere.Radius = cr32_le(&m_buffer[sizeof(float)*3]);
 			}
 		}

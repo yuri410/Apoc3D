@@ -50,18 +50,18 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		static const int NUM = 256;
-		static const char LBracket = '(';
+		const int NUM = 256;
+		const char LBracket = '(';
 
 
-		static const char OpAnd = '&';
-		static const char OpOr = '|';
-		static const char OpNot = '!';
-		//static const char OpAt = '@';
+		const char OpAnd = '&';
+		const char OpOr = '|';
+		const char OpNot = '!';
+		//const char OpAt = '@';
 
-		static const char RBracket = ')';
+		const char RBracket = ')';
 
-		static const char EndSym = '$';
+		const char EndSym = '$';
 
 		struct PriorInfo
 		{
@@ -71,7 +71,7 @@ namespace Apoc3D
 			// right side priority
 			int P2;
 		};
-		static const PriorInfo pList[6] = {
+		const PriorInfo pList[6] = {
 			{ OpAnd, 2, 1 },
 			{ OpOr, 2, 1 },
 			{ OpNot, 4, 3 },
@@ -1230,7 +1230,7 @@ namespace Apoc3D
 
 			{
 				SceneOpArg arg;
-				ParseCallArgVector2(node, "Size", arg, GlobalVars, Vector2Utils::One);
+				ParseCallArgVector2(node, "Size", arg, GlobalVars, Vector2::One);
 				inst.Args.Add(arg);
 			}
 
@@ -1527,9 +1527,9 @@ namespace Apoc3D
 				return ParseCallArgAsVar(*result,arg,vars);
 			}
 			{
-				float single = Vector2Utils::GetX(def);
+				float single = def.X;
 				arg.DefaultValue[0] = reinterpret_cast<const uint&>(single);
-				single = Vector2Utils::GetY(def);
+				single = def.Y;
 				arg.DefaultValue[1] = reinterpret_cast<const uint&>(single);
 
 			}

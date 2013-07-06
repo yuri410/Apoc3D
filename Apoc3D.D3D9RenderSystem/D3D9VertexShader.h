@@ -52,9 +52,9 @@ namespace Apoc3D
 				virtual int GetParamIndex(const String& paramName);
 				virtual int GetSamplerIndex(const String& paramName);
 
-				virtual void SetVector2(int reg, Vector2 value);
-				virtual void SetVector3(int reg, Vector3 value);
-				virtual void SetVector4(int reg, Vector4 value);
+				virtual void SetVector2(int reg, const Vector2& value);
+				virtual void SetVector3(int reg, const Vector3& value);
+				virtual void SetVector4(int reg, const Vector4& value);
 				virtual void SetValue(int reg, const Quaternion& value);
 				virtual void SetValue(int reg, const Matrix& value);
 				virtual void SetValue(int reg, const Color4& value);
@@ -79,9 +79,9 @@ namespace Apoc3D
 				virtual void SetTexture(int samIndex, Texture* tex);
 				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state);
 
-				virtual void SetVector2(const String& paramName, Vector2 value);
-				virtual void SetVector3(const String& paramName, Vector3 value);
-				virtual void SetVector4(const String& paramName, Vector4 value);
+				virtual void SetVector2(const String& paramName, const Vector2& value);
+				virtual void SetVector3(const String& paramName, const Vector3& value);
+				virtual void SetVector4(const String& paramName, const Vector4& value);
 				virtual void SetValue(const String& paramName, const Quaternion& value);
 				virtual void SetValue(const String& paramName, const Matrix& value);
 				virtual void SetValue(const String& paramName, const Color4& value);

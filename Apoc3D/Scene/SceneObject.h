@@ -82,8 +82,7 @@ namespace Apoc3D
 
 			virtual bool IntersectsSelectionRay(const Ray& ray)
 			{
-				float d;
-				return BoundingSphere::Intersects(m_BoundingSphere, ray, d);
+				return m_BoundingSphere.IntersectsRay(ray, nullptr);
 			}
 
 			virtual bool IsDynamicObject() const { return false; }
@@ -100,7 +99,7 @@ namespace Apoc3D
 			
 		protected:
 			Entity()
-				: m_position(Vector3Utils::Zero), Visible(true)
+				: m_position(Vector3::Zero), Visible(true)
 			{
 				memset(m_models, 0, sizeof(Model*)*3);
 				memset(&BoundingSphereOffset, 0, sizeof(BoundingSphereOffset));
@@ -125,7 +124,7 @@ namespace Apoc3D
 			void setPosition(const Vector3& pos)
 			{
 				m_position = pos;
-				m_BoundingSphere.Center = Vector3Utils::Add(pos, BoundingSphereOffset);
+				m_BoundingSphere.Center = pos + BoundingSphereOffset;
 				m_isTransformDirty = true;
 			}
 

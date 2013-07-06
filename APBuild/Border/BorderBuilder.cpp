@@ -49,14 +49,14 @@ namespace APBuild
 	public:
 		virtual bool Equals(const Vector3& x, const Vector3& y) const
 		{
-			return v3x(x)==v3x(y) && v3y(x)==v3y(y) && v3z(x)==v3z(y);
+			return x == y;
 		}
 
 		virtual int64 GetHashCode(const Vector3& obj) const
 		{
-			float x = v3x(obj);
-			float y = v3y(obj);
-			float z = v3z(obj);
+			float x = obj.X;
+			float y = obj.Y;
+			float z = obj.Z;
 
 			return reinterpret_cast<const int64&>(x) ^ reinterpret_cast<const int64&>(y) ^ reinterpret_cast<const int64&>(z);
 		}
@@ -344,11 +344,11 @@ namespace APBuild
 
 				for (int j=0;j<borderData[i].vertexCount;j++)
 				{
-					String value = StringUtils::ToString(v3x(borderData[i].Vertices[j]), 4, 10, ' ', ios::right | ios::fixed);
+					String value = StringUtils::ToString(borderData[i].Vertices[j].X, 4, 10, ' ', ios::right | ios::fixed);
 					value.append(L",");
-					value.append(StringUtils::ToString(v3y(borderData[i].Vertices[j]), 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::ToString(borderData[i].Vertices[j].Y, 4, 10, ' ', ios::right | ios::fixed));
 					value.append(L",");
-					value.append(StringUtils::ToString(v3z(borderData[i].Vertices[j]), 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::ToString(borderData[i].Vertices[j].Z, 4, 10, ' ', ios::right | ios::fixed));
 
 					sectV->AddStringValue(L"Vertex" + StringUtils::ToString(j, 4, '0', ios::right),
 						value);
@@ -366,11 +366,11 @@ namespace APBuild
 
 				for (int j=0;j<borderData[i].flattenVertexCount;j++)
 				{
-					String value = StringUtils::ToString(v3x(borderData[i].FlattenVertices[j]), 4, 10, ' ', ios::right | ios::fixed);
+					String value = StringUtils::ToString(borderData[i].FlattenVertices[j].X, 4, 10, ' ', ios::right | ios::fixed);
 					value.append(L",");
-					value.append(StringUtils::ToString(v3y(borderData[i].FlattenVertices[j]), 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::ToString(borderData[i].FlattenVertices[j].Y, 4, 10, ' ', ios::right | ios::fixed));
 					value.append(L",");
-					value.append(StringUtils::ToString(v3z(borderData[i].FlattenVertices[j]), 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::ToString(borderData[i].FlattenVertices[j].Z, 4, 10, ' ', ios::right | ios::fixed));
 
 					sectFV->AddStringValue(L"Vertex" + StringUtils::ToString(j, 4, '0', ios::right),
 						value);

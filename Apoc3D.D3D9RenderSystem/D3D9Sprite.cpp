@@ -267,7 +267,7 @@ namespace Apoc3D
 			{
 				assert(m_began);
 
-				AddNormalDraw(texture, Vector2Utils::GetX(pos), Vector2Utils::GetY(pos), color);
+				AddNormalDraw(texture, pos.X, pos.Y, color);
 			}
 			void D3D9Sprite::Draw(Texture* texture, const PointF& pos, uint color)
 			{
@@ -429,36 +429,36 @@ namespace Apoc3D
 
 				const Matrix& trans = getTransform();
 
-				Vector3 tl = Vector3Utils::LDVector(x,y,0);
-				Vector3 tr = Vector3Utils::LDVector(width+x, y,0);
-				Vector3 bl = Vector3Utils::LDVector(x, height+y,0);
-				Vector3 br = Vector3Utils::LDVector(width+x, height+y, 0);
+				Vector3 tl(x,y,0);
+				Vector3 tr(width+x, y,0);
+				Vector3 bl(x, height+y,0);
+				Vector3 br(width+x, height+y, 0);
 
-				tl = Vector3Utils::TransformCoordinate(tl, trans);
-				tr = Vector3Utils::TransformCoordinate(tr, trans);
-				bl = Vector3Utils::TransformCoordinate(bl, trans);
-				br = Vector3Utils::TransformCoordinate(br, trans);
+				tl = Vector3::TransformCoordinate(tl, trans);
+				tr = Vector3::TransformCoordinate(tr, trans);
+				bl = Vector3::TransformCoordinate(bl, trans);
+				br = Vector3::TransformCoordinate(br, trans);
 
 
 				drawE.Tex = static_cast<D3D9Texture*>(texture);
-				drawE.TL.Position[0] = _V3X(tl)-0.5f;
-				drawE.TL.Position[1] = _V3Y(tl)-0.5f;
-				drawE.TL.Position[2] = _V3Z(tl);
+				drawE.TL.Position[0] = tl.X-0.5f;
+				drawE.TL.Position[1] = tl.Y-0.5f;
+				drawE.TL.Position[2] = tl.Z;
 				drawE.TL.Position[3] = 1;
 
-				drawE.TR.Position[0] = _V3X(tr)-0.5f;
-				drawE.TR.Position[1] = _V3Y(tr)-0.5f;
-				drawE.TR.Position[2] = _V3Z(tr);
+				drawE.TR.Position[0] = tr.X-0.5f;
+				drawE.TR.Position[1] = tr.Y-0.5f;
+				drawE.TR.Position[2] = tr.Z;
 				drawE.TR.Position[3] = 1;
 
-				drawE.BL.Position[0] = _V3X(bl)-0.5f;
-				drawE.BL.Position[1] = _V3Y(bl)-0.5f;
-				drawE.BL.Position[2] = _V3Z(bl);
+				drawE.BL.Position[0] = bl.X-0.5f;
+				drawE.BL.Position[1] = bl.Y-0.5f;
+				drawE.BL.Position[2] = bl.Z;
 				drawE.BL.Position[3] = 1;
 
-				drawE.BR.Position[0] = _V3X(br)-0.5f;
-				drawE.BR.Position[1] = _V3Y(br)-0.5f;
-				drawE.BR.Position[2] = _V3Z(br);
+				drawE.BR.Position[0] = br.X-0.5f;
+				drawE.BR.Position[1] = br.Y-0.5f;
+				drawE.BR.Position[2] = br.Z;
 				drawE.BR.Position[3] = 1;
 
 				drawE.TL.Diffuse = drawE.TR.Diffuse = drawE.BL.Diffuse = drawE.BR.Diffuse = color;
@@ -482,34 +482,34 @@ namespace Apoc3D
 					float width = srcRect->Width;//(float)(srcRect->right-srcRect->left);
 					float height = srcRect->Height;//(float)(srcRect->bottom-srcRect->top);
 
-					Vector3 tl = Vector3Utils::LDVector(0, 0,0);
-					Vector3 tr = Vector3Utils::LDVector(width, 0,0);
-					Vector3 bl = Vector3Utils::LDVector(0, height,0);
-					Vector3 br = Vector3Utils::LDVector(width, height, 0);
+					Vector3 tl(0, 0,0);
+					Vector3 tr(width, 0,0);
+					Vector3 bl(0, height,0);
+					Vector3 br(width, height, 0);
 
-					tl = Vector3Utils::TransformCoordinate(tl, trans);
-					tr = Vector3Utils::TransformCoordinate(tr, trans);
-					bl = Vector3Utils::TransformCoordinate(bl, trans);
-					br = Vector3Utils::TransformCoordinate(br, trans);
+					tl = Vector3::TransformCoordinate(tl, trans);
+					tr = Vector3::TransformCoordinate(tr, trans);
+					bl = Vector3::TransformCoordinate(bl, trans);
+					br = Vector3::TransformCoordinate(br, trans);
 
-					drawE.TL.Position[0] = _V3X(tl)-0.5f;
-					drawE.TL.Position[1] = _V3Y(tl)-0.5f;
-					drawE.TL.Position[2] = _V3Z(tl);
+					drawE.TL.Position[0] = tl.X-0.5f;
+					drawE.TL.Position[1] = tl.Y-0.5f;
+					drawE.TL.Position[2] = tl.Z;
 					drawE.TL.Position[3] = 1;
 
-					drawE.TR.Position[0] = _V3X(tr)-0.5f;
-					drawE.TR.Position[1] = _V3Y(tr)-0.5f;
-					drawE.TR.Position[2] = _V3Z(tr);
+					drawE.TR.Position[0] = tr.X-0.5f;
+					drawE.TR.Position[1] = tr.Y-0.5f;
+					drawE.TR.Position[2] = tr.Z;
 					drawE.TR.Position[3] = 1;
 
-					drawE.BL.Position[0] = _V3X(bl)-0.5f;
-					drawE.BL.Position[1] = _V3Y(bl)-0.5f;
-					drawE.BL.Position[2] = _V3Z(bl);
+					drawE.BL.Position[0] = bl.X-0.5f;
+					drawE.BL.Position[1] = bl.Y-0.5f;
+					drawE.BL.Position[2] = bl.Z;
 					drawE.BL.Position[3] = 1;
 
-					drawE.BR.Position[0] = _V3X(br)-0.5f;
-					drawE.BR.Position[1] = _V3Y(br)-0.5f;
-					drawE.BR.Position[2] = _V3Z(br);
+					drawE.BR.Position[0] = br.X-0.5f;
+					drawE.BR.Position[1] = br.Y-0.5f;
+					drawE.BR.Position[2] = br.Z;
 					drawE.BR.Position[3] = 1;
 
 
@@ -527,35 +527,35 @@ namespace Apoc3D
 					float width = (float)texture->getWidth();
 					float height = (float)texture->getHeight();
 
-					Vector3 tl = Vector3Utils::LDVector(0,0,0);
-					Vector3 tr = Vector3Utils::LDVector(width, 0,0);
-					Vector3 bl = Vector3Utils::LDVector(0, height,0);
-					Vector3 br = Vector3Utils::LDVector(width, height, 0);
+					Vector3 tl(0,0,0);
+					Vector3 tr(width, 0,0);
+					Vector3 bl(0, height,0);
+					Vector3 br(width, height, 0);
 
-					tl = Vector3Utils::TransformCoordinate(tl, trans);
-					tr = Vector3Utils::TransformCoordinate(tr, trans);
-					bl = Vector3Utils::TransformCoordinate(bl, trans);
-					br = Vector3Utils::TransformCoordinate(br, trans);
+					tl = Vector3::TransformCoordinate(tl, trans);
+					tr = Vector3::TransformCoordinate(tr, trans);
+					bl = Vector3::TransformCoordinate(bl, trans);
+					br = Vector3::TransformCoordinate(br, trans);
 
 
-					drawE.TL.Position[0] = _V3X(tl)-0.5f;
-					drawE.TL.Position[1] = _V3Y(tl)-0.5f;
-					drawE.TL.Position[2] = _V3Z(tl);
+					drawE.TL.Position[0] = tl.X-0.5f;
+					drawE.TL.Position[1] = tl.Y-0.5f;
+					drawE.TL.Position[2] = tl.Z;
 					drawE.TL.Position[3] = 1;
 
-					drawE.TR.Position[0] = _V3X(tr)-0.5f;
-					drawE.TR.Position[1] = _V3Y(tr)-0.5f;
-					drawE.TR.Position[2] = _V3Z(tr);
+					drawE.TR.Position[0] = tr.X-0.5f;
+					drawE.TR.Position[1] = tr.Y-0.5f;
+					drawE.TR.Position[2] = tr.Z;
 					drawE.TR.Position[3] = 1;
 
-					drawE.BL.Position[0] = _V3X(bl)-0.5f;
-					drawE.BL.Position[1] = _V3Y(bl)-0.5f;
-					drawE.BL.Position[2] = _V3Z(bl);
+					drawE.BL.Position[0] = bl.X-0.5f;
+					drawE.BL.Position[1] = bl.Y-0.5f;
+					drawE.BL.Position[2] = bl.Z;
 					drawE.BL.Position[3] = 1;
 
-					drawE.BR.Position[0] = _V3X(br)-0.5f;
-					drawE.BR.Position[1] = _V3Y(br)-0.5f;
-					drawE.BR.Position[2] = _V3Z(br);
+					drawE.BR.Position[0] = br.X-0.5f;
+					drawE.BR.Position[1] = br.Y-0.5f;
+					drawE.BR.Position[2] = br.Z;
 					drawE.BR.Position[3] = 1;
 
 

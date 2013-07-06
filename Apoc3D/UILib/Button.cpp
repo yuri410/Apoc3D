@@ -181,7 +181,7 @@ namespace Apoc3D
 				
 				Matrix trans;
 				Matrix::Multiply(trans, preT, rot);
-				trans.SetTranslation(VECTOR3(destRect.X + trans.M41 + 0.5f * destRect.Width, destRect.Y + trans.M42 + 0.5f * destRect.Height, trans.M43));
+				trans.SetTranslation(destRect.X + trans.M41 + 0.5f * destRect.Width, destRect.Y + trans.M42 + 0.5f * destRect.Height, trans.M43);
 				spriteBatch->PreMultiplyTransform(trans);
 
 				Apoc3D::Math::Rectangle newDestRect(0,0, destRect.Width, destRect.Height);

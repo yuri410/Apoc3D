@@ -126,18 +126,18 @@ namespace Apoc3D
 			{
 				X = normal.X; Y = normal.Y;
 				Z = normal.Z;
-				D = -Vector3Utils::Dot(normal, point);
+				D = -Vector3::Dot(normal, point);
 			}
 			Plane(const Vector3& point1, const Vector3& point2, const Vector3& point3)
 			{
-				Vector3 p12 = Vector3Utils::Subtract(point2, point1);
-				Vector3 p13 = Vector3Utils::Subtract(point3, point1);
-				Vector3 cross = Vector3Utils::Cross(p12, p13);
-				cross = Vector3Utils::Normalize(cross);
+				Vector3 p12 = point2 - point1;
+				Vector3 p13 = point3 - point1;
+				Vector3 cross = Vector3::Cross(p12, p13);
+				cross.NormalizeInPlace();
 
 				X = cross.X; Y = cross.Y;
 				Z = cross.Z;
-				D = -Vector3Utils::Dot(cross, point1);
+				D = -Vector3::Dot(cross, point1);
 			}
 #endif
 			
@@ -206,7 +206,7 @@ namespace Apoc3D
 			/**
 			 *  Changes the coefficients of the normal vector of the plane to make it of unit length.
 			 */
-			void Normalize()
+			void NormalizeInPlace()
 			{
 				float mag = sqrtf(X * X + Y * Y + Z * Z);
  
@@ -230,6 +230,58 @@ namespace Apoc3D
 			 */
 			Vector3 ProjectVector(const Vector3& vec) const;
 
+			
+			/**
+			 *  Finds the intersection between a plane and a line.
+			 */
+			bool IntersectsLineSegment(const Vector3& start, const Vector3& end, Vector3 &intersectPoint) const
+			{
+				Vector3 dir = end - start;
+				float dirLen = dir.Length();
+
+				float cos = DotNormal(dir);
+
+				if (fabs(cos) < EPSILON)
+				{
+					intersectPoint = Vector3::Zero;
+					return false;
+				}
+
+				float d1 = Dot3(start);
+				float d2 = Dot3(end);
+
+				if (d1 * d2 > 0)
+				{
+					intersectPoint = Vector3::Zero;
+					return false;
+				}
+				
+				cos /= -dirLen;
+
+				float dist = d1 / cos;
+
+				Vector3 off = dir * (dist/dirLen);
+
+				intersectPoint = start + off;
+				return true;
+			}
+			bool IntersectsRay(const Vector3& start, const Vector3& dir, Vector3& intersectionPoint) const
+			{
+				float cos = DotNormal(dir);
+
+				if (fabs(cos) < EPSILON)
+				{
+					return false;
+				}
+				float d1 = Dot3(start);
+				float dist = d1 / cos;
+
+				Vector3 off = dir * dist;
+
+				intersectionPoint = start + off;
+				return true;
+			}
+
 			bool operator==(const Plane &other) const
 			{
 				return other.X == X && other.Y == Y && other.Z == Z && other.D == D; 
@@ -239,12 +291,7 @@ namespace Apoc3D
 			/**
 			 *  Changes the coefficients of the normal vector of the plane to make it of unit length.
 			 */
-			static Plane Normalize(const Plane &plane)
-			{
-				Plane np = plane;
-				np.Normalize();
-				return np;
-			}
+			static Plane Normalize(const Plane &plane) { Plane np = plane; np.NormalizeInPlace(); return np; }
 
 
 			/**
@@ -348,50 +395,9 @@ namespace Apoc3D
 			static Plane Transform(const Plane &plane, const Quaternion &rotation);
 
 			/**
-			 *  Finds the intersection between a plane and a line.
-			 */
-			static bool Intersects(const Plane &plane, Vector3 start, Vector3 end, Vector3 &intersectPoint)
-			{
-				Vector3 dir = Vector3Utils::Subtract(end, start);
-				float dirLen = Vector3Utils::Length(dir);
-
-				float cos = plane.DotNormal(dir);
-
-				if (fabs(cos) < EPSILON)
-				{
-					intersectPoint = Vector3Utils::Zero;
-					return false;
-				}
-
-				float d1 = plane.Dot3(start);
-				float d2 = plane.Dot3(end);
-
-				if (d1 * d2 > 0)
-				{
-					intersectPoint = Vector3Utils::Zero;
-					return false;
-				}
-
-				
-				cos /= -dirLen;
-				//float sin = (float)sqrtf(1 - cos * cos);
-
-				float dist = d1 / cos;
-
-
-				Vector3 off = Vector3Utils::Multiply(dir, dist/dirLen);
-
-				intersectPoint = Vector3Utils::Add(start, off);
-				return true;
-			}
-			/**
 			 *  Finds the intersection between a plane and a box.
 			 */
 			static PlaneIntersectionType Intersects(const Plane &plane, const BoundingBox& box);
-			/**
-			 *  Finds the intersection between a plane and a sphere.
-			 */
-			static PlaneIntersectionType Intersects(const Plane &plane, const BoundingSphere& sphere);
 		};
 	}
 }

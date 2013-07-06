@@ -146,19 +146,19 @@ namespace Apoc3D
 
 							if (posElem)
 							{
-								Vector3 v = Vector3Utils::LDVectorPtr( (float*)(newVtxPtr + posElem->getOffset()));
-								v = Vector3Utils::TransformCoordinate(v, trans);
-								*((float*)(newVtxPtr + posElem->getOffset())+0) = _V3X(v);
-								*((float*)(newVtxPtr + posElem->getOffset())+1) = _V3Y(v);
-								*((float*)(newVtxPtr + posElem->getOffset())+2) = _V3Z(v);
+								Vector3 v( (float*)(newVtxPtr + posElem->getOffset()));
+								v = Vector3::TransformCoordinate(v, trans);
+								*((float*)(newVtxPtr + posElem->getOffset())+0) = v.X;
+								*((float*)(newVtxPtr + posElem->getOffset())+1) = v.Y;
+								*((float*)(newVtxPtr + posElem->getOffset())+2) = v.Z;
 							}
 							if (nrmElem)
 							{
-								Vector3 v = Vector3Utils::LDVectorPtr( (float*)(newVtxPtr + nrmElem->getOffset()));
-								v = Vector3Utils::TransformNormal(v, trans);
-								*((float*)(newVtxPtr + nrmElem->getOffset())+0) = _V3X(v);
-								*((float*)(newVtxPtr + nrmElem->getOffset())+1) = _V3Y(v);
-								*((float*)(newVtxPtr + nrmElem->getOffset())+2) = _V3Z(v);
+								Vector3 v( (float*)(newVtxPtr + nrmElem->getOffset()));
+								v = Vector3::TransformNormal(v, trans);
+								*((float*)(newVtxPtr + nrmElem->getOffset())+0) = v.X;
+								*((float*)(newVtxPtr + nrmElem->getOffset())+1) = v.Y;
+								*((float*)(newVtxPtr + nrmElem->getOffset())+2) = v.Z;
 							}
 
 							destVertex.Add(newVtx);
@@ -241,19 +241,19 @@ namespace Apoc3D
 
 							if (posElem)
 							{
-								Vector3 v = Vector3Utils::LDVectorPtr( (float*)(newVtx + posElem->getOffset()));
-								v = Vector3Utils::TransformCoordinate(v, trans);
-								*((float*)(newVtx + posElem->getOffset())+0) = _V3X(v);
-								*((float*)(newVtx + posElem->getOffset())+1) = _V3Y(v);
-								*((float*)(newVtx + posElem->getOffset())+2) = _V3Z(v);
+								Vector3 v( (float*)(newVtx + posElem->getOffset()));
+								v = Vector3::TransformCoordinate(v, trans);
+								*((float*)(newVtx + posElem->getOffset())+0) = v.X;
+								*((float*)(newVtx + posElem->getOffset())+1) = v.Y;
+								*((float*)(newVtx + posElem->getOffset())+2) = v.Z;
 							}
 							if (nrmElem)
 							{
-								Vector3 v = Vector3Utils::LDVectorPtr( (float*)(newVtx + nrmElem->getOffset()));
-								v = Vector3Utils::TransformNormal(v, trans);
-								*((float*)(newVtx + nrmElem->getOffset())+0) = _V3X(v);
-								*((float*)(newVtx + nrmElem->getOffset())+1) = _V3Y(v);
-								*((float*)(newVtx + nrmElem->getOffset())+2) = _V3Z(v);
+								Vector3 v( (float*)(newVtx + nrmElem->getOffset()));
+								v = Vector3::TransformNormal(v, trans);
+								*((float*)(newVtx + nrmElem->getOffset())+0) = v.X;
+								*((float*)(newVtx + nrmElem->getOffset())+1) = v.Y;
+								*((float*)(newVtx + nrmElem->getOffset())+2) = v.Z;
 							}
 
 							destVertex.Add(newVtx);

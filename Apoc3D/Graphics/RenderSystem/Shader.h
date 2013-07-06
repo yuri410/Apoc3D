@@ -73,9 +73,9 @@ namespace Apoc3D
 				virtual int GetParamIndex(const String& paramName) = 0;
 				virtual int GetSamplerIndex(const String& paramName) = 0;
 
-				virtual void SetVector2(int reg, Vector2 value) = 0;
-				virtual void SetVector3(int reg, Vector3 value) = 0;
-				virtual void SetVector4(int reg, Vector4 value) = 0;
+				virtual void SetVector2(int reg, const Vector2& value) = 0;
+				virtual void SetVector3(int reg, const Vector3& value) = 0;
+				virtual void SetVector4(int reg, const Vector4& value) = 0;
 				virtual void SetValue(int reg, const Quaternion& value) = 0;
 				virtual void SetValue(int reg, const Matrix& value) = 0;
 				virtual void SetValue(int reg, const Color4& value) = 0;
@@ -101,9 +101,9 @@ namespace Apoc3D
 				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state) = 0;
 
 
-				virtual void SetVector2(const String& paramName, Vector2 value) = 0;
-				virtual void SetVector3(const String& paramName, Vector3 value) = 0;
-				virtual void SetVector4(const String& paramName, Vector4 value) = 0;
+				virtual void SetVector2(const String& paramName, const Vector2& value) = 0;
+				virtual void SetVector3(const String& paramName, const Vector3& value) = 0;
+				virtual void SetVector4(const String& paramName, const Vector4& value) = 0;
 				virtual void SetValue(const String& paramName, const Quaternion& value) = 0;
 				virtual void SetValue(const String& paramName, const Matrix& value) = 0;
 				virtual void SetValue(const String& paramName, const Color4& value) = 0;

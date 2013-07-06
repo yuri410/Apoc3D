@@ -168,8 +168,8 @@ namespace APDesigner
 		 */
 		static void ConvertCoord(const Vector2& pos, int& qx, int& qy)
 		{
-			qx = (int)floor((Vector2Utils::GetX(pos)+1024)/16.0f);
-			qy = (int)floor((Vector2Utils::GetY(pos)+1024)/16.0f);
+			qx = (int)floor((pos.X+1024)/16.0f);
+			qy = (int)floor((pos.Y+1024)/16.0f);
 
 			if (qx<0) qx = 0;
 			if (qy<0) qy = 0;

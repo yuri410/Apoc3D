@@ -55,8 +55,8 @@ namespace Apoc3D
 
 			virtual HashHandle GetHashCode() const
 			{
-				return Vector3Utils::GetHashCode(Position) ^ Vector3Utils::GetHashCode(Normal) ^ Vector2Utils::GetHashCode(TexCoord1) ^
-					Vector4Utils::GetHashCode(BlendWeight) ^ Vector4Utils::GetHashCode(BlendIndices);
+				return Position.GetHashCode() ^ Normal.GetHashCode() ^ TexCoord1.GetHashCode() ^
+					BlendWeight.GetHashCode() ^ BlendIndices.GetHashCode();
 			}
 			virtual String GetHashString() const;
 		};
@@ -73,7 +73,7 @@ namespace Apoc3D
 
 			virtual HashHandle GetHashCode() const
 			{
-				return Vector3Utils::GetHashCode(Position) ^ Vector3Utils::GetHashCode(Normal);
+				return Position.GetHashCode() ^ Normal.GetHashCode();
 			}
 			virtual String GetHashString() const;
 		};
@@ -92,7 +92,7 @@ namespace Apoc3D
 
 			virtual HashHandle GetHashCode() const
 			{
-				return Vector3Utils::GetHashCode(Position) ^ Vector3Utils::GetHashCode(Normal) ^ Vector2Utils::GetHashCode(TexCoord1);
+				return Position.GetHashCode() ^ Normal.GetHashCode() ^ TexCoord1.GetHashCode();
 			}
 			virtual String GetHashString() const;
 		};
@@ -111,8 +111,8 @@ namespace Apoc3D
 
 			virtual HashHandle GetHashCode() const
 			{
-				return Vector3Utils::GetHashCode(Position) ^ Vector3Utils::GetHashCode(Normal) ^ 
-					Vector2Utils::GetHashCode(TexCoord1) ^ Vector2Utils::GetHashCode(TexCoord2);
+				return Position.GetHashCode() ^ Normal.GetHashCode() ^ 
+					TexCoord1.GetHashCode() ^ TexCoord2.GetHashCode();
 			}
 			virtual String GetHashString() const;
 		};
@@ -129,7 +129,7 @@ namespace Apoc3D
 
 			virtual HashHandle GetHashCode() const
 			{
-				return Vector3Utils::GetHashCode(Position) ^ Vector2Utils::GetHashCode(TexCoord1);
+				return Position.GetHashCode() ^ TexCoord1.GetHashCode();
 			}
 			virtual String GetHashString() const;
 		};
@@ -146,7 +146,7 @@ namespace Apoc3D
 
 			virtual HashHandle GetHashCode() const
 			{
-				return Vector3Utils::GetHashCode(Position) ^ Vector2Utils::GetHashCode(TexCoord1) ^ Vector2Utils::GetHashCode(TexCoord2);
+				return Position.GetHashCode() ^ TexCoord1.GetHashCode() ^ TexCoord2.GetHashCode();
 			}
 			virtual String GetHashString() const;
 		};

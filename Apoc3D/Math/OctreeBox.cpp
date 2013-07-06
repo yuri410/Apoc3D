@@ -33,9 +33,9 @@ namespace Apoc3D
 	{
 		OctreeBox::OctreeBox(const BoundingBox& aabb)
 		{
-			Length = Vector3Utils::Distance(aabb.Minimum, aabb.Maximum) / Math::Root3;
-			Center = Vector3Utils::Add(aabb.Minimum, aabb.Maximum);
-			Center = Vector3Utils::Multiply(Center, 0.5f);
+			Length = Vector3::Distance(aabb.Minimum, aabb.Maximum) / Math::Root3;
+			Center = Vector3::Add(aabb.Minimum, aabb.Maximum);
+			Center*= 0.5f;
 		}
 
 		OctreeBox::OctreeBox(const BoundingSphere& sph)

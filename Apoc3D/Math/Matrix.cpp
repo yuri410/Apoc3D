@@ -327,19 +327,19 @@ namespace Apoc3D
 				fstp	float ptr [eax+ELEM_ADDR(4,4)]	
 			}
 		#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-			Vector3 difference = Vector3Utils::Subtract(objectPosition , cameraPosition);
+			Vector3 difference = objectPosition - cameraPosition;
             Vector3 crossed;
             Vector3 final;
 
-            float lengthSq = Vector3Utils::LengthSquared( difference);
+            float lengthSq = difference.LengthSquared();
             if (lengthSq < 0.0001f)
-                difference = Vector3Utils::Negate(cameraForwardVector);
+                difference = -cameraForwardVector;
             else
-                difference = Vector3Utils::Multiply(difference,  1.0f / sqrtf(lengthSq));
+                difference /= sqrtf(lengthSq);
 
-            crossed = Vector3Utils::Cross(cameraUpVector, difference);
-            crossed = Vector3Utils::Normalize(crossed);
-            final = Vector3Utils::Cross(difference, crossed);
+            crossed = Vector3::Cross(cameraUpVector, difference);
+            crossed.NormalizeInPlace();
+            final = Vector3::Cross(difference, crossed);
 
             res.M11 = final.X;
             res.M12 = final.Y;

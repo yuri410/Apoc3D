@@ -38,22 +38,22 @@ namespace Apoc3D
 			Plane pl = Plane::Normalize(*this);
 
 			float prj = pl.Dot3(start);
-			Vector3 normal = Vector3Utils::LDVector(pl.X, pl.Y, pl.Z);
+			Vector3 normal(pl.X, pl.Y, pl.Z);
 
-			ps = Vector3Utils::Subtract(start, Vector3Utils::Multiply(normal, prj));
+			ps = start - (normal * prj);
 
 			prj = pl.Dot3(end);
-			pe = Vector3Utils::Subtract(start, Vector3Utils::Multiply(normal, prj));
+			pe = start - (normal * prj);
 
 		}
 
 		Vector3 Plane::ProjectVector(const Vector3& vec) const
 		{
 			Plane pl = Plane::Normalize(*this);
-			Vector3 normal = Vector3Utils::LDVector(pl.X, pl.Y, pl.Z);
+			Vector3 normal(pl.X, pl.Y, pl.Z);
 
-			Vector3 result = Vector3Utils::Cross(vec, normal);
-			result = Vector3Utils::Cross(normal, result);
+			Vector3 result = Vector3::Cross(vec, normal);
+			result = Vector3::Cross(normal, result);
 			return result;
 		}
 
@@ -61,12 +61,12 @@ namespace Apoc3D
 		{
 			Vector3 minv;
             Vector3 maxv;
-            _V3X(maxv) = (plane.X >= 0.0f) ? _V3X(box.Minimum) : _V3X(box.Maximum);
-            _V3Y(maxv) = (plane.Y >= 0.0f) ? _V3Y(box.Minimum) : _V3Y(box.Maximum);
-            _V3Z(maxv) = (plane.Z >= 0.0f) ? _V3Y(box.Minimum) : _V3Y(box.Maximum);
-            _V3X(minv) = (plane.X >= 0.0f) ? _V3X(box.Maximum) : _V3X(box.Minimum);
-            _V3Y(minv) = (plane.Y >= 0.0f) ? _V3Y(box.Maximum) : _V3Y(box.Minimum);
-            _V3Y(minv) = (plane.Z >= 0.0f) ? _V3Y(box.Maximum) : _V3Y(box.Minimum);
+            maxv.X = (plane.X >= 0.0f) ? box.Minimum.X : box.Maximum.X;
+            maxv.Y = (plane.Y >= 0.0f) ? box.Minimum.Y : box.Maximum.Y;
+            maxv.Z = (plane.Z >= 0.0f) ? box.Minimum.Z : box.Maximum.Z;
+            minv.X = (plane.X >= 0.0f) ? box.Maximum.X : box.Minimum.X;
+            minv.Y = (plane.Y >= 0.0f) ? box.Maximum.Y : box.Minimum.Y;
+            minv.Z = (plane.Z >= 0.0f) ? box.Maximum.Z : box.Minimum.Z;
 
             float dot = plane.DotNormal(maxv);
 
@@ -81,18 +81,6 @@ namespace Apoc3D
             return PLANEIT_Intersecting;
 		}
 
-		PlaneIntersectionType Plane::Intersects(const Plane& plane, const BoundingSphere& sphere)
-        {
-            float dot = plane.Dot3(sphere.Center);
-
-            if (dot > sphere.Radius)
-                return PLANEIT_Front;
-
-            if (dot < -sphere.Radius)
-                return PLANEIT_Back;
-
-            return PLANEIT_Intersecting;
-        }
 
 		Plane Plane::Transform(const Plane &plane, const Quaternion &rotation)
 		{

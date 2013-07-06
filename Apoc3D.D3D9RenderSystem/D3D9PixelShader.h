@@ -51,21 +51,21 @@ namespace Apoc3D
 				virtual int GetParamIndex(const String& paramName);
 				virtual int GetSamplerIndex(const String& paramName);
 
-				inline virtual void SetVector2(int reg, Vector2 value);
-				inline virtual void SetVector3(int reg, Vector3 value);
-				inline virtual void SetVector4(int reg, Vector4 value);
-				inline virtual void SetValue(int reg, const Quaternion& value);
-				inline virtual void SetValue(int reg, const Matrix& value);
-				inline virtual void SetValue(int reg, const Color4& value);
-				inline virtual void SetValue(int reg, const Plane& value);
+				virtual void SetVector2(int reg, const Vector2& value);
+				virtual void SetVector3(int reg, const Vector3& value);
+				virtual void SetVector4(int reg, const Vector4& value);
+				virtual void SetValue(int reg, const Quaternion& value);
+				virtual void SetValue(int reg, const Matrix& value);
+				virtual void SetValue(int reg, const Color4& value);
+				virtual void SetValue(int reg, const Plane& value);
 
-				inline virtual void SetVector2(int reg, const Vector2* value, int count);
-				inline virtual void SetVector3(int reg, const Vector3* value, int count);
-				inline virtual void SetVector4(int reg, const Vector4* value, int count);
-				inline virtual void SetValue(int reg, const Quaternion* value, int count);
-				inline virtual void SetValue(int reg, const Matrix* value, int count);
-				inline virtual void SetValue(int reg, const Color4* value, int count);
-				inline virtual void SetValue(int reg, const Plane* value, int count);
+				virtual void SetVector2(int reg, const Vector2* value, int count);
+				virtual void SetVector3(int reg, const Vector3* value, int count);
+				virtual void SetVector4(int reg, const Vector4* value, int count);
+				virtual void SetValue(int reg, const Quaternion* value, int count);
+				virtual void SetValue(int reg, const Matrix* value, int count);
+				virtual void SetValue(int reg, const Color4* value, int count);
+				virtual void SetValue(int reg, const Plane* value, int count);
 				virtual void SetMatrix4x3(int reg, const Matrix* value, int count);
 					 
 				virtual void SetValue(int reg, bool value);
@@ -79,9 +79,9 @@ namespace Apoc3D
 				virtual void SetSamplerState(int samIndex, const ShaderSamplerState &state);
 
 
-				virtual void SetVector2(const String& paramName, Vector2 value);
-				virtual void SetVector3(const String& paramName, Vector3 value);
-				virtual void SetVector4(const String& paramName, Vector4 value);
+				virtual void SetVector2(const String& paramName, const Vector2& value);
+				virtual void SetVector3(const String& paramName, const Vector3& value);
+				virtual void SetVector4(const String& paramName, const Vector4& value);
 				virtual void SetValue(const String& paramName, const Quaternion& value);
 				virtual void SetValue(const String& paramName, const Matrix& value);
 				virtual void SetValue(const String& paramName, const Color4& value);

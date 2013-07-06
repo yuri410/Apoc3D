@@ -164,14 +164,14 @@ namespace SampleTerrain
 			{
 				if (m_trees[i].FallState == 0)
 				{
-					float d2 = Vector3Utils::DistanceSquared(m_trees[i].Position, m_pushingPos);
+					float d2 = Vector3::DistanceSquared(m_trees[i].Position, m_pushingPos);
 					if (d2 < thres)
 					{
-						Vector3 d = Vector3Utils::Subtract(m_trees[i].Position, m_pushingPos);
-						d = Vector3Utils::Normalize(d);
+						Vector3 d = Vector3::Subtract(m_trees[i].Position, m_pushingPos);
+						d.NormalizeInPlace();
 
-						m_trees[i].FallAxis = Vector3Utils::Cross(d, Vector3Utils::UnitY);
-						m_trees[i].FallAxis = Vector3Utils::Normalize(m_trees[i].FallAxis);
+						m_trees[i].FallAxis = Vector3::Cross(d, Vector3::UnitY);
+						m_trees[i].FallAxis = Vector3::Normalize(m_trees[i].FallAxis);
 
 						//Vector3 bi = Vector3Utils::Cross(Vector3Utils::UnitY, m_trees[i].FallAxis);
 						//m_trees[i].FallDirection = Vector3Utils::Dot(bi, d);
@@ -242,7 +242,7 @@ namespace SampleTerrain
 		TreeInfo info;
 		info.Height = Randomizer::NextFloat() * 0.1f + 0.9f;
 		info.Rot = Randomizer::NextFloat() * Math::PI * 2;
-		info.Position = Vector3Utils::LDVector(x,y,z);
+		info.Position = Vector3(x,y,z);
 		info.FallState = 0;
 		m_trees.Add(info);
 	}

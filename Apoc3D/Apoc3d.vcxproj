@@ -215,6 +215,7 @@
     <ClInclude Include="Math\OctreeBox.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
     <ClInclude Include="Math\RandomUtils.h" />
+    <ClInclude Include="Math\sse_functions.h" />
     <ClInclude Include="Platform\API.h" />
     <ClInclude Include="Platform\Thread.h" />
     <ClInclude Include="Project\Project.h" />
@@ -264,7 +265,6 @@
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Math\Ray.h" />
     <ClInclude Include="Math\Rectangle.h" />
-    <ClInclude Include="Math\sse_functions.h" />
     <ClInclude Include="Math\Vector.h" />
     <ClInclude Include="Math\Viewport.h" />
     <ClInclude Include="Platform\Library.h" />
@@ -360,6 +360,7 @@
     <ClCompile Include="Math\OctreeBox.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
+    <ClCompile Include="Math\sse_functions.cpp" />
     <ClCompile Include="Platform\API.cpp" />
     <ClCompile Include="Platform\Thread.cpp" />
     <ClCompile Include="Project\Project.cpp" />

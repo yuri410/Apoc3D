@@ -31,118 +31,31 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		ContainmentType BoundingSphere::Contains(const BoundingSphere& sphere, const BoundingBox& box)
+		bool BoundingSphere::IntersectsRay(const Ray& ray, Vector3* _p1) const
 		{
-			Vector3 vector;
+			Vector3 sc = Center - ray.Position;
 
-			if (!BoundingBox::Intersects(box, sphere))
-				return CONTAIN_Disjoint;
-
-			float radius = sphere.Radius * sphere.Radius;
-			Vector3 d = Vector3Utils::Subtract(sphere.Center, box.GetCorner(0));
-			_V3X(vector) = _V3X(sphere.Center) - _V3Z(box.Minimum);
-			_V3Y(vector) = _V3Y(sphere.Center) - _V3Z(box.Maximum);
-			_V3Z(vector) = _V3Z(sphere.Center) - _V3Z(box.Maximum);
-
-			if (Vector3Utils::LengthSquared(vector) > radius)
-				return CONTAIN_Intersects;
-
-			_V3X(vector) = _V3X(sphere.Center) - _V3Z(box.Maximum);
-			_V3Y(vector) = _V3Y(sphere.Center) - _V3Z(box.Maximum);
-			_V3Z(vector) = _V3Z(sphere.Center) - _V3Z(box.Maximum);
-
-			if (Vector3Utils::LengthSquared(vector) > radius)
-				return CONTAIN_Intersects;
-
-			_V3X(vector) = _V3X(sphere.Center) - _V3Z(box.Maximum);
-			_V3Y(vector) = _V3Y(sphere.Center) - _V3Z(box.Minimum);
-			_V3Z(vector) = _V3Z(sphere.Center) - _V3Z(box.Maximum);
-
-			if (Vector3Utils::LengthSquared(vector) > radius)
-				return CONTAIN_Intersects;
-
-			_V3X(vector) = _V3X(sphere.Center) - _V3Z(box.Minimum);
-			_V3Y(vector) = _V3Y(sphere.Center) - _V3Z(box.Minimum);
-			_V3Z(vector) = _V3Z(sphere.Center) - _V3Z(box.Maximum);
-
-			if (Vector3Utils::LengthSquared(vector) > radius)
-				return CONTAIN_Intersects;
-
-			_V3X(vector) = _V3X(sphere.Center) - _V3Z(box.Minimum);
-			_V3Y(vector) = _V3Y(sphere.Center) - _V3Z(box.Maximum);
-			_V3Z(vector) = _V3Z(sphere.Center) - _V3Z(box.Minimum);
-
-			if (Vector3Utils::LengthSquared(vector) > radius)
-				return CONTAIN_Intersects;
-
-			_V3X(vector) = _V3X(sphere.Center) - _V3Z(box.Maximum);
-			_V3Y(vector) = _V3Y(sphere.Center) - _V3Z(box.Maximum);
-			_V3Z(vector) = _V3Z(sphere.Center) - _V3Z(box.Minimum);
-
-			if (Vector3Utils::LengthSquared(vector) > radius)
-				return CONTAIN_Intersects;
-
-			_V3X(vector) = _V3X(sphere.Center) - _V3Z(box.Maximum);
-			_V3Y(vector) = _V3Y(sphere.Center) - _V3Z(box.Minimum);
-			_V3Z(vector) = _V3Z(sphere.Center) - _V3Z(box.Minimum);
-
-			if (Vector3Utils::LengthSquared(vector) > radius)
-				return CONTAIN_Intersects;
-
-			_V3X(vector) = _V3X(sphere.Center) - _V3Z(box.Minimum);
-			_V3Y(vector) = _V3Y(sphere.Center) - _V3Z(box.Minimum);
-			_V3Z(vector) = _V3Z(sphere.Center) - _V3Z(box.Minimum);
-
-			if (Vector3Utils::LengthSquared(vector) > radius)
-				return CONTAIN_Intersects;
-
-			return CONTAIN_Contains;
-		}
-
-		void BoundingSphere::CreateFromBox(BoundingSphere& res, const BoundingBox& box)
-		{
-			res.Center = Vector3Utils::Lerp(box.Minimum, box.Maximum, 0.5f);
-
-			float distance = Vector3Utils::Distance(box.Minimum, box.Maximum);
-
-			res.Radius = distance * 0.5f;
-		}
-
-		bool BoundingSphere::Intersects(const BoundingSphere& sphere, const BoundingBox& box)
-		{
-			return BoundingBox::Intersects(box, sphere);
-		}
-		bool BoundingSphere::Intersects(const BoundingSphere& sphere, const Ray& ray, float& distance)
-		{
-			return Ray::Intersects(ray, sphere, distance);
-		}
-		bool BoundingSphere::Intersects(const BoundingSphere& sphere, const Ray& ray, Vector3& p1)
-		{
-			Vector3 sc = Vector3Utils::Subtract(sphere.Center, ray.Position);
-
-			float slen = Vector3Utils::Dot(ray.Direction, sc);
+			float slen = Vector3::Dot(ray.Direction, sc);
 
 			if (slen > 0)
 			{
-				float dist = sqrtf(Vector3Utils::LengthSquared(sc) - slen * slen);
+				float dist = sqrtf(sc.LengthSquared() - slen * slen);
 
-				if (dist <= sphere.Radius)
+				if (dist <= Radius)
 				{
-					const float dd = sqrtf(sphere.Radius * sphere.Radius - dist * dist);
-					Vector3 t0 = Vector3Utils::Multiply(ray.Direction,
-						slen - dd);						
-					p1 = Vector3Utils::Add(ray.Position, t0);
+					const float dd = sqrtf(Radius * Radius - dist * dist);
+					Vector3 t0 = ray.Direction * (slen - dd);						
+					Vector3 p1 = ray.Position + t0;
 
-					t0 = Vector3Utils::Multiply(ray.Direction,
-						slen + sqrtf(sphere.Radius * sphere.Radius - dist * dist));
-					Vector3 p2 = Vector3Utils::Add(ray.Position, t0);						
+					t0 = ray.Direction * (slen + sqrtf(Radius * Radius - dist * dist));
+					Vector3 p2 = ray.Position + t0;
 
-					float d1 = Vector3Utils::DistanceSquared(p1, ray.Position);
-					float d2 = Vector3Utils::DistanceSquared(p2, ray.Position);
-
-					if (d2 < d1)
+					if (_p1)
 					{
-						p1 = p2;
+						float d1 = Vector3::DistanceSquared(p1, ray.Position);
+						float d2 = Vector3::DistanceSquared(p2, ray.Position);
+
+						*_p1 = d2 < d1 ? p2 : p1;
 					}
 					return true;
 				}
@@ -151,9 +64,251 @@ namespace Apoc3D
 			return false;
 		}
 
-		PlaneIntersectionType BoundingSphere::Intersects(const BoundingSphere& sphere, const Plane& plane)
+		bool BoundingSphere::IntersectsLineSegmenent(const Vector3& start, const Vector3& end, 
+			float* _dist, Vector3* _n, Vector3* _pos) const
 		{
-			return Plane::Intersects(plane, sphere);
+			Vector3 v = (start + end) * 0.5f;
+			Vector3 v2 = start - end;
+
+			float r = v2.Length() * 0.5f;
+
+			if (Vector3::Distance(v, Center) <= (r + Radius))
+			{
+				Vector3 v1 = Center - end;
+
+				Vector3 n = Vector3::Cross(Vector3::Cross(v2, v1), v2);
+				n.NormalizeInPlace();
+
+				float dist = Vector3::Dot(v1, n);
+				Vector3 pos = Center - n * dist;
+
+				if (_dist)
+					*_dist = dist;
+				if (_n)
+					*_n = n;
+				if (_pos)
+					*_pos = pos;
+
+				return (dist <= Radius) && (Vector3::DistanceSquared(pos, v) <= r * r);
+			}
+			return false;
 		}
+
+		bool BoundingSphere::IntersectsTriangle(const Vector3& a, const Vector3& b, const Vector3& c, const Vector3* _triN,
+			Vector3* _pos, Vector3* _n, float* _depth) const
+		{
+			Vector3 triN;
+
+			if (_triN)
+				triN = *_triN;
+			else
+			{
+				triN = Vector3::Cross(b-a, c-a);
+				triN.NormalizeInPlace();
+			}
+
+			// surface test
+			bool res1 = Vector3::Dot(Center - a, Vector3::Cross((b - a), triN)) >= 0;//ab
+			bool res2 = Vector3::Dot(Center - b, Vector3::Cross((c - b), triN)) >= 0;//bc
+			bool res3 = Vector3::Dot(Center - c, Vector3::Cross((a - c), triN)) >= 0;//ca
+			float dist;
+
+			if ((!res1 & !res2 & !res3) | (res1 & res2 & res3))
+			{
+				dist = Vector3::Dot(triN, Center - a);
+
+				if (dist < 0)
+				{
+					triN.X = -triN.X; triN.Y = -triN.Y; triN.Z = -triN.Z;
+					dist = -dist;
+				}
+
+				if (dist <= Radius)
+				{
+					if (_pos)
+						*_pos = Center - triN * dist;
+
+					if (_depth)
+						*_depth = dist - Radius;
+					return true;
+				}
+			}
+
+			// edge test
+
+			bool ab = (res1 != res2 && res1 != res3);
+			bool bc = (res2 != res1 && res2 != res3);
+			bool ca = (res3 != res1 && res3 != res2);
+
+			if (ab && IntersectsLineSegmenent(b, a, &dist, _n, _pos))
+			{
+				if (_depth)
+					*_depth = dist - Radius;
+				return true;
+			}
+			if (bc && IntersectsLineSegmenent(c, b, &dist, _n, _pos))
+			{
+				if (_depth)
+					*_depth = dist - Radius;
+				return true;
+			}
+			if (ca && IntersectsLineSegmenent(a, c, &dist, _n, _pos))
+			{
+				if (_depth)
+					*_depth = dist - Radius;
+				return true;
+			}
+
+			// point test
+			if (bc)
+			{
+				dist = Vector3::DistanceSquared(a, Center);
+				if (dist <= Radius * Radius)
+				{
+					if (_depth)
+					{
+						dist = sqrtf(dist);
+						*_depth = dist - Radius;
+					}
+					
+					if (_pos)
+						*_pos = a;
+
+					if (_n)
+					{
+						*_n = Center - a;
+						_n->NormalizeInPlace();
+					}
+
+					return true;
+				}
+			}
+			if (ca)
+			{
+				dist = Vector3::DistanceSquared(b, Center);
+				if (dist <= Radius * Radius)
+				{
+					if (_depth)
+					{
+						dist = sqrtf(dist);
+						*_depth = dist - Radius;
+					}
+					if (_pos)
+						*_pos = b;
+
+					if (_n)
+					{
+						*_n = Center - b;
+						_n->NormalizeInPlace();
+					}
+					return true;
+				}
+			}
+			if (ab)
+			{
+				dist = Vector3::DistanceSquared(c, Center);
+				if (dist <= Radius)
+				{
+					if (_depth)
+					{
+						dist = sqrtf(dist);
+						*_depth = dist - Radius;
+					}
+					if (_pos)
+						*_pos = c;
+
+					if (_n)
+					{
+						*_n = Center - c;
+						_n->NormalizeInPlace();
+					}
+					return true;
+				}
+			}
+			return false;
+		}
+
+		ContainmentType BoundingSphere::Contains(const BoundingSphere& sphere, const BoundingBox& box) 
+		{
+			Vector3 vector;
+
+			if (!BoundingBox::Intersects(box, sphere))
+				return CONTAIN_Disjoint;
+
+			const float radius = sphere.Radius * sphere.Radius;
+			Vector3 d = sphere.Center - box.GetCorner(0);
+			vector.X = sphere.Center.X - box.Minimum.X;
+			vector.Y = sphere.Center.Y - box.Maximum.Y;
+			vector.Z = sphere.Center.Z - box.Maximum.Z;
+
+			if (vector.LengthSquared() > radius)
+				return CONTAIN_Intersects;
+
+			vector.X = sphere.Center.X - box.Maximum.X;
+			vector.Y = sphere.Center.Y - box.Maximum.Y;
+			vector.Z = sphere.Center.Z - box.Maximum.Z;
+
+			if (vector.LengthSquared() > radius)
+				return CONTAIN_Intersects;
+
+			vector.X = sphere.Center.X - box.Maximum.X;
+			vector.Y = sphere.Center.Y - box.Minimum.Y;
+			vector.Z = sphere.Center.Z - box.Maximum.Z;
+
+			if (vector.LengthSquared() > radius)
+				return CONTAIN_Intersects;
+
+			vector.X = sphere.Center.X - box.Minimum.X;
+			vector.Y = sphere.Center.Y - box.Minimum.Y;
+			vector.Z = sphere.Center.Z - box.Maximum.Z;
+
+			if (vector.LengthSquared() > radius)
+				return CONTAIN_Intersects;
+
+			vector.X = sphere.Center.X - box.Minimum.X;
+			vector.Y = sphere.Center.Y - box.Maximum.Y;
+			vector.Z = sphere.Center.Z - box.Minimum.Z;
+
+			if (vector.LengthSquared() > radius)
+				return CONTAIN_Intersects;
+
+			vector.X = sphere.Center.X - box.Maximum.X;
+			vector.Y = sphere.Center.Y - box.Maximum.Y;
+			vector.Z = sphere.Center.Z - box.Minimum.Z;
+
+			if (vector.LengthSquared() > radius)
+				return CONTAIN_Intersects;
+
+			vector.X = sphere.Center.X - box.Maximum.X;
+			vector.Y = sphere.Center.Y - box.Minimum.Y;
+			vector.Z = sphere.Center.Z - box.Minimum.Z;
+
+			if (vector.LengthSquared() > radius)
+				return CONTAIN_Intersects;
+
+			vector.X = sphere.Center.X - box.Minimum.X;
+			vector.Y = sphere.Center.Y - box.Minimum.Y;
+			vector.Z = sphere.Center.Z - box.Minimum.Z;
+
+			if (vector.LengthSquared() > radius)
+				return CONTAIN_Intersects;
+
+			return CONTAIN_Contains;
+		}
+
+		void BoundingSphere::CreateFromBox(BoundingSphere& res, const BoundingBox& box)
+		{
+			res.Center = Vector3::Lerp(box.Minimum, box.Maximum, 0.5f);
+
+			float distance = Vector3::Distance(box.Minimum, box.Maximum);
+
+			res.Radius = distance * 0.5f;
+		}
+
+		bool BoundingSphere::Intersects(const BoundingSphere& sphere, const BoundingBox& box)
+		{
+			return BoundingBox::Intersects(box, sphere);
+		}
+		
 	}
 }

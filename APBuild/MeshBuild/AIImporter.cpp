@@ -210,7 +210,7 @@ namespace APBuild
 			data->VertexData = new char[data->VertexCount * data->VertexSize];
 
 			data->BoundingSphere.Radius = 0;
-			data->BoundingSphere.Center = Vector3Utils::Zero;
+			data->BoundingSphere.Center = Vector3::Zero;
 
 			for (uint j=0;j<m->mNumVertices;j++)
 			{
@@ -226,9 +226,9 @@ namespace APBuild
 						*(vertexPtr+1) = m->mVertices[j].y;
 						*(vertexPtr+2) = m->mVertices[j].z;
 
-						_V3X(data->BoundingSphere.Center) += m->mVertices[j].x;
-						_V3Y(data->BoundingSphere.Center) += m->mVertices[j].y;
-						_V3Z(data->BoundingSphere.Center) += m->mVertices[j].z;
+						data->BoundingSphere.Center.X += m->mVertices[j].x;
+						data->BoundingSphere.Center.Y += m->mVertices[j].y;
+						data->BoundingSphere.Center.Z += m->mVertices[j].z;
 
 						break;
 					case VEU_Normal:
@@ -266,11 +266,11 @@ namespace APBuild
 				}
 			}
 
-			data->BoundingSphere.Center = Vector3Utils::Divide(data->BoundingSphere.Center, static_cast<float>(m->mNumVertices));
+			data->BoundingSphere.Center = Vector3::Divide(data->BoundingSphere.Center, static_cast<float>(m->mNumVertices));
 			for (uint j=0;j<m->mNumVertices;j++)
 			{
-				Vector3 pos = Vector3Utils::LDVector(m->mVertices[j].x, m->mVertices[j].y, m->mVertices[j].z);
-				float rr = Vector3Utils::DistanceSquared(data->BoundingSphere.Center, pos);
+				Vector3 pos(m->mVertices[j].x, m->mVertices[j].y, m->mVertices[j].z);
+				float rr = Vector3::DistanceSquared(data->BoundingSphere.Center, pos);
 				if (rr > data->BoundingSphere.Radius)
 				{
 					data->BoundingSphere.Radius = rr;

@@ -48,27 +48,27 @@ namespace SampleTerrain
 		
 		float gravity = 50;
 
-		float groundHeight = Terrain::GetHeightAt(_V3X(m_position), _V3Z(m_position));
+		float groundHeight = Terrain::GetHeightAt(m_position.X, m_position.Z);
 
 		float target = groundHeight * Terrain::HeightScale + 5;
 
 		// check by comparing acceleration
-		if ((_V3Y(m_position)-target)/time->getElapsedTime()>gravity)
+		if ((m_position.Y-target)/time->getElapsedTime()>gravity)
 		{
 			m_isOnGround = false;
 		}
 
 		// apply gravity when not on ground or jumping
-		if ((_V3Y(m_position)>= target && !m_isOnGround) || _V3Y(m_velocity)>0)
+		if ((m_position.Y>= target && !m_isOnGround) || m_velocity.Y>0)
 		{
-			_V3Y(m_velocity) -= time->getElapsedTime() * gravity;
+			m_velocity.Y -= time->getElapsedTime() * gravity;
 			//m_fallSpeed += time->getElapsedTime() * gravity;
 			//m_height -= m_fallSpeed * time->getElapsedTime();
 		}
 		else
 		{
-			_V3Y(m_velocity) = 0;
-			_V3Y(m_position) = target;
+			m_velocity.Y = 0;
+			m_position.Y = target;
 			//m_fallSpeed = 0;
 			m_isOnGround = true;
 		}
@@ -82,22 +82,22 @@ namespace SampleTerrain
 			// camera can change speed when on ground
 			if (m_isOnGround)
 			{
-				m_velocity = Vector3Utils::Add(m_velChange, m_velocity);
+				m_velocity += m_velChange;
 			}
 
 			// calculate the normalized horizontal velocity, storing into hozV
-			Vector2 hozV = Vector2Utils::LDVector(_V3X(m_velocity), _V3Z(m_velocity));
+			Vector2 hozV(m_velocity.X, m_velocity.Z);
 			Vector3 v = m_velocity;
 
-			if (Vector2Utils::LengthSquared(hozV)>1)
+			if (Vector2::LengthSquared(hozV)>1)
 			{
-				hozV = Vector2Utils::Normalize(hozV);
+				hozV.NormalizeInPlace();
 			}
 
 			 
 			//if (m_isOnGround)
 			{
-				float vLen = Vector2Utils::Length(hozV);
+				float vLen = Vector2::Length(hozV);
 
 				// if the vel is big enough, add some drag
 				if (vLen > 0.05f)
@@ -105,28 +105,27 @@ namespace SampleTerrain
 					if (m_isOnGround)
 						vLen -= time->getElapsedTime() * 1.5f;
 
-					hozV = Vector2Utils::Normalize(hozV);
-					hozV = Vector2Utils::Multiply(hozV, vLen);
-					_V3X(v) = Vector2Utils::GetX(hozV)* m_maxVelocity;
-					_V3Z(v) = Vector2Utils::GetY(hozV)* m_maxVelocity;
+					hozV.NormalizeInPlace();
+					hozV = Vector2::Multiply(hozV, vLen);
+					v.X = hozV.X* m_maxVelocity;
+					v.Z = hozV.Y* m_maxVelocity;
 
-					_V3X(m_velocity) = Vector2Utils::GetX(hozV);
-					_V3Z(m_velocity) = Vector2Utils::GetY(hozV);
+					m_velocity.X = hozV.X;
+					m_velocity.Z = hozV.Y;
 				}
 				else
 				{
-					_V3X(v) = 0; _V3Z(v) = 0;
+					v.X = v.Z = 0;
 
-					_V3X(m_velocity) = 0;
-					_V3Z(m_velocity) = 0;
+					m_velocity.X = m_velocity.Z = 0;
 				}
 			}
 
 			
 
-			Vector3 dp = Vector3Utils::Multiply(v, time->getElapsedTime());
-			m_position = Vector3Utils::Add(m_position, dp);
-			m_velChange = Vector3Utils::Zero;
+			Vector3 dp = v * time->getElapsedTime();
+			m_position += dp;
+			m_velChange = Vector3::Zero;
 		}
 
 
@@ -145,7 +144,7 @@ namespace SampleTerrain
 	{
 		if (m_isOnGround)
 		{
-			_V3Y(m_velocity) = JumpVelocity;
+			m_velocity.Y = JumpVelocity;
 			m_isOnGround = false;
 		}
 	}

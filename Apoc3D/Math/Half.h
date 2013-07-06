@@ -40,11 +40,11 @@ namespace Apoc3D
 			uint bits = reinterpret_cast<uint&>(value);
 			uint signBit = (uint)((bits & 0x80000000) >> 16);
 			uint absolute = bits & 0x7fffffffU;
-			if (absolute > 0x47ffefffU)  // too big
+			if (absolute > 0x47ffefffU)  // too big(131039.992188)
 			{
 				return (ushort)(signBit | 0x7fff);
 			}
-			if (absolute < 0x38800000U)  // Denormal
+			if (absolute < 0x38800000U)  // too small(0.000061)
 			{
 				uint num6 = (absolute & 0x7fffffU) | 0x800000U;
 				int num4 = 0x71 - ((int)(absolute >> 0x17));

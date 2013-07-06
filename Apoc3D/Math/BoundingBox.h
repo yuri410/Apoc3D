@@ -59,68 +59,72 @@ namespace Apoc3D
 				switch (index)
 				{
 				case 0:
-					return Vector3Utils::LDVector(
-						Vector3Utils::GetX(Minimum), Vector3Utils::GetY(Maximum), Vector3Utils::GetZ(Maximum));
+					return Vector3(Minimum.X, Maximum.Y, Maximum.Z);
 				case 1:
-					return Vector3Utils::LDVector(
-						Vector3Utils::GetX(Maximum), Vector3Utils::GetY(Maximum), Vector3Utils::GetZ(Maximum));
+					return Vector3(Maximum.X, Maximum.Y, Maximum.Z);
 				case 2:
-					return Vector3Utils::LDVector(
-						Vector3Utils::GetX(Maximum), Vector3Utils::GetY(Minimum), Vector3Utils::GetZ(Maximum));
+					return Vector3(Maximum.X, Minimum.Y, Maximum.Z);
 				case 3:
-					return Vector3Utils::LDVector(
-						Vector3Utils::GetX(Minimum), Vector3Utils::GetY(Minimum), Vector3Utils::GetZ(Maximum));
+					return Vector3(Minimum.X, Minimum.Y, Maximum.Z);
 				case 4:
-					return Vector3Utils::LDVector(
-						Vector3Utils::GetX(Minimum), Vector3Utils::GetY(Maximum), Vector3Utils::GetZ(Minimum));
+					return Vector3(Minimum.X, Maximum.Y, Minimum.Z);
 				case 5:
-					return Vector3Utils::LDVector(
-						Vector3Utils::GetX(Maximum), Vector3Utils::GetY(Maximum), Vector3Utils::GetZ(Minimum));
+					return Vector3(Maximum.X, Maximum.Y, Minimum.Z);
 				case 6:
-					return Vector3Utils::LDVector(
-						Vector3Utils::GetX(Maximum), Vector3Utils::GetY(Minimum), Vector3Utils::GetZ(Minimum));
+					return Vector3(Maximum.X, Minimum.Y, Minimum.Z);
 				case 7:
-					return Vector3Utils::LDVector(
-						Vector3Utils::GetX(Minimum), Vector3Utils::GetY(Minimum), Vector3Utils::GetZ(Minimum));
+					return Vector3(Minimum.X, Minimum.Y, Minimum.Z);
 				}
-				return Vector3Utils::Zero;
+				return Vector3::Zero;
 			}
 
 			PlaneIntersectionType Intersects(const Plane& plane) const
 			{
 				return Intersects(*this, plane);
 			}
+			
+			/**
+			 *  Determines whether the box contains the specified point.
+			 */
 			ContainmentType Contains(Vector3 vector) const
 			{
-				if (Vector3Utils::IsGreaterEqual(vector, Minimum) && 
-					Vector3Utils::IsLessEqual(vector, Maximum))
+				if (Vector3::IsGreaterEqual(vector, Minimum) && 
+					Vector3::IsLessEqual(vector, Maximum))
 				{
 					return CONTAIN_Contains;
 				}
 				return CONTAIN_Disjoint;
 			}
+			/**
+			 *  Determines whether the box contains the specified box.
+			 */
 			ContainmentType Contains(const BoundingBox& box) const
 			{
-				if (_V3X(Maximum) < _V3X(box.Minimum) || _V3X(Minimum) > _V3X(box.Maximum))
+				if (Maximum.X < box.Minimum.X || Minimum.X > box.Maximum.X)
 				{
 					return CONTAIN_Disjoint;
 				}
-				if (_V3Y(Maximum) < _V3Y(box.Minimum) || _V3Y(Minimum) > _V3Y(box.Maximum))
+				if (Maximum.Y < box.Minimum.Y || Minimum.Y > box.Maximum.Y)
 				{
 					return CONTAIN_Disjoint;
 				}
-				if (_V3Z(Maximum) < _V3Z(box.Minimum) || _V3Z(Minimum) > _V3Z(box.Maximum))
+				if (Maximum.Z < box.Minimum.Z || Minimum.Z > box.Maximum.Z)
 				{
 					return CONTAIN_Disjoint;
 				}
-				if (Vector3Utils::IsLessEqual(Minimum, box.Minimum) && 
-					Vector3Utils::IsLessEqual(box.Maximum, Maximum))
+				if (Vector3::IsLessEqual(Minimum, box.Minimum) && 
+					Vector3::IsLessEqual(box.Maximum, Maximum))
 				{
 					return CONTAIN_Contains;
 				}
 				return CONTAIN_Intersects;
 			}
-
+			
+			/** 
+			 *  Determines whether the box contains the specified sphere.
+			 */
+			ContainmentType Contains(const BoundingSphere& sphere);
+			
 			bool operator==(const BoundingBox &other) const
 			{
 				return other.Minimum == Minimum && other.Maximum == Maximum; 
@@ -129,59 +133,17 @@ namespace Apoc3D
 
 
 			/**
-			 *  Determines whether the box contains the specified point.
-			 */
-			static ContainmentType Contains(const BoundingBox& box, Vector3 vector)
-			{
-				if (Vector3Utils::IsGreaterEqual(vector, box.Minimum) && 
-					Vector3Utils::IsLessEqual(vector, box.Maximum))
-				{
-					return CONTAIN_Contains;
-				}
-				return CONTAIN_Disjoint;
-			}
-
-			/** 
-			 *  Determines whether the box contains the specified sphere.
-			 */
-			static ContainmentType Contains(const BoundingBox& box, const BoundingSphere& sphere);
-			
-			/**
-			 *  Determines whether the box contains the specified box.
-			 */
-			static ContainmentType Contains(const BoundingBox& box1, const BoundingBox& box2)
-			{
-				if (_V3X(box1.Maximum) < _V3X(box2.Minimum) || _V3X(box1.Minimum) > _V3X(box2.Maximum))
-				{
-					return CONTAIN_Disjoint;
-				}
-				if (_V3Y(box1.Maximum) < _V3Y(box2.Minimum) || _V3Y(box1.Minimum) > _V3Y(box2.Maximum))
-				{
-					return CONTAIN_Disjoint;
-				}
-				if (_V3Z(box1.Maximum) < _V3Z(box2.Minimum) || _V3Z(box1.Minimum) > _V3Z(box2.Maximum))
-				{
-					return CONTAIN_Disjoint;
-				}
-				if (Vector3Utils::IsLessEqual(box1.Minimum, box2.Minimum) && 
-					Vector3Utils::IsLessEqual(box2.Maximum, box1.Maximum))
-				{
-					return CONTAIN_Contains;
-				}
-				return CONTAIN_Intersects;
-			}
-			/**
 			 *  Constructs a BoundingBox that fully contains the given points.
 			 */
 			static void CreateFromPoints(BoundingBox& res, const Vector3* points, int count)
 			{
-				Vector3 min = Vector3Utils::LDVector(FLT_MAX);
-				Vector3 max = Vector3Utils::LDVector(-FLT_MAX);
+				Vector3 min(FLT_MAX);
+				Vector3 max(-FLT_MAX);
 
 				for (int i = 0; i < count; i++)
 				{
-					min = Vector3Utils::Minimize(min, points[i]);
-					max = Vector3Utils::Maximize(max, points[i]);
+					min = Vector3::Minimize(min, points[i]);
+					max = Vector3::Maximize(max, points[i]);
 				}
 
 				res = BoundingBox(min, max);
@@ -195,8 +157,8 @@ namespace Apoc3D
 			 */
 			static void Merge(BoundingBox& res, const BoundingBox& box1, const BoundingBox& box2)
 			{				
-				res.Minimum = Vector3Utils::Minimize(box1.Minimum, box2.Minimum);
-				res.Maximum = Vector3Utils::Maximize(box1.Maximum, box2.Maximum);				
+				res.Minimum = Vector3::Minimize(box1.Minimum, box2.Minimum);
+				res.Maximum = Vector3::Maximize(box1.Maximum, box2.Maximum);				
 			}
 			/**
 			 *  Finds the intersection between a plane and a box.
@@ -214,13 +176,13 @@ namespace Apoc3D
 			 */
 			static bool Intersects(const BoundingBox& box1, const BoundingBox& box2)
 			{
-				if (_V3X(box1.Maximum) < _V3X(box2.Minimum) || _V3X(box1.Minimum) > _V3X(box2.Maximum))
+				if (box1.Maximum.X < box2.Minimum.X || box1.Minimum.X > box2.Maximum.X)
 					return false;
 
-				if (_V3Y(box1.Maximum) < _V3Y(box2.Minimum) || _V3Y(box1.Minimum) > _V3Y(box2.Maximum))
+				if (box1.Maximum.Y < box2.Minimum.Y || box1.Minimum.Y > box2.Maximum.Y)
 					return false;
 
-				return (_V3Z(box1.Maximum) >= _V3Z(box2.Minimum) && _V3Z(box1.Minimum) <= _V3Z(box2.Maximum));
+				return (box1.Maximum.Z >= box2.Minimum.Z && box1.Minimum.Z <= box2.Maximum.Z);
 			}
 		};
 	}

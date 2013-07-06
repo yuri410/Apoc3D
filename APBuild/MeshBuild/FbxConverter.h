@@ -96,7 +96,7 @@ namespace APBuild
 				{
 					v[i] = static_cast<float>( BoneWeights[i].first);
 				}
-				return Vector4Utils::LDVectorPtr(v);
+				return Vector4(v);
 			}
 			Vector4 GetBlendWeight() const
 			{
@@ -105,7 +105,7 @@ namespace APBuild
 				{
 					v[i] = BoneWeights[i].second;
 				}
-				return Vector4Utils::LDVectorPtr(v);
+				return Vector4(v);
 			}
 		};
 
