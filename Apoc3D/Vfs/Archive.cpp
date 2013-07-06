@@ -35,8 +35,8 @@ namespace Apoc3D
 	namespace VFS
 	{
 
-		static const int PakFileID1 = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
-		static const int PakFileID2 = ((byte)1 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
+		const int PakFileID1 = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
+		const int PakFileID2 = ((byte)1 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
 
 		PakArchive::PakArchive(FileLocation* fl)
 			: Archive(fl->getPath(), fl->getSize(), fl->isInArchive()), m_file(fl), m_compression(PCT_None)
