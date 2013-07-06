@@ -186,21 +186,21 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 
-		static const int LfxID_V1 = 'LFX1';
+		const int LfxID_V1 = 'LFX1';
 
-		static const int AfxId_V3 = ((byte)'A' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
-		static const int AfxId_V31 = ((byte)'A' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)'0');
-		static const int AfxId_V4 = 'AFX1';
+		const int AfxId_V3 = ((byte)'A' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
+		const int AfxId_V31 = ((byte)'A' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)'0');
+		const int AfxId_V4 = 'AFX1';
 
-		static const int CfxID_V3 = ((byte)'C' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
-		static const int CfxID_V4 = 'CFX1';
+		const int CfxID_V3 = ((byte)'C' << 24) | ((byte)'F' << 16) | ((byte)'X' << 8) | ((byte)' ');
+		const int CfxID_V4 = 'CFX1';
 
-		static const String TAG_3_ParameterCountTag = L"ParameterCount";
-		static const String TAG_3_ParameterTag = L"Parameter";
-		static const String TAG_3_ParameterSamplerStateTag = L"SamplerState";
-		static const String TAG_3_ShaderCodeTag = L"ShaderCode";
+		const String TAG_3_ParameterCountTag = L"ParameterCount";
+		const String TAG_3_ParameterTag = L"Parameter";
+		const String TAG_3_ParameterSamplerStateTag = L"SamplerState";
+		const String TAG_3_ShaderCodeTag = L"ShaderCode";
 		
-		static const String TAG_3_ShaderCodeLengthTag = L"ShaderCodeLength";
+		const String TAG_3_ShaderCodeLengthTag = L"ShaderCodeLength";
 		
 		EffectData::EffectData() 
 			: Profiles(nullptr), ProfileCount(0), IsCFX(false)
