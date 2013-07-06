@@ -43,7 +43,7 @@ using namespace Apoc3D::VFS;
 namespace APBuild
 {
 
-	static const int PakFileID = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
+	const int PakFileID = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
 
 	//struct PakEntry
 	//{
