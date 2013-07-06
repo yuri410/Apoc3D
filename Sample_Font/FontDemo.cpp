@@ -46,7 +46,7 @@ using namespace Apoc3D::Utility;
 
 namespace SampleFont
 {
-	static const String mlText = 
+	const String mlText = 
 		L"Language Learning and Teaching\n"
 		L"外国語の学習と教授\n"
 		L"Изучение и обучение иностранных языков\n"
