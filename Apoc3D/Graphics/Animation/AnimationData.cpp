@@ -37,27 +37,27 @@ namespace Apoc3D
 	{
 		namespace Animation
 		{
-			static const int MANI_ID = ((byte)'M' << 24) | ((byte)'A' << 16) | ((byte)'N' << 8) | ((byte)'I');
+			const int MANI_ID = ((byte)'M' << 24) | ((byte)'A' << 16) | ((byte)'N' << 8) | ((byte)'I');
 		
-			//static const String TAG_3_BindPoseTag = L"BindPose";
-			//static const String TAG_3_BindPoseCountTag = L"BindPoseCount";
+			//const String TAG_3_BindPoseTag = L"BindPose";
+			//const String TAG_3_BindPoseCountTag = L"BindPoseCount";
 
-			//static const String TAG_3_InvBindPoseTag = L"InvBindPose";
-			//static const String TAG_3_InvBindPoseCountTag = L"InvBindPoseCount";
+			//const String TAG_3_InvBindPoseTag = L"InvBindPose";
+			//const String TAG_3_InvBindPoseCountTag = L"InvBindPoseCount";
 
-			static const String TAG_3_SkinnedAnimationClipTag = L"SkinnedAnimationClip";
-			static const String TAG_3_SkinnedAnimationClipCountTag = L"SkinnedAnimationClipCount";
+			const String TAG_3_SkinnedAnimationClipTag = L"SkinnedAnimationClip";
+			const String TAG_3_SkinnedAnimationClipCountTag = L"SkinnedAnimationClipCount";
 
-			static const String TAG_3_RigidAnimationClipTag = L"RigidAnimationClip";
-			static const String TAG_3_RigidAnimationClipCountTag = L"RigidAnimationClipCount";
+			const String TAG_3_RigidAnimationClipTag = L"RigidAnimationClip";
+			const String TAG_3_RigidAnimationClipCountTag = L"RigidAnimationClipCount";
 
-			static const String TAG_3_MaterialAnimationTag = L"MaterialAnimation3.0";
-			static const String TAG_3_MaterialAnimationCountTag = L"MaterialAnimation3.0Count";
+			const String TAG_3_MaterialAnimationTag = L"MaterialAnimation3.0";
+			const String TAG_3_MaterialAnimationCountTag = L"MaterialAnimation3.0Count";
 
-			static const String TAG_3_RootBoneTag = L"RootBone";
-			static const String TAG_3_RigidEntityCount = L"RigidEntityCount";
-			static const String TAG_3_BonesTag = L"Bones";
-			static const String TAG_3_BoneCountTag = L"BoneCount";
+			const String TAG_3_RootBoneTag = L"RootBone";
+			const String TAG_3_RigidEntityCount = L"RigidEntityCount";
+			const String TAG_3_BonesTag = L"Bones";
+			const String TAG_3_BoneCountTag = L"BoneCount";
 
 
 

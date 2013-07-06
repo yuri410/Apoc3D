@@ -527,7 +527,7 @@ namespace Apoc3D
 
 
 				void InitClip() { }
-				inline void SetKeyframe(const MaterialAnimationKeyframe& keyframe);
+				void SetKeyframe(const MaterialAnimationKeyframe& keyframe);
 				
 			};
 		}
