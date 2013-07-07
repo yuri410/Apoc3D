@@ -26,8 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-#if APOC3D_MATH_IMPL == APOC3D_SSE
-
 #include "../Common.h"
 
 #define ZERO_VECTOR
@@ -46,7 +44,10 @@
 
 #define _MM_SHUFFLE1(x) _MM_SHUFFLE(x,x,x,x)
 
-#pragma pack(push ,16)
+const int SIMDDot4MaskX = 0xF1; // all components involved to dot, output to X
+const int SIMDDot3MaskX = 0x71; // all components involved to dot, output to X
+
+/*#pragma pack(push ,16)
 struct __declspec(align(16)) SSEVecLoader
 {
 	float X;
@@ -55,21 +56,23 @@ struct __declspec(align(16)) SSEVecLoader
 	float W;
 };
 #pragma pack(pop)
+
+
+inline __m128 SIMDVecLoad(const SSEVecLoader& vec) { return _mm_load_ps(reinterpret_cast<const float*>(&vec)); };*/
 static __m128 _MASKSIGN_;
 
-inline __m128 SIMDVecLoad(const SSEVecLoader& vec) { return _mm_load_ps(reinterpret_cast<const float*>(&vec)); };
 inline __m128 SIMDVecLoad(float f)
 {
 	return _mm_set1_ps(f);
 };
 inline __m128 SIMDVecLoad(float x, float y, float z)
 {
-	float vec[4] = {x,y,z,0};
+	const float vec[4] = {x,y,z,0};
 	return _mm_load_ps(vec);
 };
 inline __m128 SIMDVecLoad(float x, float y, float z, float w)
 {
-	float vec[4] = {x,y,z,w};
+	const float vec[4] = {x,y,z,w};
 	return _mm_load_ps(vec);
 };
 /* Adds two vectors.
@@ -103,9 +106,10 @@ inline __m128 SIMDVecDiv(__m128 va, float vb)
 
 inline __m128 SIMDVecStore(float* pVec, __m128 v)
 {
-	SSEVecLoader buffer;
-	_mm_store_ps(reinterpret_cast<float*>(&buffer), v);
-	pVec[0] = buffer.X; pVec[1] = buffer.Y; pVec[2] = buffer.Z; pVec[3] = buffer.W;
+	//SSEVecLoader buffer;
+	//_mm_store_ps(reinterpret_cast<float*>(&buffer), v);
+	//pVec[0] = buffer.X; pVec[1] = buffer.Y; pVec[2] = buffer.Z; pVec[3] = buffer.W;
+	_mm_store_ps(pVec, v);
 };
 
 /* Reverses the direction of a given vector.
@@ -156,19 +160,6 @@ inline __m128 SIMDVecMax(__m128 va, __m128 vb) { return _mm_max_ps(va, vb); };
 
 /* Calculates the cross product of two vectors.
 */
-inline float SIMDVec2Cross(__m128 va, __m128 vb)
-{
-	// a.X * b.Y - b.X * a.Y;
-	__m128 l1, l2, m1, m2;
-	l1 = _mm_shuffle_ps(va,va, _MM_SHUFFLE(VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_W));
-	l2 = _mm_shuffle_ps(vb,vb, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_X,VEC_INDEX_Z,VEC_INDEX_W));
-	m1 = _mm_mul_ps(l1,l2); // a.X * b.Y , b.X * a.Y;
-	m2 = _mm_shuffle_ps(m1,m1, VEC_INDEX_Y);
-
-	__m128 r = _mm_sub_ps(m1, m2);
-
-	return reinterpret_cast<const float&>(r);
-}
 inline __m128 SIMDVec3Cross(__m128 va, __m128 vb)
 {
 	__m128 l1, l2, m1, m2;
@@ -183,86 +174,30 @@ inline __m128 SIMDVec3Cross(__m128 va, __m128 vb)
 
 /*  Calculates the dot product of two vectors.
 */
-inline float SIMDVec2Dot(__m128 va, __m128 vb)
-{
-	__m128 t0 = _mm_mul_ps(va, vb);
-
-	__m128 t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_X,VEC_INDEX_Z,VEC_INDEX_W));
-	__m128 dot = _mm_add_ps(t0, t1);
-
-	return reinterpret_cast<const float&>(dot);
-};
 inline float SIMDVec3Dot(__m128 va, __m128 vb)
 {
-	__m128 t0 = _mm_mul_ps(va, vb);
-
-	__m128 t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
-	__m128 t2 = _mm_add_ps(t0, t1);
-	__m128 t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
-	__m128 dot = _mm_add_ps(t3, t2);
-			
+	__m128 dot = _mm_dp_ps(va, vb, SIMDDot3MaskX);
 	return reinterpret_cast<const float&>(dot);
 };
 inline float SIMDVec4Dot(__m128 va, __m128 vb)
 {
-	__m128 t0 = _mm_mul_ps(va, vb);
-
-	__m128 t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_X));
-	__m128 t2 = _mm_add_ps(t0, t1);
-	__m128 t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_Y));
-	__m128 t4 = _mm_add_ps(t3, t2);
-	__m128 t5 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_W,VEC_INDEX_W,VEC_INDEX_W,VEC_INDEX_Z));
-	__m128 dot = _mm_add_ps(t4, t5);
-
+	__m128 dot = _mm_dp_ps(va, vb, SIMDDot4MaskX);
 	return reinterpret_cast<const float&>(dot);
 };
 		
 /*  Calculates the dot product of two vectors.
 */
-inline __m128 SIMDVec2Dot2(__m128 va, __m128 vb)
-{
-	__m128 t0 = _mm_mul_ps(va, vb);
-			
-	__m128 t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
-	__m128 dot = _mm_add_ps(t0, t1);
-
-	return dot;
-};
 inline __m128 SIMDVec3Dot2(__m128 va, __m128 vb)
 {
-	__m128 t0 = _mm_mul_ps(va, vb);
-			
-	__m128 t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_W));
-	__m128 t2 = _mm_add_ps(t0, t1);
-	__m128 t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_W));
-	__m128 dot = _mm_add_ps(t3, t2);
-
-	return dot;
+	return _mm_dp_ps(va, vb, SIMDDot3MaskX);
 };
 inline __m128 SIMDVec4Dot2(__m128 va, __m128 vb)
 {
-	__m128 t0 = _mm_mul_ps(va, vb);
-
-	__m128 t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(VEC_INDEX_Y,VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_X));
-	__m128 t2 = _mm_add_ps(t0, t1);
-	__m128 t3 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_Z,VEC_INDEX_X,VEC_INDEX_Y,VEC_INDEX_Y));
-	__m128 t4 = _mm_add_ps(t3, t2);
-	__m128 t5 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(VEC_INDEX_W,VEC_INDEX_W,VEC_INDEX_W,VEC_INDEX_Z));
-	__m128 dot = _mm_add_ps(t4, t5);
-
-	return dot;
+	return _mm_dp_ps(va, vb, SIMDDot4MaskX);
 };
 		
 /* Calculates the length of a specified vector.
 */
-inline float SIMDVec2Length(__m128 va)
-{			
-	__m128 dot = SIMDVec2Dot2(va,va);
-
-	dot = _mm_sqrt_ps(dot);
-			
-	return reinterpret_cast<const float&>(dot);
-};
 inline float SIMDVec3Length(__m128 va)
 {			
 	__m128 dot = SIMDVec3Dot2(va,va);
@@ -276,16 +211,11 @@ inline float SIMDVec4Length(__m128 va)
 	__m128 dot = SIMDVec4Dot2(va,va);
 
 	dot = _mm_sqrt_ps(dot);
-			
 	return reinterpret_cast<const float&>(dot);
 };
 
 /* Calculates the squared length of a specified vector.
 */
-inline float SIMDVec2LengthSquared(__m128 va)
-{
-	return SIMDVec2Dot(va, va);
-};
 inline float SIMDVec3LengthSquared(__m128 va)
 {
 	return SIMDVec3Dot(va, va);
@@ -297,11 +227,6 @@ inline float SIMDVec4LengthSquared(__m128 va)
 
 /* Calculates the distance between two vectors.
 */
-inline float SIMDVec2Distance(__m128 va, __m128 vb)
-{
-	__m128 d = _mm_sub_ps(va, vb);
-	return SIMDVec2Length(d);
-}
 inline float SIMDVec3Distance(__m128 va, __m128 vb)
 {
 	__m128 d = _mm_sub_ps(va, vb);
@@ -315,11 +240,6 @@ inline float SIMDVec4Distance(__m128 va, __m128 vb)
 
 /* Calculates the squared distance between two vectors.
 */
-inline float SIMDVec2DistanceSquared(__m128 va, __m128 vb)
-{
-	__m128 d = _mm_sub_ps(va, vb);
-	return SIMDVec2LengthSquared(d);
-}
 inline float SIMDVec3DistanceSquared(__m128 va, __m128 vb)
 {
 	__m128 d = _mm_sub_ps(va, vb);
@@ -333,18 +253,6 @@ inline float SIMDVec4DistanceSquared(__m128 va, __m128 vb)
 
 /* Converts a specified vector into a unit vector.
 */
-inline __m128 SIMDVec2Normalize(__m128 va)
-{
-	__m128 t = SIMDVec2Dot2(va, va);
-#ifdef ZERO_VECTOR
-
-	static const __m128 vecZero = _mm_setzero_ps();
-	t = _mm_and_ps(_mm_cmpneq_ss(_mm_shuffle_ps( t, t, VEC_INDEX_X), vecZero), rsqrt_nr(t));
-#else
-	t = rsqrt_nr(t);
-#endif
-	return _mm_mul_ps(va, _mm_shuffle_ps(t,t,0x00));
-};
 inline __m128 SIMDVec3Normalize(__m128 va)
 {
 	__m128 t = SIMDVec3Dot2(va, va);
@@ -375,15 +283,6 @@ inline __m128 SIMDVec4Normalize(__m128 va)
 
 /* Returns the reflection of a vector off a surface that has the specified normal. 
 */
-inline __m128 SIMDVec2Reflect(__m128 Incident, __m128 Normal)
-{
-	// Result = Incident - (2 * dot(Incident, Normal)) * Normal
-	__m128 Result = SIMDVec2Dot2(Incident,Normal);
-	Result = _mm_add_ps(Result,Result);
-	Result = _mm_mul_ps(Result,Normal);
-	Result = _mm_sub_ps(Incident,Result);
-	return Result;
-};
 inline __m128 SIMDVec3Reflect(__m128 Incident, __m128 Normal)
 {
 	// Result = Incident - (2 * dot(Incident, Normal)) * Normal
@@ -429,5 +328,4 @@ inline bool SIMDVec3GreaterEqual(__m128 a, __m128 b)
 };
 
 #endif
-
-#endif		
+	

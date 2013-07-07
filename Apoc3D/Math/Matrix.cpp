@@ -246,46 +246,41 @@ namespace Apoc3D
             float m42 = M42;
             float m43 = M43;
             float m44 = M44;
-            float num23 = m33 * m44 - m34 * m43;
-            float num22 = m32 * m44 - m34 * m42;
-            float num21 = m32 * m43 - m33 * m42;
-            float num20 = m31 * m44 - m34 * m41;
-            float num19 = m31 * m43 - m33 * m41;
-            float num18 = m31 * m42 - m32 * m41;
-            float num39 = m22 * num23 - m23 * num22 + m24 * num21;
-            float num38 = -(m21 * num23 - m23 * num20 + m24 * num19);
-            float num37 = m21 * num22 - m22 * num20 + m24 * num18;
-            float num36 = -(m21 * num21 - m22 * num19 + m23 * num18);
-            float num = 1.0f / (m11 * num39 + m12 * num38 + m13 * num37 + m14 * num36);
-            M11 = num39 * num;
-            M21 = num38 * num;
-            M31 = num37 * num;
-            M41 = num36 * num;
-            M12 = -(m12 * num23 - m13 * num22 + m14 * num21) * num;
-            M22 = (m11 * num23 - m13 * num20 + m14 * num19) * num;
-            M32 = -(m11 * num22 - m12 * num20 + m14 * num18) * num;
-            M42 = (m11 * num21 - m12 * num19 + m13 * num18) * num;
-            float num35 = m23 * m44 - m24 * m43;
-            float num34 = m22 * m44 - m24 * m42;
-            float num33 = m22 * m43 - m23 * m42;
-            float num32 = m21 * m44 - m24 * m41;
-            float num31 = m21 * m43 - m23 * m41;
-            float num30 = m21 * m42 - m22 * m41;
-            M13 = (m12 * num35 - m13 * num34 + m14 * num33) * num;
-            M23 = -(m11 * num35 - m13 * num32 + m14 * num31) * num;
-            M33 = (m11 * num34 - m12 * num32 + m14 * num30) * num;
-            M43 = -(m11 * num33 - m12 * num31 + m13 * num30) * num;
-            float num29 = m23 * m34 - m24 * m33;
-            float num28 = m22 * m34 - m24 * m32;
-            float num27 = m22 * m33 - m23 * m32;
-            float num26 = m21 * m34 - m24 * m31;
-            float num25 = m21 * m33 - m23 * m31;
-            float num24 = m21 * m32 - m22 * m31;
-            M14 = -(m12 * num29 - m13 * num28 + m14 * num27) * num;
-            M24 = (m11 * num29 - m13 * num26 + m14 * num25) * num;
-            M34 = -(m11 * num28 - m12 * num26 + m14 * num24) * num;
-            M44 = (m11 * num27 - m12 * num25 + m13 * num24) * num;
-			return 1.0f/num;
+
+			float det01 = m11 * m22 - m12 * m21;
+			float det02 = m11 * m23 - m13 * m21;
+			float det03 = m11 * m24 - m14 * m21;
+			float det04 = m12 * m23 - m13 * m22;
+			float det05 = m12 * m24 - m14 * m22;
+			float det06 = m13 * m24 - m14 * m23;
+			float det07 = m31 * m42 - m32 * m41;
+			float det08 = m31 * m43 - m33 * m41;
+			float det09 = m31 * m44 - m34 * m41;
+			float det10 = m32 * m43 - m33 * m42;
+			float det11 = m32 * m44 - m34 * m42;
+			float det12 = m33 * m44 - m34 * m43;
+
+			float detMatrix = det01 * det12 - det02 * det11 + det03 * det10 + det04 * det09 - det05 * det08 + det06 * det07;
+			float invDetMatrix = 1.0f / detMatrix;
+
+			M11 = (+m22 * det12 - m23 * det11 + m24 * det10) * invDetMatrix;
+			M12 = (-m12 * det12 + m13 * det11 - m14 * det10) * invDetMatrix;
+			M13 = (+m42 * det06 - m43 * det05 + m44 * det04) * invDetMatrix;
+			M14 = (-m32 * det06 + m33 * det05 - m34 * det04) * invDetMatrix;
+			M21 = (-m21 * det12 + m23 * det09 - m24 * det08) * invDetMatrix;
+			M22 = (+m11 * det12 - m13 * det09 + m14 * det08) * invDetMatrix;
+			M23 = (-m41 * det06 + m43 * det03 - m44 * det02) * invDetMatrix;
+			M24 = (+m31 * det06 - m33 * det03 + m34 * det02) * invDetMatrix;
+			M31 = (+m21 * det11 - m22 * det09 + m24 * det07) * invDetMatrix;
+			M32 = (-m11 * det11 + m12 * det09 - m14 * det07) * invDetMatrix;
+			M33 = (+m41 * det05 - m42 * det03 + m44 * det01) * invDetMatrix;
+			M34 = (-m31 * det05 + m32 * det03 - m34 * det01) * invDetMatrix;
+			M41 = (-m21 * det10 + m22 * det08 - m23 * det07) * invDetMatrix;
+			M42 = (+m11 * det10 - m12 * det08 + m13 * det07) * invDetMatrix;
+			M43 = (-m41 * det04 + m42 * det02 - m43 * det01) * invDetMatrix;
+			M44 = (+m31 * det04 - m32 * det02 + m33 * det01) * invDetMatrix;
+
+			return detMatrix;
 		#endif
 			
 		}

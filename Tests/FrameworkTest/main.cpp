@@ -1,3 +1,4 @@
+#include <Windows.h>
 
 #include "apoc3d/Engine.h"
 #include "apoc3d/IOLib/TaggedData.h"
@@ -29,18 +30,20 @@ void TestListSort();
 void TestListSort2();
 void TestRLE();
 void TestLZ();
+void TestMath();
 
 void main()
 {
 	//String s = StringUtils::ToString(0.14159265f,8);
 	//std::wcout << s.c_str() << L"\n";
 	//std::wcout << std::numeric_limits<float>::digits10+1 << L"\n";
-	
+
+	TestMath();
 	TestListReverse();
 	TestListSort();
 	TestListSort2();
 	TestTaggedData();
-	TestRLE();
+	//TestRLE();
 }
 
 template <typename T>
@@ -76,7 +79,7 @@ void TestTaggedData()
 	outData->AddEntryPointF(L"PointF", (PointF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(PointF));
 	outData->AddEntryQuaternion(L"Quaternion", (Quaternion*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Quaternion));
 	outData->AddEntryRay(L"Ray", (Ray*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Ray));
-	outData->AddEntryRectangle(L"Rectangle", (Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Rectangle));
+	outData->AddEntryRectangle(L"Rectangle", (Apoc3D::Math::Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Apoc3D::Math::Rectangle));
 	outData->AddEntryRectangleF(L"RectangleF", (RectangleF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(RectangleF));
 	outData->AddEntrySingle(L"Single", (float*)sourceBuffer, sizeof(sourceBuffer)/sizeof(float));
 	outData->AddEntryUInt16(L"UInt16", (uint16*)sourceBuffer, sizeof(sourceBuffer)/sizeof(uint16));
@@ -137,8 +140,8 @@ void TestTaggedData()
 	inData->GetDataRay(L"Ray", (Ray*)tempBuffer, sizeof(tempBuffer)/sizeof(Ray));
 	CheckEqual((Ray*)tempBuffer, (Ray*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Ray));
 
-	inData->GetDataRectangle(L"Rectangle", (Rectangle*)tempBuffer, sizeof(tempBuffer)/sizeof(Rectangle));
-	CheckEqual((Rectangle*)tempBuffer, (Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Rectangle));
+	inData->GetDataRectangle(L"Rectangle", (Apoc3D::Math::Rectangle*)tempBuffer, sizeof(tempBuffer)/sizeof(Apoc3D::Math::Rectangle));
+	CheckEqual((Apoc3D::Math::Rectangle*)tempBuffer, (Apoc3D::Math::Rectangle*)sourceBuffer, sizeof(sourceBuffer)/sizeof(Apoc3D::Math::Rectangle));
 
 	inData->GetDataRectangleF(L"RectangleF", (RectangleF*)tempBuffer, sizeof(tempBuffer)/sizeof(RectangleF));
 	CheckEqual((RectangleF*)tempBuffer, (RectangleF*)sourceBuffer, sizeof(sourceBuffer)/sizeof(RectangleF));
@@ -306,4 +309,30 @@ void TestRLE()
 
 	delete[] buffer;
 	delete[] decompressedData;
+}
+
+void TestMath()
+{
+	/*Matrix m;
+	Matrix ma;
+	ma.LoadIdentity();
+	Matrix mb;
+	mb.LoadIdentity();
+
+	Matrix ac;
+	ac.LoadIdentity();
+
+	DWORD start = GetTickCount();
+	for (int i=0;i<1000000;i++)
+	{
+		Matrix::Multiply(m,ma,mb);
+		Matrix::Add(ac, m, ac);
+	}
+	DWORD end = GetTickCount();
+
+	DWORD t = end - start;
+
+	std::wcout << t << L"\n";
+	std::wcout << (ac.M11 + ac.M12) << L"\n";*/
+
 }

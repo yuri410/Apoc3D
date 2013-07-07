@@ -85,11 +85,11 @@ namespace Apoc3D
 			result.append(L"]");
 			return result;
 		}
-		String Vector2::ToParsableString() const
+		String Vector2::ToParsableString(int precision) const
 		{
-			String result = StringUtils::ToString(X, 11);
+			String result = StringUtils::ToString(X, precision);
 			result.append(L", ");
-			result.append(StringUtils::ToString(Y, 11));
+			result.append(StringUtils::ToString(Y, precision));
 			return result;
 		}
 
@@ -134,13 +134,13 @@ namespace Apoc3D
 			result.append(L"]");
 			return result;
 		}
-		String Vector3::ToParsableString() const
+		String Vector3::ToParsableString(int precision) const
 		{
-			String result = StringUtils::ToString(X, 11);
+			String result = StringUtils::ToString(X, precision);
 			result.append(L", ");
-			result.append(StringUtils::ToString(Y, 11));
+			result.append(StringUtils::ToString(Y, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(Z, 11));
+			result.append(StringUtils::ToString(Z, precision));
 			return result;
 		}
 
@@ -150,6 +150,7 @@ namespace Apoc3D
 			float y = vector.X * transform.M12 + vector.Y * transform.M22 + vector.Z * transform.M32 + transform.M42;
 			float z = vector.X * transform.M13 + vector.Y * transform.M23 + vector.Z * transform.M33 + transform.M43;
 			float w = vector.X * transform.M14 + vector.Y * transform.M24 + vector.Z * transform.M34 + transform.M44;
+			
 			return Vector4(x,y,z,w);
 		}
 		Vector3 Vector3::TransformSimple(const Vector3& vector, const Matrix& transform)
@@ -222,15 +223,15 @@ namespace Apoc3D
 			result.append(L"]");
 			return result;
 		}
-		String Vector4::ToParsableString() const
+		String Vector4::ToParsableString(int precision) const
 		{
-			String result = StringUtils::ToString(X, 11);
+			String result = StringUtils::ToString(X, precision);
 			result.append(L", ");
-			result.append(StringUtils::ToString(Y, 11));
+			result.append(StringUtils::ToString(Y, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(Z, 11));
+			result.append(StringUtils::ToString(Z, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(W, 11));
+			result.append(StringUtils::ToString(W, precision));
 			return result;
 		}
 
