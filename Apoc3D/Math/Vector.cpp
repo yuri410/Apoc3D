@@ -52,18 +52,27 @@ namespace Apoc3D
 		const Vector4 Vector4::One = Vector4(1);
 		
 
-		void Vector2::Parse(const String& str)
+		void Vector2::Parse(const String& str, bool loosy)
 		{
 			Apoc3D::Collections::List<String> results;
 			StringUtils::Split(str, results, L", ");
-			X = Y = 0;
+			
+			if (loosy)
+			{
+				X = Y = 0;
 
-			if (results.getCount() > 0)
+				if (results.getCount() > 0)
+				{
+					X = StringUtils::ParseSingle(results[0]);
+				}
+				if (results.getCount() > 1)
+				{
+					Y = StringUtils::ParseSingle(results[1]);
+				}
+			}
+			else
 			{
 				X = StringUtils::ParseSingle(results[0]);
-			}
-			if (results.getCount() > 1)
-			{
 				Y = StringUtils::ParseSingle(results[1]);
 			}
 		}
@@ -85,22 +94,32 @@ namespace Apoc3D
 		}
 
 
-		void Vector3::Parse(const String& str)
+		void Vector3::Parse(const String& str, bool loosy)
 		{
 			Apoc3D::Collections::List<String> results;
 			StringUtils::Split(str, results, L", ");
-			X = Y = Z = 0;
 
-			if (results.getCount() > 0)
+			if (loosy)
+			{
+				X = Y = Z = 0;
+
+				if (results.getCount() > 0)
+				{
+					X = StringUtils::ParseSingle(results[0]);
+				}
+				if (results.getCount() > 1)
+				{
+					Y = StringUtils::ParseSingle(results[1]);
+				}
+				if (results.getCount() > 2)
+				{
+					Z = StringUtils::ParseSingle(results[2]);
+				}
+			}
+			else
 			{
 				X = StringUtils::ParseSingle(results[0]);
-			}
-			if (results.getCount() > 1)
-			{
 				Y = StringUtils::ParseSingle(results[1]);
-			}
-			if (results.getCount() > 2)
-			{
 				Z = StringUtils::ParseSingle(results[2]);
 			}
 		}
@@ -157,26 +176,36 @@ namespace Apoc3D
 		}
 
 
-		void Vector4::Parse(const String& str)
+		void Vector4::Parse(const String& str, bool loosy)
 		{
 			Apoc3D::Collections::List<String> results;
 			StringUtils::Split(str, results, L", ");
-			X = Y = Z = W = 0;
+			if (loosy)
+			{
+				X = Y = Z = W = 0;
 
-			if (results.getCount() > 0)
+				if (results.getCount() > 0)
+				{
+					X = StringUtils::ParseSingle(results[0]);
+				}
+				if (results.getCount() > 1)
+				{
+					Y = StringUtils::ParseSingle(results[1]);
+				}
+				if (results.getCount() > 2)
+				{
+					Z = StringUtils::ParseSingle(results[2]);
+				}
+				if (results.getCount() > 3)
+				{
+					W = StringUtils::ParseSingle(results[3]);
+				}
+			}
+			else
 			{
 				X = StringUtils::ParseSingle(results[0]);
-			}
-			if (results.getCount() > 1)
-			{
 				Y = StringUtils::ParseSingle(results[1]);
-			}
-			if (results.getCount() > 2)
-			{
 				Z = StringUtils::ParseSingle(results[2]);
-			}
-			if (results.getCount() > 3)
-			{
 				W = StringUtils::ParseSingle(results[3]);
 			}
 		}

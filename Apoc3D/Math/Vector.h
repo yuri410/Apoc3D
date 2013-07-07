@@ -176,7 +176,7 @@ namespace Apoc3D
 					reinterpret_cast<const uint32&>(Z) ^ reinterpret_cast<const uint32&>(W); 
 			}
 
-			void Parse(const String& str);
+			void Parse(const String& str, bool loosy = false);
 			String ToTextString(int precision = 10) const;
 			String ToParsableString() const;
 			
@@ -544,7 +544,7 @@ namespace Apoc3D
 			uint32 GetHashCode() const { return reinterpret_cast<const uint32&>(X) ^ reinterpret_cast<const uint32&>(Y); }
 
 
-			void Parse(const String& str);
+			void Parse(const String& str, bool loosy = false);
 			String ToTextString(int precision = 10) const;
 			String ToParsableString() const;
 
@@ -874,7 +874,7 @@ namespace Apoc3D
 
 			uint32 GetHashCode() const { return reinterpret_cast<const uint32&>(X) ^ reinterpret_cast<const uint32&>(Y) ^ reinterpret_cast<const uint32&>(Z); }
 
-			void Parse(const String& str);
+			void Parse(const String& str, bool loosy = false);
 			String ToTextString(int precision = 10) const;
 			String ToParsableString() const;
 
