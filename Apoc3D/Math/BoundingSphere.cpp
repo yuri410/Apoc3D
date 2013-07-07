@@ -34,7 +34,6 @@ namespace Apoc3D
 		bool BoundingSphere::IntersectsRay(const Ray& ray, Vector3* _p1) const
 		{
 			Vector3 sc = Center - ray.Position;
-
 			float slen = Vector3::Dot(ray.Direction, sc);
 
 			if (slen > 0)
@@ -43,19 +42,19 @@ namespace Apoc3D
 
 				if (dist <= Radius)
 				{
-					const float dd = sqrtf(Radius * Radius - dist * dist);
-					Vector3 t0 = ray.Direction * (slen - dd);						
-					Vector3 p1 = ray.Position + t0;
-
-					t0 = ray.Direction * (slen + sqrtf(Radius * Radius - dist * dist));
-					Vector3 p2 = ray.Position + t0;
-
 					if (_p1)
 					{
-						float d1 = Vector3::DistanceSquared(p1, ray.Position);
-						float d2 = Vector3::DistanceSquared(p2, ray.Position);
+						const float dd = sqrtf(Radius * Radius - dist * dist);
+						Vector3 t0 = ray.Direction * (slen - dd);						
+						Vector3 p1 = ray.Position + t0;
 
-						*_p1 = d2 < d1 ? p2 : p1;
+						//t0 = ray.Direction * (slen + dd);
+						//Vector3 p2 = ray.Position + t0;
+
+						//float d1 = Vector3::DistanceSquared(p1, ray.Position);
+						//float d2 = Vector3::DistanceSquared(p2, ray.Position);
+
+						*_p1 = p1;// d2 < d1 ? p2 : p1;
 					}
 					return true;
 				}
@@ -63,7 +62,27 @@ namespace Apoc3D
 
 			return false;
 		}
+		bool BoundingSphere::IntersectsRayDist(const Ray& ray, float* _dist) const
+		{
+			Vector3 sc = Center - ray.Position;
+			float slen = Vector3::Dot(ray.Direction, sc);
 
+			if (slen > 0)
+			{
+				float dist = sqrtf(sc.LengthSquared() - slen * slen);
+
+				if (dist <= Radius)
+				{
+					if (_dist)
+					{
+						*_dist = dist;
+					}
+					return true;
+				}
+			}
+
+			return false;
+		}
 		bool BoundingSphere::IntersectsLineSegmenent(const Vector3& start, const Vector3& end, 
 			float* _dist, Vector3* _n, Vector3* _pos) const
 		{

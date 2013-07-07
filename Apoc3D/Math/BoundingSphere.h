@@ -74,6 +74,7 @@ namespace Apoc3D
 			}
 
 
+			bool IntersectsRayDist(const Ray& ray, float* dist) const;
 			bool IntersectsRay(const Ray& ray, Vector3* p1) const;
 
 			bool IntersectsLineSegmenent(const Vector3& start, const Vector3& end, 
