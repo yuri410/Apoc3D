@@ -295,20 +295,20 @@ namespace Apoc3D
 		void Matrix::CreateBillboard(const Vector3 &objectPosition, const Vector3 &cameraPosition, const Vector3 &cameraUpVector, const Vector3 &cameraForwardVector, Matrix& res)
 		{
 		#if APOC3D_MATH_IMPL == APOC3D_SSE
-			Vector3 difference = _VecSub( objectPosition , cameraPosition);
+			Vector3 difference = SIMDVecSub( objectPosition , cameraPosition);
 			Vector3 crossed;
 			Vector3 final;
 
-			float len =  _Vec3Length(difference);
+			float len =  SIMDVec3Length(difference);
 			if (len < 0.0001f)				
-				difference = _VecNegate(cameraForwardVector);
+				difference = SIMDVecNegate(cameraForwardVector);
 			else
-				difference = _VecDiv(difference, len);
+				difference = SIMDVecDiv(difference, len);
 
-			crossed = _Vec3Cross(cameraUpVector, difference);
-			crossed = _Vec3Normalize(crossed);
+			crossed = SIMDVec3Cross(cameraUpVector, difference);
+			crossed = SIMDVec3Normalize(crossed);
 
-			final = _Vec3Cross(difference,crossed);
+			final = SIMDVec3Cross(difference,crossed);
 			
 			
 			res.Row1 = final;

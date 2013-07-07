@@ -101,15 +101,15 @@ namespace Apoc3D
 			Plane(Vector3 point, Vector3 normal)
 			{
 				Normal = normal;
-				D = -_Vec3Dot(normal, point);
+				D = -SIMDVec3Dot(normal, point);
 			}
 			Plane(Vector3 point1, Vector3 point2, Vector3 point3)
 			{
-				Vector3 p12 = _VecSub(point2, point1);
-				Vector3 p13 = _VecSub(point3, point1);
-				Vector3 cross = _Vec3Cross(p12, p13);
-				cross = _Vec3Normalize(cross);
-				D = -_Vec3Dot(cross, point1);
+				Vector3 p12 = SIMDVecSub(point2, point1);
+				Vector3 p13 = SIMDVecSub(point3, point1);
+				Vector3 cross = SIMDVec3Cross(p12, p13);
+				cross = SIMDVec3Normalize(cross);
+				D = -SIMDVec3Dot(cross, point1);
 			}
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			Plane(const Vector3& v)
@@ -148,28 +148,28 @@ namespace Apoc3D
 			 */
 			float Dot3(Vector3 a) const
 			{
-				return _Vec3Dot(a, Normal) + D;
+				return SIMDVec3Dot(a, Normal) + D;
 			}
 			/**
 			 *  Calculates the dot product of the specified vector and plane.
 			 */
 			float Dot4(Vector4 a) const
 			{
-				return _Vec4Dot(a, Normal);
+				return SIMDVec4Dot(a, Normal);
 			}
 			/**
 			 *  Calculates the dot product of the specified vector and the normal of the plane.
 			 */
 			float DotNormal(Vector3 n) const
 			{
-				return _Vec3Dot(n, Normal);
+				return SIMDVec3Dot(n, Normal);
 			}
 			/**
 			 *  Changes the coefficients of the normal vector of the plane to make it of unit length.
 			 */
 			void Normalize()
 			{
-				float mag = _Vec3Length(Normal);
+				float mag = SIMDVec3Length(Normal);
 
 				if (mag>EPSILON)
 				{
@@ -328,10 +328,10 @@ namespace Apoc3D
 				Matrix trans = transformation;
 				trans.Inverse();
 
-				result.X = _Vec4Dot( transformation.Row1, plane.Normal);
-				result.Y = _Vec4Dot( transformation.Row2, plane.Normal);
-				result.Z = _Vec4Dot( transformation.Row3, plane.Normal);
-				result.D = _Vec4Dot( transformation.Row4, plane.Normal);
+				result.X = SIMDVec4Dot( transformation.Row1, plane.Normal);
+				result.Y = SIMDVec4Dot( transformation.Row2, plane.Normal);
+				result.Z = SIMDVec4Dot( transformation.Row3, plane.Normal);
+				result.D = SIMDVec4Dot( transformation.Row4, plane.Normal);
 				return result;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				Plane result;
@@ -364,10 +364,10 @@ namespace Apoc3D
 				for (int i=0;i<count;i++)
 				{
 					Plane &r = result[i];
-					r.X = _Vec4Dot( transformation.Row1, planes[i].Normal);
-					r.Y = _Vec4Dot( transformation.Row2, planes[i].Normal);
-					r.Z = _Vec4Dot( transformation.Row3, planes[i].Normal);
-					r.D = _Vec4Dot( transformation.Row4, planes[i].Normal);					
+					r.X = SIMDVec4Dot( transformation.Row1, planes[i].Normal);
+					r.Y = SIMDVec4Dot( transformation.Row2, planes[i].Normal);
+					r.Z = SIMDVec4Dot( transformation.Row3, planes[i].Normal);
+					r.D = SIMDVec4Dot( transformation.Row4, planes[i].Normal);					
 				}
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				Matrix trans = transformation;

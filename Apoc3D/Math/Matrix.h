@@ -231,7 +231,7 @@ namespace Apoc3D
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				__m128 v = Row1;
-				v = _VecNegate(v);
+				v = SIMDVecNegate(v);
 				return v;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				return Vector3(-M11, -M12, -M13);
@@ -250,7 +250,7 @@ namespace Apoc3D
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				__m128 v = Row2;
-				v = _VecNegate(v);
+				v = SIMDVecNegate(v);
 				return v;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				return Vector3(-M21, -M22, -M23);
@@ -269,7 +269,7 @@ namespace Apoc3D
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 				__m128 v = Row3;
-				v = _VecNegate(v);
+				v = SIMDVecNegate(v);
 				return v;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 				return Vector3(-M31, -M32, -M33);
@@ -287,13 +287,13 @@ namespace Apoc3D
 
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
 			void SetRight(Vector3 v) { Row1 = v; *(reinterpret_cast<float*>(&Row1)+3)=0.0f; }
-			void SetLeft(Vector3 v) { Row1 = v; _VecNegate(Row1); *(reinterpret_cast<float*>(&Row1)+3)=0.0f; }
+			void SetLeft(Vector3 v) { Row1 = v; SIMDVecNegate(Row1); *(reinterpret_cast<float*>(&Row1)+3)=0.0f; }
 
 			void SetUp(Vector3 v) { Row2 = v; *(reinterpret_cast<float*>(&Row2)+3)=0.0f; }
-			void SetDown(Vector3 v) { Row2 = v; _VecNegate(Row2); *(reinterpret_cast<float*>(&Row2)+3)=0.0f; }
+			void SetDown(Vector3 v) { Row2 = v; SIMDVecNegate(Row2); *(reinterpret_cast<float*>(&Row2)+3)=0.0f; }
 
 			void SetBackward(Vector3 v) { Row3 = v; *(reinterpret_cast<float*>(&Row3)+3)=0.0f; }
-			void SetForward(Vector3 v) { Row3 = v; _VecNegate(Row3); *(reinterpret_cast<float*>(&Row3)+3)=0.0f; }
+			void SetForward(Vector3 v) { Row3 = v; SIMDVecNegate(Row3); *(reinterpret_cast<float*>(&Row3)+3)=0.0f; }
 
 			void SetTranslation(Vector3 v) { Row4 = v; *(reinterpret_cast<float*>(&Row4)+3)=1.0f; }
 
@@ -676,10 +676,10 @@ namespace Apoc3D
 				__m128 r3 = _mm_sub_ps(mb.Row3,  ma.Row3);
 				__m128 r4 = _mm_sub_ps(mb.Row4,  ma.Row4);
 				
-				r1 = _VecMul(r1, amount);
-				r2 = _VecMul(r2, amount);
-				r3 = _VecMul(r3, amount);
-				r4 = _VecMul(r4, amount);
+				r1 = SIMDVecMul(r1, amount);
+				r2 = SIMDVecMul(r2, amount);
+				r3 = SIMDVecMul(r3, amount);
+				r4 = SIMDVecMul(r4, amount);
 
 				res.Row1 = _mm_add_ps(ma.Row1, r1);
 				res.Row2 = _mm_add_ps(ma.Row2, r2);
@@ -839,10 +839,10 @@ namespace Apoc3D
 			static void CreateRotationAxis(Matrix& res, Vector3 axis, float angle)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				Vector3 dotAxis = _Vec3Dot2(axis,axis);
+				Vector3 dotAxis = SIMDVec3Dot2(axis,axis);
 				Vector3 t0 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(VEC_INDEX_X, VEC_INDEX_X, VEC_INDEX_Y, 0));
 				Vector3 t1 = _mm_shuffle_ps(axis,axis, _MM_SHUFFLE(VEC_INDEX_Y, VEC_INDEX_Z, VEC_INDEX_Z, 0));
-				Vector3 dotAxis2 = _Vec3Dot2(t0,t1);
+				Vector3 dotAxis2 = SIMDVec3Dot2(t0,t1);
 
 				float sins, coss;
 				__asm
@@ -853,30 +853,30 @@ namespace Apoc3D
 					fstp		float ptr sins
 				}
 
-				Vector3 sin = _VecLoad(sins);
-				Vector3 cos = _VecLoad(coss);
-				Vector3 one = _VecLoad(1);
+				Vector3 sin = SIMDVecLoad(sins);
+				Vector3 cos = SIMDVecLoad(coss);
+				Vector3 one = SIMDVecLoad(1);
 
-				Vector3 r0 = _VecSub(one, dotAxis);
-				r0 = _VecMul(cos, r0);
-				r0 = _VecAdd(dotAxis, r0);
+				Vector3 r0 = SIMDVecSub(one, dotAxis);
+				r0 = SIMDVecMul(cos, r0);
+				r0 = SIMDVecAdd(dotAxis, r0);
 
 				Vector3 r1left = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_X, VEC_INDEX_Z, VEC_INDEX_Y, 0));
 				Vector3 r1right = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_Z, VEC_INDEX_X, VEC_INDEX_Y, 0));
 				
-				Vector3 tmp = _VecMul(cos, r1left);
-				r1left = _VecSub(r1left, tmp);
-				r1right = _VecMul(sin, r1right);
-				Vector3 r1 = _VecAdd(r1left, r1right);
+				Vector3 tmp = SIMDVecMul(cos, r1left);
+				r1left = SIMDVecSub(r1left, tmp);
+				r1right = SIMDVecMul(sin, r1right);
+				Vector3 r1 = SIMDVecAdd(r1left, r1right);
 
 
 				
 				r1left = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_Y, VEC_INDEX_X, VEC_INDEX_Z, 0));
 				r1right = _mm_shuffle_ps(dotAxis2,dotAxis2,_MM_SHUFFLE(VEC_INDEX_Y, VEC_INDEX_Z, VEC_INDEX_X, 0));
-				tmp = _VecMul(cos, r1left);
-				r1left = _VecSub(r1left, tmp);
-				r1right = _VecMul(sin, r1right);
-				Vector3 r2 = _VecSub(r1left, r1right);
+				tmp = SIMDVecMul(cos, r1left);
+				r1left = SIMDVecSub(r1left, tmp);
+				r1right = SIMDVecMul(sin, r1right);
+				Vector3 r2 = SIMDVecSub(r1left, r1right);
 
 				
 				__asm { 
@@ -1033,16 +1033,16 @@ namespace Apoc3D
 			static void CreateLookAtLH(Matrix& res, Vector3 cameraPosition, Vector3 cameraTarget, Vector3 up)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				Vector3 zaxis = _VecSub(cameraTarget, cameraPosition);
-				zaxis = _Vec3Normalize(zaxis);
+				Vector3 zaxis = SIMDVecSub(cameraTarget, cameraPosition);
+				zaxis = SIMDVec3Normalize(zaxis);
 
-				Vector3 xaxis = _Vec3Cross(up, zaxis);
-				xaxis = _Vec3Normalize(xaxis);
-				Vector3 yaxis = _Vec3Cross(zaxis, xaxis);
+				Vector3 xaxis = SIMDVec3Cross(up, zaxis);
+				xaxis = SIMDVec3Normalize(xaxis);
+				Vector3 yaxis = SIMDVec3Cross(zaxis, xaxis);
 				
-				float tx = _Vec3Dot(xaxis, cameraPosition);
-				float ty = _Vec3Dot(yaxis, cameraPosition);
-				float tz = _Vec3Dot(zaxis, cameraPosition);
+				float tx = SIMDVec3Dot(xaxis, cameraPosition);
+				float ty = SIMDVec3Dot(yaxis, cameraPosition);
+				float tz = SIMDVec3Dot(zaxis, cameraPosition);
 
 				__asm 
 				{
@@ -1121,16 +1121,16 @@ namespace Apoc3D
 			static void CreateLookAtRH(Matrix& res, Vector3 cameraPosition, Vector3 cameraTarget, Vector3 up)
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				Vector3 zaxis = _VecSub(cameraPosition, cameraTarget);
-				zaxis = _Vec3Normalize(zaxis);
+				Vector3 zaxis = SIMDVecSub(cameraPosition, cameraTarget);
+				zaxis = SIMDVec3Normalize(zaxis);
 
-				Vector3 xaxis = _Vec3Cross(up, zaxis);
-				xaxis = _Vec3Normalize(xaxis);
-				Vector3 yaxis = _Vec3Cross(zaxis, xaxis);
+				Vector3 xaxis = SIMDVec3Cross(up, zaxis);
+				xaxis = SIMDVec3Normalize(xaxis);
+				Vector3 yaxis = SIMDVec3Cross(zaxis, xaxis);
 
-				float tx = _Vec3Dot(xaxis, cameraPosition);
-				float ty = _Vec3Dot(yaxis, cameraPosition);
-				float tz = _Vec3Dot(zaxis, cameraPosition);
+				float tx = SIMDVec3Dot(xaxis, cameraPosition);
+				float ty = SIMDVec3Dot(yaxis, cameraPosition);
+				float tz = SIMDVec3Dot(zaxis, cameraPosition);
 				
 				__asm 
 				{

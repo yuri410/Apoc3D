@@ -42,6 +42,10 @@ namespace Apoc3D
 {
 	namespace Math
 	{
+		class Vector2;
+		class Vector3;
+		class Vector4;
+
 		/**
 		 * Defines a four component vector.
 		 */
@@ -82,8 +86,8 @@ namespace Apoc3D
 			Vector4(float x,float y,float z,float w)
 				: X(x), Y(y), Z(z), W(w)
 			{
-
 			}
+			Vector4(const Vector3& v, float w);
 
 			bool operator==(const Vector4 &other) const { return other.X == X && other.Y == Y && other.Z == Z && other.W == W; }
 			bool operator!=(const Vector4 &other) const { return !(*this == other); }
@@ -111,11 +115,11 @@ namespace Apoc3D
 			/**
 			 * Calculates the length of the vector.
 			 */
-			float Length() { return sqrtf(X*X + Y*Y + Z*Z + W*W); }
+			float Length() const { return sqrtf(X*X + Y*Y + Z*Z + W*W); }
 			/**
 			 * Calculates the squared length of the vector.
 			 */
-			float LengthSquared() { return X*X + Y*Y + Z*Z + W*W; }
+			float LengthSquared() const { return X*X + Y*Y + Z*Z + W*W; }
 
 			/**
 			 * Converts the vector into a unit vector.
@@ -483,7 +487,7 @@ namespace Apoc3D
 			Vector2 operator /(float scalar) const { scalar = 1/scalar; return Vector2(X * scalar, Y * scalar); }
 
 			void Set(const float* ptr) { X = ptr[0]; Y = ptr[1]; }
-			void Store(float* dest) { dest[0] = X; dest[1] = Y; }
+			void Store(float* dest) const { dest[0] = X; dest[1] = Y; }
 
 
 			/**
@@ -801,16 +805,16 @@ namespace Apoc3D
 			Vector3 operator /(float scalar) const { scalar = 1/scalar; return Vector3(X * scalar, Y * scalar, Z * scalar); }
 			
 			void Set(const float* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; }
-			void Store(float* dest) { dest[0] = X; dest[1] = Y; dest[2] = Z; }
+			void Store(float* dest) const { dest[0] = X; dest[1] = Y; dest[2] = Z; }
 
 			/**
 			 * Calculates the length of the vector.
 			 */
-			float Length() { return sqrtf(X*X+Y*Y+Z*Z); }
+			float Length() const { return sqrtf(X*X+Y*Y+Z*Z); }
 			/**
 			 * Calculates the squared length of the vector.
 			 */
-			float LengthSquared() { return X*X + Y*Y + Z*Z; }
+			float LengthSquared() const { return X*X + Y*Y + Z*Z; }
 
 			/**
 			 * Converts the vector into a unit vector.
@@ -1129,13 +1133,14 @@ namespace Apoc3D
 			static const Vector3 One;
 		};
 		
-		
+		inline Vector4::Vector4(const Vector3& v, float w)
+			: X(v.X), Y(v.Y), Z(v.Z), W(w)
+		{
+		}
 
 		class APAPI Vector2Utils
 		{
 		public:
-			
-			
 #if APOC3D_MATH_IMPL == APOC3D_SSE
 
 			static const float* GetElementAddress(const Vector2& v) { return reinterpret_cast<const float*>(&v); }
@@ -1170,16 +1175,16 @@ namespace Apoc3D
 			/* 
 			 * Calculates the length of the vector.
 			 */
-			static float Length(Vector2 v) { return _Vec2Length(v); }
+			static float Length(Vector2 v) { return SIMDVec2Length(v); }
 			/*
 			 * Calculates the squared length of the vector.
 			 */
-			static float LengthSquared(Vector2 v) { return _Vec2LengthSquared(v); }
+			static float LengthSquared(Vector2 v) { return SIMDVec2LengthSquared(v); }
 
 			/*
 			 * Converts the vector into a unit vector.
 			 */
-			static Vector2 Normalize(Vector2 vector) { return _Vec2Normalize(vector); }
+			static Vector2 Normalize(Vector2 vector) { return SIMDVec2Normalize(vector); }
 
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			
@@ -1193,13 +1198,13 @@ namespace Apoc3D
 			static Vector2 Barycentric(Vector2 value1, Vector2 value2, 
 				Vector2 value3, float amount1, float amount2)
 			{
-				__m128 t1 = _VecSub(value2,value1);
-				__m128 t2 = _VecSub(value3,value1);
-				t1 = _VecMul(t1, amount1);
-				t2 = _VecMul(t2, amount2);
+				__m128 t1 = SIMDVecSub(value2,value1);
+				__m128 t2 = SIMDVecSub(value3,value1);
+				t1 = SIMDVecMul(t1, amount1);
+				t2 = SIMDVecMul(t2, amount2);
 
-				__m128 result = _VecAdd(value1, t1);
-				result = _VecAdd(result, t2);
+				__m128 result = SIMDVecAdd(value1, t1);
+				result = SIMDVecAdd(result, t2);
 				return result;
 			}
 			/* 
@@ -1215,34 +1220,34 @@ namespace Apoc3D
 				__m128 t2, t3;
 				
 				__m128 result;
-				__m128 t1 = _VecMul(value2, 2);
-				__m128 lsum = _VecSub(value3, value1);
+				__m128 t1 = SIMDVecMul(value2, 2);
+				__m128 lsum = SIMDVecSub(value3, value1);
 
-				lsum = _VecMul(lsum, amount);
+				lsum = SIMDVecMul(lsum, amount);
 
-				result = _VecAdd(t1, lsum);
+				result = SIMDVecAdd(t1, lsum);
 
-				t1 = _VecMul(value1, 2);
-				t2 = _VecMul(value2, -5);
-				t3 = _VecMul(value3, 4);
+				t1 = SIMDVecMul(value1, 2);
+				t2 = SIMDVecMul(value2, -5);
+				t3 = SIMDVecMul(value3, 4);
 				
-				lsum = _VecAdd(t1, t2);
-				lsum = _VecAdd(lsum, t3);
-				lsum = _VecSub(lsum, value4);
-				lsum = _VecMul(t2, squared);
+				lsum = SIMDVecAdd(t1, t2);
+				lsum = SIMDVecAdd(lsum, t3);
+				lsum = SIMDVecSub(lsum, value4);
+				lsum = SIMDVecMul(t2, squared);
 
-				result = _VecAdd(result, lsum);
+				result = SIMDVecAdd(result, lsum);
 
-				t1 = _VecMul(value2, 3);
-				t2 = _VecMul(value3, -3);
+				t1 = SIMDVecMul(value2, 3);
+				t2 = SIMDVecMul(value3, -3);
 							
-				lsum = _VecAdd(t1, t2);
-				lsum = _VecSub(lsum, value1);
-				lsum = _VecAdd(lsum, value4);
-				lsum = _VecMul(t2, cubed);
+				lsum = SIMDVecAdd(t1, t2);
+				lsum = SIMDVecSub(lsum, value1);
+				lsum = SIMDVecAdd(lsum, value4);
+				lsum = SIMDVecMul(t2, cubed);
 
-				result = _VecAdd(result, lsum);
-				result = _VecMul(result, 0.5f);
+				result = SIMDVecAdd(result, lsum);
+				result = SIMDVecMul(result, 0.5f);
 
 				//vector.X = 0.5f * (2.0f * value2.X + (value3.X - value1.X) * amount +
 				//	(2.0f * value1.X - 5.0f * value2.X + 4.0f * value3.X - value4.X) * squared + 
@@ -1268,14 +1273,14 @@ namespace Apoc3D
 				float part4 = cubed - squared;
 
 
-				__m128 t1 = _VecMul(value1, part1);
-				__m128 t2 = _VecMul(value2, part2);
-				__m128 t3 = _VecMul(tangent1, part3);
-				__m128 t4 = _VecMul(tangent2, part4);
+				__m128 t1 = SIMDVecMul(value1, part1);
+				__m128 t2 = SIMDVecMul(value2, part2);
+				__m128 t3 = SIMDVecMul(tangent1, part3);
+				__m128 t4 = SIMDVecMul(tangent2, part4);
 
-				__m128 result = _VecAdd(t1, t2);
-				result = _VecAdd(result, t3);
-				result = _VecAdd(result, t4);
+				__m128 result = SIMDVecAdd(t1, t2);
+				result = SIMDVecAdd(result, t3);
+				result = SIMDVecAdd(result, t4);
 
 				return result;
 			}
@@ -1284,9 +1289,9 @@ namespace Apoc3D
 			 */
 			static Vector2 Lerp(Vector2 start, Vector2 end, float amount)
 			{				
-				__m128 t1 = _VecSub(end, start);
-				t1 = _VecMul(t1, amount);
-				t1 = _VecAdd(start, t1);
+				__m128 t1 = SIMDVecSub(end, start);
+				t1 = SIMDVecMul(t1, amount);
+				t1 = SIMDVecAdd(start, t1);
 				return t1;
 			}
 			/*
@@ -1297,9 +1302,9 @@ namespace Apoc3D
 				amount = (amount > 1.0f) ? 1.0f : ((amount < 0.0f) ? 0.0f : amount);
 				amount = (amount * amount) * (3.0f - (2.0f * amount));
 
-				__m128 t1 = _VecSub(end, start);
-				t1 = _VecMul(t1, amount);
-				t1 = _VecAdd(start, t1);
+				__m128 t1 = SIMDVecSub(end, start);
+				t1 = SIMDVecMul(t1, amount);
+				t1 = SIMDVecAdd(start, t1);
 
 				return t1;
 			}
@@ -1308,8 +1313,8 @@ namespace Apoc3D
 			 */
 			static Vector2 Clamp(Vector2 value, Vector2 min, Vector2 max)
 			{
-				__m128 t1 = _VecMax(min, value);
-				t1 = _VecMin(max, value);
+				__m128 t1 = SIMDVecMax(min, value);
+				t1 = SIMDVecMin(max, value);
 
 				return t1;
 			}
@@ -1321,25 +1326,25 @@ namespace Apoc3D
 			/*
 			 * Calculates the distance between two vectors.
 			 */
-			static float Distance(Vector2 value1, Vector2 value2) { return _Vec2Distance(value1, value2);	}
+			static float Distance(Vector2 value1, Vector2 value2) { return SIMDVec2Distance(value1, value2);	}
 			/*
 			 * Calculates the dot product of two vectors.
 			 */
-			static float Dot(Vector2 value1, Vector2 value2) { return _Vec2Dot(value1, value2); }
+			static float Dot(Vector2 value1, Vector2 value2) { return SIMDVec2Dot(value1, value2); }
 			/*
 			 * Calculates the dot product of two vectors.
 			 */
-			static Vector2 Dot2(Vector2 left, Vector2 right) { return _Vec2Dot2(left, right); }
+			static Vector2 Dot2(Vector2 left, Vector2 right) { return SIMDVec2Dot2(left, right); }
 			
-			static Vector2 Reflect(Vector2 vector, Vector2 normal) { return _Vec2Reflect(vector, normal); }
+			static Vector2 Reflect(Vector2 vector, Vector2 normal) { return SIMDVec2Reflect(vector, normal); }
 			/*
 			 * Returns a vector containing the smallest components of the specified vectors.
 			 */
-			static Vector2 Minimize(Vector2 left, Vector2 right) { return _VecMin(left, right); }
+			static Vector2 Minimize(Vector2 left, Vector2 right) { return SIMDVecMin(left, right); }
 			/*
 			 * Returns a vector containing the largest components of the specified vectors.
 			 */
-			static Vector2 Maximize(Vector2 left, Vector2 right) { return _VecMax(left, right); }
+			static Vector2 Maximize(Vector2 left, Vector2 right) { return SIMDVecMax(left, right); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			
 #endif
@@ -1368,29 +1373,29 @@ namespace Apoc3D
 			{
 				const SSEVecLoader buffer = { v[0], v[1], v[2], 0 };
 
-				return _VecLoad(buffer);
+				return SIMDVecLoad(buffer);
 			}
-			static Vector3 LDVector(float v) { return _VecLoad(v); }
+			static Vector3 LDVector(float v) { return SIMDVecLoad(v); }
 			static Vector3 LDVector(float x, float y, float z)
 			{
 				const SSEVecLoader buffer = { x, y, z, 0 };
 
-				return _VecLoad(buffer);
+				return SIMDVecLoad(buffer);
 			}
 
 			/*
 			 * Calculates the length of the vector.
 			 */
-			static float Length(Vector3 v) { return _Vec3Length(v); }
+			static float Length(Vector3 v) { return SIMDVec3Length(v); }
 			/*
 			 * Calculates the squared length of the vector.
 			 */
-			static float LengthSquared(Vector3 v) { return _Vec3LengthSquared(v); }
+			static float LengthSquared(Vector3 v) { return SIMDVec3LengthSquared(v); }
 
 			/*
 			 * Converts the vector into a unit vector.
 			 */
-			static Vector3 Normalize(Vector3 vector) { return _Vec3Normalize(vector); }
+			static Vector3 Normalize(Vector3 vector) { return SIMDVec3Normalize(vector); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			
 #endif
@@ -1399,27 +1404,27 @@ namespace Apoc3D
 			/* 
 			 * Adds two vectors.
 			 */
-			static Vector3 Add(Vector3 left, Vector3 right) { return _VecAdd(left, right); }
+			static Vector3 Add(Vector3 left, Vector3 right) { return SIMDVecAdd(left, right); }
 			/*
 			 * Subtracts two vectors.
 			 */
-			static Vector3 Subtract(Vector3 left, Vector3 right) { return _VecSub(left, right); }
+			static Vector3 Subtract(Vector3 left, Vector3 right) { return SIMDVecSub(left, right); }
 			/*
 			 * Scales a vector by the given value.
 			 */
-			static Vector3 Multiply(Vector3 value, float scale) { return _VecMul(value, scale); }
+			static Vector3 Multiply(Vector3 value, float scale) { return SIMDVecMul(value, scale); }
 			/*
 			 * Modulates a vector by another.
 			 */
-			static Vector3 Modulate(Vector3 left, Vector3 right) { return _VecMul(left, right); }
+			static Vector3 Modulate(Vector3 left, Vector3 right) { return SIMDVecMul(left, right); }
 			/*
 			 * Scales a vector by the given value.
 			 */
-			static Vector3 Divide(Vector3 value, float scale) { return _VecDiv(value, scale); }
+			static Vector3 Divide(Vector3 value, float scale) { return SIMDVecDiv(value, scale); }
 			/*
 			 * Reverses the direction of a given vector.
 			 */
-			static Vector3 Negate(Vector3 value) { return _VecNegate(value); }
+			static Vector3 Negate(Vector3 value) { return SIMDVecNegate(value); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 
 #endif
@@ -1432,13 +1437,13 @@ namespace Apoc3D
 			static Vector3 Barycentric(Vector3 value1, Vector3 value2, 
 				Vector3 value3, float amount1, float amount2)
 			{
-				__m128 t1 = _VecSub(value2,value1);
-				__m128 t2 = _VecSub(value3,value1);
-				t1 = _VecMul(t1, amount1);
-				t2 = _VecMul(t2, amount2);
+				__m128 t1 = SIMDVecSub(value2,value1);
+				__m128 t2 = SIMDVecSub(value3,value1);
+				t1 = SIMDVecMul(t1, amount1);
+				t2 = SIMDVecMul(t2, amount2);
 
-				__m128 result = _VecAdd(value1, t1);
-				result = _VecAdd(result, t2);
+				__m128 result = SIMDVecAdd(value1, t1);
+				result = SIMDVecAdd(result, t2);
 				return result;
 			}
 
@@ -1454,34 +1459,34 @@ namespace Apoc3D
 				__m128 t2, t3;
 				
 				__m128 result;
-				__m128 t1 = _VecMul(value2, 2);
-				__m128 lsum = _VecSub(value3, value1);
+				__m128 t1 = SIMDVecMul(value2, 2);
+				__m128 lsum = SIMDVecSub(value3, value1);
 
-				lsum = _VecMul(lsum, amount);
+				lsum = SIMDVecMul(lsum, amount);
 
-				result = _VecAdd(t1, lsum);
+				result = SIMDVecAdd(t1, lsum);
 
-				t1 = _VecMul(value1, 2);
-				t2 = _VecMul(value2, -5);
-				t3 = _VecMul(value3, 4);
+				t1 = SIMDVecMul(value1, 2);
+				t2 = SIMDVecMul(value2, -5);
+				t3 = SIMDVecMul(value3, 4);
 				
-				lsum = _VecAdd(t1, t2);
-				lsum = _VecAdd(lsum, t3);
-				lsum = _VecSub(lsum, value4);
-				lsum = _VecMul(t2, squared);
+				lsum = SIMDVecAdd(t1, t2);
+				lsum = SIMDVecAdd(lsum, t3);
+				lsum = SIMDVecSub(lsum, value4);
+				lsum = SIMDVecMul(t2, squared);
 
-				result = _VecAdd(result, lsum);
+				result = SIMDVecAdd(result, lsum);
 
-				t1 = _VecMul(value2, 3);
-				t2 = _VecMul(value3, -3);
+				t1 = SIMDVecMul(value2, 3);
+				t2 = SIMDVecMul(value3, -3);
 							
-				lsum = _VecAdd(t1, t2);
-				lsum = _VecSub(lsum, value1);
-				lsum = _VecAdd(lsum, value4);
-				lsum = _VecMul(t2, cubed);
+				lsum = SIMDVecAdd(t1, t2);
+				lsum = SIMDVecSub(lsum, value1);
+				lsum = SIMDVecAdd(lsum, value4);
+				lsum = SIMDVecMul(t2, cubed);
 
-				result = _VecAdd(result, lsum);
-				result = _VecMul(result, 0.5f);
+				result = SIMDVecAdd(result, lsum);
+				result = SIMDVecMul(result, 0.5f);
 				return result;
 			}
 			/* 
@@ -1498,14 +1503,14 @@ namespace Apoc3D
 				float part4 = cubed - squared;
 
 
-				__m128 t1 = _VecMul(value1, part1);
-				__m128 t2 = _VecMul(value2, part2);
-				__m128 t3 = _VecMul(tangent1, part3);
-				__m128 t4 = _VecMul(tangent2, part4);
+				__m128 t1 = SIMDVecMul(value1, part1);
+				__m128 t2 = SIMDVecMul(value2, part2);
+				__m128 t3 = SIMDVecMul(tangent1, part3);
+				__m128 t4 = SIMDVecMul(tangent2, part4);
 
-				__m128 result = _VecAdd(t1, t2);
-				result = _VecAdd(result, t3);
-				result = _VecAdd(result, t4);
+				__m128 result = SIMDVecAdd(t1, t2);
+				result = SIMDVecAdd(result, t3);
+				result = SIMDVecAdd(result, t4);
 
 				return result;
 			}
@@ -1514,9 +1519,9 @@ namespace Apoc3D
 			 */
 			static Vector3 Lerp(Vector3 start, Vector3 end, float amount)
 			{
-				__m128 t1 = _VecSub(end, start);
-				t1 = _VecMul(t1, amount);
-				t1 = _VecAdd(start, t1);
+				__m128 t1 = SIMDVecSub(end, start);
+				t1 = SIMDVecMul(t1, amount);
+				t1 = SIMDVecAdd(start, t1);
 				return t1;
 			}
 			/*
@@ -1527,9 +1532,9 @@ namespace Apoc3D
 				amount = (amount > 1.0f) ? 1.0f : ((amount < 0.0f) ? 0.0f : amount);
 				amount = (amount * amount) * (3.0f - (2.0f * amount));
 
-				__m128 t1 = _VecSub(end, start);
-				t1 = _VecMul(t1, amount);
-				t1 = _VecAdd(start, t1);
+				__m128 t1 = SIMDVecSub(end, start);
+				t1 = SIMDVecMul(t1, amount);
+				t1 = SIMDVecAdd(start, t1);
 
 				return t1;
 			}
@@ -1538,8 +1543,8 @@ namespace Apoc3D
 			 */
 			static Vector3 Clamp(Vector3 value, Vector3 min, Vector3 max)
 			{
-				__m128 t1 = _VecMax(min, value);
-				t1 = _VecMin(max, value);
+				__m128 t1 = SIMDVecMax(min, value);
+				t1 = SIMDVecMin(max, value);
 
 				return t1;
 			}
@@ -1551,36 +1556,36 @@ namespace Apoc3D
 			/*
 			 * Calculates the distance between two vectors.
 			 */
-			static float Distance(Vector3 value1, Vector3 value2) { return _Vec3Distance(value1, value2); }
+			static float Distance(Vector3 value1, Vector3 value2) { return SIMDVec3Distance(value1, value2); }
 			/*
 			 * Calculates the squared distance between two vectors.
 			 */
-			static float DistanceSquared(Vector3 value1, Vector3 value2) { return _Vec3DistanceSquared(value1, value2); }
+			static float DistanceSquared(Vector3 value1, Vector3 value2) { return SIMDVec3DistanceSquared(value1, value2); }
 
 			/*
 			 * Calculates the dot product of two vectors.
 			 */
-			static float Dot(Vector3 left, Vector3 right) { return _Vec3Dot(left, right); }
+			static float Dot(Vector3 left, Vector3 right) { return SIMDVec3Dot(left, right); }
 
 			/*
 			 * Calculates the cross product of two vectors.
 			 */
-			static Vector3 Cross(Vector3 left, Vector3 right) { return _Vec3Cross(left, right); }
+			static Vector3 Cross(Vector3 left, Vector3 right) { return SIMDVec3Cross(left, right); }
 
 			/*
 			 * Returns the reflection of a vector off a surface that has the specified normal. 
 			 */
-			static Vector3 Reflect(Vector3 vector, Vector3 normal) { return _Vec3Reflect(vector, normal); }
+			static Vector3 Reflect(Vector3 vector, Vector3 normal) { return SIMDVec3Reflect(vector, normal); }
 
 
 			/*
 			 * Returns a vector containing the smallest components of the specified vectors.
 			 */
-			static Vector3 Minimize(Vector3 left, Vector3 right) { return _VecMin(left, right); }
+			static Vector3 Minimize(Vector3 left, Vector3 right) { return SIMDVecMin(left, right); }
 			/*
 			 * Returns a vector containing the largest components of the specified vectors.
 			 */
-			static Vector3 Maximize(Vector3 left, Vector3 right) { return _VecMax(left, right); }
+			static Vector3 Maximize(Vector3 left, Vector3 right) { return SIMDVecMax(left, right); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			
 #endif
@@ -1607,10 +1612,10 @@ namespace Apoc3D
 #endif
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
-			static bool IsLess(Vector3 left, Vector3 right) { return _Vec3Less(left, right); }
-			static bool IsLessEqual(Vector3 left, Vector3 right) { return _Vec3LessEqual(left, right); }
-			static bool IsGreater(Vector3 left, Vector3 right) { return _Vec3Greater(left, right); }
-			static bool IsGreaterEqual(Vector3 left, Vector3 right) { return _Vec3GreaterEqual(left, right); }
+			static bool IsLess(Vector3 left, Vector3 right) { return SIMDVec3Less(left, right); }
+			static bool IsLessEqual(Vector3 left, Vector3 right) { return SIMDVec3LessEqual(left, right); }
+			static bool IsGreater(Vector3 left, Vector3 right) { return SIMDVec3Greater(left, right); }
+			static bool IsGreaterEqual(Vector3 left, Vector3 right) { return SIMDVec3GreaterEqual(left, right); }
 
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			
@@ -1641,27 +1646,27 @@ namespace Apoc3D
 			static Vector4 LDVectorPtr(const float* v)
 			{
 				const SSEVecLoader buffer = {v[0],v[1],v[2],v[3]};
-				return _VecLoad(buffer);
+				return SIMDVecLoad(buffer);
 			}
-			static Vector4 LDVector(float v) { return _VecLoad(v); }
+			static Vector4 LDVector(float v) { return SIMDVecLoad(v); }
 			static Vector4 LDVector(float x, float y, float z, float w)
 			{
 				const SSEVecLoader buffer = {x,y,z,w};
-				return _VecLoad(buffer);
+				return SIMDVecLoad(buffer);
 			}
 			/*
 			 * Calculates the length of the vector.
 			 */
-			static float Length(Vector4 v) { return _Vec4Length(v); }
+			static float Length(Vector4 v) { return SIMDVec4Length(v); }
 			/*
 			 * Calculates the squared length of the vector.
 			 */
-			static float LengthSquared(Vector4 v) { return _Vec4LengthSquared(v); }
+			static float LengthSquared(Vector4 v) { return SIMDVec4LengthSquared(v); }
 
 			/*
 			 * Converts the vector into a unit vector.
 			 */
-			static Vector4 Normalize(Vector4 vector) { return _Vec3Normalize(vector); }
+			static Vector4 Normalize(Vector4 vector) { return SIMDVec3Normalize(vector); }
 
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 #endif
@@ -1670,27 +1675,27 @@ namespace Apoc3D
 			/*
 			 * Adds two vectors.
 			 */
-			static Vector4 Add(Vector4 left, Vector4 right) { return _VecAdd(left, right); }
+			static Vector4 Add(Vector4 left, Vector4 right) { return SIMDVecAdd(left, right); }
 			/* 
 			 * Subtracts two vectors.
 			 */
-			static Vector4 Subtract(Vector4 left, Vector4 right) { return _VecSub(left, right); }
+			static Vector4 Subtract(Vector4 left, Vector4 right) { return SIMDVecSub(left, right); }
 			/*
 			 * Scales a vector by the given value.
 			 */
-			static Vector4 Multiply(Vector4 value, float scale) { return _VecMul(value, scale); }
+			static Vector4 Multiply(Vector4 value, float scale) { return SIMDVecMul(value, scale); }
 			/*
 			 * Modulates a vector by another.
 			 */
-			static Vector4 Modulate(Vector4 left, Vector4 right) { return _VecMul(left, right); }
+			static Vector4 Modulate(Vector4 left, Vector4 right) { return SIMDVecMul(left, right); }
 			/*
 			 * Scales a vector by the given value.
 			 */
-			static Vector4 Divide(Vector4 value, float scale) { return _VecDiv(value, scale); }
+			static Vector4 Divide(Vector4 value, float scale) { return SIMDVecDiv(value, scale); }
 			/*
 			 * Reverses the direction of a given vector.
 			 */
-			static Vector4 Negate(Vector4 value) { return _VecNegate(value); }
+			static Vector4 Negate(Vector4 value) { return SIMDVecNegate(value); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			
 #endif
@@ -1703,13 +1708,13 @@ namespace Apoc3D
 			static Vector4 Barycentric(Vector4 value1, Vector4 value2, 
 				Vector4 value3, float amount1, float amount2)
 			{
-				__m128 t1 = _VecSub(value2,value1);
-				__m128 t2 = _VecSub(value3,value1);
-				t1 = _VecMul(t1, amount1);
-				t2 = _VecMul(t2, amount2);
+				__m128 t1 = SIMDVecSub(value2,value1);
+				__m128 t2 = SIMDVecSub(value3,value1);
+				t1 = SIMDVecMul(t1, amount1);
+				t2 = SIMDVecMul(t2, amount2);
 
-				__m128 result = _VecAdd(value1, t1);
-				result = _VecAdd(result, t2);
+				__m128 result = SIMDVecAdd(value1, t1);
+				result = SIMDVecAdd(result, t2);
 				return result;
 			}
 			/* 
@@ -1724,34 +1729,34 @@ namespace Apoc3D
 				__m128 t2, t3;
 				
 				__m128 result;
-				__m128 t1 = _VecMul(value2, 2);
-				__m128 lsum = _VecSub(value3, value1);
+				__m128 t1 = SIMDVecMul(value2, 2);
+				__m128 lsum = SIMDVecSub(value3, value1);
 
-				lsum = _VecMul(lsum, amount);
+				lsum = SIMDVecMul(lsum, amount);
 
-				result = _VecAdd(t1, lsum);
+				result = SIMDVecAdd(t1, lsum);
 
-				t1 = _VecMul(value1, 2);
-				t2 = _VecMul(value2, -5);
-				t3 = _VecMul(value3, 4);
+				t1 = SIMDVecMul(value1, 2);
+				t2 = SIMDVecMul(value2, -5);
+				t3 = SIMDVecMul(value3, 4);
 				
-				lsum = _VecAdd(t1, t2);
-				lsum = _VecAdd(lsum, t3);
-				lsum = _VecSub(lsum, value4);
-				lsum = _VecMul(t2, squared);
+				lsum = SIMDVecAdd(t1, t2);
+				lsum = SIMDVecAdd(lsum, t3);
+				lsum = SIMDVecSub(lsum, value4);
+				lsum = SIMDVecMul(t2, squared);
 
-				result = _VecAdd(result, lsum);
+				result = SIMDVecAdd(result, lsum);
 
-				t1 = _VecMul(value2, 3);
-				t2 = _VecMul(value3, -3);
+				t1 = SIMDVecMul(value2, 3);
+				t2 = SIMDVecMul(value3, -3);
 							
-				lsum = _VecAdd(t1, t2);
-				lsum = _VecSub(lsum, value1);
-				lsum = _VecAdd(lsum, value4);
-				lsum = _VecMul(t2, cubed);
+				lsum = SIMDVecAdd(t1, t2);
+				lsum = SIMDVecSub(lsum, value1);
+				lsum = SIMDVecAdd(lsum, value4);
+				lsum = SIMDVecMul(t2, cubed);
 
-				result = _VecAdd(result, lsum);
-				result = _VecMul(result, 0.5f);
+				result = SIMDVecAdd(result, lsum);
+				result = SIMDVecMul(result, 0.5f);
 				return result;
 			}
 
@@ -1769,14 +1774,14 @@ namespace Apoc3D
 				float part4 = cubed - squared;
 
 
-				__m128 t1 = _VecMul(value1, part1);
-				__m128 t2 = _VecMul(value2, part2);
-				__m128 t3 = _VecMul(tangent1, part3);
-				__m128 t4 = _VecMul(tangent2, part4);
+				__m128 t1 = SIMDVecMul(value1, part1);
+				__m128 t2 = SIMDVecMul(value2, part2);
+				__m128 t3 = SIMDVecMul(tangent1, part3);
+				__m128 t4 = SIMDVecMul(tangent2, part4);
 
-				__m128 result = _VecAdd(t1, t2);
-				result = _VecAdd(result, t3);
-				result = _VecAdd(result, t4);
+				__m128 result = SIMDVecAdd(t1, t2);
+				result = SIMDVecAdd(result, t3);
+				result = SIMDVecAdd(result, t4);
 
 				return result;
 			}
@@ -1786,8 +1791,8 @@ namespace Apoc3D
 			 */
 			static Vector4 Clamp(Vector4 value, Vector4 min, Vector4 max)
 			{
-				__m128 t1 = _VecMax(min, value);
-				t1 = _VecMin(max, value);
+				__m128 t1 = SIMDVecMax(min, value);
+				t1 = SIMDVecMin(max, value);
 
 				return t1;
 			}
@@ -1797,9 +1802,9 @@ namespace Apoc3D
 			 */
 			static Vector4 Lerp(Vector4 start, Vector4 end, float amount)
 			{
-				__m128 t1 = _VecSub(end, start);
-				t1 = _VecMul(t1, amount);
-				t1 = _VecAdd(start, t1);
+				__m128 t1 = SIMDVecSub(end, start);
+				t1 = SIMDVecMul(t1, amount);
+				t1 = SIMDVecAdd(start, t1);
 				return t1;
 			}
 			/*
@@ -1810,9 +1815,9 @@ namespace Apoc3D
 				amount = (amount > 1.0f) ? 1.0f : ((amount < 0.0f) ? 0.0f : amount);
 				amount = (amount * amount) * (3.0f - (2.0f * amount));
 
-				__m128 t1 = _VecSub(end, start);
-				t1 = _VecMul(t1, amount);
-				t1 = _VecAdd(start, t1);
+				__m128 t1 = SIMDVecSub(end, start);
+				t1 = SIMDVecMul(t1, amount);
+				t1 = SIMDVecAdd(start, t1);
 
 				return t1;
 			}
@@ -1825,25 +1830,25 @@ namespace Apoc3D
 			/*
 			 * Calculates the distance between two vectors.
 			 */
-			static float Distance(Vector4 value1, Vector4 value2) { return _Vec4Distance(value1, value2); }
+			static float Distance(Vector4 value1, Vector4 value2) { return SIMDVec4Distance(value1, value2); }
 			/*
 			 * Calculates the squared distance between two vectors.
 			 */
-			static float DistanceSquared(Vector4 value1, Vector4 value2) { return _Vec4DistanceSquared(value1, value2); }
+			static float DistanceSquared(Vector4 value1, Vector4 value2) { return SIMDVec4DistanceSquared(value1, value2); }
 			/* 
 			 * Calculates the dot product of two vectors.
 			 */
-			static float Dot(Vector4 left, Vector4 right) { return _Vec4Dot(left, right); }
+			static float Dot(Vector4 left, Vector4 right) { return SIMDVec4Dot(left, right); }
 
 			/*
 			 * Returns a vector containing the smallest components of the specified vectors.
 			 */
-			static Vector4 Minimize(Vector4 left, Vector4 right) { return _VecMin(left, right); }
+			static Vector4 Minimize(Vector4 left, Vector4 right) { return SIMDVecMin(left, right); }
 
 			/*
 			 * Returns a vector containing the largest components of the specified vectors.
 			 */
-			static Vector4 Maximize(Vector4 left, Vector4 right) { return _VecMax(left, right); }
+			static Vector4 Maximize(Vector4 left, Vector4 right) { return SIMDVecMax(left, right); }
 #elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 			
 #endif

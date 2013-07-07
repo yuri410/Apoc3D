@@ -137,16 +137,16 @@ namespace Apoc3D
 			 */
 			static void CreateFromPoints(BoundingBox& res, const Vector3* points, int count)
 			{
-				Vector3 min(FLT_MAX);
-				Vector3 max(-FLT_MAX);
+				Vector3 minv(FLT_MAX);
+				Vector3 maxv(-FLT_MAX);
 
 				for (int i = 0; i < count; i++)
 				{
-					min = Vector3::Minimize(min, points[i]);
-					max = Vector3::Maximize(max, points[i]);
+					minv = Vector3::Minimize(minv, points[i]);
+					maxv = Vector3::Maximize(maxv, points[i]);
 				}
 
-				res = BoundingBox(min, max);
+				res = BoundingBox(minv, maxv);
 			}
 			/**
 			 *  Constructs a BoundingBox from a given sphere.
