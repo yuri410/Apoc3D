@@ -36,14 +36,9 @@ namespace Apoc3D
 		class GaussBlurFilter
 		{
 		public:
-			const float* const getSampleWeights() const { return SampleWeights; }
-			const Vector4* const getSampleOffsetX() const { return SampleOffsetsX; }
-			const Vector4* const getSampleOffsetY() const { return SampleOffsetsY; }
-
-			const int32 getSampleCount() const { return SampleCount; }
-
 			GaussBlurFilter(int32 sampleCount, float blurAmount, int32 mapWidth, int32 mapHeight)
-				: SampleCount(sampleCount), BlurAmount(blurAmount), SampleWeights(0), SampleOffsetsX(0), SampleOffsetsY(0)
+				: SampleCount(sampleCount), BlurAmount(blurAmount), SampleWeights(0), SampleOffsetsX(0), SampleOffsetsY(0),
+				m_mapWidth(mapWidth), m_mapHeight(mapHeight)
 			{
 				ComputeFilter(1.0f / (float)mapWidth, 0, SampleWeights, SampleOffsetsX);
 				ComputeFilter(0, 1.0f / (float)mapHeight, SampleWeights, SampleOffsetsY);
@@ -54,12 +49,36 @@ namespace Apoc3D
 				delete[] SampleOffsetsX;
 				delete[] SampleOffsetsY;
 			}
+
+			void ChangeSettings(float blurAmount, int32 mapWidth, int32 mapHeight)
+			{
+				BlurAmount = blurAmount;
+				m_mapHeight = mapHeight;
+				m_mapWidth = mapWidth;
+				
+				ComputeFilter(1.0f / (float)mapWidth, 0, SampleWeights, SampleOffsetsX);
+				ComputeFilter(0, 1.0f / (float)mapHeight, SampleWeights, SampleOffsetsY);
+			}
+
+			const float* const getSampleWeights() const { return SampleWeights; }
+			const Vector4* const getSampleOffsetX() const { return SampleOffsetsX; }
+			const Vector4* const getSampleOffsetY() const { return SampleOffsetsY; }
+
+			const int32 getSampleCount() const { return SampleCount; }
+			int getMapWidth() const { return m_mapWidth; }
+			int getMapHeight() const { return m_mapHeight; }
+			float getBlurAmount() const { return BlurAmount; }
+
+
 		private:
 			float BlurAmount;
 			int32 SampleCount;
 			float* SampleWeights;
 			Vector4* SampleOffsetsX;
 			Vector4* SampleOffsetsY;
+
+			int m_mapWidth;
+			int m_mapHeight;
 
 			float ComputeGaussian(float n) const
 			{

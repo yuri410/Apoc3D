@@ -106,6 +106,8 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	// now move on the creation of render window
 	DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();
 
+	//List<RenderDisplayMode> modes = devContent->GetSupportedDisplayModes();
+
 	// fill the params
 	RenderParameters params;
 	params.BackBufferHeight = 720;

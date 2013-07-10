@@ -55,6 +55,8 @@ namespace Apoc3D
 			public:
 				virtual ~RenderTarget();
 				
+				void SetPercentageLock(float wp, float hp);
+
 				uint32 getMultiSampleCount() const { return m_sampleCount; }
 				int32 getWidth() const { return m_width; }
 				int32 getHeight() const { return m_height; }
@@ -65,9 +67,16 @@ namespace Apoc3D
 				virtual Texture* GetColorTexture() = 0;
 				virtual DepthBuffer* GetDepthBuffer() = 0;
 
-			private:
+			protected:
+				RenderDevice* m_device;
+
+				float m_widthPercentage;
+				float m_heightPercentage;
+				bool m_hasPercentangeLock;
+
 				int32 m_width;
 				int32 m_height;
+			private:
 				DepthFormat m_depthFormat;
 				PixelFormat m_pixelFormat;
 				uint32 m_sampleCount;

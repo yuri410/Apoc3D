@@ -76,8 +76,11 @@ namespace SampleTerrain
 		virtual void OnFrameEnd();
 
 	private:
-		
+#if _DEBUG
+		static const int NumBlockOnEdge = 16;
+#else
 		static const int NumBlockOnEdge = 64;
+#endif
 		static const int MinBlockCoord = -NumBlockOnEdge/2;
 		static const int MaxBlockCoord = NumBlockOnEdge/2-1;
 

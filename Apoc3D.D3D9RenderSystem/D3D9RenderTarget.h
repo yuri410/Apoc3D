@@ -45,7 +45,37 @@ namespace Apoc3D
 		{
 			class D3D9RenderTarget : public RenderTarget, public VolatileResource
 			{
+			public:
+
+				virtual void ReleaseVolatileResource();
+				virtual void ReloadVolatileResource();
+
+				IDirect3DSurface9* getColorSurface() const { return m_colorSurface; }
+				IDirect3DSurface9* getDepthSurface() const { return m_depthSurface; }
+
+				//D3D9RenderTarget(D3D9RenderDevice* device, IDirect3DSurface9* color, IDirect3DSurface9* depth);
+
+				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt);
+				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt, IDirect3DSurface9* depth);
+				
+				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format);
+				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat);
+				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, uint32 sampleCount, PixelFormat format);
+				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, uint32 sampleCount, PixelFormat format, DepthFormat depthFormat);
+				
+
+				~D3D9RenderTarget();
+
+				virtual Texture* GetColorTexture();
+				virtual DepthBuffer* GetDepthBuffer();
+				
+				void NotifyDirty() { m_rtDirty = true; }
 			private:
+				
+				/** Resolve multisample RT
+				 */
+				void Resolve();
+
 				D3DTexture2D* m_color;
 				IDirect3DSurface9* m_colorSurface;
 				D3D9Texture* m_d3dTexture;
@@ -60,32 +90,7 @@ namespace Apoc3D
 				bool m_hasColor;
 				bool m_hasDepth;
 
-			public:
-
-				virtual void ReleaseVolatileResource();
-				virtual void ReloadVolatileResource();
-
-				IDirect3DSurface9* getColorSurface() const { return m_colorSurface; }
-				IDirect3DSurface9* getDepthSurface() const { return m_depthSurface; }
-
-				D3D9RenderTarget(D3D9RenderDevice* device, IDirect3DSurface9* color, IDirect3DSurface9* depth);
-
-				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt);
-				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt, IDirect3DSurface9* depth);
-				
-				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format);
-				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat);
-				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, uint32 sampleCount, PixelFormat format, DepthFormat depthFormat);
-
-				~D3D9RenderTarget();
-
-				virtual Texture* GetColorTexture();
-				virtual DepthBuffer* GetDepthBuffer();
-
-				/** When the RT is just un-binded from the device.
-				 *  This will be called by the RenderDevice to resolve the color texture.
-				 */
-				void Resolve();
+				bool m_rtDirty;
 			};
 		}
 	}

@@ -152,9 +152,11 @@ namespace Apoc3D
 				const ShaderSamplerState& getPixelSampler(int samplerIndex) const;
 				const ShaderSamplerState& getVertexSampler(int samplerIndex) const;
 
-
+				int getTextureSlotCount() const { return m_textureSlotCount; }
+				D3D9Texture* getTexture(int i) const { assert(i<m_textureSlotCount); return m_textureSlots[i]; }
 				void SetTexture(int i, D3D9Texture* tex);
 
+				void Reset() { InitializeDefaultState(); }
 			private:
 				void InitializeDefaultState();
 

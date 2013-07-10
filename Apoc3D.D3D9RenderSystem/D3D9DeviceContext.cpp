@@ -26,9 +26,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "D3D9RenderDevice.h"
 #include "D3D9RenderWindow.h"
+#include "D3D9Utils.h"
 #include "GraphicsDeviceManager.h"
-
+#include "Enumeration.h"
+#include "apoc3d/Collections/ExistTable.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Utility/Hash.h"
 #include "apoc3d/ApocException.h"
 
 using namespace Apoc3D::Utility;
@@ -89,7 +92,7 @@ namespace Apoc3D
 			{
 				if (m_window)
 					return m_window->getRenderDevice();
-				return 0;
+				return nullptr;
 			}
 
 			String D3D9DeviceContext::GetHardwareName()
@@ -100,6 +103,80 @@ namespace Apoc3D
 				}
 				return m_hardwareName; 
 			}
+
+
+			class RenderDisplayModeEqualityComparer : public IEqualityComparer<RenderDisplayMode>
+			{
+			public:
+				virtual bool Equals(const RenderDisplayMode& x, const RenderDisplayMode& y) const
+				{
+					return x.AdapterOrdinal == y.AdapterOrdinal && 
+						x.FSAASampleCount == y.FSAASampleCount && 
+						x.FullScreen == y.FullScreen && 
+						x.Width == y.Width && x.Height == y.Height;
+				}
+				virtual int64 GetHashCode(const RenderDisplayMode& obj) const
+				{
+					FNVHash h;
+					h.Accumulate(&obj.AdapterOrdinal, sizeof(obj.AdapterOrdinal));
+					h.Accumulate(&obj.FSAASampleCount, sizeof(obj.FSAASampleCount));
+					h.Accumulate(&obj.FullScreen, sizeof(obj.FullScreen));
+					h.Accumulate(&obj.Height, sizeof(obj.Height));
+					h.Accumulate(&obj.Width, sizeof(obj.Width));
+					return h.GetResult();
+				}
+			} static s_renderDisplayModeEqualityComparer;
+
+			List<RenderDisplayMode> D3D9DeviceContext::GetSupportedDisplayModes()
+			{
+				if (!Enumeration::hasEnumerated())
+					Enumeration::Enumerate(m_d3d9);
+
+				const FastList<AdapterInfo*>& adpInfos = Enumeration::getAdapters();
+
+				ExistTable<RenderDisplayMode> modeTabls(adpInfos.getCount()*2, &s_renderDisplayModeEqualityComparer);
+				for (int i=0;i<adpInfos.getCount();i++)
+				{
+					const AdapterInfo* ai = adpInfos[i];
+					
+					RenderDisplayMode mode;
+					mode.AdapterName = ai->Description;
+					mode.AdapterOrdinal = ai->AdapterOrdinal;
+
+					for (int j=0;j<ai->DisplayModes.getCount();j++)
+					{
+						mode.Height = ai->DisplayModes[j].Height;
+						mode.Width = ai->DisplayModes[j].Width;
+
+						for (int k=0;k<ai->Devices.getCount();k++)
+						{
+							const DeviceInfo* di = ai->Devices[k];
+							if (di->DeviceType == D3DDEVTYPE_HAL)
+							{
+								for (int m =0;m<di->DeviceSettings.getCount();m++)
+								{
+									SettingsCombo* sc = di->DeviceSettings[m];
+									for (int n=0;n<sc->MultisampleTypes.getCount();n++)
+									{
+										mode.FSAASampleCount = D3D9Utils::ConvertBackMultiSample(sc->MultisampleTypes[n]);
+										if (!modeTabls.Exists(mode))
+											modeTabls.Add(mode);
+									}
+								}
+								
+							}
+						}
+					}
+				}
+
+				List<RenderDisplayMode> result;
+				for (ExistTable<RenderDisplayMode>::Enumerator e = modeTabls.GetEnumerator(); e.MoveNext();)
+				{
+					result.Add(*e.getCurrent());
+				}
+				return result;
+			}
+
 		}
 	}
 }

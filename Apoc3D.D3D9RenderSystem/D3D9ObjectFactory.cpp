@@ -69,6 +69,10 @@ namespace Apoc3D
 			{
 				return new D3D9RenderTarget(m_device, width, height, clrFmt, depthFmt);
 			}
+			RenderTarget* D3D9ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt, uint sampleCount)
+			{
+				return new D3D9RenderTarget(m_device, width, height, sampleCount, clrFmt);
+			}
 			RenderTarget* D3D9ObjectFactory::CreateRenderTarget(int width, int height, PixelFormat clrFmt)
 			{
 				return new D3D9RenderTarget(m_device, width, height, clrFmt);

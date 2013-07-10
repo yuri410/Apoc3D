@@ -117,7 +117,8 @@ namespace Apoc3D
 
 			D3D9RenderDevice::D3D9RenderDevice(GraphicsDeviceManager* devManager)
 				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager), 
-				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0), m_defaultEffect(0)
+				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0), m_defaultEffect(0),
+				m_defaultRT(NULL), m_defaultDS(NULL)
 			{
 
 			}
@@ -169,6 +170,7 @@ namespace Apoc3D
 				{
 					m_volatileResources[i]->ReloadVolatileResource();
 				}
+				m_nativeState->Reset();
 			}
 
 			void D3D9RenderDevice::Initialize()
@@ -220,10 +222,10 @@ namespace Apoc3D
 			void D3D9RenderDevice::SetRenderTarget(int index, RenderTarget* rt)
 			{
 				D3DDevice* dev = getDevice();
+				D3D9RenderTarget* oldRt = m_cachedRenderTarget[index];
+
 				if (rt)
 				{
-					D3D9RenderTarget* oldRt = m_cachedRenderTarget[index];
-
 					D3D9RenderTarget* drt = static_cast<D3D9RenderTarget*>(rt);
 					
 					dev->SetRenderTarget(index, drt->getColorSurface());
@@ -237,10 +239,13 @@ namespace Apoc3D
 					}
 
 					m_cachedRenderTarget[index] = drt;
-
-					if (oldRt && oldRt != drt)
+					
+					for (int i=0;i<m_nativeState->getTextureSlotCount();i++)
 					{
-						m_cachedRenderTarget[index]->Resolve();
+						if (m_nativeState->getTexture(i) == drt->GetColorTexture())
+						{
+							m_nativeState->SetTexture(i, NULL);
+						}
 					}
 				}
 				else 
@@ -250,13 +255,18 @@ namespace Apoc3D
 						dev->SetRenderTarget(0, m_defaultRT);
 						dev->SetDepthStencilSurface(m_defaultDS);
 
-						m_cachedRenderTarget[0] = 0;
+						m_cachedRenderTarget[0] = nullptr;
 					}
 					else
 					{
 						dev->SetRenderTarget(index, 0);
 						m_cachedRenderTarget[index] = 0;
 					}
+				}
+
+				if (oldRt && oldRt != rt)
+				{
+					oldRt->NotifyDirty();
 				}
 			}
 

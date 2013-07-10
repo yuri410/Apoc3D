@@ -242,6 +242,7 @@
     <ClInclude Include="UILib\FontManager.h" />
     <ClInclude Include="UILib\UICommon.h" />
     <ClInclude Include="Utility\Compression.h" />
+    <ClInclude Include="Utility\Hash.h" />
     <ClInclude Include="Utility\StringUtils.h" />
     <ClInclude Include="Graphics\PixelFormat.h" />
     <ClInclude Include="Graphics\RenderSystem\DeviceContext.h" />

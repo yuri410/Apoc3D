@@ -73,7 +73,17 @@ namespace Apoc3D
 				{
 					for (int i=0;i<m_adapters.getCount();i++)
 					{
-						delete m_adapters[i];
+						AdapterInfo* ai = m_adapters[i];
+						for (int j=0;j<ai->Devices.getCount();j++)
+						{
+							DeviceInfo* di = ai->Devices[j];
+							for (int k=0;k<di->DeviceSettings.getCount();k++)
+							{
+								delete di->DeviceSettings[k];
+							}
+							delete di;
+						}
+						delete ai;
 					}
 					m_adapters.Clear();
 				}
@@ -365,7 +375,8 @@ namespace Apoc3D
 			
 			void Enumeration::FindValidSettings(IDirect3D9* d3d9, const DeviceSettings& settings, DeviceSettings& result)
 			{
-				Enumerate(d3d9);
+				if (!hasEnumerated())
+					Enumerate(d3d9);
 				
 				DeviceSettings newSettings = DeviceSettings(settings);
 

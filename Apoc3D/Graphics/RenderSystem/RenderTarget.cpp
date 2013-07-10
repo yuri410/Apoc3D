@@ -22,6 +22,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "RenderTarget.h"
+#include "RenderDevice.h"
+#include "apoc3d/Core/Logging.h"
 
 namespace Apoc3D
 {
@@ -30,13 +32,17 @@ namespace Apoc3D
 		namespace RenderSystem
 		{
 			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, uint32 multiSampleCount)
-				: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(depthFormat), m_sampleCount(multiSampleCount)
+				: m_device(renderDevice), m_width(width), m_height(height), 
+				m_pixelFormat(colorFormat), m_depthFormat(depthFormat), m_sampleCount(multiSampleCount), 
+				m_hasPercentangeLock(false)
 			{
 
 			}
 
 			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, uint32 multiSampleCount)
-				: m_width(width), m_height(height), m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count), m_sampleCount(multiSampleCount)
+				: m_device(renderDevice), m_width(width), m_height(height), 
+				m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count), m_sampleCount(multiSampleCount), 
+				m_hasPercentangeLock(false)
 			{ 
 			}
 
@@ -44,6 +50,23 @@ namespace Apoc3D
 			{
 
 			}
+
+			void RenderTarget::SetPercentageLock(float wp, float hp)
+			{
+				Viewport vp = m_device->getViewport();
+
+				int estWidth = static_cast<uint>(vp.Width * wp + 0.5f);
+				int estHeight = static_cast<uint>(vp.Height * hp + 0.5f);
+				m_hasPercentangeLock = true;
+				m_widthPercentage = wp;
+				m_heightPercentage = hp;
+
+				if (estWidth != m_width || estHeight != m_height)
+				{
+					ApocLog(LOG_Graphics, L"[RT] Dimension percentage does not match current size.", LOGLVL_Warning);
+				}
+			}
+
 		}
 	}
 }

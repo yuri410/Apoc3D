@@ -40,15 +40,15 @@ namespace Apoc3D
 			{
 			public:
 				void NotifyWindowClosed(D3D9RenderWindow* wnd);
-				
-				virtual String GetHardwareName();
-
-				IDirect3D9* getD3D() const { return m_d3d9; }
 
 				D3D9DeviceContext();
 				~D3D9DeviceContext();
 
+				virtual List<RenderDisplayMode> GetSupportedDisplayModes();
+				virtual String GetHardwareName();
+
 				virtual RenderDevice* getRenderDevice();
+				IDirect3D9* getD3D() const { return m_d3d9; }
 
 			protected:
 				virtual RenderView* create(const RenderParameters &pm);

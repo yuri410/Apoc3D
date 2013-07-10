@@ -119,7 +119,7 @@ namespace Apoc3D
 			}
 
 			GameWindow::GameWindow(const String& wndClass, const String& title)
-				: m_mouseWheel(0)
+				: m_mouseWheel(0), m_inSizeMove(false), m_minimized(false), m_maximized(false)
 			{
 				m_hInstance= GetModuleHandle (0);
 				ms_Window = this;
@@ -288,7 +288,7 @@ namespace Apoc3D
 							OnUserResized();
 							UpdateMonitor();
 
-
+							m_cachedSize = getCurrentSize();
 							//RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_ERASE);
 						}
 						else if (wParam == SIZE_RESTORED)

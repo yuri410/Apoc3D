@@ -39,7 +39,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			struct APAPI RenderParameters
+			struct RenderParameters
 			{
 				bool IsWindowd;
 
@@ -84,6 +84,18 @@ namespace Apoc3D
 				}
 			};
 
+			struct RenderDisplayMode
+			{
+				String AdapterName;
+				int AdapterOrdinal;
+
+				int Width;
+				int Height;
+
+				uint32 FSAASampleCount;
+				bool FullScreen;
+			};
+
 			/**
 			 *  Represent a graphics device of a graphics API. It can create one or more RenderViews.
 			 */
@@ -101,10 +113,11 @@ namespace Apoc3D
 				 */
 				RenderView* Create(const RenderParameters &pm);
 				void Destroy(RenderView* rc);
+				
+				virtual List<RenderDisplayMode> GetSupportedDisplayModes() = 0;
+				virtual String GetHardwareName() = 0;
 
 				virtual RenderDevice* getRenderDevice() = 0;
-
-				virtual String GetHardwareName() = 0;
 			protected:
 				virtual RenderView* create(const RenderParameters &pm) = 0;
 

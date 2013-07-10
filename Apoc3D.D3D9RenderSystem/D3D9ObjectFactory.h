@@ -55,6 +55,7 @@ namespace Apoc3D
 
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, uint sampleCount);
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt);
+				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, uint sampleCount);
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt);
 
 				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage);

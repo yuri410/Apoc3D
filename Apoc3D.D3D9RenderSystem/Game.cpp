@@ -201,7 +201,7 @@ namespace Apoc3D
 
 #if _DEBUG
 				if (ratio>m_maxSkipFrameCount)
-					ratio=0;
+					ratio=1;
 #else
 				if (ratio>m_maxSkipFrameCount)
 					ratio= static_cast<float>(m_maxSkipFrameCount);

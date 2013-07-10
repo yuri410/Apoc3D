@@ -294,6 +294,9 @@ namespace SampleTerrain
 		m_sprite->End();
 
 		m_device->EndFrame();
+
+		Viewport vp = m_device->getViewport();
+		m_camera->setAspectRatio(vp.Width/(float)(vp.Height));
 	}
 
 	void TerrainDemo::OnFrameStart() { }

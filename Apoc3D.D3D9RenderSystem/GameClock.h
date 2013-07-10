@@ -57,6 +57,8 @@ namespace Apoc3D
 					m_baseRealTime = 0;
 					m_lastRealTime = 0;
 
+					m_elapsedTime = 0;
+					m_elapsedAdjustedTime = 0;
 
 					m_currentTimeBase = 0;
 					m_currentTimeOffset = 0;
@@ -120,14 +122,15 @@ namespace Apoc3D
 						m_elapsedTime = 0;
 					}
 
-					if (CounterToTimeSpan(counter, (m_lastRealTime + m_timeLostToSuspension), &m_elapsedAdjustedTime))
+					/*if (CounterToTimeSpan(counter, (m_lastRealTime + m_timeLostToSuspension), &m_elapsedAdjustedTime))
 					{
 						m_timeLostToSuspension = 0;
 					}
 					else
 					{
 						m_elapsedAdjustedTime = 0;
-					}
+					}*/
+					m_elapsedAdjustedTime = m_elapsedTime;
 
 					m_lastRealTime = counter;
 				}

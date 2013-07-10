@@ -70,7 +70,7 @@ namespace Apoc3D
 			}
 			for (int i=0;i<m_createdGaussFilters.getCount();i++)
 			{
-				delete m_createdGaussFilters[i];
+				delete m_createdGaussFilters[i].Object;
 			}
 			delete[] m_vars;
 		}
@@ -154,15 +154,19 @@ namespace Apoc3D
 						{
 							uint width = m_vars[i]->Value[0];
 							uint height = m_vars[i]->Value[1];
+							float wscale;
+							float hscale;
+							bool usePercentageLock = false;
 
 							if (!width || !height)
 							{
-								float wscale = reinterpret_cast<const float&>(m_vars[i]->Value[2]);
-								float hscale = reinterpret_cast<const float&>(m_vars[i]->Value[3]);
+								wscale = reinterpret_cast<const float&>(m_vars[i]->Value[2]);
+								hscale = reinterpret_cast<const float&>(m_vars[i]->Value[3]);
 
 								Viewport vp = m_renderDevice->getViewport();
 								width = static_cast<uint>(vp.Width * wscale + 0.5f);
 								height = static_cast<uint>(vp.Height * hscale + 0.5f);
+								usePercentageLock = true;
 							}
 
 							PixelFormat fmt = static_cast<PixelFormat>(m_vars[i]->Value[4]);
@@ -173,12 +177,17 @@ namespace Apoc3D
 							RenderTarget* rt;
 							if (depFmt == DEPFMT_Count)
 							{
-								rt = factory->CreateRenderTarget(width, height, fmt);
+								rt = factory->CreateRenderTarget(width, height, fmt, sampleCount);
 							}
 							else
 							{
 								rt = factory->CreateRenderTarget(width, height, fmt, depFmt, sampleCount);
 							}
+							if (usePercentageLock)
+							{
+								rt->SetPercentageLock(wscale, hscale);
+							}
+							
 							m_vars[i]->RTValue = rt;
 							m_createdRenderTarget.Add(rt);
 						}
@@ -221,6 +230,7 @@ namespace Apoc3D
 							uint width = m_vars[i]->Value[0];
 							uint height = m_vars[i]->Value[1];
 
+							ProcGaussBlurFilter pgbf;
 							if (!width || !height)
 							{
 								float wscale = reinterpret_cast<const float&>(m_vars[i]->Value[2]);
@@ -229,6 +239,13 @@ namespace Apoc3D
 								Viewport vp = m_renderDevice->getViewport();
 								width = static_cast<uint>(vp.Width * wscale + 0.5f);
 								height = static_cast<uint>(vp.Height * hscale + 0.5f);
+								pgbf.HasPercentageLock = true;
+								pgbf.HeightPercentage = hscale;
+								pgbf.WidthPercentage = wscale;
+							}
+							else
+							{
+								pgbf.HasPercentageLock = false;
 							}
 
 							int sampleCount = m_vars[i]->Value[5];
@@ -236,7 +253,9 @@ namespace Apoc3D
 							GaussBlurFilter* filter = new GaussBlurFilter(sampleCount,blurAmount, (int32)width,(int32)height);
 							m_vars[i]->ObjectValue = filter;
 							
-							m_createdGaussFilters.Add(filter);
+							pgbf.Object = filter;
+							
+							m_createdGaussFilters.Add(pgbf);
 						}
 						break;
 							//VARTYPE_Integer,
@@ -249,6 +268,8 @@ namespace Apoc3D
 
 		void SceneProcedure::Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData)
 		{
+			CheckDimensions();
+
 			m_lastCamera = 0;
 			// pass each scene pass
 			for (int i=0;i<m_passes.getCount();i++)
@@ -257,6 +278,25 @@ namespace Apoc3D
 				m_lastCamera = m_passes[i]->getCurrentCamera();
 			}
 
+		}
+
+		void SceneProcedure::CheckDimensions()
+		{
+			Viewport vp = m_renderDevice->getViewport();
+			for (int i=0;i<m_createdGaussFilters.getCount();i++)
+			{
+				ProcGaussBlurFilter& pgbf = m_createdGaussFilters[i];
+				if (pgbf.HasPercentageLock)
+				{
+					int expectedWidth = (int)(pgbf.WidthPercentage * vp.Width + 0.5f);
+					int expectedHeight = (int)(pgbf.HeightPercentage * vp.Height + 0.5f);
+
+					if (expectedHeight != pgbf.Object->getMapHeight() || expectedWidth != pgbf.Object->getMapWidth())
+					{
+						pgbf.Object->ChangeSettings(pgbf.Object->getBlurAmount(), expectedWidth, expectedHeight);
+					}
+				}
+			}
 		}
 
 		RenderTarget* SceneProcedure::FindRenderTargetVar(const String& name) const

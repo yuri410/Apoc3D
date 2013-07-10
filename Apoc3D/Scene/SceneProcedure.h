@@ -126,6 +126,15 @@ namespace Apoc3D
 			void SetFloatVar(const String& name, const float val);
 
 		private:
+			struct ProcGaussBlurFilter
+			{
+				GaussBlurFilter* Object;
+				bool HasPercentageLock;
+				float WidthPercentage;
+				float HeightPercentage;
+			};
+			void CheckDimensions();
+
 			RenderDevice* m_renderDevice;
 
 			FastList<ScenePass*> m_passes;
@@ -134,7 +143,7 @@ namespace Apoc3D
 
 			FastList<RenderTarget*> m_createdRenderTarget;
 			FastList<ResourceHandle<Texture>*> m_createdTextures;
-			FastList<GaussBlurFilter*> m_createdGaussFilters;
+			FastList<ProcGaussBlurFilter> m_createdGaussFilters;
 
 			bool m_isAvailable;
 			String m_name;

@@ -243,6 +243,7 @@ namespace Apoc3D
 				 *  as the script will auto fall back if not supported.
 				 */
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, uint sampleCount) = 0;
+				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, uint sampleCount) = 0;
 
 
 				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage) = 0;

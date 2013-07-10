@@ -113,9 +113,10 @@ namespace Apoc3D
 			/**
 			 *  Gets the position of the view point
 			 */
-			const Vector3 &getPosition() const { return m_position; }
+			const Vector3& getPosition() const { return m_position; }
 			
-			const float getAspectRatio() const { return m_aspectRatio; }
+			float getAspectRatio() const { return m_aspectRatio; }
+			void setAspectRatio(float ar) { m_aspectRatio = ar; }
 			//const float getVelocity() const { return m_velocity; } 
 
 			void MoveForward()
