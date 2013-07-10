@@ -38,8 +38,9 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		/************************************************************************/
-		/*                                                                      */
+		/*   ModelSharedData                                                    */
 		/************************************************************************/
+
 		ModelSharedData::ModelSharedData(RenderDevice* device, const ModelData* mdlData)
 			: Resource(), m_resourceLocation(0), m_renderDevice(device)
 		{
@@ -112,18 +113,19 @@ namespace Apoc3D
 				m_entities[i]->Save(meshData);
 				data->Entities.Add(meshData);
 			}
-
 		}
+
 		/************************************************************************/
-		/*                                                                      */
+		/*  Model                                                               */
 		/************************************************************************/
 
 		Model::Model(ResourceHandle<ModelSharedData>* data, const AnimationData* animData)
 			: m_data(data), m_animData(animData), m_selectedClipName(L"Take 001"),
-			m_mtrlAnimCompleted(false), m_skinAnimCompleted(false), m_rootAnimCompleted(false), m_rigidAnimCompleted(false),
-			m_mtrlPlayer(0), m_skinPlayer(0), m_rigidPlayer(0), m_rootPlayer(0),
+			m_mtrlAnimCompleted(false), m_skinAnimCompleted(false), m_rigidAnimCompleted(false),
+			m_mtrlPlayer(nullptr), m_skinPlayer(nullptr), m_rigidPlayer(nullptr),
 			m_autoLoop(true), m_isOpBufferBuilt(false),
-			m_renderOpEntID(0),m_renderOpEntPartID(0)
+			m_renderOpEntID(0),m_renderOpEntPartID(0),
+			m_skinState(APS_Stopped), m_rigidState(APS_Stopped), m_mtrlState(APS_Stopped)
 		{
 			InitializeAnimation();
 		}
@@ -151,184 +153,6 @@ namespace Apoc3D
 				delete[] m_renderOpEntID;
 		}
 
-		void Model::ControlRootAnimation(AnimationControl ctrl)
-		{
-			//if (!m_rootPlayer)
-			//	return;
-			//if (!m_animData)
-			//	return;
-
-			//if (m_animData->hasRigidClip())
-			//{
-			//	const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
-			//	AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
-			//	if (iter != table.end())
-			//	{
-			//		const ModelAnimationClip* clip = iter->second;
-
-			//		switch (ctrl)
-			//		{
-			//		case AC_Play:
-			//			m_rootPlayer->StartClip(clip, 1, 0);
-			//			break;
-			//		case AC_Pause:
-			//			m_rootPlayer->PauseClip();
-			//			break;
-			//		case AC_Stop:
-			//			m_rootPlayer->PauseClip();
-			//			m_rootPlayer->setCurrentKeyframe(clip->getKeyframes().getCount()>10 ? 10 : 0);
-			//			break;
-			//		case AC_Resume:
-			//			m_rootPlayer->ResumeClip();
-			//			break;
-			//		}
-			//	}
-			//}
-		}
-		void Model::ControlSkinnedAnimation(AnimationControl ctrl)
-		{
-			if (!m_skinPlayer)
-				return;
-			if (!m_animData)
-				return;
-
-
-			if (m_animData->hasSkinnedClip())
-			{
-				const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
-				//AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
-				//if (iter != table.end())
-				ModelAnimationClip* clip;
-				if (table.TryGetValue(m_selectedClipName, clip))
-				{
-					switch (ctrl)
-					{
-					case AC_Play:
-						m_skinPlayer->StartClip(clip, 1, 0);
-						break;
-					case AC_Pause:
-						m_skinPlayer->PauseClip();
-						break;
-					case AC_Stop:
-						m_skinPlayer->PauseClip();
-						m_skinPlayer->setCurrentKeyframe(clip->getKeyframes().getCount()>10 ? 10 : 0);
-						break;
-					case AC_Resume:
-						m_skinPlayer->ResumeClip();
-						break;
-					}
-				}
-			}
-		}
-		void Model::ControlRigidAnimation(AnimationControl ctrl)
-		{
-			if (!m_rigidPlayer)
-				return;
-			if (!m_animData)
-				return;
-
-			if (m_animData->hasRigidClip())
-			{
-				const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
-				ModelAnimationClip* clip;
-
-				if (table.TryGetValue(m_selectedClipName, clip))
-				{
-					switch (ctrl)
-					{
-					case AC_Play:
-						m_rigidPlayer->StartClip(clip, 1, 0);
-						break;
-					case AC_Pause:
-						m_rigidPlayer->PauseClip();
-						break;
-					case AC_Stop:
-						m_rigidPlayer->PauseClip();
-						m_rigidPlayer->setCurrentKeyframe(0);
-						break;
-					case AC_Resume:
-						m_rigidPlayer->ResumeClip();
-						break;
-					}
-				}
-			}
-		}
-		void Model::ControlMaterialAnimation(AnimationControl ctrl)
-		{
-			if (!m_mtrlPlayer)
-				return;
-			
-			if (!m_animData)
-				return;
-
-			if (m_animData->hasMtrlClip())
-			{
-				const AnimationData::MtrlClipTable& table = m_animData->getMaterialAnimationClips();
-				MaterialAnimationClip* clip;
-
-				if (table.TryGetValue(m_selectedClipName, clip))
-				{
-					switch (ctrl)
-					{
-					case AC_Play:
-						m_mtrlPlayer->StartClip(clip, 1, 0);
-						break;
-					case AC_Pause:
-						m_mtrlPlayer->PauseClip();
-						break;
-					case AC_Stop:
-						m_mtrlPlayer->PauseClip();
-						m_mtrlPlayer->setCurrentKeyframe(0);
-						break;
-					case AC_Resume:
-						m_mtrlPlayer->ResumeClip();
-						break;
-					}
-				}
-			}
-		}
-
-		float Model::GetSkinAnimationDuration() const
-		{
-			if (!m_animData)
-				return 0;
-			if (!m_skinPlayer)
-				return 0;
-
-			const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
-
-			if (table.getCount())
-			{
-				ModelAnimationClip* clip;
-
-				if (table.TryGetValue(m_selectedClipName, clip))
-				{
-					return clip->getDuration();
-				}
-			}
-			return 0;
-		}
-
-		float Model::GetAnimationDuration() const
-		{
-			if (m_skinPlayer)
-			{
-				return m_skinPlayer->getCurrentClip()->getDuration();
-			}
-			else if (m_rigidPlayer)
-			{
-				return m_rigidPlayer->getCurrentClip()->getDuration();
-			}
-			else if (m_rootPlayer)
-			{
-				return m_rootPlayer->getCurrentClip()->getDuration();
-			}
-			else if (m_mtrlPlayer)
-			{
-				return m_mtrlPlayer->getCurrentClip()->Duration;
-			}
-			return 0;
-		}
 
 		ModelSharedData* Model::GetData()
 		{
@@ -336,91 +160,8 @@ namespace Apoc3D
 			return m_data->getWeakRef();
 		}
 
-
-		void Model::InitializeAnimation()
-		{
-			if (!m_animData)
-				return;
-
-			
-			if (m_animData->hasRigidClip())
-			{
-				const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
-				
-				if (table.getCount())
-				{
-					//m_rootPlayer = new RootAnimationPlayer();
-					//
-					//m_animInstance.Add(m_rootPlayer);
-
-					//m_rootPlayer->eventCompleted().bind(this, &Model::RootAnim_Completed);
-
-					m_rigidPlayer = new RigidAnimationPlayer(m_animData->RigidEntityCount);
-					
-					m_animInstance.Add(m_rigidPlayer);
-
-					m_rigidPlayer->eventCompleted().bind(this, &Model::RigidAnim_Competed);
-				}
-			}
-			if (m_animData->hasSkinnedClip())
-			{
-				const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
-
-				if (table.getCount())
-				{
-					const List<Bone>* bones = &m_animData->getBones();
-					
-					assert(bones->getCount());
-					m_skinPlayer = new SkinnedAnimationPlayer(bones);
-
-					m_animInstance.Add(m_skinPlayer);
-					m_skinPlayer->eventCompleted().bind(this, &Model::SkinAnim_Completed);
-				}
-
-			}
-			if (m_animData->hasMtrlClip())
-			{
-				const AnimationData::MtrlClipTable& table = m_animData->getMaterialAnimationClips();
-				if (table.getCount())
-				{
-					m_mtrlPlayer = new MaterialAnimationPlayer();
-					
-					//m_animInstance.Add(m_rigidPlayer);
-
-					m_mtrlPlayer->eventCompleted().bind(this, &Model::MtrlAnim_Completed);
-				}
-			}
-
-		}
-		void Model::ReloadMaterialAnimation()
-		{
-			if (m_mtrlPlayer)				
-			{
-				m_mtrlPlayer->eventCompleted().clear();
-				delete m_mtrlPlayer;
-				m_mtrlPlayer = 0;
-			}
-
-			if (m_animData->hasMtrlClip())
-			{
-				const AnimationData::MtrlClipTable& table = m_animData->getMaterialAnimationClips();
-				if (table.getCount())
-				{
-					m_mtrlPlayer = new MaterialAnimationPlayer();
-					m_mtrlPlayer->eventCompleted().bind(this, &Model::MtrlAnim_Completed);
-				}
-			}
-		}
 		void Model::UpdateAnimation()
 		{
-			if (m_rootAnimCompleted)
-			{
-				if (m_autoLoop)
-				{
-					ControlRootAnimation(AC_Play);
-				}
-				m_rootAnimCompleted = false;
-			}
 			if (m_rigidAnimCompleted)
 			{
 				if (m_autoLoop)
@@ -438,7 +179,7 @@ namespace Apoc3D
 				m_skinAnimCompleted = false;
 			}
 			if (m_mtrlAnimCompleted) 
-            {
+			{
 				if (m_autoLoop)
 				{
 					ControlMaterialAnimation(AC_Play);
@@ -550,7 +291,7 @@ namespace Apoc3D
 						{
 							int entId = m_renderOpEntID[i];
 
-							
+
 							Matrix temp;
 							m_animInstance[k]->GetTransform(entId, temp);
 
@@ -563,7 +304,7 @@ namespace Apoc3D
 					{
 						rop.RootTransform = Matrix::Identity;
 					}
-					
+
 					if (m_skinPlayer)
 					{
 						rop.PartTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
@@ -634,6 +375,359 @@ namespace Apoc3D
 			}
 			if (m_mtrlPlayer)
 				m_mtrlPlayer->Update(time);
+		}
+
+
+		void Model::InitializeAnimation()
+		{
+			if (!m_animData)
+				return;
+
+			ReloadRigidAnimation();
+			ReloadSkinAnimation();
+			ReloadMaterialAnimation();
+		}
+
+		void Model::PlayAnimation(AnimationType type)
+		{
+			if ((type & ANIMTYPE_Skinned) != 0) ControlSkinnedAnimation(AC_Play);
+			if ((type & ANIMTYPE_Rigid) != 0) ControlRigidAnimation(AC_Play);
+			if ((type & ANIMTYPE_Material) != 0) ControlMaterialAnimation(AC_Play);
+		}
+		void Model::PauseAnimation(AnimationType type)
+		{
+			if ((type & ANIMTYPE_Skinned) != 0) ControlSkinnedAnimation(AC_Pause);
+			if ((type & ANIMTYPE_Rigid) != 0) ControlRigidAnimation(AC_Pause);
+			if ((type & ANIMTYPE_Material) != 0) ControlMaterialAnimation(AC_Pause);
+		}
+		void Model::ResumeAnimation(AnimationType type)
+		{
+			if ((type & ANIMTYPE_Skinned) != 0) ControlSkinnedAnimation(AC_Resume);
+			if ((type & ANIMTYPE_Rigid) != 0) ControlRigidAnimation(AC_Resume);
+			if ((type & ANIMTYPE_Material) != 0) ControlMaterialAnimation(AC_Resume);
+		}
+		void Model::StopAnimation(AnimationType type)
+		{
+			if ((type & ANIMTYPE_Skinned) != 0) ControlSkinnedAnimation(AC_Stop);
+			if ((type & ANIMTYPE_Rigid) != 0) ControlRigidAnimation(AC_Stop);
+			if ((type & ANIMTYPE_Material) != 0) ControlMaterialAnimation(AC_Stop);
+		}
+
+		void Model::ControlSkinnedAnimation(AnimationControl ctrl)
+		{
+			if (!m_skinPlayer)
+				return;
+			if (!m_animData)
+				return;
+
+
+			if (m_animData->hasSkinnedClip())
+			{
+				const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
+				//AnimationData::ClipTable::const_iterator iter = table.find(m_selectedClipName);
+				//if (iter != table.end())
+				ModelAnimationClip* clip;
+				if (table.TryGetValue(m_selectedClipName, clip))
+				{
+					switch (ctrl)
+					{
+					case AC_Play:
+						m_skinPlayer->StartClip(clip, 1, 0);
+						m_skinState = APS_Playing;
+						break;
+					case AC_Pause:
+						m_skinPlayer->PauseClip();
+						m_skinState = APS_Paused;
+						break;
+					case AC_Stop:
+						m_skinPlayer->PauseClip();
+						m_skinPlayer->setCurrentKeyframe(clip->getKeyframes().getCount()>10 ? 10 : 0);
+						m_skinState = APS_Stopped;
+						break;
+					case AC_Resume:
+						m_skinPlayer->ResumeClip();
+						m_skinState = APS_Playing;
+						break;
+					}
+				}
+			}
+		}
+		void Model::ControlRigidAnimation(AnimationControl ctrl)
+		{
+			if (!m_rigidPlayer)
+				return;
+			if (!m_animData)
+				return;
+
+			if (m_animData->hasRigidClip())
+			{
+				const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
+				ModelAnimationClip* clip;
+
+				if (table.TryGetValue(m_selectedClipName, clip))
+				{
+					switch (ctrl)
+					{
+					case AC_Play:
+						m_rigidPlayer->StartClip(clip, 1, 0);
+						m_rigidState = APS_Playing;
+						break;
+					case AC_Pause:
+						m_rigidPlayer->PauseClip();
+						m_rigidState = APS_Paused;
+						break;
+					case AC_Stop:
+						m_rigidPlayer->PauseClip();
+						m_rigidPlayer->setCurrentKeyframe(0);
+						m_rigidState = APS_Stopped;
+						break;
+					case AC_Resume:
+						m_rigidPlayer->ResumeClip();
+						m_rigidState = APS_Playing;
+						break;
+					}
+				}
+			}
+		}
+		void Model::ControlMaterialAnimation(AnimationControl ctrl)
+		{
+			if (!m_mtrlPlayer)
+				return;
+			
+			if (!m_animData)
+				return;
+
+			if (m_animData->hasMtrlClip())
+			{
+				const AnimationData::MtrlClipTable& table = m_animData->getMaterialAnimationClips();
+				MaterialAnimationClip* clip;
+
+				if (table.TryGetValue(m_selectedClipName, clip))
+				{
+					switch (ctrl)
+					{
+					case AC_Play:
+						m_mtrlPlayer->StartClip(clip, 1, 0);
+						m_mtrlState = APS_Playing;
+						break;
+					case AC_Pause:
+						m_mtrlPlayer->PauseClip();
+						m_mtrlState = APS_Paused;
+						break;
+					case AC_Stop:
+						m_mtrlPlayer->PauseClip();
+						m_mtrlPlayer->setCurrentKeyframe(0);
+						m_mtrlState = APS_Stopped;
+						break;
+					case AC_Resume:
+						m_mtrlPlayer->ResumeClip();
+						m_mtrlState = APS_Playing;
+						break;
+					}
+				}
+			}
+		}
+
+		
+		void Model::ReloadAnimation(AnimationType type)
+		{
+			if ((type & ANIMTYPE_Rigid) != 0) ReloadSkinAnimation(); 
+			if ((type & ANIMTYPE_Skinned) != 0) ReloadRigidAnimation();
+			if ((type & ANIMTYPE_Material) != 0) ReloadMaterialAnimation();
+		}
+		void Model::ReloadMaterialAnimation()
+		{
+			if (m_mtrlPlayer)				
+			{
+				m_mtrlPlayer->eventCompleted().clear();
+				delete m_mtrlPlayer;
+				m_mtrlPlayer = nullptr;
+			}
+
+			if (m_animData->hasMtrlClip())
+			{
+				const AnimationData::MtrlClipTable& table = m_animData->getMaterialAnimationClips();
+				if (table.getCount())
+				{
+					m_mtrlPlayer = new MaterialAnimationPlayer();
+					m_mtrlPlayer->eventCompleted().bind(this, &Model::MtrlAnim_Completed);
+				}
+			}
+			m_mtrlState = APS_Stopped;
+		}
+		void Model::ReloadSkinAnimation()
+		{
+			if (m_skinPlayer)
+			{
+				m_skinPlayer->eventCompleted().clear();
+				delete m_skinPlayer;
+				m_skinPlayer = nullptr;
+			}
+
+			if (m_animData->hasSkinnedClip())
+			{
+				const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
+
+				if (table.getCount())
+				{
+					const List<Bone>* bones = &m_animData->getBones();
+
+					assert(bones->getCount());
+					m_skinPlayer = new SkinnedAnimationPlayer(bones);
+
+					m_animInstance.Add(m_skinPlayer);
+					m_skinPlayer->eventCompleted().bind(this, &Model::SkinAnim_Completed);
+				}
+			}
+
+			m_skinState = APS_Stopped;
+		}
+		void Model::ReloadRigidAnimation()
+		{
+			if (m_rigidPlayer)				
+			{
+				m_rigidPlayer->eventCompleted().clear();
+				delete m_rigidPlayer;
+				m_rigidPlayer = nullptr;
+			}
+
+			if (m_animData->hasRigidClip())
+			{
+				const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
+
+				if (table.getCount())
+				{
+					//m_rootPlayer = new RootAnimationPlayer();
+					//
+					//m_animInstance.Add(m_rootPlayer);
+
+					//m_rootPlayer->eventCompleted().bind(this, &Model::RootAnim_Completed);
+
+					m_rigidPlayer = new RigidAnimationPlayer(m_animData->RigidEntityCount);
+
+					m_animInstance.Add(m_rigidPlayer);
+
+					m_rigidPlayer->eventCompleted().bind(this, &Model::RigidAnim_Competed);
+				}
+			}
+			m_rigidState = APS_Stopped;
+		}
+
+
+		void Model::SetSelectedClipName(const String& name)
+		{
+			if (m_selectedClipName != name)
+			{
+				InitializeAnimation();
+			}
+		}
+
+		float Model::GetCurrentAnimationDuration(AnimationType type) const
+		{
+			if ((type & ANIMTYPE_Rigid) != 0)
+			{
+				if (m_rigidPlayer && m_rigidPlayer->getCurrentClip())
+					return m_rigidPlayer->getCurrentClip()->getDuration();
+			}
+
+			if ((type & ANIMTYPE_Skinned) != 0)
+			{
+				if (m_skinPlayer && m_skinPlayer->getCurrentClip())
+					return m_skinPlayer->getCurrentClip()->getDuration();
+			}
+
+			if ((type & ANIMTYPE_Material) != 0)
+			{
+				if (m_mtrlPlayer && m_mtrlPlayer->getCurrentClip())
+					return m_mtrlPlayer->getCurrentClip()->Duration;
+			}
+
+			return 0;
+		}
+
+		bool Model::HasAnimation(AnimationType type) const
+		{
+			if ((type & ANIMTYPE_Rigid) != 0)
+			{
+				return !!m_rigidPlayer;
+			}
+			if ((type & ANIMTYPE_Skinned) != 0)
+			{
+				return !!m_skinPlayer;
+			}
+			if ((type & ANIMTYPE_Material) != 0)
+			{
+				return !!m_mtrlPlayer;
+			}
+			throw AP_EXCEPTION(EX_Argument, L"type");
+		}
+
+		const ModelAnimationClip* GetModelAnimClip(const String& clipName, const AnimationData::ClipTable& clipTable);
+
+		const ModelAnimationClip* Model::GetSkinAnimationSelectedClip() const
+		{
+			if (!m_animData) return 0;
+			if (!m_skinPlayer) return 0;
+
+			const AnimationData::ClipTable& table = m_animData->getSkinnedAnimationClips();
+			return GetModelAnimClip(m_selectedClipName, table);
+		}
+		const MaterialAnimationClip* Model::GetMaterialDurationSelectedClip() const
+		{
+			if (!m_animData)
+				return 0;
+			if (!m_mtrlPlayer)
+				return 0;
+
+			const AnimationData::MtrlClipTable& table = m_animData->getMaterialAnimationClips();
+			if (table.getCount())
+			{
+				MaterialAnimationClip* clip;
+
+				if (table.TryGetValue(m_selectedClipName, clip))
+				{
+					return clip;
+				}
+			}
+			return nullptr;
+		}
+		const ModelAnimationClip* Model::GetRigidAnimationSelectedClip() const
+		{
+			if (!m_animData) return 0;
+			if (!m_skinPlayer) return 0;
+
+			const AnimationData::ClipTable& table = m_animData->getRigidAnimationClips();
+			return GetModelAnimClip(m_selectedClipName, table);
+		}
+
+		void Model::SetAnimationKeyFrame(AnimationType type, int index)
+		{
+			if ((type & ANIMTYPE_Rigid) != 0)
+			{
+				m_rigidPlayer->setCurrentKeyframe(index);
+			}
+			if ((type & ANIMTYPE_Skinned) != 0)
+			{
+				m_skinPlayer->setCurrentKeyframe(index);
+			}
+			if ((type & ANIMTYPE_Material) != 0)
+			{
+				m_mtrlPlayer->setCurrentKeyframe(index);
+			}
+		}
+		
+		const ModelAnimationClip* GetModelAnimClip(const String& clipName, const AnimationData::ClipTable& clipTable)
+		{
+			if (clipTable.getCount())
+			{
+				ModelAnimationClip* clip;
+
+				if (clipTable.TryGetValue(clipName, clip))
+				{
+					return clip;
+				}
+			}
+			return nullptr;
 		}
 	}
 }

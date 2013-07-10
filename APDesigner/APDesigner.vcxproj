@@ -134,7 +134,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="APDesigner.ico" />
-    <None Include="ModelViewSceneRenderer.xml" />
+    <None Include="ModelViewSceneRenderer.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="ModelViewSceneScript.xml">
       <SubType>Designer</SubType>
     </None>

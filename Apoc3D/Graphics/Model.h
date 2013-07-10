@@ -73,23 +73,20 @@ namespace Apoc3D
 			virtual void load();
 			virtual void unload();
 
-
 		private:
 			RenderDevice* m_renderDevice;
 
 			FastList<Mesh*> m_entities;
 
 			ResourceLocation* m_resourceLocation;
-
 		};
 
 
 		enum AnimationType
 		{
-			ANIMTYPE_Root,
-			ANIMTYPE_Rigid,
-			ANIMTYPE_Skinned,
-			ANIMTYPE_Material
+			ANIMTYPE_Rigid = 1,
+			ANIMTYPE_Skinned = 2,
+			ANIMTYPE_Material = 4
 		};
 
 		typedef EventDelegate1<AnimationType> ModelAnimationCompletedHandler;
@@ -102,47 +99,12 @@ namespace Apoc3D
 		class APAPI Model : public Renderable
 		{
 		public:
-			ModelAnimationCompletedHandler& eventAnimationCompeleted() { return m_eventAnimCompleted; }
-
-			FastList<ModelAnimationPlayerBase*>& getCustomAnimation() { return m_animInstance; }
-			
-			float GetSkinAnimationDuration() const;
-			float GetAnimationDuration() const;
-
-			void PlayAnimation()
+			enum AnimationPlaybackState
 			{
-				ControlRootAnimation(AC_Play);
-				ControlSkinnedAnimation(AC_Play);
-				ControlRigidAnimation(AC_Play);
-				ControlMaterialAnimation(AC_Play);
-			}
-			void PauseAnimation()
-			{
-				ControlRootAnimation(AC_Pause);
-				ControlSkinnedAnimation(AC_Pause);
-				ControlRigidAnimation(AC_Pause);
-				ControlMaterialAnimation(AC_Pause);
-			}
-			void ResumeAnimation()
-			{
-				ControlRootAnimation(AC_Resume);
-				ControlSkinnedAnimation(AC_Resume);
-				ControlRigidAnimation(AC_Resume);
-				ControlMaterialAnimation(AC_Resume);
-			}
-			void StopAnimation()
-			{
-				ControlRootAnimation(AC_Stop);
-				ControlSkinnedAnimation(AC_Stop);
-				ControlRigidAnimation(AC_Stop);
-				ControlMaterialAnimation(AC_Stop);
-			}
-
-			/** Gets the ModelSharedData using. 
-			 *  The caller's thread will be suspended if ModelSharedData is loaded.
-			 *
-			 */
-			ModelSharedData* GetData();
+				APS_Playing,
+				APS_Paused,
+				APS_Stopped
+			};
 
 			/** Initializes a new model from ModelSharedData and an optional AnimationData.
 			 *
@@ -150,8 +112,13 @@ namespace Apoc3D
 			 */
 			Model(ResourceHandle<ModelSharedData>* data, const AnimationData* animData = 0);
 			~Model(void);
+		
+			/**
+			 *  Gets the ModelSharedData currently being used. 
+			 *  The caller's thread will be suspended if ModelSharedData is loaded.
+			 */
+			ModelSharedData* GetData();
 
-			void ReloadMaterialAnimation();			
 			void RebuildROPCache() { m_isOpBufferBuilt = false; m_opBuffer.Clear(); }
 
 			virtual RenderOperationBuffer* GetRenderOperation(int lod);
@@ -160,7 +127,32 @@ namespace Apoc3D
 			/** The update will do the animation works if the model has animation.
 			*/
 			void Update(const GameTime* const time);
+
+			void PlayAnimation(AnimationType type = (AnimationType)(ANIMTYPE_Material | ANIMTYPE_Rigid | ANIMTYPE_Skinned));
+			void PauseAnimation(AnimationType type = (AnimationType)(ANIMTYPE_Material | ANIMTYPE_Rigid | ANIMTYPE_Skinned));
+			void ResumeAnimation(AnimationType type = (AnimationType)(ANIMTYPE_Material | ANIMTYPE_Rigid | ANIMTYPE_Skinned));
+			void StopAnimation(AnimationType type = (AnimationType)(ANIMTYPE_Material | ANIMTYPE_Rigid | ANIMTYPE_Skinned));
+
+			void ReloadAnimation(AnimationType type);	
+			void ReloadMaterialAnimation();
+			void ReloadSkinAnimation();
+			void ReloadRigidAnimation();
+
+			void SetSelectedClipName(const String& name);
+
+			const ModelAnimationClip* GetSkinAnimationSelectedClip() const;
+			const ModelAnimationClip* GetRigidAnimationSelectedClip() const;
+			const MaterialAnimationClip* GetMaterialDurationSelectedClip() const;
 			
+			float GetCurrentAnimationDuration(AnimationType type) const;
+			bool HasAnimation(AnimationType type) const;
+			
+
+			void SetAnimationKeyFrame(AnimationType type, int index);
+
+			ModelAnimationCompletedHandler& eventAnimationCompeleted() { return m_eventAnimCompleted; }
+
+			FastList<ModelAnimationPlayerBase*>& getCustomAnimation() { return m_animInstance; }
 		private:
 			enum AnimationControl
 			{
@@ -169,6 +161,29 @@ namespace Apoc3D
 				AC_Resume,
 				AC_Pause
 			};
+
+			void ControlSkinnedAnimation(AnimationControl ctrl);
+			void ControlRigidAnimation(AnimationControl ctrl);
+			void ControlMaterialAnimation(AnimationControl ctrl);
+
+			void RigidAnim_Competed()
+			{
+				m_rigidAnimCompleted = true;
+				m_eventAnimCompleted.Invoke(ANIMTYPE_Rigid);
+			}
+			void SkinAnim_Completed()
+			{
+				m_skinAnimCompleted = true;
+				m_eventAnimCompleted.Invoke(ANIMTYPE_Skinned);
+			}
+			void MtrlAnim_Completed()
+			{
+				m_mtrlAnimCompleted = true;
+				m_eventAnimCompleted.Invoke(ANIMTYPE_Material);
+			}
+			void InitializeAnimation();
+			void UpdateAnimation();
+
 
 			/** Whether the RenderOperationBuffer is pre-calculated and stored. 
 			 *  The RenderOperations inside are build first time the model is drawn for performance considerations.
@@ -188,7 +203,6 @@ namespace Apoc3D
 			/** states used for looping check. does not go public
 			*/
 			bool m_rigidAnimCompleted;
-			bool m_rootAnimCompleted;
 			bool m_skinAnimCompleted;
 			bool m_mtrlAnimCompleted;
 
@@ -196,9 +210,12 @@ namespace Apoc3D
 			const AnimationData* m_animData;
 
 			SkinnedAnimationPlayer* m_skinPlayer;
-			RootAnimationPlayer* m_rootPlayer;
 			RigidAnimationPlayer* m_rigidPlayer;
 			MaterialAnimationPlayer* m_mtrlPlayer;
+
+			AnimationPlaybackState m_skinState;
+			AnimationPlaybackState m_rigidState;
+			AnimationPlaybackState m_mtrlState;
 
 			FastList<ModelAnimationPlayerBase*> m_animInstance;
 
@@ -207,35 +224,6 @@ namespace Apoc3D
 
 			ModelAnimationCompletedHandler m_eventAnimCompleted;
 
-
-
-			void ControlRootAnimation(AnimationControl ctrl);
-			void ControlSkinnedAnimation(AnimationControl ctrl);
-			void ControlRigidAnimation(AnimationControl ctrl);
-			void ControlMaterialAnimation(AnimationControl ctrl);
-
-			void RootAnim_Completed()
-			{
-				m_rootAnimCompleted = true;
-				m_eventAnimCompleted.Invoke(ANIMTYPE_Root);
-			}
-			void RigidAnim_Competed()
-			{
-				m_rigidAnimCompleted = true;
-				m_eventAnimCompleted.Invoke(ANIMTYPE_Root);
-			}
-			void SkinAnim_Completed()
-			{
-				m_skinAnimCompleted = true;
-				m_eventAnimCompleted.Invoke(ANIMTYPE_Root);
-			}
-			void MtrlAnim_Completed()
-			{
-				m_mtrlAnimCompleted = true;
-				m_eventAnimCompleted.Invoke(ANIMTYPE_Root);
-			}
-			void InitializeAnimation();
-			void UpdateAnimation();
 		};
 	}
 }

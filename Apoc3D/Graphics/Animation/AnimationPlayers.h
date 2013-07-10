@@ -49,38 +49,7 @@ namespace Apoc3D
 			class APAPI ModelAnimationPlayerBase
 			{
 			public:
-				/**
-				 *  Invoked when playback has completed.
-				 */
-				AnimationCompeletedHandler& eventCompleted() { return m_eventCompeleted; }
-
-				/**
-				 *  Gets the clip currently being decoded.
-				 */
-				const ModelAnimationClip* getCurrentClip() const { return m_currentClipValue; }
-
-				/**
-				 *  Gets the current key frame index
-				 */
-				int getCurrentKeyframe() const { return m_currentKeyframe; }
-				/**
-				 *  Sets the current key frame index
-				 */
-				void setCurrentKeyframe(int value)
-				{
-					const FastList<ModelKeyframe>& keyframes = m_currentClipValue->getKeyframes();
-					float time = keyframes[value].getTime();
-					setCurrentTimeValue( time );
-				}
-
-				/**
-				 *  Gets the current play position.
-				 */
-				float getCurrentTimeValue() const { return m_currentTimeValue; }
-				/**
-				 *  Set the current play position.
-				 */
-				void setCurrentTimeValue(float value);
+				virtual ~ModelAnimationPlayerBase() { }
 
 				/**
 				 *  Starts playing a clip
@@ -124,6 +93,40 @@ namespace Apoc3D
 
 				virtual void GetTransform(int boneID, Matrix& result) = 0;
 				
+				/**
+				 *  Invoked when playback has completed.
+				 */
+				AnimationCompeletedHandler& eventCompleted() { return m_eventCompeleted; }
+
+				/**
+				 *  Gets the clip currently being decoded.
+				 */
+				const ModelAnimationClip* getCurrentClip() const { return m_currentClipValue; }
+
+				/**
+				 *  Gets the current key frame index
+				 */
+				int getCurrentKeyframe() const { return m_currentKeyframe; }
+				/**
+				 *  Sets the current key frame index
+				 */
+				void setCurrentKeyframe(int value)
+				{
+					const FastList<ModelKeyframe>& keyframes = m_currentClipValue->getKeyframes();
+					float time = keyframes[value].getTime();
+					setCurrentTimeValue( time );
+				}
+
+				/**
+				 *  Gets the current play position.
+				 */
+				float getCurrentTimeValue() const { return m_currentTimeValue; }
+				/**
+				 *  Set the current play position.
+				 */
+				void setCurrentTimeValue(float value);
+
+				bool isPaused() const { return m_paused; }
 			protected:
 				/**
 				 *  Virtual method allowing subclasses to do any initialization of data when the clip is initialized.
@@ -142,7 +145,7 @@ namespace Apoc3D
 				virtual void OnUpdate() { }
 
 				ModelAnimationPlayerBase()
-					: m_currentClipValue(0), m_currentTimeValue(0), m_currentKeyframe(0), m_playbackRate(0),
+					: m_currentClipValue(nullptr), m_currentTimeValue(0), m_currentKeyframe(0), m_playbackRate(0),
 					m_duration(0), m_elapsedPlaybackTime(0), m_paused(false)
 				{
 
@@ -409,40 +412,6 @@ namespace Apoc3D
 			class APAPI MaterialAnimationPlayer
 			{
 			public:
-				int getCurrentMaterialFrame() const { return m_currentFrame; }
-				/**
-				 *  Invoked when playback has completed.
-				 */
-				AnimationCompeletedHandler& eventCompleted() { return m_eventCompeleted; }
-
-				/**
-				 *  Gets the clip currently being decoded.
-				 */
-				const MaterialAnimationClip* getCurrentClip() const { return m_currentClipValue; }
-
-				/**
-				 *  Gets the current key frame index
-				 */
-				int getCurrentKeyframe() const { return m_currentKeyframe; }
-				/**
-				 *  Sets the current key frame index
-				 */
-				void setCurrentKeyframe(int value)
-				{
-					const FastList<MaterialAnimationKeyframe>& keyframes = m_currentClipValue->Keyframes;
-					float time = keyframes[value].getTime();
-					setCurrentTimeValue( time );
-				}
-
-				/**
-				 *  Gets the current play position.
-				 */
-				float getCurrentTimeValue() const { return m_currentTimeValue; }
-				/**
-				 *  Set the current play position.
-				 */
-				void setCurrentTimeValue(float value);
-
 				MaterialAnimationPlayer()
 					: m_currentClipValue(0), m_currentTimeValue(0), m_currentKeyframe(0), m_playbackRate(0),
 					m_duration(0), m_elapsedPlaybackTime(0), m_paused(false), m_currentFrame(0)
@@ -487,7 +456,42 @@ namespace Apoc3D
 
 				virtual void Update(const GameTime* const gameTime);
 
+				
+				int getCurrentMaterialFrame() const { return m_currentFrame; }
+				/**
+				 *  Invoked when playback has completed.
+				 */
+				AnimationCompeletedHandler& eventCompleted() { return m_eventCompeleted; }
 
+				/**
+				 *  Gets the clip currently being decoded.
+				 */
+				const MaterialAnimationClip* getCurrentClip() const { return m_currentClipValue; }
+
+				/**
+				 *  Gets the current key frame index
+				 */
+				int getCurrentKeyframe() const { return m_currentKeyframe; }
+				/**
+				 *  Sets the current key frame index
+				 */
+				void setCurrentKeyframe(int value)
+				{
+					const FastList<MaterialAnimationKeyframe>& keyframes = m_currentClipValue->Keyframes;
+					float time = keyframes[value].getTime();
+					setCurrentTimeValue( time );
+				}
+
+				/**
+				 *  Gets the current play position.
+				 */
+				float getCurrentTimeValue() const { return m_currentTimeValue; }
+				/**
+				 *  Set the current play position.
+				 */
+				void setCurrentTimeValue(float value);
+
+				bool isPaused() const { return m_paused; }
 				
 			private:
 				/**
