@@ -66,7 +66,8 @@ namespace Apoc3D
 		}
 		ModelSharedData::~ModelSharedData()
 		{
-			delete m_resourceLocation;
+			if (m_resourceLocation)
+				delete m_resourceLocation;
 			for (int i=0; i< m_entities.getCount();i++)
 			{
 				delete m_entities[i];
@@ -701,7 +702,7 @@ namespace Apoc3D
 			return GetModelAnimClip(m_selectedClipName, table);
 		}
 
-		void Model::SetAnimationKeyFrame(AnimationType type, int index)
+		void Model::SetCurrentAnimationKeyFrame(AnimationType type, int index)
 		{
 			if ((type & ANIMTYPE_Rigid) != 0)
 			{
@@ -715,6 +716,22 @@ namespace Apoc3D
 			{
 				m_mtrlPlayer->setCurrentKeyframe(index);
 			}
+		}
+		int Model::GetCurrentAnimationKeyFrame(AnimationType type)
+		{
+			if ((type & ANIMTYPE_Rigid) != 0)
+			{
+				return m_rigidPlayer->getCurrentKeyframe();
+			}
+			if ((type & ANIMTYPE_Skinned) != 0)
+			{
+				return m_skinPlayer->getCurrentKeyframe();
+			}
+			if ((type & ANIMTYPE_Material) != 0)
+			{
+				return m_mtrlPlayer->getCurrentKeyframe();
+			}
+			throw AP_EXCEPTION(EX_Argument, L"type");
 		}
 		
 		const ModelAnimationClip* GetModelAnimClip(const String& clipName, const AnimationData::ClipTable& clipTable)

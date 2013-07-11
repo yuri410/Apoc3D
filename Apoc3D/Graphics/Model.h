@@ -147,8 +147,8 @@ namespace Apoc3D
 			float GetCurrentAnimationDuration(AnimationType type) const;
 			bool HasAnimation(AnimationType type) const;
 			
-
-			void SetAnimationKeyFrame(AnimationType type, int index);
+			int GetCurrentAnimationKeyFrame(AnimationType type);
+			void SetCurrentAnimationKeyFrame(AnimationType type, int index);
 
 			ModelAnimationCompletedHandler& eventAnimationCompeleted() { return m_eventAnimCompleted; }
 
