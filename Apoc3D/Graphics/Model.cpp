@@ -27,9 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Animation/AnimationData.h"
 #include "Animation/AnimationPlayers.h"
 #include "apoc3d/Core/ResourceHandle.h"
+#include "apoc3d/IOLib/ModelData.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "ModelManager.h"
-#include "apoc3d/IOLib/ModelData.h"
+
 
 //template class Apoc3D::Core::ResourceHandle<Apoc3D::Graphics::ModelSharedData>;
 
