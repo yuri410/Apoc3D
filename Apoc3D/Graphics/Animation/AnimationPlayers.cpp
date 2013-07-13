@@ -255,6 +255,7 @@ namespace Apoc3D
 					{
 						m_currentKeyframe = i;
 						SetKeyframe(m_currentClipValue->Keyframes[i]);
+						break;
 					}
 				}
 				m_currentTimeValue = t;
