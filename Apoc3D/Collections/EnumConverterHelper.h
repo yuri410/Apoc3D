@@ -49,6 +49,7 @@ namespace Apoc3D
 				m_invCast(capacity, &m_comparer2)
 			{ }
 
+			bool SupportsName(const String& name) { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
 			T Parse(const String& name) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return static_cast<T>(m_cast[n]); }
 			String ToString(T e) const { return m_invCast[e]; }
 
