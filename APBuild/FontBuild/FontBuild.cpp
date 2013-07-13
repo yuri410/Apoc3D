@@ -40,6 +40,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Collections/CollectionsCommon.h"
 #include "apoc3d/Config/ConfigurationSection.h"
+#include "apoc3d/Config/Configuration.h"
+#include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/ExistTable.h"
 #include "apoc3d/Collections/HashMap.h"
@@ -647,5 +649,57 @@ namespace APBuild
 
 	}
 
-	
+	void FontBuild::BuildGlyphCheck(const ConfigurationSection* sect)
+	{
+		String srcFile = sect->getAttribute(L"SourceFile");
+		String dstFile = sect->getAttribute(L"DestinationFile");
+
+		EnsureDirectory(PathUtils::GetDirectory(dstFile));
+		
+		FT_Library library;
+		if (FT_Init_FreeType( &library )) 
+			throw std::runtime_error("FT_Init_FreeType failed");
+		
+		std::string name = StringUtils::toString(srcFile);
+		FT_Face face;
+		if (FT_New_Face( library, name.c_str(), 0, &face )) 
+			throw std::runtime_error("FT_New_Face failed (there is probably a problem with your font file)");
+
+		FT_Select_Charmap(face, FT_ENCODING_UNICODE );
+
+		List<std::pair<FT_UInt, FT_UInt>> regions;
+		FT_UInt lastIdx = 0;
+		for (uint i=0;i<65535;i++)
+		{
+			FT_UInt idx = FT_Get_Char_Index(face, i);
+			
+			if (idx == 0)
+			{
+				if (i - lastIdx > 1)
+				{
+					// put session
+					regions.Add(std::make_pair(lastIdx+1, i-1));
+				}
+				lastIdx = i;
+			}
+		}
+
+
+		FT_Done_Face(face);
+		FT_Done_FreeType(library);
+
+		FileOutStream* fs = new FileOutStream(dstFile);
+		BinaryWriter* bw = new BinaryWriter(fs);
+		
+		bw->WriteInt32(regions.getCount());
+
+		for (int i=0;i<regions.getCount();i++)
+		{
+			bw->WriteUInt32(regions[i].first);
+			bw->WriteUInt32(regions[i].second);
+		}
+
+		bw->Close();
+		delete bw;
+	}
 }

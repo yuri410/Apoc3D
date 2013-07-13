@@ -336,6 +336,7 @@ namespace Apoc3D
 
 			char m_buffer[32];
 			uint32 m_sizeInBytes;
+			int64 m_initialPosition;
 		};
 
 		/**

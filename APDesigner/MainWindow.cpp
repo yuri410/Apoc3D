@@ -36,6 +36,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "DocumentModel/ExtensionModel.h"
 #include "DocumentModel/ExtensionMaterial.h"
 #include "DocumentUI/ExtensionUI.h"
+#include "DocumentFont/ExtensionFont.h"
 
 #include "Document.h"
 #include "TextureViewer.h"
@@ -162,6 +163,7 @@ namespace APDesigner
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionMaterial(this));
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionEffect(this));
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionUI(this));
+		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionFont(this));
 		//m_font = FontManager::getSingleton().getFont(L"english");
 
 		ObjectFactory* fac = m_device->getObjectFactory();

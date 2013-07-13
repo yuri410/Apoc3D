@@ -37,6 +37,8 @@ namespace APBuild
 		static void BuildByFreeType(const FontBuildConfig& config);
 	public:
 		static void Build(const ConfigurationSection* sect);
+
+		static void BuildGlyphCheck(const ConfigurationSection* sect);
 	};
 }
 #endif

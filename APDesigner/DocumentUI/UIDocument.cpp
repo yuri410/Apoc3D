@@ -56,7 +56,7 @@ using namespace APDesigner::CommonDialog;
 namespace APDesigner
 {
 	UIDocument::UIDocument(MainWindow* window, EditorExtension* ext, const String& file)
-		: Document(window, ext), m_editingForm(nullptr)
+		: Document(window, ext), m_editingForm(nullptr), m_filePath(file)
 	{
 
 		m_uiViewer = new PictureBox(Point(15, 27), 1);
@@ -72,7 +72,7 @@ namespace APDesigner
 
 	UIDocument::~UIDocument()
 	{
-
+		delete m_uiViewer;
 	}
 
 

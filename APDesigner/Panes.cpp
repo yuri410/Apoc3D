@@ -229,6 +229,10 @@ namespace APDesigner
 				AddEntry(PRJITEM_Font, iti);
 			}
 			{
+				ItemTypeInformation iti = { L"adui_new_document", L"FontCheck" };
+				AddEntry(PRJITEM_FontGlyphDist, iti);
+			}
+			{
 				ItemTypeInformation iti = { L"adui_material_32x32", L"Material" };
 				AddEntry(PRJITEM_Material, iti);
 			}

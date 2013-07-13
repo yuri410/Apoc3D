@@ -62,6 +62,7 @@ namespace Apoc3D
 		PRJITEM_CustomEffect,
 		PRJITEM_ShaderNetwork,
 		PRJITEM_Font,
+		PRJITEM_FontGlyphDist,
 		PRJITEM_UILayout
 	};
 	
@@ -465,6 +466,28 @@ namespace Apoc3D
 		String DestFile;
 
 		virtual ProjectItemType getType() const { return PRJITEM_Font; }
+		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual List<String> GetAllOutputFiles();
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+	};
+
+	class APAPI ProjectResFontGlyphDist : public ProjectResource
+	{
+	public:
+		ProjectResFontGlyphDist(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+		
+		String SourceFile;
+		String DestFile;
+
+		virtual ProjectItemType getType() const { return PRJITEM_FontGlyphDist; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 

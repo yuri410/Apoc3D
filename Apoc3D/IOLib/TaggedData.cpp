@@ -53,6 +53,8 @@ namespace Apoc3D
 		TaggedDataReader::TaggedDataReader(Stream* strm)
 			: m_stream(strm)
 		{
+			m_initialPosition = strm->getPosition();
+
 			m_sizeInBytes = (uint32)strm->getLength();
 			m_endianDependent = strm->IsReadEndianDependent();
 
@@ -115,7 +117,8 @@ namespace Apoc3D
 		}
 		void TaggedDataReader::Close(bool seekToEnd)
 		{
-			m_stream->Seek(m_sizeInBytes, SEEK_Current);
+			if (seekToEnd)
+				m_stream->setPosition(m_initialPosition + m_sizeInBytes);
 			m_stream->Close(); 
 		}
 

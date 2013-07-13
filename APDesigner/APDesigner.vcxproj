@@ -155,6 +155,8 @@
   <ItemGroup>
     <ClInclude Include="APDCommon.h" />
     <ClInclude Include="CommonDialog\Win32InputBox.h" />
+    <ClInclude Include="DocumentFont\ExtensionFont.h" />
+    <ClInclude Include="DocumentFont\FontDocument.h" />
     <ClInclude Include="DocumentModel\ExtensionMaterial.h" />
     <ClInclude Include="DocumentModel\MaterialDocument.h" />
     <ClInclude Include="DocumentModel\ExtensionModel.h" />
@@ -190,6 +192,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommonDialog\Win32InputBox.cpp" />
+    <ClCompile Include="DocumentFont\ExtensionFont.cpp" />
+    <ClCompile Include="DocumentFont\FontDocument.cpp" />
     <ClCompile Include="DocumentModel\ExtensionMaterial.cpp" />
     <ClCompile Include="DocumentModel\MaterialDocument.cpp" />
     <ClCompile Include="DocumentModel\ExtensionModel.cpp" />

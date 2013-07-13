@@ -173,6 +173,10 @@ int Build(ConfigurationSection* sect)
 	{
 		FontBuild::Build(sect);
 	}
+	else if (buildType == L"fontcheck")
+	{
+		FontBuild::BuildGlyphCheck(sect);
+	}
 	else if (buildType == L"tanim")
 	{
 		TAnimBuild::Build(sect);

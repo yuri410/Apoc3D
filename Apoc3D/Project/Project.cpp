@@ -613,6 +613,44 @@ namespace Apoc3D
 	}
 
 	/************************************************************************/
+	/*   ProjectResFontGlyphDist                                            */
+	/************************************************************************/
+
+	void ProjectResFontGlyphDist::Parse(const ConfigurationSection* sect)
+	{
+		SourceFile = sect->getAttribute(L"SourceFile");
+		DestFile = sect->getAttribute(L"DestinationFile");
+	}
+	void ProjectResFontGlyphDist::Save(ConfigurationSection* sect, bool savingBuild)
+	{
+		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
+	}
+	List<String> ProjectResFontGlyphDist::GetAllOutputFiles()
+	{
+		List<String> e;
+		if (DestFile.size())
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+		return e;
+	}
+	bool ProjectResFontGlyphDist::IsEarlierThan(time_t t)
+	{
+		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+
+		if (destFileTime < t)
+			return true;
+
+		String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
+		if (File::FileExists(path))
+			if (File::GetFileModifiyTime(path) > destFileTime)
+				return true;
+		return false;
+	}
+	bool ProjectResFontGlyphDist::IsNotBuilt()
+	{
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+	}
+	/************************************************************************/
 	/*   ProjectResEffect                                                   */
 	/************************************************************************/
 
@@ -767,28 +805,34 @@ namespace Apoc3D
 		if (destFileTime < t)
 			return true;
 
-		String path = PathUtils::Combine(m_project->getBasePath(), VS);
-		if (File::FileExists(path))
+		if (VS.size())
 		{
-			if (File::GetFileModifiyTime(path) > destFileTime)
-			{
-				return true;
-			}
+			String path = PathUtils::Combine(m_project->getBasePath(), VS);
+			if (File::FileExists(path))
+				if (File::GetFileModifiyTime(path) > destFileTime)
+					return true;
 		}
-		path = PathUtils::Combine(m_project->getBasePath(), PS);
-		if (File::FileExists(path))
+		if (PS.size())
 		{
-			if (File::GetFileModifiyTime(path) > destFileTime)
-			{
-				return true;
-			}
+			String path = PathUtils::Combine(m_project->getBasePath(), PS);
+			if (File::FileExists(path))
+				if (File::GetFileModifiyTime(path) > destFileTime)
+					return true;
 		}
-		path = PathUtils::Combine(m_project->getBasePath(), PListFile);
-		if (File::FileExists(path))
+		if (GS.size())
 		{
-			if (File::GetFileModifiyTime(path) > destFileTime)
+			String path = PathUtils::Combine(m_project->getBasePath(), GS);
+			if (File::FileExists(path))
+				if (File::GetFileModifiyTime(path) > destFileTime)
+					return true;
+		}
+		if (PListFile.size())
+		{
+			String path = PathUtils::Combine(m_project->getBasePath(), PListFile);
+			if (File::FileExists(path))
 			{
-				return true;
+				if (File::GetFileModifiyTime(path) > destFileTime)
+					return true;
 			}
 		}
 		return false;
@@ -1292,6 +1336,9 @@ namespace Apoc3D
 			case PRJITEM_Font:
 				sect->AddAttributeString(L"Type", L"font");
 				break;
+			case PRJITEM_FontGlyphDist:
+				sect->AddAttributeString(L"Type", L"fontCheck");
+				break;
 			case PRJITEM_Folder:
 				sect->AddAttributeString(L"Type", L"folder");
 				break;
@@ -1304,6 +1351,7 @@ namespace Apoc3D
 			case PRJITEM_UILayout:
 				sect->AddAttributeString(L"Type", L"UILayout");
 				break;
+			
 			}
 			
 			m_typeData->Save(sect, savingBuild);
@@ -1381,6 +1429,12 @@ namespace Apoc3D
 			font->Parse(sect);
 			m_typeData = font;
 			//FontBuild::Build(sect);
+		}
+		else if (buildType == L"glyphcheck")
+		{
+			ProjectResFontGlyphDist* font = new ProjectResFontGlyphDist(m_project);
+			font->Parse(sect);
+			m_typeData = font;
 		}
 		else if (buildType == L"folder")
 		{
