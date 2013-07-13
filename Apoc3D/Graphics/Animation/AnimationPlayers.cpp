@@ -198,45 +198,16 @@ namespace Apoc3D
 				}
 			}
 
-			void MaterialAnimationPlayer::SetKeyframe(const MaterialAnimationKeyframe& keyframe)
+			void MaterialAnimationPlayer::setCurrentKeyframe(int value)
 			{
-				m_currentFrame = keyframe.getMaterialFrame();
-			}
-
-			void MaterialAnimationPlayer::setCurrentTimeValue(float value)
-			{
-				float time = value;
-
-				// If the position moved backwards, reset the keyframe index.
-				if (time < m_currentTimeValue)
-				{
-					m_currentTimeValue = 0;
-					InitClip();
-					if (m_currentClipValue && m_currentClipValue->Keyframes.getCount()>0)
-					{
-						m_currentFrame = 0;
-					}
-				}
-
+				const FastList<MaterialAnimationKeyframe>& keyframes = m_currentClipValue->Keyframes;
+				float time = keyframes[value].getTime();
 				m_currentTimeValue = time;
 
-				const FastList<MaterialAnimationKeyframe>& keyframes = m_currentClipValue->Keyframes;
-
-				while (m_currentKeyframe < keyframes.getCount())
-				{
-					const MaterialAnimationKeyframe& keyframe = keyframes[m_currentKeyframe];
-
-					if (keyframe.getTime()>m_currentTimeValue)
-					{
-						break;
-					}
-
-					// Use this keyframe
-					SetKeyframe(keyframe);
-
-					m_currentKeyframe++;
-				}
+				SetKeyframe(keyframes[value]);
+				m_currentKeyframe = value;
 			}
+
 
 			void MaterialAnimationPlayer::Update(const GameTime* const gameTime)
 			{
@@ -273,8 +244,25 @@ namespace Apoc3D
 				while (t >= m_currentClipValue->Duration)
 					t -= m_currentClipValue->Duration;
 
-				setCurrentTimeValue(t);
+				if (t<m_currentTimeValue)
+				{
+					m_currentKeyframe = 0;
+				}
 
+				for (int i = m_currentKeyframe;i<m_currentClipValue->Keyframes.getCount();i++)
+				{
+					if (m_currentClipValue->Keyframes[i].getTime()>=t)
+					{
+						m_currentKeyframe = i;
+						SetKeyframe(m_currentClipValue->Keyframes[i]);
+					}
+				}
+				m_currentTimeValue = t;
+			}
+
+			void MaterialAnimationPlayer::SetKeyframe(const MaterialAnimationKeyframe& keyframe)
+			{
+				m_currentMaterialFrame = keyframe.getMaterialFrame();
 			}
 		}
 	}

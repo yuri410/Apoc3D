@@ -414,7 +414,7 @@ namespace Apoc3D
 			public:
 				MaterialAnimationPlayer()
 					: m_currentClipValue(0), m_currentTimeValue(0), m_currentKeyframe(0), m_playbackRate(0),
-					m_duration(0), m_elapsedPlaybackTime(0), m_paused(false), m_currentFrame(0)
+					m_duration(0), m_elapsedPlaybackTime(0), m_paused(false), m_currentMaterialFrame(0)
 				{
 
 				}
@@ -428,36 +428,28 @@ namespace Apoc3D
 
 					m_currentClipValue = clip;
 					m_currentKeyframe = 0;
-					setCurrentTimeValue(0);
+					m_currentTimeValue = 0;
 					m_elapsedPlaybackTime = 0;
 					m_paused = false;
 
 					m_playbackRate = playbackRate;
 					m_duration = duration;
-
-					InitClip();
 				}
 
 				/**
 				 *  Will pause the playback of the current clip
 				 */
-				void PauseClip()
-				{
-					m_paused = true;
-				}
+				void PauseClip() { m_paused = true; }
 
 				/**
 				 *  Will resume playback of the current clip
 				 */
-				void ResumeClip()
-				{
-					m_paused = false;
-				}
+				void ResumeClip() { m_paused = false; }
 
 				virtual void Update(const GameTime* const gameTime);
 
 				
-				int getCurrentMaterialFrame() const { return m_currentFrame; }
+				int getCurrentMaterialFrame() const { return m_currentMaterialFrame; }
 				/**
 				 *  Invoked when playback has completed.
 				 */
@@ -475,21 +467,7 @@ namespace Apoc3D
 				/**
 				 *  Sets the current key frame index
 				 */
-				void setCurrentKeyframe(int value)
-				{
-					const FastList<MaterialAnimationKeyframe>& keyframes = m_currentClipValue->Keyframes;
-					float time = keyframes[value].getTime();
-					setCurrentTimeValue( time );
-				}
-
-				/**
-				 *  Gets the current play position.
-				 */
-				float getCurrentTimeValue() const { return m_currentTimeValue; }
-				/**
-				 *  Set the current play position.
-				 */
-				void setCurrentTimeValue(float value);
+				void setCurrentKeyframe(int value);
 
 				bool isPaused() const { return m_paused; }
 				
@@ -527,10 +505,9 @@ namespace Apoc3D
 				
 				AnimationCompeletedHandler m_eventCompeleted;
 
-				int m_currentFrame;
+				int m_currentMaterialFrame;
 
 
-				void InitClip() { }
 				void SetKeyframe(const MaterialAnimationKeyframe& keyframe);
 				
 			};
