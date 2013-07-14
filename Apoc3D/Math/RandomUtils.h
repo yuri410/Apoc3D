@@ -39,40 +39,10 @@ namespace Apoc3D
 		{
 		public:
 			Random();
-			~Random()
-			{
-			}
+			Random(int seed) { SetSeed(seed); }
+			~Random() { }
 
-			void SetSeed(int32 seed)
-			{
-				int seed0 = 0x9a4ec86 - abs(seed);
-				m_seedArray[0x37] = seed0;
-				int incr = 1;
-				for (int i = 1; i < 0x37; i++)
-				{
-					int index = (0x15 * i) % 0x37;
-					m_seedArray[index] = incr;
-					incr = seed0 - incr;
-					if (incr < 0)
-					{
-						incr += 0x7fffffff;
-					}
-					seed0 = m_seedArray[index];
-				}
-				for (int j = 1; j < 5; j++)
-				{
-					for (int k = 1; k < 0x38; k++)
-					{
-						m_seedArray[k] -= m_seedArray[1 + ((k + 30) % 0x37)];
-						if (m_seedArray[k] < 0)
-						{
-							m_seedArray[k] += 0x7fffffff;
-						}
-					}
-				}
-				m_inext = 0;
-				m_inextp = 0x15;
-			}
+			void SetSeed(int32 seed);
 
 			RandomSampleEventHandler& eventSampled() { return m_eSample; };
 
@@ -89,25 +59,20 @@ namespace Apoc3D
 			{
 				assert(minValue<=maxValue);
 
-				long range = maxValue - minValue;
+				int32 range = maxValue - minValue;
 				if (range <= 0x7fffffffL)
 				{
 					return static_cast<int32>(Sample() * range) + minValue;
 				}
 				return static_cast<int32>(GetSampleForLargeRange() * range) + minValue;
 			}
-			float NextFloat()
-			{
-				return Sample();
-			}
+			float NextFloat() { return Sample(); }
 		private:
 			RandomSampleEventHandler m_eSample;
 
 			int32 m_inext;
 			int32 m_inextp;
-			//int32 m_mbig;
-			//int32 m_mseed;
-			//int32 m_mz;
+
 			int32 m_seedArray[0x38];
 
 			int32 InternalSample()
@@ -138,7 +103,7 @@ namespace Apoc3D
 			float GetSampleForLargeRange()
 			{
 				int intSample = InternalSample();
-				if ((((InternalSample() % 2) == 0) ? 1 : 0) != 0)
+				if ((InternalSample() % 2) == 0)
 				{
 					intSample = -intSample;
 				}
@@ -148,7 +113,7 @@ namespace Apoc3D
 			}
 			float Sample()
 			{
-				return (InternalSample() * 4.6566128752457969E-10f);
+				return InternalSample() * 4.6566128752457969E-10f;
 			}
 		};
 
