@@ -35,10 +35,6 @@ namespace Apoc3D
 			randomseed = 2 + _randomseed * _randomseed;
 		}
 
-		double PerlinNoise::GetHeight(double x, double y) const
-		{
-			return amplitude * Total(x, y);
-		}
 
 		double PerlinNoise::Total(double i, double j) const
 		{

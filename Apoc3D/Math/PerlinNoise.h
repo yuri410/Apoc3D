@@ -16,7 +16,8 @@ namespace Apoc3D
 			PerlinNoise(double _persistence, double _frequency, double _amplitude, int _octaves, int _randomseed);
 
 			// Get Height
-			double GetHeight(double x, double y) const;
+			double GetHeight(double x, double y) const { return amplitude * Total(x, y); }
+			double GetUnifiedValue(double x, double y) const { return amplitude * Total(x, y) * 0.5 + 0.5; }
 
 			// Get
 			double Persistence() const { return persistence; }
