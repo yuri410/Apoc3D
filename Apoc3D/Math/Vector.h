@@ -130,6 +130,7 @@ namespace Apoc3D
 				if (length < EPSILON)					
 				{
 					X = Y = Z = W = 0;
+					return;
 				}
 				float inv = 1.0f / length;
 				X *= inv; Y *= inv;
@@ -509,6 +510,7 @@ namespace Apoc3D
 				if (length < EPSILON)					
 				{
 					X = Y = 0;
+					return;
 				}
 				float invLen = 1.0f / length;
 				X *= invLen;
@@ -825,6 +827,7 @@ namespace Apoc3D
 				if (length < EPSILON)					
 				{
 					X = Y = Z = 0;
+					return;
 				}
 				float invLen = 1.0f / length;
 				X *= invLen; Y *= invLen; Z *= invLen;
