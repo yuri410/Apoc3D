@@ -188,7 +188,7 @@ namespace Apoc3D
 		}
 
 		/************************************************************************/
-		/*                                                                      */
+		/*   TextBox                                                            */
 		/************************************************************************/
 
 		TextBox::TextBox(const Point& position, int width)
@@ -569,53 +569,60 @@ namespace Apoc3D
 				m_hscrollBar->Draw(sprite);
 			}
 		}
+
+		const ColorValue DisabledBG = 0xffe1e1e1;
+
 		void TextBox::DrawMonoline(Sprite* sprite)
 		{
+			ColorValue modColor = Enabled ? CV_White : DisabledBG;
+
 			Texture* texture = m_skin->TextBox;
 			m_destRect[0].X = (int)Position.X;
 			m_destRect[0].Y = (int)Position.Y;
-			sprite->Draw(texture, m_destRect[0], &m_skin->TextBoxSrcRectsSingle[0], CV_White);
+			sprite->Draw(texture, m_destRect[0], &m_skin->TextBoxSrcRectsSingle[0], modColor);
 
 			m_destRect[1].X = m_destRect[0].X + m_destRect[0].Width;
 			m_destRect[1].Y = m_destRect[0].Y;
-			sprite->Draw(texture, m_destRect[1], &m_skin->TextBoxSrcRectsSingle[1], CV_White);
+			sprite->Draw(texture, m_destRect[1], &m_skin->TextBoxSrcRectsSingle[1], modColor);
 
 			m_destRect[2].X = m_destRect[1].X + m_destRect[1].Width;
 			m_destRect[2].Y = m_destRect[0].Y;
-			sprite->Draw(texture, m_destRect[2], &m_skin->TextBoxSrcRectsSingle[2], CV_White);
+			sprite->Draw(texture, m_destRect[2], &m_skin->TextBoxSrcRectsSingle[2], modColor);
 		}
 		void TextBox::DrawMultiline(Sprite* sprite)
 		{
+			ColorValue modColor = Enabled ? CV_White : DisabledBG;
+
 			Texture* texture = m_skin->TextBox;
 			m_destRect[0].X = (int)Position.X;
 			m_destRect[0].Y = (int)Position.Y;
-			sprite->Draw(texture, m_destRect[0], &m_skin->TextBoxSrcRects[0], CV_White);
+			sprite->Draw(texture, m_destRect[0], &m_skin->TextBoxSrcRects[0], modColor);
 			m_destRect[1].X = m_destRect[0].X + m_destRect[0].Width;
 			m_destRect[1].Y = m_destRect[0].Y;
-			sprite->Draw(texture, m_destRect[1], &m_skin->TextBoxSrcRects[1], CV_White);
+			sprite->Draw(texture, m_destRect[1], &m_skin->TextBoxSrcRects[1], modColor);
 			m_destRect[2].X = m_destRect[1].X + m_destRect[1].Width;
 			m_destRect[2].Y = m_destRect[0].Y;
-			sprite->Draw(texture, m_destRect[2], &m_skin->TextBoxSrcRects[2], CV_White);
+			sprite->Draw(texture, m_destRect[2], &m_skin->TextBoxSrcRects[2], modColor);
 
 			m_destRect[3].X = m_destRect[0].X;
 			m_destRect[3].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(texture, m_destRect[3], &m_skin->TextBoxSrcRects[3], CV_White);
+			sprite->Draw(texture, m_destRect[3], &m_skin->TextBoxSrcRects[3], modColor);
 			m_destRect[4].X = m_destRect[1].X;
 			m_destRect[4].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(texture, m_destRect[4], &m_skin->TextBoxSrcRects[4], CV_White);
+			sprite->Draw(texture, m_destRect[4], &m_skin->TextBoxSrcRects[4], modColor);
 			m_destRect[5].X = m_destRect[2].X;
 			m_destRect[5].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(texture, m_destRect[5], &m_skin->TextBoxSrcRects[5], CV_White);
+			sprite->Draw(texture, m_destRect[5], &m_skin->TextBoxSrcRects[5], modColor);
 
 			m_destRect[6].X = m_destRect[0].X;
 			m_destRect[6].Y = m_destRect[3].Y + m_destRect[3].Height;
-			sprite->Draw(texture, m_destRect[6], &m_skin->TextBoxSrcRects[6], CV_White);
+			sprite->Draw(texture, m_destRect[6], &m_skin->TextBoxSrcRects[6], modColor);
 			m_destRect[7].X = m_destRect[1].X;
 			m_destRect[7].Y = m_destRect[4].Y + m_destRect[4].Height;
-			sprite->Draw(texture, m_destRect[7], &m_skin->TextBoxSrcRects[7], CV_White);
+			sprite->Draw(texture, m_destRect[7], &m_skin->TextBoxSrcRects[7], modColor);
 			m_destRect[8].X = m_destRect[2].X;
 			m_destRect[8].Y = m_destRect[5].Y + m_destRect[5].Height;
-			sprite->Draw(texture, m_destRect[8], &m_skin->TextBoxSrcRects[8], CV_White);
+			sprite->Draw(texture, m_destRect[8], &m_skin->TextBoxSrcRects[8], modColor);
 		}
 		void TextBox::_DrawText(Sprite* sprite)
 		{

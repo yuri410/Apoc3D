@@ -150,7 +150,7 @@ namespace Apoc3D
 				sprite->Draw(m_skin->ButtonTexture, m_btnDestRect[2], &m_skin->BtnSrcRect[2], m_skin->BtnDimColor);
 				if (Text.size())
 				{
-					m_fontRef->DrawString(sprite, Text, m_textPos, m_skin->BtnTextDimColor);
+					m_fontRef->DrawString(sprite, Text, m_textPos, m_hasTextColorValue ? m_textColorOverride : m_skin->BtnTextDimColor);
 				}
 			}
 			else
@@ -160,7 +160,7 @@ namespace Apoc3D
 				sprite->Draw(m_skin->ButtonTexture, m_btnDestRect[2], &m_skin->BtnSrcRect[2], m_skin->BtnHighLightColor);
 				if (Text.size())
 				{
-					m_fontRef->DrawString(sprite, Text, m_textPos, m_skin->BtnTextDimColor);
+					m_fontRef->DrawString(sprite, Text, m_textPos, m_hasTextColorValue ? m_textColorOverride : m_skin->BtnTextDimColor);
 				}
 			}
 		}
@@ -277,6 +277,11 @@ namespace Apoc3D
 		}
 
 
+		void Button::SetTextColorOverride(ColorValue cv)
+		{
+			m_textColorOverride = cv;
+			m_hasTextColorValue = true;
+		}
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/

@@ -43,7 +43,7 @@ namespace Apoc3D
 				: Control(position, text), m_mouseOver(false), m_mouseDown(false),
 				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
 				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
-				m_rotation(0)
+				m_rotation(0), m_hasTextColorValue(false)
 			{
 				Size.X = Size.Y = 0;
 				//BackColor = backColor;
@@ -53,7 +53,7 @@ namespace Apoc3D
 				: Control(position, text, Point(width, 0)), m_mouseOver(false), m_mouseDown(false),
 				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
 				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
-				m_rotation(0)
+				m_rotation(0), m_hasTextColorValue(false)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
@@ -62,7 +62,7 @@ namespace Apoc3D
 				: Control(position, text, size), m_mouseOver(false), m_mouseDown(false),
 				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
 				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
-				m_rotation(0)
+				m_rotation(0), m_hasTextColorValue(false)
 			{
 				//BackColor = backColor;
 				//ForeColor = foreColor;
@@ -73,7 +73,9 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite);
 			virtual void Update(const GameTime* const time);
 
-			
+
+			void SetTextColorOverride(ColorValue cv);
+
 			/** 
 			 *  Gets the modulation color for custom button in normal state.
 			 */
@@ -136,6 +138,8 @@ namespace Apoc3D
 
 			float m_rotation;
 
+			bool m_hasTextColorValue;
+			ColorValue m_textColorOverride;
 
 			void DrawDefaultButton(Sprite* spriteBatch);
 			void DrawCustomButton(Sprite* spriteBatch);
