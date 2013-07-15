@@ -153,6 +153,10 @@ namespace Apoc3D
 			ModelAnimationCompletedHandler& eventAnimationCompeleted() { return m_eventAnimCompleted; }
 
 			FastList<ModelAnimationPlayerBase*>& getCustomAnimation() { return m_animInstance; }
+
+			AnimationPlaybackState getMaterialAnimationState() const { return m_mtrlState; }
+			AnimationPlaybackState getSkinAnimationState() const { return m_skinState; }
+			AnimationPlaybackState getRigidAnimationState() const { return m_rigidState; }
 		private:
 			enum AnimationControl
 			{
