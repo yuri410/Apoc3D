@@ -41,18 +41,17 @@ namespace Apoc3D
 			uint signBit = (uint)((bits & 0x80000000) >> 16);
 			uint absolute = bits & 0x7fffffffU;
 			if (absolute > 0x47ffefffU)  // too big(131039.992188)
-			{
 				return (ushort)(signBit | 0x7fff);
-			}
+
 			if (absolute < 0x38800000U)  // too small(0.000061)
 			{
-				uint num6 = (absolute & 0x7fffffU) | 0x800000U;
-				int num4 = 0x71 - ((int)(absolute >> 0x17));
-				absolute = (num4 > 0x1f) ? 0x0 : (num6 >> num4);
-				return (ushort)(signBit | (((absolute + 0xfff) + ((absolute >> 13) & 1)) >> 13));
+				// denorm
+				uint fraction = (absolute & 0x7fffffU) | 0x800000U;
+				int shift = 113 - ((int)(absolute >> 23));
+				absolute = (shift > 31) ? 0 : (fraction >> shift);
+				return (ushort)(signBit | ((absolute + 0xfff + ((absolute >> 13) & 1)) >> 13));
 			}
 			return (ushort)(signBit | ((absolute + 0xc8000000U + 0xfff + ((absolute >> 13) & 1)) >> 13));
-
 		}
 		static float HalfToFloat(Half value)
 		{
@@ -61,24 +60,24 @@ namespace Apoc3D
 			{
 				if ((value & 0x3ff) != 0)
 				{
-					uint num2 = 0xfffffff2;
-					uint num = (uint)(value & 0x3ff);
-					while ((num & 0x400) == 0)
+					uint exponent = 0xfffffff2;
+					uint fraction = (uint)(value & 0x3ff);
+					while ((fraction & 0x400) == 0)
 					{
-						num2--;
-						num = num << 0x1;
+						exponent--;
+						fraction <<= 1;
 					}
-					num &= 0xfffffbff;
-					bits = (((uint)value & 0x8000) << 0x10) | ((num2 + 0x7f) << 0x17) | (num << 0xd);
+					fraction &= 0xfffffbff;
+					bits = (((uint)value & 0x8000) << 16) | ((exponent + 127) << 23) | (fraction << 13);
 				}
 				else
 				{
-					bits = (uint)((value & 0x8000) << 0x10);
+					bits = (uint)((value & 0x8000) << 16);
 				}
 			}
 			else
 			{
-				bits = (uint)((((value & 0x8000) << 0x10) | (((value >> 0xa) & 0x1f) - 0xf + 0x7f) << 0x17) | ((value & 0x3ff) << 0xd));
+				bits = (uint)(((value & 0x8000) << 16) | ((((value >> 10) & 31) + 112) << 23) | ((value & 0x3ff) << 13));
 			}
 			return reinterpret_cast<const float&>(bits);
 		}

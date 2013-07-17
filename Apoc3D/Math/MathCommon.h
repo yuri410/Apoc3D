@@ -67,20 +67,19 @@ namespace Apoc3D
 		}
 		inline float Saturate(float v)
 		{
-			if (v>1)
-				v=1;
+			if (v>1) return 1;
 			return (v<0) ? 0:v;
 		}
 		inline float Clamp(float v, float _min, float _max)
 		{
 			if (v > _max)
-				v = _max;
+				return _max;
 			return (v < _min) ? _min : v;
 		}
 		inline int32 Clamp(int32 v, int32 _min, int32 _max)
 		{
 			if (v > _max)
-				v = _max;
+				return _max;
 			return (v<_min) ? _min : v;
 		}
 		inline int32 Max(int32 a, int32 b)

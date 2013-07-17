@@ -177,6 +177,8 @@ namespace Apoc3D
 			 */
 			int* m_lasttime_lineBucketsFreqClassificationCount;
 
+			bool m_isUsingCaching;
+
 			void LoadGlyphData(BinaryReader* br, Glyph& glyph);
 			void EnsureGlyph(Glyph& glyph);
 			/**

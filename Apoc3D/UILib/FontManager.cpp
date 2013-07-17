@@ -53,7 +53,7 @@ namespace Apoc3D
 		}
 
 		Font::Font(RenderDevice* device, ResourceLocation* fl)
-			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(fl)
+			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(fl), m_isUsingCaching(false)
 		{
 			ObjectFactory* fac = device->getObjectFactory();
 			m_font = fac->CreateTexture(FontManager::TextureSize, FontManager::TextureSize, 1, TU_Static, FMT_A8L8);
@@ -211,6 +211,8 @@ namespace Apoc3D
 
 			br->Close();
 			delete br;
+
+			m_isUsingCaching = glyphCount > (m_edgeCount * m_edgeCount);
 
 			if (!newVersion)
 			{
@@ -611,19 +613,23 @@ namespace Apoc3D
 
 		void Font::FrameStartReset()
 		{
-			// copy the data to its "last-frame" buffer
-			memcpy(m_lasttime_lineBucketsFreqClassificationCount, m_lineBucketsFreqClassificationCount, sizeof(int)*m_edgeCount*MaxFreq);
-			// the reset the current to zero for statistics in the current frame
-			memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
-			// set specific freq of all buckets in each line to the zero feq
-			for (int i=0;i<m_edgeCount;i++)
+			if (m_isUsingCaching)
 			{
-				m_lineBucketsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
+				// copy the data to its "last-frame" buffer
+				memcpy(m_lasttime_lineBucketsFreqClassificationCount, m_lineBucketsFreqClassificationCount, sizeof(int)*m_edgeCount*MaxFreq);
+				// the reset the current to zero for statistics in the current frame
+				memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
+				// set specific freq of all buckets in each line to the zero feq
+				for (int i=0;i<m_edgeCount;i++)
+				{
+					m_lineBucketsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
+				}
+
+				memcpy(m_lastFreqTable, m_currentFreqTable, sizeof(int)*m_edgeCount*m_edgeCount);
+				memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
+			
 			}
 
-			memcpy(m_lastFreqTable, m_currentFreqTable, sizeof(int)*m_edgeCount*m_edgeCount);
-			memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
-			
 		}
 
 		void Font::LoadGlyphData(BinaryReader* br, Glyph& glyph)
@@ -672,7 +678,9 @@ namespace Apoc3D
 			{
 				for (int i=0;i<m_edgeCount && !done;i++)
 				{
-					if (m_lineBucketsFreqClassificationCount[freq + i * MaxFreq]>=bucketsNeeded)
+					int32 freqIdx = freq + i * MaxFreq;
+					if (m_lineBucketsFreqClassificationCount[freqIdx]>=bucketsNeeded &&
+						m_lasttime_lineBucketsFreqClassificationCount[freqIdx]>=bucketsNeeded)
 					{
 						// even though the number of buckets in line is sufficient enough
 						// whether they are consecutive still needed to be checked.
@@ -680,7 +688,8 @@ namespace Apoc3D
 						int bucketPosition = -1;
 						for (int j=0;j<m_edgeCount && numOfConsqBuckets<bucketsNeeded;j++)
 						{
-							if (m_currentFreqTable[i*m_edgeCount+j]==freq)
+							int32 cellIdx = i*m_edgeCount+j;
+							if (m_currentFreqTable[cellIdx]<=freq && m_lastFreqTable[cellIdx]<=freq)
 							{
 								numOfConsqBuckets++;
 								if (bucketPosition==-1)
@@ -723,26 +732,29 @@ namespace Apoc3D
 		}
 		void Font::SetUseFreq(const Glyph& glyph)
 		{
-			for (int i=0;i<glyph.NumberOfBucketsUsing;i++)
+			if (m_isUsingCaching)
 			{
-				const Bucket& buk = m_buckets[glyph.StartingParentBucket+i];
-				int& freq = m_currentFreqTable[buk.BucketIndex];
-				int lineIndex = buk.BucketIndex / m_edgeCount;
-				int spFreqLineIdx = lineIndex * MaxFreq;
-				m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]--;
-
-				/*if (max)
+				for (int i=0;i<glyph.NumberOfBucketsUsing;i++)
 				{
-					freq = MaxFreq -1;
-				}
-				else*/
-				{
-					freq++;
-					if (freq >= MaxFreq)
-						freq = MaxFreq-1;
-				}
+					const Bucket& buk = m_buckets[glyph.StartingParentBucket+i];
+					int& freq = m_currentFreqTable[buk.BucketIndex];
+					int lineIndex = buk.BucketIndex / m_edgeCount;
+					int spFreqLineIdx = lineIndex * MaxFreq;
+					m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]--;
 
-				m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]++;
+					/*if (max)
+					{
+						freq = MaxFreq -1;
+					}
+					else*/
+					{
+						freq++;
+						if (freq >= MaxFreq)
+							freq = MaxFreq-1;
+					}
+
+					m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]++;
+				}
 			}
 		}
 		void Font::UseBuckets(Glyph* g, int i, int j, int amount)
