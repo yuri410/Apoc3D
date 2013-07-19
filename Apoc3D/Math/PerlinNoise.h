@@ -89,7 +89,7 @@ namespace Apoc3D
 			double Interpolate(double x, double y, double a) const;
 			double InterpolatedNoise(double x) const
 			{
-				int xint = (int)x;
+				int xint = x>=0 ? (int)x : (int)x - 1;
 				double Xfrac = x - xint;
 
 				double v1 = SmoothedNoise(xint);

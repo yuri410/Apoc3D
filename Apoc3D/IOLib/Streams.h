@@ -27,6 +27,7 @@
  */
 
 #include "apoc3d/Collections/List.h"
+#include <fstream>
 
 using namespace Apoc3D::Collections;
 
@@ -61,7 +62,7 @@ namespace Apoc3D
 			virtual int64 getLength() const = 0;
 
 			virtual void setPosition(int64 offset) = 0;
-			virtual int64 getPosition() const = 0;
+			virtual int64 getPosition() = 0;
 
 			virtual int64 Read(char* dest, int64 count) = 0;
 			int ReadByte()
@@ -105,7 +106,7 @@ namespace Apoc3D
 			virtual int64 getLength() const { return m_length; }
 
 			virtual void setPosition(int64 offset);
-			virtual int64 getPosition() const;
+			virtual int64 getPosition();
 
 			virtual int64 Read(char* dest, int64 count);
 			virtual void Write(const char* src, int64 count);
@@ -116,7 +117,7 @@ namespace Apoc3D
 			virtual void Flush() { }
 
 		private:
-			void* m_in; //std::ifstream
+			std::ifstream m_in;
 			int64 m_length;
 		};
 		/**
@@ -137,7 +138,7 @@ namespace Apoc3D
 			virtual int64 getLength() const { return m_length; }
 
 			virtual void setPosition(int64 offset);
-			virtual int64 getPosition() const;
+			virtual int64 getPosition();
 
 			virtual int64 Read(char* dest, int64 count);
 			virtual void Write(const char* src, int64 count);
@@ -148,7 +149,7 @@ namespace Apoc3D
 			virtual void Flush();
 
 		private:
-			void* m_out; // ofstream
+			std::ofstream m_out;
 			int64 m_length;
 		};
 		/**
@@ -175,7 +176,7 @@ namespace Apoc3D
 
 			virtual int64 getLength() const { return m_length; }
 			virtual void setPosition(int64 offset) { m_position = offset; }
-			virtual int64 getPosition() const { return m_position; }
+			virtual int64 getPosition() { return m_position; }
 
 
 			virtual int64 Read(char* dest, int64 count)
@@ -251,7 +252,7 @@ namespace Apoc3D
 			}
 
 			virtual void setPosition(int64 offset);
-			virtual int64 getPosition() const
+			virtual int64 getPosition()
 			{ 
 				return m_baseStream->getPosition() - m_baseOffset;
 			}
@@ -373,7 +374,7 @@ namespace Apoc3D
 			virtual int64 getLength() const { return m_length; }
 
 			virtual void setPosition(int64 offset) { m_position = offset; }
-			virtual int64 getPosition() const { return m_position; }
+			virtual int64 getPosition() { return m_position; }
 
 
 			virtual int64 Read(char* dest, int64 count)

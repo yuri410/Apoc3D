@@ -55,6 +55,9 @@ namespace SampleTerrain
 
 
 		static float JumpVelocity;
+		static bool Flying;
+		static float FlyingAlt;
+
 	private:
 		//float m_height;
 		//float m_lastHeight;

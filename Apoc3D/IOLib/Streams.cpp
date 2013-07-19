@@ -25,8 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Streams.h"
 #include "apoc3d/ApocException.h"
 
-#include <fstream>
-
 using namespace std;
 
 namespace Apoc3D
@@ -37,28 +35,25 @@ namespace Apoc3D
 		/*  FileStream                                                          */
 		/************************************************************************/
 
-#define IFSTREAM(x) ((ifstream*&)x)
-
 		FileStream::FileStream(const String& filename)
+			: m_in(filename.c_str(), ios::in | ios::binary)
 		{
-			m_in = new ifstream(filename.c_str(), ios::in | ios::binary);
-			IFSTREAM(m_in)->exceptions( std::ios::failbit ); 
+			m_in.exceptions( std::ios::failbit ); 
 
-			uint64 oldPos = IFSTREAM(m_in)->tellg();
-			IFSTREAM(m_in)->seekg(0, ios::end);
-			m_length = IFSTREAM(m_in)->tellg();
-			IFSTREAM(m_in)->seekg(oldPos, ios::beg);
+			uint64 oldPos = m_in.tellg();
+			m_in.seekg(0, ios::end);
+			m_length = m_in.tellg();
+			m_in.seekg(oldPos, ios::beg);
 		}
 		FileStream::~FileStream()
 		{
-			delete IFSTREAM(m_in);
 		}
 
 		int64 FileStream::Read(char* dest, int64 count)
 		{
-			IFSTREAM(m_in)->read(reinterpret_cast<char*>(dest), count);
+			m_in.read(reinterpret_cast<char*>(dest), count);
 
-			return IFSTREAM(m_in)->gcount();
+			return m_in.gcount();
 		}
 		void FileStream::Write(const char* src, int64 count)
 		{
@@ -81,38 +76,34 @@ namespace Apoc3D
 				break;
 			}
 
-			IFSTREAM(m_in)->seekg(offset, dir);
+			m_in.seekg(offset, dir);
 		}
 
 		void FileStream::Close()
 		{
-			IFSTREAM(m_in)->close();
-			
+			m_in.close();
 		}
 
 		void FileStream::setPosition(int64 offset)
 		{
-			IFSTREAM(m_in)->seekg(offset, ios::beg); 
+			m_in.seekg(offset, ios::beg); 
 		}
-		int64 FileStream::getPosition() const
+		int64 FileStream::getPosition()
 		{ 
-			return IFSTREAM(m_in)->tellg(); 
+			return m_in.tellg();
 		}
 
 		/************************************************************************/
 		/*  FileOutStream                                                       */
 		/************************************************************************/
 
-#define OFSTREAM(x) ((ofstream*&)x)
-
 		FileOutStream::FileOutStream(const String& filename)
+			: m_out(filename.c_str(), ios::out | ios::binary | ios::trunc)
 		{
-			m_out = new ofstream(filename.c_str(), ios::out | ios::binary | ios::trunc);
 			m_length = 0;
 		}
 		FileOutStream::~FileOutStream()
 		{
-			delete OFSTREAM(m_out);
 		}
 
 		int64 FileOutStream::Read(char* dest, int64 count)
@@ -121,7 +112,7 @@ namespace Apoc3D
 		}
 		void FileOutStream::Write(const char* src, int64 count)
 		{
-			OFSTREAM(m_out)->write(src, count);
+			m_out.write(src, count);
 			//m_length += count;
 			int64 p = getPosition();
 			if (p>m_length)
@@ -143,7 +134,7 @@ namespace Apoc3D
 				break;
 			}
 
-			OFSTREAM(m_out)->seekp(offset, dir);
+			m_out.seekp(offset, dir);
 			int64 p = getPosition();
 			if (p>m_length)
 				m_length = p;
@@ -151,22 +142,22 @@ namespace Apoc3D
 
 		void FileOutStream::Close()
 		{
-			OFSTREAM(m_out)->close();
+			m_out.close();
 		}
 
 		void FileOutStream::Flush()
 		{
-			OFSTREAM(m_out)->flush();
+			m_out.flush();
 		}
 		void FileOutStream::setPosition(int64 offset)
 		{
-			OFSTREAM(m_out)->seekp(offset, ios::beg); 
+			m_out.seekp(offset, ios::beg); 
 			if (m_length<offset)
 				m_length = offset;
 		}
-		int64 FileOutStream::getPosition() const
+		int64 FileOutStream::getPosition()
 		{
-			return OFSTREAM(m_out)->tellp(); 
+			return m_out.tellp(); 
 		}
 		/************************************************************************/
 		/*  MemoryStream                                                        */

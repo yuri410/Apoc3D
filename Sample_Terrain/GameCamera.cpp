@@ -31,6 +31,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 namespace SampleTerrain
 {
 	float GameCamera::JumpVelocity = 25;
+	bool GameCamera::Flying = false;
+	float GameCamera::FlyingAlt = 25;
 
 	GameCamera::GameCamera(float aspectRatio)
 		: FpsCamera(aspectRatio), m_isOnGround(false), m_isSprinting(false)//m_height(100), m_fallSpeed(0)
@@ -49,6 +51,11 @@ namespace SampleTerrain
 		float gravity = 50;
 
 		float groundHeight = Terrain::GetHeightAt(m_position.X, m_position.Z);
+
+		if (Flying)
+		{
+			groundHeight = FlyingAlt;
+		}
 
 		float target = groundHeight * Terrain::HeightScale + 5;
 
@@ -142,6 +149,9 @@ namespace SampleTerrain
 	}
 	void GameCamera::Jump()
 	{
+		if (Flying)
+			return;
+
 		if (m_isOnGround)
 		{
 			m_velocity.Y = JumpVelocity;

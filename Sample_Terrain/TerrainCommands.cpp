@@ -37,7 +37,12 @@ namespace SampleTerrain
 	{
 		GameCamera::JumpVelocity = StringUtils::ParseSingle(args[0]);
 	}
-	
+	void FlyCommand(CommandArgsConstRef args)
+	{
+		GameCamera::Flying = StringUtils::ParseBool(args[0]);
+		GameCamera::FlyingAlt = StringUtils::ParseSingle(args[1]);
+	}
+
 	void RegisterTerrainCommands()
 	{
 		{
@@ -50,5 +55,6 @@ namespace SampleTerrain
 		}
 
 		CommandInterpreter::getSingleton().RegisterCommand(CommandDescription(L"jumpvel", 1, JumpHeightCommand, L"Jump Velocity", L""));
+		CommandInterpreter::getSingleton().RegisterCommand(CommandDescription(L"fly", 2, FlyCommand, L"Fly mode", L""));
 	}
 }

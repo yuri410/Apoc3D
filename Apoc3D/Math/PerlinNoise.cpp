@@ -45,7 +45,7 @@ namespace Apoc3D
 
 			for(int k = 0; k < octaves; k++) 
 			{
-				t += GetValue(j * freq + randomseed, i * freq + randomseed) * _amplitude;
+				t += GetValue(j * freq + 0, i * freq + 0) * _amplitude;
 				_amplitude *= persistence;
 				freq *= 2;
 			}
@@ -55,8 +55,21 @@ namespace Apoc3D
 
 		double PerlinNoise::GetValue(double x, double y) const
 		{
-			int Xint = (int)x;
-			int Yint = (int)y;
+			int Xint = x>=0 ? (int)x : (int)x - 1;
+			int Yint = y>=0 ? (int)y : (int)y - 1;
+
+			/*if (x>=0)
+			{
+				Xint = (int)x;
+			}
+			else
+			{
+				Xint = (int)x-1;
+			}*/
+			
+			//int Yint = (int)y;
+			//double Yfrac = y - Yint;
+
 			double Xfrac = x - Xint;
 			double Yfrac = y - Yint;
 
@@ -87,6 +100,8 @@ namespace Apoc3D
 			double x0y1 = 0.0625*(n05+n06+n23+n24) + 0.125*(n03+n04+n09+n28) + 0.25*(n08);  
 			double x1y1 = 0.0625*(n09+n16+n28+n34) + 0.125*(n08+n14+n06+n24) + 0.25*(n04);  
 
+			assert(1);
+			
 			//interpolate between those values according to the x and y fractions
 			double v1 = Interpolate(x0y0, x1y0, Xfrac); //interpolate in x direction (y)
 			double v2 = Interpolate(x0y1, x1y1, Xfrac); //interpolate in x direction (y+1)
