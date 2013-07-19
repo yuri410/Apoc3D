@@ -109,6 +109,8 @@ namespace Apoc3D
 			Vector4 operator *(float scalar) const { return Vector4(X * scalar, Y * scalar, Z * scalar, W * scalar); }
 			Vector4 operator /(float scalar) const { scalar = 1/scalar; return Vector4(X * scalar, Y * scalar, Z * scalar, W * scalar); }
 			
+			float operator[] (int idx) const { assert(idx<4); return (&X)[idx]; }
+
 			void Set(const float* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; W = ptr[3]; }
 			void Store(float* dest) { dest[0] = X; dest[1] = Y; dest[2] = Z; dest[3] = W; }
 
@@ -486,6 +488,8 @@ namespace Apoc3D
 			Vector2 operator *(const Vector2& vec) const { return Vector2(X * vec.X, Y * vec.Y); }
 			Vector2 operator *(float scalar) const { return Vector2(X * scalar, Y * scalar); }
 			Vector2 operator /(float scalar) const { scalar = 1/scalar; return Vector2(X * scalar, Y * scalar); }
+			
+			float operator[] (int idx) const { assert(idx<2); return (&X)[idx]; }
 
 			void Set(const float* ptr) { X = ptr[0]; Y = ptr[1]; }
 			void Store(float* dest) const { dest[0] = X; dest[1] = Y; }
@@ -806,6 +810,8 @@ namespace Apoc3D
 			Vector3 operator *(float scalar) const { return Vector3(X * scalar, Y * scalar, Z * scalar); }
 			Vector3 operator /(float scalar) const { scalar = 1/scalar; return Vector3(X * scalar, Y * scalar, Z * scalar); }
 			
+			float operator[] (int idx) const { assert(idx<3); return (&X)[idx]; }
+
 			void Set(const float* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; }
 			void Store(float* dest) const { dest[0] = X; dest[1] = Y; dest[2] = Z; }
 

@@ -45,7 +45,7 @@ namespace Apoc3D
 
 			for(int k = 0; k < octaves; k++) 
 			{
-				t += GetValue(j * freq + 0, i * freq + 0) * _amplitude;
+				t += GetValue(j * freq + randomseed, i * freq + randomseed) * _amplitude;
 				_amplitude *= persistence;
 				freq *= 2;
 			}
