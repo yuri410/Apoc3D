@@ -32,6 +32,116 @@ namespace Apoc3D
 {
 	namespace Math
 	{
+		class APAPI RectangleF
+		{
+		public:
+			float X;
+			float Y;
+			float Width;
+			float Height;
+
+			float getLeft() const { return X; }
+			float getRight() const { return X + Width; }
+			float getTop() const { return Y; }
+			float getBottom() const { return Y + Height; }
+
+			//Point getCenter() { return Point(X + Width / 2, Y + Height / 2); }
+
+			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
+
+			RectangleF() : X(0), Y(0), Width(0), Height(0) { }
+			RectangleF(float x, float y, float width, float height)
+				: X(x), Y(y), Width(width), Height(height)
+			{ }
+
+			void Offset(const Point &amount)
+			{
+				X += amount.X; Y += amount.Y;
+			}
+			void Offset(float offsetX, float offsetY)
+			{
+				X += offsetX; Y += offsetY;
+			}
+			void Inflate(float horizontalAmount, float verticalAmount)
+			{
+				X -= horizontalAmount;
+				Y -= verticalAmount;
+				Width += horizontalAmount * 2;
+				Height += verticalAmount * 2;
+			}
+			bool Contains(float x, float y) const
+			{
+				return (X <= x) && x < (X + Width) && (Y <= y) && y < (Y + Height);
+			}
+			bool Contains(const Point &value) const
+			{
+				return (X <= value.X) &&
+					(value.X < X + Width) &&
+					(Y <= value.Y) &&
+					(value.Y < Y + Height);
+			}
+			bool Contains(const RectangleF &value) const
+			{
+				return (X <= value.X) &&
+					((value.X + value.Width) <=
+					(X + Width)) &&
+					(Y <= value.Y) &&
+					((value.Y + value.Height) <= (Y + Height));
+			}
+			bool Intersects(const RectangleF &value) const
+			{
+				return (value.X < (X + Width)) &&
+					(X < (value.X + value.Width)) &&
+					(value.Y < (Y + Height)) &&
+					(Y < (value.Y + value.Height));
+			}
+
+			static RectangleF Intersect(const RectangleF &a, const RectangleF &b)
+			{
+				RectangleF rectangle;
+				float abrp_x = a.X + a.Width;
+				float abrp_y = a.Y + a.Height;
+
+				float bbrp_x = b.X + b.Width;
+				float bbrp_y = b.Y + b.Height;
+				float maxX = Max(a.X, b.X);
+				float maxY = Max(a.Y, b.Y);
+				float minRight = Min(abrp_x, bbrp_x);
+				float minBottom = Min(abrp_y, bbrp_y);
+				if (minRight > maxX && minBottom > maxY)
+				{
+					rectangle.X = maxX;
+					rectangle.Y = maxY;
+					rectangle.Width = minRight - maxX;
+					rectangle.Height = minBottom - maxY;
+					return rectangle;
+				}
+				return rectangle;
+			}
+			static RectangleF Union(const RectangleF &a, const RectangleF &b)
+			{
+				RectangleF result;
+				float abrp_x = a.X + a.Width;
+				float abrp_y = a.Y + a.Height;
+
+				float bbrp_x = b.X + b.Width;
+				float bbrp_y = b.Y + b.Height;
+				result.X = Min(a.X, b.X);
+				result.Y = Min(a.Y, b.Y);
+				result.Width = Max(abrp_x, bbrp_x) - result.X;
+				result.Height = Max(abrp_y, bbrp_y) - result.Y;
+				return result;
+			}
+
+			bool operator==(const RectangleF &other) const
+			{
+				return (X  == other.X) && (X == other.Y) && (Width == other.Width) && (Height == other.Height);	
+			}
+			bool operator!=(const RectangleF &other) const { return !(*this == other); }
+
+			const static RectangleF Empty;
+		};
+
 		class APAPI Rectangle
 		{
 		public:
@@ -178,120 +288,15 @@ namespace Apoc3D
 			}
 			bool operator!=(const Rectangle &other) const { return !(*this == other); }
 
+			operator RectangleF() 
+			{
+				return RectangleF(static_cast<float>(X), static_cast<float>(Y), static_cast<float>(Width), static_cast<float>(Height)); 
+			} 
+
 			const static Rectangle Empty;
 		};
 
-		class APAPI RectangleF
-		{
-		public:
-			float X;
-			float Y;
-			float Width;
-			float Height;
-
-			float getLeft() const { return X; }
-			float getRight() const { return X + Width; }
-			float getTop() const { return Y; }
-			float getBottom() const { return Y + Height; }
-
-			//Point getCenter() { return Point(X + Width / 2, Y + Height / 2); }
-
-			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
-
-			RectangleF() : X(0), Y(0), Width(0), Height(0) { }
-			RectangleF(float x, float y, float width, float height)
-				: X(x), Y(y), Width(width), Height(height)
-			{ }
-
-			void Offset(const Point &amount)
-			{
-				X += amount.X; Y += amount.Y;
-			}
-			void Offset(float offsetX, float offsetY)
-			{
-				X += offsetX; Y += offsetY;
-			}
-			void Inflate(float horizontalAmount, float verticalAmount)
-			{
-				X -= horizontalAmount;
-				Y -= verticalAmount;
-				Width += horizontalAmount * 2;
-				Height += verticalAmount * 2;
-			}
-			bool Contains(float x, float y) const
-			{
-				return (X <= x) && x < (X + Width) && (Y <= y) && y < (Y + Height);
-			}
-			bool Contains(const Point &value) const
-			{
-				return (X <= value.X) &&
-					(value.X < X + Width) &&
-					(Y <= value.Y) &&
-					(value.Y < Y + Height);
-			}
-			bool Contains(const RectangleF &value) const
-			{
-				return (X <= value.X) &&
-					((value.X + value.Width) <=
-					(X + Width)) &&
-					(Y <= value.Y) &&
-					((value.Y + value.Height) <= (Y + Height));
-			}
-			bool Intersects(const RectangleF &value) const
-			{
-				return (value.X < (X + Width)) &&
-					(X < (value.X + value.Width)) &&
-					(value.Y < (Y + Height)) &&
-					(Y < (value.Y + value.Height));
-			}
-
-			static RectangleF Intersect(const RectangleF &a, const RectangleF &b)
-			{
-				RectangleF rectangle;
-				float abrp_x = a.X + a.Width;
-				float abrp_y = a.Y + a.Height;
-
-				float bbrp_x = b.X + b.Width;
-				float bbrp_y = b.Y + b.Height;
-				float maxX = Max(a.X, b.X);
-				float maxY = Max(a.Y, b.Y);
-				float minRight = Min(abrp_x, bbrp_x);
-				float minBottom = Min(abrp_y, bbrp_y);
-				if (minRight > maxX && minBottom > maxY)
-				{
-					rectangle.X = maxX;
-					rectangle.Y = maxY;
-					rectangle.Width = minRight - maxX;
-					rectangle.Height = minBottom - maxY;
-					return rectangle;
-				}
-				return rectangle;
-			}
-			static RectangleF Union(const RectangleF &a, const RectangleF &b)
-			{
-				RectangleF result;
-				float abrp_x = a.X + a.Width;
-				float abrp_y = a.Y + a.Height;
-
-				float bbrp_x = b.X + b.Width;
-				float bbrp_y = b.Y + b.Height;
-				result.X = Min(a.X, b.X);
-				result.Y = Min(a.Y, b.Y);
-				result.Width = Max(abrp_x, bbrp_x) - result.X;
-				result.Height = Max(abrp_y, bbrp_y) - result.Y;
-				return result;
-			}
-
-			bool operator==(const RectangleF &other) const
-			{
-				return (X  == other.X) && (X == other.Y) && (Width == other.Width) && (Height == other.Height);	
-			}
-			bool operator!=(const RectangleF &other) const { return !(*this == other); }
-
-
-			const static RectangleF Empty;
-		};
-
+		
 	}
 }
 #endif
