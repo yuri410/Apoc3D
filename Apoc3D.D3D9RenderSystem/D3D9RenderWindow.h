@@ -84,7 +84,7 @@ namespace Apoc3D
 
 				public:
 					D3D9Game(D3D9RenderWindow* wnd, IDirect3D9* d3d9)
-						: Game(L"Apoc3D Engine - Direct3D9", d3d9), m_window(wnd)
+						: Game(L"", d3d9), m_window(wnd)
 					{
 					}
 					virtual void Create(const RenderParameters& params);
