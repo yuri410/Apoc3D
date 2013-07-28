@@ -79,6 +79,7 @@ namespace Apoc3D
 			}
 
 			Point MeasureString(const String& text);
+			int FitSingleLineString(const String& str, int width);
 
 			int CalculateLineCount(const String& text, int width);
 

@@ -439,7 +439,7 @@ namespace Apoc3D
 
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
 
-						x += chdef.AdcanceX + hozShrink;// glyph.Width - 1;
+						x += chdef.AdcanceX + hozShrink;
 					}
 
 				}
@@ -609,6 +609,39 @@ namespace Apoc3D
 			}
 
 			return Point(static_cast<int32>(result.X), static_cast<int32>(result.Y));
+		}
+		int Font::FitSingleLineString(const String& text, int width)
+		{
+			int chCount = 0;
+
+			PointF result = PointF(0, m_height);
+			
+			int lineSpacing = static_cast<int>(m_height + m_lineGap+0.5f);
+
+			float x = 0.f;
+			float y = lineSpacing + m_descender;
+			for (size_t i = 0; i < text.length(); i++)
+			{
+				wchar_t ch = text[i];
+				
+				if (IgnoreCharDrawing(ch))
+					continue;
+
+				Character chdef;
+				if (m_charTable.TryGetValue(ch, chdef))
+				{
+					x += chdef.AdcanceX;
+					if (x > width)
+						break;
+					chCount++;
+				}
+
+				if (result.X < x)
+					result.X = x;
+				if (result.Y < y)
+					result.Y = y;
+			}
+			return chCount;
 		}
 
 		void Font::FrameStartReset()
