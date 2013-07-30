@@ -50,7 +50,7 @@ namespace Apoc3D
 			{
 				m_gameClock = new GameClock();
 
-				m_gameWindow = new GameWindow(name, name);
+				m_gameWindow = new GameWindow(L"d5325676b0844be1a06964bc3f6603ec", name);
 				m_gameWindow->eventApplicationActivated()->Bind(this, &Game::Window_ApplicationActivated);
 				m_gameWindow->eventApplicationDeactivated()->Bind(this, &Game::Window_ApplicationDeactivated);
 				m_gameWindow->eventPaint()->Bind(this, &Game::Window_Paint);

@@ -92,9 +92,9 @@ namespace Apoc3D
 					if (String(title)==m_tempTitleParam)
 					{
 						delete[] title;
-						wchar_t buffer[32];
-						GetClassName(hwnd, buffer, 32);
-						if (StringUtils::StartsWith(String(buffer), L"Apoc3D Engine"))
+						wchar_t buffer[40];
+						GetClassName(hwnd, buffer, 40);
+						if (StringUtils::StartsWith(String(buffer), L"d5325676b0844be1a06964bc3f6603ec"))
 						{
 							m_hwnd = hwnd;
 
