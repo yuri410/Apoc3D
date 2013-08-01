@@ -288,7 +288,7 @@ namespace Apoc3D
 			}
 			bool operator!=(const Rectangle &other) const { return !(*this == other); }
 
-			operator RectangleF() 
+			operator RectangleF() const
 			{
 				return RectangleF(static_cast<float>(X), static_cast<float>(Y), static_cast<float>(Width), static_cast<float>(Height)); 
 			} 
