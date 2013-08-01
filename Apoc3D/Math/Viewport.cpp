@@ -29,13 +29,13 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		static bool WithinEpsilon(float a, float b)
+		inline bool WithinEpsilon(float a, float b)
 		{
 			float diff = a - b;
 			return ((-EPSILON <= diff) && (diff <= EPSILON));
 		}
 
-		Vector3 Viewport::Unproject(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world)
+		Vector3 Viewport::Unproject(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world) const
 		{
 			Matrix temp;
 			Matrix matrix;
@@ -58,8 +58,39 @@ namespace Apoc3D
 			}
 			return vector;
 		}
+		void Viewport::Unproject(Vector3* dest, const Vector3* source, int32 count, const Matrix& projection, const Matrix& view, const Matrix& world) const
+		{
+			Matrix temp;
+			Matrix matrix;
+			Matrix::Multiply(temp, world, view);
+			Matrix::Multiply(matrix, temp, projection);
+			matrix.Inverse();
 
-		Vector3 Viewport::Project(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world)
+			float invWidth = 1.0f / Width;
+			float invHeight = 1.0f / Height;
+			float invZ = 1.0f / (MaxZ - MinZ);
+			for (int32 i=0;i<count;i++)
+			{
+				float x = 2 * (source->X - X) * invWidth - 1.0f;
+				float y = -(2 * (source->Y - Y) * invHeight - 1.0f);
+				float z = (source->Z - MinZ) * invZ;
+
+				Vector3 ts(x,y,z);
+
+				Vector3 vector = Vector3::TransformSimple(ts, matrix);
+				float a = source->X * matrix.M14 + source->Y * matrix.M24 + source->Z * matrix.M34 + matrix.M44;
+
+				if (!WithinEpsilon(a, 1.0f))
+				{
+					vector /= a;
+				}
+
+				*dest++ = vector;
+				source++;
+			}
+		}
+
+		Vector3 Viewport::Project(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world) const
 		{
 			Matrix temp;
 			Matrix matrix;
@@ -78,6 +109,29 @@ namespace Apoc3D
 			vector.Z = vector.Z * (MaxZ - MinZ) + MinZ;
 			return vector;
 		}
+		void Viewport::Project(Vector3* dest, const Vector3* source, int32 count, const Matrix& projection, const Matrix& view, const Matrix& world) const
+		{
+			Matrix temp;
+			Matrix matrix;
+			Matrix::Multiply(temp, world, view);
+			Matrix::Multiply(matrix, temp, projection);
 
+			for (int32 i=0;i<count;i++)
+			{
+				Vector3 vector = Vector3::TransformSimple(*source, matrix);
+
+				float a = source->X * matrix.M14 + source->Y * matrix.M24 + source->Z * matrix.M34 + matrix.M44;
+				if (!WithinEpsilon(a, 1.0f))
+				{
+					vector /= a;
+				}
+				vector.X = (vector.X + 1.0f) * 0.5f * Width + X;
+				vector.Y = (-vector.Y + 1.0f) * 0.5f * Height + Y;
+				vector.Z = vector.Z * (MaxZ - MinZ) + MinZ;
+
+				source++;
+				*dest++ = vector;
+			}
+		}
 	}
 }

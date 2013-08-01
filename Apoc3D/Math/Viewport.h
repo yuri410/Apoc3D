@@ -78,11 +78,15 @@ namespace Apoc3D
 			/**
 			 *  Converts a screen space point into a corresponding point in world space.
 			 */
-			Vector3 Unproject(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world);
+			Vector3 Unproject(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world) const;
+			void Unproject(Vector3* dest, const Vector3* source, int32 count, const Matrix& projection, const Matrix& view, const Matrix& world) const;
+
 			/**
 			 *  Projects a 3D vector from object space into screen space.
 			 */
-			Vector3 Project(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world);
+			Vector3 Project(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world) const;
+			void Project(Vector3* dest, const Vector3* source, int32 count, const Matrix& projection, const Matrix& view, const Matrix& world) const;
+
 
 			bool operator==(const Viewport &other) const
 			{

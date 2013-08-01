@@ -104,6 +104,7 @@ namespace Apoc3D
 
 				D3D9VertexDeclaration* m_vtxDecl;
 				D3D9VertexBuffer* m_quadBuffer;
+				D3D9IndexBuffer* m_quadIndices;
 
 				D3D9RenderDevice* m_device;
 				D3DDevice* m_rawDevice;

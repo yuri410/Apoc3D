@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Texture.h"
 #include "D3D9VertexDeclaration.h"
 #include "Buffer/D3D9VertexBuffer.h"
+#include "Buffer/D3D9IndexBuffer.h"
 #include "D3D9RenderStateManager.h"
 
 #include "apoc3d/Graphics/RenderSystem/Shader.h"
@@ -36,8 +37,10 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			static const int MaxVertices = 1024;
-			static const int FlushThreshold = MaxVertices/5;
+			//static const int MaxVertices = 1024;
+			//static const int FlushThreshold = MaxVertices/5;
+			const int MaxDeferredDraws = 144;
+			const int FlushThreshold = 128;
 			
 			D3D9Sprite::D3D9Sprite(D3D9RenderDevice* device)
 				: Sprite(device), m_device(device), m_rawDevice(device->getDevice())
@@ -50,14 +53,35 @@ namespace Apoc3D
 				m_vtxDecl = new D3D9VertexDeclaration(device, elements);
 
 				//int test = m_vtxDecl->GetVertexSize();
-				m_quadBuffer = new D3D9VertexBuffer(device, MaxVertices * m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic|BU_WriteOnly));
+				m_quadBuffer = new D3D9VertexBuffer(device, (MaxDeferredDraws * 4) * m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic|BU_WriteOnly));
+				m_quadIndices = new D3D9IndexBuffer(device, IBT_Bit16, sizeof(uint16) * MaxDeferredDraws * 6, BU_WriteOnly);
 
+				{
+					uint16* indices = (uint16*)m_quadIndices->Lock(LOCK_None);
+
+					for (uint16 i=0;i<(uint16)MaxDeferredDraws;i++)
+					{
+						uint16 base = i * 4;
+
+						*indices++ = base + 0;
+						*indices++ = base + 1;
+						*indices++ = base + 2;
+
+						*indices++ = base + 2;
+						*indices++ = base + 1;
+						*indices++ = base + 3;
+					}
+
+					m_quadIndices->Unlock();
+				}
+				
 				m_storedState.oldBlendFactor = 0;
 			}
 			D3D9Sprite::~D3D9Sprite()
 			{
 				delete m_vtxDecl;
 				delete m_quadBuffer;
+				delete m_quadIndices;
 			}
 			void D3D9Sprite::Begin(SpriteSettings settings)
 			{
@@ -111,6 +135,8 @@ namespace Apoc3D
 
 					m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
 					m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
+					m_rawDevice->SetIndices(m_quadIndices->getD3DBuffer());
+
 					m_rawDevice->SetVertexShader(NULL); m_rawDevice->SetPixelShader(NULL);
 					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
@@ -285,6 +311,9 @@ namespace Apoc3D
 
 			void D3D9Sprite::Flush()
 			{
+				if (m_deferredDraws.getCount()==0)
+					return;
+
 				char* vtxData = (char*)m_quadBuffer->Lock(0, m_deferredDraws.getCount()*4*sizeof(QuadVertex), LOCK_Discard);
 
 				for (int i=0;i<m_deferredDraws.getCount();i++)
@@ -300,35 +329,73 @@ namespace Apoc3D
 
 				//m_rawDevice->SetTexture(0,0);
 				mgr->SetTexture(0,0);
-				D3D9Texture* currentTexture = NULL;
-				for (int i=0;i<m_deferredDraws.getCount();i++)
+				D3D9Texture* currentTexture = m_deferredDraws[0].Tex;
+				bool currentUVExtend = m_deferredDraws[0].IsUVExtended;
+				int32 lastIndex = 0;
+
+				for (int i=0;i<m_deferredDraws.getCount()+1;i++)
 				{
-					ShaderSamplerState state;
-					if (m_deferredDraws[i].IsUVExtended)
+					bool stateChanged = false;
+					const DrawEntry* de;
+
+					if (i == m_deferredDraws.getCount())
 					{
-						state = mgr->getPixelSampler(0);
-						state.AddressU = TA_Wrap;
-						state.AddressV = TA_Wrap;
-						mgr->SetPixelSampler(0, state);
+						// last entry, make a dummy next DrawEntry to force state change
+						// then the previous entries will be drawn
+						static DrawEntry dummy;
+						dummy.Tex = nullptr;
+						dummy.IsUVExtended = !currentUVExtend;
+						de = &dummy;
+					}
+					else
+					{
+						de = &m_deferredDraws[i];
 					}
 
-					if (m_deferredDraws[i].Tex != currentTexture)
+					if (de->Tex != currentTexture)
 					{
-						mgr->SetTexture(0,m_deferredDraws[i].Tex);
-						//m_rawDevice->SetTexture(0, m_deferredDraws[i].Tex->getInternal2D());
+						mgr->SetTexture(0,currentTexture);
+						currentTexture = de->Tex;
+						stateChanged = true;
+					}
+
+					if (de->IsUVExtended != currentUVExtend)
+					{
+						if (currentUVExtend)
+						{
+							ShaderSamplerState state = mgr->getPixelSampler(0);
+							state.AddressU = TA_Wrap;
+							state.AddressV = TA_Wrap;
+							mgr->SetPixelSampler(0, state);
+						}
+						else
+						{
+							ShaderSamplerState state = mgr->getPixelSampler(0);
+							state.AddressU = TA_Clamp;
+							state.AddressV = TA_Clamp;
+							mgr->SetPixelSampler(0, state);
+						}
+						currentUVExtend = de->IsUVExtended;
+						stateChanged = true;
 					}
 					
-					m_rawDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i*4, 2);
-
-					if (m_deferredDraws[i].IsUVExtended)
+					if (stateChanged)
 					{
-						state.AddressU = TA_Clamp;
-						state.AddressV = TA_Clamp;
-						mgr->SetPixelSampler(0, state);
-					}
+						int32 startIndex = lastIndex * 6;
+						int32 startVertex = lastIndex * 4;
+						int32 dpCount = i - lastIndex; // not including i
+						
+						int32 vtxCount = dpCount * 4;
+
+						m_rawDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, startVertex, vtxCount, startIndex, dpCount * 2);
+						
+						lastIndex = i;
+					}	
+
+					
+					//m_rawDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i*4, 2);
 				}
-
-
+				
 
 				m_deferredDraws.Clear();
 			}
