@@ -86,7 +86,9 @@ namespace Apoc3D
 			 */
 			Vector3 Project(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world) const;
 			void Project(Vector3* dest, const Vector3* source, int32 count, const Matrix& projection, const Matrix& view, const Matrix& world) const;
-
+			Vector2 ProjectFast(const Vector3& source, const Matrix& wvp) const;
+			void ProjectFast(Vector2* dest, const Vector3* source, int32 count, const Matrix& wvp) const;
+			void ProjectFast(Vector3* dest, const Vector3* source, int32 count, const Matrix& wvp) const;
 
 			bool operator==(const Viewport &other) const
 			{

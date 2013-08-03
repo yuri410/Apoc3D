@@ -109,6 +109,65 @@ namespace Apoc3D
 			vector.Z = vector.Z * (MaxZ - MinZ) + MinZ;
 			return vector;
 		}
+		Vector2 Viewport::ProjectFast(const Vector3& source, const Matrix& wvp) const
+		{
+			Vector2 result;
+			result.X = source.X * wvp.M11 + source.Y * wvp.M21 + source.Z * wvp.M31 + wvp.M41;
+			result.Y = source.X * wvp.M12 + source.Y * wvp.M22 + source.Z * wvp.M32 + wvp.M42;
+
+			float a = source.X * wvp.M14 + source.Y * wvp.M24 + source.Z * wvp.M34 + wvp.M44;
+			if (!WithinEpsilon(a, 1.0f))
+			{
+				result /= a;
+			}
+			result.X = (result.X + 1.0f) * 0.5f * Width + X;
+			result.Y = (-result.Y + 1.0f) * 0.5f * Height + Y;
+			return result;
+		}
+		void Viewport::ProjectFast(Vector2* dest, const Vector3* source, int32 count, const Matrix& wvp) const
+		{
+			for (int32 i=0;i<count;i++)
+			{
+				const Vector3& s = *source;
+				Vector2 result;
+				result.X = s.X * wvp.M11 + s.Y * wvp.M21 + s.Z * wvp.M31 + wvp.M41;
+				result.Y = s.X * wvp.M12 + s.Y * wvp.M22 + s.Z * wvp.M32 + wvp.M42;
+
+				float a = s.X * wvp.M14 + s.Y * wvp.M24 + s.Z * wvp.M34 + wvp.M44;
+				if (!WithinEpsilon(a, 1.0f))
+				{
+					result /= a;
+				}
+				result.X = (result.X + 1.0f) * 0.5f * Width + X;
+				result.Y = (-result.Y + 1.0f) * 0.5f * Height + Y;
+				
+				*dest++ = result;
+				source++;
+			}
+		}
+		void Viewport::ProjectFast(Vector3* dest, const Vector3* source, int32 count, const Matrix& wvp) const
+		{
+			for (int32 i=0;i<count;i++)
+			{
+				const Vector3& s = *source;
+				Vector2 result;
+				result.X = s.X * wvp.M11 + s.Y * wvp.M21 + s.Z * wvp.M31 + wvp.M41;
+				result.Y = s.X * wvp.M12 + s.Y * wvp.M22 + s.Z * wvp.M32 + wvp.M42;
+
+				float a = s.X * wvp.M14 + s.Y * wvp.M24 + s.Z * wvp.M34 + wvp.M44;
+				if (!WithinEpsilon(a, 1.0f))
+				{
+					result /= a;
+				}
+				result.X = (result.X + 1.0f) * 0.5f * Width + X;
+				result.Y = (-result.Y + 1.0f) * 0.5f * Height + Y;
+
+				dest->X = result.X;
+				dest->Y = result.Y;
+				dest++;
+				source++;
+			}
+		}
 		void Viewport::Project(Vector3* dest, const Vector3* source, int32 count, const Matrix& projection, const Matrix& view, const Matrix& world) const
 		{
 			Matrix temp;
