@@ -136,6 +136,8 @@ namespace Apoc3D
 			float m_lineGap;
 			int m_heightInt;
 
+			int m_selectTextureSize;
+
 			int m_maxGlyphWidth;
 			int m_maxGlyphHeight;
 
@@ -207,7 +209,7 @@ namespace Apoc3D
 		class APAPI FontManager : public Singleton<FontManager>
 		{
 		public:
-			static int TextureSize;
+			static int MaxTextureSize;
 		private:
 			HashMap<String, Font*> m_fontTable;
 

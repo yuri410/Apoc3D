@@ -55,9 +55,10 @@ namespace Apoc3D
 		Font::Font(RenderDevice* device, ResourceLocation* fl)
 			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(fl), m_isUsingCaching(false)
 		{
-			ObjectFactory* fac = device->getObjectFactory();
-			m_font = fac->CreateTexture(FontManager::TextureSize, FontManager::TextureSize, 1, TU_Static, FMT_A8L8);
+			m_selectTextureSize = FontManager::MaxTextureSize;
 
+			ObjectFactory* fac = device->getObjectFactory();
+			
 			Stream* strm = fl->GetReadStream();
 			BinaryReader* br = new BinaryReader(strm);
 
@@ -139,7 +140,19 @@ namespace Apoc3D
 			m_maxGlyphWidth = maxWidth;
 			m_maxGlyphHeight = maxHeight;
 
-			m_edgeCount = FontManager::TextureSize / maxHeight;
+			// estimate suitable texture size
+			int estEdgeCount;
+			const int32 MinTextureSize = 8;
+			do 
+			{
+				m_selectTextureSize/=2;
+				estEdgeCount = m_selectTextureSize / maxHeight;
+			} while (estEdgeCount * estEdgeCount > glyphCount * 1.5f && m_selectTextureSize > MinTextureSize);
+			m_selectTextureSize *= 2;
+
+			m_font = fac->CreateTexture(m_selectTextureSize, m_selectTextureSize, 1, TU_Static, FMT_A8L8);
+
+			m_edgeCount = m_selectTextureSize / maxHeight;
 			m_buckets = new Bucket[m_edgeCount*m_edgeCount];
 			m_currentFreqTable = new int[m_edgeCount*m_edgeCount];
 			m_lastFreqTable = new int[m_edgeCount*m_edgeCount];
@@ -169,6 +182,8 @@ namespace Apoc3D
 				m_lineBucketsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
 			}
 
+
+			
 			// now put the glyphs into the buckets. Initially the largest glyphs are inserted.
 			{
 				// this temp list is used to store sorting without changing the original one
@@ -177,6 +192,8 @@ namespace Apoc3D
 
 				// sort glyphs from wider to thiner.
 				std::qsort(tempList, glyphCount, sizeof(Glyph), qsort_comparer);
+				
+				m_isUsingCaching = false;
 
 				int buckY = 0;
 				int* buckX = new int[m_edgeCount];
@@ -184,8 +201,13 @@ namespace Apoc3D
 
 				// use up the buckets from column to column.
 				// The first column will have the most fat glyph, while the latter ones will have thiner ones.
-				for (int i=0;i<glyphCount && buckX[buckY]<m_edgeCount;i++)
+				for (int i=0;i<glyphCount;i++)
 				{
+					if (buckX[buckY]>=m_edgeCount)
+					{
+						m_isUsingCaching = true;
+					}
+
 					int startX = buckX[buckY];
 
 					Glyph& glyph = tempList[i];
@@ -211,8 +233,6 @@ namespace Apoc3D
 
 			br->Close();
 			delete br;
-
-			m_isUsingCaching = glyphCount > (m_edgeCount * m_edgeCount);
 
 			if (!newVersion)
 			{
@@ -677,8 +697,8 @@ namespace Apoc3D
 			DataRectangle dataRect = m_font->Lock(0, LOCK_None, lockRect);
 
 			char* buf = new char[glyph.Width * glyph.Height];
-			assert(glyph.Width <= FontManager::TextureSize && glyph.Width >=0);
-			assert(glyph.Height <= FontManager::TextureSize && glyph.Height >=0);
+			assert(glyph.Width <= m_selectTextureSize && glyph.Width >=0);
+			assert(glyph.Height <= m_selectTextureSize && glyph.Height >=0);
 
 			br->ReadBytes(buf, glyph.Width * glyph.Height);
 
@@ -828,7 +848,7 @@ namespace Apoc3D
 				}
 			}
 		}
-		int FontManager::TextureSize = 1024;
+		int FontManager::MaxTextureSize = 1024;
 
 		FontManager::FontManager()
 			: m_fontTable()
