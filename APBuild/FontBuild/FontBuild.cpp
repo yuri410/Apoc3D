@@ -51,6 +51,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/File.h"
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Utility/Hash.h"
 
 using namespace Apoc3D;
 using namespace Apoc3D::IO;
@@ -91,27 +92,23 @@ namespace APBuild
 		int Height;
 		int HashCode;
 		const char* PixelData;
+		bool HasLuminance;
 
 		GlyphBitmap() { }
-		GlyphBitmap(int width, int height, const char* data)
-			: Width(width), Height(height), PixelData(data)
+		GlyphBitmap(int width, int height, const char* data, bool hasLuminance)
+			: Width(width), Height(height), PixelData(data), HasLuminance(hasLuminance)
 		{
-			uint even = 0x15051505;
-			uint odd = even;
-			const uint* numPtr = reinterpret_cast<const uint*>(data);
-			for (int i = width*height; i > 0; i -= sizeof(uint)*2)
-			{
-				if (i < 4)
-					break;
+			FNVHash hasher;
 
-				even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
-				if (i < 8)
-					break;
-				
-				odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ numPtr[1];
-				numPtr += 2;
+			int32 size = width * height;
+			if (HasLuminance)
+			{
+				size *= 2;
 			}
-			HashCode = (int)( even + odd * 0x5d588b65);
+
+			hasher.Accumulate(PixelData, size);
+
+			HashCode = hasher.GetResult();
 		}
 
 		friend bool operator ==(const GlyphBitmap& x, const GlyphBitmap& y)
@@ -168,21 +165,22 @@ namespace APBuild
 	};
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
 	
-	struct FT_FontBuildInfo
+	struct FontRenderInfo
 	{
 		float Height;
 		float LineGap;
 		float Ascender;
 		float Descender;
+		bool HasLuminance;
 	};
 
 	typedef void (*GlyphRenderHandler)(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FT_FontBuildInfo& resultInfo);
+		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo);
 	void BuildFont(const FontBuildConfig& config, GlyphRenderHandler renderer);
 	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FT_FontBuildInfo& resultInfo);
+		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo);
 	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FT_FontBuildInfo& resultInfo);
+		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo);
 
 
 	void fbBuild(const ConfigurationSection* sect)
@@ -264,7 +262,7 @@ namespace APBuild
 		FastList<CharMapping> charMap(0xffff);
 		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
 
-		FT_FontBuildInfo info;
+		FontRenderInfo info;
 		RenderGlyphsByFreeType(StringUtils::toString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
 
 		FileOutStream* fs = new FileOutStream(config.DestIndexFile);
@@ -422,13 +420,19 @@ namespace APBuild
 		FastList<CharMapping> charMap(0xffff);
 		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
 
-		FT_FontBuildInfo info;
+		FontRenderInfo info;
 		renderer(StringUtils::toString(config.Name), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
 
 		FileOutStream* fs = new FileOutStream(config.DestFile);
 		BinaryWriter* bw = new BinaryWriter(fs);
 
-		bw->WriteUInt32(0xffffff01U); // new version id
+		bw->WriteUInt32(0xffffff02U); // new version id
+
+		uint32 flags = 0;
+		if (info.HasLuminance)
+			flags |= 1;
+
+		bw->WriteUInt32(flags);
 
 		bw->WriteInt32(charMap.getCount());
 		bw->WriteSingle(info.Height);
@@ -462,7 +466,10 @@ namespace APBuild
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 
-			bw->Write(g->PixelData, g->Width * g->Height);
+			if (info.HasLuminance)
+				bw->Write(g->PixelData, g->Width * g->Height * 2);
+			else
+				bw->Write(g->PixelData, g->Width * g->Height);
 		}
 
 		fs->Seek(glyRecPos, SEEK_Begin);
@@ -475,7 +482,12 @@ namespace APBuild
 			bw->WriteInt32((int32)g->Width);
 			bw->WriteInt32((int32)g->Height);
 			bw->WriteInt64((int64)baseOfs);
-			baseOfs += g->Width * g->Height;
+
+			if (info.HasLuminance)
+				baseOfs += g->Width * g->Height * 2;
+			else
+				baseOfs += g->Width * g->Height;
+
 			delete[] g->PixelData;
 		}
 
@@ -484,7 +496,7 @@ namespace APBuild
 	}
 
 	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FT_FontBuildInfo& resultInfo)
+		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo)
 	{
 		//Create and initialize a freetype font library.
 		FT_Library library;
@@ -582,7 +594,7 @@ namespace APBuild
 				// check duplicated glyphs using hash table
 				// use the previous glyph if a same one already exists
 				GlyphBitmap result;
-				GlyphBitmap glyphMap(width, height, buffer);
+				GlyphBitmap glyphMap(width, height, buffer, false);
 				if (!glyphHashTable.TryGetValue(glyphMap, result))
 				{
 					glyphMap.Index = glyphHashTable.getCount();// index++;
@@ -613,10 +625,11 @@ namespace APBuild
 		resultInfo.Descender = descender;
 		resultInfo.Height = height;
 		resultInfo.LineGap = lineGap;
+		resultInfo.HasLuminance = false;
 	}
 	
 	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FT_FontBuildInfo& resultInfo)
+		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo)
 	{
 		String mapFile = StringUtils::toWString(fontFile) + L".png";
 		String idxFile = StringUtils::toWString(fontFile) + L".fid";
@@ -640,7 +653,8 @@ namespace APBuild
 		resultInfo.LineGap = br->ReadSingle();
 		resultInfo.Ascender = -br->ReadSingle();
 		resultInfo.Descender = -br->ReadSingle();
-		
+		resultInfo.HasLuminance = true;
+
 		for (int i=0;i<charCount;i++)
 		{
 			CharMapping& cm = charMap[i];
@@ -663,26 +677,31 @@ namespace APBuild
 			int rx = br->ReadInt32();
 			int ry = br->ReadInt32();
 
-			char* pixelData = new char[gbWidth * gbHeight];
+			char* pixelData = new char[gbWidth * gbHeight * 2];
 
+			uint16* dest = (uint16*)pixelData;
 			const char* pixelRowAddr = (char*)bmpData.Scan0 + bmpData.Stride * ry + rx * sizeof(uint32);
 
 			for (int i=0;i<gbHeight;i++)
 			{
 				for (int j=0;j<gbWidth;j++)
 				{
-					//int32 gray = *(gb.PixelData + g->Width * i + j);
 					uint32 pa = *(((uint32*)pixelRowAddr) + j);
 					
-					*(pixelData + gbWidth * i + j) = (char)(pa >> 24);
-					//*pa = (uint32)gray << 24 | 0xffffff;
+					uint32 r = (pa >> 16) & 0xff;
+					uint32 g = (pa >> 8) & 0xff;
+					uint32 b = pa & 0xff;
+
+					uint32 l = (r + g + b) / 3;
+
+					*(dest + gbWidth * i + j) = (uint16)((pa >> 24)<<8) | (uint16)l;
 				}
 
 				pixelRowAddr += bmpData.Stride;
 			}
 
 
-			GlyphBitmap gb(gbWidth, gbHeight, pixelData);
+			GlyphBitmap gb(gbWidth, gbHeight, pixelData, true);
 			gb.Index = gbIndex;
 			glyphHashTable.Add(gb, gb);
 		}
@@ -884,7 +903,7 @@ namespace APBuild
 				// check duplicated glyphs using hash table
 				// use the previous glyph if a same one already exists
 				GlyphBitmap result;
-				GlyphBitmap glyph(width, height, buffer);
+				GlyphBitmap glyph(width, height, buffer, false);
 				if (!glyphHashTable.TryGetValue(glyph, result))
 				{
 					glyph.Index = glyphHashTable.getCount();// index++;

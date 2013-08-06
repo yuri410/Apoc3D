@@ -55,8 +55,14 @@ namespace Apoc3D
 			return 0;
 		}
 
+		enum FontFlags
+		{
+			FF_None,
+			FF_HasLuminance = 1
+		};
+
 		Font::Font(RenderDevice* device, ResourceLocation* rl)
-			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(rl), m_isUsingCaching(false)
+			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(rl), m_isUsingCaching(false), m_hasLuminance(false)
 		{
 			m_selectTextureSize = FontManager::MaxTextureSize;
 
@@ -72,6 +78,14 @@ namespace Apoc3D
 			if (((uint)fileID & 0xffffff00) == 0xffffff00)
 			{
 				hasMetrics = true;
+
+				int32 ver = (fileID & 0xff);
+				if (ver == 2)
+				{
+					uint32 flags = br->ReadUInt32();
+					if ((flags & FF_HasLuminance))
+						m_hasLuminance = true;
+				}
 
 				charCount = br->ReadInt32();
 			}
@@ -725,34 +739,54 @@ namespace Apoc3D
 
 			br->getBaseStream()->Seek(glyph.Offset, SEEK_Begin);
 
+			assert(glyph.Width <= m_selectTextureSize && glyph.Width >=0);
+			assert(glyph.Height <= m_selectTextureSize && glyph.Height >=0);
+
+
 			Apoc3D::Math::Rectangle lockRect(static_cast<int32>(glyph.MappedRect.X), static_cast<int32>(glyph.MappedRect.Y),
 				static_cast<int32>(glyph.MappedRect.Width), static_cast<int32>(glyph.MappedRect.Height));
 			DataRectangle dataRect = m_font->Lock(0, LOCK_None, lockRect);
 
-			char* buf = new char[glyph.Width * glyph.Height];
-			assert(glyph.Width <= m_selectTextureSize && glyph.Width >=0);
-			assert(glyph.Height <= m_selectTextureSize && glyph.Height >=0);
-
-			br->ReadBytes(buf, glyph.Width * glyph.Height);
-
-
-			for (int j=0;j<dataRect.getHeight();j++)
+			if (m_hasLuminance)
 			{
-				char* src=buf+j*glyph.Width;
-				char* dest = (char*)dataRect.getDataPointer()+j*dataRect.getPitch();
-				for (int i=0;i<dataRect.getWidth();i++)
+				uint16* buf = new uint16[glyph.Width * glyph.Height];
+				br->ReadBytes((char*)buf, glyph.Width * glyph.Height * sizeof(uint16));
+
+				for (int j=0;j<dataRect.getHeight();j++)
 				{
-					uint16* pix = (uint16*)(dest)+i;
+					uint16* src= buf+j*glyph.Width;
+					char* dest = (char*)dataRect.getDataPointer()+j*dataRect.getPitch();
+					for (int i=0;i<dataRect.getWidth();i++)
+					{
+						uint16* pix = (uint16*)(dest)+i;
 
-					ushort highA = (byte)*(src+i);
-
-					*pix = highA<<8 | 0xff;
+						*pix = *(src + i);
+					}
 				}
+				delete[] buf;
 			}
+			else
+			{
+				char* buf = new char[glyph.Width * glyph.Height];
+				br->ReadBytes(buf, glyph.Width * glyph.Height);
 
+				for (int j=0;j<dataRect.getHeight();j++)
+				{
+					char* src=buf+j*glyph.Width;
+					char* dest = (char*)dataRect.getDataPointer()+j*dataRect.getPitch();
+					for (int i=0;i<dataRect.getWidth();i++)
+					{
+						uint16* pix = (uint16*)(dest)+i;
 
+						ushort highA = (byte)*(src+i);
+
+						*pix = highA<<8 | 0xff;
+					}
+				}
+				delete[] buf;
+			}
+			
 			m_font->Unlock(0);
-			delete[] buf;
 		}
 		void Font::EnsureGlyph(Glyph& glyph)
 		{

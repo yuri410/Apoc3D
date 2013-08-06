@@ -135,6 +135,7 @@ namespace Apoc3D
 			float m_descender;
 			float m_lineGap;
 			int m_heightInt;
+			bool m_hasLuminance;
 
 			int m_selectTextureSize;
 
