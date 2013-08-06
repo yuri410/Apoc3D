@@ -230,14 +230,14 @@ namespace Apoc3D
 						float temp = r.right;
 						r.right = r.left;
 						r.left = temp;
-						position[0] -= ( r.left - r.right);
+						position[0] += r.right - r.left;
 					}
 					if (r.top>r.bottom)
 					{
 						float temp = r.bottom;
 						r.bottom = r.top;
 						r.top = temp;
-						position[1] -= ( r.top - r.bottom);
+						position[1] += r.bottom -r.top;
 					}
 					Apoc3D::Math::RectangleF r2(r.left, r.top, r.right-r.left,r.bottom-r.top);
 
