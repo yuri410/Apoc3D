@@ -30,15 +30,10 @@ using namespace Apoc3D::Config;
 
 namespace APBuild
 {
-	class FontBuild
-	{
-	private:
-		static void BuildByGDIPlus(const FontBuildConfig& config);
-		static void BuildByFreeType(const FontBuildConfig& config);
-	public:
-		static void Build(const ConfigurationSection* sect);
+	void fbBuild(const ConfigurationSection* sect);
 
-		static void BuildGlyphCheck(const ConfigurationSection* sect);
-	};
+	void fbBuildFromFontMap(const ConfigurationSection* sect);
+	void fbBuildToFontMap(const ConfigurationSection* sect);
+	void fbBuildGlyphCheck(const ConfigurationSection* sect);
 }
 #endif

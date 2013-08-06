@@ -27,11 +27,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::IO;
+using namespace Apoc3D::Utility;
 
 SINGLETON_DECL(Apoc3D::UI::FontManager);
 
@@ -52,27 +55,32 @@ namespace Apoc3D
 			return 0;
 		}
 
-		Font::Font(RenderDevice* device, ResourceLocation* fl)
-			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(fl), m_isUsingCaching(false)
+		Font::Font(RenderDevice* device, ResourceLocation* rl)
+			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(rl), m_isUsingCaching(false)
 		{
 			m_selectTextureSize = FontManager::MaxTextureSize;
 
 			ObjectFactory* fac = device->getObjectFactory();
 			
-			Stream* strm = fl->GetReadStream();
+			Stream* strm = rl->GetReadStream();
 			BinaryReader* br = new BinaryReader(strm);
 
-			int charCount = br->ReadInt32();
-			
-			bool newVersion = false;
-			if (((uint)charCount & 0xffffff00) == 0xffffff00)
+			int fileID = br->ReadInt32();
+			int charCount;
+
+			bool hasMetrics = false;
+			if (((uint)fileID & 0xffffff00) == 0xffffff00)
 			{
-				newVersion = true;
+				hasMetrics = true;
 
 				charCount = br->ReadInt32();
 			}
+			else
+			{
+				charCount = fileID;
+			}
 
-			if (newVersion)
+			if (hasMetrics)
 			{
 				m_height = br->ReadSingle();
 				m_lineGap = br->ReadSingle();
@@ -131,7 +139,7 @@ namespace Apoc3D
 					maxHeight = glyph.Height;
 				}
 			}
-			if (!newVersion)
+			if (!hasMetrics)
 			{
 				m_height = static_cast<float>(maxHeight);
 			}
@@ -230,11 +238,10 @@ namespace Apoc3D
 				delete[] buckX;
 			}
 
-
 			br->Close();
 			delete br;
 
-			if (!newVersion)
+			if (!hasMetrics)
 			{
 				for (HashMap<wchar_t, Character>::Enumerator i=m_charTable.GetEnumerator();i.MoveNext();)
 				{
@@ -243,6 +250,32 @@ namespace Apoc3D
 					ch->AdcanceX = static_cast<float>(g.Width);
 				}
 			}
+			
+/*#if _DEBUG
+			{
+				FileLocation* fl = dynamic_cast<FileLocation*>(m_resource);
+				String name = fl ? PathUtils::GetFileNameNoExt(fl->getName()) : m_resource->getName();
+				String msg = L"Font '" + name;
+				msg.append(L"' is using a");
+				msg.append(StringUtils::ToString(m_selectTextureSize));
+				msg.append(L"x");
+				msg.append(StringUtils::ToString(m_selectTextureSize));
+
+				if (m_isUsingCaching)
+				{
+					msg.append(L" texture and caching.");
+				}
+				else
+				{
+					msg.append(L" texture.");
+				}
+
+				if (m_isUsingCaching)
+					ApocLog(LOG_System, msg);
+				else
+					ApocLog(LOG_System, msg);
+			}
+#endif*/
 			
 		}
 		Font::~Font()
@@ -883,6 +916,105 @@ namespace Apoc3D
 				Font* fnt = *iter.getCurrentValue();
 				fnt->FrameStartReset();
 			}
+		}
+
+		void FontManager::ReportComplexFonts()
+		{
+			int32 bytesUsed = 0;
+			int32 numCmpFont = 0;
+			int32 numLargeFont = 0;
+			for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
+			{
+				Font* fnt = *iter.getCurrentValue();
+				bytesUsed += fnt->m_selectTextureSize * fnt->m_selectTextureSize * 2;
+
+				if (fnt->m_isUsingCaching)
+				{
+					numCmpFont++;
+				}
+				else if (fnt->m_selectTextureSize == MaxTextureSize)
+				{
+					numLargeFont++;
+				}
+			}
+			bytesUsed /= 1048576;
+
+			String msg = L"[FontManager] ";
+			msg.append(StringUtils::ToString(m_fontTable.getCount()));
+			msg.append(L" fonts currently loaded using ");
+			msg.append(StringUtils::ToString(bytesUsed));
+			msg.append(L"MB");
+
+			if (numCmpFont>0)
+			{
+				msg.append(L" including ");
+				msg.append(StringUtils::ToString(numCmpFont));
+				msg.append(L" complex fonts.");
+			}
+			else
+			{
+				msg.append(L".");
+			}
+			
+			ApocLog(LOG_System, msg);
+
+			if (numCmpFont > 0)
+			{
+				msg.clear();
+				msg = L"[FontManager] Complex fonts: ";
+
+				int32 counter = 0;
+				for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
+				{
+					Font* fnt = *iter.getCurrentValue();
+					
+					if (fnt->m_isUsingCaching)
+					{
+						FileLocation* fl = dynamic_cast<FileLocation*>(fnt->m_resource);
+						String name = fl ? PathUtils::GetFileNameNoExt(fl->getName()) : fnt->m_resource->getName();
+						msg.append(name);
+						counter++;
+
+						if (counter != numCmpFont)
+						{
+							msg.append(L", ");
+						}
+					}
+				} 
+
+				ApocLog(LOG_System, msg);
+			}
+
+			if (numLargeFont > 0)
+			{
+				msg.clear();
+				msg = L"[FontManager] Large fonts: ";
+
+				int32 counter = 0;
+				for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
+				{
+					Font* fnt = *iter.getCurrentValue();
+
+					if (!fnt->m_isUsingCaching && fnt->m_selectTextureSize == MaxTextureSize)
+					{
+						FileLocation* fl = dynamic_cast<FileLocation*>(fnt->m_resource);
+						String name = fl ? PathUtils::GetFileNameNoExt(fl->getName()) : fnt->m_resource->getName();
+						msg.append(name);
+						msg.append(L"(");
+						msg.append(StringUtils::ToString(fnt->m_selectTextureSize));
+						msg.append(L")");
+						counter++;
+
+						if (counter != numLargeFont)
+						{
+							msg.append(L", ");
+						}
+					}
+				} 
+
+				ApocLog(LOG_System, msg);
+			}
+
 		}
 	}
 }

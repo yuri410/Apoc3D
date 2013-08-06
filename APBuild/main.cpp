@@ -171,11 +171,19 @@ int Build(ConfigurationSection* sect)
 	}
 	else if (buildType == L"font")
 	{
-		FontBuild::Build(sect);
+		fbBuild(sect);
 	}
 	else if (buildType == L"fontcheck")
 	{
-		FontBuild::BuildGlyphCheck(sect);
+		fbBuildGlyphCheck(sect);
+	}
+	else if (buildType == L"fontmap")
+	{
+		fbBuildToFontMap(sect);
+	}
+	else if (buildType == L"fontmapst")
+	{
+		fbBuildFromFontMap(sect);
 	}
 	else if (buildType == L"tanim")
 	{

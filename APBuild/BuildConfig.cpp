@@ -236,6 +236,34 @@ namespace APBuild
 
 		DestFile = sect->getAttribute(L"DestinationFile");
 	}
+	void FontMapBuildConfig::Parse(const ConfigurationSection* sect)
+	{
+		SourceFile = sect->getAttribute(L"SourceFile");
+		Size = sect->GetAttributeSingle(L"Size");
+
+		GlyphMargin = sect->GetAttributeInt(L"GlyphMargin");
+
+		AntiAlias = true;
+		sect->TryGetAttributeBool(L"AntiAlias", AntiAlias);
+
+		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
+			iter.MoveNext();)
+		{
+			const ConfigurationSection* ss = *iter.getCurrentValue();
+
+			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
+			Ranges.Add(range);
+		}
+
+		ShowGrid = false;
+		sect->TryGetAttributeBool(L"ShowGrid", ShowGrid);
+
+		DestFile = sect->getAttribute(L"DestinationFile");
+		DestIndexFile = sect->getAttribute(L"DestinationIndexFile");
+	}
+
+
+
 	void PakBuildConfig::Parse(const ConfigurationSection* sect)
 	{
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();

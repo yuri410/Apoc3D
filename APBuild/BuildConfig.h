@@ -104,6 +104,22 @@ namespace APBuild
 		
 		void Parse(const ConfigurationSection* sect);
 	};
+	struct FontMapBuildConfig
+	{
+		FastList<CharRange> Ranges;
+		String SourceFile;
+		float Size;
+		bool AntiAlias;
+
+		String DestFile;
+		String DestIndexFile;
+
+		int32 GlyphMargin;
+		bool ShowGrid;
+
+		void Parse(const ConfigurationSection* sect);
+	};
+
 	struct PakBuildConfig
 	{
 		struct PakDirEntryConfig

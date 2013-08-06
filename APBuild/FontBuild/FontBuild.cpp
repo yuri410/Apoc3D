@@ -46,6 +46,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Collections/ExistTable.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/BinaryWriter.h"
 #include "apoc3d/Vfs/File.h"
 #include "apoc3d/Vfs/PathUtils.h"
@@ -56,8 +57,6 @@ using namespace Apoc3D::IO;
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
-using namespace Gdiplus;
-//using namespace freetype;
 
 #pragma comment (lib, "Gdiplus.lib")
 
@@ -77,13 +76,14 @@ using namespace Gdiplus;
 
 namespace APBuild
 {
-	
-
-
-	/** The font file is made up of the following
-	 *   1. Glyph bitmaps
-	 *   2. Mapping from each character to the glyphs
+	/** 
+	 * The font file is made up of the following
+	 *	 0. Font metrics
+	 *   1. Mapping from each character to the glyphs
+	 *   2. Glyph offset info & bitmap data
 	 */
+
+
 	struct GlyphBitmap
 	{
 		int Index;
@@ -134,7 +134,6 @@ namespace APBuild
 	};
 
 	template class IEqualityComparer<GlyphBitmap>;
-
 	class GlyphBitmapEqualityComparer : public IEqualityComparer<GlyphBitmap>
 	{
 	public:
@@ -153,7 +152,9 @@ namespace APBuild
 		}
 	};
 
-	
+
+	const int32 FIDXFileID = 'FIDX';
+
 	/** Establish a mapping between a character and a glyph
 	*/
 	struct CharMapping
@@ -165,7 +166,531 @@ namespace APBuild
 		short Top;
 		float AdvanceX;
 	};
+	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
+	
+	struct FT_FontBuildInfo
+	{
+		float Height;
+		float LineGap;
+		float Ascender;
+		float Descender;
+	};
 
+	typedef void (*GlyphRenderHandler)(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
+		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FT_FontBuildInfo& resultInfo);
+	void BuildFont(const FontBuildConfig& config, GlyphRenderHandler renderer);
+	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
+		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FT_FontBuildInfo& resultInfo);
+	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
+		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FT_FontBuildInfo& resultInfo);
+
+
+	void fbBuild(const ConfigurationSection* sect)
+	{
+		FontBuildConfig config;
+		config.Parse(sect);
+
+		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
+
+		BuildFont(config, RenderGlyphsByFreeType);
+
+		CompileLog::WriteInformation(config.Name, L">");
+	}
+
+	void fbBuildGlyphCheck(const ConfigurationSection* sect)
+	{
+		String srcFile = sect->getAttribute(L"SourceFile");
+		String dstFile = sect->getAttribute(L"DestinationFile");
+
+		EnsureDirectory(PathUtils::GetDirectory(dstFile));
+		
+		FT_Library library;
+		if (FT_Init_FreeType( &library )) 
+			throw std::runtime_error("FT_Init_FreeType failed");
+		
+		std::string name = StringUtils::toString(srcFile);
+		FT_Face face;
+		if (FT_New_Face( library, name.c_str(), 0, &face )) 
+			throw std::runtime_error("FT_New_Face failed (there is probably a problem with your font file)");
+
+		FT_Select_Charmap(face, FT_ENCODING_UNICODE );
+
+		List<std::pair<FT_UInt, FT_UInt>> regions;
+		FT_UInt lastIdx = 0;
+		for (uint i=0;i<65535;i++)
+		{
+			FT_UInt idx = FT_Get_Char_Index(face, i);
+			
+			if (idx == 0)
+			{
+				if (i - lastIdx > 1)
+				{
+					// put session
+					regions.Add(std::make_pair(lastIdx+1, i-1));
+				}
+				lastIdx = i;
+			}
+		}
+
+
+		FT_Done_Face(face);
+		FT_Done_FreeType(library);
+
+		FileOutStream* fs = new FileOutStream(dstFile);
+		BinaryWriter* bw = new BinaryWriter(fs);
+		
+		bw->WriteInt32(regions.getCount());
+
+		for (int i=0;i<regions.getCount();i++)
+		{
+			bw->WriteUInt32(regions[i].first);
+			bw->WriteUInt32(regions[i].second);
+		}
+
+		bw->Close();
+		delete bw;
+
+		CompileLog::WriteInformation(srcFile, L">");
+	}
+	void fbBuildToFontMap(const ConfigurationSection* sect)
+	{
+		FontMapBuildConfig config;
+		config.Parse(sect);
+
+		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
+		EnsureDirectory(PathUtils::GetDirectory(config.DestIndexFile));
+
+		GlyphBitmapEqualityComparer comparer;
+		FastList<CharMapping> charMap(0xffff);
+		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
+
+		FT_FontBuildInfo info;
+		RenderGlyphsByFreeType(StringUtils::toString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
+
+		FileOutStream* fs = new FileOutStream(config.DestIndexFile);
+		BinaryWriter* bw = new BinaryWriter(fs);
+
+		bw->WriteInt32(FIDXFileID);
+		bw->WriteInt32(0); // version
+
+		bw->WriteInt32(charMap.getCount());
+		bw->WriteSingle(info.Height);
+		bw->WriteSingle(info.LineGap);
+		bw->WriteSingle(-info.Ascender);
+		bw->WriteSingle(-info.Descender);
+
+		// char to glyph mapping
+		for (int i=0;i<charMap.getCount();i++)
+		{
+			bw->WriteInt32(charMap[i].Character);
+			bw->WriteInt32(charMap[i].GlyphIndex);
+
+			bw->WriteInt16(charMap[i].Left);
+			bw->WriteInt16(charMap[i].Top);
+			bw->WriteSingle(charMap[i].AdvanceX);
+		}
+
+		bw->WriteInt32(glyphHashTable.getCount());
+
+
+		int maxGWidth = 0;
+		int maxGHeight = 0;
+		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		{
+			const GlyphBitmap* g = i.getCurrentKey();
+			if (g->Width > maxGWidth) maxGWidth = g->Width;
+			if (g->Height > maxGHeight) maxGHeight = g->Height;
+		}
+
+		int32 cellWidth = maxGWidth + config.GlyphMargin*2;
+		int32 cellHeight = maxGHeight + config.GlyphMargin*2;
+		int32 edgeCount = (int32)(ceilf(sqrtf((float)glyphHashTable.getCount())) + 0.5f);
+		int32 bitMapWdith = edgeCount * cellWidth;
+		int32 bitMapHeight = edgeCount * cellHeight;
+
+		Gdiplus::Bitmap packedMap(bitMapWdith, bitMapHeight, PixelFormat32bppARGB);
+		
+		{
+			Gdiplus::BitmapData bmpData;
+			Gdiplus::Rect lr( 0, 0, bitMapWdith, bitMapHeight );
+			Gdiplus::Status ret = packedMap.LockBits(&lr, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bmpData);
+
+			int32 xPos = 0;
+			int32 yPos = 0;
+			for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+			{
+				const GlyphBitmap* g = i.getCurrentKey();
+				bw->WriteInt32(g->Index);
+				bw->WriteInt32(g->Width + config.GlyphMargin*2);
+				bw->WriteInt32(g->Height + config.GlyphMargin*2);
+
+				int32 regionX = xPos * cellWidth;
+				int32 regionY = yPos * cellHeight;
+				bw->WriteInt32(regionX);
+				bw->WriteInt32(regionY);
+
+				regionX += config.GlyphMargin;
+				regionY += config.GlyphMargin;
+
+				char* pixelRowAddr = (char*)bmpData.Scan0 + bmpData.Stride * regionY + regionX * sizeof(uint32);
+
+				for (int i=0;i<g->Height;i++)
+				{
+					for (int j=0;j<g->Width;j++)
+					{
+						int32 gray = *(g->PixelData + g->Width * i + j);
+						uint32* pa = ((uint32*)pixelRowAddr) + j;
+
+						*pa = (uint32)gray << 24 | 0xffffff;
+					}
+
+					pixelRowAddr += bmpData.Stride;
+				}
+				
+				delete[] g->PixelData;
+
+				xPos++;
+				if (xPos >= edgeCount)
+				{
+					xPos = 0;
+					yPos++;
+				}
+			}
+
+			if (config.ShowGrid)
+			{
+				char* pixelRowAddr = (char*)bmpData.Scan0;
+
+				for (int i=0;i<edgeCount;i++)
+				{
+					xPos = cellWidth * i - 1;
+					yPos = cellHeight * i - 1;
+
+					if (xPos>0)
+					{
+						uint32* pa = ((uint32*)pixelRowAddr) + xPos;
+						for (int j=0;j<bitMapHeight;j++)
+						{
+							*pa = 0xff000000U;
+							pa = (uint32*)(((char*)pa) + bmpData.Stride);
+						}
+					}
+					if (yPos>0)
+					{
+						uint32* pa = (uint32*)(pixelRowAddr + yPos * bmpData.Stride);
+						for (int j=0;j<bitMapWdith;j++)
+						{
+							*pa++ = 0xff000000U;
+						}
+					}
+					
+				}
+
+			}
+
+			packedMap.UnlockBits(&bmpData);
+		}
+		
+		bw->Close();
+		delete bw;
+
+		CLSID pngClsid;
+		GetEncoderClsid(L"image/png", &pngClsid);
+		packedMap.Save(config.DestFile.c_str(), &pngClsid);
+
+		CompileLog::WriteInformation(config.SourceFile, L">");
+	}
+	void fbBuildFromFontMap(const ConfigurationSection* sect)
+	{
+		String name = sect->getAttribute(L"Name");
+		String destFile = sect->getAttribute(L"DestinationFile");
+
+		EnsureDirectory(PathUtils::GetDirectory(destFile));
+		
+		FontBuildConfig config;
+		config.Name = name;
+		config.DestFile = destFile;
+		// other params ignored
+		BuildFont(config, RenderGlyphsByFontMap);
+
+		CompileLog::WriteInformation(name, L">");
+	}
+
+	void BuildFont(const FontBuildConfig& config, GlyphRenderHandler renderer)
+	{
+		GlyphBitmapEqualityComparer comparer;
+		FastList<CharMapping> charMap(0xffff);
+		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
+
+		FT_FontBuildInfo info;
+		renderer(StringUtils::toString(config.Name), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
+
+		FileOutStream* fs = new FileOutStream(config.DestFile);
+		BinaryWriter* bw = new BinaryWriter(fs);
+
+		bw->WriteUInt32(0xffffff01U); // new version id
+
+		bw->WriteInt32(charMap.getCount());
+		bw->WriteSingle(info.Height);
+		bw->WriteSingle(info.LineGap);
+		bw->WriteSingle(-info.Ascender);
+		bw->WriteSingle(-info.Descender);
+
+
+		for (int i=0;i<charMap.getCount();i++)
+		{
+			bw->WriteInt32(charMap[i].Character);
+			bw->WriteInt32(charMap[i].GlyphIndex);
+
+			bw->WriteInt16(charMap[i].Left);
+			bw->WriteInt16(charMap[i].Top);
+			bw->WriteSingle(charMap[i].AdvanceX);
+		}
+
+		bw->WriteInt32(glyphHashTable.getCount());
+		int64 glyRecPos = fs->getPosition();
+		for (int i=0;i<glyphHashTable.getCount();i++)
+		{
+			bw->WriteInt32((int32)0);
+			bw->WriteInt32((int32)0);
+			bw->WriteInt32((int32)0);
+			bw->WriteInt64((int64)0);
+		}
+		int64 baseOfs = fs->getPosition();
+
+		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		{
+			const GlyphBitmap* g = i.getCurrentKey();
+
+			bw->Write(g->PixelData, g->Width * g->Height);
+		}
+
+		fs->Seek(glyRecPos, SEEK_Begin);
+
+		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		{
+			const GlyphBitmap* g = i.getCurrentKey();
+
+			bw->WriteInt32((int32)g->Index);
+			bw->WriteInt32((int32)g->Width);
+			bw->WriteInt32((int32)g->Height);
+			bw->WriteInt64((int64)baseOfs);
+			baseOfs += g->Width * g->Height;
+			delete[] g->PixelData;
+		}
+
+		bw->Close();
+		delete bw;
+	}
+
+	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
+		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FT_FontBuildInfo& resultInfo)
+	{
+		//Create and initialize a freetype font library.
+		FT_Library library;
+		if (FT_Init_FreeType( &library )) 
+			throw std::runtime_error("FT_Init_FreeType failed");
+
+		//The object in which Freetype holds information on a given
+		//font is called a "face".
+		FT_Face face;
+
+		//This is where we load in the font information from the file.
+		//Of all the places where the code might die, this is the most likely,
+		//as FT_New_Face will die if the font file does not exist or is somehow broken.
+		if (FT_New_Face( library, fontFile.c_str(), 0, &face )) 
+			throw std::runtime_error("FT_New_Face failed (there is probably a problem with your font file)");
+
+		FT_Select_Charmap(face, FT_ENCODING_UNICODE );
+
+
+		//For some twisted reason, Freetype measures font size
+		//in terms of 1/64ths of pixels.  Thus, to make a font
+		//h pixels high, we need to request a size of h*64.
+		//(h << 6 is just a prettier way of writting h*64)
+		FT_Set_Char_Size( face, static_cast<int>(fontSize * 64.0f), 0, 96, 96);
+
+		FT_Size_Metrics metrics = face->size->metrics; 
+
+		float ascender = metrics.ascender / 64.f; //(metrics.ascender >> 6) / 100.0f;
+		float descender = metrics.descender / 64.f; //(metrics.descender >> 6) / 100.0f;
+		float height = metrics.height / 64.f; //(metrics.height >> 6) / 100.0f;
+		float lineGap = height - ascender + descender;
+
+		for (int i=0;i<ranges.getCount();i++)
+		{
+			for (int ch = ranges[i].MinChar; 
+				ch <= ranges[i].MaxChar; ch++)
+			{
+				//Load the Glyph for our character.
+				if(FT_Load_Glyph( face, FT_Get_Char_Index( face, (FT_ULong)ch ), FT_LOAD_DEFAULT ))
+					throw std::runtime_error("FT_Load_Glyph failed");
+
+				//Move the face's glyph into a Glyph object.
+				FT_Glyph glyph;
+				if(FT_Get_Glyph( face->glyph, &glyph ))
+					throw std::runtime_error("FT_Get_Glyph failed");
+
+				//Convert the glyph to a bitmap.
+				if (antiAlias)
+					FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_NORMAL, nullptr, 1 );
+				else
+					FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_MONO, nullptr, 1 );
+
+				FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph)glyph;
+
+				FT_Bitmap tempbitmap;
+				if (!antiAlias)
+				{
+					FT_Bitmap_New(&tempbitmap);
+					FT_Error ret = FT_Bitmap_Convert( library, &bitmap_glyph->bitmap, &tempbitmap, 1);
+					assert(ret == 0);
+				}
+
+				FT_Bitmap& readSource = antiAlias ? bitmap_glyph->bitmap : tempbitmap;
+
+				int height = readSource.rows;
+				int width = readSource.width;
+
+				char* buffer = new char[width * height];
+				memset(buffer, 0, width*height);
+
+
+				//assert(sy>=0);
+
+				int srcofs = 0;
+				int dstofs = 0;
+				for (int k=0;k<readSource.rows;k++)
+				{
+					for (int j=0;j<readSource.width;j++)
+					{
+						if (antiAlias)
+							buffer[dstofs+j] = readSource.buffer[srcofs + j];
+						else
+							buffer[dstofs+j] = readSource.buffer[srcofs + j] ? 0xff : 0;
+					}
+
+					srcofs += readSource.width;
+					dstofs += width;
+				}
+
+				if (!antiAlias)
+				{
+					FT_Bitmap_Done( library, &tempbitmap );
+				}
+
+				// check duplicated glyphs using hash table
+				// use the previous glyph if a same one already exists
+				GlyphBitmap result;
+				GlyphBitmap glyphMap(width, height, buffer);
+				if (!glyphHashTable.TryGetValue(glyphMap, result))
+				{
+					glyphMap.Index = glyphHashTable.getCount();// index++;
+					glyphHashTable.Add(glyphMap, glyphMap);
+				}
+				else
+				{
+					glyphMap = result;
+					delete[] buffer;
+				}
+
+				{
+					CharMapping m = { (wchar_t)ch, glyphMap.Index, (short)bitmap_glyph->left, (short)(fontSize-bitmap_glyph->top), (face->glyph->advance.x / 64.0f) };
+					charMap.Add(m);
+				}
+			}
+		}
+
+
+		//We don't need the face information now that the display
+		//lists have been created, so we free the assosiated resources.
+		FT_Done_Face(face);
+
+		//Ditto for the library.
+		FT_Done_FreeType(library);
+
+		resultInfo.Ascender = ascender;
+		resultInfo.Descender = descender;
+		resultInfo.Height = height;
+		resultInfo.LineGap = lineGap;
+	}
+	
+	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
+		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FT_FontBuildInfo& resultInfo)
+	{
+		String mapFile = StringUtils::toWString(fontFile) + L".png";
+		String idxFile = StringUtils::toWString(fontFile) + L".fid";
+
+		Gdiplus::Bitmap* packedMap = Gdiplus::Bitmap::FromFile(mapFile.c_str());
+		Gdiplus::BitmapData bmpData;
+		Gdiplus::Rect lr( 0, 0, packedMap->GetWidth(), packedMap->GetHeight() );
+		Gdiplus::Status ret = packedMap->LockBits(&lr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpData);
+
+		BinaryReader* br = new BinaryReader(new FileStream(idxFile));
+
+		int32 fid = br->ReadInt32();
+		assert(fid == FIDXFileID);
+
+		br->ReadInt32();
+
+		int32 charCount = br->ReadInt32();
+		charMap.ReserveDiscard(charCount);
+
+		resultInfo.Height = br->ReadSingle();
+		resultInfo.LineGap = br->ReadSingle();
+		resultInfo.Ascender = -br->ReadSingle();
+		resultInfo.Descender = -br->ReadSingle();
+		
+		for (int i=0;i<charCount;i++)
+		{
+			CharMapping& cm = charMap[i];
+			cm.Character = br->ReadInt32();
+			cm.GlyphIndex = br->ReadInt32();
+			cm.Left = br->ReadInt16();
+			cm.Top = br->ReadInt16();
+			cm.AdvanceX = br->ReadSingle();
+		}
+
+		int32 glyphCount = br->ReadInt32();
+		glyphHashTable.Resize(glyphCount);
+
+		for (int k=0;k<glyphCount;k++)
+		{
+			int32 gbIndex = br->ReadInt32();
+			int32 gbWidth = br->ReadInt32();
+			int32 gbHeight = br->ReadInt32();
+			
+			int rx = br->ReadInt32();
+			int ry = br->ReadInt32();
+
+			char* pixelData = new char[gbWidth * gbHeight];
+
+			const char* pixelRowAddr = (char*)bmpData.Scan0 + bmpData.Stride * ry + rx * sizeof(uint32);
+
+			for (int i=0;i<gbHeight;i++)
+			{
+				for (int j=0;j<gbWidth;j++)
+				{
+					//int32 gray = *(gb.PixelData + g->Width * i + j);
+					uint32 pa = *(((uint32*)pixelRowAddr) + j);
+					
+					*(pixelData + gbWidth * i + j) = (char)(pa >> 24);
+					//*pa = (uint32)gray << 24 | 0xffffff;
+				}
+
+				pixelRowAddr += bmpData.Stride;
+			}
+
+
+			GlyphBitmap gb(gbWidth, gbHeight, pixelData);
+			gb.Index = gbIndex;
+			glyphHashTable.Add(gb, gb);
+		}
+
+		packedMap->UnlockBits(&bmpData);
+		delete packedMap;
+		delete br;
+	}
 
 	bool IsColEmpty(const Gdiplus::BitmapData* bmp, int x)
 	{
@@ -184,13 +709,13 @@ namespace APBuild
 		UINT  num = 0;          // number of image encoders
 		UINT  size = 0;         // size of the image encoder array in bytes
 
-		ImageCodecInfo* pImageCodecInfo = NULL;
+		Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
 
-		GetImageEncodersSize(&num, &size);
+		Gdiplus::GetImageEncodersSize(&num, &size);
 		if(size == 0)
 			return -1;  // Failure
 
-		pImageCodecInfo = (ImageCodecInfo*)(malloc(size));
+		pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
 		if(pImageCodecInfo == NULL)
 			return -1;  // Failure
 
@@ -210,19 +735,17 @@ namespace APBuild
 		return -1;  // Failure
 	}
 
-	void FontBuild::BuildByGDIPlus(const FontBuildConfig& config)
+	// this is useless
+	void BuildByGDIPlus(const FontBuildConfig& config)
 	{
-		GlyphBitmapEqualityComparer* comparer = new GlyphBitmapEqualityComparer();
+		GlyphBitmapEqualityComparer comparer;
 		FastList<CharMapping> charMap(0xffff);
-		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, comparer);
-		//bool* passCheck = new bool[0xffff];
-		//memset(passCheck,0,sizeof(bool)*0xffff);
-
-
-		Bitmap globalBmp(1,1, PixelFormat32bppARGB);
+		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
+		
+		Gdiplus::Bitmap globalBmp(1,1, PixelFormat32bppARGB);
 		Gdiplus::Graphics* gg = Gdiplus::Graphics::FromImage(&globalBmp);
 
-		Font font(config.Name.c_str(), config.Size, config.Style);
+		Gdiplus::Font font(config.Name.c_str(), config.Size, config.Style);
 
 		// generate the images for characters as specified in the ranges
 		for (int i=0;i<config.Ranges.getCount();i++)
@@ -230,27 +753,26 @@ namespace APBuild
 			for (wchar_t ch = (wchar_t)config.Ranges[i].MinChar; 
 				ch <= (wchar_t)config.Ranges[i].MaxChar; ch++)
 			{
-
-				RectF size;
+				Gdiplus::RectF size;
 				gg->MeasureString(&ch, 1, &font, Gdiplus::PointF(0,0), &size);
 
 				int width = static_cast<int>(ceilf(size.Width));
 				int height = static_cast<int>(ceilf(size.Height));
 
-				Bitmap* bitmap = new Bitmap((INT)width, (INT)height, PixelFormat32bppARGB);
+				Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap((INT)width, (INT)height, PixelFormat32bppARGB);
 
 				Gdiplus::Graphics* g = Gdiplus::Graphics::FromImage(bitmap);
 				if (config.AntiAlias)
-					g->SetTextRenderingHint(TextRenderingHintAntiAliasGridFit);
+					g->SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAliasGridFit);
 				else
-					g->SetTextRenderingHint(TextRenderingHintSingleBitPerPixel);
+					g->SetTextRenderingHint(Gdiplus::TextRenderingHintSingleBitPerPixel);
 				g->Clear(Gdiplus::Color(0));
 
 
-				Brush* brush = new SolidBrush((Gdiplus::ARGB)Gdiplus::Color::White);
-				StringFormat* strFmt = new StringFormat();
-				strFmt->SetAlignment(StringAlignmentNear);
-				strFmt->SetLineAlignment(StringAlignmentNear);
+				Gdiplus::Brush* brush = new Gdiplus::SolidBrush((Gdiplus::ARGB)Gdiplus::Color::White);
+				Gdiplus::StringFormat* strFmt = new Gdiplus::StringFormat();
+				strFmt->SetAlignment(Gdiplus::StringAlignmentNear);
+				strFmt->SetLineAlignment(Gdiplus::StringAlignmentNear);
 
 				g->DrawString(&ch,1,&font,Gdiplus::PointF(0,0), strFmt, brush);
 
@@ -260,8 +782,6 @@ namespace APBuild
 				delete g;
 				delete brush;
 				delete strFmt;
-
-
 
 				Gdiplus::BitmapData bmpData;
 				Gdiplus::Rect lr = Gdiplus::Rect( 0, 0, width, height );
@@ -414,10 +934,7 @@ namespace APBuild
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 
-			//int compLength;
-			//char* compressed = CompressData(g->PixelData, g->Width, g->Height, compLength);
 			bw->Write(g->PixelData, g->Width * g->Height);
-			//delete[] compressed;
 		}
 
 		fs->Seek(glyRecPos, SEEK_Begin);
@@ -438,268 +955,6 @@ namespace APBuild
 		bw->Close();
 		delete bw;
 
-		delete comparer;
-		//delete[] passCheck;
-	}
-	void FontBuild::BuildByFreeType(const FontBuildConfig& config)
-	{
-		GlyphBitmapEqualityComparer* comparer = new GlyphBitmapEqualityComparer();
-		FastList<CharMapping> charMap(0xffff);
-		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, comparer);
-		
-		//Create and initilize a freetype font library.
-		FT_Library library;
-		if (FT_Init_FreeType( &library )) 
-			throw std::runtime_error("FT_Init_FreeType failed");
-
-		//The object in which Freetype holds information on a given
-		//font is called a "face".
-		FT_Face face;
-
-		std::string name = StringUtils::toString(config.Name);
-		//This is where we load in the font information from the file.
-		//Of all the places where the code might die, this is the most likely,
-		//as FT_New_Face will die if the font file does not exist or is somehow broken.
-		if (FT_New_Face( library, name.c_str(), 0, &face )) 
-			throw std::runtime_error("FT_New_Face failed (there is probably a problem with your font file)");
-
-		FT_Select_Charmap(face, FT_ENCODING_UNICODE );
-			
-
-		//For some twisted reason, Freetype measures font size
-		//in terms of 1/64ths of pixels.  Thus, to make a font
-		//h pixels high, we need to request a size of h*64.
-		//(h << 6 is just a prettier way of writting h*64)
-		FT_Set_Char_Size( face, static_cast<int>(config.Size * 64.0f), 0, 96, 96);
-
-		FT_Size_Metrics metrics = face->size->metrics; 
-
-		float ascender = metrics.ascender / 64.f; //(metrics.ascender >> 6) / 100.0f;
-		float descender = metrics.descender / 64.f; //(metrics.descender >> 6) / 100.0f;
-		float height = metrics.height / 64.f; //(metrics.height >> 6) / 100.0f;
-		float lineGap = height - ascender + descender;
-		
-		for (int i=0;i<config.Ranges.getCount();i++)
-		{
-			for (int ch = config.Ranges[i].MinChar; 
-				ch <= config.Ranges[i].MaxChar; ch++)
-			{
-				//Load the Glyph for our character.
-				if(FT_Load_Glyph( face, FT_Get_Char_Index( face, (FT_ULong)ch ), FT_LOAD_DEFAULT ))
-					throw std::runtime_error("FT_Load_Glyph failed");
-
-				//Move the face's glyph into a Glyph object.
-				FT_Glyph glyph;
-				if(FT_Get_Glyph( face->glyph, &glyph ))
-					throw std::runtime_error("FT_Get_Glyph failed");
-
-				//Convert the glyph to a bitmap.
-				if (config.AntiAlias)
-					FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_NORMAL, nullptr, 1 );
-				else
-					FT_Glyph_To_Bitmap( &glyph, FT_RENDER_MODE_MONO, nullptr, 1 );
-
-				FT_BitmapGlyph bitmap_glyph = (FT_BitmapGlyph)glyph;
-
-				FT_Bitmap tempbitmap;
-				if (!config.AntiAlias)
-				{
-					FT_Bitmap_New(&tempbitmap);
-					FT_Error ret = FT_Bitmap_Convert( library, &bitmap_glyph->bitmap, &tempbitmap, 1);
-					assert(ret == 0);
-				}
-
-				FT_Bitmap& readSource = config.AntiAlias ? bitmap_glyph->bitmap : tempbitmap;
-
-				int height = readSource.rows;
-				int width = readSource.width;
-
-				char* buffer = new char[width * height];
-				memset(buffer, 0, width*height);
-				
-				
-				//assert(sy>=0);
-				
-				int srcofs = 0;
-				int dstofs = 0;
-				for (int k=0;k<readSource.rows;k++)
-				{
-					for (int j=0;j<readSource.width;j++)
-					{
-						if (config.AntiAlias)
-							buffer[dstofs+j] = readSource.buffer[srcofs + j];
-						else
-							buffer[dstofs+j] = readSource.buffer[srcofs + j] ? 0xff : 0;
-					}
-
-					srcofs += readSource.width;
-					dstofs += width;
-				}
-
-				if (!config.AntiAlias)
-				{
-					FT_Bitmap_Done( library, &tempbitmap );
-				}
-				
-				// check duplicated glyphs using hash table
-				// use the previous glyph if a same one already exists
-				GlyphBitmap result;
-				GlyphBitmap glyphMap(width, height, buffer);
-				if (!glyphHashTable.TryGetValue(glyphMap, result))
-				{
-					glyphMap.Index = glyphHashTable.getCount();// index++;
-					glyphHashTable.Add(glyphMap, glyphMap);
-				}
-				else
-				{
-					glyphMap = result;
-					delete[] buffer;
-				}
-
-				{
-					CharMapping m = { (wchar_t)ch, glyphMap.Index, (short)bitmap_glyph->left, (short)(config.Size-bitmap_glyph->top), (face->glyph->advance.x / 64.0f) };
-					charMap.Add(m);
-				}
-			}
-		}
-
-
-		//We don't need the face information now that the display
-		//lists have been created, so we free the assosiated resources.
-		FT_Done_Face(face);
-
-		//Ditto for the library.
-		FT_Done_FreeType(library);
-
-		FileOutStream* fs = new FileOutStream(config.DestFile);
-		BinaryWriter* bw = new BinaryWriter(fs);
-
-		bw->WriteUInt32(0xffffff01U); // new version id
-		
-		bw->WriteInt32(static_cast<int32>(charMap.getCount()));
-		bw->WriteSingle(static_cast<float>(height));
-		bw->WriteSingle(static_cast<float>(lineGap));
-		bw->WriteSingle(static_cast<float>(-ascender));
-		bw->WriteSingle(static_cast<float>(-descender));
-
-
-		for (int i=0;i<charMap.getCount();i++)
-		{
-			bw->WriteInt32((int32)charMap[i].Character);
-			bw->WriteInt32((int32)charMap[i].GlyphIndex);
-
-			bw->WriteInt16((short)charMap[i].Left);
-			bw->WriteInt16((short)charMap[i].Top);
-			bw->WriteSingle((float)charMap[i].AdvanceX);
-		}
-
-		bw->WriteInt32(glyphHashTable.getCount());
-		int64 glyRecPos = fs->getPosition();
-		for (int i=0;i<glyphHashTable.getCount();i++)
-		{
-			bw->WriteInt32((int32)0);
-			bw->WriteInt32((int32)0);
-			bw->WriteInt32((int32)0);
-			bw->WriteInt64((int64)0);
-		}
-		int64 baseOfs = fs->getPosition();
-
-		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
-		{
-			const GlyphBitmap* g = i.getCurrentKey();
-
-			//int compLength;
-			//char* compressed = CompressData(g->PixelData, g->Width, g->Height, compLength);
-			bw->Write(g->PixelData, g->Width * g->Height);
-			//delete[] compressed;
-		}
-
-		fs->Seek(glyRecPos, SEEK_Begin);
-
-		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
-		{
-			const GlyphBitmap* g = i.getCurrentKey();
-
-			bw->WriteInt32((int32)g->Index);
-			bw->WriteInt32((int32)g->Width);
-			bw->WriteInt32((int32)g->Height);
-			bw->WriteInt64((int64)baseOfs);
-			baseOfs += g->Width * g->Height;
-			delete[] g->PixelData;
-		}
-
-
-		bw->Close();
-		delete bw;
-
-		delete comparer;
-		//delete[] passCheck;
-	}
-	void FontBuild::Build(const ConfigurationSection* sect)
-	{
-		FontBuildConfig config;
-		config.Parse(sect);
-
-		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
-
-		//BuildByGDIPlus(config);
-		BuildByFreeType(config);
-
-		CompileLog::WriteInformation(config.Name, L">");
-
 	}
 
-	void FontBuild::BuildGlyphCheck(const ConfigurationSection* sect)
-	{
-		String srcFile = sect->getAttribute(L"SourceFile");
-		String dstFile = sect->getAttribute(L"DestinationFile");
-
-		EnsureDirectory(PathUtils::GetDirectory(dstFile));
-		
-		FT_Library library;
-		if (FT_Init_FreeType( &library )) 
-			throw std::runtime_error("FT_Init_FreeType failed");
-		
-		std::string name = StringUtils::toString(srcFile);
-		FT_Face face;
-		if (FT_New_Face( library, name.c_str(), 0, &face )) 
-			throw std::runtime_error("FT_New_Face failed (there is probably a problem with your font file)");
-
-		FT_Select_Charmap(face, FT_ENCODING_UNICODE );
-
-		List<std::pair<FT_UInt, FT_UInt>> regions;
-		FT_UInt lastIdx = 0;
-		for (uint i=0;i<65535;i++)
-		{
-			FT_UInt idx = FT_Get_Char_Index(face, i);
-			
-			if (idx == 0)
-			{
-				if (i - lastIdx > 1)
-				{
-					// put session
-					regions.Add(std::make_pair(lastIdx+1, i-1));
-				}
-				lastIdx = i;
-			}
-		}
-
-
-		FT_Done_Face(face);
-		FT_Done_FreeType(library);
-
-		FileOutStream* fs = new FileOutStream(dstFile);
-		BinaryWriter* bw = new BinaryWriter(fs);
-		
-		bw->WriteInt32(regions.getCount());
-
-		for (int i=0;i<regions.getCount();i++)
-		{
-			bw->WriteUInt32(regions[i].first);
-			bw->WriteUInt32(regions[i].second);
-		}
-
-		bw->Close();
-		delete bw;
-	}
 }

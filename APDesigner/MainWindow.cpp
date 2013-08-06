@@ -150,6 +150,7 @@ namespace APDesigner
 			m_UIskin->ControlFontName = L"english";
 			FileLocation* fl = FileSystem::getSingleton().Locate(L"english.fnt", rule);
 			FontManager::getSingleton().LoadFont(m_device, L"english", fl);
+			FontManager::getSingleton().ReportComplexFonts();
 		}
 
 		{

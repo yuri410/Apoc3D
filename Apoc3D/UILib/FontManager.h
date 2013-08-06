@@ -58,6 +58,7 @@ namespace Apoc3D
 		 */
 		class APAPI Font
 		{
+			friend class FontManager;
 		public:
 			
 			Font(RenderDevice* device, ResourceLocation* fl);
@@ -92,7 +93,6 @@ namespace Apoc3D
 			float getTextBackgroundHeight(int lineCount) const { return m_descender + (m_height+m_lineGap) * lineCount; }
 
 			static int qsort_comparer(const void* a, const void* b);
-
 		private:
 			static const int MaxFreq = 5;
 			struct Character
@@ -224,6 +224,7 @@ namespace Apoc3D
 			void StartFrame();
 			void LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl);
 
+			void ReportComplexFonts();
 
 			Font* getFont(const String& fontName);
 
