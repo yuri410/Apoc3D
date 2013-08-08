@@ -135,7 +135,7 @@ namespace Apoc3D
 
 			bool operator==(const RectangleF &other) const
 			{
-				return (X  == other.X) && (X == other.Y) && (Width == other.Width) && (Height == other.Height);	
+				return (X  == other.X) && (Y == other.Y) && (Width == other.Width) && (Height == other.Height);	
 			}
 			bool operator!=(const RectangleF &other) const { return !(*this == other); }
 
@@ -282,16 +282,16 @@ namespace Apoc3D
 				result.Height = Max(abrp_y, bbrp_y) - result.Y;
 				return result;
 			}
-			bool operator==(const Rectangle &other) const
-			{
-				return (X  == other.X) && (X == other.Y) && (Width == other.Width) && (Height == other.Height);	
-			}
-			bool operator!=(const Rectangle &other) const { return !(*this == other); }
-
 			operator RectangleF() const
 			{
 				return RectangleF(static_cast<float>(X), static_cast<float>(Y), static_cast<float>(Width), static_cast<float>(Height)); 
 			} 
+
+			bool operator==(const Rectangle &other) const
+			{
+				return (X == other.X) && (Y == other.Y) && (Width == other.Width) && (Height == other.Height);	
+			}
+			bool operator!=(const Rectangle &other) const { return !(*this == other); }
 
 			const static Rectangle Empty;
 		};

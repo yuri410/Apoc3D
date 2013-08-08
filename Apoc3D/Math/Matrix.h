@@ -149,8 +149,12 @@ namespace Apoc3D
 				float f21, float f22, float f23, float f24,
 				float f31, float f32, float f33, float f34,
 				float f41, float f42, float f43, float f44)
+				: M11(f11), M12(f12), M13(f13), M14(f14),
+				 M21(f21), M22(f22), M23(f23), M24(f24),
+				 M31(f31), M32(f32), M33(f33), M34(f34),
+				 M41(f41), M42(f42), M43(f43), M44(f44)
 			{
-				__asm
+				/*__asm
 				{
 					mov		eax, this
 					fld		float ptr f11
@@ -188,7 +192,7 @@ namespace Apoc3D
 					fstp	float ptr [eax+ELEM_ADDR(4,3)]
 					fld		float ptr f44;
 					fstp	float ptr [eax+ELEM_ADDR(4,4)]
-				}
+				}*/
 			}
 
 			Vector3 GetX() const
@@ -525,7 +529,76 @@ namespace Apoc3D
 
 				res.Row4 = Result;
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+
+				/*__m128 a;
+				__m128 b;
+				__m128 c;
+				__m128 d;
+
+				if (((uintptr_t)&mb.M11) & 15)
+				{
+					a = _mm_loadu_ps(&mb.M11);
+					b = _mm_loadu_ps(&mb.M21);
+					c = _mm_loadu_ps(&mb.M31);
+					d = _mm_loadu_ps(&mb.M41);
+				}
+				else
+				{
+					a = mb.Row1;// _mm_load_ps(&mb.M11);
+					b = mb.Row2;//_mm_load_ps(&mb.M21);
+					c = mb.Row3;// _mm_load_ps(&mb.M31);
+					d = mb.Row4;// _mm_load_ps(&mb.M41);
+				}
 				
+				__m128 t1, t2;
+
+				t1 = _mm_set1_ps(ma.M11);
+				t2 = _mm_mul_ps(a, t1);
+				t1 =_mm_set1_ps(ma.M12);
+				t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
+				t1 =_mm_set1_ps(ma.M13);
+				t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
+				t1 =_mm_set1_ps(ma.M14);
+				t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
+
+				_mm_store_ps(&res.M11, t2);
+				//_mm_store_ps(&m[0], t2);
+
+				t1 = _mm_set1_ps(ma.M21);
+				t2 = _mm_mul_ps(a, t1);
+				t1 =_mm_set1_ps(ma.M22);
+				t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
+				t1 =_mm_set1_ps(ma.M23);
+				t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
+				t1 =_mm_set1_ps(ma.M24);
+				t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
+
+				_mm_store_ps(&res.M21, t2);
+				//_mm_store_ps(&m[4], t2);
+
+				t1 = _mm_set1_ps(ma.M31);
+				t2 = _mm_mul_ps(a, t1);
+				t1 =_mm_set1_ps(ma.M32);
+				t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
+				t1 =_mm_set1_ps(ma.M33);
+				t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
+				t1 =_mm_set1_ps(ma.M34);
+				t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
+
+				_mm_store_ps(&res.M31, t2);
+				//_mm_store_ps(&m[8], t2);
+
+				t1 = _mm_set1_ps(ma.M41);
+				t2 = _mm_mul_ps(a, t1);
+				t1 =_mm_set1_ps(ma.M42);
+				t2 = _mm_add_ps(_mm_mul_ps(b, t1), t2);
+				t1 =_mm_set1_ps(ma.M43);
+				t2 = _mm_add_ps(_mm_mul_ps(c, t1), t2);
+				t1 =_mm_set1_ps(ma.M44);
+				t2 = _mm_add_ps(_mm_mul_ps(d, t1), t2);
+
+				_mm_store_ps(&res.M41, t2);
+				*/
 				res.M11 = (ma.M11 * mb.M11) + (ma.M12 * mb.M21) + (ma.M13 * mb.M31) + (ma.M14 * mb.M41);
 				res.M12 = (ma.M11 * mb.M12) + (ma.M12 * mb.M22) + (ma.M13 * mb.M32) + (ma.M14 * mb.M42);
 				res.M13 = (ma.M11 * mb.M13) + (ma.M12 * mb.M23) + (ma.M13 * mb.M33) + (ma.M14 * mb.M43);
@@ -545,6 +618,59 @@ namespace Apoc3D
 				res.M42 = (ma.M41 * mb.M12) + (ma.M42 * mb.M22) + (ma.M43 * mb.M32) + (ma.M44 * mb.M42);
 				res.M43 = (ma.M41 * mb.M13) + (ma.M42 * mb.M23) + (ma.M43 * mb.M33) + (ma.M44 * mb.M43);
 				res.M44 = (ma.M41 * mb.M14) + (ma.M42 * mb.M24) + (ma.M43 * mb.M34) + (ma.M44 * mb.M44);
+				/*__m128 maR1 = _mm_loadu_ps(&ma.M11);
+				__m128 maR2 = _mm_loadu_ps(&ma.M21);
+				__m128 maR3 = _mm_loadu_ps(&ma.M31);
+				__m128 maR4 = _mm_loadu_ps(&ma.M41);
+
+				__declspec(align(16)) float temp[4] = { mb.M11, mb.M21, mb.M31, mb.M41 };
+				__m128 mbC1 = _mm_load_ps(temp);
+				temp[0] = mb.M12; temp[1] = mb.M22; temp[2] = mb.M32; temp[3] = mb.M42;
+				__m128 mbC2 = _mm_load_ps(temp);
+				temp[0] = mb.M13; temp[1] = mb.M23; temp[2] = mb.M33; temp[3] = mb.M43;
+				__m128 mbC3 = _mm_load_ps(temp);
+				temp[0] = mb.M14; temp[1] = mb.M24; temp[2] = mb.M34; temp[3] = mb.M44;
+				__m128 mbC4 = _mm_load_ps(temp);
+
+				res.M11 = reinterpret_cast<const float&>(_mm_dp_ps(maR1, mbC1, SIMDDot4MaskX));
+				res.M12 = reinterpret_cast<const float&>(_mm_dp_ps(maR1, mbC2, SIMDDot4MaskX));
+				res.M13 = reinterpret_cast<const float&>(_mm_dp_ps(maR1, mbC3, SIMDDot4MaskX));
+				res.M14 = reinterpret_cast<const float&>(_mm_dp_ps(maR1, mbC4, SIMDDot4MaskX));
+
+				res.M21 = reinterpret_cast<const float&>(_mm_dp_ps(maR2, mbC1, SIMDDot4MaskX));
+				res.M22 = reinterpret_cast<const float&>(_mm_dp_ps(maR2, mbC2, SIMDDot4MaskX));
+				res.M23 = reinterpret_cast<const float&>(_mm_dp_ps(maR2, mbC3, SIMDDot4MaskX));
+				res.M24 = reinterpret_cast<const float&>(_mm_dp_ps(maR2, mbC4, SIMDDot4MaskX));
+
+				res.M31 = reinterpret_cast<const float&>(_mm_dp_ps(maR3, mbC1, SIMDDot4MaskX));
+				res.M32 = reinterpret_cast<const float&>(_mm_dp_ps(maR3, mbC2, SIMDDot4MaskX));
+				res.M33 = reinterpret_cast<const float&>(_mm_dp_ps(maR3, mbC3, SIMDDot4MaskX));
+				res.M34 = reinterpret_cast<const float&>(_mm_dp_ps(maR3, mbC4, SIMDDot4MaskX));
+
+				res.M41 = reinterpret_cast<const float&>(_mm_dp_ps(maR4, mbC1, SIMDDot4MaskX));
+				res.M42 = reinterpret_cast<const float&>(_mm_dp_ps(maR4, mbC2, SIMDDot4MaskX));
+				res.M43 = reinterpret_cast<const float&>(_mm_dp_ps(maR4, mbC3, SIMDDot4MaskX));
+				res.M44 = reinterpret_cast<const float&>(_mm_dp_ps(maR4, mbC4, SIMDDot4MaskX));*/
+
+				/*res.M11 = SIMDVec4Dot(maR1, mbC1);
+				res.M12 = SIMDVec4Dot(maR1, mbC2);
+				res.M13 = SIMDVec4Dot(maR1, mbC3);
+				res.M14 = SIMDVec4Dot(maR1, mbC4);
+
+				res.M21 = SIMDVec4Dot(maR2, mbC1);
+				res.M22 = SIMDVec4Dot(maR2, mbC2);
+				res.M23 = SIMDVec4Dot(maR2, mbC3);
+				res.M24 = SIMDVec4Dot(maR2, mbC4);
+
+				res.M31 = SIMDVec4Dot(maR3, mbC1);
+				res.M32 = SIMDVec4Dot(maR3, mbC2);
+				res.M33 = SIMDVec4Dot(maR3, mbC3);
+				res.M34 = SIMDVec4Dot(maR3, mbC4);
+
+				res.M41 = SIMDVec4Dot(maR4, mbC1);
+				res.M42 = SIMDVec4Dot(maR4, mbC2);
+				res.M43 = SIMDVec4Dot(maR4, mbC3);
+				res.M44 = SIMDVec4Dot(maR4, mbC4);*/
 			#endif
 			}
 

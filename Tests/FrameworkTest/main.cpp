@@ -3,6 +3,8 @@
 #include "apoc3d/Engine.h"
 #include "apoc3d/IOLib/TaggedData.h"
 #include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Math/Plane.h"
@@ -311,28 +313,39 @@ void TestRLE()
 	delete[] decompressedData;
 }
 
+Matrix* GenerateRandomMatrices(Random& rnd, int32 count)
+{
+	Matrix* result = new Matrix[count];
+
+	for (int i=0;i<count;i++)
+	{
+		Matrix& m = result[i];
+		Matrix::CreateRotationY(m, rnd.NextFloat() * Math::PI);
+	}
+	return result;
+}
+
 void TestMath()
 {
-	/*Matrix m;
-	Matrix ma;
-	ma.LoadIdentity();
-	Matrix mb;
-	mb.LoadIdentity();
+	const int32 count = 1048576; // 64MB * 3
 
-	Matrix ac;
-	ac.LoadIdentity();
+	Random rnd(9934234);
+
+	Matrix* set1 = GenerateRandomMatrices(rnd, count); // 64MB
+	Matrix* set2 = GenerateRandomMatrices(rnd, count);
+	Matrix* result = GenerateRandomMatrices(rnd, count);
 
 	DWORD start = GetTickCount();
-	for (int i=0;i<1000000;i++)
+	for (int i=0;i<count;i++)
 	{
-		Matrix::Multiply(m,ma,mb);
-		Matrix::Add(ac, m, ac);
+		Matrix::Multiply(result[i], set1[i], set2[i]);
 	}
 	DWORD end = GetTickCount();
 
 	DWORD t = end - start;
-
 	std::wcout << t << L"\n";
-	std::wcout << (ac.M11 + ac.M12) << L"\n";*/
 
+	BinaryWriter* bw = new BinaryWriter(new FileOutStream(L"testMath1.dat"));
+	bw->Write((char*)result, sizeof(Matrix) * count);
+	delete bw;
 }
