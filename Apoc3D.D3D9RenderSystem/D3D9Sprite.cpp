@@ -388,7 +388,8 @@ namespace Apoc3D
 						int32 vtxCount = dpCount * 4;
 
 						m_rawDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, startVertex, vtxCount, startIndex, dpCount * 2);
-						
+						m_batchCount++;
+
 						lastIndex = i;
 					}	
 

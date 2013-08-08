@@ -34,7 +34,8 @@ namespace Apoc3D
 			Sprite::Sprite(RenderDevice* rd)
 				: m_renderDevice(rd), m_transform(Matrix::Identity), m_stack(10), 
 				m_currentSettings((SpriteSettings)(SPR_ChangeState | SPR_AlphaBlended)),
-				m_began(false)
+				m_began(false),
+				m_batchCount(0)
 			{
 				
 			}
