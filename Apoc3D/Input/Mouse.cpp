@@ -40,5 +40,9 @@ namespace Apoc3D
 
 		}
 
+		void Mouse::SetCurrentPosition(const Point& loc)
+		{
+			m_currentPos = loc;
+		}
 	}
 }

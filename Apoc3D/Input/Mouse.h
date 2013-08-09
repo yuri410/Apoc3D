@@ -45,6 +45,7 @@ namespace Apoc3D
 			virtual ~Mouse();
 
 			const Point& GetCurrentPosition() const { return m_currentPos; }
+			virtual void SetCurrentPosition(const Point& loc);
 
 			int getX() const { return m_currentPos.X; }
 			int getY() const { return m_currentPos.Y; }

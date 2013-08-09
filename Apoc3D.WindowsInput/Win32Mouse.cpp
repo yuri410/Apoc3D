@@ -68,8 +68,21 @@ namespace Apoc3D
 					m_btnState[1] = !!GetAsyncKeyState(VK_MBUTTON);
 					m_btnState[2] = !!GetAsyncKeyState(VK_RBUTTON);
 				}
-
 			}
+			void OldSchoolMouse::SetCurrentPosition(const Point& loc)
+			{
+				Mouse::SetCurrentPosition(loc);
+				if (m_hwnd)
+				{
+					POINT pt;
+					pt.x = loc.X;
+					pt.y = loc.Y;
+
+					ClientToScreen(m_hwnd, &pt);
+					SetCursorPos(pt.x, pt.y);
+				}
+			}
+
 			LRESULT OldSchoolMouse::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				switch (message)
@@ -102,7 +115,14 @@ namespace Apoc3D
 				
 				m_mouse->capture();
 			}
+			void Win32Mouse::SetCurrentPosition(const Point& loc)
+			{
+				Mouse::SetCurrentPosition(loc);
 
+				OIS::MouseState& mutableMouseState = const_cast<OIS::MouseState &>(m_mouse->getMouseState());
+				mutableMouseState.X.abs = loc.X;
+				mutableMouseState.Y.abs = loc.Y;
+			}
 			bool Win32Mouse::mouseMoved( const OIS::MouseEvent &arg )
 			{
 				const OIS::MouseState& s = arg.state;

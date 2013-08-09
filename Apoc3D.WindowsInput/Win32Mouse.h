@@ -41,6 +41,8 @@ namespace Apoc3D
 				OldSchoolMouse(HWND hwnd);
 				~OldSchoolMouse();
 
+				virtual void SetCurrentPosition(const Point& loc);
+
 				void Update(const GameTime* const time);
 			private:
 				int m_accumlatedMouseWheel;
@@ -62,10 +64,22 @@ namespace Apoc3D
 			};
 			class Win32Mouse : public Mouse, public OIS::MouseListener
 			{
+			public:
+				Win32Mouse(OIS::InputManager* manager);
+				~Win32Mouse();
+
+				virtual void SetCurrentPosition(const Point& loc);
+
+				void Update(const GameTime* const time);
+
+				bool mouseMoved( const OIS::MouseEvent &arg );
+				bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
+				bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
+
 			private:
 				OIS::InputManager* m_inpMgr;
 				OIS::Mouse* m_mouse;
-				
+
 
 				//int32 m_x;
 				//int32 m_y;
@@ -76,15 +90,6 @@ namespace Apoc3D
 				//int32 m_lastZ;
 				//bool m_buttons[3];
 				//bool m_lastButtons[3];
-			public:
-				Win32Mouse(OIS::InputManager* manager);
-				~Win32Mouse();
-
-				void Update(const GameTime* const time);
-
-				bool mouseMoved( const OIS::MouseEvent &arg );
-				bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
-				bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 			};
 		}
 	}
