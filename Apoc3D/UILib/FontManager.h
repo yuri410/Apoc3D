@@ -64,6 +64,9 @@ namespace Apoc3D
 			Font(RenderDevice* device, ResourceLocation* fl);
 			~Font();
 
+			bool ChangeCharacterSetting(wchar_t ch, short left, short top, float adcanceX);
+			bool LookupCharacterSetting(wchar_t ch, short& left, short& top, float& adcanceX);
+
 			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length=-1, float lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color);
 
@@ -223,7 +226,7 @@ namespace Apoc3D
 			 *  reset every Font's internal frequency statistics
 			 */
 			void StartFrame();
-			void LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl);
+			Font* LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl);
 
 			void ReportComplexFonts();
 

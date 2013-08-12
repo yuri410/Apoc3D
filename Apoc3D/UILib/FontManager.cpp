@@ -301,6 +301,31 @@ namespace Apoc3D
 			delete m_resource;
 		}
 
+		bool Font::ChangeCharacterSetting(wchar_t ch, short left, short top, float adcanceX)
+		{
+			Character* c = m_charTable.TryGetValue(ch);
+			if (c)
+			{
+				c->Left = left;
+				c->Top = top;
+				c->AdcanceX = adcanceX;
+				return true;
+			}
+			return false;
+		}
+		bool Font::LookupCharacterSetting(wchar_t ch, short& left, short& top, float& adcanceX)
+		{
+			Character* c = m_charTable.TryGetValue(ch);
+			if (c)
+			{
+				left = c->Left;
+				top = c->Top;
+				adcanceX = c->AdcanceX;
+				return true;
+			}
+			return false;
+		}
+
 		void Font::DrawStringEx(Sprite* sprite, const String& text, float _x, float y, uint color, int length, float extLineSpace, wchar_t suffix, float hozShrink)
 		{
 			float std = _x;
@@ -937,11 +962,11 @@ namespace Apoc3D
 			return m_fontTable[fontName];
 		}
 
-		void FontManager::LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl)
+		Font* FontManager::LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl)
 		{
 			Font* font = new Font(device, rl);
 			m_fontTable.Add(name, font);
-
+			return font;
 		}
 		void FontManager::StartFrame()
 		{
