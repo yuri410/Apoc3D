@@ -735,6 +735,98 @@ namespace Apoc3D
 			}
 			return chCount;
 		}
+		
+		String Font::LineBreakString(const String& text, int width, bool byWord, int& lineCount)
+		{
+			String result;
+			result.reserve(text.size() + 5);
+			
+			lineCount = 0;
+
+			if (byWord)
+			{
+				float x = 0;
+				int32 len = (int32)text.length();
+
+				int32 prevWorldBegin = 0;
+				for (int32 i = 0; i < len; i++)
+				{
+					wchar_t ch = text[i];
+
+					bool isBlankCh = ch == ' ' || ch == '\t';
+					if (isBlankCh) prevWorldBegin = i;
+
+					Character chdef;
+					if (m_charTable.TryGetValue(ch, chdef))
+					{
+						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+
+						x += chdef.AdcanceX;
+
+						if (x > width && !isBlankCh)
+						{
+							if (prevWorldBegin+1 < (int32)result.size())
+								result.insert(prevWorldBegin+1, 1, '\n');
+
+							lineCount++;
+							x = 0;
+						}
+					}
+					
+					result.append(1, text[i]);
+
+					if (ch == '\n')
+					{
+						x = 0;
+						lineCount++;
+					}
+				}
+			}
+			else
+			{
+				float x = 0;
+				int32 len = (int32)text.length() - 1;
+
+				if (text.length())
+					result.append(1, text[0]);
+
+				for (int32 i = 0; i < len; i++)
+				{
+					wchar_t ch = text[i];
+					wchar_t nch = text[i+1];
+
+					Character chdef;
+					if (m_charTable.TryGetValue(nch, chdef))
+					{
+						const Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+
+						x += chdef.AdcanceX;
+
+						if (x > width)
+						{
+							if (nch == ' ' || nch == '\t' || ch == ' ' || ch == '\t')
+								result.append(1, nch);
+							else
+								result.append(1, '-');
+								
+							result.append(1, '\n');
+							lineCount++;
+							x = 0;
+						}
+						else result.append(1, nch);
+					}
+					else result.append(1, nch);
+
+					if (ch == '\n')
+					{
+						x = 0;
+						lineCount++;
+					}
+				}
+			}
+
+			return result;
+		}
 
 		void Font::FrameStartReset()
 		{

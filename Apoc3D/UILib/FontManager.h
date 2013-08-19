@@ -82,6 +82,7 @@ namespace Apoc3D
 				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, -1.f, 0, hozShrink);
 			}
 
+			String LineBreakString(const String& text, int width, bool byWord, int& lineCount);
 			Point MeasureString(const String& text);
 			int FitSingleLineString(const String& str, int width);
 
