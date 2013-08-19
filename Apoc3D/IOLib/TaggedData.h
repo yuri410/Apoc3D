@@ -541,7 +541,7 @@ namespace Apoc3D
 				MemoryOutStream* Buffer;
 				Entry(const String& name);
 
-				Entry() { }
+				Entry() : Buffer(nullptr) { }
 				void ResetWritePosition() const;
 			};
 

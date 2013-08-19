@@ -1562,7 +1562,7 @@ namespace Apoc3D
 
 			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
 			{
-				Entry* ent = e.getCurrentValue();
+				//Entry* ent = e.getCurrentValue();
 				
 				bw->WriteString(*e.getCurrentKey());
 			}

@@ -118,7 +118,8 @@ namespace Apoc3D
 			D3D9RenderDevice::D3D9RenderDevice(GraphicsDeviceManager* devManager)
 				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager), 
 				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0), m_defaultEffect(0),
-				m_defaultRT(NULL), m_defaultDS(NULL)
+				m_defaultRT(NULL), m_defaultDS(NULL),
+				m_instancingData(NULL)
 			{
 
 			}

@@ -43,10 +43,8 @@ namespace Apoc3D
 
 			class SettingsCombo
 			{
-			private:
-				SettingsCombo(const SettingsCombo& another) { }
 			public:
-				SettingsCombo(){}
+				SettingsCombo() : AdapterInfo(NULL), DeviceInfo(NULL), Windowed(true) {}
 				int32 AdapterOrdinal;
 
 				D3DDEVTYPE DeviceType;
@@ -67,7 +65,8 @@ namespace Apoc3D
 
 				DeviceInfo* DeviceInfo;
 
-
+			private:
+				SettingsCombo(const SettingsCombo& another) { }
 			};
 		
 			class DeviceInfo

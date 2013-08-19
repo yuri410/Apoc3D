@@ -76,15 +76,8 @@ namespace Apoc3D
 				assert(s);
 
 				VirtualStream* strm = dynamic_cast<VirtualStream*>(s);
-
-				if (!strm)
-				{
-					return new VirtualStream(*strm);
-				}
-				else
-				{
-					return strm;
-				}
+				assert(strm);
+				return strm;
 			}
 			
 			return new FileStream(m_path);

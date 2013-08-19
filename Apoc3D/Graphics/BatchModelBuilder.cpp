@@ -146,7 +146,7 @@ namespace Apoc3D
 
 							if (posElem)
 							{
-								Vector3 v( (float*)(newVtxPtr + posElem->getOffset()));
+								Vector3 v((float*)(newVtxPtr + posElem->getOffset()));
 								v = Vector3::TransformCoordinate(v, trans);
 								*((float*)(newVtxPtr + posElem->getOffset())+0) = v.X;
 								*((float*)(newVtxPtr + posElem->getOffset())+1) = v.Y;

@@ -67,7 +67,7 @@ namespace APDesigner
 	/*                                                                      */
 	/************************************************************************/
 	ToolsPane::ToolsPane(MainWindow* window)
-		: m_mainWindow(window)
+		: m_mainWindow(window), m_currentTools(nullptr)
 	{
 		m_pane = new Form(FBS_Pane);
 		m_pane->SetSkin(window->getUISkin());

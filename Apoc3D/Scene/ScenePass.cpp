@@ -213,7 +213,7 @@ namespace Apoc3D
 						{
 							selectorID = reinterpret_cast<const int&>(inst.Args[0].Var->Value[0]);
 						}
-						uint64 selectMask = 1 << m_selectorID;
+						uint64 selectMask = 1 << selectorID;
 						result = batchData->HasObject(selectMask);
 						inst.Args[1].Var->Value[0] = result ? 1 : 0;
 					}

@@ -521,9 +521,7 @@ namespace Apoc3D
 
 					if (verI < verJ)
 					{
-						EffectProfileData temp = Profiles[j];
-
-						temp = Profiles[i];
+						EffectProfileData temp = Profiles[i];
 						Profiles[i] = Profiles[j];
 						Profiles[j] = temp;
 

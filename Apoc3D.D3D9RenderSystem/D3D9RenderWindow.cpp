@@ -44,7 +44,7 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			D3D9RenderView::D3D9RenderView(D3D9RenderDevice* device, D3D9DeviceContext* dc, D3D9RenderViewSet* viewSet, IDirect3DSwapChain9* chain, const RenderParameters& pm)
-				: RenderView(dc, device, pm), m_viewSet(viewSet),  m_swapChain(chain)//, m_deviceLost(false)
+				: RenderView(dc, device, pm), m_viewSet(viewSet),  m_swapChain(chain), m_device(NULL)//, m_deviceLost(false)
 			{
 				m_controlHandle = reinterpret_cast<HANDLE>(pm.TargetHandle);
 			}

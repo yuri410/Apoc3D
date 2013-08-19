@@ -37,10 +37,10 @@ namespace APDesigner
 		protected:
 			wchar_t szFile[10240]; 
 
-			
-
 			FileDialog()
 			{
+				memset(szFile, 0, sizeof(szFile));
+
 				SetFilter(L"All\0*.*\0\0");
 			}
 		};

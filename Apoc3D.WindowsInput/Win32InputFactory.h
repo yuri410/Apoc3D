@@ -41,7 +41,7 @@ namespace Apoc3D
 			{
 			public:
 				Win32InputFactory()
-					: InputAPIFactory(GetDescription()), m_hwnd(0)
+					: InputAPIFactory(GetDescription()), m_hwnd(0), m_InputManager(NULL)
 				{
 					m_instance = this;
 				}

@@ -108,8 +108,9 @@ namespace Apoc3D
 				m_libraries.Add(lib);
 				m_plugins.Add(name, plugin);
 			}
-			catch (ApocException e)
+			catch (const ApocException& e)
 			{
+				(void)e;
 				OnPluginError(0);
 			}
 		}
@@ -127,8 +128,9 @@ namespace Apoc3D
 
 					m_plugins.Add(plugin->GetName(), plugin);
 				}
-				catch (ApocException e)
+				catch (const ApocException& e)
 				{
+					(void)e;
 					OnPluginError(0);
 				}
 			}
@@ -158,8 +160,9 @@ namespace Apoc3D
 				{
 					(*e.getCurrentValue())->Unload();
 				}
-				catch (ApocException ex)
+				catch (const ApocException& ex)
 				{
+					(void)ex;
 					OnPluginError((*e.getCurrentValue()));
 				}
 			}

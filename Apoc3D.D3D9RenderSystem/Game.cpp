@@ -42,7 +42,7 @@ namespace Apoc3D
 			Game::Game(const String& name, IDirect3D9* d3d9)
 				: m_maxElapsedTime(0.5f), m_targetElapsedTime(1.0f / 60.0f), m_inactiveSleepTime(20),
 				m_updatesSinceRunningSlowly1(MAXINT32), m_updatesSinceRunningSlowly2(MAXINT32),
-				m_exiting(false),
+				m_exiting(false), m_active(false), 
 				m_accumulatedElapsedGameTime(0), m_lastFrameElapsedGameTime(0), m_lastFrameElapsedRealTime(0),
 				m_totalGameTime(0), m_forceElapsedTimeToZero(false), m_drawRunningSlowly(false), m_lastUpdateFrame(0),
 				m_lastUpdateTime(0), m_fps(0),
