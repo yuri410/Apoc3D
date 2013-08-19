@@ -741,7 +741,7 @@ namespace Apoc3D
 			String result;
 			result.reserve(text.size() + 5);
 			
-			lineCount = 0;
+			lineCount = 1;
 
 			if (byWord)
 			{
