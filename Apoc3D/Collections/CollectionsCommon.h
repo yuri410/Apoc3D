@@ -67,27 +67,18 @@ namespace Apoc3D
 		typedef void* PtrVoid;
 		class APAPI PointerEqualityComparer : public IEqualityComparer<PtrVoid>
 		{
-		public:
-			class BuiltIn : public IBuiltInEqualityComparer<PtrVoid> { };
-
 			virtual bool Equals(const PtrVoid& x, const PtrVoid& y) const;
 			virtual int64 GetHashCode(const PtrVoid& obj) const;
 		};
 
 		class APAPI Uint64EqualityComparer : public IEqualityComparer<uint64>
 		{
-		public:
-			class BuiltIn : public IBuiltInEqualityComparer<uint64> { };
-
 			virtual bool Equals(const uint64& x, const uint64& y) const;
 			virtual int64 GetHashCode(const uint64& obj) const;
 		};
 
 		class APAPI Uint32EqualityComparer : public IEqualityComparer<uint32>
 		{
-		public:
-			class BuiltIn : public IBuiltInEqualityComparer<uint32> { };
-
 			virtual bool Equals(const uint32& x, const uint32& y) const;
 			virtual int64 GetHashCode(const uint32& obj) const;
 		};
@@ -95,17 +86,12 @@ namespace Apoc3D
 		class APAPI Int32EqualityComparer : public IEqualityComparer<int32>
 		{
 		public:
-			class BuiltIn : public IBuiltInEqualityComparer<int32> { };
-
 			virtual bool Equals(const int32& x, const int32& y) const;
 			virtual int64 GetHashCode(const int32& obj) const;
 		};
 
 		class APAPI WCharEqualityComparer : public IEqualityComparer<wchar_t>
 		{
-		public:
-			class BuiltIn : public IBuiltInEqualityComparer<wchar_t> { };
-
 			virtual bool Equals(const wchar_t& x, const wchar_t& y) const;
 			virtual int64 GetHashCode(const wchar_t& obj) const;
 		};
@@ -113,31 +99,38 @@ namespace Apoc3D
 		typedef Resource* LPResource;
 		class APAPI ResourceEqualityComparer : public IEqualityComparer<LPResource>
 		{
-		public:
-			class BuiltIn : public IBuiltInEqualityComparer<LPResource> { };
-
 			virtual bool Equals(const LPResource& x, const LPResource& y) const;
 			virtual int64 GetHashCode(const LPResource& obj) const;
 		};
 
 		class APAPI stlstringEqualityComparer : public IEqualityComparer<std::string>
 		{
-		public:
-			class BuiltIn : public IBuiltInEqualityComparer<std::string> { };
-
 			virtual bool Equals(const std::string& x, const std::string& y) const;
 			virtual int64 GetHashCode(const std::string& obj) const;
 		};
 
-		class APAPI StringEuqlityComparer : public IEqualityComparer<String>
+		class APAPI StringEqualityComparer : public IEqualityComparer<String>
 		{
-		public:
-			class BuiltIn : public IBuiltInEqualityComparer<String> { };
-
 			virtual bool Equals(const String& x, const String& y) const;
 			virtual int64 GetHashCode(const String& obj) const;
 		};
 
+		class APAPI RectangleEqualityComparer : public IEqualityComparer<Apoc3D::Math::Rectangle>
+		{
+			virtual bool Equals(const Apoc3D::Math::Rectangle& x, const Apoc3D::Math::Rectangle& y) const;
+			virtual int64 GetHashCode(const Apoc3D::Math::Rectangle& obj) const;
+		};
+
+		class APAPI SizeEqualityComparer : public IEqualityComparer<Apoc3D::Math::Size>
+		{
+			virtual bool Equals(const Apoc3D::Math::Size& x, const Apoc3D::Math::Size& y) const;
+			virtual int64 GetHashCode(const Apoc3D::Math::Size& obj) const;
+		};
+		class APAPI PointEqualityComparer : public IEqualityComparer<Apoc3D::Math::Point>
+		{
+			virtual bool Equals(const Apoc3D::Math::Point& x, const Apoc3D::Math::Point& y) const;
+			virtual int64 GetHashCode(const Apoc3D::Math::Point& obj) const;
+		};
 
 		template<> const IEqualityComparer<Resource*>*
 			IBuiltInEqualityComparer<Resource*>::Default = new ResourceEqualityComparer();
@@ -161,8 +154,16 @@ namespace Apoc3D
 			IBuiltInEqualityComparer<int32>::Default = new Int32EqualityComparer();
 
 		template<> const IEqualityComparer<String>*
-			IBuiltInEqualityComparer<String>::Default = new StringEuqlityComparer();
+			IBuiltInEqualityComparer<String>::Default = new StringEqualityComparer();
 
+		template<> const IEqualityComparer<Apoc3D::Math::Point>*
+			IBuiltInEqualityComparer<Apoc3D::Math::Point>::Default = new PointEqualityComparer();
+
+		template<> const IEqualityComparer<Apoc3D::Math::Size>*
+			IBuiltInEqualityComparer<Apoc3D::Math::Size>::Default = new SizeEqualityComparer();
+
+		template<> const IEqualityComparer<Apoc3D::Math::Rectangle>*
+			IBuiltInEqualityComparer<Apoc3D::Math::Rectangle>::Default = new RectangleEqualityComparer();
 
 		class APAPI HashHelpers
 		{

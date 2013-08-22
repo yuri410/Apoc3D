@@ -100,7 +100,7 @@ namespace Apoc3D
 					AddPair(L"cmtrlparam", EPUSAGE_CustomMaterialParam);
 				}
 
-				StringEuqlityComparer m_comparer1;
+				StringEqualityComparer m_comparer1;
 				Int32EqualityComparer m_comparer2;
 
 				HashMap<String, EffectParamUsage> CastTable;

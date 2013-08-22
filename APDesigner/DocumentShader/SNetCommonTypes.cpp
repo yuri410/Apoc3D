@@ -157,7 +157,7 @@ namespace APDesigner
 
 		}
 
-		StringEuqlityComparer m_comparer1;
+		StringEqualityComparer m_comparer1;
 		Int32EqualityComparer m_comparer2;
 
 		HashMap<String, ShaderAtomDataFormat> CastTable;

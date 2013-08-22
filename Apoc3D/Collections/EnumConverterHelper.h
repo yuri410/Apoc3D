@@ -78,7 +78,7 @@ namespace Apoc3D
 			CastTable m_cast;
 			InverseCastTable m_invCast;
 
-			StringEuqlityComparer m_comparer1;
+			StringEqualityComparer m_comparer1;
 			Int32EqualityComparer m_comparer2;
 		};
 	}

@@ -112,6 +112,7 @@ namespace Apoc3D
 
 			const static PointF Zero;
 		};
+
 	}
 }
 #endif

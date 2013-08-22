@@ -25,6 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Core/Resource.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Math/Point.h"
+#include "apoc3d/Math/Rectangle.h"
 #include <unordered_map>
 
 using namespace std;
@@ -59,10 +61,7 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		bool PointerEqualityComparer::Equals(const PtrVoid& x, const PtrVoid& y) const
-		{
-			return x==y;
-		}
+		bool PointerEqualityComparer::Equals(const PtrVoid& x, const PtrVoid& y) const { return x==y; }
 		int64 PointerEqualityComparer::GetHashCode(const PtrVoid& obj) const
 		{
 			return static_cast<int64>(reinterpret_cast<uintptr>(obj));
@@ -72,10 +71,7 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		bool WCharEqualityComparer::Equals(const wchar_t& x, const wchar_t& y) const
-		{
-			return x==y;
-		}
+		bool WCharEqualityComparer::Equals(const wchar_t& x, const wchar_t& y) const { return x==y; }
 		int64 WCharEqualityComparer::GetHashCode(const wchar_t& obj) const
 		{
 			return static_cast<int64>(obj);
@@ -86,10 +82,7 @@ namespace Apoc3D
 		/************************************************************************/
 		std::unordered_map<string, int>::hasher stlStringHasher;
 
-		bool stlstringEqualityComparer::Equals(const string& x, const string& y) const
-		{
-			return x==y;
-		}
+		bool stlstringEqualityComparer::Equals(const string& x, const string& y) const { return x==y; }
 		int64 stlstringEqualityComparer::GetHashCode(const string& obj) const
 		{
 			return stlStringHasher(obj);
@@ -99,13 +92,7 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		//const IEqualityComparer<uint64>* 
-		//	Uint64EqualityComparer::BuiltIn::Default = new Uint64EqualityComparer();
-
-		bool Uint64EqualityComparer::Equals(const uint64& x, const uint64& y) const
-		{
-			return x==y;
-		}
+		bool Uint64EqualityComparer::Equals(const uint64& x, const uint64& y) const { return x==y; }
 		int64 Uint64EqualityComparer::GetHashCode(const uint64& obj) const
 		{
 			return static_cast<int64>(obj);
@@ -115,43 +102,37 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		//const IEqualityComparer<uint32>* 
-		//	Uint32EqualityComparer::BuiltIn::Default = new Uint32EqualityComparer();
-		
-		bool Uint32EqualityComparer::Equals(const uint32& x, const uint32& y) const
-		{
-			return x==y;
-		}
-		int64 Uint32EqualityComparer::GetHashCode(const uint32& obj) const
-		{
-			return obj;
-		}
+		bool Uint32EqualityComparer::Equals(const uint32& x, const uint32& y) const { return x==y; }
+		int64 Uint32EqualityComparer::GetHashCode(const uint32& obj) const { return obj; }
 
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
 
-		bool Int32EqualityComparer::Equals(const int32& x, const int32& y) const
-		{
-			return x==y;
-		}
-		int64 Int32EqualityComparer::GetHashCode(const int32& obj) const
-		{
-			return obj;
-		}
+		bool Int32EqualityComparer::Equals(const int32& x, const int32& y) const { return x==y; }
+		int64 Int32EqualityComparer::GetHashCode(const int32& obj) const { return obj; }
 
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
 
-		bool StringEuqlityComparer::Equals(const String& x, const String& y) const
-		{
-			return x==y;
-		}
-		int64 StringEuqlityComparer::GetHashCode(const String& obj) const
+		bool StringEqualityComparer::Equals(const String& x, const String& y) const { return x==y; }
+		int64 StringEqualityComparer::GetHashCode(const String& obj) const
 		{
 			return StringUtils::GetHashCode(obj);
 		}
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+		bool PointEqualityComparer::Equals(const Apoc3D::Math::Point& x, const Apoc3D::Math::Point& y) const { return x==y; }
+		int64 PointEqualityComparer::GetHashCode(const Apoc3D::Math::Point& obj) const { return obj.X ^ obj.Y; }
+
+		bool SizeEqualityComparer::Equals(const Apoc3D::Math::Size& x, const Apoc3D::Math::Size& y) const { return x==y; }
+		int64 SizeEqualityComparer::GetHashCode(const Apoc3D::Math::Size& obj) const { return obj.Width ^ obj.Height; }
+
+		bool RectangleEqualityComparer::Equals(const Apoc3D::Math::Rectangle& x, const Apoc3D::Math::Rectangle& y) const { return x==y; }
+		int64 RectangleEqualityComparer::GetHashCode(const Apoc3D::Math::Rectangle& obj) const { return obj.X ^ obj.Y ^ obj.Width ^ obj.Height; }
 
 	}
 }

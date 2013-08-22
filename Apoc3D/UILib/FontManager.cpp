@@ -62,7 +62,7 @@ namespace Apoc3D
 		};
 
 		Font::Font(RenderDevice* device, ResourceLocation* rl)
-			: m_charTable(255, WCharEqualityComparer::BuiltIn::Default), m_resource(rl), m_isUsingCaching(false), m_hasLuminance(false)
+			: m_charTable(255, IBuiltInEqualityComparer<wchar_t>::Default), m_resource(rl), m_isUsingCaching(false), m_hasLuminance(false)
 		{
 			m_selectTextureSize = FontManager::MaxTextureSize;
 
@@ -748,13 +748,18 @@ namespace Apoc3D
 				float x = 0;
 				int32 len = (int32)text.length();
 
-				int32 prevWorldBegin = 0;
+				int32 prevWordBegin = 0;
+				float prevWordBeginAdvX = 0;
 				for (int32 i = 0; i < len; i++)
 				{
 					wchar_t ch = text[i];
 
 					bool isBlankCh = ch == ' ' || ch == '\t';
-					if (isBlankCh) prevWorldBegin = i;
+					if (isBlankCh)
+					{
+						prevWordBegin = i;
+						prevWordBeginAdvX = x;
+					}
 
 					Character chdef;
 					if (m_charTable.TryGetValue(ch, chdef))
@@ -765,11 +770,18 @@ namespace Apoc3D
 
 						if (x > width && !isBlankCh)
 						{
-							if (prevWorldBegin+1 < (int32)result.size())
-								result.insert(prevWorldBegin+1, 1, '\n');
+							if (prevWordBegin+1 < (int32)result.size())
+							{
+								result.insert(prevWordBegin+1, 1, '\n');
+								x -= prevWordBeginAdvX;
+							}
+							else
+							{
+								result.append(1, '\n');
+								x = 0;
+							}
 
 							lineCount++;
-							x = 0;
 						}
 					}
 					
