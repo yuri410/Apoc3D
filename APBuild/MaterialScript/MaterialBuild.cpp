@@ -42,12 +42,21 @@ using namespace Apoc3D::Graphics::EffectSystem;
 
 namespace APBuild
 {
-	class Pallet
+	struct PalletColor
 	{
-	public:
 		String Name;
-		FastList<Color4> Colors;
+		Color4 Color;
 	};
+
+	struct Pallet
+	{
+		String Name;
+		List<PalletColor> Colors;
+
+		const Color4* FindColor(const String& name) const;
+	};
+
+	bool hasLetters(const String& str);
 
 	Color4 ResolveColor4(const String& text, const HashMap<String, Pallet*>& pallets);
 	void ParseMaterialTree(HashMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const HashMap<String, Pallet*>& pallets);
@@ -81,8 +90,11 @@ namespace APBuild
 			ConfigurationSection* subSect = *e.getCurrentValue();
 			for (ConfigurationSection::SubSectionEnumerator e1 = subSect->GetSubSectionEnumrator(); e1.MoveNext();)
 			{
-				Color4 r = ResolveColor4((*e1.getCurrentValue())->getValue(), palColors);
-				p->Colors.Add(r);
+				PalletColor pc;
+
+				pc.Color = ResolveColor4((*e1.getCurrentValue())->getValue(), palColors);
+				pc.Name = *e1.getCurrentKey();
+				p->Colors.Add(pc);
 			}
 
 		}
@@ -134,9 +146,6 @@ namespace APBuild
 		}
 		palColors.Clear();
 	}
-
-
-
 
 	void ParseMaterialTree(HashMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const HashMap<String, Pallet*>& pallets)
 	{
@@ -249,7 +258,6 @@ namespace APBuild
 
 		table.Add(name, newNode);
 	}
-
 	void ParseMaterialCustomParams(MaterialData& data, const String& value, const HashMap<String, Pallet*>& pallets)
 	{
 		List<String> vals;
@@ -363,8 +371,7 @@ namespace APBuild
 				StringUtils::Trim(palName);
 
 				String sIndx = text.substr(posL+1,posR-posL-1);
-				int index = StringUtils::ParseInt32(sIndx);
-
+				
 				Pallet* result;
 				if (pallets.TryGetValue(palName, result))
 				{
@@ -426,7 +433,26 @@ namespace APBuild
 						for (int i=0;i<4;i++) factor[i] = fact;
 					}
 
-					Color4 source = result->Colors[index];
+					Color4 source;
+					if (hasLetters(sIndx))
+					{
+						StringUtils::Trim(sIndx);
+
+						const Color4* found = result->FindColor(sIndx);
+						if (found)
+							source = *found;
+						else
+						{
+							CompileLog::WriteError(L"Color " + sIndx + L" not found in " + palName, L"");
+							return Color4();
+						}
+					}
+					else
+					{
+						int index = StringUtils::ParseInt32(sIndx);
+						source = result->Colors[index].Color;
+					}
+					
 					if ((channelMask & 8) == 8)
 						source.Red *= factor[0];
 					if ((channelMask & 4) == 4)
@@ -461,12 +487,26 @@ namespace APBuild
 					StringUtils::Trim(palName);
 
 					String sIndx = text.substr(posL+1,posR-posL-1);
-					int index = StringUtils::ParseInt32(sIndx);
-
+					
 					Pallet* result;
 					if (pallets.TryGetValue(palName, result))
 					{
-						return result->Colors[index];
+						if (hasLetters(sIndx))
+						{
+							const Color4* found = result->FindColor(sIndx);
+							if (found)
+								return *found;
+							else
+							{
+								CompileLog::WriteError(L"Color " + sIndx + L" not found in " + palName, L"");
+								return Color4();
+							}
+						}
+						else
+						{
+							int index = StringUtils::ParseInt32(sIndx);
+							return result->Colors[index].Color;
+						}	
 					}
 					else
 						CompileLog::WriteError(String(L"Pallet not found ") + palName, L"");
@@ -492,5 +532,28 @@ namespace APBuild
 		}
 		
 	
+	}
+
+
+
+	const Color4* Pallet::FindColor(const String& name) const
+	{
+		for (int i=0;i<Colors.getCount();i++)
+		{
+			if (Colors[i].Name == name)
+				return &Colors[i].Color;
+		}
+		return nullptr;
+	}
+
+	bool hasLetters(const String& str)
+	{
+		for (size_t i=0;i<str.size();i++)
+		{
+			int c = toupper(str[i]);
+			if (c >= 'A' && c <= 'Z')
+				return true;
+		}
+		return false;
 	}
 }
