@@ -55,6 +55,7 @@ namespace Apoc3D
 	void ProjectFolder::Parse(const ConfigurationSection* sect)
 	{
 		sect->tryGetAttribute(L"Pack", PackType);
+		sect->TryGetAttributeBool(L"IncludeUnpackedSubFolderItems", IncludeUnpackedSubFolderItems);
 
 		if (PackType.size())
 		{
@@ -69,6 +70,7 @@ namespace Apoc3D
 		{
 			sect->AddAttributeString(L"Pack", PackType);
 			sect->AddAttributeString(L"DestinationPack", DestinationPack);
+			sect->AddAttributeBool(L"IncludeUnpackedSubFolderItems", IncludeUnpackedSubFolderItems);
 		}
 		ProjectSave(sect, SubItems, savingBuild);
 	}
@@ -79,11 +81,14 @@ namespace Apoc3D
 
 		// a package file/archive build config section needs every item's path
 		int pakEntryIndex = 0;
-		for (int i=0;i<SubItems.getCount();i++)
+		AddPackageEntries(sect, pakEntryIndex);
+		/*for (int i=0;i<SubItems.getCount();i++)
 		{
 			if (SubItems[i]->getData())
 			{
-				List<String> itemOutputs = SubItems[i]->getData()->GetAllOutputFiles();
+				ProjectItemData* item = SubItems[i]->getData();
+
+				List<String> itemOutputs = item->GetAllOutputFiles();
 				for (int32 j=0;j<itemOutputs.getCount();j++)
 				{
 					ConfigurationSection* e = new ConfigurationSection(L"Entry" + StringUtils::ToString(pakEntryIndex++));
@@ -91,8 +96,37 @@ namespace Apoc3D
 					sect->AddSection(e);
 				}
 			}
+		}*/
+	}
+	void ProjectFolder::AddPackageEntries(ConfigurationSection* sect, int32& idx)
+	{
+		// this will also search sub folder which is not packed
+		for (int i=0;i<SubItems.getCount();i++)
+		{
+			if (SubItems[i]->getData())
+			{
+				ProjectItemData* item = SubItems[i]->getData();
+
+				if (item->getType() == PRJITEM_Folder)
+				{
+					ProjectFolder* fol = static_cast<ProjectFolder*>(item);
+					if (fol->PackType.empty() && IncludeUnpackedSubFolderItems)
+					{
+						fol->AddPackageEntries(sect, idx);
+					}
+				}
+
+				List<String> itemOutputs = item->GetAllOutputFiles();
+				for (int32 j=0;j<itemOutputs.getCount();j++)
+				{
+					ConfigurationSection* e = new ConfigurationSection(L"Entry" + StringUtils::ToString(idx++));
+					e->AddAttributeString(L"FilePath", itemOutputs[j]);
+					sect->AddSection(e);
+				}
+			}
 		}
 	}
+
 	List<String> ProjectFolder::GetAllOutputFiles()
 	{
 		List<String> e;

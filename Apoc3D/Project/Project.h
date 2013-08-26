@@ -151,9 +151,10 @@ namespace Apoc3D
 	public:
 		String PackType;
 		String DestinationPack;
+		bool IncludeUnpackedSubFolderItems;
 
 		ProjectFolder(Project* prj)
-			: ProjectItemData(prj)
+			: ProjectItemData(prj), IncludeUnpackedSubFolderItems(false)
 		{
 
 		}
@@ -170,6 +171,9 @@ namespace Apoc3D
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 		void SavePackBuildConfig(ConfigurationSection* sect);
+
+	private:
+		void AddPackageEntries(ConfigurationSection* sect, int32& idx);
 	};
 
 	/**
