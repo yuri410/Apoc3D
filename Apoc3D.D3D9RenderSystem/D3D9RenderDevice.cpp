@@ -464,7 +464,7 @@ namespace Apoc3D
 								getDevice()->SetIndices(0);
 
 								getDevice()->DrawPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType),
-									0, gm->PrimitiveCount);
+									gm->BaseVertex, gm->PrimitiveCount);
 							}
 						}
 					}
