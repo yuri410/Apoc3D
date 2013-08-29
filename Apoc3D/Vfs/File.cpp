@@ -25,12 +25,20 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "File.h"
 
 #include "apoc3d/Vfs/PathUtils.h"
+#include "apoc3d/Utility/StringUtils.h"
 #include <sys/types.h> 
 #include <sys/stat.h> 
 #include <io.h>
+#include <dirent.h>
+
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+
+#else
+
+#endif
 
 using namespace Apoc3D::VFS;
-
+using namespace Apoc3D::Utility;
 using namespace std;
 
 namespace Apoc3D
@@ -47,14 +55,11 @@ namespace Apoc3D
 		bool File::DirectoryExists(const String& path)
 		{
 			struct stat status;
+			std::string spath = StringUtils::toString(path);
 
-			char buffer[256];
-			size_t res;
-			wcstombs_s(&res, buffer, path.c_str(), 256);
-
-			if (_access(buffer, 0) == 0)
+			if (_access(spath.c_str(), 0) == 0)
 			{
-				stat(buffer, &status);
+				stat(spath.c_str(), &status);
 				
 				if (status.st_mode & S_IFDIR)
 				{
@@ -66,14 +71,11 @@ namespace Apoc3D
 		time_t File::GetFileModifiyTime(const String& path)
 		{
 			struct stat status;
+			std::string spath = StringUtils::toString(path);
 
-			char buffer[256];
-			size_t res;
-			wcstombs_s(&res, buffer, path.c_str(), 256);
-
-			if (_access(buffer, 0) == 0)
+			if (_access(spath.c_str(), 0) == 0)
 			{
-				stat(buffer, &status);
+				stat(spath.c_str(), &status);
 
 				return status.st_mtime;
 			}			
@@ -82,14 +84,11 @@ namespace Apoc3D
 		bool File::FileExists(const String& path)
 		{
 			struct stat status;
+			std::string spath = StringUtils::toString(path);
 
-			char buffer[256];
-			size_t res;
-			wcstombs_s(&res, buffer, path.c_str(), 256);
-
-			if (_access(buffer, 0) == 0)
+			if (_access(spath.c_str(), 0) == 0)
 			{
-				stat(buffer, &status);
+				stat(spath.c_str(), &status);
 				
 				if (status.st_mode & S_IFDIR)
 				{
@@ -102,14 +101,11 @@ namespace Apoc3D
 		int64 File::GetFileSize(const String& path)
 		{
 			struct stat status;
+			std::string spath = StringUtils::toString(path);
 
-			char buffer[256];
-			size_t res;
-			wcstombs_s(&res, buffer, path.c_str(), 256);
-
-			if (_access(buffer, 0) == 0)
+			if (_access(spath.c_str(), 0) == 0)
 			{
-				stat(buffer, &status);
+				stat(spath.c_str(), &status);
 				
 				if (status.st_mode & S_IFDIR)
 				{
@@ -133,5 +129,26 @@ namespace Apoc3D
 			//return pos;
 		}
 
+		bool File::ListDirectoryFiles(const String& path, List<String>& items)
+		{
+			DIR *dir;
+			struct dirent *ent;
+
+			std::string spath = StringUtils::toString(path);
+
+			if ((dir = opendir(spath.c_str())) != NULL) 
+			{
+				while ((ent = readdir (dir)) != NULL) 
+				{
+					if ((ent->d_type & S_IFDIR) == 0)
+					{
+						items.Add(StringUtils::toWString(ent->d_name));
+					}
+				}
+				closedir (dir);
+				return true;
+			}
+			return false;
+		}
 	}
 }

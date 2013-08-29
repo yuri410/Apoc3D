@@ -58,6 +58,8 @@ namespace Apoc3D
 			static bool FileExists(const String& path);
 			static time_t GetFileModifiyTime(const String& path);
 			static bool DirectoryExists(const String& path);
+
+			static bool ListDirectoryFiles(const String& path, Apoc3D::Collections::List<String>& items);
 		};
 	}
 }

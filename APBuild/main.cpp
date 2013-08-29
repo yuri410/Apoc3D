@@ -55,6 +55,8 @@ int CollectBuildIssues();
 // build will be called to pack them into archive files.
 int _tmain(int argc, _TCHAR* argv[])
 {
+	setlocale(LC_CTYPE, ".ACP");
+
 	Initialize();
 
 	int r = Build(argc, argv);

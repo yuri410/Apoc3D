@@ -61,7 +61,7 @@ namespace Apoc3D
 {
 	void Engine::Initialize(const ManualStartConfig* mconf)
 	{
-		_wsetlocale(LC_CTYPE, L".ACP");
+		setlocale(LC_CTYPE, ".ACP");
 		
 
 		LogManager::Initialize();

@@ -185,6 +185,16 @@ namespace Apoc3D
 			return !!result.getCount();
 		}
 
+		void FileSystem::ListDirectoryFiles(const String& path, List<String>& subItems, String* dirPath)
+		{
+			String fullPath;
+			if (DirectoryExists(path, fullPath))
+			{
+				File::ListDirectoryFiles(fullPath, subItems);
+				if (dirPath)
+					*dirPath = fullPath;
+			}
+		}
 
 		Archive* FileSystem::LocateArchive(const String& filePath, const FileLocateRule& rule)
 		{

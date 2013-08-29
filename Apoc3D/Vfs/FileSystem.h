@@ -104,7 +104,7 @@ namespace Apoc3D
 			 *  Adds an absolute path as a new working directory. 
 			 *
 			 *  @remark
-			 *   Duplicated dir is not check. (TODO: check it)
+			 *   Duplicated dir is not checked. (TODO: check it)
 			 */
 			void AddWrokingDirectory(const String& path);
 			const String& getWorkingDirectory(int i) const { return m_workingDirs[i]; }
@@ -118,7 +118,7 @@ namespace Apoc3D
 			bool DirectoryExists(const String& path, String& result) const;
 			bool SplitExistingDirectories(const String& path, List<String>& result, List<String>& archivePath) const;
 
-			List<String> SearchFile(const String& path);
+			void ListDirectoryFiles(const String& path, List<String>& subItems, String* dirPath = nullptr);
 			
 			Archive* LocateArchive(const String& filePath, const FileLocateRule& rule);
 			FileLocation* Locate(const String& filePath, const FileLocateRule& rule);

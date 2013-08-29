@@ -17,6 +17,7 @@
 #include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Utility/Compression.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Vfs/FileSystem.h"
 
 #include <iostream>
 
@@ -36,9 +37,19 @@ void TestMath();
 
 void main()
 {
+	setlocale(LC_CTYPE, ".ACP");
+
 	//String s = StringUtils::ToString(0.14159265f,8);
 	//std::wcout << s.c_str() << L"\n";
 	//std::wcout << std::numeric_limits<float>::digits10+1 << L"\n";
+
+	FileSystem::Initialize();
+	wchar_t workingDir[260];
+	GetCurrentDirectory(260, workingDir);
+	FileSystem::getSingleton().AddWrokingDirectory(workingDir);
+	
+	List<String> items;
+	FileSystem::getSingleton().ListDirectoryFiles(L"", items);
 
 	TestMath();
 	TestListReverse();
@@ -46,6 +57,7 @@ void main()
 	TestListSort2();
 	TestTaggedData();
 	//TestRLE();
+
 }
 
 template <typename T>
