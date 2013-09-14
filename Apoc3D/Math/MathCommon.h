@@ -61,6 +61,13 @@ namespace Apoc3D
 				return 1.0f;
 			return value<0 ? -1.0f : 0.0f;
 		}
+		inline int32 Sign(int32 value)
+		{
+			if (value>0)
+				return 1;
+			return value<0 ? -1 : 0;
+		}
+
 		inline float Lerp(float a, float b, float amount)
 		{
 			return a + (b-a)*amount;
