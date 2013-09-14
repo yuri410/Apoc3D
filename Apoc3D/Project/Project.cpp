@@ -1399,7 +1399,7 @@ namespace Apoc3D
 	}
 	void ProjectItem::Parse(const ConfigurationSection* sect)
 	{
-		m_name = sect->getName();//L"Name");
+		m_name = sect->getName();
 
 		if (sect->hasAttribute(L"LastModTime"))
 		{

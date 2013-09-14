@@ -193,6 +193,10 @@ namespace Apoc3D
 	{	
 		class Color4;
 
+		class Vector2;
+		class Vector3;
+		class Vector4;
+
 		class Matrix;
 		class Quaternion;		
 

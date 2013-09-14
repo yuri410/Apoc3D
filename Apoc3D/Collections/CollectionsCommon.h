@@ -132,6 +132,27 @@ namespace Apoc3D
 			virtual int64 GetHashCode(const Apoc3D::Math::Point& obj) const;
 		};
 
+		class APAPI PointFEqualityComparer : public IEqualityComparer<Apoc3D::Math::PointF>
+		{
+			virtual bool Equals(const Apoc3D::Math::PointF& x, const Apoc3D::Math::PointF& y) const;
+			virtual int64 GetHashCode(const Apoc3D::Math::PointF& obj) const;
+		};
+		class APAPI Vector2EqualityComparer : public IEqualityComparer<Apoc3D::Math::Vector2>
+		{
+			virtual bool Equals(const Apoc3D::Math::Vector2& x, const Apoc3D::Math::Vector2& y) const;
+			virtual int64 GetHashCode(const Apoc3D::Math::Vector2& obj) const;
+		};
+		class APAPI Vector3EqualityComparer : public IEqualityComparer<Apoc3D::Math::Vector3>
+		{
+			virtual bool Equals(const Apoc3D::Math::Vector3& x, const Apoc3D::Math::Vector3& y) const;
+			virtual int64 GetHashCode(const Apoc3D::Math::Vector3& obj) const;
+		};
+		class APAPI Vector4EqualityComparer : public IEqualityComparer<Apoc3D::Math::Vector4>
+		{
+			virtual bool Equals(const Apoc3D::Math::Vector4& x, const Apoc3D::Math::Vector4& y) const;
+			virtual int64 GetHashCode(const Apoc3D::Math::Vector4& obj) const;
+		};
+
 		template<> const IEqualityComparer<Resource*>*
 			IBuiltInEqualityComparer<Resource*>::Default = new ResourceEqualityComparer();
 
@@ -158,12 +179,21 @@ namespace Apoc3D
 
 		template<> const IEqualityComparer<Apoc3D::Math::Point>*
 			IBuiltInEqualityComparer<Apoc3D::Math::Point>::Default = new PointEqualityComparer();
-
 		template<> const IEqualityComparer<Apoc3D::Math::Size>*
 			IBuiltInEqualityComparer<Apoc3D::Math::Size>::Default = new SizeEqualityComparer();
-
 		template<> const IEqualityComparer<Apoc3D::Math::Rectangle>*
 			IBuiltInEqualityComparer<Apoc3D::Math::Rectangle>::Default = new RectangleEqualityComparer();
+
+
+		template<> const IEqualityComparer<Apoc3D::Math::PointF>*
+			IBuiltInEqualityComparer<Apoc3D::Math::PointF>::Default = new PointFEqualityComparer();
+		template<> const IEqualityComparer<Apoc3D::Math::Vector2>*
+			IBuiltInEqualityComparer<Apoc3D::Math::Vector2>::Default = new Vector2EqualityComparer();
+		template<> const IEqualityComparer<Apoc3D::Math::Vector3>*
+			IBuiltInEqualityComparer<Apoc3D::Math::Vector3>::Default = new Vector3EqualityComparer();
+		template<> const IEqualityComparer<Apoc3D::Math::Vector4>*
+			IBuiltInEqualityComparer<Apoc3D::Math::Vector4>::Default = new Vector4EqualityComparer();
+
 
 		class APAPI HashHelpers
 		{

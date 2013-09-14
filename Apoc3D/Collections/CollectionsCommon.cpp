@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Math/Point.h"
 #include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/Vector.h"
 #include <unordered_map>
 
 using namespace std;
@@ -134,5 +135,20 @@ namespace Apoc3D
 		bool RectangleEqualityComparer::Equals(const Apoc3D::Math::Rectangle& x, const Apoc3D::Math::Rectangle& y) const { return x==y; }
 		int64 RectangleEqualityComparer::GetHashCode(const Apoc3D::Math::Rectangle& obj) const { return obj.X ^ obj.Y ^ obj.Width ^ obj.Height; }
 
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+		bool PointFEqualityComparer::Equals(const Apoc3D::Math::PointF& x, const Apoc3D::Math::PointF& y) const { return x==y; }
+		int64 PointFEqualityComparer::GetHashCode(const Apoc3D::Math::PointF& obj) const { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y; }
+
+		bool Vector2EqualityComparer::Equals(const Apoc3D::Math::Vector2& x, const Apoc3D::Math::Vector2& y) const { return x==y; }
+		int64 Vector2EqualityComparer::GetHashCode(const Apoc3D::Math::Vector2& obj) const { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y; }
+
+		bool Vector3EqualityComparer::Equals(const Apoc3D::Math::Vector3& x, const Apoc3D::Math::Vector3& y) const { return x==y; }
+		int64 Vector3EqualityComparer::GetHashCode(const Apoc3D::Math::Vector3& obj) const { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y ^ *(const int32*)&obj.Z; }
+		
+		bool Vector4EqualityComparer::Equals(const Apoc3D::Math::Vector4& x, const Apoc3D::Math::Vector4& y) const { return x==y; }
+		int64 Vector4EqualityComparer::GetHashCode(const Apoc3D::Math::Vector4& obj) const { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y ^ *(const int32*)&obj.Z ^ *(const int32*)&obj.W; }
 	}
 }
