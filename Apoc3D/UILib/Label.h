@@ -94,7 +94,7 @@ namespace Apoc3D
 			virtual void Draw(Sprite* sprite);
 
 			void setText(const String& text);
-			void setWidth(int w) { Size.X = w; InitDstRect(); }
+			void setWidth(int w) { Size.X = w; }
 			bool getHasFocus() const { return m_hasFocus; }
 			void setHasFocus(bool value) { m_hasFocus = value; }
 			bool getLocked() const { return m_locked; }
@@ -126,7 +126,6 @@ namespace Apoc3D
 
 			bool m_locked;
 
-			Apoc3D::Math::Rectangle m_destRect[9];
 			Apoc3D::Math::Rectangle m_dRect;
 			Apoc3D::Math::Rectangle m_sRect;
 
@@ -141,7 +140,6 @@ namespace Apoc3D
 			
 
 			void InitScrollbars(RenderDevice* device);
-			void InitDstRect();
 
 			void Add(const String& text);
 			void Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e);

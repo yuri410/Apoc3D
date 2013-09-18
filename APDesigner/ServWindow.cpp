@@ -71,13 +71,9 @@ namespace APDesigner
 		{
 			FileLocateRule rule;
 			LocateCheckPoint pt;
-			pt.AddPath(L"system.pak\\classic_skin.pak");
+			pt.AddPath(L"system.pak\\skin.pak");
 			rule.AddCheckPoint(pt);
 			m_UIskin = new StyleSkin(m_device, rule);
-
-			m_UIskin->ControlFontName = L"english";
-			FileLocation* fl = FileSystem::getSingleton().Locate(L"english.fnt", rule);
-			FontManager::getSingleton().LoadFont(m_device, L"english", fl);
 		}
 		ObjectFactory* fac = m_device->getObjectFactory();
 		m_sprite = fac->CreateSprite();

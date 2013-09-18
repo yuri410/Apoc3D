@@ -81,7 +81,7 @@ namespace APDesigner
 		//m_pane->setTitle(m_pane->Text);
 
 		m_btSave = new Button(Point(5,20), L"");
-		m_btSave->setNormalTexture(UIResources::GetTexture(L"adui_save"));
+		m_btSave->NormalTexture = UIGraphic(UIResources::GetTexture(L"adui_save"));
 		m_btSave->setCustomModColorMouseOver(CV_Silver);
 		
 		m_btSave->eventRelease().Bind(this,&ToolsPane::BtnSave_Release);
@@ -247,6 +247,10 @@ namespace APDesigner
 			{
 				ItemTypeInformation iti = { L"adui_surface", L"Material Anim" };
 				AddEntry(PRJITEM_MaterialAnimation, iti);
+			}
+			{
+				ItemTypeInformation iti = { L"adui_add_exisiting_document", L"Direct Copy" };
+				AddEntry(PRJITEM_Copy, iti);
 			}
 		}
 
@@ -497,8 +501,7 @@ namespace APDesigner
 		Label* label = new Label(Point(PropFieldMargin, top), a, lw);
 		TextBox* tb = new TextBox(Point(PropFieldMargin*2+lw, top), fw-30, b);
 		Button* bb = new Button(Point(tb->Position.X+tb->Size.X, top), 30, L"...");
-		bb->Size.Y = static_cast<int32>( FontManager::getSingleton().getFont(m_skin->ControlFontName)->getLineHeight());
-;
+		bb->Size.Y = m_skin->TitleTextFont->getLineHeightInt();
 
 		PropItem item(a, label, tb, bb);
 		item.LoadOrSave = isLoad;

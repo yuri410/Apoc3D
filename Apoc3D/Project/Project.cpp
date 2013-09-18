@@ -1272,6 +1272,37 @@ namespace Apoc3D
 		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
 	}
 
+	/************************************************************************/
+	/*   ProjectResCopy                                                     */
+	/************************************************************************/
+
+
+	void ProjectResCopy::Parse(const ConfigurationSection* sect)
+	{
+		SourceFile = sect->getAttribute(L"SourceFile");
+		DestinationFile = sect->getAttribute(L"DestinationFile");
+	}
+	void ProjectResCopy::Save(ConfigurationSection* sect, bool savingBuild)
+	{
+		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
+		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
+	}
+	List<String> ProjectResCopy::GetAllOutputFiles()
+	{
+		List<String> e;
+		if (DestinationFile.size())
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+		return e;
+	}
+	bool ProjectResCopy::IsEarlierThan(time_t t)
+	{
+		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile)) < t;
+	}
+	bool ProjectResCopy::IsNotBuilt()
+	{
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
+	}
+
 
 	/************************************************************************/
 	/*    ProjectCustomItem                                                 */
@@ -1385,7 +1416,9 @@ namespace Apoc3D
 			case PRJITEM_UILayout:
 				sect->AddAttributeString(L"Type", L"UILayout");
 				break;
-			
+			case PRJITEM_Copy:
+				sect->AddAttributeString(L"Type", L"Copy");
+				break;
 			}
 			
 			m_typeData->Save(sect, savingBuild);
@@ -1507,6 +1540,12 @@ namespace Apoc3D
 			ProjectResUILayout* ul = new ProjectResUILayout(m_project);
 			ul->Parse(sect);
 			m_typeData = ul;
+		}
+		else if (buildType == L"copy")
+		{
+			ProjectResCopy* cpy = new ProjectResCopy(m_project);
+			cpy->Parse(sect);
+			m_typeData = cpy;
 		}
 		else if (buildType == L"projectfxlist")
 		{

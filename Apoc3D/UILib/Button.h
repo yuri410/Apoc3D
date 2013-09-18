@@ -41,7 +41,6 @@ namespace Apoc3D
 		public:
 			Button(const Point& position, const String& text)
 				: Control(position, text), m_mouseOver(false), m_mouseDown(false),
-				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
 				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
 				m_rotation(0), m_hasTextColorValue(false)
 			{
@@ -51,7 +50,6 @@ namespace Apoc3D
 			}
 			Button(const Point& position, int width, const String& text)
 				: Control(position, text, Point(width, 0)), m_mouseOver(false), m_mouseDown(false),
-				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
 				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
 				m_rotation(0), m_hasTextColorValue(false)
 			{
@@ -60,7 +58,6 @@ namespace Apoc3D
 			}
 			Button(const Point& position, const Point& size, const String& text)
 				: Control(position, text, size), m_mouseOver(false), m_mouseDown(false),
-				m_InvalidTexture(0), m_DisabledTexture(0), m_MouseDownTexture(0), m_MouseOverTexture(0), m_NormalTexture(0),
 				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
 				m_rotation(0), m_hasTextColorValue(false)
 			{
@@ -98,36 +95,25 @@ namespace Apoc3D
 			void setCustomDisabledColor(ColorValue clr) { m_modDisabledColor = clr; }
 
 
-			Texture* getInvalidTexture() const { return m_InvalidTexture; }
-			void setInvalidTexture(Texture* texture) { m_InvalidTexture = texture; }
-
-			Texture* getNormalTexture() const { return m_NormalTexture; }
-			void setNormalTexture(Texture* texture) { m_NormalTexture = texture; }
-
-			Texture* getMouseOverTexture() const { return m_MouseOverTexture; }
-			void setMouseOverTexture(Texture* texture) { m_MouseOverTexture = texture; }
-
-			Texture* getMouseDownTexture() const { return m_MouseDownTexture; }
-			void setMouseDownTexture(Texture* texture) { m_MouseDownTexture = texture; }
-
-			Texture* getDisabledTexture() const { return m_DisabledTexture; }
-			void setDiabledTexture(Texture* texture) { m_DisabledTexture = texture; }
-		
 			void setRotation(float rot) { m_rotation = rot; }
 			float getRotation() const { return m_rotation; }
+
+			bool isMouseHover() const { return m_mouseOver; }
+
+			UIGraphic DisabledTexture;
+			UIGraphic NormalTexture;
+			UIGraphic MouseOverTexture;
+			UIGraphic MouseDownTexture;
+			
+			UIGraphic OverlayIcon;
 		protected:
 
 			bool m_mouseOver;
 			bool m_mouseDown;
 
 		private:
-			Apoc3D::Math::Rectangle m_btnDestRect[3];
+			Apoc3D::Math::Rectangle m_btnDestRect[9];
 
-			Texture* m_InvalidTexture;
-			Texture* m_DisabledTexture;
-			Texture* m_MouseDownTexture;
-			Texture* m_MouseOverTexture;
-			Texture* m_NormalTexture;
 			ColorValue m_modColor;
 			ColorValue m_modMouseDownColor;
 			ColorValue m_modMouseOverColor;
@@ -202,7 +188,6 @@ namespace Apoc3D
 			int m_count;
 			String* m_titles;
 			Point* m_texPos;
-			Apoc3D::Math::Rectangle* m_rect;
 			Apoc3D::Math::Rectangle* m_btRect;
 
 			int m_hoverIndex;

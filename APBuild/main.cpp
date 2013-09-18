@@ -29,6 +29,7 @@
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/IOLib/Streams.h"
 
 #include <direct.h>
 #include <iostream>
@@ -138,6 +139,8 @@ int Build(int argc, _TCHAR* argv[])
 	return 0;
 }
 
+int BuildDirectCopy(ConfigurationSection* sect);
+
 int Build(ConfigurationSection* sect)
 {
 	String buildType = sect->getAttribute(L"Type");
@@ -222,12 +225,48 @@ int Build(ConfigurationSection* sect)
 	{
 		BorderBuilder::Build(sect);
 	}
+	else if (buildType == L"copy")
+	{
+		BuildDirectCopy(sect);
+	}
 	else
 	{
 		return ERR_UNSUPPORTED_BUILD;
 	}
 
 	return CollectBuildIssues();
+}
+
+int BuildDirectCopy(ConfigurationSection* sect)
+{
+	String sourceFile = sect->getAttribute(L"SourceFile");
+	String destFile = sect->getAttribute(L"DestinationFile");
+
+	if (!File::FileExists(sourceFile))
+	{
+		CompileLog::WriteError(sourceFile, L"Could not find source file.");
+		return 1;
+	}
+	EnsureDirectory(PathUtils::GetDirectory(destFile));
+
+	FileStream* input = new FileStream(sourceFile);
+	FileOutStream* output = new FileOutStream(destFile);
+
+	bool finished = false;
+	while (!finished)
+	{
+		char buffer[4096];
+		int64 count = input->Read(buffer, 4096);
+		output->Write(buffer, count);
+
+		finished |= count < 4096;
+	}
+
+	delete input;
+	delete output;
+
+	CompileLog::WriteInformation(sect->getName(), L"> Copied: ");
+	return 0;
 }
 
 void PrintUsage()

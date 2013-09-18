@@ -63,7 +63,8 @@ namespace Apoc3D
 		PRJITEM_ShaderNetwork,
 		PRJITEM_Font,
 		PRJITEM_FontGlyphDist,
-		PRJITEM_UILayout
+		PRJITEM_UILayout,
+		PRJITEM_Copy
 	};
 	
 
@@ -569,6 +570,30 @@ namespace Apoc3D
 		virtual bool IsNotBuilt();
 		virtual bool IsEarlierThan(time_t t);
 	};
+
+
+	class APAPI ProjectResCopy : public ProjectResource
+	{
+	public:
+		ProjectResCopy(Project* prj)
+			: ProjectResource(prj)
+		{
+
+		}
+
+		String SourceFile;
+		String DestinationFile;
+
+		virtual ProjectItemType getType() const { return PRJITEM_Copy; }
+		virtual void Parse(const ConfigurationSection* sect);
+		virtual void Save(ConfigurationSection* sect, bool savingBuild);
+
+		virtual List<String> GetAllOutputFiles();
+
+		virtual bool IsNotBuilt();
+		virtual bool IsEarlierThan(time_t t);
+	};
+
 
 	/**
 	 *  Represents one asset in the project.

@@ -38,16 +38,6 @@ namespace Apoc3D
 
 		class APAPI PictureBox : public Control
 		{
-		private:
-			Texture* m_texture;
-			Apoc3D::Math::Rectangle m_srcRect;
-
-			bool m_mouseOver;
-			int m_border;
-
-			PictureDrawEventHandler m_eDraw;
-
-			void UpdateEvents();
 		public:
 			Texture* getImage() const { return m_texture; }
 			void setImage(Texture* tex) { m_texture = tex; }
@@ -63,6 +53,18 @@ namespace Apoc3D
 
 			virtual void Update(const GameTime* const time);
 			virtual void Draw(Sprite* sprite);
+
+		private:
+			RenderDevice* m_device;
+			Texture* m_texture;
+			Apoc3D::Math::Rectangle m_srcRect;
+
+			bool m_mouseOver;
+			int m_border;
+
+			PictureDrawEventHandler m_eDraw;
+
+			void UpdateEvents();
 		};
 	}
 }

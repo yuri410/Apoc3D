@@ -32,11 +32,13 @@ namespace Apoc3D
 		{
 			Control::Initialize(device);
 
-			Size.X = m_skin->CheckBoxTextures[0]->getWidth() + m_fontRef->MeasureString(Text).X + 15;
-			Size.Y = std::max(m_skin->CheckBoxTextures[0]->getHeight(), m_fontRef->getLineHeightInt());
+			int32 hozMg = m_skin->CheckBoxMargin[StyleSkin::SI_Left] + m_skin->CheckBoxMargin[StyleSkin::SI_Right];
+			int32 vertMg = m_skin->CheckBoxMargin[StyleSkin::SI_Top] + m_skin->CheckBoxMargin[StyleSkin::SI_Bottom];
+			Size.X = m_skin->CheckBoxNormal.Width - hozMg + m_fontRef->MeasureString(Text).X + m_skin->CheckBoxTextSpacing;
+			Size.Y = Math::Max(m_skin->CheckBoxNormal.Height,m_fontRef->getLineHeightInt()) - vertMg;
 
-			m_textOffset.X = m_skin->CheckBoxTextures[0]->getWidth() + 5;
-			m_textOffset.Y = (m_skin->CheckBoxTextures[0]->getHeight() - m_fontRef->getLineHeightInt())/2 ;
+			m_textOffset.X = m_skin->CheckBoxNormal.Width + m_skin->CheckBoxTextSpacing;
+			m_textOffset.Y = (m_skin->CheckBoxNormal.Height - m_fontRef->getLineHeightInt())/2 - vertMg;
 		}
 		void CheckBox::Update(const GameTime* const time)
 		{
@@ -69,6 +71,7 @@ namespace Apoc3D
 				else if (m_mouseDown && mouse->IsLeftUp())
 				{
 					OnRelease();
+					m_mouseDown = false;
 				}
 			}
 			else
@@ -97,14 +100,31 @@ namespace Apoc3D
 
 		void CheckBox::Draw(Sprite* sprite)
 		{
-			if (m_check)
+			Apoc3D::Math::Rectangle dstRect(Position.X - m_skin->CheckBoxMargin[StyleSkin::SI_Left], Position.Y - m_skin->CheckBoxMargin[StyleSkin::SI_Top], 0,0);
+			dstRect.Width = m_skin->CheckBoxNormal.Width;
+			dstRect.Height = m_skin->CheckBoxNormal.Height;
+
+			if (Enabled)
 			{
-				sprite->Draw(m_skin->CheckBoxTextures[0], Position, m_skin->BackColor);
+				if (m_mouseDown)
+					sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxDown, CV_White);
+				else if (m_mouseOver)
+					sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxHover, CV_White);
+				else
+					sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxNormal, CV_White);
+
+				if (m_check)
+					sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxChecked, CV_White);
 			}
 			else
-				sprite->Draw(m_skin->CheckBoxTextures[1], Position, m_skin->BackColor);
+			{
+				sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxDisable, CV_White);
 
-			m_fontRef->DrawString(sprite, Text, Position + m_textOffset, m_skin->ForeColor);
+				if (m_check)
+					sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->CheckBoxChecked, 0x7fffffffU);
+			}
+			
+			m_fontRef->DrawString(sprite, Text, Position + m_textOffset, m_skin->TextColor);
 		}
 
 		/************************************************************************/

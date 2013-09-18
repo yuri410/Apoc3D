@@ -44,7 +44,7 @@ namespace Apoc3D
 
 			Point m_textOffset;
 
-			Apoc3D::Math::Rectangle m_destRect[9];
+			//Apoc3D::Math::Rectangle m_destRect[9];
 
 			Apoc3D::Math::Rectangle m_selectionRect;
 			int m_hoverIndex;
@@ -147,7 +147,7 @@ namespace Apoc3D
 
 			Point m_textOffset;
 
-			Apoc3D::Math::Rectangle m_destRect[9];
+			//Apoc3D::Math::Rectangle m_destRect[9];
 
 			Apoc3D::Math::Rectangle m_selectionRect;
 			TreeViewNode* m_selectedNode;

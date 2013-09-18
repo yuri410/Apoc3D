@@ -58,7 +58,7 @@ namespace Apoc3D
 			m_form->Size = size;
 			m_form->SetSkin(skin);
 
-			int32 lineHeight = static_cast<int32>( FontManager::getSingleton().getFont(skin->ControlFontName)->getLineHeight());
+			int32 lineHeight = skin->ContentTextFont->getLineHeightInt();
 
 			m_inputText = new TextBox(Point(10, size.Y - 40), size.X - 100, L"");
 			m_inputText->SetSkin(skin);
@@ -74,7 +74,7 @@ namespace Apoc3D
 
 			m_form->getControls().Add(m_submit);
 
-			m_pictureBox = new PictureBox(Point(10,10+17), 1);
+			m_pictureBox = new PictureBox(Point(10,5+skin->FormTitle->Height), 1);
 			m_pictureBox->SetSkin(skin);
 			m_pictureBox->eventPictureDraw().Bind(this, &Console::PictureBox_Draw);
 			m_form->getControls().Add(m_pictureBox);

@@ -104,7 +104,7 @@ namespace APDesigner
 
 		m_scene.AddObject(&m_object);
 
-		int32 lineHeight = static_cast<int32>( FontManager::getSingleton().getFont(window->getUISkin()->ControlFontName)->getLineHeight());
+		int32 lineHeight = window->getUISkin()->ContentTextFont->getLineHeightInt();
 		
 		{
 			m_modelViewer = new PictureBox(Point(15, 10 + 25 + 90), 1);

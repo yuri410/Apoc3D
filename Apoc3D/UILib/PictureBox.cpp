@@ -28,7 +28,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "FontManager.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
+#include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 #include "StyleSkin.h"
+#include "Form.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Input;
@@ -40,6 +43,8 @@ namespace Apoc3D
 	{
 		void PictureBox::Initialize(RenderDevice* device)
 		{
+			m_device = device;
+
 			if (m_texture)
 			{
 				if (Size == Point::Zero)
@@ -95,7 +100,28 @@ namespace Apoc3D
 				sprite->Draw(m_texture, destRect, &m_srcRect, CV_White);
 			}
 
-			m_eDraw.Invoke(sprite, &destRect);
+			if (m_eDraw.getCount())
+			{
+				sprite->Flush();
+
+				Apoc3D::Math::Rectangle uiArea = UIRoot::GetUIArea(m_device);
+
+				Apoc3D::Math::Rectangle rect= getAbsoluteArea();
+				if (rect.getBottom()>uiArea.getBottom())
+				{
+					rect.Height -= rect.getBottom() - uiArea.getBottom();
+				}
+				if (rect.getRight() > uiArea.getRight())
+				{
+					rect.Width -= rect.getRight() - uiArea.getRight();
+				}
+				m_device->getRenderState()->setScissorTest(true, &rect);
+
+				m_eDraw.Invoke(sprite, &destRect);
+
+				sprite->Flush();
+				m_device->getRenderState()->setScissorTest(false,0);
+			}
 		}
 	}
 }

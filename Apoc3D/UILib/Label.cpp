@@ -156,7 +156,7 @@ namespace Apoc3D
 				}
 
 				m_drawPos = Point(Position.X + m_textOffset.X, Position.Y);
-				m_fontRef->DrawString(sprite, Text, m_drawPos, m_hasColorValue ? m_colorOverride : m_skin->ForeColor);
+				m_fontRef->DrawString(sprite, Text, m_drawPos, m_hasColorValue ? m_colorOverride : m_skin->TextColor);
 			}
 			else
 			{
@@ -176,7 +176,7 @@ namespace Apoc3D
 						break;
 					}
 					m_drawPos.Y = Position.Y + i * m_fontRef->getLineHeightInt();
-					m_fontRef->DrawString(sprite, m_lines[i], m_drawPos, m_hasColorValue ? m_colorOverride : m_skin->ForeColor);
+					m_fontRef->DrawString(sprite, m_lines[i], m_drawPos, m_hasColorValue ? m_colorOverride : m_skin->TextColor);
 				}
 			}
 		}
@@ -329,13 +329,22 @@ namespace Apoc3D
 		void TextBox::Initialize(RenderDevice* device)
 		{
 			Control::Initialize(device);
-			Texture* texture = m_skin->TextBox;
 
-			m_textOffset = Point(5, static_cast<int>((texture->getHeight() - m_fontRef->getLineBackgroundHeight()) /2 ));
+			m_textOffset = Point(5, static_cast<int>((m_skin->TextBox[0].Height - m_fontRef->getLineBackgroundHeight()) /2 ));
+			
+			if (!m_multiline)
+			{
+				int32 yMargin = m_skin->TextBoxMargin[StyleSkin::SI_Top] + m_skin->TextBoxMargin[StyleSkin::SI_Bottom];
+				Size.Y = m_skin->TextBox[0].Height - yMargin;
+			}
+			else
+			{
+				m_visibleLines = (int)ceilf((float)Size.Y / m_fontRef->getLineHeightInt());
 
-			InitDstRect();
+				Size.Y = m_visibleLines * m_fontRef->getLineHeightInt() + 2;
+			}
 
-			m_dRect = Apoc3D::Math::Rectangle(0,0,Size.X,Size.Y);
+			m_dRect = Apoc3D::Math::Rectangle(Position.X,Position.Y,Size.X,Size.Y);
 
 			m_keyboard.eventKeyPress().Bind(this, &TextBox::Keyboard_OnPress);
 			m_keyboard.eventKeyPaste().Bind(this, &TextBox::Keyboard_OnPaste);
@@ -347,53 +356,7 @@ namespace Apoc3D
 			m_timerStarted = true;
 		}
 
-		void TextBox::InitDstRect()
-		{
-			Texture* texture = m_skin->TextBox;
-			if (!m_multiline)
-			{
-				m_destRect[0] = Apoc3D::Math::Rectangle(0,0,m_skin->TextBoxSrcRectsSingle[0].Width, m_skin->TextBoxSrcRectsSingle[0].Height);
-				m_destRect[1] = Apoc3D::Math::Rectangle(0,0,Size.X - m_skin->TextBoxSrcRectsSingle[0].Width * 2, m_skin->TextBoxSrcRectsSingle[1].Height);
-				m_destRect[2] = m_destRect[0];
-				Size.Y = texture->getHeight();
-			}
-			else
-			{
-				//if (Size.Y == 0)
-				{
-					m_visibleLines = (int)ceilf((float)Size.Y / m_fontRef->getLineHeightInt());
 
-					Size.Y = m_visibleLines * m_fontRef->getLineHeightInt() + 2;
-				}
-				//else
-				//{
-				//	m_visibleLines = static_cast<int32>(0.5f + Size.Y / m_fontRef->getLineHeight());
-
-				//	if (m_visibleLines == 0)
-				//	{
-				//		m_visibleLines = 1;
-				//	}
-				//}
-				
-				m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
-					m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-				m_destRect[1] = Apoc3D::Math::Rectangle(0,0, 
-					Size.X - m_skin->TextBoxSrcRects[0].Width*2, m_skin->TextBoxSrcRects[0].Height);
-				m_destRect[2] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-
-				m_destRect[3] = Apoc3D::Math::Rectangle(0,0, 
-					m_skin->TextBoxSrcRects[0].Width, Size.Y - m_skin->TextBoxSrcRects[0].Height*2);
-				m_destRect[4] = Apoc3D::Math::Rectangle(0,0,
-					m_destRect[1].Width, m_destRect[3].Height);
-				m_destRect[5] = Apoc3D::Math::Rectangle(0,0,
-					m_skin->TextBoxSrcRects[0].Width, m_destRect[3].Height);
-
-				m_destRect[6] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-				m_destRect[7] = Apoc3D::Math::Rectangle(0,0, m_destRect[1].Width, m_skin->TextBoxSrcRects[0].Height);
-				m_destRect[8] = Apoc3D::Math::Rectangle(0,0, m_skin->TextBoxSrcRects[0].Width, m_skin->TextBoxSrcRects[0].Height);
-
-			}
-		}
 		void TextBox::InitScrollbars(RenderDevice* device)
 		{
 			if (m_scrollBar == SBT_Vertical)
@@ -574,55 +537,68 @@ namespace Apoc3D
 
 		void TextBox::DrawMonoline(Sprite* sprite)
 		{
+			int32 xMargin = -(m_skin->TextBoxMargin[StyleSkin::SI_Left] + m_skin->TextBoxMargin[StyleSkin::SI_Right]);
+			int32 yMargin = -(m_skin->TextBoxMargin[StyleSkin::SI_Top] + m_skin->TextBoxMargin[StyleSkin::SI_Bottom]);
+
+			Apoc3D::Math::Rectangle dstRect[3];
+			dstRect[0] = Apoc3D::Math::Rectangle(m_skin->TextBoxMargin[StyleSkin::SI_Left], m_skin->TextBoxMargin[StyleSkin::SI_Top], m_skin->TextBox[0].Width , m_skin->TextBox[0].Height + yMargin);
+			dstRect[1] = Apoc3D::Math::Rectangle(dstRect[0].Width, m_skin->TextBoxMargin[StyleSkin::SI_Top],
+				Size.X - m_skin->TextBox[0].Width - m_skin->TextBox[2].Width + xMargin, m_skin->TextBox[1].Height + yMargin);
+			dstRect[2] = Apoc3D::Math::Rectangle(dstRect[1].getRight(), m_skin->TextBoxMargin[StyleSkin::SI_Top], m_skin->TextBox[2].Width, m_skin->TextBox[2].Height + yMargin);
+			
+			for (int32 i=0;i<3;i++)
+			{
+				dstRect[i].X += Position.X;
+				dstRect[i].Y += Position.Y;
+			}
+
 			ColorValue modColor = Enabled ? CV_White : DisabledBG;
 
-			Texture* texture = m_skin->TextBox;
-			m_destRect[0].X = (int)Position.X;
-			m_destRect[0].Y = (int)Position.Y;
-			sprite->Draw(texture, m_destRect[0], &m_skin->TextBoxSrcRectsSingle[0], modColor);
-
-			m_destRect[1].X = m_destRect[0].X + m_destRect[0].Width;
-			m_destRect[1].Y = m_destRect[0].Y;
-			sprite->Draw(texture, m_destRect[1], &m_skin->TextBoxSrcRectsSingle[1], modColor);
-
-			m_destRect[2].X = m_destRect[1].X + m_destRect[1].Width;
-			m_destRect[2].Y = m_destRect[0].Y;
-			sprite->Draw(texture, m_destRect[2], &m_skin->TextBoxSrcRectsSingle[2], modColor);
+			sprite->Draw(m_skin->SkinTexture, dstRect[0], &m_skin->TextBox[0], modColor);
+			sprite->Draw(m_skin->SkinTexture, dstRect[1], &m_skin->TextBox[1], modColor);
+			sprite->Draw(m_skin->SkinTexture, dstRect[2], &m_skin->TextBox[2], modColor);
 		}
 		void TextBox::DrawMultiline(Sprite* sprite)
 		{
+			Apoc3D::Math::Rectangle graphicalArea(Position.X, Position.Y, Size.X, Size.Y);
+			graphicalArea.X -= m_skin->TextBoxExMargin[StyleSkin::SI_Left];
+			graphicalArea.Y -= m_skin->TextBoxExMargin[StyleSkin::SI_Top];
+			graphicalArea.Width += m_skin->TextBoxExMargin[StyleSkin::SI_Left] + m_skin->TextBoxExMargin[StyleSkin::SI_Right];
+			graphicalArea.Height += m_skin->TextBoxExMargin[StyleSkin::SI_Top] + m_skin->TextBoxExMargin[StyleSkin::SI_Bottom];
+
+			const int GraphicalPaddingWidth = m_skin->TextBoxEx[0].Width + m_skin->TextBoxEx[2].Width;
+			const int GraphicalPaddingHeight = m_skin->TextBoxEx[0].Height + m_skin->TextBoxEx[6].Height;
+
+			Apoc3D::Math::Rectangle dstRect[9];
+			for (int i=0;i<9;i++)
+			{
+				dstRect[i] = m_skin->TextBoxEx[i];
+
+				dstRect[i].X += graphicalArea.X - m_skin->TextBoxEx[0].X;
+				dstRect[i].Y += graphicalArea.Y - m_skin->TextBoxEx[0].Y;
+			}
+
+			int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
+			int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
+
+			dstRect[1].Width = eWidth; // top
+			dstRect[4].Width = eWidth; // mid
+			dstRect[7].Width = eWidth; // bottom
+
+			dstRect[3].Height = eHeight; // left
+			dstRect[4].Height = eHeight; // mid
+			dstRect[5].Height = eHeight; // right
+
+			dstRect[2].X = dstRect[5].X = dstRect[8].X = dstRect[1].getRight();
+			dstRect[6].Y = dstRect[7].Y = dstRect[8].Y = dstRect[3].getBottom();
+
+
 			ColorValue modColor = Enabled ? CV_White : DisabledBG;
 
-			Texture* texture = m_skin->TextBox;
-			m_destRect[0].X = (int)Position.X;
-			m_destRect[0].Y = (int)Position.Y;
-			sprite->Draw(texture, m_destRect[0], &m_skin->TextBoxSrcRects[0], modColor);
-			m_destRect[1].X = m_destRect[0].X + m_destRect[0].Width;
-			m_destRect[1].Y = m_destRect[0].Y;
-			sprite->Draw(texture, m_destRect[1], &m_skin->TextBoxSrcRects[1], modColor);
-			m_destRect[2].X = m_destRect[1].X + m_destRect[1].Width;
-			m_destRect[2].Y = m_destRect[0].Y;
-			sprite->Draw(texture, m_destRect[2], &m_skin->TextBoxSrcRects[2], modColor);
-
-			m_destRect[3].X = m_destRect[0].X;
-			m_destRect[3].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(texture, m_destRect[3], &m_skin->TextBoxSrcRects[3], modColor);
-			m_destRect[4].X = m_destRect[1].X;
-			m_destRect[4].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(texture, m_destRect[4], &m_skin->TextBoxSrcRects[4], modColor);
-			m_destRect[5].X = m_destRect[2].X;
-			m_destRect[5].Y = m_destRect[0].Y + m_destRect[0].Height;
-			sprite->Draw(texture, m_destRect[5], &m_skin->TextBoxSrcRects[5], modColor);
-
-			m_destRect[6].X = m_destRect[0].X;
-			m_destRect[6].Y = m_destRect[3].Y + m_destRect[3].Height;
-			sprite->Draw(texture, m_destRect[6], &m_skin->TextBoxSrcRects[6], modColor);
-			m_destRect[7].X = m_destRect[1].X;
-			m_destRect[7].Y = m_destRect[4].Y + m_destRect[4].Height;
-			sprite->Draw(texture, m_destRect[7], &m_skin->TextBoxSrcRects[7], modColor);
-			m_destRect[8].X = m_destRect[2].X;
-			m_destRect[8].Y = m_destRect[5].Y + m_destRect[5].Height;
-			sprite->Draw(texture, m_destRect[8], &m_skin->TextBoxSrcRects[8], modColor);
+			for (int i=0;i<9;i++)
+			{
+				sprite->Draw(m_skin->SkinTexture, dstRect[i], &m_skin->TextBoxEx[i], modColor);
+			}
 		}
 		void TextBox::_DrawText(Sprite* sprite)
 		{
@@ -648,10 +624,10 @@ namespace Apoc3D
 				m_cursorOffset.Y = m_textOffset.Y;
 
 				//Point pos(m_textOffset.X - m_scrollOffset.X, m_textOffset.Y - m_scrollOffset.Y);
-				m_fontRef->DrawString(sprite, Text, m_textOffset-m_scrollOffset + baseOffset, CV_Black);
+				m_fontRef->DrawString(sprite, Text, m_textOffset-m_scrollOffset + baseOffset, m_skin->TextColor);
 				if (m_hasFocus && !m_locked && m_cursorVisible && getOwner()==UIRoot::getTopMostForm())
 				{
-					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, CV_Black);
+					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
 				}
 			}
 			else
@@ -663,7 +639,7 @@ namespace Apoc3D
 
 					m_lineOffset.Y = i*m_fontRef->getLineHeightInt();
 
-					m_fontRef->DrawString(sprite, m_lines[i], m_textOffset+m_lineOffset-m_scrollOffset + baseOffset, CV_Black);
+					m_fontRef->DrawString(sprite, m_lines[i], m_textOffset+m_lineOffset-m_scrollOffset + baseOffset, m_skin->TextColor);
 
 					if (lineSize.X -Size.X > maxWidth)
 					{
@@ -695,7 +671,7 @@ namespace Apoc3D
 						m_lines[m_curorLocation.Y].substr(0, m_curorLocation.X)).X+cursorLeft;
 					m_cursorOffset.Y = m_fontRef->getLineHeightInt() * m_curorLocation.Y + 1;
 
-					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, CV_Black);
+					m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
 				}
 			}
 		}

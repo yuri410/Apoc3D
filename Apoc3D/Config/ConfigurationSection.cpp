@@ -377,6 +377,28 @@ namespace Apoc3D
 			SplitInt(vals, result);
 			return result;
 		}
+		void ConfigurationSection::GetAttributeInts(const String& key, FastList<int32>& values) const
+		{
+			List<String> vals;
+			StringUtils::Split(getAttribute(key), vals, L",");
+			values.ResizeDiscard(vals.getCount());
+			SplitInt(vals, values);
+		}
+
+		bool ConfigurationSection::TryGetAttributeInts(const String& key, FastList<int32>& values) const
+		{
+			String str;
+			if (tryGetAttribute(key, str))
+			{
+				List<String> vals;
+				StringUtils::Split(str, vals, L",");
+				values.ResizeDiscard(vals.getCount());
+				SplitInt(vals, values);
+				return true;
+			}
+			return false;
+		}
+
 
 
 		FastList<uint32> ConfigurationSection::GetUInts() const 

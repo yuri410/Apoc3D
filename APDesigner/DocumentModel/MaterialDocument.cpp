@@ -699,7 +699,7 @@ namespace APDesigner
 	void ColorField::Initialize(RenderDevice* device)
 	{
 		assert(m_skin);
-		int32 lineHeight = static_cast<int32>( FontManager::getSingleton().getFont(m_skin->ControlFontName)->getLineHeight());
+		int32 lineHeight = m_skin->ContentTextFont->getLineHeightInt();
 
 		m_lblAmbient = new Label(Position, Text, 80);
 		m_lblAmbient->SetSkin(m_skin);

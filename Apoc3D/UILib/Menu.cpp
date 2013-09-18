@@ -57,6 +57,8 @@ namespace Apoc3D
 		{
 			Control::Initialize(device);
 
+			m_fontRef = m_skin->TitleTextFont;
+
 			for (int i=0;i<m_items.getCount();i++)
 			{
 				if (m_items[i]->getSubMenu())
@@ -215,9 +217,12 @@ namespace Apoc3D
 				Size.Y = static_cast<int>(m_fontRef->getLineBackgroundHeight());
 			}
 			{
-				Apoc3D::Math::Rectangle area(Position.X+1,Position.Y,Size.X,Size.Y);
+				Apoc3D::Math::Rectangle area(Position.X+1,Position.Y, Size.X,Size.Y - m_skin->HShade.Height);
 
-				sprite->Draw(m_skin->WhitePixelTexture, area, CV_White);
+				sprite->Draw(m_skin->WhitePixelTexture, area, m_skin->ControlFaceColor);
+
+				Apoc3D::Math::Rectangle shadeArea(area.X, area.getBottom(), Size.X, m_skin->HShade.Height);
+				sprite->Draw(m_skin->SkinTexture, shadeArea, &m_skin->HShade, CV_White);
 			}
 			
 
@@ -256,14 +261,14 @@ namespace Apoc3D
 					m_items[i]->getSubMenu()->getState() != MENU_Closed)
 				{
 					sprite->Draw(m_skin->WhitePixelTexture, m_itemArea, CV_LightGray);
-					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_itemPos, CV_Black);
+					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_itemPos, m_skin->TextColor);
 				}
 				// hover item
 				else if (m_itemArea.Contains(cursorLoc))
 				{
 					m_hoverIndex = i;
 					sprite->Draw(m_skin->WhitePixelTexture, m_itemArea, CV_Silver);
-					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_itemPos, CV_Black);
+					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_itemPos, m_skin->TextColor);
 
 					m_openPos.X = m_itemArea.X + 1;
 					m_openPos.Y = m_itemArea.Y + m_itemArea.Height + 2;
@@ -271,7 +276,7 @@ namespace Apoc3D
 				// normal item
 				else
 				{
-					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_itemPos, CV_Black);
+					m_fontRef->DrawString(sprite, m_items[i]->getCleanText(), m_itemPos, m_skin->TextColor);
 				}
 
 				if (m_indexToOpen == i)
@@ -298,17 +303,18 @@ namespace Apoc3D
 					Point underscorePos(
 						m_itemPos.X + m_fontRef->MeasureString(m_items[i]->getCleanText().substr(0,m_items[i]->getKeyIndex())).X,
 						m_itemPos.Y);
-					m_fontRef->DrawString(sprite, L"_", underscorePos, CV_Black);
+					m_fontRef->DrawString(sprite, L"_", underscorePos, m_skin->TextColor);
 				}
 				m_itemPos.X += cleanTextSize.X + 10;
 			}
 
 			for (int i=0;i<m_items.getCount();i++)
 			{
-				if (m_items[i]->getSubMenu() && 
-					m_items[i]->getSubMenu()->getState() != MENU_Closed)
+				MenuItem* itm = m_items[i];
+				if (itm->getSubMenu() && 
+					itm->getSubMenu()->getState() != MENU_Closed)
 				{
-					m_items[i]->getSubMenu()->Draw(sprite);
+					itm->getSubMenu()->Draw(sprite);
 				}
 			}
 		}
@@ -688,9 +694,12 @@ namespace Apoc3D
 					if (m_items[i]->getSubMenu())
 					{
 						m_arrowPos.X = m_itemArea.X + m_itemArea.Width - 15;
-						m_arrowPos.Y = m_itemArea.Y + (m_itemArea.Height - m_skin->SubMenuArrowTexture->getHeight())/2;
+						m_arrowPos.Y = m_itemArea.Y + (m_itemArea.Height - m_skin->SubMenuArrow.Height)/2;
 
-						sprite->Draw(m_skin->SubMenuArrowTexture, m_arrowPos, CV_Black);
+						Apoc3D::Math::Rectangle dstRect = m_skin->SubMenuArrow;
+						dstRect.X = m_arrowPos.X;
+						dstRect.Y = m_arrowPos.Y;
+						sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->SubMenuArrow, CV_Black);
 					}
 				}
 				else if (m_items[i]->getText() == L"-")

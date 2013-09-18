@@ -202,7 +202,6 @@ namespace Apoc3D
 
 		void Form::Initialize(RenderDevice* device)
 		{
-			
 			m_device = device;
 
 			Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
@@ -218,6 +217,13 @@ namespace Apoc3D
 
 			m_border = new Border(m_borderStyle, m_skin);
 
+			m_fontRef = m_skin->TitleTextFont;
+
+			if (m_borderStyle != FBS_Pane)
+				m_titleOffset.Y = (m_skin->FormTitle->Height - m_fontRef->getLineHeightInt())/2 - 1;
+
+			m_titleOffset.X = m_skin->FormTitlePadding[StyleSkin::SI_Left];
+
 			InitializeButtons(device);
 
 			ControlContainer::Initialize(device);
@@ -227,47 +233,48 @@ namespace Apoc3D
 
 		void Form::InitializeButtons(RenderDevice* device)
 		{
-			m_btClose = new Button(Point(Size.X - 22, 4), L"");
-			m_btClose->setNormalTexture(m_skin->FormCloseButton);
+			m_btClose = new Button(Point(Size.X - m_skin->FormTitlePadding[StyleSkin::SI_Right] - m_skin->FormCBCloseNormal.Width, m_skin->FormTitlePadding[StyleSkin::SI_Top]), L"");
+			m_btClose->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseNormal);
+			m_btClose->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseHover);
+			m_btClose->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseDown);
+			m_btClose->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconClose);
 			m_btClose->setOwner(this);
 			m_btClose->Initialize(device);
-			m_btClose->setCustomModColor(m_skin->FormControlButtonColor);
-			m_btClose->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
-			m_btClose->setCustomModColorMouseOver(m_skin->BtnDimColor);
 			m_btClose->eventRelease().Bind(this, &Form::btClose_Release);
 
 			
 			if (m_hasMinimizeButton)
 			{
 				m_btMinimize = new Button(Point(0,0),L"");
-				m_btMinimize->setNormalTexture(m_skin->FormMinimizeButton);
+				//m_btMinimize->setNormalTexture(m_skin->FormMinimizeButton);
+				m_btMinimize->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMinNormal);
+				m_btMinimize->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMinHover);
+				m_btMinimize->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMinDown);
+				m_btMinimize->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconMin);
 				m_btMinimize->setOwner(this);
 				m_btMinimize->Initialize(device);
-				m_btMinimize->setCustomModColor(m_skin->FormControlButtonColor);
-				m_btMinimize->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
-				m_btMinimize->setCustomModColorMouseOver(m_skin->BtnDimColor);
 				m_btMinimize->eventRelease().Bind(this, &Form::btMinimize_Release);
 			}
 			if (m_hasMaximizeButton)
 			{
 				m_btMaximize = new Button(Point(0,0),L"");
-				m_btMaximize->setNormalTexture(m_skin->FormMaximizeButton);
+				m_btMaximize->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMaxNormal);
+				m_btMaximize->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMaxHover);
+				m_btMaximize->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBMaxDown);
+				m_btMaximize->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconMax);
 				m_btMaximize->setOwner(this);
 				m_btMaximize->Initialize(device);
-				m_btMaximize->setCustomModColor(m_skin->FormControlButtonColor);
-				m_btMaximize->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
-				m_btMaximize->setCustomModColorMouseOver(m_skin->BtnDimColor);
 				m_btMaximize->eventRelease().Bind(this, &Form::btMaximize_Release);
 			}
 			if (m_hasMinimizeButton || m_hasMaximizeButton)
 			{
 				m_btRestore = new Button(Point(0,0), L"");
-				m_btRestore->setNormalTexture(m_skin->FormRestoreButton);
+				m_btRestore->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBRestoreNormal);
+				m_btRestore->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBRestoreHover);
+				m_btRestore->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBRestoreDown);
+				m_btRestore->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconRestore);
 				m_btRestore->setOwner(this);
 				m_btRestore->Initialize(device);
-				m_btRestore->setCustomModColor(m_skin->FormControlButtonColor);
-				m_btRestore->setCustomModColorMouseDown(m_skin->BtnHighLightColor);
-				m_btRestore->setCustomModColorMouseOver(m_skin->BtnDimColor);
 				m_btRestore->eventRelease().Bind(this, &Form::btRestore_Release);
 			}
 		}
@@ -327,23 +334,28 @@ namespace Apoc3D
 					m_menu->Update(time);
 				}
 
+				bool blocked = false;
 				if (m_btClose && m_borderStyle != FBS_Pane)
 				{
 					m_btClose->Update(time);
+					blocked |= m_btClose->isMouseHover();
 				}
 
-				if (m_btMaximize && ((m_hasMaximizeButton && !m_isMaximized)||(m_hasMinimizeButton && m_isMinimized)))
+				if (!blocked && m_btMaximize && ((m_hasMaximizeButton && !m_isMaximized)||(m_hasMinimizeButton && m_isMinimized)))
 				{
 					m_btMaximize->Update(time);
+					blocked |= m_btMaximize->isMouseHover();
 				}
-				if (m_btMinimize && ((m_hasMinimizeButton && !m_isMinimized)||(m_hasMaximizeButton && m_isMaximized)))
+				if (!blocked && m_btMinimize && ((m_hasMinimizeButton && !m_isMinimized)||(m_hasMaximizeButton && m_isMaximized)))
 				{
 					m_btMinimize->Update(time);
+					blocked |= m_btMinimize->isMouseHover();
 				}
 
-				if (m_btRestore && ((m_hasMinimizeButton && m_isMinimized)||(m_hasMaximizeButton && m_isMaximized)))
+				if (!blocked && m_btRestore && ((m_hasMinimizeButton && m_isMinimized)||(m_hasMaximizeButton && m_isMaximized)))
 				{
 					m_btRestore->Update(time);
+					blocked |= m_btRestore->isMouseHover();
 				}
 
 				if (!m_menu || !m_menu->Visible || m_menu->getState() == MENU_Closed)
@@ -544,14 +556,14 @@ namespace Apoc3D
 		void Form::CheckDragging()
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			m_dragArea.X = Position.X + 7;
+			m_dragArea.X = Position.X + m_skin->FormTitle[0].Width;
 			m_dragArea.Y = Position.Y;
-			m_dragArea.Width = Size.X - 29;
+			m_dragArea.Width = Size.X - m_skin->FormCBCloseNormal.Width - m_skin->FormTitlePadding[StyleSkin::SI_Right];
 			if (m_hasMinimizeButton)
-				m_dragArea.Width -= 15;
+				m_dragArea.Width -= m_skin->FormCBMinNormal.Width;
 			if (m_hasMaximizeButton)
-				m_dragArea.Width -= 15;
-			m_dragArea.Height = 20;
+				m_dragArea.Width -= m_skin->FormCBMaxNormal.Width;
+			m_dragArea.Height = m_skin->FormTitle[0].Height;
 
 			if (m_dragArea.Contains(mouse->GetCurrentPosition()) &&
 				mouse->IsLeftPressed() && UIRoot::getActiveForm()==this)
@@ -708,13 +720,14 @@ namespace Apoc3D
 				int overlay = 0;
 				for (int i=0;i<m_controls->getCount();i++)
 				{
-					if (m_controls->operator[](i)->IsOverriding())
+					Control* ctl = m_controls->operator[](i);
+					if (ctl->IsOverriding())
 					{
 						overlay = i;
 					}
-					if (m_controls->operator[](i)->Visible)
+					if (ctl->Visible)
 					{
-						m_controls->operator[](i)->Draw(sprite);
+						ctl->Draw(sprite);
 					}
 				}
 
@@ -815,18 +828,27 @@ namespace Apoc3D
 		void Form::DrawTitle(Sprite* sprite)
 		{
 			Point size = m_fontRef->MeasureString(m_title);
-			if (size.X >= Size.X-75)
+			int32 padding = m_skin->FormTitlePadding[StyleSkin::SI_Right] + m_skin->FormTitlePadding[StyleSkin::SI_Left];
+			padding += m_skin->FormCBCloseNormal.Width;
+			if (m_hasMinimizeButton)
+				padding += m_skin->FormCBMinNormal.Width;
+			if (m_hasMaximizeButton)
+				padding += m_skin->FormCBMaxNormal.Width;
+			
+			if (size.X >= Size.X-padding)
 			{
+				padding += m_fontRef->MeasureString(L"..").X;
+
 				for (size_t i=0;i<m_title.size()+1;i++)
 				{
 					String subStr = m_title.substr(0,i);
 					size = m_fontRef->MeasureString(subStr);
-					if (size.X >= Size.X-75)
+					if (size.X >= Size.X-padding)
 					{
 						Point pos = Position;
 						pos.X += m_titleOffset.X;
 						pos.Y += m_titleOffset.Y;
-						m_fontRef->DrawString(sprite, subStr + L"..", pos, CV_Black);
+						m_fontRef->DrawString(sprite, subStr + L"..", pos, m_skin->TextColor);
 						break;
 					}
 				}
@@ -836,37 +858,44 @@ namespace Apoc3D
 				Point pos = Position;
 				pos.X += m_titleOffset.X;
 				pos.Y += m_titleOffset.Y;
-				m_fontRef->DrawString(sprite, m_title, pos, CV_Black);
+				m_fontRef->DrawString(sprite, m_title, pos, m_skin->TextColor);
 			}
 
 		}
+
 		/************************************************************************/
-		/*                                                                      */
+		/*  Border                                                              */
 		/************************************************************************/
 
 
 		Border::Border(BorderStyle style, const StyleSkin* skin)
-			: m_skin(skin), m_style(style), m_shadowOffset(6,4)
+			: m_skin(skin), m_style(style)
 		{
 			for (int i=0;i<9;i++)
 			{
-				Texture* tex;
+				//Texture* tex;
 				if (m_style == FBS_Pane)
 				{
-					tex = m_skin->WhitePixelTexture;
+					//tex = m_skin->WhitePixelTexture;
+					m_dstRect[i] = Apoc3D::Math::Rectangle(0,0,1,1);
+					m_srcRect[i] = m_dstRect[i];
 				}
 				else
 				{
-					tex = m_skin->FormBorderTexture[i];
+					if (i < 3)
+						m_srcRect[i] = m_skin->FormTitle[i];
+					else
+						m_srcRect[i] = m_skin->FormBody[i];
+					m_dstRect[i] = m_srcRect[i];
 				}
 
-				m_dstRect[i] = Apoc3D::Math::Rectangle(0,0,tex->getWidth(), tex->getHeight());
+				//m_dstRect[i] = Apoc3D::Math::Rectangle(0,0,tex->getWidth(), tex->getHeight());
 			}
 			
-			if (style == FBS_Sizable)
+			/*if (style == FBS_Sizable)
 			{
 				m_dstRect[8] = Apoc3D::Math::Rectangle(0,0,m_skin->FormBorderTexture[9]->getWidth(), m_skin->FormBorderTexture[9]->getHeight());
-			}
+			}*/
 			//if (m_style == FBS_Pane)
 			//	m_shadowOffset = Point(1,1);
 		}
@@ -875,18 +904,27 @@ namespace Apoc3D
 		{
 			UpdateRects(pt, size);
 
-			if (size.Y > m_dstRect[0].Height)
-			{
-				Point shdPos = pt;
-				shdPos.Y += 15;
-				DrawShadow(sprite, shdPos, shadowAlpha);
-			}
+			//if (size.Y > m_dstRect[0].Height)
+			//{
+				//Point shdPos = pt;
+				//shdPos.Y += 15;
+				//DrawShadow(sprite, shdPos, shadowAlpha);
+			//}
 
 			DrawUpper(sprite);
 			if (size.Y > m_dstRect[0].Height)
 			{
 				DrawMiddle(sprite);
 				DrawLower(sprite);
+			}
+
+			if (m_style == FBS_Sizable)
+			{
+				Apoc3D::Math::Rectangle dstRect = m_skin->FormResizer;
+				dstRect.X = pt.X + size.X - dstRect.Width - 5;
+				dstRect.Y = pt.Y + size.Y - dstRect.Height - 5;
+				sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->FormResizer, CV_White);
+
 			}
 		}
 
@@ -915,7 +953,7 @@ namespace Apoc3D
 			{
 				m_dstRect[3].X = m_dstRect[0].X;
 				m_dstRect[3].Y = m_dstRect[0].Y + m_dstRect[0].Height;
-				m_dstRect[3].Height = size.Y - (m_dstRect[0].Height + m_skin->FormBorderTexture[6]->getHeight());
+				m_dstRect[3].Height = size.Y - (m_dstRect[0].Height + m_skin->FormBody[6].Height);
 
 			}
 			
@@ -946,14 +984,14 @@ namespace Apoc3D
 			}
 			else
 			{
-				if (size.Y > m_dstRect[0].Height + m_skin->FormBorderTexture[6]->getHeight())
+				if (size.Y > m_dstRect[0].Height + m_skin->FormBody[6].Height)
 				{
-					m_dstRect[6].Height = m_skin->FormBorderTexture[6]->getHeight();
+					m_dstRect[6].Height = m_skin->FormBody[6].Height;
 				}
 				else
 				{
 					m_dstRect[6].Y = m_dstRect[0].Y + m_dstRect[0].Height;
-					m_dstRect[6].Height = size.Y - m_skin->FormBorderTexture[6]->getHeight();
+					m_dstRect[6].Height = size.Y - m_skin->FormBody[6].Height;
 				}
 			}
 			
@@ -971,15 +1009,15 @@ namespace Apoc3D
 		{
 			if (m_style == FBS_Pane)
 			{
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[0], CV_DarkGray);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[1], CV_DarkGray);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[2], CV_DarkGray);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[0], m_skin->BorderColor);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[1], m_skin->BorderColor);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[2], m_skin->BorderColor);
 			}
 			else
 			{
-				sprite->Draw(m_skin->FormBorderTexture[0], m_dstRect[0], CV_White);
-				sprite->Draw(m_skin->FormBorderTexture[1], m_dstRect[1], CV_White);
-				sprite->Draw(m_skin->FormBorderTexture[2], m_dstRect[2], CV_White);
+				sprite->Draw(m_skin->SkinTexture, m_dstRect[0], &m_srcRect[0], CV_White);
+				sprite->Draw(m_skin->SkinTexture, m_dstRect[1], &m_srcRect[1], CV_White);
+				sprite->Draw(m_skin->SkinTexture, m_dstRect[2], &m_srcRect[2], CV_White);
 			}
 			
 		}
@@ -987,15 +1025,15 @@ namespace Apoc3D
 		{
 			if (m_style == FBS_Pane)
 			{
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[3], CV_DarkGray);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[4], CV_White);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[5], CV_DarkGray);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[3], m_skin->BorderColor);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[4], m_skin->ControlFaceColor);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[5], m_skin->BorderColor);
 			}
 			else
 			{
-				sprite->Draw(m_skin->FormBorderTexture[3], m_dstRect[3], CV_White);
-				sprite->Draw(m_skin->FormBorderTexture[4], m_dstRect[4], CV_White);
-				sprite->Draw(m_skin->FormBorderTexture[5], m_dstRect[5], CV_White);
+				sprite->Draw(m_skin->SkinTexture, m_dstRect[3], &m_srcRect[3], CV_White);
+				sprite->Draw(m_skin->SkinTexture, m_dstRect[4], &m_srcRect[4], CV_White);
+				sprite->Draw(m_skin->SkinTexture, m_dstRect[5], &m_srcRect[5], CV_White);
 			}
 			
 		}
@@ -1003,23 +1041,20 @@ namespace Apoc3D
 		{
 			if (m_style == FBS_Pane)
 			{
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[6], CV_DarkGray);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[7], CV_DarkGray);
-				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[8], CV_DarkGray);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[6], m_skin->BorderColor);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[7], m_skin->BorderColor);
+				sprite->Draw(m_skin->WhitePixelTexture, m_dstRect[8], m_skin->BorderColor);
 			}
 			else
 			{
-				sprite->Draw(m_skin->FormBorderTexture[6], m_dstRect[6], CV_White);
-				sprite->Draw(m_skin->FormBorderTexture[7], m_dstRect[7], CV_White);
-				if (m_style == FBS_Sizable)
-					sprite->Draw(m_skin->FormBorderTexture[9], m_dstRect[8], CV_White);			
-				else
-					sprite->Draw(m_skin->FormBorderTexture[8], m_dstRect[8], CV_White);
+				sprite->Draw(m_skin->SkinTexture, m_dstRect[6], &m_srcRect[6], CV_White);
+				sprite->Draw(m_skin->SkinTexture, m_dstRect[7], &m_srcRect[7], CV_White);
+				sprite->Draw(m_skin->SkinTexture, m_dstRect[8], &m_srcRect[8], CV_White);
 			}
 		}
 		void Border::DrawShadow(Sprite* sprite, const Point& pos, float alpha)
 		{
-			if (m_style == FBS_Pane)
+			/*if (m_style == FBS_Pane)
 				return;
 			
 			if (alpha > 1)
@@ -1063,7 +1098,7 @@ namespace Apoc3D
 			{
 				sprite->Draw(m_skin->FormBorderTexture[8], shadowRect, shdClr);
 			}
-
+			*/
 		}
 		/************************************************************************/
 		/*                                                                      */

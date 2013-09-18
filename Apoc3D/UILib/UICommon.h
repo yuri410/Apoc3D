@@ -27,6 +27,7 @@
  */
 
 #include "apoc3d/Common.h"
+#include "apoc3d/Math/Rectangle.h"
 #include "..\EventDelegate.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -39,6 +40,18 @@ namespace Apoc3D
 
 		typedef EventDelegate1<MenuItem*> MenuItemEventHandler;
 
+		struct UIGraphic
+		{
+			Texture* Graphic;
+			bool HasSourceRect;
+			Apoc3D::Math::Rectangle SourceRect;
+
+			UIGraphic() : HasSourceRect(false), Graphic(nullptr) { }
+			UIGraphic(Texture* tex) : HasSourceRect(false), Graphic(tex) { }
+			UIGraphic(Texture* tex, const Apoc3D::Math::Rectangle& srcRect) : Graphic(tex), HasSourceRect(true), SourceRect(srcRect) { }
+
+			bool isSet() const { return !!Graphic; }
+		};
 	}
 }
 

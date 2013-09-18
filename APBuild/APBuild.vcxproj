@@ -136,9 +136,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="AnimationBuild\MAnimBuild.h" />
     <ClInclude Include="AnimationBuild\TAnimBuild.h" />
     <ClInclude Include="APBCommon.h" />

@@ -2,120 +2,19 @@
 <TestBuild>
   <Project Name="Apoc3D System Assets" Type="project">
     <system Type="Folder" Pack="pak" DestinationPack="apoc_system\system.pak">
-      <skin Type="Folder" Pack="pak" DestinationPack="apoc_system\classic_skin.pak">
+      <skin Type="Folder" Pack="pak" DestinationPack="apoc_system\skin.pak">
         <english Type ="Font"
                Name="fonts\SourceSansPro-Regular.otf"
                Size="11"
                Style="Regular"
-               DestinationFile="apoc_system\classic_skin\english.fnt">
+               DestinationFile="apoc_system\skin\english.fnt">
           <Range1 Start="0" End="255"/>
         </english>
-
-        <ctl_arrow
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_arrow.png" DestinationFile="apoc_system\classic_skin\ctl_arrow.tex" />
-        <ctl_btn_close
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_btn_close.png" DestinationFile="apoc_system\classic_skin\ctl_btn_close.tex" />
-        <ctl_btn_default
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_btn_default.png" DestinationFile="apoc_system\classic_skin\ctl_btn_default.tex" />
-        <ctl_btn_maximize
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_btn_maximize.png" DestinationFile="apoc_system\classic_skin\ctl_btn_maximize.tex" />
-        <ctl_btn_minimize
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_btn_minimize.png" DestinationFile="apoc_system\classic_skin\ctl_btn_minimize.tex" />
-        <ctl_btn_restore
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_btn_restore.png" DestinationFile="apoc_system\classic_skin\ctl_btn_restore.tex" />
-        <ctl_checkbox_checked
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_checkbox_checked.png" DestinationFile="apoc_system\classic_skin\ctl_checkbox_checked.tex" />
-        <ctl_checkbox_unchecked
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_checkbox_unchecked.png" DestinationFile="apoc_system\classic_skin\ctl_checkbox_unchecked.tex" />
-        <ctl_combobox_button
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_combobox_button.png" DestinationFile="apoc_system\classic_skin\ctl_combobox_button.tex" />
-        <ctl_frm_default_lowercenter
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_lowercenter.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_lowercenter.tex" />
-        <ctl_frm_default_lowerleft
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_lowerleft.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_lowerleft.tex" />
-        <ctl_frm_default_lowerright
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_lowerright.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_lowerright.tex" />
-        <ctl_frm_default_lowerright_resize
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_lowerright_resize.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_lowerright_resize.tex" />
-        <ctl_frm_default_midcenter
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_midcenter.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_midcenter.tex" />
-        <ctl_frm_default_midleft
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_midleft.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_midleft.tex" />
-        <ctl_frm_default_midright
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_midright.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_midright.tex" />
-        <ctl_frm_default_uppercenter
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_uppercenter.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_uppercenter.tex" />
-        <ctl_frm_default_upperleft
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_upperleft.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_upperleft.tex" />
-        <ctl_frm_default_upperright
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_frm_default_upperright.png" DestinationFile="apoc_system\classic_skin\ctl_frm_default_upperright.tex" />
-        <ctl_potentiometer
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_potentiometer.png" DestinationFile="apoc_system\classic_skin\ctl_potentiometer.tex" />
-        <ctl_radiobtn_checked
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_radiobtn_checked.png" DestinationFile="apoc_system\classic_skin\ctl_radiobtn_checked.tex" />
-        <ctl_radiobtn_unchecked
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_radiobtn_unchecked.png" DestinationFile="apoc_system\classic_skin\ctl_radiobtn_unchecked.tex" />
-        <ctl_scrollbar_base
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_base.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_base.tex" />
-        <ctl_scrollbar_button
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_button.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_button.tex" />
-        <ctl_scrollbar_hscrollbar_back
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_back.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_back.tex" />
-        <ctl_scrollbar_hscrollbar_button
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_button.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_button.tex" />
-        <ctl_scrollbar_hscrollbar_cursor
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_cursor.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_cursor.tex" />
-        <ctl_scrollbar_hscrollbar_highlight_left
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_left.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_left.tex" />
-        <ctl_scrollbar_hscrollbar_highlight_middle
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_middle.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_middle.tex" />
-        <ctl_scrollbar_hscrollbar_highlight_right
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_right.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_highlight_right.tex" />
-        <ctl_scrollbar_hscrollbar_left
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_left.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_left.tex" />
-        <ctl_scrollbar_hscrollbar_middle
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_middle.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_middle.tex" />
-        <ctl_scrollbar_hscrollbar_right
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_right.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_hscrollbar_right.tex" />
-        <ctl_scrollbar_scrollbar_cursor
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_scrollbar_cursor.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_scrollbar_cursor.tex" />
-        <ctl_scrollbar_scroller
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_scroller.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_scroller.tex" />
-        <ctl_scrollbar_vscrollbar_back
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_back.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_back.tex" />
-        <ctl_scrollbar_vscrollbar_bottom
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_bottom.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_bottom.tex" />
-        <ctl_scrollbar_vscrollbar_button
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_button.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_button.tex" />
-        <ctl_scrollbar_vscrollbar_cursor
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_cursor.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_cursor.tex" />
-        <ctl_scrollbar_vscrollbar_highlight_bottom
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_bottom.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_bottom.tex" />
-        <ctl_scrollbar_vscrollbar_highlight_middle
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_middle.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_middle.tex" />
-        <ctl_scrollbar_vscrollbar_highlight_top
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_top.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_highlight_top.tex" />
-        <ctl_scrollbar_vscrollbar_middle
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_middle.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_middle.tex" />
-        <ctl_scrollbar_vscrollbar_top
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_top.png" DestinationFile="apoc_system\classic_skin\ctl_scrollbar_vscrollbar_top.tex" />
-        <ctl_slider_center
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_slider_center.png" DestinationFile="apoc_system\classic_skin\ctl_slider_center.tex" />
-        <ctl_slider_cursor
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_slider_cursor.png" DestinationFile="apoc_system\classic_skin\ctl_slider_cursor.tex" />
-        <ctl_slider_left
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_slider_left.png" DestinationFile="apoc_system\classic_skin\ctl_slider_left.tex" />
-        <ctl_textbox
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\ctl_textbox.png" DestinationFile="apoc_system\classic_skin\ctl_textbox.tex" />
-        <cursor_circle
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\cursor_circle.png" DestinationFile="apoc_system\classic_skin\cursor_circle.tex" />
-        <cursor_default
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\cursor_default.png" DestinationFile="apoc_system\classic_skin\cursor_default.tex" />
-        <cursor_resize
-          Type ="Texture" Method="d3d" PixelFormat="A8R8G8B8" SourceFile="apoc_system\classic_skin\cursor_resize.png" DestinationFile="apoc_system\classic_skin\cursor_resize.tex" />
-
-
+        <ds_skin Type="Texture" Method="d3d" SourceFile="apoc_system\ds_skin.png" DestinationFile="apoc_system\skin\ds_skin.tex" />
+        <skin Type="Copy" SourceFile="apoc_system\ds_skin_met.xml" DestinationFile="apoc_system\skin\skin.xml" />
+        <ds_title Type="Copy" SourceFile="apoc_system\ds_title.fnt" DestinationFile="apoc_system\skin\ds_title.fnt" />
       </skin>
+      
       <gui Type="Folder" Pack="pak" DestinationPack="apoc_system\apdgui.pak">
         <add_ambientlight
           Type ="Texture" Method="devil"  SourceFile="apoc_system\icons\add_ambientlight.ico" DestinationFile="apoc_system\gui\adui_add_ambientlight.tex" />

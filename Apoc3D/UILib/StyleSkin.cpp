@@ -23,16 +23,24 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "StyleSkin.h"
+#include "apoc3d/Config/Configuration.h"
+#include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Graphics/RenderSystem/Texture.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Graphics/TextureManager.h"
 #include "apoc3d/Vfs/FileSystem.h"
 #include "apoc3d/Vfs/FileLocateRule.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Math/ColorValue.h"
+#include "apoc3d/Utility/StringUtils.h"
+#include "FontManager.h"
 
+using namespace Apoc3D::Config;
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;
+using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;
 
 namespace Apoc3D
@@ -40,172 +48,544 @@ namespace Apoc3D
 	namespace UI
 	{
 		StyleSkin::StyleSkin(RenderDevice* device, const FileLocateRule& rule)
-			: ForeColor(CV_Black), BackColor(CV_LightGray), FormControlButtonColor(CV_Silver)
 		{
-			FileLocation* fl = FileSystem::getSingleton().Locate(L"ctl_btn_default.tex", rule);
-			ButtonTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			
-			
-			BtnSrcRect[0] = Apoc3D::Math::Rectangle(0, 0, ButtonTexture->getWidth() - 1, ButtonTexture->getHeight());
-			BtnSrcRect[1] = Apoc3D::Math::Rectangle(ButtonTexture->getWidth() - 1, 0, 1, ButtonTexture->getHeight());
-			BtnSrcRect[2] = Apoc3D::Math::Rectangle(ButtonTexture->getWidth() - 1, 0, -ButtonTexture->getWidth() + 1, ButtonTexture->getHeight());
+			FileLocation* fl = FileSystem::getSingleton().Locate(L"skin.xml", rule);
+			Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+			delete fl;
 
-			BtnHozPadding = 5;
-			BtnVertPadding = 20;
+			String packTexName;
 
-			BtnDimColor = CV_Gray;
-			BtnHighLightColor = CV_LightGray;
-			BtnTextDimColor = CV_Black;
-			BtnTextHighLightColor = CV_Black;
+			ConfigurationSection* basicSect = config->get(L"Basic");
+			String contentTextFontName = basicSect->getValue(L"TextFont");
+			String titleTextFontName = basicSect->getValue(L"TitleFont");
+			packTexName = basicSect->getValue(L"Pack");
+
+			TextColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"TextColor"));
+			ControlFaceColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ControlFaceColor"));
+			ControlDarkShadeColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ControlDarkShadeColor"));
+			ControlLightShadeColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ControlLightShadeColor"));
+
+			ButtonDisabledColorMod = StringUtils::ParseUInt32Hex(basicSect->getValue(L"ButtonDisabledColorMod"));
+			MIDBackgroundColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"MIDBackgroundColor"));
+
+			BorderColor = StringUtils::ParseUInt32Hex(basicSect->getValue(L"BorderColor"));
+
+			if (!FontManager::getSingleton().hasFont(contentTextFontName))
+			{
+				fl = FileSystem::getSingleton().Locate(contentTextFontName + L".fnt", rule);
+				ContentTextFont = FontManager::getSingleton().LoadFont(device, contentTextFontName, fl);
+			}
+			if (!FontManager::getSingleton().hasFont(titleTextFontName))
+			{
+				fl = FileSystem::getSingleton().Locate(titleTextFontName + L".fnt", rule);
+				TitleTextFont = FontManager::getSingleton().LoadFont(device, titleTextFontName, fl);
+			}
 
 
-			//BtnRowSrcRect[0] = Apoc3D::Math::Rectangle(0,0,ButtonTexture->getWidth(),ButtonTexture->getHeight());
-			////BtnRowSrcRect[1] = Apoc3D::Math::Rectangle(ButtonTexture->getWidth()-1,01,1,ButtonTexture->getHeight());
-			BtnRowSeparator = Apoc3D::Math::Rectangle(0,0,2,ButtonTexture->getHeight());
+			HashMap<String, const Apoc3D::Math::Rectangle*> cachedRegions;
+			{ // Button
+				ConfigurationSection* btnSect = config->get(L"Button");
 
+				ButtonFont = GetFontName(btnSect->getAttribute(L"Font"));
+				ParseMargin(btnSect, ButtonMargin);
+				ParsePadding(btnSect, ButtonPadding);
+
+				ConfigurationSection* normalSect = btnSect->getSection(L"Normal");
+				ConfigurationSection* downSect = btnSect->getSection(L"Down");
+				ConfigurationSection* hoverSect = btnSect->getSection(L"Hover");
+
+				Parse9Region(normalSect, ButtonRegionsNormal, cachedRegions);
+				Parse9Region(downSect, ButtonRegionsDown, cachedRegions);
+				Parse9Region(hoverSect, ButtonRegionsHover, cachedRegions);
+
+				Push9Region(normalSect, ButtonRegionsNormal);
+				Push9Region(downSect, ButtonRegionsDown);
+				Push9Region(hoverSect, ButtonRegionsHover);
+
+				cachedRegions.Clear();
+			}
+
+			{ // TextBox
+				ConfigurationSection* textBoxSect = config->get(L"TextBox");
+
+				TextBoxFont = GetFontName(textBoxSect->getAttribute(L"Font"));
+				ParseMargin(textBoxSect, TextBoxMargin);
+				ParseMargin(textBoxSect, TextBoxPadding);
+
+				ConfigurationSection* normalSect = textBoxSect->getSection(L"Normal");
+				Parse3Region(normalSect, TextBox, cachedRegions);
+				Push3Region(normalSect, TextBox);
+
+				cachedRegions.Clear();
+			}
+			{ // TextFieldEx
+				ConfigurationSection* textBoxExSect = config->get(L"TextFieldMultiline");
+				
+				ConfigurationSection* normalSect = textBoxExSect->getSection(L"Normal");
+				Parse9Region(normalSect, TextBoxEx, cachedRegions);
+				Push9Region(normalSect, TextBoxEx);
+
+				cachedRegions.Clear();
+			}
+
+
+			{ // CheckBox
+				ConfigurationSection* checkBoxSect = config->get(L"CheckBox");
+
+				CheckBoxFont = GetFontName(checkBoxSect->getAttribute(L"Font"));
+				ParseMargin(checkBoxSect, CheckBoxMargin);
+
+				CheckBoxTextSpacing = checkBoxSect->GetAttributeInt(L"TextSpacing");
+
+				ConfigurationSection* disabledSect = checkBoxSect->getSection(L"Disabled");
+				ConfigurationSection* normalSect = checkBoxSect->getSection(L"Normal");
+				ConfigurationSection* hoverSect = checkBoxSect->getSection(L"Hover");
+				ConfigurationSection* downSect = checkBoxSect->getSection(L"Down");
+				ConfigurationSection* checkedSect = checkBoxSect->getSection(L"Checked");
+
+				ParseRegion(disabledSect, CheckBoxDisable, cachedRegions);
+				ParseRegion(normalSect, CheckBoxNormal, cachedRegions);
+				ParseRegion(hoverSect, CheckBoxHover, cachedRegions);
+				ParseRegion(downSect, CheckBoxDown, cachedRegions);
+				ParseRegion(checkedSect, CheckBoxChecked, cachedRegions);
+
+				PushRegion(disabledSect, CheckBoxDisable);
+				PushRegion(normalSect, CheckBoxNormal);
+				PushRegion(hoverSect, CheckBoxHover);
+				PushRegion(downSect, CheckBoxDown);
+				PushRegion(checkedSect, CheckBoxChecked);
+
+				cachedRegions.Clear();
+			}
+
+			{ // RadioButton
+				ConfigurationSection* radioButtonSect = config->get(L"RadioButton");
+
+				RadioButtonFont = GetFontName(radioButtonSect->getAttribute(L"Font"));
+				ParseMargin(radioButtonSect, RadioButtonMargin);
+				RadioButtonTextSpacing = radioButtonSect->GetAttributeInt(L"TextSpacing");
+
+				ConfigurationSection* disabledSect = radioButtonSect->getSection(L"Disabled");
+				ConfigurationSection* normalSect = radioButtonSect->getSection(L"Normal");
+				ConfigurationSection* hoverSect = radioButtonSect->getSection(L"Hover");
+				ConfigurationSection* downSect = radioButtonSect->getSection(L"Down");
+				ConfigurationSection* checkedSect = radioButtonSect->getSection(L"Checked");
+
+				ParseRegion(disabledSect, RadioButtonDisable, cachedRegions);
+				ParseRegion(normalSect, RadioButtonNormal, cachedRegions);
+				ParseRegion(hoverSect, RadioButtonHover, cachedRegions);
+				ParseRegion(downSect, RadioButtonDown, cachedRegions);
+				ParseRegion(checkedSect, RadioButtonChecked, cachedRegions);
+
+				PushRegion(disabledSect, RadioButtonDisable);
+				PushRegion(normalSect, RadioButtonNormal);
+				PushRegion(hoverSect, RadioButtonHover);
+				PushRegion(downSect, RadioButtonDown);
+				PushRegion(checkedSect, RadioButtonChecked);
+
+				cachedRegions.Clear();
+			}
+
+			{ // DropDownButton
+				ConfigurationSection* dropDownSect = config->get(L"DropDownButton");
+
+				ParseMargin(dropDownSect, DropDownButtonMargin);
+
+				ConfigurationSection* normalSect = dropDownSect->getSection(L"Normal");
+				ConfigurationSection* hoverSect = dropDownSect->getSection(L"Hover");
+				ConfigurationSection* downSect = dropDownSect->getSection(L"Down");
+
+				ParseRegion(normalSect, DropDownButtonNormal, cachedRegions);
+				ParseRegion(hoverSect, DropDownButtonHover, cachedRegions);
+				ParseRegion(downSect, DropDownButtonDown, cachedRegions);
+
+				PushRegion(normalSect, DropDownButtonNormal);
+				PushRegion(hoverSect, DropDownButtonHover);
+				PushRegion(downSect, DropDownButtonDown);
+
+				cachedRegions.Clear();
+			}
+
+			{ // Form
+				ConfigurationSection* formSect = config->get(L"Form");
+				FormFont = GetFontName(formSect->getAttribute(L"Font"));
+
+				ParsePadding(formSect, FormTitlePadding);
+
+				ConfigurationSection* titleNormalSect = formSect->getSection(L"TitleNormal");
+				ConfigurationSection* backgroundSect = formSect->getSection(L"Background");
+				ConfigurationSection* resizer = formSect->getSection(L"Resizer");
+				
+				Parse3Region(titleNormalSect, FormTitle, cachedRegions);
+				Parse9Region(backgroundSect, FormBody, cachedRegions);
+				ParseRegion(resizer, FormResizer, cachedRegions);
+
+				Push3Region(titleNormalSect, FormTitle);
+				Push9Region(backgroundSect, FormBody);
+				PushRegion(resizer, FormResizer);
+
+				cachedRegions.Clear();
+
+				ConfigurationSection* iconSect = formSect->getSection(L"ControlBoxIcon");
+				{
+					ConfigurationSection* maxSect = iconSect->getSection(L"MaxOverlay");
+					ConfigurationSection* minSect = iconSect->getSection(L"MinOverlay");
+					ConfigurationSection* closeSect = iconSect->getSection(L"CloseOverlay");
+					ConfigurationSection* restoreSect = iconSect->getSection(L"RestoreOverlay");
+
+					ParseRegion(maxSect, FormCBIconMax, cachedRegions);
+					ParseRegion(minSect, FormCBIconMin, cachedRegions);
+					ParseRegion(closeSect, FormCBIconClose, cachedRegions);
+					ParseRegion(restoreSect, FormCBIconRestore, cachedRegions);
+
+					PushRegion(maxSect, FormCBIconMax);
+					PushRegion(minSect, FormCBIconMin);
+					PushRegion(closeSect, FormCBIconClose);
+					PushRegion(restoreSect, FormCBIconRestore);
+
+					cachedRegions.Clear();
+				}
+
+				ConfigurationSection* cbBtnSects[4] = 
+				{
+					formSect->getSection(L"MaximizeButton"),
+					formSect->getSection(L"CloseButton"),
+					formSect->getSection(L"MinimizeButton"),
+					formSect->getSection(L"RestoreButton")
+				};
+				struct 
+				{
+					Apoc3D::Math::Rectangle& disabled;
+					Apoc3D::Math::Rectangle& normal;
+					Apoc3D::Math::Rectangle& hover;
+					Apoc3D::Math::Rectangle& down;
+				} cbBtnRegions[4] = 
+				{
+					{ FormCBMaxDisabled, FormCBMaxNormal, FormCBMaxHover, FormCBMaxDown },
+					{ FormCBCloseDisabled, FormCBCloseNormal, FormCBCloseHover, FormCBCloseDown },
+					{ FormCBMinDisabled, FormCBMinNormal, FormCBMinHover, FormCBMinDown },
+					{ FormCBRestoreDisabled, FormCBRestoreNormal, FormCBRestoreHover, FormCBRestoreDown },
+				};
+
+				int32 cbbCount = sizeof(cbBtnSects) / sizeof(cbBtnSects[0]);
+				for (int i=0;i<cbbCount;i++)
+				{
+					ConfigurationSection* cbbSect = cbBtnSects[i];
+					{
+						ConfigurationSection* disabledSect = cbbSect->getSection(L"Disabled");
+						ConfigurationSection* normalSect = cbbSect->getSection(L"Normal");
+						ConfigurationSection* hoverSect = cbbSect->getSection(L"Hover");
+						ConfigurationSection* downSect = cbbSect->getSection(L"Down");
+
+						ParseRegion(disabledSect, cbBtnRegions[i].disabled, cachedRegions);
+						ParseRegion(normalSect, cbBtnRegions[i].normal, cachedRegions);
+						ParseRegion(hoverSect, cbBtnRegions[i].hover, cachedRegions);
+						ParseRegion(downSect, cbBtnRegions[i].down, cachedRegions);
+
+						PushRegion(disabledSect, cbBtnRegions[i].disabled);
+						PushRegion(normalSect, cbBtnRegions[i].normal);
+						PushRegion(hoverSect, cbBtnRegions[i].hover);
+						PushRegion(downSect, cbBtnRegions[i].down);
+
+						cachedRegions.Clear();
+					}
+				}
+				
+				cachedRegions.Clear();
+			}
+
+			{ // ProgressBar
+				ConfigurationSection* cbbSect = config->get(L"ProgressBar");
+
+				ConfigurationSection* bgSect = cbbSect->getSection(L"Background");
+				ConfigurationSection* fillSect = cbbSect->getSection(L"Filled");
+				
+				Parse3Region(bgSect, ProgressBarBG, cachedRegions);
+				Parse3Region(fillSect, ProgressBarFilled, cachedRegions);
+				
+				Push3Region(bgSect, ProgressBarBG);
+				Push3Region(fillSect, ProgressBarFilled);
+
+				cachedRegions.Clear();
+			}
+
+
+			{ // HSlider
+				ConfigurationSection* sdrSect = config->get(L"HSlider");
+
+				ConfigurationSection* bgSect = sdrSect->getSection(L"Background");
+				ConfigurationSection* fillSect = sdrSect->getSection(L"Filled");
+				ConfigurationSection* handleSect = sdrSect->getSection(L"HandleNormal");
+
+				Parse3Region(bgSect, HSilderBG, cachedRegions);
+				Parse3Region(fillSect, HSilderFilled, cachedRegions);
+				ParseRegion(handleSect, HSliderHandle, cachedRegions);
+
+				Push3Region(bgSect, HSilderBG);
+				Push3Region(fillSect, HSilderFilled);
+				PushRegion(handleSect, HSliderHandle);
+
+				cachedRegions.Clear();
+			}
+
+			{ // VScrollBar
+				ConfigurationSection* vsBar = config->get(L"VScrollBar");
+
+				ConfigurationSection* bgSect = vsBar->getSection(L"Background");
+				ConfigurationSection* cursor = vsBar->getSection(L"Cursor")->getSection(L"Normal");
+				ConfigurationSection* backSect = vsBar->getSection(L"UpButton")->getSection(L"Normal");
+				ConfigurationSection* forwardSect = vsBar->getSection(L"DownButton")->getSection(L"Normal");
+
+				ParseRegion(bgSect, VScrollBarBG, cachedRegions);
+				Parse3Region(cursor, VScrollBarCursor, cachedRegions);
+
+				PushRegion(bgSect, VScrollBarBG);
+				Push3Region(cursor, VScrollBarCursor);
+
+				cachedRegions.Clear();
+				ParseRegion(backSect, VScrollBarUp, cachedRegions);
+				cachedRegions.Clear();
+				ParseRegion(forwardSect, VScrollBarDown, cachedRegions);
+
+				PushRegion(backSect, VScrollBarUp);
+				PushRegion(forwardSect, VScrollBarDown);
+
+				cachedRegions.Clear();
+			}
+
+
+			{ // HScrollBar
+				ConfigurationSection* vsBar = config->get(L"HScrollBar");
+
+				ConfigurationSection* bgSect = vsBar->getSection(L"Background");
+				ConfigurationSection* cursor = vsBar->getSection(L"Cursor")->getSection(L"Normal");
+				ConfigurationSection* backSect = vsBar->getSection(L"BackButton")->getSection(L"Normal");
+				ConfigurationSection* forwardSect = vsBar->getSection(L"ForwardButton")->getSection(L"Normal");
+
+				ParseRegion(bgSect, HScrollBarBG, cachedRegions);
+				Parse3Region(cursor, HScrollBarCursor, cachedRegions);
+
+				PushRegion(bgSect, HScrollBarBG);
+				Push3Region(cursor, HScrollBarCursor);
+
+				cachedRegions.Clear();
+				ParseRegion(backSect, HScrollBarLeft, cachedRegions);
+				cachedRegions.Clear();
+				ParseRegion(forwardSect, HScrollBarRight, cachedRegions);
+
+				PushRegion(backSect, HScrollBarLeft);
+				PushRegion(forwardSect, HScrollBarRight);
+
+				cachedRegions.Clear();
+			}
+
+
+			{ // ListBox
+				ConfigurationSection* listBox = config->get(L"ListBox");
+				ListBoxFont = GetFontName(listBox->getAttribute(L"Font"));
+
+				ParseMargin(listBox, ListBoxMargin);
+				ParsePadding(listBox, ListBoxPadding);
+
+				ConfigurationSection* normal = listBox->getSection(L"Normal");
+				Parse9Region(normal, ListBoxBackground, cachedRegions);
+				
+				Push9Region(normal, ListBoxBackground);
+				cachedRegions.Clear();
+			}
+
+
+			// Menu
+			{
+				ConfigurationSection* menuSect = config->get(L"Menu");
+
+				ConfigurationSection* subMenuArrow = menuSect->getSection(L"SubMenuArrow");
+				ConfigurationSection* hshadeSect = menuSect->getSection(L"HShade");
+
+				ParseRegion(subMenuArrow, SubMenuArrow, cachedRegions);
+				ParseRegion(hshadeSect, HShade, cachedRegions);
+
+				PushRegion(subMenuArrow, SubMenuArrow);
+				PushRegion(hshadeSect, HShade);
+
+				cachedRegions.Clear();
+			}
+
+			delete config;
 
 			WhitePixelTexture = device->getObjectFactory()->CreateTexture(1,1,1, TU_Static, FMT_A8R8G8B8);
 
 			DataRectangle rect = WhitePixelTexture->Lock(0, LOCK_None);
-			*(uint*)rect.getDataPointer() = PACK_COLOR(0xff,0xff,0xff,0xff);
+			*(uint32*)rect.getDataPointer() = CV_White;
 			WhitePixelTexture->Unlock(0);
 
-
-			fl = FileSystem::getSingleton().Locate(L"ctl_btn_close.tex", rule);
-			FormCloseButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_btn_maximize.tex", rule);
-			FormMaximizeButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_btn_minimize.tex", rule);
-			FormMinimizeButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_btn_restore.tex", rule);
-			FormRestoreButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-
-			fl = FileSystem::getSingleton().Locate(L"ctl_arrow.tex", rule);
-			SubMenuArrowTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-
-			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_upperleft.tex", rule);
-			FormBorderTexture[0] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_uppercenter.tex", rule);
-			FormBorderTexture[1] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_upperright.tex", rule);
-			FormBorderTexture[2] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_midleft.tex", rule);
-			FormBorderTexture[3] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_midcenter.tex", rule);
-			FormBorderTexture[4] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_midright.tex", rule);
-			FormBorderTexture[5] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_lowerleft.tex", rule);
-			FormBorderTexture[6] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_lowercenter.tex", rule);
-			FormBorderTexture[7] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_lowerright.tex", rule);
-			FormBorderTexture[8] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_frm_default_lowerright_resize.tex", rule);
-			FormBorderTexture[9] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-
-			fl = FileSystem::getSingleton().Locate(L"ctl_radiobtn_checked.tex", rule);
-			RadioBtnChecked = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_radiobtn_unchecked.tex", rule);
-			RadioBtnUnchecked = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-
-
-			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_hscrollbar_button.tex", rule);
-			HScrollBar_Button = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_hscrollbar_back.tex", rule);
-			HScrollBar_Back = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_hscrollbar_cursor.tex", rule);
-			HScrollBar_Cursor = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-
-			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_vscrollbar_button.tex", rule);
-			VScrollBar_Button = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_vscrollbar_back.tex", rule);
-			VScrollBar_Back = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_scrollbar_vscrollbar_cursor.tex", rule);
-			VScrollBar_Cursor = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-
-			HSCursorLeft = Apoc3D::Math::Rectangle(
-				0,0,
-				3, HScrollBar_Cursor->getHeight());
-			HSCursorRight = Apoc3D::Math::Rectangle(
-				HScrollBar_Cursor->getWidth()-3,0,
-				3, HScrollBar_Cursor->getHeight());
-			HSCursorMiddle = Apoc3D::Math::Rectangle(
-				3,0,
-				1, HScrollBar_Cursor->getHeight());
-
-			
-			VSCursorTop = Apoc3D::Math::Rectangle(
-				VScrollBar_Cursor->getWidth(),0,
-				-VScrollBar_Cursor->getWidth(), 3);
-			VSCursorBottom = Apoc3D::Math::Rectangle(
-				VScrollBar_Cursor->getWidth(), VScrollBar_Cursor->getHeight()-3,
-				-VScrollBar_Cursor->getWidth(), 3);
-			VSCursorMiddle = Apoc3D::Math::Rectangle(
-				VScrollBar_Cursor->getWidth(),3,
-				-VScrollBar_Cursor->getWidth(),1);
-
-
-			fl = FileSystem::getSingleton().Locate(L"ctl_textbox.tex", rule);
-			TextBox = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-
-			TextBoxSrcRects[0] = Apoc3D::Math::Rectangle(0,0,TextBox->getWidth()-1, TextBox->getHeight()/2);
-			TextBoxSrcRects[1] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,1, TextBox->getHeight()/2);
-			TextBoxSrcRects[2] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,-(TextBox->getWidth()-1), TextBox->getHeight()/2);
-
-			TextBoxSrcRects[3] = Apoc3D::Math::Rectangle(0,TextBox->getHeight()/2,TextBox->getWidth()-1, 1);
-			TextBoxSrcRects[4] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1,1);
-			TextBoxSrcRects[5] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,-(TextBox->getWidth()-1), 1);
-			
-			TextBoxSrcRects[6] = Apoc3D::Math::Rectangle(0,TextBox->getHeight()/2,TextBox->getWidth()-1, -TextBox->getHeight()/2);
-			TextBoxSrcRects[7] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,1, -TextBox->getHeight()/2);
-			TextBoxSrcRects[8] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,TextBox->getHeight()/2,-(TextBox->getWidth()-1), -TextBox->getHeight()/2);
-
-
-			TextBoxSrcRectsSingle[0] = Apoc3D::Math::Rectangle(0,0,TextBox->getWidth()-1, TextBox->getHeight());
-			TextBoxSrcRectsSingle[1] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,1, TextBox->getHeight());
-			TextBoxSrcRectsSingle[2] = Apoc3D::Math::Rectangle(TextBox->getWidth()-1,0,-(TextBox->getWidth()-1), TextBox->getHeight());
-
-			fl = FileSystem::getSingleton().Locate(L"ctl_combobox_button.tex", rule);
-			ComboButton = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-
-			fl = FileSystem::getSingleton().Locate(L"ctl_checkbox_checked.tex", rule);
-			CheckBoxTextures[0] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
-			fl = FileSystem::getSingleton().Locate(L"ctl_checkbox_unchecked.tex", rule);
-			CheckBoxTextures[1] = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			fl = FileSystem::getSingleton().Locate(packTexName, rule);
+			SkinTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
 		}
 
 		StyleSkin::~StyleSkin()
 		{
-			delete ButtonTexture;
 			delete WhitePixelTexture;
+			delete SkinTexture;
+		}
 
-			delete FormCloseButton;
-			delete FormMaximizeButton;
-			delete FormMinimizeButton;
-			delete FormRestoreButton;
+		Font* StyleSkin::GetFontName(const String& alias)
+		{
+			return alias == L"Title" ? TitleTextFont : ContentTextFont;
+		}
 
-			for (int i=0;i<10;i++)
-				delete FormBorderTexture[i];
-			delete SubMenuArrowTexture;
+		void StyleSkin::ParseMargin(ConfigurationSection* sect, int result[4])
+		{
+			FastList<int32> margins;
+			if (sect->TryGetAttributeInts(L"Margin", margins))
+			{
+				assert(margins.getCount()==4);
 
-			delete RadioBtnChecked;
-			delete RadioBtnUnchecked;
+				for (int i=0;i<4;i++)
+					result[i] = margins[i];
+			}
+			else
+			{
+				for (int i=0;i<4;i++)
+					result[i] = 0;
+			}
+		}
 
-			delete HScrollBar_Back;
-			delete HScrollBar_Button;
-			delete HScrollBar_Cursor;
+		void StyleSkin::ParsePadding(ConfigurationSection* sect, int result[4])
+		{
+			FastList<int32> padding;
+			if (sect->TryGetAttributeInts(L"Padding", padding))
+			{
+				assert(padding.getCount()==4);
+
+				for (int i=0;i<4;i++)
+					result[i] = padding[i];
+			}
+			else
+			{
+				for (int i=0;i<4;i++)
+					result[i] = 0;
+			}
+		}
+		void StyleSkin::Parse9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9], HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions)
+		{
+			String ref;
+			if (sect->tryGetAttribute(L"RegionRef", ref))
+			{
+				memcpy(srcRects, cachedRegions[ref], sizeof(Apoc3D::Math::Rectangle) * 9);
+				return;
+			}
+			
+			List<String> parts;
+			StringUtils::Split(sect->getValue(), parts, L"[], ");
+			assert(parts.getCount() == 4 * 9);
+
+			for (int i=0;i<9;i++)
+			{
+				Apoc3D::Math::Rectangle& rect = srcRects[i];
+				
+				rect.X = StringUtils::ParseInt32(parts[i * 4]);
+				rect.Y = StringUtils::ParseInt32(parts[i * 4 + 1]);
+				rect.Width = StringUtils::ParseInt32(parts[i * 4 + 2]);
+				rect.Height = StringUtils::ParseInt32(parts[i * 4 + 3]);
+			}
+
+			cachedRegions.Add(sect->getName(), srcRects);
+		}
+		void StyleSkin::Parse3Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[3], HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions)
+		{
+			String ref;
+			if (sect->tryGetAttribute(L"RegionRef", ref))
+			{
+				memcpy(srcRects, cachedRegions[ref], sizeof(Apoc3D::Math::Rectangle) * 3);
+				return;
+			}
+
+			List<String> parts;
+			StringUtils::Split(sect->getValue(), parts, L"[], ");
+			assert(parts.getCount() == 4 * 3);
+
+			for (int i=0;i<3;i++)
+			{
+				Apoc3D::Math::Rectangle& rect = srcRects[i];
+
+				rect.X = StringUtils::ParseInt32(parts[i * 4]);
+				rect.Y = StringUtils::ParseInt32(parts[i * 4 + 1]);
+				rect.Width = StringUtils::ParseInt32(parts[i * 4 + 2]);
+				rect.Height = StringUtils::ParseInt32(parts[i * 4 + 3]);
+			}
+
+			cachedRegions.Add(sect->getName(), srcRects);
+		}
+		void StyleSkin::ParseRegion(ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect, HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions)
+		{
+			String ref;
+			if (sect->tryGetAttribute(L"RegionRef", ref))
+			{
+				memcpy(&srcRect, cachedRegions[ref], sizeof(Apoc3D::Math::Rectangle));
+				return;
+			}
+
+			List<String> parts;
+			StringUtils::Split(sect->getValue(), parts, L"[], ");
+			assert(parts.getCount() == 4);
+
+			srcRect.X = StringUtils::ParseInt32(parts[0]);
+			srcRect.Y = StringUtils::ParseInt32(parts[1]);
+			srcRect.Width = StringUtils::ParseInt32(parts[2]);
+			srcRect.Height = StringUtils::ParseInt32(parts[3]);
+
+			cachedRegions.Add(sect->getName(), &srcRect);
+		}
 
 
-			delete VScrollBar_Back;
-			delete VScrollBar_Button;
-			delete VScrollBar_Cursor;
+		void StyleSkin::Push9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9])
+		{
+			Point coord(0,0);
+			FastList<int32> coordArr;
+			if (sect->TryGetAttributeInts(L"Coord", coordArr))
+			{
+				assert(coordArr.getCount()==2);
+				coord.X = coordArr[0];
+				coord.Y = coordArr[1];
 
-			delete TextBox;
-			delete ComboButton;
-			delete CheckBoxTextures[0];
-			delete CheckBoxTextures[1];
+				for (int i=0;i<9;i++)
+				{
+					srcRects[i].X += coord.X;
+					srcRects[i].Y += coord.Y;
+				}
+			}
+		}
+		void StyleSkin::Push3Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[3])
+		{
+			Point coord(0,0);
+			FastList<int32> coordArr;
+			if (sect->TryGetAttributeInts(L"Coord", coordArr))
+			{
+				assert(coordArr.getCount()==2);
+				coord.X = coordArr[0];
+				coord.Y = coordArr[1];
 
+				for (int i=0;i<3;i++)
+				{
+					srcRects[i].X += coord.X;
+					srcRects[i].Y += coord.Y;
+				}
+			}
+		}
+		void StyleSkin::PushRegion(ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect)
+		{
+			Point coord(0,0);
+			FastList<int32> coordArr;
+			if (sect->TryGetAttributeInts(L"Coord", coordArr))
+			{
+				assert(coordArr.getCount()==2);
+				coord.X = coordArr[0];
+				coord.Y = coordArr[1];
+
+				srcRect.X += coord.X;
+				srcRect.Y += coord.Y;
+			}
 		}
 	}
 }

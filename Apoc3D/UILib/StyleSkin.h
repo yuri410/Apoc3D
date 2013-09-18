@@ -40,68 +40,144 @@ namespace Apoc3D
 		class APAPI StyleSkin
 		{
 		public:
-			Texture* ButtonTexture;
-			Apoc3D::Math::Rectangle BtnSrcRect[3];
-			uint BtnDimColor;
-			uint BtnHighLightColor;
-			uint BtnTextDimColor;
-			uint BtnTextHighLightColor;
-
-			int BtnVertPadding;
-			int BtnHozPadding;
-
-
-
-			Texture* WhitePixelTexture;
-			//Apoc3D::Math::Rectangle BtnRowSrcRect[2];
-			Apoc3D::Math::Rectangle BtnRowSeparator;
-			String ControlFontName;
-
-			Texture* FormBorderTexture[10];
-			Texture* SubMenuArrowTexture;
-
-			Texture* FormCloseButton;
-			Texture* FormMinimizeButton;
-			Texture* FormMaximizeButton;
-			Texture* FormRestoreButton;
-
-			ColorValue ForeColor;
-			ColorValue BackColor;
-			ColorValue FormControlButtonColor;
-
-			Texture* RadioBtnChecked;
-			Texture* RadioBtnUnchecked;
-
-
-
-			//Apoc3D::Math::Rectangle HSCrsorArea;
-			Apoc3D::Math::Rectangle HSCursorLeft;
-			Apoc3D::Math::Rectangle HSCursorRight;
-			Apoc3D::Math::Rectangle HSCursorMiddle;
-
-			Apoc3D::Math::Rectangle VSCursorTop;
-			Apoc3D::Math::Rectangle VSCursorBottom;
-			Apoc3D::Math::Rectangle VSCursorMiddle;
-
-			Texture* HScrollBar_Cursor;
-			Texture* HScrollBar_Back;
-			Texture* HScrollBar_Button;
-
-			Texture* VScrollBar_Cursor;
-			Texture* VScrollBar_Back;
-			Texture* VScrollBar_Button;
-
-			Texture* TextBox;
-
-			Apoc3D::Math::Rectangle TextBoxSrcRects[9];
-			Apoc3D::Math::Rectangle TextBoxSrcRectsSingle[3];
-
-			Texture* ComboButton;
-			Texture* CheckBoxTextures[2];
-		public:
-			// create default skin
 			StyleSkin(RenderDevice* device, const FileLocateRule& rule);
 			~StyleSkin();
+
+			enum SideIndex
+			{
+				SI_Left,
+				SI_Top,
+				SI_Right,
+				SI_Bottom
+			};
+
+			Font* ContentTextFont;
+			Font* TitleTextFont;
+			ColorValue TextColor;
+			ColorValue ControlFaceColor;
+			ColorValue ControlDarkShadeColor;
+			ColorValue ControlLightShadeColor;
+			ColorValue ButtonDisabledColorMod;
+			ColorValue MIDBackgroundColor;
+			ColorValue BorderColor;
+
+			int32 ButtonPadding[4];
+			int32 ButtonMargin[4];
+			Font* ButtonFont;
+			Apoc3D::Math::Rectangle ButtonRegionsNormal[9];
+			Apoc3D::Math::Rectangle ButtonRegionsHover[9];
+			Apoc3D::Math::Rectangle ButtonRegionsDown[9];
+			
+
+
+			Font* TextBoxFont;
+			int32 TextBoxPadding[4];
+			int32 TextBoxMargin[4];
+			Apoc3D::Math::Rectangle TextBox[3];
+
+			int32 TextBoxExMargin[4];
+			Apoc3D::Math::Rectangle TextBoxEx[9];
+
+			int32 CheckBoxMargin[4];
+			Font* CheckBoxFont;
+			Apoc3D::Math::Rectangle CheckBoxDisable;
+			Apoc3D::Math::Rectangle CheckBoxNormal;
+			Apoc3D::Math::Rectangle CheckBoxHover;
+			Apoc3D::Math::Rectangle CheckBoxDown;
+			Apoc3D::Math::Rectangle CheckBoxChecked;
+			int32 CheckBoxTextSpacing;
+
+			int32 RadioButtonMargin[4];
+			Font* RadioButtonFont;
+			Apoc3D::Math::Rectangle RadioButtonDisable;
+			Apoc3D::Math::Rectangle RadioButtonNormal;
+			Apoc3D::Math::Rectangle RadioButtonHover;
+			Apoc3D::Math::Rectangle RadioButtonDown;
+			Apoc3D::Math::Rectangle RadioButtonChecked;
+			int32 RadioButtonTextSpacing;
+
+			int32 DropDownButtonMargin[4];
+			Apoc3D::Math::Rectangle DropDownButtonNormal;
+			Apoc3D::Math::Rectangle DropDownButtonHover;
+			Apoc3D::Math::Rectangle DropDownButtonDown;
+
+			Font* FormFont;
+			int32 FormTitlePadding[4];
+			Apoc3D::Math::Rectangle FormTitle[3];
+			Apoc3D::Math::Rectangle FormBody[9];
+			Apoc3D::Math::Rectangle FormResizer;
+
+			Apoc3D::Math::Rectangle FormCBIconMax;
+			Apoc3D::Math::Rectangle FormCBIconMin;
+			Apoc3D::Math::Rectangle FormCBIconRestore;
+			Apoc3D::Math::Rectangle FormCBIconClose;
+
+			Apoc3D::Math::Rectangle FormCBMaxDisabled;
+			Apoc3D::Math::Rectangle FormCBMaxNormal;
+			Apoc3D::Math::Rectangle FormCBMaxHover;
+			Apoc3D::Math::Rectangle FormCBMaxDown;
+
+			Apoc3D::Math::Rectangle FormCBMinDisabled;
+			Apoc3D::Math::Rectangle FormCBMinNormal;
+			Apoc3D::Math::Rectangle FormCBMinHover;
+			Apoc3D::Math::Rectangle FormCBMinDown;
+
+			Apoc3D::Math::Rectangle FormCBCloseDisabled;
+			Apoc3D::Math::Rectangle FormCBCloseNormal;
+			Apoc3D::Math::Rectangle FormCBCloseHover;
+			Apoc3D::Math::Rectangle FormCBCloseDown;
+
+			Apoc3D::Math::Rectangle FormCBRestoreDisabled;
+			Apoc3D::Math::Rectangle FormCBRestoreNormal;
+			Apoc3D::Math::Rectangle FormCBRestoreHover;
+			Apoc3D::Math::Rectangle FormCBRestoreDown;
+
+			
+			Apoc3D::Math::Rectangle ProgressBarBG[3];
+			Apoc3D::Math::Rectangle ProgressBarFilled[3];
+
+
+			Apoc3D::Math::Rectangle HSilderBG[3];
+			Apoc3D::Math::Rectangle HSilderFilled[3];
+			Apoc3D::Math::Rectangle HSliderHandle;
+
+
+
+			Apoc3D::Math::Rectangle VScrollBarCursor[3];
+			Apoc3D::Math::Rectangle VScrollBarBG;
+			Apoc3D::Math::Rectangle VScrollBarUp;
+			Apoc3D::Math::Rectangle VScrollBarDown;
+
+			Apoc3D::Math::Rectangle HScrollBarCursor[3];
+			Apoc3D::Math::Rectangle HScrollBarBG;
+			Apoc3D::Math::Rectangle HScrollBarLeft;
+			Apoc3D::Math::Rectangle HScrollBarRight;
+
+			int32 ListBoxMargin[4];
+			int32 ListBoxPadding[4];
+			Font* ListBoxFont;
+			Apoc3D::Math::Rectangle ListBoxBackground[9];
+
+
+			Apoc3D::Math::Rectangle SubMenuArrow;
+
+			Apoc3D::Math::Rectangle HShade;
+
+			Texture* WhitePixelTexture;
+			Texture* SkinTexture;
+
+		private:
+			Font* GetFontName(const String& alias);
+
+			void ParseMargin(Apoc3D::Config::ConfigurationSection* sect, int result[4]);
+			void ParsePadding(Apoc3D::Config::ConfigurationSection* sect, int result[4]);
+			void Parse9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9], Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
+			void Parse3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[3], Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
+			void ParseRegion(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect, Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
+
+			void Push9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9]);
+			void Push3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[3]);
+			void PushRegion(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect);
 		};
 	}
 }

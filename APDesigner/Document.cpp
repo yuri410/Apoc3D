@@ -9,7 +9,7 @@ namespace APDesigner
 		: m_activated(false), m_mainWindow(window), m_extension(ext)
 	{
 		m_docForm = new Form(FBS_Sizable, L"New document");
-		m_docForm->Position.Y = 20;
+		m_docForm->Position.Y = 25;
 		m_docForm->SetSkin(window->getUISkin());
 		//reinterpret_cast<int&>(m_docForm->UserData) = 0xffffffff;
 

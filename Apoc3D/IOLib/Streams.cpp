@@ -44,6 +44,8 @@ namespace Apoc3D
 			m_in.seekg(0, ios::end);
 			m_length = m_in.tellg();
 			m_in.seekg(oldPos, ios::beg);
+
+			m_in.exceptions(std::ios::goodbit);
 		}
 		FileStream::~FileStream()
 		{

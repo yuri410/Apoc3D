@@ -58,11 +58,14 @@ namespace Apoc3D
 		enum FontFlags
 		{
 			FF_None,
-			FF_HasLuminance = 1
+			FF_HasLuminance = 1,
+			FF_HasDrawOffset = 2
 		};
 
 		Font::Font(RenderDevice* device, ResourceLocation* rl)
-			: m_charTable(255, IBuiltInEqualityComparer<wchar_t>::Default), m_resource(rl), m_isUsingCaching(false), m_hasLuminance(false)
+			: m_charTable(255, IBuiltInEqualityComparer<wchar_t>::Default), m_resource(rl), m_isUsingCaching(false),
+			m_hasLuminance(false), m_hasDrawOffset(false),
+			m_drawOffset(0,0)
 		{
 			m_selectTextureSize = FontManager::MaxTextureSize;
 
@@ -85,6 +88,8 @@ namespace Apoc3D
 					uint32 flags = br->ReadUInt32();
 					if ((flags & FF_HasLuminance))
 						m_hasLuminance = true;
+					if ((flags & FF_HasDrawOffset))
+						m_hasDrawOffset = true;
 				}
 
 				charCount = br->ReadInt32();
@@ -100,6 +105,12 @@ namespace Apoc3D
 				m_lineGap = br->ReadSingle();
 				m_ascender = br->ReadSingle();
 				m_descender = br->ReadSingle();
+
+				if (m_hasDrawOffset)
+				{
+					m_drawOffset.X = br->ReadSingle();
+					m_drawOffset.Y = br->ReadSingle();
+				}
 
 				for (int i=0;i<charCount;i++)
 				{
@@ -328,6 +339,12 @@ namespace Apoc3D
 
 		void Font::DrawStringEx(Sprite* sprite, const String& text, float _x, float y, uint color, int length, float extLineSpace, wchar_t suffix, float hozShrink)
 		{
+			if (m_hasDrawOffset)
+			{
+				_x -= m_drawOffset.X;
+				y -= m_drawOffset.Y;
+			}
+
 			float std = _x;
 			float x = std;
 
@@ -418,6 +435,12 @@ namespace Apoc3D
 		}
 		void Font::DrawString(Sprite* sprite, const String& text, float _x, float y, int width, uint color)
 		{
+			if (m_hasDrawOffset)
+			{
+				_x -= m_drawOffset.X;
+				y -= m_drawOffset.Y;
+			}
+
 			float std = _x;
 			float x = std;
 
@@ -481,6 +504,12 @@ namespace Apoc3D
 
 		void Font::DrawStringEx(Sprite* sprite, const String& text, int _x, int y, uint color, int length, int extLineSpace, wchar_t suffix, float hozShrink)
 		{
+			if (m_hasDrawOffset)
+			{
+				_x -= (int32)m_drawOffset.X;
+				y -= (int32)m_drawOffset.Y;
+			}
+
 			float std = static_cast<float>(_x);
 			float x = std;
 
@@ -572,6 +601,12 @@ namespace Apoc3D
 		}
 		void Font::DrawString(Sprite* sprite, const String& text, int _x, int y, int width, uint color)
 		{
+			if (m_hasDrawOffset)
+			{
+				_x -= (int32)m_drawOffset.X;
+				y -= (int32)m_drawOffset.Y;
+			}
+
 			float std = static_cast<float>(_x);
 			float x = std;
 
@@ -1064,6 +1099,10 @@ namespace Apoc3D
 		Font* FontManager::getFont(const String& fontName)
 		{
 			return m_fontTable[fontName];
+		}
+		bool FontManager::hasFont(const String& fontName)
+		{
+			return m_fontTable.Contains(fontName);
 		}
 
 		Font* FontManager::LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl)

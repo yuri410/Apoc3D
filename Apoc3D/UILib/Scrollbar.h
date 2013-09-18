@@ -46,7 +46,6 @@ namespace Apoc3D
 			bool m_inverted;
 
 			Apoc3D::Math::Rectangle m_cursorArea;
-			Apoc3D::Math::Rectangle m_cursorMidDest;
 
 			Point m_cursorPos;
 			Point m_cursorOffset;
@@ -103,7 +102,6 @@ namespace Apoc3D
 			bool m_inverted;
 
 			Apoc3D::Math::Rectangle m_cursorArea;
-			Apoc3D::Math::Rectangle m_cursorMidDest;
 
 			Point m_cursorPos;
 			Point m_cursorOffset;

@@ -3,22 +3,22 @@
 <TestBuild>
   <Build Type="Project">
     <Item001 Type ="PAK" 
-             DestinationFile="apoc_manual_build\classic_skin.pak">
-      <Entry01 DirPath="apoc_manual_build\classic_skin" Flatten="true" />
+             DestinationFile="build\apoc_system\skin.pak">
+      <Entry01 DirPath="build\apoc_system\skin" Flatten="true" />
     </Item001>
     <Item002 Type ="PAK" 
-             DestinationFile="apoc_manual_build\effects.pak">
-      <Entry01 DirPath="apoc_manual_build\effects" Flatten="true" />
+             DestinationFile="build\apoc_system\effects.pak">
+      <Entry01 DirPath="build\apoc_system\effects" Flatten="true" />
     </Item002>
     <Item003 Type ="PAK" 
-             DestinationFile="apoc_manual_build\apdgui.pak">
-      <Entry01 DirPath="apoc_manual_build\gui" Flatten="true" />
+             DestinationFile="build\apoc_system\apdgui.pak">
+      <Entry01 DirPath="build\apoc_system\gui" Flatten="true" />
     </Item003>
     <Item004 Type ="PAK" 
-             DestinationFile="apoc_manual_build\system.pak">
-      <Entry01 FilePath="apoc_manual_build\classic_skin.pak" />
-      <Entry02 FilePath="apoc_manual_build\effects.pak" />
-      <Entry03 FilePath="apoc_manual_build\apdgui.pak" />
+             DestinationFile="build\apoc_system\system.pak">
+      <Entry01 FilePath="build\apoc_system\skin.pak" />
+      <Entry02 FilePath="build\apoc_system\effects.pak" />
+      <Entry03 FilePath="build\apoc_system\apdgui.pak" />
     </Item004>
   </Build>
 </TestBuild>

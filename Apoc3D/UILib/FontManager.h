@@ -141,6 +141,9 @@ namespace Apoc3D
 			int m_heightInt;
 			bool m_hasLuminance;
 
+			bool m_hasDrawOffset;
+			PointF m_drawOffset;
+
 			int m_selectTextureSize;
 
 			int m_maxGlyphWidth;
@@ -232,7 +235,7 @@ namespace Apoc3D
 			void ReportComplexFonts();
 
 			Font* getFont(const String& fontName);
-
+			bool hasFont(const String& fontName);
 
 			SINGLETON_DECL_HEARDER(FontManager);
 		};

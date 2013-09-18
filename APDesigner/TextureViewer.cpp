@@ -37,6 +37,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/UILib/Button.h"
 #include "apoc3d/UILib/PictureBox.h"
 #include "apoc3d/UILib/FontManager.h"
+#include "apoc3d/UILib/StyleSkin.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Utility/StringUtils.h"
 
@@ -237,13 +238,14 @@ namespace APDesigner
 	TextureViewer::TextureViewer(MainWindow* window, const String& name, const String& filePath)
 		: Document(window, nullptr), m_pictureBox(0), m_filePath(filePath), m_texture(0), m_scale(0), m_name(name)
 	{
-		m_pictureBox = new PictureBox(Point(5,5 + 17), 1);
+		int32 sy = window->getUISkin()->FormTitle->Height;
+		m_pictureBox = new PictureBox(Point(5,5 + sy), 1);
 		m_pictureBox->SetSkin(window->getUISkin());
 		m_pictureBox->eventPictureDraw().Bind(this, &TextureViewer::PixtureBox_Draw);
-		m_btnZoomIn = new Button(Point(100,17+5), L"+");
+		m_btnZoomIn = new Button(Point(100,sy+7), L"+");
 		m_btnZoomIn->SetSkin(window->getUISkin());
 		m_btnZoomIn->eventPress().Bind(this, &TextureViewer::BtnZoomIn_Pressed);
-		m_btnZoomOut = new Button(Point(140,17+5), L"-");
+		m_btnZoomOut = new Button(Point(140,sy+7), L"-");
 		m_btnZoomOut->SetSkin(window->getUISkin());
 		m_btnZoomOut->eventPress().Bind(this, &TextureViewer::BtnZoomOut_Pressed);
 

@@ -53,7 +53,7 @@ namespace Apoc3D
 				AddButton(L"Cancel", skin, DLGRES_Cancel);
 
 
-			Font* controlFont = FontManager::getSingleton().getFont(skin->ControlFontName);
+			Font* controlFont = skin->ContentTextFont;
 			
 			int buttonSpacing = 15;
 			int buttonsWidth = 0;
@@ -79,7 +79,7 @@ namespace Apoc3D
 			if (minimumWidth < orginalContentSize.X)
 				minimumWidth = orginalContentSize.X;
 
-			int estButtonHeight = controlFont->getLineHeightInt() + skin->BtnVertPadding;
+			int estButtonHeight = controlFont->getLineHeightInt() + skin->ButtonPadding[StyleSkin::SI_Bottom] + skin->ButtonPadding[StyleSkin::SI_Top];
 
 			int vertPadding = 15;
 			int btnHozPadding = 50;
@@ -163,7 +163,7 @@ namespace Apoc3D
 
 			m_form->Size = Point(500, !multiline ? 150 : 400);
 
-			m_content = new Label(Point(15, 27), text, m_form->Size.X - 30);
+			m_content = new Label(Point(15, skin->FormTitle->Height + 10), text, m_form->Size.X - 30);
 			m_content->SetSkin(skin);
 			m_form->getControls().Add(m_content);
 

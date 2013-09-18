@@ -43,10 +43,15 @@ namespace Apoc3D
 		};
 		class APAPI Border
 		{
-		private:
-			Point m_shadowOffset;
+		public:
+			Border(BorderStyle style, const StyleSkin* skin);
+			void Draw(Sprite* sprite, const Point& pt, const Point& size, float shadowAlpha);
 			
+
+		private:
 			Apoc3D::Math::Rectangle m_dstRect[9];
+			Apoc3D::Math::Rectangle m_srcRect[9];
+
 			const StyleSkin* m_skin;
 			BorderStyle m_style;
 
@@ -55,11 +60,6 @@ namespace Apoc3D
 			void DrawMiddle(Sprite* sprite);
 			void DrawLower(Sprite* sprite);
 			void DrawShadow(Sprite* sprite, const Point& pos, float alpha);
-
-		public:
-			Border(BorderStyle style, const StyleSkin* skin);
-			void Draw(Sprite* sprite, const Point& pt, const Point& size, float shadowAlpha);
-			
 
 		};
 		class APAPI Form : public ControlContainer
@@ -92,6 +92,7 @@ namespace Apoc3D
 			virtual void Update(const GameTime* const time);
 			virtual void Draw(Sprite* sprite);
 
+			int32 GetTitleBarHeight() const;
 
 			RenderDevice* getRenderDevice() const { return m_device; }
 
@@ -116,6 +117,8 @@ namespace Apoc3D
 
 			UIEventHandler& eventResized() { return m_eResized; }
 			UIEventHandler& eventClosed() { return m_eClosed; }
+
+			
 
 			/**
 			 *  Background from will never cover other's on top

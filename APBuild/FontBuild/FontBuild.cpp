@@ -172,6 +172,9 @@ namespace APBuild
 		float Ascender;
 		float Descender;
 		bool HasLuminance;
+
+		bool HasDrawOffset;
+		float DrawOffset[2];
 	};
 
 	typedef void (*GlyphRenderHandler)(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
@@ -276,6 +279,8 @@ namespace APBuild
 		bw->WriteSingle(info.LineGap);
 		bw->WriteSingle(-info.Ascender);
 		bw->WriteSingle(-info.Descender);
+		bw->WriteSingle((float)config.GlyphMargin);
+		bw->WriteSingle((float)config.GlyphMargin);
 
 		// char to glyph mapping
 		for (int i=0;i<charMap.getCount();i++)
@@ -431,6 +436,8 @@ namespace APBuild
 		uint32 flags = 0;
 		if (info.HasLuminance)
 			flags |= 1;
+		if (info.HasDrawOffset)
+			flags |= 2;
 
 		bw->WriteUInt32(flags);
 
@@ -439,7 +446,11 @@ namespace APBuild
 		bw->WriteSingle(info.LineGap);
 		bw->WriteSingle(-info.Ascender);
 		bw->WriteSingle(-info.Descender);
-
+		if (info.HasDrawOffset)
+		{
+			bw->WriteSingle(info.DrawOffset[0]);
+			bw->WriteSingle(info.DrawOffset[1]);
+		}
 
 		for (int i=0;i<charMap.getCount();i++)
 		{
@@ -626,6 +637,7 @@ namespace APBuild
 		resultInfo.Height = height;
 		resultInfo.LineGap = lineGap;
 		resultInfo.HasLuminance = false;
+		resultInfo.HasDrawOffset = false;
 	}
 	
 	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
@@ -653,7 +665,11 @@ namespace APBuild
 		resultInfo.LineGap = br->ReadSingle();
 		resultInfo.Ascender = -br->ReadSingle();
 		resultInfo.Descender = -br->ReadSingle();
+		resultInfo.DrawOffset[0] = br->ReadSingle();
+		resultInfo.DrawOffset[1] = br->ReadSingle();
+
 		resultInfo.HasLuminance = true;
+		resultInfo.HasDrawOffset = true;
 
 		for (int i=0;i<charCount;i++)
 		{

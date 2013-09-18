@@ -134,7 +134,9 @@ namespace Apoc3D
 			FastList<float> GetAttributeSingles(const String& key) const;
 			FastList<float> GetAttributePercentages(const String& key) const;
 			FastList<int32> GetAttributeInts(const String& key) const;
+			void GetAttributeInts(const String& key, FastList<int32>& values) const;
 			FastList<uint32> GetAttributeUInts(const String& key) const;
+
 
 
 
@@ -145,6 +147,7 @@ namespace Apoc3D
 			bool TryGetUInt(const String& key, uint32& result) const;
 			bool TryGetColorValue(const String& key, ColorValue& result) const;
 
+			bool TryGetAttributeInts(const String& key, FastList<int32>& values) const;
 
 
 			bool TryGetAttributeBool(const String& key, bool& result) const;

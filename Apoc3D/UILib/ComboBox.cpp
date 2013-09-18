@@ -44,7 +44,10 @@ namespace Apoc3D
 
 			m_button = new Button(Position + Point(Size.X-16,0), L"");
 			m_button->setOwner(getOwner());
-			m_button->setNormalTexture(m_skin->ComboButton);
+			m_button->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonNormal); //m_skin->ComboButton);
+			m_button->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonHover); 
+			m_button->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonDown); 
+
 			m_button->eventPress().Bind(this, &ComboBox::Button_OnPress);
 			m_button->Initialize(device);
 			

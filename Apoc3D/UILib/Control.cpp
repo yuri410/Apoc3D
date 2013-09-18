@@ -36,7 +36,7 @@ namespace Apoc3D
 			if (m_skin)
 			{
 				if (m_fontRef == nullptr)
-					m_fontRef = FontManager::getSingleton().getFont(m_skin->ControlFontName);
+					m_fontRef = m_skin->ContentTextFont;
 			}
 			else
 			{
@@ -104,13 +104,14 @@ namespace Apoc3D
 			int overlay = 0;
 			for (int i=0;i<m_controls->getCount();i++)
 			{
-				if (m_controls->operator[](i)->IsOverriding())
+				Control* ctrl = m_controls->operator[](i);
+				if (ctrl->IsOverriding())
 				{
 					overlay = i;
 				}
-				if (m_controls->operator[](i)->Enabled)
+				if (ctrl->Enabled)
 				{
-					m_controls->operator[](i)->Draw(sprite);
+					ctrl->Draw(sprite);
 				}
 			}
 			if (overlay)

@@ -143,14 +143,16 @@ namespace APDesigner
 		{
 			FileLocateRule rule;
 			LocateCheckPoint pt;
-			pt.AddPath(L"system.pak\\classic_skin.pak");
+			pt.AddPath(L"system.pak\\skin.pak");
 			rule.AddCheckPoint(pt);
+
 			m_UIskin = new StyleSkin(m_device, rule);
 
-			m_UIskin->ControlFontName = L"english";
+			/*m_UIskin->ControlFontName = L"english";
 			FileLocation* fl = FileSystem::getSingleton().Locate(L"english.fnt", rule);
 			FontManager::getSingleton().LoadFont(m_device, L"english", fl);
 			FontManager::getSingleton().ReportComplexFonts();
+			*/
 		}
 
 		{
@@ -365,7 +367,7 @@ namespace APDesigner
 	}
 	void MainWindow::Draw(const GameTime* const time)
 	{
-		m_device->Clear(CLEAR_ColorAndDepth, CV_DarkGray, 1, 0);
+		m_device->Clear(CLEAR_ColorAndDepth, m_UIskin->MIDBackgroundColor, 1, 0);
 		
 		m_device->BeginFrame();
 
