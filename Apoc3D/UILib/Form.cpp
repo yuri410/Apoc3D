@@ -1359,11 +1359,11 @@ namespace Apoc3D
 				const StyleSkin* skin = m_modalForm->getSkin();
 				if (m_modalAnim>3)
 				{
-					m_sprite->Draw(skin->WhitePixelTexture, GetUIArea(m_sprite->getRenderDevice()),0, PACK_COLOR(0,0,0, 120));
+					m_sprite->Draw(skin->WhitePixelTexture, GetUIArea(m_sprite->getRenderDevice()),0, PACK_COLOR(0,0,0, 180));
 				}
 				else if (m_modalAnim)
 				{
-					m_sprite->Draw(skin->WhitePixelTexture, GetUIArea(m_sprite->getRenderDevice()),0, PACK_COLOR(0,0,0, 200));
+					m_sprite->Draw(skin->WhitePixelTexture, GetUIArea(m_sprite->getRenderDevice()),0, PACK_COLOR(0,0,0, 225));
 				}
 
 				m_modalForm->Draw(m_sprite);
