@@ -141,6 +141,12 @@ namespace Apoc3D
 			D3D9IndexBuffer::~D3D9IndexBuffer()
 			{
 				m_indexBuffer->Release();
+
+				if (m_tempData)
+				{
+					delete[] m_tempData;
+					m_tempData = NULL;
+				}
 			}
 
 

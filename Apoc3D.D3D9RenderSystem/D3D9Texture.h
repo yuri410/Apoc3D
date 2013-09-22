@@ -43,29 +43,8 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9Texture : public Apoc3D::Graphics::RenderSystem::Texture
+			class D3D9Texture : public Apoc3D::Graphics::RenderSystem::Texture, public VolatileResource
 			{
-			private:
-				/** As the specification of the Apoc3D::Graphics::RenderSystem::Texture class,
-				 *  a Texture can be one of the following: 1D, 2D, 3D, Cube.
-				 *  Now they are all listed below in case of use; 
-				 *  because the texture type might be determined at run time when 
-				 *  loading from a file, generalization is not a good idea. 
-				 *
-				 *  There is no 1D texture in D3D9. If the 2D texture has a width or height of
-				 *  1, it will be treated as an 1D texture at the render system's texture level.
-				 *  Anyway the inner workings are still the same to make it work.
-				 */
-				D3DTexture2D* m_tex2D;
-				D3DTexture3D* m_tex3D;
-				D3DTextureCube* m_cube;
-				D3D9RenderDevice* m_renderDevice;
-
-				/** Keep this to specify the parameter for D3D's cube map unlock operation.
-				 *  It need to know which exactly face was locked.
-				 */
-				D3DCUBEMAP_FACES m_lockedCubeFace;
-
 			public:
 				void setInternal2D(D3DTexture2D* tex) { m_tex2D = tex; }
 
@@ -114,6 +93,33 @@ namespace Apoc3D
 				 */
 				virtual void unload();
 
+				
+			private:
+				void ReleaseVolatileResource();
+				void ReloadVolatileResource();
+
+				/** As the specification of the Apoc3D::Graphics::RenderSystem::Texture class,
+				 *  a Texture can be one of the following: 1D, 2D, 3D, Cube.
+				 *  Now they are all listed below in case of use; 
+				 *  because the texture type might be determined at run time when 
+				 *  loading from a file, generalization is not a good idea. 
+				 *
+				 *  There is no 1D texture in D3D9. If the 2D texture has a width or height of
+				 *  1, it will be treated as an 1D texture at the render system's texture level.
+				 *  Anyway the inner workings are still the same to make it work.
+				 */
+				D3DTexture2D* m_tex2D;
+				D3DTexture3D* m_tex3D;
+				D3DTextureCube* m_cube;
+				D3D9RenderDevice* m_renderDevice;
+
+				/** Keep this to specify the parameter for D3D's cube map unlock operation.
+				 *  It need to know which exactly face was locked.
+				 */
+				D3DCUBEMAP_FACES m_lockedCubeFace;
+
+
+				char* m_tempData;
 			};
 		}
 	}

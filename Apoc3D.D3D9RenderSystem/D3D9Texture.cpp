@@ -54,7 +54,9 @@ namespace Apoc3D
 				static_cast<int32>(tex2D->GetLevelCount()), 
 				D3D9Utils::GetD3DTextureFormat(tex2D), 
 				D3D9Utils::GetD3DTextureUsage(tex2D)), 
-				m_renderDevice(device), m_tex2D(tex2D), m_tex3D(0), m_cube(0)
+				VolatileResource(device), 
+				m_renderDevice(device), m_tex2D(tex2D), m_tex3D(NULL), m_cube(NULL),
+				m_tempData(NULL)
 			{
 
 			}
@@ -65,8 +67,10 @@ namespace Apoc3D
 				D3D9Utils::GetD3DTextureDepth(tex3D), 
 				static_cast<int32>(tex3D->GetLevelCount()), 
 				D3D9Utils::GetD3DTextureFormat(tex3D), 
-				D3D9Utils::GetD3DTextureUsage(tex3D)),
-				m_renderDevice(device), m_tex2D(0), m_tex3D(tex3D), m_cube(0)
+				D3D9Utils::GetD3DTextureUsage(tex3D)), 
+				VolatileResource(device), 
+				m_renderDevice(device), m_tex2D(NULL), m_tex3D(tex3D), m_cube(NULL),
+				m_tempData(NULL)
 			{
 				
 			}
@@ -77,15 +81,19 @@ namespace Apoc3D
 				1, 
 				static_cast<int32>(texCube->GetLevelCount()), 
 				D3D9Utils::GetD3DTextureFormat(texCube), 
-				D3D9Utils::GetD3DTextureUsage(texCube)), 
-				m_renderDevice(device), m_tex2D(0), m_tex3D(0), m_cube(texCube)
+				D3D9Utils::GetD3DTextureUsage(texCube)),  
+				VolatileResource(device), 
+				m_renderDevice(device), m_tex2D(NULL), m_tex3D(NULL), m_cube(texCube),
+				m_tempData(NULL)
 			{
 
 			}
 
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed)
-				: Texture(device, rl, usage, managed), 
-				m_renderDevice(device), m_tex2D(0), m_tex3D(0), m_cube(0)
+				: Texture(device, rl, usage, managed),  
+				VolatileResource(device), 
+				m_renderDevice(device), m_tex2D(NULL), m_tex3D(NULL), m_cube(NULL),
+				m_tempData(NULL)
 			{
 				if (!managed)
 				{
@@ -94,8 +102,10 @@ namespace Apoc3D
 			}
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
 				PixelFormat format, TextureUsage usage)
-				: Texture(device, width, height, depth, level, format, usage),
-				m_renderDevice(device), m_tex2D(0), m_tex3D(0), m_cube(0)
+				: Texture(device, width, height, depth, level, format, usage), 
+				VolatileResource(device), 
+				m_renderDevice(device), m_tex2D(NULL), m_tex3D(NULL), m_cube(NULL),
+				m_tempData(NULL)
 			{
 				D3DDevice* dev = device->getDevice();
 
@@ -116,8 +126,10 @@ namespace Apoc3D
 			}
 
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage)
-				: Texture(device, length, level, usage, format),
-				m_renderDevice(device), m_tex2D(0), m_tex3D(0)
+				: Texture(device, length, level, usage, format), 
+				VolatileResource(device), 
+				m_renderDevice(device), m_tex2D(NULL), m_tex3D(NULL),
+				m_tempData(NULL)
 			{
 				D3DDevice* dev = device->getDevice();
 
@@ -143,6 +155,13 @@ namespace Apoc3D
 					m_cube->Release();
 					m_cube = 0;
 				}
+
+
+				if (m_tempData)
+				{
+					delete[] m_tempData;
+					m_tempData = NULL;
+				}
 			}
 
 			DataRectangle D3D9Texture::lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect)
@@ -155,6 +174,19 @@ namespace Apoc3D
 				rect0.right = rect.getRight();
 				rect0.bottom = rect.getBottom();
 
+				if (mode == LOCK_Discard)
+				{
+					assert(rect.X == 0 && rect.Y == 0 && rect.Width == getWidth() && rect.Height == getHeight());
+
+					HRESULT hr = m_tex2D->LockRect(surface, &rrect, NULL, D3D9Utils::ConvertLockMode(mode));
+					assert(SUCCEEDED(hr));
+
+					DataRectangle result(rrect.Pitch, rrect.pBits, rect.Width, rect.Height, getFormat());
+
+					assert(result.getWidth() == getWidth() && result.getHeight() == getHeight());
+
+					return result;
+				}
 				HRESULT hr = m_tex2D->LockRect(surface, &rrect, &rect0, D3D9Utils::ConvertLockMode(mode));
 				assert(SUCCEEDED(hr));
 				DataRectangle result(rrect.Pitch, rrect.pBits, rect.Width, rect.Height, getFormat());
@@ -629,7 +661,7 @@ namespace Apoc3D
 					case (int)TT_CubeTexture:
 						{
 							HRESULT hr = D3DXCheckCubeTextureRequirements(dev, &newWidth, &levels,
-								0, &fmt, 
+								0, &newFmt, 
 								D3DPOOL_MANAGED);
 							assert(SUCCEEDED(hr));
 							break;
@@ -857,6 +889,98 @@ namespace Apoc3D
 					delete[] data.Levels[i].ContentData;
 				}
 			}
+
+			void D3D9Texture::ReleaseVolatileResource()
+			{
+				if (getUsage() & TU_Dynamic)
+				{
+					if (m_tempData)
+					{
+						delete[] m_tempData;
+						m_tempData = NULL;
+					}
+
+					if (getType() == TT_Texture2D || getType() == TT_Texture1D)
+					{
+						DataRectangle dr = lock(0, LOCK_ReadOnly, Apoc3D::Math::Rectangle(0,0,getWidth(), getHeight()));
+						m_tempData = new char[dr.getMemorySize()];
+
+						int32 rowSize = PixelFormatUtils::GetMemorySize(getWidth(), 1, 1, dr.getFormat());
+						for (int32 i=0;i<dr.getHeight();i++)
+						{
+							memcpy(m_tempData + rowSize * i, (char*)dr.getDataPointer() + dr.getPitch() * i, rowSize);
+						}
+
+						unlock(0);
+
+						m_tex2D->Release();
+						m_tex2D = NULL;
+					}
+					else if (getType() == TT_Texture3D)
+					{
+						m_tex3D->Release();
+						m_tex3D = 0;
+					}
+					else if (getType() == TT_CubeTexture)
+					{
+						m_cube->Release();
+						m_cube = 0;
+					}
+				}
+			}
+			void D3D9Texture::ReloadVolatileResource()
+			{
+				if (getUsage() & TU_Dynamic)
+				{
+					D3D9RenderDevice* device = m_renderDevice;
+					D3DDevice* dev = device->getDevice();
+					TextureUsage usage = getUsage();
+					int32 level = getLevelCount();
+					PixelFormat format = getFormat();
+
+					if (getType() == TT_Texture2D || getType() == TT_Texture1D)
+					{
+						HRESULT hr = dev->CreateTexture(getWidth(), getHeight(), level, 
+							D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
+							(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex2D, NULL);;
+						assert(SUCCEEDED(hr));
+					}
+					else if (getType() == TT_Texture3D)
+					{
+						HRESULT hr = dev->CreateVolumeTexture(getWidth(), getHeight(), getDepth(), level, 
+							D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
+							(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_tex3D, NULL);;
+						assert(SUCCEEDED(hr));
+					}
+					else if (getType() == TT_CubeTexture)
+					{
+						HRESULT hr = dev->CreateCubeTexture(getWidth(), level, 
+							D3D9Utils::ConvertTextureUsage(usage), D3D9Utils::ConvertPixelFormat(format), 
+							(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_cube, NULL);
+						assert(SUCCEEDED(hr));
+					}
+
+					if (m_tempData)
+					{
+						if (getType() == TT_Texture2D || getType() == TT_Texture1D)
+						{
+							DataRectangle dr = lock(0, LOCK_Discard, Apoc3D::Math::Rectangle(0,0,getWidth(), getHeight()));
+							
+							int32 rowSize = PixelFormatUtils::GetMemorySize(getWidth(), 1, 1, dr.getFormat());
+							for (int32 i=0;i<dr.getHeight();i++)
+							{
+								memcpy((char*)dr.getDataPointer() + dr.getPitch() * i, m_tempData + rowSize * i, rowSize);
+							}
+
+							unlock(0);
+						}
+
+						delete[] m_tempData;
+						m_tempData = NULL;
+					}
+				}
+			}
+
 
 		}
 	}
