@@ -66,6 +66,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/UILib/ComboBox.h"
 #include "apoc3d/UILib/StyleSkin.h"
 #include "apoc3d/UILib/CheckBox.h"
+#include "apoc3d/UILib/List.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Vfs/FileSystem.h"
@@ -237,6 +238,11 @@ namespace APDesigner
 
 			m_tbRefMaterialName = new TextBox(Point(sx+150,sy), 150);
 			m_tbRefMaterialName->SetSkin(window->getUISkin());
+			
+			m_btnRefMaterial = new Button(Point(sx + 310, sy), L"...");
+			m_btnRefMaterial->SetSkin(window->getUISkin());
+			m_btnRefMaterial->eventPress().Bind(this, &ModelDocument::BtnRefMtrl_Pressed);
+			m_btnRefMaterial->Size.Y = lineHeight;
 
 			sy+=30;
 			m_cfAmbient = new ColorField(Point(sx, sy), CV_Red);
@@ -424,12 +430,11 @@ namespace APDesigner
 			m_rotateY = new Button(Point(sx, sy),btnWidth, L"Rotation Y 90");
 			m_rotateY->SetSkin(window->getUISkin());
 			m_rotateY->eventPress().Bind(this, &ModelDocument::RotY_Pressed);
-			
+
 			sx += btnWidth+10;
 			m_rotateZ = new Button(Point(sx, sy),btnWidth, L"Rotation Z 90");
 			m_rotateZ->SetSkin(window->getUISkin());
 			m_rotateZ->eventPress().Bind(this, &ModelDocument::RotZ_Pressed);
-
 
 			sx += btnWidth+10;
 			m_zoomIn = new Button(Point(sx, sy),50, L"+");
@@ -455,10 +460,15 @@ namespace APDesigner
 
 		m_passEditor = new PassFlagDialog(window, window->getDevice());
 		m_batchCopyMtrl = new CopyMaterialDialog(this, window, window->getDevice());
+		m_selectMtrl = new SelectMaterialDialog(this, window, window->getDevice());
 	}
 
 	ModelDocument::~ModelDocument()
 	{
+		delete m_passEditor;
+		delete m_batchCopyMtrl;
+		delete m_selectMtrl;
+
 		delete m_modelViewer;
 		if (m_model)
 		{
@@ -496,6 +506,7 @@ namespace APDesigner
 
 		delete m_cbUseRef;
 		delete m_tbRefMaterialName;
+		delete m_btnRefMaterial;
 
 		delete m_cfAmbient;
 		delete m_cfDiffuse;
@@ -524,7 +535,6 @@ namespace APDesigner
 		delete m_btnPassFlag;
 
 		delete m_cbCull;
-		delete m_passEditor;
 
 		delete m_recenterModel;
 		delete m_revertZ;
@@ -639,6 +649,7 @@ namespace APDesigner
 		{
 			getDocumentForm()->getControls().Add(m_cbUseRef);
 			getDocumentForm()->getControls().Add(m_tbRefMaterialName);
+			getDocumentForm()->getControls().Add(m_btnRefMaterial);
 		}
 		{
 			getDocumentForm()->getControls().Add(m_cfAmbient);
@@ -742,6 +753,27 @@ namespace APDesigner
 	void ModelDocument::UpdateSelectedPart()
 	{
 		CBMeshPart_SelectionChanged(m_cbMeshPart);
+	}
+	void ModelDocument::UpdateSelectedMaterial()
+	{
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx!=-1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			int frameIndex = m_cbSubMtrl->getSelectedIndex();
+			if (partIdx != -1 && frameIndex != -1)
+			{
+				Material* m = mtrls->getMaterial(partIdx, frameIndex);
+				if (m->ExternalReferenceName.size())
+				{
+					m->LoadReferencedMaterial(m->ExternalReferenceName);
+				}
+
+				DisplayMaterialEditor(m, !m->ExternalReferenceName.empty());
+			}
+		}
 	}
 
 	void ModelDocument::PassButton_Pressed(Control* ctrl)
@@ -920,6 +952,22 @@ namespace APDesigner
 			}
 		}
 	}
+	void ModelDocument::BtnRefMtrl_Pressed(Control* ctrl)
+	{
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx!=-1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			int frameIndex = m_cbSubMtrl->getSelectedIndex();
+			if (partIdx != -1 && frameIndex != -1)
+			{
+				Material* m = mtrls->getMaterial(partIdx, frameIndex);
+				m_selectMtrl->ShowModal(m);
+			}
+		}
+	}
 
 	void ModelDocument::DisplayMaterialEditor(Material* mtrl, bool usingRef)
 	{
@@ -929,6 +977,7 @@ namespace APDesigner
 			m_cbUseRef->setValue(usingRef);
 			m_tbRefMaterialName->Visible = usingRef;
 			m_tbRefMaterialName->setText(mtrl->ExternalReferenceName);
+			m_btnRefMaterial->Visible = usingRef;
 
 			bool v = !usingRef;
 
@@ -1004,6 +1053,7 @@ namespace APDesigner
 			}
 			m_cbUseRef->Visible = false;
 			m_tbRefMaterialName->Visible = false;
+			m_btnRefMaterial->Visible = false;
 
 			m_cfAmbient->Visible = false;
 			m_cfDiffuse->Visible = false;
@@ -1413,12 +1463,14 @@ namespace APDesigner
 	}
 
 	/************************************************************************/
-	/*                                                                      */
+	/*   CopyMaterialDialog                                                 */
 	/************************************************************************/
 
 	CopyMaterialDialog::CopyMaterialDialog(ModelDocument* parent, MainWindow* window,RenderDevice* device)
 		: m_parent(parent), m_dialogResult(false)
 	{
+		const StyleSkin* skin = window->getUISkin();
+
 		m_form = new Form(FBS_Fixed, L"Name Pattern");
 
 		Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
@@ -1426,44 +1478,50 @@ namespace APDesigner
 		m_form->Position = Point(rect.Width, rect.Height) - m_form->Size;
 		m_form->Position.X /= 2;
 		m_form->Position.Y /= 2;
-		m_form->SetSkin(window->getUISkin());
+		m_form->SetSkin(skin);
 		m_form->eventClosed().Bind(this, &CopyMaterialDialog::Form_Closed);
 		
-		m_lblTextureName = new Label(Point(15, 22), L"Texture Name (C style)", 180);
-		m_lblTextureName->SetSkin(window->getUISkin());
+		int32 sy = skin->FormTitle->Height + 5;
+		m_lblTextureName = new Label(Point(15, sy), L"Texture Name (C style)", 180);
+		m_lblTextureName->SetSkin(skin);
 		m_form->getControls().Add(m_lblTextureName);
 
-		m_tbTextureName = new TextBox(Point(15+190, 22), 150);
-		m_tbTextureName->SetSkin(window->getUISkin());
+		m_tbTextureName = new TextBox(Point(15+190, sy), 150);
+		m_tbTextureName->SetSkin(skin);
 		m_tbTextureName->eventContentChanged.Bind(this, &CopyMaterialDialog::Config_Changed);
 		m_form->getControls().Add(m_tbTextureName);
 
-		m_lblPreview = new Label(Point(15, 62), L"[Preview] ", 350);
-		m_lblPreview->SetSkin(window->getUISkin());
+		sy += 40;
+		m_lblPreview = new Label(Point(15, sy), L"[Preview] ", 350);
+		m_lblPreview->SetSkin(skin);
 		m_form->getControls().Add(m_lblPreview);
 
-		m_lblStartNumber = new Label(Point(15, 102), L"Start No.", 120);
-		m_lblStartNumber->SetSkin(window->getUISkin());
+		sy += 40;
+		m_lblStartNumber = new Label(Point(15, sy), L"Start No.", 120);
+		m_lblStartNumber->SetSkin(skin);
 		m_form->getControls().Add(m_lblStartNumber);
 
-		m_tbStartNumber = new TextBox(Point(15+190, 102), 150);
-		m_tbStartNumber->SetSkin(window->getUISkin());
+		m_tbStartNumber = new TextBox(Point(15+190, sy), 150);
+		m_tbStartNumber->SetSkin(skin);
 		m_tbStartNumber->setText(L"0");
 		m_tbStartNumber->eventContentChanged.Bind(this, &CopyMaterialDialog::Config_Changed);
 		m_form->getControls().Add(m_tbStartNumber);
 
 
-		m_lblEndNumber = new Label(Point(15, 142), L"End No.", 120);
-		m_lblEndNumber->SetSkin(window->getUISkin());
+		sy += 40;
+		m_lblEndNumber = new Label(Point(15, sy), L"End No.", 120);
+		m_lblEndNumber->SetSkin(skin);
 		m_form->getControls().Add(m_lblEndNumber);
 
-		m_tbEndNumber = new TextBox(Point(15+190, 142), 150);
-		m_tbEndNumber->SetSkin(window->getUISkin());
+		m_tbEndNumber = new TextBox(Point(15+190, sy), 150);
+		m_tbEndNumber->SetSkin(skin);
 		m_tbEndNumber->setText(L"0");
 		m_form->getControls().Add(m_tbEndNumber);
 
-		m_btnOK = new Button(Point(m_form->Size.X - 150 - 25, 162), 150, L"OK");
-		m_btnOK->SetSkin(window->getUISkin());
+		
+		sy += 20;
+		m_btnOK = new Button(Point(m_form->Size.X - 150 - 25, sy), 150, L"OK");
+		m_btnOK->SetSkin(skin);
 		m_btnOK->eventPress().Bind(this, &CopyMaterialDialog::ButtonOK_Pressed);
 		m_form->getControls().Add(m_btnOK);
 
@@ -1558,5 +1616,86 @@ namespace APDesigner
 		m_mtrl = 0;
 
 		m_parent->UpdateSelectedPart();
+	}
+
+	/************************************************************************/
+	/*  SelectMaterialDialog                                                */
+	/************************************************************************/
+
+	SelectMaterialDialog::SelectMaterialDialog(ModelDocument* parent, MainWindow* window,RenderDevice* device)
+		: m_parent(parent), m_dialogResult(false), m_mtrl(nullptr)
+	{
+		const StyleSkin* skin = window->getUISkin();
+
+		m_form = new Form(FBS_Fixed, L"Material Table");
+		
+		Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);
+		m_form->Size = Point(600, 600);
+		m_form->Position = Point(rect.Width, rect.Height) - m_form->Size;
+		m_form->Position.X /= 2;
+		m_form->Position.Y /= 2;
+		m_form->SetSkin(window->getUISkin());
+		m_form->eventClosed().Bind(this, &SelectMaterialDialog::Form_Closed);
+
+		const List<std::pair<String, String>>& mtrlList = window->getProjectMaterialDesc();
+		List2D<String> items(2, mtrlList.getCount());
+
+		for (int i=0;i<mtrlList.getCount();i++)
+		{
+			String line[2] = { mtrlList[i].first, mtrlList[i].second };
+			items.AddRow(line);
+		}
+
+		int32 sy = skin->FormTitle->Height + 5;
+		m_materialTable = new ListView(Point(5, sy), Point(m_form->Size.X - 10, m_form->Size.Y - sy - 50), items);
+		m_materialTable->SetSkin(skin);
+		m_materialTable->getColumnHeader().Add(ListView::Header(L"Name", m_materialTable->Size.X*2/5-5));
+		m_materialTable->getColumnHeader().Add(ListView::Header(L"Description", m_materialTable->Size.X*3/5-5));
+		m_materialTable->setFullRowSelect(true);
+		m_form->getControls().Add(m_materialTable);
+
+		sy += m_materialTable->Size.Y + 5;
+		m_btnOK = new Button(Point(m_form->Size.X - 150 - 25, sy), 150, L"OK");
+		m_btnOK->SetSkin(window->getUISkin());
+		m_btnOK->eventPress().Bind(this, &SelectMaterialDialog::ButtonOK_Pressed);
+		m_form->getControls().Add(m_btnOK);
+
+		m_form->Initialize(device);
+		UIRoot::Add(m_form);
+	}
+
+	SelectMaterialDialog::~SelectMaterialDialog()
+	{
+		m_form->eventClosed().Unbind(this, &SelectMaterialDialog::Form_Closed);
+
+		UIRoot::Remove(m_form);
+
+		delete m_form;
+		delete m_materialTable;
+		delete m_btnOK;
+	}
+
+	void SelectMaterialDialog::ShowModal(Material* mtrl)
+	{
+		m_dialogResult = false;
+		m_mtrl = mtrl;
+		m_form->ShowModal();
+	}
+
+	void SelectMaterialDialog::ButtonOK_Pressed(Control* ctrl)
+	{
+		m_dialogResult = true;
+		m_form->Close();
+	}
+	void SelectMaterialDialog::Form_Closed(Control* ctrl)
+	{
+		if (!m_dialogResult)
+			return;
+
+		m_mtrl->ExternalReferenceName = m_materialTable->getItems().at(m_materialTable->getSelectedRowIndex(),0) + L".mtrl";
+
+		m_mtrl = nullptr;
+		
+		m_parent->UpdateSelectedMaterial();
 	}
 }

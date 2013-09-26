@@ -154,6 +154,8 @@ namespace Apoc3D
 			void Load(const MaterialData& data);
 			void Save(MaterialData& data);
 
+			void LoadReferencedMaterial(const String& mtrlName);
+
 			void Load(TaggedDataReader* data);
 			/** 
 			 *  Packs the material to a MaterialData. Then save it as

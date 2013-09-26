@@ -654,6 +654,8 @@ namespace Apoc3D
 
 		void TreeView::DrawNodes(Sprite* sprite, const FastList<TreeViewNode*>& nodes, int depth, int& counter, int maxCount)
 		{
+			Apoc3D::Math::Rectangle absArea = getAbsoluteArea();
+
 			for (int i=0;i<nodes.getCount();i++)
 			{
 				counter++;
@@ -669,7 +671,7 @@ namespace Apoc3D
 				m_textOffset.Y = (counter-1 - m_vscrollbar->getValue()) * GetItemHeight();
 
 				if (UIRoot::getTopMostForm() == getOwner())
-					RenderSelectionBox(sprite,nodes[i]);
+					RenderSelectionBox(sprite,nodes[i], absArea);
 
 				if (nodes[i]->getIcon())
 				{
@@ -751,7 +753,7 @@ namespace Apoc3D
 
 
 
-		void TreeView::RenderSelectionBox(Sprite* sprite, TreeViewNode* node)
+		void TreeView::RenderSelectionBox(Sprite* sprite, TreeViewNode* node, const Apoc3D::Math::Rectangle& absoluteArea)
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
@@ -764,11 +766,11 @@ namespace Apoc3D
 			else
 				m_selectionRect.Width = Size.X - 1;
 
+			
 			if (node == m_selectedNode)
 				sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_LightGray);
-			if (getOwner()->getArea().Contains(mouse->GetCurrentPosition()) &&
-				m_selectionRect.Contains(Point(mouse->GetCurrentPosition().X-getOwner()->Position.X-Position.X, 
-				mouse->GetCurrentPosition().Y-getOwner()->Position.Y-Position.Y)))
+			if (absoluteArea.Contains(mouse->GetCurrentPosition()) &&
+				m_selectionRect.Contains(Point(mouse->GetCurrentPosition().X-absoluteArea.X, mouse->GetCurrentPosition().Y-absoluteArea.Y)))
 			{
 				m_anyHoverNode = node;
 				if (node != m_selectedNode)
@@ -982,6 +984,13 @@ namespace Apoc3D
 				m_isResizing = false;
 
 			m_selectionArea = getAbsoluteArea();
+			if (m_selectionArea.Contains(mouse->GetCurrentPosition()))
+			{
+				if (mouse->getDZ())
+				{
+					m_vScrollBar->setValue(Math::Clamp(m_vScrollBar->getValue() - mouse->getDZ() / 60, 0, m_vScrollBar->getMax()));
+				}
+			}
 
 			if (m_headerStyle != LHSTYLE_None)
 			{

@@ -59,6 +59,8 @@ namespace APDesigner
 		virtual void OnFrameStart();
 		virtual void OnFrameEnd();
 
+		void RefreshMaterialList();
+
 		const StyleSkin* getUISkin() const { return m_UIskin; }
 		const Point& getUIAreaSize() const { return m_lastSize; }
 		RenderDevice* getDevice() const { return m_device; }
@@ -67,7 +69,10 @@ namespace APDesigner
 		Document* getCurrentDocument() const { return m_currentDocument; }
 
 		Menu* getMenuBar() const { return m_mainMenu; }
+
+		const List<std::pair<String, String>>& getProjectMaterialDesc() const { return m_projectMaterialNames; }
 	private:
+		void RefreshMaterialList(const FastList<ProjectItem*>& items);
 		void LoadMenus();
 
 		StyleSkin* m_UIskin;
@@ -95,6 +100,7 @@ namespace APDesigner
 
 		Point m_lastSize;
 
+		List<std::pair<String, String>> m_projectMaterialNames;
 
 		void Menu_Tools_AtomManager(MenuItem* itm);
 

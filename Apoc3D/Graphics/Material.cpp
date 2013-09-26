@@ -146,23 +146,28 @@ namespace Apoc3D
 			
 		}
 
+		void Material::LoadReferencedMaterial(const String& mtrlName)
+		{
+			// re load using a newly loaded MaterialData
+			MaterialData newData;
+			FileLocation* fl = FileSystem::getSingleton().TryLocate(mtrlName, FileLocateRule::Materials);
+			if (fl)
+			{
+				newData.Load(fl);
+				Load(newData);
+				delete fl;
+
+				ExternalReferenceName = mtrlName;
+			}
+		}
+
 		void Material::Load(const MaterialData& mdata)
 		{
 			if (mdata.ExternalRefName.size())
 			{
 				// re load using a newly loaded MaterialData
-
-				MaterialData newData;
-				FileLocation* fl = FileSystem::getSingleton().TryLocate(mdata.ExternalRefName, FileLocateRule::Materials);
-				if (fl)
-				{
-					newData.Load(fl);
-					Load(newData);
-					delete fl;
-
-					ExternalReferenceName = mdata.ExternalRefName;
-					return;
-				}
+				LoadReferencedMaterial(mdata.ExternalRefName);
+				return;
 			}
 			ExternalReferenceName = mdata.ExternalRefName;
 

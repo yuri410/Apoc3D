@@ -40,6 +40,7 @@ using namespace Apoc3D::Scene;
 namespace APDesigner
 {
 	class CopyMaterialDialog;
+	class SelectMaterialDialog;
 
 	class ModelDocument : public Document
 	{
@@ -56,6 +57,7 @@ namespace APDesigner
 		virtual void Render();
 
 		void UpdateSelectedPart();
+		void UpdateSelectedMaterial();
 	private:
 		class ModelWrapper : public Entity 
 		{
@@ -127,8 +129,9 @@ namespace APDesigner
 
 		CheckBox* m_cbUseRef;
 		TextBox* m_tbRefMaterialName;
-		// material specific parameters
+		Button* m_btnRefMaterial;
 
+		// material specific parameters
 		ColorField* m_cfAmbient;
 		ColorField* m_cfDiffuse;
 		ColorField* m_cfSpecular;
@@ -166,6 +169,7 @@ namespace APDesigner
 		ComboBox* m_cbCull;
 		PassFlagDialog* m_passEditor;
 		CopyMaterialDialog* m_batchCopyMtrl;
+		SelectMaterialDialog* m_selectMtrl;
 
 		void PassButton_Pressed(Control* ctrl);
 		void CBMesh_SelectionChanged(Control* ctrl);
@@ -195,6 +199,7 @@ namespace APDesigner
 		void PassViewSelect_SelectionChanged(Control* ctrl);
 
 		void CBUseRef_Checked(Control* ctrl);
+		void BtnRefMtrl_Pressed(Control* ctrl);
 
 		void DisplayMaterialEditor(Material* mtrl, bool usingRef);
 
@@ -232,6 +237,29 @@ namespace APDesigner
 		void ButtonOK_Pressed(Control* ctrl);
 		void Form_Closed(Control* ctrl);
 		void Config_Changed(Control* ctrl);
+	};
+
+	class SelectMaterialDialog
+	{
+	public:
+		SelectMaterialDialog(ModelDocument* parent, MainWindow* window, RenderDevice* device);
+		~SelectMaterialDialog();
+
+		void ShowModal(Material* mtrl);
+
+	private:
+		ModelDocument* m_parent;
+		Form* m_form;
+
+		ListView* m_materialTable;
+
+		Button* m_btnOK;
+
+		Material* m_mtrl;
+		bool m_dialogResult;
+
+		void ButtonOK_Pressed(Control* ctrl);
+		void Form_Closed(Control* ctrl);
 	};
 }
 

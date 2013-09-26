@@ -168,7 +168,7 @@ namespace Apoc3D
 			void InitScrollbars(RenderDevice* device);
 			void UpdateHScrollbar();
 			
-			void RenderSelectionBox(Sprite* sprite, TreeViewNode* node);
+			void RenderSelectionBox(Sprite* sprite, TreeViewNode* node, const Apoc3D::Math::Rectangle& absoluteArea);
 			void DrawBackground(Sprite* sprite);
 			void DrawScrollbar(Sprite* sprite);
 			void DrawNodes(Sprite* sprite, const FastList<TreeViewNode*>& nodes, int depth, int& counter, int maxCount);

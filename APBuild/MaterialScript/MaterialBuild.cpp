@@ -238,13 +238,22 @@ namespace APBuild
 				List<String> lr;
 				StringUtils::Split(defs[i], lr, L":");
 
-				int ord = StringUtils::ParseInt32(lr[0].substr(1));
-				String name = lr[1];
-
-				if (!newNode->EffectName.Contains(ord-1))
-					newNode->EffectName.Add(ord-1, name);
+				if (lr.getCount() == 1)
+				{
+					if (lr[0] == L"RST")
+						newNode->EffectName.Clear();
+				}
 				else
-					newNode->EffectName[ord-1] = name;
+				{
+					int ord = StringUtils::ParseInt32(lr[0].substr(1));
+					String name = lr[1];
+
+					if (!newNode->EffectName.Contains(ord-1))
+						newNode->EffectName.Add(ord-1, name);
+					else
+						newNode->EffectName[ord-1] = name;
+				}
+				
 			}
 		}
 

@@ -49,6 +49,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/GameTime.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/Config/ConfigurationManager.h"
+#include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
 #include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Graphics/RenderSystem/Sprite.h"
@@ -410,6 +411,7 @@ namespace APDesigner
 
 	}
 
+
 	void MainWindow::OpenProject(const String& path)
 	{
 		if (!m_project)
@@ -455,6 +457,7 @@ namespace APDesigner
 			// Once a project is loaded or built, the effects used will be registered/updated in the EffectSystem.
 			// So the editing tools using these effect will work perfectly
 			UpdateProjectEffect();
+			RefreshMaterialList();
 
 			cfAddRecentProject(m_project->getName(), path);
 			UpdateRecentProjects();
@@ -538,7 +541,69 @@ namespace APDesigner
 		}
 
 	}
-	
+
+	void MainWindow::RefreshMaterialList()
+	{
+		m_projectMaterialNames.Clear();
+		if (m_project)
+		{
+			RefreshMaterialList(m_project->getItems());
+		}
+	}
+
+	void ParseMaterialTree(const String& baseMtrlName, const ConfigurationSection* sect, List<std::pair<String, String>>& resultNameList)
+	{
+		// build a name
+		String name = baseMtrlName;
+		if (name.size())
+		{
+			name.append(L"_");
+		}
+		name.append(sect->getName());
+
+		String comment;
+		sect->tryGetAttribute(L"Comment", comment);
+		
+		resultNameList.Add(std::make_pair(name, comment));
+
+		// go into sub sections
+		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
+		{
+			ParseMaterialTree(name, *e.getCurrentValue(), resultNameList);
+		}
+	}
+
+	void MainWindow::RefreshMaterialList(const FastList<ProjectItem*>& items)
+	{
+		for (int i=0;i<items.getCount();i++)
+		{
+			ProjectItem* itm = items[i];
+			if (itm->getType() == PRJITEM_MaterialSet)
+			{
+				ProjectResMaterialSet* eff = static_cast<ProjectResMaterialSet*>(itm->getData());
+				String cpath = PathUtils::Combine(m_project->getBasePath(), eff->SourceFile);
+
+				LogManager::getSingleton().Write(LOG_Graphics, L"Updating material table " + itm->getName());
+
+				FileLocation* fl = new FileLocation(cpath);
+				Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+				ConfigurationSection* mSect = config->get(L"Materials");
+				
+				for (ConfigurationSection::SubSectionEnumerator e = mSect->GetSubSectionEnumrator(); e.MoveNext();)
+				{
+					ParseMaterialTree(L"", *e.getCurrentValue(), m_projectMaterialNames);
+				}
+				delete config;
+				delete fl;
+			}
+			else if (itm->getType() == PRJITEM_Folder)
+			{
+				ProjectFolder* fld = static_cast<ProjectFolder*>(itm->getData());
+				RefreshMaterialList(fld->SubItems);
+			}
+		}
+	}
+
 	void MainWindow::Menu_CloseProject(MenuItem* itm)
 	{
 		//delete m_project;
@@ -586,6 +651,7 @@ namespace APDesigner
 				// Once a project is loaded or built, the effects used will be registered/updated in the EffectSystem.
 				// So the editing tools using these effect will work perfectly
 				UpdateProjectEffect();
+				RefreshMaterialList();
 			}
 		}
 		
