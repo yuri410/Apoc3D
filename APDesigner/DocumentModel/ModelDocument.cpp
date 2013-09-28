@@ -766,12 +766,18 @@ namespace APDesigner
 			if (partIdx != -1 && frameIndex != -1)
 			{
 				Material* m = mtrls->getMaterial(partIdx, frameIndex);
+				bool isRef = false;
+				String refName;
 				if (m->ExternalReferenceName.size())
 				{
+					refName = m->ExternalReferenceName;
+					isRef = true;
+
 					m->LoadReferencedMaterial(m->ExternalReferenceName);
 				}
 
-				DisplayMaterialEditor(m, !m->ExternalReferenceName.empty());
+				m->ExternalReferenceName = refName;
+				DisplayMaterialEditor(m, isRef);
 			}
 		}
 	}
