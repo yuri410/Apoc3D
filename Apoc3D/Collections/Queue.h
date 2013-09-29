@@ -79,15 +79,6 @@ namespace Apoc3D
 
 			void Clear()
 			{
-				//if (m_head<m_tail)
-				//{
-				//	memset(m_array+m_head, 0, m_size * sizeof(T));
-				//}
-				//else
-				//{
-				//	memset(m_array+m_head, 0, (m_arrLength - m_head)*sizeof(T));
-				//	memset(m_array, 0, m_tail * sizeof(T));
-				//}
 				m_head = 0;
 				m_tail = 0;
 				m_size = 0;
@@ -187,6 +178,7 @@ namespace Apoc3D
 
 			int getCount() const { return m_size; }
 
+			T& Element(int i) { return m_array[(m_head + i) % m_arrLength]; }
 			const T& GetElement(int i) const { return m_array[(m_head + i) % m_arrLength]; }
 			void SetElement(int i, const T& value) { m_array[(m_head + i) % m_arrLength] = value; }
 
