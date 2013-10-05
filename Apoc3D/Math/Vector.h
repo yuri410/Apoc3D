@@ -138,7 +138,7 @@ namespace Apoc3D
 				X *= inv; Y *= inv;
 				Z *= inv; W *= inv;
 			}
-			Vector4 Normalize() const { Vector4 copy = *this; copy.NormalizeInPlace(); return copy; }
+			Vector4 Normalized() const { Vector4 copy = *this; copy.NormalizeInPlace(); return copy; }
 
 			/**
 			 * Reverses the direction of the vector.
@@ -520,7 +520,7 @@ namespace Apoc3D
 				X *= invLen;
 				Y *= invLen;
 			}
-			Vector2 Normalize() const { Vector2 copy = *this; copy.NormalizeInPlace(); return copy; }
+			Vector2 Normalized() const { Vector2 copy = *this; copy.NormalizeInPlace(); return copy; }
 
 			/**
 			 * Reverses the direction of the vector.
@@ -569,7 +569,7 @@ namespace Apoc3D
 			/**
 			 * Converts the vector into a unit vector.
 			 */
-			static Vector2 Normalize(const Vector2& vector) { return vector.Normalize(); }
+			static Vector2 Normalize(const Vector2& vector) { return vector.Normalized(); }
 			/**
 			 * Adds two vectors.
 			 */
@@ -838,7 +838,7 @@ namespace Apoc3D
 				float invLen = 1.0f / length;
 				X *= invLen; Y *= invLen; Z *= invLen;
 			}
-			Vector3 Normalize() const { Vector3 copy = *this; copy.NormalizeInPlace(); return copy; }
+			Vector3 Normalized() const { Vector3 copy = *this; copy.NormalizeInPlace(); return copy; }
 
 			/**
 			 * Reverses the direction of the vector.
@@ -898,7 +898,7 @@ namespace Apoc3D
 			 */
 			static float LengthSquared(const Vector3& v) { return v.X*v.X + v.Y*v.Y + v.Z*v.Z; }
 
-			static Vector3 Normalize(const Vector3& vector) { return vector.Normalize(); }
+			static Vector3 Normalize(const Vector3& vector) { return vector.Normalized(); }
 
 			/**
 			 * Adds two vectors.
