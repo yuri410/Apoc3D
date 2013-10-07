@@ -86,14 +86,14 @@ namespace Apoc3D
 			/**
 			 *  Determines whether the box contains the specified point.
 			 */
-			ContainmentType Contains(Vector3 vector) const
+			bool Contains(Vector3 vector) const
 			{
 				if (Vector3::IsGreaterEqual(vector, Minimum) && 
 					Vector3::IsLessEqual(vector, Maximum))
 				{
-					return CONTAIN_Contains;
+					return true;
 				}
-				return CONTAIN_Disjoint;
+				return false;
 			}
 			/**
 			 *  Determines whether the box contains the specified box.

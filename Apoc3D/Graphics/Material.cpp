@@ -159,6 +159,10 @@ namespace Apoc3D
 
 				ExternalReferenceName = mtrlName;
 			}
+			else
+			{
+				ApocLog(LOG_Graphics, L"[Material] External reference material '" + mtrlName + L"' not found.", LOGLVL_Error);
+			}
 		}
 
 		void Material::Load(const MaterialData& mdata)
