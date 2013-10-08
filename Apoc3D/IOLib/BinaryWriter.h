@@ -43,42 +43,6 @@ namespace Apoc3D
 			~BinaryWriter();
 
 			void Write(const char* bytes, int64 count) const;
-			void Write(char byte) const		{ WriteByte(byte); }
-
-			void Write(bool value) const	{ WriteBoolean(value); }
-
-			void Write(double value) const	{ WriteDouble(value); }
-			void Write(float value) const	{ WriteSingle(value); }
-			void Write(const String& value) const		{ WriteString(value); }
-			void Write(const std::string& value) const	{ WriteMBString(value); }
-
-			void Write(int16 value) const	{ WriteInt16(value); }
-			void Write(int32 value) const	{ WriteInt32(value); }
-			void Write(int64 value) const	{ WriteInt64(value); }
-			void Write(uint16 value) const	{ WriteUInt16(value); }
-			void Write(uint32 value) const	{ WriteUInt32(value); }
-			void Write(uint64 value) const	{ WriteUInt64(value); }
-
-			void Write(const Color4& value) const	{ WriteColor4(value); }
-			void Write(const Plane& plane) const	{ WritePlane(plane); }
-			void Write(const Matrix& matrix) const	{ WriteMatrix(matrix); }
-			void Write(const Quaternion& quat) const	{ WriteQuaternion(quat); }
-			void Write(const Point& point) const		{ WritePoint(point); }
-			void Write(const Size& size) const			{ WriteSize(size); }
-			void Write(const Apoc3D::Math::Rectangle& rect) const	{ WriteRectangle(rect); }
-			void Write(const Apoc3D::Math::RectangleF& rect) const	{ WriteRectangleF(rect); }
-
-			void Write(const Ray& ray) const				{ WriteRay(ray); }
-			void Write(const BoundingBox& box) const		{ WriteBoundingBox(box); }
-			void Write(const BoundingSphere& sphere) const { WriteBoundingSphere(sphere); }
-
-			void Write(const TaggedDataWriter* data) const	{ WriteTaggedDataBlock(data); }
-
-			void Write(const float* data, int32 count) const { WriteSingle(data, count); }
-			void Write(const double* data, int32 count) const { WriteDouble(data, count); }
-			void Write(const int32* data, int32 count) const { WriteInt32(data, count); }
-			void Write(const bool* data, int32 count) const { WriteBoolean(data, count); }
-
 
 			void WriteByte(char byte) const;
 			void WriteBoolean(bool value) const;

@@ -121,14 +121,14 @@ namespace Apoc3D
 			{
 				for (size_t i=0;i<value.size();i++)
 				{
-					Write(reinterpret_cast<const char&>(value[i]));
+					WriteByte(reinterpret_cast<const char&>(value[i]));
 				}
 			}
 			else
 			{
 				for (size_t i=0;i<value.size();i++)
 				{
-					Write(reinterpret_cast<const int16&>(value[i]));
+					WriteInt16(reinterpret_cast<const int16&>(value[i]));
 				}
 			}
 		}

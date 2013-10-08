@@ -126,7 +126,7 @@ namespace Apoc3D
 				bw->Write(GSCode, GSLength);
 			}
 
-			bw->Write(Parameters.getCount());
+			bw->WriteInt32(Parameters.getCount());
 			for (int32 i=0;i<Parameters.getCount();i++)
 			{
 				const EffectParameter& fxParam = Parameters[i];
@@ -488,7 +488,7 @@ namespace Apoc3D
 				bw->WriteInt32((int32)AfxId_V4);
 			}
 
-			bw->Write(Name);
+			bw->WriteString(Name);
 			bw->WriteInt32(ProfileCount);
 			for (int32 i=0;i<ProfileCount;i++)
 			{
