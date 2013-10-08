@@ -320,20 +320,19 @@ namespace Apoc3D
 				{
 					m_nativeState->setAlphaBlendEnable(mtrl->IsBlendTransparent);
 					
-					if (m_nativeState->getAlphaSourceBlend() != mtrl->SourceBlend)
-					{
-						m_nativeState->setAlphaSourceBlend(mtrl->SourceBlend);
-					}
-					if (m_nativeState->getAlphaDestinationBlend() != mtrl->DestinationBlend)
-					{
-						m_nativeState->setAlphaDestinationBlend(mtrl->DestinationBlend);
-					}
-					if (m_nativeState->getAlphaBlendOperation() != mtrl->BlendFunction)
-					{
-						m_nativeState->setAlphaBlendOperation(mtrl->BlendFunction);
-					}
 				}
-
+				if (m_nativeState->getAlphaSourceBlend() != mtrl->SourceBlend)
+				{
+					m_nativeState->setAlphaSourceBlend(mtrl->SourceBlend);
+				}
+				if (m_nativeState->getAlphaDestinationBlend() != mtrl->DestinationBlend)
+				{
+					m_nativeState->setAlphaDestinationBlend(mtrl->DestinationBlend);
+				}
+				if (m_nativeState->getAlphaBlendOperation() != mtrl->BlendFunction)
+				{
+					m_nativeState->setAlphaBlendOperation(mtrl->BlendFunction);
+				}
 				if (m_nativeState->getCullMode() != mtrl->Cull)
 				{
 					m_nativeState->SetCullMode(mtrl->Cull);
