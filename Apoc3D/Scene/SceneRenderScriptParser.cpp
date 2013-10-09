@@ -679,9 +679,12 @@ namespace Apoc3D
 		void SceneRenderScriptParser::BuildPass(const TiXmlElement* node)
 		{
 			ScenePassData passData;
-			node->Attribute("SelectorID", &passData.SelectorID);
+			
 			std::string strName = node->Attribute("Name");
 			passData.Name = StringUtils::toWString(strName);
+
+			if (node->Attribute("SelectorID", &passData.SelectorID) == nullptr)
+				ApocLog(LOG_Scene, L"[" + passData.Name + L"] Pass configuration missing selector ID.", LOGLVL_Error);
 
 			passData.CameraID=0;
 			node->Attribute("CameraID", &passData.CameraID);
