@@ -124,6 +124,7 @@ namespace Apoc3D
 				return m_resource;
 			}
 
+			bool isDummyHandle() const { return m_dummy; }
 		private:
 			ResType* m_resource;
 			bool m_dummy;

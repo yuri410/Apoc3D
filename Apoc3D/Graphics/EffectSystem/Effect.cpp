@@ -360,7 +360,7 @@ namespace Apoc3D
 				if (value)
 				{
 					tex = value->operator->();
-					if (tex->getState() != RS_Loaded)
+					if (!value->isDummyHandle() && tex->getState() != RS_Loaded)
 					{
 						tex = 0;
 					}
@@ -656,7 +656,7 @@ namespace Apoc3D
 				if (value)
 				{
 					tex = value->operator->();
-					if (tex->getState() != RS_Loaded)
+					if (!value->isDummyHandle() && tex->getState() != RS_Loaded)
 					{
 						tex = 0;
 					}
