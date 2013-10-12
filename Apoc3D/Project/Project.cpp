@@ -1235,7 +1235,20 @@ namespace Apoc3D
 	}
 	bool ProjectResTAnim::IsEarlierThan(time_t t)
 	{
-		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile)) < t;
+		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(), DestinationFile));
+
+		if (destFileTime < t)
+			return true;
+
+		String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
+		if (File::FileExists(path))
+		{
+			if (File::GetFileModifiyTime(path) > destFileTime)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	bool ProjectResTAnim::IsNotBuilt()
 	{
