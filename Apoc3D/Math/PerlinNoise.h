@@ -78,7 +78,7 @@ namespace Apoc3D
 
 				for (int i=0;i<m_octaves;i++)
 				{
-					total += InterpolatedNoise(x * freq) * _amplitude;
+					total += InterpolatedNoise(x * freq + m_randomSeed) * _amplitude;
 
 					_amplitude *= m_persistence;
 					freq *= 2;
