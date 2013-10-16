@@ -831,6 +831,7 @@ namespace APDesigner
 			message.append(L"\n");
 			message.append(L"Skinned");
 		}
+		message.append(L"\nZ: " + StringUtils::ToString(m_distance,1));
 
 		font->DrawString(sprite, message, Point(dstRect->X+11, dstRect->Y+11), CV_Black);
 		font->DrawString(sprite, message, Point(dstRect->X+10, dstRect->Y+10), CV_White);
