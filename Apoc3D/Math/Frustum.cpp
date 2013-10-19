@@ -51,6 +51,42 @@ namespace Apoc3D
 		}
 		void Frustum::Update(const Matrix& mvp)
 		{
+			//m_planes[FPL_Left].X = mvp.M41 - mvp.M11;
+			//m_planes[FPL_Left].Y = mvp.M42 - mvp.M12;
+			//m_planes[FPL_Left].Z = mvp.M43 - mvp.M13;
+			//m_planes[FPL_Left].D = mvp.M44 - mvp.M14;
+			//m_planes[FPL_Left].NormalizeInPlace();
+
+			//m_planes[FPL_Right].X = mvp.M41 + mvp.M11;
+			//m_planes[FPL_Right].Y = mvp.M42 + mvp.M12;
+			//m_planes[FPL_Right].Z = mvp.M43 + mvp.M13;
+			//m_planes[FPL_Right].D = mvp.M44 + mvp.M14;
+			//m_planes[FPL_Right].NormalizeInPlace();
+
+			//m_planes[FPL_Top].X = mvp.M41 - mvp.M21;
+			//m_planes[FPL_Top].Y = mvp.M42 - mvp.M22;
+			//m_planes[FPL_Top].Z = mvp.M43 - mvp.M23;
+			//m_planes[FPL_Top].D = mvp.M44 - mvp.M24;
+			//m_planes[FPL_Top].NormalizeInPlace();
+
+			//m_planes[FPL_Bottom].X = mvp.M41 + mvp.M21;
+			//m_planes[FPL_Bottom].Y = mvp.M42 + mvp.M22;
+			//m_planes[FPL_Bottom].Z = mvp.M43 + mvp.M23;
+			//m_planes[FPL_Bottom].D = mvp.M44 + mvp.M24;
+			//m_planes[FPL_Bottom].NormalizeInPlace();
+
+			//m_planes[FPL_Far].X = mvp.M41 - mvp.M31;
+			//m_planes[FPL_Far].Y = mvp.M42 - mvp.M32;
+			//m_planes[FPL_Far].Z = mvp.M43 - mvp.M33;
+			//m_planes[FPL_Far].D = mvp.M44 - mvp.M34;
+			//m_planes[FPL_Far].NormalizeInPlace();
+
+			//m_planes[FPL_Near].X = mvp.M41 + mvp.M31;
+			//m_planes[FPL_Near].Y = mvp.M42 + mvp.M32;
+			//m_planes[FPL_Near].Z = mvp.M43 + mvp.M33;
+			//m_planes[FPL_Near].D = mvp.M44 + mvp.M34;
+			//m_planes[FPL_Near].NormalizeInPlace();
+
 			m_planes[FPL_Right].X = mvp.M14 - mvp.M11;
 			m_planes[FPL_Right].Y = mvp.M24 - mvp.M21;
 			m_planes[FPL_Right].Z = mvp.M34 - mvp.M31;
