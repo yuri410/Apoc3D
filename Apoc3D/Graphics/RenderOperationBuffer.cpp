@@ -14,16 +14,6 @@ namespace Apoc3D
 				rop.RootTransform = transform;
 			}
 		}
-		void RenderOperationBuffer::AddWithParam(const RenderOperation* op, int count, const Matrix& transform, void* userPointer)
-		{
-			for (int i=0;i<count;i++)
-			{
-				m_oplist.Add(*(op+i));
-				RenderOperation& rop = m_oplist[m_oplist.getCount()-1];
-				rop.RootTransform = transform;
-				rop.UserData = userPointer;
-			}
-		}
 		void RenderOperationBuffer::AddWithParam(const RenderOperation* op, int count, const Matrix& transform, Material* mtrl, void* userPointer)
 		{
 			for (int i=0;i<count;i++)
@@ -47,24 +37,14 @@ namespace Apoc3D
 				rop.RootTransformIsFinal = isFinal;
 			}
 		}
-		void RenderOperationBuffer::AddWithParam(const RenderOperation* op, int count, const Matrix& transform, bool isFinal, void* userPointer)
+		void RenderOperationBuffer::AddWithParam(const RenderOperation* op, int count, const Matrix& transform, bool isFinal)
 		{
 			for (int i=0;i<count;i++)
 			{
 				m_oplist.Add(*(op+i));
 				RenderOperation& rop = m_oplist[m_oplist.getCount()-1];
 				rop.RootTransform = transform;
-				rop.UserData = userPointer;
 				rop.RootTransformIsFinal = isFinal;
-			}
-		}
-		void RenderOperationBuffer::AddWithParam(const RenderOperation* op, int count, void* userPointer)
-		{
-			for (int i=0;i<count;i++)
-			{
-				m_oplist.Add(*(op+i));
-				RenderOperation& rop = m_oplist[m_oplist.getCount()-1];
-				rop.UserData = userPointer;
 			}
 		}
 		void RenderOperationBuffer::AddWithParam(const RenderOperation* op, int count, Material* mtrl, void* userPointer)
@@ -77,15 +57,42 @@ namespace Apoc3D
 				rop.Material = mtrl;
 			}
 		}
-		void RenderOperationBuffer::AddWithParam(const RenderOperation* op, int count, Material* mtrl)
+
+
+
+		void RenderOperationBuffer::AddWithParamMtrlLess(const RenderOperation* op, int count, const Matrix& transform, void* userPointer)
 		{
 			for (int i=0;i<count;i++)
 			{
 				m_oplist.Add(*(op+i));
 				RenderOperation& rop = m_oplist[m_oplist.getCount()-1];
-				rop.Material = mtrl;
+				rop.RootTransform = transform;
+				rop.UserData = userPointer;
 			}
 		}
+		void RenderOperationBuffer::AddWithParamMtrlLess(const RenderOperation* op, int count, const Matrix& transform, bool isFinal, void* userPointer)
+		{
+			for (int i=0;i<count;i++)
+			{
+				m_oplist.Add(*(op+i));
+				RenderOperation& rop = m_oplist[m_oplist.getCount()-1];
+				rop.RootTransform = transform;
+				rop.UserData = userPointer;
+				rop.RootTransformIsFinal = isFinal;
+			}
+		}
+		void RenderOperationBuffer::AddWithParamMtrlLess(const RenderOperation* op, int count, void* userPointer)
+		{
+			for (int i=0;i<count;i++)
+			{
+				m_oplist.Add(*(op+i));
+				RenderOperation& rop = m_oplist[m_oplist.getCount()-1];
+				rop.UserData = userPointer;
+			}
+		}
+
+
+
 
 		//void RenderOperationBuffer::MultiplyTransform(const Matrix& m)
 		//{
