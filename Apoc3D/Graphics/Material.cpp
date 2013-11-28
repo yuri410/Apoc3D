@@ -47,7 +47,7 @@ namespace Apoc3D
 	{
 		Material::Material(RenderDevice* device)
 			: m_device(device),
-			m_passFlags(0), m_priority(2), 
+			m_passFlags(0), m_priority(DefaultMaterialPriority), 
 			BlendFunction(BLFUN_Add), IsBlendTransparent(false), 
 			SourceBlend(BLEND_SourceAlpha), DestinationBlend(BLEND_InverseSourceAlpha),
 			AlphaTestEnabled(false), AlphaReference(0),

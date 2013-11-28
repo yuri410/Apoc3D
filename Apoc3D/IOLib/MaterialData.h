@@ -112,7 +112,7 @@ namespace Apoc3D
 				BlendFunction = BLFUN_Add;
 				SourceBlend = BLEND_One;
 				DestinationBlend = BLEND_Zero;
-				Priority = 0;
+				Priority = DefaultMaterialPriority;
 				PassFlags = 1;
 				UsePointSprite = false;
 

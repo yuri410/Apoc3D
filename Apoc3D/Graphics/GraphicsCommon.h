@@ -36,6 +36,7 @@ namespace Apoc3D
 		namespace RenderSystem
 		{
 			const int32 MaxScenePass = 64;
+			const int32 DefaultMaterialPriority = 10;
 
 			enum TextureType
 			{
