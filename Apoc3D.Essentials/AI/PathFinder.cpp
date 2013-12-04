@@ -31,27 +31,18 @@ namespace Apoc3DEx
 		PathFinderManager::PathFinderManager(PathFinderField* fld)
 			: m_terrain(fld)
 		{
-			m_units = new AStarNode**[fld->getWidth()];
-			for (int i=0;i<fld->getWidth();i++)
+			m_units = new AStarNode[fld->getWidth() * fld->getHeight()];
+			for (int32 i=0;i<fld->getHeight();i++)
 			{
-				m_units[i] = new AStarNode*[fld->getHeight()];
-				for (int j=0;j<fld->getHeight();j++)
+				for (int32 j=0;j<fld->getWidth();j++)
 				{
-					m_units[i][j] = new AStarNode(i,j);
+					m_units[i * fld->getWidth() + j] = AStarNode(j,i);
 				}
 			}
 		}
 
 		PathFinderManager::~PathFinderManager()
 		{
-			for (int i=0;i<m_terrain->getWidth();i++)
-			{
-				for (int j=0;j<m_terrain->getHeight();j++)
-				{
-					delete m_units[i][j];
-				}
-				delete[] m_units[i];
-			}
 			delete[] m_units;
 		}
 
@@ -64,37 +55,39 @@ namespace Apoc3DEx
 		/*                                                                      */
 		/************************************************************************/
 
-		int PathFinder::stateEnum[8][2] = 
-		{
-			{ 0, -1 }, { 0, 1 },
-			{ -1, 0 }, { 1, 0 },
-			{ -1, -1 }, { 1, 1 },
-			{ -1, 1 }, { 1, -1 },
-		};
-
-		float PathFinder::stateEnumCost[8] =
-		{
-			1,1,
-			1,1,
-			Math::Root2, Math::Root2,
-			Math::Root2, Math::Root2,
-		};
-
-
-		PathFinder::PathFinder(PathFinderField* terrain, AStarNode*** units)
-			: MaxStep(50), m_terrain(terrain), m_units(units), 
+		PathFinder::PathFinder(PathFinderField* terrain, AStarNode* units)
+			: MaxStep(-1), TurnCost(1), m_terrain(terrain), m_units(units), 
 			m_width(terrain->getWidth()), m_height(terrain->getHeight())
 		{
-
+			Set8DirectionTable();
 		}
 
 		PathFinder::PathFinder(PathFinderManager* mgr)
-			: MaxStep(50), m_terrain(mgr->getFieldTable()), m_units(mgr->m_units),
+			: MaxStep(-1), TurnCost(1), m_terrain(mgr->getFieldTable()), m_units(mgr->m_units),
 			m_width(mgr->m_terrain->getWidth()), m_height(mgr->m_terrain->getHeight())
 		{
-
+			Set8DirectionTable();
 		}
 
+		void PathFinder::Set8DirectionTable()
+		{
+			Set4DirectionTable();
+
+			AddExpansionDirection(-1, -1, Math::Root2);
+			AddExpansionDirection( 1,  1, Math::Root2);
+			AddExpansionDirection(-1,  1, Math::Root2);
+			AddExpansionDirection( 1, -1, Math::Root2);
+		}
+
+		void PathFinder::Set4DirectionTable()
+		{
+			ResetExpansionDirections();
+
+			AddExpansionDirection( 0, -1, 1.0f);
+			AddExpansionDirection( 0,  1, 1.0f);
+			AddExpansionDirection(-1,  0, 1.0f);
+			AddExpansionDirection( 1,  0, 1.0f);
+		}
 		void PathFinder::Reset()
 		{
 			m_queue.Clear();
@@ -116,12 +109,15 @@ namespace Apoc3DEx
 				return new PathFinderResult(emptyList, false);
 			}
 
+			int32 maxStep = MaxStep;
+			if (maxStep == -1) maxStep = 0x7fffffff;
+
 			//int ofsX = min(sx, tx);
 			//int ofxY = min(sy, ty);
 
 			FastList<AStarNode*> enQueueBuffer(10);
 
-			AStarNode* startNode = m_units[sx][sy];
+			AStarNode* startNode = getNode(sx, sy);
 			startNode->parent = 0;
 			startNode->h = 0;
 			startNode->g = 0;
@@ -141,7 +137,7 @@ namespace Apoc3DEx
 				AStarNode* curPos = m_queue.Dequeue();
 				int curHash = curPos->GetHashCode();
 
-				if (curPos->depth > MaxStep)
+				if (curPos->depth > maxStep)
 				{
 					rcpf = true;
 					finalNode = curPos;
@@ -154,15 +150,30 @@ namespace Apoc3DEx
 				int cx = curPos->X;
 				int cy = curPos->Y;
 
-				// bfs expand new nodes
-				for (int i=0;i<8;i++)
+				int lastDx = 0;
+				int lastDy = 0;
+				if (curPos->parent)
 				{
-					int nx = cx + stateEnum[i][0];
-					int ny = cy + stateEnum[i][1];
+					lastDx = curPos->X - curPos->parent->X;
+					lastDy = curPos->Y - curPos->parent->Y;
+				}
+
+				// bfs expand new nodes
+				for (int i=0;i<m_pathExpansionEnum.getCount();i++)
+				{
+					int nx = cx + m_pathExpansionEnum[i].dx;
+					int ny = cy + m_pathExpansionEnum[i].dy;
+					float cost = m_pathExpansionEnum[i].cost;
+
+					if (TurnCost != 1.0f &&
+						nx != lastDx && ny != lastDy)
+					{
+						cost *= TurnCost;
+					}
 
 					if (nx >= 0 && nx < m_width && ny >= 0 && ny<m_height)
 					{
-						AStarNode* np = m_units[nx][ny];
+						AStarNode* np = getNode(nx, ny);
 						int npHash = np->GetHashCode();
 
 						if (nx == tx && ny == ty) // if this next coord equals to the destination, then we found it
@@ -176,15 +187,15 @@ namespace Apoc3DEx
 						}
 						else
 						{
-							if (!m_terrain->IsPassable(nx, ny))
+							if (m_terrain->IsPassable(nx, ny))
 							{
 								bool isNPInQueue = false;
 								AStarNode* temp;
 								if (m_inQueueTable.TryGetValue(npHash, temp) && temp == np)
 								{
-									if (np->g > curPos->g + stateEnumCost[i])
+									if (np->g > curPos->g + cost)
 									{
-										np->g = curPos->g + stateEnumCost[i];
+										np->g = curPos->g + cost;
 										np->f = np->g + np->h;
 									}
 									isNPInQueue = true;
@@ -196,7 +207,7 @@ namespace Apoc3DEx
 								{
 									np->parent = curPos;
 
-									np->g = curPos->g + stateEnumCost[i];
+									np->g = curPos->g + cost;
 									np->h = (float)abs(tx-nx) + (float)abs(ty-ny);
 									np->f = np->g + np->h;
 									np->depth = curPos->depth + 1;
@@ -256,6 +267,16 @@ namespace Apoc3DEx
 			return 0;
 		}
 
+		void PathFinder::AddExpansionDirection(int32 dx, int32 dy, float cost)
+		{
+			ExpansionDirection dir;
+			dir.dx = dx;
+			dir.dy = dy;
+			dir.cost = cost;
+
+			m_pathExpansionEnum.Add(dir);
+		}
+
 		void PathFinder::QuickSort(FastList<AStarNode*>& list, int left, int right)
 		{
 			int i = left, j = right;
@@ -288,23 +309,18 @@ namespace Apoc3DEx
 		PathFinderField::PathFinderField(int w, int h)
 			: m_width(w), m_height(h)
 		{
-			m_passTable = new bool*[w];
-			for (int i=0;i<w;i++)
+			m_passTable = new bool[w * h];
+			for (int i=0;i<h;i++)
 			{
-				m_passTable[i] = new bool[h];
-				for (int j=0;j<h;j++)
+				for (int j=0;j<j;j++)
 				{
-					m_passTable[i][j] = true;
+					Passable(j,i) = true;
 				}
 			}
 		}
 
 		PathFinderField::~PathFinderField()
 		{
-			for (int i=0;i<m_width;i++)
-			{
-				delete[] m_passTable[i];
-			}
 			delete[] m_passTable;
 		}
 	}

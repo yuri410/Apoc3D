@@ -54,7 +54,7 @@ namespace Apoc3DEx
 			PathFinder* CreatePathFinder();
 			PathFinderField* getFieldTable() const { return m_terrain; }
 		private:
-			AStarNode*** m_units;
+			AStarNode* m_units;
 			PathFinderField* m_terrain;
 
 			friend class PathFinder;
@@ -63,18 +63,33 @@ namespace Apoc3DEx
 		class APEXAPI PathFinder
 		{
 		public:
-			int MaxStep;
-
 			PathFinder(PathFinderManager* mgr);
-			PathFinder(PathFinderField* terrain, AStarNode*** units);
+			PathFinder(PathFinderField* terrain, AStarNode* units);
 
 			void Reset();
 			void Continue();
 			PathFinderResult* FindPath(int sx, int sy, int tx, int ty);
+
+			void AddExpansionDirection(int32 dx, int32 dy, float cost);
+			void ResetExpansionDirections() { m_pathExpansionEnum.Clear(); }
+			void Set8DirectionTable();
+			void Set4DirectionTable();
+
+			int MaxStep;
+
+			float TurnCost;
 		private:
+			struct ExpansionDirection
+			{
+				int32 dx, dy;
+				float cost;
+			};
+			
 			void QuickSort(FastList<AStarNode*>& list, int l, int r);
 
-			AStarNode*** m_units;
+			inline AStarNode* getNode(int32 x, int32 y);
+
+			AStarNode* m_units;
 			PathFinderField* m_terrain;
 
 			/** bfs search queue
@@ -94,9 +109,8 @@ namespace Apoc3DEx
 
 			FastList<Point> m_result;
 
-			static int stateEnum[8][2];
-			static float stateEnumCost[];
 
+			FastList<ExpansionDirection> m_pathExpansionEnum;
 		};
 
 		class APEXAPI PathFinderField
@@ -105,16 +119,16 @@ namespace Apoc3DEx
 			PathFinderField(int w, int h);
 			~PathFinderField();
 
-			bool IsPassable(int x, int y) const { return m_passTable[x][y]; }
+			bool IsPassable(int x, int y) const { return m_passTable[y * m_width + x]; }
 			int getWidth() { return m_width; }
 			int getHeight() { return m_height; }
 
-			bool& Passable(int x, int y) { return m_passTable[x][y]; }
+			bool& Passable(int x, int y) { return m_passTable[y * m_width + x]; }
 		private:
 			int m_width;
 			int m_height;
 
-			bool** m_passTable;
+			bool* m_passTable;
 		};
 
 		class APEXAPI PathFinderResult
@@ -152,15 +166,18 @@ namespace Apoc3DEx
 
 			AStarNode* parent;
 
+			AStarNode()
+				: X(0), Y(0), f(0), g(0), h(0), depth(0), parent(0) 
+			{ }
+
 			AStarNode(int x, int y)
 				: X(x), Y(y), f(0), g(0), h(0), depth(0), parent(0)
-			{
-
-			}
+			{ }
 
 			int GetHashCode() const { return (X<<16) | Y; }
 		};
 
+		AStarNode* PathFinder::getNode(int32 x, int32 y) { return &m_units[y * m_width + x]; }
 	}
 }
 #endif
