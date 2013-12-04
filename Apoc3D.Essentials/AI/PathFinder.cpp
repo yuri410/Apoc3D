@@ -166,7 +166,7 @@ namespace Apoc3DEx
 					float cost = m_pathExpansionEnum[i].cost;
 
 					if (TurnCost != 1.0f &&
-						nx != lastDx && ny != lastDy)
+						(nx != lastDx || ny != lastDy))
 					{
 						cost *= TurnCost;
 					}
