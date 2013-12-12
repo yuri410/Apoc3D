@@ -67,6 +67,27 @@ namespace Apoc3D
 			bool ChangeCharacterSetting(wchar_t ch, short left, short top, float adcanceX);
 			bool LookupCharacterSetting(wchar_t ch, short& left, short& top, float& adcanceX);
 
+			void RegisterCustomGlyph(wchar_t utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX);
+			void RegisterCustomGlyph(wchar_t utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect) 
+			{
+				RegisterCustomGlyph(utf16code, graphic, srcRect, 0, 0, static_cast<float>(srcRect.Width));
+			}
+			void RegisterCustomGlyphYCenter(wchar_t utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, float advanceX) 
+			{
+				int32 top = (getLineHeightInt() - srcRect.Height) / 2;
+				RegisterCustomGlyph(utf16code, graphic, srcRect, left, top, advanceX);
+			}
+			void RegisterCustomGlyphYCenter(wchar_t utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, int32 lineHeight, float advanceX) 
+			{
+				int32 top = (lineHeight - srcRect.Height) / 2;
+				RegisterCustomGlyph(utf16code, graphic, srcRect, left, top, advanceX);
+			}
+
+
+
+			void UnregisterCustomGlyph(wchar_t utf16code);
+			void ClearCustomGlyph();
+
 			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length=-1, float lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color);
 
@@ -105,7 +126,7 @@ namespace Apoc3D
 				int GlyphIndex;
 				short Left;
 				short Top;
-				float AdcanceX;
+				float AdvanceX;
 			};
 			struct Glyph
 			{
@@ -125,6 +146,19 @@ namespace Apoc3D
 				int StartingParentBucket;
 
 			};
+
+			struct CustomGlyph
+			{
+				wchar_t _Character;
+
+				short Left;
+				short Top;
+				float AdvanceX;
+
+				Apoc3D::Math::RectangleF SrcRect;
+				Texture* Graphic;
+			};
+
 			struct Bucket
 			{
 				int CurrentGlyph;
@@ -157,6 +191,8 @@ namespace Apoc3D
 
 			HashMap<wchar_t, Character> m_charTable;
 			Glyph* m_glyphList;
+
+			HashMap<wchar_t, CustomGlyph> m_customCharacters;
 
 			//list<Glyph*> m_activeGlyph;
 			//FastList<Bucket*> m_buckets;
