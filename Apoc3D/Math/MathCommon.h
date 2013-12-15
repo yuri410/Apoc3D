@@ -55,6 +55,13 @@ namespace Apoc3D
 #define ToRadian(x) (x * (Apoc3D::Math::PI/180.0f))
 #define ToDegree(x) (x * (180.0f/Apoc3D::Math::PI))
 
+
+		inline float Frac(float value)
+		{
+			assert(value>=0);
+			return value - floorf(value);
+		}
+
 		inline float Sign(float value)
 		{
 			if (value>0)

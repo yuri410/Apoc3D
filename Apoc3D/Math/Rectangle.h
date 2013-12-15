@@ -215,7 +215,7 @@ namespace Apoc3D
 			}
 			/** Determines whether this Rectangle contains a specified Point.
 			*/
-			bool Contains(const Point &value) const
+			bool Contains(const Point& value) const
 			{
 				return (X <= value.X) &&
 					(value.X < X + Width) &&
@@ -224,7 +224,7 @@ namespace Apoc3D
 			}
 			/** Determines whether this Rectangle entirely contains a specified Rectangle.
 			*/
-			bool Contains(const Rectangle &value) const
+			bool Contains(const Rectangle& value) const
 			{
 				return (X <= value.X) &&
 					((value.X + value.Width) <=
@@ -234,7 +234,7 @@ namespace Apoc3D
 			}
 			/** Determines whether a specified Rectangle intersects with this Rectangle.
 			*/
-			bool Intersects(const Rectangle &value) const
+			bool Intersects(const Rectangle& value) const
 			{
 				return (value.X < (X + Width)) &&
 					(X < (value.X + value.Width)) &&
