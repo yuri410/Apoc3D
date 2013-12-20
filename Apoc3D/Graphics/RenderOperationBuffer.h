@@ -62,57 +62,65 @@ namespace Apoc3D
 				}
 			}
 
+			void AddWithParamAndMtrl(const RenderOperation* op, int count, Material* mtrl, void* userPointer);
+			void AddWithParamAndMtrl(const RenderOperation* op, int count, const Matrix& transform, Material* mtrl, void* userPointer);
+			void AddWithParamAndMtrl(const RenderOperation* op, int count, const Matrix& transform, bool isFinal, Material* mtrl, void* userPointer);
+			
 			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform);
-			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform, Material* mtrl, void* userPointer);
-			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform, bool isFinal, Material* mtrl, void* userPointer);
 			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform, bool isFinal);
-			void AddWithParam(const RenderOperation* op, int count, Material* mtrl, void* userPointer);
+			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform, bool isFinal, void* userPointer);
+			void AddWithParam(const RenderOperation* op, int count, const Matrix& transform, void* userPointer);
+			void AddWithParam(const RenderOperation* op, int count, void* userPointer);
+			
 
-			void AddWithParamMtrlLess(const RenderOperation* op, int count, const Matrix& transform, void* userPointer);
-			void AddWithParamMtrlLess(const RenderOperation* op, int count, const Matrix& transform, bool isFinal, void* userPointer);
-			void AddWithParamMtrlLess(const RenderOperation* op, int count, void* userPointer);
+			void AddBufferWithMtrl(const RenderOperationBuffer* ops, Material* mtrl, void* userPointer) 
+			{
+				AddWithParamAndMtrl(ops->m_oplist.getInternalPointer(), ops->getCount(), mtrl, userPointer);
+			}
+			void AddBufferWithMtrl(const RenderOperationBuffer* ops, const Matrix& transform, Material* mtrl, void* userPointer)
+			{
+				AddWithParamAndMtrl(ops->m_oplist.getInternalPointer(), ops->getCount(), transform, mtrl, userPointer);
+			}
+			void AddBufferWithMtrl(const RenderOperationBuffer* ops, const Matrix& transform, bool isFinal, Material* mtrl, void* userPointer)
+			{
+				AddWithParamAndMtrl(ops->m_oplist.getInternalPointer(), ops->getCount(), transform, isFinal, mtrl, userPointer);
+			}
 
-
-			void Add(const RenderOperationBuffer* ops)
+			void AddBuffer(const RenderOperationBuffer* ops)
 			{
 				Add(ops->m_oplist.getInternalPointer(), ops->getCount()); 
 			}
-			void Add(const RenderOperationBuffer* ops, const Matrix& transform)
-			{
-				AddWithParam(ops->m_oplist.getInternalPointer(), ops->getCount(), transform); 
-			}
-			void Add(const RenderOperationBuffer* ops, const Matrix& transform, Material* mtrl, void* userPointer)
-			{
-				AddWithParam(ops->m_oplist.getInternalPointer(), ops->getCount(), transform, mtrl, userPointer);
-			}
-			void Add(const RenderOperationBuffer* ops, const Matrix& transform, bool isFinal, Material* mtrl, void* userPointer)
-			{
-				AddWithParam(ops->m_oplist.getInternalPointer(), ops->getCount(), transform, isFinal, mtrl, userPointer);
-			}
-			void Add(const RenderOperationBuffer* ops, const Matrix& transform, bool isFinal)
+			void AddBuffer(const RenderOperationBuffer* ops, const Matrix& transform, bool isFinal)
 			{
 				AddWithParam(ops->m_oplist.getInternalPointer(), ops->getCount(), transform, isFinal);
 			}
-			void Add(const RenderOperationBuffer* ops, Material* mtrl, void* userPointer) 
+			void AddBuffer(const RenderOperationBuffer* ops, const Matrix& transform)
 			{
-				AddWithParam(ops->m_oplist.getInternalPointer(), ops->getCount(), mtrl, userPointer);
+				AddWithParam(ops->m_oplist.getInternalPointer(), ops->getCount(), transform); 
+			}
+			void AddBuffer(const RenderOperationBuffer* ops, const Matrix& transform, void* userPointer)
+			{
+				AddWithParam(ops->m_oplist.getInternalPointer(), ops->getCount(), transform, userPointer);
+			}
+			void AddBuffer(const RenderOperationBuffer* ops, const Matrix& transform, bool isFinal, void* userPointer)
+			{
+				AddWithParam(ops->m_oplist.getInternalPointer(), ops->getCount(), transform, isFinal, userPointer);
+			}
+			void AddBuffer(const RenderOperationBuffer* ops, void* userPointer) 
+			{
+				AddWithParam(ops->m_oplist.getInternalPointer(), ops->getCount(), userPointer);
 			}
 
 
-			void AddMtrlLess(const RenderOperationBuffer* ops, const Matrix& transform, void* userPointer)
-			{
-				AddWithParamMtrlLess(ops->m_oplist.getInternalPointer(), ops->getCount(), transform, userPointer);
-			}
-			void AddMtrlLess(const RenderOperationBuffer* ops, const Matrix& transform, bool isFinal, void* userPointer)
-			{
-				AddWithParamMtrlLess(ops->m_oplist.getInternalPointer(), ops->getCount(), transform, isFinal, userPointer);
-			}
-			void AddMtrlLess(const RenderOperationBuffer* ops, void* userPointer) 
-			{
-				AddWithParamMtrlLess(ops->m_oplist.getInternalPointer(), ops->getCount(), userPointer);
-			}
+			void SetForAllWithMtrl(Material* mtrl, void* userPointer);
+			void SetForAllWithMtrl(const Matrix& transform, Material* mtrl, void* userPointer);
+			void SetForAllWithMtrl(const Matrix& transform, bool isFinal, Material* mtrl, void* userPointer);
 
-
+			void SetForAll(const Matrix& transform);
+			void SetForAll(const Matrix& transform, bool isFinal);
+			void SetForAll(const Matrix& transform, bool isFinal, void* userPointer);
+			void SetForAll(const Matrix& transform, void* userPointer);
+			void SetForAll(void* userPointer);
 
 
 			void Clear() { m_oplist.Clear(); }

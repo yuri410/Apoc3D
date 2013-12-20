@@ -214,7 +214,7 @@ namespace SampleTerrain
 					Matrix trans;
 					info.CalculateTransform(trans);
 
-					m_treeOPBuffer.Add(opbuf, trans);
+					m_treeOPBuffer.AddBuffer(opbuf, trans);
 				}
 				else
 				{
