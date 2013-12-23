@@ -78,14 +78,14 @@ namespace Apoc3DEx
 			int MaxStep;
 
 			float TurnCost;
+			bool ConsiderFieldDifferencialWeightCost;
+			bool ConsiderFieldWeightCost;
 		private:
 			struct ExpansionDirection
 			{
 				int32 dx, dy;
 				float cost;
 			};
-			
-			void QuickSort(FastList<AStarNode*>& list, int l, int r);
 
 			inline AStarNode* getNode(int32 x, int32 y);
 
@@ -94,8 +94,9 @@ namespace Apoc3DEx
 
 			/** bfs search queue
 			*/
-			Queue<AStarNode*> m_queue;
+			PriorityQueue<AStarNode*> m_queue;
 			
+
 			/** used to fast check if a node is in the queue
 			*/
 			HashMap<int, AStarNode*> m_inQueueTable;
@@ -116,19 +117,34 @@ namespace Apoc3DEx
 		class APEXAPI PathFinderField
 		{
 		public:
-			PathFinderField(int w, int h);
+			PathFinderField(int32 w, int32 h);
 			~PathFinderField();
+			
+			int32 getWidth() { return m_width; }
+			int32 getHeight() { return m_height; }
 
-			bool IsPassable(int x, int y) const { return m_passTable[y * m_width + x]; }
-			int getWidth() { return m_width; }
-			int getHeight() { return m_height; }
+			bool isPassable(int32 x, int32 y) const { return m_fieldPassable[y * m_width + x]; }
+			void setPassable(int32 x, int32 y, bool passable) { m_fieldPassable[y * m_width + x] = passable; }
 
-			bool& Passable(int x, int y) { return m_passTable[y * m_width + x]; }
+			float getFieldWeight(int32 x, int32 y) const { return m_fieldWeight[y * m_width + x]; }
+			void setFieldWeight(int32 x, int32 y, float wgt) { m_fieldWeight[y * m_width + x] = wgt; }
+
+			float getDifferencialFieldWeight(int32 x, int32 y) const { return m_fieldDifferencialWeight[y * m_width + x]; }
+			void setDifferencialFieldWeight(int32 x, int32 y, float wgt) { m_fieldDifferencialWeight[y * m_width + x] = wgt; }
+
+			float calculateDifferencialWeight(int32 cx, int32 cy, int32 nx, int32 ny) const
+			{
+				float d = getDifferencialFieldWeight(cx, cy)-getDifferencialFieldWeight(nx,ny);
+				return fabs(d);
+			}
 		private:
 			int m_width;
 			int m_height;
 
-			bool* m_passTable;
+			bool* m_fieldPassable;
+			float* m_fieldWeight;
+			float* m_fieldDifferencialWeight;
+			
 		};
 
 		class APEXAPI PathFinderResult

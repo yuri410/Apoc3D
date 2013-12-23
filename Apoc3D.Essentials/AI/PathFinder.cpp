@@ -52,19 +52,30 @@ namespace Apoc3DEx
 		}
 
 		/************************************************************************/
-		/*                                                                      */
+		/*   PathFinder                                                         */
 		/************************************************************************/
 
+		int32 AStarNodeComparer(AStarNode* const& a, AStarNode* const& b)
+		{
+			if (a->f < b->f) return -1;
+			if (a->f > b->f) return 1;
+			return 0;
+		}
+
 		PathFinder::PathFinder(PathFinderField* terrain, AStarNode* units)
-			: MaxStep(-1), TurnCost(1), m_terrain(terrain), m_units(units), 
-			m_width(terrain->getWidth()), m_height(terrain->getHeight())
+			: MaxStep(-1), TurnCost(1), ConsiderFieldWeightCost(false), ConsiderFieldDifferencialWeightCost(false),
+			m_terrain(terrain), m_units(units), 
+			m_width(terrain->getWidth()), m_height(terrain->getHeight()),
+			m_queue(&AStarNodeComparer)
 		{
 			Set8DirectionTable();
 		}
 
 		PathFinder::PathFinder(PathFinderManager* mgr)
-			: MaxStep(-1), TurnCost(1), m_terrain(mgr->getFieldTable()), m_units(mgr->m_units),
-			m_width(mgr->m_terrain->getWidth()), m_height(mgr->m_terrain->getHeight())
+			: MaxStep(-1), TurnCost(1), ConsiderFieldWeightCost(false), ConsiderFieldDifferencialWeightCost(false),
+			m_terrain(mgr->getFieldTable()), m_units(mgr->m_units),
+			m_width(mgr->m_terrain->getWidth()), m_height(mgr->m_terrain->getHeight()),
+			m_queue(&AStarNodeComparer)
 		{
 			Set8DirectionTable();
 		}
@@ -91,6 +102,7 @@ namespace Apoc3DEx
 		void PathFinder::Reset()
 		{
 			m_queue.Clear();
+			
 			m_inQueueTable.Clear();
 			m_passedTable.Clear();
 			m_result.Clear();
@@ -112,10 +124,13 @@ namespace Apoc3DEx
 			int32 maxStep = MaxStep;
 			if (maxStep == -1) maxStep = 0x7fffffff;
 
+			const bool considerFieldWeightCost = ConsiderFieldWeightCost;
+			const bool considerFieldDifferencialWeightCost = ConsiderFieldDifferencialWeightCost;
+
 			//int ofsX = min(sx, tx);
 			//int ofxY = min(sy, ty);
 
-			FastList<AStarNode*> enQueueBuffer(10);
+			//FastList<AStarNode*> enQueueBuffer(10);
 
 			AStarNode* startNode = getNode(sx, sy);
 			startNode->parent = 0;
@@ -135,6 +150,7 @@ namespace Apoc3DEx
 			while (m_queue.getCount()>0 && !(found || rcpf))
 			{
 				AStarNode* curPos = m_queue.Dequeue();
+
 				int curHash = curPos->GetHashCode();
 
 				if (curPos->depth > maxStep)
@@ -187,8 +203,14 @@ namespace Apoc3DEx
 						}
 						else
 						{
-							if (m_terrain->IsPassable(nx, ny))
+							if (m_terrain->isPassable(nx, ny))
 							{
+								if (considerFieldWeightCost)
+									cost *= m_terrain->getFieldWeight(nx, ny);
+
+								if (considerFieldDifferencialWeightCost)
+									cost *= m_terrain->calculateDifferencialWeight(cx, cy, nx, ny);
+
 								bool isNPInQueue = false;
 								AStarNode* temp;
 								if (m_inQueueTable.TryGetValue(npHash, temp) && temp == np)
@@ -197,6 +219,12 @@ namespace Apoc3DEx
 									{
 										np->g = curPos->g + cost;
 										np->f = np->g + np->h;
+
+										int32 indexInQueue = m_queue.getInternalList().IndexOf(np);
+										if (indexInQueue != -1)
+										{
+											m_queue.UpdatePriorityForChange(indexInQueue);
+										}
 									}
 									isNPInQueue = true;
 								}
@@ -212,23 +240,24 @@ namespace Apoc3DEx
 									np->f = np->g + np->h;
 									np->depth = curPos->depth + 1;
 
-									enQueueBuffer.Add(np);
+									//enQueueBuffer.Add(np);
 									m_inQueueTable.Add(npHash, np);
+									m_queue.Enqueue(np);
 								}
 							}
 						}
 					}
 				}
 
-				if (enQueueBuffer.getCount())
-				{
-					QuickSort(enQueueBuffer,0,enQueueBuffer.getCount()-1);
-					for (int i=0;i<enQueueBuffer.getCount();i++)
-					{
-						m_queue.Enqueue(enQueueBuffer[i]);
-					}
-					enQueueBuffer.Clear();
-				}
+				//if (enQueueBuffer.getCount())
+				//{
+				//	QuickSort(enQueueBuffer,0,enQueueBuffer.getCount()-1);
+				//	for (int i=0;i<enQueueBuffer.getCount();i++)
+				//	{
+				//		m_queue.Enqueue(enQueueBuffer[i]);
+				//	}
+				//	enQueueBuffer.Clear();
+				//}
 			}
 
 			if (rcpf)
@@ -277,51 +306,32 @@ namespace Apoc3DEx
 			m_pathExpansionEnum.Add(dir);
 		}
 
-		void PathFinder::QuickSort(FastList<AStarNode*>& list, int left, int right)
-		{
-			int i = left, j = right;
-			const AStarNode* pivot = list[(left + right) / 2];
-
-			while (i<=j)
-			{
-				while (list[i]->f < pivot->f)
-					i++;
-				while (list[j]->f > pivot->f)
-					j--;
-
-				if (i<=j)
-				{
-					AStarNode* tmp = list[i];
-					list[i] = list[j];
-					list[j] = tmp;
-					i++; j--;
-				}
-			}
-
-			if (left < j) QuickSort(list, left, j);
-			if (i < right) QuickSort(list, i, right);
-		}
 
 		/************************************************************************/
-		/*                                                                      */
+		/*   PathFinderField                                                    */
 		/************************************************************************/
 
-		PathFinderField::PathFinderField(int w, int h)
+		PathFinderField::PathFinderField(int32 w, int32 h)
 			: m_width(w), m_height(h)
 		{
-			m_passTable = new bool[w * h];
-			for (int i=0;i<h;i++)
+			m_fieldPassable = new bool[w * h];
+			m_fieldWeight = new float[w * h];
+			m_fieldDifferencialWeight = new float[w * h];
+
+			for (int32 i=0;i<h;i++)
 			{
-				for (int j=0;j<j;j++)
+				for (int32 j=0;j<j;j++)
 				{
-					Passable(j,i) = true;
+					setPassable(j,i, true);
+					setFieldWeight(j,i, 1.0f);
+					setDifferencialFieldWeight(j,i,0.0f);
 				}
 			}
 		}
 
 		PathFinderField::~PathFinderField()
 		{
-			delete[] m_passTable;
+			delete[] m_fieldPassable;
 		}
 	}
 }

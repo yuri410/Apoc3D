@@ -27,6 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Common.h"
 
+#include <queue>
+
 #ifndef APOC3D_DYNLIB
 #	define APEXAPI
 #else
