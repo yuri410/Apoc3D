@@ -75,16 +75,26 @@ namespace Apoc3DEx
 			void Set8DirectionTable();
 			void Set4DirectionTable();
 
+			void AddNeighborCostInclusion(int32 dx, int32 dy);
+			void ResetNeighborCostInclusion() { m_neighborCosts.Clear(); }
+
 			int MaxStep;
 
 			float TurnCost;
 			bool ConsiderFieldDifferencialWeightCost;
 			bool ConsiderFieldWeightCost;
+
+			bool UseManhattanDistance;
 		private:
 			struct ExpansionDirection
 			{
 				int32 dx, dy;
 				float cost;
+			};
+			struct NeighorCostInclusion
+			{
+				int32 dx, dy;
+				//float weight;
 			};
 
 			inline AStarNode* getNode(int32 x, int32 y);
@@ -112,6 +122,7 @@ namespace Apoc3DEx
 
 
 			FastList<ExpansionDirection> m_pathExpansionEnum;
+			FastList<NeighorCostInclusion> m_neighborCosts;
 		};
 
 		class APEXAPI PathFinderField
@@ -134,8 +145,9 @@ namespace Apoc3DEx
 
 			float calculateDifferencialWeight(int32 cx, int32 cy, int32 nx, int32 ny) const
 			{
-				float d = getDifferencialFieldWeight(cx, cy)-getDifferencialFieldWeight(nx,ny);
-				return fabs(d);
+				float d = getDifferencialFieldWeight(nx,ny)-getDifferencialFieldWeight(cx, cy);
+				if (d<0)d = 0;
+				return d;
 			}
 		private:
 			int m_width;

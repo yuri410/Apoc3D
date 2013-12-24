@@ -266,6 +266,7 @@ namespace Apoc3D
 				return m_elements[i];
 			}
 
+			int32 getCapacity() const { return m_length; }
 			int32 getCount() const { return m_internalPointer; }
 			T* getInternalPointer() const { return m_elements; }
 		private:
@@ -474,6 +475,8 @@ namespace Apoc3D
 				assert(i<m_internalPointer);
 				return m_elements[i];
 			}
+
+			int32 getCapacity() const { return m_length; }
 			int32 getCount() const { return m_internalPointer; }
 			T* getInternalPointer() const { return m_elements; }
 

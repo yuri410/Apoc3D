@@ -63,7 +63,7 @@ namespace Apoc3DEx
 		}
 
 		PathFinder::PathFinder(PathFinderField* terrain, AStarNode* units)
-			: MaxStep(-1), TurnCost(1), ConsiderFieldWeightCost(false), ConsiderFieldDifferencialWeightCost(false),
+			: MaxStep(-1), TurnCost(1), ConsiderFieldWeightCost(false), ConsiderFieldDifferencialWeightCost(false), UseManhattanDistance(false),
 			m_terrain(terrain), m_units(units), 
 			m_width(terrain->getWidth()), m_height(terrain->getHeight()),
 			m_queue(&AStarNodeComparer)
@@ -72,7 +72,7 @@ namespace Apoc3DEx
 		}
 
 		PathFinder::PathFinder(PathFinderManager* mgr)
-			: MaxStep(-1), TurnCost(1), ConsiderFieldWeightCost(false), ConsiderFieldDifferencialWeightCost(false),
+			: MaxStep(-1), TurnCost(1), ConsiderFieldWeightCost(false), ConsiderFieldDifferencialWeightCost(false), UseManhattanDistance(false),
 			m_terrain(mgr->getFieldTable()), m_units(mgr->m_units),
 			m_width(mgr->m_terrain->getWidth()), m_height(mgr->m_terrain->getHeight()),
 			m_queue(&AStarNodeComparer)
@@ -206,7 +206,26 @@ namespace Apoc3DEx
 							if (m_terrain->isPassable(nx, ny))
 							{
 								if (considerFieldWeightCost)
-									cost *= m_terrain->getFieldWeight(nx, ny);
+								{
+									float fldWeight = m_terrain->getFieldWeight(nx, ny);
+									
+									if (m_neighborCosts.getCount()>0)
+									{
+										for (int32 j=0;j<m_neighborCosts.getCount();j++)
+										{
+											int samx = nx + m_neighborCosts[j].dx;
+											int samy = ny + m_neighborCosts[j].dy;
+											
+											if (samx >= 0 && samx < m_width && samy >= 0 && samy<m_height)
+											{
+												fldWeight += m_terrain->getFieldWeight(samx, samy);
+											}
+										}
+										fldWeight /= m_neighborCosts.getCount()+1;
+									}
+
+									cost *= fldWeight;
+								}
 
 								if (considerFieldDifferencialWeightCost)
 									cost *= m_terrain->calculateDifferencialWeight(cx, cy, nx, ny);
@@ -236,7 +255,19 @@ namespace Apoc3DEx
 									np->parent = curPos;
 
 									np->g = curPos->g + cost;
-									np->h = (float)abs(tx-nx) + (float)abs(ty-ny);
+
+									if (UseManhattanDistance)
+									{
+										np->h = (float)(abs(tx-nx) + abs(ty-ny));
+									}
+									else
+									{
+										float _dx = (float)tx-nx;
+										float _dy = (float)ty-ny;
+
+										np->h = sqrtf(_dx*_dx + _dy*_dy);
+									}
+									
 									np->f = np->g + np->h;
 									np->depth = curPos->depth + 1;
 
@@ -306,6 +337,15 @@ namespace Apoc3DEx
 			m_pathExpansionEnum.Add(dir);
 		}
 
+		void PathFinder::AddNeighborCostInclusion(int32 dx, int32 dy)
+		{
+			NeighorCostInclusion nci;
+			nci.dx = dx;
+			nci.dy = dy;
+			//nci.weight = weight;
+
+			m_neighborCosts.Add(nci);
+		}
 
 		/************************************************************************/
 		/*   PathFinderField                                                    */
