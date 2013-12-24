@@ -177,12 +177,13 @@ namespace Apoc3DEx
 				// bfs expand new nodes
 				for (int i=0;i<m_pathExpansionEnum.getCount();i++)
 				{
-					int nx = cx + m_pathExpansionEnum[i].dx;
-					int ny = cy + m_pathExpansionEnum[i].dy;
-					float cost = m_pathExpansionEnum[i].cost;
+					const ExpansionDirection& ed = m_pathExpansionEnum[i];
+					int nx = cx + ed.dx;
+					int ny = cy + ed.dy;
+					float cost = ed.cost;
 
 					if (TurnCost != 1.0f &&
-						(nx != lastDx || ny != lastDy))
+						(ed.dx != lastDx || ed.dy != lastDy) && (lastDx || lastDy))
 					{
 						cost *= TurnCost;
 					}
