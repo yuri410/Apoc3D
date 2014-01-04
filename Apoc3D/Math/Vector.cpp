@@ -74,6 +74,7 @@ namespace Apoc3D
 			{
 				X = StringUtils::ParseSingle(results[0]);
 				Y = StringUtils::ParseSingle(results[1]);
+				assert(results.getCount()==2);
 			}
 		}
 		String Vector2::ToTextString(int precision) const
@@ -121,6 +122,7 @@ namespace Apoc3D
 				X = StringUtils::ParseSingle(results[0]);
 				Y = StringUtils::ParseSingle(results[1]);
 				Z = StringUtils::ParseSingle(results[2]);
+				assert(results.getCount()==3);
 			}
 		}
 		String Vector3::ToTextString(int precision) const
@@ -208,6 +210,7 @@ namespace Apoc3D
 				Y = StringUtils::ParseSingle(results[1]);
 				Z = StringUtils::ParseSingle(results[2]);
 				W = StringUtils::ParseSingle(results[3]);
+				assert(results.getCount()==4);
 			}
 		}
 		String Vector4::ToTextString(int precision) const
