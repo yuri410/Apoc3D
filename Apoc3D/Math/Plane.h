@@ -274,12 +274,16 @@ namespace Apoc3D
 					return false;
 				}
 				float d1 = Dot3(start);
-				float dist = d1 / cos;
+				float dist = -d1 / cos;
 
-				Vector3 off = dir * dist;
+				if (dist>=0)
+				{
+					Vector3 off = dir * dist;
 
-				intersectionPoint = start + off;
-				return true;
+					intersectionPoint = start + off;
+					return true;
+				}
+				return false;
 			}
 
 			bool operator==(const Plane &other) const
