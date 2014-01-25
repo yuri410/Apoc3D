@@ -405,13 +405,12 @@ namespace APDesigner
 			int sx = 21;
 			int sy = 522 + 115;
 
-			const int btnWidth = 120;
-
 			Label* lbl = new Label(Point(sx, sy), L"Utilities: ", 100);
 			lbl->SetSkin(window->getUISkin());
 			m_labels.Add(lbl);
 			sy+=20;
 
+			int btnWidth = 100;
 			m_revertZ = new Button(Point(sx , sy),btnWidth, L"Revert Z");
 			m_revertZ->SetSkin(window->getUISkin());
 			m_revertZ->eventPress().Bind(this, &ModelDocument::RevertZ_Pressed);
@@ -450,6 +449,11 @@ namespace APDesigner
 			m_setSequenceImages = new Button(Point(sx, sy),180, L"Set Sequence Material");
 			m_setSequenceImages->SetSkin(window->getUISkin());
 			m_setSequenceImages->eventPress().Bind(this, &ModelDocument::SetSequenceImages_Pressed);
+
+			sx += 190;
+			m_applyColorToAll = new Button(Point(sx, sy),btnWidth, L"Apply Color");
+			m_applyColorToAll->SetSkin(window->getUISkin());
+			m_applyColorToAll->eventPress().Bind(this, &ModelDocument::ApplyColorToAll_Pressed);
 
 		}
 
@@ -543,6 +547,7 @@ namespace APDesigner
 		delete m_zoomIn;
 		delete m_zoomOut;
 		delete m_setSequenceImages;
+		delete m_applyColorToAll;
 		delete m_passViewSelect;
 	}
 	
@@ -645,6 +650,7 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_zoomIn);
 		getDocumentForm()->getControls().Add(m_zoomOut);
 		getDocumentForm()->getControls().Add(m_setSequenceImages);
+		getDocumentForm()->getControls().Add(m_applyColorToAll);
 		getDocumentForm()->getControls().Add(m_passViewSelect);
 		{
 			getDocumentForm()->getControls().Add(m_cbUseRef);
@@ -1453,6 +1459,44 @@ namespace APDesigner
 			int partIdx = m_cbMeshPart->getSelectedIndex();
 		
 			m_batchCopyMtrl->ShowModal(mtrls, partIdx);
+		}
+	}
+	void ModelDocument::ApplyColorToAll_Pressed(Control* ctrl)
+	{
+		Material* currentMtrl = 0;
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx != -1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			ents[selMeshIdx]->setName(m_tbMeshName->Text);
+
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			int frameIndex = m_cbSubMtrl->getSelectedIndex();
+			if (partIdx != -1 && frameIndex != -1)
+			{
+				currentMtrl = mtrls->getMaterial(partIdx, frameIndex);
+			}
+		}
+
+
+		for (int i=0;i<ents.getCount();i++)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[i]->getMaterials();
+
+			for (int32 j=0;j<mtrls->getMaterialCount();j++)
+			{
+				for (int32 k=0;k<mtrls->getFrameCount(j);k++)
+				{
+					Material* mtrl = mtrls->getMaterial(j,k);
+
+					mtrl->Ambient = Color4(m_cfAmbient->GetValue());
+					mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
+					mtrl->Specular = Color4(m_cfSpecular->GetValue());
+					mtrl->Emissive = Color4(m_cfEmissive->GetValue());
+				}
+			}
+
 		}
 	}
 	void ModelDocument::PassViewSelect_SelectionChanged(Control* ctrl)
