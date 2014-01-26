@@ -436,24 +436,29 @@ namespace APDesigner
 			m_rotateZ->eventPress().Bind(this, &ModelDocument::RotZ_Pressed);
 
 			sx += btnWidth+10;
-			m_zoomIn = new Button(Point(sx, sy),50, L"+");
+			m_zoomIn = new Button(Point(sx, sy),40, L"+");
 			m_zoomIn->SetSkin(window->getUISkin());
 			m_zoomIn->eventPress().Bind(this, &ModelDocument::ZoomIn_Pressed);
 
-			sx += 60;
-			m_zoomOut = new Button(Point(sx, sy),50, L"-");
+			sx += 50;
+			m_zoomOut = new Button(Point(sx, sy),40, L"-");
 			m_zoomOut->SetSkin(window->getUISkin());
 			m_zoomOut->eventPress().Bind(this, &ModelDocument::ZoomOut_Pressed);
 
-			sx += 60;
+			sx += 50;
 			m_setSequenceImages = new Button(Point(sx, sy),180, L"Set Sequence Material");
 			m_setSequenceImages->SetSkin(window->getUISkin());
 			m_setSequenceImages->eventPress().Bind(this, &ModelDocument::SetSequenceImages_Pressed);
 
 			sx += 190;
-			m_applyColorToAll = new Button(Point(sx, sy),btnWidth, L"Apply Color");
+			m_applyColorToAll = new Button(Point(sx, sy),btnWidth, L"Color All");
 			m_applyColorToAll->SetSkin(window->getUISkin());
 			m_applyColorToAll->eventPress().Bind(this, &ModelDocument::ApplyColorToAll_Pressed);
+
+			sx += btnWidth + 10;
+			m_applyFXToAll = new Button(Point(sx, sy),50, L"FX All");
+			m_applyFXToAll->SetSkin(window->getUISkin());
+			m_applyFXToAll->eventPress().Bind(this, &ModelDocument::ApplyFXToAll_Pressed);
 
 		}
 
@@ -548,6 +553,7 @@ namespace APDesigner
 		delete m_zoomOut;
 		delete m_setSequenceImages;
 		delete m_applyColorToAll;
+		delete m_applyFXToAll;
 		delete m_passViewSelect;
 	}
 	
@@ -651,6 +657,7 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_zoomOut);
 		getDocumentForm()->getControls().Add(m_setSequenceImages);
 		getDocumentForm()->getControls().Add(m_applyColorToAll);
+		getDocumentForm()->getControls().Add(m_applyFXToAll);
 		getDocumentForm()->getControls().Add(m_passViewSelect);
 		{
 			getDocumentForm()->getControls().Add(m_cbUseRef);
@@ -1469,8 +1476,7 @@ namespace APDesigner
 		if (selMeshIdx != -1)
 		{
 			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
-			ents[selMeshIdx]->setName(m_tbMeshName->Text);
-
+			
 			int partIdx = m_cbMeshPart->getSelectedIndex();
 			int frameIndex = m_cbSubMtrl->getSelectedIndex();
 			if (partIdx != -1 && frameIndex != -1)
@@ -1490,13 +1496,53 @@ namespace APDesigner
 				{
 					Material* mtrl = mtrls->getMaterial(j,k);
 
-					mtrl->Ambient = Color4(m_cfAmbient->GetValue());
-					mtrl->Diffuse = Color4(m_cfDiffuse->GetValue());
-					mtrl->Specular = Color4(m_cfSpecular->GetValue());
-					mtrl->Emissive = Color4(m_cfEmissive->GetValue());
+					mtrl->Ambient = currentMtrl->Ambient;
+					mtrl->Diffuse = currentMtrl->Diffuse;
+					mtrl->Specular = currentMtrl->Specular;
+					mtrl->Emissive = currentMtrl->Emissive;
+					mtrl->Power = currentMtrl->Power;
 				}
 			}
 
+		}
+	}
+	void ModelDocument::ApplyFXToAll_Pressed(Control* ctrl)
+	{
+		Material* currentMtrl = 0;
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		int selMeshIdx = m_cbMesh->getSelectedIndex();
+		if (selMeshIdx != -1)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[selMeshIdx]->getMaterials();
+			
+			int partIdx = m_cbMeshPart->getSelectedIndex();
+			int frameIndex = m_cbSubMtrl->getSelectedIndex();
+			if (partIdx != -1 && frameIndex != -1)
+			{
+				currentMtrl = mtrls->getMaterial(partIdx, frameIndex);
+			}
+		}
+
+		for (int i=0;i<ents.getCount();i++)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[i]->getMaterials();
+
+			for (int32 j=0;j<mtrls->getMaterialCount();j++)
+			{
+				for (int32 k=0;k<mtrls->getFrameCount(j);k++)
+				{
+					Material* mtrl = mtrls->getMaterial(j,k);
+
+					uint64 passFlags = 0;
+					for (int p=0;p<MaxScenePass;p++)
+					{
+						mtrl->setPassEffectName(p, currentMtrl->getPassEffectName(p));
+						mtrl->setPassEffect(p, currentMtrl->getPassEffect(p));
+					}
+					
+					mtrl->setPassFlags(currentMtrl->getPassFlags());
+				}
+			}
 		}
 	}
 	void ModelDocument::PassViewSelect_SelectionChanged(Control* ctrl)

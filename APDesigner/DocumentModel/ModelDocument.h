@@ -117,6 +117,7 @@ namespace APDesigner
 		Button* m_zoomOut;
 		Button* m_setSequenceImages;
 		Button* m_applyColorToAll;
+		Button* m_applyFXToAll;
 
 		ComboBox* m_cbMesh;
 		ComboBox* m_cbMeshPart;
@@ -198,6 +199,7 @@ namespace APDesigner
 		void ZoomOut_Pressed(Control* ctrl);
 		void SetSequenceImages_Pressed(Control* ctrl);
 		void ApplyColorToAll_Pressed(Control* ctrl);
+		void ApplyFXToAll_Pressed(Control* ctrl);
 
 		void PassViewSelect_SelectionChanged(Control* ctrl);
 
