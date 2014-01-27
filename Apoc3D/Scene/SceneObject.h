@@ -41,29 +41,13 @@ namespace Apoc3D
 	{
 		class APAPI SceneObject : public Renderable
 		{
-		private:
-			bool m_hasSubObjects;
-			SceneNode* m_parentNode;
-			
-		protected:
-			Matrix m_transformation;
-
-			BoundingSphere m_BoundingSphere;
-
 		public:
-			bool RequiresNodeUpdate;
-
-			bool hasSubObjects() const { return m_hasSubObjects; }
-			SceneNode* getSceneNode() const { return m_parentNode; }
-
-			const Matrix& getTrasformation() const { return m_transformation; }
-			const BoundingSphere& getBoundingSphere() const { return m_BoundingSphere; }
-
-
 			SceneObject(const bool hasSubObjs = false) 
 				: m_hasSubObjects(hasSubObjs), m_parentNode(0), RequiresNodeUpdate(false)
 			{
 				m_transformation.LoadIdentity();
+				m_BoundingSphere.Center = Vector3::Zero;
+				m_BoundingSphere.Radius = 0;
 			}
 
 			virtual ~SceneObject(){}
@@ -86,26 +70,27 @@ namespace Apoc3D
 			}
 
 			virtual bool IsDynamicObject() const { return false; }
+
+			bool hasSubObjects() const { return m_hasSubObjects; }
+			SceneNode* getSceneNode() const { return m_parentNode; }
+
+			const Matrix& getTrasformation() const { return m_transformation; }
+			const BoundingSphere& getBoundingSphere() const { return m_BoundingSphere; }
+
+			bool RequiresNodeUpdate;
+		protected:
+			Matrix m_transformation;
+
+			BoundingSphere m_BoundingSphere;
+
+		private:
+			bool m_hasSubObjects;
+			SceneNode* m_parentNode;
+
 		};
 
 		class APAPI Entity : public SceneObject
 		{
-		protected:
-			Vector3 m_position;
-			Matrix m_orientation;
-			
-			Model* m_models[3];
-			bool m_isTransformDirty;
-			
-		protected:
-			Entity()
-				: m_position(Vector3::Zero), Visible(true)
-			{
-				memset(m_models, 0, sizeof(Model*)*3);
-				memset(&BoundingSphereOffset, 0, sizeof(BoundingSphereOffset));
-				m_orientation.LoadIdentity();
-			}
-
 		public:
 			bool Visible;
 			Vector3 BoundingSphereOffset;
@@ -133,6 +118,22 @@ namespace Apoc3D
 			virtual RenderOperationBuffer* GetRenderOperation(int lod);
 
 			virtual void Update(const GameTime* const time);
+
+		protected:
+			Entity()
+				: m_position(Vector3::Zero), Visible(true)
+			{
+				memset(m_models, 0, sizeof(Model*)*3);
+				memset(&BoundingSphereOffset, 0, sizeof(BoundingSphereOffset));
+				m_orientation.LoadIdentity();
+			}
+
+			Vector3 m_position;
+			Matrix m_orientation;
+
+			Model* m_models[3];
+			bool m_isTransformDirty;
+
 		};
 
 		class APAPI StaticObject : public Entity
