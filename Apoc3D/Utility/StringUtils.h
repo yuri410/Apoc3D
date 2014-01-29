@@ -47,6 +47,7 @@ namespace Apoc3D
 			static uint32 ParseUInt32(const String& val);
 			static uint32 ParseUInt32Hex(const String& val);
 			static uint64 ParseUInt64(const String& val);
+			static uint64 ParseUInt64Hex(const String& val);
 			static uint64 ParseUInt64Bin(const String& val);
 			static int16 ParseInt16(const String& val);
 			static int32 ParseInt32(const String& val);
@@ -59,6 +60,7 @@ namespace Apoc3D
 			static uint32 ParseUInt32(const std::string& val);
 			static uint32 ParseUInt32Hex(const std::string& val);
 			static uint64 ParseUInt64(const std::string& val);
+			static uint64 ParseUInt64Hex(const std::string& val);
 			static uint64 ParseUInt64Bin(const std::string& val);
 			static int16 ParseInt16(const std::string& val);
 			static int32 ParseInt32(const std::string& val);

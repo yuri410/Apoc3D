@@ -116,6 +116,17 @@ namespace Apoc3D
 			assert(!str.fail());
 			return ret;
 		}
+		uint64 StringUtils::ParseUInt64Hex(const String& val)
+		{
+			wistringstream str(val);
+			str.imbue(locale::classic());
+			str.setf ( ios::hex, ios::basefield );       // set hex as the basefield
+			str.setf ( ios::showbase ); 
+			uint64 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
 		uint64 StringUtils::ParseUInt64Bin(const String& val)
 		{
 			uint64 result = 0;
@@ -231,6 +242,17 @@ namespace Apoc3D
 		{
 			istringstream str(val);
 			str.imbue(locale::classic());
+			uint64 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		uint64 StringUtils::ParseUInt64Hex(const std::string& val)
+		{
+			istringstream str(val);
+			str.imbue(locale::classic());
+			str.setf ( ios::hex, ios::basefield );       // set hex as the basefield
+			str.setf ( ios::showbase ); 
 			uint64 ret = 0;
 			str >> ret;
 			assert(!str.fail());
