@@ -82,7 +82,7 @@ namespace Apoc3D
 					if (!StringUtils::EndsWith(msg, L"\n"))
 						msg.append(L"\n");
 
-					cout << ( msg.c_str() );
+					wcout << ( msg );
 
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 #if _DEBUG
