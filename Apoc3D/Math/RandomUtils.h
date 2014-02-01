@@ -127,6 +127,13 @@ namespace Apoc3D
 			static int32 Next(int32 minValue, int32 maxValue) { return m_randomizer.Next(minValue, maxValue); }
 
 			static float NextFloat() { return m_randomizer.NextFloat(); }
+			static float NextFloat(float minValue, float maxValue)
+			{
+				if (minValue >= maxValue)
+					return minValue;
+				return minValue + (maxValue - minValue) * m_randomizer.NextFloat(); 
+			}
+			static float NextFloat(const float* ranges) { return NextFloat(ranges[0], ranges[1]); }
 
 			static int Choose(const float* p, int count)
 			{
