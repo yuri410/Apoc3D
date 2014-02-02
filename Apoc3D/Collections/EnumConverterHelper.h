@@ -41,8 +41,8 @@ namespace Apoc3D
 		class EnumDualConversionHelper
 		{
 		public:
-			typedef HashMap<String, int32> CastTable;
-			typedef HashMap<int32, String> InverseCastTable;
+			typedef HashMap<String, uint64> CastTable;
+			typedef HashMap<uint64, String> InverseCastTable;
 
 			EnumDualConversionHelper(int32 capacity)
 				: m_cast(capacity, &m_comparer1), 
@@ -56,9 +56,25 @@ namespace Apoc3D
 			void DumpNames(List<String>& names) const
 			{
 				names.ResizeDiscard(m_cast.getCount());
-				for (HashMap<int32, String>::Enumerator e = m_invCast.GetEnumerator(); e.MoveNext();)
+				for (InverseCastTable::Enumerator e = m_invCast.GetEnumerator(); e.MoveNext();)
 				{
 					names.Add(*e.getCurrentValue());
+				}
+			}
+			void DumpValues(FastList<T>& values) const
+			{
+				values.ResizeDiscard(m_cast.getCount());
+				for (CastTable::Enumerator e = m_cast.GetEnumerator(); e.MoveNext();)
+				{
+					values.Add(static_cast<T>(*e.getCurrentValue()));
+				}
+			}
+			void DumpValues(List<T>& values) const
+			{
+				values.ResizeDiscard(m_cast.getCount());
+				for (CastTable::Enumerator e = m_cast.GetEnumerator(); e.MoveNext();)
+				{
+					values.Add(static_cast<T>(*e.getCurrentValue()));
 				}
 			}
 
@@ -70,8 +86,8 @@ namespace Apoc3D
 			{
 				String cpy = name;
 				Apoc3D::Utility::StringUtils::ToLowerCase(cpy);
-				m_cast.Add(cpy, static_cast<int32>(v));
-				m_invCast.Add(static_cast<int32>(v), name);
+				m_cast.Add(cpy, static_cast<uint64>(v));
+				m_invCast.Add(static_cast<uint64>(v), name);
 			}
 
 		private:
@@ -79,7 +95,7 @@ namespace Apoc3D
 			InverseCastTable m_invCast;
 
 			StringEqualityComparer m_comparer1;
-			Int32EqualityComparer m_comparer2;
+			Uint64EqualityComparer m_comparer2;
 		};
 	}
 }
