@@ -160,6 +160,9 @@ namespace Apoc3D
 			}
 			void RemoveAt(int32 index)
 			{
+				assert (index < m_internalPointer);
+				assert(index>=0);
+
 				if (index < m_internalPointer-1)
 				{
 					for (int i=index+1 ;i<m_internalPointer; i++)
@@ -370,6 +373,9 @@ namespace Apoc3D
 			}
 			void RemoveAt(int32 index)
 			{
+				assert (index < m_internalPointer);
+				assert(index>=0);
+
 				if (index < m_internalPointer - 1)
 				{
 					for (int i=index;i<m_internalPointer-1;i++)
