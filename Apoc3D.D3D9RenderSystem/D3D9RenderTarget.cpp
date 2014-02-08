@@ -32,6 +32,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/ApocException.h"
 
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
+
 namespace Apoc3D
 {
 	namespace Graphics
@@ -109,6 +114,7 @@ namespace Apoc3D
 						HRESULT hr = dev->CreateTexture(getWidth(), getHeight(), 1, D3DUSAGE_RENDERTARGET, 
 							D3D9Utils::ConvertPixelFormat(getColorFormat()), D3DPOOL_DEFAULT, &m_color, NULL);
 						assert(SUCCEEDED(hr));
+						
 						m_color->GetSurfaceLevel(0, &m_colorSurface);
 
 						m_d3dTexture->setInternal2D(m_color);
@@ -172,6 +178,31 @@ namespace Apoc3D
 				}
 			}
 
+			void logRTFailure(PixelFormat colorFormat, DepthFormat depFormat, uint32 multisample)
+			{
+				String formatString;
+				if (colorFormat != FMT_Count)
+				{
+					formatString.append(L"C-");
+					formatString.append(PixelFormatUtils::ToString(colorFormat));
+				}
+				if (depFormat != DEPFMT_Count)
+				{
+					if (formatString.size())
+						formatString.append(L", ");
+					formatString.append(L"D-");
+					formatString.append(PixelFormatUtils::ToString(depFormat));
+				}
+				if (multisample != 0)
+				{
+					if (formatString.size())
+						formatString.append(L", ");
+					formatString.append(L"M=");
+					formatString.append(StringUtils::ToString(multisample));
+				}
+
+				ApocLog(LOG_Graphics, L"[D3D9] RenderTarget format not supported: " + formatString, LOGLVL_Error);
+			}
 
 
 			/*D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, IDirect3DSurface9* color, IDirect3DSurface9* depth)
@@ -224,6 +255,9 @@ namespace Apoc3D
 				HRESULT hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
 					D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
 				assert(SUCCEEDED(hr));
+				if (FAILED(hr))
+					logRTFailure(format, DEPFMT_Count, 0);
+
 				m_color->GetSurfaceLevel(0, &m_colorSurface);
 				m_d3dTexture = new D3D9Texture(m_device, m_color);
 			}
@@ -237,11 +271,15 @@ namespace Apoc3D
 				HRESULT hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
 					D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
 				assert(SUCCEEDED(hr));
+				if (FAILED(hr))
+					logRTFailure(format, DEPFMT_Count, 0);
 				m_color->GetSurfaceLevel(0, &m_colorSurface);
 
 				hr = dev->CreateDepthStencilSurface(width, height, 
 					D3D9Utils::ConvertDepthFormat(depthFormat), D3DMULTISAMPLE_NONE, 0, TRUE, &m_depthSurface, NULL);
 				assert(SUCCEEDED(hr));
+				if (FAILED(hr))
+					logRTFailure(FMT_Count, depthFormat, 0);
 
 				m_depthBuffer = new D3D9DepthBuffer(device, m_depthSurface);
 				m_d3dTexture = new D3D9Texture(m_device, m_color);
@@ -260,11 +298,15 @@ namespace Apoc3D
 					HRESULT hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
 						D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
 					assert(SUCCEEDED(hr));
+					if (FAILED(hr))
+						logRTFailure(format, DEPFMT_Count, sampleCount);
 					m_color->GetSurfaceLevel(0, &m_colorSurface);
 
 					hr = dev->CreateDepthStencilSurface(width, height, 
 						D3D9Utils::ConvertDepthFormat(depthFormat), D3DMULTISAMPLE_NONE, 0, TRUE, &m_depthSurface, NULL);
 					assert(SUCCEEDED(hr));
+					if (FAILED(hr))
+						logRTFailure(FMT_Count, depthFormat, sampleCount);
 
 					m_depthBuffer = new D3D9DepthBuffer(device, m_depthSurface);
 				}
@@ -320,6 +362,9 @@ namespace Apoc3D
 					HRESULT hr = dev->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET, 
 						D3D9Utils::ConvertPixelFormat(format), D3DPOOL_DEFAULT, &m_color, NULL);
 					assert(SUCCEEDED(hr));
+					if (FAILED(hr))
+						logRTFailure(format, DEPFMT_Count, sampleCount);
+
 					m_color->GetSurfaceLevel(0, &m_colorSurface);
 				}
 				else

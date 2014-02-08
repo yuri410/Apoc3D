@@ -90,19 +90,25 @@ namespace Apoc3D
 			m_dConvHelper = new DepthFormatEnumHelper();
 		}
 
-		String PixelFormatUtils::ToString(PixelFormat format)
-		{
-			return initializer.m_pConvHelper->ToString(format);
-		}
 		PixelFormat PixelFormatUtils::ConvertFormat(const String& fmt)
 		{
 			return initializer.m_pConvHelper->Parse(fmt);
+		}
+		String PixelFormatUtils::ToString(PixelFormat format)
+		{
+			return initializer.m_pConvHelper->ToString(format);
 		}
 
 		DepthFormat PixelFormatUtils::ConvertDepthFormat(const String& fmt)
 		{
 			return initializer.m_dConvHelper->Parse(fmt);
 		}
+		String PixelFormatUtils::ToString(DepthFormat format)
+		{
+			return initializer.m_dConvHelper->ToString(format);
+		}
+
+
 		void PixelFormatUtils::DumpPixelFormatName(Apoc3D::Collections::List<String>& names)
 		{
 			initializer.m_pConvHelper->DumpNames(names);

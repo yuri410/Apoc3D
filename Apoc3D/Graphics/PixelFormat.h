@@ -312,18 +312,22 @@ namespace Apoc3D
 				return 0;
 			}
 			/** 
-			 *  Converts a PixelFormat value to a string representation
-			 */
-			static String ToString(PixelFormat format);
-			/** 
 			 *  Converts a PixelFormat's string representation to the PixelFormat enum
 			 */
 			static PixelFormat ConvertFormat(const String& fmt);
+			/** 
+			 *  Converts a PixelFormat value to a string representation
+			 */
+			static String ToString(PixelFormat format);
 
 			/**
 			 *  Converts a DepthFormat's string representation to the DepthFormat enum
 			 */
 			static DepthFormat ConvertDepthFormat(const String& fmt);
+			/** 
+			 *  Converts a DepthFormat value to a string representation
+			 */
+			static String ToString(DepthFormat format);
 
 			static void DumpPixelFormatName(Apoc3D::Collections::List<String>& names);
 
