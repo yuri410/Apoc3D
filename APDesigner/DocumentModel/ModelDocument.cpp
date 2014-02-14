@@ -1193,6 +1193,8 @@ namespace APDesigner
 						}
 					}
 
+					mtrl->ExternalReferenceName = currentMtrl->ExternalReferenceName;
+
 					mtrl->Reload();
 				}
 			}
