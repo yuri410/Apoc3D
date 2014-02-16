@@ -82,10 +82,8 @@ namespace Apoc3D
 			 */
 			virtual void Update(const GameTime* const time) 
 			{
-				Matrix::Inverse(m_invView, m_view);
-				Matrix::Multiply(m_viewProj, m_view, m_proj);
+				CalculateMatrices();
 			}
-
 
 			Camera(void)
 			{
@@ -96,6 +94,12 @@ namespace Apoc3D
 			~Camera(void) {}
 
 		protected:
+
+			void CalculateMatrices()
+			{
+				Matrix::Inverse(m_invView, m_view);
+				Matrix::Multiply(m_viewProj, m_view, m_proj);
+			}
 
 			Matrix m_view;
 			Matrix m_invView;
