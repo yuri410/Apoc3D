@@ -134,6 +134,8 @@ namespace Apoc3D
 				 */
 				virtual bool SupportsInstancing();
 
+				void Reload(const ResourceLocation* rl);
+
 				int FindParameterIndex(const String& name);
 
 				template<typename T>

@@ -103,18 +103,56 @@ namespace Apoc3D
 			template void AutomaticEffect::SetParameterValue<const float>(int index, const float* value, int count);
 
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
-				: m_vertexShader(0), m_pixelShader(0), m_device(device), m_supportsInstancing(false), 
+				: m_vertexShader(nullptr), m_pixelShader(nullptr), m_device(device), m_supportsInstancing(false), 
 				m_unifiedTime(0), m_lastTime(0)
 			{
+				Reload(rl);
+
+				ObjectFactory* objFac = m_device->getObjectFactory();
+				m_texture = objFac->CreateTexture(1,1,1, TU_Static, FMT_A8R8G8B8);
+				DataRectangle rect = m_texture->Lock(0, LOCK_None);
+				*(uint*)rect.getDataPointer() = 0xffffffff;
+				m_texture->Unlock(0);
+			}
+
+			AutomaticEffect::~AutomaticEffect()
+			{
+				if (m_vertexShader)
+					delete m_vertexShader;
+				if (m_pixelShader)
+					delete m_pixelShader;
+				delete m_texture;
+			}
+
+			bool AutomaticEffect::SupportsInstancing()
+			{
+				return m_supportsInstancing;
+			}
+
+			void AutomaticEffect::Reload(const ResourceLocation* rl)
+			{
+				if (m_vertexShader)
+				{
+					delete m_vertexShader;
+					m_vertexShader = nullptr;
+				}
+				if (m_pixelShader)
+				{
+					delete m_pixelShader;
+					m_pixelShader = nullptr; 
+				}
+				m_parameters.Clear();
+				m_supportsInstancing = false;
+				m_isUnsupported = false;
+
 				EffectData data;
 				data.Load(rl);
 				m_name = data.Name;
 				assert(!data.IsCFX);
 
-				Capabilities* caps = device->getCapabilities();
+				Capabilities* caps = m_device->getCapabilities();
 
 				const EffectProfileData* profileSelected = nullptr;
-
 				for (int i=data.ProfileCount-1; i>=0; i--)
 				{
 					const EffectProfileData& pd = data.Profiles[i];
@@ -131,42 +169,21 @@ namespace Apoc3D
 					profileSelected = &pd;
 				}
 
-				ObjectFactory* objFac = device->getObjectFactory();
+				ObjectFactory* objFac = m_device->getObjectFactory();
 				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(profileSelected->VSCode));
 				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(profileSelected->PSCode));
 
 				m_parameters =  profileSelected->Parameters;
-				
-				m_texture = objFac->CreateTexture(1,1,1, TU_Static, FMT_A8R8G8B8);
-				DataRectangle rect = m_texture->Lock(0, LOCK_None);
-				*(uint*)rect.getDataPointer() = 0xffffffff;
-				m_texture->Unlock(0);
 
 				// instancing check
+				for (int i=0;i<m_parameters.getCount();i++)
 				{
-					for (int i=0;i<m_parameters.getCount();i++)
+					if (m_parameters[i].Usage == EPUSAGE_Trans_InstanceWorlds)
 					{
-						if (m_parameters[i].Usage == EPUSAGE_Trans_InstanceWorlds)
-						{
-							m_supportsInstancing = true;
-							break;
-						}
+						m_supportsInstancing = true;
+						break;
 					}
 				}
-			}
-
-			AutomaticEffect::~AutomaticEffect()
-			{
-				if (m_vertexShader)
-					delete m_vertexShader;
-				if (m_pixelShader)
-					delete m_pixelShader;
-				delete m_texture;
-			}
-
-			bool AutomaticEffect::SupportsInstancing()
-			{
-				return m_supportsInstancing;
 			}
 
 			void AutomaticEffect::Update(const GameTime* const time)
