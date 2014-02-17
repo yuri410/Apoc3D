@@ -50,14 +50,17 @@ namespace Apoc3D
 			class APAPI RenderTarget
 			{
 			protected:
-				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, uint32 multiSampleCount);
-				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, uint32 multiSampleCount);
+				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, const String& multiSampleMode);
+				RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, const String& multiSampleMode);
+
 			public:
 				virtual ~RenderTarget();
 				
 				void SetPercentageLock(float wp, float hp);
 
-				uint32 getMultiSampleCount() const { return m_sampleCount; }
+				bool isMultiSampled() const { return m_isMultisampled; }
+				const String& getMultisampleMode() const { return m_multisampleMode; }
+
 				int32 getWidth() const { return m_width; }
 				int32 getHeight() const { return m_height; }
 
@@ -67,6 +70,7 @@ namespace Apoc3D
 				virtual Texture* GetColorTexture() = 0;
 				virtual DepthBuffer* GetDepthBuffer() = 0;
 
+				static bool CheckMultisampleModeStringNone(const String& aamode);
 			protected:
 				RenderDevice* m_device;
 
@@ -79,8 +83,8 @@ namespace Apoc3D
 			private:
 				DepthFormat m_depthFormat;
 				PixelFormat m_pixelFormat;
-				uint32 m_sampleCount;
-
+				bool m_isMultisampled;
+				String m_multisampleMode;
 			};
 		}
 

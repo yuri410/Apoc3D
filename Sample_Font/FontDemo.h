@@ -61,6 +61,7 @@ namespace SampleFont
 	private:
 		Sprite* m_sprite;
 
+		int32 m_currentPressure;
 	};
 }
 #endif

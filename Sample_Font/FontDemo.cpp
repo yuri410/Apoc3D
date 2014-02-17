@@ -46,24 +46,15 @@ using namespace Apoc3D::Utility;
 
 namespace SampleFont
 {
+	const int32 MaxPressure = 10;
 	const String mlText = 
-		L"Language Learning and Teaching\n"
-		L"外国語の学習と教授\n"
-		L"Изучение и обучение иностранных языков\n"
-		L"Tere Daaheng Aneng Karimah\n"
-		L"語文教學・语文教学\n"
-		L"Enseñanza y estudio de idiomas\n"
-		L"Изучаване и Преподаване на Чужди Езици\n"
-		L"Lus kawm thaib qhia\n"
-		L"Ngôn Ngữ, Sự học,\n"
-		L"L'enseignement et l'étude des langues\n"
-		L"Nauka języków obcych\n"
-		L"\n"
-		L"あいうえおかがきぎくぐけこさざしじすせそただちぢつてとなにぬねのはばぱひふへほまみむ\n"
-		L"안녕하세요(This font does not support Korean)";
+		L"This font supports multiple language.\n"
+		L"这种字体支持多国语言\n"
+		L"このフォントは、複数の言語をサポートしています\n"
+		L"этот шрифт поддерживает несколько языков";
 
 	FontDemo::FontDemo(RenderWindow* wnd)
-		: Game(wnd)
+		: Game(wnd), m_currentPressure(5)
 	{
 	}
 
@@ -94,8 +85,10 @@ namespace SampleFont
 
 			fl = FileSystem::getSingleton().Locate(L"uming22.fnt", FileLocateRule::Default);
 			FontManager::getSingleton().LoadFont(m_device, L"uming22", fl);
-		}
 
+			FontManager::getSingleton().ReportComplexFonts();
+		}
+		
 		m_console->Minimize();
 
 	}
@@ -108,6 +101,21 @@ namespace SampleFont
 	void FontDemo::Update(const GameTime* const time)
 	{
 		Game::Update(time);
+
+		Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();
+
+		if (kb->IsKeyDown(KEY_EQUALS))
+		{
+			m_currentPressure++;
+			if (m_currentPressure>MaxPressure)
+				m_currentPressure = MaxPressure;
+		}
+		if (kb->IsKeyDown(KEY_MINUS))
+		{
+			m_currentPressure--;
+			if (m_currentPressure<1)
+				m_currentPressure = 1;
+		}
 	}
 	void FontDemo::Draw(const GameTime* const time)
 	{
@@ -117,10 +125,44 @@ namespace SampleFont
 		m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_RestoreState));
 		
 		Font* uming14 = FontManager::getSingleton().getFont(L"uming14");
-		Font* uming22 = FontManager::getSingleton().getFont(L"uming22");
+		//Font* uming22 = FontManager::getSingleton().getFont(L"uming22");
 
-		uming22->DrawString(m_sprite, mlText, 0,0, m_window->getClientSize().Width, CV_White);
+		uming14->DrawString(m_sprite, mlText, 5,5, m_window->getClientSize().Width, CV_White);
 
+		
+		Apoc3D::Math::Rectangle dstRect(getWindow()->getClientSize().Width - 512,30,512, 512);
+		uming14->DrawString(m_sprite, L"Glyph Cache Map(dynamic):", Point(dstRect.X, 10), CV_White);
+		m_sprite->Draw(uming14->getInternalTexture(), dstRect, nullptr, CV_White);
+		
+		uming14->DrawString(m_sprite, L"Random Text:", Point(5, 150), CV_White);
+
+		int unicodeStep = (0x6d00 - 0x673A) / 5;
+		int unicodeBegin = 0x673a;
+		int unicodeEnd = 0x673a + unicodeStep * m_currentPressure;
+
+		for (int i=0;i<24;i++)
+		{
+			wchar_t randomText[32];
+			memset(randomText, 0, sizeof(randomText));
+
+			for (int j=0;j<31;j++)
+			{
+				randomText[j] = unicodeBegin + rand() % (unicodeEnd-unicodeBegin);
+			}
+
+			uming14->DrawString(m_sprite, randomText, Point(5, 150 + uming14->getLineHeightInt() * (i+1)), CV_White);
+		}
+
+		String helperText[3] =
+		{
+			L"Current Pressure: " + StringUtils::ToString(unicodeEnd - unicodeBegin) + L" glyphs",
+			L" [-] : Decrease Pressure ",
+			L" [+] : Increase Pressure "
+		};
+		for (int i=0;i<3;i++)
+		{
+			uming14->DrawString(m_sprite, helperText[i], Point(dstRect.X, dstRect.getBottom() + 15 + i*uming14->getLineHeightInt()), CV_White);
+		}
 
 
 		Font* english = FontManager::getSingleton().getFont(L"english");

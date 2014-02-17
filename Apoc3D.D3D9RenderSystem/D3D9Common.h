@@ -118,6 +118,8 @@ namespace Apoc3D
 			class D3D9PixelShader;
 
 			class VolatileResource;
+
+			struct DeviceSettings;
 		}
 	}
 }

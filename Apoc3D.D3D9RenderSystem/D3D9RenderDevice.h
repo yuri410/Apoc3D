@@ -83,6 +83,7 @@ namespace Apoc3D
 
 				virtual Capabilities* const getCapabilities() const;
 
+				D3D9Capabilities* getD3D9Capabilities() const { return m_caps; }
 				NativeD3DStateManager* getNativeStateManager() const { return m_nativeState; }
 			private:
 				friend class VolatileResource;
@@ -117,19 +118,38 @@ namespace Apoc3D
 			class D3D9Capabilities : public Capabilities
 			{
 			public:
-				D3D9Capabilities(D3D9RenderDevice* device)
-					: m_device(device)
+				struct AAProfile
 				{
+					String Name;
 
-				}
+					int32 Sorter;
 
-				virtual bool SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat);
+					D3DMULTISAMPLE_TYPE SampleType;
+					DWORD SampleQuality;
+				};
+
+				D3D9Capabilities(D3D9RenderDevice* device);
+				~D3D9Capabilities();
+
+				virtual bool SupportsRenderTarget(const String& multisampleMode, PixelFormat pixFormat, DepthFormat depthFormat);
 				virtual bool SupportsPixelShader(const char* implType, int majorVer, int minorVer);
 				virtual bool SupportsVertexShader(const char* implType, int majorVer, int minorVer);
 
+				virtual void EnumerateRenderTargetMultisampleModes(PixelFormat pixFormat, DepthFormat depthFormat, Apoc3D::Collections::List<String>& modes);
+				virtual const String* FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat);
+
 				virtual int GetMRTCount();
+
+				const AAProfile* LookupAAProfile(const String& name, PixelFormat pixFormat, DepthFormat depthFormat);
 			private:
+				typedef HashMap<String, AAProfile> ProfileTable;
+				typedef HashMap<uint32, ProfileTable*> ProfileCacheTable;
+
+				ProfileTable* EnsureCurrentAAModes(PixelFormat pixFormat, DepthFormat depthFormat);
+				ProfileTable* GenerateSupportedAAModes(const DeviceSettings* setting, PixelFormat pixFormat, DepthFormat depthFormat);
+
 				D3D9RenderDevice* m_device;
+				ProfileCacheTable m_aaProfileLookup;
 			};
 		}
 	}

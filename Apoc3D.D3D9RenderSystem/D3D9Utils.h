@@ -139,6 +139,7 @@ namespace Apoc3D
 				static VertexElementFormat ConvertBackVertexElementFormat(D3DDECLTYPE type);
 				static VertexElementUsage ConvertBackVertexElementUsage(D3DDECLUSAGE usage);
 
+
 				static D3DMULTISAMPLE_TYPE ConvertMultisample(uint32 sampleCount);
 				static uint32 ConvertBackMultiSample(D3DMULTISAMPLE_TYPE type);
 
@@ -177,6 +178,7 @@ namespace Apoc3D
 				static D3DCUBEMAP_FACES ConvertCubeMapFace(CubeMapFace face);
 
 				static D3DTEXTUREADDRESS ConvertTextureAddress(TextureAddressMode ta);
+			
 			};
 		}
 	}

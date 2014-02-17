@@ -167,9 +167,12 @@ namespace Apoc3D
 			class APAPI Capabilities
 			{
 			public:
-				virtual bool SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat) = 0;
+				virtual bool SupportsRenderTarget(const String& multisampleMode, PixelFormat pixFormat, DepthFormat depthFormat) = 0;
 				virtual bool SupportsPixelShader(const char* implType, int majorVer, int minorVer) = 0;
 				virtual bool SupportsVertexShader(const char* implType, int majorVer, int minorVer) = 0;
+
+				virtual void EnumerateRenderTargetMultisampleModes(PixelFormat pixFormat, DepthFormat depthFormat, Apoc3D::Collections::List<String>& modes) = 0;
+				virtual const String* FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat) = 0;
 
 				virtual int GetMRTCount() = 0;
 			};
@@ -233,8 +236,7 @@ namespace Apoc3D
 
 				/**
 				 *  Creates a RenderTarget with a depth buffer and a color buffer. 
-				 *  If sampleCount is more than 0, the render target will be multisampled. 
-				 *  A value of 1 will take as a 2 sample RT.
+				 *  For a list of supported multisampleModes, use Capabilities::EnumerateRenderTargetMultisampleModes
 				 *
 				 * Notice:
 				 *  When creating manually in client code, do check the device capabilities.
@@ -242,8 +244,8 @@ namespace Apoc3D
 				 *  When using render targets in scene-render scripts, do not worry about checking the capabilities,
 				 *  as the script will auto fall back if not supported.
 				 */
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, uint sampleCount) = 0;
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, uint sampleCount) = 0;
+				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode) = 0;
+				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, const String& multisampleMode) = 0;
 
 
 				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage) = 0;

@@ -115,9 +115,14 @@ namespace Apoc3D
 
 							uint sampleCount = m_vars[i]->Value[6];
 
-							if (!m_renderDevice->getCapabilities()->SupportsRenderTarget(sampleCount, fmt, depFmt))
+							if (sampleCount != 0)
 							{
-								m_isAvailable = false;
+								const String* profile = m_renderDevice->getCapabilities()->FindClosesetMultisampleMode(sampleCount, fmt, depFmt);
+
+								if (profile == nullptr || !m_renderDevice->getCapabilities()->SupportsRenderTarget(*profile, fmt, depFmt))
+								{
+									m_isAvailable = false;
+								}
 							}
 						}
 						break;
@@ -172,17 +177,35 @@ namespace Apoc3D
 							PixelFormat fmt = static_cast<PixelFormat>(m_vars[i]->Value[4]);
 							DepthFormat depFmt = static_cast<DepthFormat>(m_vars[i]->Value[5]);
 
-							uint sampleCount = m_vars[i]->Value[6];
+							uint32 sampleCount = m_vars[i]->Value[6];
 
 							RenderTarget* rt;
-							if (depFmt == DEPFMT_Count)
+							if (sampleCount != 0)
 							{
-								rt = factory->CreateRenderTarget(width, height, fmt, sampleCount);
+								const String* profile = m_renderDevice->getCapabilities()->FindClosesetMultisampleMode(sampleCount, fmt, depFmt);
+								assert(profile);
+
+								if (depFmt == DEPFMT_Count)
+								{
+									rt = factory->CreateRenderTarget(width, height, fmt, *profile);
+								}
+								else
+								{
+									rt = factory->CreateRenderTarget(width, height, fmt, depFmt, *profile);
+								}
 							}
 							else
 							{
-								rt = factory->CreateRenderTarget(width, height, fmt, depFmt, sampleCount);
+								if (depFmt == DEPFMT_Count)
+								{
+									rt = factory->CreateRenderTarget(width, height, fmt, L"");
+								}
+								else
+								{
+									rt = factory->CreateRenderTarget(width, height, fmt, depFmt, L"");
+								}
 							}
+
 							if (usePercentageLock)
 							{
 								rt->SetPercentageLock(wscale, hscale);

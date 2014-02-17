@@ -139,6 +139,8 @@ namespace SampleTerrain
 		
 		LoadUI();
 
+		//List<String> modes;
+		//m_device->getCapabilities()->EnumerateRenderTargetMultisampleModes(FMT_A8R8G8B8, m_device->GetDefaultDepthStencilFormat(), modes);
 	}
 	void TerrainDemo::LoadScene()
 	{

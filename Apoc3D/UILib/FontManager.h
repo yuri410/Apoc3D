@@ -117,9 +117,11 @@ namespace Apoc3D
 			float getLineBackgroundHeight() const { return m_height + m_lineGap + m_descender; }
 			float getTextBackgroundHeight(int lineCount) const { return m_descender + (m_height+m_lineGap) * lineCount; }
 
+			Texture* getInternalTexture() const { return m_font; }
+
 			static int qsort_comparer(const void* a, const void* b);
 		private:
-			static const int MaxFreq = 5;
+			static const int MaxFreq = 10;
 			struct Character
 			{
 				wchar_t _Character;
@@ -224,7 +226,9 @@ namespace Apoc3D
 			 */
 			int* m_lasttime_lineBucketsFreqClassificationCount;
 
+			Random* m_bucketSearchRandomizer;
 			bool m_isUsingCaching;
+			bool m_usedInFrame;
 
 			void LoadGlyphData(BinaryReader* br, Glyph& glyph);
 			void EnsureGlyph(Glyph& glyph);

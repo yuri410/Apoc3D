@@ -24,6 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RenderTarget.h"
 #include "RenderDevice.h"
 #include "apoc3d/Core/Logging.h"
+#include "apoc3d/Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -31,24 +34,35 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, uint32 multiSampleCount)
+			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, const String& multiSampleMode)
 				: m_device(renderDevice), m_width(width), m_height(height), 
-				m_pixelFormat(colorFormat), m_depthFormat(depthFormat), m_sampleCount(multiSampleCount), 
+				m_pixelFormat(colorFormat), m_depthFormat(depthFormat), m_multisampleMode(multiSampleMode), 
 				m_hasPercentangeLock(false)
 			{
-
+				m_isMultisampled = !CheckMultisampleModeStringNone(m_multisampleMode);
 			}
 
-			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, uint32 multiSampleCount)
+			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, const String& multiSampleMode)
 				: m_device(renderDevice), m_width(width), m_height(height), 
-				m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count), m_sampleCount(multiSampleCount), 
+				m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count), m_multisampleMode(multiSampleMode), 
 				m_hasPercentangeLock(false)
 			{ 
+				m_isMultisampled = !CheckMultisampleModeStringNone(m_multisampleMode);
 			}
 
 			RenderTarget::~RenderTarget()
 			{
 
+			}
+
+			bool RenderTarget::CheckMultisampleModeStringNone(const String& aamode)
+			{
+				if (aamode.empty())
+					return true;
+
+				String c = aamode;
+				StringUtils::ToLowerCase(c);
+				return c == L"none";
 			}
 
 			void RenderTarget::SetPercentageLock(float wp, float hp)

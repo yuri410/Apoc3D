@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <Root>
-  <Proc00 Script="ModelViewSceneScript.xml" />
+  <Proc01 Script="ModelViewSceneScript1.xml" />
+  <Proc00 Script="ModelViewSceneScript0.xml" />
 </Root>

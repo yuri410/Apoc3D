@@ -60,8 +60,8 @@ namespace Apoc3D
 				
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format);
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat);
-				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, uint32 sampleCount, PixelFormat format);
-				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, uint32 sampleCount, PixelFormat format, DepthFormat depthFormat);
+				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, const String& multisampleMode, PixelFormat format);
+				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, const String& multisampleMode, PixelFormat format, DepthFormat depthFormat);
 				
 
 				~D3D9RenderTarget();

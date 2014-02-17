@@ -502,7 +502,7 @@ namespace Apoc3D
 			{
 				D3DSURFACE_DESC desc;
 				m_defaultRT->GetDesc(&desc);
-
+				
 				return D3D9Utils::ConvertBackPixelFormat(desc.Format);
 			}
 			DepthFormat D3D9RenderDevice::GetDefaultDepthStencilFormat()
@@ -514,51 +514,74 @@ namespace Apoc3D
 			}
 
 			/************************************************************************/
-			/*                                                                      */
+			/*  D3D9Capabilities                                                    */
 			/************************************************************************/
 
-			bool D3D9Capabilities::SupportsRenderTarget(uint multisampleCount, PixelFormat pixFormat, DepthFormat depthFormat)
+			const uint32 packAAProfileTableHash(uint32 adapterOrd, PixelFormat pixFormat, DepthFormat depthFormat)
 			{
-				GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
-				IDirect3D9* d3d9 = devMgr->getDirect3D();
-				const DeviceSettings* setting = devMgr->getCurrentSetting();
+				return (adapterOrd << 16) | ((uint32)pixFormat << 8) | (uint32)depthFormat;
+			}
 
-				if (multisampleCount)
+			D3D9Capabilities::D3D9Capabilities(D3D9RenderDevice* device)
+				: m_device(device)
+			{
+
+			}
+			D3D9Capabilities::~D3D9Capabilities()
+			{
+				for (ProfileCacheTable::Enumerator e = m_aaProfileLookup.GetEnumerator();e.MoveNext();)
 				{
-					if (depthFormat == DEPFMT_Count)
-					{
-						DWORD quality;
-						HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
-							D3D9Utils::ConvertPixelFormat(pixFormat),
-							setting->D3D9.PresentParameters.Windowed, 
-							D3D9Utils::ConvertMultisample(multisampleCount),
-							&quality);
+					ProfileTable* table = *e.getCurrentValue();
+					delete table;
+				}
+				m_aaProfileLookup.Clear();
+			}
 
-						return hr == S_OK;
-					}
-					else
-					{
-						DWORD quality;
-						HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
-							D3D9Utils::ConvertPixelFormat(pixFormat),
-							setting->D3D9.PresentParameters.Windowed, 
-							D3D9Utils::ConvertMultisample(multisampleCount),
-							&quality);
+			bool D3D9Capabilities::SupportsRenderTarget(const String& multisampleMode, PixelFormat pixFormat, DepthFormat depthFormat)
+			{
+				if (!RenderTarget::CheckMultisampleModeStringNone(multisampleMode))
+				{
+					return !!LookupAAProfile(multisampleMode, pixFormat, depthFormat);
 
-						if (FAILED(hr))
-							return false;
-						
-						hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
-							D3D9Utils::ConvertDepthFormat(depthFormat),
-							setting->D3D9.PresentParameters.Windowed, 
-							D3D9Utils::ConvertMultisample(multisampleCount),
-							&quality);
-
-						return hr == S_OK;
-					}
+					//if (depthFormat == DEPFMT_Count)
+					//{
+					//
+					//	DWORD quality;
+					//	HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
+					//		D3D9Utils::ConvertPixelFormat(pixFormat),
+					//		setting->D3D9.PresentParameters.Windowed, 
+					//		D3D9Utils::ConvertMultisample(multisampleCount),
+					//		&quality);
+					//
+					//	return hr == S_OK;
+					//}
+					//else
+					//{
+					//	DWORD quality;
+					//	HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
+					//		D3D9Utils::ConvertPixelFormat(pixFormat),
+					//		setting->D3D9.PresentParameters.Windowed, 
+					//		D3D9Utils::ConvertMultisample(multisampleCount),
+					//		&quality);
+					//
+					//	if (FAILED(hr))
+					//		return false;
+					//	
+					//	hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
+					//		D3D9Utils::ConvertDepthFormat(depthFormat),
+					//		setting->D3D9.PresentParameters.Windowed, 
+					//		D3D9Utils::ConvertMultisample(multisampleCount),
+					//		&quality);
+					//
+					//	return hr == S_OK;
+					//}
 				}
 				else
 				{
+					GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
+					IDirect3D9* d3d9 = devMgr->getDirect3D();
+					const DeviceSettings* setting = devMgr->getCurrentSetting();
+
 					if (depthFormat == DEPFMT_Count)
 					{
 						HRESULT hr = d3d9->CheckDeviceFormat(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType, setting->D3D9.AdapterFormat, 
@@ -610,6 +633,261 @@ namespace Apoc3D
 				D3DCAPS9 caps;
 				m_device->getDevice()->GetDeviceCaps(&caps);
 				return caps.NumSimultaneousRTs;
+			}
+
+			int32 AAProfileComparison(const D3D9Capabilities::AAProfile& a, const D3D9Capabilities::AAProfile& b)
+			{
+				if (a.Sorter < b.Sorter)
+					return -1;
+				if (a.Sorter > b.Sorter)
+					return 1;
+				return 0;
+			}
+
+			void D3D9Capabilities::EnumerateRenderTargetMultisampleModes(PixelFormat pixFormat, DepthFormat depthFormat, Apoc3D::Collections::List<String>& modes)
+			{
+				ProfileTable* profileTable = EnsureCurrentAAModes(pixFormat, depthFormat);
+
+				List<AAProfile> profileListing;
+				for (ProfileTable::Enumerator e = profileTable->GetEnumerator();e.MoveNext();)
+				{
+					profileListing.Add(*e.getCurrentValue());
+				}
+				profileListing.Sort(AAProfileComparison);
+
+				for (int32 i=0;i<profileListing.getCount();i++)
+					modes.Add(profileListing[i].Name);
+			}
+			const String* D3D9Capabilities::FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat)
+			{
+				const String* closest = nullptr;
+				int32 closestD = 0x7fffffff;
+
+				ProfileTable* profileTable = EnsureCurrentAAModes(pixFormat, depthFormat);
+				for (ProfileTable::Enumerator e = profileTable->GetEnumerator();e.MoveNext();)
+				{
+					const AAProfile& ap = *e.getCurrentValue();
+					uint32 cnt = D3D9Utils::ConvertBackMultiSample(ap.SampleType);
+					int32 d = (int32)sampleCount - cnt;
+					if (d < 0) d = -d;
+					
+					if (d < closestD)
+					{
+						closest = &ap.Name;
+						closestD = d;
+					}
+				}
+				return closest;
+			}
+
+			const D3D9Capabilities::AAProfile* D3D9Capabilities::LookupAAProfile(const String& name, PixelFormat pixFormat, DepthFormat depthFormat)
+			{
+				ProfileTable* profileTable = EnsureCurrentAAModes(pixFormat, depthFormat);
+
+				return profileTable->TryGetValue(name);
+			}
+
+			D3D9Capabilities::ProfileTable* D3D9Capabilities::EnsureCurrentAAModes(PixelFormat pixFormat, DepthFormat depthFormat)
+			{
+				GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
+				const DeviceSettings* setting = devMgr->getCurrentSetting();
+
+				uint32 tableCode = packAAProfileTableHash(setting->AdapterOrdinal, pixFormat, depthFormat);
+				ProfileTable* profileTable = nullptr;
+				if (!m_aaProfileLookup.TryGetValue(tableCode, profileTable))
+				{
+					profileTable = GenerateSupportedAAModes(setting, pixFormat, depthFormat);
+					m_aaProfileLookup.Add(tableCode, profileTable);
+				}
+				return profileTable;
+			}
+			D3D9Capabilities::ProfileTable* D3D9Capabilities::GenerateSupportedAAModes(const DeviceSettings* setting, PixelFormat pixFormat, DepthFormat depthFormat)
+			{
+				GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
+				IDirect3D9* d3d9 = devMgr->getDirect3D();
+
+				D3DADAPTER_IDENTIFIER9 aid;
+				d3d9->GetAdapterIdentifier(setting->AdapterOrdinal, 0, &aid);
+				bool isNvidia = aid.VendorId == 0x10DE;
+				bool isAMD = aid.VendorId == 0x1002;
+
+				struct VenderSpecificAACombo
+				{
+					const wchar_t* name;
+					D3DMULTISAMPLE_TYPE sampleType;
+					DWORD qualityLevel;
+
+					int32 sorter;
+				};
+				static const VenderSpecificAACombo nvidiaPresets[] = 
+				{
+					{ L"8x CSAA", D3DMULTISAMPLE_4_SAMPLES, 2, 81 },
+					{ L"8xQ CSAA", D3DMULTISAMPLE_8_SAMPLES, 0, 82 },
+					{ L"16x CSAA", D3DMULTISAMPLE_4_SAMPLES, 4, 161 },
+					{ L"16xQ CSAA", D3DMULTISAMPLE_8_SAMPLES, 2, 162 },
+				};
+				static const VenderSpecificAACombo amdPresets[] = 
+				{
+					{ L"2x MSAA", D3DMULTISAMPLE_NONMASKABLE, 0, 20 },
+					{ L"2f4x EQAA", D3DMULTISAMPLE_NONMASKABLE, 1, 21 },
+					{ L"4x MSAA", D3DMULTISAMPLE_NONMASKABLE, 2, 40 },
+					{ L"2f8x EQAA", D3DMULTISAMPLE_NONMASKABLE, 3, 41 },
+					{ L"4f8x EQAA", D3DMULTISAMPLE_NONMASKABLE, 4, 42 },
+					{ L"4f16x EQAA", D3DMULTISAMPLE_NONMASKABLE, 5, 43 },
+					{ L"8x MSAA", D3DMULTISAMPLE_NONMASKABLE, 6, 80 },
+					{ L"8f16x EQAA", D3DMULTISAMPLE_NONMASKABLE, 7, 81 },
+
+					{ L"2x MSAA", D3DMULTISAMPLE_NONMASKABLE, 0, 20 },
+					{ L"2x MSAA", D3DMULTISAMPLE_NONMASKABLE, 1, 20 },
+					{ L"2f4x EQAA", D3DMULTISAMPLE_NONMASKABLE, 2, 21 },
+					{ L"2f4x EQAA", D3DMULTISAMPLE_NONMASKABLE, 3, 21 },
+					{ L"2f8x EQAA", D3DMULTISAMPLE_NONMASKABLE, 4, 41 },
+
+					{ L"4x MSAA", D3DMULTISAMPLE_NONMASKABLE, 0, 40 },
+					{ L"4x MSAA", D3DMULTISAMPLE_NONMASKABLE, 1, 40 },
+					{ L"4f8x EQAA", D3DMULTISAMPLE_NONMASKABLE, 2, 42 },
+
+					{ L"8x MSAA", D3DMULTISAMPLE_NONMASKABLE, 0, 80 },
+					{ L"8x MSAA", D3DMULTISAMPLE_NONMASKABLE, 1, 80 },
+					{ L"8f16x EQAA", D3DMULTISAMPLE_NONMASKABLE, 27, 81 },
+				};
+
+				struct  
+				{
+					const wchar_t* name;
+					D3DMULTISAMPLE_TYPE type;
+
+				} possibleMultisampleTypes[] = {
+					{ L"", D3DMULTISAMPLE_NONMASKABLE },
+					{ L"2x", D3DMULTISAMPLE_2_SAMPLES },
+					{ L"3x", D3DMULTISAMPLE_3_SAMPLES },
+					{ L"4x", D3DMULTISAMPLE_4_SAMPLES },
+					{ L"5x", D3DMULTISAMPLE_5_SAMPLES },
+					{ L"6x", D3DMULTISAMPLE_6_SAMPLES },
+					{ L"7x", D3DMULTISAMPLE_7_SAMPLES },
+					{ L"8x", D3DMULTISAMPLE_8_SAMPLES },
+					{ L"9x", D3DMULTISAMPLE_9_SAMPLES },
+					{ L"10x", D3DMULTISAMPLE_10_SAMPLES },
+					{ L"11x", D3DMULTISAMPLE_11_SAMPLES },
+					{ L"12x", D3DMULTISAMPLE_12_SAMPLES },
+					{ L"13x", D3DMULTISAMPLE_13_SAMPLES },
+					{ L"14x", D3DMULTISAMPLE_14_SAMPLES },
+					{ L"15x", D3DMULTISAMPLE_15_SAMPLES },
+					{ L"16x", D3DMULTISAMPLE_16_SAMPLES }
+				};
+
+				ProfileTable* profiles = new ProfileTable();
+				for (size_t i=0;i<ARRAYSIZE(possibleMultisampleTypes);i++)
+				{
+					const D3DMULTISAMPLE_TYPE& type = possibleMultisampleTypes[i].type;
+					const wchar_t* name = possibleMultisampleTypes[i].name;
+
+					bool supported = false;
+					DWORD qualityCount;
+					if (depthFormat == DEPFMT_Count)
+					{
+						HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->AdapterOrdinal, setting->DeviceType, 
+							D3D9Utils::ConvertPixelFormat(pixFormat), setting->Windowed, type, &qualityCount);
+						supported = SUCCEEDED(hr);
+					}
+					else
+					{
+						DWORD quality;
+						DWORD quality2;
+
+						HRESULT hr1 = d3d9->CheckDeviceMultiSampleType(setting->AdapterOrdinal, setting->DeviceType, 
+							D3D9Utils::ConvertPixelFormat(pixFormat), setting->Windowed, type, &quality);
+						HRESULT hr2 = d3d9->CheckDeviceMultiSampleType(setting->AdapterOrdinal, setting->DeviceType, 
+							D3D9Utils::ConvertDepthFormat(depthFormat), setting->Windowed, type, &quality2);
+
+						if (SUCCEEDED(hr1) && SUCCEEDED(hr2) && quality2 == quality && quality > 0)
+						{
+							supported = true;
+							qualityCount = quality;
+						}
+					}
+
+
+					if (supported && qualityCount > 0)
+					{
+						bool isSpecial = false;
+						DWORD maxSpecialAAQualityLevel = 0;
+
+						const VenderSpecificAACombo* venderPreset = nullptr;
+						int32 venderPresetCount = 0;
+
+						if (isNvidia)
+						{
+							venderPreset = nvidiaPresets;
+							venderPresetCount = ARRAYSIZE(nvidiaPresets);
+						}
+						if (isAMD)
+						{
+							venderPreset = amdPresets;
+							venderPresetCount = ARRAYSIZE(amdPresets);
+						}
+
+						for (int32 j=0;j<venderPresetCount;j++)
+						{
+							const VenderSpecificAACombo& aac = venderPreset[j];
+							if (aac.sampleType == type && aac.qualityLevel < qualityCount)
+							{
+								AAProfile p;
+								p.Name = aac.name;
+								p.SampleQuality = aac.qualityLevel;
+								p.SampleType = aac.sampleType;
+								p.Sorter = aac.sorter;
+
+								if (!profiles->Contains(p.Name))
+								{
+									profiles->Add(p.Name, p);
+								}
+
+								//modes.Add(aac.name);
+								isSpecial = true;
+								if (aac.qualityLevel > maxSpecialAAQualityLevel)
+									maxSpecialAAQualityLevel = aac.qualityLevel;
+							}
+						}
+
+
+						if (isSpecial && maxSpecialAAQualityLevel + 1 == qualityCount)
+						{
+
+						}
+						else
+						{
+							if (type == D3DMULTISAMPLE_NONMASKABLE)
+							{
+								AAProfile p;
+								p.Name = L"Default Max*";
+								p.SampleQuality = qualityCount-1;
+								p.SampleType = type;
+								p.Sorter = 65535;
+
+								if (!profiles->Contains(p.Name))
+								{
+									profiles->Add(p.Name, p);
+								}
+							}
+							else
+							{
+								AAProfile p;
+								p.Name = String(name) + L" MSAA";
+								p.SampleQuality = qualityCount-1;
+								p.SampleType = type;
+								p.Sorter = D3D9Utils::ConvertBackMultiSample(type) * 10;
+
+								if (!profiles->Contains(p.Name))
+								{
+									profiles->Add(p.Name, p);
+								}
+							}
+						}
+					}
+				}
+
+				return profiles;
 			}
 		}
 	}

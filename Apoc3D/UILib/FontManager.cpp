@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Core/Logging.h"
+#include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::IO;
@@ -63,10 +64,13 @@ namespace Apoc3D
 		};
 
 		Font::Font(RenderDevice* device, ResourceLocation* rl)
-			: m_charTable(255, IBuiltInEqualityComparer<wchar_t>::Default), m_resource(rl), m_isUsingCaching(false),
+			: m_charTable(255, IBuiltInEqualityComparer<wchar_t>::Default), m_resource(rl), 
+			m_bucketSearchRandomizer(nullptr), m_isUsingCaching(false),m_usedInFrame(false),
 			m_hasLuminance(false), m_hasDrawOffset(false),
 			m_drawOffset(0,0)
 		{
+			m_bucketSearchRandomizer = new Random();
+
 			m_selectTextureSize = FontManager::MaxTextureSize;
 
 			ObjectFactory* fac = device->getObjectFactory();
@@ -213,6 +217,7 @@ namespace Apoc3D
 			for (int i=0;i<m_edgeCount;i++)
 			{
 				m_lineBucketsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
+				m_lasttime_lineBucketsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
 			}
 
 
@@ -307,8 +312,10 @@ namespace Apoc3D
 		{
 			delete[] m_lineBucketsFreqClassificationCount;
 			delete[] m_buckets;
-			delete m_font;
 			delete[] m_glyphList;
+			delete m_bucketSearchRandomizer;
+
+			delete m_font;
 			delete m_resource;
 		}
 
@@ -1037,17 +1044,31 @@ namespace Apoc3D
 			{
 				// copy the data to its "last-frame" buffer
 				memcpy(m_lasttime_lineBucketsFreqClassificationCount, m_lineBucketsFreqClassificationCount, sizeof(int)*m_edgeCount*MaxFreq);
-				// the reset the current to zero for statistics in the current frame
-				memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
-				// set specific freq of all buckets in each line to the zero feq
-				for (int i=0;i<m_edgeCount;i++)
-				{
-					m_lineBucketsFreqClassificationCount[i * MaxFreq + 0] = m_edgeCount;
-				}
 
 				memcpy(m_lastFreqTable, m_currentFreqTable, sizeof(int)*m_edgeCount*m_edgeCount);
-				memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
-			
+
+
+				// then reset the current to zero for statistics in the current frame
+				memset(m_lineBucketsFreqClassificationCount,0,sizeof(int)*m_edgeCount*MaxFreq);
+
+				if (m_usedInFrame)
+				{
+					//memset(m_currentFreqTable,0,sizeof(int)*m_edgeCount*m_edgeCount);
+					for (int i=0;i<m_edgeCount;i++)
+					{
+						for (int j=0;j<m_edgeCount;j++)
+						{
+							int& f = m_currentFreqTable[i*m_edgeCount+j];
+							if (f>0)
+							{
+								f--;
+								if (f<0) f = 0;
+							}
+							m_lineBucketsFreqClassificationCount[i*MaxFreq + f]++;
+						}
+					}
+					m_usedInFrame = false;
+				}
 			}
 
 		}
@@ -1113,11 +1134,16 @@ namespace Apoc3D
 			int bucketsNeeded = (int)ceil((double)glyph.Width/m_height);
 
 			bool done = false;
+
 			// find enough space for the glyph, testing from lower use time to higher use time
+			int32 startEdgeOffset = m_bucketSearchRandomizer->Next(m_edgeCount);
 			for (int freq = 0; freq<MaxFreq && !done; freq++)
 			{
-				for (int i=0;i<m_edgeCount && !done;i++)
+				for (int ii=0;ii<m_edgeCount && !done;ii++)
 				{
+					// some randomness to be at some chances finding unused glyph that is out of the range of use freq stat
+					int32 i = (startEdgeOffset + ii) % m_edgeCount;
+
 					int32 freqIdx = freq + i * MaxFreq;
 					if (m_lineBucketsFreqClassificationCount[freqIdx]>=bucketsNeeded &&
 						m_lasttime_lineBucketsFreqClassificationCount[freqIdx]>=bucketsNeeded)
@@ -1174,27 +1200,45 @@ namespace Apoc3D
 		{
 			if (m_isUsingCaching)
 			{
+				m_usedInFrame = true;
+
 				for (int i=0;i<glyph.NumberOfBucketsUsing;i++)
 				{
 					const Bucket& buk = m_buckets[glyph.StartingParentBucket+i];
 					int& freq = m_currentFreqTable[buk.BucketIndex];
 					int lineIndex = buk.BucketIndex / m_edgeCount;
-					int spFreqLineIdx = lineIndex * MaxFreq;
-					m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]--;
+					int spFreqLineIdx = lineIndex*MaxFreq;
 
-					/*if (max)
-					{
-						freq = MaxFreq -1;
-					}
-					else*/
-					{
-						freq++;
-						if (freq >= MaxFreq)
-							freq = MaxFreq-1;
-					}
+					m_lineBucketsFreqClassificationCount[freq+spFreqLineIdx]--;
 
-					m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]++;
+					freq = MaxFreq-1;
+					//freq++;
+					//if (freq >= MaxFreq)
+						//freq = MaxFreq-1;
+					m_lineBucketsFreqClassificationCount[freq+spFreqLineIdx]++;
 				}
+
+				//for (int i=0;i<glyph.NumberOfBucketsUsing;i++)
+				//{
+				//	const Bucket& buk = m_buckets[glyph.StartingParentBucket+i];
+				//	int& freq = m_currentFreqTable[buk.BucketIndex];
+				//	int lineIndex = buk.BucketIndex / m_edgeCount;
+				//	int spFreqLineIdx = lineIndex * MaxFreq;
+				//	m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]--;
+				//
+				//	/*if (max)
+				//	{
+				//		freq = MaxFreq -1;
+				//	}
+				//	else*/
+				//	{
+				//		freq++;
+				//		if (freq >= MaxFreq)
+				//			freq = MaxFreq-1;
+				//	}
+				//
+				//	m_lineBucketsFreqClassificationCount[freq + spFreqLineIdx]++;
+				//}
 			}
 		}
 		void Font::UseBuckets(Glyph* g, int i, int j, int amount)

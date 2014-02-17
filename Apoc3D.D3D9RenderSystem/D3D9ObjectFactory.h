@@ -53,9 +53,9 @@ namespace Apoc3D
 				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format);
 				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format);
 
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, uint sampleCount);
+				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt, const String& multisampleMode);
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, DepthFormat depthFmt);
-				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, uint sampleCount);
+				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt, const String& multisampleMode);
 				virtual RenderTarget* CreateRenderTarget(int width, int height, PixelFormat clrFmt);
 
 				virtual IndexBuffer* CreateIndexBuffer(IndexBufferType type, int count, BufferUsageFlags usage);

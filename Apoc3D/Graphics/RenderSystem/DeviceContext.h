@@ -96,6 +96,7 @@ namespace Apoc3D
 				bool FullScreen;
 			};
 
+
 			/**
 			 *  Represent a graphics device of a graphics API. It can create one or more RenderViews.
 			 */
