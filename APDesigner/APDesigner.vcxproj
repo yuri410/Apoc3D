@@ -137,9 +137,6 @@
     <None Include="ModelViewSceneRenderer.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="ModelViewSceneScript.xml">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="small.ico" />
     <None Include="SysShaderLib.xml" />
     <None Include="SysShaderLib\all_mod2.xml">
@@ -236,6 +233,10 @@
     <ProjectReference Include="..\Apoc3D\Apoc3d.vcxproj">
       <Project>{db9f1707-9349-4171-b670-cc5ac4ee4170}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="ModelViewSceneScript0.xml" />
+    <Xml Include="ModelViewSceneScript1.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

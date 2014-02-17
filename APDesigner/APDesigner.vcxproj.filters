@@ -22,7 +22,6 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="ModelViewSceneRenderer.xml" />
-    <None Include="ModelViewSceneScript.xml" />
     <None Include="SysShaderLib.xml" />
     <None Include="SysShaderLib\vs_trans_pn.xml" />
     <None Include="SysShaderLib\all_mod2.xml" />
@@ -246,5 +245,9 @@
     <ResourceCompile Include="APDesigner.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="ModelViewSceneScript1.xml" />
+    <Xml Include="ModelViewSceneScript0.xml" />
   </ItemGroup>
 </Project>
