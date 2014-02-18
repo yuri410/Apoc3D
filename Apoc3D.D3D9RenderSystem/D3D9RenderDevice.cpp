@@ -229,14 +229,17 @@ namespace Apoc3D
 				{
 					D3D9RenderTarget* drt = static_cast<D3D9RenderTarget*>(rt);
 					
-					dev->SetRenderTarget(index, drt->getColorSurface());
+					HRESULT hr = dev->SetRenderTarget(index, drt->getColorSurface());
+					assert(SUCCEEDED(hr));
+
 					if (drt->getDepthSurface())
 					{
 						if (index)
 						{
 							throw AP_EXCEPTION(EX_InvalidOperation, L"Render targets with a depth buffer can only be set at index 0.");
 						}
-						dev->SetDepthStencilSurface(drt->getDepthSurface());
+						hr = dev->SetDepthStencilSurface(drt->getDepthSurface());
+						assert(SUCCEEDED(hr));
 					}
 
 					m_cachedRenderTarget[index] = drt;
@@ -253,14 +256,18 @@ namespace Apoc3D
 				{
 					if (index == 0)
 					{
-						dev->SetRenderTarget(0, m_defaultRT);
-						dev->SetDepthStencilSurface(m_defaultDS);
+						HRESULT hr = dev->SetRenderTarget(0, m_defaultRT);
+						assert(SUCCEEDED(hr));
+						hr = dev->SetDepthStencilSurface(m_defaultDS);
+						assert(SUCCEEDED(hr));
 
 						m_cachedRenderTarget[0] = nullptr;
 					}
 					else
 					{
-						dev->SetRenderTarget(index, 0);
+						HRESULT hr = dev->SetRenderTarget(index, 0);
+						assert(SUCCEEDED(hr));
+
 						m_cachedRenderTarget[index] = 0;
 					}
 				}
