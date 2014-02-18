@@ -198,7 +198,7 @@ namespace Apoc3D
 					if (m_hasColor)
 					{
 						HRESULT hr = dev->CreateRenderTarget(getWidth(), getHeight(), 
-							D3D9Utils::ConvertPixelFormat(getColorFormat()), aamode->SampleType, quality - 1, FALSE, &m_colorSurface, NULL);
+							D3D9Utils::ConvertPixelFormat(getColorFormat()), aamode->SampleType, quality, FALSE, &m_colorSurface, NULL);
 						assert(SUCCEEDED(hr));
 
 						hr = dev->CreateTexture(getWidth(), getHeight(), 1, D3DUSAGE_RENDERTARGET, 
@@ -210,7 +210,7 @@ namespace Apoc3D
 					if (m_hasDepth)
 					{
 						HRESULT hr = dev->CreateDepthStencilSurface(getWidth(), getHeight(), 
-							D3D9Utils::ConvertDepthFormat(getDepthFormat()), aamode->SampleType, quality2 - 1, TRUE, &m_depthSurface, NULL);
+							D3D9Utils::ConvertDepthFormat(getDepthFormat()), aamode->SampleType, quality2, TRUE, &m_depthSurface, NULL);
 						assert(SUCCEEDED(hr));
 
 						m_depthBuffer->setD3DBuffer(m_depthSurface);
