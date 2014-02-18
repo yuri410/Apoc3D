@@ -36,9 +36,10 @@ namespace Apoc3D
 		class GaussBlurFilter
 		{
 		public:
-			GaussBlurFilter(int32 sampleCount, float blurAmount, int32 mapWidth, int32 mapHeight)
+			GaussBlurFilter(int32 sampleCount, float blurAmount, int32 mapWidth, int32 mapHeight, float kernelXScale = 1)
 				: SampleCount(sampleCount), BlurAmount(blurAmount), SampleWeights(0), SampleOffsetsX(0), SampleOffsetsY(0),
-				m_mapWidth(mapWidth), m_mapHeight(mapHeight)
+				m_mapWidth(mapWidth), m_mapHeight(mapHeight),
+				m_kernelXScale(kernelXScale)
 			{
 				ComputeFilter(1.0f / (float)mapWidth, 0, SampleWeights, SampleOffsetsX);
 				ComputeFilter(0, 1.0f / (float)mapHeight, SampleWeights, SampleOffsetsY);
@@ -64,12 +65,12 @@ namespace Apoc3D
 			const Vector4* const getSampleOffsetX() const { return SampleOffsetsX; }
 			const Vector4* const getSampleOffsetY() const { return SampleOffsetsY; }
 
-			const int32 getSampleCount() const { return SampleCount; }
+			int32 getSampleCount() const { return SampleCount; }
 			int getMapWidth() const { return m_mapWidth; }
 			int getMapHeight() const { return m_mapHeight; }
 			float getBlurAmount() const { return BlurAmount; }
 
-
+			float getKernelXScale() const { return m_kernelXScale; }
 		private:
 			float BlurAmount;
 			int32 SampleCount;
@@ -77,11 +78,14 @@ namespace Apoc3D
 			Vector4* SampleOffsetsX;
 			Vector4* SampleOffsetsY;
 
+			float m_kernelXScale;
+
 			int m_mapWidth;
 			int m_mapHeight;
 
 			float ComputeGaussian(float n) const
 			{
+				n *= m_kernelXScale;
 				float theta = BlurAmount;
 				
 				return (float)((1.0 / sqrtf(2 * Math::PI * theta)) *
