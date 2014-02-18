@@ -133,8 +133,12 @@ namespace Apoc3D
 
 			for (size_t i=0;i<val.size();i++)
 			{
+				wchar_t ch = val[i];
+				if (ch == ' ')
+					continue;
+
 				result <<=1;
-				result |= (val[i]=='1') ? 1 : 0;
+				result |= (ch=='1') ? 1 : 0;
 			}
 
 			return result;
@@ -264,8 +268,12 @@ namespace Apoc3D
 
 			for (size_t i=0;i<val.size();i++)
 			{
+				char ch = val[i];
+				if (ch == ' ')
+					continue;
+
 				result <<=1;
-				result |= (val[i]=='1') ? 1 : 0;
+				result |= (ch=='1') ? 1 : 0;
 			}
 
 			return result;
