@@ -45,6 +45,11 @@ namespace Apoc3D
 			class APAPI FPSCounter
 			{
 			public:
+				FPSCounter()
+					: m_fps(0)
+				{
+				}
+
 				float getFPS() const { return m_fps; }
 				void Step(const GameTime* const time);
 
