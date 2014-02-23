@@ -82,13 +82,41 @@ namespace Apoc3D
 					if (!StringUtils::EndsWith(msg, L"\n"))
 						msg.append(L"\n");
 
-					wcout << ( msg );
-
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 #if _DEBUG
 					OutputDebugString(msg.c_str());
 #endif
+					{
+						HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);  // Get handle to standard output
+						if (hConsole != INVALID_HANDLE_VALUE)
+						{
+							WORD conTextAtt = 0;
+							switch (lastest.Level)
+							{
+							case LOGLVL_Fatal:
+								conTextAtt = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE;
+								break;
+							case LOGLVL_Error:
+								conTextAtt = FOREGROUND_INTENSITY | FOREGROUND_RED;
+								break;
+							case LOGLVL_Warning:
+								conTextAtt = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN;
+								break;
+							case LOGLVL_Infomation:
+								conTextAtt = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+								break;
+							case LOGLVL_Default:
+								conTextAtt = FOREGROUND_INTENSITY;
+								break;
+							}
+							if (conTextAtt)
+								SetConsoleTextAttribute(hConsole, conTextAtt);
+						}
+						
+					}
 #endif
+
+					wcout << ( msg );
 				}
 			}
 
