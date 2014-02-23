@@ -363,6 +363,9 @@ namespace Apoc3D
 					m_nativeState->SetDepth(mtrl->DepthTestEnabled,
 						mtrl->DepthWriteEnabled);
 				}
+
+				D3DDevice* d3dd = getDevice();
+
 				int passCount = fx->Begin();
 				for (int p = 0; p < passCount; p++)
 				{
@@ -372,62 +375,54 @@ namespace Apoc3D
 					{
 						// here the input render operation list is guaranteed to have the same geometry data,
 						// instancing drawing is done here once the effect supports it
-						
 						const RenderOperation& rop = op[0];
 						const GeometryData* gm = rop.GeometryData;
 
+						m_primitiveCount += gm->PrimitiveCount*count;
+						m_vertexCount += gm->VertexCount*count;
+
 						if (gm->usesIndex())
 						{
-							//count = 1;
-							m_batchCount++;
-							m_primitiveCount += gm->PrimitiveCount*count;
-							m_vertexCount += gm->VertexCount*count;
-
-
 							const RenderOperation& rop = op[0];
 							const GeometryData* gm = rop.GeometryData;
 
 							VertexDeclaration* vtxDecl = static_cast<D3D9VertexDeclaration*>(gm->VertexDecl);
-							getDevice()->SetVertexDeclaration(m_instancingData->ExpandVertexDecl(vtxDecl));
+							d3dd->SetVertexDeclaration(m_instancingData->ExpandVertexDecl(vtxDecl));
 
-							
 							D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
-							getDevice()->SetIndices(dib->getD3DBuffer());
+							d3dd->SetIndices(dib->getD3DBuffer());
 
+							D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
+							
+							d3dd->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
+
+							d3dd->SetStreamSourceFreq(1, (D3DSTREAMSOURCE_INSTANCEDATA | 1U));
+							d3dd->SetStreamSource(1, m_instancingData->GetInstanceBuffer(), 0, m_instancingData->getInstanceDataSize());
+
+							uint32 lastActuallConut = 0;
 							int currentIndex = 0;
 							while (currentIndex<count)
 							{
-								uint actual = (uint)m_instancingData->Setup(op, count, currentIndex);
+								uint32 actual = (uint)m_instancingData->Setup(op, count, currentIndex);
 
 								fx->Setup(mtrl, op+currentIndex, actual);
 
-									
-								D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
-								getDevice()->SetStreamSourceFreq(0,
-									(D3DSTREAMSOURCE_INDEXEDDATA | actual));
-								getDevice()->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
+								if (lastActuallConut != actual)
+									d3dd->SetStreamSourceFreq(0, (D3DSTREAMSOURCE_INDEXEDDATA | actual));
 
-
-								getDevice()->SetStreamSourceFreq(1,
-									(D3DSTREAMSOURCE_INSTANCEDATA | 1U));
-								getDevice()->SetStreamSource(1, m_instancingData->GetInstanceBuffer(), 0, m_instancingData->getInstanceDataSize());
-
-
-
-								D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
-								getDevice()->SetIndices(dib->getD3DBuffer());
-
-								getDevice()->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
+								d3dd->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
 									gm->BaseVertex, 0,
 									gm->VertexCount, 0, 
 									gm->PrimitiveCount);
 								
 
+								m_batchCount++;
+
 								currentIndex += actual;
 							}
 
-							getDevice()->SetStreamSourceFreq(0,1);
-							getDevice()->SetStreamSourceFreq(1,1);
+							d3dd->SetStreamSourceFreq(0,1);
+							d3dd->SetStreamSourceFreq(1,1);
 						}
 
 					}
@@ -452,25 +447,25 @@ namespace Apoc3D
 							fx->Setup(mtrl, &rop, 1);
 
 							D3D9VertexBuffer* dvb = static_cast<D3D9VertexBuffer*>(gm->VertexBuffer);
-							getDevice()->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
+							d3dd->SetStreamSource(0, dvb->getD3DBuffer(), 0, gm->VertexSize);
 
-							getDevice()->SetVertexDeclaration(static_cast<D3D9VertexDeclaration*>(gm->VertexDecl)->getD3DDecl());
+							d3dd->SetVertexDeclaration(static_cast<D3D9VertexDeclaration*>(gm->VertexDecl)->getD3DDecl());
 
 							if (gm->usesIndex())
 							{
 								D3D9IndexBuffer* dib = static_cast<D3D9IndexBuffer*>(gm->IndexBuffer);
-								getDevice()->SetIndices(dib->getD3DBuffer());
+								d3dd->SetIndices(dib->getD3DBuffer());
 
-								getDevice()->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
+								d3dd->DrawIndexedPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType), 
 									gm->BaseVertex, 0,
 									gm->VertexCount, 0, 
 									gm->PrimitiveCount);
 							}
 							else
 							{
-								getDevice()->SetIndices(0);
+								d3dd->SetIndices(0);
 
-								getDevice()->DrawPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType),
+								d3dd->DrawPrimitive(D3D9Utils::ConvertPrimitiveType(gm->PrimitiveType),
 									gm->BaseVertex, gm->PrimitiveCount);
 							}
 						}
