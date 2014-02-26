@@ -395,6 +395,8 @@ namespace Apoc3D
 
 				MeshData* mesh = new MeshData();
 				mesh->LoadData(meshData);
+				
+				
 				Entities.Add(mesh);
 
 				meshData->Close();
@@ -485,6 +487,32 @@ namespace Apoc3D
 				TaggedDataReader* data = br->ReadTaggedDataBlock();
 
 				ReadData(data, id);
+
+
+#if _DEBUG
+				for (int32 k=0;k<Entities.getCount();k++)
+				{
+					MeshData* md = Entities[k];
+
+					for (int32 i=0;i<md->Materials.getMaterialCount();i++)
+					{
+						for (int32 j=0;j<md->Materials.getFrameCount(i);j++)
+						{
+							MaterialData* mtrlData = md->Materials.getMaterial(i,j);
+
+							if (mtrlData->DebugName.empty())
+							{
+								const FileLocation* fl = dynamic_cast<const FileLocation*>(rl);
+								if (fl)
+									mtrlData->DebugName = PathUtils::GetFileNameNoExt(fl->getPath()) + L"::" + md->Name;
+								else
+									mtrlData->DebugName = rl->getName() + L"::" + md->Name;
+							}
+						}
+					}
+				}
+#endif
+
 
 				data->Close();
 				delete data;

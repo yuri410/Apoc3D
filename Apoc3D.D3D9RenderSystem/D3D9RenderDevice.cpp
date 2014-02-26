@@ -212,6 +212,7 @@ namespace Apoc3D
 			void D3D9RenderDevice::EndFrame()
 			{
 				getDevice()->EndScene();
+				RenderDevice::EndFrame();
 			}
 
 			void D3D9RenderDevice::Clear(ClearFlags flags, uint color, float depth, int stencil)
@@ -312,6 +313,9 @@ namespace Apoc3D
 			{
 				if (!op || count == 0)
 					return;
+
+				if (HasBatchReportRequest)
+					RenderDevice::Render(mtrl, op, count, passSelID);
 
 				//getDevice()->SetVertexShader(0);
 				//getDevice()->SetPixelShader(0);

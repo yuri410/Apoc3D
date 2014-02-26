@@ -2,6 +2,7 @@
 
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Core/ResourceManager.h"
+#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Vfs/FileSystem.h"
@@ -33,6 +34,8 @@ namespace Apoc3D
 		void ResReloadCommand(CommandArgsConstRef args);
 		void ExecCommand(CommandArgsConstRef args);
 
+		void BatchReportCommand(CommandArgsConstRef args);
+
 		/************************************************************************/
 		/*                                                                      */
 		/************************************************************************/
@@ -49,6 +52,8 @@ namespace Apoc3D
 
 
 			RegisterCommand(CommandDescription(L"exec", 1, ExecCommand, L"Execute Script", L""));
+
+			RegisterCommand(CommandDescription(L"batchreport", 0, BatchReportCommand, L"Report Render Batch Stats", L""));
 		}
 
 		CommandInterpreter::~CommandInterpreter()
@@ -356,7 +361,10 @@ namespace Apoc3D
 			else LogManager::getSingleton().Write(LOG_CommandResponse, String(L"Script '") + args[0] + String(L"'not found."), LOGLVL_Error);
 		}
 
-
+		void BatchReportCommand(CommandArgsConstRef args)
+		{
+			Apoc3D::Graphics::RenderSystem::RenderDevice::HasBatchReportRequest = true;
+		}
 		
 	}
 }

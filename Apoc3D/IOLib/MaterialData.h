@@ -48,6 +48,10 @@ namespace Apoc3D
 		class APAPI MaterialData
 		{
 		public:
+#if _DEBUG
+			String DebugName;
+#endif
+
 			/**
 			 *  Name for retiring material reference
 			 */

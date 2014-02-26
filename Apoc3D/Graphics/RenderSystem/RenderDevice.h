@@ -48,6 +48,8 @@ namespace Apoc3D
 			class APAPI RenderDevice
 			{
 			public:
+				static bool HasBatchReportRequest;
+
 				virtual Capabilities* const getCapabilities() const = 0;
 				
 				/**
@@ -84,16 +86,11 @@ namespace Apoc3D
 				/**
 				 *  Notify the RenderDevice a new frame is began to draw.
 				 */
-				virtual void BeginFrame()
-				{
-					m_batchCount = 0;
-					m_primitiveCount = 0;
-					m_vertexCount = 0;
-				}
+				virtual void BeginFrame();
 				/**
 				 *  Notify the RenderDevice the current frame rendering is over.
 				 */
-				virtual void EndFrame() { }
+				virtual void EndFrame();
 
 				//virtual RenderTarget* getDefaultRenderTarget() = 0;
 
@@ -140,9 +137,34 @@ namespace Apoc3D
 				uint getVertexCount() const { return m_vertexCount; }
 
 			private:
+				struct BatchReportEntry
+				{
+					String DebugName;
+
+					int32 DP;
+					int32 Vertex;
+					int32 Primitive;
+
+					int32 VertexInstanced;
+					int32 PrimitiveInstanced;
+					int32 DPInstanced;
+					int32 InstancingBatch;
+
+					int32 EmptyROP;
+					int32 EmptyInstancedROP;
+
+					int32 Sorter;
+
+					BatchReportEntry();
+
+					void CalculateSorter();
+				};
+
 				String m_rdName;
 
+				Apoc3D::Collections::HashMap<void*, BatchReportEntry>* m_reportTableByMaterial;
 
+				static int32 BatchReportEntryComparison(BatchReportEntry* const& a, BatchReportEntry* const& b);
 			protected:
 				//Capabilities m_caps;
 				uint m_batchCount;
@@ -155,7 +177,8 @@ namespace Apoc3D
 				RenderDevice(const String &renderSysName)
 					: m_rdName(renderSysName), 
 					m_batchCount(0), m_primitiveCount(0), m_vertexCount(0), 
-					m_objectFactory(0), m_renderStates(0)
+					m_objectFactory(0), m_renderStates(0),
+					m_reportTableByMaterial(nullptr)
 				{
 
 				}

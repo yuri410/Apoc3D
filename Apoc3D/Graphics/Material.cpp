@@ -86,6 +86,10 @@ namespace Apoc3D
 			{
 				LoadTexture(i);
 			}
+
+#if _DEBUG
+			DebugName = m.DebugName;
+#endif
 		}
 
 		Material::~Material(void)
@@ -208,6 +212,10 @@ namespace Apoc3D
 			{
 				LoadTexture(*e.getCurrentKey());
 			}
+
+#if _DEBUG
+			DebugName = mdata.DebugName;
+#endif
 		}
 		void Material::Save(MaterialData& data)
 		{

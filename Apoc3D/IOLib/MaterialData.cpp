@@ -32,6 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Graphics/Material.h"
 
 using namespace Apoc3D::Utility;
@@ -335,6 +336,16 @@ namespace Apoc3D
 
 		void MaterialData::Load(const ResourceLocation* rl)
 		{
+#if _DEBUG
+			{
+				const FileLocation* fl = dynamic_cast<const FileLocation*>(rl);
+				if (fl)
+					DebugName = PathUtils::GetFileNameNoExt(fl->getPath());
+				else
+					DebugName = rl->getName();
+			}
+#endif
+
 			BinaryReader* br = new BinaryReader(rl->GetReadStream());
 
 			int32 id = br->ReadInt32();
@@ -378,6 +389,9 @@ namespace Apoc3D
 			Emissive(other.Emissive), Specular(other.Specular), Power(other.Power), UsePointSprite(other.UsePointSprite),
 			EffectName(other.EffectName), TextureName(other.TextureName)
 		{
+#if _DEBUG
+			DebugName = other.DebugName;
+#endif
 		}
 	}
 }

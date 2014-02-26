@@ -54,6 +54,10 @@ namespace Apoc3D
 		class APAPI Material
 		{
 		public:
+#if _DEBUG
+			String DebugName;
+#endif
+
 			String ExternalReferenceName;
 
 			bool UsePointSprite;
