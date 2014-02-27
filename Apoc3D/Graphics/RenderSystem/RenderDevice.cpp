@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Graphics/GeometryData.h"
 #include "apoc3d/Graphics/Material.h"
 #include "apoc3d/Graphics/EffectSystem/Effect.h"
+#include "apoc3d/Graphics/RenderSystem/InstancingData.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Graphics::EffectSystem;
@@ -72,7 +73,9 @@ namespace Apoc3D
 						entry->PrimitiveInstanced += gm->PrimitiveCount*count;
 						entry->VertexInstanced += gm->VertexCount*count;
 						entry->DPInstanced += count;
-						entry->InstancingBatch++;
+						entry->InstancingBatch += count / InstancingData::MaxOneTimeInstances;
+						if ((count % InstancingData::MaxOneTimeInstances) != 0)
+							entry->InstancingBatch++;
 					}
 					else
 					{
