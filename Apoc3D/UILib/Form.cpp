@@ -717,6 +717,7 @@ namespace Apoc3D
 				}
 				m_device->getRenderState()->setScissorTest(true, &rect);
 
+				bool hasOverridingControl = false;
 				int overlay = 0;
 				for (int i=0;i<m_controls->getCount();i++)
 				{
@@ -724,6 +725,7 @@ namespace Apoc3D
 					if (ctl->IsOverriding())
 					{
 						overlay = i;
+						hasOverridingControl = true;
 					}
 					if (ctl->Visible)
 					{
@@ -733,7 +735,7 @@ namespace Apoc3D
 
 				sprite->Flush();
 				m_device->getRenderState()->setScissorTest(false,0);
-				if (overlay)
+				if (hasOverridingControl)
 				{
 					m_controls->operator[](overlay)->DrawOverlay(sprite);
 				}
