@@ -961,9 +961,10 @@ namespace Apoc3D
 
 					if (x > width && !isBlankCh)
 					{
-						if (prevWordBegin+1 < (int32)result.size())
+						int32 insertPos = prevWordBegin + lineCount;
+						if (insertPos < (int32)result.size())
 						{
-							result.insert(prevWordBegin+1, 1, '\n');
+							result.insert(insertPos, 1, '\n');
 							x -= prevWordBeginAdvX;
 						}
 						else
