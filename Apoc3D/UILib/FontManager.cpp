@@ -924,6 +924,7 @@ namespace Apoc3D
 			result.reserve(text.size() + 5);
 			
 			lineCount = 1;
+			int32 lineBreakCount = 0;
 
 			if (byWord)
 			{
@@ -961,7 +962,7 @@ namespace Apoc3D
 
 					if (x > width && !isBlankCh)
 					{
-						int32 insertPos = prevWordBegin + lineCount;
+						int32 insertPos = prevWordBegin + lineBreakCount + 1;
 						if (insertPos < (int32)result.size())
 						{
 							result.insert(insertPos, 1, '\n');
@@ -973,6 +974,7 @@ namespace Apoc3D
 							x = 0;
 						}
 
+						lineBreakCount++;
 						lineCount++;
 					}
 
