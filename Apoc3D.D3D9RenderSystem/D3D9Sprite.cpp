@@ -125,7 +125,7 @@ namespace Apoc3D
 					ShaderSamplerState state = mgr->getPixelSampler(0);
 					state.MinFilter = TFLT_Linear;
 					state.MagFilter = TFLT_Linear;
-					state.MipFilter = TFLT_Linear;
+					state.MipFilter = TFLT_None;
 					state.AddressU = TA_Clamp;
 					state.AddressV = TA_Clamp;
 					state.MaxMipLevel = 0;

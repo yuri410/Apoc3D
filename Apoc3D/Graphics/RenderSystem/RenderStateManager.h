@@ -152,6 +152,15 @@ namespace Apoc3D
 				virtual void getColorWriteEnabled(int rtIndex, bool& r, bool& g, bool& b, bool& a) = 0;
 				virtual void setColorWriteEnabled(int rtIndex, bool r, bool g, bool b, bool a) = 0;
 				
+				/************************************************************************/
+				/* Samplers                                                             */
+				/************************************************************************/
+				virtual void SetVertexSampler(int samplerIndex, const ShaderSamplerState& sampler) = 0;
+				virtual void SetPixelSampler(int samplerIndex, const ShaderSamplerState& sampler) = 0;
+
+				virtual const ShaderSamplerState& getPixelSampler(int samplerIndex) const = 0;
+				virtual const ShaderSamplerState& getVertexSampler(int samplerIndex) const = 0;
+
 			};
 		}
 	}

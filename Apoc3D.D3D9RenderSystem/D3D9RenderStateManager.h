@@ -368,6 +368,15 @@ namespace Apoc3D
 				virtual void getColorWriteEnabled(int rtIndex, bool& r, bool& g, bool& b, bool& a);
 				virtual void setColorWriteEnabled(int rtIndex, bool r, bool g, bool b, bool a);
 
+				/************************************************************************/
+				/* Samplers                                                             */
+				/************************************************************************/
+
+				virtual void SetVertexSampler(int samplerIndex, const ShaderSamplerState& sampler) { m_stMgr->SetVertexSampler(samplerIndex, sampler); }
+				virtual void SetPixelSampler(int samplerIndex, const ShaderSamplerState& sampler) { m_stMgr->SetPixelSampler(samplerIndex, sampler); }
+
+				virtual const ShaderSamplerState& getPixelSampler(int samplerIndex) const { return m_stMgr->getPixelSampler(samplerIndex); }
+				virtual const ShaderSamplerState& getVertexSampler(int samplerIndex) const { return m_stMgr->getVertexSampler(samplerIndex); }
 
 			private:
 				D3D9RenderDevice* m_device;
