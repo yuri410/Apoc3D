@@ -410,55 +410,69 @@ namespace APDesigner
 			m_labels.Add(lbl);
 			sy+=20;
 
-			int btnWidth = 100;
+			int btnWidth = 80;
 			m_revertZ = new Button(Point(sx , sy),btnWidth, L"Revert Z");
 			m_revertZ->SetSkin(window->getUISkin());
 			m_revertZ->eventPress().Bind(this, &ModelDocument::RevertZ_Pressed);
-
 			sx += btnWidth+10;
+
+			btnWidth = 100;
 			m_recenterModel = new Button(Point(sx, sy),btnWidth, L"Center model");
 			m_recenterModel->SetSkin(window->getUISkin());
 			m_recenterModel->eventPress().Bind(this, &ModelDocument::RecenterModel_Pressed);
-
 			sx += btnWidth+10;
+
+			btnWidth = 80;
 			m_swapYZ = new Button(Point(sx, sy),btnWidth, L"Swap YZ");
 			m_swapYZ->SetSkin(window->getUISkin());
 			m_swapYZ->eventPress().Bind(this, &ModelDocument::RevertYZ_Pressed);
-
 			sx += btnWidth+10;
+
+			btnWidth = 100;
 			m_rotateY = new Button(Point(sx, sy),btnWidth, L"Rotation Y 90");
 			m_rotateY->SetSkin(window->getUISkin());
 			m_rotateY->eventPress().Bind(this, &ModelDocument::RotY_Pressed);
-
 			sx += btnWidth+10;
+
 			m_rotateZ = new Button(Point(sx, sy),btnWidth, L"Rotation Z 90");
 			m_rotateZ->SetSkin(window->getUISkin());
 			m_rotateZ->eventPress().Bind(this, &ModelDocument::RotZ_Pressed);
-
 			sx += btnWidth+10;
-			m_zoomIn = new Button(Point(sx, sy),40, L"+");
+
+			btnWidth = 30;
+			m_zoomIn = new Button(Point(sx, sy),btnWidth, L"+");
 			m_zoomIn->SetSkin(window->getUISkin());
 			m_zoomIn->eventPress().Bind(this, &ModelDocument::ZoomIn_Pressed);
+			sx += btnWidth+10;
 
-			sx += 50;
-			m_zoomOut = new Button(Point(sx, sy),40, L"-");
+			m_zoomOut = new Button(Point(sx, sy),btnWidth, L"-");
 			m_zoomOut->SetSkin(window->getUISkin());
 			m_zoomOut->eventPress().Bind(this, &ModelDocument::ZoomOut_Pressed);
+			sx += btnWidth+10;
 
-			sx += 50;
-			m_setSequenceImages = new Button(Point(sx, sy),180, L"Set Sequence Material");
+			btnWidth = 170;
+			m_setSequenceImages = new Button(Point(sx, sy),btnWidth, L"Set Sequence Material");
 			m_setSequenceImages->SetSkin(window->getUISkin());
 			m_setSequenceImages->eventPress().Bind(this, &ModelDocument::SetSequenceImages_Pressed);
+			sx += btnWidth+10;
 
-			sx += 190;
+			btnWidth = 80;
 			m_applyColorToAll = new Button(Point(sx, sy),btnWidth, L"Color All");
 			m_applyColorToAll->SetSkin(window->getUISkin());
 			m_applyColorToAll->eventPress().Bind(this, &ModelDocument::ApplyColorToAll_Pressed);
-
 			sx += btnWidth + 10;
-			m_applyFXToAll = new Button(Point(sx, sy),50, L"FX All");
+
+			btnWidth = 50;
+			m_applyFXToAll = new Button(Point(sx, sy),btnWidth, L"FX All");
 			m_applyFXToAll->SetSkin(window->getUISkin());
 			m_applyFXToAll->eventPress().Bind(this, &ModelDocument::ApplyFXToAll_Pressed);
+			sx += btnWidth + 10;
+
+			btnWidth = 80;
+			m_autoTex = new Button(Point(sx, sy),btnWidth, L"Auto Tex");
+			m_autoTex->SetSkin(window->getUISkin());
+			m_autoTex->eventPress().Bind(this, &ModelDocument::AutoTex_Pressed);
+			sx += btnWidth + 10;
 
 		}
 
@@ -554,6 +568,7 @@ namespace APDesigner
 		delete m_setSequenceImages;
 		delete m_applyColorToAll;
 		delete m_applyFXToAll;
+		delete m_autoTex;
 		delete m_passViewSelect;
 	}
 	
@@ -658,6 +673,8 @@ namespace APDesigner
 		getDocumentForm()->getControls().Add(m_setSequenceImages);
 		getDocumentForm()->getControls().Add(m_applyColorToAll);
 		getDocumentForm()->getControls().Add(m_applyFXToAll);
+		getDocumentForm()->getControls().Add(m_autoTex);
+
 		getDocumentForm()->getControls().Add(m_passViewSelect);
 		{
 			getDocumentForm()->getControls().Add(m_cbUseRef);
@@ -1535,7 +1552,7 @@ namespace APDesigner
 				{
 					Material* mtrl = mtrls->getMaterial(j,k);
 
-					uint64 passFlags = 0;
+					//uint64 passFlags = 0;
 					for (int p=0;p<MaxScenePass;p++)
 					{
 						mtrl->setPassEffectName(p, currentMtrl->getPassEffectName(p));
@@ -1547,6 +1564,41 @@ namespace APDesigner
 			}
 		}
 	}
+	void ModelDocument::AutoTex_Pressed(Control* ctrl)
+	{
+		const FastList<Mesh*> ents = m_modelSData->getEntities();
+
+		for (int i=0;i<ents.getCount();i++)
+		{
+			MeshMaterialSet<Material*>* mtrls = ents[i]->getMaterials();
+
+			for (int32 j=0;j<mtrls->getMaterialCount();j++)
+			{
+				for (int32 k=0;k<mtrls->getFrameCount(j);k++)
+				{
+					Material* mtrl = mtrls->getMaterial(j,k);
+
+					bool processed = false;
+					for (int p=0;p<MaxTextures;p++)
+					{
+						const String& tn = mtrl->getTextureName(p);
+						if (tn.size() && tn.find('.', 0) != String::npos)
+						{
+							String newName = PathUtils::GetFileNameNoExt(tn);
+							newName.append(L".tex");
+
+							mtrl->setTextureName(p, newName);
+							processed = true;
+						}
+					}
+
+					if (processed)
+						mtrl->Reload();
+				}
+			}
+		}
+	}
+
 	void ModelDocument::PassViewSelect_SelectionChanged(Control* ctrl)
 	{
 		SceneProcedure* sp = m_sceneRenderer->getSelectedProc();

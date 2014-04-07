@@ -118,6 +118,7 @@ namespace APDesigner
 		Button* m_setSequenceImages;
 		Button* m_applyColorToAll;
 		Button* m_applyFXToAll;
+		Button* m_autoTex;
 
 		ComboBox* m_cbMesh;
 		ComboBox* m_cbMeshPart;
@@ -200,6 +201,7 @@ namespace APDesigner
 		void SetSequenceImages_Pressed(Control* ctrl);
 		void ApplyColorToAll_Pressed(Control* ctrl);
 		void ApplyFXToAll_Pressed(Control* ctrl);
+		void AutoTex_Pressed(Control* ctrl);
 
 		void PassViewSelect_SelectionChanged(Control* ctrl);
 
