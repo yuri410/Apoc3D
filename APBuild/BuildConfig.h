@@ -60,7 +60,7 @@ namespace APBuild
 	{
 		TDCT_None,
 		TDCT_RLE,
-		TDCT_Auto
+		TDCT_LZ4
 	};
 	struct TextureBuildConfig 
 	{

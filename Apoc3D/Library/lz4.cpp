@@ -31,6 +31,9 @@
    - LZ4 public forum : https://groups.google.com/forum/#!forum/lz4c
 */
 
+#include "../Common.h"
+#include "apoc3d/IOLib/Streams.h"
+
 /**************************************
    Tuning parameters
 **************************************/
@@ -845,6 +848,7 @@ FORCE_INLINE int LZ4_decompress_generic(
 _output_error:
     return (int) (-(((char*)ip)-source))-1;
 }
+
 
 
 int LZ4_decompress_safe(const char* source, char* dest, int inputSize, int maxOutputSize)

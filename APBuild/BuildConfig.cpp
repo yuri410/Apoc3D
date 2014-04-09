@@ -181,9 +181,9 @@ namespace APBuild
 			{
 				CompressionType = TDCT_RLE;
 			}
-			else if (cmp == L"auto")
+			else if (cmp == L"lz4")
 			{
-				CompressionType = TDCT_Auto;
+				CompressionType = TDCT_LZ4;
 			}
 		}
 	}

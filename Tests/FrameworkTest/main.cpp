@@ -17,6 +17,8 @@
 #include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Utility/Compression.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Library/lz4.h"
+#include "apoc3d/Library/lz4hc.h"
 #include "apoc3d/Vfs/FileSystem.h"
 
 #include <iostream>
@@ -34,9 +36,21 @@ void TestListSort2();
 void TestRLE();
 void TestMath();
 void TestBufferStream();
+void TestLZ4();
 
 void main()
 {
+
+
+#if (GCC_VERSION >= 302) || (__INTEL_COMPILER >= 800) || defined(__clang__)
+#  define expect(expr,value)    (__builtin_expect ((expr),(value)) )
+#else
+#  define expect(expr,value)    (expr)
+#endif
+
+#define likely(expr)     expect((expr) != 0, 1)
+#define unlikely(expr)   expect((expr) != 0, 0)
+
 	setlocale(LC_CTYPE, ".ACP");
 
 	//String s = StringUtils::ToString(0.14159265f,8);
@@ -57,7 +71,8 @@ void main()
 	TestListSort2();
 	TestTaggedData();
 	TestBufferStream();
-	TestRLE();
+	//TestRLE();
+	//TestLZ4();
 
 }
 
@@ -298,7 +313,7 @@ void TestRLE()
 
 	int32 copyRawTime = 0;
 
-	FileStream fs(L"Apoc3d.lib");
+	FileStream fs(L"testMath1.dat");
 	char* buffer = new char[(int32)fs.getLength()];
 	fs.Read(buffer, fs.getLength());
 	fs.Close();
@@ -311,7 +326,7 @@ void TestRLE()
 	assert(compressedStream.getLength() == compressedSize);
 	compStreamTime = GetTickCount() - compStreamTime;
 
-	printf("Comp Stream: %d\n", compStreamTime);
+	printf("RLE Comp Stream: %d,%d\n", compStreamTime, compressedSize);
 
 	compRawTime = GetTickCount();
 	char* compressedData = new char[compressedSize];
@@ -366,6 +381,48 @@ void TestRLE()
 
 	delete[] buffer;
 	delete[] decompressedData;
+	delete[] compressedData;
+}
+void TestLZ4()
+{
+	FileStream fs(L"testMath1.dat");
+	int32 srcDataSize = (int32)fs.getLength();
+
+	char* buffer = new char[srcDataSize];
+	fs.Read(buffer, fs.getLength());
+	fs.Close();
+
+	
+	char* compressed = new char[LZ4_COMPRESSBOUND(srcDataSize)];
+	int32 t = GetTickCount();
+	//int32 res = LZ4_compress(buffer, compressed, srcDataSize);
+	int32 res = LZ4_compressHC2(buffer, compressed, srcDataSize,8);
+	t = GetTickCount() - t;
+	printf("LZ4 Comp: Time=%d, Size=%d\n", t, res);
+
+	t = GetTickCount();
+	char* decompressed = new char[srcDataSize];
+	int32 res2 = LZ4_decompress_safe(compressed, decompressed, res, srcDataSize);
+	delete[] decompressed;
+	t = GetTickCount() - t;
+	printf("LZ4 Decomp Buffer: Time=%d\n", t);
+
+	decompressed = new char[srcDataSize];
+
+	MemoryStream ms(compressed, res);
+	BufferedStreamReader bsr(&ms);
+	t = GetTickCount();
+	res2 = lz4Decompress(decompressed, srcDataSize, &bsr);
+	t = GetTickCount() - t;
+	printf("LZ4 Decomp Stream: Time=%d\n", t);
+
+	assert(res2 == srcDataSize);
+	CheckEqual(buffer, decompressed, srcDataSize);
+
+
+	delete[] buffer;
+	delete[] compressed;
+	delete[] decompressed;
 }
 
 void TestBufferStream()

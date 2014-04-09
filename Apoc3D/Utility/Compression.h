@@ -18,6 +18,8 @@ namespace Apoc3D
 		APAPI int32 rleEvalDecompressedSize(const char* srcBuffer, int32 srcBufferSize);
 		APAPI int32 rleEvalCompressedSize(const char* srcBuffer, int32 srcBufferSize);
 
+		// test version, very slow
+		APAPI int32 lz4Decompress(char* dstBuffer, int32 dstBufferSize, Apoc3D::IO::BufferedStreamReader* srcStrm);
 	}
 }
 

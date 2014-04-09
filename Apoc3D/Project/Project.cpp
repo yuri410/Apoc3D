@@ -255,9 +255,9 @@ namespace Apoc3D
 			{
 				CompressionType = TDCT_RLE;
 			}
-			else if (cmp == L"auto")
+			else if (cmp == L"lz4")
 			{
-				CompressionType = TDCT_Auto;
+				CompressionType = TDCT_LZ4;
 			}
 		}
 
@@ -371,9 +371,9 @@ namespace Apoc3D
 			{
 				sect->AddAttributeString(L"Compression", L"RLE");
 			}
-			else if (CompressionType == TDCT_Auto)
+			else if (CompressionType == TDCT_LZ4)
 			{
-				sect->AddAttributeString(L"Compression", L"Auto");
+				sect->AddAttributeString(L"Compression", L"LZ4");
 			}
 		}
 	}

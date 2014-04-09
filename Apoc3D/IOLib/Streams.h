@@ -458,7 +458,8 @@ namespace Apoc3D
 			}
 
 			bool IsReadEndianDependent() const { return m_baseStream->IsReadEndianDependent(); }
-			
+			int32 getLength() const { return static_cast<int32>(m_baseStream->getLength()); }
+
 			int32 Read(char* dest, int32 count)
 			{
 				int32 ret;

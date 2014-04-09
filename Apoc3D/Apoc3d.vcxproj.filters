@@ -842,12 +842,6 @@
     <ClCompile Include="Math\sse_functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Library\lz4.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Library\lz4hc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Library\tinythread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -858,6 +852,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Library\tinyxmlparser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\lz4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\lz4hc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

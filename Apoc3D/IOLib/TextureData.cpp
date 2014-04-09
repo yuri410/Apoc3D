@@ -32,6 +32,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Utility/Compression.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Library/lz4.h"
+#include "apoc3d/Library/lz4hc.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Utility;
@@ -117,6 +119,15 @@ namespace Apoc3D
 					int32 ret = rleDecompress(ContentData, LevelSize, &bsr);
 					assert(ret == LevelSize);
 				}
+				else if ((flags & TextureData::TDF_LZ4Compressed) == TextureData::TDF_LZ4Compressed)
+				{
+					int32 comprsesedSize = br->ReadInt32();
+					char* compressedData = new char[comprsesedSize];
+					strm->Read(compressedData, comprsesedSize);
+					int32 ret = LZ4_decompress_safe(compressedData, ContentData, comprsesedSize, LevelSize);
+					assert(ret == LevelSize);
+					delete[] compressedData;
+				}
 				else
 				{
 					int64 ret = strm->Read(ContentData, LevelSize);
@@ -139,6 +150,15 @@ namespace Apoc3D
 			if ((flags & TextureData::TDF_RLECompressed) == TextureData::TDF_RLECompressed)
 			{
 				rleCompress(ContentData, LevelSize, strm);
+			}
+			else if ((flags & TextureData::TDF_LZ4Compressed) == TextureData::TDF_LZ4Compressed)
+			{
+				char* compressedData = new char[LZ4_COMPRESSBOUND(LevelSize)];
+				int32 compressedSize = LZ4_compressHC2(ContentData, compressedData, LevelSize, 8);
+				assert(compressedSize>0);
+				bw->WriteInt32(compressedSize);
+				strm->Write(compressedData, compressedSize);
+				delete[] compressedData;
 			}
 			else
 			{

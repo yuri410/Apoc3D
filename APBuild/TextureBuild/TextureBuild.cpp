@@ -1572,19 +1572,21 @@ LFail:
 
 			if (cmp == TDCT_RLE)
 				data.Flags = TextureData::TDF_RLECompressed;
-			else if (cmp == TDCT_Auto)
-			{
-				int32 compressedSize = 0;
-				for (int32 i=0;i<data.Levels.getCount();i++)
-				{
-					compressedSize += rleEvalCompressedSize(data.Levels[i].ContentData, data.Levels[i].LevelSize);
-				}
-				float ratio = (float)compressedSize / data.ContentSize;
-				if (ratio < RLECompressRatioThreshold)
-				{
-					data.Flags = TextureData::TDF_RLECompressed;
-				}
-			}
+			else if (cmp == TDCT_LZ4)
+				data.Flags = TextureData::TDF_LZ4Compressed;
+			//else if (cmp == TDCT_Auto)
+			//{
+			//	int32 compressedSize = 0;
+			//	for (int32 i=0;i<data.Levels.getCount();i++)
+			//	{
+			//		compressedSize += rleEvalCompressedSize(data.Levels[i].ContentData, data.Levels[i].LevelSize);
+			//	}
+			//	float ratio = (float)compressedSize / data.ContentSize;
+			//	if (ratio < RLECompressRatioThreshold)
+			//	{
+			//		data.Flags = TextureData::TDF_RLECompressed;
+			//	}
+			//}
 
 			FileOutStream* fs = new FileOutStream(path);
 			data.Save(fs);
@@ -1949,19 +1951,22 @@ LFail:
 
 		if (config.CompressionType == TDCT_RLE)
 			texData.Flags = TextureData::TDF_RLECompressed;
-		else if (config.CompressionType == TDCT_Auto)
-		{
-			int32 compressedSize = 0;
-			for (int32 i=0;i<texData.Levels.getCount();i++)
-			{
-				compressedSize += rleEvalCompressedSize(texData.Levels[i].ContentData, texData.Levels[i].LevelSize);
-			}
-			float ratio = (float)compressedSize / texData.ContentSize;
-			if (ratio < RLECompressRatioThreshold)
-			{
-				texData.Flags = TextureData::TDF_RLECompressed;
-			}
-		}
+		else if (config.CompressionType == TDCT_LZ4)
+			texData.Flags = TextureData::TDF_LZ4Compressed;
+
+		//else if (config.CompressionType == TDCT_Auto)
+		//{
+		//	int32 compressedSize = 0;
+		//	for (int32 i=0;i<texData.Levels.getCount();i++)
+		//	{
+		//		compressedSize += rleEvalCompressedSize(texData.Levels[i].ContentData, texData.Levels[i].LevelSize);
+		//	}
+		//	float ratio = (float)compressedSize / texData.ContentSize;
+		//	if (ratio < RLECompressRatioThreshold)
+		//	{
+		//		texData.Flags = TextureData::TDF_RLECompressed;
+		//	}
+		//}
 
 		FileOutStream* fs = new FileOutStream(config.DestinationFile);
 		texData.Save(fs);
