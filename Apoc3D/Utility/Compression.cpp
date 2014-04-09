@@ -128,7 +128,7 @@ namespace Apoc3D
 			return total;
 		}
 
-		int32 rleDecompress(char* dstBuffer, int32 dstBufferSize, Apoc3D::IO::Stream* srcStrm)
+		int32 rleDecompress(char* dstBuffer, int32 dstBufferSize, Apoc3D::IO::BufferedStreamReader* srcStrm)
 		{
 #if _DEBUG
 			int32 orginalDstBufferSize = dstBufferSize;
@@ -138,7 +138,7 @@ namespace Apoc3D
 			int32 length;
 			int32 total = 0;
 
-			while (dstBufferSize > 0 && srcStrm->Read((char*)&token, 1) > 0)
+			while (dstBufferSize > 0 && srcStrm->ReadByte((char&)token))
 			{
 				length = (token & ~0x80) + 1;
 
@@ -147,7 +147,7 @@ namespace Apoc3D
 
 				if (token & 0x80)
 				{
-					if (srcStrm->Read((char*)&token, 1) == 0)
+					if (!srcStrm->ReadByte((char&)token))
 						return total;
 					memset(dstBuffer, token, length);
 				}

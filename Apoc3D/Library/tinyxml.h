@@ -26,7 +26,7 @@ distribution.
 #ifndef TINYXML_INCLUDED
 #define TINYXML_INCLUDED
 
-#include "Common.h"
+#include "../Common.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )

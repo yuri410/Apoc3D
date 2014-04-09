@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/VFS/PathUtils.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 
-#include "apoc3d/tinyxml.h"
+#include "apoc3d/Library/tinyxml.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;

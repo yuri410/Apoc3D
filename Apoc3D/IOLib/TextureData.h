@@ -87,7 +87,8 @@ namespace Apoc3D
 			enum TextureDataFlags
 			{
 				TDF_None = 0,
-				TDF_RLECompressed = 1U << 0
+				TDF_RLECompressed = 1U << 0,
+				TDF_LZ4Compressed = 1U << 1
 			};
 
 			TextureType Type;

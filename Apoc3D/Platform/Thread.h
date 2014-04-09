@@ -29,7 +29,7 @@
 
 #include "../Common.h"
 
-#include "../tinythread.h"
+#include "apoc3d/Library/tinythread.h"
 
 namespace Apoc3D
 {

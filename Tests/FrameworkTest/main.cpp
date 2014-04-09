@@ -32,8 +32,8 @@ void TestListReverse();
 void TestListSort();
 void TestListSort2();
 void TestRLE();
-void TestLZ();
 void TestMath();
+void TestBufferStream();
 
 void main()
 {
@@ -56,7 +56,8 @@ void main()
 	TestListSort();
 	TestListSort2();
 	TestTaggedData();
-	//TestRLE();
+	TestBufferStream();
+	TestRLE();
 
 }
 
@@ -289,40 +290,137 @@ void TestListSort2()
 
 void TestRLE()
 {
+	int32 compRawTime = 0;
+	int32 compStreamTime = 0;
+
+	int32 decompRawTime = 0;
+	int32 decompStreamTime = 0;
+
+	int32 copyRawTime = 0;
+
 	FileStream fs(L"Apoc3d.lib");
 	char* buffer = new char[(int32)fs.getLength()];
 	fs.Read(buffer, fs.getLength());
 	fs.Close();
 
 	int32 compressedSize = rleEvalCompressedSize(buffer, (int32)fs.getLength());
+
+	compStreamTime = GetTickCount();
 	MemoryOutStream compressedStream(compressedSize);
 	rleCompress(buffer, (int32)fs.getLength(), &compressedStream);
-
 	assert(compressedStream.getLength() == compressedSize);
+	compStreamTime = GetTickCount() - compStreamTime;
 
+	printf("Comp Stream: %d\n", compStreamTime);
+
+	compRawTime = GetTickCount();
 	char* compressedData = new char[compressedSize];
 	int ret = rleCompress(compressedData, compressedSize, buffer, (int32)fs.getLength());
 	assert(ret == compressedSize);
+	compRawTime = GetTickCount() - compRawTime;
+
+	printf("Comp Buffer: %d\n", compStreamTime);
+
+
 
 	//////////////////////////////////////////////////////////////////////////
 
 	int32 decompSize = rleEvalDecompressedSize(compressedData, compressedSize);
 	assert(decompSize == fs.getLength());
-
+	
+	decompRawTime = GetTickCount();
 	char* decompressedData = new char[decompSize];
 	ret = rleDecompress(decompressedData, decompSize, compressedData, compressedSize);
 	assert(ret == decompSize);
+	decompRawTime = GetTickCount() - decompRawTime;
+	printf("Decomp Buffer: %d\n", decompRawTime);
 
 	CheckEqual(buffer, decompressedData, decompSize);
 
+	memset(decompressedData, decompSize, 0);
+
+	decompStreamTime = GetTickCount();
 	MemoryStream ms(compressedData, compressedSize);
-	ret = rleDecompress(decompressedData, decompSize, &ms);
+	VirtualStream vs1(&ms);
+	VirtualStream vs2(&vs1);
+	VirtualStream vs3(&vs2);
+	VirtualStream vs4(&vs3);
+	VirtualStream vs5(&vs4);
+	BufferedStreamReader bsr(&vs5);
+	ret = rleDecompress(decompressedData, decompSize, &bsr);
 	assert(ret == decompSize);
+	decompStreamTime = GetTickCount() - decompStreamTime;
+	printf("Decomp Stream: %d\n", decompStreamTime);
 
 	CheckEqual(buffer, decompressedData, decompSize);
+
+
+	{
+		copyRawTime = GetTickCount();
+		memcpy(decompressedData, buffer, fs.getLength());
+		copyRawTime = GetTickCount() - copyRawTime;
+		printf("Copy Buffer: %d\n", decompRawTime);
+	}
+
+
 
 	delete[] buffer;
 	delete[] decompressedData;
+}
+
+void TestBufferStream()
+{
+	FileStream fs(L"Apoc3d.lib");
+	char* buffer = new char[(int32)fs.getLength()];
+	fs.Read(buffer, fs.getLength());
+	fs.Close();
+
+
+	MemoryStream ms(buffer, fs.getLength());
+	BufferedStreamReader bsr(&ms);
+	char* cmp = buffer;
+	for (;;)
+	{
+		char temp[102400];
+		int32 countToRead = Randomizer::Next(ARRAYSIZE(temp));
+		int32 r = bsr.Read(temp, countToRead);
+		CheckEqual<char>(cmp, temp, r);
+		
+		cmp += r;
+
+		if (r < countToRead)
+			break;
+	}
+	//char temp[102400];
+	//bsr.Read(temp, 4);
+	//CheckEqual<char>(cmp, temp, 4);
+	//cmp += 4;
+
+	//bsr.Read(temp, 1024);
+	//CheckEqual<char>(cmp, temp, 1024);
+	//cmp += 1024;
+
+	//bsr.Read(temp, 4096);
+	//CheckEqual<char>(cmp, temp, 4096);
+	//cmp += 4096;
+
+	//bsr.Read(temp, 4096);
+	//CheckEqual<char>(cmp, temp, 4096);
+	//cmp += 4096;
+
+	//bsr.Read(temp, 128);
+	//CheckEqual<char>(cmp, temp, 128);
+	//cmp += 128;
+
+	//bsr.Read(temp, 8192);
+	//CheckEqual<char>(cmp, temp, 8192);
+	//cmp += 8192;
+
+	//bsr.Read(temp, 102400);
+	//CheckEqual<char>(cmp, temp, 102400);
+	//cmp += 102400;
+
+	delete[] buffer;
 }
 
 Matrix* GenerateRandomMatrices(Random& rnd, int32 count)

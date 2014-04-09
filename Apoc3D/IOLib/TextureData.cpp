@@ -61,7 +61,8 @@ namespace Apoc3D
 
 				if ((flags & TextureData::TDF_RLECompressed) == TextureData::TDF_RLECompressed)
 				{
-					int32 ret = rleDecompress(ContentData, LevelSize, strm);
+					BufferedStreamReader bsr(strm);
+					int32 ret = rleDecompress(ContentData, LevelSize, &bsr);
 					assert(ret == LevelSize);
 				}
 				else
@@ -112,7 +113,8 @@ namespace Apoc3D
 				ContentData = new char[LevelSize];
 				if ((flags & TextureData::TDF_RLECompressed) == TextureData::TDF_RLECompressed)
 				{
-					int32 ret = rleDecompress(ContentData, LevelSize, strm);
+					BufferedStreamReader bsr(strm);
+					int32 ret = rleDecompress(ContentData, LevelSize, &bsr);
 					assert(ret == LevelSize);
 				}
 				else

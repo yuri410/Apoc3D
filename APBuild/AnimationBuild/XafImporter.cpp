@@ -36,7 +36,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Utility/StringUtils.h"
 
-#include "apoc3d/tinyxml.h"
+#include "apoc3d/Library/tinyxml.h"
 
 #include <fstream>
 #include <vector>

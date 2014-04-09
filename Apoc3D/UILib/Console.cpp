@@ -38,7 +38,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Input/Mouse.h"
 #include "apoc3d/Utility/StringUtils.h"
 
-#include "../tinythread.h"
+#include "apoc3d/Library/tinythread.h"
 #include <ctime>
 
 using namespace Apoc3D::Utility;

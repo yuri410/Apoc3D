@@ -181,9 +181,9 @@ namespace Apoc3D
 
 			virtual int64 Read(char* dest, int64 count)
 			{
-				if (count > m_length)
+				if (m_position + count > m_length)
 				{
-					count = m_length;
+					count = m_length - m_position;
 				}
 
 				memcpy(dest, m_data+m_position, static_cast<size_t>(count));
@@ -379,9 +379,9 @@ namespace Apoc3D
 
 			virtual int64 Read(char* dest, int64 count)
 			{
-				if (count > m_length)
+				if (m_position + count > m_length)
 				{
-					count = m_length;
+					count = m_length - m_position;
 				}
 
 				for (int64 i=0;i<count;i++)
@@ -436,6 +436,153 @@ namespace Apoc3D
 			int64 m_length;
 			FastList<char> m_data;
 			int64 m_position;
+		};
+
+		/**
+		 *  This reader can read Stream with an internal buffer to 
+		 *  avoid frequent calls to Stream's read methods (which is expensive for various reasons)
+		 */
+		class APAPI BufferedStreamReader
+		{
+		public:
+			static const int32 BufferSize = 8192;
+
+			BufferedStreamReader(Stream* strm)
+				: m_baseStream(strm), m_endofStream(false),
+				m_head(0), m_tail(0), m_size(0)
+			{
+				assert(strm->CanRead()); 
+			}
+			~BufferedStreamReader() 
+			{
+			}
+
+			bool IsReadEndianDependent() const { return m_baseStream->IsReadEndianDependent(); }
+			
+			int32 Read(char* dest, int32 count)
+			{
+				int32 ret;
+				if (getBufferContentSize()>count)
+				{
+					ReadBuffer(dest, count);
+					ret = count;
+				}
+				else
+				{
+					ret = 0;
+
+					int32 existing = getBufferContentSize();
+					if (existing>0)
+					{
+						ReadBuffer(dest, existing);
+						ret = existing;
+						count -= existing;
+					}
+					
+					int32 actual = static_cast<int32>(m_baseStream->Read(dest + existing, count));
+					m_endofStream = actual < count;
+					ret += actual;
+				}
+
+				if (!m_endofStream && m_size<BufferSize/2)
+				{
+					FillBuffer();
+				}
+
+				return ret;
+			}
+			bool ReadByte(char& result)
+			{
+				if (!m_endofStream && m_size<BufferSize/2)
+				{
+					FillBuffer();
+				}
+
+				if (m_size)
+				{
+					result = m_buffer[m_head];
+					m_head = (m_head + 1) % BufferSize;
+					m_size--;
+					return true;
+				}
+				return false;
+			}
+
+		private:
+			void ClearBuffer()
+			{
+				m_head = 0;
+				m_tail = 0;
+				m_size = 0;
+			}
+			void ReadBuffer(char* dest, int32 count)
+			{
+				assert(m_size >= count);
+
+				if (m_head + count > BufferSize)
+				{
+					int32 numHeadToEnd = BufferSize - m_head;
+					memcpy(dest, m_buffer+m_head, numHeadToEnd);
+
+					int32 remaining = count - numHeadToEnd;
+					assert(remaining<=m_head);
+					memcpy(dest+numHeadToEnd, m_buffer, remaining);
+				}
+				else
+				{
+					memcpy(dest, m_buffer + m_head, count);
+				}
+
+				m_head = (m_head + count) % BufferSize;
+				m_size -= count;
+			}
+
+			void FillBuffer()
+			{
+				int32 count = BufferSize - m_size;
+				assert(count>0);
+				int32 actualCount = 0;
+
+				if (m_tail + count > BufferSize)
+				{
+					int32 numTailToEnd = BufferSize - m_tail;
+					int32 actual = static_cast<int32>(m_baseStream->Read(m_buffer + m_tail, numTailToEnd));
+					m_endofStream = actual < numTailToEnd;
+					actualCount = actual;
+
+					if (!m_endofStream)
+					{
+						int32 remaining = count - numTailToEnd;
+						assert(remaining<=m_tail);
+
+						actual = static_cast<int32>(m_baseStream->Read(m_buffer, remaining));
+						m_endofStream = actual < remaining;
+						actualCount += actual;
+					}
+				}
+				else
+				{
+					int32 actual = static_cast<int32>(m_baseStream->Read(m_buffer + m_tail, count));
+					m_endofStream = actual < count;
+					actualCount = actual;
+				}
+
+				m_tail = (m_tail + actualCount) % BufferSize;
+				m_size+=actualCount;
+			}
+
+			int getBufferContentSize() const { return m_size; }
+
+
+
+			Stream* m_baseStream;
+			bool m_endofStream;
+
+			char m_buffer[BufferSize];
+
+			int32 m_head;
+			int32 m_tail;
+			int32 m_size;
 		};
 	};
 }

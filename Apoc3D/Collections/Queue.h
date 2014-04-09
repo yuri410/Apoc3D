@@ -129,7 +129,6 @@ namespace Apoc3D
 					{
 						dest[i] = m_array[i+m_head];
 					}
-					//memcpy(dest,m_array+m_head,num3*sizeof(T));
 					remaining -= numHeadToEnd;
 					if (remaining > 0)
 					{
@@ -137,7 +136,6 @@ namespace Apoc3D
 						{
 							dest[i + m_arrLength-m_head] = m_array[i];
 						}
-						//memcpy(dest+(m_arrLength-m_head)*sizeof(T), m_array, num2*sizeof(T));
 					}
 				}
 			}

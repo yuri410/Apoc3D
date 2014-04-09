@@ -10,7 +10,7 @@
 
 #include "APDesigner/CommonDialog/DialogCommon.h"
 
-#include "apoc3d/tinythread.h"
+#include "apoc3d/Library/tinythread.h"
 
 #include <Windows.h>
 

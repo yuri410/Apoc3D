@@ -241,6 +241,7 @@ namespace Apoc3D
 		class MemoryStream;
 		class MemoryOutStream;
 		class VirtualStream;
+		class BufferedStreamReader;
 
 		class TextureLevelData;
 		class TextureData;

@@ -438,9 +438,6 @@
     <ClInclude Include="Config\XmlConfigurationFormat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tinyxml.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Graphics\RenderSystem\DeviceContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -465,9 +462,6 @@
     <ClInclude Include="Utility\Compression.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="tinythread.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ApocString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -487,6 +481,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utility\Hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\lz4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\lz4hc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\tinythread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\tinyxml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -809,15 +815,6 @@
     <ClCompile Include="Config\XmlConfigurationFormat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tinyxml.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tinyxmlerror.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tinyxmlparser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Platform\API.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -836,9 +833,6 @@
     <ClCompile Include="Utility\Compression.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tinythread.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ApocException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -846,6 +840,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Math\sse_functions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\lz4.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\lz4hc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\tinythread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\tinyxml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\tinyxmlerror.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\tinyxmlparser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -209,6 +209,10 @@
     <ClInclude Include="IOLib\Streams.h" />
     <ClInclude Include="IOLib\TaggedData.h" />
     <ClInclude Include="IOLib\TextureData.h" />
+    <ClInclude Include="Library\lz4.h" />
+    <ClInclude Include="Library\lz4hc.h" />
+    <ClInclude Include="Library\tinythread.h" />
+    <ClInclude Include="Library\tinyxml.h" />
     <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\ColorValue.h" />
     <ClInclude Include="Math\GaussBlurFilter.h" />
@@ -223,8 +227,6 @@
     <ClInclude Include="Scene\ScenePassTypes.h" />
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />
     <ClInclude Include="ApocString.h" />
-    <ClInclude Include="tinythread.h" />
-    <ClInclude Include="tinyxml.h" />
     <ClInclude Include="UILib\Button.h" />
     <ClInclude Include="UILib\CheckBox.h" />
     <ClInclude Include="UILib\ComboBox.h" />
@@ -358,6 +360,12 @@
     <ClCompile Include="IOLib\Streams.cpp" />
     <ClCompile Include="IOLib\TaggedData.cpp" />
     <ClCompile Include="IOLib\TextureData.cpp" />
+    <ClCompile Include="Library\lz4.c" />
+    <ClCompile Include="Library\lz4hc.c" />
+    <ClCompile Include="Library\tinythread.cpp" />
+    <ClCompile Include="Library\tinyxml.cpp" />
+    <ClCompile Include="Library\tinyxmlerror.cpp" />
+    <ClCompile Include="Library\tinyxmlparser.cpp" />
     <ClCompile Include="Math\OctreeBox.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
@@ -367,10 +375,6 @@
     <ClCompile Include="Project\Project.cpp" />
     <ClCompile Include="Scene\OctreeSceneManager.cpp" />
     <ClCompile Include="Scene\SceneRenderScriptParser.cpp" />
-    <ClCompile Include="tinythread.cpp" />
-    <ClCompile Include="tinyxml.cpp" />
-    <ClCompile Include="tinyxmlerror.cpp" />
-    <ClCompile Include="tinyxmlparser.cpp" />
     <ClCompile Include="UILib\Button.cpp" />
     <ClCompile Include="UILib\CheckBox.cpp" />
     <ClCompile Include="UILib\ComboBox.cpp" />

@@ -24,9 +24,9 @@ distribution.
 
 #include "tinyxml.h"
 
-#include "IOLib/Streams.h"
-#include "IOLib/BinaryReader.h"
-#include "IOLib/BinaryWriter.h"
+#include "../IOLib/Streams.h"
+#include "../IOLib/BinaryReader.h"
+#include "../IOLib/BinaryWriter.h"
 
 using namespace std;
 
