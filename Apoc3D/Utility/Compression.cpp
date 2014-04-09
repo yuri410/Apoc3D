@@ -33,21 +33,34 @@ namespace Apoc3D
 						return total;
 					token = *(const byte*)srcBuffer++;
 					srcBufferSize--;
-					memset(dstBuffer, token, length);
+
+					dstBufferSize -= length;
+					total += length;
+
+					while (length-->0)
+						*dstBuffer++ = token;
+					//memset(dstBuffer, token, length);
+					//dstBuffer += length;
 				}
 				else
 				{
 					if (srcBufferSize < length)
 						return total;
-					
-					memcpy(dstBuffer, srcBuffer, length);
-					srcBuffer += length;
+
 					srcBufferSize -= length;
+					dstBufferSize -= length;
+					total += length;
+
+					while (length-->0)
+					{
+						*dstBuffer++ = *srcBuffer++;
+					}
+
+					//memcpy(dstBuffer, srcBuffer, length);
+					//srcBuffer += length;
+					//dstBuffer += length;
 				}
 
-				dstBuffer += length;
-				dstBufferSize -= length;
-				total += length;
 				assert(dstBuffer - orginalDstBuffer <= orginalDstBufferSize);
 			}
 
@@ -150,17 +163,24 @@ namespace Apoc3D
 				{
 					if (!srcStrm->ReadByte((char&)token))
 						return total;
-					memset(dstBuffer, token, length);
+
+					dstBufferSize -= length;
+					total += length;
+
+					//memset(dstBuffer, token, length);
+					while (length-->0)
+						*dstBuffer++ = token;
 				}
 				else
 				{
 					if (srcStrm->Read(dstBuffer, length) != length)
 						return total;
+
+					dstBuffer += length;
+					dstBufferSize -= length;
+					total += length;
 				}
 
-				dstBuffer += length;
-				dstBufferSize -= length;
-				total += length;
 				assert(dstBuffer - orginalDstBuffer <= orginalDstBufferSize);
 			}
 
@@ -305,14 +325,10 @@ namespace Apoc3D
 			#  define _PACKED
 			#endif
 
-				typedef struct { uint16 v; }  _PACKED U16_S;
 				typedef struct { uint32 v; }  _PACKED U32_S;
-				typedef struct { uint64 v; }  _PACKED U64_S;
 				typedef struct {size_t v;} _PACKED size_t_S;
 
-			#define A16(x)   (((U16_S *)(x))->v)
 			#define A32(x)   (((U32_S *)(x))->v)
-			#define A64(x)   (((U64_S *)(x))->v)
 			#define AARCH(x) (((size_t_S *)(x))->v)
 
 			#define LZ4_COPYSTEP(d,s)         { AARCH(d) = AARCH(s); d+=STEPSIZE; s+=STEPSIZE; }
@@ -328,7 +344,7 @@ namespace Apoc3D
 			byte* dst = (byte*) destBuffer;
 			byte* const dstEnd = dst + outputSize;
    
-			char temp[4];
+			char temp[2];
 
 			const size_t dec32table[] = {4-0, 4-3, 4-2, 4-3, 4-0, 4-0, 4-0, 4-0};   /* static reduces speed for LZ4_decompress_safe() on GCC64 */
 			static const size_t dec64table[] = {0, 0, 0, (size_t)-1, 0, 1, 2, 3};
@@ -341,7 +357,7 @@ namespace Apoc3D
 				uint32 length;
 
 				/* get runlength */
-				bool rr = bsr->ReadByte((char&)token);
+				bool rr =  bsr->ReadByte((char&)token);
 				assert(rr);
 
 				if ((length=(token>>ML_BITS)) == RUN_MASK)
@@ -369,7 +385,8 @@ namespace Apoc3D
 				/* get offset */
 				r = bsr->Read(temp, 2);
 				assert(r == 2);
-				uint16 offset = cui16_le(temp);
+
+				uint16 offset = reinterpret_cast<uint16&>(*temp);
 				byte* ref = dst - offset;
 
 				if (ref < (byte*)destBuffer)
@@ -384,6 +401,7 @@ namespace Apoc3D
 						uint32 s = 0;
 						rr = bsr->ReadByte((char&)s);
 						assert(rr);
+						//s = *sourceBuffer++;
 
 						length += s;
 						if (s==255) continue;

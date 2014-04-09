@@ -40,17 +40,6 @@ void TestLZ4();
 
 void main()
 {
-
-
-#if (GCC_VERSION >= 302) || (__INTEL_COMPILER >= 800) || defined(__clang__)
-#  define expect(expr,value)    (__builtin_expect ((expr),(value)) )
-#else
-#  define expect(expr,value)    (expr)
-#endif
-
-#define likely(expr)     expect((expr) != 0, 1)
-#define unlikely(expr)   expect((expr) != 0, 0)
-
 	setlocale(LC_CTYPE, ".ACP");
 
 	//String s = StringUtils::ToString(0.14159265f,8);
@@ -71,8 +60,8 @@ void main()
 	TestListSort2();
 	TestTaggedData();
 	TestBufferStream();
-	//TestRLE();
-	//TestLZ4();
+	TestRLE();
+	TestLZ4();
 
 }
 
@@ -303,6 +292,36 @@ void TestListSort2()
 	assert(memcmp(counter, counter2, sizeof(counter))==0);
 }
 
+void memcpytest(char* dst, char* src, int32 count)
+{
+#if defined(__GNUC__)  && !defined(LZ4_FORCE_UNALIGNED_ACCESS)
+#  define _PACKED __attribute__ ((packed))
+#else
+#  define _PACKED
+#endif
+
+	typedef struct { uint32 v; }  _PACKED U32_S;
+	typedef struct {size_t v;} _PACKED size_t_S;
+
+#define STEPSIZE sizeof(size_t)
+#define A32(x)   (((U32_S *)(x))->v)
+#define AARCH(x) (((size_t_S *)(x))->v)
+
+#define LZ4_COPYSTEP(d,s)         { AARCH(d) = AARCH(s); d+=STEPSIZE; s+=STEPSIZE; }
+#define LZ4_COPY8(d,s)            { LZ4_COPYSTEP(d,s); if (STEPSIZE<8) LZ4_COPYSTEP(d,s); }
+
+#if LZ4_ARCH64 || !defined(__GNUC__)
+#  define LZ4_WILDCOPY(d,s,e)     { do { LZ4_COPY8(d,s) } while (d<e); }           /* at the end, d>=e; */
+#else
+#  define LZ4_WILDCOPY(d,s,e)     { if (likely(e-d <= 8)) LZ4_COPY8(d,s) else do { LZ4_COPY8(d,s) } while (d<e); }
+#endif
+#define LZ4_SECURECOPY(d,s,e)     { if (d<e) LZ4_WILDCOPY(d,s,e); }
+
+	char* cpyEnd = dst + count - STEPSIZE;
+
+	LZ4_WILDCOPY(dst, src, cpyEnd);
+}
+
 void TestRLE()
 {
 	int32 compRawTime = 0;
@@ -334,7 +353,7 @@ void TestRLE()
 	assert(ret == compressedSize);
 	compRawTime = GetTickCount() - compRawTime;
 
-	printf("Comp Buffer: %d\n", compStreamTime);
+	printf("RLE Comp Buffer: %d\n", compStreamTime);
 
 
 
@@ -348,7 +367,7 @@ void TestRLE()
 	ret = rleDecompress(decompressedData, decompSize, compressedData, compressedSize);
 	assert(ret == decompSize);
 	decompRawTime = GetTickCount() - decompRawTime;
-	printf("Decomp Buffer: %d\n", decompRawTime);
+	printf("RLE Decomp Buffer: %d\n", decompRawTime);
 
 	CheckEqual(buffer, decompressedData, decompSize);
 
@@ -365,7 +384,7 @@ void TestRLE()
 	ret = rleDecompress(decompressedData, decompSize, &bsr);
 	assert(ret == decompSize);
 	decompStreamTime = GetTickCount() - decompStreamTime;
-	printf("Decomp Stream: %d\n", decompStreamTime);
+	printf("RLE Decomp Stream: %d\n", decompStreamTime);
 
 	CheckEqual(buffer, decompressedData, decompSize);
 
@@ -374,7 +393,7 @@ void TestRLE()
 		copyRawTime = GetTickCount();
 		memcpy(decompressedData, buffer, fs.getLength());
 		copyRawTime = GetTickCount() - copyRawTime;
-		printf("Copy Buffer: %d\n", decompRawTime);
+		printf("Copy Buffer: %d\n", copyRawTime);
 	}
 
 
@@ -410,7 +429,14 @@ void TestLZ4()
 	decompressed = new char[srcDataSize];
 
 	MemoryStream ms(compressed, res);
-	BufferedStreamReader bsr(&ms);
+	//BufferedStreamReader bsr(&ms);
+	VirtualStream vs1(&ms);
+	VirtualStream vs2(&vs1);
+	VirtualStream vs3(&vs2);
+	VirtualStream vs4(&vs3);
+	VirtualStream vs5(&vs4);
+	BufferedStreamReader bsr(&vs5);
+
 	t = GetTickCount();
 	res2 = lz4Decompress(decompressed, srcDataSize, &bsr);
 	t = GetTickCount() - t;
