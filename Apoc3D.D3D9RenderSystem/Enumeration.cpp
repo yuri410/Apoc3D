@@ -256,6 +256,7 @@ namespace Apoc3D
 
 							BuildDepthStencilFormatList(d3d9, combo);
 							BuildMultisampleTypeList(d3d9, combo);
+							BuildPresentIntervalList(d3d9, combo);
 
 							if (combo->MultisampleTypes.getCount()==0)
 								continue;
