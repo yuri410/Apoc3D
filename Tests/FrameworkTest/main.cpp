@@ -422,33 +422,15 @@ void TestLZ4()
 	t = GetTickCount();
 	char* decompressed = new char[srcDataSize];
 	int32 res2 = LZ4_decompress_safe(compressed, decompressed, res, srcDataSize);
-	delete[] decompressed;
 	t = GetTickCount() - t;
 	printf("LZ4 Decomp Buffer: Time=%d\n", t);
-
-	decompressed = new char[srcDataSize];
-
-	MemoryStream ms(compressed, res);
-	//BufferedStreamReader bsr(&ms);
-	VirtualStream vs1(&ms);
-	VirtualStream vs2(&vs1);
-	VirtualStream vs3(&vs2);
-	VirtualStream vs4(&vs3);
-	VirtualStream vs5(&vs4);
-	BufferedStreamReader bsr(&vs5);
-
-	t = GetTickCount();
-	res2 = lz4Decompress(decompressed, srcDataSize, &bsr);
-	t = GetTickCount() - t;
-	printf("LZ4 Decomp Stream: Time=%d\n", t);
 
 	assert(res2 == srcDataSize);
 	CheckEqual(buffer, decompressed, srcDataSize);
 
-
+	delete[] decompressed;
 	delete[] buffer;
 	delete[] compressed;
-	delete[] decompressed;
 }
 
 void TestBufferStream()
