@@ -322,11 +322,17 @@ namespace Apoc3D
 
 			return &m_opBuffer;
 		}
-
-		void Model::BuildROPBuffer()
+		RenderOperationBuffer* Model::GetRenderOperationSubEntityRaw(int index)
 		{
 			assert(!m_data->getWeakRef()->isManaged() || !m_data->getWeakRef()->getManager()->usesAsync());
 
+			const FastList<Mesh*>& entities = m_data->getWeakRef()->getEntities();
+
+			return entities[index]->GetRenderOperation(0);
+		}
+
+		void Model::BuildROPBuffer()
+		{
 			assert(!m_isOpBufferBuilt);
 			assert(m_renderOpEntPartID == nullptr);
 			assert(m_renderOpEntPartID == nullptr);

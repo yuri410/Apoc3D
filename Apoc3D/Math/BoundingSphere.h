@@ -48,7 +48,7 @@ namespace Apoc3D
 			float Radius;
 
 			BoundingSphere() { }
-			BoundingSphere(Vector3 center, float radius)
+			BoundingSphere(const Vector3& center, float radius)
 			{
 				Center = center;
 				Radius = radius;
@@ -63,7 +63,7 @@ namespace Apoc3D
 			/**
 			 *  Determines whether the sphere contains the specified point.
 			 */
-			bool Contains(Vector3 vector) const
+			bool Contains(const Vector3& vector) const
 			{
 				float distance = Vector3::DistanceSquared(vector, Center);
 

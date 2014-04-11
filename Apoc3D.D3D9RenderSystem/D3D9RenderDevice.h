@@ -104,6 +104,10 @@ namespace Apoc3D
 
 				D3D9InstancingData* m_instancingData;
 
+				D3D9VertexShader* m_currentVS;
+				D3D9PixelShader* m_currentPS;
+
+
 				// This is called by the VolatileResource itself
 				void TrackVolatileResource(VolatileResource* res)
 				{

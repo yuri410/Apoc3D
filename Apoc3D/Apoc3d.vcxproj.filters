@@ -854,10 +854,10 @@
     <ClCompile Include="Library\tinyxmlparser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Library\lz4.cpp">
+    <ClCompile Include="Library\lz4.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Library\lz4hc.cpp">
+    <ClCompile Include="Library\lz4hc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

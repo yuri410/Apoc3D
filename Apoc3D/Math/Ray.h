@@ -46,7 +46,7 @@ namespace Apoc3D
 			Vector3 Direction;
 
 			Ray() { }
-			Ray(Vector3 position, Vector3 direction)
+			Ray(const Vector3& position, const Vector3& direction)
 				: Position(position), Direction(direction)
 			{ }
 

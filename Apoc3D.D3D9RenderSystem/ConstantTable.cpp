@@ -64,7 +64,8 @@ namespace Apoc3D
 
 					
 					constant.Name = StringUtils::toWString(descs[0].Name);
-					
+					constant.IsSampler = false;
+
 					switch (descs[0].RegisterSet)
 					{
 					case D3DXRS_BOOL:
@@ -78,6 +79,7 @@ namespace Apoc3D
 						break;
 					case D3DXRS_SAMPLER:
 						constant.RegisterSet = SREG_Sampler;
+						constant.IsSampler = true;
 						break;
 					}
 

@@ -63,11 +63,11 @@ namespace Apoc3D
 			float Alpha;
 
 			Color4() : Red(0), Green(0), Blue(0), Alpha(0) { }
-			Color4(Vector3 color)
+			explicit Color4(const Vector3& color)
 				: Red(color.X), Green(color.Y), Blue(color.Z), Alpha(1)
 			{ }
 			
-			Color4(ColorValue argb)
+			explicit Color4(ColorValue argb)
 			{
 				Alpha = static_cast<float>(((argb >> 24) & 0xff) / 255.0f);
 				Red = static_cast<float>((float)((argb >> 16) & 0xff) / 255.0f);

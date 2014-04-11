@@ -92,8 +92,12 @@ namespace Apoc3D
 			/*  AutomaticEffect                                                     */
 			/************************************************************************/
 
-			static Matrix s_instancingWorldBuffer[InstancingData::MaxOneTimeInstances];
-
+			static Matrix s_instancingMatrixBuffer[InstancingData::MaxOneTimeInstances];
+			static float s_instancingFloatBuffer[InstancingData::MaxOneTimeInstances];
+			static float s_instancingVector2Buffer[InstancingData::MaxOneTimeInstances*2];
+			static Vector4 s_instancingVector4Buffer[InstancingData::MaxOneTimeInstances];
+			
+			
 			template void AutomaticEffect::SetParameterValue<bool>(int index, bool* value, int count);
 			template void AutomaticEffect::SetParameterValue<int>(int index, int* value, int count);
 			template void AutomaticEffect::SetParameterValue<float>(int index, float* value, int count);
@@ -104,7 +108,8 @@ namespace Apoc3D
 
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
 				: m_vertexShader(nullptr), m_pixelShader(nullptr), m_device(device), m_supportsInstancing(false), 
-				m_unifiedTime(0), m_lastTime(0)
+				m_unifiedTime(0), m_lastTime(0),
+				m_previousMaterialPointer(nullptr)
 			{
 				Reload(rl);
 
@@ -141,6 +146,7 @@ namespace Apoc3D
 					delete m_pixelShader;
 					m_pixelShader = nullptr; 
 				}
+
 				m_parameters.Clear();
 				m_supportsInstancing = false;
 				m_isUnsupported = false;
@@ -172,9 +178,75 @@ namespace Apoc3D
 				ObjectFactory* objFac = m_device->getObjectFactory();
 				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(profileSelected->VSCode));
 				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(profileSelected->PSCode));
+				
 
-				m_parameters =  profileSelected->Parameters;
+				m_parameters.ResizeDiscard(profileSelected->Parameters.getCount());
+				for (int32 i=0;i<profileSelected->Parameters.getCount();i++)
+				{
+					ResolvedEffectParameter rep(profileSelected->Parameters[i]);
 
+					Shader* shader = nullptr;
+					if (rep.ProgramType == SHDT_Vertex)
+					{
+						shader = m_vertexShader;
+					}
+					else if (rep.ProgramType == SHDT_Pixel)
+					{
+						shader = m_pixelShader;
+					}
+					assert(shader);
+					rep.RS_TargetShader = shader;
+
+					switch (rep.Usage)
+					{
+					case EPUSAGE_LC4_Ambient:
+					case EPUSAGE_LC4_Diffuse:
+					case EPUSAGE_LC4_Specular:
+					case EPUSAGE_LV3_LightDir:
+					case EPUSAGE_PV3_ViewPos:
+					case EPUSAGE_SV2_ViewportSize:
+					case EPUSAGE_SV2_InvViewportSize:
+					case EPUSAGE_S_FarPlane:
+					case EPUSAGE_S_NearPlane:
+					case EPUSAGE_Trans_View:
+					case EPUSAGE_Trans_InvView:
+					case EPUSAGE_Trans_ViewProj:
+					case EPUSAGE_Trans_Projection:
+					case EPUSAGE_Trans_InvProj:
+					case EPUSAGE_V3_CameraX:
+					case EPUSAGE_V3_CameraY:
+					case EPUSAGE_V3_CameraZ:
+					case EPUSAGE_S_UnifiedTime:
+						rep.RS_SetupAtBeginingOnly = true;
+
+					case EPUSAGE_Tex0:
+					case EPUSAGE_Tex1:
+					case EPUSAGE_Tex2:
+					case EPUSAGE_Tex3:
+					case EPUSAGE_Tex4:
+					case EPUSAGE_Tex5:
+					case EPUSAGE_Tex6:
+					case EPUSAGE_Tex7:
+					case EPUSAGE_Tex8:
+					case EPUSAGE_Tex9:
+					case EPUSAGE_Tex10:
+					case EPUSAGE_Tex11:
+					case EPUSAGE_Tex12:
+					case EPUSAGE_Tex13:
+					case EPUSAGE_Tex14:
+					case EPUSAGE_Tex15:
+
+						rep.RS_SetupAtBegining = true;
+						break;
+					}
+
+					shader->TryGetSamplerIndex(rep.Name, rep.SamplerIndex);
+					shader->TryGetParamIndex(rep.Name, rep.RegisterIndex);
+					assert(rep.RegisterIndex != -1 || rep.SamplerIndex != -1);
+
+					m_parameters.Add(rep);
+				}
+				
 				// instancing check
 				for (int i=0;i<m_parameters.getCount();i++)
 				{
@@ -202,98 +274,37 @@ namespace Apoc3D
 			{
 				// set the param's value one by one. 
 
-				// TODO: some optimization can be done to reduce the parameters here.
-				// as the material for all the render operations in the list is the same.
-				// material parameters had better to be set only once.
+				// the material for all the render operations in the list is the same.
+				// it is better to be set only once. by checking m_previousMaterialPointer
 
 				for (int i=0;i<m_parameters.getCount();i++)
 				{
-					EffectParameter& ep = m_parameters[i];
+					ResolvedEffectParameter& ep = m_parameters[i];
+
+					if (ep.RS_SetupAtBegining && ep.RS_SetupAtBeginingOnly)
+						continue;
+
 					switch (ep.Usage)
 					{
 						case EPUSAGE_MtrlC4_Ambient:
-							SetValue(ep, mtrl->Ambient);
+							if (m_previousMaterialPointer != mtrl)
+								ep.SetColor4(mtrl->Ambient);
 							break;
 						case EPUSAGE_MtrlC4_Diffuse:
-							SetValue(ep, mtrl->Diffuse);
+							if (m_previousMaterialPointer != mtrl)
+								ep.SetColor4(mtrl->Diffuse);
 							break;
 						case EPUSAGE_MtrlC4_Emissive:
-							SetValue(ep, mtrl->Emissive);
+							if (m_previousMaterialPointer != mtrl)
+								ep.SetColor4(mtrl->Emissive);
 							break;
 						case EPUSAGE_MtrlC4_Specular:
-							SetValue(ep, mtrl->Specular);
+							if (m_previousMaterialPointer != mtrl)
+								ep.SetColor4(mtrl->Specular);
 							break;
 						case EPUSAGE_MtrlC_Power:
-							SetValue(ep, mtrl->Power);
-							break;
-						case EPUSAGE_Trans_WorldViewProj:
-							if (RendererEffectParams::CurrentCamera)
-							{
-								Matrix mvp;
-								Matrix::Multiply(mvp, rop->RootTransform, RendererEffectParams::CurrentCamera->getViewProjMatrix());
-
-								SetValue(ep, mvp);
-							}
-							break;
-						case EPUSAGE_Trans_WorldView:
-							if (RendererEffectParams::CurrentCamera)
-							{
-								Matrix mv;
-								Matrix::Multiply(mv, rop->RootTransform, RendererEffectParams::CurrentCamera->getViewMatrix());
-
-								SetValue(ep, mv);
-							}
-							break;
-						case EPUSAGE_Trans_World:
-							SetValue(ep, rop->RootTransform);
-							break;
-						case EPUSAGE_Trans_WorldViewOriProj:
-							if (RendererEffectParams::CurrentCamera)
-							{
-								Matrix view = RendererEffectParams::CurrentCamera->getViewMatrix();
-								view.SetTranslation(Vector3::Zero);
-
-								Matrix temp;
-								Matrix::Multiply(temp, rop->RootTransform, view);
-
-								Matrix mvp;
-								Matrix::Multiply(mvp, temp, RendererEffectParams::CurrentCamera->getProjMatrix());
-
-								SetValue(ep, mvp);
-							}
-							break;
-						case EPUSAGE_Trans_InstanceWorlds:
-							{
-								Shader* shader = 0;
-								if (ep.ProgramType == SHDT_Vertex)
-								{
-									shader = m_vertexShader;
-								}
-								else if (ep.ProgramType == SHDT_Pixel)
-								{
-									shader = m_pixelShader;
-								}
-
-								if (ep.RegisterIndex == -1)
-								{
-									ep.RegisterIndex = shader->GetParamIndex(ep.Name);
-								}
-
-								for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-								{
-									s_instancingWorldBuffer[i] = rop[i].RootTransform;
-									//shader->SetValue(ep.RegisterIndex + i * 4, rop[i].RootTransform);
-								}
-
-								shader->SetValue(ep.RegisterIndex, s_instancingWorldBuffer, count);
-							}
-							break;
-						
-						case EPUSAGE_M4X3_BoneTrans:
-							Set4X3Matrix(ep, rop->PartTransform.Transfroms, rop->PartTransform.Count);
-							break;
-						case EPUSAGE_M4X4_BoneTrans:
-							SetMatrix(ep, rop->PartTransform.Transfroms, rop->PartTransform.Count);
+							if (m_previousMaterialPointer != mtrl)
+								ep.SetFloat(mtrl->Power);
 							break;
 						case EPUSAGE_Tex0:
 						case EPUSAGE_Tex1:
@@ -311,34 +322,163 @@ namespace Apoc3D
 						case EPUSAGE_Tex13:
 						case EPUSAGE_Tex14:
 						case EPUSAGE_Tex15:
-							SetTexture(ep, mtrl->getTexture(ep.Usage - EPUSAGE_Tex0));
+							if (m_previousMaterialPointer != mtrl)
+							{
+								SetTexture(ep, mtrl->getTexture(ep.Usage - EPUSAGE_Tex0));
+							}
+							break;
+
+						case EPUSAGE_Trans_WorldViewProj:
+							if (RendererEffectParams::CurrentCamera)
+							{
+								Matrix mvp;
+								Matrix::Multiply(mvp, rop->RootTransform, RendererEffectParams::CurrentCamera->getViewProjMatrix());
+
+								ep.SetMatrix(mvp);
+							}
+							break;
+						case EPUSAGE_Trans_WorldView:
+							if (RendererEffectParams::CurrentCamera)
+							{
+								Matrix mv;
+								Matrix::Multiply(mv, rop->RootTransform, RendererEffectParams::CurrentCamera->getViewMatrix());
+
+								ep.SetMatrix(mv);
+							}
+							break;
+						case EPUSAGE_Trans_World:
+							ep.SetMatrix(rop->RootTransform);
+							break;
+						case EPUSAGE_Trans_WorldViewOriProj:
+							if (RendererEffectParams::CurrentCamera)
+							{
+								Matrix view = RendererEffectParams::CurrentCamera->getViewMatrix();
+								view.SetTranslation(Vector3::Zero);
+
+								Matrix temp;
+								Matrix::Multiply(temp, rop->RootTransform, view);
+
+								Matrix mvp;
+								Matrix::Multiply(mvp, temp, RendererEffectParams::CurrentCamera->getProjMatrix());
+
+								ep.SetMatrix(mvp);
+							}
+							break;
+						case EPUSAGE_Trans_InstanceWorlds:
+							{
+								for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+								{
+									s_instancingMatrixBuffer[i] = rop[i].RootTransform;
+								}
+
+								ep.SetMatrix(s_instancingMatrixBuffer, count);
+							}
+							break;
+						
+						case EPUSAGE_M4X3_BoneTrans:
+							ep.Set4X3Matrix(rop->PartTransform.Transfroms, rop->PartTransform.Count);
+							break;
+						case EPUSAGE_M4X4_BoneTrans:
+							ep.SetMatrix(rop->PartTransform.Transfroms, rop->PartTransform.Count);
 							break;
 
 						case EPUSAGE_InstanceBlob:
+							if (rop->UserData)
 							{
-								if (SupportsInstancing())
+								const InstanceInfoBlob* firstBlob = reinterpret_cast<const InstanceInfoBlob*>(rop->UserData);
+
+								if (m_supportsInstancing)
 								{
-									LogManager::getSingleton().Write(LOG_Graphics, L"[" + m_name + L"] Setting per-instance data for the instanced effect. Parameter is not setup per-instance.", LOGLVL_Warning);
-								}
-								if (rop->UserData)
-								{
-									const InstanceInfoBlob* blob = reinterpret_cast<const InstanceInfoBlob*>(rop->UserData);
-									SetInstanceBlobParameter(ep, blob->DataList[ep.InstanceBlobIndex]);
+									CustomEffectParameterType paramType = firstBlob->DataList[ep.InstanceBlobIndex].Type;
+
+									bool inValidType = false;
+									switch (paramType)
+									{
+									case CEPT_Float:
+										{
+											for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+												s_instancingFloatBuffer[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsSingle();
+
+											int32 alignedCount = (count + 3) & ~0x03;
+											ep.SetFloat(s_instancingFloatBuffer, alignedCount);
+										}
+										break;
+
+									case CEPT_Vector2:
+									case CEPT_Ref_Vector2:
+										{
+											Vector2* dst = reinterpret_cast<Vector2*>(s_instancingVector2Buffer);
+
+											if (paramType == CEPT_Ref_Vector2)
+											{
+												for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+													dst[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsVector2Ref();
+											}
+											else
+											{
+												for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+													dst[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsVector2();
+											}
+												
+											int32 alignedCount = (count*2 + 3) & ~0x03;
+											ep.SetFloat(s_instancingVector2Buffer, alignedCount);
+										}
+										break;
+											
+									case CEPT_Vector4:
+										for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+											s_instancingVector4Buffer[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsVector4();
+										ep.SetVector4(s_instancingVector4Buffer, count);
+										break;
+									case CEPT_Ref_Vector4:
+										for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+											s_instancingVector4Buffer[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsVector4Ref();
+										ep.SetVector4(s_instancingVector4Buffer, count);
+										break;
+
+									case CEPT_Ref_Vector3:
+										for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
+											(Vector3&)s_instancingVector4Buffer[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsVector3Ref();
+										ep.SetVector4(s_instancingVector4Buffer, count);
+										break;
+
+									case CEPT_Boolean:
+									case CEPT_Integer:
+									case CEPT_Ref_TextureHandle:
+									case CEPT_Ref_Texture:
+										inValidType = true;
+										break;
+									}
+									if (inValidType)
+									{
+										LogManager::getSingleton().Write(LOG_Graphics, 
+											L"[" + m_name + L"] Instanced InfoBlob parameter " + ep.Name + L" type not valid. ", LOGLVL_Warning);
+									}
 								}
 								else
 								{
-									LogManager::getSingleton().Write(LOG_Graphics, L"[" + m_name + L"] No InfoBlob Obtained.", LOGLVL_Error);
+									SetInstanceBlobParameter(ep, firstBlob->DataList[ep.InstanceBlobIndex]);
 								}
-								break;
 							}
-						case EPUSAGE_CustomMaterialParam:
-							if (mtrl && ep.CustomMaterialParamName.size())
+							else
 							{
-								SetMaterialCustomParameter(ep, mtrl);
+								LogManager::getSingleton().Write(LOG_Graphics, L"[" + m_name + L"] No InfoBlob Obtained.", LOGLVL_Error);
+							}
+							break;
+							
+						case EPUSAGE_CustomMaterialParam:
+							if (m_previousMaterialPointer != mtrl)
+							{
+								if (mtrl && ep.CustomMaterialParamName.size())
+								{
+									SetMaterialCustomParameter(ep, mtrl);
+								}
 							}
 							break;
 					}
 				}
+
+				m_previousMaterialPointer = mtrl;
 			}
 			void AutomaticEffect::BeginPass(int passId)
 			{
@@ -352,26 +492,13 @@ namespace Apoc3D
 			template<typename T>
 			void AutomaticEffect::SetParameterValue(int index, T* value, int count)
 			{
-				EffectParameter& param = m_parameters[index];
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
-
-				if (param.RegisterIndex == -1)
-				{
-					param.RegisterIndex = shader->GetParamIndex(param.Name);
-				}
-				shader->SetValue(param.RegisterIndex, value, count);
+				ResolvedEffectParameter& param = m_parameters[index];
+				
+				param.RS_TargetShader->SetValue(param.RegisterIndex, value, count);
 			}
 			void AutomaticEffect::SetParameterTexture(int index, ResourceHandle<Texture>* value)
 			{
-				EffectParameter& param = m_parameters[index];
+				ResolvedEffectParameter& param = m_parameters[index];
 				Texture* tex = 0;
 
 				if (value)
@@ -387,45 +514,16 @@ namespace Apoc3D
 					tex = m_texture;
 				}
 
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
-
-				if (param.SamplerIndex == -1)
-				{
-					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
-				}
-				shader->SetSamplerState(param.SamplerIndex, param.SamplerState);
-				shader->SetTexture(param.SamplerIndex, tex);
+				param.RS_TargetShader->SetSamplerState(param.SamplerIndex, param.SamplerState);
+				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
 
 			void AutomaticEffect::SetParameterTexture(int index, Texture* tex)
 			{
-				EffectParameter& param = m_parameters[index];
+				ResolvedEffectParameter& param = m_parameters[index];
 				
-
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
-
-				if (param.SamplerIndex == -1)
-				{
-					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
-				}
-				shader->SetSamplerState(param.SamplerIndex, param.SamplerState);
-				shader->SetTexture(param.SamplerIndex, tex);
+				param.RS_TargetShader->SetSamplerState(param.SamplerIndex, param.SamplerState);
+				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
 
 			int AutomaticEffect::FindParameterIndex(const String& name)
@@ -442,52 +540,52 @@ namespace Apoc3D
 
 			int AutomaticEffect::begin()
 			{
-				// as you can see, some parameters are set up here.
-				// The reason here is for performance reasons, the begin method
-				// is called per material and geometry shape, not per render operation.   
-				// The amount is much smaller than render operations.
-				// As a result, data sending to the GPU will be fewer.
-
+				// non render operation specific parameters will be set here
+				m_previousMaterialPointer = nullptr;
 				
 				m_device->BindPixelShader(m_pixelShader);
 				m_device->BindVertexShader(m_vertexShader);
 
 				for (int i=0;i<m_parameters.getCount();i++)
 				{
-					EffectParameter& ep = m_parameters[i];
+					ResolvedEffectParameter& ep = m_parameters[i];
+
+					if (!ep.RS_SetupAtBegining)
+						continue;
+
 					switch (ep.Usage)
 					{
 					case EPUSAGE_LC4_Ambient:
-						SetValue(ep, RendererEffectParams::LightAmbient);
+						ep.SetColor4(RendererEffectParams::LightAmbient);
 						break;
 					case EPUSAGE_LC4_Diffuse:
-						SetValue(ep, RendererEffectParams::LightDiffuse);
+						ep.SetColor4(RendererEffectParams::LightDiffuse);
 						break;
 					case EPUSAGE_LC4_Specular:
-						SetValue(ep, RendererEffectParams::LightSpecular);
+						ep.SetColor4(RendererEffectParams::LightSpecular);
 						break;
 					case EPUSAGE_LV3_LightDir:
-						SetVector3(ep, RendererEffectParams::LightDirection);
+						ep.SetVector3(RendererEffectParams::LightDirection);
 						break;
 					case EPUSAGE_PV3_ViewPos:
 						if (RendererEffectParams::CurrentCamera)
 						{
 							Vector3 pos = RendererEffectParams::CurrentCamera->getInvViewMatrix().GetTranslation();
-							SetVector3(ep, pos);
-							break;
+							ep.SetVector3(pos);
 						}
+						break;
 					case EPUSAGE_SV2_ViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
 							Vector2 size = Vector2((float)vp.Width, (float)vp.Height);
-							SetVector2(ep, size);
+							ep.SetVector2(size);
 							break;
 						}
 					case EPUSAGE_SV2_InvViewportSize:
 						{
 							Viewport vp = m_device->getViewport();
 							Vector2 size = Vector2(1.f/(float)vp.Width, 1.f/(float)vp.Height);
-							SetVector2(ep, size);
+							ep.SetVector2(size);
 							break;
 						}
 					case EPUSAGE_S_FarPlane:
@@ -498,11 +596,11 @@ namespace Apoc3D
 							if (view.M34<0)
 							{
 								// RH
-								SetValue(ep, (float)(view.M33 * n /(view.M33*n+1)));
+								ep.SetFloat((float)(view.M33 * n /(view.M33*n+1)));
 							}
 							else
 							{
-								SetValue(ep, (float)(view.M33 * n /(view.M33*n-1)));
+								ep.SetFloat((float)(view.M33 * n /(view.M33*n-1)));
 							}
 							break;
 						}
@@ -510,36 +608,36 @@ namespace Apoc3D
 						{
 							const Matrix& view = RendererEffectParams::CurrentCamera->getProjMatrix();
 							float n = - view.M34 * view.M43 / view.M33;
-							SetValue(ep, n);
+							ep.SetFloat(n);
 							break;
 						}
 					case EPUSAGE_Trans_View:
-						SetValue(ep, RendererEffectParams::CurrentCamera->getViewMatrix());
+						ep.SetMatrix(RendererEffectParams::CurrentCamera->getViewMatrix());
 						break;
 					case EPUSAGE_Trans_InvView:
-						SetValue(ep, RendererEffectParams::CurrentCamera->getInvViewMatrix());
+						ep.SetMatrix(RendererEffectParams::CurrentCamera->getInvViewMatrix());
 						break;
 					case EPUSAGE_Trans_ViewProj:
-						SetValue(ep, RendererEffectParams::CurrentCamera->getViewProjMatrix());
+						ep.SetMatrix(RendererEffectParams::CurrentCamera->getViewProjMatrix());
 						break;
 					case EPUSAGE_Trans_Projection:
-						SetValue(ep, RendererEffectParams::CurrentCamera->getProjMatrix());
+						ep.SetMatrix(RendererEffectParams::CurrentCamera->getProjMatrix());
 						break;
 					case EPUSAGE_Trans_InvProj:
 						{
 							Matrix invProj;
 							Matrix::Inverse(invProj, RendererEffectParams::CurrentCamera->getProjMatrix());
-							SetValue(ep, invProj);
+							ep.SetMatrix(invProj);
 							break;
 						}
 					case EPUSAGE_V3_CameraX:
-						SetVector3(ep, RendererEffectParams::CurrentCamera->getInvViewMatrix().GetX());
+						ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetX());
 						break;
 					case EPUSAGE_V3_CameraY:
-						SetVector3(ep, RendererEffectParams::CurrentCamera->getInvViewMatrix().GetY());
+						ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetY());
 						break;
 					case EPUSAGE_V3_CameraZ:
-						SetVector3(ep, RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ());
+						ep.SetVector3(RendererEffectParams::CurrentCamera->getInvViewMatrix().GetZ());
 						break;
 					case EPUSAGE_Tex0:
 					case EPUSAGE_Tex1:
@@ -557,11 +655,11 @@ namespace Apoc3D
 					case EPUSAGE_Tex13:
 					case EPUSAGE_Tex14:
 					case EPUSAGE_Tex15:
-						SetSamplerState(ep);
+						ep.SetSamplerState();
 						break;
 
 					case EPUSAGE_S_UnifiedTime:
-						SetValue(m_parameters[i], m_unifiedTime);
+						ep.SetFloat(m_unifiedTime);
 						break;
 					}
 				}
@@ -572,101 +670,9 @@ namespace Apoc3D
 			{
 
 			}
-			template<typename T>
-			void AutomaticEffect::SetValue(EffectParameter& param, const T& value)
-			{
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
 
-				if (param.RegisterIndex == -1)
-				{
-					param.RegisterIndex = shader->GetParamIndex(param.Name);
-				}
-				shader->SetValue(param.RegisterIndex, value);
-			}
-			void AutomaticEffect::SetVector2(EffectParameter& param, Vector2 value)
-			{
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
 
-				if (param.RegisterIndex == -1)
-				{
-					param.RegisterIndex = shader->GetParamIndex(param.Name);
-				}
-				
-				shader->SetVector2(param.RegisterIndex, value);
-			}
-			void AutomaticEffect::SetVector3(EffectParameter& param, Vector3 value)
-			{
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
-				
-				if (param.RegisterIndex == -1)
-				{
-					param.RegisterIndex = shader->GetParamIndex(param.Name);
-				}
-
-				shader->SetVector3(param.RegisterIndex, value);
-			}
-			void AutomaticEffect::SetVector4(EffectParameter& param, Vector4 value)
-			{
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
-
-				if (param.RegisterIndex == -1)
-				{
-					param.RegisterIndex = shader->GetParamIndex(param.Name);
-				}
-
-				shader->SetVector4(param.RegisterIndex, value);
-			}
-			void AutomaticEffect::SetSamplerState(EffectParameter& param)
-			{
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
-
-				if (param.SamplerIndex == -1)
-				{
-					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
-				}
-				shader->SetSamplerState(param.SamplerIndex, param.SamplerState);
-			}
-			void AutomaticEffect::SetTexture(EffectParameter& param, ResourceHandle<Texture>* value)
+			void AutomaticEffect::SetTexture(ResolvedEffectParameter& param, ResourceHandle<Texture>* value)
 			{
 				Texture* tex = 0;
 				
@@ -675,7 +681,7 @@ namespace Apoc3D
 					tex = value->operator->();
 					if (!value->isDummyHandle() && tex->getState() != RS_Loaded)
 					{
-						tex = 0;
+						tex = nullptr;
 					}
 				}
 				else
@@ -683,85 +689,22 @@ namespace Apoc3D
 					tex = m_texture;
 				}
 
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
-
-				if (param.SamplerIndex == -1)
-				{
-					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
-				}
-				shader->SetTexture(param.SamplerIndex, tex);
+				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}
-			void AutomaticEffect::SetTexture(EffectParameter& param, Texture* value)
+			void AutomaticEffect::SetTexture(ResolvedEffectParameter& param, Texture* value)
 			{
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
-
-				if (param.SamplerIndex == -1)
-				{
-					param.SamplerIndex = shader->GetSamplerIndex(param.Name);
-				}
-				shader->SetTexture(param.SamplerIndex, value == 0 ? m_texture : value);
+				param.RS_TargetShader->SetTexture(param.SamplerIndex, value == nullptr ? m_texture : value);
 			}
-			void AutomaticEffect::Set4X3Matrix(EffectParameter& param, const Matrix* transfroms, int count)
-			{
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
+			
 
-				if (param.RegisterIndex == -1)
-				{
-					param.RegisterIndex = shader->GetParamIndex(param.Name);
-				}
-				shader->SetMatrix4x3(param.RegisterIndex, transfroms, count);
-			}
-			void AutomaticEffect::SetMatrix(EffectParameter& param, const Matrix* transfroms, int count)
-			{
-				Shader* shader = 0;
-				if (param.ProgramType == SHDT_Vertex)
-				{
-					shader = m_vertexShader;
-				}
-				else if (param.ProgramType == SHDT_Pixel)
-				{
-					shader = m_pixelShader;
-				}
-
-				if (param.RegisterIndex == -1)
-				{
-					param.RegisterIndex = shader->GetParamIndex(param.Name);
-				}
-				shader->SetValue(param.RegisterIndex, transfroms, count);
-			}
-
-			void AutomaticEffect::SetInstanceBlobParameter(EffectParameter& ep, const InstanceInfoBlob::CustomValue& v)
+			void AutomaticEffect::SetInstanceBlobParameter(ResolvedEffectParameter& ep, const InstanceInfoBlob::CustomValue& v)
 			{
 				if (EffectParameter::IsReference(v.Type))
 					SetSingleCustomParameter(ep, v.Type, v.RefValue);
 				else
 					SetSingleCustomParameter(ep, v.Type, v.Value);
 			}
-			void AutomaticEffect::SetMaterialCustomParameter(EffectParameter& ep, Material* mtrl)
+			void AutomaticEffect::SetMaterialCustomParameter(ResolvedEffectParameter& ep, Material* mtrl)
 			{
 				const MaterialCustomParameter* mcp = mtrl->getCustomParameter(ep.CustomMaterialParamName);
 				if (mcp)
@@ -772,50 +715,62 @@ namespace Apoc3D
 						SetSingleCustomParameter(ep, mcp->Type, mcp->Value);
 				}
 			}
-			void AutomaticEffect::SetSingleCustomParameter(EffectParameter& ep, CustomEffectParameterType type, void* data)
-			{
-				switch (type)
-				{
-				case CEPT_Ref_TextureHandle:
-					if (EffectParameter::IsReference(type))
-					{
-						SetTexture(ep, reinterpret_cast<ResourceHandle<Texture>*>(data));
-					}
-					break;
-				case CEPT_Ref_Texture:
-					if (EffectParameter::IsReference(type))
-					{
-						SetTexture(ep, reinterpret_cast<Texture*>(data));
-					}
-					break;
-				}
-			}
-			void AutomaticEffect::SetSingleCustomParameter(EffectParameter& ep, CustomEffectParameterType type, const uint* data)
+
+			void AutomaticEffect::SetSingleCustomParameter(ResolvedEffectParameter& ep, CustomEffectParameterType type, const void* data)
 			{
 				switch (type)
 				{
 				case CEPT_Float:
-					SetValue(ep, *reinterpret_cast<const float*>(data));
+					ep.SetFloat(*reinterpret_cast<const float*>(data));
 					break;
 				case CEPT_Vector2:
 				case CEPT_Ref_Vector2:
-					SetVector2(ep, *reinterpret_cast<const Vector2*>(data));
+					ep.SetVector2(*reinterpret_cast<const Vector2*>(data));
 					break;
 				case CEPT_Ref_Vector3:
-					SetVector3(ep, *reinterpret_cast<const Vector3*>(data));
+					ep.SetVector3(*reinterpret_cast<const Vector3*>(data));
 					break;
 				case CEPT_Ref_Vector4:
 				case CEPT_Vector4:
-					SetVector4(ep, *reinterpret_cast<const Vector4*>(data));
+					ep.SetVector4(*reinterpret_cast<const Vector4*>(data));
 					break;
 				case CEPT_Boolean:
-					SetValue(ep, *reinterpret_cast<const bool*>(data));
+					ep.SetBool(*reinterpret_cast<const bool*>(data));
 					break;
 				case CEPT_Integer:
-					SetValue(ep, *reinterpret_cast<const int*>(data));
+					ep.SetInt(*reinterpret_cast<const int*>(data));
+					break;
+				case CEPT_Ref_TextureHandle:
+					SetTexture(ep, (ResourceHandle<Texture>*)data);
+					break;
+				case CEPT_Ref_Texture:
+					SetTexture(ep, (Texture*)data);
 					break;
 				}
 			}
+
+			void AutomaticEffect::ResolvedEffectParameter::SetSamplerState() const { RS_TargetShader->SetSamplerState(SamplerIndex, SamplerState); }
+
+			void AutomaticEffect::ResolvedEffectParameter::SetVector2(const Vector2& value) const { RS_TargetShader->SetVector2(RegisterIndex, value); }
+			void AutomaticEffect::ResolvedEffectParameter::SetVector3(const Vector3& value) const { RS_TargetShader->SetVector3(RegisterIndex, value); }
+			void AutomaticEffect::ResolvedEffectParameter::SetVector4(const Vector4& value) const { RS_TargetShader->SetVector4(RegisterIndex, value); }
+			void AutomaticEffect::ResolvedEffectParameter::SetVector4(const Vector4* value, int count) const { RS_TargetShader->SetVector4(RegisterIndex, value, count); }
+			
+			void AutomaticEffect::ResolvedEffectParameter::SetColor4(const Color4& value) const { RS_TargetShader->SetValue(RegisterIndex, value); }
+
+			void AutomaticEffect::ResolvedEffectParameter::SetFloat(const float values) const { RS_TargetShader->SetValue(RegisterIndex, values); }
+			void AutomaticEffect::ResolvedEffectParameter::SetFloat(const float* values, int count) const { RS_TargetShader->SetValue(RegisterIndex, values, count); }
+
+			void AutomaticEffect::ResolvedEffectParameter::SetInt(const int values) const { RS_TargetShader->SetValue(RegisterIndex, values); }
+			void AutomaticEffect::ResolvedEffectParameter::SetInt(const int* values, int count) const { RS_TargetShader->SetValue(RegisterIndex, values, count); }
+
+			void AutomaticEffect::ResolvedEffectParameter::SetBool(const bool values) const { RS_TargetShader->SetValue(RegisterIndex, values); }
+			void AutomaticEffect::ResolvedEffectParameter::SetBool(const bool* values, int count) const { RS_TargetShader->SetValue(RegisterIndex, values, count); }
+
+
+			void AutomaticEffect::ResolvedEffectParameter::Set4X3Matrix(const Matrix* transfroms, int count) const { RS_TargetShader->SetMatrix4x3(RegisterIndex, transfroms, count); }
+			void AutomaticEffect::ResolvedEffectParameter::SetMatrix(const Matrix* transfroms, int count) const { RS_TargetShader->SetValue(RegisterIndex, transfroms, count); }
+			void AutomaticEffect::ResolvedEffectParameter::SetMatrix(const Matrix& m) const { RS_TargetShader->SetValue(RegisterIndex, m); }
 
 			/************************************************************************/
 			/*  CustomShaderEffect                                                  */

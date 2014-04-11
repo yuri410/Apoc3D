@@ -106,7 +106,7 @@ namespace Apoc3D
 				String m_name;
 			private:
 				bool m_begun;
-
+				
 			};
 
 			/**
@@ -148,26 +148,52 @@ namespace Apoc3D
 				virtual int begin();
 				virtual void end();
 			private:
-				void SetVector2(EffectParameter& param, Vector2 value);
-				void SetVector3(EffectParameter& param, Vector3 value);
-				void SetVector4(EffectParameter& param, Vector4 value);
-				void SetSamplerState(EffectParameter& param);
-				void SetTexture(EffectParameter& param, ResourceHandle<Texture>* value);
-				void SetTexture(EffectParameter& param, Texture* value);
-				template<typename T>
-				void SetValue(EffectParameter& param, const T& value);
-				void Set4X3Matrix(EffectParameter& param, const Matrix* transfroms, int count);
-				void SetMatrix(EffectParameter& param, const Matrix* transfroms, int count);
+				struct ResolvedEffectParameter : public EffectParameter
+				{
+					ResolvedEffectParameter() : EffectParameter() { }
+					explicit ResolvedEffectParameter(const EffectParameter& base)
+						: EffectParameter(base), RS_SetupAtBeginingOnly(false), RS_SetupAtBegining(false), RS_TargetShader(nullptr) { }
 
-				void SetInstanceBlobParameter(EffectParameter& param, const InstanceInfoBlob::CustomValue& v);
-				void SetMaterialCustomParameter(EffectParameter& param, Material* mtrl);
-				void SetSingleCustomParameter(EffectParameter& param, CustomEffectParameterType type, void* data);
-				void SetSingleCustomParameter(EffectParameter& param, CustomEffectParameterType type, const uint* data);
+					bool RS_SetupAtBegining;
+					bool RS_SetupAtBeginingOnly;
+					Shader* RS_TargetShader;
+
+					void SetSamplerState() const;
+
+					void SetVector2(const Vector2& value) const;
+					void SetVector3(const Vector3& value) const;
+					void SetVector4(const Vector4& value) const;
+					void SetVector4(const Vector4* value, int count) const;
+					
+					void SetColor4(const Color4& value) const;
+
+					void Set4X3Matrix(const Matrix* transfroms, int count) const;
+
+					void SetMatrix(const Matrix& m) const;
+					void SetMatrix(const Matrix* transfroms, int count) const;
+
+					void SetFloat(const float values) const;
+					void SetFloat(const float* values, int count) const;
+
+					void SetInt(const int values) const;
+					void SetInt(const int* values, int count) const;
+
+					void SetBool(const bool values) const;
+					void SetBool(const bool* values, int count) const;
+
+				};
+
+				void SetTexture(ResolvedEffectParameter& param, ResourceHandle<Texture>* value);
+				void SetTexture(ResolvedEffectParameter& param, Texture* value);
+				
+				void SetInstanceBlobParameter(ResolvedEffectParameter& param, const InstanceInfoBlob::CustomValue& v);
+				void SetMaterialCustomParameter(ResolvedEffectParameter& param, Material* mtrl);
+				void SetSingleCustomParameter(ResolvedEffectParameter& param, CustomEffectParameterType type, const void* data);
 
 				VertexShader* m_vertexShader;
 				PixelShader* m_pixelShader;
 
-				List<EffectParameter> m_parameters;
+				List<ResolvedEffectParameter> m_parameters;
 
 				RenderDevice* m_device;
 				Texture* m_texture;
@@ -176,6 +202,9 @@ namespace Apoc3D
 
 				float m_unifiedTime;
 				float m_lastTime;
+
+				// for duplicated material parameter setup check only
+				void* m_previousMaterialPointer;
 				//Matrix m_mtrxBuffer[InstancingData::MaxOneTimeInstances];
 			};
 

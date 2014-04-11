@@ -361,6 +361,10 @@ namespace Apoc3D
 					Vector4& AsVector4() { return reinterpret_cast<Vector4&>(Value); }
 					bool& AsBoolean() { return reinterpret_cast<bool&>(Value); }
 					int& AsInteger() { return reinterpret_cast<int&>(Value); }
+
+					Vector2& AsVector2Ref() { return *reinterpret_cast<Vector2*>(RefValue); }
+					Vector4& AsVector4Ref() { return *reinterpret_cast<Vector4*>(RefValue); }
+					Vector3& AsVector3Ref() { return *reinterpret_cast<Vector3*>(RefValue); }
 				};
 
 				FastList<CustomValue> DataList;

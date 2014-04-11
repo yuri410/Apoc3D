@@ -119,7 +119,8 @@ namespace Apoc3D
 				: RenderDevice(L"Direct3D9 RenderSystem"), m_devManager(devManager), 
 				m_stateManager(0), m_nativeState(0), m_caps(0), m_cachedRenderTarget(0), m_defaultEffect(0),
 				m_defaultRT(NULL), m_defaultDS(NULL),
-				m_instancingData(NULL)
+				m_instancingData(NULL),
+				m_currentVS(nullptr), m_currentPS(nullptr)
 			{
 
 			}
@@ -286,26 +287,36 @@ namespace Apoc3D
 
 			void D3D9RenderDevice::BindVertexShader(VertexShader* shader)
 			{
-				if (shader)
+				if (m_currentVS != shader)
 				{
-					D3D9VertexShader* vs = static_cast<D3D9VertexShader*>(shader);
-					getDevice()->SetVertexShader(vs->getD3DVS());
-				}
-				else
-				{
-					getDevice()->SetVertexShader(0);
+					if (shader)
+					{
+						D3D9VertexShader* vs = static_cast<D3D9VertexShader*>(shader);
+						getDevice()->SetVertexShader(vs->getD3DVS());
+						m_currentVS = vs;
+					}
+					else
+					{
+						getDevice()->SetVertexShader(0);
+						m_currentVS = nullptr;
+					}
 				}
 			}
 			void D3D9RenderDevice::BindPixelShader(PixelShader* shader)
 			{
-				if (shader)
+				if (m_currentPS != shader)
 				{
-					D3D9PixelShader* ps = static_cast<D3D9PixelShader*>(shader);
-					getDevice()->SetPixelShader(ps->getD3DPS());
-				}
-				else
-				{
-					getDevice()->SetPixelShader(0);
+					if (shader)
+					{
+						D3D9PixelShader* ps = static_cast<D3D9PixelShader*>(shader);
+						getDevice()->SetPixelShader(ps->getD3DPS());
+						m_currentPS = ps;
+					}
+					else
+					{
+						getDevice()->SetPixelShader(0);
+						m_currentPS = nullptr;
+					}
 				}
 			}
 

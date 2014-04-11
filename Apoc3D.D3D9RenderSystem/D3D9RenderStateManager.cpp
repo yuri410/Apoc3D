@@ -278,7 +278,7 @@ namespace Apoc3D
 			{
 				if (m_vertexSamplers)
 				{
-					assert(samplerIndex<4);
+					assert(samplerIndex<4 && samplerIndex>=0);
 					D3DDevice* dev = m_device->getDevice();
 
 					if (m_vertexSamplers[samplerIndex].AddressU != state.AddressU)
@@ -356,6 +356,8 @@ namespace Apoc3D
 			void NativeD3DStateManager::SetPixelSampler(int samplerIndex, const ShaderSamplerState& state)
 			{
 				D3DDevice* dev = m_device->getDevice();
+				
+				assert(samplerIndex>=0);
 
 				if (m_pixelSamplers[samplerIndex].AddressU != state.AddressU)
 				{

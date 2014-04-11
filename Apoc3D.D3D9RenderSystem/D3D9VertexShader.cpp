@@ -91,6 +91,27 @@ namespace Apoc3D
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
 				return cons.SamplerIndex[0];
 			}
+			bool D3D9VertexShader::TryGetParamIndex(const String& paramName, int& result)
+			{
+				const ShaderConstant* sc = m_constantTable->tryGetConstant(paramName);
+				if (sc && !sc->IsSampler)
+				{
+					result = sc->RegisterIndex;
+					return true;
+				}
+				return false;
+			}
+			bool D3D9VertexShader::TryGetSamplerIndex(const String& paramName, int& result)
+			{
+				const ShaderConstant* sc = m_constantTable->tryGetConstant(paramName);
+				if (sc && sc->IsSampler)
+				{
+					result = sc->SamplerIndex[0];
+					return true;
+				}
+				return false;
+			}
+
 
 			void D3D9VertexShader::SetVector2(int reg, const Vector2& value)
 			{

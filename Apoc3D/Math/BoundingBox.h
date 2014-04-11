@@ -48,7 +48,7 @@ namespace Apoc3D
 			Vector3 Minimum;
 
 			BoundingBox() { }
-			BoundingBox(Vector3 minimum, Vector3 maximum)
+			BoundingBox(const Vector3& minimum, const Vector3& maximum)
 			{
 				Minimum = minimum;
 				Maximum = maximum;
@@ -86,7 +86,7 @@ namespace Apoc3D
 			/**
 			 *  Determines whether the box contains the specified point.
 			 */
-			bool Contains(Vector3 vector) const
+			bool Contains(const Vector3& vector) const
 			{
 				if (Vector3::IsGreaterEqual(vector, Minimum) && 
 					Vector3::IsLessEqual(vector, Maximum))

@@ -31,9 +31,6 @@
    - LZ4 public forum : https://groups.google.com/forum/#!forum/lz4c
 */
 
-#include "../Common.h"
-#include "apoc3d/IOLib/Streams.h"
-
 /**************************************
    Tuning parameters
 **************************************/

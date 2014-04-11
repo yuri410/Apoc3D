@@ -90,6 +90,7 @@ namespace Apoc3D
 				uint32 StructMembers;
 				uint32 SizeInBytes;
 				int32 SamplerIndex[16];
+				bool IsSampler;
 			};
 
 			class ConstantTable
@@ -99,6 +100,7 @@ namespace Apoc3D
 				~ConstantTable();
 
 				inline const ShaderConstant& getConstant(const String& name) const;
+				inline const ShaderConstant* tryGetConstant(const String& name) const { return m_table.TryGetValue(name); }
 
 			private:
 				HashMap<String, ShaderConstant> m_table;
@@ -117,6 +119,7 @@ namespace Apoc3D
 				ThrowKeyNotFoundEx(name);
 				throw; // keep the compiler happy
 			}
+
 		}
 	}
 }

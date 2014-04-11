@@ -360,8 +360,8 @@
     <ClCompile Include="IOLib\Streams.cpp" />
     <ClCompile Include="IOLib\TaggedData.cpp" />
     <ClCompile Include="IOLib\TextureData.cpp" />
-    <ClCompile Include="Library\lz4.cpp" />
-    <ClCompile Include="Library\lz4hc.cpp" />
+    <ClCompile Include="Library\lz4.c" />
+    <ClCompile Include="Library\lz4hc.c" />
     <ClCompile Include="Library\tinythread.cpp" />
     <ClCompile Include="Library\tinyxml.cpp" />
     <ClCompile Include="Library\tinyxmlerror.cpp" />

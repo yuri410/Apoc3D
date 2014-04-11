@@ -38,7 +38,7 @@ namespace Apoc3D
 			OctreeBox()
 				: Length(0), Center(Vector3::Zero)
 			{ }
-			OctreeBox(float length)
+			explicit OctreeBox(float length)
 				: Length(length), Center(Vector3::Zero)
 			{ }
 

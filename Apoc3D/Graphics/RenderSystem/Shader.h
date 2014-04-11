@@ -72,6 +72,8 @@ namespace Apoc3D
 
 				virtual int GetParamIndex(const String& paramName) = 0;
 				virtual int GetSamplerIndex(const String& paramName) = 0;
+				virtual bool TryGetParamIndex(const String& paramName, int& result) = 0;
+				virtual bool TryGetSamplerIndex(const String& paramName, int& result) = 0;
 
 				virtual void SetVector2(int reg, const Vector2& value) = 0;
 				virtual void SetVector3(int reg, const Vector3& value) = 0;

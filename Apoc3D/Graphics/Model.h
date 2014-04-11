@@ -135,6 +135,7 @@ namespace Apoc3D
 				return &m_opBuffer;
 			}
 			RenderOperationBuffer* GetRenderOperationSubEntitySimple(int index);
+			RenderOperationBuffer* GetRenderOperationSubEntityRaw(int index);
 
 
 			/** The update will do the animation works if the model has animation.
