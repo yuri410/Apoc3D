@@ -126,7 +126,7 @@ namespace Apoc3D
 			m_mtrlAnimCompleted(false), m_skinAnimCompleted(false), m_rigidAnimCompleted(false),
 			m_mtrlPlayer(nullptr), m_skinPlayer(nullptr), m_rigidPlayer(nullptr),
 			m_autoLoop(true), m_isOpBufferBuilt(false),
-			m_renderOpEntID(0),m_renderOpEntPartID(0),
+			m_renderOpEntID(nullptr),m_renderOpEntPartID(nullptr),
 			m_skinState(APS_Stopped), m_rigidState(APS_Stopped), m_mtrlState(APS_Stopped)
 		{
 			InitializeAnimation();
@@ -202,70 +202,10 @@ namespace Apoc3D
 
 			ResourceHandle<ModelSharedData>& data = *m_data;
 
-			FastList<Mesh*> entities = data->getEntities();
+			const FastList<Mesh*>& entities = data->getEntities();
 			if (!m_isOpBufferBuilt)
 			{
-				RenderOperationBuffer** entOps = new RenderOperationBuffer*[entities.getCount()];
-
-				int opCount = 0;
-				for (int i = 0; i < entities.getCount(); i++)
-				{
-					entOps[i] = entities[i]->GetRenderOperation(0);
-
-					opCount += entOps[i]->getCount();
-				}
-
-				int dstIdx = 0;
-				//gmBuffer = new GeomentryData[opCount];
-				m_opBuffer.ReserveDiscard(opCount);				
-				m_renderOpEntID = new int[opCount];
-				m_renderOpEntPartID = new int[opCount];
-
-				for (int i = 0; i < entities.getCount(); i++)
-				{
-					//memcpy();
-					//Array.Copy(entOps[i], 0, opBuffer, dstIdx, entOps[i].Length);
-					//entOps[i] = 
-					m_opBuffer.Add(&entOps[i]->operator[](0), entOps[i]->getCount());
-					for (int j = 0; j < entOps[i]->getCount(); j++)
-					{
-						int opid = dstIdx + j;
-						m_renderOpEntID[opid] = i;
-						m_renderOpEntPartID[opid] = j;
-
-
-						if (m_skinPlayer)
-						{
-							m_opBuffer[opid].PartTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
-							m_opBuffer[opid].PartTransform.Count = m_skinPlayer->getTransformCount();
-						}
-						if (m_animInstance.getCount())
-						{
-							m_opBuffer[opid].RootTransform = Matrix::Identity;
-
-							for (int k = 0; k < m_animInstance.getCount(); k++)
-							{
-								int entId = i;
-
-								//int boneId = entities[entId].ParentBoneID;
-								Matrix temp;
-								m_animInstance[k]->GetTransform(entId, temp);
-
-								Matrix result;
-								Matrix::Multiply(result, m_opBuffer[opid].RootTransform, temp);
-								m_opBuffer[opid].RootTransform = result;
-								//opBuffer[opid].Transformation *= animInstance[k].GetTransform(boneId);
-
-							}
-						}
-						else
-						{
-							m_opBuffer[opid].RootTransform = Matrix::Identity;
-						}
-					}
-
-					dstIdx += entOps[i]->getCount();
-				}
+				BuildROPBuffer();
 				m_isOpBufferBuilt = true;
 			}
 			else
@@ -329,7 +269,7 @@ namespace Apoc3D
 
 			ResourceHandle<ModelSharedData>& data = *m_data;
 
-			FastList<Mesh*> entities = data->getEntities();
+			const FastList<Mesh*>& entities = data->getEntities();
 
 			RenderOperationBuffer* opBuf = entities[index]->GetRenderOperation(0);
 			m_opBuffer.Clear();
@@ -367,6 +307,102 @@ namespace Apoc3D
 				}
 			}
 			return &m_opBuffer;
+		}
+
+		
+		RenderOperationBuffer* Model::GetRenderOperationSubEntitySimple(int index)
+		{
+			assert(!m_data->getWeakRef()->isManaged() || !m_data->getWeakRef()->getManager()->usesAsync());
+
+			const FastList<Mesh*>& entities = m_data->getWeakRef()->getEntities();
+
+			RenderOperationBuffer* opBuf = entities[index]->GetRenderOperation(0);
+			m_opBuffer.Clear();
+			m_opBuffer.AddBuffer(opBuf, Matrix::Identity);
+
+			return &m_opBuffer;
+		}
+
+		void Model::BuildROPBuffer()
+		{
+			assert(!m_data->getWeakRef()->isManaged() || !m_data->getWeakRef()->getManager()->usesAsync());
+
+			assert(!m_isOpBufferBuilt);
+			assert(m_renderOpEntPartID == nullptr);
+			assert(m_renderOpEntPartID == nullptr);
+
+			ResourceHandle<ModelSharedData>& data = *m_data;
+
+			const FastList<Mesh*>& entities = data->getEntities();
+
+			RenderOperationBuffer** entOps = new RenderOperationBuffer*[entities.getCount()];
+
+			int opCount = 0;
+			for (int i = 0; i < entities.getCount(); i++)
+			{
+				entOps[i] = entities[i]->GetRenderOperation(0);
+
+				opCount += entOps[i]->getCount();
+			}
+
+			int dstIdx = 0;
+			m_opBuffer.ReserveDiscard(opCount);				
+			m_renderOpEntID = new int[opCount];
+			m_renderOpEntPartID = new int[opCount];
+
+			for (int i = 0; i < entities.getCount(); i++)
+			{
+				RenderOperationBuffer* ops = entOps[i];
+				m_opBuffer.AddBuffer(ops);
+
+				for (int j = 0; j < ops->getCount(); j++)
+				{
+					int opid = dstIdx + j;
+					m_renderOpEntID[opid] = i;
+					m_renderOpEntPartID[opid] = j;
+
+					RenderOperation& rop = m_opBuffer[opid];
+
+					if (m_skinPlayer)
+					{
+						rop.PartTransform.Transfroms = m_skinPlayer->GetSkinTransforms();
+						rop.PartTransform.Count = m_skinPlayer->getTransformCount();
+					}
+					if (m_animInstance.getCount())
+					{
+						rop.RootTransform = Matrix::Identity;
+
+						for (int k = 0; k < m_animInstance.getCount(); k++)
+						{
+							int entId = i;
+
+							Matrix temp;
+							m_animInstance[k]->GetTransform(entId, temp);
+
+							Matrix result;
+							Matrix::Multiply(result, m_opBuffer[opid].RootTransform, temp);
+							rop.RootTransform = result;
+						}
+					}
+					else
+					{
+						rop.RootTransform = Matrix::Identity;
+					}
+				}
+
+				dstIdx += ops->getCount();
+			}
+		}
+		void Model::RebuildROPCache()
+		{
+			m_isOpBufferBuilt = false; 
+
+			m_opBuffer.Clear();
+
+			delete[] m_renderOpEntID;
+			delete[] m_renderOpEntPartID;
+			m_renderOpEntID = nullptr;
+			m_renderOpEntPartID = nullptr;
 		}
 
 		void Model::Update(const GameTime* const time)

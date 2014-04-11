@@ -119,10 +119,23 @@ namespace Apoc3D
 			 */
 			ModelSharedData* GetData();
 
-			void RebuildROPCache() { m_isOpBufferBuilt = false; m_opBuffer.Clear(); }
+			void RebuildROPCache();
 
 			virtual RenderOperationBuffer* GetRenderOperation(int lod);
-			virtual RenderOperationBuffer* GetRenderOperationSubEntity(int index);
+			RenderOperationBuffer* GetRenderOperationSubEntity(int index);
+
+			RenderOperationBuffer* GetRenderOperationSimple()
+			{
+				if (!m_isOpBufferBuilt)
+				{
+					BuildROPBuffer();
+					m_isOpBufferBuilt = true;
+				}
+
+				return &m_opBuffer;
+			}
+			RenderOperationBuffer* GetRenderOperationSubEntitySimple(int index);
+
 
 			/** The update will do the animation works if the model has animation.
 			*/
@@ -187,6 +200,8 @@ namespace Apoc3D
 			}
 			void InitializeAnimation();
 			void UpdateAnimation();
+
+			void BuildROPBuffer();
 
 
 			/** Whether the RenderOperationBuffer is pre-calculated and stored. 
