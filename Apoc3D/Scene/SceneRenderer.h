@@ -31,6 +31,7 @@
 
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Collections/Queue.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Config;
@@ -43,19 +44,60 @@ namespace Apoc3D
 	namespace Scene
 	{
 		typedef FastList<RenderOperation> OperationList;
-		typedef HashMap<GeometryData*, OperationList*> GeometryTable;
-		typedef HashMap<Material*, GeometryTable*> MaterialTable;
-		typedef HashMap<uint32, MaterialTable*> PriorityTable;
+		typedef FastMap<GeometryData*, OperationList*> GeometryTable;
+		typedef FastMap<Material*, GeometryTable*> MaterialTable;
+		typedef FastMap<uint32, MaterialTable*> PriorityTable;
+
+		/**
+		 *  A pool used to quick obtain tables and lists for storing render operations
+		 *  This also contain other preallocated buffer used at render time.
+		 *
+		 */
+		class APAPI BatchDataBufferCache
+		{
+		public:
+			typedef FastList<GeometryData*> InvalidGeoPointerList;
+			typedef FastList<Material*> InvalidMtrlPointerList;
+
+			BatchDataBufferCache(int32 opListCount, int32 geoTableCount, int32 mtrlTableCount,
+				int32 minGeoTableSize, int32 minMtrlTableSize, int32 minOpListSize);
+			~BatchDataBufferCache();
+
+			OperationList* ObtainNewOperationList();
+			GeometryTable* ObtainNewGeometryTable();
+			MaterialTable* ObtainNewMaterialTable();
+
+			void RecycleOperationList(OperationList* obj);
+			void RecycleGeometryTable(GeometryTable* obj);
+			void RecycleMaterialTable(MaterialTable* obj);
+
+			void Reserve(int32 opListCount, int32 geoTableCount, int32 mtrlTableCount,
+				int32 minGeoTableSize, int32 minMtrlTableSize, int32 minOpListSize);
+
+			InvalidMtrlPointerList* getInvalidMtrlPointerBuffer() const { return m_invalidMtrlPointers; }
+			InvalidGeoPointerList* getInvalidGeoPointerBuffer() const { return m_invalidGeoPointers; }
+		private:
+			Queue<OperationList*> m_retiredOpList;
+			Queue<GeometryTable*> m_retiredGeoTable;
+			Queue<MaterialTable*> m_retiredMtrlTable;
+
+			int32 m_minGeoTableSize;
+			int32 m_minMtrlTableSize;
+			int32 m_minOpListSize;
+
+			InvalidMtrlPointerList* m_invalidMtrlPointers;
+			InvalidGeoPointerList* m_invalidGeoPointers;
+		};
 
 		/**
 		 *  A hirerachy of tables to store classified render operations.
 		 *
-		 *  At the time visible objects are detected, their render operations will
+		 *  Before rendering with graphics API. Visible objects are detected and their render operations will
 		 *  be inserted into this sheet, grouped according to their sources, materials, priorities..
 		 *  The classification is done by hashing; similar render op will be 
 		 *  grouped together. This is good for minimizing render state changes if grouped 
-		 *  render operations are drawn one time. And also, with this, instancing is automatic once
-		 *  the shader effect supports.
+		 *  render operations are drawn one time. 
+		 *  Also instancing is automatic as long as the shader effect supports.
 		 */
 		class APAPI BatchData
 		{
@@ -65,6 +107,13 @@ namespace Apoc3D
 		public:
 
 			BatchData();
+			~BatchData();
+
+			
+			/**
+			 *  Renders this batch data
+			 */
+			void RenderBatch(RenderDevice* device, int selectorID);
 
 			/**
 			 *  Adds an object's render operations into the internal table.
@@ -94,11 +143,12 @@ namespace Apoc3D
 
 			void Reset();
 
+			BatchDataBufferCache& getBufferCache() { return m_bufferCache; }
 		private:
 			PriorityTable m_priTable;
-			//MaterialList m_mtrlList;			
-
 			int m_objectCount;
+
+			BatchDataBufferCache m_bufferCache;
 
 		};
 
@@ -116,8 +166,9 @@ namespace Apoc3D
 
 			/**
 			 *  The scene renderer loads from a config which lists several render script (SceneProcedure) files.
-			 *  What the config has, are all options as SceneProcedure xmls for the renders to 
-			 *  choose from. The input list is expected to be sorted form high ended SceneProcedures
+			 *  Each render script (SceneProcedure xml) will be evaluated for compatibility.
+			 *  So the renderer can choose a valid one. 
+			 *  The input list is expected to be sorted form high ended SceneProcedures
 			 *  to low ended ones. A fall back will be performed if the prior ones are 
 			 *  not supported by the hardware.
 			 *  SceneRenderer will eventually select one SceneProcedure. And if the hardware
@@ -170,11 +221,6 @@ namespace Apoc3D
 			void ResetBatchTable();
 
 			int GlobalCameraOverride;
-
-			/**
-			 *  Renders a particular batch data
-			 */
-			static void RenderBatch(RenderDevice* device, const BatchData& data, int selectorID);
 
 		private:
 			RenderDevice* m_renderDevice;

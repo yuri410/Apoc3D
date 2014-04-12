@@ -55,19 +55,273 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
+		BatchDataBufferCache::BatchDataBufferCache(int32 opListCount, int32 geoTableCount, int32 mtrlTableCount, 
+			int32 minGeoTableSize, int32 minMtrlTableSize, int32 minOpListSize)
+		{
+			m_invalidMtrlPointers = new InvalidMtrlPointerList(50);
+			m_invalidGeoPointers = new InvalidGeoPointerList(50);
+
+			Reserve(opListCount, geoTableCount, mtrlTableCount,
+				minGeoTableSize, minMtrlTableSize, minOpListSize);
+		}
+
+		BatchDataBufferCache::~BatchDataBufferCache()
+		{
+			for (int32 i=0;i<m_retiredOpList.getCount();i++)
+			{
+				OperationList* opList = m_retiredOpList.GetElement(i);
+				delete opList;
+			}
+			for (int32 i=0;i<m_retiredGeoTable.getCount();i++)
+			{
+				GeometryTable* geoTable = m_retiredGeoTable.GetElement(i);
+				delete geoTable;
+			}
+
+			for (int32 i=0;i<m_retiredMtrlTable.getCount();i++)
+			{
+				MaterialTable* mtrlTable = m_retiredMtrlTable.GetElement(i);
+				delete mtrlTable;
+			}
+
+			m_retiredOpList.Clear();
+			m_retiredGeoTable.Clear();
+			m_retiredMtrlTable.Clear();
+
+			delete m_invalidMtrlPointers;
+			delete m_invalidGeoPointers;
+		}
+
+		OperationList* BatchDataBufferCache::ObtainNewOperationList()
+		{
+			if (m_retiredOpList.getCount())
+				return m_retiredOpList.Dequeue();
+
+			return new OperationList(m_minOpListSize);
+		}
+		GeometryTable* BatchDataBufferCache::ObtainNewGeometryTable()
+		{
+			if (m_retiredGeoTable.getCount())
+				return m_retiredGeoTable.Dequeue();
+
+			return new GeometryTable(m_minGeoTableSize);
+		}
+		MaterialTable* BatchDataBufferCache::ObtainNewMaterialTable()
+		{
+			if (m_retiredMtrlTable.getCount())
+				return m_retiredMtrlTable.Dequeue();
+
+			return new MaterialTable(m_minMtrlTableSize);
+		}
+
+		void BatchDataBufferCache::RecycleOperationList(OperationList* obj)
+		{
+			obj->Clear();
+			m_retiredOpList.Enqueue(obj); 
+		}
+		void BatchDataBufferCache::RecycleGeometryTable(GeometryTable* obj) 
+		{
+			obj->Clear();
+			m_retiredGeoTable.Enqueue(obj); 
+		}
+		void BatchDataBufferCache::RecycleMaterialTable(MaterialTable* obj)
+		{
+			obj->Clear();
+			m_retiredMtrlTable.Enqueue(obj); 
+		}
+
+
+		void BatchDataBufferCache::Reserve(int32 opListCount, int32 geoTableCount, int32 mtrlTableCount,
+			int32 minGeoTableSize, int32 minMtrlTableSize, int32 minOpListSize)
+		{
+			m_minGeoTableSize = minGeoTableSize;
+			m_minMtrlTableSize = minMtrlTableSize;
+			m_minOpListSize = minOpListSize;
+
+			// ensure current buffer's capacity
+			for (int32 i=0;i<m_retiredOpList.getCount();i++)
+			{
+				OperationList* opList = m_retiredOpList.GetElement(i);
+				if (opList->getCapacity()<m_minOpListSize)
+					opList->ResizeDiscard(m_minOpListSize);
+			}
+			for (int32 i=0;i<m_retiredGeoTable.getCount();i++)
+			{
+				GeometryTable* geoTable = m_retiredGeoTable.GetElement(i);
+				if (geoTable->getPrimeCapacity()<m_minGeoTableSize)
+					geoTable->Resize(m_minGeoTableSize);
+			}
+
+			for (int32 i=0;i<m_retiredMtrlTable.getCount();i++)
+			{
+				MaterialTable* mtrlTable = m_retiredMtrlTable.GetElement(i);
+				if (mtrlTable->getPrimeCapacity()<m_minMtrlTableSize)
+					mtrlTable->Resize(m_minMtrlTableSize);
+			}
+
+
+			// create to target count
+			int32 numToCreate = opListCount - m_retiredOpList.getCount();
+			for (int32 i=0;i<numToCreate;i++)
+			{
+				OperationList* opList = new OperationList(m_minOpListSize);
+				m_retiredOpList.Enqueue(opList);
+			}
+
+			numToCreate = geoTableCount - m_retiredGeoTable.getCount();
+			for (int32 i=0;i<numToCreate;i++)
+			{
+				GeometryTable* geoTable = new GeometryTable(m_minGeoTableSize);
+				m_retiredGeoTable.Enqueue(geoTable);
+			}
+
+			numToCreate = mtrlTableCount - m_retiredMtrlTable.getCount();
+			for (int32 i=0;i<numToCreate;i++)
+			{
+				MaterialTable* mtrlTable = new MaterialTable(m_minMtrlTableSize);
+				m_retiredMtrlTable.Enqueue(mtrlTable);
+			}
+		}
+
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+		
+
 		BatchData::BatchData()
-			: m_objectCount(0), m_priTable(5, IBuiltInEqualityComparer<uint>::Default)
+			: m_bufferCache(0, 0, MaxPriority+1, 50, 50, 50), m_objectCount(0), m_priTable(MaxPriority+1)
 		{
 			for (int i=0;i<MaxPriority;i++)
 			{
 				MaterialTable* mtrlTable;
 				if (!m_priTable.TryGetValue(i, mtrlTable))
 				{
-					mtrlTable = new MaterialTable();
+					mtrlTable = m_bufferCache.ObtainNewMaterialTable();//new MaterialTable();
 					m_priTable.Add(i,mtrlTable);
 				}
 			}
-			
+		}
+		BatchData::~BatchData()
+		{
+			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
+			{
+				MaterialTable* mtrlTbl = *i.getCurrentValue();
+				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
+				{
+					GeometryTable* geoTbl = *j.getCurrentValue();
+
+					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext(); )
+					{
+						delete *k.getCurrentValue();
+					}
+					delete geoTbl;
+				}
+				delete mtrlTbl;
+			}
+			m_priTable.Clear();
+		}
+
+
+
+		void BatchData::RenderBatch(RenderDevice* device, int selectorID)
+		{
+			uint64 selectorMask;
+			if (selectorID == -1)
+				selectorMask = 0xffffffffffffffff;
+			else
+				selectorMask = (uint64)1<<selectorID;
+
+			BatchDataBufferCache::InvalidGeoPointerList& invalidGeoPointers = *m_bufferCache.getInvalidGeoPointerBuffer();
+			BatchDataBufferCache::InvalidMtrlPointerList& invalidMtrlPointers = *m_bufferCache.getInvalidMtrlPointerBuffer();
+
+			for (PriorityTable::Enumerator pe = m_priTable.GetEnumerator();pe.MoveNext();)
+			{
+				MaterialTable* mtrlTbl = *(pe.getCurrentValue());
+				for (MaterialTable::Enumerator me = mtrlTbl->GetEnumerator(); me.MoveNext();)
+				{
+					GeometryTable* geoTbl = *(me.getCurrentValue());
+
+					bool isMtrlUsed = false;
+					for (GeometryTable::Enumerator ge = geoTbl->GetEnumerator(); ge.MoveNext();)
+					{
+						GeometryData* geoData = *ge.getCurrentKey();
+						const OperationList* opList = *ge.getCurrentValue();
+
+						if (opList->getCount())
+						{
+							if (geoData->Discard)
+							{
+								break;
+							}
+
+							isMtrlUsed = true;
+						}
+						else
+						{
+							invalidGeoPointers.Add(geoData);
+						}
+					}
+
+					if (invalidGeoPointers.getCount()>0)
+					{
+						//InvalidGeoPointerList::Iterator iter = invalidGeoPointers->Begin(); iter != invalidGeoPointers->End(); iter++)
+						for (int32 j=0;j<invalidGeoPointers.getCount();j++)
+						{
+							GeometryData* item = invalidGeoPointers[j];
+							OperationList* list = geoTbl->operator[](item);
+							assert(list->getCount()==0);
+							//delete list;
+
+							m_bufferCache.RecycleOperationList(list);
+
+							geoTbl->Remove(item);
+						}
+
+						invalidGeoPointers.Clear();
+					}
+
+
+					Material* mtrl = *me.getCurrentKey();
+					if (isMtrlUsed)
+					{
+						if (mtrl->getPassFlags() & selectorMask)
+						{
+							for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
+							{
+								const OperationList* opList = *k.getCurrentValue();
+								if (opList->getCount())
+								{
+									device->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
+								}
+							}
+						}
+					}
+					else
+					{
+						invalidMtrlPointers.Add(mtrl);
+					}
+				}
+
+				if (invalidMtrlPointers.getCount()>0)
+				{
+					//for (InvalidMtrlPointerList::Iterator iter = invalidMtrlPointers->Begin(); iter != invalidMtrlPointers->End(); iter++)
+					for (int32 i=0;i<invalidMtrlPointers.getCount();i++)
+					{
+						Material* item = invalidMtrlPointers[i];//*iter;
+						GeometryTable* geoTbl = mtrlTbl->operator[](item);
+						for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
+						{
+							OperationList* opList = *k.getCurrentValue();
+							m_bufferCache.RecycleOperationList(opList);
+						}
+						m_bufferCache.RecycleGeometryTable(geoTbl);
+						mtrlTbl->Remove(item);
+					}
+					invalidMtrlPointers.Clear();
+				}
+
+			}
+
 		}
 
 		void BatchData::AddVisisbleObject(SceneObject* obj, int level)
@@ -101,21 +355,21 @@ namespace Apoc3D
 						MaterialTable* mtrlTable;
 						if (!m_priTable.TryGetValue(priority, mtrlTable))
 						{
-							mtrlTable = new MaterialTable();
+							mtrlTable = m_bufferCache.ObtainNewMaterialTable();// new MaterialTable();
 							m_priTable.Add(priority,mtrlTable);
 						}
 
 						GeometryTable* geoTable;
 						if (!mtrlTable->TryGetValue(mtrl, geoTable))
 						{
-							geoTable = new GeometryTable();
+							geoTable = m_bufferCache.ObtainNewGeometryTable();// new GeometryTable();
 							mtrlTable->Add(mtrl, geoTable);
 						}
 
 						OperationList* opList;
 						if (!geoTable->TryGetValue(geoData, opList))
 						{
-							opList = new OperationList();
+							opList = m_bufferCache.ObtainNewOperationList();// new OperationList();
 							geoTable->Add(geoData, opList);
 						}
 
@@ -156,12 +410,13 @@ namespace Apoc3D
 
 					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext(); )
 					{
-						(*(k.getCurrentValue()))->Clear();
+						m_bufferCache.RecycleOperationList(*k.getCurrentValue());
 					}
-					geoTbl->Clear();
+					m_bufferCache.RecycleGeometryTable(geoTbl);
 				}
 				mtrlTbl->Clear();
 			}
+			
 		}
 		bool BatchData::HasObject(uint64 selectMask)
 		{
@@ -244,146 +499,7 @@ namespace Apoc3D
 
 		void SceneRenderer::RenderBatch(int selectorID)
 		{
-			RenderBatch(m_renderDevice, m_batchData, selectorID);
-		}
-
-		void SceneRenderer::RenderBatch(RenderDevice* device, const BatchData& data, int selectorID)
-		{
-			uint64 selectorMask;
-			if (selectorID == -1)
-				selectorMask = 0xffffffffffffffff;
-			else
-				selectorMask = (uint64)1<<selectorID;
-
-			//const PriorityTable& table = data.getTable();
-
-			//for (PriorityTable::Enumerator i = table.GetEnumerator();i.MoveNext();)
-			//{
-			//	MaterialTable* mtrlTbl = *(i.getCurrentValue());
-			//	for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
-			//	{
-			//		Material* mtrl = *j.getCurrentKey();
-			//		GeometryTable* geoTbl = *(j.getCurrentValue());
-
-			//		if (mtrl->getPassFlags() & selectorMask)
-			//		{
-			//			for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
-			//			{
-			//				const OperationList* opList = *k.getCurrentValue();
-			//				if (opList->getCount())
-			//				{
-			//					device->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
-			//				}
-			//			}
-			//		}
-			//	}
-			//}
-
-			typedef LinkedList<GeometryData*> InvalidGeoPointerList;
-			typedef LinkedList<Material*> InvalidMtrlPointerList;
-
-			InvalidMtrlPointerList* invalidMtrlPointers = nullptr;
-			InvalidGeoPointerList* invalidGeoPointers = nullptr;
-
-			const PriorityTable& table = data.getTable();
-
-			for (PriorityTable::Enumerator i = table.GetEnumerator();i.MoveNext();)
-			{
-				MaterialTable* mtrlTbl = *(i.getCurrentValue());
-				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
-				{
-					bool isMtrlUsed = false;
-					GeometryTable* geoTbl = *(j.getCurrentValue());
-					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
-					{
-						GeometryData* geoData = *k.getCurrentKey();
-
-						const OperationList* opList = *k.getCurrentValue();
-						if (opList->getCount())
-						{
-							if (geoData->Discard)
-							{
-								break;
-							}
-
-							isMtrlUsed = true;
-						}
-						else
-						{
-							if (!invalidGeoPointers)
-								invalidGeoPointers = new InvalidGeoPointerList();
-							
-							invalidGeoPointers->PushBack(geoData);
-						}
-					}
-
-
-					if (invalidGeoPointers && invalidGeoPointers->getCount())
-					{
-						for (InvalidGeoPointerList::Iterator iter = invalidGeoPointers->Begin(); iter != invalidGeoPointers->End(); iter++)
-						{
-							GeometryData* item = *iter;
-							OperationList* list = geoTbl->operator[](item);
-							assert(list->getCount()==0);
-							delete list;
-							geoTbl->Remove(item);
-						}
-
-						invalidGeoPointers->Clear();
-					}
-
-
-					Material* mtrl = *j.getCurrentKey();
-					if (isMtrlUsed)
-					{
-						if (mtrl->getPassFlags() & selectorMask)
-						{
-							for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
-							{
-								const OperationList* opList = *k.getCurrentValue();
-								if (opList->getCount())
-								{
-									device->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
-								}
-							}
-						}
-					}
-					else
-					{
-						if (!invalidMtrlPointers)
-							invalidMtrlPointers = new InvalidMtrlPointerList();
-						invalidMtrlPointers->PushBack(mtrl);
-					}
-				}
-
-				if (invalidMtrlPointers && invalidMtrlPointers->getCount())
-				{
-					for (InvalidMtrlPointerList::Iterator iter = invalidMtrlPointers->Begin(); iter != invalidMtrlPointers->End(); iter++)
-					{
-						Material* item = *iter;
-						GeometryTable* geoTbl = mtrlTbl->operator[](item);
-						for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
-						{
-							OperationList* opList = *k.getCurrentValue();
-							delete opList;
-						}
-						delete geoTbl;
-						mtrlTbl->Remove(item);
-					}
-					invalidMtrlPointers->Clear();
-				}
-
-			}
-			
-			if (invalidGeoPointers)
-			{
-				delete invalidGeoPointers;
-			}
-
-			if (invalidMtrlPointers)
-			{
-				delete invalidMtrlPointers;
-			}
+			m_batchData.RenderBatch(m_renderDevice, selectorID);
 		}
 
 		void SceneRenderer::ResetBatchTable()
