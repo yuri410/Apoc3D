@@ -88,6 +88,8 @@ namespace Apoc3D
 			void UnregisterCustomGlyph(wchar_t utf16code);
 			void ClearCustomGlyph();
 
+			void DrawStringDissolving(Sprite* sprite, const String& text, float x, float y, uint color, float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale);
+
 			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length=-1, float lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color);
 
@@ -167,6 +169,10 @@ namespace Apoc3D
 				Apoc3D::Math::RectangleF SrcRect;
 				int BucketIndex;
 			};
+
+			void DrawDisolvingCharacter(Sprite* sprite, float x, float y,
+				int32 seed, const Apoc3D::Math::RectangleF& srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color,
+				const Point& dissolvePatchSize, float progress);
 
 
 			Texture* m_font;

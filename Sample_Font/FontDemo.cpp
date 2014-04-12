@@ -134,7 +134,7 @@ namespace SampleFont
 		uming14->DrawString(m_sprite, L"Glyph Cache Map(dynamic):", Point(dstRect.X, 10), CV_White);
 		m_sprite->Draw(uming14->getInternalTexture(), dstRect, nullptr, CV_White);
 		
-		uming14->DrawString(m_sprite, L"Random Text:", Point(5, 150), CV_White);
+		uming14->DrawString(m_sprite, L"Random Text:", Point(5, 100), CV_White);
 
 		int unicodeStep = (0x6d00 - 0x673A) / 5;
 		int unicodeBegin = 0x673a;
@@ -150,7 +150,7 @@ namespace SampleFont
 				randomText[j] = unicodeBegin + rand() % (unicodeEnd-unicodeBegin);
 			}
 
-			uming14->DrawString(m_sprite, randomText, Point(5, 150 + uming14->getLineHeightInt() * (i+1)), CV_White);
+			uming14->DrawString(m_sprite, randomText, Point(5, 100 + uming14->getLineHeightInt() * (i+1)), CV_White);
 		}
 
 		String helperText[3] =
@@ -167,6 +167,20 @@ namespace SampleFont
 
 		Font* english = FontManager::getSingleton().getFont(L"english");
 		english->DrawString(m_sprite, L"FPS: " + StringUtils::ToString(time->getFPS(),1), Point(0, m_window->getClientSize().Height-50), CV_White);
+
+		static int32 disCurLen = 0;
+		disCurLen++;
+		if (disCurLen>200)
+			disCurLen = 0;
+		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-90.0f, CV_White, disCurLen*0.5f, 10, Point(3,3), 0.3f);
+
+		static float wordDisProgress = 0;
+		wordDisProgress += time->getElapsedTime()*5;
+		if (wordDisProgress>5)
+			wordDisProgress = 0;
+
+		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-70.0f, CV_White, wordDisProgress, -2, Point(3,3), 0.3f);
+
 
 		m_sprite->End();
 

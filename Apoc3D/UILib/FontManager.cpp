@@ -360,6 +360,232 @@ namespace Apoc3D
 		void Font::UnregisterCustomGlyph(wchar_t utf16code) { m_customCharacters.Remove(utf16code); }
 		void Font::ClearCustomGlyph() { m_customCharacters.Clear(); }
 
+		float PositionalNoise(int32 x)
+		{
+			x = (x<<13) ^ x;
+			return (float)( 1.0 - ( (x * (x * x * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
+		}
+
+
+		void Font::DrawDisolvingCharacter(Sprite* sprite, float x, float y,
+			int32 seed, const Apoc3D::Math::RectangleF& _srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color, 
+			const Point& dissolvePatchSize, float progress)
+		{
+			int32 xDPCount = (glyphWidth + dissolvePatchSize.X - 1) / dissolvePatchSize.X;
+			int32 yDPCount = (glyphHeight + dissolvePatchSize.Y - 1) / dissolvePatchSize.Y;
+
+			for (int32 dy=0;dy<yDPCount;dy++)
+			{
+				for (int32 dx=0;dx<xDPCount;dx++)
+				{
+					float ang = PositionalNoise(seed+dx*yDPCount+dy) * Math::PI;
+					Vector2 rndDir(cosf(ang), sinf(ang));
+					if (xDPCount>1)
+						rndDir.X += (float)dx/(xDPCount-1) - 0.5f;
+					if (yDPCount>1)
+						rndDir.Y += (float)dy/(yDPCount-1) - 0.5f;
+					rndDir.NormalizeInPlace();
+
+
+					int32 offX = dx * dissolvePatchSize.X;
+					int32 offY = dy * dissolvePatchSize.Y;
+					int32 patchWidth = Math::Min(dissolvePatchSize.X, glyphWidth-dx*dissolvePatchSize.X);
+					int32 patchHeight = Math::Min(dissolvePatchSize.Y, glyphHeight-dy*dissolvePatchSize.Y);
+
+					Apoc3D::Math::RectangleF srcRect = _srcRect;
+
+					srcRect.X += offX;
+					srcRect.Y += offY;
+					srcRect.Width = static_cast<float>(patchWidth);
+					srcRect.Height = static_cast<float>(patchHeight);
+
+					Apoc3D::Math::RectangleF rect;
+					rect.X = x + glyphLeft + offX;
+					rect.Y = y + glyphTop + offY;
+					rect.Width = static_cast<float>(patchWidth);
+					rect.Height = static_cast<float>(patchHeight);
+
+					rect.X += rndDir.X * _srcRect.Width * progress;
+					rect.Y += rndDir.Y * _srcRect.Height * progress;
+
+					sprite->Draw(m_font, rect, &srcRect, color);
+				}
+			}
+		}
+
+		void Font::DrawStringDissolving(Sprite* sprite, const String& text, float _x, float y, uint color, 
+			float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale)
+		{
+			if (m_hasDrawOffset)
+			{
+				_x -= m_drawOffset.X;
+				y -= m_drawOffset.Y;
+			}
+
+			float std = _x;
+			float x = std;
+
+			y += m_descender;
+
+			size_t maxLen = text.length();
+			int32 loopCount;
+			
+			if (dissolvingCount <=0)
+			{
+				// by word
+
+				bool wasSpace = false;
+				int32 wordCount = 0;
+				int32 maxWord = (int32)ceilf(length);
+				size_t i = 0;
+				for (i=0;i<text.size() && wordCount<maxWord;i++)
+				{
+					wchar_t ch = text[i];
+					if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
+					{
+						if (!wasSpace)
+						{
+							wordCount++;
+							wasSpace = true;
+						}
+					}
+					else
+					{
+						wasSpace = false;
+					}
+				}
+
+				loopCount = Math::Min((int32)text.length(), (int32)i);
+			}
+			else
+			{
+				loopCount = Math::Min((int32)text.length(), (int32)(length+0.5f));
+			}
+
+			float lineSpacing = m_height + m_lineGap;
+			int32 wordIndex = 0;
+			bool wasSpace = false;
+
+			int32 concurrentWords = 1;
+			if (dissolvingCount<-1)
+			{
+				concurrentWords = -dissolvingCount;
+			}
+
+
+			for (int32 i = 0; i < loopCount; i++)
+			{
+				wchar_t ch = text[i];
+
+				if (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\r')
+				{
+					if (!wasSpace)
+					{
+						wordIndex++;
+						wasSpace = true;
+					}
+				}
+				else
+				{
+					wasSpace = false;
+				}
+
+				if (ch != '\n')
+				{
+					if (IgnoreCharDrawing(ch))
+						continue;
+
+					bool shouldDissolve;
+
+					if (dissolvingCount > 0)
+						shouldDissolve = i > (length - dissolvingCount);
+					else
+					{
+						shouldDissolve = length - concurrentWords < wordIndex;
+					}
+
+					float dissolveProgress = 0;
+					if (shouldDissolve)
+					{
+						if (dissolvingCount > 0)
+							dissolveProgress = maxDissolvingScale * (float)(i-length+dissolvingCount) / dissolvingCount;
+						else
+							dissolveProgress = maxDissolvingScale * (1 - Math::Saturate((length - wordIndex)/concurrentWords));
+					}
+
+					Character chdef;
+					if (m_charTable.TryGetValue(ch, chdef))
+					{
+						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
+
+						if (glyph.Width == 0 || glyph.Height == 0)
+						{
+							x += chdef.AdvanceX ;
+							continue;
+						}
+
+						if (!glyph.IsMapped)
+						{
+							EnsureGlyph(glyph);
+						}
+						SetUseFreq(glyph);
+
+						if (shouldDissolve)
+						{
+							DrawDisolvingCharacter(sprite, x, y, i, 
+								glyph.MappedRectF, chdef.Left, chdef.Top, glyph.Width, glyph.Height, color,
+								dissolvePatchSize, dissolveProgress);
+						}
+						else
+						{
+							Apoc3D::Math::RectangleF rect;
+							rect.X = x + chdef.Left;
+							rect.Y = y + chdef.Top;
+							rect.Width = static_cast<float>(glyph.Width);
+							rect.Height = static_cast<float>(glyph.Height);
+							
+							sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
+						}
+						
+						x += chdef.AdvanceX ;
+					}
+					else
+					{
+						CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
+						if (cgdef)
+						{
+							if (shouldDissolve)
+							{
+								DrawDisolvingCharacter(sprite, x, y, i, 
+									cgdef->SrcRect, cgdef->Left, cgdef->Top, (int32)cgdef->SrcRect.Width, (int32)cgdef->SrcRect.Height, color,
+									dissolvePatchSize, dissolveProgress);
+							}
+							else
+							{
+								Apoc3D::Math::RectangleF rect;
+								rect.X = x + cgdef->Left;
+								rect.Y = y + cgdef->Top;
+								rect.Width = static_cast<float>(cgdef->SrcRect.Width);
+								rect.Height = static_cast<float>(cgdef->SrcRect.Height);
+
+								sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRect, color);
+							}
+
+							x += cgdef->AdvanceX ;
+						}
+					}
+				}
+				else
+				{
+					x = std;
+					y += lineSpacing;
+				}
+
+				
+				if (dissolvingCount<=0 && wordIndex > length)
+					break;
+			}
+		}
 
 
 		void Font::DrawStringEx(Sprite* sprite, const String& text, float _x, float y, uint color, int length, float extLineSpace, wchar_t suffix, float hozShrink)
