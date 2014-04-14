@@ -137,14 +137,14 @@ namespace Apoc3D
 					m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
 					m_rawDevice->SetIndices(m_quadIndices->getD3DBuffer());
 
-					m_rawDevice->SetVertexShader(NULL); m_rawDevice->SetPixelShader(NULL);
+					m_device->BindVertexShader(nullptr);
+					m_device->BindPixelShader(nullptr);
 					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 					m_rawDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 					//m_rawDevice->SetTexture(0,0);
 				}
 
-				
 				
 				//mgr->SetAlphaBlend(false, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, oldBlendFactor);
 				
