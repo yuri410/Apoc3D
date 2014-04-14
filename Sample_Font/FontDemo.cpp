@@ -172,14 +172,21 @@ namespace SampleFont
 		disCurLen++;
 		if (disCurLen>200)
 			disCurLen = 0;
-		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-90.0f, CV_White, disCurLen*0.5f, 10, Point(3,3), 0.3f);
+		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-110.0f, CV_White, disCurLen*0.5f, 10, Point(3,3), 0.3f);
 
 		static float wordDisProgress = 0;
 		wordDisProgress += time->getElapsedTime()*5;
 		if (wordDisProgress>5)
 			wordDisProgress = 0;
 
-		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-70.0f, CV_White, wordDisProgress, -2, Point(3,3), 0.3f);
+		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-90.0f, CV_White, wordDisProgress, -2, Point(3,3), 0.3f);
+
+		static float allDisProgress = 0;
+		allDisProgress += time->getElapsedTime();
+		if (allDisProgress>2)
+			allDisProgress = 0;
+
+		english->DrawStringDissolving(m_sprite, L"THIS IS DISSOLVING TEXT.", 5.0f, m_window->getClientSize().Height-70.0f, CV_White, 1-Math::Saturate(allDisProgress), 0, Point(3,3), 0.3f);
 
 
 		m_sprite->End();

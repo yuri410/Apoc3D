@@ -430,7 +430,7 @@ namespace Apoc3D
 			size_t maxLen = text.length();
 			int32 loopCount;
 			
-			if (dissolvingCount <=0)
+			if (dissolvingCount <0)
 			{
 				// by word
 
@@ -456,6 +456,11 @@ namespace Apoc3D
 				}
 
 				loopCount = Math::Min((int32)text.length(), (int32)i);
+			}
+			else if (dissolvingCount == 0)
+			{
+				// together
+				loopCount = (int32)text.length();
 			}
 			else
 			{
@@ -498,7 +503,13 @@ namespace Apoc3D
 					bool shouldDissolve;
 
 					if (dissolvingCount > 0)
+					{
 						shouldDissolve = i > (length - dissolvingCount);
+					}
+					else if (dissolvingCount == 0)
+					{
+						shouldDissolve = length < 1;
+					}
 					else
 					{
 						shouldDissolve = length - concurrentWords < wordIndex;
@@ -509,6 +520,8 @@ namespace Apoc3D
 					{
 						if (dissolvingCount > 0)
 							dissolveProgress = maxDissolvingScale * (float)(i-length+dissolvingCount) / dissolvingCount;
+						else if (dissolvingCount == 0)
+							dissolveProgress = maxDissolvingScale * length;
 						else
 							dissolveProgress = maxDissolvingScale * (1 - Math::Saturate((length - wordIndex)/concurrentWords));
 					}
@@ -582,7 +595,7 @@ namespace Apoc3D
 				}
 
 				
-				if (dissolvingCount<=0 && wordIndex > length)
+				if (dissolvingCount<0 && wordIndex > length)
 					break;
 			}
 		}
