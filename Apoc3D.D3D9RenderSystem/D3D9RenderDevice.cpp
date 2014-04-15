@@ -368,7 +368,7 @@ namespace Apoc3D
 				if (m_nativeState->getAlphaTestEnable() != mtrl->AlphaTestEnabled ||
 					m_nativeState->getAlphaReference() != mtrl->AlphaReference)
 				{
-					m_nativeState->SetAlphaTestParameters(mtrl->AlphaTestEnabled, 
+					m_nativeState->SetAlphaTestParameters(mtrl->AlphaTestEnabled, COMFUN_GreaterEqual,
 						mtrl->AlphaReference);
 				}
 
