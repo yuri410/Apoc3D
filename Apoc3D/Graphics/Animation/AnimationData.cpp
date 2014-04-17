@@ -52,6 +52,7 @@ namespace Apoc3D
 			const String TAG_3_RigidAnimationClipCountTag = L"RigidAnimationClipCount";
 
 			const String TAG_3_MaterialAnimationTag = L"MaterialAnimation3.0";
+			const String TAG_3_1_MaterialAnimationTag = L"MaterialAnimation3.1";
 			const String TAG_3_MaterialAnimationCountTag = L"MaterialAnimation3.0Count";
 
 			const String TAG_3_RootBoneTag = L"RootBone";
@@ -67,15 +68,22 @@ namespace Apoc3D
 				if (data->Contains(TAG_3_RigidEntityCount))
 					RigidEntityCount = data->GetDataInt32(TAG_3_RigidEntityCount);
 
-				if (data->Contains(TAG_3_MaterialAnimationTag))
+				if (data->Contains(TAG_3_MaterialAnimationCountTag))
 				{
 					m_hasMtrlClip = true;
 
 					int count = data->GetDataInt32(TAG_3_MaterialAnimationCountTag);
 
 					m_mtrlAnimationClips.Resize(count);
-
-					BinaryReader* br = data->GetData(TAG_3_MaterialAnimationTag);
+					
+					bool readsFrameFlag = false;
+					BinaryReader* br = nullptr;
+					br = data->TryGetData(TAG_3_MaterialAnimationTag);
+					if (br == nullptr)
+					{
+						br = data->TryGetData(TAG_3_1_MaterialAnimationTag);
+						readsFrameFlag = true;
+					}
 					
 					for (int i=0;i<count;i++)
 					{
@@ -91,8 +99,14 @@ namespace Apoc3D
 						{
 							float time = br->ReadSingle();
 							int32 mid = br->ReadInt32();
+							uint32 flags = 0;
 
-							keyframes.Add(MaterialAnimationKeyframe(time, mid));
+							if (readsFrameFlag)
+							{
+								flags = br->ReadUInt32();
+							}
+
+							keyframes.Add(MaterialAnimationKeyframe(time, mid, flags));
 						}
 
 						MaterialAnimationClip* clip = new MaterialAnimationClip(duration, keyframes);
@@ -233,7 +247,7 @@ namespace Apoc3D
 				{
 					data->AddEntryInt32(TAG_3_MaterialAnimationCountTag, (int32)m_mtrlAnimationClips.getCount());
 
-					BinaryWriter* bw = data->AddEntry(TAG_3_MaterialAnimationTag);
+					BinaryWriter* bw = data->AddEntry(TAG_3_1_MaterialAnimationTag);
 					for (MtrlClipTable::Enumerator e = m_mtrlAnimationClips.GetEnumerator(); e.MoveNext();)
 					{
 						const String& name = *e.getCurrentKey();
@@ -248,8 +262,10 @@ namespace Apoc3D
 
 						for (int i = 0; i < keyFrames.getCount(); i++)
 						{
-							bw->WriteSingle(keyFrames[i].getTime());
-							bw->WriteInt32(keyFrames[i].getMaterialFrame());
+							const MaterialAnimationKeyframe& kf = keyFrames[i];
+							bw->WriteSingle(kf.getTime());
+							bw->WriteInt32(kf.getMaterialFrame());
+							bw->WriteUInt32(kf.getFlags());
 						}
 					}
 					bw->Close();

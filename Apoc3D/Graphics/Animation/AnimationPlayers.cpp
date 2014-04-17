@@ -251,10 +251,12 @@ namespace Apoc3D
 
 				for (int i = m_currentKeyframe;i<m_currentClipValue->Keyframes.getCount();i++)
 				{
-					if (m_currentClipValue->Keyframes[i].getTime()>=t)
+					const MaterialAnimationKeyframe& kf = m_currentClipValue->Keyframes[i];
+
+					if (kf.getTime()>=t && (kf.getFlags() & MaterialAnimationKeyframe::MKF_Hidden) == 0)
 					{
 						m_currentKeyframe = i;
-						SetKeyframe(m_currentClipValue->Keyframes[i]);
+						SetKeyframe(kf);
 						break;
 					}
 				}

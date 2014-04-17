@@ -67,11 +67,17 @@ namespace APBuild
 			{
 				float frameTime = subSect->GetAttributeInt(L"Time") / 1000.0f;
 				int materialID = subSect->GetAttributeInt(L"Material");
+				uint flags = 0;
+				String temp;
+				if (subSect->tryGetAttribute(L"Flags", temp) && temp != L"none")
+				{
+					flags = MaterialAnimationKeyframe::MKF_Hidden;
+				}
 
 				if (maxTime<frameTime)
 					maxTime = frameTime;
 
-				keyFrames.Add(MaterialAnimationKeyframe(frameTime, materialID));
+				keyFrames.Add(MaterialAnimationKeyframe(frameTime, materialID, flags));
 			}
 			else
 			{

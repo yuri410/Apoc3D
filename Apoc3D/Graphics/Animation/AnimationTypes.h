@@ -166,11 +166,18 @@ namespace Apoc3D
 			class APAPI MaterialAnimationKeyframe
 			{
 			public:
+				enum MaterialKeyframeFlags
+				{
+					MKF_None = 0,
+					MKF_Hidden = 1
+				};
+
 				float getTime() const { return m_time; }
 				int32 getMaterialFrame() const { return m_materialFrame; }
+				uint32 getFlags() const { return m_flags; }
 
-				MaterialAnimationKeyframe(float time, int32 mtrlID)
-					: m_time(time), m_materialFrame(mtrlID)
+				MaterialAnimationKeyframe(float time, int32 mtrlID, uint32 flags = 0)
+					: m_time(time), m_materialFrame(mtrlID), m_flags(flags)
 				{
 				}
 				MaterialAnimationKeyframe() { }
@@ -179,6 +186,7 @@ namespace Apoc3D
 				float m_time;
 				int32 m_materialFrame;
 
+				uint32 m_flags;
 			};
 
 			/**
