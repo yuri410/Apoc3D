@@ -491,6 +491,41 @@ namespace Apoc3D
 
 			} while (pos != String::npos);
 		}
+		void StringUtils::Split(const std::string& str, List<std::string>& result, const std::string& delims)
+		{
+			assert(result.getCount() == 0);
+
+			unsigned int numSplits = 0;
+
+			// Use STL methods 
+			size_t start, pos;
+			start = 0;
+			do 
+			{
+				pos = str.find_first_of(delims, start);
+				if (pos == start)
+				{
+					// Do nothing
+					start = pos + 1;
+				}
+				else if (pos == std::string::npos)
+				{
+					// Copy the rest of the string
+					result.Add( str.substr(start) );
+					break;
+				}
+				else
+				{
+					// Copy up to delimiter
+					result.Add( str.substr(start, pos - start) );
+					start = pos + 1;
+				}
+				// parse up to next real data
+				start = str.find_first_not_of(delims, start);
+				++numSplits;
+
+			} while (pos != std::string::npos);
+		}
 
 		bool StringUtils::StartsWith(const String& str, const String& v, bool caseInsensitive)
 		{

@@ -91,6 +91,7 @@ namespace Apoc3D
 			static void TrimLeft(String& str, const String& delims = L" \t\r");
 			static void TrimRight(String& str, const String& delims = L" \t\r");
 			static void Split(const String& str, Apoc3D::Collections::List<String>& results, const String& delims = L" ");
+			static void Split(const std::string& str, Apoc3D::Collections::List<std::string>& results, const std::string& delims = " ");
 
 			static bool StartsWith(const String& str, const String& v, bool caseInsensitive = false);
 			static bool EndsWith(const String& str, const String& v, bool caseInsensitive = false);
