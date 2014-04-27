@@ -45,7 +45,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include <direct.h>
 #include <Windows.h>
-#include <ShellAPI.h>
 
 #include <SDKDDKVer.h>
 
