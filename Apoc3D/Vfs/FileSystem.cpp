@@ -44,8 +44,11 @@ namespace Apoc3D
 		//{
 		//	new FileSystem();
 		//}
+		FileSystem::FileSystem()
+			: m_openedPack(10, &m_openedPackHasher)
+		{
 
-
+		}
 		FileSystem::~FileSystem()
 		{
 			for (PackTable::Enumerator e = m_openedPack.GetEnumerator(); e.MoveNext();)
@@ -55,38 +58,10 @@ namespace Apoc3D
 			}
 		}
 
-
-		Archive* FileSystem::CreateArchive(FileLocation* fl)
-		{
-			String fileName;
-			String fileExt;
-			PathUtils::SplitFileNameExtension(fl->getPath(), fileName, fileExt);
-
-			ArchiveFactory* fac = FindArchiveFactory(fileExt);
-			if (fac)
-				return fac->CreateInstance(fl);
-			throw AP_EXCEPTION(EX_NotSupported, fileExt);
-		}
-		Archive* FileSystem::CreateArchive(const String& file)
-		{
-			String fileName;
-			String fileExt;
-			PathUtils::SplitFileNameExtension(file, fileName, fileExt);
-
-			ArchiveFactory* fac = FindArchiveFactory(fileExt);
-			if (fac)
-				return fac->CreateInstance(file);
-			throw AP_EXCEPTION(EX_NotSupported, fileExt);
-		}
-
-
 		void FileSystem::AddWrokingDirectory(const String& path)
 		{
-			String _path = path;
+			String _path = PathUtils::NormalizePath(path);
 			
-			//if (!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
-				//path += Path.DirectorySeparatorChar;
-
 			m_workingDirs.Add(_path);
 		}
 		void FileSystem::RegisterArchiveType(ArchiveFactory* factory)
@@ -203,10 +178,12 @@ namespace Apoc3D
 			{
 				return res;
 			}
+
 			FileLocation* fl = Locate(filePath, rule);
 			res = CreateArchive(fl);
-			m_openedPack.Add(PathUtils::Combine(PathUtils::NormalizePath(res->getDirectory()), res->getFileName()),
-				res);
+
+			StoreNewArchive(PathUtils::Combine(PathUtils::NormalizePath(res->getDirectory()), res->getFileName()), res);
+			
 			return res;
 		}
 
@@ -227,19 +204,6 @@ namespace Apoc3D
 				
 				for (int j = 0; j < checkPt.getCount(); j++)
 				{
-					//// 如果检查点要求搜索CurrectArchiveSet
-					//if (checkPt.SearchesCurrectArchiveSet)
-					//{
-					//	for (int i = 0; i < CurrentArchiveSet.Count; i++)
-					//	{
-					//		Stream entStm = CurrentArchiveSet[i].GetEntryStream(filePath);
-
-					//		if (entStm != null)
-					//			return new FileLocation(CurrentArchiveSet[i], CurrentArchiveSet[i].FilePath + Path.DirectorySeparatorChar + filePath, entStm);
-					//	}
-					//}
-
-
 					if (!checkPt.hasArchivePath(j))
 					{
 						String fullPath = PathUtils::Combine(checkPt.GetPath(j), filePath);
@@ -253,109 +217,102 @@ namespace Apoc3D
 						String arcPath = checkPt.GetArchivePath(j);
 						PathUtils::NormalizePath(arcPath);
 
-						//try
+						List<String> locs = PathUtils::Split(PathUtils::Combine(checkPt.GetPath(j), filePath));
+
+						if (locs.getCount() > 1)
 						{
-							List<String> locs = PathUtils::Split(PathUtils::Combine(checkPt.GetPath(j), filePath));
+							String sb;
 
-							if (locs.getCount() > 1)
+							Archive* entry = 0;
+							if (!IsOpened(arcPath, &entry))
 							{
-								String sb;
+								entry = CreateArchive(arcPath);
+								StoreNewArchive(PathUtils::NormalizePath(arcPath), entry);
+							}
+							Archive* parent;
 
-								Archive* entry = 0;
-								if (!IsOpened(arcPath, &entry))
+							bool found = true;
+
+							for (int32 i = 0; i < locs.getCount() - 1; i++)
+							{
+								if (i > 0)
+								{
+									sb.append(1, PathUtils::AltDirectorySeparator);
+									sb.append(locs[i]);
+								}
+								else
+									sb.append(locs[i]);
+
+								parent = entry;
+
+								String afp = PathUtils::Combine(parent->getDirectory(), parent->getFileName());
+								String fPath = PathUtils::Combine(afp, sb);
+								fPath = PathUtils::NormalizePath(fPath);
+
+								// check if the archive is never been opened
+								if (!IsOpened(fPath, &entry))
+								{
+									// if the archive is in a parent archive
+									//if (parent)
+									{
+										if (parent->HasEntry(locs[i]))
+										{
+											entry = CreateArchive(new FileLocation(parent, fPath, locs[i]));
+											StoreNewArchive(fPath, entry);
+										}
+										else
+										{
+											found = false;
+											break;
+										}
+									}
+									//else
+									//{
+									//	String arc = sb;
+									//	if (File::FileExists(arc))
+									//	{
+									//		entry = CreateArchive(arc);
+									//		m_openedPack.insert(pair<String, Archive*>(PathUtils::NormalizePath(arc), entry));
+									//	}
+									//	else
+									//	{
+									//		found = false;
+									//		break;
+									//	}
+									//}
+								}
+							}
+							if (found && entry)
+							{
+								const String& entName = locs[locs.getCount()-1];
+								if (entry->HasEntry(entName))
+								{
+									String afp = PathUtils::Combine(entry->getDirectory(), entry->getFileName());
+									return new FileLocation(entry, PathUtils::Combine(afp, filePath), entName);
+								}
+							}
+						}
+						else
+						{
+							Archive* entry;
+							if (!IsOpened(arcPath, &entry))
+							{
+								if (File::FileExists(arcPath))
 								{
 									entry = CreateArchive(arcPath);
-									m_openedPack.Add(PathUtils::NormalizePath(arcPath), entry);
-								}
-								Archive* parent;
-
-								bool found = true;
-
-								for (int32 i = 0; i < locs.getCount() - 1; i++)
-								{
-									if (i > 0)
-									{
-										sb.append(1, PathUtils::AltDirectorySeparator);
-										sb.append(locs[i]);
-									}
-									else
-										sb.append(locs[i]);
-
-									parent = entry;
-
-									String afp = PathUtils::Combine(parent->getDirectory(), parent->getFileName());
-									String fPath = PathUtils::Combine(afp, sb);
-									fPath = PathUtils::NormalizePath(fPath);
-
-									// check if the archive is never been opened
-									if (!IsOpened(fPath, &entry))
-									{
-										// if the archive is in a parent archive
-										//if (parent)
-										{
-											if (parent->HasEntry(locs[i]))
-											{
-												entry = CreateArchive(
-													new FileLocation(parent, fPath, locs[i]));
-												m_openedPack.Add(fPath, entry);
-											}
-											else
-											{
-												found = false;
-												break;
-											}
-										}
-										//else
-										//{
-										//	String arc = sb;
-										//	if (File::FileExists(arc))
-										//	{
-										//		entry = CreateArchive(arc);
-										//		m_openedPack.insert(pair<String, Archive*>(PathUtils::NormalizePath(arc), entry));
-										//	}
-										//	else
-										//	{
-										//		found = false;
-										//		break;
-										//	}
-										//}
-									}
-								}
-								if (found && entry)
-								{
-									const String& entName = locs[locs.getCount()-1];
-									if (entry->HasEntry(entName))
-									{
-										String afp = PathUtils::Combine(entry->getDirectory(), entry->getFileName());
-										return new FileLocation(entry, PathUtils::Combine(afp, filePath), entName);
-									}
+									StoreNewArchive(arcPath, entry);
 								}
 							}
-							else
+							if (entry)
 							{
-								Archive* entry;
-								if (!IsOpened(arcPath, &entry))
+								if (entry->HasEntry(locs[0]))
 								{
-									if (File::FileExists(arcPath))
-									{
-										entry = CreateArchive(arcPath);
-										m_openedPack.Add(arcPath, entry);
-									}
-								}
-								if (entry)
-								{
-									if (entry->HasEntry(locs[0]))
-									{
-										String afp = PathUtils::Combine(entry->getDirectory(), entry->getFileName());
-										return new FileLocation(entry, PathUtils::Combine(afp, filePath), locs[0]);
-									}
+									String afp = PathUtils::Combine(entry->getDirectory(), entry->getFileName());
+									return new FileLocation(entry, PathUtils::Combine(afp, filePath), locs[0]);
 								}
 							}
 						}
-						//catch (Apoc3DException e)
-						{
-							//EngineConsole.Instance.Write("文件格式不对", ConsoleMessageType.Warning);
-						}
+						
 					} // if archive
 
 				}
@@ -363,5 +320,74 @@ namespace Apoc3D
 			}
 			return 0;
 		}
+
+		bool FileSystem::IsOpened(const String& filePath, Archive** entry) 
+		{
+			bool result = false;
+
+			ArchiveKey ak;
+			ak.filePath = filePath;
+			ak.threadID = tthread::this_thread::get_id().getIdNumber();
+
+			m_openedPackMutex.lock();
+			Archive* pack;
+			if (m_openedPack.TryGetValue(ak, pack))
+			{
+				(*entry) = pack;
+				result = true;
+			}
+			m_openedPackMutex.unlock();
+
+			return result;
+		}
+
+		void FileSystem::StoreNewArchive(const String& filePath, Archive* arc)
+		{
+			ArchiveKey ak;
+			ak.filePath = filePath;
+			ak.threadID = tthread::this_thread::get_id().getIdNumber();
+
+			m_openedPackMutex.lock();
+
+			m_openedPack.Add(ak, arc);
+
+			m_openedPackMutex.unlock();
+		}
+
+
+
+		Archive* FileSystem::CreateArchive(FileLocation* fl)
+		{
+			String fileName;
+			String fileExt;
+			PathUtils::SplitFileNameExtension(fl->getPath(), fileName, fileExt);
+
+			ArchiveFactory* fac = FindArchiveFactory(fileExt);
+			if (fac)
+				return fac->CreateInstance(fl);
+			throw AP_EXCEPTION(EX_NotSupported, fileExt);
+		}
+		Archive* FileSystem::CreateArchive(const String& file)
+		{
+			String fileName;
+			String fileExt;
+			PathUtils::SplitFileNameExtension(file, fileName, fileExt);
+
+			ArchiveFactory* fac = FindArchiveFactory(fileExt);
+			if (fac)
+				return fac->CreateInstance(file);
+			throw AP_EXCEPTION(EX_NotSupported, fileExt);
+		}
+
+
+		bool FileSystem::ArchiveKeyEqualityComparer::Equals(const FileSystem::ArchiveKey& x, const FileSystem::ArchiveKey& y) const 
+		{
+			return x.threadID == y.threadID && x.filePath == y.filePath; 
+		}
+		int64 FileSystem::ArchiveKeyEqualityComparer::GetHashCode(const FileSystem::ArchiveKey& obj) const 
+		{
+			return StringUtils::GetHashCode(obj.filePath) ^ obj.threadID;
+		}
+
 	}
 }

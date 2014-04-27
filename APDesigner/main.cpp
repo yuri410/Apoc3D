@@ -42,6 +42,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include <direct.h>
 #include <Windows.h>
+#include <ShellAPI.h>
 
 #include <SDKDDKVer.h>
 
@@ -105,7 +106,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 
 	int numOfArgs;
 	LPWSTR* argv = CommandLineToArgvW(lpCmdLine, &numOfArgs);
-
+	
 	StartupParameters startupParams;
 	startupParams.Parse(argv, numOfArgs);
 

@@ -29,6 +29,7 @@
 #include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/List.h"
+#include "apoc3d/Library/tinythread.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
@@ -60,46 +61,10 @@ namespace Apoc3D
 		 */
 		class APAPI FileSystem : public Singleton<FileSystem>
 		{
-		private:
-			typedef HashMap<String, Archive*> PackTable;
-			typedef HashMap<String, ArchiveFactory*> PackFactoryTable;
-
-			PackTable m_openedPack;
-			PackFactoryTable m_factories;
-			List<String> m_workingDirs;
-
-			
-			ArchiveFactory* FindArchiveFactory(const String& ext)
-			{
-				if (m_factories.getCount() == 0)
-					return nullptr;
-
-				ArchiveFactory* fac;
-				if (m_factories.TryGetValue(ext, fac))
-					return fac;
-
-				return nullptr;
-			}
-
-			bool IsOpened(String filePath, Archive** entry) const
-			{
-				Archive* pack;
-				if (m_openedPack.TryGetValue(filePath, pack))
-				{
-					(*entry) = pack;
-					return true;
-				}
-
-				return false;
-			}
-			Archive* CreateArchive(FileLocation* fl);
-			Archive* CreateArchive(const String& file);
-
 		public:
-			FileSystem(void) { }
+			FileSystem(void);
 			~FileSystem(void);
 
-			//static void Initialize();
 			/**
 			 *  Adds an absolute path as a new working directory. 
 			 *
@@ -125,6 +90,49 @@ namespace Apoc3D
 			FileLocation* TryLocate(const String& filePath, const FileLocateRule& rule);
 
 			SINGLETON_DECL_HEARDER(FileSystem);
+
+		private:
+			struct ArchiveKey
+			{
+				uint64 threadID;
+				String filePath;
+			};
+
+			class ArchiveKeyEqualityComparer : public IEqualityComparer<ArchiveKey>
+			{
+				virtual bool Equals(const ArchiveKey& x, const ArchiveKey& y) const;
+				virtual int64 GetHashCode(const ArchiveKey& obj) const;
+			};
+
+			typedef HashMap<ArchiveKey, Archive*> PackTable;
+			typedef HashMap<String, ArchiveFactory*> PackFactoryTable;
+
+			ArchiveFactory* FindArchiveFactory(const String& ext)
+			{
+				if (m_factories.getCount() == 0)
+					return nullptr;
+
+				ArchiveFactory* fac;
+				if (m_factories.TryGetValue(ext, fac))
+					return fac;
+
+				return nullptr;
+			}
+
+			bool IsOpened(const String& filePath, Archive** entry);
+			void StoreNewArchive(const String& filePath, Archive* arc);
+
+			Archive* CreateArchive(FileLocation* fl);
+			Archive* CreateArchive(const String& file);
+
+			ArchiveKeyEqualityComparer m_openedPackHasher;
+			tthread::mutex m_openedPackMutex;
+			PackTable m_openedPack;
+
+			PackFactoryTable m_factories;
+			List<String> m_workingDirs;
+
+
 		};
 	}
 }

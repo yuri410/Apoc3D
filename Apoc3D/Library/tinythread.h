@@ -582,6 +582,8 @@ class thread::id {
 
     id(const id& aId) : mId(aId.mId) {};
 
+	unsigned long int getIdNumber() const { return mId; }
+
     inline id & operator=(const id &aId)
     {
       mId = aId.mId;
