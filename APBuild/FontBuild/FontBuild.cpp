@@ -98,7 +98,7 @@ namespace APBuild
 		GlyphBitmap(int width, int height, const char* data, bool hasLuminance)
 			: Width(width), Height(height), PixelData(data), HasLuminance(hasLuminance)
 		{
-			FNVHash hasher;
+			FNVHash32 hasher;
 
 			int32 size = width * height;
 			if (HasLuminance)

@@ -7,6 +7,7 @@
 #include "apoc3d/IOLib/MaterialData.h"
 #include "apoc3d/IOLib/ModelData.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Utility/Hash.h"
 
 #include "MeshBuild.h"
 
@@ -1226,23 +1227,11 @@ namespace APBuild
 
 		virtual int64 GetHashCode(const FIVertex& obj) const
 		{
-			const float* chPtr = reinterpret_cast<const float*>(&obj);
-			uint even = 0x15051505;
-			uint odd = even;
-			const uint* numPtr = reinterpret_cast<const uint*>(chPtr);
-			for (int i = sizeof(FIVertex); i > 0; i -= 8)
-			{
-				if (i < 4)
-					break;
+			FNVHash32 hasher;
 
-				even = ((even << 5) + even + (even >> 0x1b)) ^ numPtr[0];
-				if (i < 8)
-					break;
-				
-				odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ numPtr[1];
-				numPtr += 2;
-			}
-			return even + odd * 0x5d588b65;
+			hasher.Accumulate(&obj, sizeof(FIVertex));
+
+			return hasher.GetResult();
 		}
 	};
 

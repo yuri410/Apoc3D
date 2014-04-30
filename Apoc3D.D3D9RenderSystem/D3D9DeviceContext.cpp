@@ -117,7 +117,7 @@ namespace Apoc3D
 				}
 				virtual int64 GetHashCode(const RenderDisplayMode& obj) const
 				{
-					FNVHash h;
+					FNVHash32 h;
 					h.Accumulate(&obj.AdapterOrdinal, sizeof(obj.AdapterOrdinal));
 					h.Accumulate(&obj.FSAASampleCount, sizeof(obj.FSAASampleCount));
 					h.Accumulate(&obj.FullScreen, sizeof(obj.FullScreen));

@@ -27,6 +27,7 @@
  */
 
 #include "apoc3d/Common.h"
+#include "apoc3d/Utility/Hash.h"
 
 namespace Apoc3D
 {
@@ -101,22 +102,7 @@ namespace Apoc3D
 
 			static uint GetHashCode(const String& str)
 			{
-				// This may read "outside" buffer. 
-				// Not really for String because it is null terminated having an extra wchar.
-				uint even = 0x15051505;
-				uint odd = even;
-				const uint* data = reinterpret_cast<const uint*>(str.c_str());
-				for (int i = str.size(); i > 0; i -= 4)
-				{
-					even = ((even << 5) + even + (even >> 0x1b)) ^ data[0];
-					if (i <= 2)
-					{
-						break;
-					}
-					odd = ((odd << 5) + odd + (odd >> 0x1b)) ^ data[1];
-					data += 2;
-				}
-				return even + odd * 0x5d588b65;
+				return MurmurHash(str.c_str(), sizeof(wchar_t)*str.length());
 			}
 		};
 	}

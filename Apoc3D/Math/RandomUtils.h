@@ -42,86 +42,55 @@ namespace Apoc3D
 			Random(int seed) { SetSeed(seed); }
 			~Random() { }
 
+			int32 getSeed() const { return m_seed; }
 			void SetSeed(int32 seed);
 
-			RandomSampleEventHandler& eventSampled() { return m_eSample; };
+			int32 Next() { return RawSample(); }
 
-			int32 Next()
-			{
-				return InternalSample();
-			}
 			int32 Next(int32 max)
 			{
 				assert(max>=0);
 				return static_cast<int32>(Sample() * max);
 			}
+
 			int32 Next(int32 minValue, int32 maxValue)
 			{
 				assert(minValue<=maxValue);
-
 				int32 range = maxValue - minValue;
-				if (range <= 0x7fffffffL)
-				{
-					return static_cast<int32>(Sample() * range) + minValue;
-				}
-				return static_cast<int32>(GetSampleForLargeRange() * range) + minValue;
+				return static_cast<int32>(Sample() * range) + minValue;
 			}
 			float NextFloat() { return Sample(); }
+
 		private:
-			RandomSampleEventHandler m_eSample;
+			int32 m_state[16];
+			int32 m_index;
+			int32 m_seed;
 
-			int32 m_inext;
-			int32 m_inextp;
-
-			int32 m_seedArray[0x38];
-
-			int32 InternalSample()
+			int32 RawSample()
 			{
-				int inext = m_inext;
-				int inextp = m_inextp;
-				if (++inext >= 0x38)
-				{
-					inext = 1;
-				}
-				if (++inextp >= 0x38)
-				{
-					inextp = 1;
-				}
-				int dif = m_seedArray[inext] - m_seedArray[inextp];
-				if (dif < 0)
-				{
-					dif += 0x7fffffff;
-				}
-				m_seedArray[inext] = dif;
-				m_inext = inext;
-				m_inextp = inextp;
-
-				m_eSample.Invoke(dif);
-
-				return dif;
-			}
-			float GetSampleForLargeRange()
-			{
-				int intSample = InternalSample();
-				if ((InternalSample() % 2) == 0)
-				{
-					intSample = -intSample;
-				}
-				float result = static_cast<float>(intSample);
-				result += 2147483646.0f;
-				return (result / 4294967293.f);
+				unsigned long a, b, c, d;
+				a = m_state[m_index];
+				c = m_state[(m_index+13)&15];
+				b = a^c^(a<<16)^(c<<15);
+				c = m_state[(m_index+9)&15];
+				c ^= (c>>11);
+				a = m_state[m_index] = b^c;
+				d = a^((a<<5)&0xDA442D20UL);
+				m_index = (m_index + 15)&15;
+				a = m_state[m_index];
+				m_state[m_index] = a^b^d^(a<<2)^(b<<18)^(c<<28);
+				return static_cast<int32>(m_state[m_index] & 0x7fffffffUL);
 			}
 			float Sample()
 			{
-				return InternalSample() * 4.6566128752457969E-10f;
+				return RawSample() / 2147483647.0f;
 			}
 		};
+
 
 		class APAPI Randomizer
 		{
 		public:
-			static RandomSampleEventHandler& eventSampled() { return m_randomizer.eventSampled(); };
-
 			static int32 Next() { return m_randomizer.Next(); }
 			static int32 Next(int32 max) { return m_randomizer.Next(max); }
 			static int32 Next(int32 minValue, int32 maxValue) { return m_randomizer.Next(minValue, maxValue); }

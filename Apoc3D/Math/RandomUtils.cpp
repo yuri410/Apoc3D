@@ -32,6 +32,7 @@ namespace Apoc3D
 		Random Randomizer::m_randomizer;
 
 		Random::Random()
+			: m_index(0)
 		{
 			const int32 seed = static_cast<int32>(time(0));
 			SetSeed(seed);
@@ -39,33 +40,14 @@ namespace Apoc3D
 
 		void Random::SetSeed(int32 seed)
 		{
-			int seed0 = 0x9a4ec86 - abs(seed);
-			m_seedArray[0x37] = seed0;
-			int incr = 1;
-			for (int i = 1; i < 0x37; i++)
+			m_seed = seed;
+			int32 holdRand = seed;
+
+			for (int32 i=0;i<16;i++)
 			{
-				int index = (0x15 * i) % 0x37;
-				m_seedArray[index] = incr;
-				incr = seed0 - incr;
-				if (incr < 0)
-				{
-					incr += 0x7fffffff;
-				}
-				seed0 = m_seedArray[index];
+				m_state[i] = (((holdRand = holdRand * 214013L + 2531011L) >> 16) & 0x7fff);
 			}
-			for (int j = 1; j < 5; j++)
-			{
-				for (int k = 1; k < 0x38; k++)
-				{
-					m_seedArray[k] -= m_seedArray[1 + ((k + 30) % 0x37)];
-					if (m_seedArray[k] < 0)
-					{
-						m_seedArray[k] += 0x7fffffff;
-					}
-				}
-			}
-			m_inext = 0;
-			m_inextp = 0x15;
 		}
+
 	}
 }
