@@ -109,7 +109,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	
 	StartupParameters startupParams;
 	startupParams.Parse(argv, numOfArgs);
-
+	LocalFree(argv);
 
 	RenderParameters params;
 	params.ColorBufferFormat = FMT_X8R8G8B8;
