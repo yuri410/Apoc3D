@@ -279,77 +279,79 @@ namespace Apoc3D
 				if (m_vertexSamplers)
 				{
 					assert(samplerIndex<4 && samplerIndex>=0);
-					D3DDevice* dev = m_device->getDevice();
 
-					if (m_vertexSamplers[samplerIndex].AddressU != state.AddressU)
+					D3DDevice* dev = m_device->getDevice();
+					ShaderSamplerState& curState = m_vertexSamplers[samplerIndex];
+
+					if (curState.AddressU != state.AddressU)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSU, 
 							D3D9Utils::ConvertTextureAddress(state.AddressU));
-						m_vertexSamplers[samplerIndex].AddressU = state.AddressU;
+						curState.AddressU = state.AddressU;
 					}
 
-					if (m_vertexSamplers[samplerIndex].AddressV != state.AddressV)
+					if (curState.AddressV != state.AddressV)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSV, 
 							D3D9Utils::ConvertTextureAddress(state.AddressV));
-						m_vertexSamplers[samplerIndex].AddressV = state.AddressV;
+						curState.AddressV = state.AddressV;
 					}
 
-					if (m_vertexSamplers[samplerIndex].AddressW != state.AddressW)
+					if (curState.AddressW != state.AddressW)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSW, 
 							D3D9Utils::ConvertTextureAddress(state.AddressW));
-						m_vertexSamplers[samplerIndex].AddressW = state.AddressW;
+						curState.AddressW = state.AddressW;
 					}
 
-					if (m_vertexSamplers[samplerIndex].BorderColor != state.BorderColor)
+					if (curState.BorderColor != state.BorderColor)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_BORDERCOLOR, 
 							state.BorderColor);
-						m_vertexSamplers[samplerIndex].BorderColor = state.BorderColor;
+						curState.BorderColor = state.BorderColor;
 					}
 
-					if (m_vertexSamplers[samplerIndex].MagFilter != state.MagFilter)
+					if (curState.MagFilter != state.MagFilter)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MAGFILTER, 
 							D3D9Utils::ConvertTextureFilter(state.MagFilter));
-						m_vertexSamplers[samplerIndex].MagFilter = state.MagFilter;
+						curState.MagFilter = state.MagFilter;
 					}
 
-					if (m_vertexSamplers[samplerIndex].MinFilter != state.MinFilter)
+					if (curState.MinFilter != state.MinFilter)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MINFILTER, 
 							D3D9Utils::ConvertTextureFilter(state.MinFilter));
-						m_vertexSamplers[samplerIndex].MinFilter = state.MinFilter;
+						curState.MinFilter = state.MinFilter;
 					}
 
-					if (m_vertexSamplers[samplerIndex].MipFilter != state.MipFilter)
+					if (curState.MipFilter != state.MipFilter)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MIPFILTER, 
 							D3D9Utils::ConvertTextureFilter(state.MipFilter));
-						m_vertexSamplers[samplerIndex].MipFilter = state.MipFilter;
+						curState.MipFilter = state.MipFilter;
 					}
 
 					int maxAnis = std::min<int>(state.MaxAnisotropy,1);
-					if (m_vertexSamplers[samplerIndex].MaxAnisotropy != maxAnis)
+					if (curState.MaxAnisotropy != maxAnis)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MAXANISOTROPY, 
 							maxAnis);
-						m_vertexSamplers[samplerIndex].MaxAnisotropy = maxAnis;
+						curState.MaxAnisotropy = maxAnis;
 					}
 
-					if (m_vertexSamplers[samplerIndex].MaxMipLevel != state.MaxMipLevel)
+					if (curState.MaxMipLevel != state.MaxMipLevel)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MAXMIPLEVEL, 
 							state.MaxMipLevel);
-						m_vertexSamplers[samplerIndex].MaxMipLevel = state.MaxMipLevel;
+						curState.MaxMipLevel = state.MaxMipLevel;
 					}
 
-					if (m_vertexSamplers[samplerIndex].MipMapLODBias != state.MipMapLODBias)
+					if (curState.MipMapLODBias != state.MipMapLODBias)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MIPMAPLODBIAS, 
 							state.MipMapLODBias);
-						m_vertexSamplers[samplerIndex].MipMapLODBias = state.MipMapLODBias;
+						curState.MipMapLODBias = state.MipMapLODBias;
 					}
 				}
 			}
@@ -359,65 +361,66 @@ namespace Apoc3D
 				
 				assert(samplerIndex>=0);
 
-				if (m_pixelSamplers[samplerIndex].AddressU != state.AddressU)
+				ShaderSamplerState& curState = m_pixelSamplers[samplerIndex];
+				if (state.AddressU != curState.AddressU)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_ADDRESSU, D3D9Utils::ConvertTextureAddress(state.AddressU));
-					m_pixelSamplers[samplerIndex].AddressU = state.AddressU;
+					curState.AddressU = state.AddressU;
 				}
 				
-				if (m_pixelSamplers[samplerIndex].AddressV != state.AddressV)
+				if (curState.AddressV != state.AddressV)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_ADDRESSV, D3D9Utils::ConvertTextureAddress(state.AddressV));
-					m_pixelSamplers[samplerIndex].AddressV = state.AddressV;
+					curState.AddressV = state.AddressV;
 				}
 
-				if (m_pixelSamplers[samplerIndex].AddressW != state.AddressW)
+				if (curState.AddressW != state.AddressW)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_ADDRESSW, D3D9Utils::ConvertTextureAddress(state.AddressW));
-					m_pixelSamplers[samplerIndex].AddressW = state.AddressW;
+					curState.AddressW = state.AddressW;
 				}
 
-				if (m_pixelSamplers[samplerIndex].BorderColor != state.BorderColor)
+				if (curState.BorderColor != state.BorderColor)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_BORDERCOLOR, state.BorderColor);
-					m_pixelSamplers[samplerIndex].BorderColor = state.BorderColor;
+					curState.BorderColor = state.BorderColor;
 				}
 				
-				if (m_pixelSamplers[samplerIndex].MagFilter != state.MagFilter)
+				if (curState.MagFilter != state.MagFilter)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_MAGFILTER, D3D9Utils::ConvertTextureFilter(state.MagFilter));
-					m_pixelSamplers[samplerIndex].MagFilter = state.MagFilter;
+					curState.MagFilter = state.MagFilter;
 				}
 				
-				if (m_pixelSamplers[samplerIndex].MinFilter != state.MinFilter)
+				if (curState.MinFilter != state.MinFilter)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_MINFILTER, D3D9Utils::ConvertTextureFilter(state.MinFilter));
-					m_pixelSamplers[samplerIndex].MinFilter = state.MinFilter;
+					curState.MinFilter = state.MinFilter;
 				}
 				
-				if (m_pixelSamplers[samplerIndex].MipFilter != state.MipFilter)
+				if (curState.MipFilter != state.MipFilter)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_MIPFILTER, D3D9Utils::ConvertTextureFilter(state.MipFilter));
-					m_pixelSamplers[samplerIndex].MipFilter = state.MipFilter;
+					curState.MipFilter = state.MipFilter;
 				}
 				
 				int maxAnis = std::max<int>(state.MaxAnisotropy,1);
-				if (m_pixelSamplers[samplerIndex].MaxAnisotropy != maxAnis)
+				if (curState.MaxAnisotropy != maxAnis)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_MAXANISOTROPY, maxAnis);
-					m_pixelSamplers[samplerIndex].MaxAnisotropy = maxAnis;
+					curState.MaxAnisotropy = maxAnis;
 				}
 
-				if (m_pixelSamplers[samplerIndex].MaxMipLevel != state.MaxMipLevel)
+				if (curState.MaxMipLevel != state.MaxMipLevel)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_MAXMIPLEVEL, state.MaxMipLevel);
-					m_pixelSamplers[samplerIndex].MaxMipLevel = state.MaxMipLevel;
+					curState.MaxMipLevel = state.MaxMipLevel;
 				}
 
-				if (m_pixelSamplers[samplerIndex].MipMapLODBias != state.MipMapLODBias)
+				if (curState.MipMapLODBias != state.MipMapLODBias)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_MIPMAPLODBIAS, state.MipMapLODBias);
-					m_pixelSamplers[samplerIndex].MipMapLODBias = state.MipMapLODBias;
+					curState.MipMapLODBias = state.MipMapLODBias;
 				}
 
 			}
@@ -632,6 +635,17 @@ namespace Apoc3D
 						m_vertexSamplers[i].MipMapLODBias = 0;
 						m_vertexSamplers[i].MaxMipLevel = 0;
 						m_vertexSamplers[i].MaxAnisotropy = 1;
+
+						dev->SetSamplerState(i+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+						dev->SetSamplerState(i+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+						dev->SetSamplerState(i+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_ADDRESSW, D3DTADDRESS_WRAP);
+						dev->SetSamplerState(i+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_BORDERCOLOR, 0x00000000);
+						dev->SetSamplerState(i+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+						dev->SetSamplerState(i+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+						dev->SetSamplerState(i+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+						dev->SetSamplerState(i+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MIPMAPLODBIAS, 0);
+						dev->SetSamplerState(i+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MAXMIPLEVEL, 0);
+						dev->SetSamplerState(i+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MAXANISOTROPY, 1);
 					}
 				}
 				else
@@ -655,6 +669,17 @@ namespace Apoc3D
 					m_pixelSamplers[i].MipMapLODBias = 0;
 					m_pixelSamplers[i].MaxMipLevel = 0;
 					m_pixelSamplers[i].MaxAnisotropy = 1;
+
+					dev->SetSamplerState(i, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+					dev->SetSamplerState(i, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+					dev->SetSamplerState(i, D3DSAMP_ADDRESSW, D3DTADDRESS_WRAP);
+					dev->SetSamplerState(i, D3DSAMP_BORDERCOLOR, 0x00000000);
+					dev->SetSamplerState(i, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+					dev->SetSamplerState(i, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+					dev->SetSamplerState(i, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+					dev->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, 0);
+					dev->SetSamplerState(i, D3DSAMP_MAXMIPLEVEL, 0);
+					dev->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, 1);
 				}
 
 				if (m_textureSlots)
