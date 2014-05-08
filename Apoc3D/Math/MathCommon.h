@@ -113,6 +113,11 @@ namespace Apoc3D
 		{
 			return (a < b) ? a : b;
 		}
+
+		inline int32 Round(float x)
+		{
+			return x>=0 ? (int32)(x+0.5) : (int32)(x-0.5);
+		}
 	}
 }
 
