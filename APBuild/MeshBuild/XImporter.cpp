@@ -219,7 +219,7 @@ namespace APBuild
 			mtrl->Emissive = ToColor4( d3dmtrl.MatD3D.Emissive);
 			mtrl->Power = d3dmtrl.MatD3D.Power;
 			if (d3dmtrl.pTextureFilename)
-				mtrl->TextureName.Add(0, StringUtils::toWString(d3dmtrl.pTextureFilename));
+				mtrl->TextureName.Add(0, StringUtils::toPlatformWideString(d3dmtrl.pTextureFilename));
 
 			MeshData* data = new MeshData();
 			data->Name = L"Part" + StringUtils::ToString(i,2,'0');

@@ -82,7 +82,7 @@ namespace Apoc3D
 			
 			//char sname[64];
 			//wcstombs(sname, name.c_str(), 64);
-			std::string sname = StringUtils::toString(name);
+			std::string sname = StringUtils::toPlatformNarrowString(name);
 
 			return (void*)LIB_GETSYM( handle, sname.c_str() );
 		}

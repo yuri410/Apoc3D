@@ -35,6 +35,7 @@
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/VFS/PathUtils.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/IOLib/TextData.h"
 
 #include "apoc3d/Library/ConvertUTF.h"
 
@@ -59,119 +60,87 @@ namespace Apoc3D
 			rawBytes[length] = 0;
 			br->ReadBytes(rawBytes, length);
 
-			const UTF8* sourceStart = (const UTF8*)rawBytes;
-			const UTF8* sourceEnd = sourceStart + length;
+			String allText = Encoding::ConvertRawData(rawBytes, length, Encoding::TEC_Unknown, true);
 
-			// skip BOM
-			const byte LEAD_0 = 0xef;
-			const byte LEAD_1 = 0xbb;
-			const byte LEAD_2 = 0xbf;
-
-			if (length>=3 && ((byte)rawBytes[0] == LEAD_0 && (byte)rawBytes[1] == LEAD_1 && (byte)rawBytes[2] == LEAD_2))
+			if (allText.size())
 			{
-				sourceStart+=3;
-				length -= 3;
-			}
+				ConfigurationSection* curSect = nullptr;
+				String curSectName;
 
-			int32 utf16MaxLength = length+1;
-			UTF16* resultBuffer = new UTF16[utf16MaxLength];
-			memset(resultBuffer, 0, sizeof(UTF16) * utf16MaxLength);
-
-			UTF16* targetStart = resultBuffer;
-			UTF16* targetEnd = targetStart + utf16MaxLength;
-
-			ConversionResult res = ConvertUTF8toUTF16(&sourceStart, sourceEnd, &targetStart, targetEnd, lenientConversion);
-
-			delete[] rawBytes;
-
-			if (res == conversionOK)
-			{
-				String allText((const wchar_t*)resultBuffer);
-
-				if (allText.size())
+				String::size_type pos = 0;
+				while (pos != String::npos)
 				{
-					ConfigurationSection* curSect = nullptr;
-					String curSectName;
+					String::size_type lastPos = pos;
+					pos = allText.find('\n', pos+1);
 
-					String::size_type pos = 0;
-					while (pos != String::npos)
+					String line;
+
+					if (pos == String::npos)
 					{
-						String::size_type lastPos = pos;
-						pos = allText.find('\n', pos+1);
-
-						String line;
-
-						if (pos == String::npos)
-						{
-							line = allText.substr(lastPos);
-						}
-						else if (pos > lastPos)
-						{
-							line = allText.substr(lastPos, pos-lastPos);
-						}
-
-						String::size_type cpos = line.find(';');
-						if (cpos != String::npos)
-							line = line.substr(0, cpos);
-
-						StringUtils::Trim(line, L"\n\r\t ");
-
-						if (line.size()>1)
-						{
-							if (line[0] == '[' && line[line.size()-1]==']')
-							{
-								curSectName = line.substr(1, line.size()-2);
-								StringUtils::Trim(curSectName);
-
-								curSect = config->get(curSectName);
-								if (curSect == nullptr)
-								{
-									curSect = new ConfigurationSection(curSectName);
-									config->Add(curSect);
-								}
-								else
-								{
-									ApocLog(LOG_System, L"[INI] Section '" + curSectName + L"' already exists, merging.", LOGLVL_Warning);
-								}
-							}
-							else if (curSect)
-							{
-								cpos = line.find('=');
-								if (cpos != String::npos)
-								{
-									String key = line.substr(0, cpos);
-									String value = line.substr(cpos+1);
-
-									StringUtils::Trim(key);
-									StringUtils::Trim(value);
-
-									ConfigurationSection* valSect = curSect->getSection(key);
-									
-									if (valSect)
-									{
-										valSect->SetValue(value);
-
-										ApocLog(LOG_System, L"[INI] Key '" + key + L"' already exists in section '" + curSect->getName() + L"', overwriting.", LOGLVL_Warning);
-									}
-									else
-										curSect->AddStringValue(key, value);
-								}
-								else
-								{
-									curSect->AddStringValue(line, L"");
-								}
-							}
-						}
-
+						line = allText.substr(lastPos);
 					}
+					else if (pos > lastPos)
+					{
+						line = allText.substr(lastPos, pos-lastPos);
+					}
+
+					String::size_type cpos = line.find(';');
+					if (cpos != String::npos)
+						line = line.substr(0, cpos);
+
+					StringUtils::Trim(line, L"\n\r\t ");
+
+					if (line.size()>1)
+					{
+						if (line[0] == '[' && line[line.size()-1]==']')
+						{
+							curSectName = line.substr(1, line.size()-2);
+							StringUtils::Trim(curSectName);
+
+							curSect = config->get(curSectName);
+							if (curSect == nullptr)
+							{
+								curSect = new ConfigurationSection(curSectName);
+								config->Add(curSect);
+							}
+							else
+							{
+								ApocLog(LOG_System, L"[INI] Section '" + curSectName + L"' already exists, merging.", LOGLVL_Warning);
+							}
+						}
+						else if (curSect)
+						{
+							cpos = line.find('=');
+							if (cpos != String::npos)
+							{
+								String key = line.substr(0, cpos);
+								String value = line.substr(cpos+1);
+
+								StringUtils::Trim(key);
+								StringUtils::Trim(value);
+
+								ConfigurationSection* valSect = curSect->getSection(key);
+
+								if (valSect)
+								{
+									valSect->SetValue(value);
+
+									ApocLog(LOG_System, L"[INI] Key '" + key + L"' already exists in section '" + curSect->getName() + L"', overwriting.", LOGLVL_Warning);
+								}
+								else
+									curSect->AddStringValue(key, value);
+							}
+							else
+							{
+								curSect->AddStringValue(line, L"");
+							}
+						}
+					}
+
 				}
 			}
-			else
-			{
-				LogManager::getSingleton().Write(LOG_System, L"Invalid text data in " + rl->getName(), LOGLVL_Error);
-			}
-			delete[] resultBuffer;
 
+			delete[] rawBytes;
 
 			br->Close();
 			delete br;

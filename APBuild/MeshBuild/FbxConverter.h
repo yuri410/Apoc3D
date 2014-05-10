@@ -531,7 +531,7 @@ namespace APBuild
 					if (frames.getCount())
 					{
 						ModelAnimationClip* clip = new ModelAnimationClip(frames[frames.getCount()-1].getTime(), frames);
-						clipTable->Add(StringUtils::toWString(animName), clip);
+						clipTable->Add(StringUtils::toPlatformWideString(animName), clip);
 					}					
 				}
 			}
@@ -543,7 +543,7 @@ namespace APBuild
 					bone.Parent = m_SkeletonBones[i]->GetParentBoneIndex();
 					bone.setBindPoseTransform(m_SkeletonBones[i]->GetBindPoseTransform());
 					bone.setBoneReferenceTransform(m_SkeletonBones[i]->GetBoneReferenceTransform());
-					bone.Name = StringUtils::toWString(m_SkeletonBones[i]->GetName());
+					bone.Name = StringUtils::toPlatformWideString(m_SkeletonBones[i]->GetName());
 					bones.Add(bone);
 				}
 

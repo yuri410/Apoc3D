@@ -26,5 +26,5 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace Apoc3D
 {
-
+	static_assert(sizeof(wchar_t) == 2, "wchar_t need to be configured to be 2 bytes.");
 }

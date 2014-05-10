@@ -345,7 +345,7 @@ namespace Apoc3D
 				delete[] binaryBuffer;
 
 				const char* allContent = &buffer[0];
-				String allContentStr = StringUtils::toWString(allContent);
+				String allContentStr = StringUtils::toPlatformWideString(allContent);
 				List<String> lines(50);
 				StringUtils::Split(allContentStr, lines, L"\n\r");
 

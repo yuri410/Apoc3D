@@ -42,11 +42,6 @@ namespace Apoc3D
 	{
 		XMLConfigurationFormat XMLConfigurationFormat::Instance = XMLConfigurationFormat();
 
-		String getElementName(const TiXmlElement* elem, bool isAscii);
-		String getNodeText(const TiXmlText* text, bool isAscii);
-		String getAttribName(const TiXmlAttribute* attrib, bool isAscii);
-		String getAttribValue(const TiXmlAttribute* attrib, bool isAscii);
-
 		Configuration* XMLConfigurationFormat::Load(const ResourceLocation* rl)
 		{
 			Configuration* config = new Configuration(rl->getName());
@@ -55,13 +50,9 @@ namespace Apoc3D
 
 			Stream* strm = rl->GetReadStream();
 
-			TiXmlEncoding encoding = TIXML_ENCODING_UNKNOWN;
-
-			doc.Load(strm, encoding);
+			doc.Load(strm, TIXML_ENCODING_UNKNOWN);
 			
-			bool isAscii = encoding != TIXML_ENCODING_UTF8;
-
-			BuildXml(config, &doc, isAscii);
+			BuildXml(config, &doc);
 
 			return config;
 		}
@@ -77,7 +68,7 @@ namespace Apoc3D
 			for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator();iter.MoveNext();)
 			{
 				ConfigurationSection* sect = *iter.getCurrentValue();
-				TiXmlElement* elem = new TiXmlElement(StringUtils::toString(sect->getName()));
+				TiXmlElement* elem = new TiXmlElement(sect->getName());
 				root->LinkEndChild(elem);
 				SaveNode(elem, sect);
 			}
@@ -86,7 +77,7 @@ namespace Apoc3D
 			//doc.SaveFile(StringUtils::toString(filePath));
 		}
 
-		void XMLConfigurationFormat::BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent, bool isAscii)
+		void XMLConfigurationFormat::BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent, const TiXmlDocument& doc)
 		{
 			int type = node->Type();
 
@@ -96,20 +87,20 @@ namespace Apoc3D
 				{
 					const TiXmlElement* elem = node->ToElement();
 
-					String strName = getElementName(elem, isAscii);
+					String strName = doc.GetUTF16ElementName(elem);
 					
 					ConfigurationSection* section = new ConfigurationSection(strName);
 
 
 					for (const TiXmlAttribute* i = elem->FirstAttribute(); i!=0; i=i->Next())
 					{
-						section->AddAttributeString(getAttribName(i, isAscii), getAttribValue(i, isAscii));
+						section->AddAttributeString(doc.GetUTF16AttribName(i), doc.GetUTF16AttribValue(i));
 					}
 
 
 					for (const TiXmlNode* i = node->FirstChild(); i!=0; i=i->NextSibling())
 					{
-						BuildNode(config, i, section, isAscii);
+						BuildNode(config, i, section, doc);
 					}
 					if (parent)
 					{
@@ -126,21 +117,21 @@ namespace Apoc3D
 				{
 					const TiXmlText* text = node->ToText();
 					
-					String strText = getNodeText(text, isAscii);
+					String strText = doc.GetUTF16NodeText(text);
 					
 					parent->SetValue(strText);
 				}
 				break;
 			}
 		}
-		void XMLConfigurationFormat::BuildXml(Configuration* config, const TiXmlDocument* doc, bool isAscii)
+		void XMLConfigurationFormat::BuildXml(Configuration* config, const TiXmlDocument* doc)
 		{
 			const TiXmlNode* i = doc->FirstChildElement();
 			if (i)
 			{
 				for (const TiXmlNode* j = i->FirstChild(); j!=0; j=j->NextSibling())
 				{
-					BuildNode(config, j, nullptr, isAscii);
+					BuildNode(config, j, nullptr, *doc);
 				}
 			}
 		}
@@ -149,55 +140,24 @@ namespace Apoc3D
 		{
 			for (ConfigurationSection::AttributeEnumerator iter = parent->GetAttributeEnumrator();iter.MoveNext();)
 			{
-				node->ToElement()->SetAttribute(StringUtils::toString(*iter.getCurrentKey()), StringUtils::toString(*iter.getCurrentValue()));
+				node->ToElement()->SetAttribute(*iter.getCurrentKey(), *iter.getCurrentValue());
 			}
 			
 			for (ConfigurationSection::SubSectionEnumerator iter = parent->GetSubSectionEnumrator();iter.MoveNext();)
 			{
 				ConfigurationSection* s = *iter.getCurrentValue();
-				TiXmlElement* elem = new TiXmlElement(StringUtils::toString(s->getName()));
+				TiXmlElement* elem = new TiXmlElement(s->getName());
 				if (s->getValue().size())
 				{
-					TiXmlText* txt = new TiXmlText(StringUtils::toString(s->getValue()));
+					TiXmlText* txt = new TiXmlText(s->getValue());
 					elem->LinkEndChild(txt);
 				}
-				//elem->SetText(StringUtils::toString(s->getValue()));
+
 				node->LinkEndChild(elem);
 				SaveNode(elem, s);
 			}
+			
 		}
 
-		String getElementName(const TiXmlElement* elem, bool isAscii)
-		{
-			std::string str = elem->ValueStr();
-
-			if (isAscii) return String(str.begin(), str.end());
-
-			return StringUtils::UTF8toUTF16(str);
-		}
-		String getNodeText(const TiXmlText* text, bool isAscii)
-		{
-			std::string str = text->ValueStr();
-
-			if (isAscii) return String(str.begin(), str.end());
-
-			return StringUtils::UTF8toUTF16(str);
-		}
-		String getAttribName(const TiXmlAttribute* attrib, bool isAscii)
-		{
-			std::string str = attrib->NameTStr();
-
-			if (isAscii) return String(str.begin(), str.end());
-
-			return StringUtils::UTF8toUTF16(str);
-		}
-		String getAttribValue(const TiXmlAttribute* attrib, bool isAscii)
-		{
-			std::string str = attrib->ValueStr();
-
-			if (isAscii) return String(str.begin(), str.end());
-
-			return StringUtils::UTF8toUTF16(str);
-		}
 	}
 }

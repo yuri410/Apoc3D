@@ -38,14 +38,26 @@ namespace Apoc3D
 		public:
 			static const String Empty;
 
-			static std::string toString(const String& str);
-			static std::string toString(const wchar_t* str);
-			static String toWString(const std::string& str);
-			static String toWString(const char* str);
+			static std::string toPlatformNarrowString(const String& str);
+			static std::string toPlatformNarrowString(const wchar_t* str);
+			static String toPlatformWideString(const std::string& str);
+			static String toPlatformWideString(const char* str);
 
+
+			static std::string toASCIINarrowString(const String& str);
+			static String toASCIIWideString(const std::string& str);
+			
 
 			static String UTF8toUTF16(const std::string& utf8);
 			static std::string UTF16toUTF8(const String& utf16);
+
+			static String32 UTF8toUTF32(const std::string& utf8);
+			static std::string UTF32toUTF8(const String32& utf32);
+
+			static String32 UTF16toUTF32(const String& utf16);
+			static String UTF32toUTF16(const String32& utf32);
+
+
 
 
 			static bool ParseBool(const String& val);

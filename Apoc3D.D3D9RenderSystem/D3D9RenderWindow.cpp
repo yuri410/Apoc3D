@@ -126,7 +126,7 @@ namespace Apoc3D
 			{
 				D3DADAPTER_IDENTIFIER9 did;
 				getGraphicsDeviceManager()->getDirect3D()->GetAdapterIdentifier(getGraphicsDeviceManager()->getCurrentSetting()->D3D9.AdapterOrdinal, NULL, &did);
-				m_window->m_hardwareName = StringUtils::toWString(did.Description);
+				m_window->m_hardwareName = StringUtils::toPlatformWideString(did.Description);
 
 				// The window will be only initialized once, even in some cases, like device losts
 				// when this is called again.

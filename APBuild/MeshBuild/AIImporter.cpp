@@ -84,7 +84,7 @@ namespace APBuild
 	{
 		Importer importer;
 		
-		const aiScene* scene = importer.ReadFile(StringUtils::toString(config.SrcFile), 
+		const aiScene* scene = importer.ReadFile(StringUtils::toPlatformNarrowString(config.SrcFile), 
 			aiProcess_Triangulate | aiProcess_RemoveRedundantMaterials | aiProcess_OptimizeMeshes | aiProcess_FlipUVs);
 		
 		ModelData* result = new ModelData();
@@ -124,7 +124,7 @@ namespace APBuild
 					}
 					else if (std::string(prop->mKey.data) == std::string("$tex.file"))
 					{
-						String texFile = StringUtils::toWString(prop->mData);
+						String texFile = StringUtils::toPlatformWideString(prop->mData);
 						StringUtils::Trim(texFile, L" \t\r\n\07");
 						mtrl->TextureName[0] = texFile;
 					}
@@ -133,7 +133,7 @@ namespace APBuild
 
 				data->Materials.Add(mtrl);
 			}
-			data->Name = StringUtils::toWString(m->mName.data);
+			data->Name = StringUtils::toPlatformWideString(m->mName.data);
 
 			// faces
 			{

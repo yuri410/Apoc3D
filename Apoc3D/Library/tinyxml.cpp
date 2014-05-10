@@ -27,6 +27,7 @@ distribution.
 #include "../IOLib/Streams.h"
 #include "../IOLib/BinaryReader.h"
 #include "../IOLib/BinaryWriter.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace std;
 
@@ -516,7 +517,12 @@ TiXmlElement::TiXmlElement( const std::string& _value )
 	firstChild = lastChild = 0;
 	value = _value;
 }
-
+TiXmlElement::TiXmlElement( const Apoc3D::String& utf16 )
+	: TiXmlNode( TiXmlNode::TINYXML_ELEMENT )
+{
+	firstChild = lastChild = 0;
+	value = Apoc3D::Utility::StringUtils::UTF16toUTF8(utf16);
+}
 
 TiXmlElement::TiXmlElement( const TiXmlElement& copy)
 	: TiXmlNode( TiXmlNode::TINYXML_ELEMENT )
@@ -758,6 +764,13 @@ void TiXmlElement::SetAttribute( const std::string& _name, const std::string& _v
 	}
 }
 
+void TiXmlElement::SetAttribute( const Apoc3D::String& name, const Apoc3D::String& value )
+{
+	std::string _name = Apoc3D::Utility::StringUtils::UTF16toUTF8(name);
+	std::string _value = Apoc3D::Utility::StringUtils::UTF16toUTF8(value);
+	SetAttribute(_name, _value);
+}
+
 
 void TiXmlElement::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 {
@@ -893,14 +906,14 @@ const char* TiXmlElement::GetText() const
 }
 
 
-TiXmlDocument::TiXmlDocument() : TiXmlNode( TiXmlNode::TINYXML_DOCUMENT )
+TiXmlDocument::TiXmlDocument() : TiXmlNode( TiXmlNode::TINYXML_DOCUMENT ), selectedEncoding(TIXML_ENCODING_UNKNOWN)
 {
 	tabsize = 4;
 	useMicrosoftBOM = false;
 	ClearError();
 }
 
-TiXmlDocument::TiXmlDocument( const char * documentName ) : TiXmlNode( TiXmlNode::TINYXML_DOCUMENT )
+TiXmlDocument::TiXmlDocument( const char * documentName ) : TiXmlNode( TiXmlNode::TINYXML_DOCUMENT ), selectedEncoding(TIXML_ENCODING_UNKNOWN)
 {
 	tabsize = 4;
 	useMicrosoftBOM = false;
@@ -908,7 +921,7 @@ TiXmlDocument::TiXmlDocument( const char * documentName ) : TiXmlNode( TiXmlNode
 	ClearError();
 }
 
-TiXmlDocument::TiXmlDocument( const std::string& documentName ) : TiXmlNode( TiXmlNode::TINYXML_DOCUMENT )
+TiXmlDocument::TiXmlDocument( const std::string& documentName ) : TiXmlNode( TiXmlNode::TINYXML_DOCUMENT ), selectedEncoding(TIXML_ENCODING_UNKNOWN)
 {
 	tabsize = 4;
 	useMicrosoftBOM = false;
@@ -917,7 +930,7 @@ TiXmlDocument::TiXmlDocument( const std::string& documentName ) : TiXmlNode( TiX
 }
 
 
-TiXmlDocument::TiXmlDocument( const TiXmlDocument& copy ) : TiXmlNode( TiXmlNode::TINYXML_DOCUMENT )
+TiXmlDocument::TiXmlDocument( const TiXmlDocument& copy ) : TiXmlNode( TiXmlNode::TINYXML_DOCUMENT ), selectedEncoding(TIXML_ENCODING_UNKNOWN)
 {
 	copy.CopyTo( this );
 }
@@ -959,7 +972,7 @@ TiXmlDocument& TiXmlDocument::operator=( const TiXmlDocument& copy )
 //	Print( fp, 0 );
 //	return (ferror(fp) == 0);
 //}
-bool TiXmlDocument::Load(Apoc3D::IO::Stream* strm, TiXmlEncoding& encoding)
+bool TiXmlDocument::Load(Apoc3D::IO::Stream* strm, TiXmlEncoding encoding)
 {
 	// Delete the existing data:
 	Clear();
@@ -1044,6 +1057,7 @@ void TiXmlDocument::CopyTo( TiXmlDocument* target ) const
 	target->tabsize = tabsize;
 	target->errorLocation = errorLocation;
 	target->useMicrosoftBOM = useMicrosoftBOM;
+	target->selectedEncoding = selectedEncoding;
 
 	TiXmlNode* node = 0;
 	for ( node = firstChild; node; node = node->NextSibling() )
@@ -1088,6 +1102,67 @@ bool TiXmlDocument::Accept( TiXmlVisitor* visitor ) const
 	}
 	return visitor->VisitExit( *this );
 }
+
+
+Apoc3D::String TiXmlDocument::GetUTF16ElementName(const TiXmlElement* elem) const
+{
+	const std::string& str = elem->ValueStr();
+	if (selectedEncoding == TIXML_ENCODING_LEGACY) return Apoc3D::String(str.begin(), str.end());
+	return Apoc3D::Utility::StringUtils::UTF8toUTF16(str);
+}
+Apoc3D::String TiXmlDocument::GetUTF16ElementText(const TiXmlElement* elem) const
+{
+	const std::string& str = elem->GetText();
+	if (selectedEncoding == TIXML_ENCODING_LEGACY) return Apoc3D::String(str.begin(), str.end());
+	return Apoc3D::Utility::StringUtils::UTF8toUTF16(str);
+}
+
+Apoc3D::String TiXmlDocument::GetUTF16NodeText(const TiXmlText* text) const
+{
+	const std::string& str = text->ValueStr();
+	if (selectedEncoding == TIXML_ENCODING_LEGACY) return Apoc3D::String(str.begin(), str.end());
+	return Apoc3D::Utility::StringUtils::UTF8toUTF16(str);
+}
+Apoc3D::String TiXmlDocument::GetUTF16AttribName(const TiXmlAttribute* attrib) const
+{
+	const std::string& str = attrib->NameTStr();
+	if (selectedEncoding == TIXML_ENCODING_LEGACY) return Apoc3D::String(str.begin(), str.end());
+	return Apoc3D::Utility::StringUtils::UTF8toUTF16(str);
+}
+Apoc3D::String TiXmlDocument::GetUTF16AttribValue(const TiXmlAttribute* attrib) const
+{
+	const std::string& str = attrib->ValueStr();
+	if (selectedEncoding == TIXML_ENCODING_LEGACY) return Apoc3D::String(str.begin(), str.end());
+	return Apoc3D::Utility::StringUtils::UTF8toUTF16(str);
+}
+Apoc3D::String TiXmlDocument::GetUTF16AttribValue(const TiXmlElement* elem, const char* attribName) const
+{
+	const std::string& str = elem->Attribute(attribName);
+	if (selectedEncoding == TIXML_ENCODING_LEGACY) return Apoc3D::String(str.begin(), str.end());
+	return Apoc3D::Utility::StringUtils::UTF8toUTF16(str);
+}
+
+void TiXmlDocument::SetUTF16ElementName(TiXmlElement* elem, const Apoc3D::String& value) const
+{
+	elem->SetValue(Apoc3D::Utility::StringUtils::UTF16toUTF8(value));
+}
+void TiXmlDocument::SetUTF16NodeText(TiXmlText* text, const Apoc3D::String& value) const
+{
+	text->SetValue(Apoc3D::Utility::StringUtils::UTF16toUTF8(value));
+}
+void TiXmlDocument::SetUTF16AttribName(TiXmlAttribute* attrib, const Apoc3D::String& value) const
+{
+	attrib->SetName(Apoc3D::Utility::StringUtils::UTF16toUTF8(value));
+}
+void TiXmlDocument::SetUTF16AttribValue(TiXmlAttribute* attrib, const Apoc3D::String& value) const
+{
+	attrib->SetValue(Apoc3D::Utility::StringUtils::UTF16toUTF8(value));
+}
+
+
+
+
+
 
 
 const TiXmlAttribute* TiXmlAttribute::Next() const
@@ -1270,6 +1345,12 @@ TiXmlNode* TiXmlComment::Clone() const
 	return clone;
 }
 
+
+TiXmlText::TiXmlText( const Apoc3D::String& utf16 ) : TiXmlNode (TiXmlNode::TINYXML_TEXT)
+{
+	SetValue( Apoc3D::Utility::StringUtils::UTF16toUTF8(utf16) );
+	cdata = false;
+}
 
 void TiXmlText::Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const
 {

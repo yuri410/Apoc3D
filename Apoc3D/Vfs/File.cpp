@@ -55,7 +55,7 @@ namespace Apoc3D
 		bool File::DirectoryExists(const String& path)
 		{
 			struct stat status;
-			std::string spath = StringUtils::toString(path);
+			std::string spath = StringUtils::toPlatformNarrowString(path);
 
 			if (_access(spath.c_str(), 0) == 0)
 			{
@@ -71,7 +71,7 @@ namespace Apoc3D
 		time_t File::GetFileModifiyTime(const String& path)
 		{
 			struct stat status;
-			std::string spath = StringUtils::toString(path);
+			std::string spath = StringUtils::toPlatformNarrowString(path);
 
 			if (_access(spath.c_str(), 0) == 0)
 			{
@@ -84,7 +84,7 @@ namespace Apoc3D
 		bool File::FileExists(const String& path)
 		{
 			struct stat status;
-			std::string spath = StringUtils::toString(path);
+			std::string spath = StringUtils::toPlatformNarrowString(path);
 
 			if (_access(spath.c_str(), 0) == 0)
 			{
@@ -101,7 +101,7 @@ namespace Apoc3D
 		int64 File::GetFileSize(const String& path)
 		{
 			struct stat status;
-			std::string spath = StringUtils::toString(path);
+			std::string spath = StringUtils::toPlatformNarrowString(path);
 
 			if (_access(spath.c_str(), 0) == 0)
 			{
@@ -134,7 +134,7 @@ namespace Apoc3D
 			DIR *dir;
 			struct dirent *ent;
 
-			std::string spath = StringUtils::toString(path);
+			std::string spath = StringUtils::toPlatformNarrowString(path);
 
 			if ((dir = opendir(spath.c_str())) != NULL) 
 			{
@@ -142,7 +142,7 @@ namespace Apoc3D
 				{
 					if ((ent->d_type & S_IFDIR) == 0)
 					{
-						items.Add(StringUtils::toWString(ent->d_name));
+						items.Add(StringUtils::toPlatformWideString(ent->d_name));
 					}
 				}
 				closedir (dir);

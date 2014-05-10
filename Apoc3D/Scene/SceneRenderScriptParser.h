@@ -39,6 +39,7 @@ using namespace Apoc3D::Graphics::EffectSystem;
 
 class TiXmlNode;
 class TiXmlElement;
+class TiXmlDocument;
 
 namespace Apoc3D
 {
@@ -72,24 +73,24 @@ namespace Apoc3D
 			/**
 			 *  Build instructions for commands.
 			 */
-			void FillFunctionCall(const TiXmlElement* node, List<SceneInstruction>& instructions);
+			void FillFunctionCall(const TiXmlElement* node, List<SceneInstruction>& instructions, const TiXmlDocument& doc);
 
 			/**
 			 *  Parse and add all the global vars to the list
 			 */
-			void ParseGlocalVarNode(const TiXmlElement* node);
+			void ParseGlocalVarNode(const TiXmlElement* node, const TiXmlDocument& doc);
 
 			/**
 			 *  Build instructions for the RenderQuad command
 			 */
-			void FillRenderQuad(const TiXmlElement* node, List<SceneInstruction>& instructions);
+			void FillRenderQuad(const TiXmlElement* node, List<SceneInstruction>& instructions, const TiXmlDocument& doc);
 			/**
 			 *  Build instructions for code blocks
 			 */
-			void BuildInstructions(const TiXmlElement* node, ScenePassData* data);
+			void BuildInstructions(const TiXmlElement* node, ScenePassData* data, const TiXmlDocument& doc);
 
-			void BuildPass(const TiXmlElement* node);
-			void BuildNode(const TiXmlNode* node);
+			void BuildPass(const TiXmlElement* node, const TiXmlDocument& doc);
+			void BuildNode(const TiXmlNode* node, const TiXmlDocument& doc);
 
 			
 		};

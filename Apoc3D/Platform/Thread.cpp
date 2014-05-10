@@ -111,7 +111,7 @@ namespace Apoc3D
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 #if _DEBUG
 			const tthread::thread::native_handle_type handle = th->native_handle();
-			SetThreadNameInternal(GetThreadId(handle), StringUtils::toString(name).c_str());
+			SetThreadNameInternal(GetThreadId(handle), StringUtils::toPlatformNarrowString(name).c_str());
 #endif
 #endif
 		}

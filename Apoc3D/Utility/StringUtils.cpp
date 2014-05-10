@@ -37,8 +37,8 @@ namespace Apoc3D
 	{
 		const String StringUtils::Empty;
 
-		string StringUtils::toString(const String& str) { return toString(str.c_str()); }
-		string StringUtils::toString(const wchar_t* str)
+		string StringUtils::toPlatformNarrowString(const String& str) { return toPlatformNarrowString(str.c_str()); }
+		string StringUtils::toPlatformNarrowString(const wchar_t* str)
 		{
 			size_t bufSize = wcstombs(nullptr, str, 0);
 			if (bufSize != static_cast<size_t>(-1))
@@ -53,8 +53,8 @@ namespace Apoc3D
 			}
 			return string();
 		}
-		String StringUtils::toWString(const string& str) { return toWString(str.c_str()); }
-		String StringUtils::toWString(const char* str)
+		String StringUtils::toPlatformWideString(const string& str) { return toPlatformWideString(str.c_str()); }
+		String StringUtils::toPlatformWideString(const char* str)
 		{
 			size_t bufSize = mbstowcs(nullptr, str, 0);
 			if (bufSize != static_cast<size_t>(-1))
@@ -69,6 +69,10 @@ namespace Apoc3D
 			}
 			return Empty;
 		}
+
+		std::string StringUtils::toASCIINarrowString(const String& str) { return std::string(str.begin(), str.end()); }
+		String StringUtils::toASCIIWideString(const std::string& str) { return String(str.begin(), str.end()); }
+
 
 
 		String StringUtils::UTF8toUTF16(const std::string& utf8)
@@ -92,14 +96,14 @@ namespace Apoc3D
 		}
 		std::string StringUtils::UTF16toUTF8(const String& utf16)
 		{
-			size_t utf8MaxSize = 4 * utf16.size()+1;
-			UTF8* byteBuffer = new UTF8[utf8MaxSize];
-			memset(byteBuffer, 0, sizeof(UTF8) * utf8MaxSize);
+			size_t utf8MaxLength = 4 * utf16.size()+1;
+			UTF8* byteBuffer = new UTF8[utf8MaxLength];
+			memset(byteBuffer, 0, sizeof(UTF8) * utf8MaxLength);
 
 			const UTF16* sourcestart = reinterpret_cast<const UTF16*>(utf16.c_str());
 			const UTF16* sourceend = sourcestart + utf16.size();
 			UTF8* targetstart = byteBuffer;
-			UTF8* targetend = targetstart + utf8MaxSize;
+			UTF8* targetend = targetstart + utf8MaxLength;
 
 			ConvertUTF16toUTF8(&sourcestart, sourceend, &targetstart, targetend, lenientConversion);
 			
@@ -109,6 +113,86 @@ namespace Apoc3D
 
 			return result;
 		}
+
+		String32 StringUtils::UTF8toUTF32(const std::string& utf8)
+		{
+			size_t utf32MaxLength = utf8.length()+1;
+			UTF32* resultBuffer = new UTF32[utf32MaxLength];
+			memset(resultBuffer, 0, sizeof(UTF32) * utf32MaxLength);
+
+			const UTF8* sourceStart = (const UTF8*)utf8.c_str();
+			const UTF8* sourceEnd = sourceStart + utf8.length();
+			UTF32* targetStart = resultBuffer;
+			UTF32* targetEnd = targetStart + utf32MaxLength;
+
+			ConvertUTF8toUTF32(&sourceStart, sourceEnd, &targetStart, targetEnd, lenientConversion);
+
+			String32 result((const char32_t*)resultBuffer);
+
+			delete[] resultBuffer;
+
+			return result;
+		}
+		std::string StringUtils::UTF32toUTF8(const String32& utf32)
+		{
+			size_t utf8MaxLength = 4 * utf32.size()+1;
+			UTF8* byteBuffer = new UTF8[utf8MaxLength];
+			memset(byteBuffer, 0, sizeof(UTF8) * utf8MaxLength);
+
+			const UTF32* sourcestart = reinterpret_cast<const UTF32*>(utf32.c_str());
+			const UTF32* sourceend = sourcestart + utf32.size();
+			UTF8* targetstart = byteBuffer;
+			UTF8* targetend = targetstart + utf8MaxLength;
+
+			ConvertUTF32toUTF8(&sourcestart, sourceend, &targetstart, targetend, lenientConversion);
+
+			std::string result((const char*)byteBuffer);
+
+			delete[] byteBuffer;
+
+			return result;
+		}
+
+		String32 StringUtils::UTF16toUTF32(const String& utf16)
+		{
+			size_t utf16MaxLength = utf16.length()+1;
+			UTF32* resultBuffer = new UTF32[utf16MaxLength];
+			memset(resultBuffer, 0, sizeof(UTF32) * utf16MaxLength);
+
+			const UTF16* sourceStart = (const UTF16*)utf16.c_str();
+			const UTF16* sourceEnd = sourceStart + utf16.length();
+			UTF32* targetStart = resultBuffer;
+			UTF32* targetEnd = targetStart + utf16MaxLength;
+
+			ConvertUTF16toUTF32(&sourceStart, sourceEnd, &targetStart, targetEnd, lenientConversion);
+
+			String32 result((const char32_t*)resultBuffer);
+
+			delete[] resultBuffer;
+
+			return result;
+		}
+		String StringUtils::UTF32toUTF16(const String32& utf32)
+		{
+			size_t utf16MaxLength = 2 * utf32.size()+1;
+			UTF16* byteBuffer = new UTF16[utf16MaxLength];
+			memset(byteBuffer, 0, sizeof(UTF16) * utf16MaxLength);
+
+			const UTF32* sourcestart = reinterpret_cast<const UTF32*>(utf32.c_str());
+			const UTF32* sourceend = sourcestart + utf32.size();
+			UTF16* targetstart = byteBuffer;
+			UTF16* targetend = targetstart + utf16MaxLength;
+
+			ConvertUTF32toUTF16(&sourcestart, sourceend, &targetstart, targetend, lenientConversion);
+
+			String result((const wchar_t*)byteBuffer);
+
+			delete[] byteBuffer;
+
+			return result;
+		}
+
+
 
 		//////////////////////////////////////////////////////////////////////////
 

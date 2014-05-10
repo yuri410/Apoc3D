@@ -86,7 +86,7 @@ namespace Apoc3D
 
 			if( _getcwd( currentDir, sizeof(currentDir)-1 ) != NULL )
 			{
-				FileSystem::getSingleton().AddWrokingDirectory(StringUtils::toWString(currentDir));
+				FileSystem::getSingleton().AddWrokingDirectory(StringUtils::toPlatformWideString(currentDir));
 			}
 		}
 		FileLocateRule::Initialize();

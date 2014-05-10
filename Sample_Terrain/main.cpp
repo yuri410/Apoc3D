@@ -93,7 +93,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	// get the exe's path, add this path to the working directories
 	wchar_t exePath[260];
 	GetModuleFileName(0, exePath, 260);
-	_chdir(StringUtils::toString(PathUtils::GetDirectory(exePath)).c_str());
+	_chdir(StringUtils::toPlatformNarrowString(PathUtils::GetDirectory(exePath)).c_str());
 	escon.WorkingDirectories.Add(PathUtils::GetDirectory(exePath));
 
 	/* Initialization */

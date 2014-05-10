@@ -63,7 +63,7 @@ namespace Apoc3D
 					ShaderConstant constant;
 
 					
-					constant.Name = StringUtils::toWString(descs[0].Name);
+					constant.Name = StringUtils::toPlatformWideString(descs[0].Name);
 					constant.IsSampler = false;
 
 					switch (descs[0].RegisterSet)

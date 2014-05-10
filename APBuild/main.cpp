@@ -76,8 +76,8 @@ int Build(int argc, _TCHAR* argv[])
 		String basePath = argv[0];
 		basePath = PathUtils::GetDirectory(basePath);
 
-		_chdir(StringUtils::toString(basePath).c_str());
-
+		_chdir(StringUtils::toPlatformNarrowString(basePath).c_str());
+		
 		if (argv[1] == L"/d")
 		{
 			if (argc>3)

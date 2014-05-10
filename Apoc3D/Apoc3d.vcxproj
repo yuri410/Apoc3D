@@ -209,6 +209,7 @@
     <ClInclude Include="IOLib\PatchData.h" />
     <ClInclude Include="IOLib\Streams.h" />
     <ClInclude Include="IOLib\TaggedData.h" />
+    <ClInclude Include="IOLib\TextData.h" />
     <ClInclude Include="IOLib\TextureData.h" />
     <ClInclude Include="Library\ConvertUTF.h" />
     <ClInclude Include="Library\lz4.h" />
@@ -362,6 +363,7 @@
     <ClCompile Include="IOLib\ModelData.cpp" />
     <ClCompile Include="IOLib\Streams.cpp" />
     <ClCompile Include="IOLib\TaggedData.cpp" />
+    <ClCompile Include="IOLib\TextData.cpp" />
     <ClCompile Include="IOLib\TextureData.cpp" />
     <ClCompile Include="Library\ConvertUTF.c" />
     <ClCompile Include="Library\lz4.c" />

@@ -58,8 +58,7 @@ namespace APBuild
 		String xafFile = config.SrcFile;
 
 		TiXmlDocument doc;
-		TiXmlEncoding encoding = TIXML_ENCODING_UNKNOWN;
-		doc.Load(new FileStream(xafFile), encoding);
+		doc.Load(new FileStream(xafFile), TIXML_ENCODING_UNKNOWN);
 		
 		double frameRate = 0;
 		double tickpf = 0;
@@ -84,7 +83,7 @@ namespace APBuild
 				{
 					std::string objName = elem->Attribute("name");
 					
-					String wobjName = StringUtils::toWString(objName);
+					String wobjName = StringUtils::toPlatformWideString(objName);
 
 					int index = -1;
 					if (config.ObjectIndexMapping.TryGetValue(wobjName, index))
@@ -145,7 +144,7 @@ namespace APBuild
 				double t;
 				j->Attribute("t",&t);
 
-				String v = Apoc3D::Utility::StringUtils::toWString(j->Attribute("v"));
+				String v = Apoc3D::Utility::StringUtils::toPlatformWideString(j->Attribute("v"));
 				List<String> values(12);
 				Apoc3D::Utility::StringUtils::Split(v, values);
 				assert(values.getCount() == 12);

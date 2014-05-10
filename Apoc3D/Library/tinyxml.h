@@ -242,7 +242,7 @@ public:
 
 	virtual const char* Parse(	const char* p, 
 								TiXmlParsingData* data, 
-								TiXmlEncoding& encoding /*= TIXML_ENCODING_UNKNOWN */ ) = 0;
+								TiXmlEncoding encoding /*= TIXML_ENCODING_UNKNOWN */ ) = 0;
 
 	/** Expands entities in a string. Note this should not contian the tag's '<', '>', etc, 
 		or they will be transformed into entities!
@@ -414,6 +414,8 @@ class APAPI TiXmlNode : public TiXmlBase
 	friend class TiXmlElement;
 
 public:
+
+
 
 	/** An input stream operator, for every class. Tolerant of newlines and
 		formatting, but doesn't expect them.
@@ -840,7 +842,7 @@ public:
 	/*	Attribute parsing starts: first letter of the name
 						 returns: the next char after the value end quote
 	*/
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
 
 	// Prints this Attribute to a stream.
 	virtual void Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const {
@@ -919,6 +921,9 @@ public:
 
 	/// std::string constructor.
 	TiXmlElement( const std::string& _value );
+
+	TiXmlElement( const Apoc3D::String& utf16 );
+
 
 	TiXmlElement( const TiXmlElement& );
 
@@ -1029,6 +1034,9 @@ public:
 
 	/// STL std::string form.
 	void SetAttribute( const std::string& name, const std::string& _value );
+
+	void SetAttribute( const Apoc3D::String& name, const Apoc3D::String& value );
+
 	///< STL std::string form.
 	void SetAttribute( const std::string& name, int _value );
 	///< STL std::string form.
@@ -1098,7 +1106,7 @@ public:
 	/*	Attribtue parsing starts: next char past '<'
 						 returns: next char past '>'
 	*/
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
 
 	virtual const TiXmlElement*     ToElement()     const { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
 	virtual TiXmlElement*           ToElement()	          { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
@@ -1150,7 +1158,7 @@ public:
 	/*	Attribtue parsing starts: at the ! of the !--
 						 returns: next char past '>'
 	*/
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
 
 	virtual const TiXmlComment*  ToComment() const	{ return this; } ///< Cast to a more defined type. Will return null not of the requested type.
 	virtual		  TiXmlComment*  ToComment()		{ return this; } ///< Cast to a more defined type. Will return null not of the requested type.
@@ -1199,6 +1207,7 @@ public:
 		cdata = false;
 	}
 
+	TiXmlText( const Apoc3D::String& utf16 );
 
 	TiXmlText( const TiXmlText& copy ) : TiXmlNode( TiXmlNode::TINYXML_TEXT )	{ copy.CopyTo( this ); }
 	TiXmlText& operator=( const TiXmlText& base )							 	{ base.CopyTo( this ); return *this; }
@@ -1211,7 +1220,7 @@ public:
 	/// Turns on or off a CDATA representation of text.
 	void SetCDATA( bool _cdata )	{ cdata = _cdata; }
 
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
 
 	virtual const TiXmlText* ToText() const { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
 	virtual TiXmlText*       ToText()       { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
@@ -1286,7 +1295,7 @@ public:
 		Print( bw, depth, 0 );
 	}
 
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
 
 	virtual const TiXmlDeclaration* ToDeclaration() const { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
 	virtual TiXmlDeclaration*       ToDeclaration()       { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
@@ -1329,7 +1338,7 @@ public:
 	// Print this Unknown to a stream.
 	virtual void Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const;
 
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
 
 	virtual const TiXmlUnknown*     ToUnknown()     const	{ return this; } ///< Cast to a more defined type. Will return null not of the requested type.
 	virtual TiXmlUnknown*           ToUnknown()				{ return this; } ///< Cast to a more defined type. Will return null not of the requested type.
@@ -1368,14 +1377,14 @@ public:
 
 	virtual ~TiXmlDocument() {}
 
-	bool Load(Apoc3D::IO::Stream* strm, TiXmlEncoding& encoding);
+	bool Load(Apoc3D::IO::Stream* strm, TiXmlEncoding encoding);
 	void Save(Apoc3D::IO::Stream* strm);
 
 	/** Parse the given null terminated block of xml data. Passing in an encoding to this
 		method (either TIXML_ENCODING_LEGACY or TIXML_ENCODING_UTF8 will force TinyXml
 		to use that encoding, regardless of what TinyXml might otherwise try to detect.
 	*/
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
 
 	/** Get the root element -- the only top level element -- of the document.
 		In well formed XML, there should only be one. TinyXml is tolerant of
@@ -1468,6 +1477,20 @@ public:
 	*/
 	virtual bool Accept( TiXmlVisitor* content ) const;
 
+
+	Apoc3D::String GetUTF16ElementName(const TiXmlElement* elem) const;
+	Apoc3D::String GetUTF16ElementText(const TiXmlElement* elem) const;
+
+	Apoc3D::String GetUTF16NodeText(const TiXmlText* text) const;
+	Apoc3D::String GetUTF16AttribName(const TiXmlAttribute* attrib) const;
+	Apoc3D::String GetUTF16AttribValue(const TiXmlAttribute* attrib) const;
+	Apoc3D::String GetUTF16AttribValue(const TiXmlElement* elem, const char* attribName) const;
+
+	void SetUTF16ElementName(TiXmlElement* elem, const Apoc3D::String& value) const;
+	void SetUTF16NodeText(TiXmlText* text, const Apoc3D::String& value) const;
+	void SetUTF16AttribName(TiXmlAttribute* attrib, const Apoc3D::String& value) const;
+	void SetUTF16AttribValue(TiXmlAttribute* attrib, const Apoc3D::String& value) const;
+
 protected :
 	// [internal use]
 	virtual TiXmlNode* Clone() const;
@@ -1483,6 +1506,8 @@ private:
 	int tabsize;
 	TiXmlCursor errorLocation;
 	bool useMicrosoftBOM;		// the UTF-8 BOM were found when read. Note this, and try to write.
+
+	TiXmlEncoding selectedEncoding;
 };
 
 

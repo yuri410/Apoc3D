@@ -1712,7 +1712,7 @@ namespace APDesigner
 	void CopyMaterialDialog::Config_Changed(Control* ctrl)
 	{
 		int startNo = StringUtils::ParseInt32(m_tbStartNumber->Text);
-		std::string formatString = StringUtils::toString(m_tbTextureName->Text);
+		std::string formatString = StringUtils::toPlatformNarrowString(m_tbTextureName->Text);
 
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
@@ -1726,7 +1726,7 @@ namespace APDesigner
 
 		if (ret>0)
 		{
-			String texName = StringUtils::toWString(buffer);
+			String texName = StringUtils::toPlatformWideString(buffer);
 
 			m_lblPreview->Text = L"[Preview]" + texName;
 		}
@@ -1745,7 +1745,7 @@ namespace APDesigner
 		int startNo = StringUtils::ParseInt32(m_tbStartNumber->Text);
 		int endNo = StringUtils::ParseInt32(m_tbEndNumber->Text);
 
-		std::string formatString = StringUtils::toString(m_tbTextureName->Text);
+		std::string formatString = StringUtils::toPlatformNarrowString(m_tbTextureName->Text);
 
 		Material* baseMtrl = m_mtrl->getMaterial(m_selectedSet, m_mtrl->getFrameCount(m_selectedSet)-1);
 
@@ -1755,7 +1755,7 @@ namespace APDesigner
 			memset(buffer, 0, sizeof(buffer));
 			sprintf_s(buffer, formatString.c_str(), i);
 
-			String texName = StringUtils::toWString(buffer);
+			String texName = StringUtils::toPlatformWideString(buffer);
 
 			Material* newMtrl = new Material(*baseMtrl);
 			newMtrl->setTextureName(0, texName);

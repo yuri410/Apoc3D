@@ -63,8 +63,8 @@ namespace Apoc3D
 			/**
 			 *  Read xml node recursively, while add data into ConfigurationSection
 			 */
-			void BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent, bool isAscii);
-			void BuildXml(Configuration* config, const TiXmlDocument* doc, bool isAscii);
+			void BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent, const TiXmlDocument& doc);
+			void BuildXml(Configuration* config, const TiXmlDocument* doc);
 		};
 	}
 }

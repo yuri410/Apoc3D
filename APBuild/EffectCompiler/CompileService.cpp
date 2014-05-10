@@ -71,7 +71,7 @@ namespace APBuild
 
 				ID3DBlob* pBlobOut;
 				ID3DBlob* pErrorBlob;
-				HRESULT hr = D3DX11CompileFromFile( src.c_str(), NULL, NULL, StringUtils::toString(entryPoint).c_str(), pfName, 
+				HRESULT hr = D3DX11CompileFromFile( src.c_str(), NULL, NULL, StringUtils::toPlatformNarrowString(entryPoint).c_str(), pfName, 
 					dwShaderFlags, 0, NULL, &pBlobOut, &pErrorBlob, NULL );
 				if( FAILED(hr) )
 				{
@@ -108,7 +108,7 @@ namespace APBuild
 				}
 
 				HRESULT hr = D3DXCompileShaderFromFile(src.c_str(), 0, 0, 
-					StringUtils::toString(entryPoint).c_str(), pfName,
+					StringUtils::toPlatformNarrowString(entryPoint).c_str(), pfName,
 					flags, &shader, &error, &constants);
 
 				if (FAILED(hr))
@@ -162,7 +162,7 @@ namespace APBuild
 	void WriteCompileError(const std::string& errmsg, const String& sourceFile)
 	{
 		List<String> errs;
-		StringUtils::Split(StringUtils::toWString(errmsg), errs, L"\n\r");
+		StringUtils::Split(StringUtils::toPlatformWideString(errmsg), errs, L"\n\r");
 
 		for (int32 i=0;i<errs.getCount();i++)
 		{

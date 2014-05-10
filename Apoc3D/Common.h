@@ -120,6 +120,7 @@ namespace std
 {
 	template class basic_string<char, char_traits<char>, allocator<char> >;
 	template class basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> >;
+	template class basic_string<char32_t, char_traits<char32_t>, allocator<char32_t>>;
 };
 
 // Forward Declarations
@@ -128,6 +129,7 @@ namespace Apoc3D
 	template class APAPI fastdelegate::FastDelegate0<void>;
 
 	typedef std::wstring String;
+	typedef std::u32string String32;
 
 	class Project;
 	class ProjectItemData;

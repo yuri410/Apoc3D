@@ -101,7 +101,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 
 	wchar_t exePath[260];
 	GetModuleFileName(0, exePath, 260);
-	_chdir(StringUtils::toString(PathUtils::GetDirectory(exePath)).c_str());
+	_chdir(StringUtils::toPlatformNarrowString(PathUtils::GetDirectory(exePath)).c_str());
 
 	Engine::Initialize(&escon);
 

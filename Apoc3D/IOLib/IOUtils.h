@@ -30,6 +30,13 @@
 
 using namespace Apoc3D;
 
+inline bool isPlatformLittleEndian()
+{
+	const short int number = 1;
+	return (const char&)number == 1;
+}
+
+
 /** Little-endian, used in file reading
 */
 inline uint16 cui16_le(const char* const src);

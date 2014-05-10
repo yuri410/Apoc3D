@@ -501,6 +501,9 @@
     <ClInclude Include="Library\ConvertUTF.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IOLib\TextData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -870,6 +873,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Library\ConvertUTF.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IOLib\TextData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

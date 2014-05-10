@@ -339,7 +339,7 @@ namespace APDesigner
 
 			if (actul)
 			{
-				buildOutput.append(StringUtils::toWString(buffer));
+				buildOutput.append(StringUtils::toPlatformWideString(buffer));
 			}
 
 			if (actul<readSize)

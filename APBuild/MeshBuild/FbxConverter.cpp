@@ -155,7 +155,7 @@ namespace APBuild
 		bool lStatus;
 		//char lPassword[256];
 
-		std::string mbFilename = StringUtils::toString(pFilename);
+		std::string mbFilename = StringUtils::toPlatformNarrowString(pFilename);
 
 		// Get the file version number generate by the FBX SDK.
 		FbxManager::GetFileFormatVersion(lSDKMajor, lSDKMinor, lSDKRevision);
@@ -172,7 +172,7 @@ namespace APBuild
 		if( !lImportStatus )
 		{
 			CompileLog::WriteError(L"Unable to initialize FBX", pFilename);
-			CompileLog::WriteError(StringUtils::toWString(lImporter->GetStatus().GetErrorString()), pFilename);
+			CompileLog::WriteError(StringUtils::toPlatformWideString(lImporter->GetStatus().GetErrorString()), pFilename);
 			
 			if (lImporter->GetStatus() == FbxStatus::eInvalidFile ||
 				lImporter->GetStatus() == FbxStatus::eInvalidFileVersion)
@@ -289,7 +289,7 @@ namespace APBuild
 					std::string strFileName = pDiffuseTexture->GetFileName();
 					if( strFileName.length() == 0 )
 						strFileName = pDiffuseTexture->GetRelativeFileName();
-					pMaterial->TextureName[0] = StringUtils::toWString( strFileName );
+					pMaterial->TextureName[0] = StringUtils::toPlatformWideString( strFileName );
 				}
 			}
 			
@@ -540,7 +540,7 @@ namespace APBuild
 		FISkeletonBone* pSkeletonBone = new FISkeletonBone( pNode->GetName(), nParentBoneIndex );
 		if (m_pSkeleton->FindBone(pNode->GetName()))
 		{
-			CompileLog::WriteError(String(L"There are more than one bone named ") + StringUtils::toWString(pNode->GetName()) + String(L" in the FBX file."), m_sourceFile);
+			CompileLog::WriteError(String(L"There are more than one bone named ") + StringUtils::toPlatformWideString(pNode->GetName()) + String(L" in the FBX file."), m_sourceFile);
 			return;
 		}
 		m_pSkeleton->AddSkeletonBone(pSkeletonBone);
@@ -633,7 +633,7 @@ namespace APBuild
 		mesh->FinishAndOptimize();
 		if (m_meshes.Contains(pNode->GetName()))
 		{
-			CompileLog::WriteError(String(L"There are more than one mesh named ") + StringUtils::toWString(pNode->GetName()) + String(L" in the FBX file."), m_sourceFile);
+			CompileLog::WriteError(String(L"There are more than one mesh named ") + StringUtils::toPlatformWideString(pNode->GetName()) + String(L" in the FBX file."), m_sourceFile);
 			return;
 		}
 		else
@@ -1058,7 +1058,7 @@ namespace APBuild
 			if (frames.getCount())
 			{
 				ModelAnimationClip* clip = new ModelAnimationClip(frames[frames.getCount()-1].getTime(), frames);
-				clipTable->Add(StringUtils::toWString(animName), clip);
+				clipTable->Add(StringUtils::toPlatformWideString(animName), clip);
 			}					
 		}
 
@@ -1295,7 +1295,7 @@ namespace APBuild
 						meshData->Materials.Add(mtrlData);
 					}
 				}
-				meshData->Name = StringUtils::toWString(mesh->GetName());
+				meshData->Name = StringUtils::toPlatformWideString(mesh->GetName());
 				meshData->BoundingSphere.Center = Vector3::Zero;
 				meshData->BoundingSphere.Radius = 0;
 

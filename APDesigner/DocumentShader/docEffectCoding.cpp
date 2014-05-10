@@ -253,7 +253,7 @@ namespace APDesigner
 			std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(strm), std::istreambuf_iterator<char>( ) );
 			buffer.push_back('\0');
 
-			m_tbVertexCode->setText(StringUtils::toWString(&buffer[0]));
+			m_tbVertexCode->setText(StringUtils::toPlatformWideString(&buffer[0]));
 
 		}
 		{
@@ -263,7 +263,7 @@ namespace APDesigner
 			std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(strm), std::istreambuf_iterator<char>( ) );
 			buffer.push_back('\0');
 
-			m_tbPixelCode->setText(StringUtils::toWString(&buffer[0]));
+			m_tbPixelCode->setText(StringUtils::toPlatformWideString(&buffer[0]));
 		}
 		
 		RefreshParameterList();

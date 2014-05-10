@@ -209,7 +209,7 @@ namespace APBuild
 		if (FT_Init_FreeType( &library )) 
 			throw std::runtime_error("FT_Init_FreeType failed");
 		
-		std::string name = StringUtils::toString(srcFile);
+		std::string name = StringUtils::toPlatformNarrowString(srcFile);
 		FT_Face face;
 		if (FT_New_Face( library, name.c_str(), 0, &face )) 
 			throw std::runtime_error("FT_New_Face failed (there is probably a problem with your font file)");
@@ -266,7 +266,7 @@ namespace APBuild
 		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
 
 		FontRenderInfo info;
-		RenderGlyphsByFreeType(StringUtils::toString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
+		RenderGlyphsByFreeType(StringUtils::toPlatformNarrowString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
 
 		FileOutStream* fs = new FileOutStream(config.DestIndexFile);
 		BinaryWriter* bw = new BinaryWriter(fs);
@@ -426,7 +426,7 @@ namespace APBuild
 		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
 
 		FontRenderInfo info;
-		renderer(StringUtils::toString(config.Name), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
+		renderer(StringUtils::toPlatformNarrowString(config.Name), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
 
 		FileOutStream* fs = new FileOutStream(config.DestFile);
 		BinaryWriter* bw = new BinaryWriter(fs);
@@ -643,8 +643,8 @@ namespace APBuild
 	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
 		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo)
 	{
-		String mapFile = StringUtils::toWString(fontFile) + L".png";
-		String idxFile = StringUtils::toWString(fontFile) + L".fid";
+		String mapFile = StringUtils::toPlatformWideString(fontFile) + L".png";
+		String idxFile = StringUtils::toPlatformWideString(fontFile) + L".fid";
 
 		Gdiplus::Bitmap* packedMap = Gdiplus::Bitmap::FromFile(mapFile.c_str());
 		Gdiplus::BitmapData bmpData;

@@ -49,7 +49,7 @@ namespace Apoc3D
 
 				D3DADAPTER_IDENTIFIER9 did;
 				m_d3d9->GetAdapterIdentifier(0, NULL, &did);
-				m_hardwareName = StringUtils::toWString(did.Description);
+				m_hardwareName = StringUtils::toPlatformWideString(did.Description);
 			}
 			D3D9DeviceContext::~D3D9DeviceContext()
 			{

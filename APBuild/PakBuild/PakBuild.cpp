@@ -117,7 +117,7 @@ namespace APBuild
 				DIR* dir;
 				struct dirent* ent;
 
-				dir = opendir(StringUtils::toString(config.Dirs[i].Path).c_str());
+				dir = opendir(StringUtils::toPlatformNarrowString(config.Dirs[i].Path).c_str());
 				if (dir)
 				{
 					int counter = 0;
@@ -126,7 +126,7 @@ namespace APBuild
 						switch (ent->d_type)
 						{
 						case DT_REG:
-							String file = StringUtils::toWString(ent->d_name);
+							String file = StringUtils::toPlatformWideString(ent->d_name);
 							file = PathUtils::Combine(config.Dirs[i].Path,file);
 							sourceFiles.Add(file);
 							counter++;
