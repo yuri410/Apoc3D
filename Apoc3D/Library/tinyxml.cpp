@@ -959,7 +959,7 @@ TiXmlDocument& TiXmlDocument::operator=( const TiXmlDocument& copy )
 //	Print( fp, 0 );
 //	return (ferror(fp) == 0);
 //}
-bool TiXmlDocument::Load(Apoc3D::IO::Stream* strm, TiXmlEncoding encoding)
+bool TiXmlDocument::Load(Apoc3D::IO::Stream* strm, TiXmlEncoding& encoding)
 {
 	// Delete the existing data:
 	Clear();
@@ -1577,7 +1577,9 @@ std::istream& operator>> (std::istream & in, TiXmlNode & base)
 	tag.reserve( 8 * 1000 );
 	base.StreamIn( &in, &tag );
 
-	base.Parse( tag.c_str(), 0, TIXML_DEFAULT_ENCODING );
+	TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING;
+
+	base.Parse( tag.c_str(), 0, encoding );
 	return in;
 }
 

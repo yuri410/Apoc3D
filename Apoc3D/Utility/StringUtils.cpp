@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "StringUtils.h"
 #include "apoc3d/Collections/List.h"
+#include "apoc3d/Library/ConvertUTF.h"
 #include <strstream>
 #include <sstream>
 #include <algorithm>
@@ -67,6 +68,46 @@ namespace Apoc3D
 				return result;
 			}
 			return Empty;
+		}
+
+
+		String StringUtils::UTF8toUTF16(const std::string& utf8)
+		{
+			size_t utf16MaxLength = utf8.length()+1;
+			UTF16* resultBuffer = new UTF16[utf16MaxLength];
+			memset(resultBuffer, 0, sizeof(UTF16) * utf16MaxLength);
+
+			const UTF8* sourceStart = (const UTF8*)utf8.c_str();
+			const UTF8* sourceEnd = sourceStart + utf8.length();
+			UTF16* targetStart = resultBuffer;
+			UTF16* targetEnd = targetStart + utf16MaxLength;
+
+			ConvertUTF8toUTF16(&sourceStart, sourceEnd, &targetStart, targetEnd, lenientConversion);
+
+			String result((const wchar_t*)resultBuffer);
+
+			delete[] resultBuffer;
+
+			return result;
+		}
+		std::string StringUtils::UTF16toUTF8(const String& utf16)
+		{
+			size_t utf8MaxSize = 4 * utf16.size()+1;
+			UTF8* byteBuffer = new UTF8[utf8MaxSize];
+			memset(byteBuffer, 0, sizeof(UTF8) * utf8MaxSize);
+
+			const UTF16* sourcestart = reinterpret_cast<const UTF16*>(utf16.c_str());
+			const UTF16* sourceend = sourcestart + utf16.size();
+			UTF8* targetstart = byteBuffer;
+			UTF8* targetend = targetstart + utf8MaxSize;
+
+			ConvertUTF16toUTF8(&sourcestart, sourceend, &targetstart, targetend, lenientConversion);
+			
+			std::string result((const char*)byteBuffer);
+
+			delete[] byteBuffer;
+
+			return result;
 		}
 
 		//////////////////////////////////////////////////////////////////////////

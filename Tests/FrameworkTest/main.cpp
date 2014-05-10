@@ -542,6 +542,9 @@ void TestIni()
 	FileLocation* fl = new FileLocation(path);// FileSystem::getSingleton().Locate(L"testIni.ini", FileLocateRule::Default);
 	Configuration* config = IniConfigurationFormat::Instance.Load(fl);
 
+	FileOutStream fs(L"iniOut.ini");
+	IniConfigurationFormat::Instance.Save(config, &fs);
+
 	delete config;
 	delete fl;
 }

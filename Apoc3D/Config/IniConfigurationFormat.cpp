@@ -195,22 +195,11 @@ namespace Apoc3D
 				}
 			}
 
-			size_t utf8size = 4 * resultBuffer.size();
-			UTF8* byteBuffer = new UTF8[utf8size];
-			memset(byteBuffer, 0, sizeof(UTF8) * utf8size);
+			std::string utf8 = StringUtils::UTF16toUTF8(resultBuffer);
 
-			const UTF16* sourcestart = reinterpret_cast<const UTF16*>(resultBuffer.c_str());
-			const UTF16* sourceend = sourcestart + resultBuffer.size();
-			UTF8* targetstart = byteBuffer;
-			UTF8* targetend = targetstart + utf8size;
-			ConversionResult res = ConvertUTF16toUTF8(&sourcestart, sourceend, &targetstart, targetend, lenientConversion);
-			assert(res == conversionOK);
-			
-			int32 actualLength = targetstart - byteBuffer;
+			strm->Write((const char*)utf8.c_str(), utf8.length());
 
-			strm->Write((const char*)byteBuffer, actualLength);
-
-			delete[] byteBuffer;
+			strm->Close();
 		}
 	}
 }

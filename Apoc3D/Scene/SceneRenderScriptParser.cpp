@@ -506,7 +506,8 @@ namespace Apoc3D
 		{
 			TiXmlDocument doc;
 
-			doc.Load(rl->GetReadStream(), TIXML_ENCODING_UNKNOWN);
+			TiXmlEncoding encoding = TIXML_ENCODING_UNKNOWN;
+			doc.Load(rl->GetReadStream(), encoding);
 
 			for (const TiXmlNode* i = doc.FirstChild(); i!=0; i=i->NextSibling())
 			{

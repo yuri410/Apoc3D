@@ -43,6 +43,11 @@ namespace Apoc3D
 			static String toWString(const std::string& str);
 			static String toWString(const char* str);
 
+
+			static String UTF8toUTF16(const std::string& utf8);
+			static std::string UTF16toUTF8(const String& utf16);
+
+
 			static bool ParseBool(const String& val);
 			static uint16 ParseUInt16(const String& val);
 			static uint32 ParseUInt32(const String& val);
@@ -87,6 +92,9 @@ namespace Apoc3D
 			static String ToString(uint64 val, uint16 width = 0, wchar_t fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
 			static String ToString(bool val);
+
+
+
 
 			static void Trim(String& str, const String& delims = L" \t\r");
 			static void TrimLeft(String& str, const String& delims = L" \t\r");

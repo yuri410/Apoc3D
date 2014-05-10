@@ -242,7 +242,7 @@ public:
 
 	virtual const char* Parse(	const char* p, 
 								TiXmlParsingData* data, 
-								TiXmlEncoding encoding /*= TIXML_ENCODING_UNKNOWN */ ) = 0;
+								TiXmlEncoding& encoding /*= TIXML_ENCODING_UNKNOWN */ ) = 0;
 
 	/** Expands entities in a string. Note this should not contian the tag's '<', '>', etc, 
 		or they will be transformed into entities!
@@ -840,7 +840,7 @@ public:
 	/*	Attribute parsing starts: first letter of the name
 						 returns: the next char after the value end quote
 	*/
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
 
 	// Prints this Attribute to a stream.
 	virtual void Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const {
@@ -1098,7 +1098,7 @@ public:
 	/*	Attribtue parsing starts: next char past '<'
 						 returns: next char past '>'
 	*/
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
 
 	virtual const TiXmlElement*     ToElement()     const { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
 	virtual TiXmlElement*           ToElement()	          { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
@@ -1150,7 +1150,7 @@ public:
 	/*	Attribtue parsing starts: at the ! of the !--
 						 returns: next char past '>'
 	*/
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
 
 	virtual const TiXmlComment*  ToComment() const	{ return this; } ///< Cast to a more defined type. Will return null not of the requested type.
 	virtual		  TiXmlComment*  ToComment()		{ return this; } ///< Cast to a more defined type. Will return null not of the requested type.
@@ -1211,7 +1211,7 @@ public:
 	/// Turns on or off a CDATA representation of text.
 	void SetCDATA( bool _cdata )	{ cdata = _cdata; }
 
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
 
 	virtual const TiXmlText* ToText() const { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
 	virtual TiXmlText*       ToText()       { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
@@ -1286,7 +1286,7 @@ public:
 		Print( bw, depth, 0 );
 	}
 
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
 
 	virtual const TiXmlDeclaration* ToDeclaration() const { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
 	virtual TiXmlDeclaration*       ToDeclaration()       { return this; } ///< Cast to a more defined type. Will return null not of the requested type.
@@ -1329,7 +1329,7 @@ public:
 	// Print this Unknown to a stream.
 	virtual void Print( Apoc3D::IO::BinaryWriter* bw, int depth ) const;
 
-	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding encoding );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
 
 	virtual const TiXmlUnknown*     ToUnknown()     const	{ return this; } ///< Cast to a more defined type. Will return null not of the requested type.
 	virtual TiXmlUnknown*           ToUnknown()				{ return this; } ///< Cast to a more defined type. Will return null not of the requested type.
@@ -1368,14 +1368,14 @@ public:
 
 	virtual ~TiXmlDocument() {}
 
-	bool Load(Apoc3D::IO::Stream* strm, TiXmlEncoding encoding);
+	bool Load(Apoc3D::IO::Stream* strm, TiXmlEncoding& encoding);
 	void Save(Apoc3D::IO::Stream* strm);
 
 	/** Parse the given null terminated block of xml data. Passing in an encoding to this
 		method (either TIXML_ENCODING_LEGACY or TIXML_ENCODING_UTF8 will force TinyXml
 		to use that encoding, regardless of what TinyXml might otherwise try to detect.
 	*/
-	virtual const char* Parse( const char* p, TiXmlParsingData* data = 0, TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING );
+	virtual const char* Parse( const char* p, TiXmlParsingData* data, TiXmlEncoding& encoding );
 
 	/** Get the root element -- the only top level element -- of the document.
 		In well formed XML, there should only be one. TinyXml is tolerant of

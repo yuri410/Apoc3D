@@ -42,10 +42,10 @@ namespace Apoc3D
 	{
 		XMLConfigurationFormat XMLConfigurationFormat::Instance = XMLConfigurationFormat();
 
-		String getElementName(const TiXmlElement* elem);
-		String getNodeText(const TiXmlText* text);
-		String getAttribName(const TiXmlAttribute* attrib);
-		String getAttribValue(const TiXmlAttribute* attrib);
+		String getElementName(const TiXmlElement* elem, bool isAscii);
+		String getNodeText(const TiXmlText* text, bool isAscii);
+		String getAttribName(const TiXmlAttribute* attrib, bool isAscii);
+		String getAttribValue(const TiXmlAttribute* attrib, bool isAscii);
 
 		Configuration* XMLConfigurationFormat::Load(const ResourceLocation* rl)
 		{
@@ -54,9 +54,14 @@ namespace Apoc3D
 			TiXmlDocument doc;
 
 			Stream* strm = rl->GetReadStream();
-			doc.Load(strm, TIXML_ENCODING_UNKNOWN);
+
+			TiXmlEncoding encoding = TIXML_ENCODING_UNKNOWN;
+
+			doc.Load(strm, encoding);
 			
-			BuildXml(config, &doc);
+			bool isAscii = encoding != TIXML_ENCODING_UTF8;
+
+			BuildXml(config, &doc, isAscii);
 
 			return config;
 		}
@@ -81,7 +86,7 @@ namespace Apoc3D
 			//doc.SaveFile(StringUtils::toString(filePath));
 		}
 
-		void XMLConfigurationFormat::BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent)
+		void XMLConfigurationFormat::BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent, bool isAscii)
 		{
 			int type = node->Type();
 
@@ -91,20 +96,20 @@ namespace Apoc3D
 				{
 					const TiXmlElement* elem = node->ToElement();
 
-					String strName = getElementName(elem);
+					String strName = getElementName(elem, isAscii);
 					
 					ConfigurationSection* section = new ConfigurationSection(strName);
 
 
 					for (const TiXmlAttribute* i = elem->FirstAttribute(); i!=0; i=i->Next())
 					{
-						section->AddAttributeString(getAttribName(i), getAttribValue(i));
+						section->AddAttributeString(getAttribName(i, isAscii), getAttribValue(i, isAscii));
 					}
 
 
 					for (const TiXmlNode* i = node->FirstChild(); i!=0; i=i->NextSibling())
 					{
-						BuildNode(config, i, section);
+						BuildNode(config, i, section, isAscii);
 					}
 					if (parent)
 					{
@@ -121,21 +126,21 @@ namespace Apoc3D
 				{
 					const TiXmlText* text = node->ToText();
 					
-					String strText = getNodeText(text);
+					String strText = getNodeText(text, isAscii);
 					
 					parent->SetValue(strText);
 				}
 				break;
 			}
 		}
-		void XMLConfigurationFormat::BuildXml(Configuration* config, const TiXmlDocument* doc)
+		void XMLConfigurationFormat::BuildXml(Configuration* config, const TiXmlDocument* doc, bool isAscii)
 		{
 			const TiXmlNode* i = doc->FirstChildElement();
 			if (i)
 			{
 				for (const TiXmlNode* j = i->FirstChild(); j!=0; j=j->NextSibling())
 				{
-					BuildNode(config, j, nullptr);
+					BuildNode(config, j, nullptr, isAscii);
 				}
 			}
 		}
@@ -162,49 +167,37 @@ namespace Apoc3D
 			}
 		}
 
-		String UTF8toUTF16(const std::string& utf8)
-		{
-			int32 utf8Len = static_cast<int32>(utf8.length());
-
-			const UTF8* sourceStart = (const UTF8*)utf8.c_str();
-			const UTF8* sourceEnd = sourceStart + utf8Len;
-
-			int32 utf16MaxLength = utf8Len+1;
-			UTF16* resultBuffer = new UTF16[utf16MaxLength];
-			memset(resultBuffer, 0, sizeof(UTF16) * utf16MaxLength);
-
-			UTF16* targetStart = resultBuffer;
-			UTF16* targetEnd = targetStart + utf16MaxLength;
-
-			ConvertUTF8toUTF16(&sourceStart, sourceEnd, &targetStart, targetEnd, lenientConversion);
-
-			String result((const wchar_t*)resultBuffer);
-			
-			delete[] resultBuffer;
-
-			return result;
-		}
-
-		String getElementName(const TiXmlElement* elem)
+		String getElementName(const TiXmlElement* elem, bool isAscii)
 		{
 			std::string str = elem->ValueStr();
 
-			return UTF8toUTF16(str);
+			if (isAscii) return String(str.begin(), str.end());
+
+			return StringUtils::UTF8toUTF16(str);
 		}
-		String getNodeText(const TiXmlText* text)
+		String getNodeText(const TiXmlText* text, bool isAscii)
 		{
 			std::string str = text->ValueStr();
-			return UTF8toUTF16(str);
+
+			if (isAscii) return String(str.begin(), str.end());
+
+			return StringUtils::UTF8toUTF16(str);
 		}
-		String getAttribName(const TiXmlAttribute* attrib)
+		String getAttribName(const TiXmlAttribute* attrib, bool isAscii)
 		{
 			std::string str = attrib->NameTStr();
-			return UTF8toUTF16(str);
+
+			if (isAscii) return String(str.begin(), str.end());
+
+			return StringUtils::UTF8toUTF16(str);
 		}
-		String getAttribValue(const TiXmlAttribute* attrib)
+		String getAttribValue(const TiXmlAttribute* attrib, bool isAscii)
 		{
 			std::string str = attrib->ValueStr();
-			return UTF8toUTF16(str);
+
+			if (isAscii) return String(str.begin(), str.end());
+
+			return StringUtils::UTF8toUTF16(str);
 		}
 	}
 }
