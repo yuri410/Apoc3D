@@ -1,6 +1,8 @@
 #include <Windows.h>
 
 #include "apoc3d/Engine.h"
+#include "apoc3d/Config/IniConfigurationFormat.h"
+#include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/IOLib/TaggedData.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/IOLib/BinaryReader.h"
@@ -20,10 +22,13 @@
 #include "apoc3d/Library/lz4.h"
 #include "apoc3d/Library/lz4hc.h"
 #include "apoc3d/Vfs/FileSystem.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
+#include "apoc3d/Vfs/FileLocateRule.h"
 
 #include <iostream>
 
 using namespace Apoc3D;
+using namespace Apoc3D::Config;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::IO;
 using namespace Apoc3D::VFS;
@@ -37,6 +42,9 @@ void TestRLE();
 void TestMath();
 void TestBufferStream();
 void TestLZ4();
+
+void TestIni();
+void TestXml();
 
 void main()
 {
@@ -60,9 +68,10 @@ void main()
 	TestListSort2();
 	TestTaggedData();
 	TestBufferStream();
-	TestRLE();
-	TestLZ4();
-
+	//TestRLE();
+	//TestLZ4();
+	TestIni();
+	TestXml();
 }
 
 template <typename T>
@@ -523,4 +532,27 @@ void TestMath()
 	BinaryWriter* bw = new BinaryWriter(new FileOutStream(L"testMath1.dat"));
 	bw->Write((char*)result, sizeof(Matrix) * count);
 	delete bw;
+}
+
+void TestIni()
+{
+	String path;
+	path.append(L"testIni.ini");
+
+	FileLocation* fl = new FileLocation(path);// FileSystem::getSingleton().Locate(L"testIni.ini", FileLocateRule::Default);
+	Configuration* config = IniConfigurationFormat::Instance.Load(fl);
+
+	delete config;
+	delete fl;
+}
+void TestXml()
+{
+	String path;
+	path.append(L"testXml.xml");
+
+	FileLocation* fl = new FileLocation(path);// FileSystem::getSingleton().Locate(L"testIni.ini", FileLocateRule::Default);
+	Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+
+	delete config;
+	delete fl;
 }

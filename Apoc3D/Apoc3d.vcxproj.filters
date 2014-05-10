@@ -495,9 +495,6 @@
     <ClInclude Include="Library\tinyxml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UILib\Html\CSS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Config\IniConfigurationFormat.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/ResourceLocation.h"
 
 #include "apoc3d/Library/tinyxml.h"
+#include "apoc3d/Library/ConvertUTF.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
@@ -161,26 +162,49 @@ namespace Apoc3D
 			}
 		}
 
+		String UTF8toUTF16(const std::string& utf8)
+		{
+			int32 utf8Len = static_cast<int32>(utf8.length());
+
+			const UTF8* sourceStart = (const UTF8*)utf8.c_str();
+			const UTF8* sourceEnd = sourceStart + utf8Len;
+
+			int32 utf16MaxLength = utf8Len+1;
+			UTF16* resultBuffer = new UTF16[utf16MaxLength];
+			memset(resultBuffer, 0, sizeof(UTF16) * utf16MaxLength);
+
+			UTF16* targetStart = resultBuffer;
+			UTF16* targetEnd = targetStart + utf16MaxLength;
+
+			ConvertUTF8toUTF16(&sourceStart, sourceEnd, &targetStart, targetEnd, lenientConversion);
+
+			String result((const wchar_t*)resultBuffer);
+			
+			delete[] resultBuffer;
+
+			return result;
+		}
+
 		String getElementName(const TiXmlElement* elem)
 		{
 			std::string str = elem->ValueStr();
 
-			return StringUtils::toWString(str);
+			return UTF8toUTF16(str);
 		}
 		String getNodeText(const TiXmlText* text)
 		{
 			std::string str = text->ValueStr();
-			return StringUtils::toWString(str);
+			return UTF8toUTF16(str);
 		}
 		String getAttribName(const TiXmlAttribute* attrib)
 		{
 			std::string str = attrib->NameTStr();
-			return StringUtils::toWString(str);
+			return UTF8toUTF16(str);
 		}
 		String getAttribValue(const TiXmlAttribute* attrib)
 		{
 			std::string str = attrib->ValueStr();
-			return StringUtils::toWString(str);
+			return UTF8toUTF16(str);
 		}
 	}
 }

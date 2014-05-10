@@ -55,11 +55,23 @@ namespace Apoc3D
 			BinaryReader* br = new BinaryReader(rl->GetReadStream());
 
 			int32 length = (int32)br->getBaseStream()->getLength();
-			char* rawBytes = new char[length];
+			char* rawBytes = new char[length+1];
+			rawBytes[length] = 0;
 			br->ReadBytes(rawBytes, length);
 
 			const UTF8* sourceStart = (const UTF8*)rawBytes;
 			const UTF8* sourceEnd = sourceStart + length;
+
+			// skip BOM
+			const byte LEAD_0 = 0xef;
+			const byte LEAD_1 = 0xbb;
+			const byte LEAD_2 = 0xbf;
+
+			if (length>=3 && ((byte)rawBytes[0] == LEAD_0 && (byte)rawBytes[1] == LEAD_1 && (byte)rawBytes[2] == LEAD_2))
+			{
+				sourceStart+=3;
+				length -= 3;
+			}
 
 			int32 utf16MaxLength = length+1;
 			UTF16* resultBuffer = new UTF16[utf16MaxLength];
@@ -69,6 +81,8 @@ namespace Apoc3D
 			UTF16* targetEnd = targetStart + utf16MaxLength;
 
 			ConversionResult res = ConvertUTF8toUTF16(&sourceStart, sourceEnd, &targetStart, targetEnd, lenientConversion);
+
+			delete[] rawBytes;
 
 			if (res == conversionOK)
 			{
@@ -83,7 +97,7 @@ namespace Apoc3D
 					while (pos != String::npos)
 					{
 						String::size_type lastPos = pos;
-						pos = allText.find('\n', pos);
+						pos = allText.find('\n', pos+1);
 
 						String line;
 
@@ -122,11 +136,14 @@ namespace Apoc3D
 							}
 							else if (curSect)
 							{
-								cpos = line.find(';');
+								cpos = line.find('=');
 								if (cpos != String::npos)
 								{
 									String key = line.substr(0, cpos);
 									String value = line.substr(cpos+1);
+
+									StringUtils::Trim(key);
+									StringUtils::Trim(value);
 
 									ConfigurationSection* valSect = curSect->getSection(key);
 									
@@ -178,7 +195,7 @@ namespace Apoc3D
 				}
 			}
 
-			size_t utf8size = 3 * resultBuffer.size() + 1;
+			size_t utf8size = 4 * resultBuffer.size();
 			UTF8* byteBuffer = new UTF8[utf8size];
 			memset(byteBuffer, 0, sizeof(UTF8) * utf8size);
 

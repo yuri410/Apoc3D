@@ -39,7 +39,7 @@ namespace Apoc3D
 		{
 		public:
 			Random();
-			Random(int seed) { SetSeed(seed); }
+			Random(int seed) : m_index(0) { SetSeed(seed); }
 			~Random() { }
 
 			int32 getSeed() const { return m_seed; }

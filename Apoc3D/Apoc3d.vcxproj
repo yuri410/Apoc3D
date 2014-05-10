@@ -235,7 +235,6 @@
     <ClInclude Include="UILib\Console.h" />
     <ClInclude Include="UILib\Dialogs.h" />
     <ClInclude Include="UILib\Form.h" />
-    <ClInclude Include="UILib\Html\CSS.h" />
     <ClInclude Include="UILib\KeyboardHelper.h" />
     <ClInclude Include="UILib\Label.h" />
     <ClInclude Include="UILib\List.h" />

@@ -70,9 +70,11 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
                      LPWSTR    lpCmdLine,
                      int       nCmdShow)
 {
-	
-	wchar_t workingDir[260];
-	DWORD len = GetCurrentDirectory(260, workingDir);
+	DWORD len = GetCurrentDirectory(0, NULL);
+
+	wchar_t* workingDir = new wchar_t[len+1];
+	workingDir[len] = 0;
+	GetCurrentDirectory(len, workingDir);
 
 
 	ManualStartConfig escon;
@@ -94,6 +96,8 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 #if _DEBUG
 	escon.WriteLogToStd = true;
 #endif
+
+	delete[] workingDir;
 
 	wchar_t exePath[260];
 	GetModuleFileName(0, exePath, 260);

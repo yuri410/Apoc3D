@@ -28,6 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/Config/ABCConfigurationFormat.h"
+#include "apoc3d/Config/IniConfigurationFormat.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -44,6 +45,7 @@ namespace Apoc3D
 		{
 			RegisterFormat(new ABCConfigurationFormat());
 			RegisterFormat(new XMLConfigurationFormat());
+			RegisterFormat(new IniConfigurationFormat());
 		}
 		ConfigurationManager::~ConfigurationManager()
 		{
