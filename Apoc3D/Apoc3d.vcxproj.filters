@@ -495,6 +495,15 @@
     <ClInclude Include="Library\tinyxml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UILib\Html\CSS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\IniConfigurationFormat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ConvertUTF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -858,6 +867,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Library\lz4hc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Config\IniConfigurationFormat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ConvertUTF.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -162,6 +162,7 @@
     <ClInclude Include="Config\Configuration.h" />
     <ClInclude Include="Config\ConfigurationManager.h" />
     <ClInclude Include="Config\ConfigurationSection.h" />
+    <ClInclude Include="Config\IniConfigurationFormat.h" />
     <ClInclude Include="Config\XmlConfigurationFormat.h" />
     <ClInclude Include="Core\CommandInterpreter.h" />
     <ClInclude Include="Core\IHashed.h" />
@@ -209,6 +210,7 @@
     <ClInclude Include="IOLib\Streams.h" />
     <ClInclude Include="IOLib\TaggedData.h" />
     <ClInclude Include="IOLib\TextureData.h" />
+    <ClInclude Include="Library\ConvertUTF.h" />
     <ClInclude Include="Library\lz4.h" />
     <ClInclude Include="Library\lz4hc.h" />
     <ClInclude Include="Library\tinythread.h" />
@@ -233,6 +235,7 @@
     <ClInclude Include="UILib\Console.h" />
     <ClInclude Include="UILib\Dialogs.h" />
     <ClInclude Include="UILib\Form.h" />
+    <ClInclude Include="UILib\Html\CSS.h" />
     <ClInclude Include="UILib\KeyboardHelper.h" />
     <ClInclude Include="UILib\Label.h" />
     <ClInclude Include="UILib\List.h" />
@@ -315,6 +318,7 @@
     <ClCompile Include="Config\ConfigurationSection.cpp" />
     <ClCompile Include="Config\Configuration.cpp" />
     <ClCompile Include="Config\ConfigurationManager.cpp" />
+    <ClCompile Include="Config\IniConfigurationFormat.cpp" />
     <ClCompile Include="Config\XmlConfigurationFormat.cpp" />
     <ClCompile Include="Core\CommandInterpreter.cpp" />
     <ClCompile Include="Core\HashHandleObject.cpp" />
@@ -360,6 +364,7 @@
     <ClCompile Include="IOLib\Streams.cpp" />
     <ClCompile Include="IOLib\TaggedData.cpp" />
     <ClCompile Include="IOLib\TextureData.cpp" />
+    <ClCompile Include="Library\ConvertUTF.c" />
     <ClCompile Include="Library\lz4.c" />
     <ClCompile Include="Library\lz4hc.c" />
     <ClCompile Include="Library\tinythread.cpp" />
