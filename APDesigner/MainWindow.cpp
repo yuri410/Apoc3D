@@ -72,7 +72,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Math/ColorValue.h"
+#include "apoc3d/Utility/StringUtils.h"
 
+#include <chrono>
 
 using namespace Apoc3D::Graphics::EffectSystem;
 using namespace Apoc3D::Input;
@@ -161,7 +163,7 @@ namespace APDesigner
 			ShaderAtomLibraryManager::getSingleton().Load(fl);
 			delete fl;
 		}
-		
+
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionShaderNetwork(this));
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionModel(this));
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionMaterial(this));
