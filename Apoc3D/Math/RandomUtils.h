@@ -56,8 +56,9 @@ namespace Apoc3D
 			int32 Next(int32 minValue, int32 maxValue)
 			{
 				assert(minValue<=maxValue);
-				int32 range = maxValue - minValue;
-				return static_cast<int32>(Sample() * range) + minValue;
+				int64 range = maxValue - minValue;
+				int64 val = static_cast<int64>(Sample() * range) + minValue;
+				return static_cast<int32>(val);
 			}
 			float NextFloat() { return Sample(); }
 

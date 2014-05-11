@@ -46,6 +46,8 @@ void TestLZ4();
 void TestIni();
 void TestXml();
 
+void TestRandom();
+
 void main()
 {
 	setlocale(LC_CTYPE, ".ACP");
@@ -72,6 +74,8 @@ void main()
 	//TestLZ4();
 	TestIni();
 	TestXml();
+
+	TestRandom();
 }
 
 template <typename T>
@@ -558,4 +562,19 @@ void TestXml()
 
 	delete config;
 	delete fl;
+}
+void TestRandom()
+{
+	const int32 count = 1048576 * 64;
+	int32* buf1 = new int32[count];
+
+	int64 ta = GetTickCount();
+	for (int32 i=0;i<count;i++)
+	{
+		buf1[i] = Randomizer::Next();
+	}
+	ta = GetTickCount() - ta;
+	printf("RND1: %d\n", ta);
+
+	delete[] buf1;
 }
