@@ -50,14 +50,16 @@ namespace Apoc3D
 			int32 NextInclusive(int32 max)
 			{
 				assert(max>=0);
-				return static_cast<int32>(SampleD() * max);
+				int32 result = static_cast<int32>(SampleD() * (max + 1));
+				if (result>max)
+					result = max;
+				return result;
 			}
-			int32 NextExclusive(int32 max)
+			int32 NextExclusive(int32 max) 
 			{
-				assert(max>=0);
-				if (max>0)
-					max--;
-				return static_cast<int32>(SampleD() * max);
+				if (--max<=0)
+					return 0;
+				return NextInclusive(max-1); 
 			}
 
 

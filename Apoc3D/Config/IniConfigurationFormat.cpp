@@ -175,6 +175,11 @@ namespace Apoc3D
 
 			std::string utf8 = StringUtils::UTF16toUTF8(resultBuffer);
 
+			int32 bomLen;
+			const char* bom = GetEncodingBOM(Encoding::TEC_UTF8,bomLen);
+
+			if (bomLen>0)
+				strm->Write((const char*)bom, bomLen);
 			strm->Write((const char*)utf8.c_str(), utf8.length());
 
 			strm->Close();

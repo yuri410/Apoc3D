@@ -62,6 +62,46 @@ namespace Apoc3D
 				return TEC_Unknown;
 			}
 
+			const char* GetEncodingBOM(TextEncoding enc, int32& length)
+			{
+				length = 0;
+				switch (enc)
+				{
+				case Apoc3D::IO::Encoding::TEC_UTF8:
+					{
+						static byte utf8BOM[] = { 0xEF, 0xBB, 0xBF };
+						length = 3;
+						return (char*)utf8BOM;
+					}
+				case Apoc3D::IO::Encoding::TEC_UTF16LE:
+					{
+						static byte utf16leBOM[] = { 0xFF, 0xFE };
+						length = 2;
+						return (char*)utf16leBOM;
+					}
+				case Apoc3D::IO::Encoding::TEC_UTF16BE:
+					{
+						static byte utf16beBOM[] = { 0xFE, 0xFF };
+						length = 2;
+						return (char*)utf16beBOM;
+					}
+				case Apoc3D::IO::Encoding::TEC_UTF32LE:
+					{
+						static byte utf32leBOM[] = { 0xFF, 0xFE, 0x00, 0x00 };
+						length = 4;
+						return (char*)utf32leBOM;
+					}
+				case Apoc3D::IO::Encoding::TEC_UTF32BE:
+					{
+						static byte utf32beBOM[] = { 0x00, 0x00, 0xFE, 0xFF };
+						length = 4;
+						return (char*)utf32beBOM;
+					}
+				default:
+					return "";
+				}
+			}
+
 			String ConvertRawData(const char* rawData, int32 length, TextEncoding encoding, bool checkBom)
 			{
 				// skip BOM
@@ -91,11 +131,11 @@ namespace Apoc3D
 						return String(utf16Text);
 					}
 
-				
+					int32 utf16Len = length/2;
 					String result;
-					result.reserve(length/2+1);
+					result.reserve(utf16Len+1);
 
-					for (int32 i=0;i<length;i+=2)
+					for (int32 i=0;i<utf16Len;i++)
 					{
 						result.append(1, (wchar_t)_byteswap_ushort(utf16Text[i]));
 					}
@@ -111,10 +151,11 @@ namespace Apoc3D
 						return StringUtils::UTF32toUTF16(utf32Text);
 					}
 
+					int32 utf32Len = length/4;
 					String32 swapped;
-					swapped.reserve(length/4+1);
+					swapped.reserve(utf32Len+1);
 
-					for (int32 i=0;i<length;i+=2)
+					for (int32 i=0;i<utf32Len;i++)
 					{
 						swapped.append(1, (char32_t)_byteswap_ulong(utf32Text[i]));
 					}

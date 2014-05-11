@@ -31,6 +31,7 @@ namespace Apoc3D
 				return encoding;
 			}
 
+			const char* GetEncodingBOM(TextEncoding enc, int32& length);
 
 			String APAPI ConvertRawData(const char* rawData, int32 length, TextEncoding encoding, bool checkBom);
 
