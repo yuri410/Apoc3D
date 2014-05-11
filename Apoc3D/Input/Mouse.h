@@ -41,7 +41,6 @@ namespace Apoc3D
 		class APAPI Mouse
 		{
 		public:
-
 			virtual ~Mouse();
 
 			const Point& GetCurrentPosition() const { return m_currentPos; }
@@ -93,7 +92,10 @@ namespace Apoc3D
 
 			virtual void Update(const GameTime* const time) = 0;
 
+			void Serialize(Apoc3D::IO::BinaryWriter* bw);
+			void Deserialize(Apoc3D::IO::BinaryReader* br);
 		protected:
+
 			bool m_lastBtnState[3];
 			bool m_btnState[3];
 
@@ -104,6 +106,7 @@ namespace Apoc3D
 			int m_lastZ;
 
 			Mouse();
+
 		};
 	}
 }

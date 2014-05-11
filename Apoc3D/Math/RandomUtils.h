@@ -33,7 +33,7 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		typedef EventDelegate1<int&> RandomSampleEventHandler;
+		//typedef EventDelegate1<int&> SeedChangedEventHandler;
 
 		class APAPI Random
 		{
@@ -125,6 +125,8 @@ namespace Apoc3D
 				}
 				return 0;
 			}
+
+			static int32 getSeed() { return m_randomizer.getSeed(); }
 
 		private:
 			static Random m_randomizer;

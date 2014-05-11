@@ -207,6 +207,8 @@ namespace Apoc3D
 			 */
 			virtual void Update(const GameTime* const time) = 0;
 
+			void Serialize(Apoc3D::IO::BinaryWriter* bw);
+			void Deserialize(Apoc3D::IO::BinaryReader* br);
 		protected:
 			bool m_keyState[KEYCODE_MAX];
 			bool m_lastKeyState[KEYCODE_MAX];

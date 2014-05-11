@@ -409,6 +409,21 @@ namespace Apoc3D
 		void BinaryWriter::WriteInt32(const int32* data, int32 count) const		{ for (int32 i=0;i<count;i++) WriteInt32(data[i]); }
 		void BinaryWriter::WriteBoolean(const bool* data, int32 count) const		{ for (int32 i=0;i<count;i++) WriteBoolean(data[i]); }
 
+		void BinaryWriter::WriteBooleanBits(const bool* arr, int32 count) const
+		{
+			for (int32 i=0;i<count;i+=8)
+			{
+				byte bits = 0;
+
+				for (int32 j=0;j<8 && i+j<count;j++)
+					if (arr[i+j])
+						bits |= (byte)(1 << j);
+
+				WriteByte((char)bits);
+			}
+		}
+
+
 		void BinaryWriter::Close() const
 		{
 			m_baseStream->Close();

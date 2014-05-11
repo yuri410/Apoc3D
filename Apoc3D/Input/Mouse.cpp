@@ -24,6 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Mouse.h"
 
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
+
+using namespace Apoc3D::IO;
 
 namespace Apoc3D
 {
@@ -43,6 +47,46 @@ namespace Apoc3D
 		void Mouse::SetCurrentPosition(const Point& loc)
 		{
 			m_currentPos = loc;
+		}
+
+		void Mouse::Serialize(Apoc3D::IO::BinaryWriter* bw)
+		{
+			const int32 lastCount = sizeof(m_lastBtnState) / sizeof(*m_lastBtnState);
+			const int32 count = sizeof(m_btnState) / sizeof(*m_btnState);
+
+			bool packedBools[lastCount + count];
+			memcpy(packedBools, m_lastBtnState, sizeof(bool)*lastCount);
+			memcpy(packedBools+lastCount, m_btnState, sizeof(bool)*count);
+
+			bw->WriteBooleanBits(packedBools, lastCount+count);
+			
+			bw->WriteInt16(m_lastPosition.X);
+			bw->WriteInt16(m_lastPosition.Y);
+			bw->WriteInt16(m_currentPos.X);
+			bw->WriteInt16(m_currentPos.Y);
+
+			bw->WriteInt32(m_z);
+			bw->WriteInt32(m_lastZ);
+		}
+		void Mouse::Deserialize(Apoc3D::IO::BinaryReader* br)
+		{
+			const int32 lastCount = sizeof(m_lastBtnState) / sizeof(*m_lastBtnState);
+			const int32 count = sizeof(m_btnState) / sizeof(*m_btnState);
+
+			bool packedBools[lastCount + count];
+
+			br->ReadBooleanBits(packedBools, lastCount+count);
+
+			memcpy(m_lastBtnState, packedBools, sizeof(bool)*lastCount);
+			memcpy(m_btnState, packedBools+lastCount, sizeof(bool)*count);
+
+			m_lastPosition.X = br->ReadInt16();
+			m_lastPosition.Y = br->ReadInt16();
+			m_currentPos.X = br->ReadInt16();
+			m_currentPos.Y = br->ReadInt16();
+			
+			m_z = br->ReadInt32();
+			m_lastZ = br->ReadInt32();
 		}
 	}
 }

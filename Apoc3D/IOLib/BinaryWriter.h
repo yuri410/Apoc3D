@@ -83,6 +83,8 @@ namespace Apoc3D
 			void WriteInt32(const int32* data, int32 count) const;
 			void WriteBoolean(const bool* data, int32 count) const;
 
+			void WriteBooleanBits(const bool* arr, int32 count) const;
+
 			void Close() const;
 
 			/**

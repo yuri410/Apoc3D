@@ -90,6 +90,9 @@ namespace Apoc3D
 			void ReadInt32(int32* data, int32 count);
 			void ReadBoolean(bool* data, int32 count);
 
+			void ReadBooleanBits(bool* arr, int32 count);
+
+
 
 
 			TaggedDataReader* ReadTaggedDataBlock();

@@ -95,6 +95,8 @@ namespace Apoc3DEx
 		if (m_window->getIsActive())
 			InputAPIManager::getSingleton().Update(time);
 		
+
+
 		EffectManager::getSingleton().Update(time);
 
 		m_console->Update(time);

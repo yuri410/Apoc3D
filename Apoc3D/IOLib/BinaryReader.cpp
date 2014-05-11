@@ -546,6 +546,18 @@ namespace Apoc3D
 		void BinaryReader::ReadInt32(int32* data, int32 count)		{ for (int32 i=0;i<count;i++) data[i] = ReadInt32(); }
 		void BinaryReader::ReadBoolean(bool* data, int32 count)	{ for (int32 i=0;i<count;i++) data[i] = ReadBoolean(); }
 
+		void BinaryReader::ReadBooleanBits(bool* arr, int32 count)
+		{
+			for (int32 i=0;i<count;i+=8)
+			{
+				byte bits = ReadByte();
+
+				for (int32 j=0;j<8 && i+j<count;j++)
+					arr[i+j] = (bits & (1<<j)) != 0;
+			}
+		}
+
+
 
 		TaggedDataReader* BinaryReader::ReadTaggedDataBlock()
 		{
