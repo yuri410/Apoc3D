@@ -241,7 +241,7 @@ void TestListSort()
 
 	for (int i=0;i<100;i++)
 	{
-		int val = Randomizer::Next(1000);
+		int val = Randomizer::NextExclusive(1000);
 		subject.Add(val);
 		counter[val]++;
 	}
@@ -279,7 +279,7 @@ void TestListSort2()
 
 	for (int i=0;i<100;i++)
 	{
-		int val = Randomizer::Next(1000);
+		int val = Randomizer::NextExclusive(1000);
 		subject.Add(val);
 		counter[val]++;
 	}
@@ -460,7 +460,7 @@ void TestBufferStream()
 	for (;;)
 	{
 		char temp[102400];
-		int32 countToRead = Randomizer::Next(ARRAYSIZE(temp));
+		int32 countToRead = Randomizer::NextExclusive(ARRAYSIZE(temp));
 		int32 r = bsr.Read(temp, countToRead);
 		CheckEqual<char>(cmp, temp, r);
 		
@@ -577,4 +577,11 @@ void TestRandom()
 	printf("RND1: %d\n", ta);
 
 	delete[] buf1;
+
+	/*int32 raw = 0x7fffffff;
+	int32 sample = (int32)(raw & 0x7fffffffUL);
+	double fltSample = sample / 2147483647.0;
+	int32 rnd = (int32)(50 * fltSample);
+	printf("RNDTest: %d\n", rnd);*/
+
 }

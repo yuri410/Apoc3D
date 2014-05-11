@@ -1378,7 +1378,7 @@ namespace Apoc3D
 			bool done = false;
 
 			// find enough space for the glyph, testing from lower use time to higher use time
-			int32 startEdgeOffset = m_bucketSearchRandomizer->Next(m_edgeCount);
+			int32 startEdgeOffset = m_bucketSearchRandomizer->NextExclusive(m_edgeCount);
 			for (int freq = 0; freq<MaxFreq && !done; freq++)
 			{
 				for (int ii=0;ii<m_edgeCount && !done;ii++)

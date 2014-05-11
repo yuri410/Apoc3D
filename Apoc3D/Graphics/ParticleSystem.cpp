@@ -240,8 +240,8 @@ namespace Apoc3D
 
 			// Choose four random control values. These will be used by the vertex
 			// shader to give each particle a different size, rotation, and color.
-			uint32 randomValues = PACK_COLOR(Randomizer::Next(255), 
-				Randomizer::Next(255), Randomizer::Next(255), Randomizer::Next(255));
+			uint32 randomValues = PACK_COLOR(Randomizer::NextInclusive(255), 
+				Randomizer::NextInclusive(255), Randomizer::NextInclusive(255), Randomizer::NextInclusive(255));
 			// new Color((byte)random.Next(255),
 				//(byte)random.Next(255),
 				//(byte)random.Next(255),

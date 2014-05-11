@@ -47,21 +47,29 @@ namespace Apoc3D
 
 			int32 Next() { return RawSample(); }
 
-			int32 Next(int32 max)
+			int32 NextInclusive(int32 max)
 			{
 				assert(max>=0);
-				return static_cast<int32>(Sample() * max);
+				return static_cast<int32>(SampleD() * max);
 			}
+			int32 NextExclusive(int32 max)
+			{
+				assert(max>=0);
+				if (max>0)
+					max--;
+				return static_cast<int32>(SampleD() * max);
+			}
+
 
 			int32 Next(int32 minValue, int32 maxValue)
 			{
 				assert(minValue<=maxValue);
-				int64 range = maxValue - minValue;
-				int64 val = static_cast<int64>(Sample() * range) + minValue;
+				int64 range = (int64)maxValue - (int64)minValue;
+				int64 val = static_cast<int64>(SampleD() * range) + minValue;
 				return static_cast<int32>(val);
 			}
 			float NextFloat() { return Sample(); }
-
+			double NextDouble() { return SampleD(); }
 		private:
 			int32 m_state[16];
 			int32 m_index;
@@ -86,6 +94,10 @@ namespace Apoc3D
 			{
 				return RawSample() / 2147483647.0f;
 			}
+			double SampleD()
+			{
+				return RawSample() / 2147483647.0;
+			}
 		};
 
 
@@ -93,7 +105,8 @@ namespace Apoc3D
 		{
 		public:
 			static int32 Next() { return m_randomizer.Next(); }
-			static int32 Next(int32 max) { return m_randomizer.Next(max); }
+			static int32 NextInclusive(int32 max) { return m_randomizer.NextInclusive(max); }
+			static int32 NextExclusive(int32 max) { return m_randomizer.NextExclusive(max); }
 			static int32 Next(int32 minValue, int32 maxValue) { return m_randomizer.Next(minValue, maxValue); }
 
 			static float NextFloat() { return m_randomizer.NextFloat(); }

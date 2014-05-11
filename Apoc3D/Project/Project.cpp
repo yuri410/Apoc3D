@@ -1623,7 +1623,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"Type", L"Project");
 		result.Add(sect);
 		
-		int startNo = Randomizer::Next(65535);
+		int startNo = Randomizer::NextInclusive(65535);
 		RecursivePassFolderPacks(startNo, result, m_items);
 		
 	}
