@@ -137,9 +137,9 @@ namespace Apoc3D
 
 					for (int32 i=0;i<utf16Len;i++)
 					{
-						result.append(1, (wchar_t)_byteswap_ushort(utf16Text[i]));
+						result.append(1,(wchar_t)_byteswap_ushort(utf16Text[i]));
 					}
-
+					
 					return result;
 				}
 				else if (encoding == TEC_UTF32LE || encoding == TEC_UTF32BE)
@@ -157,7 +157,7 @@ namespace Apoc3D
 
 					for (int32 i=0;i<utf32Len;i++)
 					{
-						swapped.append(1, (char32_t)_byteswap_ulong(utf32Text[i]));
+						swapped.append(1,(char32_t)_byteswap_ulong(utf32Text[i]));
 					}
 
 					return StringUtils::UTF32toUTF16(swapped);
@@ -166,7 +166,7 @@ namespace Apoc3D
 				String asciiResult;
 				asciiResult.reserve(length);
 				for (int32 i=0;i<length;i++)
-					asciiResult[i] = rawData[i];
+					asciiResult.append(1,rawData[i]);
 				return asciiResult;
 			}
 
