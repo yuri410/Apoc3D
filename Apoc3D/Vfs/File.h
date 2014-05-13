@@ -53,6 +53,10 @@ namespace Apoc3D
 			const String& getFileName() const { return m_fileName; }
 			const String& getDirectory() const { return m_filePath; }
 
+			static int64 GetFileSize(const std::string& path);
+			static bool FileExists(const std::string& path);
+			static time_t GetFileModifiyTime(const std::string& path);
+			static bool DirectoryExists(const std::string& path);
 
 			static int64 GetFileSize(const String& path);
 			static bool FileExists(const String& path);

@@ -54,59 +54,37 @@ namespace Apoc3D
 
 		bool File::DirectoryExists(const String& path)
 		{
-			struct stat status;
 			std::string spath = StringUtils::toPlatformNarrowString(path);
 
-			if (_access(spath.c_str(), 0) == 0)
-			{
-				stat(spath.c_str(), &status);
-				
-				if (status.st_mode & S_IFDIR)
-				{
-					return true;
-				}
-			}			
-			return false;
+			return DirectoryExists(spath);
 		}
 		time_t File::GetFileModifiyTime(const String& path)
 		{
-			struct stat status;
 			std::string spath = StringUtils::toPlatformNarrowString(path);
 
-			if (_access(spath.c_str(), 0) == 0)
-			{
-				stat(spath.c_str(), &status);
-
-				return status.st_mtime;
-			}			
-			return 0;
+			return GetFileModifiyTime(spath);
 		}
 		bool File::FileExists(const String& path)
 		{
-			struct stat status;
 			std::string spath = StringUtils::toPlatformNarrowString(path);
 
-			if (_access(spath.c_str(), 0) == 0)
-			{
-				stat(spath.c_str(), &status);
-				
-				if (status.st_mode & S_IFDIR)
-				{
-					return false;
-				}
-				return true;
-			}			
-			return false;
+			return FileExists(spath);
 		}
 		int64 File::GetFileSize(const String& path)
 		{
-			struct stat status;
 			std::string spath = StringUtils::toPlatformNarrowString(path);
 
-			if (_access(spath.c_str(), 0) == 0)
+			return GetFileSize(spath);
+		}
+
+
+		int64 File::GetFileSize(const std::string& path)
+		{
+			struct stat status;
+			if (_access(path.c_str(), 0) == 0)
 			{
-				stat(spath.c_str(), &status);
-				
+				stat(path.c_str(), &status);
+
 				if (status.st_mode & S_IFDIR)
 				{
 					return -1;
@@ -128,6 +106,49 @@ namespace Apoc3D
 			//fs.close();
 			//return pos;
 		}
+		bool File::FileExists(const std::string& path)
+		{
+			struct stat status;
+			if (_access(path.c_str(), 0) == 0)
+			{
+				stat(path.c_str(), &status);
+
+				if (status.st_mode & S_IFDIR)
+				{
+					return false;
+				}
+				return true;
+			}			
+			return false;
+		}
+		time_t File::GetFileModifiyTime(const std::string& path)
+		{
+			struct stat status;
+			if (_access(path.c_str(), 0) == 0)
+			{
+				stat(path.c_str(), &status);
+
+				return status.st_mtime;
+			}			
+			return 0;
+		}
+		bool File::DirectoryExists(const std::string& path)
+		{
+			struct stat status;
+			if (_access(path.c_str(), 0) == 0)
+			{
+				stat(path.c_str(), &status);
+
+				if (status.st_mode & S_IFDIR)
+				{
+					return true;
+				}
+			}			
+			return false;
+		}
+
+
+
 
 		bool File::ListDirectoryFiles(const String& path, List<String>& items)
 		{
