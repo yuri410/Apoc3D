@@ -237,7 +237,7 @@ namespace Apoc3D
 				: RenderTarget(device, 
 				D3D9Utils::GetD3DTextureWidth(rt),
 				D3D9Utils::GetD3DTextureHeight(rt), 
-				D3D9Utils::GetD3DTextureFormat(rt), 0), VolatileResource(device),
+				D3D9Utils::GetD3DTextureFormat(rt), L""), VolatileResource(device),
 				m_device(device), m_color(rt), m_d3dTexture(0), m_depthSurface(0), m_depthBuffer(0),
 				m_isDefault(false), m_hasDepth(false), m_hasColor(true),
 				m_rtDirty(false)
@@ -250,7 +250,7 @@ namespace Apoc3D
 				D3D9Utils::GetD3DTextureWidth(rt),
 				D3D9Utils::GetD3DTextureHeight(rt), 
 				D3D9Utils::GetD3DTextureFormat(rt), 
-				GetDepthSurfaceFormat(depth), 0), VolatileResource(device),
+				GetDepthSurfaceFormat(depth), L""), VolatileResource(device),
 				m_device(device), m_color(rt), m_d3dTexture(0), m_depthSurface(depth),
 				m_isDefault(false), m_hasDepth(true), m_hasColor(true),
 				m_rtDirty(false)
@@ -261,7 +261,7 @@ namespace Apoc3D
 			}
 
 			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format)
-				: RenderTarget(device, width, height, format, 0), VolatileResource(device),
+				: RenderTarget(device, width, height, format, L""), VolatileResource(device),
 				m_device(device), m_depthSurface(0), m_depthBuffer(0), m_d3dTexture(0),
 				m_isDefault(false), m_hasDepth(false), m_hasColor(true),
 				m_rtDirty(false)
@@ -277,7 +277,7 @@ namespace Apoc3D
 				m_d3dTexture = new D3D9Texture(m_device, m_color);
 			}
 			D3D9RenderTarget::D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat)
-				: RenderTarget(device, width, height, format, depthFormat, 0), VolatileResource(device),
+				: RenderTarget(device, width, height, format, depthFormat, L""), VolatileResource(device),
 				m_device(device),
 				m_isDefault(false), m_hasDepth(true), m_hasColor(true),
 				m_rtDirty(false)
