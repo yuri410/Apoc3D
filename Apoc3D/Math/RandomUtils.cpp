@@ -24,6 +24,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RandomUtils.h"
 
 #include <ctime>
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Library/tinythread.h"
+#include "apoc3d/Utility/StringUtils.h"
+
+using namespace Apoc3D::Core;
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -48,6 +54,33 @@ namespace Apoc3D
 				m_state[i] = (((holdRand = holdRand * 214013L + 2531011L) >> 16) & 0x7fff);
 			}
 		}
+
+
+#if _DEBUG
+		uint32 Randomizer::m_existingThreadID = 0;
+
+		void Randomizer::CheckThreadSafety()
+		{
+			uint32 id = tthread::this_thread::get_id().getIdNumber();
+
+			if (id != m_existingThreadID)
+			{
+				if (m_existingThreadID == 0)
+				{
+					m_existingThreadID = id;
+				}
+				else
+				{
+					ApocLog(LOG_System, L"[Randomizer] Called from thread " + StringUtils::ToString(id) + L". Unsafe!", LOGLVL_Warning);
+
+#if _WIN32
+					DebugBreak();
+#endif
+				}
+			}
+		}
+#endif
+
 
 	}
 }

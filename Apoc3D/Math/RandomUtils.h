@@ -92,36 +92,38 @@ namespace Apoc3D
 				m_state[m_index] = a^b^d^(a<<2)^(b<<18)^(c<<28);
 				return static_cast<int32>(m_state[m_index] & 0x7fffffffUL);
 			}
-			float Sample()
-			{
-				return RawSample() / 2147483647.0f;
-			}
-			double SampleD()
-			{
-				return RawSample() / 2147483647.0;
-			}
+			float Sample() { return RawSample() / 2147483647.0f; }
+			double SampleD() { return RawSample() / 2147483647.0; }
 		};
 
 
 		class APAPI Randomizer
 		{
 		public:
-			static int32 Next() { return m_randomizer.Next(); }
-			static int32 NextInclusive(int32 max) { return m_randomizer.NextInclusive(max); }
-			static int32 NextExclusive(int32 max) { return m_randomizer.NextExclusive(max); }
-			static int32 Next(int32 minValue, int32 maxValue) { return m_randomizer.Next(minValue, maxValue); }
+#if _DEBUG
+#define RANDOMIZER_CHECKTHREAD CheckThreadSafety()
+#else
+#define RANDOMIZER_CHECKTHREAD
+#endif
+			static int32 Next() { RANDOMIZER_CHECKTHREAD; return m_randomizer.Next();  }
+			static int32 NextInclusive(int32 max) { RANDOMIZER_CHECKTHREAD; return m_randomizer.NextInclusive(max); }
+			static int32 NextExclusive(int32 max) { RANDOMIZER_CHECKTHREAD; return m_randomizer.NextExclusive(max); }
+			static int32 Next(int32 minValue, int32 maxValue) { RANDOMIZER_CHECKTHREAD; return m_randomizer.Next(minValue, maxValue); }
 
-			static float NextFloat() { return m_randomizer.NextFloat(); }
+			static float NextFloat() { RANDOMIZER_CHECKTHREAD; return m_randomizer.NextFloat();  }
 			static float NextFloat(float minValue, float maxValue)
 			{
+				RANDOMIZER_CHECKTHREAD;
 				if (minValue >= maxValue)
 					return minValue;
 				return minValue + (maxValue - minValue) * m_randomizer.NextFloat(); 
 			}
-			static float NextFloat(const float* ranges) { return NextFloat(ranges[0], ranges[1]); }
+			static float NextFloat(const float* ranges) { return NextFloat(ranges[0], ranges[1]);  }
 
 			static int Choose(const float* p, int count)
 			{
+				RANDOMIZER_CHECKTHREAD;
+
 				float total = 0;
 				for (int i = 0; i < count; i++)
 				{
@@ -147,8 +149,15 @@ namespace Apoc3D
 		private:
 			static Random m_randomizer;
 
+#if _DEBUG
+			static void CheckThreadSafety();
+			static uint32 m_existingThreadID;
+#endif
+
 			Randomizer() {}
 			~Randomizer() {}
+
+#undef RANDOMIZER_CHECKTHREAD
 		};
 
 	}
