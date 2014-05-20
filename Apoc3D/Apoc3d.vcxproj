@@ -164,6 +164,7 @@
     <ClInclude Include="Config\ConfigurationSection.h" />
     <ClInclude Include="Config\IniConfigurationFormat.h" />
     <ClInclude Include="Config\XmlConfigurationFormat.h" />
+    <ClInclude Include="Core\BackgroundSequencialWorker.h" />
     <ClInclude Include="Core\CommandInterpreter.h" />
     <ClInclude Include="Core\IHashed.h" />
     <ClInclude Include="Core\Logging.h" />
