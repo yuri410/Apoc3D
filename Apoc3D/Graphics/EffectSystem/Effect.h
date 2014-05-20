@@ -139,9 +139,14 @@ namespace Apoc3D
 				int FindParameterIndex(const String& name);
 
 				template<typename T>
-				void SetParameterValue(int index, T* value, int count);
+				void SetParameterValue(int index, const T* value, int count);
 				void SetParameterTexture(int index, ResourceHandle<Texture>* value);
 				void SetParameterTexture(int index, Texture* value);
+
+				template<typename T>
+				void SetParameterValueByName(const String& name, const T* value, int count);
+				void SetParameterTextureByName(const String& name, ResourceHandle<Texture>* value);
+				void SetParameterTextureByName(const String& name, Texture* value);
 
 				virtual void Update(const GameTime* const time);
 			protected:

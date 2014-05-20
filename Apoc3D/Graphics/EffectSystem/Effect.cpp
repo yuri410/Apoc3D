@@ -98,13 +98,14 @@ namespace Apoc3D
 			static Vector4 s_instancingVector4Buffer[InstancingData::MaxOneTimeInstances];
 			
 			
-			template void AutomaticEffect::SetParameterValue<bool>(int index, bool* value, int count);
-			template void AutomaticEffect::SetParameterValue<int>(int index, int* value, int count);
-			template void AutomaticEffect::SetParameterValue<float>(int index, float* value, int count);
+			template void AutomaticEffect::SetParameterValue<bool>(int index, const bool* value, int count);
+			template void AutomaticEffect::SetParameterValue<int>(int index, const int* value, int count);
+			template void AutomaticEffect::SetParameterValue<float>(int index, const float* value, int count);
 
-			template void AutomaticEffect::SetParameterValue<const bool>(int index, const bool* value, int count);
-			template void AutomaticEffect::SetParameterValue<const int>(int index, const int* value, int count);
-			template void AutomaticEffect::SetParameterValue<const float>(int index, const float* value, int count);
+			template void AutomaticEffect::SetParameterValueByName<bool>(const String& name, const bool* value, int count);
+			template void AutomaticEffect::SetParameterValueByName<int>(const String& name, const int* value, int count);
+			template void AutomaticEffect::SetParameterValueByName<float>(const String& name, const float* value, int count);
+
 
 			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
 				: m_vertexShader(nullptr), m_pixelShader(nullptr), m_device(device), m_supportsInstancing(false), 
@@ -490,7 +491,7 @@ namespace Apoc3D
 			}
 
 			template<typename T>
-			void AutomaticEffect::SetParameterValue(int index, T* value, int count)
+			void AutomaticEffect::SetParameterValue(int index, const T* value, int count)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
 				
@@ -537,6 +538,27 @@ namespace Apoc3D
 				}
 				return -1;
 			}
+
+			template<typename T>
+			void AutomaticEffect::SetParameterValueByName(const String& name, const T* value, int count)
+			{
+				int32 idx = FindParameterIndex(name);
+				assert(idx != -1);
+				SetParameterValue(idx, value, count);
+			}
+			void AutomaticEffect::SetParameterTextureByName(const String& name, ResourceHandle<Texture>* value)
+			{
+				int32 idx = FindParameterIndex(name);
+				assert(idx != -1);
+				SetParameterTexture(idx, value);
+			}
+			void AutomaticEffect::SetParameterTextureByName(const String& name, Texture* value)
+			{
+				int32 idx = FindParameterIndex(name);
+				assert(idx != -1);
+				SetParameterTexture(idx, value);
+			}
+
 
 			int AutomaticEffect::begin()
 			{
