@@ -39,11 +39,12 @@ namespace Apoc3D
 		{
 		public:
 			Random();
-			Random(int seed) : m_index(0) { SetSeed(seed); }
+			Random(int seed) : m_index(0) { SetSeed(seed, true); }
 			~Random() { }
 
 			int32 getSeed() const { return m_seed; }
-			void SetSeed(int32 seed);
+			void SetSeed(int32 seed, bool reset);
+			void Reset();
 
 			int32 Next() { return RawSample(); }
 
@@ -145,7 +146,8 @@ namespace Apoc3D
 			}
 
 			static int32 getSeed() { return m_randomizer.getSeed(); }
-
+			static void setSeed(int32 seed, bool reset) { RANDOMIZER_CHECKTHREAD; m_randomizer.SetSeed(seed, reset); }
+			static void Reset() { RANDOMIZER_CHECKTHREAD; m_randomizer.Reset(); }
 		private:
 			static Random m_randomizer;
 

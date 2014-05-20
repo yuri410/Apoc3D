@@ -41,20 +41,32 @@ namespace Apoc3D
 			: m_index(0)
 		{
 			const int32 seed = static_cast<int32>(time(0));
-			SetSeed(seed);
+			SetSeed(seed, true);
 		}
 
-		void Random::SetSeed(int32 seed)
+		void Random::SetSeed(int32 seed, bool reset)
 		{
-			m_seed = seed;
-			int32 holdRand = seed;
-
-			for (int32 i=0;i<16;i++)
+			if (reset)
 			{
-				m_state[i] = (((holdRand = holdRand * 214013L + 2531011L) >> 16) & 0x7fff);
+				Reset();
+			}
+			else
+			{
+				m_seed = seed;
+				int32 holdRand = seed;
+
+				for (int32 i=0;i<16;i++)
+				{
+					m_state[i] = (((holdRand = holdRand * 214013L + 2531011L) >> 16) & 0x7fff);
+				}
 			}
 		}
 
+		void Random::Reset()
+		{
+			SetSeed(m_seed, false);
+			m_index = 0;
+		}
 
 #if _DEBUG
 		uint32 Randomizer::m_existingThreadID = 0;
