@@ -42,25 +42,6 @@ namespace Apoc3D
 			int32 m_result;
 		};
 
-		template <unsigned int N, unsigned int I>
-		struct FNVHash32Fixed
-		{
-			static int32 Hash(const char (&str)[N])
-			{
-				return (FNVHash32Fixed<N, I-1>::Hash(str) ^ str[I-1])*16777619;
-			}
-		};
-
-		template <unsigned int N>
-		struct FNVHash32Fixed<N, 1>
-		{
-			static int32 Hash(const char (&str)[N])
-			{
-				return (2166136261u ^ str[0])*16777619;
-			}
-		};
-
-
 		inline int32 MurmurHash(const void * key, int len)
 		{
 			const int32 seed = 2166136261;
