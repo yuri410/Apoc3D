@@ -93,8 +93,8 @@ namespace Apoc3D
 				m_state[m_index] = a^b^d^(a<<2)^(b<<18)^(c<<28);
 				return static_cast<int32>(m_state[m_index] & 0x7fffffffUL);
 			}
-			float Sample() { return RawSample() / 2147483647.0f; }
-			double SampleD() { return RawSample() / 2147483647.0; }
+			float Sample() { return RawSample() * (1.0f / 2147483647.0f); }
+			double SampleD() { return RawSample() * (1.0 / 2147483647.0); }
 		};
 
 

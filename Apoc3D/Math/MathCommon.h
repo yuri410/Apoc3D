@@ -46,16 +46,28 @@ namespace Apoc3D
 			PLANEIT_Intersecting
 		};
 
-		const float PI = float( 4.0 * atan( 1.0 ) );
-		const float Two_PI = PI * 2;
-		const float Half_PI = float(PI * 0.5);
-		const float Root2 = 1.41421f;
-		const float Root3 = 1.73205f;
+		extern const float PI;
+		extern const float Two_PI;
+		extern const float Half_PI;
+		extern const float Root2;
+		extern const float Root3;
 
-#define ToRadian(x) (x * (Apoc3D::Math::PI/180.0f))
-#define ToDegree(x) (x * (180.0f/Apoc3D::Math::PI))
+#define L_PIf 3.1415926535897932384626433832795f
+#define L_Two_PIf 6.283185307179586476925286766559f
+#define L_Half_PIf 1.5707963267948966192313216916398f
+#define L_Root2f 1.4142135623730950488016887242097f
+#define L_Root3f 1.7320508075688772935274463415059f
+
+#define L_PId 3.1415926535897932384626433832795
+#define L_Two_PId 6.283185307179586476925286766559
+#define L_Half_PId 1.5707963267948966192313216916398
+#define L_Root2d 1.4142135623730950488016887242097
+#define L_Root3d 1.7320508075688772935274463415059
 
 
+#define ToRadian(x) (x * (L_PIf/180.0f))
+#define ToDegree(x) (x * (180.0f/L_PIf))
+		
 		inline float Frac(float value)
 		{
 			assert(value>=0);

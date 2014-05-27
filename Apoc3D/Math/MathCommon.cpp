@@ -27,6 +27,14 @@ namespace Apoc3D
 {
 	namespace Math
 	{
+
+		const float PI = L_PIf;//float( 4.0 * atan( 1.0 ) );
+		const float Two_PI = L_Two_PIf; // PI * 2
+		const float Half_PI = L_Half_PIf;// float(PI * 0.5);
+		const float Root2 = 1.41421f;
+		const float Root3 = 1.73205f;
+
+		
 		//extern const float MaxFloat = std::numeric_limits<float>::max();
 		//extern const float MinFloat = std::numeric_limits<float>::min();
 		//extern const float POSINF_Float = std::numeric_limits<float>::infinity();

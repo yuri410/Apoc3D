@@ -373,6 +373,7 @@
     <ClCompile Include="Library\tinyxml.cpp" />
     <ClCompile Include="Library\tinyxmlerror.cpp" />
     <ClCompile Include="Library\tinyxmlparser.cpp" />
+    <ClCompile Include="Math\MathCommon.cpp" />
     <ClCompile Include="Math\OctreeBox.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
