@@ -453,26 +453,15 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 		
-		String StringUtils::ToString(bool val)
+		String StringUtils::BoolToString(bool val)
 		{
 			wostringstream stream;
 			stream.setf(ios::boolalpha);
 			stream << val;
 			return stream.str();
 		}
-		String StringUtils::ToString(const wchar_t* val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
-		{
-			wostringstream stream;
-			stream.width(width);
-			stream.fill(fill);
-			stream.imbue(locale::classic());
-			if (flags)
-				stream.setf(flags);
-			stream << val;
-			return stream.str();
-		}
 
-		String StringUtils::ToString(int64 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
+		String StringUtils::IntToString(int64 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
 		{
 			wostringstream stream;
 			stream.width(width);
@@ -483,7 +472,7 @@ namespace Apoc3D
 			stream << val;
 			return stream.str();
 		}
-		String StringUtils::ToString(uint64 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
+		String StringUtils::UIntToString(uint64 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
 		{
 			wostringstream stream;
 			stream.width(width);
@@ -494,7 +483,7 @@ namespace Apoc3D
 			stream << val;
 			return stream.str();
 		}
-		String StringUtils::ToString(float val, uint16 precision, uint16 width, char fill, std::ios::fmtflags flags)
+		String StringUtils::SingleToString(float val, uint16 precision, uint16 width, wchar_t fill, std::ios::fmtflags flags)
 		{
 			wostringstream stream;
 			stream.precision(precision);
@@ -507,24 +496,24 @@ namespace Apoc3D
 			return stream.str();
 		}
 
-		String StringUtils::ToString(int16 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
+		String StringUtils::IntToString(int16 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
 		{
-			return ToString((int64)val, width, fill, flags); 
+			return IntToString((int64)val, width, fill, flags); 
 		}
-		String StringUtils::ToString(int32 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
+		String StringUtils::IntToString(int32 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
 		{
-			return ToString((int64)val, width, fill, flags);
+			return IntToString((int64)val, width, fill, flags);
 		}
-		String StringUtils::ToString(uint16 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
+		String StringUtils::UIntToString(uint16 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
 		{
-			return ToString((uint64)val, width, fill, flags);
+			return UIntToString((uint64)val, width, fill, flags);
 		}
-		String StringUtils::ToString(uint32 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
+		String StringUtils::UIntToString(uint32 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
 		{
-			return ToString((uint64)val, width, fill, flags);
+			return UIntToString((uint64)val, width, fill, flags);
 		}
 
-		String StringUtils::ToStringHex(uint64 val, uint16 width/* =0 */)
+		String StringUtils::UIntToStringHex(uint64 val, uint16 width/* =0 */)
 		{
 			wostringstream stream;
 			stream.width(width);
@@ -535,7 +524,7 @@ namespace Apoc3D
 			stream << val;
 			return stream.str();
 		}
-		String StringUtils::ToStringHex(uint32 val, uint16 width/* =0 */)
+		String StringUtils::UIntToStringHex(uint32 val, uint16 width/* =0 */)
 		{
 			wostringstream stream;
 			stream.width(width);
@@ -547,7 +536,7 @@ namespace Apoc3D
 			return stream.str();
 		}
 
-		String StringUtils::ToStringBin(uint64 val)
+		String StringUtils::UIntToStringBin(uint64 val)
 		{
 			//uint64 result = 0;
 			String result(64, '0');
@@ -567,6 +556,116 @@ namespace Apoc3D
 
 			return result;
 		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+
+		std::string StringUtils::BoolToNarrowString(bool val)
+		{
+			ostringstream stream;
+			stream.setf(ios::boolalpha);
+			stream << val;
+			return stream.str();
+		}
+		std::string StringUtils::IntToNarrowString(int64 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			ostringstream stream;
+			stream.width(width);
+			stream.fill(fill);
+			stream.imbue(locale::classic());
+			if (flags)
+				stream.setf(flags);
+			stream << val;
+			return stream.str();
+		}
+		std::string StringUtils::UIntToNarrowString(uint64 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			ostringstream stream;
+			stream.width(width);
+			stream.fill(fill);
+			stream.imbue(locale::classic());
+			if (flags)
+				stream.setf(flags);
+			stream << val;
+			return stream.str();
+		}
+		std::string StringUtils::SingleToNarrowString(float val, uint16 precision, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			ostringstream stream;
+			stream.precision(precision);
+			stream.width(width);
+			stream.fill(fill);
+			stream.imbue(locale::classic());
+
+			stream.setf(flags, ios::floatfield);
+			stream << val;
+			return stream.str();
+		}
+
+		std::string StringUtils::IntToNarrowString(int16 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			return IntToNarrowString((int64)val, width, fill, flags); 
+		}
+		std::string StringUtils::IntToNarrowString(int32 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			return IntToNarrowString((int64)val, width, fill, flags);
+		}
+		std::string StringUtils::UIntToNarrowString(uint16 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			return UIntToNarrowString((uint64)val, width, fill, flags);
+		}
+		std::string StringUtils::UIntToNarrowString(uint32 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			return UIntToNarrowString((uint64)val, width, fill, flags);
+		}
+
+		std::string StringUtils::UIntToNarrowStringHex(uint64 val, uint16 width/* =0 */)
+		{
+			ostringstream stream;
+			stream.width(width);
+			stream.fill('0');
+			stream.imbue(locale::classic());
+			stream.setf ( ios::hex, ios::basefield );       // set hex as the basefield
+			stream.setf ( ios::showbase ); 
+			stream << val;
+			return stream.str();
+		}
+		std::string StringUtils::UIntToNarrowStringHex(uint32 val, uint16 width/* =0 */)
+		{
+			ostringstream stream;
+			stream.width(width);
+			stream.fill('0');
+			stream.imbue(locale::classic());
+			stream.setf ( ios::hex, ios::basefield );       // set hex as the basefield
+			stream.setf ( ios::showbase ); 
+			stream << val;
+			return stream.str();
+		}
+
+		std::string StringUtils::UIntToNarrowStringBin(uint64 val)
+		{
+			//uint64 result = 0;
+			std::string result(64, '0');
+
+			for (size_t i=0;i<64;i++)
+			{
+				//if ((val & (1UL << i)))
+				//{
+				//	result[64 - i] = '1';
+				//}
+				val >>= 1;
+				if (val & 1)
+				{
+					result[63-i] = '1';
+				}
+			}
+
+			return result;
+		}
+
+
+
+		//////////////////////////////////////////////////////////////////////////
 
 		void StringUtils::Trim(String& str, const String& delims)
 		{

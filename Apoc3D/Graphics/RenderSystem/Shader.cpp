@@ -99,7 +99,7 @@ namespace Apoc3D
 				sect->TryGetAttributeInt(L"MaxMipLevel", MaxMipLevel);
 
 				MipMapLODBias = 0;
-				sect->TryGetAttributeUInt(L"MipMapLODBias", MipMapLODBias);
+				sect->TryGetAttributeInt(L"MipMapLODBias", MipMapLODBias);
 			}
 			void ShaderSamplerState::Save(ConfigurationSection* sect)
 			{
@@ -111,11 +111,11 @@ namespace Apoc3D
 				sect->AddAttributeString(L"MinFilter", GraphicsCommonUtils::ToString(MinFilter));
 				sect->AddAttributeString(L"MipFilter", GraphicsCommonUtils::ToString(MipFilter));
 
-				sect->AddAttributeString(L"BorderColor", StringUtils::ToStringHex(BorderColor));
+				sect->AddAttributeString(L"BorderColor", StringUtils::UIntToStringHex(BorderColor));
 
-				sect->AddAttributeString(L"MaxAnisotropy", StringUtils::ToString(MaxAnisotropy));
-				sect->AddAttributeString(L"MaxMipLevel", StringUtils::ToString(MaxMipLevel));
-				sect->AddAttributeString(L"MipMapLODBias", StringUtils::ToString(MipMapLODBias));
+				sect->AddAttributeString(L"MaxAnisotropy", StringUtils::IntToString(MaxAnisotropy));
+				sect->AddAttributeString(L"MaxMipLevel", StringUtils::IntToString(MaxMipLevel));
+				sect->AddAttributeString(L"MipMapLODBias", StringUtils::IntToString(MipMapLODBias));
 
 
 			}

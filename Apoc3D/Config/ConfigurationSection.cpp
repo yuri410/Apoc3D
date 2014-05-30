@@ -435,11 +435,11 @@ namespace Apoc3D
 			AddSection(ss);
 		}
 
-		void ConfigurationSection::AddBool(const String& key, bool value)				{ AddStringValue(key, StringUtils::ToString(value)); }
-		void ConfigurationSection::AddSingle(const String& key, float value)			{ AddStringValue(key, StringUtils::ToString(value)); }
+		void ConfigurationSection::AddBool(const String& key, bool value)				{ AddStringValue(key, StringUtils::BoolToString(value)); }
+		void ConfigurationSection::AddSingle(const String& key, float value)			{ AddStringValue(key, StringUtils::SingleToString(value)); }
 		void ConfigurationSection::AddPercentage(const String& key, float value)		{ AddStringValue(key, PercentageToString(value)); }
-		void ConfigurationSection::AddInt(const String& key, int32 value)				{ AddStringValue(key, StringUtils::ToString(value)); }
-		void ConfigurationSection::AddUInt(const String& key, uint32 value)				{ AddStringValue(key, StringUtils::ToString(value)); }
+		void ConfigurationSection::AddInt(const String& key, int32 value)				{ AddStringValue(key, StringUtils::IntToString(value)); }
+		void ConfigurationSection::AddUInt(const String& key, uint32 value)				{ AddStringValue(key, StringUtils::UIntToString(value)); }
 		void ConfigurationSection::AddColorValue(const String& key, ColorValue value)	{ AddStringValue(key, ColorValueToString(value)); }
 
 		void ConfigurationSection::AddStrings(const String& key, const String* v, int count)
@@ -492,11 +492,11 @@ namespace Apoc3D
 				}
 			}
 		}
-		void ConfigurationSection::AddAttributeBool(const String& name, bool val)				{ AddAttributeString(name, StringUtils::ToString(val)); }
-		void ConfigurationSection::AddAttributeSingle(const String& name, float val)			{ AddAttributeString(name, StringUtils::ToString(val)); }
+		void ConfigurationSection::AddAttributeBool(const String& name, bool val)				{ AddAttributeString(name, StringUtils::BoolToString(val)); }
+		void ConfigurationSection::AddAttributeSingle(const String& name, float val)			{ AddAttributeString(name, StringUtils::SingleToString(val)); }
 		void ConfigurationSection::AddAttributePercentage(const String& name, float val)		{ AddAttributeString(name, PercentageToString(val)); }
-		void ConfigurationSection::AddAttributeInt(const String& name, int32 val)				{ AddAttributeString(name, StringUtils::ToString(val)); }
-		void ConfigurationSection::AddAttributeUInt(const String& name, uint32 val)			{ AddAttributeString(name, StringUtils::ToString(val)); }
+		void ConfigurationSection::AddAttributeInt(const String& name, int32 val)				{ AddAttributeString(name, StringUtils::IntToString(val)); }
+		void ConfigurationSection::AddAttributeUInt(const String& name, uint32 val)			{ AddAttributeString(name, StringUtils::UIntToString(val)); }
 		void ConfigurationSection::AddAttributeColorValue(const String& name, ColorValue val)	{ AddAttributeString(name, ColorValueToString(val)); }
 
 		void ConfigurationSection::AddAttributeStrings(const String& name, const String* v, int count)
@@ -537,16 +537,16 @@ namespace Apoc3D
 			ss->SetValue(value);
 		}
 
-		void ConfigurationSection::SetBool(bool value)									{ m_value = StringUtils::ToString(value); }
-		void ConfigurationSection::SetBool(const String& name, bool value)				{ SetStringValue(name, StringUtils::ToString(value)); }
-		void ConfigurationSection::SetSingle(float value)								{ m_value = StringUtils::ToString(value); }
-		void ConfigurationSection::SetSingle(const String& name, float value)			{ SetStringValue(name, StringUtils::ToString(value)); }
+		void ConfigurationSection::SetBool(bool value)									{ m_value = StringUtils::BoolToString(value); }
+		void ConfigurationSection::SetBool(const String& name, bool value)				{ SetStringValue(name, StringUtils::BoolToString(value)); }
+		void ConfigurationSection::SetSingle(float value)								{ m_value = StringUtils::SingleToString(value); }
+		void ConfigurationSection::SetSingle(const String& name, float value)			{ SetStringValue(name, StringUtils::SingleToString(value)); }
 		void ConfigurationSection::SetPercentage(float value)							{ m_value = PercentageToString(value); }
 		void ConfigurationSection::SetPercentage(const String& name, float value)		{ SetStringValue(name, PercentageToString(value)); }
-		void ConfigurationSection::SetInt(int32 value)									{ m_value = StringUtils::ToString(value); }
-		void ConfigurationSection::SetInt(const String& name, int32 value)				{ SetStringValue(name, StringUtils::ToString(value)); }
-		void ConfigurationSection::SetUInt(uint32 value)								{ m_value = StringUtils::ToString(value); }
-		void ConfigurationSection::SetUInt(const String& name, uint32 value)			{ SetStringValue(name, StringUtils::ToString(value)); }
+		void ConfigurationSection::SetInt(int32 value)									{ m_value = StringUtils::IntToString(value); }
+		void ConfigurationSection::SetInt(const String& name, int32 value)				{ SetStringValue(name, StringUtils::IntToString(value)); }
+		void ConfigurationSection::SetUInt(uint32 value)								{ m_value = StringUtils::UIntToString(value); }
+		void ConfigurationSection::SetUInt(const String& name, uint32 value)			{ SetStringValue(name, StringUtils::UIntToString(value)); }
 		void ConfigurationSection::SetColorValue(ColorValue value)						{ m_value = ColorValueToString(value); }
 		void ConfigurationSection::SetColorValue(const String& name, ColorValue value)	{ SetStringValue(name, ColorValueToString(value)); }
 
@@ -606,7 +606,7 @@ namespace Apoc3D
 		{
 			for (int i=0;i<count;i++)
 			{
-				result.append(StringUtils::ToString(v[i]));
+				result.append(StringUtils::SingleToString(v[i]));
 				if (i != count - 1)
 					result.append(1, ',');
 			}
@@ -624,7 +624,7 @@ namespace Apoc3D
 		{
 			for (int i=0;i<count;i++)
 			{
-				result.append(StringUtils::ToString(v[i]));
+				result.append(StringUtils::IntToString(v[i]));
 				if (i != count - 1)
 					result.append(1, ',');
 			}
@@ -633,7 +633,7 @@ namespace Apoc3D
 		{
 			for (int i=0;i<count;i++)
 			{
-				result.append(StringUtils::ToString(v[i]));
+				result.append(StringUtils::UIntToString(v[i]));
 				if (i != count - 1)
 					result.append(1, ',');
 			}
@@ -680,7 +680,7 @@ namespace Apoc3D
 		}
 		String PercentageToString(float v)
 		{
-			String result = StringUtils::ToString(v);
+			String result = StringUtils::SingleToString(v);
 			result.append(L"%");
 			return result;
 		}
@@ -719,16 +719,16 @@ namespace Apoc3D
 			String result;
 			if (a == 0xff)
 			{
-				result.append(StringUtils::ToString(r));
-				result.append(StringUtils::ToString(g));
-				result.append(StringUtils::ToString(b));
+				result.append(StringUtils::UIntToString(r));
+				result.append(StringUtils::UIntToString(g));
+				result.append(StringUtils::UIntToString(b));
 			}
 			else
 			{
-				result.append(StringUtils::ToString(r));
-				result.append(StringUtils::ToString(g));
-				result.append(StringUtils::ToString(b));
-				result.append(StringUtils::ToString(a));
+				result.append(StringUtils::UIntToString(r));
+				result.append(StringUtils::UIntToString(g));
+				result.append(StringUtils::UIntToString(b));
+				result.append(StringUtils::UIntToString(a));
 			}
 			return result;
 		}

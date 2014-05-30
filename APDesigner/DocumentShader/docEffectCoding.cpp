@@ -285,7 +285,7 @@ namespace APDesigner
 			if (ep.Usage == EPUSAGE_CustomMaterialParam)
 				sect->AddAttributeString(L"CustomUsage", ep.CustomMaterialParamName);
 			else if (ep.Usage == EPUSAGE_CustomMaterialParam)
-				sect->AddAttributeString(L"BlobIndex", StringUtils::ToString(ep.InstanceBlobIndex));
+				sect->AddAttributeString(L"BlobIndex", StringUtils::IntToString(ep.InstanceBlobIndex));
 
 			if (ep.RegisterIndex == 99)
 				ep.SamplerState.Save(sect);
@@ -788,13 +788,13 @@ namespace APDesigner
 		cbTemp->setSelectedIndex(idx);
 		hasSamplerState |= p.SamplerState.MipFilter != TFLT_None;
 
-		(isVS ? m_tbVsMaxAnisotropy : m_tbPsMaxAnisotropy)->setText(StringUtils::ToString(p.SamplerState.MaxAnisotropy));
+		(isVS ? m_tbVsMaxAnisotropy : m_tbPsMaxAnisotropy)->setText(StringUtils::IntToString(p.SamplerState.MaxAnisotropy));
 		hasSamplerState |= p.SamplerState.MaxAnisotropy!=1;
 
-		(isVS ? m_tbVsMaxMipLevel : m_tbPsMaxMipLevel)->setText(StringUtils::ToString(p.SamplerState.MaxMipLevel));
+		(isVS ? m_tbVsMaxMipLevel : m_tbPsMaxMipLevel)->setText(StringUtils::IntToString(p.SamplerState.MaxMipLevel));
 		hasSamplerState |= !!p.SamplerState.MaxMipLevel;
 
-		(isVS ? m_tbVsMipMapLODBias : m_tbPsMipMapLODBias)->setText(StringUtils::ToString(p.SamplerState.MipMapLODBias));
+		(isVS ? m_tbVsMipMapLODBias : m_tbPsMipMapLODBias)->setText(StringUtils::IntToString(p.SamplerState.MipMapLODBias));
 		hasSamplerState |= !!p.SamplerState.MipMapLODBias;
 
 		if (p.Usage >= EPUSAGE_Tex0 && p.Usage <= EPUSAGE_Tex16)

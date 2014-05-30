@@ -39,7 +39,7 @@ namespace Apoc3D
 		
 		text.append(L" @ Line ");
 
-		text.append(StringUtils::ToString(line));
+		text.append(StringUtils::IntToString(line));
 		text.append(L", ");
 		text.append(file);
 

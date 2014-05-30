@@ -1584,15 +1584,15 @@ namespace Apoc3D
 			bytesUsed /= 1048576;
 
 			String msg = L"[FontManager] ";
-			msg.append(StringUtils::ToString(m_fontTable.getCount()));
+			msg.append(StringUtils::IntToString(m_fontTable.getCount()));
 			msg.append(L" fonts currently loaded using ");
-			msg.append(StringUtils::ToString(bytesUsed));
+			msg.append(StringUtils::IntToString(bytesUsed));
 			msg.append(L"MB");
 
 			if (numCmpFont>0)
 			{
 				msg.append(L" including ");
-				msg.append(StringUtils::ToString(numCmpFont));
+				msg.append(StringUtils::IntToString(numCmpFont));
 				msg.append(L" complex fonts.");
 			}
 			else
@@ -1645,7 +1645,7 @@ namespace Apoc3D
 						String name = fl ? PathUtils::GetFileNameNoExt(fl->getName()) : fnt->m_resource->getName();
 						msg.append(name);
 						msg.append(L"(");
-						msg.append(StringUtils::ToString(fnt->m_selectTextureSize));
+						msg.append(StringUtils::IntToString(fnt->m_selectTextureSize));
 						msg.append(L")");
 						counter++;
 

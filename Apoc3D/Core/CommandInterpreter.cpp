@@ -270,21 +270,21 @@ namespace Apoc3D
 				ResourceManager* mgr = list[index];
 				String msg = mgr->getName();
 				msg.append(L"  |  [");
-				msg.append(StringUtils::ToString(mgr->getUsedCacheSize() / 1048576.0f, 1, 0, ' '));
+				msg.append(StringUtils::SingleToString(mgr->getUsedCacheSize() / 1048576.0f, 1, 0, ' '));
 				msg.append(L"MB / ");
-				msg.append(StringUtils::ToString(mgr->getTotalCacheSize() / 1048576.0f, 1, 0, ' '));
+				msg.append(StringUtils::SingleToString(mgr->getTotalCacheSize() / 1048576.0f, 1, 0, ' '));
 				msg.append(L"MB]");
 				if (mgr->usesAsync())
 				{
 					msg.append(L" [OP = ");
-					msg.append(StringUtils::ToString(mgr->GetCurrentOperationCount()));
+					msg.append(StringUtils::IntToString(mgr->GetCurrentOperationCount()));
 					msg.append(L"] [Async]");
 				}
 
 				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
 
 				msg = L"Managing ";
-				msg.append(StringUtils::ToString(mgr->getResourceCount()));
+				msg.append(StringUtils::IntToString(mgr->getResourceCount()));
 				msg.append(L" resources.");
 
 				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
@@ -298,7 +298,7 @@ namespace Apoc3D
 			const ResourceManager::ManagerList& list = ResourceManager::getManagerInstances();
 			for (int32 i=0;i<list.getCount();i++)
 			{
-				LogManager::getSingleton().Write(LOG_CommandResponse, L"  " + StringUtils::ToString(i+1) + L". " + list[i]->getName(), LOGLVL_Infomation);
+				LogManager::getSingleton().Write(LOG_CommandResponse, L"  " + StringUtils::IntToString(i+1) + L". " + list[i]->getName(), LOGLVL_Infomation);
 			}
 		}
 		void ResReloadCommand(CommandArgsConstRef args)

@@ -33,7 +33,7 @@ namespace Apoc3D
 	{
 		String IHashed::GetHashString() const
 		{
-			return StringUtils::ToString(GetHashCode());
+			return StringUtils::UIntToString(GetHashCode());
 		}
 	}
 }

@@ -45,7 +45,7 @@ namespace Apoc3D
 			: ResourceManager(L"Model Manager ", CacheSize, UseCache)
 		{
 			LogManager::getSingleton().Write(LOG_System, 
-				L"Model manager initialized with a cache size " + StringUtils::ToString(CacheSize) + (UseCache ? L". Use async streaming." : L"."), 
+				L"Model manager initialized with a cache size " + StringUtils::IntToString(CacheSize) + (UseCache ? L". Use async streaming." : L"."), 
 				LOGLVL_Infomation);
 		}
 

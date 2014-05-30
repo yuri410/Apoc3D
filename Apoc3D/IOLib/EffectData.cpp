@@ -286,12 +286,12 @@ namespace Apoc3D
 
 			TaggedDataReader* data = br->ReadTaggedDataBlock();
 
-			int count = data->GetDataInt32(TAG_3_ParameterCountTag);
+			int32 count = data->GetDataInt32(TAG_3_ParameterCountTag);
 			Profiles->Parameters.ResizeDiscard(count);
 
-			for (int i=0;i<count;i++)
+			for (int32 i=0;i<count;i++)
 			{
-				String tag = StringUtils::ToString(i);
+				String tag = StringUtils::IntToString(i);
 				tag = TAG_3_ParameterTag + tag;
 
 				BinaryReader* br2 = data->GetData(tag);
@@ -315,7 +315,7 @@ namespace Apoc3D
 				br2->Close();
 				delete br2;
 
-				tag = StringUtils::ToString(i);
+				tag = StringUtils::IntToString(i);
 				tag = TAG_3_ParameterSamplerStateTag + tag;
 
 				if (data->Contains(tag))
@@ -331,7 +331,7 @@ namespace Apoc3D
 					params.SamplerState.MaxMipLevel = br2->ReadInt32();
 					params.SamplerState.MinFilter = static_cast<TextureFilter>(br2->ReadUInt32());
 					params.SamplerState.MipFilter = static_cast<TextureFilter>(br2->ReadUInt32());
-					params.SamplerState.MipMapLODBias = br2->ReadUInt32();
+					params.SamplerState.MipMapLODBias = br2->ReadInt32();
 
 					br2->Close();
 					delete br2;
@@ -385,12 +385,12 @@ namespace Apoc3D
 
 			TaggedDataReader* data = br->ReadTaggedDataBlock();
 
-			int count = data->GetDataInt32(TAG_3_ParameterCountTag);
+			int32 count = data->GetDataInt32(TAG_3_ParameterCountTag);
 			Profiles->Parameters.ResizeDiscard(count);
 
-			for (int i=0;i<count;i++)
+			for (int32 i=0;i<count;i++)
 			{
-				String tag = StringUtils::ToString(i);
+				String tag = StringUtils::IntToString(i);
 				tag = TAG_3_ParameterTag + tag;
 				BinaryReader* br2 = data->GetData(tag);
 
@@ -407,7 +407,7 @@ namespace Apoc3D
 				br2->Close();
 				delete br2;
 
-				tag = StringUtils::ToString(i);
+				tag = StringUtils::IntToString(i);
 				tag = TAG_3_ParameterSamplerStateTag + tag;
 
 				if (data->Contains(tag))
@@ -423,7 +423,7 @@ namespace Apoc3D
 					params.SamplerState.MaxMipLevel = br2->ReadInt32();
 					params.SamplerState.MinFilter = static_cast<TextureFilter>(br2->ReadUInt32());
 					params.SamplerState.MipFilter = static_cast<TextureFilter>(br2->ReadUInt32());
-					params.SamplerState.MipMapLODBias = br2->ReadUInt32();
+					params.SamplerState.MipMapLODBias = br2->ReadInt32();
 
 					br2->Close();
 					delete br2;

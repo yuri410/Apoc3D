@@ -382,12 +382,12 @@ namespace Apoc3D
 
 		void ModelData::ReadData(TaggedDataReader* data, int32 id)
 		{
-			int entCount = data->GetDataInt32(TAG_3_EntityCountTag);
+			int32 entCount = data->GetDataInt32(TAG_3_EntityCountTag);
 			Entities.ResizeDiscard(entCount);
 
-			for (int i=0;i<entCount;i++)
+			for (int32 i=0;i<entCount;i++)
 			{
-				String tag = StringUtils::ToString(i);
+				String tag = StringUtils::IntToString(i);
 				tag = TAG_3_EntityPrefix + tag;
 				BinaryReader* br = data->GetData(tag);
 
@@ -461,9 +461,9 @@ namespace Apoc3D
 
 			data->AddEntryInt32(TAG_3_EntityCountTag, static_cast<int32>(Entities.getCount()));
 
-			for (int i=0;i<Entities.getCount();i++)
+			for (int32 i=0;i<Entities.getCount();i++)
 			{
-				String tag = StringUtils::ToString(i);
+				String tag = StringUtils::IntToString(i);
 				tag = TAG_3_EntityPrefix + tag;
 				BinaryWriter* bw = data->AddEntry(tag);
 

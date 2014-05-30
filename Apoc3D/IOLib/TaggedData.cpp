@@ -1604,7 +1604,7 @@ namespace Apoc3D
 
 				if (memBlock->getLength()>8)
 				{
-					text = StringUtils::ToString(memBlock->getLength()) + L" bytes";
+					text = StringUtils::IntToString(memBlock->getLength()) + L" bytes";
 				}
 				else
 				{

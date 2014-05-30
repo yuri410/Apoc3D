@@ -83,7 +83,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					ApocLog(LOG_System, L"[Randomizer] Called from thread " + StringUtils::ToString(id) + L". Unsafe!", LOGLVL_Warning);
+					ApocLog(LOG_System, L"[Randomizer] Called from thread " + StringUtils::UIntToString(id) + L". Unsafe!", LOGLVL_Warning);
 
 #if _WIN32
 					DebugBreak();

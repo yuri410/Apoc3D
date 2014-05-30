@@ -86,7 +86,7 @@ namespace Apoc3D
 		//////////////////////////////////////////////////////////////////////////
 
 		MemoryLocation::MemoryLocation(void* pos, int64 size)
-			: ResourceLocation(L"[ADDR]" + StringUtils::ToString(size), size), m_data(pos)
+			: ResourceLocation(L"[ADDR]" + StringUtils::IntToString(size), size), m_data(pos)
 		{
 		}
 
@@ -102,7 +102,7 @@ namespace Apoc3D
 		//////////////////////////////////////////////////////////////////////////
 
 		StreamLocation::StreamLocation(Stream* strm)
-			: ResourceLocation(L"[STRM]" + StringUtils::ToStringHex((uint64)strm), strm->getLength()), 
+			: ResourceLocation(L"[STRM]" + StringUtils::UIntToStringHex((uint64)strm), strm->getLength()), 
 			m_stream(strm)
 		{
 

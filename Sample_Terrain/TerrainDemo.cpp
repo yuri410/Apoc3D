@@ -383,15 +383,15 @@ namespace SampleTerrain
 
 		//m_device->getRenderState()->SetAlphaBlend(true, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, 0);
 
-		fnt->DrawString(m_sprite, L"Operations: " + StringUtils::ToString(op), Point(x,y), CV_White);
+		fnt->DrawString(m_sprite, L"Operations: " + StringUtils::IntToString(op), Point(x,y), CV_White);
 		y+=35;
-		fnt->DrawString(m_sprite, L"Cache Usage: " + StringUtils::ToString(usage/1048576) + L"/" + StringUtils::ToString(total/1048576) + L"MB", Point(x,y), CV_White);
+		fnt->DrawString(m_sprite, L"Cache Usage: " + StringUtils::IntToString(usage/1048576) + L"/" + StringUtils::IntToString(total/1048576) + L"MB", Point(x,y), CV_White);
 		y+=35;
-		fnt->DrawString(m_sprite, L"Batch Count: " + StringUtils::ToString(m_device->getBatchCount()), Point(x,y), CV_White);
+		fnt->DrawString(m_sprite, L"Batch Count: " + StringUtils::UIntToString(m_device->getBatchCount()), Point(x,y), CV_White);
 		y+=35;
-		fnt->DrawString(m_sprite, L"Primitive Count: " + StringUtils::ToString(m_device->getPrimitiveCount()), Point(x,y), CV_White);
+		fnt->DrawString(m_sprite, L"Primitive Count: " + StringUtils::UIntToString(m_device->getPrimitiveCount()), Point(x,y), CV_White);
 		y+=35;
-		fnt->DrawString(m_sprite, L"FPS: " + StringUtils::ToString(m_window->getFPS(), 0, 0), Point(x,y), CV_White);
+		fnt->DrawString(m_sprite, L"FPS: " + StringUtils::SingleToString(m_window->getFPS(), 0, 0), Point(x,y), CV_White);
 
 		x = vp.Width - 180;
 		y = vp.Height - 120;

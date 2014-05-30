@@ -145,9 +145,9 @@ namespace APDesigner
 			row[1] = GraphicsCommonUtils::ToString(type->getShaderType());
 			
 			row[2] = L"SM ";
-			row[2].append(StringUtils::ToString(type->getMajorSMVersion()));
+			row[2].append(StringUtils::IntToString(type->getMajorSMVersion()));
 			row[2].append(L".");
-			row[2].append(StringUtils::ToString(type->getMinorSMVersion()));
+			row[2].append(StringUtils::IntToString(type->getMinorSMVersion()));
 
 			m_atomList->getItems().AddRow(row);
 		}

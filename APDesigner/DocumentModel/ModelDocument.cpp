@@ -117,7 +117,7 @@ namespace APDesigner
 			items.Add(L"First Pass");
 			for (int32 i=0;i<MaxScenePass;i++)
 			{
-				items.Add(L"Pass " + StringUtils::ToString(i));
+				items.Add(L"Pass " + StringUtils::IntToString(i));
 			}
 			m_passViewSelect = new ComboBox(Point(m_modelViewer->Position.X, m_modelViewer->Position.Y - lineHeight), 150, items);
 			m_passViewSelect->SetSkin(window->getUISkin());
@@ -853,15 +853,15 @@ namespace APDesigner
 				hasSkin |= !!VertexElement::FindElementBySemantic(m_modelSData->getEntities()[i]->getVertexElement(), VEU_BlendWeight);
 			}
 		}
-		String message = L"Vertex Count: " + StringUtils::ToString(totalVertexCount);
+		String message = L"Vertex Count: " + StringUtils::IntToString(totalVertexCount);
 		message.append(L"\nFace Count:");
-		message.append(StringUtils::ToString(totalFaceCount));
+		message.append(StringUtils::IntToString(totalFaceCount));
 		if (hasSkin)
 		{
 			message.append(L"\n");
 			message.append(L"Skinned");
 		}
-		message.append(L"\nZ: " + StringUtils::ToString(m_distance,1));
+		message.append(L"\nZ: " + StringUtils::SingleToString(m_distance,1));
 
 		font->DrawString(sprite, message, Point(dstRect->X+11, dstRect->Y+11), CV_Black);
 		font->DrawString(sprite, message, Point(dstRect->X+10, dstRect->Y+10), CV_White);
@@ -925,7 +925,7 @@ namespace APDesigner
 
 			for (int32 i=0;i<mtrls->getMaterialCount();i++)
 			{
-				m_cbMeshPart->getItems().Add(L"Part(Material Set)" + StringUtils::ToString(i, 4, '0'));
+				m_cbMeshPart->getItems().Add(L"Part(Material Set)" + StringUtils::IntToString(i, 4, '0'));
 			}
 		}
 	}
@@ -944,7 +944,7 @@ namespace APDesigner
 			{
 				for (int32 i=0;i<mtrls->getFrameCount(partIdx);i++)
 				{
-					m_cbSubMtrl->getItems().Add(L"Frame(Material)" + StringUtils::ToString(i, 4, '0'));
+					m_cbSubMtrl->getItems().Add(L"Frame(Material)" + StringUtils::IntToString(i, 4, '0'));
 				}
 			}
 		}
@@ -1055,7 +1055,7 @@ namespace APDesigner
 				m_cfSpecular->SetValue(mtrl->Specular);
 				m_cfEmissive->SetValue(mtrl->Emissive);
 
-				m_tbShinness->Text = StringUtils::ToString(mtrl->Power);
+				m_tbShinness->Text = StringUtils::SingleToString(mtrl->Power);
 
 				m_tbTex1->setText(mtrl->getTextureName(0));
 				m_tbTex2->setText(mtrl->getTextureName(1));
@@ -1063,8 +1063,8 @@ namespace APDesigner
 				m_tbTex4->setText(mtrl->getTextureName(3));
 				m_tbTex5->setText(mtrl->getTextureName(4));
 
-				m_tbPriority->setText(StringUtils::ToString(mtrl->getPriority()));
-				m_tbAlphaTest->setText(StringUtils::ToString(mtrl->AlphaReference));
+				m_tbPriority->setText(StringUtils::UIntToString(mtrl->getPriority()));
+				m_tbAlphaTest->setText(StringUtils::UIntToString(mtrl->AlphaReference));
 
 				m_cbDepthTest->setValue(mtrl->DepthTestEnabled);
 				m_cbDepthWrite->setValue(mtrl->DepthWriteEnabled);

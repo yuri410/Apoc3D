@@ -320,11 +320,11 @@ namespace APDesigner
 					String msg = L"Type: 2D.\nFormat: ";
 					msg.append(PixelFormatUtils::ToString(m_texture->getFormat()));
 					msg.append(L"\nDimension:");
-					msg.append(StringUtils::ToString(m_texture->getWidth()));
+					msg.append(StringUtils::IntToString(m_texture->getWidth()));
 					msg.append(1,'x');
-					msg.append(StringUtils::ToString(m_texture->getHeight()));
+					msg.append(StringUtils::IntToString(m_texture->getHeight()));
 					msg.append(L"\nMip Levels:");
-					msg.append(StringUtils::ToString(m_texture->getLevelCount()));	
+					msg.append(StringUtils::IntToString(m_texture->getLevelCount()));	
 					
 					m_pictureBox->getFontRef()->DrawString(sprite, msg, Point(5+dr.X, 6+dr.Y), CV_Black);
 					m_pictureBox->getFontRef()->DrawString(sprite, msg, Point(5+dr.X, 5+dr.Y), CV_White);
@@ -389,7 +389,7 @@ namespace APDesigner
 
 		float scale = powf(2, (float)m_scale);
 
-		String scaleRatio = String(L" (") +StringUtils::ToString(scale*100,2,0,' ', std::ios::fixed);
+		String scaleRatio = String(L" (") +StringUtils::SingleToString(scale*100,2,0,' ', std::ios::fixed);
 		scaleRatio.append(L"%)");
 
 		getDocumentForm()->setTitle(m_name + scaleRatio);
@@ -402,7 +402,7 @@ namespace APDesigner
 
 		float scale = powf(2, (float)m_scale);
 
-		String scaleRatio = String(L" (") +StringUtils::ToString(scale*100,2,0,' ', std::ios::fixed);
+		String scaleRatio = String(L" (") +StringUtils::SingleToString(scale*100,2,0,' ', std::ios::fixed);
 		scaleRatio.append(L"%)");
 
 		getDocumentForm()->setTitle(m_name + scaleRatio);

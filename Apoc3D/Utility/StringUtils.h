@@ -87,23 +87,40 @@ namespace Apoc3D
 			static double ParseDouble(const std::string& val);
 
 
-			static String ToString(int16 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
-			static String ToString(int32 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
-			static String ToString(int64 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
-			static String ToString(float val, uint16 precision = 6, uint16 width = 0, char fill = ' ', 
+
+			static String IntToString(int16 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static String IntToString(int32 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static String IntToString(int64 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static String SingleToString(float val, uint16 precision = 6, uint16 width = 0, wchar_t fill = ' ', 
 				std::ios::fmtflags flags = std::ios::fmtflags(std::ios::fixed) );
-			static String ToString(const wchar_t* val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			
+			static String UIntToString(uint16 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static String UIntToString(uint32 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static String UIntToString(uint64 val, uint16 width = 0, wchar_t fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
-			static String ToString(uint16 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
-			static String ToString(uint32 val, uint16 width=0, wchar_t fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static String UIntToStringHex(uint32 val, uint16 width = 0);
+			static String UIntToStringHex(uint64 val, uint16 width = 0);
+			static String UIntToStringBin(uint64 val);
 
-			static String ToStringHex(uint32 val, uint16 width = 0);
-			static String ToStringHex(uint64 val, uint16 width = 0);
-			static String ToStringBin(uint64 val);
+			static String BoolToString(bool val);
 
-			static String ToString(uint64 val, uint16 width = 0, wchar_t fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
 
-			static String ToString(bool val);
+
+			static std::string IntToNarrowString(int16 val, uint16 width=0, char fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static std::string IntToNarrowString(int32 val, uint16 width=0, char fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static std::string IntToNarrowString(int64 val, uint16 width=0, char fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static std::string SingleToNarrowString(float val, uint16 precision = 6, uint16 width = 0, char fill = ' ', 
+				std::ios::fmtflags flags = std::ios::fmtflags(std::ios::fixed) );
+			
+			static std::string UIntToNarrowString(uint16 val, uint16 width=0, char fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static std::string UIntToNarrowString(uint32 val, uint16 width=0, char fill=' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+			static std::string UIntToNarrowString(uint64 val, uint16 width = 0, char fill = ' ', std::ios::fmtflags flags = std::ios::fmtflags(0));
+
+			static std::string UIntToNarrowStringHex(uint32 val, uint16 width = 0);
+			static std::string UIntToNarrowStringHex(uint64 val, uint16 width = 0);
+			static std::string UIntToNarrowStringBin(uint64 val);
+
+			static std::string BoolToNarrowString(bool val);
 
 
 

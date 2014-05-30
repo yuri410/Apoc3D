@@ -52,9 +52,9 @@ namespace Apoc3D
 				TextureFilter MagFilter;
 				TextureFilter MinFilter;
 				TextureFilter MipFilter;
-				int MaxAnisotropy;
-				int MaxMipLevel;
-				uint32 MipMapLODBias;
+				int32 MaxAnisotropy;
+				int32 MaxMipLevel;
+				int32 MipMapLODBias;
 
 				ShaderSamplerState();
 				void Parse(const ConfigurationSection* sect);

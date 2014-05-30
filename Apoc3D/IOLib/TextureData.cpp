@@ -196,10 +196,10 @@ namespace Apoc3D
 
 				if (!doNotLoadLevel)
 				{
-					for (int i = 0; i < LevelCount; i++)
+					for (int32 i = 0; i < LevelCount; i++)
 					{
 						String levelName = Tag_Level;
-						const String temp = StringUtils::ToString(i);
+						const String temp = StringUtils::IntToString(i);
 						levelName.append(temp);
 
 						BinaryReader* br2 = data->GetData(levelName);
@@ -281,10 +281,10 @@ namespace Apoc3D
 			data->AddEntryInt32(Tag_LevelCount, LevelCount);
 			data->AddEntryInt32(Tag_Flags, Flags);
 
-			for (int i = 0; i < LevelCount; i++)
+			for (int32 i = 0; i < LevelCount; i++)
 			{
 				String levelName = Tag_Level;
-				const String temp = StringUtils::ToString(i);
+				const String temp = StringUtils::IntToString(i);
 				levelName.append(temp);
 
 				BinaryWriter* bw2 = data->AddEntry(levelName);

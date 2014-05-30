@@ -619,7 +619,7 @@ namespace APDesigner
 			m_cfSpecular->SetValue(mtrl->Specular);
 			m_cfEmissive->SetValue(mtrl->Emissive);
 
-			m_tbShinness->Text = StringUtils::ToString(mtrl->Power);
+			m_tbShinness->Text = StringUtils::SingleToString(mtrl->Power);
 
 			m_tbTex1->setText(mtrl->getTextureName(0));
 			m_tbTex2->setText(mtrl->getTextureName(1));
@@ -627,8 +627,8 @@ namespace APDesigner
 			m_tbTex4->setText(mtrl->getTextureName(3));
 			m_tbTex5->setText(mtrl->getTextureName(4));
 
-			m_tbPriority->setText(StringUtils::ToString(mtrl->getPriority()));
-			m_tbAlphaTest->setText(StringUtils::ToString(mtrl->AlphaReference));
+			m_tbPriority->setText(StringUtils::UIntToString(mtrl->getPriority()));
+			m_tbAlphaTest->setText(StringUtils::UIntToString(mtrl->AlphaReference));
 
 			m_cbDepthTest->setValue(mtrl->DepthTestEnabled);
 			m_cbDepthWrite->setValue(mtrl->DepthWriteEnabled);
@@ -784,7 +784,7 @@ namespace APDesigner
 		{
 			for (int j=0;j<16;j++)
 			{
-				Label* lbl = new Label(Point(i * 250+ofsX,j * 25+ofsY), L"Pass " + StringUtils::ToString(counter++), 50);
+				Label* lbl = new Label(Point(i * 250+ofsX,j * 25+ofsY), L"Pass " + StringUtils::IntToString(counter++), 50);
 				lbl->SetSkin(window->getUISkin());
 				m_lblTable.Add(lbl);
 

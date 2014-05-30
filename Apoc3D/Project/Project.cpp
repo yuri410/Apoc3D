@@ -119,7 +119,7 @@ namespace Apoc3D
 				List<String> itemOutputs = item->GetAllOutputFiles();
 				for (int32 j=0;j<itemOutputs.getCount();j++)
 				{
-					ConfigurationSection* e = new ConfigurationSection(L"Entry" + StringUtils::ToString(idx++));
+					ConfigurationSection* e = new ConfigurationSection(L"Entry" + StringUtils::IntToString(idx++));
 					e->AddAttributeString(L"FilePath", itemOutputs[j]);
 					sect->AddSection(e);
 				}
@@ -322,9 +322,9 @@ namespace Apoc3D
 				sect->AddAttributeString(L"Assemble", L"volume");
 				
 				ConfigurationSection* srcsect = new ConfigurationSection(L"Source");
-				for (int i=0;i<SubMapTable.getCount();i++)
+				for (int32 i=0;i<SubMapTable.getCount();i++)
 				{
-					ConfigurationSection* es = new ConfigurationSection(String(L"Slice") + StringUtils::ToString(i));
+					ConfigurationSection* es = new ConfigurationSection(String(L"Slice") + StringUtils::IntToString(i));
 					es->AddAttributeString(L"FilePath", SubMapTable[i]);
 
 					srcsect->AddSection(es);
@@ -332,9 +332,9 @@ namespace Apoc3D
 				sect->AddSection(srcsect);
 
 				srcsect = new ConfigurationSection(L"AlphaSource");
-				for (int i=0;i<SubAlphaMapTable.getCount();i++)
+				for (int32 i=0;i<SubAlphaMapTable.getCount();i++)
 				{
-					ConfigurationSection* es = new ConfigurationSection(String(L"Slice") + StringUtils::ToString(i));
+					ConfigurationSection* es = new ConfigurationSection(String(L"Slice") + StringUtils::IntToString(i));
 					es->AddAttributeString(L"FilePath", SubAlphaMapTable[i]);
 
 					srcsect->AddSection(es);
@@ -349,13 +349,13 @@ namespace Apoc3D
 		}
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationFile) : DestinationFile);
 		if (GenerateMipmaps)
-			sect->AddAttributeString(L"GenerateMipmaps", StringUtils::ToString(GenerateMipmaps));
+			sect->AddAttributeString(L"GenerateMipmaps", StringUtils::BoolToString(GenerateMipmaps));
 
 		if (Resize)
 		{
-			sect->AddAttributeString(L"Width", StringUtils::ToString(NewWidth));
-			sect->AddAttributeString(L"Height", StringUtils::ToString(NewHeight));
-			sect->AddAttributeString(L"Depth", StringUtils::ToString(NewDepth));
+			sect->AddAttributeString(L"Width", StringUtils::IntToString(NewWidth));
+			sect->AddAttributeString(L"Height", StringUtils::IntToString(NewHeight));
+			sect->AddAttributeString(L"Depth", StringUtils::IntToString(NewDepth));
 
 			sect->AddAttributeString(L"ResizeFilter", ProjectTypeUtils::ToString(ResizeFilterType));
 		}
@@ -595,7 +595,7 @@ namespace Apoc3D
 	void ProjectResFont::Save(ConfigurationSection* sect, bool savingBuild)
 	{
 		sect->AddAttributeString(L"Name", savingBuild ? PathUtils::Combine(m_project->getBasePath(), Name) : Name);
-		sect->AddAttributeString(L"Size", StringUtils::ToString(Size));
+		sect->AddAttributeString(L"Size", StringUtils::SingleToString(Size));
 
 		sect->AddAttributeBool(L"AntiAlias", AntiAlias);
 
@@ -621,11 +621,11 @@ namespace Apoc3D
 
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 
-		for (int i=0;i<Ranges.getCount();i++)
+		for (int32 i=0;i<Ranges.getCount();i++)
 		{
-			ConfigurationSection* ss = new ConfigurationSection(String(L"Range") + StringUtils::ToString(i));
-			ss->AddAttributeString(L"Start", StringUtils::ToString( Ranges[i].MinChar));
-			ss->AddAttributeString(L"End", StringUtils::ToString( Ranges[i].MaxChar));
+			ConfigurationSection* ss = new ConfigurationSection(String(L"Range") + StringUtils::IntToString(i));
+			ss->AddAttributeString(L"Start", StringUtils::IntToString( Ranges[i].MinChar));
+			ss->AddAttributeString(L"End", StringUtils::IntToString( Ranges[i].MaxChar));
 
 			sect->AddSection(ss);
 		}
@@ -1093,7 +1093,7 @@ namespace Apoc3D
 				ConfigurationSection* vs;
 				if (ve.getUsage() == VEU_TextureCoordinate)
 				{
-					String idxText = StringUtils::ToString(ve.getIndex());
+					String idxText = StringUtils::IntToString(ve.getIndex());
 					vs = new ConfigurationSection(GraphicsCommonUtils::ToString(ve.getUsage()) + idxText);
 					vs->SetValue(idxText);
 				}
@@ -1215,13 +1215,13 @@ namespace Apoc3D
 	{
 		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
-		sect->AddAttributeString(L"Reverse", StringUtils::ToString(Reverse));
+		sect->AddAttributeString(L"Reverse", StringUtils::BoolToString(Reverse));
 
 		for (HashMap<String, int>::Enumerator e = ObjectIndexMapping.GetEnumerator(); e.MoveNext(); )
 		{
 			ConfigurationSection* ss = new ConfigurationSection(*e.getCurrentKey());
 			
-			ss->SetValue(StringUtils::ToString(*e.getCurrentValue()));
+			ss->SetValue(StringUtils::IntToString(*e.getCurrentValue()));
 
 			sect->AddSection(ss);
 		}
@@ -1439,7 +1439,7 @@ namespace Apoc3D
 
 		if (!savingBuild)
 		{
-			sect->AddAttributeString(L"LastModTime", StringUtils::ToString(m_timeStamp));
+			sect->AddAttributeString(L"LastModTime", StringUtils::IntToString(m_timeStamp));
 		}
 		return sect;
 	}
@@ -1623,14 +1623,14 @@ namespace Apoc3D
 		sect->AddAttributeString(L"Type", L"Project");
 		result.Add(sect);
 		
-		int startNo = Randomizer::NextInclusive(65535);
+		int32 startNo = Randomizer::NextInclusive(65535);
 		RecursivePassFolderPacks(startNo, result, m_items);
 		
 	}
 	void RecursivePassFolderPacks(int& startNo, FastList<ConfigurationSection*>& result, FastList<ProjectItem*>& items)
 	{
 		// post traversal on the project tree will make leaf folder to pack file builds comes first
-		for (int i=0;i<items.getCount();i++)
+		for (int32 i=0;i<items.getCount();i++)
 		{
 			if (items[i]->getType() == PRJITEM_Folder)
 			{
@@ -1642,7 +1642,7 @@ namespace Apoc3D
 
 					if (fld->PackType.size())
 					{
-						ConfigurationSection* s = new ConfigurationSection(L"Archive_" + StringUtils::ToString(startNo++));
+						ConfigurationSection* s = new ConfigurationSection(L"Archive_" + StringUtils::IntToString(startNo++));
 						fld->SavePackBuildConfig(s);
 						//parentSect->AddSection(s);
 

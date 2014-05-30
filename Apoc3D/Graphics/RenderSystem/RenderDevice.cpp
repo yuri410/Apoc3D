@@ -135,26 +135,26 @@ namespace Apoc3D
 						String msg;
 						msg.append(ent->DebugName);
 						msg.append(L"\t DP=");
-						msg.append(StringUtils::ToString(ent->DP));
+						msg.append(StringUtils::IntToString(ent->DP));
 						msg.append(L"\t I=");
-						msg.append(StringUtils::ToString(ent->InstancingBatch));
+						msg.append(StringUtils::IntToString(ent->InstancingBatch));
 						msg.append(L"\t DPI=");
-						msg.append(StringUtils::ToString(ent->DPInstanced));
+						msg.append(StringUtils::IntToString(ent->DPInstanced));
 
 
 						msg.append(L"\t TRI=");
-						msg.append(StringUtils::ToString(ent->Primitive));
+						msg.append(StringUtils::IntToString(ent->Primitive));
 						msg.append(L"\t VTX=");
-						msg.append(StringUtils::ToString(ent->Vertex));
+						msg.append(StringUtils::IntToString(ent->Vertex));
 						msg.append(L"\t EROP=");
-						msg.append(StringUtils::ToString(ent->EmptyROP));
+						msg.append(StringUtils::IntToString(ent->EmptyROP));
 
 						msg.append(L"\t TRII=");
-						msg.append(StringUtils::ToString(ent->PrimitiveInstanced));
+						msg.append(StringUtils::IntToString(ent->PrimitiveInstanced));
 						msg.append(L"\t VTXI=");
-						msg.append(StringUtils::ToString(ent->VertexInstanced));
+						msg.append(StringUtils::IntToString(ent->VertexInstanced));
 						msg.append(L"\t EROPI=");
-						msg.append(StringUtils::ToString(ent->EmptyInstancedROP));
+						msg.append(StringUtils::IntToString(ent->EmptyInstancedROP));
 
 
 						ApocLog(LOG_Graphics, msg, LOGLVL_Default);

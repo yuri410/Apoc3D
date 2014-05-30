@@ -155,7 +155,7 @@ namespace SampleFont
 
 		String helperText[3] =
 		{
-			L"Current Pressure: " + StringUtils::ToString(unicodeEnd - unicodeBegin) + L" glyphs",
+			L"Current Pressure: " + StringUtils::IntToString(unicodeEnd - unicodeBegin) + L" glyphs",
 			L" [-] : Decrease Pressure ",
 			L" [+] : Increase Pressure "
 		};
@@ -166,7 +166,7 @@ namespace SampleFont
 
 
 		Font* english = FontManager::getSingleton().getFont(L"english");
-		english->DrawString(m_sprite, L"FPS: " + StringUtils::ToString(time->getFPS(),1), Point(0, m_window->getClientSize().Height-50), CV_White);
+		english->DrawString(m_sprite, L"FPS: " + StringUtils::SingleToString(time->getFPS(),1), Point(0, m_window->getClientSize().Height-50), CV_White);
 
 		static int32 disCurLen = 0;
 		disCurLen++;

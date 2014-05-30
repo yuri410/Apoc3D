@@ -80,17 +80,17 @@ namespace Apoc3D
 		String Vector2::ToTextString(int precision) const
 		{
 			String result = L"[";
-			result.append(StringUtils::ToString(X, precision));
+			result.append(StringUtils::SingleToString(X, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, precision));
 			result.append(L"]");
 			return result;
 		}
 		String Vector2::ToParsableString(int precision) const
 		{
-			String result = StringUtils::ToString(X, precision);
+			String result = StringUtils::SingleToString(X, precision);
 			result.append(L", ");
-			result.append(StringUtils::ToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, precision));
 			return result;
 		}
 
@@ -128,21 +128,21 @@ namespace Apoc3D
 		String Vector3::ToTextString(int precision) const
 		{
 			String result = L"[";
-			result.append(StringUtils::ToString(X, precision));
+			result.append(StringUtils::SingleToString(X, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(Z, precision));
+			result.append(StringUtils::SingleToString(Z, precision));
 			result.append(L"]");
 			return result;
 		}
 		String Vector3::ToParsableString(int precision) const
 		{
-			String result = StringUtils::ToString(X, precision);
+			String result = StringUtils::SingleToString(X, precision);
 			result.append(L", ");
-			result.append(StringUtils::ToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(Z, precision));
+			result.append(StringUtils::SingleToString(Z, precision));
 			return result;
 		}
 
@@ -216,25 +216,25 @@ namespace Apoc3D
 		String Vector4::ToTextString(int precision) const
 		{
 			String result = L"[";
-			result.append(StringUtils::ToString(X, precision));
+			result.append(StringUtils::SingleToString(X, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(Z, precision));
+			result.append(StringUtils::SingleToString(Z, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(W, precision));
+			result.append(StringUtils::SingleToString(W, precision));
 			result.append(L"]");
 			return result;
 		}
 		String Vector4::ToParsableString(int precision) const
 		{
-			String result = StringUtils::ToString(X, precision);
+			String result = StringUtils::SingleToString(X, precision);
 			result.append(L", ");
-			result.append(StringUtils::ToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(Z, precision));
+			result.append(StringUtils::SingleToString(Z, precision));
 			result.append(L", ");
-			result.append(StringUtils::ToString(W, precision));
+			result.append(StringUtils::SingleToString(W, precision));
 			return result;
 		}
 

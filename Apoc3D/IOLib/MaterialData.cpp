@@ -98,7 +98,7 @@ namespace Apoc3D
 
 			for (uint32 i=0;i<cmpCount;i++)
 			{
-				String tag = StringUtils::ToString(i);
+				String tag = StringUtils::UIntToString(i);
 				tag = TAG_3_CustomParam + tag;
 
 				BinaryReader* br = data->GetData(tag);
@@ -125,7 +125,7 @@ namespace Apoc3D
 				{
 					if (hasTexture[i])
 					{
-						String tag = StringUtils::ToString(i);
+						String tag = StringUtils::IntToString(i);
 						tag = tag + TAG_3_Texture;
 
 						String name;
@@ -149,7 +149,7 @@ namespace Apoc3D
 				{
 					if (hasEffect[i])
 					{
-						String tag = StringUtils::ToString(i);
+						String tag = StringUtils::IntToString(i);
 						tag = tag + TAG_3_Effect;
 
 						String name;
@@ -226,7 +226,7 @@ namespace Apoc3D
 
 				if (!EffectParameter::IsReference(mcp.Type))
 				{
-					String tag = StringUtils::ToString(index++);
+					String tag = StringUtils::IntToString(index++);
 					tag = TAG_3_CustomParam + tag;// tag + TAG_3_CustomParam;
 
 					BinaryWriter* bw = data->AddEntry(tag);
@@ -261,7 +261,7 @@ namespace Apoc3D
 				{
 					if (hasTexture[i])
 					{
-						String tag = StringUtils::ToString(i);
+						String tag = StringUtils::IntToString(i);
 						tag = tag + TAG_3_Texture;
 
 						data->AddEntryString(tag, TextureName[i]);
@@ -289,7 +289,7 @@ namespace Apoc3D
 				{
 					if (hasEffects[i])
 					{
-						String tag = StringUtils::ToString(i);
+						String tag = StringUtils::IntToString(i);
 						tag = tag + TAG_3_Effect;
 
 						data->AddEntryString(tag, EffectName[i]);

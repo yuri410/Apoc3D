@@ -337,42 +337,42 @@ namespace APBuild
 			
 			for (int i=0;i<borderData.getCount();i++)
 			{
-				ConfigurationSection* sect = new ConfigurationSection(L"Section" + StringUtils::ToString(i));	
+				ConfigurationSection* sect = new ConfigurationSection(L"Section" + StringUtils::IntToString(i));	
 				ConfigurationSection* sectV = new ConfigurationSection(L"Vertex");	
 				ConfigurationSection* sectB = new ConfigurationSection(L"Border");	
 				ConfigurationSection* sectFV = new ConfigurationSection(L"FlattenVertex");	
 
 				for (int j=0;j<borderData[i].vertexCount;j++)
 				{
-					String value = StringUtils::ToString(borderData[i].Vertices[j].X, 4, 10, ' ', ios::right | ios::fixed);
+					String value = StringUtils::SingleToString(borderData[i].Vertices[j].X, 4, 10, ' ', ios::right | ios::fixed);
 					value.append(L",");
-					value.append(StringUtils::ToString(borderData[i].Vertices[j].Y, 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::SingleToString(borderData[i].Vertices[j].Y, 4, 10, ' ', ios::right | ios::fixed));
 					value.append(L",");
-					value.append(StringUtils::ToString(borderData[i].Vertices[j].Z, 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::SingleToString(borderData[i].Vertices[j].Z, 4, 10, ' ', ios::right | ios::fixed));
 
-					sectV->AddStringValue(L"Vertex" + StringUtils::ToString(j, 4, '0', ios::right),
+					sectV->AddStringValue(L"Vertex" + StringUtils::IntToString(j, 4, '0', ios::right),
 						value);
 				}
 					
 				for (int j=0;j<borderData[i].borderCount;j++)
 				{
-					String value = StringUtils::ToString(borderData[i].BorderDef[j].SmallerIDVertex, 3, ' ', ios::right);
+					String value = StringUtils::IntToString(borderData[i].BorderDef[j].SmallerIDVertex, 3, ' ', ios::right);
 					value.append(L",");
-					value.append(StringUtils::ToString(borderData[i].BorderDef[j].LargerIDVertex, 3, ' ', ios::right));
+					value.append(StringUtils::IntToString(borderData[i].BorderDef[j].LargerIDVertex, 3, ' ', ios::right));
 					
-					sectB->AddStringValue(L"Border" + StringUtils::ToString(j, 4, '0', ios::right),
+					sectB->AddStringValue(L"Border" + StringUtils::IntToString(j, 4, '0', ios::right),
 						value);
 				}
 
 				for (int j=0;j<borderData[i].flattenVertexCount;j++)
 				{
-					String value = StringUtils::ToString(borderData[i].FlattenVertices[j].X, 4, 10, ' ', ios::right | ios::fixed);
+					String value = StringUtils::SingleToString(borderData[i].FlattenVertices[j].X, 4, 10, ' ', ios::right | ios::fixed);
 					value.append(L",");
-					value.append(StringUtils::ToString(borderData[i].FlattenVertices[j].Y, 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::SingleToString(borderData[i].FlattenVertices[j].Y, 4, 10, ' ', ios::right | ios::fixed));
 					value.append(L",");
-					value.append(StringUtils::ToString(borderData[i].FlattenVertices[j].Z, 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::SingleToString(borderData[i].FlattenVertices[j].Z, 4, 10, ' ', ios::right | ios::fixed));
 
-					sectFV->AddStringValue(L"Vertex" + StringUtils::ToString(j, 4, '0', ios::right),
+					sectFV->AddStringValue(L"Vertex" + StringUtils::IntToString(j, 4, '0', ios::right),
 						value);
 				}
 

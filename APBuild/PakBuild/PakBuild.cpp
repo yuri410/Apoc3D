@@ -135,7 +135,7 @@ namespace APBuild
 					}
 
 					closedir(dir);
-					CompileLog::WriteInformation(L"Adding " + StringUtils::ToString(counter)
+					CompileLog::WriteInformation(L"Adding " + StringUtils::IntToString(counter)
 						+ L" files from flatten dir: " + config.Dirs[i].Path, config.DestFile);
 				}
 				else

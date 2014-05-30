@@ -184,7 +184,7 @@ namespace Apoc3D
 					
 					if (!unique)
 					{
-						String temp = StringUtils::ToString(m_adapters[i]->AdapterOrdinal);
+						String temp = StringUtils::IntToString(m_adapters[i]->AdapterOrdinal);
 						m_adapters[i]->Description.append(temp);
 					}
 				}

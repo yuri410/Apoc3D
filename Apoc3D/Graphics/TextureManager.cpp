@@ -53,7 +53,7 @@ namespace Apoc3D
 			: ResourceManager(L"Texture Manager ", CacheSize, UseCache), m_redirectLocation(0)
 		{
 			LogManager::getSingleton().Write(LOG_System, 
-				L"Texture manager initialized with a cache size " + StringUtils::ToString(CacheSize) + (UseCache ? L". Use async streaming." : L"."), 
+				L"Texture manager initialized with a cache size " + StringUtils::IntToString(CacheSize) + (UseCache ? L". Use async streaming." : L"."), 
 				LOGLVL_Infomation);
 		}
 

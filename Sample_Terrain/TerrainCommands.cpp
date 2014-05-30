@@ -17,10 +17,10 @@ namespace SampleTerrain
 	void GenGetCommand(CommandArgsConstRef args)
 	{
 		PerlinNoise& pn = Terrain::GetNoiseGenerator();
-		LogManager::getSingleton().Write(LOG_CommandResponse, L"persistence = " + StringUtils::ToString((float)pn.Persistence(), 4), LOGLVL_Infomation);
-		LogManager::getSingleton().Write(LOG_CommandResponse, L"frequency = " + StringUtils::ToString((float)pn.Frequency(), 4), LOGLVL_Infomation);
-		LogManager::getSingleton().Write(LOG_CommandResponse, L"octaves = " + StringUtils::ToString(pn.Octaves()), LOGLVL_Infomation);
-		LogManager::getSingleton().Write(LOG_CommandResponse, L"seed = " + StringUtils::ToString(pn.RandomSeed()), LOGLVL_Infomation);
+		LogManager::getSingleton().Write(LOG_CommandResponse, L"persistence = " + StringUtils::SingleToString((float)pn.Persistence(), 4), LOGLVL_Infomation);
+		LogManager::getSingleton().Write(LOG_CommandResponse, L"frequency = " + StringUtils::SingleToString((float)pn.Frequency(), 4), LOGLVL_Infomation);
+		LogManager::getSingleton().Write(LOG_CommandResponse, L"octaves = " + StringUtils::IntToString(pn.Octaves()), LOGLVL_Infomation);
+		LogManager::getSingleton().Write(LOG_CommandResponse, L"seed = " + StringUtils::IntToString(pn.RandomSeed()), LOGLVL_Infomation);
 	}
 	void GenSetCommand(CommandArgsConstRef args)
 	{

@@ -698,9 +698,9 @@ namespace Apoc3D
 
 						LogManager::getSingleton().Write(LOG_Graphics, 
 							L"[D3D9Texture]" + name +  L" Dimension " +
-							StringUtils::ToString(width) + L"x" + StringUtils::ToString(height)
+							StringUtils::UIntToString(width) + L"x" + StringUtils::UIntToString(height)
 							+ L" is not supported by hardware. Resizing to " +
-							StringUtils::ToString(newWidth) + L"x" + StringUtils::ToString(newHeight)
+							StringUtils::UIntToString(newWidth) + L"x" + StringUtils::UIntToString(newHeight)
 							, LOGLVL_Warning);
 					}
 

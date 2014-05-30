@@ -47,11 +47,11 @@ namespace APDesigner
 		ConfigurationSection* sect = new ConfigurationSection(L"Recents");
 		conf->Add(sect);
 
-		for (int i=RecentProjects.getCount()-1;i>=0;i--)
+		for (int32 i=RecentProjects.getCount()-1;i>=0;i--)
 		{
 			const std::pair<String, String>& p = RecentProjects.GetElement(i);
 
-			ConfigurationSection* ss = new ConfigurationSection(L"Item" + StringUtils::ToString(i));
+			ConfigurationSection* ss = new ConfigurationSection(L"Item" + StringUtils::IntToString(i));
 			ss->AddAttributeString(L"Name", p.first);
 			ss->SetValue(p.second);
 			sect->AddSection(ss);

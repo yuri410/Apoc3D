@@ -42,7 +42,7 @@ namespace SampleTerrain
 
 	String TerrainMesh::GetHashString(int x, int z, int size)
 	{
-		return L"TM" + StringUtils::ToString(x) + L" " + StringUtils::ToString(z) + L" " + StringUtils::ToString(size);
+		return L"TM" + StringUtils::IntToString(x) + L" " + StringUtils::IntToString(z) + L" " + StringUtils::IntToString(size);
 	}
 
 
