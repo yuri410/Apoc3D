@@ -81,7 +81,7 @@ namespace Apoc3D
 				while (!m_terminated)
 				{
 					m_queueMutex.lock();
-					int32 queueCount = m_taskQueue.getCount();
+					volatile int32 queueCount = m_taskQueue.getCount();
 					if (queueCount == 0)
 					{
 						m_queueEmptyWait.wait(m_queueMutex);
@@ -116,7 +116,7 @@ namespace Apoc3D
 			Queue<T> m_taskQueue;
 
 			tthread::thread* m_thread;
-			bool m_terminated;
+			volatile bool m_terminated;
 		};
 	}
 }
