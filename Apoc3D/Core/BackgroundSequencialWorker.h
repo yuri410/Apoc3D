@@ -58,7 +58,8 @@ namespace Apoc3D
 
 					m_queueEmptyWait.notify_all();
 
-					m_thread->join();
+					if (m_thread->joinable())
+						m_thread->join();
 					delete m_thread;
 					m_thread = nullptr;
 				}
