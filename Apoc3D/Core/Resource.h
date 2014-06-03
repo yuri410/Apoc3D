@@ -179,21 +179,20 @@ namespace Apoc3D
 
 			void _Ref()
 			{
-				if (isManaged())
-				{
-					m_refCount++;
-				}
+				assert(isManaged());
+				m_refCount++;
 			}
 			void _Unref()
 			{
-				if (isManaged())
-				{
-					m_refCount--;
+				assert(isManaged());
+				m_refCount--;
+				//if (isManaged())
+				//{
 					//if (--m_refCount == 0)
 					//{
 					//delete this;
 					//}
-				}
+				//}
 			}
 		protected:
 			/**

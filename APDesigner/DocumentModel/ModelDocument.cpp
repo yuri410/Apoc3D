@@ -605,7 +605,7 @@ namespace APDesigner
 			delete afl;
 		}
 
-		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData,true), m_animData);
+		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData, ResourceHandle<ModelSharedData>::FLG_DummyHandle), m_animData);
 		m_object.setmdl(m_model);
 		m_model->PlayAnimation();
 		

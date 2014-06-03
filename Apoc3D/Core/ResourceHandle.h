@@ -44,35 +44,46 @@ namespace Apoc3D
 			 */
 			typedef typename ResType::ResHandleTemplateConstraint CF_XXX;
 		public:
+			static const byte FLG_Untouching = 1;
+			static const byte FLG_ForceDisposal = 2;
+			static const byte FLG_DummyHandle = FLG_Untouching | FLG_ForceDisposal;
+
 			ResourceHandle(ResType* res)
-				: m_resource(res), m_dummy(false), m_disposal(true)
+				: m_resource(res), m_flags(0)
 			{
-				_Ref();
+				if (res->isManaged())
+					_Ref();
 			}
-			ResourceHandle(ResType* res, bool dummy, bool disposal = true)
-				: m_resource(res), m_dummy(dummy), m_disposal(disposal)
+			ResourceHandle(ResType* res, byte flags)
+				: m_resource(res), m_flags(flags)
 			{
-				_Ref();
+				if (res->isManaged())
+					_Ref();
 			}
+			
+			// outdated
+			ResourceHandle(ResType* res, bool dead);
+
 			virtual ~ResourceHandle(void)
 			{
-				_Unref();
+				if (m_resource->isManaged())
+					_Unref();
 				
-				if (m_dummy) 
+				if (m_flags & FLG_ForceDisposal) 
 				{
-					if (m_disposal)
-						delete m_resource;
+					delete m_resource;
+					m_resource = nullptr;
 				}
 				else
 				{
-					if (!m_resource->getReferenceCount() && 
+					if (m_resource->getReferenceCount()==0 && 
 						(m_resource->isManaged() && !m_resource->getManager()->usesAsync())
 						)
 					{
 						m_resource->Unload();
 						delete m_resource;
 					}
-					m_resource = 0;
+					m_resource = nullptr;
 				}
 			}
 
@@ -83,7 +94,7 @@ namespace Apoc3D
 			 */
 			void Touch()
 			{
-				if (!m_dummy)
+				if (!shouldNotTouchResource())
 				{
 					m_resource->Use();
 				}
@@ -94,7 +105,7 @@ namespace Apoc3D
 			 */
 			void TouchSync()
 			{
-				if (!m_dummy)
+				if (!shouldNotTouchResource())
 				{
 					m_resource->UseSync();
 				}
@@ -116,7 +127,7 @@ namespace Apoc3D
 
 			ResType* operator ->()
 			{
-				if (!m_dummy)
+				if (!shouldNotTouchResource())
 				{
 					Touch();
 				}
@@ -124,21 +135,22 @@ namespace Apoc3D
 				return m_resource;
 			}
 
-			bool isDummyHandle() const { return m_dummy; }
+			bool shouldNotTouchResource() const { return (m_flags&FLG_Untouching)!=0; }
 		private:
 			ResType* m_resource;
-			bool m_dummy;
-			bool m_disposal;
+
+			byte m_flags;
+
 			void _Ref( )
 			{
-				if (!m_dummy && m_resource->isManaged())
+				if (!shouldNotTouchResource() && m_resource->isManaged())
 				{
 					m_resource->_Ref();
 				}
 			}
 			void _Unref( )
 			{
-				if (!m_dummy && m_resource->isManaged())
+				if (!shouldNotTouchResource() && m_resource->isManaged())
 				{
 					m_resource->_Unref();
 				}

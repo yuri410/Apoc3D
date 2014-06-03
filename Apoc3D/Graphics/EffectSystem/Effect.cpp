@@ -505,7 +505,7 @@ namespace Apoc3D
 				if (value)
 				{
 					tex = value->operator->();
-					if (!value->isDummyHandle() && tex->getState() != RS_Loaded)
+					if (!value->shouldNotTouchResource() && tex->getState() != RS_Loaded)
 					{
 						tex = 0;
 					}
@@ -701,7 +701,7 @@ namespace Apoc3D
 				if (value)
 				{
 					tex = value->operator->();
-					if (!value->isDummyHandle() && tex->getState() != RS_Loaded)
+					if (!value->shouldNotTouchResource() && tex->getState() != RS_Loaded)
 					{
 						tex = nullptr;
 					}
