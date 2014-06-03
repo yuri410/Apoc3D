@@ -77,7 +77,7 @@ namespace Apoc3D
 		double BinaryReader::ReadDouble()
 		{
 			FillBuffer(sizeof(double));
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return cr64_dep(m_buffer);
@@ -88,7 +88,7 @@ namespace Apoc3D
 		float BinaryReader::ReadSingle()
 		{
 			FillBuffer(sizeof(float));
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return cr32_dep(m_buffer);
@@ -136,7 +136,7 @@ namespace Apoc3D
 		int16 BinaryReader::ReadInt16() 
 		{
 			FillBuffer(sizeof(int16));
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return ci16_dep(m_buffer);
@@ -147,7 +147,7 @@ namespace Apoc3D
 		int32 BinaryReader::ReadInt32() 
 		{
 			FillBuffer(sizeof(int32));
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return ci32_dep(m_buffer);
@@ -158,7 +158,7 @@ namespace Apoc3D
 		int64 BinaryReader::ReadInt64() 
 		{
 			FillBuffer(sizeof(int64));
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return ci64_dep(m_buffer);
@@ -170,7 +170,7 @@ namespace Apoc3D
 		uint16 BinaryReader::ReadUInt16() 
 		{
 			FillBuffer(sizeof(uint16));
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return cui16_dep(m_buffer);
@@ -181,7 +181,7 @@ namespace Apoc3D
 		uint32 BinaryReader::ReadUInt32() 
 		{
 			FillBuffer(sizeof(uint32));
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return cui32_dep(m_buffer);
@@ -192,7 +192,7 @@ namespace Apoc3D
 		uint64 BinaryReader::ReadUInt64() 
 		{
 			FillBuffer(sizeof(uint64));
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				return cui64_dep(m_buffer);
@@ -219,7 +219,7 @@ namespace Apoc3D
 		void BinaryReader::ReadMatrix(Matrix& matrix)
 		{
 			FillBuffer(sizeof(float)*8);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				matrix.M11 = cr32_dep(&m_buffer[0]);
@@ -245,7 +245,7 @@ namespace Apoc3D
 			}
 			
 			FillBuffer(sizeof(float)*8);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				matrix.M31 = cr32_dep(&m_buffer[0]);
@@ -275,7 +275,7 @@ namespace Apoc3D
 		void BinaryReader::ReadVector2(Vector2& vec)
 		{
 			FillBuffer(sizeof(float)*2);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				vec.X = cr32_dep(&m_buffer[0]);
@@ -291,7 +291,7 @@ namespace Apoc3D
 		void BinaryReader::ReadVector3(Vector3& vec)
 		{
 			FillBuffer(sizeof(float)*3);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				vec.X = cr32_dep(&m_buffer[0]);
@@ -310,7 +310,7 @@ namespace Apoc3D
 		void BinaryReader::ReadVector4(Vector4& vec)
 		{
 			FillBuffer(sizeof(float)*4);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				vec.X = cr32_dep(&m_buffer[0]);
@@ -331,7 +331,7 @@ namespace Apoc3D
 		void BinaryReader::ReadColor4(Color4& color)
 		{
 			FillBuffer(sizeof(float)*4);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				color.Red = cr32_dep(&m_buffer[0]);
@@ -351,7 +351,7 @@ namespace Apoc3D
 		void BinaryReader::ReadPlane(Plane& plane)
 		{
 			FillBuffer(sizeof(float)*4);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				plane.X = cr32_dep(&m_buffer[0]);
@@ -371,7 +371,7 @@ namespace Apoc3D
 		void BinaryReader::ReadQuaternion(Quaternion& quat)
 		{
 			FillBuffer(sizeof(float)*4);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				quat.X = cr32_dep(&m_buffer[0]);
@@ -391,7 +391,7 @@ namespace Apoc3D
 		void BinaryReader::ReadPoint(Point& point)
 		{
 			FillBuffer(sizeof(int32)*2);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				point.X = ci32_dep(&m_buffer[0]);
@@ -407,7 +407,7 @@ namespace Apoc3D
 		void BinaryReader::ReadSize(Size& size)
 		{
 			FillBuffer(sizeof(int32)*2);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				size.Width = ci32_dep(&m_buffer[0]);
@@ -423,7 +423,7 @@ namespace Apoc3D
 		void BinaryReader::ReadRectangle(Rectangle& rect)
 		{
 			FillBuffer(sizeof(int32)*4);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				rect.X = ci32_dep(&m_buffer[0]);
@@ -443,7 +443,7 @@ namespace Apoc3D
 		void BinaryReader::ReadRectangleF(RectangleF& rect)
 		{
 			FillBuffer(sizeof(float)*4);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				rect.X = cr32_dep(&m_buffer[0]);
@@ -463,7 +463,7 @@ namespace Apoc3D
 		void BinaryReader::ReadRay(Ray& ray)
 		{
 			FillBuffer(sizeof(float)*6);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				float x = cr32_dep(&m_buffer[0]);
@@ -493,7 +493,7 @@ namespace Apoc3D
 		void BinaryReader::ReadBoundingBox(BoundingBox& box)
 		{
 			FillBuffer(sizeof(float)*6);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				float x = cr32_dep(&m_buffer[0]);
@@ -521,7 +521,7 @@ namespace Apoc3D
 		void BinaryReader::ReadBoundingSphere(BoundingSphere& sphere)
 		{
 			FillBuffer(sizeof(float)*4);
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_isEndianDependent)
 			{
 				float x = cr32_dep(&m_buffer[0]);

@@ -93,7 +93,7 @@ inline double cr64_dep(const char* const src) { return *reinterpret_cast<const d
 
 inline int32 ci32_le(const char* const src) 
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	return *reinterpret_cast<const int32*>(src);
 #else
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
@@ -103,7 +103,7 @@ inline int32 ci32_le(const char* const src)
 }
 inline int16 ci16_le(const char* const src)
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	return *reinterpret_cast<const int16*>(src);
 #else
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
@@ -113,7 +113,7 @@ inline int16 ci16_le(const char* const src)
 }
 inline int64 ci64_le(const char* const src) 
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	return *reinterpret_cast<const int64*>(src); 
 #else
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
@@ -124,7 +124,7 @@ inline int64 ci64_le(const char* const src)
 }
 inline uint32 cui32_le(const char* const src) 
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	return *reinterpret_cast<const uint32*>(src); 
 #else
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
@@ -133,7 +133,7 @@ inline uint32 cui32_le(const char* const src)
 }
 inline uint16 cui16_le(const char* const src) 
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	return *reinterpret_cast<const uint16*>(src); 
 #else
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
@@ -142,7 +142,7 @@ inline uint16 cui16_le(const char* const src)
 }
 inline uint64 cui64_le(const char* const src)
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	return *reinterpret_cast<const uint64*>(src);
 #else
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
@@ -152,7 +152,7 @@ inline uint64 cui64_le(const char* const src)
 }
 inline float cr32_le(const char* const src) 
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	return *reinterpret_cast<const float*>(src);
 #else
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
@@ -162,7 +162,7 @@ inline float cr32_le(const char* const src)
 }
 inline double cr64_le(const char* const src) 
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	return *reinterpret_cast<const double*>(src); 
 #else
 	const byte* const src2 = reinterpret_cast<const byte*>(src);
@@ -174,7 +174,7 @@ inline double cr64_le(const char* const src)
 
 inline void i16tomb_le(int16 v, char* dest)
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	reinterpret_cast<int16&>(dest[0]) = v;
 #else
 	uint16 v2 = reinterpret_cast<const uint16&>(v);
@@ -185,7 +185,7 @@ inline void i16tomb_le(int16 v, char* dest)
 }
 inline void i32tomb_le(int32 v, char* dest)
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	reinterpret_cast<int32&>(dest[0]) = v;
 #else
 	uint32 v2 = reinterpret_cast<const uint32&>(v);
@@ -199,7 +199,7 @@ inline void i32tomb_le(int32 v, char* dest)
 }
 inline void i64tomb_le(int64 v, char* dest)
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	reinterpret_cast<int64&>(dest[0]) = v;
 #else
 	uint64 v2 = reinterpret_cast<const uint64&>(v);
@@ -217,7 +217,7 @@ inline void i64tomb_le(int64 v, char* dest)
 }
 inline void ui16tomb_le(uint16 v, char* dest)
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	reinterpret_cast<uint16&>(dest[0]) = v;
 #else
 	byte* dest2 = reinterpret_cast<byte*>(dest);
@@ -228,7 +228,7 @@ inline void ui16tomb_le(uint16 v, char* dest)
 }
 inline void ui32tomb_le(uint32 v, char* dest)
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	reinterpret_cast<uint32&>(dest[0]) = v;
 #else
 	byte* dest2 = reinterpret_cast<byte*>(dest);
@@ -241,7 +241,7 @@ inline void ui32tomb_le(uint32 v, char* dest)
 }
 inline void ui64tomb_le(uint64 v, char* dest)
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	reinterpret_cast<uint64&>(dest[0]) = v;
 #else
 	byte* dest2 = reinterpret_cast<byte*>(dest);
@@ -258,7 +258,7 @@ inline void ui64tomb_le(uint64 v, char* dest)
 }
 inline void r32tomb_le(float v, char* dest)
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	reinterpret_cast<float&>(dest[0]) = v;
 #else
 	uint32 r = reinterpret_cast<const uint32&>(v);
@@ -272,7 +272,7 @@ inline void r32tomb_le(float v, char* dest)
 }
 inline void r64tomb_le(double v, char* dest)
 {
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 	reinterpret_cast<double&>(dest[0]) = v;
 #else
 	uint64 r = reinterpret_cast<const uint64&>(v);

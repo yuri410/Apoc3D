@@ -458,7 +458,7 @@ namespace Apoc3D
 		{
 			inline static uint ConvertPixel(const Col3b &inp)
 			{
-#if LITTLE_ENDIAN
+#ifndef BIG_ENDIAN
 				return (0xFF<<ashift) | (((unsigned int)inp.x)<<zshift) | (((unsigned int)inp.y)<<yshift) | (((unsigned int)inp.z)<<xshift);
 #else
 				return (0xFF<<ashift) | (((unsigned int)inp.x)<<xshift) | (((unsigned int)inp.y)<<yshift) | (((unsigned int)inp.z)<<zshift);

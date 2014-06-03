@@ -134,7 +134,7 @@ namespace Apoc3D
 				case FMT_A1R5G5B5:
 					format = GL_BGRA;
 					return;
-#ifdef LITTLEENDIAN
+#ifndef BIG_ENDIAN
 				case FMT_R8G8B8:
 					format = GL_BGR;
 					return;

@@ -68,7 +68,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteDouble(double value) const
 		{
 			char buffer[sizeof(double)];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				r64tomb_dep(value, buffer);
@@ -83,7 +83,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteSingle(float value) const
 		{
 			char buffer[sizeof(float)];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				r32tomb_dep(value, buffer);
@@ -142,7 +142,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteInt16(int16 value) const
 		{
 			char buffer[sizeof(int16)];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				i16tomb_dep(value, buffer);
@@ -157,7 +157,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteInt32(int32 value) const
 		{
 			char buffer[sizeof(int32)];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				i32tomb_dep(value, buffer);
@@ -172,7 +172,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteInt64(int64 value) const
 		{
 			char buffer[sizeof(int64)];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				i64tomb_dep(value, buffer);
@@ -187,7 +187,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteUInt16(uint16 value) const
 		{
 			char buffer[sizeof(uint16)];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				ui16tomb_dep(value, buffer);
@@ -202,7 +202,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteUInt32(uint32 value) const
 		{
 			char buffer[sizeof(uint32)];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				ui32tomb_dep(value, buffer);
@@ -217,7 +217,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteUInt64(uint64 value) const
 		{
 			char buffer[sizeof(uint64)];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				ui64tomb_dep(value, buffer);
@@ -349,7 +349,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteVector2(const Vector2& vec) const
 		{
 			char writeBuffer[sizeof(float) * 2];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				r32tomb_dep(vec.X, writeBuffer);
@@ -366,7 +366,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteVector3(const Vector3& vec) const
 		{
 			char writeBuffer[sizeof(float) * 3];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				r32tomb_dep(vec.X, writeBuffer);
@@ -385,7 +385,7 @@ namespace Apoc3D
 		void BinaryWriter::WriteVector4(const Vector4& vec) const
 		{
 			char writeBuffer[sizeof(float) * 4];
-#if !LITTLE_ENDIAN
+#ifdef BIG_ENDIAN
 			if (m_endianDependent)
 			{
 				r32tomb_dep(vec.X, writeBuffer);

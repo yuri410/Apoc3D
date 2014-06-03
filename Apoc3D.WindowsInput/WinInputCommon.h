@@ -56,13 +56,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 
 #ifdef _DEBUG
-#	ifdef APOC3D_STATIC_RT
+#	ifdef APOC3D_MT
 #		pragma comment(lib, "OIS_static_d_mt.lib")
 #	else
 #		pragma comment(lib, "OIS_static_d.lib")
 #	endif
 #else
-#	ifdef APOC3D_STATIC_RT
+#	ifdef APOC3D_MT
 #		pragma comment(lib, "OIS_static_mt.lib")
 #	else
 #		pragma comment(lib, "OIS_static.lib")

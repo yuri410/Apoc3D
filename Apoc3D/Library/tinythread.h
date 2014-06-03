@@ -108,10 +108,12 @@ freely, subject to the following restrictions:
 // Macro for disabling assignments of objects.
 #ifdef _TTHREAD_CPP11_PARTIAL_
   #define _TTHREAD_DISABLE_ASSIGNMENT(name) \
+	private: \
       name(const name&) = delete; \
       name& operator=(const name&) = delete;
 #else
   #define _TTHREAD_DISABLE_ASSIGNMENT(name) \
+	private: \
       name(const name&); \
       name& operator=(const name&);
 #endif
@@ -158,7 +160,7 @@ namespace tthread {
 /// program may deadlock if the thread that owns a mutex object calls lock()
 /// on that object).
 /// @see recursive_mutex
-class mutex {
+class APAPI mutex {
   public:
     /// Constructor.
     mutex()
@@ -250,7 +252,7 @@ class mutex {
 /// may lock the mutex several times, as long as it unlocks the mutex the same
 /// number of times).
 /// @see mutex
-class recursive_mutex {
+class APAPI recursive_mutex {
   public:
     /// Constructor.
     recursive_mutex()
@@ -342,7 +344,7 @@ class recursive_mutex {
 /// @endcode
 
 template <class T>
-class lock_guard {
+class APAPI lock_guard {
   public:
     typedef T mutex_type;
 
@@ -571,7 +573,7 @@ class APAPI thread {
 /// Thread ID.
 /// The thread ID is a unique identifier for each thread.
 /// @see thread::get_id()
-class thread::id {
+class APAPI thread::id {
   public:
     /// Default constructor.
     /// The default constructed ID is that of thread without a thread of
@@ -677,7 +679,7 @@ namespace chrono {
 /// calling thread.
 namespace this_thread {
   /// Return the thread ID of the calling thread.
-  thread::id get_id();
+  thread::id APAPI get_id();
 
   /// Yield execution to another thread.
   /// Offers the operating system the opportunity to schedule another thread

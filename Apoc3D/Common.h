@@ -53,13 +53,6 @@
 
 #include "ApocExportSettings.h"
 
-//#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
-//#	ifdef APOC3D_STATIC_RT
-//#		pragma comment(lib, "tthread_mt.lib")
-//#	else
-//#		pragma comment(lib, "tthread.lib")
-//#	endif
-//#endif
 
 #if defined(_MSC_VER)
 #define NoInline __declspec(noinline)

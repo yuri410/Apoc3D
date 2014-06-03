@@ -35,8 +35,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/PathUtils.h"
 #include "apoc3d/Utility/StringUtils.h"
 
+#ifndef APOC3D_DYNLIB
 #include "Apoc3D.D3D9RenderSystem/Plugin.h"
 #include "Apoc3D.WindowsInput/Plugin.h"
+#endif
 
 #include "apoc3d/Math/Matrix.h"
 
@@ -61,13 +63,20 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	wchar_t workingDir[260];
 	DWORD len = GetCurrentDirectory(260, workingDir);
 
-	Plugin* input = new Apoc3D::Input::Win32::WinInputPlugin();
-	Plugin* d3d = new Apoc3D::Graphics::D3D9RenderSystem::D3D9RSPlugin();
 
 	ManualStartConfig escon;
-	//escon.PluginDyList.Add(L"Apoc3D.D3D9RenderSystem");
+
+#ifndef APOC3D_DYNLIB
+	// manually add these plugins, since the library is built statically.
+	Plugin* input = new Apoc3D::Input::Win32::WinInputPlugin();
+	Plugin* d3d = new Apoc3D::Graphics::D3D9RenderSystem::D3D9RSPlugin();
 	escon.PluginList.Add(input);
 	escon.PluginList.Add(d3d);
+#else
+	escon.PluginDynLibList.Add(L"Apoc3D.D3D9RenderSystem.dll");
+	escon.PluginDynLibList.Add(L"Apoc3D.WindowsInput.dll");
+#endif
+
 	escon.WorkingDirectories.Add(workingDir);
 	escon.TextureCacheSize = 512 * 1048576;
 	escon.ModelCacheSize = 192 * 1048576;
@@ -120,8 +129,10 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 
 	Engine::Shutdown();
 
+#ifndef APOC3D_DYNLIB
 	delete input;
 	delete d3d;
+#endif
 
 	return 0;
 }

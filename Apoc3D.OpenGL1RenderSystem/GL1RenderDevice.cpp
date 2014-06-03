@@ -190,7 +190,7 @@ namespace Apoc3D
 			{
 				GLbitfield field = 0;
 				
-				if (flags & CLEAR_ColorBuffer == CLEAR_ColorBuffer)
+				if ((flags & CLEAR_ColorBuffer) == CLEAR_ColorBuffer)
 				{
 					field |= GL_COLOR_BUFFER_BIT;
 					

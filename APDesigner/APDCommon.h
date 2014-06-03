@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma comment(lib, "Apoc3D.lib")
 
 #ifdef APOC3D_DYNLIB
-#	ifdef APOC3D_IDE_DYLIB
+#	ifdef APOC3D_IDE_DYLIB_EXPORT
 #		define APDAPI __declspec( dllexport )
 #	else
 #		define APDAPI __declspec( dllimport )
