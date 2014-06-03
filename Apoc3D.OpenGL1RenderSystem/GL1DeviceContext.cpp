@@ -21,16 +21,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef GL1DDEVICECONTNET_H
-#define GL1DDEVICECONTNET_H
 
-#include "GL1Common.h"
+#include "GL1DeviceContext.h"
 
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
+#include "GL1RenderDevice.h"
+#include "GL1RenderWindow.h"
+#include "apoc3d/ApocException.h"
 
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Graphics::RenderSystem;
+#include "apoc3d/Utility/StringUtils.h"
+
+using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
@@ -38,26 +38,54 @@ namespace Apoc3D
 	{
 		namespace GL1RenderSystem
 		{
-			class GL1DeviceContent : public DeviceContext
+			GL1DeviceContext::GL1DeviceContext()
+				: DeviceContext(true), m_window(0)
 			{
-			protected:
-				virtual RenderView* create(const RenderParameters &pm);
-			public:
-				void NotifyWindowClosed(GL1RenderWindow* wnd);
-				
-
-				GL1DeviceContent();
-				~GL1DeviceContent();
-
-				virtual RenderDevice* getRenderDevice();
 
 
-			private:
+			}
+			GL1DeviceContext::~GL1DeviceContext()
+			{
 
-				GL1RenderWindow* m_window;
-			};
+			}
+
+
+			void GL1DeviceContext::NotifyWindowClosed(GL1RenderWindow* wnd)
+			{
+				if (m_window != wnd)
+					m_window = NULL;
+			}
+
+			RenderView* GL1DeviceContext::create(const RenderParameters &pm)
+			{
+				if (m_window)
+				{
+					throw AP_EXCEPTION(EX_InvalidOperation, L"Cannot create more render view when a render window has been created.");
+				}
+
+				if (!pm.IsFullForm)
+				{
+					
+				}
+				else
+				{
+					if (!m_window)
+					{
+						m_window = new GL1RenderWindow(0, this, pm);
+
+						return m_window;
+					}
+				}
+				// keep the compiler happy
+				return 0;
+			}
+
+			RenderDevice* GL1DeviceContext::getRenderDevice()
+			{
+				if (m_window)
+					return m_window->getRenderDevice();
+				return 0;
+			}
 		}
 	}
 }
-
-#endif

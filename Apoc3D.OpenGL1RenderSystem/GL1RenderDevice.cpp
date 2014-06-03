@@ -26,29 +26,23 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GraphicsDeviceManager.h"
 #include "GL1Utils.h"
 
-#include "GL1PixelShader.h"
-#include "GL1VertexShader.h"
-#include "GL1RenderTarget.h"
 #include "GL1Texture.h"
 #include "GL1RenderStateManager.h"
 #include "GL1ObjectFactory.h"
 //#include "GL1InstancingData.h"
-#include "Buffer/GL1DepthBuffer.h"
-#include "Buffer/GL1IndexBuffer.h"
-#include "Buffer/GL1VertexBuffer.h"
-#include "GL1VertexDeclaration.h"
+
 #include "GL1Sprite.h"
 
-#include "Apoc3DException.h"
+#include "apoc3d/ApocException.h"
 
-#include "Graphics/Camera.h"
-#include "Graphics/Material.h"
-#include "Graphics/GeometryData.h"
-#include "Graphics/EffectSystem/Effect.h"
-#include "Graphics/EffectSystem/EffectParameter.h"
-#include "Core/Logging.h"
-#include "Core/ResourceHandle.h"
-#include "Utility/StringUtils.h"
+#include "apoc3d/Graphics/Camera.h"
+#include "apoc3d/Graphics/Material.h"
+#include "apoc3d/Graphics/GeometryData.h"
+#include "apoc3d/Graphics/EffectSystem/Effect.h"
+#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/Core/ResourceHandle.h"
+#include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Core;

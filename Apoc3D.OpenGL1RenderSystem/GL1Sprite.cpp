@@ -42,16 +42,16 @@ namespace Apoc3D
 			{
 
 			}
-			void GL1Sprite::Begin(bool alphabled, bool useStack)
+			void GL1Sprite::Begin(SpriteSettings settings)
 			{
-				m_alphaEnabled = alphabled;
+				m_alphaEnabled = (settings & Sprite::SPR_AlphaBlended) == Sprite::SPR_AlphaBlended;
 
 				// disable all shaders
 				m_gl1device->BindPixelShader(0);
 				m_gl1device->BindVertexShader(0);
 				
 				
-				if (alphabled)
+				if (m_alphaEnabled)
 				{
 					NativeGL1StateManager* mgr = m_gl1device->getNativeState();
 
@@ -71,7 +71,7 @@ namespace Apoc3D
 					mgr->SetAlphaBlend(true, BLFUN_Add, BLEND_SourceAlpha, BLEND_InverseSourceAlpha, 0);
 					mgr->SetSeparateAlphaBlend(false, m_oldSepBlendFunc, m_oldSepSrcBlend, m_oldSepDstBlend);
 				}
-				Sprite::Begin(alphabled, useStack);
+				Sprite::Begin(settings);
 
 				// transform matrices and be push on the stack as no other ways can be used access
 				// them in the engine while drawing sprites in fixed-function pipeline
@@ -129,11 +129,11 @@ namespace Apoc3D
 					glTexCoord2f(0,0);
 					glVertex4f(0, 0, 0, 1);
 					glTexCoord2f(0,1);
-					glVertex4f(0, Vector2Utils::GetY(pos), 0, 1);
+					glVertex4f(0, pos.Y, 0, 1);
 					glTexCoord2f(1,1);
-					glVertex4f(Vector2Utils::GetX(pos), Vector2Utils::GetY(pos), 0, 1);
+					glVertex4f(pos.X, pos.Y, 0, 1);
 					glTexCoord2f(1,0);
-					glVertex4f(Vector2Utils::GetX(pos), 0, 0, 1);
+					glVertex4f(pos.X, 0, 0, 1);
 
 					glEnd();
 				}
@@ -154,11 +154,11 @@ namespace Apoc3D
 					glTexCoord2f(0,0);
 					glVertex4f(0, 0, 0, 1);
 					glTexCoord2f(0,1);
-					glVertex4f(0, pos.Y, 0, 1);
+					glVertex4f(0, (float)pos.Y, 0, 1);
 					glTexCoord2f(1,1);
-					glVertex4f(pos.X, pos.Y, 0, 1);
+					glVertex4f((float)pos.X, (float)pos.Y, 0, 1);
 					glTexCoord2f(1,0);
-					glVertex4f(pos.X, 0, 0, 1);
+					glVertex4f((float)pos.X, 0, 0, 1);
 
 					glEnd();
 				}

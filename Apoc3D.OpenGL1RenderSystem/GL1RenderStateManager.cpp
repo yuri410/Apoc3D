@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GL1RenderStateManager.h"
 
 #include "GL1RenderDevice.h"
-#include "GLUtils.h"
+#include "GL1Utils.h"
 
 namespace Apoc3D
 {
@@ -412,51 +412,10 @@ namespace Apoc3D
 
 
 
-			GL1ClipPlane::GL1ClipPlane(GL1RenderDevice* device, GL1RenderStateManager* mgr, int index)
-				: m_manager(mgr), m_device(device), m_index(index)
-			{
-				
-			}
-
-			bool GL1ClipPlane::getEnabled()
-			{
-				uint32 mask = 1<<m_index;
-				return !!(m_manager->clipPlaneEnable & mask);
-			}
-			Plane GL1ClipPlane::getPlane()
-			{
-				return m_cachedPlane;
-			}
-
-			void GL1ClipPlane::setEnabled(bool value)
-			{
-				if (value)
-					glEnable(m_index + GL_CLIP_PLANE0);
-				else
-					glDisable(m_index + GL_CLIP_PLANE0);
-
-			}
-			void GL1ClipPlane::setPlane(const Plane& plane)
-			{
-				m_cachedPlane = plane;
-
-				GLdouble clipPlane[4];
-				clipPlane[0] = plane.X;
-				clipPlane[1] = plane.Y;
-				clipPlane[2] = plane.Z;
-				clipPlane[3] = plane.D;
-
-				glClipPlane(m_index + GL_CLIP_PLANE0, clipPlane);
-			}
-
 			
 			GL1RenderStateManager::GL1RenderStateManager(GL1RenderDevice* device, NativeGL1StateManager* nsmgr)
 				: RenderStateManager(device), m_device(device), clipPlaneEnable(0), m_stMgr(nsmgr)
 			{
-				for (int i=0;i<32;i++)
-				{
-					m_clipPlanes[i] = GL1ClipPlane(device, this, i);
-				}
 			}
 			GL1RenderStateManager::~GL1RenderStateManager()
 			{

@@ -44,7 +44,7 @@ namespace Apoc3D
 				GL1Sprite(GL1RenderDevice* device);
 				~GL1Sprite();
 
-				virtual void Begin(bool alphabled, bool useStack);
+				virtual void Begin(SpriteSettings settings);
 				virtual void End();
 
 				virtual void Draw(Texture* texture, const Apoc3D::Math::Rectangle &rect, uint color)

@@ -21,63 +21,43 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef GL1COMMON_H
-#define GL1COMMON_H
+#ifndef GL1DDEVICECONTNET_H
+#define GL1DDEVICECONTNET_H
 
-#include "apoc3d/Common.h"
+#include "GL1Common.h"
 
-#include <Windows.h>
+#include "apoc3d/Collections/HashMap.h"
+#include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
 
-#include <gl/glew.h>
-
-#include "apoc3d/EventDelegate.h"
-
-#pragma comment(lib, "Apoc3D.lib")
-
-#pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "glu32.lib")
-
-#ifndef APOC3D_DYNLIB
-#	define PLUGIN
-#else
-#	ifdef APOC3D_GL1RS_DYLIB_EXPORT
-#		define PLUGIN __declspec( dllexport )
-#	else
-#		define PLUGIN __declspec( dllimport )
-#	endif
-#endif
+using namespace Apoc3D::Collections;
+using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
 {
-	typedef EventDelegate1<bool*> CancellableEventHandler;
-	typedef EventDelegate0 EventHandler;
-
 	namespace Graphics
 	{
 		namespace GL1RenderSystem
 		{
-			class GameClock;
-			class Game;
-			class Win32GameWindow;
-			class GraphicsDeviceManager;
+			class GL1DeviceContext : public DeviceContext
+			{
+			protected:
+				virtual RenderView* create(const RenderParameters &pm);
+			public:
+				void NotifyWindowClosed(GL1RenderWindow* wnd);
+				
 
-			class GL1RenderView;
-			class GL1RenderWindow;
+				GL1DeviceContext();
+				~GL1DeviceContext();
 
-			class GL1DeviceContext;
-			
-			class GL1ObjectFactory;
-			class GL1RenderDevice;
-			class GL1Capabilities;
-			class GL1RenderStateManager;
-			class GL1RenderTarget;
+				virtual RenderDevice* getRenderDevice();
 
-			class NativeGL1StateManager;
 
-			class GL1Texture;
-			class GL1Sprite;
-			
+			private:
+
+				GL1RenderWindow* m_window;
+			};
 		}
 	}
 }
+
 #endif

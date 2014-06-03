@@ -182,34 +182,12 @@ namespace Apoc3D
 			};
 
 
-			class GL1ClipPlane : public ClipPlane
-			{
-			private:
-				GL1RenderStateManager* m_manager;
-				GL1RenderDevice* m_device;
-				int32 m_index;
-				Plane m_cachedPlane;
-
-			public:
-				GL1ClipPlane() {}
-				GL1ClipPlane(GL1RenderDevice* device, GL1RenderStateManager* mgr, int index);
-				virtual bool getEnabled();
-				virtual Plane getPlane();
-
-				virtual void setEnabled(bool value);
-				virtual void setPlane(const Plane& plane);
-			};
-
 			class GL1RenderStateManager : public RenderStateManager
 			{
 			private:
 				GL1RenderDevice* m_device;
 
-				GL1ClipPlane m_clipPlanes[GL_MAX_CLIP_PLANES];
-
 				NativeGL1StateManager* m_stMgr;
-
-
 			public:
 				DWORD clipPlaneEnable;
 
@@ -319,9 +297,6 @@ namespace Apoc3D
 				virtual CompareFunction getCounterClockwiseStencilFunction()
 				{ return m_stMgr->getCounterClockwiseStencilFunction(); }
 				
-				virtual ClipPlane& getClipPlane(int i) { return m_clipPlanes[i]; }
-				virtual int getClipPlaneCount() { return 32; }
-
 				/************************************************************************/
 				/* Scissor Test                                                         */
 				/************************************************************************/

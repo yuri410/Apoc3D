@@ -23,8 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Game.h"
 
-#include "apoc3d/Core\GameTime.h"
-#include "apoc3d/Apoc3DException.h"
+#include "apoc3d/Core/GameTime.h"
+#include "apoc3d/ApocException.h"
 
 #include "GameClock.h"
 #include "Win32GameWindow.h"
@@ -49,11 +49,11 @@ namespace Apoc3D
 				m_gameClock = new GameClock();
 
 				m_gameWindow = new Win32GameWindow(name, name);
-				m_gameWindow->eventApplicationActivated()->bind(this, &Game::Window_ApplicationActivated);
-				m_gameWindow->eventApplicationDeactivated()->bind(this, &Game::Window_ApplicationDeactivated);
-				m_gameWindow->eventPaint()->bind(this, &Game::Window_Paint);
-				m_gameWindow->eventResume()->bind(this, &Game::Window_Resume);
-				m_gameWindow->eventSuspend()->bind(this, &Game::Window_Suspend);
+				m_gameWindow->eventApplicationActivated()->Bind(this, &Game::Window_ApplicationActivated);
+				m_gameWindow->eventApplicationDeactivated()->Bind(this, &Game::Window_ApplicationDeactivated);
+				m_gameWindow->eventPaint()->Bind(this, &Game::Window_Paint);
+				m_gameWindow->eventResume()->Bind(this, &Game::Window_Resume);
+				m_gameWindow->eventSuspend()->Bind(this, &Game::Window_Suspend);
 
 				m_graphicsDeviceManager = new GraphicsDeviceManager(this);
 				m_graphicsDeviceManager->PreTest();
@@ -77,13 +77,13 @@ namespace Apoc3D
 			bool Game::OnFrameStart()
 			{
 				bool re = false;
-				m_eFrameStart(&re);
+				m_eFrameStart.Invoke(&re);
 				return re;
 			}
 
 			void Game::OnFrameEnd()
 			{
-				m_eFrameEnd();
+				m_eFrameEnd.Invoke();
 			}
 
 			void Game::DrawFrame(const GameTime* const time)

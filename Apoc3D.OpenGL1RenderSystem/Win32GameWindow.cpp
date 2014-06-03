@@ -23,8 +23,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Win32GameWindow.h"
 
-#include "Resource.h"
-
 namespace Apoc3D
 {
 	namespace Graphics
@@ -44,26 +42,17 @@ namespace Apoc3D
 				wcex.cbClsExtra		= 0;
 				wcex.cbWndExtra		= 0;
 				wcex.hInstance		= hInstance;
-				wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_LABTD));
+				wcex.hIcon			= LoadIcon(hInstance, L"AppIcon");
 				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 				wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
 				wcex.lpszMenuName	= 0;
 				wcex.lpszClassName	= wndClass;
-				wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+				wcex.hIconSm		= LoadIcon(hInstance, L"AppSmallIcon");
 
 				return RegisterClassEx(&wcex);
 			}
 
-			//
-			//   函数: InitInstance(HINSTANCE, int)
-			//
-			//   目的: 保存实例句柄并创建主窗口
-			//
-			//   注释:
-			//
-			//        在此函数中，我们在全局变量中保存实例句柄并
-			//        创建和显示主程序窗口。
-			//
+			// creates a window with the given dimension and other options
 			BOOL Win32GameWindow::InitInstance(HINSTANCE hInstance, 
 				const TCHAR* const &wndClass, const TCHAR* const &wndTitle)
 			{
@@ -141,54 +130,44 @@ namespace Apoc3D
 
 			void Win32GameWindow::OnUserResized()
 			{
-				if (!m_eUserResized.empty())
-					m_eUserResized();
+				m_eUserResized.Invoke();
 			}
 			void Win32GameWindow::OnSuspend()
 			{
-				if (!m_eSuspend.empty())
-					m_eSuspend();
+				m_eSuspend.Invoke();
 			}
 			void Win32GameWindow::OnResume()
 			{
-				if (!m_eResume.empty())
-					m_eResume();
+				m_eResume.Invoke();
 			}
 			void Win32GameWindow::OnApplicationActivated()
 			{
-				if (!m_eApplicationActivated.empty())
-					m_eApplicationActivated();
+				m_eApplicationActivated.Invoke();
 			}
 			void Win32GameWindow::OnApplicationDeactivated()
 			{
-				if (!m_eApplicationDeactivated.empty())
-					m_eApplicationDeactivated();
+				m_eApplicationDeactivated.Invoke();
 			}
 			void Win32GameWindow::OnSystemSuspend()
 			{
-				if (!m_eSystemSuspend.empty())
-					m_eSystemSuspend();
+				m_eSystemSuspend.Invoke();
 			}
 			void Win32GameWindow::OnSystemResume()
 			{
-				if (!m_eSystemResume.empty())
-					m_eSystemResume();
+				m_eSystemResume.Invoke();
 			}
 			void Win32GameWindow::OnScreensaver(bool * cancel)
 			{
-				if (!m_eScreensaver.empty())
-					m_eScreensaver(cancel);
+				m_eScreensaver.Invoke(cancel);
 			}
 
 			void Win32GameWindow::OnPaint()
 			{
-				if (!m_ePaint.empty())
-					m_ePaint();
+				m_ePaint.Invoke();
 			}
 			void Win32GameWindow::OnMonitorChanged()
 			{
-				if (!m_eMonitorChanged.empty())
-					m_eMonitorChanged();
+				m_eMonitorChanged.Invoke();
 			}
 
 			Size Win32GameWindow::getCurrentSize() const

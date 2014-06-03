@@ -87,7 +87,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GLUtils.h" />
+    <ClInclude Include="GL1Utils.h" />
     <ClInclude Include="GL1RenderStateManager.h" />
     <ClInclude Include="GL1ObjectFactory.h" />
     <ClInclude Include="GL1RenderDevice.h" />
@@ -99,7 +99,7 @@
     <ClInclude Include="Win32GameWindow.h" />
     <ClInclude Include="GL1RenderWindow.h" />
     <ClInclude Include="GL1GraphicsAPIFactory.h" />
-    <ClInclude Include="GL1DeviceContent.h" />
+    <ClInclude Include="GL1DeviceContext.h" />
     <ClInclude Include="GL1Common.h" />
     <ClInclude Include="Plugin.h" />
   </ItemGroup>
@@ -111,12 +111,12 @@
     <ClCompile Include="GL1Sprite.cpp" />
     <ClCompile Include="GL1Texture.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GLUtils.cpp" />
+    <ClCompile Include="GL1Utils.cpp" />
     <ClCompile Include="GraphicsDeviceManager.cpp" />
     <ClCompile Include="Win32GameWindow.cpp" />
     <ClCompile Include="GL1RenderWindow.cpp" />
     <ClCompile Include="GL1GraphicsAPIFactory.cpp" />
-    <ClCompile Include="GL1DeviceContent.cpp" />
+    <ClCompile Include="GL1DeviceContext.cpp" />
     <ClCompile Include="Plugin.cpp" />
   </ItemGroup>
   <ItemGroup>

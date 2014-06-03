@@ -45,7 +45,7 @@ namespace Apoc3D
 					: GraphicsAPIFactory(GetDescription())
 				{ }
 
-				virtual DeviceContent* CreateDeviceContent();
+				virtual DeviceContext* CreateDeviceContext();
 			};
 		}
 	}

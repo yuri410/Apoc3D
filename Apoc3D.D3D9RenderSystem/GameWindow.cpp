@@ -31,27 +31,8 @@ namespace Apoc3D
 		{
 			GameWindow* GameWindow::ms_Window = 0;
 
-			/*BOOL CALLBACK ProcessResourceItem(
-				_In_opt_  HMODULE hModule,
-				_In_      LPCTSTR lpszType,
-				_In_      LPTSTR lpszName,
-				_In_      LONG_PTR lParam
-				)
-			{
-				LONG_PTR& iconResourceName = *(LONG_PTR*)(lParam);
-
-				iconResourceName = (LONG_PTR)lpszName;
-
-				return FALSE;
-			}*/
-
 			ATOM GameWindow::MyRegisterClass(HINSTANCE hInstance, const TCHAR* const &wndClass)
 			{
-				//FindResource(hInstance, NULL, RT_ICON);
-				//LONG_PTR iconResourceName = 0;
-				
-				//EnumResourceNames(NULL, RT_GROUP_ICON, ProcessResourceItem, (LONG_PTR)&iconResourceName);
-
 				WNDCLASSEX wcex;
 
 				wcex.cbSize = sizeof(WNDCLASSEX);
@@ -61,19 +42,12 @@ namespace Apoc3D
 				wcex.cbClsExtra		= 0;
 				wcex.cbWndExtra		= 0;
 				wcex.hInstance		= hInstance;
-				//if (iconResourceName)
-				{
-					wcex.hIcon			= LoadIcon(hInstance, L"AppIcon");
-				}
-				//else
-				{
-				//	wcex.hIcon			= LoadIcon(NULL, IDI_APPLICATION);//LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APOC3D));
-				}
+				wcex.hIcon			= LoadIcon(hInstance, L"AppIcon");
 				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 				wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
 				wcex.lpszMenuName	= 0;
 				wcex.lpszClassName	= wndClass;
-				wcex.hIconSm		= LoadIcon(hInstance, L"AppSmallIcon"); NULL;//LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+				wcex.hIconSm		= LoadIcon(hInstance, L"AppSmallIcon"); 
 
 				return RegisterClassEx(&wcex);
 			}

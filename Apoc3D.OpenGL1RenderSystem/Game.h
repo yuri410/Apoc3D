@@ -25,7 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GAME_H
 
 #include "GL1Common.h"
-#include "apoc3d/EventDelegate.h"
 
 using namespace Apoc3D::Graphics;
 using namespace Apoc3D::Core;
@@ -96,7 +95,7 @@ namespace Apoc3D
 
 
 				CancellableEventHandler m_eFrameStart;
-				EventDelegate0 m_eFrameEnd;
+				EventHandler m_eFrameEnd;
 
 				void DrawFrame(const GameTime* const time);
 

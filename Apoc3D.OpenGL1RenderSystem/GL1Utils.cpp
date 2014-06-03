@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "GLUtils.h"
+#include "GL1Utils.h"
 
 
 namespace Apoc3D
@@ -212,7 +212,7 @@ namespace Apoc3D
 				case FMT_Palette8Alpha8:
 					break;
 				}
-				throw Apoc3DException::createException(EX_NotSupported, L"");
+				throw AP_EXCEPTION(EX_NotSupported, L"");
 			}
 			GLenum GLUtils::ConvertPixelFormat(PixelFormat fmt)
 			{

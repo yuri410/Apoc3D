@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Core/Logging.h"
 
-#include "GL1DeviceContent.h"
+#include "GL1DeviceContext.h"
 
 using namespace Apoc3D::Core;
 
@@ -45,11 +45,9 @@ namespace Apoc3D
 
 				m_game = game;
 
-				m_game->eventFrameStart()->bind(this, &GraphicsDeviceManager::game_FrameStart);
-				m_game->eventFrameEnd()->bind(this, &GraphicsDeviceManager::game_FrameEnd);
-				m_game->getWindow()->eventUserResized()->bind(this, &GraphicsDeviceManager::Window_UserResized);
-
-
+				m_game->eventFrameStart()->Bind(this, &GraphicsDeviceManager::game_FrameStart);
+				m_game->eventFrameEnd()->Bind(this, &GraphicsDeviceManager::game_FrameEnd);
+				m_game->getWindow()->eventUserResized()->Bind(this, &GraphicsDeviceManager::Window_UserResized);
 			}
 
 			GraphicsDeviceManager::~GraphicsDeviceManager(void)

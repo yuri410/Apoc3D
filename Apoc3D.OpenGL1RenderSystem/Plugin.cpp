@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Plugin.h"
 
-#include "Graphics/RenderSystem/GraphicsAPI.h"
+#include "apoc3d/Graphics/RenderSystem/GraphicsAPI.h"
 #include "GL1GraphicsAPIFactory.h"
 
 using namespace Apoc3D::Graphics::RenderSystem;

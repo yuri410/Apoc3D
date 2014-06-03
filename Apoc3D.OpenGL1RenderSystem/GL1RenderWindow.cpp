@@ -24,9 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "GL1RenderWindow.h"
 #include "GL1RenderDevice.h"
-#include "GLUtils.h"
+#include "GL1Utils.h"
 
-#include "GL1DeviceContent.h"
+#include "GL1DeviceContext.h"
 #include "apoc3d/Core/Logging.h"
 
 #include "Win32GameWindow.h"

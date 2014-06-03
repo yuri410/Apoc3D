@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "GL1GraphicsAPIFactory.h"
-#include "GL1DeviceContent.h"
+#include "GL1DeviceContext.h"
 
 namespace Apoc3D
 {
@@ -37,13 +37,13 @@ namespace Apoc3D
 
 				APIDescription desc;
 				desc.Name = L"OpenGL 1.x";
-				desc.SupportedPlatforms.push_back(platform);
+				desc.SupportedPlatforms.Add(platform);
 				return desc;
 			}
 
-			DeviceContent* GL1GraphicsAPIFactory::CreateDeviceContent()
+			DeviceContext* GL1GraphicsAPIFactory::CreateDeviceContext()
 			{
-				return new GL1DeviceContent();
+				return new GL1DeviceContext();
 			}
 		}
 	}
