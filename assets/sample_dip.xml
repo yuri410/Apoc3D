@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<TestBuild>
+  <Project Name="Sample DIP">
+    <dipworks Type="Folder" Pack="pak" DestinationPack="s_dip\dipworks.pak">
+      <image1
+          Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\image1.png" DestinationFile="s_dip\image1.tex" />
+      <image2
+          Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\image2.png" DestinationFile="s_dip\image2.tex" />
+      <image256
+          Type ="Texture" Method="d3d" PixelFormat="X8R8G8B8" SourceFile="s_dip\image256.png" DestinationFile="s_dip\image256.tex" />
+      <image256_gray
+          Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\image256_gray.png" DestinationFile="s_dip\image256_gray.tex" />
+      <image512_gray
+          Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\image512_gray.png" DestinationFile="s_dip\image512_gray.tex" />
+      <imagegrad
+                Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\grad.png" DestinationFile="s_dip\grad.tex" />
+
+      <image3_256l8
+          Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\image3_256l8.png" DestinationFile="s_dip\image3_256l8.tex" />
+      <image2_256l8
+          Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\image2_256l8.png" DestinationFile="s_dip\image2_256l8.tex" />
+    </dipworks>
+    <dm Type="Folder" Pack="pak" DestinationPack="s_dip\dmining.pak">
+      <a1 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\a1.png" DestinationFile="s_dip\dm\a1.tex" />
+      <a2 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\a2.png" DestinationFile="s_dip\dm\a2.tex" />
+      <a3 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\a3.png" DestinationFile="s_dip\dm\a3.tex" />
+      <a4 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\a4.png" DestinationFile="s_dip\dm\a4.tex" />
+      
+      <b1 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\b1.png" DestinationFile="s_dip\dm\b1.tex" />
+      <b2 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\b2.png" DestinationFile="s_dip\dm\b2.tex" />
+      <b3 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\b3.png" DestinationFile="s_dip\dm\b3.tex" />
+      <b4 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\b4.png" DestinationFile="s_dip\dm\b4.tex" />
+
+      <ba_1 Type ="Texture" Method="d3d" PixelFormat="L8" SourceFile="s_dip\dm\ba_1.png" DestinationFile="s_dip\dm\ba_1.tex" />
+    </dm>
+  </Project>
+</TestBuild>

@@ -1,0 +1,3 @@
+@echo off
+echo Building Font...
+APBuild effects_post.xml

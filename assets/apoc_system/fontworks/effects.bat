@@ -1,0 +1,3 @@
+@echo off
+echo Generating Font Maps...
+APBuild effects.xml

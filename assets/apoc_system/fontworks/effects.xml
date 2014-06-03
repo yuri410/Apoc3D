@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<TestBuild>
+  <Build Type="Project">
+    <ds_titleFont Type ="fontmap"
+               GlyphMargin="2"
+               SourceFile="..\fonts\SourceSansPro-Regular.otf"
+               Size="11"
+               DestinationFile="ds_titleFont.png"
+               DestinationIndexFile="ds_titleFont.fid">
+      <Range1 Start="0" End="255"/>
+    </ds_titleFont>
+  </Build>
+</TestBuild>

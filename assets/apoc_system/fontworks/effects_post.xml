@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<TestBuild>
+  <Build Type="Project">
+    <ds_titleFont Type="fontmapst"
+                     Name="ds_titleFont"
+                     DestinationFile="ds_titleFont.fnt" >
+      <Range0 Start="0" End="1" />
+    </ds_titleFont>
+  </Build>
+</TestBuild>
