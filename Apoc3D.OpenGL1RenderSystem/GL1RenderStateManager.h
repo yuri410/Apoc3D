@@ -1,4 +1,3 @@
-#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -22,11 +21,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef D3D9RENDERSTATEMANAGER_H
-#define D3D9RENDERSTATEMANAGER_H
+#ifndef GL1RENDERSTATEMANAGER_H
+#define GL1RENDERSTATEMANAGER_H
 
-#include "D3D9Common.h"
-
+#include "GL1Common.h"
 #include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
 
 using namespace Apoc3D::Graphics;
@@ -36,16 +34,67 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		namespace D3D9RenderSystem
+		namespace GL1RenderSystem
 		{
-			/** This class stores states for quick state checks without any
-			 *  D3D calls. Other classes check state to avoid redundant state changes.
-			 */
-			class NativeD3DStateManager
+
+			class NativeGL1StateManager
 			{
+			private:
+				GL1RenderDevice* m_device;
+
+				bool m_cachedAlphaTestEnable;
+				CompareFunction m_cachedAlphaTestFunction;
+				uint32 m_cachedAlphaReference;
+
+				bool m_cachedAlphaBlendEnable;
+				BlendFunction m_cachedAlphaBlendFunction;
+				Blend m_cachedAlphaSourceBlend;
+				Blend m_cachedAlphaDestBlend;
+				uint32 m_cachedAlphaBlendFactor;
+
+				bool m_cachedSepAlphaBlendEnable;
+				BlendFunction m_cachedSepAlphaBlendFunction;
+				Blend m_cachedSepAlphaSourceBlend;
+				Blend m_cachedSepAlphaDestBlend;
+				//uint32 m_cachedSepAlphaBlendFactor;
+
+				float m_cachedDepthBias;
+				float m_cachedSlopeScaleDepthBias;
+				CompareFunction m_cachedDepthBufferFunction;
+				bool m_cachedDepthBufferWriteEnabled;
+				bool m_cachedDepthBufferEnabled;
+
+				CullMode m_cachedCullMode;
+				FillMode m_cachedFillMode;
+
+				float m_cachedPointSize;
+				float m_cachedPointSizeMax;
+				float m_cachedPointSizeMin;
+				bool m_cachedPointSpriteEnabled;
+
+				bool m_cachedStencilEnabled;
+				StencilOperation m_cachedStencilFail;
+				StencilOperation m_cachedStencilPass;
+				StencilOperation m_cachedStencilDepthFail;
+				uint32 m_cachedRefrenceStencil;
+				CompareFunction m_cachedStencilFunction;
+				uint32 m_cachedStencilMask;
+				uint32 m_cachedStencilWriteMask;
+
+				bool m_cachedTwoSidedStencilMode;
+
+				StencilOperation m_cachedCounterClockwiseStencilFail;
+				StencilOperation m_cachedCounterClockwiseStencilPass;
+				StencilOperation m_cachedCounterClockwiseStencilDepthBufferFail;
+
+				CompareFunction m_cachedCounterClockwiseStencilFunction;
+
+
+				void InitializeDefaultState();
+
 			public:
-				NativeD3DStateManager(D3D9RenderDevice* device);
-				~NativeD3DStateManager();
+				NativeGL1StateManager(GL1RenderDevice* device);
+				~NativeGL1StateManager();
 
 				void SetAlphaTestParameters(bool enable, uint32 reference);
 				void SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference);
@@ -130,103 +179,42 @@ namespace Apoc3D
 
 				CompareFunction getCounterClockwiseStencilFunction() { return m_cachedCounterClockwiseStencilFunction; }
 
-
-				/************************************************************************/
-				/* Color Write                                                          */
-				/************************************************************************/
-				void getColorWriteEnabled0(bool& r, bool& g, bool& b, bool& a);
-				void setColorWriteEnabled0(bool r, bool g, bool b, bool a);
-				void getColorWriteEnabled1(bool& r, bool& g, bool& b, bool& a);
-				void setColorWriteEnabled1(bool r, bool g, bool b, bool a);
-				void getColorWriteEnabled2(bool& r, bool& g, bool& b, bool& a);
-				void setColorWriteEnabled2(bool r, bool g, bool b, bool a);
-				void getColorWriteEnabled3(bool& r, bool& g, bool& b, bool& a);
-				void setColorWriteEnabled3(bool r, bool g, bool b, bool a);
-
-				/************************************************************************/
-				/* Samplers                                                             */
-				/************************************************************************/
-				void SetVertexSampler(int samplerIndex, const ShaderSamplerState& sampler);
-				void SetPixelSampler(int samplerIndex, const ShaderSamplerState& sampler);
-
-				const ShaderSamplerState& getPixelSampler(int samplerIndex) const;
-				const ShaderSamplerState& getVertexSampler(int samplerIndex) const;
-
-				int getTextureSlotCount() const { return m_textureSlotCount; }
-				D3D9Texture* getTexture(int i) const { assert(i<m_textureSlotCount); return m_textureSlots[i]; }
-				void SetTexture(int i, D3D9Texture* tex);
-
-				void Reset() { InitializeDefaultState(); }
-			private:
-				void InitializeDefaultState();
-
-				D3D9RenderDevice* m_device;
-
-				bool m_cachedAlphaTestEnable;
-				CompareFunction m_cachedAlphaTestFunction;
-				uint32 m_cachedAlphaReference;
-
-				bool m_cachedAlphaBlendEnable;
-				BlendFunction m_cachedAlphaBlendFunction;
-				Blend m_cachedAlphaSourceBlend;
-				Blend m_cachedAlphaDestBlend;
-				uint32 m_cachedAlphaBlendFactor;
-
-				bool m_cachedSepAlphaBlendEnable;
-				BlendFunction m_cachedSepAlphaBlendFunction;
-				Blend m_cachedSepAlphaSourceBlend;
-				Blend m_cachedSepAlphaDestBlend;
-				//uint32 m_cachedSepAlphaBlendFactor;
-
-				float m_cachedDepthBias;
-				float m_cachedSlopeScaleDepthBias;
-				CompareFunction m_cachedDepthBufferFunction;
-				bool m_cachedDepthBufferWriteEnabled;
-				bool m_cachedDepthBufferEnabled;
-
-				CullMode m_cachedCullMode;
-				FillMode m_cachedFillMode;
-
-				float m_cachedPointSize;
-				float m_cachedPointSizeMax;
-				float m_cachedPointSizeMin;
-				bool m_cachedPointSpriteEnabled;
-
-				bool m_cachedStencilEnabled;
-				StencilOperation m_cachedStencilFail;
-				StencilOperation m_cachedStencilPass;
-				StencilOperation m_cachedStencilDepthFail;
-				uint32 m_cachedRefrenceStencil;
-				CompareFunction m_cachedStencilFunction;
-				uint32 m_cachedStencilMask;
-				uint32 m_cachedStencilWriteMask;
-
-				bool m_cachedTwoSidedStencilMode;
-
-				StencilOperation m_cachedCounterClockwiseStencilFail;
-				StencilOperation m_cachedCounterClockwiseStencilPass;
-				StencilOperation m_cachedCounterClockwiseStencilDepthBufferFail;
-
-				CompareFunction m_cachedCounterClockwiseStencilFunction;
-
-				ShaderSamplerState* m_pixelSamplers;
-				ShaderSamplerState* m_vertexSamplers;
-
-				bool m_colorWrite0[4];
-				bool m_colorWrite1[4];
-				bool m_colorWrite2[4];
-				bool m_colorWrite3[4];
-
-				int m_textureSlotCount;
-				D3D9Texture** m_textureSlots;
 			};
 
 
-			class D3D9RenderStateManager : public RenderStateManager
+			class GL1ClipPlane : public ClipPlane
 			{
+			private:
+				GL1RenderStateManager* m_manager;
+				GL1RenderDevice* m_device;
+				int32 m_index;
+				Plane m_cachedPlane;
+
 			public:
-				D3D9RenderStateManager(D3D9RenderDevice* device, NativeD3DStateManager* nsmgr);
-				~D3D9RenderStateManager();
+				GL1ClipPlane() {}
+				GL1ClipPlane(GL1RenderDevice* device, GL1RenderStateManager* mgr, int index);
+				virtual bool getEnabled();
+				virtual Plane getPlane();
+
+				virtual void setEnabled(bool value);
+				virtual void setPlane(const Plane& plane);
+			};
+
+			class GL1RenderStateManager : public RenderStateManager
+			{
+			private:
+				GL1RenderDevice* m_device;
+
+				GL1ClipPlane m_clipPlanes[GL_MAX_CLIP_PLANES];
+
+				NativeGL1StateManager* m_stMgr;
+
+
+			public:
+				DWORD clipPlaneEnable;
+
+				GL1RenderStateManager(GL1RenderDevice* device, NativeGL1StateManager* nsmgr);
+				~GL1RenderStateManager();
 
 				virtual void SetAlphaTestParameters(bool enable, CompareFunction func, uint32 reference)
 				{
@@ -331,6 +319,8 @@ namespace Apoc3D
 				virtual CompareFunction getCounterClockwiseStencilFunction()
 				{ return m_stMgr->getCounterClockwiseStencilFunction(); }
 				
+				virtual ClipPlane& getClipPlane(int i) { return m_clipPlanes[i]; }
+				virtual int getClipPlaneCount() { return 32; }
 
 				/************************************************************************/
 				/* Scissor Test                                                         */
@@ -339,28 +329,6 @@ namespace Apoc3D
 				virtual bool getScissorTestEnabled();
 				virtual Apoc3D::Math::Rectangle getScissorTestRect();
 				virtual void setScissorTest(bool enable, const Apoc3D::Math::Rectangle* rect);
-
-				/************************************************************************/
-				/* Color Write                                                          */
-				/************************************************************************/
-				virtual void getColorWriteEnabled(int rtIndex, bool& r, bool& g, bool& b, bool& a);
-				virtual void setColorWriteEnabled(int rtIndex, bool r, bool g, bool b, bool a);
-
-				/************************************************************************/
-				/* Samplers                                                             */
-				/************************************************************************/
-
-				virtual void SetVertexSampler(int samplerIndex, const ShaderSamplerState& sampler) { m_stMgr->SetVertexSampler(samplerIndex, sampler); }
-				virtual void SetPixelSampler(int samplerIndex, const ShaderSamplerState& sampler) { m_stMgr->SetPixelSampler(samplerIndex, sampler); }
-
-				virtual const ShaderSamplerState& getPixelSampler(int samplerIndex) const { return m_stMgr->getPixelSampler(samplerIndex); }
-				virtual const ShaderSamplerState& getVertexSampler(int samplerIndex) const { return m_stMgr->getVertexSampler(samplerIndex); }
-
-			private:
-				D3D9RenderDevice* m_device;
-
-				NativeD3DStateManager* m_stMgr;
-
 			};
 		}
 	}

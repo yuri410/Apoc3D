@@ -38,20 +38,6 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			/**
-			 *  Represents a user clip plane of a RenderDevice
-			 */
-			class APAPI ClipPlane
-			{
-			public:
-				virtual bool getEnabled() = 0;
-				virtual Plane getPlane() = 0;
-
-				virtual void setEnabled(bool value) = 0;
-				virtual void setPlane(const Plane& plane) = 0;
-				
-			};
-
 			class APAPI RenderStateManager
 			{
 			private:
@@ -137,8 +123,6 @@ namespace Apoc3D
 
 				virtual CompareFunction getCounterClockwiseStencilFunction() = 0;
 				
-				virtual ClipPlane& getClipPlane(int i) = 0;
-				virtual int getClipPlaneCount() = 0;
 				/************************************************************************/
 				/* Scissor Test                                                         */
 				/************************************************************************/

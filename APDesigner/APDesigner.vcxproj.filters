@@ -15,12 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="small.ico">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="APDesigner.ico">
-      <Filter>资源文件</Filter>
-    </None>
     <None Include="ModelViewSceneRenderer.xml" />
     <None Include="SysShaderLib.xml" />
     <None Include="SysShaderLib\vs_trans_pn.xml" />
@@ -28,12 +22,6 @@
     <None Include="SysShaderLib\vs_vtxNdl.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="targetver.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="APDCommon.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -134,6 +122,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DocumentFont\FontDocument.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -242,12 +236,20 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="ModelViewSceneScript1.xml" />
+    <Xml Include="ModelViewSceneScript0.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="APDesigner.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
     <ResourceCompile Include="APDesigner.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="ModelViewSceneScript1.xml" />
-    <Xml Include="ModelViewSceneScript0.xml" />
   </ItemGroup>
 </Project>

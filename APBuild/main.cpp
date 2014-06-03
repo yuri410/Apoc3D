@@ -1,7 +1,11 @@
 // APBuild.cpp : 定义控制台应用程序的入口点。
 //
 
-#include "stdafx.h"
+#include <SDKDDKVer.h>
+
+#include <Windows.h>
+#include <tchar.h>
+
 #include "BuildEngine.h"
 
 #include "APBCommon.h"
@@ -21,7 +25,6 @@
 #include "EffectCompiler/FXListBuild.h"
 #include "AnimationBuild/MAnimBuild.h"
 #include "AnimationBuild/TAnimBuild.h"
-//#include <Windows.h>
 
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 #include "apoc3d/Config/ConfigurationSection.h"

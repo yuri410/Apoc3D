@@ -134,8 +134,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Plugin.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="Win32InputFactory.h" />
     <ClInclude Include="Win32Keyboard.h" />
     <ClInclude Include="Win32Mouse.h" />
@@ -144,11 +142,6 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Plugin.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="Win32InputFactory.cpp" />
     <ClCompile Include="Win32Keyboard.cpp" />
     <ClCompile Include="Win32Mouse.cpp" />

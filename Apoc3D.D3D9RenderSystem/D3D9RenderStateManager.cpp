@@ -694,53 +694,11 @@ namespace Apoc3D
 			}
 
 
-			D3D9ClipPlane::D3D9ClipPlane(D3D9RenderDevice* device, D3D9RenderStateManager* mgr, int index)
-				: m_manager(mgr), m_device(device), m_index(index)
-			{
 
-			}
-
-			bool D3D9ClipPlane::getEnabled()
-			{
-				uint32 mask = 1<<m_index;
-				return !!(m_manager->clipPlaneEnable & mask);
-			}
-			Plane D3D9ClipPlane::getPlane()
-			{
-				return m_cachedPlane;
-			}
-
-			void D3D9ClipPlane::setEnabled(bool value)
-			{
-				if (value)
-				{
-					uint32 mask = 1<<m_index;
-					m_manager->clipPlaneEnable |= mask;
-				}
-				else
-				{
-					uint32 mask = 1<<m_index;
-					m_manager->clipPlaneEnable ^= mask;
-				}
-				HRESULT hr = m_device->getDevice()->SetRenderState(D3DRS_CLIPPLANEENABLE, m_manager->clipPlaneEnable);
-				assert(SUCCEEDED(hr));
-			}
-			void D3D9ClipPlane::setPlane(const Plane& plane)
-			{
-				m_cachedPlane = plane;
-
-				HRESULT hr = m_device->getDevice()->SetClipPlane(m_index, &plane.X);
-				assert(SUCCEEDED(hr));
-			}
-
-			
 			D3D9RenderStateManager::D3D9RenderStateManager(D3D9RenderDevice* device, NativeD3DStateManager* nsmgr)
-				: RenderStateManager(device), m_device(device), clipPlaneEnable(0), m_stMgr(nsmgr)
+				: RenderStateManager(device), m_device(device),  m_stMgr(nsmgr)
 			{
-				for (int i=0;i<32;i++)
-				{
-					m_clipPlanes[i] = D3D9ClipPlane(device, this, i);
-				}
+				
 			}
 			D3D9RenderStateManager::~D3D9RenderStateManager()
 			{
@@ -751,6 +709,7 @@ namespace Apoc3D
 			/* Scissor Test                                                         */
 			/************************************************************************/
 
+			
 			bool D3D9RenderStateManager::getScissorTestEnabled()
 			{
 				DWORD result;

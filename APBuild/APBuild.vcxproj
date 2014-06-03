@@ -158,8 +158,6 @@
     <ClInclude Include="AnimationBuild\XafImporter.h" />
     <ClInclude Include="MeshBuild\XImporter.h" />
     <ClInclude Include="PakBuild\PakBuild.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="BuildEngine.h" />
     <ClInclude Include="TextureBuild\TextureBuild.h" />
   </ItemGroup>
@@ -184,7 +182,6 @@
     <ClCompile Include="AnimationBuild\XafImporter.cpp" />
     <ClCompile Include="MeshBuild\XImporter.cpp" />
     <ClCompile Include="PakBuild\PakBuild.cpp" />
-    <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="APBCommon.cpp" />
     <ClCompile Include="BuildEngine.cpp" />
     <ClCompile Include="TextureBuild\TextureBuild.cpp" />

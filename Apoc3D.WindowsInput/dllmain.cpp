@@ -1,8 +1,9 @@
 
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS && APOC3D_DYNLIB
 
-// dllmain.cpp : 定义 DLL 应用程序的入口点。
-#include "stdafx.h"
+#include <sdkddkver.h>
+#include <Windows.h>
+#include <tchar.h>
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
