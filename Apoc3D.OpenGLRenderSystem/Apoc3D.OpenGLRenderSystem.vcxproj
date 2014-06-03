@@ -14,7 +14,7 @@
     <ProjectGuid>{4ECF9A4B-40A2-458D-BCDB-B48440527408}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Apoc3D::Graphics::GLRenderSystem</RootNamespace>
-    <ProjectName>Apoc3D.OpenGLRenderSystem</ProjectName>
+    <ProjectName>Apoc3D.OpenGL1RenderSystem</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
