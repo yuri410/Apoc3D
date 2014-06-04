@@ -44,21 +44,33 @@ namespace Apoc3D
 			 */
 			typedef typename ResType::ResHandleTemplateConstraint CF_XXX;
 		public:
+			/**
+			 *  Means the handle will not touch resource, making unloaded loading.
+			 *  This is helpful reducing overhead when all resources are preloaded.
+			 */
 			static const byte FLG_Untouching = 1;
+			/**
+			 *  This will force the resource being deleted with the destruction of the handle.
+			 */
 			static const byte FLG_ForceDisposal = 2;
-			static const byte FLG_DummyHandle = FLG_Untouching | FLG_ForceDisposal;
+			/**
+			 *  This will make handle ignore reference counting.
+			 *	When used with FLG_Untouching, this works as a reference wrapper to fit interfaces.
+			 */
+			static const byte FLG_NoRefCounting = 4;
+
+			static const byte FLGMIX_ContainerHandle = FLG_Untouching | FLG_ForceDisposal;
+			static const byte FLGMIX_ReferenceWrapperHandle = FLG_Untouching | FLG_NoRefCounting;
 
 			ResourceHandle(ResType* res)
 				: m_resource(res), m_flags(0)
 			{
-				if (res->isManaged())
-					_Ref();
+				_Ref();
 			}
 			ResourceHandle(ResType* res, byte flags)
 				: m_resource(res), m_flags(flags)
 			{
-				if (res->isManaged())
-					_Ref();
+				_Ref();
 			}
 			
 			// outdated
@@ -66,8 +78,7 @@ namespace Apoc3D
 
 			virtual ~ResourceHandle(void)
 			{
-				if (m_resource->isManaged())
-					_Unref();
+				_Unref();
 				
 				if (m_flags & FLG_ForceDisposal) 
 				{
@@ -76,7 +87,8 @@ namespace Apoc3D
 				}
 				else
 				{
-					if (m_resource->getReferenceCount()==0 && 
+					if (!shouldNotUseRefCount() &&
+						m_resource->getReferenceCount()==0 && 
 						(m_resource->isManaged() && !m_resource->getManager()->usesAsync())
 						)
 					{
@@ -136,6 +148,7 @@ namespace Apoc3D
 			}
 
 			bool shouldNotTouchResource() const { return (m_flags&FLG_Untouching)!=0; }
+			bool shouldNotUseRefCount() const { return (m_flags&FLG_NoRefCounting)!=0; }
 		private:
 			ResType* m_resource;
 
@@ -143,14 +156,14 @@ namespace Apoc3D
 
 			void _Ref( )
 			{
-				if (!shouldNotTouchResource() && m_resource->isManaged())
+				if (!shouldNotUseRefCount() && m_resource->isManaged())
 				{
 					m_resource->_Ref();
 				}
 			}
 			void _Unref( )
 			{
-				if (!shouldNotTouchResource() && m_resource->isManaged())
+				if (!shouldNotUseRefCount() && m_resource->isManaged())
 				{
 					m_resource->_Unref();
 				}

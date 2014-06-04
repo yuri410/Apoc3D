@@ -497,6 +497,8 @@ namespace APDesigner
 		{
 			delete m_model;
 		}
+		m_modelSData = nullptr;
+
 		delete m_sceneRenderer;
 		delete m_camera;
 		for (int i=0;i<m_labels.getCount();i++)
@@ -605,7 +607,7 @@ namespace APDesigner
 			delete afl;
 		}
 
-		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData, ResourceHandle<ModelSharedData>::FLG_DummyHandle), m_animData);
+		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData, ResourceHandle<ModelSharedData>::FLGMIX_ContainerHandle), m_animData);
 		m_object.setmdl(m_model);
 		m_model->PlayAnimation();
 		
