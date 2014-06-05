@@ -85,7 +85,6 @@ namespace Apoc3D
 
 				D3D9RenderDevice* m_device;
 				
-				bool m_isDefault;
 
 				bool m_hasColor;
 				bool m_hasDepth;

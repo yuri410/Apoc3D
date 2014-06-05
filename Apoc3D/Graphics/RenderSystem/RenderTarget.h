@@ -27,6 +27,7 @@
  */
 
 #include "apoc3d/Graphics/LockData.h"
+#include "apoc3d/EventDelegate.h"
 
 using namespace Apoc3D::VFS;
 using namespace Apoc3D::Core;
@@ -71,6 +72,8 @@ namespace Apoc3D
 				virtual DepthBuffer* GetDepthBuffer() = 0;
 
 				static bool CheckMultisampleModeStringNone(const String& aamode);
+
+				EventDelegate1<RenderTarget*> eventReseted;
 			protected:
 				RenderDevice* m_device;
 

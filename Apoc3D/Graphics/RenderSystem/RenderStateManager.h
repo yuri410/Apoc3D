@@ -40,10 +40,6 @@ namespace Apoc3D
 		{
 			class APAPI RenderStateManager
 			{
-			private:
-				RenderDevice* m_renderDevice;
-			protected:
-				RenderStateManager(RenderDevice* device);
 			public:
 				/************************************************************************/
 				/* Alpha Test                                                           */
@@ -145,6 +141,10 @@ namespace Apoc3D
 				virtual const ShaderSamplerState& getPixelSampler(int samplerIndex) const = 0;
 				virtual const ShaderSamplerState& getVertexSampler(int samplerIndex) const = 0;
 
+			protected:
+				RenderStateManager(RenderDevice* device);
+			private:
+				RenderDevice* m_renderDevice;
 			};
 		}
 	}

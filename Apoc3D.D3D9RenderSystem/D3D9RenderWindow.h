@@ -75,7 +75,6 @@ namespace Apoc3D
 				 *  and the GameWindow class. As being said above, these classes works on their own. D3D9Game is the "implementation" but as
 				 *  a wrapper redirects the calls from Game and etc to the D3D9RenderWindow class, which is associated with the 
 				 *  client application event handler to handle the Load(), Initialize() operations.
-				 *  Thus, make sure to draw a line here. Maybe that helps understanding or reviewing the code.
 				 */
 				class D3D9Game : public Game
 				{
