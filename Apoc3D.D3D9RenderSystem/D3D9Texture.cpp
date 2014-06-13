@@ -618,6 +618,7 @@ namespace Apoc3D
 				}
 			}
 
+
 			void D3D9Texture::load()
 			{
 				// These 2 lines will load the data into memory from the ResourceLocation
@@ -680,17 +681,7 @@ namespace Apoc3D
 					// usually happens when the hardware does not support non power of 2 textures
 					if (newHeight != height || newWidth != width || newDepth != depth)
 					{
-						String name;
-						const FileLocation* fl = dynamic_cast<const FileLocation*>(getResourceLocation());
-
-						if (fl)
-						{
-							name = PathUtils::GetFileNameNoExt( fl->getPath());
-						}
-						else
-						{
-							name = getResourceLocation()->getName();
-						}
+						String name = getResourceLocationName();
 
 						// TODO: resize here
 						// 
@@ -715,17 +706,8 @@ namespace Apoc3D
 						newdata.Levels.ResizeDiscard(data.LevelCount);
 						newdata.Flags = data.Flags;
 
-						String name;
-						const FileLocation* fl = dynamic_cast<const FileLocation*>(getResourceLocation());
+						String name = getResourceLocationName();
 
-						if (fl)
-						{
-							name = PathUtils::GetFileNameNoExt( fl->getPath());
-						}
-						else
-						{
-							name = getResourceLocation()->getName();
-						}
 						LogManager::getSingleton().Write(LOG_Graphics, 
 							L"[D3D9Texture]" + name + L" " + PixelFormatUtils::ToString(data.Format) 
 							+ L" Pixel format is not supported by hardware. Converting to " +
@@ -794,6 +776,20 @@ namespace Apoc3D
 							D3DPOOL_MANAGED, &m_tex2D, NULL);
 						assert(SUCCEEDED(hr));
 
+						if (FAILED(hr))
+						{
+							String name = getResourceLocationName();
+							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt));
+							msg.append(L" ");
+							msg.append(StringUtils::IntToString(getWidth()));
+							msg.append(L"x");
+							msg.append(StringUtils::IntToString(getHeight()));
+							msg.append(L" L=");
+							msg.append(StringUtils::IntToString(getLevelCount()));
+
+							LogManager::getSingleton().Write(LOG_Graphics, msg, LOGLVL_Warning);
+						}
+
 						setData(data, m_tex2D);
 					}					
 					break;
@@ -805,6 +801,18 @@ namespace Apoc3D
 							usage, newFmt, 
 							D3DPOOL_MANAGED, &m_cube, NULL);
 						assert(SUCCEEDED(hr));
+						
+						if (FAILED(hr))
+						{
+							String name = getResourceLocationName();
+							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt));
+							msg.append(L" ");
+							msg.append(StringUtils::IntToString(getWidth()));
+							msg.append(L" L=");
+							msg.append(StringUtils::IntToString(getLevelCount()));
+
+							LogManager::getSingleton().Write(LOG_Graphics, msg, LOGLVL_Warning);
+						}
 
 						setData(data, m_cube);
 					}
@@ -818,6 +826,22 @@ namespace Apoc3D
 							usage, newFmt, 
 							D3DPOOL_MANAGED, &m_tex3D, NULL);
 						assert(SUCCEEDED(hr));
+
+						if (FAILED(hr))
+						{
+							String name = getResourceLocationName();
+							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt));
+							msg.append(L" ");
+							msg.append(StringUtils::IntToString(getWidth()));
+							msg.append(L"x");
+							msg.append(StringUtils::IntToString(getHeight()));
+							msg.append(L"x");
+							msg.append(StringUtils::IntToString(getDepth()));
+							msg.append(L" L=");
+							msg.append(StringUtils::IntToString(getLevelCount()));
+
+							LogManager::getSingleton().Write(LOG_Graphics, msg, LOGLVL_Warning);
+						}
 
 						setData(data, m_tex3D);
 					}
@@ -981,6 +1005,17 @@ namespace Apoc3D
 				}
 			}
 
+
+			String D3D9Texture::getResourceLocationName()
+			{
+				const FileLocation* fl = dynamic_cast<const FileLocation*>(getResourceLocation());
+
+				if (fl)
+				{
+					return PathUtils::GetFileNameNoExt( fl->getPath());
+				}
+				return getResourceLocation()->getName();
+			}
 
 		}
 	}

@@ -75,7 +75,7 @@ void main()
 	TestIni();
 	TestXml();
 
-	TestRandom();
+	//TestRandom();
 }
 
 template <typename T>

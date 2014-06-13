@@ -684,8 +684,6 @@ namespace Apoc3D
 		{
 			assert(result.getCount() == 0);
 
-			unsigned int numSplits = 0;
-
 			// Use STL methods 
 			size_t start, pos;
 			start = 0;
@@ -711,15 +709,12 @@ namespace Apoc3D
 				}
 				// parse up to next real data
 				start = str.find_first_not_of(delims, start);
-				++numSplits;
 
 			} while (pos != String::npos);
 		}
 		void StringUtils::Split(const std::string& str, List<std::string>& result, const std::string& delims)
 		{
 			assert(result.getCount() == 0);
-
-			unsigned int numSplits = 0;
 
 			// Use STL methods 
 			size_t start, pos;
@@ -746,7 +741,6 @@ namespace Apoc3D
 				}
 				// parse up to next real data
 				start = str.find_first_not_of(delims, start);
-				++numSplits;
 
 			} while (pos != std::string::npos);
 		}
