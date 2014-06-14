@@ -379,12 +379,17 @@ namespace Apoc3D
 		void ConfigurationSection::SetUInt(const String& name, uint32 value)			{ SetStringValue(name, StringUtils::UIntToString(value)); }
 		void ConfigurationSection::SetColorValue(ColorValue value)						{ m_value = ColorValueToString(value); }
 		void ConfigurationSection::SetColorValue(const String& name, ColorValue value)	{ SetStringValue(name, ColorValueToString(value)); }
+		void ConfigurationSection::SetVector3(const Vector3& v)							{ m_value = Vector3ToString(v); }
+		void ConfigurationSection::SetVector3(const String& name, const Vector3& v)		{ SetStringValue(name, Vector3ToString(v)); }
 
 		void ConfigurationSection::SetStrings(const String* v, int32 count)				{ CombineString(v, count, m_value); }
 		void ConfigurationSection::SetSingles(const float* v, int32 count)				{ SinglesToString(v, count, m_value); }
 		void ConfigurationSection::SetPercentages(const float* v, int32 count)			{ PrecentagesToString(v, count, m_value); }
 		void ConfigurationSection::SetInts(const int32* v, int32 count)					{ IntsToString(v, count, m_value); }
 		void ConfigurationSection::SetUInts(const uint32* v, int32 count)				{ UIntsToString(v, count, m_value); }
+		void ConfigurationSection::SetVector3s(const Vector3* v, int count)				{ Vector3sToString(v, count, m_value); }
+
+		
 
 
 		float ParsePercentage(const String& val)

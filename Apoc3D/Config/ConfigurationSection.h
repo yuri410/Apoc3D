@@ -210,13 +210,14 @@ namespace Apoc3D
 			void SetInt(int32 value);
 			void SetUInt(uint32 value);
 			void SetColorValue(ColorValue value);
-
+			void SetVector3(const Vector3& v);
 
 			void SetStrings(const String* v, int count);
 			void SetSingles(const float* v, int count);
 			void SetPercentages(const float* v, int count);
 			void SetInts(const int32* v, int count);
 			void SetUInts(const uint32* v, int count);
+			void SetVector3s(const Vector3* v, int count);
 
 			void SetStrings(const List<String>& v)			{ SetStrings(&v[0], v.getCount()); }
 			void SetSingles(const FastList<float>& v)		{ SetSingles(&v[0],  v.getCount()); }
@@ -231,6 +232,7 @@ namespace Apoc3D
 			void SetInt(const String& name, int32 value);
 			void SetUInt(const String& name, uint32 value);
 			void SetColorValue(const String& name, ColorValue value);
+			void SetVector3(const String& name, const Vector3& v);
 
 		protected:
 			
