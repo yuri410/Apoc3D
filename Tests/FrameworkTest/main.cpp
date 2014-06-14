@@ -35,9 +35,6 @@ using namespace Apoc3D::VFS;
 using namespace Apoc3D::Utility;
 
 void TestTaggedData();
-void TestListReverse();
-void TestListSort();
-void TestListSort2();
 void TestRLE();
 void TestMath();
 void TestBufferStream();
@@ -65,9 +62,6 @@ void main()
 	FileSystem::getSingleton().ListDirectoryFiles(L"", items);
 
 	TestMath();
-	TestListReverse();
-	TestListSort();
-	TestListSort2();
 	TestTaggedData();
 	TestBufferStream();
 	//TestRLE();
@@ -206,66 +200,6 @@ void TestTaggedData()
 	delete outData;
 }
 
-void TestListReverse()
-{
-	List<int> subject;
-
-	subject.Add(0);
-	subject.Add(1);
-	subject.Add(2);
-	subject.Add(3);
-
-	subject.Reverse();
-
-	assert(subject[0] == 3);
-	assert(subject[1] == 2);
-	assert(subject[2] == 1);
-	assert(subject[3] == 0);
-
-	subject.Reverse();
-	subject.Add(4);
-	subject.Reverse();
-	assert(subject[0] == 4);
-	assert(subject[1] == 3);
-	assert(subject[2] == 2);
-	assert(subject[3] == 1);
-	assert(subject[4] == 0);
-
-}
-
-void TestListSort()
-{
-	FastList<int> subject(100);
-	int counter[1000];
-	memset(counter, 0, sizeof(counter));
-
-	for (int i=0;i<100;i++)
-	{
-		int val = Randomizer::NextExclusive(1000);
-		subject.Add(val);
-		counter[val]++;
-	}
-
-	subject.Sort();
-
-	
-	for (int i=0;i<subject.getCount()-1;i++)
-	{
-		if (subject[i+1] < subject[i])
-		{
-			assert(0);
-		}
-	}
-
-	int counter2[1000];
-	memset(counter2, 0, sizeof(counter2));
-	for (int i=0;i<subject.getCount();i++)
-	{
-		counter2[subject[i]]++;
-	}
-
-	assert(memcmp(counter, counter2, sizeof(counter))==0);
-}
 
 int comparerTestInt(const int& a, const int& b)
 {

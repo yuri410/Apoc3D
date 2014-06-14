@@ -35,8 +35,6 @@ namespace Apoc3D
 {
 	namespace Utility
 	{
-		const String StringUtils::Empty;
-
 		string StringUtils::toPlatformNarrowString(const String& str) { return toPlatformNarrowString(str.c_str()); }
 		string StringUtils::toPlatformNarrowString(const wchar_t* str)
 		{
@@ -67,7 +65,7 @@ namespace Apoc3D
 				delete[] buffer;
 				return result;
 			}
-			return Empty;
+			return L"";
 		}
 
 		std::string StringUtils::toASCIINarrowString(const String& str) { return std::string(str.begin(), str.end()); }
@@ -192,16 +190,159 @@ namespace Apoc3D
 			return result;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+
+
+		int32 SimpleParseInt32(const String& v) { return StringUtils::ParseInt32(v); }
+		float SimpleParseFloat(const String& v) { return StringUtils::ParseSingle(v); }
+
+		int32 SimpleParseInt32(const std::string& v) { return StringUtils::ParseInt32(v); }
+		float SimpleParseFloat(const std::string& v) { return StringUtils::ParseSingle(v); }
+
+		template <typename StrType>
+		struct GenericFunctions
+		{
+			static bool EqualsNoCase(const StrType& a, const StrType& b)
+			{
+				for (size_t i=0;i<a.size();i++)
+				{
+					if (tolower(a[i]) != tolower(b[i]))
+						return false;
+				}
+				return true;
+			}
+
+			static void Split(const StrType& str, List<StrType>& result, const StrType& delims)
+			{
+				assert(result.getCount() == 0);
+
+				// Use STL methods 
+				size_t start, pos;
+				start = 0;
+				do 
+				{
+					pos = str.find_first_of(delims, start);
+					if (pos == start)
+					{
+						// Do nothing
+						start = pos + 1;
+					}
+					else if (pos == StrType::npos)
+					{
+						// Copy the rest of the string
+						result.Add( str.substr(start) );
+						break;
+					}
+					else
+					{
+						// Copy up to delimiter
+						result.Add( str.substr(start, pos - start) );
+						start = pos + 1;
+					}
+					// parse up to next real data
+					start = str.find_first_not_of(delims, start);
+
+				} while (pos != StrType::npos);
+			}
+
+			static bool StartsWith(const StrType& str, const StrType& v, bool caseInsensitive)
+			{
+				size_t len = str.length();
+				size_t vlen = v.length();
+				if (len<vlen || !vlen)
+				{
+					return false;
+				}
+
+				StrType startOfThis = str.substr(0, vlen);
+				if (caseInsensitive)
+				{
+					return EqualsNoCase(startOfThis, v);
+				}
+				return (startOfThis == v);
+			}
+
+			static bool EndsWith(const StrType& str, const StrType& v, bool caseInsensitive)
+			{
+				size_t thisLen = str.length();
+				size_t patternLen = v.length();
+				if (thisLen < patternLen || patternLen == 0)
+					return false;
+
+				StrType endOfThis = str.substr(thisLen - patternLen, patternLen);
+				if (caseInsensitive)
+				{
+					return EqualsNoCase(endOfThis, v);
+				}
+				return (endOfThis == v);
+			}
+
+			template <typename ListElementT, typename ElementT, ElementT (*TConverter)(const StrType&) >
+			static void SplitT(const StrType& str, ListElementT& result, const StrType& delims)
+			{
+				assert(result.getCount() == 0);
+
+				// Use STL methods 
+				size_t start, pos;
+				start = 0;
+				do 
+				{
+					pos = str.find_first_of(delims, start);
+					if (pos == start)
+					{
+						// Do nothing
+						start = pos + 1;
+					}
+					else if (pos == StrType::npos)
+					{
+						// Copy the rest of the string
+						result.Add(TConverter(str.substr(start) ));
+						break;
+					}
+					else
+					{
+						// Copy up to delimiter
+						result.Add(TConverter(str.substr(start, pos - start) ));
+						start = pos + 1;
+					}
+					// parse up to next real data
+					start = str.find_first_not_of(delims, start);
+
+				} while (pos != StrType::npos);
+			}
+
+		};
+
+		template <typename T>
+		class CappedBufferList
+		{
+		public:
+			CappedBufferList(T* dataBuf, int32 sizeCap)
+				: m_elements(dataBuf), m_sizeCap(sizeCap), m_internalPointer(0)
+			{
+			}
+
+			void Add(const T& item)
+			{
+				assert(m_internalPointer<m_sizeCap);
+				m_elements[m_internalPointer++] = item;
+			}
+
+			int32 getCount() const { return m_internalPointer; }
+		private:
+			T* m_elements;
+			int32 m_sizeCap;
+
+			int32 m_internalPointer;
+		};
 
 
 		//////////////////////////////////////////////////////////////////////////
 
-		bool StringUtils::ParseBool(const String& val)
+		bool StringUtils::ParseBool(const String& v)
 		{
-			String v = val;
-			ToLowerCase(v);
-			return (StartsWith(v, L"true") || StartsWith(v, L"yes")
-				|| StartsWith(v, L"1"));
+			return (StartsWith(v, L"true", true) || StartsWith(v, L"yes", true)
+				|| StartsWith(v, L"1", true));
 		}
 		uint16 StringUtils::ParseUInt16(const String& val)
 		{
@@ -317,26 +458,10 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 
-		bool startsWidth(const std::string& str, const std::string& v)
+		bool StringUtils::ParseBool(const std::string& v)
 		{
-			size_t len = str.length();
-			size_t vlen = v.length();
-			if (len<vlen || !vlen)
-			{
-				return false;
-			}
-
-			std::string startOfThis = str.substr(0, vlen);
-			return (startOfThis == v);
-		}
-
-		bool StringUtils::ParseBool(const std::string& val)
-		{
-			std::string v = val;
-			std::transform(v.begin(), v.end(), v.begin(), tolower);
-			
-			return (startsWidth(v, "true") || startsWidth(v, "yes")
-				|| startsWidth(v, "1"));
+			return (StartsWith(v, "true", true) || StartsWith(v, "yes", true)
+				|| StartsWith(v, "1", true));
 		}
 		uint16 StringUtils::ParseUInt16(const std::string& val)
 		{
@@ -663,6 +788,11 @@ namespace Apoc3D
 			return result;
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+
+
+		bool StringUtils::EqualsNoCase(const String& a, const String& b) { return GenericFunctions<String>::EqualsNoCase(a,b); }
+		bool StringUtils::EqualsNoCase(const std::string& a, const std::string& b) { return GenericFunctions<std::string>::EqualsNoCase(a,b); }
 
 
 		//////////////////////////////////////////////////////////////////////////
@@ -680,111 +810,61 @@ namespace Apoc3D
 		{
 			str.erase(str.find_last_not_of(delims)+1);
 		}
-		void StringUtils::Split(const String& str, List<String>& result, const String& delims)
+
+
+		void StringUtils::Split(const String& str, List<String>& result, const String& delims) { GenericFunctions<String>::Split(str, result, delims); }
+		void StringUtils::Split(const std::string& str, List<std::string>& result, const std::string& delims) { GenericFunctions<std::string>::Split(str, result, delims); }
+
+		//////////////////////////////////////////////////////////////////////////
+
+		int32 StringUtils::SplitParseSingles(const String& str, float* flts, int32 maxCount, const String& delims)
 		{
-			assert(result.getCount() == 0);
-
-			// Use STL methods 
-			size_t start, pos;
-			start = 0;
-			do 
-			{
-				pos = str.find_first_of(delims, start);
-				if (pos == start)
-				{
-					// Do nothing
-					start = pos + 1;
-				}
-				else if (pos == String::npos)
-				{
-					// Copy the rest of the string
-					result.Add( str.substr(start) );
-					break;
-				}
-				else
-				{
-					// Copy up to delimiter
-					result.Add( str.substr(start, pos - start) );
-					start = pos + 1;
-				}
-				// parse up to next real data
-				start = str.find_first_not_of(delims, start);
-
-			} while (pos != String::npos);
+			CappedBufferList<float> lst(flts, maxCount);
+			GenericFunctions<String>::SplitT<CappedBufferList<float>, float, SimpleParseFloat>(str, lst, delims);
+			return lst.getCount();
 		}
-		void StringUtils::Split(const std::string& str, List<std::string>& result, const std::string& delims)
+		void StringUtils::SplitParseSingles(const String& str, Apoc3D::Collections::List<float>& results, const String& delims) { GenericFunctions<String>::SplitT<List<float>, float, SimpleParseFloat>(str, results, delims); }
+		void StringUtils::SplitParseSingles(const String& str, Apoc3D::Collections::FastList<float>& results, const String& delims) { GenericFunctions<String>::SplitT<FastList<float>, float, SimpleParseFloat>(str, results, delims); }
+
+		int32 StringUtils::SplitParseSingles(const std::string& str, float* flts, int32 maxCount, const std::string& delims)
 		{
-			assert(result.getCount() == 0);
-
-			// Use STL methods 
-			size_t start, pos;
-			start = 0;
-			do 
-			{
-				pos = str.find_first_of(delims, start);
-				if (pos == start)
-				{
-					// Do nothing
-					start = pos + 1;
-				}
-				else if (pos == std::string::npos)
-				{
-					// Copy the rest of the string
-					result.Add( str.substr(start) );
-					break;
-				}
-				else
-				{
-					// Copy up to delimiter
-					result.Add( str.substr(start, pos - start) );
-					start = pos + 1;
-				}
-				// parse up to next real data
-				start = str.find_first_not_of(delims, start);
-
-			} while (pos != std::string::npos);
+			CappedBufferList<float> lst(flts, maxCount);
+			GenericFunctions<std::string>::SplitT<CappedBufferList<float>, float, SimpleParseFloat>(str, lst, delims);
+			return lst.getCount();
 		}
+		void StringUtils::SplitParseSingles(const std::string& str, Apoc3D::Collections::List<float>& results, const std::string& delims) { GenericFunctions<std::string>::SplitT<List<float>, float, SimpleParseFloat>(str, results, delims); }
+		void StringUtils::SplitParseSingles(const std::string& str, Apoc3D::Collections::FastList<float>& results, const std::string& delims) { GenericFunctions<std::string>::SplitT<FastList<float>, float, SimpleParseFloat>(str, results, delims); }
 
-		bool StringUtils::StartsWith(const String& str, const String& v, bool caseInsensitive)
+		int32 StringUtils::SplitParseInts(const String& str, int32* ints, int32 maxCount, const String& delims)
 		{
-			size_t len = str.length();
-			size_t vlen = v.length();
-			if (len<vlen || !vlen)
-			{
-				return false;
-			}
-
-			String startOfThis = str.substr(0, vlen);
-			if (caseInsensitive)
-			{
-				ToLowerCase(startOfThis);
-
-				String newV = v;
-				ToLowerCase(newV);
-				return (startOfThis == newV);
-			}
-			return (startOfThis == v);
+			CappedBufferList<int32> lst(ints, maxCount);
+			GenericFunctions<String>::SplitT<CappedBufferList<int32>, int32, SimpleParseInt32>(str, lst, delims);
+			return lst.getCount();
 		}
+		void StringUtils::SplitParseInts(const String& str, Apoc3D::Collections::List<int32>& results, const String& delims) { GenericFunctions<String>::SplitT<List<int32>, int32, SimpleParseInt32>(str, results, delims); }
+		void StringUtils::SplitParseInts(const String& str, Apoc3D::Collections::FastList<int32>& results, const String& delims) { GenericFunctions<String>::SplitT<FastList<int32>, int32, SimpleParseInt32>(str, results, delims); }
 
-		bool StringUtils::EndsWith(const String& str, const String& v, bool caseInsensitive)
+		int32 StringUtils::SplitParseInts(const std::string& str, int32* ints, int32 maxCount, const std::string& delims)
 		{
-			size_t thisLen = str.length();
-			size_t patternLen = v.length();
-			if (thisLen < patternLen || patternLen == 0)
-				return false;
-
-			String endOfThis = str.substr(thisLen - patternLen, patternLen);
-			if (caseInsensitive)
-			{
-				ToLowerCase(endOfThis);
-
-				String newV = v;
-				ToLowerCase(newV);
-
-				return (endOfThis == newV);
-			}
-			return (endOfThis == v);
+			CappedBufferList<int32> lst(ints, maxCount);
+			GenericFunctions<std::string>::SplitT<CappedBufferList<int32>, int32, SimpleParseInt32>(str, lst, delims);
+			return lst.getCount();
 		}
+		void StringUtils::SplitParseInts(const std::string& str, Apoc3D::Collections::List<int32>& results, const std::string& delims) { GenericFunctions<std::string>::SplitT<List<int32>, int32, SimpleParseInt32>(str, results, delims); }
+		void StringUtils::SplitParseInts(const std::string& str, Apoc3D::Collections::FastList<int32>& results, const std::string& delims) { GenericFunctions<std::string>::SplitT<FastList<int32>, int32, SimpleParseInt32>(str, results, delims); }
+
+
+
+		//////////////////////////////////////////////////////////////////////////
+
+
+
+		bool StringUtils::StartsWith(const String& str, const String& v, bool caseInsensitive) { return GenericFunctions<String>::StartsWith(str, v, caseInsensitive); }
+		bool StringUtils::EndsWith(const String& str, const String& v, bool caseInsensitive) { return GenericFunctions<String>::EndsWith(str, v, caseInsensitive); }
+		bool StringUtils::StartsWith(const std::string& str, const std::string& v, bool caseInsensitive) { return GenericFunctions<std::string>::StartsWith(str, v, caseInsensitive); }
+		bool StringUtils::EndsWith(const std::string& str, const std::string& v, bool caseInsensitive) { return GenericFunctions<std::string>::EndsWith(str, v, caseInsensitive); }
+
+
 
 
 		void StringUtils::ToLowerCase(String& str)

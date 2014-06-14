@@ -61,6 +61,8 @@ namespace Apoc3D
 		class APAPI ConfigurationSection
 		{
 		public:
+			static int32 FloatPointStoringPrecision;
+
 			typedef HashMap<String, String> AttributeTable;
 			typedef HashMap<String, ConfigurationSection*> SubSectionTable;
 
@@ -98,107 +100,106 @@ namespace Apoc3D
 			bool tryGetAttribute(const String& name, String& result) const;
 
 
+#define CONFIG_SECT_GETER_DECL(type, typeName) \
+			type Get##typeName() const; \
+			type Get##typeName(const String& key) const; \
+			type GetAttribute##typeName(const String& key) const; \
+			bool TryGet##typeName(const String& key, type& result) const; \
+			bool TryGetAttribute##typeName(const String& key, type& result) const;
 
-			bool GetBool() const;
-			float GetSingle() const;
-			float GetPercentage() const;
-			int32 GetInt() const;
-			uint32 GetUInt() const;
-			ColorValue GetColorValue() const;
-			List<String> GetStrings() const;
-			FastList<float> GetSingles() const;
-			FastList<float> GetPercentages() const;
-			FastList<int32> GetInts() const;
-			FastList<uint32> GetUInts() const;
+			CONFIG_SECT_GETER_DECL(bool, Bool);
+			CONFIG_SECT_GETER_DECL(float, Single);
+			CONFIG_SECT_GETER_DECL(float, Percentage);
+			CONFIG_SECT_GETER_DECL(int32, Int);
+			CONFIG_SECT_GETER_DECL(uint32, UInt);
+			CONFIG_SECT_GETER_DECL(ColorValue, ColorValue);
+			CONFIG_SECT_GETER_DECL(Vector3, Vector3);
+			CONFIG_SECT_GETER_DECL(Point, Point);
 
-			bool GetBool(const String& key) const;
-			float GetSingle(const String& key) const;
-			float GetPercentage(const String& key) const;
-			int32 GetInt(const String& key) const;
-			uint32 GetUInt(const String& key) const;
-			ColorValue GetColorValue(const String& key) const;
-			List<String> GetStrings(const String& key) const;
-			FastList<float> GetSingles(const String& key) const;
-			FastList<float> GetPercentages(const String& key) const;
-			FastList<int32> GetInts(const String& key) const;
-			FastList<uint32> GetUInts(const String& key) const;
+#undef CONFIG_SECT_GETER_DECL
 
-			
-			bool GetAttributeBool(const String& key) const;
-			float GetAttributeSingle(const String& key) const;
-			float GetAttributePercentage(const String& key) const;
-			int32 GetAttributeInt(const String& key) const;
-			uint32 GetAttributeUInt(const String& key) const;
-			ColorValue GetAttributeColorValue(const String& key) const;
-			List<String> GetAttributeStrings(const String& key) const;
-			FastList<float> GetAttributeSingles(const String& key) const;
-			FastList<float> GetAttributePercentages(const String& key) const;
-			FastList<int32> GetAttributeInts(const String& key) const;
-			void GetAttributeInts(const String& key, FastList<int32>& values) const;
-			FastList<uint32> GetAttributeUInts(const String& key) const;
+#define CONFIG_SECT_SPLITER_DECL(type, typeName) \
+			type Get##typeName() const; \
+			type Get##typeName(const String& key) const; \
+			type GetAttribute##typeName(const String& key) const; \
+			void Get##typeName(type& result) const; \
+			void Get##typeName(const String& key, type& result) const; \
+			void GetAttribute##typeName(const String& key, type& result) const; \
+			bool TryGet##typeName(const String& key, type& result) const; \
+			bool TryGetAttribute##typeName(const String& key, type& result) const;
 
+			CONFIG_SECT_SPLITER_DECL(List<String>, Strings);
+			CONFIG_SECT_SPLITER_DECL(FastList<float>, Singles);
+			CONFIG_SECT_SPLITER_DECL(FastList<float>, Percentages);
+			CONFIG_SECT_SPLITER_DECL(FastList<int32>, Ints);
+			CONFIG_SECT_SPLITER_DECL(FastList<uint32>, UInts);
+			CONFIG_SECT_SPLITER_DECL(FastList<Vector3>, Vector3s);
+			CONFIG_SECT_SPLITER_DECL(FastList<Point>, Points);
+
+#undef CONFIG_SECT_SPLITER_DECL
 
 
+#define CONFIG_SECT_SPLITER_ARR_DECL(type, typeName) \
+			void Get##typeName(type* v, int32 maxCount, int32* acutallCount = nullptr) const; \
+			void Get##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount = nullptr) const; \
+			void GetAttribute##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount = nullptr) const; \
+			bool TryGet##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount = nullptr) const; \
+			bool TryGetAttribute##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount = nullptr) const; \
+			void Get##typeName##Checked(type* v, int32 expectedCount) const { int32 actuallCount; Get##typeName(v, expectedCount, &actuallCount); assert(actuallCount = expectedCount); } \
+			void Get##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; Get##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount = expectedCount); } \
+			void GetAttribute##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; GetAttribute##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount = expectedCount); } \
+			bool TryGet##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; bool r = TryGet##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount = expectedCount); return r; } \
+			bool TryGetAttribute##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; bool r = TryGetAttribute##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount = expectedCount); return r; } 
 
-			bool TryGetBool(const String& key, bool& result) const;
-			bool TryGetSingle(const String& key, float& result) const;
-			bool TryGetPercentage(const String& key, float& result) const;
-			bool TryGetInt(const String& key, int32& result) const;
-			bool TryGetUInt(const String& key, uint32& result) const;
-			bool TryGetColorValue(const String& key, ColorValue& result) const;
+			CONFIG_SECT_SPLITER_ARR_DECL(float, Singles);
+			CONFIG_SECT_SPLITER_ARR_DECL(float, Percentages);
+			CONFIG_SECT_SPLITER_ARR_DECL(int32, Ints);
+			CONFIG_SECT_SPLITER_ARR_DECL(uint32, UInts);
+			CONFIG_SECT_SPLITER_ARR_DECL(Vector3, Vector3s);
+			CONFIG_SECT_SPLITER_ARR_DECL(Point, Points);
 
-			bool TryGetAttributeInts(const String& key, FastList<int32>& values) const;
-
-
-			bool TryGetAttributeBool(const String& key, bool& result) const;
-			bool TryGetAttributeSingle(const String& key, float& result) const;
-			bool TryGetAttributePercentage(const String& key, float& result) const;
-			bool TryGetAttributeInt(const String& key, int32& result) const;
-			bool TryGetAttributeUInt(const String& key, uint32& result) const;
-			bool TryGetAttributeColorValue(const String& key, ColorValue& result) const;
+#undef CONFIG_SECT_SPLITER_ARR_DECL
 
 
 			void AddStringValue(const String& name, const String& value);
-
-			void AddBool(const String& key, bool value);
-			void AddSingle(const String& key, float value);
-			void AddPercentage(const String& key, float value);
-			void AddInt(const String& key, int32 value);
-			void AddUInt(const String& key, uint32 value);
-			void AddColorValue(const String& key, ColorValue value);
-			
-			void AddStrings(const String& key, const String* v, int count);
-			void AddSingles(const String& key, const float* v, int count);
-			void AddPercentages(const String& key, const float* v, int count);
-			void AddInts(const String& key, const int32* v, int count);
-			void AddUInts(const String& key, const uint32* v, int count);
-			
-			void AddStrings(const String& key, const List<String>& v)			{ AddStrings(key, &v[0], v.getCount()); }
-			void AddSingles(const String& key, const FastList<float>& v)		{ AddSingles(key, &v[0],  v.getCount()); }
-			void AddPercentages(const String& key, const FastList<float>& v)	{ AddPercentages(key, &v[0],  v.getCount()); }
-			void AddInts(const String& key, const FastList<int32>& v)			{ AddInts(key, &v[0],  v.getCount()); }
-			void AddUInts(const String& key, const FastList<uint32>& v)			{ AddUInts(key, &v[0],  v.getCount()); }
-
-
 			void AddAttributeString(const String& name, const String& value);
-			void AddAttributeBool(const String& name, bool val);
-			void AddAttributeSingle(const String& name, float val);
-			void AddAttributePercentage(const String& name, float val);
-			void AddAttributeInt(const String& name, int32 val);
-			void AddAttributeUInt(const String& name, uint32 val);
-			void AddAttributeColorValue(const String& name, ColorValue val);
 
-			void AddAttributeStrings(const String& name, const String* v, int count);
-			void AddAttributeSingles(const String& name, const float* v, int count);
-			void AddAttributePercentages(const String& name, const float* v, int count);
-			void AddAttributeInts(const String& name, const int32* v, int count);
-			void AddAttributeUInts(const String& name, const uint32* v, int count);
 
-			void AddAttributeStrings(const String& name, const List<String>& v)			{ AddAttributeStrings(name, &v[0], v.getCount()); }
-			void AddAttributeSingles(const String& name, const FastList<float>& v)		{ AddAttributeSingles(name, &v[0], v.getCount()); }
-			void AddAttributePercentages(const String& name, const FastList<float>& v)	{ AddAttributePercentages(name, &v[0], v.getCount()); }
-			void AddAttributeInts(const String& name, const FastList<int32>& v)			{ AddAttributeInts(name, &v[0], v.getCount()); }
-			void AddAttributeUInts(const String& name, const FastList<uint32>& v)		{ AddAttributeUInts(name, &v[0], v.getCount()); }
+#define CONFIG_SECT_ADDER_DECL(type, typeName) \
+			void Add##typeName(const String& key, type value); \
+			void AddAttribute##typeName(const String& key, type value); 
+
+			CONFIG_SECT_ADDER_DECL(bool, Bool);
+			CONFIG_SECT_ADDER_DECL(float, Single);
+			CONFIG_SECT_ADDER_DECL(float, Percentage);
+			CONFIG_SECT_ADDER_DECL(int32, Int);
+			CONFIG_SECT_ADDER_DECL(uint32, UInt);
+			CONFIG_SECT_ADDER_DECL(ColorValue, ColorValue);
+			CONFIG_SECT_ADDER_DECL(const Vector3&, Vector3);
+			CONFIG_SECT_ADDER_DECL(const Point&, Point);
+
+#undef CONFIG_SECT_ADDER_DECL
+
+
+#define CONFIG_SECT_COMBINER_DECL_NOLIST(type, typeName) \
+			void Add##typeName(const String& key, const type* v, int32 count); \
+			void AddAttribute##typeName(const String& name, const type* v, int32 count);
+			
+#define CONFIG_SECT_COMBINER_DECL(type, typeName, listType) \
+			CONFIG_SECT_COMBINER_DECL_NOLIST(type, typeName); \
+			void Add##typeName(const String& key, const listType<type>& v)			{ Add##typeName(key, &v[0], v.getCount()); }  \
+			void AddAttribute##typeName(const String& name, const listType<type>& v)			{ AddAttribute##typeName(name, &v[0], v.getCount()); } 
+
+			CONFIG_SECT_COMBINER_DECL(String, Strings, List);
+			CONFIG_SECT_COMBINER_DECL(float, Singles, FastList);
+			CONFIG_SECT_COMBINER_DECL(float, Percentages, FastList);
+			CONFIG_SECT_COMBINER_DECL(int32, Ints, FastList);
+			CONFIG_SECT_COMBINER_DECL(uint32, UInts, FastList);
+			CONFIG_SECT_COMBINER_DECL_NOLIST(Vector3, Vector3s);
+			CONFIG_SECT_COMBINER_DECL_NOLIST(Point, Points);
+
+#undef CONFIG_SECT_COMBINER_DECL
+#undef CONFIG_SECT_COMBINER_DECL_NOLIST
 
 
 			void SetStringValue(const String& name, const String& value);

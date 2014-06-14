@@ -54,28 +54,10 @@ namespace Apoc3D
 
 		void Vector2::Parse(const String& str, bool loosy)
 		{
-			Apoc3D::Collections::List<String> results;
-			StringUtils::Split(str, results, L", ");
-			
 			if (loosy)
-			{
-				X = Y = 0;
-
-				if (results.getCount() > 0)
-				{
-					X = StringUtils::ParseSingle(results[0]);
-				}
-				if (results.getCount() > 1)
-				{
-					Y = StringUtils::ParseSingle(results[1]);
-				}
-			}
+				StringUtils::SplitParseSingles(str, this->operator float *(), 2, L", ");
 			else
-			{
-				X = StringUtils::ParseSingle(results[0]);
-				Y = StringUtils::ParseSingle(results[1]);
-				assert(results.getCount()==2);
-			}
+				StringUtils::SplitParseSinglesChecked(str, this->operator float *(), 2, L", ");
 		}
 		String Vector2::ToTextString(int precision) const
 		{
@@ -97,33 +79,10 @@ namespace Apoc3D
 
 		void Vector3::Parse(const String& str, bool loosy)
 		{
-			Apoc3D::Collections::List<String> results;
-			StringUtils::Split(str, results, L", ");
-
 			if (loosy)
-			{
-				X = Y = Z = 0;
-
-				if (results.getCount() > 0)
-				{
-					X = StringUtils::ParseSingle(results[0]);
-				}
-				if (results.getCount() > 1)
-				{
-					Y = StringUtils::ParseSingle(results[1]);
-				}
-				if (results.getCount() > 2)
-				{
-					Z = StringUtils::ParseSingle(results[2]);
-				}
-			}
+				StringUtils::SplitParseSingles(str, this->operator float *(), 3, L", ");
 			else
-			{
-				X = StringUtils::ParseSingle(results[0]);
-				Y = StringUtils::ParseSingle(results[1]);
-				Z = StringUtils::ParseSingle(results[2]);
-				assert(results.getCount()==3);
-			}
+				StringUtils::SplitParseSinglesChecked(str, this->operator float *(), 3, L", ");
 		}
 		String Vector3::ToTextString(int precision) const
 		{
@@ -181,37 +140,10 @@ namespace Apoc3D
 
 		void Vector4::Parse(const String& str, bool loosy)
 		{
-			Apoc3D::Collections::List<String> results;
-			StringUtils::Split(str, results, L", ");
 			if (loosy)
-			{
-				X = Y = Z = W = 0;
-
-				if (results.getCount() > 0)
-				{
-					X = StringUtils::ParseSingle(results[0]);
-				}
-				if (results.getCount() > 1)
-				{
-					Y = StringUtils::ParseSingle(results[1]);
-				}
-				if (results.getCount() > 2)
-				{
-					Z = StringUtils::ParseSingle(results[2]);
-				}
-				if (results.getCount() > 3)
-				{
-					W = StringUtils::ParseSingle(results[3]);
-				}
-			}
+				StringUtils::SplitParseSingles(str, this->operator float *(), 4, L", ");
 			else
-			{
-				X = StringUtils::ParseSingle(results[0]);
-				Y = StringUtils::ParseSingle(results[1]);
-				Z = StringUtils::ParseSingle(results[2]);
-				W = StringUtils::ParseSingle(results[3]);
-				assert(results.getCount()==4);
-			}
+				StringUtils::SplitParseSinglesChecked(str, this->operator float *(), 4, L", ");
 		}
 		String Vector4::ToTextString(int precision) const
 		{
