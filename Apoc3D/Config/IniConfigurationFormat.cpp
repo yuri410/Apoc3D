@@ -183,6 +183,7 @@ namespace Apoc3D
 			strm->Write((const char*)utf8.c_str(), utf8.length());
 
 			strm->Close();
+			delete strm;
 		}
 	}
 }

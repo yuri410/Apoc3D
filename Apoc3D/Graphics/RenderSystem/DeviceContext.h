@@ -51,7 +51,7 @@ namespace Apoc3D
 				bool IgnoreMonitorChange;
 				
 				/** 
-				 *  Represents when not full screen rendering, whether
+				 *  Represents when IsWindowd, whether
 				 *  the engine should create a RenderWindow or(true), or
 				 *  using a user specified render area as a RenderView(false).
 				 */
@@ -66,10 +66,10 @@ namespace Apoc3D
 				uint32 FSAASampleCount;
 				bool EnableVSync;
 				
+				bool IsMultithreaded;
+
 				/** 
-				 *  When IsFullForm==true, this is used to indicate the target area
-				 *  to present the render result.
-				 *  On console targets, this is not really likely to use.
+				 *  When IsFullForm==false, this is a platform specific handle indicating the target area for presenting the render result.
 				 */
 				uint64 TargetHandle;
 
@@ -78,7 +78,7 @@ namespace Apoc3D
 				RenderParameters()
 					: IsWindowd(false), IsFullForm(false), BackBufferWidth(0), BackBufferHeight(0),
 					DepthBufferFormat(DEPFMT_Depth16), ColorBufferFormat(FMT_Unknown), FSAASampleCount(0), EnableVSync(false),
-					TargetHandle(0), UserData(0), IsFixedWindow(false), IgnoreMonitorChange(false)
+					TargetHandle(0), UserData(0), IsFixedWindow(false), IgnoreMonitorChange(false), IsMultithreaded(true)
 				{
 					
 				}

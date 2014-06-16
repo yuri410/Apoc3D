@@ -65,7 +65,7 @@ namespace Apoc3D
 				settings.DeviceType = D3DDEVTYPE_HAL;
 				settings.EnableVSync = params.EnableVSync;
 				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
-				settings.Multithreaded = true;
+				settings.Multithreaded = params.IsMultithreaded;
 				settings.RefreshRate = 0;
 				settings.Windowed = true;			
 
@@ -98,7 +98,7 @@ namespace Apoc3D
 				settings.DeviceType = D3DDEVTYPE_HAL;
 				settings.EnableVSync = params.EnableVSync;
 				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
-				settings.Multithreaded = true;
+				settings.Multithreaded = params.IsMultithreaded;
 				settings.RefreshRate = 0;
 				settings.Windowed = params.IsWindowd;				
 
@@ -166,7 +166,7 @@ namespace Apoc3D
 				settings.DeviceType = D3DDEVTYPE_HAL;
 				settings.EnableVSync = params.EnableVSync;
 				settings.MultiSampleType = D3D9Utils::ConvertMultisample(params.FSAASampleCount);
-				settings.Multithreaded = true;
+				settings.Multithreaded = params.IsMultithreaded;
 				settings.RefreshRate = 0;
 				settings.Windowed = params.IsWindowd;				
 
