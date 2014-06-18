@@ -502,6 +502,8 @@ namespace Apoc3D
 		void SplitString(const String& str, List<String>& result)
 		{
 			bool isIn = false;
+			bool preventTriming = false;
+
 			String buffer;
 			for (size_t i=0;i<str.size();i++)
 			{
@@ -509,11 +511,17 @@ namespace Apoc3D
 				if (ch == '"')
 				{
 					isIn = !isIn;
+					if (isIn)
+						preventTriming = true;
 				}
 				else if (ch == ',' && !isIn)
 				{
+					if (!preventTriming)
+						StringUtils::Trim(buffer);
+
 					result.Add(buffer);
 					buffer = String();
+					preventTriming = false;
 				}
 				else
 				{
@@ -522,7 +530,11 @@ namespace Apoc3D
 			}
 			if (buffer.size())
 			{
-				result.Add(buffer);
+				if (!preventTriming)
+					StringUtils::Trim(buffer);
+
+				if (buffer.size())
+					result.Add(buffer);
 			}
 		}
 
