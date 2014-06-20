@@ -64,20 +64,20 @@ namespace Apoc3D
 			Font(RenderDevice* device, ResourceLocation* fl);
 			~Font();
 
-			bool ChangeCharacterSetting(wchar_t ch, short left, short top, float adcanceX);
-			bool LookupCharacterSetting(wchar_t ch, short& left, short& top, float& adcanceX);
+			bool ChangeCharacterSetting(int32 ch, short left, short top, float adcanceX);
+			bool LookupCharacterSetting(int32 ch, short& left, short& top, float& adcanceX);
 
-			void RegisterCustomGlyph(wchar_t utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX);
-			void RegisterCustomGlyph(wchar_t utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect) 
+			void RegisterCustomGlyph(int32 utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX);
+			void RegisterCustomGlyph(int32 utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect) 
 			{
 				RegisterCustomGlyph(utf16code, graphic, srcRect, 0, 0, static_cast<float>(srcRect.Width));
 			}
-			void RegisterCustomGlyphYCenter(wchar_t utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, float advanceX) 
+			void RegisterCustomGlyphYCenter(int32 utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, float advanceX) 
 			{
 				int32 top = (getLineHeightInt() - srcRect.Height) / 2;
 				RegisterCustomGlyph(utf16code, graphic, srcRect, left, top, advanceX);
 			}
-			void RegisterCustomGlyphYCenter(wchar_t utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, int32 lineHeight, float advanceX) 
+			void RegisterCustomGlyphYCenter(int32 utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, int32 lineHeight, float advanceX) 
 			{
 				int32 top = (lineHeight - srcRect.Height) / 2;
 				RegisterCustomGlyph(utf16code, graphic, srcRect, left, top, advanceX);
@@ -85,7 +85,7 @@ namespace Apoc3D
 
 
 
-			void UnregisterCustomGlyph(wchar_t utf16code);
+			void UnregisterCustomGlyph(int32 utf16code);
 			void ClearCustomGlyph();
 
 			void DrawStringDissolving(Sprite* sprite, const String& text, float x, float y, uint color, float length, int dissolvingCount, const Point& dissolvePatchSize, float maxDissolvingScale);
@@ -94,20 +94,24 @@ namespace Apoc3D
 				DrawStringDissolving(sprite, text, static_cast<float>(pos.X), static_cast<float>(pos.Y), color, length, dissolvingCount, dissolvePatchSize, maxDissolvingScale);
 			}
 
-			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length=-1, float lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
+			void DrawStringEx(Sprite* sprite, const String& text, float x, float y, uint color, int length=-1, float lineSpace = 0, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, float x, float y, int width, uint color);
 
-			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = -1, wchar_t suffix=0, float hozShrink = 0);
+			void DrawStringEx(Sprite* sprite, const String& text, int x, int y, uint color, int length=-1, int lineSpace = 0, wchar_t suffix=0, float hozShrink = 0);
 			void DrawString(Sprite* sprite, const String& text, int x, int y, int width, uint color);
 
 			void DrawString(Sprite* sprite, const String& text, const Point& pt, uint color, float hozShrink = 0)
 			{
-				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, -1, 0, hozShrink);
+				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, 0, 0, hozShrink);
 			}
 			void DrawString(Sprite* sprite, const String& text, const PointF& pt, uint color, float hozShrink = 0)
 			{
-				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, -1.f, 0, hozShrink);
+				DrawStringEx(sprite, text, pt.X, pt.Y, color, -1, 0.0f, 0, hozShrink);
 			}
+
+			void DrawStringGradient(Sprite* sprite, const String& text, int x, int y, uint startColor, uint endColor);
+
+
 
 			String LineBreakString(const String& text, int width, bool byWord, int& lineCount);
 			Point MeasureString(const String& text);
@@ -164,6 +168,7 @@ namespace Apoc3D
 				float AdvanceX;
 
 				Apoc3D::Math::RectangleF SrcRect;
+				Apoc3D::Math::RectangleF SrcRectF;
 				Texture* Graphic;
 			};
 
@@ -174,6 +179,8 @@ namespace Apoc3D
 				int BucketIndex;
 			};
 
+			void DrawCharacter(Sprite* sprite, int32 ch, float& x, float& y, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned);
+			
 			void DrawDisolvingCharacter(Sprite* sprite, float x, float y,
 				int32 seed, const Apoc3D::Math::RectangleF& srcRect, int32 glyphLeft, int32 glyphTop, int32 glyphWidth, int32 glyphHeight, uint32 color,
 				const Point& dissolvePatchSize, float progress);
@@ -201,10 +208,10 @@ namespace Apoc3D
 			int m_edgeCount;
 			ResourceLocation* m_resource;
 
-			HashMap<wchar_t, Character> m_charTable;
+			FastMap<int32, Character> m_charTable;
 			Glyph* m_glyphList;
 
-			HashMap<wchar_t, CustomGlyph> m_customCharacters;
+			FastMap<int32, CustomGlyph> m_customCharacters;
 
 			//list<Glyph*> m_activeGlyph;
 			//FastList<Bucket*> m_buckets;
@@ -255,7 +262,7 @@ namespace Apoc3D
 			 */
 			void SetUseFreq(const Glyph& g);
 
-			static bool IgnoreCharDrawing(wchar_t ch) { return ch == '\r'; }
+			static bool IgnoreCharDrawing(int32 ch) { return ch == '\r'; }
 			
 			friend class FontManager;
 		

@@ -245,7 +245,7 @@ namespace Apoc3D
 				return;
 
 			
-			sprite->Draw(m_skin->WhitePixelTexture, *dstRect,0, PACK_COLOR(25,25,25,255));
+			sprite->Draw(m_skin->WhitePixelTexture, *dstRect,0, CV_PackColor(25,25,25,255));
 
 			Font* font = m_form->getFontRef();
 			float lineSpacing = font->getLineHeight() + font->getLineGap();

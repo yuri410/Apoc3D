@@ -385,7 +385,7 @@ namespace Apoc3D
 
 		SubMenu::SubMenu(ControlContainer* owner)
 			: m_itemPos(0,0), m_arrowPos(0,0), m_textPos(0,0), m_itemArea(0,0,0,0), m_borderArea(0,0,0,0),
-			m_hoverIndex(-1), m_openPos(0,0), m_shadowColor(PACK_COLOR(0,0,0,127)),m_state(MENU_Closed),
+			m_hoverIndex(-1), m_openPos(0,0), m_shadowColor(CV_PackColor(0,0,0,127)),m_state(MENU_Closed),
 			m_indexToOpen(-1),
 			m_timerStarted(0), m_timerCount(0.5f)
 		{

@@ -41,7 +41,7 @@ namespace Apoc3D
 		public:
 			Button(const Point& position, const String& text)
 				: Control(position, text), m_mouseOver(false), m_mouseDown(false),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_PackColor(0x7f,0x7f,0x7f,0x7f)),
 				m_rotation(0), m_hasTextColorValue(false)
 			{
 				Size.X = Size.Y = 0;
@@ -50,7 +50,7 @@ namespace Apoc3D
 			}
 			Button(const Point& position, int width, const String& text)
 				: Control(position, text, Point(width, 0)), m_mouseOver(false), m_mouseDown(false),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_PackColor(0x7f,0x7f,0x7f,0x7f)),
 				m_rotation(0), m_hasTextColorValue(false)
 			{
 				//BackColor = backColor;
@@ -58,7 +58,7 @@ namespace Apoc3D
 			}
 			Button(const Point& position, const Point& size, const String& text)
 				: Control(position, text, size), m_mouseOver(false), m_mouseDown(false),
-				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(PACK_COLOR(0x7f,0x7f,0x7f,0x7f)),
+				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_PackColor(0x7f,0x7f,0x7f,0x7f)),
 				m_rotation(0), m_hasTextColorValue(false)
 			{
 				//BackColor = backColor;

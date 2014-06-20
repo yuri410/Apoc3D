@@ -599,6 +599,7 @@ namespace Apoc3D
 
 				_mm_store_ps(&res.M41, t2);
 				*/
+#if _DEBUG
 				res.M11 = (ma.M11 * mb.M11) + (ma.M12 * mb.M21) + (ma.M13 * mb.M31) + (ma.M14 * mb.M41);
 				res.M12 = (ma.M11 * mb.M12) + (ma.M12 * mb.M22) + (ma.M13 * mb.M32) + (ma.M14 * mb.M42);
 				res.M13 = (ma.M11 * mb.M13) + (ma.M12 * mb.M23) + (ma.M13 * mb.M33) + (ma.M14 * mb.M43);
@@ -618,6 +619,30 @@ namespace Apoc3D
 				res.M42 = (ma.M41 * mb.M12) + (ma.M42 * mb.M22) + (ma.M43 * mb.M32) + (ma.M44 * mb.M42);
 				res.M43 = (ma.M41 * mb.M13) + (ma.M42 * mb.M23) + (ma.M43 * mb.M33) + (ma.M44 * mb.M43);
 				res.M44 = (ma.M41 * mb.M14) + (ma.M42 * mb.M24) + (ma.M43 * mb.M34) + (ma.M44 * mb.M44);
+#else
+				res = Matrix(
+				(ma.M11 * mb.M11) + (ma.M12 * mb.M21) + (ma.M13 * mb.M31) + (ma.M14 * mb.M41),
+				(ma.M11 * mb.M12) + (ma.M12 * mb.M22) + (ma.M13 * mb.M32) + (ma.M14 * mb.M42),
+				(ma.M11 * mb.M13) + (ma.M12 * mb.M23) + (ma.M13 * mb.M33) + (ma.M14 * mb.M43),
+				(ma.M11 * mb.M14) + (ma.M12 * mb.M24) + (ma.M13 * mb.M34) + (ma.M14 * mb.M44),
+
+				(ma.M21 * mb.M11) + (ma.M22 * mb.M21) + (ma.M23 * mb.M31) + (ma.M24 * mb.M41),
+				(ma.M21 * mb.M12) + (ma.M22 * mb.M22) + (ma.M23 * mb.M32) + (ma.M24 * mb.M42),
+				(ma.M21 * mb.M13) + (ma.M22 * mb.M23) + (ma.M23 * mb.M33) + (ma.M24 * mb.M43),
+				(ma.M21 * mb.M14) + (ma.M22 * mb.M24) + (ma.M23 * mb.M34) + (ma.M24 * mb.M44),
+
+				(ma.M31 * mb.M11) + (ma.M32 * mb.M21) + (ma.M33 * mb.M31) + (ma.M34 * mb.M41),
+				(ma.M31 * mb.M12) + (ma.M32 * mb.M22) + (ma.M33 * mb.M32) + (ma.M34 * mb.M42),
+				(ma.M31 * mb.M13) + (ma.M32 * mb.M23) + (ma.M33 * mb.M33) + (ma.M34 * mb.M43),
+				(ma.M31 * mb.M14) + (ma.M32 * mb.M24) + (ma.M33 * mb.M34) + (ma.M34 * mb.M44),
+
+				(ma.M41 * mb.M11) + (ma.M42 * mb.M21) + (ma.M43 * mb.M31) + (ma.M44 * mb.M41),
+				(ma.M41 * mb.M12) + (ma.M42 * mb.M22) + (ma.M43 * mb.M32) + (ma.M44 * mb.M42),
+				(ma.M41 * mb.M13) + (ma.M42 * mb.M23) + (ma.M43 * mb.M33) + (ma.M44 * mb.M43),
+				(ma.M41 * mb.M14) + (ma.M42 * mb.M24) + (ma.M43 * mb.M34) + (ma.M44 * mb.M44)
+				);
+
+#endif
 				/*__m128 maR1 = _mm_loadu_ps(&ma.M11);
 				__m128 maR2 = _mm_loadu_ps(&ma.M21);
 				__m128 maR3 = _mm_loadu_ps(&ma.M31);

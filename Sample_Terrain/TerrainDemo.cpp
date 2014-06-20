@@ -424,11 +424,11 @@ namespace SampleTerrain
 
 		if (moveAlpha>0)
 		{
-			m_sprite->Draw(m_helpMove, x,y , PACK_COLOR(0xff,0xff,0xff,moveAlpha));
+			m_sprite->Draw(m_helpMove, x,y , CV_PackLA(0xff,moveAlpha));
 		}
 		if (lookAlpha>0)
 		{
-			m_sprite->Draw(m_helpLook, x,y , PACK_COLOR(0xff,0xff,0xff,lookAlpha));
+			m_sprite->Draw(m_helpLook, x,y , CV_PackLA(0xff,lookAlpha));
 		}
 		
 	}

@@ -45,7 +45,7 @@ namespace APDesigner
 			}
 
 			static DWORD rgbCurrent;        // initial color selection
-			rgbCurrent = RGB(GetColorR(m_selectedColor), GetColorG(m_selectedColor), GetColorB(m_selectedColor));
+			rgbCurrent = RGB(CV_GetColorR(m_selectedColor), CV_GetColorG(m_selectedColor), CV_GetColorB(m_selectedColor));
 
 			// Initialize CHOOSECOLOR 
 			ZeroMemory(&cc, sizeof(cc));
@@ -58,7 +58,7 @@ namespace APDesigner
 			if (ChooseColor(&cc)==TRUE) 
 			{
 				//rgbCurrent = cc.rgbResult; 
-				m_selectedColor = PACK_COLOR(
+				m_selectedColor = CV_PackColor(
 					GetRValue(cc.rgbResult)&0xff, 
 					GetGValue(cc.rgbResult)&0xff,
 					GetBValue(cc.rgbResult)&0xff,

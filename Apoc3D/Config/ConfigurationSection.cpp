@@ -420,7 +420,7 @@ namespace Apoc3D
 				const uint b = StringUtils::ParseUInt32(val[2]);
 				const uint a = StringUtils::ParseUInt32(val[3]);
 
-				return PACK_COLOR(r,g,b,a);
+				return CV_PackColor(r,g,b,a);
 			}
 			else if (val.getCount() == 3)
 			{
@@ -429,16 +429,16 @@ namespace Apoc3D
 				const uint b = StringUtils::ParseUInt32(val[2]);
 				const uint a = 0xff;
 
-				return PACK_COLOR(r,g,b,a);
+				return CV_PackColor(r,g,b,a);
 			}
 			throw AP_EXCEPTION(EX_FormatException, L"Wrong number of channels: " + str);
 		}
 		String ColorValueToString(ColorValue v)
 		{
-			uint a = GetColorA(v);
-			uint r = GetColorR(v);
-			uint g = GetColorG(v);
-			uint b = GetColorB(v);
+			uint a = CV_GetColorA(v);
+			uint r = CV_GetColorR(v);
+			uint g = CV_GetColorG(v);
+			uint b = CV_GetColorB(v);
 
 			String result;
 			if (a == 0xff)

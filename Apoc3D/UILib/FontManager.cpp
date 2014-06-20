@@ -33,6 +33,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Math/RandomUtils.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Math/Color.h"
 
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Utility;
@@ -64,7 +65,7 @@ namespace Apoc3D
 		};
 
 		Font::Font(RenderDevice* device, ResourceLocation* rl)
-			: m_charTable(255, IBuiltInEqualityComparer<wchar_t>::Default), m_resource(rl), 
+			: m_charTable(255), m_resource(rl), 
 			m_bucketSearchRandomizer(nullptr), m_isUsingCaching(false),m_usedInFrame(false),
 			m_hasLuminance(false), m_hasDrawOffset(false),
 			m_drawOffset(0,0)
@@ -273,7 +274,7 @@ namespace Apoc3D
 
 			if (!hasMetrics)
 			{
-				for (HashMap<wchar_t, Character>::Enumerator i=m_charTable.GetEnumerator();i.MoveNext();)
+				for (FastMap<int32, Character>::Enumerator i=m_charTable.GetEnumerator();i.MoveNext();)
 				{
 					Character* ch = i.getCurrentValue();
 					Glyph& g = m_glyphList[ch->GlyphIndex];
@@ -319,7 +320,7 @@ namespace Apoc3D
 			delete m_resource;
 		}
 
-		bool Font::ChangeCharacterSetting(wchar_t ch, short left, short top, float adcanceX)
+		bool Font::ChangeCharacterSetting(int32 ch, short left, short top, float adcanceX)
 		{
 			Character* c = m_charTable.TryGetValue(ch);
 			if (c)
@@ -331,7 +332,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool Font::LookupCharacterSetting(wchar_t ch, short& left, short& top, float& adcanceX)
+		bool Font::LookupCharacterSetting(int32 ch, short& left, short& top, float& adcanceX)
 		{
 			Character* c = m_charTable.TryGetValue(ch);
 			if (c)
@@ -345,7 +346,7 @@ namespace Apoc3D
 		}
 
 
-		void Font::RegisterCustomGlyph(wchar_t utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX)
+		void Font::RegisterCustomGlyph(int32 utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX)
 		{
 			CustomGlyph cg;
 			cg._Character = utf16code;
@@ -354,10 +355,11 @@ namespace Apoc3D
 			cg.Left = left;
 			cg.Top = top;
 			cg.SrcRect = srcRect;
+			cg.SrcRectF = srcRect;
 
 			m_customCharacters.Add(utf16code, cg);
 		}
-		void Font::UnregisterCustomGlyph(wchar_t utf16code) { m_customCharacters.Remove(utf16code); }
+		void Font::UnregisterCustomGlyph(int32 utf16code) { m_customCharacters.Remove(utf16code); }
 		void Font::ClearCustomGlyph() { m_customCharacters.Clear(); }
 
 		float PositionalNoise(int32 x)
@@ -570,7 +572,7 @@ namespace Apoc3D
 							if (shouldDissolve)
 							{
 								DrawDisolvingCharacter(sprite, x, y, i, 
-									cgdef->SrcRect, cgdef->Left, cgdef->Top, (int32)cgdef->SrcRect.Width, (int32)cgdef->SrcRect.Height, color,
+									cgdef->SrcRectF, cgdef->Left, cgdef->Top, (int32)cgdef->SrcRectF.Width, (int32)cgdef->SrcRectF.Height, color,
 									dissolvePatchSize, dissolveProgress);
 							}
 							else
@@ -578,10 +580,10 @@ namespace Apoc3D
 								Apoc3D::Math::RectangleF rect;
 								rect.X = x + cgdef->Left;
 								rect.Y = y + cgdef->Top;
-								rect.Width = static_cast<float>(cgdef->SrcRect.Width);
-								rect.Height = static_cast<float>(cgdef->SrcRect.Height);
+								rect.Width = static_cast<float>(cgdef->SrcRectF.Width);
+								rect.Height = static_cast<float>(cgdef->SrcRectF.Height);
 
-								sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRect, color);
+								sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRectF, color);
 							}
 
 							x += cgdef->AdvanceX ;
@@ -609,8 +611,8 @@ namespace Apoc3D
 				y -= m_drawOffset.Y;
 			}
 
-			float std = _x;
-			float x = std;
+			float xOrigin = _x;
+			float x = _x;
 
 			y += m_descender;
 
@@ -621,110 +623,14 @@ namespace Apoc3D
 					len = (size_t)length;
 			}
 
-			float lineSpacing = m_height + m_lineGap;
-			if (extLineSpace!=-1)
-				lineSpacing=extLineSpace;
-
-			for (size_t i = 0; i < text.length(); i++)
+			for (size_t i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
-				if (ch != '\n')
-				{
-					if (IgnoreCharDrawing(ch))
-						continue;
-
-					Character chdef;
-					if (m_charTable.TryGetValue(ch, chdef))
-					{
-						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
-						
-						if (glyph.Width == 0 || glyph.Height == 0)
-						{
-							x += chdef.AdvanceX + hozShrink;
-							continue;
-						}
-
-						if (!glyph.IsMapped)
-						{
-							EnsureGlyph(glyph);
-						}
-
-						Apoc3D::Math::RectangleF rect;
-						rect.X = x + chdef.Left;
-						rect.Y = y + chdef.Top;
-						rect.Width = static_cast<float>(glyph.Width);
-						rect.Height = static_cast<float>(glyph.Height);
-						SetUseFreq(glyph);
-
-						sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
-
-						x += chdef.AdvanceX + hozShrink;
-					}
-					else
-					{
-						CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-						if (cgdef)
-						{
-							Apoc3D::Math::RectangleF rect;
-							rect.X = x + cgdef->Left;
-							rect.Y = y + cgdef->Top;
-							rect.Width = static_cast<float>(cgdef->SrcRect.Width);
-							rect.Height = static_cast<float>(cgdef->SrcRect.Height);
-							
-							sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRect, color);
-
-							x += cgdef->AdvanceX + hozShrink;
-						}
-					}
-				}
-				else
-				{
-					x = std;
-					y += lineSpacing;
-				}
+				DrawCharacter(sprite, ch, x, y, color, hozShrink, extLineSpace, 0, xOrigin, true);
 			}
 			if (suffix)
 			{
-				wchar_t ch = suffix;
-				
-				Character chdef;
-				if (m_charTable.TryGetValue(ch, chdef))
-				{
-					Glyph& glyph = m_glyphList[chdef.GlyphIndex];
-
-					if (glyph.Width == 0 || glyph.Height == 0)
-						return;
-
-					if (!glyph.IsMapped)
-					{
-						EnsureGlyph(glyph);
-					}
-
-					Apoc3D::Math::RectangleF rect;
-					rect.X = x + chdef.Left;
-					rect.Y = y + chdef.Top;
-					rect.Width = static_cast<float>(glyph.Width);
-					rect.Height = static_cast<float>(glyph.Height);
-					SetUseFreq(glyph);
-
-					sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
-				}
-				else
-				{
-					CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-					if (cgdef)
-					{
-						Apoc3D::Math::RectangleF rect;
-						rect.X = x + cgdef->Left;
-						rect.Y = y + cgdef->Top;
-						rect.Width = cgdef->SrcRect.Width;
-						rect.Height = cgdef->SrcRect.Height;
-
-						sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRect, color);
-
-						x += cgdef->AdvanceX + hozShrink;
-					}
-				}
+				DrawCharacter(sprite, suffix, x, y, color, hozShrink, extLineSpace, 0, xOrigin, true);
 			}
 		}
 		void Font::DrawString(Sprite* sprite, const String& text, float _x, float y, int width, uint color)
@@ -735,99 +641,28 @@ namespace Apoc3D
 				y -= m_drawOffset.Y;
 			}
 
-			float std = _x;
-			float x = std;
+			float xOrig = _x;
+			float x = _x;
 
-			float lineSpacing = m_height + m_lineGap;
-			
 			y += m_descender;
 
 			for (size_t i = 0; i < text.length(); i++)
 			{
-				wchar_t ch = text[i];
-				if (ch != '\n')
-				{
-					if (IgnoreCharDrawing(ch))
-						continue;
-
-					Character chdef;
-					if (m_charTable.TryGetValue(ch, chdef))
-					{
-						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
-
-						if (glyph.Width == 0 || glyph.Height == 0)
-						{
-							x += chdef.AdvanceX;
-							continue;
-						}
-
-						float nextX = x + chdef.AdvanceX;
-						if (nextX>=width + std)
-						{
-							x = std;
-							nextX = x + chdef.AdvanceX;
-							y += lineSpacing;
-						}
-
-						if (!glyph.IsMapped)
-						{
-							EnsureGlyph(glyph);
-						}
-
-						Apoc3D::Math::RectangleF rect;
-						rect.X = x + chdef.Left;
-						rect.Y = y + chdef.Top;
-						rect.Width = static_cast<float>(glyph.Width);
-						rect.Height = static_cast<float>(glyph.Height);
-						SetUseFreq(glyph);
-
-						sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
-
-						x = nextX;
-					}
-					else
-					{
-						CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-						if (cgdef)
-						{
-							float nextX = x + cgdef->AdvanceX;
-							if (nextX>=width + std)
-							{
-								x = std;
-								nextX = x + cgdef->AdvanceX;
-								y += lineSpacing;
-							}
-
-							Apoc3D::Math::RectangleF rect;
-							rect.X = x + cgdef->Left;
-							rect.Y = y + cgdef->Top;
-							rect.Width = cgdef->SrcRect.Width;
-							rect.Height = cgdef->SrcRect.Height;
-
-							sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRect, color);
-
-							x = nextX;
-						}
-					}
-				}
-				else
-				{
-					x = std;
-					y += lineSpacing;
-				}
+				DrawCharacter(sprite, text[i], x, y, color, 0, 0, static_cast<float>(width), xOrig, true);
 			}
 		}
 
-		void Font::DrawStringEx(Sprite* sprite, const String& text, int _x, int y, uint color, int length, int extLineSpace, wchar_t suffix, float hozShrink)
+		void Font::DrawStringEx(Sprite* sprite, const String& text, int _x, int _y, uint color, int length, int _extLineSpace, wchar_t suffix, float hozShrink)
 		{
 			if (m_hasDrawOffset)
 			{
-				_x -= (int32)m_drawOffset.X;
-				y -= (int32)m_drawOffset.Y;
+				_x -= static_cast<int32>(m_drawOffset.X);
+				_y -= static_cast<int32>(m_drawOffset.Y);
 			}
 
-			float std = static_cast<float>(_x);
-			float x = std;
+			float xOrig = static_cast<float>(_x);
+			float x = xOrig;
+			float y = _y + m_descender;
 
 			size_t len = text.length();
 			if (length !=-1)
@@ -836,73 +671,84 @@ namespace Apoc3D
 					len = (size_t)length;
 			}
 
-			int lineSpacing = static_cast<int>(m_height + m_lineGap+0.5f);
-			if (extLineSpace!=-1)
-				lineSpacing=extLineSpace;
+			float extLineSpace = static_cast<float>(_extLineSpace);
 
-			y += static_cast<int>(m_descender);
-
-			for (size_t i = 0; i < text.length(); i++)
+			for (size_t i = 0; i < len; i++)
 			{
 				wchar_t ch = text[i];
-				if (ch != '\n')
-				{
-					if (IgnoreCharDrawing(ch))
-						continue;
-
-					Character chdef;
-					if (m_charTable.TryGetValue(ch, chdef))
-					{
-						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
-
-						if (glyph.Width == 0 || glyph.Height == 0)
-						{
-							x += chdef.AdvanceX + hozShrink;
-							continue;
-						}
-
-						if (!glyph.IsMapped)
-						{
-							EnsureGlyph(glyph);
-						}
-
-						Apoc3D::Math::Rectangle rect;
-						rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
-						rect.Y = y + chdef.Top;
-						rect.Width = glyph.Width;
-						rect.Height = glyph.Height;
-						SetUseFreq(glyph);
-
-						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
-
-						x += chdef.AdvanceX + hozShrink;
-					}
-					else
-					{
-						CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-						if (cgdef)
-						{
-							Apoc3D::Math::RectangleF rect;
-							rect.X = x + static_cast<float>(cgdef->Left);
-							rect.Y = y + static_cast<float>(cgdef->Top);
-							rect.Width = cgdef->SrcRect.Width;
-							rect.Height = cgdef->SrcRect.Height;
-
-							sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRect, color);
-
-							x += cgdef->AdvanceX + hozShrink;
-						}
-					}
-				}
-				else
-				{
-					x = std;
-					y += lineSpacing;
-				}
+				DrawCharacter(sprite, ch, x, y, color, hozShrink, extLineSpace, 0, xOrig, true);
 			}
 			if (suffix)
 			{
 				wchar_t ch = suffix;
+				DrawCharacter(sprite, ch, x, y, color, hozShrink, extLineSpace, 0, xOrig, true);
+			}
+		}
+		void Font::DrawString(Sprite* sprite, const String& text, int _x, int _y, int width, uint color)
+		{
+			if (m_hasDrawOffset)
+			{
+				_x -= static_cast<int32>(m_drawOffset.X);
+				_y -= static_cast<int32>(m_drawOffset.Y);
+			}
+
+			float xOrig = static_cast<float>(_x);
+			float x = xOrig;
+			float y = _y + m_descender;
+
+			for (size_t i = 0; i < text.length(); i++)
+			{
+				wchar_t ch = text[i];
+				DrawCharacter(sprite, ch, x, y, color, 0,0,static_cast<float>(width), xOrig, true);
+			}
+		}
+
+		void Font::DrawStringGradient(Sprite* sprite, const String& text, int _x, int _y, uint _startColor, uint _endColor)
+		{
+			if (m_hasDrawOffset)
+			{
+				_x -= static_cast<int32>(m_drawOffset.X);
+				_y -= static_cast<int32>(m_drawOffset.Y);
+			}
+
+			float xOrig = static_cast<float>(_x);
+			float x = xOrig;
+			float y = _y + m_descender;
+
+			Color4 startColor(_startColor);
+			Color4 endColor(_endColor);
+
+			for (size_t i = 0; i < text.length(); i++)
+			{
+				float lerpAmount = text.length() > 1 ? (i / (float)(text.length()-1)) : 0;
+
+				Color4 curColor = Color4::Lerp(startColor, endColor, lerpAmount);
+
+				wchar_t ch = text[i];
+				DrawCharacter(sprite, ch, x, y, curColor.ToArgb(), 0,0,0, xOrig, true);
+			}
+		}
+
+#ifdef _MSC_VER
+#  define FORCE_INLINE __forceinline
+#else
+#  ifdef __GNUC__
+#    define FORCE_INLINE inline __attribute__((always_inline))
+#  else
+#    define FORCE_INLINE inline
+#  endif
+#endif
+
+		FORCE_INLINE void Font::DrawCharacter(Sprite* sprite, int32 ch, float& x, float& y, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned)
+		{
+			const float lineSpacing = extLineSpace ? 
+				(pixelAligned ? floorf(extLineSpace) : extLineSpace) : 
+				(pixelAligned ? floorf(m_height + m_lineGap) : (m_height + m_lineGap));
+			
+			if (ch != '\n')
+			{
+				if (IgnoreCharDrawing(ch))
+					return;
 
 				Character chdef;
 				if (m_charTable.TryGetValue(ch, chdef))
@@ -910,131 +756,102 @@ namespace Apoc3D
 					Glyph& glyph = m_glyphList[chdef.GlyphIndex];
 
 					if (glyph.Width == 0 || glyph.Height == 0)
+					{
+						x += chdef.AdvanceX + hozShrink;
 						return;
+					}
+
+					if (widthCap)
+					{
+						float nextX = x + chdef.AdvanceX + hozShrink;
+						if (nextX>=widthCap + xOrig)
+						{
+							x = xOrig;
+							nextX = x + chdef.AdvanceX;
+							y += lineSpacing;
+						}
+					}
+
 
 					if (!glyph.IsMapped)
 					{
 						EnsureGlyph(glyph);
 					}
 
-					Apoc3D::Math::Rectangle rect;
-					rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
-					rect.Y = y + chdef.Top;
-					rect.Width = glyph.Width;
-					rect.Height = glyph.Height;
-					SetUseFreq(glyph);
-
-					sprite->Draw(m_font, rect, &glyph.MappedRect, color);
-				}
-				else
-				{
-					CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-					if (cgdef)
+					if (pixelAligned)
 					{
-						Apoc3D::Math::RectangleF rect;
-						rect.X = x + static_cast<float>(cgdef->Left);
-						rect.Y = y + static_cast<float>(cgdef->Top);
-						rect.Width = cgdef->SrcRect.Width;
-						rect.Height = cgdef->SrcRect.Height;
-
-						sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRect, color);
-
-						x += cgdef->AdvanceX + hozShrink;
-					}
-				}
-			}
-		}
-		void Font::DrawString(Sprite* sprite, const String& text, int _x, int y, int width, uint color)
-		{
-			if (m_hasDrawOffset)
-			{
-				_x -= (int32)m_drawOffset.X;
-				y -= (int32)m_drawOffset.Y;
-			}
-
-			float std = static_cast<float>(_x);
-			float x = std;
-
-			int ls = static_cast<int>(m_height + m_lineGap+0.5f);
-
-			y += static_cast<int>(m_descender);
-
-			for (size_t i = 0; i < text.length(); i++)
-			{
-				wchar_t ch = text[i];
-				if (ch != '\n')
-				{
-					if (IgnoreCharDrawing(ch))
-						continue;
-
-					Character chdef;
-					if (m_charTable.TryGetValue(ch, chdef))
-					{
-						Glyph& glyph = m_glyphList[chdef.GlyphIndex];
-
-						if (glyph.Width == 0 || glyph.Height == 0)
-						{
-							x += chdef.AdvanceX;
-							continue;
-						}
-
-						float nextX = x + chdef.AdvanceX;
-						if (nextX>=width + std)
-						{
-							x = std;
-							nextX = x + chdef.AdvanceX;
-							y += ls;
-						}
-
-
-						if (!glyph.IsMapped)
-						{
-							EnsureGlyph(glyph);
-						}
-
 						Apoc3D::Math::Rectangle rect;
 						rect.X = static_cast<int32>(x+0.5f) + chdef.Left;
-						rect.Y = y + chdef.Top;
+						rect.Y = static_cast<int32>(y+0.5f) + chdef.Top;
 						rect.Width = glyph.Width;
 						rect.Height = glyph.Height;
 						SetUseFreq(glyph);
 
 						sprite->Draw(m_font, rect, &glyph.MappedRect, color);
-
-						x = nextX;
 					}
 					else
 					{
-						CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
-						if (cgdef)
-						{
-							float nextX = x + cgdef->AdvanceX;
-							if (nextX>=width + std)
-							{
-								x = std;
-								nextX = x + cgdef->AdvanceX;
-								y += ls;
-							}
+						Apoc3D::Math::RectangleF rect;
+						rect.X = x + chdef.Left;
+						rect.Y = y + chdef.Top;
+						rect.Width = static_cast<float>(glyph.Width);
+						rect.Height = static_cast<float>(glyph.Height);
+						SetUseFreq(glyph);
 
-							Apoc3D::Math::RectangleF rect;
-							rect.X = x + static_cast<float>(cgdef->Left);
-							rect.Y = y + static_cast<float>(cgdef->Top);
-							rect.Width = cgdef->SrcRect.Width;
-							rect.Height = cgdef->SrcRect.Height;
-
-							sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRect, color);
-
-							x = nextX;
-						}
+						sprite->Draw(m_font, rect, &glyph.MappedRectF, color);
 					}
+
+					x += chdef.AdvanceX + hozShrink;
 				}
 				else
 				{
-					x = std;
-					y += ls;
+					// draw custom characters
+					CustomGlyph* cgdef = m_customCharacters.TryGetValue(ch);
+					if (cgdef)
+					{
+						if (widthCap)
+						{
+							float nextX = x + cgdef->AdvanceX;
+							if (nextX>=widthCap + xOrig)
+							{
+								x = xOrig;
+								nextX = x + cgdef->AdvanceX;
+								y += lineSpacing;
+							}
+						}
+
+						if (pixelAligned)
+						{
+							Apoc3D::Math::Rectangle rect;
+							rect.X = static_cast<int32>(x+0.5f) + cgdef->Left;
+							rect.Y = static_cast<int32>(y+0.5f) + cgdef->Top;
+							rect.Width = static_cast<int32>(cgdef->SrcRectF.Width);
+							rect.Height = static_cast<int32>(cgdef->SrcRectF.Height);
+
+							sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRect, color);
+						}
+						else
+						{
+							Apoc3D::Math::RectangleF rect;
+							rect.X = x + static_cast<float>(cgdef->Left);
+							rect.Y = y + static_cast<float>(cgdef->Top);
+							rect.Width = cgdef->SrcRectF.Width;
+							rect.Height = cgdef->SrcRectF.Height;
+
+							sprite->Draw(cgdef->Graphic, rect, &cgdef->SrcRectF, color);
+						}
+
+						x += cgdef->AdvanceX + hozShrink;
+					}
 				}
 			}
+			else
+			{
+				x = xOrig;
+				y += lineSpacing;
+			}
 		}
+		
 
 		int Font::CalculateLineCount(const String& text, int width)
 		{
