@@ -60,28 +60,58 @@ namespace Apoc3D
 		{
 			friend class FontManager;
 		public:
-			
+			enum CustomGlyphAlignment
+			{
+				CGA_Center,
+				CGA_Top,
+				CGA_Bottom
+			};
+
 			Font(RenderDevice* device, ResourceLocation* fl);
 			~Font();
 
 			bool ChangeCharacterSetting(int32 ch, short left, short top, float adcanceX);
 			bool LookupCharacterSetting(int32 ch, short& left, short& top, float& adcanceX);
 
-			void RegisterCustomGlyph(int32 utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX);
-			void RegisterCustomGlyph(int32 utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect) 
+			void RegisterCustomGlyph(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, short top, float advanceX);
+			void RegisterCustomGlyph(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect) 
 			{
-				RegisterCustomGlyph(utf16code, graphic, srcRect, 0, 0, static_cast<float>(srcRect.Width));
+				RegisterCustomGlyph(charCode, graphic, srcRect, 0, 0, static_cast<float>(srcRect.Width));
 			}
-			void RegisterCustomGlyphYCenter(int32 utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, float advanceX) 
+
+			void RegisterCustomGlyphAligned(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, int32 padLeft, int32 padRight, CustomGlyphAlignment vertAlignment, int32 vaValue) 
 			{
-				int32 top = (getLineHeightInt() - srcRect.Height) / 2;
-				RegisterCustomGlyph(utf16code, graphic, srcRect, left, top, advanceX);
+				short left = -padLeft;
+				float advX = static_cast<float>(srcRect.Width - padLeft - padRight);
+
+				if (vertAlignment == CGA_Center)
+				{
+					int32 top = (getLineHeightInt() - static_cast<int32>(m_descender) - srcRect.Height) / 2 + vaValue;
+					RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
+				}
+				else if (vertAlignment == CGA_Bottom)
+				{
+					// bottom to baseline
+					int32 adjustedContentHeight = srcRect.Height - vaValue;
+					int32 top = getLineHeightInt() - static_cast<int32>(m_descender) - adjustedContentHeight;
+					RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advX);
+				}
+				else if (vertAlignment == CGA_Top)
+				{
+					RegisterCustomGlyph(charCode, graphic, srcRect, left, vaValue, advX);
+				}
 			}
-			void RegisterCustomGlyphYCenter(int32 utf16code, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, int32 lineHeight, float advanceX) 
+
+			/*void RegisterCustomGlyphYCenter(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, float advanceX) 
 			{
-				int32 top = (lineHeight - srcRect.Height) / 2;
-				RegisterCustomGlyph(utf16code, graphic, srcRect, left, top, advanceX);
+				int32 top = (getLineHeightInt() - m_descender - srcRect.Height) / 2;
+				RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advanceX);
 			}
+			void RegisterCustomGlyphYCenter(int32 charCode, Texture* graphic, const Apoc3D::Math::Rectangle& srcRect, short left, int32 height, float advanceX) 
+			{
+				int32 top = (height - srcRect.Height) / 2;
+				RegisterCustomGlyph(charCode, graphic, srcRect, left, top, advanceX);
+			}*/
 
 
 
