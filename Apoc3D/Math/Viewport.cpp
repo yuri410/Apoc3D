@@ -34,6 +34,11 @@ namespace Apoc3D
 			float diff = a - b;
 			return ((-EPSILON <= diff) && (diff <= EPSILON));
 		}
+		inline bool WithinEpsilon(double a, double b)
+		{
+			double diff = a - b;
+			return ((-EPSILON <= diff) && (diff <= EPSILON));
+		}
 
 		Vector3 Viewport::Unproject(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world) const
 		{
@@ -89,6 +94,31 @@ namespace Apoc3D
 				source++;
 			}
 		}
+
+		DoubleMath::Vector3d Viewport::Unproject(const DoubleMath::Vector3d& source, const DoubleMath::Matrixd& projection, const DoubleMath::Matrixd& view, const DoubleMath::Matrixd& world) const
+		{
+			DoubleMath::Matrixd temp;
+			DoubleMath::Matrixd matrix;
+			DoubleMath::Matrixd::Multiply(temp, world, view);
+			DoubleMath::Matrixd::Multiply(matrix, temp, projection);
+			matrix.Inverse();
+
+			double x = 2 * (source.X - X) / static_cast<double>(Width) - 1.0;
+			double y = -(2 * (source.Y - Y) / static_cast<double>(Height) - 1.0);
+			double z = (source.Z - MinZ) / (MaxZ - MinZ);
+
+			DoubleMath::Vector3d ts(x,y,z);
+
+			DoubleMath::Vector3d vector = DoubleMath::Vector3d::TransformSimple(ts, matrix);
+			double a = source.X * matrix.M14 + source.Y * matrix.M24 + source.Z * matrix.M34 + matrix.M44;
+
+			if (!WithinEpsilon(a, 1.0))
+			{
+				vector /= a;
+			}
+			return vector;
+		}
+
 
 		Vector3 Viewport::Project(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world) const
 		{

@@ -219,6 +219,7 @@
     <ClInclude Include="Library\tinyxml.h" />
     <ClInclude Include="Math\Box.h" />
     <ClInclude Include="Math\ColorValue.h" />
+    <ClInclude Include="Math\DoubleMath.h" />
     <ClInclude Include="Math\GaussBlurFilter.h" />
     <ClInclude Include="Math\OctreeBox.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
@@ -373,6 +374,7 @@
     <ClCompile Include="Library\tinyxml.cpp" />
     <ClCompile Include="Library\tinyxmlerror.cpp" />
     <ClCompile Include="Library\tinyxmlparser.cpp" />
+    <ClCompile Include="Math\DoubleMath.cpp" />
     <ClCompile Include="Math\OctreeBox.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />

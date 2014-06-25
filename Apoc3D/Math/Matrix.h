@@ -223,63 +223,6 @@ namespace Apoc3D
 			}
 
 
-			Vector3 GetRight() const
-			{
-			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				return Row1;
-			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3(M11, M12, M13);
-			#endif
-			}
-			Vector3 GetLeft() const
-			{
-			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				__m128 v = Row1;
-				v = SIMDVecNegate(v);
-				return v;
-			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3(-M11, -M12, -M13);
-			#endif
-			}
-
-			Vector3 GetUp() const
-			{
-			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				return Row2;
-			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3(M21, M22, M23);
-			#endif
-			}
-			Vector3 GetDown() const
-			{
-			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				__m128 v = Row2;
-				v = SIMDVecNegate(v);
-				return v;
-			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3(-M21, -M22, -M23);
-			#endif
-			}
-
-			Vector3 GetBackward() const
-			{
-			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				return Row3;
-			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3(M31, M32, M33);
-			#endif
-			}
-			Vector3 GetForward() const
-			{
-			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				__m128 v = Row3;
-				v = SIMDVecNegate(v);
-				return v;
-			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-				return Vector3(-M31, -M32, -M33);
-			#endif
-			}
-			
 			Vector3 GetTranslation() const
 			{
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -290,17 +233,7 @@ namespace Apoc3D
 			}
 
 			#if APOC3D_MATH_IMPL == APOC3D_SSE
-			void SetRight(Vector3 v) { Row1 = v; *(reinterpret_cast<float*>(&Row1)+3)=0.0f; }
-			void SetLeft(Vector3 v) { Row1 = v; SIMDVecNegate(Row1); *(reinterpret_cast<float*>(&Row1)+3)=0.0f; }
-
-			void SetUp(Vector3 v) { Row2 = v; *(reinterpret_cast<float*>(&Row2)+3)=0.0f; }
-			void SetDown(Vector3 v) { Row2 = v; SIMDVecNegate(Row2); *(reinterpret_cast<float*>(&Row2)+3)=0.0f; }
-
-			void SetBackward(Vector3 v) { Row3 = v; *(reinterpret_cast<float*>(&Row3)+3)=0.0f; }
-			void SetForward(Vector3 v) { Row3 = v; SIMDVecNegate(Row3); *(reinterpret_cast<float*>(&Row3)+3)=0.0f; }
-
 			void SetTranslation(Vector3 v) { Row4 = v; *(reinterpret_cast<float*>(&Row4)+3)=1.0f; }
-
 
 			void SetX(Vector3 v) { Row1 = v; *(reinterpret_cast<float*>(&Row1)+3)=0.0f; }
 			void SetY(Vector3 v) { Row2 = v; *(reinterpret_cast<float*>(&Row2)+3)=0.0f; }
@@ -313,20 +246,11 @@ namespace Apoc3D
 			void SetY(const Vector3& v) { M21 = v.X; M22 = v.Y; M23 = v.Z; }
 			void SetZ(const Vector3& v) { M31 = v.X; M32 = v.Y; M33 = v.Z; }
 
-
-			void SetRight(const Vector3& v) { M11 = v.X; M12 = v.Y; M13 = v.Z; }
-			void SetLeft(const Vector3& v) { M11 = -v.X; M12 = -v.Y; M13 = -v.Z; } 
-
-			void SetUp(const Vector3& v) { M21 = v.X; M22 = v.Y; M23 = v.Z; }
-			void SetDown(const Vector3& v) { M21 = -v.X; M22 = -v.Y; M23 = -v.Z; }
-
-			void SetBackward(const Vector3& v) { M31 = v.X; M32 = v.Y; M33 = v.Z; }
-			void SetForward(const Vector3& v) { M31 = -v.X; M32 = -v.Y; M33 = -v.Z; }
-
 			void SetTranslation(const Vector3& v) { M41 = v.X; M42 = v.Y; M43 = v.Z; }
 			void SetTranslation(float x, float y, float z) { M41 = x; M42 = y; M43 = z; }
 
 			#endif
+
 			void SetXYZ(const Vector3& x, const Vector3& y, const Vector3& z)
 			{
 				SetX(x); SetY(y); SetZ(z);
@@ -380,7 +304,7 @@ namespace Apoc3D
 			/**
 			 *  Inverts the matrix.
 			 */
-			float Inverse(); // TODO: Rewrite
+			float Inverse(); 
 			
 
 			/**

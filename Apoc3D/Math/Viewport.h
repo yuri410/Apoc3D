@@ -27,6 +27,7 @@
  */
 
 #include "Vector.h"
+#include "DoubleMath.h"
 
 namespace Apoc3D
 {
@@ -80,6 +81,8 @@ namespace Apoc3D
 			 */
 			Vector3 Unproject(const Vector3& source, const Matrix& projection, const Matrix& view, const Matrix& world) const;
 			void Unproject(Vector3* dest, const Vector3* source, int32 count, const Matrix& projection, const Matrix& view, const Matrix& world) const;
+
+			DoubleMath::Vector3d Unproject(const DoubleMath::Vector3d& source, const DoubleMath::Matrixd& projection, const DoubleMath::Matrixd& view, const DoubleMath::Matrixd& world) const;
 
 			/**
 			 *  Projects a 3D vector from object space into screen space.
