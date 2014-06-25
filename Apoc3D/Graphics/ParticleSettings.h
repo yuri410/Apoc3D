@@ -42,11 +42,9 @@ namespace Apoc3D
 		/** Settings class describes all the tweakable options used
 		 * to control the appearance of a particle system.
 		 */
-		class APAPI ParticleSettings
+		class ParticleSettings
 		{
 		public:
-			/* the texture used by this particle system.*/
-			ResourceHandle<Texture>* ParticleTexture;
 			/* Maximum number of particles that can be displayed at one time. */
 			int32 MaxParticles;
 
@@ -122,13 +120,10 @@ namespace Apoc3D
 			float MinEndSize;
 			float MaxEndSize;
 
-			/* Alpha blending settings. */
-			Blend SourceBlend;
-			Blend DestinationBlend;
-
+			float ZBias;
 
 			ParticleSettings()
-				: ParticleTexture(NULL),
+				: 
 				MaxParticles(100),
 				Duration(1.f),
 				DurationRandomness(0),
@@ -145,8 +140,7 @@ namespace Apoc3D
 				MaxStartSize(100),
 				MinEndSize(100),
 				MaxEndSize(100),
-				SourceBlend(BLEND_SourceAlpha),
-				DestinationBlend(BLEND_InverseSourceAlpha),
+				ZBias(0),
 				MinColor(1.0f,1.0f,1.0f,1.0f),
 				MaxColor(1.0f,1.0f,1.0f,1.0f)
 			{

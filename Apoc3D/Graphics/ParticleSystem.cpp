@@ -33,6 +33,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "LockData.h"
 #include "RenderSystem/RenderDevice.h"
+#include "RenderSystem/VertexDeclaration.h"
 #include "RenderSystem/Buffer/HardwareBuffer.h"
 
 namespace Apoc3D
@@ -43,85 +44,66 @@ namespace Apoc3D
 		const VertexElement ParticleVertex::VtxElements[] =
 		{
 			VertexElement(0, VEF_Vector3, VEU_Position, 0),
-			VertexElement(0, VEF_Vector3, VEU_Normal, 0),
-			VertexElement(0, VEF_Color, VEU_Color, 0),
-			VertexElement(0, VEF_Single, VEU_TextureCoordinate, 0)
+			VertexElement(12, VEF_Vector3, VEU_Normal, 0),
+			VertexElement(24, VEF_Color, VEU_Color, 0),
+			VertexElement(28, VEF_Single, VEU_TextureCoordinate, 0)
 		};
 
-		ParticleSystem::ParticleSystem(RenderDevice* device)
+		ParticleSystem::ParticleSystem(RenderDevice* device, Material* mtrl)
 			: m_device(device), 
-			m_particles(0), m_particleCount(0), m_vertexBuffer(0), m_vertexDeclaration(0),
+			m_particles(nullptr), m_particleCount(0), 
+			m_vertexBuffer(nullptr), m_vertexDeclaration(nullptr),
 			m_firstActiveParticle(0),m_firstNewParticle(0),m_firstFreeParticle(0),m_firstRetiredParticle(0),
 			m_currentTime(0),m_drawCounter(0),
-			m_mtrl(device)
+			m_mtrl(mtrl)
 		{
 			memset(&m_settings,0, sizeof(m_settings));
-			
-			m_mtrl.UsePointSprite = true;
-			//m_device->CreateStateBlock(D3DSBT_VERTEXSTATE,&m_stateBlock);
 		}
 
 		ParticleSystem::~ParticleSystem(void)
 		{
+			if (m_particles)
+			{
+				delete[] m_particles;
+			}
+			if (m_vertexBuffer)
+			{
+				delete m_vertexBuffer;
+			}
+			if (m_vertexDeclaration)
+			{
+				delete m_vertexDeclaration;
+			}
+			m_particles = nullptr;
+			m_vertexBuffer = nullptr;
+			m_vertexDeclaration = nullptr;
 		}
 
 		void ParticleSystem::Load()
 		{
 			InitializeSettings(m_settings);
-			//m_mtrl.setTexture(0, m_settings.ParticleTexture);
 
 			m_particles = new ParticleVertex[m_settings.MaxParticles];
 			m_particleCount = m_settings.MaxParticles;
 
-
-			//m_effect = LoadEffect(m_game);
 			ObjectFactory* fac = m_device->getObjectFactory();
-			
+			FastList<VertexElement> elems; 
+			elems.Add(ParticleVertex::VtxElements[0]); elems.Add(ParticleVertex::VtxElements[1]);
+			elems.Add(ParticleVertex::VtxElements[2]); elems.Add(ParticleVertex::VtxElements[3]);
 
-			FastList<VertexElement> elems;
-			elems.Add(ParticleVertex::VtxElements[0]);
-			elems.Add(ParticleVertex::VtxElements[1]);
-			elems.Add(ParticleVertex::VtxElements[2]);
-			elems.Add(ParticleVertex::VtxElements[3]);
 			m_vertexDeclaration = fac->CreateVertexDeclaration(elems);
 
-			// load effect
-			m_vertexBuffer =
-				m_device->getObjectFactory()->CreateVertexBuffer(m_particleCount, m_vertexDeclaration, BU_Dynamic);
+			m_vertexBuffer = fac->CreateVertexBuffer(m_particleCount, m_vertexDeclaration, (BufferUsageFlags)( BU_Dynamic | BU_WriteOnly | BU_PointSpriteVertex));
+
+			m_geoData.VertexBuffer = m_vertexBuffer;
+			m_geoData.VertexDecl = m_vertexDeclaration;
+			m_geoData.PrimitiveType = PT_PointList;
+			m_geoData.VertexSize = m_vertexDeclaration->GetVertexSize();
+			m_geoData.UserData = this;
+
+			m_geoDataAlt = m_geoData;
 		}
 		
-
-		void ParticleSystem::SetParticleRenderStates()
-		{
-			m_mtrl.SourceBlend = m_settings.SourceBlend;
-			m_mtrl.DestinationBlend = m_settings.DestinationBlend;
-			////const float ps = 1.f;
-			////m_device->SetRenderState(D3DRS_POINTSIZE, reinterpret_cast<const DWORD&>(ps));
-
-			//// Enable point sprites.
-			//m_device->SetRenderState(D3DRS_POINTSPRITEENABLE, TRUE);
-			//const float ps = 256.f;
-			//m_device->SetRenderState(D3DRS_POINTSIZE_MAX, reinterpret_cast<const DWORD&>(ps));
-
-			//
-			//// Set the alpha blend mode.
-			//m_device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			//m_device->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
-
-			//m_device->SetRenderState(D3DRS_SRCBLEND, m_settings.SourceBlend);
-			//m_device->SetRenderState(D3DRS_DESTBLEND, m_settings.DestinationBlend);
-			//
-			//// Set the alpha test mode.
-			//m_device->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-			//m_device->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-			//m_device->SetRenderState(D3DRS_ALPHAREF, 0);
-			//
-			//// Enable the depth buffer (so particles will not be visible through
-			//// solid objects like the ground plane), but disable depth writes
-			//// (so particles will not obscure other particles).
-			//m_device->SetRenderState(D3DRS_ZENABLE, TRUE);
-			//m_device->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);						
-		}
 		void ParticleSystem::AddNewParticlesToVertexBuffer()
 		{
 			const int stride = sizeof(ParticleVertex);
@@ -132,7 +114,7 @@ namespace Apoc3D
 				// we can upload them all in a single call.
 				int length = (m_firstFreeParticle - m_firstNewParticle)* stride;
 
-				void* data = m_vertexBuffer->Lock(m_firstNewParticle * stride, length, LOCK_NoOverwrite);
+				void* data = m_vertexBuffer->Lock(m_firstNewParticle * stride,length, LOCK_NoOverwrite);
 				
 				memcpy(data, m_particles+m_firstNewParticle, length);
 				m_vertexBuffer->Unlock();
@@ -205,10 +187,11 @@ namespace Apoc3D
 				if (m_firstRetiredParticle >= m_particleCount)
 					m_firstRetiredParticle = 0;
 			}
-
 		}
-		void ParticleSystem::AddParticle(const Vector3 &position,  Vector3 velocity)
+		bool ParticleSystem::AddParticle(const Vector3 &position, const Vector3& _velocity)
 		{
+			Vector3 velocity = _velocity;
+
 			// Figure out where in the circular queue to allocate the new particle.
 			int nextFreeParticle = m_firstFreeParticle + 1;
 
@@ -217,11 +200,10 @@ namespace Apoc3D
 
 			// If there are no free particles, we just have to give up.
 			if (nextFreeParticle == m_firstRetiredParticle)
-				return;
+				return false;
 
-			// Adjust the input velocity based on how much
-			// this particle system wants to be affected by it.
-			velocity *= m_settings.EmitterVelocitySensitivity;	
+			velocity *= m_settings.EmitterVelocitySensitivity;
+
 
 			// Add in some random amount of horizontal velocity.
 			float horizontalVelocity = Math::Lerp(m_settings.MinHorizontalVelocity,
@@ -242,10 +224,7 @@ namespace Apoc3D
 			// shader to give each particle a different size, rotation, and color.
 			uint32 randomValues = CV_PackColor(Randomizer::NextInclusive(255), 
 				Randomizer::NextInclusive(255), Randomizer::NextInclusive(255), Randomizer::NextInclusive(255));
-			// new Color((byte)random.Next(255),
-				//(byte)random.Next(255),
-				//(byte)random.Next(255),
-				//(byte)random.Next(255));
+
 
 			// Fill in the particle vertex structure.
 			m_particles[m_firstFreeParticle].Position = position;
@@ -254,6 +233,7 @@ namespace Apoc3D
 			m_particles[m_firstFreeParticle].Time = m_currentTime;
 
 			m_firstFreeParticle = nextFreeParticle;
+			return true;
 		}
 		RenderOperationBuffer* ParticleSystem::GetRenderOperation(int lod)
 		{
@@ -264,120 +244,57 @@ namespace Apoc3D
 			{
 				AddNewParticlesToVertexBuffer();
 			}
+			// If there are any active particles, draw them now!
 			if (m_firstActiveParticle != m_firstFreeParticle)
 			{
-				m_geoData.VertexBuffer = m_vertexBuffer;
-				m_geoData.VertexDecl = m_vertexDeclaration;
-				m_geoData.PrimitiveType = PT_PointList;
-				m_geoData.VertexSize = sizeof(ParticleVertex);
-				m_geoData2.VertexBuffer = m_vertexBuffer;
-				m_geoData2.VertexDecl = m_vertexDeclaration;
-				m_geoData2.PrimitiveType = PT_PointList;
-				m_geoData2.VertexSize = sizeof(ParticleVertex);
-
 				if (m_firstActiveParticle < m_firstFreeParticle)
 				{
-					RenderOperation rop;
-					rop.Material = &m_mtrl;
-					rop.GeometryData = &m_geoData;
-					rop.RootTransform.LoadIdentity();
-					m_opBuffer.Add(rop);
-					
+					// If the active particles are all in one consecutive range,
+					// we can draw them all in a single call.
 					m_geoData.BaseVertex = m_firstActiveParticle;
-					m_geoData.PrimitiveCount = m_firstFreeParticle - m_firstActiveParticle;
-					m_geoData.VertexCount = m_geoData.PrimitiveCount;
+					m_geoData.VertexCount = m_firstFreeParticle - m_firstActiveParticle;
+					m_geoData.PrimitiveCount = m_geoData.VertexCount;
+
+					RenderOperation rop;
+					rop.GeometryData = &m_geoData;
+					rop.RootTransform = Matrix::Identity;
+					rop.Material = m_mtrl;
+					m_opBuffer.Add(rop);
 				}
 				else
 				{
-					RenderOperation rop;
-					rop.Material = &m_mtrl;
-					rop.GeometryData = &m_geoData;
-					rop.RootTransform.LoadIdentity();
-					m_opBuffer.Add(rop);
+					// If the active particle range wraps past the end of the queue
+					// back to the start, we must split them over two draw calls.
 					m_geoData.BaseVertex = m_firstActiveParticle;
-					m_geoData.PrimitiveCount = m_firstFreeParticle - m_firstActiveParticle;
-					m_geoData.VertexCount = m_geoData.PrimitiveCount;
+					m_geoData.VertexCount = m_particleCount - m_firstActiveParticle;
+					m_geoData.PrimitiveCount = m_geoData.VertexCount;
+
+					RenderOperation rop;
+					rop.GeometryData = &m_geoData;
+					rop.RootTransform = Matrix::Identity;
+					rop.Material = m_mtrl;
+					m_opBuffer.Add(rop);
 
 					if (m_firstFreeParticle > 0)
 					{
-						RenderOperation rop2;
-						rop2.Material = &m_mtrl;
-						rop2.GeometryData = &m_geoData2;
-						rop2.RootTransform.LoadIdentity();
-						m_opBuffer.Add(rop2);
+						m_geoDataAlt.BaseVertex = 0;
+						m_geoDataAlt.VertexCount = m_firstFreeParticle;
+						m_geoDataAlt.PrimitiveCount = m_geoDataAlt.VertexCount;
 
-						m_geoData2.BaseVertex = m_firstActiveParticle;
-						m_geoData2.PrimitiveCount = m_firstFreeParticle - m_firstActiveParticle;
-						m_geoData2.VertexCount = m_geoData2.PrimitiveCount;
+						RenderOperation rop2;
+						rop2.GeometryData = &m_geoDataAlt;
+						rop2.RootTransform = Matrix::Identity;
+						rop2.Material = m_mtrl;
+						m_opBuffer.Add(rop2);
 					}
 				}
 			}
-
 			m_drawCounter++;
-
 			return &m_opBuffer;
 		}
-		//void ParticleSystem::Render(ModelEffect* effect)
-		//{
-		//	// If there are any particles waiting in the newly added queue,
-		//	// we'd better upload them to the GPU ready for drawing.
-		//	if (m_firstNewParticle != m_firstFreeParticle)
-		//	{
-		//		AddNewParticlesToVertexBuffer();
-		//	}
-		//	// If there are any active particles, draw them now!
-		//	if (m_firstActiveParticle != m_firstFreeParticle)
-		//	{
-		//		//m_stateBlock->Capture();
-		//		SetParticleRenderStates();
-
-		//		m_device->SetStreamSource(0, m_vertexBuffer, 0, sizeof(ParticleVertex));
-		//		m_device->SetVertexDeclaration(m_vertexDeclaration);
-
-		//		Matrix world;
-		//		D3DXMatrixIdentity(&world);
-		//		effect->Begin();
-		//		static_cast<ExplParticleEffect*>(effect)->SetParameters(this);
-		//		effect->Setup(&m_mtrl, &world);
-		//		
-		//		// TODO: setup effect
-		//		if (m_firstActiveParticle < m_firstFreeParticle)
-		//		{
-		//			// If the active particles are all in one consecutive range,
-		//			// we can draw them all in a single call.
-		//			m_device->DrawPrimitive(D3DPT_POINTLIST,
-		//				m_firstActiveParticle,
-		//				m_firstFreeParticle - m_firstActiveParticle);
-		//		}
-		//		else
-		//		{
-		//			// If the active particle range wraps past the end of the queue
-		//			// back to the start, we must split them over two draw calls.
-		//			m_device->DrawPrimitive(D3DPT_POINTLIST,
-		//				m_firstActiveParticle,
-		//				m_particleCount - m_firstActiveParticle);
-
-		//			if (m_firstFreeParticle > 0)
-		//			{
-		//				m_device->DrawPrimitive(D3DPT_POINTLIST,
-		//					0,
-		//					m_firstFreeParticle);
-		//			}
-		//		}
-		//		effect->End();
-
-		//		//m_stateBlock->Apply();
-		//		m_device->SetRenderState(D3DRS_POINTSPRITEENABLE, FALSE);
-		//		m_device->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-		//		m_device->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-		//		m_device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-		//	}
-
-		//	m_drawCounter++;
-		//}
-		void ParticleSystem::Update(const GameTime* const time)
+		void ParticleSystem::Update(float dt)
 		{
-			m_currentTime += time->getElapsedTime();
+			m_currentTime += dt;
 
 			RetireActiveParticles();
 			FreeRetiredParticles();

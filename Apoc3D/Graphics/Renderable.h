@@ -53,7 +53,7 @@ namespace Apoc3D
 			{
 			}
 
-			~Renderable(void)
+			virtual ~Renderable(void)
 			{
 			}
 		};

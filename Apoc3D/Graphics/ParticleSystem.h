@@ -76,7 +76,7 @@ namespace Apoc3D
 		class APAPI ParticleSystem : public Renderable
 		{
 		public:
-			ParticleSystem(RenderDevice* device);
+			ParticleSystem(RenderDevice* device, Material* mtrl);
 			virtual ~ParticleSystem(void);
 
 			void Reset()
@@ -91,24 +91,18 @@ namespace Apoc3D
 
 			float getCurrentTime() const { return m_currentTime; }
 			const ParticleSettings* getSettings() const { return &m_settings; }
+			ParticleSettings* getSettings() { return &m_settings; }
 
-			/* Draws the particle system. */
-			//void Render(ModelEffect* effect);
 			virtual RenderOperationBuffer* GetRenderOperation(int lod);
 
 			/* Updates the particle system. */
-			virtual void Update(const GameTime* const time);
-
-			//void OnDeviceLost();
-			//void OnDeviceReset();
+			virtual void Update(float dt);
 
 			/* Adds a new particle to the system. */
-			void AddParticle(const Vector3 &position, Vector3 velocity);
+			bool AddParticle(const Vector3 &position, const Vector3& _velocity);
 			
-			Material& getMaterial() { return m_mtrl; }
 		protected:
-			void changeTexture(ResourceHandle<Texture>* tex) { m_mtrl.setTexture(0, tex); }
-			//virtual ModelEffect* LoadEffect(LabGame* game) const = 0;
+			void changeMaterial(Material* mtrl) { m_mtrl = mtrl; }
 
 			/* Derived particle system classes should override this method
 			   and use it to initialize their tweakable settings.
@@ -124,11 +118,7 @@ namespace Apoc3D
 			 *  Settings class controls the appearance and animation of this particle system.
 			 */
 			ParticleSettings m_settings;
-
-			RenderOperationBuffer m_opBuffer;
-			Material m_mtrl;
-			GeometryData m_geoData;
-			GeometryData m_geoData2;
+			Material* m_mtrl;
 
 			/**
 			 * An array of particles, treated as a circular queue.
@@ -145,6 +135,10 @@ namespace Apoc3D
 			 *  Vertex declaration describes the format of our ParticleVertex structure.
 			 */
 			VertexDeclaration* m_vertexDeclaration;
+
+			GeometryData m_geoData;
+			GeometryData m_geoDataAlt;
+			RenderOperationBuffer m_opBuffer;
 
 			/* The particles array and vertex buffer are treated as a circular queue.
 			   Initially, the entire contents of the array are free, because no particles
@@ -239,10 +233,6 @@ namespace Apoc3D
 			 *  array to the GPU vertex buffer.
 			 */
 			void AddNewParticlesToVertexBuffer();
-			/**
-			 *  setting the render states used to draw particles.
-			 */
-			void SetParticleRenderStates();
 
 			/** checking when active particles have reached the end of
 			 *  their life. It moves old particles from the active area of the queue
