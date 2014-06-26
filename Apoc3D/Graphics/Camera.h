@@ -125,7 +125,7 @@ namespace Apoc3D
 
 			void MoveForward()
 			{
-				Vector3 dir = -m_invView.GetZ();
+				Vector3 dir = m_invView.GetZ();
 				dir.NormalizeInPlace();
 				Move(dir);
 				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
@@ -135,7 +135,7 @@ namespace Apoc3D
 			{
 				//Vector3 ofs = Vector3Utils::Multiply(Vector3Utils::UnitZ, m_velocity);
 				//m_velChange = Vector3Utils::Subtract(m_velChange, Vector3Utils::UnitZ);				
-				Vector3 dir = m_invView.GetZ();
+				Vector3 dir = -m_invView.GetZ();
 				dir.NormalizeInPlace();
 				Move(dir);
 			}
