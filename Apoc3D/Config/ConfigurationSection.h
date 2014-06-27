@@ -145,11 +145,11 @@ namespace Apoc3D
 			void GetAttribute##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount = nullptr) const; \
 			bool TryGet##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount = nullptr) const; \
 			bool TryGetAttribute##typeName(const String& key, type* v, int32 maxCount, int32* acutallCount = nullptr) const; \
-			void Get##typeName##Checked(type* v, int32 expectedCount) const { int32 actuallCount; Get##typeName(v, expectedCount, &actuallCount); assert(actuallCount = expectedCount); } \
-			void Get##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; Get##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount = expectedCount); } \
-			void GetAttribute##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; GetAttribute##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount = expectedCount); } \
-			bool TryGet##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; bool r = TryGet##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount = expectedCount); return r; } \
-			bool TryGetAttribute##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; bool r = TryGetAttribute##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount = expectedCount); return r; } 
+			void Get##typeName##Checked(type* v, int32 expectedCount) const { int32 actuallCount; Get##typeName(v, expectedCount, &actuallCount); assert(actuallCount == expectedCount); } \
+			void Get##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; Get##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount == expectedCount); } \
+			void GetAttribute##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; GetAttribute##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount == expectedCount); } \
+			bool TryGet##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; bool r = TryGet##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount == expectedCount); return r; } \
+			bool TryGetAttribute##typeName##Checked(const String& key, type* v, int32 expectedCount) const { int32 actuallCount; bool r = TryGetAttribute##typeName(key, v, expectedCount, &actuallCount); assert(actuallCount == expectedCount); return r; } 
 
 			CONFIG_SECT_SPLITER_ARR_DECL(float, Singles);
 			CONFIG_SECT_SPLITER_ARR_DECL(float, Percentages);
