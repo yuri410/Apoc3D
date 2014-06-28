@@ -96,11 +96,8 @@ namespace Apoc3D
 		{
 			return a + (b-a)*amount;
 		}
-		inline float Saturate(float v)
-		{
-			if (v>1) return 1;
-			return (v<0) ? 0:v;
-		}
+
+
 		inline float Clamp(float v, float _min, float _max)
 		{
 			if (v > _max)
@@ -113,6 +110,13 @@ namespace Apoc3D
 				return _max;
 			return (v<_min) ? _min : v;
 		}
+
+		inline float Saturate(float v) 
+		{
+			const float t = v < 0 ? 0 : v;
+			return t > 1 ? 1 : t;
+		}
+
 		inline int32 Max(int32 a, int32 b)
 		{
 			return (a > b) ? a : b;

@@ -457,12 +457,12 @@ void TestMath()
 	Matrix* set2 = GenerateRandomMatrices(rnd, count);
 	Matrix* result = GenerateRandomMatrices(rnd, count);
 
-	DWORD start = GetTickCount();
+	volatile DWORD start = GetTickCount();
 	for (int i=0;i<count;i++)
 	{
 		Matrix::Multiply(result[i], set1[i], set2[i]);
 	}
-	DWORD end = GetTickCount();
+	volatile DWORD end = GetTickCount();
 
 	DWORD t = end - start;
 	std::wcout << t << L"\n";
