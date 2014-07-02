@@ -372,90 +372,7 @@ namespace Apoc3D
 			static void Multiply(Matrix& res, const Matrix& ma, const Matrix& mb)
 			{
 				assert(&ma != &res && &mb != &res);
-			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				__m128 Result;
-				__m128 B1 = mb.Row1, B2 = mb.Row2, B3 = mb.Row3, B4 = mb.Row4;
-				__m128 t0, t1;
-
-
-				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE1(COL_INDEX(1)));// m11
-				Result = _mm_mul_ps(t0, B1);
-
-				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE1(COL_INDEX(2)));// m12
-				t1 = _mm_mul_ps(t0, B2);
-				Result = _mm_add_ps(Result, t1);
-
-				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE1(COL_INDEX(3)));// m13
-				t1 = _mm_mul_ps(t0, B3);
-				Result = _mm_add_ps(Result, t1);
-
-				t0 = _mm_shuffle_ps(ma.Row1,ma.Row1, _MM_SHUFFLE1(COL_INDEX(4)));// m14
-				t1 = _mm_mul_ps(t0, B4);
-				Result = _mm_add_ps(Result, t1);
-
-				res.Row1 = Result;
-
-				//_mm_store_ps(buffer, ma.Row2);
-				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE1(COL_INDEX(1)));// m21
-				Result = _mm_mul_ps(t0, B1);
-
-				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE1(COL_INDEX(2)));// m21
-				t1 = _mm_mul_ps(t0, B2);
-				Result = _mm_add_ps(Result, t1);
-
-				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE1(COL_INDEX(3)));// m21
-				t1 = _mm_mul_ps(t0, B3);
-				Result = _mm_add_ps(Result, t1);
-
-				t0 = _mm_shuffle_ps(ma.Row2,ma.Row2, _MM_SHUFFLE1(COL_INDEX(4)));// m21
-				t1 = _mm_mul_ps(t0, B4);
-				Result = _mm_add_ps(Result, t1);
-
-				res.Row2 = Result;
-
-
-
-				//_mm_store_ps(buffer, ma.Row3);
-				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE1(COL_INDEX(1)));// M31
-				Result = _mm_mul_ps(t0, B1);
-
-				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE1(COL_INDEX(2)));// M32
-				t1 = _mm_mul_ps(t0, B2);
-				Result = _mm_add_ps(Result, t1);
-
-				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE1(COL_INDEX(3)));// M33
-				t1 = _mm_mul_ps(t0, B3);
-				Result = _mm_add_ps(Result, t1);
-
-				t0 = _mm_shuffle_ps(ma.Row3,ma.Row3, _MM_SHUFFLE1(COL_INDEX(4)));// M34
-				t1 = _mm_mul_ps(t0, B4);
-				Result = _mm_add_ps(Result, t1);
-
-				res.Row3 = Result;
-
-
-
-				//_mm_store_ps(buffer, ma.Row4);
-				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE1(COL_INDEX(1)));// M41
-				Result = _mm_mul_ps(t0, B1);
-
-				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE1(COL_INDEX(2)));// M42
-				t1 = _mm_mul_ps(t0, B2);
-				Result = _mm_add_ps(Result, t1);
-
-				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE1(COL_INDEX(3)));// M43
-				t1 = _mm_mul_ps(t0, B3);
-				Result = _mm_add_ps(Result, t1);
-
-				t0 = _mm_shuffle_ps(ma.Row4,ma.Row4, _MM_SHUFFLE1(COL_INDEX(4)));// M44
-				t1 = _mm_mul_ps(t0, B4);
-				Result = _mm_add_ps(Result, t1);
-
-				res.Row4 = Result;
-			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
-
-				
-#if _DEBUG
+#if _DEBUG && APOC3D_MATH_IMPL != APOC3D_SSE
 				res.M11 = (ma.M11 * mb.M11) + (ma.M12 * mb.M21) + (ma.M13 * mb.M31) + (ma.M14 * mb.M41);
 				res.M12 = (ma.M11 * mb.M12) + (ma.M12 * mb.M22) + (ma.M13 * mb.M32) + (ma.M14 * mb.M42);
 				res.M13 = (ma.M11 * mb.M13) + (ma.M12 * mb.M23) + (ma.M13 * mb.M33) + (ma.M14 * mb.M43);
@@ -560,7 +477,6 @@ namespace Apoc3D
 				_mm_storeu_ps(&res.M31, r3);
 				_mm_storeu_ps(&res.M41, r4);
 #endif
-			#endif
 			}
 
 			/**
