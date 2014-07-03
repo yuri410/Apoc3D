@@ -222,7 +222,7 @@ namespace Apoc3D
 			if (m_borderStyle != FBS_Pane)
 				m_titleOffset.Y = (m_skin->FormTitle->Height - m_fontRef->getLineHeightInt())/2 - 1;
 
-			m_titleOffset.X = m_skin->FormTitlePadding[StyleSkin::SI_Left];
+			m_titleOffset.X = m_skin->FormTitlePadding.Left;
 
 			InitializeButtons(device);
 
@@ -233,7 +233,7 @@ namespace Apoc3D
 
 		void Form::InitializeButtons(RenderDevice* device)
 		{
-			m_btClose = new Button(Point(Size.X - m_skin->FormTitlePadding[StyleSkin::SI_Right] - m_skin->FormCBCloseNormal.Width, m_skin->FormTitlePadding[StyleSkin::SI_Top]), L"");
+			m_btClose = new Button(Point(Size.X - m_skin->FormTitlePadding.Right - m_skin->FormCBCloseNormal.Width, m_skin->FormTitlePadding.Top), L"");
 			m_btClose->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseNormal);
 			m_btClose->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseHover);
 			m_btClose->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->FormCBCloseDown);
@@ -558,7 +558,7 @@ namespace Apoc3D
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			m_dragArea.X = Position.X + m_skin->FormTitle[0].Width;
 			m_dragArea.Y = Position.Y;
-			m_dragArea.Width = Size.X - m_skin->FormCBCloseNormal.Width - m_skin->FormTitlePadding[StyleSkin::SI_Right];
+			m_dragArea.Width = Size.X - m_skin->FormCBCloseNormal.Width - m_skin->FormTitlePadding.Right;
 			if (m_hasMinimizeButton)
 				m_dragArea.Width -= m_skin->FormCBMinNormal.Width;
 			if (m_hasMaximizeButton)
@@ -830,7 +830,7 @@ namespace Apoc3D
 		void Form::DrawTitle(Sprite* sprite)
 		{
 			Point size = m_fontRef->MeasureString(m_title);
-			int32 padding = m_skin->FormTitlePadding[StyleSkin::SI_Right] + m_skin->FormTitlePadding[StyleSkin::SI_Left];
+			int32 padding = m_skin->FormTitlePadding.getHorizontalSum();
 			padding += m_skin->FormCBCloseNormal.Width;
 			if (m_hasMinimizeButton)
 				padding += m_skin->FormCBMinNormal.Width;

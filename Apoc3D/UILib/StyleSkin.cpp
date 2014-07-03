@@ -47,6 +47,65 @@ namespace Apoc3D
 {
 	namespace UI
 	{
+		ControlBounds::ControlBounds(const Apoc3D::Math::Rectangle& graphicalArea, const Apoc3D::Math::Rectangle& hotArea)
+		{
+			Left = hotArea.X - graphicalArea.X;
+			Right = graphicalArea.getRight() - hotArea.getRight();
+
+			Top = hotArea.Y - graphicalArea.Y;
+			Bottom = graphicalArea.getBottom() - hotArea.getBottom();
+		}
+
+		Apoc3D::Math::Rectangle ControlBounds::InflateRect(const Apoc3D::Math::Rectangle& rect) const
+		{
+			Apoc3D::Math::Rectangle result = rect;
+			result.X -= Left;
+			result.Y -= Top;
+			result.Width += getHorizontalSum();
+			result.Height += getVerticalSum();
+			return result;
+		}
+		Apoc3D::Math::Rectangle ControlBounds::ShrinkRect(const Apoc3D::Math::Rectangle& rect) const
+		{
+			Apoc3D::Math::Rectangle result = rect;
+			result.X += Left;
+			result.Y += Top;
+			result.Width -= getHorizontalSum();
+			result.Height -= getVerticalSum();
+			return result;
+		}
+
+		int32 ControlBounds::operator[](SideIndex idx) const
+		{
+			switch (idx)
+			{
+			case Apoc3D::UI::ControlBounds::SI_Left:
+				return Left;
+			case Apoc3D::UI::ControlBounds::SI_Top:
+				return Top;
+			case Apoc3D::UI::ControlBounds::SI_Right:
+				return Right;
+			case Apoc3D::UI::ControlBounds::SI_Bottom:
+				return Bottom;
+			default:
+				return 0;
+			}
+		}
+
+		void ControlBounds::SetFromLeftTopRightBottom(int32 padding[4])
+		{
+			Left = padding[ControlBounds::SI_Left];
+			Right = padding[ControlBounds::SI_Right];
+			Top = padding[ControlBounds::SI_Top];
+			Bottom = padding[ControlBounds::SI_Bottom];
+		}
+		void ControlBounds::SetZero()
+		{
+			Left = Right = Top = Bottom = 0;
+		}
+
+
+
 		StyleSkin::StyleSkin(RenderDevice* device, const FileLocateRule& rule)
 		{
 			FileLocation* fl = FileSystem::getSingleton().Locate(L"skin.xml", rule);
@@ -110,7 +169,7 @@ namespace Apoc3D
 
 				TextBoxFont = GetFontName(textBoxSect->getAttribute(L"Font"));
 				ParseMargin(textBoxSect, TextBoxMargin);
-				ParseMargin(textBoxSect, TextBoxPadding);
+				ParsePadding(textBoxSect, TextBoxPadding);
 
 				ConfigurationSection* normalSect = textBoxSect->getSection(L"Normal");
 				Parse3Region(normalSect, TextBox, cachedRegions);
@@ -434,37 +493,29 @@ namespace Apoc3D
 			return alias == L"Title" ? TitleTextFont : ContentTextFont;
 		}
 
-		void StyleSkin::ParseMargin(ConfigurationSection* sect, int result[4])
+		void StyleSkin::ParseMargin(ConfigurationSection* sect, ControlBounds& result)
 		{
-			FastList<int32> margins;
-			if (sect->TryGetAttributeInts(L"Margin", margins))
+			int32 margins[4];
+			if (sect->TryGetAttributeIntsChecked(L"Margin", margins, 4))
 			{
-				assert(margins.getCount()==4);
-
-				for (int i=0;i<4;i++)
-					result[i] = margins[i];
+				result.SetFromLeftTopRightBottom(margins);
 			}
 			else
 			{
-				for (int i=0;i<4;i++)
-					result[i] = 0;
+				result.SetZero();
 			}
 		}
 
-		void StyleSkin::ParsePadding(ConfigurationSection* sect, int result[4])
+		void StyleSkin::ParsePadding(ConfigurationSection* sect, ControlBounds& result)
 		{
-			FastList<int32> padding;
-			if (sect->TryGetAttributeInts(L"Padding", padding))
+			int32 padding[4];
+			if (sect->TryGetAttributeIntsChecked(L"Padding", padding, 4))
 			{
-				assert(padding.getCount()==4);
-
-				for (int i=0;i<4;i++)
-					result[i] = padding[i];
+				result.SetFromLeftTopRightBottom(padding);
 			}
 			else
 			{
-				for (int i=0;i<4;i++)
-					result[i] = 0;
+				result.SetZero();
 			}
 		}
 		void StyleSkin::Parse9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9], HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions)
@@ -475,19 +526,19 @@ namespace Apoc3D
 				memcpy(srcRects, cachedRegions[ref], sizeof(Apoc3D::Math::Rectangle) * 9);
 				return;
 			}
-			
-			List<String> parts;
-			StringUtils::Split(sect->getValue(), parts, L"[], ");
+
+			FastList<int32> parts;
+			StringUtils::SplitParseInts(sect->getValue(), parts, L"[], ");
 			assert(parts.getCount() == 4 * 9);
 
 			for (int i=0;i<9;i++)
 			{
 				Apoc3D::Math::Rectangle& rect = srcRects[i];
 				
-				rect.X = StringUtils::ParseInt32(parts[i * 4]);
-				rect.Y = StringUtils::ParseInt32(parts[i * 4 + 1]);
-				rect.Width = StringUtils::ParseInt32(parts[i * 4 + 2]);
-				rect.Height = StringUtils::ParseInt32(parts[i * 4 + 3]);
+				rect.X = parts[i * 4];
+				rect.Y = parts[i * 4 + 1];
+				rect.Width = parts[i * 4 + 2];
+				rect.Height = parts[i * 4 + 3];
 			}
 
 			cachedRegions.Add(sect->getName(), srcRects);
@@ -501,18 +552,18 @@ namespace Apoc3D
 				return;
 			}
 
-			List<String> parts;
-			StringUtils::Split(sect->getValue(), parts, L"[], ");
+			FastList<int32> parts;
+			StringUtils::SplitParseInts(sect->getValue(), parts, L"[], ");
 			assert(parts.getCount() == 4 * 3);
 
 			for (int i=0;i<3;i++)
 			{
 				Apoc3D::Math::Rectangle& rect = srcRects[i];
 
-				rect.X = StringUtils::ParseInt32(parts[i * 4]);
-				rect.Y = StringUtils::ParseInt32(parts[i * 4 + 1]);
-				rect.Width = StringUtils::ParseInt32(parts[i * 4 + 2]);
-				rect.Height = StringUtils::ParseInt32(parts[i * 4 + 3]);
+				rect.X = parts[i * 4];
+				rect.Y = parts[i * 4 + 1];
+				rect.Width = parts[i * 4 + 2];
+				rect.Height = parts[i * 4 + 3];
 			}
 
 			cachedRegions.Add(sect->getName(), srcRects);
@@ -526,14 +577,14 @@ namespace Apoc3D
 				return;
 			}
 
-			List<String> parts;
-			StringUtils::Split(sect->getValue(), parts, L"[], ");
+			FastList<int32> parts;
+			StringUtils::SplitParseInts(sect->getValue(), parts, L"[], ");
 			assert(parts.getCount() == 4);
 
-			srcRect.X = StringUtils::ParseInt32(parts[0]);
-			srcRect.Y = StringUtils::ParseInt32(parts[1]);
-			srcRect.Width = StringUtils::ParseInt32(parts[2]);
-			srcRect.Height = StringUtils::ParseInt32(parts[3]);
+			srcRect.X = parts[0];
+			srcRect.Y = parts[1];
+			srcRect.Width = parts[2];
+			srcRect.Height = parts[3];
 
 			cachedRegions.Add(sect->getName(), &srcRect);
 		}
@@ -576,10 +627,10 @@ namespace Apoc3D
 		void StyleSkin::PushRegion(ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect)
 		{
 			Point coord(0,0);
-			FastList<int32> coordArr;
-			if (sect->TryGetAttributeInts(L"Coord", coordArr))
+			//FastList<int32> coordArr;
+			int32 coordArr[2];
+			if (sect->TryGetAttributeIntsChecked(L"Coord", coordArr, 2))
 			{
-				assert(coordArr.getCount()==2);
 				coord.X = coordArr[0];
 				coord.Y = coordArr[1];
 

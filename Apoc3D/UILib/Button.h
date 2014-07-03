@@ -45,24 +45,18 @@ namespace Apoc3D
 				m_rotation(0), m_hasTextColorValue(false)
 			{
 				Size.X = Size.Y = 0;
-				//BackColor = backColor;
-				//ForeColor = foreColor;
 			}
 			Button(const Point& position, int width, const String& text)
 				: Control(position, text, Point(width, 0)), m_mouseOver(false), m_mouseDown(false),
 				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_PackColor(0x7f,0x7f,0x7f,0x7f)),
 				m_rotation(0), m_hasTextColorValue(false)
 			{
-				//BackColor = backColor;
-				//ForeColor = foreColor;
 			}
 			Button(const Point& position, const Point& size, const String& text)
 				: Control(position, text, size), m_mouseOver(false), m_mouseDown(false),
 				m_modColor(CV_White),m_modMouseOverColor(CV_White),m_modMouseDownColor(CV_White),m_modDisabledColor(CV_PackColor(0x7f,0x7f,0x7f,0x7f)),
 				m_rotation(0), m_hasTextColorValue(false)
 			{
-				//BackColor = backColor;
-				//ForeColor = foreColor;
 			}
 			
 			virtual void Initialize(RenderDevice* device);
@@ -187,12 +181,21 @@ namespace Apoc3D
 
 			int m_count;
 			String* m_titles;
-			Point* m_texPos;
-			Apoc3D::Math::Rectangle* m_btRect;
+			Point* m_textPos;
+			Point* m_textSize;
+			Apoc3D::Math::Rectangle* m_buttonDstRect;
 
 			int m_hoverIndex;
 
 		};
+
+
+		class APAPI ButtonMatrix : public Control
+		{
+
+		};
+		
+
 
 		class APAPI RadioButton : public Control
 		{

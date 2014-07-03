@@ -334,7 +334,7 @@ namespace Apoc3D
 			
 			if (!m_multiline)
 			{
-				int32 yMargin = m_skin->TextBoxMargin[StyleSkin::SI_Top] + m_skin->TextBoxMargin[StyleSkin::SI_Bottom];
+				int32 yMargin = m_skin->TextBoxMargin.getVerticalSum();
 				Size.Y = m_skin->TextBox[0].Height - yMargin;
 			}
 			else
@@ -537,14 +537,14 @@ namespace Apoc3D
 
 		void TextBox::DrawMonoline(Sprite* sprite)
 		{
-			int32 xMargin = -(m_skin->TextBoxMargin[StyleSkin::SI_Left] + m_skin->TextBoxMargin[StyleSkin::SI_Right]);
-			int32 yMargin = -(m_skin->TextBoxMargin[StyleSkin::SI_Top] + m_skin->TextBoxMargin[StyleSkin::SI_Bottom]);
+			int32 xMargin = -m_skin->TextBoxMargin.getHorizontalSum();//m_skin->TextBoxMargin[StyleSkin::SI_Left] + m_skin->TextBoxMargin[StyleSkin::SI_Right]);
+			int32 yMargin = -m_skin->TextBoxMargin.getVerticalSum();//m_skin->TextBoxMargin[StyleSkin::SI_Top] + m_skin->TextBoxMargin[StyleSkin::SI_Bottom]);
 
 			Apoc3D::Math::Rectangle dstRect[3];
-			dstRect[0] = Apoc3D::Math::Rectangle(m_skin->TextBoxMargin[StyleSkin::SI_Left], m_skin->TextBoxMargin[StyleSkin::SI_Top], m_skin->TextBox[0].Width , m_skin->TextBox[0].Height + yMargin);
-			dstRect[1] = Apoc3D::Math::Rectangle(dstRect[0].Width, m_skin->TextBoxMargin[StyleSkin::SI_Top],
+			dstRect[0] = Apoc3D::Math::Rectangle(m_skin->TextBoxMargin.Left, m_skin->TextBoxMargin.Top, m_skin->TextBox[0].Width , m_skin->TextBox[0].Height + yMargin);
+			dstRect[1] = Apoc3D::Math::Rectangle(dstRect[0].Width, m_skin->TextBoxMargin.Top,
 				Size.X - m_skin->TextBox[0].Width - m_skin->TextBox[2].Width + xMargin, m_skin->TextBox[1].Height + yMargin);
-			dstRect[2] = Apoc3D::Math::Rectangle(dstRect[1].getRight(), m_skin->TextBoxMargin[StyleSkin::SI_Top], m_skin->TextBox[2].Width, m_skin->TextBox[2].Height + yMargin);
+			dstRect[2] = Apoc3D::Math::Rectangle(dstRect[1].getRight(), m_skin->TextBoxMargin.Top, m_skin->TextBox[2].Width, m_skin->TextBox[2].Height + yMargin);
 			
 			for (int32 i=0;i<3;i++)
 			{
@@ -561,10 +561,7 @@ namespace Apoc3D
 		void TextBox::DrawMultiline(Sprite* sprite)
 		{
 			Apoc3D::Math::Rectangle graphicalArea(Position.X, Position.Y, Size.X, Size.Y);
-			graphicalArea.X -= m_skin->TextBoxExMargin[StyleSkin::SI_Left];
-			graphicalArea.Y -= m_skin->TextBoxExMargin[StyleSkin::SI_Top];
-			graphicalArea.Width += m_skin->TextBoxExMargin[StyleSkin::SI_Left] + m_skin->TextBoxExMargin[StyleSkin::SI_Right];
-			graphicalArea.Height += m_skin->TextBoxExMargin[StyleSkin::SI_Top] + m_skin->TextBoxExMargin[StyleSkin::SI_Bottom];
+			graphicalArea = m_skin->TextBoxExMargin.InflateRect(graphicalArea);
 
 			const int GraphicalPaddingWidth = m_skin->TextBoxEx[0].Width + m_skin->TextBoxEx[2].Width;
 			const int GraphicalPaddingHeight = m_skin->TextBoxEx[0].Height + m_skin->TextBoxEx[6].Height;

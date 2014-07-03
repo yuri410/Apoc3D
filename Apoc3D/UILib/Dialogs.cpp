@@ -79,7 +79,7 @@ namespace Apoc3D
 			if (minimumWidth < orginalContentSize.X)
 				minimumWidth = orginalContentSize.X;
 
-			int estButtonHeight = controlFont->getLineHeightInt() + skin->ButtonPadding[StyleSkin::SI_Bottom] + skin->ButtonPadding[StyleSkin::SI_Top];
+			int estButtonHeight = controlFont->getLineHeightInt() + skin->ButtonPadding.getVerticalSum();
 
 			int vertPadding = 15;
 			int btnHozPadding = 50;

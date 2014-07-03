@@ -63,7 +63,7 @@ namespace Apoc3D
 		{
 			Control::Initialize(device);
 
-			m_textOffset = Point(m_skin->ListBoxPadding[StyleSkin::SI_Left], m_skin->ListBoxPadding[StyleSkin::SI_Top] + 
+			m_textOffset = Point(m_skin->ListBoxPadding.Left, m_skin->ListBoxPadding.Top + 
 				m_skin->TextBox->Height-m_fontRef->getLineHeightInt()/2);
 
 			//m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
@@ -304,14 +304,10 @@ namespace Apoc3D
 		}
 		void ListBox::DrawBackground(Sprite* sprite)
 		{
-			Apoc3D::Math::Rectangle graphicalArea = getArea();
-
 			const Apoc3D::Math::Rectangle* srcRects = m_skin->ListBoxBackground;
-			graphicalArea.X -= m_skin->ListBoxMargin[StyleSkin::SI_Left];
-			graphicalArea.Y -= m_skin->ListBoxMargin[StyleSkin::SI_Top];
-			graphicalArea.Width += m_skin->ListBoxMargin[StyleSkin::SI_Left] + m_skin->ListBoxMargin[StyleSkin::SI_Right];
-			graphicalArea.Height += m_skin->ListBoxMargin[StyleSkin::SI_Top] + m_skin->ListBoxMargin[StyleSkin::SI_Bottom];
 
+			Apoc3D::Math::Rectangle graphicalArea = getArea();
+			graphicalArea = m_skin->ListBoxMargin.InflateRect(graphicalArea);
 
 			const int GraphicalPaddingWidth = srcRects[0].Width + srcRects[2].Width;
 			const int GraphicalPaddingHeight = srcRects[0].Height + srcRects[6].Height;
@@ -478,7 +474,7 @@ namespace Apoc3D
 		{
 			Control::Initialize(device);
 			//m_textOffset = Point(5, m_skin->TextBox->getHeight()-GetItemHeight()/2);
-			m_textOffset = Point(m_skin->ListBoxPadding[StyleSkin::SI_Left], m_skin->ListBoxPadding[StyleSkin::SI_Top] + 
+			m_textOffset = Point(m_skin->ListBoxPadding.Left, m_skin->ListBoxPadding.Top + 
 				m_skin->TextBox->Height-m_fontRef->getLineHeightInt()/2);
 
 			/*m_destRect[0] = Apoc3D::Math::Rectangle(0,0, 
@@ -753,14 +749,10 @@ namespace Apoc3D
 		}
 		void TreeView::DrawBackground(Sprite* sprite)
 		{
-			Apoc3D::Math::Rectangle graphicalArea = getArea();
-
 			const Apoc3D::Math::Rectangle* srcRects = m_skin->ListBoxBackground;
-			graphicalArea.X -= m_skin->ListBoxMargin[StyleSkin::SI_Left];
-			graphicalArea.Y -= m_skin->ListBoxMargin[StyleSkin::SI_Top];
-			graphicalArea.Width += m_skin->ListBoxMargin[StyleSkin::SI_Left] + m_skin->ListBoxMargin[StyleSkin::SI_Right];
-			graphicalArea.Height += m_skin->ListBoxMargin[StyleSkin::SI_Top] + m_skin->ListBoxMargin[StyleSkin::SI_Bottom];
 
+			Apoc3D::Math::Rectangle graphicalArea = getArea();
+			graphicalArea = m_skin->ListBoxMargin.InflateRect(graphicalArea);
 
 			const int GraphicalPaddingWidth = srcRects[0].Width + srcRects[2].Width;
 			const int GraphicalPaddingHeight = srcRects[0].Height + srcRects[6].Height;

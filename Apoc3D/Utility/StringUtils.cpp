@@ -35,6 +35,8 @@ namespace Apoc3D
 {
 	namespace Utility
 	{
+		const String Empty;
+
 		string StringUtils::toPlatformNarrowString(const String& str) { return toPlatformNarrowString(str.c_str()); }
 		string StringUtils::toPlatformNarrowString(const wchar_t* str)
 		{

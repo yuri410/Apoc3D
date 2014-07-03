@@ -32,8 +32,8 @@ namespace Apoc3D
 		{
 			Control::Initialize(device);
 
-			int32 hozMg = m_skin->CheckBoxMargin[StyleSkin::SI_Left] + m_skin->CheckBoxMargin[StyleSkin::SI_Right];
-			int32 vertMg = m_skin->CheckBoxMargin[StyleSkin::SI_Top] + m_skin->CheckBoxMargin[StyleSkin::SI_Bottom];
+			int32 hozMg = m_skin->CheckBoxMargin.getHorizontalSum();
+			int32 vertMg = m_skin->CheckBoxMargin.getVerticalSum();
 			Size.X = m_skin->CheckBoxNormal.Width - hozMg + m_fontRef->MeasureString(Text).X + m_skin->CheckBoxTextSpacing;
 			Size.Y = Math::Max(m_skin->CheckBoxNormal.Height,m_fontRef->getLineHeightInt()) - vertMg;
 
@@ -100,7 +100,7 @@ namespace Apoc3D
 
 		void CheckBox::Draw(Sprite* sprite)
 		{
-			Apoc3D::Math::Rectangle dstRect(Position.X - m_skin->CheckBoxMargin[StyleSkin::SI_Left], Position.Y - m_skin->CheckBoxMargin[StyleSkin::SI_Top], 0,0);
+			Apoc3D::Math::Rectangle dstRect(Position.X - m_skin->CheckBoxMargin.Left, Position.Y - m_skin->CheckBoxMargin.Top, 0,0);
 			dstRect.Width = m_skin->CheckBoxNormal.Width;
 			dstRect.Height = m_skin->CheckBoxNormal.Height;
 

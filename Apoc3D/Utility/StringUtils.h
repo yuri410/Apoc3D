@@ -35,6 +35,8 @@ namespace Apoc3D
 	{
 		namespace StringUtils
 		{
+			APAPI extern const String Empty;
+
 			APAPI std::string toPlatformNarrowString(const String& str);
 			APAPI std::string toPlatformNarrowString(const wchar_t* str);
 			APAPI String toPlatformWideString(const std::string& str);

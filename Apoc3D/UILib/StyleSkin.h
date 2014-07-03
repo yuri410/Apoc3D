@@ -37,12 +37,8 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		class APAPI StyleSkin
+		struct ControlBounds
 		{
-		public:
-			StyleSkin(RenderDevice* device, const FileLocateRule& rule);
-			~StyleSkin();
-
 			enum SideIndex
 			{
 				SI_Left,
@@ -50,6 +46,34 @@ namespace Apoc3D
 				SI_Right,
 				SI_Bottom
 			};
+
+
+			int32 Left;
+			int32 Right;
+			int32 Top;
+			int32 Bottom;
+
+			ControlBounds() : Left(0), Right(0), Top(0), Bottom(0) { }
+			ControlBounds(int32 left, int32 right, int32 top, int32 bottom) : Left(left), Right(right), Top(top), Bottom(bottom) { }
+			ControlBounds(const Apoc3D::Math::Rectangle& graphicalArea, const Apoc3D::Math::Rectangle& hotArea);
+			
+			int32 getHorizontalSum() const { return Left + Right; }
+			int32 getVerticalSum() const { return Top + Bottom; }
+
+			Apoc3D::Math::Rectangle InflateRect(const Apoc3D::Math::Rectangle& rect) const;
+			Apoc3D::Math::Rectangle ShrinkRect(const Apoc3D::Math::Rectangle& rect) const;
+
+			int32 operator[](SideIndex idx) const;
+
+			void SetFromLeftTopRightBottom(int32 padding[4]);
+			void SetZero();
+		};
+
+		class APAPI StyleSkin
+		{
+		public:
+			StyleSkin(RenderDevice* device, const FileLocateRule& rule);
+			~StyleSkin();
 
 			Font* ContentTextFont;
 			Font* TitleTextFont;
@@ -61,8 +85,8 @@ namespace Apoc3D
 			ColorValue MIDBackgroundColor;
 			ColorValue BorderColor;
 
-			int32 ButtonPadding[4];
-			int32 ButtonMargin[4];
+			ControlBounds ButtonPadding;
+			ControlBounds ButtonMargin;
 			Font* ButtonFont;
 			Apoc3D::Math::Rectangle ButtonRegionsNormal[9];
 			Apoc3D::Math::Rectangle ButtonRegionsHover[9];
@@ -71,14 +95,14 @@ namespace Apoc3D
 
 
 			Font* TextBoxFont;
-			int32 TextBoxPadding[4];
-			int32 TextBoxMargin[4];
+			ControlBounds TextBoxPadding;
+			ControlBounds TextBoxMargin;
 			Apoc3D::Math::Rectangle TextBox[3];
 
-			int32 TextBoxExMargin[4];
+			ControlBounds TextBoxExMargin;
 			Apoc3D::Math::Rectangle TextBoxEx[9];
 
-			int32 CheckBoxMargin[4];
+			ControlBounds CheckBoxMargin;
 			Font* CheckBoxFont;
 			Apoc3D::Math::Rectangle CheckBoxDisable;
 			Apoc3D::Math::Rectangle CheckBoxNormal;
@@ -87,7 +111,7 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle CheckBoxChecked;
 			int32 CheckBoxTextSpacing;
 
-			int32 RadioButtonMargin[4];
+			ControlBounds RadioButtonMargin;
 			Font* RadioButtonFont;
 			Apoc3D::Math::Rectangle RadioButtonDisable;
 			Apoc3D::Math::Rectangle RadioButtonNormal;
@@ -96,13 +120,13 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle RadioButtonChecked;
 			int32 RadioButtonTextSpacing;
 
-			int32 DropDownButtonMargin[4];
+			ControlBounds DropDownButtonMargin;
 			Apoc3D::Math::Rectangle DropDownButtonNormal;
 			Apoc3D::Math::Rectangle DropDownButtonHover;
 			Apoc3D::Math::Rectangle DropDownButtonDown;
 
 			Font* FormFont;
-			int32 FormTitlePadding[4];
+			ControlBounds FormTitlePadding;
 			Apoc3D::Math::Rectangle FormTitle[3];
 			Apoc3D::Math::Rectangle FormBody[9];
 			Apoc3D::Math::Rectangle FormResizer;
@@ -153,8 +177,8 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle HScrollBarLeft;
 			Apoc3D::Math::Rectangle HScrollBarRight;
 
-			int32 ListBoxMargin[4];
-			int32 ListBoxPadding[4];
+			ControlBounds ListBoxMargin;
+			ControlBounds ListBoxPadding;
 			Font* ListBoxFont;
 			Apoc3D::Math::Rectangle ListBoxBackground[9];
 
@@ -169,8 +193,8 @@ namespace Apoc3D
 		private:
 			Font* GetFontName(const String& alias);
 
-			void ParseMargin(Apoc3D::Config::ConfigurationSection* sect, int result[4]);
-			void ParsePadding(Apoc3D::Config::ConfigurationSection* sect, int result[4]);
+			void ParseMargin(Apoc3D::Config::ConfigurationSection* sect, ControlBounds& result);
+			void ParsePadding(Apoc3D::Config::ConfigurationSection* sect, ControlBounds& result);
 			void Parse9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9], Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
 			void Parse3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[3], Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
 			void ParseRegion(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect, Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
