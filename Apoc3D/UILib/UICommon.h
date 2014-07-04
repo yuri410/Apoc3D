@@ -28,8 +28,10 @@
 
 #include "apoc3d/Common.h"
 #include "apoc3d/Math/Rectangle.h"
+#include "apoc3d/Math/ColorValue.h"
 #include "..\EventDelegate.h"
 
+using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace Apoc3D
@@ -52,6 +54,42 @@ namespace Apoc3D
 
 			bool isSet() const { return !!Graphic; }
 		};
+
+		enum Region9Flags
+		{
+			R9_None = 0,
+			R9_TopLeft = 1 << 0,
+			R9_TopCenter = 1 << 1,
+			R9_TopRight = 1 << 2,
+			R9_MiddleLeft = 1 << 3,
+			R9_MiddleCenter = 1 << 4,
+			R9_MiddleRight = 1 << 5,
+			R9_BottomLeft = 1 << 6,
+			R9_BottomCenter = 1 << 7,
+			R9_BottomRight = 1 << 8,
+
+			R9Mix_TopBar = R9_TopLeft | R9_TopCenter | R9_TopRight,
+			R9Mix_MiddleBar = R9_MiddleLeft | R9_MiddleCenter | R9_MiddleRight,
+			R9Mix_BottomBar = R9_BottomLeft | R9_BottomCenter | R9_BottomRight,
+			R9Mix_All = R9Mix_TopBar | R9Mix_MiddleBar | R9Mix_BottomBar
+		};
+
+		// These do not account for border padding
+		bool guiDrawRegion9(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv, 
+			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
+
+		bool guiDrawRegion3(Sprite* sprite, const Point& pt, int width, ColorValue cv, 
+			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
+
+		bool guiDrawRegion3Vert(Sprite* sprite, const Point& pos, int height, ColorValue cv, 
+			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
+
+		void guiDrawRegion3Capped(Sprite* sprite, const Point& pos, int32 maxWidth, int32 capWidth, 
+			ColorValue cv, Texture* texture, const Apoc3D::Math::Rectangle* srcRects);
+
+		void guiDrawRegion9Subbox(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv, 
+			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, uint32 subRegionFlags);
+
 	}
 }
 

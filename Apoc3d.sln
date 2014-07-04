@@ -38,6 +38,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sample_DIP", "Sample_DIP\Sa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTestVC", "Tests\UnitTestVC\UnitTestVC.vcxproj", "{210113A2-16E7-4967-AE5C-C9C37A21E984}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sample_GUI", "Sample_GUI\Sample_GUI.vcxproj", "{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -149,11 +151,20 @@ Global
 		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Debug|Win32.ActiveCfg = Debug|Win32
 		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Debug|Win32.Build.0 = Debug|Win32
 		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Debug|x64.ActiveCfg = Debug|Win32
-		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_DynLib|Win32.ActiveCfg = Release|Win32
-		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_DynLib|Win32.Build.0 = Release|Win32
-		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_DynLib|x64.ActiveCfg = Release|Win32
-		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_Static|Win32.ActiveCfg = Release|Win32
-		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_Static|x64.ActiveCfg = Release|Win32
+		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_DynLib|Win32.ActiveCfg = Release_DynLib|Win32
+		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_DynLib|Win32.Build.0 = Release_DynLib|Win32
+		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_DynLib|x64.ActiveCfg = Release_DynLib|Win32
+		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_Static|Win32.ActiveCfg = Release_DynLib|Win32
+		{210113A2-16E7-4967-AE5C-C9C37A21E984}.Release_Static|x64.ActiveCfg = Release_DynLib|Win32
+		{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}.Debug|Win32.Build.0 = Debug|Win32
+		{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}.Debug|x64.ActiveCfg = Debug|Win32
+		{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}.Release_DynLib|Win32.ActiveCfg = Release_DynLib|Win32
+		{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}.Release_DynLib|Win32.Build.0 = Release_DynLib|Win32
+		{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}.Release_DynLib|x64.ActiveCfg = Release_DynLib|Win32
+		{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}.Release_Static|Win32.ActiveCfg = Release_Static|Win32
+		{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}.Release_Static|Win32.Build.0 = Release_Static|Win32
+		{C29E77BC-60BF-4BFC-A74E-5C93E1918C51}.Release_Static|x64.ActiveCfg = Release_Static|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,5 +175,6 @@ Global
 		{B7A302BD-C02D-4BB3-B6D5-B2CBEE6881BF} = {967EA61A-D303-411C-9D65-6CB72489F5CE}
 		{5BE097D4-AA3A-41C9-B58F-EF4627B13806} = {967EA61A-D303-411C-9D65-6CB72489F5CE}
 		{881548E3-B5CD-43EA-85DC-1A93C9E38D14} = {967EA61A-D303-411C-9D65-6CB72489F5CE}
+		{C29E77BC-60BF-4BFC-A74E-5C93E1918C51} = {967EA61A-D303-411C-9D65-6CB72489F5CE}
 	EndGlobalSection
 EndGlobal

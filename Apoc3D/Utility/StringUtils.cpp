@@ -796,6 +796,52 @@ namespace Apoc3D
 		bool StringUtils::EqualsNoCase(const String& a, const String& b) { return GenericFunctions<String>::EqualsNoCase(a,b); }
 		bool StringUtils::EqualsNoCase(const std::string& a, const std::string& b) { return GenericFunctions<std::string>::EqualsNoCase(a,b); }
 
+		
+		bool StringUtils::Match(const String& str, const String& pattern)
+		{
+			const wchar_t* cp = nullptr;
+			const wchar_t* mp = nullptr;
+
+			const wchar_t* string = str.c_str();
+			const wchar_t* wild = pattern.c_str();
+
+			while ((*string) && (*wild != '*')) 
+			{
+				if ((*wild != *string) && (*wild != '?')) 
+					return 0;
+
+				wild++;
+				string++;
+			}
+
+			while (*string) 
+			{
+				wchar_t wch = *wild;
+
+				if (wch == '*') 
+				{
+					if (!*++wild) 
+						return 1;
+
+					mp = wild;
+					cp = string+1;
+				} 
+				else if ((wch == *string) || (wch == '?'))
+				{
+					wild++;
+					string++;
+				}
+				else
+				{
+					wild = mp;
+					string = cp++;
+				}
+			}
+
+			while (*wild == '*')
+				wild++;
+			return !*wild;
+		}
 
 		//////////////////////////////////////////////////////////////////////////
 

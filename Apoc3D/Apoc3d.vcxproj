@@ -399,6 +399,7 @@
     <ClCompile Include="UILib\PictureBox.cpp" />
     <ClCompile Include="UILib\Scrollbar.cpp" />
     <ClCompile Include="UILib\StyleSkin.cpp" />
+    <ClCompile Include="UILib\UICommon.cpp" />
     <ClCompile Include="Utility\Compression.cpp" />
     <ClCompile Include="Utility\StringUtils.cpp" />
     <ClCompile Include="Graphics\PixelFormat.cpp" />

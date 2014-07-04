@@ -21,9 +21,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "DIP1.h"
+#include "GUIDemo.h"
 
-#include "DIPCommon.h"
+#include "DemoCommon.h"
 
 #include "apoc3d/Math/RandomUtils.h"
 
@@ -47,7 +47,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include <SDKDDKVer.h>
 
-using namespace dip;
+using namespace Sample_GUI;
 
 using namespace std;
 using namespace Apoc3D;
@@ -114,7 +114,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 
 	RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
 	
-	wnd->setEventHandler(new DIP1(wnd));
+	wnd->setEventHandler(new GUIDemo(wnd));
 
 	if (wnd)
 	{

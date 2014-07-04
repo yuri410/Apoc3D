@@ -125,6 +125,8 @@ namespace Apoc3D
 			APAPI bool EqualsNoCase(const String& a, const String& b);
 			APAPI bool EqualsNoCase(const std::string& a, const std::string& b);
 
+			APAPI bool Match(const String& str, const String& pattern);
+
 
 			APAPI void Trim(String& str, const String& delims = L" \t\r");
 			APAPI void TrimLeft(String& str, const String& delims = L" \t\r");
@@ -177,6 +179,8 @@ namespace Apoc3D
 
 			APAPI void ToLowerCase(String& str);
 			APAPI void ToUpperCase(String& str);
+
+			
 
 			inline uint GetHashCode(const String& str)
 			{

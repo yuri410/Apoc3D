@@ -481,7 +481,8 @@ namespace Apoc3D
 		/************************************************************************/
 
 		ButtonRow::ButtonRow(const Point& position, float width, const List<String>& titles)
-			: Control(position), m_count(titles.getCount()), m_hoverIndex(-1), m_selectedIndex(0)
+			: Control(position), m_count(titles.getCount()), m_hoverIndex(-1), m_selectedIndex(0),
+			m_verticalBorderStyle(VBS_Both)
 		{ 
 			Size.X = (int)width;
 			
@@ -542,128 +543,20 @@ namespace Apoc3D
 					btnSrcRect = m_skin->ButtonRegionsHover;
 				}
 
-				Apoc3D::Math::Rectangle currentRegions[6];
-				if (i == 0)
+				switch (m_verticalBorderStyle)
 				{
-					Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
-					graphicalArea.X -= m_skin->ButtonMargin.Left;// m_skin->ButtonMargin[StyleSkin::SI_Left];
-					graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
-					graphicalArea.Width += m_skin->ButtonMargin.Left;// m_skin->ButtonMargin[StyleSkin::SI_Left];
-					graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
-
-					const int GraphicalPaddingWidth = btnSrcRect[0].Width;// + btnSrc[2].Width;
-					const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
-
-					currentRegions[0] = btnSrcRect[0];
-					currentRegions[1] = btnSrcRect[1];
-					currentRegions[2] = btnSrcRect[3];
-					currentRegions[3] = btnSrcRect[4];
-					currentRegions[4] = btnSrcRect[6];
-					currentRegions[5] = btnSrcRect[7];
-
-					for (int i=0;i<6;i++)
-					{
-						currentRegions[i].X += graphicalArea.X - btnSrcRect[0].X;
-						currentRegions[i].Y += graphicalArea.Y - btnSrcRect[0].Y;
-					}
-
-					int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
-					int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
-
-					currentRegions[1].Width = eWidth; // top
-					currentRegions[3].Width = eWidth; // mid
-					currentRegions[5].Width = eWidth; // bottom
-
-					currentRegions[2].Height = eHeight; // left
-					currentRegions[3].Height = eHeight; // mid
-
-					currentRegions[4].Y = currentRegions[5].Y = currentRegions[3].getBottom();
-
-					sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[0], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[1], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[3], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[3], &btnSrcRect[4], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[4], &btnSrcRect[6], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[5], &btnSrcRect[7], CV_White);
+				case Apoc3D::UI::ButtonRow::VBS_Both:
+					DrawButtonDualVSided(sprite, i, btnSrcRect);
+					break;
+				case Apoc3D::UI::ButtonRow::VBS_Top:
+					break;
+				case Apoc3D::UI::ButtonRow::VBS_Bottom:
+					break;
+				case Apoc3D::UI::ButtonRow::VBS_None:
+					break;
 				}
-				else if (i == m_count - 1)
-				{
-					Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
-					graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
-					graphicalArea.Width += m_skin->ButtonMargin.Right;// m_skin->ButtonMargin[StyleSkin::SI_Right];
-					graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
 
-					const int GraphicalPaddingWidth = btnSrcRect[2].Width;
-					const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
 
-					currentRegions[0] = btnSrcRect[1];
-					currentRegions[1] = btnSrcRect[2];
-					currentRegions[2] = btnSrcRect[4];
-					currentRegions[3] = btnSrcRect[5];
-					currentRegions[4] = btnSrcRect[7];
-					currentRegions[5] = btnSrcRect[8];
-
-					for (int i=0;i<6;i++)
-					{
-						currentRegions[i].X += graphicalArea.X - btnSrcRect[1].X;
-						currentRegions[i].Y += graphicalArea.Y - btnSrcRect[1].Y;
-					}
-
-					int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
-					int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
-
-					currentRegions[0].Width = eWidth; // top
-					currentRegions[2].Width = eWidth; // mid
-					currentRegions[4].Width = eWidth; // bottom
-
-					currentRegions[2].Height = eHeight; // mid
-					currentRegions[3].Height = eHeight; // right
-
-					currentRegions[4].Y = currentRegions[5].Y = currentRegions[3].getBottom();
-
-					currentRegions[1].X = currentRegions[3].X = currentRegions[5].X = currentRegions[0].getRight();
-
-					sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[1], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[2], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[4], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[3], &btnSrcRect[5], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[4], &btnSrcRect[7], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[5], &btnSrcRect[8], CV_White);
-				}
-				else
-				{
-					Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
-					graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
-					graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
-
-					const int GraphicalPaddingWidth = 0;
-					const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
-
-					currentRegions[0] = btnSrcRect[1];
-					currentRegions[1] = btnSrcRect[4];
-					currentRegions[2] = btnSrcRect[7];
-
-					for (int i=0;i<3;i++)
-					{
-						currentRegions[i].X += graphicalArea.X - btnSrcRect[1].X;
-						currentRegions[i].Y += graphicalArea.Y - btnSrcRect[1].Y;
-					}
-
-					int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
-					int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
-
-					currentRegions[0].Width = eWidth; // top
-					currentRegions[1].Width = eWidth; // mid
-					currentRegions[2].Width = eWidth; // bottom
-
-					currentRegions[1].Height = eHeight;
-
-					currentRegions[2].Y = currentRegions[1].getBottom();
-
-					sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[1], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[4], CV_White);
-					sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[7], CV_White);
-				}
 
 				if (i>0)
 				{
@@ -676,6 +569,300 @@ namespace Apoc3D
 				m_fontRef->DrawString(sprite, m_titles[i], m_textPos[i], m_skin->TextColor);
 			}
 		}
+
+		void ButtonRow::DrawButtonDualVSided(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		{
+			Apoc3D::Math::Rectangle currentRegions[6];
+			if (i == 0)
+			{
+				Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
+				graphicalArea.X -= m_skin->ButtonMargin.Left;// m_skin->ButtonMargin[StyleSkin::SI_Left];
+				graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
+				graphicalArea.Width += m_skin->ButtonMargin.Left;// m_skin->ButtonMargin[StyleSkin::SI_Left];
+				graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
+
+				const int GraphicalPaddingWidth = btnSrcRect[0].Width;// + btnSrc[2].Width;
+				const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
+
+				currentRegions[0] = btnSrcRect[0];
+				currentRegions[1] = btnSrcRect[1];
+				currentRegions[2] = btnSrcRect[3];
+				currentRegions[3] = btnSrcRect[4];
+				currentRegions[4] = btnSrcRect[6];
+				currentRegions[5] = btnSrcRect[7];
+
+				for (int i=0;i<6;i++)
+				{
+					currentRegions[i].X += graphicalArea.X - btnSrcRect[0].X;
+					currentRegions[i].Y += graphicalArea.Y - btnSrcRect[0].Y;
+				}
+
+				int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
+				int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
+
+				currentRegions[1].Width = eWidth; // top
+				currentRegions[3].Width = eWidth; // mid
+				currentRegions[5].Width = eWidth; // bottom
+
+				currentRegions[2].Height = eHeight; // left
+				currentRegions[3].Height = eHeight; // mid
+
+				currentRegions[4].Y = currentRegions[5].Y = currentRegions[3].getBottom();
+
+				sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[0], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[1], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[3], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[3], &btnSrcRect[4], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[4], &btnSrcRect[6], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[5], &btnSrcRect[7], CV_White);
+			}
+			else if (i == m_count - 1)
+			{
+				Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
+				graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
+				graphicalArea.Width += m_skin->ButtonMargin.Right;// m_skin->ButtonMargin[StyleSkin::SI_Right];
+				graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
+
+				const int GraphicalPaddingWidth = btnSrcRect[2].Width;
+				const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
+
+				currentRegions[0] = btnSrcRect[1];
+				currentRegions[1] = btnSrcRect[2];
+				currentRegions[2] = btnSrcRect[4];
+				currentRegions[3] = btnSrcRect[5];
+				currentRegions[4] = btnSrcRect[7];
+				currentRegions[5] = btnSrcRect[8];
+
+				for (int i=0;i<6;i++)
+				{
+					currentRegions[i].X += graphicalArea.X - btnSrcRect[1].X;
+					currentRegions[i].Y += graphicalArea.Y - btnSrcRect[1].Y;
+				}
+
+				int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
+				int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
+
+				currentRegions[0].Width = eWidth; // top
+				currentRegions[2].Width = eWidth; // mid
+				currentRegions[4].Width = eWidth; // bottom
+
+				currentRegions[2].Height = eHeight; // mid
+				currentRegions[3].Height = eHeight; // right
+
+				currentRegions[4].Y = currentRegions[5].Y = currentRegions[3].getBottom();
+
+				currentRegions[1].X = currentRegions[3].X = currentRegions[5].X = currentRegions[0].getRight();
+
+				sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[1], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[2], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[4], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[3], &btnSrcRect[5], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[4], &btnSrcRect[7], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[5], &btnSrcRect[8], CV_White);
+			}
+			else
+			{
+				Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
+				graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
+				graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
+
+				const int GraphicalPaddingWidth = 0;
+				const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
+
+				currentRegions[0] = btnSrcRect[1];
+				currentRegions[1] = btnSrcRect[4];
+				currentRegions[2] = btnSrcRect[7];
+
+				for (int i=0;i<3;i++)
+				{
+					currentRegions[i].X += graphicalArea.X - btnSrcRect[1].X;
+					currentRegions[i].Y += graphicalArea.Y - btnSrcRect[1].Y;
+				}
+
+				int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
+				int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
+
+				currentRegions[0].Width = eWidth; // top
+				currentRegions[1].Width = eWidth; // mid
+				currentRegions[2].Width = eWidth; // bottom
+
+				currentRegions[1].Height = eHeight;
+
+				currentRegions[2].Y = currentRegions[1].getBottom();
+
+				sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[1], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[4], CV_White);
+				sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[7], CV_White);
+			}
+		}
+
+		void ButtonRow::DrawButtonTL(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		{
+
+		}
+		void ButtonRow::DrawButtonTC(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		{
+
+		}
+		void ButtonRow::DrawButtonTR(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		{
+
+		}
+
+		void ButtonRow::DrawButtonML(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect)
+		{
+
+		}
+		void ButtonRow::DrawButtonMC(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect)
+		{
+
+		}
+		void ButtonRow::DrawButtonMR(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect)
+		{
+
+		}
+
+
+		void ButtonRow::DrawButtonBL(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		{
+
+		}
+		void ButtonRow::DrawButtonBC(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		{
+
+		}
+		void ButtonRow::DrawButtonBR(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		{
+
+		}
+
+		void ButtonRow::DrawButtonSL(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		{
+			Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
+			graphicalArea.X -= m_skin->ButtonMargin.Left;// m_skin->ButtonMargin[StyleSkin::SI_Left];
+			graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
+			graphicalArea.Width += m_skin->ButtonMargin.Left;// m_skin->ButtonMargin[StyleSkin::SI_Left];
+			graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
+
+			const int GraphicalPaddingWidth = btnSrcRect[0].Width;// + btnSrc[2].Width;
+			const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
+
+			Apoc3D::Math::Rectangle currentRegions[6];
+			currentRegions[0] = btnSrcRect[0];
+			currentRegions[1] = btnSrcRect[1];
+			currentRegions[2] = btnSrcRect[3];
+			currentRegions[3] = btnSrcRect[4];
+			currentRegions[4] = btnSrcRect[6];
+			currentRegions[5] = btnSrcRect[7];
+
+			for (int i=0;i<6;i++)
+			{
+				currentRegions[i].X += graphicalArea.X - btnSrcRect[0].X;
+				currentRegions[i].Y += graphicalArea.Y - btnSrcRect[0].Y;
+			}
+
+			int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
+			int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
+
+			currentRegions[1].Width = eWidth; // top
+			currentRegions[3].Width = eWidth; // mid
+			currentRegions[5].Width = eWidth; // bottom
+
+			currentRegions[2].Height = eHeight; // left
+			currentRegions[3].Height = eHeight; // mid
+
+			currentRegions[4].Y = currentRegions[5].Y = currentRegions[3].getBottom();
+
+			sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[0], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[1], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[3], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[3], &btnSrcRect[4], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[4], &btnSrcRect[6], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[5], &btnSrcRect[7], CV_White);
+		}
+		void ButtonRow::DrawButtonSC(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		{
+			Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
+			graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
+			graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
+
+			const int GraphicalPaddingWidth = 0;
+			const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
+
+			Apoc3D::Math::Rectangle currentRegions[6];
+			currentRegions[0] = btnSrcRect[1];
+			currentRegions[1] = btnSrcRect[4];
+			currentRegions[2] = btnSrcRect[7];
+
+			for (int i=0;i<3;i++)
+			{
+				currentRegions[i].X += graphicalArea.X - btnSrcRect[1].X;
+				currentRegions[i].Y += graphicalArea.Y - btnSrcRect[1].Y;
+			}
+
+			int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
+			int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
+
+			currentRegions[0].Width = eWidth; // top
+			currentRegions[1].Width = eWidth; // mid
+			currentRegions[2].Width = eWidth; // bottom
+
+			currentRegions[1].Height = eHeight;
+
+			currentRegions[2].Y = currentRegions[1].getBottom();
+
+			sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[1], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[4], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[7], CV_White);
+		}
+		void ButtonRow::DrawButtonSR(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		{
+			Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
+			graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
+			graphicalArea.Width += m_skin->ButtonMargin.Right;// m_skin->ButtonMargin[StyleSkin::SI_Right];
+			graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
+
+			const int GraphicalPaddingWidth = btnSrcRect[2].Width;
+			const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
+
+			Apoc3D::Math::Rectangle currentRegions[6];
+			currentRegions[0] = btnSrcRect[1];
+			currentRegions[1] = btnSrcRect[2];
+			currentRegions[2] = btnSrcRect[4];
+			currentRegions[3] = btnSrcRect[5];
+			currentRegions[4] = btnSrcRect[7];
+			currentRegions[5] = btnSrcRect[8];
+
+			for (int i=0;i<6;i++)
+			{
+				currentRegions[i].X += graphicalArea.X - btnSrcRect[1].X;
+				currentRegions[i].Y += graphicalArea.Y - btnSrcRect[1].Y;
+			}
+
+			int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
+			int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
+
+			currentRegions[0].Width = eWidth; // top
+			currentRegions[2].Width = eWidth; // mid
+			currentRegions[4].Width = eWidth; // bottom
+
+			currentRegions[2].Height = eHeight; // mid
+			currentRegions[3].Height = eHeight; // right
+
+			currentRegions[4].Y = currentRegions[5].Y = currentRegions[3].getBottom();
+
+			currentRegions[1].X = currentRegions[3].X = currentRegions[5].X = currentRegions[0].getRight();
+
+			sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[1], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[2], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[4], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[3], &btnSrcRect[5], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[4], &btnSrcRect[7], CV_White);
+			sprite->Draw(m_skin->SkinTexture, currentRegions[5], &btnSrcRect[8], CV_White);
+		}
+
+
+
 		void ButtonRow::Update(const GameTime* const time)
 		{
 			if (!Visible)

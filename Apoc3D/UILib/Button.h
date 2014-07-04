@@ -161,6 +161,14 @@ namespace Apoc3D
 		public:
 			typedef EventDelegate1<int> SelectedChangedHandler;
 
+			enum VerticalBorderStyle
+			{
+				VBS_Both,
+				VBS_Top,
+				VBS_Bottom,
+				VBS_None
+			};
+
 			ButtonRow(const Point& position, float width, const List<String>& titles);
 			~ButtonRow();
 
@@ -173,6 +181,25 @@ namespace Apoc3D
 
 			SelectedChangedHandler eventSelectedChanging;
 		private:
+			void DrawButtonDualVSided(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+
+			void DrawButtonTL(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButtonTC(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButtonTR(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+
+			void DrawButtonML(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButtonMC(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButtonMR(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+
+			void DrawButtonBL(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButtonBC(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButtonBR(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			
+			void DrawButtonSL(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButtonSC(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButtonSR(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+
+
 			int m_selectedIndex;
 
 			bool m_mouseDown;
@@ -184,6 +211,7 @@ namespace Apoc3D
 			Point* m_textPos;
 			Point* m_textSize;
 			Apoc3D::Math::Rectangle* m_buttonDstRect;
+			VerticalBorderStyle m_verticalBorderStyle;
 
 			int m_hoverIndex;
 

@@ -1,7 +1,10 @@
 #pragma once
+
+#ifndef GAMECOMMON_H
+#define GAMECOMMON_H
 /*
 -----------------------------------------------------------------------------
-This source file is part of labtd
+This source file is part of Apoc3D Engine
 
 Copyright (c) 2009+ Tao Xin
 
@@ -16,15 +19,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  if not, write to the Free Software Foundation,
+along with this program.  if not, write to the Free Software Foundation, 
 Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-
-#ifndef GAMECOMMON_H
-#define GAMECOMMON_H
 
 #include "apoc3d/Engine.h"
 

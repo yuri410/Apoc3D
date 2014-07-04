@@ -33,9 +33,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 #pragma comment(lib, "Apoc3D.Essentials.lib")
 
 // Forward Declarations
-namespace dip
+namespace Sample_GUI
 {
-	class DIP1;
+	class GUIDemo;
+
 };
 
 using namespace Apoc3D;
