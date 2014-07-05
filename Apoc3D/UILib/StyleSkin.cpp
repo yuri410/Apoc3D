@@ -47,65 +47,6 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		ControlBounds::ControlBounds(const Apoc3D::Math::Rectangle& graphicalArea, const Apoc3D::Math::Rectangle& hotArea)
-		{
-			Left = hotArea.X - graphicalArea.X;
-			Right = graphicalArea.getRight() - hotArea.getRight();
-
-			Top = hotArea.Y - graphicalArea.Y;
-			Bottom = graphicalArea.getBottom() - hotArea.getBottom();
-		}
-
-		Apoc3D::Math::Rectangle ControlBounds::InflateRect(const Apoc3D::Math::Rectangle& rect) const
-		{
-			Apoc3D::Math::Rectangle result = rect;
-			result.X -= Left;
-			result.Y -= Top;
-			result.Width += getHorizontalSum();
-			result.Height += getVerticalSum();
-			return result;
-		}
-		Apoc3D::Math::Rectangle ControlBounds::ShrinkRect(const Apoc3D::Math::Rectangle& rect) const
-		{
-			Apoc3D::Math::Rectangle result = rect;
-			result.X += Left;
-			result.Y += Top;
-			result.Width -= getHorizontalSum();
-			result.Height -= getVerticalSum();
-			return result;
-		}
-
-		int32 ControlBounds::operator[](SideIndex idx) const
-		{
-			switch (idx)
-			{
-			case Apoc3D::UI::ControlBounds::SI_Left:
-				return Left;
-			case Apoc3D::UI::ControlBounds::SI_Top:
-				return Top;
-			case Apoc3D::UI::ControlBounds::SI_Right:
-				return Right;
-			case Apoc3D::UI::ControlBounds::SI_Bottom:
-				return Bottom;
-			default:
-				return 0;
-			}
-		}
-
-		void ControlBounds::SetFromLeftTopRightBottom(int32 padding[4])
-		{
-			Left = padding[ControlBounds::SI_Left];
-			Right = padding[ControlBounds::SI_Right];
-			Top = padding[ControlBounds::SI_Top];
-			Bottom = padding[ControlBounds::SI_Bottom];
-		}
-		void ControlBounds::SetZero()
-		{
-			Left = Right = Top = Bottom = 0;
-		}
-
-
-
 		StyleSkin::StyleSkin(RenderDevice* device, const FileLocateRule& rule)
 		{
 			FileLocation* fl = FileSystem::getSingleton().Locate(L"skin.xml", rule);

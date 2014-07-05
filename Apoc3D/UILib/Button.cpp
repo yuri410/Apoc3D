@@ -543,18 +543,24 @@ namespace Apoc3D
 					btnSrcRect = m_skin->ButtonRegionsHover;
 				}
 
-				switch (m_verticalBorderStyle)
+				int32 colStyle = 0;
+				if (i == 0)
+					colStyle = -1;
+				else if (i == m_count - 1)
+					colStyle = 1;
+
+				DrawButton(sprite, i, colStyle, m_verticalBorderStyle, btnSrcRect);
+				/*switch (m_verticalBorderStyle)
 				{
 				case Apoc3D::UI::ButtonRow::VBS_Both:
-					DrawButtonDualVSided(sprite, i, btnSrcRect);
+					DrawButtonDualVSided(sprite, i, m_count, btnSrcRect);
 					break;
 				case Apoc3D::UI::ButtonRow::VBS_Top:
-					break;
 				case Apoc3D::UI::ButtonRow::VBS_Bottom:
-					break;
 				case Apoc3D::UI::ButtonRow::VBS_None:
+					
 					break;
-				}
+				}*/
 
 
 
@@ -570,7 +576,7 @@ namespace Apoc3D
 			}
 		}
 
-		void ButtonRow::DrawButtonDualVSided(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		void ButtonRow::DrawButtonDualVSided(Sprite* sprite, int32 i, int32 colCount, const Apoc3D::Math::Rectangle* btnSrcRect)
 		{
 			Apoc3D::Math::Rectangle currentRegions[6];
 			if (i == 0)
@@ -616,7 +622,7 @@ namespace Apoc3D
 				sprite->Draw(m_skin->SkinTexture, currentRegions[4], &btnSrcRect[6], CV_White);
 				sprite->Draw(m_skin->SkinTexture, currentRegions[5], &btnSrcRect[7], CV_White);
 			}
-			else if (i == m_count - 1)
+			else if (i == colCount - 1)
 			{
 				Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
 				graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
@@ -696,172 +702,98 @@ namespace Apoc3D
 			}
 		}
 
-		void ButtonRow::DrawButtonTL(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+
+		void ButtonRow::DrawButton(Sprite* sprite, int32 i, int32 colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* btnSrcRect)
 		{
+			uint32 subBox = R9_MiddleCenter;
 
-		}
-		void ButtonRow::DrawButtonTC(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
-		{
+			ControlBounds padding;
 
-		}
-		void ButtonRow::DrawButtonTR(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
-		{
-
-		}
-
-		void ButtonRow::DrawButtonML(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect)
-		{
-
-		}
-		void ButtonRow::DrawButtonMC(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect)
-		{
-
-		}
-		void ButtonRow::DrawButtonMR(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect)
-		{
-
-		}
-
-
-		void ButtonRow::DrawButtonBL(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
-		{
-
-		}
-		void ButtonRow::DrawButtonBC(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
-		{
-
-		}
-		void ButtonRow::DrawButtonBR(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
-		{
-
-		}
-
-		void ButtonRow::DrawButtonSL(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
-		{
-			Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
-			graphicalArea.X -= m_skin->ButtonMargin.Left;// m_skin->ButtonMargin[StyleSkin::SI_Left];
-			graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
-			graphicalArea.Width += m_skin->ButtonMargin.Left;// m_skin->ButtonMargin[StyleSkin::SI_Left];
-			graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
-
-			const int GraphicalPaddingWidth = btnSrcRect[0].Width;// + btnSrc[2].Width;
-			const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
-
-			Apoc3D::Math::Rectangle currentRegions[6];
-			currentRegions[0] = btnSrcRect[0];
-			currentRegions[1] = btnSrcRect[1];
-			currentRegions[2] = btnSrcRect[3];
-			currentRegions[3] = btnSrcRect[4];
-			currentRegions[4] = btnSrcRect[6];
-			currentRegions[5] = btnSrcRect[7];
-
-			for (int i=0;i<6;i++)
+			switch (rowType)
 			{
-				currentRegions[i].X += graphicalArea.X - btnSrcRect[0].X;
-				currentRegions[i].Y += graphicalArea.Y - btnSrcRect[0].Y;
+			case Apoc3D::UI::ButtonRow::VBS_Both:
+				subBox |= R9_TopCenter;
+				subBox |= R9_BottomCenter;
+
+				padding.Top = m_skin->ButtonMargin.Top;
+				padding.Bottom = m_skin->ButtonMargin.Bottom;
+
+				break;
+			case Apoc3D::UI::ButtonRow::VBS_Top:
+				subBox |= R9_TopCenter;
+				padding.Top = m_skin->ButtonMargin.Top;
+				break;
+			case Apoc3D::UI::ButtonRow::VBS_Bottom:
+				subBox |= R9_BottomCenter;
+				padding.Bottom = m_skin->ButtonMargin.Bottom;
+				break;
 			}
 
-			int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
-			int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
-
-			currentRegions[1].Width = eWidth; // top
-			currentRegions[3].Width = eWidth; // mid
-			currentRegions[5].Width = eWidth; // bottom
-
-			currentRegions[2].Height = eHeight; // left
-			currentRegions[3].Height = eHeight; // mid
-
-			currentRegions[4].Y = currentRegions[5].Y = currentRegions[3].getBottom();
-
-			sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[0], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[1], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[3], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[3], &btnSrcRect[4], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[4], &btnSrcRect[6], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[5], &btnSrcRect[7], CV_White);
-		}
-		void ButtonRow::DrawButtonSC(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
-		{
-			Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
-			graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
-			graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
-
-			const int GraphicalPaddingWidth = 0;
-			const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
-
-			Apoc3D::Math::Rectangle currentRegions[6];
-			currentRegions[0] = btnSrcRect[1];
-			currentRegions[1] = btnSrcRect[4];
-			currentRegions[2] = btnSrcRect[7];
-
-			for (int i=0;i<3;i++)
+			if (colType == -1)
 			{
-				currentRegions[i].X += graphicalArea.X - btnSrcRect[1].X;
-				currentRegions[i].Y += graphicalArea.Y - btnSrcRect[1].Y;
+				subBox |= R9_MiddleLeft;
+				padding.Left = m_skin->ButtonMargin.Left;
+
+				if (subBox & R9_TopCenter)
+					subBox |= R9_TopLeft;
+				if (subBox & R9_BottomCenter)
+					subBox |= R9_BottomLeft;
+			}
+			else if (colType == 1)
+			{
+				subBox |= R9_MiddleRight;
+				padding.Right = m_skin->ButtonMargin.Right;
+
+				if (subBox & R9_TopCenter)
+					subBox |= R9_TopRight;
+				if (subBox & R9_BottomCenter)
+					subBox |= R9_BottomRight;
 			}
 
-			int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
-			int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
-
-			currentRegions[0].Width = eWidth; // top
-			currentRegions[1].Width = eWidth; // mid
-			currentRegions[2].Width = eWidth; // bottom
-
-			currentRegions[1].Height = eHeight;
-
-			currentRegions[2].Y = currentRegions[1].getBottom();
-
-			sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[1], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[4], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[7], CV_White);
+			Apoc3D::Math::Rectangle graphicalArea = padding.InflateRect(m_buttonDstRect[i]);
+		
+			DrawRegion9Subbox(sprite, graphicalArea, CV_White, m_skin->SkinTexture, btnSrcRect, subBox);
+			
 		}
-		void ButtonRow::DrawButtonSR(Sprite* sprite, int32 i, const Apoc3D::Math::Rectangle* btnSrcRect)
+		
+
+
+		void ButtonRow::DrawRegion9Subbox(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv, 
+			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, uint32 subRegionFlags)
 		{
-			Apoc3D::Math::Rectangle graphicalArea = m_buttonDstRect[i];
-			graphicalArea.Y -= m_skin->ButtonMargin.Top;// m_skin->ButtonMargin[StyleSkin::SI_Top];
-			graphicalArea.Width += m_skin->ButtonMargin.Right;// m_skin->ButtonMargin[StyleSkin::SI_Right];
-			graphicalArea.Height += m_skin->ButtonMargin.getVerticalSum();// m_skin->ButtonMargin[StyleSkin::SI_Top] + m_skin->ButtonMargin[StyleSkin::SI_Bottom];
+			Apoc3D::Math::Rectangle srcRectsTable[9];
+			Apoc3D::Math::Rectangle destRects[9];
 
-			const int GraphicalPaddingWidth = btnSrcRect[2].Width;
-			const int GraphicalPaddingHeight = btnSrcRect[0].Height + btnSrcRect[6].Height;
-
-			Apoc3D::Math::Rectangle currentRegions[6];
-			currentRegions[0] = btnSrcRect[1];
-			currentRegions[1] = btnSrcRect[2];
-			currentRegions[2] = btnSrcRect[4];
-			currentRegions[3] = btnSrcRect[5];
-			currentRegions[4] = btnSrcRect[7];
-			currentRegions[5] = btnSrcRect[8];
-
-			for (int i=0;i<6;i++)
+			const uint flags[9] = 
 			{
-				currentRegions[i].X += graphicalArea.X - btnSrcRect[1].X;
-				currentRegions[i].Y += graphicalArea.Y - btnSrcRect[1].Y;
+				R9_TopLeft,
+				R9_TopCenter,
+				R9_TopRight,
+				R9_MiddleLeft,
+				R9_MiddleCenter,
+				R9_MiddleRight,
+				R9_BottomLeft,
+				R9_BottomCenter,
+				R9_BottomRight
+			};
+
+			for (int32 i=0;i<9;i++)
+			{
+				if (subRegionFlags & flags[i])
+				{
+					srcRectsTable[i] = srcRects[i];
+				}
+			}
+			
+			guiGenerateRegion9Rects(dstRect, srcRectsTable, destRects);
+
+			for (int i=0;i<9;i++)
+			{
+				if (destRects[i].Width > 0 && destRects[i].Height > 0)
+					sprite->Draw(texture, destRects[i], &srcRectsTable[i], cv);
 			}
 
-			int eWidth = graphicalArea.Width - GraphicalPaddingWidth;
-			int eHeight = graphicalArea.Height - GraphicalPaddingHeight;
-
-			currentRegions[0].Width = eWidth; // top
-			currentRegions[2].Width = eWidth; // mid
-			currentRegions[4].Width = eWidth; // bottom
-
-			currentRegions[2].Height = eHeight; // mid
-			currentRegions[3].Height = eHeight; // right
-
-			currentRegions[4].Y = currentRegions[5].Y = currentRegions[3].getBottom();
-
-			currentRegions[1].X = currentRegions[3].X = currentRegions[5].X = currentRegions[0].getRight();
-
-			sprite->Draw(m_skin->SkinTexture, currentRegions[0], &btnSrcRect[1], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[1], &btnSrcRect[2], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[2], &btnSrcRect[4], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[3], &btnSrcRect[5], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[4], &btnSrcRect[7], CV_White);
-			sprite->Draw(m_skin->SkinTexture, currentRegions[5], &btnSrcRect[8], CV_White);
 		}
-
-
 
 		void ButtonRow::Update(const GameTime* const time)
 		{

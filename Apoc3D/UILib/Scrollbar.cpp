@@ -231,7 +231,7 @@ namespace Apoc3D
 			dstRect = Apoc3D::Math::Rectangle(
 				m_cursorPos.X + m_skin->HScrollBarCursor[0].Width, 
 				m_cursorPos.Y, 
-				m_cursorArea.Width - m_skin->HScrollBarCursor[0].Width - m_skin->HScrollBarCursor[2].Width, m_skin->HScrollBarCursor[2].Height);
+				m_cursorArea.Width - m_skin->HScrollBarCursor[0].Width - m_skin->HScrollBarCursor[2].Width, m_skin->HScrollBarCursor[1].Height);
 			sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->HScrollBarCursor[1], CV_White);
 
 			int32 midWidth = dstRect.Width;
@@ -439,7 +439,7 @@ namespace Apoc3D
 			dstRect = Apoc3D::Math::Rectangle(
 				m_cursorPos.X, 
 				m_cursorPos.Y + m_skin->VScrollBarCursor[0].Height, 
-				m_skin->VScrollBarCursor[2].Width,
+				m_skin->VScrollBarCursor[1].Width,
 				m_cursorArea.Height - m_skin->HScrollBarCursor[0].Height - m_skin->HScrollBarCursor[2].Height);
 			sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->VScrollBarCursor[1], CV_White);
 

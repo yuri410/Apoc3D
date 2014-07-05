@@ -416,6 +416,7 @@ namespace Apoc3D
 
 		class Console;
 
+		struct ControlBounds;
 		class StyleSkin;
 
 		class MessageDialogBox;

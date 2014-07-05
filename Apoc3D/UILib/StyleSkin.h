@@ -26,6 +26,7 @@
  * -----------------------------------------------------------------------------
  */
 
+#include "UICommon.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/ColorValue.h"
 
@@ -37,38 +38,6 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		struct ControlBounds
-		{
-			enum SideIndex
-			{
-				SI_Left,
-				SI_Top,
-				SI_Right,
-				SI_Bottom
-			};
-
-
-			int32 Left;
-			int32 Right;
-			int32 Top;
-			int32 Bottom;
-
-			ControlBounds() : Left(0), Right(0), Top(0), Bottom(0) { }
-			ControlBounds(int32 left, int32 right, int32 top, int32 bottom) : Left(left), Right(right), Top(top), Bottom(bottom) { }
-			ControlBounds(const Apoc3D::Math::Rectangle& graphicalArea, const Apoc3D::Math::Rectangle& hotArea);
-			
-			int32 getHorizontalSum() const { return Left + Right; }
-			int32 getVerticalSum() const { return Top + Bottom; }
-
-			Apoc3D::Math::Rectangle InflateRect(const Apoc3D::Math::Rectangle& rect) const;
-			Apoc3D::Math::Rectangle ShrinkRect(const Apoc3D::Math::Rectangle& rect) const;
-
-			int32 operator[](SideIndex idx) const;
-
-			void SetFromLeftTopRightBottom(int32 padding[4]);
-			void SetZero();
-		};
-
 		class APAPI StyleSkin
 		{
 		public:

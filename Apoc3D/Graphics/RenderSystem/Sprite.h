@@ -52,21 +52,23 @@ namespace Apoc3D
 					/**
 					 *   Modify render states, but not restore them
 					 */
-					SPR_ChangeState=1,  // 01
+					SPR_ChangeState = 1,  // 01
 					/**
 					 *   Keep render states unchanged
 					 */
-					SPR_KeepState=2,	// 10
+					SPR_KeepState = 2,	// 10
 					/**
 					 *  Modify render states when Begin() and restore when calling End()
 					 */
-					SPR_RestoreState=3,	// 11
+					SPR_RestoreState = 3,	// 11
 					
 					
 
 
-					SPR_AlphaBlended =4,
-					SPR_UsePostTransformStack=8
+					SPR_AlphaBlended = 4,
+					SPR_UsePostTransformStack = 8,
+
+					SPRMix_RestoreStateAlphaBlended = SPR_AlphaBlended | SPR_RestoreState
 				};
 
 

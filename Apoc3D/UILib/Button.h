@@ -180,25 +180,33 @@ namespace Apoc3D
 			int getSelectedIndex() const { return m_selectedIndex; }
 
 			SelectedChangedHandler eventSelectedChanging;
+
 		private:
-			void DrawButtonDualVSided(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			enum Region9Flags
+			{
+				R9_None = 0,
+				R9_TopLeft = 1 << 0,
+				R9_TopCenter = 1 << 1,
+				R9_TopRight = 1 << 2,
+				R9_MiddleLeft = 1 << 3,
+				R9_MiddleCenter = 1 << 4,
+				R9_MiddleRight = 1 << 5,
+				R9_BottomLeft = 1 << 6,
+				R9_BottomCenter = 1 << 7,
+				R9_BottomRight = 1 << 8,
 
-			void DrawButtonTL(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
-			void DrawButtonTC(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
-			void DrawButtonTR(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+				R9Mix_TopBar = R9_TopLeft | R9_TopCenter | R9_TopRight,
+				R9Mix_MiddleBar = R9_MiddleLeft | R9_MiddleCenter | R9_MiddleRight,
+				R9Mix_BottomBar = R9_BottomLeft | R9_BottomCenter | R9_BottomRight,
+				R9Mix_All = R9Mix_TopBar | R9Mix_MiddleBar | R9Mix_BottomBar
+			};
 
-			void DrawButtonML(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
-			void DrawButtonMC(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
-			void DrawButtonMR(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
-
-			void DrawButtonBL(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
-			void DrawButtonBC(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
-			void DrawButtonBR(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButtonDualVSided(Sprite* sprite, int32 idx, int32 colCount, const Apoc3D::Math::Rectangle* srcRect);
 			
-			void DrawButtonSL(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
-			void DrawButtonSC(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
-			void DrawButtonSR(Sprite* sprite, int32 idx, const Apoc3D::Math::Rectangle* srcRect);
+			void DrawButton(Sprite* sprite, int32 idx, int32 colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* srcRect);
+			
 
+			void DrawRegion9Subbox(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv, Texture* texture, const Apoc3D::Math::Rectangle* srcRects, uint32 subRegionFlags);
 
 			int m_selectedIndex;
 
