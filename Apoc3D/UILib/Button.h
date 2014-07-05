@@ -161,15 +161,9 @@ namespace Apoc3D
 		public:
 			typedef EventDelegate1<int> SelectedChangedHandler;
 
-			enum VerticalBorderStyle
-			{
-				VBS_Both,
-				VBS_Top,
-				VBS_Bottom,
-				VBS_None
-			};
 
-			ButtonRow(const Point& position, float width, const List<String>& titles);
+			ButtonRow(const Point& position, int32 width, const List<String>& titles);
+			ButtonRow(const Point& position, int32 width, int32 colCount, const List<String>& titles);
 			~ButtonRow();
 
 			virtual void Initialize(RenderDevice* device);
@@ -182,6 +176,14 @@ namespace Apoc3D
 			SelectedChangedHandler eventSelectedChanging;
 
 		private:
+
+			enum VerticalBorderStyle
+			{
+				VBS_Both,
+				VBS_Top,
+				VBS_Bottom,
+				VBS_None
+			};
 			enum Region9Flags
 			{
 				R9_None = 0,
@@ -201,36 +203,31 @@ namespace Apoc3D
 				R9Mix_All = R9Mix_TopBar | R9Mix_MiddleBar | R9Mix_BottomBar
 			};
 
-			void DrawButtonDualVSided(Sprite* sprite, int32 idx, int32 colCount, const Apoc3D::Math::Rectangle* srcRect);
-			
+			void Init(int32 width, const List<String>& titles);
+
+			void UpdatePositions();
+
 			void DrawButton(Sprite* sprite, int32 idx, int32 colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* srcRect);
 			
-
 			void DrawRegion9Subbox(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv, Texture* texture, const Apoc3D::Math::Rectangle* srcRects, uint32 subRegionFlags);
 
-			int m_selectedIndex;
+			int32 m_selectedIndex;
 
 			bool m_mouseDown;
-			//Vector2 m_size;
-			Point m_tailPos;
 
-			int m_count;
+			int32 m_countPerRow;
+			int32 m_numRows;
+			int32 m_count;
+			int32 m_rowHeight;
 			String* m_titles;
 			Point* m_textPos;
 			Point* m_textSize;
 			Apoc3D::Math::Rectangle* m_buttonDstRect;
-			VerticalBorderStyle m_verticalBorderStyle;
 
-			int m_hoverIndex;
-
-		};
-
-
-		class APAPI ButtonMatrix : public Control
-		{
+			int32 m_hoverIndex;
 
 		};
-		
+
 
 
 		class APAPI RadioButton : public Control
