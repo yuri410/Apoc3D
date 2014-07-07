@@ -395,6 +395,8 @@ namespace Apoc3D
 
 		TreeView::~TreeView()
 		{
+			NukeTreeViewNodes();
+
 			if(m_hscrollbar)
 				delete m_hscrollbar;
 			if (m_vscrollbar)
@@ -884,6 +886,20 @@ namespace Apoc3D
 				m_hscrollbar->setWidth(newSize.X);
 			if (m_vscrollbar)
 				m_vscrollbar->setHeight(newSize.Y);
+		}
+
+
+		void TreeView::NukeTreeViewNodes(FastList<TreeViewNode*>& nodes)
+		{
+			for (int i=0;i<nodes.getCount();i++)
+			{
+				if (nodes[i]->getNodes().getCount())
+				{
+					NukeTreeViewNodes(nodes[i]->getNodes());
+				}
+				delete nodes[i];
+			}
+			nodes.Clear();
 		}
 
 		/************************************************************************/

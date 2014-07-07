@@ -341,7 +341,6 @@ namespace APDesigner
 		delete m_openItem;
 		delete m_applyModify;
 
-		NukeTreeView();
 		delete m_resourceView;
 	}
 
@@ -388,30 +387,14 @@ namespace APDesigner
 	void ResourcePane::UpdateToNewProject(Project* prj)
 	{
 		m_currentProject = prj;
-		NukeTreeView();
+
+		m_resourceView->NukeTreeViewNodes();
 
 		const FastList<ProjectItem*>& items = prj->getItems();
 		BuildTreeViewNodes(items);
-		
 	}
 
 
-	void ResourcePane::NukeTreeViewNodes(FastList<TreeViewNode*>& nodes)
-	{
-		for (int i=0;i<nodes.getCount();i++)
-		{
-			if (nodes[i]->getNodes().getCount())
-			{
-				NukeTreeViewNodes(nodes[i]->getNodes());
-			}
-			delete nodes[i];
-		}
-		nodes.Clear();
-	}
-	void ResourcePane::NukeTreeView()
-	{
-		NukeTreeViewNodes(m_resourceView->getNodes());
-	}
 
 	void ResourcePane::BuildTreeViewNodes(TreeViewNode* parentNode, const FastList<ProjectItem*> items)
 	{

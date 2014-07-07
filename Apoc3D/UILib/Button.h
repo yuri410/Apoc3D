@@ -59,6 +59,8 @@ namespace Apoc3D
 			{
 			}
 			
+			virtual ~Button() { }
+
 			virtual void Initialize(RenderDevice* device);
 
 			virtual void Draw(Sprite* sprite);
@@ -126,36 +128,6 @@ namespace Apoc3D
 			void UpdateEvents();
 		};
 
-		class APAPI ButtonGroup : public Control
-		{
-		private:
-			FastList<Button*> m_button;
-
-			int m_selectedIndex;
-
-			UIEventHandler m_eChangeSelection;
-
-			void Button_OnRelease(Control* sender);
-		public:
-			int getSelectedIndex() const { return m_selectedIndex; }
-
-			Button* getSelectedButton() const { return m_button[m_selectedIndex]; }
-
-			const String& getSelectedText() const;
-			void setSelectedText(const String& text);
-
-			UIEventHandler& eventSelectionChanged() { return m_eChangeSelection; }
-
-			ButtonGroup(const FastList<Button*> buttons);
-			ButtonGroup(const FastList<Button*> buttons, int selected);
-
-			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
-
-			virtual void Draw(Sprite* sprite);
-			
-		};
-
 		class APAPI ButtonRow : public Control
 		{
 		public:
@@ -208,7 +180,7 @@ namespace Apoc3D
 			void UpdatePositions();
 
 			void DrawButton(Sprite* sprite, int32 idx, int32 colType, VerticalBorderStyle rowType, const Apoc3D::Math::Rectangle* srcRect);
-			
+
 			void DrawRegion9Subbox(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv, Texture* texture, const Apoc3D::Math::Rectangle* srcRects, uint32 subRegionFlags);
 
 			int32 m_selectedIndex;
@@ -228,6 +200,36 @@ namespace Apoc3D
 
 		};
 
+
+		class APAPI ButtonGroup : public Control
+		{
+		private:
+			FastList<Button*> m_button;
+
+			int m_selectedIndex;
+
+			UIEventHandler m_eChangeSelection;
+
+			void Button_OnRelease(Control* sender);
+		public:
+			int getSelectedIndex() const { return m_selectedIndex; }
+
+			Button* getSelectedButton() const { return m_button[m_selectedIndex]; }
+
+			const String& getSelectedText() const;
+			void setSelectedText(const String& text);
+
+			UIEventHandler& eventSelectionChanged() { return m_eChangeSelection; }
+
+			ButtonGroup(const FastList<Button*> buttons);
+			ButtonGroup(const FastList<Button*> buttons, int selected);
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+
+			virtual void Draw(Sprite* sprite);
+			
+		};
 
 
 		class APAPI RadioButton : public Control

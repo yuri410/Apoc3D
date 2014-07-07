@@ -34,34 +34,15 @@ namespace Apoc3D
 	{
 		class APAPI HScrollbar : public Control
 		{
-		private:
-			Button* m_btLeft;
-			Button* m_btRight;
-
-			Apoc3D::Math::Rectangle m_backArea;
-			int m_value;
-			int m_max;
-			int m_step;
-			bool m_isScrolling;
-			bool m_inverted;
-
-			Apoc3D::Math::Rectangle m_cursorArea;
-
-			Point m_cursorPos;
-			Point m_cursorOffset;
-
-			UIEventHandler m_eChangeValue;
-
-			void btLeft_OnPress(Control* ctrl);
-			void btRight_OnPress(Control* ctrl);
-
-			void DrawBackground(Sprite* sprite);
-			void DrawCursor(Sprite* sprite);
-
-
-
-			void UpdateScrolling();
 		public:
+			HScrollbar(const Point& position, int width);
+			virtual ~HScrollbar();
+
+			virtual void Initialize(RenderDevice* device);
+
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
 			void setWidth(int w);
 			void setPosition(const Point& pos);
 
@@ -79,20 +60,17 @@ namespace Apoc3D
 
 			UIEventHandler& eventValueChanged() { return m_eChangeValue; }
 
-			HScrollbar(const Point& position, int width);
-			~HScrollbar();
-
-			virtual void Initialize(RenderDevice* device);
-
-			virtual void Update(const GameTime* const time);
-			virtual void Draw(Sprite* sprite);
-
-		};
-		class APAPI VScrollBar : public Control
-		{
 		private:
-			Button* m_btUp;
-			Button* m_btDown;
+			void btLeft_OnPress(Control* ctrl);
+			void btRight_OnPress(Control* ctrl);
+
+			void DrawBackground(Sprite* sprite);
+			void DrawCursor(Sprite* sprite);
+
+			void UpdateScrolling();
+
+			Button* m_btLeft;
+			Button* m_btRight;
 
 			Apoc3D::Math::Rectangle m_backArea;
 			int m_value;
@@ -107,17 +85,18 @@ namespace Apoc3D
 			Point m_cursorOffset;
 
 			UIEventHandler m_eChangeValue;
-
-			void btUp_OnPress(Control* ctrl);
-			void btDown_OnPress(Control* ctrl);
-
-			void DrawBackground(Sprite* sprite);
-			void DrawCursor(Sprite* sprite);
-
-
-
-			void UpdateScrolling();
+		};
+		class APAPI VScrollBar : public Control
+		{
 		public:
+			VScrollBar(const Point& position, int width);
+			~VScrollBar();
+
+			virtual void Initialize(RenderDevice* device);
+
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
 			void setHeight(int w);
 			void setPosition(const Point& pos);
 
@@ -135,13 +114,32 @@ namespace Apoc3D
 
 			UIEventHandler& eventValueChanged() { return m_eChangeValue; }
 
-			VScrollBar(const Point& position, int width);
-			~VScrollBar();
+		private:
 
-			virtual void Initialize(RenderDevice* device);
+			void btUp_OnPress(Control* ctrl);
+			void btDown_OnPress(Control* ctrl);
 
-			virtual void Update(const GameTime* const time);
-			virtual void Draw(Sprite* sprite);
+			void DrawBackground(Sprite* sprite);
+			void DrawCursor(Sprite* sprite);
+
+			void UpdateScrolling();
+
+			Button* m_btUp;
+			Button* m_btDown;
+
+			Apoc3D::Math::Rectangle m_backArea;
+			int m_value;
+			int m_max;
+			int m_step;
+			bool m_isScrolling;
+			bool m_inverted;
+
+			Apoc3D::Math::Rectangle m_cursorArea;
+
+			Point m_cursorPos;
+			Point m_cursorOffset;
+
+			UIEventHandler m_eChangeValue;
 
 		};
 		class APAPI ScrollBar : public Control

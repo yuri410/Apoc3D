@@ -204,6 +204,7 @@ namespace Apoc3D
 			delete m_btnCancel;
 			delete m_btnOk;
 			delete m_content;
+			delete m_inputField;
 		}
 
 		void InputDialogBox::ShowModal()

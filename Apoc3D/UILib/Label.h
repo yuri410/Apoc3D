@@ -47,7 +47,7 @@ namespace Apoc3D
 			};
 		public:
 			Label(const Point& position, const String& text, int width, Align alignment = ALIGN_Left);
-			~Label();
+			virtual ~Label();
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Draw(Sprite* sprite);
@@ -88,7 +88,7 @@ namespace Apoc3D
 			TextBox(const Point& position, int width);
 			TextBox(const Point& position, int width, const String& text);
 			TextBox(const Point& position, int width, int height, const String& text);
-			~TextBox();
+			virtual ~TextBox();
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time);
 			virtual void Draw(Sprite* sprite);

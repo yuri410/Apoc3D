@@ -38,9 +38,8 @@ namespace Apoc3D
 		class APAPI CheckBox : public Control
 		{
 		public:
-
 			CheckBox(const Point& position, const String& text, bool checked);
-			~CheckBox();
+			virtual ~CheckBox();
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time);
@@ -73,7 +72,7 @@ namespace Apoc3D
 		{
 		public:
 			CheckboxGroup(const FastList<CheckBox*>& checkbox);
-			~CheckboxGroup();
+			virtual ~CheckboxGroup();
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time);

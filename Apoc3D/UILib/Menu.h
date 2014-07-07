@@ -46,7 +46,7 @@ namespace Apoc3D
 			MenuState getState() const { return m_state; }
 
 			Menu();
-			~Menu();
+			virtual ~Menu();
 
 			MenuItem* operator [](int index) const;
 
@@ -126,7 +126,7 @@ namespace Apoc3D
 			void setParent(Control* ctrl) { m_parent = ctrl; }
 
 			SubMenu(ControlContainer* owner);
-			~SubMenu();
+			virtual ~SubMenu();
 
 			void Add(MenuItem* item, SubMenu* submenu);
 

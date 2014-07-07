@@ -133,6 +133,7 @@ namespace Apoc3D
 			{
 
 			}
+			virtual ~Control() { }
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time)
@@ -175,6 +176,7 @@ namespace Apoc3D
 			void RemoveAt(int index);
 			void Clear();
 
+			void DestroyAndClear();
 		};
 
 
@@ -212,7 +214,7 @@ namespace Apoc3D
 			//	m_controls.Clear();
 			//}
 			ControlContainer();
-			~ControlContainer();
+			virtual ~ControlContainer();
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time);

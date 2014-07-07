@@ -140,7 +140,32 @@ namespace Apoc3D
 
 		class APAPI TreeView : public Control
 		{
+		public:
+			TreeView(const Point& position, int width, int height);
+			virtual ~TreeView();
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			
+			virtual void Draw(Sprite* sprite);
+
+			void SetSize(const Point& newSize);
+
+			void NukeTreeViewNodes() { NukeTreeViewNodes(m_nodes); }
+
+			UIEventHandler& eventSelect() { return m_eSelect; }
+			UIEventHandler& eventSelectionChanged() { return m_eSelectionChanged; }
+
+			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
+			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
+
+			FastList<TreeViewNode*>& getNodes() { return m_nodes; }
+
+			TreeViewNode* getSelectedNode() const { return m_selectedNode; }
+
 		private:
+			void NukeTreeViewNodes(FastList<TreeViewNode*>& nodes);
+
 			FastList<TreeViewNode*> m_nodes;
 
 			int m_visisbleItems;
@@ -167,7 +192,7 @@ namespace Apoc3D
 
 			void InitScrollbars(RenderDevice* device);
 			void UpdateHScrollbar();
-			
+
 			void RenderSelectionBox(Sprite* sprite, TreeViewNode* node, const Apoc3D::Math::Rectangle& absoluteArea);
 			void DrawBackground(Sprite* sprite);
 			void DrawScrollbar(Sprite* sprite);
@@ -180,27 +205,6 @@ namespace Apoc3D
 			int GetAllVisibleNodeCount() const;
 			int MeasureExpandedNodeWidth() const;
 			int MeasureExpandedModeHeight() const;
-		public:
-			UIEventHandler& eventSelect() { return m_eSelect; }
-			UIEventHandler& eventSelectionChanged() { return m_eSelectionChanged; }
-
-			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
-			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
-			
-			FastList<TreeViewNode*>& getNodes() { return m_nodes; }
-
-
-			TreeViewNode* getSelectedNode() const { return m_selectedNode; }
-
-			TreeView(const Point& position, int width, int height);
-			~TreeView();
-
-			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
-			
-			virtual void Draw(Sprite* sprite);
-
-			void SetSize(const Point& newSize);
 		};
 
 		typedef EventDelegate2<int, int> ListViewSelectionHandler;
@@ -239,7 +243,7 @@ namespace Apoc3D
 			};
 
 			ListView(const Point& position, const Point& size, const List2D<String>& items);
-			~ListView();
+			virtual ~ListView();
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time);

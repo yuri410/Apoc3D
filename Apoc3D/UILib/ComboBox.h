@@ -40,7 +40,7 @@ namespace Apoc3D
 		public:
 
 			ComboBox(const Point& position, int width, const List<String>& items);
-			~ComboBox();
+			virtual ~ComboBox();
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time);

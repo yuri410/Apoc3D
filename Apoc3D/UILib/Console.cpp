@@ -115,6 +115,7 @@ namespace Apoc3D
 			delete m_submit;
 			delete m_inputText;
 			delete m_logLock;
+			delete m_scrollBar;
 		}
 
 		void Console::Update(const GameTime* const time)

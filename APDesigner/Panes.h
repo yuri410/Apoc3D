@@ -91,11 +91,9 @@ namespace APDesigner
 		void Update(const GameTime* const time);
 
 		void UpdateToNewProject(Project* prj);
+
 	private:
 		
-		void NukeTreeViewNodes(FastList<TreeViewNode*>& nodes);
-		void NukeTreeView();
-
 		void BuildTreeViewNodes(TreeViewNode* parentNode, const FastList<ProjectItem*> items);
 		void BuildTreeViewNodes(const FastList<ProjectItem*> items);
 
