@@ -63,7 +63,7 @@ namespace Apoc3D
 
 			ModelSharedData(RenderDevice* device, const FastList<Mesh*>& entities);
 			ModelSharedData(RenderDevice* device, const ModelData* mdlData);
-			ModelSharedData(RenderDevice* device, ResourceLocation* rl, bool managed = true);
+			ModelSharedData(RenderDevice* device, const ResourceLocation& rl, bool managed = true);
 			virtual ~ModelSharedData();
 
 			virtual uint32 getSize();

@@ -80,7 +80,7 @@ namespace Apoc3D
 			return m_isAvailable;
 		}
 
-		void SceneProcedure::Load(SceneRenderer* renderer, const ResourceLocation* rl)
+		void SceneProcedure::Load(SceneRenderer* renderer, const ResourceLocation& rl)
 		{
 			SceneRenderScriptParser parser(m_renderDevice);
 			parser.Parse(rl);
@@ -223,10 +223,10 @@ namespace Apoc3D
 						{
 							if (m_vars[i]->DefaultStringValue.size())
 							{
-								FileLocation* fl = FileSystem::getSingleton().TryLocate(m_vars[i]->DefaultStringValue, FileLocateRule::Textures);
-								if (fl)
+								FileLocation fl;// = FileSystem::getSingleton().TryLocate(m_vars[i]->DefaultStringValue, FileLocateRule::Textures);
+								if (FileSystem::getSingleton().TryLocate(m_vars[i]->DefaultStringValue, FileLocateRule::Textures, fl))
 								{
-									ResourceHandle<Texture>* tex = TextureManager::getSingleton().CreateInstance(m_renderDevice, fl, false);
+									ResourceHandle<Texture>* tex = TextureManager::getSingleton().CreateInstance(m_renderDevice, fl);
 									m_vars[i]->TextureValue = tex;
 									m_createdTextures.Add(tex);
 								}

@@ -44,7 +44,7 @@ namespace Apoc3D
 		public:
 			static IniConfigurationFormat Instance;
 
-			virtual Configuration* Load(const ResourceLocation* rl);
+			virtual Configuration* Load(const ResourceLocation& rl);
 			virtual void Save(Configuration* config, Stream* strm);
 
 			List<String> GetSupportedFileSystemExtensions()

@@ -494,8 +494,8 @@ namespace Apoc3D
 		String path = PathUtils::Combine(m_project->getBasePath(), SourceFile);
 		if (File::FileExists(path))
 		{
-			FileLocation* fl = new FileLocation(path);
-			Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
+			FileLocation floc(path);
+			Configuration* config = XMLConfigurationFormat::Instance.Load(floc);
 			ConfigurationSection* mSect = config->get(L"Materials");
 
 			List<String> names;
@@ -505,7 +505,6 @@ namespace Apoc3D
 			} 
 
 			delete config;
-			delete fl;
 
 			String basePath = PathUtils::Combine(m_project->getOutputPath(), DestinationLocation);
 

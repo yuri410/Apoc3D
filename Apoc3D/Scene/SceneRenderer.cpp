@@ -465,10 +465,9 @@ namespace Apoc3D
 				String file = (*iter.getCurrentValue())->getAttribute(L"Script");
 
 				// load proc
-				FileLocation* fl = FileSystem::getSingleton().Locate(file, FileLocateRule::Default);
+				FileLocation fl = FileSystem::getSingleton().Locate(file, FileLocateRule::Default);
 				SceneProcedure* proc = new SceneProcedure(m_renderDevice);
-				proc->Load(this, static_cast<ResourceLocation*>(fl));
-				delete fl;
+				proc->Load(this, fl);
 
 				m_procFallbacks.Add(proc);
 

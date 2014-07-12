@@ -44,7 +44,7 @@ namespace Apoc3D
 			{
 
 			}
-			Texture* D3D9ObjectFactory::CreateTexture(ResourceLocation* rl, TextureUsage usage, bool managed)
+			Texture* D3D9ObjectFactory::CreateTexture(const ResourceLocation& rl, TextureUsage usage, bool managed)
 			{
 				return new D3D9Texture(m_device, rl, usage, managed);
 			}
@@ -92,11 +92,11 @@ namespace Apoc3D
 				return new D3D9VertexDeclaration(m_device, elements);
 			}
 
-			VertexShader* D3D9ObjectFactory::CreateVertexShader(const ResourceLocation* resLoc)
+			VertexShader* D3D9ObjectFactory::CreateVertexShader(const ResourceLocation& resLoc)
 			{
 				return new D3D9VertexShader(m_device, resLoc);
 			}
-			PixelShader* D3D9ObjectFactory::CreatePixelShader(const ResourceLocation* resLoc)
+			PixelShader* D3D9ObjectFactory::CreatePixelShader(const ResourceLocation& resLoc)
 			{
 				return new D3D9PixelShader(m_device, resLoc);
 			}

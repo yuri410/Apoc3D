@@ -60,8 +60,8 @@ namespace Apoc3D
 			TextureManager();
 			~TextureManager(void);
 
-			Texture* CreateUnmanagedInstance(RenderDevice* rd, FileLocation* fl, bool genMips);
-			ResourceHandle<Texture>* CreateInstance(RenderDevice* rd, FileLocation* fl, bool genMips);
+			Texture* CreateUnmanagedInstance(RenderDevice* rd, const FileLocation& fl, bool generateMips = false);
+			ResourceHandle<Texture>* CreateInstance(RenderDevice* rd, const FileLocation& fl, bool generateMips = false);
 
 			SINGLETON_DECL_HEARDER(TextureManager);
 		};

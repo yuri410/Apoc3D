@@ -227,7 +227,7 @@ namespace APDesigner
 	void ServWindow::UpdateProject()
 	{
 		FileLocation fl(m_projectFilePath);
-		Configuration* conf = XMLConfigurationFormat::Instance.Load(&fl);
+		Configuration* conf = XMLConfigurationFormat::Instance.Load(fl);
 
 		Project* prj = new Project();
 		prj->Parse(conf->get(L"Project"));

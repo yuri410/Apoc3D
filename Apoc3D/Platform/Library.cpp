@@ -27,19 +27,19 @@ http://www.gnu.org/copyleft/gpl.txt.
 #	 define LIB_HANDLE HMODULE
 #    define LIB_LOAD( a ) LoadLibraryEx( a, NULL, 0 )
 #    define LIB_GETSYM( a, b ) GetProcAddress( a, b )
-#    define LIB_UNLOAD( a ) !FreeLibrary( a )
+#    define LIB_UNLOAD( a ) { FreeLibrary( a ); }
 #elif APOC3D_PLATFORM == APOC3D_PLATFORM_LINUX
 #	 include <CoreFoundation/CoreFoundation.h>
 #    define LIB_HANDLE void*
 #    define LIB_LOAD( a ) dlopen( a, RTLD_LAZY | RTLD_GLOBAL)
 #    define LIB_GETSYM( a, b ) dlsym( a, b )
-#    define LIB_UNLOAD( a ) dlclose( a )
+#    define LIB_UNLOAD( a ) { dlclose( a ); }
 
 #elif APOC3D_PLATFORM == APOC3D_PLATFORM_MAC
 #    define LIB_HANDLE CFBundleRef
 #    define LIB_LOAD( a ) mac_loadExeBundle( a )
 #    define LIB_GETSYM( a, b ) mac_getBundleSym( a, b )
-#    define LIB_UNLOAD( a ) mac_unloadExeBundle( a )
+#    define LIB_UNLOAD( a ) { mac_unloadExeBundle( a ); }
 #endif
 
 #include "apoc3d/Utility/StringUtils.h"

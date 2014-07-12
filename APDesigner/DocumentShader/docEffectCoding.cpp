@@ -213,7 +213,7 @@ namespace APDesigner
 	}
 	void EffectDocument::LoadRes()
 	{
-		FileLocation* fl = new FileLocation(m_filePath);
+		FileLocation fl(m_filePath);
 		Configuration* plist = XMLConfigurationFormat::Instance.Load(fl);
 
 		ConfigurationSection* s = plist->get(L"VS");
@@ -243,7 +243,6 @@ namespace APDesigner
 			m_parameters.Add(ep);
 		}
 
-		delete fl;
 		delete plist;
 
 		{

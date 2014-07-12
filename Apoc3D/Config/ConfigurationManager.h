@@ -50,7 +50,7 @@ namespace Apoc3D
 			 *  manager with the given name as an identifier, which can be 
 			 *  used to retrieve the config using the getConfiguration method.
 			 */
-			void LoadConfig(const String& name, const ResourceLocation* rl, ConfigurationFormat* fmt = nullptr);
+			void LoadConfig(const String& name, const ResourceLocation& rl, ConfigurationFormat* fmt = nullptr);
 
 			/** 
 			 *  Gets a pre-loaded configuration with the given name
@@ -62,7 +62,7 @@ namespace Apoc3D
 				return result;
 			}
 
-			Configuration* CreateInstance(const ResourceLocation* rl, ConfigurationFormat* fmt = nullptr);
+			Configuration* CreateInstance(const ResourceLocation& rl, ConfigurationFormat* fmt = nullptr);
 
 			void RegisterFormat(ConfigurationFormat* fmt);
 			void UnregisterFormat(ConfigurationFormat* fmt);

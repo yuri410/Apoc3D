@@ -97,7 +97,7 @@ namespace Apoc3D
 			 */
 			bool IsAvailable();
 
-			void Load(SceneRenderer* renderer, const ResourceLocation* rl);
+			void Load(SceneRenderer* renderer, const ResourceLocation& rl);
 
 			/** 
 			 *  Execute the procedure, respectively invoking a series of Scene Passes.

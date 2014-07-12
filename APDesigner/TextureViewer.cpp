@@ -422,7 +422,7 @@ namespace APDesigner
 		if (m_texture)
 			delete m_texture;
 
-		FileLocation* fl = new FileLocation(m_filePath);
+		FileLocation fl(m_filePath);
 		m_texture = TextureManager::getSingleton().CreateUnmanagedInstance(getMainWindow()->getDevice(), fl, false);
 	}
 	void TextureViewer::SaveRes()

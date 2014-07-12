@@ -174,7 +174,7 @@ namespace Apoc3D
 		const String Tag_Level = L"Level";
 		const String Tag_Flags = L"Flags";
 
-		void TextureData::Load(const ResourceLocation* rl, bool doNotLoadLevel, bool doNotLoadContent)
+		void TextureData::Load(const ResourceLocation& rl, bool doNotLoadLevel, bool doNotLoadContent)
 		{
 			BinaryReader* br = new BinaryReader(rl);
 
@@ -241,7 +241,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid texture file. " + rl->getName(), LOGLVL_Error);
+				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid texture file. " + rl.getName(), LOGLVL_Error);
 			}
 			br->Close();
 

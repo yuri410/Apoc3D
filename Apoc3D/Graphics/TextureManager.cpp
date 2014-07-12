@@ -66,33 +66,34 @@ namespace Apoc3D
 
 
 
-		Texture* TextureManager::CreateUnmanagedInstance(RenderDevice* rd, FileLocation* fl, bool genMips)
+		Texture* TextureManager::CreateUnmanagedInstance(RenderDevice* rd, const FileLocation& fl, bool generateMips)
 		{
-			assert(fl);
+			const FileLocation* selectedFloc = &fl;
+
 			ObjectFactory* factory = rd->getObjectFactory();
 			if (m_redirectLocation)
 			{
-				delete fl;
-				fl = new FileLocation(*m_redirectLocation);
+				selectedFloc = m_redirectLocation;
 			}
-			Texture* result = factory->CreateTexture(fl, genMips? TU_AutoMipMap : TU_Static, false);
+
+			Texture* result = factory->CreateTexture(*selectedFloc, generateMips ? (TextureUsage)(TU_AutoMipMap | TU_Static) : TU_Static, false);
 			//result->Load();
 			return result;
 		}
-		ResourceHandle<Texture>* TextureManager::CreateInstance(RenderDevice* rd, FileLocation* fl, bool genMips)
+		ResourceHandle<Texture>* TextureManager::CreateInstance(RenderDevice* rd, const FileLocation& fl, bool generateMips)
 		{
-			assert(fl);
+			const FileLocation* selectedFloc = &fl;
+
 			if (m_redirectLocation)
 			{
-				delete fl;
-				fl = new FileLocation(*m_redirectLocation);
+				selectedFloc = m_redirectLocation;
 			}
 
-			Resource* retrived = Exists(fl->GetHashString());
+			Resource* retrived = Exists(selectedFloc->GetHashString());
 			if (retrived == nullptr)
 			{
 				ObjectFactory* factory = rd->getObjectFactory();
-				Texture* tex = factory->CreateTexture(fl, genMips? TU_AutoMipMap : TU_Static, true);
+				Texture* tex = factory->CreateTexture(*selectedFloc, generateMips ? (TextureUsage)(TU_AutoMipMap | TU_Static) : TU_Static, true);
 				
 				NotifyNewResource(tex);
 
@@ -102,10 +103,6 @@ namespace Apoc3D
 					return new ResourceHandle<Texture>((Texture*)tex, ResourceHandle<Texture>::FLG_Untouching);		
 				}
 				return new ResourceHandle<Texture>((Texture*)tex);	
-			}
-			else
-			{
-				delete fl;
 			}
 			return new ResourceHandle<Texture>((Texture*)retrived);
 		}

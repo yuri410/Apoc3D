@@ -54,10 +54,9 @@ namespace Apoc3D
 		{
 		}
 
-		ResourceHandle<ModelSharedData>* ModelManager::CreateInstance(RenderDevice* renderDevice, 
-			ResourceLocation* rl)
+		ResourceHandle<ModelSharedData>* ModelManager::CreateInstance(RenderDevice* renderDevice, const ResourceLocation& rl)
 		{
-			Resource* retrived = Exists(rl->GetHashString());
+			Resource* retrived = Exists(rl.GetHashString());
 			if (retrived == nullptr)
 			{
 				ModelSharedData* mdl = new ModelSharedData(renderDevice, rl);
@@ -66,14 +65,10 @@ namespace Apoc3D
 				if (!usesAsync())
 					mdl->Load();
 			}
-			else
-			{
-				delete rl;
-			}
 			return new ResourceHandle<ModelSharedData>((ModelSharedData*)retrived);
 		}
 
-		ModelSharedData* ModelManager::CreateInstanceUnmanaged(RenderDevice* renderDevice, ResourceLocation* rl)
+		ModelSharedData* ModelManager::CreateInstanceUnmanaged(RenderDevice* renderDevice, const ResourceLocation& rl)
 		{			
 			return new ModelSharedData(renderDevice, rl,false);
 		}

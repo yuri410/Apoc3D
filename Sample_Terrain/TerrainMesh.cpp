@@ -229,7 +229,7 @@ namespace SampleTerrain
 		m_idxLod2 = new SharedIndexData(device, 64);
 		m_idxLod3 = new SharedIndexData(device, 32);
 
-		FileLocation* fl = FileSystem::getSingleton().Locate(L"TRock.tex", FileLocateRule::Textures);
+		FileLocation fl = FileSystem::getSingleton().Locate(L"TRock.tex", FileLocateRule::Textures);
 		m_textures[0] = TextureManager::getSingleton().CreateInstance(device,fl, false);
 		fl = FileSystem::getSingleton().Locate(L"TSand.tex", FileLocateRule::Textures);
 		m_textures[1] = TextureManager::getSingleton().CreateInstance(device,fl, false);

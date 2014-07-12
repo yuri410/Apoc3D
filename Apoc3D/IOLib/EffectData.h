@@ -101,7 +101,7 @@ namespace Apoc3D
 			EffectData();
 			~EffectData();
 
-			void Load(const ResourceLocation* rl);
+			void Load(const ResourceLocation& rl);
 			void Save(Stream* strm) const;
 			void SaveLite(Stream* strm) const;
 

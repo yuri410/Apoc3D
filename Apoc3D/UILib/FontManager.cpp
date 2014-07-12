@@ -64,8 +64,8 @@ namespace Apoc3D
 			FF_HasDrawOffset = 2
 		};
 
-		Font::Font(RenderDevice* device, ResourceLocation* rl)
-			: m_charTable(255), m_resource(rl), 
+		Font::Font(RenderDevice* device, const ResourceLocation& rl)
+			: m_charTable(255), m_resource(rl.Clone()), 
 			m_bucketSearchRandomizer(nullptr), m_isUsingCaching(false),m_usedInFrame(false),
 			m_hasLuminance(false), m_hasDrawOffset(false),
 			m_drawOffset(0,0)
@@ -76,8 +76,7 @@ namespace Apoc3D
 
 			ObjectFactory* fac = device->getObjectFactory();
 			
-			Stream* strm = rl->GetReadStream();
-			BinaryReader* br = new BinaryReader(strm);
+			BinaryReader* br = new BinaryReader(rl);
 
 			int fileID = br->ReadInt32();
 			int charCount;
@@ -281,33 +280,7 @@ namespace Apoc3D
 					ch->AdvanceX = static_cast<float>(g.Width);
 				}
 			}
-			
-/*#if _DEBUG
-			{
-				FileLocation* fl = dynamic_cast<FileLocation*>(m_resource);
-				String name = fl ? PathUtils::GetFileNameNoExt(fl->getName()) : m_resource->getName();
-				String msg = L"Font '" + name;
-				msg.append(L"' is using a");
-				msg.append(StringUtils::ToString(m_selectTextureSize));
-				msg.append(L"x");
-				msg.append(StringUtils::ToString(m_selectTextureSize));
-
-				if (m_isUsingCaching)
-				{
-					msg.append(L" texture and caching.");
-				}
-				else
-				{
-					msg.append(L" texture.");
-				}
-
-				if (m_isUsingCaching)
-					ApocLog(LOG_System, msg);
-				else
-					ApocLog(LOG_System, msg);
-			}
-#endif*/
-			
+				
 		}
 		Font::~Font()
 		{
@@ -1364,7 +1337,7 @@ namespace Apoc3D
 			return m_fontTable.Contains(fontName);
 		}
 
-		Font* FontManager::LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl)
+		Font* FontManager::LoadFont(RenderDevice* device, const String& name, const ResourceLocation& rl)
 		{
 			Font* font = new Font(device, rl);
 			m_fontTable.Add(name, font);
@@ -1431,7 +1404,7 @@ namespace Apoc3D
 					
 					if (fnt->m_isUsingCaching)
 					{
-						FileLocation* fl = dynamic_cast<FileLocation*>(fnt->m_resource);
+						FileLocation* fl = fnt->m_resource->Upcast<FileLocation>(); // dynamic_cast<FileLocation*>(fnt->m_resource);
 						String name = fl ? PathUtils::GetFileNameNoExt(fl->getName()) : fnt->m_resource->getName();
 						msg.append(name);
 						counter++;
@@ -1458,7 +1431,7 @@ namespace Apoc3D
 
 					if (!fnt->m_isUsingCaching && fnt->m_selectTextureSize == MaxTextureSize)
 					{
-						FileLocation* fl = dynamic_cast<FileLocation*>(fnt->m_resource);
+						FileLocation* fl = fnt->m_resource->Upcast<FileLocation>();// dynamic_cast<FileLocation*>(fnt->m_resource);
 						String name = fl ? PathUtils::GetFileNameNoExt(fl->getName()) : fnt->m_resource->getName();
 						msg.append(name);
 						msg.append(L"(");

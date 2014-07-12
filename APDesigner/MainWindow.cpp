@@ -138,7 +138,7 @@ namespace APDesigner
 			LocateCheckPoint pt;
 			pt.AddPath(L"system.pak\\effects.pak");
 			rule.AddCheckPoint(pt);
-			FileLocation* fl = FileSystem::getSingleton().Locate(L"standard.afx", rule);
+			FileLocation fl = FileSystem::getSingleton().Locate(L"standard.afx", rule);
 			EffectManager::getSingleton().LoadEffect(m_device, fl);
 		}
 
@@ -159,9 +159,8 @@ namespace APDesigner
 		}
 
 		{
-			FileLocation* fl = FileSystem::getSingleton().Locate(L"SysShaderLib.xml", FileLocateRule::Default);
+			FileLocation fl = FileSystem::getSingleton().Locate(L"SysShaderLib.xml", FileLocateRule::Default);
 			ShaderAtomLibraryManager::getSingleton().Load(fl);
-			delete fl;
 		}
 
 		EditorExtensionManager::getSingleton().RegisterExtension(new ExtensionShaderNetwork(this));
@@ -420,12 +419,11 @@ namespace APDesigner
 		{
 			m_project = new Project();
 			m_projectFilePath = path;
-			FileLocation* fl = new FileLocation(path);
+			FileLocation fl(path);
 			Configuration* conf = ConfigurationManager::getSingleton().CreateInstance(fl);// XMLConfigurationFormat::Instance.Load(fl);
 
 			m_project->Parse(conf->get(L"Project"));
 			delete conf;
-			delete fl;
 
 			UpdateWindowTitle();
 			
@@ -494,9 +492,8 @@ namespace APDesigner
 
 					LogManager::getSingleton().Write(LOG_Graphics, L"Updating effect " + eff->DestFile);
 
-					FileLocation* fl = new FileLocation(df);
+					FileLocation fl(df);
 					EffectManager::getSingleton().LoadEffect(m_device, fl);
-					delete fl;
 				}
 			}
 			else if (itm->getType() == PRJITEM_Folder)
@@ -587,7 +584,7 @@ namespace APDesigner
 
 				LogManager::getSingleton().Write(LOG_Graphics, L"Updating material table " + itm->getName());
 
-				FileLocation* fl = new FileLocation(cpath);
+				FileLocation fl(cpath);
 				Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 				ConfigurationSection* mSect = config->get(L"Materials");
 				
@@ -596,7 +593,6 @@ namespace APDesigner
 					ParseMaterialTree(L"", *e.getCurrentValue(), m_projectMaterialNames);
 				}
 				delete config;
-				delete fl;
 			}
 			else if (itm->getType() == PRJITEM_Folder)
 			{
@@ -715,7 +711,7 @@ namespace APDesigner
 			{
 				Project* prj = new Project();
 				FileLocation fl(path);
-				Configuration* conf = ConfigurationManager::getSingleton().CreateInstance(&fl);
+				Configuration* conf = ConfigurationManager::getSingleton().CreateInstance(fl);
 				
 				prj->Parse(conf->get(L"Project"));
 

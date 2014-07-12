@@ -80,7 +80,7 @@ namespace SampleFont
 		Game::Load();
 
 		{
-			FileLocation* fl = FileSystem::getSingleton().Locate(L"uming14.fnt", FileLocateRule::Default);
+			FileLocation fl = FileSystem::getSingleton().Locate(L"uming14.fnt", FileLocateRule::Default);
 			FontManager::getSingleton().LoadFont(m_device, L"uming14", fl);
 
 			fl = FileSystem::getSingleton().Locate(L"uming22.fnt", FileLocateRule::Default);

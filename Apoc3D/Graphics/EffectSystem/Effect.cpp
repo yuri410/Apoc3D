@@ -77,12 +77,12 @@ namespace Apoc3D
 			}
 
 
-			VertexShader* Effect::LoadVertexShader(RenderDevice* rs, const ResourceLocation* vs)
+			VertexShader* Effect::LoadVertexShader(RenderDevice* rs, const ResourceLocation& vs)
 			{
 				ObjectFactory* objFac = rs->getObjectFactory();
 				return objFac->CreateVertexShader(vs);
 			}
-			PixelShader* Effect::LoadPixelShader(RenderDevice* rs, const ResourceLocation* ps)
+			PixelShader* Effect::LoadPixelShader(RenderDevice* rs, const ResourceLocation& ps)
 			{
 				ObjectFactory* objFac = rs->getObjectFactory();
 				return objFac->CreatePixelShader(ps);
@@ -107,7 +107,7 @@ namespace Apoc3D
 			template void AutomaticEffect::SetParameterValueByName<float>(const String& name, const float* value, int count);
 
 
-			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation* rl)
+			AutomaticEffect::AutomaticEffect(RenderDevice* device, const ResourceLocation& rl)
 				: m_vertexShader(nullptr), m_pixelShader(nullptr), m_device(device), m_supportsInstancing(false), 
 				m_unifiedTime(0), m_lastTime(0),
 				m_previousMaterialPointer(nullptr)
@@ -135,7 +135,7 @@ namespace Apoc3D
 				return m_supportsInstancing;
 			}
 
-			void AutomaticEffect::Reload(const ResourceLocation* rl)
+			void AutomaticEffect::Reload(const ResourceLocation& rl)
 			{
 				if (m_vertexShader)
 				{
@@ -798,7 +798,7 @@ namespace Apoc3D
 			/*  CustomShaderEffect                                                  */
 			/************************************************************************/
 
-			CustomShaderEffect::CustomShaderEffect(RenderDevice* device, const ResourceLocation* rl)
+			CustomShaderEffect::CustomShaderEffect(RenderDevice* device, const ResourceLocation& rl)
 			{
 				EffectData data;
 				data.Load(rl);

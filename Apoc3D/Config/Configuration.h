@@ -42,7 +42,7 @@ namespace Apoc3D
 		class APAPI ConfigurationFormat
 		{
 		public:
-			virtual Configuration* Load(const ResourceLocation* rl) = 0;
+			virtual Configuration* Load(const ResourceLocation& rl) = 0;
 			virtual void Save(Configuration* config, Stream* strm) = 0;
 
 			virtual List<String> GetSupportedFileSystemExtensions() = 0;

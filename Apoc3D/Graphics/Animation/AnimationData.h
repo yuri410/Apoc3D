@@ -78,7 +78,6 @@ namespace Apoc3D
 
 				void setBones(const List<Bone>& bones)
 				{
-					
 					m_bones = bones;
 				}
 				void setRigidAnimationClips(const ClipTable& table) { m_rigidAnimationClips = table; m_hasRigidClip = !!table.getCount();}
@@ -104,7 +103,7 @@ namespace Apoc3D
 				TaggedDataWriter* WriteData() const;
 
 
-				void Load(const ResourceLocation* rl);
+				void Load(const ResourceLocation& rl);
 				void Save(Stream* strm) const;
 
 				AnimationData()

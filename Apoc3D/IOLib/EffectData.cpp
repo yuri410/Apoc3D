@@ -212,9 +212,9 @@ namespace Apoc3D
 		}
 
 
-		void EffectData::Load(const ResourceLocation* rl)
+		void EffectData::Load(const ResourceLocation& rl)
 		{
-			BinaryReader* br = new BinaryReader(rl->GetReadStream());
+			BinaryReader* br = new BinaryReader(rl.GetReadStream());
 
 			int id = br->ReadInt32();
 
@@ -267,7 +267,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid effect file. " + rl->getName(), LOGLVL_Error);
+				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid effect file. " + rl.getName(), LOGLVL_Error);
 			}
 			
 

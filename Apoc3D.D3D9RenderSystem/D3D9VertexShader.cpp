@@ -53,7 +53,7 @@ namespace Apoc3D
 
 				m_constantTable = new ConstantTable(reinterpret_cast<const DWORD*>(byteCode));
 			}
-			D3D9VertexShader::D3D9VertexShader(D3D9RenderDevice* device, const ResourceLocation* rl)
+			D3D9VertexShader::D3D9VertexShader(D3D9RenderDevice* device, const ResourceLocation& rl)
 				: VertexShader(device), m_device(device)
 			{
 				BinaryReader* br = new BinaryReader(rl);

@@ -334,19 +334,19 @@ namespace Apoc3D
 			return data;
 		}
 
-		void MaterialData::Load(const ResourceLocation* rl)
+		void MaterialData::Load(const ResourceLocation& rl)
 		{
 #if _DEBUG
 			{
-				const FileLocation* fl = dynamic_cast<const FileLocation*>(rl);
+				const FileLocation* fl = rl.Upcast<FileLocation>();// = dynamic_cast<const FileLocation*>(rl);
 				if (fl)
 					DebugName = PathUtils::GetFileNameNoExt(fl->getPath());
 				else
-					DebugName = rl->getName();
+					DebugName = rl.getName();
 			}
 #endif
 
-			BinaryReader* br = new BinaryReader(rl->GetReadStream());
+			BinaryReader* br = new BinaryReader(rl);
 
 			int32 id = br->ReadInt32();
 			if (id == MtrlId_V3)
@@ -360,7 +360,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid material file. " + rl->getName(), LOGLVL_Error);
+				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid material file. " + rl.getName(), LOGLVL_Error);
 			}
 
 			br->Close();

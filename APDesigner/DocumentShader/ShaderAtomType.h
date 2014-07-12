@@ -118,7 +118,7 @@ namespace APDesigner
 		 *  Before that all previous loaded atom types will be unloaded,
 		 *  if any.
 		 */
-		void Load(const FileLocation* fl);
+		void Load(const FileLocation& fl);
 		void AddAtomType(ShaderAtomType* type);
 		void RemoveAtomType(ShaderAtomType* type);
 

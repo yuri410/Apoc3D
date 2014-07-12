@@ -67,7 +67,7 @@ namespace Apoc3D
 				CGA_Bottom
 			};
 
-			Font(RenderDevice* device, ResourceLocation* fl);
+			Font(RenderDevice* device, const ResourceLocation& fl);
 			~Font();
 
 			bool ChangeCharacterSetting(int32 ch, short left, short top, float adcanceX);
@@ -317,7 +317,7 @@ namespace Apoc3D
 			 *  reset every Font's internal frequency statistics
 			 */
 			void StartFrame();
-			Font* LoadFont(RenderDevice* device, const String& name, ResourceLocation* rl);
+			Font* LoadFont(RenderDevice* device, const String& name, const ResourceLocation& rl);
 
 			void ReportComplexFonts();
 

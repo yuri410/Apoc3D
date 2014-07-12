@@ -42,13 +42,13 @@ namespace Apoc3D
 	{
 		XMLConfigurationFormat XMLConfigurationFormat::Instance = XMLConfigurationFormat();
 
-		Configuration* XMLConfigurationFormat::Load(const ResourceLocation* rl)
+		Configuration* XMLConfigurationFormat::Load(const ResourceLocation& rl)
 		{
-			Configuration* config = new Configuration(rl->getName());
+			Configuration* config = new Configuration(rl.getName());
 
 			TiXmlDocument doc;
 
-			Stream* strm = rl->GetReadStream();
+			Stream* strm = rl.GetReadStream();
 
 			doc.Load(strm, TIXML_ENCODING_UNKNOWN);
 			

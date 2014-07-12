@@ -49,10 +49,9 @@ namespace Apoc3D
 	{
 		StyleSkin::StyleSkin(RenderDevice* device, const FileLocateRule& rule)
 		{
-			FileLocation* fl = FileSystem::getSingleton().Locate(L"skin.xml", rule);
+			FileLocation fl = FileSystem::getSingleton().Locate(L"skin.xml", rule);
 			Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
-			delete fl;
-
+			
 			String packTexName;
 
 			ConfigurationSection* basicSect = config->get(L"Basic");
@@ -420,7 +419,7 @@ namespace Apoc3D
 			WhitePixelTexture->Unlock(0);
 
 			fl = FileSystem::getSingleton().Locate(packTexName, rule);
-			SkinTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false);
+			SkinTexture = TextureManager::getSingleton().CreateUnmanagedInstance(device, fl);
 		}
 
 		StyleSkin::~StyleSkin()

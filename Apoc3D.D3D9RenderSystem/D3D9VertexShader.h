@@ -46,7 +46,7 @@ namespace Apoc3D
 				IDirect3DVertexShader9* getD3DVS() const { return m_shader; }
 
 				D3D9VertexShader(D3D9RenderDevice* device, const byte* byteCode);
-				D3D9VertexShader(D3D9RenderDevice* device, const ResourceLocation* rl);
+				D3D9VertexShader(D3D9RenderDevice* device, const ResourceLocation& rl);
 				~D3D9VertexShader();
 
 				virtual int GetParamIndex(const String& paramName);

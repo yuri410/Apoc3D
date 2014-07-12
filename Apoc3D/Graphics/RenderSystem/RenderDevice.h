@@ -228,7 +228,7 @@ namespace Apoc3D
 				 *       However the resource manager will not care about it at all. This will just bring more
 				 *       trivia for developers *unless* special cases like making custom resource managers.
 				 */
-				virtual Texture* CreateTexture(ResourceLocation* rl, TextureUsage usage, bool managed) = 0;
+				virtual Texture* CreateTexture(const ResourceLocation& rl, TextureUsage usage, bool managed) = 0;
 
 
 				/**
@@ -291,8 +291,8 @@ namespace Apoc3D
 				virtual VertexShader* CreateVertexShader(const byte* byteCode) = 0;
 				virtual PixelShader* CreatePixelShader(const byte* byteCode) = 0;
 
-				virtual VertexShader* CreateVertexShader(const ResourceLocation* resLoc) = 0;
-				virtual PixelShader* CreatePixelShader(const ResourceLocation* resLoc) = 0;
+				virtual VertexShader* CreateVertexShader(const ResourceLocation& resLoc) = 0;
+				virtual PixelShader* CreatePixelShader(const ResourceLocation& resLoc) = 0;
 
 
 				virtual Sprite* CreateSprite() = 0;

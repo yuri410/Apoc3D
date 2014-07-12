@@ -477,9 +477,9 @@ namespace Apoc3D
 
 			return data;
 		}
-		void ModelData::Load(const ResourceLocation* rl)
+		void ModelData::Load(const ResourceLocation& rl)
 		{
-			BinaryReader* br = new BinaryReader(rl->GetReadStream());
+			BinaryReader* br = new BinaryReader(rl);
 
 			int32 id = br->ReadInt32();
 			if (id == MdlId_V2 || id == MdlId_V3)
@@ -502,11 +502,11 @@ namespace Apoc3D
 
 							if (mtrlData->DebugName.empty())
 							{
-								const FileLocation* fl = dynamic_cast<const FileLocation*>(rl);
+								const FileLocation* fl = rl.Upcast<FileLocation>();// dynamic_cast<const FileLocation*>(rl);
 								if (fl)
 									mtrlData->DebugName = PathUtils::GetFileNameNoExt(fl->getPath()) + L"::" + md->Name;
 								else
-									mtrlData->DebugName = rl->getName() + L"::" + md->Name;
+									mtrlData->DebugName = rl.getName() + L"::" + md->Name;
 							}
 						}
 					}
@@ -519,7 +519,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid model file. " + rl->getName(), LOGLVL_Error);
+				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid model file. " + rl.getName(), LOGLVL_Error);
 			}
 
 			br->Close();

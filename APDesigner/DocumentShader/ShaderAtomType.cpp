@@ -152,7 +152,7 @@ namespace APDesigner
 
 	void ShaderAtomType::Load(const String& filePath)
 	{
-		FileLocation* fl = new FileLocation(filePath);
+		FileLocation fl(filePath);
 		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 
 		ConfigurationSection* sect = config->get(L"Basic");
@@ -171,7 +171,6 @@ namespace APDesigner
 		}
 		
 		delete config;
-		delete fl;
 	}
 	void ShaderAtomType::Save(const String& filePath)
 	{
@@ -196,9 +195,9 @@ namespace APDesigner
 	/*  ShaderAtomLibraryManager                                            */
 	/************************************************************************/
 
-	void ShaderAtomLibraryManager::Load(const FileLocation* fl)
+	void ShaderAtomLibraryManager::Load(const FileLocation& fl)
 	{
-		String basePath = PathUtils::GetDirectory(fl->getPath());
+		String basePath = PathUtils::GetDirectory(fl.getPath());
 
 		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 

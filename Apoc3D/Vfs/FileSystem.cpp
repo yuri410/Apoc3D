@@ -179,7 +179,7 @@ namespace Apoc3D
 				return res;
 			}
 
-			FileLocation* fl = Locate(filePath, rule);
+			FileLocation fl = Locate(filePath, rule);
 			res = CreateArchive(fl);
 
 			StoreNewArchive(PathUtils::Combine(PathUtils::NormalizePath(res->getDirectory()), res->getFileName()), res);
@@ -187,15 +187,17 @@ namespace Apoc3D
 			return res;
 		}
 
-		FileLocation* FileSystem::Locate(const String& filePath, const FileLocateRule& rule)
+		FileLocation FileSystem::Locate(const String& filePath, const FileLocateRule& rule)
 		{
-			FileLocation* res = TryLocate(filePath, rule);
-			if (!res)
+			FileLocation res;
+			if (!TryLocate(filePath, rule, res))
+			{
 				throw AP_EXCEPTION(EX_FileNotFound, filePath);
+			}
 			return res;
 		}
 
-		FileLocation* FileSystem::TryLocate(const String& filePath, const FileLocateRule& rule)
+		bool FileSystem::TryLocate(const String& filePath, const FileLocateRule& rule, FileLocation& result)
 		{
 			// pass through all check points
 			for (int cp = 0; cp < rule.getCount(); cp++)
@@ -209,7 +211,8 @@ namespace Apoc3D
 						String fullPath = PathUtils::Combine(checkPt.GetPath(j), filePath);
 						if (File::FileExists(fullPath))
 						{
-							return new FileLocation(fullPath);
+							result = FileLocation(fullPath);
+							return true;
 						}
 					}
 					else
@@ -257,7 +260,7 @@ namespace Apoc3D
 									{
 										if (parent->HasEntry(locs[i]))
 										{
-											entry = CreateArchive(new FileLocation(parent, fPath, locs[i]));
+											entry = CreateArchive(FileLocation(parent, fPath, locs[i]));
 											StoreNewArchive(fPath, entry);
 										}
 										else
@@ -288,7 +291,8 @@ namespace Apoc3D
 								if (entry->HasEntry(entName))
 								{
 									String afp = PathUtils::Combine(entry->getDirectory(), entry->getFileName());
-									return new FileLocation(entry, PathUtils::Combine(afp, filePath), entName);
+									result = FileLocation(entry, PathUtils::Combine(afp, filePath), entName);
+									return true;
 								}
 							}
 						}
@@ -308,7 +312,8 @@ namespace Apoc3D
 								if (entry->HasEntry(locs[0]))
 								{
 									String afp = PathUtils::Combine(entry->getDirectory(), entry->getFileName());
-									return new FileLocation(entry, PathUtils::Combine(afp, filePath), locs[0]);
+									result = FileLocation(entry, PathUtils::Combine(afp, filePath), locs[0]);
+									return true;
 								}
 							}
 						}
@@ -318,7 +323,7 @@ namespace Apoc3D
 				}
 
 			}
-			return 0;
+			return false;
 		}
 
 		bool FileSystem::IsOpened(const String& filePath, Archive** entry) 
@@ -356,11 +361,11 @@ namespace Apoc3D
 
 
 
-		Archive* FileSystem::CreateArchive(FileLocation* fl)
+		Archive* FileSystem::CreateArchive(const FileLocation& fl)
 		{
 			String fileName;
 			String fileExt;
-			PathUtils::SplitFileNameExtension(fl->getPath(), fileName, fileExt);
+			PathUtils::SplitFileNameExtension(fl.getPath(), fileName, fileExt);
 
 			ArchiveFactory* fac = FindArchiveFactory(fileExt);
 			if (fac)

@@ -24,7 +24,7 @@ namespace APDesigner
 		if (File::FileExists(L"ideconf.xml"))
 		{
 			FileLocation fl(L"ideconf.xml");
-			Configuration* conf = XMLConfigurationFormat::Instance.Load(&fl);
+			Configuration* conf = XMLConfigurationFormat::Instance.Load(fl);
 
 			ConfigurationSection* sect = conf->get(L"Recents");
 			for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)

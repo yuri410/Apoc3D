@@ -47,10 +47,10 @@ namespace Apoc3D
 		{
 			m_isEndianDependent = baseStream->IsReadEndianDependent();
 		}
-		BinaryReader::BinaryReader(const ResourceLocation* rl)
+		BinaryReader::BinaryReader(const ResourceLocation& rsloc)
 			: m_shouldDeleteStream(true)
 		{
-			m_baseStream = rl->GetReadStream();
+			m_baseStream = rsloc.GetReadStream();
 			m_isEndianDependent = m_baseStream->IsReadEndianDependent();
 		}
 		BinaryReader::~BinaryReader()

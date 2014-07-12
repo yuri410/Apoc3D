@@ -57,24 +57,23 @@ namespace Apoc3D
 				return nullptr;
 			}
 
-			void EffectManager::LoadEffectFromList(RenderDevice* device, const ResourceLocation* rl)
+			void EffectManager::LoadEffectFromList(RenderDevice* device, const ResourceLocation& rl)
 			{
 				Configuration* config = XMLConfigurationFormat::Instance.Load(rl);
 				for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator();iter.MoveNext();)
 				{
 					ConfigurationSection* lstEntry = *iter.getCurrentValue();
 
-					FileLocation* fl = FileSystem::getSingleton().TryLocate(lstEntry->getName() + L".afx", FileLocateRule::Effects);
-					if (!fl)
+					FileLocation fl;
+					if (!FileSystem::getSingleton().TryLocate(lstEntry->getName() + L".afx", FileLocateRule::Effects, fl))
 					{
 						LogManager::getSingleton().Write(LOG_Graphics, L"Effect " + lstEntry->getName() + L" is not found.", LOGLVL_Error);
 						continue;
 					}
 					LoadEffect(device, fl);
-					delete fl;
 				}
 			}
-			void EffectManager::LoadEffect(RenderDevice* device, const ResourceLocation* rl)
+			void EffectManager::LoadEffect(RenderDevice* device, const ResourceLocation& rl)
 			{
 				AutomaticEffect* effect = new AutomaticEffect(device, rl);
 

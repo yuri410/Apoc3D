@@ -115,7 +115,7 @@ namespace Apoc3D
 				
 				void UpdateProperties(TextureType type, int width, int height, int depth, int levelCount, PixelFormat format, TextureUsage usage);
 
-				Texture(RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed);
+				Texture(RenderDevice* device, const ResourceLocation& rl, TextureUsage usage, bool managed);
 				Texture(RenderDevice* device, int32 width, int32 height, int32 depth, 
 					int32 levelCount, PixelFormat format, TextureUsage usage);
 				Texture(RenderDevice* device, int32 length, int32 levelCount, TextureUsage usage, PixelFormat format);

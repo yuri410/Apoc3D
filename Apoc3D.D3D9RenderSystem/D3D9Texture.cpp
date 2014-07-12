@@ -89,7 +89,7 @@ namespace Apoc3D
 
 			}
 
-			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, ResourceLocation* rl, TextureUsage usage, bool managed)
+			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, const ResourceLocation& rl, TextureUsage usage, bool managed)
 				: Texture(device, rl, usage, managed),  
 				VolatileResource(device), 
 				m_renderDevice(device), m_tex2D(NULL), m_tex3D(NULL), m_cube(NULL),
@@ -623,7 +623,7 @@ namespace Apoc3D
 			{
 				// These 2 lines will load the data into memory from the ResourceLocation
 				TextureData data;
-				data.Load(getResourceLocation());
+				data.Load(*getResourceLocation());
 				
 				// Before setting up the D3D9 texture objects, check if the 
 				// device supports this kind of texture

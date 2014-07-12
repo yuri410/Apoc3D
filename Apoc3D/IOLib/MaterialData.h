@@ -139,7 +139,7 @@ namespace Apoc3D
 			TaggedDataWriter* SaveData();
 
 
-			void Load(const ResourceLocation* rl);
+			void Load(const ResourceLocation& rl);
 			void Save(Stream* strm);
 			
 		private:

@@ -71,7 +71,7 @@ namespace APBuild
 
 		EnsureDirectory(destination);
 
-		FileLocation* fl = new FileLocation(srcFile);
+		FileLocation fl(srcFile);
 		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 
 		ConfigurationSection* palSect = config->get(L"Pallet");
@@ -111,7 +111,6 @@ namespace APBuild
 		}
 
 		delete config;
-		delete fl;
 
 		Configuration* tokenFile = new Configuration(L"MtrlToken");
 		for (HashMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)

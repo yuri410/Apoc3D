@@ -497,134 +497,16 @@ namespace Apoc3D
 
 		// the parsing processing is done recursively as the structure of xml
 		// first the outer element, then the inside ScenePass and Commands
-		void SceneRenderScriptParser::Parse(const ResourceLocation* rl)
+		void SceneRenderScriptParser::Parse(const ResourceLocation& rl)
 		{
 			TiXmlDocument doc;
 
-			doc.Load(rl->GetReadStream(), TIXML_ENCODING_UNKNOWN);
+			doc.Load(rl.GetReadStream(), TIXML_ENCODING_UNKNOWN);
 
 			for (const TiXmlNode* i = doc.FirstChild(); i!=0; i=i->NextSibling())
 			{
 				BuildNode(i, doc);
 			}
-			//vector<String> lines = StringUtils::Split(code, L"\n\r");
-
-
-			//FastList<Block> stack;
-
-			//for (size_t i=0;i<lines.size();i++)
-			//{
-			//	StringUtils::Trim(lines[i]);
-
-			//	vector<String> args;
-
-			//	{
-			//		String buildingStr;
-			//		bool isInStr = false;
-			//		bool lower = true;
-			//		for (size_t j=0;j<lines[i].length();j++)
-			//		{
-			//			wchar_t ch = lines[i][j];
-			//			if (ch == '"')
-			//			{
-			//				isInStr = !isInStr;
-			//				if (isInStr)
-			//					lower = false;
-			//			}
-			//			else if (ch == ';' && !isInStr)
-			//			{
-			//				break;
-			//			}
-			//			else if (ch == ' ' && !isInStr)
-			//			{
-			//				StringUtils::Trim(buildingStr);
-			//				if (buildingStr.length())
-			//				{
-			//					args.push_back(buildingStr);
-			//				}
-			//				buildingStr = String();
-			//				lower = true;
-			//			}
-			//			else
-			//			{
-			//				if (lower)
-			//				{
-			//					ch = tolower(ch);
-			//				}
-			//				buildingStr.append(1, ch);
-			//			}
-			//		}
-			//		StringUtils::Trim(buildingStr);
-			//		if (buildingStr.length())
-			//		{
-			//			args.push_back(buildingStr);
-			//		}
-			//	}
-			//	
-
-			//	if (args.size())
-			//	{
-			//		const String& first = args[0];
-			//		
-			//		if (first == PreserveWords[PWORD_Scene])
-			//		{
-			//			Block block = { BLK_Scene, args };
-			//			stack.Add(block);
-			//		}
-			//		else if (first == PreserveWords[PWORD_Pass])
-			//		{
-			//			Block block = { BLK_Pass, args[1] };
-			//			stack.Add(block);
-			//		}
-			//		else if (first == PreserveWords[PWORD_IF])
-			//		{
-			//			Block block = { BLK_IF, args[1] };
-			//			stack.Add(block);
-			//		}
-			//		else if (first == PreserveWords[PWORD_EndIF])
-			//		{
-			//			if (stack.Peek().BlockType == BLK_IF)
-			//			{
-			//				invStack.Push(stack.Pop());
-			//			}
-			//			else
-			//			{
-			//				throw Apoc3DException::createException(EX_ScriptCompileError, 
-			//					String(L"No corresponding IF Block. Line ") + StringUtils::ToString(i));
-			//			}
-			//		}
-			//		else if (first == PreserveWords[PWORD_EndPass])
-			//		{
-			//			if (stack.Peek().BlockType == BLK_Pass)
-			//			{
-			//				invStack.Push(stack.Pop());
-			//			}
-			//			else
-			//			{
-			//				throw Apoc3DException::createException(EX_ScriptCompileError, 
-			//					String(L"No corresponding Pass Block. Line ") + StringUtils::ToString(i));
-			//			}
-			//		}
-			//		else if (first == PreserveWords[PWORD_EndScene])
-			//		{
-			//			if (stack.Peek().BlockType == BLK_Scene)
-			//			{
-			//				invStack.Push(stack.Pop());
-			//			}
-			//			else
-			//			{
-			//				throw Apoc3DException::createException(EX_ScriptCompileError, 
-			//					String(L"No corresponding Scene Block. Line ") + StringUtils::ToString(i));
-			//			}
-			//		}
-			//		else
-			//		{
-			//			Block blk = 
-			//		}
-			//	}
-
-
-			//}
 		}
 
 		void SceneRenderScriptParser::BuildNode(const TiXmlNode* node, const TiXmlDocument& doc)

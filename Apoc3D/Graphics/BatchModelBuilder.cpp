@@ -296,10 +296,7 @@ namespace Apoc3D
 
 		BatchModelBuilder::~BatchModelBuilder()
 		{
-			for (int i=0;i<m_modelTable.getCount();i++)
-			{
-				delete m_modelTable[i];
-			}
+
 		}
 	}
 }

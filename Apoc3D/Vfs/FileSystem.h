@@ -86,8 +86,8 @@ namespace Apoc3D
 			void ListDirectoryFiles(const String& path, List<String>& subItems, String* dirPath = nullptr);
 			
 			Archive* LocateArchive(const String& filePath, const FileLocateRule& rule);
-			FileLocation* Locate(const String& filePath, const FileLocateRule& rule);
-			FileLocation* TryLocate(const String& filePath, const FileLocateRule& rule);
+			FileLocation Locate(const String& filePath, const FileLocateRule& rule);
+			bool TryLocate(const String& filePath, const FileLocateRule& rule, FileLocation& result);
 
 			SINGLETON_DECL_HEARDER(FileSystem);
 
@@ -122,7 +122,7 @@ namespace Apoc3D
 			bool IsOpened(const String& filePath, Archive** entry);
 			void StoreNewArchive(const String& filePath, Archive* arc);
 
-			Archive* CreateArchive(FileLocation* fl);
+			Archive* CreateArchive(const FileLocation& fl);
 			Archive* CreateArchive(const String& file);
 
 			ArchiveKeyEqualityComparer m_openedPackHasher;

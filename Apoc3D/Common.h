@@ -52,7 +52,7 @@
 #endif
 
 #include "ApocExportSettings.h"
-
+#include "RTTI.h"
 
 #if defined(_MSC_VER)
 #define NoInline __declspec(noinline)
@@ -61,6 +61,7 @@
 #else
 #define NoInline
 #endif
+
 
 #ifndef CASSERT_INCLUDED
 #define CASSERT_INCLUDED

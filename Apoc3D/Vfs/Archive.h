@@ -45,7 +45,7 @@ namespace Apoc3D
 		{
 		public:
 			virtual Archive* CreateInstance(const String& file) = 0;
-			virtual Archive* CreateInstance(FileLocation* fl) = 0;
+			virtual Archive* CreateInstance(const FileLocation& fl) = 0;
 
 			virtual String getExtension() const = 0;
 		};
@@ -80,7 +80,7 @@ namespace Apoc3D
 		class APAPI PakArchive : public Archive
 		{
 		public:
-			PakArchive(FileLocation* fl);
+			PakArchive(const FileLocation& fl);
 			~PakArchive();
 
 			void FillEntries(FastList<PakArchiveEntry>& entries);
@@ -99,7 +99,6 @@ namespace Apoc3D
 		private:
 			HashMap<String, PakArchiveEntry> m_entries;
 
-			FileLocation* m_file;
 			Stream* m_fileStream;
 			PakCompressionType m_compression;
 		};
@@ -108,7 +107,7 @@ namespace Apoc3D
 		{
 		public:
 			Archive* CreateInstance(const String& file);
-			Archive* CreateInstance(FileLocation* fl) { return new PakArchive(fl); }
+			Archive* CreateInstance(const FileLocation& fl) { return new PakArchive(fl); }
 
 			String getExtension() const { return L"pak"; }
 		};

@@ -129,17 +129,17 @@ namespace Apoc3D
 		void Material::LoadTexture(int32 index)
 		{
 			const String* name = m_texName.TryGetValue(index);
-			if (!name)
+			if (name == nullptr)
 			{
 				m_tex[index] = nullptr;
 				return;
 			}
 			// load texture
-			FileLocation* fl = FileSystem::getSingleton().TryLocate(*name, FileLocateRule::Textures);
-
-			if (fl)
+			//FileLocation* fl = FileSystem::getSingleton().TryLocate(*name, FileLocateRule::Textures);
+			FileLocation fl;
+			if (FileSystem::getSingleton().TryLocate(*name, FileLocateRule::Textures, fl))
 			{
-				m_tex[index] = TextureManager::getSingleton().CreateInstance(m_device, fl, false);
+				m_tex[index] = TextureManager::getSingleton().CreateInstance(m_device, fl);
 			}
 			else
 			{
@@ -154,12 +154,12 @@ namespace Apoc3D
 		{
 			// re load using a newly loaded MaterialData
 			MaterialData newData;
-			FileLocation* fl = FileSystem::getSingleton().TryLocate(mtrlName, FileLocateRule::Materials);
-			if (fl)
+			//FileLocation* fl = FileSystem::getSingleton().TryLocate(mtrlName, FileLocateRule::Materials);
+			FileLocation fl;
+			if (FileSystem::getSingleton().TryLocate(mtrlName, FileLocateRule::Materials, fl))
 			{
 				newData.Load(fl);
 				Load(newData);
-				delete fl;
 
 				ExternalReferenceName = mtrlName;
 			}

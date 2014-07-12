@@ -41,16 +41,9 @@ namespace Apoc3D
 		 */
 		class APAPI ResourceLocation : public IHashed
 		{
-		private:
-			String m_name;
-		protected:
-			int64 m_size;
-
-			ResourceLocation(const String& name, int64 s)
-				: m_name(name), m_size(s)
-			{
-			}
 		public:
+			virtual ~ResourceLocation() { }
+
 			virtual Stream* GetWriteStream() const = 0;
 			virtual Stream* GetReadStream() const = 0;
 
@@ -62,7 +55,27 @@ namespace Apoc3D
 
 			virtual bool CanRead() const = 0;
 			virtual bool CanWrite() const = 0;
+
+			virtual ResourceLocation* Clone() const = 0;
+
+			RTTI_UpcastableBase;
+		protected:
+			int64 m_size;
+
+			ResourceLocation(const String& name, int64 size)
+				: m_name(name), m_size(size)
+			{
+			}
+
+			ResourceLocation(const ResourceLocation& another)
+				: m_name(another.m_name), m_size(another.m_size)
+			{
+			}
+
+		private:
+			String m_name;
 		};
+
 		/**
 		 *  Represents the location of a data storage which is stored in a file, including
 		 *  those in archives.
@@ -70,18 +83,12 @@ namespace Apoc3D
 		 */
 		class APAPI FileLocation : public ResourceLocation
 		{
-		private:
-			Archive* m_parent;
-			String m_path;
-			String m_entryName;
-
-		protected:
-			FileLocation(const String& filePath, int64 size);
 		public:
+			FileLocation();
 			FileLocation(const String& filePath);
 			FileLocation(const FileLocation& fl);
 			FileLocation(Archive* pack, const String& filePath, const String& entryName);
-			~FileLocation();
+			virtual ~FileLocation();
 
 			virtual Stream* GetWriteStream() const { return nullptr;}
 			virtual Stream* GetReadStream() const;
@@ -91,7 +98,20 @@ namespace Apoc3D
 			
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return false; }
+
+			virtual ResourceLocation* Clone() const { return new FileLocation(*this); }
+
+			RTTI_UpcastableDerived(ResourceLocation);
+		protected:
+			FileLocation(const String& filePath, int64 size);
+
+		private:
+			Archive* m_parent;
+			String m_path;
+			String m_entryName;
+
 		};
+
 		/** 
 		 *  Represents the location of a data storage which is stored in memory.
 		 */
@@ -99,6 +119,7 @@ namespace Apoc3D
 		{
 		public:
 			MemoryLocation(void* pos, int64 size);
+			MemoryLocation(const MemoryLocation& ml);
 
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return true; }
@@ -106,6 +127,9 @@ namespace Apoc3D
 			virtual Stream* GetWriteStream() const;
 			virtual Stream* GetReadStream() const;
 
+			virtual ResourceLocation* Clone() const { return new MemoryLocation(*this); }
+
+			RTTI_UpcastableDerived(MemoryLocation);
 		private:
 			void* m_data;
 		};
@@ -117,6 +141,7 @@ namespace Apoc3D
 		{
 		public:
 			StreamLocation(Stream* strm);
+			StreamLocation(const StreamLocation& sl);
 
 			virtual bool CanRead() const; 
 			virtual bool CanWrite() const; 
@@ -124,6 +149,9 @@ namespace Apoc3D
 			virtual Stream* GetWriteStream() const;
 			virtual Stream* GetReadStream() const;
 
+			virtual ResourceLocation* Clone() const  { return new StreamLocation(*this); }
+
+			RTTI_UpcastableDerived(StreamLocation);
 		private:
 			Stream* m_stream;
 		};

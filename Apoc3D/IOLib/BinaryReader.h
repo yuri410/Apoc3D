@@ -41,7 +41,7 @@ namespace Apoc3D
 		{
 		public:
 			BinaryReader(Stream* baseStream);
-			BinaryReader(const ResourceLocation* baseStream);
+			BinaryReader(const ResourceLocation& rsloc);
 
 			~BinaryReader();
 

@@ -477,25 +477,23 @@ void TestIni()
 	String path;
 	path.append(L"testIni.ini");
 
-	FileLocation* fl = new FileLocation(path);// FileSystem::getSingleton().Locate(L"testIni.ini", FileLocateRule::Default);
+	FileLocation fl(path);// FileSystem::getSingleton().Locate(L"testIni.ini", FileLocateRule::Default);
 	Configuration* config = IniConfigurationFormat::Instance.Load(fl);
 
 	FileOutStream fs(L"iniOut.ini");
 	IniConfigurationFormat::Instance.Save(config, &fs);
 
 	delete config;
-	delete fl;
 }
 void TestXml()
 {
 	String path;
 	path.append(L"testXml.xml");
 
-	FileLocation* fl = new FileLocation(path);// FileSystem::getSingleton().Locate(L"testIni.ini", FileLocateRule::Default);
+	FileLocation fl(path);// FileSystem::getSingleton().Locate(L"testIni.ini", FileLocateRule::Default);
 	Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 
 	delete config;
-	delete fl;
 }
 void TestRandom()
 {

@@ -378,9 +378,9 @@ namespace Apoc3D
 				return data;
 			}
 
-			void AnimationData::Load(const ResourceLocation* rl)
+			void AnimationData::Load(const ResourceLocation& rl)
 			{
-				BinaryReader* br = new BinaryReader(rl->GetReadStream());
+				BinaryReader* br = new BinaryReader(rl);
 
 				int32 id = br->ReadInt32();
 				if (id == MANI_ID)
@@ -394,7 +394,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					LogManager::getSingleton().Write(LOG_Graphics, L"Invalid animation file." + rl->getName(), LOGLVL_Error);
+					LogManager::getSingleton().Write(LOG_Graphics, L"Invalid animation file." + rl.getName(), LOGLVL_Error);
 				}
 
 				br->Close();

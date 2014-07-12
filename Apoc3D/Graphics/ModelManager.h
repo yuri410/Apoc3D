@@ -58,10 +58,10 @@ namespace Apoc3D
 			~ModelManager(void);
 
 			ResourceHandle<ModelSharedData>* CreateInstance(RenderDevice* renderDevice, 
-				ResourceLocation* rl);
+				const ResourceLocation& rl);
 
 			ModelSharedData* CreateInstanceUnmanaged(RenderDevice* renderDevice, 
-				ResourceLocation* rl);
+				const ResourceLocation& rl);
 
 			SINGLETON_DECL_HEARDER(ModelManager);
 		};

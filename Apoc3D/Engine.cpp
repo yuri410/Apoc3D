@@ -96,7 +96,7 @@ namespace Apoc3D
 		{
 			for (int i=0;i<mconf->ConfigSet.getCount();i++)
 			{
-				FileLocation* fl = FileSystem::getSingleton().Locate(mconf->ConfigSet[i], FileLocateRule::Default);
+				FileLocation fl = FileSystem::getSingleton().Locate(mconf->ConfigSet[i], FileLocateRule::Default);
 
 				ConfigurationManager::getSingleton().LoadConfig(PathUtils::GetFileNameNoExt(mconf->ConfigSet[i]), fl);
 			}

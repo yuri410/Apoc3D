@@ -51,8 +51,8 @@ namespace Apoc3D
 				m_entities.Add(mesh);
 			}
 		}
-		ModelSharedData::ModelSharedData(RenderDevice* device, ResourceLocation* rl, bool managed)
-			: Resource(managed ? ModelManager::getSingletonPtr():0, rl->getName()), m_renderDevice(device), m_resourceLocation(rl)
+		ModelSharedData::ModelSharedData(RenderDevice* device, const ResourceLocation& rl, bool managed)
+			: Resource(managed ? ModelManager::getSingletonPtr():0, rl.getName()), m_renderDevice(device), m_resourceLocation(rl.Clone())
 		{
 			if (!managed)
 			{
@@ -80,7 +80,7 @@ namespace Apoc3D
 			if (m_resourceLocation)
 			{
 				ModelData data;
-				data.Load(m_resourceLocation);
+				data.Load(*m_resourceLocation);
 
 				for (int i=0; i< data.Entities.getCount();i++)
 				{

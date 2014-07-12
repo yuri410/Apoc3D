@@ -46,7 +46,7 @@ namespace APBuild
 
 		AnimationData::MtrlClipTable mtrlClip;
 
-		FileLocation* fl = new FileLocation(config.SrcFile);
+		FileLocation fl(config.SrcFile);
 		Configuration* script = XMLConfigurationFormat::Instance.Load(fl);
 
 		ConfigurationSection* animSect = script->get(L"Animation");
@@ -103,7 +103,6 @@ namespace APBuild
 		mtrlClip.Add(takeName, clip);
 		
 		delete script;
-		delete fl;
 
 
 		AnimationData* data = new AnimationData();

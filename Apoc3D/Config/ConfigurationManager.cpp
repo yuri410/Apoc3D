@@ -61,21 +61,21 @@ namespace Apoc3D
 			}
 		}
 
-		void ConfigurationManager::LoadConfig(const String& name, const ResourceLocation* rl, ConfigurationFormat* fmt)
+		void ConfigurationManager::LoadConfig(const String& name, const ResourceLocation& rl, ConfigurationFormat* fmt)
 		{
 			Configuration* conf = CreateInstance(rl, fmt);
 			//XMLConfiguration* conf = new XMLConfiguration(rl);
 			m_configs.Add(name, conf);
 		}
 
-		Configuration* ConfigurationManager::CreateInstance(const ResourceLocation* rl, ConfigurationFormat* fmt)
+		Configuration* ConfigurationManager::CreateInstance(const ResourceLocation& rl, ConfigurationFormat* fmt)
 		{
 			if (fmt)
 			{
 				return fmt->Load(rl);
 			}
 
-			const FileLocation* fl = dynamic_cast<const FileLocation*>(rl);
+			const FileLocation* fl = rl.Upcast<FileLocation>();//dynamic_cast<const FileLocation*>(rl);
 			if (fl)
 			{
 				String temp;

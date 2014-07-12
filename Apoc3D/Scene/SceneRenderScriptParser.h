@@ -58,7 +58,7 @@ namespace Apoc3D
 			/**
 			 *  Build the script from xml config.
 			 */
-			void Parse(const ResourceLocation* rl);
+			void Parse(const ResourceLocation& rl);
 
 			const String& getSceneName() const { return m_sceneName; }
 

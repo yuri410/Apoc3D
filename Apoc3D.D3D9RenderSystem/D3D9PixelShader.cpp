@@ -56,7 +56,7 @@ namespace Apoc3D
 				m_constantTable = new ConstantTable(reinterpret_cast<const DWORD*>(byteCode));
 
 			}
-			D3D9PixelShader::D3D9PixelShader(D3D9RenderDevice* device, const ResourceLocation* rl)
+			D3D9PixelShader::D3D9PixelShader(D3D9RenderDevice* device, const ResourceLocation& rl)
 				: PixelShader(device), m_device(device)
 			{
 				BinaryReader* br = new BinaryReader(rl);

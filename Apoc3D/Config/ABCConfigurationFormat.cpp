@@ -45,11 +45,11 @@ namespace Apoc3D
 	{
 		ABCConfigurationFormat ABCConfigurationFormat::Instance = ABCConfigurationFormat();
 
-		Configuration* ABCConfigurationFormat::Load(const ResourceLocation* rl)
+		Configuration* ABCConfigurationFormat::Load(const ResourceLocation& rl)
 		{
-			Configuration* config = new Configuration(rl->getName());
+			Configuration* config = new Configuration(rl.getName());
 
-			BinaryReader* br = new BinaryReader(rl->GetReadStream());
+			BinaryReader* br = new BinaryReader(rl);
 
 			int id = br->ReadInt32();
 
@@ -64,7 +64,7 @@ namespace Apoc3D
 			}
 			else
 			{
-				LogManager::getSingleton().Write(LOG_System, L"Invalid Apoc3D Binary Config format " + rl->getName(), LOGLVL_Error);
+				LogManager::getSingleton().Write(LOG_System, L"Invalid Apoc3D Binary Config format " + rl.getName(), LOGLVL_Error);
 			}
 
 			br->Close();

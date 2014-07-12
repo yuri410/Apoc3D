@@ -98,9 +98,9 @@ namespace Apoc3D
 				virtual int begin() = 0;
 				virtual void end() = 0;
 
-				static VertexShader* LoadVertexShader(RenderDevice* rs, const ResourceLocation* vs);
-				static PixelShader* LoadPixelShader(RenderDevice* rs, const ResourceLocation* ps);
-				static void LoadEffect(RenderDevice* rs, const ResourceLocation* rl, VertexShader*& vs, PixelShader*& ps);
+				static VertexShader* LoadVertexShader(RenderDevice* rs, const ResourceLocation& vs);
+				static PixelShader* LoadPixelShader(RenderDevice* rs, const ResourceLocation& ps);
+				static void LoadEffect(RenderDevice* rs, const ResourceLocation& rl, VertexShader*& vs, PixelShader*& ps);
 
 				bool m_isUnsupported;
 				String m_name;
@@ -119,7 +119,7 @@ namespace Apoc3D
 			class APAPI AutomaticEffect : public Effect
 			{
 			public:
-				AutomaticEffect(RenderDevice* device, const ResourceLocation* rl);
+				AutomaticEffect(RenderDevice* device, const ResourceLocation& rl);
 				~AutomaticEffect();
 
 				virtual void Setup(Material* mtrl, const RenderOperation* rop, int count);
@@ -134,7 +134,7 @@ namespace Apoc3D
 				 */
 				virtual bool SupportsInstancing();
 
-				void Reload(const ResourceLocation* rl);
+				void Reload(const ResourceLocation& rl);
 
 				int FindParameterIndex(const String& name);
 
@@ -220,7 +220,7 @@ namespace Apoc3D
 			class APAPI CustomShaderEffect : public Effect
 			{
 			public:
-				CustomShaderEffect(RenderDevice* device, const ResourceLocation* rl);
+				CustomShaderEffect(RenderDevice* device, const ResourceLocation& rl);
 				virtual ~CustomShaderEffect();
 
 			protected:

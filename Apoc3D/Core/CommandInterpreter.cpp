@@ -316,9 +316,9 @@ namespace Apoc3D
 
 		void ExecCommand(CommandArgsConstRef args)
 		{
-			FileLocation* fl = FileSystem::getSingleton().TryLocate(args[0], FileLocateRule::Default);
-
-			if (fl)
+			FileLocation fl;
+			
+			if (FileSystem::getSingleton().TryLocate(args[0], FileLocateRule::Default, fl))
 			{
 				String msg = L"Executing ";
 				msg.append(args[0]);
@@ -326,14 +326,13 @@ namespace Apoc3D
 
 				LogManager::getSingleton().Write(LOG_CommandResponse, msg, LOGLVL_Infomation);
 
-				Stream* inStrm = fl->GetReadStream();
+				Stream* inStrm = fl.GetReadStream();
 				int32 streamLength = static_cast<int32>(inStrm->getLength());
 				char* binaryBuffer = new char[streamLength+1];
 				inStrm->Read(binaryBuffer, inStrm->getLength());
 				inStrm->Close();
 				delete inStrm;
-				delete fl;
-
+				
 				binaryBuffer[streamLength] = 0;
 
 				istringstream readStrm(binaryBuffer, std::ios::in);

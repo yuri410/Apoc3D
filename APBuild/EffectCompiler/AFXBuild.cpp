@@ -82,7 +82,7 @@ namespace APBuild
 		}
 		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
-		FileLocation* fl = new FileLocation(config.PListFile);
+		FileLocation fl(config.PListFile);
 		Configuration* plist = XMLConfigurationFormat::Instance.Load(fl);
 
 		EffectData data;
@@ -152,7 +152,6 @@ namespace APBuild
 			}
 		}
 
-		delete fl;
 		delete plist;
 
 		data.SortProfiles();

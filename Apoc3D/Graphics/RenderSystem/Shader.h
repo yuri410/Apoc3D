@@ -62,11 +62,6 @@ namespace Apoc3D
 			};
 			class APAPI Shader
 			{
-			private:
-				RenderDevice* m_renderDevice;
-			protected:
-				Shader(RenderDevice* rd);
-
 			public:
 				RenderDevice* getRenderDevice() { return m_renderDevice; }
 
@@ -131,15 +126,27 @@ namespace Apoc3D
 				virtual void SetTexture(const String& paramName, Texture* tex) = 0;
 				virtual void SetSamplerState(const String& paramName, const ShaderSamplerState& state) = 0;
 
+				virtual ~Shader() {}
+
+			protected:
+				Shader(RenderDevice* rd);
+
+			private:
+				RenderDevice* m_renderDevice;
+
 			};
 
 			class APAPI VertexShader : public Shader
 			{
+			public:
+				virtual ~VertexShader() {}
 			protected:
 				VertexShader(RenderDevice* rd);
 			};
 			class APAPI PixelShader : public Shader
 			{
+			public:
+				virtual ~PixelShader() {}
 			protected:
 				PixelShader(RenderDevice* rd);
 			};

@@ -86,12 +86,11 @@ namespace APDesigner
 		
 		m_sceneRenderer = new SceneRenderer(window->getDevice());
 
-		FileLocation* fl = FileSystem::getSingleton().Locate(L"ModelViewSceneRenderer.xml", FileLocateRule::Default);
+		FileLocation fl = FileSystem::getSingleton().Locate(L"ModelViewSceneRenderer.xml", FileLocateRule::Default);
 
 		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 		m_sceneRenderer->Load(config);
 		delete config;
-		delete fl;
 		m_camera = new ChaseCamera();
 		m_camera->setChaseDirection(Vector3(0, 0, 1));
 		m_camera->setChasePosition(Vector3(0, 0, 0));
@@ -102,7 +101,7 @@ namespace APDesigner
 		m_sceneRenderer->RegisterCamera(m_camera);
 
 		
-		fl = new FileLocation(L"ball.mesh");
+		fl = FileLocation(L"ball.mesh");
 		m_modelSData = ModelManager::getSingleton().CreateInstanceUnmanaged(getMainWindow()->getDevice(), fl);
 
 
@@ -374,7 +373,7 @@ namespace APDesigner
 			delete m_material;
 		}
 
-		FileLocation* fl = new FileLocation(m_filePath);
+		FileLocation fl(m_filePath);
 		MaterialData md;
 		md.Load(fl);
 		m_material->Load(md);

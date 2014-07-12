@@ -57,7 +57,7 @@ namespace Apoc3D
 				AnimationManager();
 				~AnimationManager();
 
-				const AnimationData* CreateInstance(const ResourceLocation* rl);
+				const AnimationData* CreateInstance(const ResourceLocation& rl);
 
 				SINGLETON_DECL_HEARDER(AnimationManager);
 

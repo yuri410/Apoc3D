@@ -63,7 +63,7 @@ namespace Apoc3D
 			/**
 			 *  Add the sources of models represented by FileLocation
 			 */
-			void AddSource(FileLocation* fl)
+			void AddSource(const FileLocation& fl)
 			{
 				m_modelTable.Add(fl);
 			}
@@ -82,7 +82,7 @@ namespace Apoc3D
 				Matrix Transform;
 			};
 
-			FastList<FileLocation*> m_modelTable;
+			FastList<FileLocation> m_modelTable;
 
 			FastList<Entry> m_entires;
 		};

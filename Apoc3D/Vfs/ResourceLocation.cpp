@@ -41,6 +41,8 @@ namespace Apoc3D
 			return StringUtils::GetHashCode(m_name);
 		}
 
+		//////////////////////////////////////////////////////////////////////////
+
 		FileLocation::FileLocation(Archive* pack, const String& filePath, const String& entryName)
 			: ResourceLocation(filePath, pack->GetEntrySize(entryName)), 
 			m_parent(pack), m_path(filePath), m_entryName(entryName)
@@ -48,20 +50,23 @@ namespace Apoc3D
 
 		}
 		FileLocation::FileLocation(const FileLocation& fl)
-			: ResourceLocation(fl.getName(), fl.getSize()), 
+			: ResourceLocation(fl),
 			m_parent(fl.m_parent), m_path(fl.m_path), m_entryName(fl.m_entryName)
 		{
 		}
 		
 		FileLocation::FileLocation(const String& filePath, int64 size)
-			: ResourceLocation(filePath, size), 
-			m_parent(0), m_path(filePath)
+			: ResourceLocation(filePath, size), m_parent(nullptr), m_path(filePath)
 		{
 
 		}
 		FileLocation::FileLocation(const String& filePath)
-			: ResourceLocation(filePath, File::GetFileSize(filePath)),
-			m_parent(0), m_path(filePath)
+			: ResourceLocation(filePath, File::GetFileSize(filePath)), m_parent(nullptr), m_path(filePath)
+		{
+
+		}
+		FileLocation::FileLocation()
+			: ResourceLocation(L"", 0), m_parent(nullptr)
 		{
 
 		}
@@ -86,8 +91,14 @@ namespace Apoc3D
 		//////////////////////////////////////////////////////////////////////////
 
 		MemoryLocation::MemoryLocation(void* pos, int64 size)
-			: ResourceLocation(L"[ADDR]" + StringUtils::IntToString(size), size), m_data(pos)
+			: ResourceLocation(L"[ADDR]" + StringUtils::UIntToStringHex((uintptr)pos), size), m_data(pos)
 		{
+		}
+
+		MemoryLocation::MemoryLocation(const MemoryLocation& ml)
+			: ResourceLocation(ml), m_data(ml.m_data)
+		{
+
 		}
 
 		Stream* MemoryLocation::GetReadStream() const
@@ -104,6 +115,12 @@ namespace Apoc3D
 		StreamLocation::StreamLocation(Stream* strm)
 			: ResourceLocation(L"[STRM]" + StringUtils::UIntToStringHex((uint64)strm), strm->getLength()), 
 			m_stream(strm)
+		{
+
+		}
+
+		StreamLocation::StreamLocation(const StreamLocation& sl)
+			: ResourceLocation(sl), m_stream(sl.m_stream)
 		{
 
 		}

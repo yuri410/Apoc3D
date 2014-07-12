@@ -48,18 +48,18 @@ namespace Apoc3D
 				}
 			}
 
-			const AnimationData* AnimationManager::CreateInstance(const ResourceLocation* rl)
+			const AnimationData* AnimationManager::CreateInstance(const ResourceLocation& rl)
 			{
 				AnimationData* res;
 				//AnimHashTable::Enumerator e = m_hashTable(rl->GetHashString());
 
-				if (m_hashTable.TryGetValue(rl->GetHashString(), res))
+				if (m_hashTable.TryGetValue(rl.GetHashString(), res))
 					return res;
 
 				res = new AnimationData();
 
 				res->Load(rl);
-				m_hashTable.Add(rl->GetHashString(), res);
+				m_hashTable.Add(rl.GetHashString(), res);
 
 				return res;
 			}

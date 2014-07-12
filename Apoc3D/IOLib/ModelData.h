@@ -112,7 +112,7 @@ namespace Apoc3D
 			}
 			~ModelData();
 			
-			void Load(const ResourceLocation* rl);
+			void Load(const ResourceLocation& rl);
 			void Save(Stream* strm) const;
 			void SaveLite(Stream* strm) const;
 		private:

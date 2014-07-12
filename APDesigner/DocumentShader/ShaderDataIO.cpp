@@ -35,10 +35,9 @@ namespace APDesigner
 {
 	void ShaderDocumentData::Load(const String& filePath)
 	{
-		FileLocation* fl = new FileLocation(filePath);
+		FileLocation fl(filePath);
 		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
-		delete fl;
-
+		
 		ConfigurationSection* sect = config->get(L"Basic");
 		MajorSMVersion = sect->GetInt(L"MajorSMVersion");
 		MinorSMVersion = sect->GetInt(L"MinorSMVersion");

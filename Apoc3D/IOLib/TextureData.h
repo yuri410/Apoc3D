@@ -101,7 +101,7 @@ namespace Apoc3D
 			TextureData() {}
 			~TextureData() {}
 
-			void Load(const ResourceLocation* rl, bool doNotLoadLevel = false, bool doNotLoadContent = false);
+			void Load(const ResourceLocation& rl, bool doNotLoadLevel = false, bool doNotLoadContent = false);
 			void Save(Stream* strm) const;
 			void SaveAsTagged(Stream* strm) const;
 		};

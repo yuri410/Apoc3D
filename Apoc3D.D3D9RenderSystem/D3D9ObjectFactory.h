@@ -48,7 +48,7 @@ namespace Apoc3D
 			public:
 				D3D9ObjectFactory(D3D9RenderDevice* device);
 
-				virtual Texture* CreateTexture(ResourceLocation* rl, TextureUsage usage, bool managed);
+				virtual Texture* CreateTexture(const ResourceLocation& rl, TextureUsage usage, bool managed);
 				virtual Texture* CreateTexture(int width, int height, int levelCount, TextureUsage usage, PixelFormat format);
 				virtual Texture* CreateTexture(int width, int height, int depth, int levelCount, TextureUsage usage, PixelFormat format);
 				virtual Texture* CreateTexture(int length, int levelCount, TextureUsage usage, PixelFormat format);
@@ -63,8 +63,8 @@ namespace Apoc3D
 
 				virtual VertexDeclaration* CreateVertexDeclaration(const FastList<VertexElement> &elements);
 
-				virtual VertexShader* CreateVertexShader(const ResourceLocation* resLoc);
-				virtual PixelShader* CreatePixelShader(const ResourceLocation* resLoc);
+				virtual VertexShader* CreateVertexShader(const ResourceLocation& resLoc);
+				virtual PixelShader* CreatePixelShader(const ResourceLocation& resLoc);
 
 				virtual VertexShader* CreateVertexShader(const byte* byteCode);
 				virtual PixelShader* CreatePixelShader(const byte* byteCode);

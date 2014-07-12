@@ -38,10 +38,10 @@ namespace Apoc3D
 		const int PakFileID1 = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
 		const int PakFileID2 = ((byte)1 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
 
-		PakArchive::PakArchive(FileLocation* fl)
-			: Archive(fl->getPath(), fl->getSize(), fl->isInArchive()), m_file(fl), m_compression(PCT_None)
+		PakArchive::PakArchive(const FileLocation& fl)
+			: Archive(fl.getPath(), fl.getSize(), fl.isInArchive()), m_compression(PCT_None)
 		{
-			Stream* stream = fl->GetReadStream();
+			Stream* stream = fl.GetReadStream();
 			stream->setPosition(0);
 
 			BinaryReader* br = new BinaryReader(stream);
@@ -80,17 +80,16 @@ namespace Apoc3D
 			}
 			else
 			{
-				LogManager::getSingleton().Write(LOG_System, L"Pak archive format is invalid " + fl->getPath(), LOGLVL_Warning);
+				LogManager::getSingleton().Write(LOG_System, L"Pak archive format is invalid " + fl.getPath(), LOGLVL_Warning);
 			}
 			br->Close();
 			delete br;
 
-			m_fileStream = m_file->GetReadStream();
+			m_fileStream = fl.GetReadStream();
 		}
 		PakArchive::~PakArchive()
 		{
 			delete m_fileStream;
-			delete m_file;
 		}
 
 		void PakArchive::FillEntries(FastList<PakArchiveEntry>& entries)
@@ -156,7 +155,7 @@ namespace Apoc3D
 
 		Archive* PakArchiveFactory::CreateInstance(const String& file)
 		{
-			return CreateInstance(new FileLocation(file));
+			return CreateInstance(FileLocation(file));
 		}
 	}
 }

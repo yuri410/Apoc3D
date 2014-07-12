@@ -88,12 +88,12 @@ namespace APDesigner
 	{
 		m_sceneRenderer = new SceneRenderer(window->getDevice());
 
-		FileLocation* fl = FileSystem::getSingleton().Locate(L"ModelViewSceneRenderer.xml", FileLocateRule::Default);
+		FileLocation fl = FileSystem::getSingleton().Locate(L"ModelViewSceneRenderer.xml", FileLocateRule::Default);
 
 		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 		m_sceneRenderer->Load(config);
 		delete config;
-		delete fl;
+
 		m_camera = new ChaseCamera();
 		m_camera->setChaseDirection(Vector3(0, 0, 1));
 		m_camera->setChasePosition(Vector3(0, 0, 0));
@@ -583,7 +583,7 @@ namespace APDesigner
 			delete m_model;
 			//delete m_modelSData;
 		}
-		FileLocation* fl = new FileLocation(m_filePath);
+		FileLocation fl(m_filePath);
 		
 		m_modelSData = ModelManager::getSingleton().CreateInstanceUnmanaged(getMainWindow()->getDevice(), fl);
 
@@ -602,9 +602,8 @@ namespace APDesigner
 
 		if (m_animPath.size())
 		{
-			FileLocation* afl = new FileLocation(m_animPath);
+			FileLocation afl(m_animPath);
 			m_animData = AnimationManager::getSingleton().CreateInstance(afl);
-			delete afl;
 		}
 
 		m_model = new Model(new ResourceHandle<ModelSharedData>(m_modelSData, ResourceHandle<ModelSharedData>::FLGMIX_ContainerHandle), m_animData);

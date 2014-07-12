@@ -60,14 +60,14 @@ namespace Apoc3D
 				Effect* getEffect(const String& name) const;
 
 				//void ReloadEffect(RenderDevice* device, const ResourceLocation* fl);
-				void LoadEffect(RenderDevice* device, const ResourceLocation* rl);
+				void LoadEffect(RenderDevice* device, const ResourceLocation& rl);
 				
 				void RegisterCustomEffect(CustomShaderEffect* effect);
 
 				/**
 				 *  Loads all of a project's effects from a APBuild-generated xml list automatically.
 				 */
-				void LoadEffectFromList(RenderDevice* device, const ResourceLocation* rl);
+				void LoadEffectFromList(RenderDevice* device, const ResourceLocation& rl);
 
 				void Update(const GameTime* const time);
 

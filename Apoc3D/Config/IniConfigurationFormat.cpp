@@ -49,11 +49,11 @@ namespace Apoc3D
 
 		
 
-		Configuration* IniConfigurationFormat::Load(const ResourceLocation* rl)
+		Configuration* IniConfigurationFormat::Load(const ResourceLocation& rl)
 		{
-			Configuration* config = new Configuration(rl->getName());
+			Configuration* config = new Configuration(rl.getName());
 
-			BinaryReader* br = new BinaryReader(rl->GetReadStream());
+			BinaryReader* br = new BinaryReader(rl);
 
 			int32 length = (int32)br->getBaseStream()->getLength();
 			char* rawBytes = new char[length+1];

@@ -124,7 +124,7 @@ int Build(int argc, _TCHAR* argv[])
 			}
 
 			FileLocation fl(configPath);
-			Configuration* config = XMLConfigurationFormat::Instance.Load(&fl);
+			Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
 
 			// find the first section in the build config
 			Configuration::ChildTable::Enumerator e = config->GetEnumerator();

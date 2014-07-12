@@ -32,7 +32,7 @@ namespace APDesigner
 			String name = arc->GetEntryName(i);
 			//Stream* strm = arc->GetEntryStream(name);
 			
-			FileLocation* fl = new FileLocation(arc, PathUtils::Combine(arc->getDirectory(), name), name);
+			FileLocation fl(arc, PathUtils::Combine(arc->getDirectory(), name), name);
 
 			m_maps->Add(PathUtils::GetFileNameNoExt(name), TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false));
 		}

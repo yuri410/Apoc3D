@@ -228,6 +228,7 @@
     <ClInclude Include="Platform\API.h" />
     <ClInclude Include="Platform\Thread.h" />
     <ClInclude Include="Project\Project.h" />
+    <ClInclude Include="RTTI.h" />
     <ClInclude Include="Scene\OctreeSceneManager.h" />
     <ClInclude Include="Scene\ScenePassTypes.h" />
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />
