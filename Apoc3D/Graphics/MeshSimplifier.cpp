@@ -90,8 +90,11 @@ namespace Apoc3D
 
 			wd.ProgressiveMesh(map, permutation);
 
-			// The caller of this function should reorder their vertices
-			// according to the returned "permutation".
+			// rearrange the vertex list 
+			//for(int i=0;i<vert.num;i++)
+			//{
+			//	new_vert[permutation[i]]=vert[i];
+			//}
 		}
 
 
@@ -364,6 +367,10 @@ namespace Apoc3D
 			{
 				map[i] = (map[i] == -1) ? 0 : permutation[map[i]];
 			}
+
+			// The caller of this function should reorder their vertices
+			// according to the returned "permutation".
+
 		}
 
 
