@@ -48,9 +48,6 @@ namespace Apoc3D
 		 */
 		class APAPI TextureManager : public ResourceManager, public Singleton<TextureManager>
 		{
-		private:
-			FileLocation* m_redirectLocation;
-
 		public:
 			static int64 CacheSize;
 			static bool UseCache;
@@ -64,6 +61,10 @@ namespace Apoc3D
 			ResourceHandle<Texture>* CreateInstance(RenderDevice* rd, const FileLocation& fl, bool generateMips = false);
 
 			SINGLETON_DECL_HEARDER(TextureManager);
+
+		private:
+			FileLocation* m_redirectLocation;
+
 		};
 	}
 }

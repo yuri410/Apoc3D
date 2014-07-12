@@ -62,6 +62,16 @@ namespace Apoc3D
 				return TEC_Unknown;
 			}
 
+			TextEncoding FindEncodingByBOM(const char* bomData, int32 length, TextEncoding defaultEnc, int32* bomLength)
+			{
+				TextEncoding encoding = FindEncodingByBOM(bomData, length, bomLength);
+
+				if (encoding == TEC_Unknown)
+					encoding = defaultEnc;
+				return encoding;
+			}
+
+
 			const char* GetEncodingBOM(TextEncoding enc, int32& length)
 			{
 				length = 0;

@@ -59,8 +59,6 @@ namespace Apoc3D
 		class APAPI ModelSharedData : public Resource
 		{
 		public:
-			FastList<Mesh*>& getEntities() { return m_entities; }
-
 			ModelSharedData(RenderDevice* device, const FastList<Mesh*>& entities);
 			ModelSharedData(RenderDevice* device, const ModelData* mdlData);
 			ModelSharedData(RenderDevice* device, const ResourceLocation& rl, bool managed = true);
@@ -68,7 +66,10 @@ namespace Apoc3D
 
 			virtual uint32 getSize();
 
+			FastList<Mesh*>& getEntities() { return m_entities; }
+
 			void Save(ModelData* data);
+
 		protected:
 			virtual void load();
 			virtual void unload();
@@ -91,10 +92,10 @@ namespace Apoc3D
 
 		typedef EventDelegate1<AnimationType> ModelAnimationCompletedHandler;
 
-		/** A model is a set of subsets called Mesh, with additionally animation controller and data.
-		 *
-		 *  When loading model, ModelManager is recommended, the model manager will create ModelSharedData, which is then
-		 *  used as Model's constructor's parameter.
+		/**
+		 *  A model is a set of subsets called Mesh, with additionally animation controller and data.
+		 *   When loading model, ModelManager is recommended, the model manager will create ModelSharedData, which is then
+		 *   used as Model's constructor's parameter.
 		 */
 		class APAPI Model : public Renderable
 		{
@@ -106,9 +107,9 @@ namespace Apoc3D
 				APS_Stopped
 			};
 
-			/** Initializes a new model from ModelSharedData and an optional AnimationData.
-			 *
-			 *  The AnimationData need to be deleted manually when no longer used, as the Model class will not modify it.
+			/**
+			 *  Initializes a new model from ModelSharedData and an optional AnimationData.
+			 *   The AnimationData need to be deleted manually when no longer used, as the Model class will not modify it.
 			 */
 			Model(ResourceHandle<ModelSharedData>* data, const AnimationData* animData = 0);
 			~Model(void);

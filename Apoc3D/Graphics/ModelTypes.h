@@ -86,7 +86,7 @@ namespace Apoc3D
 			{
 				m_set[index]->RemoveAt(frameIndex);
 			}
-			M& getMaterial(int index, int frame = 0) {	return m_set[index]->operator[](frame); }
+			M& getMaterial(int index, int frame = 0) { return m_set[index]->operator[](frame); }
 			const M& getMaterial(int index, int frame = 0) const { return m_set[index]->operator[](frame); }
 
 

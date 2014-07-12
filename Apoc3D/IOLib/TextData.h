@@ -21,20 +21,12 @@ namespace Apoc3D
 				TEC_ASCII
 			};
 
-			TextEncoding APAPI FindEncodingByBOM(const char* bomData, int32 length, int32* bomLength = nullptr);
-			inline TextEncoding FindEncodingByBOM(const char* bomData, int32 length, TextEncoding defaultEnc, int32* bomLength = nullptr)
-			{
-				TextEncoding encoding = FindEncodingByBOM(bomData, length, bomLength);
+			APAPI TextEncoding FindEncodingByBOM(const char* bomData, int32 length, int32* bomLength = nullptr);
+			APAPI TextEncoding FindEncodingByBOM(const char* bomData, int32 length, TextEncoding defaultEnc, int32* bomLength = nullptr);
 
-				if (encoding == TEC_Unknown)
-					encoding = defaultEnc;
-				return encoding;
-			}
 
-			const char* GetEncodingBOM(TextEncoding enc, int32& length);
-
-			String APAPI ConvertRawData(const char* rawData, int32 length, TextEncoding encoding, bool checkBom);
-
+			APAPI const char* GetEncodingBOM(TextEncoding enc, int32& length);
+			APAPI String ConvertRawData(const char* rawData, int32 length, TextEncoding encoding, bool checkBom);
 
 		}
 
