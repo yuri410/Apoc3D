@@ -214,7 +214,8 @@ namespace Apoc3D
 
 		void EffectData::Load(const ResourceLocation& rl)
 		{
-			BinaryReader* br = new BinaryReader(rl.GetReadStream());
+			BinaryReader _br(rl.GetReadStream());
+			BinaryReader* br = &_br;
 
 			int id = br->ReadInt32();
 
@@ -270,9 +271,7 @@ namespace Apoc3D
 				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid effect file. " + rl.getName(), LOGLVL_Error);
 			}
 			
-
 			br->Close();
-			delete br;
 		}
 
 		void EffectData::LoadAFXV3(BinaryReader* br)
@@ -300,8 +299,6 @@ namespace Apoc3D
 				String name = br2->ReadString();
 
 				EffectParameter params(name);
-				//params.TypicalUsage = static_cast<EffectParamUsage>(br2->ReadUInt32());
-				//params.IsCustomUsage = br->ReadBoolean();
 				params.CustomMaterialParamName = br->ReadString();
 				params.ProgramType = static_cast<ShaderType>(br->ReadInt32());
 
@@ -310,7 +307,6 @@ namespace Apoc3D
 				{
 					params.Usage = EPUSAGE_CustomMaterialParam;
 				}
-				//params.IsCustomUsage = params.Usage == EPUSAGE_Unknown;
 
 				br2->Close();
 				delete br2;
@@ -478,7 +474,9 @@ namespace Apoc3D
 
 		void EffectData::Save(Stream* strm) const
 		{
-			BinaryWriter* bw = new BinaryWriter(strm);
+			BinaryWriter _bw(strm);
+			BinaryWriter* bw = &_bw;
+
 			if (IsCFX)
 			{
 				bw->WriteInt32((int32)CfxID_V4);
@@ -495,11 +493,12 @@ namespace Apoc3D
 				Profiles[i].Save(bw);
 			}
 			bw->Close();
-			delete bw;
 		}
 		void EffectData::SaveLite(Stream* strm) const
 		{
-			BinaryWriter* bw = new BinaryWriter(strm);
+			BinaryWriter _bw(strm);
+			BinaryWriter* bw = &_bw;
+
 			bw->WriteInt32(LfxID_V1);
 			bw->WriteInt32(ProfileCount);
 			for (int32 i=0;i<ProfileCount;i++)
@@ -507,7 +506,6 @@ namespace Apoc3D
 				Profiles[i].SaveLite(bw);
 			}
 			bw->Close();
-			delete bw;
 		}
 
 		void EffectData::SortProfiles()

@@ -59,12 +59,11 @@ namespace Apoc3D
 			D3D9PixelShader::D3D9PixelShader(D3D9RenderDevice* device, const ResourceLocation& rl)
 				: PixelShader(device), m_device(device)
 			{
-				BinaryReader* br = new BinaryReader(rl);
-				int64 len = br->getBaseStream()->getLength();
+				BinaryReader br(rl);
+				int64 len = br.getBaseStream()->getLength();
 				char* buffer = new char[static_cast<uint>(len)];
-				br->ReadBytes(buffer, len);
-				br->Close();
-				delete br;
+				br.ReadBytes(buffer, len);
+				br.Close();
 
 				D3DDevice* dev = m_device->getDevice();
 				HRESULT hr = dev->CreatePixelShader(reinterpret_cast<const DWORD*>(buffer), &m_shader);

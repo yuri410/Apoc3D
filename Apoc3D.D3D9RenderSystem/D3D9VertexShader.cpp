@@ -56,12 +56,11 @@ namespace Apoc3D
 			D3D9VertexShader::D3D9VertexShader(D3D9RenderDevice* device, const ResourceLocation& rl)
 				: VertexShader(device), m_device(device)
 			{
-				BinaryReader* br = new BinaryReader(rl);
-				int64 len = br->getBaseStream()->getLength();
+				BinaryReader br(rl);
+				int64 len = br.getBaseStream()->getLength();
 				char* buffer = new char[static_cast<uint>(len)];
-				br->ReadBytes(buffer, len);
-				br->Close();
-				delete br;
+				br.ReadBytes(buffer, len);
+				br.Close();
 
 				D3DDevice* dev = m_device->getDevice();
 				HRESULT hr = dev->CreateVertexShader(reinterpret_cast<const DWORD*>(buffer), &m_shader);

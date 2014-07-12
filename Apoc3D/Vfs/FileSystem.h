@@ -44,8 +44,8 @@ namespace Apoc3D
 		 * 
 		 *  Ordinarily FileSystem::Locate or FileSystem::TryLocate 
 		 *  is used to locate a file. A file name or relative directory
-		 *  as well as a FileLocateRule object is needed. When locating 
-		 *  files outside archive, relative directory with
+		 *  as well as a FileLocateRule object is needed. When not locating 
+		 *  files inside archive, relative directory with
 		 *  file names can be directly used with a default FileLocateRule.
 		 * 
 		 *  On the other hand, when locating files inside archives, 

@@ -176,7 +176,8 @@ namespace Apoc3D
 
 		void TextureData::Load(const ResourceLocation& rl, bool doNotLoadLevel, bool doNotLoadContent)
 		{
-			BinaryReader* br = new BinaryReader(rl);
+			BinaryReader _br(rl);
+			BinaryReader* br = &_br;
 
 			int32 id = br->ReadInt32();
 			if (id == FileID1)
@@ -244,12 +245,11 @@ namespace Apoc3D
 				LogManager::getSingleton().Write(LOG_Graphics, L"Invalid texture file. " + rl.getName(), LOGLVL_Error);
 			}
 			br->Close();
-
-			delete br;
 		}
 		void TextureData::Save(Stream* strm) const
 		{
-			BinaryWriter* bw = new BinaryWriter(strm);
+			BinaryWriter _bw(strm);
+			BinaryWriter* bw = &_bw;
 			bw->WriteInt32(FileID2);
 
 			bw->WriteInt32(static_cast<int32>(Type));
@@ -266,11 +266,11 @@ namespace Apoc3D
 			}
 
 			bw->Close();
-			delete bw;
 		}
 		void TextureData::SaveAsTagged(Stream* strm) const
 		{
-			BinaryWriter* bw = new BinaryWriter(strm);
+			BinaryWriter _bw(strm);
+			BinaryWriter* bw = &_bw;
 			bw->WriteInt32(FileID1);
 
 			TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
@@ -302,7 +302,6 @@ namespace Apoc3D
 			delete data;
 
 			bw->Close();
-			delete bw;
 		}
 	}
 }

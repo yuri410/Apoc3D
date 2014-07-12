@@ -406,10 +406,6 @@ namespace Apoc3D
 				delete br;
 			}
 
-			
-
-
-
 
 			//if (id == MdlId_V2)
 			//{
@@ -479,7 +475,8 @@ namespace Apoc3D
 		}
 		void ModelData::Load(const ResourceLocation& rl)
 		{
-			BinaryReader* br = new BinaryReader(rl);
+			BinaryReader _br(rl);
+			BinaryReader* br = &_br;
 
 			int32 id = br->ReadInt32();
 			if (id == MdlId_V2 || id == MdlId_V3)
@@ -523,11 +520,11 @@ namespace Apoc3D
 			}
 
 			br->Close();
-			delete br;
 		}
 		void ModelData::Save(Stream* strm) const
 		{
-			BinaryWriter* bw = new BinaryWriter(strm);
+			BinaryWriter _bw(strm);
+			BinaryWriter* bw = &_bw;
 
 			bw->WriteInt32(MdlId_V3);
 
@@ -536,11 +533,12 @@ namespace Apoc3D
 			delete mdlData;
 
 			bw->Close();
-			delete bw;
 		}
 		void ModelData::SaveLite(Stream* strm) const
 		{
-			BinaryWriter* bw = new BinaryWriter(strm);
+			BinaryWriter _bw(strm);
+			BinaryWriter* bw = &_bw;
+
 			bw->WriteInt32(MdlLiteID);
 			bw->WriteInt32(Entities.getCount());
 			for (int i=0;i<Entities.getCount();i++)
@@ -548,7 +546,6 @@ namespace Apoc3D
 				Entities[i]->SaveLite(bw);
 			}
 			bw->Close();
-			delete bw;
 		}
 	}
 }

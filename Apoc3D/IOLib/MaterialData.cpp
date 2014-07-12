@@ -346,7 +346,8 @@ namespace Apoc3D
 			}
 #endif
 
-			BinaryReader* br = new BinaryReader(rl);
+			BinaryReader _br(rl);
+			BinaryReader* br = &_br;
 
 			int32 id = br->ReadInt32();
 			if (id == MtrlId_V3)
@@ -364,11 +365,11 @@ namespace Apoc3D
 			}
 
 			br->Close();
-			delete br;
 		}
 		void MaterialData::Save(Stream* strm)
 		{
-			BinaryWriter* bw = new BinaryWriter(strm);
+			BinaryWriter _bw(strm);
+			BinaryWriter* bw = &_bw;
 			
 			bw->WriteInt32(MtrlId_V3);
 
@@ -377,7 +378,6 @@ namespace Apoc3D
 			delete mdlData;
 
 			bw->Close();
-			delete bw;
 		}
 
 		MaterialData::MaterialData(const MaterialData& other)
