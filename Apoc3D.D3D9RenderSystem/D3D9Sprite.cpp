@@ -45,12 +45,22 @@ namespace Apoc3D
 			D3D9Sprite::D3D9Sprite(D3D9RenderDevice* device)
 				: Sprite(device), m_device(device), m_rawDevice(device->getDevice())
 			{
-				FastList<VertexElement> elements;
-				elements.Add(VertexElement(0, VEF_Vector4, VEU_PositionTransformed));
-				elements.Add(VertexElement(16, VEF_Color, VEU_Color));
-				elements.Add(VertexElement(20, VEF_Vector2, VEU_TextureCoordinate,0));
+				{
+					FastList<VertexElement> elements;
+					elements.Add(VertexElement(0, VEF_Vector4, VEU_PositionTransformed));
+					elements.Add(VertexElement(16, VEF_Color, VEU_Color));
+					elements.Add(VertexElement(20, VEF_Vector2, VEU_TextureCoordinate,0));
 
-				m_vtxDecl = new D3D9VertexDeclaration(device, elements);
+					m_vtxDecl = new D3D9VertexDeclaration(device, elements);
+				}
+				{
+					FastList<VertexElement> elements;
+					elements.Add(VertexElement(0, VEF_Vector4, VEU_Position));
+					elements.Add(VertexElement(16, VEF_Color, VEU_Color));
+					elements.Add(VertexElement(20, VEF_Vector2, VEU_TextureCoordinate,0));
+
+					m_vtxDeclShadable = new D3D9VertexDeclaration(device, elements);
+				}
 
 				//int test = m_vtxDecl->GetVertexSize();
 				m_quadBuffer = new D3D9VertexBuffer(device, (MaxDeferredDraws * 4) * m_vtxDecl->GetVertexSize(), (BufferUsageFlags)(BU_Dynamic|BU_WriteOnly));
@@ -80,15 +90,13 @@ namespace Apoc3D
 			D3D9Sprite::~D3D9Sprite()
 			{
 				delete m_vtxDecl;
+				delete m_vtxDeclShadable;
 				delete m_quadBuffer;
 				delete m_quadIndices;
 			}
 			void D3D9Sprite::Begin(SpriteSettings settings)
 			{
 				Sprite::Begin(settings);
-
-				D3DVIEWPORT9 vp;
-				m_rawDevice->GetViewport(&vp);
 
 				SetRenderState();
 			}
@@ -133,9 +141,17 @@ namespace Apoc3D
 
 					mgr->SetPixelSampler(0, state);
 
-					m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
 					m_rawDevice->SetStreamSource(0, m_quadBuffer->getD3DBuffer(), 0, sizeof(QuadVertex));
 					m_rawDevice->SetIndices(m_quadIndices->getD3DBuffer());
+
+					if (getSettings() & SPR_AllowShading)
+					{
+						m_rawDevice->SetVertexDeclaration(m_vtxDeclShadable->getD3DDecl());
+					}
+					else
+					{
+						m_rawDevice->SetVertexDeclaration(m_vtxDecl->getD3DDecl());
+					}
 
 					m_device->BindVertexShader(nullptr);
 					m_device->BindPixelShader(nullptr);

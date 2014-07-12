@@ -60,7 +60,23 @@ namespace Apoc3D
 			const String TAG_3_BonesTag = L"Bones";
 			const String TAG_3_BoneCountTag = L"BoneCount";
 
+			template <typename T>
+			void FreeClipTable(T& table)
+			{
+				for (T::Enumerator e = table.GetEnumerator();e.MoveNext();)
+				{
+					auto* clip = *e.getCurrentValue();
+					delete clip;
+				}
+				table.Clear();
+			}
 
+			AnimationData::~AnimationData()
+			{
+				FreeClipTable(m_rigidAnimationClips);
+				FreeClipTable(m_skinnedAnimationClips);
+				FreeClipTable(m_mtrlAnimationClips);
+			}
 
 			void AnimationData::ReadData(TaggedDataReader* data)
 			{
@@ -219,13 +235,13 @@ namespace Apoc3D
 
 						for (int j=0;j<frameCount;j++)
 						{
-							int32 bone = br->ReadInt32();
+							int32 partId = br->ReadInt32();
 
 							float totalSec = static_cast<float>(br->ReadDouble());
 							Matrix transfrom;
 							br->ReadMatrix(transfrom);
 
-							ModelKeyframe keyframe(bone, totalSec, transfrom);
+							ModelKeyframe keyframe(partId, totalSec, transfrom);
 							keyframe.setNextFrameIndex(br->ReadInt32());
 							frames.Add(keyframe);
 						}
@@ -233,6 +249,8 @@ namespace Apoc3D
 						ModelAnimationClip* clip = new ModelAnimationClip(duration, frames);
 						m_rigidAnimationClips.Add(key, clip);
 					}
+					br->Close();
+					delete br;
 				}
 
 			}

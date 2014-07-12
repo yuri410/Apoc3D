@@ -285,6 +285,7 @@ namespace Apoc3D
 				~RigidAnimationPlayer()
 				{
 					delete[] m_meshTransforms;
+					delete[] m_initialTransforms;
 				}
 
 				/** 

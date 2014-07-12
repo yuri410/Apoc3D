@@ -398,6 +398,7 @@ namespace Apoc3D
 
 				dstIdx += ops->getCount();
 			}
+			delete[] entOps;
 		}
 		void Model::RebuildROPCache()
 		{

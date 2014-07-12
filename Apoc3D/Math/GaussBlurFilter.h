@@ -37,7 +37,7 @@ namespace Apoc3D
 		{
 		public:
 			GaussBlurFilter(int32 sampleCount, float blurAmount, int32 mapWidth, int32 mapHeight, float kernelXScale = 1)
-				: SampleCount(sampleCount), BlurAmount(blurAmount), SampleWeights(0), SampleOffsetsX(0), SampleOffsetsY(0),
+				: SampleCount(sampleCount), BlurAmount(blurAmount), SampleWeights(nullptr), SampleOffsetsX(nullptr), SampleOffsetsY(nullptr),
 				m_mapWidth(mapWidth), m_mapHeight(mapHeight),
 				m_kernelXScale(kernelXScale)
 			{
@@ -98,9 +98,9 @@ namespace Apoc3D
 					count++;
 
 				// Create temporary arrays for computing our filter settings.
-				if (!sampleWeights)
+				if (sampleWeights == nullptr)
 					sampleWeights = new float[count];
-				if (!sampleOffsets)
+				if (sampleOffsets == nullptr)
 					sampleOffsets = new Vector4[count];
 
 				// The first sample always has a zero offset.

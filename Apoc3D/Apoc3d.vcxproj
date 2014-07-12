@@ -297,7 +297,6 @@
     <ClInclude Include="Core\GameTime.h" />
     <ClInclude Include="Graphics\GeometryData.h" />
     <ClInclude Include="Graphics\Material.h" />
-    <ClInclude Include="nedmalloc\malloc.c" />
     <ClInclude Include="Scene\SceneNode.h" />
     <ClInclude Include="Scene\ScenePass.h" />
     <ClInclude Include="Scene\SceneRenderer.h" />

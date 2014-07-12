@@ -69,7 +69,7 @@ namespace Apoc3D
 				{
 					IDirect3DVertexDeclaration9* decl = *e.getCurrentValue();
 					decl->Release();
-				}	
+				}
 				m_vertexBuffer->Release();
 				m_vertexBuffer = 0;
 			}
@@ -79,7 +79,7 @@ namespace Apoc3D
 				// add the instancing vertex element on the given one
 				// save it the a map for future look ups
 
-				// As the render system API layer does not support multi-stream mixing
+				// Since render system API layer does not support multi-stream mixing
 				// this is the only way to do it, API specific
 
 				IDirect3DVertexDeclaration9* result;
@@ -110,8 +110,8 @@ namespace Apoc3D
 			int D3D9InstancingData::Setup(const RenderOperation* op, int count, int beginIndex)
 			{
 				// In d3d no more setup is needed
-				// As the instancing index is mixed in the vertex stream, the rest of work: per-instancing transformations
-				// are set in effects.
+				// The instancing index is mixed in the vertex stream. The rest of work would be: per-instancing transformations
+				// set in effects.
 
 				return min(MaxOneTimeInstances, count-beginIndex);
 			}

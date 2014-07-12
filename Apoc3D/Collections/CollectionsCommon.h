@@ -153,6 +153,7 @@ namespace Apoc3D
 			virtual int64 GetHashCode(const Apoc3D::Math::Vector4& obj) const;
 		};
 
+		
 		template<> const IEqualityComparer<Resource*>*
 			IBuiltInEqualityComparer<Resource*>::Default = new ResourceEqualityComparer();
 
@@ -194,8 +195,7 @@ namespace Apoc3D
 		template<> const IEqualityComparer<Apoc3D::Math::Vector4>*
 			IBuiltInEqualityComparer<Apoc3D::Math::Vector4>::Default = new Vector4EqualityComparer();
 
-
-		class APAPI HashHelpers
+		class HashHelpers
 		{
 		public:
 			//static const int primes[72];

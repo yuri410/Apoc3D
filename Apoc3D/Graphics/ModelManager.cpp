@@ -58,13 +58,17 @@ namespace Apoc3D
 			ResourceLocation* rl)
 		{
 			Resource* retrived = Exists(rl->GetHashString());
-			if (!retrived)
+			if (retrived == nullptr)
 			{
 				ModelSharedData* mdl = new ModelSharedData(renderDevice, rl);
 				retrived = mdl;
 				NotifyNewResource(retrived);
 				if (!usesAsync())
 					mdl->Load();
+			}
+			else
+			{
+				delete rl;
 			}
 			return new ResourceHandle<ModelSharedData>((ModelSharedData*)retrived);
 		}

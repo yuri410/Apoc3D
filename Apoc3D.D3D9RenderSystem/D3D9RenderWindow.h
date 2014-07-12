@@ -78,9 +78,6 @@ namespace Apoc3D
 				 */
 				class D3D9Game : public Game
 				{
-				private:
-					D3D9RenderWindow* m_window;
-
 				public:
 					D3D9Game(D3D9RenderWindow* wnd, IDirect3D9* d3d9)
 						: Game(L"", d3d9), m_window(wnd)
@@ -92,6 +89,7 @@ namespace Apoc3D
 					{
 						// First use this to make sure the Unload is handled first
 						Game::Release();
+
 						// then finalize
 						m_window->OnFinalize();
 					}
@@ -138,6 +136,9 @@ namespace Apoc3D
 						m_window->OnFrameEnd();
 						Game::OnFrameEnd();
 					}
+				private:
+					D3D9RenderWindow* m_window;
+					D3D9RenderDevice* m_device;
 				};
 			public:
 

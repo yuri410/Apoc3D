@@ -50,6 +50,8 @@ namespace Apoc3D
 			public:
 				static bool HasBatchReportRequest;
 
+				virtual ~RenderDevice() { }
+
 				virtual Capabilities* const getCapabilities() const = 0;
 				
 				/**
@@ -190,6 +192,8 @@ namespace Apoc3D
 			class APAPI Capabilities
 			{
 			public:
+				virtual ~Capabilities() { }
+
 				virtual bool SupportsRenderTarget(const String& multisampleMode, PixelFormat pixFormat, DepthFormat depthFormat) = 0;
 				virtual bool SupportsPixelShader(const char* implType, int majorVer, int minorVer) = 0;
 				virtual bool SupportsVertexShader(const char* implType, int majorVer, int minorVer) = 0;
@@ -207,6 +211,8 @@ namespace Apoc3D
 			class APAPI ObjectFactory
 			{
 			public:
+				virtual ~ObjectFactory() { }
+
 				/**
 				 *  Creates a texture from a ResourceLocation. 
 				 * @param managed tell if the Texture will be managed.

@@ -60,7 +60,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 /*#define FORCEINLINE*/
-#include "malloc.c.h"
+#include "malloc.c"
 #ifdef NDEBUG               /* Disable assert checking on release builds */
  #undef DEBUG
 #endif

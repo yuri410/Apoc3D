@@ -369,7 +369,7 @@ namespace Apoc3D
 		void MaterialData::Save(Stream* strm)
 		{
 			BinaryWriter* bw = new BinaryWriter(strm);
-
+			
 			bw->WriteInt32(MtrlId_V3);
 
 			TaggedDataWriter* mdlData = SaveData();

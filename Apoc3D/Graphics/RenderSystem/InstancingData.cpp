@@ -14,6 +14,11 @@ namespace Apoc3D
 
 				//objFac->CreateVertexBuffer();
 			}
+
+			InstancingData::~InstancingData()
+			{
+
+			}
 		}
 	}
 }

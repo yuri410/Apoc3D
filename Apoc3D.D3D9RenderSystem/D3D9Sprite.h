@@ -103,6 +103,7 @@ namespace Apoc3D
 				} m_storedState;
 
 				D3D9VertexDeclaration* m_vtxDecl;
+				D3D9VertexDeclaration* m_vtxDeclShadable;
 				D3D9VertexBuffer* m_quadBuffer;
 				D3D9IndexBuffer* m_quadIndices;
 

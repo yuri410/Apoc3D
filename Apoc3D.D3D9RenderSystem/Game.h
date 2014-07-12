@@ -44,17 +44,17 @@ namespace Apoc3D
 			class Game
 			{
 			public:
-				/** This method will ask the GraphicsDeviceManager to release resources. And 
-				 *  will cause the Game::UnloadContent to be called.
-				 */
-				virtual void Release();
-
 				/** When derived, this method should be overrided to initialize the graphics device,
 				 *  with the specific parameters and settings provided.
 				 *  As GraphicsDeviceManager has creates the device, Game::LoadContent and Game::Initialize
 				 *  will be called.
 				 */
 				virtual void Create(const RenderParameters& params);
+				
+				/** This method will ask the GraphicsDeviceManager to release resources. And 
+				 *  will cause the Game::UnloadContent to be called.
+				 */
+				virtual void Release();
 
 				CancellableEventHandler* eventFrameStart() { return &m_eFrameStart; }
 				EventHandler* eventFrameEnd() { return &m_eFrameEnd; }		

@@ -373,6 +373,8 @@ namespace Apoc3DEx
 		PathFinderField::~PathFinderField()
 		{
 			delete[] m_fieldPassable;
+			delete[] m_fieldWeight;
+			delete[] m_fieldDifferencialWeight;
 		}
 	}
 }

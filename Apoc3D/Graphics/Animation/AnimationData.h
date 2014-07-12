@@ -128,7 +128,7 @@ namespace Apoc3D
 
 				//}
 
-				~AnimationData(){}
+				~AnimationData();
 
 			private:
 				ClipTable m_rigidAnimationClips;

@@ -68,6 +68,8 @@ namespace Apoc3D
 					SPR_AlphaBlended = 4,
 					SPR_UsePostTransformStack = 8,
 
+					SPR_AllowShading = 16,
+
 					SPRMix_RestoreStateAlphaBlended = SPR_AlphaBlended | SPR_RestoreState
 				};
 

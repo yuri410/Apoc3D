@@ -37,6 +37,8 @@ namespace Apoc3D
 		public:
 			virtual HashHandle GetHashCode() const { return reinterpret_cast<HashHandle>((void*)this); }
 			virtual String GetHashString() const;
+
+			virtual ~IHashed() { }
 		};
 	}
 }

@@ -48,6 +48,7 @@ namespace Apoc3D
 				static const int MaxOneTimeInstances = 50;
 
 				InstancingData(RenderDevice* device);
+				virtual ~InstancingData();
 
 				/** Prepares the instancing data for a set of render operation began at beginIndex in op.
 				 *  This is called each time of drawing up to MaxOneTimeInstances instances.

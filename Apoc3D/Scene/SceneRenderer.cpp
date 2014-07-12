@@ -212,7 +212,8 @@ namespace Apoc3D
 
 					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext(); )
 					{
-						delete *k.getCurrentValue();
+						OperationList* opList = *k.getCurrentValue();
+						delete opList;
 					}
 					delete geoTbl;
 				}

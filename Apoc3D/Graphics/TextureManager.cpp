@@ -89,7 +89,7 @@ namespace Apoc3D
 			}
 
 			Resource* retrived = Exists(fl->GetHashString());
-			if (!retrived)
+			if (retrived == nullptr)
 			{
 				ObjectFactory* factory = rd->getObjectFactory();
 				Texture* tex = factory->CreateTexture(fl, genMips? TU_AutoMipMap : TU_Static, true);
@@ -102,6 +102,10 @@ namespace Apoc3D
 					return new ResourceHandle<Texture>((Texture*)tex, ResourceHandle<Texture>::FLG_Untouching);		
 				}
 				return new ResourceHandle<Texture>((Texture*)tex);	
+			}
+			else
+			{
+				delete fl;
 			}
 			return new ResourceHandle<Texture>((Texture*)retrived);
 		}

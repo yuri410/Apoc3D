@@ -150,5 +150,7 @@ namespace Apoc3D
 		
 		bool Vector4EqualityComparer::Equals(const Apoc3D::Math::Vector4& x, const Apoc3D::Math::Vector4& y) const { return x==y; }
 		int64 Vector4EqualityComparer::GetHashCode(const Apoc3D::Math::Vector4& obj) const { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y ^ *(const int32*)&obj.Z ^ *(const int32*)&obj.W; }
+
+
 	}
 }
