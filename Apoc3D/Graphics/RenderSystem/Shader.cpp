@@ -42,17 +42,6 @@ namespace Apoc3D
 				
 			}
 
-			VertexShader::VertexShader(RenderDevice* rd)
-				: Shader(rd)
-			{
-
-			}
-
-			PixelShader::PixelShader(RenderDevice* rd)
-				: Shader(rd)
-			{
-
-			}
 
 			ShaderSamplerState::ShaderSamplerState()
 				: AddressU(TA_Wrap), AddressV(TA_Wrap), AddressW(TA_Wrap),

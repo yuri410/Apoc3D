@@ -73,6 +73,8 @@ namespace Apoc3D
 			}
 
 		private:
+			ResourceLocation& operator=(const FileLocation& fl) { return *this; }
+
 			String m_name;
 		};
 

@@ -368,8 +368,7 @@ namespace Apoc3D
 			class VertexElement;
 			class VertexDeclaration;
 
-			class VertexShader;
-			class PixelShader;
+			class Shader;
 
 			class StateBlock;
 

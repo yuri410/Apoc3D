@@ -128,6 +128,7 @@ namespace Apoc3D
 
 				virtual ~Shader() {}
 
+				virtual ShaderType getType() const = 0;
 			protected:
 				Shader(RenderDevice* rd);
 
@@ -136,20 +137,7 @@ namespace Apoc3D
 
 			};
 
-			class APAPI VertexShader : public Shader
-			{
-			public:
-				virtual ~VertexShader() {}
-			protected:
-				VertexShader(RenderDevice* rd);
-			};
-			class APAPI PixelShader : public Shader
-			{
-			public:
-				virtual ~PixelShader() {}
-			protected:
-				PixelShader(RenderDevice* rd);
-			};
+			
 		}
 	}
 }

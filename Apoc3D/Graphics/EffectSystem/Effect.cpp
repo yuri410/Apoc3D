@@ -77,12 +77,12 @@ namespace Apoc3D
 			}
 
 
-			VertexShader* Effect::LoadVertexShader(RenderDevice* rs, const ResourceLocation& vs)
+			Shader* Effect::LoadVertexShader(RenderDevice* rs, const ResourceLocation& vs)
 			{
 				ObjectFactory* objFac = rs->getObjectFactory();
 				return objFac->CreateVertexShader(vs);
 			}
-			PixelShader* Effect::LoadPixelShader(RenderDevice* rs, const ResourceLocation& ps)
+			Shader* Effect::LoadPixelShader(RenderDevice* rs, const ResourceLocation& ps)
 			{
 				ObjectFactory* objFac = rs->getObjectFactory();
 				return objFac->CreatePixelShader(ps);

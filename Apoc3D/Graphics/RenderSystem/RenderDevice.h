@@ -111,8 +111,8 @@ namespace Apoc3D
 				//virtual void SetTexture(int index, Texture* texture) = 0;
 				//virtual Texture* GetTexture(int index) = 0;
 
-				virtual void BindVertexShader(VertexShader* shader) = 0;
-				virtual void BindPixelShader(PixelShader* shader) = 0;
+				virtual void BindVertexShader(Shader* shader) = 0;
+				virtual void BindPixelShader(Shader* shader) = 0;
 
 				/**
 				 *  Draws a list of RenderOperations.
@@ -288,11 +288,11 @@ namespace Apoc3D
 				 *  The code could be byteCode(D3D9) or source(OpenGL) depends on 
 				 *  the specific API.
 				 */
-				virtual VertexShader* CreateVertexShader(const byte* byteCode) = 0;
-				virtual PixelShader* CreatePixelShader(const byte* byteCode) = 0;
+				virtual Shader* CreateVertexShader(const byte* byteCode) = 0;
+				virtual Shader* CreatePixelShader(const byte* byteCode) = 0;
 
-				virtual VertexShader* CreateVertexShader(const ResourceLocation& resLoc) = 0;
-				virtual PixelShader* CreatePixelShader(const ResourceLocation& resLoc) = 0;
+				virtual Shader* CreateVertexShader(const ResourceLocation& resLoc) = 0;
+				virtual Shader* CreatePixelShader(const ResourceLocation& resLoc) = 0;
 
 
 				virtual Sprite* CreateSprite() = 0;

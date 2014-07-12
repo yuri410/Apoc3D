@@ -292,7 +292,6 @@
     <ClInclude Include="Scene\SceneObject.h" />
     <ClInclude Include="Graphics\EffectSystem\Effect.h" />
     <ClInclude Include="Graphics\EffectSystem\EffectParameter.h" />
-    <ClInclude Include="Core\HashHandleObject.h" />
     <ClInclude Include="Graphics\EffectSystem\EffectManager.h" />
     <ClInclude Include="Math\Frustum.h" />
     <ClInclude Include="Core\GameTime.h" />
@@ -323,7 +322,6 @@
     <ClCompile Include="Config\IniConfigurationFormat.cpp" />
     <ClCompile Include="Config\XmlConfigurationFormat.cpp" />
     <ClCompile Include="Core\CommandInterpreter.cpp" />
-    <ClCompile Include="Core\HashHandleObject.cpp" />
     <ClCompile Include="Core\IHashed.cpp" />
     <ClCompile Include="Core\Logging.cpp" />
     <ClCompile Include="Core\PluginManager.cpp" />

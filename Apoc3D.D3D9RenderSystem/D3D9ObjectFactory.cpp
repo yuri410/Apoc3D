@@ -27,8 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Texture.h"
 #include "Buffer/D3D9VertexBuffer.h"
 #include "Buffer/D3D9IndexBuffer.h"
-#include "D3D9VertexShader.h"
-#include "D3D9PixelShader.h"
+#include "D3D9TypedShader.h"
 #include "D3D9VertexDeclaration.h"
 #include "D3D9RenderTarget.h"
 #include "D3D9Sprite.h"
@@ -92,20 +91,20 @@ namespace Apoc3D
 				return new D3D9VertexDeclaration(m_device, elements);
 			}
 
-			VertexShader* D3D9ObjectFactory::CreateVertexShader(const ResourceLocation& resLoc)
+			Shader* D3D9ObjectFactory::CreateVertexShader(const ResourceLocation& resLoc)
 			{
 				return new D3D9VertexShader(m_device, resLoc);
 			}
-			PixelShader* D3D9ObjectFactory::CreatePixelShader(const ResourceLocation& resLoc)
+			Shader* D3D9ObjectFactory::CreatePixelShader(const ResourceLocation& resLoc)
 			{
 				return new D3D9PixelShader(m_device, resLoc);
 			}
 
-			VertexShader* D3D9ObjectFactory::CreateVertexShader(const byte* byteCode)
+			Shader* D3D9ObjectFactory::CreateVertexShader(const byte* byteCode)
 			{
 				return new D3D9VertexShader(m_device, byteCode);
 			}
-			PixelShader* D3D9ObjectFactory::CreatePixelShader(const byte* byteCode)
+			Shader* D3D9ObjectFactory::CreatePixelShader(const byte* byteCode)
 			{
 				return new D3D9PixelShader(m_device, byteCode);
 			}

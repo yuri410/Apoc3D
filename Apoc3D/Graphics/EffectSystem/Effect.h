@@ -98,9 +98,9 @@ namespace Apoc3D
 				virtual int begin() = 0;
 				virtual void end() = 0;
 
-				static VertexShader* LoadVertexShader(RenderDevice* rs, const ResourceLocation& vs);
-				static PixelShader* LoadPixelShader(RenderDevice* rs, const ResourceLocation& ps);
-				static void LoadEffect(RenderDevice* rs, const ResourceLocation& rl, VertexShader*& vs, PixelShader*& ps);
+				static Shader* LoadVertexShader(RenderDevice* rs, const ResourceLocation& vs);
+				static Shader* LoadPixelShader(RenderDevice* rs, const ResourceLocation& ps);
+				static void LoadEffect(RenderDevice* rs, const ResourceLocation& rl, Shader*& vs, Shader*& ps);
 
 				bool m_isUnsupported;
 				String m_name;
@@ -195,8 +195,8 @@ namespace Apoc3D
 				void SetMaterialCustomParameter(ResolvedEffectParameter& param, Material* mtrl);
 				void SetSingleCustomParameter(ResolvedEffectParameter& param, CustomEffectParameterType type, const void* data);
 
-				VertexShader* m_vertexShader;
-				PixelShader* m_pixelShader;
+				Shader* m_vertexShader;
+				Shader* m_pixelShader;
 
 				List<ResolvedEffectParameter> m_parameters;
 
@@ -224,8 +224,8 @@ namespace Apoc3D
 				virtual ~CustomShaderEffect();
 
 			protected:
-				VertexShader* m_vertexShader;
-				PixelShader* m_pixelShader;
+				Shader* m_vertexShader;
+				Shader* m_pixelShader;
 			};
 
 			//class APAPI PostEffect

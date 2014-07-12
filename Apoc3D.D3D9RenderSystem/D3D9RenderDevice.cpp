@@ -26,8 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GraphicsDeviceManager.h"
 #include "D3D9Utils.h"
 
-#include "D3D9PixelShader.h"
-#include "D3D9VertexShader.h"
+#include "D3D9TypedShader.h"
 #include "D3D9RenderTarget.h"
 #include "D3D9Texture.h"
 #include "D3D9RenderStateManager.h"
@@ -285,7 +284,7 @@ namespace Apoc3D
 				return m_cachedRenderTarget[index];
 			}
 
-			void D3D9RenderDevice::BindVertexShader(VertexShader* shader)
+			void D3D9RenderDevice::BindVertexShader(Shader* shader)
 			{
 				if (m_currentVS != shader)
 				{
@@ -302,7 +301,7 @@ namespace Apoc3D
 					}
 				}
 			}
-			void D3D9RenderDevice::BindPixelShader(PixelShader* shader)
+			void D3D9RenderDevice::BindPixelShader(Shader* shader)
 			{
 				if (m_currentPS != shader)
 				{

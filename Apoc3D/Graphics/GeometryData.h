@@ -31,8 +31,6 @@
 
 #include "GraphicsCommon.h"
 
-#include "apoc3d/Core/HashHandleObject.h"
-
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Scene;
 using namespace Apoc3D::Graphics::RenderSystem;
