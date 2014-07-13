@@ -54,8 +54,9 @@ namespace Apoc3D
 		public:
 			virtual ~Stream() { }
 
-			virtual bool IsReadEndianDependent() const = 0;
-			virtual bool IsWriteEndianDependent() const = 0;
+			virtual bool IsReadEndianIndependent() const = 0;
+			virtual bool IsWriteEndianIndependent() const = 0;
+
 			virtual bool CanRead() const = 0;
 			virtual bool CanWrite() const = 0;
 
@@ -97,8 +98,8 @@ namespace Apoc3D
 			FileStream(const String& filename);
 			virtual ~FileStream();
 
-			virtual bool IsReadEndianDependent() const { return true; }
-			virtual bool IsWriteEndianDependent() const { return false; }
+			virtual bool IsReadEndianIndependent() const { return true; }
+			virtual bool IsWriteEndianIndependent() const { return true; }
 
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return false; }
@@ -129,8 +130,8 @@ namespace Apoc3D
 			FileOutStream(const String& filename);
 			virtual ~FileOutStream();
 
-			virtual bool IsReadEndianDependent() const { return false; }
-			virtual bool IsWriteEndianDependent() const { return true; }
+			virtual bool IsReadEndianIndependent() const { return true; }
+			virtual bool IsWriteEndianIndependent() const { return true; }
 
 			virtual bool CanRead() const { return false; }
 			virtual bool CanWrite() const { return true; }
@@ -160,8 +161,8 @@ namespace Apoc3D
 		public:
 			char* getInternalPointer() const { return m_data; }
 
-			virtual bool IsReadEndianDependent() const { return false; }
-			virtual bool IsWriteEndianDependent() const { return false; }
+			virtual bool IsReadEndianIndependent() const { return false; }
+			virtual bool IsWriteEndianIndependent() const { return false; }
 
 			MemoryStream(char* data, int64 length)
 				: m_data(data), m_length(length), m_position(0)
@@ -232,10 +233,8 @@ namespace Apoc3D
 		class APAPI VirtualStream : public Stream
 		{
 		public:
-
-			virtual bool IsReadEndianDependent() const { return m_baseStream->IsReadEndianDependent(); }
-			virtual bool IsWriteEndianDependent() const { return m_baseStream->IsWriteEndianDependent(); }
-
+			virtual bool IsReadEndianIndependent() const { return m_baseStream->IsReadEndianIndependent(); }
+			virtual bool IsWriteEndianIndependent() const { return m_baseStream->IsWriteEndianIndependent(); }
 
 			Stream* getBaseStream() const { return m_baseStream; }
 			bool isOutput() const { return m_isOutput; }
@@ -355,8 +354,8 @@ namespace Apoc3D
 		public:
 			char* getPointer() const { return m_data.getInternalPointer(); }
 
-			virtual bool IsReadEndianDependent() const { return false; }
-			virtual bool IsWriteEndianDependent() const { return false; }
+			virtual bool IsReadEndianIndependent() const { return false; }
+			virtual bool IsWriteEndianIndependent() const { return false; }
 
 			MemoryOutStream(int64 preserved)
 				: m_length(0), m_position(0), m_data((int32)preserved)
@@ -457,7 +456,7 @@ namespace Apoc3D
 			{
 			}
 
-			bool IsReadEndianDependent() const { return m_baseStream->IsReadEndianDependent(); }
+			bool IsReadEndianIndependent() const { return m_baseStream->IsReadEndianIndependent(); }
 			int32 getLength() const { return static_cast<int32>(m_baseStream->getLength()); }
 
 			int32 Read(char* dest, int32 count)

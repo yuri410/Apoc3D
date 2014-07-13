@@ -109,7 +109,7 @@ namespace Apoc3D
 			inline void FillBuffer(int32 len);
 			NoInline static void throwEndofStreamException();
 
-			bool m_isEndianDependent;
+			bool m_isEndianIndependent;
 			bool m_shouldDeleteStream;
 
 			Stream* m_baseStream;

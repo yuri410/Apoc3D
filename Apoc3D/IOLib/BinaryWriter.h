@@ -95,7 +95,7 @@ namespace Apoc3D
 			Stream* getBaseStream() const { return m_baseStream; }
 
 		private:
-			bool m_endianDependent;
+			bool m_endianIndependent;
 			bool m_shouldDeleteStream;
 
 			Stream* m_baseStream;

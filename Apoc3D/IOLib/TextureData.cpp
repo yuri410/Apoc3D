@@ -273,7 +273,7 @@ namespace Apoc3D
 			BinaryWriter* bw = &_bw;
 			bw->WriteInt32(FileID1);
 
-			TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianDependent());
+			TaggedDataWriter* data = new TaggedDataWriter(strm->IsWriteEndianIndependent());
 
 			data->AddEntryInt32(Tag_Type, (int32)Type);
 			data->AddEntryInt32(Tag_Format, (int32)Format);
@@ -288,7 +288,7 @@ namespace Apoc3D
 				levelName.append(temp);
 
 				BinaryWriter* bw2 = data->AddEntry(levelName);
-				TaggedDataWriter* data2 = new TaggedDataWriter(strm->IsWriteEndianDependent());
+				TaggedDataWriter* data2 = new TaggedDataWriter(strm->IsWriteEndianIndependent());
 				Levels[i].SaveData(data2, Flags);
 
 				bw2->WriteTaggedDataBlock(data2);

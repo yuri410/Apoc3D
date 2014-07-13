@@ -56,7 +56,7 @@ namespace Apoc3D
 			m_initialPosition = strm->getPosition();
 
 			m_sizeInBytes = (uint32)strm->getLength();
-			m_endianDependent = strm->IsReadEndianDependent();
+			m_endianIndependent = strm->IsReadEndianIndependent();
 
 			BinaryReader* br = new BinaryReader(new VirtualStream(strm, 0, strm->getLength()));
 
@@ -305,15 +305,15 @@ namespace Apoc3D
 		void TaggedDataReader::_GetEntrySingle(const Entry* e, float& val) { FillBuffer(*e, sizeof(float)); val = cr32_le(m_buffer); }
 		void TaggedDataReader::_GetEntryDouble(const Entry* e, double& val) { FillBuffer(*e, sizeof(double)); val = cr64_le(m_buffer); }
 #else
-		void TaggedDataReader::_GetEntryInt64(const Entry* e, int64& val) { FillBuffer(*e, sizeof(int64)); val = m_endianDependent ? ci64_dep(m_buffer) : ci64_le(m_buffer); }
-		void TaggedDataReader::_GetEntryUInt64(const Entry* e, uint64& val) { FillBuffer(*e, sizeof(uint64)); val = m_endianDependent ? cui64_dep(m_buffer) : cui64_le(m_buffer); }
-		void TaggedDataReader::_GetEntryInt32(const Entry* e, int32& val) { FillBuffer(*e, sizeof(int32)); val = m_endianDependent ? ci32_dep(m_buffer) : ci32_le(m_buffer); }
-		void TaggedDataReader::_GetEntryUInt32(const Entry* e, uint32& val) { FillBuffer(*e, sizeof(uint32)); val = m_endianDependent ? cui32_dep(m_buffer) : cui32_le(m_buffer);}
-		void TaggedDataReader::_GetEntryInt16(const Entry* e, int16& val) { FillBuffer(*e, sizeof(int16)); val = m_endianDependent ? ci16_dep(m_buffer) : ci16_le(m_buffer); }
-		void TaggedDataReader::_GetEntryUInt16(const Entry* e, uint16& val) { FillBuffer(*e, sizeof(int16)); val = m_endianDependent ? ci16_dep(m_buffer) : ci16_le(m_buffer); }
+		void TaggedDataReader::_GetEntryInt64(const Entry* e, int64& val) { FillBuffer(*e, sizeof(int64)); val = !m_endianIndependent ? ci64_dep(m_buffer) : ci64_le(m_buffer); }
+		void TaggedDataReader::_GetEntryUInt64(const Entry* e, uint64& val) { FillBuffer(*e, sizeof(uint64)); val = !m_endianIndependent ? cui64_dep(m_buffer) : cui64_le(m_buffer); }
+		void TaggedDataReader::_GetEntryInt32(const Entry* e, int32& val) { FillBuffer(*e, sizeof(int32)); val = !m_endianIndependent ? ci32_dep(m_buffer) : ci32_le(m_buffer); }
+		void TaggedDataReader::_GetEntryUInt32(const Entry* e, uint32& val) { FillBuffer(*e, sizeof(uint32)); val = !m_endianIndependent ? cui32_dep(m_buffer) : cui32_le(m_buffer);}
+		void TaggedDataReader::_GetEntryInt16(const Entry* e, int16& val) { FillBuffer(*e, sizeof(int16)); val = !m_endianIndependent ? ci16_dep(m_buffer) : ci16_le(m_buffer); }
+		void TaggedDataReader::_GetEntryUInt16(const Entry* e, uint16& val) { FillBuffer(*e, sizeof(int16)); val = !m_endianIndependent ? ci16_dep(m_buffer) : ci16_le(m_buffer); }
 		void TaggedDataReader::_GetEntryBool(const Entry* e, bool& val) { FillBuffer(*e, sizeof(bool)); val = !!m_buffer[0]; }
-		void TaggedDataReader::_GetEntrySingle(const Entry* e, float& val) { FillBuffer(*e, sizeof(float)); val = m_endianDependent ? cr32_dep(m_buffer) : cr32_le(m_buffer); }
-		void TaggedDataReader::_GetEntryDouble(const Entry* e, double& val) { FillBuffer(*e, sizeof(double)); val = m_endianDependent ? cr64_dep(m_buffer) : cr64_le(m_buffer); }
+		void TaggedDataReader::_GetEntrySingle(const Entry* e, float& val) { FillBuffer(*e, sizeof(float)); val = !m_endianIndependent ? cr32_dep(m_buffer) : cr32_le(m_buffer); }
+		void TaggedDataReader::_GetEntryDouble(const Entry* e, double& val) { FillBuffer(*e, sizeof(double)); val = !m_endianIndependent ? cr64_dep(m_buffer) : cr64_le(m_buffer); }
 #endif
 		void TaggedDataReader::_GetEntryBool(const Entry* ent, bool* val, int32 len)
 		{
@@ -335,7 +335,7 @@ namespace Apoc3D
 			const int32 Chunk = 4;
 			m_stream->setPosition(ent->Offset);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				while (len>=Chunk)
 				{
@@ -370,7 +370,7 @@ namespace Apoc3D
 			const int32 Chunk = 4;
 			m_stream->setPosition(ent->Offset);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				while (len>=Chunk)
 				{
@@ -405,7 +405,7 @@ namespace Apoc3D
 			const int32 Chunk = 8;
 			m_stream->setPosition(ent->Offset);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				while (len>=Chunk)
 				{
@@ -440,7 +440,7 @@ namespace Apoc3D
 			const int32 Chunk = 8;
 			m_stream->setPosition(ent->Offset);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				while (len>=Chunk)
 				{
@@ -475,7 +475,7 @@ namespace Apoc3D
 			const int32 Chunk = 16;
 			m_stream->setPosition(ent->Offset);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				while (len>=Chunk)
 				{
@@ -510,7 +510,7 @@ namespace Apoc3D
 			const int32 Chunk = 16;
 			m_stream->setPosition(ent->Offset);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				while (len>=Chunk)
 				{
@@ -545,7 +545,7 @@ namespace Apoc3D
 			const int32 Chunk = 8;
 			m_stream->setPosition(ent->Offset);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				while (len>=Chunk)
 				{
@@ -580,7 +580,7 @@ namespace Apoc3D
 			const int32 Chunk = 4;
 			m_stream->setPosition(ent->Offset);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				while (len>=Chunk)
 				{
@@ -615,7 +615,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*ent, sizeof(float)*2);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				vec.X = cr32_dep(m_buffer);
 				vec.Y = cr32_dep(m_buffer + sizeof(float));
@@ -631,7 +631,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*ent, sizeof(float)*3);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				vec.X = cr32_dep(m_buffer);
 				vec.Y = cr32_dep(m_buffer + sizeof(float));
@@ -649,7 +649,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*ent, sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				vec.X = cr32_dep(m_buffer);
 				vec.Y = cr32_dep(m_buffer + sizeof(float));
@@ -669,7 +669,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*ent, sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				clr.Red = cr32_dep(m_buffer);
 				clr.Green = cr32_dep(m_buffer + sizeof(float));
@@ -688,7 +688,7 @@ namespace Apoc3D
 		void TaggedDataReader::_GetEntryMatrix(const Entry* ent, Matrix& mat)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				FillBuffer(*ent, sizeof(float)*8);
 				mat.M11 = cr32_dep(m_buffer);
@@ -748,7 +748,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*ent, sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				plane.X = cr32_dep(m_buffer);
 				plane.Y = cr32_dep(m_buffer + sizeof(float));
@@ -768,7 +768,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*e, sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				quat.X = cr32_dep(m_buffer);
 				quat.Y = cr32_dep(m_buffer + sizeof(float));
@@ -788,7 +788,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*e, sizeof(int32)*4);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				rect.X = ci32_dep(m_buffer);
 				rect.Y = ci32_dep(m_buffer + sizeof(int32));
@@ -808,7 +808,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*e, sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				rect.X = cr32_dep(m_buffer);
 				rect.Y = cr32_dep(m_buffer + sizeof(float));
@@ -828,7 +828,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*e, sizeof(int32)*2);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				pt.X = ci32_dep(m_buffer);
 				pt.Y = ci32_dep(m_buffer + sizeof(int32));
@@ -844,7 +844,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*e, sizeof(float)*2);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				pt.X = cr32_dep(m_buffer);
 				pt.Y = cr32_dep(m_buffer + sizeof(float));
@@ -860,7 +860,7 @@ namespace Apoc3D
 		{
 			FillBuffer(*e, sizeof(int32)*2);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				sz.Width = ci32_dep(m_buffer);
 				sz.Height = ci32_dep(m_buffer + sizeof(int32));
@@ -875,7 +875,7 @@ namespace Apoc3D
 		void TaggedDataReader::_GetEntryBoundingBox(const Entry* e, BoundingBox& bb)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				FillBuffer(*e, sizeof(float)*6);
 				bb.Minimum.X = cr32_dep(m_buffer);
@@ -902,7 +902,7 @@ namespace Apoc3D
 		void TaggedDataReader::_GetEntryBoundingSphere(const Entry* e, BoundingSphere& bs)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				FillBuffer(*e, sizeof(float)*4);
 				bs.Center.X = cr32_dep(m_buffer);
@@ -923,7 +923,7 @@ namespace Apoc3D
 		void TaggedDataReader::_GetEntryRay(const Entry* e, Ray& r)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				FillBuffer(*e, sizeof(float)*6);
 				r.Position.X = cr32_dep(m_buffer);
@@ -950,7 +950,7 @@ namespace Apoc3D
 		void TaggedDataReader::_GetEntryViewport(const Entry* e, Viewport& vp)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				FillBuffer(*e, sizeof(int32)*4);
 				vp.X = ci32_dep(m_buffer);
@@ -981,7 +981,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryVector2(ent, value[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1005,7 +1005,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryVector3(ent, value[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1033,7 +1033,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryVector4(ent, value[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1063,7 +1063,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryMatrix(ent, value[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1123,7 +1123,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryColor4(ent, value[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1164,7 +1164,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryPlane(ent, plane[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1194,7 +1194,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryQuaternion(ent, quat[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1224,7 +1224,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryRectangle(ent, rect[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1254,7 +1254,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryRectangleF(ent, rect[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1284,7 +1284,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryPoint(ent, pt[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1310,7 +1310,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryPointF(ent, pt[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1336,7 +1336,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryMathSize(ent, sz[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1362,7 +1362,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryBoundingBox(ent, bb[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1400,7 +1400,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryBoundingSphere(ent, bs[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1430,7 +1430,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryRay(ent, r[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1466,7 +1466,7 @@ namespace Apoc3D
 		{
 			if (len>0) _GetEntryViewport(ent, vp[0]);
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				for (int i=1;i<len;i++)
 				{
@@ -1515,7 +1515,7 @@ namespace Apoc3D
 		/************************************************************************/
 		
 		TaggedDataWriter::TaggedDataWriter(bool isEndianIndependent)
-			: m_endianDependent(!isEndianIndependent)
+			: m_endianIndependent(isEndianIndependent)
 		{ }
 
 		TaggedDataWriter::~TaggedDataWriter()
@@ -1772,7 +1772,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataInt64(const Entry& ent, int64 value)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 				i64tomb_dep(value, m_buffer);
 			else
 #endif
@@ -1783,7 +1783,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataUInt64(const Entry& ent, uint64 value)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 				ui64tomb_dep(value, m_buffer);
 			else
 #endif
@@ -1794,7 +1794,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataInt32(const Entry& ent, int32 value)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 				i32tomb_dep(value, m_buffer);
 			else
 #endif
@@ -1805,7 +1805,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataUInt32(const Entry& ent, uint32 value)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 				ui32tomb_dep(value, m_buffer);
 			else
 #endif
@@ -1816,7 +1816,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataInt16(const Entry& ent, int16 value)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 				i16tomb_dep(value, m_buffer);
 			else
 #endif
@@ -1827,7 +1827,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataUInt16(const Entry& ent, uint16 value)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 				ui16tomb_dep(value, m_buffer);
 			else
 #endif
@@ -1838,7 +1838,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataSingle(const Entry& ent, float value)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 				r32tomb_dep(value, m_buffer);
 			else
 #endif
@@ -1849,7 +1849,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataDouble(const Entry& ent, double value)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 				r64tomb_dep(value, m_buffer);
 			else
 #endif
@@ -1880,7 +1880,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataVector2(const Entry& ent, const Vector2& vec)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(vec.X, m_buffer);
 				r32tomb_dep(vec.Y, m_buffer + sizeof(float));
@@ -1896,7 +1896,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataVector3(const Entry& ent, const Vector3& vec)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(vec.X, m_buffer);
 				r32tomb_dep(vec.Y, m_buffer + sizeof(float));
@@ -1914,7 +1914,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataVector4(const Entry& ent, const Vector4& vec)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(vec.X, m_buffer);
 				r32tomb_dep(vec.Y, m_buffer + sizeof(float));
@@ -1934,7 +1934,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataMatrix(const Entry& ent, const Matrix& mat)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(mat.M11, m_buffer);
 				r32tomb_dep(mat.M12, m_buffer + sizeof(float));
@@ -1983,7 +1983,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataColor4(const Entry& ent, const Color4& clr)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(clr.Red, m_buffer);
 				r32tomb_dep(clr.Green, m_buffer + sizeof(float));
@@ -2013,7 +2013,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataPlane(const Entry& ent, const Plane& plane)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(plane.X, m_buffer);
 				r32tomb_dep(plane.Y, m_buffer + sizeof(float));
@@ -2033,7 +2033,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataQuaternion(const Entry& ent, const Quaternion& quat)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(quat.X, m_buffer);
 				r32tomb_dep(quat.Y, m_buffer + sizeof(float));
@@ -2053,7 +2053,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataRectangle(const Entry& ent, const Rectangle& rect)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				i32tomb_dep(rect.X, m_buffer);
 				i32tomb_dep(rect.Y, m_buffer + sizeof(int32));
@@ -2073,7 +2073,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataRectangleF(const Entry& ent, const RectangleF& rect)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(rect.X, m_buffer);
 				r32tomb_dep(rect.Y, m_buffer + sizeof(float));
@@ -2093,7 +2093,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataPoint(const Entry& ent, const Point& pt)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				i32tomb_dep(pt.X, m_buffer);
 				i32tomb_dep(pt.Y, m_buffer + sizeof(int32));
@@ -2109,7 +2109,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataPointF(const Entry& ent, const PointF& pt)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(pt.X, m_buffer);
 				r32tomb_dep(pt.Y, m_buffer + sizeof(float));
@@ -2125,7 +2125,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataMathSize(const Entry& ent, const Apoc3D::Math::Size& sz)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				i32tomb_dep(sz.Width, m_buffer);
 				i32tomb_dep(sz.Height, m_buffer + sizeof(int32));
@@ -2141,7 +2141,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataBoundingBox(const Entry& ent, const BoundingBox& bb)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(bb.Minimum.X, m_buffer);
 				r32tomb_dep(bb.Minimum.Y, m_buffer + sizeof(float));
@@ -2168,7 +2168,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataBoundingSphere(const Entry& ent, const BoundingSphere& bs)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(bs.Center.X, m_buffer);
 				r32tomb_dep(bs.Center.Y, m_buffer + sizeof(float));
@@ -2188,7 +2188,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataRay(const Entry& ent, const Ray& r)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				r32tomb_dep(r.Position.X, m_buffer);
 				r32tomb_dep(r.Position.Y, m_buffer + sizeof(float));
@@ -2215,7 +2215,7 @@ namespace Apoc3D
 		void TaggedDataWriter::_SetEntryDataViewport(const Entry& ent, const Viewport& vp)
 		{
 #ifdef BIG_ENDIAN
-			if (m_endianDependent)
+			if (!m_endianIndependent)
 			{
 				i32tomb_dep(vp.X, m_buffer);
 				i32tomb_dep(vp.Y, m_buffer + sizeof(int32));

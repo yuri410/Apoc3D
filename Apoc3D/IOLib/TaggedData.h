@@ -246,7 +246,7 @@ namespace Apoc3D
 			 */
 			void FillTagList(List<String>& nameTags) const;
 
-			bool isEndianIndependent() const { return !m_endianDependent; }
+			bool isEndianIndependent() const { return !m_endianIndependent; }
 			Stream* getBaseStream() const { return m_stream; }
 		private:
 			struct Entry
@@ -329,7 +329,7 @@ namespace Apoc3D
 
 			NoInline static void throwKeynotFoundException(const String& key);
 
-			bool m_endianDependent;
+			bool m_endianIndependent;
 			int m_sectCount;
 			SectionTable m_positions;
 			Stream* m_stream;
@@ -532,7 +532,7 @@ namespace Apoc3D
 
 			bool Contains(const String& name) const;
 
-			bool isEndianIndependent() const { return !m_endianDependent; }
+			bool isEndianIndependent() const { return !m_endianIndependent; }
 
 		private:
 			struct Entry
@@ -611,7 +611,7 @@ namespace Apoc3D
 			void _SetEntryDataViewport(const Entry& ent, const Viewport* vp, int32 count);
 
 
-			bool m_endianDependent;
+			bool m_endianIndependent;
 			SectionTable m_positions;
 			char m_buffer[32];
 

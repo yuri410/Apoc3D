@@ -45,13 +45,13 @@ namespace Apoc3D
 		BinaryReader::BinaryReader(Stream* baseStream)
 			: m_baseStream(baseStream), m_shouldDeleteStream(true)
 		{
-			m_isEndianDependent = baseStream->IsReadEndianDependent();
+			m_isEndianIndependent = baseStream->IsReadEndianIndependent();
 		}
 		BinaryReader::BinaryReader(const ResourceLocation& rsloc)
 			: m_shouldDeleteStream(true)
 		{
 			m_baseStream = rsloc.GetReadStream();
-			m_isEndianDependent = m_baseStream->IsReadEndianDependent();
+			m_isEndianIndependent = m_baseStream->IsReadEndianIndependent();
 		}
 		BinaryReader::~BinaryReader()
 		{
@@ -78,7 +78,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(double));
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				return cr64_dep(m_buffer);
 			}
@@ -89,7 +89,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float));
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				return cr32_dep(m_buffer);
 			}
@@ -137,7 +137,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(int16));
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				return ci16_dep(m_buffer);
 			}
@@ -148,7 +148,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(int32));
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				return ci32_dep(m_buffer);
 			}
@@ -159,7 +159,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(int64));
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				return ci64_dep(m_buffer);
 			}
@@ -171,7 +171,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(uint16));
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				return cui16_dep(m_buffer);
 			}
@@ -182,7 +182,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(uint32));
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				return cui32_dep(m_buffer);
 			}
@@ -193,7 +193,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(uint64));
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				return cui64_dep(m_buffer);
 			}
@@ -220,7 +220,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*8);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				matrix.M11 = cr32_dep(&m_buffer[0]);
 				matrix.M12 = cr32_dep(&m_buffer[sizeof(float)]);
@@ -246,7 +246,7 @@ namespace Apoc3D
 			
 			FillBuffer(sizeof(float)*8);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				matrix.M31 = cr32_dep(&m_buffer[0]);
 				matrix.M32 = cr32_dep(&m_buffer[sizeof(float)]);
@@ -276,7 +276,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*2);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				vec.X = cr32_dep(&m_buffer[0]);
 				vec.Y = cr32_dep(&m_buffer[sizeof(float)]);
@@ -292,7 +292,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*3);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				vec.X = cr32_dep(&m_buffer[0]);
 				vec.Y = cr32_dep(&m_buffer[sizeof(float)]);
@@ -311,7 +311,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				vec.X = cr32_dep(&m_buffer[0]);
 				vec.Y = cr32_dep(&m_buffer[sizeof(float)]);
@@ -332,7 +332,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				color.Red = cr32_dep(&m_buffer[0]);
 				color.Green = cr32_dep(&m_buffer[sizeof(float)]);
@@ -352,7 +352,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				plane.X = cr32_dep(&m_buffer[0]);
 				plane.Y = cr32_dep(&m_buffer[sizeof(float)]);
@@ -372,7 +372,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				quat.X = cr32_dep(&m_buffer[0]);
 				quat.Y = cr32_dep(&m_buffer[sizeof(float)]);
@@ -392,7 +392,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(int32)*2);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				point.X = ci32_dep(&m_buffer[0]);
 				point.Y = ci32_dep(&m_buffer[sizeof(int32)]);
@@ -408,7 +408,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(int32)*2);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				size.Width = ci32_dep(&m_buffer[0]);
 				size.Height = ci32_dep(&m_buffer[sizeof(int32)]);
@@ -424,7 +424,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(int32)*4);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				rect.X = ci32_dep(&m_buffer[0]);
 				rect.Y = ci32_dep(&m_buffer[sizeof(int32)]);
@@ -444,7 +444,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				rect.X = cr32_dep(&m_buffer[0]);
 				rect.Y = cr32_dep(&m_buffer[sizeof(float)]);
@@ -464,7 +464,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*6);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				float x = cr32_dep(&m_buffer[0]);
 				float y = cr32_dep(&m_buffer[sizeof(float)]);
@@ -494,7 +494,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*6);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				float x = cr32_dep(&m_buffer[0]);
 				float y = cr32_dep(&m_buffer[sizeof(float)]);
@@ -522,7 +522,7 @@ namespace Apoc3D
 		{
 			FillBuffer(sizeof(float)*4);
 #ifdef BIG_ENDIAN
-			if (m_isEndianDependent)
+			if (!m_isEndianIndependent)
 			{
 				float x = cr32_dep(&m_buffer[0]);
 				float y = cr32_dep(&m_buffer[sizeof(float)]);
