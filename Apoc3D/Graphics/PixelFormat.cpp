@@ -2,6 +2,9 @@
 #include "PixelFormat.h"
 #include "LockData.h"
 #include "apoc3d/Math/Half.h"
+#include "apoc3d/Math/MathCommon.h"
+#include "apoc3d/Math/Color.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/EnumConverterHelper.h"
 
 using namespace Apoc3D::Math;
@@ -10,16 +13,14 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		class PixelFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>
+		struct PixelFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>
 		{
-		public:
 			PixelFormatEnumHelper();
-		};
-		class DepthFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<DepthFormat>
+		} static PixelFormatEnumConverter;
+		struct DepthFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<DepthFormat>
 		{
-		public:
 			DepthFormatEnumHelper();
-		};
+		} static DepthFormatEnumConveter;
 
 		void createSizeTable(int st[])
 		{
@@ -77,42 +78,88 @@ namespace Apoc3D
             st[(int)DEPFMT_Depth32Single] = 4;		
 		}
 
-
-		PixelFormatUtils PixelFormatUtils::initializer;
-
-		PixelFormatUtils::PixelFormatUtils()
+		struct SizeTable
 		{
-			createSizeTable(sizeTable);
-			createDepsizeTable(depSizeTable);
+			int sizeTable[FMT_Count];
+			int depSizeTable[DEPFMT_Count];
 
+			SizeTable()
+			{
+				createSizeTable(sizeTable);
+				createDepsizeTable(depSizeTable);
+			}
 
-			m_pConvHelper = new PixelFormatEnumHelper();
-			m_dConvHelper = new DepthFormatEnumHelper();
-		}
+		} static FormatSizeTable;
+		
+		PixelFormat PixelFormatUtils::ConvertFormat(const String& fmt) { return PixelFormatEnumConverter.Parse(fmt); }
+		String PixelFormatUtils::ToString(PixelFormat format) { return PixelFormatEnumConverter.ToString(format); }
 
-		PixelFormat PixelFormatUtils::ConvertFormat(const String& fmt)
-		{
-			return initializer.m_pConvHelper->Parse(fmt);
-		}
-		String PixelFormatUtils::ToString(PixelFormat format)
-		{
-			return initializer.m_pConvHelper->ToString(format);
-		}
-
-		DepthFormat PixelFormatUtils::ConvertDepthFormat(const String& fmt)
-		{
-			return initializer.m_dConvHelper->Parse(fmt);
-		}
-		String PixelFormatUtils::ToString(DepthFormat format)
-		{
-			return initializer.m_dConvHelper->ToString(format);
-		}
-
+		DepthFormat PixelFormatUtils::ConvertDepthFormat(const String& fmt) { return DepthFormatEnumConveter.Parse(fmt); }
+		String PixelFormatUtils::ToString(DepthFormat format) { return DepthFormatEnumConveter.ToString(format); }
 
 		void PixelFormatUtils::DumpPixelFormatName(Apoc3D::Collections::List<String>& names)
 		{
-			initializer.m_pConvHelper->DumpNames(names);
+			PixelFormatEnumConverter.DumpNames(names);
 		}
+
+		bool PixelFormatUtils::IsCompressed(PixelFormat format)
+		{
+			return (format == FMT_DXT1 ||
+				format == FMT_DXT2 ||
+				format == FMT_DXT3 ||
+				format == FMT_DXT4 ||
+				format == FMT_DXT5);
+		}
+		int PixelFormatUtils::GetMemorySize(int width, int height, DepthFormat format) 
+		{
+			int bytepp = FormatSizeTable.depSizeTable[(int)format];
+			if (bytepp == -1)
+			{
+				throw AP_EXCEPTION(EX_Default, L"Invalid pixel format");
+			}
+			return width * height * bytepp;
+		}
+
+		int PixelFormatUtils::GetMemorySize(int width, int height, int depth, PixelFormat format)
+		{
+			if (format == FMT_DXT1)				
+			{
+				return ((width + 3) / 4) * ((height + 3) / 4) * 8;
+			}
+
+			if (format == FMT_DXT2 ||
+				format == FMT_DXT3 ||
+				format == FMT_DXT4 ||
+				format == FMT_DXT5)
+			{
+				return ((width + 3) / 4) * ((height + 3) / 4) * 16;
+			}
+			int bytepp = FormatSizeTable.sizeTable[(int)format];
+			if (bytepp == -1)
+			{
+				throw AP_EXCEPTION(EX_Default, L"Invalid pixel format");
+			}
+			return width * height * depth * bytepp;
+		}
+		int PixelFormatUtils::GetBPP(PixelFormat fmt) { return FormatSizeTable.sizeTable[(int)fmt]; }
+		int PixelFormatUtils::GetBPP(DepthFormat fmt) { return FormatSizeTable.depSizeTable[(int)fmt]; }
+		int PixelFormatUtils::GetStencilBitDepth(DepthFormat fmt)
+		{
+			switch (fmt)
+			{
+			case DEPFMT_Depth15Stencil1:
+				return 1;
+			case DEPFMT_Depth24Stencil4:
+				return 4;
+			case DEPFMT_Depth24Stencil8:
+				return 8;
+			case DEPFMT_Depth24Stencil8Single:
+				return 8;
+
+			}
+			return 0;
+		}
+
 
 		PixelFormatEnumHelper::PixelFormatEnumHelper()
 			: Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>(FMT_Count)
@@ -187,21 +234,524 @@ namespace Apoc3D
 		}
 
 
-
-
-
-#define FMTCONVERTERID(from,to) (((from)<<16)|(to))
-
-		template <class U> struct DataBoxConverter 
+#define PACKCONVERTERID(srcFmtId, dstFmtId)  ((srcFmtId << 16) | dstFmtId)
+		template <typename T, typename U, uint32 srcFmtId, uint32 dstFmtId> 
+		struct PixelConverter 
 		{
-			static const int ID = U::ID;
-			static void conversion(const DataBox& src, const DataBox& dst)
+			static const uint32 ID = PACKCONVERTERID(srcFmtId, dstFmtId);
+			typedef T SrcType;
+			typedef U DstType;
+		};
+
+
+
+		struct Col3b 
+		{
+			Col3b(uint a, uint b, uint c)
+				: x((byte)a), y((byte)b), z((byte)c) { }
+			byte x,y,z;
+		};
+
+		struct ColArgb4f
+		{
+			ColArgb4f(float _a, float _r, float _g, float _b)
+				: a(_a), r(_r), g(_g), b(_b) { }
+			float a,r,g,b;
+		};
+		
+		struct ColArgb4h
+		{
+			ColArgb4h(uint16 _a, uint16 _r, uint16 _g, uint16 _b)
+				: a(_a), r(_r), g(_g), b(_b) { }
+			uint16 a,r,g,b;
+		};
+
+
+		struct A8R8G8B8toA8B8G8R8 : public PixelConverter<uint, uint, FMT_A8R8G8B8, FMT_A8B8G8R8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x000000FF)<<16)|(inp&0xFF00FF00)|((inp&0x00FF0000)>>16);
+			}
+		};
+
+		struct A8R8G8B8toB8G8R8A8 : public PixelConverter<uint, uint, FMT_A8R8G8B8, FMT_B8G8R8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x000000FF)<<24)|((inp&0x0000FF00)<<8)|((inp&0x00FF0000)>>8)|((inp&0xFF000000)>>24);
+			}
+		};
+		struct A8R8G8B8toR8G8B8A8 : public PixelConverter<uint, uint, FMT_A8R8G8B8, FMT_R8G8B8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x00FFFFFF)<<8)|((inp&0xFF000000)>>24);
+			}
+		};
+
+		struct A8B8G8R8toA8R8G8B8 : public PixelConverter<uint, uint, FMT_A8B8G8R8, FMT_A8R8G8B8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x000000FF)<<16)|(inp&0xFF00FF00)|((inp&0x00FF0000)>>16);
+			}
+		};
+
+		struct A8B8G8R8toB8G8R8A8 : public PixelConverter<uint, uint, FMT_A8B8G8R8, FMT_B8G8R8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x00FFFFFF)<<8)|((inp&0xFF000000)>>24);
+			}
+		};
+
+		struct A8B8G8R8toR8G8B8A8 : public PixelConverter<uint, uint, FMT_A8B8G8R8, FMT_R8G8B8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x000000FF)<<24)|((inp&0x0000FF00)<<8)|((inp&0x00FF0000)>>8)|((inp&0xFF000000)>>24);
+			}
+		};
+
+
+		struct B8G8R8A8toA8R8G8B8 : public PixelConverter<uint, uint, FMT_B8G8R8A8, FMT_A8R8G8B8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x000000FF)<<24)|((inp&0x0000FF00)<<8)|((inp&0x00FF0000)>>8)|((inp&0xFF000000)>>24);
+			}
+		};
+
+		struct B8G8R8A8toA8B8G8R8
+			: public PixelConverter<uint, uint, FMT_B8G8R8A8, FMT_A8B8G8R8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x000000FF)<<24)|((inp&0xFFFFFF00)>>8);
+			}
+		};
+
+		struct B8G8R8A8toR8G8B8A8 : public PixelConverter<uint, uint, FMT_B8G8R8A8, FMT_R8G8B8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x0000FF00)<<16)|(inp&0x00FF00FF)|((inp&0xFF000000)>>16);
+			}
+		};
+
+		struct R8G8B8A8toA8R8G8B8 : public PixelConverter<uint, uint, FMT_R8G8B8A8, FMT_A8R8G8B8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x000000FF)<<24)|((inp&0xFFFFFF00)>>8);
+			}
+		};
+
+
+		struct R8G8B8A8toA8B8G8R8 : public PixelConverter<uint, uint, FMT_R8G8B8A8, FMT_A8B8G8R8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x000000FF)<<24)|((inp&0x0000FF00)<<8)|((inp&0x00FF0000)>>8)|((inp&0xFF000000)>>24);
+			}
+		};
+
+		struct R8G8B8A8toB8G8R8A8 : public PixelConverter<uint, uint, FMT_R8G8B8A8, FMT_B8G8R8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x0000FF00)<<16)|(inp&0x00FF00FF)|((inp&0xFF000000)>>16);
+			}
+		};
+
+
+		struct A8B8G8R8toL8 : public PixelConverter<uint, byte, FMT_A8B8G8R8, FMT_Luminance8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return (byte)(inp&0x000000FF);
+			}
+		};
+
+		struct L8toA8B8G8R8 : public PixelConverter<byte, uint, FMT_Luminance8, FMT_A8B8G8R8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return 0xFF000000|(((unsigned int)inp)<<0)|(((unsigned int)inp)<<8)|(((unsigned int)inp)<<16);
+			}
+		};
+
+		struct A8R8G8B8toL8 : public PixelConverter<uint, byte, FMT_A8R8G8B8, FMT_Luminance8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return (byte)((inp&0x00FF0000)>>16);
+			}
+		};
+
+		struct L8toA8R8G8B8 : public PixelConverter<byte, uint, FMT_Luminance8, FMT_A8R8G8B8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return 0xFF000000|(((unsigned int)inp)<<0)|(((unsigned int)inp)<<8)|(((unsigned int)inp)<<16);
+			}
+		};
+
+
+		struct B8G8R8A8toL8 : public PixelConverter<uint, byte, FMT_B8G8R8A8, FMT_Luminance8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return (byte)((inp&0x0000FF00)>>8);
+			}
+		};
+
+		struct L8toB8G8R8A8 : public PixelConverter<byte, uint, FMT_Luminance8, FMT_B8G8R8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return 0x000000FF|(((unsigned int)inp)<<8)|(((unsigned int)inp)<<16)|(((unsigned int)inp)<<24);
+			}
+		};
+
+
+		struct L8toL16 : public PixelConverter<byte, uint16, FMT_Luminance8, FMT_Luminance16>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return (uint16)((((unsigned int)inp)<<8)|(((unsigned int)inp)));
+			}
+		};
+
+		struct L16toL8
+			: public PixelConverter<uint16, byte, FMT_Luminance16, FMT_Luminance8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return (byte)(inp>>8);
+			}
+		};
+
+
+		struct R8G8B8toB8G8R8 : public PixelConverter<Col3b, Col3b, FMT_R8G8B8, FMT_B8G8R8>
+		{
+			static DstType ConvertPixel(const SrcType &inp)
+			{
+				return Col3b(inp.z, inp.y, inp.x);
+			}  
+		};
+
+		struct B8G8R8toR8G8B8 : public PixelConverter<Col3b, Col3b, FMT_B8G8R8, FMT_R8G8B8>
+		{
+			static DstType ConvertPixel(const SrcType &inp)
+			{
+				return Col3b(inp.z, inp.y, inp.x);
+			}  
+		};
+
+		// X8Y8Z8 ->  X8<<xshift Y8<<yshift Z8<<zshift A8<<ashift
+		template <uint32 srcFmtId, uint32 dstFmtId, unsigned int xshift, unsigned int yshift, unsigned int zshift, unsigned int ashift>
+		struct Col3btoUint32swizzler
+			: public PixelConverter<Col3b, uint, srcFmtId, dstFmtId>
+		{
+			static uint ConvertPixel(const Col3b &inp)
+			{
+#ifndef BIG_ENDIAN
+				return (0xFF<<ashift) | (((unsigned int)inp.x)<<zshift) | (((unsigned int)inp.y)<<yshift) | (((unsigned int)inp.z)<<xshift);
+#else
+				return (0xFF<<ashift) | (((unsigned int)inp.x)<<xshift) | (((unsigned int)inp.y)<<yshift) | (((unsigned int)inp.z)<<zshift);
+#endif
+			}
+		};
+
+		struct R8G8B8toX8R8G8B8: public Col3btoUint32swizzler<FMT_R8G8B8, FMT_X8R8G8B8, 16, 8, 0, 24> { };
+		struct R8G8B8toA8R8G8B8: public Col3btoUint32swizzler<FMT_R8G8B8, FMT_A8R8G8B8, 16, 8, 0, 24> { };
+		struct B8G8R8toA8R8G8B8: public Col3btoUint32swizzler<FMT_B8G8R8, FMT_A8R8G8B8, 0, 8, 16, 24> { };
+		struct R8G8B8toA8B8G8R8: public Col3btoUint32swizzler<FMT_R8G8B8, FMT_A8B8G8R8, 0, 8, 16, 24> { };
+		struct B8G8R8toA8B8G8R8: public Col3btoUint32swizzler<FMT_B8G8R8, FMT_A8B8G8R8, 16, 8, 0, 24> { };
+		struct R8G8B8toB8G8R8A8: public Col3btoUint32swizzler<FMT_R8G8B8, FMT_B8G8R8A8, 8, 16, 24, 0> { };
+		struct B8G8R8toB8G8R8A8: public Col3btoUint32swizzler<FMT_B8G8R8, FMT_B8G8R8A8, 24, 16, 8, 0> { };
+		
+
+
+		struct A8R8G8B8toR8G8B8 : public PixelConverter<uint, Col3b, FMT_A8R8G8B8, FMT_R8G8B8>
+		{
+			static DstType ConvertPixel(uint inp)
+			{
+				return Col3b((byte)((inp>>16)&0xFF), (byte)((inp>>8)&0xFF), (byte)((inp>>0)&0xFF));
+			}
+		};
+		struct A8R8G8B8toB8G8R8 : public PixelConverter<uint, Col3b, FMT_A8R8G8B8, FMT_B8G8R8>
+		{
+			static DstType ConvertPixel(uint inp)
+			{
+				return Col3b((byte)((inp>>0)&0xFF), (byte)((inp>>8)&0xFF), (byte)((inp>>16)&0xFF));
+			}
+		};
+		struct X8R8G8B8toA8R8G8B8 : public PixelConverter<uint, uint, FMT_X8R8G8B8, FMT_A8R8G8B8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return inp | 0xFF000000;
+			}
+		};
+
+		struct X8R8G8B8toA8B8G8R8 : public PixelConverter<uint, uint, FMT_X8R8G8B8, FMT_A8B8G8R8>
+		{
+			inline static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x0000FF)<<16)|((inp&0xFF0000)>>16)|(inp&0x00FF00)|0xFF000000;
+			}
+		};
+		struct X8R8G8B8toB8G8R8A8 : public PixelConverter <uint, uint, FMT_X8R8G8B8, FMT_B8G8R8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x0000FF)<<24)|((inp&0xFF0000)>>8)|((inp&0x00FF00)<<8)|0x000000FF;
+			}
+		};
+		struct X8R8G8B8toR8G8B8A8 : public PixelConverter<uint, uint, FMT_X8R8G8B8, FMT_R8G8B8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0xFFFFFF)<<8)|0x000000FF;
+			}
+		};
+
+
+		// X8B8G8R8
+		struct X8B8G8R8toA8R8G8B8 : public PixelConverter<uint, uint, FMT_X8B8G8R8, FMT_A8R8G8B8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x0000FF)<<16)|((inp&0xFF0000)>>16)|(inp&0x00FF00)|0xFF000000;
+			}
+		};
+		struct X8B8G8R8toA8B8G8R8 : public PixelConverter<uint, uint, FMT_X8B8G8R8, FMT_A8B8G8R8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return inp | 0xFF000000;
+			}
+		};
+		struct X8B8G8R8toB8G8R8A8 : public PixelConverter<uint, uint, FMT_X8B8G8R8, FMT_B8G8R8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0xFFFFFF)<<8)|0x000000FF;
+			}
+		};
+		struct X8B8G8R8toR8G8B8A8 : public PixelConverter<uint, uint, FMT_X8B8G8R8, FMT_R8G8B8A8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				return ((inp&0x0000FF)<<24)|((inp&0xFF0000)>>8)|((inp&0x00FF00)<<8)|0x000000FF;
+			}
+		};
+		
+
+		/*inline uint16 ch_r32u16(float v)
+		{
+			v = Math::Saturate(v);
+			return static_cast<uint16>(v*65535);
+		}*/
+		inline uint16 ch_r32r16(float v)
+		{
+			return FloatToHalf(v);
+		}
+		inline float ch_r16r32(uint16 v)
+		{
+			return HalfToFloat(v);
+		}
+		inline byte ch_r32u8(float v)
+		{
+			v = Math::Saturate(v);
+			return static_cast<byte>(v*255);
+		}
+
+		/*inline float ch_u16r32(uint16 v)
+		{
+			return v / 65535.0f;
+		}*/
+		inline byte ch_r16u8(uint16 v)
+		{
+			return ch_r32u8(HalfToFloat(v));
+		}
+		inline float ch_u8r32(byte v)
+		{
+			return v / 255.0f;
+		}
+		inline uint16 ch_u8r16(byte v)
+		{
+			return FloatToHalf(v / 255.0f);
+		}
+
+		struct A8R8G8B8toA32B32G32R32F : public PixelConverter<uint, ColArgb4f, FMT_A8R8G8B8, FMT_A32B32G32R32F>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				float a = ch_u8r32(CV_GetColorA(inp));
+				float r = ch_u8r32(CV_GetColorR(inp));
+				float g = ch_u8r32(CV_GetColorG(inp));
+				float b = ch_u8r32(CV_GetColorB(inp));
+
+				return ColArgb4f(a,r,g,b);
+			}
+		};
+
+		struct A32B32G32R32FtoA8R8G8B8 : public PixelConverter<ColArgb4f, uint, FMT_A32B32G32R32F, FMT_A8R8G8B8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				byte a = ch_r32u8(inp.a);
+				byte r = ch_r32u8(inp.r);
+				byte g = ch_r32u8(inp.g);
+				byte b = ch_r32u8(inp.b);
+
+				return CV_PackColor(r,g,b,a);
+			}
+		};
+
+
+		struct A32B32G32R32FtoA16B16G16R16F : public PixelConverter<ColArgb4f, ColArgb4h, FMT_A32B32G32R32F, FMT_A16B16G16R16F>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				uint16 a = ch_r32r16(inp.a);
+				uint16 r = ch_r32r16(inp.r);
+				uint16 g = ch_r32r16(inp.g);
+				uint16 b = ch_r32r16(inp.b);
+
+				return ColArgb4h(a,r,g,b);
+			}
+		};
+
+		struct A16B16G16R16FtoA32B32G32R32F : public PixelConverter<ColArgb4h, ColArgb4f, FMT_A16B16G16R16F, FMT_A32B32G32R32F>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				float a = ch_r16r32(inp.a);
+				float r = ch_r16r32(inp.r);
+				float g = ch_r16r32(inp.g);
+				float b = ch_r16r32(inp.b);
+
+				return ColArgb4f(a,r,g,b);
+			}
+		};
+
+
+		struct A8R8G8B8toA16B16G16R16F : public PixelConverter<uint, ColArgb4h, FMT_A8R8G8B8, FMT_A16B16G16R16F>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				uint16 a = ch_u8r16(CV_GetColorA(inp));
+				uint16 r = ch_u8r16(CV_GetColorR(inp));
+				uint16 g = ch_u8r16(CV_GetColorG(inp));
+				uint16 b = ch_u8r16(CV_GetColorB(inp));
+
+				return ColArgb4h(a,r,g,b);
+			}
+		};
+		struct A16B16G16R16FtoA8R8G8B8 : public PixelConverter<ColArgb4h, uint, FMT_A16B16G16R16F, FMT_A8R8G8B8>
+		{
+			static DstType ConvertPixel(SrcType inp)
+			{
+				byte a = ch_r16u8(inp.a);
+				byte r = ch_r16u8(inp.r);
+				byte g = ch_r16u8(inp.g);
+				byte b = ch_r16u8(inp.b);
+
+				return CV_PackColor(r,g,b,a);
+			}
+		};
+
+
+		struct ConveterHelper
+		{
+			typedef void (*ConversionRoutine)(const DataBox& src, const DataBox& dst);
+			Apoc3D::Collections::FastMap<uint, ConversionRoutine> Converters;
+
+			ConveterHelper()
+				: Converters(25)
+			{
+				Register<A8R8G8B8toA8B8G8R8>();
+				Register<A8R8G8B8toB8G8R8A8>();
+				Register<A8R8G8B8toR8G8B8A8>();
+				Register<A8B8G8R8toA8R8G8B8>();
+				Register<A8B8G8R8toB8G8R8A8>();
+				Register<A8B8G8R8toR8G8B8A8>();
+				Register<B8G8R8A8toA8R8G8B8>();
+				Register<B8G8R8A8toA8B8G8R8>();
+				Register<B8G8R8A8toR8G8B8A8>();
+				Register<R8G8B8A8toA8R8G8B8>();
+				Register<R8G8B8A8toA8B8G8R8>();
+				Register<R8G8B8A8toB8G8R8A8>();
+				Register<A8B8G8R8toL8>();
+				Register<L8toA8B8G8R8>();
+				Register<A8R8G8B8toL8>();
+				Register<L8toA8R8G8B8>();
+				Register<B8G8R8A8toL8>();
+				Register<L8toB8G8R8A8>();
+				Register<L8toL16>();
+				Register<L16toL8>();
+				Register<B8G8R8toR8G8B8>();
+				Register<R8G8B8toB8G8R8>();
+				Register<R8G8B8toX8R8G8B8>();
+				Register<R8G8B8toA8R8G8B8>();
+				Register<B8G8R8toA8R8G8B8>();
+				Register<R8G8B8toA8B8G8R8>();
+				Register<B8G8R8toA8B8G8R8>();
+				Register<R8G8B8toB8G8R8A8>();
+				Register<B8G8R8toB8G8R8A8>();
+				Register<A8R8G8B8toR8G8B8>();
+				Register<A8R8G8B8toB8G8R8>();
+				Register<X8R8G8B8toA8R8G8B8>();
+				Register<X8R8G8B8toA8B8G8R8>();
+				Register<X8R8G8B8toB8G8R8A8>();
+				Register<X8R8G8B8toR8G8B8A8>();
+				Register<X8B8G8R8toA8R8G8B8>();
+				Register<X8B8G8R8toA8B8G8R8>();
+				Register<X8B8G8R8toB8G8R8A8>();
+				Register<X8B8G8R8toR8G8B8A8>();
+
+				Register<A8R8G8B8toA32B32G32R32F>();
+				Register<A32B32G32R32FtoA8R8G8B8>();
+
+				Register<A16B16G16R16FtoA32B32G32R32F>();
+				Register<A32B32G32R32FtoA16B16G16R16F>();
+
+				Register<A8R8G8B8toA16B16G16R16F>();
+				Register<A16B16G16R16FtoA8R8G8B8>();	
+			}
+
+			template <typename type>
+			void Register()
+			{
+				Converters.Add(type::ID, &BoxConversion<type>);
+			}
+
+			bool Convert(const DataBox& src, const DataBox& dst)
+			{
+				ConversionRoutine func;
+				if (Converters.TryGetValue(PACKCONVERTERID(src.getFormat(), dst.getFormat()), func))
+				{
+					func(src, dst);
+					return true;
+				}
+				return false;
+			}
+
+		private:
+
+			template <class U>
+			static void BoxConversion(const DataBox& src, const DataBox& dst)
 			{
 				typename U::SrcType *srcptr = static_cast<typename U::SrcType*>(src.getDataPointer());
 				typename U::DstType *dstptr = static_cast<typename U::DstType*>(dst.getDataPointer());
 				const int srcSliceSkip = src.getSlicePitch();
 				const int dstSliceSkip = dst.getSlicePitch();
-				
+
 				for (int z=0;z<src.getDepth();z++)
 				{
 					for (int y=0;y<src.getHeight();y++)
@@ -217,532 +767,26 @@ namespace Apoc3D
 					dstptr = reinterpret_cast<typename U::DstType*>((byte*)dstptr + dstSliceSkip);
 				} 
 			}
-		};
+
+		} static converterHelper;
 
 
-		template <typename T, typename U, int id> struct PixelConverter {
-			static const uint ID = id;
-			typedef T SrcType;
-			typedef U DstType;    
-
-		};
-
-
-		/** Type for PF_R8G8B8/PF_B8G8R8 */
-		struct Col3b {
-			Col3b(uint a, uint b, uint c)
-				: x((byte)a), y((byte)b), z((byte)c) { }
-			byte x,y,z;
-		};
-		/** Type for PF_FLOAT32_RGB */
-		struct Col3f {
-			Col3f(float r, float g, float b)
-				: r(r), g(g), b(b) { }
-			float r,g,b;
-		};
-		/** Type for PF_FLOAT32_RGBA */
-		struct Col4f {
-			Col4f(float r, float g, float b, float a)
-				: r(r), g(g), b(b), a(a) { }
-			float r,g,b,a;
-		};
-
-		struct A8R8G8B8toA8B8G8R8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_A8R8G8B8, FMT_A8B8G8R8)>
+		bool PixelFormatUtils::ConvertPixels(const DataBox& src, const DataBox& dst)
 		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x000000FF)<<16)|(inp&0xFF00FF00)|((inp&0x00FF0000)>>16);
-			}
-		};
-
-		struct A8R8G8B8toB8G8R8A8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_A8R8G8B8, FMT_B8G8R8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x000000FF)<<24)|((inp&0x0000FF00)<<8)|((inp&0x00FF0000)>>8)|((inp&0xFF000000)>>24);
-			}
-		};
-		struct A8R8G8B8toR8G8B8A8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_A8R8G8B8, FMT_R8G8B8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x00FFFFFF)<<8)|((inp&0xFF000000)>>24);
-			}
-		};
-
-		struct A8B8G8R8toA8R8G8B8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_A8B8G8R8, FMT_A8R8G8B8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x000000FF)<<16)|(inp&0xFF00FF00)|((inp&0x00FF0000)>>16);
-			}
-		};
-
-		struct A8B8G8R8toB8G8R8A8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_A8B8G8R8, FMT_B8G8R8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x00FFFFFF)<<8)|((inp&0xFF000000)>>24);
-			}
-		};
-
-		struct A8B8G8R8toR8G8B8A8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_A8B8G8R8, FMT_R8G8B8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x000000FF)<<24)|((inp&0x0000FF00)<<8)|((inp&0x00FF0000)>>8)|((inp&0xFF000000)>>24);
-			}
-		};
-
-
-		struct B8G8R8A8toA8R8G8B8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_B8G8R8A8, FMT_A8R8G8B8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x000000FF)<<24)|((inp&0x0000FF00)<<8)|((inp&0x00FF0000)>>8)|((inp&0xFF000000)>>24);
-			}
-		};
-
-		struct B8G8R8A8toA8B8G8R8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_B8G8R8A8, FMT_A8B8G8R8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x000000FF)<<24)|((inp&0xFFFFFF00)>>8);
-			}
-		};
-
-		struct B8G8R8A8toR8G8B8A8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_B8G8R8A8, FMT_R8G8B8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x0000FF00)<<16)|(inp&0x00FF00FF)|((inp&0xFF000000)>>16);
-			}
-		};
-
-		struct R8G8B8A8toA8R8G8B8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_R8G8B8A8, FMT_A8R8G8B8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x000000FF)<<24)|((inp&0xFFFFFF00)>>8);
-			}
-		};
-
-
-		struct R8G8B8A8toA8B8G8R8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_R8G8B8A8, FMT_A8B8G8R8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x000000FF)<<24)|((inp&0x0000FF00)<<8)|((inp&0x00FF0000)>>8)|((inp&0xFF000000)>>24);
-			}
-		};
-
-		struct R8G8B8A8toB8G8R8A8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_R8G8B8A8, FMT_B8G8R8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x0000FF00)<<16)|(inp&0x00FF00FF)|((inp&0xFF000000)>>16);
-			}
-		};
-
-
-		struct A8B8G8R8toL8
-			: public PixelConverter<uint, byte, FMTCONVERTERID(FMT_A8B8G8R8, FMT_Luminance8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return (byte)(inp&0x000000FF);
-			}
-		};
-
-		struct L8toA8B8G8R8
-			: public PixelConverter<byte, uint, FMTCONVERTERID(FMT_Luminance8, FMT_A8B8G8R8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return 0xFF000000|(((unsigned int)inp)<<0)|(((unsigned int)inp)<<8)|(((unsigned int)inp)<<16);
-			}
-		};
-
-		struct A8R8G8B8toL8
-			: public PixelConverter<uint, byte, FMTCONVERTERID(FMT_A8R8G8B8, FMT_Luminance8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return (byte)((inp&0x00FF0000)>>16);
-			}
-		};
-
-		struct L8toA8R8G8B8
-			: public PixelConverter<byte, uint, FMTCONVERTERID(FMT_Luminance8, FMT_A8R8G8B8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return 0xFF000000|(((unsigned int)inp)<<0)|(((unsigned int)inp)<<8)|(((unsigned int)inp)<<16);
-			}
-		};
-
-
-		struct B8G8R8A8toL8
-			: public PixelConverter<uint, byte, FMTCONVERTERID(FMT_B8G8R8A8, FMT_Luminance8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return (byte)((inp&0x0000FF00)>>8);
-			}
-		};
-
-		struct L8toB8G8R8A8
-			: public PixelConverter<byte, uint, FMTCONVERTERID(FMT_Luminance8, FMT_B8G8R8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return 0x000000FF|(((unsigned int)inp)<<8)|(((unsigned int)inp)<<16)|(((unsigned int)inp)<<24);
-			}
-		};
-
-
-		struct L8toL16
-			: public PixelConverter<byte, uint16, FMTCONVERTERID(FMT_Luminance8, FMT_Luminance16)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return (uint16)((((unsigned int)inp)<<8)|(((unsigned int)inp)));
-			}
-		};
-
-		struct L16toL8
-			: public PixelConverter<uint16, byte, FMTCONVERTERID(FMT_Luminance16, FMT_Luminance8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return (byte)(inp>>8);
-			}
-		};
-
-
-		struct R8G8B8toB8G8R8
-			: public PixelConverter<Col3b, Col3b, FMTCONVERTERID(FMT_R8G8B8, FMT_B8G8R8)>
-		{
-			inline static DstType ConvertPixel(const SrcType &inp)
-			{
-				return Col3b(inp.z, inp.y, inp.x);
-			}  
-		};
-
-		struct B8G8R8toR8G8B8
-			: public PixelConverter<Col3b, Col3b, FMTCONVERTERID(FMT_B8G8R8, FMT_R8G8B8)>
-		{
-			inline static DstType ConvertPixel(const SrcType &inp)
-			{
-				return Col3b(inp.z, inp.y, inp.x);
-			}  
-		};
-
-
-		// X8Y8Z8 ->  X8<<xshift Y8<<yshift Z8<<zshift A8<<ashift
-		template <int id, unsigned int xshift, unsigned int yshift, unsigned int zshift, unsigned int ashift>
-		struct Col3btoUint32swizzler
-			: public PixelConverter<Col3b, uint, id>
-		{
-			inline static uint ConvertPixel(const Col3b &inp)
-			{
-#ifndef BIG_ENDIAN
-				return (0xFF<<ashift) | (((unsigned int)inp.x)<<zshift) | (((unsigned int)inp.y)<<yshift) | (((unsigned int)inp.z)<<xshift);
-#else
-				return (0xFF<<ashift) | (((unsigned int)inp.x)<<xshift) | (((unsigned int)inp.y)<<yshift) | (((unsigned int)inp.z)<<zshift);
-#endif
-			}
-		};
-
-		struct R8G8B8toX8R8G8B8: public Col3btoUint32swizzler<FMTCONVERTERID(FMT_R8G8B8, FMT_X8R8G8B8), 16, 8, 0, 24> { };
-		struct R8G8B8toA8R8G8B8: public Col3btoUint32swizzler<FMTCONVERTERID(FMT_R8G8B8, FMT_A8R8G8B8), 16, 8, 0, 24> { };
-		struct B8G8R8toA8R8G8B8: public Col3btoUint32swizzler<FMTCONVERTERID(FMT_B8G8R8, FMT_A8R8G8B8), 0, 8, 16, 24> { };
-		struct R8G8B8toA8B8G8R8: public Col3btoUint32swizzler<FMTCONVERTERID(FMT_R8G8B8, FMT_A8B8G8R8), 0, 8, 16, 24> { };
-		struct B8G8R8toA8B8G8R8: public Col3btoUint32swizzler<FMTCONVERTERID(FMT_B8G8R8, FMT_A8B8G8R8), 16, 8, 0, 24> { };
-		struct R8G8B8toB8G8R8A8: public Col3btoUint32swizzler<FMTCONVERTERID(FMT_R8G8B8, FMT_B8G8R8A8), 8, 16, 24, 0> { };
-		struct B8G8R8toB8G8R8A8: public Col3btoUint32swizzler<FMTCONVERTERID(FMT_B8G8R8, FMT_B8G8R8A8), 24, 16, 8, 0> { };
-		
-
-		struct A8R8G8B8toR8G8B8
-			: public PixelConverter<uint, Col3b, FMTCONVERTERID(FMT_A8R8G8B8, FMT_R8G8B8)>
-		{
-			inline static DstType ConvertPixel(uint inp)
-			{
-				return Col3b((byte)((inp>>16)&0xFF), (byte)((inp>>8)&0xFF), (byte)((inp>>0)&0xFF));
-			}
-		};
-		struct A8R8G8B8toB8G8R8
-			: public PixelConverter<uint, Col3b, FMTCONVERTERID(FMT_A8R8G8B8, FMT_B8G8R8)>
-		{
-			inline static DstType ConvertPixel(uint inp)
-			{
-				return Col3b((byte)((inp>>0)&0xFF), (byte)((inp>>8)&0xFF), (byte)((inp>>16)&0xFF));
-			}
-		};
-		struct X8R8G8B8toA8R8G8B8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_X8R8G8B8, FMT_A8R8G8B8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return inp | 0xFF000000;
-			}
-		};
-
-		struct X8R8G8B8toA8B8G8R8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_X8R8G8B8, FMT_A8B8G8R8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x0000FF)<<16)|((inp&0xFF0000)>>16)|(inp&0x00FF00)|0xFF000000;
-			}
-		};
-		struct X8R8G8B8toB8G8R8A8
-			: public PixelConverter <uint, uint, FMTCONVERTERID(FMT_X8R8G8B8, FMT_B8G8R8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x0000FF)<<24)|((inp&0xFF0000)>>8)|((inp&0x00FF00)<<8)|0x000000FF;
-			}
-		};
-		struct X8R8G8B8toR8G8B8A8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_X8R8G8B8, FMT_R8G8B8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0xFFFFFF)<<8)|0x000000FF;
-			}
-		};
-
-
-		// X8B8G8R8
-		struct X8B8G8R8toA8R8G8B8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_X8B8G8R8, FMT_A8R8G8B8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x0000FF)<<16)|((inp&0xFF0000)>>16)|(inp&0x00FF00)|0xFF000000;
-			}
-		};
-		struct X8B8G8R8toA8B8G8R8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_X8B8G8R8, FMT_A8B8G8R8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return inp | 0xFF000000;
-			}
-		};
-		struct X8B8G8R8toB8G8R8A8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_X8B8G8R8, FMT_B8G8R8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0xFFFFFF)<<8)|0x000000FF;
-			}
-		};
-		struct X8B8G8R8toR8G8B8A8
-			: public PixelConverter<uint, uint, FMTCONVERTERID(FMT_X8B8G8R8, FMT_R8G8B8A8)>
-		{
-			inline static DstType ConvertPixel(SrcType inp)
-			{
-				return ((inp&0x0000FF)<<24)|((inp&0xFF0000)>>8)|((inp&0x00FF00)<<8)|0x000000FF;
-			}
-		};
-		
-#define CASECONVERTER(type) case type::ID : DataBoxConverter<type>::conversion(src, dst); return 1;
-
-		int PixelFormatUtils::ConvertPixels(const DataBox& src, const DataBox& dst)
-		{;
-		switch(FMTCONVERTERID((uint)src.getFormat(), (uint)dst.getFormat()))
-		{
-			// Register converters here
-			CASECONVERTER(A8R8G8B8toA8B8G8R8);
-			CASECONVERTER(A8R8G8B8toB8G8R8A8);
-			CASECONVERTER(A8R8G8B8toR8G8B8A8);
-			CASECONVERTER(A8B8G8R8toA8R8G8B8);
-			CASECONVERTER(A8B8G8R8toB8G8R8A8);
-			CASECONVERTER(A8B8G8R8toR8G8B8A8);
-			CASECONVERTER(B8G8R8A8toA8R8G8B8);
-			CASECONVERTER(B8G8R8A8toA8B8G8R8);
-			CASECONVERTER(B8G8R8A8toR8G8B8A8);
-			CASECONVERTER(R8G8B8A8toA8R8G8B8);
-			CASECONVERTER(R8G8B8A8toA8B8G8R8);
-			CASECONVERTER(R8G8B8A8toB8G8R8A8);
-			CASECONVERTER(A8B8G8R8toL8);
-			CASECONVERTER(L8toA8B8G8R8);
-			CASECONVERTER(A8R8G8B8toL8);
-			CASECONVERTER(L8toA8R8G8B8);
-			CASECONVERTER(B8G8R8A8toL8);
-			CASECONVERTER(L8toB8G8R8A8);
-			CASECONVERTER(L8toL16);
-			CASECONVERTER(L16toL8);
-			CASECONVERTER(B8G8R8toR8G8B8);
-			CASECONVERTER(R8G8B8toB8G8R8);
-			CASECONVERTER(R8G8B8toX8R8G8B8);
-			CASECONVERTER(R8G8B8toA8R8G8B8);
-			CASECONVERTER(B8G8R8toA8R8G8B8);
-			CASECONVERTER(R8G8B8toA8B8G8R8);
-			CASECONVERTER(B8G8R8toA8B8G8R8);
-			CASECONVERTER(R8G8B8toB8G8R8A8);
-			CASECONVERTER(B8G8R8toB8G8R8A8);
-			CASECONVERTER(A8R8G8B8toR8G8B8);
-			CASECONVERTER(A8R8G8B8toB8G8R8);
-			CASECONVERTER(X8R8G8B8toA8R8G8B8);
-			CASECONVERTER(X8R8G8B8toA8B8G8R8);
-			CASECONVERTER(X8R8G8B8toB8G8R8A8);
-			CASECONVERTER(X8R8G8B8toR8G8B8A8);
-			CASECONVERTER(X8B8G8R8toA8R8G8B8);
-			CASECONVERTER(X8B8G8R8toA8B8G8R8);
-			CASECONVERTER(X8B8G8R8toB8G8R8A8);
-			CASECONVERTER(X8B8G8R8toR8G8B8A8);
-
-		default:
-			return 0;
-		}
-		}
-#undef CASECONVERTER
-
-		inline uint16 floatToU16Channel(float v)
-		{
-			if (v<0)
-				v = 0;
-			if (v>1)
-				v=1;
-			return static_cast<uint16>(v*65535);
-		}
-		inline byte floatToU8Channel(float v)
-		{
-			if (v<0)
-				v = 0;
-			if (v>1)
-				v=1;
-			return static_cast<byte>(v*255);
-		}
-		void packColour(const float r, const float g, const float b, const float a, 
-			const PixelFormat pf,  void* dest)
-		{
-			switch(pf)
-			{
-			case FMT_R32F:
-				((float*)dest)[0] = r;
-				break;
-			case FMT_G32R32F:
-				((float*)dest)[0] = g;
-				((float*)dest)[1] = r;
-				break;
-			case FMT_A32B32G32R32F:
-				((float*)dest)[0] = a;
-				((float*)dest)[1] = b;
-				((float*)dest)[2] = g;
-				((float*)dest)[3] = r;
-				break;
-			case FMT_R16F:
-				((uint16*)dest)[0] = FloatToHalf(r);
-				break;
-			case FMT_G16R16F:
-				((uint16*)dest)[0] = FloatToHalf(g);
-				((uint16*)dest)[1] = FloatToHalf(r);
-				break;
-			case FMT_A16B16G16R16F:
-				((uint16*)dest)[0] = FloatToHalf(a);
-				((uint16*)dest)[1] = FloatToHalf(b);
-				((uint16*)dest)[2] = FloatToHalf(g);
-				((uint16*)dest)[3] = FloatToHalf(r);
-				break;
-			case FMT_R16G16B16:
-				((uint16*)dest)[0] = floatToU16Channel(r);
-				((uint16*)dest)[1] = floatToU16Channel(g);
-				((uint16*)dest)[2] = floatToU16Channel(b);
-				break;
-			case FMT_A16B16G16R16:
-				((uint16*)dest)[0] = floatToU16Channel(a);
-				((uint16*)dest)[1] = floatToU16Channel(b);
-				((uint16*)dest)[2] = floatToU16Channel(g);
-				((uint16*)dest)[3] = floatToU16Channel(r);
-				break;
-			case FMT_A8L8:
-				((byte*)dest)[0] = floatToU8Channel(r);
-				((byte*)dest)[1] = floatToU8Channel(a);
-				break;
-			default:
-				throw AP_EXCEPTION(EX_NotSupported, L"Not supported for unpacking");
-				break;
-			}
-		}
-		void unpackColour(float *r, float *g, float *b, float *a,
-			PixelFormat pf,  const void* src)
-		{
-			switch(pf)
-			{
-			case FMT_R32F:
-				*r = *g = *b = ((float*)src)[0];
-				*a = 1.0f;
-				break;
-			case FMT_G32R32F:
-				*g = ((float*)src)[0];
-				*r = *b = ((float*)src)[1];
-				*a = 1.0f;
-				break;
-			case FMT_A32B32G32R32F:
-				*a = ((float*)src)[0];
-				*b = ((float*)src)[1];
-				*g = ((float*)src)[2];
-				*r = ((float*)src)[3];
-
-				break;
-			case FMT_R16F:
-				*r = *g = *b = HalfToFloat(reinterpret_cast<const uint16*>(src)[0]);
-				*a = 1.0f;
-				break;
-			case FMT_G16R16F:
-				*g =  HalfToFloat(reinterpret_cast<const uint16*>(src)[0]); 
-				*r = *b = HalfToFloat(reinterpret_cast<const uint16*>(src)[1]);
-				*a = 1.0f;
-				break;
-			case FMT_A16B16G16R16F:
-				*a = HalfToFloat(reinterpret_cast<const uint16*>(src)[0]);
-				*g = HalfToFloat(reinterpret_cast<const uint16*>(src)[1]);
-				*g = HalfToFloat(reinterpret_cast<const uint16*>(src)[2]);
-				*r = HalfToFloat(reinterpret_cast<const uint16*>(src)[3]);
-
-				break;
-			case FMT_R16G16B16:
-				*r = reinterpret_cast<const uint16*>(src)[0] / (65535.0f);
-				*g = reinterpret_cast<const uint16*>(src)[1] / (65535.0f);
-				*b = reinterpret_cast<const uint16*>(src)[2] / (65535.0f);
-				*a = 1.0f;
-				break;
-			case FMT_A16B16G16R16:
-				*a = reinterpret_cast<const uint16*>(src)[0] / (65535.0f);
-				*b = reinterpret_cast<const uint16*>(src)[1] / (65535.0f);
-				*g = reinterpret_cast<const uint16*>(src)[2] / (65535.0f);
-				*r = reinterpret_cast<const uint16*>(src)[3] / (65535.0f);
-
-				break;
-			case FMT_A8L8:
-				*r = *g = *b = reinterpret_cast<const uint16*>(src)[0] / (255.0f);
-				*a =  reinterpret_cast<const uint16*>(src)[1] / (255.0f);
-				break;
-			default:
-				throw AP_EXCEPTION(EX_NotSupported, L"Not supported for unpacking");
-				break;
-			}
+			return converterHelper.Convert(src, dst);
 		}
 
-		void PixelFormatUtils::Resize(const float* src, int srcWidth, int srcHeight, float* dst, int dstWidth, int dstHeight, int numChannels)
+		void PixelFormatUtils::Resize(const void* src, int srcWidth, int srcHeight,
+			void* dst, int dstWidth, int dstHeight, PixelFormat format)
 		{
+			int lvlSize = PixelFormatUtils::GetMemorySize(
+				dstWidth, dstHeight, 1, format);
 
+			memset(dst, 0, lvlSize);
 		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+
 	}
 }

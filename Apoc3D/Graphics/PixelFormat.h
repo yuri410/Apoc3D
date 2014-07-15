@@ -217,128 +217,57 @@ namespace Apoc3D
 			FMT_Count = 41
 		};
 	
-		class PixelFormatEnumHelper;
-		class DepthFormatEnumHelper;
 
 		/**
 		 *  Some functions for PixelFormat
 		 */
-		class APAPI PixelFormatUtils
+		namespace PixelFormatUtils
 		{
-		private:
-			int sizeTable[FMT_Count];
-			int depSizeTable[DEPFMT_Count];
-
-			PixelFormatEnumHelper* m_pConvHelper;
-			DepthFormatEnumHelper* m_dConvHelper;
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable:4251)
-#endif
-			static PixelFormatUtils initializer;
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-			PixelFormatUtils();
-		public:
 			/**
 			 *  Check if a PixelFormat is a compressed format
 			 */
-			static bool IsCompressed(PixelFormat format)
-			{
-				return (format == FMT_DXT1 ||
-					format == FMT_DXT2 ||
-					format == FMT_DXT3 ||
-					format == FMT_DXT4 ||
-					format == FMT_DXT5);
-			}
-			static int GetMemorySize(int width, int height, DepthFormat format) 
-			{
-				int bytepp = initializer.depSizeTable[(int)format];
-				if (bytepp == -1)
-				{
-					throw AP_EXCEPTION(EX_Default, L"Invalid pixel format");
-				}
-				return width * height * bytepp;
-			}
-			static int GetMemorySize(int width, int height, int depth, PixelFormat format)
-			{
-				if (format == FMT_DXT1)				
-				{
-					return (((uint)width + 3) >> 2) * (((uint)height + 3) >> 2) * 8;
-				}
-
-				if (format == FMT_DXT2 ||
-					format == FMT_DXT3 ||
-					format == FMT_DXT4 ||
-					format == FMT_DXT5)
-				{
-					return (((uint)width + 3) >> 2) * (((uint)height + 3) >> 2) * 16;
-					//return ((width * 3) / 4) * ((height * 3) / 4) * 16;
-				}
-				int bytepp = initializer.sizeTable[(int)format];
-				if (bytepp == -1)
-				{
-					throw AP_EXCEPTION(EX_Default, L"Invalid pixel format");
-				}
-				return width * height * depth * bytepp;
-			}
+			APAPI bool IsCompressed(PixelFormat format);
+			APAPI int GetMemorySize(int width, int height, DepthFormat format);
+			APAPI int GetMemorySize(int width, int height, int depth, PixelFormat format);
 
 			/** 
 			 *  Gets the num of bytes per pixel of a given format
 			 */
-			static int GetBPP(PixelFormat fmt)
-			{
-				return initializer.sizeTable[(int)fmt];
-			}
-			static int GetBPP(DepthFormat fmt)
-			{
-				return initializer.depSizeTable[(int)fmt];
-			}
-			static int GetStencilDepth(DepthFormat fmt)
-			{
-				switch (fmt)
-				{
-				case DEPFMT_Depth15Stencil1:
-					return 1;
-				case DEPFMT_Depth24Stencil4:
-					return 4;
-				case DEPFMT_Depth24Stencil8:
-					return 8;
-				case DEPFMT_Depth24Stencil8Single:
-					return 8;
+			APAPI int GetBPP(PixelFormat fmt);
+			APAPI int GetBPP(DepthFormat fmt);
+			APAPI int GetStencilBitDepth(DepthFormat fmt);
 
-				}
-				return 0;
-			}
+			APAPI int GetChannelCount(PixelFormat fmt);
+			APAPI int GetChannelBitDepth(PixelFormat fmt, int32 chnBitDepths[4]);
+
 			/** 
 			 *  Converts a PixelFormat's string representation to the PixelFormat enum
 			 */
-			static PixelFormat ConvertFormat(const String& fmt);
+			APAPI PixelFormat ConvertFormat(const String& fmt);
 			/** 
 			 *  Converts a PixelFormat value to a string representation
 			 */
-			static String ToString(PixelFormat format);
+			APAPI String ToString(PixelFormat format);
 
 			/**
 			 *  Converts a DepthFormat's string representation to the DepthFormat enum
 			 */
-			static DepthFormat ConvertDepthFormat(const String& fmt);
+			APAPI DepthFormat ConvertDepthFormat(const String& fmt);
 			/** 
 			 *  Converts a DepthFormat value to a string representation
 			 */
-			static String ToString(DepthFormat format);
+			APAPI String ToString(DepthFormat format);
 
-			static void DumpPixelFormatName(Apoc3D::Collections::List<String>& names);
+			APAPI void DumpPixelFormatName(Apoc3D::Collections::List<String>& names);
 
 			/** 
 			 *  Converts some pixels from a source format to a destination format
 			 */
-			static int ConvertPixels(const DataBox& src, const DataBox& dst);
+			APAPI bool ConvertPixels(const DataBox& src, const DataBox& dst);
 
 
-			static void Resize(const float* src, int srcWidth, int srcHeight,
-				float* dst, int dstWidth, int dstHeight, int numChannels);
+			APAPI void Resize(const void* src, int srcWidth, int srcHeight, 
+				void* dst, int dstWidth, int dstHeight, PixelFormat format);
 		};
 
 	}

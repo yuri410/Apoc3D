@@ -172,6 +172,7 @@
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="GraphicsDeviceManager.h" />
     <ClInclude Include="Plugin.h" />
+    <ClInclude Include="D3D9TextureUtils.h" />
     <ClInclude Include="VolatileResource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +181,7 @@
     <ClCompile Include="ConstantTable.cpp" />
     <ClCompile Include="D3D9InstancingData.cpp" />
     <ClCompile Include="D3D9ObjectFactory.cpp" />
+    <ClCompile Include="D3D9TextureUtils.cpp" />
     <ClCompile Include="D3D9TypedShader.cpp" />
     <ClCompile Include="Buffer\D3D9VertexBuffer.cpp" />
     <ClCompile Include="D3D9RenderStateManager.cpp" />

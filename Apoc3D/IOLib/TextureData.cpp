@@ -303,5 +303,14 @@ namespace Apoc3D
 
 			bw->Close();
 		}
+
+		void TextureData::Free()
+		{
+			for (int i=0;i<LevelCount;i++)
+			{
+				delete[] Levels[i].ContentData;
+			}
+			Levels.Clear();
+		}
 	}
 }

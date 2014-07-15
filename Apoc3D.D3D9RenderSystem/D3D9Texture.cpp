@@ -25,6 +25,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Texture.h"
 #include "D3D9RenderDevice.h"
 #include "D3D9Utils.h"
+#include "D3D9TextureUtils.h"
+
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/Box.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -242,381 +244,6 @@ namespace Apoc3D
 				m_cube->UnlockRect(D3D9Utils::ConvertCubeMapFace(cubemapFace), surface);
 			}
 
-			// These are 2 way(getting and setting) utility functions
-			// for accessing the content of D3D9 textures.
-			void copyData(void* tex, 
-				int pitch, void* texData, PixelFormat surfaceFormat,
-				DWORD dwLockWidth, DWORD dwLockHeight, bool isSetting)
-			{
-				byte* texPtr = reinterpret_cast<byte*>(tex);
-				byte* texDataPtr = reinterpret_cast<byte*>(texData);
-
-				byte bytesPerPixel = (byte)PixelFormatUtils::GetBPP(surfaceFormat);// GetExpectedByteSizeFromFormat(surfaceFormat);
-
-
-				bool isDxt = false;
-				if (surfaceFormat == FMT_DXT1 || 
-					surfaceFormat == FMT_DXT2 || 
-					surfaceFormat == FMT_DXT3 || 
-					surfaceFormat == FMT_DXT4 ||
-					surfaceFormat == FMT_DXT5)
-				{
-					isDxt = true;
-					
-					dwLockWidth = (dwLockWidth + 3) >> 2;
-					dwLockHeight = (dwLockHeight + 3) >> 2;
-
-					bytesPerPixel = surfaceFormat == FMT_DXT1 ? 8 : 16;
-				}
-				if (dwLockHeight)
-				{
-					DWORD j = dwLockHeight;
-					DWORD lineSize = dwLockWidth * bytesPerPixel;
-
-					do 
-					{
-						if (isSetting)
-						{
-							memcpy(texPtr, texDataPtr, lineSize);
-						}
-						else
-						{
-							memcpy(texDataPtr, texPtr, lineSize);
-						}
-						texPtr += pitch;
-						texDataPtr += lineSize;
-
-						j--;
-					} while (j>0);
-
-				}
-			}
-			void copyData(void* tex,
-				int rowPitch, int slicePitch, void* texData,
-				PixelFormat surfaceFormat,
-				DWORD dwLockWidth, DWORD dwLockHeight, DWORD dwLockDepth,
-				bool isSetting)
-			{
-				byte* texPtr = reinterpret_cast<byte*>(tex);
-				byte* texDataPtr = reinterpret_cast<byte*>(texData);
-
-				byte bytesPerPixel = (byte)PixelFormatUtils::GetBPP(surfaceFormat);//(surfaceFormat);
-
-				bool isDxt = false;
-				if (surfaceFormat == FMT_DXT1 || 
-					surfaceFormat == FMT_DXT2 || 
-					surfaceFormat == FMT_DXT3 || 
-					surfaceFormat == FMT_DXT4 ||
-					surfaceFormat == FMT_DXT5)
-				{
-					isDxt = true;
-
-					dwLockWidth = (dwLockWidth + 3) >> 2;
-					dwLockHeight = (dwLockHeight + 3) >> 2;
-
-					bytesPerPixel = surfaceFormat == FMT_DXT1 ? 8 : 16;
-				}
-
-				if (dwLockDepth)
-				{
-					DWORD k = dwLockDepth;
-					do 
-					{
-						byte* ptr = texPtr;
-						//byte* ptr2 = texDataPtr;
-
-						if (dwLockHeight)
-						{
-							DWORD j = dwLockHeight;
-							DWORD lineSize = dwLockWidth * bytesPerPixel;
-
-							do 
-							{
-								if (isSetting)
-								{
-									memcpy(ptr, texDataPtr, lineSize);
-								}
-								else
-								{
-									memcpy(texDataPtr, ptr, lineSize);
-								}
-								ptr += rowPitch;
-								texDataPtr += lineSize;
-								j--;
-							} while (j>0);
-						}
-						texPtr += slicePitch;
-						k--;
-					} while (k>0);
-				}
-			}
-
-			void getData(TextureData& data, D3DTexture2D* tex)
-			{
-				for (int i=0;i<data.LevelCount;i++)
-				{
-					TextureLevelData lvlData;
-
-					D3DSURFACE_DESC desc;
-					tex->GetLevelDesc(i, &desc);
-
-					D3DLOCKED_RECT rect;
-					HRESULT hr = tex->LockRect(i, &rect, NULL, D3DLOCK_READONLY);
-					assert(SUCCEEDED(hr));
-
-					lvlData.Width = (int32)desc.Width;
-					lvlData.Height = (int32)desc.Height;
-					lvlData.Depth = 1;
-					lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format);
-					lvlData.ContentData  = new char[lvlData.LevelSize];
-					copyData(rect.pBits, rect.Pitch, lvlData.ContentData, data.Format, desc.Width, desc.Height, false);
-
-					hr = tex->UnlockRect(i);
-					assert(SUCCEEDED(hr));
-
-					data.Levels.Add(lvlData);
-					data.ContentSize += lvlData.LevelSize;
-				}
-			}
-			void getData(TextureData& data, D3DTextureCube* tex)
-			{
-				for (int i=0;i<data.LevelCount;i++)
-				{
-					int startPos = 0;
-					
-					D3DSURFACE_DESC desc;
-					tex->GetLevelDesc(i, &desc);
-					TextureLevelData lvlData;
-					lvlData.Width = (int32)desc.Width;
-					lvlData.Height = (int32)desc.Width;
-					lvlData.Depth = 1;
-					lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format) * 6;
-					lvlData.ContentData  = new char[lvlData.LevelSize];
-					int faceSize = data.Levels[i].LevelSize / 6;
-
-
-
-
-					D3DLOCKED_RECT rect;
-					HRESULT hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_X, i, &rect, NULL, D3DLOCK_READONLY);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, false);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_X, i);
-					assert(SUCCEEDED(hr));
-
-					// ======================================================================
-
-					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i, &rect, NULL, D3DLOCK_READONLY);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, false);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i);
-					assert(SUCCEEDED(hr));
-
-					// ======================================================================
-
-					hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i, &rect, NULL, D3DLOCK_READONLY);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, false);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i);
-					assert(SUCCEEDED(hr));
-
-					// ======================================================================
-					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i, &rect, NULL, D3DLOCK_READONLY);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, false);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i);
-					assert(SUCCEEDED(hr));
-
-					// ======================================================================
-
-					hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i, &rect, NULL, D3DLOCK_READONLY);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, false);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i);
-					assert(SUCCEEDED(hr));
-					// ======================================================================
-					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i, &rect, NULL, D3DLOCK_READONLY);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, false);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i);
-					assert(SUCCEEDED(hr));
-
-					// ======================================================================
-					data.Levels.Add(lvlData);
-					data.ContentSize += lvlData.LevelSize;
-
-				}
-			}
-			void getData(TextureData& data, D3DTexture3D* tex)
-			{
-				for (int i=0;i<data.LevelCount;i++)
-				{
-					TextureLevelData lvlData;
-
-					D3DVOLUME_DESC desc;
-					tex->GetLevelDesc(i, &desc);
-					
-					lvlData.Width = (int32)desc.Width;
-					lvlData.Height = (int32)desc.Height;
-					lvlData.Depth = (int32)desc.Depth;
-					lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, desc.Depth, data.Format);
-					lvlData.ContentData  = new char[lvlData.LevelSize];
-
-					D3DLOCKED_BOX box;
-					HRESULT hr = tex->LockBox(i, &box, NULL, 0);
-					assert(SUCCEEDED(hr));
-
-					copyData(box.pBits, box.RowPitch, box.SlicePitch,
-						data.Levels[i].ContentData, data.Format,
-						desc.Width, desc.Height, desc.Depth, false);
-
-					hr = tex->UnlockBox(i);
-					assert(SUCCEEDED(hr));
-				}
-			}
-
-			void setData(const TextureData& data, D3DTextureCube* tex)
-			{
-				for (int i=0;i<data.LevelCount;i++)
-				{
-					int startPos = 0;
-					int faceSize = data.Levels[i].LevelSize / 6;
-					D3DSURFACE_DESC desc;
-					tex->GetLevelDesc(i, &desc);
-
-					D3DLOCKED_RECT rect;
-					HRESULT hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_X, i, &rect, NULL, 0);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, true);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_X, i);
-					assert(SUCCEEDED(hr));
-
-					// ======================================================================
-
-					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i, &rect, NULL, 0);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, true);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i);
-					assert(SUCCEEDED(hr));
-
-					// ======================================================================
-
-					hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i, &rect, NULL, 0);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, true);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i);
-					assert(SUCCEEDED(hr));
-
-					// ======================================================================
-					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i, &rect, NULL, 0);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, true);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i);
-					assert(SUCCEEDED(hr));
-
-					// ======================================================================
-
-					hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i, &rect, NULL, 0);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, true);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i);
-					assert(SUCCEEDED(hr));
-					// ======================================================================
-					hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i, &rect, NULL, 0);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData+startPos,
-						data.Format, desc.Width, desc.Height, true);
-					startPos += faceSize;
-
-					hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i);
-					assert(SUCCEEDED(hr));
-
-					// ======================================================================
-
-
-				}
-			}
-			void setData(const TextureData& data, D3DTexture2D* tex)
-			{
-				for (int i=0;i<data.LevelCount;i++)
-				{
-					D3DSURFACE_DESC desc;
-					tex->GetLevelDesc(i, &desc);
-
-					D3DLOCKED_RECT rect;
-					HRESULT hr = tex->LockRect(i, &rect, NULL, 0);
-					assert(SUCCEEDED(hr));
-
-					copyData(rect.pBits, rect.Pitch, data.Levels[i].ContentData, data.Format, desc.Width, desc.Height, true);
-
-					hr = tex->UnlockRect(i);
-					assert(SUCCEEDED(hr));
-				}
-			}
-			void setData(const TextureData& data, D3DTexture3D* tex)
-			{
-				for (int i=0;i<data.LevelCount;i++)
-				{
-					D3DVOLUME_DESC desc;
-					tex->GetLevelDesc(i, &desc);
-
-					D3DLOCKED_BOX box;
-					HRESULT hr = tex->LockBox(i, &box, NULL, 0);
-					assert(SUCCEEDED(hr));
-
-					copyData(box.pBits, box.RowPitch, box.SlicePitch,
-						data.Levels[i].ContentData, data.Format,
-						desc.Width, desc.Height, desc.Depth, true);
-
-					hr = tex->UnlockBox(i);
-					assert(SUCCEEDED(hr));
-				}
-			}
 
 
 			void D3D9Texture::load()
@@ -629,21 +256,21 @@ namespace Apoc3D
 				// device supports this kind of texture
 				D3DDevice* dev = m_renderDevice->getDevice();
 
-				D3DFORMAT newFmt;
-				{
-					//DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
-					D3DFORMAT fmt = D3D9Utils::ConvertPixelFormat(data.Format);
-					UINT width = data.Levels[0].Width;
-					UINT height = data.Levels[0].Height;
-					UINT depth = data.Levels[0].Depth;
-					UINT levels = data.LevelCount;
+				bool notSupported = false;
 
+				PixelFormat newFmt;
+				{
+					PixelFormat fmt = data.Format;
+					int32 width = data.Levels[0].Width;
+					int32 height = data.Levels[0].Height;
+					int32 depth = data.Levels[0].Depth;
+					int32 levels = data.LevelCount;
 
 
 					newFmt = fmt;
-					UINT newWidth = width;
-					UINT newHeight = height;
-					UINT newDepth = depth;
+					int32 newWidth = width;
+					int32 newHeight = height;
+					int32 newDepth = depth;
 
 					// Checking whether the texture parameter is supported
 					// to get rid of the occasion that a rare texture format
@@ -652,127 +279,153 @@ namespace Apoc3D
 					{
 					case (int)TT_Texture1D:
 					case (int)TT_Texture2D:
-						{
-							HRESULT hr = D3DXCheckTextureRequirements(dev, &newWidth, &newHeight, &levels,
-								0, &newFmt, 
-								D3DPOOL_MANAGED);
-							assert(SUCCEEDED(hr));
-							break;
-						}
+						notSupported |= !FindCompatibleTextureFormat(dev, newWidth, newHeight, levels, fmt,
+							newWidth, newHeight, levels, newFmt);
+						break;
 					case (int)TT_CubeTexture:
-						{
-							HRESULT hr = D3DXCheckCubeTextureRequirements(dev, &newWidth, &levels,
-								0, &newFmt, 
-								D3DPOOL_MANAGED);
-							assert(SUCCEEDED(hr));
-							break;
-						}
+						notSupported |= !FindCompatibleCubeTextureFormat(dev, newWidth, levels, fmt,
+							newWidth, levels, newFmt);
+						break;
 					case (int)TT_Texture3D:
-						{
-							HRESULT hr = D3DXCheckVolumeTextureRequirements(dev,
-								&newWidth, &newHeight, &newDepth,
-								&levels, 0, &newFmt, D3DPOOL_MANAGED);
-							assert(SUCCEEDED(hr));
-							break;
-						}
+						notSupported |= !FindCompatibleVolumeTextureFormat(dev, newWidth, newHeight, newDepth, levels, fmt,
+							newWidth, newHeight, newDepth, levels, newFmt);
+						break;
 					}
 
-					// resize the texture to the preferred size
-					// usually happens when the hardware does not support non power of 2 textures
-					if (newHeight != height || newWidth != width || newDepth != depth)
+					if (notSupported)
 					{
 						String name = getResourceLocationName();
-
-						// TODO: resize here
-						// 
-						//PixelFormatUtils::Resize();
-
-						LogManager::getSingleton().Write(LOG_Graphics, 
-							L"[D3D9Texture]" + name +  L" Dimension " +
-							StringUtils::UIntToString(width) + L"x" + StringUtils::UIntToString(height)
-							+ L" is not supported by hardware. Resizing to " +
-							StringUtils::UIntToString(newWidth) + L"x" + StringUtils::UIntToString(newHeight)
-							, LOGLVL_Warning);
+						ApocLog(LOG_Graphics, L"[D3D9Texture] Texture " + name + L" impossible to support.", LOGLVL_Error);
 					}
-
-					// automatically converts to the preferred format
-					if (newFmt != fmt)
+					else
 					{
-						TextureData newdata;
-						newdata.Format = D3D9Utils::ConvertBackPixelFormat(newFmt);
-						newdata.ContentSize = 0;
-						newdata.LevelCount = data.LevelCount;
-						newdata.Type = data.Type;
-						newdata.Levels.ResizeDiscard(data.LevelCount);
-						newdata.Flags = data.Flags;
-
-						String name = getResourceLocationName();
-
-						LogManager::getSingleton().Write(LOG_Graphics, 
-							L"[D3D9Texture]" + name + L" " + PixelFormatUtils::ToString(data.Format) 
-							+ L" Pixel format is not supported by hardware. Converting to " +
-							PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt)), LOGLVL_Warning);
-
-						// do it for all levels
-						for (int i=0;i<newdata.LevelCount;i++)
+						// resize the texture to the preferred size
+						// usually happens when the hardware does not support non power of 2 textures
+						if ((newHeight != height || newWidth != width) && (newDepth == 1) && (depth == 1))
 						{
-							TextureLevelData& srcLvl = data.Levels[i];
-							
-							TextureLevelData dstLvl;
-							dstLvl.Depth = srcLvl.Depth;
-							dstLvl.Width = srcLvl.Width;
-							dstLvl.Height = srcLvl.Height;
+							String name = getResourceLocationName();
 
-							int lvlSize = PixelFormatUtils::GetMemorySize(
-								dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
-							dstLvl.LevelSize = lvlSize;
+							TextureData newdata;
+							newdata.Format = data.Format;
+							newdata.ContentSize = 0;
+							newdata.LevelCount = data.LevelCount;
+							newdata.Type = data.Type;
+							newdata.Levels.ResizeDiscard(data.LevelCount);
+							newdata.Flags = data.Flags;
 
-							dstLvl.ContentData = new char[lvlSize];
-							newdata.ContentSize += lvlSize;
+							LogManager::getSingleton().Write(LOG_Graphics, 
+								L"[D3D9Texture]" + name +  L" Dimension " +
+								StringUtils::IntToString(width) + L"x" + StringUtils::IntToString(height)
+								+ L" is not supported by hardware. Resizing to " +
+								StringUtils::IntToString(newWidth) + L"x" + StringUtils::IntToString(newHeight)
+								, LOGLVL_Warning);
 
-							DataBox src = DataBox(
-								srcLvl.Width, 
-								srcLvl.Height, 
-								srcLvl.Depth, 
-								PixelFormatUtils::GetMemorySize(srcLvl.Width, 1, 1, data.Format),
-								PixelFormatUtils::GetMemorySize(srcLvl.Width, srcLvl.Height, 1, data.Format), 
-								srcLvl.ContentData,
-								data.Format);
+							// do it for all levels
+							for (int i=0;i<newdata.LevelCount;i++)
+							{
+								TextureLevelData& srcLvl = data.Levels[i];
 
-							DataBox dst = DataBox(
-								dstLvl.Width,
-								dstLvl.Height, 
-								dstLvl.Depth, 
-								PixelFormatUtils::GetMemorySize(dstLvl.Width, 1, 1, newdata.Format),
-								PixelFormatUtils::GetMemorySize(dstLvl.Width, dstLvl.Height, 1, newdata.Format), 
-								dstLvl.ContentData,
-								newdata.Format);
+								TextureLevelData dstLvl;
+								dstLvl.Depth = srcLvl.Depth;
+								dstLvl.Width = srcLvl.Width;
+								dstLvl.Height = srcLvl.Height;
 
-							int r = PixelFormatUtils::ConvertPixels(src, dst);
-							assert(r);
-							delete[] srcLvl.ContentData;
+								int lvlSize = PixelFormatUtils::GetMemorySize(
+									dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
+								dstLvl.LevelSize = lvlSize;
 
-							newdata.Levels.Add(dstLvl);
+								dstLvl.ContentData = new char[lvlSize];
+								newdata.ContentSize += lvlSize;
+
+								PixelFormatUtils::Resize(srcLvl.ContentData, srcLvl.Width, srcLvl.Height, dstLvl.ContentData, dstLvl.Width, dstLvl.Height, newdata.Format);
+
+								newdata.Levels.Add(dstLvl);
+							}
+
+							data.Free();
+							data = newdata;
 						}
 
-						data = newdata;
-					}
+						// automatically converts to the preferred format
+						if (newFmt != fmt)
+						{
+							TextureData newdata;
+							newdata.Format = D3D9Utils::ConvertBackPixelFormat(newFmt);
+							newdata.ContentSize = 0;
+							newdata.LevelCount = data.LevelCount;
+							newdata.Type = data.Type;
+							newdata.Levels.ResizeDiscard(data.LevelCount);
+							newdata.Flags = data.Flags;
 
+							String name = getResourceLocationName();
+
+							LogManager::getSingleton().Write(LOG_Graphics, 
+								L"[D3D9Texture]" + name + L" " + PixelFormatUtils::ToString(data.Format) 
+								+ L" Pixel format is not supported by hardware. Converting to " +
+								PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt)), LOGLVL_Warning);
+
+							// do it for all levels
+							for (int i=0;i<newdata.LevelCount;i++)
+							{
+								TextureLevelData& srcLvl = data.Levels[i];
+
+								TextureLevelData dstLvl;
+								dstLvl.Depth = srcLvl.Depth;
+								dstLvl.Width = srcLvl.Width;
+								dstLvl.Height = srcLvl.Height;
+
+								int lvlSize = PixelFormatUtils::GetMemorySize(
+									dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
+								dstLvl.LevelSize = lvlSize;
+
+								dstLvl.ContentData = new char[lvlSize];
+								newdata.ContentSize += lvlSize;
+
+								DataBox src = DataBox(
+									srcLvl.Width, 
+									srcLvl.Height, 
+									srcLvl.Depth, 
+									PixelFormatUtils::GetMemorySize(srcLvl.Width, 1, 1, data.Format),
+									PixelFormatUtils::GetMemorySize(srcLvl.Width, srcLvl.Height, 1, data.Format), 
+									srcLvl.ContentData,
+									data.Format);
+
+								DataBox dst = DataBox(
+									dstLvl.Width,
+									dstLvl.Height, 
+									dstLvl.Depth, 
+									PixelFormatUtils::GetMemorySize(dstLvl.Width, 1, 1, newdata.Format),
+									PixelFormatUtils::GetMemorySize(dstLvl.Width, dstLvl.Height, 1, newdata.Format), 
+									dstLvl.ContentData,
+									newdata.Format);
+
+								bool r = PixelFormatUtils::ConvertPixels(src, dst);
+								assert(r);
+
+								newdata.Levels.Add(dstLvl);
+							}
+
+							data.Free();
+							data = newdata;
+						}
+
+					}
 				}
 				
 				// update using the checked data
 				UpdateInfo(data);
 
-			
-				switch (data.Type)
+				if (!notSupported)
 				{
-				case (int)TT_Texture1D:
-				case (int)TT_Texture2D:
+					DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
+					HRESULT hr;
+
+					switch (data.Type)
 					{
-						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
-					
-						HRESULT hr = dev->CreateTexture(getWidth(), getHeight(), getLevelCount(), 
-							usage, newFmt, 
+					case (int)TT_Texture1D:
+					case (int)TT_Texture2D:
+						hr = dev->CreateTexture(getWidth(), getHeight(), getLevelCount(), 
+							usage, D3D9Utils::ConvertPixelFormat(newFmt), 
 							D3DPOOL_MANAGED, &m_tex2D, NULL);
 						assert(SUCCEEDED(hr));
 
@@ -789,19 +442,18 @@ namespace Apoc3D
 
 							LogManager::getSingleton().Write(LOG_Graphics, msg, LOGLVL_Warning);
 						}
+						else
+						{
+							setData(data, m_tex2D);
+						}				
+						break;
 
-						setData(data, m_tex2D);
-					}					
-					break;
-				case (int)TT_CubeTexture:
-					{
-						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
-						
-						HRESULT hr = dev->CreateCubeTexture(getWidth(), getLevelCount(), 
-							usage, newFmt, 
+					case (int)TT_CubeTexture:
+						hr = dev->CreateCubeTexture(getWidth(), getLevelCount(), 
+							usage, D3D9Utils::ConvertPixelFormat(newFmt), 
 							D3DPOOL_MANAGED, &m_cube, NULL);
 						assert(SUCCEEDED(hr));
-						
+
 						if (FAILED(hr))
 						{
 							String name = getResourceLocationName();
@@ -813,17 +465,15 @@ namespace Apoc3D
 
 							LogManager::getSingleton().Write(LOG_Graphics, msg, LOGLVL_Warning);
 						}
+						else
+						{
+							setData(data, m_cube);
+						}
+						break;
 
-						setData(data, m_cube);
-					}
-					
-					break;
-				case (int)TT_Texture3D:
-					{
-						DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
-
-						HRESULT hr = dev->CreateVolumeTexture(getWidth(), getHeight(), getDepth(), getLevelCount(),
-							usage, newFmt, 
+					case (int)TT_Texture3D:
+						hr = dev->CreateVolumeTexture(getWidth(), getHeight(), getDepth(), getLevelCount(),
+							usage, D3D9Utils::ConvertPixelFormat(newFmt), 
 							D3DPOOL_MANAGED, &m_tex3D, NULL);
 						assert(SUCCEEDED(hr));
 
@@ -842,16 +492,21 @@ namespace Apoc3D
 
 							LogManager::getSingleton().Write(LOG_Graphics, msg, LOGLVL_Warning);
 						}
-
-						setData(data, m_tex3D);
+						else
+						{
+							setData(data, m_tex3D);
+						}
+						break;
 					}
-					break;
+				}
+				else
+				{
+					m_tex2D = nullptr;
+					m_tex3D = nullptr;
+					m_cube = nullptr;
 				}
 
-				for (int i=0;i<data.LevelCount;i++)
-				{
-					delete[] data.Levels[i].ContentData;
-				}
+				data.Free();
 			}
 			void D3D9Texture::unload()
 			{
@@ -908,10 +563,7 @@ namespace Apoc3D
 
 				data.Save(strm);
 
-				for (int i=0;i<data.LevelCount;i++)
-				{
-					delete[] data.Levels[i].ContentData;
-				}
+				data.Free();
 			}
 
 			void D3D9Texture::ReleaseVolatileResource()

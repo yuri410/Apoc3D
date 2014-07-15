@@ -27,12 +27,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Common.h"
 
 #ifndef APOC3D_DYNLIB
-#	define PLUGIN
+#	define PLUGINAPI
 #else
 #	ifdef APOC3D_WININP_DYLIB_EXPORT
-#		define PLUGIN __declspec( dllexport )
+#		define PLUGINAPI __declspec( dllexport )
 #	else
-#		define PLUGIN __declspec( dllimport )
+#		define PLUGINAPI __declspec( dllimport )
 #	endif
 #endif
 

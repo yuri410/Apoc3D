@@ -69,12 +69,12 @@ typedef IDirect3DPixelShader9 D3DPixelShader;
 typedef IDirect3DVertexDeclaration9 D3DVertexDeclaration;
 
 #ifndef APOC3D_DYNLIB
-#	define PLUGIN
+#	define PLUGINAPI
 #else
 #	ifdef APOC3D_D3D9RS_DYLIB_EXPORT
-#		define PLUGIN __declspec( dllexport )
+#		define PLUGINAPI __declspec( dllexport )
 #	else
-#		define PLUGIN __declspec( dllimport )
+#		define PLUGINAPI __declspec( dllimport )
 #	endif
 #endif
 

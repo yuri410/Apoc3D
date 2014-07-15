@@ -33,7 +33,7 @@ using namespace Apoc3D::Graphics::D3D9RenderSystem;
 #ifdef APOC3D_DYNLIB
 static D3D9RSPlugin* plugin = new D3D9RSPlugin();
 
-extern "C" PLUGIN Plugin* Apoc3DGetPlugin()
+extern "C" PLUGINAPI Plugin* Apoc3DGetPlugin()
 {
 	return plugin;
 }

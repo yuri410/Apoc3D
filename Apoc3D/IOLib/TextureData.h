@@ -71,6 +71,8 @@ namespace Apoc3D
 
 			void LoadData(TaggedDataReader* data, bool doNotLoadContent = false, int32 flags = 0);
 			void SaveData(TaggedDataWriter* data, int32 flags = 0) const;
+
+			
 		private:
 		};
 
@@ -104,6 +106,8 @@ namespace Apoc3D
 			void Load(const ResourceLocation& rl, bool doNotLoadLevel = false, bool doNotLoadContent = false);
 			void Save(Stream* strm) const;
 			void SaveAsTagged(Stream* strm) const;
+
+			void Free();
 		};
 	}
 }

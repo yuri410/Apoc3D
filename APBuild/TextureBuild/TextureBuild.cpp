@@ -1571,11 +1571,7 @@ LFail:
 
 			FileOutStream* fs = new FileOutStream(path);
 			data.Save(fs);
-
-			for (int i=0;i<data.LevelCount;i++)
-			{
-				delete[] data.Levels[i].ContentData;
-			}
+			data.Free();
 		}
 	};
 
@@ -1920,13 +1916,13 @@ LFail:
 					dstLvl.ContentData,
 					newdata.Format);
 
-				int r = PixelFormatUtils::ConvertPixels(src, dst);
+				bool r = PixelFormatUtils::ConvertPixels(src, dst);
 				assert(r);
-				delete[] srcLvl.ContentData;
 
 				newdata.Levels.Add(dstLvl);
 			}
 
+			texData.Free();
 			texData = newdata;
 		}
 
@@ -1952,11 +1948,7 @@ LFail:
 		FileOutStream* fs = new FileOutStream(config.DestinationFile);
 		texData.Save(fs);
 
-
-		for (int i=0;i<mipCount;i++)
-		{
-			delete[] texData.Levels[i].ContentData;
-		}
+		texData.Free();
 	}
 	void TextureBuild::Build(const ConfigurationSection* sect)
 	{

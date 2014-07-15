@@ -32,7 +32,7 @@ using namespace Apoc3D::Input::Win32;
 #ifdef APOC3D_DYNLIB
 static WinInputPlugin* plugin = new WinInputPlugin();
 
-extern "C" PLUGIN Plugin* Apoc3DGetPlugin()
+extern "C" PLUGINAPI Plugin* Apoc3DGetPlugin()
 {
 	return plugin;
 }

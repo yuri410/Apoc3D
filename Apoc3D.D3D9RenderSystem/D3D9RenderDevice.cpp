@@ -533,7 +533,7 @@ namespace Apoc3D
 			/*  D3D9Capabilities                                                    */
 			/************************************************************************/
 
-			const uint32 packAAProfileTableHash(uint32 adapterOrd, PixelFormat pixFormat, DepthFormat depthFormat)
+			inline const uint32 packAAProfileTableHash(uint32 adapterOrd, PixelFormat pixFormat, DepthFormat depthFormat)
 			{
 				return (adapterOrd << 16) | ((uint32)pixFormat << 8) | (uint32)depthFormat;
 			}
