@@ -30,26 +30,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "APDesigner/UIResources.h"
 #include "APDesigner/Document.h"
 
-#include "apoc3d/Core/Logging.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Graphics/RenderSystem/Sprite.h"
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/List.h"
-#include "apoc3d/UILib/Button.h"
-#include "apoc3d/UILib/Label.h"
-#include "apoc3d/Project/Project.h"
-#include "apoc3d/Graphics/GraphicsCommon.h"
-
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-
-
-#include "apoc3d/Utility/StringUtils.h"
-
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::VFS;
-
-
 namespace APDesigner
 {
 	AtomManagerDialog::AtomManagerDialog(MainWindow* window)

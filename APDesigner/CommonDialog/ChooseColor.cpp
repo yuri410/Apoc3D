@@ -1,14 +1,6 @@
 #include "ChooseColor.h"
 
-#include "Apoc3D/Vfs/File.h"
-#include "Apoc3D/IOLib/BinaryReader.h"
-#include "Apoc3D/IOLib/BinaryWriter.h"
-#include "Apoc3D/IOLib/Streams.h"
-
 #include <Windows.h>
-
-using namespace Apoc3D::IO;
-using namespace Apoc3D::VFS;
 
 #undef GetGValue
 #define GetGValue(rgb) (LOBYTE((rgb) >> 8))

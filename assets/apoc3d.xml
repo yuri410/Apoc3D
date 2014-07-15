@@ -4,9 +4,8 @@
     <system Type="Folder" Pack="pak" DestinationPack="apoc_system\system.pak">
       <skin Type="Folder" Pack="pak" DestinationPack="apoc_system\skin.pak">
         <english Type ="Font"
-               Name="fonts\SourceSansPro-Regular.otf"
+               SourceFile="fonts\SourceSansPro-Regular.otf"
                Size="11"
-               Style="Regular"
                DestinationFile="apoc_system\skin\english.fnt">
           <Range1 Start="0" End="255"/>
         </english>

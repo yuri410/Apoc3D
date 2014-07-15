@@ -23,22 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "MaterialBuild.h"
 
-#include "apoc3d/Math/Color.h"
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/IOLib/MaterialData.h"
-#include "apoc3d/IOLib/Streams.h"
-
-#include "../CompileLog.h"
-#include "../BuildEngine.h"
-
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::Graphics::EffectSystem;
+#include "BuildSystem.h"
 
 namespace APBuild
 {
@@ -69,7 +54,7 @@ namespace APBuild
 		String desinationToken = sect->getAttribute(L"DestinationToken");
 
 
-		EnsureDirectory(destination);
+		BuildSystem::EnsureDirectory(destination);
 
 		FileLocation fl(srcFile);
 		Configuration* config = XMLConfigurationFormat::Instance.Load(fl);
@@ -122,7 +107,7 @@ namespace APBuild
 		XMLConfigurationFormat::Instance.Save(tokenFile, new FileOutStream(desinationToken));
 		delete tokenFile;
 
-		CompileLog::WriteInformation(desinationToken, L">");
+		BuildSystem::LogInformation(desinationToken, L">");
 
 
 		for (HashMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
@@ -135,7 +120,7 @@ namespace APBuild
 			md->Save(fos);
 
 			delete md;
-			CompileLog::WriteInformation(*e.getCurrentKey(), L">");
+			BuildSystem::LogInformation(*e.getCurrentKey(), L">");
 		}
 		mtrlTable.Clear();
 
@@ -451,7 +436,7 @@ namespace APBuild
 							source = *found;
 						else
 						{
-							CompileLog::WriteError(L"Color " + sIndx + L" not found in " + palName, L"");
+							BuildSystem::LogError(L"Color " + sIndx + L" not found in " + palName, L"");
 							return Color4();
 						}
 					}
@@ -472,10 +457,10 @@ namespace APBuild
 					return source;
 				}
 				else
-					CompileLog::WriteError(String(L"Pallet not found ") + palName, L"");
+					BuildSystem::LogError(String(L"Pallet not found ") + palName, L"");
 			}
 			
-			CompileLog::WriteError(String(L"Cannot parse ") + text, L"");
+			BuildSystem::LogError(String(L"Cannot parse ") + text, L"");
 			return Color4();
 		}
 		
@@ -506,7 +491,7 @@ namespace APBuild
 								return *found;
 							else
 							{
-								CompileLog::WriteError(L"Color " + sIndx + L" not found in " + palName, L"");
+								BuildSystem::LogError(L"Color " + sIndx + L" not found in " + palName, L"");
 								return Color4();
 							}
 						}
@@ -517,10 +502,10 @@ namespace APBuild
 						}	
 					}
 					else
-						CompileLog::WriteError(String(L"Pallet not found ") + palName, L"");
+						BuildSystem::LogError(String(L"Pallet not found ") + palName, L"");
 				}
 				else
-					CompileLog::WriteError(String(L"Cannot parse ") + text, L"");
+					BuildSystem::LogError(String(L"Cannot parse ") + text, L"");
 			}
 			return Color4();
 		case 3:
@@ -535,7 +520,7 @@ namespace APBuild
 				StringUtils::ParseInt32(vals[2]), 
 				StringUtils::ParseInt32(vals[3]));
 		default:
-			CompileLog::WriteError(String(L"Cannot parse ") + text, L"");
+			BuildSystem::LogError(String(L"Cannot parse ") + text, L"");
 			return Color4();
 		}
 		

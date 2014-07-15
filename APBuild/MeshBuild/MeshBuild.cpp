@@ -23,53 +23,40 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "MeshBuild.h"
 
-#include "../BuildEngine.h"
-#include "../BuildConfig.h"
-#include "../CompileLog.h"
+#include "BuildSystem.h"
+#include "BuildConfig.h"
 
 #include "AIImporter.h"
 #include "XImporter.h"
 #include "FbxConverter.h"
 
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/ModelData.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Graphics;
-
 namespace APBuild
 {
-	void MeshBuild::BuildByFBX(const MeshBuildConfig& config)
+	void BuildByFBX(const MeshBuildConfig& config)
 	{
 		FbxConverter::Import(config);
 
-		CompileLog::WriteInformation(config.SrcFile, L">");
+		BuildSystem::LogInformation(config.SrcFile, L">");
 	}
-	void MeshBuild::BuildByASS(const MeshBuildConfig& config)
+	void BuildByASS(const MeshBuildConfig& config)
 	{
-		AIImporter importer;
-		ModelData* data = importer.Import(config);
+		ModelData* data = AIImporter::Import(config);
 
-		ConvertVertexData(data, config);
-		CollapseMeshs(data, config);
+		MeshBuild::ConvertVertexData(data, config);
+		MeshBuild::CollapseMeshs(data, config);
 
 		FileOutStream* fs = new FileOutStream(config.DstFile);
 		data->Save(fs);
 		delete data;
 
-		CompileLog::WriteInformation(config.SrcFile, L">");
+		BuildSystem::LogInformation(config.SrcFile, L">");
 	}
-	void MeshBuild::BuildByD3D(const MeshBuildConfig& config)
+	void BuildByD3D(const MeshBuildConfig& config)
 	{
-		XImporter importer;
-		ModelData* data = importer.Import(config);
+		ModelData* data = AIImporter::Import(config);
 
-		ConvertVertexData(data, config);
-		CollapseMeshs(data, config);
+		MeshBuild::ConvertVertexData(data, config);
+		MeshBuild::CollapseMeshs(data, config);
 
 		FileOutStream* fs = new FileOutStream(config.DstFile);
 		if (config.CompactBuild)
@@ -82,7 +69,7 @@ namespace APBuild
 		}
 		delete data;
 
-		CompileLog::WriteInformation(config.SrcFile, L">");
+		BuildSystem::LogInformation(config.SrcFile, L">");
 	}
 
 	void MeshBuild::Build(const ConfigurationSection* sect)
@@ -92,21 +79,21 @@ namespace APBuild
 		
 		if (!File::FileExists(config.SrcFile))
 		{
-			CompileLog::WriteError(config.SrcFile, L"Could not find source file.");
+			BuildSystem::LogError(config.SrcFile, L"Could not find source file.");
 			return;
 		}
-		EnsureDirectory(PathUtils::GetDirectory(config.DstFile));
-		EnsureDirectory(PathUtils::GetDirectory(config.DstAnimationFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DstFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DstAnimationFile));
 
 		switch (config.Method)
 		{
-		case MESHBUILD_ASS:
+		case MeshBuildMethod::ASS:
 			BuildByASS(config);
 			break;
-		case MESHBUILD_FBX:
+		case MeshBuildMethod::FBX:
 			BuildByFBX(config);
 			break;
-		case MESHBUILD_D3D:
+		case MeshBuildMethod::D3D:
 			BuildByD3D(config);
 			break;
 		}
@@ -212,7 +199,7 @@ namespace APBuild
 
 				if (refVertexSize!=md->VertexSize)
 				{
-					CompileLog::WriteError(config.SrcFile, 
+					BuildSystem::LogError(config.SrcFile, 
 						L"The mesh collapse only works with meshes that have the same vertex format.");
 					delete[] indexShifters;
 					delete[] materialShifters;

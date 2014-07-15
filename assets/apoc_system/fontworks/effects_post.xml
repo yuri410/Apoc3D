@@ -3,7 +3,7 @@
 <TestBuild>
   <Build Type="Project">
     <ds_titleFont Type="fontmapst"
-                     Name="ds_titleFont"
+                     SourceFile="ds_titleFont"
                      DestinationFile="ds_titleFont.fnt" >
       <Range0 Start="0" End="1" />
     </ds_titleFont>

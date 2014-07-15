@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <Root>
     <Project Name="Sample Font" TexturePath="textures" MaterialPath="">
-      <uming14 Type="font" Name="fonts\uming.ttc" Size="14" AntiAlias="true" DestinationFile="s_font\uming14.fnt" LastModTime="1325484148">
+      <uming14 Type="font" SourceFile="fonts\uming.ttc" Size="14" AntiAlias="true" DestinationFile="s_font\uming14.fnt" LastModTime="1325484148">
         <Range0 Start="0" End="65535" />
       </uming14>
-      <uming22 Type="font" Name="fonts\uming.ttc" Size="22" AntiAlias="true" DestinationFile="s_font\uming22.fnt" LastModTime="1325484148">
+      <uming22 Type="font" SourceFile="fonts\uming.ttc" Size="22" AntiAlias="true" DestinationFile="s_font\uming22.fnt" LastModTime="1325484148">
         <Range0 Start="0" End="65535" />
       </uming22>
     

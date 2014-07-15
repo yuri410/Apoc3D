@@ -25,22 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ShaderAtomType.h"
 #include "ShaderDataIO.h"
 
-#include "apoc3d/Config/ABCConfigurationFormat.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-
-#include "apoc3d/IOLib/Streams.h"
-
-#include "apoc3d/Utility/StringUtils.h"
-
-using namespace Apoc3D::Config;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::Utility;
-
 SINGLETON_DECL(APDesigner::ShaderAtomLibraryManager);
 
 namespace APDesigner

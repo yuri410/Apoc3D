@@ -10,7 +10,7 @@ namespace APDesigner
 {
 	Document* ExtensionFont::OpenItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_FontGlyphDist)
+		if (item->getType() == ProjectItemType::FontGlyphDist)
 		{
 			const Project* prj = item->getProject();
 			ProjectResFontGlyphDist* mdl = static_cast<ProjectResFontGlyphDist*>(item->getData());
@@ -30,7 +30,7 @@ namespace APDesigner
 
 	bool ExtensionFont::SupportsItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_FontGlyphDist)
+		if (item->getType() == ProjectItemType::FontGlyphDist)
 			return true;
 		return false;
 	}

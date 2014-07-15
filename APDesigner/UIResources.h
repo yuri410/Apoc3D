@@ -1,11 +1,6 @@
 #pragma once
 
 #include "APDCommon.h"
-#include "apoc3d/Collections/HashMap.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Graphics::RenderSystem;
 
 namespace APDesigner
 {

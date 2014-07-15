@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,13 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "../APBCommon.h"
-#include "apoc3d/Graphics/GraphicsCommon.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::IO;
+#include "APBCommon.h"
 
 namespace APBuild
 {

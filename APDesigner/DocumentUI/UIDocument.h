@@ -5,16 +5,6 @@
 
 #include "APDesigner/Document.h"
 
-#include "apoc3d/Scene/SimpleSceneManager.h"
-#include "apoc3d/Scene/SceneObject.h"
-#include "apoc3d/UILib/Control.h"
-#include "apoc3d/Graphics/ModelTypes.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::Animation;
-using namespace Apoc3D::Scene;
-
 namespace APDesigner
 {
 	class UIDocument : public Document

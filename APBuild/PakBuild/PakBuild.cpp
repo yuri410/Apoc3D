@@ -23,16 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "PakBuild.h"
 
-#include "../CompileLog.h"
-#include "../BuildEngine.h"
-#include "../BuildConfig.h"
-
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/BinaryReader.h"
-#include "apoc3d/IOLib/BinaryWriter.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Vfs/Archive.h"
+#include "BuildSystem.h"
+#include "BuildConfig.h"
 
 #include <dirent.h>
 
@@ -42,7 +34,6 @@ using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
-
 	const int PakFileID = ((byte)0 << 24) | ((byte)'P' << 16) | ((byte)'A' << 8) | ((byte)'K');
 
 	//struct PakEntry
@@ -77,24 +68,23 @@ namespace APBuild
 	//
 	void PakBuild::Build(const ConfigurationSection* sect)
 	{
-
 		PakBuildConfig config;
 		config.Parse(sect);
 
-		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 		for (int i=0;i<config.Files.getCount();i++)
 		{
 			if (!File::FileExists(config.Files[i]))
 			{
-				CompileLog::WriteError(L"Source file does not exist: " + config.Files[i], config.DestFile);
+				BuildSystem::LogError(L"Source file does not exist: " + config.Files[i], config.DestFile);
 				return;
 			}
 		}
 
-		//CompileLog::WriteInformation(L"Pak builder currently only supports directory flatten build.", L"");
+		//BuildSystem::LogInformation(L"Pak builder currently only supports directory flatten build.", L"");
 
 		//PakNode* root = GetNodes(config);
-		CompileLog::WriteInformation(config.DestFile, L">");
+		BuildSystem::LogInformation(config.DestFile, L">");
 
 		List<String> sourceFiles;
 
@@ -135,17 +125,17 @@ namespace APBuild
 					}
 
 					closedir(dir);
-					CompileLog::WriteInformation(L"Adding " + StringUtils::IntToString(counter)
+					BuildSystem::LogInformation(L"Adding " + StringUtils::IntToString(counter)
 						+ L" files from flatten dir: " + config.Dirs[i].Path, config.DestFile);
 				}
 				else
 				{
-					CompileLog::WriteError(L"Cannot read directory: "+config.Dirs[i].Path, config.DestFile);
+					BuildSystem::LogError(L"Cannot read directory: "+config.Dirs[i].Path, config.DestFile);
 				}
 			}
 			else
 			{
-				CompileLog::WriteError(L"Recursive dir currently not supported: " + config.Dirs[i].Path, config.DestFile);
+				BuildSystem::LogError(L"Recursive dir currently not supported: " + config.Dirs[i].Path, config.DestFile);
 			}
 		}
 		int count = sourceFiles.getCount();

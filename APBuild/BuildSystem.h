@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -28,8 +29,30 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D;
 
-int Initialize();
-void Finalize();
-void EnsureDirectory(const String& path);
+namespace APBuild
+{
+	namespace BuildSystem
+	{
+		int Initialize();
+		void Finalize();
+
+		int Build(ConfigurationSection* sect);
+
+		void EnsureDirectory(const String& path);
+
+		enum CompileLogType
+		{
+			COMPILE_Warning,
+			COMPILE_Information,
+			COMPILE_Error
+		};
+
+		void Log(CompileLogType type, const String& message, const String& location);
+		void LogInformation(const String& message, const String& location);
+		void LogError(const String& message, const String& location);
+		void LogWarning(const String& message, const String& location);
+		void LogClear();
+	}
+}
 
 #endif

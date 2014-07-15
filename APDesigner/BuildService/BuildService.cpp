@@ -1,23 +1,8 @@
 #include "BuildService.h"
 
-#include "apoc3d/Project/Project.h"
-#include "apoc3d/Platform/Thread.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/Core/Logging.h"
-
 #include "APDesigner/CommonDialog/DialogCommon.h"
 
-#include "apoc3d/Library/tinythread.h"
-
 #include <Windows.h>
-
-using namespace Apoc3D;
-using namespace Apoc3D::Core;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::Utility;
 
 SINGLETON_DECL(APDesigner::BuildInterface);
 

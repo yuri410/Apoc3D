@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -25,22 +26,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef BORDERBUILDER_H
 #define BORDERBUILDER_H
 
-#include "../APBCommon.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Math;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Graphics::Animation;
+#include "APBCommon.h"
 
 namespace APBuild
 {
-	class BorderBuilder
+	namespace BorderBuilder
 	{
-	public:
-		static void Build(const ConfigurationSection* sect);
-	};
+		void Build(const ConfigurationSection* sect);
+	}
 }
 
 

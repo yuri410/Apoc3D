@@ -25,17 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "UIDocument.h"
 
-#include "apoc3d/Project/Project.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-
-using namespace Apoc3D::VFS;
-
 namespace APDesigner
 {
 	Document* ExtensionUI::OpenItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_UILayout)
+		if (item->getType() == ProjectItemType::UILayout)
 		{
 			const Project* prj = item->getProject();
 			ProjectResUILayout* mtrl = static_cast<ProjectResUILayout*>(item->getData());
@@ -56,7 +50,7 @@ namespace APDesigner
 
 	bool ExtensionUI::SupportsItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_UILayout)
+		if (item->getType() == ProjectItemType::UILayout)
 			return true;
 		return false;
 	}

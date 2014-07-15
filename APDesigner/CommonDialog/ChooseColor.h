@@ -6,10 +6,6 @@
 
 #include "DialogCommon.h"
 
-#include "apoc3d/Math/ColorValue.h"
-
-using namespace Apoc3D::Math;
-
 namespace APDesigner
 {
 	namespace CommonDialog

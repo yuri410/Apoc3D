@@ -26,11 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDesigner/Document.h"
 
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::Animation;
-using namespace Apoc3D::Scene;
-
 namespace APDesigner
 {
 	class ShaderAtomDocument : public Document

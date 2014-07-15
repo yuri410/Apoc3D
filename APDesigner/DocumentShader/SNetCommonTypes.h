@@ -26,10 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define SHADERNETWORKTYPES_H
 
 #include "APDesigner/APDCommon.h"
-#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics::EffectSystem;
 
 namespace APDesigner
 {

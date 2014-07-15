@@ -1,4 +1,4 @@
-
+#pragma once
 #ifndef OPENFILEDIALOG_H
 #define OPENFILEDIALOG_H
 

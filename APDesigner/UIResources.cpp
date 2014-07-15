@@ -1,16 +1,5 @@
 #include "UIResources.h"
 
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::IO;
-
-#include "apoc3d/Vfs/Archive.h"
-#include "apoc3d/Vfs/FileSystem.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Vfs/FileLocateRule.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Graphics/TextureManager.h"
-#include "apoc3d/Graphics/RenderSystem/Texture.h"
-
 namespace APDesigner
 {
 	HashMap<String, Texture*>* UIResources::m_maps = 0;

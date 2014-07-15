@@ -24,24 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "XafImporter.h"
 
-#include "../BuildConfig.h"
-
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Math/Matrix.h"
-#include "apoc3d/Graphics/Animation/AnimationTypes.h"
-#include "apoc3d/IOLib/MaterialData.h"
-#include "apoc3d/IOLib/ModelData.h"
-#include "apoc3d/Graphics/Animation/AnimationData.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/Utility/StringUtils.h"
-
-#include "apoc3d/Library/tinyxml.h"
+#include "BuildConfig.h"
 
 #include <fstream>
 #include <vector>
-
-using namespace Apoc3D::Utility;
 
 namespace APBuild
 {
@@ -179,8 +165,6 @@ namespace APBuild
 
 				Matrix::Multiply(temp, spaceSwitcher, trans);
 				Matrix::Multiply(trans, temp, spaceSwitcher);
-				//D3DXMatrixMultiply(&trans, &spaceSwitcher, &trans);
-				//D3DXMatrixMultiply(&trans, &trans, &spaceSwitcher);
 
 				if (index<nodes.getCount())
 				{

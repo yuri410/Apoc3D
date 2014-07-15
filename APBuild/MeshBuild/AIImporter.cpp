@@ -26,16 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "../BuildConfig.h"
 
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Math/Matrix.h"
-#include "apoc3d/Graphics/Animation/AnimationTypes.h"
-#include "apoc3d/IOLib/MaterialData.h"
-#include "apoc3d/IOLib/ModelData.h"
-#include "apoc3d/Graphics/Animation/AnimationData.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/Utility/StringUtils.h"
-
 #ifdef _MSC_VER
 #pragma warning (push)
 #pragma warning (disable : 4819)

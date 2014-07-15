@@ -1,29 +1,7 @@
 #include "MAnimBuild.h"
 
-#include "../BuildConfig.h"
-#include "../CompileLog.h"
-#include "../BuildEngine.h"
-
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/ModelData.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Graphics/Animation/AnimationData.h"
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/IOLib/MaterialData.h"
-#include "apoc3d/IOLib/Streams.h"
-
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Utility;
+#include "BuildConfig.h"
+#include "BuildSystem.h"
 
 namespace APBuild
 {
@@ -38,11 +16,11 @@ namespace APBuild
 
 		if (!File::FileExists(config.SrcFile))
 		{
-			CompileLog::WriteError(config.SrcFile, L"Could not find source file.");
+			BuildSystem::LogError(config.SrcFile, L"Could not find source file.");
 			return;
 		}
 
-		EnsureDirectory(PathUtils::GetDirectory(config.DstFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DstFile));
 
 		AnimationData::MtrlClipTable mtrlClip;
 
@@ -114,6 +92,6 @@ namespace APBuild
 
 		delete data;
 
-		CompileLog::WriteInformation(config.SrcFile, L">");
+		BuildSystem::LogInformation(config.SrcFile, L">");
 	}
 }

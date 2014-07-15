@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -24,26 +25,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MESHBUILD_H
 #define MESHBUILD_H
 
-#include "../APBCommon.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::IO;
+#include "APBCommon.h"
 
 namespace APBuild
 {
-	class MeshBuild
+	namespace MeshBuild
 	{
-	public:
-		static void Build(const ConfigurationSection* sect);
+		void Build(const ConfigurationSection* sect);
 
-		static void ConvertVertexData(ModelData* data, const MeshBuildConfig& config);
-		static void CollapseMeshs(ModelData* data, const MeshBuildConfig& config);
+		void ConvertVertexData(ModelData* data, const MeshBuildConfig& config);
+		void CollapseMeshs(ModelData* data, const MeshBuildConfig& config);
 
-	private:
-		static void BuildByASS(const MeshBuildConfig& config);
-		static void BuildByFBX(const MeshBuildConfig& config);
-		static void BuildByD3D(const MeshBuildConfig& config);
 	};
 
 }

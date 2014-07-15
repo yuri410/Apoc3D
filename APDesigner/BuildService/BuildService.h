@@ -1,15 +1,8 @@
+#pragma once
 #ifndef BUILDSERVICE_H
 #define BUILDSERVICE_H
 
-#include "../APDCommon.h"
-#include "apoc3d/Core/Singleton.h"
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/Queue.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Core;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::Collections;
+#include "APDCommon.h"
 
 namespace tthread
 {

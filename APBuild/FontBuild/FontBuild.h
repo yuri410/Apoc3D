@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -24,16 +25,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef FONTBUILD_H
 #define FONTBUILD_H
 
-#include "../APBCommon.h"
-
-using namespace Apoc3D::Config;
+#include "APBCommon.h"
 
 namespace APBuild
 {
-	void fbBuild(const ConfigurationSection* sect);
+	namespace FontBuild
+	{
+		void Build(const ConfigurationSection* sect);
 
-	void fbBuildFromFontMap(const ConfigurationSection* sect);
-	void fbBuildToFontMap(const ConfigurationSection* sect);
-	void fbBuildGlyphCheck(const ConfigurationSection* sect);
+		void BuildFromFontMap(const ConfigurationSection* sect);
+		void BuildToFontMap(const ConfigurationSection* sect);
+		void BuildGlyphAvailabilityRanges(const ConfigurationSection* sect);
+	}
 }
 #endif

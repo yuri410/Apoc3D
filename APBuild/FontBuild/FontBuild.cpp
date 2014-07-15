@@ -23,9 +23,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "FontBuild.h"
 
-#include "../BuildConfig.h"
-#include "../BuildEngine.h"
-#include "../CompileLog.h"
+#include "BuildConfig.h"
+#include "BuildSystem.h"
 
 #include <windows.h>
 #include <objidl.h>
@@ -37,27 +36,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "freetype/ftoutln.h"
 #include "freetype/fttrigon.h"
 #include "freetype/ftbitmap.h"
-
-#include "apoc3d/Collections/CollectionsCommon.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Config/Configuration.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/ExistTable.h"
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/BinaryReader.h"
-#include "apoc3d/IOLib/BinaryWriter.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Utility/Hash.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::Utility;
 
 #pragma comment (lib, "Gdiplus.lib")
 
@@ -186,24 +164,24 @@ namespace APBuild
 		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo);
 
 
-	void fbBuild(const ConfigurationSection* sect)
+	void FontBuild::Build(const ConfigurationSection* sect)
 	{
 		FontBuildConfig config;
 		config.Parse(sect);
 
-		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
 		BuildFont(config, RenderGlyphsByFreeType);
 
-		CompileLog::WriteInformation(config.Name, L">");
+		BuildSystem::LogInformation(config.SourceFile, L">");
 	}
 
-	void fbBuildGlyphCheck(const ConfigurationSection* sect)
+	void FontBuild::BuildGlyphAvailabilityRanges(const ConfigurationSection* sect)
 	{
 		String srcFile = sect->getAttribute(L"SourceFile");
 		String dstFile = sect->getAttribute(L"DestinationFile");
 
-		EnsureDirectory(PathUtils::GetDirectory(dstFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(dstFile));
 		
 		FT_Library library;
 		if (FT_Init_FreeType( &library )) 
@@ -251,15 +229,15 @@ namespace APBuild
 		bw->Close();
 		delete bw;
 
-		CompileLog::WriteInformation(srcFile, L">");
+		BuildSystem::LogInformation(srcFile, L">");
 	}
-	void fbBuildToFontMap(const ConfigurationSection* sect)
+	void FontBuild::BuildToFontMap(const ConfigurationSection* sect)
 	{
 		FontMapBuildConfig config;
 		config.Parse(sect);
 
-		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
-		EnsureDirectory(PathUtils::GetDirectory(config.DestIndexFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestIndexFile));
 
 		GlyphBitmapEqualityComparer comparer;
 		FastList<CharMapping> charMap(0xffff);
@@ -401,22 +379,22 @@ namespace APBuild
 		GetEncoderClsid(L"image/png", &pngClsid);
 		packedMap.Save(config.DestFile.c_str(), &pngClsid);
 
-		CompileLog::WriteInformation(config.SourceFile, L">");
+		BuildSystem::LogInformation(config.SourceFile, L">");
 	}
-	void fbBuildFromFontMap(const ConfigurationSection* sect)
+	void FontBuild::BuildFromFontMap(const ConfigurationSection* sect)
 	{
-		String name = sect->getAttribute(L"Name");
+		String sourceFile = sect->getAttribute(L"SourceFile");
 		String destFile = sect->getAttribute(L"DestinationFile");
 
-		EnsureDirectory(PathUtils::GetDirectory(destFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(destFile));
 		
 		FontBuildConfig config;
-		config.Name = name;
+		config.SourceFile = sourceFile;
 		config.DestFile = destFile;
 		// other params ignored
 		BuildFont(config, RenderGlyphsByFontMap);
 
-		CompileLog::WriteInformation(name, L">");
+		BuildSystem::LogInformation(sourceFile, L">");
 	}
 
 	void BuildFont(const FontBuildConfig& config, GlyphRenderHandler renderer)
@@ -426,7 +404,7 @@ namespace APBuild
 		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
 
 		FontRenderInfo info;
-		renderer(StringUtils::toPlatformNarrowString(config.Name), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
+		renderer(StringUtils::toPlatformNarrowString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
 
 		FileOutStream* fs = new FileOutStream(config.DestFile);
 		BinaryWriter* bw = new BinaryWriter(fs);
@@ -727,18 +705,6 @@ namespace APBuild
 		delete br;
 	}
 
-	bool IsColEmpty(const Gdiplus::BitmapData* bmp, int x)
-	{
-		const char* data = reinterpret_cast<const char*>(bmp->Scan0);
-
-		for (uint y = 0; y < bmp->Height; y++)
-		{
-			if (data[y* bmp->Stride + x * sizeof(uint)] & 0xff000000)
-				return false;
-		}
-
-		return true;
-	}
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 	{
 		UINT  num = 0;          // number of image encoders
@@ -769,227 +735,4 @@ namespace APBuild
 		free(pImageCodecInfo);
 		return -1;  // Failure
 	}
-
-	// this is useless
-	void BuildByGDIPlus(const FontBuildConfig& config)
-	{
-		GlyphBitmapEqualityComparer comparer;
-		FastList<CharMapping> charMap(0xffff);
-		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
-		
-		Gdiplus::Bitmap globalBmp(1,1, PixelFormat32bppARGB);
-		Gdiplus::Graphics* gg = Gdiplus::Graphics::FromImage(&globalBmp);
-
-		Gdiplus::Font font(config.Name.c_str(), config.Size, config.Style);
-
-		// generate the images for characters as specified in the ranges
-		for (int i=0;i<config.Ranges.getCount();i++)
-		{
-			for (wchar_t ch = (wchar_t)config.Ranges[i].MinChar; 
-				ch <= (wchar_t)config.Ranges[i].MaxChar; ch++)
-			{
-				Gdiplus::RectF size;
-				gg->MeasureString(&ch, 1, &font, Gdiplus::PointF(0,0), &size);
-
-				int width = static_cast<int>(ceilf(size.Width));
-				int height = static_cast<int>(ceilf(size.Height));
-
-				Gdiplus::Bitmap* bitmap = new Gdiplus::Bitmap((INT)width, (INT)height, PixelFormat32bppARGB);
-
-				Gdiplus::Graphics* g = Gdiplus::Graphics::FromImage(bitmap);
-				if (config.AntiAlias)
-					g->SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAliasGridFit);
-				else
-					g->SetTextRenderingHint(Gdiplus::TextRenderingHintSingleBitPerPixel);
-				g->Clear(Gdiplus::Color(0));
-
-
-				Gdiplus::Brush* brush = new Gdiplus::SolidBrush((Gdiplus::ARGB)Gdiplus::Color::White);
-				Gdiplus::StringFormat* strFmt = new Gdiplus::StringFormat();
-				strFmt->SetAlignment(Gdiplus::StringAlignmentNear);
-				strFmt->SetLineAlignment(Gdiplus::StringAlignmentNear);
-
-				g->DrawString(&ch,1,&font,Gdiplus::PointF(0,0), strFmt, brush);
-
-
-				g->Flush();
-
-				delete g;
-				delete brush;
-				delete strFmt;
-
-				Gdiplus::BitmapData bmpData;
-				Gdiplus::Rect lr = Gdiplus::Rect( 0, 0, width, height );
-				Gdiplus::Status ret = bitmap->LockBits(&lr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpData);
-
-				const char* data = reinterpret_cast<const char*>(bmpData.Scan0);
-
-				// clip the character
-				{
-					int cropLeft = 0;
-					int cropRight = width - 1;
-					while ((cropLeft < cropRight) && IsColEmpty(&bmpData, cropLeft))
-						cropLeft++;
-
-					while ((cropRight > cropLeft) && IsColEmpty(&bmpData, cropRight))
-						cropRight--;
-
-					if (cropLeft != cropRight)
-					{
-						cropLeft = max(cropLeft-1,0);
-						cropRight = min(cropRight+1, width-1);
-
-						int width2 = cropRight-cropLeft+1;
-						Gdiplus::Bitmap* altBmp = new Gdiplus::Bitmap(width2, height, bitmap->GetPixelFormat());
-
-						{
-							Gdiplus::BitmapData bmpData2;
-							Gdiplus::Rect lr2 = Gdiplus::Rect( 0, 0, width2, height );
-							altBmp->LockBits(&lr2, Gdiplus::ImageLockModeWrite, PixelFormat32bppARGB, &bmpData2);
-
-							char* data2 = reinterpret_cast<char*>(bmpData2.Scan0);
-							int srcofs = 0;
-							int dstofs = 0;
-							for (int k=0;k<height;k++)
-							{
-								for (int j=cropLeft;j<=cropRight;j++)
-								{
-									*(uint*)(data2 + dstofs+(j-cropLeft)*sizeof(uint)) = *(uint*)(data + srcofs + j*sizeof(uint));
-								}
-
-								srcofs += bmpData.Stride;
-								dstofs += bmpData2.Stride;
-							}
-							altBmp->UnlockBits(&bmpData2);
-						}
-
-
-						//Gdiplus::Graphics* g = Gdiplus::Graphics::FromImage(altBmp);
-
-						//g->SetCompositingMode(Gdiplus::CompositingModeSourceCopy);
-						//g->DrawImage(bitmap, 0,0, cropLeft, 0, width2, height, Gdiplus::UnitPixel);
-						//g->Flush();
-						//delete g;
-
-
-						bitmap->UnlockBits(&bmpData);
-
-
-						width = width2;
-
-						delete bitmap;
-
-						{
-							//String testOut = String(L"E:\\Desktop\\fntb\\ss")+String(1,ch)+String(L".png");
-							//if (ch >= 'A' && ch <= 'Z' && !File::FileExists(testOut))
-							//{
-							//	CLSID pngClsid;
-							//	GetEncoderClsid(L"image/png", &pngClsid);
-							//	altBmp->Save(testOut.c_str(), &pngClsid);
-
-							//}
-
-						}
-
-						bitmap = altBmp;
-						lr = Gdiplus::Rect( 0, 0, width, height );
-						ret = bitmap->LockBits(&lr, Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmpData);
-					}
-				}
-
-
-
-				data = reinterpret_cast<const char*>(bmpData.Scan0);
-
-				// put the data in bitmap to a byte buffer
-				char* buffer = new char[width*height];
-				int srcofs = 0;
-				int dstofs = 0;
-				for (int k=0;k<height;k++)
-				{
-					for (int j=0;j<width;j++)
-					{
-						buffer[dstofs+j] = data[srcofs + j*sizeof(uint)+3];
-					}
-
-					srcofs += bmpData.Stride;
-					dstofs += width;
-				}
-
-				// check duplicated glyphs using hash table
-				// use the previous glyph if a same one already exists
-				GlyphBitmap result;
-				GlyphBitmap glyph(width, height, buffer, false);
-				if (!glyphHashTable.TryGetValue(glyph, result))
-				{
-					glyph.Index = glyphHashTable.getCount();// index++;
-					glyphHashTable.Add(glyph, glyph);
-				}
-				else
-				{
-					glyph = result;
-					delete[] buffer;
-				}
-
-
-
-				//if (!passCheck[ch])
-				{
-					CharMapping m = { ch, glyph.Index };
-					charMap.Add(m);
-				}
-
-				bitmap->UnlockBits(&bmpData);
-				delete bitmap;
-			}
-		}
-
-		FileOutStream* fs = new FileOutStream(config.DestFile);
-		BinaryWriter* bw = new BinaryWriter(fs);
-
-		bw->WriteInt32(charMap.getCount());
-		for (int i=0;i<charMap.getCount();i++)
-		{
-			bw->WriteInt32((int32)charMap[i].Character);
-			bw->WriteInt32((int32)charMap[i].GlyphIndex);
-		}
-
-		bw->WriteInt32(glyphHashTable.getCount());
-		int64 glyRecPos = fs->getPosition();
-		for (int i=0;i<glyphHashTable.getCount();i++)
-		{
-			bw->WriteInt32((int32)0);
-			bw->WriteInt32((int32)0);
-			bw->WriteInt32((int32)0);
-			bw->WriteInt64((int64)0);
-		}
-		int64 baseOfs = fs->getPosition();
-
-		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
-		{
-			const GlyphBitmap* g = i.getCurrentKey();
-
-			bw->Write(g->PixelData, g->Width * g->Height);
-		}
-
-		fs->Seek(glyRecPos, SEEK_Begin);
-
-		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
-		{
-			const GlyphBitmap* g = i.getCurrentKey();
-
-			bw->WriteInt32((int32)g->Index);
-			bw->WriteInt32((int32)g->Width);
-			bw->WriteInt32((int32)g->Height);
-			bw->WriteInt64((int64)baseOfs);
-			baseOfs += g->Width * g->Height;
-			delete[] g->PixelData;
-		}
-
-
-		bw->Close();
-		delete bw;
-
-	}
-
 }

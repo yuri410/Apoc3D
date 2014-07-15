@@ -27,14 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDesigner/APDCommon.h"
 
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Math/Vector.h"
-
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Core;
-using namespace Apoc3D::Math;
-using namespace Apoc3D;
-
 namespace APDesigner
 {
 	/** Represents a node in the graph, used to represent a

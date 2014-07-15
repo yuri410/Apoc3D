@@ -24,15 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "BuildConfig.h"
 
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Graphics/PixelFormat.h"
-#include "apoc3d/Graphics/GraphicsCommon.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
-
-using namespace Apoc3D::Utility;
 
 namespace APBuild
 {
@@ -40,24 +33,8 @@ namespace APBuild
 	{
 		String method = L"d3d";
 		sect->tryGetAttribute(L"Method", method);
-		StringUtils::ToLowerCase(method);
-
-		if (method == L"d3d")
-		{
-			Method = TEXBUILD_D3D;
-		}
-		else if (method == L"d3dl")
-		{
-			Method = TEXBUILD_D3D_LatencySupport;
-		}
-		else if (method == L"devil")
-		{
-			Method = TEXBUILD_Devil;
-		}
-		else if (method == L"default")
-		{
-			Method = TEXBUILD_BuiltIn;
-		}
+		
+		Method = ProjectTypeUtils::ParseTextureBuildMethod(method);
 
 		AssembleCubemap = false;
 		AssembleVolumeMap = false;
@@ -144,24 +121,11 @@ namespace APBuild
 		passed |= sect->TryGetAttributeInt(L"Height", NewHeight);
 		passed |= sect->TryGetAttributeInt(L"Depth", NewDepth);
 		
-		ResizeFilterType = TFLT_BSpline;
+		ResizeFilterType = TextureFilterType::BSpline;
 		String flt;
 		if (sect->tryGetAttribute(L"ResizeFilter", flt))
 		{
-			StringUtils::ToLowerCase(flt);
-
-			if (flt == L"nearest")
-			{
-				ResizeFilterType = TFLT_Nearest;
-			}
-			else if (flt == L"box")
-			{
-				ResizeFilterType = TFLT_Box;
-			}
-			else 
-			{
-				ResizeFilterType = TFLT_BSpline;
-			}
+			ResizeFilterType = ProjectTypeUtils::ParseTextureFilterType(flt);
 		}
 
 		Resize = passed;
@@ -173,56 +137,21 @@ namespace APBuild
 			NewFormat = PixelFormatUtils::ConvertFormat(fmt);
 		}
 		
+		CompressionType = TextureCompressionType::None;
 		String cmp;
 		if (sect->tryGetAttribute(L"Compression", cmp))
 		{
-			StringUtils::ToLowerCase(cmp);
-			if (cmp == L"rle")
-			{
-				CompressionType = TDCT_RLE;
-			}
-			else if (cmp == L"lz4")
-			{
-				CompressionType = TDCT_LZ4;
-			}
+			CompressionType = ProjectTypeUtils::ParseTextureCompressionType(cmp);
 		}
 	}
 
 	void FontBuildConfig::Parse(const ConfigurationSection* sect)
 	{
-		Name = sect->getAttribute(L"Name");
+		SourceFile = sect->getAttribute(L"SourceFile");
 		Size = sect->GetAttributeSingle(L"Size");
 
 		AntiAlias = true;
 		sect->TryGetAttributeBool(L"AntiAlias", AntiAlias);
-
-		Style = Gdiplus::FontStyleRegular;
-		String strStyle;
-		if (sect->tryGetAttribute(L"Style", strStyle))
-		{
-			StringUtils::ToLowerCase(strStyle);
-
-			if (strStyle == L"regular")
-			{
-				Style = Gdiplus::FontStyleRegular;
-			}
-			else if (strStyle == L"bold")
-			{
-				Style = Gdiplus::FontStyleBold;
-			}
-			else if (strStyle == L"italic")
-			{
-				Style = Gdiplus::FontStyleItalic;
-			}
-			else if (strStyle == L"bolditalic")
-			{
-				Style = Gdiplus::FontStyleBoldItalic;
-			}
-			else if (strStyle == L"underline")
-			{
-				Style = Gdiplus::FontStyleStrikeout;
-			}
-		}
 
 
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
@@ -408,22 +337,10 @@ namespace APBuild
 		DstFile = sect->getAttribute(L"DestinationFile");
 		sect->tryGetAttribute(L"DestinationAnimFile", DstAnimationFile);
 
-		String method = L"ass";
-		sect->tryGetAttribute(L"Method", method);
-		StringUtils::ToLowerCase(method);
+		String strMethod = L"ass";
+		sect->tryGetAttribute(L"Method", strMethod);
+		Method = ProjectTypeUtils::ParseModelBuildMethod(strMethod);
 
-		if (method == L"ass")
-		{
-			Method = MESHBUILD_ASS;
-		}
-		else if (method == L"fbx")
-		{
-			Method = MESHBUILD_FBX;
-		}
-		else if (method == L"d3d")
-		{
-			Method = MESHBUILD_D3D;
-		}
 
 		UseVertexFormatConversion = false;
 

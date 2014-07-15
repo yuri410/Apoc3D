@@ -27,14 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "GraphNode.h"
 #include "QuadTree.h"
 
-#include "apoc3d/Core/GameTime.h"
-#include "apoc3d/Collections/Queue.h"
-#include "apoc3d/Math/Matrix.h"
-#include "apoc3d/Math/MathCommon.h"
-#include "apoc3d/Utility/StringUtils.h"
-
-using namespace Apoc3D::Utility;
-
 namespace APDesigner
 {
 	class LeafNodeCreatedHandlerImpl : public LeafNodeCreatedHandler

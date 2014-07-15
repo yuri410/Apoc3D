@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -24,19 +25,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MANIMBUILD_H
 #define MANIMBUILD_H
 
-#include "../APBCommon.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::IO;
+#include "APBCommon.h"
 
 namespace APBuild
 {
-	class MAnimBuild
+	namespace MAnimBuild
 	{
-	public:
-		static void Build(const ConfigurationSection* sect);
-	};
+		void Build(const ConfigurationSection* sect);
+	}
 }
 
 #endif

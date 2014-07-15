@@ -26,9 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "GraphNode.h"
 
-#include "apoc3d/Core/GameTime.h"
-#include "apoc3d/Math/Rectangle.h"
-
 namespace APDesigner
 {
 	QuadTreeNode::QuadTreeNode(QuadTreeNode* parent, const Apoc3D::Math::RectangleF& rect, int maxDepth, LeafNodeCreatedHandler* handler)

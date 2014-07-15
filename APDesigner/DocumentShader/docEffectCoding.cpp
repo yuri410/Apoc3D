@@ -29,35 +29,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "APDesigner/DocumentModel/MaterialDocument.h"
 #include "APDesigner/CommonDialog/Win32InputBox.h"
 
-#include "apoc3d/Collections/List2D.h"
-#include "apoc3d/Graphics/GraphicsCommon.h"
-
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/IOLib/BinaryReader.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/Button.h"
-#include "apoc3d/UILib/PictureBox.h"
-#include "apoc3d/UILib/Label.h"
-#include "apoc3d/UILib/FontManager.h"
-#include "apoc3d/UILib/ComboBox.h"
-#include "apoc3d/UILib/CheckBox.h"
-#include "apoc3d/UILib/StyleSkin.h"
-#include "apoc3d/UILib/CheckBox.h"
-#include "apoc3d/UILib/List.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-
 #include <fstream>
 #include <vector>
-
-using namespace Apoc3D::Config;
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::VFS;
 
 namespace APDesigner
 {

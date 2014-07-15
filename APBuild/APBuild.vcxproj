@@ -57,31 +57,35 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IntDir>$(SolutionDir)objs\$(ProjectName)$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IntDir>$(SolutionDir)objs\$(ProjectName)$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IntDir>$(SolutionDir)objs\$(ProjectName)$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\include\fbx;$(SolutionDir)\extra;$(SolutionDir)\extra\freetype-2.4.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\include\fbx;$(SolutionDir)\extra;$(SolutionDir)\extra\freetype-2.4.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <PrecompiledHeaderFile>APBPCH.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>APBPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -93,15 +97,17 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;APOC3D_DYNLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\include\fbx;$(SolutionDir)\extra;$(SolutionDir)\extra\freetype-2.4.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\include\fbx;$(SolutionDir)\extra;$(SolutionDir)\extra\freetype-2.4.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <PrecompiledHeaderFile>APBPCH.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>APBPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,16 +121,18 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;APOC3D_MT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\include\fbx;$(SolutionDir)\extra;$(SolutionDir)\extra\freetype-2.4.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\include\fbx;$(SolutionDir)\extra;$(SolutionDir)\extra\freetype-2.4.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <PrecompiledHeaderFile>APBPCH.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>APBPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,9 +148,8 @@
     <ClInclude Include="AnimationBuild\TAnimBuild.h" />
     <ClInclude Include="APBCommon.h" />
     <ClInclude Include="BuildConfig.h" />
-    <ClInclude Include="CompileLog.h" />
-    <ClInclude Include="D3DHelper.h" />
-    <ClInclude Include="dds.h" />
+    <ClInclude Include="Utils\D3DHelper.h" />
+    <ClInclude Include="TextureBuild\dds.h" />
     <ClInclude Include="EffectCompiler\AFXBuild.h" />
     <ClInclude Include="EffectCompiler\CFXBuild.h" />
     <ClInclude Include="EffectCompiler\FXListBuild.h" />
@@ -150,7 +157,7 @@
     <ClInclude Include="FontBuild\FontBuild.h" />
     <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="MaterialScript\MaterialBuild.h" />
-    <ClInclude Include="MaterialStub.h" />
+    <ClInclude Include="MaterialScript\MaterialStub.h" />
     <ClInclude Include="Border\BorderBuilder.h" />
     <ClInclude Include="MeshBuild\FbxConverter.h" />
     <ClInclude Include="MeshBuild\MeshBuild.h" />
@@ -158,8 +165,17 @@
     <ClInclude Include="AnimationBuild\XafImporter.h" />
     <ClInclude Include="MeshBuild\XImporter.h" />
     <ClInclude Include="PakBuild\PakBuild.h" />
-    <ClInclude Include="BuildEngine.h" />
+    <ClInclude Include="BuildSystem.h" />
     <ClInclude Include="TextureBuild\TextureBuild.h" />
+    <ClInclude Include="Utils\MeshProcessing.h" />
+    <ClCompile Include="APBPCH.h">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">APBPCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">APBPCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">APBPCH.h</PrecompiledHeaderFile>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationBuild\MAnimBuild.cpp" />
@@ -171,11 +187,10 @@
     <ClCompile Include="EffectCompiler\CompileService.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="BuildConfig.cpp" />
-    <ClCompile Include="CompileLog.cpp" />
-    <ClCompile Include="D3DHelper.cpp" />
+    <ClCompile Include="Utils\D3DHelper.cpp" />
     <ClCompile Include="FontBuild\FontBuild.cpp" />
     <ClCompile Include="MaterialScript\MaterialBuild.cpp" />
-    <ClCompile Include="MaterialStub.cpp" />
+    <ClCompile Include="MaterialScript\MaterialStub.cpp" />
     <ClCompile Include="MeshBuild\FbxConverter.cpp" />
     <ClCompile Include="MeshBuild\MeshBuild.cpp" />
     <ClCompile Include="MeshBuild\AIImporter.cpp" />
@@ -183,8 +198,9 @@
     <ClCompile Include="MeshBuild\XImporter.cpp" />
     <ClCompile Include="PakBuild\PakBuild.cpp" />
     <ClCompile Include="APBCommon.cpp" />
-    <ClCompile Include="BuildEngine.cpp" />
+    <ClCompile Include="BuildSystem.cpp" />
     <ClCompile Include="TextureBuild\TextureBuild.cpp" />
+    <ClCompile Include="Utils\MeshProcessing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Apoc3D.D3D9RenderSystem\Apoc3D_D3D9RenderSystem.vcxproj">

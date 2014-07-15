@@ -21,23 +21,23 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#ifndef MATERIALSTUB_H
-#define MATERIALSTUB_H
+#include "MaterialStub.h"
 
-#include "APBCommon.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::IO;
+#include "BuildConfig.h"
+#include "BuildSystem.h"
 
 namespace APBuild
 {
-	class MaterialStub
+	void MaterialStub::Build(const ConfigurationSection* sect)
 	{
-	public:
-		static void Build(const ConfigurationSection* sect);
+		MaterialBuildConfig config;
+		config.Parse(sect);
 
-	};
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DstFile));
+
+		MaterialData empty;
+		empty.SetDefaults();
+
+		empty.Save(new FileOutStream(config.DstFile));
+	}
 }
-
-#endif

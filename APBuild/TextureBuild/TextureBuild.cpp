@@ -23,30 +23,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "TextureBuild.h"
 
-#include "../CompileLog.h"
-#include "../D3DHelper.h"
-#include "../BuildEngine.h"
+#include "Utils/D3DHelper.h"
+#include "BuildSystem.h"
 
-#include "../dds.h"
-
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/IOLib/TextureData.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Graphics/LockData.h"
-#include "apoc3d/ApocException.h"
-#include "apoc3d/Utility/Compression.h"
+#include "dds.h"
 
 #include <IL/il.h>
 #include <IL/ilu.h>
-
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::Utility;
 
 #ifndef ReleasePpo
 #define ReleasePpo(ppo) \
@@ -60,8 +43,6 @@ using namespace Apoc3D::Utility;
 
 namespace APBuild
 {
-	static const float RLECompressRatioThreshold = 0.67f;
-
 	D3DFORMAT ConvertFormat(PixelFormat fmt)
 	{
 		static D3DFORMAT pixFmtTable[FMT_Count];
@@ -216,7 +197,7 @@ namespace APBuild
 
 		void Error(const String& msg, const String& src)
 		{
-			CompileLog::WriteError(msg, src);
+			BuildSystem::LogError(msg, src);
 			m_isOnError = true;
 		}
 
@@ -369,7 +350,7 @@ namespace APBuild
 		{
 			HRESULT hr;
 			D3DSURFACE_DESC sd;
-			LPDIRECT3DDEVICE9 pd3ddev = D3DHelper::getDevice();
+			LPDIRECT3DDEVICE9 pd3ddev = Utils::D3DHelper::getDevice();
 			LPDIRECT3DTEXTURE9 ptexAlpha;
 			LPDIRECT3DSURFACE9 psurfAlpha;
 			LPDIRECT3DSURFACE9 psurfTarget;
@@ -512,7 +493,7 @@ namespace APBuild
 		{
 			HRESULT hr;
 			
-			LPDIRECT3DDEVICE9 pd3ddev = D3DHelper::getDevice();
+			LPDIRECT3DDEVICE9 pd3ddev = Utils::D3DHelper::getDevice();
 			LPDIRECT3DTEXTURE9 ptex = NULL;
 			LPDIRECT3DSURFACE9 psurfOrig = NULL;
 			LPDIRECT3DSURFACE9 psurfNew = NULL;
@@ -944,7 +925,7 @@ namespace APBuild
 			m_ptexOrig(NULL), m_ptexNew(NULL), m_dwWidth(0), m_dwHeight(0), m_dwDepth(0),
 			m_numMips(0), m_dwCubeMapFlags(0)
 		{
-			LPDIRECT3DDEVICE9 pd3ddev = D3DHelper::getDevice();
+			LPDIRECT3DDEVICE9 pd3ddev = Utils::D3DHelper::getDevice();
 			D3DXIMAGE_INFO imageInfo;
 			D3DXIMAGE_INFO imageInfo2;
 
@@ -959,7 +940,7 @@ namespace APBuild
 			{
 			case D3DRTYPE_TEXTURE:
 				{
-					hr = D3DXCreateTextureFromFileEx(D3DHelper::getDevice(), filePath.c_str(),
+					hr = D3DXCreateTextureFromFileEx(Utils::D3DHelper::getDevice(), filePath.c_str(),
 						imageInfo.Width, imageInfo.Height, imageInfo.MipLevels,0,
 						imageInfo.Format, D3DPOOL_MANAGED, D3DX_FILTER_NONE, D3DX_FILTER_NONE, 0,
 						&imageInfo2, NULL, (LPDIRECT3DTEXTURE9*)&m_ptexOrig);
@@ -976,7 +957,7 @@ namespace APBuild
 				break;
 			case D3DRTYPE_VOLUMETEXTURE:
 				{
-					hr = D3DXCreateVolumeTextureFromFileEx(D3DHelper::getDevice(), filePath.c_str(),
+					hr = D3DXCreateVolumeTextureFromFileEx(Utils::D3DHelper::getDevice(), filePath.c_str(),
 						imageInfo.Width, imageInfo.Height,imageInfo.Depth,imageInfo.MipLevels,
 						0, imageInfo.Format, D3DPOOL_MANAGED, D3DX_FILTER_NONE, D3DX_FILTER_NONE,
 						0,&imageInfo2, 0, (LPDIRECT3DVOLUMETEXTURE9*)&m_ptexOrig);
@@ -993,7 +974,7 @@ namespace APBuild
 				break;
 			case D3DRTYPE_CUBETEXTURE:
 				{
-					hr = D3DXCreateCubeTextureFromFileEx(D3DHelper::getDevice(), filePath.c_str(),
+					hr = D3DXCreateCubeTextureFromFileEx(Utils::D3DHelper::getDevice(), filePath.c_str(),
 						imageInfo.Width, imageInfo.MipLevels, 0,imageInfo.Format,
 						D3DPOOL_MANAGED, D3DX_FILTER_NONE, D3DX_FILTER_NONE,
 						0, &imageInfo2, NULL, (LPDIRECT3DCUBETEXTURE9*)&m_ptexOrig);
@@ -1029,7 +1010,7 @@ namespace APBuild
 			m_numMips(1), m_dwCubeMapFlags(0)
 		{
 			HRESULT hr;
-			LPDIRECT3DDEVICE9 pd3ddev = D3DHelper::getDevice();
+			LPDIRECT3DDEVICE9 pd3ddev = Utils::D3DHelper::getDevice();
 
 			m_dwWidth = width;
 			m_dwHeight = height;
@@ -1121,7 +1102,7 @@ namespace APBuild
 			LPDIRECT3DTEXTURE9 pddsNew = NULL;
 			D3DFORMAT fmt;
 			HRESULT hr;
-			LPDIRECT3DDEVICE9 pd3ddev = D3DHelper::getDevice();
+			LPDIRECT3DDEVICE9 pd3ddev = Utils::D3DHelper::getDevice();
 			LPDIRECT3DTEXTURE9 pmiptex = NULL;
 			LPDIRECT3DCUBETEXTURE9 pcubetex = NULL;
 			LPDIRECT3DVOLUMETEXTURE9 pvoltex = NULL;
@@ -1296,7 +1277,7 @@ LFail:
 			LPDIRECT3DBASETEXTURE9* pptexNew)
 		{
 			HRESULT hr;
-			LPDIRECT3DDEVICE9 pd3ddev = D3DHelper::getDevice();
+			LPDIRECT3DDEVICE9 pd3ddev = Utils::D3DHelper::getDevice();
 			LPDIRECT3DTEXTURE9 pmiptex;
 			LPDIRECT3DCUBETEXTURE9 pcubetex;
 			LPDIRECT3DVOLUMETEXTURE9 pvoltex;
@@ -1331,7 +1312,7 @@ LFail:
 			{
 				if (fmtTo == D3DFMT_DXT1)
 				{
-					CompileLog::WriteWarning(
+					BuildSystem::LogWarning(
 						L"The source image contains premultiplied alpha, and the RGB values will be copied to \
 						the destination without \"unpremultiplying\" them so the resulting colors may be affected.", m_name);
 					//AfxMessageBox(ID_ERROR_PREMULTTODXT1);
@@ -1445,7 +1426,7 @@ LFail:
 		{
 			HRESULT hr;
 			LPDIRECT3DTEXTURE9 pmiptexNew;
-			LPDIRECT3DDEVICE9 pd3ddev = D3DHelper::getDevice();
+			LPDIRECT3DDEVICE9 pd3ddev = Utils::D3DHelper::getDevice();
 
 			hr = pd3ddev->CreateTexture(dwWidthNew, dwHeightNew, m_numMips, 
 				0, GetFormat(m_ptexOrig), D3DPOOL_MANAGED, &pmiptexNew, NULL);
@@ -1509,7 +1490,7 @@ LFail:
 			}
 		}
 
-		void Save(const String& path, TextureDataCompressionType cmp)
+		void Save(const String& path, TextureCompressionType cmp)
 		{
 			LPDIRECT3DBASETEXTURE9 ptex;
 			ptex = (m_ptexNew == NULL ? m_ptexOrig : m_ptexNew);
@@ -1570,9 +1551,9 @@ LFail:
 				break;
 			}
 
-			if (cmp == TDCT_RLE)
+			if (cmp == TextureCompressionType::RLE)
 				data.Flags = TextureData::TDF_RLECompressed;
-			else if (cmp == TDCT_LZ4)
+			else if (cmp == TextureCompressionType::LZ4)
 				data.Flags = TextureData::TDF_LZ4Compressed;
 			//else if (cmp == TDCT_Auto)
 			//{
@@ -1750,11 +1731,11 @@ LFail:
 	{
 		switch (flt)
 		{
-		case TFLT_Nearest:
+		case TextureFilterType::Nearest:
 			return ILU_NEAREST;
-		case TFLT_Box:
+		case TextureFilterType::Box:
 			return ILU_SCALE_BOX;
-		case TFLT_BSpline:
+		case TextureFilterType::BSpline:
 			return ILU_SCALE_BSPLINE;
 		}
 		throw AP_EXCEPTION(EX_NotSupported, L"Not supported filter type");
@@ -1763,7 +1744,7 @@ LFail:
 	{
 		if (config.AssembleCubemap || config.AssembleVolumeMap)
 		{
-			CompileLog::WriteError(L"DevIL Build Method currently does not support assembling textures.", config.SourceFile);
+			BuildSystem::LogError(L"DevIL Build Method currently does not support assembling textures.", config.SourceFile);
 			return;
 		}
 		int image = ilGenImage();
@@ -1949,9 +1930,9 @@ LFail:
 			texData = newdata;
 		}
 
-		if (config.CompressionType == TDCT_RLE)
+		if (config.CompressionType == TextureCompressionType::RLE)
 			texData.Flags = TextureData::TDF_RLECompressed;
-		else if (config.CompressionType == TDCT_LZ4)
+		else if (config.CompressionType == TextureCompressionType::LZ4)
 			texData.Flags = TextureData::TDF_LZ4Compressed;
 
 		//else if (config.CompressionType == TDCT_Auto)
@@ -1984,20 +1965,20 @@ LFail:
 
 		if (!File::FileExists(config.SourceFile))
 		{
-			CompileLog::WriteError(config.SourceFile, L"Could not find source file.");
+			BuildSystem::LogError(config.SourceFile, L"Could not find source file.");
 			return;
 		}
 
-		EnsureDirectory(PathUtils::GetDirectory(config.DestinationFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestinationFile));
 
-		CompileLog::WriteInformation(config.SourceFile, L">");
+		BuildSystem::LogInformation(config.SourceFile, L">");
 
 		switch (config.Method)
 		{
-		case TEXBUILD_D3D:
+		case TextureBuildMethod::D3D:
 			BuildByD3D(config);
 			break;
-		case TEXBUILD_Devil:
+		case TextureBuildMethod::Devil:
 			BuildByDevIL(config);
 			break;
 		}

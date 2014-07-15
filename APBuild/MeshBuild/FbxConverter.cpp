@@ -1,17 +1,9 @@
 #include "FbxConverter.h"
 
-#include "../CompileLog.h"
-#include "../BuildConfig.h"
-
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/MaterialData.h"
-#include "apoc3d/IOLib/ModelData.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Utility/Hash.h"
+#include "BuildConfig.h"
+#include "BuildSystem.h"
 
 #include "MeshBuild.h"
-
-using namespace Apoc3D::Utility;
 
 #ifdef IOS_REF
 #undef  IOS_REF
@@ -171,13 +163,13 @@ namespace APBuild
 
 		if( !lImportStatus )
 		{
-			CompileLog::WriteError(L"Unable to initialize FBX", pFilename);
-			CompileLog::WriteError(StringUtils::toPlatformWideString(lImporter->GetStatus().GetErrorString()), pFilename);
+			BuildSystem::LogError(L"Unable to initialize FBX", pFilename);
+			BuildSystem::LogError(StringUtils::toPlatformWideString(lImporter->GetStatus().GetErrorString()), pFilename);
 			
 			if (lImporter->GetStatus() == FbxStatus::eInvalidFile ||
 				lImporter->GetStatus() == FbxStatus::eInvalidFileVersion)
 			{
-				CompileLog::WriteError(
+				BuildSystem::LogError(
 					L"File version is probably newer than the version supported.", pFilename);
 			}
 
@@ -230,7 +222,7 @@ namespace APBuild
 		
 		if(lStatus == false && lImporter->GetStatus() == FbxStatus::ePasswordError)
 		{
-			CompileLog::WriteError(L"Cannot import files with password.", pFilename);
+			BuildSystem::LogError(L"Cannot import files with password.", pFilename);
 			
 			return false;
 		}
@@ -540,7 +532,7 @@ namespace APBuild
 		FISkeletonBone* pSkeletonBone = new FISkeletonBone( pNode->GetName(), nParentBoneIndex );
 		if (m_pSkeleton->FindBone(pNode->GetName()))
 		{
-			CompileLog::WriteError(String(L"There are more than one bone named ") + StringUtils::toPlatformWideString(pNode->GetName()) + String(L" in the FBX file."), m_sourceFile);
+			BuildSystem::LogError(String(L"There are more than one bone named ") + StringUtils::toPlatformWideString(pNode->GetName()) + String(L" in the FBX file."), m_sourceFile);
 			return;
 		}
 		m_pSkeleton->AddSkeletonBone(pSkeletonBone);
@@ -633,7 +625,7 @@ namespace APBuild
 		mesh->FinishAndOptimize();
 		if (m_meshes.Contains(pNode->GetName()))
 		{
-			CompileLog::WriteError(String(L"There are more than one mesh named ") + StringUtils::toPlatformWideString(pNode->GetName()) + String(L" in the FBX file."), m_sourceFile);
+			BuildSystem::LogError(String(L"There are more than one mesh named ") + StringUtils::toPlatformWideString(pNode->GetName()) + String(L" in the FBX file."), m_sourceFile);
 			return;
 		}
 		else

@@ -27,17 +27,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "docShaderAtom.h"
 #include "docEffectCoding.h"
 
-#include "apoc3d/Project/Project.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-
-using namespace Apoc3D::VFS;
-
 namespace APDesigner
 {
 	Document* ExtensionShaderNetwork::OpenItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_ShaderNetwork)
+		if (item->getType() == ProjectItemType::ShaderNetwork)
 		{
 			ProjectResShaderNetwork* shaderNet = static_cast<ProjectResShaderNetwork*>(item->getData());
 
@@ -58,7 +52,7 @@ namespace APDesigner
 
 	bool ExtensionShaderNetwork::SupportsItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_ShaderNetwork)
+		if (item->getType() == ProjectItemType::ShaderNetwork)
 			return true;
 		return false;
 	}
@@ -87,7 +81,7 @@ namespace APDesigner
 
 	Document* ExtensionEffect::OpenItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_Effect)
+		if (item->getType() == ProjectItemType::Effect)
 		{
 			ProjectResEffect* data = static_cast<ProjectResEffect*>(item->getData());
 
@@ -115,7 +109,7 @@ namespace APDesigner
 
 	bool ExtensionEffect::SupportsItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_Effect)
+		if (item->getType() == ProjectItemType::Effect)
 			return true;
 		return false;
 	}

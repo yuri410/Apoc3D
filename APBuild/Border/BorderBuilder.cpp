@@ -1,27 +1,12 @@
 #include "BorderBuilder.h"
 
-#include "../CompileLog.h"
-#include "../BuildEngine.h"
-#include "../BuildConfig.h"
-#include "../MeshBuild/XImporter.h"
-#include "../MeshBuild/MeshBuild.h"
-
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Collections/Queue.h"
-#include "apoc3d/Graphics/PixelFormat.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Graphics/GraphicsCommon.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/ModelData.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
+#include "BuildSystem.h"
+#include "BuildConfig.h"
+#include "MeshBuild/XImporter.h"
+#include "MeshBuild/MeshBuild.h"
+#include "Utils/MeshProcessing.h"
 
 using namespace std;
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Graphics;
 
 namespace APBuild
 {
@@ -90,23 +75,22 @@ namespace APBuild
 
 		if (!File::FileExists(srcFile))
 		{
-			CompileLog::WriteError(srcFile, L"Could not find source file.");
+			BuildSystem::LogError(srcFile, L"Could not find source file.");
 			return;
 		}
-		EnsureDirectory(PathUtils::GetDirectory(dstFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(dstFile));
 
 
 		MeshBuildConfig config;
 		config.CollapseMeshs = false;
 		config.UseVertexFormatConversion = true;
 		config.VertexElements.Add(VertexElement(0,VEF_Count,VEU_Position,0));
-		config.Method = MESHBUILD_D3D;
+		config.Method = MeshBuildMethod::D3D;
 		config.SrcFile = srcFile;
 		config.DstFile = dstFile;
 		
 
-		XImporter importer;
-		ModelData* data = importer.Import(config);
+		ModelData* data = XImporter::Import(config);
 
 		MeshBuild::ConvertVertexData(data, config);
 
@@ -119,49 +103,15 @@ namespace APBuild
 			if (mesh->VertexCount == 0 || mesh->Faces.getCount() == 0)
 				continue;
 
-			const Vector3* vertices = reinterpret_cast<const Vector3*>(mesh->VertexData);
+			//const Vector3* vertices = reinterpret_cast<const Vector3*>(mesh->VertexData);
 			assert(mesh->VertexSize == 12);
 
 			uint totalVertexCount = mesh->VertexCount;
 
 			HashMap<Vector3, int> vtxHashTable(totalVertexCount, &vec3Comparer);
-			FastList<Vector3> newVertexList(totalVertexCount);
+			FastList<Vector3> newVertexList;
 
-			// vertex reduction - welding same vertices
-			for (int j=0;j<mesh->Faces.getCount();j++)
-			{
-				MeshFace& face = mesh->Faces[j];
-
-				Vector3 va = vertices[face.IndexA];
-				int existA;
-				if (!vtxHashTable.TryGetValue(va, existA))
-				{
-					existA = newVertexList.getCount();
-					newVertexList.Add(va);
-					vtxHashTable.Add(va, existA);
-				}
-				face.IndexA = existA;
-
-				Vector3 vb = vertices[face.IndexB];
-				int existB;
-				if (!vtxHashTable.TryGetValue(vb, existB))
-				{
-					existB = newVertexList.getCount();
-					newVertexList.Add(vb);
-					vtxHashTable.Add(vb, existB);
-				}
-				face.IndexB = existB;
-
-				Vector3 vc = vertices[face.IndexC];
-				int existC;
-				if (!vtxHashTable.TryGetValue(vc, existC))
-				{
-					existC = newVertexList.getCount();
-					newVertexList.Add(vc);
-					vtxHashTable.Add(vc, existC);
-				}
-				face.IndexC = existC;
-			}
+			Utils::meshWeldVertices(vtxHashTable, mesh, newVertexList);
 
 			// =================== do the unique edge detection ============================== 
 			HashMap<FaceEdge, int> edgeUsageCounter(&faceEdgeComparer);

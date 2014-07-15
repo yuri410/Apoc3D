@@ -22,7 +22,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "EditorExtensionManager.h"
-#include "apoc3d/Core/Logging.h"
 
 SINGLETON_DECL(APDesigner::EditorExtensionManager);
 

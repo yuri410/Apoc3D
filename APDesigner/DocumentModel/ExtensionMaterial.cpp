@@ -25,17 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "MaterialDocument.h"
 
-#include "apoc3d/Project/Project.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-
-using namespace Apoc3D::VFS;
-
 namespace APDesigner
 {
 	Document* ExtensionMaterial::OpenItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_Material)
+		if (item->getType() == ProjectItemType::Material)
 		{
 			const Project* prj = item->getProject();
 			ProjectResMaterial* mtrl = static_cast<ProjectResMaterial*>(item->getData());
@@ -60,7 +54,7 @@ namespace APDesigner
 
 	bool ExtensionMaterial::SupportsItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_Material)
+		if (item->getType() == ProjectItemType::Material)
 			return true;
 		return false;
 	}

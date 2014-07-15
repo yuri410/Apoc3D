@@ -1,11 +1,8 @@
+#pragma once
 #ifndef DIALOGCOMMON_H
 #define DIALOGCOMMON_H
 
 #include "APDesigner/APDCommon.h"
-#include "apoc3d/UILib/Dialogs.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::UI;
 
 namespace APDesigner
 {

@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -24,20 +25,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef MATERIALBUILD_H
 #define MATERIALBUILD_H
 
-#include "../APBCommon.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Config;
+#include "APBCommon.h"
 
 namespace APBuild
 {
-	class MaterialBuild
+	namespace MaterialBuild
 	{
-	public:
-		static void Build(ConfigurationSection* sect);
-	private:
-
-	};
+		void Build(ConfigurationSection* sect);
+	}
 }
 
 #endif

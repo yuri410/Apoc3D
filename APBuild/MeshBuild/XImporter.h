@@ -25,22 +25,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef XIMPORTER_H
 #define XIMPORTER_H
 
-#include "../APBCommon.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Math;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Graphics::Animation;
+#include "APBCommon.h"
 
 namespace APBuild
 {
-	class XImporter
+	namespace XImporter
 	{
-	public:
 		ModelData* Import(const MeshBuildConfig& config);
-	};
+	}
 }
 
 

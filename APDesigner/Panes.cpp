@@ -33,30 +33,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BuildService/BuildService.h"
 #include "CommonDialog/FileDialog.h"
 
-#include "apoc3d/Core/Logging.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Collections/EnumConverterHelper.h"
-#include "apoc3d/Graphics/RenderSystem/Sprite.h"
-#include "apoc3d/UILib/Button.h"
-#include "apoc3d/UILib/ComboBox.h"
-#include "apoc3d/UILib/CheckBox.h"
-#include "apoc3d/UILib/FontManager.h"
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/List.h"
-#include "apoc3d/UILib/Label.h"
-#include "apoc3d/UILib/Menu.h"
-#include "apoc3d/UILib/StyleSkin.h"
-#include "apoc3d/Project/Project.h"
-
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-
-#include "apoc3d/Utility/StringUtils.h"
-
 #include <Shlwapi.h>
 
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::VFS;
 using namespace APDesigner::CommonDialog;
 
 #pragma comment (lib, "Shlwapi.lib")
@@ -206,67 +184,62 @@ namespace APDesigner
 		{
 			{
 				ItemTypeInformation iti = { L"adui_Image", L"Texture" };
-				AddEntry(PRJITEM_Texture, iti);
+				AddEntry(ProjectItemType::Texture, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_NewProject1", L"Folder" };
-				AddEntry(PRJITEM_Folder, iti);
+				AddEntry(ProjectItemType::Folder, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_Scene", L"Model" };
-				AddEntry(PRJITEM_Model, iti);
+				AddEntry(ProjectItemType::Model, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_effects_file", L"Effect" };
-				AddEntry(PRJITEM_Effect, iti);
+				AddEntry(ProjectItemType::Effect, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_effects_file", L"Custom Effect" };
-				AddEntry(PRJITEM_CustomEffect, iti);
+				AddEntry(ProjectItemType::CustomEffect, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_new_document", L"Font" };
-				AddEntry(PRJITEM_Font, iti);
+				AddEntry(ProjectItemType::Font, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_new_document", L"FontCheck" };
-				AddEntry(PRJITEM_FontGlyphDist, iti);
+				AddEntry(ProjectItemType::FontGlyphDist, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_material_32x32", L"Material" };
-				AddEntry(PRJITEM_Material, iti);
+				AddEntry(ProjectItemType::Material, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_import1", L"MaterialSet" };
-				AddEntry(PRJITEM_MaterialSet, iti);
+				AddEntry(ProjectItemType::MaterialSet, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_skinning", L"Transform Anim" };
-				AddEntry(PRJITEM_TransformAnimation, iti);
+				AddEntry(ProjectItemType::TransformAnimation, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_surface", L"Material Anim" };
-				AddEntry(PRJITEM_MaterialAnimation, iti);
+				AddEntry(ProjectItemType::MaterialAnimation, iti);
 			}
 			{
 				ItemTypeInformation iti = { L"adui_add_exisiting_document", L"Direct Copy" };
-				AddEntry(PRJITEM_Copy, iti);
+				AddEntry(ProjectItemType::Copy, iti);
 			}
 		}
 
-
-		ItemTypeInformation* Lookup(ProjectItemType type)
-		{
-			return m_lookupTable.TryGetValue(type);
-		}
-
+		ItemTypeInformation* Lookup(ProjectItemType type) { return m_lookupTable.TryGetValue(static_cast<int32>(type)); }
 	private:
 		void AddEntry(ProjectItemType type, const ItemTypeInformation& itemInfo)
 		{
-			m_lookupTable.Add(type, itemInfo);
+			m_lookupTable.Add(static_cast<int32>(type), itemInfo);
 		}
 
-		HashMap<int, ItemTypeInformation> m_lookupTable;
+		HashMap<int32, ItemTypeInformation> m_lookupTable;
 	};
 
 	static ResourcePaneHelper ResPaneHelperInstance;
@@ -555,7 +528,7 @@ namespace APDesigner
 		NukePropertyList();
 		switch (data->getType())
 		{
-		case PRJITEM_Texture:
+		case ProjectItemType::Texture:
 			{
 				ProjectResTexture* tex = static_cast<ProjectResTexture*>(data);
 
@@ -565,13 +538,13 @@ namespace APDesigner
 				AddPropertyCheckbox(L"GenerateMipmaps", tex->GenerateMipmaps);
 
 				List<String> items;
-				ProjectTypeUtils::GetTextureBuildMethodConverter().DumpNames(items);
+				ProjectTypeUtils::FillTextureBuildMethodNames(items);
 				AddPropertyDropdown(L"Method", items, items.IndexOf(ProjectTypeUtils::ToString(tex->Method)));
 				
 				AddPropertyCheckbox(L"Resize", tex->Resize);
 
 				items.Clear();
-				ProjectTypeUtils::GetTextureFilterTypeConverter().DumpNames(items);
+				ProjectTypeUtils::FillTextureFilterTypeNames(items);
 				AddPropertyDropdown(L"ResizeFilterType", items, items.IndexOf(ProjectTypeUtils::ToString(tex->ResizeFilterType)));
 
 				items.Clear();
@@ -579,7 +552,7 @@ namespace APDesigner
 				AddPropertyDropdown(L"NewFormat", items, items.IndexOf(PixelFormatUtils::ToString(tex->NewFormat)));
 			}
 			break;
-		case PRJITEM_Model:
+		case ProjectItemType::Model:
 			{
 				ProjectResModel* mdl = static_cast<ProjectResModel*>(data);
 				
@@ -589,37 +562,37 @@ namespace APDesigner
 
 
 				List<String> items;
-				ProjectTypeUtils::GetMeshBuildMethodConverter().DumpNames(items);
+				ProjectTypeUtils::FillModelBuildMethodNames(items);
 				AddPropertyDropdown(L"Method", items, items.IndexOf(ProjectTypeUtils::ToString(mdl->Method)));
 			}
 			break;
-		case PRJITEM_Font:
+		case ProjectItemType::Font:
 			{
 				//ProjectResFont* fnt = static_cast<ProjectResFont*>(data);
 
 
 			}
 			break;
-		case PRJITEM_Folder:
+		case ProjectItemType::Folder:
 			{
 				ProjectFolder* folder = static_cast<ProjectFolder*>(data);
 				AddPropertyPath(L"DstPack", folder->DestinationPack, false);
 				AddPropertyPair(L"PackType", folder->PackType);
 			}
 			break;
-		case PRJITEM_Effect:
+		case ProjectItemType::Effect:
 			{
 
 			}
 			break;
-		case PRJITEM_Material:
+		case ProjectItemType::Material:
 			{
 				ProjectResMaterial* mtrl = static_cast<ProjectResMaterial*>(data);
 
 				AddPropertyPath(L"DstFile", mtrl->DestinationFile, false);
 			}
 			break;
-		case PRJITEM_TransformAnimation:
+		case ProjectItemType::TransformAnimation:
 			{
 				ProjectResTAnim* ta = static_cast<ProjectResTAnim*>(data);
 				AddPropertyPath(L"DstFile", ta->DestinationFile, false);
@@ -637,7 +610,7 @@ namespace APDesigner
 	{
 		switch (data->getType())
 		{
-		case PRJITEM_Texture:
+		case ProjectItemType::Texture:
 			{
 				ProjectResTexture* tex = static_cast<ProjectResTexture*>(data);
 				
@@ -738,7 +711,7 @@ namespace APDesigner
 
 				switch (item->getType())
 				{
-				case PRJITEM_Texture:
+				case ProjectItemType::Texture:
 					{
 						ProjectResTexture* tex = static_cast<ProjectResTexture*>(item->getData());
 						String path = PathUtils::Combine(m_currentProject->getOutputPath(), tex->DestinationFile);

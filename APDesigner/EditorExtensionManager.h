@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -26,14 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define EDITOREXTENSIONMANAGER
 
 #include "APDCommon.h"
-
-#include "apoc3d/Core/Singleton.h"
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Collections/List.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Core;
-using namespace Apoc3D::Collections;
 
 namespace APDesigner
 {

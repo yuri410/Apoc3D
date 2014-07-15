@@ -25,15 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDCommon.h"
 
-#include "apoc3d/Collections/List.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::UI;
-using namespace Apoc3D::Core;
-
 namespace APDesigner
 {
 	class ToolsPane

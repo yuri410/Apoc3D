@@ -27,41 +27,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APBCommon.h"
 
-#include "apoc3d/Graphics/PixelFormat.h"
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Graphics/RenderSystem/VertexElement.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
-
 namespace APBuild
 {
 	/** More descriptions on these build config structs can be found in Project.h
 	*/
 
-	enum TextureFilterType
-	{
-		TFLT_Nearest,
-		TFLT_Box,
-		TFLT_BSpline
-	};
-	enum TextureBuildMethod
-	{
-		TEXBUILD_D3D,
-		TEXBUILD_D3D_LatencySupport,
-		TEXBUILD_Devil,
-		TEXBUILD_BuiltIn
-	};
-	enum TextureDataCompressionType
-	{
-		TDCT_None,
-		TDCT_RLE,
-		TDCT_LZ4
-	};
 	struct TextureBuildConfig 
 	{
 		String SourceFile;
@@ -74,7 +44,7 @@ namespace APBuild
 		TextureFilterType ResizeFilterType;
 		Apoc3D::Graphics::PixelFormat NewFormat;
 		
-		TextureDataCompressionType CompressionType;
+		TextureCompressionType CompressionType;
 
 		bool AssembleCubemap;
 		bool AssembleVolumeMap;
@@ -95,8 +65,7 @@ namespace APBuild
 	struct FontBuildConfig
 	{
 		FastList<CharRange> Ranges;
-		uint Style;
-		String Name;
+		String SourceFile;
 		float Size;
 		bool AntiAlias;
 
@@ -177,12 +146,6 @@ namespace APBuild
 		String DestFile;
 
 		void Parse(const ConfigurationSection* sect);
-	};
-	enum MeshBuildMethod
-	{
-		MESHBUILD_ASS,
-		MESHBUILD_FBX,
-		MESHBUILD_D3D
 	};
 
 	struct MeshBuildConfig

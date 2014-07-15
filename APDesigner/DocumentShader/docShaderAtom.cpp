@@ -27,19 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ShaderAtomType.h"
 #include "APDesigner/MainWindow.h"
 
-#include "apoc3d/Collections/List2D.h"
-
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/Button.h"
-#include "apoc3d/UILib/PictureBox.h"
-#include "apoc3d/UILib/Label.h"
-#include "apoc3d/UILib/FontManager.h"
-#include "apoc3d/UILib/ComboBox.h"
-#include "apoc3d/UILib/StyleSkin.h"
-#include "apoc3d/UILib/CheckBox.h"
-#include "apoc3d/UILib/List.h"
-#include "apoc3d/Utility/StringUtils.h"
-
 namespace APDesigner
 {
 	ShaderAtomDocument::ShaderAtomDocument(MainWindow* window, EditorExtension* ext, const String& name)

@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -24,20 +25,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef TANIMBUILD_H
 #define TANIMBUILD_H
 
-#include "../APBCommon.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::IO;
+#include "APBCommon.h"
 
 namespace APBuild
 {
-
-	class TAnimBuild
+	namespace TAnimBuild
 	{
-	public:
-		static void Build(const ConfigurationSection* sect);
-	};
+		void Build(const ConfigurationSection* sect);
+	}
 }
 
 #endif

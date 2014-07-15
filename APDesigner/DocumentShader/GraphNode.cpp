@@ -27,11 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ShaderGraph.h"
 #include "QuadTree.h"
 
-#include "apoc3d/Core/GameTime.h"
-#include "apoc3d/Math/RandomUtils.h"
-#include "apoc3d/Math/MathCommon.h"
-
-
 namespace APDesigner
 {
 	const float Damping = 2.2f;

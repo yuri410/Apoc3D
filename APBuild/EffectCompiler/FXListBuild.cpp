@@ -24,29 +24,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "FXListBuild.h"
 
-#include "../BuildConfig.h"
-#include "../BuildEngine.h"
-#include "../CompileLog.h"
-
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/ExistTable.h"
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Collections/CollectionsCommon.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/BinaryWriter.h"
-#include "apoc3d/IOLib/EffectData.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Vfs/PathUtils.h"
-
-
-
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::VFS;
+#include "BuildConfig.h"
+#include "BuildSystem.h"
 
 namespace APBuild
 {
@@ -55,7 +34,7 @@ namespace APBuild
 		FXListBuildConfig config;
 		config.Parse(sect);
 
-		EnsureDirectory(PathUtils::GetDirectory(config.Name));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.Name));
 
 		Configuration* xml = new Configuration(L"FXList");
 

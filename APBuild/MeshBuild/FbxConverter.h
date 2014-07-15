@@ -4,26 +4,9 @@
 
 #include <fbxsdk.h>
 
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Collections/ExistTable.h"
-#include "apoc3d/Math/Matrix.h"
-#include "apoc3d/Graphics/Animation/AnimationTypes.h"
-#include "apoc3d/Graphics/Animation/AnimationData.h"
-#include "apoc3d/Utility/StringUtils.h"
-
 #define MAXBONES_PER_VERTEX 4
 
 #include <vector>
-
-using namespace Apoc3D;
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Math;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Graphics::Animation;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Utility;
 
 namespace APBuild
 {

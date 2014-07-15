@@ -26,17 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDesigner/Document.h"
 
-#include "apoc3d/UILib/Control.h"
-#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::Animation;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Graphics::EffectSystem;
-using namespace Apoc3D::UI;
-using namespace Apoc3D::Scene;
-
 namespace APDesigner
 {
 	class EffectDocument : public Document

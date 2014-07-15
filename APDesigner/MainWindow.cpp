@@ -46,39 +46,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "CommonDialog/Win32InputBox.h"
 #include "BuildService/BuildService.h"
 
-#include "apoc3d/Core/GameTime.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Config/ConfigurationManager.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
-#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/Sprite.h"
-#include "apoc3d/Graphics/EffectSystem/EffectManager.h"
-#include "apoc3d/UILib/StyleSkin.h"
-#include "apoc3d/UILib/FontManager.h"
-#include "apoc3d/UILib/Control.h"
-#include "apoc3d/UILib/Button.h"
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/Menu.h"
-#include "apoc3d/UILib/List.h"
-#include "apoc3d/UILib/Console.h"
-#include "apoc3d/UILib/Dialogs.h"
-#include "apoc3d/Project/Project.h"
-
-#include "apoc3d/Input/InputAPI.h"
-#include "apoc3d/Vfs/FileLocateRule.h"
-#include "apoc3d/Vfs/FileSystem.h"
-#include "apoc3d/Vfs/Archive.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Math/ColorValue.h"
-#include "apoc3d/Utility/StringUtils.h"
-
 #include <chrono>
-
-using namespace Apoc3D::Graphics::EffectSystem;
-using namespace Apoc3D::Input;
-using namespace Apoc3D::VFS;
 
 using namespace APDesigner::CommonDialog;
 
@@ -415,7 +383,10 @@ namespace APDesigner
 
 	void MainWindow::OpenProject(const String& path)
 	{
-		if (!m_project)
+		if (m_project)
+			CloseProject();
+
+		if (m_project == nullptr)
 		{
 			m_project = new Project();
 			m_projectFilePath = path;
@@ -483,7 +454,7 @@ namespace APDesigner
 		for (int i=0;i<items.getCount();i++)
 		{
 			ProjectItem* itm = items[i];
-			if (itm->getType() == PRJITEM_Effect)
+			if (itm->getType() == ProjectItemType::Effect)
 			{
 				if (!itm->IsOutDated())
 				{
@@ -496,7 +467,7 @@ namespace APDesigner
 					EffectManager::getSingleton().LoadEffect(m_device, fl);
 				}
 			}
-			else if (itm->getType() == PRJITEM_Folder)
+			else if (itm->getType() == ProjectItemType::Folder)
 			{
 				ProjectFolder* fld = static_cast<ProjectFolder*>(itm->getData());
 				UpdateProjectEffect(fld->SubItems);
@@ -577,7 +548,7 @@ namespace APDesigner
 		for (int i=0;i<items.getCount();i++)
 		{
 			ProjectItem* itm = items[i];
-			if (itm->getType() == PRJITEM_MaterialSet)
+			if (itm->getType() == ProjectItemType::MaterialSet)
 			{
 				ProjectResMaterialSet* eff = static_cast<ProjectResMaterialSet*>(itm->getData());
 				String cpath = PathUtils::Combine(m_project->getBasePath(), eff->SourceFile);
@@ -594,7 +565,7 @@ namespace APDesigner
 				}
 				delete config;
 			}
-			else if (itm->getType() == PRJITEM_Folder)
+			else if (itm->getType() == ProjectItemType::Folder)
 			{
 				ProjectFolder* fld = static_cast<ProjectFolder*>(itm->getData());
 				RefreshMaterialList(fld->SubItems);

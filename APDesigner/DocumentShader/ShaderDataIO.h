@@ -29,9 +29,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "SNetCommonTypes.h"
 #include "ShaderAtomType.h"
 
-using namespace Apoc3D;
-using namespace Apoc3D::Collections;
-
 namespace APDesigner
 {
 	struct ShaderAtomLinkInfo

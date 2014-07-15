@@ -1,8 +1,6 @@
-
+#pragma once
 #ifndef APBCOMMON_H
 #define APBCOMMON_H
-
-#include "apoc3d/Common.h"
 
 #include "squish-1.10/squish.h"
 

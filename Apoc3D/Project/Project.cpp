@@ -107,7 +107,7 @@ namespace Apoc3D
 			{
 				ProjectItemData* item = SubItems[i]->getData();
 
-				if (item->getType() == PRJITEM_Folder)
+				if (item->getType() == ProjectItemType::Folder)
 				{
 					ProjectFolder* fol = static_cast<ProjectFolder*>(item);
 					if (fol->PackType.empty() && IncludeUnpackedSubFolderItems)
@@ -127,13 +127,7 @@ namespace Apoc3D
 		}
 	}
 
-	List<String> ProjectFolder::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (PackType.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationPack));
-		return e;
-	}
+	List<String> ProjectFolder::GetAllOutputFiles()  { return simpleGetAllOutputFiles(DestinationPack); }
 
 	/************************************************************************/
 	/*  ProjectResTexture                                                   */
@@ -230,7 +224,7 @@ namespace Apoc3D
 		passed |= sect->TryGetAttributeInt(L"Height", NewHeight);
 		passed |= sect->TryGetAttributeInt(L"Depth", NewDepth);
 
-		ResizeFilterType = TFLT_BSpline;
+		ResizeFilterType = TextureFilterType::BSpline;
 		String flt;
 		if (sect->tryGetAttribute(L"ResizeFilter", flt))
 		{
@@ -246,18 +240,18 @@ namespace Apoc3D
 			NewFormat = PixelFormatUtils::ConvertFormat(fmt);
 		}
 
-		CompressionType = TDCT_None;
+		CompressionType = TextureCompressionType::None;
 		String cmp;
 		if (sect->tryGetAttribute(L"Compression", cmp))
 		{
 			StringUtils::ToLowerCase(cmp);
 			if (cmp == L"rle")
 			{
-				CompressionType = TDCT_RLE;
+				CompressionType = TextureCompressionType::RLE;
 			}
 			else if (cmp == L"lz4")
 			{
-				CompressionType = TDCT_LZ4;
+				CompressionType = TextureCompressionType::LZ4;
 			}
 		}
 
@@ -365,25 +359,19 @@ namespace Apoc3D
 			sect->AddAttributeString(L"PixelFormat", PixelFormatUtils::ToString(NewFormat));
 		}
 
-		if (CompressionType != TDCT_None)
+		if (CompressionType != TextureCompressionType::None)
 		{
-			if (CompressionType == TDCT_RLE)
+			if (CompressionType == TextureCompressionType::RLE)
 			{
 				sect->AddAttributeString(L"Compression", L"RLE");
 			}
-			else if (CompressionType == TDCT_LZ4)
+			else if (CompressionType == TextureCompressionType::LZ4)
 			{
 				sect->AddAttributeString(L"Compression", L"LZ4");
 			}
 		}
 	}
-	List<String> ProjectResTexture::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestinationFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-		return e;
-	}
+	List<String> ProjectResTexture::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
 	bool ProjectResTexture::IsEarlierThan(time_t t)
 	{
 		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
@@ -419,10 +407,7 @@ namespace Apoc3D
 		}
 		return false;
 	}
-	bool ProjectResTexture::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-	}
+	bool ProjectResTexture::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
 	
 	/************************************************************************/
 	/*  ProjectResMaterial                                                  */
@@ -436,21 +421,9 @@ namespace Apoc3D
 	{
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(),DestinationFile) : DestinationFile);
 	}
-	List<String> ProjectResMaterial::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestinationFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-		return e;
-	}
-	bool ProjectResMaterial::IsEarlierThan(time_t t)
-	{
-		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile)) < t;
-	}
-	bool ProjectResMaterial::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-	}
+	List<String> ProjectResMaterial::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
+	bool ProjectResMaterial::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestinationFile); }
+	bool ProjectResMaterial::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
 
 	/************************************************************************/
 	/*   ProjectResMaterialSet                                              */
@@ -535,10 +508,7 @@ namespace Apoc3D
 		}
 		return false;
 	}
-	bool ProjectResMaterialSet::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationToken));
-	}
+	bool ProjectResMaterialSet::IsNotBuilt() { return simpleIsNotBuilt(DestinationToken); }
 
 	/************************************************************************/
 	/*   ProjectResFont                                                     */
@@ -546,39 +516,13 @@ namespace Apoc3D
 	
 	void ProjectResFont::Parse(const ConfigurationSection* sect)
 	{
-		Name = sect->getAttribute(L"Name");
+		SourceFile = sect->getAttribute(L"SourceFile");
 		Size = sect->GetAttributeSingle(L"Size");
 
 		AntiAlias = true;
 		sect->TryGetAttributeBool(L"AntiAlias", AntiAlias);
-
-		Style = FONTSTYLE_Regular;
-		String strStyle;
-		if (sect->tryGetAttribute(L"Style", strStyle))
-		{
-			StringUtils::ToLowerCase(strStyle);
-
-			if (strStyle == L"regular")
-			{
-				Style = FONTSTYLE_Regular;
-			}
-			else if (strStyle == L"bold")
-			{
-				Style = FONTSTYLE_Bold;
-			}
-			else if (strStyle == L"italic")
-			{
-				Style = FONTSTYLE_Italic;
-			}
-			else if (strStyle == L"bolditalic")
-			{
-				Style = FONTSTYLE_BoldItalic;
-			}
-			else if (strStyle == L"underline")
-			{
-				Style = FONTSTYLE_Strikeout;
-			}
-		}
+		
+		DestFile = sect->getAttribute(L"DestinationFile");
 
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
@@ -588,35 +532,13 @@ namespace Apoc3D
 			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
 			Ranges.Add(range);
 		}
-
-		DestFile = sect->getAttribute(L"DestinationFile");
 	}
 	void ProjectResFont::Save(ConfigurationSection* sect, bool savingBuild)
 	{
-		sect->AddAttributeString(L"Name", savingBuild ? PathUtils::Combine(m_project->getBasePath(), Name) : Name);
+		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
 		sect->AddAttributeString(L"Size", StringUtils::SingleToString(Size));
 
 		sect->AddAttributeBool(L"AntiAlias", AntiAlias);
-
-		if (Style != FONTSTYLE_Regular)
-		{
-			switch (Style)
-			{
-			case FONTSTYLE_Bold:
-				sect->AddAttributeString(L"Style", L"Bold");
-				break;
-			case FONTSTYLE_Italic:
-				sect->AddAttributeString(L"Style", L"Italic");
-				break;
-			case FONTSTYLE_BoldItalic:
-				sect->AddAttributeString(L"Style", L"BoldItalic");
-				break;
-			case FONTSTYLE_Strikeout:
-				sect->AddAttributeString(L"Style", L"Underline");
-				break;
-				
-			}
-		}
 
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 
@@ -629,21 +551,9 @@ namespace Apoc3D
 			sect->AddSection(ss);
 		}
 	}
-	List<String> ProjectResFont::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-		return e;
-	}
-	bool ProjectResFont::IsEarlierThan(time_t t)
-	{
-		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile)) < t;
-	}
-	bool ProjectResFont::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-	}
+	List<String> ProjectResFont::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
+	bool ProjectResFont::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestFile); }
+	bool ProjectResFont::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*   ProjectResFontGlyphDist                                            */
@@ -659,13 +569,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 	}
-	List<String> ProjectResFontGlyphDist::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-		return e;
-	}
+	List<String> ProjectResFontGlyphDist::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
 	bool ProjectResFontGlyphDist::IsEarlierThan(time_t t)
 	{
 		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
@@ -679,10 +583,7 @@ namespace Apoc3D
 				return true;
 		return false;
 	}
-	bool ProjectResFontGlyphDist::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-	}
+	bool ProjectResFontGlyphDist::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
 	/************************************************************************/
 	/*   ProjectResEffect                                                   */
 	/************************************************************************/
@@ -824,13 +725,7 @@ namespace Apoc3D
 		}
 		sect->AddAttributeString(L"Targets", targetsStr);
 	}
-	List<String> ProjectResEffect::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-		return e;
-	}
+	List<String> ProjectResEffect::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
 	bool ProjectResEffect::IsEarlierThan(time_t t)
 	{
 		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
@@ -870,10 +765,7 @@ namespace Apoc3D
 		}
 		return false;
 	}
-	bool ProjectResEffect::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-	}
+	bool ProjectResEffect::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*   ProjectResCustomEffect                                             */
@@ -897,13 +789,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"EntryPointPS", EntryPointPS);
 		sect->AddAttributeString(L"Profile", Profile);
 	}
-	List<String> ProjectResCustomEffect::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-		return e;
-	}
+	List<String> ProjectResCustomEffect::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
 	bool ProjectResCustomEffect::IsEarlierThan(time_t t)
 	{
 		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
@@ -929,10 +815,7 @@ namespace Apoc3D
 		}
 		return false;
 	}
-	bool ProjectResCustomEffect::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-	}
+	bool ProjectResCustomEffect::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*  ProjectResEffectList                                                */
@@ -943,11 +826,11 @@ namespace Apoc3D
 	{
 		for (int i=0;i<items.getCount();i++)
 		{
-			if (items[i]->getType() == PRJITEM_Effect)
+			if (items[i]->getType() == ProjectItemType::Effect)
 			{
 				effectsFound.Add(items[i]->getName());
 			}
-			else if (items[i]->getType() == PRJITEM_Folder)
+			else if (items[i]->getType() == ProjectItemType::Folder)
 			{
 				ProjectFolder* folder = static_cast<ProjectFolder*>(items[i]->getData());
 
@@ -977,17 +860,8 @@ namespace Apoc3D
 		}
 		
 	}
-	List<String> ProjectResEffectList::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-		return e;
-	}
-	bool ProjectResEffectList::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-	}
+	List<String> ProjectResEffectList::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
+	bool ProjectResEffectList::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*  ProjectResShaderNetwork                                             */
@@ -1003,13 +877,7 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SrcFile) : SrcFile);
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestFile) : DestFile);
 	}
-	List<String> ProjectResShaderNetwork::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-		return e;
-	}
+	List<String> ProjectResShaderNetwork::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
 	bool ProjectResShaderNetwork::IsEarlierThan(time_t t)
 	{
 		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile));
@@ -1027,10 +895,7 @@ namespace Apoc3D
 		}
 		return false;
 	}
-	bool ProjectResShaderNetwork::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
-	}
+	bool ProjectResShaderNetwork::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
 
 	/************************************************************************/
 	/*  ProjectResModel                                                     */
@@ -1171,21 +1036,9 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
 	}
-	List<String> ProjectResMAnim::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestinationFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-		return e;
-	}
-	bool ProjectResMAnim::IsEarlierThan(time_t t)
-	{
-		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile)) < t;
-	}
-	bool ProjectResMAnim::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-	}
+	List<String> ProjectResMAnim::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
+	bool ProjectResMAnim::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestinationFile); }
+	bool ProjectResMAnim::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
 
 
 	/************************************************************************/
@@ -1225,13 +1078,7 @@ namespace Apoc3D
 			sect->AddSection(ss);
 		}
 	}
-	List<String> ProjectResTAnim::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestinationFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-		return e;
-	}
+	List<String> ProjectResTAnim::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
 	bool ProjectResTAnim::IsEarlierThan(time_t t)
 	{
 		time_t destFileTime = File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(), DestinationFile));
@@ -1249,10 +1096,7 @@ namespace Apoc3D
 		}
 		return false;
 	}
-	bool ProjectResTAnim::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-	}
+	bool ProjectResTAnim::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
 
 	/************************************************************************/
 	/*   ProjectResUILayout                                                 */
@@ -1268,21 +1112,9 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
 	}
-	List<String> ProjectResUILayout::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestinationFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-		return e;
-	}
-	bool ProjectResUILayout::IsEarlierThan(time_t t)
-	{
-		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile)) < t;
-	}
-	bool ProjectResUILayout::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-	}
+	List<String> ProjectResUILayout::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
+	bool ProjectResUILayout::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestinationFile); }
+	bool ProjectResUILayout::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
 
 	/************************************************************************/
 	/*   ProjectResCopy                                                     */
@@ -1299,21 +1131,9 @@ namespace Apoc3D
 		sect->AddAttributeString(L"SourceFile", savingBuild ? PathUtils::Combine(m_project->getBasePath(), SourceFile) : SourceFile);
 		sect->AddAttributeString(L"DestinationFile", savingBuild ? PathUtils::Combine(m_project->getOutputPath(), DestinationFile) : DestinationFile);
 	}
-	List<String> ProjectResCopy::GetAllOutputFiles()
-	{
-		List<String> e;
-		if (DestinationFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-		return e;
-	}
-	bool ProjectResCopy::IsEarlierThan(time_t t)
-	{
-		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestinationFile)) < t;
-	}
-	bool ProjectResCopy::IsNotBuilt()
-	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestinationFile));
-	}
+	List<String> ProjectResCopy::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestinationFile); }
+	bool ProjectResCopy::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestinationFile); }
+	bool ProjectResCopy::IsNotBuilt() { return simpleIsNotBuilt(DestinationFile); }
 
 
 	/************************************************************************/
@@ -1349,20 +1169,25 @@ namespace Apoc3D
 			sect->AddSection(valSect);
 		}
 	}
-	List<String> ProjectCustomItem::GetAllOutputFiles()
+
+	List<String> ProjectCustomItem::GetAllOutputFiles() { return simpleGetAllOutputFiles(DestFile); }
+	bool ProjectCustomItem::IsEarlierThan(time_t t) { return simpleIsEarlierThan(t, DestFile); }
+	bool ProjectCustomItem::IsNotBuilt() { return simpleIsNotBuilt(DestFile); }
+
+	List<String> ProjectItemData::simpleGetAllOutputFiles(const String& destinationFile)
 	{
 		List<String> e;
-		if (DestFile.size())
-			e.Add(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+		if (destinationFile.size())
+			e.Add(PathUtils::Combine(m_project->getOutputPath(),destinationFile));
 		return e;
 	}
-	bool ProjectCustomItem::IsEarlierThan(time_t t)
+	bool ProjectItemData::simpleIsEarlierThan(time_t t, const String& destinationFile)
 	{
-		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),DestFile)) < t;
+		return File::GetFileModifiyTime(PathUtils::Combine(m_project->getOutputPath(),destinationFile)) < t;
 	}
-	bool ProjectCustomItem::IsNotBuilt()
+	bool ProjectItemData::simpleIsNotBuilt(const String& destinationFile)
 	{
-		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),DestFile));
+		return !File::FileExists(PathUtils::Combine(m_project->getOutputPath(),destinationFile));
 	}
 
 	/************************************************************************/
@@ -1372,7 +1197,10 @@ namespace Apoc3D
 	ConfigurationSection* ProjectItem::Save(bool savingBuild)
 	{
 		if (savingBuild && 
-			(m_typeData->getType() == PRJITEM_Model || m_typeData->getType() == PRJITEM_Texture || m_typeData->getType() == PRJITEM_MaterialSet || m_typeData->getType() == PRJITEM_TransformAnimation) &&
+			(m_typeData->getType() == ProjectItemType::Model || 
+			 m_typeData->getType() == ProjectItemType::Texture || 
+			 m_typeData->getType() == ProjectItemType::MaterialSet || 
+			 m_typeData->getType() == ProjectItemType::TransformAnimation) &&
 			!IsOutDated())
 		{
 			return 0;
@@ -1381,57 +1209,7 @@ namespace Apoc3D
 
 		if (m_typeData)
 		{
-			switch (m_typeData->getType())
-			{
-			case PRJITEM_Material:
-				sect->AddAttributeString(L"Type", L"material");
-				break;
-			case PRJITEM_MaterialSet:
-				sect->AddAttributeString(L"Type", L"materialset");
-				break;
-			case PRJITEM_Texture:
-				sect->AddAttributeString(L"Type", L"texture");
-				break;
-			case PRJITEM_Model:
-				sect->AddAttributeString(L"Type", L"mesh");
-				break;
-			case PRJITEM_Effect:
-				sect->AddAttributeString(L"Type", L"effect");
-				break;
-			case PRJITEM_TransformAnimation:
-				sect->AddAttributeString(L"Type", L"tanim");
-				break;
-			//case PRJITEM_Animation:
-				//sect->AddAttribute(L"Type", L"animation");
-				//break;
-			case PRJITEM_EffectList:
-				sect->AddAttributeString(L"Type", L"ProjectFXList");
-				break;
-			case PRJITEM_CustomEffect:
-				sect->AddAttributeString(L"Type", L"CustomEffect");
-				break;
-			case PRJITEM_Font:
-				sect->AddAttributeString(L"Type", L"font");
-				break;
-			case PRJITEM_FontGlyphDist:
-				sect->AddAttributeString(L"Type", L"fontCheck");
-				break;
-			case PRJITEM_Folder:
-				sect->AddAttributeString(L"Type", L"folder");
-				break;
-			case PRJITEM_ShaderNetwork:
-				sect->AddAttributeString(L"Type", L"ShaderNet");
-				break;
-			case PRJITEM_MaterialAnimation:
-				sect->AddAttributeString(L"Type", L"manim");
-				break;
-			case PRJITEM_UILayout:
-				sect->AddAttributeString(L"Type", L"UILayout");
-				break;
-			case PRJITEM_Copy:
-				sect->AddAttributeString(L"Type", L"Copy");
-				break;
-			}
+			sect->AddAttributeString(L"Type", ProjectTypeUtils::ToString(m_typeData->getType()));
 			
 			m_typeData->Save(sect, savingBuild);
 		}
@@ -1456,115 +1234,64 @@ namespace Apoc3D
 		}
 		
 
-		String buildType = sect->getAttribute(L"Type");
-		StringUtils::ToLowerCase(buildType);
+		ProjectItemType itemType = ProjectTypeUtils::ParseProjectItemType(sect->getAttribute(L"Type"));
+		//StringUtils::ToLowerCase(buildType);
 
-		if (buildType == L"material")
+		switch (itemType)
 		{
-			ProjectResMaterial* mtrl = new ProjectResMaterial(m_project);
-			mtrl->Parse(sect);
-			m_typeData = mtrl;
+		case ProjectItemType::Custom:
+			m_typeData = new ProjectCustomItem(m_project);
+			break;
+		case ProjectItemType::Folder:
+			m_typeData = new ProjectFolder(m_project);
+			break;
+		case ProjectItemType::Material:
+			m_typeData = new ProjectResMaterial(m_project);
+			break;
+		case ProjectItemType::MaterialSet:
+			m_typeData = new ProjectResMaterialSet(m_project);
+			break;
+		case ProjectItemType::Texture:
+			m_typeData = new ProjectResTexture(m_project);
+			break;
+		case ProjectItemType::Model:
+			m_typeData = new ProjectResModel(m_project);
+			break;
+		case ProjectItemType::TransformAnimation:
+			m_typeData = new ProjectResTAnim(m_project);
+			break;
+		case ProjectItemType::MaterialAnimation:
+			m_typeData = new ProjectResMAnim(m_project);
+			break;
+		case ProjectItemType::Effect:
+			m_typeData = new ProjectResEffect(m_project);
+			break;
+		case ProjectItemType::EffectList:
+			m_typeData = new ProjectResEffectList(m_project);
+			break;
+		case ProjectItemType::CustomEffect:
+			m_typeData = new ProjectResCustomEffect(m_project);
+			break;
+		case ProjectItemType::ShaderNetwork:
+			m_typeData = new ProjectResShaderNetwork(m_project);
+			break;
+		case ProjectItemType::Font:
+			m_typeData = new ProjectResFont(m_project);
+			break;
+		case ProjectItemType::FontGlyphDist:
+			m_typeData = new ProjectResFontGlyphDist(m_project);
+			break;
+		case ProjectItemType::UILayout:
+			m_typeData = new ProjectResUILayout(m_project);
+			break;
+		case ProjectItemType::Copy:
+			m_typeData = new ProjectResCopy(m_project);
+			break;
+		default:
+			assert(0);
 		}
-		else if (buildType == L"materialset")
-		{
-			ProjectResMaterialSet* mtrlSet = new ProjectResMaterialSet(m_project);
-			mtrlSet->Parse(sect);
-			m_typeData = mtrlSet;
-		}
-		else if (buildType == L"texture")
-		{
-			ProjectResTexture* tex = new ProjectResTexture(m_project);
-			tex->Parse(sect);
-			m_typeData = tex;
-		}
-		else if (buildType == L"mesh")
-		{
-			ProjectResModel* mdl = new ProjectResModel(m_project);
-			mdl->Parse(sect);
-			m_typeData = mdl;
-			//MeshBuild::Build(sect);
-		}
-		else if (buildType == L"effect")
-		{
-			ProjectResEffect* eff = new ProjectResEffect(m_project);
-			eff->Parse(sect);
-			m_typeData = eff;
-		}
-		else if (buildType == L"customeffect")
-		{
-			ProjectResCustomEffect* eff = new ProjectResCustomEffect(m_project);
-			eff->Parse(sect);
-			m_typeData = eff;
-		}
-		else if (buildType == L"custom")
-		{
-			ProjectCustomItem* item = new ProjectCustomItem(m_project);
-			item->Parse(sect);
-			m_typeData = item;
-		}
-		else if (buildType == L"font")
-		{
-			ProjectResFont* font = new ProjectResFont(m_project);
-			font->Parse(sect);
-			m_typeData = font;
-			//FontBuild::Build(sect);
-		}
-		else if (buildType == L"glyphcheck")
-		{
-			ProjectResFontGlyphDist* font = new ProjectResFontGlyphDist(m_project);
-			font->Parse(sect);
-			m_typeData = font;
-		}
-		else if (buildType == L"folder")
-		{
-			ProjectFolder* folder = new ProjectFolder(m_project);
-			folder->Parse(sect);
-			m_typeData = folder;
-		}
-		else if (buildType == L"shadernet")
-		{
-			ProjectResShaderNetwork* snet = new ProjectResShaderNetwork(m_project);
-			snet->Parse(sect);
-			m_typeData = snet;
-		}
-		else if (buildType == L"tanim")
-		{
-			ProjectResTAnim* ta = new ProjectResTAnim(m_project);
-			ta->Parse(sect);
-			m_typeData = ta;
-		}
-		else if (buildType == L"manim")
-		{
-			ProjectResMAnim* ma = new ProjectResMAnim(m_project);
-			ma->Parse(sect);
-			m_typeData = ma;
-		}
-		//else if (buildType == L"animation")
-		//{
-		//	
-		//}
-		//else if (buildType == L"pak")
-		//{
-		//	PakBuild::Build(sect);
-		//}
-		else if (buildType == L"uilayout")
-		{
-			ProjectResUILayout* ul = new ProjectResUILayout(m_project);
-			ul->Parse(sect);
-			m_typeData = ul;
-		}
-		else if (buildType == L"copy")
-		{
-			ProjectResCopy* cpy = new ProjectResCopy(m_project);
-			cpy->Parse(sect);
-			m_typeData = cpy;
-		}
-		else if (buildType == L"projectfxlist")
-		{
-			ProjectResEffectList* list = new ProjectResEffectList(m_project);
-			list->Parse(sect);
-			m_typeData = list;
-		}
+
+		m_typeData->Parse(sect);
 	}
 
 	/************************************************************************/
@@ -1631,7 +1358,7 @@ namespace Apoc3D
 		// post traversal on the project tree will make leaf folder to pack file builds comes first
 		for (int32 i=0;i<items.getCount();i++)
 		{
-			if (items[i]->getType() == PRJITEM_Folder)
+			if (items[i]->getType() == ProjectItemType::Folder)
 			{
 				ProjectFolder* fld = static_cast<ProjectFolder*>(items[i]->getData());
 
@@ -1699,68 +1426,110 @@ namespace Apoc3D
 	void ProjectItem::NotifyModified() { m_timeStamp = time(0); }
 
 	//////////////////////////////////////////////////////////////////////////
+	struct ProjectItemTypeConv : public EnumDualConversionHelper<ProjectItemType>
+	{
+		ProjectItemTypeConv() 
+			: EnumDualConversionHelper<ProjectItemType>(10)
+		{
+			AddPair(L"Custom", ProjectItemType::Custom);
+			AddPair(L"Folder", ProjectItemType::Folder);
+			AddPair(L"Material", ProjectItemType::Material);
+			AddPair(L"MaterialSet", ProjectItemType::MaterialSet);
+			AddPair(L"Texture", ProjectItemType::Texture);
+			AddPair(L"Model", ProjectItemType::Model);
+			AddPair(L"tanim", ProjectItemType::TransformAnimation);
+			AddPair(L"manim", ProjectItemType::MaterialAnimation);
+			AddPair(L"Effect", ProjectItemType::Effect);
+			AddPair(L"EffectList", ProjectItemType::EffectList);
+			AddPair(L"CustomEffect", ProjectItemType::CustomEffect);
+			AddPair(L"ShaderNetwork", ProjectItemType::ShaderNetwork);
+			AddPair(L"Font", ProjectItemType::Font);
+			AddPair(L"FontGlyphDist", ProjectItemType::FontGlyphDist);
+			AddPair(L"UILayout", ProjectItemType::UILayout);
+			AddPair(L"Copy", ProjectItemType::Copy);
+		}
+	} static ProjectItemTypeConvInst;
 
-
-	struct TextureFilterTypeConv : public EnumDualConversionHelper<ProjectResTexture::TextureFilterType>
+	struct TextureFilterTypeConv : public EnumDualConversionHelper<TextureFilterType>
 	{
 		TextureFilterTypeConv() 
-			: EnumDualConversionHelper<ProjectResTexture::TextureFilterType>(10)
+			: EnumDualConversionHelper<TextureFilterType>(10)
 		{
-			AddPair(L"Nearest", ProjectResTexture::TFLT_Nearest);
-			AddPair(L"BSpline", ProjectResTexture::TFLT_BSpline);
-			AddPair(L"Box", ProjectResTexture::TFLT_Box);
+			AddPair(L"Nearest", TextureFilterType::Nearest);
+			AddPair(L"BSpline", TextureFilterType::BSpline);
+			AddPair(L"Box", TextureFilterType::Box);
 		}
-	} TextureFilterTypeConvInst;
+	} static TextureFilterTypeConvInst;
 
-	struct TextureBuildMethodConv : public EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>
+	struct TextureBuildMethodConv : public EnumDualConversionHelper<TextureBuildMethod>
 	{
 		TextureBuildMethodConv() 
-			: EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>(10)
+			: EnumDualConversionHelper<TextureBuildMethod>(10)
 		{
-			AddPair(L"Default", ProjectResTexture::TEXBUILD_BuiltIn);
-			AddPair(L"D3D", ProjectResTexture::TEXBUILD_D3D);
-			AddPair(L"Devil", ProjectResTexture::TEXBUILD_Devil);
+			AddPair(L"Default", TextureBuildMethod::BuiltIn);
+			AddPair(L"D3D", TextureBuildMethod::D3D);
+			AddPair(L"Devil", TextureBuildMethod::Devil);
 		}
-	} TextureBuildMethodConvInst;
+	} static TextureBuildMethodConvInst;
 
-	struct MeshBuildMethodConv : public EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>
+	struct TextureCompressionTypeConv : public EnumDualConversionHelper<TextureCompressionType>
+	{
+		TextureCompressionTypeConv() 
+			: EnumDualConversionHelper<TextureCompressionType>(10)
+		{
+			AddPair(L"None", TextureCompressionType::None);
+			AddPair(L"LZ4", TextureCompressionType::LZ4);
+			AddPair(L"RLE", TextureCompressionType::RLE);
+		}
+	} static TextureCompressionTypeConvInst;
+
+	struct MeshBuildMethodConv : public EnumDualConversionHelper<MeshBuildMethod>
 	{
 		MeshBuildMethodConv() 
-			: EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>(10)
+			: EnumDualConversionHelper<MeshBuildMethod>(10)
 		{
-			AddPair(L"Ass", ProjectResModel::MESHBUILD_ASS);
-			AddPair(L"FBX", ProjectResModel::MESHBUILD_FBX);
-			AddPair(L"D3D", ProjectResModel::MESHBUILD_D3D);
+			AddPair(L"Ass", MeshBuildMethod::ASS);
+			AddPair(L"FBX", MeshBuildMethod::FBX);
+			AddPair(L"D3D", MeshBuildMethod::D3D);
 		}
-	} MeshBuildMethodConvInst;
+	} static MeshBuildMethodConvInst;
 
-	ProjectResTexture::TextureFilterType ProjectTypeUtils::ParseTextureFilterType(const String& str)
+	/*struct FontStyleConv : public EnumDualConversionHelper<FontStyle>
 	{
-		return TextureFilterTypeConvInst.Parse(str);
-	}
-	ProjectResTexture::TextureBuildMethod ProjectTypeUtils::ParseTextureBuildMethod(const String& str)
-	{
-		return TextureBuildMethodConvInst.Parse(str);
-	}
-	String ProjectTypeUtils::ToString(ProjectResTexture::TextureFilterType flt)
-	{
-		return TextureFilterTypeConvInst.ToString(flt);
-	}
-	String ProjectTypeUtils::ToString(ProjectResTexture::TextureBuildMethod method)
-	{
-		return TextureBuildMethodConvInst.ToString(method);
-	}
+		FontStyleConv() 
+			: EnumDualConversionHelper<FontStyle>(10)
+		{
+			AddPair(L"Regular", FontStyle::Regular);
+			AddPair(L"Bold", FontStyle::Bold);
+			AddPair(L"Italic", FontStyle::Italic);
+			AddPair(L"BoldItalic", FontStyle::BoldItalic);
+			AddPair(L"Strikeout", FontStyle::Strikeout);
+		}
+	} static FontStyleConvInst;*/
 
-	ProjectResModel::MeshBuildMethod ProjectTypeUtils::ParseModelBuildMethod(const String& str)
-	{
-		return MeshBuildMethodConvInst.Parse(str);
-	}
-	String ProjectTypeUtils::ToString(ProjectResModel::MeshBuildMethod method)
-	{
-		return MeshBuildMethodConvInst.ToString(method);
-	}
-	const EnumDualConversionHelper<ProjectResTexture::TextureFilterType>& ProjectTypeUtils::GetTextureFilterTypeConverter() { return TextureFilterTypeConvInst; }
-	const EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>& ProjectTypeUtils::GetTextureBuildMethodConverter() { return TextureBuildMethodConvInst; }
-	const EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>& ProjectTypeUtils::GetMeshBuildMethodConverter() { return MeshBuildMethodConvInst; }
 
+	ProjectItemType ProjectTypeUtils::ParseProjectItemType(const String& str) { return ProjectItemTypeConvInst.Parse(str); }
+	String ProjectTypeUtils::ToString(ProjectItemType type) { return ProjectItemTypeConvInst.ToString(type); }
+	void ProjectTypeUtils::FillProjectItemTypeNames(List<String>& names) { return ProjectItemTypeConvInst.DumpNames(names); }
+	bool ProjectTypeUtils::SupportsProjectItemType(const String& str) { return ProjectItemTypeConvInst.SupportsName(str); }
+
+	TextureFilterType ProjectTypeUtils::ParseTextureFilterType(const String& str) { return TextureFilterTypeConvInst.Parse(str); }
+	String ProjectTypeUtils::ToString(TextureFilterType flt) { return TextureFilterTypeConvInst.ToString(flt); }
+	void ProjectTypeUtils::FillTextureFilterTypeNames(List<String>& names) { TextureFilterTypeConvInst.DumpNames(names); }
+
+	TextureBuildMethod ProjectTypeUtils::ParseTextureBuildMethod(const String& str) { return TextureBuildMethodConvInst.Parse(str); }
+	String ProjectTypeUtils::ToString(TextureBuildMethod method) { return TextureBuildMethodConvInst.ToString(method); }
+	void ProjectTypeUtils::FillTextureBuildMethodNames(List<String>& names) { TextureBuildMethodConvInst.DumpNames(names); }
+
+	TextureCompressionType ProjectTypeUtils::ParseTextureCompressionType(const String& str) { return TextureCompressionTypeConvInst.Parse(str); }
+	String ProjectTypeUtils::ToString(TextureCompressionType type) { return TextureCompressionTypeConvInst.ToString(type); }
+	void ProjectTypeUtils::FillTextureCompressionTypeNames(List<String>& names) { TextureCompressionTypeConvInst.DumpNames(names); }
+
+	MeshBuildMethod ProjectTypeUtils::ParseModelBuildMethod(const String& str) { return MeshBuildMethodConvInst.Parse(str); }
+	String ProjectTypeUtils::ToString(MeshBuildMethod method) { return MeshBuildMethodConvInst.ToString(method); }
+	void ProjectTypeUtils::FillModelBuildMethodNames(List<String>& names) { MeshBuildMethodConvInst.DumpNames(names); }
+
+	/*FontStyle ProjectTypeUtils::ParseFontStyle(const String& str) { return FontStyleConvInst.Parse(str); }
+	String ProjectTypeUtils::ToString(FontStyle type) { return FontStyleConvInst.ToString(type); }
+	void ProjectTypeUtils::FillFontStyleNames(List<String>& names) { return FontStyleConvInst.DumpNames(names); }*/
 }

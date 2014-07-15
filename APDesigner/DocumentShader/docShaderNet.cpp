@@ -27,18 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ShaderGraph.h"
 #include "ShaderDataIO.h"
 
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/Button.h"
-#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/RenderTarget.h"
-
-using namespace Apoc3D::Input;
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Graphics::RenderSystem;
-//using namespace APDesigner::CommonDialog;
-
 namespace APDesigner
 {
 	ShaderNetDocument::ShaderNetDocument(MainWindow* window, EditorExtension* ext, const String& file)

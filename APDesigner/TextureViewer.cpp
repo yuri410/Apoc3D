@@ -26,24 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "MainWindow.h"
 #include "UIResources.h"
 
-#include "apoc3d/Graphics/RenderSystem/Sprite.h"
-#include "apoc3d/Graphics/RenderSystem/Texture.h"
-#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
-#include "apoc3d/Graphics/TextureManager.h"
-#include "apoc3d/Math/ColorValue.h"
-#include "apoc3d/Math/Box.h"
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/Button.h"
-#include "apoc3d/UILib/PictureBox.h"
-#include "apoc3d/UILib/FontManager.h"
-#include "apoc3d/UILib/StyleSkin.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Utility/StringUtils.h"
-
-
-using namespace Apoc3D::Utility;
-
 namespace APDesigner
 {
 	const Point MaxSize(300, 300);

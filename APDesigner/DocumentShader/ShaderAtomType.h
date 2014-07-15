@@ -28,17 +28,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "APDesigner/APDCommon.h"
 #include "SNetCommonTypes.h"
 
-#include "apoc3d/Core/Singleton.h"
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Core;
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Config;
-using namespace Apoc3D::Graphics::EffectSystem;
-using namespace Apoc3D::VFS;
-
 namespace APDesigner
 {
 	/** A part of one ShaderAtomType, defines the input and outputs of a

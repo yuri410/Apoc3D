@@ -24,32 +24,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "AFXBuild.h"
 
-#include "../BuildConfig.h"
-#include "../BuildEngine.h"
-#include "../CompileLog.h"
+#include "BuildConfig.h"
+#include "BuildSystem.h"
 #include "CompileService.h"
-
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Collections/CollectionsCommon.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/ExistTable.h"
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/BinaryWriter.h"
-#include "apoc3d/IOLib/EffectData.h"
-#include "apoc3d/Utility/StringUtils.h"
-
-
-#include <d3d9.h>
-#include <d3dx9.h>
-
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::VFS;
 
 namespace APBuild
 {
@@ -62,25 +39,25 @@ namespace APBuild
 		
 		if (!File::FileExists(config.VS))
 		{
-			CompileLog::WriteError(config.VS, L"Could not find source file.");
+			BuildSystem::LogError(config.VS, L"Could not find source file.");
 			return;
 		}
 		if (!File::FileExists(config.PS))
 		{
-			CompileLog::WriteError(config.PS, L"Could not find source file.");
+			BuildSystem::LogError(config.PS, L"Could not find source file.");
 			return;
 		}
 		if (config.GS.size() && !File::FileExists(config.GS))
 		{
-			CompileLog::WriteError(config.GS, L"Could not find source file.");
+			BuildSystem::LogError(config.GS, L"Could not find source file.");
 			return;
 		}
 		if (!File::FileExists(config.PListFile))
 		{
-			CompileLog::WriteError(config.PListFile, L"Could not find param list file.");
+			BuildSystem::LogError(config.PListFile, L"Could not find param list file.");
 			return;
 		}
-		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
 		FileLocation fl(config.PListFile);
 		Configuration* plist = XMLConfigurationFormat::Instance.Load(fl);
@@ -147,7 +124,7 @@ namespace APBuild
 			}
 			else
 			{
-				CompileLog::WriteError(L"Target profile is not supported "+ config.Targets[i], config.Name);
+				BuildSystem::LogError(L"Target profile is not supported "+ config.Targets[i], config.Name);
 				return;
 			}
 		}
@@ -174,7 +151,7 @@ namespace APBuild
 		{
 			if (!ps->hasAttribute(L"CustomUsage"))
 			{
-				CompileLog::WriteError(config.PListFile, L"Could not find CustomUsage for param " + ep.Name);
+				BuildSystem::LogError(config.PListFile, L"Could not find CustomUsage for param " + ep.Name);
 			}
 			else
 			{
@@ -185,7 +162,7 @@ namespace APBuild
 		{
 			if (!ps->hasAttribute(L"BlobIndex"))
 			{
-				CompileLog::WriteError(config.PListFile, L"Could not find BlobIndex for param " + ep.Name);
+				BuildSystem::LogError(config.PListFile, L"Could not find BlobIndex for param " + ep.Name);
 			}
 			else
 			{

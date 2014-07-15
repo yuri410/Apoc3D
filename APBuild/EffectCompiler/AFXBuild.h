@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -24,16 +25,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef AFXBUILD_H
 #define AFXBUILD_H
 
-#include "../APBCommon.h"
-
-using namespace Apoc3D::Config;
+#include "APBCommon.h"
 
 namespace APBuild
 {
-	class AFXBuild
+	namespace AFXBuild
 	{
-	public:
-		static void Build(const ConfigurationSection* sect);
-	};
+		void Build(const ConfigurationSection* sect);
+	}
 }
 #endif

@@ -1,18 +1,5 @@
 #include "IDEConfig.h"
 
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Config/Configuration.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Collections/Queue.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/Utility/StringUtils.h"
-
-using namespace Apoc3D::Config;
-using namespace Apoc3D::Utility;
-
 namespace APDesigner
 {
 	const int MaxRecentProjects = 7;

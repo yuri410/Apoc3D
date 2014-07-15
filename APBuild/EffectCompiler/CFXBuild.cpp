@@ -24,28 +24,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "CFXBuild.h"
 
-#include "../BuildConfig.h"
-#include "../BuildEngine.h"
-#include "../CompileLog.h"
+#include "BuildConfig.h"
+#include "BuildSystem.h"
 #include "CompileService.h"
 
-#include "apoc3d/Collections/CollectionsCommon.h"
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/ExistTable.h"
-#include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/IOLib/BinaryWriter.h"
-#include "apoc3d/IOLib/EffectData.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Vfs/PathUtils.h"
-
-
-#include <d3d9.h>
-#include <d3dx9.h>
 
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Utility;
@@ -60,15 +42,15 @@ namespace APBuild
 
 		if (!File::FileExists(config.SrcVSFile))
 		{
-			CompileLog::WriteError(config.SrcVSFile, L"Could not find source file.");
+			BuildSystem::LogError(config.SrcVSFile, L"Could not find source file.");
 			return;
 		}
 		if (!File::FileExists(config.SrcPSFile))
 		{
-			CompileLog::WriteError(config.SrcPSFile, L"Could not find source file.");
+			BuildSystem::LogError(config.SrcPSFile, L"Could not find source file.");
 			return;
 		}
-		EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
+		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
 
 		EffectData data;
@@ -88,7 +70,7 @@ namespace APBuild
 		}
 		else
 		{
-			CompileLog::WriteError(L"Profile not supported." + config.Profile, config.Name);
+			BuildSystem::LogError(L"Profile not supported." + config.Profile, config.Name);
 		}
 
 		data.IsCFX=true;

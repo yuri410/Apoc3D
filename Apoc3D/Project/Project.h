@@ -46,51 +46,80 @@ namespace Apoc3D
 
 	class ProjectItem;
 
-	enum ProjectItemType
+	enum struct ProjectItemType
 	{
-		PRJITEM_Custom,
-		PRJITEM_Folder,
-		PRJITEM_Material,
-		PRJITEM_MaterialSet,
-		PRJITEM_Texture,
-		PRJITEM_Model,
-		PRJITEM_Animation,
-		PRJITEM_TransformAnimation,
-		PRJITEM_MaterialAnimation,
-		PRJITEM_Effect,
-		PRJITEM_EffectList,
-		PRJITEM_CustomEffect,
-		PRJITEM_ShaderNetwork,
-		PRJITEM_Font,
-		PRJITEM_FontGlyphDist,
-		PRJITEM_UILayout,
-		PRJITEM_Copy
+		Custom,
+		Folder,
+		Material,
+		MaterialSet,
+		Texture,
+		Model,
+		TransformAnimation,
+		MaterialAnimation,
+		Effect,
+		EffectList,
+		CustomEffect,
+		ShaderNetwork,
+		Font,
+		FontGlyphDist,
+		UILayout,
+		Copy
 	};
-	
+	enum struct TextureFilterType
+	{
+		Nearest,
+		Box,
+		BSpline
+	};
+	enum struct TextureBuildMethod
+	{
+		D3D,
+		Devil,
+		BuiltIn
+	};
+	enum struct TextureCompressionType
+	{
+		None,
+		RLE,
+		LZ4
+	};
+	enum struct MeshBuildMethod
+	{
+		ASS,
+		/** The method for importing FBX files
+		*/
+		FBX,
+		D3D
+	};
+
+	/*enum struct FontStyle
+	{
+		Regular,
+		Bold,
+		Italic,
+		BoldItalic,
+		Strikeout
+	};*/
+
+
 
 	/**
 	 *  Represent the build configuration for a specific type of assert in the project.
 	 */
 	class APAPI ProjectItemData
 	{
-	private:
-		//ProjectItemType m_type;
-	protected:
-		Project* m_project;
-
-		ProjectItemData(Project* prj)
-			: m_project(prj)
-		{
-		}
 	public:
 		virtual ProjectItemType getType() const = 0;
 		
-		/** Check if the item is not built yet
-		*/
+		/**
+		 * Check if the item is not built yet
+		 */
 		virtual bool IsNotBuilt() = 0;
-		/** Check if the item's built is earlier than the given time or not
-		*/
+		/**
+		 * Check if the item's built is earlier than the given time or not
+		 */
 		virtual bool IsEarlierThan(time_t t) = 0;
+
 		/** Indicates if the item's required further editing on the built file after building
 		*/
 		virtual bool RequiresPostEdit() { return false; }
@@ -102,6 +131,18 @@ namespace Apoc3D
 		virtual List<String> GetAllOutputFiles() =0;
 
 		virtual ~ProjectItemData() { }
+
+	protected:
+		Project* m_project;
+
+		ProjectItemData(Project* prj)
+			: m_project(prj)
+		{
+		}
+
+		List<String> simpleGetAllOutputFiles(const String& destinationFile);
+		bool simpleIsEarlierThan(time_t t, const String& destinationFile);
+		bool simpleIsNotBuilt(const String& destinationFile);
 	};
 	class APAPI ProjectCustomItem : public ProjectItemData
 	{
@@ -124,7 +165,7 @@ namespace Apoc3D
 
 		virtual List<String> GetAllOutputFiles();
 
-		virtual ProjectItemType getType() const { return PRJITEM_Custom; }
+		virtual ProjectItemType getType() const { return ProjectItemType::Custom; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 	};
@@ -168,7 +209,7 @@ namespace Apoc3D
 
 		virtual List<String> GetAllOutputFiles();
 		
-		virtual ProjectItemType getType() const { return PRJITEM_Folder; }
+		virtual ProjectItemType getType() const { return ProjectItemType::Folder; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 		void SavePackBuildConfig(ConfigurationSection* sect);
@@ -193,28 +234,11 @@ namespace Apoc3D
 		{
 
 		}
-		enum TextureFilterType
-		{
-			TFLT_Nearest,
-			TFLT_Box,
-			TFLT_BSpline
-		};
-		enum TextureBuildMethod
-		{
-			TEXBUILD_D3D,
-			TEXBUILD_Devil,
-			TEXBUILD_BuiltIn
-		};
-		enum TextureDataCompressionType
-		{
-			TDCT_None,
-			TDCT_RLE,
-			TDCT_LZ4
-		};
+		
 
 		String SourceFile;
 		String DestinationFile;
-		TextureDataCompressionType CompressionType;
+		TextureCompressionType CompressionType;
 		bool GenerateMipmaps;
 		bool Resize;
 		int NewWidth;
@@ -231,7 +255,7 @@ namespace Apoc3D
 
 		TextureBuildMethod Method;
 
-		virtual ProjectItemType getType() const { return PRJITEM_Texture; }
+		virtual ProjectItemType getType() const { return ProjectItemType::Texture; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -254,7 +278,7 @@ namespace Apoc3D
 
 		String DestinationFile;
 
-		virtual ProjectItemType getType() const { return PRJITEM_Material; }
+		virtual ProjectItemType getType() const { return ProjectItemType::Material; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -277,7 +301,7 @@ namespace Apoc3D
 		String DestinationLocation;
 		String DestinationToken;
 
-		virtual ProjectItemType getType() const { return PRJITEM_MaterialSet; }
+		virtual ProjectItemType getType() const { return ProjectItemType::MaterialSet; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -302,15 +326,6 @@ namespace Apoc3D
 
 		}
 
-		enum MeshBuildMethod
-		{
-			MESHBUILD_ASS,
-			/** The method for importing FBX files
-			*/
-			MESHBUILD_FBX,
-			MESHBUILD_D3D
-		};
-
 		String SrcFile;
 		String DstFile;
 		String DstAnimationFile;
@@ -323,7 +338,7 @@ namespace Apoc3D
 		bool CollapseMeshs;
 
 		virtual bool RequiresPostEdit() { return true; }
-		virtual ProjectItemType getType() const { return PRJITEM_Model; }
+		virtual ProjectItemType getType() const { return ProjectItemType::Model; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -333,7 +348,6 @@ namespace Apoc3D
 		virtual bool IsEarlierThan(time_t t);
 	};
 	
-
 	class APAPI ProjectResEffect : public ProjectResource
 	{
 	public:
@@ -356,7 +370,7 @@ namespace Apoc3D
 
 		List<String> Targets;
 
-		virtual ProjectItemType getType() const { return PRJITEM_Effect; }
+		virtual ProjectItemType getType() const { return ProjectItemType::Effect; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -382,7 +396,7 @@ namespace Apoc3D
 		String EntryPointPS;
 		String Profile;
 
-		virtual ProjectItemType getType() const { return PRJITEM_CustomEffect; }
+		virtual ProjectItemType getType() const { return ProjectItemType::CustomEffect; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -402,7 +416,7 @@ namespace Apoc3D
 
 		String DestFile;
 
-		virtual ProjectItemType getType() const { return PRJITEM_EffectList; }
+		virtual ProjectItemType getType() const { return ProjectItemType::EffectList; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -424,7 +438,7 @@ namespace Apoc3D
 		String SrcFile;
 		String DestFile;
 
-		virtual ProjectItemType getType() const { return PRJITEM_ShaderNetwork; }
+		virtual ProjectItemType getType() const { return ProjectItemType::ShaderNetwork; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -452,25 +466,15 @@ namespace Apoc3D
 			int MinChar;
 			int MaxChar;
 		};
-		enum FontStyle
-		{
-			FONTSTYLE_Regular,
-			FONTSTYLE_Bold,
-			FONTSTYLE_Italic,
-			FONTSTYLE_BoldItalic,
-			FONTSTYLE_Strikeout
-
-		};
 
 		FastList<CharRange> Ranges;
-		FontStyle Style;
-		String Name;
+		String SourceFile;
 		float Size;
 		bool AntiAlias;
 
 		String DestFile;
 
-		virtual ProjectItemType getType() const { return PRJITEM_Font; }
+		virtual ProjectItemType getType() const { return ProjectItemType::Font; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -492,7 +496,7 @@ namespace Apoc3D
 		String SourceFile;
 		String DestFile;
 
-		virtual ProjectItemType getType() const { return PRJITEM_FontGlyphDist; }
+		virtual ProjectItemType getType() const { return ProjectItemType::FontGlyphDist; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -517,7 +521,7 @@ namespace Apoc3D
 
 		HashMap<String, int> ObjectIndexMapping;
 
-		virtual ProjectItemType getType() const { return PRJITEM_TransformAnimation; }
+		virtual ProjectItemType getType() const { return ProjectItemType::TransformAnimation; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -539,7 +543,7 @@ namespace Apoc3D
 		String SourceFile;
 		String DestinationFile;
 
-		virtual ProjectItemType getType() const { return PRJITEM_MaterialAnimation; }
+		virtual ProjectItemType getType() const { return ProjectItemType::MaterialAnimation; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -561,7 +565,7 @@ namespace Apoc3D
 		String SourceFile;
 		String DestinationFile;
 
-		virtual ProjectItemType getType() const { return PRJITEM_UILayout; }
+		virtual ProjectItemType getType() const { return ProjectItemType::UILayout; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -584,7 +588,7 @@ namespace Apoc3D
 		String SourceFile;
 		String DestinationFile;
 
-		virtual ProjectItemType getType() const { return PRJITEM_Copy; }
+		virtual ProjectItemType getType() const { return ProjectItemType::Copy; }
 		virtual void Parse(const ConfigurationSection* sect);
 		virtual void Save(ConfigurationSection* sect, bool savingBuild);
 
@@ -722,23 +726,33 @@ namespace Apoc3D
 
 
 
-	class APAPI ProjectTypeUtils
+	namespace APAPI ProjectTypeUtils
 	{
-	public:
-		static ProjectResTexture::TextureFilterType ParseTextureFilterType(const String& str);
-		static ProjectResTexture::TextureBuildMethod ParseTextureBuildMethod(const String& str);
-		static String ToString(ProjectResTexture::TextureFilterType flt);
-		static String ToString(ProjectResTexture::TextureBuildMethod method);
+		ProjectItemType ParseProjectItemType(const String& str);
+		String ToString(ProjectItemType type);
+		void FillProjectItemTypeNames(List<String>& names);
+		bool SupportsProjectItemType(const String& str);
 
-		static ProjectResModel::MeshBuildMethod ParseModelBuildMethod(const String& str);
-		static String ToString(ProjectResModel::MeshBuildMethod method);
+		TextureFilterType ParseTextureFilterType(const String& str);
+		String ToString(TextureFilterType flt);
+		void FillTextureFilterTypeNames(List<String>& names);
 
-	public:
+		TextureBuildMethod ParseTextureBuildMethod(const String& str);
+		String ToString(TextureBuildMethod method);
+		void FillTextureBuildMethodNames(List<String>& names);
 
-		static const EnumDualConversionHelper<ProjectResTexture::TextureFilterType>& GetTextureFilterTypeConverter();
-		static const EnumDualConversionHelper<ProjectResTexture::TextureBuildMethod>& GetTextureBuildMethodConverter();
-		static const EnumDualConversionHelper<ProjectResModel::MeshBuildMethod>& GetMeshBuildMethodConverter();
+		TextureCompressionType ParseTextureCompressionType(const String& str);
+		String ToString(TextureCompressionType ct);
+		void FillTextureCompressionTypeNames(List<String>& names);
 
+		MeshBuildMethod ParseModelBuildMethod(const String& str);
+		String ToString(MeshBuildMethod method);
+		void FillModelBuildMethodNames(List<String>& names);
+
+		/*FontStyle ParseFontStyle(const String& str);
+		String ToString(FontStyle type);
+		void FillFontStyleNames(List<String>& names);
+		*/
 	};
 }
 #endif

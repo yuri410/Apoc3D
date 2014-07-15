@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D Engine
@@ -21,36 +22,17 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 -----------------------------------------------------------------------------
 */
-#include "MaterialStub.h"
+#ifndef MATERIALSTUB_H
+#define MATERIALSTUB_H
 
-#include "BuildConfig.h"
-#include "CompileLog.h"
-#include "BuildEngine.h"
-
-#include "apoc3d/Config/ConfigurationSection.h"
-#include "apoc3d/IOLib/MaterialData.h"
-#include "apoc3d/IOLib/Streams.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Graphics;
+#include "APBCommon.h"
 
 namespace APBuild
 {
-	void MaterialStub::Build(const ConfigurationSection* sect)
+	namespace MaterialStub
 	{
-		MaterialBuildConfig config;
-		config.Parse(sect);
-
-		EnsureDirectory(PathUtils::GetDirectory(config.DstFile));
-
-		MaterialData empty;
-		empty.SetDefaults();
-
-		empty.Save(new FileOutStream(config.DstFile));
-
-
+		void Build(const ConfigurationSection* sect);
 	}
 }
+
+#endif

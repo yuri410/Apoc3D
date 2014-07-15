@@ -26,13 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "APDCommon.h"
 #include "Document.h"
 
-using namespace Apoc3D::Math;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::UI;
-using namespace Apoc3D::VFS;
-using namespace Apoc3D;
-
 namespace APDesigner
 {
 	class TextureThumbViewer

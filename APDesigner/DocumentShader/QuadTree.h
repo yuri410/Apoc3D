@@ -27,15 +27,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "APDesigner/APDCommon.h"
 
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/LinkedList.h"
-#include "apoc3d/Math/Vector.h"
-#include "apoc3d/Math/Rectangle.h"
-
-using namespace Apoc3D::Core;
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Math;
-
 namespace APDesigner
 {
 	/** Handler for the creation of a leaf node in quad tree

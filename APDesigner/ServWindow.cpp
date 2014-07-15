@@ -3,35 +3,7 @@
 #include "BuildService/BuildService.h"
 #include "CommonDialog/DialogCommon.h"
 
-#include "apoc3d/Core/GameTime.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-#include "apoc3d/Config/ConfigurationManager.h"
-#include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
-#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/Sprite.h"
-#include "apoc3d/Graphics/EffectSystem/EffectManager.h"
-#include "apoc3d/UILib/StyleSkin.h"
-#include "apoc3d/UILib/FontManager.h"
-#include "apoc3d/UILib/Control.h"
-#include "apoc3d/UILib/Button.h"
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/Menu.h"
-#include "apoc3d/UILib/List.h"
-#include "apoc3d/UILib/Label.h"
-#include "apoc3d/UILib/Console.h"
-#include "apoc3d/Project/Project.h"
-
-#include "apoc3d/Input/InputAPI.h"
-#include "apoc3d/Vfs/FileLocateRule.h"
-#include "apoc3d/Vfs/FileSystem.h"
-#include "apoc3d/Vfs/Archive.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Math/ColorValue.h"
-
 #include <Windows.h>
-
-using namespace Apoc3D::Graphics::EffectSystem;
 
 namespace APDesigner
 {

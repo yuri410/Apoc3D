@@ -25,22 +25,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "CompileService.h"
 
-#include "../BuildConfig.h"
-#include "../BuildEngine.h"
-#include "../CompileLog.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/IOLib/EffectData.h"
+#include "BuildConfig.h"
+#include "BuildSystem.h"
 
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <d3d11.h>
 #include <d3dx11.h>
 #include <d3dcompiler.h>
-
-using namespace Apoc3D::IO;
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::VFS;
-
 
 namespace APBuild
 {
@@ -83,7 +75,7 @@ namespace APBuild
 					}
 					else
 					{
-						CompileLog::WriteError(L"Failed due to unknown problem.", src);
+						BuildSystem::LogError(L"Failed due to unknown problem.", src);
 					}
 					return false;
 				}
@@ -121,7 +113,7 @@ namespace APBuild
 					}
 					else
 					{
-						CompileLog::WriteError(L"Failed due to unknown problem.", src);
+						BuildSystem::LogError(L"Failed due to unknown problem.", src);
 					}
 					return false;
 				}
@@ -131,7 +123,7 @@ namespace APBuild
 				return true;
 			}
 		}
-		CompileLog::WriteError(L"Profile temporarily not supported.", src);
+		BuildSystem::LogError(L"Profile temporarily not supported.", src);
 		return false;
 	}
 
@@ -166,7 +158,7 @@ namespace APBuild
 
 		for (int32 i=0;i<errs.getCount();i++)
 		{
-			CompileLog::WriteError(errs[i], sourceFile);
+			BuildSystem::LogError(errs[i], sourceFile);
 		}
 		
 	}

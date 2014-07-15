@@ -25,17 +25,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "ModelDocument.h"
 
-#include "apoc3d/Project/Project.h"
-#include "apoc3d/Vfs/File.h"
-#include "apoc3d/Vfs/PathUtils.h"
-
-using namespace Apoc3D::VFS;
-
 namespace APDesigner
 {
 	Document* ExtensionModel::OpenItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_Model)
+		if (item->getType() == ProjectItemType::Model)
 		{
 			const Project* prj = item->getProject();
 			ProjectResModel* mdl = static_cast<ProjectResModel*>(item->getData());
@@ -64,7 +58,7 @@ namespace APDesigner
 
 	bool ExtensionModel::SupportsItem(const ProjectItem* item)
 	{
-		if (item->getType() == PRJITEM_Model)
+		if (item->getType() == ProjectItemType::Model)
 			return true;
 		return false;
 	}
