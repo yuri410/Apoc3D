@@ -149,7 +149,7 @@ namespace APDesigner
 		void GetViewMatrix(Matrix& mtrx);
 		
 
-		Rectangle Viewport;
+		Apoc3D::Math::Rectangle Viewport;
 
 		/** Converts a world coord to the quad tree's block coord system,
 		 *  a pair of integer representing the grid in a plane divided all

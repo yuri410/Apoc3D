@@ -4,14 +4,11 @@
 
 namespace APDesigner
 {
-	class UIResources
+	namespace UIResources
 	{
-	private:
-		static HashMap<String, Texture*>* m_maps;
-	public:
-		static void Initialize(RenderDevice* device);
-		static void Finalize();
+		void Initialize(RenderDevice* device);
+		void Finalize();
 
-		static Texture* GetTexture(const String& name) { return m_maps->operator[](name); }
+		Texture* GetTexture(const String& name);
 	};
 }

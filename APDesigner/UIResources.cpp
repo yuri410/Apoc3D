@@ -2,7 +2,8 @@
 
 namespace APDesigner
 {
-	HashMap<String, Texture*>* UIResources::m_maps = 0;
+	StringEqualityComparer comparer;
+	HashMap<String, Texture*> m_maps(&comparer);
 
 	void UIResources::Initialize(RenderDevice* device)
 	{
@@ -14,7 +15,7 @@ namespace APDesigner
 		Archive* arc = FileSystem::getSingleton().LocateArchive(L"apdgui.pak", rule);
 		int count = arc->getFileCount();
 		
-		m_maps = new HashMap<String, Texture*>(count, IBuiltInEqualityComparer<String>::Default);
+		m_maps.Resize(count);
 
 		for (int i=0;i<count;i++)
 		{
@@ -23,17 +24,20 @@ namespace APDesigner
 			
 			FileLocation fl(arc, PathUtils::Combine(arc->getDirectory(), name), name);
 
-			m_maps->Add(PathUtils::GetFileNameNoExt(name), TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false));
+			m_maps.Add(PathUtils::GetFileNameNoExt(name), TextureManager::getSingleton().CreateUnmanagedInstance(device, fl, false));
 		}
 	}
 	void UIResources::Finalize()
 	{
-		for (HashMap<String, Texture*>::Enumerator e = m_maps->GetEnumerator();e.MoveNext();)
+		for (HashMap<String, Texture*>::Enumerator e = m_maps.GetEnumerator();e.MoveNext();)
 		{
 			delete *e.getCurrentValue();
 		}
-		m_maps->Clear();
+		m_maps.Clear();
+	}
 
-		delete m_maps;
+	Texture* UIResources::GetTexture(const String& name)
+	{
+		return m_maps[name];
 	}
 }

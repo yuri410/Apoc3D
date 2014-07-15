@@ -28,6 +28,7 @@
 #include "apoc3d/Config/ConfigurationManager.h"
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
+#include "apoc3d/Config/IniConfigurationFormat.h"
 
 #include "apoc3d/Core/BackgroundSequencialWorker.h"
 #include "apoc3d/Core/CommandInterpreter.h"
