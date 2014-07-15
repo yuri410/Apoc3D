@@ -76,14 +76,16 @@ namespace Apoc3D
 					0, D3DRTYPE_TEXTURE, D3D9Utils::ConvertPixelFormat(newFormat));
 				if (FAILED(hr))
 				{
-					int bestscore = 0;
+					newFormat = FMT_Unknown;
+
+					int bestscore = INT_MIN;
 					PixelFormat bestFormat = FMT_Unknown;
 
 					int32 originalChBitDepths[4];
 					PixelFormatUtils::GetChannelBitDepth(newFormat, originalChBitDepths);
 
 					int32 originalChCount = PixelFormatUtils::GetChannelCount(newFormat);
-					bool allow_24bits = PixelFormatUtils::GetBPP(newFormat) == 3;
+					bool allow24bits = PixelFormatUtils::GetBPP(newFormat) == 3;
 
 					for (int32 i=FMT_Unknown+1;i<FMT_Count;i++)
 					{
@@ -96,7 +98,7 @@ namespace Apoc3D
 						if (chnCount<originalChCount)
 							continue;
 
-						if (!allow_24bits && PixelFormatUtils::GetBPP(curFmt)==3)
+						if (!allow24bits && PixelFormatUtils::GetBPP(curFmt)==3)
 							continue;
 
 
@@ -154,10 +156,10 @@ namespace Apoc3D
 				{
 					int32 mipCount = 1;
 
-					int32 max_dimen = Math::Max(newWidth, newHeight);
-					while (max_dimen > 1)
+					int32 maxDimension = Math::Max(newWidth, newHeight);
+					while (maxDimension > 1)
 					{
-						max_dimen >>= 1;
+						maxDimension >>= 1;
 						mipCount++;
 					}
 
@@ -213,7 +215,6 @@ namespace Apoc3D
 
 				newDepth = depth;
 
-				/* ensure width/height is power of 2 */
 				if (caps.TextureCaps & D3DPTEXTURECAPS_VOLUMEMAP_POW2)
 				{
 					if (!IsPowerOfTwo(newWidth)) 

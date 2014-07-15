@@ -349,11 +349,21 @@ namespace APDesigner
 		int sy = getPropertyFieldTop();
 		for (int32 i=0;i<m_proplist.getCount();i++)
 		{
+			PropItem& pi = m_proplist[i];
+
 			int top = sy + i * PropFieldSpacing;
-			m_proplist[i].Desc->Position.Y = top;
-			m_proplist[i].Editor->Position.Y = top;
-			if (m_proplist[i].ExtraButton)
-				m_proplist[i].ExtraButton->Position.Y = top;
+			if (pi.Desc)
+			{
+				pi.Desc->Position.Y = top;
+			}
+			if (pi.Editor)
+			{
+				pi.Editor->Position.Y = top;
+			}
+			if (pi.ExtraButton)
+			{
+				pi.ExtraButton->Position.Y = top;
+			}
 		}
 	}
 
@@ -409,17 +419,7 @@ namespace APDesigner
 	{
 		for (int i=0;i<m_proplist.getCount();i++)
 		{
-			m_form->getControls().Remove(m_proplist[i].Desc);
-			delete m_proplist[i].Desc;
-
-			m_form->getControls().Remove(m_proplist[i].Editor);
-			delete m_proplist[i].Editor;
-
-			if (m_proplist[i].ExtraButton)
-			{
-				m_form->getControls().Remove(m_proplist[i].ExtraButton);
-				delete m_proplist[i].ExtraButton;
-			}
+			m_proplist[i].Destory(m_form);
 		}
 		m_proplist.Clear();
 
@@ -509,18 +509,14 @@ namespace APDesigner
 		int lw = getPropertyLabelWidth();
 		int fw = getPropertyFieldWidth();
 
-		Label* label = new Label(Point(PropFieldMargin, top), L"", lw); // dummy one
 		CheckBox* cb = new CheckBox(Point(PropFieldMargin*2+lw, top), name, checked);
 		
-		PropItem item(name, label, cb, nullptr);
+		PropItem item(name, nullptr, cb, nullptr);
 		m_proplist.Add(item);
 
-		label->SetSkin(m_skin);
-		label->Initialize(m_form->getRenderDevice());
 		cb->SetSkin(m_skin);
 		cb->Initialize(m_form->getRenderDevice());
 
-		m_form->getControls().Add(label);
 		m_form->getControls().Add(cb);
 	}
 	void ResourcePane::ListNewProperties(ProjectItemData* data)
@@ -891,6 +887,28 @@ namespace APDesigner
 	int ResourcePane::getPropertyFieldTop() const
 	{
 		return m_infoDisplay->Position.Y + 80;
+	}
+
+	
+	void ResourcePane::PropItem::Destory(Form* pane)
+	{
+		if (Desc)
+		{
+			pane->getControls().Remove(Desc);
+			delete Desc;
+		}
+
+		if (Editor)
+		{
+			pane->getControls().Remove(Editor);
+			delete Editor;
+		}
+		
+		if (ExtraButton)
+		{
+			pane->getControls().Remove(ExtraButton);
+			delete ExtraButton;
+		}
 	}
 
 	/************************************************************************/

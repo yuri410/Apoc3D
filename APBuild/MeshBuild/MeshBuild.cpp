@@ -53,7 +53,7 @@ namespace APBuild
 	}
 	void BuildByD3D(const MeshBuildConfig& config)
 	{
-		ModelData* data = AIImporter::Import(config);
+		ModelData* data = XImporter::Import(config);
 
 		MeshBuild::ConvertVertexData(data, config);
 		MeshBuild::CollapseMeshs(data, config);

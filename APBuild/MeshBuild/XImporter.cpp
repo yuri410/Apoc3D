@@ -148,6 +148,8 @@ namespace APBuild
 		d3dmesh->UnlockVertexBuffer();
 		d3dmesh->UnlockAttributeBuffer();
 
+		d3dmaterials->Release();
+		d3dmesh->Release();
 
 		return result;
 	}

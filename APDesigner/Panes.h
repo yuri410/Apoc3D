@@ -152,6 +152,8 @@ namespace APDesigner
 			bool getAsTextbox(String& val) const;
 			bool getAsCombo(String& val) const;
 			bool getAsCheckBox(bool& val) const;
+
+			void Destory(Form* pane);
 		};
 		
 		FastList<PropItem> m_proplist;

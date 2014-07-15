@@ -256,7 +256,7 @@ namespace APBuild
 				}
 			}
 
-			data->BoundingSphere.Center = Vector3::Divide(data->BoundingSphere.Center, static_cast<float>(m->mNumVertices));
+			data->BoundingSphere.Center /= (float)m->mNumVertices;
 			for (uint j=0;j<m->mNumVertices;j++)
 			{
 				Vector3 pos(m->mVertices[j].x, m->mVertices[j].y, m->mVertices[j].z);

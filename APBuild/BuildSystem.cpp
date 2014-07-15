@@ -142,7 +142,7 @@ namespace APBuild
 			{
 				BorderBuilder::Build(sect);
 			}
-			if (buildType == L"project" || buildType == L"folder")
+			else if (buildType == L"project" || buildType == L"folder")
 			{
 				// If the node is a project or folder node, building sub-nodes recursively
 				for (ConfigurationSection::SubSectionEnumerator iter =  sect->GetSubSectionEnumrator();
