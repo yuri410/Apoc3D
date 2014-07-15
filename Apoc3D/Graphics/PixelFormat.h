@@ -238,7 +238,7 @@ namespace Apoc3D
 			APAPI int GetStencilBitDepth(DepthFormat fmt);
 
 			APAPI int GetChannelCount(PixelFormat fmt);
-			APAPI int GetChannelBitDepth(PixelFormat fmt, int32 chnBitDepths[4]);
+			APAPI void GetChannelBitDepth(PixelFormat fmt, int32 chnBitDepths[4]);
 
 			/** 
 			 *  Converts a PixelFormat's string representation to the PixelFormat enum

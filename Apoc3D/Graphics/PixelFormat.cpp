@@ -22,72 +22,30 @@ namespace Apoc3D
 			DepthFormatEnumHelper();
 		} static DepthFormatEnumConveter;
 
-		void createSizeTable(int st[])
-		{
-			st[(int)FMT_Unknown] = -1;
-            st[(int)FMT_A16B16G16R16] = 8;
-            st[(int)FMT_A16B16G16R16F] = 8;
-            st[(int)FMT_A1R5G5B5] = 2;
-            st[(int)FMT_A2B10G10R10] = 4;
-            st[(int)FMT_A2R10G10B10] = 4;
-            st[(int)FMT_A32B32G32R32F] = 32;
-            st[(int)FMT_A4L4] = 1;
-            st[(int)FMT_A4R4G4B4] = 2;
-            st[(int)FMT_A8B8G8R8] = 4;
-            st[(int)FMT_A8L8] = 2;
-            st[(int)FMT_A8R8G8B8] = 4;
-            st[(int)FMT_Alpha8] = 1;
-            st[(int)FMT_B4G4R4A4] = 2;
-            st[(int)FMT_B5G6R5] = 2;
-            st[(int)FMT_B8G8R8] = 3;
-            st[(int)FMT_B8G8R8A8] = 4;
-            st[(int)FMT_Depth] = -1;
-            st[(int)FMT_DXT1] = -1;
-            st[(int)FMT_DXT2] = -1;
-            st[(int)FMT_DXT3] = -1;
-            st[(int)FMT_DXT4] = -1;
-            st[(int)FMT_DXT5] = -1;
-            st[(int)FMT_G16R16] = 4;
-            st[(int)FMT_G16R16F] = 4;
-            st[(int)FMT_G32R32F] = 8;
-            st[(int)FMT_Luminance16] = 2;
-            st[(int)FMT_Luminance8] = 1;
-            st[(int)FMT_R16F] = 1;
-            st[(int)FMT_R16G16B16] = 6;
-            st[(int)FMT_R32F] = 4;
-            st[(int)FMT_R3G3B2] = 1;
-            st[(int)FMT_R5G6B5] = 2;
-            st[(int)FMT_R8G8B8] = 3;
-            st[(int)FMT_R8G8B8A8] = 4;
-            st[(int)FMT_X8B8G8R8] = 4;
-            st[(int)FMT_X8R8G8B8] = 4;
-            st[(int)FMT_Palette8] = 1;
-            st[(int)FMT_Palette8Alpha8] = 2;
-		}
-		void createDepsizeTable(int st[])
-		{			
-			st[(int)DEPFMT_Depth15Stencil1] = 2;
-            st[(int)DEPFMT_Depth16] = 2;
-            st[(int)DEPFMT_Depth16Lockable] = 2;
-            st[(int)DEPFMT_Depth24X8] = 4;
-            st[(int)DEPFMT_Depth24Stencil4] = 4;
-            st[(int)DEPFMT_Depth24Stencil8] = 4;
-            st[(int)DEPFMT_Depth24Stencil8Single] = 4;
-            st[(int)DEPFMT_Depth32] = 4;
-            st[(int)DEPFMT_Depth32Lockable] = 4;
-            st[(int)DEPFMT_Depth32Single] = 4;		
-		}
-
 		struct SizeTable
 		{
-			int sizeTable[FMT_Count];
-			int depSizeTable[DEPFMT_Count];
+			int pfSizeTable[FMT_Count];
+			int dfSizeTable[DEPFMT_Count];
+			int pfChannelCountTable[FMT_Count];
+			int pfChannelBits[FMT_Count][4];
 
 			SizeTable()
 			{
-				createSizeTable(sizeTable);
-				createDepsizeTable(depSizeTable);
+				memset(pfSizeTable, 0, sizeof(pfSizeTable));
+				memset(dfSizeTable, 0, sizeof(dfSizeTable));
+				memset(pfChannelCountTable, 0, sizeof(pfChannelCountTable));
+				memset(pfChannelBits, 0, sizeof(pfChannelBits));
+
+				createPixelFormatSizeTable(pfSizeTable);
+				createDepthFormatSizeTable(dfSizeTable);
+				createChannelCountTable(pfChannelCountTable);
+				createChannelBit(pfChannelBits);
 			}
+
+			void createPixelFormatSizeTable(int st[]);
+			void createDepthFormatSizeTable(int st[]);
+			void createChannelCountTable(int st[]);
+			void createChannelBit(int st[FMT_Count][4]);
 
 		} static FormatSizeTable;
 		
@@ -97,10 +55,7 @@ namespace Apoc3D
 		DepthFormat PixelFormatUtils::ConvertDepthFormat(const String& fmt) { return DepthFormatEnumConveter.Parse(fmt); }
 		String PixelFormatUtils::ToString(DepthFormat format) { return DepthFormatEnumConveter.ToString(format); }
 
-		void PixelFormatUtils::DumpPixelFormatName(Apoc3D::Collections::List<String>& names)
-		{
-			PixelFormatEnumConverter.DumpNames(names);
-		}
+		void PixelFormatUtils::DumpPixelFormatName(Apoc3D::Collections::List<String>& names) { PixelFormatEnumConverter.DumpNames(names); }
 
 		bool PixelFormatUtils::IsCompressed(PixelFormat format)
 		{
@@ -112,7 +67,7 @@ namespace Apoc3D
 		}
 		int PixelFormatUtils::GetMemorySize(int width, int height, DepthFormat format) 
 		{
-			int bytepp = FormatSizeTable.depSizeTable[(int)format];
+			int bytepp = FormatSizeTable.dfSizeTable[(int)format];
 			if (bytepp == -1)
 			{
 				throw AP_EXCEPTION(EX_Default, L"Invalid pixel format");
@@ -134,15 +89,15 @@ namespace Apoc3D
 			{
 				return ((width + 3) / 4) * ((height + 3) / 4) * 16;
 			}
-			int bytepp = FormatSizeTable.sizeTable[(int)format];
+			int bytepp = FormatSizeTable.pfSizeTable[(int)format];
 			if (bytepp == -1)
 			{
 				throw AP_EXCEPTION(EX_Default, L"Invalid pixel format");
 			}
 			return width * height * depth * bytepp;
 		}
-		int PixelFormatUtils::GetBPP(PixelFormat fmt) { return FormatSizeTable.sizeTable[(int)fmt]; }
-		int PixelFormatUtils::GetBPP(DepthFormat fmt) { return FormatSizeTable.depSizeTable[(int)fmt]; }
+		int PixelFormatUtils::GetBPP(PixelFormat fmt) { return FormatSizeTable.pfSizeTable[(int)fmt]; }
+		int PixelFormatUtils::GetBPP(DepthFormat fmt) { return FormatSizeTable.dfSizeTable[(int)fmt]; }
 		int PixelFormatUtils::GetStencilBitDepth(DepthFormat fmt)
 		{
 			switch (fmt)
@@ -159,7 +114,11 @@ namespace Apoc3D
 			}
 			return 0;
 		}
-
+		int PixelFormatUtils::GetChannelCount(PixelFormat fmt) { return FormatSizeTable.pfChannelCountTable[(int)fmt]; }
+		void PixelFormatUtils::GetChannelBitDepth(PixelFormat fmt, int32 chnBitDepths[4])
+		{
+			memcpy(chnBitDepths, FormatSizeTable.pfChannelBits[(int32)fmt], sizeof(chnBitDepths));
+		}
 
 		PixelFormatEnumHelper::PixelFormatEnumHelper()
 			: Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>(FMT_Count)
@@ -234,6 +193,160 @@ namespace Apoc3D
 		}
 
 
+		void SizeTable::createPixelFormatSizeTable(int st[])
+		{
+			st[(int)FMT_Unknown] = -1;
+			st[(int)FMT_Luminance8] = 1;
+			st[(int)FMT_Luminance16] = 2;
+			st[(int)FMT_Alpha1] = -1;
+			st[(int)FMT_Alpha8] = 1;
+			st[(int)FMT_A4L4] = 1;
+			st[(int)FMT_A8L8] = 2;
+			st[(int)FMT_R5G6B5] = 2;
+			st[(int)FMT_B5G6R5] = 2;
+			st[(int)FMT_A4R4G4B4] = 2;
+			st[(int)FMT_A1R5G5B5] = 2;
+			st[(int)FMT_R8G8B8] = 3;
+			st[(int)FMT_B8G8R8] = 3;
+			st[(int)FMT_A8R8G8B8] = 4;
+			st[(int)FMT_A8B8G8R8] = 4;
+			st[(int)FMT_B8G8R8A8] = 4;
+			st[(int)FMT_A2B10G10R10] = 4;
+			st[(int)FMT_A2R10G10B10] = 4;
+			st[(int)FMT_DXT1] = -1;
+			st[(int)FMT_DXT2] = -1;
+			st[(int)FMT_DXT3] = -1;
+			st[(int)FMT_DXT4] = -1;
+			st[(int)FMT_DXT5] = -1;
+			st[(int)FMT_A16B16G16R16F] = 8;
+			st[(int)FMT_A32B32G32R32F] = 16;
+			st[(int)FMT_X8R8G8B8] = 4;
+			st[(int)FMT_X8B8G8R8] = 4;
+			st[(int)FMT_X1R5G5B5] = 4;
+			st[(int)FMT_R8G8B8A8] = 4;
+			st[(int)FMT_Depth] = -1;
+			st[(int)FMT_A16B16G16R16] = 8;
+			st[(int)FMT_R3G3B2] = 1;
+			st[(int)FMT_R16F] = 2;
+			st[(int)FMT_R32F] = 4;
+			st[(int)FMT_G16R16] = 4;
+			st[(int)FMT_G16R16F] = 4;
+			st[(int)FMT_G32R32F] = 8;
+			st[(int)FMT_R16G16B16] = 6;
+			st[(int)FMT_B4G4R4A4] = 2;
+			st[(int)FMT_Palette8] = 1;
+			st[(int)FMT_Palette8Alpha8] = 2;
+		}
+		void SizeTable::createDepthFormatSizeTable(int st[])
+		{			
+			st[(int)DEPFMT_Depth15Stencil1] = 2;
+			st[(int)DEPFMT_Depth16] = 2;
+			st[(int)DEPFMT_Depth16Lockable] = 2;
+			st[(int)DEPFMT_Depth24X8] = 4;
+			st[(int)DEPFMT_Depth24Stencil4] = 4;
+			st[(int)DEPFMT_Depth24Stencil8] = 4;
+			st[(int)DEPFMT_Depth24Stencil8Single] = 4;
+			st[(int)DEPFMT_Depth32] = 4;
+			st[(int)DEPFMT_Depth32Lockable] = 4;
+			st[(int)DEPFMT_Depth32Single] = 4;		
+		}
+		void SizeTable::createChannelCountTable(int st[])
+		{
+			st[(int)FMT_Unknown] = 0;
+			st[(int)FMT_Luminance8] = 1;
+			st[(int)FMT_Luminance16] = 1;
+			st[(int)FMT_Alpha1] = 1;
+			st[(int)FMT_Alpha8] = 1;
+			st[(int)FMT_A4L4] = 2;
+			st[(int)FMT_A8L8] = 2;
+			st[(int)FMT_R5G6B5] = 3;
+			st[(int)FMT_B5G6R5] = 3;
+			st[(int)FMT_A4R4G4B4] = 4;
+			st[(int)FMT_A1R5G5B5] = 4;
+			st[(int)FMT_R8G8B8] = 3;
+			st[(int)FMT_B8G8R8] = 3;
+			st[(int)FMT_A8R8G8B8] = 4;
+			st[(int)FMT_A8B8G8R8] = 4;
+			st[(int)FMT_B8G8R8A8] = 4;
+			st[(int)FMT_A2B10G10R10] = 4;
+			st[(int)FMT_A2R10G10B10] = 4;
+			st[(int)FMT_DXT1] = 0;
+			st[(int)FMT_DXT2] = 0;
+			st[(int)FMT_DXT3] = 0;
+			st[(int)FMT_DXT4] = 0;
+			st[(int)FMT_DXT5] = 0;
+			st[(int)FMT_A16B16G16R16F] = 4;
+			st[(int)FMT_A32B32G32R32F] = 4;
+			st[(int)FMT_X8R8G8B8] = 4;
+			st[(int)FMT_X8B8G8R8] = 4;
+			st[(int)FMT_X1R5G5B5] = 4;
+			st[(int)FMT_R8G8B8A8] = 4;
+			st[(int)FMT_Depth] = 0;
+			st[(int)FMT_A16B16G16R16] = 4;
+			st[(int)FMT_R3G3B2] = 3;
+			st[(int)FMT_R16F] = 1;
+			st[(int)FMT_R32F] = 1;
+			st[(int)FMT_G16R16] = 2;
+			st[(int)FMT_G16R16F] = 2;
+			st[(int)FMT_G32R32F] = 2;
+			st[(int)FMT_R16G16B16] = 3;
+			st[(int)FMT_B4G4R4A4] = 2;
+			st[(int)FMT_Palette8] = 1;
+			st[(int)FMT_Palette8Alpha8] = 2;
+		}
+
+		void setArr(int arr[4], int a, int b, int c, int d)
+		{
+			arr[0] = a; arr[1] = b; arr[2] = c; arr[3] = d;
+		}
+		void setArr(int arr[4], int a)
+		{
+			arr[0] = arr[1] = arr[2] = arr[3] = a;
+		}
+		void SizeTable::createChannelBit(int st[][4])
+		{
+			setArr(st[(int)FMT_Unknown], 0);
+			setArr(st[(int)FMT_Luminance8], 8,0,0,0);
+			setArr(st[(int)FMT_Luminance16], 16,0,0,0);
+			setArr(st[(int)FMT_Alpha1], 1,0,0,0);
+			setArr(st[(int)FMT_Alpha8], 8,0,0,0);
+			setArr(st[(int)FMT_A4L4], 4,4,0,0);
+			setArr(st[(int)FMT_A8L8], 8,8,0,0);
+			setArr(st[(int)FMT_R5G6B5], 5,6,5,0);
+			setArr(st[(int)FMT_B5G6R5], 5,6,5,0);
+			setArr(st[(int)FMT_A4R4G4B4], 4);
+			setArr(st[(int)FMT_A1R5G5B5], 1,5,6,5);
+			setArr(st[(int)FMT_R8G8B8], 8,8,8,0);
+			setArr(st[(int)FMT_B8G8R8], 8,8,8,0);
+			setArr(st[(int)FMT_A8R8G8B8], 8);
+			setArr(st[(int)FMT_A8B8G8R8], 8);
+			setArr(st[(int)FMT_B8G8R8A8], 8);
+			setArr(st[(int)FMT_A2R10G10B10], 2,10,10,10);
+			setArr(st[(int)FMT_A2B10G10R10], 2,10,10,10);
+			setArr(st[(int)FMT_DXT1], 0);
+			setArr(st[(int)FMT_DXT2], 0);
+			setArr(st[(int)FMT_DXT3], 0);
+			setArr(st[(int)FMT_DXT4], 0);
+			setArr(st[(int)FMT_DXT5], 0);
+			setArr(st[(int)FMT_A16B16G16R16F], 16);
+			setArr(st[(int)FMT_A32B32G32R32F], 32);
+			setArr(st[(int)FMT_X8R8G8B8], 8);
+			setArr(st[(int)FMT_X8B8G8R8], 8);
+			setArr(st[(int)FMT_X1R5G5B5], 1,5,5,5);
+			setArr(st[(int)FMT_R8G8B8A8], 8);
+			setArr(st[(int)FMT_Depth], 0);
+			setArr(st[(int)FMT_A16B16G16R16], 16);
+			setArr(st[(int)FMT_R3G3B2], 3,3,2,0);
+			setArr(st[(int)FMT_R16F], 16,0,0,0);
+			setArr(st[(int)FMT_R32F], 32,0,0,0);
+			setArr(st[(int)FMT_G16R16], 16,16,0,0);
+			setArr(st[(int)FMT_G16R16F], 16,16,0,0);
+			setArr(st[(int)FMT_G32R32F], 32,32,0,0);
+			setArr(st[(int)FMT_R16G16B16], 16,16,16,0);
+			setArr(st[(int)FMT_B4G4R4A4], 4);
+			setArr(st[(int)FMT_Palette8], 8,0,0,0);
+			setArr(st[(int)FMT_Palette8Alpha8], 8,8,0,0);
+		}
 #define PACKCONVERTERID(srcFmtId, dstFmtId)  ((srcFmtId << 16) | dstFmtId)
 		template <typename T, typename U, uint32 srcFmtId, uint32 dstFmtId> 
 		struct PixelConverter 
