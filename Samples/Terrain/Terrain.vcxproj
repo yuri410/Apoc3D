@@ -57,23 +57,23 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\Sample_$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\Sample_$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\Sample_$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -82,6 +82,8 @@
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,7 +94,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -101,6 +103,8 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -113,7 +117,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -122,6 +126,8 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -132,10 +138,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="Sample_Terrain.ico" />
     <None Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Common\SamplePCH.h">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">SamplePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SamplePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">SamplePCH.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClInclude Include="GameCamera.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -154,21 +167,24 @@
     <ClCompile Include="TerrainMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Sample_Terrain.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Apoc3D.D3D9RenderSystem\Apoc3D_D3D9RenderSystem.vcxproj">
+    <ProjectReference Include="..\..\Apoc3D.D3D9RenderSystem\Apoc3D_D3D9RenderSystem.vcxproj">
       <Project>{54915473-0627-4a72-9939-2588588ff585}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Apoc3D.Essentials\Apoc3D.Essentials.vcxproj">
+    <ProjectReference Include="..\..\Apoc3D.Essentials\Apoc3D.Essentials.vcxproj">
       <Project>{a834ad24-93ab-4f33-9172-d8f920e58e6c}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Apoc3D.WindowsInput\Apoc3D.WindowsInput.vcxproj">
+    <ProjectReference Include="..\..\Apoc3D.WindowsInput\Apoc3D.WindowsInput.vcxproj">
       <Project>{bb441c8f-5157-43a9-b180-dfa4207adc37}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Apoc3D\Apoc3d.vcxproj">
+    <ProjectReference Include="..\..\Apoc3D\Apoc3d.vcxproj">
       <Project>{db9f1707-9349-4171-b670-cc5ac4ee4170}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Terrain.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Terrain.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

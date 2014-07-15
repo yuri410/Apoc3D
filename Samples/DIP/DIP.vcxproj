@@ -17,8 +17,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{881548E3-B5CD-43EA-85DC-1A93C9E38D14}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>DIP_Assignment1</RootNamespace>
-    <ProjectName>Sample_DIP</ProjectName>
+    <RootNamespace>Sample_DIP</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -58,23 +57,23 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\Sample_$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\Sample_$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)\Include\;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <IntDir>$(SolutionDir)objs\$(ProjectName)$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)objs\Sample_$(ProjectName)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -82,6 +81,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -93,7 +93,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -101,6 +101,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -113,7 +114,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -122,6 +123,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir);..\include;$(SolutionDir)\Source;$(SolutionDir)\include;$(SolutionDir)\;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -135,6 +137,14 @@
     <None Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Common\SamplePCH.h">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">SamplePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SamplePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_Static|Win32'">SamplePCH.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClInclude Include="DIP1.h" />
     <ClInclude Include="DIPCommon.h" />
     <ClInclude Include="Resource.h" />
@@ -145,24 +155,24 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Apoc3D.D3D9RenderSystem\Apoc3D_D3D9RenderSystem.vcxproj">
+    <ProjectReference Include="..\..\Apoc3D.D3D9RenderSystem\Apoc3D_D3D9RenderSystem.vcxproj">
       <Project>{54915473-0627-4a72-9939-2588588ff585}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Apoc3D.Essentials\Apoc3D.Essentials.vcxproj">
+    <ProjectReference Include="..\..\Apoc3D.Essentials\Apoc3D.Essentials.vcxproj">
       <Project>{a834ad24-93ab-4f33-9172-d8f920e58e6c}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Apoc3D.WindowsInput\Apoc3D.WindowsInput.vcxproj">
+    <ProjectReference Include="..\..\Apoc3D.WindowsInput\Apoc3D.WindowsInput.vcxproj">
       <Project>{bb441c8f-5157-43a9-b180-dfa4207adc37}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Apoc3D\Apoc3d.vcxproj">
+    <ProjectReference Include="..\..\Apoc3D\Apoc3d.vcxproj">
       <Project>{db9f1707-9349-4171-b670-cc5ac4ee4170}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Sample_DIP.rc" />
+    <ResourceCompile Include="DIP.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Sample_DIP.ico" />
+    <Image Include="DIP.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
