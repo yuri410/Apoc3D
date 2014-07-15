@@ -24,7 +24,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "GameCamera.h"
 
-#include "apoc3d/Core/GameTime.h"
 #include "Terrain.h"
 //#include "Math/PerlinNoise.h"
 

@@ -2,20 +2,6 @@
 #define TERRAIN_H
 
 #include "TerrainCommon.h"
-#include "apoc3d/Scene/SceneObject.h"
-#include "apoc3d/Core/Resource.h"
-#include "apoc3d/Core/ResourceManager.h"
-#include "apoc3d/Collections/Queue.h"
-#include "apoc3d/Math/BoundingSphere.h"
-#include "apoc3d/Math/PerlinNoise.h"
-#include "apoc3d/Graphics/RenderOperationBuffer.h"
-
-using namespace Apoc3D;
-using namespace Apoc3D::Core;
-using namespace Apoc3D::Collections;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Scene;
-using namespace Apoc3D::Math;
 
 namespace SampleTerrain
 {

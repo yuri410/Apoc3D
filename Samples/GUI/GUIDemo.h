@@ -4,19 +4,9 @@
 
 #include "DemoCommon.h"
 
-#include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
-#include "apoc3d/Math/Point.h"
-#include "Apoc3D.Essentials/Game.h"
-
-using namespace Apoc3DEx;
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Math;
-using namespace Apoc3D::UI;
-
 namespace Sample_GUI
 {
-    class GUIDemo : public Game
+    class GUIDemo : public Apoc3DEx::Game
 	{
 	public:
 		static const int DMCount = 8;

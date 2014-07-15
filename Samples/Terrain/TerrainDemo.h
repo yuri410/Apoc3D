@@ -3,18 +3,6 @@
 
 #include "TerrainCommon.h"
 
-#include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
-#include "apoc3d/Graphics/Material.h"
-#include "apoc3d/UILib/CheckBox.h"
-#include "Apoc3D.Essentials/Game.h"
-
-using namespace Apoc3DEx;
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Math;
-using namespace Apoc3D::Scene;
-using namespace Apoc3D::UI;
-
 namespace SampleTerrain
 {
 	/** This class is the event handler for all messages from render window. 
@@ -34,7 +22,7 @@ namespace SampleTerrain
 	 *  multiplying CellLength and the number of vertices on the edge -1.
 	 *
 	 */
-	class TerrainDemo : public Game
+	class TerrainDemo : public Apoc3DEx::Game
 	{
 	public:
 		TerrainDemo(RenderWindow* wnd);

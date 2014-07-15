@@ -2,12 +2,6 @@
 #include "Terrain.h"
 #include "GameCamera.h"
 
-#include "apoc3d/Core/Logging.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/Core/CommandInterpreter.h"
-
-using namespace Apoc3D::Utility;
-
 namespace SampleTerrain
 {
 	void GenCommand(CommandArgsConstRef args)

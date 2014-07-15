@@ -1,53 +1,9 @@
 #include "TerrainDemo.h"
 
-#include "apoc3d/Core/GameTime.h"
-#include "apoc3d/Core/CommandInterpreter.h"
-#include "apoc3d/Config/XmlConfigurationFormat.h"
-
-#include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
-#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/RenderStateManager.h"
-#include "apoc3d/Graphics/RenderSystem/Sprite.h"
-#include "apoc3d/Graphics/RenderSystem/Texture.h"
-#include "apoc3d/Graphics/EffectSystem/EffectManager.h"
-#include "apoc3d/Graphics/EffectSystem/EffectParameter.h"
-#include "apoc3d/Graphics/TextureManager.h"
-#include "apoc3d/Graphics/GraphicsCommon.h"
-#include "apoc3d/Graphics/PixelFormat.h"
-#include "apoc3d/Graphics/ModelManager.h"
-#include "apoc3d/Graphics/Model.h"
-#include "apoc3d/Graphics/Mesh.h"
-#include "apoc3d/Scene/OctreeSceneManager.h"
-#include "apoc3d/Scene/SceneRenderer.h"
-#include "apoc3d/Input/InputAPI.h"
-#include "apoc3d/Input/Keyboard.h"
-#include "apoc3d/Input/Mouse.h"
-#include "apoc3d/Vfs/FileLocateRule.h"
-#include "apoc3d/Vfs/FileSystem.h"
-#include "apoc3d/Vfs/Archive.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Math/ColorValue.h"
-#include "apoc3d/Math/RandomUtils.h"
-#include "apoc3d/Math/PerlinNoise.h"
-#include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/UILib/Form.h"
-#include "apoc3d/UILib/FontManager.h"
-#include "apoc3d/UILib/Console.h"
-#include "apoc3d/Platform/Thread.h"
-
 #include "GameCamera.h"
 #include "Terrain.h"
 #include "TerrainMesh.h"
 #include "TerrainCommands.h"
-
-using namespace Apoc3D::Config;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::EffectSystem;
-using namespace Apoc3D::Input;
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::Utility;
-
 
 namespace SampleTerrain
 {

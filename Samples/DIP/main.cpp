@@ -25,22 +25,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "DIPCommon.h"
 
-#include "apoc3d/Math/RandomUtils.h"
-
-#include "apoc3d/Graphics/RenderSystem/GraphicsAPI.h"
-#include "apoc3d/Graphics/RenderSystem/DeviceContext.h"
-#include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
-#include "apoc3d/Vfs/FileSystem.h"
-#include "apoc3d/Vfs/Archive.h"
-#include "apoc3d/Vfs/PathUtils.h"
-#include "apoc3d/Utility/StringUtils.h"
-
 #ifndef APOC3D_DYNLIB
 #include "Apoc3D.D3D9RenderSystem/Plugin.h"
 #include "Apoc3D.WindowsInput/Plugin.h"
 #endif
-
-#include "apoc3d/Math/Matrix.h"
 
 #include <direct.h>
 #include <Windows.h>
@@ -50,13 +38,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace dip;
 
 using namespace std;
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Math;
-using namespace Apoc3D::VFS;
-using namespace Apoc3D::Utility;
-
 
 INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 {

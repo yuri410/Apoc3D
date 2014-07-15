@@ -1,23 +1,12 @@
+#pragma once
 #ifndef FONTDEMO_H
 #define FONTDEMO_H
 
 #include "FontCommon.h"
 
-#include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
-#include "apoc3d/Graphics/Material.h"
-#include "apoc3d/UILib/CheckBox.h"
-#include "Apoc3D.Essentials/Game.h"
-
-using namespace Apoc3DEx;
-using namespace Apoc3D;
-using namespace Apoc3D::Graphics::RenderSystem;
-using namespace Apoc3D::Math;
-using namespace Apoc3D::Scene;
-using namespace Apoc3D::UI;
-
 namespace SampleFont
 {
-	class FontDemo : public Game
+	class FontDemo : public Apoc3DEx::Game
 	{
 	public:
 		FontDemo(RenderWindow* wnd);

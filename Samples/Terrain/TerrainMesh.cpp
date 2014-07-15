@@ -1,29 +1,8 @@
 #include "TerrainMesh.h"
 
-#include "apoc3d/Core/Logging.h"
-#include "apoc3d/Core/ResourceHandle.h"
-#include "apoc3d/Collections/List.h"
-#include "apoc3d/Graphics/EffectSystem/EffectManager.h"
-#include "apoc3d/Graphics/RenderSystem/RenderDevice.h"
-#include "apoc3d/Graphics/RenderSystem/Buffer/HardwareBuffer.h"
-#include "apoc3d/Graphics/RenderSystem/VertexDeclaration.h"
-#include "apoc3d/Graphics/RenderSystem/Texture.h"
-#include "apoc3d/Graphics/TextureManager.h"
-#include "apoc3d/Graphics/ModelManager.h"
-#include "apoc3d/Graphics/Model.h"
-#include "apoc3d/Vfs/FileSystem.h"
-#include "apoc3d/Vfs/ResourceLocation.h"
-#include "apoc3d/Vfs/FileLocateRule.h"
-#include "apoc3d/Math/RandomUtils.h"
-#include "apoc3d/Math/PerlinNoise.h"
-#include "apoc3d/Utility/StringUtils.h"
-
 #include "Terrain.h"
 
 SINGLETON_DECL(SampleTerrain::TerrainMeshManager);
-
-using namespace Apoc3D::Utility;
-using namespace Apoc3D::VFS;
 
 namespace SampleTerrain
 {

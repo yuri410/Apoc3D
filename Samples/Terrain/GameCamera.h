@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
 This source file is part of Apoc3D
@@ -25,11 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define GAMECAMERA_H
 
 #include "TerrainCommon.h"
-
-#include "apoc3d/Graphics/Camera.h"
-
-using namespace Apoc3D::Graphics;
-using namespace Apoc3D::Math;
 
 namespace SampleTerrain
 {

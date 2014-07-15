@@ -1,3 +1,4 @@
+#pragma once
 #ifndef GAMECOMMON_H
 #define GAMECOMMON_H
 

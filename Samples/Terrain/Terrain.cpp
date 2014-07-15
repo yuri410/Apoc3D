@@ -1,9 +1,5 @@
 #include "Terrain.h"
 #include "TerrainMesh.h"
-#include "apoc3d/Core/ResourceHandle.h"
-#include "apoc3d/Core/GameTime.h"
-#include "apoc3d/Math/RandomUtils.h"
-#include "apoc3d/Graphics/Model.h"
 
 namespace SampleTerrain
 {
