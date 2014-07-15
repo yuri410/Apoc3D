@@ -136,7 +136,6 @@
     <None Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Samples\SamplePCH.h" />
     <ClInclude Include="GameCamera.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />

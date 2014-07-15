@@ -132,7 +132,6 @@
     <None Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Samples\SamplePCH.h" />
     <ClInclude Include="GUIDemo.h" />
     <ClInclude Include="DemoCommon.h" />
     <ClInclude Include="Resource.h" />
