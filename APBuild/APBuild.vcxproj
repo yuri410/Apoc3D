@@ -148,6 +148,7 @@
     <ClInclude Include="AnimationBuild\TAnimBuild.h" />
     <ClInclude Include="APBCommon.h" />
     <ClInclude Include="BuildConfig.h" />
+    <ClInclude Include="EffectCompiler\CompilerService_SM3.h" />
     <ClInclude Include="Utils\D3DHelper.h" />
     <ClInclude Include="TextureBuild\dds.h" />
     <ClInclude Include="EffectCompiler\AFXBuild.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="Border\BorderBuilder.cpp" />
     <ClCompile Include="EffectCompiler\AFXBuild.cpp" />
     <ClCompile Include="EffectCompiler\CFXBuild.cpp" />
+    <ClCompile Include="EffectCompiler\CompilerService_SM3.cpp" />
     <ClCompile Include="EffectCompiler\FXListBuild.cpp" />
     <ClCompile Include="EffectCompiler\CompileService.cpp" />
     <ClCompile Include="main.cpp" />

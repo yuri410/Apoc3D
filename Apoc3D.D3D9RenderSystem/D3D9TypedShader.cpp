@@ -58,12 +58,12 @@ namespace Apoc3D
 			void D3D9PixelShader::SetTexture(const String &paramName, Texture* tex)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetTexture(cons.SamplerIndex[0], tex);
+				SetTexture(cons.SamplerIndex, tex);
 			}
 			void D3D9PixelShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetSamplerState(cons.SamplerIndex[0], state);
+				SetSamplerState(cons.SamplerIndex, state);
 			}
 
 
@@ -101,12 +101,12 @@ namespace Apoc3D
 			void D3D9VertexShader::SetTexture(const String &paramName, Texture* tex)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetTexture(cons.SamplerIndex[0], tex);
+				SetTexture(cons.SamplerIndex, tex);
 			}
 			void D3D9VertexShader::SetSamplerState(const String &paramName, const ShaderSamplerState &state)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				SetSamplerState(cons.SamplerIndex[0], state);
+				SetSamplerState(cons.SamplerIndex, state);
 			}
 		}
 	}

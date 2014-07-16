@@ -24,8 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ConstantTable.h"
 
 #include "apoc3d/ApocException.h"
+#include "apoc3d/Core/Logging.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
+#include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Utility/StringUtils.h"
 
+using namespace Apoc3D::Core;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -42,150 +47,55 @@ namespace Apoc3D
 
 			ConstantTable::ConstantTable(const DWORD* bytes)
 			{
-				
-				ID3DXConstantTable* constants;
-				HRESULT hr = D3DXGetShaderConstantTableEx(reinterpret_cast<const DWORD*>(bytes), 
-					D3DXCONSTTABLE_LARGEADDRESSAWARE, &constants);
-				assert(SUCCEEDED(hr));
+				// http://msdn.microsoft.com/en-us/library/ff552891.aspx
+				const DWORD* ptr = bytes;
 
-				D3DXCONSTANTTABLE_DESC desc;
-				hr = constants->GetDesc(&desc);
-				assert(SUCCEEDED(hr));
-				
-				for (uint32 i=0;i<desc.Constants;i++)
+				while (*ptr != D3DSIO_END)
 				{
-					D3DXHANDLE handle = constants->GetConstant(NULL, i);
+					DWORD cur = *ptr;
 
-					D3DXCONSTANT_DESC descs[16];
-					UINT count = 16;
-					constants->GetConstantDesc(handle, descs, &count);
-					
-					ShaderConstant constant;
-
-					
-					constant.Name = StringUtils::toPlatformWideString(descs[0].Name);
-					constant.IsSampler = false;
-
-					switch (descs[0].RegisterSet)
+					if ((cur & D3DSI_OPCODE_MASK) == D3DSIO_COMMENT)
 					{
-					case D3DXRS_BOOL:
-						constant.RegisterSet = SREG_Bool;
-						break;
-					case D3DXRS_INT4:
-						constant.RegisterSet = SREG_Int4;
-						break;
-					case D3DXRS_FLOAT4:
-						constant.RegisterSet = SREG_Float4;
-						break;
-					case D3DXRS_SAMPLER:
-						constant.RegisterSet = SREG_Sampler;
-						constant.IsSampler = true;
-						break;
+						DWORD commentBlobSize = (cur & D3DSI_COMMENTSIZE_MASK) >> D3DSI_COMMENTSIZE_SHIFT;
+						DWORD commentBlobName = *(ptr+1);
+
+						// this is a section added by APBuild
+						// constant information can be retrieved from this
+						if (commentBlobName == 'APBM' && commentBlobSize>2)
+						{
+							DWORD crc = *(ptr+2);
+
+							char* payload = (char*)(ptr+3);
+							int32 payloadSize = (commentBlobSize-2) * sizeof(DWORD); // 2 = 1x blob name + 1x crc
+
+							uint32 realCrc = CalculateCRC32(payload, payloadSize);
+
+							if (crc == realCrc)
+							{
+								ReadShaderComment((char*)(ptr+3), payloadSize);
+							}
+							else
+							{
+								ApocLog(LOG_Graphics, L"Invalid APBM shader constant data.");
+							}
+
+							break;
+						}
 					}
-
-					constant.RegisterIndex = descs[0].RegisterIndex;
-					constant.RegisterCount = descs[0].RegisterCount;
-
-					switch (descs[0].Class)
-					{
-					case D3DXPC_SCALAR:
-						constant.Class = SCC_Scalar;
-						break;
-					case D3DXPC_VECTOR:
-						constant.Class = SCC_Vector;
-						break;
-					case D3DXPC_MATRIX_ROWS:
-						constant.Class = SCC_Matrix_Rows;
-						break;
-					case D3DXPC_MATRIX_COLUMNS:
-						constant.Class = SCC_Matrix_Columns;
-						break;
-					case D3DXPC_OBJECT:
-						constant.Class = SCC_Object;
-						break;
-					case D3DXPC_STRUCT:
-						constant.Class = SCC_Struct;
-						break;
-					}
-
-					switch (descs[0].Type)
-					{
-					case D3DXPT_VOID:
-						constant.Type = SCT_VoidPointer;
-						break;
-					case D3DXPT_BOOL:
-						constant.Type = SCT_Boolean;
-						break;
-					case D3DXPT_INT:
-						constant.Type = SCT_Integer;
-						break;
-					case D3DXPT_FLOAT:
-						constant.Type = SCT_Float;
-						break;
-					case D3DXPT_STRING:
-						constant.Type = SCT_String;
-						break;
-					case D3DXPT_TEXTURE:
-						constant.Type = SCT_Texture;
-						break;
-					case D3DXPT_TEXTURE1D:
-						constant.Type = SCT_Texture1D;
-						break;
-					case D3DXPT_TEXTURE2D:
-						constant.Type = SCT_Texture2D;
-						break;
-					case D3DXPT_TEXTURE3D:
-						constant.Type = SCT_Texture3D;
-						break;
-					case D3DXPT_TEXTURECUBE:
-						constant.Type = SCT_TextureCube;
-						break;
-					case D3DXPT_SAMPLER:
-						constant.Type = SCT_Sampler;
-						break;
-					case D3DXPT_SAMPLER1D:
-						constant.Type = SCT_Sampler1D;
-						break;
-					case D3DXPT_SAMPLER2D:
-						constant.Type = SCT_Sampler2D;
-						break;
-					case D3DXPT_SAMPLER3D:
-						constant.Type = SCT_Sampler3D;
-						break;
-					case D3DXPT_SAMPLERCUBE:
-						constant.Type = SCT_SamplerCube;
-						break;
-					case D3DXPT_PIXELSHADER:
-						constant.Type = SCT_PixelShader;
-						break;
-					case D3DXPT_VERTEXSHADER:
-						constant.Type = SCT_VertexShader;
-						break;
-					case D3DXPT_PIXELFRAGMENT:
-						constant.Type = SCT_PixelFragment;
-						break;
-					case D3DXPT_VERTEXFRAGMENT:
-						constant.Type = SCT_VertexFragment;
-						break;
-					}
-
-					constant.Rows = descs[0].Rows;
-					constant.Columns = descs[0].Columns;
-					constant.Elements = descs[0].Elements;
-					constant.StructMembers = descs[0].StructMembers;
-					constant.SizeInBytes = descs[0].Bytes;
-					for (int i=0;i<16;i++) constant.SamplerIndex[0] = -1;
-					constant.SamplerIndex[0] = constants->GetSamplerIndex(handle);
-					//for (uint j=0;j<16;j++)
-					//{
-					//	if (
-					//	constant.SamplerIndex[j] < 
-					//	constant.SamplerIndex[j] = -1;
-					//}
-					m_table.Add(constant.Name, constant);
+					ptr++;
 				}
+			}
 
-				constants->Release();
+
+			void ConstantTable::ReadShaderComment(char* data, int32 size)
+			{
+				MemoryStream ms(data, size);
+				BinaryReader br(&ms);
+				br.SuspendStreamRelease();
+
+				Read(&br);
+
+				br.Close();
 			}
 
 			ConstantTable::~ConstantTable()
@@ -193,6 +103,68 @@ namespace Apoc3D
 
 			}
 
+
+
+			void ConstantTable::Read(BinaryReader* br)
+			{
+				int32 constantCount = br->ReadInt32();
+
+				for (int32 i=0;i<constantCount;i++)
+				{
+					ShaderConstant sc;
+
+					char ch = br->ReadByte();
+					while (ch)
+					{
+						sc.Name.append(1, ch);
+						ch = br->ReadByte();
+					}
+
+					sc.RegisterIndex = br->ReadUInt16();
+					sc.RegisterCount = br->ReadUInt16();
+					sc.SamplerIndex = br->ReadByte();
+					sc.IsSampler = br->ReadBoolean();
+
+
+					sc.RegisterSet = (ShaderRegisterSetType)br->ReadByte();
+					sc.Class = (ShaderConstantClass)br->ReadByte();
+					sc.Type = (ShaderConstantType)br->ReadByte();
+					sc.Rows = br->ReadByte();
+					sc.Columns = br->ReadByte();
+					sc.Elements = br->ReadUInt16();
+					sc.StructMembers = br->ReadUInt16();
+					sc.SizeInBytes = br->ReadUInt32();
+
+
+					m_table.Add(sc.Name, sc);
+				}
+			}
+			void ConstantTable::Write(BinaryWriter* bw)
+			{
+				bw->WriteInt32(m_table.getCount());
+
+				for (HashMap<String, ShaderConstant>::Enumerator e = m_table.GetEnumerator();e.MoveNext();)
+				{
+					const ShaderConstant& sc = *e.getCurrentValue();
+
+					std::string name = StringUtils::toASCIINarrowString(sc.Name);
+					bw->Write(name.c_str(), name.size()+1);
+
+					bw->WriteUInt16(sc.RegisterIndex);
+					bw->WriteUInt16(sc.RegisterCount);
+					bw->WriteByte(sc.SamplerIndex);
+					bw->WriteBoolean(sc.IsSampler);
+
+					bw->WriteByte(sc.RegisterSet);
+					bw->WriteByte(sc.Class);
+					bw->WriteByte(sc.Type);
+					bw->WriteByte(sc.Rows);
+					bw->WriteByte(sc.Columns);
+					bw->WriteUInt16(sc.Elements);
+					bw->WriteUInt16(sc.StructMembers);
+					bw->WriteUInt32(sc.SizeInBytes);
+				}
+			}
 		}
 	}
 }

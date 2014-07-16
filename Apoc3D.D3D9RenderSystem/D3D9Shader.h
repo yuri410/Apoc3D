@@ -121,9 +121,6 @@ namespace Apoc3D
 				virtual void SetValue(const String& paramName, const int* value, int count);
 
 			protected:
-				D3D9Shader(D3D9RenderDevice* device)
-					: Shader(device), m_device(device) { }
-
 				NoInline static void ThrowKeyNotFoundEx(const String& name)
 				{
 					throw AP_EXCEPTION(EX_KeyNotFound, name);
@@ -166,6 +163,7 @@ namespace Apoc3D
 			GST ShaderTT::~D3D9Shader()
 			{
 				m_shader->Release();
+				delete m_constantTable;
 			}
 
 
@@ -182,7 +180,7 @@ namespace Apoc3D
 			GST int ShaderTT::GetSamplerIndex(const String& paramName)
 			{
 				const ShaderConstant& cons = m_constantTable->getConstant(paramName);
-				return cons.SamplerIndex[0];
+				return cons.SamplerIndex;
 			}
 			GST bool ShaderTT::TryGetParamIndex(const String& paramName, int& result)
 			{
@@ -199,7 +197,7 @@ namespace Apoc3D
 				const ShaderConstant* sc = m_constantTable->tryGetConstant(paramName);
 				if (sc && sc->IsSampler)
 				{
-					result = sc->SamplerIndex[0];
+					result = sc->SamplerIndex;
 					return true;
 				}
 				return false;

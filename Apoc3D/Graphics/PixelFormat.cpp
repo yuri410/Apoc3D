@@ -347,6 +347,36 @@ namespace Apoc3D
 			setArr(st[(int)FMT_Palette8], 8,0,0,0);
 			setArr(st[(int)FMT_Palette8Alpha8], 8,8,0,0);
 		}
+
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
+		// BEGIN PixelConverters
+		// 
+		// -----------------------------------------------------------------------------
+		// Copyright (c) 2000-2013 Torus Knot Software Ltd
+		//
+		// Permission is hereby granted, free of charge, to any person obtaining a copy
+		// of this software and associated documentation files (the "Software"), to deal
+		// in the Software without restriction, including without limitation the rights
+		// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+		// copies of the Software, and to permit persons to whom the Software is
+		// furnished to do so, subject to the following conditions:
+		//
+		// The above copyright notice and this permission notice shall be included in
+		// all copies or substantial portions of the Software.
+		// 
+		// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+		// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+		// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+		// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+		// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+		// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+		// THE SOFTWARE.
+		// -----------------------------------------------------------------------------
+		// NOTICE: This section of code has been modified. For the original source, find in http://www.ogre3d.org/
+		// 
+
 #define PACKCONVERTERID(srcFmtId, dstFmtId)  ((srcFmtId << 16) | dstFmtId)
 		template <typename T, typename U, uint32 srcFmtId, uint32 dstFmtId> 
 		struct PixelConverter 
@@ -355,8 +385,6 @@ namespace Apoc3D
 			typedef T SrcType;
 			typedef U DstType;
 		};
-
-
 
 		struct Col3b 
 		{
@@ -663,6 +691,34 @@ namespace Apoc3D
 			}
 		};
 		
+		template <class U>
+		static void BoxConversion(const DataBox& src, const DataBox& dst)
+		{
+			typename U::SrcType *srcptr = static_cast<typename U::SrcType*>(src.getDataPointer());
+			typename U::DstType *dstptr = static_cast<typename U::DstType*>(dst.getDataPointer());
+			const int srcSliceSkip = src.getSlicePitch();
+			const int dstSliceSkip = dst.getSlicePitch();
+
+			for (int z=0;z<src.getDepth();z++)
+			{
+				for (int y=0;y<src.getHeight();y++)
+				{
+					for (int x=0;x<src.getWidth();x++)
+					{
+						dstptr[x] = U::ConvertPixel(srcptr[x]);
+					}
+					srcptr = reinterpret_cast<typename U::SrcType*>((byte*)srcptr + src.getRowPitch());
+					dstptr = reinterpret_cast<typename U::DstType*>((byte*)dstptr + dst.getRowPitch());
+				}
+				srcptr = reinterpret_cast<typename U::SrcType*>((byte*)srcptr + srcSliceSkip);
+				dstptr = reinterpret_cast<typename U::DstType*>((byte*)dstptr + dstSliceSkip);
+			} 
+		}
+
+		// END Pixel Converters
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////
 
 		/*inline uint16 ch_r32u16(float v)
 		{
@@ -855,32 +911,6 @@ namespace Apoc3D
 				return false;
 			}
 
-		private:
-
-			template <class U>
-			static void BoxConversion(const DataBox& src, const DataBox& dst)
-			{
-				typename U::SrcType *srcptr = static_cast<typename U::SrcType*>(src.getDataPointer());
-				typename U::DstType *dstptr = static_cast<typename U::DstType*>(dst.getDataPointer());
-				const int srcSliceSkip = src.getSlicePitch();
-				const int dstSliceSkip = dst.getSlicePitch();
-
-				for (int z=0;z<src.getDepth();z++)
-				{
-					for (int y=0;y<src.getHeight();y++)
-					{
-						for (int x=0;x<src.getWidth();x++)
-						{
-							dstptr[x] = U::ConvertPixel(srcptr[x]);
-						}
-						srcptr = reinterpret_cast<typename U::SrcType*>((byte*)srcptr + src.getRowPitch());
-						dstptr = reinterpret_cast<typename U::DstType*>((byte*)dstptr + dst.getRowPitch());
-					}
-					srcptr = reinterpret_cast<typename U::SrcType*>((byte*)srcptr + srcSliceSkip);
-					dstptr = reinterpret_cast<typename U::DstType*>((byte*)dstptr + dstSliceSkip);
-				} 
-			}
-
 		} static converterHelper;
 
 
@@ -897,8 +927,6 @@ namespace Apoc3D
 
 			memset(dst, 0, lvlSize);
 		}
-
-		//////////////////////////////////////////////////////////////////////////
 
 
 	}

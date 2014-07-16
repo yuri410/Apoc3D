@@ -300,7 +300,7 @@ namespace Apoc3D
 
 					// Checking whether the texture format/size is possible to be supported.
 					// Convert as needed.
-					impossible |= caps->FindCompatibleTextureFormat(newFmt);
+					impossible |= !caps->FindCompatibleTextureFormat(newFmt);
 
 					if (!impossible)
 					{

@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BuildConfig.h"
 #include "BuildSystem.h"
 
+#include "CompilerService_SM3.h"
+
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <d3d11.h>
@@ -36,17 +38,16 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 namespace APBuild
 {
-	const char* getHLSLProfileName(EffectProfileData& pd, ShaderType type);
+	const char* getHLSLCompilerProfileName(EffectProfileData& pd, ShaderType type);
 	
 	void WriteCompileError(const std::string& logs, const String& sourceFile);
-	void FillShader(EffectProfileData& pd, const char* data, const int32 length, ShaderType type);
-
+	void FillEffectProfileData(EffectProfileData& pd, const char* data, const int32 length, ShaderType type);
 
 	bool CompileShader(const String& src, const String& entryPoint, EffectProfileData& profData, ShaderType type, bool debugEnabled)
 	{
 		if (profData.MatchImplType(EffectProfileData::Imp_HLSL))
 		{
-			const char* pfName = getHLSLProfileName(profData, type);
+			const char* pfName = getHLSLCompilerProfileName(profData, type);
 
 			if (profData.MajorVer>3)
 			{
@@ -80,14 +81,15 @@ namespace APBuild
 					return false;
 				}
 
-				FillShader(profData, (const char*)pBlobOut->GetBufferPointer(), pBlobOut->GetBufferSize(), type);
+				FillEffectProfileData(profData, (const char*)pBlobOut->GetBufferPointer(), pBlobOut->GetBufferSize(), type);
+
+				pBlobOut->Release();
 				return true;
 			}
 			else
 			{
 				ID3DXBuffer* error = 0;
 				ID3DXBuffer* shader = 0;
-				ID3DXConstantTable* constants;
 
 				DWORD flags = D3DXSHADER_PACKMATRIX_ROWMAJOR;
 				if (debugEnabled)
@@ -99,9 +101,11 @@ namespace APBuild
 					flags |= D3DXSHADER_OPTIMIZATION_LEVEL3;
 				}
 
+				//flags |= D3DXCONSTTABLE_LARGEADDRESSAWARE;
+
 				HRESULT hr = D3DXCompileShaderFromFile(src.c_str(), 0, 0, 
 					StringUtils::toPlatformNarrowString(entryPoint).c_str(), pfName,
-					flags, &shader, &error, &constants);
+					flags, &shader, &error, NULL);
 
 				if (FAILED(hr))
 				{
@@ -113,21 +117,45 @@ namespace APBuild
 					}
 					else
 					{
-						BuildSystem::LogError(L"Failed due to unknown problem.", src);
+						BuildSystem::LogError(L"Shader compiling failed due to unknown problem.", src);
 					}
 					return false;
 				}
+
+				ID3DXConstantTable* constants;
+				hr = D3DXGetShaderConstantTableEx((const DWORD*)shader->GetBufferPointer(), D3DXCONSTTABLE_LARGEADDRESSAWARE, &constants);
+				if (FAILED(hr))
+				{
+					BuildSystem::LogError(L"Unable to obtain constant information from shader.", src);
+					shader->Release();
+					return false;
+				}
+				ShaderModel3ConstantTable constantHelper(constants);
 				constants->Release();
 
-				FillShader(profData, (const char*)shader->GetBufferPointer(), shader->GetBufferSize(), type);
+				DWORD* newShaderCode;
+				int32 newShaderCodeSize;
+				ProcessShaderModel3ByteCode(constantHelper, 
+					(const DWORD*)shader->GetBufferPointer(), shader->GetBufferSize(),
+					newShaderCode, newShaderCodeSize);
+
+				shader->Release();
+
+
+				FillEffectProfileData(profData, (const char*)newShaderCode, newShaderCodeSize, type);
+
+				delete[] newShaderCode;
+				
 				return true;
 			}
 		}
-		BuildSystem::LogError(L"Profile temporarily not supported.", src);
+		BuildSystem::LogError(L"Profile not supported.", src);
 		return false;
 	}
 
-	void FillShader(EffectProfileData& pd, const char* data, const int32 length, ShaderType type)
+	
+
+	void FillEffectProfileData(EffectProfileData& pd, const char* data, const int32 length, ShaderType type)
 	{
 		if (type == SHDT_Vertex)
 		{
@@ -151,6 +179,7 @@ namespace APBuild
 			memcpy(pd.GSCode, data, pd.GSLength);
 		}
 	}
+
 	void WriteCompileError(const std::string& errmsg, const String& sourceFile)
 	{
 		List<String> errs;
@@ -162,7 +191,7 @@ namespace APBuild
 		}
 		
 	}
-	const char* getHLSLProfileName(EffectProfileData& pd, ShaderType type)
+	const char* getHLSLCompilerProfileName(EffectProfileData& pd, ShaderType type)
 	{
 		if (pd.MajorVer == 5 && pd.MinorVer == 0)
 		{

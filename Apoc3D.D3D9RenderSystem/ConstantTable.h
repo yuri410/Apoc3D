@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Collections;
+using namespace Apoc3D::IO;
 
 namespace Apoc3D
 {
@@ -37,14 +38,14 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			enum ShaderRegisterSetType
+			enum ShaderRegisterSetType : byte
 			{
 				SREG_Bool,
 				SREG_Int4,
 				SREG_Float4,
 				SREG_Sampler
 			};
-			enum ShaderConstantClass
+			enum ShaderConstantClass : byte
 			{
 				SCC_Scalar,
 				SCC_Vector,
@@ -53,7 +54,7 @@ namespace Apoc3D
 				SCC_Object,
 				SCC_Struct
 			};
-			enum ShaderConstantType
+			enum ShaderConstantType : byte
 			{
 				SCT_VoidPointer,
 				SCT_Boolean,
@@ -79,30 +80,38 @@ namespace Apoc3D
 			struct ShaderConstant
 			{
 				String Name;
+				uint16 RegisterIndex;
+				uint16 RegisterCount;
+				byte SamplerIndex;
+				bool IsSampler;
+
 				ShaderRegisterSetType RegisterSet;
-				uint32 RegisterIndex;
-				uint32 RegisterCount;
 				ShaderConstantClass Class;
 				ShaderConstantType Type;
-				uint32 Rows;
-				uint32 Columns;
-				uint32 Elements;
-				uint32 StructMembers;
+				byte Rows;
+				byte Columns;
+				uint16 Elements;
+				uint16 StructMembers;
 				uint32 SizeInBytes;
-				int32 SamplerIndex[16];
-				bool IsSampler;
 			};
 
-			class ConstantTable
+			class PLUGINAPI ConstantTable
 			{
 			public:
 				ConstantTable(const DWORD* bytes);
-				~ConstantTable();
+				virtual ~ConstantTable();
 
 				inline const ShaderConstant& getConstant(const String& name) const;
 				inline const ShaderConstant* tryGetConstant(const String& name) const { return m_table.TryGetValue(name); }
 
-			private:
+				void Read(BinaryReader* br);
+				void Write(BinaryWriter* bw);
+
+			protected:
+				ConstantTable() { }
+
+				void ReadShaderComment(char* data, int32 size);
+
 				HashMap<String, ShaderConstant> m_table;
 
 				NoInline static void ThrowKeyNotFoundEx(const String& name);
