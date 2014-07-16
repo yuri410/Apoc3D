@@ -141,10 +141,17 @@ namespace Apoc3D
 
 				virtual void EnumerateRenderTargetMultisampleModes(PixelFormat pixFormat, DepthFormat depthFormat, Apoc3D::Collections::List<String>& modes);
 				virtual const String* FindClosesetMultisampleMode(uint32 sampleCount, PixelFormat pixFormat, DepthFormat depthFormat);
-
+				
 				virtual int GetMRTCount();
 
 				const AAProfile* LookupAAProfile(const String& name, PixelFormat pixFormat, DepthFormat depthFormat);
+
+				bool FindCompatibleTextureFormat(PixelFormat& format);
+				bool FindCompatibleTextureDimension(int32& width, int32& height, int32& miplevels);
+				bool FindCompatibleCubeTextureDimension(int32& length, int32& miplevels);
+				bool FindCompatibleVolumeTextureDimension(int32& width, int32& height, int32& depth, int32& miplevels);
+
+
 			private:
 				typedef HashMap<String, AAProfile> ProfileTable;
 				typedef HashMap<uint32, ProfileTable*> ProfileCacheTable;
@@ -152,8 +159,18 @@ namespace Apoc3D
 				ProfileTable* EnsureCurrentAAModes(PixelFormat pixFormat, DepthFormat depthFormat);
 				ProfileTable* GenerateSupportedAAModes(const DeviceSettings* setting, PixelFormat pixFormat, DepthFormat depthFormat);
 
+				void RefreshCaps();
+				
+
 				D3D9RenderDevice* m_device;
+
+				/**
+				 *  This table caches a set of AA profiles for each adapter+color+depth permutation.
+				 *  Only generate as needed.
+				 */
 				ProfileCacheTable m_aaProfileLookup;
+
+				D3DCAPS9 m_caps;
 			};
 		}
 	}

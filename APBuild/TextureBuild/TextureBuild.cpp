@@ -26,6 +26,9 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Utils/D3DHelper.h"
 #include "BuildSystem.h"
 
+#include "Apoc3D.D3D9RenderSystem/D3D9Utils.h"
+#include "Apoc3D.D3D9RenderSystem/D3D9TextureUtils.h"
+
 #include "dds.h"
 
 #include <IL/il.h>
@@ -41,131 +44,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 		else (VOID)0
 #endif
 
+using namespace Apoc3D::Graphics::D3D9RenderSystem;
+
 namespace APBuild
 {
-	D3DFORMAT ConvertFormat(PixelFormat fmt)
-	{
-		static D3DFORMAT pixFmtTable[FMT_Count];
-		pixFmtTable[FMT_Unknown] = D3DFMT_UNKNOWN;
-		pixFmtTable[FMT_Luminance8] = D3DFMT_L8;
-		pixFmtTable[FMT_Luminance16] = D3DFMT_L16;
-		pixFmtTable[FMT_Alpha8] = D3DFMT_A8;
-		pixFmtTable[FMT_A4L4] = D3DFMT_A4L4;
-		pixFmtTable[FMT_A8L8] = D3DFMT_A8L8;
-		pixFmtTable[FMT_R5G6B5] = D3DFMT_R5G6B5;
-		pixFmtTable[FMT_B5G6R5] = D3DFMT_UNKNOWN;
-		pixFmtTable[FMT_A4R4G4B4] = D3DFMT_A4R4G4B4;
-		pixFmtTable[FMT_A1R5G5B5] = D3DFMT_A1R5G5B5;
-		pixFmtTable[FMT_R8G8B8] = D3DFMT_R8G8B8;
-		pixFmtTable[FMT_B8G8R8] = D3DFMT_UNKNOWN;
-		pixFmtTable[FMT_A8R8G8B8] = D3DFMT_A8R8G8B8;
-		pixFmtTable[FMT_A8B8G8R8] = D3DFMT_A8B8G8R8;
-		pixFmtTable[FMT_B8G8R8A8] = D3DFMT_UNKNOWN;
-		pixFmtTable[FMT_A2R10G10B10] = D3DFMT_A2R10G10B10;
-		pixFmtTable[FMT_A2B10G10R10] = D3DFMT_A2B10G10R10;
-		pixFmtTable[FMT_DXT1] = D3DFMT_DXT1;
-		pixFmtTable[FMT_DXT2] = D3DFMT_DXT2;
-		pixFmtTable[FMT_DXT3] = D3DFMT_DXT3;
-		pixFmtTable[FMT_DXT4] = D3DFMT_DXT4;
-		pixFmtTable[FMT_DXT5] = D3DFMT_DXT5;
-		pixFmtTable[FMT_A16B16G16R16F] = D3DFMT_A16B16G16R16F;
-		pixFmtTable[FMT_A32B32G32R32F] = D3DFMT_A32B32G32R32F;
-		pixFmtTable[FMT_X8R8G8B8] = D3DFMT_X8R8G8B8;
-		pixFmtTable[FMT_X8B8G8R8] = D3DFMT_X8B8G8R8;
-		pixFmtTable[FMT_X1R5G5B5] = D3DFMT_X1R5G5B5;
-		pixFmtTable[FMT_R8G8B8A8] = D3DFMT_UNKNOWN;
-		pixFmtTable[FMT_Depth] = D3DFMT_UNKNOWN;
-		pixFmtTable[FMT_A16B16G16R16] = D3DFMT_A16B16G16R16;
-		pixFmtTable[FMT_R3G3B2] = D3DFMT_R3G3B2;
-		pixFmtTable[FMT_R16F] = D3DFMT_R16F;
-		pixFmtTable[FMT_R32F] = D3DFMT_R32F;
-		pixFmtTable[FMT_G16R16] = D3DFMT_G16R16;
-		pixFmtTable[FMT_G16R16F] = D3DFMT_G16R16F;
-		pixFmtTable[FMT_G32R32F] = D3DFMT_G32R32F;
-		pixFmtTable[FMT_R16G16B16] = D3DFMT_UNKNOWN;
-		pixFmtTable[FMT_B4G4R4A4] = D3DFMT_UNKNOWN;
-		pixFmtTable[FMT_Palette8] = D3DFMT_P8;
-		pixFmtTable[FMT_Palette8Alpha8] = D3DFMT_A8P8;
-		return pixFmtTable[(int)fmt];
-	}
-	
-	PixelFormat ConvertBackPixelFormat(DWORD fmt)
-	{
-		switch (fmt)
-		{
-		case D3DFMT_A2R10G10B10:
-			return FMT_A2R10G10B10;
-		case D3DFMT_A8R8G8B8:
-			return FMT_A8R8G8B8;
-		case D3DFMT_X8R8G8B8:
-			return FMT_X8R8G8B8;
-		case D3DFMT_A1R5G5B5:
-			return FMT_A1R5G5B5;
-		case D3DFMT_X1R5G5B5:
-			return FMT_X1R5G5B5;
-		case D3DFMT_R5G6B5:
-			return FMT_R5G6B5;
-
-		case D3DFMT_DXT1:
-			return FMT_DXT1;
-		case D3DFMT_DXT2:
-			return FMT_DXT2;
-		case D3DFMT_DXT3:
-			return FMT_DXT3;
-		case D3DFMT_DXT4:
-			return FMT_DXT4;
-		case D3DFMT_DXT5:
-			return FMT_DXT5;
-
-		case D3DFMT_R16F:
-			return FMT_R16F;
-		case D3DFMT_G16R16F:
-			return FMT_G16R16F;
-		case D3DFMT_A16B16G16R16F:
-			return FMT_A16B16G16R16F;
-
-		case D3DFMT_R32F:
-			return FMT_R32F;
-		case D3DFMT_G32R32F:
-			return FMT_G32R32F;
-		case D3DFMT_A32B32G32R32F:
-			return FMT_A32B32G32R32F;
-
-		case D3DFMT_R8G8B8:
-			return FMT_R8G8B8;
-		case D3DFMT_A4R4G4B4:
-			return FMT_A4R4G4B4;
-		case D3DFMT_R3G3B2:
-			return FMT_R3G3B2;
-		case D3DFMT_A8:
-			return FMT_Alpha8;
-		case D3DFMT_A2B10G10R10:
-			return FMT_A2B10G10R10;
-		case D3DFMT_G16R16:
-			return FMT_G16R16;
-		case D3DFMT_A16B16G16R16:
-			return FMT_A16B16G16R16;
-		case D3DFMT_A8P8:
-			return FMT_Palette8Alpha8;
-		case D3DFMT_P8:
-			return FMT_Palette8;
-		case D3DFMT_L8:
-			return FMT_Luminance8;
-		case D3DFMT_L16:
-			return FMT_Luminance16;
-		case D3DFMT_A8L8:
-			return FMT_A8L8;
-		case D3DFMT_A4L4:
-			return FMT_A4L4;
-		case D3DFMT_A1:
-			return FMT_Alpha1;
-
-		case D3DFMT_X4R4G4B4:
-		case D3DFMT_A8R3G3B2:
-			return FMT_Unknown;
-		}
-		throw AP_EXCEPTION(EX_NotSupported, L"ConvertBackPixelFormat");
-	}
 	D3DCUBEMAP_FACES ConvertCubemapFace(CubeMapFace face)
 	{
 		switch (face)
@@ -527,393 +409,6 @@ namespace APBuild
 
 		}
 
-		//byte GetExpectedByteSizeFromFormat(D3DFORMAT format)
-		//{
-		//	switch (format)
-		//	{
-		//	case D3DFMT_X8R8G8B8:// SurfaceFormat.Bgr32:
-		//		return 4;
-		//
-		//	case D3DFMT_A2R10G10B10:// 0x23:
-		//		return 4;
-		//
-		//	case D3DFMT_A8R8G8B8:// SurfaceFormat.Rgba32:
-		//		return 4;
-		//
-		//
-		//	case D3DFMT_X8B8G8R8:// SurfaceFormat.Rgb32:
-		//		return 4;
-		//
-		//	case D3DFMT_A2B10G10R10:// SurfaceFormat.Rgba1010102:
-		//		return 4;
-		//
-		//	case D3DFMT_G16R16:// SurfaceFormat.Rg32:
-		//		return 4;
-		//
-		//	case D3DFMT_A16B16G16R16:// SurfaceFormat.Rgba64:
-		//		return 4;
-		//
-		//	case D3DFMT_R5G6B5:// SurfaceFormat.Bgr565:
-		//		return 8;
-		//
-		//	case D3DFMT_A1R5G5B5:// SurfaceFormat.Bgra5551:
-		//		return 2;
-		//
-		//	case D3DFMT_X1R5G5B5:// SurfaceFormat.Bgr555:
-		//		return 2;
-		//
-		//	case D3DFMT_A4R4G4B4://SurfaceFormat.Bgra4444:
-		//		return 2;
-		//
-		//	case D3DFMT_X4R4G4B4: // SurfaceFormat.Bgr444:
-		//		return 2;
-		//
-		//	case D3DFMT_A8R3G3B2:// SurfaceFormat.Bgra2338:
-		//		return 2;
-		//
-		//	case D3DFMT_A8://SurfaceFormat.Alpha8:
-		//		return 2;
-		//
-		//	case D3DFMT_R3G3B2://SurfaceFormat.Bgr233:
-		//		return 1;
-		//
-		//	case D3DFMT_R8G8B8:// 20:// SurfaceFormat.Bgr24:
-		//		return 1;
-		//
-		//	case D3DFMT_V8U8://SurfaceFormat.NormalizedByte2:
-		//		return 3;
-		//
-		//	case D3DFMT_Q8W8V8U8://SurfaceFormat.NormalizedByte4:
-		//		return 2;
-		//
-		//	case D3DFMT_V16U16://SurfaceFormat.NormalizedShort2:
-		//		return 4;
-		//
-		//	case D3DFMT_Q16W16V16U16://SurfaceFormat.NormalizedShort4:
-		//		return 4;
-		//
-		//	case D3DFMT_R32F:
-		//		return 8;
-		//
-		//	case D3DFMT_G32R32F:
-		//		return 4;
-		//
-		//	case D3DFMT_A32B32G32R32F:// SurfaceFormat.Vector4:
-		//		return 8;
-		//
-		//	case D3DFMT_R16F:// SurfaceFormat.HalfSingle:
-		//		return 0x10;
-		//
-		//	case D3DFMT_G16R16F:// SurfaceFormat.HalfVector2:
-		//		return 2;
-		//
-		//	case D3DFMT_A16B16G16R16F:// SurfaceFormat.HalfVector4:
-		//		return 4;
-		//
-		//	case D3DFMT_DXT1:
-		//		return 8;
-		//
-		//	case D3DFMT_DXT2:
-		//		return 1;
-		//
-		//	case D3DFMT_DXT3:
-		//		return 1;
-		//
-		//	case D3DFMT_DXT4:
-		//		return 1;
-		//
-		//	case D3DFMT_DXT5:
-		//		return 1;
-		//
-		//	case D3DFMT_L8:// SurfaceFormat.Luminance8:
-		//		return 1;
-		//
-		//	case D3DFMT_L16:// SurfaceFormat.Luminance16:
-		//		return 1;
-		//
-		//	case D3DFMT_A4L4:// SurfaceFormat.LuminanceAlpha8:
-		//		return 2;
-		//
-		//	case D3DFMT_A8L8:// SurfaceFormat.LuminanceAlpha16:
-		//		return 1;
-		//
-		//	case D3DFMT_P8:// SurfaceFormat.Palette8:
-		//		return 2;
-		//
-		//	case D3DFMT_A8P8:// SurfaceFormat.PaletteAlpha16:
-		//		return 1;
-		//
-		//	case D3DFMT_L6V5U5://0x3d://SurfaceFormat.NormalizedLuminance16:
-		//		return 2;
-		//
-		//	case D3DFMT_X8L8V8U8://0x3e://SurfaceFormat.NormalizedLuminance32:
-		//		return 2;
-		//
-		//	case D3DFMT_A2W10V10U10://0x43://SurfaceFormat.NormalizedAlpha1010102:
-		//		return 4;
-		//
-		//	case D3DFMT_CxV8U8://0x75://SurfaceFormat.NormalizedByte2Computed:
-		//		return 4;
-		//
-		//		//case 0x3154454d://SurfaceFormat.Multi2Bgra32:
-		//		//	return 2;
-		//	}
-		//	throw Apoc3DException::createException(EX_NotSupported,  L"");
-		//}
-
-		void copyData(void* tex, 
-			int pitch, void* texData, PixelFormat surfaceFormat,
-			DWORD dwLockWidth, DWORD dwLockHeight, bool isSetting)
-		{
-			byte* texPtr = reinterpret_cast<byte*>(tex);
-			byte* texDataPtr = reinterpret_cast<byte*>(texData);
-
-			byte bytesPerPixel = PixelFormatUtils::GetBPP(surfaceFormat);// GetExpectedByteSizeFromFormat(surfaceFormat);
-
-
-			bool isDxt = false;
-			if (surfaceFormat == FMT_DXT1 || //D3DFMT_DXT1 || 
-				surfaceFormat == FMT_DXT2 || 
-				surfaceFormat == FMT_DXT3 || 
-				surfaceFormat == FMT_DXT4 ||
-				surfaceFormat == FMT_DXT5)
-			{
-				isDxt = true;
-
-				dwLockWidth = (dwLockWidth + 3) >> 2;
-				dwLockHeight = (dwLockHeight + 3) >> 2;
-
-				bytesPerPixel = surfaceFormat == FMT_DXT1 ? 8 : 16;
-			}
-			if (dwLockHeight)
-			{
-				DWORD j = dwLockHeight;
-				DWORD lineSize = dwLockWidth * bytesPerPixel;
-
-				do 
-				{
-					if (isSetting)
-					{
-						memcpy(texPtr, texDataPtr, lineSize);
-					}
-					else
-					{
-						memcpy(texDataPtr, texPtr, lineSize);
-					}
-					texPtr += pitch;
-					texDataPtr += lineSize;
-
-					j--;
-				} while (j>0);
-
-			}
-		}
-		void copyData(void* tex,
-			int rowPitch, int slicePitch, void* texData,
-			PixelFormat surfaceFormat,
-			DWORD dwLockWidth, DWORD dwLockHeight, DWORD dwLockDepth,
-			bool isSetting)
-		{
-			byte* texPtr = reinterpret_cast<byte*>(tex);
-			byte* texDataPtr = reinterpret_cast<byte*>(texData);
-
-			byte bytesPerPixel = PixelFormatUtils::GetBPP(surfaceFormat);
-
-			bool isDxt = false;
-			if (surfaceFormat == FMT_DXT1 || 
-				surfaceFormat == FMT_DXT2 || 
-				surfaceFormat == FMT_DXT3 || 
-				surfaceFormat == FMT_DXT4 ||
-				surfaceFormat == FMT_DXT5)
-			{
-				isDxt = true;
-
-				dwLockWidth = (dwLockWidth + 3) >> 2;
-				dwLockHeight = (dwLockHeight + 3) >> 2;
-
-				bytesPerPixel = surfaceFormat == FMT_DXT1 ? 8 : 16;
-			}
-
-			if (dwLockDepth)
-			{
-				DWORD k = dwLockDepth;
-				do 
-				{
-					byte* ptr = texPtr;
-					//byte* ptr2 = texDataPtr;
-
-					if (dwLockHeight)
-					{
-						DWORD j = dwLockHeight;
-						DWORD lineSize = dwLockWidth * bytesPerPixel;
-
-						do 
-						{
-							if (isSetting)
-							{
-								memcpy(ptr, texDataPtr, lineSize);
-							}
-							else
-							{
-								memcpy(texDataPtr, ptr, lineSize);
-							}
-							ptr += rowPitch;
-							texDataPtr += lineSize;
-							j--;
-						} while (j>0);
-					}
-					texPtr += slicePitch;
-					k--;
-				} while (k>0);
-			}
-		}
-		void getData(TextureData& data, LPDIRECT3DTEXTURE9 tex)
-		{
-			for (int i=0;i<data.LevelCount;i++)
-			{
-				TextureLevelData lvlData;
-
-				D3DSURFACE_DESC desc;
-				tex->GetLevelDesc(i, &desc);
-
-				D3DLOCKED_RECT rect;
-				HRESULT hr = tex->LockRect(i, &rect, NULL, D3DLOCK_READONLY);
-				assert(SUCCEEDED(hr));
-
-				lvlData.Width = (int32)desc.Width;
-				lvlData.Height = (int32)desc.Height;
-				lvlData.Depth = 1;
-				lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format);
-				lvlData.ContentData  = new char[lvlData.LevelSize];
-				copyData(rect.pBits, rect.Pitch, lvlData.ContentData, ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
-
-				hr = tex->UnlockRect(i);
-				assert(SUCCEEDED(hr));
-
-				data.Levels.Add(lvlData);
-				data.ContentSize += lvlData.LevelSize;
-			}
-		}
-		void getData(TextureData& data, LPDIRECT3DCUBETEXTURE9 tex)
-		{
-			for (int i=0;i<data.LevelCount;i++)
-			{
-				int startPos = 0;
-
-				D3DSURFACE_DESC desc;
-				tex->GetLevelDesc(i, &desc);
-				TextureLevelData lvlData;
-				lvlData.Width = (int32)desc.Width;
-				lvlData.Height = (int32)desc.Width;
-				lvlData.Depth = 1;
-				lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, 1, data.Format) * 6;
-				lvlData.ContentData  = new char[lvlData.LevelSize];
-				int faceSize = lvlData.LevelSize / 6;
-
-
-
-
-				D3DLOCKED_RECT rect;
-				HRESULT hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_X, i, &rect, NULL, D3DLOCK_READONLY);
-				assert(SUCCEEDED(hr));
-
-				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
-				startPos += faceSize;
-
-				hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_X, i);
-				assert(SUCCEEDED(hr));
-
-				// ======================================================================
-
-				hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i, &rect, NULL, D3DLOCK_READONLY);
-				assert(SUCCEEDED(hr));
-
-				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
-				startPos += faceSize;
-
-				hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_X, i);
-				assert(SUCCEEDED(hr));
-
-				// ======================================================================
-
-				hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i, &rect, NULL, D3DLOCK_READONLY);
-				assert(SUCCEEDED(hr));
-
-				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
-				startPos += faceSize;
-
-				hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Y, i);
-				assert(SUCCEEDED(hr));
-
-				// ======================================================================
-				hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i, &rect, NULL, D3DLOCK_READONLY);
-				assert(SUCCEEDED(hr));
-
-				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
-				startPos += faceSize;
-
-				hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Y, i);
-				assert(SUCCEEDED(hr));
-
-				// ======================================================================
-
-				hr = tex->LockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i, &rect, NULL, D3DLOCK_READONLY);
-				assert(SUCCEEDED(hr));
-
-				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
-				startPos += faceSize;
-
-				hr = tex->UnlockRect(D3DCUBEMAP_FACE_POSITIVE_Z, i);
-				assert(SUCCEEDED(hr));
-				// ======================================================================
-				hr = tex->LockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i, &rect, NULL, D3DLOCK_READONLY);
-				assert(SUCCEEDED(hr));
-
-				copyData(rect.pBits, rect.Pitch, lvlData.ContentData+startPos,
-					ConvertBackPixelFormat(desc.Format), desc.Width, desc.Height, false);
-				startPos += faceSize;
-
-				hr = tex->UnlockRect(D3DCUBEMAP_FACE_NEGATIVE_Z, i);
-				assert(SUCCEEDED(hr));
-
-				// ======================================================================
-				data.Levels.Add(lvlData);
-				data.ContentSize += lvlData.LevelSize;
-
-			}
-		}
-		void getData(TextureData& data, LPDIRECT3DVOLUMETEXTURE9 tex)
-		{
-			for (int i=0;i<data.LevelCount;i++)
-			{
-				TextureLevelData lvlData;
-
-				D3DVOLUME_DESC desc;
-				tex->GetLevelDesc(i, &desc);
-
-				lvlData.Width = (int32)desc.Width;
-				lvlData.Height = (int32)desc.Height;
-				lvlData.Depth = (int32)desc.Depth;
-				lvlData.LevelSize = PixelFormatUtils::GetMemorySize(lvlData.Width, lvlData.Height, desc.Depth, data.Format);
-				lvlData.ContentData  = new char[lvlData.LevelSize];
-
-				D3DLOCKED_BOX box;
-				HRESULT hr = tex->LockBox(i, &box, NULL, 0);
-				assert(SUCCEEDED(hr));
-
-				copyData(box.pBits, box.RowPitch, box.SlicePitch,
-					data.Levels[i].ContentData, ConvertBackPixelFormat(desc.Format),
-					desc.Width, desc.Height, desc.Depth, false);
-
-				hr = tex->UnlockBox(i);
-				assert(SUCCEEDED(hr));
-			}
-		}
 
 	public:
 		bool isError() const { return m_isOnError; }
@@ -1022,7 +517,7 @@ namespace APBuild
 				{
 					LPDIRECT3DTEXTURE9 pmiptex;
 					HRESULT hr = pd3ddev->CreateTexture(m_dwWidth, m_dwHeight, m_numMips, 
-						0, ConvertFormat(format), D3DPOOL_MANAGED, &pmiptex, NULL);
+						0, D3D9Utils::ConvertPixelFormat(format), D3DPOOL_MANAGED, &pmiptex, NULL);
 					if (FAILED(hr))
 					{
 						Error(L"Unexpected error: cannot create texture.", m_name);
@@ -1037,7 +532,7 @@ namespace APBuild
 					LPDIRECT3DCUBETEXTURE9 pcubetex;
 					m_dwCubeMapFlags = DDS_CUBEMAP_ALLFACES;
 					hr = pd3ddev->CreateCubeTexture(m_dwWidth, m_numMips, 
-						0, ConvertFormat(format), D3DPOOL_MANAGED, &pcubetex, NULL);
+						0, D3D9Utils::ConvertPixelFormat(format), D3DPOOL_MANAGED, &pcubetex, NULL);
 					if (FAILED(hr))
 					{
 						Error(L"Unexpected error: cannot create cube texture.", m_name);
@@ -1051,7 +546,7 @@ namespace APBuild
 					LPDIRECT3DVOLUMETEXTURE9 pvoltex;
 					m_dwDepth = depth;
 					hr = pd3ddev->CreateVolumeTexture(m_dwWidth, m_dwHeight, m_dwDepth, m_numMips, 
-						0, ConvertFormat(format), D3DPOOL_SYSTEMMEM, &pvoltex, NULL);
+						0, D3D9Utils::ConvertPixelFormat(format), D3DPOOL_SYSTEMMEM, &pvoltex, NULL);
 					if (FAILED(hr))
 					{
 						Error(L"Unexpected error: cannot create volume texture.",
@@ -1535,7 +1030,7 @@ LFail:
 				}
 			}
 
-			data.Format = ConvertBackPixelFormat(fmt);
+			data.Format = D3D9Utils::ConvertBackPixelFormat(fmt);
 			data.ContentSize = 0;
 			switch (data.Type)
 			{
@@ -1622,7 +1117,7 @@ LFail:
 			}
 			if (config.NewFormat != FMT_Unknown)
 			{
-				tex.Compress(ConvertFormat(config.NewFormat));
+				tex.Compress(D3D9Utils::ConvertPixelFormat(config.NewFormat));
 				if (tex.isError())
 					return;
 				

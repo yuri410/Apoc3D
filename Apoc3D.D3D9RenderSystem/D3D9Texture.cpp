@@ -245,19 +245,45 @@ namespace Apoc3D
 			}
 
 
+			void ConvertFormat(const TextureLevelData& srcLvl, const TextureLevelData& dstLvl, 
+				PixelFormat srcFormat, PixelFormat dstFormat,
+				int32 srcOffset = 0, int32 dstOffset = 0)
+			{
+				DataBox src = DataBox(
+					srcLvl.Width, 
+					srcLvl.Height, 
+					srcLvl.Depth, 
+					PixelFormatUtils::GetMemorySize(srcLvl.Width, 1, 1, srcFormat),
+					PixelFormatUtils::GetMemorySize(srcLvl.Width, srcLvl.Height, 1, srcFormat), 
+					srcLvl.ContentData + srcOffset,
+					srcFormat);
+
+				DataBox dst = DataBox(
+					dstLvl.Width,
+					dstLvl.Height, 
+					dstLvl.Depth, 
+					PixelFormatUtils::GetMemorySize(dstLvl.Width, 1, 1, dstFormat),
+					PixelFormatUtils::GetMemorySize(dstLvl.Width, dstLvl.Height, 1, dstFormat), 
+					dstLvl.ContentData + dstOffset,
+					dstFormat);
+
+				bool r = PixelFormatUtils::ConvertPixels(src, dst);
+				assert(r);
+			}
 
 			void D3D9Texture::load()
 			{
-				// These 2 lines will load the data into memory from the ResourceLocation
+				// load texture data into memory from the ResourceLocation
 				TextureData data;
 				data.Load(*getResourceLocation());
 				
+				D3DDevice* dev = m_renderDevice->getDevice();
+				D3D9Capabilities* caps = static_cast<D3D9Capabilities*>(m_renderDevice->getCapabilities());
+
+				bool impossible = false;
+
 				// Before setting up the D3D9 texture objects, check if the 
 				// device supports this kind of texture
-				D3DDevice* dev = m_renderDevice->getDevice();
-
-				bool notSupported = false;
-
 				PixelFormat newFmt;
 				{
 					PixelFormat fmt = data.Format;
@@ -272,27 +298,38 @@ namespace Apoc3D
 					int32 newHeight = height;
 					int32 newDepth = depth;
 
-					// Checking whether the texture parameter is supported
-					// to get rid of the occasion that a rare texture format
-					// is not supported by an old hardware, causing the application to crash
-					switch (data.Type)
+					// Checking whether the texture format/size is possible to be supported.
+					// Convert as needed.
+					impossible |= caps->FindCompatibleTextureFormat(newFmt);
+
+					if (!impossible)
 					{
-					case (int)TT_Texture1D:
-					case (int)TT_Texture2D:
-						notSupported |= !FindCompatibleTextureFormat(dev, newWidth, newHeight, levels, fmt,
-							newWidth, newHeight, levels, newFmt);
-						break;
-					case (int)TT_CubeTexture:
-						notSupported |= !FindCompatibleCubeTextureFormat(dev, newWidth, levels, fmt,
-							newWidth, levels, newFmt);
-						break;
-					case (int)TT_Texture3D:
-						notSupported |= !FindCompatibleVolumeTextureFormat(dev, newWidth, newHeight, newDepth, levels, fmt,
-							newWidth, newHeight, newDepth, levels, newFmt);
-						break;
+						switch (data.Type)
+						{
+						case (int)TT_Texture1D:
+						case (int)TT_Texture2D:
+							impossible |= !caps->FindCompatibleTextureDimension(newWidth, newHeight, levels);
+							break;
+						case (int)TT_CubeTexture:
+							impossible |= !caps->FindCompatibleCubeTextureDimension(newWidth, levels);
+							break;
+						case (int)TT_Texture3D:
+							impossible |= !caps->FindCompatibleVolumeTextureDimension(newWidth, newHeight, newDepth, levels);
+							break;
+						}
 					}
 
-					if (notSupported)
+
+					// Currently not handling volume texture resizing
+					if (!impossible && data.Type == TT_Texture3D &&
+						(newHeight != height || newWidth != width || newDepth != depth))
+					{
+						String name = getResourceLocationName();
+						ApocLog(LOG_Graphics, L"[D3D9Texture] Texture " + name + L" can not be resized.", LOGLVL_Warning);
+						impossible = true;
+					}
+
+					if (impossible)
 					{
 						String name = getResourceLocationName();
 						ApocLog(LOG_Graphics, L"[D3D9Texture] Texture " + name + L" impossible to support.", LOGLVL_Error);
@@ -305,6 +342,14 @@ namespace Apoc3D
 						{
 							String name = getResourceLocationName();
 
+							LogManager::getSingleton().Write(LOG_Graphics, 
+								L"[D3D9Texture]" + name +  L" Dimension " +
+								StringUtils::IntToString(width) + L"x" + StringUtils::IntToString(height)
+								+ L" is not supported by hardware. Resizing to " +
+								StringUtils::IntToString(newWidth) + L"x" + StringUtils::IntToString(newHeight)
+								, LOGLVL_Warning);
+
+
 							TextureData newdata;
 							newdata.Format = data.Format;
 							newdata.ContentSize = 0;
@@ -312,13 +357,6 @@ namespace Apoc3D
 							newdata.Type = data.Type;
 							newdata.Levels.ResizeDiscard(data.LevelCount);
 							newdata.Flags = data.Flags;
-
-							LogManager::getSingleton().Write(LOG_Graphics, 
-								L"[D3D9Texture]" + name +  L" Dimension " +
-								StringUtils::IntToString(width) + L"x" + StringUtils::IntToString(height)
-								+ L" is not supported by hardware. Resizing to " +
-								StringUtils::IntToString(newWidth) + L"x" + StringUtils::IntToString(newHeight)
-								, LOGLVL_Warning);
 
 							// do it for all levels
 							for (int i=0;i<newdata.LevelCount;i++)
@@ -330,14 +368,32 @@ namespace Apoc3D
 								dstLvl.Width = srcLvl.Width;
 								dstLvl.Height = srcLvl.Height;
 
-								int lvlSize = PixelFormatUtils::GetMemorySize(
+								int dstLvlSize = PixelFormatUtils::GetMemorySize(
 									dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
-								dstLvl.LevelSize = lvlSize;
 
-								dstLvl.ContentData = new char[lvlSize];
-								newdata.ContentSize += lvlSize;
+								if (data.Type == TT_CubeTexture)
+								{
+									dstLvlSize *= 6;
+								}
+								dstLvl.LevelSize = dstLvlSize;
 
-								PixelFormatUtils::Resize(srcLvl.ContentData, srcLvl.Width, srcLvl.Height, dstLvl.ContentData, dstLvl.Width, dstLvl.Height, newdata.Format);
+								dstLvl.ContentData = new char[dstLvlSize];
+								newdata.ContentSize += dstLvlSize;
+
+								if (data.Type == TT_CubeTexture)
+								{
+									int32 srcFaceSize = srcLvl.LevelSize/6;
+									int32 dstFaceSize = dstLvlSize/6;
+									for (int32 j=0;j<6;j++)
+									{
+										PixelFormatUtils::Resize(srcLvl.ContentData + i * srcFaceSize, srcLvl.Width, srcLvl.Height, 
+											dstLvl.ContentData + i*dstFaceSize, dstLvl.Width, dstLvl.Height, newdata.Format);
+									}
+								}
+								else
+								{
+									PixelFormatUtils::Resize(srcLvl.ContentData, srcLvl.Width, srcLvl.Height, dstLvl.ContentData, dstLvl.Width, dstLvl.Height, newdata.Format);
+								}
 
 								newdata.Levels.Add(dstLvl);
 							}
@@ -349,20 +405,21 @@ namespace Apoc3D
 						// automatically converts to the preferred format
 						if (newFmt != fmt)
 						{
-							TextureData newdata;
-							newdata.Format = D3D9Utils::ConvertBackPixelFormat(newFmt);
-							newdata.ContentSize = 0;
-							newdata.LevelCount = data.LevelCount;
-							newdata.Type = data.Type;
-							newdata.Levels.ResizeDiscard(data.LevelCount);
-							newdata.Flags = data.Flags;
-
 							String name = getResourceLocationName();
 
 							LogManager::getSingleton().Write(LOG_Graphics, 
 								L"[D3D9Texture]" + name + L" " + PixelFormatUtils::ToString(data.Format) 
 								+ L" Pixel format is not supported by hardware. Converting to " +
-								PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt)), LOGLVL_Warning);
+								PixelFormatUtils::ToString(newFmt), LOGLVL_Warning);
+
+
+							TextureData newdata;
+							newdata.Format = newFmt;
+							newdata.ContentSize = 0;
+							newdata.LevelCount = data.LevelCount;
+							newdata.Type = data.Type;
+							newdata.Levels.ResizeDiscard(data.LevelCount);
+							newdata.Flags = data.Flags;
 
 							// do it for all levels
 							for (int i=0;i<newdata.LevelCount;i++)
@@ -374,33 +431,32 @@ namespace Apoc3D
 								dstLvl.Width = srcLvl.Width;
 								dstLvl.Height = srcLvl.Height;
 
-								int lvlSize = PixelFormatUtils::GetMemorySize(
+								int dstLvlSize = PixelFormatUtils::GetMemorySize(
 									dstLvl.Width, dstLvl.Height, dstLvl.Depth, newdata.Format);
-								dstLvl.LevelSize = lvlSize;
+								
+								if (data.Type == TT_CubeTexture)
+								{
+									dstLvlSize *= 6;
+								}
+								dstLvl.LevelSize = dstLvlSize;
 
-								dstLvl.ContentData = new char[lvlSize];
-								newdata.ContentSize += lvlSize;
 
-								DataBox src = DataBox(
-									srcLvl.Width, 
-									srcLvl.Height, 
-									srcLvl.Depth, 
-									PixelFormatUtils::GetMemorySize(srcLvl.Width, 1, 1, data.Format),
-									PixelFormatUtils::GetMemorySize(srcLvl.Width, srcLvl.Height, 1, data.Format), 
-									srcLvl.ContentData,
-									data.Format);
+								dstLvl.ContentData = new char[dstLvlSize];
+								newdata.ContentSize += dstLvlSize;
 
-								DataBox dst = DataBox(
-									dstLvl.Width,
-									dstLvl.Height, 
-									dstLvl.Depth, 
-									PixelFormatUtils::GetMemorySize(dstLvl.Width, 1, 1, newdata.Format),
-									PixelFormatUtils::GetMemorySize(dstLvl.Width, dstLvl.Height, 1, newdata.Format), 
-									dstLvl.ContentData,
-									newdata.Format);
-
-								bool r = PixelFormatUtils::ConvertPixels(src, dst);
-								assert(r);
+								if (data.Type == TT_CubeTexture)
+								{
+									int32 srcFaceSize = srcLvl.LevelSize/6;
+									int32 dstFaceSize = dstLvlSize/6;
+									for (int32 j=0;j<6;j++)
+									{
+										ConvertFormat(srcLvl, dstLvl, data.Format, newdata.Format, i*srcFaceSize, i*dstFaceSize);
+									}
+								}
+								else
+								{
+									ConvertFormat(srcLvl, dstLvl, data.Format, newdata.Format);
+								}
 
 								newdata.Levels.Add(dstLvl);
 							}
@@ -415,7 +471,7 @@ namespace Apoc3D
 				// update using the checked data
 				UpdateInfo(data);
 
-				if (!notSupported)
+				if (!impossible)
 				{
 					DWORD usage = D3D9Utils::ConvertTextureUsage(getUsage());
 					HRESULT hr;
@@ -432,7 +488,7 @@ namespace Apoc3D
 						if (FAILED(hr))
 						{
 							String name = getResourceLocationName();
-							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt));
+							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(newFmt);
 							msg.append(L" ");
 							msg.append(StringUtils::IntToString(getWidth()));
 							msg.append(L"x");
@@ -457,7 +513,7 @@ namespace Apoc3D
 						if (FAILED(hr))
 						{
 							String name = getResourceLocationName();
-							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt));
+							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(newFmt);
 							msg.append(L" ");
 							msg.append(StringUtils::IntToString(getWidth()));
 							msg.append(L" L=");
@@ -480,7 +536,7 @@ namespace Apoc3D
 						if (FAILED(hr))
 						{
 							String name = getResourceLocationName();
-							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(D3D9Utils::ConvertBackPixelFormat(newFmt));
+							String msg = L"[D3D9Texture] Failed creating " + name + L" " + PixelFormatUtils::ToString(newFmt);
 							msg.append(L" ");
 							msg.append(StringUtils::IntToString(getWidth()));
 							msg.append(L"x");

@@ -39,7 +39,7 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9Utils
+			class PLUGINAPI D3D9Utils
 			{
 			private:
 				static D3D9Utils s_initlaizer;

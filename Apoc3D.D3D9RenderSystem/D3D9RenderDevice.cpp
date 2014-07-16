@@ -541,7 +541,7 @@ namespace Apoc3D
 			D3D9Capabilities::D3D9Capabilities(D3D9RenderDevice* device)
 				: m_device(device)
 			{
-
+				RefreshCaps();
 			}
 			D3D9Capabilities::~D3D9Capabilities()
 			{
@@ -553,44 +553,12 @@ namespace Apoc3D
 				m_aaProfileLookup.Clear();
 			}
 
+
 			bool D3D9Capabilities::SupportsRenderTarget(const String& multisampleMode, PixelFormat pixFormat, DepthFormat depthFormat)
 			{
 				if (!RenderTarget::CheckMultisampleModeStringNone(multisampleMode))
 				{
 					return !!LookupAAProfile(multisampleMode, pixFormat, depthFormat);
-
-					//if (depthFormat == DEPFMT_Count)
-					//{
-					//
-					//	DWORD quality;
-					//	HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
-					//		D3D9Utils::ConvertPixelFormat(pixFormat),
-					//		setting->D3D9.PresentParameters.Windowed, 
-					//		D3D9Utils::ConvertMultisample(multisampleCount),
-					//		&quality);
-					//
-					//	return hr == S_OK;
-					//}
-					//else
-					//{
-					//	DWORD quality;
-					//	HRESULT hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
-					//		D3D9Utils::ConvertPixelFormat(pixFormat),
-					//		setting->D3D9.PresentParameters.Windowed, 
-					//		D3D9Utils::ConvertMultisample(multisampleCount),
-					//		&quality);
-					//
-					//	if (FAILED(hr))
-					//		return false;
-					//	
-					//	hr = d3d9->CheckDeviceMultiSampleType(setting->D3D9.AdapterOrdinal, setting->D3D9.DeviceType,
-					//		D3D9Utils::ConvertDepthFormat(depthFormat),
-					//		setting->D3D9.PresentParameters.Windowed, 
-					//		D3D9Utils::ConvertMultisample(multisampleCount),
-					//		&quality);
-					//
-					//	return hr == S_OK;
-					//}
 				}
 				else
 				{
@@ -627,9 +595,7 @@ namespace Apoc3D
 					return false;
 				}
 
-				D3DCAPS9 caps;
-				m_device->getDevice()->GetDeviceCaps(&caps);
-				return caps.PixelShaderVersion >= D3DPS_VERSION((uint)majorVer, (uint)minorVer);
+				return m_caps.PixelShaderVersion >= D3DPS_VERSION((uint)majorVer, (uint)minorVer);
 			}
 
 			bool D3D9Capabilities::SupportsVertexShader(const char* implType, int majorVer, int minorVer)
@@ -639,16 +605,12 @@ namespace Apoc3D
 					return false;
 				}
 
-				D3DCAPS9 caps;
-				m_device->getDevice()->GetDeviceCaps(&caps);
-				return caps.VertexShaderVersion >= D3DVS_VERSION((uint)majorVer, (uint)minorVer);
+				return m_caps.VertexShaderVersion >= D3DVS_VERSION((uint)majorVer, (uint)minorVer);
 			}
 
 			int D3D9Capabilities::GetMRTCount()
 			{
-				D3DCAPS9 caps;
-				m_device->getDevice()->GetDeviceCaps(&caps);
-				return caps.NumSimultaneousRTs;
+				return m_caps.NumSimultaneousRTs;
 			}
 
 			int32 AAProfileComparison(const D3D9Capabilities::AAProfile& a, const D3D9Capabilities::AAProfile& b)
@@ -735,14 +697,14 @@ namespace Apoc3D
 
 					int32 sorter;
 				};
-				static const VenderSpecificAACombo nvidiaPresets[] = 
+				const VenderSpecificAACombo nvidiaPresets[] = 
 				{
 					{ L"8x CSAA", D3DMULTISAMPLE_4_SAMPLES, 2, 81 },
 					{ L"8xQ CSAA", D3DMULTISAMPLE_8_SAMPLES, 0, 82 },
 					{ L"16x CSAA", D3DMULTISAMPLE_4_SAMPLES, 4, 161 },
 					{ L"16xQ CSAA", D3DMULTISAMPLE_8_SAMPLES, 2, 162 },
 				};
-				static const VenderSpecificAACombo amdPresets[] = 
+				const VenderSpecificAACombo amdPresets[] = 
 				{
 					{ L"2x MSAA", D3DMULTISAMPLE_NONMASKABLE, 0, 20 },
 					{ L"2f4x EQAA", D3DMULTISAMPLE_NONMASKABLE, 1, 21 },
@@ -773,7 +735,7 @@ namespace Apoc3D
 					const wchar_t* name;
 					D3DMULTISAMPLE_TYPE type;
 
-				} possibleMultisampleTypes[] = {
+				} const possibleMultisampleTypes[] = {
 					{ L"", D3DMULTISAMPLE_NONMASKABLE },
 					{ L"2x", D3DMULTISAMPLE_2_SAMPLES },
 					{ L"3x", D3DMULTISAMPLE_3_SAMPLES },
@@ -826,7 +788,7 @@ namespace Apoc3D
 
 					if (supported && qualityCount > 0)
 					{
-						bool isSpecial = false;
+						bool isVenderSpecial = false;
 						DWORD maxSpecialAAQualityLevel = 0;
 
 						const VenderSpecificAACombo* venderPreset = nullptr;
@@ -860,23 +822,23 @@ namespace Apoc3D
 								}
 
 								//modes.Add(aac.name);
-								isSpecial = true;
+								isVenderSpecial = true;
 								if (aac.qualityLevel > maxSpecialAAQualityLevel)
 									maxSpecialAAQualityLevel = aac.qualityLevel;
 							}
 						}
 
 
-						if (isSpecial && maxSpecialAAQualityLevel + 1 == qualityCount)
+						if (isVenderSpecial && maxSpecialAAQualityLevel + 1 == qualityCount)
 						{
-
+							// no nothing, already added as a vender setting
 						}
 						else
 						{
 							if (type == D3DMULTISAMPLE_NONMASKABLE)
 							{
 								AAProfile p;
-								p.Name = L"Default Max*";
+								p.Name = L"Maximum";
 								p.SampleQuality = qualityCount-1;
 								p.SampleType = type;
 								p.Sorter = 65535;
@@ -904,6 +866,219 @@ namespace Apoc3D
 				}
 
 				return profiles;
+			}
+
+			bool IsPowerOfTwo(int32 x)
+			{
+				if (x == 0)
+					return false;
+
+				return (x & (x - 1)) == 0;
+			}
+			int32 SmallestGreaterPoT(int32 x)
+			{
+				if (x < 0)
+					return 0;
+				--x;
+				x |= x >> 1;
+				x |= x >> 2;
+				x |= x >> 4;
+				x |= x >> 8;
+				x |= x >> 16;
+				return x+1;
+			}
+
+			int32 CalculateLevelCount(int32 maxDimension)
+			{
+				int32 lvlCount = 1;
+				while (maxDimension > 1)
+				{
+					maxDimension /= 2;
+					lvlCount++;
+				}
+				return lvlCount;
+			}
+
+
+			bool D3D9Capabilities::FindCompatibleTextureFormat(PixelFormat& format)
+			{
+				GraphicsDeviceManager* devMgr = m_device->getGraphicsDeviceManager();
+				IDirect3D9* d3d9 = devMgr->getDirect3D();
+				const DeviceSettings* setting = devMgr->getCurrentSetting();
+
+				if (format == FMT_Unknown)
+					format = FMT_A8R8G8B8;
+
+				HRESULT hr = d3d9->CheckDeviceFormat(setting->AdapterOrdinal, setting->DeviceType, setting->D3D9.AdapterFormat,
+					0, D3DRTYPE_TEXTURE, D3D9Utils::ConvertPixelFormat(format));
+				if (FAILED(hr))
+				{
+					int bestScore = INT_MAX;
+
+					int32 originalChBitDepths[4];
+					PixelFormatUtils::GetChannelBitDepth(format, originalChBitDepths);
+
+					int32 originalChCount = PixelFormatUtils::GetChannelCount(format);
+					bool allow24bits = PixelFormatUtils::GetBPP(format) == 3;
+
+					format = FMT_Unknown;
+
+					for (int32 i=FMT_Unknown+1;i<FMT_Count;i++)
+					{
+						PixelFormat curFmt = (PixelFormat)i;
+
+						if (PixelFormatUtils::IsCompressed(curFmt))
+							continue;
+
+						int32 curBpp = PixelFormatUtils::GetBPP(curFmt);
+						if (curBpp <= 0)
+							continue; // these formats can not be manipulated
+
+						int32 chnCount = PixelFormatUtils::GetChannelCount(curFmt);
+						if (chnCount<originalChCount)
+							continue;
+
+						if (!allow24bits && curBpp==3)
+							continue;
+
+						hr = d3d9->CheckDeviceFormat(setting->AdapterOrdinal, setting->DeviceType, setting->D3D9.AdapterFormat, 
+							0, D3DRTYPE_TEXTURE, D3D9Utils::ConvertPixelFormat(curFmt));
+						if (FAILED(hr))
+							continue;
+
+						int32 penalty = 4 * (chnCount - originalChCount);
+
+						int32 curChBitDepths[4];
+						PixelFormatUtils::GetChannelBitDepth(curFmt, curChBitDepths);
+
+						for (int32 j = 0; j < 4; j++)
+						{
+							int bitPenalty = curChBitDepths[j] - originalChBitDepths[j];
+							if (bitPenalty<0)
+								bitPenalty = -bitPenalty*4;
+							penalty += bitPenalty;
+						}
+
+						if (penalty < bestScore)
+						{
+							bestScore = penalty;
+							format = curFmt;
+						}
+					}
+				}
+
+				return format != FMT_Unknown;
+			}
+			bool D3D9Capabilities::FindCompatibleTextureDimension(int32& width, int32& height, int32& miplevels)
+			{
+				if (m_caps.TextureCaps & D3DPTEXTURECAPS_POW2)
+				{
+					if (!IsPowerOfTwo(width))
+						width = SmallestGreaterPoT(width);
+
+					if (!IsPowerOfTwo(height))
+						height = SmallestGreaterPoT(height);
+				}
+				
+				if (m_caps.TextureCaps & D3DPTEXTURECAPS_SQUAREONLY)
+				{
+					int32 maxLen = Math::Min((int32)m_caps.MaxTextureWidth, (int32)m_caps.MaxTextureHeight);
+					if (width > maxLen) width = maxLen;
+					if (height > maxLen) height = maxLen;
+
+					width = height = Math::Max(width, height);
+				}
+				else
+				{
+					if (width > (int32)m_caps.MaxTextureWidth)
+						width = (int32)m_caps.MaxTextureWidth;
+
+					if (height > (int32)m_caps.MaxTextureHeight)
+						height = (int32)m_caps.MaxTextureHeight;
+				}
+
+				if (miplevels>1)
+				{
+					int32 mipCount = CalculateLevelCount(Math::Max(width, height));
+
+					if (miplevels>mipCount)
+						miplevels = mipCount;
+				}
+				return true;
+			}
+			bool D3D9Capabilities::FindCompatibleCubeTextureDimension(int32& length, int32& miplevels)
+			{
+				if ((m_caps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP) == 0)
+					return false;
+
+				if ((m_caps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP_POW2) && !IsPowerOfTwo(length))
+					length = SmallestGreaterPoT(length);
+
+				if (length > (int32)m_caps.MaxTextureWidth)
+					length = (int32)m_caps.MaxTextureWidth;
+
+				if (length > (int32)m_caps.MaxTextureHeight)
+					length = (int32)m_caps.MaxTextureHeight;
+
+				if ((m_caps.TextureCaps & D3DPTEXTURECAPS_MIPCUBEMAP) == 0)
+				{
+					miplevels = 1;
+				}
+				else if (miplevels>1)
+				{
+					int32 mipCount = CalculateLevelCount(length);
+
+					if (miplevels>mipCount)
+						miplevels = mipCount;
+				}
+				return true;
+			}
+			bool D3D9Capabilities::FindCompatibleVolumeTextureDimension(int32& width, int32& height, int32& depth, int32& miplevels)
+			{
+				if ((m_caps.TextureCaps & D3DPTEXTURECAPS_VOLUMEMAP) == 0)
+					return false;
+
+				if (m_caps.TextureCaps & D3DPTEXTURECAPS_VOLUMEMAP_POW2)
+				{
+					if (!IsPowerOfTwo(width)) 
+						width = SmallestGreaterPoT(width);
+
+					if (!IsPowerOfTwo(height)) 
+						height = SmallestGreaterPoT(height);
+
+					if (!IsPowerOfTwo(depth)) 
+						depth = SmallestGreaterPoT(depth);
+				}
+
+				if (width > (int32)m_caps.MaxVolumeExtent)
+					width = (int32)m_caps.MaxVolumeExtent;
+				if (height > (int32)m_caps.MaxVolumeExtent)
+					height = (int32)m_caps.MaxVolumeExtent;
+				if (depth > (int32)m_caps.MaxVolumeExtent)
+					depth = (int32)m_caps.MaxVolumeExtent;
+
+				if ((m_caps.TextureCaps & D3DPTEXTURECAPS_MIPVOLUMEMAP) == 0)
+				{
+					miplevels = 1;
+				}
+				else if (miplevels>1)
+				{
+					int32 maxDimension = Math::Max(Math::Max(width, height), depth);
+					int32 mipCount = CalculateLevelCount(maxDimension);
+
+					if (miplevels > mipCount)
+						miplevels = mipCount;
+				}
+
+				return true;
+			}
+
+
+			void D3D9Capabilities::RefreshCaps()
+			{
+				assert(m_device->getDevice());
+				HRESULT hr = m_device->getDevice()->GetDeviceCaps(&m_caps);
+				assert(SUCCEEDED(hr));
 			}
 		}
 	}
