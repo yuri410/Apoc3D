@@ -104,11 +104,7 @@ namespace Apoc3D
 
 			int32 RenderDevice::BatchReportEntryComparison(BatchReportEntry* const& a, BatchReportEntry* const& b)
 			{
-				if (a->Sorter < b->Sorter)
-					return 1;
-				if (a->Sorter > b->Sorter)
-					return -1;
-				return 0;
+				return -Apoc3D::Collections::OrderComparer(a->Sorter, b->Sorter);
 			}
 
 			void RenderDevice::EndFrame()

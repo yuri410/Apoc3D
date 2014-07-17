@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Utility/StringUtils.h"
-
+#include "apoc3d/Collections/CollectionsCommon.h"
 #include "apoc3d/Library/tinythread.h"
 #include <ctime>
 
@@ -122,11 +122,9 @@ namespace Apoc3D
 
 		}
 
-		int compareLogEntrySequence (const LogEntry* const & a, const LogEntry* const & b)
+		int compareLogEntrySequence(const LogEntry* const & a, const LogEntry* const & b)
 		{
-			if ( a->SerialIndex < b->SerialIndex ) return -1;
-			if ( a->SerialIndex == b->SerialIndex ) return 0;
-			return 1;
+			return Apoc3D::Collections::OrderComparer(a->SerialIndex, b->SerialIndex);
 		}
 
 		void LogManager::DumpLogs(String& result)

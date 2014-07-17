@@ -48,14 +48,6 @@ namespace Apoc3D
 		};
 		class APAPI InputAPIFactory
 		{
-		private:
-			APIDescription m_description;
-
-		protected:
-			InputAPIFactory(const APIDescription& desc)
-				: m_description(desc)
-			{ }
-
 		public:
 			const APIDescription& getDescription() const { return m_description; }
 
@@ -64,10 +56,40 @@ namespace Apoc3D
 			virtual void Initialize(RenderWindow* window) = 0;
 			virtual Mouse* CreateMouse() = 0;
 			virtual Keyboard* CreateKeyboard() = 0;
-			//virtual DeviceContent* CreateDeviceContent() = 0;
+
+		protected:
+			InputAPIFactory(const APIDescription& desc)
+				: m_description(desc)
+			{ }
+
+		private:
+			APIDescription m_description;
+
 		};
+
 		class APAPI InputAPIManager : public Singleton<InputAPIManager>
 		{
+		public:
+			InputAPIManager()
+				: m_mouse(0), m_keyboard(0)
+			{
+			}
+
+			virtual ~InputAPIManager();
+		
+			void RegisterInputAPI(InputAPIFactory* fac);
+			void UnregisterInputAPI(const String& name);
+			void UnregisterInputAPI(InputAPIFactory* fac);
+
+			void InitializeInput(RenderWindow* window, const InputCreationParameters& params);
+			void FinalizeInput();
+			void Update(const GameTime* const time);
+
+
+			Mouse* getMouse() const { return m_mouse; }
+			Keyboard* getKeyboard() const { return m_keyboard; }
+
+			SINGLETON_DECL_HEARDER(InputAPIManager);
 		private:
 			struct Entry
 			{
@@ -88,25 +110,6 @@ namespace Apoc3D
 
 			virtual Mouse* CreateMouse();
 			virtual Keyboard* CreateKeyboard();
-		public:
-			Mouse* getMouse() const { return m_mouse; }
-			Keyboard* getKeyboard() const { return m_keyboard; }
-
-			InputAPIManager()
-				: m_mouse(0), m_keyboard(0)
-			{
-			}
-
-			virtual ~InputAPIManager();
-		
-			void RegisterInputAPI(InputAPIFactory* fac);
-			void UnregisterInputAPI(const String& name);
-			void UnregisterInputAPI(InputAPIFactory* fac);
-
-			void InitializeInput(RenderWindow* window, const InputCreationParameters& params);
-			void FinalizeInput();
-			void Update(const GameTime* const time);
-			SINGLETON_DECL_HEARDER(InputAPIManager);
 		};
 
 	}

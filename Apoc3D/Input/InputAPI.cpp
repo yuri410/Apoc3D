@@ -39,12 +39,7 @@ namespace Apoc3D
 	{
 		InputAPIManager::~InputAPIManager()
 		{
-			for (PlatformTable::Enumerator e = m_factories.GetEnumerator();
-				e.MoveNext(); )
-			{
-				APIList* list = *e.getCurrentValue();
-				delete list;
-			}
+			m_factories.DeleteValuesAndClear();
 		}
 
 		void InputAPIManager::RegisterInputAPI(InputAPIFactory* fac)

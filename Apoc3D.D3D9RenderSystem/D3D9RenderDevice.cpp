@@ -615,11 +615,7 @@ namespace Apoc3D
 
 			int32 AAProfileComparison(const D3D9Capabilities::AAProfile& a, const D3D9Capabilities::AAProfile& b)
 			{
-				if (a.Sorter < b.Sorter)
-					return -1;
-				if (a.Sorter > b.Sorter)
-					return 1;
-				return 0;
+				return Apoc3D::Collections::OrderComparer(a.Sorter, b.Sorter);
 			}
 
 			void D3D9Capabilities::EnumerateRenderTargetMultisampleModes(PixelFormat pixFormat, DepthFormat depthFormat, Apoc3D::Collections::List<String>& modes)

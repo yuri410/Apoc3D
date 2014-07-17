@@ -55,18 +55,10 @@ namespace Apoc3DEx
 		/*   PathFinder                                                         */
 		/************************************************************************/
 
-		int32 AStarNodeComparer(AStarNode* const& a, AStarNode* const& b)
-		{
-			if (a->f < b->f) return -1;
-			if (a->f > b->f) return 1;
-			return 0;
-		}
-
 		PathFinder::PathFinder(PathFinderField* terrain, AStarNode* units)
 			: MaxStep(-1), TurnCost(1), ConsiderFieldWeightCost(false), ConsiderFieldDifferencialWeightCost(false), UseManhattanDistance(false),
 			m_terrain(terrain), m_units(units), 
-			m_width(terrain->getWidth()), m_height(terrain->getHeight()),
-			m_queue(&AStarNodeComparer)
+			m_width(terrain->getWidth()), m_height(terrain->getHeight())
 		{
 			Set8DirectionTable();
 		}
@@ -74,8 +66,7 @@ namespace Apoc3DEx
 		PathFinder::PathFinder(PathFinderManager* mgr)
 			: MaxStep(-1), TurnCost(1), ConsiderFieldWeightCost(false), ConsiderFieldDifferencialWeightCost(false), UseManhattanDistance(false),
 			m_terrain(mgr->getFieldTable()), m_units(mgr->m_units),
-			m_width(mgr->m_terrain->getWidth()), m_height(mgr->m_terrain->getHeight()),
-			m_queue(&AStarNodeComparer)
+			m_width(mgr->m_terrain->getWidth()), m_height(mgr->m_terrain->getHeight())
 		{
 			Set8DirectionTable();
 		}

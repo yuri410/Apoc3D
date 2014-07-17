@@ -161,7 +161,7 @@ namespace Apoc3D
 				//{
 				//	res->Unload();
 				//}
-
+				
 				m_hashTable.Remove(res->getHashString());
 
 				if (m_generationTable)

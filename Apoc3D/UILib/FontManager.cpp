@@ -50,11 +50,7 @@ namespace Apoc3D
 			const Glyph* ga = reinterpret_cast<const Glyph*>(b);
 			const Glyph* gb = reinterpret_cast<const Glyph*>(a);
 
-			if (ga->Width<gb->Width)
-				return -1;
-			if (ga->Width>gb->Width)
-				return 1;
-			return 0;
+			return Apoc3D::Collections::OrderComparer(ga->Width, gb->Width);
 		}
 
 		enum FontFlags

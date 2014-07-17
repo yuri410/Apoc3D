@@ -225,26 +225,15 @@ namespace Apoc3D
 			int32 m_size;
 		};
 
-		template<typename T>
+		template<typename T, int32 (*Comparer)(const T& a, const T& b) = &OrderComparer<T>>
 		class PriorityQueue
 		{
 		public:
-			typedef int32 (*Comparer)(const T& a, const T& b);
-
 			PriorityQueue() 
-				: m_itemComparison(&DefaultBinaryComparer)
 			{ }
 
 			PriorityQueue(int32 capacity) 
-				: m_itemComparison(&DefaultBinaryComparer), m_innerList(capacity)
-			{ }
-
-			PriorityQueue(int32 capacity, Comparer comparer) 
-				: m_itemComparison(comparer), m_innerList(capacity)
-			{ }
-
-			PriorityQueue(Comparer comparer) 
-				: m_itemComparison(comparer)
+				: m_innerList(capacity)
 			{ }
 
 
@@ -351,17 +340,9 @@ namespace Apoc3D
 				m_innerList[a] = m_innerList[b];
 				m_innerList[b] = temp;
 			}
-			int32 CompareListItem(int32 a, int32 b) { return m_itemComparison(m_innerList[a], m_innerList[b]); }
-
-			static int32 DefaultBinaryComparer(const T& a, const T& b)
-			{
-				if (a < b) return -1;
-				if (a > b) return 1;
-				return 0;
-			}
-
+			int32 CompareListItem(int32 a, int32 b) { return Comparer(m_innerList[a], m_innerList[b]); }
+			
 			List<T> m_innerList;
-			Comparer m_itemComparison;
 		};
 	}
 }

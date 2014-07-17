@@ -31,7 +31,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Core;
 
-extern const int SmallPrimeTable[];
 
 namespace Apoc3D
 {
@@ -53,19 +52,27 @@ namespace Apoc3D
 			static int64 GetHashCode(const T& obj);
 		};
 
-		template <>
-		struct APAPI EqualityComparer<void*>
+		template <typename T>
+		struct EqualityComparer<T*>
 		{
-			static bool Equals(void* const& x, void* const& y);
-			static int64 GetHashCode(void* const& obj);
+			static bool Equals(T* const& x, T* const& y) { return x==y; }
+			static int64 GetHashCode(T* const& obj) { return static_cast<int64>(reinterpret_cast<uintptr>(obj)); }
 		};
+
 		template <>
+		struct EqualityComparer<void*>
+		{
+			static bool Equals(void* const& x, void* const& y) { return x==y; }
+			static int64 GetHashCode(void* const& obj) { return static_cast<int64>(reinterpret_cast<uintptr>(obj)); }
+		};
+
+		/*template <>
 		struct APAPI EqualityComparer<Resource*>
 		{
 			static bool Equals(Resource* const& x, Resource* const& y);
 			static int64 GetHashCode(Resource* const& obj);
-		};
-
+		};*/
+		
 
 		template <>
 		struct APAPI EqualityComparer<uint64>
@@ -154,50 +161,17 @@ namespace Apoc3D
 			static int64 GetHashCode(const Apoc3D::Math::Vector4& obj);
 		};
 
-		
-
-
-		class HashHelpers
+		template <typename T>
+		int32 OrderComparer(const T& a, const T& b)
 		{
-		public:
-			//static const int primes[72];
+			if (a < b) return -1;
+			return (a > b) ? 1 : 0;
+		}
 
-			static int GetPrime(int min)
-			{
-				for (int i = 0; i < 72; i++)
-				{
-					int val = SmallPrimeTable[i];
-					if (val >= min)
-					{
-						return val;
-					}
-				}
-				for (int j = min | 1; j < 2147483647; j += 2)
-				{
-					if (IsPrime(j))
-					{
-						return j;
-					}
-				}
-				return min;
-			}
-
-			static bool IsPrime(int candidate)
-			{
-				if ((candidate & 1) == 0)
-				{
-					return (candidate == 2);
-				}
-				int root = (int)sqrtf((float)candidate);
-				for (int i = 3; i <= root; i += 2)
-				{
-					if ((candidate % i) == 0)
-					{
-						return false;
-					}
-				}
-				return true;
-			}
+		namespace HashHelpers
+		{
+			int GetPrime(int min);
+			bool IsPrime(int candidate);
 		};
 
 	}

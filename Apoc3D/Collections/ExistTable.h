@@ -27,9 +27,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "apoc3d/Common.h"
-#include "apoc3d/ApocException.h"
 #include "CollectionsCommon.h"
+#include "apoc3d/ApocException.h"
 
 namespace Apoc3D
 {
@@ -43,7 +42,7 @@ namespace Apoc3D
 			{
 			public:
 				Enumerator(const ExistTable<T, ComparerType>* dict)
-					: m_dict(dict), m_index(0), m_current(0)
+					: m_dict(dict), m_index(0), m_current(nullptr)
 				{
 				}
 

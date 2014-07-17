@@ -98,13 +98,14 @@ namespace Apoc3DEx
 			};
 
 			inline AStarNode* getNode(int32 x, int32 y);
+			inline static int32 AStarNodeComparer(AStarNode* const& a, AStarNode* const& b);
 
 			AStarNode* m_units;
 			PathFinderField* m_terrain;
 
 			/** bfs search queue
 			*/
-			PriorityQueue<AStarNode*> m_queue;
+			PriorityQueue<AStarNode*, &AStarNodeComparer> m_queue;
 			
 
 			/** used to fast check if a node is in the queue
@@ -206,6 +207,8 @@ namespace Apoc3DEx
 		};
 
 		AStarNode* PathFinder::getNode(int32 x, int32 y) { return &m_units[y * m_width + x]; }
+		int32 PathFinder::AStarNodeComparer(AStarNode* const& a, AStarNode* const& b) { return OrderComparer<float>(a->f, b->f); }
+
 	}
 }
 #endif
