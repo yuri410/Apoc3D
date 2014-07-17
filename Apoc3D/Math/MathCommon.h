@@ -139,6 +139,49 @@ namespace Apoc3D
 		{
 			return x>=0 ? (int32)(x+0.5) : (int32)(x-0.5);
 		}
+
+
+
+		inline int32 RoundUp2(int32 x)
+		{
+			assert(x>=0);
+			return (x + 1) & ~0x01;
+		}
+		inline int32 RoundUp4(int32 x)
+		{
+			assert(x>=0);
+			return (x + 3) & ~0x03;
+		}
+		inline int32 RoundUp8(int32 x)
+		{
+			assert(x>=0);
+			return (x + 7) & ~0x07;
+		}
+		inline int32 RoundUp16(int32 x)
+		{
+			assert(x>=0);
+			return (x + 15) & ~0x0f;
+		}
+		inline int32 Pow2RoundUp(int32 x)
+		{
+			if (x < 0)
+				return 0;
+			--x;
+			x |= x >> 1;
+			x |= x >> 2;
+			x |= x >> 4;
+			x |= x >> 8;
+			x |= x >> 16;
+			return x+1;
+		}
+		inline bool IsPowerOfTwo(int32 x)
+		{
+			if (x <= 0)
+				return false;
+
+			return (x & (x - 1)) == 0;
+		}
+
 	}
 }
 

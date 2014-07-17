@@ -868,25 +868,7 @@ namespace Apoc3D
 				return profiles;
 			}
 
-			bool IsPowerOfTwo(int32 x)
-			{
-				if (x == 0)
-					return false;
-
-				return (x & (x - 1)) == 0;
-			}
-			int32 SmallestGreaterPoT(int32 x)
-			{
-				if (x < 0)
-					return 0;
-				--x;
-				x |= x >> 1;
-				x |= x >> 2;
-				x |= x >> 4;
-				x |= x >> 8;
-				x |= x >> 16;
-				return x+1;
-			}
+			
 
 			int32 CalculateLevelCount(int32 maxDimension)
 			{
@@ -974,10 +956,10 @@ namespace Apoc3D
 				if (m_caps.TextureCaps & D3DPTEXTURECAPS_POW2)
 				{
 					if (!IsPowerOfTwo(width))
-						width = SmallestGreaterPoT(width);
+						width = Math::Pow2RoundUp(width);
 
 					if (!IsPowerOfTwo(height))
-						height = SmallestGreaterPoT(height);
+						height = Math::Pow2RoundUp(height);
 				}
 				
 				if (m_caps.TextureCaps & D3DPTEXTURECAPS_SQUAREONLY)
@@ -1012,7 +994,7 @@ namespace Apoc3D
 					return false;
 
 				if ((m_caps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP_POW2) && !IsPowerOfTwo(length))
-					length = SmallestGreaterPoT(length);
+					length = Math::Pow2RoundUp(length);
 
 				if (length > (int32)m_caps.MaxTextureWidth)
 					length = (int32)m_caps.MaxTextureWidth;
@@ -1041,13 +1023,13 @@ namespace Apoc3D
 				if (m_caps.TextureCaps & D3DPTEXTURECAPS_VOLUMEMAP_POW2)
 				{
 					if (!IsPowerOfTwo(width)) 
-						width = SmallestGreaterPoT(width);
+						width = Math::Pow2RoundUp(width);
 
 					if (!IsPowerOfTwo(height)) 
-						height = SmallestGreaterPoT(height);
+						height = Math::Pow2RoundUp(height);
 
 					if (!IsPowerOfTwo(depth)) 
-						depth = SmallestGreaterPoT(depth);
+						depth = Math::Pow2RoundUp(depth);
 				}
 
 				if (width > (int32)m_caps.MaxVolumeExtent)
