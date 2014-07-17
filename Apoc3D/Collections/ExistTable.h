@@ -35,21 +35,14 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-		template<typename T>
+		template <typename T, typename ComparerType = EqualityComparer<T>>
 		class ExistTable
 		{
 		public:
 			class Enumerator
 			{
-			private:
-				const ExistTable<T>* m_dict;
-				int m_index;
-				const T* m_current;
-
 			public:
-				const T* getCurrent() const { return m_current; }
-
-				Enumerator(const ExistTable<T>* dict)
+				Enumerator(const ExistTable<T, ComparerType>* dict)
 					: m_dict(dict), m_index(0), m_current(0)
 				{
 				}
@@ -70,7 +63,155 @@ namespace Apoc3D
 					m_current = 0;
 					return false;
 				}
+
+				const T* getCurrent() const { return m_current; }
+
+			private:
+				const ExistTable<T, ComparerType>* m_dict;
+				int m_index;
+				const T* m_current;
+
 			};
+
+		public:
+			ExistTable(const ExistTable& another)
+				: m_bucketsLength(another.m_bucketsLength),
+				m_count(another.m_count), m_entryLength(another.m_entryLength), m_freeCount(another.m_freeCount),
+				m_freeList(another.m_freeList)
+			{
+				m_buckets = new int[m_bucketsLength];
+				memcpy(m_buckets, another.m_buckets, sizeof(int)*m_bucketsLength);
+
+				m_entries = new Entry[m_entryLength];
+				for (int i=0;i<m_entryLength;i++)
+					m_entries[i] = another.m_entries[i];
+			}
+
+			ExistTable()
+				: m_buckets(0), m_bucketsLength(0), m_count(0), 
+				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
+			{
+				int capacity = 40;
+				if (capacity > 0)
+				{
+					Initialize(capacity);
+				}
+			}
+
+			explicit ExistTable(int capacity)
+				: m_buckets(0), m_bucketsLength(0), m_count(0), 
+				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
+			{
+				if (capacity > 0)
+				{
+					Initialize(capacity);
+				}
+			}
+
+			~ExistTable()
+			{
+				delete[] m_buckets;
+				delete[] m_entries;
+			}
+
+			ExistTable& operator=(const ExistTable& another)
+			{
+				if (this == &another)
+					return *this;
+
+				delete[] m_entries;
+				delete[] m_buckets;
+
+				m_bucketsLength = another.m_bucketsLength;
+
+				m_count = another.m_count;
+				m_entryLength = another.m_entryLength;
+				m_freeCount = another.m_freeCount;
+				m_freeList = another.m_freeList;
+
+				m_buckets = new int[m_bucketsLength];
+				memcpy(m_buckets, another.m_buckets, sizeof(int)*m_bucketsLength);
+
+				m_entries = new Entry[m_entryLength];
+				for (int i=0;i<m_entryLength;i++)
+					m_entries[i] = another.m_entries[i];
+
+				return *this; 
+			}
+
+			void Add(const T& item)
+			{
+				Insert(item, true);
+			}
+
+			void Clear()
+			{
+				if (m_count > 0)
+				{
+					for (int i = 0; i < m_bucketsLength; i++)
+					{
+						m_buckets[i] = -1;
+					}
+					memset(m_entries, 0, m_count*sizeof(Entry));
+					m_freeList = -1;
+					m_count = 0;
+					m_freeCount = 0;
+				}
+			}
+
+			bool Remove(const T& item)
+			{
+				if (m_buckets)
+				{
+					int hash = ComparerType::GetHashCode(item) & 2147483647;
+					int index = hash % m_bucketsLength;
+					int slot = -1;
+					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
+					{
+						if ((m_entries[i].hashCode == hash) && ComparerType::Equals(m_entries[i].data, item))
+						{
+							if (slot < 0)
+							{
+								m_buckets[index] = m_entries[i].next;
+							}
+							else
+							{
+								m_entries[slot].next = m_entries[i].next;
+							}
+							m_entries[i].hashCode = -1;
+							m_entries[i].next = m_freeList;
+							memset(&m_entries[i].data,0,sizeof(T));
+							m_freeList = i;
+							m_freeCount++;
+							return true;
+						}
+						slot = i;
+					}
+				}
+				return false;
+			}
+			bool Exists(const T& item) const
+			{
+				if (m_buckets)
+				{
+					int hash = ComparerType::GetHashCode(item) & 2147483647;
+					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
+					{
+						if ((m_entries[i].hashCode == hash) && ComparerType::Equals(m_entries[i].data, item))
+						{
+							return true;
+						}
+					}
+				}
+				return false;
+			}
+
+			Enumerator GetEnumerator() const
+			{
+				return Enumerator(this);
+			}
+
+			int32 getCount() const { return m_count - m_freeCount; }
 
 		private:
 			struct Entry
@@ -89,7 +230,6 @@ namespace Apoc3D
 
 			int m_freeCount;
 			int m_freeList;
-			const IEqualityComparer<T>* m_comparer;
 
 			void Initialize(int capacity)
 			{
@@ -135,12 +275,12 @@ namespace Apoc3D
 				{
 					Initialize(0);
 				}
-				int hash = m_comparer->GetHashCode(item) & 2147483647;
+				int hash = ComparerType::GetHashCode(item) & 2147483647;
 				int index = hash % m_bucketsLength;
 				for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 				{
 					if ((m_entries[i].hashCode == hash) &&
-						m_comparer->Equals(m_entries[i].data, item))
+						ComparerType::Equals(m_entries[i].data, item))
 					{
 						if (add)
 						{
@@ -176,158 +316,16 @@ namespace Apoc3D
 			{
 				if (m_buckets)
 				{
-					int hash = m_comparer->GetHashCode(item) & 2147483647;
+					int hash = ComparerType::GetHashCode(item) & 2147483647;
 					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == hash) && m_comparer->Equals(m_entries[i].data, item))
+						if ((m_entries[i].hashCode == hash) && ComparerType::Equals(m_entries[i].data, item))
 						{
 							return i;
 						}
 					}
 				}
 				return -1;
-			}
-		public:
-			int32 getCount() const { return m_count - m_freeCount; }
-
-			ExistTable(const ExistTable& another)
-				: m_comparer(another.m_comparer), m_bucketsLength(another.m_bucketsLength),
-				m_count(another.m_count), m_entryLength(another.m_entryLength), m_freeCount(another.m_freeCount),
-				m_freeList(another.m_freeList)
-			{
-				m_buckets = new int[m_bucketsLength];
-				memcpy(m_buckets, another.m_buckets, sizeof(int)*m_bucketsLength);
-
-				m_entries = new Entry[m_entryLength];
-				for (int i=0;i<m_entryLength;i++)
-					m_entries[i] = another.m_entries[i];
-			}
-
-			explicit ExistTable(const IEqualityComparer<T>* comparer = IBuiltInEqualityComparer<T>::Default)
-				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
-				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
-			{
-				assert(m_comparer);
-
-				int capacity = 40;
-				if (capacity > 0)
-				{
-					Initialize(capacity);
-				}
-			}
-
-			ExistTable(int capacity, const IEqualityComparer<T>* comparer)
-				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
-				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
-			{
-				if (capacity > 0)
-				{
-					Initialize(capacity);
-				}
-			}
-
-			~ExistTable()
-			{
-				delete[] m_buckets;
-				delete[] m_entries;
-			}
-
-			ExistTable& operator=(const ExistTable& another)
-			{
-				if (this == &another)
-					return *this;
-
-				delete[] m_entries;
-				delete[] m_buckets;
-
-				m_comparer = another.m_comparer;
-				m_bucketsLength = another.m_bucketsLength;
-
-				m_count = another.m_count;
-				m_entryLength = another.m_entryLength;
-				m_freeCount = another.m_freeCount;
-				m_freeList = another.m_freeList;
-
-				m_buckets = new int[m_bucketsLength];
-				memcpy(m_buckets, another.m_buckets, sizeof(int)*m_bucketsLength);
-
-				m_entries = new Entry[m_entryLength];
-				for (int i=0;i<m_entryLength;i++)
-					m_entries[i] = another.m_entries[i];
-
-				return *this; 
-			}
-
-			void Add(const T& item)
-			{
-				Insert(item, true);
-			}
-
-			void Clear()
-			{
-				if (m_count > 0)
-				{
-					for (int i = 0; i < m_bucketsLength; i++)
-					{
-						m_buckets[i] = -1;
-					}
-					memset(m_entries, 0, m_count*sizeof(Entry));
-					m_freeList = -1;
-					m_count = 0;
-					m_freeCount = 0;
-				}
-			}
-
-			bool Remove(const T& item)
-			{
-				if (m_buckets)
-				{
-					int hash = m_comparer->GetHashCode(item) & 2147483647;
-					int index = hash % m_bucketsLength;
-					int slot = -1;
-					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
-					{
-						if ((m_entries[i].hashCode == hash) && m_comparer->Equals(m_entries[i].data, item))
-						{
-							if (slot < 0)
-							{
-								m_buckets[index] = m_entries[i].next;
-							}
-							else
-							{
-								m_entries[slot].next = m_entries[i].next;
-							}
-							m_entries[i].hashCode = -1;
-							m_entries[i].next = m_freeList;
-							memset(&m_entries[i].data,0,sizeof(T));
-							m_freeList = i;
-							m_freeCount++;
-							return true;
-						}
-						slot = i;
-					}
-				}
-				return false;
-			}
-			bool Exists(const T& item) const
-			{
-				if (m_buckets)
-				{
-					int hash = m_comparer->GetHashCode(item) & 2147483647;
-					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
-					{
-						if ((m_entries[i].hashCode == hash) && m_comparer->Equals(m_entries[i].data, item))
-						{
-							return true;
-						}
-					}
-				}
-				return false;
-			}
-
-			Enumerator GetEnumerator() const
-			{
-				return Enumerator(this);
 			}
 		};
 	}

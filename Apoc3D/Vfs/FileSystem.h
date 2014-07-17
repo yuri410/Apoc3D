@@ -98,13 +98,13 @@ namespace Apoc3D
 				String filePath;
 			};
 
-			class ArchiveKeyEqualityComparer : public IEqualityComparer<ArchiveKey>
+			struct ArchiveKeyEqualityComparer
 			{
-				virtual bool Equals(const ArchiveKey& x, const ArchiveKey& y) const;
-				virtual int64 GetHashCode(const ArchiveKey& obj) const;
+				static bool Equals(const ArchiveKey& x, const ArchiveKey& y);
+				static int64 GetHashCode(const ArchiveKey& obj);
 			};
 
-			typedef HashMap<ArchiveKey, Archive*> PackTable;
+			typedef HashMap<ArchiveKey, Archive*, ArchiveKeyEqualityComparer> PackTable;
 			typedef HashMap<String, ArchiveFactory*> PackFactoryTable;
 
 			ArchiveFactory* FindArchiveFactory(const String& ext)
@@ -125,7 +125,6 @@ namespace Apoc3D
 			Archive* CreateArchive(const FileLocation& fl);
 			Archive* CreateArchive(const String& file);
 
-			ArchiveKeyEqualityComparer m_openedPackHasher;
 			tthread::mutex m_openedPackMutex;
 			PackTable m_openedPack;
 

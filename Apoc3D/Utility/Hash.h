@@ -42,6 +42,8 @@ namespace Apoc3D
 			int32 m_result;
 		};
 
+
+
 		inline int32 MurmurHash(const void * key, int len)
 		{
 			const int32 seed = 2166136261;

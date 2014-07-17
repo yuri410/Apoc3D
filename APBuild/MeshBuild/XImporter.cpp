@@ -71,7 +71,7 @@ namespace APBuild
 		
 		for (uint i=0;i<partCount;i++)
 		{
-			HashMap<int,int> vertexMapping((int)totalVertex, Apoc3D::Collections::IBuiltInEqualityComparer<int>::Default);
+			HashMap<int,int> vertexMapping((int)totalVertex);
 			FastList<const char*> verticePointers(totalVertex);
 			FastList<MeshFace> faces(totalFaces);
 

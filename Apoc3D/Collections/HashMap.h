@@ -34,22 +34,14 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-		template<typename T, typename S>
+		template <typename T, typename S, typename ComparerType = Apoc3D::Collections::EqualityComparer<T>>
 		class HashMap
 		{
 		public:
 			class Enumerator
 			{
-			private:
-				const HashMap<T, S>* m_dict;
-				int m_index;
-				T* m_current;
-				S* m_currentVal;
 			public:
-				T* getCurrentKey() const { return m_current; }
-				S* getCurrentValue() const { return m_currentVal; }
-
-				Enumerator(const HashMap<T, S>* dict)
+				Enumerator(const HashMap<T, S, ComparerType>* dict)
 					: m_dict(dict), m_index(0), m_current(nullptr), m_currentVal(nullptr)
 				{
 				}
@@ -72,13 +64,20 @@ namespace Apoc3D
 					m_currentVal = nullptr;
 					return false;
 				}
+
+				T* getCurrentKey() const { return m_current; }
+				S* getCurrentValue() const { return m_currentVal; }
+			private:
+				const HashMap<T, S, ComparerType>* m_dict;
+				int m_index;
+				T* m_current;
+				S* m_currentVal;
 			};
 
 		public:
-			int32 getCount() const { return m_count - m_freeCount; }
 
 			HashMap(const HashMap& another)
-				: m_comparer(another.m_comparer), m_bucketsLength(another.m_bucketsLength),
+				: m_bucketsLength(another.m_bucketsLength),
 				m_count(another.m_count), m_entryLength(another.m_entryLength), m_freeCount(another.m_freeCount),
 				m_freeList(another.m_freeList)
 			{
@@ -89,20 +88,18 @@ namespace Apoc3D
 				for (int i=0;i<m_entryLength;i++)
 					m_entries[i] = another.m_entries[i];
 			}
-			explicit HashMap(const IEqualityComparer<T>* comparer = IBuiltInEqualityComparer<T>::Default)
-				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
+			HashMap()
+				: m_buckets(0), m_bucketsLength(0), m_count(0), 
 				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
 			{
-				assert(m_comparer);
-
 				int capacity = 8;
 				if (capacity > 0)
 				{
 					Initialize(capacity);
 				}
 			}
-			HashMap(int capacity, const IEqualityComparer<T>* comparer)
-				: m_comparer(comparer), m_buckets(0), m_bucketsLength(0), m_count(0), 
+			explicit HashMap(int capacity)
+				: m_buckets(0), m_bucketsLength(0), m_count(0), 
 				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
 			{
 				if (capacity > 0)
@@ -123,7 +120,6 @@ namespace Apoc3D
 				delete[] m_entries;
 				delete[] m_buckets;
 
-				m_comparer = another.m_comparer;
 				m_bucketsLength = another.m_bucketsLength;
 
 				m_count = another.m_count;
@@ -164,7 +160,7 @@ namespace Apoc3D
 			{
 				for (Enumerator e = GetEnumerator(); e.MoveNext();)
 				{
-					S* val = *e.getCurrentValue();
+					S val = *e.getCurrentValue();
 					delete val;
 				}
 
@@ -176,12 +172,12 @@ namespace Apoc3D
 			{
 				if (m_buckets)
 				{
-					int hash = m_comparer->GetHashCode(item) & 2147483647;
+					int hash = ComparerType::GetHashCode(item) & 2147483647;
 					int index = hash % m_bucketsLength;
 					int lastI = -1;
 					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == hash) && m_comparer->Equals(m_entries[i].data, item))
+						if ((m_entries[i].hashCode == hash) && ComparerType::Equals(m_entries[i].data, item))
 						{
 							if (lastI < 0)
 							{
@@ -206,10 +202,10 @@ namespace Apoc3D
 			{
 				if (m_buckets)
 				{
-					int hash = m_comparer->GetHashCode(item) & 2147483647;
+					int hash = ComparerType::GetHashCode(item) & 2147483647;
 					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == hash) && m_comparer->Equals(m_entries[i].data, item))
+						if ((m_entries[i].hashCode == hash) && ComparerType::Equals(m_entries[i].data, item))
 						{
 							return true;
 						}
@@ -275,6 +271,8 @@ namespace Apoc3D
 			{
 				return Enumerator(this);
 			}
+
+			int32 getCount() const { return m_count - m_freeCount; }
 		private:
 			struct Entry
 			{
@@ -293,7 +291,6 @@ namespace Apoc3D
 
 			int m_freeCount;
 			int m_freeList;
-			const IEqualityComparer<T>* m_comparer;
 
 			void Initialize(int capacity)
 			{
@@ -316,12 +313,12 @@ namespace Apoc3D
 				{
 					Initialize(0);
 				}
-				int hash = m_comparer->GetHashCode(item) & 2147483647;
+				int hash = ComparerType::GetHashCode(item) & 2147483647;
 				int index = hash % m_bucketsLength;
 				for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 				{
 					if ((m_entries[i].hashCode == hash) &&
-						m_comparer->Equals(m_entries[i].data, item))
+						ComparerType::Equals(m_entries[i].data, item))
 					{
 						if (add)
 						{
@@ -357,10 +354,10 @@ namespace Apoc3D
 			{
 				if (m_buckets)
 				{
-					int hash = m_comparer->GetHashCode(item) & 2147483647;
+					int hash = ComparerType::GetHashCode(item) & 2147483647;
 					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == hash) && m_comparer->Equals(m_entries[i].data, item))
+						if ((m_entries[i].hashCode == hash) && ComparerType::Equals(m_entries[i].data, item))
 						{
 							return i;
 						}
@@ -376,15 +373,7 @@ namespace Apoc3D
 		public:
 			class Enumerator
 			{
-			private:
-				const FastMap<T, S>* m_dict;
-				int m_index;
-				T* m_current;
-				S* m_currentVal;
 			public:
-				T* getCurrentKey() const { return m_current; }
-				S* getCurrentValue() const { return m_currentVal; }
-
 				Enumerator(const FastMap<T, S>* dict)
 					: m_dict(dict), m_index(0), m_current(nullptr), m_currentVal(nullptr)
 				{
@@ -408,6 +397,14 @@ namespace Apoc3D
 					m_currentVal = nullptr;
 					return false;
 				}
+
+				T* getCurrentKey() const { return m_current; }
+				S* getCurrentValue() const { return m_currentVal; }
+			private:
+				const FastMap<T, S>* m_dict;
+				int m_index;
+				T* m_current;
+				S* m_currentVal;
 			};
 
 		public:

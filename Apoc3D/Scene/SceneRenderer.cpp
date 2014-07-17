@@ -507,37 +507,4 @@ namespace Apoc3D
 			m_batchData.Reset();
 		}
 	};
-
-	namespace Collections
-	{
-		const IEqualityComparer<LPMaterial>* MaterialEqualityComparer::BuiltIn::Default =
-			new MaterialEqualityComparer();
-
-		bool MaterialEqualityComparer::Equals(const LPMaterial& x, const LPMaterial& y) const
-		{
-			const void* a = x;
-			const void* b = y;
-			return a==b;
-		}
-		int64 MaterialEqualityComparer::GetHashCode(const LPMaterial& obj) const
-		{
-			return static_cast<int64>(reinterpret_cast<uintptr>(obj));//->getBatchHandle();
-		}
-
-
-
-		const IEqualityComparer<LPGeometryData>* GeometryDataEqualityComparer::BuiltIn::Default = 
-			new GeometryDataEqualityComparer();
-
-		bool GeometryDataEqualityComparer::Equals(const LPGeometryData& x, const LPGeometryData& y) const
-		{
-			const void* a = x;
-			const void* b = y;
-			return a==b;
-		}
-		int64 GeometryDataEqualityComparer::GetHashCode(const LPGeometryData& obj) const
-		{
-			return static_cast<int64>(reinterpret_cast<uintptr>(obj));//->getBatchHandle();
-		}
-	}
 };

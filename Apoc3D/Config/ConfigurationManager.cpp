@@ -49,16 +49,8 @@ namespace Apoc3D
 		}
 		ConfigurationManager::~ConfigurationManager()
 		{
-			for (ConfigTable::Enumerator e = m_configs.GetEnumerator(); e.MoveNext();)
-			{
-				Configuration* config = *e.getCurrentValue();
-				delete config;
-			}
-			for (FormatTable::Enumerator e = m_formats.GetEnumerator(); e.MoveNext(); )
-			{
-				ConfigurationFormat* fmt = *e.getCurrentValue();
-				delete fmt;
-			}
+			m_configs.DeleteValuesAndClear();
+			m_formats.DeleteValuesAndClear();
 		}
 
 		void ConfigurationManager::LoadConfig(const String& name, const ResourceLocation& rl, ConfigurationFormat* fmt)

@@ -71,7 +71,7 @@ namespace Apoc3D
 		private:
 			typedef HashMap<String, Configuration*> ConfigTable;
 			typedef HashMap<String, ConfigurationFormat*> FormatTable;
-
+			
 			ConfigTable m_configs;
 			FormatTable m_formats;
 		};

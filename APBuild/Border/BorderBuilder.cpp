@@ -27,37 +27,14 @@ namespace APBuild
 	};
 
 
-	template class IEqualityComparer<Vector3>;
-
-	class Vector3EqualityComparer : public IEqualityComparer<Vector3>
+	struct FaceEdgeEqualityComparer
 	{
-	public:
-		virtual bool Equals(const Vector3& x, const Vector3& y) const
-		{
-			return x == y;
-		}
-
-		virtual int64 GetHashCode(const Vector3& obj) const
-		{
-			float x = obj.X;
-			float y = obj.Y;
-			float z = obj.Z;
-
-			return reinterpret_cast<const int64&>(x) ^ reinterpret_cast<const int64&>(y) ^ reinterpret_cast<const int64&>(z);
-		}
-	};
-	
-	template class IEqualityComparer<FaceEdge>;
-
-	class FaceEdgeEqualityComparer : public IEqualityComparer<FaceEdge>
-	{
-	public:
-		virtual bool Equals(const FaceEdge& x, const FaceEdge& y) const
+		static bool Equals(const FaceEdge& x, const FaceEdge& y) 
 		{
 			return x.SmallerIDVertex == y.SmallerIDVertex && x.LargerIDVertex == y.LargerIDVertex;
 		}
 
-		virtual int64 GetHashCode(const FaceEdge& obj) const
+		static int64 GetHashCode(const FaceEdge& obj) 
 		{
 			return obj.SmallerIDVertex + (obj.LargerIDVertex << 16);
 		}
@@ -65,9 +42,6 @@ namespace APBuild
 
 	void BorderBuilder::Build(const ConfigurationSection* sect)
 	{
-		Vector3EqualityComparer vec3Comparer;
-		FaceEdgeEqualityComparer faceEdgeComparer;
-
 		String srcFile = sect->getAttribute(L"SourceFile");
 		String dstFile = sect->getAttribute(L"DestinationFile");
 		String outputFormat = sect->getAttribute(L"OutputFormat");
@@ -108,13 +82,13 @@ namespace APBuild
 
 			uint totalVertexCount = mesh->VertexCount;
 
-			HashMap<Vector3, int> vtxHashTable(totalVertexCount, &vec3Comparer);
+			HashMap<Vector3, int> vtxHashTable(totalVertexCount);
 			FastList<Vector3> newVertexList;
 
 			Utils::meshWeldVertices(vtxHashTable, mesh, newVertexList);
 
 			// =================== do the unique edge detection ============================== 
-			HashMap<FaceEdge, int> edgeUsageCounter(&faceEdgeComparer);
+			HashMap<FaceEdge, int, FaceEdgeEqualityComparer> edgeUsageCounter;
 
 			for (int j=0;j<mesh->Faces.getCount();j++)
 			{
@@ -157,7 +131,7 @@ namespace APBuild
 
 			FastList<FaceEdge> border; // the border edges, unsorted
 			// dump out from the map
-			for (HashMap<FaceEdge, int>::Enumerator e = edgeUsageCounter.GetEnumerator();e.MoveNext();)
+			for (HashMap<FaceEdge, int, FaceEdgeEqualityComparer>::Enumerator e = edgeUsageCounter.GetEnumerator();e.MoveNext();)
 			{
 				if ((*e.getCurrentValue()) == 1)
 					border.Add(*e.getCurrentKey());

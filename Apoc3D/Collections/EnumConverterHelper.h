@@ -45,8 +45,8 @@ namespace Apoc3D
 			typedef HashMap<uint64, String> InverseCastTable;
 
 			EnumDualConversionHelper(int32 capacity)
-				: m_cast(capacity, &m_comparer1), 
-				m_invCast(capacity, &m_comparer2)
+				: m_cast(capacity), 
+				m_invCast(capacity)
 			{ }
 
 			bool SupportsName(const String& name) { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
@@ -95,9 +95,6 @@ namespace Apoc3D
 		private:
 			CastTable m_cast;
 			InverseCastTable m_invCast;
-
-			StringEqualityComparer m_comparer1;
-			Uint64EqualityComparer m_comparer2;
 		};
 	}
 }

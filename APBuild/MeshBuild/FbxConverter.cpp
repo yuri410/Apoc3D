@@ -1167,10 +1167,9 @@ namespace APBuild
 		}
 	};
 
-	class FIVertexEqualityComparer : public IEqualityComparer<FIVertex>
+	struct FIVertexEqualityComparer
 	{
-	public:
-		virtual bool Equals(const FIVertex& x, const FIVertex& y) const
+		static bool Equals(const FIVertex& x, const FIVertex& y)
 		{
 			if (x.Position[0] != y.Position[0])
 				return false;
@@ -1217,7 +1216,7 @@ namespace APBuild
 			return true;
 		}
 
-		virtual int64 GetHashCode(const FIVertex& obj) const
+		static int64 GetHashCode(const FIVertex& obj)
 		{
 			FNVHash32 hasher;
 
@@ -1293,8 +1292,7 @@ namespace APBuild
 
 				// duplicated vertex removal using hashtable
 				// build face data at the same time
-				FIVertexEqualityComparer comparer;
-				HashMap<FIVertex, int> vtxHashTable(totalVertexCount, &comparer);
+				HashMap<FIVertex, int, FIVertexEqualityComparer> vtxHashTable(totalVertexCount);
 				FastList<FIVertex> vertexList(totalVertexCount);
 				meshData->Faces.ResizeDiscard(totalVertexCount/3+2);
 

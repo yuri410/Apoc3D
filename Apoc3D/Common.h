@@ -143,8 +143,6 @@ namespace Apoc3D
 		template<typename T> class List2D;
 		template<typename T> class FastList;
 		template<typename T> class Queue;
-		template<typename T, typename S> class HashMap;
-		template<typename T> class ExistTable;
 		template<typename T> class Stack;
 
 		template<typename T> class EnumDualConversionHelper;

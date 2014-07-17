@@ -26,6 +26,7 @@
  * -----------------------------------------------------------------------------
  */
 
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 #include "apoc3d/Graphics/RenderOperation.h"
 #include "apoc3d/Graphics/PixelFormat.h"

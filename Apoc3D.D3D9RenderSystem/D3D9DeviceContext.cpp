@@ -105,17 +105,16 @@ namespace Apoc3D
 			}
 
 
-			class RenderDisplayModeEqualityComparer : public IEqualityComparer<RenderDisplayMode>
+			struct RenderDisplayModeEqualityComparer
 			{
-			public:
-				virtual bool Equals(const RenderDisplayMode& x, const RenderDisplayMode& y) const
+				static bool Equals(const RenderDisplayMode& x, const RenderDisplayMode& y)
 				{
 					return x.AdapterOrdinal == y.AdapterOrdinal && 
 						x.FSAASampleCount == y.FSAASampleCount && 
 						x.FullScreen == y.FullScreen && 
 						x.Width == y.Width && x.Height == y.Height;
 				}
-				virtual int64 GetHashCode(const RenderDisplayMode& obj) const
+				static int64 GetHashCode(const RenderDisplayMode& obj)
 				{
 					FNVHash32 h;
 					h.Accumulate(&obj.AdapterOrdinal, sizeof(obj.AdapterOrdinal));
@@ -125,7 +124,7 @@ namespace Apoc3D
 					h.Accumulate(&obj.Width, sizeof(obj.Width));
 					return h.GetResult();
 				}
-			} static s_renderDisplayModeEqualityComparer;
+			};
 
 			List<RenderDisplayMode> D3D9DeviceContext::GetSupportedDisplayModes()
 			{
@@ -134,7 +133,7 @@ namespace Apoc3D
 
 				const FastList<AdapterInfo*>& adpInfos = Enumeration::getAdapters();
 
-				ExistTable<RenderDisplayMode> modeTabls(adpInfos.getCount()*2, &s_renderDisplayModeEqualityComparer);
+				ExistTable<RenderDisplayMode, RenderDisplayModeEqualityComparer> modeTabls(adpInfos.getCount()*2);
 				for (int i=0;i<adpInfos.getCount();i++)
 				{
 					const AdapterInfo* ai = adpInfos[i];
@@ -170,7 +169,7 @@ namespace Apoc3D
 				}
 
 				List<RenderDisplayMode> result;
-				for (ExistTable<RenderDisplayMode>::Enumerator e = modeTabls.GetEnumerator(); e.MoveNext();)
+				for (ExistTable<RenderDisplayMode, RenderDisplayModeEqualityComparer>::Enumerator e = modeTabls.GetEnumerator(); e.MoveNext();)
 				{
 					result.Add(*e.getCurrent());
 				}

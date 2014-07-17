@@ -61,8 +61,8 @@ namespace APDesigner
 	{
 	public:
 		EnumConvHelper()
-			: CastTable(50, &m_comparer1), InvCastTable(50, &m_comparer2),
-			CastTable_SNVT(50, &m_comparer1), InvCastTable_SNVT(50, &m_comparer2)
+			: CastTable(50), InvCastTable(50),
+			CastTable_SNVT(50), InvCastTable_SNVT(50)
 		{
 			AddPair(L"int1", ATOMDATA_Int1);
 			AddPair(L"int2", ATOMDATA_Int2);
@@ -151,9 +151,6 @@ namespace APDesigner
 
 		}
 
-		StringEqualityComparer m_comparer1;
-		Int32EqualityComparer m_comparer2;
-
 		HashMap<String, ShaderAtomDataFormat> CastTable;
 		HashMap<int, String> InvCastTable;
 
@@ -172,8 +169,7 @@ namespace APDesigner
 			CastTable_SNVT.Add(name, type);
 			InvCastTable_SNVT.Add((int)type, name);
 		}
-	};
-	static EnumConvHelper EnumConverter;
+	} static EnumConverter;
 
 
 	ShaderAtomDataFormat ShaderNetUtils::ParseAtomDataFormat(const String& value)

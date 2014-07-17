@@ -108,24 +108,13 @@ namespace APBuild
 		}
 	};
 
-	template class IEqualityComparer<GlyphBitmap>;
-	class GlyphBitmapEqualityComparer : public IEqualityComparer<GlyphBitmap>
+	struct GlyphBitmapEqualityComparer
 	{
-	public:
-		GlyphBitmapEqualityComparer() { }
-
-		virtual bool Equals(const GlyphBitmap& x, const GlyphBitmap& y) const
-		{
-			if (x==y)
-				return true;
-			return false;
-		}
-
-		virtual int64 GetHashCode(const GlyphBitmap& obj) const
-		{
-			return obj.HashCode;
-		}
+		static bool Equals(const GlyphBitmap& x, const GlyphBitmap& y) { return (x==y); }
+		static int64 GetHashCode(const GlyphBitmap& obj) { return obj.HashCode; }
 	};
+
+	typedef HashMap<GlyphBitmap, GlyphBitmap, GlyphBitmapEqualityComparer> GlyphBitmapTable;
 
 
 	const int32 FIDXFileID = 'FIDX';
@@ -156,18 +145,24 @@ namespace APBuild
 	};
 
 	typedef void (*GlyphRenderHandler)(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo);
+		FastList<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
 	void BuildFont(const FontBuildConfig& config, GlyphRenderHandler renderer);
 	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo);
+		FastList<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
 	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo);
+		FastList<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
 
 
 	void FontBuild::Build(const ConfigurationSection* sect)
 	{
 		FontBuildConfig config;
 		config.Parse(sect);
+
+		if (!File::FileExists(config.SourceFile))
+		{
+			BuildSystem::LogError(config.SourceFile, L"Could not find source file.");
+			return;
+		}
 
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 
@@ -239,9 +234,8 @@ namespace APBuild
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestIndexFile));
 
-		GlyphBitmapEqualityComparer comparer;
 		FastList<CharMapping> charMap(0xffff);
-		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
+		GlyphBitmapTable glyphHashTable(0xffff);
 
 		FontRenderInfo info;
 		RenderGlyphsByFreeType(StringUtils::toPlatformNarrowString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
@@ -276,7 +270,7 @@ namespace APBuild
 
 		int maxGWidth = 0;
 		int maxGHeight = 0;
-		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 			if (g->Width > maxGWidth) maxGWidth = g->Width;
@@ -298,7 +292,7 @@ namespace APBuild
 
 			int32 xPos = 0;
 			int32 yPos = 0;
-			for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+			for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 			{
 				const GlyphBitmap* g = i.getCurrentKey();
 				bw->WriteInt32(g->Index);
@@ -399,9 +393,8 @@ namespace APBuild
 
 	void BuildFont(const FontBuildConfig& config, GlyphRenderHandler renderer)
 	{
-		GlyphBitmapEqualityComparer comparer;
 		FastList<CharMapping> charMap(0xffff);
-		HashMap<GlyphBitmap, GlyphBitmap> glyphHashTable(0xffff, &comparer);
+		GlyphBitmapTable glyphHashTable(0xffff);
 
 		FontRenderInfo info;
 		renderer(StringUtils::toPlatformNarrowString(config.SourceFile), config.Size, config.Ranges, config.AntiAlias, charMap, glyphHashTable, info);
@@ -451,7 +444,7 @@ namespace APBuild
 		}
 		int64 baseOfs = fs->getPosition();
 
-		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 
@@ -463,7 +456,7 @@ namespace APBuild
 
 		fs->Seek(glyRecPos, SEEK_Begin);
 
-		for (HashMap<GlyphBitmap, GlyphBitmap>::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
+		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
 			const GlyphBitmap* g = i.getCurrentKey();
 
@@ -485,7 +478,7 @@ namespace APBuild
 	}
 
 	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo)
+		FastList<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo)
 	{
 		//Create and initialize a freetype font library.
 		FT_Library library;
@@ -619,7 +612,7 @@ namespace APBuild
 	}
 	
 	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, HashMap<GlyphBitmap, GlyphBitmap>& glyphHashTable, FontRenderInfo& resultInfo)
+		FastList<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo)
 	{
 		String mapFile = StringUtils::toPlatformWideString(fontFile) + L".png";
 		String idxFile = StringUtils::toPlatformWideString(fontFile) + L".fid";

@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "EffectParameter.h"
 
+#include "apoc3d/Collections/EnumConverterHelper.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
 
@@ -39,7 +40,7 @@ namespace Apoc3D
 			{
 			public:
 				EParamConvHelper()
-					: CastTable(50, &m_comparer1), InvCastTable(50, &m_comparer2)
+					: CastTable(50), InvCastTable(50)
 				{
 					AddPair(L"unknown", EPUSAGE_Unknown);
 					AddPair(L"mc4_ambient", EPUSAGE_MtrlC4_Ambient);
@@ -100,9 +101,6 @@ namespace Apoc3D
 					AddPair(L"cmtrlparam", EPUSAGE_CustomMaterialParam);
 				}
 
-				StringEqualityComparer m_comparer1;
-				Int32EqualityComparer m_comparer2;
-
 				HashMap<String, EffectParamUsage> CastTable;
 				HashMap<int, String> InvCastTable;
 			private:
@@ -111,8 +109,7 @@ namespace Apoc3D
 					CastTable.Add(name, usage);
 					InvCastTable.Add((int)usage, name);
 				}
-			};
-			static EParamConvHelper EffectParameterUsageConverter;
+			} static EffectParameterUsageConverter;
 			
 			EffectParameter::EffectParameter(const String& name)
 				: Name(name), Usage(EPUSAGE_Unknown),

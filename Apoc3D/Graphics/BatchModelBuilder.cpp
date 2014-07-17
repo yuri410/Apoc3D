@@ -34,35 +34,22 @@ namespace Apoc3D
 	namespace Graphics
 	{
 		typedef MeshData* PtrMeshData;
-		class APAPI LPMeshDataEqualityComparer : public IEqualityComparer<PtrMeshData>
+		struct LPMeshDataEqualityComparer
 		{
-		public:
-			class BuiltIn : public IBuiltInEqualityComparer<PtrMeshData> { };
-
-			virtual bool Equals(const PtrMeshData& x, const PtrMeshData& y) const
+			static bool Equals(const PtrMeshData& x, const PtrMeshData& y)
 			{
 				const void* a = x;
 				const void* b = y;
 				return a==b;
 			}
 
-			virtual int64 GetHashCode(const PtrMeshData& obj) const
+			static int64 GetHashCode(const PtrMeshData& obj)
 			{
 				const void* s = obj;
 				return reinterpret_cast<int64>(s);
 			}
 		};
-	}
 
-	namespace Collections
-	{
-		template<> const Apoc3D::Collections::IEqualityComparer<PtrMeshData>*
-			Apoc3D::Collections::IBuiltInEqualityComparer<PtrMeshData>::Default = new LPMeshDataEqualityComparer();
-
-	}
-	
-	namespace Graphics
-	{
 		struct Vertex64B
 		{
 			char data[64];
@@ -70,9 +57,8 @@ namespace Apoc3D
 
 		ModelData* BatchModelBuilder::BuildData()
 		{
-			LPMeshDataEqualityComparer comparer;
 			// mapping from MeshData in Models to the index in the sources list
-			HashMap<MeshData*, int> targets(10, &comparer);
+			HashMap<MeshData*, int, LPMeshDataEqualityComparer> targets(10);
 			
 			FastList<ModelData*> sources(m_modelTable.getCount());
 			int index = 0;

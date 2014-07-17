@@ -45,7 +45,7 @@ namespace Apoc3D
 		//	new FileSystem();
 		//}
 		FileSystem::FileSystem()
-			: m_openedPack(10, &m_openedPackHasher)
+			: m_openedPack(10)
 		{
 
 		}
@@ -385,11 +385,11 @@ namespace Apoc3D
 		}
 
 
-		bool FileSystem::ArchiveKeyEqualityComparer::Equals(const FileSystem::ArchiveKey& x, const FileSystem::ArchiveKey& y) const 
+		bool FileSystem::ArchiveKeyEqualityComparer::Equals(const FileSystem::ArchiveKey& x, const FileSystem::ArchiveKey& y) 
 		{
 			return x.threadID == y.threadID && x.filePath == y.filePath; 
 		}
-		int64 FileSystem::ArchiveKeyEqualityComparer::GetHashCode(const FileSystem::ArchiveKey& obj) const 
+		int64 FileSystem::ArchiveKeyEqualityComparer::GetHashCode(const FileSystem::ArchiveKey& obj) 
 		{
 			return StringUtils::GetHashCode(obj.filePath) ^ obj.threadID;
 		}

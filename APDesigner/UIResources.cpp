@@ -2,8 +2,7 @@
 
 namespace APDesigner
 {
-	StringEqualityComparer comparer;
-	HashMap<String, Texture*> m_maps(&comparer);
+	HashMap<String, Texture*> m_maps;
 
 	void UIResources::Initialize(RenderDevice* device)
 	{

@@ -78,7 +78,7 @@ namespace Apoc3D
 
 
 		ConfigurationSection::ConfigurationSection(const String& name, int capacity)
-			: m_name(name), m_subSection(capacity, Apoc3D::Collections::IBuiltInEqualityComparer<String>::Default)
+			: m_name(name), m_subSection(capacity)
 		{ }
 		ConfigurationSection::ConfigurationSection(const String& name)
 			: m_name(name)
