@@ -137,6 +137,13 @@ namespace Apoc3D
 				m_internalPointer = 0;
 			}
 
+			void DeleteAndClear()
+			{
+				for (int32 i=0;i<getCount();i++)
+					delete m_elements[i];
+				Clear();
+			}
+
 			int32 IndexOf(const T& item) const
 			{
 				for (int i = 0; i < m_internalPointer; i++)
@@ -348,6 +355,12 @@ namespace Apoc3D
 			void Clear()
 			{
 				m_internalPointer = 0;
+			}
+			void DeleteAndClear()
+			{
+				for (int32 i=0;i<getCount();i++)
+					delete m_elements[i];
+				Clear();
 			}
 
 			int32 IndexOf(const T& item) const

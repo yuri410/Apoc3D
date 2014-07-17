@@ -160,6 +160,18 @@ namespace Apoc3D
 				}
 			}
 
+			void DeleteValuesAndClear()
+			{
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+				{
+					S* val = *e.getCurrentValue();
+					delete val;
+				}
+
+				Clear();
+			}
+
+
 			bool Remove(const T& item)
 			{
 				if (m_buckets)
