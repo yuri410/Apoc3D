@@ -94,6 +94,8 @@ namespace Apoc3D
 
 				bool IsUnsupported() const { return m_isUnsupported; }
 				const String& getName() const { return m_name; }
+
+				RTTI_UpcastableBase;
 			protected:				
 				virtual int begin() = 0;
 				virtual void end() = 0;
@@ -149,6 +151,8 @@ namespace Apoc3D
 				void SetParameterTextureByName(const String& name, Texture* value);
 
 				virtual void Update(const GameTime* const time);
+
+				RTTI_UpcastableDerived(Effect);
 			protected:
 				virtual int begin();
 				virtual void end();
@@ -223,6 +227,7 @@ namespace Apoc3D
 				CustomShaderEffect(RenderDevice* device, const ResourceLocation& rl);
 				virtual ~CustomShaderEffect();
 
+				RTTI_UpcastableDerived(Effect);
 			protected:
 				Shader* m_vertexShader;
 				Shader* m_pixelShader;

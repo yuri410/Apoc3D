@@ -26,7 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 #include "RenderSystem/VertexElement.h"
-#include "apoc3d/Core/IHashed.h"
 #include "apoc3d/Math/Vector.h"
 #include "apoc3d/Collections/List.h"
 
@@ -40,7 +39,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		struct APAPI VertexPIBNT1 : public IHashed
+		struct APAPI VertexPIBNT1
 		{
 		private:
 			static FastList<VertexElement> GetElements();
@@ -53,15 +52,15 @@ namespace Apoc3D
 			Vector3 Normal;
 			Vector2 TexCoord1;
 
-			virtual HashHandle GetHashCode() const
+			uint64 GetHashCode() const
 			{
 				return Position.GetHashCode() ^ Normal.GetHashCode() ^ TexCoord1.GetHashCode() ^
 					BlendWeight.GetHashCode() ^ BlendIndices.GetHashCode();
 			}
-			virtual String GetHashString() const;
+			String GetHashString() const;
 		};
 
-		struct APAPI VertexPN : public IHashed
+		struct APAPI VertexPN
 		{
 		private:
 			static FastList<VertexElement> GetElements();
@@ -71,14 +70,14 @@ namespace Apoc3D
 			Vector3 Position;
 			Vector3 Normal;
 
-			virtual HashHandle GetHashCode() const
+			uint64 GetHashCode() const
 			{
 				return Position.GetHashCode() ^ Normal.GetHashCode();
 			}
-			virtual String GetHashString() const;
+			String GetHashString() const;
 		};
 
-		struct APAPI VertexPNT1 : public IHashed
+		struct APAPI VertexPNT1
 		{
 		private:
 			static FastList<VertexElement> GetElements();
@@ -90,14 +89,14 @@ namespace Apoc3D
 			Vector2 TexCoord1;
 
 
-			virtual HashHandle GetHashCode() const
+			uint64 GetHashCode() const
 			{
 				return Position.GetHashCode() ^ Normal.GetHashCode() ^ TexCoord1.GetHashCode();
 			}
-			virtual String GetHashString() const;
+			String GetHashString() const;
 		};
 
-		struct APAPI VertexPNT2 : public IHashed
+		struct APAPI VertexPNT2
 		{
 		private:
 			static FastList<VertexElement> GetElements();
@@ -109,15 +108,15 @@ namespace Apoc3D
 			Vector2 TexCoord1;
 			Vector2 TexCoord2;
 
-			virtual HashHandle GetHashCode() const
+			uint64 GetHashCode() const
 			{
 				return Position.GetHashCode() ^ Normal.GetHashCode() ^ 
 					TexCoord1.GetHashCode() ^ TexCoord2.GetHashCode();
 			}
-			virtual String GetHashString() const;
+			String GetHashString() const;
 		};
 
-		struct APAPI VertexPT1 : public IHashed
+		struct APAPI VertexPT1
 		{
 		private:
 			static FastList<VertexElement> GetElements();
@@ -127,13 +126,13 @@ namespace Apoc3D
 			Vector3 Position;
 			Vector2 TexCoord1;
 
-			virtual HashHandle GetHashCode() const
+			uint64 GetHashCode() const
 			{
 				return Position.GetHashCode() ^ TexCoord1.GetHashCode();
 			}
-			virtual String GetHashString() const;
+			String GetHashString() const;
 		};
-		struct APAPI VertexPT2 : public IHashed
+		struct APAPI VertexPT2
 		{
 		private:
 			static FastList<VertexElement> GetElements();
@@ -144,11 +143,11 @@ namespace Apoc3D
 			Vector2 TexCoord1;
 			Vector2 TexCoord2;
 
-			virtual HashHandle GetHashCode() const
+			uint64 GetHashCode() const
 			{
 				return Position.GetHashCode() ^ TexCoord1.GetHashCode() ^ TexCoord2.GetHashCode();
 			}
-			virtual String GetHashString() const;
+			String GetHashString() const;
 		};
 
 	}
