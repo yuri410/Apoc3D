@@ -170,6 +170,9 @@ void * thread::wrapper_function(void * aArg)
   }
   catch(...)
   {
+#if defined(_TTHREAD_WIN32_) && defined(_DEBUG)
+	  DebugBreak();
+#endif
     // Uncaught exceptions will terminate the application (default behavior
     // according to C++11)
     std::terminate();
