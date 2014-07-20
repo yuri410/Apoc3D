@@ -27,7 +27,6 @@
  */
 
 #include "apoc3d/Common.h"
-#include "apoc3d/Core/IHashed.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::IO;
@@ -39,7 +38,7 @@ namespace Apoc3D
 		/**
 		 *  An abstract class representing the location of a data storage.
 		 */
-		class APAPI ResourceLocation : public IHashed
+		class APAPI ResourceLocation 
 		{
 		public:
 			virtual ~ResourceLocation() { }
@@ -47,16 +46,17 @@ namespace Apoc3D
 			virtual Stream* GetWriteStream() const = 0;
 			virtual Stream* GetReadStream() const = 0;
 
-			int64 getSize() const { return m_size; }
-			
-			const String& getName() const { return m_name; }
-			virtual String GetHashString() const { return m_name; }
-			virtual HashHandle GetHashCode() const;
-
 			virtual bool CanRead() const = 0;
 			virtual bool CanWrite() const = 0;
 
 			virtual ResourceLocation* Clone() const = 0;
+
+
+			int64 getSize() const { return m_size; }
+			
+			const String& getName() const { return m_name; }
+			const String& GetHashString() const { return m_name; }
+			uint64 GetHashCode() const;
 
 			RTTI_UpcastableBase;
 		protected:
@@ -95,13 +95,13 @@ namespace Apoc3D
 			virtual Stream* GetWriteStream() const { return nullptr;}
 			virtual Stream* GetReadStream() const;
 
-			bool isInArchive() const { return !!m_parent; }
-			const String& getPath() const { return m_path; } 
-			
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return false; }
 
 			virtual ResourceLocation* Clone() const { return new FileLocation(*this); }
+			
+			bool isInArchive() const { return !!m_parent; }
+			const String& getPath() const { return m_path; } 
 
 			RTTI_UpcastableDerived(ResourceLocation);
 		protected:

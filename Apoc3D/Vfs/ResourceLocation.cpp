@@ -36,7 +36,7 @@ namespace Apoc3D
 {	
 	namespace VFS
 	{
-		HashHandle ResourceLocation::GetHashCode() const
+		uint64 ResourceLocation::GetHashCode() const
 		{
 			return StringUtils::GetHashCode(m_name);
 		}
@@ -80,7 +80,7 @@ namespace Apoc3D
 				Stream* s = m_parent->GetEntryStream(m_entryName);
 				assert(s);
 
-				VirtualStream* strm = dynamic_cast<VirtualStream*>(s);
+				VirtualStream* strm = s->Upcast<VirtualStream>();
 				assert(strm);
 				return strm;
 			}
