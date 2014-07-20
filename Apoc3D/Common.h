@@ -85,9 +85,6 @@ typedef uint8_t byte;
 typedef uint16 ushort;
 typedef uint32 uint;
 typedef uint64 ulong;
-typedef uint64 BatchHandle;
-typedef BatchHandle HashHandle;
-
 
 #define MaxUInt16 std::numeric_limits<uint16>::max();
 #define MinUInt16 std::numeric_limits<uint16>::min();
@@ -99,8 +96,6 @@ typedef BatchHandle HashHandle;
 #define MinUInt64 std::numeric_limits<uint64>::min();
 
 
-
-
 #define MaxInt16 std::numeric_limits<int16>::max();
 #define MinInt16 std::numeric_limits<int16>::min();
 
@@ -109,6 +104,7 @@ typedef BatchHandle HashHandle;
 
 #define MaxInt64 std::numeric_limits<int64>::max();
 #define MinInt64 std::numeric_limits<int64>::min();
+
 
 namespace std
 {
@@ -124,6 +120,10 @@ namespace Apoc3D
 
 	typedef std::wstring String;
 	typedef std::u32string String32;
+
+	template <typename T, int32 N>
+	int32 countof(T (&)[N]) { return N; }
+
 
 	class Project;
 	class ProjectItemData;
