@@ -309,7 +309,7 @@ namespace Apoc3D
 				m_attributes.Add(name, value);
 				//m_attributes.insert(make_pair(name, value));
 			}
-			catch (const ApocException& e)
+			catch (ApocException& e)
 			{
 				switch (e.getType())
 				{
