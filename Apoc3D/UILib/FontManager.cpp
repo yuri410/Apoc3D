@@ -1400,7 +1400,7 @@ namespace Apoc3D
 					
 					if (fnt->m_isUsingCaching)
 					{
-						FileLocation* fl = fnt->m_resource->Upcast<FileLocation>(); // dynamic_cast<FileLocation*>(fnt->m_resource);
+						FileLocation* fl = fnt->m_resource->Upcast<FileLocation>();
 						String name = fl ? PathUtils::GetFileNameNoExt(fl->getName()) : fnt->m_resource->getName();
 						msg.append(name);
 						counter++;
@@ -1427,7 +1427,7 @@ namespace Apoc3D
 
 					if (!fnt->m_isUsingCaching && fnt->m_selectTextureSize == MaxTextureSize)
 					{
-						FileLocation* fl = fnt->m_resource->Upcast<FileLocation>();// dynamic_cast<FileLocation*>(fnt->m_resource);
+						FileLocation* fl = fnt->m_resource->Upcast<FileLocation>();
 						String name = fl ? PathUtils::GetFileNameNoExt(fl->getName()) : fnt->m_resource->getName();
 						msg.append(name);
 						msg.append(L"(");

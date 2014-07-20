@@ -58,8 +58,9 @@ namespace Apoc3D
 			int getMax() const { return m_max; }
 			void setMax(int v) { m_max = v; if (m_max<0)m_max =0; if (m_value>m_max) m_value = m_max; }
 
-			UIEventHandler& eventValueChanged() { return m_eChangeValue; }
+			UIEventHandler eventValueChanged;
 
+			RTTI_UpcastableDerived(Control);
 		private:
 			void btLeft_OnPress(Control* ctrl);
 			void btRight_OnPress(Control* ctrl);
@@ -83,8 +84,6 @@ namespace Apoc3D
 
 			Point m_cursorPos;
 			Point m_cursorOffset;
-
-			UIEventHandler m_eChangeValue;
 		};
 		class APAPI VScrollBar : public Control
 		{
@@ -112,8 +111,9 @@ namespace Apoc3D
 			int getMax() const { return m_max; }
 			void setMax(int v) { m_max = v; if (m_max<0)m_max =0; if (m_value>m_max) m_value = m_max; }
 
-			UIEventHandler& eventValueChanged() { return m_eChangeValue; }
+			UIEventHandler eventValueChanged;
 
+			RTTI_UpcastableDerived(Control);
 		private:
 
 			void btUp_OnPress(Control* ctrl);
@@ -138,10 +138,8 @@ namespace Apoc3D
 
 			Point m_cursorPos;
 			Point m_cursorOffset;
-
-			UIEventHandler m_eChangeValue;
-
 		};
+
 		class APAPI ScrollBar : public Control
 		{
 		public:
@@ -151,32 +149,16 @@ namespace Apoc3D
 				SCRBAR_Vertical
 			};
 
-		private:
-			ScrollBarType m_type;
-			HScrollbar* m_hsbar;
-			VScrollBar* m_vsbar;
 
-		public:
+			ScrollBar(const Point& position, ScrollBarType type, int size);
+			~ScrollBar();
 
-			void setPosition(const Point& pos)
-			{
-				if (m_type == SCRBAR_Horizontal)
-				{
-					m_hsbar->Position = pos;
-					m_hsbar->setPosition(pos);
-				}
-				else
-				{
-					m_vsbar->Position = pos;
-					m_vsbar->setPosition(pos);
-				}
-			}
-			const Point& getPosition() const 
-			{
-				if (m_type == SCRBAR_Horizontal)
-					return m_hsbar->Position;
-				return m_vsbar->Position;
-			}
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
+			void setPosition(const Point& pos);
+			const Point& getPosition() const;
 
 			int getValue() const
 			{
@@ -223,8 +205,8 @@ namespace Apoc3D
 			UIEventHandler& eventValueChanged()
 			{
 				if (m_type == SCRBAR_Horizontal)
-					return m_hsbar->eventValueChanged();
-				return m_vsbar->eventValueChanged();
+					return m_hsbar->eventValueChanged;
+				return m_vsbar->eventValueChanged;
 			}
 
 			bool getIsInverted() const
@@ -273,68 +255,12 @@ namespace Apoc3D
 				return 0;
 			}
 
-			ScrollBar(const Point& position, ScrollBarType type, int size)
-				: m_hsbar(0), m_vsbar(0), m_type(type)
-			{
-				if (m_type == SCRBAR_Horizontal)
-				{
-					m_hsbar = new HScrollbar(position, size);
-				}
-				else
-				{
-					m_vsbar = new VScrollBar(position, size);
-				}
-			}
-			~ScrollBar()
-			{
-				if (m_hsbar)
-					delete m_hsbar;
-				if (m_vsbar)
-					delete m_vsbar;
-			}
+			RTTI_UpcastableDerived(Control);
 
-			virtual void Initialize(RenderDevice* device)
-			{
-				if (m_hsbar)
-				{
-					m_hsbar->SetSkin(m_skin);
-					m_hsbar->setOwner(getOwner());
-					m_hsbar->Initialize(device);
-				}
-				if (m_vsbar)
-				{
-					m_vsbar->SetSkin(m_skin);
-					m_vsbar->setOwner(getOwner());
-					m_vsbar->Initialize(device);
-				}
-				
-			}
-			virtual void Update(const GameTime* const time)
-			{
-				if (Visible)
-				{
-					if (m_hsbar)
-					{
-						m_hsbar->setOwner(getOwner());
-						m_hsbar->Update(time);
-					}
-					if (m_vsbar)
-					{
-						m_vsbar->setOwner(getOwner());
-						m_vsbar->Update(time);
-					}
-				}
-			}
-			virtual void Draw(Sprite* sprite)
-			{
-				if (Visible)
-				{
-					if (m_hsbar)
-						m_hsbar->Draw(sprite);
-					if (m_vsbar)
-						m_vsbar->Draw(sprite);
-				}
-			}
+		private:
+			ScrollBarType m_type;
+			HScrollbar* m_hsbar;
+			VScrollBar* m_vsbar;
 
 		};
 	}

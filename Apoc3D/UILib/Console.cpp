@@ -69,14 +69,14 @@ namespace Apoc3D
 
 			m_submit = new Button(Point(size.X - 100, size.Y - 30-2), L"Submit");
 			m_submit->SetSkin(skin);
-			m_submit->eventRelease().Bind(this,&Console::Submit_Pressed);
+			m_submit->eventRelease.Bind(this,&Console::Submit_Pressed);
 			m_submit->Size.Y = lineHeight;
 
 			m_form->getControls().Add(m_submit);
 
 			m_pictureBox = new PictureBox(Point(10,5+skin->FormTitle->Height), 1);
 			m_pictureBox->SetSkin(skin);
-			m_pictureBox->eventPictureDraw().Bind(this, &Console::PictureBox_Draw);
+			m_pictureBox->eventPictureDraw.Bind(this, &Console::PictureBox_Draw);
 			m_form->getControls().Add(m_pictureBox);
 
 			m_scrollBar = new ScrollBar(Point(m_pictureBox->Position.X + m_pictureBox->Size.X - 12, m_pictureBox->Position.Y),
@@ -87,7 +87,7 @@ namespace Apoc3D
 
 			m_form->setMinimumSize(Point(400,300));
 			m_form->Initialize(device);
-			m_form->eventResized().Bind(this, &Console::Form_Resized);
+			m_form->eventResized.Bind(this, &Console::Form_Resized);
 
 			RegisterCommands();
 

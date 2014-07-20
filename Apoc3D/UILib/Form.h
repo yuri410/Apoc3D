@@ -41,6 +41,7 @@ namespace Apoc3D
 			FBS_Sizable,
 			FBS_Pane
 		};
+
 		class APAPI Border
 		{
 		public:
@@ -115,15 +116,16 @@ namespace Apoc3D
 			WindowState getState() const { return m_state; }
 			BorderStyle getBorderStyle() const { return m_borderStyle; }
 
-			UIEventHandler& eventResized() { return m_eResized; }
-			UIEventHandler& eventClosed() { return m_eClosed; }
+			UIEventHandler eventResized;
+			UIEventHandler eventClosed;
 
-			
 
 			/**
 			 *  Background from will never cover other's on top
 			 */
 			bool IsBackgroundForm;
+
+			RTTI_UpcastableDerived(ControlContainer);
 		private:
 			void InitializeButtons(RenderDevice* device);
 
@@ -162,9 +164,6 @@ namespace Apoc3D
 			Point m_maximizedPos;
 
 			String m_title;
-
-			UIEventHandler m_eResized;
-			UIEventHandler m_eClosed;
 
 
 			Border* m_border;

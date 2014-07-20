@@ -14,7 +14,7 @@ namespace APDesigner
 		m_uiViewer = new PictureBox(Point(15, 27), 1);
 		m_uiViewer->Size = Point(512,512);
 		m_uiViewer->SetSkin(window->getUISkin());
-		m_uiViewer->eventPictureDraw().Bind(this, &UIDocument::UIViewer_Draw);
+		m_uiViewer->eventPictureDraw.Bind(this, &UIDocument::UIViewer_Draw);
 
 
 		getDocumentForm()->setMinimumSize(Point(1000,600));

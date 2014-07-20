@@ -69,14 +69,14 @@ namespace Apoc3D
 			m_btLeft = new Button(Position,1, L"");
 			m_btLeft->setOwner(getOwner());
 			m_btLeft->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->HScrollBarLeft);
-			m_btLeft->eventPress().Bind(this, &HScrollbar::btLeft_OnPress);
+			m_btLeft->eventPress.Bind(this, &HScrollbar::btLeft_OnPress);
 			m_btLeft->Initialize(device);
 
 			m_btRight = new Button(Point(Position.X + Size.X - 12, Position.Y), 1, L"");
 			m_btRight->setOwner(getOwner());
 			//m_btRight->setNormalTexture(m_skin->HScrollBar_Button);
 			m_btRight->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->HScrollBarRight);
-			m_btRight->eventPress().Bind(this, &HScrollbar::btRight_OnPress);
+			m_btRight->eventPress.Bind(this, &HScrollbar::btRight_OnPress);
 			m_btRight->Initialize(device);
 		}
 
@@ -88,14 +88,14 @@ namespace Apoc3D
 				{
 					m_value -= m_step;
 					
-					m_eChangeValue.Invoke(this);
+					eventValueChanged.Invoke(this);
 				}
 			}
 			else if (m_value<m_max)
 			{
 				m_value += m_step;
 				
-				m_eChangeValue.Invoke(this);
+				eventValueChanged.Invoke(this);
 			}
 		}
 		void HScrollbar::btRight_OnPress(Control* ctrl)
@@ -106,14 +106,14 @@ namespace Apoc3D
 				{
 					m_value += m_step;
 					
-					m_eChangeValue.Invoke(this);
+					eventValueChanged.Invoke(this);
 				}
 			}
 			else if (m_value>0)
 			{
 				m_value -= m_step;
 				
-				m_eChangeValue.Invoke(this);
+				eventValueChanged.Invoke(this);
 			}
 		}
 
@@ -147,9 +147,7 @@ namespace Apoc3D
 			}
 		}
 
-		float round(float r) {
-			return (r > 0.0f) ? floor(r + 0.5f) : ceil(r - 0.5f);
-		}
+		
 		void HScrollbar::UpdateScrolling()
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
@@ -171,11 +169,11 @@ namespace Apoc3D
 
 			if (!m_inverted)
 			{
-				value = (int)round(x/(m_backArea.Width-m_cursorArea.Width)*m_max);
+				value = Math::Round(x/(m_backArea.Width-m_cursorArea.Width)*m_max);
 			}
 			else
 			{
-				value = m_max - (int)round(x/(m_backArea.Width - m_cursorArea.Width)*m_max);
+				value = m_max - Math::Round(x/(m_backArea.Width - m_cursorArea.Width)*m_max);
 			}
 
 			if (value <0)
@@ -187,7 +185,7 @@ namespace Apoc3D
 			{
 				m_value = value;
 				
-				m_eChangeValue.Invoke(this);
+				eventValueChanged.Invoke(this);
 			}
 		}
 		void HScrollbar::Draw(Sprite* sprite)
@@ -243,8 +241,9 @@ namespace Apoc3D
 		}
 
 		/************************************************************************/
-		/*                                                                      */
+		/* VScrollBar                                                           */
 		/************************************************************************/
+
 		VScrollBar::VScrollBar(const Point& position, int height)
 			: Control(position), m_value(0), m_max(0), m_step(1), m_isScrolling(false), m_inverted(false)
 		{
@@ -277,13 +276,13 @@ namespace Apoc3D
 			m_btUp = new Button(Position, 1, L"");
 			m_btUp->setOwner(getOwner());
 			m_btUp->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->VScrollBarUp);// (m_skin->VScrollBar_Button);
-			m_btUp->eventPress().Bind(this, &VScrollBar::btUp_OnPress);
+			m_btUp->eventPress.Bind(this, &VScrollBar::btUp_OnPress);
 			m_btUp->Initialize(device);
 
 			m_btDown = new Button(Point(Position.X, Position.Y + Size.Y -12),1,L"");
 			m_btDown->setOwner(getOwner());
 			m_btDown->NormalTexture = UIGraphic(m_skin->SkinTexture, m_skin->VScrollBarDown);
-			m_btDown->eventPress().Bind(this, &VScrollBar::btDown_OnPress);
+			m_btDown->eventPress.Bind(this, &VScrollBar::btDown_OnPress);
 			m_btDown->Initialize(device);
 
 		}
@@ -296,14 +295,14 @@ namespace Apoc3D
 				{
 					m_value -= m_step;
 					
-					m_eChangeValue.Invoke(this);
+					eventValueChanged.Invoke(this);
 				}
 			}
 			else if (m_value<m_max)
 			{
 				m_value += m_step;
 				
-				m_eChangeValue.Invoke(this);
+				eventValueChanged.Invoke(this);
 			}
 		}
 		void VScrollBar::btDown_OnPress(Control* ctrl)
@@ -314,14 +313,14 @@ namespace Apoc3D
 				{
 					m_value += m_step;
 					
-					m_eChangeValue.Invoke(this);
+					eventValueChanged.Invoke(this);
 				}
 			}
 			else if (m_value>0)
 			{
 				m_value -= m_step;
 				
-				m_eChangeValue.Invoke(this);
+				eventValueChanged.Invoke(this);
 			}
 		}
 
@@ -377,11 +376,11 @@ namespace Apoc3D
 
 			if (!m_inverted)
 			{
-				value = (int)round(y/(m_backArea.Height-m_cursorArea.Height)*m_max);
+				value = Math::Round(y/(m_backArea.Height-m_cursorArea.Height)*m_max);
 			}
 			else
 			{
-				value = m_max - (int)round(y/(m_backArea.Height - m_cursorArea.Height)*m_max);
+				value = m_max - Math::Round(y/(m_backArea.Height - m_cursorArea.Height)*m_max);
 			}
 
 			if (value <0)
@@ -393,7 +392,7 @@ namespace Apoc3D
 			{
 				m_value = value;
 				
-				m_eChangeValue.Invoke(this);
+				eventValueChanged.Invoke(this);
 			}
 		}
 		void VScrollBar::Draw(Sprite* sprite)
@@ -450,5 +449,95 @@ namespace Apoc3D
 				m_cursorPos.X, m_cursorPos.Y+midHeight, m_skin->VScrollBarCursor[2].Width, m_skin->VScrollBarCursor[2].Height);
 			sprite->Draw(m_skin->SkinTexture, dstRect, &m_skin->VScrollBarCursor[2], CV_White);
 		}
+
+		/************************************************************************/
+		/* ScrollBar                                                            */
+		/************************************************************************/
+
+		ScrollBar::ScrollBar(const Point& position, ScrollBarType type, int size)
+			: m_hsbar(0), m_vsbar(0), m_type(type)
+		{
+			if (m_type == SCRBAR_Horizontal)
+			{
+				m_hsbar = new HScrollbar(position, size);
+			}
+			else
+			{
+				m_vsbar = new VScrollBar(position, size);
+			}
+		}
+		ScrollBar::~ScrollBar()
+		{
+			if (m_hsbar)
+				delete m_hsbar;
+			if (m_vsbar)
+				delete m_vsbar;
+		}
+
+		void ScrollBar::Initialize(RenderDevice* device)
+		{
+			if (m_hsbar)
+			{
+				m_hsbar->SetSkin(m_skin);
+				m_hsbar->setOwner(getOwner());
+				m_hsbar->Initialize(device);
+			}
+			if (m_vsbar)
+			{
+				m_vsbar->SetSkin(m_skin);
+				m_vsbar->setOwner(getOwner());
+				m_vsbar->Initialize(device);
+			}
+
+		}
+		void ScrollBar::Update(const GameTime* const time)
+		{
+			if (Visible)
+			{
+				if (m_hsbar)
+				{
+					m_hsbar->setOwner(getOwner());
+					m_hsbar->Update(time);
+				}
+				if (m_vsbar)
+				{
+					m_vsbar->setOwner(getOwner());
+					m_vsbar->Update(time);
+				}
+			}
+		}
+		void ScrollBar::Draw(Sprite* sprite)
+		{
+			if (Visible)
+			{
+				if (m_hsbar)
+					m_hsbar->Draw(sprite);
+				if (m_vsbar)
+					m_vsbar->Draw(sprite);
+			}
+		}
+
+		void ScrollBar::setPosition(const Point& pos)
+		{
+			if (m_type == SCRBAR_Horizontal)
+			{
+				m_hsbar->Position = pos;
+				m_hsbar->setPosition(pos);
+			}
+			else
+			{
+				m_vsbar->Position = pos;
+				m_vsbar->setPosition(pos);
+			}
+		}
+		const Point& ScrollBar::getPosition() const 
+		{
+			if (m_type == SCRBAR_Horizontal)
+				return m_hsbar->Position;
+			return m_vsbar->Position;
+		}
+
+
+
 	}
 }

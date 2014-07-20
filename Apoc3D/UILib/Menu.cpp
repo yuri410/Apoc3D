@@ -281,7 +281,7 @@ namespace Apoc3D
 
 				if (m_indexToOpen == i)
 				{
-					m_items[i]->event().Invoke(m_items[i]);
+					m_items[i]->event.Invoke(m_items[i]);
 					
 					if (m_items[i]->getSubMenu() &&
 						m_items[i]->getSubMenu()->getState() == MENU_Closed)
@@ -463,14 +463,14 @@ namespace Apoc3D
 
 			m_state = MENU_Closed;
 
-			SubMenu* parentMenu = dynamic_cast<SubMenu*>(m_parent);
+			SubMenu* parentMenu = m_parent->Upcast<SubMenu>();
 			if (parentMenu)
 			{
 				parentMenu->Close();
 			}
 			else
 			{
-				Menu* parentMenu2 = dynamic_cast<Menu*>(m_parent);
+				Menu* parentMenu2 = m_parent->Upcast<Menu>();
 				if (parentMenu2) parentMenu2->Close();
 			}
 
@@ -583,7 +583,7 @@ namespace Apoc3D
 				if (!m_items[index]->Enabled)
 					return;
 
-				m_items[index]->event().Invoke(m_items[index]);
+				m_items[index]->event.Invoke(m_items[index]);
 
 				if (m_items[index]->getSubMenu())
 				{
@@ -673,7 +673,7 @@ namespace Apoc3D
 						}
 						else
 						{
-							m_items[i]->event().Invoke(m_items[i]);
+							m_items[i]->event.Invoke(m_items[i]);
 						}
 
 					}

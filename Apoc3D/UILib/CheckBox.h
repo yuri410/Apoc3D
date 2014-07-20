@@ -53,7 +53,9 @@ namespace Apoc3D
 			bool getCanUncheck() const { return m_canUncheck; }
 			void setCanUncheck(bool v) { m_canUncheck = v; }
 
-			UIEventHandler& eventToggled() { return m_eToggled; }
+			UIEventHandler eventToggled;
+
+			RTTI_UpcastableDerived(Control);
 		private:
 			
 			bool m_mouseDown;
@@ -62,8 +64,6 @@ namespace Apoc3D
 			bool m_check;
 			bool m_canUncheck;
 			Point m_textOffset;
-
-			UIEventHandler m_eToggled;
 
 			void UpdateEvents();
 		};
@@ -82,10 +82,11 @@ namespace Apoc3D
 			CheckBox* getSubCheckbox(int i) { return m_checkbox[i]; }
 			int getSubCheckboxCount() const { return m_checkbox.getCount(); }
 
-			UIEventHandler& eventSelectionChanged() { return m_eSelectionChanged; }
+			UIEventHandler eventSelectionChanged;
+
+			RTTI_UpcastableDerived(Control);
 		private:
 			FastList<CheckBox*> m_checkbox;
-			UIEventHandler m_eSelectionChanged;
 			int m_selectedIndex;
 
 			void Checkbox_Press(Control* ctrl);

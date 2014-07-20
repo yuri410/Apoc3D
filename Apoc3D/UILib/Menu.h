@@ -39,16 +39,12 @@ namespace Apoc3D
 			MENU_Open,
 			MENU_Closed
 		};
+
 		class APAPI Menu : public Control
 		{
 		public:
-			const FastList<MenuItem*>& getItems() const { return m_items; }
-			MenuState getState() const { return m_state; }
-
 			Menu();
 			virtual ~Menu();
-
-			MenuItem* operator [](int index) const;
 
 			void Add(MenuItem* item, SubMenu* submenu);
 			virtual void Initialize(RenderDevice* device);
@@ -58,6 +54,12 @@ namespace Apoc3D
 
 			void Close();
 
+			MenuItem* operator [](int index) const;
+
+			const FastList<MenuItem*>& getItems() const { return m_items; }
+			MenuState getState() const { return m_state; }
+
+			RTTI_UpcastableDerived(Control);
 		private:
 			Point m_drawPos;
 
@@ -85,8 +87,12 @@ namespace Apoc3D
 		class APAPI MenuItem
 		{
 		public:
-			void* UserPointer;
-			bool Enabled;
+			MenuItem(const String& text)
+				: m_submenu(0), UserPointer(0), m_key(KEY_UNASSIGNED), m_keyIndex(-1),
+				Enabled(true)
+			{
+				setText(text);
+			}
 
 			const String& getText() const { return m_text; }
 			void setText(const String& txt);
@@ -95,17 +101,13 @@ namespace Apoc3D
 			KeyboardKeyCode getKeyCode() const { return m_key; }
 			int getKeyIndex() const { return m_keyIndex; }
 
-			MenuItemEventHandler& event() { return m_event; }
-
 			SubMenu* getSubMenu() const { return m_submenu; }
 			void setSubMenu(SubMenu* sm) { m_submenu = sm; }
 
-			MenuItem(const String& text)
-				: m_submenu(0), UserPointer(0), m_key(KEY_UNASSIGNED), m_keyIndex(-1),
-				Enabled(true)
-			{
-				setText(text);
-			}
+			void* UserPointer;
+			bool Enabled;
+
+			MenuItemEventHandler event;
 
 		private:
 			String m_text;
@@ -114,7 +116,6 @@ namespace Apoc3D
 			int m_keyIndex;
 			KeyboardKeyCode m_key;
 
-			MenuItemEventHandler m_event;
 			SubMenu* m_submenu;
 		};
 
@@ -143,6 +144,8 @@ namespace Apoc3D
 
 			int getHoverIndex() const { return m_hoverIndex; }
 			const FastList<MenuItem*>& getItems() const { return m_items; }
+
+			RTTI_UpcastableDerived(Control);
 		private:
 			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
 			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);

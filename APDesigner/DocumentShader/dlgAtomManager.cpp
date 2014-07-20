@@ -66,19 +66,19 @@ namespace APDesigner
 		m_addItem = new Button(Point(10,550),L"Add...");
 		m_addItem->Size.X = 100;
 		m_addItem->SetSkin(window->getUISkin());
-		m_addItem->eventRelease().Bind(this, &AtomManagerDialog::BtnAdd_Release);
+		m_addItem->eventRelease.Bind(this, &AtomManagerDialog::BtnAdd_Release);
 		m_form->getControls().Add(m_addItem);
 
 		m_removeItem = new Button(Point(120+10,550),L"Delete");
 		m_removeItem->Size.X = 100;
 		m_removeItem->SetSkin(window->getUISkin());
-		m_removeItem->eventRelease().Bind(this, &AtomManagerDialog::BtnRemove_Release);
+		m_removeItem->eventRelease.Bind(this, &AtomManagerDialog::BtnRemove_Release);
 		m_form->getControls().Add(m_removeItem);
 
 		m_editItem = new Button(Point(240+10,550),L"Open");
 		m_editItem->Size.X = 100;
 		m_editItem->SetSkin(window->getUISkin());
-		m_editItem->eventRelease().Bind(this, &AtomManagerDialog::BtnEdit_Release);
+		m_editItem->eventRelease.Bind(this, &AtomManagerDialog::BtnEdit_Release);
 		m_form->getControls().Add(m_editItem);
 
 

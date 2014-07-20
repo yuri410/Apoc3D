@@ -94,6 +94,7 @@ namespace Apoc3D
 
 			DialogResult getResult() const { return m_result; }
 			const String& getTextInput() const;
+
 			ConfirmInputHandler eventInputConfirmed;
 		private:
 			void AddButton(const String& caption, const StyleSkin* skin, DialogResult dr);

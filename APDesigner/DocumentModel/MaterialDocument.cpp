@@ -67,13 +67,13 @@ namespace APDesigner
 		m_modelViewer = new PictureBox(Point(10,10 + 17), 1);
 		m_modelViewer->Size = Point(512,512);
 		m_modelViewer->SetSkin(window->getUISkin());
-		m_modelViewer->eventPictureDraw().Bind(this, &MaterialDocument::ModelView_Draw);
+		m_modelViewer->eventPictureDraw.Bind(this, &MaterialDocument::ModelView_Draw);
 
 		{
 
 			m_applyMtrl = new Button(Point(21 + 522+100+220, 159),150, L"Apply Changes");
 			m_applyMtrl->SetSkin(window->getUISkin());
-			m_applyMtrl->eventRelease().Bind(this, &MaterialDocument::BtnApplyMtrl_Pressed);
+			m_applyMtrl->eventRelease.Bind(this, &MaterialDocument::BtnApplyMtrl_Pressed);
 
 		}
 		{
@@ -238,11 +238,11 @@ namespace APDesigner
 			m_pbPassFlag->SetSkin(window->getUISkin());
 			//m_pbPassFlag->Size.Y = getDocumentForm()->getFontRef()->getLineHeight();
 			m_pbPassFlag->Size.X = 256;
-			m_pbPassFlag->eventPictureDraw().Bind(this, &MaterialDocument::PassFlags_Draw);
+			m_pbPassFlag->eventPictureDraw.Bind(this, &MaterialDocument::PassFlags_Draw);
 
 			m_btnPassFlag = new Button(Point(sx+100+300, sy), L"Edit");
 			m_btnPassFlag->SetSkin(window->getUISkin());
-			m_btnPassFlag->eventPress().Bind(this, &MaterialDocument::PassButton_Pressed);
+			m_btnPassFlag->eventPress.Bind(this, &MaterialDocument::PassButton_Pressed);
 		}
 		
 		getDocumentForm()->setMinimumSize(Point(1070,512+137));
@@ -662,7 +662,7 @@ namespace APDesigner
 		m_pbAmbient = new PictureBox(Position + Point(100, 0), 1);
 		m_pbAmbient->SetSkin(m_skin);
 		m_pbAmbient->Size = Point(50, lineHeight);
-		m_pbAmbient->eventPictureDraw().Bind(this, &ColorField::PictureBox_Draw);
+		m_pbAmbient->eventPictureDraw.Bind(this, &ColorField::PictureBox_Draw);
 		m_pbAmbient->setOwner(getOwner());
 		m_pbAmbient->Initialize(device);
 
@@ -676,7 +676,7 @@ namespace APDesigner
 		m_btnAmbient->Size.Y = lineHeight;
 		m_btnAmbient->Initialize(device);
 		m_btnAmbient->Position.Y += (m_lblAmbient->Size.Y - m_btnAmbient->Size.Y)/2;
-		m_btnAmbient->eventPress().Bind(this, &ColorField::Button_Press);
+		m_btnAmbient->eventPress.Bind(this, &ColorField::Button_Press);
 	}
 	void ColorField::Draw(Sprite* sprite)
 	{
@@ -728,7 +728,7 @@ namespace APDesigner
 		m_form->Position.X /= 2;
 		m_form->Position.Y /= 2;
 		m_form->SetSkin(window->getUISkin());
-		m_form->eventClosed().Bind(this, &PassFlagDialog::Form_Closed);
+		m_form->eventClosed.Bind(this, &PassFlagDialog::Form_Closed);
 		int ofsX = 10;
 		int ofsY = 27;
 		int counter = 0;
@@ -757,7 +757,7 @@ namespace APDesigner
 
 	PassFlagDialog::~PassFlagDialog()
 	{
-		m_form->eventClosed().Unbind(this, &PassFlagDialog::Form_Closed);
+		m_form->eventClosed.Unbind(this, &PassFlagDialog::Form_Closed);
 		UIRoot::Remove(m_form);
 		delete m_form;
 		for (int i=0;i<m_lblTable.getCount();i++)

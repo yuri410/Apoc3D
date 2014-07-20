@@ -38,7 +38,6 @@ namespace Apoc3D
 		class APAPI ComboBox : public Control
 		{
 		public:
-
 			ComboBox(const Point& position, int width, const List<String>& items);
 			virtual ~ComboBox();
 
@@ -59,15 +58,15 @@ namespace Apoc3D
 			void setSelectedIndex(int v) const;
 			void SetSelectedByName(const String& name);
 
-			UIEventHandler& eventSelectionChanged() { return m_eSelectionChanged; }
+			UIEventHandler eventSelectionChanged;
 
+			RTTI_UpcastableDerived(Control);
 		private:
 			TextBox* m_textbox;
 			Button* m_button;
 			ListBox* m_listBox;
 			List<String> m_items;
 
-			UIEventHandler m_eSelectionChanged;
 			bool m_justOpened;
 
 			void ListBox_SelectionChanged(Control* ctrl);

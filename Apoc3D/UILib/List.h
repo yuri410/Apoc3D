@@ -36,37 +36,13 @@ namespace Apoc3D
 	{
 		class APAPI ListBox : public Control
 		{
-		private:
-			List<String> m_items;
-			bool m_sorted;
-			bool m_isSorted;
-			int m_visisbleItems;
-
-			Point m_textOffset;
-
-			//Apoc3D::Math::Rectangle m_destRect[9];
-
-			Apoc3D::Math::Rectangle m_selectionRect;
-			int m_hoverIndex;
-			int m_selectedIndex;
-
-			ScrollBar* m_vscrollbar;
-			ScrollBar* m_hscrollbar;
-			bool m_horizontalScrollbar;
-			int m_hScrollWidth;
-
-			UIEventHandler m_eSelect;
-			UIEventHandler m_eSelectionChanged;
-			bool m_mouseOver;
-
-			void InitScrollbars(RenderDevice* device);
-			void UpdateHScrollbar();
-			void RenderSelectionBox(Sprite* sprite, int index);
-			void DrawBackground(Sprite* sprite);
-			void DrawScrollbar(Sprite* sprite);
 		public:
-			UIEventHandler& eventSelect() { return m_eSelect; }
-			UIEventHandler& eventSelectionChanged() { return m_eSelectionChanged; }
+			ListBox(const Point& position, int width, int height, const List<String>& items);
+			~ListBox();
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
 
 			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
 			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
@@ -88,35 +64,41 @@ namespace Apoc3D
 					}
 			}
 
-			ListBox(const Point& position, int width, int height, const List<String>& items);
-			~ListBox();
+			UIEventHandler eventSelect;
+			UIEventHandler eventSelectionChanged;
 
-			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
-			virtual void Draw(Sprite* sprite);
+			RTTI_UpcastableDerived(Control);
+		private:
+			List<String> m_items;
+			bool m_sorted;
+			bool m_isSorted;
+			int m_visisbleItems;
 
+			Point m_textOffset;
+
+			//Apoc3D::Math::Rectangle m_destRect[9];
+
+			Apoc3D::Math::Rectangle m_selectionRect;
+			int m_hoverIndex;
+			int m_selectedIndex;
+
+			ScrollBar* m_vscrollbar;
+			ScrollBar* m_hscrollbar;
+			bool m_horizontalScrollbar;
+			int m_hScrollWidth;
+
+			bool m_mouseOver;
+
+			void InitScrollbars(RenderDevice* device);
+			void UpdateHScrollbar();
+			void RenderSelectionBox(Sprite* sprite, int index);
+			void DrawBackground(Sprite* sprite);
+			void DrawScrollbar(Sprite* sprite);
 		};
 
 		class APAPI TreeViewNode
 		{
-		private:
-			String m_text;
-			Texture* m_icon;
-			FastList<TreeViewNode*> m_subNode;
-
-			bool m_expanded;
 		public:
-			void* UserData;
-
-			bool isExpanded() const { return m_expanded; }
-			const String& getText() const { return m_text; }
-			void setText(const String& txt) { m_text = txt; }
-
-			Texture* getIcon() const { return m_icon; }
-			void setIcon(Texture* texture) { m_icon = texture; }
-
-			FastList<TreeViewNode*>& getNodes() { return m_subNode; }
-
 			TreeViewNode(const String& text)
 				: m_text(text), m_icon(0), m_expanded(false), UserData(0)
 			{
@@ -136,6 +118,25 @@ namespace Apoc3D
 			{
 				m_expanded = false;
 			}
+
+
+			bool isExpanded() const { return m_expanded; }
+			const String& getText() const { return m_text; }
+			void setText(const String& txt) { m_text = txt; }
+
+			Texture* getIcon() const { return m_icon; }
+			void setIcon(Texture* texture) { m_icon = texture; }
+
+			FastList<TreeViewNode*>& getNodes() { return m_subNode; }
+
+			void* UserData;
+
+		private:
+			String m_text;
+			Texture* m_icon;
+			FastList<TreeViewNode*> m_subNode;
+
+			bool m_expanded;
 		};
 
 		class APAPI TreeView : public Control
@@ -153,9 +154,6 @@ namespace Apoc3D
 
 			void NukeTreeViewNodes() { NukeTreeViewNodes(m_nodes); }
 
-			UIEventHandler& eventSelect() { return m_eSelect; }
-			UIEventHandler& eventSelectionChanged() { return m_eSelectionChanged; }
-
 			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
 			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
 
@@ -163,6 +161,10 @@ namespace Apoc3D
 
 			TreeViewNode* getSelectedNode() const { return m_selectedNode; }
 
+			UIEventHandler eventSelect;
+			UIEventHandler eventSelectionChanged;
+
+			RTTI_UpcastableDerived(Control);
 		private:
 			void NukeTreeViewNodes(FastList<TreeViewNode*>& nodes);
 
@@ -184,8 +186,6 @@ namespace Apoc3D
 			bool m_horizontalScrollbar;
 			int m_hScrollWidth;
 
-			UIEventHandler m_eSelect;
-			UIEventHandler m_eSelectionChanged;
 			bool m_mouseOver;
 
 			int GetItemHeight() const;
@@ -224,16 +224,11 @@ namespace Apoc3D
 				{
 				}
 
-				UIEventHandler& eventPress() { return m_eOnPress; }
-				UIEventHandler& enentRelease() { return m_eOnRelease; }
-
 				String Text;
 				int Width;
 
-			private:
-				UIEventHandler m_eOnPress;
-				UIEventHandler m_eOnRelease;
-				
+				UIEventHandler eventPress;
+				UIEventHandler enentRelease;
 			};
 			enum ListViewHeaderStyle
 			{
@@ -266,7 +261,9 @@ namespace Apoc3D
 			int getSelectedRowIndex() const { return m_selectedRow; }
 			int getSelectedColumnIndex() const { return m_selectedColumn; }
 
-			ListViewSelectionHandler& eventSelected() { return m_eSelect; }
+			ListViewSelectionHandler eventSelected;
+
+			RTTI_UpcastableDerived(Control);
 		private:
 			int GetVisibleItems();
 			
@@ -309,8 +306,6 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle m_selectionRect;
 			bool m_fullRowSelect;
 			bool m_hoverSelection;
-
-			ListViewSelectionHandler m_eSelect;
 
 			Apoc3D::Math::Rectangle m_srcRect;
 		};

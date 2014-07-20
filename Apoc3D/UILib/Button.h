@@ -102,6 +102,8 @@ namespace Apoc3D
 			UIGraphic MouseDownTexture;
 			
 			UIGraphic OverlayIcon;
+
+			RTTI_UpcastableDerived(Control);
 		protected:
 
 			bool m_mouseOver;
@@ -133,7 +135,6 @@ namespace Apoc3D
 		public:
 			typedef EventDelegate1<int> SelectedChangedHandler;
 
-
 			ButtonRow(const Point& position, int32 width, const List<String>& titles);
 			ButtonRow(const Point& position, int32 width, int32 colCount, const List<String>& titles);
 			~ButtonRow();
@@ -147,6 +148,7 @@ namespace Apoc3D
 
 			SelectedChangedHandler eventSelectedChanging;
 
+			RTTI_UpcastableDerived(Control);
 		private:
 
 			enum VerticalBorderStyle
@@ -203,23 +205,7 @@ namespace Apoc3D
 
 		class APAPI ButtonGroup : public Control
 		{
-		private:
-			FastList<Button*> m_button;
-
-			int m_selectedIndex;
-
-			UIEventHandler m_eChangeSelection;
-
-			void Button_OnRelease(Control* sender);
 		public:
-			int getSelectedIndex() const { return m_selectedIndex; }
-
-			Button* getSelectedButton() const { return m_button[m_selectedIndex]; }
-
-			const String& getSelectedText() const;
-			void setSelectedText(const String& text);
-
-			UIEventHandler& eventSelectionChanged() { return m_eChangeSelection; }
 
 			ButtonGroup(const FastList<Button*> buttons);
 			ButtonGroup(const FastList<Button*> buttons, int selected);
@@ -228,12 +214,40 @@ namespace Apoc3D
 			virtual void Update(const GameTime* const time);
 
 			virtual void Draw(Sprite* sprite);
-			
-		};
 
+			int getSelectedIndex() const { return m_selectedIndex; }
+
+			Button* getSelectedButton() const { return m_button[m_selectedIndex]; }
+
+			const String& getSelectedText() const;
+			void setSelectedText(const String& text);
+
+			UIEventHandler eventSelectionChanged;
+
+			RTTI_UpcastableDerived(Control);
+		private:
+			FastList<Button*> m_button;
+			int m_selectedIndex;
+			
+			void Button_OnRelease(Control* sender);
+		};
 
 		class APAPI RadioButton : public Control
 		{
+		public:
+			RadioButton(const Point& position, const String& text, bool checked);
+			~RadioButton() { }
+
+			virtual void Initialize(RenderDevice* device);
+			virtual void Update(const GameTime* const time);
+			virtual void Draw(Sprite* sprite);
+
+			void Toggle();
+
+			bool isChecked() const { return m_checked; }
+			bool canUncheck() const { return m_canUncheck; }
+
+			RTTI_UpcastableDerived(Control);
 		private:
 			Point m_textOffset;
 
@@ -243,27 +257,6 @@ namespace Apoc3D
 			bool m_canUncheck;
 
 			void UpdateEvents();
-		public:
-			bool isChecked() const { return m_checked; }
-			bool canUncheck() const { return m_canUncheck; }
-
-			RadioButton(const Point& position, const String& text, bool checked);
-			~RadioButton() {}
-			void Toggle()
-			{
-				if (m_checked && m_canUncheck)
-				{
-					m_checked = false;
-				}
-				else if (!m_checked)
-				{
-					m_checked = true;
-				}
-			}
-
-			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
-			virtual void Draw(Sprite* sprite);
 		};
 
 		//class APAPI RadioButtonGroup : public Control

@@ -305,10 +305,7 @@ namespace Apoc3D
 		{
 		public:
 			static int MaxTextureSize;
-		private:
-			HashMap<String, Font*> m_fontTable;
 
-		public:
 			FontManager();
 			~FontManager();
 
@@ -325,6 +322,9 @@ namespace Apoc3D
 			bool hasFont(const String& fontName);
 
 			SINGLETON_DECL_HEARDER(FontManager);
+		private:
+			HashMap<String, Font*> m_fontTable;
+
 		};
 	}
 }

@@ -169,7 +169,6 @@
     <ClInclude Include="Config\XmlConfigurationFormat.h" />
     <ClInclude Include="Core\BackgroundSequencialWorker.h" />
     <ClInclude Include="Core\CommandInterpreter.h" />
-    <ClInclude Include="Core\IHashed.h" />
     <ClInclude Include="Core\Logging.h" />
     <ClInclude Include="Core\Plugin.h" />
     <ClInclude Include="Core\PluginManager.h" />
@@ -325,7 +324,6 @@
     <ClCompile Include="Config\IniConfigurationFormat.cpp" />
     <ClCompile Include="Config\XmlConfigurationFormat.cpp" />
     <ClCompile Include="Core\CommandInterpreter.cpp" />
-    <ClCompile Include="Core\IHashed.cpp" />
     <ClCompile Include="Core\Logging.cpp" />
     <ClCompile Include="Core\PluginManager.cpp" />
     <ClCompile Include="Core\Resource.cpp" />

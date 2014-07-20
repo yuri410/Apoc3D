@@ -137,7 +137,7 @@ namespace Apoc3D
 		{
 			Button* btn = new Button(Point(0,0), singleFixedButtonWidth, caption);
 			btn->SetSkin(skin);
-			btn->eventRelease().Bind(this, &MessageDialogBox::Button_Release);
+			btn->eventRelease.Bind(this, &MessageDialogBox::Button_Release);
 
 			m_controlButtons.Add(btn);
 			m_buttonMapping.Add(btn, dr);
@@ -169,12 +169,12 @@ namespace Apoc3D
 
 			m_btnOk = new Button(Point(315, m_form->Size.Y - 50), singleFixedButtonWidth, L"OK");
 			m_btnOk->SetSkin(skin);
-			m_btnOk->eventRelease().Bind(this, &InputDialogBox::Button_OkRelease);
+			m_btnOk->eventRelease.Bind(this, &InputDialogBox::Button_OkRelease);
 			m_form->getControls().Add(m_btnOk);
 
 			m_btnCancel = new Button(Point(400, m_form->Size.Y - 50), singleFixedButtonWidth, L"Cancel");
 			m_btnCancel->SetSkin(skin);
-			m_btnCancel->eventRelease().Bind(this, &InputDialogBox::Button_CancelRelease);
+			m_btnCancel->eventRelease.Bind(this, &InputDialogBox::Button_CancelRelease);
 			m_form->getControls().Add(m_btnCancel);
 
 			if (multiline)
@@ -183,7 +183,7 @@ namespace Apoc3D
 				m_inputField = new TextBox(Point(15, 60), m_form->Size.X - 30, L"");
 			m_inputField->SetSkin(skin);
 			m_inputField->setScrollbarType(TextBox::SBT_Vertical);
-			m_inputField->eventRelease().Bind(this, &InputDialogBox::Button_CancelRelease);
+			m_inputField->eventRelease.Bind(this, &InputDialogBox::Button_CancelRelease);
 			m_form->getControls().Add(m_inputField);
 
 			Apoc3D::Math::Rectangle rect = UIRoot::GetUIArea(device);

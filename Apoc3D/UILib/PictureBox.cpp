@@ -100,7 +100,7 @@ namespace Apoc3D
 				sprite->Draw(m_texture, destRect, &m_srcRect, CV_White);
 			}
 
-			if (m_eDraw.getCount())
+			if (eventPictureDraw.getCount())
 			{
 				sprite->Flush();
 
@@ -117,7 +117,7 @@ namespace Apoc3D
 				}
 				m_device->getRenderState()->setScissorTest(true, &rect);
 
-				m_eDraw.Invoke(sprite, &destRect);
+				eventPictureDraw.Invoke(sprite, &destRect);
 
 				sprite->Flush();
 				m_device->getRenderState()->setScissorTest(false,0);

@@ -76,9 +76,7 @@ namespace Apoc3D
 		}
 		void ControlCollection::DestroyAndClear()
 		{
-			for (int32 i=0;i<m_controls.getCount();i++)
-				delete m_controls[i];
-			m_controls.Clear();
+			m_controls.DeleteAndClear();
 		}
 
 

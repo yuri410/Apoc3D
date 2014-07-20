@@ -45,7 +45,7 @@ namespace Apoc3D
 				ALIGN_Center,
 				ALIGN_Right
 			};
-		public:
+
 			Label(const Point& position, const String& text, int width, Align alignment = ALIGN_Left);
 			virtual ~Label();
 
@@ -54,6 +54,8 @@ namespace Apoc3D
 			virtual void Update(const GameTime* const time);
 
 			void SetTextColorOverride(ColorValue cv);
+
+			RTTI_UpcastableDerived(Control);
 		private:
 			Point m_textOffset;
 			Point m_drawPos;
@@ -107,6 +109,9 @@ namespace Apoc3D
 			UIEventHandler eventContentChanged;
 			UIEventHandler eventUpPressedSingleline;
 			UIEventHandler eventDownPressedSingleline;
+
+
+			RTTI_UpcastableDerived(Control);
 		private:
 			Point m_textOffset;
 			KeyboardHelper m_keyboard;

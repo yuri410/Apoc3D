@@ -433,7 +433,7 @@ namespace Apoc3D
 			for (int i=0;i<m_button.getCount();i++)
 			{
 				m_button[i]->Initialize(device);
-				m_button[i]->eventRelease().Bind(this, &ButtonGroup::Button_OnRelease);
+				m_button[i]->eventRelease.Bind(this, &ButtonGroup::Button_OnRelease);
 				m_button[i]->setOwner(m_owner);
 			}
 		}
@@ -449,7 +449,7 @@ namespace Apoc3D
 					if (m_selectedIndex != i)
 					{
 						m_selectedIndex = i;
-						m_eChangeSelection.Invoke(this);
+						eventSelectionChanged.Invoke(this);
 					}
 				}
 			}
@@ -787,6 +787,17 @@ namespace Apoc3D
 		void RadioButton::UpdateEvents()
 		{
 
+		}
+		void RadioButton::Toggle()
+		{
+			if (m_checked && m_canUncheck)
+			{
+				m_checked = false;
+			}
+			else if (!m_checked)
+			{
+				m_checked = true;
+			}
 		}
 	}
 }

@@ -48,7 +48,7 @@ namespace Apoc3D
 			m_button->MouseOverTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonHover); 
 			m_button->MouseDownTexture = UIGraphic(m_skin->SkinTexture, m_skin->DropDownButtonDown); 
 
-			m_button->eventPress().Bind(this, &ComboBox::Button_OnPress);
+			m_button->eventPress.Bind(this, &ComboBox::Button_OnPress);
 			m_button->Initialize(device);
 			
 
@@ -56,8 +56,8 @@ namespace Apoc3D
 			m_listBox->SetSkin(m_skin);
 			m_listBox->setOwner(getOwner());
 			m_listBox->Visible = false;
-			m_listBox->eventSelectionChanged().Bind(this, &ComboBox::ListBox_SelectionChanged);
-			m_listBox->eventPress().Bind(this, &ComboBox::ListBox_OnPress);
+			m_listBox->eventSelectionChanged.Bind(this, &ComboBox::ListBox_SelectionChanged);
+			m_listBox->eventPress.Bind(this, &ComboBox::ListBox_OnPress);
 			m_listBox->Initialize(device);
 		}
 		void ComboBox::Update(const GameTime* const time)
@@ -134,7 +134,7 @@ namespace Apoc3D
 			{
 				m_textbox->Text = m_listBox->getItems()[m_listBox->getSelectedIndex()];
 
-				m_eSelectionChanged.Invoke(this);
+				eventSelectionChanged.Invoke(this);
 				
 				Close();
 			}

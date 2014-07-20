@@ -65,7 +65,7 @@ namespace APDesigner
 		m_glyphDistribution = new PictureBox(Point(15, 27), 1);
 		m_glyphDistribution->Size = Point(512,512);
 		m_glyphDistribution->SetSkin(window->getUISkin());
-		m_glyphDistribution->eventPictureDraw().Bind(this, &FontDocument::GlyphDistribution_Draw);
+		m_glyphDistribution->eventPictureDraw.Bind(this, &FontDocument::GlyphDistribution_Draw);
 
 
 		getDocumentForm()->setMinimumSize(Point(1000,600));

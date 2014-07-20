@@ -62,7 +62,7 @@ namespace APDesigner
 			m_modelViewer = new PictureBox(Point(15, 10 + 25 + 90), 1);
 			m_modelViewer->Size = Point(512,512);
 			m_modelViewer->SetSkin(window->getUISkin());
-			m_modelViewer->eventPictureDraw().Bind(this, &ModelDocument::ModelView_Draw);
+			m_modelViewer->eventPictureDraw.Bind(this, &ModelDocument::ModelView_Draw);
 
 			List<String> items(MaxScenePass+1);
 			items.Add(L"First Pass");
@@ -72,7 +72,7 @@ namespace APDesigner
 			}
 			m_passViewSelect = new ComboBox(Point(m_modelViewer->Position.X, m_modelViewer->Position.Y - lineHeight), 150, items);
 			m_passViewSelect->SetSkin(window->getUISkin());
-			m_passViewSelect->eventSelectionChanged().Bind(this, &ModelDocument::PassViewSelect_SelectionChanged);
+			m_passViewSelect->eventSelectionChanged.Bind(this, &ModelDocument::PassViewSelect_SelectionChanged);
 		}
 
 		{
@@ -83,7 +83,7 @@ namespace APDesigner
 			m_pbTime->Size = Point(957, 30);
 			m_pbTime->SetSkin(window->getUISkin());
 
-			m_pbTime->eventPress().Bind(this, &ModelDocument::PBTime_Pressed);
+			m_pbTime->eventPress.Bind(this, &ModelDocument::PBTime_Pressed);
 		}
 		{
 			int32 sy = 68;
@@ -133,11 +133,11 @@ namespace APDesigner
 			List<String> items;
 			m_cbMesh = new ComboBox(Point(21+522+100, 107), 200, items);
 			m_cbMesh->SetSkin(window->getUISkin());
-			m_cbMesh->eventSelectionChanged().Bind(this, &ModelDocument::CBMesh_SelectionChanged);
+			m_cbMesh->eventSelectionChanged.Bind(this, &ModelDocument::CBMesh_SelectionChanged);
 
 			m_cbMeshPart = new ComboBox(Point(21+522+100, 133), 200, items);
 			m_cbMeshPart->SetSkin(window->getUISkin());
-			m_cbMeshPart->eventSelectionChanged().Bind(this, &ModelDocument::CBMeshPart_SelectionChanged);
+			m_cbMeshPart->eventSelectionChanged.Bind(this, &ModelDocument::CBMeshPart_SelectionChanged);
 
 			lbl = new Label(Point(21 + 522, 183), L"Mesh Name", 100);
 			lbl->SetSkin(window->getUISkin());
@@ -150,12 +150,12 @@ namespace APDesigner
 
 			m_applyMtrl = new Button(Point(21 + 522+100+220, 159),175, L"Apply Changes");
 			m_applyMtrl->SetSkin(window->getUISkin());
-			m_applyMtrl->eventRelease().Bind(this, &ModelDocument::BtnApplyMtrl_Pressed);
+			m_applyMtrl->eventRelease.Bind(this, &ModelDocument::BtnApplyMtrl_Pressed);
 			m_applyMtrl->Size.Y = lineHeight;
 
 			m_applyAllMtrl = new Button(Point(21 + 522+100+220, 185),175, L"Apply To All");
 			m_applyAllMtrl->SetSkin(window->getUISkin());
-			m_applyAllMtrl->eventRelease().Bind(this, &ModelDocument::BtnApplyAllMtrl_Pressed);
+			m_applyAllMtrl->eventRelease.Bind(this, &ModelDocument::BtnApplyAllMtrl_Pressed);
 			m_applyAllMtrl->Size.Y = lineHeight;
 
 
@@ -164,17 +164,17 @@ namespace APDesigner
 			m_labels.Add(lbl);
 			m_cbSubMtrl = new ComboBox(Point(21+522+100, 159), 200, items);
 			m_cbSubMtrl->SetSkin(window->getUISkin());
-			m_cbSubMtrl->eventSelectionChanged().Bind(this, &ModelDocument::CBSubMtrl_SelectionChanged);
+			m_cbSubMtrl->eventSelectionChanged.Bind(this, &ModelDocument::CBSubMtrl_SelectionChanged);
 			
 
 			m_addMtrlFrame = new Button(Point(21 + 522+100+220, 107),175, L"Add Sub Material");
 			m_addMtrlFrame->SetSkin(window->getUISkin());
-			m_addMtrlFrame->eventRelease().Bind(this, &ModelDocument::BtnAddMtrl_Pressed);
+			m_addMtrlFrame->eventRelease.Bind(this, &ModelDocument::BtnAddMtrl_Pressed);
 			m_addMtrlFrame->Size.Y = lineHeight;
 
 			m_removeMtrlFrame = new Button(Point(21 + 522+100+220, 133),175, L"Remove Sub Material");
 			m_removeMtrlFrame->SetSkin(window->getUISkin());
-			m_removeMtrlFrame->eventRelease().Bind(this, &ModelDocument::BtnRemoveMtrl_Pressed);
+			m_removeMtrlFrame->eventRelease.Bind(this, &ModelDocument::BtnRemoveMtrl_Pressed);
 			m_removeMtrlFrame->Size.Y = lineHeight;
 
 		}
@@ -185,14 +185,14 @@ namespace APDesigner
 
 			m_cbUseRef = new CheckBox(Point(sx,sy), L"Use External", false);
 			m_cbUseRef->SetSkin(window->getUISkin());
-			m_cbUseRef->eventToggled().Bind(this, &ModelDocument::CBUseRef_Checked);
+			m_cbUseRef->eventToggled.Bind(this, &ModelDocument::CBUseRef_Checked);
 
 			m_tbRefMaterialName = new TextBox(Point(sx+150,sy), 150);
 			m_tbRefMaterialName->SetSkin(window->getUISkin());
 			
 			m_btnRefMaterial = new Button(Point(sx + 310, sy), L"...");
 			m_btnRefMaterial->SetSkin(window->getUISkin());
-			m_btnRefMaterial->eventPress().Bind(this, &ModelDocument::BtnRefMtrl_Pressed);
+			m_btnRefMaterial->eventPress.Bind(this, &ModelDocument::BtnRefMtrl_Pressed);
 			m_btnRefMaterial->Size.Y = lineHeight;
 
 			sy+=30;
@@ -344,11 +344,11 @@ namespace APDesigner
 			m_pbPassFlag->SetSkin(window->getUISkin());
 			//m_pbPassFlag->Size.Y = getDocumentForm()->getFontRef()->getLineHeight();
 			m_pbPassFlag->Size.X = 256;
-			m_pbPassFlag->eventPictureDraw().Bind(this, &ModelDocument::PassFlags_Draw);
+			m_pbPassFlag->eventPictureDraw.Bind(this, &ModelDocument::PassFlags_Draw);
 
 			m_btnPassFlag = new Button(Point(sx+100+300, sy), L"Edit");
 			m_btnPassFlag->SetSkin(window->getUISkin());
-			m_btnPassFlag->eventPress().Bind(this, &ModelDocument::PassButton_Pressed);
+			m_btnPassFlag->eventPress.Bind(this, &ModelDocument::PassButton_Pressed);
 		}
 
 		// utilities
@@ -364,65 +364,65 @@ namespace APDesigner
 			int btnWidth = 80;
 			m_revertZ = new Button(Point(sx , sy),btnWidth, L"Revert Z");
 			m_revertZ->SetSkin(window->getUISkin());
-			m_revertZ->eventPress().Bind(this, &ModelDocument::RevertZ_Pressed);
+			m_revertZ->eventPress.Bind(this, &ModelDocument::RevertZ_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 100;
 			m_recenterModel = new Button(Point(sx, sy),btnWidth, L"Center model");
 			m_recenterModel->SetSkin(window->getUISkin());
-			m_recenterModel->eventPress().Bind(this, &ModelDocument::RecenterModel_Pressed);
+			m_recenterModel->eventPress.Bind(this, &ModelDocument::RecenterModel_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 80;
 			m_swapYZ = new Button(Point(sx, sy),btnWidth, L"Swap YZ");
 			m_swapYZ->SetSkin(window->getUISkin());
-			m_swapYZ->eventPress().Bind(this, &ModelDocument::RevertYZ_Pressed);
+			m_swapYZ->eventPress.Bind(this, &ModelDocument::RevertYZ_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 100;
 			m_rotateY = new Button(Point(sx, sy),btnWidth, L"Rotation Y 90");
 			m_rotateY->SetSkin(window->getUISkin());
-			m_rotateY->eventPress().Bind(this, &ModelDocument::RotY_Pressed);
+			m_rotateY->eventPress.Bind(this, &ModelDocument::RotY_Pressed);
 			sx += btnWidth+10;
 
 			m_rotateZ = new Button(Point(sx, sy),btnWidth, L"Rotation Z 90");
 			m_rotateZ->SetSkin(window->getUISkin());
-			m_rotateZ->eventPress().Bind(this, &ModelDocument::RotZ_Pressed);
+			m_rotateZ->eventPress.Bind(this, &ModelDocument::RotZ_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 30;
 			m_zoomIn = new Button(Point(sx, sy),btnWidth, L"+");
 			m_zoomIn->SetSkin(window->getUISkin());
-			m_zoomIn->eventPress().Bind(this, &ModelDocument::ZoomIn_Pressed);
+			m_zoomIn->eventPress.Bind(this, &ModelDocument::ZoomIn_Pressed);
 			sx += btnWidth+10;
 
 			m_zoomOut = new Button(Point(sx, sy),btnWidth, L"-");
 			m_zoomOut->SetSkin(window->getUISkin());
-			m_zoomOut->eventPress().Bind(this, &ModelDocument::ZoomOut_Pressed);
+			m_zoomOut->eventPress.Bind(this, &ModelDocument::ZoomOut_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 170;
 			m_setSequenceImages = new Button(Point(sx, sy),btnWidth, L"Set Sequence Material");
 			m_setSequenceImages->SetSkin(window->getUISkin());
-			m_setSequenceImages->eventPress().Bind(this, &ModelDocument::SetSequenceImages_Pressed);
+			m_setSequenceImages->eventPress.Bind(this, &ModelDocument::SetSequenceImages_Pressed);
 			sx += btnWidth+10;
 
 			btnWidth = 80;
 			m_applyColorToAll = new Button(Point(sx, sy),btnWidth, L"Color All");
 			m_applyColorToAll->SetSkin(window->getUISkin());
-			m_applyColorToAll->eventPress().Bind(this, &ModelDocument::ApplyColorToAll_Pressed);
+			m_applyColorToAll->eventPress.Bind(this, &ModelDocument::ApplyColorToAll_Pressed);
 			sx += btnWidth + 10;
 
 			btnWidth = 50;
 			m_applyFXToAll = new Button(Point(sx, sy),btnWidth, L"FX All");
 			m_applyFXToAll->SetSkin(window->getUISkin());
-			m_applyFXToAll->eventPress().Bind(this, &ModelDocument::ApplyFXToAll_Pressed);
+			m_applyFXToAll->eventPress.Bind(this, &ModelDocument::ApplyFXToAll_Pressed);
 			sx += btnWidth + 10;
 
 			btnWidth = 80;
 			m_autoTex = new Button(Point(sx, sy),btnWidth, L"Auto Tex");
 			m_autoTex->SetSkin(window->getUISkin());
-			m_autoTex->eventPress().Bind(this, &ModelDocument::AutoTex_Pressed);
+			m_autoTex->eventPress.Bind(this, &ModelDocument::AutoTex_Pressed);
 			sx += btnWidth + 10;
 
 		}
@@ -1582,7 +1582,7 @@ namespace APDesigner
 		m_form->Position.X /= 2;
 		m_form->Position.Y /= 2;
 		m_form->SetSkin(skin);
-		m_form->eventClosed().Bind(this, &CopyMaterialDialog::Form_Closed);
+		m_form->eventClosed.Bind(this, &CopyMaterialDialog::Form_Closed);
 		
 		int32 sy = skin->FormTitle->Height + 5;
 		m_lblTextureName = new Label(Point(15, sy), L"Texture Name (C style)", 180);
@@ -1625,7 +1625,7 @@ namespace APDesigner
 		sy += 20;
 		m_btnOK = new Button(Point(m_form->Size.X - 150 - 25, sy), 150, L"OK");
 		m_btnOK->SetSkin(skin);
-		m_btnOK->eventPress().Bind(this, &CopyMaterialDialog::ButtonOK_Pressed);
+		m_btnOK->eventPress.Bind(this, &CopyMaterialDialog::ButtonOK_Pressed);
 		m_form->getControls().Add(m_btnOK);
 
 		m_form->Initialize(device);
@@ -1634,7 +1634,7 @@ namespace APDesigner
 
 	CopyMaterialDialog::~CopyMaterialDialog()
 	{
-		m_form->eventClosed().Unbind(this, &CopyMaterialDialog::Form_Closed);
+		m_form->eventClosed.Unbind(this, &CopyMaterialDialog::Form_Closed);
 
 		UIRoot::Remove(m_form);
 		
@@ -1738,7 +1738,7 @@ namespace APDesigner
 		m_form->Position.X /= 2;
 		m_form->Position.Y /= 2;
 		m_form->SetSkin(window->getUISkin());
-		m_form->eventClosed().Bind(this, &SelectMaterialDialog::Form_Closed);
+		m_form->eventClosed.Bind(this, &SelectMaterialDialog::Form_Closed);
 
 		const List<std::pair<String, String>>& mtrlList = window->getProjectMaterialDesc();
 		List2D<String> items(2, mtrlList.getCount());
@@ -1760,7 +1760,7 @@ namespace APDesigner
 		sy += m_materialTable->Size.Y + 5;
 		m_btnOK = new Button(Point(m_form->Size.X - 150 - 25, sy), 150, L"OK");
 		m_btnOK->SetSkin(window->getUISkin());
-		m_btnOK->eventPress().Bind(this, &SelectMaterialDialog::ButtonOK_Pressed);
+		m_btnOK->eventPress.Bind(this, &SelectMaterialDialog::ButtonOK_Pressed);
 		m_form->getControls().Add(m_btnOK);
 
 		m_form->Initialize(device);
@@ -1769,7 +1769,7 @@ namespace APDesigner
 
 	SelectMaterialDialog::~SelectMaterialDialog()
 	{
-		m_form->eventClosed().Unbind(this, &SelectMaterialDialog::Form_Closed);
+		m_form->eventClosed.Unbind(this, &SelectMaterialDialog::Form_Closed);
 
 		UIRoot::Remove(m_form);
 

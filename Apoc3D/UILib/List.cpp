@@ -171,10 +171,10 @@ namespace Apoc3D
 					int previousIndex = m_selectedIndex;
 					m_selectedIndex = m_hoverIndex;
 					
-					m_eSelect.Invoke(this);
+					eventSelect.Invoke(this);
 
 					if (m_selectedIndex != previousIndex)
-						m_eSelectionChanged.Invoke(this);
+						eventSelectionChanged.Invoke(this);
 				}
 
 				if (getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
@@ -571,9 +571,9 @@ namespace Apoc3D
 					TreeViewNode* previousNode = m_selectedNode;
 					m_selectedNode = m_hoverNode;
 					
-					m_eSelect.Invoke(this);
+					eventSelect.Invoke(this);
 					if (m_selectedNode != previousNode)
-						m_eSelectionChanged.Invoke(this);
+						eventSelectionChanged.Invoke(this);
 				}
 				if (getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
 				{
@@ -987,7 +987,7 @@ namespace Apoc3D
 			if (m_headerStyle == LHSTYLE_Clickable && m_headerHoverIndex != -1 &&
 				mouse->IsLeftUp())
 			{
-				m_columnHeader[m_headerHoverIndex].enentRelease().Invoke(this);
+				m_columnHeader[m_headerHoverIndex].enentRelease.Invoke(this);
 				m_headerHoverIndex = -1;
 			}
 		}
@@ -1002,9 +1002,9 @@ namespace Apoc3D
 				m_selectedColumn = m_hoverColumnIndex;
 
 				if (m_fullRowSelect)
-					m_eSelect.Invoke(m_selectedRow, 0);
+					eventSelected.Invoke(m_selectedRow, 0);
 				else
-					m_eSelect.Invoke(m_selectedRow, m_selectedColumn);
+					eventSelected.Invoke(m_selectedRow, m_selectedColumn);
 			}
 			m_hoverRowIndex = -1;
 			m_hoverColumnIndex = -1;
@@ -1155,7 +1155,7 @@ namespace Apoc3D
 
 						if (mouse->IsLeftPressed())
 						{
-							m_columnHeader[i].eventPress().Invoke(this);
+							m_columnHeader[i].eventPress.Invoke(this);
 						}
 
 						if (mouse->IsLeftReleasedState())

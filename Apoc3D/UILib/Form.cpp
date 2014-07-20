@@ -117,7 +117,7 @@ namespace Apoc3D
 
 			Hide();
 			
-			m_eClosed.Invoke(this);
+			eventClosed.Invoke(this);
 		}
 		void Form::Focus()
 		{
@@ -240,7 +240,7 @@ namespace Apoc3D
 			m_btClose->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconClose);
 			m_btClose->setOwner(this);
 			m_btClose->Initialize(device);
-			m_btClose->eventRelease().Bind(this, &Form::btClose_Release);
+			m_btClose->eventRelease.Bind(this, &Form::btClose_Release);
 
 			
 			if (m_hasMinimizeButton)
@@ -253,7 +253,7 @@ namespace Apoc3D
 				m_btMinimize->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconMin);
 				m_btMinimize->setOwner(this);
 				m_btMinimize->Initialize(device);
-				m_btMinimize->eventRelease().Bind(this, &Form::btMinimize_Release);
+				m_btMinimize->eventRelease.Bind(this, &Form::btMinimize_Release);
 			}
 			if (m_hasMaximizeButton)
 			{
@@ -264,7 +264,7 @@ namespace Apoc3D
 				m_btMaximize->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconMax);
 				m_btMaximize->setOwner(this);
 				m_btMaximize->Initialize(device);
-				m_btMaximize->eventRelease().Bind(this, &Form::btMaximize_Release);
+				m_btMaximize->eventRelease.Bind(this, &Form::btMaximize_Release);
 			}
 			if (m_hasMinimizeButton || m_hasMaximizeButton)
 			{
@@ -275,7 +275,7 @@ namespace Apoc3D
 				m_btRestore->OverlayIcon = UIGraphic(m_skin->SkinTexture, m_skin->FormCBIconRestore);
 				m_btRestore->setOwner(this);
 				m_btRestore->Initialize(device);
-				m_btRestore->eventRelease().Bind(this, &Form::btRestore_Release);
+				m_btRestore->eventRelease.Bind(this, &Form::btRestore_Release);
 			}
 		}
 
@@ -458,7 +458,7 @@ namespace Apoc3D
 
 					Focus();
 					
-					m_eResized.Invoke(this);
+					eventResized.Invoke(this);
 				}
 			}
 			 //Minimize the window
@@ -504,7 +504,7 @@ namespace Apoc3D
 					m_isMaximized = false;
 					m_isMinimizing = false;
 					
-					m_eResized.Invoke(this);
+					eventResized.Invoke(this);
 				}
 			}
 			//Maximize the window
@@ -549,7 +549,7 @@ namespace Apoc3D
 					m_isMinimized = false;
 					m_isMaximized = true;
 					
-					m_eResized.Invoke(this);
+					eventResized.Invoke(this);
 				}
 			}
 		}
@@ -667,7 +667,7 @@ namespace Apoc3D
 
 				if ((dif.X !=0 || dif.Y !=0))
 				{
-					m_eResized.Invoke(this);
+					eventResized.Invoke(this);
 				}
 				
 				if (mouse->IsLeftReleasedState())

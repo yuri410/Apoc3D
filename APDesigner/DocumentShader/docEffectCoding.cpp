@@ -70,7 +70,7 @@ namespace APDesigner
 			m_vsParams->getColumnHeader().Add(ListView::Header(L"Name",120));
 			m_vsParams->getColumnHeader().Add(ListView::Header(L"Usage",120));
 			m_vsParams->setFullRowSelect(true);
-			m_vsParams->eventSelected().Bind(this, &EffectDocument::VSParams_Selected);
+			m_vsParams->eventSelected.Bind(this, &EffectDocument::VSParams_Selected);
 
 			m_psParams = new ListView(Point(775, 45), Point(240, 200), emptyList);
 			m_psParams->SetSkin(window->getUISkin());
@@ -78,7 +78,7 @@ namespace APDesigner
 			m_psParams->getColumnHeader().Add(ListView::Header(L"Name",120));
 			m_psParams->getColumnHeader().Add(ListView::Header(L"Usage",120));
 			m_psParams->setFullRowSelect(true);
-			m_psParams->eventSelected().Bind(this, &EffectDocument::PSParams_Selected);
+			m_psParams->eventSelected.Bind(this, &EffectDocument::PSParams_Selected);
 
 			Label* lbl = new Label(Point(260, 22), L"Parameters(VS)" , 200);
 			lbl->SetSkin(window->getUISkin());
@@ -293,15 +293,15 @@ namespace APDesigner
 		int lineHeight = 25;
 		m_vsAddParam = new Button(Point(sx, sy), 60, L"Add");
 		m_vsAddParam->SetSkin(window->getUISkin());
-		m_vsAddParam->eventPress().Bind(this, &EffectDocument::VSAddParam_Clicked);
+		m_vsAddParam->eventPress.Bind(this, &EffectDocument::VSAddParam_Clicked);
 		
 		m_vsRemoveParam = new Button(Point(sx+70, sy), 90, L"Remove");
 		m_vsRemoveParam->SetSkin(window->getUISkin());
-		m_vsRemoveParam->eventPress().Bind(this, &EffectDocument::VSRemoveParam_Clicked);
+		m_vsRemoveParam->eventPress.Bind(this, &EffectDocument::VSRemoveParam_Clicked);
 
 		m_vsApplyParam = new Button(Point(sx+170, sy), 90, L"Apply");
 		m_vsApplyParam->SetSkin(window->getUISkin());
-		m_vsApplyParam->eventPress().Bind(this, &EffectDocument::VSApplyParam_Clicked);
+		m_vsApplyParam->eventPress.Bind(this, &EffectDocument::VSApplyParam_Clicked);
 
 
 
@@ -320,7 +320,7 @@ namespace APDesigner
 		sy+= lineHeight;
 		m_cbVsIsCustom = new CheckBox(Point(sx, sy), L"Use Custom Usage", false);
 		m_cbVsIsCustom->SetSkin(window->getUISkin());
-		m_cbVsIsCustom->eventToggled().Bind(this, &EffectDocument::CBVSIsCustom_Changed);
+		m_cbVsIsCustom->eventToggled.Bind(this, &EffectDocument::CBVSIsCustom_Changed);
 
 		sy+= lineHeight;
 		lbl = new Label(Point(sx, sy), L"Custom" , 100);
@@ -332,7 +332,7 @@ namespace APDesigner
 		sy+= lineHeight;
 		m_cbVsHasSamplerState = new CheckBox(Point(sx, sy), L"Has Sampler", false);
 		m_cbVsHasSamplerState->SetSkin(window->getUISkin());
-		m_cbVsHasSamplerState->eventToggled().Bind(this, &EffectDocument::CBVSHasSampler_Changed);
+		m_cbVsHasSamplerState->eventToggled.Bind(this, &EffectDocument::CBVSHasSampler_Changed);
 
 		sy += lineHeight;
 		lbl = new Label(Point(sx, sy), L"AddressU" , 100);
@@ -433,15 +433,15 @@ namespace APDesigner
 		int lineHeight = 25;
 		m_psAddParam = new Button(Point(sx, sy), 60, L"Add");
 		m_psAddParam->SetSkin(window->getUISkin());
-		m_psAddParam->eventPress().Bind(this, &EffectDocument::PSAddParam_Clicked);
+		m_psAddParam->eventPress.Bind(this, &EffectDocument::PSAddParam_Clicked);
 
 		m_psRemoveParam = new Button(Point(sx+70, sy), 90, L"Remove");
 		m_psRemoveParam->SetSkin(window->getUISkin());
-		m_psRemoveParam->eventPress().Bind(this, &EffectDocument::PSRemoveParam_Clicked);
+		m_psRemoveParam->eventPress.Bind(this, &EffectDocument::PSRemoveParam_Clicked);
 
 		m_psApplyParam = new Button(Point(sx+170, sy), 90, L"Apply");
 		m_psApplyParam->SetSkin(window->getUISkin());
-		m_psApplyParam->eventPress().Bind(this, &EffectDocument::PSApplyParam_Clicked);
+		m_psApplyParam->eventPress.Bind(this, &EffectDocument::PSApplyParam_Clicked);
 
 
 		sy+= lineHeight+15;
@@ -459,7 +459,7 @@ namespace APDesigner
 		sy+= lineHeight;
 		m_cbPsIsCustom = new CheckBox(Point(sx, sy), L"Use Custom Usage", false);
 		m_cbPsIsCustom->SetSkin(window->getUISkin());
-		m_cbPsIsCustom->eventToggled().Bind(this, &EffectDocument::CBPSIsCustom_Changed);
+		m_cbPsIsCustom->eventToggled.Bind(this, &EffectDocument::CBPSIsCustom_Changed);
 
 		sy+= lineHeight;
 		lbl = new Label(Point(sx, sy), L"Custom" , 100);
@@ -471,7 +471,7 @@ namespace APDesigner
 		sy+= lineHeight;
 		m_cbPsHasSamplerState = new CheckBox(Point(sx, sy), L"Has Sampler", false);
 		m_cbPsHasSamplerState->SetSkin(window->getUISkin());
-		m_cbPsHasSamplerState->eventToggled().Bind(this, &EffectDocument::CBPSHasSampler_Changed);
+		m_cbPsHasSamplerState->eventToggled.Bind(this, &EffectDocument::CBPSHasSampler_Changed);
 
 		sy += lineHeight;
 		lbl = new Label(Point(sx, sy), L"AddressU" , 100);
