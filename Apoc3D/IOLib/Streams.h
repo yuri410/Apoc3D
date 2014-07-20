@@ -76,7 +76,6 @@ namespace Apoc3D
 				return reinterpret_cast<const byte&>(buffer);
 			}
 
-			
 			virtual void Write(const char* src, int64 count) = 0;
 
 			void WriteByte(byte value) { Write(reinterpret_cast<const char*>(&value), 1); }
@@ -87,6 +86,8 @@ namespace Apoc3D
 			virtual void Close() = 0;
 
 			virtual void Flush() = 0;
+
+			RTTI_UpcastableBase;
 		};
 
 		/**
@@ -117,6 +118,7 @@ namespace Apoc3D
 
 			virtual void Flush() { }
 
+			RTTI_UpcastableDerived(Stream);
 		private:
 			std::ifstream m_in;
 			int64 m_length;
@@ -149,6 +151,7 @@ namespace Apoc3D
 
 			virtual void Flush();
 
+			RTTI_UpcastableDerived(Stream);
 		private:
 			std::ofstream m_out;
 			int64 m_length;
@@ -174,50 +177,19 @@ namespace Apoc3D
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return true; }
 
-
 			virtual int64 getLength() const { return m_length; }
 			virtual void setPosition(int64 offset) { m_position = offset; }
 			virtual int64 getPosition() { return m_position; }
 
-
-			virtual int64 Read(char* dest, int64 count)
-			{
-				if (m_position + count > m_length)
-				{
-					count = m_length - m_position;
-				}
-
-				memcpy(dest, m_data+m_position, static_cast<size_t>(count));
-				
-				m_position += count;
-				return count;
-			}
+			virtual int64 Read(char* dest, int64 count);
 			virtual void Write(const char* src, int64 count);
 			
-
-			virtual void Seek(int64 offset, SeekMode mode)
-			{
-				switch (mode)
-				{
-				case SEEK_Begin:
-					m_position = (int)offset;
-					break;
-				case SEEK_Current:
-					m_position += (int)offset;
-					break;
-				case SEEK_End:
-					m_position = m_length + (int)offset;
-					break;
-				}
-				if (m_position < 0)
-					m_position = 0;
-				if (m_position > m_length)
-					m_position = m_length;
-			}
+			virtual void Seek(int64 offset, SeekMode mode);
 			virtual void Close() { }
 
 			virtual void Flush() { }
 
+			RTTI_UpcastableDerived(Stream);
 		private:
 			NoInline static void throwEndofStreamException();
 
@@ -291,52 +263,13 @@ namespace Apoc3D
 			{
 				m_baseStream->Write(src, count);
 			}
-			virtual void Seek(int64 offset, SeekMode mode)
-			{
-				switch (mode)
-				{
-				case SEEK_Begin:
-					if (offset > m_length)
-					{
-						offset = m_length;
-					}
-					if (offset < 0)
-					{
-						offset = 0;
-					}
-					m_baseStream->setPosition(offset+ m_baseOffset);
-					break;
-				case SEEK_Current:
-					if (m_baseStream->getPosition() + offset > m_baseOffset + m_length)
-					{
-						offset = m_baseOffset + m_length - m_baseStream->getPosition();
-					}
-					if (m_baseStream->getPosition() + offset < m_baseOffset)
-					{
-						offset = m_baseOffset - m_baseStream->getPosition();
-					}
-					m_baseStream->Seek(offset, mode);
-					break;
-				case SEEK_End:
-					if (offset > 0)
-					{
-						offset = 0;
-					}
-					
-					if (offset < -m_length)
-					{
-						offset = -m_length;
-					}
-					m_baseStream->setPosition(m_length - offset+ m_baseOffset);
-					break;
-				}
-				
-			}
+			virtual void Seek(int64 offset, SeekMode mode);
 
 			virtual void Close() { }
 
 			virtual void Flush() { m_baseStream->Flush(); }
 
+			RTTI_UpcastableDerived(Stream);
 		private:
 			Stream* m_baseStream;
 			int64 m_length;
@@ -375,62 +308,15 @@ namespace Apoc3D
 			virtual void setPosition(int64 offset) { m_position = offset; }
 			virtual int64 getPosition() { return m_position; }
 
+			virtual int64 Read(char* dest, int64 count);
+			virtual void Write(const char* src, int64 count);
 
-			virtual int64 Read(char* dest, int64 count)
-			{
-				if (m_position + count > m_length)
-				{
-					count = m_length - m_position;
-				}
-
-				for (int64 i=0;i<count;i++)
-					dest[i] = m_data[static_cast<int32>(i+m_position)];
-				
-				m_position += count;
-				return count;
-			}
-			virtual void Write(const char* src, int64 count)
-			{
-				for (int64 i=0;i<count;i++)
-				{
-					if (m_position>=m_length)
-					{
-						m_data.Add(src[i]);
-						m_length++;
-					}
-					else
-					{
-						m_data[static_cast<int32>(m_position)] = src[i];
-					}
-					m_position++;
-				}
-				
-			}
-
-
-			virtual void Seek(int64 offset, SeekMode mode)
-			{
-				switch (mode)
-				{
-				case SEEK_Begin:
-					m_position = (int)offset;
-					break;
-				case SEEK_Current:
-					m_position += (int)offset;
-					break;
-				case SEEK_End:
-					m_position = m_length + (int)offset;
-					break;
-				}
-				if (m_position < 0)
-					m_position = 0;
-				if (m_position > m_length)
-					m_position = m_length;
-			}
+			virtual void Seek(int64 offset, SeekMode mode);
 			virtual void Close() { }
 
 			virtual void Flush() { }
 
+			RTTI_UpcastableDerived(Stream);
 		private:
 			int64 m_length;
 			FastList<char> m_data;
@@ -459,117 +345,12 @@ namespace Apoc3D
 			bool IsReadEndianIndependent() const { return m_baseStream->IsReadEndianIndependent(); }
 			int32 getLength() const { return static_cast<int32>(m_baseStream->getLength()); }
 
-			int32 Read(char* dest, int32 count)
-			{
-				int32 ret;
-				if (getBufferContentSize()>count)
-				{
-					ReadBuffer(dest, count);
-					ret = count;
-				}
-				else
-				{
-					ret = 0;
-
-					int32 existing = getBufferContentSize();
-					if (existing>0)
-					{
-						ReadBuffer(dest, existing);
-						ret = existing;
-						count -= existing;
-					}
-					
-					int32 actual = static_cast<int32>(m_baseStream->Read(dest + existing, count));
-					m_endofStream = actual < count;
-					ret += actual;
-				}
-
-				if (!m_endofStream && m_size<BufferSize/2)
-				{
-					FillBuffer();
-				}
-
-				return ret;
-			}
-			bool ReadByte(char& result)
-			{
-				if (!m_endofStream && m_size<BufferSize/2)
-				{
-					FillBuffer();
-				}
-
-				if (m_size)
-				{
-					result = m_buffer[m_head];
-					m_head = (m_head + 1) % BufferSize;
-					m_size--;
-					return true;
-				}
-				return false;
-			}
-
+			int32 Read(char* dest, int32 count);
+			bool ReadByte(char& result);
 		private:
-			void ClearBuffer()
-			{
-				m_head = 0;
-				m_tail = 0;
-				m_size = 0;
-			}
-			void ReadBuffer(char* dest, int32 count)
-			{
-				assert(m_size >= count);
-
-				if (m_head + count > BufferSize)
-				{
-					int32 numHeadToEnd = BufferSize - m_head;
-					memcpy(dest, m_buffer+m_head, numHeadToEnd);
-
-					int32 remaining = count - numHeadToEnd;
-					assert(remaining<=m_head);
-					memcpy(dest+numHeadToEnd, m_buffer, remaining);
-				}
-				else
-				{
-					memcpy(dest, m_buffer + m_head, count);
-				}
-
-				m_head = (m_head + count) % BufferSize;
-				m_size -= count;
-			}
-
-			void FillBuffer()
-			{
-				int32 count = BufferSize - m_size;
-				assert(count>0);
-				int32 actualCount = 0;
-
-				if (m_tail + count > BufferSize)
-				{
-					int32 numTailToEnd = BufferSize - m_tail;
-					int32 actual = static_cast<int32>(m_baseStream->Read(m_buffer + m_tail, numTailToEnd));
-					m_endofStream = actual < numTailToEnd;
-					actualCount = actual;
-
-					if (!m_endofStream)
-					{
-						int32 remaining = count - numTailToEnd;
-						assert(remaining<=m_tail);
-
-						actual = static_cast<int32>(m_baseStream->Read(m_buffer, remaining));
-						m_endofStream = actual < remaining;
-						actualCount += actual;
-					}
-				}
-				else
-				{
-					int32 actual = static_cast<int32>(m_baseStream->Read(m_buffer + m_tail, count));
-					m_endofStream = actual < count;
-					actualCount = actual;
-				}
-
-				m_tail = (m_tail + actualCount) % BufferSize;
-				m_size+=actualCount;
-			}
+			void ClearBuffer();
+			void ReadBuffer(char* dest, int32 count);
+			void FillBuffer();
 
 			int getBufferContentSize() const { return m_size; }
 

@@ -338,7 +338,7 @@ namespace Apoc3D
 		{
 #if _DEBUG
 			{
-				const FileLocation* fl = rl.Upcast<FileLocation>();// = dynamic_cast<const FileLocation*>(rl);
+				const FileLocation* fl = rl.Upcast<FileLocation>();
 				if (fl)
 					DebugName = PathUtils::GetFileNameNoExt(fl->getPath());
 				else

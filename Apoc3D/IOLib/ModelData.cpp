@@ -499,7 +499,7 @@ namespace Apoc3D
 
 							if (mtrlData->DebugName.empty())
 							{
-								const FileLocation* fl = rl.Upcast<FileLocation>();// dynamic_cast<const FileLocation*>(rl);
+								const FileLocation* fl = rl.Upcast<FileLocation>();
 								if (fl)
 									mtrlData->DebugName = PathUtils::GetFileNameNoExt(fl->getPath()) + L"::" + md->Name;
 								else
