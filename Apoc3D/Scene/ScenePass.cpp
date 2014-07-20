@@ -313,7 +313,7 @@ namespace Apoc3D
 			//mtrl.IsBlendTransparent = true;
 
 			// the post here is expected to be an AutomaticEffect
-			AutomaticEffect* autoFx = dynamic_cast<AutomaticEffect*>(effect);
+			AutomaticEffect* autoFx = effect->Upcast<AutomaticEffect>();
 
 			// assign the parameters
 			for (int32 i=2;i<inst.Args.getCount();i++)

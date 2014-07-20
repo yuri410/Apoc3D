@@ -1131,7 +1131,7 @@ namespace Apoc3D
 
 			if (effect)
 			{
-				AutomaticEffect* autoFx = dynamic_cast<AutomaticEffect*>(effect);
+				AutomaticEffect* autoFx = effect->Upcast<AutomaticEffect>();
 				if (autoFx)
 				{
 					const TiXmlAttribute* att = node->FirstAttribute();
