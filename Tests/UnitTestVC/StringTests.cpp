@@ -71,7 +71,7 @@ namespace UnitTestVC
 		TEST_METHOD(StringSplitParseInts)
 		{
 			String test = L"1 , 4,2, 90 ";
-			FastList<int32> results;
+			List<int32> results;
 			StringUtils::SplitParseInts(test, results, L", ");
 
 			Assert::AreEqual(results.getCount(), 4);
@@ -92,7 +92,7 @@ namespace UnitTestVC
 		TEST_METHOD(StringSplitParseSingles)
 		{
 			String test = L"1.0 , 4,2.0, 90 ";
-			FastList<float> results;
+			List<float> results;
 			StringUtils::SplitParseSingles(test, results, L", ");
 
 			Assert::AreEqual(results.getCount(), 4);

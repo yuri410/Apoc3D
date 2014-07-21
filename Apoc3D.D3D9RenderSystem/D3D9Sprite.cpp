@@ -46,7 +46,7 @@ namespace Apoc3D
 				: Sprite(device), m_device(device), m_rawDevice(device->getDevice())
 			{
 				{
-					FastList<VertexElement> elements;
+					List<VertexElement> elements;
 					elements.Add(VertexElement(0, VEF_Vector4, VEU_PositionTransformed));
 					elements.Add(VertexElement(16, VEF_Color, VEU_Color));
 					elements.Add(VertexElement(20, VEF_Vector2, VEU_TextureCoordinate,0));
@@ -54,7 +54,7 @@ namespace Apoc3D
 					m_vtxDecl = new D3D9VertexDeclaration(device, elements);
 				}
 				{
-					FastList<VertexElement> elements;
+					List<VertexElement> elements;
 					elements.Add(VertexElement(0, VEF_Vector4, VEU_Position));
 					elements.Add(VertexElement(16, VEF_Color, VEU_Color));
 					elements.Add(VertexElement(20, VEF_Vector2, VEU_TextureCoordinate,0));

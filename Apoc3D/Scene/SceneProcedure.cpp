@@ -289,7 +289,7 @@ namespace Apoc3D
 			}
 		}
 
-		void SceneProcedure::Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData)
+		void SceneProcedure::Invoke(const List<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData)
 		{
 			CheckDimensions();
 

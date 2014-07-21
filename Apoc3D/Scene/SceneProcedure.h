@@ -102,7 +102,7 @@ namespace Apoc3D
 			/** 
 			 *  Execute the procedure, respectively invoking a series of Scene Passes.
 			 */
-			void Invoke(const FastList<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
+			void Invoke(const List<Camera*> cameras, SceneManager* sceMgr, BatchData* batchData);
 			
 			/**
 			 *  Gets the current camera in the rendering process.
@@ -137,13 +137,13 @@ namespace Apoc3D
 
 			RenderDevice* m_renderDevice;
 
-			FastList<ScenePass*> m_passes;
+			List<ScenePass*> m_passes;
 			SceneVariable** m_vars;
 			int m_varCount;
 
-			FastList<RenderTarget*> m_createdRenderTarget;
-			FastList<ResourceHandle<Texture>*> m_createdTextures;
-			FastList<ProcGaussBlurFilter> m_createdGaussFilters;
+			List<RenderTarget*> m_createdRenderTarget;
+			List<ResourceHandle<Texture>*> m_createdTextures;
+			List<ProcGaussBlurFilter> m_createdGaussFilters;
 
 			bool m_isAvailable;
 			String m_name;

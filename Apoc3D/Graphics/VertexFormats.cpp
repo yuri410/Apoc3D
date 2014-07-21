@@ -31,9 +31,9 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		FastList<VertexElement> VertexPIBNT1::GetElements()
+		List<VertexElement> VertexPIBNT1::GetElements()
 		{
-			FastList<VertexElement> elements;
+			List<VertexElement> elements;
 
 			elements.Add( VertexElement(0, VEF_Vector3, VEU_Position) );
 			elements.Add( VertexElement(elements[0].getSize(), VEF_Vector4, VEU_BlendIndices) );
@@ -43,7 +43,7 @@ namespace Apoc3D
 
 			return elements;
 		}
-		const FastList<VertexElement> VertexPIBNT1::Elements = GetElements();
+		const List<VertexElement> VertexPIBNT1::Elements = GetElements();
 
 		String VertexPIBNT1::GetHashString() const
 		{
@@ -56,16 +56,16 @@ namespace Apoc3D
 
 		//======================================================================================
 
-		FastList<VertexElement> VertexPN::GetElements()
+		List<VertexElement> VertexPN::GetElements()
 		{
-			FastList<VertexElement> elements;
+			List<VertexElement> elements;
 
 			elements.Add( VertexElement(0, VEF_Vector3, VEU_Position) );
 			elements.Add( VertexElement(elements[0].getSize(), VEF_Vector3, VEU_Normal) );
 
 			return elements;
 		}
-		const FastList<VertexElement> VertexPN::Elements = GetElements();
+		const List<VertexElement> VertexPN::Elements = GetElements();
 
 		String VertexPN::GetHashString() const
 		{
@@ -73,9 +73,9 @@ namespace Apoc3D
 		}
 
 		//======================================================================================
-		FastList<VertexElement> VertexPNT1::GetElements()
+		List<VertexElement> VertexPNT1::GetElements()
 		{
-			FastList<VertexElement> elements;
+			List<VertexElement> elements;
 
 			elements.Add( VertexElement(0, VEF_Vector3, VEU_Position) );
 			elements.Add( VertexElement(elements[0].getSize(), VEF_Vector3, VEU_Normal) );
@@ -83,7 +83,7 @@ namespace Apoc3D
 
 			return elements;
 		}
-		const FastList<VertexElement> VertexPNT1::Elements = GetElements();
+		const List<VertexElement> VertexPNT1::Elements = GetElements();
 
 		String VertexPNT1::GetHashString() const
 		{
@@ -92,9 +92,9 @@ namespace Apoc3D
 		} 
 
 		//======================================================================================
-		FastList<VertexElement> VertexPNT2::GetElements()
+		List<VertexElement> VertexPNT2::GetElements()
 		{
-			FastList<VertexElement> elements;
+			List<VertexElement> elements;
 
 			elements.Add( VertexElement(0, VEF_Vector3, VEU_Position) );
 			elements.Add( VertexElement(elements[0].getSize(), VEF_Vector3, VEU_Normal) );
@@ -103,7 +103,7 @@ namespace Apoc3D
 
 			return elements;
 		}
-		const FastList<VertexElement> VertexPNT2::Elements = GetElements();
+		const List<VertexElement> VertexPNT2::Elements = GetElements();
 
 		String VertexPNT2::GetHashString() const
 		{
@@ -112,9 +112,9 @@ namespace Apoc3D
 		}
 
 		//======================================================================================
-		FastList<VertexElement> VertexPT1::GetElements()
+		List<VertexElement> VertexPT1::GetElements()
 		{
-			FastList<VertexElement> elements;
+			List<VertexElement> elements;
 
 			elements.Add( VertexElement(0, VEF_Vector3, VEU_Position) );
 			elements.Add( VertexElement(elements[0].getSize(), VEF_Vector3, VEU_Normal) );
@@ -122,7 +122,7 @@ namespace Apoc3D
 
 			return elements;
 		}
-		const FastList<VertexElement> VertexPT1::Elements = GetElements();
+		const List<VertexElement> VertexPT1::Elements = GetElements();
 
 		String VertexPT1::GetHashString() const
 		{
@@ -131,9 +131,9 @@ namespace Apoc3D
 		}
 
 		//======================================================================================
-		FastList<VertexElement> VertexPT2::GetElements()
+		List<VertexElement> VertexPT2::GetElements()
 		{
-			FastList<VertexElement> elements;
+			List<VertexElement> elements;
 
 			elements.Add( VertexElement(0, VEF_Vector3, VEU_Position) );
 			elements.Add( VertexElement(elements[0].getSize(), VEF_Vector3, VEU_Normal) );
@@ -141,7 +141,7 @@ namespace Apoc3D
 
 			return elements;
 		}
-		const FastList<VertexElement> VertexPT2::Elements = GetElements();
+		const List<VertexElement> VertexPT2::Elements = GetElements();
 
 		String VertexPT2::GetHashString() const
 		{

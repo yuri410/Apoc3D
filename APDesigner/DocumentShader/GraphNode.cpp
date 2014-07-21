@@ -85,7 +85,7 @@ namespace APDesigner
 			// the time is O(n^2) for each iteration
 			static const float MaxDist = 512;
 			
-			const FastList<GraphNode*>& nodes = m_graph->getNodes();
+			const List<GraphNode*>& nodes = m_graph->getNodes();
 
 			for (int i=0;i<nodes.getCount();i++)
 			{

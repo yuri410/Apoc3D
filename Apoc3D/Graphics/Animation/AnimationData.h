@@ -88,13 +88,13 @@ namespace Apoc3D
 				///** Bindpose matrices for each bone in the skeleton,
 				//	relative to the parent bone.
 				//*/
-				//const FastList<Matrix>& getBindPose() const { return m_bindPose; }
+				//const List<Matrix>& getBindPose() const { return m_bindPose; }
 				///** Vertex to bonespace transforms for each bone in the skeleton.
 				//*/
-				//const FastList<Matrix>& getInvBindPose() const { return m_invBindPose; }
+				//const List<Matrix>& getInvBindPose() const { return m_invBindPose; }
 				///** For each bone in the skeleton, stores the index of the parent bone.
 				//*/
-				//const FastList<int32>& getSkeletonHierarchy() const { return m_skeletonHierarchy; }
+				//const List<int32>& getSkeletonHierarchy() const { return m_skeletonHierarchy; }
 
 				/**
 				 *  Load animation data from a Tagged Data Block

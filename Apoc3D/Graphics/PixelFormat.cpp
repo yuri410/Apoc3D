@@ -839,7 +839,7 @@ namespace Apoc3D
 		struct ConveterHelper
 		{
 			typedef void (*ConversionRoutine)(const DataBox& src, const DataBox& dst);
-			Apoc3D::Collections::FastMap<uint, ConversionRoutine> Converters;
+			Apoc3D::Collections::HashMap<uint, ConversionRoutine> Converters;
 
 			ConveterHelper()
 				: Converters(25)

@@ -204,7 +204,7 @@ namespace APDesigner
 		return 0;
 	}
 
-	void QuadTreeNode::FillIntersectingNodesAttachment(FastList<GraphNode*>& list, const Apoc3D::Math::RectangleF& area)
+	void QuadTreeNode::FillIntersectingNodesAttachment(List<GraphNode*>& list, const Apoc3D::Math::RectangleF& area)
 	{
 		for (LinkedList<GraphNode*>::Iterator iter = m_attachedGraphNodes.Begin();
 			iter != m_attachedGraphNodes.End(); iter++)

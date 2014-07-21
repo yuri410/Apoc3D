@@ -232,7 +232,7 @@ namespace Apoc3D
 			 */
 			static Apoc3D::Math::Rectangle GetUIArea(RenderDevice* device);
 
-			static FastList<Form*>& getForms() { return m_forms; }
+			static List<Form*>& getForms() { return m_forms; }
 
 			/**
 			 *  The active form is the one that is currently being dragged/clicked.
@@ -268,8 +268,8 @@ namespace Apoc3D
 			static Point ClampFormMovementOffset(Form* frm, const Point& vec);
 
 		private:
-			static FastList<Form*> m_forms;
-			static FastList<ControlContainer*> m_containers;
+			static List<Form*> m_forms;
+			static List<ControlContainer*> m_containers;
 			static Form* m_activeForm;
 			static Form* m_topMostForm;
 			static SubMenu* m_contextMenu;

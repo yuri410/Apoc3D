@@ -87,7 +87,7 @@ namespace Apoc3D
 			m_particleCount = m_settings.MaxParticles;
 
 			ObjectFactory* fac = m_device->getObjectFactory();
-			FastList<VertexElement> elems; 
+			List<VertexElement> elems; 
 			elems.Add(ParticleVertex::VtxElements[0]); elems.Add(ParticleVertex::VtxElements[1]);
 			elems.Add(ParticleVertex::VtxElements[2]); elems.Add(ParticleVertex::VtxElements[3]);
 

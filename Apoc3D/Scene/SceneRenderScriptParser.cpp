@@ -82,29 +82,29 @@ namespace Apoc3D
 		};
 
 
-		bool ParseCallArgAsVar(const String& value, SceneOpArg& arg, const FastList<SceneVariable*>& vars);
-		bool ParseCallArgAsVar(const std::string& value, SceneOpArg& arg, const FastList<SceneVariable*>& vars);
+		bool ParseCallArgAsVar(const String& value, SceneOpArg& arg, const List<SceneVariable*>& vars);
+		bool ParseCallArgAsVar(const std::string& value, SceneOpArg& arg, const List<SceneVariable*>& vars);
 
 		bool ParseCallArgBool(const TiXmlElement* node,  const std::string& name, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars, bool def);
+			const List<SceneVariable*>& vars, bool def);
 		bool ParseCallArgFloat(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars, float def);
+			const List<SceneVariable*>& vars, float def);
 		bool ParseCallArgUint(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars, uint def);
+			const List<SceneVariable*>& vars, uint def);
 		bool ParseCallArgInt(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars, int def);
+			const List<SceneVariable*>& vars, int def);
 		bool ParseCallArgRef(const TiXmlElement* node, const std::string& name, SceneOpArg& arg,
-			const FastList<SceneVariable*>& vars);
+			const List<SceneVariable*>& vars);
 		bool ParseCallArgUintHexImm(const TiXmlElement* node, const std::string& name, SceneOpArg& arg);
 		bool ParseCallArgVector2(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars, Vector2 def);
+			const List<SceneVariable*>& vars, Vector2 def);
 		void ParseCallArgRenderStates(const std::string& value, List<SceneOpArg>& args);
 
 		PixelFormat ConvertFormat(const std::string& fmt);
 		DepthFormat ConvertDepthFormat(const std::string& fmt);
 
 
-		SceneVariable* FindVar(const FastList<SceneVariable*>& vars, const String& name)
+		SceneVariable* FindVar(const List<SceneVariable*>& vars, const String& name)
 		{
 			for (int i=0;i<vars.getCount();i++)
 			{
@@ -261,7 +261,7 @@ namespace Apoc3D
 				return exprStack.Peek();
 			}
 
-			bool FollowOrderTraverse(ExpressionNode* T, List<SceneInstruction>& insts, const FastList<SceneVariable*>& vars)
+			bool FollowOrderTraverse(ExpressionNode* T, List<SceneInstruction>& insts, const List<SceneVariable*>& vars)
 			{
 				if (!T)
 					return true;
@@ -475,7 +475,7 @@ namespace Apoc3D
 			{
 				
 			}
-			void FillInstrunctions(const std::string& expression, List<SceneInstruction>& insts, const FastList<SceneVariable*>& vars)
+			void FillInstrunctions(const std::string& expression, List<SceneInstruction>& insts, const List<SceneVariable*>& vars)
 			{
 				Parse(expression);
 				expStruct.Add(std::string(1,EndSym));
@@ -1279,7 +1279,7 @@ namespace Apoc3D
 
 
 		bool ParseCallArgBool(const TiXmlElement* node,  const std::string& name, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars, bool def)
+			const List<SceneVariable*>& vars, bool def)
 		{
 			bool flag;
 			int res = node->QueryBoolAttribute(name.c_str(), &flag);
@@ -1300,7 +1300,7 @@ namespace Apoc3D
 			return false;
 		}
 		bool ParseCallArgFloat(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars, float def)
+			const List<SceneVariable*>& vars, float def)
 		{
 			float flag;
 			int res = node->QueryFloatAttribute(name.c_str(), &flag);
@@ -1336,7 +1336,7 @@ namespace Apoc3D
 			return false;
 		}
 		bool ParseCallArgUint(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars, uint def)
+			const List<SceneVariable*>& vars, uint def)
 		{
 			uint flag;
 			int res = node->QueryUnsignedAttribute(name.c_str(), &flag);
@@ -1357,7 +1357,7 @@ namespace Apoc3D
 			return false;
 		}
 		bool ParseCallArgInt(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars, int def)
+			const List<SceneVariable*>& vars, int def)
 		{
 			int flag;
 			int res = node->QueryIntAttribute(name.c_str(), &flag);
@@ -1378,13 +1378,13 @@ namespace Apoc3D
 			return false;
 		}
 		bool ParseCallArgRef(const TiXmlElement* node, const std::string& name, SceneOpArg& arg,
-			const FastList<SceneVariable*>& vars)
+			const List<SceneVariable*>& vars)
 		{
 			return ParseCallArgAsVar(*node->Attribute(name), arg,vars);
 		}
 
 		bool ParseCallArgVector2(const TiXmlElement* node, const std::string& name, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars, Vector2 def)
+			const List<SceneVariable*>& vars, Vector2 def)
 		{
 			const std::string* result = node->Attribute(name);
 
@@ -1419,7 +1419,7 @@ namespace Apoc3D
 
 
 		bool ParseCallArgAsVar(const String& value, SceneOpArg& arg, 
-			const FastList<SceneVariable*>& vars)
+			const List<SceneVariable*>& vars)
 		{
 			//arg.IsImmediate = false;
 			//String vname = StringUtils::toWString(node->Attribute(name.c_str()));
@@ -1462,7 +1462,7 @@ namespace Apoc3D
 			return true;
 		}
 
-		bool ParseCallArgAsVar(const std::string& value, SceneOpArg& arg, const FastList<SceneVariable*>& vars)
+		bool ParseCallArgAsVar(const std::string& value, SceneOpArg& arg, const List<SceneVariable*>& vars)
 		{
 			arg.IsImmediate = false;
 

@@ -872,8 +872,7 @@ namespace Apoc3D
 			return lst.getCount();
 		}
 		void StringUtils::SplitParseSingles(const String& str, Apoc3D::Collections::List<float>& results, const String& delims) { GenericFunctions<String>::SplitT<List<float>, float, SimpleParseFloat>(str, results, delims); }
-		void StringUtils::SplitParseSingles(const String& str, Apoc3D::Collections::FastList<float>& results, const String& delims) { GenericFunctions<String>::SplitT<FastList<float>, float, SimpleParseFloat>(str, results, delims); }
-
+		
 		int32 StringUtils::SplitParseSingles(const std::string& str, float* flts, int32 maxCount, const std::string& delims)
 		{
 			CappedBufferList<float> lst(flts, maxCount);
@@ -881,8 +880,7 @@ namespace Apoc3D
 			return lst.getCount();
 		}
 		void StringUtils::SplitParseSingles(const std::string& str, Apoc3D::Collections::List<float>& results, const std::string& delims) { GenericFunctions<std::string>::SplitT<List<float>, float, SimpleParseFloat>(str, results, delims); }
-		void StringUtils::SplitParseSingles(const std::string& str, Apoc3D::Collections::FastList<float>& results, const std::string& delims) { GenericFunctions<std::string>::SplitT<FastList<float>, float, SimpleParseFloat>(str, results, delims); }
-
+		
 		int32 StringUtils::SplitParseInts(const String& str, int32* ints, int32 maxCount, const String& delims)
 		{
 			CappedBufferList<int32> lst(ints, maxCount);
@@ -890,8 +888,7 @@ namespace Apoc3D
 			return lst.getCount();
 		}
 		void StringUtils::SplitParseInts(const String& str, Apoc3D::Collections::List<int32>& results, const String& delims) { GenericFunctions<String>::SplitT<List<int32>, int32, SimpleParseInt32>(str, results, delims); }
-		void StringUtils::SplitParseInts(const String& str, Apoc3D::Collections::FastList<int32>& results, const String& delims) { GenericFunctions<String>::SplitT<FastList<int32>, int32, SimpleParseInt32>(str, results, delims); }
-
+		
 		int32 StringUtils::SplitParseInts(const std::string& str, int32* ints, int32 maxCount, const std::string& delims)
 		{
 			CappedBufferList<int32> lst(ints, maxCount);
@@ -899,9 +896,7 @@ namespace Apoc3D
 			return lst.getCount();
 		}
 		void StringUtils::SplitParseInts(const std::string& str, Apoc3D::Collections::List<int32>& results, const std::string& delims) { GenericFunctions<std::string>::SplitT<List<int32>, int32, SimpleParseInt32>(str, results, delims); }
-		void StringUtils::SplitParseInts(const std::string& str, Apoc3D::Collections::FastList<int32>& results, const std::string& delims) { GenericFunctions<std::string>::SplitT<FastList<int32>, int32, SimpleParseInt32>(str, results, delims); }
-
-
+		
 
 		//////////////////////////////////////////////////////////////////////////
 

@@ -92,7 +92,7 @@ namespace Apoc3D
 			delete m_fileStream;
 		}
 
-		void PakArchive::FillEntries(FastList<PakArchiveEntry>& entries)
+		void PakArchive::FillEntries(List<PakArchiveEntry>& entries)
 		{
 			for (HashMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
 				e.MoveNext();)

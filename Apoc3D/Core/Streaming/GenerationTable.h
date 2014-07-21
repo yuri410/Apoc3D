@@ -91,7 +91,7 @@ namespace Apoc3D
 				/**
 				 *  A list of all pointers to resource objects.
 				 */
-				FastList<Resource*> m_generationList;
+				List<Resource*> m_generationList;
 				
 				ResourceManager* m_manager;
 

@@ -97,7 +97,7 @@ namespace APDesigner
 
 		/** Fill all sub nodes' attachment if a node is intersecting the given area.
 		*/
-		void FillIntersectingNodesAttachment(FastList<GraphNode*>& list, const Apoc3D::Math::RectangleF& area);
+		void FillIntersectingNodesAttachment(List<GraphNode*>& list, const Apoc3D::Math::RectangleF& area);
 
 		const RectangleF& getArea() const { return m_area; }
 		const LinkedList<GraphNode*>& getAttachedNodes() { return m_attachedGraphNodes; }

@@ -30,6 +30,7 @@
 #include "Renderable.h"
 #include "RenderOperationBuffer.h"
 #include "ModelTypes.h"
+#include "apoc3d/Vfs/ResourceLocation.h"
 
 using namespace Apoc3D::Collections;
 using namespace Apoc3D::Core;
@@ -82,9 +83,9 @@ namespace Apoc3D
 				Matrix Transform;
 			};
 
-			FastList<FileLocation> m_modelTable;
+			List<FileLocation> m_modelTable;
 
-			FastList<Entry> m_entires;
+			List<Entry> m_entires;
 		};
 
 	}

@@ -130,7 +130,7 @@ namespace Apoc3D
 			int32 GraphicsDeviceManager::GetAdapterOrdinal(HMONITOR mon)
 			{
 				const AdapterInfo* adapter = 0;
-				const FastList<AdapterInfo*> adInfo = Enumeration::getAdapters();
+				const List<AdapterInfo*> adInfo = Enumeration::getAdapters();
 				for (int32 i=0;i<adInfo.getCount();i++)
 				{
 					if (m_direct3D9->GetAdapterMonitor(adInfo[i]->AdapterOrdinal) == mon)
@@ -291,7 +291,7 @@ namespace Apoc3D
 						wss << L" (sw vp)";
 					}
 
-					const FastList<AdapterInfo*> adapters = Enumeration::getAdapters();
+					const List<AdapterInfo*> adapters = Enumeration::getAdapters();
 					for (int32 i=0;i<adapters.getCount();i++)
 					{
 						if (adapters[i]->AdapterOrdinal

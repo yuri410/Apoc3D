@@ -86,7 +86,7 @@ namespace Apoc3D
 				return new D3D9VertexBuffer(m_device, vertexCount * vtxDecl->GetVertexSize(), usage);
 			}
 
-			VertexDeclaration* D3D9ObjectFactory::CreateVertexDeclaration(const FastList<VertexElement>& elements)
+			VertexDeclaration* D3D9ObjectFactory::CreateVertexDeclaration(const List<VertexElement>& elements)
 			{
 				return new D3D9VertexDeclaration(m_device, elements);
 			}

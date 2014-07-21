@@ -373,13 +373,13 @@ namespace APDesigner
 
 		m_resourceView->NukeTreeViewNodes();
 
-		const FastList<ProjectItem*>& items = prj->getItems();
+		const List<ProjectItem*>& items = prj->getItems();
 		BuildTreeViewNodes(items);
 	}
 
 
 
-	void ResourcePane::BuildTreeViewNodes(TreeViewNode* parentNode, const FastList<ProjectItem*> items)
+	void ResourcePane::BuildTreeViewNodes(TreeViewNode* parentNode, const List<ProjectItem*> items)
 	{
 		for (int i=0;i<items.getCount();i++)
 		{
@@ -410,7 +410,7 @@ namespace APDesigner
 			}
 		}
 	}
-	void ResourcePane::BuildTreeViewNodes(const FastList<ProjectItem*> items)
+	void ResourcePane::BuildTreeViewNodes(const List<ProjectItem*> items)
 	{
 		BuildTreeViewNodes(0, items);
 	}

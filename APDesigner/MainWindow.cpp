@@ -449,7 +449,7 @@ namespace APDesigner
 			UpdateProjectEffect(m_project->getItems());
 		}
 	}
-	void MainWindow::UpdateProjectEffect(const FastList<ProjectItem*>& items)
+	void MainWindow::UpdateProjectEffect(const List<ProjectItem*>& items)
 	{
 		for (int i=0;i<items.getCount();i++)
 		{
@@ -543,7 +543,7 @@ namespace APDesigner
 		}
 	}
 
-	void MainWindow::RefreshMaterialList(const FastList<ProjectItem*>& items)
+	void MainWindow::RefreshMaterialList(const List<ProjectItem*>& items)
 	{
 		for (int i=0;i<items.getCount();i++)
 		{

@@ -64,7 +64,7 @@ namespace Apoc3D
 
 			bool Enumeration::m_hasMinimumSettings = false;
 			DeviceSettings Enumeration::m_minimumSettings;
-			FastList<AdapterInfo*> Enumeration::m_adapters;
+			List<AdapterInfo*> Enumeration::m_adapters;
 			bool Enumeration::m_hasEnumerated = false;
 
 			void Enumeration::Enumerate(IDirect3D9* d3d9)
@@ -90,7 +90,7 @@ namespace Apoc3D
 				D3DFORMAT allowedAdapterFormat[] =  { D3DFMT_X8R8G8B8, D3DFMT_X1R5G5B5, D3DFMT_R5G6B5, 
 					D3DFMT_A2R10G10B10 };
 
-				FastList<D3DFORMAT> adapterFormats;
+				List<D3DFORMAT> adapterFormats;
 
 				UINT count = d3d9->GetAdapterCount();
 
@@ -190,7 +190,7 @@ namespace Apoc3D
 				}
 			}
 
-			void Enumeration::EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, FastList<D3DFORMAT>& adapterFormats)
+			void Enumeration::EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, List<D3DFORMAT>& adapterFormats)
 			{
 				D3DDEVTYPE devTypes[] = { D3DDEVTYPE_HAL, D3DDEVTYPE_REF };
 
@@ -217,7 +217,7 @@ namespace Apoc3D
 			}
 
 			void Enumeration::EnumerateSettingsCombos(IDirect3D9* d3d9, AdapterInfo* adapterInfo, 
-				DeviceInfo* deviceInfo, FastList<D3DFORMAT>& adapterFormats)
+				DeviceInfo* deviceInfo, List<D3DFORMAT>& adapterFormats)
 			{
 				D3DFORMAT backBufferFormats[] = { D3DFMT_A8R8G8B8, D3DFMT_X8R8G8B8, D3DFMT_A2R10G10B10,
 					D3DFMT_R5G6B5, D3DFMT_A1R5G5B5, D3DFMT_X1R5G5B5 };
@@ -656,7 +656,7 @@ namespace Apoc3D
 					}
 				}
 
-				const FastList<D3DFORMAT>& dsfmts = combo->DepthStencilFormats;
+				const List<D3DFORMAT>& dsfmts = combo->DepthStencilFormats;
 				if(dsfmts.IndexOf(optimal.PresentParameters.AutoDepthStencilFormat) != -1)
 					ranking += 1.0f;
 
@@ -672,7 +672,7 @@ namespace Apoc3D
 					}
 				}
 
-				const FastList<uint32>& presentIntervals = combo->PresentIntervals;
+				const List<uint32>& presentIntervals = combo->PresentIntervals;
 				if(presentIntervals.IndexOf(optimal.PresentParameters.PresentationInterval) != -1)
 					ranking += 1.0f;
 
@@ -746,7 +746,7 @@ namespace Apoc3D
 					settings.PresentParameters.MultiSampleQuality = bestQuality;
 				}
 
-				FastList<int> rankings;
+				List<int> rankings;
 				int inputDepthBitDepth = GetDepthBits(input.PresentParameters.AutoDepthStencilFormat);
 				int inputStencilBitDepth = GetStencilBits(input.PresentParameters.AutoDepthStencilFormat);
 
@@ -818,7 +818,7 @@ namespace Apoc3D
 					settings.PresentParameters.FullScreen_RefreshRateInHz = bestDisplayMode.RefreshRate;
 				}
 
-				const FastList<uint32> prIntrvls = combo->PresentIntervals;
+				const List<uint32> prIntrvls = combo->PresentIntervals;
 				if(prIntrvls.IndexOf(input.PresentParameters.PresentationInterval) != -1)
 					settings.PresentParameters.PresentationInterval = input.PresentParameters.PresentationInterval;
 				else

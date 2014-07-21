@@ -100,7 +100,7 @@ namespace Apoc3D
 
 				D3D9Capabilities* m_caps;
 
-				FastList<VolatileResource*> m_volatileResources;
+				List<VolatileResource*> m_volatileResources;
 
 				D3D9InstancingData* m_instancingData;
 

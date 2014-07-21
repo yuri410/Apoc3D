@@ -48,7 +48,7 @@ namespace Apoc3D
 			public:
 				D3DVertexDeclaration* getD3DDecl() const { return m_vtxDecl; }
 
-				D3D9VertexDeclaration(D3D9RenderDevice* device, const FastList<VertexElement>& elements);
+				D3D9VertexDeclaration(D3D9RenderDevice* device, const List<VertexElement>& elements);
 				D3D9VertexDeclaration(D3D9RenderDevice* device, D3DVertexDeclaration* vtxdecl);
 
 				~D3D9VertexDeclaration();

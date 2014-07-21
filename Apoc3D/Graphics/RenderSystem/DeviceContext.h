@@ -128,7 +128,7 @@ namespace Apoc3D
 				}
 
 			private:
-				FastList<RenderView*> m_renderPorts;
+				List<RenderView*> m_renderPorts;
 				bool m_supportsRenderControl;
 			};
 		}

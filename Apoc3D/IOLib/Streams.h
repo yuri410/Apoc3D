@@ -319,7 +319,7 @@ namespace Apoc3D
 			RTTI_UpcastableDerived(Stream);
 		private:
 			int64 m_length;
-			FastList<char> m_data;
+			List<char> m_data;
 			int64 m_position;
 		};
 

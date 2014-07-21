@@ -133,8 +133,8 @@ namespace APDesigner
 		*/
 		GraphNode* IntersectNodes(int mx, int my);
 
-		const FastList<GraphNode*>& getNodes() const { return m_nodes; }
-		const FastList<GraphNode*>& getVisibleNodes() const { return m_currentVisisbleNodes; }
+		const List<GraphNode*>& getNodes() const { return m_nodes; }
+		const List<GraphNode*>& getVisibleNodes() const { return m_currentVisisbleNodes; }
 
 		bool getIsProcessingLayout() const { return m_isProcessingLayout; }
 
@@ -168,11 +168,11 @@ namespace APDesigner
 
 		static void SetUpNodeColor(bool isolated, float scale, float ascale = 1);
 	private:
-		FastList<GraphNode*> m_nodes;
+		List<GraphNode*> m_nodes;
 		
 		/** A list of visible nodes generated each frame 
 		*/
-		FastList<GraphNode*> m_currentVisisbleNodes;
+		List<GraphNode*> m_currentVisisbleNodes;
 
 		GraphNode* m_highlightingNode;
 

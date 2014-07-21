@@ -36,7 +36,7 @@ namespace UnitTestVC
 
 		TEST_METHOD(ListSort)
 		{
-			FastList<int> subject(100);
+			List<int> subject(100);
 			int counter[1000];
 			memset(counter, 0, sizeof(counter));
 
@@ -73,7 +73,7 @@ namespace UnitTestVC
 
 		TEST_METHOD(ListSort2)
 		{
-			FastList<int> subject(100);
+			List<int> subject(100);
 			int counter[1000];
 			memset(counter, 0, sizeof(counter));
 

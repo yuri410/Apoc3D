@@ -111,7 +111,7 @@ namespace Apoc3D
 				D3DDevice* m_rawDevice;
 				SpriteSettings m_currentSettings;
 
-				FastList<DrawEntry> m_deferredDraws;
+				List<DrawEntry> m_deferredDraws;
 
 			};
 		}

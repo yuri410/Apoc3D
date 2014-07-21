@@ -20,11 +20,11 @@ namespace Apoc3D
 			/**
 			 *  adjacent vertices
 			 */
-			FastList<Vertex*> m_neighbour;
+			List<Vertex*> m_neighbour;
 			/**
 			 *  adjacent triangles
 			 */
-			FastList<Triangle*> m_face;
+			List<Triangle*> m_face;
 			/**
 			 *  cached cost of collapsing edge
 			 */
@@ -67,24 +67,24 @@ namespace Apoc3D
 		
 		struct WorkingData
 		{
-			FastList<Triangle*> m_triangles;
-			FastList<Vertex*> m_vertices;
+			List<Triangle*> m_triangles;
+			List<Vertex*> m_vertices;
 
-			WorkingData(const FastList<Vector3>& vert, const FastList<MeshFace>& tri);
+			WorkingData(const List<Vector3>& vert, const List<MeshFace>& tri);
 			~WorkingData();
 
-			void AddVertices(const FastList<Vector3>& vert);
-			void AddFaces(const FastList<MeshFace>& tri);
+			void AddVertices(const List<Vector3>& vert);
+			void AddFaces(const List<MeshFace>& tri);
 
 			Vertex* MinimumCostEdge();
 			void ComputeAllEdgeCollapseCosts();
 			void Collapse(Vertex* u, Vertex* v);
 
-			void ProgressiveMesh(FastList<int>& map, FastList<int>& permutation);
+			void ProgressiveMesh(List<int>& map, List<int>& permutation);
 		};
 
-		void MeshSimplifier::ProgressiveMesh(const FastList<Vector3>& vert, const FastList<MeshFace>& tri, 
-			FastList<int>& map, FastList<int>& permutation)
+		void MeshSimplifier::ProgressiveMesh(const List<Vector3>& vert, const List<MeshFace>& tri, 
+			List<int>& map, List<int>& permutation)
 		{
 			WorkingData wd(vert, tri);
 
@@ -223,7 +223,7 @@ namespace Apoc3D
 		float ComputeEdgeCollapseCost(Vertex* u, Vertex* v);
 		void ComputeEdgeCostAtVertex(Vertex* v);
 
-		WorkingData::WorkingData(const FastList<Vector3>& vert, const FastList<MeshFace>& tri)
+		WorkingData::WorkingData(const List<Vector3>& vert, const List<MeshFace>& tri)
 		{
 			m_vertices.ReserveDiscard(vert.getCount());
 			m_triangles.ReserveDiscard(tri.getCount());
@@ -246,14 +246,14 @@ namespace Apoc3D
 			m_vertices.Clear();
 		}
 
-		void WorkingData::AddVertices(const FastList<Vector3>& vert)
+		void WorkingData::AddVertices(const List<Vector3>& vert)
 		{
 			for (int i=0;i<vert.getCount();i++)
 			{
 				m_vertices.Add(new Vertex(vert[i], i));
 			}
 		}
-		void WorkingData::AddFaces(const FastList<MeshFace>& tri)
+		void WorkingData::AddFaces(const List<MeshFace>& tri)
 		{
 			for (int i = 0; i < tri.getCount(); i++)
 			{
@@ -312,7 +312,7 @@ namespace Apoc3D
 			}
 
 			int i;
-			FastList<Vertex*> tmp;
+			List<Vertex*> tmp;
 			// make tmp a list of all the neighbors of u
 			for (i = 0; i < u->m_neighbour.getCount(); i++)
 			{
@@ -342,7 +342,7 @@ namespace Apoc3D
 			}
 		}
 
-		void WorkingData::ProgressiveMesh(FastList<int>& map, FastList<int>& permutation)
+		void WorkingData::ProgressiveMesh(List<int>& map, List<int>& permutation)
 		{
 			ComputeAllEdgeCollapseCosts(); // cache all edge collapse costs
 
@@ -395,7 +395,7 @@ namespace Apoc3D
 			float curvature = 0;
 
 			// find the "sides" triangles that are on the edge uv
-			FastList<Triangle*> sides;
+			List<Triangle*> sides;
 			for (i = 0; i < u->m_face.getCount(); i++)
 			{
 				if (u->m_face[i]->HasVertex(v))

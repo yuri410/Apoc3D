@@ -83,7 +83,7 @@ namespace Apoc3D
 			PakArchive(const FileLocation& fl);
 			~PakArchive();
 
-			void FillEntries(FastList<PakArchiveEntry>& entries);
+			void FillEntries(List<PakArchiveEntry>& entries);
 
 			virtual int getFileCount() const;
 			virtual Stream* GetEntryStream(const String& file);

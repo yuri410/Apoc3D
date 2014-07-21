@@ -127,14 +127,14 @@ namespace Apoc3D
 			Texture* getIcon() const { return m_icon; }
 			void setIcon(Texture* texture) { m_icon = texture; }
 
-			FastList<TreeViewNode*>& getNodes() { return m_subNode; }
+			List<TreeViewNode*>& getNodes() { return m_subNode; }
 
 			void* UserData;
 
 		private:
 			String m_text;
 			Texture* m_icon;
-			FastList<TreeViewNode*> m_subNode;
+			List<TreeViewNode*> m_subNode;
 
 			bool m_expanded;
 		};
@@ -157,7 +157,7 @@ namespace Apoc3D
 			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
 			void setUseHorizontalScrollbar(bool v) { m_horizontalScrollbar = v; }
 
-			FastList<TreeViewNode*>& getNodes() { return m_nodes; }
+			List<TreeViewNode*>& getNodes() { return m_nodes; }
 
 			TreeViewNode* getSelectedNode() const { return m_selectedNode; }
 
@@ -166,9 +166,9 @@ namespace Apoc3D
 
 			RTTI_UpcastableDerived(Control);
 		private:
-			void NukeTreeViewNodes(FastList<TreeViewNode*>& nodes);
+			void NukeTreeViewNodes(List<TreeViewNode*>& nodes);
 
-			FastList<TreeViewNode*> m_nodes;
+			List<TreeViewNode*> m_nodes;
 
 			int m_visisbleItems;
 
@@ -196,12 +196,12 @@ namespace Apoc3D
 			void RenderSelectionBox(Sprite* sprite, TreeViewNode* node, const Apoc3D::Math::Rectangle& absoluteArea);
 			void DrawBackground(Sprite* sprite);
 			void DrawScrollbar(Sprite* sprite);
-			void DrawNodes(Sprite* sprite, const FastList<TreeViewNode*>& nodes, int depth, int& counter, int maxCount);
+			void DrawNodes(Sprite* sprite, const List<TreeViewNode*>& nodes, int depth, int& counter, int maxCount);
 
 			int GetExpandedNodeCount() const { return GetExpandedNodeCount(m_nodes); }
-			int GetExpandedNodeCount(const FastList<TreeViewNode*>& node) const;
-			int GetExpandedNodeMaxRight(const FastList<TreeViewNode*>& node) const;
-			int GetAllVisibleNodeCount(const FastList<TreeViewNode*>& node) const;
+			int GetExpandedNodeCount(const List<TreeViewNode*>& node) const;
+			int GetExpandedNodeMaxRight(const List<TreeViewNode*>& node) const;
+			int GetAllVisibleNodeCount(const List<TreeViewNode*>& node) const;
 			int GetAllVisibleNodeCount() const;
 			int MeasureExpandedNodeWidth() const;
 			int MeasureExpandedModeHeight() const;

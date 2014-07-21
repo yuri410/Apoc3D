@@ -51,7 +51,7 @@ namespace Apoc3D
 		{
 		public:
 			List<ScenePassData> PassData;
-			FastList<SceneVariable*> GlobalVars;
+			List<SceneVariable*> GlobalVars;
 
 			SceneRenderScriptParser(RenderDevice* dev);
 

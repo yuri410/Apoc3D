@@ -53,7 +53,7 @@ namespace APBuild
 		}
 
 		ModelData* result = new ModelData();
-		FastList<VertexElement> elements;
+		List<VertexElement> elements;
 		
 		Utils::meshGenerateVertexElements(d3dmesh->GetFVF(), elements);
 
@@ -72,8 +72,8 @@ namespace APBuild
 		for (uint i=0;i<partCount;i++)
 		{
 			HashMap<int,int> vertexMapping((int)totalVertex);
-			FastList<const char*> verticePointers(totalVertex);
-			FastList<MeshFace> faces(totalFaces);
+			List<const char*> verticePointers(totalVertex);
+			List<MeshFace> faces(totalFaces);
 
 			for (uint j=0;j<totalFaces;j++)
 			{

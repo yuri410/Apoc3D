@@ -209,7 +209,7 @@ int comparerTestInt(const int& a, const int& b)
 }
 void TestListSort2()
 {
-	FastList<int> subject(100);
+	List<int> subject(100);
 	int counter[1000];
 	memset(counter, 0, sizeof(counter));
 

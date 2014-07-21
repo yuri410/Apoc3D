@@ -74,7 +74,7 @@ namespace Apoc3D
 			Form* m_form;
 			Label* m_content;
 
-			Apoc3D::Collections::FastList<Button*> m_controlButtons;
+			Apoc3D::Collections::List<Button*> m_controlButtons;
 			Apoc3D::Collections::HashMap<void*, DialogResult> m_buttonMapping;
 
 			DialogResult m_result;

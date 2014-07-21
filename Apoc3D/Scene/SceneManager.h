@@ -75,9 +75,9 @@ namespace Apoc3D
 
 			virtual SceneObject* FindObject(const Ray& ray, IObjectFilter* filter) = 0;
 
-			const FastList<SceneObject*>& getAllObjects() const { return m_objects; }
+			const List<SceneObject*>& getAllObjects() const { return m_objects; }
 		private:
-			FastList<SceneObject*> m_objects;
+			List<SceneObject*> m_objects;
 		protected:
 
 		};

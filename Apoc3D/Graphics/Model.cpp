@@ -59,7 +59,7 @@ namespace Apoc3D
 				load();
 			}
 		}
-		ModelSharedData::ModelSharedData(RenderDevice* device, const FastList<Mesh*>& entities)
+		ModelSharedData::ModelSharedData(RenderDevice* device, const List<Mesh*>& entities)
 			: Resource(), m_resourceLocation(0), m_renderDevice(device), m_entities(entities)
 		{
 
@@ -202,7 +202,7 @@ namespace Apoc3D
 
 			ResourceHandle<ModelSharedData>& data = *m_data;
 
-			const FastList<Mesh*>& entities = data->getEntities();
+			const List<Mesh*>& entities = data->getEntities();
 			if (!m_isOpBufferBuilt)
 			{
 				BuildROPBuffer();
@@ -269,7 +269,7 @@ namespace Apoc3D
 
 			ResourceHandle<ModelSharedData>& data = *m_data;
 
-			const FastList<Mesh*>& entities = data->getEntities();
+			const List<Mesh*>& entities = data->getEntities();
 
 			RenderOperationBuffer* opBuf = entities[index]->GetRenderOperation(0);
 			m_opBuffer.Clear();
@@ -314,7 +314,7 @@ namespace Apoc3D
 		{
 			assert(!m_data->getWeakRef()->isManaged() || !m_data->getWeakRef()->getManager()->usesAsync());
 
-			const FastList<Mesh*>& entities = m_data->getWeakRef()->getEntities();
+			const List<Mesh*>& entities = m_data->getWeakRef()->getEntities();
 
 			RenderOperationBuffer* opBuf = entities[index]->GetRenderOperation(0);
 			m_opBuffer.Clear();
@@ -326,7 +326,7 @@ namespace Apoc3D
 		{
 			assert(!m_data->getWeakRef()->isManaged() || !m_data->getWeakRef()->getManager()->usesAsync());
 
-			const FastList<Mesh*>& entities = m_data->getWeakRef()->getEntities();
+			const List<Mesh*>& entities = m_data->getWeakRef()->getEntities();
 
 			return entities[index]->GetRenderOperation(0);
 		}
@@ -339,7 +339,7 @@ namespace Apoc3D
 
 			ResourceHandle<ModelSharedData>& data = *m_data;
 
-			const FastList<Mesh*>& entities = data->getEntities();
+			const List<Mesh*>& entities = data->getEntities();
 
 			RenderOperationBuffer** entOps = new RenderOperationBuffer*[entities.getCount()];
 

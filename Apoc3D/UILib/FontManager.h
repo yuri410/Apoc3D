@@ -238,13 +238,13 @@ namespace Apoc3D
 			int m_edgeCount;
 			ResourceLocation* m_resource;
 
-			FastMap<int32, Character> m_charTable;
+			HashMap<int32, Character> m_charTable;
 			Glyph* m_glyphList;
 
-			FastMap<int32, CustomGlyph> m_customCharacters;
+			HashMap<int32, CustomGlyph> m_customCharacters;
 
 			//list<Glyph*> m_activeGlyph;
-			//FastList<Bucket*> m_buckets;
+			//List<Bucket*> m_buckets;
 
 			/** 
 			 *  The entire texture area is divided into 2d plane of buckets(m_edgeCount*m_edgeCount), 

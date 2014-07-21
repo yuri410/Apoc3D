@@ -40,7 +40,7 @@ namespace Apoc3D
 		class APAPI PatchData
 		{
 		private:
-			Apoc3D::Collections::FastList<Vector3> Points;
+			Apoc3D::Collections::List<Vector3> Points;
 		};
 	}
 }

@@ -131,7 +131,7 @@ namespace Apoc3D
 				if (!Enumeration::hasEnumerated())
 					Enumeration::Enumerate(m_d3d9);
 
-				const FastList<AdapterInfo*>& adpInfos = Enumeration::getAdapters();
+				const List<AdapterInfo*>& adpInfos = Enumeration::getAdapters();
 
 				ExistTable<RenderDisplayMode, RenderDisplayModeEqualityComparer> modeTabls(adpInfos.getCount()*2);
 				for (int i=0;i<adpInfos.getCount();i++)

@@ -45,7 +45,7 @@ namespace Apoc3D
 			private:
 				DeviceSettings* m_currentSetting;
 
-				FastList<D3D9RenderView*> m_views;
+				List<D3D9RenderView*> m_views;
 				IDirect3D9* m_direct3D9;
 				D3DDevice* m_device;
 				D3D9RenderDevice* m_apiDevice;

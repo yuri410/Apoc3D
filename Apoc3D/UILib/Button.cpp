@@ -392,7 +392,7 @@ namespace Apoc3D
 		/************************************************************************/
 
 
-		ButtonGroup::ButtonGroup(const FastList<Button*> buttons)
+		ButtonGroup::ButtonGroup(const List<Button*> buttons)
 			: m_selectedIndex(0)
 		{
 			for (int i=0;i<buttons.getCount();i++)
@@ -401,7 +401,7 @@ namespace Apoc3D
 			}
 		}
 
-		ButtonGroup::ButtonGroup(const FastList<Button*> buttons, int selected)
+		ButtonGroup::ButtonGroup(const List<Button*> buttons, int selected)
 			: m_selectedIndex(selected)
 		{
 			for (int i=0;i<buttons.getCount();i++)

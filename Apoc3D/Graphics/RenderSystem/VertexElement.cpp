@@ -31,7 +31,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			VertexElement* VertexElement::FindElementBySemantic(const FastList<VertexElement>& elem, VertexElementUsage semantic)
+			VertexElement* VertexElement::FindElementBySemantic(const List<VertexElement>& elem, VertexElementUsage semantic)
 			{
 				for (int i=0;i<elem.getCount();i++)
 				{

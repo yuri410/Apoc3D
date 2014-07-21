@@ -69,7 +69,7 @@ namespace Apoc3D
 			ObjectFactory* fac = device->getObjectFactory();
 
 
-			FastList<VertexElement> elements;
+			List<VertexElement> elements;
 			elements.Add(VertexElement(0, VEF_Vector3, VEU_Position));
 			m_quadVtxDecl = fac->CreateVertexDeclaration(elements);
 
@@ -94,7 +94,7 @@ namespace Apoc3D
 		}
 		
 		
-		void ScenePass::Invoke(const FastList<Camera*>& cameras, SceneManager* sceMgr, BatchData* batchData)
+		void ScenePass::Invoke(const List<Camera*>& cameras, SceneManager* sceMgr, BatchData* batchData)
 		{
 			//uint64 selectorMask = 1<<m_selectorID;
 			if (m_renderer->GlobalCameraOverride != -1)

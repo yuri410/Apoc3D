@@ -30,20 +30,14 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			VertexDeclaration::VertexDeclaration(const FastList<VertexElement> &e)
+			VertexDeclaration::VertexDeclaration(const List<VertexElement> &e)
 			{
 				for (int i=0;i<e.getCount();i++)
 				{
 					m_elements.Add(e[i]);
 				}
 			}
-			VertexDeclaration::VertexDeclaration(const List<VertexElement> &e)
-			{
-				for (int32 i=0;i<e.getCount();i++)
-				{
-					m_elements.Add(e[i]);
-				}
-			}
+			
 			bool VertexDeclaration::FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result) const
 			{
 				for (int32 i = 0; i < m_elements.getCount(); i++)

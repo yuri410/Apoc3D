@@ -88,7 +88,7 @@ namespace APDesigner
 
 		PictureBox* m_modelViewer;
 
-		FastList<Label*> m_labels;
+		List<Label*> m_labels;
 
 		Button* m_applyMtrl;
 
@@ -104,7 +104,7 @@ namespace APDesigner
 		PictureBox* m_pbPassFlag;
 		Button* m_btnPassFlag;
 
-		FastList<Label*> m_mtrlPanelLabels;
+		List<Label*> m_mtrlPanelLabels;
 
 
 		TextBox* m_tbTex1;
@@ -151,8 +151,8 @@ namespace APDesigner
 	private:
 
 		Form* m_form;
-		FastList<Label*> m_lblTable;
-		FastList<TextBox*> m_tbTable;
+		List<Label*> m_lblTable;
+		List<TextBox*> m_tbTable;
 
 		Material* m_mtrl;
 		void Form_Closed(Control* ctrl);

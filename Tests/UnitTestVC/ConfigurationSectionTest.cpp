@@ -73,7 +73,7 @@ namespace UnitTestVC
 			sect->AddInts(L"C", vals, 3);
 			sect->AddAttributeInts(L"E", vals, 3);
 
-			FastList<int32> buf;
+			List<int32> buf;
 			Assert::IsFalse(sect->TryGetInts(L"D", buf));
 
 			buf.Clear();
@@ -123,7 +123,7 @@ namespace UnitTestVC
 			sect->AddVector3s(L"C", vals, 3);
 			sect->AddAttributeVector3s(L"E", vals, 3);
 
-			FastList<Vector3> buf;
+			List<Vector3> buf;
 			Assert::IsFalse(sect->TryGetVector3s(L"D", buf));
 
 			buf.Clear();
@@ -168,7 +168,7 @@ namespace UnitTestVC
 			sect->AddPoints(L"C", vals, 3);
 			sect->AddAttributePoints(L"E", vals, 3);
 
-			FastList<Point> buf;
+			List<Point> buf;
 			Assert::IsFalse(sect->TryGetPoints(L"D", buf));
 
 			buf.Clear();

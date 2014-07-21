@@ -161,7 +161,7 @@ namespace dip
 		CheckBox* m_dmInitCluster[8];
 		Texture* m_dmOriginals[8];
 		Texture* m_dmSpecturm[8];
-		FastList<PictureBox*> m_resultDisplays;
+		List<PictureBox*> m_resultDisplays;
 		PictureBox* m_dmPicBoxSpecturm[9];
 		Form* m_frmDM;
 

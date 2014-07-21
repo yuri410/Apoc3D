@@ -62,7 +62,7 @@ namespace Apoc3D
 				m_mtrl = mtrl;
 			}
 			void setTransform(const Matrix& trans) { m_transfrom = trans; }
-			Patch(RenderDevice* device, const void* vertexData, int vertexCount, const FastList<VertexElement>& vtxElems);
+			Patch(RenderDevice* device, const void* vertexData, int vertexCount, const List<VertexElement>& vtxElems);
 			~Patch();
 
 			virtual RenderOperationBuffer* GetRenderOperation(int lod);

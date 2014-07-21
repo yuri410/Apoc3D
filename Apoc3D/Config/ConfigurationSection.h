@@ -129,12 +129,12 @@ namespace Apoc3D
 			bool TryGetAttribute##typeName(const String& key, type& result) const;
 
 			CONFIG_SECT_SPLITER_DECL(List<String>, Strings);
-			CONFIG_SECT_SPLITER_DECL(FastList<float>, Singles);
-			CONFIG_SECT_SPLITER_DECL(FastList<float>, Percentages);
-			CONFIG_SECT_SPLITER_DECL(FastList<int32>, Ints);
-			CONFIG_SECT_SPLITER_DECL(FastList<uint32>, UInts);
-			CONFIG_SECT_SPLITER_DECL(FastList<Vector3>, Vector3s);
-			CONFIG_SECT_SPLITER_DECL(FastList<Point>, Points);
+			CONFIG_SECT_SPLITER_DECL(List<float>, Singles);
+			CONFIG_SECT_SPLITER_DECL(List<float>, Percentages);
+			CONFIG_SECT_SPLITER_DECL(List<int32>, Ints);
+			CONFIG_SECT_SPLITER_DECL(List<uint32>, UInts);
+			CONFIG_SECT_SPLITER_DECL(List<Vector3>, Vector3s);
+			CONFIG_SECT_SPLITER_DECL(List<Point>, Points);
 
 #undef CONFIG_SECT_SPLITER_DECL
 
@@ -191,10 +191,10 @@ namespace Apoc3D
 			void AddAttribute##typeName(const String& name, const listType<type>& v)			{ AddAttribute##typeName(name, &v[0], v.getCount()); } 
 
 			CONFIG_SECT_COMBINER_DECL(String, Strings, List);
-			CONFIG_SECT_COMBINER_DECL(float, Singles, FastList);
-			CONFIG_SECT_COMBINER_DECL(float, Percentages, FastList);
-			CONFIG_SECT_COMBINER_DECL(int32, Ints, FastList);
-			CONFIG_SECT_COMBINER_DECL(uint32, UInts, FastList);
+			CONFIG_SECT_COMBINER_DECL(float, Singles, List);
+			CONFIG_SECT_COMBINER_DECL(float, Percentages, List);
+			CONFIG_SECT_COMBINER_DECL(int32, Ints, List);
+			CONFIG_SECT_COMBINER_DECL(uint32, UInts, List);
 			CONFIG_SECT_COMBINER_DECL_NOLIST(Vector3, Vector3s);
 			CONFIG_SECT_COMBINER_DECL_NOLIST(Point, Points);
 
@@ -220,10 +220,10 @@ namespace Apoc3D
 			void SetVector3s(const Vector3* v, int count);
 
 			void SetStrings(const List<String>& v)			{ SetStrings(&v[0], v.getCount()); }
-			void SetSingles(const FastList<float>& v)		{ SetSingles(&v[0],  v.getCount()); }
-			void SetPercentages(const FastList<float>& v)	{ SetPercentages(&v[0],  v.getCount()); }
-			void SetInts(const FastList<int32>& v)			{ SetInts(&v[0],  v.getCount()); }
-			void SetUInts(const FastList<uint32>& v)		{ SetUInts(&v[0],  v.getCount()); }
+			void SetSingles(const List<float>& v)		{ SetSingles(&v[0],  v.getCount()); }
+			void SetPercentages(const List<float>& v)	{ SetPercentages(&v[0],  v.getCount()); }
+			void SetInts(const List<int32>& v)			{ SetInts(&v[0],  v.getCount()); }
+			void SetUInts(const List<uint32>& v)		{ SetUInts(&v[0],  v.getCount()); }
 
 
 			void SetBool(const String& name, bool value);

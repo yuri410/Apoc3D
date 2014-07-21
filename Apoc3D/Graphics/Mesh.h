@@ -74,10 +74,10 @@ namespace Apoc3D
 
 
 			VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
-			const FastList<IndexBuffer*>& getIndexBuffers() const { return m_indexBuffers; }
+			const List<IndexBuffer*>& getIndexBuffers() const { return m_indexBuffers; }
 			int32 getIndexCount() const { return m_primitiveCount * 3; }
 
-			const FastList<VertexElement>& getVertexElement() const { return m_vertexElements; }
+			const List<VertexElement>& getVertexElement() const { return m_vertexElements; }
 			const int32* getPartPrimitiveCount() const { return m_partPrimitiveCount; }
 			const int32* getPartVertexCount() const { return m_partVertexCount; } 
 			const int32 getPartCount() const { return m_indexBuffers.getCount(); }
@@ -111,7 +111,7 @@ namespace Apoc3D
 			RenderOperationBuffer m_bufferedOp;
 			MeshMaterialSet<Material*> m_materials;
 			VertexBuffer* m_vertexBuffer;
-			FastList<IndexBuffer*> m_indexBuffers;
+			List<IndexBuffer*> m_indexBuffers;
 
 			/** An array indicating the primitive 
 			 *  count for each sub mesh (or sub part, cut by materials; see the Mesh class)
@@ -133,7 +133,7 @@ namespace Apoc3D
 
 			BoundingSphere m_boundingSphere;
 
-			FastList<VertexElement> m_vertexElements;
+			List<VertexElement> m_vertexElements;
 
 		};
 	}

@@ -71,7 +71,7 @@ namespace Apoc3D
 		class APAPI CheckboxGroup : public Control
 		{
 		public:
-			CheckboxGroup(const FastList<CheckBox*>& checkbox);
+			CheckboxGroup(const List<CheckBox*>& checkbox);
 			virtual ~CheckboxGroup();
 
 			virtual void Initialize(RenderDevice* device);
@@ -86,7 +86,7 @@ namespace Apoc3D
 
 			RTTI_UpcastableDerived(Control);
 		private:
-			FastList<CheckBox*> m_checkbox;
+			List<CheckBox*> m_checkbox;
 			int m_selectedIndex;
 
 			void Checkbox_Press(Control* ctrl);

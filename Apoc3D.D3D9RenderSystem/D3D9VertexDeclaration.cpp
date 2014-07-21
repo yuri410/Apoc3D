@@ -62,7 +62,7 @@ namespace Apoc3D
 				delete[] elements;
 				return result;
 			}
-			D3D9VertexDeclaration::D3D9VertexDeclaration(D3D9RenderDevice* device, const FastList<VertexElement>& elements)
+			D3D9VertexDeclaration::D3D9VertexDeclaration(D3D9RenderDevice* device, const List<VertexElement>& elements)
 				: VertexDeclaration(elements), m_device(device)
 			{
 

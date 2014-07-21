@@ -105,8 +105,8 @@ namespace APBuild
 		{
 			for (int i=0;i<data->Entities.getCount();i++)
 			{
-				FastList<VertexElement> newElements; // to new data buffer
-				FastList<VertexElement> extractingElements; // from source
+				List<VertexElement> newElements; // to new data buffer
+				List<VertexElement> extractingElements; // from source
 
 				MeshData* md = data->Entities[i];
 				

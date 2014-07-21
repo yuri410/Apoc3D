@@ -573,7 +573,7 @@ namespace APBuild
 		//mesh->Name = toWString( pNode->GetName() );
 		//mesh->VertexCount = nVertexCount;
 		
-		FastList<MaterialData*> meshMtrls;
+		List<MaterialData*> meshMtrls;
 
 		FbxVector4* pControlPoints = pFBXMesh->GetControlPoints();
 		int nLayerCount = pFBXMesh->GetLayerCount();
@@ -1010,7 +1010,7 @@ namespace APBuild
 
 			uint frameIndex = 0;
 			bool finished = false;
-			FastList<ModelKeyframe> frames;
+			List<ModelKeyframe> frames;
 
 			while (!finished)
 			{
@@ -1241,7 +1241,7 @@ namespace APBuild
 			{
 				FIMesh* mesh = *i.getCurrentValue();
 				const std::vector<FIMeshPart*>& parts = mesh->getParts();
-				FastList<MaterialData*> materialData;
+				List<MaterialData*> materialData;
 				// materials
 				{
 					bool* useTable = new bool[fbx.m_materials.getCount()];
@@ -1293,7 +1293,7 @@ namespace APBuild
 				// duplicated vertex removal using hashtable
 				// build face data at the same time
 				HashMap<FIVertex, int, FIVertexEqualityComparer> vtxHashTable(totalVertexCount);
-				FastList<FIVertex> vertexList(totalVertexCount);
+				List<FIVertex> vertexList(totalVertexCount);
 				meshData->Faces.ResizeDiscard(totalVertexCount/3+2);
 
 				// vertex hashing & add to list
@@ -1442,7 +1442,7 @@ namespace APBuild
 				
 				meshData->VertexCount = vertexList.getCount();
 
-				FastList<VertexElement>& vtxElem = meshData->VertexElements;
+				List<VertexElement>& vtxElem = meshData->VertexElements;
 				// fill vertex element
 				vtxElem.Add(VertexElement(0, VEF_Vector3, VEU_Position, 0));
 				

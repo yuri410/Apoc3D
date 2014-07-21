@@ -110,21 +110,21 @@ namespace Apoc3DEx
 			HashMap<int, AStarNode3*> m_passedTable;
 
 
-			FastList<VolumePathFinderResultPoint> m_result;
+			List<VolumePathFinderResultPoint> m_result;
 
 			static int stateEnum[8][2];
 			static float stateEnumCost[];
 
 			bool ExpandNode(int nx, int ny, int nz, int tx, int ty, int tz, 
-				float cost, AStarNode3* curPos, AStarNode3*& finalNode, FastList<AStarNode3*>& enQueueBuffer);
-			void QuickSort(FastList<AStarNode3*>& list, int l, int r);
+				float cost, AStarNode3* curPos, AStarNode3*& finalNode, List<AStarNode3*>& enQueueBuffer);
+			void QuickSort(List<AStarNode3*>& list, int l, int r);
 		};
 
 		class APEXAPI VolumePathFinderField
 		{
 		public:
 			virtual bool Passable(int x, int y, int z) = 0;;
-			virtual const FastList<PathFinderLevelPortal>& GetPortals(int x, int y, int z) = 0;
+			virtual const List<PathFinderLevelPortal>& GetPortals(int x, int y, int z) = 0;
 			virtual bool IsInBound(int x, int y, int z) = 0;
 		};
 
@@ -134,7 +134,7 @@ namespace Apoc3DEx
 		{
 		public:
 
-			VolumePathFinderResult(const FastList<VolumePathFinderResultPoint>& path, bool rcpf)
+			VolumePathFinderResult(const List<VolumePathFinderResultPoint>& path, bool rcpf)
 				: m_path(path), m_requiresContinuePathFinding(rcpf)
 			{
 			}
@@ -148,7 +148,7 @@ namespace Apoc3DEx
 			bool RequiresContinePathFinding() const { return m_requiresContinuePathFinding; }
 		private:
 			bool m_requiresContinuePathFinding;
-			FastList<VolumePathFinderResultPoint> m_path;
+			List<VolumePathFinderResultPoint> m_path;
 		};
 
 		class APEXAPI AStarNode3

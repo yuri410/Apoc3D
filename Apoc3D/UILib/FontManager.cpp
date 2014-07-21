@@ -269,7 +269,7 @@ namespace Apoc3D
 
 			if (!hasMetrics)
 			{
-				for (FastMap<int32, Character>::Enumerator i=m_charTable.GetEnumerator();i.MoveNext();)
+				for (auto i = m_charTable.GetEnumerator();i.MoveNext();)
 				{
 					Character* ch = i.getCurrentValue();
 					Glyph& g = m_glyphList[ch->GlyphIndex];

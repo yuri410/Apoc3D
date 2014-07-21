@@ -64,7 +64,7 @@ namespace APBuild
 	};
 	struct FontBuildConfig
 	{
-		FastList<CharRange> Ranges;
+		List<CharRange> Ranges;
 		String SourceFile;
 		float Size;
 		bool AntiAlias;
@@ -75,7 +75,7 @@ namespace APBuild
 	};
 	struct FontMapBuildConfig
 	{
-		FastList<CharRange> Ranges;
+		List<CharRange> Ranges;
 		String SourceFile;
 		float Size;
 		bool AntiAlias;
@@ -157,7 +157,7 @@ namespace APBuild
 		MeshBuildMethod Method;
 
 		bool UseVertexFormatConversion;
-		FastList<VertexElement> VertexElements;
+		List<VertexElement> VertexElements;
 
 		bool CollapseMeshs;
 

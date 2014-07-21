@@ -398,7 +398,7 @@ namespace APBuild
 		class FISkeleton
 		{
 		private:
-			FastList<FISkeletonBone*> m_SkeletonBones;
+			List<FISkeletonBone*> m_SkeletonBones;
 
 		public:
 			FISkeleton()
@@ -446,7 +446,7 @@ namespace APBuild
 			{
 				return m_SkeletonBones[nIndex];
 			}
-			//const FastMap<string, SkeletonBone*>& GetSkeletonBones() const { return m_SkeletonBones; }
+			//const HashMap<string, SkeletonBone*>& GetSkeletonBones() const { return m_SkeletonBones; }
 			//Matrix* GetSkinTransforms() { return m_SkinTransforms; }
 			int GetBoneCount() const { return m_SkeletonBones.getCount(); }
 
@@ -476,7 +476,7 @@ namespace APBuild
 					
 					uint frameIndex = 0;
 					bool finished = false;
-					FastList<ModelKeyframe> frames;
+					List<ModelKeyframe> frames;
 					
 					while (!finished)
 					{
@@ -551,8 +551,8 @@ namespace APBuild
 		/** One to one mapping to m_materials. 
 			Used to find corresponding MaterialData from KFbxSurfaceMaterial or back.
 		*/
-		FastList<FbxSurfaceMaterial*> m_FBXMaterials;
-		FastList<MaterialData*> m_materials;
+		List<FbxSurfaceMaterial*> m_FBXMaterials;
+		List<MaterialData*> m_materials;
 		
 
 		HashMap<std::string, FIMesh*> m_meshes;

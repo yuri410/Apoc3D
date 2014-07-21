@@ -1106,8 +1106,8 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 		
-		FastList<Form*> UIRoot::m_forms(10);
-		FastList<ControlContainer*> UIRoot::m_containers(10);
+		List<Form*> UIRoot::m_forms(10);
+		List<ControlContainer*> UIRoot::m_containers(10);
 		Form* UIRoot::m_activeForm = 0;
 		Form* UIRoot::m_topMostForm = 0;
 		RectangleF UIRoot::UIArea(0,0,1,1);

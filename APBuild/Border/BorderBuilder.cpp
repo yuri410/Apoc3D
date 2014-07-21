@@ -68,7 +68,7 @@ namespace APBuild
 
 		MeshBuild::ConvertVertexData(data, config);
 
-		FastList<BorderData> borderData;
+		List<BorderData> borderData;
 
 		for (int i=0;i<data->Entities.getCount();i++)
 		{
@@ -83,7 +83,7 @@ namespace APBuild
 			uint totalVertexCount = mesh->VertexCount;
 
 			HashMap<Vector3, int> vtxHashTable(totalVertexCount);
-			FastList<Vector3> newVertexList;
+			List<Vector3> newVertexList;
 
 			Utils::meshWeldVertices(vtxHashTable, mesh, newVertexList);
 
@@ -129,7 +129,7 @@ namespace APBuild
 
 			// ================ sorting edges =============
 
-			FastList<FaceEdge> border; // the border edges, unsorted
+			List<FaceEdge> border; // the border edges, unsorted
 			// dump out from the map
 			for (HashMap<FaceEdge, int, FaceEdgeEqualityComparer>::Enumerator e = edgeUsageCounter.GetEnumerator();e.MoveNext();)
 			{
@@ -167,9 +167,9 @@ namespace APBuild
 
 
 				// bfs pass
-				FastList<Vector3> flattenVertices;
+				List<Vector3> flattenVertices;
 
-				FastList<FaceEdge*> sortedEdge;
+				List<FaceEdge*> sortedEdge;
 				HashMap<void*, int> passedEdge;
 
 				Queue<FaceEdge*> bfsQueue;

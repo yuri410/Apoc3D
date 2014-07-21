@@ -32,7 +32,7 @@ namespace APBuild
 		String takeName = animSect->getAttribute(L"Name");
 		float frameRate = animSect->GetAttributeSingle(L"FrameRate");
 
-		FastList<MaterialAnimationKeyframe> keyFrames;
+		List<MaterialAnimationKeyframe> keyFrames;
 		float maxTime = 0;
 		for (ConfigurationSection::SubSectionEnumerator e = animSect->GetSubSectionEnumrator(); e.MoveNext();)
 		{

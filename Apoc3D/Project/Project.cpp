@@ -44,9 +44,9 @@ using namespace Apoc3D::Utility;
 
 namespace Apoc3D
 {
-	void RecursivePassFolderPacks(int& startNo, FastList<ConfigurationSection*>& result, FastList<ProjectItem*>& items);
-	void ProjectParse(Project* prj, FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect);
-	void ProjectSave(ConfigurationSection* parentSect, FastList<ProjectItem*>& items, bool savingBuild);
+	void RecursivePassFolderPacks(int& startNo, List<ConfigurationSection*>& result, List<ProjectItem*>& items);
+	void ProjectParse(Project* prj, List<ProjectItem*>& parentContainer, const ConfigurationSection* sect);
+	void ProjectSave(ConfigurationSection* parentSect, List<ProjectItem*>& items, bool savingBuild);
 
 	/************************************************************************/
 	/*  ProjectFolder                                                       */
@@ -822,7 +822,7 @@ namespace Apoc3D
 	/************************************************************************/
 
 	// Finds all effects in the project
-	void WalkProject(const FastList<ProjectItem*>& items, List<String>& effectsFound)
+	void WalkProject(const List<ProjectItem*>& items, List<String>& effectsFound)
 	{
 		for (int i=0;i<items.getCount();i++)
 		{
@@ -1322,7 +1322,7 @@ namespace Apoc3D
 		delete xc;
 	}
 
-	void RecursivePassFolderPacks(int& startNo, ConfigurationSection* parentSect, FastList<ProjectItem*>& items);
+	void RecursivePassFolderPacks(int& startNo, ConfigurationSection* parentSect, List<ProjectItem*>& items);
 
 	ConfigurationSection* Project::Save()
 	{
@@ -1338,7 +1338,7 @@ namespace Apoc3D
 
 		return sect;
 	}
-	void Project::GenerateBuildScripts(FastList<ConfigurationSection*>& result)
+	void Project::GenerateBuildScripts(List<ConfigurationSection*>& result)
 	{
 		ConfigurationSection* sect = new ConfigurationSection(L"Build", m_items.getCount() * 2);
 
@@ -1353,7 +1353,7 @@ namespace Apoc3D
 		RecursivePassFolderPacks(startNo, result, m_items);
 		
 	}
-	void RecursivePassFolderPacks(int& startNo, FastList<ConfigurationSection*>& result, FastList<ProjectItem*>& items)
+	void RecursivePassFolderPacks(int& startNo, List<ConfigurationSection*>& result, List<ProjectItem*>& items)
 	{
 		// post traversal on the project tree will make leaf folder to pack file builds comes first
 		for (int32 i=0;i<items.getCount();i++)
@@ -1381,7 +1381,7 @@ namespace Apoc3D
 	}
 
 	// this function is for parsing all sub items in a section
-	void ProjectParse(Project* prj, FastList<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
+	void ProjectParse(Project* prj, List<ProjectItem*>& parentContainer, const ConfigurationSection* sect)
 	{
 		for (ConfigurationSection::SubSectionEnumerator iter =  sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
@@ -1398,7 +1398,7 @@ namespace Apoc3D
 	}
 
 	// this function is for saving all sub items into a section
-	void ProjectSave(ConfigurationSection* parentSect, FastList<ProjectItem*>& items, bool savingBuild)
+	void ProjectSave(ConfigurationSection* parentSect, List<ProjectItem*>& items, bool savingBuild)
 	{
 		for (int i=0;i<items.getCount();i++)
 		{

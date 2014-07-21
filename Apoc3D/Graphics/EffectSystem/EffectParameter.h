@@ -367,7 +367,7 @@ namespace Apoc3D
 					Vector3& AsVector3Ref() { return *reinterpret_cast<Vector3*>(RefValue); }
 				};
 
-				FastList<CustomValue> DataList;
+				List<CustomValue> DataList;
 			};
 		};
 	};

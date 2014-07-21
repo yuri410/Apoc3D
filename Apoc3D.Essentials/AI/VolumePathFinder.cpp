@@ -118,14 +118,14 @@ namespace Apoc3DEx
 		{
 			if (sx == tx && sy == ty)
 			{
-				FastList<VolumePathFinderResultPoint> emptyList;
+				List<VolumePathFinderResultPoint> emptyList;
 				return new VolumePathFinderResult(emptyList, false);
 			}
 
 			//int ofsX = min(sx, tx);
 			//int ofxY = min(sy, ty);
 
-			FastList<AStarNode3*> enQueueBuffer(10);
+			List<AStarNode3*> enQueueBuffer(10);
 
 			AStarNode3* startNode = m_units[sx][sy][sz];
 			startNode->parent = 0;
@@ -164,7 +164,7 @@ namespace Apoc3DEx
 
 				// bfs expand new nodes
 				{
-					const FastList<PathFinderLevelPortal>& portals = m_terrain->GetPortals(cx,cy,cz);
+					const List<PathFinderLevelPortal>& portals = m_terrain->GetPortals(cx,cy,cz);
 					for (int i=0;i<portals.getCount();i++)
 					{
 						int nx = portals[i].TargetX;
@@ -243,7 +243,7 @@ namespace Apoc3DEx
 			return 0;
 		}
 		bool VolumePathFinder::ExpandNode(int nx, int ny, int nz, int tx, int ty, int tz, 
-			float cost, AStarNode3* curPos, AStarNode3*& finalNode, FastList<AStarNode3*>& enQueueBuffer)
+			float cost, AStarNode3* curPos, AStarNode3*& finalNode, List<AStarNode3*>& enQueueBuffer)
 		{
 			if (m_terrain->IsInBound(nx, ny, nz))
 			{
@@ -293,7 +293,7 @@ namespace Apoc3DEx
 			}
 			return false;
 		}
-		void VolumePathFinder::QuickSort(FastList<AStarNode3*>& list, int l, int r)
+		void VolumePathFinder::QuickSort(List<AStarNode3*>& list, int l, int r)
 		{
 			int i;
 			int j;

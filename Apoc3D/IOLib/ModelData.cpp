@@ -62,7 +62,7 @@ namespace Apoc3D
 		//const String TAG_3_ParentBoneTag = L"ParentBone";
 		const String TAG_3_BoundingSphereTag = L"BoundingSphere";
 
-		uint32 MeshData::ComputeVertexSize(const FastList<VertexElement>& elements)
+		uint32 MeshData::ComputeVertexSize(const List<VertexElement>& elements)
 		{
 			uint32 vertexSize = 0;
 			for (int i = 0; i < elements.getCount(); i++)

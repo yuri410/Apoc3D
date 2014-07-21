@@ -75,7 +75,7 @@ namespace APDesigner
 
 		String m_queuedMessage;
 
-		FastList<char*> m_changeBuffer;
+		List<char*> m_changeBuffer;
 		Project* m_currentProject;
 	};
 }

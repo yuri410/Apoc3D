@@ -64,7 +64,7 @@ namespace APDesigner
 
 		const List<std::pair<String, String>>& getProjectMaterialDesc() const { return m_projectMaterialNames; }
 	private:
-		void RefreshMaterialList(const FastList<ProjectItem*>& items);
+		void RefreshMaterialList(const List<ProjectItem*>& items);
 		void LoadMenus();
 
 		StyleSkin* m_UIskin;
@@ -75,7 +75,7 @@ namespace APDesigner
 		Sprite* m_sprite;
 
 		Document* m_currentDocument;
-		FastList<Document*> m_documentList;
+		List<Document*> m_documentList;
 		Console* m_console;
 
 		Menu* m_mainMenu;
@@ -114,7 +114,7 @@ namespace APDesigner
 
 		void Document_Activated(Document* doc);
 		void Document_Deactivated(Document* doc);
-		void UpdateProjectEffect(const FastList<ProjectItem*>& items);
+		void UpdateProjectEffect(const List<ProjectItem*>& items);
 		void UpdateProjectEffect();
 
 		void UpdateWindowTitle();

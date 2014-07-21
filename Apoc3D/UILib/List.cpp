@@ -403,7 +403,7 @@ namespace Apoc3D
 				delete m_vscrollbar;
 		}
 
-		int TreeView::GetAllVisibleNodeCount(const FastList<TreeViewNode*>& node) const
+		int TreeView::GetAllVisibleNodeCount(const List<TreeViewNode*>& node) const
 		{
 			int result = node.getCount();
 
@@ -419,7 +419,7 @@ namespace Apoc3D
 		{
 			return GetAllVisibleNodeCount(m_nodes);
 		}
-		int TreeView::GetExpandedNodeMaxRight(const FastList<TreeViewNode*>& node) const
+		int TreeView::GetExpandedNodeMaxRight(const List<TreeViewNode*>& node) const
 		{
 			int r = 0;
 			for (int i=0;i<node.getCount();i++)
@@ -443,7 +443,7 @@ namespace Apoc3D
 			}
 			return r;
 		}
-		int TreeView::GetExpandedNodeCount(const FastList<TreeViewNode*>& node) const
+		int TreeView::GetExpandedNodeCount(const List<TreeViewNode*>& node) const
 		{
 			int r = 0;
 			for (int i=0;i<node.getCount();i++)
@@ -620,7 +620,7 @@ namespace Apoc3D
 				m_hscrollbar->setMax(barmax);
 		}
 
-		void TreeView::DrawNodes(Sprite* sprite, const FastList<TreeViewNode*>& nodes, int depth, int& counter, int maxCount)
+		void TreeView::DrawNodes(Sprite* sprite, const List<TreeViewNode*>& nodes, int depth, int& counter, int maxCount)
 		{
 			Apoc3D::Math::Rectangle absArea = getAbsoluteArea();
 
@@ -889,7 +889,7 @@ namespace Apoc3D
 		}
 
 
-		void TreeView::NukeTreeViewNodes(FastList<TreeViewNode*>& nodes)
+		void TreeView::NukeTreeViewNodes(List<TreeViewNode*>& nodes)
 		{
 			for (int i=0;i<nodes.getCount();i++)
 			{

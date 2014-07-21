@@ -144,13 +144,13 @@ namespace APBuild
 		float DrawOffset[2];
 	};
 
-	typedef void (*GlyphRenderHandler)(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
+	typedef void (*GlyphRenderHandler)(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
+		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
 	void BuildFont(const FontBuildConfig& config, GlyphRenderHandler renderer);
-	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
-	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
+	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
+		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
+	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
+		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo);
 
 
 	void FontBuild::Build(const ConfigurationSection* sect)
@@ -234,7 +234,7 @@ namespace APBuild
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestFile));
 		BuildSystem::EnsureDirectory(PathUtils::GetDirectory(config.DestIndexFile));
 
-		FastList<CharMapping> charMap(0xffff);
+		List<CharMapping> charMap(0xffff);
 		GlyphBitmapTable glyphHashTable(0xffff);
 
 		FontRenderInfo info;
@@ -393,7 +393,7 @@ namespace APBuild
 
 	void BuildFont(const FontBuildConfig& config, GlyphRenderHandler renderer)
 	{
-		FastList<CharMapping> charMap(0xffff);
+		List<CharMapping> charMap(0xffff);
 		GlyphBitmapTable glyphHashTable(0xffff);
 
 		FontRenderInfo info;
@@ -477,8 +477,8 @@ namespace APBuild
 		delete bw;
 	}
 
-	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo)
+	void RenderGlyphsByFreeType(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
+		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo)
 	{
 		//Create and initialize a freetype font library.
 		FT_Library library;
@@ -611,8 +611,8 @@ namespace APBuild
 		resultInfo.HasDrawOffset = false;
 	}
 	
-	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const FastList<CharRange>& ranges, bool antiAlias,
-		FastList<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo)
+	void RenderGlyphsByFontMap(const std::string& fontFile, float fontSize, const List<CharRange>& ranges, bool antiAlias,
+		List<CharMapping>& charMap, GlyphBitmapTable& glyphHashTable, FontRenderInfo& resultInfo)
 	{
 		String mapFile = StringUtils::toPlatformWideString(fontFile) + L".png";
 		String idxFile = StringUtils::toPlatformWideString(fontFile) + L".fid";

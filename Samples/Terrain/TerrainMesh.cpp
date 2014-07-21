@@ -83,7 +83,7 @@ namespace SampleTerrain
 	{
 		ObjectFactory* fac = m_device->getObjectFactory();
 
-		FastList<VertexElement> elements(4);
+		List<VertexElement> elements(4);
 		elements.Add(Elements[0]); 
 		elements.Add(Elements[1]);
 

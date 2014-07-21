@@ -207,8 +207,8 @@ namespace Apoc3D
 		{
 		public:
 
-			ButtonGroup(const FastList<Button*> buttons);
-			ButtonGroup(const FastList<Button*> buttons, int selected);
+			ButtonGroup(const List<Button*> buttons);
+			ButtonGroup(const List<Button*> buttons, int selected);
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Update(const GameTime* const time);
@@ -226,7 +226,7 @@ namespace Apoc3D
 
 			RTTI_UpcastableDerived(Control);
 		private:
-			FastList<Button*> m_button;
+			List<Button*> m_button;
 			int m_selectedIndex;
 			
 			void Button_OnRelease(Control* sender);

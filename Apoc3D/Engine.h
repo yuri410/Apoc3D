@@ -62,7 +62,7 @@ namespace Apoc3D
 		/**
 		 *  A list of user specified pre-loaded plugins.
 		 */
-		FastList<Plugin*> PluginList;
+		List<Plugin*> PluginList;
 
 		/**
 		 *  Specified whether the incoming new log entries should be forwarded to standard output.

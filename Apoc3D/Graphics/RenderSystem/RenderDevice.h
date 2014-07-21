@@ -282,7 +282,7 @@ namespace Apoc3D
 				virtual VertexBuffer* CreateVertexBuffer(int vertexCount, VertexDeclaration* vtxDecl, BufferUsageFlags usage) = 0;
 
 
-				virtual VertexDeclaration* CreateVertexDeclaration(const Apoc3D::Collections::FastList<VertexElement>& elements) = 0;
+				virtual VertexDeclaration* CreateVertexDeclaration(const Apoc3D::Collections::List<VertexElement>& elements) = 0;
 
 				/** 
 				 *  Creates a vertex shader from a piece of code.

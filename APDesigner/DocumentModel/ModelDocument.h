@@ -97,7 +97,7 @@ namespace APDesigner
 		PictureBox* m_modelViewer;
 		ComboBox* m_passViewSelect;
 		
-		FastList<Label*> m_labels;
+		List<Label*> m_labels;
 
 		PictureBox* m_pbTime;
 		TextBox* m_tbMKeyTime;
@@ -145,7 +145,7 @@ namespace APDesigner
 		PictureBox* m_pbPassFlag;
 		Button* m_btnPassFlag;
 
-		FastList<Label*> m_mtrlPanelLabels;
+		List<Label*> m_mtrlPanelLabels;
 
 
 		TextBox* m_tbTex1;

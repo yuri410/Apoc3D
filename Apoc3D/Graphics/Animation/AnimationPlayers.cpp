@@ -46,7 +46,7 @@ namespace Apoc3D
 
 				m_currentTimeValue = time;
 
-				const FastList<ModelKeyframe>& keyframes = m_currentClipValue->getKeyframes();
+				const List<ModelKeyframe>& keyframes = m_currentClipValue->getKeyframes();
 
 				while (m_currentKeyframe < keyframes.getCount())
 				{
@@ -107,7 +107,7 @@ namespace Apoc3D
 			void RootAnimationPlayer::InitClip(bool newClip)
 			{
 				const ModelAnimationClip* clip = getCurrentClip();
-				const FastList<ModelKeyframe>& keyframes = clip->getKeyframes();
+				const List<ModelKeyframe>& keyframes = clip->getKeyframes();
 
 				m_currentTransfrom = keyframes.getCount() > 0 ? keyframes[0].getTransform() : Matrix::Identity;
 			}
@@ -200,7 +200,7 @@ namespace Apoc3D
 
 			void MaterialAnimationPlayer::setCurrentKeyframe(int value)
 			{
-				const FastList<MaterialAnimationKeyframe>& keyframes = m_currentClipValue->Keyframes;
+				const List<MaterialAnimationKeyframe>& keyframes = m_currentClipValue->Keyframes;
 				float time = keyframes[value].getTime();
 				m_currentTimeValue = time;
 

@@ -467,7 +467,7 @@ namespace Apoc3D
 				return;
 			}
 
-			FastList<int32> parts;
+			List<int32> parts;
 			StringUtils::SplitParseInts(sect->getValue(), parts, L"[], ");
 			assert(parts.getCount() == 4 * 9);
 
@@ -492,7 +492,7 @@ namespace Apoc3D
 				return;
 			}
 
-			FastList<int32> parts;
+			List<int32> parts;
 			StringUtils::SplitParseInts(sect->getValue(), parts, L"[], ");
 			assert(parts.getCount() == 4 * 3);
 
@@ -517,7 +517,7 @@ namespace Apoc3D
 				return;
 			}
 
-			FastList<int32> parts;
+			List<int32> parts;
 			StringUtils::SplitParseInts(sect->getValue(), parts, L"[], ");
 			assert(parts.getCount() == 4);
 
@@ -533,7 +533,7 @@ namespace Apoc3D
 		void StyleSkin::Push9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9])
 		{
 			Point coord(0,0);
-			FastList<int32> coordArr;
+			List<int32> coordArr;
 			if (sect->TryGetAttributeInts(L"Coord", coordArr))
 			{
 				assert(coordArr.getCount()==2);
@@ -550,7 +550,7 @@ namespace Apoc3D
 		void StyleSkin::Push3Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[3])
 		{
 			Point coord(0,0);
-			FastList<int32> coordArr;
+			List<int32> coordArr;
 			if (sect->TryGetAttributeInts(L"Coord", coordArr))
 			{
 				assert(coordArr.getCount()==2);
@@ -567,7 +567,7 @@ namespace Apoc3D
 		void StyleSkin::PushRegion(ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect)
 		{
 			Point coord(0,0);
-			//FastList<int32> coordArr;
+			//List<int32> coordArr;
 			int32 coordArr[2];
 			if (sect->TryGetAttributeIntsChecked(L"Coord", coordArr, 2))
 			{

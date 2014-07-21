@@ -171,7 +171,7 @@ namespace Apoc3D
 			Control* ActiveControl;
 
 		protected:
-			FastList<Control*> m_controls;
+			List<Control*> m_controls;
 
 			ControlContainer* m_owner;
 

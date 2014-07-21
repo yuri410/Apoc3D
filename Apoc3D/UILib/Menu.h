@@ -56,7 +56,7 @@ namespace Apoc3D
 
 			MenuItem* operator [](int index) const;
 
-			const FastList<MenuItem*>& getItems() const { return m_items; }
+			const List<MenuItem*>& getItems() const { return m_items; }
 			MenuState getState() const { return m_state; }
 
 			RTTI_UpcastableDerived(Control);
@@ -64,7 +64,7 @@ namespace Apoc3D
 			Point m_drawPos;
 
 			Point m_itemPos;
-			FastList<MenuItem*> m_items;
+			List<MenuItem*> m_items;
 			MenuState m_state;
 
 			int m_hoverIndex;
@@ -143,7 +143,7 @@ namespace Apoc3D
 			bool IsCursorInside();
 
 			int getHoverIndex() const { return m_hoverIndex; }
-			const FastList<MenuItem*>& getItems() const { return m_items; }
+			const List<MenuItem*>& getItems() const { return m_items; }
 
 			RTTI_UpcastableDerived(Control);
 		private:
@@ -155,7 +155,7 @@ namespace Apoc3D
 			void CheckSelection();
 
 			Control* m_parent;
-			FastList<MenuItem*> m_items;
+			List<MenuItem*> m_items;
 			Point m_itemPos;
 			Point m_arrowPos;
 			Point m_textPos;

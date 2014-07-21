@@ -96,8 +96,8 @@ namespace APDesigner
 
 		const Vector2& getPosition() const { return m_position; }
 		void setPosition(const Vector2& pos) { m_position = pos; m_isPositionDirty = true; }
-		const FastList<GraphNode*>& getNeighbors() const { return m_neighbour; }
-		const FastList<GraphNode*>& getTargets() const { return m_targets; }
+		const List<GraphNode*>& getNeighbors() const { return m_neighbour; }
+		const List<GraphNode*>& getTargets() const { return m_targets; }
 		float getMass() const;
 		float getKineticEnergy() const { return m_kineticEnergy; }
 
@@ -115,8 +115,8 @@ namespace APDesigner
 		String m_name;
 		int m_index;
 
-		FastList<GraphNode*> m_neighbour;
-		FastList<GraphNode*> m_targets;
+		List<GraphNode*> m_neighbour;
+		List<GraphNode*> m_targets;
 
 		bool m_useable;
 

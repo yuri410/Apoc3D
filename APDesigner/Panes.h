@@ -85,8 +85,8 @@ namespace APDesigner
 
 	private:
 		
-		void BuildTreeViewNodes(TreeViewNode* parentNode, const FastList<ProjectItem*> items);
-		void BuildTreeViewNodes(const FastList<ProjectItem*> items);
+		void BuildTreeViewNodes(TreeViewNode* parentNode, const List<ProjectItem*> items);
+		void BuildTreeViewNodes(const List<ProjectItem*> items);
 
 		void BtnAdd_Release(Control* ctrl);
 		void BtnRemove_Release(Control* ctrl);
@@ -156,7 +156,7 @@ namespace APDesigner
 			void Destory(Form* pane);
 		};
 		
-		FastList<PropItem> m_proplist;
+		List<PropItem> m_proplist;
 	};
 
 	//class PropertyPane

@@ -55,7 +55,7 @@ namespace APDesigner
 
 		ListView* m_lbPorts;
 
-		FastList<Label*> m_labels;
+		List<Label*> m_labels;
 
 	};
 }

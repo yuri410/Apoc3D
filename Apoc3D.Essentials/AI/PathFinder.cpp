@@ -108,7 +108,7 @@ namespace Apoc3DEx
 		{
 			if (sx == tx && sy == ty)
 			{
-				FastList<Point> emptyList;
+				List<Point> emptyList;
 				return new PathFinderResult(emptyList, false);
 			}
 
@@ -121,7 +121,7 @@ namespace Apoc3DEx
 			//int ofsX = min(sx, tx);
 			//int ofxY = min(sy, ty);
 
-			//FastList<AStarNode*> enQueueBuffer(10);
+			//List<AStarNode*> enQueueBuffer(10);
 
 			AStarNode* startNode = getNode(sx, sy);
 			startNode->parent = 0;

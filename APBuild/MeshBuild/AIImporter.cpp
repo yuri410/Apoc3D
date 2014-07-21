@@ -79,8 +79,6 @@ namespace APBuild
 		
 		ModelData* result = new ModelData();
 
-		//FastMap<string, aiNode*> cachedbones;
-
 		for (uint i=0;i<scene->mNumMeshes;i++)
 		{
 			MeshData* data = new MeshData();
@@ -140,7 +138,7 @@ namespace APBuild
 
 			data->VertexCount = m->mNumVertices;
 			
-			FastList<VertexElement>& vtxelems = data->VertexElements;
+			List<VertexElement>& vtxelems = data->VertexElements;
 			int offset = 0;
 			//int blendIndexOffset = -1;
 			//int blendWeightOffset = -1;

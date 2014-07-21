@@ -103,7 +103,7 @@ namespace Apoc3D
 					
 					for (int i=0;i<count;i++)
 					{
-						FastList<MaterialAnimationKeyframe> keyframes;
+						List<MaterialAnimationKeyframe> keyframes;
 						String key = br->ReadString();
 
 						float duration = br->ReadSingle();
@@ -155,7 +155,7 @@ namespace Apoc3D
 
 						int cldCount = br2->ReadInt32();
 
-						FastList<int> children(cldCount);
+						List<int> children(cldCount);
 						for (int j = 0; j < cldCount; j++)
 						{
 							children.Add(br2->ReadInt32());
@@ -189,7 +189,7 @@ namespace Apoc3D
 
 						int frameCount = br->ReadInt32();
 
-						FastList<ModelKeyframe> frames(frameCount);
+						List<ModelKeyframe> frames(frameCount);
 
 						for (int j=0;j<frameCount;j++)
 						{
@@ -231,7 +231,7 @@ namespace Apoc3D
 
 						int frameCount = br->ReadInt32();
 
-						FastList<ModelKeyframe> frames(frameCount);
+						List<ModelKeyframe> frames(frameCount);
 
 						for (int j=0;j<frameCount;j++)
 						{
@@ -275,7 +275,7 @@ namespace Apoc3D
 						const MaterialAnimationClip* clip = *e.getCurrentValue();
 						bw->WriteSingle(clip->Duration);
 
-						const FastList<MaterialAnimationKeyframe>& keyFrames = clip->Keyframes;
+						const List<MaterialAnimationKeyframe>& keyFrames = clip->Keyframes;
 						bw->WriteInt32(keyFrames.getCount());
 
 						for (int i = 0; i < keyFrames.getCount(); i++)
@@ -332,7 +332,7 @@ namespace Apoc3D
 						const ModelAnimationClip* clip = *e.getCurrentValue();
 						bw->WriteDouble(static_cast<double>(clip->getDuration()));
 
-						const FastList<ModelKeyframe>& keyFrames = clip->getKeyframes();
+						const List<ModelKeyframe>& keyFrames = clip->getKeyframes();
 
 						bw->WriteInt32(keyFrames.getCount());
 
@@ -360,7 +360,7 @@ namespace Apoc3D
 						const ModelAnimationClip* clip = *e.getCurrentValue();
 						bw->WriteDouble(static_cast<double>(clip->getDuration()));
 						
-						const FastList<ModelKeyframe>& keyFrames = clip->getKeyframes();
+						const List<ModelKeyframe>& keyFrames = clip->getKeyframes();
 						bw->WriteInt32(keyFrames.getCount());
 
 						for (int i = 0; i < keyFrames.getCount(); i++)

@@ -35,7 +35,7 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		Patch::Patch(RenderDevice* device, const void* vertexData, int vertexCount, const FastList<VertexElement>& vtxElems)
+		Patch::Patch(RenderDevice* device, const void* vertexData, int vertexCount, const List<VertexElement>& vtxElems)
 			: m_opBuffer(0), m_mtrl(0), m_primitiveCount(vertexCount - 3 + 2), m_vertexCount(vertexCount)
 		{
 			assert(vertexCount>3);

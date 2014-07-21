@@ -44,7 +44,6 @@ namespace Apoc3D
 			class APAPI VertexDeclaration
 			{
 			protected:
-				VertexDeclaration(const FastList<VertexElement> &e);
 				VertexDeclaration(const List<VertexElement> &e);
 
 				VertexElementList m_elements;

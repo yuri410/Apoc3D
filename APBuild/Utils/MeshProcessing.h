@@ -29,13 +29,13 @@ namespace APBuild
 	namespace Utils
 	{
 		template <typename VertexType>
-		void meshWeldVertices(HashMap<VertexType, int>& vtxHashTable, MeshData* mesh, FastList<VertexType>& result)
+		void meshWeldVertices(HashMap<VertexType, int>& vtxHashTable, MeshData* mesh, List<VertexType>& result)
 		{
 			const VertexType* vertices = reinterpret_cast<const VertexType*>(mesh->VertexData);
 			uint totalVertexCount = mesh->VertexCount;
 
 			//HashMap<VertexType, int> vtxHashTable(totalVertexCount, &vec3Comparer);
-			FastList<VertexType>& newVertexList = result;
+			List<VertexType>& newVertexList = result;
 			newVertexList.ReserveDiscard(totalVertexCount);
 
 			for (int j=0;j<mesh->Faces.getCount();j++)
@@ -60,7 +60,7 @@ namespace APBuild
 
 		}
 
-		void meshGenerateVertexElements(uint32 fvf, FastList<VertexElement>& elements);
+		void meshGenerateVertexElements(uint32 fvf, List<VertexElement>& elements);
 		
 	}
 }

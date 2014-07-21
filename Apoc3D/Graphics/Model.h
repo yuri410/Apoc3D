@@ -59,14 +59,14 @@ namespace Apoc3D
 		class APAPI ModelSharedData : public Resource
 		{
 		public:
-			ModelSharedData(RenderDevice* device, const FastList<Mesh*>& entities);
+			ModelSharedData(RenderDevice* device, const List<Mesh*>& entities);
 			ModelSharedData(RenderDevice* device, const ModelData* mdlData);
 			ModelSharedData(RenderDevice* device, const ResourceLocation& rl, bool managed = true);
 			virtual ~ModelSharedData();
 
 			virtual uint32 getSize();
 
-			FastList<Mesh*>& getEntities() { return m_entities; }
+			List<Mesh*>& getEntities() { return m_entities; }
 
 			void Save(ModelData* data);
 
@@ -77,7 +77,7 @@ namespace Apoc3D
 		private:
 			RenderDevice* m_renderDevice;
 
-			FastList<Mesh*> m_entities;
+			List<Mesh*> m_entities;
 
 			ResourceLocation* m_resourceLocation;
 		};
@@ -167,7 +167,7 @@ namespace Apoc3D
 
 			ModelAnimationCompletedHandler& eventAnimationCompeleted() { return m_eventAnimCompleted; }
 
-			FastList<ModelAnimationPlayerBase*>& getCustomAnimation() { return m_animInstance; }
+			List<ModelAnimationPlayerBase*>& getCustomAnimation() { return m_animInstance; }
 
 			AnimationPlaybackState getMaterialAnimationState() const { return m_mtrlState; }
 			AnimationPlaybackState getSkinAnimationState() const { return m_skinState; }
@@ -238,7 +238,7 @@ namespace Apoc3D
 			AnimationPlaybackState m_rigidState;
 			AnimationPlaybackState m_mtrlState;
 
-			FastList<ModelAnimationPlayerBase*> m_animInstance;
+			List<ModelAnimationPlayerBase*> m_animInstance;
 
 			bool m_autoLoop;
 			String m_selectedClipName;

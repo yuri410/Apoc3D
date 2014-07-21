@@ -60,7 +60,7 @@ namespace Apoc3D
 			// mapping from MeshData in Models to the index in the sources list
 			HashMap<MeshData*, int, LPMeshDataEqualityComparer> targets(10);
 			
-			FastList<ModelData*> sources(m_modelTable.getCount());
+			List<ModelData*> sources(m_modelTable.getCount());
 			int index = 0;
 			for (int i=0;i<m_modelTable.getCount();i++)
 			{
@@ -84,7 +84,7 @@ namespace Apoc3D
 			// fast way: using fixed vertex size
 			if (vertexSize<=sizeof(Vertex64B))
 			{
-				FastList<Vertex64B>* entVertexData = new FastList<Vertex64B>[index];
+				List<Vertex64B>* entVertexData = new List<Vertex64B>[index];
 				MeshData** ents = new MeshData*[index]; // holds the result entities
 				index = 0;
 				for (int i=0;i<m_modelTable.getCount();i++)
@@ -116,7 +116,7 @@ namespace Apoc3D
 					{
 						MeshData* md = src->Entities[j];
 						MeshData* dest = ents[ targets[md]];
-						FastList<Vertex64B>& destVertex = entVertexData[targets[md]];
+						List<Vertex64B>& destVertex = entVertexData[targets[md]];
 
 						const VertexElement* posElem = VertexElement::FindElementBySemantic(md->VertexElements, VEU_Position);
 						const VertexElement* nrmElem = VertexElement::FindElementBySemantic(md->VertexElements, VEU_Normal);
@@ -180,7 +180,7 @@ namespace Apoc3D
 				// TODO: this can be optimized if using a buffer for the final mesh vertex
 				// instead of allocating room for each vertex
 
-				FastList<char*>* entVertexData = new FastList<char*>[index];
+				List<char*>* entVertexData = new List<char*>[index];
 				MeshData** ents = new MeshData*[index];
 				index = 0;
 				for (int i=0;i<m_modelTable.getCount();i++)
@@ -212,7 +212,7 @@ namespace Apoc3D
 					{
 						MeshData* md = src->Entities[j];
 						MeshData* dest = ents[ targets[md]];
-						FastList<char*>& destVertex = entVertexData[targets[md]];
+						List<char*>& destVertex = entVertexData[targets[md]];
 
 						const VertexElement* posElem = VertexElement::FindElementBySemantic(md->VertexElements, VEU_Position);
 						const VertexElement* nrmElem = VertexElement::FindElementBySemantic(md->VertexElements, VEU_Normal);

@@ -201,7 +201,7 @@ namespace Apoc3D
 
 		}
 
-		FastList<ProjectItem*> SubItems;
+		List<ProjectItem*> SubItems;
 
 		virtual bool IsNotBuilt() { return true; }
 		virtual bool IsEarlierThan(time_t t) { return true; }
@@ -333,7 +333,7 @@ namespace Apoc3D
 		MeshBuildMethod Method;
 
 		bool UseVertexFormatConversion;
-		FastList<VertexElement> VertexElements;
+		List<VertexElement> VertexElements;
 
 		bool CollapseMeshs;
 
@@ -467,7 +467,7 @@ namespace Apoc3D
 			int MaxChar;
 		};
 
-		FastList<CharRange> Ranges;
+		List<CharRange> Ranges;
 		String SourceFile;
 		float Size;
 		bool AntiAlias;
@@ -660,7 +660,7 @@ namespace Apoc3D
 	class APAPI Project
 	{
 	private:
-		FastList<ProjectItem*> m_items;
+		List<ProjectItem*> m_items;
 		String m_name;
 
 		String m_texturePath;
@@ -700,7 +700,7 @@ namespace Apoc3D
 		 */
 		const String& getBasePath() const { return m_basePath; }
 
-		const FastList<ProjectItem*>& getItems() const { return m_items; }
+		const List<ProjectItem*>& getItems() const { return m_items; }
 
 		void AddItem(ProjectItem* item) { m_items.Add(item); }
 
@@ -718,7 +718,7 @@ namespace Apoc3D
 		 *  Generate a series of build action represented by ConfigurationSection object.
 		 *  The sequence is based on the dependency of project items.
 		 */
-		void GenerateBuildScripts(FastList<ConfigurationSection*>& result);
+		void GenerateBuildScripts(List<ConfigurationSection*>& result);
 
 
 		void setTexturePath(const String& path) { m_texturePath = path; }

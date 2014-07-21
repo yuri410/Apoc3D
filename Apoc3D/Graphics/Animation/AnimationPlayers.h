@@ -112,7 +112,7 @@ namespace Apoc3D
 				 */
 				void setCurrentKeyframe(int value)
 				{
-					const FastList<ModelKeyframe>& keyframes = m_currentClipValue->getKeyframes();
+					const List<ModelKeyframe>& keyframes = m_currentClipValue->getKeyframes();
 					float time = keyframes[value].getTime();
 					setCurrentTimeValue( time );
 				}
@@ -397,8 +397,8 @@ namespace Apoc3D
 
 				bool m_useQuaternionInterpolation;
 				const List<Bone>* m_bones;
-				//const FastList<Matrix>* m_inverseBindPose;
-				//const FastList<int32>* m_skeletonHierarchy;
+				//const List<Matrix>* m_inverseBindPose;
+				//const List<int32>* m_skeletonHierarchy;
 
 			};
 

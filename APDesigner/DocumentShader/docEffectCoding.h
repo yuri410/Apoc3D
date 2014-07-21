@@ -120,7 +120,7 @@ namespace APDesigner
 		TextBox* m_tbPsMaxMipLevel;
 		TextBox* m_tbPsMipMapLODBias;
 
-		FastList<Label*> m_labels;
+		List<Label*> m_labels;
 
 	};
 }

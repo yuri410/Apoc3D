@@ -59,7 +59,7 @@ namespace Apoc3D
 		{
 			friend class Resource;
 		public:
-			typedef Apoc3D::Collections::FastList<ResourceManager*> ManagerList;
+			typedef Apoc3D::Collections::List<ResourceManager*> ManagerList;
 
 			/**
 			 * Initializes the resource manager. 

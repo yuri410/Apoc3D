@@ -55,11 +55,11 @@ namespace Apoc3D
 
 				bool Windowed;
 
-				FastList<D3DFORMAT> DepthStencilFormats;
+				List<D3DFORMAT> DepthStencilFormats;
 
-				FastList<D3DMULTISAMPLE_TYPE> MultisampleTypes;
-				FastList<int32> MultisampleQualities;
-				FastList<uint32> PresentIntervals;
+				List<D3DMULTISAMPLE_TYPE> MultisampleTypes;
+				List<int32> MultisampleQualities;
+				List<uint32> PresentIntervals;
 
 				AdapterInfo* AdapterInfo;
 
@@ -79,7 +79,7 @@ namespace Apoc3D
 
 				D3DCAPS9 Capabilities;
 
-				FastList<SettingsCombo*> DeviceSettings;
+				List<SettingsCombo*> DeviceSettings;
 
 			};
 			class AdapterInfo
@@ -96,14 +96,14 @@ namespace Apoc3D
 
 				List<D3DDISPLAYMODE> DisplayModes;
 
-				FastList<DeviceInfo*> Devices;
+				List<DeviceInfo*> Devices;
 
 			};
 
 			class Enumeration
 			{
 			public:
-				static const FastList<AdapterInfo*>& getAdapters() { return m_adapters; }
+				static const List<AdapterInfo*>& getAdapters() { return m_adapters; }
 				
 				static void Enumerate(IDirect3D9* d3d9);
 				static void FindValidSettings(IDirect3D9* d3d9, const DeviceSettings& settings, DeviceSettings& result);
@@ -123,14 +123,14 @@ namespace Apoc3D
 
 				static bool m_hasMinimumSettings;
 				static DeviceSettings m_minimumSettings;
-				static FastList<AdapterInfo*> m_adapters;
+				static List<AdapterInfo*> m_adapters;
 				static bool m_hasEnumerated;
 
 
-				static void EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, FastList<D3DFORMAT>& adapterFormats);
+				static void EnumerateDevices(IDirect3D9* d3d9, AdapterInfo* info, List<D3DFORMAT>& adapterFormats);
 
 				static void EnumerateSettingsCombos(IDirect3D9* d3d9, AdapterInfo* adapterInfo, 
-					DeviceInfo* deviceInfo, FastList<D3DFORMAT>& adapterFormats);
+					DeviceInfo* deviceInfo, List<D3DFORMAT>& adapterFormats);
 
 				static void BuildDepthStencilFormatList(IDirect3D9* d3d9, SettingsCombo* combo);
 

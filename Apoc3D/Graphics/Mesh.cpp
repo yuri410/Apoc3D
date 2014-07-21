@@ -91,7 +91,7 @@ namespace Apoc3D
 			
 			// index data
 			bool useIndex16 = vertexCount < MaxUInt16;
-			FastList<uint>* indices = new FastList<uint>[matCount];
+			List<uint>* indices = new List<uint>[matCount];
 
 			m_partPrimitiveCount = new int[matCount];
 			m_partVertexCount = new int[matCount];
@@ -102,7 +102,7 @@ namespace Apoc3D
 			// Counting some statistics at the same time.
 			// 
 			// The mesh only supports triangle list as primitives.
-			const FastList<MeshFace>& faces = data->Faces;
+			const List<MeshFace>& faces = data->Faces;
 			for (int i=0;i<faces.getCount();i++)
 			{
 				const MeshFace& face = faces[i];
@@ -125,7 +125,7 @@ namespace Apoc3D
 				{
 					memset(passed, 0, vertexCount * sizeof(bool));
 
-					const FastList<uint>& idx = indices[i];
+					const List<uint>& idx = indices[i];
 					IndexBuffer* indexBuffer = m_factory->CreateIndexBuffer(IBT_Bit16, idx.getCount(), BU_Static);
 
 					ushort* ib = (ushort*)indexBuffer->Lock(0,0, LOCK_None);
@@ -158,7 +158,7 @@ namespace Apoc3D
 				{
 					memset(passed, 0, vertexCount * sizeof(bool));
 
-					const FastList<uint>& idx = indices[i];
+					const List<uint>& idx = indices[i];
 					IndexBuffer* indexBuffer = m_factory->CreateIndexBuffer(IBT_Bit32, idx.getCount(), BU_Static);
 
 					uint* ib = (uint*)indexBuffer->Lock(0,0, LOCK_None);

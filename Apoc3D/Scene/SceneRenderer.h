@@ -43,10 +43,10 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		typedef FastList<RenderOperation> OperationList;
-		typedef FastMap<GeometryData*, OperationList*> GeometryTable;
-		typedef FastMap<Material*, GeometryTable*> MaterialTable;
-		typedef FastMap<uint32, MaterialTable*> PriorityTable;
+		typedef List<RenderOperation> OperationList;
+		typedef HashMap<GeometryData*, OperationList*> GeometryTable;
+		typedef HashMap<Material*, GeometryTable*> MaterialTable;
+		typedef HashMap<uint32, MaterialTable*> PriorityTable;
 
 		/**
 		 *  A pool used to quick obtain tables and lists for storing render operations
@@ -56,8 +56,8 @@ namespace Apoc3D
 		class APAPI BatchDataBufferCache
 		{
 		public:
-			typedef FastList<GeometryData*> InvalidGeoPointerList;
-			typedef FastList<Material*> InvalidMtrlPointerList;
+			typedef List<GeometryData*> InvalidGeoPointerList;
+			typedef List<Material*> InvalidMtrlPointerList;
 
 			BatchDataBufferCache(int32 opListCount, int32 geoTableCount, int32 mtrlTableCount,
 				int32 minGeoTableSize, int32 minMtrlTableSize, int32 minOpListSize);
@@ -224,13 +224,13 @@ namespace Apoc3D
 
 		private:
 			RenderDevice* m_renderDevice;
-			//FastList<ScenePass*> m_passes;
+			//List<ScenePass*> m_passes;
 			BatchData m_batchData;
 
-			FastList<SceneProcedure*> m_procFallbacks;
+			List<SceneProcedure*> m_procFallbacks;
 			int m_selectedProc;
 
-			FastList<Camera*> m_cameraList;
+			List<Camera*> m_cameraList;
 		};
 	};
 };

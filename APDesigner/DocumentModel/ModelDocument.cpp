@@ -680,7 +680,7 @@ namespace APDesigner
 		m_cbSubMtrl->getItems().Clear();
 
 		{
-			const FastList<Mesh*> ents = m_modelSData->getEntities();
+			const List<Mesh*> ents = m_modelSData->getEntities();
 			for (int i=0;i<ents.getCount();i++)
 			{
 				m_cbMesh->getItems().Add(L"[Mesh]" + ents[i]->getName());
@@ -738,7 +738,7 @@ namespace APDesigner
 	}
 	void ModelDocument::UpdateSelectedMaterial()
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx!=-1)
 		{
@@ -766,7 +766,7 @@ namespace APDesigner
 
 	void ModelDocument::PassButton_Pressed(Control* ctrl)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx !=-1)
 		{
@@ -821,7 +821,7 @@ namespace APDesigner
 	}
 	void ModelDocument::PassFlags_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx != -1)
 		{
@@ -848,7 +848,7 @@ namespace APDesigner
 	}
 	void ModelDocument::Timeline_Draw(Sprite* sprite, Apoc3D::Math::Rectangle* dstRect)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx!=-1)
 		{
@@ -867,7 +867,7 @@ namespace APDesigner
 		m_cbSubMtrl->setSelectedIndex(-1);
 
 
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx!=-1)
 		{
@@ -886,7 +886,7 @@ namespace APDesigner
 		m_cbSubMtrl->getItems().Clear();
 		m_cbSubMtrl->setSelectedIndex(-1);
 
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx!=-1)
 		{
@@ -903,7 +903,7 @@ namespace APDesigner
 	}
 	void ModelDocument::CBSubMtrl_SelectionChanged(Control* ctrl)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx!=-1)
 		{
@@ -927,7 +927,7 @@ namespace APDesigner
 
 	void ModelDocument::CBUseRef_Checked(Control* ctrl)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx!=-1)
 		{
@@ -943,7 +943,7 @@ namespace APDesigner
 	}
 	void ModelDocument::BtnRefMtrl_Pressed(Control* ctrl)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx!=-1)
 		{
@@ -1079,7 +1079,7 @@ namespace APDesigner
 	void ModelDocument::BtnApplyAllMtrl_Pressed(Control* ctrl)
 	{
 		Material* currentMtrl = 0;
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx != -1)
 		{
@@ -1172,7 +1172,7 @@ namespace APDesigner
 	}
 	void ModelDocument::BtnAddMtrl_Pressed(Control* ctrl)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx != -1)
 		{
@@ -1187,7 +1187,7 @@ namespace APDesigner
 	}
 	void ModelDocument::BtnApplyMtrl_Pressed(Control* ctrl)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx != -1)
 		{
@@ -1257,7 +1257,7 @@ namespace APDesigner
 	}
 	void ModelDocument::BtnRemoveMtrl_Pressed(Control* ctrl)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx != -1)
 		{
@@ -1429,7 +1429,7 @@ namespace APDesigner
 
 	void ModelDocument::SetSequenceImages_Pressed(Control* ctrl)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx !=-1)
 		{
@@ -1442,7 +1442,7 @@ namespace APDesigner
 	void ModelDocument::ApplyColorToAll_Pressed(Control* ctrl)
 	{
 		Material* currentMtrl = 0;
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx != -1)
 		{
@@ -1480,7 +1480,7 @@ namespace APDesigner
 	void ModelDocument::ApplyFXToAll_Pressed(Control* ctrl)
 	{
 		Material* currentMtrl = 0;
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 		int selMeshIdx = m_cbMesh->getSelectedIndex();
 		if (selMeshIdx != -1)
 		{
@@ -1518,7 +1518,7 @@ namespace APDesigner
 	}
 	void ModelDocument::AutoTex_Pressed(Control* ctrl)
 	{
-		const FastList<Mesh*> ents = m_modelSData->getEntities();
+		const List<Mesh*> ents = m_modelSData->getEntities();
 
 		for (int i=0;i<ents.getCount();i++)
 		{

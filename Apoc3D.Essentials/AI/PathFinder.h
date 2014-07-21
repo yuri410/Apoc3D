@@ -119,11 +119,11 @@ namespace Apoc3DEx
 			int m_width;
 			int m_height;
 
-			FastList<Point> m_result;
+			List<Point> m_result;
 
 
-			FastList<ExpansionDirection> m_pathExpansionEnum;
-			FastList<NeighorCostInclusion> m_neighborCosts;
+			List<ExpansionDirection> m_pathExpansionEnum;
+			List<NeighorCostInclusion> m_neighborCosts;
 		};
 
 		class APEXAPI PathFinderField
@@ -164,7 +164,7 @@ namespace Apoc3DEx
 		{
 		public:
 
-			PathFinderResult(const FastList<Point>& path, bool rcpf)
+			PathFinderResult(const List<Point>& path, bool rcpf)
 				: m_path(path), m_requiresContinuePathFinding(rcpf)
 			{
 			}
@@ -178,7 +178,7 @@ namespace Apoc3DEx
 			bool RequiresContinePathFinding() const { return m_requiresContinuePathFinding; }
 		private:
 			bool m_requiresContinuePathFinding;
-			FastList<Point> m_path;
+			List<Point> m_path;
 		};
 
 		class APEXAPI AStarNode

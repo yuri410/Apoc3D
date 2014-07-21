@@ -135,7 +135,7 @@ namespace Apoc3D
 				totalEntryCount += m_logs[i]->getCount();
 			}
 
-			FastList<const LogEntry*> allEntries(totalEntryCount);
+			List<const LogEntry*> allEntries(totalEntryCount);
 			for (size_t i=0;i<LOG_Count;i++)
 			{
 				LogSet* ls = m_logs[i];

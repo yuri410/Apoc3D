@@ -140,7 +140,7 @@ namespace Apoc3D
 			int getCount() const { return m_oplist.getCount(); }
 
 		private:
-			FastList<RenderOperation> m_oplist;
+			List<RenderOperation> m_oplist;
 		};
 
 

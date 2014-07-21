@@ -63,14 +63,6 @@ namespace Apoc3D
 					names.Add(*e.getCurrentValue());
 				}
 			}
-			void DumpValues(FastList<T>& values) const
-			{
-				values.ResizeDiscard(m_cast.getCount());
-				for (CastTable::Enumerator e = m_cast.GetEnumerator(); e.MoveNext();)
-				{
-					values.Add(static_cast<T>(*e.getCurrentValue()));
-				}
-			}
 			void DumpValues(List<T>& values) const
 			{
 				values.ResizeDiscard(m_cast.getCount());

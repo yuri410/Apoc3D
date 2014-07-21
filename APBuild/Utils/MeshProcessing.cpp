@@ -81,7 +81,7 @@ namespace APBuild
 			throw AP_EXCEPTION(EX_NotSupported, L"ConvertVEUsage");
 		}
 
-		void meshGenerateVertexElements(uint32 fvf, FastList<VertexElement>& elements)
+		void meshGenerateVertexElements(uint32 fvf, List<VertexElement>& elements)
 		{
 			D3DVERTEXELEMENT9 d3delements[MAX_FVF_DECL_SIZE];
 			D3DXDeclaratorFromFVF(fvf, d3delements);

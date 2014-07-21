@@ -62,12 +62,12 @@ namespace Apoc3D
 		void Vector3sToString(const Vector3* v, int count, String& result);
 		void PointsToString(const Point* v, int count, String& result);
 
-		void SplitSingles(const String& str, FastList<float>& result);
-		void SplitPercentages(const String& str, FastList<float>& result);
-		void SplitInt(const String& str, FastList<int32>& result);
-		void SplitUint(const String& str, FastList<uint32>& result);
-		void SplitVector3s(const String& str, FastList<Vector3>& result);
-		void SplitPoints(const String& str, FastList<Point>& result);
+		void SplitSingles(const String& str, List<float>& result);
+		void SplitPercentages(const String& str, List<float>& result);
+		void SplitInt(const String& str, List<int32>& result);
+		void SplitUint(const String& str, List<uint32>& result);
+		void SplitVector3s(const String& str, List<Vector3>& result);
+		void SplitPoints(const String& str, List<Point>& result);
 
 		int32 SplitSinglesArr(const String& str, float* result, int32 expectedCount);
 		int32 SplitPercentagesArr(const String& str, float* result, int32 expectedCount);
@@ -238,12 +238,12 @@ namespace Apoc3D
 		}
 
 		CONFIG_SECT_SPLITER_IMP(List<String>, Strings, SplitString);
-		CONFIG_SECT_SPLITER_IMP(FastList<float>, Singles, SplitSingles);
-		CONFIG_SECT_SPLITER_IMP(FastList<float>, Percentages, SplitPercentages);
-		CONFIG_SECT_SPLITER_IMP(FastList<int32>, Ints, SplitInt);
-		CONFIG_SECT_SPLITER_IMP(FastList<uint32>, UInts, SplitUint);
-		CONFIG_SECT_SPLITER_IMP(FastList<Vector3>, Vector3s, SplitVector3s);
-		CONFIG_SECT_SPLITER_IMP(FastList<Point>, Points, SplitPoints);
+		CONFIG_SECT_SPLITER_IMP(List<float>, Singles, SplitSingles);
+		CONFIG_SECT_SPLITER_IMP(List<float>, Percentages, SplitPercentages);
+		CONFIG_SECT_SPLITER_IMP(List<int32>, Ints, SplitInt);
+		CONFIG_SECT_SPLITER_IMP(List<uint32>, UInts, SplitUint);
+		CONFIG_SECT_SPLITER_IMP(List<Vector3>, Vector3s, SplitVector3s);
+		CONFIG_SECT_SPLITER_IMP(List<Point>, Points, SplitPoints);
 
 
 
@@ -588,21 +588,21 @@ namespace Apoc3D
 		void Vector3sToString(const Vector3* v, int count, String& result);
 		void PointsToString(const Point* v, int count, String& result);
 
-		void SplitSingles(const String& str, FastList<float>& result);
-		void SplitPercentages(const String& str, FastList<float>& result);
-		void SplitInt(const String& str, FastList<int32>& result);
-		void SplitUint(const String& str, FastList<uint32>& result);
+		void SplitSingles(const String& str, List<float>& result);
+		void SplitPercentages(const String& str, List<float>& result);
+		void SplitInt(const String& str, List<int32>& result);
+		void SplitUint(const String& str, List<uint32>& result);
 		
 
 
 
-		void SplitSingles(const String& text, FastList<float>& result) { StringUtils::SplitParseSingles(text, result, L", "); } 
-		void SplitInt(const String& text, FastList<int32>& result) { StringUtils::SplitParseInts(text, result, L", "); } 
-		void SplitPercentages(const String& text, FastList<float>& result) { SplitT<FastList<float>, float, ParsePercentage>(text, result, L", "); }
-		void SplitUint(const String& text, FastList<uint32>& result) { SplitT<FastList<uint32>, uint32, StringUtils::ParseUInt32>(text, result, L", "); }
-		void SplitVector3s(const String& str, FastList<Vector3>& result) 
+		void SplitSingles(const String& text, List<float>& result) { StringUtils::SplitParseSingles(text, result, L", "); } 
+		void SplitInt(const String& text, List<int32>& result) { StringUtils::SplitParseInts(text, result, L", "); } 
+		void SplitPercentages(const String& text, List<float>& result) { SplitT<List<float>, float, ParsePercentage>(text, result, L", "); }
+		void SplitUint(const String& text, List<uint32>& result) { SplitT<List<uint32>, uint32, StringUtils::ParseUInt32>(text, result, L", "); }
+		void SplitVector3s(const String& str, List<Vector3>& result) 
 		{
-			FastList<float> buffer;
+			List<float> buffer;
 			StringUtils::SplitParseSingles(str, buffer, L", ");
 
 			assert((buffer.getCount()%3) == 0);
@@ -616,9 +616,9 @@ namespace Apoc3D
 				v.Z = buffer[i*3+2];
 			}
 		}
-		void SplitPoints(const String& str, FastList<Point>& result)
+		void SplitPoints(const String& str, List<Point>& result)
 		{
-			FastList<int32> buffer;
+			List<int32> buffer;
 			StringUtils::SplitParseInts(str, buffer, L", ");
 
 			assert((buffer.getCount()%2) == 0);

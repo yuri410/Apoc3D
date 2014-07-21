@@ -149,7 +149,7 @@ namespace SampleTerrain
 		};
 
 
-		FastList<TreeInfo> m_trees;
+		List<TreeInfo> m_trees;
 
 		ResourceHandle<TerrainMesh>* m_terrains[4];
 		

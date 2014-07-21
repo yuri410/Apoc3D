@@ -49,7 +49,7 @@ namespace Apoc3D
 			public:
 				String Name;
 				int32 Parent;
-				FastList<int32> Children;
+				List<int32> Children;
 				int32 Index;
 
 				const Matrix& getBindPoseTransform() const { return m_bindPoseTransfrom; }
@@ -81,7 +81,7 @@ namespace Apoc3D
 					m_boneReferenceTransform.LoadIdentity();
 					m_invBoneReferenceTransform.LoadIdentity();
 				}
-				Bone(int32 index, const Matrix& transform, const FastList<int32>& children, int32 parent, const String& name)
+				Bone(int32 index, const Matrix& transform, const List<int32>& children, int32 parent, const String& name)
 					: Index(index), m_bindPoseTransfrom(transform), Children(children), Parent(parent), Name(name)
 				{
 					Matrix::Inverse(m_invBindPoseTransfrom, transform);
@@ -195,7 +195,7 @@ namespace Apoc3D
 			class APAPI ModelAnimationClip
 			{
 			public:
-				ModelAnimationClip(float duration, const FastList<ModelKeyframe>& keyframes)
+				ModelAnimationClip(float duration, const List<ModelKeyframe>& keyframes)
 					: m_duration(duration), m_keyFrames(keyframes)
 				{
 
@@ -212,11 +212,11 @@ namespace Apoc3D
 				 *  Gets a combined list containing all the keyframes for all bones,
 				 *  sorted by time.
 				 */
-				const FastList<ModelKeyframe>& getKeyframes() const { return m_keyFrames; }
+				const List<ModelKeyframe>& getKeyframes() const { return m_keyFrames; }
 
 			private:
 				float m_duration;
-				FastList<ModelKeyframe> m_keyFrames;
+				List<ModelKeyframe> m_keyFrames;
 
 			};
 
@@ -226,9 +226,9 @@ namespace Apoc3D
 			{
 			public:
 				float Duration;
-				FastList<MaterialAnimationKeyframe> Keyframes;
+				List<MaterialAnimationKeyframe> Keyframes;
 
-				MaterialAnimationClip(float duration, const FastList<MaterialAnimationKeyframe>& keyframes)
+				MaterialAnimationClip(float duration, const List<MaterialAnimationKeyframe>& keyframes)
 					: Duration(duration), Keyframes(keyframes)
 				{
 

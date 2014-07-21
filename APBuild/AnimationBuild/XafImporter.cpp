@@ -78,7 +78,7 @@ namespace APBuild
 						ParseMatrixList(elem->FirstChildElement("Samples"), track, 1.0/(frameRate*tickpf));
 						
 						float duration = 0;
-						FastList<ModelKeyframe> keyFrames((int)track.getCount());
+						List<ModelKeyframe> keyFrames((int)track.getCount());
 
 						for (int32 i=0;i<track.getCount();i++)
 							if (track[i].Time>duration)

@@ -131,7 +131,7 @@ namespace Apoc3D
 		/*                                                                      */
 		/************************************************************************/
 
-		CheckboxGroup::CheckboxGroup(const FastList<CheckBox*>& checkbox)
+		CheckboxGroup::CheckboxGroup(const List<CheckBox*>& checkbox)
 			: m_checkbox(checkbox), m_selectedIndex(-1)
 		{
 

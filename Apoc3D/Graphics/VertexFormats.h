@@ -42,9 +42,9 @@ namespace Apoc3D
 		struct APAPI VertexPIBNT1
 		{
 		private:
-			static FastList<VertexElement> GetElements();
+			static List<VertexElement> GetElements();
 		public:
-			static const FastList<VertexElement> Elements;
+			static const List<VertexElement> Elements;
 
 			Vector3 Position;
 			Vector4 BlendIndices;
@@ -63,9 +63,9 @@ namespace Apoc3D
 		struct APAPI VertexPN
 		{
 		private:
-			static FastList<VertexElement> GetElements();
+			static List<VertexElement> GetElements();
 		public:
-			static const FastList<VertexElement> Elements;
+			static const List<VertexElement> Elements;
 
 			Vector3 Position;
 			Vector3 Normal;
@@ -80,9 +80,9 @@ namespace Apoc3D
 		struct APAPI VertexPNT1
 		{
 		private:
-			static FastList<VertexElement> GetElements();
+			static List<VertexElement> GetElements();
 		public:
-			static const FastList<VertexElement> Elements;
+			static const List<VertexElement> Elements;
 
 			Vector3 Position;
 			Vector3 Normal;
@@ -99,9 +99,9 @@ namespace Apoc3D
 		struct APAPI VertexPNT2
 		{
 		private:
-			static FastList<VertexElement> GetElements();
+			static List<VertexElement> GetElements();
 		public:
-			static const FastList<VertexElement> Elements;
+			static const List<VertexElement> Elements;
 
 			Vector3 Position;
 			Vector3 Normal;
@@ -119,9 +119,9 @@ namespace Apoc3D
 		struct APAPI VertexPT1
 		{
 		private:
-			static FastList<VertexElement> GetElements();
+			static List<VertexElement> GetElements();
 		public:
-			static const FastList<VertexElement> Elements;
+			static const List<VertexElement> Elements;
 
 			Vector3 Position;
 			Vector2 TexCoord1;
@@ -135,9 +135,9 @@ namespace Apoc3D
 		struct APAPI VertexPT2
 		{
 		private:
-			static FastList<VertexElement> GetElements();
+			static List<VertexElement> GetElements();
 		public:
-			static const FastList<VertexElement> Elements;
+			static const List<VertexElement> Elements;
 
 			Vector3 Position;
 			Vector2 TexCoord1;

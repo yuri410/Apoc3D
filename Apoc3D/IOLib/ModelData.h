@@ -62,7 +62,7 @@ namespace Apoc3D
 			 */
 			char* VertexData;
 
-			FastList<VertexElement> VertexElements;
+			List<VertexElement> VertexElements;
 
 			//int32 ParentBoneID;
 			BoundingSphere BoundingSphere;
@@ -83,9 +83,9 @@ namespace Apoc3D
 
 			/** A list of triangle faces. Only triangle list is supported as primitive at this stage.
 			*/
-			FastList<MeshFace> Faces;
+			List<MeshFace> Faces;
 
-			static uint32 ComputeVertexSize(const FastList<VertexElement>& elements);
+			static uint32 ComputeVertexSize(const List<VertexElement>& elements);
 
 			void LoadData(TaggedDataReader* data);
 			TaggedDataWriter* SaveData();
@@ -105,7 +105,7 @@ namespace Apoc3D
 			/**
 			 *  A list of meshes that this model has.
 			 */
-			FastList<MeshData*> Entities;
+			List<MeshData*> Entities;
 
 			ModelData()
 			{

@@ -15,7 +15,7 @@ namespace Apoc3D
 	{
 		namespace MeshSimplifier
 		{
-			APAPI void ProgressiveMesh(const FastList<Vector3>& vert, const FastList<MeshFace>& tri, FastList<int>& map, FastList<int>& permutation);
+			APAPI void ProgressiveMesh(const List<Vector3>& vert, const List<MeshFace>& tri, List<int>& map, List<int>& permutation);
 		}
 	}
 }

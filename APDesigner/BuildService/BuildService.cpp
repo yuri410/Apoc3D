@@ -44,7 +44,7 @@ namespace APDesigner
 	void BuildInterface::AddBuild(Project* project)
 	{
 		//project->Save(L"build.xml", true);
-		FastList<ConfigurationSection*> scripts;
+		List<ConfigurationSection*> scripts;
 		project->GenerateBuildScripts(scripts);
 
 		for (int i=0;i<scripts.getCount();i++)

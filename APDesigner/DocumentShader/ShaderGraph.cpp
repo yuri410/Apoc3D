@@ -172,11 +172,11 @@ namespace APDesigner
 		//{
 		//	const String& item = m_nodes[i]->getName();
 
-		//	const FastList<GraphNode*>& neighbors = m_nodes[i]->getNeighbors();
+		//	const List<GraphNode*>& neighbors = m_nodes[i]->getNeighbors();
 		//	// find dependents among all linked nodes.
 		//	for (int j=0;j<neighbors.getCount();j++)
 		//	{
-		//		const FastList<GraphNode*>& targets = neighbors[j]->getTargets();
+		//		const List<GraphNode*>& targets = neighbors[j]->getTargets();
 		//		for (int k=0;k<targets.getCount();k++)
 		//		{
 		//			if (targets[k] == m_nodes[i])
@@ -207,10 +207,10 @@ namespace APDesigner
 		memset(passed, 0, sizeof(bool)*m_nodes.getCount());
 
 		Queue<GraphNode*> bfsQueue;
-		FastList<GraphNode*> islandNodes;
+		List<GraphNode*> islandNodes;
 
 
-		FastList<Island*> islands;
+		List<Island*> islands;
 
 		for (int i=0;i<m_nodes.getCount();i++)
 		{
@@ -232,7 +232,7 @@ namespace APDesigner
 
 					islandNodes.Add(nde);
 
-					const FastList<GraphNode*>& neighb = nde->getNeighbors();
+					const List<GraphNode*>& neighb = nde->getNeighbors();
 					for (int j=0;j<neighb.getCount();j++)
 					{
 						if (!passed[neighb[j]->getIndex()])

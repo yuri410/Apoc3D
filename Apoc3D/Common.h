@@ -141,7 +141,6 @@ namespace Apoc3D
 	{
 		template<typename T> class List;
 		template<typename T> class List2D;
-		template<typename T> class FastList;
 		template<typename T> class Queue;
 		template<typename T> class Stack;
 
