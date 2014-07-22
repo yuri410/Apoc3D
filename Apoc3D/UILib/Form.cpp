@@ -1458,7 +1458,7 @@ namespace Apoc3D
 
 		void UIRoot::Add(ControlContainer* cc)
 		{
-			Form* form = dynamic_cast<Form*>(cc);
+			Form* form = cc->Upcast<Form>();
 			if (form)
 			{
 				m_forms.Insert(0, form);
@@ -1470,7 +1470,7 @@ namespace Apoc3D
 		}
 		void UIRoot::Remove(ControlContainer* cc)
 		{
-			Form* form = dynamic_cast<Form*>(cc);
+			Form* form = cc->Upcast<Form>();
 			if (form)
 			{
 				m_forms.Remove(form);

@@ -238,7 +238,7 @@ namespace Apoc3D
 				m_entries = newEntries;
 				m_entryLength = primeCapacity;
 			}
-			inline S& operator [](const T& key) const
+			S& operator [](const T& key) const
 			{
 				int index = FindEntry(key);
 				if (index>=0)
@@ -271,6 +271,8 @@ namespace Apoc3D
 			{
 				return Enumerator(this);
 			}
+
+
 
 			int32 getPrimeCapacity() const { return m_entryLength; }
 			int32 getCount() const { return m_count - m_freeCount; }

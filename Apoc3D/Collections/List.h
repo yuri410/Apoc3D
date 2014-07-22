@@ -89,7 +89,7 @@ namespace Apoc3D
 		class List
 		{
 		private:
-			static const bool DirectCopy = std::is_trivially_copyable<T>::value;
+			static const bool CanDirectCopy = std::is_trivially_copyable<T>::value;
 		public:
 			explicit List(int capacity)
 				: m_internalPointer(0), m_length(capacity)
@@ -106,7 +106,7 @@ namespace Apoc3D
 			{
 				m_elements = new T[m_length];
 
-				if (DirectCopy)
+				if (CanDirectCopy)
 				{
 					memcpy(m_elements, another.m_elements, m_internalPointer * sizeof(T));
 				}
@@ -130,7 +130,7 @@ namespace Apoc3D
 				m_length = rhs.m_length;
 				m_elements = new T[m_length];
 
-				if (DirectCopy)
+				if (CanDirectCopy)
 				{
 					memcpy(m_elements, rhs.m_elements, m_internalPointer * sizeof(T));
 				}
@@ -224,7 +224,7 @@ namespace Apoc3D
 			void Resize(int newSize)
 			{
 				T* newArr = new T[newSize];
-				if (DirectCopy)
+				if (CanDirectCopy)
 				{
 					memcpy(newArr, m_elements, m_internalPointer*sizeof(T));
 				}
@@ -297,6 +297,21 @@ namespace Apoc3D
 					m_elements[i] = m_elements[another];
 					m_elements[another] = temp;
 				}
+			}
+
+			T* AllocateArrayCopy() const
+			{
+				T* result = new T[getCount()];
+				if (CanDirectCopy)
+				{
+					memcpy(result, m_elements, sizeof(T)*getCount());
+				}
+				else
+				{
+					for (int32 i=0;i<getCount();i++)
+						result[i] = m_elements[i];
+				}
+				return result;
 			}
 
 			void Sort() { QuickSort(m_elements, 0, m_internalPointer-1); }

@@ -798,7 +798,7 @@ namespace APDesigner
 
 				if (dlg.ShowDialog() == DLGRES_OK)
 				{
-					TextBox* tb = dynamic_cast<TextBox*>(m_proplist[i].Editor);
+					TextBox* tb = m_proplist[i].Editor->Upcast<TextBox>();
 					if (tb)
 					{
 						const String& path	= dlg.getFilePath()[0];
@@ -851,7 +851,7 @@ namespace APDesigner
 
 				if (dlg.ShowDialog() == DLGRES_OK)
 				{
-					TextBox* tb = dynamic_cast<TextBox*>(m_proplist[i].Editor);
+					TextBox* tb = m_proplist[i].Editor->Upcast<TextBox>();
 					if (tb)
 					{
 						const String& path	= dlg.getFilePath()[0];
@@ -918,7 +918,7 @@ namespace APDesigner
 	
 	bool ResourcePane::PropItem::getAsCombo( String& val) const
 	{
-		ComboBox* cb = dynamic_cast<ComboBox*>(Editor);
+		ComboBox* cb = Editor->Upcast<ComboBox>();
 		if (cb)
 		{
 			int idx = cb->getSelectedIndex();
@@ -930,10 +930,10 @@ namespace APDesigner
 
 	bool ResourcePane::PropItem::getAsTextbox(String& val) const
 	{
-		TextBox* tb = dynamic_cast<TextBox*>(Editor);
+		TextBox* tb = Editor->Upcast<TextBox>();
 		if (tb)
 		{
-			val = dynamic_cast<TextBox*>(Editor)->Text;
+			val = tb->Text;
 			return true;
 		}
 		return false;
@@ -941,7 +941,7 @@ namespace APDesigner
 
 	bool ResourcePane::PropItem::getAsCheckBox(bool& val) const
 	{
-		CheckBox* cb = dynamic_cast<CheckBox*>(Editor);
+		CheckBox* cb = Editor->Upcast<CheckBox>();
 		if (cb)
 		{
 			val = cb->getValue();
