@@ -61,7 +61,10 @@ namespace Apoc3D
 			}
 			void DumpValues(List<T>& values) const
 			{
-				m_cast.FillValues(values);
+				for (CastTable::Enumerator e = m_cast.GetEnumerator();e.MoveNext();)
+				{
+					values.Add(e.getCurrentValue());
+				}
 			}
 
 			CastTable::Enumerator GetCastTableEnumerator() { return m_cast.GetEnumerator(); }

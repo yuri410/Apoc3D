@@ -316,7 +316,8 @@ namespace Apoc3D
 
 			//////////////////////////////////////////////////////////////////////////
 
-			void ForEachAbortable(bool (*proc)(T& element))
+			template <typename Func>
+			void ForEachAbortable(Func proc)
 			{
 				for (int32 i=0;i<getCount();i++)
 					if (proc(m_elements[i]))
@@ -325,26 +326,30 @@ namespace Apoc3D
 			template <bool (*proc)(T& element)>
 			void ForEachAbortable() { ForEachAbortable(proc); }
 
-			void ForEachAbortableConst(bool (*proc)(const T& element)) const
+
+			template <typename Func>
+			void ForEachAbortableConst(Func proc) const
 			{
 				for (int32 i=0;i<getCount();i++)
 					if (proc(m_elements[i]))
 						return;
 			}
-
 			template <bool (*proc)(const T& element)>
 			void ForEachAbortableConst() const { ForEachAbortableConst(proc); }
 
-			void ForEach()
+
+			template <typename Func>
+			void ForEach(Func proc)
 			{
 				for (int32 i=0;i<getCount();i++)
 					proc(m_elements[i]);
 			}
-
 			template <void (*proc)(T& element)>
 			void ForEach() { ForEach(proc); }
 
-			void ForEachConst() const
+
+			template <typename Func>
+			void ForEachConst(Func proc) const
 			{
 				for (int32 i=0;i<getCount();i++)
 					proc(m_elements[i]);
