@@ -222,7 +222,7 @@ namespace Apoc3D
 			int32 index = 0;
 			for (CustomParamTable::Enumerator e = CustomParametrs.GetEnumerator(); e.MoveNext();)
 			{				
-				const MaterialCustomParameter& mcp = *e.getCurrentValue();
+				const MaterialCustomParameter& mcp = e.getCurrentValue();
 
 				if (!EffectParameter::IsReference(mcp.Type))
 				{

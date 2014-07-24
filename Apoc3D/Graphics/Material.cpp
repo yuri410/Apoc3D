@@ -206,11 +206,11 @@ namespace Apoc3D
 
 			for (HashMap<int, String>::Enumerator e = m_effectName.GetEnumerator(); e.MoveNext();)
 			{
-				LoadEffect(*e.getCurrentKey());
+				LoadEffect(e.getCurrentKey());
 			}
 			for (HashMap<int, String>::Enumerator e = m_texName.GetEnumerator(); e.MoveNext();)
 			{
-				LoadTexture(*e.getCurrentKey());
+				LoadTexture(e.getCurrentKey());
 			}
 
 #if _DEBUG

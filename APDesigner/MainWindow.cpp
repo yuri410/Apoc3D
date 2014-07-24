@@ -243,7 +243,7 @@ namespace APDesigner
 
 			for (EditorExtensionManager::ExtensionEnumerator e = EditorExtensionManager::getSingleton().GetEnumerator();e.MoveNext();)
 			{
-				EditorExtension* ext = *e.getCurrentValue();
+				EditorExtension* ext = e.getCurrentValue();
 
 				if (ext->SupportsIndependentEditing())
 				{
@@ -539,7 +539,7 @@ namespace APDesigner
 		// go into sub sections
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
 		{
-			ParseMaterialTree(name, *e.getCurrentValue(), resultNameList);
+			ParseMaterialTree(name, e.getCurrentValue(), resultNameList);
 		}
 	}
 
@@ -561,7 +561,7 @@ namespace APDesigner
 				
 				for (ConfigurationSection::SubSectionEnumerator e = mSect->GetSubSectionEnumrator(); e.MoveNext();)
 				{
-					ParseMaterialTree(L"", *e.getCurrentValue(), m_projectMaterialNames);
+					ParseMaterialTree(L"", e.getCurrentValue(), m_projectMaterialNames);
 				}
 				delete config;
 			}

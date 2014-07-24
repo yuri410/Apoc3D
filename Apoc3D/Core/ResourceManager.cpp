@@ -97,10 +97,10 @@ namespace Apoc3D
 			{
 				for (ResHashTable::Enumerator e = m_hashTable.GetEnumerator();e.MoveNext();)
 				{
-					if ((*e.getCurrentValue())->getState() == RS_Loaded)
+					if (e.getCurrentValue()->getState() == RS_Loaded)
 					{
 						LogManager::getSingleton().Write(LOG_System, 
-							L"ResMgr: Resource leak detected: " + (*e.getCurrentKey()), LOGLVL_Warning);
+							L"ResMgr: Resource leak detected: " + e.getCurrentKey(), LOGLVL_Warning);
 					}
 				}
 				
@@ -117,7 +117,7 @@ namespace Apoc3D
 		{
 			for (ResHashTable::Enumerator e = m_hashTable.GetEnumerator();e.MoveNext();)
 			{
-				Resource* res = (*e.getCurrentValue());
+				Resource* res = e.getCurrentValue();
 
 				if (res->getState() == RS_Loaded)
 				{

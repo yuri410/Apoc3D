@@ -147,9 +147,9 @@ namespace Apoc3D
 				return L"unknown";
 			}
 
-			HashMap<String, EffectParamUsage>::Enumerator EffectParameter::getParameterUsageEnumeration()
+			void EffectParameter::FillParameterUsageNames(List<String>& results)
 			{
-				return EffectParameterUsageConverter.CastTable.GetEnumerator();
+				EffectParameterUsageConverter.CastTable.FillKeys(results);
 			}
 			/************************************************************************/
 			/*                                                                      */

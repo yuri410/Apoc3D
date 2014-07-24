@@ -145,7 +145,7 @@ namespace Apoc3D
 
 				for (HashMap<String, ShaderConstant>::Enumerator e = m_table.GetEnumerator();e.MoveNext();)
 				{
-					const ShaderConstant& sc = *e.getCurrentValue();
+					const ShaderConstant& sc = e.getCurrentValue();
 
 					std::string name = StringUtils::toASCIINarrowString(sc.Name);
 					bw->Write(name.c_str(), name.size()+1);

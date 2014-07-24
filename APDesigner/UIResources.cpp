@@ -28,11 +28,7 @@ namespace APDesigner
 	}
 	void UIResources::Finalize()
 	{
-		for (HashMap<String, Texture*>::Enumerator e = m_maps.GetEnumerator();e.MoveNext();)
-		{
-			delete *e.getCurrentValue();
-		}
-		m_maps.Clear();
+		m_maps.DeleteValuesAndClear();
 	}
 
 	Texture* UIResources::GetTexture(const String& name)

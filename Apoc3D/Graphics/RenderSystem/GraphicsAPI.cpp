@@ -39,12 +39,7 @@ namespace Apoc3D
 		{
 			GraphicsAPIManager::~GraphicsAPIManager()
 			{
-				for (PlatformTable::Enumerator e = m_factories.GetEnumerator();
-					e.MoveNext();)
-				{
-					APIList* list = *e.getCurrentValue();
-					delete list;
-				}
+				m_factories.DeleteValuesAndClear();
 			}
 
 			void GraphicsAPIManager::RegisterGraphicsAPI(GraphicsAPIFactory* fac)
@@ -81,7 +76,7 @@ namespace Apoc3D
 				for (PlatformTable::Enumerator e = m_factories.GetEnumerator();
 					e.MoveNext(); )
 				{
-					APIList* list = *e.getCurrentValue();
+					APIList* list = e.getCurrentValue();
 
 					for (int32 i=list->getCount()-1; i>=0;i--)
 					{

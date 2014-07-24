@@ -65,8 +65,8 @@ namespace Apoc3D
 					return false;
 				}
 
-				T* getCurrentKey() const { return m_current; }
-				S* getCurrentValue() const { return m_currentVal; }
+				const T& getCurrentKey() const { return *m_current; }
+				S& getCurrentValue() const { return *m_currentVal; }
 			private:
 				const HashMap<T, S, ComparerType>* m_dict;
 				int m_index;
@@ -160,7 +160,7 @@ namespace Apoc3D
 			{
 				for (Enumerator e = GetEnumerator(); e.MoveNext();)
 				{
-					S val = *e.getCurrentValue();
+					S val = e.getCurrentValue();
 					delete val;
 				}
 
@@ -272,7 +272,61 @@ namespace Apoc3D
 				return Enumerator(this);
 			}
 
+			void FillKeys(List<T>& list) const
+			{
+				if (list.getCount() == 0)
+					list.ResizeDiscard(getCount());
 
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					list.Add(e.getCurrentKey());
+			}
+
+			void FillValues(List<S>& list) const
+			{
+				if (list.getCount() == 0)
+					list.ResizeDiscard(getCount());
+
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					list.Add(e.getCurrentValue());
+			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+			void ForEachAbortable(bool (*proc)(const T& key, T& value))
+			{
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					if (proc(e.getCurrentKey(), e.getCurrentValue()))
+						return;
+			}
+			template <bool (*proc)(const T& key, T& value)>
+			void ForEachAbortable() { ForEachAbortable(proc); }
+			
+			void ForEachAbortableConst(bool (*proc)(const T& key, const T& value)) const
+			{
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					if (proc(e.getCurrentKey(), e.getCurrentValue()))
+						return;
+			}
+			template <bool (*proc)(const T& key, const T& value)>
+			void ForEachAbortableConst() const { ForEachAbortableConst(proc); }
+
+			void ForEach(void (*proc)(const T& key, T& value))
+			{
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					proc(e.getCurrentKey(), e.getCurrentValue());
+			}
+			template <void (*proc)(const T& key, T& value)>
+			void ForEach() { ForEach(proc); }
+
+			void ForEachConst(void (*proc)(const T& key, const T& value)) const
+			{
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					proc(e.getCurrentKey(), e.getCurrentValue());
+			}
+			template <void (*proc)(const T& key, const T& value)>
+			void ForEachConst() const { ForEachConst(proc); }
+
+			//////////////////////////////////////////////////////////////////////////
 
 			int32 getPrimeCapacity() const { return m_entryLength; }
 			int32 getCount() const { return m_count - m_freeCount; }

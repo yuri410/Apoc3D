@@ -39,7 +39,7 @@ namespace APDesigner
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
 		{
 			Nodes.Add(
-				(*e.getCurrentValue())->getValue()
+				e.getCurrentValue()->getValue()
 			);
 		}
 
@@ -47,7 +47,7 @@ namespace APDesigner
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
 		{
 			ShaderNetVaryingNode inp;
-			inp.Parse(*e.getCurrentValue());
+			inp.Parse(e.getCurrentValue());
 			VaryingNodes.Add(inp);
 		}
 
@@ -55,7 +55,7 @@ namespace APDesigner
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
 		{
 			ShaderNetConstantNode oup;
-			oup.Parse(*e.getCurrentValue());
+			oup.Parse(e.getCurrentValue());
 			ConstantNodes.Add(oup);
 		}
 
@@ -63,7 +63,7 @@ namespace APDesigner
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
 		{
 			ShaderAtomLinkInfo lnk;
-			lnk.Parse(*e.getCurrentValue());
+			lnk.Parse(e.getCurrentValue());
 			Links.Add(lnk);
 		}
 

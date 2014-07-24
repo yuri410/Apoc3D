@@ -272,7 +272,7 @@ namespace APBuild
 		int maxGHeight = 0;
 		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
-			const GlyphBitmap* g = i.getCurrentKey();
+			const GlyphBitmap* g = &i.getCurrentKey();
 			if (g->Width > maxGWidth) maxGWidth = g->Width;
 			if (g->Height > maxGHeight) maxGHeight = g->Height;
 		}
@@ -294,7 +294,7 @@ namespace APBuild
 			int32 yPos = 0;
 			for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 			{
-				const GlyphBitmap* g = i.getCurrentKey();
+				const GlyphBitmap* g = &i.getCurrentKey();
 				bw->WriteInt32(g->Index);
 				bw->WriteInt32(g->Width + config.GlyphMargin*2);
 				bw->WriteInt32(g->Height + config.GlyphMargin*2);
@@ -446,7 +446,7 @@ namespace APBuild
 
 		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
-			const GlyphBitmap* g = i.getCurrentKey();
+			const GlyphBitmap* g = &i.getCurrentKey();
 
 			if (info.HasLuminance)
 				bw->Write(g->PixelData, g->Width * g->Height * 2);
@@ -458,7 +458,7 @@ namespace APBuild
 
 		for (GlyphBitmapTable::Enumerator i = glyphHashTable.GetEnumerator();i.MoveNext();)
 		{
-			const GlyphBitmap* g = i.getCurrentKey();
+			const GlyphBitmap* g = &i.getCurrentKey();
 
 			bw->WriteInt32((int32)g->Index);
 			bw->WriteInt32((int32)g->Width);

@@ -67,7 +67,7 @@ namespace Apoc3D
 
 			for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator();iter.MoveNext();)
 			{
-				ConfigurationSection* sect = *iter.getCurrentValue();
+				ConfigurationSection* sect = iter.getCurrentValue();
 				TiXmlElement* elem = new TiXmlElement(sect->getName());
 				root->LinkEndChild(elem);
 				SaveNode(elem, sect);
@@ -140,12 +140,12 @@ namespace Apoc3D
 		{
 			for (ConfigurationSection::AttributeEnumerator iter = parent->GetAttributeEnumrator();iter.MoveNext();)
 			{
-				node->ToElement()->SetAttribute(*iter.getCurrentKey(), *iter.getCurrentValue());
+				node->ToElement()->SetAttribute(iter.getCurrentKey(), iter.getCurrentValue());
 			}
 			
 			for (ConfigurationSection::SubSectionEnumerator iter = parent->GetSubSectionEnumrator();iter.MoveNext();)
 			{
-				ConfigurationSection* s = *iter.getCurrentValue();
+				ConfigurationSection* s = iter.getCurrentValue();
 				TiXmlElement* elem = new TiXmlElement(s->getName());
 				if (s->getValue().size())
 				{

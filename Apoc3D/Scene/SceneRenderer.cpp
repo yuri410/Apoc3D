@@ -205,14 +205,14 @@ namespace Apoc3D
 		{
 			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
 			{
-				MaterialTable* mtrlTbl = *i.getCurrentValue();
+				MaterialTable* mtrlTbl = i.getCurrentValue();
 				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
 				{
-					GeometryTable* geoTbl = *j.getCurrentValue();
+					GeometryTable* geoTbl = j.getCurrentValue();
 
 					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext(); )
 					{
-						OperationList* opList = *k.getCurrentValue();
+						OperationList* opList = k.getCurrentValue();
 						delete opList;
 					}
 					delete geoTbl;
@@ -237,16 +237,16 @@ namespace Apoc3D
 
 			for (PriorityTable::Enumerator pe = m_priTable.GetEnumerator();pe.MoveNext();)
 			{
-				MaterialTable* mtrlTbl = *(pe.getCurrentValue());
+				MaterialTable* mtrlTbl = pe.getCurrentValue();
 				for (MaterialTable::Enumerator me = mtrlTbl->GetEnumerator(); me.MoveNext();)
 				{
-					GeometryTable* geoTbl = *(me.getCurrentValue());
+					GeometryTable* geoTbl = me.getCurrentValue();
 
 					bool isMtrlUsed = false;
 					for (GeometryTable::Enumerator ge = geoTbl->GetEnumerator(); ge.MoveNext();)
 					{
-						GeometryData* geoData = *ge.getCurrentKey();
-						const OperationList* opList = *ge.getCurrentValue();
+						GeometryData* geoData = ge.getCurrentKey();
+						const OperationList* opList = ge.getCurrentValue();
 
 						if (opList->getCount())
 						{
@@ -282,14 +282,14 @@ namespace Apoc3D
 					}
 
 
-					Material* mtrl = *me.getCurrentKey();
+					Material* mtrl = me.getCurrentKey();
 					if (isMtrlUsed)
 					{
 						if (mtrl->getPassFlags() & selectorMask)
 						{
 							for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
 							{
-								const OperationList* opList = *k.getCurrentValue();
+								const OperationList* opList = k.getCurrentValue();
 								if (opList->getCount())
 								{
 									device->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
@@ -312,7 +312,7 @@ namespace Apoc3D
 						GeometryTable* geoTbl = mtrlTbl->operator[](item);
 						for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext();)
 						{
-							OperationList* opList = *k.getCurrentValue();
+							OperationList* opList = k.getCurrentValue();
 							m_bufferCache.RecycleOperationList(opList);
 						}
 						m_bufferCache.RecycleGeometryTable(geoTbl);
@@ -387,14 +387,14 @@ namespace Apoc3D
 			// it is highly possible the next time the buckets in them are reused.
 			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
 			{
-				MaterialTable* mtrlTbl = *i.getCurrentValue();
+				MaterialTable* mtrlTbl = i.getCurrentValue();
 				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
 				{
-					GeometryTable* geoTbl = *j.getCurrentValue();
+					GeometryTable* geoTbl = j.getCurrentValue();
 
 					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext(); )
 					{
-						(*(k.getCurrentValue()))->Clear();
+						k.getCurrentValue()->Clear();
 					}
 				}
 
@@ -404,14 +404,14 @@ namespace Apoc3D
 		{
 			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
 			{
-				MaterialTable* mtrlTbl = *i.getCurrentValue();
+				MaterialTable* mtrlTbl = i.getCurrentValue();
 				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
 				{
-					GeometryTable* geoTbl = *j.getCurrentValue();
+					GeometryTable* geoTbl = j.getCurrentValue();
 
 					for (GeometryTable::Enumerator k = geoTbl->GetEnumerator(); k.MoveNext(); )
 					{
-						m_bufferCache.RecycleOperationList(*k.getCurrentValue());
+						m_bufferCache.RecycleOperationList(k.getCurrentValue());
 					}
 					m_bufferCache.RecycleGeometryTable(geoTbl);
 				}
@@ -423,10 +423,10 @@ namespace Apoc3D
 		{
 			for (PriorityTable::Enumerator i = m_priTable.GetEnumerator();i.MoveNext();)
 			{
-				MaterialTable* mtrlTbl = *i.getCurrentValue();
+				MaterialTable* mtrlTbl = i.getCurrentValue();
 				for (MaterialTable::Enumerator j = mtrlTbl->GetEnumerator(); j.MoveNext();)
 				{
-					Material* m = *(j.getCurrentKey());
+					Material* m = j.getCurrentKey();
 
 					if (m->getPassFlags() & selectMask)
 					{
@@ -462,7 +462,7 @@ namespace Apoc3D
 			// then the engine will do a check one them
 			for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator(); iter.MoveNext();)
 			{
-				String file = (*iter.getCurrentValue())->getAttribute(L"Script");
+				String file = iter.getCurrentValue()->getAttribute(L"Script");
 
 				// load proc
 				FileLocation fl = FileSystem::getSingleton().Locate(file, FileLocateRule::Default);

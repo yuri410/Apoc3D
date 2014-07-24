@@ -81,7 +81,7 @@ namespace Apoc3D
 
 			for (Configuration::ChildTable::Enumerator e = config->GetEnumerator(); e.MoveNext();)
 			{
-				ConfigurationSection* sect = *e.getCurrentValue();
+				ConfigurationSection* sect = e.getCurrentValue();
 				BinaryWriter* bw2 = root->AddEntry(sect->getName());
 
 				SaveNode(sect, bw2);
@@ -110,8 +110,8 @@ namespace Apoc3D
 					bw2->WriteInt32(static_cast<int32>(section->getAttributeCount()));
 					for (ConfigurationSection::AttributeEnumerator e = section->GetAttributeEnumrator();e.MoveNext();)
 					{
-						bw2->WriteString(*e.getCurrentKey());
-						bw2->WriteString(*e.getCurrentValue());
+						bw2->WriteString(e.getCurrentKey());
+						bw2->WriteString(e.getCurrentValue());
 					}
 					bw2->Close();
 					delete bw2;
@@ -126,7 +126,7 @@ namespace Apoc3D
 			{
 				for (ConfigurationSection::SubSectionEnumerator e = section->GetSubSectionEnumrator(); e.MoveNext();)
 				{
-					ConfigurationSection* sect = *e.getCurrentValue();
+					ConfigurationSection* sect = e.getCurrentValue();
 					BinaryWriter* bw2 = subTreeData->AddEntry(sect->getName());
 
 					SaveNode(sect, bw2);

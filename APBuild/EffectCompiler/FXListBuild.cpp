@@ -40,7 +40,7 @@ namespace APBuild
 
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();iter.MoveNext();)
 		{
-			ConfigurationSection* ss = new ConfigurationSection((*iter.getCurrentValue())->getName());
+			ConfigurationSection* ss = new ConfigurationSection(iter.getCurrentValue()->getName());
 			xml->Add(ss);
 		}
 

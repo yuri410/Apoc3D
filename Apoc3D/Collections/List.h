@@ -314,6 +314,46 @@ namespace Apoc3D
 				return result;
 			}
 
+			//////////////////////////////////////////////////////////////////////////
+
+			void ForEachAbortable(bool (*proc)(T& element))
+			{
+				for (int32 i=0;i<getCount();i++)
+					if (proc(m_elements[i]))
+						return;
+			}
+			template <bool (*proc)(T& element)>
+			void ForEachAbortable() { ForEachAbortable(proc); }
+
+			void ForEachAbortableConst(bool (*proc)(const T& element)) const
+			{
+				for (int32 i=0;i<getCount();i++)
+					if (proc(m_elements[i]))
+						return;
+			}
+
+			template <bool (*proc)(const T& element)>
+			void ForEachAbortableConst() const { ForEachAbortableConst(proc); }
+
+			void ForEach()
+			{
+				for (int32 i=0;i<getCount();i++)
+					proc(m_elements[i]);
+			}
+
+			template <void (*proc)(T& element)>
+			void ForEach() { ForEach(proc); }
+
+			void ForEachConst() const
+			{
+				for (int32 i=0;i<getCount();i++)
+					proc(m_elements[i]);
+			}
+			template <void (*proc)(const T& element)>
+			void ForEachConst() const { ForEachConst(proc); }
+
+			//////////////////////////////////////////////////////////////////////////
+
 			void Sort() { QuickSort(m_elements, 0, m_internalPointer-1); }
 			void Sort(int (* comparer)(const T& a, const T& b)) { QuickSort(m_elements, 0, m_internalPointer-1, comparer); }
 

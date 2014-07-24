@@ -310,7 +310,8 @@ namespace Apoc3D
 				static EffectParamUsage ParseParamUsage(const String& val);
 				static String ToString(EffectParamUsage usage);
 
-				static HashMap<String, EffectParamUsage>::Enumerator getParameterUsageEnumeration();
+				//static HashMap<String, EffectParamUsage>::Enumerator getParameterUsageEnumeration();
+				static void FillParameterUsageNames(List<String>& results);
 
 
 				static bool IsReference(CustomEffectParameterType t)

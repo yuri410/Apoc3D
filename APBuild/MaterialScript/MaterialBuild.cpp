@@ -65,20 +65,20 @@ namespace APBuild
 		
 		for (ConfigurationSection::SubSectionEnumerator e = palSect->GetSubSectionEnumrator(); e.MoveNext();)
 		{
-			String palName = *e.getCurrentKey();
+			const String& palName = e.getCurrentKey();
 
 			Pallet* p = new Pallet();
 			p->Name = palName;
 
 			palColors.Add(palName, p);
 
-			ConfigurationSection* subSect = *e.getCurrentValue();
+			ConfigurationSection* subSect = e.getCurrentValue();
 			for (ConfigurationSection::SubSectionEnumerator e1 = subSect->GetSubSectionEnumrator(); e1.MoveNext();)
 			{
 				PalletColor pc;
 
-				pc.Color = ResolveColor4((*e1.getCurrentValue())->getValue(), palColors);
-				pc.Name = *e1.getCurrentKey();
+				pc.Color = ResolveColor4(e1.getCurrentValue()->getValue(), palColors);
+				pc.Name = e1.getCurrentKey();
 				p->Colors.Add(pc);
 			}
 
@@ -92,7 +92,7 @@ namespace APBuild
 
 		for (ConfigurationSection::SubSectionEnumerator e = mSect->GetSubSectionEnumrator(); e.MoveNext();)
 		{
-			ParseMaterialTree(mtrlTable, 0, L"", *e.getCurrentValue(), palColors);
+			ParseMaterialTree(mtrlTable, 0, L"", e.getCurrentValue(), palColors);
 		}
 
 		delete config;
@@ -100,7 +100,7 @@ namespace APBuild
 		Configuration* tokenFile = new Configuration(L"MtrlToken");
 		for (HashMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
 		{
-			ConfigurationSection* s = new ConfigurationSection(*e.getCurrentKey());
+			ConfigurationSection* s = new ConfigurationSection(e.getCurrentKey());
 			tokenFile->Add(s);
 		}
 		//tokenFile->Save(desinationToken);
@@ -112,23 +112,19 @@ namespace APBuild
 
 		for (HashMap<String, MaterialData*>::Enumerator e = mtrlTable.GetEnumerator();e.MoveNext();)
 		{
-			String destPath = PathUtils::Combine(destination, *e.getCurrentKey());
+			String destPath = PathUtils::Combine(destination, e.getCurrentKey());
 			destPath.append(L".mtrl");
 
-			MaterialData* md = *e.getCurrentValue();
+			MaterialData* md = e.getCurrentValue();
 			FileOutStream* fos = new FileOutStream(destPath);
 			md->Save(fos);
 
 			delete md;
-			BuildSystem::LogInformation(*e.getCurrentKey(), L">");
+			BuildSystem::LogInformation(e.getCurrentKey(), L">");
 		}
 		mtrlTable.Clear();
 
-		for (HashMap<String, Pallet*>::Enumerator e = palColors.GetEnumerator();e.MoveNext();)
-		{
-			delete *e.getCurrentValue();
-		}
-		palColors.Clear();
+		palColors.DeleteValuesAndClear();
 	}
 
 	void ParseMaterialTree(HashMap<String, MaterialData*>& table, const MaterialData* baseMtrl, const String& baseMtrlName, const ConfigurationSection* sect, const HashMap<String, Pallet*>& pallets)
@@ -246,7 +242,7 @@ namespace APBuild
 		// go into sub sections
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
 		{
-			ParseMaterialTree(table, newNode, name, *e.getCurrentValue(), pallets);
+			ParseMaterialTree(table, newNode, name, e.getCurrentValue(), pallets);
 		}
 
 		table.Add(name, newNode);

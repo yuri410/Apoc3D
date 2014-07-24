@@ -111,7 +111,7 @@ namespace APBuild
 
 					for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator(); iter.MoveNext();)
 					{
-						ConfigurationSection* psect = *iter.getCurrentValue();
+						ConfigurationSection* psect = iter.getCurrentValue();
 						EffectParameter ep(psect->getName());
 
 						Parse(config, psect, ep);

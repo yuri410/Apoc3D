@@ -81,14 +81,8 @@ namespace APBuild
 	}
 	FbxConverter::~FbxConverter()
 	{
-		for (int i=0;i<m_materials.getCount();i++)
-		{
-			delete m_materials[i];
-		}
-		for (HashMap<std::string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
-		{
-			delete *i.getCurrentValue();
-		}
+		m_materials.DeleteAndClear();
+		m_meshes.DeleteValuesAndClear();
 		delete m_pSkeleton;
 	}
 
@@ -989,10 +983,10 @@ namespace APBuild
 		int idxCounter = 0;
 		for (HashMap<std::string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
 		{
-			const FIMesh* mesh = *i.getCurrentValue();
+			const FIMesh* mesh = i.getCurrentValue();
 			for (HashMap<std::string, FIPartialAnimation*>::Enumerator j=mesh->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
 			{
-				FIPartialAnimation* anim = *j.getCurrentValue();
+				FIPartialAnimation* anim = j.getCurrentValue();
 
 				const std::string& name = anim->GetAnimationName();
 
@@ -1239,7 +1233,7 @@ namespace APBuild
 		{
 			for (HashMap<std::string, FIMesh*>::Enumerator i=fbx.m_meshes.GetEnumerator();i.MoveNext();)
 			{
-				FIMesh* mesh = *i.getCurrentValue();
+				FIMesh* mesh = i.getCurrentValue();
 				const std::vector<FIMeshPart*>& parts = mesh->getParts();
 				List<MaterialData*> materialData;
 				// materials

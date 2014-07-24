@@ -88,18 +88,14 @@ namespace Apoc3D
 		{
 			for (SubSectionTable::Enumerator e = another.GetSubSectionEnumrator(); e.MoveNext(); )
 			{
-				ConfigurationSection* newSect = new ConfigurationSection(**e.getCurrentValue());
+				ConfigurationSection* newSect = new ConfigurationSection(*e.getCurrentValue());
 
-				*e.getCurrentValue() = newSect;
+				e.getCurrentValue() = newSect;
 			}
 		}
 		ConfigurationSection::~ConfigurationSection()
 		{
-			for (SubSectionTable::Enumerator e = m_subSection.GetEnumerator();e.MoveNext();)
-			{
-				ConfigurationSection* sect = *e.getCurrentValue();
-				delete sect;
-			}
+			m_subSection.DeleteValuesAndClear();
 		}
 
 		void ConfigurationSection::AddSection(ConfigurationSection* section)

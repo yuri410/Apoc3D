@@ -192,7 +192,7 @@ namespace APDesigner
 		ConfigurationSection* s = plist->get(L"VS");
 		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
 		{
-			ConfigurationSection* ps = *iter.getCurrentValue();
+			ConfigurationSection* ps = iter.getCurrentValue();
 			EffectParameter ep(ps->getName());
 
 			Parse(ps, ep);
@@ -206,7 +206,7 @@ namespace APDesigner
 
 		for (ConfigurationSection::SubSectionEnumerator iter = s->GetSubSectionEnumrator(); iter.MoveNext();)
 		{
-			ConfigurationSection* ps = *iter.getCurrentValue();
+			ConfigurationSection* ps = iter.getCurrentValue();
 			EffectParameter ep(ps->getName());
 
 			Parse(ps, ep);
@@ -311,8 +311,7 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		List<String> items;
-		for (HashMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
-			items.Add(*e.getCurrentKey());
+		EffectParameter::FillParameterUsageNames(items);
 		m_cbVsUsage = new ComboBox(Point(sx+100, sy), 140, items);
 		m_cbVsUsage->SetSkin(window->getUISkin());
 
@@ -450,8 +449,7 @@ namespace APDesigner
 		m_labels.Add(lbl);
 
 		List<String> items;
-		for (HashMap<String, EffectParamUsage>::Enumerator e = EffectParameter::getParameterUsageEnumeration();e.MoveNext();)
-			items.Add(*e.getCurrentKey());
+		EffectParameter::FillParameterUsageNames(items);
 		m_cbPsUsage = new ComboBox(Point(sx+100, sy), 140, items);
 		m_cbPsUsage->SetSkin(window->getUISkin());
 

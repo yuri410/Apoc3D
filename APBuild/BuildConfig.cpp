@@ -91,7 +91,7 @@ namespace APBuild
 				for (ConfigurationSection::SubSectionEnumerator iter = srcsect->GetSubSectionEnumrator();
 					iter.MoveNext();)
 				{
-					const ConfigurationSection* ss = *iter.getCurrentValue();
+					const ConfigurationSection* ss = iter.getCurrentValue();
 
 					SubMapTable.Add(i, ss->getAttribute(L"FilePath"));
 					i++;
@@ -101,7 +101,7 @@ namespace APBuild
 				for (ConfigurationSection::SubSectionEnumerator iter = srcsect->GetSubSectionEnumrator();
 					iter.MoveNext();)
 				{
-					const ConfigurationSection* ss = *iter.getCurrentValue();
+					const ConfigurationSection* ss = iter.getCurrentValue();
 
 					SubMapTable.Add(i, ss->getAttribute(L"FilePath"));
 					i++;
@@ -157,7 +157,7 @@ namespace APBuild
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
 		{
-			const ConfigurationSection* ss = *iter.getCurrentValue();
+			const ConfigurationSection* ss = iter.getCurrentValue();
 
 			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
 			Ranges.Add(range);
@@ -178,7 +178,7 @@ namespace APBuild
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
 		{
-			const ConfigurationSection* ss = *iter.getCurrentValue();
+			const ConfigurationSection* ss = iter.getCurrentValue();
 
 			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
 			Ranges.Add(range);
@@ -198,7 +198,7 @@ namespace APBuild
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
 		{
-			const ConfigurationSection* ss = *iter.getCurrentValue();
+			const ConfigurationSection* ss = iter.getCurrentValue();
 
 			String path;
 			if (ss->tryGetAttribute(L"FilePath", path))
@@ -351,7 +351,7 @@ namespace APBuild
 			for (ConfigurationSection::SubSectionEnumerator iter = subs->GetSubSectionEnumrator();
 				iter.MoveNext();)
 			{
-				const ConfigurationSection* ent = *iter.getCurrentValue();
+				const ConfigurationSection* ent = iter.getCurrentValue();
 
 				VertexElementUsage usage = GraphicsCommonUtils::ParseVertexElementUsage(ent->getName());
 				int index = 0;
@@ -393,7 +393,7 @@ namespace APBuild
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
 		{
-			const ConfigurationSection* ss = *iter.getCurrentValue();
+			const ConfigurationSection* ss = iter.getCurrentValue();
 
 			String name = ss->getName();
 			int objIdx = StringUtils::ParseInt32(ss->getValue());

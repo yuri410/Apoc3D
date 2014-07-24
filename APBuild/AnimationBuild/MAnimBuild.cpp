@@ -36,7 +36,7 @@ namespace APBuild
 		float maxTime = 0;
 		for (ConfigurationSection::SubSectionEnumerator e = animSect->GetSubSectionEnumrator(); e.MoveNext();)
 		{
-			ConfigurationSection* subSect = *e.getCurrentValue();
+			ConfigurationSection* subSect = e.getCurrentValue();
 
 			String type = subSect->getAttribute(L"Type");
 

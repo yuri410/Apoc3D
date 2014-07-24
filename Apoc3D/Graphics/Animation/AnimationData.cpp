@@ -60,22 +60,12 @@ namespace Apoc3D
 			const String TAG_3_BonesTag = L"Bones";
 			const String TAG_3_BoneCountTag = L"BoneCount";
 
-			template <typename T>
-			void FreeClipTable(T& table)
-			{
-				for (T::Enumerator e = table.GetEnumerator();e.MoveNext();)
-				{
-					auto* clip = *e.getCurrentValue();
-					delete clip;
-				}
-				table.Clear();
-			}
 
 			AnimationData::~AnimationData()
 			{
-				FreeClipTable(m_rigidAnimationClips);
-				FreeClipTable(m_skinnedAnimationClips);
-				FreeClipTable(m_mtrlAnimationClips);
+				m_rigidAnimationClips.DeleteValuesAndClear();
+				m_skinnedAnimationClips.DeleteValuesAndClear();
+				m_mtrlAnimationClips.DeleteValuesAndClear();
 			}
 
 			void AnimationData::ReadData(TaggedDataReader* data)
@@ -268,11 +258,11 @@ namespace Apoc3D
 					BinaryWriter* bw = data->AddEntry(TAG_3_1_MaterialAnimationTag);
 					for (MtrlClipTable::Enumerator e = m_mtrlAnimationClips.GetEnumerator(); e.MoveNext();)
 					{
-						const String& name = *e.getCurrentKey();
+						const String& name = e.getCurrentKey();
 
 						bw->WriteString(name);
 
-						const MaterialAnimationClip* clip = *e.getCurrentValue();
+						const MaterialAnimationClip* clip = e.getCurrentValue();
 						bw->WriteSingle(clip->Duration);
 
 						const List<MaterialAnimationKeyframe>& keyFrames = clip->Keyframes;
@@ -326,10 +316,10 @@ namespace Apoc3D
 					BinaryWriter* bw = data->AddEntry(TAG_3_SkinnedAnimationClipTag);
 					for (ClipTable::Enumerator e = m_skinnedAnimationClips.GetEnumerator(); e.MoveNext();)
 					{
-						const String& name = *e.getCurrentKey();
+						const String& name = e.getCurrentKey();
 						bw->WriteString(name);
 
-						const ModelAnimationClip* clip = *e.getCurrentValue();
+						const ModelAnimationClip* clip = e.getCurrentValue();
 						bw->WriteDouble(static_cast<double>(clip->getDuration()));
 
 						const List<ModelKeyframe>& keyFrames = clip->getKeyframes();
@@ -354,10 +344,10 @@ namespace Apoc3D
 					BinaryWriter* bw = data->AddEntry(TAG_3_RigidAnimationClipTag);
 					for (ClipTable::Enumerator e = m_rigidAnimationClips.GetEnumerator(); e.MoveNext();)
 					{
-						const String& name = *e.getCurrentKey();
+						const String& name = e.getCurrentKey();
 						bw->WriteString(name);
 
-						const ModelAnimationClip* clip = *e.getCurrentValue();
+						const ModelAnimationClip* clip = e.getCurrentValue();
 						bw->WriteDouble(static_cast<double>(clip->getDuration()));
 						
 						const List<ModelKeyframe>& keyFrames = clip->getKeyframes();

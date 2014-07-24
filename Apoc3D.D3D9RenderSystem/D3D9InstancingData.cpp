@@ -67,7 +67,7 @@ namespace Apoc3D
 				for (HashMap<void*, IDirect3DVertexDeclaration9*>::Enumerator e 
 					= m_vtxDeclExpansionTable.GetEnumerator(); e.MoveNext();)
 				{
-					IDirect3DVertexDeclaration9* decl = *e.getCurrentValue();
+					IDirect3DVertexDeclaration9* decl = e.getCurrentValue();
 					decl->Release();
 				}
 				m_vertexBuffer->Release();

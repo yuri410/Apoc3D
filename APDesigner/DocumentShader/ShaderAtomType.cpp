@@ -150,7 +150,7 @@ namespace APDesigner
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator();e.MoveNext();)
 		{
 			ShaderAtomPort port;
-			port.Parse(*e.getCurrentValue());
+			port.Parse(e.getCurrentValue());
 			m_ports.Add(port);
 		}
 		
@@ -187,7 +187,7 @@ namespace APDesigner
 
 		for (Configuration::ChildTable::Enumerator e = config->GetEnumerator();e.MoveNext();)
 		{
-			String file = (*e.getCurrentValue())->getValue();
+			String file = e.getCurrentValue()->getValue();
 			String filePath = PathUtils::Combine(basePath, file);
 
 			ShaderAtomType* type = new ShaderAtomType();

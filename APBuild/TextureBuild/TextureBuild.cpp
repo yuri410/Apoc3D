@@ -969,9 +969,9 @@ LFail:
 			for (HashMap<uint, String>::Enumerator e = maps.GetEnumerator(); e.MoveNext();)
 			{
 				String alpha;
-				bool hasAlpha = alphaMaps->TryGetValue(*e.getCurrentKey(), alpha);
+				bool hasAlpha = alphaMaps->TryGetValue(e.getCurrentKey(), alpha);
 				
-				OpenCubeFace(*e.getCurrentValue(), hasAlpha? &alpha:0, ConvertCubemapFace((CubeMapFace)*e.getCurrentKey()));
+				OpenCubeFace(e.getCurrentValue(), hasAlpha? &alpha:0, ConvertCubemapFace((CubeMapFace)e.getCurrentKey()));
 			}
 		}
 		void AssembleVolumeMap(const HashMap<uint, String>& maps, const HashMap<uint, String>* alphaMaps = 0)
@@ -979,9 +979,9 @@ LFail:
 			for (HashMap<uint, String>::Enumerator e = maps.GetEnumerator(); e.MoveNext();)
 			{
 				String alpha;
-				bool hasAlpha = alphaMaps->TryGetValue(*e.getCurrentKey(), alpha);
+				bool hasAlpha = alphaMaps->TryGetValue(e.getCurrentKey(), alpha);
 
-				OpenVolumeSlice(*e.getCurrentValue(), hasAlpha? &alpha:0, *e.getCurrentKey());
+				OpenVolumeSlice(e.getCurrentValue(), hasAlpha? &alpha:0, e.getCurrentKey());
 			}
 		}
 

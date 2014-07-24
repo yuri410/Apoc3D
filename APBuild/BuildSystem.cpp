@@ -148,7 +148,7 @@ namespace APBuild
 				for (ConfigurationSection::SubSectionEnumerator iter =  sect->GetSubSectionEnumrator();
 					iter.MoveNext();)
 				{
-					ConfigurationSection* item = *iter.getCurrentValue();
+					ConfigurationSection* item = iter.getCurrentValue();
 
 					Build(item);
 				}

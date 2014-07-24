@@ -62,7 +62,7 @@ namespace Apoc3D
 				Configuration* config = XMLConfigurationFormat::Instance.Load(rl);
 				for (Configuration::ChildTable::Enumerator iter = config->GetEnumerator();iter.MoveNext();)
 				{
-					ConfigurationSection* lstEntry = *iter.getCurrentValue();
+					ConfigurationSection* lstEntry = iter.getCurrentValue();
 
 					FileLocation fl;
 					if (!FileSystem::getSingleton().TryLocate(lstEntry->getName() + L".afx", FileLocateRule::Effects, fl))
@@ -125,7 +125,7 @@ namespace Apoc3D
 			{
 				for (EffectTable::Enumerator e = m_fxTable.GetEnumerator(); e.MoveNext();)
 				{
-					Effect* fx = *e.getCurrentValue();
+					Effect* fx = e.getCurrentValue();
 					fx->Update(time);
 				}
 			}

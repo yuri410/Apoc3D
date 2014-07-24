@@ -97,7 +97,7 @@ namespace Apoc3D
 			for (HashMap<String, PakArchiveEntry>::Enumerator e = m_entries.GetEnumerator();
 				e.MoveNext();)
 			{
-				entries.Add(*e.getCurrentValue());
+				entries.Add(e.getCurrentValue());
 			}
 		}
 
@@ -149,8 +149,8 @@ namespace Apoc3D
 				e.MoveNext();
 				i++;
 			}
-			assert(e.getCurrentKey());
-			return *e.getCurrentKey();
+
+			return e.getCurrentKey();
 		}
 
 		Archive* PakArchiveFactory::CreateInstance(const String& file)

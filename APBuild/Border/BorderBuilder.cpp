@@ -133,8 +133,8 @@ namespace APBuild
 			// dump out from the map
 			for (HashMap<FaceEdge, int, FaceEdgeEqualityComparer>::Enumerator e = edgeUsageCounter.GetEnumerator();e.MoveNext();)
 			{
-				if ((*e.getCurrentValue()) == 1)
-					border.Add(*e.getCurrentKey());
+				if (e.getCurrentValue() == 1)
+					border.Add(e.getCurrentKey());
 			}
 
 			if (border.getCount()>0)

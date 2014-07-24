@@ -200,11 +200,7 @@ namespace APBuild
 				{
 					delete m_ModelParts[i];
 				}
-				for (HashMap<std::string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
-				{
-					FIPartialAnimation* akf = *e.getCurrentValue();
-					delete akf;
-				}
+				m_AnimationKeyFrames.DeleteValuesAndClear();
 			}
 
 			void AddVertex(MaterialData* pMaterial, const Vector3& vPosition, const Vector3& vNormal, const Vector2& vTexCoord, const BoneWeight& boneWeights)
@@ -352,12 +348,7 @@ namespace APBuild
 			}
 			~FISkeletonBone()
 			{
-				for (HashMap<std::string, FIPartialAnimation*>::Enumerator e = m_AnimationKeyFrames.GetEnumerator();e.MoveNext();)
-				{
-					FIPartialAnimation* akf = *e.getCurrentValue();
-					delete akf;
-				}
-				m_AnimationKeyFrames.Clear();
+				m_AnimationKeyFrames.DeleteValuesAndClear();
 			}
 
 
@@ -459,7 +450,7 @@ namespace APBuild
 					const FISkeletonBone* bone = m_SkeletonBones[i];
 					for (HashMap<std::string, FIPartialAnimation*>::Enumerator j=bone->m_AnimationKeyFrames.GetEnumerator();j.MoveNext();)
 					{
-						FIPartialAnimation* anim = *j.getCurrentValue();
+						FIPartialAnimation* anim = j.getCurrentValue();
 
 						const std::string& name = anim->GetAnimationName();
 

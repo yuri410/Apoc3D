@@ -158,17 +158,17 @@ namespace Apoc3D
 				}
 
 				resultBuffer.append(1, '[');
-				resultBuffer.append(*e1.getCurrentKey());
+				resultBuffer.append(e1.getCurrentKey());
 				resultBuffer.append(L"]\n");
 
 				firstSection = false;
 
-				ConfigurationSection* sect = *e1.getCurrentValue();
+				ConfigurationSection* sect = e1.getCurrentValue();
 				for (ConfigurationSection::SubSectionEnumerator e2 = sect->GetSubSectionEnumrator();e2.MoveNext();)
 				{
-					resultBuffer.append(*e2.getCurrentKey());
+					resultBuffer.append(e2.getCurrentKey());
 					resultBuffer.append(L" = ");
-					resultBuffer.append((*e2.getCurrentValue())->getValue());
+					resultBuffer.append(e2.getCurrentValue()->getValue());
 					resultBuffer.append(L"\n");
 				}
 			}

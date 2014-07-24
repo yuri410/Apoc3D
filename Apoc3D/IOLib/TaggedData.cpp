@@ -76,7 +76,7 @@ namespace Apoc3D
 
 				for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
 				{
-					Entry& ent = *e.getCurrentValue();
+					Entry& ent = e.getCurrentValue();
 					ent.Offset = br->ReadUInt32();
 					ent.Size = br->ReadUInt32();
 				}
@@ -124,10 +124,7 @@ namespace Apoc3D
 
 		void TaggedDataReader::FillTagList(List<String>& nameTags) const
 		{
-			for (SectionTable::Enumerator e = m_positions.GetEnumerator();e.MoveNext();)
-			{
-				nameTags.Add(*e.getCurrentKey());
-			}
+			m_positions.FillKeys(nameTags);
 		}
 
 
@@ -1522,7 +1519,7 @@ namespace Apoc3D
 		{
 			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
 			{
-				MemoryOutStream* ee = e.getCurrentValue()->Buffer;
+				MemoryOutStream* ee = e.getCurrentValue().Buffer;
 				delete ee;
 			}
 			m_positions.Clear();
@@ -1564,14 +1561,14 @@ namespace Apoc3D
 			{
 				//Entry* ent = e.getCurrentValue();
 				
-				bw->WriteString(*e.getCurrentKey());
+				bw->WriteString(e.getCurrentKey());
 			}
 
 			uint32 baseOffset = static_cast<uint32>( stream->getPosition() ) + sizeof(uint32) * 2 * static_cast<uint32>(m_positions.getCount());
 			uint32 offset = 0;
 			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
 			{
-				Entry* ent = e.getCurrentValue();
+				Entry* ent = &e.getCurrentValue();
 				MemoryOutStream* memBlock = ent->Buffer;
 
 				uint32 blockSize = static_cast<uint32>(memBlock->getLength());
@@ -1584,7 +1581,7 @@ namespace Apoc3D
 
 			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
 			{
-				Entry* ent = e.getCurrentValue();
+				Entry* ent = &e.getCurrentValue();
 				MemoryOutStream* memBlock = ent->Buffer;
 				bw->Write(memBlock->getPointer(), memBlock->getLength());
 			}
@@ -1597,7 +1594,7 @@ namespace Apoc3D
 			ConfigurationSection* sect = new ConfigurationSection(name);
 			for (SectionTable::Enumerator e = m_positions.GetEnumerator(); e.MoveNext();)
 			{
-				Entry* ent = e.getCurrentValue();
+				Entry* ent = &e.getCurrentValue();
 				MemoryOutStream* memBlock = ent->Buffer;
 
 				String text;
@@ -1623,7 +1620,7 @@ namespace Apoc3D
 					}
 				}
 
-				sect->AddStringValue(*e.getCurrentKey(), text);
+				sect->AddStringValue(e.getCurrentKey(), text);
 			}
 			return sect;
 		}

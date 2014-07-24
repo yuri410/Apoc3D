@@ -545,12 +545,7 @@ namespace Apoc3D
 			}
 			D3D9Capabilities::~D3D9Capabilities()
 			{
-				for (ProfileCacheTable::Enumerator e = m_aaProfileLookup.GetEnumerator();e.MoveNext();)
-				{
-					ProfileTable* table = *e.getCurrentValue();
-					delete table;
-				}
-				m_aaProfileLookup.Clear();
+				m_aaProfileLookup.DeleteValuesAndClear();
 			}
 
 
@@ -625,7 +620,7 @@ namespace Apoc3D
 				List<AAProfile> profileListing;
 				for (ProfileTable::Enumerator e = profileTable->GetEnumerator();e.MoveNext();)
 				{
-					profileListing.Add(*e.getCurrentValue());
+					profileListing.Add(e.getCurrentValue());
 				}
 				profileListing.Sort(AAProfileComparison);
 
@@ -640,7 +635,7 @@ namespace Apoc3D
 				ProfileTable* profileTable = EnsureCurrentAAModes(pixFormat, depthFormat);
 				for (ProfileTable::Enumerator e = profileTable->GetEnumerator();e.MoveNext();)
 				{
-					const AAProfile& ap = *e.getCurrentValue();
+					const AAProfile& ap = e.getCurrentValue();
 					uint32 cnt = D3D9Utils::ConvertBackMultiSample(ap.SampleType);
 					int32 d = (int32)sampleCount - cnt;
 					if (d < 0) d = -d;

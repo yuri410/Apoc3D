@@ -148,7 +148,7 @@ namespace Apoc3D
 			
 			for (Configuration::ChildTable::Enumerator iter = conf->GetEnumerator(); iter.MoveNext();)
 			{
-				String name = (*iter.getCurrentValue())->getAttribute(L"Library");
+				String name = iter.getCurrentValue()->getAttribute(L"Library");
 				LoadPlugin(name);
 			}
 		}
@@ -158,12 +158,12 @@ namespace Apoc3D
 			{
 				try
 				{
-					(*e.getCurrentValue())->Unload();
+					e.getCurrentValue()->Unload();
 				}
 				catch (const ApocException& ex)
 				{
 					(void)ex;
-					OnPluginError((*e.getCurrentValue()));
+					OnPluginError(e.getCurrentValue());
 				}
 			}
 			m_plugins.Clear();

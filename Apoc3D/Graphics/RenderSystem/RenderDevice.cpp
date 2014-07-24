@@ -115,7 +115,7 @@ namespace Apoc3D
 
 					for (HashMap<void*, BatchReportEntry>::Enumerator e = m_reportTableByMaterial->GetEnumerator(); e.MoveNext();)
 					{
-						BatchReportEntry* ent = e.getCurrentValue();
+						BatchReportEntry* ent = &e.getCurrentValue();
 						
 						ent->CalculateSorter();
 

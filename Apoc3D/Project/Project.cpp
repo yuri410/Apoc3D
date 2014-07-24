@@ -194,7 +194,7 @@ namespace Apoc3D
 				for (ConfigurationSection::SubSectionEnumerator iter = srcsect->GetSubSectionEnumrator();
 					iter.MoveNext();)
 				{
-					const ConfigurationSection* ss = *iter.getCurrentValue();
+					const ConfigurationSection* ss = iter.getCurrentValue();
 
 					SubMapTable.Add(i, ss->getAttribute(L"FilePath"));
 					i++;
@@ -204,7 +204,7 @@ namespace Apoc3D
 				for (ConfigurationSection::SubSectionEnumerator iter = srcsect->GetSubSectionEnumrator();
 					iter.MoveNext();)
 				{
-					const ConfigurationSection* ss = *iter.getCurrentValue();
+					const ConfigurationSection* ss = iter.getCurrentValue();
 
 					SubAlphaMapTable.Add(i, ss->getAttribute(L"FilePath"));
 					i++;
@@ -454,7 +454,7 @@ namespace Apoc3D
 		// go into sub sections
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
 		{
-			ParseMaterialTree(mtrlList, name, *e.getCurrentValue());
+			ParseMaterialTree(mtrlList, name, e.getCurrentValue());
 		}
 
 		mtrlList.Add(name);
@@ -474,7 +474,7 @@ namespace Apoc3D
 			List<String> names;
 			for (ConfigurationSection::SubSectionEnumerator e = mSect->GetSubSectionEnumrator(); e.MoveNext();)
 			{
-				ParseMaterialTree(names, L"", *e.getCurrentValue());
+				ParseMaterialTree(names, L"", e.getCurrentValue());
 			} 
 
 			delete config;
@@ -527,7 +527,7 @@ namespace Apoc3D
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
 		{
-			const ConfigurationSection* ss = *iter.getCurrentValue();
+			const ConfigurationSection* ss = iter.getCurrentValue();
 
 			CharRange range = { ss->GetAttributeInt(L"Start"), ss->GetAttributeInt(L"End") };
 			Ranges.Add(range);
@@ -921,7 +921,7 @@ namespace Apoc3D
 			for (ConfigurationSection::SubSectionEnumerator iter = subs->GetSubSectionEnumrator();
 				iter.MoveNext();)
 			{
-				const ConfigurationSection* ent = *iter.getCurrentValue();
+				const ConfigurationSection* ent = iter.getCurrentValue();
 
 				VertexElementUsage usage = GraphicsCommonUtils::ParseVertexElementUsage(ent->getName());
 				int index = 0;
@@ -1055,7 +1055,7 @@ namespace Apoc3D
 		for (ConfigurationSection::SubSectionEnumerator iter = sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
 		{
-			const ConfigurationSection* ss = *iter.getCurrentValue();
+			const ConfigurationSection* ss = iter.getCurrentValue();
 
 			String name = ss->getName();
 			int objIdx = StringUtils::ParseInt32(ss->getValue());
@@ -1071,9 +1071,9 @@ namespace Apoc3D
 
 		for (HashMap<String, int>::Enumerator e = ObjectIndexMapping.GetEnumerator(); e.MoveNext(); )
 		{
-			ConfigurationSection* ss = new ConfigurationSection(*e.getCurrentKey());
+			ConfigurationSection* ss = new ConfigurationSection(e.getCurrentKey());
 			
-			ss->SetValue(StringUtils::IntToString(*e.getCurrentValue()));
+			ss->SetValue(StringUtils::IntToString(e.getCurrentValue()));
 
 			sect->AddSection(ss);
 		}
@@ -1148,7 +1148,7 @@ namespace Apoc3D
 
 		for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
 		{
-			Properties.Add(*e.getCurrentKey(), (*e.getCurrentValue())->getValue());
+			Properties.Add(e.getCurrentKey(), e.getCurrentValue()->getValue());
 		}
 	}
 	void ProjectCustomItem::Save(ConfigurationSection* sect, bool savingBuild)
@@ -1163,8 +1163,8 @@ namespace Apoc3D
 
 		for (HashMap<String, String>::Enumerator e = Properties.GetEnumerator(); e.MoveNext();)
 		{
-			ConfigurationSection* valSect = new ConfigurationSection(*e.getCurrentKey());
-			valSect->SetValue(*e.getCurrentValue());
+			ConfigurationSection* valSect = new ConfigurationSection(e.getCurrentKey());
+			valSect->SetValue(e.getCurrentValue());
 
 			sect->AddSection(valSect);
 		}
@@ -1386,7 +1386,7 @@ namespace Apoc3D
 		for (ConfigurationSection::SubSectionEnumerator iter =  sect->GetSubSectionEnumrator();
 			iter.MoveNext();)
 		{
-			ConfigurationSection* sect = *iter.getCurrentValue();
+			ConfigurationSection* sect = iter.getCurrentValue();
 
 			ProjectItem* item = new ProjectItem(prj);
 

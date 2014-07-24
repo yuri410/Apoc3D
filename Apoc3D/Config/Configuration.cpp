@@ -34,22 +34,16 @@ namespace Apoc3D
 		{
 			for (ChildTable::Enumerator e = m_sections.GetEnumerator(); e.MoveNext(); )
 			{
-				ConfigurationSection* newSect = new ConfigurationSection(**e.getCurrentValue());
+				ConfigurationSection* newSect = new ConfigurationSection(*e.getCurrentValue());
 
-				*e.getCurrentValue() = newSect;
+				e.getCurrentValue() = newSect;
 			}
 		}
 
 
 		Configuration::~Configuration()
 		{
-			for (Configuration::ChildTable::Enumerator e = m_sections.GetEnumerator();
-				e.MoveNext();)
-			{
-				ConfigurationSection* sect = *e.getCurrentValue();
-				delete sect;
-			}
-
+			m_sections.DeleteValuesAndClear();
 		}
 
 		void Configuration::Add(ConfigurationSection* sect)

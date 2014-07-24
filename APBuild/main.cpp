@@ -99,7 +99,7 @@ int PrepareBuild(int argc, _TCHAR* argv[])
 			e.MoveNext();
 		
 			// build the node
-			int ret = BuildSystem::Build(*e.getCurrentValue());
+			int ret = BuildSystem::Build(e.getCurrentValue());
 			delete config;
 
 			return ret;

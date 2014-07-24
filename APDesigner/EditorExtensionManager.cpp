@@ -60,10 +60,10 @@ namespace APDesigner
 		EditorExtension* result = 0;
 		for (HashMap<String, EditorExtension*>::Enumerator e = m_extensions.GetEnumerator();e.MoveNext();)
 		{
-			EditorExtension* ee = *e.getCurrentValue();
+			EditorExtension* ee = e.getCurrentValue();
 			if (ee->SupportsItem(item))
 			{
-				result = *e.getCurrentValue();
+				result = e.getCurrentValue();
 				break;
 			}
 		}

@@ -246,7 +246,7 @@ namespace Apoc3D
 		{
 			for (CommandRecord::SubCommandTable::Enumerator e = table.GetEnumerator(); e.MoveNext(); )
 			{
-				CommandRecord* rec = *e.getCurrentValue();
+				CommandRecord* rec = e.getCurrentValue();
 				DesturctCommandTree(rec->SubCommands);
 				if (rec->Cmd)
 				{

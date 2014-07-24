@@ -16,7 +16,7 @@ namespace APDesigner
 			ConfigurationSection* sect = conf->get(L"Recents");
 			for (ConfigurationSection::SubSectionEnumerator e = sect->GetSubSectionEnumrator(); e.MoveNext();)
 			{
-				ConfigurationSection* ss = *e.getCurrentValue();
+				ConfigurationSection* ss = e.getCurrentValue();
 
 				String name = ss->getAttribute(L"Name");
 				String value = ss->getValue();

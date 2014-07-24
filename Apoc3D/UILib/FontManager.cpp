@@ -271,7 +271,7 @@ namespace Apoc3D
 			{
 				for (auto i = m_charTable.GetEnumerator();i.MoveNext();)
 				{
-					Character* ch = i.getCurrentValue();
+					Character* ch = &i.getCurrentValue();
 					Glyph& g = m_glyphList[ch->GlyphIndex];
 					ch->AdvanceX = static_cast<float>(g.Width);
 				}
@@ -1318,10 +1318,7 @@ namespace Apoc3D
 		}
 		FontManager::~FontManager()
 		{
-			for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
-			{
-				delete *iter.getCurrentValue();
-			}
+			m_fontTable.DeleteValuesAndClear();
 		}
 
 		Font* FontManager::getFont(const String& fontName)
@@ -1343,7 +1340,7 @@ namespace Apoc3D
 		{
 			for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
 			{
-				Font* fnt = *iter.getCurrentValue();
+				Font* fnt = iter.getCurrentValue();
 				fnt->FrameStartReset();
 			}
 		}
@@ -1355,7 +1352,7 @@ namespace Apoc3D
 			int32 numLargeFont = 0;
 			for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
 			{
-				Font* fnt = *iter.getCurrentValue();
+				Font* fnt = iter.getCurrentValue();
 				bytesUsed += fnt->m_selectTextureSize * fnt->m_selectTextureSize * 2;
 
 				if (fnt->m_isUsingCaching)
@@ -1396,7 +1393,7 @@ namespace Apoc3D
 				int32 counter = 0;
 				for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
 				{
-					Font* fnt = *iter.getCurrentValue();
+					Font* fnt = iter.getCurrentValue();
 					
 					if (fnt->m_isUsingCaching)
 					{
@@ -1423,7 +1420,7 @@ namespace Apoc3D
 				int32 counter = 0;
 				for (HashMap<String, Font*>::Enumerator iter = m_fontTable.GetEnumerator(); iter.MoveNext();)
 				{
-					Font* fnt = *iter.getCurrentValue();
+					Font* fnt = iter.getCurrentValue();
 
 					if (!fnt->m_isUsingCaching && fnt->m_selectTextureSize == MaxTextureSize)
 					{

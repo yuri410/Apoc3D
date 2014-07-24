@@ -57,19 +57,11 @@ namespace Apoc3D
 
 			void DumpNames(List<String>& names) const
 			{
-				names.ResizeDiscard(m_cast.getCount());
-				for (InverseCastTable::Enumerator e = m_invCast.GetEnumerator(); e.MoveNext();)
-				{
-					names.Add(*e.getCurrentValue());
-				}
+				m_cast.FillKeys(names);
 			}
 			void DumpValues(List<T>& values) const
 			{
-				values.ResizeDiscard(m_cast.getCount());
-				for (CastTable::Enumerator e = m_cast.GetEnumerator(); e.MoveNext();)
-				{
-					values.Add(static_cast<T>(*e.getCurrentValue()));
-				}
+				m_cast.FillValues(values);
 			}
 
 			CastTable::Enumerator GetCastTableEnumerator() { return m_cast.GetEnumerator(); }

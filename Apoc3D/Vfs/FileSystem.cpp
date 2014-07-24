@@ -51,11 +51,7 @@ namespace Apoc3D
 		}
 		FileSystem::~FileSystem()
 		{
-			for (PackTable::Enumerator e = m_openedPack.GetEnumerator(); e.MoveNext();)
-			{				
-				Archive* arc = *e.getCurrentValue();
-				delete arc;
-			}
+			m_openedPack.DeleteValuesAndClear();
 		}
 
 		void FileSystem::AddWrokingDirectory(const String& path)

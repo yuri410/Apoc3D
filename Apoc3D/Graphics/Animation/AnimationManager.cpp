@@ -42,10 +42,7 @@ namespace Apoc3D
 
 			AnimationManager::~AnimationManager(void)
 			{
-				for (AnimHashTable::Enumerator e = m_hashTable.GetEnumerator(); e.MoveNext();)
-				{
-					delete (*e.getCurrentValue());
-				}
+				m_hashTable.DeleteValuesAndClear();
 			}
 
 			const AnimationData* AnimationManager::CreateInstance(const ResourceLocation& rl)
