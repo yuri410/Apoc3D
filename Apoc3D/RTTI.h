@@ -37,4 +37,4 @@ public:
 	public: \
 	_RTTI_StaticTypeId \
 	static_assert(_InheritCheck<ParentType, Type>::isDerivedFrom, "BaseType is not the base."); \
-	virtual bool CheckRuntimeType(uint32 id) const { return id == getTypeID() || ParentType::CheckRuntimeType(id); }
+	virtual bool CheckRuntimeType(uint32 id) const override { return id == getTypeID() || ParentType::CheckRuntimeType(id); }
