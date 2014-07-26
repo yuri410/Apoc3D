@@ -65,6 +65,7 @@ namespace Apoc3D
 		};
 		class APAPI Form : public ControlContainer
 		{
+			RTTI_UpcastableDerived(Form, ControlContainer);
 		public:
 			enum WindowState
 			{
@@ -125,7 +126,6 @@ namespace Apoc3D
 			 */
 			bool IsBackgroundForm;
 
-			RTTI_UpcastableDerived(ControlContainer);
 		private:
 			void InitializeButtons(RenderDevice* device);
 

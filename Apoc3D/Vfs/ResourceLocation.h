@@ -85,6 +85,7 @@ namespace Apoc3D
 		 */
 		class APAPI FileLocation : public ResourceLocation
 		{
+			RTTI_UpcastableDerived(FileLocation, ResourceLocation);
 		public:
 			FileLocation();
 			FileLocation(const String& filePath);
@@ -103,7 +104,6 @@ namespace Apoc3D
 			bool isInArchive() const { return !!m_parent; }
 			const String& getPath() const { return m_path; } 
 
-			RTTI_UpcastableDerived(ResourceLocation);
 		protected:
 			FileLocation(const String& filePath, int64 size);
 
@@ -119,6 +119,7 @@ namespace Apoc3D
 		 */
 		class APAPI MemoryLocation : public ResourceLocation
 		{
+			RTTI_UpcastableDerived(MemoryLocation, ResourceLocation);
 		public:
 			MemoryLocation(void* pos, int64 size);
 			MemoryLocation(const MemoryLocation& ml);
@@ -131,7 +132,6 @@ namespace Apoc3D
 
 			virtual ResourceLocation* Clone() const { return new MemoryLocation(*this); }
 
-			RTTI_UpcastableDerived(MemoryLocation);
 		private:
 			void* m_data;
 		};
@@ -141,6 +141,7 @@ namespace Apoc3D
 		 */
 		class APAPI StreamLocation : public ResourceLocation
 		{
+			RTTI_UpcastableDerived(StreamLocation, ResourceLocation);
 		public:
 			StreamLocation(Stream* strm);
 			StreamLocation(const StreamLocation& sl);
@@ -153,7 +154,6 @@ namespace Apoc3D
 
 			virtual ResourceLocation* Clone() const  { return new StreamLocation(*this); }
 
-			RTTI_UpcastableDerived(StreamLocation);
 		private:
 			Stream* m_stream;
 		};

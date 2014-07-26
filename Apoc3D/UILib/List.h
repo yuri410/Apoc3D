@@ -36,6 +36,7 @@ namespace Apoc3D
 	{
 		class APAPI ListBox : public Control
 		{
+			RTTI_UpcastableDerived(ListBox, Control);
 		public:
 			ListBox(const Point& position, int width, int height, const List<String>& items);
 			~ListBox();
@@ -66,8 +67,6 @@ namespace Apoc3D
 
 			UIEventHandler eventSelect;
 			UIEventHandler eventSelectionChanged;
-
-			RTTI_UpcastableDerived(Control);
 		private:
 			List<String> m_items;
 			bool m_sorted;
@@ -141,6 +140,7 @@ namespace Apoc3D
 
 		class APAPI TreeView : public Control
 		{
+			RTTI_UpcastableDerived(TreeView, Control);
 		public:
 			TreeView(const Point& position, int width, int height);
 			virtual ~TreeView();
@@ -163,8 +163,6 @@ namespace Apoc3D
 
 			UIEventHandler eventSelect;
 			UIEventHandler eventSelectionChanged;
-
-			RTTI_UpcastableDerived(Control);
 		private:
 			void NukeTreeViewNodes(List<TreeViewNode*>& nodes);
 
@@ -211,6 +209,7 @@ namespace Apoc3D
 
 		class APAPI ListView : public Control
 		{
+			RTTI_UpcastableDerived(ListView, Control);
 		public:
 			class Header
 			{
@@ -262,8 +261,6 @@ namespace Apoc3D
 			int getSelectedColumnIndex() const { return m_selectedColumn; }
 
 			ListViewSelectionHandler eventSelected;
-
-			RTTI_UpcastableDerived(Control);
 		private:
 			int GetVisibleItems();
 			

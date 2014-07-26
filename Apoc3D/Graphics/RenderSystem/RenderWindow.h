@@ -80,6 +80,8 @@ namespace Apoc3D
 				DeviceContext* getDeviceContext() const { return m_deviceContext; }
 
 				float getFPS() const { return m_fpsCounter.getFPS(); }
+
+				RTTI_UpcastableBase;
 			protected:
 				RenderDevice* m_renderDevice;
 
@@ -107,6 +109,7 @@ namespace Apoc3D
 			 */
 			class APAPI RenderWindow : public RenderView
 			{
+				RTTI_UpcastableDerived(RenderWindow, RenderView);
 			private:
 				RenderWindowHandler* m_evtHandler;
 				bool m_isExiting;

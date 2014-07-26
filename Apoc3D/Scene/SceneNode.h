@@ -34,16 +34,13 @@ namespace Apoc3D
 {
 	namespace Scene
 	{
-		//template class APAPI std::vector<SceneObject*>;
-		typedef List<SceneObject*> ObjectList;
+		typedef List<SceneObject*> SceneObjectList;
 
 		/**
 		 *  Represents a collection of scene objects in the scene
 		 */
 		class APAPI SceneNode
 		{
-		protected:
-			ObjectList m_attached;
 		public:
 			SceneNode(void);
 			virtual ~SceneNode(void);
@@ -54,7 +51,10 @@ namespace Apoc3D
 			virtual void AddObject(SceneObject* sceObj);
 			virtual void RemoveObject(SceneObject* sceObj);
 
-			const ObjectList& getAttachedObjects() const {  return m_attached; }
+			const SceneObjectList& getAttachedObjects() const {  return m_attached; }
+
+		protected:
+			SceneObjectList m_attached;
 		};
 	};
 };

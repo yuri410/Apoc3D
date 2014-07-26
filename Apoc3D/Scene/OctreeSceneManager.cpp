@@ -265,7 +265,7 @@ namespace Apoc3D
 							m_bfsQueue.Enqueue(subNode);
 						}
 					}
-					const ObjectList& objs = node->getAttachedObjects();
+					const SceneObjectList& objs = node->getAttachedObjects();
 					for (int i=0;i<objs.getCount();i++)
 					{
 						if (frus.Intersects(objs[i]->getBoundingSphere()))
@@ -325,7 +325,7 @@ namespace Apoc3D
 							m_bfsQueue.Enqueue(node->getNode(static_cast<OctreeSceneNode::Extend>(i)));
 						}
 					}
-					const ObjectList& objs = node->getAttachedObjects();
+					const SceneObjectList& objs = node->getAttachedObjects();
 					for (int i=0;i<objs.getCount();i++)
 					{
 						SceneObject* obj = objs[i];

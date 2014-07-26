@@ -34,6 +34,7 @@ namespace Apoc3D
 	{
 		class APAPI HScrollbar : public Control
 		{
+			RTTI_UpcastableDerived(HScrollbar, Control);
 		public:
 			HScrollbar(const Point& position, int width);
 			virtual ~HScrollbar();
@@ -60,7 +61,6 @@ namespace Apoc3D
 
 			UIEventHandler eventValueChanged;
 
-			RTTI_UpcastableDerived(Control);
 		private:
 			void btLeft_OnPress(Control* ctrl);
 			void btRight_OnPress(Control* ctrl);
@@ -87,6 +87,7 @@ namespace Apoc3D
 		};
 		class APAPI VScrollBar : public Control
 		{
+			RTTI_UpcastableDerived(VScrollBar, Control);
 		public:
 			VScrollBar(const Point& position, int width);
 			~VScrollBar();
@@ -112,8 +113,6 @@ namespace Apoc3D
 			void setMax(int v) { m_max = v; if (m_max<0)m_max =0; if (m_value>m_max) m_value = m_max; }
 
 			UIEventHandler eventValueChanged;
-
-			RTTI_UpcastableDerived(Control);
 		private:
 
 			void btUp_OnPress(Control* ctrl);
@@ -142,6 +141,7 @@ namespace Apoc3D
 
 		class APAPI ScrollBar : public Control
 		{
+			RTTI_UpcastableDerived(ScrollBar, Control);
 		public:
 			enum ScrollBarType
 			{
@@ -254,8 +254,6 @@ namespace Apoc3D
 					return m_vsbar->Size.X;
 				return 0;
 			}
-
-			RTTI_UpcastableDerived(Control);
 
 		private:
 			ScrollBarType m_type;

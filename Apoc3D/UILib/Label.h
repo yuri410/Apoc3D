@@ -38,6 +38,7 @@ namespace Apoc3D
 	{
 		class APAPI Label : public Control
 		{
+			RTTI_UpcastableDerived(Label, Control);
 		public:
 			enum Align
 			{
@@ -55,7 +56,6 @@ namespace Apoc3D
 
 			void SetTextColorOverride(ColorValue cv);
 
-			RTTI_UpcastableDerived(Control);
 		private:
 			Point m_textOffset;
 			Point m_drawPos;
@@ -78,6 +78,7 @@ namespace Apoc3D
 
 		class APAPI TextBox : public Control
 		{
+			RTTI_UpcastableDerived(TextBox, Control);
 		public:
 			enum ScrollBarType
 			{
@@ -110,8 +111,6 @@ namespace Apoc3D
 			UIEventHandler eventUpPressedSingleline;
 			UIEventHandler eventDownPressedSingleline;
 
-
-			RTTI_UpcastableDerived(Control);
 		private:
 			Point m_textOffset;
 			KeyboardHelper m_keyboard;

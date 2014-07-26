@@ -95,6 +95,7 @@ namespace Apoc3D
 		 */
 		class APAPI FileStream : public Stream
 		{
+			RTTI_UpcastableDerived(FileStream, Stream);
 		public:
 			FileStream(const String& filename);
 			virtual ~FileStream();
@@ -118,7 +119,6 @@ namespace Apoc3D
 
 			virtual void Flush() { }
 
-			RTTI_UpcastableDerived(Stream);
 		private:
 			std::ifstream m_in;
 			int64 m_length;
@@ -128,6 +128,7 @@ namespace Apoc3D
 		 */
 		class APAPI FileOutStream : public Stream
 		{
+			RTTI_UpcastableDerived(FileOutStream, Stream);
 		public:
 			FileOutStream(const String& filename);
 			virtual ~FileOutStream();
@@ -151,7 +152,6 @@ namespace Apoc3D
 
 			virtual void Flush();
 
-			RTTI_UpcastableDerived(Stream);
 		private:
 			std::ofstream m_out;
 			int64 m_length;
@@ -161,6 +161,7 @@ namespace Apoc3D
 		 */
 		class APAPI MemoryStream : public Stream
 		{
+			RTTI_UpcastableDerived(MemoryStream, Stream);
 		public:
 			char* getInternalPointer() const { return m_data; }
 
@@ -188,8 +189,6 @@ namespace Apoc3D
 			virtual void Close() { }
 
 			virtual void Flush() { }
-
-			RTTI_UpcastableDerived(Stream);
 		private:
 			NoInline static void throwEndofStreamException();
 
@@ -204,6 +203,7 @@ namespace Apoc3D
 		 */
 		class APAPI VirtualStream : public Stream
 		{
+			RTTI_UpcastableDerived(VirtualStream, Stream);
 		public:
 			virtual bool IsReadEndianIndependent() const { return m_baseStream->IsReadEndianIndependent(); }
 			virtual bool IsWriteEndianIndependent() const { return m_baseStream->IsWriteEndianIndependent(); }
@@ -268,8 +268,6 @@ namespace Apoc3D
 			virtual void Close() { }
 
 			virtual void Flush() { m_baseStream->Flush(); }
-
-			RTTI_UpcastableDerived(Stream);
 		private:
 			Stream* m_baseStream;
 			int64 m_length;
@@ -284,6 +282,7 @@ namespace Apoc3D
 		 */
 		class APAPI MemoryOutStream : public Stream
 		{
+			RTTI_UpcastableDerived(MemoryOutStream, Stream);
 		public:
 			char* getPointer() const { return m_data.getInternalPointer(); }
 
@@ -315,8 +314,6 @@ namespace Apoc3D
 			virtual void Close() { }
 
 			virtual void Flush() { }
-
-			RTTI_UpcastableDerived(Stream);
 		private:
 			int64 m_length;
 			List<char> m_data;

@@ -180,6 +180,7 @@ namespace Apoc3D
 
 		class APAPI ControlContainer : public Control
 		{
+			RTTI_UpcastableDerived(ControlContainer, Control);
 		public:
 			ControlContainer();
 			virtual ~ControlContainer();
@@ -196,7 +197,6 @@ namespace Apoc3D
 			Menu* getMenu() const { return m_menu; }
 			void setMenu(Menu* m);
 
-			RTTI_UpcastableDerived(Control);
 		protected:
 			ControlCollection* m_controls;
 			Menu* m_menu;

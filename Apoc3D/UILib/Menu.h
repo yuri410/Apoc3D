@@ -42,6 +42,7 @@ namespace Apoc3D
 
 		class APAPI Menu : public Control
 		{
+			RTTI_UpcastableDerived(Menu, Control);
 		public:
 			Menu();
 			virtual ~Menu();
@@ -58,8 +59,6 @@ namespace Apoc3D
 
 			const List<MenuItem*>& getItems() const { return m_items; }
 			MenuState getState() const { return m_state; }
-
-			RTTI_UpcastableDerived(Control);
 		private:
 			Point m_drawPos;
 
@@ -121,6 +120,7 @@ namespace Apoc3D
 
 		class APAPI SubMenu : public Control
 		{
+			RTTI_UpcastableDerived(SubMenu, Control);
 		public:
 			MenuState getState() const { return m_state; }
 			Control* getParent() const { return m_parent; }
@@ -145,7 +145,6 @@ namespace Apoc3D
 			int getHoverIndex() const { return m_hoverIndex; }
 			const List<MenuItem*>& getItems() const { return m_items; }
 
-			RTTI_UpcastableDerived(Control);
 		private:
 			void Keyboard_OnPress(KeyboardKeyCode key, KeyboardEventsArgs e);
 			void Keyboard_OnRelease(KeyboardKeyCode key, KeyboardEventsArgs e);

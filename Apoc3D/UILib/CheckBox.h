@@ -37,6 +37,7 @@ namespace Apoc3D
 	{
 		class APAPI CheckBox : public Control
 		{
+			RTTI_UpcastableDerived(CheckBox, Control);
 		public:
 			CheckBox(const Point& position, const String& text, bool checked);
 			virtual ~CheckBox();
@@ -55,7 +56,6 @@ namespace Apoc3D
 
 			UIEventHandler eventToggled;
 
-			RTTI_UpcastableDerived(Control);
 		private:
 			
 			bool m_mouseDown;
@@ -70,6 +70,7 @@ namespace Apoc3D
 
 		class APAPI CheckboxGroup : public Control
 		{
+			RTTI_UpcastableDerived(CheckboxGroup, Control);
 		public:
 			CheckboxGroup(const List<CheckBox*>& checkbox);
 			virtual ~CheckboxGroup();
@@ -84,7 +85,6 @@ namespace Apoc3D
 
 			UIEventHandler eventSelectionChanged;
 
-			RTTI_UpcastableDerived(Control);
 		private:
 			List<CheckBox*> m_checkbox;
 			int m_selectedIndex;

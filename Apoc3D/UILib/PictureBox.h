@@ -38,6 +38,7 @@ namespace Apoc3D
 
 		class APAPI PictureBox : public Control
 		{
+			RTTI_UpcastableDerived(PictureBox, Control);
 		public:
 			PictureBox(const Point& position, int border)
 				: Control(position), m_mouseOver(false), m_border(border), m_texture(0)
@@ -55,7 +56,6 @@ namespace Apoc3D
 
 			PictureDrawEventHandler eventPictureDraw;
 
-			RTTI_UpcastableDerived(Control);
 		private:
 			RenderDevice* m_device;
 			Texture* m_texture;

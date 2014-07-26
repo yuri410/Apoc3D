@@ -120,6 +120,7 @@ namespace Apoc3D
 			*/
 			class APAPI AutomaticEffect : public Effect
 			{
+				RTTI_UpcastableDerived(AutomaticEffect, Effect);
 			public:
 				AutomaticEffect(RenderDevice* device, const ResourceLocation& rl);
 				~AutomaticEffect();
@@ -152,7 +153,6 @@ namespace Apoc3D
 
 				virtual void Update(const GameTime* const time);
 
-				RTTI_UpcastableDerived(Effect);
 			protected:
 				virtual int begin();
 				virtual void end();
@@ -223,11 +223,11 @@ namespace Apoc3D
 			 */
 			class APAPI CustomShaderEffect : public Effect
 			{
+				RTTI_UpcastableDerived(CustomShaderEffect, Effect);
 			public:
 				CustomShaderEffect(RenderDevice* device, const ResourceLocation& rl);
 				virtual ~CustomShaderEffect();
 
-				RTTI_UpcastableDerived(Effect);
 			protected:
 				Shader* m_vertexShader;
 				Shader* m_pixelShader;

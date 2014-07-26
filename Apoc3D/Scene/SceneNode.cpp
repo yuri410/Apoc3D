@@ -38,7 +38,7 @@ namespace Apoc3D
 			{
 				if (m_attached[i]->getSceneNode() == this)
 				{
-					m_attached[i]->NotifyParentNode(0);
+					m_attached[i]->NotifyParentNode(nullptr);
 				}
 			}
 		}
@@ -51,7 +51,7 @@ namespace Apoc3D
 		void SceneNode::RemoveObject(SceneObject* sceObj)
 		{
 			m_attached.Remove(sceObj);
-			sceObj->NotifyParentNode(0);
+			sceObj->NotifyParentNode(nullptr);
 		}
 	};
 };
