@@ -63,7 +63,7 @@ namespace Apoc3D
 			{
 				for (CastTable::Enumerator e = m_cast.GetEnumerator();e.MoveNext();)
 				{
-					values.Add(e.getCurrentValue());
+					values.Add(static_cast<T>(e.getCurrentValue()));
 				}
 			}
 
