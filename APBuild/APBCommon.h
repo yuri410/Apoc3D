@@ -2,7 +2,7 @@
 #ifndef APBCOMMON_H
 #define APBCOMMON_H
 
-#include "squish-1.10/squish.h"
+//#include "squish-1.10/squish.h"
 
 namespace APBuild
 {

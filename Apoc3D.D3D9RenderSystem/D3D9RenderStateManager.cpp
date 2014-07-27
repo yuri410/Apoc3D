@@ -332,7 +332,7 @@ namespace Apoc3D
 						curState.MipFilter = state.MipFilter;
 					}
 
-					int maxAnis = std::min<int>(state.MaxAnisotropy,1);
+					int maxAnis = Math::Min(state.MaxAnisotropy,1);
 					if (curState.MaxAnisotropy != maxAnis)
 					{
 						dev->SetSamplerState(samplerIndex+D3DVERTEXTEXTURESAMPLER0, D3DSAMP_MAXANISOTROPY, 
@@ -404,7 +404,7 @@ namespace Apoc3D
 					curState.MipFilter = state.MipFilter;
 				}
 				
-				int maxAnis = std::max<int>(state.MaxAnisotropy,1);
+				int maxAnis = Math::Max(state.MaxAnisotropy,1);
 				if (curState.MaxAnisotropy != maxAnis)
 				{
 					dev->SetSamplerState(samplerIndex, D3DSAMP_MAXANISOTROPY, maxAnis);

@@ -347,7 +347,7 @@ namespace Apoc3D
 							op.RootTransform = temp;
 						}
 						
-						uint priority = std::min<uint>(mtrl->getPriority(), MaxPriority);
+						uint priority = Math::Min(mtrl->getPriority(), MaxPriority);
 
 						// add the rop from outer table to inner table(top down)
 						MaterialTable* mtrlTable;

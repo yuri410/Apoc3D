@@ -246,7 +246,7 @@ namespace Apoc3D
 
 			m_hoverIndex = -1;
 			for (int i=m_vscrollbar->getValue();
-				i<std::min(m_items.getCount(), m_vscrollbar->getValue()+m_visisbleItems);i++)
+				i<Math::Min(m_items.getCount(), m_vscrollbar->getValue()+m_visisbleItems);i++)
 			{
 				if (m_hscrollbar)
 					m_textOffset.X = -m_hscrollbar->getValue() + 2;
@@ -345,7 +345,7 @@ namespace Apoc3D
 		}
 		void ListBox::DrawScrollbar(Sprite* sprite)
 		{
-			m_vscrollbar->setMax(std::max(0, m_items.getCount()-m_visisbleItems));
+			m_vscrollbar->setMax(Math::Max(0, m_items.getCount()-m_visisbleItems));
 			if (m_vscrollbar->getValue()>m_vscrollbar->getMax())
 				m_vscrollbar->setValue(m_vscrollbar->getMax());
 
@@ -357,7 +357,7 @@ namespace Apoc3D
 					m_hscrollbar->setWidth( Size.X - 14);
 					UpdateHScrollbar();
 				}
-				m_vscrollbar->setStep(std::max(1, m_vscrollbar->getMax()/15));
+				m_vscrollbar->setStep(Math::Max(1, m_vscrollbar->getMax() / 15));
 			}
 			else if (m_hscrollbar)
 			{
@@ -793,11 +793,11 @@ namespace Apoc3D
 		{
 			if (m_hscrollbar && m_vscrollbar->getMax()>0)
 			{
-				m_vscrollbar->setMax(std::max(0, GetAllVisibleNodeCount()-m_visisbleItems+1));
+				m_vscrollbar->setMax(Math::Max(0, GetAllVisibleNodeCount() - m_visisbleItems + 1));
 			}
 			else
 			{
-				m_vscrollbar->setMax(std::max(0, GetAllVisibleNodeCount()-m_visisbleItems));
+				m_vscrollbar->setMax(Math::Max(0, GetAllVisibleNodeCount() - m_visisbleItems));
 			}
 
 			if (m_vscrollbar->getValue()>m_vscrollbar->getMax())
@@ -811,7 +811,7 @@ namespace Apoc3D
 					m_hscrollbar->setWidth( Size.X - 14);
 					UpdateHScrollbar();
 				}
-				m_vscrollbar->setStep(std::max(1, m_vscrollbar->getMax()/15));
+				m_vscrollbar->setStep(Math::Max(1, m_vscrollbar->getMax() / 15));
 			}
 			else if (m_hscrollbar)
 			{
@@ -1090,7 +1090,7 @@ namespace Apoc3D
 				else
 					m_hScrollBar->setMax(totalWidth-Size.X+12);
 			}
-			m_hScrollBar->setStep(std::max(1, m_hScrollBar->getMax()/15));
+			m_hScrollBar->setStep(Math::Max(1, m_hScrollBar->getMax() / 15));
 
 			if (m_hScrollBar->getMax()>0)
 			{
