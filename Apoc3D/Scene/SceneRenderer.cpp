@@ -265,14 +265,12 @@ namespace Apoc3D
 
 					if (invalidGeoPointers.getCount()>0)
 					{
-						//InvalidGeoPointerList::Iterator iter = invalidGeoPointers->Begin(); iter != invalidGeoPointers->End(); iter++)
 						for (int32 j=0;j<invalidGeoPointers.getCount();j++)
 						{
 							GeometryData* item = invalidGeoPointers[j];
 							OperationList* list = geoTbl->operator[](item);
 							assert(list->getCount()==0);
-							//delete list;
-
+							
 							m_bufferCache.RecycleOperationList(list);
 
 							geoTbl->Remove(item);
@@ -305,7 +303,6 @@ namespace Apoc3D
 
 				if (invalidMtrlPointers.getCount()>0)
 				{
-					//for (InvalidMtrlPointerList::Iterator iter = invalidMtrlPointers->Begin(); iter != invalidMtrlPointers->End(); iter++)
 					for (int32 i=0;i<invalidMtrlPointers.getCount();i++)
 					{
 						Material* item = invalidMtrlPointers[i];//*iter;

@@ -185,16 +185,16 @@ namespace Apoc3D
 			void Add##typeName(const String& key, const type* v, int32 count); \
 			void AddAttribute##typeName(const String& name, const type* v, int32 count);
 			
-#define CONFIG_SECT_COMBINER_DECL(type, typeName, listType) \
+#define CONFIG_SECT_COMBINER_DECL(type, typeName) \
 			CONFIG_SECT_COMBINER_DECL_NOLIST(type, typeName); \
-			void Add##typeName(const String& key, const listType<type>& v)			{ Add##typeName(key, &v[0], v.getCount()); }  \
-			void AddAttribute##typeName(const String& name, const listType<type>& v)			{ AddAttribute##typeName(name, &v[0], v.getCount()); } 
+			void Add##typeName(const String& key, const List<type>& v) { Add##typeName(key, v.getInternalPointer(), v.getCount()); } \
+			void AddAttribute##typeName(const String& name, const List<type>& v) { AddAttribute##typeName(name, v.getInternalPointer(), v.getCount()); }
 
-			CONFIG_SECT_COMBINER_DECL(String, Strings, List);
-			CONFIG_SECT_COMBINER_DECL(float, Singles, List);
-			CONFIG_SECT_COMBINER_DECL(float, Percentages, List);
-			CONFIG_SECT_COMBINER_DECL(int32, Ints, List);
-			CONFIG_SECT_COMBINER_DECL(uint32, UInts, List);
+			CONFIG_SECT_COMBINER_DECL(String, Strings);
+			CONFIG_SECT_COMBINER_DECL(float, Singles);
+			CONFIG_SECT_COMBINER_DECL(float, Percentages);
+			CONFIG_SECT_COMBINER_DECL(int32, Ints);
+			CONFIG_SECT_COMBINER_DECL(uint32, UInts);
 			CONFIG_SECT_COMBINER_DECL_NOLIST(Vector3, Vector3s);
 			CONFIG_SECT_COMBINER_DECL_NOLIST(Point, Points);
 
