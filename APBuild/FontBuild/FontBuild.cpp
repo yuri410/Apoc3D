@@ -41,15 +41,15 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #if _DEBUG
 #if APOC3D_MT
-#pragma comment (lib, "freetype253MT_D.lib")
+#pragma comment (lib, "freetype2411MT_D.lib")
 #else
-#pragma comment (lib, "freetype253_D.lib")
+#pragma comment (lib, "freetype2411_D.lib")
 #endif
 #else
 #if APOC3D_MT
-#pragma comment (lib, "freetype253MT.lib")
+#pragma comment (lib, "freetype2411MT.lib")
 #else
-#pragma comment (lib, "freetype253.lib")
+#pragma comment (lib, "freetype2411.lib")
 #endif
 #endif
 
