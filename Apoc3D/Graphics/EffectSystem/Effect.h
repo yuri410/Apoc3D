@@ -195,7 +195,7 @@ namespace Apoc3D
 				void SetTexture(ResolvedEffectParameter& param, ResourceHandle<Texture>* value);
 				void SetTexture(ResolvedEffectParameter& param, Texture* value);
 				
-				void SetInstanceBlobParameter(ResolvedEffectParameter& param, const InstanceInfoBlob::CustomValue& v);
+				void SetInstanceBlobParameter(ResolvedEffectParameter& param, const InstanceInfoBlobValue& v);
 				void SetMaterialCustomParameter(ResolvedEffectParameter& param, Material* mtrl);
 				void SetSingleCustomParameter(ResolvedEffectParameter& param, CustomEffectParameterType type, const void* data);
 

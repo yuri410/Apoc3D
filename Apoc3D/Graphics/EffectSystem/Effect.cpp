@@ -386,11 +386,11 @@ namespace Apoc3D
 						case EPUSAGE_InstanceBlob:
 							if (rop->UserData)
 							{
-								const InstanceInfoBlob* firstBlob = reinterpret_cast<const InstanceInfoBlob*>(rop->UserData);
+								const InstanceInfoBlob& firstBlob = *reinterpret_cast<const InstanceInfoBlob*>(rop->UserData);
 
 								if (m_supportsInstancing)
 								{
-									CustomEffectParameterType paramType = firstBlob->DataList[ep.InstanceBlobIndex].Type;
+									CustomEffectParameterType paramType = firstBlob[ep.InstanceBlobIndex].Type;
 
 									bool inValidType = false;
 									switch (paramType)
@@ -398,7 +398,7 @@ namespace Apoc3D
 									case CEPT_Float:
 										{
 											for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-												s_instancingFloatBuffer[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsSingle();
+												s_instancingFloatBuffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsSingle();
 
 											int32 alignedCount = (count + 3) & ~0x03;
 											ep.SetFloat(s_instancingFloatBuffer, alignedCount);
@@ -413,12 +413,12 @@ namespace Apoc3D
 											if (paramType == CEPT_Ref_Vector2)
 											{
 												for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-													dst[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsVector2Ref();
+													dst[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector2Ref();
 											}
 											else
 											{
 												for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-													dst[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsVector2();
+													dst[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector2();
 											}
 												
 											int32 alignedCount = (count*2 + 3) & ~0x03;
@@ -428,18 +428,18 @@ namespace Apoc3D
 											
 									case CEPT_Vector4:
 										for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-											s_instancingVector4Buffer[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsVector4();
+											s_instancingVector4Buffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector4();
 										ep.SetVector4(s_instancingVector4Buffer, count);
 										break;
 									case CEPT_Ref_Vector4:
 										for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-											s_instancingVector4Buffer[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsVector4Ref();
+											s_instancingVector4Buffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector4Ref();
 										ep.SetVector4(s_instancingVector4Buffer, count);
 										break;
 
 									case CEPT_Ref_Vector3:
 										for (int i=0;i<count && i<InstancingData::MaxOneTimeInstances;i++)
-											(Vector3&)s_instancingVector4Buffer[i] = reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData)->DataList[ep.InstanceBlobIndex].AsVector3Ref();
+											(Vector3&)s_instancingVector4Buffer[i] = (*reinterpret_cast<const InstanceInfoBlob*>(rop[i].UserData))[ep.InstanceBlobIndex].AsVector3Ref();
 										ep.SetVector4(s_instancingVector4Buffer, count);
 										break;
 
@@ -458,7 +458,7 @@ namespace Apoc3D
 								}
 								else
 								{
-									SetInstanceBlobParameter(ep, firstBlob->DataList[ep.InstanceBlobIndex]);
+									SetInstanceBlobParameter(ep, firstBlob[ep.InstanceBlobIndex]);
 								}
 							}
 							else
@@ -719,7 +719,7 @@ namespace Apoc3D
 			}
 			
 
-			void AutomaticEffect::SetInstanceBlobParameter(ResolvedEffectParameter& ep, const InstanceInfoBlob::CustomValue& v)
+			void AutomaticEffect::SetInstanceBlobParameter(ResolvedEffectParameter& ep, const InstanceInfoBlobValue& v)
 			{
 				if (EffectParameter::IsReference(v.Type))
 					SetSingleCustomParameter(ep, v.Type, v.RefValue);

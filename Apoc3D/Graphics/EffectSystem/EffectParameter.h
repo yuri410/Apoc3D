@@ -298,9 +298,9 @@ namespace Apoc3D
 
 				ShaderType ProgramType;
 
-				int RegisterIndex;
+				int32 RegisterIndex;
 				
-				int SamplerIndex;
+				int32 SamplerIndex;
 				ShaderSamplerState SamplerState;
 
 				EffectParameter() : RegisterIndex(-1), SamplerIndex(-1) { }
@@ -309,10 +309,7 @@ namespace Apoc3D
 
 				static EffectParamUsage ParseParamUsage(const String& val);
 				static String ToString(EffectParamUsage usage);
-
-				//static HashMap<String, EffectParamUsage>::Enumerator getParameterUsageEnumeration();
 				static void FillParameterUsageNames(List<String>& results);
-
 
 				static bool IsReference(CustomEffectParameterType t)
 				{
@@ -322,54 +319,74 @@ namespace Apoc3D
 
 			};
 
-
-			struct APAPI InstanceInfoBlob
+			struct InstanceInfoBlobValue
 			{
-				struct CustomValue
+				/**
+				*  The data type of the value.
+				*/
+				CustomEffectParameterType Type;
+				uint Value[16];
+				void* RefValue;
+
+				InstanceInfoBlobValue()
+				{ }
+
+				InstanceInfoBlobValue(float val)
+					: RefValue(nullptr), Type(CEPT_Float)
 				{
-					/** 
-					 *  The data type of the value.
-					 */
-					CustomEffectParameterType Type;
-					uint Value[16];
-					void* RefValue;
+					AsSingle() = val;
+				}
 
-					CustomValue() 
-					{ }
+				InstanceInfoBlobValue(const Vector2& val)
+					: RefValue(nullptr), Type(CEPT_Vector2)
+				{
+					AsVector2() = val;
+				}
 
-					CustomValue(float val)
-						: RefValue(nullptr), Type(CEPT_Float)
-					{ AsSingle() = val; }
+				InstanceInfoBlobValue(const Vector4& val)
+					: RefValue(nullptr), Type(CEPT_Vector4)
+				{
+					AsVector4() = val;
+				}
 
-					CustomValue(const Vector2& val)
-						: RefValue(nullptr), Type(CEPT_Vector2)
-					{ AsVector2() = val; }
+				InstanceInfoBlobValue(bool val)
+					: RefValue(nullptr), Type(CEPT_Boolean)
+				{
+					AsBoolean() = val;
+				}
 
-					CustomValue(const Vector4& val)
-						: RefValue(nullptr), Type(CEPT_Vector4)
-					{ AsVector4() = val; }
+				InstanceInfoBlobValue(int val)
+					: RefValue(nullptr), Type(CEPT_Integer)
+				{
+					AsInteger() = val;
+				}
 
-					CustomValue(bool val)
-						: RefValue(nullptr), Type(CEPT_Boolean)
-					{ AsBoolean() = val; }
+				float& AsSingle() { return reinterpret_cast<float&>(Value); }
+				Vector2& AsVector2() { return reinterpret_cast<Vector2&>(Value); }
+				Vector4& AsVector4() { return reinterpret_cast<Vector4&>(Value); }
+				bool& AsBoolean() { return reinterpret_cast<bool&>(Value); }
+				int& AsInteger() { return reinterpret_cast<int&>(Value); }
 
-					CustomValue(int val)
-						: RefValue(nullptr), Type(CEPT_Integer)
-					{ AsInteger() = val; }
+				Vector2& AsVector2Ref() { return *reinterpret_cast<Vector2*>(RefValue); }
+				Vector3& AsVector3Ref() { return *reinterpret_cast<Vector3*>(RefValue); }
+				Vector4& AsVector4Ref() { return *reinterpret_cast<Vector4*>(RefValue); }
 
-					float& AsSingle() { return reinterpret_cast<float&>(Value); }
-					Vector2& AsVector2() { return reinterpret_cast<Vector2&>(Value); }
-					Vector4& AsVector4() { return reinterpret_cast<Vector4&>(Value); }
-					bool& AsBoolean() { return reinterpret_cast<bool&>(Value); }
-					int& AsInteger() { return reinterpret_cast<int&>(Value); }
 
-					Vector2& AsVector2Ref() { return *reinterpret_cast<Vector2*>(RefValue); }
-					Vector4& AsVector4Ref() { return *reinterpret_cast<Vector4*>(RefValue); }
-					Vector3& AsVector3Ref() { return *reinterpret_cast<Vector3*>(RefValue); }
-				};
+				void Configure(float defVal) { RefValue = nullptr; Type = CEPT_Float; AsSingle() = defVal; }
+				void Configure(const Vector2& defVal) { RefValue = nullptr; Type = CEPT_Vector2; AsVector2() = defVal; }
+				void Configure(const Vector4& defVal) { RefValue = nullptr; Type = CEPT_Vector4; AsVector4() = defVal; }
+				void Configure(bool defVal) { RefValue = nullptr; Type = CEPT_Boolean; AsBoolean() = defVal; }
+				void Configure(int defVal) { RefValue = nullptr; Type = CEPT_Integer; AsInteger() = defVal; }
 
-				List<CustomValue> DataList;
+				void ConfigureRef(const Vector2* defVal) { Type = CEPT_Ref_Vector2; RefValue = (void*)defVal; }
+				void ConfigureRef(const Vector3* defVal) { Type = CEPT_Ref_Vector3; RefValue = (void*)defVal; }
+				void ConfigureRef(const Vector4* defVal) { Type = CEPT_Ref_Vector4; RefValue = (void*)defVal; }
+				void ConfigureRef(Texture* defVal) { Type = CEPT_Ref_Texture; RefValue = defVal; }
+				void ConfigureRef(ResourceHandle<Texture>* defVal) { Type = CEPT_Ref_TextureHandle; RefValue = defVal; }
 			};
+
+			typedef List<InstanceInfoBlobValue> InstanceInfoBlob;
+
 		};
 	};
 };
