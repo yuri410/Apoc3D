@@ -79,7 +79,8 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <SmallerTypeCheck>true</SmallerTypeCheck>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <PrecompiledHeaderFile>APDPCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>APDPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -101,7 +102,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;APOC3D_DYNLIB;APOC3D_IDE_DYLIB_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <PrecompiledHeaderFile>APDPCH.h</PrecompiledHeaderFile>
@@ -126,7 +128,8 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <PrecompiledHeaderFile>APDPCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>APDPCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>

@@ -80,7 +80,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;$(SolutionDir)\Samples\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
-      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
@@ -102,7 +103,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;$(SolutionDir)\Samples\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
@@ -125,7 +127,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;$(SolutionDir)\Samples\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>4100</DisableSpecificWarnings>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
       <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
