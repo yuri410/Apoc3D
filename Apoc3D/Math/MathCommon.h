@@ -117,18 +117,31 @@ namespace Apoc3D
 			return t > 1 ? 1 : t;
 		}
 
+
 		template <typename T>
-		T Max(T a, T b)
+		T _Max(T a, T b)
 		{
 			static_assert(std::is_floating_point<T>::value || std::is_integral<T>::value, "");
 			return (a > b) ? a : b;
 		}
 		template <typename T>
-		T Min(T a, T b)
+		T _Min(T a, T b)
 		{
 			static_assert(std::is_floating_point<T>::value || std::is_integral<T>::value, "");
 			return (a < b) ? a : b;
 		}
+
+
+		inline int32 Max(int32 a, int32 b) { return _Max(a, b); }
+		inline int32 Min(int32 a, int32 b) { return _Min(a, b); }
+
+		inline uint32 Max(uint32 a, uint32 b) { return _Max(a, b); }
+		inline uint32 Min(uint32 a, uint32 b) { return _Min(a, b); }
+
+		inline float Max(float a, float b) { return _Max(a, b); }
+		inline float Min(float a, float b) { return _Min(a, b); }
+
+
 
 		inline int32 Round(float x)
 		{
