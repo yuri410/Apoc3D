@@ -57,7 +57,7 @@ namespace Apoc3D
 
 			void DumpNames(List<String>& names) const
 			{
-				m_cast.FillKeys(names);
+				m_invCast.FillValues(names);
 			}
 			void DumpValues(List<T>& values) const
 			{
