@@ -143,9 +143,15 @@ namespace Apoc3D
 			}
 			else
 			{
-				m_tex[index] = 0;
+				m_tex[index] = nullptr;
+
+#if _DEBUG
+				LogManager::getSingleton().Write(LOG_Graphics, L"Missing texture '" + *name + L"' when loading " + DebugName + L".",
+					LOGLVL_Error);
+#else
 				LogManager::getSingleton().Write(LOG_Graphics, L"Missing texture '" + *name + L"'. ",
 					LOGLVL_Error);
+#endif
 			}
 			
 		}
@@ -165,12 +171,19 @@ namespace Apoc3D
 			}
 			else
 			{
+#if _DEBUG
+				ApocLog(LOG_Graphics, L"[Material] External reference material '" + mtrlName + L"' not found when loading " + DebugName + L".", LOGLVL_Error);
+#else
 				ApocLog(LOG_Graphics, L"[Material] External reference material '" + mtrlName + L"' not found.", LOGLVL_Error);
+#endif
 			}
 		}
 
 		void Material::Load(const MaterialData& mdata)
 		{
+#if _DEBUG
+			DebugName = mdata.DebugName;
+#endif
 			if (mdata.ExternalRefName.size())
 			{
 				// re load using a newly loaded MaterialData
@@ -212,10 +225,6 @@ namespace Apoc3D
 			{
 				LoadTexture(e.getCurrentKey());
 			}
-
-#if _DEBUG
-			DebugName = mdata.DebugName;
-#endif
 		}
 		void Material::Save(MaterialData& data)
 		{
