@@ -77,6 +77,7 @@ namespace Apoc3D
 			AttributeTable::Enumerator GetAttributeEnumrator() const { return m_attributes.GetEnumerator(); }
 			SubSectionTable::Enumerator GetSubSectionEnumrator() const { return m_subSection.GetEnumerator(); }
 
+			ConfigurationSection* CreateSubSection(const String& name);
 			void AddSection(ConfigurationSection* section);
 			void SetValue( const String& value);
 

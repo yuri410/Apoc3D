@@ -98,6 +98,21 @@ namespace Apoc3D
 			m_subSection.DeleteValuesAndClear();
 		}
 
+		ConfigurationSection* ConfigurationSection::CreateSubSection(const String& name)
+		{
+			ConfigurationSection* sect;
+
+			if (m_subSection.TryGetValue(name, sect))
+			{
+				LogManager::getSingleton().Write(LOG_System, L"Configuration Section with name '" + name + L"' already exists. Ignored.", LOGLVL_Warning);
+			}
+			else
+			{
+				sect = new ConfigurationSection(name);
+				m_subSection.Add(name, sect);
+			}
+			return sect;
+		}
 		void ConfigurationSection::AddSection(ConfigurationSection* section)
 		{
 			assert(section != this);
