@@ -73,6 +73,19 @@ namespace Apoc3D
 #define ToRadian(x) (x * (L_PIf/180.0f))
 #define ToDegree(x) (x * (180.0f/L_PIf))
 		
+		inline float SqrtFast(float x)
+		{
+			union
+			{
+				int i;
+				float x;
+			} u;
+
+			u.x = x;
+			u.i = (1 << 29) + (u.i >> 1) - (1 << 22);
+			return u.x;
+		}
+
 		inline float Frac(float value)
 		{
 			assert(value>=0);

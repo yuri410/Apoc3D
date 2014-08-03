@@ -172,8 +172,11 @@
 #include "Apoc3D.Essentials/EssentialCommon.h"
 #include "Apoc3D.Essentials/Game.h"
 #include "Apoc3D.Essentials/AI/PathFinder.h"
+
+#ifndef APOC3D_DYNLIB
 #include "Apoc3D.D3D9RenderSystem/Plugin.h"
 #include "Apoc3D.WindowsInput/Plugin.h"
+#endif
 
 using namespace Apoc3D;
 using namespace Apoc3D::Collections;

@@ -66,40 +66,33 @@ namespace Apoc3D
 			static int64 GetHashCode(void* const& obj) { return static_cast<int64>(reinterpret_cast<uintptr>(obj)); }
 		};
 
-		/*template <>
-		struct APAPI EqualityComparer<Resource*>
-		{
-			static bool Equals(Resource* const& x, Resource* const& y);
-			static int64 GetHashCode(Resource* const& obj);
-		};*/
-		
 
 		template <>
-		struct APAPI EqualityComparer<uint64>
+		struct EqualityComparer<uint64>
 		{
-			static bool Equals(const uint64& x, const uint64& y);
-			static int64 GetHashCode(const uint64& obj);
+			static bool Equals(const uint64& x, const uint64& y) { return x == y; }
+			static int64 GetHashCode(const uint64& obj) { return static_cast<int64>(obj); }
 		};
 
 		template <>
-		struct APAPI EqualityComparer<uint32>
+		struct EqualityComparer<uint32>
 		{
-			static bool Equals(const uint32& x, const uint32& y);
-			static int64 GetHashCode(const uint32& obj);
+			static bool Equals(const uint32& x, const uint32& y) { return x == y; }
+			static int64 GetHashCode(const uint32& obj) { return obj; }
 		};
 
 		template <>
-		struct APAPI EqualityComparer<int32>
+		struct EqualityComparer<int32>
 		{
-			static bool Equals(const int32& x, const int32& y);
-			static int64 GetHashCode(const int32& obj);
+			static bool Equals(const int32& x, const int32& y) { return x == y; }
+			static int64 GetHashCode(const int32& obj) { return obj; }
 		};
 
 		template <>
-		struct APAPI EqualityComparer<wchar_t>
+		struct EqualityComparer<wchar_t>
 		{
-			static bool Equals(const wchar_t& x, const wchar_t& y);
-			static int64 GetHashCode(const wchar_t& obj);
+			static bool Equals(const wchar_t& x, const wchar_t& y) { return x == y; }
+			static int64 GetHashCode(const wchar_t& obj) { return static_cast<int64>(obj); }
 		};
 
 		template <>
@@ -170,8 +163,8 @@ namespace Apoc3D
 
 		namespace HashHelpers
 		{
-			int GetPrime(int min);
-			bool IsPrime(int candidate);
+			int APAPI GetPrime(int min);
+			bool APAPI IsPrime(int candidate);
 		};
 
 	}

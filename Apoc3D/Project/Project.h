@@ -726,28 +726,28 @@ namespace Apoc3D
 
 
 
-	namespace APAPI ProjectTypeUtils
+	namespace ProjectTypeUtils
 	{
-		ProjectItemType ParseProjectItemType(const String& str);
-		String ToString(ProjectItemType type);
-		void FillProjectItemTypeNames(List<String>& names);
-		bool SupportsProjectItemType(const String& str);
+		ProjectItemType APAPI ParseProjectItemType(const String& str);
+		String APAPI ToString(ProjectItemType type);
+		void APAPI FillProjectItemTypeNames(List<String>& names);
+		bool APAPI SupportsProjectItemType(const String& str);
 
-		TextureFilterType ParseTextureFilterType(const String& str);
-		String ToString(TextureFilterType flt);
-		void FillTextureFilterTypeNames(List<String>& names);
+		TextureFilterType APAPI ParseTextureFilterType(const String& str);
+		String APAPI ToString(TextureFilterType flt);
+		void APAPI FillTextureFilterTypeNames(List<String>& names);
 
-		TextureBuildMethod ParseTextureBuildMethod(const String& str);
-		String ToString(TextureBuildMethod method);
-		void FillTextureBuildMethodNames(List<String>& names);
+		TextureBuildMethod APAPI ParseTextureBuildMethod(const String& str);
+		String APAPI ToString(TextureBuildMethod method);
+		void APAPI FillTextureBuildMethodNames(List<String>& names);
 
-		TextureCompressionType ParseTextureCompressionType(const String& str);
-		String ToString(TextureCompressionType ct);
-		void FillTextureCompressionTypeNames(List<String>& names);
+		TextureCompressionType APAPI ParseTextureCompressionType(const String& str);
+		String APAPI ToString(TextureCompressionType ct);
+		void APAPI FillTextureCompressionTypeNames(List<String>& names);
 
-		MeshBuildMethod ParseModelBuildMethod(const String& str);
-		String ToString(MeshBuildMethod method);
-		void FillModelBuildMethodNames(List<String>& names);
+		MeshBuildMethod APAPI ParseModelBuildMethod(const String& str);
+		String APAPI ToString(MeshBuildMethod method);
+		void APAPI FillModelBuildMethodNames(List<String>& names);
 
 		/*FontStyle ParseFontStyle(const String& str);
 		String ToString(FontStyle type);

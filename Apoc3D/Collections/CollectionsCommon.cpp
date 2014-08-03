@@ -40,37 +40,7 @@ namespace Apoc3D
 	namespace Collections
 	{
 		//////////////////////////////////////////////////////////////////////////
-		/*
-		bool EqualityComparer<Resource*>::Equals(Resource* const& x, Resource* const& y)
-		{
-			const void* a = x;
-			const void* b = y;
-			return a==b;
-		}
-		int64 EqualityComparer<Resource*>::GetHashCode(Resource* const& obj)
-		{
-			const void* s = obj;
-			return static_cast<int64>(reinterpret_cast<uintptr>(s));
-		}*/
-
-		//////////////////////////////////////////////////////////////////////////
-
-		bool EqualityComparer<uint64>::Equals(const uint64& x, const uint64& y) { return x==y; }
-		int64 EqualityComparer<uint64>::GetHashCode(const uint64& obj) { return static_cast<int64>(obj); }
-
-		bool EqualityComparer<uint32>::Equals(const uint32& x, const uint32& y) { return x==y; }
-		int64 EqualityComparer<uint32>::GetHashCode(const uint32& obj) { return obj; }
-
-		bool EqualityComparer<int32>::Equals(const int32& x, const int32& y) { return x==y; }
-		int64 EqualityComparer<int32>::GetHashCode(const int32& obj) { return obj; }
-
-		//////////////////////////////////////////////////////////////////////////
-
-		bool EqualityComparer<wchar_t>::Equals(const wchar_t& x, const wchar_t& y) { return x==y; }
-		int64 EqualityComparer<wchar_t>::GetHashCode(const wchar_t& obj) { return static_cast<int64>(obj); }
-
-		//////////////////////////////////////////////////////////////////////////
-
+		
 		bool EqualityComparer<std::string>::Equals(const string& x, const string& y) { return x==y; }
 		int64 EqualityComparer<std::string>::GetHashCode(const string& obj)
 		{

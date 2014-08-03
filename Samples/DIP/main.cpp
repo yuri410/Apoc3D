@@ -25,11 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "DIPCommon.h"
 
-#ifndef APOC3D_DYNLIB
-#include "Apoc3D.D3D9RenderSystem/Plugin.h"
-#include "Apoc3D.WindowsInput/Plugin.h"
-#endif
-
 #include <direct.h>
 #include <Windows.h>
 

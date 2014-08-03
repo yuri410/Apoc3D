@@ -241,7 +241,6 @@ namespace Apoc3D
 
 			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
 
-
 			void SetX(const Vector3& v) { M11 = v.X; M12 = v.Y; M13 = v.Z; }
 			void SetY(const Vector3& v) { M21 = v.X; M22 = v.Y; M23 = v.Z; }
 			void SetZ(const Vector3& v) { M31 = v.X; M32 = v.Y; M33 = v.Z; }
@@ -249,6 +248,8 @@ namespace Apoc3D
 			void SetTranslation(const Vector3& v) { M41 = v.X; M42 = v.Y; M43 = v.Z; }
 			void SetTranslation(float x, float y, float z) { M41 = x; M42 = y; M43 = z; }
 
+			void AddTranslation(const Vector3& v) { M41 += v.X; M42 += v.Y; M43 += v.Z; }
+			void AddTranslation(float x, float y, float z) { M41 += x; M42 += y; M43 += z; }
 			#endif
 
 			void SetXYZ(const Vector3& x, const Vector3& y, const Vector3& z)
