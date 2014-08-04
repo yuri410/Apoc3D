@@ -161,10 +161,39 @@ namespace Apoc3D
 			return (a > b) ? 1 : 0;
 		}
 
+		template <typename T, typename S>
+		struct KeyValuePair
+		{
+			T Key;
+			S Value;
+
+			KeyValuePair() { }
+			KeyValuePair(T key, S val) 
+				: Key(key), Value(val) { }
+		};
+
 		namespace HashHelpers
 		{
 			int APAPI GetPrime(int min);
 			bool APAPI IsPrime(int candidate);
+
+			template <typename T>
+			struct _ToString
+			{
+				static String Invoke(const T& item) { return L""; }
+			};
+
+			template <typename T>
+			String ToString(const T& item) { return _ToString<T>::Invoke(item); }
+
+			/*template<> String ToString<int16>(const int16& v);
+			template<> String ToString<int32>(const int32& v);
+			template<> String ToString<int64>(const int64& v);
+
+			template<> String ToString<uint16>(const uint16& v);
+			template<> String ToString<uint32>(const uint32& v);
+			template<> String ToString<uint64>(const uint64& v);
+			*/
 		};
 
 	}

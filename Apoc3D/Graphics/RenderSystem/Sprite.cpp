@@ -53,7 +53,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw AP_EXCEPTION(EX_InvalidOperation, L"The sprite is not begun with SPR_UsePostTransformStack.");
+					throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"The sprite is not begun with SPR_UsePostTransformStack.");
 				}
 			}
 		}

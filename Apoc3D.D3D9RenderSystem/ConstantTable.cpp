@@ -41,7 +41,7 @@ namespace Apoc3D
 		{
 			void ConstantTable::ThrowKeyNotFoundEx(const String& name)
 			{
-				throw AP_EXCEPTION(EX_KeyNotFound, name);
+				throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, name);
 			}
 			
 

@@ -257,9 +257,8 @@ namespace Apoc3D
 			{
 				m_contendLineCount = 0;
 				int counter = 0;
-				for (LinkedList<LogEntry>::Iterator iter = m_logs.Begin(); iter != m_logs.End(); iter++ )
+				for (const LogEntry& e : m_logs)
 				{
-					const LogEntry& e = *iter;
 					String str = e.ToString();
 					
 					m_entryInfo[counter].LineCount = font->CalculateLineCount(str,textWidth);

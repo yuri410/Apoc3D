@@ -59,7 +59,7 @@ namespace Apoc3D
 			{
 				return plg;
 			}
-			throw AP_EXCEPTION(EX_KeyNotFound, name);
+			throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, name);
 		}
 
 		void PluginManager::OnPluginLoad(const Plugin* plg, int32 index, int32 count)

@@ -133,8 +133,8 @@ namespace Apoc3D
 
 			static const int32 MaxEntries = 200;
 
-			Iterator begin() const { return m_entries.Begin(); }
-			Iterator end() const { return m_entries.End(); }
+			Iterator begin() const { return m_entries.begin(); }
+			Iterator end() const { return m_entries.end(); }
 
 			LogEntry* LastEntry() { return &m_entries.Back(); }
 

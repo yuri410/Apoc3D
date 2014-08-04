@@ -200,11 +200,11 @@ namespace Apoc3D
 			/**
 			 * Returns an iterator pointing to the head of the list
 			 */
-			Iterator Begin() const { return Iterator(this, m_firstNode); }
+			Iterator begin() const { return Iterator(this, m_firstNode); }
 			/**
 			 * Returns an iterator pointing to the past the end of the list
 			 */
-			Iterator End() const { return Iterator(this, nullptr); }
+			Iterator end() const { return Iterator(this, nullptr); }
 
 			/**
 			 * Append the given item after the item the iterator points to.
@@ -238,14 +238,14 @@ namespace Apoc3D
 			 */
 			Iterator Find(const T& item) const
 			{
-				for (Iterator iter = Begin(); iter != End(); ++iter)
+				for (Iterator iter = begin(); iter != end(); ++iter)
 				{
 					if ((*iter) == item)
 					{
 						return iter;
 					}
 				}
-				return End();
+				return end();
 			}
 
 			/**
@@ -254,10 +254,10 @@ namespace Apoc3D
 			 */
 			bool Remove(const T& item)
 			{
-				Iterator prev = End();
-				Iterator cur = Begin();
+				Iterator prev = end();
+				Iterator cur = begin();
 
-				while (cur != End())
+				while (cur != end())
 				{
 					if ((*cur) == item)
 					{
@@ -294,12 +294,12 @@ namespace Apoc3D
 			void RemoveAt(const Iterator& iter)
 			{
 				assert(iter.m_owner == this);
-				assert(iter != End());
+				assert(iter != end());
 
-				Iterator prev = End();
-				Iterator cur = Begin();
+				Iterator prev = end();
+				Iterator cur = begin();
 
-				while (cur != End())
+				while (cur != end())
 				{
 					if (cur == iter)
 					{

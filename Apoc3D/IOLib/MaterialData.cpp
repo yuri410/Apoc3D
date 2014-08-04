@@ -83,7 +83,7 @@ namespace Apoc3D
 		{
 			if (value.Usage.empty())
 			{
-				throw AP_EXCEPTION(EX_Argument, L"usage can not be empty");
+				throw AP_EXCEPTION(ApocExceptionType::Argument, L"usage can not be empty");
 			}
 			CustomParametrs.Add(value.Usage, value);
 		}

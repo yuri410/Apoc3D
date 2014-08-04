@@ -324,7 +324,7 @@ namespace Apoc3D
 			{
 				switch (e.getType())
 				{
-				case EX_Duplicate:
+				case ApocExceptionType::Duplicate:
 					LogManager::getSingleton().Write(LOG_System,  L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
 					break;
 				}
@@ -411,7 +411,7 @@ namespace Apoc3D
 				String ss = val.substr(0, pos);
 				return StringUtils::ParseSingle(ss) / 100.0f;
 			}
-			throw AP_EXCEPTION(EX_FormatException, val);
+			throw AP_EXCEPTION(ApocExceptionType::FormatException, val);
 		}
 		String PercentageToString(const float& v)
 		{
@@ -442,7 +442,7 @@ namespace Apoc3D
 
 				return CV_PackColor(r,g,b,a);
 			}
-			throw AP_EXCEPTION(EX_FormatException, L"Wrong number of channels: " + str);
+			throw AP_EXCEPTION(ApocExceptionType::FormatException, L"Wrong number of channels: " + str);
 		}
 		String ColorValueToString(ColorValue v)
 		{

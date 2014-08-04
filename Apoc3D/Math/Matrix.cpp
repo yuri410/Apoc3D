@@ -83,7 +83,7 @@ namespace Apoc3D
 			{
 				return m_stack->Peek();
 			}
-			throw AP_EXCEPTION(EX_InvalidOperation, L"The stack is empty.");
+			throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"The stack is empty.");
 		}
 
 		int MatrixStack::getCount() const

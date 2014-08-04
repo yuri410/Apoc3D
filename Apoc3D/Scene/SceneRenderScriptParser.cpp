@@ -181,7 +181,7 @@ namespace Apoc3D
 				}
 				if (op1 == -1 || op2 == -1)
 				{
-					throw AP_EXCEPTION(EX_InvalidOperation, L"operator error!");
+					throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"operator error!");
 					//cout << "operator   error!" << endl;
 					//exit(1);
 				}

@@ -55,7 +55,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(EX_NotSupported, L"Async processing not enabled");
+				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Async processing not enabled");
 			}
 			m_asyncProc->AddTask(op);
 		}
@@ -63,7 +63,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(EX_NotSupported, L"Async processing not enabled");
+				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Async processing not enabled");
 			}
 			m_asyncProc->RemoveTask(op);
 		}
@@ -173,7 +173,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(EX_NotSupported, L"Async processing not enabled");
+				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Async processing not enabled");
 			}
 			return m_asyncProc->TaskCompleted();
 		}
@@ -181,7 +181,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(EX_NotSupported, L"Async processing not enabled");
+				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Async processing not enabled");
 			}
 			m_asyncProc->WaitForCompletion();
 		}
@@ -189,7 +189,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(EX_NotSupported, L"Async processing not enabled");
+				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Async processing not enabled");
 			}
 			return m_asyncProc->GetOperationCount();
 		}

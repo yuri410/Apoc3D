@@ -59,7 +59,7 @@ namespace Apoc3D
 		}
 		void FileStream::Write(const char* src, int64 count)
 		{
-			throw AP_EXCEPTION(EX_NotSupported, L"Can't write");
+			throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Can't write");
 		}
 
 		void FileStream::Seek(int64 offset, SeekMode mode)
@@ -110,7 +110,7 @@ namespace Apoc3D
 
 		int64 FileOutStream::Read(char* dest, int64 count)
 		{
-			throw AP_EXCEPTION(EX_NotSupported, L"Can't read");
+			throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Can't read");
 		}
 		void FileOutStream::Write(const char* src, int64 count)
 		{
@@ -211,7 +211,7 @@ namespace Apoc3D
 
 		void MemoryStream::throwEndofStreamException()
 		{
-			throw AP_EXCEPTION(EX_EndOfStream, L"");
+			throw AP_EXCEPTION(ApocExceptionType::EndOfStream, L"");
 		}
 
 		/************************************************************************/

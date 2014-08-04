@@ -123,6 +123,26 @@ namespace Apoc3D
 				}
 				return true;
 			}
+
+			template<> String _ToString<std::string>::Invoke(const std::string& str) { return StringUtils::toPlatformWideString(str); }
+
+			template<> String _ToString<int16>::Invoke(const int16& v) { return StringUtils::IntToString(v); }
+			template<> String _ToString<int32>::Invoke(const int32& v) { return StringUtils::IntToString(v); }
+			template<> String _ToString<int64>::Invoke(const int64& v) { return StringUtils::IntToString(v); }
+
+			template<> String _ToString<uint16>::Invoke(const uint16& v) { return StringUtils::UIntToString(v); }
+			template<> String _ToString<uint32>::Invoke(const uint32& v) { return StringUtils::UIntToString(v); }
+			template<> String _ToString<uint64>::Invoke(const uint64& v) { return StringUtils::UIntToString(v); }
+			/*
+			template<> String ToString<std::string>(const std::string& str) { return StringUtils::toPlatformWideString(str); }
+
+			template<> String ToString<int16>(const int16& v) { return StringUtils::IntToString(v); }
+			template<> String ToString<int32>(const int32& v) { return StringUtils::IntToString(v); }
+			template<> String ToString<int64>(const int64& v) { return StringUtils::IntToString(v); }
+
+			template<> String ToString<uint16>(const uint16& v) { return StringUtils::UIntToString(v); }
+			template<> String ToString<uint32>(const uint32& v) { return StringUtils::UIntToString(v); }
+			template<> String ToString<uint64>(const uint64& v) { return StringUtils::UIntToString(v); }*/
 		}
 	}
 }

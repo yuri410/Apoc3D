@@ -202,75 +202,6 @@ void TestTaggedData()
 	delete outData;
 }
 
-
-int comparerTestInt(const int& a, const int& b)
-{
-	return a - b;
-}
-void TestListSort2()
-{
-	List<int> subject(100);
-	int counter[1000];
-	memset(counter, 0, sizeof(counter));
-
-	for (int i=0;i<100;i++)
-	{
-		int val = Randomizer::NextExclusive(1000);
-		subject.Add(val);
-		counter[val]++;
-	}
-
-	subject.Sort(comparerTestInt);
-
-
-	for (int i=0;i<subject.getCount()-1;i++)
-	{
-		if (subject[i+1] < subject[i])
-		{
-			assert(0);
-		}
-	}
-
-	int counter2[1000];
-	memset(counter2, 0, sizeof(counter2));
-	for (int i=0;i<subject.getCount();i++)
-	{
-		counter2[subject[i]]++;
-	}
-
-	assert(memcmp(counter, counter2, sizeof(counter))==0);
-}
-
-void memcpytest(char* dst, char* src, int32 count)
-{
-#if defined(__GNUC__)  && !defined(LZ4_FORCE_UNALIGNED_ACCESS)
-#  define _PACKED __attribute__ ((packed))
-#else
-#  define _PACKED
-#endif
-
-	typedef struct { uint32 v; }  _PACKED U32_S;
-	typedef struct {size_t v;} _PACKED size_t_S;
-
-#define STEPSIZE sizeof(size_t)
-#define A32(x)   (((U32_S *)(x))->v)
-#define AARCH(x) (((size_t_S *)(x))->v)
-
-#define LZ4_COPYSTEP(d,s)         { AARCH(d) = AARCH(s); d+=STEPSIZE; s+=STEPSIZE; }
-#define LZ4_COPY8(d,s)            { LZ4_COPYSTEP(d,s); if (STEPSIZE<8) LZ4_COPYSTEP(d,s); }
-
-#if LZ4_ARCH64 || !defined(__GNUC__)
-#  define LZ4_WILDCOPY(d,s,e)     { do { LZ4_COPY8(d,s) } while (d<e); }           /* at the end, d>=e; */
-#else
-#  define LZ4_WILDCOPY(d,s,e)     { if (likely(e-d <= 8)) LZ4_COPY8(d,s) else do { LZ4_COPY8(d,s) } while (d<e); }
-#endif
-#define LZ4_SECURECOPY(d,s,e)     { if (d<e) LZ4_WILDCOPY(d,s,e); }
-
-	char* cpyEnd = dst + count - STEPSIZE;
-
-	LZ4_WILDCOPY(dst, src, cpyEnd);
-}
-
 void TestRLE()
 {
 	int32 compRawTime = 0;
@@ -340,7 +271,7 @@ void TestRLE()
 
 	{
 		copyRawTime = GetTickCount();
-		memcpy(decompressedData, buffer, fs.getLength());
+		memcpy(decompressedData, buffer, (size_t)fs.getLength());
 		copyRawTime = GetTickCount() - copyRawTime;
 		printf("Copy Buffer: %d\n", copyRawTime);
 	}
@@ -482,8 +413,7 @@ void TestIni()
 	FileLocation fl(path);// FileSystem::getSingleton().Locate(L"testIni.ini", FileLocateRule::Default);
 	Configuration* config = IniConfigurationFormat::Instance.Load(fl);
 
-	FileOutStream fs(L"iniOut.ini");
-	IniConfigurationFormat::Instance.Save(config, &fs);
+	IniConfigurationFormat::Instance.Save(config, new FileOutStream(L"iniOut.ini"));
 
 	delete config;
 }

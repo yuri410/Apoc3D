@@ -70,7 +70,7 @@ namespace Apoc3D
 			int bytepp = FormatSizeTable.dfSizeTable[(int)format];
 			if (bytepp == -1)
 			{
-				throw AP_EXCEPTION(EX_Default, L"Invalid pixel format");
+				throw AP_EXCEPTION(ApocExceptionType::Default, L"Invalid pixel format");
 			}
 			return width * height * bytepp;
 		}
@@ -92,7 +92,7 @@ namespace Apoc3D
 			int bytepp = FormatSizeTable.pfSizeTable[(int)format];
 			if (bytepp == -1)
 			{
-				throw AP_EXCEPTION(EX_Default, L"Invalid pixel format");
+				throw AP_EXCEPTION(ApocExceptionType::Default, L"Invalid pixel format");
 			}
 			return width * height * depth * bytepp;
 		}

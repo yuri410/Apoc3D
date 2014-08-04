@@ -36,7 +36,6 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-
 		template <typename T>
 		class EnumDualConversionHelper
 		{

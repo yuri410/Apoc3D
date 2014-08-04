@@ -111,7 +111,7 @@ namespace Apoc3D
 		{
 			const Entry* ent = FindEntry(name);
 			if (!ent)
-				throw AP_EXCEPTION(EX_KeyNotFound, name);
+				throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, name);
 
 			return ent->Offset;
 		}
@@ -1500,7 +1500,7 @@ namespace Apoc3D
 
 		void TaggedDataReader::throwKeynotFoundException(const String& key)
 		{
-			throw AP_EXCEPTION(EX_KeyNotFound, key);
+			throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, key);
 		}
 
 		//////////////////////////////////////////////////////////////////////////

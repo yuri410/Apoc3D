@@ -321,10 +321,10 @@ namespace APDesigner
 				recycleList.PushBack(m_documentList[i]);
 			}
 		}
-		for (LinkedList<Document*>::Iterator iter = recycleList.Begin();iter!=recycleList.End();iter++)
+		for (Document* doc : recycleList)
 		{
-			m_documentList.Remove(*iter);
-			delete *iter;
+			m_documentList.Remove(doc);
+			delete doc;
 		}
 
 		m_buildMemuItem->Enabled = !!m_project;

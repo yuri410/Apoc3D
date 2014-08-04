@@ -37,14 +37,15 @@ namespace Apoc3D
 		template <typename T, typename S, typename ComparerType = Apoc3D::Collections::EqualityComparer<T>>
 		class HashMap
 		{
+		private:
+			typedef HashMap<T, S, ComparerType> HashMapType;
 		public:
 			class Enumerator
 			{
 			public:
-				Enumerator(const HashMap<T, S, ComparerType>* dict)
+				Enumerator(const HashMapType* dict)
 					: m_dict(dict), m_index(0), m_current(nullptr), m_currentVal(nullptr)
-				{
-				}
+				{ }
 
 				bool MoveNext()
 				{
@@ -68,12 +69,125 @@ namespace Apoc3D
 				const T& getCurrentKey() const { return *m_current; }
 				S& getCurrentValue() const { return *m_currentVal; }
 			private:
-				const HashMap<T, S, ComparerType>* m_dict;
+				const HashMapType* m_dict;
 				int m_index;
 				T* m_current;
 				S* m_currentVal;
 			};
 
+			class IteratorBase
+			{
+			public:
+				explicit IteratorBase(const HashMapType* dict)
+					: m_dict(dict), m_index(0)
+				{
+					MoveToNext();
+				}
+
+				IteratorBase(const HashMapType* dict, int idx)
+					: m_dict(dict), m_index(idx) { }
+
+				IteratorBase& operator++()
+				{
+					MoveToNext();
+					return *this;
+				}
+				IteratorBase operator++(int) { IteratorBase result = *this; ++(*this); return result; }
+
+				bool operator==(const IteratorBase& rhs) const { return m_dict == rhs.m_dict && m_index == rhs.m_index; }
+				bool operator!=(const IteratorBase& rhs) const { return !this->operator==(rhs); }
+			protected:
+				void MoveToNext()
+				{
+					while (m_index < m_dict->m_count)
+					{
+						if (m_dict->m_entries[m_index].hashCode >= 0)
+						{
+							m_index++;
+							return;
+						}
+						m_index++;
+					}
+					m_index = m_dict->m_count + 1;
+				}
+
+				const HashMapType* m_dict;
+				int m_index;
+			};
+
+			template <bool IsAccessingKey>
+			class IteratorKV : public IteratorBase
+			{
+			public:
+				typedef typename std::conditional<IsAccessingKey, const T, S>::type ReturnType;
+
+				explicit IteratorKV(const HashMapType* dict)
+					: IteratorBase(dict) { }
+
+				IteratorKV(const HashMapType* dict, int idx)
+					: IteratorBase(dict, idx) { }
+
+				ReturnType& operator*() const
+				{
+					return std::conditional<IsAccessingKey, KeyGetter, ValueGetter>::type::Get(m_dict, m_index);
+				}
+
+			private:
+				struct KeyGetter
+				{
+					static const T& Get(const HashMapType* dict, int idx) 
+					{
+						assert(idx > 0 && idx <= dict->m_count);
+						return dict->m_entries[idx-1].data; 
+					}
+				};
+				struct ValueGetter
+				{
+					static S& Get(const HashMapType* dict, int idx) 
+					{
+						assert(idx > 0 && idx <= dict->m_count);
+						return dict->m_entries[idx-1].value; 
+					}
+				};
+			};
+
+			class Iterator : public IteratorBase
+			{
+			public:
+				explicit Iterator(const HashMapType* dict)
+					: IteratorBase(dict) { }
+
+				Iterator(const HashMapType* dict, int idx)
+					: IteratorBase(dict, idx) { }
+
+				KeyValuePair<const T&, S&> operator*() const
+				{
+					assert(m_index > 0 && m_index <= m_dict->m_count);
+					Entry& e = m_dict->m_entries[m_index - 1];
+					return KeyValuePair<const T&, S&>(static_cast<const T&>(e.data), static_cast<S&>(e.value));
+				}
+			};
+
+
+			template <bool IsAccessingKey>
+			class Accessor
+			{
+			public:
+				Accessor(const HashMapType* dict)
+					: m_dict(dict) { }
+
+				IteratorKV<IsAccessingKey> begin() { return IteratorKV<IsAccessingKey>(m_dict); }
+				IteratorKV<IsAccessingKey> end() { return IteratorKV<IsAccessingKey>(m_dict, m_dict->m_count + 1); }
+
+
+			private:
+				const HashMapType* m_dict;
+			};
+
+			typedef Accessor<true> KeyAccessor;
+			typedef Accessor<false> ValueAccessor;
+
+			
 		public:
 
 			HashMap(const HashMap& another)
@@ -137,10 +251,7 @@ namespace Apoc3D
 				return *this; 
 			}
 
-			void Add(const T& item, const S& value)
-			{
-				Insert(item, value, true);
-			}
+			void Add(const T& item, const S& value) { Insert(item, value, true); }
 
 			void Clear()
 			{
@@ -177,7 +288,7 @@ namespace Apoc3D
 					int lastI = -1;
 					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == hash) && ComparerType::Equals(m_entries[i].data, item))
+						if (m_entries[i].hashCode == hash && ComparerType::Equals(m_entries[i].data, item))
 						{
 							if (lastI < 0)
 							{
@@ -205,7 +316,7 @@ namespace Apoc3D
 					int hash = ComparerType::GetHashCode(item) & 2147483647;
 					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == hash) && ComparerType::Equals(m_entries[i].data, item))
+						if (m_entries[i].hashCode == hash && ComparerType::Equals(m_entries[i].data, item))
 						{
 							return true;
 						}
@@ -245,7 +356,7 @@ namespace Apoc3D
 				{
 					return m_entries[index].value;
 				}
-				throw AP_EXCEPTION(EX_KeyNotFound, L"");
+				throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, HashHelpers::ToString(key));
 			}
 
 			bool TryGetValue(const T& key, S& value) const
@@ -267,10 +378,8 @@ namespace Apoc3D
 				}
 				return nullptr;
 			}
-			Enumerator GetEnumerator() const
-			{
-				return Enumerator(this);
-			}
+
+			Enumerator GetEnumerator() const { return Enumerator(this); }
 
 			void FillKeys(List<T>& list) const
 			{
@@ -347,9 +456,13 @@ namespace Apoc3D
 			template <void (*proc)(const S& value)>
 			void ForEachValueConst() const { ForEachValueConst(proc); }
 
-
-
 			//////////////////////////////////////////////////////////////////////////
+
+			KeyAccessor getKeyAccessor() const { return KeyAccessor(this); }
+			ValueAccessor getValueAccessor() const { return ValueAccessor(this); }
+
+			Iterator begin() const { return Iterator(this); }
+			Iterator end() const { return Iterator(this, m_count + 1); }
 
 			int32 getPrimeCapacity() const { return m_entryLength; }
 			int32 getCount() const { return m_count - m_freeCount; }
@@ -388,8 +501,7 @@ namespace Apoc3D
 
 			void Insert(const T& item, const S& value, bool add)
 			{
-				int freeList;
-				if (!m_buckets)
+				if (m_buckets == nullptr)
 				{
 					Initialize(0);
 				}
@@ -397,17 +509,15 @@ namespace Apoc3D
 				int index = hash % m_bucketsLength;
 				for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
 				{
-					if ((m_entries[i].hashCode == hash) &&
-						ComparerType::Equals(m_entries[i].data, item))
+					if (m_entries[i].hashCode == hash && ComparerType::Equals(m_entries[i].data, item))
 					{
 						if (add)
-						{
-							throw AP_EXCEPTION(EX_Duplicate, L"");
-						}
+							throw AP_EXCEPTION(ApocExceptionType::Duplicate, HashHelpers::ToString(item));
 						m_entries[i].data = item;
 						return;
 					}
 				}
+				int freeList;
 				if (m_freeCount > 0)
 				{
 					freeList = m_freeList;
@@ -437,7 +547,7 @@ namespace Apoc3D
 					int hash = ComparerType::GetHashCode(item) & 2147483647;
 					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
 					{
-						if ((m_entries[i].hashCode == hash) && ComparerType::Equals(m_entries[i].data, item))
+						if (m_entries[i].hashCode == hash && ComparerType::Equals(m_entries[i].data, item))
 						{
 							return i;
 						}
@@ -446,6 +556,7 @@ namespace Apoc3D
 				return -1;
 			}
 		};
+
 
 	}
 }

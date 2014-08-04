@@ -262,7 +262,7 @@ namespace APDesigner
 		float totalArea = 0;
 		for (int i=0;i<islands.getCount();i++)
 		{
-			float area = islands[i]->NodeCount;
+			float area = (float)islands[i]->NodeCount;
 			totalArea += area;
 		}
 
@@ -290,7 +290,7 @@ namespace APDesigner
 				if (!areaUse[i*edgeLen+j])
 				{
 					//float area = islands[index]->NodeCount * islands[index]->NodeCount;
-					int len = (int)sqrtf(islands[index]->NodeCount);
+					int len = (int)sqrtf((float)islands[index]->NodeCount);
 
 					if (i+len>=edgeLen || j+len>=edgeLen)
 						continue;

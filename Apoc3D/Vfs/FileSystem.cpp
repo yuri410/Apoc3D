@@ -188,7 +188,7 @@ namespace Apoc3D
 			FileLocation res;
 			if (!TryLocate(filePath, rule, res))
 			{
-				throw AP_EXCEPTION(EX_FileNotFound, filePath);
+				throw AP_EXCEPTION(ApocExceptionType::FileNotFound, filePath);
 			}
 			return res;
 		}
@@ -366,7 +366,7 @@ namespace Apoc3D
 			ArchiveFactory* fac = FindArchiveFactory(fileExt);
 			if (fac)
 				return fac->CreateInstance(fl);
-			throw AP_EXCEPTION(EX_NotSupported, fileExt);
+			throw AP_EXCEPTION(ApocExceptionType::NotSupported, fileExt);
 		}
 		Archive* FileSystem::CreateArchive(const String& file)
 		{
@@ -377,7 +377,7 @@ namespace Apoc3D
 			ArchiveFactory* fac = FindArchiveFactory(fileExt);
 			if (fac)
 				return fac->CreateInstance(file);
-			throw AP_EXCEPTION(EX_NotSupported, fileExt);
+			throw AP_EXCEPTION(ApocExceptionType::NotSupported, fileExt);
 		}
 
 

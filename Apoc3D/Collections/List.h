@@ -88,8 +88,6 @@ namespace Apoc3D
 		template<typename T>
 		class List
 		{
-		private:
-			static const bool CanDirectCopy = std::is_trivially_copyable<T>::value;
 		public:
 			explicit List(int capacity)
 				: m_internalPointer(0), m_length(capacity)
@@ -106,15 +104,7 @@ namespace Apoc3D
 			{
 				m_elements = new T[m_length];
 
-				if (CanDirectCopy)
-				{
-					memcpy(m_elements, another.m_elements, m_internalPointer * sizeof(T));
-				}
-				else
-				{
-					for (int i=0;i<m_internalPointer;i++)
-						m_elements[i] = another.m_elements[i];
-				}
+				CopyTo(m_elements, another.m_elements, m_internalPointer);
 			}
 			~List()
 			{
@@ -130,15 +120,7 @@ namespace Apoc3D
 				m_length = rhs.m_length;
 				m_elements = new T[m_length];
 
-				if (CanDirectCopy)
-				{
-					memcpy(m_elements, rhs.m_elements, m_internalPointer * sizeof(T));
-				}
-				else
-				{
-					for (int i=0;i<m_internalPointer;i++)
-						m_elements[i] = rhs.m_elements[i];
-				}
+				CopyTo(m_elements, rhs.m_elements, m_internalPointer);
 
 				return *this; 
 			}
@@ -184,16 +166,21 @@ namespace Apoc3D
 				}
 				return false;
 			}
+			void RemoveChecked(const T& item)
+			{
+				if (!Remove(item))
+					throw todo;
+			}
 			void RemoveAt(int32 index)
 			{
-				assert (index < m_internalPointer);
-				assert(index>=0);
+				assert(index < m_internalPointer);
+				assert(index >= 0);
 
 				if (index < m_internalPointer-1)
 				{
-					for (int i=index+1 ;i<m_internalPointer; i++)
+					for (int i = index + 1; i < m_internalPointer; i++)
 					{
-						m_elements[i-1] = m_elements[i];
+						m_elements[i - 1] = m_elements[i];
 					}
 				}
 
@@ -201,40 +188,31 @@ namespace Apoc3D
 			}
 			void RemoveRange(int32 start, int32 count)
 			{
-				if (count>0)
+				if (count > 0)
 				{
 					m_internalPointer -= count;
 
 					if (start < m_internalPointer)
 					{
-						for (int i=start; i<m_internalPointer; i++)
+						for (int i = start; i < m_internalPointer; i++)
 						{
-							m_elements[i] = m_elements[i+count];
+							m_elements[i] = m_elements[i + count];
 						}
 					}
 				}
 			}
 			void ResizeDiscard(int newSize)
 			{
-				T* newArr = new T[newSize];
 				delete[] m_elements;
-				m_elements = newArr;
+				m_elements = new T[newSize];
 				m_length = newSize;
 			}
 			void Resize(int newSize)
 			{
+				assert(newSize >= m_internalPointer);
 				T* newArr = new T[newSize];
-				if (CanDirectCopy)
-				{
-					memcpy(newArr, m_elements, m_internalPointer*sizeof(T));
-				}
-				else
-				{
-					for (int i=0;i<m_internalPointer;i++)
-					{
-						newArr[i] = m_elements[i];
-					}
-				}
+				CopyTo(newArr, m_elements, m_internalPointer);
+
 				delete[] m_elements;
 				m_elements = newArr;
 				m_length = newSize;
@@ -242,7 +220,7 @@ namespace Apoc3D
 			void Reserve(int newCount)
 			{
 				if (m_length < newCount)
-					Reserve(newCount);
+					Resize(newCount);
 				m_internalPointer = newCount;
 			}
 			void ReserveDiscard(int newCount)
@@ -263,13 +241,13 @@ namespace Apoc3D
 			{
 				if (m_internalPointer == m_length)
 				{
-					Resize(m_length+1);
+					Resize(m_length + 1);
 				}
-				if (index<m_internalPointer)
+				if (index < m_internalPointer)
 				{
-					for (int i=m_internalPointer;i>index;i--)
+					for (int i = m_internalPointer; i > index; i--)
 					{
-						m_elements[i] = m_elements[i-1];
+						m_elements[i] = m_elements[i - 1];
 					}
 				}
 				m_elements[index] = item;
@@ -290,9 +268,9 @@ namespace Apoc3D
 
 			void Reverse()
 			{
-				for (int i=0;i<m_internalPointer/2;i++)
+				for (int i = 0; i < m_internalPointer / 2; i++)
 				{
-					int32 another = m_internalPointer-i-1;
+					int32 another = m_internalPointer - i - 1;
 					T temp = m_elements[i];
 					m_elements[i] = m_elements[another];
 					m_elements[another] = temp;
@@ -302,18 +280,11 @@ namespace Apoc3D
 			T* AllocateArrayCopy() const
 			{
 				T* result = new T[getCount()];
-				if (CanDirectCopy)
-				{
-					memcpy(result, m_elements, sizeof(T)*getCount());
-				}
-				else
-				{
-					for (int32 i=0;i<getCount();i++)
-						result[i] = m_elements[i];
-				}
+				CopyTo(result, m_elements, getCount());
 				return result;
 			}
 
+			
 			//////////////////////////////////////////////////////////////////////////
 
 			template <typename Func>
@@ -364,15 +335,30 @@ namespace Apoc3D
 
 			T& operator [](int32 i) const
 			{
-				assert(i>=0);
-				assert(i<m_internalPointer);
+				assert(i >= 0);
+				assert(i < m_internalPointer);
 				return m_elements[i];
 			}
 
 			int32 getCapacity() const { return m_length; }
 			int32 getCount() const { return m_internalPointer; }
 			T* getInternalPointer() const { return m_elements; }
+
+			T* begin() const { return m_elements; }
+			T* end() const { return m_elements + m_internalPointer; }
 		private:
+			static void CopyTo(T* dest, const T* src, int32 count)
+			{
+				if (std::is_trivially_copyable<T>::value)
+				{
+					memcpy(dest, src, count*sizeof(T));
+				}
+				else
+				{
+					for (int i = 0; i < count; i++)
+						dest[i] = src[i];
+				}
+			}
 
 			T* m_elements;
 

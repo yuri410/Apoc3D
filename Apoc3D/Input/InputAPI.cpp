@@ -46,7 +46,7 @@ namespace Apoc3D
 		{
 			if (m_factories.Contains(fac->getName()))
 			{
-				throw AP_EXCEPTION(EX_InvalidOperation, L"Input API Already registered");
+				throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Input API Already registered");
 			}
 			const List<PlatformAPISupport>& plats = fac->getDescription().SupportedPlatforms;
 
@@ -88,7 +88,7 @@ namespace Apoc3D
 
 			if (!passed)
 			{
-				throw AP_EXCEPTION(EX_InvalidOperation, L"Input API not registered");
+				throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Input API not registered");
 			}
 		}
 		void InputAPIManager::UnregisterInputAPI(InputAPIFactory* fac)
@@ -118,7 +118,7 @@ namespace Apoc3D
 			}
 			if (!passed)
 			{
-				throw AP_EXCEPTION(EX_InvalidOperation, L"Input API not registered");
+				throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Input API not registered");
 			}
 		}
 
@@ -160,9 +160,9 @@ namespace Apoc3D
 						m_keyboard = CreateKeyboard();
 					}
 				}
-				else throw AP_EXCEPTION(EX_NotSupported, L"Platform not supported");
+				else throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Platform not supported");
 			}
-			else throw AP_EXCEPTION(EX_NotSupported, L"Platform not supported");
+			else throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Platform not supported");
 		}
 		void InputAPIManager::FinalizeInput()
 		{

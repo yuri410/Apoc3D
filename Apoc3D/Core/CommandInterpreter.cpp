@@ -213,9 +213,8 @@ namespace Apoc3D
 			CommandRecord* rec = new CommandRecord();
 			rec->Cmd = new CommandDescription(cmd);
 
-			for (LinkedList<CommandDescription>::Iterator iter = cmd.SubCommands.Begin(); iter != cmd.SubCommands.End(); ++iter)
+			for (const CommandDescription& subCmd : cmd.SubCommands)
 			{
-				const CommandDescription& subCmd = *iter;
 				AddCommandTree(subCmd, rec->SubCommands);
 			}
 
@@ -231,9 +230,8 @@ namespace Apoc3D
 			CommandRecord* rec;
 			if (table.TryGetValue(cmdName, rec))
 			{
-				for (LinkedList<CommandDescription>::Iterator iter = cmd.SubCommands.Begin(); iter != cmd.SubCommands.End(); ++iter)
+				for (const CommandDescription& subCmd : cmd.SubCommands)
 				{
-					const CommandDescription& subCmd = *iter;
 					DestoryCommandTree(subCmd, rec->SubCommands);
 				}
 

@@ -40,7 +40,7 @@ namespace Apoc3D
 
 				if (m_frameTimes.getCount()>1)
 				{
-					float begin = *m_frameTimes.Begin();
+					float begin = *m_frameTimes.begin();
 
 					float end = m_frameTimes.Back();
 

@@ -16,22 +16,21 @@ namespace Apoc3D
 		Apoc3DExceptionTypeConverter()
 			: EnumDualConversionHelper(25)
 		{
-			AddPair(L"Exception", EX_Default);
-			AddPair(L"InvalidData", EX_InvalidData);
-			AddPair(L"InvalidOperation", EX_InvalidOperation);
-			AddPair(L"NotSupported", EX_NotSupported);
-			AddPair(L"KeyNotFound", EX_KeyNotFound);
-			AddPair(L"FormatException", EX_FormatException);
-			AddPair(L"EndOfStream", EX_EndOfStream);
-			AddPair(L"FileNotFound", EX_FileNotFound);
-			AddPair(L"Argument", EX_Argument);
-			AddPair(L"Duplicate", EX_Duplicate);
-			AddPair(L"ScriptCompileError", EX_ScriptCompileError);
-
+			AddPair(L"Default", ApocExceptionType::Default);
+			AddPair(L"InvalidData", ApocExceptionType::InvalidData);
+			AddPair(L"InvalidOperation", ApocExceptionType::InvalidOperation);
+			AddPair(L"NotSupported", ApocExceptionType::NotSupported);
+			AddPair(L"KeyNotFound", ApocExceptionType::KeyNotFound);
+			AddPair(L"FormatException", ApocExceptionType::FormatException);
+			AddPair(L"EndOfStream", ApocExceptionType::EndOfStream);
+			AddPair(L"FileNotFound", ApocExceptionType::FileNotFound);
+			AddPair(L"Argument", ApocExceptionType::Argument);
+			AddPair(L"Duplicate", ApocExceptionType::Duplicate);
+			AddPair(L"ScriptCompileError", ApocExceptionType::ScriptCompileError);
 		}
 	} exceptTypeConverter;
 
-	ApocException ApocException::createException(ApocExceptionType type, const String& msg, const wchar_t* file, int line)
+	ApocException ApocException::CreateException(ApocExceptionType type, const String& msg, const wchar_t* file, int line)
 	{
 		String text = exceptTypeConverter.ToString(type);
 
@@ -45,6 +44,10 @@ namespace Apoc3D
 
 		LogManager::getSingleton().Write(LOG_System, text, LOGLVL_Fatal);
 
-		return ApocException(msg, type);	
+		return ApocException(msg, type);
+	}
+	ApocException ApocException::CreateException(ApocExceptionType type, const wchar_t* file, int line)
+	{
+		return CreateException(type, L"Location: ", file, line);
 	}
 }

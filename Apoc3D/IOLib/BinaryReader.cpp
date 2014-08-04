@@ -576,7 +576,7 @@ namespace Apoc3D
 
 		void BinaryReader::throwEndofStreamException()
 		{
-			throw AP_EXCEPTION(EX_EndOfStream, L"");
+			throw AP_EXCEPTION(ApocExceptionType::EndOfStream, L"");
 		}
 	}
 }

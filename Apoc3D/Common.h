@@ -70,6 +70,7 @@
 
 #include <string>
 #include <cstdint>
+#include <type_traits>
 
 #include "FastDelegate\FastDelegate.h"
 

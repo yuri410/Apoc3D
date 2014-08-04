@@ -177,10 +177,8 @@ namespace APDesigner
 					// That mean this node is a leaf node
 
 					const LinkedList<GraphNode*>& nodes = node->getAttachedNodes();
-					for (LinkedList<GraphNode*>::Iterator iter = nodes.Begin();
-						iter!=nodes.End();iter++)
+					for (const GraphNode* nde : nodes)
 					{
-						const GraphNode* nde = *iter;
 						d = Vector2::Subtract(nde->getPosition(), getPosition());
 						dist = Vector2::Length(d);
 

@@ -123,7 +123,7 @@ namespace Apoc3D
 			protected:
 				NoInline static void ThrowKeyNotFoundEx(const String& name)
 				{
-					throw AP_EXCEPTION(EX_KeyNotFound, name);
+					throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, name);
 				}
 
 				D3D9RenderDevice* m_device;

@@ -137,7 +137,7 @@ namespace Apoc3D
 				case D3DFMT_A8R3G3B2:
 					return FMT_Unknown;
 				}
-				throw AP_EXCEPTION(EX_NotSupported, L"ConvertBackPixelFormat");
+				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"ConvertBackPixelFormat");
 			}
 			DepthFormat D3D9Utils::ConvertBackDepthFormat(DWORD format)
 			{
@@ -172,7 +172,7 @@ namespace Apoc3D
 				case D3DFMT_D32_LOCKABLE:
 					return DEPFMT_Depth32Lockable;
 				}
-				throw AP_EXCEPTION(EX_NotSupported, L"ConvertBackDepthFormat");
+				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"ConvertBackDepthFormat");
 			}
 
 			TextureUsage ConvertBackTextureUsage(DWORD usage)
@@ -616,7 +616,7 @@ namespace Apoc3D
 				case D3DDECLTYPE_FLOAT16_4:
 					return VEF_HalfVector4;
 				}
-				throw AP_EXCEPTION(EX_NotSupported, L"ConvertBackVertexElementFormat");
+				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"ConvertBackVertexElementFormat");
 			}
 			VertexElementUsage D3D9Utils::ConvertBackVertexElementUsage(D3DDECLUSAGE usage)
 			{
@@ -651,7 +651,7 @@ namespace Apoc3D
 				case D3DDECLUSAGE_SAMPLE:
 					return VEU_Sample;
 				}
-				throw AP_EXCEPTION(EX_NotSupported, L"ConvertBackVertexElementUsage");
+				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"ConvertBackVertexElementUsage");
 			}
 
 			D3DDECLUSAGE D3D9Utils::ConvertVertexElementUsage(VertexElementUsage usage)

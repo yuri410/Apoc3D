@@ -67,15 +67,15 @@ namespace Apoc3D
 				if (UseDestructProtection)
 				{
 					Apoc3D::Collections::LinkedList<DeleType> copy = m_delegates;
-					for (Apoc3D::Collections::LinkedList<DeleType>::Iterator iter = copy.Begin(); iter != copy.End(); ++iter)
-						(*iter)();
+					for (const auto& e : copy)
+						e();
 				}
 				else
 				{
 					assert(!m_locked);
 					m_locked = true;
-					for (Apoc3D::Collections::LinkedList<DeleType>::Iterator iter = m_delegates.Begin(); iter != m_delegates.End(); ++iter)
-						(*iter)();
+					for (const auto& e : m_delegates)
+						e();
 					m_locked = false;
 				}
 			}
@@ -125,15 +125,15 @@ namespace Apoc3D
 				if (UseDestructProtection)
 				{
 					Apoc3D::Collections::LinkedList<DeleType> copy = m_delegates;
-					for (Apoc3D::Collections::LinkedList<DeleType>::Iterator iter = copy.Begin(); iter != copy.End(); ++iter)
-						(*iter)(a1);
+					for (const auto& e : copy)
+						e(a1);
 				}
 				else
 				{
 					assert(!m_locked);
 					m_locked = true;
-					for (Apoc3D::Collections::LinkedList<DeleType>::Iterator iter = m_delegates.Begin(); iter != m_delegates.End(); ++iter)
-						(*iter)(a1);
+					for (const auto& e : m_delegates)
+						e(a1);
 					m_locked = false;
 				}
 			}
@@ -182,15 +182,15 @@ namespace Apoc3D
 				if (UseDestructProtection)
 				{
 					Apoc3D::Collections::LinkedList<DeleType> copy = m_delegates;
-					for (Apoc3D::Collections::LinkedList<DeleType>::Iterator iter = copy.Begin(); iter != copy.End(); ++iter)
-						(*iter)(a1, a2);
+					for (const auto& e : copy)
+						e(a1, a2);
 				}
 				else
 				{
 					assert(!m_locked);
 					m_locked = true;
-					for (Apoc3D::Collections::LinkedList<DeleType>::Iterator iter = m_delegates.Begin(); iter != m_delegates.End(); ++iter)
-						(*iter)(a1, a2);
+					for (const auto& e : m_delegates)
+						e(a1, a2);
 					m_locked = false;
 				}
 			}
@@ -239,15 +239,15 @@ namespace Apoc3D
 				if (UseDestructProtection)
 				{
 					Apoc3D::Collections::LinkedList<DeleType> copy = m_delegates;
-					for (Apoc3D::Collections::LinkedList<DeleType>::Iterator iter = copy.Begin(); iter != copy.End(); ++iter)
-						(*iter)(a1, a2, a3);
+					for (const auto& e : copy)
+						e(a1, a2, a3);
 				}
 				else
 				{
 					assert(!m_locked);
 					m_locked = true;
-					for (Apoc3D::Collections::LinkedList<DeleType>::Iterator iter = m_delegates.Begin(); iter != m_delegates.End(); ++iter)
-						(*iter)(a1, a2, a3);
+					for (const auto& e : m_delegates)
+						e(a1, a2, a3);
 					m_locked = false;
 				}
 			}
@@ -297,15 +297,15 @@ namespace Apoc3D
 				if (UseDestructProtection)
 				{
 					Apoc3D::Collections::LinkedList<DeleType> copy = m_delegates;
-					for (Apoc3D::Collections::LinkedList<DeleType>::Iterator iter = copy.Begin(); iter != copy.End(); ++iter)
-						(*iter)(a1, a2, a3, a4);
+					for (const auto& e : copy)
+						e(a1, a2, a3, a4);
 				}
 				else
 				{
 					assert(!m_locked);
 					m_locked = true;
-					for (Apoc3D::Collections::LinkedList<DeleType>::Iterator iter = m_delegates.Begin(); iter != m_delegates.End(); ++iter)
-						(*iter)(a1, a2, a3, a4);
+					for (const auto& e : m_delegates)
+						e(a1, a2, a3, a4);
 					m_locked = false;
 				}
 			}

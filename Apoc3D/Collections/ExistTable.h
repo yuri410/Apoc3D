@@ -283,7 +283,7 @@ namespace Apoc3D
 					{
 						if (add)
 						{
-							throw AP_EXCEPTION(EX_Duplicate, L"");
+							throw AP_EXCEPTION(ApocExceptionType::Duplicate, HashHelpers::ToString(item));
 						}
 						m_entries[i].data = item;
 						return;

@@ -31,46 +31,47 @@
 
 namespace Apoc3D
 {
-
-	enum ApocExceptionType
+	enum struct ApocExceptionType
 	{
-		EX_Default,
-		EX_InvalidOperation,
-		EX_InvalidData,
-		EX_NotSupported,
-		EX_KeyNotFound,
-		EX_FormatException,
-		EX_EndOfStream,
-		EX_FileNotFound,
-		EX_Argument,
-		EX_Duplicate,
-		EX_ScriptCompileError
+		Default,
+		InvalidOperation,
+		InvalidData,
+		NotSupported,
+		KeyNotFound,
+		FormatException,
+		EndOfStream,
+		FileNotFound,
+		Argument,
+		Duplicate,
+		ScriptCompileError
 	};
 
 	class APAPI ApocException
 	{
 	public:
 		ApocException(const String& msg, ApocExceptionType type)
-			: m_message(msg), m_type(type)
-		{
+			: m_message(msg), m_type(type) { }
 
-		}
+		explicit ApocException(ApocExceptionType type)
+			: m_type(type) { }
+
 		ApocException(const ApocException &another)
-			: m_message(another.m_message)
-		{
-		}
+			: m_message(another.m_message), m_type(another.m_type) { }
 
 		const String& getMessage() const { return m_message; }
 		const ApocExceptionType getType() const { return m_type; }
 
-		static ApocException createException(ApocExceptionType type, const String& msg, const wchar_t* file, int line);
+		static ApocException CreateException(ApocExceptionType type, const String& msg, const wchar_t* file, int line);
+		static ApocException CreateException(ApocExceptionType type, const wchar_t* file, int line);
 
 	private:
 		String m_message;
 		ApocExceptionType m_type;
 	};
 
-#define AP_EXCEPTION(type, msg) (ApocException::createException(type, msg, _CRT_WIDE(__FILE__), __LINE__))
+#define AP_EXCEPTION(type, msg) (ApocException::CreateException(type, msg, _CRT_WIDE(__FILE__), __LINE__))
+//#define AP_EXCEPTION(type) (ApocException::CreateException(type, _CRT_WIDE(__FILE__), __LINE__))
+
 };
 
 

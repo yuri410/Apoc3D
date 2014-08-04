@@ -197,14 +197,14 @@ namespace Apoc3D
 			if (!QualifiesFarObject(sceObj))
 			{
 				m_octRootNode->AddObject(sceObj);
-				if (iter != m_farObjs.End())
+				if (iter != m_farObjs.end())
 				{
 					m_farObjs.RemoveAt(iter);
 				}
 			}
 			else
 			{
-				if (iter == m_farObjs.End())
+				if (iter == m_farObjs.end())
 				{
 					m_farObjs.PushBack(sceObj);
 				}
@@ -282,9 +282,8 @@ namespace Apoc3D
 					}
 				}
 			}
-			for (LinkedList<SceneObject*>::Iterator iter = m_farObjs.Begin();iter!=m_farObjs.End();iter++)
+			for (SceneObject* obj : m_farObjs)
 			{
-				SceneObject* obj = *iter;
 				if (frus.Intersects(obj->getBoundingSphere()))
 				{
 					int level = GetLevel(obj->getBoundingSphere(), camPos);
@@ -292,9 +291,8 @@ namespace Apoc3D
 					batchData->AddVisisbleObject(obj, level);
 				}
 			}
-			for (LinkedList<SceneObject*>::Iterator iter = m_dynObjs.Begin();iter!=m_dynObjs.End();iter++)
+			for (SceneObject* obj : m_dynObjs)
 			{
-				SceneObject* obj = *iter;
 				if (frus.Intersects(obj->getBoundingSphere()))
 				{
 					int level = GetLevel(obj->getBoundingSphere(), camPos);
@@ -343,9 +341,8 @@ namespace Apoc3D
 				}
 			}
 
-			for (LinkedList<SceneObject*>::Iterator iter = m_farObjs.Begin();iter!=m_farObjs.End();iter++)
+			for (SceneObject* obj : m_farObjs)
 			{
-				SceneObject* obj = *iter;
 				if ((filter && filter->Check(obj) || !filter) && 
 					obj->IntersectsSelectionRay(ray))
 				{
@@ -357,9 +354,8 @@ namespace Apoc3D
 					}
 				}
 			}
-			for (LinkedList<SceneObject*>::Iterator iter = m_dynObjs.Begin();iter!=m_dynObjs.End();iter++)
+			for (SceneObject* obj : m_dynObjs)
 			{
-				SceneObject* obj = *iter;
 				if ((filter && filter->Check(obj) || !filter) && 
 					obj->IntersectsSelectionRay(ray))
 				{
