@@ -98,7 +98,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 
 	RenderView* view =  devContent->Create(params);
 
-	RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
+	RenderWindow* wnd = up_cast<RenderWindow*>(view);
 	// once created, set the application's main class as the event handler, 
 	// so that the window's events will be passes to demo code
 	wnd->setEventHandler(new TerrainDemo(wnd));

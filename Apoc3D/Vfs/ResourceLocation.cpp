@@ -80,7 +80,7 @@ namespace Apoc3D
 				Stream* s = m_parent->GetEntryStream(m_entryName);
 				assert(s);
 
-				VirtualStream* strm = s->Upcast<VirtualStream>();
+				VirtualStream* strm = up_cast<VirtualStream*>(s);
 				assert(strm);
 				return strm;
 			}

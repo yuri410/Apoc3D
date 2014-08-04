@@ -133,7 +133,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 
 		RenderView* view =  devContent->Create(params);
 
-		RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
+		RenderWindow* wnd = up_cast<RenderWindow*>(view);
 
 		//MainWindow* mainWnd = new MainWindow(wnd);
 		wnd->setEventHandler(new MainWindow(wnd));
@@ -162,7 +162,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 
 		RenderView* view =  devContent->Create(params);
 
-		RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
+		RenderWindow* wnd = up_cast<RenderWindow*>(view);
 		
 		wnd->setEventHandler(new ServWindow(wnd, startupParams.ProjectFile));
 

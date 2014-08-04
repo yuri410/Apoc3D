@@ -41,6 +41,7 @@ namespace Apoc3D
 	{
 		class APAPI SceneObject : public Renderable
 		{
+			RTTI_UpcastableBase;
 		public:
 			SceneObject(const bool hasSubObjs = false) 
 				: m_hasSubObjects(hasSubObjs), m_parentNode(0), RequiresNodeUpdate(false)
@@ -79,7 +80,6 @@ namespace Apoc3D
 
 			bool RequiresNodeUpdate;
 
-			RTTI_UpcastableBase;
 		protected:
 			Matrix m_transformation;
 

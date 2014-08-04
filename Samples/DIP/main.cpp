@@ -88,7 +88,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 
 	RenderView* view =  devContent->Create(params);
 
-	RenderWindow* wnd = dynamic_cast<RenderWindow*>(view);
+	RenderWindow* wnd = up_cast<RenderWindow*>(view);
 	
 	wnd->setEventHandler(new DIP1(wnd));
 

@@ -49,6 +49,7 @@ namespace Apoc3D
 		 */
 		class APAPI Stream
 		{
+			RTTI_UpcastableBase;
 		protected:
 			Stream() { }
 		public:
@@ -87,7 +88,6 @@ namespace Apoc3D
 
 			virtual void Flush() = 0;
 
-			RTTI_UpcastableBase;
 		};
 
 		/**

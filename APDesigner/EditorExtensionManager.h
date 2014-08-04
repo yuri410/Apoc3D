@@ -57,15 +57,15 @@ namespace APDesigner
 		virtual Document* NewDocument() = 0;
 	};
 
-	class APDAPI IndenpendentEditor
+	/*class APDAPI IndenpendentEditor
 	{
 	public:
 		virtual bool NeedsSaveAs() { return false; }
 		virtual void SaveAs(const String& filePath) = 0;
 
 		virtual void LoadNewDocument() = 0;
+	};*/
 
-	};
 
 	class EditorExtensionManager : public Apoc3D::Core::Singleton<EditorExtensionManager>
 	{

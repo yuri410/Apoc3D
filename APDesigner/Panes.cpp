@@ -75,7 +75,7 @@ namespace APDesigner
 	{
 		if (m_mainWindow->getCurrentDocument())
 		{
-			IndenpendentEditor* ide = dynamic_cast<IndenpendentEditor*>(m_mainWindow->getCurrentDocument());
+			/*IndenpendentEditor* ide = up_cast<IndenpendentEditor*>(m_mainWindow->getCurrentDocument());
 
 			if (ide && ide->NeedsSaveAs())
 			{
@@ -118,7 +118,7 @@ namespace APDesigner
 					ide->SaveAs(dlg.getFilePath()[0]);	
 				}
 			}
-			else
+			else*/
 			{
 				m_mainWindow->getCurrentDocument()->SaveRes();
 			}
@@ -393,7 +393,7 @@ namespace APDesigner
 				TreeViewNode* newNode = new TreeViewNode(items[i]->getName(), UIResources::GetTexture(itemType->IconName));
 				newNode->UserData = items[i];
 
-				ProjectFolder* fld = dynamic_cast<ProjectFolder*>(data);
+				ProjectFolder* fld = up_cast<ProjectFolder*>(data);
 				if (fld)
 				{
 					BuildTreeViewNodes(newNode, fld->SubItems);
@@ -798,7 +798,7 @@ namespace APDesigner
 
 				if (dlg.ShowDialog() == DLGRES_OK)
 				{
-					TextBox* tb = m_proplist[i].Editor->Upcast<TextBox>();
+					TextBox* tb = up_cast<TextBox*>(m_proplist[i].Editor);
 					if (tb)
 					{
 						const String& path	= dlg.getFilePath()[0];
@@ -851,7 +851,7 @@ namespace APDesigner
 
 				if (dlg.ShowDialog() == DLGRES_OK)
 				{
-					TextBox* tb = m_proplist[i].Editor->Upcast<TextBox>();
+					TextBox* tb = up_cast<TextBox*>(m_proplist[i].Editor);
 					if (tb)
 					{
 						const String& path	= dlg.getFilePath()[0];
@@ -918,7 +918,7 @@ namespace APDesigner
 	
 	bool ResourcePane::PropItem::getAsCombo( String& val) const
 	{
-		ComboBox* cb = Editor->Upcast<ComboBox>();
+		ComboBox* cb = up_cast<ComboBox*>(Editor);
 		if (cb)
 		{
 			int idx = cb->getSelectedIndex();
@@ -930,7 +930,7 @@ namespace APDesigner
 
 	bool ResourcePane::PropItem::getAsTextbox(String& val) const
 	{
-		TextBox* tb = Editor->Upcast<TextBox>();
+		TextBox* tb = up_cast<TextBox*>(Editor);
 		if (tb)
 		{
 			val = tb->Text;
@@ -941,7 +941,7 @@ namespace APDesigner
 
 	bool ResourcePane::PropItem::getAsCheckBox(bool& val) const
 	{
-		CheckBox* cb = Editor->Upcast<CheckBox>();
+		CheckBox* cb = up_cast<CheckBox*>(Editor);
 		if (cb)
 		{
 			val = cb->getValue();

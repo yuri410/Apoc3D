@@ -85,8 +85,6 @@ namespace APDesigner
 		}
 
 	private:
-		bool m_activated;
-
 		Form* m_docForm;
 		MainWindow* m_mainWindow;
 
@@ -94,6 +92,9 @@ namespace APDesigner
 		DocumentActivationHandler m_eDocDeactivated;
 
 		EditorExtension* m_extension;
+
+		bool m_activated;
+
 	};
 }
 

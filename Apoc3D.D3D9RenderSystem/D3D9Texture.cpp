@@ -716,7 +716,7 @@ namespace Apoc3D
 
 			String D3D9Texture::getResourceLocationName()
 			{
-				const FileLocation* fl = getResourceLocation()->Upcast<FileLocation>();
+				const FileLocation* fl = up_cast<const FileLocation*>(getResourceLocation());
 
 				if (fl)
 				{

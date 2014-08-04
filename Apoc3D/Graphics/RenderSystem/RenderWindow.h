@@ -63,6 +63,7 @@ namespace Apoc3D
 			 */
 			class APAPI RenderView
 			{
+				RTTI_UpcastableBase;
 			public:
 				virtual ~RenderView(){}
 
@@ -81,7 +82,6 @@ namespace Apoc3D
 
 				float getFPS() const { return m_fpsCounter.getFPS(); }
 
-				RTTI_UpcastableBase;
 			protected:
 				RenderDevice* m_renderDevice;
 

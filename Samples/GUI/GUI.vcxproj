@@ -83,6 +83,7 @@
       <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -103,6 +104,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\include;$(SolutionDir)\extra;$(SolutionDir)\Samples\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -125,6 +127,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

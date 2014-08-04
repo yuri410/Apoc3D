@@ -40,6 +40,7 @@ namespace Apoc3D
 		 */
 		class APAPI ResourceLocation 
 		{
+			RTTI_UpcastableBase;
 		public:
 			virtual ~ResourceLocation() { }
 
@@ -58,7 +59,6 @@ namespace Apoc3D
 			const String& GetHashString() const { return m_name; }
 			uint64 GetHashCode() const;
 
-			RTTI_UpcastableBase;
 		protected:
 			int64 m_size;
 

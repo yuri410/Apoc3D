@@ -19,22 +19,34 @@ public:
 	static const bool isDerivedFrom = false;
 };
 
-#define _RTTI_StaticTypeId static uintptr getTypeID() { static char dummy; return (uintptr)&dummy; }
-#define _RTTI_Upcaster \
-	template <typename T> \
-	T* Upcast() const \
-	{ \
-		if (CheckRuntimeType(T::getTypeID())) \
-			return (T*)this; \
-		return nullptr; \
-	}
+// This is aka downcast. Base to Derived.
+// Called upcast here to match naming of other libraries, and it is shorter.
 
-#define RTTI_UpcastableBase \
-	_RTTI_Upcaster \
-	virtual bool CheckRuntimeType(uint32 id) const { return false; }
+template <typename Derived, typename Base>
+Derived up_cast(Base* o)
+{
+	static_assert(std::is_pointer<Derived>::value, "up_cast: Type T needs to be pointer.");
+
+	static_assert(std::is_const<std::remove_pointer<Derived>::type>::value == std::is_const<Base>::value && 
+		std::is_volatile<std::remove_pointer<Derived>::type>::value == std::is_volatile<Base>::value
+		, "up_cast: CV mismatch");
+
+	static_assert(std::is_base_of<Base, std::remove_pointer<Derived>::type>::value, "Impossible up_cast");
+
+	if (o == nullptr)
+		return nullptr;
+
+	if (o->CheckRuntimeType(std::remove_pointer<Derived>::type::_getTypeID()))
+	{
+		return (Derived)o;
+	}
+	return nullptr;
+}
+
+#define RTTI_UpcastableBase public: virtual bool CheckRuntimeType(uintptr id) const { return false; }
 
 #define RTTI_UpcastableDerived(Type, ParentType) \
+		static_assert(_InheritCheck<ParentType, Type>::isDerivedFrom, "BaseType is not the base."); \
 	public: \
-	_RTTI_StaticTypeId \
-	static_assert(_InheritCheck<ParentType, Type>::isDerivedFrom, "BaseType is not the base."); \
-	virtual bool CheckRuntimeType(uint32 id) const override { return id == getTypeID() || ParentType::CheckRuntimeType(id); }
+		static uintptr _getTypeID() { static char dummy; return (uintptr)&dummy; } \
+		virtual bool CheckRuntimeType(uintptr id) const override { return id == _getTypeID() || ParentType::CheckRuntimeType(id); }

@@ -47,6 +47,7 @@ namespace Apoc3D
 			 */
 			class APAPI Effect
 			{
+				RTTI_UpcastableBase;
 			public:
 				Effect(void);
 				virtual ~Effect(void);
@@ -95,7 +96,6 @@ namespace Apoc3D
 				bool IsUnsupported() const { return m_isUnsupported; }
 				const String& getName() const { return m_name; }
 
-				RTTI_UpcastableBase;
 			protected:				
 				virtual int begin() = 0;
 				virtual void end() = 0;

@@ -85,6 +85,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -107,6 +108,7 @@
       </DisableSpecificWarnings>
       <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -131,6 +133,7 @@
       </DisableSpecificWarnings>
       <PrecompiledHeaderFile>SamplePCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>SamplePCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

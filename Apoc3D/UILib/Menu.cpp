@@ -463,14 +463,14 @@ namespace Apoc3D
 
 			m_state = MENU_Closed;
 
-			SubMenu* parentMenu = m_parent->Upcast<SubMenu>();
+			SubMenu* parentMenu = up_cast<SubMenu*>(m_parent);
 			if (parentMenu)
 			{
 				parentMenu->Close();
 			}
 			else
 			{
-				Menu* parentMenu2 = m_parent->Upcast<Menu>();
+				Menu* parentMenu2 = up_cast<Menu*>(m_parent);
 				if (parentMenu2) parentMenu2->Close();
 			}
 

@@ -85,7 +85,7 @@ namespace Apoc3D
 				{
 					Effect* eff = getEffect(effect->getName());
 
-					AutomaticEffect* ae = eff->Upcast<AutomaticEffect>();
+					AutomaticEffect* ae = up_cast<AutomaticEffect*>(eff);
 					if (ae)
 					{
 						delete m_fxTable[effect->getName()];

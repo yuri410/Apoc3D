@@ -67,7 +67,7 @@ namespace Apoc3D
 				return fmt->Load(rl);
 			}
 
-			const FileLocation* fl = rl.Upcast<FileLocation>();
+			const FileLocation* fl = up_cast<const FileLocation*>(&rl);
 			if (fl)
 			{
 				String temp;

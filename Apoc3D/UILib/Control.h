@@ -48,6 +48,7 @@ namespace Apoc3D
 	{
 		class APAPI Control
 		{
+			RTTI_UpcastableBase;
 		public:
 			Control()
 				: Position(Point::Zero), Size(0,0), m_owner(0), m_skin(0), Enabled(true), Visible(true), UserData(0), m_fontRef(0)
@@ -133,7 +134,6 @@ namespace Apoc3D
 			UIEventHandler eventPress;
 			UIEventHandler eventRelease;
 
-			RTTI_UpcastableBase;
 		protected:
 			ControlContainer* m_owner;
 			const StyleSkin* m_skin;
