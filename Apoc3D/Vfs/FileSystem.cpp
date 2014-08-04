@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "File.h"
 
 #include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 using namespace Apoc3D::Utility;
 
@@ -188,7 +188,7 @@ namespace Apoc3D
 			FileLocation res;
 			if (!TryLocate(filePath, rule, res))
 			{
-				throw AP_EXCEPTION(ApocExceptionType::FileNotFound, filePath);
+				throw AP_EXCEPTION(ExceptID::FileNotFound, filePath);
 			}
 			return res;
 		}
@@ -366,7 +366,7 @@ namespace Apoc3D
 			ArchiveFactory* fac = FindArchiveFactory(fileExt);
 			if (fac)
 				return fac->CreateInstance(fl);
-			throw AP_EXCEPTION(ApocExceptionType::NotSupported, fileExt);
+			throw AP_EXCEPTION(ExceptID::NotSupported, fileExt);
 		}
 		Archive* FileSystem::CreateArchive(const String& file)
 		{
@@ -377,7 +377,7 @@ namespace Apoc3D
 			ArchiveFactory* fac = FindArchiveFactory(fileExt);
 			if (fac)
 				return fac->CreateInstance(file);
-			throw AP_EXCEPTION(ApocExceptionType::NotSupported, fileExt);
+			throw AP_EXCEPTION(ExceptID::NotSupported, fileExt);
 		}
 
 

@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "../D3D9RenderDevice.h"
 #include "../D3D9Utils.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 namespace Apoc3D
 {
@@ -72,11 +72,11 @@ namespace Apoc3D
 
 			void* D3D9DepthBuffer::lock(int offset, int size, LockMode mode)
 			{
-				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"DepthBuffer lock");
+				throw AP_EXCEPTION(ExceptID::NotSupported, L"DepthBuffer lock");
 			}
 			void D3D9DepthBuffer::unlock()
 			{
-				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"DepthBuffer unlock");
+				throw AP_EXCEPTION(ExceptID::NotSupported, L"DepthBuffer unlock");
 			}
 
 		}

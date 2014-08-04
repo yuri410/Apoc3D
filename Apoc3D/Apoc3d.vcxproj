@@ -152,7 +152,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ApocException.h" />
+    <ClInclude Include="Exception.h" />
     <ClInclude Include="Collections\EnumConverterHelper.h" />
     <ClInclude Include="Collections\List2D.h" />
     <ClInclude Include="Collections\CollectionsCommon.h" />
@@ -317,7 +317,7 @@
     <ClInclude Include="Vfs\VFSCommon.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ApocException.cpp" />
+    <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Collections\CollectionsCommon.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Config\ABCConfigurationFormat.cpp" />

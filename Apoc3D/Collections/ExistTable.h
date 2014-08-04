@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "CollectionsCommon.h"
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 namespace Apoc3D
 {
@@ -283,7 +283,7 @@ namespace Apoc3D
 					{
 						if (add)
 						{
-							throw AP_EXCEPTION(ApocExceptionType::Duplicate, HashHelpers::ToString(item));
+							throw AP_EXCEPTION(ExceptID::Duplicate, HashHelpers::ToString(item));
 						}
 						m_entries[i].data = item;
 						return;

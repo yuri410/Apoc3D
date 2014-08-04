@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "TaggedData.h"
 #include "BinaryReader.h"
 #include "BinaryWriter.h"
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -83,7 +83,7 @@ namespace Apoc3D
 		{
 			if (value.Usage.empty())
 			{
-				throw AP_EXCEPTION(ApocExceptionType::Argument, L"usage can not be empty");
+				throw AP_EXCEPTION(ExceptID::Argument, L"usage can not be empty");
 			}
 			CustomParametrs.Add(value.Usage, value);
 		}

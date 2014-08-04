@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "Sprite.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 namespace Apoc3D
 {
@@ -53,7 +53,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"The sprite is not begun with SPR_UsePostTransformStack.");
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The sprite is not begun with SPR_UsePostTransformStack.");
 				}
 			}
 		}

@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "ConstantTable.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/BinaryWriter.h"
@@ -41,7 +41,7 @@ namespace Apoc3D
 		{
 			void ConstantTable::ThrowKeyNotFoundEx(const String& name)
 			{
-				throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, name);
+				throw AP_EXCEPTION(ExceptID::KeyNotFound, name);
 			}
 			
 

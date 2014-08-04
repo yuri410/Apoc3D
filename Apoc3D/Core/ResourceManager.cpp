@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Streaming/AsyncProcessor.h"
 #include "Streaming/GenerationTable.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 namespace Apoc3D
 {
@@ -55,7 +55,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Async processing not enabled");
+				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
 			}
 			m_asyncProc->AddTask(op);
 		}
@@ -63,7 +63,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Async processing not enabled");
+				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
 			}
 			m_asyncProc->RemoveTask(op);
 		}
@@ -173,7 +173,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Async processing not enabled");
+				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
 			}
 			return m_asyncProc->TaskCompleted();
 		}
@@ -181,7 +181,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Async processing not enabled");
+				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
 			}
 			m_asyncProc->WaitForCompletion();
 		}
@@ -189,7 +189,7 @@ namespace Apoc3D
 		{
 			if (!m_asyncProc)
 			{
-				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Async processing not enabled");
+				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
 			}
 			return m_asyncProc->GetOperationCount();
 		}

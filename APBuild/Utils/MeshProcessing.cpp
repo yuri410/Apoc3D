@@ -41,7 +41,7 @@ namespace APBuild
 			case D3DDECLTYPE_FLOAT16_4:
 				return VEF_HalfVector4;
 			}
-			throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"ConvertVEFormat");
+			throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertVEFormat");
 			//D3DDECLTYPE_USHORT2N    = 11,
 			//D3DDECLTYPE_USHORT4N    = 12,
 		}
@@ -78,7 +78,7 @@ namespace APBuild
 			case D3DDECLUSAGE_SAMPLE:
 				return VEU_Sample;
 			}
-			throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"ConvertVEUsage");
+			throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertVEUsage");
 		}
 
 		void meshGenerateVertexElements(uint32 fvf, List<VertexElement>& elements)

@@ -704,7 +704,7 @@ namespace Apoc3D
 			{
 				return !!m_mtrlPlayer;
 			}
-			throw AP_EXCEPTION(ApocExceptionType::Argument, L"type");
+			throw AP_EXCEPTION(ExceptID::Argument, L"type");
 		}
 
 		const ModelAnimationClip* GetModelAnimClip(const String& clipName, const AnimationData::ClipTable& clipTable);
@@ -774,7 +774,7 @@ namespace Apoc3D
 			{
 				return m_mtrlPlayer->getCurrentKeyframe();
 			}
-			throw AP_EXCEPTION(ApocExceptionType::Argument, L"type");
+			throw AP_EXCEPTION(ExceptID::Argument, L"type");
 		}
 		
 		const ModelAnimationClip* GetModelAnimClip(const String& clipName, const AnimationData::ClipTable& clipTable)

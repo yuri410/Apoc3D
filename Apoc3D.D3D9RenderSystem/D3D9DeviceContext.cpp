@@ -32,7 +32,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Collections/ExistTable.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Utility/Hash.h"
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 using namespace Apoc3D::Utility;
 
@@ -68,7 +68,7 @@ namespace Apoc3D
 			{
 				if (m_window)
 				{
-					throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Cannot create more render view when a render window has been created.");
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Cannot create more render view when a render window has been created.");
 				}
 
 				if (!pm.IsFullForm)

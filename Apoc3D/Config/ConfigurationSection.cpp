@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "ConfigurationSection.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Math/Vector.h"
@@ -320,11 +320,11 @@ namespace Apoc3D
 				m_attributes.Add(name, value);
 				//m_attributes.insert(make_pair(name, value));
 			}
-			catch (ApocException& e)
+			catch (Exception& e)
 			{
 				switch (e.getType())
 				{
-				case ApocExceptionType::Duplicate:
+				case ExceptID::Duplicate:
 					LogManager::getSingleton().Write(LOG_System,  L"Attribute with name '" + name + L"' already exists. ", LOGLVL_Warning);
 					break;
 				}
@@ -411,7 +411,7 @@ namespace Apoc3D
 				String ss = val.substr(0, pos);
 				return StringUtils::ParseSingle(ss) / 100.0f;
 			}
-			throw AP_EXCEPTION(ApocExceptionType::FormatException, val);
+			throw AP_EXCEPTION(ExceptID::FormatException, val);
 		}
 		String PercentageToString(const float& v)
 		{
@@ -442,7 +442,7 @@ namespace Apoc3D
 
 				return CV_PackColor(r,g,b,a);
 			}
-			throw AP_EXCEPTION(ApocExceptionType::FormatException, L"Wrong number of channels: " + str);
+			throw AP_EXCEPTION(ExceptID::FormatException, L"Wrong number of channels: " + str);
 		}
 		String ColorValueToString(ColorValue v)
 		{

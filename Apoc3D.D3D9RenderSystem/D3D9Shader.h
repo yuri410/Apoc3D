@@ -28,7 +28,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Common.h"
 #include "apoc3d/Math/Math.h"
 #include "apoc3d/Graphics/RenderSystem/Shader.h"
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/IOLib/BinaryReader.h"
 #include "apoc3d/IOLib/Streams.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
@@ -123,7 +123,7 @@ namespace Apoc3D
 			protected:
 				NoInline static void ThrowKeyNotFoundEx(const String& name)
 				{
-					throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, name);
+					throw AP_EXCEPTION(ExceptID::KeyNotFound, name);
 				}
 
 				D3D9RenderDevice* m_device;

@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "Buffer/D3D9DepthBuffer.h"
 #include "GraphicsDeviceManager.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
@@ -160,7 +160,7 @@ namespace Apoc3D
 					if (aamode == nullptr)
 					{
 						logRTFailure(getColorFormat(), getDepthFormat(), getMultisampleMode());
-						throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"");
+						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 
 					DWORD quality;
@@ -171,14 +171,14 @@ namespace Apoc3D
 						HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
 							sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertPixelFormat(getColorFormat()), sets->D3D9.PresentParameters.Windowed, aamode->SampleType, &quality);
 						if (hr != S_OK || quality == 0)
-							throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"");
+							throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 					if (m_hasDepth)
 					{
 						HRESULT hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
 							sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertDepthFormat(getDepthFormat()), sets->D3D9.PresentParameters.Windowed, aamode->SampleType, &quality2);
 						if (hr != S_OK || quality2 == 0)
-							throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"");
+							throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 
 					if (m_hasColor && m_hasDepth)
@@ -328,7 +328,7 @@ namespace Apoc3D
 					if (aamode == nullptr)
 					{
 						logRTFailure(format, depthFormat, multisampleMode);
-						throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"");
+						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 
 					GraphicsDeviceManager* dmgr = m_device->getGraphicsDeviceManager();
@@ -340,7 +340,7 @@ namespace Apoc3D
 					if (hr != S_OK || quality == 0)
 					{
 						logRTFailure(format, depthFormat, multisampleMode);
-						throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"");
+						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 					hr = dmgr->getDirect3D()->CheckDeviceMultiSampleType(
 						sets->D3D9.AdapterOrdinal, sets->D3D9.DeviceType, D3D9Utils::ConvertDepthFormat(depthFormat), sets->D3D9.PresentParameters.Windowed, aamode->SampleType, &quality2);
@@ -348,7 +348,7 @@ namespace Apoc3D
 					if (hr != S_OK || quality2 == 0)
 					{
 						logRTFailure(format, depthFormat, multisampleMode);
-						throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"");
+						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 
 					DWORD overallQ = min(quality, quality2)-1;
@@ -397,7 +397,7 @@ namespace Apoc3D
 					if (aamode == nullptr)
 					{
 						logRTFailure(format, DEPFMT_Count, multisampleMode);
-						throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"");
+						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 
 					DWORD quality;
@@ -408,7 +408,7 @@ namespace Apoc3D
 					if (hr != S_OK || quality == 0)
 					{
 						logRTFailure(format, DEPFMT_Count, multisampleMode);
-						throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"");
+						throw AP_EXCEPTION(ExceptID::NotSupported, L"");
 					}
 
 					quality--;

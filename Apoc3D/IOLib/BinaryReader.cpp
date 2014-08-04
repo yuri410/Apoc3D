@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "TaggedData.h"
 #include "IOUtils.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/Math/Ray.h"
 #include "apoc3d/Math/BoundingBox.h"
 #include "apoc3d/Math/BoundingSphere.h"
@@ -576,7 +576,7 @@ namespace Apoc3D
 
 		void BinaryReader::throwEndofStreamException()
 		{
-			throw AP_EXCEPTION(ApocExceptionType::EndOfStream, L"");
+			throw AP_EXCEPTION(ExceptID::EndOfStream, L"");
 		}
 	}
 }

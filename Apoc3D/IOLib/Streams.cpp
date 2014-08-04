@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "Streams.h"
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 using namespace std;
 
@@ -59,7 +59,7 @@ namespace Apoc3D
 		}
 		void FileStream::Write(const char* src, int64 count)
 		{
-			throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Can't write");
+			throw AP_EXCEPTION(ExceptID::NotSupported, L"Can't write");
 		}
 
 		void FileStream::Seek(int64 offset, SeekMode mode)
@@ -110,7 +110,7 @@ namespace Apoc3D
 
 		int64 FileOutStream::Read(char* dest, int64 count)
 		{
-			throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Can't read");
+			throw AP_EXCEPTION(ExceptID::NotSupported, L"Can't read");
 		}
 		void FileOutStream::Write(const char* src, int64 count)
 		{
@@ -211,7 +211,7 @@ namespace Apoc3D
 
 		void MemoryStream::throwEndofStreamException()
 		{
-			throw AP_EXCEPTION(ApocExceptionType::EndOfStream, L"");
+			throw AP_EXCEPTION(ExceptID::EndOfStream, L"");
 		}
 
 		/************************************************************************/

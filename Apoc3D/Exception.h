@@ -31,7 +31,7 @@
 
 namespace Apoc3D
 {
-	enum struct ApocExceptionType
+	enum struct ExceptID
 	{
 		Default,
 		InvalidOperation,
@@ -46,31 +46,31 @@ namespace Apoc3D
 		ScriptCompileError
 	};
 
-	class APAPI ApocException
+	class APAPI Exception
 	{
 	public:
-		ApocException(const String& msg, ApocExceptionType type)
+		Exception(const String& msg, ExceptID type)
 			: m_message(msg), m_type(type) { }
 
-		explicit ApocException(ApocExceptionType type)
+		explicit Exception(ExceptID type)
 			: m_type(type) { }
 
-		ApocException(const ApocException &another)
+		Exception(const Exception &another)
 			: m_message(another.m_message), m_type(another.m_type) { }
 
 		const String& getMessage() const { return m_message; }
-		const ApocExceptionType getType() const { return m_type; }
+		const ExceptID getType() const { return m_type; }
 
-		static ApocException CreateException(ApocExceptionType type, const String& msg, const wchar_t* file, int line);
-		static ApocException CreateException(ApocExceptionType type, const wchar_t* file, int line);
+		static Exception CreateException(ExceptID type, const String& msg, const wchar_t* file, int line);
+		static Exception CreateException(ExceptID type, const wchar_t* file, int line);
 
 	private:
 		String m_message;
-		ApocExceptionType m_type;
+		ExceptID m_type;
 	};
 
-#define AP_EXCEPTION(type, msg) (ApocException::CreateException(type, msg, _CRT_WIDE(__FILE__), __LINE__))
-//#define AP_EXCEPTION(type) (ApocException::CreateException(type, _CRT_WIDE(__FILE__), __LINE__))
+#define AP_EXCEPTION(type, msg) (Exception::CreateException(type, msg, _CRT_WIDE(__FILE__), __LINE__))
+//#define AP_EXCEPTION(type) (Exception::CreateException(type, _CRT_WIDE(__FILE__), __LINE__))
 
 };
 

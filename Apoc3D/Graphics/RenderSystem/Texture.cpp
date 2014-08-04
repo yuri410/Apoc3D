@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/IOLib/TextureData.h"
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/Box.h"
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/VFS/ResourceLocation.h"
 
 namespace Apoc3D
@@ -151,9 +151,9 @@ namespace Apoc3D
 							return res;
 						}
 					}
-					throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Texture is not volume.");
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is not volume.");
 				}
-				throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Texture is already locked.");
+				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
 			}
 			DataRectangle Texture::Lock(int surface, LockMode mode)
 			{
@@ -173,7 +173,7 @@ namespace Apoc3D
 						}
 					}
 				}
-				throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Texture is already locked.");
+				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
 			}
 			DataRectangle Texture::Lock(int surface, LockMode mode, const Apoc3D::Math::Rectangle& rect)
 			{
@@ -193,7 +193,7 @@ namespace Apoc3D
 						}
 					}
 				}
-				throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Texture is already locked.");
+				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
 			}
 			DataRectangle Texture::Lock(int surface, LockMode mode, CubeMapFace cubemapFace)
 			{
@@ -213,7 +213,7 @@ namespace Apoc3D
 						}
 					}
 				}
-				throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Texture is already locked.");
+				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
 			}
 			DataRectangle Texture::Lock(int surface, LockMode mode, CubeMapFace cubemapFace, const Apoc3D::Math::Rectangle& rect)
 			{
@@ -233,7 +233,7 @@ namespace Apoc3D
 						}
 					}
 				}
-				throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Texture is already locked.");
+				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
 			}
 
 			void Texture::Unlock(int surface)
@@ -245,7 +245,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Texture is not locked.");
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is not locked.");
 				}
 				
 			}
@@ -258,7 +258,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Texture is not locked.");
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is not locked.");
 				}
 			}
 			

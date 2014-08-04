@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryWriter.h"
 #include "apoc3d/Vfs/PathUtils.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "apoc3d/Graphics/Animation/AnimationData.h"
 #include "apoc3d/Core/Logging.h"
@@ -168,7 +168,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"The format version of this mesh data is out of date.");
+					throw AP_EXCEPTION(ExceptID::NotSupported, L"The format version of this mesh data is out of date.");
 				}
 			}
 			else

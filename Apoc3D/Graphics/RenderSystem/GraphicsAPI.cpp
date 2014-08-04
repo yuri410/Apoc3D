@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "GraphicsAPI.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/Utility/StringUtils.h"
 
 using namespace Apoc3D;
@@ -46,7 +46,7 @@ namespace Apoc3D
 			{
 				if (m_factories.Contains(fac->getName()))
 				{
-					throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"The Graphics API " + fac->getName() + L" is already registered");
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The Graphics API " + fac->getName() + L" is already registered");
 				}
 
 
@@ -89,7 +89,7 @@ namespace Apoc3D
 				}
 				if (!passed)
 				{
-					throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"The graphics API " + name + L" is not registered");
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The graphics API " + name + L" is not registered");
 				}
 			}
 			void GraphicsAPIManager::UnregisterGraphicsAPI(GraphicsAPIFactory* fac)
@@ -119,7 +119,7 @@ namespace Apoc3D
 				}
 				if (!passed)
 				{
-					throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Graphics API not registered");
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Graphics API not registered");
 				}
 			}
 
@@ -156,9 +156,9 @@ namespace Apoc3D
 						}
 						return list->operator[](bestIdx).Factory->CreateDeviceContext();
 					}
-					throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Platform not supported");
+					throw AP_EXCEPTION(ExceptID::NotSupported, L"Platform not supported");
 				}
-				throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Platform not supported");
+				throw AP_EXCEPTION(ExceptID::NotSupported, L"Platform not supported");
 			}
 		}
 	}

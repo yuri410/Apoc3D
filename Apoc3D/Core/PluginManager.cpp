@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "PluginManager.h"
 
 #include "Plugin.h"
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/Platform/Library.h"
 #include "apoc3d/Config/ConfigurationManager.h"
 #include "apoc3d/Config/Configuration.h"
@@ -59,7 +59,7 @@ namespace Apoc3D
 			{
 				return plg;
 			}
-			throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, name);
+			throw AP_EXCEPTION(ExceptID::KeyNotFound, name);
 		}
 
 		void PluginManager::OnPluginLoad(const Plugin* plg, int32 index, int32 count)
@@ -108,7 +108,7 @@ namespace Apoc3D
 				m_libraries.Add(lib);
 				m_plugins.Add(name, plugin);
 			}
-			catch (const ApocException& e)
+			catch (const Exception& e)
 			{
 				(void)e;
 				OnPluginError(0);
@@ -128,7 +128,7 @@ namespace Apoc3D
 
 					m_plugins.Add(plugin->GetName(), plugin);
 				}
-				catch (const ApocException& e)
+				catch (const Exception& e)
 				{
 					(void)e;
 					OnPluginError(0);
@@ -160,7 +160,7 @@ namespace Apoc3D
 				{
 					e.getCurrentValue()->Unload();
 				}
-				catch (const ApocException& ex)
+				catch (const Exception& ex)
 				{
 					(void)ex;
 					OnPluginError(e.getCurrentValue());

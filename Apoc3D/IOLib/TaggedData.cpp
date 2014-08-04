@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "BinaryWriter.h"
 #include "Streams.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/Config/ConfigurationSection.h"
 #include "apoc3d/Math/Matrix.h"
 #include "apoc3d/Math/Color.h"
@@ -111,7 +111,7 @@ namespace Apoc3D
 		{
 			const Entry* ent = FindEntry(name);
 			if (!ent)
-				throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, name);
+				throw AP_EXCEPTION(ExceptID::KeyNotFound, name);
 
 			return ent->Offset;
 		}
@@ -1500,7 +1500,7 @@ namespace Apoc3D
 
 		void TaggedDataReader::throwKeynotFoundException(const String& key)
 		{
-			throw AP_EXCEPTION(ApocExceptionType::KeyNotFound, key);
+			throw AP_EXCEPTION(ExceptID::KeyNotFound, key);
 		}
 
 		//////////////////////////////////////////////////////////////////////////

@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "Quaternion.h"
 #include "apoc3d/Collections/Stack.h"
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 using namespace Apoc3D::Collections;
 
@@ -83,7 +83,7 @@ namespace Apoc3D
 			{
 				return m_stack->Peek();
 			}
-			throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"The stack is empty.");
+			throw AP_EXCEPTION(ExceptID::InvalidOperation, L"The stack is empty.");
 		}
 
 		int MatrixStack::getCount() const

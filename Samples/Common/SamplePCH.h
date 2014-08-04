@@ -4,7 +4,7 @@
 
 #include "apoc3d/Engine.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 #include "apoc3d/Library/tinyxml.h"
 #include "apoc3d/Library/tinythread.h"
 #include "apoc3d/Library/lz4.h"

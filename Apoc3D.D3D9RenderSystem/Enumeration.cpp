@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Utility/StringUtils.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 #include <vector>
 #include <algorithm>
@@ -416,7 +416,7 @@ namespace Apoc3D
 
 				if (!bestCombo)
 				{
-					throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Can not create Direct3D9 Device. No compatible Direct3D9 devices found.");
+					throw AP_EXCEPTION(ExceptID::NotSupported, L"Can not create Direct3D9 Device. No compatible Direct3D9 devices found.");
 				}
 				Direct3D9Settings inteResult;
 				BuildValidSettings(bestCombo, optimal, inteResult);
@@ -829,7 +829,7 @@ namespace Apoc3D
 			{
 				if (combo->AdapterInfo->DisplayModes.getCount() == 0)
 				{
-					throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"No device modes available");
+					throw AP_EXCEPTION(ExceptID::NotSupported, L"No device modes available");
 				}
 
 				D3DDISPLAYMODE bestMode;

@@ -39,7 +39,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Sprite.h"
 #include "VolatileResource.h"
 
-#include "apoc3d/ApocException.h"
+#include "apoc3d/Exception.h"
 
 #include "apoc3d/Graphics/Camera.h"
 #include "apoc3d/Graphics/Material.h"
@@ -237,7 +237,7 @@ namespace Apoc3D
 					{
 						if (index)
 						{
-							throw AP_EXCEPTION(ApocExceptionType::InvalidOperation, L"Render targets with a depth buffer can only be set at index 0.");
+							throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Render targets with a depth buffer can only be set at index 0.");
 						}
 						hr = dev->SetDepthStencilSurface(drt->getDepthSurface());
 						assert(SUCCEEDED(hr));

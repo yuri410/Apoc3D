@@ -1215,7 +1215,7 @@ LFail:
 		case IL_DXT5:
 			return FMT_DXT5;
 		}
-		throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"ConvertFormat");
+		throw AP_EXCEPTION(ExceptID::NotSupported, L"ConvertFormat");
 		//return FMT_Unknown;
 	}
 	int ConvertFilter(TextureFilterType flt)
@@ -1229,7 +1229,7 @@ LFail:
 		case TextureFilterType::BSpline:
 			return ILU_SCALE_BSPLINE;
 		}
-		throw AP_EXCEPTION(ApocExceptionType::NotSupported, L"Not supported filter type");
+		throw AP_EXCEPTION(ExceptID::NotSupported, L"Not supported filter type");
 	}
 	void TextureBuild::BuildByDevIL(const TextureBuildConfig& config)
 	{
