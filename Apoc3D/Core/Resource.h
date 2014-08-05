@@ -46,30 +46,26 @@ namespace Apoc3D
 		 *	RS_PendingLoad and RS_PendingUnload may occur. Otherwise, the state will only
 		 *	be one of the first four.
 		 */
-		enum ResourceState
+		enum struct ResourceState
 		{
 			/** 
 			 *  Represents the resource is already unloaded or not loaded yet. 
 			 */
-			RS_Unloaded = 0,
+			Unloaded = 0,
 			/**
 			 *  Represents the resource is already loaded.
 			 */
-			RS_Loaded = 1,
+			Loaded = 1,
 			/**
 			 *  Represents the resource is currently being loaded 
 			 */
-			RS_Loading = 2,			
+			Loading = 2,			
 			/**
 			 *  Represents the resource is currently being unloaded 
 			 */
-			RS_Unloading = 3
-
+			Unloading = 3
 		};
 		
-		template class APAPI fastdelegate::FastDelegate1<Resource*, void>;
-		typedef fastdelegate::FastDelegate1<Resource*, void> ResourceEventHandler;
-
 		/**
 		 *  A resource is data or operation that uses hardware provided resources, which is limited.
 		 *  Typical example for resources are textures and models. Both uses video card memory.
@@ -82,15 +78,11 @@ namespace Apoc3D
 		 */
 		class APAPI Resource
 		{
-		public: 
 			friend class GenerationTable;
-			typedef Resource ResHandleTemplateConstraint;   
+		public: 
 			
 			virtual ~Resource();
-
-			ResourceEventHandler& eventLoaded() { return m_eventLoaded; }
-			ResourceEventHandler& eventUnloaded() { return m_eventUnloaded; }
-
+			
 			/** 
 			 *  Get the generation number.
 			 *  Only returns valid if the resource is managed and async.
@@ -109,11 +101,7 @@ namespace Apoc3D
 			 */
 			virtual bool IsUnloadable();
 
-			virtual bool IsIndependent() const { return true; }
-
-			/** 
-			 *  Get the memory token by the resource in bytes.
-			 */
+			/** Get the memory token by the resource in bytes. */
 			virtual uint32 getSize() = 0;
 
 			/**
@@ -150,32 +138,28 @@ namespace Apoc3D
 			 */
 			void Reload();
 
-			/**
-			 *  Gets a string uniquely represents the resource
-			 */
+			/** Gets a string uniquely represents the resource */
 			const String& getHashString() const { return m_hashString; }
-			/**
-			 *  Check if the resource's state is RS_Loaded.
-			 */
-			bool isLoaded() { return getState() == RS_Loaded; }
-			/**
-			 *  Gets the resource's current state.
-			 */
-			ResourceState getState() const;
-			
 
+			/** Check if the resource's state is RS_Loaded. */
+			bool isLoaded() { return getState() == ResourceState::Loaded; }
+
+			/** Gets the resource's current state. */
+			ResourceState getState() const;
+
+			bool isIndependent() const { return m_isIndependent; }
+			bool isPostSyncNeeded() const { return m_requiresPostSync; }
 
 			/**
 			 *  Check if the resource is managed.
 			 */
-			bool isManaged() const { return !!m_manager; }
+			bool isManaged() const { return m_manager != nullptr; }
+
 			/**
 			 *  Gets the corresponding resource manager. 
-			 *  &return The pointer to the resource manager object, 0 if the resource is not managed.
+			 *  &return The pointer to the resource manager object, nullptr if the resource is not managed.
 			 */
 			ResourceManager* getManager() const { return m_manager; }
-			
-
 
 			void _Ref()
 			{
@@ -186,121 +170,41 @@ namespace Apoc3D
 			{
 				assert(isManaged());
 				m_refCount--;
-				//if (isManaged())
-				//{
-					//if (--m_refCount == 0)
-					//{
-					//delete this;
-					//}
-				//}
 			}
-		protected:
-			/**
-			 *  implement load processing here
-			 */
-			virtual void load() = 0;
-			/**
-			 *  implement unload processing here
-			 */
-			virtual void unload() = 0;
 
-			/**
-			 *  Create a unmanaged resource
-			 */
+			static void ProcessResourceOperation(const ResourceOperation& resOp);
+			static void ProcessResourceOperationPostSyc(const ResourceOperation& resOp, int32 percentage);
+		protected:
+			
+			/** Create a unmanaged resource */
 			Resource();
-			/**
-			 *  If manager is not 0, creates a managed resource.
-			 */
+
+			/** If manager is not nullptr, creates a managed resource. */
 			Resource(ResourceManager* manager, const String& hashString);
 
-			virtual void OnLoaded()
-			{
-				if (!m_eventLoaded.empty())
-				{
-					m_eventLoaded(this);
-				}
-			}
-			virtual void OnUnloaded()
-			{
-				if (!m_eventUnloaded.empty())
-				{
-					m_eventUnloaded(this);
-				}
-			}
+			/** implement load processing here */
+			virtual void load() = 0;
+
+			/** implement unload processing here */
+			virtual void unload() = 0;
+
+			virtual void loadPostSync(int32 percentage) { }
+			virtual void unloadPostSync(int32 percentage) { }
+			
 		private:
-			/** 
-			 *  Implements a general resource loading operation
-			 */
-			class ResourceLoadOperation : public ResourceOperation
-			{
-			public:
-				ResourceLoadOperation(Resource* resource)
-					: ResourceOperation(resource)
-				{
-					
-				}
+			Resource& operator=(const Resource &rhs) = delete;
 
-				void Process()
-				{ 
-					Resource* res = getResource();
-					ResourceState state = res->getState();
-					
-					if (state != RS_Unloaded)
-						return;
-					
-					res->setState(RS_Loading);
-					res->load();
-					res->setState(RS_Loaded);
+			ResourceOperation GetLoadOperation() { return ResourceOperation(this, ResourceOperation::RESOP_Load); }
+			ResourceOperation GetUnloadOperation() { return ResourceOperation(this, ResourceOperation::RESOP_Unload); }
 
-					res->OnLoaded();
-				}
+			void LoadSync();
 
-				virtual OperationType getType() const { return RESOP_Load; }
-			};
-			/** 
-			 *  Implements a general resource unloading operation
-			 */
-			class ResourceUnloadOperation : public ResourceOperation
-			{
-			public:
-				ResourceUnloadOperation(Resource* resource)
-					: ResourceOperation(resource)
-				{
-					
-				}
+			void setState(ResourceState st);
 
-				void Process()
-				{ 
-					Resource* res = getResource();
-					
-					ResourceState state = res->getState();
-					if (state != RS_Loaded)
-						return;
-					res->setState(RS_Unloading);
-					res->unload();
-					res->setState(RS_Unloaded);
-
-					res->OnUnloaded();
-				}
-
-				virtual OperationType getType() const { return RESOP_Unload; }
-			};
-			/** 
-			 *  A utility used for calculating generation number for resources based on
-			 *  the visit history.
-			 */
+			/** A utility used for calculating generation number for resources based on the visit history. */
 			class GenerationCalculator
 			{
 			public:
-				volatile int Generation;
-			private:
-				const GenerationTable* m_table;
-				Queue<float> m_timeQueue;
-
-				tthread::mutex* m_queueLock;
-				
-			public:
-
 				GenerationCalculator(const GenerationTable* table);
 				~GenerationCalculator();
 
@@ -308,40 +212,32 @@ namespace Apoc3D
 				void UpdateGeneration(float time);
 
 				bool IsGenerationOutOfTime(float time);
+			public:
+				volatile int Generation;
+			private:
+				const GenerationTable* m_table;
+				Queue<float> m_timeQueue;
 
+				tthread::mutex* m_queueLock;
 			};
 
-			friend class ResourceHandle<Resource>;
 
-			GenerationCalculator* m_generation;
-			ResourceManager* m_manager;
+			GenerationCalculator* m_generation = nullptr;
+			ResourceManager* m_manager = nullptr;
 
 			const String m_hashString;
 
-			int m_refCount;
-
-			volatile ResourceState m_state;
-
-			ResourceLoadOperation* m_resLoader;
-			ResourceUnloadOperation* m_resUnloader;
+			int m_refCount = 0;
 			
-			tthread::mutex* m_lock;
 
-			ResourceEventHandler m_eventLoaded;
-			ResourceEventHandler m_eventUnloaded;
+			volatile ResourceState m_state = ResourceState::Unloaded;
 
-			bool m_unloadableLock;
+			tthread::mutex* m_lock = nullptr;
 
+			bool m_unloadableLock = false;
+			bool m_requiresPostSync = false;
+			bool m_isIndependent = true;
 
-			void LoadSync();
-
-
-			void setState(ResourceState st);
-
-			Resource& operator=(const Resource &rhs)
-			{
-				return *this; 
-			}
 		};
 	};
 };

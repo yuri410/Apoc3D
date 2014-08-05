@@ -37,14 +37,14 @@ namespace Apoc3D
 		template <typename T, typename ComparerType = EqualityComparer<T>>
 		class ExistTable
 		{
+		private:
+			typedef ExistTable<T, ComparerType> ExistTableType;
 		public:
 			class Enumerator
 			{
 			public:
 				Enumerator(const ExistTable<T, ComparerType>* dict)
-					: m_dict(dict), m_index(0), m_current(nullptr)
-				{
-				}
+					: m_dict(dict), m_index(0), m_current(nullptr) { }
 
 				bool MoveNext()
 				{
@@ -59,17 +59,64 @@ namespace Apoc3D
 						m_index++;
 					}
 					m_index = m_dict->m_count + 1;
-					m_current = 0;
+					m_current = nullptr;
 					return false;
 				}
 
 				const T* getCurrent() const { return m_current; }
 
 			private:
-				const ExistTable<T, ComparerType>* m_dict;
+				const ExistTableType* m_dict;
 				int m_index;
 				const T* m_current;
 
+			};
+
+			class Iterator
+			{
+			public:
+				explicit Iterator(const ExistTableType* dict)
+					: m_dict(dict), m_index(0)
+				{
+					MoveToNext();
+				}
+
+				Iterator(const ExistTableType* dict, int idx)
+					: m_dict(dict), m_index(idx) { }
+
+				const T& operator*() const
+				{
+					assert(m_index > 0 && m_index <= m_dict->m_count);
+					Entry& e = m_dict->m_entries[m_index - 1];
+					return e.data;
+				}
+
+				Iterator& operator++()
+				{
+					MoveToNext();
+					return *this;
+				}
+				Iterator operator++(int) { Iterator result = *this; ++(*this); return result; }
+
+				bool operator==(const Iterator& rhs) const { return m_dict == rhs.m_dict && m_index == rhs.m_index; }
+				bool operator!=(const Iterator& rhs) const { return !this->operator==(rhs); }
+			private:
+				void MoveToNext()
+				{
+					while (m_index < m_dict->m_count)
+					{
+						if (m_dict->m_entries[m_index].hashCode >= 0)
+						{
+							m_index++;
+							return;
+						}
+						m_index++;
+					}
+					m_index = m_dict->m_count + 1;
+				}
+
+				const ExistTableType* m_dict;
+				int m_index;
 			};
 
 		public:
@@ -211,6 +258,9 @@ namespace Apoc3D
 			}
 
 			int32 getCount() const { return m_count - m_freeCount; }
+
+			Iterator begin() const { return Iterator(this); }
+			Iterator end() const { return Iterator(this, m_count + 1); }
 
 		private:
 			struct Entry

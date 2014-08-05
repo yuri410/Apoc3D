@@ -82,13 +82,12 @@ namespace Apoc3D
 
 
 		ControlContainer::ControlContainer()
-			: Control(), m_menu(0), m_menuOffset(0,20)
+			: Control(), m_controls(this), m_menu(0), m_menuOffset(0,20)
 		{
-			m_controls = new ControlCollection(this);
+
 		}
 		ControlContainer::~ControlContainer()
 		{
-			delete m_controls;
 		}
 		void ControlContainer::setMenu(Menu* m)
 		{
@@ -98,18 +97,18 @@ namespace Apoc3D
 		void ControlContainer::Initialize(RenderDevice* device)
 		{
 			Control::Initialize(device);
-			for (int i=0;i<m_controls->getCount();i++)
+			for (int i=0;i<m_controls.getCount();i++)
 			{
-				m_controls->operator[](i)->Initialize(device);
+				m_controls[i]->Initialize(device);
 			}
 		}
 
 		void ControlContainer::Draw(Sprite* sprite)
 		{
 			int overlay = 0;
-			for (int i=0;i<m_controls->getCount();i++)
+			for (int i=0;i<m_controls.getCount();i++)
 			{
-				Control* ctrl = m_controls->operator[](i);
+				Control* ctrl = m_controls[i];
 				if (ctrl->IsOverriding())
 				{
 					overlay = i;
@@ -121,7 +120,7 @@ namespace Apoc3D
 			}
 			if (overlay)
 			{
-				m_controls->operator[](overlay)->DrawOverlay(sprite);
+				m_controls[overlay]->DrawOverlay(sprite);
 			}
 
 			if (m_menu && m_menu->Visible)
@@ -132,21 +131,21 @@ namespace Apoc3D
 		void ControlContainer::Update(const GameTime* const time)
 		{
 			bool skip = false;
-			for (int i=0;i<m_controls->getCount();i++)
+			for (int i=0;i<m_controls.getCount();i++)
 			{
-				if (m_controls->operator[](i)->IsOverriding())
+				if (m_controls[i]->IsOverriding())
 				{
-					m_controls->operator[](i)->Update(time);
+					m_controls[i]->Update(time);
 					skip = true;
 				}
 			}
 			if (!skip)
 			{
-				for (int i=0;i<m_controls->getCount();i++)
+				for (int i=0;i<m_controls.getCount();i++)
 				{
-					if (m_controls->operator[](i)->Enabled)
+					if (m_controls[i]->Enabled)
 					{
-						m_controls->operator[](i)->Update(time);
+						m_controls[i]->Update(time);
 					}
 				}
 			}

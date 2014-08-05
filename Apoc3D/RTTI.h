@@ -52,4 +52,4 @@ Derived up_cast(Base* o)
 		static_assert(_InheritCheck<ParentType, Type>::isDerivedFrom, "BaseType is not the base."); \
 	public: \
 		static uintptr _getTypeID() { static char dummy; return (uintptr)&dummy; } \
-		virtual bool CheckRuntimeType(uintptr id) const override { return id == _getTypeID() || ParentType::CheckRuntimeType(id); }
+		virtual bool CheckRuntimeType(uintptr id) const override { return id == Type::_getTypeID() || ParentType::CheckRuntimeType(id); }

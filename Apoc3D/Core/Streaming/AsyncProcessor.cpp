@@ -6,6 +6,7 @@
 #include "apoc3d/Library/tinythread.h"
 
 #include <ctime>
+#include <chrono>
 
 using namespace Apoc3D::Platform;
 
@@ -16,16 +17,29 @@ namespace Apoc3D
 		namespace Streaming
 		{
 			
-			void AsyncProcessor::ThreadEntry(void* arg)
+			AsyncProcessor::AsyncProcessor(GenerationTable* gtable, const String& name, bool isThreaded)
+				: m_genTable(gtable)
 			{
-				AsyncProcessor* obj = static_cast<AsyncProcessor*>(arg);
-
-				obj->Main();
+				if (isThreaded)
+				{
+					m_queueMutex = new tthread::mutex();
+					m_processThread = new tthread::thread(&AsyncProcessor::ThreadEntry, this);
+					SetThreadName(m_processThread, name);
+				}
 			}
+
+			AsyncProcessor::~AsyncProcessor(void)
+			{
+				DELETE_AND_NULL(m_processThread);
+				DELETE_AND_NULL(m_queueMutex);
+			}
+
+			void AsyncProcessor::ThreadEntry(void* arg) { static_cast<AsyncProcessor*>(arg)->Main(); }
+
 			void AsyncProcessor::Main()
 			{
-				static const float CollectInterval = 1;
-				static const float GenUpdateInterval = 0.25f;
+				const float CollectInterval = 1;
+				const float GenUpdateInterval = 0.25f;
 
 				float accumulatedCollectWaitingTime = 0;
 				float accumulatedGenUpdateWaitingTime = 0;
@@ -38,18 +52,24 @@ namespace Apoc3D
 				{
 					bool rest = true;
 
-					ResourceOperation* resOp = 0;
-					m_syncMutex->lock();
+					ResourceOperation resOp;
+					m_queueMutex->lock();
 					if (m_opQueue.getCount())
 					{
 						resOp = m_opQueue.Dequeue();
 					}
 
-					m_syncMutex->unlock();
+					m_queueMutex->unlock();
 
-					if (resOp)
+					if (resOp.isValid())
 					{
-						resOp->Process();
+						Resource::ProcessResourceOperation(resOp);
+
+						if (resOp.Subject->isPostSyncNeeded())
+						{
+							m_postSyncQueue.Enqueue(resOp);
+						}
+
 						rest = false;
 					}
 					
@@ -84,88 +104,92 @@ namespace Apoc3D
 					
 				}
 			}
-			bool AsyncProcessor::NeutralizeTask(ResourceOperation* op)
+
+			bool AsyncProcessor::NeutralizeTask(const ResourceOperation& op)
 			{
 				bool passed = false;
-				ResourceOperation::OperationType type = op->getType();
 
-				if (op->getResource() && op->getResource()->IsIndependent())
+				Resource* res = op.Subject;
+
+				if (res && res->isIndependent())
 				{
-					if (type == ResourceOperation::RESOP_Load)
+					if (op.Type == ResourceOperation::RESOP_Load)
 					{
-						m_syncMutex->lock();
+						LockQueue();
 
-						for (int i=0;i<m_opQueue.getCount();i++)
-						{
-							ResourceOperation* other = m_opQueue.GetElement(i);
-							if (other && other->getResource() == op->getResource() && other->getType() == ResourceOperation::RESOP_Unload)
-							{
-								m_opQueue.SetElement(i,0);
-								passed = true;
-								break;
-							}
-						}
+						passed = ClearMatchingResourceOperation(res, ResourceOperation::RESOP_Unload);
 
-						m_syncMutex->unlock();
+						UnlockQueue();
 					}
-					else if (type == ResourceOperation::RESOP_Unload)
+					else if (op.Type == ResourceOperation::RESOP_Unload)
 					{
-						m_syncMutex->lock();
+						LockQueue();
 
-						for (int i=0;i<m_opQueue.getCount();i++)
-						{
-							ResourceOperation* other = m_opQueue.GetElement(i);
-							if (other && other->getResource() == op->getResource() && other->getType() == ResourceOperation::RESOP_Load)
-							{
-								m_opQueue.SetElement(i,0);
-								passed = true;
-								break;
-							}
-						}
+						passed = ClearMatchingResourceOperation(res, ResourceOperation::RESOP_Load);
 
-						m_syncMutex->unlock();
+						UnlockQueue();
 					}
 				}
 				return passed;
 			}
-			void AsyncProcessor::AddTask(ResourceOperation* op)
+			void AsyncProcessor::AddTask(const ResourceOperation& op)
 			{
-				
-				//if (!ignored)
+				LockQueue();
+
+				m_opQueue.Enqueue(op);
+
+				UnlockQueue();
+			}
+			void AsyncProcessor::RemoveTask(const ResourceOperation& op)
+			{
+				LockQueue();
+
+				for (int i = 0; i < m_opQueue.getCount(); i++)
 				{
-					m_syncMutex->lock();
-
-					m_opQueue.Enqueue(op);
-
-					m_syncMutex->unlock();
+					ResourceOperation& e = m_opQueue.Element(i);
+					if (e == op)
+					{
+						e.Invalidate();
+					}
 				}
+
+				UnlockQueue();
 			}
-			void AsyncProcessor::RemoveTask(ResourceOperation* op)
+			void AsyncProcessor::RemoveTask(Resource* res)
 			{
-				m_syncMutex->lock();
+				LockQueue();
 
-				m_opQueue.Replace(op, 0);
+				for (int i = 0; i < m_opQueue.getCount(); i++)
+				{
+					ResourceOperation& e = m_opQueue.Element(i);
+					if (e.Subject == res)
+					{
+						e.Invalidate();
+					}
+				}
 
-				m_syncMutex->unlock();
+				UnlockQueue();
 			}
+
 			bool AsyncProcessor::TaskCompleted()
 			{
-				bool result;
-				m_syncMutex->lock();
+				volatile bool result;
+				LockQueue();
 				result = m_opQueue.getCount() == 0;
-				m_syncMutex->unlock();
+				UnlockQueue();
 				return result;
 			}
 			int AsyncProcessor::GetOperationCount()
 			{
-				int result;
-				m_syncMutex->lock();
+				volatile int result;
+				LockQueue();
 				result = m_opQueue.getCount();
-				m_syncMutex->unlock();
+				UnlockQueue();
 				return result;
 			}
 			void AsyncProcessor::WaitForCompletion()
 			{
+				assert(m_processThread);
 				while (!TaskCompleted())
 				{
 					ApocSleep(10);
@@ -175,23 +199,79 @@ namespace Apoc3D
 			{
 				m_closed = true;
 				m_genTable->ShutDown();
-				m_processThread->join();
+				if (m_processThread)
+				{
+					m_processThread->join();
+				}
+			}
+
+			void AsyncProcessor::ProcessPostSync(float& timeLeft)
+			{
+				using namespace std::chrono;
+				
+				if (m_postSyncQueue.getCount()>0)
+				{
+					high_resolution_clock::time_point t1 = high_resolution_clock::now();
+
+					bool processed = false;
+					while (m_postSyncQueue.getCount() > 0)
+					{
+						const ResourceOperation& resop = m_postSyncQueue.Head();
+
+						for (int32 i = 0; i < 5; i++)
+						{
+							processed = true;
+
+							Resource::ProcessResourceOperationPostSyc(resop, i * 25);
+
+							high_resolution_clock::time_point t2 = high_resolution_clock::now();
+							duration<float> time_span = duration_cast<duration<float>>(t2 - t1);
+
+							if (time_span.count() >= timeLeft)
+							{
+								timeLeft = 0;
+								break;
+							}
+						}
+					}
+
+					if (processed && timeLeft > 0)
+					{
+						high_resolution_clock::time_point t2 = high_resolution_clock::now();
+						duration<float> time_span = duration_cast<duration<float>>(t2 - t1);
+						timeLeft -= time_span.count();
+					}
+				}
 				
 			}
 
-			AsyncProcessor::AsyncProcessor(GenerationTable* gtable, const String& name)
-				: m_closed(false), m_genTable(gtable)
+			void AsyncProcessor::LockQueue()
 			{
-				m_syncMutex = new tthread::mutex();
-				m_processThread = new tthread::thread(&AsyncProcessor::ThreadEntry, this);
-				SetThreadName(m_processThread, name);
+				if (m_queueMutex)
+				{
+					m_queueMutex->lock();
+				}
+			}
+			void AsyncProcessor::UnlockQueue()
+			{
+				if (m_queueMutex)
+				{
+					m_queueMutex->unlock();
+				}
 			}
 
-			AsyncProcessor::~AsyncProcessor(void)
+			bool AsyncProcessor::ClearMatchingResourceOperation(Resource* res, ResourceOperation::OperationType type)
 			{
-				delete m_processThread;
-				delete m_syncMutex;
-				m_syncMutex = nullptr;
+				for (int i = 0; i < m_opQueue.getCount(); i++)
+				{
+					ResourceOperation& other = m_opQueue.Element(i);
+					if (other.Subject == res && other.Type == type)
+					{
+						other.Invalidate();
+						return true;
+					}
+				}
+				return false;
 			}
 		}
 	}

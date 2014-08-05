@@ -363,21 +363,21 @@ namespace Apoc3D
 					if (m_state == FWS_Normal || m_state == FWS_Maximized)
 					{
 						bool skip = false;
-						for (int i=0;i<m_controls->getCount();i++)
+						for (int i=0;i<m_controls.getCount();i++)
 						{
-							if (m_controls->operator[](i)->IsOverriding())
+							if (m_controls[i]->IsOverriding())
 							{
-								m_controls->operator[](i)->Update(time);
+								m_controls[i]->Update(time);
 								skip = true;
 							}
 						}
 						if (!skip)
 						{
-							for (int i=0;i<m_controls->getCount();i++)
+							for (int i=0;i<m_controls.getCount();i++)
 							{
-								if (m_controls->operator[](i)->Enabled)
+								if (m_controls[i]->Enabled)
 								{
-									m_controls->operator[](i)->Update(time);
+									m_controls[i]->Update(time);
 								}
 							}
 						}
@@ -719,9 +719,9 @@ namespace Apoc3D
 
 				bool hasOverridingControl = false;
 				int overlay = 0;
-				for (int i=0;i<m_controls->getCount();i++)
+				for (int i=0;i<m_controls.getCount();i++)
 				{
-					Control* ctl = m_controls->operator[](i);
+					Control* ctl = m_controls[i];
 					if (ctl->IsOverriding())
 					{
 						overlay = i;
@@ -737,7 +737,7 @@ namespace Apoc3D
 				m_device->getRenderState()->setScissorTest(false,0);
 				if (hasOverridingControl)
 				{
-					m_controls->operator[](overlay)->DrawOverlay(sprite);
+					m_controls[overlay]->DrawOverlay(sprite);
 				}
 
 				if (m_menu && m_menu->Visible)

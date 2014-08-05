@@ -33,16 +33,12 @@ namespace Apoc3D
 	namespace Core
 	{
 		/**
-		 *   A proxy class to access a managed resources.
+		 *  A proxy class to access a managed resources.
 		 *  It helps informing resources accessing records and the change of reference count.
 		 */
 		template <class ResType>
 		class ResourceHandle
 		{
-			/** 
-			 *  used to make sure the ResType are derived from the Resource class
-			 */
-			typedef typename ResType::ResHandleTemplateConstraint CF_XXX;
 		public:
 			/**
 			 *  Means the handle will not touch resource, making unloaded loading.
@@ -73,10 +69,26 @@ namespace Apoc3D
 				_Ref();
 			}
 			
-			// outdated
-			ResourceHandle(ResType* res, bool dead);
+			ResourceHandle(const ResourceHandle& obj)
+				: m_resource(obj.m_resource), m_flags(obj.m_flags)
+			{
+				_Ref();
+			}
+			ResourceHandle& operator =(const ResourceHandle& rhs)
+			{
+				if (&rhs == this)
+					return *this;
 
-			virtual ~ResourceHandle(void)
+				_Unref();
+
+				m_resource = rhs.m_resource;
+				m_flags = rhs.m_flags;
+
+				_Ref();
+				return *this;
+			}
+
+			virtual ~ResourceHandle()
 			{
 				_Unref();
 				
@@ -99,7 +111,6 @@ namespace Apoc3D
 				}
 			}
 
-			//void Build(ResType* res);
 
 			/**
 			 *  Notify the resource that it will be, or being used.
@@ -111,6 +122,7 @@ namespace Apoc3D
 					m_resource->Use();
 				}
 			}
+
 			/**
 			 *  Notify the resource that it will be, or being used.
 			 *  If the resource is not loaded, the caller's thread will be suspended until the resource is ready.
@@ -126,10 +138,7 @@ namespace Apoc3D
 			/** 
 			 *  Gets the resource's state.
 			 */
-			inline ResourceState getState() const
-			{
-				return m_resource->getState();
-			}
+			ResourceState getState() const { return m_resource->getState(); }
 
 			/**
 			 *  Gets the pointer to the resource object without informing it.
@@ -137,12 +146,17 @@ namespace Apoc3D
 			 */
 			ResType* getWeakRef() const { return m_resource; }
 
+			ResType* operator*()
+			{
+				if (!shouldNotTouchResource())
+					Touch();
+
+				return m_resource;
+			}
 			ResType* operator ->()
 			{
 				if (!shouldNotTouchResource())
-				{
 					Touch();
-				}
 				
 				return m_resource;
 			}
@@ -169,11 +183,6 @@ namespace Apoc3D
 				}
 			}
 
-			ResourceHandle(const ResourceHandle& another) { }
-			ResourceHandle& operator =(const ResourceHandle& other)
-			{
-				return *this;
-			}
 		protected:
 		};
 	};

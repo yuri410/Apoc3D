@@ -143,7 +143,7 @@ namespace Apoc3D
 			bool GenerationTable::CanUnload(Resource* res) const
 			{
 				ResourceState state = res->getState();
-				return state == RS_Loaded;
+				return state == ResourceState::Loaded;
 			}
 
 			void GenerationTable::AddResource(Resource* res)

@@ -73,7 +73,7 @@ namespace Apoc3D
 				D3DBaseTexture* value = 0;
 				if (tex)
 				{
-					if (!tex->isManaged() || tex->getState() == RS_Loaded)
+					if (!tex->isManaged() || tex->getState() == ResourceState::Loaded)
 					{
 						D3D9Texture* d3dTex = static_cast<D3D9Texture*>(tex);
 						if (d3dTex->getInternal2D())

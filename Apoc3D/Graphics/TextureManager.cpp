@@ -97,7 +97,7 @@ namespace Apoc3D
 				
 				NotifyNewResource(tex);
 
-				if (!usesAsync() && tex->getState() == RS_Loaded)
+				if (!usesAsync() && tex->getState() == ResourceState::Loaded)
 				{
 					return new ResourceHandle<Texture>((Texture*)tex, ResourceHandle<Texture>::FLG_Untouching);		
 				}

@@ -2,6 +2,7 @@
 #include "Game.h"
 
 #include "apoc3d/Core/GameTime.h"
+#include "apoc3d/Core/ResourceManager.h"
 #include "apoc3d/Config/XmlConfigurationFormat.h"
 
 #include "apoc3d/Graphics/RenderSystem/RenderWindow.h"
@@ -94,7 +95,7 @@ namespace Apoc3DEx
 	{
 		if (m_window->getIsActive())
 			InputAPIManager::getSingleton().Update(time);
-		
+
 
 
 		EffectManager::getSingleton().Update(time);
@@ -102,5 +103,7 @@ namespace Apoc3DEx
 		m_console->Update(time);
 
 		UIRoot::Update(time);
+
+		ResourceManager::PerformAllPostSync(time->getElapsedRealTime());
 	}
 }

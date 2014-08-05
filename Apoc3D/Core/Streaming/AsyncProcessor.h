@@ -47,31 +47,25 @@ namespace Apoc3D
 			/**
 			 *  Represents an operation that processes resources.
 			 */
-			class APAPI ResourceOperation
+			struct ResourceOperation
 			{
-			private:
-				Resource* m_resource;
-
-			protected:
-				ResourceOperation(Resource* res)
-					: m_resource(res){ }
-
-			
-			public:
 				enum OperationType
 				{
 					RESOP_Load,
-					RESOP_Unload,
-					RESOP_Other
-				};
+					RESOP_Unload
+				} Type = RESOP_Load;
 
-				/**
-				 *  Do the processing.
-				 */
-				virtual void Process() = 0;
+				Resource* Subject = nullptr;
 
-				virtual OperationType getType() const = 0;
-				Resource* getResource() const { return m_resource; }
+				ResourceOperation() { }
+				ResourceOperation(Resource* res, OperationType type)
+					: Subject(res), Type(type) { }
+
+				void Invalidate() { Subject = nullptr; }
+				bool isValid() const { return Subject != nullptr; }
+
+				bool operator ==(const ResourceOperation& rhs) const { return Type == rhs.Type && Subject == rhs.Subject; }
+				bool operator !=(const ResourceOperation& rhs) const { return !this->operator==(rhs); }
 			};
 
 			/**
@@ -81,20 +75,25 @@ namespace Apoc3D
 			class APAPI AsyncProcessor
 			{
 			public:
+				AsyncProcessor(GenerationTable* gTable, const String& name, bool isThreaded);
+				~AsyncProcessor(void);
+
 				/**
 				 *  If a resource is IsIndependent(), this cancels(or removes) the corresponding opposite resource operation
 				 *  from the queue.
 				 */
-				bool NeutralizeTask(ResourceOperation* op);
+				bool NeutralizeTask(const ResourceOperation& op);
 
 				/**
 				 *  Adds a ResourceOperation object to the queue.
 				 */
-				void AddTask(ResourceOperation* op);
+				void AddTask(const ResourceOperation& op);
 				/**
 				 *  Removes a ResourceOperation object from the queue.
 				 */
-				void RemoveTask(ResourceOperation* op);
+				void RemoveTask(const ResourceOperation& op);
+
+				void RemoveTask(Resource* res);
 
 				/**
 				 *  Check if there is no queued ResourceOperations at the moment.
@@ -115,19 +114,28 @@ namespace Apoc3D
 				 */
 				void Shutdown();
 
-				AsyncProcessor(GenerationTable* gTable,const String& name);
-				~AsyncProcessor(void);
+
+				void ProcessPostSync(float& timeLeft);
+
 
 			private:
-				Queue<ResourceOperation*> m_opQueue;
-				GenerationTable* m_genTable;
-				tthread::thread* m_processThread;
-				tthread::mutex* m_syncMutex;
+				void LockQueue();
+				void UnlockQueue();
 
-				bool m_closed;
+				bool ClearMatchingResourceOperation(Resource* res, ResourceOperation::OperationType type);
+
 
 				static void ThreadEntry(void* arg);
 				void Main();
+
+				Queue<ResourceOperation> m_opQueue;
+				GenerationTable* m_genTable = nullptr;
+				tthread::thread* m_processThread = nullptr;
+				tthread::mutex* m_queueMutex = nullptr;
+
+				Queue<ResourceOperation> m_postSyncQueue;
+
+				bool m_closed = false;
 
 			};
 		}

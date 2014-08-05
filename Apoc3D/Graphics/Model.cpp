@@ -192,7 +192,8 @@ namespace Apoc3D
 
 		RenderOperationBuffer* Model::GetRenderOperation(int lod)
 		{
-			if (m_data->getWeakRef()->isManaged() && m_data->getState() != RS_Loaded)
+			if (!m_data->shouldNotTouchResource() && 
+				m_data->getWeakRef()->isManaged() && m_data->getState() != ResourceState::Loaded)
 			{
 				m_data->Touch();
 				return 0;
@@ -259,7 +260,8 @@ namespace Apoc3D
 		}
 		RenderOperationBuffer* Model::GetRenderOperationSubEntity(int index)
 		{
-			if (m_data->getWeakRef()->isManaged() && m_data->getState() != RS_Loaded)
+			if (!m_data->shouldNotTouchResource() && 
+				m_data->getWeakRef()->isManaged() && m_data->getState() != ResourceState::Loaded)
 			{
 				m_data->Touch();
 				return 0;
@@ -273,7 +275,7 @@ namespace Apoc3D
 
 			RenderOperationBuffer* opBuf = entities[index]->GetRenderOperation(0);
 			m_opBuffer.Clear();
-			m_opBuffer.Add(&opBuf->operator [](0), opBuf->getCount());
+			m_opBuffer.AddBuffer(opBuf);
 
 			for (int j = 0; j < opBuf->getCount(); j++)
 			{

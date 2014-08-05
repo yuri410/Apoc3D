@@ -123,10 +123,9 @@ namespace Apoc3D
 
 			AutomaticEffect::~AutomaticEffect()
 			{
-				if (m_vertexShader)
-					delete m_vertexShader;
-				if (m_pixelShader)
-					delete m_pixelShader;
+				DELETE_AND_NULL(m_vertexShader);
+				DELETE_AND_NULL(m_pixelShader);
+
 				delete m_texture;
 			}
 
@@ -137,16 +136,8 @@ namespace Apoc3D
 
 			void AutomaticEffect::Reload(const ResourceLocation& rl)
 			{
-				if (m_vertexShader)
-				{
-					delete m_vertexShader;
-					m_vertexShader = nullptr;
-				}
-				if (m_pixelShader)
-				{
-					delete m_pixelShader;
-					m_pixelShader = nullptr; 
-				}
+				DELETE_AND_NULL(m_vertexShader);
+				DELETE_AND_NULL(m_pixelShader);
 
 				m_parameters.Clear();
 				m_supportsInstancing = false;
@@ -180,6 +171,7 @@ namespace Apoc3D
 				m_vertexShader = objFac->CreateVertexShader(reinterpret_cast<const byte*>(profileSelected->VSCode));
 				m_pixelShader = objFac->CreatePixelShader(reinterpret_cast<const byte*>(profileSelected->PSCode));
 				
+				bool hasShaderIssues = false;
 
 				m_parameters.ResizeDiscard(profileSelected->Parameters.getCount());
 				for (int32 i=0;i<profileSelected->Parameters.getCount();i++)
@@ -243,7 +235,12 @@ namespace Apoc3D
 
 					shader->TryGetSamplerIndex(rep.Name, rep.SamplerIndex);
 					shader->TryGetParamIndex(rep.Name, rep.RegisterIndex);
-					assert(rep.RegisterIndex != -1 || rep.SamplerIndex != -1);
+
+					if (!(rep.RegisterIndex != -1 || rep.SamplerIndex != -1))
+					{
+						ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Effect parameter " + rep.Name +  L" does not have valid info.", LOGLVL_Warning);
+						hasShaderIssues = true;
+					}
 
 					m_parameters.Add(rep);
 				}
@@ -257,7 +254,14 @@ namespace Apoc3D
 						break;
 					}
 				}
+
+				if (hasShaderIssues)
+				{
+					ApocLog(LOG_Graphics, L"[AutomaticEffect][" + m_name + L"] Effect disable due to invalid data.", LOGLVL_Warning);
+					m_isUnsupported = true;
+				}
 			}
+
 
 			void AutomaticEffect::Update(const GameTime* const time)
 			{
@@ -505,7 +509,7 @@ namespace Apoc3D
 				if (value)
 				{
 					tex = value->operator->();
-					if (!value->shouldNotTouchResource() && tex->getState() != RS_Loaded)
+					if (!value->shouldNotTouchResource() && tex->getState() != ResourceState::Loaded)
 					{
 						tex = 0;
 					}
@@ -562,6 +566,9 @@ namespace Apoc3D
 
 			int AutomaticEffect::begin()
 			{
+				if (m_isUnsupported)
+					return 0;
+
 				// non render operation specific parameters will be set here
 				m_previousMaterialPointer = nullptr;
 				
@@ -701,7 +708,7 @@ namespace Apoc3D
 				if (value)
 				{
 					tex = value->operator->();
-					if (!value->shouldNotTouchResource() && tex->getState() != RS_Loaded)
+					if (!value->shouldNotTouchResource() && tex->getState() != ResourceState::Loaded)
 					{
 						tex = nullptr;
 					}

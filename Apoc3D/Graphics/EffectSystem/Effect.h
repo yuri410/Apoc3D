@@ -104,8 +104,8 @@ namespace Apoc3D
 				static Shader* LoadPixelShader(RenderDevice* rs, const ResourceLocation& ps);
 				static void LoadEffect(RenderDevice* rs, const ResourceLocation& rl, Shader*& vs, Shader*& ps);
 
-				bool m_isUnsupported;
 				String m_name;
+				bool m_isUnsupported;
 			private:
 				bool m_begun;
 				

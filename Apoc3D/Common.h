@@ -62,6 +62,9 @@
 #define NoInline
 #endif
 
+#define DELETE_AND_NULL( ptr ) { delete ptr; ptr = nullptr; }
+
+
 
 #ifndef CASSERT_INCLUDED
 #define CASSERT_INCLUDED
@@ -171,7 +174,7 @@ namespace Apoc3D
 
 		namespace Streaming
 		{
-			class ResourceOperation;
+			struct ResourceOperation;
 
 			class AsyncProcessor;
 			class GenerationTable;

@@ -38,32 +38,15 @@ namespace Apoc3D
 {
 	namespace Core
 	{
+		Resource::Resource() { }
 
-		/************************************************************************/
-		/*                                                                      */
-		/************************************************************************/
-		Resource::Resource()
-			: m_refCount(0), 
-			m_state(RS_Unloaded), 
-			m_manager(nullptr), 
-			m_resLoader(nullptr), m_resUnloader(nullptr), 
-			m_generation(nullptr), m_lock(nullptr), 
-			m_unloadableLock(false)
-		{
-
-		}
 		Resource::Resource(ResourceManager* manager, const String& hashString)
-			: m_manager(manager), m_hashString(hashString), m_refCount(0), m_state(RS_Unloaded), 
-			m_resLoader(nullptr), m_resUnloader(nullptr), m_generation(nullptr), m_lock(nullptr), 
-			m_unloadableLock(false)
+			: m_manager(manager), m_hashString(hashString)
 		{
 			if (isManaged())
 			{
 				if (m_manager->usesAsync())
 				{
-					m_resLoader = new ResourceLoadOperation(this);
-					m_resUnloader = new ResourceUnloadOperation(this);
-
 					m_generation = new GenerationCalculator(manager->m_generationTable);
 
 					m_lock = new tthread::mutex();
@@ -73,29 +56,16 @@ namespace Apoc3D
 		}
 		Resource::~Resource()
 		{
-			m_eventLoaded.clear();
-			m_eventUnloaded.clear();
 			if (isManaged())
 			{
 				m_manager->NotifyReleaseResource(this);
 			}
-			if (m_generation)
-				delete m_generation;
-			if (m_resLoader)
-			{
-				m_manager->RemoveTask(m_resLoader);
-				delete m_resLoader;
-			}
-			if (m_resUnloader)
-			{
-				m_manager->RemoveTask(m_resUnloader);
-				delete m_resUnloader;
-			}
-			if (m_lock)
-			{
-				delete m_lock;
-				m_lock = nullptr;
-			}
+			DELETE_AND_NULL(m_generation);
+
+			if (isManaged() && m_manager->usesAsync())
+				m_manager->RemoveTask(this);
+
+			DELETE_AND_NULL(m_lock);
 		}
 
 		void Resource::Use()		
@@ -106,7 +76,7 @@ namespace Apoc3D
 				{
 					m_generation->Use(this);
 
-					if (getState() == RS_Unloaded)
+					if (getState() == ResourceState::Unloaded)
 						Load();
 				}
 				else
@@ -132,14 +102,14 @@ namespace Apoc3D
 				ResourceState state = getState();
 				switch (state)
 				{
-				case RS_Loading:
-				case RS_Unloading:
-				case RS_Loaded:
+				case ResourceState::Loading:
+				case ResourceState::Unloading:
+				case ResourceState::Loaded:
 					break;
-				case RS_Unloaded:
-					setState(RS_Loading);
+				case ResourceState::Unloaded:
+					setState(ResourceState::Loading);
 					load();
-					setState(RS_Loaded);
+					setState(ResourceState::Loaded);
 					break;
 				}
 			}
@@ -155,15 +125,15 @@ namespace Apoc3D
 					ResourceState state = getState();
 					switch (state)
 					{
-					case RS_Loading:
-					case RS_Unloading:
-					case RS_Loaded:
+					case ResourceState::Loading:
+					case ResourceState::Unloading:
+					case ResourceState::Loaded:
 						return;
 					default:
 						{
-							if (!m_manager->NeutralizeTask(m_resLoader))
+							if (!m_manager->NeutralizeTask(GetLoadOperation()))
 							{
-								m_manager->AddTask(m_resLoader);
+								m_manager->AddTask(GetLoadOperation());
 							}
 							break;
 						}
@@ -184,20 +154,20 @@ namespace Apoc3D
 			{
 				if (m_manager->usesAsync())
 				{
-					assert(getState() == RS_Loaded);
-
 					ResourceState state = getState();
+					assert(state == ResourceState::Loaded);
+
 					switch (state)
 					{
-					case RS_Loading:
-					case RS_Unloading:
-					case RS_Unloaded:
+					case ResourceState::Loading:
+					case ResourceState::Unloading:
+					case ResourceState::Unloaded:
 						return;
 					default:
 						{
-							if (!m_manager->NeutralizeTask(m_resUnloader))
+							if (!m_manager->NeutralizeTask(GetUnloadOperation()))
 							{
-								m_manager->AddTask(m_resUnloader);
+								m_manager->AddTask(GetUnloadOperation());
 							}
 							break;
 						}
@@ -208,14 +178,14 @@ namespace Apoc3D
 					ResourceState state = getState();
 					switch (state)
 					{
-					case RS_Loading:
-					case RS_Unloading:
-					case RS_Unloaded:
+					case ResourceState::Loading:
+					case ResourceState::Unloading:
+					case ResourceState::Unloaded:
 						return;
 					default:
-						setState(RS_Unloading);
+						setState(ResourceState::Unloading);
 						unload();
-						setState(RS_Unloaded);
+						setState(ResourceState::Unloaded);
 						break;
 					}
 				}
@@ -229,20 +199,20 @@ namespace Apoc3D
 			{
 				if (m_manager->usesAsync())
 				{
-					if (getState() == RS_Loaded)
+					if (getState() == ResourceState::Loaded)
 					{
-						m_manager->AddTask(m_resUnloader);
-						m_manager->AddTask(m_resLoader);
+						m_manager->AddTask(GetUnloadOperation());
+						m_manager->AddTask(GetLoadOperation());
 					}
 				}
 				else
 				{
-					setState(RS_Unloading);
+					setState(ResourceState::Unloading);
 					unload();
-					setState(RS_Unloaded);
-					setState(RS_Loading);
+					setState(ResourceState::Unloaded);
+					setState(ResourceState::Loading);
 					load();
-					setState(RS_Loaded);
+					setState(ResourceState::Loaded);
 				}
 			}
 		}
@@ -251,7 +221,7 @@ namespace Apoc3D
 		{
 			if (m_lock)
 			{
-				bool ul;
+				volatile bool ul;
 				m_lock->lock(); 
 				ul = m_unloadableLock;
 				m_lock->unlock();
@@ -265,7 +235,7 @@ namespace Apoc3D
 		{
 			if (m_lock)
 			{
-				ResourceState state;
+				volatile ResourceState state;
 				m_lock->lock();
 				state = m_state;
 				m_lock->unlock();
@@ -291,9 +261,58 @@ namespace Apoc3D
 		void Resource::Lock_Unloadable() { assert(m_lock); m_lock->lock(); m_unloadableLock = true; m_lock->unlock(); }
 		void Resource::Unlock_Unloadable() { assert(m_lock); m_lock->lock(); m_unloadableLock = false; m_lock->unlock(); }
 
+		void Resource::ProcessResourceOperation(const ResourceOperation& resOp)
+		{
+			Resource* res = resOp.Subject;
+			if (resOp.Type == ResourceOperation::RESOP_Load)
+			{
+				ResourceState state = res->getState();
+
+				if (state != ResourceState::Unloaded)
+					return;
+
+				res->setState(ResourceState::Loading);
+				res->load();
+				res->setState(ResourceState::Loaded);
+
+				if (res->m_manager)
+					res->m_manager->NotifyResourceLoaded(res);
+			}
+			else if (resOp.Type == ResourceOperation::RESOP_Unload)
+			{
+				ResourceState state = res->getState();
+				if (state != ResourceState::Loaded)
+					return;
+				res->setState(ResourceState::Unloading);
+				res->unload();
+				res->setState(ResourceState::Unloaded);
+
+				if (res->m_manager)
+					res->m_manager->NotifyResourceUnloaded(res);
+			}
+			else assert(0);
+		}
+		void Resource::ProcessResourceOperationPostSyc(const ResourceOperation& resOp, int32 percentage)
+		{
+			Resource* res = resOp.Subject;
+
+			if (resOp.Type == ResourceOperation::RESOP_Load)
+			{
+				assert(res->getState() == ResourceState::Loaded);
+				res->loadPostSync(percentage);
+			}
+			else if (resOp.Type == ResourceOperation::RESOP_Unload)
+			{
+				assert(res->getState() == ResourceState::Unloaded);
+				res->unloadPostSync(percentage);
+			}
+			else assert(0);
+		}
+
 		/************************************************************************/
-		/*                                                                      */
+		/*   Resource::GenerationCalculator                                     */
 		/************************************************************************/
+
 		Resource::GenerationCalculator::GenerationCalculator(const GenerationTable* table)
 			: m_table(table), Generation(GenerationTable::MaxGeneration - 1)
 		{
@@ -362,8 +381,8 @@ namespace Apoc3D
 
 		bool Resource::GenerationCalculator::IsGenerationOutOfTime(float time)
 		{
-			bool notEmpty;
-			float topVal = 0;
+			volatile bool notEmpty;
+			volatile float topVal = 0;
 			m_queueLock->lock();
 			notEmpty = !!m_timeQueue.getCount();
 			if (notEmpty)

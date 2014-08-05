@@ -190,15 +190,15 @@ namespace Apoc3D
 
 			virtual void Draw(Sprite* sprite);
 
-			ControlCollection& getControls() { return *m_controls; }
-			int getCount() const { return m_controls->getCount(); }
-			Control* operator [](int index) const { return m_controls->operator[](index); }
+			ControlCollection& getControls() { return m_controls; }
+			int getCount() const { return m_controls.getCount(); }
+			Control* operator [](int index) const { return m_controls[index]; }
 
 			Menu* getMenu() const { return m_menu; }
 			void setMenu(Menu* m);
 
 		protected:
-			ControlCollection* m_controls;
+			ControlCollection m_controls;
 			Menu* m_menu;
 			Point m_menuOffset;
 

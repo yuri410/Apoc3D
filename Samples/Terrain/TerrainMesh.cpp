@@ -55,7 +55,7 @@ namespace SampleTerrain
 
 	RenderOperationBuffer* TerrainMesh::GetRenderOperation(int lod)
 	{
-		if (getState() == RS_Loaded)
+		if (getState() == ResourceState::Loaded)
 		{
 			m_opBuffer.Clear();
 

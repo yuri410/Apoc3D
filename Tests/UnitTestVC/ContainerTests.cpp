@@ -85,9 +85,9 @@ namespace UnitTestVC
 			subject.Sort(OrderComparer);
 
 
-			for (int i=0;i<subject.getCount()-1;i++)
+			for (int i = 0; i < subject.getCount() - 1; i++)
 			{
-				if (subject[i+1] < subject[i])
+				if (subject[i + 1] < subject[i])
 				{
 					Assert::Fail();
 				}
@@ -101,6 +101,36 @@ namespace UnitTestVC
 			}
 
 			Assert::IsTrue(memcmp(counter, counter2, sizeof(counter))==0);
+		}
+
+		TEST_METHOD(ListIterator)
+		{
+			List<int> subject;
+
+			subject.Add(0);
+			subject.Add(1);
+			subject.Add(2);
+
+			List<int> result;
+			for (int e : subject)
+			{
+				result.Add(e);
+			}
+
+			Assert::AreEqual(3, result.getCount());
+			if (result.getCount() == 3)
+			{
+				Assert::AreEqual(0, result[0]);
+				Assert::AreEqual(1, result[1]);
+				Assert::AreEqual(2, result[2]);
+			}
+
+			subject.Clear();
+
+			for (auto e : subject)
+			{
+				Assert::Fail();
+			}
 		}
 
 		TEST_METHOD(HashMapIterator)
@@ -159,6 +189,12 @@ namespace UnitTestVC
 				Assert::AreEqual(0, result[5]);
 			}
 
+			subject.Clear();
+
+			for (auto e : subject)
+			{
+				Assert::Fail();
+			}
 		}
 	};
 }

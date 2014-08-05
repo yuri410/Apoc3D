@@ -36,7 +36,6 @@ namespace Apoc3D
 {
 	namespace Core
 	{
-		//template class APAPI std::unordered_map<String, Resource*>;
 		typedef HashMap<String, Resource*> ResHashTable;
 
 		/**
@@ -82,26 +81,6 @@ namespace Apoc3D
 
 			/**
 			 *  [Only applicable when working in async mode.]
-			 *  If a resource is IsIndependent(), this cancels(or removes) the corresponding opposite resource operation
-			 *  from the task queue. Say a load ResourceOperation can cancel an unload ResourceOperation for the same resources
-			 *  if the unload ResourceOperation is yet to be processed.
-			 * 
-			 * &return True if successfully canceled.
-			 */
-			bool NeutralizeTask(ResourceOperation* op) const;
-			/**
-			 *  [Only applicable when working in async mode.]
-			 *  Adds a task represented by a ResourceOperation object to the task queue, waiting to be processed.
-			 */
-			void AddTask(ResourceOperation* op) const;
-			/**
-			 *  [Only applicable when working in async mode.]
-			 *  Remove a task from the task queue, if the it is not the operation's turn in the background.
-			*/
-			void RemoveTask(ResourceOperation* op) const;
-
-			/**
-			 *  [Only applicable when working in async mode.]
 			 *  Check if no async processing task is running in the background. (i.e. check if queue is empty)
 			 */
 			bool IsIdle() const;
@@ -115,6 +94,8 @@ namespace Apoc3D
 			 *  Gets the number of background tasks currently.
 			*/
 			int GetCurrentOperationCount() const;
+
+			void ProcessPostSync(float& timeLeft);
 
 			/**
 			 * Check if a resource identified by a string is already loaded before.
@@ -132,18 +113,7 @@ namespace Apoc3D
 			/**
 			 *  Check if the resource manager is working in async mode.
 			 */
-			bool usesAsync() const { return !!m_asyncProc; }
-
-			/**
-			 *  Notifies the resource manager a new resource is created, and should be managed.
-			 */
-			void NotifyNewResource(Resource* res);
-			/**
-			 *  Notifies the resource manager a resource is release, and should be removed from management.
-			 */
-			void NotifyReleaseResource(Resource* res);
-
-			GenerationTable* getTable() const { return m_generationTable; }
+			bool usesAsync() const { return m_asyncProc != nullptr; }
 
 			/**
 			 *  [Only applicable when working in async mode.]
@@ -164,27 +134,65 @@ namespace Apoc3D
 			
 			int32 getResourceCount() const { return m_hashTable.getCount(); }
 
-			static const ManagerList& getManagerInstances() { return m_managers; }
+			static void PerformAllPostSync(float timelimit);
+			static const ManagerList& getManagerInstances() { return s_managers; }
+
+		protected:
+			
+			/**
+			 *  Notifies the resource manager a new resource is created, and should be managed.
+			 */
+			void NotifyNewResource(Resource* res);
+			/**
+			 *  Notifies the resource manager a resource is release, and should be removed from management.
+			 */
+			void NotifyReleaseResource(Resource* res);
+
+			void NotifyResourceLoaded(Resource* res);
+			void NotifyResourceUnloaded(Resource* res);
+
 		private:
-			void Resource_Loaded(Resource* res);
-			void Resource_Unloaded(Resource* res);
+			
+			/**
+			 *  [Only applicable when working in async mode.]
+			 *  If a resource is IsIndependent(), this cancels(or removes) the corresponding opposite resource operation
+			 *  from the task queue. Say a load ResourceOperation can cancel an unload ResourceOperation for the same resources
+			 *  if the unload ResourceOperation is yet to be processed.
+			 * 
+			 * &return True if successfully canceled.
+			 */
+			bool NeutralizeTask(const ResourceOperation& op) const;
+
+			/**
+			 *  [Only applicable when working in async mode.]
+			 *  Adds a task represented by a ResourceOperation object to the task queue, waiting to be processed.
+			 */
+			void AddTask(const ResourceOperation& op) const;
+
+			/**
+			 *  [Only applicable when working in async mode.]
+			 *  Remove a task from the task queue, if the it is not the operation's turn in the background.
+			*/
+			void RemoveTask(const ResourceOperation& op) const;
+
+			void RemoveTask(Resource* res) const;
+
+			void CheckAsync() const; 
 
 			ResHashTable m_hashTable;
 			
 			int64 m_totalCacheSize;
 			int64 m_curUsedCache;
 
-
 			GenerationTable* m_generationTable;
 			AsyncProcessor* m_asyncProc;
 
-			bool m_isShutDown;
-
 			String m_name;
 
+			bool m_isShutDown;
+
 			
-			static ManagerList m_managers;			
-		protected:
+			static ManagerList s_managers;
 		};
 	}
 }

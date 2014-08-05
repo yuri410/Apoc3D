@@ -36,37 +36,44 @@ namespace Apoc3D
 
 	namespace Core
 	{
-		ResourceManager::ManagerList ResourceManager::m_managers;
+		ResourceManager::ManagerList ResourceManager::s_managers;
 
-		void ResourceManager::Resource_Loaded(Resource* res)
+		ResourceManager::ResourceManager(const String& name, int64 cacheSize, bool useAsync)
+			: m_name(name), m_totalCacheSize(cacheSize), m_curUsedCache(0), m_isShutDown(false)
 		{
-			m_curUsedCache += res->getSize();
+			if (useAsync)
+			{
+				m_generationTable = new GenerationTable(this);
+				m_asyncProc = new AsyncProcessor(m_generationTable, m_name + L" Async ResourceLoader", true);
+			}
+			else
+			{
+				m_asyncProc = 0; m_generationTable = 0;
+			}
+
+			s_managers.Add(this);
+		}
+		
+		ResourceManager::~ResourceManager()
+		{
+			if (m_hashTable.getCount())
+			{
+				for (ResHashTable::Enumerator e = m_hashTable.GetEnumerator();e.MoveNext();)
+				{
+					if (e.getCurrentValue()->getState() == ResourceState::Loaded)
+					{
+						LogManager::getSingleton().Write(LOG_System, 
+							L"ResMgr: Resource leak detected: " + e.getCurrentKey(), LOGLVL_Warning);
+					}
+				}
+			}
+
+			DELETE_AND_NULL(m_asyncProc);
+			DELETE_AND_NULL(m_generationTable);
+
+			s_managers.Remove(this);
 		}
 
-		void ResourceManager::Resource_Unloaded(Resource* res)
-		{
-			m_curUsedCache -= res->getSize();
-		}
-		bool ResourceManager::NeutralizeTask(ResourceOperation* op) const
-		{
-			return m_asyncProc->NeutralizeTask(op);
-		}
-		void ResourceManager::AddTask(ResourceOperation* op) const
-		{
-			if (!m_asyncProc)
-			{
-				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
-			}
-			m_asyncProc->AddTask(op);
-		}
-		void ResourceManager::RemoveTask(ResourceOperation* op) const
-		{
-			if (!m_asyncProc)
-			{
-				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
-			}
-			m_asyncProc->RemoveTask(op);
-		}
 
 		void ResourceManager::Shutdown()
 		{
@@ -76,50 +83,13 @@ namespace Apoc3D
 				m_generationTable->ShutDown();
 		}
 
-		ResourceManager::ResourceManager(const String& name, int64 cacheSize, bool useAsync)
-			: m_name(name), m_totalCacheSize(cacheSize), m_curUsedCache(0), m_isShutDown(false)
-		{
-			if (useAsync)
-			{
-				m_generationTable = new GenerationTable(this);
-				m_asyncProc = new AsyncProcessor(m_generationTable, m_name + L" Async ResourceLoader");
-			}
-			else
-			{
-				m_asyncProc = 0; m_generationTable = 0;
-			}
-
-			m_managers.Add(this);
-		}
-		ResourceManager::~ResourceManager()
-		{
-			if (m_hashTable.getCount())
-			{
-				for (ResHashTable::Enumerator e = m_hashTable.GetEnumerator();e.MoveNext();)
-				{
-					if (e.getCurrentValue()->getState() == RS_Loaded)
-					{
-						LogManager::getSingleton().Write(LOG_System, 
-							L"ResMgr: Resource leak detected: " + e.getCurrentKey(), LOGLVL_Warning);
-					}
-				}
-				
-			}
-			if (m_asyncProc)
-				delete m_asyncProc;
-			if (m_generationTable)
-				delete m_generationTable;
-
-			m_managers.Remove(this);
-		}
-
 		void ResourceManager::ReloadAll()
 		{
 			for (ResHashTable::Enumerator e = m_hashTable.GetEnumerator();e.MoveNext();)
 			{
 				Resource* res = e.getCurrentValue();
 
-				if (res->getState() == RS_Loaded)
+				if (res->getState() == ResourceState::Loaded)
 				{
 					res->Reload();
 				}
@@ -142,9 +112,6 @@ namespace Apoc3D
 
 				if (m_generationTable)
 					m_generationTable->AddResource(res);
-
-				res->eventLoaded().bind(this, &ResourceManager::Resource_Loaded);
-				res->eventUnloaded().bind(this, &ResourceManager::Resource_Unloaded);
 
 				if (!usesAsync())
 				{
@@ -171,28 +138,74 @@ namespace Apoc3D
 		}
 		bool ResourceManager::IsIdle() const
 		{
-			if (!m_asyncProc)
-			{
-				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
-			}
+			CheckAsync();
 			return m_asyncProc->TaskCompleted();
 		}
 		void ResourceManager::WaitForIdle() const
 		{
-			if (!m_asyncProc)
-			{
-				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
-			}
+			CheckAsync();
 			m_asyncProc->WaitForCompletion();
 		}
 		int ResourceManager::GetCurrentOperationCount() const
+		{
+			CheckAsync();
+			return m_asyncProc->GetOperationCount();
+		}
+
+		void ResourceManager::ProcessPostSync(float& timeLeft)
+		{
+			CheckAsync();
+			m_asyncProc->ProcessPostSync(timeLeft);
+		}
+		void ResourceManager::PerformAllPostSync(float timelimit)
+		{
+			const ResourceManager::ManagerList& mgrList = ResourceManager::getManagerInstances();
+			for (int32 i = 0; i < mgrList.getCount(); i++)
+			{
+				if (mgrList[i]->usesAsync())
+					mgrList[i]->ProcessPostSync(timelimit);
+			}
+		}
+
+		void ResourceManager::NotifyResourceLoaded(Resource* res)
+		{
+			m_curUsedCache += res->getSize();
+		}
+
+		void ResourceManager::NotifyResourceUnloaded(Resource* res)
+		{
+			m_curUsedCache -= res->getSize();
+		}
+
+		bool ResourceManager::NeutralizeTask(const ResourceOperation& op) const
+		{
+			return m_asyncProc->NeutralizeTask(op);
+		}
+
+		void ResourceManager::AddTask(const ResourceOperation& op) const
+		{
+			CheckAsync();
+			m_asyncProc->AddTask(op);
+		}
+
+		void ResourceManager::RemoveTask(const ResourceOperation& op) const
+		{
+			CheckAsync();
+			m_asyncProc->RemoveTask(op);
+		}
+
+		void ResourceManager::RemoveTask(Resource* res) const
+		{
+			CheckAsync();
+			m_asyncProc->RemoveTask(res);
+		}
+
+		void ResourceManager::CheckAsync() const
 		{
 			if (!m_asyncProc)
 			{
 				throw AP_EXCEPTION(ExceptID::NotSupported, L"Async processing not enabled");
 			}
-			return m_asyncProc->GetOperationCount();
 		}
-
 	}
 }

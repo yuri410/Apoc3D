@@ -99,19 +99,18 @@ namespace Apoc3D
 	/**
 	 *  Includes elementary operation on the engine like Initialize and Showdown
 	 */
-	class APAPI Engine
+	namespace Engine
 	{
-	public:
 		/** 
 		 *  Initializes all fundamental services like resource management, file system, plugins, graphics API..
 		 *  to prepare the engine ready for use.
 		 */
-		static void Initialize(const ManualStartConfig* mconf = 0);
+		APAPI void Initialize(const ManualStartConfig* mconf = 0);
 
 		/**
 		 *  Releases all services, freeing the hardware resources used.
 		 */
-		static void Shutdown();
+		APAPI void Shutdown();
 	};
 }
 
