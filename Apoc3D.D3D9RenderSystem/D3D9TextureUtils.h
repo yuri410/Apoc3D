@@ -1,6 +1,7 @@
 #pragma once
 
 #include "D3D9Common.h"
+#include "apoc3d/Core/Plugin.h"
 
 using namespace Apoc3D::IO;
 

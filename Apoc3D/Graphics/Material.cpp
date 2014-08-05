@@ -295,10 +295,9 @@ namespace Apoc3D
 
 		const String& Material::getTextureName(int index) const 
 		{
-			static String Empty = L"";
 			assert(index<MaxTextures);
 			if (!m_texName.Contains(index))
-				return Empty;
+				return StringUtils::Empty;
 			return m_texName[index];
 		}
 
@@ -306,13 +305,27 @@ namespace Apoc3D
 		{
 			assert(index<MaxTextures);
 			if (!m_texName.Contains(index))
-				m_texName.Add(index, name);
+			{
+				if (name.size())
+				{
+					m_texName.Add(index, name);
+					m_texDirty[index] = true;
+				}
+			}
 			else
 			{
-				String& tn = m_texName[index];
-				if (tn != name)
+				if (name.size())
 				{
-					tn.operator=(name);
+					String& tn = m_texName[index];
+					if (tn != name)
+					{
+						tn.operator=(name);
+						m_texDirty[index] = true;
+					}
+				}
+				else
+				{
+					m_texName.Remove(index);
 					m_texDirty[index] = true;
 				}
 			}
@@ -320,10 +333,9 @@ namespace Apoc3D
 
 		const String& Material::getPassEffectName(int index) 
 		{
-			static String Empty = L"";
 			assert(index<MaxScenePass); 
 			if (!m_effectName.Contains(index))
-				return Empty;
+				return StringUtils::Empty;
 			return m_effectName[index]; 
 		}
 		void Material::setPassEffectName(int index, const String& en) 

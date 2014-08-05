@@ -24,11 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef WININPUTPLUGIN_H
 #define WININPUTPLUGIN_H
 
-#include "WinInputCommon.h"
-#include "Win32InputFactory.h"
 #include "apoc3d/Core/Plugin.h"
 
 using namespace Apoc3D::Core;
+
+#ifdef APOC3D_DYNLIB
+extern "C" PLUGINAPI Plugin* Apoc3DGetPlugin();
+#endif
 
 namespace Apoc3D
 {
@@ -38,15 +40,16 @@ namespace Apoc3D
 		{
 			class WinInputPlugin : public Plugin
 			{
-			private:
-				Win32InputFactory m_factory;
 			public:
 				WinInputPlugin();
+				~WinInputPlugin();
 
 				virtual void Load();
 				virtual void Unload();
 
 				virtual String GetName() { return L"Windows Input System"; }
+			private:
+				class Win32InputFactory* m_factory;
 			};
 		}
 	}

@@ -22,6 +22,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "Plugin.h"
+#include "Win32InputFactory.h"
 
 #include "apoc3d/Input/InputAPI.h"
 
@@ -45,17 +46,23 @@ namespace Apoc3D
 		namespace Win32
 		{
 			WinInputPlugin::WinInputPlugin()
-				: m_factory()
+				: m_factory(new Win32InputFactory())
 			{
 
 			}
+			WinInputPlugin::~WinInputPlugin()
+			{
+				delete m_factory;
+				m_factory = nullptr;
+			}
+
 			void WinInputPlugin::Load()
 			{
-				InputAPIManager::getSingleton().RegisterInputAPI(&m_factory);
+				InputAPIManager::getSingleton().RegisterInputAPI(m_factory);
 			}
 			void WinInputPlugin::Unload()
 			{
-				InputAPIManager::getSingleton().UnregisterInputAPI(&m_factory);
+				InputAPIManager::getSingleton().UnregisterInputAPI(m_factory);
 			}
 
 		}

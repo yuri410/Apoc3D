@@ -28,6 +28,16 @@
 
 #include "apoc3d/Common.h"
 
+#ifndef APOC3D_DYNLIB
+#	define PLUGINAPI
+#else
+#	ifdef APOC3D_PLUGIN_DYLIB_EXPORT
+#		define PLUGINAPI __declspec( dllexport )
+#	else
+#		define PLUGINAPI __declspec( dllimport )
+#	endif
+#endif
+
 namespace Apoc3D
 {
 	namespace Core
@@ -35,6 +45,8 @@ namespace Apoc3D
 		class APAPI Plugin
 		{
 		public:
+			virtual ~Plugin() { }
+
 			virtual void Load() = 0;
 			virtual void Unload() = 0;
 

@@ -68,16 +68,6 @@ typedef IDirect3DVertexShader9 D3DVertexShader;
 typedef IDirect3DPixelShader9 D3DPixelShader;
 typedef IDirect3DVertexDeclaration9 D3DVertexDeclaration;
 
-#ifndef APOC3D_DYNLIB
-#	define PLUGINAPI
-#else
-#	ifdef APOC3D_D3D9RS_DYLIB_EXPORT
-#		define PLUGINAPI __declspec( dllexport )
-#	else
-#		define PLUGINAPI __declspec( dllimport )
-#	endif
-#endif
-
 namespace Apoc3D
 {
 	typedef EventDelegate1<bool*> CancellableEventHandler;

@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define D3D9UTILS_H
 
 #include "D3D9Common.h"
+#include "apoc3d/Core/Plugin.h"
 #include "apoc3d/Graphics/PixelFormat.h"
 #include "apoc3d/Graphics/GraphicsCommon.h"
 

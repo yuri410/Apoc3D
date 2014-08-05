@@ -26,16 +26,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "apoc3d/Common.h"
 
-#ifndef APOC3D_DYNLIB
-#	define PLUGINAPI
-#else
-#	ifdef APOC3D_WININP_DYLIB_EXPORT
-#		define PLUGINAPI __declspec( dllexport )
-#	else
-#		define PLUGINAPI __declspec( dllimport )
-#	endif
-#endif
-
 #pragma warning ( push )
 #pragma warning ( disable:4512 )
 

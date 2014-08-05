@@ -27,6 +27,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #define APOC3D_D3D9_CONSTANTTABLE_H
 
 #include "D3D9Common.h"
+#include "apoc3d/Core/Plugin.h"
 #include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Collections;

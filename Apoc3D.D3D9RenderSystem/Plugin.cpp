@@ -46,17 +46,22 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			D3D9RSPlugin::D3D9RSPlugin()
-				: m_factory()
+				: m_factory(new D3D9GraphicsAPIFactory())
 			{
+			}
+			D3D9RSPlugin::~D3D9RSPlugin()
+			{
+				delete m_factory;
+				m_factory = nullptr;
 			}
 
 			void D3D9RSPlugin::Load()
 			{
-				GraphicsAPIManager::getSingleton().RegisterGraphicsAPI(&m_factory);
+				GraphicsAPIManager::getSingleton().RegisterGraphicsAPI(m_factory);
 			}
 			void D3D9RSPlugin::Unload()
 			{
-				GraphicsAPIManager::getSingleton().UnregisterGraphicsAPI(&m_factory);
+				GraphicsAPIManager::getSingleton().UnregisterGraphicsAPI(m_factory);
 			}
 
 		}

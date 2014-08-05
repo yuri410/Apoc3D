@@ -43,7 +43,10 @@ Derived up_cast(Base* o)
 	return nullptr;
 }
 
-#define RTTI_UpcastableBase public: virtual bool CheckRuntimeType(uintptr id) const { return false; }
+#define RTTI_UpcastableBase \
+	public: \
+		static uintptr _getTypeID() { static char dummy; return (uintptr)&dummy; } \
+		virtual bool CheckRuntimeType(uintptr id) const { return id == _getTypeID(); }
 
 #define RTTI_UpcastableDerived(Type, ParentType) \
 		static_assert(_InheritCheck<ParentType, Type>::isDerivedFrom, "BaseType is not the base."); \

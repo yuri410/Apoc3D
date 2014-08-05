@@ -25,9 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #ifndef D3DPLUGIN_H
 #define D3DPLUGIN_H
 
-#include "D3D9Common.h"
-#include "D3D9GraphicsAPIFactory.h"
-
 #include "apoc3d/Core/Plugin.h"
 
 using namespace Apoc3D::Core;
@@ -44,14 +41,16 @@ namespace Apoc3D
 		{
 			class D3D9RSPlugin : public Plugin
 			{
-			private:
-				D3D9GraphicsAPIFactory m_factory;
 			public:
 				D3D9RSPlugin();
+				~D3D9RSPlugin();
+
 				virtual void Load();
 				virtual void Unload();
 
 				virtual String GetName() { return L"Direct3D9 Render System"; }
+			private:
+				class D3D9GraphicsAPIFactory* m_factory;
 			};
 		}
 	}
