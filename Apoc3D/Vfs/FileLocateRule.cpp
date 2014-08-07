@@ -44,7 +44,6 @@ namespace Apoc3D
 				pts.Add(pt);
 
 				Default = FileLocateRule(pts);
-
 			}
 			
 			/********************************************************************************/
@@ -82,6 +81,14 @@ namespace Apoc3D
 			}
 		}
 
+		LocateCheckPoint::LocateCheckPoint(std::initializer_list<String> list)
+		{
+			for (const String& e : list)
+			{
+				AddPath(e);
+			}
+		}
+
 		void LocateCheckPoint::AddPath(const String& path)
 		{
 			List<String> fullPath;
@@ -91,7 +98,7 @@ namespace Apoc3D
 			{
 				for (int32 i = 0; i < fullPath.getCount(); i++)
 				{
-					pathList.Add(Entry(fullPath[i], arcPath[i]));
+					m_pathList.Add(Entry(fullPath[i], arcPath[i]));
 				}
 			}
 		}

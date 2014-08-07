@@ -99,9 +99,9 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PCH.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release_DynLib|Win32'">PCH.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="StringTests.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="StringTests.cpp" />
     <ClCompile Include="unittest1.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +113,9 @@
     <ClCompile Include="ConfigurationSectionTest.cpp">
       <FileType>CppHeader</FileType>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MemoryLeakChecker.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

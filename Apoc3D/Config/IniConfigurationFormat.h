@@ -44,16 +44,13 @@ namespace Apoc3D
 		public:
 			static IniConfigurationFormat Instance;
 
-			virtual Configuration* Load(const ResourceLocation& rl);
-			virtual void Save(Configuration* config, Stream* strm);
+			virtual Configuration* Load(const ResourceLocation& rl) override;
+			virtual void Save(Configuration* config, Stream* strm) override;
 
-			List<String> GetSupportedFileSystemExtensions()
+			List<String> GetSupportedFileSystemExtensions() override
 			{
-				List<String> result;
-				result.Add(L"ini");
-				return result;
+				return { L"ini" };
 			}
-		private:
 
 		};
 	}

@@ -47,7 +47,7 @@ namespace Apoc3D
 			GenerationTable::GenerationTable(ResourceManager* mgr)
 				: m_manager(mgr), m_isShutdown(false), m_generationList(100)
 			{
-				m_generations = new ExistTable<Resource*>[MaxGeneration];
+				m_generations = new HashSet<Resource*>[MaxGeneration];
 
 				m_genLock = new tthread::mutex();
 			}
@@ -104,11 +104,11 @@ namespace Apoc3D
 					for (int i=MaxGeneration-1;i>1 && predictSize > m_manager->getTotalCacheSize(); i--)
 					{
 						m_genLock->lock();
-						ExistTable<Resource*>::Enumerator iter = m_generations[i].GetEnumerator();
+						HashSet<Resource*>::Enumerator iter = m_generations[i].GetEnumerator();
 
 						while (iter.MoveNext())
 						{
-							Resource* r = *iter.getCurrent();
+							Resource* r = iter.getCurrent();
 
 							if (CanUnload(r) && r->IsUnloadable())
 							{
@@ -126,9 +126,9 @@ namespace Apoc3D
 				}
 				{
 					m_genLock->lock();
-					for (ExistTable<Resource*>::Enumerator iter = m_generations[MaxGeneration-1].GetEnumerator();iter.MoveNext();)
+					for (HashSet<Resource*>::Enumerator iter = m_generations[MaxGeneration-1].GetEnumerator();iter.MoveNext();)
 					{
-						Resource* r = *iter.getCurrent();
+						Resource* r = iter.getCurrent();
 						if (!r->getReferenceCount())
 						{
 							if (CanUnload(r) && r->IsUnloadable())
@@ -174,11 +174,11 @@ namespace Apoc3D
 			{
 				m_genLock->lock();
 
-				if (oldGeneration != -1 && m_generations[oldGeneration].Exists(resource))
+				if (oldGeneration != -1 && m_generations[oldGeneration].Contains(resource))
 				{
 					m_generations[oldGeneration].Remove(resource);
 				}
-				if (!m_generations[newGeneration].Exists(resource))
+				if (!m_generations[newGeneration].Contains(resource))
 				{
 					m_generations[newGeneration].Add(resource);
 				}

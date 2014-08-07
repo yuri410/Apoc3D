@@ -29,7 +29,7 @@
 
 #include "apoc3d/Common.h"
 #include "apoc3d/Collections/List.h"
-#include "apoc3d/Collections/ExistTable.h"
+#include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
@@ -87,7 +87,7 @@ namespace Apoc3D
 				/**
 				 *  An array of tables represents that resources with gen i are in i+1 th table.
 				 */
-				ExistTable<Resource*>* m_generations;
+				HashSet<Resource*>* m_generations;
 				/**
 				 *  A list of all pointers to resource objects.
 				 */

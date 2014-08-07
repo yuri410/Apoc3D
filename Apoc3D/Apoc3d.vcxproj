@@ -158,7 +158,6 @@
     <ClInclude Include="Collections\EnumConverterHelper.h" />
     <ClInclude Include="Collections\List2D.h" />
     <ClInclude Include="Collections\CollectionsCommon.h" />
-    <ClInclude Include="Collections\ExistTable.h" />
     <ClInclude Include="Collections\List.h" />
     <ClInclude Include="Collections\HashMap.h" />
     <ClInclude Include="Collections\Queue.h" />

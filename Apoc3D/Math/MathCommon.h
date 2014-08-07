@@ -203,6 +203,45 @@ namespace Apoc3D
 			return (x & (x - 1)) == 0;
 		}
 
+		inline uint32 SqrtI32(uint32 n)
+		{
+			register uint32 root, remainder, place;
+
+			root = 0;
+			remainder = n;
+			place = 0x40000000;
+
+			while (place > remainder)
+				place = place >> 2;
+			while (place)
+			{
+				if (remainder >= root + place)
+				{
+					remainder = remainder - root - place;
+					root = root + (place << 1);
+				}
+				root = root >> 1;
+				place = place >> 2;
+			}
+			return root;
+		}
+
+		inline bool IsPrime(int32 n)
+		{
+			if (n < 2) return false;
+			if (n < 4) return true;
+			if (n % 2 == 0) return false;
+
+			int32 boundary = (int32)Math::SqrtI32(n);
+			for (int32 i = 3; i <= boundary; i += 2)
+			{
+				if (n % i == 0)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 }
 

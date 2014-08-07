@@ -14,7 +14,6 @@
 
 #include "apoc3d/Collections/CollectionsCommon.h"
 #include "apoc3d/Collections/EnumConverterHelper.h"
-#include "apoc3d/Collections/ExistTable.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/LinkedList.h"
 #include "apoc3d/Collections/List.h"

@@ -282,9 +282,9 @@ namespace Apoc3D
 				// the material for all the render operations in the list is the same.
 				// it is better to be set only once. by checking m_previousMaterialPointer
 
-				for (int i=0;i<m_parameters.getCount();i++)
+				for (int k=0;k<m_parameters.getCount();k++)
 				{
-					ResolvedEffectParameter& ep = m_parameters[i];
+					ResolvedEffectParameter& ep = m_parameters[k];
 
 					if (ep.RS_SetupAtBegining && ep.RS_SetupAtBeginingOnly)
 						continue;

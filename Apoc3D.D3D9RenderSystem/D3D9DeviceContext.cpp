@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "D3D9Utils.h"
 #include "GraphicsDeviceManager.h"
 #include "Enumeration.h"
-#include "apoc3d/Collections/ExistTable.h"
+#include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Utility/Hash.h"
 #include "apoc3d/Exception.h"
@@ -133,7 +133,7 @@ namespace Apoc3D
 
 				const List<AdapterInfo*>& adpInfos = Enumeration::getAdapters();
 
-				ExistTable<RenderDisplayMode, RenderDisplayModeEqualityComparer> modeTabls(adpInfos.getCount()*2);
+				HashSet<RenderDisplayMode, RenderDisplayModeEqualityComparer> modeTabls(adpInfos.getCount()*2);
 				for (int i=0;i<adpInfos.getCount();i++)
 				{
 					const AdapterInfo* ai = adpInfos[i];
@@ -158,7 +158,7 @@ namespace Apoc3D
 									for (int n=0;n<sc->MultisampleTypes.getCount();n++)
 									{
 										mode.FSAASampleCount = D3D9Utils::ConvertBackMultiSample(sc->MultisampleTypes[n]);
-										if (!modeTabls.Exists(mode))
+										if (!modeTabls.Contains(mode))
 											modeTabls.Add(mode);
 									}
 								}
@@ -169,9 +169,9 @@ namespace Apoc3D
 				}
 
 				List<RenderDisplayMode> result;
-				for (ExistTable<RenderDisplayMode, RenderDisplayModeEqualityComparer>::Enumerator e = modeTabls.GetEnumerator(); e.MoveNext();)
+				for (HashSet<RenderDisplayMode, RenderDisplayModeEqualityComparer>::Enumerator e = modeTabls.GetEnumerator(); e.MoveNext();)
 				{
-					result.Add(*e.getCurrent());
+					result.Add(e.getCurrent());
 				}
 				return result;
 			}

@@ -43,10 +43,20 @@ namespace Apoc3D
 			typedef HashMap<String, uint64> CastTable;
 			typedef HashMap<uint64, String> InverseCastTable;
 
-			EnumDualConversionHelper(int32 capacity)
+			explicit EnumDualConversionHelper(int32 capacity)
 				: m_cast(capacity), 
 				m_invCast(capacity)
 			{ }
+
+			EnumDualConversionHelper(std::initializer_list<std::pair<String, T>> list)
+				: m_cast(list.size()),
+				m_invCast(list.size())
+			{
+				for (const auto& e : list)
+				{
+					AddPair(e.first, e.second);
+				}
+			}
 
 			bool SupportsName(const String& name) { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
 			T Parse(const String& name) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return static_cast<T>(m_cast[n]); }

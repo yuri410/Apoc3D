@@ -163,8 +163,6 @@ namespace Apoc3D
 		{
 			RTTI_UpcastableDerived(MemoryStream, Stream);
 		public:
-			char* getInternalPointer() const { return m_data; }
-
 			virtual bool IsReadEndianIndependent() const { return false; }
 			virtual bool IsWriteEndianIndependent() const { return false; }
 
@@ -189,6 +187,9 @@ namespace Apoc3D
 			virtual void Close() { }
 
 			virtual void Flush() { }
+
+			char* getDataPointer() const { return m_data; }
+
 		private:
 			NoInline static void throwEndofStreamException();
 
@@ -284,11 +285,6 @@ namespace Apoc3D
 		{
 			RTTI_UpcastableDerived(MemoryOutStream, Stream);
 		public:
-			char* getPointer() const { return m_data.getInternalPointer(); }
-
-			virtual bool IsReadEndianIndependent() const { return false; }
-			virtual bool IsWriteEndianIndependent() const { return false; }
-
 			MemoryOutStream(int64 preserved)
 				: m_length(0), m_position(0), m_data((int32)preserved)
 			{
@@ -298,6 +294,9 @@ namespace Apoc3D
 			{
 				
 			}
+
+			virtual bool IsReadEndianIndependent() const { return false; }
+			virtual bool IsWriteEndianIndependent() const { return false; }
 
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return true; }
@@ -314,6 +313,10 @@ namespace Apoc3D
 			virtual void Close() { }
 
 			virtual void Flush() { }
+
+			const char* getDataPointer() const { return m_data.getElements(); }
+			char* getDataPointer() { return m_data.getElements(); }
+
 		private:
 			int64 m_length;
 			List<char> m_data;

@@ -443,7 +443,7 @@ namespace APBuild
 
 			void FlattenAnimation(AnimationData::ClipTable* clipTable)
 			{
-				ExistTable<std::string> seenAnimation;
+				HashSet<std::string> seenAnimation;
 				
 				for (int i=0;i<m_SkeletonBones.getCount();i++)
 				{
@@ -454,16 +454,16 @@ namespace APBuild
 
 						const std::string& name = anim->GetAnimationName();
 
-						if (!seenAnimation.Exists(name))
+						if (!seenAnimation.Contains(name))
 						{
 							seenAnimation.Add(name);
 						}
 					}
 				}
 
-				for (ExistTable<std::string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
+				for (HashSet<std::string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
 				{
-					const std::string& animName = *e.getCurrent();
+					const std::string& animName = e.getCurrent();
 					
 					uint frameIndex = 0;
 					bool finished = false;

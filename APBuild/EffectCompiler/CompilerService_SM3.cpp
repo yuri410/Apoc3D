@@ -208,8 +208,8 @@ namespace APBuild
 		bw.WriteUInt32(commentDword);
 		bw.WriteUInt32('APBM');
 
-		bw.WriteUInt32(CalculateCRC32(metaDataBuffer.getPointer(), (int32)metaDataBuffer.getLength()));
-		bw.Write(metaDataBuffer.getPointer(), metaDataBuffer.getLength());
+		bw.WriteUInt32(CalculateCRC32(metaDataBuffer.getDataPointer(), (int32)metaDataBuffer.getLength()));
+		bw.Write(metaDataBuffer.getDataPointer(), metaDataBuffer.getLength());
 		
 		bw.WriteUInt32(D3DSIO_END);
 
@@ -218,6 +218,6 @@ namespace APBuild
 		int32 sizeInDwords = (int32)newCodeBuffer.getLength()/sizeof(DWORD);
 		newByteCode = new DWORD[sizeInDwords];
 		newCodeSize = (int32)newCodeBuffer.getLength();
-		memcpy(newByteCode, newCodeBuffer.getPointer(), newCodeSize);
+		memcpy(newByteCode, newCodeBuffer.getDataPointer(), newCodeSize);
 	}
 }

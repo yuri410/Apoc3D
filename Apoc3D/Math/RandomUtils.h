@@ -53,14 +53,14 @@ namespace Apoc3D
 				assert(max>=0);
 				int32 result = static_cast<int32>(SampleD() * (max + 1));
 				if (result>max)
-					result = max;
+					result = max; // this might happen if processor float point precision is tuned down
 				return result;
 			}
 			int32 NextExclusive(int32 max) 
 			{
 				if (--max<=0)
 					return 0;
-				return NextInclusive(max-1); 
+				return NextInclusive(max);
 			}
 
 
@@ -80,6 +80,7 @@ namespace Apoc3D
 
 			int32 RawSample()
 			{
+				// WELLRNG512
 				unsigned long a, b, c, d;
 				a = m_state[m_index];
 				c = m_state[(m_index+13)&15];

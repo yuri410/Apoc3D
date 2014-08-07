@@ -43,7 +43,7 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		ABCConfigurationFormat ABCConfigurationFormat::Instance = ABCConfigurationFormat();
+		ABCConfigurationFormat ABCConfigurationFormat::Instance;
 
 		Configuration* ABCConfigurationFormat::Load(const ResourceLocation& rl)
 		{

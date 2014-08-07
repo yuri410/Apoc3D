@@ -363,7 +363,7 @@ namespace Apoc3D
 					if (m_state == FWS_Normal || m_state == FWS_Maximized)
 					{
 						bool skip = false;
-						for (int i=0;i<m_controls.getCount();i++)
+						for (int i = 0; i < m_controls.getCount(); i++)
 						{
 							if (m_controls[i]->IsOverriding())
 							{
@@ -373,7 +373,7 @@ namespace Apoc3D
 						}
 						if (!skip)
 						{
-							for (int i=0;i<m_controls.getCount();i++)
+							for (int i = 0; i < m_controls.getCount(); i++)
 							{
 								if (m_controls[i]->Enabled)
 								{
@@ -719,7 +719,7 @@ namespace Apoc3D
 
 				bool hasOverridingControl = false;
 				int overlay = 0;
-				for (int i=0;i<m_controls.getCount();i++)
+				for (int i = 0; i < m_controls.getCount(); i++)
 				{
 					Control* ctl = m_controls[i];
 					if (ctl->IsOverriding())
@@ -841,11 +841,11 @@ namespace Apoc3D
 			{
 				padding += m_fontRef->MeasureString(L"..").X;
 
-				for (size_t i=0;i<m_title.size()+1;i++)
+				for (size_t i = 0; i < m_title.size() + 1; i++)
 				{
-					String subStr = m_title.substr(0,i);
+					String subStr = m_title.substr(0, i);
 					size = m_fontRef->MeasureString(subStr);
-					if (size.X >= Size.X-padding)
+					if (size.X >= Size.X - padding)
 					{
 						Point pos = Position;
 						pos.X += m_titleOffset.X;
@@ -873,13 +873,13 @@ namespace Apoc3D
 		Border::Border(BorderStyle style, const StyleSkin* skin)
 			: m_skin(skin), m_style(style)
 		{
-			for (int i=0;i<9;i++)
+			for (int i = 0; i < countof(m_dstRect); i++)
 			{
 				//Texture* tex;
 				if (m_style == FBS_Pane)
 				{
 					//tex = m_skin->WhitePixelTexture;
-					m_dstRect[i] = Apoc3D::Math::Rectangle(0,0,1,1);
+					m_dstRect[i] = Apoc3D::Math::Rectangle(0, 0, 1, 1);
 					m_srcRect[i] = m_dstRect[i];
 				}
 				else
@@ -1132,7 +1132,7 @@ namespace Apoc3D
 
 		bool UIRoot::GetMinimizedPosition(RenderDevice* dev, Form* form, Point& pos)
 		{
-			for (int i=0;i<m_forms.getCount();i++)
+			for (int i = 0; i < m_forms.getCount(); i++)
 			{
 				if (m_forms[i] != form && m_forms[i]->isMinimizing())
 				{
@@ -1142,12 +1142,12 @@ namespace Apoc3D
 
 			Apoc3D::Math::Rectangle rect = GetUIArea(dev);
 
-			for (int y = rect.Height -20;y>0;y-=20)
+			for (int y = rect.Height - 20; y > 0; y -= 20)
 			{
-				for (int x=0;x<rect.Width-99;x+=100)
+				for (int x = 0; x < rect.Width - 99; x += 100)
 				{
 					bool isOccupied = false;
-					for (int i=0;i<m_forms.getCount();i++)
+					for (int i = 0; i < m_forms.getCount(); i++)
 					{
 						if (m_forms[i] != form && m_forms[i]->Visible &&
 							m_forms[i]->Position.X == x && m_forms[i]->Position.Y == y)
@@ -1159,7 +1159,7 @@ namespace Apoc3D
 
 					if (!isOccupied)
 					{
-						pos = Point(x,y);
+						pos = Point(x, y);
 						return true;
 					}
 				}
@@ -1194,18 +1194,19 @@ namespace Apoc3D
 			rect.Width = (int)(UIArea.Width * MaximizedArea.Width * vp.Width);
 			rect.Height = (int)(UIArea.Height * MaximizedArea.Height * vp.Height);
 
-			for (int i=0;i<m_forms.getCount();i++)
+			for (int i = 0; i < m_forms.getCount(); i++)
 			{
-				if (m_forms[i] != form && m_forms[i]->Visible && m_forms[i]->getState() == Form::FWS_Minimized)
-					if (m_forms[i]->Position.Y < rect.getBottom())
-						rect.Height = m_forms[i]->Position.Y - rect.Y;
+				Form* frm = m_forms[i];
+				if (frm != form && frm->Visible && frm->getState() == Form::FWS_Minimized)
+					if (frm->Position.Y < rect.getBottom())
+						rect.Height = frm->Position.Y - rect.Y;
 			}
 
 			return Point(rect.Width, rect.Height);
 		}
 		bool UIRoot::IsObstructed(Control* control, const Point& point)
 		{
-			for (int i=0;i<m_forms.getCount();i++)
+			for (int i = 0; i < m_forms.getCount(); i++)
 			{
 				Apoc3D::Math::Rectangle area = control->getArea();
 				if (control->getOwner() && m_forms[i] != control->getOwner())
@@ -1266,9 +1267,8 @@ namespace Apoc3D
 			Form* form = static_cast<Form*>(ctl);
 
 			Apoc3D::Math::Rectangle area = GetUIArea(form->getRenderDevice());
-			//for (int i=0;i<m_forms.getCount();i++)
+			
 			{
-				//Form* form = m_forms[i];
 				//If a form is out of the working area,
 				//we need to put it back where the user can see it.
 				if (!area.Contains(form->getArea()))
@@ -1309,10 +1309,10 @@ namespace Apoc3D
 			m_sprite->Begin((Sprite::SpriteSettings)(Sprite::SPR_AlphaBlended | Sprite::SPR_UsePostTransformStack | Sprite::SPR_RestoreState));
 			
 			// first background forms
-			for (int i=m_forms.getCount()-1;i>-1;i--)
+			for (int i = m_forms.getCount() - 1; i > -1; i--)
 			{
 				Form* frm = m_forms[i];
-				if (frm->Visible && 
+				if (frm->Visible &&
 					frm->getState() != Form::FWS_Minimized && frm->IsBackgroundForm)
 				{
 					frm->Draw(m_sprite);
@@ -1321,10 +1321,10 @@ namespace Apoc3D
 
 
 			// regular forms
-			for (int i=m_forms.getCount()-1;i>-1;i--)
+			for (int i = m_forms.getCount() - 1; i > -1; i--)
 			{
 				Form* frm = m_forms[i];
-				if (frm->Visible && frm != m_topMostForm && 
+				if (frm->Visible && frm != m_topMostForm &&
 					frm->getState() != Form::FWS_Minimized && !frm->IsBackgroundForm)
 				{
 					frm->Draw(m_sprite);
@@ -1337,7 +1337,7 @@ namespace Apoc3D
 			}
 
 			// minimized always last
-			for (int i=m_forms.getCount()-1;i>=0;i--)
+			for (int i = m_forms.getCount() - 1; i >= 0; i--)
 			{
 				Form* frm = m_forms[i];
 				if (frm->getState() == Form::FWS_Minimized &&
@@ -1388,7 +1388,7 @@ namespace Apoc3D
 			bool menuOverriden = false;
 			if (m_mainMenu)
 			{
-				for (int i=0;i<m_mainMenu->getItems().getCount();i++)
+				for (int i = 0; i < m_mainMenu->getItems().getCount(); i++)
 				{
 					if (m_mainMenu->getItems()[i]->getSubMenu() && m_mainMenu->getItems()[i]->getSubMenu()->getState() == MENU_Open)
 					{
@@ -1416,7 +1416,7 @@ namespace Apoc3D
 				//	m_topMostForm->Focus();
 				//}
 
-				for (int i=0;i<m_forms.getCount();i++)
+				for (int i = 0; i < m_forms.getCount(); i++)
 				{
 					Form* frm = m_forms[i];
 					if (frm->Enabled && frm != alreadyUpdatedForm)
@@ -1482,7 +1482,7 @@ namespace Apoc3D
 		}
 		void UIRoot::RemoveForm(const String& name)
 		{
-			for (int i=0;i<m_forms.getCount();i++)
+			for (int i = 0; i < m_forms.getCount(); i++)
 			{
 				if (m_forms[i]->Name == name)
 				{
@@ -1493,7 +1493,7 @@ namespace Apoc3D
 		}
 		void UIRoot::RemoveContainer(const String& name)
 		{
-			for (int i=0;i<m_containers.getCount();i++)
+			for (int i = 0; i < m_containers.getCount(); i++)
 			{
 				if (m_containers[i]->Name == name)
 				{

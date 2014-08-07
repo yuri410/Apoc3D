@@ -22,7 +22,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 -----------------------------------------------------------------------------
 */
 #include "BatchModelBuilder.h"
-#include "apoc3d/Collections/ExistTable.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/IOLib/ModelData.h"
 #include "apoc3d/Vfs/ResourceLocation.h"

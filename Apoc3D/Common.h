@@ -74,6 +74,7 @@
 #include <string>
 #include <cstdint>
 #include <type_traits>
+#include <initializer_list>
 
 #include "FastDelegate\FastDelegate.h"
 

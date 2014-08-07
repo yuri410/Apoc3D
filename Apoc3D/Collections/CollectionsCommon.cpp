@@ -30,8 +30,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Math/Rectangle.h"
 #include "apoc3d/Math/Vector.h"
 
-#include <unordered_map>
-
 using namespace std;
 using namespace Apoc3D::Utility;
 
@@ -41,88 +39,58 @@ namespace Apoc3D
 	{
 		//////////////////////////////////////////////////////////////////////////
 		
-		bool EqualityComparer<std::string>::Equals(const string& x, const string& y) { return x==y; }
-		int64 EqualityComparer<std::string>::GetHashCode(const string& obj)
+		int32 EqualityComparer<std::string>::GetHashCode(const string& obj)
 		{
 			FNVHash32 fnv;
 			fnv.Accumulate(obj.c_str(), obj.size());
 			return fnv.GetResult();
 		}
 
-		bool EqualityComparer<String>::Equals(const String& x, const String& y) { return x==y; }
-		int64 EqualityComparer<String>::GetHashCode(const String& obj) { return StringUtils::GetHashCode(obj); }
+		int32 EqualityComparer<String>::GetHashCode(const String& obj) { return StringUtils::GetHashCode(obj); }
 		
 		//////////////////////////////////////////////////////////////////////////
 
-		bool EqualityComparer<Apoc3D::Math::Rectangle>::Equals(const Apoc3D::Math::Rectangle& x, const Apoc3D::Math::Rectangle& y) { return x==y; }
-		int64 EqualityComparer<Apoc3D::Math::Rectangle>::GetHashCode(const Apoc3D::Math::Rectangle& obj) { return obj.X ^ obj.Y ^ obj.Width ^ obj.Height; }
+		int32 EqualityComparer<Apoc3D::Math::Rectangle>::GetHashCode(const Apoc3D::Math::Rectangle& obj) { return obj.X ^ obj.Y ^ obj.Width ^ obj.Height; }
 
-		bool EqualityComparer<Apoc3D::Math::Size>::Equals(const Apoc3D::Math::Size& x, const Apoc3D::Math::Size& y) { return x==y; }
-		int64 EqualityComparer<Apoc3D::Math::Size>::GetHashCode(const Apoc3D::Math::Size& obj) { return obj.Width ^ obj.Height; }
+		int32 EqualityComparer<Apoc3D::Math::Size>::GetHashCode(const Apoc3D::Math::Size& obj) { return obj.Width ^ obj.Height; }
 
-		bool EqualityComparer<Apoc3D::Math::Point>::Equals(const Apoc3D::Math::Point& x, const Apoc3D::Math::Point& y) { return x==y; }
-		int64 EqualityComparer<Apoc3D::Math::Point>::GetHashCode(const Apoc3D::Math::Point& obj) { return obj.X ^ obj.Y; }
+		int32 EqualityComparer<Apoc3D::Math::Point>::GetHashCode(const Apoc3D::Math::Point& obj) { return obj.X ^ obj.Y; }
 		
-		bool EqualityComparer<Apoc3D::Math::PointF>::Equals(const Apoc3D::Math::PointF& x, const Apoc3D::Math::PointF& y) { return x==y; }
-		int64 EqualityComparer<Apoc3D::Math::PointF>::GetHashCode(const Apoc3D::Math::PointF& obj) { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y; }
+		int32 EqualityComparer<Apoc3D::Math::PointF>::GetHashCode(const Apoc3D::Math::PointF& obj) { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y; }
 
 		//////////////////////////////////////////////////////////////////////////
 		
-		bool EqualityComparer<Apoc3D::Math::Vector2>::Equals(const Apoc3D::Math::Vector2& x, const Apoc3D::Math::Vector2& y) { return x==y; }
-		int64 EqualityComparer<Apoc3D::Math::Vector2>::GetHashCode(const Apoc3D::Math::Vector2& obj) { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y; }
+		int32 EqualityComparer<Apoc3D::Math::Vector2>::GetHashCode(const Apoc3D::Math::Vector2& obj) { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y; }
 
-		bool EqualityComparer<Apoc3D::Math::Vector3>::Equals(const Apoc3D::Math::Vector3& x, const Apoc3D::Math::Vector3& y) { return x==y; }
-		int64 EqualityComparer<Apoc3D::Math::Vector3>::GetHashCode(const Apoc3D::Math::Vector3& obj) { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y ^ *(const int32*)&obj.Z; }
+		int32 EqualityComparer<Apoc3D::Math::Vector3>::GetHashCode(const Apoc3D::Math::Vector3& obj) { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y ^ *(const int32*)&obj.Z; }
 		
-		bool EqualityComparer<Apoc3D::Math::Vector4>::Equals(const Apoc3D::Math::Vector4& x, const Apoc3D::Math::Vector4& y) { return x==y; }
-		int64 EqualityComparer<Apoc3D::Math::Vector4>::GetHashCode(const Apoc3D::Math::Vector4& obj) { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y ^ *(const int32*)&obj.Z ^ *(const int32*)&obj.W; }
+		int32 EqualityComparer<Apoc3D::Math::Vector4>::GetHashCode(const Apoc3D::Math::Vector4& obj) { return *(const int32*)&obj.X ^ *(const int32*)&obj.Y ^ *(const int32*)&obj.Z ^ *(const int32*)&obj.W; }
 
-		namespace HashHelpers
+		namespace Utils
 		{
-			const int SmallPrimeTable[72] = { 
-				3, 7, 11, 17, 23, 29, 37, 47, 59, 71, 89, 107, 131, 163, 197, 239, 
-				293, 353, 431, 521, 631, 761, 919, 1103, 1327, 1597, 1931, 2333, 2801, 3371, 4049, 4861, 
-				5839, 7013, 8419, 10103, 12143, 14591, 17519, 21023, 25229, 30293, 36353, 43627, 52361, 62851, 75431, 90523, 
-				108631, 130363, 156437, 187751, 225307, 270371, 324449, 389357, 467237, 560689, 672827, 807403, 968897, 1162687, 1395263, 1674319, 
-				2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369
+			const int Int32PrimeSizes[] =
+			{
+				7, 11, 17, 23, 29, 37, 53, 71, 97, 127, 167, 223, 293, 383, 499, 653, 853, 1109,
+				1447, 1889, 2459, 3203, 4177, 5431, 7069, 9199, 11959, 15551, 20219, 26293, 34183,
+				44449, 57787, 75133, 97673, 126989, 165089, 214631, 279023, 362741, 471571,
+				613049, 796967, 1036067, 1346899, 1750979, 2276293, 2959183, 3846943, 5001049, 6501367,
+				8451791, 10987343, 14283559, 18568637, 24139231, 31381043, 40795357, 53033969,
+				68944181, 89627443, 116515687, 151470409, 196911553
 			};
 
-			int GetPrime(int min)
+			int GetHashTableSize(int min)
 			{
-				for (int i = 0; i < 72; i++)
+				for (int i = 0; i < countof(Int32PrimeSizes); i++)
 				{
-					int val = SmallPrimeTable[i];
+					int val = Int32PrimeSizes[i];
 					if (val >= min)
 					{
 						return val;
 					}
 				}
-				for (int j = min | 1; j < 2147483647; j += 2)
-				{
-					if (IsPrime(j))
-					{
-						return j;
-					}
-				}
 				return min;
 			}
 
-			bool IsPrime(int candidate)
-			{
-				if ((candidate & 1) == 0)
-				{
-					return (candidate == 2);
-				}
-				int root = (int)sqrtf((float)candidate);
-				for (int i = 3; i <= root; i += 2)
-				{
-					if ((candidate % i) == 0)
-					{
-						return false;
-					}
-				}
-				return true;
-			}
 
 			template<> String _ToString<std::string>::Invoke(const std::string& str) { return StringUtils::toPlatformWideString(str); }
 
@@ -133,16 +101,18 @@ namespace Apoc3D
 			template<> String _ToString<uint16>::Invoke(const uint16& v) { return StringUtils::UIntToString(v); }
 			template<> String _ToString<uint32>::Invoke(const uint32& v) { return StringUtils::UIntToString(v); }
 			template<> String _ToString<uint64>::Invoke(const uint64& v) { return StringUtils::UIntToString(v); }
-			/*
-			template<> String ToString<std::string>(const std::string& str) { return StringUtils::toPlatformWideString(str); }
+			
 
-			template<> String ToString<int16>(const int16& v) { return StringUtils::IntToString(v); }
+			//template<> String ToString<std::string>(const std::string& str) { return StringUtils::toPlatformWideString(str); }
+
+			/*template<> String ToString<int16>(const int16& v) { return StringUtils::IntToString(v); }
 			template<> String ToString<int32>(const int32& v) { return StringUtils::IntToString(v); }
 			template<> String ToString<int64>(const int64& v) { return StringUtils::IntToString(v); }
 
 			template<> String ToString<uint16>(const uint16& v) { return StringUtils::UIntToString(v); }
 			template<> String ToString<uint32>(const uint32& v) { return StringUtils::UIntToString(v); }
-			template<> String ToString<uint64>(const uint64& v) { return StringUtils::UIntToString(v); }*/
+			template<> String ToString<uint64>(const uint64& v) { return StringUtils::UIntToString(v); }
+			*/
 		}
 	}
 }

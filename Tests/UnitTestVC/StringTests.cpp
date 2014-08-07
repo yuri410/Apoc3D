@@ -1,6 +1,5 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-using namespace Apoc3D::Utility;
 
 namespace UnitTestVC
 {

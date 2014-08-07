@@ -290,7 +290,7 @@ namespace Apoc3D
 								const OperationList* opList = k.getCurrentValue();
 								if (opList->getCount())
 								{
-									device->Render(mtrl, opList->getInternalPointer(), opList->getCount(), selectorID);
+									device->Render(mtrl, opList->getElements(), opList->getCount(), selectorID);
 								}
 							}
 						}

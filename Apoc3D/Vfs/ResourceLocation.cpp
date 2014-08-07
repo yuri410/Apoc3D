@@ -49,12 +49,7 @@ namespace Apoc3D
 		{
 
 		}
-		FileLocation::FileLocation(const FileLocation& fl)
-			: ResourceLocation(fl),
-			m_parent(fl.m_parent), m_path(fl.m_path), m_entryName(fl.m_entryName)
-		{
-		}
-		
+
 		FileLocation::FileLocation(const String& filePath, int64 size)
 			: ResourceLocation(filePath, size), m_parent(nullptr), m_path(filePath)
 		{
@@ -73,6 +68,27 @@ namespace Apoc3D
 		FileLocation::~FileLocation()
 		{
 		}
+
+		FileLocation::FileLocation(FileLocation&& fl)
+			: ResourceLocation(std::forward<ResourceLocation>(fl)), m_parent(fl.m_parent),
+			m_path(std::move(fl.m_path)), m_entryName(std::move(fl.m_entryName))
+		{
+
+		}
+
+		FileLocation& FileLocation::operator=(FileLocation&& rhs)
+		{
+			if (this != &rhs)
+			{
+				ResourceLocation::operator=(std::forward<ResourceLocation>(rhs));
+
+				m_parent = rhs.m_parent;
+				m_path = std::move(rhs.m_path);
+				m_entryName = std::move(rhs.m_entryName);
+			}
+			return *this;
+		}
+
 		Stream* FileLocation::GetReadStream() const
 		{
 			if (m_parent)
@@ -95,11 +111,6 @@ namespace Apoc3D
 		{
 		}
 
-		MemoryLocation::MemoryLocation(const MemoryLocation& ml)
-			: ResourceLocation(ml), m_data(ml.m_data)
-		{
-
-		}
 
 		Stream* MemoryLocation::GetReadStream() const
 		{
@@ -115,12 +126,6 @@ namespace Apoc3D
 		StreamLocation::StreamLocation(Stream* strm)
 			: ResourceLocation(L"[STRM]" + StringUtils::UIntToStringHex((uint64)strm), strm->getLength()), 
 			m_stream(strm)
-		{
-
-		}
-
-		StreamLocation::StreamLocation(const StreamLocation& sl)
-			: ResourceLocation(sl), m_stream(sl.m_stream)
 		{
 
 		}

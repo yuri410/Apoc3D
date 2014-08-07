@@ -26,8 +26,14 @@ namespace Apoc3D
 
 
 			APAPI const char* GetEncodingBOM(TextEncoding enc, int32& length);
-			APAPI String ConvertRawData(const char* rawData, int32 length, TextEncoding encoding, bool checkBom);
+			
+			APAPI String ConvertFromRawData(const char* rawData, int32 length, TextEncoding encoding, bool checkBom);
+			APAPI void ConvertToRawData(const String& text, TextEncoding encoding, bool includeBom, char*& dest, int32& destLength);
+			APAPI void ConvertToRawData(const String& text, TextEncoding encoding, bool includeBom, Stream& dest);
 
+
+			APAPI String ReadAllText(const VFS::ResourceLocation& rl, TextEncoding encoding);
+			APAPI void WriteAllText(Stream& strm, const String& text, TextEncoding encoding);
 		}
 
 

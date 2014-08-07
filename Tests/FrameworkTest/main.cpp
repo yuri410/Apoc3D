@@ -69,7 +69,7 @@ void main()
 	TestIni();
 	TestXml();
 
-	//TestRandom();
+	TestRandom();
 
 	
 }
@@ -430,22 +430,23 @@ void TestXml()
 void TestRandom()
 {
 	const int32 count = 1048576 * 64;
-	int32* buf1 = new int32[count];
 
-	int64 ta = GetTickCount();
+	int32 buckets[3] = { 0 };
+	float rates[3] = { 0 };
+
 	for (int32 i=0;i<count;i++)
 	{
-		buf1[i] = Randomizer::Next();
+		int32 v = Randomizer::NextExclusive(3);
+		buckets[v]++;
 	}
-	ta = GetTickCount() - ta;
-	printf("RND1: %d\n", ta);
 
-	delete[] buf1;
+	int32 total = 0;
+	for (int32 v : buckets)
+		total += v;
+	
+	for (int32 i = 0; i < countof(rates); i++)
+		rates[i] = buckets[i] / (float)total;
 
-	/*int32 raw = 0x7fffffff;
-	int32 sample = (int32)(raw & 0x7fffffffUL);
-	double fltSample = sample / 2147483647.0;
-	int32 rnd = (int32)(50 * fltSample);
-	printf("RNDTest: %d\n", rnd);*/
+	printf("Random Distribution: %.2f, %.2f, %.2f\n", rates[0]*10, rates[1]*10, rates[2]*10);
 
 }

@@ -979,7 +979,7 @@ namespace APBuild
 	void FbxConverter::FlattenAnimation(AnimationData::ClipTable* clipTable)
 	{
 		const FIMesh** meshList = new const FIMesh*[m_meshes.getCount()];
-		ExistTable<std::string> seenAnimation;
+		HashSet<std::string> seenAnimation;
 		int idxCounter = 0;
 		for (HashMap<std::string, FIMesh*>::Enumerator i=m_meshes.GetEnumerator();i.MoveNext();)
 		{
@@ -990,7 +990,7 @@ namespace APBuild
 
 				const std::string& name = anim->GetAnimationName();
 
-				if (!seenAnimation.Exists(name))
+				if (!seenAnimation.Contains(name))
 				{
 					seenAnimation.Add(name);
 				}
@@ -998,9 +998,9 @@ namespace APBuild
 			meshList[idxCounter++] = mesh;
 		}
 
-		for (ExistTable<std::string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
+		for (HashSet<std::string>::Enumerator e = seenAnimation.GetEnumerator();e.MoveNext();)
 		{
-			const std::string& animName = *e.getCurrent();
+			const std::string& animName = e.getCurrent();
 
 			uint frameIndex = 0;
 			bool finished = false;

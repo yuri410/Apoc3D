@@ -244,7 +244,7 @@ namespace APDesigner
 				}
 
 				GraphNode** nodeList = new GraphNode*[islandNodes.getCount()];
-				memcpy(nodeList, islandNodes.getInternalPointer(), islandNodes.getCount() * sizeof(GraphNode*));
+				memcpy(nodeList, islandNodes.getElements(), islandNodes.getCount() * sizeof(GraphNode*));
 
 				Island* isl = new Island();
 				isl->NodeCount = islandNodes.getCount();

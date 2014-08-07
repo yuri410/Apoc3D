@@ -60,20 +60,27 @@ namespace Apoc3D
 			uint64 GetHashCode() const;
 
 		protected:
-			int64 m_size;
-
 			ResourceLocation(const String& name, int64 size)
 				: m_name(name), m_size(size)
+			{ }
+
+			ResourceLocation(const ResourceLocation& rl) = default;
+			ResourceLocation(ResourceLocation&& rl)
+				: m_name(std::move(rl.m_name)), m_size(rl.m_size)
+			{ }
+
+			ResourceLocation& operator=(ResourceLocation&& rl)
 			{
+				assert(this != &rl);
+				m_name = std::move(rl.m_name);
+				m_size = rl.m_size;
+				return *this;
 			}
 
-			ResourceLocation(const ResourceLocation& another)
-				: m_name(another.m_name), m_size(another.m_size)
-			{
-			}
+			int64 m_size;
 
 		private:
-			ResourceLocation& operator=(const FileLocation& fl) { return *this; }
+			ResourceLocation& operator=(const FileLocation& rhs) = delete;
 
 			String m_name;
 		};
@@ -86,13 +93,19 @@ namespace Apoc3D
 		class APAPI FileLocation : public ResourceLocation
 		{
 			RTTI_UpcastableDerived(FileLocation, ResourceLocation);
+
 		public:
 			FileLocation();
 			FileLocation(const String& filePath);
-			FileLocation(const FileLocation& fl);
+			FileLocation(const FileLocation& fl) = default;
+			FileLocation(FileLocation&& fl);
+
 			FileLocation(Archive* pack, const String& filePath, const String& entryName);
 			virtual ~FileLocation();
 
+			FileLocation& operator=(const FileLocation& rhs) = default;
+			FileLocation& operator=(FileLocation&& rhs);
+			
 			virtual Stream* GetWriteStream() const { return nullptr;}
 			virtual Stream* GetReadStream() const;
 
@@ -122,7 +135,7 @@ namespace Apoc3D
 			RTTI_UpcastableDerived(MemoryLocation, ResourceLocation);
 		public:
 			MemoryLocation(void* pos, int64 size);
-			MemoryLocation(const MemoryLocation& ml);
+			MemoryLocation(const MemoryLocation& ml) = default;
 
 			virtual bool CanRead() const { return true; }
 			virtual bool CanWrite() const { return true; }
@@ -144,7 +157,7 @@ namespace Apoc3D
 			RTTI_UpcastableDerived(StreamLocation, ResourceLocation);
 		public:
 			StreamLocation(Stream* strm);
-			StreamLocation(const StreamLocation& sl);
+			StreamLocation(const StreamLocation& sl) = default;
 
 			virtual bool CanRead() const; 
 			virtual bool CanWrite() const; 
@@ -152,7 +165,7 @@ namespace Apoc3D
 			virtual Stream* GetWriteStream() const;
 			virtual Stream* GetReadStream() const;
 
-			virtual ResourceLocation* Clone() const  { return new StreamLocation(*this); }
+			virtual ResourceLocation* Clone() const { return new StreamLocation(*this); }
 
 		private:
 			Stream* m_stream;

@@ -34,33 +34,291 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-		template <typename T, typename S, typename ComparerType = Apoc3D::Collections::EqualityComparer<T>>
-		class HashMap
+		template <typename T, typename E, typename ComparerType>
+		class HashMapCore
 		{
-		private:
+		public:
+			void Clear()
+			{
+				if (m_touchedSlots > 0)
+				{
+					memset(m_buckets, 0xff, sizeof(int32)*m_bucketsLength);
+
+					m_emptySlot = -1;
+					m_touchedSlots = 0;
+					m_count = 0;
+				}
+			}
+
+			bool Remove(const T& item)
+			{
+				if (m_buckets)
+				{
+					int hash = ComparerType::GetHashCode(item) & PositiveMask;
+					int index = hash % m_bucketsLength;
+					int prev = -1;
+					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
+					{
+						if (m_entries[i].hashCode == hash && 
+							ComparerType::Equals(m_entries[i].data, item))
+						{
+							if (prev < 0)
+							{
+								m_buckets[index] = m_entries[i].next;
+							}
+							else
+							{
+								m_entries[prev].next = m_entries[i].next;
+							}
+							m_entries[i].hashCode = -1;
+							m_entries[i].next = m_emptySlot;
+							m_emptySlot = i;
+							m_count--;
+
+							return true;
+						}
+						prev = i;
+					}
+				}
+				return false;
+			}
+			bool Contains(const T& item) const { return FindEntry(item) != -1; }
+			void Resize(int32 newSize)
+			{
+				int primeCapacity = Utils::GetHashTableSize(newSize);
+				int* newBuckets = new int[primeCapacity];
+				for (int i = 0; i < primeCapacity; i++)
+				{
+					newBuckets[i] = -1;
+				}
+				E* newEntries = new E[primeCapacity];
+				for (int j = 0; j < m_touchedSlots; j++)
+				{
+					int index = m_entries[j].hashCode % primeCapacity;
+
+					newEntries[j] = m_entries[j];
+					newEntries[j].next = newBuckets[index];
+					newBuckets[index] = j;
+				}
+				delete[] m_buckets;
+				m_buckets = newBuckets;
+				m_bucketsLength = primeCapacity;
+				delete[] m_entries;
+				m_entries = newEntries;
+			}
+
+			int32 getPrimeCapacity() const { return m_bucketsLength; }
+			int32 getCount() const { return m_count; }
+			
+		protected:
+			static const int32 PositiveMask = 0x7fffffff;
+
+			explicit HashMapCore(int capacity)
+			{
+				if (capacity > 0)
+					Initialize(capacity);
+			}
+
+			HashMapCore(const HashMapCore& other)
+				: m_bucketsLength(other.m_bucketsLength),
+				m_touchedSlots(other.m_touchedSlots), m_count(other.m_count),
+				m_emptySlot(other.m_emptySlot)
+			{
+				if (other.m_buckets)
+				{
+					m_buckets = new int[m_bucketsLength];
+					memcpy(m_buckets, other.m_buckets, sizeof(int)*m_bucketsLength);
+				}
+				
+				if (other.m_entries)
+				{
+					m_entries = new E[m_bucketsLength];
+					for (int i = 0; i < m_bucketsLength; i++)
+						m_entries[i] = other.m_entries[i];
+				}
+			}
+			HashMapCore(HashMapCore&& other)
+				: m_buckets(other.m_buckets), m_bucketsLength(other.m_bucketsLength),
+				m_entries(other.m_entries), m_touchedSlots(other.m_touchedSlots),
+				m_count(other.m_count), m_emptySlot(other.m_emptySlot)
+			{
+				other.m_buckets = nullptr;
+				other.m_entries = nullptr;
+			}
+			HashMapCore& operator=(const HashMapCore& other)
+			{
+				if (this != &other)
+				{
+					if (m_bucketsLength != other.m_bucketsLength)
+					{
+						delete[] m_entries;
+						delete[] m_buckets;
+
+						m_buckets = nullptr;
+						m_entries = nullptr;
+
+						m_bucketsLength = other.m_bucketsLength;
+
+						if (other.m_buckets)
+							m_buckets = new int[m_bucketsLength];
+						if (other.m_entries)
+							m_entries = new E[m_bucketsLength];
+					}
+					else
+					{
+						if (m_buckets == nullptr && other.m_buckets)
+							m_buckets = new int[m_bucketsLength];
+						if (m_entries == nullptr && other.m_entries)
+							m_entries = new E[m_bucketsLength];
+					}
+
+					m_touchedSlots = other.m_touchedSlots;
+					m_count = other.m_count;
+					m_emptySlot = other.m_emptySlot;
+
+					for (int i = 0; i < m_bucketsLength; i++)
+						m_entries[i] = other.m_entries[i];
+
+					memcpy(m_buckets, other.m_buckets, sizeof(int)*m_bucketsLength);
+				}
+				return *this;
+			}
+			HashMapCore& operator=(HashMapCore&& other)
+			{
+				if (this != &other)
+				{
+					delete[] m_entries;
+					delete[] m_buckets;
+
+					m_buckets = other.m_buckets;
+					m_bucketsLength = other.m_bucketsLength;
+
+					m_entries = other.m_entries;
+
+					m_touchedSlots = other.m_touchedSlots;
+					m_count = other.m_count;
+					m_emptySlot = other.m_emptySlot;
+
+					other.m_buckets = nullptr;
+					other.m_entries = nullptr;
+				}
+				return *this;
+			}
+			~HashMapCore()
+			{
+				delete[] m_entries;
+				delete[] m_buckets;
+			}
+
+			int* m_buckets = nullptr;
+			E* m_entries = nullptr;
+
+			int m_bucketsLength = 0;
+			int m_touchedSlots = 0;
+
+			int m_count = 0;
+			int m_emptySlot = -1;
+
+			void Initialize(int capacity)
+			{
+				int primeCapacity = Utils::GetHashTableSize(capacity);
+				m_bucketsLength = primeCapacity;
+				m_entries = new E[primeCapacity];
+				m_buckets = new int[primeCapacity];
+				for (int i = 0; i < primeCapacity; i++)
+				{
+					m_buckets[i] = -1;
+				}
+			}
+
+			int FindEntry(const T& item) const
+			{
+				if (m_buckets)
+				{
+					int hash = ComparerType::GetHashCode(item) & PositiveMask;
+					int index = hash % m_bucketsLength;
+
+					return FindEntry(item, hash, index);
+				}
+				return -1;
+			}
+
+			int FindEntry(const T& item, int32 hash, int32 index) const
+			{
+				for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
+				{
+					if (m_entries[i].hashCode == hash &&
+						ComparerType::Equals(m_entries[i].data, item))
+					{
+						return i;
+					}
+				}
+				return -1;
+			}
+
+			E& InsertEntry(const T& item)
+			{
+				if (m_buckets == nullptr)
+				{
+					Initialize(7);
+				}
+
+				int hash = ComparerType::GetHashCode(item) & PositiveMask;
+				int index = hash % m_bucketsLength;
+
+				if (FindEntry(item, hash, index) != -1)
+					throw AP_EXCEPTION(ExceptID::Duplicate, Utils::ToString(item));
+
+				
+				int pos = m_emptySlot;
+				if (pos >= 0)
+				{
+					m_emptySlot = m_entries[pos].next;
+				}
+				else
+				{
+					if (m_touchedSlots == m_bucketsLength)
+					{
+						Resize(m_touchedSlots * 2);
+						index = hash % m_bucketsLength;
+					}
+					pos = m_touchedSlots++;
+				}
+				m_count++;
+
+				m_entries[pos].hashCode = hash;
+				m_entries[pos].data = item;
+				m_entries[pos].next = m_buckets[index];
+
+				m_buckets[index] = pos;
+				return m_entries[pos];
+			}
+		};
+
+		template <typename T, typename S, typename ComparerType = Apoc3D::Collections::EqualityComparer<T>>
+		class HashMap : public HashMapCore<T, Utils::HashMapEntryPair<T,S>, ComparerType>
+		{
 			typedef HashMap<T, S, ComparerType> HashMapType;
+			typedef Utils::HashMapEntryPair<T, S> Entry;
 		public:
 			class Enumerator
 			{
+				friend class HashMap;
 			public:
-				Enumerator(const HashMapType* dict)
-					: m_dict(dict), m_index(0), m_current(nullptr), m_currentVal(nullptr)
-				{ }
-
 				bool MoveNext()
 				{
-					while (m_index<m_dict->m_count)
+					while (m_next < m_dict->m_touchedSlots)
 					{
-						if (m_dict->m_entries[m_index].hashCode>=0)
+						int cur = m_next++;
+						if (m_dict->m_entries[cur].hashCode >= 0)
 						{
-							m_current = &m_dict->m_entries[m_index].data;
-							m_currentVal = &m_dict->m_entries[m_index].value;
-							m_index++;
+							m_current = &m_dict->m_entries[cur].data;
+							m_currentVal = &m_dict->m_entries[cur].value;
 							return true;
 						}
-						m_index++;
 					}
-					m_index = m_dict->m_count + 1;
+
+					m_next = m_dict->m_touchedSlots + 1;
 					m_current = nullptr;
 					m_currentVal = nullptr;
 					return false;
@@ -68,25 +326,22 @@ namespace Apoc3D
 
 				const T& getCurrentKey() const { return *m_current; }
 				S& getCurrentValue() const { return *m_currentVal; }
+
 			private:
+				Enumerator(const HashMapType* dict)
+					: m_dict(dict), m_next(0), m_current(nullptr), m_currentVal(nullptr)
+				{ }
+
 				const HashMapType* m_dict;
-				int m_index;
+				int m_next;
 				T* m_current;
 				S* m_currentVal;
 			};
 
 			class IteratorBase
 			{
+				friend class HashMap;
 			public:
-				explicit IteratorBase(const HashMapType* dict)
-					: m_dict(dict), m_index(0)
-				{
-					MoveToNext();
-				}
-
-				IteratorBase(const HashMapType* dict, int idx)
-					: m_dict(dict), m_index(idx) { }
-
 				IteratorBase& operator++()
 				{
 					MoveToNext();
@@ -94,32 +349,50 @@ namespace Apoc3D
 				}
 				IteratorBase operator++(int) { IteratorBase result = *this; ++(*this); return result; }
 
-				bool operator==(const IteratorBase& rhs) const { return m_dict == rhs.m_dict && m_index == rhs.m_index; }
+				bool operator==(const IteratorBase& rhs) const { return m_dict == rhs.m_dict && m_next == rhs.m_next; }
 				bool operator!=(const IteratorBase& rhs) const { return !this->operator==(rhs); }
+
 			protected:
+
+				explicit IteratorBase(const HashMapType* dict)
+					: m_dict(dict), m_next(0)
+				{
+					MoveToNext();
+				}
+
+				IteratorBase(const HashMapType* dict, int idx)
+					: m_dict(dict), m_next(idx) { }
+
+
 				void MoveToNext()
 				{
-					while (m_index < m_dict->m_count)
+					while (m_next < m_dict->m_touchedSlots)
 					{
-						if (m_dict->m_entries[m_index].hashCode >= 0)
+						if (m_dict->m_entries[m_next++].hashCode >= 0)
 						{
-							m_index++;
 							return;
 						}
-						m_index++;
 					}
-					m_index = m_dict->m_count + 1;
+					m_next = m_dict->m_touchedSlots + 1;
 				}
 
 				const HashMapType* m_dict;
-				int m_index;
+				int m_next;
 			};
 
 			template <bool IsAccessingKey>
 			class IteratorKV : public IteratorBase
 			{
+				friend class HashMap;
 			public:
 				typedef typename std::conditional<IsAccessingKey, const T, S>::type ReturnType;
+
+				ReturnType& operator*() const
+				{
+					return std::conditional<IsAccessingKey, KeyGetter, ValueGetter>::type::Get(m_dict, m_next);
+				}
+
+			private:
 
 				explicit IteratorKV(const HashMapType* dict)
 					: IteratorBase(dict) { }
@@ -127,144 +400,123 @@ namespace Apoc3D
 				IteratorKV(const HashMapType* dict, int idx)
 					: IteratorBase(dict, idx) { }
 
-				ReturnType& operator*() const
-				{
-					return std::conditional<IsAccessingKey, KeyGetter, ValueGetter>::type::Get(m_dict, m_index);
-				}
-
-			private:
 				struct KeyGetter
 				{
-					static const T& Get(const HashMapType* dict, int idx) 
+					static const T& Get(const HashMapType* dict, int idx)
 					{
-						assert(idx > 0 && idx <= dict->m_count);
-						return dict->m_entries[idx-1].data; 
+						assert(idx > 0 && idx <= dict->m_touchedSlots);
+						return dict->m_entries[idx - 1].data;
 					}
 				};
 				struct ValueGetter
 				{
-					static S& Get(const HashMapType* dict, int idx) 
+					static S& Get(const HashMapType* dict, int idx)
 					{
-						assert(idx > 0 && idx <= dict->m_count);
-						return dict->m_entries[idx-1].value; 
+						assert(idx > 0 && idx <= dict->m_touchedSlots);
+						return dict->m_entries[idx - 1].value;
 					}
 				};
 			};
 
 			class Iterator : public IteratorBase
 			{
+				friend class HashMap;
 			public:
+
+				KeyPairValue<const T&, S&> operator*() const
+				{
+					assert(m_next > 0 && m_next <= m_dict->m_touchedSlots);
+					Entry& e = m_dict->m_entries[m_next - 1];
+					return { e.data, e.value };
+				}
+			private:
 				explicit Iterator(const HashMapType* dict)
 					: IteratorBase(dict) { }
 
 				Iterator(const HashMapType* dict, int idx)
 					: IteratorBase(dict, idx) { }
-
-				KeyValuePair<const T&, S&> operator*() const
-				{
-					assert(m_index > 0 && m_index <= m_dict->m_count);
-					Entry& e = m_dict->m_entries[m_index - 1];
-					return KeyValuePair<const T&, S&>(static_cast<const T&>(e.data), static_cast<S&>(e.value));
-				}
 			};
 
 
 			template <bool IsAccessingKey>
 			class Accessor
 			{
+				friend class HashMap;
 			public:
-				Accessor(const HashMapType* dict)
-					: m_dict(dict) { }
-
 				IteratorKV<IsAccessingKey> begin() { return IteratorKV<IsAccessingKey>(m_dict); }
 				IteratorKV<IsAccessingKey> end() { return IteratorKV<IsAccessingKey>(m_dict, m_dict->m_count + 1); }
 
-
 			private:
+				Accessor(const HashMapType* dict)
+					: m_dict(dict) { }
+
 				const HashMapType* m_dict;
 			};
 
 			typedef Accessor<true> KeyAccessor;
 			typedef Accessor<false> ValueAccessor;
 
-			
-		public:
 
-			HashMap(const HashMap& another)
-				: m_bucketsLength(another.m_bucketsLength),
-				m_count(another.m_count), m_entryLength(another.m_entryLength), m_freeCount(another.m_freeCount),
-				m_freeList(another.m_freeList)
-			{
-				m_buckets = new int[m_bucketsLength];
-				memcpy(m_buckets, another.m_buckets, sizeof(int)*m_bucketsLength);
-
-				m_entries = new Entry[m_entryLength];
-				for (int i=0;i<m_entryLength;i++)
-					m_entries[i] = another.m_entries[i];
-			}
-			HashMap()
-				: m_buckets(0), m_bucketsLength(0), m_count(0), 
-				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
-			{
-				int capacity = 8;
-				if (capacity > 0)
-				{
-					Initialize(capacity);
-				}
-			}
+			HashMap() 
+				: HashMapCore(0) { }
 			explicit HashMap(int capacity)
-				: m_buckets(0), m_bucketsLength(0), m_count(0), 
-				m_entries(0), m_entryLength(0), m_freeCount(0), m_freeList(0)
+				: HashMapCore(capacity) { }
+
+			HashMap(std::initializer_list<KeyPairValue<T, S>> list)
+				: HashMapCore((int32)list.size())
 			{
-				if (capacity > 0)
+				if (list.size())
 				{
-					Initialize(capacity);
+					for (const auto& e : list)
+						Add(e.Key, e.Value);
 				}
 			}
-			~HashMap()
+
+			~HashMap() { }
+
+			HashMap(HashMap&& other)
+				: HashMapCore(std::move(other)) { }
+
+			HashMap& operator=(HashMap&& other)
 			{
-				delete[] m_entries;
-				delete[] m_buckets;
-			}
-			HashMap& operator=(const HashMap& another)
-			{
-				if (this == &another)
-					return *this;
-
-				delete[] m_entries;
-				delete[] m_buckets;
-
-				m_bucketsLength = another.m_bucketsLength;
-
-				m_count = another.m_count;
-				m_entryLength = another.m_entryLength;
-				m_freeCount = another.m_freeCount;
-				m_freeList = another.m_freeList;
-
-				m_buckets = new int[m_bucketsLength];
-				memcpy(m_buckets, another.m_buckets, sizeof(int)*m_bucketsLength);
-
-				m_entries = new Entry[m_entryLength];
-				for (int i=0;i<m_entryLength;i++)
-					m_entries[i] = another.m_entries[i];
-
-				return *this; 
+				HashMapCore::operator =(std::move(other));
+				return *this;
 			}
 
-			void Add(const T& item, const S& value) { Insert(item, value, true); }
-
-			void Clear()
+			void Add(const T& item, const S& value) 
 			{
-				if (m_count > 0)
+				Entry& ent = InsertEntry(item);
+				ent.value = value;
+			}
+
+			S& operator [](const T& key) const
+			{
+				int index = FindEntry(key);
+				if (index >= 0)
 				{
-					for (int i = 0; i < m_bucketsLength; i++)
-					{
-						m_buckets[i] = -1;
-					}
-					m_freeList = -1;
-					m_count = 0;
-					m_freeCount = 0;
+					return m_entries[index].value;
 				}
+				throw AP_EXCEPTION(ExceptID::KeyNotFound, Utils::ToString(key));
+			}
+
+			bool TryGetValue(const T& key, S& value) const
+			{
+				int index = FindEntry(key);
+				if (index >= 0)
+				{
+					value = m_entries[index].value;
+					return true;
+				}
+				return false;
+			}
+			S* TryGetValue(const T& key) const
+			{
+				int index = FindEntry(key);
+				if (index >= 0)
+				{
+					return &m_entries[index].value;
+				}
+				return nullptr;
 			}
 
 			void DeleteValuesAndClear()
@@ -276,107 +528,6 @@ namespace Apoc3D
 				}
 
 				Clear();
-			}
-
-
-			bool Remove(const T& item)
-			{
-				if (m_buckets)
-				{
-					int hash = ComparerType::GetHashCode(item) & 2147483647;
-					int index = hash % m_bucketsLength;
-					int lastI = -1;
-					for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
-					{
-						if (m_entries[i].hashCode == hash && ComparerType::Equals(m_entries[i].data, item))
-						{
-							if (lastI < 0)
-							{
-								m_buckets[index] = m_entries[i].next;
-							}
-							else
-							{
-								m_entries[lastI].next = m_entries[i].next;
-							}
-							m_entries[i].hashCode = -1;
-							m_entries[i].next = m_freeList;
-							m_freeList = i;
-							m_freeCount++;
-							return true;
-						}
-						lastI = i;
-					}
-				}
-				return false;
-			}
-			bool Contains(const T& item) const
-			{
-				if (m_buckets)
-				{
-					int hash = ComparerType::GetHashCode(item) & 2147483647;
-					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
-					{
-						if (m_entries[i].hashCode == hash && ComparerType::Equals(m_entries[i].data, item))
-						{
-							return true;
-						}
-					}
-				}
-
-				return false;
-			}
-			void Resize(int32 newSize)
-			{
-				int primeCapacity = HashHelpers::GetPrime(newSize);
-				int* newBuckets = new int[primeCapacity];
-				for (int i = 0; i < primeCapacity; i++)
-				{
-					newBuckets[i] = -1;
-				}
-				Entry* newEntries = new Entry[primeCapacity];
-				//memcpy(destinationArray, m_entries, m_count * sizeof(Entry));
-				for (int j = 0; j < m_count; j++)
-				{
-					newEntries[j] = m_entries[j];
-					int index = newEntries[j].hashCode % primeCapacity;
-					newEntries[j].next = newBuckets[index];
-					newBuckets[index] = j;
-				}
-				delete[] m_buckets;
-				m_buckets = newBuckets;
-				m_bucketsLength = primeCapacity;
-				delete[] m_entries;
-				m_entries = newEntries;
-				m_entryLength = primeCapacity;
-			}
-			S& operator [](const T& key) const
-			{
-				int index = FindEntry(key);
-				if (index>=0)
-				{
-					return m_entries[index].value;
-				}
-				throw AP_EXCEPTION(ExceptID::KeyNotFound, HashHelpers::ToString(key));
-			}
-
-			bool TryGetValue(const T& key, S& value) const
-			{
-				int index = FindEntry(key);
-				if (index>=0)
-				{
-					value = m_entries[index].value;
-					return true;
-				}
-				return false;
-			}
-			S* TryGetValue(const T& key) const
-			{
-				int index = FindEntry(key);
-				if (index>=0)
-				{
-					return &m_entries[index].value;
-				}
-				return nullptr;
 			}
 
 			Enumerator GetEnumerator() const { return Enumerator(this); }
@@ -399,7 +550,6 @@ namespace Apoc3D
 					list.Add(e.getCurrentValue());
 			}
 
-			//////////////////////////////////////////////////////////////////////////
 			template <typename Func>
 			void ForEachAbortable(Func proc)
 			{
@@ -407,9 +557,9 @@ namespace Apoc3D
 					if (proc(e.getCurrentKey(), e.getCurrentValue()))
 						return;
 			}
-			template <bool (*proc)(const T& key, S& value)>
+			template <bool(*proc)(const T& key, S& value)>
 			void ForEachAbortable() { ForEachAbortable(proc); }
-			
+
 			template <typename Func>
 			void ForEachAbortableConst(Func proc) const
 			{
@@ -417,7 +567,7 @@ namespace Apoc3D
 					if (proc(e.getCurrentKey(), e.getCurrentValue()))
 						return;
 			}
-			template <bool (*proc)(const T& key, const S& value)>
+			template <bool(*proc)(const T& key, const S& value)>
 			void ForEachAbortableConst() const { ForEachAbortableConst(proc); }
 
 			template <typename Func>
@@ -426,7 +576,7 @@ namespace Apoc3D
 				for (Enumerator e = GetEnumerator(); e.MoveNext();)
 					proc(e.getCurrentKey(), e.getCurrentValue());
 			}
-			template <void (*proc)(const T& key, S& value)>
+			template <void(*proc)(const T& key, S& value)>
 			void ForEach() { ForEach(proc); }
 
 			template <typename Func>
@@ -435,7 +585,7 @@ namespace Apoc3D
 				for (Enumerator e = GetEnumerator(); e.MoveNext();)
 					proc(e.getCurrentKey(), e.getCurrentValue());
 			}
-			template <void (*proc)(const T& key, const S& value)>
+			template <void(*proc)(const T& key, const S& value)>
 			void ForEachConst() const { ForEachConst(proc); }
 
 			template <typename Func>
@@ -444,7 +594,7 @@ namespace Apoc3D
 				for (Enumerator e = GetEnumerator(); e.MoveNext();)
 					proc(e.getCurrentValue());
 			}
-			template <void (*proc)(const S& value)>
+			template <void(*proc)(const S& value)>
 			void ForEachValue() { ForEachValue(proc); }
 
 			template <typename Func>
@@ -453,7 +603,7 @@ namespace Apoc3D
 				for (Enumerator e = GetEnumerator(); e.MoveNext();)
 					proc(e.getCurrentValue());
 			}
-			template <void (*proc)(const S& value)>
+			template <void(*proc)(const S& value)>
 			void ForEachValueConst() const { ForEachValueConst(proc); }
 
 			//////////////////////////////////////////////////////////////////////////
@@ -462,99 +612,181 @@ namespace Apoc3D
 			ValueAccessor getValueAccessor() const { return ValueAccessor(this); }
 
 			Iterator begin() const { return Iterator(this); }
-			Iterator end() const { return Iterator(this, m_count + 1); }
+			Iterator end() const { return Iterator(this, m_touchedSlots + 1); }
 
-			int32 getPrimeCapacity() const { return m_entryLength; }
-			int32 getCount() const { return m_count - m_freeCount; }
-		private:
-			struct Entry
+		};
+
+		template <typename T, typename ComparerType = Apoc3D::Collections::EqualityComparer<T>>
+		class HashSet : public HashMapCore < T, Utils::HashMapEntry<T>, ComparerType >
+		{
+			typedef HashSet<T, ComparerType> HashSetType;			
+			typedef Utils::HashMapEntry<T> Entry;
+
+		public:
+			class Enumerator
 			{
-				int hashCode;
-				int next;
-				T data;
-				S value;
-			};
-
-			int* m_buckets;
-			int m_bucketsLength;
-			int m_count;
-
-			Entry* m_entries;
-			int m_entryLength;
-
-			int m_freeCount;
-			int m_freeList;
-
-			void Initialize(int capacity)
-			{
-				int primeCapacity = HashHelpers::GetPrime(capacity);
-				m_bucketsLength = primeCapacity;
-				m_buckets = new int[primeCapacity];
-				for (int i = 0; i < m_bucketsLength; i++)
+				friend class HashSet;
+			public:
+				bool MoveNext()
 				{
-					m_buckets[i] = -1;
-				}
-				m_entries = new Entry[primeCapacity];
-				m_entryLength = primeCapacity;
-				m_freeList = -1;
-			}
-
-			void Insert(const T& item, const S& value, bool add)
-			{
-				if (m_buckets == nullptr)
-				{
-					Initialize(0);
-				}
-				int hash = ComparerType::GetHashCode(item) & 2147483647;
-				int index = hash % m_bucketsLength;
-				for (int i = m_buckets[index]; i >= 0; i = m_entries[i].next)
-				{
-					if (m_entries[i].hashCode == hash && ComparerType::Equals(m_entries[i].data, item))
+					while (m_next < m_dict->m_touchedSlots)
 					{
-						if (add)
-							throw AP_EXCEPTION(ExceptID::Duplicate, HashHelpers::ToString(item));
-						m_entries[i].data = item;
-						return;
-					}
-				}
-				int freeList;
-				if (m_freeCount > 0)
-				{
-					freeList = m_freeList;
-					m_freeList = m_entries[freeList].next;
-					m_freeCount--;
-				}
-				else
-				{
-					if (m_count == m_entryLength)
-					{
-						Resize(m_count*2);
-						index = hash % m_bucketsLength;
-					}
-					freeList = m_count;
-					m_count++;
-				}
-				m_entries[freeList].hashCode = hash;
-				m_entries[freeList].next = m_buckets[index];
-				m_entries[freeList].data = item;
-				m_entries[freeList].value = value;
-				m_buckets[index] = freeList;
-			}
-			int FindEntry(const T& item) const
-			{
-				if (m_buckets)
-				{
-					int hash = ComparerType::GetHashCode(item) & 2147483647;
-					for (int i = m_buckets[hash % m_bucketsLength]; i >= 0; i = m_entries[i].next)
-					{
-						if (m_entries[i].hashCode == hash && ComparerType::Equals(m_entries[i].data, item))
+						int cur = m_next++;
+						if (m_dict->m_entries[cur].hashCode >= 0)
 						{
-							return i;
+							m_current = &m_dict->m_entries[cur].data;
+							return true;
 						}
 					}
+					m_next = m_dict->m_touchedSlots + 1;
+					m_current = nullptr;
+					return false;
 				}
-				return -1;
+
+				const T& getCurrent() const { return *m_current; }
+
+			private:
+				Enumerator(const HashSetType* dict)
+					: m_dict(dict), m_next(0), m_current(nullptr) { }
+
+				const HashSetType* m_dict;
+				int m_next;
+				const T* m_current;
+
+			};
+
+			class Iterator
+			{
+				friend class HashSet;
+			public:
+				const T& operator*() const
+				{
+					assert(m_next > 0 && m_next <= m_dict->m_touchedSlots);
+					Entry& e = m_dict->m_entries[m_next - 1];
+					return e.data;
+				}
+
+				Iterator& operator++()
+				{
+					MoveToNext();
+					return *this;
+				}
+				Iterator operator++(int) { Iterator result = *this; ++(*this); return result; }
+
+				bool operator==(const Iterator& rhs) const { return m_dict == rhs.m_dict && m_next == rhs.m_next; }
+				bool operator!=(const Iterator& rhs) const { return !this->operator==(rhs); }
+			private:
+
+				explicit Iterator(const HashSetType* dict)
+					: m_dict(dict), m_next(0)
+				{
+					MoveToNext();
+				}
+
+				Iterator(const HashSetType* dict, int idx)
+					: m_dict(dict), m_next(idx) { }
+
+
+				void MoveToNext()
+				{
+					while (m_next < m_dict->m_touchedSlots)
+					{
+						if (m_dict->m_entries[m_next++].hashCode >= 0)
+						{
+							return;
+						}
+					}
+					m_next = m_dict->m_touchedSlots + 1;
+				}
+
+				const HashSetType* m_dict;
+				int m_next;
+			};
+
+
+			HashSet()
+				: HashMapCore(0) { }
+			explicit HashSet(int capacity)
+				: HashMapCore(capacity) { }
+
+			HashSet(std::initializer_list<T> list)
+				: HashMapCore((int32)list.size())
+			{
+				if (list.size())
+				{
+					for (const T& e : list) Add(e);
+				}
 			}
+
+			~HashSet() { }
+
+			
+			HashSet(HashSet&& other)
+				: HashMapCore(std::move(other)) { }
+
+			HashSet& operator=(HashSet&& other)
+			{
+				HashMapCore::operator =(std::move(other));
+				return *this;
+			}
+
+			void Add(const T& item) { InsertEntry(item); }
+
+			Enumerator GetEnumerator() const { return Enumerator(this); }
+
+			void FillItems(List<T>& list) const
+			{
+				if (list.getCount() == 0)
+					list.ResizeDiscard(getCount());
+
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					list.Add(e.getCurrent());
+			}
+
+			template <typename Func>
+			void ForEachAbortable(Func proc)
+			{
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					if (proc(e.getCurrent()))
+						return;
+			}
+			template <bool(*proc)(const T& item)>
+			void ForEachAbortable() { ForEachAbortable(proc); }
+
+			template <typename Func>
+			void ForEachAbortableConst(Func proc) const
+			{
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					if (proc(e.getCurrent()))
+						return;
+			}
+			template <bool(*proc)(const T& item)>
+			void ForEachAbortableConst() const { ForEachAbortableConst(proc); }
+
+			template <typename Func>
+			void ForEach(Func proc)
+			{
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					proc(e.getCurrent());
+			}
+			template <void(*proc)(const T& item)>
+			void ForEach() { ForEach(proc); }
+
+			template <typename Func>
+			void ForEachConst(Func proc) const
+			{
+				for (Enumerator e = GetEnumerator(); e.MoveNext();)
+					proc(e.getCurrent());
+			}
+			template <void(*proc)(const T& item)>
+			void ForEachConst() const { ForEachConst(proc); }
+
+
+			//////////////////////////////////////////////////////////////////////////
+
+			Iterator begin() const { return Iterator(this); }
+			Iterator end() const { return Iterator(this, m_touchedSlots + 1); }
+		
 		};
 
 

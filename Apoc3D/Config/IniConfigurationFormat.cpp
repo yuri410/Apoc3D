@@ -45,22 +45,13 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		IniConfigurationFormat IniConfigurationFormat::Instance = IniConfigurationFormat();
-
-		
+		IniConfigurationFormat IniConfigurationFormat::Instance;
 
 		Configuration* IniConfigurationFormat::Load(const ResourceLocation& rl)
 		{
 			Configuration* config = new Configuration(rl.getName());
 
-			BinaryReader* br = new BinaryReader(rl);
-
-			int32 length = (int32)br->getBaseStream()->getLength();
-			char* rawBytes = new char[length+1];
-			rawBytes[length] = 0;
-			br->ReadBytes(rawBytes, length);
-
-			String allText = Encoding::ConvertRawData(rawBytes, length, Encoding::TEC_Unknown, true);
+			String allText = Encoding::ReadAllText(rl, Encoding::TEC_Unknown);
 
 			if (allText.size())
 			{
@@ -140,10 +131,6 @@ namespace Apoc3D
 				}
 			}
 
-			delete[] rawBytes;
-
-			br->Close();
-			delete br;
 			return config;
 		}
 		void IniConfigurationFormat::Save(Configuration* config, Stream* strm)
@@ -173,14 +160,8 @@ namespace Apoc3D
 				}
 			}
 
-			std::string utf8 = StringUtils::UTF16toUTF8(resultBuffer);
+			Encoding::WriteAllText(*strm, resultBuffer, Encoding::TEC_UTF8);
 
-			int32 bomLen;
-			const char* bom = GetEncodingBOM(Encoding::TEC_UTF8,bomLen);
-
-			if (bomLen>0)
-				strm->Write((const char*)bom, bomLen);
-			strm->Write((const char*)utf8.c_str(), utf8.length());
 
 			strm->Close();
 			delete strm;

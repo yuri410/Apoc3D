@@ -188,8 +188,8 @@ namespace Apoc3D
 			
 #define CONFIG_SECT_COMBINER_DECL(type, typeName) \
 			CONFIG_SECT_COMBINER_DECL_NOLIST(type, typeName); \
-			void Add##typeName(const String& key, const List<type>& v) { Add##typeName(key, v.getInternalPointer(), v.getCount()); } \
-			void AddAttribute##typeName(const String& name, const List<type>& v) { AddAttribute##typeName(name, v.getInternalPointer(), v.getCount()); }
+			void Add##typeName(const String& key, const List<type>& v) { Add##typeName(key, v.getElements(), v.getCount()); } \
+			void AddAttribute##typeName(const String& name, const List<type>& v) { AddAttribute##typeName(name, v.getElements(), v.getCount()); }
 
 			CONFIG_SECT_COMBINER_DECL(String, Strings);
 			CONFIG_SECT_COMBINER_DECL(float, Singles);

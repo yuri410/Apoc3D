@@ -1,8 +1,14 @@
 #include "TextData.h"
+#include "apoc3d/Collections/List.h"
+#include "apoc3d/IOLib/Streams.h"
+#include "apoc3d/IOLib/BinaryReader.h"
+#include "apoc3d/IOLib/BinaryWriter.h"
+#include "apoc3d/IOLib/IOUtils.h"
 #include "apoc3d/Library/ConvertUTF.h"
 #include "apoc3d/Utility/StringUtils.h"
-#include "apoc3d/IOLib/IOUtils.h"
 
+
+using namespace Apoc3D::Collections;
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -11,49 +17,45 @@ namespace Apoc3D
 	{
 		namespace Encoding
 		{
+			// For more info on BOM, check:
+			//  http://en.wikipedia.org/wiki/Byte_order_mark#Representations_of_byte_order_marks_by_encoding
+
+			static const byte utf8BOM[] = { 0xEF, 0xBB, 0xBF };
+			static const byte utf16leBOM[] = { 0xFF, 0xFE };
+			static const byte utf16beBOM[] = { 0xFE, 0xFF };
+			static const byte utf32leBOM[] = { 0xFF, 0xFE, 0x00, 0x00 };
+			static const byte utf32beBOM[] = { 0x00, 0x00, 0xFE, 0xFF };
+
+			struct BomType
+			{
+				const TextEncoding encodingType;
+				const byte* bom;
+				const int bomLength;
+
+				template <int32 N>
+				BomType(TextEncoding enc, const byte(&b)[N])
+					: encodingType(enc), bom(b), bomLength(N) { }
+			};
+
+			static const BomType bomList[] =
+			{
+				{ TEC_UTF8, utf8BOM },
+				{ TEC_UTF16LE, utf16leBOM },
+				{ TEC_UTF16BE, utf16beBOM },
+				{ TEC_UTF32LE, utf32leBOM },
+				{ TEC_UTF32BE, utf32beBOM }
+			};
+
 			TextEncoding FindEncodingByBOM(const char* bomData, int32 length, int32* bomLength)
 			{
-				// For more info, check:
-				//  http://en.wikipedia.org/wiki/Byte_order_mark#Representations_of_byte_order_marks_by_encoding
-
 				const byte* data = (const byte*)bomData;
 
-				if (length >= 2)
+				for (const BomType& bt : bomList)
 				{
-					if (data[0] == 0xFE && data[1] == 0xFF)
+					if (bt.bomLength <= length && memcmp(bt.bom, data, bt.bomLength) == 0)
 					{
-						if (bomLength) *bomLength = 2;
-						return TEC_UTF16BE;
-					}
-
-					if (data[1] == 0xFE && data[0] == 0xFF)
-					{
-						if (bomLength) *bomLength = 2;
-						return TEC_UTF16LE;
-					}
-				}
-
-				if (length >= 3)
-				{
-					if (data[0] == 0xEF && data[1] == 0xBB && data[2] == 0xBF)
-					{
-						if (bomLength) *bomLength = 3;
-						return TEC_UTF8;
-					}
-				}
-
-				if (length >= 4)
-				{
-					if (data[0] == 0x00 && data[1] == 0x00 && data[2] == 0xFE && data[3] == 0xFF)
-					{
-						if (bomLength) *bomLength = 4;
-						return TEC_UTF32BE;
-					}
-
-					if (data[0] == 0xFF && data[1] == 0xFE && data[2] == 0x00 && data[3] == 0x00)
-					{
-						if (bomLength) *bomLength = 4;
-						return TEC_UTF32LE;
+						if (bomLength) *bomLength = bt.bomLength;
+						return bt.encodingType;
 					}
 				}
 
@@ -71,39 +73,34 @@ namespace Apoc3D
 				return encoding;
 			}
 
-
 			const char* GetEncodingBOM(TextEncoding enc, int32& length)
 			{
 				length = 0;
+
 				switch (enc)
 				{
 				case Apoc3D::IO::Encoding::TEC_UTF8:
 					{
-						static byte utf8BOM[] = { 0xEF, 0xBB, 0xBF };
 						length = 3;
 						return (char*)utf8BOM;
 					}
 				case Apoc3D::IO::Encoding::TEC_UTF16LE:
 					{
-						static byte utf16leBOM[] = { 0xFF, 0xFE };
 						length = 2;
 						return (char*)utf16leBOM;
 					}
 				case Apoc3D::IO::Encoding::TEC_UTF16BE:
 					{
-						static byte utf16beBOM[] = { 0xFE, 0xFF };
 						length = 2;
 						return (char*)utf16beBOM;
 					}
 				case Apoc3D::IO::Encoding::TEC_UTF32LE:
 					{
-						static byte utf32leBOM[] = { 0xFF, 0xFE, 0x00, 0x00 };
 						length = 4;
 						return (char*)utf32leBOM;
 					}
 				case Apoc3D::IO::Encoding::TEC_UTF32BE:
 					{
-						static byte utf32beBOM[] = { 0x00, 0x00, 0xFE, 0xFF };
 						length = 4;
 						return (char*)utf32beBOM;
 					}
@@ -112,7 +109,9 @@ namespace Apoc3D
 				}
 			}
 
-			String ConvertRawData(const char* rawData, int32 length, TextEncoding encoding, bool checkBom)
+
+
+			String ConvertFromRawData(const char* rawData, int32 length, TextEncoding encoding, bool checkBom)
 			{
 				// skip BOM
 				if (checkBom || encoding == TEC_Unknown)
@@ -124,9 +123,7 @@ namespace Apoc3D
 					length -= bomLength;
 				}
 
-
 				const bool platformLittleEndian = isPlatformLittleEndian();
-
 
 				if (encoding == TEC_UTF8)
 				{
@@ -180,6 +177,112 @@ namespace Apoc3D
 				return asciiResult;
 			}
 
+			void ConvertToRawData(const String& text, TextEncoding encoding, bool includeBom, char*& dest, int32& destLength)
+			{
+				MemoryOutStream dataBuffer(text.size() * 3);
+				
+				ConvertToRawData(text, encoding, includeBom, dataBuffer);
+
+				destLength = (int32)dataBuffer.getLength();
+				dest = new char[destLength];
+				memcpy(dest, dataBuffer.getDataPointer(), destLength);
+			}
+
+			void ConvertToRawData(const String& text, TextEncoding encoding, bool includeBom, Stream& dest)
+			{
+				assert(encoding != TEC_Unknown);
+
+				if (includeBom)
+				{
+					int32 bomLen;
+					const char* bom = GetEncodingBOM(Encoding::TEC_UTF8, bomLen);
+
+					if (bomLen > 0)
+						dest.Write(bom, bomLen);
+				}
+
+				const bool platformLittleEndian = isPlatformLittleEndian();
+
+				switch (encoding)
+				{
+					case TEC_UTF8:
+					{
+						std::string utf8str = StringUtils::UTF16toUTF8(text);
+						dest.Write(utf8str.c_str(), utf8str.size());
+						break;
+					}
+					case TEC_UTF16BE:
+					case TEC_UTF16LE:
+					{
+						if ((platformLittleEndian && encoding == TEC_UTF16LE) || (!platformLittleEndian && encoding == TEC_UTF16BE))
+						{
+							dest.Write((const char*)text.c_str(), text.size() * sizeof(char16_t));
+						}
+						else
+						{
+							for (size_t i = 0; i < text.size(); i++)
+							{
+								char buf[sizeof(char16_t)];
+								ui16tomb_le(text[i], buf);
+								dest.Write(buf, sizeof(char16_t));
+							}
+						}
+						break;
+					}
+					case TEC_UTF32LE:
+					case TEC_UTF32BE:
+					{
+						String32 utf32Str = StringUtils::UTF16toUTF32(text);
+						if ((platformLittleEndian && encoding == TEC_UTF32LE) || (!platformLittleEndian && encoding == TEC_UTF32BE))
+						{
+							dest.Write((const char*)utf32Str.c_str(), utf32Str.size() * sizeof(char32_t));
+						}
+						else
+						{
+							for (size_t i = 0; i < utf32Str.size(); i++)
+							{
+								char buf[sizeof(char32_t)];
+								ui32tomb_le(text[i], buf);
+								dest.Write(buf, sizeof(char32_t));
+							}
+						}
+						break;
+					}
+					case TEC_ASCII:
+					{
+						for (size_t i = 0; i < text.size(); i++)
+							dest.WriteByte((char)text[i]);
+						break;
+					}
+					default:
+						assert(0);
+						break;
+				}
+			}
+
+
+			String ReadAllText(const VFS::ResourceLocation& rl, TextEncoding encoding)
+			{
+				BinaryReader br(rl);
+
+				int32 length = (int32)br.getBaseStream()->getLength();
+				char* rawBytes = new char[length + 1];
+				rawBytes[length] = 0;
+				br.ReadBytes(rawBytes, length);
+
+				String alltext = ConvertFromRawData(rawBytes, length, encoding, true);
+
+				delete[] rawBytes;
+				br.Close();
+
+				return alltext;
+			}
+			void WriteAllText(Stream& strm, const String& text, TextEncoding encoding)
+			{
+				assert(encoding != TEC_Unknown);
+
+				ConvertToRawData(text, encoding, true, strm);
+			}
 		}
 	}
 }

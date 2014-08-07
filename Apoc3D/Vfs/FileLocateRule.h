@@ -42,29 +42,19 @@ namespace Apoc3D
 		 */
 		class APAPI LocateCheckPoint
 		{
-		private:
-			struct Entry
-			{
-				String Path;
-				String ArchivePath;
-
-				Entry() { }
-				Entry(const String& path, const String& ap)
-				{
-					Path = path;
-					ArchivePath = ap;
-				}
-			};
-
-			List<Entry> pathList;
-			
 		public:	
-			/**
-			 *  [Obsolete] Indicates whether the file system should search for file in standard archive set when using this rule
-			 */
-			bool SearchesCurrectArchiveSet;
+			LocateCheckPoint() { }
+			LocateCheckPoint(std::initializer_list<String> list);
 
-			LocateCheckPoint() : SearchesCurrectArchiveSet(false) { }
+			LocateCheckPoint(LocateCheckPoint&& other)
+				: m_pathList(std::move(other.m_pathList)) { }
+
+			LocateCheckPoint& operator=(LocateCheckPoint&& rhs)
+			{
+				if (this != &rhs)
+					m_pathList = std::move(rhs.m_pathList);
+				return *this;
+			}
 
 			/**
 			 *  Add a check point path
@@ -73,16 +63,16 @@ namespace Apoc3D
 
 			void Clear()
 			{
-				pathList.Clear();
+				m_pathList.Clear();
 			}
 
 
 			/**
-			 *  Check if check point at index is pointed to a archvie file
+			 *  Check if check point at index is pointed to a archive file
 			 */
 			bool hasArchivePath(int index) const
 			{
-				return !!pathList[index].ArchivePath.length();
+				return m_pathList[index].ArchivePath.length() != 0;
 			}
 
 			/**
@@ -90,7 +80,7 @@ namespace Apoc3D
 			 */
 			const String& GetPath(int index) const
 			{
-				return pathList[index].Path;
+				return m_pathList[index].Path;
 			}
 
 			/**
@@ -98,7 +88,7 @@ namespace Apoc3D
 			 */
 			const String& GetArchivePath(int index) const
 			{
-				return pathList[index].ArchivePath;
+				return m_pathList[index].ArchivePath;
 			}
 
 			/**
@@ -106,12 +96,29 @@ namespace Apoc3D
 			 */
 			int getCount() const
 			{
-				return pathList.getCount();
+				return m_pathList.getCount();
 			}
 
+		private:
+			struct Entry
+			{
+				String Path;
+				String ArchivePath;
+
+				Entry() { }
+				Entry(Entry&& other)
+					: Path(std::move(other.Path)), ArchivePath(std::move(other.ArchivePath)) { }
+
+				Entry(const String& path, const String& ap)
+					: Path(path), ArchivePath(ap) { }
+
+				Entry(String&& path, String&& ap)
+					: Path(std::move(path)), ArchivePath(std::move(ap)) { }
+			};
+
+			List<Entry> m_pathList;
 		};
 
-		//template class APAPI vector<LocateCheckPoint>;
 
 		/**
 		 *  Defines the rule used for locate files in FileSystem.
@@ -135,14 +142,13 @@ namespace Apoc3D
 
 			List<LocateCheckPoint> pathChkPt;
 
-			FileLocateRule()
-			{
-			}
+			FileLocateRule() { }
+
+			FileLocateRule(std::initializer_list<LocateCheckPoint> checkPoints)
+				: pathChkPt(checkPoints) { }
 
 			FileLocateRule(const List<LocateCheckPoint>& checkPoints)
-				: pathChkPt(checkPoints)
-			{
-			}
+				: pathChkPt(checkPoints) { }
 
 			void AddCheckPoint(const LocateCheckPoint& coll)
 			{
@@ -153,7 +159,7 @@ namespace Apoc3D
 			{
 				return pathChkPt.getCount();
 			}
-			LocateCheckPoint getCheckPoint(int index) const
+			const LocateCheckPoint& getCheckPoint(int index) const
 			{
 				return pathChkPt[index];
 			}

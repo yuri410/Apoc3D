@@ -37,7 +37,7 @@ namespace Apoc3D
 		 *  It helps informing resources accessing records and the change of reference count.
 		 */
 		template <class ResType>
-		class ResourceHandle
+		class ResourceHandle final
 		{
 		public:
 			/**
@@ -59,7 +59,7 @@ namespace Apoc3D
 			static const byte FLGMIX_ReferenceWrapperHandle = FLG_Untouching | FLG_NoRefCounting;
 
 			ResourceHandle(ResType* res)
-				: m_resource(res), m_flags(0)
+				: m_resource(res)
 			{
 				_Ref();
 			}
@@ -74,21 +74,42 @@ namespace Apoc3D
 			{
 				_Ref();
 			}
+
+			ResourceHandle(ResourceHandle&& obj)
+				: m_resource(obj.m_resource), m_flags(obj.m_flags)
+			{
+				obj.m_resource = nullptr;
+				obj.m_flags = FLGMIX_ReferenceWrapperHandle;
+			}
+
 			ResourceHandle& operator =(const ResourceHandle& rhs)
 			{
-				if (&rhs == this)
-					return *this;
+				if (&rhs != this)
+				{
+					_Unref();
 
-				_Unref();
+					m_resource = rhs.m_resource;
+					m_flags = rhs.m_flags;
 
-				m_resource = rhs.m_resource;
-				m_flags = rhs.m_flags;
-
-				_Ref();
+					_Ref();
+				}
 				return *this;
 			}
 
-			virtual ~ResourceHandle()
+			ResourceHandle& operator=(ResourceHandle&& rhs)
+			{
+				if (&rhs != this)
+				{
+					m_resource = rhs.m_resource;
+					m_flags = rhs.m_flags;
+
+					rhs.m_resource = nullptr;
+					rhs.m_flags = FLGMIX_ReferenceWrapperHandle;
+				}
+				return *this;
+			}
+
+			~ResourceHandle()
 			{
 				_Unref();
 				
@@ -161,12 +182,11 @@ namespace Apoc3D
 				return m_resource;
 			}
 
-			bool shouldNotTouchResource() const { return (m_flags&FLG_Untouching)!=0; }
-			bool shouldNotUseRefCount() const { return (m_flags&FLG_NoRefCounting)!=0; }
+			bool shouldNotTouchResource() const { return (m_flags&FLG_Untouching) != 0; }
+			bool shouldNotUseRefCount() const { return (m_flags&FLG_NoRefCounting) != 0; }
 		private:
-			ResType* m_resource;
-
-			byte m_flags;
+			ResType* m_resource = nullptr;
+			byte m_flags = 0;
 
 			void _Ref( )
 			{
@@ -183,7 +203,6 @@ namespace Apoc3D
 				}
 			}
 
-		protected:
 		};
 	};
 };

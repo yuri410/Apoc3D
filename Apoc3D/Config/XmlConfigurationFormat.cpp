@@ -40,7 +40,7 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		XMLConfigurationFormat XMLConfigurationFormat::Instance = XMLConfigurationFormat();
+		XMLConfigurationFormat XMLConfigurationFormat::Instance;
 
 		Configuration* XMLConfigurationFormat::Load(const ResourceLocation& rl)
 		{
@@ -59,8 +59,8 @@ namespace Apoc3D
 		void XMLConfigurationFormat::Save(Configuration* config, Stream* strm)
 		{
 			TiXmlDocument doc;
-			TiXmlDeclaration* decl = new TiXmlDeclaration( "1.0", "", "" );  
-			doc.LinkEndChild( decl );  
+			TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "", "");
+			doc.LinkEndChild(decl);
 
 			TiXmlElement* root = new TiXmlElement("Root");
 			doc.LinkEndChild(root);
@@ -74,7 +74,6 @@ namespace Apoc3D
 			}
 
 			doc.Save(strm);
-			//doc.SaveFile(StringUtils::toString(filePath));
 		}
 
 		void XMLConfigurationFormat::BuildNode(Configuration* config, const TiXmlNode* node, ConfigurationSection* parent, const TiXmlDocument& doc)

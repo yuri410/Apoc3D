@@ -1583,7 +1583,7 @@ namespace Apoc3D
 			{
 				Entry* ent = &e.getCurrentValue();
 				MemoryOutStream* memBlock = ent->Buffer;
-				bw->Write(memBlock->getPointer(), memBlock->getLength());
+				bw->Write(memBlock->getDataPointer(), memBlock->getLength());
 			}
 
 			bw->Close();
@@ -1605,7 +1605,7 @@ namespace Apoc3D
 				}
 				else
 				{
-					const byte* data = reinterpret_cast<const byte*>(memBlock->getPointer());
+					const byte* data = reinterpret_cast<const byte*>(memBlock->getDataPointer());
 
 					for (int64 i=0;i<memBlock->getLength();i++)
 					{

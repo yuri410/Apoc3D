@@ -36,122 +36,114 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
+
 		/** 
 		 *  Defines methods to support the comparison of objects for equality.
 		 */
 		template<typename T>
-		struct EqualityComparer
+		struct EqualityComparerBase
 		{
 			/** 
 			 *  Determines whether the specified objects are equal.
 			 */
-			static bool Equals(const T& x, const T& y);
-			/** 
-			 *  Returns a hash code for the specified object.
-			 */
-			static int64 GetHashCode(const T& obj);
+			static bool Equals(const T& x, const T& y) { return x == y; }
+		};
+
+		template<typename T>
+		struct EqualityComparer : public EqualityComparerBase<T>
+		{
 		};
 
 		template <typename T>
-		struct EqualityComparer<T*>
+		struct EqualityComparer<T*> : public EqualityComparerBase<T*>
 		{
-			static bool Equals(T* const& x, T* const& y) { return x==y; }
-			static int64 GetHashCode(T* const& obj) { return static_cast<int64>(reinterpret_cast<uintptr>(obj)); }
+			/** 
+			 *  Returns a hash code for the specified object.
+			 */
+			static int32 GetHashCode(T* const& obj)
+			{
+				if (sizeof(T*) == sizeof(int32))
+					return static_cast<int32>(reinterpret_cast<uintptr>(obj));
+				
+				int64 av = static_cast<int64>(reinterpret_cast<uintptr>(obj));
+				return (int32)(av ^ (av >> 32));
+			}
+		};
+
+
+
+		template <>
+		struct EqualityComparer<uint64> : public EqualityComparerBase<uint64>
+		{
+			static int32 GetHashCode(const uint64& obj) { return (int32)(obj ^ (obj >> 32)); }
 		};
 
 		template <>
-		struct EqualityComparer<void*>
+		struct EqualityComparer<uint32> : public EqualityComparerBase<uint32>
 		{
-			static bool Equals(void* const& x, void* const& y) { return x==y; }
-			static int64 GetHashCode(void* const& obj) { return static_cast<int64>(reinterpret_cast<uintptr>(obj)); }
-		};
-
-
-		template <>
-		struct EqualityComparer<uint64>
-		{
-			static bool Equals(const uint64& x, const uint64& y) { return x == y; }
-			static int64 GetHashCode(const uint64& obj) { return static_cast<int64>(obj); }
+			static int32 GetHashCode(const uint32& obj) { return obj; }
 		};
 
 		template <>
-		struct EqualityComparer<uint32>
+		struct EqualityComparer<int32> : public EqualityComparerBase<int32>
 		{
-			static bool Equals(const uint32& x, const uint32& y) { return x == y; }
-			static int64 GetHashCode(const uint32& obj) { return obj; }
+			static int32 GetHashCode(const int32& obj) { return obj; }
 		};
 
 		template <>
-		struct EqualityComparer<int32>
+		struct EqualityComparer<wchar_t> : public EqualityComparerBase<wchar_t>
 		{
-			static bool Equals(const int32& x, const int32& y) { return x == y; }
-			static int64 GetHashCode(const int32& obj) { return obj; }
+			static int32 GetHashCode(const wchar_t& obj) { return obj; }
 		};
 
 		template <>
-		struct EqualityComparer<wchar_t>
+		struct APAPI EqualityComparer<std::string> : public EqualityComparerBase<std::string>
 		{
-			static bool Equals(const wchar_t& x, const wchar_t& y) { return x == y; }
-			static int64 GetHashCode(const wchar_t& obj) { return static_cast<int64>(obj); }
+			static int32 GetHashCode(const std::string& obj);
 		};
 
 		template <>
-		struct APAPI EqualityComparer<std::string>
+		struct APAPI EqualityComparer<String> : public EqualityComparerBase<String>
 		{
-			static bool Equals(const std::string& x, const std::string& y);
-			static int64 GetHashCode(const std::string& obj);
+			static int32 GetHashCode(const String& obj);
 		};
 
 		template <>
-		struct APAPI EqualityComparer<String>
+		struct APAPI EqualityComparer<Apoc3D::Math::Rectangle> : public EqualityComparerBase<Apoc3D::Math::Rectangle>
 		{
-			static bool Equals(const String& x, const String& y);
-			static int64 GetHashCode(const String& obj);
+			static int32 GetHashCode(const Apoc3D::Math::Rectangle& obj);
 		};
 
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Rectangle>
+		struct APAPI EqualityComparer<Apoc3D::Math::Size> : public EqualityComparerBase<Apoc3D::Math::Size>
 		{
-			static bool Equals(const Apoc3D::Math::Rectangle& x, const Apoc3D::Math::Rectangle& y);
-			static int64 GetHashCode(const Apoc3D::Math::Rectangle& obj);
+			static int32 GetHashCode(const Apoc3D::Math::Size& obj);
+		};
+		template <>
+		struct APAPI EqualityComparer<Apoc3D::Math::Point> : public EqualityComparerBase<Apoc3D::Math::Point>
+		{
+			static int32 GetHashCode(const Apoc3D::Math::Point& obj);
 		};
 
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Size>
+		struct APAPI EqualityComparer<Apoc3D::Math::PointF> : public EqualityComparerBase<Apoc3D::Math::PointF>
 		{
-			static bool Equals(const Apoc3D::Math::Size& x, const Apoc3D::Math::Size& y);
-			static int64 GetHashCode(const Apoc3D::Math::Size& obj);
+			static int32 GetHashCode(const Apoc3D::Math::PointF& obj);
 		};
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Point>
+		struct APAPI EqualityComparer<Apoc3D::Math::Vector2> : public EqualityComparerBase<Apoc3D::Math::Vector2>
 		{
-			static bool Equals(const Apoc3D::Math::Point& x, const Apoc3D::Math::Point& y);
-			static int64 GetHashCode(const Apoc3D::Math::Point& obj);
-		};
-
-		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::PointF>
-		{
-			static bool Equals(const Apoc3D::Math::PointF& x, const Apoc3D::Math::PointF& y);
-			static int64 GetHashCode(const Apoc3D::Math::PointF& obj);
+			static int32 GetHashCode(const Apoc3D::Math::Vector2& obj);
 		};
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Vector2>
+		struct APAPI EqualityComparer<Apoc3D::Math::Vector3> : public EqualityComparerBase<Apoc3D::Math::Vector3>
 		{
-			static bool Equals(const Apoc3D::Math::Vector2& x, const Apoc3D::Math::Vector2& y);
-			static int64 GetHashCode(const Apoc3D::Math::Vector2& obj);
+			static int32 GetHashCode(const Apoc3D::Math::Vector3& obj);
 		};
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Vector3>
+		struct APAPI EqualityComparer<Apoc3D::Math::Vector4> : public EqualityComparerBase<Apoc3D::Math::Vector4>
 		{
-			static bool Equals(const Apoc3D::Math::Vector3& x, const Apoc3D::Math::Vector3& y);
-			static int64 GetHashCode(const Apoc3D::Math::Vector3& obj);
-		};
-		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Vector4>
-		{
-			static bool Equals(const Apoc3D::Math::Vector4& x, const Apoc3D::Math::Vector4& y);
-			static int64 GetHashCode(const Apoc3D::Math::Vector4& obj);
+			static int32 GetHashCode(const Apoc3D::Math::Vector4& obj);
 		};
 
 		template <typename T>
@@ -162,19 +154,32 @@ namespace Apoc3D
 		}
 
 		template <typename T, typename S>
-		struct KeyValuePair
+		struct KeyPairValue
 		{
 			T Key;
 			S Value;
 
-			KeyValuePair() { }
-			KeyValuePair(T key, S val) 
-				: Key(key), Value(val) { }
+			KeyPairValue() { }
+			KeyPairValue(const T& key, const S& value) 
+				: Key(key), Value(value) { }
+
+			KeyPairValue(KeyPairValue&& other)
+				: Key(std::move(other.Key)), Value(std::move(other.Value)) { }
+
+			KeyPairValue& operator =(KeyPairValue&& other)
+			{
+				if (this != &other)
+				{
+					Key = std::move(other.Key);
+					Value = std::move(other.Value);
+				}
+				return *this;
+			}
 		};
 
-		namespace HashHelpers
+		namespace Utils
 		{
-			int APAPI GetPrime(int min);
+			int APAPI GetHashTableSize(int min);
 			bool APAPI IsPrime(int candidate);
 
 			template <typename T>
@@ -186,14 +191,22 @@ namespace Apoc3D
 			template <typename T>
 			String ToString(const T& item) { return _ToString<T>::Invoke(item); }
 
-			/*template<> String ToString<int16>(const int16& v);
-			template<> String ToString<int32>(const int32& v);
-			template<> String ToString<int64>(const int64& v);
+			
 
-			template<> String ToString<uint16>(const uint16& v);
-			template<> String ToString<uint32>(const uint32& v);
-			template<> String ToString<uint64>(const uint64& v);
-			*/
+			template <typename A>
+			struct HashMapEntry
+			{
+				int32 hashCode;
+				int32 next;
+				A data;
+			};
+
+			template <typename A, typename B>
+			struct HashMapEntryPair : public HashMapEntry < A >
+			{
+				B value;
+			};
+
 		};
 
 	}
