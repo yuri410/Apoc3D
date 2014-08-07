@@ -36,49 +36,10 @@ namespace Apoc3D
 
 		void FileLocateRule::Initialize()
 		{
-			{
-				LocateCheckPoint pt;
-				pt.AddPath(L"");
-
-				List<LocateCheckPoint> pts;
-				pts.Add(pt);
-
-				Default = FileLocateRule(pts);
-			}
-			
-			/********************************************************************************/
-			{
-				LocateCheckPoint pt;
-				pt.AddPath(L"textures");
-				pt.AddPath(L"textures.pak");
-
-				List<LocateCheckPoint> pts;
-				pts.Add(pt);
-
-				Textures = FileLocateRule(pts);
-			}
-			/********************************************************************************/
-			{
-				LocateCheckPoint pt;
-				pt.AddPath(L"effects");
-				pt.AddPath(L"effects.pak");
-
-				List<LocateCheckPoint> pts;
-				pts.Add(pt);
-
-				Effects = FileLocateRule(pts);
-			}
-			/********************************************************************************/
-			{
-				LocateCheckPoint pt;
-				pt.AddPath(L"materials");
-				pt.AddPath(L"materials.pak");
-
-				List<LocateCheckPoint> pts;
-				pts.Add(pt);
-
-				Materials = FileLocateRule(pts);
-			}
+			Default = { { L"" } };
+			Textures = { { L"textures", L"textures.pak" } };
+			Effects = { { L"effects", L"effects.pak" } };
+			Materials = { { L"materials", L"materials.pak" } };
 		}
 
 		LocateCheckPoint::LocateCheckPoint(std::initializer_list<String> list)
@@ -94,7 +55,7 @@ namespace Apoc3D
 			List<String> fullPath;
 			List<String> arcPath;
 
-			if (FileSystem::getSingleton().SplitExistingDirectories(path, fullPath, arcPath))
+			if (FileSystem::getSingleton().FindMatchingSplitDirectories(path, fullPath, arcPath))
 			{
 				for (int32 i = 0; i < fullPath.getCount(); i++)
 				{

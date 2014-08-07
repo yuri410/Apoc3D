@@ -190,23 +190,21 @@ namespace Apoc3D
 
 			void Add(const T& val)
 			{
-				if (m_length <= m_count)
-				{
-					Resize(m_length == 0 ? 4 : (m_length * 2));
-				}
-				else
-				{
-					EnsureElements();
-				}
-
+				EnsureElementIncrSize();
 				m_elements[m_count++] = val;
+			}
+
+			void Add(T&& val)
+			{
+				EnsureElementIncrSize();
+				m_elements[m_count++] = std::move(val);
 			}
 
 			template <int32 N>
 			void AddArray(const T (&val)[N]) { AddArray(val, N); }
 			void AddArray(const T* val, int32 count)
 			{
-				EnsureElementSize(count);
+				EnsureElementIncrSize(count);
 
 				for (int32 i = 0; i < count; i++)
 					m_elements[m_count++] = val[i];
@@ -215,7 +213,7 @@ namespace Apoc3D
 			void AddList(const List<T>& other) { AddArray(other.m_elements, other.m_count); }
 			void AddList(std::initializer_list<T> l)
 			{
-				EnsureElementSize((int32)l.size());
+				EnsureElementIncrSize((int32)l.size());
 
 				for (const T& e : l)
 					m_elements[m_count++] = e;
@@ -467,7 +465,19 @@ namespace Apoc3D
 				}
 			}
 
-			void EnsureElementSize(int32 count)
+			void EnsureElementIncrSize()
+			{
+				if (m_length <= m_count)
+				{
+					Resize(m_length == 0 ? 4 : (m_length * 2));
+				}
+				else
+				{
+					EnsureElements();
+				}
+			}
+
+			void EnsureElementIncrSize(int32 count)
 			{
 				int32 finalCount = m_count + count;
 				if (m_length < finalCount)

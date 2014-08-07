@@ -81,7 +81,7 @@ namespace Apoc3D
 
 			bool DirectoryExists(const String& path) const;
 			bool DirectoryExists(const String& path, String& result) const;
-			bool SplitExistingDirectories(const String& path, List<String>& result, List<String>& archivePath) const;
+			bool FindMatchingSplitDirectories(const String& path, List<String>& result, List<String>& archivePath) const;
 
 			void ListDirectoryFiles(const String& path, List<String>& subItems, String* dirPath = nullptr);
 			
@@ -119,7 +119,7 @@ namespace Apoc3D
 				return nullptr;
 			}
 
-			bool IsOpened(const String& filePath, Archive** entry);
+			bool ObtainOpenedArchive(const String& filePath, Archive*& entry);
 			void StoreNewArchive(const String& filePath, Archive* arc);
 
 			Archive* CreateArchive(const FileLocation& fl);

@@ -140,29 +140,48 @@ namespace Apoc3D
 			static FileLocateRule Default;
 			static FileLocateRule Materials;
 
-			List<LocateCheckPoint> pathChkPt;
-
 			FileLocateRule() { }
 
+			FileLocateRule(FileLocateRule&& other)
+				: m_pathChkPt(std::move(other.m_pathChkPt)) { }
+
 			FileLocateRule(std::initializer_list<LocateCheckPoint> checkPoints)
-				: pathChkPt(checkPoints) { }
+				: m_pathChkPt(checkPoints) { }
 
 			FileLocateRule(const List<LocateCheckPoint>& checkPoints)
-				: pathChkPt(checkPoints) { }
+				: m_pathChkPt(checkPoints) { }
+
+
+			FileLocateRule& operator=(FileLocateRule&& rhs)
+			{
+				if (this != &rhs)
+					m_pathChkPt = std::move(rhs.m_pathChkPt);
+				return *this;
+			}
+
+			FileLocateRule& operator=(std::initializer_list<LocateCheckPoint> checkPoints)
+			{
+				m_pathChkPt = checkPoints;
+				return *this;
+			}
+
 
 			void AddCheckPoint(const LocateCheckPoint& coll)
 			{
-				pathChkPt.Add(coll);
+				m_pathChkPt.Add(coll);
 			}
 
 			int getCount() const
 			{
-				return pathChkPt.getCount();
+				return m_pathChkPt.getCount();
 			}
 			const LocateCheckPoint& getCheckPoint(int index) const
 			{
-				return pathChkPt[index];
+				return m_pathChkPt[index];
 			}
+
+		private:
+			List<LocateCheckPoint> m_pathChkPt;
 		};
 	}
 }

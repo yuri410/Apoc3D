@@ -26,6 +26,8 @@
 #include "apoc3d/Vfs/FileLocateRule.h"
 
 #include <iostream>
+#include <chrono>
+#include <vector>
 
 using namespace Apoc3D;
 using namespace Apoc3D::Config;
@@ -44,6 +46,9 @@ void TestIni();
 void TestXml();
 
 void TestRandom();
+
+void TestIterator();
+
 
 void main()
 {
@@ -69,8 +74,8 @@ void main()
 	TestIni();
 	TestXml();
 
-	TestRandom();
-
+	//TestRandom();
+	TestIterator();
 	
 }
 
@@ -449,4 +454,146 @@ void TestRandom()
 
 	printf("Random Distribution: %.2f, %.2f, %.2f\n", rates[0]*10, rates[1]*10, rates[2]*10);
 
+}
+
+template<typename T>
+NoInline void DoNothing(volatile const T& e) 
+{
+	(void)e;
+	//volatile char r = *reinterpret_cast<const char*>(&e);
+	//volatile char r[sizeof(T)];
+	//for (int32 i = 0; i < sizeof(T); i++)
+		//r[i] = *(reinterpret_cast<const char*>(&e) + i);
+}
+
+NoInline int64 getTimeDiff(const volatile std::chrono::high_resolution_clock::time_point& t1,
+	const volatile std::chrono::high_resolution_clock::time_point& t2)
+{
+	using namespace std::chrono;
+
+	return duration_cast<milliseconds>(const_cast<high_resolution_clock::time_point&>(t2)-const_cast<high_resolution_clock::time_point&>(t1)).count();
+}
+
+void TestIterator()
+{
+	using namespace std::chrono;
+
+	const int Count = 10000000;
+	const int Iterations = 10;
+
+	HashMap<int, int> test1(Count);
+	HashSet<int> test2(Count);
+	List<int> test3(Count);
+	std::vector<int> test4(Count);
+
+	for (int32 i = 0; i < Count; i++)
+	{
+		test1.Add(i, i);
+		test2.Add(i);
+		test3.Add(i);
+		test4.push_back(i);
+	}
+
+	volatile int64 iterTime;
+	volatile int64 eterTime;
+	
+	if (1)
+	{
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int i = 0; i < Iterations;i++)
+			{
+				for (auto e = test1.GetEnumerator(); e.MoveNext();)
+					DoNothing(e);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			eterTime = getTimeDiff(t1, t2);
+		}
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int i = 0; i < Iterations; i++)
+			{
+				for (const auto& e : test1)
+					DoNothing(e);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			iterTime = getTimeDiff(t1, t2);
+		}
+		printf("HashMap: %lld,%lld\n", iterTime, eterTime);
+	}
+
+	if (1)
+	{
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int i = 0; i < Iterations; i++)
+			{
+				for (const auto& e : test2)
+					DoNothing(e);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			iterTime = getTimeDiff(t1, t2);
+		}
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int i = 0; i < Iterations; i++)
+			{
+				for (auto e = test2.GetEnumerator(); e.MoveNext();)
+					DoNothing(e);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			eterTime = getTimeDiff(t1, t2);
+		}
+		printf("HashSet: %lld,%lld\n", iterTime, eterTime);
+	}
+
+	if (1)
+	{
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int i = 0; i < Iterations; i++)
+			{
+				for (const auto& e : test3)
+					DoNothing(e);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			iterTime = getTimeDiff(t1, t2);
+		}
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int i = 0; i < Iterations; i++)
+			{
+				for (int32 i = 0; i < test3.getCount(); i++)
+					DoNothing(test3[i]);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			eterTime = getTimeDiff(t1, t2);
+		}
+		printf("List: %lld,%lld\n", iterTime, eterTime);
+	}
+
+	if (1)
+	{
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int i = 0; i < Iterations; i++)
+			{
+				for (const auto& e : test4)
+					DoNothing(e);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			iterTime = getTimeDiff(t1, t2);
+		}
+		{
+			volatile auto t1 = high_resolution_clock::now();
+			for (int i = 0; i < Iterations; i++)
+			{
+				for (size_t i = 0; i < test4.size(); i++)
+					DoNothing(test4[i]);
+			}
+			volatile auto t2 = high_resolution_clock::now();
+			eterTime = getTimeDiff(t1, t2);
+		}
+		printf("vector: %lld,%lld\n", iterTime, eterTime);
+	}
 }

@@ -202,13 +202,13 @@ namespace Apoc3D
 		String PathUtils::Combine(const String &path1, const String &path2)
 		{
 			size_t len1 = path1.length();
-			if (!len1)
+			if (len1 == 0)
 			{
 				return path2;
 			}
 			
 			size_t len2 = path2.length();
-			if (!len2)
+			if (len2 == 0)
 			{
 				return path1;
 			}
@@ -229,65 +229,7 @@ namespace Apoc3D
 				StringUtils::ToLowerCase(tmpStr);
 				StringUtils::ToLowerCase(tmpPattern);
 			}
-
-			String::const_iterator strIt = tmpStr.begin();
-			String::const_iterator patIt = tmpPattern.begin();
-			String::const_iterator lastWildCardIt = tmpPattern.end();
-			while (strIt != tmpStr.end() && patIt != tmpPattern.end())
-			{
-				if (*patIt == '*')
-				{
-					lastWildCardIt = patIt;
-					// Skip over looking for next character
-					++patIt;
-					if (patIt == tmpPattern.end())
-					{
-						// Skip right to the end since * matches the entire rest of the string
-						strIt = tmpStr.end();
-					}
-					else
-					{
-						// scan until we find next pattern character
-						while(strIt != tmpStr.end() && *strIt != *patIt)
-							++strIt;
-					}
-				}
-				else
-				{
-					if (*patIt != *strIt)
-					{
-						if (lastWildCardIt != tmpPattern.end())
-						{
-							// The last wildcard can match this incorrect sequence
-							// rewind pattern to wildcard and keep searching
-							patIt = lastWildCardIt;
-							lastWildCardIt = tmpPattern.end();
-						}
-						else
-						{
-							// no wildwards left
-							return false;
-						}
-					}
-					else
-					{
-						++patIt;
-						++strIt;
-					}
-				}
-
-			}
-			// If we reached the end of both the pattern and the string, we succeeded
-			if (patIt == tmpPattern.end() && strIt == tmpStr.end())
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		
-
+			return StringUtils::Match(tmpStr, tmpPattern);
 		}
 
 		bool PathUtils::ComparePath(const String& _left, const String& _right)
