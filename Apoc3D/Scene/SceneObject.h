@@ -41,7 +41,7 @@ namespace Apoc3D
 	{
 		class APAPI SceneObject : public Renderable
 		{
-			RTTI_UpcastableBase;
+			RTTI_BASE;
 		public:
 			SceneObject(const bool hasSubObjs = false) 
 				: m_hasSubObjects(hasSubObjs), m_parentNode(0), RequiresNodeUpdate(false)
@@ -93,7 +93,7 @@ namespace Apoc3D
 
 		class APAPI Entity : public SceneObject
 		{
-			RTTI_UpcastableDerived(Entity, SceneObject);
+			RTTI_DERIVED(Entity, SceneObject);
 		public:
 			bool Visible;
 			Vector3 BoundingSphereOffset;
@@ -141,7 +141,7 @@ namespace Apoc3D
 
 		class APAPI StaticObject : public Entity
 		{
-			RTTI_UpcastableDerived(StaticObject, Entity);
+			RTTI_DERIVED(StaticObject, Entity);
 		public:
 			StaticObject() { }
 			StaticObject(const Vector3& position, const Matrix& orientation);
@@ -150,7 +150,7 @@ namespace Apoc3D
 		};
 		class APAPI DynamicObject : public Entity
 		{
-			RTTI_UpcastableDerived(DynamicObject, Entity);
+			RTTI_DERIVED(DynamicObject, Entity);
 		public:
 			DynamicObject() { }
 			DynamicObject(const Vector3& position, const Matrix& orientation);

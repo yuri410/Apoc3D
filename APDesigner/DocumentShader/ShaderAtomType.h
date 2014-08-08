@@ -96,11 +96,11 @@ namespace APDesigner
 	 *
 	 *  This also provides all available shader output nodes.
 	 */
-	class ShaderAtomLibraryManager : public Singleton<ShaderAtomLibraryManager>
+	class ShaderAtomLibraryManager
 	{
+		SINGLETON_DECL(ShaderAtomLibraryManager);
 	public:
-		SINGLETON_DECL_HEARDER(APDesigner::ShaderAtomLibraryManager);
-
+		
 		typedef HashMap<String, ShaderAtomType*>::Enumerator LibraryEnumerator;
 
 		/** Load all atom types from give file.

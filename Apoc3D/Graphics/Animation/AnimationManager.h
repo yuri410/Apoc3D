@@ -27,7 +27,6 @@
  */
 
 
-#include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Core/ResourceManager.h"
 
 using namespace Apoc3D::Core;
@@ -51,15 +50,14 @@ namespace Apoc3D
 			 *  Actually, user can load AnimationData manually if this AnimationManager is felt tricky.
 			 *  locating a file and call Animation::Load will do the job, only few lines of code.
 			 */
-			class APAPI AnimationManager : public Singleton<AnimationManager>
+			class APAPI AnimationManager
 			{
+				SINGLETON_DECL(AnimationManager);
 			public:
 				AnimationManager();
 				~AnimationManager();
 
 				const AnimationData* CreateInstance(const ResourceLocation& rl);
-
-				SINGLETON_DECL_HEARDER(AnimationManager);
 
 			private:
 				AnimHashTable m_hashTable;

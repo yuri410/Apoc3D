@@ -32,12 +32,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Utility;
 
-SINGLETON_DECL(Apoc3D::Graphics::ModelManager);
-
 namespace Apoc3D
 {
 	namespace Graphics
 	{
+		SINGLETON_IMPL(ModelManager);
+
 		int64 ModelManager::CacheSize = 100 * 1048576;
 		bool ModelManager::UseCache = true;
 

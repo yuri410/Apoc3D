@@ -26,7 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "Singleton.h"
 #include "..\EventDelegate.h"
 
 using namespace Apoc3D::Collections;
@@ -97,8 +96,9 @@ namespace Apoc3D
 		/** 
 		 *  A singleton providing possibilities to log messages anywhere in the code.
 		 */
-		class APAPI LogManager : public Singleton<LogManager>
+		class APAPI LogManager
 		{
+			SINGLETON_DECL(LogManager);
 		public:
 			LogManager();
 			~LogManager();
@@ -109,9 +109,7 @@ namespace Apoc3D
 			void Write(LogType type, const String& message, LogMessageLevel level = LOGLVL_Infomation);
 
 			void DumpLogs(String& result);
-
-			SINGLETON_DECL_HEARDER(LogManager);
-
+			
 			bool WriteLogToStd;
 			NewLogWrittenHandler eventNewLogWritten;
 		private:

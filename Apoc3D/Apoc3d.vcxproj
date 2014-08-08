@@ -154,6 +154,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ApocMacros.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="Collections\EnumConverterHelper.h" />
     <ClInclude Include="Collections\List2D.h" />
@@ -190,7 +191,6 @@
     <ClInclude Include="Graphics\Camera.h" />
     <ClInclude Include="Core\CoreCommon.h" />
     <ClInclude Include="core\resource.h" />
-    <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="core\streaming\asyncprocessor.h" />
     <ClInclude Include="Graphics\LockData.h" />
     <ClInclude Include="Graphics\MaterialTypes.h" />
@@ -234,7 +234,6 @@
     <ClInclude Include="Platform\API.h" />
     <ClInclude Include="Platform\Thread.h" />
     <ClInclude Include="Project\Project.h" />
-    <ClInclude Include="RTTI.h" />
     <ClInclude Include="Scene\OctreeSceneManager.h" />
     <ClInclude Include="Scene\ScenePassTypes.h" />
     <ClInclude Include="Scene\SceneRenderScriptParser.h" />

@@ -31,7 +31,6 @@
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
 
-#include "Singleton.h"
 #include "..\EventDelegate.h"
 
 namespace Apoc3D
@@ -65,8 +64,9 @@ namespace Apoc3D
 		};
 
 		typedef EventDelegate2<String, Apoc3D::Collections::List<String>*> RawCommandHandler;
-		class APAPI CommandInterpreter : public Singleton<CommandInterpreter>
+		class APAPI CommandInterpreter
 		{
+			SINGLETON_DECL(CommandInterpreter);
 		public:
 			CommandInterpreter();
 			~CommandInterpreter();
@@ -77,8 +77,6 @@ namespace Apoc3D
 			void UnregisterCommand(const CommandDescription& cmd);
 
 			RawCommandHandler& eventCommandSubmited() { return m_eCommandSubmited; }
-
-			SINGLETON_DECL_HEARDER(CommandInterpreter);
 		private:
 
 

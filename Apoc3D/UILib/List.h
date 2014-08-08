@@ -36,7 +36,7 @@ namespace Apoc3D
 	{
 		class APAPI ListBox : public Control
 		{
-			RTTI_UpcastableDerived(ListBox, Control);
+			RTTI_DERIVED(ListBox, Control);
 		public:
 			ListBox(const Point& position, int width, int height, const List<String>& items);
 			~ListBox();
@@ -140,7 +140,7 @@ namespace Apoc3D
 
 		class APAPI TreeView : public Control
 		{
-			RTTI_UpcastableDerived(TreeView, Control);
+			RTTI_DERIVED(TreeView, Control);
 		public:
 			TreeView(const Point& position, int width, int height);
 			virtual ~TreeView();
@@ -209,7 +209,7 @@ namespace Apoc3D
 
 		class APAPI ListView : public Control
 		{
-			RTTI_UpcastableDerived(ListView, Control);
+			RTTI_DERIVED(ListView, Control);
 		public:
 			class Header
 			{

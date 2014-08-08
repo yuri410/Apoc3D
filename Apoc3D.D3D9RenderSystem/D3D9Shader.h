@@ -121,7 +121,7 @@ namespace Apoc3D
 				virtual void SetValue(const String& paramName, const int* value, int count);
 
 			protected:
-				NoInline static void ThrowKeyNotFoundEx(const String& name)
+				NO_INLINE static void ThrowKeyNotFoundEx(const String& name)
 				{
 					throw AP_EXCEPTION(ExceptID::KeyNotFound, name);
 				}

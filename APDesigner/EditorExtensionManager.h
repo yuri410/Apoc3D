@@ -67,12 +67,12 @@ namespace APDesigner
 	};*/
 
 
-	class EditorExtensionManager : public Apoc3D::Core::Singleton<EditorExtensionManager>
+	class EditorExtensionManager
 	{
+		SINGLETON_DECL(EditorExtensionManager);
+
 	public:
 		typedef HashMap<String, EditorExtension*>::Enumerator ExtensionEnumerator;
-
-		SINGLETON_DECL_HEARDER(EditorExtensionManager);
 
 		EditorExtension* FindSuitableExtension(const ProjectItem* item);
 		

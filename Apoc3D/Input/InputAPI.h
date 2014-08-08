@@ -26,7 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Platform/API.h"
@@ -67,11 +66,12 @@ namespace Apoc3D
 
 		};
 
-		class APAPI InputAPIManager : public Singleton<InputAPIManager>
+		class APAPI InputAPIManager
 		{
+			SINGLETON_DECL(InputAPIManager);
 		public:
 			InputAPIManager()
-				: m_mouse(0), m_keyboard(0)
+				: m_mouse(0), m_keyboard(0), m_selectedAPI(0)
 			{
 			}
 
@@ -89,7 +89,6 @@ namespace Apoc3D
 			Mouse* getMouse() const { return m_mouse; }
 			Keyboard* getKeyboard() const { return m_keyboard; }
 
-			SINGLETON_DECL_HEARDER(InputAPIManager);
 		private:
 			struct Entry
 			{
@@ -102,8 +101,6 @@ namespace Apoc3D
 			PlatformTable m_factories;
 
 			InputAPIFactory* m_selectedAPI;
-
-			static bool Comparison(const Entry& a, const Entry& b);
 
 			Mouse* m_mouse;
 			Keyboard* m_keyboard;

@@ -38,21 +38,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::IO;
 using namespace Apoc3D::Utility;
 
-SINGLETON_DECL(Apoc3D::UI::FontManager);
-
 namespace Apoc3D
 {
 	namespace UI
 	{
-		// compare Glyph by their width
-		int Font::qsort_comparer(const void* a, const void* b)
-		{
-			const Glyph* ga = reinterpret_cast<const Glyph*>(b);
-			const Glyph* gb = reinterpret_cast<const Glyph*>(a);
-
-			return Apoc3D::Collections::OrderComparer(ga->Width, gb->Width);
-		}
-
 		enum FontFlags
 		{
 			FF_None,
@@ -225,8 +214,15 @@ namespace Apoc3D
 				memcpy(tempList, m_glyphList, sizeof(Glyph) * glyphCount);
 
 				// sort glyphs from wider to thiner.
-				std::qsort(tempList, glyphCount, sizeof(Glyph), qsort_comparer);
-				
+				if (glyphCount>0)
+				{
+					QuickSort(tempList, 0, glyphCount - 1,
+						[](const Glyph& ga, const Glyph& gb)->int
+					{
+						return Apoc3D::Collections::OrderComparer(ga.Width, gb.Width);
+					});
+				}
+
 				m_isUsingCaching = false;
 
 				int buckY = 0;
@@ -697,16 +693,6 @@ namespace Apoc3D
 				DrawCharacter(sprite, ch, x, y, curColor.ToArgb(), 0,0,0, xOrig, true);
 			}
 		}
-
-#ifdef _MSC_VER
-#  define FORCE_INLINE __forceinline
-#else
-#  ifdef __GNUC__
-#    define FORCE_INLINE inline __attribute__((always_inline))
-#  else
-#    define FORCE_INLINE inline
-#  endif
-#endif
 
 		FORCE_INLINE void Font::DrawCharacter(Sprite* sprite, int32 ch, float& x, float& y, uint color, float hozShrink, float extLineSpace, float widthCap, float xOrig, bool pixelAligned)
 		{
@@ -1307,6 +1293,13 @@ namespace Apoc3D
 				}
 			}
 		}
+		
+		/************************************************************************/
+		/*  FontManager                                                         */
+		/************************************************************************/
+
+		SINGLETON_IMPL(FontManager);
+
 		int FontManager::MaxTextureSize = 1024;
 
 		FontManager::FontManager()

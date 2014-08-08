@@ -19,12 +19,12 @@ using namespace Apoc3D::Collections;
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::VFS;
 
-SINGLETON_DECL(Apoc3D::Core::CommandInterpreter);
-
 namespace Apoc3D
 {
 	namespace Core
 	{
+		SINGLETON_IMPL(CommandInterpreter);
+
 		/************************************************************************/
 		/*  Engine Built-in Commands                                            */
 		/************************************************************************/

@@ -31,12 +31,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D::Utility;
 using namespace Apoc3D::Graphics;
 
-SINGLETON_DECL(Apoc3D::Input::InputAPIManager);
-
 namespace Apoc3D
 {
 	namespace Input
 	{
+		SINGLETON_IMPL(InputAPIManager);
+
 		InputAPIManager::~InputAPIManager()
 		{
 			m_factories.DeleteValuesAndClear();
@@ -120,11 +120,6 @@ namespace Apoc3D
 			{
 				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Input API not registered");
 			}
-		}
-
-		bool InputAPIManager::Comparison(const Entry& a, const Entry& b)
-		{
-			return a.PlatformMark < b.PlatformMark;
 		}
 
 		void InputAPIManager::InitializeInput(RenderWindow* window, const InputCreationParameters& params)

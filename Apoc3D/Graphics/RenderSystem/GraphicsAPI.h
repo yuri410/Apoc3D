@@ -26,7 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Platform/API.h"
 
@@ -44,8 +43,21 @@ namespace Apoc3D
 			 *  Manages all registered graphics APIs. 
 			 *  Creates device content best suited for the platform.
 			 */
-			class APAPI GraphicsAPIManager : public Singleton<GraphicsAPIManager>
+			class APAPI GraphicsAPIManager
 			{
+				SINGLETON_DECL(GraphicsAPIManager);
+
+			public:
+				GraphicsAPIManager() { }
+			
+				virtual ~GraphicsAPIManager();
+
+				void RegisterGraphicsAPI(GraphicsAPIFactory* fac);
+				void UnregisterGraphicsAPI(const String& name);
+				void UnregisterGraphicsAPI(GraphicsAPIFactory* fac);
+				
+				DeviceContext* CreateDeviceContext();
+
 			private:
 				/**
 				 *  Obtains the information for each graphics API.h
@@ -61,20 +73,6 @@ namespace Apoc3D
 				typedef HashMap<String, APIList*> PlatformTable;
 				PlatformTable m_factories;
 				
-				static bool Comparison(const Entry& a, const Entry& b);
-
-			public:
-				GraphicsAPIManager() { }
-			
-				virtual ~GraphicsAPIManager();
-			public:
-				void RegisterGraphicsAPI(GraphicsAPIFactory* fac);
-				void UnregisterGraphicsAPI(const String& name);
-				void UnregisterGraphicsAPI(GraphicsAPIFactory* fac);
-				
-				DeviceContext* CreateDeviceContext();
-			
-				SINGLETON_DECL_HEARDER(GraphicsAPIManager);
 			};
 
 
@@ -83,14 +81,6 @@ namespace Apoc3D
 			 */
 			class APAPI GraphicsAPIFactory
 			{
-			private:
-				APIDescription m_description;
-
-			protected:
-				GraphicsAPIFactory(const APIDescription& desc)
-					: m_description(desc)
-				{ }
-
 			public:
 				const APIDescription& getDescription() const { return m_description; }
 
@@ -103,6 +93,16 @@ namespace Apoc3D
 				 *  Create the device content of the Graphics API.
 				 */
 				virtual DeviceContext* CreateDeviceContext() = 0;
+
+
+			protected:
+				GraphicsAPIFactory(const APIDescription& desc)
+					: m_description(desc)
+				{ }
+			private:
+				APIDescription m_description;
+
+
 			};
 		}
 	}

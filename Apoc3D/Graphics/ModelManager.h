@@ -27,7 +27,6 @@
  */
 
 #include "apoc3d/Core/ResourceManager.h"
-#include "apoc3d/Core/Singleton.h"
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -46,8 +45,9 @@ namespace Apoc3D
 		 *  way need to be taken care by the client code. Deleting is required when no longer used.
 		 *
 		 */
-		class APAPI ModelManager : public ResourceManager, public Singleton<ModelManager>
+		class APAPI ModelManager : public ResourceManager
 		{
+			SINGLETON_DECL(ModelManager);
 		public:
 			static int64 CacheSize;
 			static bool UseCache;
@@ -58,7 +58,6 @@ namespace Apoc3D
 			ModelSharedData* CreateInstanceUnmanaged(RenderDevice* renderDevice, const ResourceLocation& rl);
 			ResourceHandle<ModelSharedData>* CreateInstance(RenderDevice* renderDevice, const ResourceLocation& rl);
 			
-			SINGLETON_DECL_HEARDER(ModelManager);
 		};
 	}
 }

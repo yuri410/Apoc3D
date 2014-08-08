@@ -26,8 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "Singleton.h"
-
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Collections/HashMap.h"
 
@@ -44,8 +42,9 @@ namespace Apoc3D
 
 		/** A 
 		*/
-		class APAPI PluginManager : public Singleton<PluginManager>
+		class APAPI PluginManager
 		{
+			SINGLETON_DECL(PluginManager);
 		public:
 			PluginManager() { }
 			~PluginManager();
@@ -62,8 +61,6 @@ namespace Apoc3D
 			
 			const Plugin* getPlugin(const String& name) const;
 			
-			SINGLETON_DECL_HEARDER(PluginManager);
-
 		private:
 			typedef HashMap<String, Plugin*> PluginTable;
 			typedef List<Library*> LibraryList;

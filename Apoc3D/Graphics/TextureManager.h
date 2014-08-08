@@ -27,7 +27,6 @@
  */
 
 #include "apoc3d/Core/ResourceManager.h"
-#include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Graphics/PixelFormat.h"
 
 using namespace Apoc3D::Core;
@@ -46,8 +45,10 @@ namespace Apoc3D
 		 *  CreateUnmanagedInstance directly loads a texture; then return it. Instances created in this
 		 *  way need to be taken care by the client code. Deleting is required when no longer used.
 		 */
-		class APAPI TextureManager : public ResourceManager, public Singleton<TextureManager>
+		class APAPI TextureManager : public ResourceManager
 		{
+			SINGLETON_DECL(TextureManager);
+
 		public:
 			static int64 CacheSize;
 			static bool UseCache;
@@ -55,12 +56,10 @@ namespace Apoc3D
 			void SetRedirectLocation(FileLocation* fl);
 			
 			TextureManager();
-			~TextureManager(void);
+			~TextureManager();
 
 			Texture* CreateUnmanagedInstance(RenderDevice* rd, const FileLocation& fl, bool generateMips = false);
 			ResourceHandle<Texture>* CreateInstance(RenderDevice* rd, const FileLocation& fl, bool generateMips = false);
-
-			SINGLETON_DECL_HEARDER(TextureManager);
 
 		private:
 			FileLocation* m_redirectLocation;

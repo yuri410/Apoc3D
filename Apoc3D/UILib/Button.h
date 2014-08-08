@@ -38,7 +38,7 @@ namespace Apoc3D
 	{
 		class APAPI Button : public Control
 		{
-			RTTI_UpcastableDerived(Button, Control);
+			RTTI_DERIVED(Button, Control);
 		public:
 			Button(const Point& position, const String& text)
 				: Control(position, text), m_mouseOver(false), m_mouseDown(false),
@@ -132,7 +132,7 @@ namespace Apoc3D
 
 		class APAPI ButtonRow : public Control
 		{
-			RTTI_UpcastableDerived(ButtonRow, Control);
+			RTTI_DERIVED(ButtonRow, Control);
 		public:
 			typedef EventDelegate1<int> SelectedChangedHandler;
 
@@ -205,7 +205,7 @@ namespace Apoc3D
 
 		class APAPI ButtonGroup : public Control
 		{
-			RTTI_UpcastableDerived(ButtonGroup, Control);
+			RTTI_DERIVED(ButtonGroup, Control);
 		public:
 
 			ButtonGroup(const List<Button*> buttons);
@@ -234,7 +234,7 @@ namespace Apoc3D
 
 		class APAPI RadioButton : public Control
 		{
-			RTTI_UpcastableDerived(RadioButton, Control);
+			RTTI_DERIVED(RadioButton, Control);
 		public:
 			RadioButton(const Point& position, const String& text, bool checked);
 			~RadioButton() { }

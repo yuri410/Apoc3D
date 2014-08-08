@@ -34,7 +34,7 @@ namespace Apoc3D
 	{
 		class APAPI HScrollbar : public Control
 		{
-			RTTI_UpcastableDerived(HScrollbar, Control);
+			RTTI_DERIVED(HScrollbar, Control);
 		public:
 			HScrollbar(const Point& position, int width);
 			virtual ~HScrollbar();
@@ -87,7 +87,7 @@ namespace Apoc3D
 		};
 		class APAPI VScrollBar : public Control
 		{
-			RTTI_UpcastableDerived(VScrollBar, Control);
+			RTTI_DERIVED(VScrollBar, Control);
 		public:
 			VScrollBar(const Point& position, int width);
 			~VScrollBar();
@@ -141,7 +141,7 @@ namespace Apoc3D
 
 		class APAPI ScrollBar : public Control
 		{
-			RTTI_UpcastableDerived(ScrollBar, Control);
+			RTTI_DERIVED(ScrollBar, Control);
 		public:
 			enum ScrollBarType
 			{

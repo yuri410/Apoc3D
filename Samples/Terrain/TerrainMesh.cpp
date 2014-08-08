@@ -2,8 +2,6 @@
 
 #include "Terrain.h"
 
-SINGLETON_DECL(SampleTerrain::TerrainMeshManager);
-
 namespace SampleTerrain
 {
 	struct TerrainVertex
@@ -26,7 +24,7 @@ namespace SampleTerrain
 
 
 	TerrainMesh::TerrainMesh(RenderDevice* rd, int bx, int bz, int size)
-		: Resource(TerrainMeshManager::getSingletonPtr(), TerrainMesh::GetHashString(bx,bz,size)), m_device(rd),
+		: Resource(&TerrainMeshManager::getSingleton(), TerrainMesh::GetHashString(bx,bz,size)), m_device(rd),
 		m_edgeVertexCount(size+1),
 		m_vertexBuffer(0), m_vtxDecl(0),
 		m_bx(bx), m_bz(bz), m_material(rd)
@@ -188,6 +186,9 @@ namespace SampleTerrain
 	/************************************************************************/
 	/*                                                                      */
 	/************************************************************************/
+
+	SINGLETON_IMPL(TerrainMeshManager);
+
 	TerrainMeshManager::TerrainMeshManager()
 		: ResourceManager(L"TerrainMeshManager Manager ", 32 * 1048576, true)
 	{

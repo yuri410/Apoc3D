@@ -52,7 +52,7 @@ namespace Apoc3D
 			}
 		}
 		ModelSharedData::ModelSharedData(RenderDevice* device, const ResourceLocation& rl, bool managed)
-			: Resource(managed ? ModelManager::getSingletonPtr():0, rl.getName()), m_renderDevice(device), m_resourceLocation(rl.Clone())
+			: Resource(managed ? &ModelManager::getSingleton():0, rl.getName()), m_renderDevice(device), m_resourceLocation(rl.Clone())
 		{
 			if (!managed)
 			{

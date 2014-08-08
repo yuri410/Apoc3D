@@ -40,7 +40,7 @@ namespace Apoc3D
 		namespace RenderSystem
 		{
 			Texture::Texture(RenderDevice* device, const ResourceLocation& rl, TextureUsage usage, bool managed)
-				: Resource(managed ? TextureManager::getSingletonPtr() : 0, rl.getName()),
+				: Resource(managed ? &TextureManager::getSingleton() : 0, rl.getName()),
 				m_renderDevice(device), m_resourceLocation(rl.Clone()), m_usage(usage),
 				m_levelCount(0), m_width(0), m_height(0), m_depth(0), 
 				m_format(FMT_Unknown), m_type(TT_Texture2D), m_contentSize(0),

@@ -108,7 +108,7 @@ namespace Apoc3D
 	 */
 	class APAPI ProjectItemData
 	{
-		RTTI_UpcastableBase;
+		RTTI_BASE;
 	public:
 		virtual ProjectItemType getType() const = 0;
 		
@@ -147,7 +147,7 @@ namespace Apoc3D
 	};
 	class APAPI ProjectCustomItem : public ProjectItemData
 	{
-		RTTI_UpcastableDerived(ProjectCustomItem, ProjectItemData);
+		RTTI_DERIVED(ProjectCustomItem, ProjectItemData);
 	public:
 		ProjectCustomItem(Project* prj)
 			: ProjectItemData(prj)
@@ -177,7 +177,7 @@ namespace Apoc3D
 	 */
 	class APAPI ProjectResource : public ProjectItemData
 	{
-		RTTI_UpcastableDerived(ProjectResource, ProjectItemData);
+		RTTI_DERIVED(ProjectResource, ProjectItemData);
 	protected:
 		ProjectResource(Project* prj)
 			: ProjectItemData(prj)
@@ -193,7 +193,7 @@ namespace Apoc3D
 	 */
 	class APAPI ProjectFolder : public ProjectItemData
 	{
-		RTTI_UpcastableDerived(ProjectFolder, ProjectItemData);
+		RTTI_DERIVED(ProjectFolder, ProjectItemData);
 	public:
 		String PackType;
 		String DestinationPack;
@@ -232,7 +232,7 @@ namespace Apoc3D
 	 */
 	class APAPI ProjectResTexture : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResTexture, ProjectResource);
+		RTTI_DERIVED(ProjectResTexture, ProjectResource);
 	public:
 		ProjectResTexture(Project* prj)
 			: ProjectResource(prj)
@@ -274,7 +274,7 @@ namespace Apoc3D
 
 	class APAPI ProjectResMaterial : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResMaterial, ProjectResource);
+		RTTI_DERIVED(ProjectResMaterial, ProjectResource);
 	public:
 		ProjectResMaterial(Project* prj)
 			: ProjectResource(prj)
@@ -296,7 +296,7 @@ namespace Apoc3D
 
 	class APAPI ProjectResMaterialSet : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResMaterialSet, ProjectResource);
+		RTTI_DERIVED(ProjectResMaterialSet, ProjectResource);
 	public:
 		ProjectResMaterialSet(Project* prj)
 			: ProjectResource(prj)
@@ -326,7 +326,7 @@ namespace Apoc3D
 	 */
 	class APAPI ProjectResModel : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResModel, ProjectResource);
+		RTTI_DERIVED(ProjectResModel, ProjectResource);
 	public:
 		ProjectResModel(Project* prj)
 			: ProjectResource(prj)
@@ -358,7 +358,7 @@ namespace Apoc3D
 	
 	class APAPI ProjectResEffect : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResEffect, ProjectResource);
+		RTTI_DERIVED(ProjectResEffect, ProjectResource);
 	public:
 		ProjectResEffect(Project* prj)
 			: ProjectResource(prj)
@@ -391,7 +391,7 @@ namespace Apoc3D
 	};
 	class APAPI ProjectResCustomEffect : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResCustomEffect, ProjectResource);
+		RTTI_DERIVED(ProjectResCustomEffect, ProjectResource);
 	public:
 		ProjectResCustomEffect(Project* prj)
 			: ProjectResource(prj)
@@ -417,7 +417,7 @@ namespace Apoc3D
 	};
 	class APAPI ProjectResEffectList : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResEffectList, ProjectResource);
+		RTTI_DERIVED(ProjectResEffectList, ProjectResource);
 	public:
 		ProjectResEffectList(Project* prj)
 			: ProjectResource(prj)
@@ -439,7 +439,7 @@ namespace Apoc3D
 
 	class APAPI ProjectResShaderNetwork : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResShaderNetwork, ProjectResource);
+		RTTI_DERIVED(ProjectResShaderNetwork, ProjectResource);
 	public:
 		ProjectResShaderNetwork(Project* prj)
 			: ProjectResource(prj)
@@ -467,7 +467,7 @@ namespace Apoc3D
 	 */
 	class APAPI ProjectResFont : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResFont, ProjectResource);
+		RTTI_DERIVED(ProjectResFont, ProjectResource);
 	public:
 		ProjectResFont(Project* prj)
 			: ProjectResource(prj)
@@ -499,7 +499,7 @@ namespace Apoc3D
 
 	class APAPI ProjectResFontGlyphDist : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResFontGlyphDist, ProjectResource);
+		RTTI_DERIVED(ProjectResFontGlyphDist, ProjectResource);
 	public:
 		ProjectResFontGlyphDist(Project* prj)
 			: ProjectResource(prj)
@@ -522,7 +522,7 @@ namespace Apoc3D
 
 	class APAPI ProjectResTAnim : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResTAnim, ProjectResource);
+		RTTI_DERIVED(ProjectResTAnim, ProjectResource);
 	public:
 		ProjectResTAnim(Project* prj)
 			: ProjectResource(prj)
@@ -548,7 +548,7 @@ namespace Apoc3D
 
 	class APAPI ProjectResMAnim : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResMAnim, ProjectResource);
+		RTTI_DERIVED(ProjectResMAnim, ProjectResource);
 	public:
 		ProjectResMAnim(Project* prj)
 			: ProjectResource(prj)
@@ -571,7 +571,7 @@ namespace Apoc3D
 
 	class APAPI ProjectResUILayout : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResUILayout, ProjectResource);
+		RTTI_DERIVED(ProjectResUILayout, ProjectResource);
 	public:
 		ProjectResUILayout(Project* prj)
 			: ProjectResource(prj)
@@ -595,7 +595,7 @@ namespace Apoc3D
 
 	class APAPI ProjectResCopy : public ProjectResource
 	{
-		RTTI_UpcastableDerived(ProjectResCopy, ProjectResource);
+		RTTI_DERIVED(ProjectResCopy, ProjectResource);
 	public:
 		ProjectResCopy(Project* prj)
 			: ProjectResource(prj)

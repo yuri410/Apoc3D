@@ -27,14 +27,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/ResourceLocation.h"
 #include "AnimationData.h"
 
-SINGLETON_DECL(Apoc3D::Graphics::Animation::AnimationManager);
-
 namespace Apoc3D
 {
 	namespace Graphics
 	{
 		namespace Animation
 		{
+			SINGLETON_IMPL(AnimationManager);
 
 			AnimationManager::AnimationManager(void)
 			{

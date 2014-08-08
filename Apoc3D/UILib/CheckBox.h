@@ -37,7 +37,7 @@ namespace Apoc3D
 	{
 		class APAPI CheckBox : public Control
 		{
-			RTTI_UpcastableDerived(CheckBox, Control);
+			RTTI_DERIVED(CheckBox, Control);
 		public:
 			CheckBox(const Point& position, const String& text, bool checked);
 			virtual ~CheckBox();
@@ -70,7 +70,7 @@ namespace Apoc3D
 
 		class APAPI CheckboxGroup : public Control
 		{
-			RTTI_UpcastableDerived(CheckboxGroup, Control);
+			RTTI_DERIVED(CheckboxGroup, Control);
 		public:
 			CheckboxGroup(const List<CheckBox*>& checkbox);
 			virtual ~CheckboxGroup();

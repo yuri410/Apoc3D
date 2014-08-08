@@ -48,7 +48,7 @@ namespace Apoc3D
 	{
 		class APAPI Control
 		{
-			RTTI_UpcastableBase;
+			RTTI_BASE;
 		public:
 			Control()
 				: Position(Point::Zero), Size(0,0), m_owner(0), m_skin(0), Enabled(true), Visible(true), UserData(0), m_fontRef(0)
@@ -180,7 +180,7 @@ namespace Apoc3D
 
 		class APAPI ControlContainer : public Control
 		{
-			RTTI_UpcastableDerived(ControlContainer, Control);
+			RTTI_DERIVED(ControlContainer, Control);
 		public:
 			ControlContainer();
 			virtual ~ControlContainer();

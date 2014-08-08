@@ -37,7 +37,7 @@ namespace Apoc3D
 	{
 		class APAPI ComboBox : public Control
 		{
-			RTTI_UpcastableDerived(ComboBox, Control);
+			RTTI_DERIVED(ComboBox, Control);
 		public:
 			ComboBox(const Point& position, int width, const List<String>& items);
 			virtual ~ComboBox();

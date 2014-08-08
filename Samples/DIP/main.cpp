@@ -71,7 +71,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	Engine::Initialize(&escon);
 
 	PakArchiveFactory* pakSupport = new PakArchiveFactory();
-	FileSystem::getSingletonPtr()->RegisterArchiveType(pakSupport);
+	FileSystem::getSingleton().RegisterArchiveType(pakSupport);
 
 	DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();
 
@@ -100,7 +100,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 
 	delete devContent;
 
-	FileSystem::getSingletonPtr()->UnregisterArchiveType(pakSupport);
+	FileSystem::getSingleton().UnregisterArchiveType(pakSupport);
 	delete pakSupport;
 
 	Engine::Shutdown();

@@ -35,12 +35,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 using namespace Apoc3D::Utility;
 
-SINGLETON_DECL(Apoc3D::Config::ConfigurationManager);
-
 namespace Apoc3D
 {
 	namespace Config
 	{
+		SINGLETON_IMPL(ConfigurationManager);
+
 		ConfigurationManager::ConfigurationManager()
 		{
 			RegisterFormat(new ABCConfigurationFormat());

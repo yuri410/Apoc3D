@@ -75,8 +75,10 @@ namespace SampleTerrain
 	 *  Index data for the LODs are prepared for using as a shared resources. So did the tree models,
 	 *  which does not have artist-created animations to necessarily load 1 model per-instance.
 	 */
-	class TerrainMeshManager : public ResourceManager, public Singleton<TerrainMeshManager>
+	class TerrainMeshManager : public ResourceManager
 	{
+		SINGLETON_DECL(TerrainMeshManager);
+
 	public:
 		TerrainMeshManager();
 		~TerrainMeshManager();
@@ -89,8 +91,6 @@ namespace SampleTerrain
 		Model* getTreeModelByLOD(int lod) const;
 		SharedIndexData* getIndexData(int size) const;
 		ResourceHandle<Texture>* getTexture(int id) const { return m_textures[id]; }
-
-		SINGLETON_DECL_HEARDER(TerrainMeshManager);
 
 	private:
 		Model* m_tree[4];

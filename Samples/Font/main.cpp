@@ -77,7 +77,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 
 	// pak file support should be manually added to the file system. Apoc3DEx (Apoc3D.Essentials) will use it for the 'system.pak' file.
 	PakArchiveFactory* pakSupport = new PakArchiveFactory();
-	FileSystem::getSingletonPtr()->RegisterArchiveType(pakSupport);
+	FileSystem::getSingleton().RegisterArchiveType(pakSupport);
 
 	// now move on the creation of render window
 	DeviceContext* devContent =  GraphicsAPIManager::getSingleton().CreateDeviceContext();
@@ -114,7 +114,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT cmdShow)
 	delete devContent;
 
 	// unregister pakSupport before deleting it.
-	FileSystem::getSingletonPtr()->UnregisterArchiveType(pakSupport);
+	FileSystem::getSingleton().UnregisterArchiveType(pakSupport);
 	delete pakSupport;
 
 	Engine::Shutdown();

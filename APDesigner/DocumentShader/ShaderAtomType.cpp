@@ -25,7 +25,6 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "ShaderAtomType.h"
 #include "ShaderDataIO.h"
 
-SINGLETON_DECL(APDesigner::ShaderAtomLibraryManager);
 
 namespace APDesigner
 {
@@ -178,6 +177,8 @@ namespace APDesigner
 	/************************************************************************/
 	/*  ShaderAtomLibraryManager                                            */
 	/************************************************************************/
+
+	SINGLETON_IMPL(ShaderAtomLibraryManager);
 
 	void ShaderAtomLibraryManager::Load(const FileLocation& fl)
 	{

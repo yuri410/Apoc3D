@@ -36,30 +36,25 @@ namespace Apoc3D
 {
 	namespace Collections
 	{
-
-		/** 
-		 *  Defines methods to support the comparison of objects for equality.
-		 */
 		template<typename T>
-		struct EqualityComparerBase
+		struct EqualityComparer
 		{
 			/** 
 			 *  Determines whether the specified objects are equal.
 			 */
 			static bool Equals(const T& x, const T& y) { return x == y; }
-		};
-
-		template<typename T>
-		struct EqualityComparer : public EqualityComparerBase<T>
-		{
-		};
-
-		template <typename T>
-		struct EqualityComparer<T*> : public EqualityComparerBase<T*>
-		{
+			
 			/** 
 			 *  Returns a hash code for the specified object.
 			 */
+			static int32 GetHashCode(T* const& obj);
+		};
+
+		template <typename T>
+		struct EqualityComparer<T*>
+		{
+			static bool Equals(T* const& x, T* const& y) { return x == y; }
+
 			static int32 GetHashCode(T* const& obj)
 			{
 				if (sizeof(T*) == sizeof(int32))
@@ -73,76 +68,89 @@ namespace Apoc3D
 
 
 		template <>
-		struct EqualityComparer<uint64> : public EqualityComparerBase<uint64>
+		struct EqualityComparer<uint64>
 		{
+			static bool Equals(const uint64& x, const uint64& y) { return x == y; }
 			static int32 GetHashCode(const uint64& obj) { return (int32)(obj ^ (obj >> 32)); }
 		};
 
 		template <>
-		struct EqualityComparer<uint32> : public EqualityComparerBase<uint32>
+		struct EqualityComparer<uint32>
 		{
+			static bool Equals(const uint32& x, const uint32& y) { return x == y; }
 			static int32 GetHashCode(const uint32& obj) { return obj; }
 		};
 
 		template <>
-		struct EqualityComparer<int32> : public EqualityComparerBase<int32>
+		struct EqualityComparer<int32>
 		{
+			static bool Equals(const int32& x, const int32& y) { return x == y; }
 			static int32 GetHashCode(const int32& obj) { return obj; }
 		};
 
 		template <>
-		struct EqualityComparer<wchar_t> : public EqualityComparerBase<wchar_t>
+		struct EqualityComparer<wchar_t>
 		{
+			static bool Equals(const wchar_t& x, const wchar_t& y) { return x == y; }
 			static int32 GetHashCode(const wchar_t& obj) { return obj; }
 		};
 
 		template <>
-		struct APAPI EqualityComparer<std::string> : public EqualityComparerBase<std::string>
+		struct APAPI EqualityComparer<std::string>
 		{
+			static bool Equals(const std::string& x, const std::string& y);
 			static int32 GetHashCode(const std::string& obj);
 		};
 
 		template <>
-		struct APAPI EqualityComparer<String> : public EqualityComparerBase<String>
+		struct APAPI EqualityComparer<String>
 		{
+			static bool Equals(const String& x, const String& y);
 			static int32 GetHashCode(const String& obj);
 		};
 
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Rectangle> : public EqualityComparerBase<Apoc3D::Math::Rectangle>
+		struct APAPI EqualityComparer<Apoc3D::Math::Rectangle>
 		{
+			static bool Equals(const Apoc3D::Math::Rectangle& x, const Apoc3D::Math::Rectangle& y);
 			static int32 GetHashCode(const Apoc3D::Math::Rectangle& obj);
 		};
 
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Size> : public EqualityComparerBase<Apoc3D::Math::Size>
+		struct APAPI EqualityComparer<Apoc3D::Math::Size>
 		{
+			static bool Equals(const Apoc3D::Math::Size& x, const Apoc3D::Math::Size& y);
 			static int32 GetHashCode(const Apoc3D::Math::Size& obj);
 		};
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Point> : public EqualityComparerBase<Apoc3D::Math::Point>
+		struct APAPI EqualityComparer<Apoc3D::Math::Point>
 		{
+			static bool Equals(const Apoc3D::Math::Point& x, const Apoc3D::Math::Point& y);
 			static int32 GetHashCode(const Apoc3D::Math::Point& obj);
 		};
 
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::PointF> : public EqualityComparerBase<Apoc3D::Math::PointF>
+		struct APAPI EqualityComparer<Apoc3D::Math::PointF>
 		{
+			static bool Equals(const Apoc3D::Math::PointF& x, const Apoc3D::Math::PointF& y);
 			static int32 GetHashCode(const Apoc3D::Math::PointF& obj);
 		};
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Vector2> : public EqualityComparerBase<Apoc3D::Math::Vector2>
+		struct APAPI EqualityComparer<Apoc3D::Math::Vector2>
 		{
+			static bool Equals(const Apoc3D::Math::Vector2& x, const Apoc3D::Math::Vector2& y);
 			static int32 GetHashCode(const Apoc3D::Math::Vector2& obj);
 		};
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Vector3> : public EqualityComparerBase<Apoc3D::Math::Vector3>
+		struct APAPI EqualityComparer<Apoc3D::Math::Vector3>
 		{
+			static bool Equals(const Apoc3D::Math::Vector3& x, const Apoc3D::Math::Vector3& y);
 			static int32 GetHashCode(const Apoc3D::Math::Vector3& obj);
 		};
 		template <>
-		struct APAPI EqualityComparer<Apoc3D::Math::Vector4> : public EqualityComparerBase<Apoc3D::Math::Vector4>
+		struct APAPI EqualityComparer<Apoc3D::Math::Vector4>
 		{
+			static bool Equals(const Apoc3D::Math::Vector4& x, const Apoc3D::Math::Vector4& y);
 			static int32 GetHashCode(const Apoc3D::Math::Vector4& obj);
 		};
 
@@ -153,6 +161,8 @@ namespace Apoc3D
 			return (a > b) ? 1 : 0;
 		}
 
+		// If T/S is a reference, and a ref to temporary rvalue object is passed in,
+		// watch out its life time. This issue exists for both lvalue and rvalue ctors.
 		template <typename T, typename S>
 		struct KeyPairValue
 		{
@@ -160,8 +170,11 @@ namespace Apoc3D
 			S Value;
 
 			KeyPairValue() { }
-			KeyPairValue(const T& key, const S& value) 
+			KeyPairValue(const T& key, const S& value)
 				: Key(key), Value(value) { }
+
+			KeyPairValue(typename std::remove_reference<T>::type&& key, typename std::remove_reference<S>::type&& value)
+				: Key(std::move(key)), Value(std::move(value)) { }
 
 			KeyPairValue(KeyPairValue&& other)
 				: Key(std::move(other.Key)), Value(std::move(other.Value)) { }

@@ -23,10 +23,11 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 #include "EditorExtensionManager.h"
 
-SINGLETON_DECL(APDesigner::EditorExtensionManager);
 
 namespace APDesigner
 {
+	SINGLETON_IMPL(EditorExtensionManager);
+
 	void EditorExtensionManager::RegisterExtension(EditorExtension* ext)
 	{
 		String name = ext->GetName();

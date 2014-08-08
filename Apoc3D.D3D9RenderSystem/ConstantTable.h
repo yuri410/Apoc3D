@@ -115,7 +115,7 @@ namespace Apoc3D
 
 				HashMap<String, ShaderConstant> m_table;
 
-				NoInline static void ThrowKeyNotFoundEx(const String& name);
+				NO_INLINE static void ThrowKeyNotFoundEx(const String& name);
 			};
 
 			const ShaderConstant& ConstantTable::getConstant(const String& name) const

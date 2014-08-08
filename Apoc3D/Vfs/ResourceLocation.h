@@ -40,7 +40,7 @@ namespace Apoc3D
 		 */
 		class APAPI ResourceLocation 
 		{
-			RTTI_UpcastableBase;
+			RTTI_BASE;
 		public:
 			virtual ~ResourceLocation() { }
 
@@ -92,7 +92,7 @@ namespace Apoc3D
 		 */
 		class APAPI FileLocation : public ResourceLocation
 		{
-			RTTI_UpcastableDerived(FileLocation, ResourceLocation);
+			RTTI_DERIVED(FileLocation, ResourceLocation);
 
 		public:
 			FileLocation();
@@ -132,7 +132,7 @@ namespace Apoc3D
 		 */
 		class APAPI MemoryLocation : public ResourceLocation
 		{
-			RTTI_UpcastableDerived(MemoryLocation, ResourceLocation);
+			RTTI_DERIVED(MemoryLocation, ResourceLocation);
 		public:
 			MemoryLocation(void* pos, int64 size);
 			MemoryLocation(const MemoryLocation& ml) = default;
@@ -154,7 +154,7 @@ namespace Apoc3D
 		 */
 		class APAPI StreamLocation : public ResourceLocation
 		{
-			RTTI_UpcastableDerived(StreamLocation, ResourceLocation);
+			RTTI_DERIVED(StreamLocation, ResourceLocation);
 		public:
 			StreamLocation(Stream* strm);
 			StreamLocation(const StreamLocation& sl) = default;

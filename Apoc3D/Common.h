@@ -52,19 +52,7 @@
 #endif
 
 #include "ApocExportSettings.h"
-#include "RTTI.h"
-
-#if defined(_MSC_VER)
-#define NoInline __declspec(noinline)
-#elif defined(__GCC__)
-#define NoInline __attribute__((noinline))
-#else
-#define NoInline
-#endif
-
-#define DELETE_AND_NULL( ptr ) { delete ptr; ptr = nullptr; }
-
-
+#include "ApocMacros.h"
 
 #ifndef CASSERT_INCLUDED
 #define CASSERT_INCLUDED

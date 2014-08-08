@@ -457,7 +457,7 @@ void TestRandom()
 }
 
 template<typename T>
-NoInline void DoNothing(volatile const T& e) 
+NO_INLINE void DoNothing(volatile const T& e) 
 {
 	(void)e;
 	//volatile char r = *reinterpret_cast<const char*>(&e);
@@ -466,7 +466,7 @@ NoInline void DoNothing(volatile const T& e)
 		//r[i] = *(reinterpret_cast<const char*>(&e) + i);
 }
 
-NoInline int64 getTimeDiff(const volatile std::chrono::high_resolution_clock::time_point& t1,
+NO_INLINE int64 getTimeDiff(const volatile std::chrono::high_resolution_clock::time_point& t1,
 	const volatile std::chrono::high_resolution_clock::time_point& t2)
 {
 	using namespace std::chrono;

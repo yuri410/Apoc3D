@@ -38,7 +38,7 @@ namespace Apoc3D
 	{
 		class APAPI Label : public Control
 		{
-			RTTI_UpcastableDerived(Label, Control);
+			RTTI_DERIVED(Label, Control);
 		public:
 			enum Align
 			{
@@ -78,7 +78,7 @@ namespace Apoc3D
 
 		class APAPI TextBox : public Control
 		{
-			RTTI_UpcastableDerived(TextBox, Control);
+			RTTI_DERIVED(TextBox, Control);
 		public:
 			enum ScrollBarType
 			{

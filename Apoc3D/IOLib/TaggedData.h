@@ -327,7 +327,7 @@ namespace Apoc3D
 
 			const Entry* FindEntry(const String& name) const { return m_positions.TryGetValue(name); }
 
-			NoInline static void throwKeynotFoundException(const String& key);
+			NO_INLINE static void throwKeynotFoundException(const String& key);
 
 			bool m_endianIndependent;
 			int m_sectCount;

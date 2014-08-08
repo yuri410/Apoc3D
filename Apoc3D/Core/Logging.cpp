@@ -41,12 +41,12 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace std;
 using namespace Apoc3D::Utility;
 
-SINGLETON_DECL(Apoc3D::Core::LogManager);
-
 namespace Apoc3D
 {
 	namespace Core
 	{
+		SINGLETON_IMPL(LogManager);
+
 		static uint64 LogItemSerialCounter = 1;
 
 		LogManager::LogManager()
@@ -122,11 +122,6 @@ namespace Apoc3D
 
 		}
 
-		int compareLogEntrySequence(const LogEntry* const & a, const LogEntry* const & b)
-		{
-			return Apoc3D::Collections::OrderComparer(a->SerialIndex, b->SerialIndex);
-		}
-
 		void LogManager::DumpLogs(String& result)
 		{
 			int32 totalEntryCount = 0;
@@ -146,8 +141,10 @@ namespace Apoc3D
 				}
 			}
 
-			allEntries.Sort(compareLogEntrySequence);
-			//qsort(allEntries.getInternalPointer(), allEntries.getCount(), sizeof(const LogEntry*), compareLogEntrySequence);
+			allEntries.Sort([](const LogEntry* a, const LogEntry* b)->int
+			{
+				return Apoc3D::Collections::OrderComparer(a->SerialIndex, b->SerialIndex);
+			});
 			
 			result.reserve(10240);
 			for (int32 i=0;i<allEntries.getCount();i++)

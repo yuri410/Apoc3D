@@ -63,7 +63,7 @@ namespace Apoc3D
 			 */
 			class APAPI RenderView
 			{
-				RTTI_UpcastableBase;
+				RTTI_BASE;
 			public:
 				virtual ~RenderView(){}
 
@@ -109,7 +109,7 @@ namespace Apoc3D
 			 */
 			class APAPI RenderWindow : public RenderView
 			{
-				RTTI_UpcastableDerived(RenderWindow, RenderView);
+				RTTI_DERIVED(RenderWindow, RenderView);
 			private:
 				RenderWindowHandler* m_evtHandler;
 				bool m_isExiting;

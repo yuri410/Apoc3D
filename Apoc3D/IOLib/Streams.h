@@ -49,7 +49,7 @@ namespace Apoc3D
 		 */
 		class APAPI Stream
 		{
-			RTTI_UpcastableBase;
+			RTTI_BASE;
 		protected:
 			Stream() { }
 		public:
@@ -95,7 +95,7 @@ namespace Apoc3D
 		 */
 		class APAPI FileStream : public Stream
 		{
-			RTTI_UpcastableDerived(FileStream, Stream);
+			RTTI_DERIVED(FileStream, Stream);
 		public:
 			FileStream(const String& filename);
 			virtual ~FileStream();
@@ -128,7 +128,7 @@ namespace Apoc3D
 		 */
 		class APAPI FileOutStream : public Stream
 		{
-			RTTI_UpcastableDerived(FileOutStream, Stream);
+			RTTI_DERIVED(FileOutStream, Stream);
 		public:
 			FileOutStream(const String& filename);
 			virtual ~FileOutStream();
@@ -161,7 +161,7 @@ namespace Apoc3D
 		 */
 		class APAPI MemoryStream : public Stream
 		{
-			RTTI_UpcastableDerived(MemoryStream, Stream);
+			RTTI_DERIVED(MemoryStream, Stream);
 		public:
 			virtual bool IsReadEndianIndependent() const { return false; }
 			virtual bool IsWriteEndianIndependent() const { return false; }
@@ -191,7 +191,7 @@ namespace Apoc3D
 			char* getDataPointer() const { return m_data; }
 
 		private:
-			NoInline static void throwEndofStreamException();
+			NO_INLINE static void throwEndofStreamException();
 
 			int64 m_length;
 			char* m_data;
@@ -204,7 +204,7 @@ namespace Apoc3D
 		 */
 		class APAPI VirtualStream : public Stream
 		{
-			RTTI_UpcastableDerived(VirtualStream, Stream);
+			RTTI_DERIVED(VirtualStream, Stream);
 		public:
 			virtual bool IsReadEndianIndependent() const { return m_baseStream->IsReadEndianIndependent(); }
 			virtual bool IsWriteEndianIndependent() const { return m_baseStream->IsWriteEndianIndependent(); }
@@ -283,7 +283,7 @@ namespace Apoc3D
 		 */
 		class APAPI MemoryOutStream : public Stream
 		{
-			RTTI_UpcastableDerived(MemoryOutStream, Stream);
+			RTTI_DERIVED(MemoryOutStream, Stream);
 		public:
 			MemoryOutStream(int64 preserved)
 				: m_length(0), m_position(0), m_data((int32)preserved)

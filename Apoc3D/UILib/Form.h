@@ -65,7 +65,7 @@ namespace Apoc3D
 		};
 		class APAPI Form : public ControlContainer
 		{
-			RTTI_UpcastableDerived(Form, ControlContainer);
+			RTTI_DERIVED(Form, ControlContainer);
 		public:
 			enum WindowState
 			{

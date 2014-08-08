@@ -28,7 +28,6 @@
 
 
 #include "apoc3d/Common.h"
-#include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Core;
@@ -39,8 +38,9 @@ namespace Apoc3D
 {
 	namespace Config
 	{
-		class APAPI ConfigurationManager : public Singleton<ConfigurationManager>
+		class APAPI ConfigurationManager
 		{
+			SINGLETON_DECL(ConfigurationManager);
 		public:
 			ConfigurationManager();
 			virtual ~ConfigurationManager();
@@ -67,7 +67,6 @@ namespace Apoc3D
 			void RegisterFormat(ConfigurationFormat* fmt);
 			void UnregisterFormat(ConfigurationFormat* fmt);
 
-			SINGLETON_DECL_HEARDER(ConfigurationManager);
 		private:
 			typedef HashMap<String, Configuration*> ConfigTable;
 			typedef HashMap<String, ConfigurationFormat*> FormatTable;

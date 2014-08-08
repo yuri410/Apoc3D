@@ -4,10 +4,10 @@
 
 #include <Windows.h>
 
-SINGLETON_DECL(APDesigner::BuildInterface);
-
 namespace APDesigner
 {
+	SINGLETON_IMPL(BuildInterface);
+
 	BuildInterface::BuildInterface()
 		: m_hasLastError(false), m_finished(true), m_isBuildPending(false)
 	{

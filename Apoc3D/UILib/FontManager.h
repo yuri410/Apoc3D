@@ -27,7 +27,6 @@
  */
 
 #include "apoc3d/Collections/HashMap.h"
-#include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Math/Rectangle.h"
 
 using namespace Apoc3D::Collections;
@@ -159,7 +158,6 @@ namespace Apoc3D
 
 			Texture* getInternalTexture() const { return m_font; }
 
-			static int qsort_comparer(const void* a, const void* b);
 		private:
 			static const int MaxFreq = 10;
 			struct Character
@@ -243,8 +241,6 @@ namespace Apoc3D
 
 			HashMap<int32, CustomGlyph> m_customCharacters;
 
-			//list<Glyph*> m_activeGlyph;
-			//List<Bucket*> m_buckets;
 
 			/** 
 			 *  The entire texture area is divided into 2d plane of buckets(m_edgeCount*m_edgeCount), 
@@ -293,7 +289,7 @@ namespace Apoc3D
 			void SetUseFreq(const Glyph& g);
 
 			static bool IgnoreCharDrawing(int32 ch) { return ch == '\r'; }
-			
+
 			friend class FontManager;
 		
 		};
@@ -301,8 +297,9 @@ namespace Apoc3D
 		/**
 		 *  Manages font resources, creating them from font files.
 		 */
-		class APAPI FontManager : public Singleton<FontManager>
+		class APAPI FontManager
 		{
+			SINGLETON_DECL(FontManager);
 		public:
 			static int MaxTextureSize;
 
@@ -321,7 +318,6 @@ namespace Apoc3D
 			Font* getFont(const String& fontName);
 			bool hasFont(const String& fontName);
 
-			SINGLETON_DECL_HEARDER(FontManager);
 		private:
 			HashMap<String, Font*> m_fontTable;
 

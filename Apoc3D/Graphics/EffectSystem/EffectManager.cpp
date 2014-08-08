@@ -32,14 +32,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Vfs/FileLocateRule.h"
 #include "apoc3d/Vfs/ResourceLocation.h"
 
-SINGLETON_DECL(Apoc3D::Graphics::EffectSystem::EffectManager);
-
 namespace Apoc3D
 {
 	namespace Graphics
 	{
 		namespace EffectSystem
 		{
+			SINGLETON_IMPL(EffectManager);
+
 			bool EffectManager::HasEffect(const String& name) const
 			{
 				return m_fxTable.Contains(name);

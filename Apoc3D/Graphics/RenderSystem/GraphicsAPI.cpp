@@ -29,14 +29,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 using namespace Apoc3D;
 using namespace Apoc3D::Utility;
 
-SINGLETON_DECL(Apoc3D::Graphics::RenderSystem::GraphicsAPIManager);
-
 namespace Apoc3D
 {
 	namespace Graphics
 	{
 		namespace RenderSystem
 		{
+			SINGLETON_IMPL(GraphicsAPIManager);
+
 			GraphicsAPIManager::~GraphicsAPIManager()
 			{
 				m_factories.DeleteValuesAndClear();
@@ -123,13 +123,6 @@ namespace Apoc3D
 				}
 			}
 
-			bool GraphicsAPIManager::Comparison(const Entry& a, const Entry& b)
-			{
-				return a.PlatformMark < b.PlatformMark;
-				//if (a.PlatformMark == b.PlatformMark)
-					//return 0;
-				//return a.PlatformMark < b.PlatformMark ? -1 : 1;
-			}
 
 			/** Find a best suited a Graphics API for current platform and create a device context.
 			*/

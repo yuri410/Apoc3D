@@ -12,8 +12,9 @@ namespace tthread
 
 namespace APDesigner
 {
-	class BuildInterface : public Singleton<BuildInterface>
+	class BuildInterface
 	{
+		SINGLETON_DECL(BuildInterface);
 	public:
 		struct BuildResult
 		{
@@ -21,8 +22,6 @@ namespace APDesigner
 			bool HasWarning;
 			bool HasError;
 		};
-
-		SINGLETON_DECL_HEARDER(BuildInterface);
 
 		BuildInterface();
 		~BuildInterface();

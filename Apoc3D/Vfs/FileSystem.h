@@ -26,7 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Library/tinythread.h"
@@ -59,8 +58,9 @@ namespace Apoc3D
 		 *  them at the beginning of your app's Initialization
 		 *  (after engine's init).
 		 */
-		class APAPI FileSystem : public Singleton<FileSystem>
+		class APAPI FileSystem
 		{
+			SINGLETON_DECL(FileSystem);
 		public:
 			FileSystem(void);
 			~FileSystem(void);
@@ -89,7 +89,6 @@ namespace Apoc3D
 			FileLocation Locate(const String& filePath, const FileLocateRule& rule);
 			bool TryLocate(const String& filePath, const FileLocateRule& rule, FileLocation& result);
 
-			SINGLETON_DECL_HEARDER(FileSystem);
 
 		private:
 			struct ArchiveKey

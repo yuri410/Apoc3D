@@ -26,7 +26,6 @@
  * -----------------------------------------------------------------------------
  */
 
-#include "apoc3d/Core/Singleton.h"
 #include "apoc3d/Collections/HashMap.h"
 
 using namespace Apoc3D::Collections;
@@ -40,18 +39,13 @@ namespace Apoc3D
 	{
 		namespace EffectSystem
 		{
-			//template class APAPI unordered_map<String, Effect*>;
-			typedef HashMap<String, Effect*> EffectTable;
-
 			/**
 			 *  Keeps track of all shader effects.
 			 *  All fx are recommended to be loaded at the beginning of your program.
 			 */
-			class APAPI EffectManager : public Singleton<EffectManager>
+			class APAPI EffectManager
 			{
-			private:
-				EffectTable m_fxTable;
-
+				SINGLETON_DECL(EffectManager);
 			public:
 				EffectManager() { }
 				~EffectManager() { }
@@ -71,7 +65,10 @@ namespace Apoc3D
 
 				void Update(const GameTime* const time);
 
-				SINGLETON_DECL_HEARDER(EffectManager);
+			private:
+				typedef HashMap<String, Effect*> EffectTable;
+
+				EffectTable m_fxTable;
 			};
 		};
 	};

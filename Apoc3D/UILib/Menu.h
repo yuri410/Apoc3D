@@ -42,7 +42,7 @@ namespace Apoc3D
 
 		class APAPI Menu : public Control
 		{
-			RTTI_UpcastableDerived(Menu, Control);
+			RTTI_DERIVED(Menu, Control);
 		public:
 			Menu();
 			virtual ~Menu();
@@ -120,7 +120,7 @@ namespace Apoc3D
 
 		class APAPI SubMenu : public Control
 		{
-			RTTI_UpcastableDerived(SubMenu, Control);
+			RTTI_DERIVED(SubMenu, Control);
 		public:
 			MenuState getState() const { return m_state; }
 			Control* getParent() const { return m_parent; }

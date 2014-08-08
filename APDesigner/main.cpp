@@ -106,7 +106,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	Engine::Initialize(&escon);
 
 	PakArchiveFactory* pakSupport = new PakArchiveFactory();
-	FileSystem::getSingletonPtr()->RegisterArchiveType(pakSupport);
+	FileSystem::getSingleton().RegisterArchiveType(pakSupport);
 
 	int numOfArgs;
 	LPWSTR* argv = CommandLineToArgvW(lpCmdLine, &numOfArgs);
@@ -176,7 +176,7 @@ INT WINAPI wWinMain(HINSTANCE hInstance,
 	}
 
 
-	FileSystem::getSingletonPtr()->UnregisterArchiveType(pakSupport);
+	FileSystem::getSingleton().UnregisterArchiveType(pakSupport);
 	delete pakSupport;
 
 	Engine::Shutdown();
