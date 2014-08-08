@@ -58,19 +58,36 @@ Derived up_cast(Base* o)
 		static uintptr _getTypeID() { static char dummy; return (uintptr)&dummy; } \
 		virtual bool CheckRuntimeType(uintptr id) const override { return id == Type::_getTypeID() || ParentType::CheckRuntimeType(id); }
 
+#define _SINGLETON_DECL(T) \
+	public: \
+		static void Initialize(); static void Finalize(); \
+		static bool isInitialized() { return s_initialized; } \
+	private: \
+		static bool s_initialized; \
+		static char s_instance[];
 
 #define SINGLETON_DECL(T) \
-	 public: \
-		static void Initialize(); static void Finalize(); \
+	public: \
 		static T& getSingleton() \
 		{ \
 			assert(s_initialized); \
 			return reinterpret_cast<T&>(s_instance); \
 		}  \
-		static bool isInitialized() { return s_initialized; } \
-	private: \
-		static bool s_initialized; \
-		static char s_instance[];
+		_SINGLETON_DECL(T)
+		
+#define SINGLETON_DECL_CONST(T) \
+	public: \
+		static const T& getSingleton() \
+		{ \
+			assert(s_initialized); \
+			return reinterpret_cast<const T&>(s_instance); \
+		} \
+		static T& getNonConstSingleton() \
+		{ \
+			assert(s_initialized); \
+			return reinterpret_cast<T&>(s_instance); \
+		} \
+		_SINGLETON_DECL(T)
 
 
 #define SINGLETON_IMPL(T)  \

@@ -210,6 +210,7 @@ namespace Apoc3D
 					m_elements[m_count++] = val[i];
 			}
 
+			template<typename = void> // helps overload resolution with initializer_list
 			void AddList(const List<T>& other) { AddArray(other.m_elements, other.m_count); }
 			void AddList(std::initializer_list<T> l)
 			{
