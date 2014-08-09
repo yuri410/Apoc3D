@@ -62,9 +62,11 @@ Derived up_cast(Base* o)
 	public: \
 		static void Initialize(); static void Finalize(); \
 		static bool isInitialized() { return s_initialized; } \
+		T(const T&) = delete; \
+		T& operator=(const T&) = delete; \
 	private: \
 		static bool s_initialized; \
-		static char s_instance[];
+		static char s_instance[]; 
 
 #define SINGLETON_DECL(T) \
 	public: \

@@ -100,7 +100,8 @@ namespace APDesigner
 	{
 		SINGLETON_DECL(ShaderAtomLibraryManager);
 	public:
-		
+		ShaderAtomLibraryManager() { }
+
 		typedef HashMap<String, ShaderAtomType*>::Enumerator LibraryEnumerator;
 
 		/** Load all atom types from give file.

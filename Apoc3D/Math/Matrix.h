@@ -123,20 +123,8 @@ namespace Apoc3D
 				
 			Matrix() {  ZeroMatrix(); }
 			explicit Matrix(const float elements[16])
-			{				
-			#if APOC3D_MATH_IMPL == APOC3D_SSE
-				SSEVecLoader buffer;
-				memcpy(&buffer, &elements[0], sizeof(float) * 4);
-				Row1 = _mm_load_ps(reinterpret_cast<const float*>(&buffer));
-				memcpy(&buffer, &elements[4], sizeof(float) * 4);
-				Row2 = _mm_load_ps(reinterpret_cast<const float*>(&buffer));
-				memcpy(&buffer, &elements[8], sizeof(float) * 4);
-				Row3 = _mm_load_ps(reinterpret_cast<const float*>(&buffer));
-				memcpy(&buffer, &elements[12], sizeof(float) * 4);
-				Row4 = _mm_load_ps(reinterpret_cast<const float*>(&buffer));
-			#elif APOC3D_MATH_IMPL == APOC3D_DEFAULT
+			{
 				memcpy(Elements, elements, sizeof(Elements));
-			#endif
 			}
 
 #if APOC3D_MATH_IMPL == APOC3D_SSE
@@ -153,47 +141,7 @@ namespace Apoc3D
 				 M21(f21), M22(f22), M23(f23), M24(f24),
 				 M31(f31), M32(f32), M33(f33), M34(f34),
 				 M41(f41), M42(f42), M43(f43), M44(f44)
-			{
-				/*__asm
-				{
-					mov		eax, this
-					fld		float ptr f11
-					fstp	float ptr [eax+ELEM_ADDR(1,1)]
-					fld		float ptr f12;
-					fstp	float ptr [eax+ELEM_ADDR(1,2)]
-					fld		float ptr f13;
-					fstp	float ptr [eax+ELEM_ADDR(1,3)]
-					fld		float ptr f14;
-					fstp	float ptr [eax+ELEM_ADDR(1,4)]
-
-					fld		float ptr f21;
-					fstp	float ptr [eax+ELEM_ADDR(2,1)]
-					fld		float ptr f22;
-					fstp	float ptr [eax+ELEM_ADDR(2,2)]
-					fld		float ptr f23;
-					fstp	float ptr [eax+ELEM_ADDR(2,3)]
-					fld		float ptr f24;
-					fstp	float ptr [eax+ELEM_ADDR(2,4)]
-
-					fld		float ptr f31;
-					fstp	float ptr [eax+ELEM_ADDR(3,1)]
-					fld		float ptr f32;
-					fstp	float ptr [eax+ELEM_ADDR(3,2)]
-					fld		float ptr f33;
-					fstp	float ptr [eax+ELEM_ADDR(3,3)]
-					fld		float ptr f34;
-					fstp	float ptr [eax+ELEM_ADDR(3,4)]
-
-					fld		float ptr f41;
-					fstp	float ptr [eax+ELEM_ADDR(4,1)]
-					fld		float ptr f42;
-					fstp	float ptr [eax+ELEM_ADDR(4,2)]
-					fld		float ptr f43;
-					fstp	float ptr [eax+ELEM_ADDR(4,3)]
-					fld		float ptr f44;
-					fstp	float ptr [eax+ELEM_ADDR(4,4)]
-				}*/
-			}
+			{ }
 
 			Vector3 GetX() const
 			{
@@ -1440,19 +1388,6 @@ namespace Apoc3D
 			}
 			bool operator!=(const Matrix& rhs) const { return !(*this == rhs); }
 
-//			friend static bool operator ==(const Matrix& left, const Matrix& right)
-//			{
-//				if (&left == &right)
-//					return true;
-//			#if APOC3D_MATH_IMPL == APOC3D_SSE
-//#pragma error "Not implemented"
-//			#else
-//				return (left.M11 == right.M11 && left.M12 == right.M12 && left.M13 == right.M13 && left.M14 == right.M14 &&
-//					left.M21 == right.M21 && left.M22 == right.M22 && left.M23 == right.M23 && left.M24 == right.M24 &&
-//					left.M31 == right.M31 && left.M32 == right.M32 && left.M33 == right.M33 && left.M34 == right.M34 &&
-//					left.M41 == right.M41 && left.M42 == right.M42 && left.M43 == right.M43 && left.M44 == right.M44);
-//			#endif
-//			}
 
 		};
 
