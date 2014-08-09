@@ -36,7 +36,7 @@ namespace Apoc3D
 		 *  A proxy class to access a managed resources.
 		 *  It helps informing resources accessing records and the change of reference count.
 		 */
-		template <class ResType>
+		template <typename ResType>
 		class ResourceHandle final
 		{
 		public:
@@ -204,6 +204,7 @@ namespace Apoc3D
 			}
 
 		};
+
 	};
 };
 #endif
