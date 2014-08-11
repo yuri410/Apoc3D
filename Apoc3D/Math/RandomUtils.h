@@ -28,13 +28,12 @@
 
 #include "apoc3d/Common.h"
 #include "apoc3d/EventDelegate.h"
+#include "apoc3d/Collections/List.h"
 
 namespace Apoc3D
 {
 	namespace Math
 	{
-		//typedef EventDelegate1<int&> SeedChangedEventHandler;
-
 		class APAPI Random
 		{
 		public:
@@ -107,6 +106,8 @@ namespace Apoc3D
 #else
 #define RANDOMIZER_CHECKTHREAD
 #endif
+			static bool NextBool() { return (Next() & 1) != 0; }
+
 			static int32 Next() { RANDOMIZER_CHECKTHREAD; return m_randomizer.Next();  }
 			static int32 NextInclusive(int32 max) { RANDOMIZER_CHECKTHREAD; return m_randomizer.NextInclusive(max); }
 			static int32 NextExclusive(int32 max) { RANDOMIZER_CHECKTHREAD; return m_randomizer.NextExclusive(max); }
@@ -121,6 +122,12 @@ namespace Apoc3D
 				return minValue + (maxValue - minValue) * m_randomizer.NextFloat(); 
 			}
 			static float NextFloat(const float* ranges) { return NextFloat(ranges[0], ranges[1]);  }
+
+
+			template <int32 N>
+			static int Choose(const float(&p)[N]) { return Choose(p, N); }
+
+			static int Choose(const Apoc3D::Collections::List<float>& lst) { return Choose(lst.getElements(), lst.getCount()); }
 
 			static int Choose(const float* p, int count)
 			{
@@ -144,6 +151,24 @@ namespace Apoc3D
 					}
 				}
 				return 0;
+			}
+			
+
+			template <typename T, int32 N>
+			static void Shuffle(T (&lst)[N]) { Shuffle(lst, N); }
+
+			template <typename T>
+			static void Shuffle(Apoc3D::Collections::List<T>& lst) { Shuffle(lst.getElements(), lst.getCount()); }
+
+			template <typename T>
+			static void Shuffle(T* arr, int32 count)
+			{
+				RANDOMIZER_CHECKTHREAD;
+
+				for (int32 i = count - 1; i > 0; i--)
+				{
+					std::swap(arr[i], arr[NextInclusive(i)]);
+				}
 			}
 
 			static int32 getSeed() { return m_randomizer.getSeed(); }
