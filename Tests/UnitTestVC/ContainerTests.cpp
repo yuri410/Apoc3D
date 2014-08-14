@@ -455,6 +455,97 @@ namespace UnitTestVC
 		
 	};
 
+	TEST_CLASS(FixedListTest)
+	{
+		int* m_intData;
+		int32 m_intDataCount;
+		MEM_Variables;
+
+	public:
+		FixedListTest()
+		{
+			MEM_BeginCheckPoint;
+
+			srand((unsigned int)time(0));
+
+			m_intDataCount = 8 + rand() % 16;
+			m_intData = new int[m_intDataCount];
+			for (int i = 0; i < m_intDataCount; i++)
+				m_intData[i] = rand();
+		}
+		~FixedListTest()
+		{
+			delete[] m_intData;
+			MEM_EndCheckPoint;
+		}
+
+		TEST_METHOD(FixedListIterator)
+		{
+			FixedList<int, 5> subject;
+
+			subject.Add(0);
+			subject.Add(1);
+			subject.Add(2);
+
+			FixedList<int, 5> result;
+			for (int e : subject)
+			{
+				result.Add(e);
+			}
+
+			Assert::AreEqual(3, result.getCount());
+			if (result.getCount() == 3)
+			{
+				Assert::AreEqual(0, result[0]);
+				Assert::AreEqual(1, result[1]);
+				Assert::AreEqual(2, result[2]);
+			}
+
+			subject.Clear();
+
+			for (auto e : subject)
+			{
+				Assert::Fail();
+			}
+		}
+
+		TEST_METHOD(FixedListAddMult)
+		{
+			const int preData[] = { 44, 55, 66, 77 };
+
+			for (int32 i = 0; i < countof(preData); i++)
+			{
+				FixedList<int, 24> s1;
+
+				for (int32 j = 0; j <= i; j++)
+				{
+					s1.Add(preData[j]);
+				}
+
+				s1.AddArray(m_intData, m_intDataCount);
+
+				for (int32 j = 0; j < s1.getCount(); j++)
+				{
+					if (j <= i)
+						Assert::AreEqual(preData[j], s1[j]);
+					else
+						Assert::AreEqual(m_intData[j - i - 1], s1[j]);
+				}
+
+				Assert::AreEqual(i + m_intDataCount + 1, s1.getCount());
+			}
+
+			FixedList<int, 5> s2;
+			s2.AddArray(preData);
+
+			Assert::AreEqual(countof(preData), s2.getCount());
+			for (int32 i = 0; i < s2.getCount(); i++)
+			{
+				Assert::AreEqual(preData[i], s2[i]);
+			}
+		}
+
+	};
 
 	TEST_CLASS(HashMapTest)
 	{

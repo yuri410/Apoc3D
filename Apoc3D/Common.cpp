@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 */
 
 #include "Common.h"
+#include "Collections/List.h"
 
 namespace Apoc3D
 {

@@ -550,62 +550,6 @@ namespace Apoc3D
 					list.Add(e.getCurrentValue());
 			}
 
-			template <typename Func>
-			void ForEachAbortable(Func proc)
-			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					if (proc(e.getCurrentKey(), e.getCurrentValue()))
-						return;
-			}
-			template <bool(*proc)(const T& key, S& value)>
-			void ForEachAbortable() { ForEachAbortable(proc); }
-
-			template <typename Func>
-			void ForEachAbortableConst(Func proc) const
-			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					if (proc(e.getCurrentKey(), e.getCurrentValue()))
-						return;
-			}
-			template <bool(*proc)(const T& key, const S& value)>
-			void ForEachAbortableConst() const { ForEachAbortableConst(proc); }
-
-			template <typename Func>
-			void ForEach(Func proc)
-			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					proc(e.getCurrentKey(), e.getCurrentValue());
-			}
-			template <void(*proc)(const T& key, S& value)>
-			void ForEach() { ForEach(proc); }
-
-			template <typename Func>
-			void ForEachConst(Func proc) const
-			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					proc(e.getCurrentKey(), e.getCurrentValue());
-			}
-			template <void(*proc)(const T& key, const S& value)>
-			void ForEachConst() const { ForEachConst(proc); }
-
-			template <typename Func>
-			void ForEachValue(Func proc)
-			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					proc(e.getCurrentValue());
-			}
-			template <void(*proc)(const S& value)>
-			void ForEachValue() { ForEachValue(proc); }
-
-			template <typename Func>
-			void ForEachValueConst(Func proc) const
-			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					proc(e.getCurrentValue());
-			}
-			template <void(*proc)(const S& value)>
-			void ForEachValueConst() const { ForEachValueConst(proc); }
-
 			//////////////////////////////////////////////////////////////////////////
 
 			KeyAccessor getKeyAccessor() const { return KeyAccessor(this); }
@@ -742,44 +686,6 @@ namespace Apoc3D
 				for (Enumerator e = GetEnumerator(); e.MoveNext();)
 					list.Add(e.getCurrent());
 			}
-
-			template <typename Func>
-			void ForEachAbortable(Func proc)
-			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					if (proc(e.getCurrent()))
-						return;
-			}
-			template <bool(*proc)(const T& item)>
-			void ForEachAbortable() { ForEachAbortable(proc); }
-
-			template <typename Func>
-			void ForEachAbortableConst(Func proc) const
-			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					if (proc(e.getCurrent()))
-						return;
-			}
-			template <bool(*proc)(const T& item)>
-			void ForEachAbortableConst() const { ForEachAbortableConst(proc); }
-
-			template <typename Func>
-			void ForEach(Func proc)
-			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					proc(e.getCurrent());
-			}
-			template <void(*proc)(const T& item)>
-			void ForEach() { ForEach(proc); }
-
-			template <typename Func>
-			void ForEachConst(Func proc) const
-			{
-				for (Enumerator e = GetEnumerator(); e.MoveNext();)
-					proc(e.getCurrent());
-			}
-			template <void(*proc)(const T& item)>
-			void ForEachConst() const { ForEachConst(proc); }
 
 
 			//////////////////////////////////////////////////////////////////////////
