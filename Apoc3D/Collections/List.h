@@ -248,6 +248,8 @@ namespace Apoc3D
 		class FixedList : public ListBase<T, T[MaxSize]>
 		{
 		public:
+			static const int32 Capacity = MaxSize;
+
 			FixedList() { }
 			FixedList(std::initializer_list<T> l)
 			{
@@ -287,6 +289,8 @@ namespace Apoc3D
 				for (auto iter = l.begin(); iter != l.end() && m_count < MaxSize; ++iter)
 					m_elements[m_count++] = e;
 			}
+
+			int32 getCapacity() const { return MaxSize; }
 
 			const T* getElements() const { return m_elements; }
 			T* getElements() { return m_elements; }
