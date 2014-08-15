@@ -287,7 +287,7 @@ namespace Apoc3D
 			{
 				assert(m_count + l.size() <= MaxSize);
 				for (auto iter = l.begin(); iter != l.end() && m_count < MaxSize; ++iter)
-					m_elements[m_count++] = e;
+					m_elements[m_count++] = *iter;
 			}
 
 			int32 getCapacity() const { return MaxSize; }
