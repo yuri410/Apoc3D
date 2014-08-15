@@ -39,58 +39,112 @@ namespace Apoc3D
 		template <typename T>
 		class EnumDualConversionHelper
 		{
+			struct EnumEqualityComparer
+			{
+				static bool Equals(const T& x, const T& y) { return x == y; }
+				static int32 GetHashCode(const T& obj) { return static_cast<int32>(obj); }
+			};
+
 		public:
-			typedef HashMap<String, uint64> CastTable;
-			typedef HashMap<uint64, String> InverseCastTable;
+			typedef HashMap<String, T> CastTable;
+			typedef HashMap<T, String, EnumEqualityComparer> InverseCastTable;
+
+			typedef typename InverseCastTable::Iterator Iterator;
+			typedef typename InverseCastTable::ValueAccessor NameAccessor;
+			typedef typename CastTable::ValueAccessor ValueAccessor;
+
 
 			explicit EnumDualConversionHelper(int32 capacity)
-				: m_cast(capacity), 
-				m_invCast(capacity)
-			{ }
+				: m_cast(capacity), m_invCast(capacity) { }
 
-			EnumDualConversionHelper(std::initializer_list<std::pair<String, T>> list)
-				: m_cast(list.size()),
-				m_invCast(list.size())
+			EnumDualConversionHelper(std::initializer_list<std::pair<T, String>> list)
+				: m_cast(list.size()), m_invCast(list.size())
 			{
 				for (const auto& e : list)
-				{
 					AddPair(e.first, e.second);
-				}
 			}
+
+			EnumDualConversionHelper(std::initializer_list<std::pair<String, T>> list)
+				: m_cast(list.size()), m_invCast(list.size())
+			{
+				for (const auto& e : list)
+					AddPair(e.first, e.second);
+			}
+
 
 			bool SupportsName(const String& name) { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
-			T Parse(const String& name) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return static_cast<T>(m_cast[n]); }
+			T Parse(const String& name) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast[n]; }
 			
+			const String& ToString(T e) const { return m_invCast[e]; }
 
-			String ToString(T e) const { return m_invCast[static_cast<uint64>(e)]; }
+			void DumpNames(List<String>& names) const { m_invCast.FillValues(names); }
+			void DumpValues(List<T>& values) const { m_cast.FillValues(values); }
 
-			void DumpNames(List<String>& names) const
-			{
-				m_invCast.FillValues(names);
-			}
-			void DumpValues(List<T>& values) const
-			{
-				for (CastTable::Enumerator e = m_cast.GetEnumerator();e.MoveNext();)
-				{
-					values.Add(static_cast<T>(e.getCurrentValue()));
-				}
-			}
 
-			CastTable::Enumerator GetCastTableEnumerator() { return m_cast.GetEnumerator(); }
-			InverseCastTable::Enumerator GetInverseTableEnumerator() const { return m_invCast.GetEnumerator(); }
+			NameAccessor getNameAccessor() const { return m_invCast.getValueAccessor(); }
+			ValueAccessor getValueAccessor() const { return m_cast.getValueAccessor(); }
+
+			Iterator begin() const { return m_invCast.begin(); }
+			Iterator end() const { return m_invCast.end(); }
+
+			int32 getEntryCount() const { return m_cast.getCount(); }
 
 		protected:
 			void AddPair(const String& name, T v)
 			{
 				String cpy = name;
 				Apoc3D::Utility::StringUtils::ToLowerCase(cpy);
-				m_cast.Add(cpy, static_cast<uint64>(v));
-				m_invCast.Add(static_cast<uint64>(v), name);
+				m_cast.Add(cpy, v);
+				m_invCast.Add(v, name);
 			}
+
+			void AddPair(T v, const String& name) { AddPair(name, v); }
 
 		private:
 			CastTable m_cast;
 			InverseCastTable m_invCast;
+		};
+
+		template <typename T>
+		class EnumToStringConversionHelper
+		{
+			struct EnumEqualityComparer
+			{
+				static bool Equals(const T& x, const T& y) { return x == y; }
+				static int32 GetHashCode(const T& obj) { return static_cast<int32>(obj); }
+			};
+
+		public:
+			typedef HashMap<T, String, EnumEqualityComparer> CastTable;
+			typedef typename CastTable::Iterator Iterator;
+			typedef typename CastTable::KeyAccessor NameAccessor;
+			typedef typename CastTable::ValueAccessor ValueAccessor;
+
+			explicit EnumToStringConversionHelper(int32 capacity)
+				: m_cast(capacity) { }
+
+			EnumToStringConversionHelper(std::initializer_list<std::pair<T, String>> list)
+				: m_cast(list.size())
+			{
+				for (const auto& e : list)
+					m_cast.Add(e.first, e.second);
+			}
+
+			const String& ToString(T e) const { return m_cast[e]; }
+			const String& operator[](T e) const { return m_cast[e]; }
+
+			void DumpNames(List<String>& names) const { m_cast.FillValues(names); }
+			void DumpValues(List<T>& values) const { m_cast.FillKeys(values); }
+
+			NameAccessor getNameAccessor() const { return m_cast.getKeyAccessor(); }
+			ValueAccessor getValueAccessor() const { return m_cast.getValueAccessor(); }
+
+			Iterator begin() const { return m_cast.begin(); }
+			Iterator end() const { return m_cast.end(); }
+
+			int32 getEntryCount() const { return m_cast.getCount(); }
+		private:
+			CastTable m_cast;
 		};
 	}
 }

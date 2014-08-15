@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace CodeCheck
 {
+    // Regex based c++ code checker. Style assumed.
     class Program
     {
         static Regex inheritanceMatcher =
@@ -14,7 +15,7 @@ namespace CodeCheck
 
         static Regex forLoopMatcher = new Regex(@"for\s*\(int(\w\w)?\s*(?<var>\S+)\s*=\s*\S+\s*;.*\)");
 
-
+        // This detects RTTI macro usages that are not valid
         static void CheckRTTI(string fileName, string[] lines, string all)
         {
             string[] groupNames = inheritanceMatcher.GetGroupNames();
@@ -36,15 +37,16 @@ namespace CodeCheck
                     int lineNo = GetLineNumber(m.Index, lines);
 
                     if (className != a1)
-                        OutputMessage(fileName, lineNo, "Invalid RTTI declaration. Class name mismatch, expected " + className + " actually " + a1);
+                        OutputLocatableMessage(fileName, lineNo, "Invalid RTTI declaration. Class name mismatch, expected " + className + " actually " + a1);
 
                     if (baseClassName != a2)
-                        OutputMessage(fileName, lineNo, "Invalid RTTI declaration. Base name mismatch, expected " + baseClassName + " actually " + a2);
+                        OutputLocatableMessage(fileName, lineNo, "Invalid RTTI declaration. Base name mismatch, expected " + baseClassName + " actually " + a2);
                 }
             }
         }
         
         // This detects for loops that are nested in and having the same loop variable
+        // Though this is valid in c++ and shadows the previous one, it is easier to make mistakes in these scenarios.
         static void CheckFor(string fileName, string[] lines, string all)
         {
             bool[] isComment = new bool[lines.Length];
@@ -52,7 +54,6 @@ namespace CodeCheck
 
             bool[] forEnds = new bool[lines.Length];
             
-            //Dictionary<string, int> loopVarNames = new Dictionary<string, int>();
             Stack<string> loopVarNames = new Stack<string>();
             Stack<int> debugList = new Stack<int>();
 
@@ -73,7 +74,7 @@ namespace CodeCheck
 
                     if (forLevel != 0 && loopVarNames.Contains(curLoopVar))
                     {
-                        OutputMessage(fileName, j + 1, "Duplicated loop variable " + curLoopVar);
+                        OutputLocatableMessage(fileName, j + 1, "Duplicated loop variable " + curLoopVar);
                     }
 
 
@@ -160,12 +161,11 @@ namespace CodeCheck
             return lineNum;
         }
 
-        static void OutputMessage(string filename, int lineNo, string msg)
+        static void OutputLocatableMessage(string filename, int lineNo, string msg)
         {
             string txt = filename + "(" + lineNo.ToString() + ") " + msg;
             Debug.WriteLine(txt);
             Console.WriteLine(txt);
-
         }
 
         delegate void Checker(string fileName, string[] lines, string all);

@@ -40,8 +40,8 @@ namespace Apoc3D
 #define CV_UnpackColor(color, r,g,b,a) a = (color>>24); r = (0xff & (color>>16)); g = (0xff & (color>>8)); b = (0xff & color);
 #define CV_PackColor(r,g,b,a) ( (static_cast<uint>(a)<<24) | (static_cast<uint>(r)<<16) | (static_cast<uint>(g)<<8) | (static_cast<uint>(b)) )
 
-#define CV_ReplaceAlpha(v, alpha) v &= (alpha<<24) | 0xffffffU
 #define CV_PackLA(l, a) CV_PackColor(l,l,l, a)
+#define CV_RepackAlpha(v, alpha) ((uint32)alpha<<24) | (v & 0x00ffffffU)
 
 #define CV_GetColorR(v) ((v>>16)&0xff)
 #define CV_GetColorG(v) ((v>>8)&0xff)
