@@ -46,12 +46,14 @@ namespace Apoc3D
 		namespace D3D9RenderSystem
 		{
 			D3D9RSPlugin::D3D9RSPlugin()
-				: m_factory(new D3D9GraphicsAPIFactory())
 			{
+				static_assert(sizeof(D3D9GraphicsAPIFactory) <= sizeof(m_localData), "");
+
+				m_factory = new (m_localData)D3D9GraphicsAPIFactory();
 			}
 			D3D9RSPlugin::~D3D9RSPlugin()
 			{
-				delete m_factory;
+				m_factory->~D3D9GraphicsAPIFactory();
 				m_factory = nullptr;
 			}
 

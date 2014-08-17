@@ -44,6 +44,7 @@ typedef struct tagTHREADNAME_INFO
 #include <pthread.h>
 #endif
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Library/tinythread.h"
 
 using namespace Apoc3D::Utility;
 
@@ -56,7 +57,10 @@ namespace Apoc3D
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 			Sleep(ms);
 #else
-			// Single thread sleep code thanks to Furquan Shaikh
+			usleep(ms*1000);
+#endif
+
+			/*// Single thread sleep code thanks to Furquan Shaikh
 			// http://somethingswhichidintknow.blogspot.com/2009/09/sleep-in-pthread.html
 			// Modified slightly from the original
 			pthread_mutex_t fakeMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -80,8 +84,7 @@ namespace Apoc3D
 
 			pthread_mutex_lock(&fakeMutex);
 			rt = pthread_cond_timedwait(&fakeCond, &fakeMutex, &timeToWait);
-			pthread_mutex_unlock(&fakeMutex);
-#endif
+			pthread_mutex_unlock(&fakeMutex);*/
 		}
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 #if _DEBUG

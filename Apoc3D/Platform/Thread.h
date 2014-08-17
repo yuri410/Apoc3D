@@ -29,8 +29,6 @@
 
 #include "../Common.h"
 
-#include "apoc3d/Library/tinythread.h"
-
 namespace Apoc3D
 {
 	namespace Platform

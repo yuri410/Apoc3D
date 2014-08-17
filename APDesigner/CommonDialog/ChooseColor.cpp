@@ -1,5 +1,6 @@
 #include "ChooseColor.h"
 
+#include <Windows.h>
 #include <CommDlg.h>
 
 #undef GetGValue

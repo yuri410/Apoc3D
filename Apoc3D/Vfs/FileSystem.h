@@ -28,7 +28,7 @@
 
 #include "apoc3d/Collections/HashMap.h"
 #include "apoc3d/Collections/List.h"
-#include "apoc3d/Library/tinythread.h"
+#include <mutex>
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
@@ -124,7 +124,7 @@ namespace Apoc3D
 			Archive* CreateArchive(const FileLocation& fl);
 			Archive* CreateArchive(const String& file);
 
-			tthread::mutex m_openedPackMutex;
+			std::mutex m_openedPackMutex;
 			PackTable m_openedPack;
 
 			PackFactoryTable m_factories;

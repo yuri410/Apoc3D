@@ -32,6 +32,8 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Exception.h"
 
+#include "apoc3d/Library/tinythread.h"
+
 using namespace Apoc3D::Utility;
 
 namespace Apoc3D
@@ -302,8 +304,8 @@ namespace Apoc3D
 
 			ArchiveKey ak;
 			ak.filePath = filePath;
-			ak.threadID = tthread::this_thread::get_id().getIdNumber();
-
+			ak.threadID = tthread::this_thread::get_id().hash();
+			
 			m_openedPackMutex.lock();
 			Archive* pack;
 			if (m_openedPack.TryGetValue(ak, pack))
@@ -320,7 +322,7 @@ namespace Apoc3D
 		{
 			ArchiveKey ak;
 			ak.filePath = filePath;
-			ak.threadID = tthread::this_thread::get_id().getIdNumber();
+			ak.threadID = tthread::this_thread::get_id().hash();
 
 			m_openedPackMutex.lock();
 

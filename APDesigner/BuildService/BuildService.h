@@ -4,12 +4,6 @@
 
 #include "APDCommon.h"
 
-namespace tthread
-{
-	class thread;
-	class mutex;
-}
-
 namespace APDesigner
 {
 	class BuildInterface

@@ -99,14 +99,21 @@ typedef uint64 ulong;
 #define MinInt64 std::numeric_limits<int64>::min();
 
 
+// Forward Declarations
 namespace std
 {
 	template class basic_string<char, char_traits<char>, allocator<char> >;
 	template class basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t> >;
 	template class basic_string<char32_t, char_traits<char32_t>, allocator<char32_t>>;
+
 };
 
-// Forward Declarations
+namespace tthread
+{
+	class thread;
+	class mutex;
+}
+
 namespace Apoc3D
 {
 	template class APAPI fastdelegate::FastDelegate0<void>;

@@ -48,7 +48,9 @@ namespace Apoc3D
 				virtual void Unload();
 
 				virtual String GetName() { return L"Windows Input System"; }
+
 			private:
+				char m_localData[88];
 				class Win32InputFactory* m_factory;
 			};
 		}

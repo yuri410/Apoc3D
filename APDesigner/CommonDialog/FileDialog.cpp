@@ -2,6 +2,7 @@
 #include "apoc3d/Utility/StringUtils.h"
 #include "apoc3d/Vfs/PathUtils.h"
 
+#include <Windows.h>
 #include <Commdlg.h>
 
 using namespace Apoc3D::Utility;

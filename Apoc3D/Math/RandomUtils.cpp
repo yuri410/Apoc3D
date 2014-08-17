@@ -24,9 +24,13 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RandomUtils.h"
 
 #include <ctime>
+
 #include "apoc3d/Core/Logging.h"
-#include "apoc3d/Library/tinythread.h"
 #include "apoc3d/Utility/StringUtils.h"
+
+#if _WIN32
+#include <Windows.h>
+#endif
 
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Utility;
@@ -73,7 +77,7 @@ namespace Apoc3D
 
 		void Randomizer::CheckThreadSafety()
 		{
-			uint32 id = tthread::this_thread::get_id().getIdNumber();
+			uint32 id = GetCurrentThreadId();
 
 			if (id != m_existingThreadID)
 			{

@@ -81,7 +81,7 @@ namespace UnitTestVC
 
 			test = L"1 , 2, 90 ";
 			int32 resultArr[4];
-			int32 c = StringUtils::SplitParseInts(test, resultArr, ARRAYSIZE(resultArr), L", ");
+			int32 c = StringUtils::SplitParseInts(test, resultArr, countof(resultArr), L", ");
 			Assert::AreEqual(3, c);
 			Assert::AreEqual(1, resultArr[0]);
 			Assert::AreEqual(2, resultArr[1]);
@@ -102,7 +102,7 @@ namespace UnitTestVC
 
 			test = L"1 , 2, 90 ";
 			float resultArr[4];
-			int32 c = StringUtils::SplitParseSingles(test, resultArr, ARRAYSIZE(resultArr), L", ");
+			int32 c = StringUtils::SplitParseSingles(test, resultArr, countof(resultArr), L", ");
 			Assert::AreEqual(3, c);
 			Assert::AreEqual(1.0f, resultArr[0], 0.0001f);
 			Assert::AreEqual(2.0f, resultArr[1], 0.0001f);

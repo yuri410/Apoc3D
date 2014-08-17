@@ -46,13 +46,14 @@ namespace Apoc3D
 		namespace Win32
 		{
 			WinInputPlugin::WinInputPlugin()
-				: m_factory(new Win32InputFactory())
 			{
+				static_assert(sizeof(Win32InputFactory) <= sizeof(m_localData), "");
 
+				m_factory = new (m_localData)Win32InputFactory();
 			}
 			WinInputPlugin::~WinInputPlugin()
 			{
-				delete m_factory;
+				m_factory->~Win32InputFactory();
 				m_factory = nullptr;
 			}
 

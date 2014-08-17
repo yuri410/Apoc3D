@@ -38,11 +38,6 @@ using namespace Apoc3D::Core;
 using namespace Apoc3D::Math;
 using namespace Apoc3D::Graphics;
 
-namespace tthread
-{
-	class mutex;
-}
-
 namespace Apoc3D
 {
 	namespace UI

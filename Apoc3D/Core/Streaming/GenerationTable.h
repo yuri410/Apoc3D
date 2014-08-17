@@ -34,11 +34,6 @@
 using namespace Apoc3D::Core;
 using namespace Apoc3D::Collections;
 
-namespace tthread
-{
-	class mutex;
-}
-
 namespace Apoc3D
 {
 	namespace Core

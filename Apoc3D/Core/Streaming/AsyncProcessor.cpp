@@ -2,10 +2,8 @@
 #include "apoc3d/Platform/Thread.h"
 #include "GenerationTable.h"
 #include "apoc3d/Core/Resource.h"
-
 #include "apoc3d/Library/tinythread.h"
 
-#include <ctime>
 #include <chrono>
 
 using namespace Apoc3D::Platform;
