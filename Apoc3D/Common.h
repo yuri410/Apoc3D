@@ -121,11 +121,17 @@ namespace Apoc3D
 	typedef std::wstring String;
 	typedef std::u32string String32;
 
-	template <typename T, int32 N>
-	int32 countof(T(&)[N]) { return N; }
+	//template <typename T, int32 N>
+	//int32 countof(T(&)[N]) { return N; }
+	
+	template <typename T, int N> const char(&__countof(T(&)[N]))[N];
+#define countof(arr) static_cast<int32>(sizeof(__countof(arr)))
+#define COUNTOF(arr) countof(arr)
 
 	template <typename T, int32 N>
 	void ZeroArray(T(&arr)[N]) { static_assert(std::is_trivially_default_constructible<T>::value, "Type not suitable"); memset(arr, 0, sizeof(T)*N); }
+
+	void DebugBreak();
 
 	class Project;
 	class ProjectItemData;

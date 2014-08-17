@@ -47,7 +47,7 @@ namespace Apoc3D
 				StopBackground();
 
 				m_terminated = false;
-				m_thread = new std::thread(BackgroundMainStatic, this);
+				m_thread = new tthread::thread(BackgroundMainStatic, this);
 				Apoc3D::Platform::SetThreadName(m_thread, name);
 			}
 			void StopBackground()

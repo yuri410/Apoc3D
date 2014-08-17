@@ -28,4 +28,14 @@ http://www.gnu.org/copyleft/gpl.txt.
 namespace Apoc3D
 {
 	static_assert(sizeof(wchar_t) == 2, "wchar_t need to be configured to be 2 bytes.");
+
+
+	void DebugBreak()
+	{
+#if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
+		__debugbreak();
+#else
+		raise(SIGTRAP);
+#endif
+	}
 }
