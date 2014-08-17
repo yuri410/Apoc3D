@@ -82,13 +82,13 @@ namespace Apoc3D
 
 			Vector3 GetMax() const
 			{
-				Vector3 ext = Vector3(m_boundingVolume.Length*0.5f);
+				Vector3 ext = Vector3::Set(m_boundingVolume.Length*0.5f);
 				return m_boundingVolume.Center +  ext;
 			}
 			Vector3 GetMin() const
 			{
-				Vector3 ext = Vector3(m_boundingVolume.Length*-0.5f);
-				return m_boundingVolume.Center +  ext;
+				Vector3 ext = Vector3::Set(m_boundingVolume.Length*-0.5f);
+				return m_boundingVolume.Center + ext;
 			}
 
 			const BoundingSphere& getBoundingSphere() const { return m_boundingSphere; }

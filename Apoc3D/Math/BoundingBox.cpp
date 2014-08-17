@@ -43,7 +43,7 @@ namespace Apoc3D
 			if (dist > (radius * radius))
 				return CONTAIN_Disjoint;
 
-			Vector3 rrr(radius);
+			Vector3 rrr = Vector3::Set(radius);
 			Vector3 boxmax_near = Maximum - rrr;
 			Vector3 boxmin_near = Minimum + rrr;
 
@@ -61,7 +61,7 @@ namespace Apoc3D
 
 		void BoundingBox::CreateFromSphere(BoundingBox& res, const BoundingSphere& sphere)
 		{
-			Vector3 r(sphere.Radius);
+			Vector3 r = Vector3::Set(sphere.Radius);
 			res.Minimum = sphere.Center - r;
 			res.Maximum = sphere.Center + r;
 		}

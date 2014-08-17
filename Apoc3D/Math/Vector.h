@@ -77,16 +77,11 @@ namespace Apoc3D
 
 			explicit Vector4(const float* ptr)
 				: X(ptr[0]), Y(ptr[1]), Z(ptr[2]), W(ptr[3])
-			{
-			}
-			explicit Vector4(float value)
-				: X(value), Y(value), Z(value), W(value)
-			{				
-			}
-			Vector4(float x,float y,float z,float w)
+			{ }
+			Vector4(float x, float y, float z, float w)
 				: X(x), Y(y), Z(z), W(w)
-			{
-			}
+			{ }
+
 			Vector4(const Vector3& v, float w);
 
 			bool operator==(const Vector4 &other) const { return other.X == X && other.Y == Y && other.Z == Z && other.W == W; }
@@ -111,7 +106,7 @@ namespace Apoc3D
 			
 			float operator[] (int idx) const { assert(idx<4); return (&X)[idx]; }
 
-			void Set(const float* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; W = ptr[3]; }
+			void Load(const float* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; W = ptr[3]; }
 			void Store(float* dest) { dest[0] = X; dest[1] = Y; dest[2] = Z; dest[3] = W; }
 
 			/**
@@ -419,6 +414,7 @@ namespace Apoc3D
 			 */
 			static Vector4 Transform(const Vector4& vector, const Matrix& transform);
 			
+			static Vector4 Set(float s) { return Vector4(s, s, s, s); }
 
 			/** 
 			 * a Vector4 with all of its components set to zero.
@@ -460,13 +456,9 @@ namespace Apoc3D
 			float Y;
 
 			Vector2() { }
-			explicit Vector2(float value)
-				: X(value), Y(value)
-			{ }
 
 			Vector2(float x, float y)
-				: X(x), Y(y)
-			{ }
+				: X(x), Y(y) { }
 
 			bool operator==(const Vector2 &other) const { return other.X == X && other.Y == Y;  }
 			bool operator!=(const Vector2 &other) const { return !(*this == other); }
@@ -491,7 +483,7 @@ namespace Apoc3D
 			
 			float operator[] (int idx) const { assert(idx<2); return (&X)[idx]; }
 
-			void Set(const float* ptr) { X = ptr[0]; Y = ptr[1]; }
+			void Load(const float* ptr) { X = ptr[0]; Y = ptr[1]; }
 			void Store(float* dest) const { dest[0] = X; dest[1] = Y; }
 
 
@@ -742,6 +734,8 @@ namespace Apoc3D
 				return vector;
 			}
 
+			static Vector2 Set(float s) { return Vector2(s, s); }
+
 			/**
 			 *  a Vector2 with all of its components set to zero.
 			 */
@@ -783,10 +777,8 @@ namespace Apoc3D
 			explicit Vector3(const float* ptr)
 				: X(ptr[0]), Y(ptr[1]), Z(ptr[2])
 			{ }
-			explicit Vector3(float value)
-				: X(value), Y(value), Z(value)
-			{ }
-			Vector3(float x,float y,float z)
+			
+			Vector3(float x, float y, float z)
 				: X(x), Y(y), Z(z)
 			{ }
 
@@ -812,7 +804,7 @@ namespace Apoc3D
 			
 			float operator[] (int idx) const { assert(idx<3); return (&X)[idx]; }
 
-			void Set(const float* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; }
+			void Load(const float* ptr) { X = ptr[0]; Y = ptr[1]; Z = ptr[2]; }
 			void Store(float* dest) const { dest[0] = X; dest[1] = Y; dest[2] = Z; }
 
 			/**
@@ -1122,6 +1114,7 @@ namespace Apoc3D
 			static bool IsGreater(const Vector3& left, const Vector3& right)		{ return left.X >  right.X && left.Y >  right.Y && left.Z >  right.Z; }
 			static bool IsGreaterEqual(const Vector3& left, const Vector3& right)	{ return left.X >= right.X && left.Y >= right.Y && left.Z >= right.Z; }
 
+			static Vector3 Set(float s) { return Vector3(s, s, s); }
 
 			/**
 			 * a Vector3 with all of its components set to zero.
@@ -1144,8 +1137,7 @@ namespace Apoc3D
 		
 		inline Vector4::Vector4(const Vector3& v, float w)
 			: X(v.X), Y(v.Y), Z(v.Z), W(w)
-		{
-		}
+		{ }
 
 		class APAPI Vector2Utils
 		{

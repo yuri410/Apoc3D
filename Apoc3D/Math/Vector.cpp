@@ -33,23 +33,23 @@ namespace Apoc3D
 {
 	namespace Math
 	{
-		const Vector2 Vector2::Zero = Vector2(0);
+		const Vector2 Vector2::Zero = Vector2::Set(0.0f);
 		const Vector2 Vector2::UnitX = Vector2(1,0);
 		const Vector2 Vector2::UnitY = Vector2(0,1);
-		const Vector2 Vector2::One = Vector2(1);
+		const Vector2 Vector2::One = Vector2::Set(1.0f);
 
-		const Vector3 Vector3::Zero = Vector3(0.0f);
+		const Vector3 Vector3::Zero = Vector3::Set(0.0f);
 		const Vector3 Vector3::UnitX = Vector3(1, 0, 0);
 		const Vector3 Vector3::UnitY = Vector3(0, 1, 0);
 		const Vector3 Vector3::UnitZ = Vector3(0, 0, 1);
-		const Vector3 Vector3::One = Vector3(1);
+		const Vector3 Vector3::One = Vector3::Set(1.0f);
 
-		const Vector4 Vector4::Zero = Vector4(0.0f);
+		const Vector4 Vector4::Zero = Vector4::Set(0.0f);
 		const Vector4 Vector4::UnitX = Vector4(1, 0, 0, 0);
 		const Vector4 Vector4::UnitY = Vector4(0, 1, 0, 0);
 		const Vector4 Vector4::UnitZ = Vector4(0, 0, 1, 0);
 		const Vector4 Vector4::UnitW = Vector4(0, 0, 0, 1);
-		const Vector4 Vector4::One = Vector4(1);
+		const Vector4 Vector4::One = Vector4::Set(1.0f);
 		
 
 		void Vector2::Parse(const String& str, bool loosy)

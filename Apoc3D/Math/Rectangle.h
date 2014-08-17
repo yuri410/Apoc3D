@@ -54,6 +54,7 @@ namespace Apoc3D
 				: X(x), Y(y), Width(width), Height(height)
 			{ }
 
+
 			void Offset(const Point &amount)
 			{
 				X += amount.X; Y += amount.Y;
@@ -179,6 +180,13 @@ namespace Apoc3D
 			Point getCenter() const { return Point(X + Width / 2, Y + Height / 2); }
 
 			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
+
+
+			Point GetTopLeft() const { return Point(X, Y); }
+			Point GetTopRight() const { return Point(X + Width, Y); }
+
+			Point GetBottomLeft() const { return Point(X, Y + Height); }
+			Point GetBottomRight() const { return Point(X + Width, Y + Height); }
 
 			Rectangle() : X(0), Y(0), Width(0), Height(0) { }
 			Rectangle(int x, int y, int width, int height)
