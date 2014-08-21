@@ -35,18 +35,17 @@ namespace Apoc3D
 	{
 		namespace StringUtils
 		{
+			using Apoc3D::Collections::List;
+
 			APAPI extern const String Empty;
 
 			APAPI std::string toPlatformNarrowString(const String& str);
 			APAPI std::string toPlatformNarrowString(const wchar_t* str);
 			APAPI String toPlatformWideString(const std::string& str);
 			APAPI String toPlatformWideString(const char* str);
-
-
 			APAPI std::string toASCIINarrowString(const String& str);
 			APAPI String toASCIIWideString(const std::string& str);
 			
-
 			APAPI String UTF8toUTF16(const std::string& utf8);
 			APAPI std::string UTF16toUTF8(const String& utf16);
 
@@ -57,8 +56,7 @@ namespace Apoc3D
 			APAPI String UTF32toUTF16(const String32& utf32);
 
 
-
-
+			
 			APAPI bool ParseBool(const String& val);
 			APAPI uint16 ParseUInt16(const String& val);
 			APAPI uint32 ParseUInt32(const String& val);
@@ -131,46 +129,73 @@ namespace Apoc3D
 			APAPI void Trim(String& str, const String& delims = L" \t\r");
 			APAPI void TrimLeft(String& str, const String& delims = L" \t\r");
 			APAPI void TrimRight(String& str, const String& delims = L" \t\r");
-			APAPI void Split(const String& str, Apoc3D::Collections::List<String>& results, const String& delims = L" ");
-			APAPI void Split(const std::string& str, Apoc3D::Collections::List<std::string>& results, const std::string& delims = " ");
 
-			APAPI int32 SplitParseSingles(const String& str, float* flts, int32 maxCount, const String& delims = L" ");
-			APAPI void SplitParseSingles(const String& str, Apoc3D::Collections::List<float>& results, const String& delims = L" ");
-			inline void SplitParseSinglesChecked(const String& str, float* flts, int32 maxCount, const String& delims = L" ")
+
+
+			APAPI void Split(const String& str, Apoc3D::Collections::List<String>& results, const String& delims);
+			APAPI void Split(const std::string& str, Apoc3D::Collections::List<std::string>& results, const std::string& delims);
+			APAPI void Split(const String& str, Apoc3D::Collections::List<String>& results, char16_t delims);
+			APAPI void Split(const std::string& str, Apoc3D::Collections::List<std::string>& results, char delims);
+
+
+			APAPI List<String> Split(const String& str, const String& delims);
+			APAPI List<std::string> Split(const std::string& str, const std::string& delims);
+			APAPI List<String> Split(const String& str, char16_t delims);
+			APAPI List<std::string> Split(const std::string& str, char delims);
+
+			//////////////////////////////////////////////////////////////////////////
+
+			APAPI int32 SplitParseSingles(const String& str, float* flts, int32 maxCount, const String& delims);
+			APAPI List<float> SplitParseSingles(const String& str, const String& delims);
+			APAPI void SplitParseSingles(const String& str, List<float>& results, const String& delims);
+			
+			template <int32 N>
+			void SplitParseSinglesChecked(const String& str, float (&flts)[N], const String& delims) { SplitParseSinglesChecked(str, flts, N, delims); }
+			inline void SplitParseSinglesChecked(const String& str, float* flts, int32 maxCount, const String& delims)
 			{
 				int32 r = SplitParseSingles(str, flts, maxCount, delims); assert(r == maxCount);
 			}
-			template <int32 N>
-			void SplitParseSinglesChecked(const String& str, float (&flts)[N], const String& delims = L" ") { SplitParseSinglesChecked(str, flts, N, delims); }
 
-			APAPI int32 SplitParseSingles(const std::string& str, float* flts, int32 maxCount, const std::string& delims = " ");
-			APAPI void SplitParseSingles(const std::string& str, Apoc3D::Collections::List<float>& results, const std::string& delims = " ");
-			inline void SplitParseSinglesChecked(const std::string& str, float* flts, int32 maxCount, const std::string& delims = " ")
+			//////////////////////////////////////////////////////////////////////////
+
+			APAPI int32 SplitParseSingles(const std::string& str, float* flts, int32 maxCount, const std::string& delims);
+			APAPI List<float> SplitParseSingles(const std::string& str, const std::string& delims);
+			APAPI void SplitParseSingles(const std::string& str, List<float>& results, const std::string& delims);
+			
+			template <int32 N>
+			void SplitParseSinglesChecked(const std::string& str, float (&flts)[N], const std::string& delims) { SplitParseSinglesChecked(str, flts, N, delims); }
+			inline void SplitParseSinglesChecked(const std::string& str, float* flts, int32 maxCount, const std::string& delims)
 			{
 				int32 r = SplitParseSingles(str, flts, maxCount, delims); assert(r == maxCount);
 			}
+
+			//////////////////////////////////////////////////////////////////////////
+
+			APAPI int32 SplitParseInts(const String& str, int32* ints, int32 maxCount, const String& delims);
+			APAPI List<int32> SplitParseInts(const String& str, const String& delims);
+			APAPI void SplitParseInts(const String& str, List<int32>& results, const String& delims);
+			
 			template <int32 N>
-			void SplitParseSinglesChecked(const std::string& str, float (&flts)[N], const std::string& delims = " ") { SplitParseSinglesChecked(str, flts, N, delims); }
-
-
-			APAPI int32 SplitParseInts(const String& str, int32* ints, int32 maxCount, const String& delims = L" ");
-			APAPI void SplitParseInts(const String& str, Apoc3D::Collections::List<int32>& results, const String& delims = L" ");
-			inline void SplitParseIntsChecked(const String& str, int32* ints, int32 maxCount, const String& delims = L" ")
+			void SplitParseIntsChecked(const String& str, int32 (&ints)[N], const String& delims) { SplitParseIntsChecked(str, ints, N, delims); }
+			inline void SplitParseIntsChecked(const String& str, int32* ints, int32 maxCount, const String& delims)
 			{
 				int32 r = SplitParseInts(str, ints, maxCount, delims); assert(r == maxCount);
 			}
-			template <int32 N>
-			void SplitParseIntsChecked(const String& str, int32 (&ints)[N], const String& delims = L" ") { SplitParseIntsChecked(str, ints, N, delims); }
 
-			APAPI int32 SplitParseInts(const std::string& str, int32* ints, int32 maxCount, const std::string& delims = " ");
-			APAPI void SplitParseInts(const std::string& str, Apoc3D::Collections::List<int32>& results, const std::string& delims = " ");
-			inline void SplitParseIntsChecked(const std::string& str, int32* ints, int32 maxCount, const std::string& delims = " ")
+			//////////////////////////////////////////////////////////////////////////
+
+			APAPI int32 SplitParseInts(const std::string& str, int32* ints, int32 maxCount, const std::string& delims);
+			APAPI List<int32> SplitParseInts(const std::string& str, const std::string& delims);
+			APAPI void SplitParseInts(const std::string& str, List<int32>& results, const std::string& delims);
+			
+			template <int32 N>
+			void SplitParseIntsChecked(const std::string& str, int32 (&ints)[N], const std::string& delims) { SplitParseIntsChecked(str, ints, N, delims); }
+			inline void SplitParseIntsChecked(const std::string& str, int32* ints, int32 maxCount, const std::string& delims)
 			{
 				int32 r = SplitParseInts(str, ints, maxCount, delims); assert(r == maxCount);
 			}
-			template <int32 N>
-			void SplitParseIntsChecked(const std::string& str, int32 (&ints)[N], const std::string& delims = " ") { SplitParseIntsChecked(str, ints, N, delims); }
 
+			//////////////////////////////////////////////////////////////////////////
 
 			APAPI bool StartsWith(const String& str, const String& v, bool caseInsensitive = false);
 			APAPI bool EndsWith(const String& str, const String& v, bool caseInsensitive = false);
@@ -179,8 +204,6 @@ namespace Apoc3D
 
 			APAPI void ToLowerCase(String& str);
 			APAPI void ToUpperCase(String& str);
-
-			
 
 			inline uint GetHashCode(const String& str)
 			{

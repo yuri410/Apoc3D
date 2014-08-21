@@ -44,7 +44,7 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		Label::Label(const Point& position, const String& text, int width, Align alignment)
+		Label::Label(const Point& position, const String& text, int width, TextAlignment alignment)
 			: Control(position, text), m_alignment(alignment), m_width(width), m_hasColorValue(false)
 		{
 			Size.X = width;
@@ -147,10 +147,10 @@ namespace Apoc3D
 				Point txtSize = m_fontRef->MeasureString(Text);
 				switch (m_alignment)
 				{
-				case ALIGN_Right:
+				case TextAlignment::Right:
 					m_textOffset.X = Size.X - txtSize.X;
 					break;
-				case ALIGN_Center:
+				case TextAlignment::Center:
 					m_textOffset.X = (Size.X - txtSize.X)/2;
 					break;
 				}
@@ -165,13 +165,13 @@ namespace Apoc3D
 					Point txtSize = m_fontRef->MeasureString(Text);
 					switch (m_alignment)
 					{
-					case ALIGN_Right:
+					case TextAlignment::Right:
 						m_drawPos.X = Position.X + Size.X - txtSize.X;
 						break;
-					case ALIGN_Center:
+					case TextAlignment::Center:
 						m_drawPos.X = Position.X + (Size.X - txtSize.X)/2;
 						break;
-					case ALIGN_Left:
+					case TextAlignment::Left:
 						m_drawPos.X = Position.X;
 						break;
 					}

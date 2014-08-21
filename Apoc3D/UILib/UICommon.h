@@ -88,6 +88,16 @@ namespace Apoc3D
 		};
 
 
+		enum struct TextAlignment
+		{
+			Left,
+			Center,
+			Right
+		};
+
+
+
+
 
 		APAPI void guiGenerateRegion9Rects(const Apoc3D::Math::Rectangle& dstRect, Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* destRects);
 		APAPI void guiGenerateRegion3Rects(const Point& pos, int32 width, Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* destRects);

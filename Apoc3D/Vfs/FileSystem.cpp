@@ -85,6 +85,7 @@ namespace Apoc3D
 					return true;
 				}
 
+				// goto parent until (a)found: the archive file (b)not found: workingDir
 				while (!PathUtils::ComparePath(fullPath, m_workingDirs[i]))
 				{
 					fullPath = PathUtils::GetDirectory(fullPath);
@@ -98,7 +99,7 @@ namespace Apoc3D
 			}
 			return false;
 		}
-		bool FileSystem::FindMatchingSplitDirectories(const String& path, List<String>& result, List<String>& archivePath) const
+		bool FileSystem::FindAllExistingDirectoriesSplited(const String& path, List<String>& result, List<String>& archivePath) const
 		{
 			for (int32 i = 0; i < m_workingDirs.getCount(); i++)
 			{
@@ -212,7 +213,7 @@ namespace Apoc3D
 							{
 								if (i > 0)
 								{
-									sb.append(1, PathUtils::AltDirectorySeparator);
+									sb.append(1, PathUtils::DirectorySeparator);
 									sb.append(locs[i]);
 								}
 								else

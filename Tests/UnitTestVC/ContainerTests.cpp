@@ -50,7 +50,7 @@ namespace UnitTestVC
 			MEM_EndCheckPoint;
 		}
 
-		TEST_METHOD(ListReverse)
+		TEST_METHOD(List_Reverse)
 		{
 			List<int> subject;
 
@@ -77,7 +77,7 @@ namespace UnitTestVC
 
 		}
 
-		TEST_METHOD(ListSort)
+		TEST_METHOD(List_Sort)
 		{
 			List<int> subject(100);
 			int counter[1000];
@@ -111,7 +111,7 @@ namespace UnitTestVC
 			Assert::IsTrue(memcmp(counter, counter2, sizeof(counter)) == 0);
 		}
 
-		TEST_METHOD(ListSort2)
+		TEST_METHOD(List_Sort2)
 		{
 			List<int> subject(100);
 			int counter[1000];
@@ -145,7 +145,7 @@ namespace UnitTestVC
 			Assert::IsTrue(memcmp(counter, counter2, sizeof(counter)) == 0);
 		}
 
-		TEST_METHOD(ListIterator)
+		TEST_METHOD(List_Iterator)
 		{
 			List<int> subject;
 
@@ -175,7 +175,7 @@ namespace UnitTestVC
 			}
 		}
 
-		TEST_METHOD(ListAddMult)
+		TEST_METHOD(List_AddMult)
 		{
 			const int preData[] = { 44, 55, 66, 77 };
 
@@ -213,36 +213,36 @@ namespace UnitTestVC
 
 		//////////////////////////////////////////////////////////////////////////
 
-		TEST_METHOD(ListOrderInt)
+		TEST_METHOD(List_OrderInt)
 		{
 			_TestOrder<int>(m_intData, m_intDataCount);
 		}
 
-		TEST_METHOD(ListOrderVoid)
+		TEST_METHOD(List_OrderVoid)
 		{
 			_TestOrder<void*>(m_ptrData, m_ptrDataCount);
 		}
 
-		TEST_METHOD(ListOrderString)
+		TEST_METHOD(List_OrderString)
 		{
 			_TestOrder<String>(m_stringData, m_strDataCount);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
 
-		TEST_METHOD(ListClearInt)
+		TEST_METHOD(List_ClearInt)
 		{
 			int data[5] = { 1, 2, 3, 4, 5 };
 			_TestClear<int>(data, 5, 100, 101);
 		}
 
-		TEST_METHOD(ListClearVoid)
+		TEST_METHOD(List_ClearVoid)
 		{
 			void* data[5] = { (void*)1, (void*)2, (void*)3, (void*)4, (void*)5 };
 			_TestClear<void*>(data, 5, (void*)100, (void*)101);
 		}
 
-		TEST_METHOD(ListClearString)
+		TEST_METHOD(List_ClearString)
 		{
 			String data[5] = { L"a", L"b", L"c", L"d", L"e" };
 			_TestClear<String>(data, 5, L"x", L"y");
@@ -250,19 +250,19 @@ namespace UnitTestVC
 
 		//////////////////////////////////////////////////////////////////////////
 
-		TEST_METHOD(ListCopyInt)
+		TEST_METHOD(List_CopyInt)
 		{
 			int data[5] = { 1, 2, 3, 4, 5 };
 			_TestCopy<int>(data, 5, 100, 101);
 		}
 
-		TEST_METHOD(ListCopyVoid)
+		TEST_METHOD(List_CopyVoid)
 		{
 			void* data[5] = { (void*)1, (void*)2, (void*)3, (void*)4, (void*)5 };
 			_TestCopy<void*>(data, 5, (void*)100, (void*)101);
 		}
 
-		TEST_METHOD(ListCopyString)
+		TEST_METHOD(List_CopyString)
 		{
 			String data[5] = { L"a", L"b", L"c", L"d", L"e" };
 			_TestCopy<String>(data, 5, L"x", L"y");
@@ -270,36 +270,36 @@ namespace UnitTestVC
 
 		//////////////////////////////////////////////////////////////////////////
 
-		TEST_METHOD(ListIteratorInt)
+		TEST_METHOD(List_IteratorInt)
 		{
 			_TestIterator<int>(m_intData, m_intDataCount);
 		}
 
-		TEST_METHOD(ListIteratorVoid)
+		TEST_METHOD(List_IteratorVoid)
 		{
 			_TestIterator<void*>(m_ptrData, m_ptrDataCount);
 		}
 
-		TEST_METHOD(ListIteratorString)
+		TEST_METHOD(List_IteratorString)
 		{
 			_TestIterator<String>(m_stringData, m_strDataCount);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
 
-		TEST_METHOD(ListRemoveInt)
+		TEST_METHOD(List_RemoveInt)
 		{
 			int data[5] = { 1, 2, 3, 4, 5 };
 			_TestRemove<int>(data, 5, 100);
 		}
 
-		TEST_METHOD(ListRemoveVoid)
+		TEST_METHOD(List_RemoveVoid)
 		{
 			void* data[5] = { (void*)1, (void*)2, (void*)3, (void*)4, (void*)5 };
 			_TestRemove<void*>(data, 5, (void*)100);
 		}
 
-		TEST_METHOD(ListRemoveString)
+		TEST_METHOD(List_RemoveString)
 		{
 			String data[5] = { L"a", L"b", L"c", L"d", L"e" };
 			_TestRemove<String>(data, 5, L"missing");
@@ -479,7 +479,7 @@ namespace UnitTestVC
 			MEM_EndCheckPoint;
 		}
 
-		TEST_METHOD(FixedListIterator)
+		TEST_METHOD(FixedList_Iterator)
 		{
 			FixedList<int, 5> subject;
 
@@ -509,13 +509,13 @@ namespace UnitTestVC
 			}
 		}
 
-		TEST_METHOD(FixedListAddMult)
+		TEST_METHOD(FixedList_AddMult)
 		{
 			const int preData[] = { 44, 55, 66, 77 };
 
 			for (int32 i = 0; i < countof(preData); i++)
 			{
-				FixedList<int, 24> s1;
+				FixedList<int, 28> s1;
 
 				for (int32 j = 0; j <= i; j++)
 				{
@@ -561,7 +561,7 @@ namespace UnitTestVC
 			MEM_EndCheckPoint;
 		}
 
-		TEST_METHOD(HashMapIterator)
+		TEST_METHOD(HashMap_Iterator)
 		{
 			HashMap<int, int> subject;
 
@@ -625,7 +625,7 @@ namespace UnitTestVC
 			}
 		}
 
-		TEST_METHOD(HashMapCopy)
+		TEST_METHOD(HashMap_Copy)
 		{
 			HashMap<String, String> m1(10);
 
@@ -651,7 +651,7 @@ namespace UnitTestVC
 			HashMap<String, String> m6 = m5;
 		}
 
-		TEST_METHOD(HashMapCount)
+		TEST_METHOD(HashMap_Count)
 		{
 			HashMap<String, String> m2;
 			m2.Add(L"1", L"");
@@ -687,7 +687,7 @@ namespace UnitTestVC
 
 		}
 
-		TEST_METHOD(HashMapAddRemove)
+		TEST_METHOD(HashMap_AddRemove)
 		{
 			const int amount = 1000;
 			String srcs[amount];
@@ -752,7 +752,7 @@ namespace UnitTestVC
 		}
 
 
-		TEST_METHOD(HashSetAddRemove)
+		TEST_METHOD(HashSet_AddRemove)
 		{
 			const int amount = 1000;
 			String srcs[amount];

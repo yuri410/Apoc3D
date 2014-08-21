@@ -1,7 +1,6 @@
 
 #include "PixelFormat.h"
 #include "LockData.h"
-#include "apoc3d/Math/Half.h"
 #include "apoc3d/Math/MathCommon.h"
 #include "apoc3d/Math/Color.h"
 #include "apoc3d/Collections/HashMap.h"
@@ -13,14 +12,75 @@ namespace Apoc3D
 {
 	namespace Graphics
 	{
-		struct PixelFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>
+		const Apoc3D::Collections::EnumDualConversionHelper<PixelFormat> PixelFormatEnumConverter = 
 		{
-			PixelFormatEnumHelper();
-		} static PixelFormatEnumConverter;
-		struct DepthFormatEnumHelper : public Apoc3D::Collections::EnumDualConversionHelper<DepthFormat>
+			{ L"L8", FMT_Luminance8 },
+			{ L"L16", FMT_Luminance16 },
+			{ L"A8", FMT_Alpha8 },
+			{ L"A4L4", FMT_A4L4 },
+			{ L"A8L8", FMT_A8L8 },
+
+			{ L"R5G6B5", FMT_R5G6B5 },
+			{ L"R8G8B8", FMT_R8G8B8 },
+			{ L"A8R8G8B8", FMT_A8R8G8B8 },
+			{ L"A4R4G4B4", FMT_A4R4G4B4 },
+			{ L"A1R5G5B5", FMT_A1R5G5B5 },
+
+			{ L"B5G6R5", FMT_B5G6R5 },
+			{ L"B8G8R8", FMT_B8G8R8 },
+			{ L"B8G8R8A8", FMT_B8G8R8A8 },
+			{ L"A8B8G8R8", FMT_A8B8G8R8 },
+
+			{ L"A2R10G10B10", FMT_A2R10G10B10 },
+			{ L"A2B10G10R10", FMT_A2B10G10R10 },
+
+			{ L"DXT1", FMT_DXT1 },
+			{ L"DXT2", FMT_DXT2 },
+			{ L"DXT3", FMT_DXT3 },
+			{ L"DXT4", FMT_DXT4 },
+			{ L"DXT5", FMT_DXT5 },
+
+			{ L"R16F", FMT_R16F },
+			{ L"G16R16F", FMT_G16R16F },
+			{ L"A16B16G16R16F", FMT_A16B16G16R16F },
+
+			{ L"R32F", FMT_R32F },
+			{ L"G32R32F", FMT_G32R32F },
+			{ L"A32B32G32R32F", FMT_A32B32G32R32F },
+
+			{ L"X8R8G8B8", FMT_X8R8G8B8 },
+			{ L"X8B8G8R8", FMT_X8B8G8R8 },
+			{ L"X1R5G5B5", FMT_X1R5G5B5 },
+
+			{ L"R8G8B8A8", FMT_R8G8B8A8 },
+
+			{ L"A16B16G16R16", FMT_A16B16G16R16 },
+
+			{ L"R3G3B2", FMT_R3G3B2 },
+			{ L"B4G4R4A4", FMT_B4G4R4A4 },
+
+			{ L"G16R16", FMT_G16R16 },
+			{ L"R16G16B16", FMT_R16G16B16 },
+
+			{ L"P8", FMT_Palette8 },
+			{ L"P8A8", FMT_Palette8Alpha8 },
+
+			{ L"Unknown", FMT_Unknown }
+		};
+
+		const Apoc3D::Collections::EnumDualConversionHelper<DepthFormat> DepthFormatEnumConveter =
 		{
-			DepthFormatEnumHelper();
-		} static DepthFormatEnumConveter;
+			{ L"D15S1", DEPFMT_Depth15Stencil1 },
+			{ L"D16", DEPFMT_Depth16 },
+			{ L"D16Lockable", DEPFMT_Depth16Lockable },
+			{ L"D24", DEPFMT_Depth24X8 },
+			{ L"D24S4", DEPFMT_Depth24Stencil4 },
+			{ L"D24S8", DEPFMT_Depth24Stencil8 },
+			{ L"D24S8F", DEPFMT_Depth24Stencil8Single },
+			{ L"D32", DEPFMT_Depth32 },
+			{ L"D32Lockable", DEPFMT_Depth32Lockable },
+			{ L"D32F", DEPFMT_Depth32Single },
+		};
 
 		struct SizeTable
 		{
@@ -120,78 +180,7 @@ namespace Apoc3D
 			memcpy(chnBitDepths, FormatSizeTable.pfChannelBits[(int32)fmt], sizeof(chnBitDepths));
 		}
 
-		PixelFormatEnumHelper::PixelFormatEnumHelper()
-			: Apoc3D::Collections::EnumDualConversionHelper<PixelFormat>(FMT_Count)
-		{
-			AddPair(L"L8",			FMT_Luminance8);
-			AddPair(L"L16",			FMT_Luminance16);
-			AddPair(L"A8",			FMT_Alpha8);
-			AddPair(L"A4L4",		FMT_A4L4);
-			AddPair(L"A8L8",		FMT_A8L8);
-
-			AddPair(L"R5G6B5",		FMT_R5G6B5);
-			AddPair(L"R8G8B8",		FMT_R8G8B8);
-			AddPair(L"A8R8G8B8",	FMT_A8R8G8B8);
-			AddPair(L"A4R4G4B4",	FMT_A4R4G4B4);
-			AddPair(L"A1R5G5B5",	FMT_A1R5G5B5);
-
-			AddPair(L"B5G6R5",		FMT_B5G6R5);
-			AddPair(L"B8G8R8",		FMT_B8G8R8);
-			AddPair(L"B8G8R8A8",	FMT_B8G8R8A8);
-			AddPair(L"A8B8G8R8",	FMT_A8B8G8R8);
-
-			AddPair(L"A2R10G10B10",	FMT_A2R10G10B10);
-			AddPair(L"A2B10G10R10", FMT_A2B10G10R10);
-
-			AddPair(L"DXT1", FMT_DXT1);
-			AddPair(L"DXT2", FMT_DXT2);
-			AddPair(L"DXT3", FMT_DXT3);
-			AddPair(L"DXT4", FMT_DXT4);
-			AddPair(L"DXT5", FMT_DXT5);
-
-			AddPair(L"R16F",	FMT_R16F);
-			AddPair(L"G16R16F",	FMT_G16R16F);
-			AddPair(L"A16B16G16R16F",	FMT_A16B16G16R16F);
-
-			AddPair(L"R32F",	FMT_R32F);
-			AddPair(L"G32R32F",	FMT_G32R32F);
-			AddPair(L"A32B32G32R32F",	FMT_A32B32G32R32F);
-
-			AddPair(L"X8R8G8B8", FMT_X8R8G8B8);
-			AddPair(L"X8B8G8R8", FMT_X8B8G8R8);
-			AddPair(L"X1R5G5B5", FMT_X1R5G5B5);
-
-			AddPair(L"R8G8B8A8", FMT_R8G8B8A8);
-
-			AddPair(L"A16B16G16R16",	FMT_A16B16G16R16);
-
-			AddPair(L"R3G3B2",	FMT_R3G3B2);
-			AddPair(L"B4G4R4A4",	FMT_B4G4R4A4);
-
-			AddPair(L"G16R16",	FMT_G16R16);
-			AddPair(L"R16G16B16",	FMT_R16G16B16);
-
-			AddPair(L"P8",	FMT_Palette8);
-			AddPair(L"P8A8",	FMT_Palette8Alpha8);
-
-			AddPair(L"Unknown", FMT_Unknown);
-		}
-
-		DepthFormatEnumHelper::DepthFormatEnumHelper()
-			: Apoc3D::Collections::EnumDualConversionHelper<DepthFormat>(DEPFMT_Count)
-		{
-			AddPair(L"D15S1",		DEPFMT_Depth15Stencil1);
-			AddPair(L"D16",			DEPFMT_Depth16);
-			AddPair(L"D16Lockable",	DEPFMT_Depth16Lockable);
-			AddPair(L"D24",			DEPFMT_Depth24X8);
-			AddPair(L"D24S4",		DEPFMT_Depth24Stencil4);
-			AddPair(L"D24S8",		DEPFMT_Depth24Stencil8);
-			AddPair(L"D24S8F",		DEPFMT_Depth24Stencil8Single);
-			AddPair(L"D32",			DEPFMT_Depth32);
-			AddPair(L"D32Lockable", DEPFMT_Depth32Lockable);
-			AddPair(L"D32F",		DEPFMT_Depth32Single);
-		}
-
+	
 
 		void SizeTable::createPixelFormatSizeTable(int st[])
 		{
@@ -727,11 +716,11 @@ namespace Apoc3D
 		}*/
 		inline uint16 ch_r32r16(float v)
 		{
-			return FloatToHalf(v);
+			return Math::R32ToR16(v);
 		}
 		inline float ch_r16r32(uint16 v)
 		{
-			return HalfToFloat(v);
+			return Math::R16ToR32(v);
 		}
 		inline byte ch_r32u8(float v)
 		{
@@ -745,7 +734,7 @@ namespace Apoc3D
 		}*/
 		inline byte ch_r16u8(uint16 v)
 		{
-			return ch_r32u8(HalfToFloat(v));
+			return ch_r32u8(Math::R16ToR32(v));
 		}
 		inline float ch_u8r32(byte v)
 		{
@@ -753,7 +742,7 @@ namespace Apoc3D
 		}
 		inline uint16 ch_u8r16(byte v)
 		{
-			return FloatToHalf(v / 255.0f);
+			return Math::R32ToR16(v / 255.0f);
 		}
 
 		struct A8R8G8B8toA32B32G32R32F : public PixelConverter<uint, ColArgb4f, FMT_A8R8G8B8, FMT_A32B32G32R32F>

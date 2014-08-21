@@ -132,7 +132,7 @@ namespace APBuild
 
 				String v = Apoc3D::Utility::StringUtils::toPlatformWideString(j->Attribute("v"));
 				List<String> values(12);
-				Apoc3D::Utility::StringUtils::Split(v, values);
+				Apoc3D::Utility::StringUtils::Split(v, values, ' ');
 				assert(values.getCount() == 12);
 
 				Matrix trans;

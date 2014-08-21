@@ -55,7 +55,7 @@ namespace Apoc3D
 			List<String> fullPath;
 			List<String> arcPath;
 
-			if (FileSystem::getSingleton().FindMatchingSplitDirectories(path, fullPath, arcPath))
+			if (FileSystem::getSingleton().FindAllExistingDirectoriesSplited(path, fullPath, arcPath))
 			{
 				for (int32 i = 0; i < fullPath.getCount(); i++)
 				{

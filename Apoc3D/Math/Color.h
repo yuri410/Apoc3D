@@ -42,30 +42,14 @@ namespace Apoc3D
 		class Color4
 		{
 		public:
-			/**
-			 * the color's red component.
-			 */
-			float Red;
-
-			/**
-			 *  the color's green component.
-			 */
-			float Green;
-
-			/**
-			 *  the color's blue component.
-			 */
-			float Blue;
-
-			/**
-			 *  the color's alpha component.
-			 */ 
-			float Alpha;
+			float Red;					/** the color's red component. */
+			float Green;				/** the color's green component. */
+			float Blue;					/** the color's blue component. */
+			float Alpha;				/** the color's alpha component. */ 
 
 			Color4() : Red(0), Green(0), Blue(0), Alpha(0) { }
 			explicit Color4(const Vector3& color)
-				: Red(color.X), Green(color.Y), Blue(color.Z), Alpha(1)
-			{ }
+				: Red(color.X), Green(color.Y), Blue(color.Z), Alpha(1) { }
 			
 			explicit Color4(ColorValue argb)
 			{
@@ -101,10 +85,10 @@ namespace Apoc3D
 			 */
 			ColorValue ToArgb() const
 			{
-				uint a = static_cast<uint>(Alpha * 255.0f);
-				uint r = static_cast<uint>(Red * 255.0f);
-				uint g = static_cast<uint>(Green * 255.0f);
-				uint b = static_cast<uint>(Blue * 255.0f);
+				uint a = Math::UnifiedToByteRange(Alpha);
+				uint r = Math::UnifiedToByteRange(Red);
+				uint g = Math::UnifiedToByteRange(Green);
+				uint b = Math::UnifiedToByteRange(Blue);
 				uint result = b;
 				result += g << 8;
 				result += r << 16;

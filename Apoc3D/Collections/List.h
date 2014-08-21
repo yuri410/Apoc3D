@@ -314,6 +314,7 @@ namespace Apoc3D
 
 		};
 
+
 		template <typename T>
 		class List : public ListBase<T, T*>
 		{

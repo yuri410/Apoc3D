@@ -81,7 +81,7 @@ namespace Apoc3D
 
 			bool DirectoryExists(const String& path) const;
 			bool DirectoryExists(const String& path, String& result) const;
-			bool FindMatchingSplitDirectories(const String& path, List<String>& result, List<String>& archivePath) const;
+			bool FindAllExistingDirectoriesSplited(const String& path, List<String>& result, List<String>& archivePath) const;
 
 			void ListDirectoryFiles(const String& path, List<String>& subItems, String* dirPath = nullptr);
 			

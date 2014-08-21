@@ -18,7 +18,7 @@ namespace UnitTestVC
 	TEST_CLASS(ConfigurationSectionTest)
 	{
 	public:
-		TEST_METHOD(ConfigSectBool)
+		TEST_METHOD(ConfigSect_Bool)
 		{
 			ConfigurationSection* sect = new ConfigurationSection(L"test");
 
@@ -45,7 +45,7 @@ namespace UnitTestVC
 
 		}
 
-		TEST_METHOD(ConfigSectInt)
+		TEST_METHOD(ConfigSect_Int)
 		{
 			ConfigurationSection* sect = new ConfigurationSection(L"test");
 
@@ -107,7 +107,7 @@ namespace UnitTestVC
 
 		}
 
-		TEST_METHOD(ConfigSectVector3)
+		TEST_METHOD(ConfigSect_Vector3)
 		{
 			ConfigurationSection* sect = new ConfigurationSection(L"test");
 
@@ -152,7 +152,7 @@ namespace UnitTestVC
 				Assert::AreEqual(vals[i], vals[i]);
 		}
 
-		TEST_METHOD(ConfigSectPoint)
+		TEST_METHOD(ConfigSect_Point)
 		{
 			ConfigurationSection* sect = new ConfigurationSection(L"test");
 

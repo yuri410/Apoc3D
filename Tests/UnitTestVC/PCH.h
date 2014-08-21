@@ -112,7 +112,6 @@
 #include "apoc3d/Math/ColorValue.h"
 #include "apoc3d/Math/Frustum.h"
 #include "apoc3d/Math/GaussBlurFilter.h"
-#include "apoc3d/Math/Half.h"
 #include "apoc3d/Math/Math.h"
 #include "apoc3d/Math/MathCommon.h"
 #include "apoc3d/Math/Matrix.h"

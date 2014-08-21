@@ -40,14 +40,7 @@ namespace Apoc3D
 		{
 			RTTI_DERIVED(Label, Control);
 		public:
-			enum Align
-			{
-				ALIGN_Left,
-				ALIGN_Center,
-				ALIGN_Right
-			};
-
-			Label(const Point& position, const String& text, int width, Align alignment = ALIGN_Left);
+			Label(const Point& position, const String& text, int width, TextAlignment alignment = TextAlignment::Left);
 			virtual ~Label();
 
 			virtual void Initialize(RenderDevice* device);
@@ -64,7 +57,7 @@ namespace Apoc3D
 
 			bool m_mouseOver;
 			bool m_mouseDown;
-			Align m_alignment;
+			TextAlignment m_alignment;
 
 			List<String> m_lines;
 

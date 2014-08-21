@@ -40,6 +40,11 @@ namespace Apoc3D
 			float Width;
 			float Height;
 
+			RectangleF() : X(0), Y(0), Width(0), Height(0) { }
+
+			RectangleF(float x, float y, float width, float height)
+				: X(x), Y(y), Width(width), Height(height) { }
+
 			float getLeft() const { return X; }
 			float getRight() const { return X + Width; }
 			float getTop() const { return Y; }
@@ -48,11 +53,6 @@ namespace Apoc3D
 			//Point getCenter() { return Point(X + Width / 2, Y + Height / 2); }
 
 			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
-
-			RectangleF() : X(0), Y(0), Width(0), Height(0) { }
-			RectangleF(float x, float y, float width, float height)
-				: X(x), Y(y), Width(width), Height(height)
-			{ }
 
 
 			void Offset(const Point &amount)
@@ -146,67 +146,56 @@ namespace Apoc3D
 		class APAPI Rectangle
 		{
 		public:
-			/** Specifies the x-coordinate of the rectangle.
-			*/
-			int X;
-			/** Specifies the y-coordinate of the rectangle.
-			*/
-			int Y;
-			/** Specifies the width of the rectangle.
-			*/
-			int Width;
-			/** Specifies the height of the rectangle.
-			*/
-			int Height;
+			int X;				/** Specifies the x-coordinate of the rectangle. */
+			int Y;				/** Specifies the y-coordinate of the rectangle. */
+			int Width;			/** Specifies the width of the rectangle. */
+			int Height;			/** Specifies the height of the rectangle. */
 
-			/** Returns the x-coordinate of the left side of the rectangle.
-			*/
+			Rectangle() : X(0), Y(0), Width(0), Height(0) { }
+			
+			Rectangle(const Point& pos, const Point& size)
+				: X(pos.X), Y(pos.Y), Width(size.X), Height(size.Y) { }
+
+			Rectangle(int x, int y, int width, int height)
+				: X(x), Y(y), Width(width), Height(height) { }
+
+			/** Returns the x-coordinate of the left side of the rectangle. */
 			int getLeft() const { return X; }
 
-			/** Returns the x-coordinate of the right side of the rectangle.
-			*/
+			/** Returns the x-coordinate of the right side of the rectangle. */
 			int getRight() const { return X + Width; }
 
-			/** Returns the y-coordinate of the top of the rectangle.
-			*/
+			/** Returns the y-coordinate of the top of the rectangle. */
 			int getTop() const { return Y; }
 
-			/** Returns the y-coordinate of the bottom of the rectangle.
-			*/
+			/** Returns the y-coordinate of the bottom of the rectangle. */
 			int getBottom() const { return Y + Height; }
 
-			/** Gets the Point that specifies the center of the rectangle.
-			*/
+			/** Gets the Point that specifies the center of the rectangle. */
 			Point getCenter() const { return Point(X + Width / 2, Y + Height / 2); }
+
+			Point getTopLeft() const { return Point(X, Y); }
+			Point getTopRight() const { return Point(X + Width, Y); }
+
+			Point getBottomLeft() const { return Point(X, Y + Height); }
+			Point getBottomRight() const { return Point(X + Width, Y + Height); }
+
 
 			bool IsEmpty() const { return (Width == 0) && (Height == 0) && (X == 0) && (Y == 0); }
 
-
-			Point GetTopLeft() const { return Point(X, Y); }
-			Point GetTopRight() const { return Point(X + Width, Y); }
-
-			Point GetBottomLeft() const { return Point(X, Y + Height); }
-			Point GetBottomRight() const { return Point(X + Width, Y + Height); }
-
-			Rectangle() : X(0), Y(0), Width(0), Height(0) { }
-			Rectangle(int x, int y, int width, int height)
-				: X(x), Y(y), Width(width), Height(height)
-			{ }
-
-			/**  Changes the position of the Rectangle.
-			*/
+			/** Changes the position of the Rectangle. */
 			void Offset(const Point &amount)
 			{
 				X += amount.X; Y += amount.Y;
 			}
-			/**  Changes the position of the Rectangle.
-			*/
+
+			/** Changes the position of the Rectangle. */
 			void Offset(int offsetX, int offsetY)
 			{
 				X += offsetX; Y += offsetY;
 			}
-			/** Pushes the edges of the Rectangle out by the horizontal and vertical values specified.
-			*/
+
+			/** Pushes the edges of the Rectangle out by the horizontal and vertical values specified. */
 			void Inflate(int horizontalAmount, int verticalAmount)
 			{
 				X -= horizontalAmount;
@@ -214,6 +203,7 @@ namespace Apoc3D
 				Width += horizontalAmount * 2;
 				Height += verticalAmount * 2;
 			}
+
 			/** Determines whether this Rectangle contains a specified point 
 			    represented by its x- and y-coordinates.
 			*/
@@ -221,8 +211,8 @@ namespace Apoc3D
 			{
 				return (X <= x) && x < (X + Width) && (Y <= y) && y < (Y + Height);
 			}
-			/** Determines whether this Rectangle contains a specified Point.
-			*/
+
+			/** Determines whether this Rectangle contains a specified Point. */
 			bool Contains(const Point& value) const
 			{
 				return (X <= value.X) &&
@@ -230,8 +220,8 @@ namespace Apoc3D
 					(Y <= value.Y) &&
 					(value.Y < Y + Height);
 			}
-			/** Determines whether this Rectangle entirely contains a specified Rectangle.
-			*/
+
+			/** Determines whether this Rectangle entirely contains a specified Rectangle. */
 			bool Contains(const Rectangle& value) const
 			{
 				return (X <= value.X) &&
@@ -240,8 +230,8 @@ namespace Apoc3D
 					(Y <= value.Y) &&
 					((value.Y + value.Height) <= (Y + Height));
 			}
-			/** Determines whether a specified Rectangle intersects with this Rectangle.
-			*/
+
+			/** Determines whether a specified Rectangle intersects with this Rectangle. */
 			bool Intersects(const Rectangle& value) const
 			{
 				return (value.X < (X + Width)) &&
@@ -250,8 +240,7 @@ namespace Apoc3D
 					(Y < (value.Y + value.Height));
 			}
 
-			/** Creates a Rectangle defining the area where one rectangle overlaps another rectangle.
-			*/
+			/** Creates a Rectangle defining the area where one rectangle overlaps another rectangle. */
 			static Rectangle Intersect(const Rectangle &a, const Rectangle &b)
 			{
 				Rectangle rectangle;
@@ -274,8 +263,8 @@ namespace Apoc3D
 				}
 				return rectangle;
 			}
-			/** Creates a new Rectangle that exactly contains two other rectangles.
-			*/
+
+			/** Creates a new Rectangle that exactly contains two other rectangles. */
 			static Rectangle Union(const Rectangle &a, const Rectangle &b)
 			{
 				Rectangle result;
@@ -290,6 +279,7 @@ namespace Apoc3D
 				result.Height = Max(abrp_y, bbrp_y) - result.Y;
 				return result;
 			}
+
 			operator RectangleF() const
 			{
 				return RectangleF(static_cast<float>(X), static_cast<float>(Y), static_cast<float>(Width), static_cast<float>(Height)); 

@@ -7,7 +7,7 @@ namespace UnitTestVC
 	{
 	public:
 
-		TEST_METHOD(StringParseBool)
+		TEST_METHOD(String_ParseBool)
 		{
 			bool val = StringUtils::ParseBool("true");
 			Assert::IsTrue(val);
@@ -46,7 +46,7 @@ namespace UnitTestVC
 			Assert::IsFalse(val);
 		}
 
-		TEST_METHOD(StringEqualsNoCase)
+		TEST_METHOD(String_EqualsNoCase)
 		{
 			Assert::IsTrue(StringUtils::EqualsNoCase("Aaa", "aAa"));
 			Assert::IsFalse(StringUtils::EqualsNoCase("Aab", "aAa"));
@@ -55,7 +55,7 @@ namespace UnitTestVC
 			Assert::IsFalse(StringUtils::EqualsNoCase(L"Aab", L"aAa"));
 		}
 
-		TEST_METHOD(StringSplit)
+		TEST_METHOD(String_Split)
 		{
 			String test = L"s , sad,a";
 			List<String> results;
@@ -67,7 +67,7 @@ namespace UnitTestVC
 			Assert::AreEqual(L"a", results[2].c_str());
 		}
 
-		TEST_METHOD(StringSplitParseInts)
+		TEST_METHOD(String_SplitParseInts)
 		{
 			String test = L"1 , 4,2, 90 ";
 			List<int32> results;
@@ -88,7 +88,7 @@ namespace UnitTestVC
 			Assert::AreEqual(90, resultArr[2]);
 		}
 
-		TEST_METHOD(StringSplitParseSingles)
+		TEST_METHOD(String_SplitParseSingles)
 		{
 			String test = L"1.0 , 4,2.0, 90 ";
 			List<float> results;

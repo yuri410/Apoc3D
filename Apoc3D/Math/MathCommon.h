@@ -46,12 +46,6 @@ namespace Apoc3D
 			PLANEIT_Intersecting
 		};
 
-		/*extern const float PI;
-		extern const float Two_PI;
-		extern const float Half_PI;
-		extern const float Root2;
-		extern const float Root3;*/
-
 #define L_PIf 3.1415926535897932384626433832795f
 #define L_Two_PIf 6.283185307179586476925286766559f
 #define L_Half_PIf 1.5707963267948966192313216916398f
@@ -70,9 +64,30 @@ namespace Apoc3D
 		const float Root2 = 1.41421f;
 		const float Root3 = 1.73205f;
 
-#define ToRadian(x) (x * (L_PIf/180.0f))
-#define ToDegree(x) (x * (180.0f/L_PIf))
 		
+
+		uint16 R32ToR16I(uint32 value);
+		uint32 R16ToR32I(uint16 value);
+
+		inline uint16 R32ToR16(float value) { return R32ToR16I(reinterpret_cast<const uint32&>(value)); }
+
+		// once a floating point value is formed, bits maybe altered implicitly due to floating point behavior
+		inline float R16ToR32(uint16 value)
+		{
+			uint32 iv = R32ToR16I(value);
+			return reinterpret_cast<const float&>(iv);
+		}
+
+
+		inline byte UnifiedToByteRange(float f)
+		{
+			return (byte)floor(f == 1.0f ? 255 : f * 256.0f);
+		}
+
+		inline float ToRadian(float x) { return x * (L_PIf / 180.0f); }
+		inline float ToDegree(float x) { return x * (180.0f / L_PIf); }
+
+
 		inline float SqrtFast(float x)
 		{
 			union

@@ -214,7 +214,8 @@ namespace Apoc3D
 				return true;
 			}
 
-			static void Split(const StrType& str, List<StrType>& result, const StrType& delims)
+			template <typename DelimType = StrType>
+			static void Split(const StrType& str, List<StrType>& result, const DelimType& delims)
 			{
 				assert(result.getCount() == 0);
 
@@ -246,6 +247,58 @@ namespace Apoc3D
 
 				} while (pos != StrType::npos);
 			}
+
+			template <typename DelimType = StrType>
+			static List<StrType> Split(const StrType& str, const DelimType& delims)
+			{
+				List<StrType> result;
+				Split<DelimType>(str, result, delims);
+				return result;
+			}
+
+
+			template <typename ListElementT, typename ElementT, ElementT (*TConverter)(const StrType&), typename DelimType = StrType>
+			static void SplitT(const StrType& str, ListElementT& result, const DelimType& delims)
+			{
+				assert(result.getCount() == 0);
+
+				// Use STL methods 
+				size_t start, pos;
+				start = 0;
+				do 
+				{
+					pos = str.find_first_of(delims, start);
+					if (pos == start)
+					{
+						// Do nothing
+						start = pos + 1;
+					}
+					else if (pos == StrType::npos)
+					{
+						// Copy the rest of the string
+						result.Add(TConverter(str.substr(start) ));
+						break;
+					}
+					else
+					{
+						// Copy up to delimiter
+						result.Add(TConverter(str.substr(start, pos - start) ));
+						start = pos + 1;
+					}
+					// parse up to next real data
+					start = str.find_first_not_of(delims, start);
+
+				} while (pos != StrType::npos);
+			}
+
+			template <typename ListElementT, typename ElementT, ElementT (*TConverter)(const StrType&), typename DelimType = StrType >
+			static ListElementT SplitT(const StrType& str, const DelimType& delims)
+			{
+				ListElementT result;
+				SplitT<ListElementT, ElementT, TConverter, DelimType>(str, result, delims);
+				return result;
+			}
+
 
 			static bool StartsWith(const StrType& str, const StrType& v, bool caseInsensitive)
 			{
@@ -279,40 +332,6 @@ namespace Apoc3D
 				return (endOfThis == v);
 			}
 
-			template <typename ListElementT, typename ElementT, ElementT (*TConverter)(const StrType&) >
-			static void SplitT(const StrType& str, ListElementT& result, const StrType& delims)
-			{
-				assert(result.getCount() == 0);
-
-				// Use STL methods 
-				size_t start, pos;
-				start = 0;
-				do 
-				{
-					pos = str.find_first_of(delims, start);
-					if (pos == start)
-					{
-						// Do nothing
-						start = pos + 1;
-					}
-					else if (pos == StrType::npos)
-					{
-						// Copy the rest of the string
-						result.Add(TConverter(str.substr(start) ));
-						break;
-					}
-					else
-					{
-						// Copy up to delimiter
-						result.Add(TConverter(str.substr(start, pos - start) ));
-						start = pos + 1;
-					}
-					// parse up to next real data
-					start = str.find_first_not_of(delims, start);
-
-				} while (pos != StrType::npos);
-			}
-
 		};
 
 		template <typename T>
@@ -321,8 +340,7 @@ namespace Apoc3D
 		public:
 			CappedBufferList(T* dataBuf, int32 sizeCap)
 				: m_elements(dataBuf), m_sizeCap(sizeCap), m_internalPointer(0)
-			{
-			}
+			{ }
 
 			void Add(const T& item)
 			{
@@ -859,9 +877,18 @@ namespace Apoc3D
 			str.erase(str.find_last_not_of(delims)+1);
 		}
 
-
 		void StringUtils::Split(const String& str, List<String>& result, const String& delims) { GenericFunctions<String>::Split(str, result, delims); }
 		void StringUtils::Split(const std::string& str, List<std::string>& result, const std::string& delims) { GenericFunctions<std::string>::Split(str, result, delims); }
+		
+		void StringUtils::Split(const String& str, List<String>& result, char16_t delims) { GenericFunctions<String>::Split(str, result, delims); }
+		void StringUtils::Split(const std::string& str, List<std::string>& result, char delims) { GenericFunctions<std::string>::Split(str, result, delims); }
+
+		List<String> StringUtils::Split(const String& str, const String& delims) { return GenericFunctions<String>::Split(str, delims); }
+		List<std::string> StringUtils::Split(const std::string& str, const std::string& delims) { return GenericFunctions<std::string>::Split(str, delims); }
+
+		List<String> StringUtils::Split(const String& str, char16_t delims) { return GenericFunctions<String>::Split(str, delims); }
+		List<std::string> StringUtils::Split(const std::string& str, char delims) { return GenericFunctions<std::string>::Split(str, delims); }
+
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -871,33 +898,63 @@ namespace Apoc3D
 			GenericFunctions<String>::SplitT<CappedBufferList<float>, float, SimpleParseFloat>(str, lst, delims);
 			return lst.getCount();
 		}
-		void StringUtils::SplitParseSingles(const String& str, Apoc3D::Collections::List<float>& results, const String& delims) { GenericFunctions<String>::SplitT<List<float>, float, SimpleParseFloat>(str, results, delims); }
-		
+		List<float> StringUtils::SplitParseSingles(const String& str, const String& delims)
+		{
+			return GenericFunctions<String>::SplitT<List<float>, float, SimpleParseFloat>(str, delims);
+		}
+		void StringUtils::SplitParseSingles(const String& str, Apoc3D::Collections::List<float>& results, const String& delims) 
+		{
+			GenericFunctions<String>::SplitT<List<float>, float, SimpleParseFloat>(str, results, delims); 
+		}
+
 		int32 StringUtils::SplitParseSingles(const std::string& str, float* flts, int32 maxCount, const std::string& delims)
 		{
 			CappedBufferList<float> lst(flts, maxCount);
 			GenericFunctions<std::string>::SplitT<CappedBufferList<float>, float, SimpleParseFloat>(str, lst, delims);
 			return lst.getCount();
 		}
-		void StringUtils::SplitParseSingles(const std::string& str, Apoc3D::Collections::List<float>& results, const std::string& delims) { GenericFunctions<std::string>::SplitT<List<float>, float, SimpleParseFloat>(str, results, delims); }
-		
+		List<float> StringUtils::SplitParseSingles(const std::string& str, const std::string& delims)
+		{
+			return GenericFunctions<std::string>::SplitT<List<float>, float, SimpleParseFloat>(str, delims); 
+		}
+		void StringUtils::SplitParseSingles(const std::string& str, Apoc3D::Collections::List<float>& results, const std::string& delims)
+		{
+			GenericFunctions<std::string>::SplitT<List<float>, float, SimpleParseFloat>(str, results, delims); 
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
 		int32 StringUtils::SplitParseInts(const String& str, int32* ints, int32 maxCount, const String& delims)
 		{
 			CappedBufferList<int32> lst(ints, maxCount);
 			GenericFunctions<String>::SplitT<CappedBufferList<int32>, int32, SimpleParseInt32>(str, lst, delims);
 			return lst.getCount();
 		}
-		void StringUtils::SplitParseInts(const String& str, Apoc3D::Collections::List<int32>& results, const String& delims) { GenericFunctions<String>::SplitT<List<int32>, int32, SimpleParseInt32>(str, results, delims); }
+		List<int32> StringUtils::SplitParseInts(const String& str, const String& delims)
+		{
+			return GenericFunctions<String>::SplitT<List<int32>, int32, SimpleParseInt32>(str, delims); 
+		}
+		void StringUtils::SplitParseInts(const String& str, Apoc3D::Collections::List<int32>& results, const String& delims) 
+		{
+			GenericFunctions<String>::SplitT<List<int32>, int32, SimpleParseInt32>(str, results, delims); 
+		}
 		
+
 		int32 StringUtils::SplitParseInts(const std::string& str, int32* ints, int32 maxCount, const std::string& delims)
 		{
 			CappedBufferList<int32> lst(ints, maxCount);
 			GenericFunctions<std::string>::SplitT<CappedBufferList<int32>, int32, SimpleParseInt32>(str, lst, delims);
 			return lst.getCount();
 		}
-		void StringUtils::SplitParseInts(const std::string& str, Apoc3D::Collections::List<int32>& results, const std::string& delims) { GenericFunctions<std::string>::SplitT<List<int32>, int32, SimpleParseInt32>(str, results, delims); }
+		List<int32> StringUtils::SplitParseInts(const std::string& str, const std::string& delims)
+		{
+			return GenericFunctions<std::string>::SplitT<List<int32>, int32, SimpleParseInt32>(str, delims); 
+		}
+		void StringUtils::SplitParseInts(const std::string& str, Apoc3D::Collections::List<int32>& results, const std::string& delims) 
+		{
+			GenericFunctions<std::string>::SplitT<List<int32>, int32, SimpleParseInt32>(str, results, delims); 
+		}
 		
-
 		//////////////////////////////////////////////////////////////////////////
 
 

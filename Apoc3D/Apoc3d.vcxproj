@@ -271,7 +271,6 @@
     <ClInclude Include="Math\BoundingBox.h" />
     <ClInclude Include="Math\BoundingSphere.h" />
     <ClInclude Include="Math\Color.h" />
-    <ClInclude Include="Math\Half.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\MathCommon.h" />
     <ClInclude Include="Math\Matrix.h" />
@@ -379,6 +378,7 @@
     <ClCompile Include="Library\tinyxmlerror.cpp" />
     <ClCompile Include="Library\tinyxmlparser.cpp" />
     <ClCompile Include="Math\DoubleMath.cpp" />
+    <ClCompile Include="Math\MathCommon.cpp" />
     <ClCompile Include="Math\OctreeBox.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\RandomUtils.cpp" />
