@@ -73,9 +73,12 @@ namespace Apoc3D
 
 
 			bool SupportsName(const String& name) { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast.Contains(n); }
+
 			T Parse(const String& name) const { String n = name; Apoc3D::Utility::StringUtils::ToLowerCase(n); return m_cast[n]; }
-			
+			T ParseFlags(const String& combo, const String& delim) const;
+
 			const String& ToString(T e) const { return m_invCast[e]; }
+			String ToStringFlags(T flags, const String& delim) const;
 
 			void DumpNames(List<String>& names) const { m_invCast.FillValues(names); }
 			void DumpValues(List<T>& values) const { m_cast.FillValues(values); }
@@ -129,9 +132,11 @@ namespace Apoc3D
 				for (const auto& e : list)
 					m_cast.Add(e.first, e.second);
 			}
-
+			
 			const String& ToString(T e) const { return m_cast[e]; }
 			const String& operator[](T e) const { return m_cast[e]; }
+			String ToStringFlags(T flags, const String& delim) const;
+
 
 			void DumpNames(List<String>& names) const { m_cast.FillValues(names); }
 			void DumpValues(List<T>& values) const { m_cast.FillKeys(values); }
@@ -146,6 +151,53 @@ namespace Apoc3D
 		private:
 			CastTable m_cast;
 		};
+
+
+
+		template <typename T, typename H>
+		String FlagFieldsToString(T flags, H& helper, const String& delim)
+		{
+			String result;
+
+			for (auto e : helper)
+			{
+				T fld = e.Key;
+				if ((flags & fld) == fld)
+				{
+					result.append(e.Value);
+					result.append(delim);
+				}
+			}
+
+			if (result.size() > 1)
+				return result.substr(0, result.size() - 2);
+			return result;
+		}
+
+		template <typename T>
+		T EnumDualConversionHelper<T>::ParseFlags(const String& combo, const String& delim) const 
+		{
+			String v = combo;
+			StringUtils::ToLowerCase(v);
+
+			List<String> vals;
+			StringUtils::Split(v, vals, delim);
+			std::underlying_type<T>::type result = 0;
+
+			for (const String& e : vals)
+			{
+				result |= Parse(e);
+			}
+
+			return static_cast<T>(result);
+		}
+
+		template <typename T>
+		String EnumDualConversionHelper<T>::ToStringFlags(T flags, const String& delim) const { return FlagFieldsToString(flags, *this, delim); }
+
+		template <typename T>
+		String EnumToStringConversionHelper<T>::ToStringFlags(T flags, const String& delim) const { return FlagFieldsToString(flags, *this, delim); }
+
 	}
 }
 

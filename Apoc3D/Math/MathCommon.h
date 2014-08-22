@@ -84,8 +84,11 @@ namespace Apoc3D
 			return (byte)floor(f == 1.0f ? 255 : f * 256.0f);
 		}
 
-		inline float ToRadian(float x) { return x * (L_PIf / 180.0f); }
+		inline float ToRadian(float x) { return x * (L_PIf / 180.0f); }		
+		inline float ToRadian(int32 x) { return x * (L_PIf / 180.0f); }
+
 		inline float ToDegree(float x) { return x * (180.0f / L_PIf); }
+		inline float ToDegree(int32 x) { return x * (180.0f / L_PIf); }
 
 
 		inline float SqrtFast(float x)

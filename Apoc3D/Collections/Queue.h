@@ -84,6 +84,14 @@ namespace Apoc3D
 				m_tail = 0;
 				m_size = 0;
 			}
+
+			void DeleteAndClear()
+			{
+				for (int32 i = 0; i < getCount(); i++)
+					delete Element(i);
+				Clear();
+			}
+
 			bool Replace(const T& item, const T& item2)
 			{
 				int index = m_head;
@@ -233,8 +241,7 @@ namespace Apoc3D
 			{ }
 
 			PriorityQueue(int32 capacity) 
-				: m_innerList(capacity)
-			{ }
+				: m_innerList(capacity) { }
 
 
 			void Enqueue(const T& item)
