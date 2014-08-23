@@ -121,12 +121,12 @@ namespace Apoc3D
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			if (getOwner()->getArea().Contains(m_cursorArea) && m_cursorArea.Contains(mouse->GetCurrentPosition()))
+			if (getOwner()->getArea().Contains(m_cursorArea) && m_cursorArea.Contains(mouse->GetPosition()))
 			{
 				if (mouse->IsLeftPressed())
 				{
 					m_isScrolling = true;
-					m_cursorOffset = mouse->GetCurrentPosition();
+					m_cursorOffset = mouse->GetPosition();
 					m_cursorOffset.X -= m_cursorArea.X;
 					m_cursorOffset.Y -= m_cursorArea.Y;
 				}
@@ -152,7 +152,7 @@ namespace Apoc3D
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			
-			m_cursorPos.X = mouse->GetCurrentPosition().X - m_cursorOffset.X - getOwner()->Position.X;
+			m_cursorPos.X = mouse->GetPosition().X - m_cursorOffset.X - getOwner()->Position.X;
 
 			if (m_cursorPos.X < Position.X + m_skin->HScrollBarLeft.Width)
 			{
@@ -328,12 +328,12 @@ namespace Apoc3D
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			if (m_cursorArea.Contains(mouse->GetCurrentPosition()))
+			if (m_cursorArea.Contains(mouse->GetPosition()))
 			{
 				if (mouse->IsLeftPressed())
 				{
 					m_isScrolling = true;
-					m_cursorOffset = mouse->GetCurrentPosition();
+					m_cursorOffset = mouse->GetPosition();
 					m_cursorOffset.X -= m_cursorArea.X;
 					m_cursorOffset.Y -= m_cursorArea.Y;
 				}
@@ -359,7 +359,7 @@ namespace Apoc3D
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
-			m_cursorPos.Y = mouse->GetCurrentPosition().Y - m_cursorOffset.Y - getOwner()->Position.Y;
+			m_cursorPos.Y = mouse->GetPosition().Y - m_cursorOffset.Y - getOwner()->Position.Y;
 
 			if (m_cursorPos.Y < Position.Y + m_skin->VScrollBarUp.Height)
 			{

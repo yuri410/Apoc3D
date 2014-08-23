@@ -131,6 +131,14 @@ namespace Apoc3D
 	template <typename T, int32 N>
 	void ZeroArray(T(&arr)[N]) { static_assert(std::is_trivially_default_constructible<T>::value, "Type not suitable"); memset(arr, 0, sizeof(T)*N); }
 
+	template <typename X, typename Y, int32 N1, int32 N2>
+	void CopyArray(X(&dst)[N1], const Y(&src)[N2]) 
+	{
+		static_assert(std::is_trivially_copyable<X>::value && std::is_trivially_copyable<Y>::value, "Type not suitable"); 
+		static_assert(N1 * sizeof(X) == N2 * sizeof(Y), "Array size mismatch");
+		memcpy(dst, src, sizeof(X)*N1); 
+	}
+
 	void DebugBreak();
 
 	class Project;

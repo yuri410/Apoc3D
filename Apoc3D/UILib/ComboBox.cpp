@@ -78,7 +78,7 @@ namespace Apoc3D
 
 				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 				if (!m_justOpened && mouse->IsLeftPressed() &&
-					!m_listBox->getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
+					!m_listBox->getAbsoluteArea().Contains(mouse->GetPosition()))
 				{
 					Close();
 				}

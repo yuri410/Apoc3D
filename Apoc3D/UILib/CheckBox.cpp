@@ -50,7 +50,7 @@ namespace Apoc3D
 
 			Apoc3D::Math::Rectangle rect = getAbsoluteArea();
 			
-			if (rect.Contains(mouse->GetCurrentPosition()) && (!getOwner() || getOwner()->getAbsoluteArea().Contains(rect)))
+			if (rect.Contains(mouse->GetPosition()) && (!getOwner() || getOwner()->getAbsoluteArea().Contains(rect)))
 			{
 				if (!m_mouseOver)
 				{

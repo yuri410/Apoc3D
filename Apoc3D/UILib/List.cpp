@@ -177,7 +177,7 @@ namespace Apoc3D
 						eventSelectionChanged.Invoke(this);
 				}
 
-				if (getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
+				if (getAbsoluteArea().Contains(mouse->GetPosition()))
 				{
 					if (!m_mouseOver)
 					{
@@ -294,8 +294,8 @@ namespace Apoc3D
 			if (index == m_selectedIndex)
 				sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_LightGray);
 			else if (//getOwner()->getArea().Contains(mouse->GetCurrentPosition()) &&
-				m_selectionRect.Contains(Point(mouse->GetCurrentPosition().X-getOwner()->Position.X-Position.X, 
-				mouse->GetCurrentPosition().Y-getOwner()->Position.Y-Position.Y)))
+				m_selectionRect.Contains(Point(mouse->GetPosition().X-getOwner()->Position.X-Position.X, 
+				mouse->GetPosition().Y-getOwner()->Position.Y-Position.Y)))
 			{
 				m_hoverIndex = index;
 				sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_Silver);
@@ -575,7 +575,7 @@ namespace Apoc3D
 					if (m_selectedNode != previousNode)
 						eventSelectionChanged.Invoke(this);
 				}
-				if (getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
+				if (getAbsoluteArea().Contains(mouse->GetPosition()))
 				{
 					if (!m_mouseOver)
 					{
@@ -737,8 +737,8 @@ namespace Apoc3D
 			
 			if (node == m_selectedNode)
 				sprite->Draw(m_skin->WhitePixelTexture, m_selectionRect, CV_LightGray);
-			if (absoluteArea.Contains(mouse->GetCurrentPosition()) &&
-				m_selectionRect.Contains(Point(mouse->GetCurrentPosition().X-absoluteArea.X, mouse->GetCurrentPosition().Y-absoluteArea.Y)))
+			if (absoluteArea.Contains(mouse->GetPosition()) &&
+				m_selectionRect.Contains(Point(mouse->GetPosition().X-absoluteArea.X, mouse->GetPosition().Y-absoluteArea.Y)))
 			{
 				m_anyHoverNode = node;
 				if (node != m_selectedNode)
@@ -962,7 +962,7 @@ namespace Apoc3D
 				m_isResizing = false;
 
 			m_selectionArea = getAbsoluteArea();
-			if (m_selectionArea.Contains(mouse->GetCurrentPosition()))
+			if (m_selectionArea.Contains(mouse->GetPosition()))
 			{
 				if (mouse->getDZ())
 				{
@@ -1148,7 +1148,7 @@ namespace Apoc3D
 					//m_headerArea.Y += Position.Y;
 
 					if (m_headerStyle == LHSTYLE_Clickable && 
-						m_headerArea.Contains(mouse->GetCurrentPosition()-pos) &&
+						m_headerArea.Contains(mouse->GetPosition()-pos) &&
 						UIRoot::getActiveForm() == getOwner())
 					{
 						m_headerHoverIndex = i;
@@ -1266,7 +1266,7 @@ namespace Apoc3D
 				//m_sizeArea.Y += absP.Y;
 				
 				Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-				Point mousePos = mouse->GetCurrentPosition();
+				Point mousePos = mouse->GetPosition();
 				mousePos = mousePos - absP;
 				if (m_sizeArea.Contains(mousePos))
 				{
@@ -1403,8 +1403,8 @@ namespace Apoc3D
 			m_selectionRect.Y = position.Y + absp.Y;
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			if (m_selectionArea.Contains(mouse->GetCurrentPosition()) &&
-				m_selectionRect.Contains(mouse->GetCurrentPosition()) &&
+			if (m_selectionArea.Contains(mouse->GetPosition()) &&
+				m_selectionRect.Contains(mouse->GetPosition()) &&
 				UIRoot::getTopMostForm() == getOwner())
 			{
 				//if (m_fullRowSelect)

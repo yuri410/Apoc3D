@@ -247,11 +247,11 @@ namespace Apoc3D
 				Point cursorLoc;
 				if (!getOwner())
 				{
-					cursorLoc = mouse->GetCurrentPosition();
+					cursorLoc = mouse->GetPosition();
 				}
 				else
 				{
-					cursorLoc = mouse->GetCurrentPosition();
+					cursorLoc = mouse->GetPosition();
 					cursorLoc.X -= getOwner()->Position.X;
 					cursorLoc.Y -= getOwner()->Position.Y;
 				}
@@ -491,7 +491,7 @@ namespace Apoc3D
 		bool SubMenu::IsCursorInside()
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			Point cursorLoc = mouse->GetCurrentPosition();
+			Point cursorLoc = mouse->GetPosition();
 			//if (!getOwner())
 			//{
 			//	cursorLoc 
@@ -635,11 +635,11 @@ namespace Apoc3D
 					Point cursorLoc;
 					if (!getOwner())
 					{
-						cursorLoc = mouse->GetCurrentPosition();
+						cursorLoc = mouse->GetPosition();
 					}
 					else
 					{
-						cursorLoc = mouse->GetCurrentPosition();
+						cursorLoc = mouse->GetPosition();
 						cursorLoc.X -= getOwner()->Position.X;
 						cursorLoc.Y -= getOwner()->Position.Y;
 					}

@@ -72,7 +72,7 @@ namespace Apoc3D
 					IDirect3DDevice9* dev = m_device->getDevice();
 					if (mtrl->getTexture(0))
 					{
-						D3D9Texture* tex = static_cast<D3D9Texture*>(mtrl->getTexture(0)->operator->());
+						D3D9Texture* tex = static_cast<D3D9Texture*>(mtrl->getTexture(0)->ObtainLoaded());
 
 						dev->SetTexture(0, tex->getBaseTexture());
 					}

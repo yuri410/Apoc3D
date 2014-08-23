@@ -112,7 +112,7 @@ namespace Apoc3D
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
 			Apoc3D::Math::Rectangle area = getAbsoluteArea();
-			if (area.Contains(mouse->GetCurrentPosition()) &&
+			if (area.Contains(mouse->GetPosition()) &&
 				getOwner()->getAbsoluteArea().Contains(area))
 			{
 				if (!m_mouseOver)
@@ -452,7 +452,7 @@ namespace Apoc3D
 
 				m_vscrollBar->Update(time);
 
-				if (mouse->getDZ() && m_dRect.Contains(mouse->GetCurrentPosition()))
+				if (mouse->getDZ() && m_dRect.Contains(mouse->GetPosition()))
 				{
 					m_vscrollBar->setValue(Math::Clamp(m_vscrollBar->getValue() + mouse->getDZ() / 60, 0, m_vscrollBar->getMax()));
 				}
@@ -475,7 +475,7 @@ namespace Apoc3D
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			if (mouse->IsLeftPressed())
 			{
-				if (m_dRect.Contains(mouse->GetCurrentPosition()))
+				if (m_dRect.Contains(mouse->GetPosition()))
 				{
 					m_hasFocus = true;
 				}

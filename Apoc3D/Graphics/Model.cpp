@@ -192,16 +192,11 @@ namespace Apoc3D
 
 		RenderOperationBuffer* Model::GetRenderOperation(int lod)
 		{
-			if (!m_data->shouldNotTouchResource() && 
-				m_data->getWeakRef()->isManaged() && m_data->getState() != ResourceState::Loaded)
-			{
-				m_data->Touch();
-				return 0;
-			}
+			ModelSharedData* data = m_data->ObtainLoaded();
+			if (data == nullptr)
+				return nullptr;
 
 			UpdateAnimation();
-
-			ResourceHandle<ModelSharedData>& data = *m_data;
 
 			const List<Mesh*>& entities = data->getEntities();
 			if (!m_isOpBufferBuilt)
@@ -260,16 +255,11 @@ namespace Apoc3D
 		}
 		RenderOperationBuffer* Model::GetRenderOperationSubEntity(int index)
 		{
-			if (!m_data->shouldNotTouchResource() && 
-				m_data->getWeakRef()->isManaged() && m_data->getState() != ResourceState::Loaded)
-			{
-				m_data->Touch();
-				return 0;
-			}
+			ModelSharedData* data = m_data->ObtainLoaded();
+			if (data == nullptr)
+				return nullptr;
 
 			UpdateAnimation();
-
-			ResourceHandle<ModelSharedData>& data = *m_data;
 
 			const List<Mesh*>& entities = data->getEntities();
 
@@ -339,9 +329,7 @@ namespace Apoc3D
 			assert(m_renderOpEntPartID == nullptr);
 			assert(m_renderOpEntPartID == nullptr);
 
-			ResourceHandle<ModelSharedData>& data = *m_data;
-
-			const List<Mesh*>& entities = data->getEntities();
+			const List<Mesh*>& entities = m_data->Obtain()->getEntities();
 
 			RenderOperationBuffer** entOps = new RenderOperationBuffer*[entities.getCount()];
 

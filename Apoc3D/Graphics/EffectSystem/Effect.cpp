@@ -504,20 +504,13 @@ namespace Apoc3D
 			void AutomaticEffect::SetParameterTexture(int index, ResourceHandle<Texture>* value)
 			{
 				ResolvedEffectParameter& param = m_parameters[index];
-				Texture* tex = 0;
+				Texture* tex = nullptr;
 
 				if (value)
-				{
-					tex = value->operator->();
-					if (!value->shouldNotTouchResource() && tex->getState() != ResourceState::Loaded)
-					{
-						tex = 0;
-					}
-				}
-				else
-				{
+					tex = value->ObtainLoaded();
+
+				if (tex == nullptr)
 					tex = m_texture;
-				}
 
 				param.RS_TargetShader->SetSamplerState(param.SamplerIndex, param.SamplerState);
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
@@ -703,20 +696,13 @@ namespace Apoc3D
 
 			void AutomaticEffect::SetTexture(ResolvedEffectParameter& param, ResourceHandle<Texture>* value)
 			{
-				Texture* tex = 0;
+				Texture* tex = nullptr;
 				
 				if (value)
-				{
-					tex = value->operator->();
-					if (!value->shouldNotTouchResource() && tex->getState() != ResourceState::Loaded)
-					{
-						tex = nullptr;
-					}
-				}
-				else
-				{
+					tex = value->ObtainLoaded();
+
+				if (tex == nullptr)
 					tex = m_texture;
-				}
 
 				param.RS_TargetShader->SetTexture(param.SamplerIndex, tex);
 			}

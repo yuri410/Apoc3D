@@ -112,8 +112,8 @@ namespace Apoc3D
 			~ResourceHandle()
 			{
 				_Unref();
-				
-				if (m_flags & FLG_ForceDisposal) 
+
+				if (m_flags & FLG_ForceDisposal)
 				{
 					delete m_resource;
 					m_resource = nullptr;
@@ -121,7 +121,7 @@ namespace Apoc3D
 				else
 				{
 					if (!shouldNotUseRefCount() &&
-						m_resource->getReferenceCount()==0 && 
+						m_resource->getReferenceCount() == 0 &&
 						(m_resource->isManaged() && !m_resource->getManager()->usesAsync())
 						)
 					{
@@ -167,35 +167,48 @@ namespace Apoc3D
 			 */
 			ResType* getWeakRef() const { return m_resource; }
 
-			ResType* operator*()
+			ResType* Obtain() 
 			{
 				if (!shouldNotTouchResource())
 					Touch();
 
 				return m_resource;
 			}
-			ResType* operator ->()
+			ResType* ObtainLoaded()
 			{
-				if (!shouldNotTouchResource())
-					Touch();
-				
-				return m_resource;
+				if (m_resource)
+				{
+					if (!shouldNotTouchResource() && m_resource->isManaged())
+					{
+						Touch();
+
+						if (getState() != ResourceState::Loaded)
+						{
+							return nullptr;
+						}
+					}
+					return m_resource;
+				}
+				return nullptr;
 			}
+
+			//ResType* operator ->() const { return Obtain(); }
 
 			bool shouldNotTouchResource() const { return (m_flags&FLG_Untouching) != 0; }
 			bool shouldNotUseRefCount() const { return (m_flags&FLG_NoRefCounting) != 0; }
+
 		private:
 			ResType* m_resource = nullptr;
 			byte m_flags = 0;
 
-			void _Ref( )
+			void _Ref() const
 			{
 				if (!shouldNotUseRefCount() && m_resource->isManaged())
 				{
 					m_resource->_Ref();
 				}
 			}
-			void _Unref( )
+			void _Unref() const
 			{
 				if (!shouldNotUseRefCount() && m_resource->isManaged())
 				{

@@ -98,7 +98,7 @@ namespace SampleTerrain
 		RenderOperationBuffer* opBuf = 0;
 		while (!opBuf && lod<4)
 		{
-			ResourceHandle<TerrainMesh>& mesh = *m_terrains[lod];
+			TerrainMesh* mesh = m_terrains[lod]->Obtain();
 			opBuf = mesh->GetRenderOperation(lod);
 			if (opBuf)
 				break;

@@ -47,7 +47,7 @@ namespace Apoc3D
 
 			Apoc3D::Math::Rectangle rect = getAbsoluteArea();
 			
-			Point cursorPos = mouse->GetCurrentPosition();
+			Point cursorPos = mouse->GetPosition();
 
 			if (m_owner && rect.Contains(cursorPos))
 			{
@@ -717,7 +717,7 @@ namespace Apoc3D
 				rect.X += basePosition.X;
 				rect.Y += basePosition.Y;
 
-				if (rect.Contains(mouse->GetCurrentPosition().X, mouse->GetCurrentPosition().Y))
+				if (rect.Contains(mouse->GetPosition().X, mouse->GetPosition().Y))
 				{
 					m_hoverIndex = i;
 					if (mouse->IsLeftPressed())

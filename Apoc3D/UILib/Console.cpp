@@ -149,7 +149,7 @@ namespace Apoc3D
 
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			if (mouse->getDZ() && m_pictureBox->getAbsoluteArea().Contains(mouse->GetCurrentPosition()))
+			if (mouse->getDZ() && m_pictureBox->getAbsoluteArea().Contains(mouse->GetPosition()))
 			{
 				m_scrollBar->setValue(Math::Clamp(m_scrollBar->getValue() + mouse->getDZ() / 60, 0, m_scrollBar->getMax()));
 			}

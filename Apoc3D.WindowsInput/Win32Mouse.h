@@ -41,7 +41,7 @@ namespace Apoc3D
 				OldSchoolMouse(HWND hwnd);
 				~OldSchoolMouse();
 
-				virtual void SetCurrentPosition(const Point& loc);
+				virtual void SetPosition(const Point& loc) override;
 
 				void Update(const GameTime* const time);
 			private:
@@ -62,13 +62,14 @@ namespace Apoc3D
 
 				static OldSchoolMouse* m_instance;
 			};
+
 			class Win32Mouse : public Mouse, public OIS::MouseListener
 			{
 			public:
 				Win32Mouse(OIS::InputManager* manager);
 				~Win32Mouse();
 
-				virtual void SetCurrentPosition(const Point& loc);
+				virtual void SetPosition(const Point& loc) override;
 
 				void Update(const GameTime* const time);
 

@@ -697,7 +697,7 @@ namespace APDesigner
 
 		Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 		
-		if (rect.Contains(mouse->GetCurrentPosition()))
+		if (rect.Contains(mouse->GetPosition()))
 		{
 			if (mouse->IsRightPressedState())
 			{

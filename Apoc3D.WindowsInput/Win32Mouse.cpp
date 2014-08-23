@@ -69,9 +69,9 @@ namespace Apoc3D
 					m_btnState[2] = !!GetAsyncKeyState(VK_RBUTTON);
 				}
 			}
-			void OldSchoolMouse::SetCurrentPosition(const Point& loc)
+			void OldSchoolMouse::SetPosition(const Point& loc)
 			{
-				Mouse::SetCurrentPosition(loc);
+				Mouse::SetPosition(loc);
 				if (m_hwnd)
 				{
 					POINT pt;
@@ -115,9 +115,9 @@ namespace Apoc3D
 				
 				m_mouse->capture();
 			}
-			void Win32Mouse::SetCurrentPosition(const Point& loc)
+			void Win32Mouse::SetPosition(const Point& loc)
 			{
-				Mouse::SetCurrentPosition(loc);
+				Mouse::SetPosition(loc);
 
 				OIS::MouseState& mutableMouseState = const_cast<OIS::MouseState &>(m_mouse->getMouseState());
 				mutableMouseState.X.abs = loc.X;

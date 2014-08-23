@@ -396,7 +396,7 @@ namespace Apoc3D
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();	
 
-			if (mouse->IsLeftPressedState() && getArea().Contains(mouse->GetCurrentPosition()) && !UIRoot::getActiveForm())
+			if (mouse->IsLeftPressedState() && getArea().Contains(mouse->GetPosition()) && !UIRoot::getActiveForm())
 			{
 				UIRoot::setActiveForm(this);
 				Focus();
@@ -565,19 +565,17 @@ namespace Apoc3D
 				m_dragArea.Width -= m_skin->FormCBMaxNormal.Width;
 			m_dragArea.Height = m_skin->FormTitle[0].Height;
 
-			if (m_dragArea.Contains(mouse->GetCurrentPosition()) &&
+			if (m_dragArea.Contains(mouse->GetPosition()) &&
 				mouse->IsLeftPressed() && UIRoot::getActiveForm()==this)
 			{
 				m_isDragging = true;
 				Focus();
-				m_posOffset.X = mouse->GetCurrentPosition().X - Position.X;
-				m_posOffset.Y = mouse->GetCurrentPosition().Y - Position.Y;
+				m_posOffset = mouse->GetPosition() - Position;
 			}
 
 			if (m_isDragging)
 			{
-				Point dif(mouse->GetCurrentPosition().X - m_posOffset.X - Position.X, 
-					mouse->GetCurrentPosition().Y - m_posOffset.Y - Position.Y);
+				Point dif = mouse->GetPosition() - m_posOffset - Position;
 
 				dif = UIRoot::ClampFormMovementOffset(this, dif);
 				Position.X += dif.X;
@@ -605,7 +603,7 @@ namespace Apoc3D
 				m_dragArea.Height = 20;
 			}
 
-			if (m_borderStyle == FBS_Sizable && m_dragArea.Contains(mouse->GetCurrentPosition()))
+			if (m_borderStyle == FBS_Sizable && m_dragArea.Contains(mouse->GetPosition()))
 			{
 				if (mouse->IsLeftPressed())
 				{
@@ -631,7 +629,7 @@ namespace Apoc3D
 			m_resizeArea.X = Position.X + Size.X - m_resizeArea.Width;
 			m_resizeArea.Y = Position.Y + Size.Y - m_resizeArea.Height;
 
-			if (m_resizeArea.Contains(mouse->GetCurrentPosition()) &&
+			if (m_resizeArea.Contains(mouse->GetPosition()) &&
 				UIRoot::getTopMostForm()==this)
 			{
 				if (m_isInReiszeArea)
@@ -644,8 +642,8 @@ namespace Apoc3D
 				{
 					m_isResizeing = true;
 					Focus();
-					m_posOffset.X = mouse->GetCurrentPosition().X;
-					m_posOffset.Y = mouse->GetCurrentPosition().Y;
+					m_posOffset.X = mouse->GetPosition().X;
+					m_posOffset.Y = mouse->GetPosition().Y;
 					m_oldSize = Size;
 				}
 			}
@@ -657,8 +655,8 @@ namespace Apoc3D
 			if (m_isResizeing)
 			{
 				Point dif(
-					m_oldSize.X + mouse->GetCurrentPosition().X - m_posOffset.X - Size.X, 
-					m_oldSize.Y + mouse->GetCurrentPosition().Y - m_posOffset.Y - Size.Y);
+					m_oldSize.X + mouse->GetPosition().X - m_posOffset.X - Size.X, 
+					m_oldSize.Y + mouse->GetPosition().Y - m_posOffset.Y - Size.Y);
 
 				dif = UIRoot::ClampFormMovementOffset(this, dif);
 
