@@ -136,7 +136,8 @@ namespace Apoc3D
 			}
 		}
 
-		void guiGenerateRegion9Rects(const Apoc3D::Math::Rectangle& dstRect, Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* destRects)
+		void guiGenerateRegion9Rects(const Apoc3D::Math::Rectangle& dstRect, 
+			Apoc3D::Math::Rectangle (&srcRects)[9], Apoc3D::Math::Rectangle (&destRects)[9])
 		{
 			const int32 SrcLeftWidth = srcRects[3].Width;
 			const int32 SrcRightWidth = srcRects[5].Width;
@@ -207,7 +208,8 @@ namespace Apoc3D
 			destRects[6].Y = destRects[7].Y = destRects[8].Y = destRects[3].getBottom();
 		}
 
-		void guiGenerateRegion3Rects(const Point& pos, int32 width, Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* destRects)
+		void guiGenerateRegion3Rects(const Point& pos, int32 width, 
+			Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle (&destRects)[3])
 		{
 			const int32 SrcLeftWidth = srcRects[0].Width;
 			const int32 SrcRightWidth = srcRects[2].Width;
@@ -235,7 +237,9 @@ namespace Apoc3D
 			destRects[2].X = destRects[1].getRight();
 
 		}
-		void guiGenerateRegion3VertRects(const Point& pos, int32 height, Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* destRects)
+		
+		void guiGenerateRegion3VertRects(const Point& pos, int32 height, 
+			Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle (&destRects)[3])
 		{
 			const int32 SrcTopHeight = srcRects[0].Height;
 			const int32 SrcBottomHeight = srcRects[2].Height;
@@ -264,7 +268,7 @@ namespace Apoc3D
 		}
 
 		void guiDrawRegion9(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv, 
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerRegion)
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[9], Apoc3D::Math::Rectangle* centerRegion)
 		{
 			Apoc3D::Math::Rectangle srcRectCopy[9];
 			Apoc3D::Math::Rectangle destRects[9];
@@ -282,7 +286,7 @@ namespace Apoc3D
 		}
 
 		void guiDrawRegion3(Sprite* sprite, const Point& pos, int width, ColorValue cv, 
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerRegion)
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle* centerRegion)
 		{
 			Apoc3D::Math::Rectangle srcRectsCopy[3];
 			Apoc3D::Math::Rectangle dstRects[3];
@@ -299,7 +303,7 @@ namespace Apoc3D
 		}
 
 		void guiDrawRegion3Vert(Sprite* sprite, const Point& pos, int height, ColorValue cv, 
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerRegion)
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle* centerRegion)
 		{
 			Apoc3D::Math::Rectangle srcRectsCopy[3];
 			Apoc3D::Math::Rectangle dstRects[3];
@@ -315,12 +319,12 @@ namespace Apoc3D
 				*centerRegion = dstRects[1];
 		}
 
-		void guiDrawRegion3Capped(Sprite* sprite, const Point& pos, int32 maxWidth, int32 capWidth, 
-			ColorValue cv, Texture* texture, const Apoc3D::Math::Rectangle* srcRects)
+		void guiDrawRegion3Clipped(Sprite* sprite, const Point& pos, int32 maxWidth, int32 capWidth,
+			ColorValue cv, Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[3])
 		{
 			int32 cx = pos.X;
 
-			for (int32 i=0;i<3;i++)
+			for (int32 i = 0; i < countof(srcRects); i++)
 			{
 				Apoc3D::Math::Rectangle srcRect = srcRects[i];
 				Apoc3D::Math::Rectangle dstRect = srcRect;
@@ -346,7 +350,7 @@ namespace Apoc3D
 				cx += partWidth;
 				capWidth -= partWidth;
 
-				if (capWidth<=0)
+				if (capWidth <= 0)
 					break;
 			}
 		}
@@ -354,7 +358,7 @@ namespace Apoc3D
 
 
 		bool guiDrawRegion9Noclip(Sprite* sprite, const Apoc3D::Math::Rectangle& rect, ColorValue cv, 
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRect, Apoc3D::Math::Rectangle* centerRegion)
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRect)[9], Apoc3D::Math::Rectangle* centerRegion)
 		{
 			const int MarginWidth = srcRect[0].Width + srcRect[2].Width;
 			const int MarginHeight = srcRect[0].Height + srcRect[6].Height;
@@ -399,7 +403,7 @@ namespace Apoc3D
 		}
 
 		bool guiDrawRegion3Noclip(Sprite* sprite, const Point& pt, int w, ColorValue cv, 
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRect, Apoc3D::Math::Rectangle* centerRegion)
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRect)[3], Apoc3D::Math::Rectangle* centerRegion)
 		{
 			int headAndTailWidth = srcRect[0].Width + srcRect[2].Width;
 
@@ -436,7 +440,7 @@ namespace Apoc3D
 		}
 
 		bool guiDrawRegion3VertNoclip(Sprite* sprite, const Point& pt, int h, ColorValue cv, 
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRect, Apoc3D::Math::Rectangle* centerRegion)
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRect)[3], Apoc3D::Math::Rectangle* centerRegion)
 		{
 			int headAndTailHeight = srcRect[0].Height + srcRect[2].Height;
 

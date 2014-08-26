@@ -281,8 +281,8 @@ namespace Apoc3D
 					m_elements[m_count++] = val[i];
 			}
 
-			template<int32 FixedSize>
-			void AddList(const FixedList<T,FixedSize>& other) { AddArray(other.m_elements, other.m_count); }
+			template <int32 N>
+			void AddList(const FixedList<T, N>& other) { AddArray(other.getElements(), other.getCount()); }
 			void AddList(std::initializer_list<T> l)
 			{
 				assert(m_count + l.size() <= MaxSize);
@@ -314,6 +314,62 @@ namespace Apoc3D
 
 		};
 
+		template <typename T>
+		class WrappedList : public ListBase<T, T*>
+		{
+		public:
+			WrappedList(T* externalBuffer, int32 maxCapacity)
+				: ListBase(externalBuffer), m_length(maxCapacity) { }
+
+			void Add(const T& val)
+			{
+				assert(m_count < m_length);
+				if (m_count < m_length)
+					m_elements[m_count++] = val;
+			}
+
+			void Add(T&& val)
+			{
+				assert(m_count < m_length);
+				if (m_count < m_length)
+					m_elements[m_count++] = std::move(val);
+			}
+
+			template <int32 N>
+			void AddArray(const T(&val)[N]) { AddArray(val, N); }
+			void AddArray(const T* val, int32 count)
+			{
+				assert(m_count + count <= m_length);
+				for (int32 i = 0; i < count && m_count < m_length; i++)
+					m_elements[m_count++] = val[i];
+			}
+
+			template<typename = void>
+			void AddList(const WrappedList<T>& other) { AddArray(other.getElements(), other.getCount()); }
+			
+			void AddList(std::initializer_list<T> l)
+			{
+				assert(m_count + l.size() <= m_length);
+				for (auto iter = l.begin(); iter != l.end() && m_count < m_length; ++iter)
+					m_elements[m_count++] = *iter;
+			}
+
+			int32 getCapacity() const { return m_length; }
+
+			T* getElements() { return m_elements; }
+
+			T& operator [](int32 i)
+			{
+				assert(i >= 0 && i < m_count);
+				return m_elements[i];
+			}
+
+			T* begin() { return m_elements; }
+			T* end() { return m_elements + m_count; }
+		private:
+
+			int m_length = 0;
+		};
 
 		template <typename T>
 		class List : public ListBase<T, T*>
@@ -323,7 +379,6 @@ namespace Apoc3D
 
 			explicit List(int capacity)  
 				: ListBase(nullptr), m_length(capacity)  { }
-
 
 			List(std::initializer_list<T> l) 
 				: ListBase(nullptr, l.size()),  m_length(l.size())
@@ -417,10 +472,11 @@ namespace Apoc3D
 					m_elements[m_count++] = val[i];
 			}
 
-			template<typename = void> // helps overload resolution with initializer_list
-			void AddList(const List<T>& other) { AddArray(other.m_elements, other.m_count); }
-			template<int32 FixedSize>
-			void AddList(const FixedList<T,FixedSize>& other) { AddArray(other.getElements(), other.getCount()); }
+			template <typename = void>
+			void AddList(const List<T>& other) { AddArray(other.getElements(), other.getCount()); }
+			template <int32 N>
+			void AddList(const FixedList<T, N>& other) { AddArray(other.getElements(), other.getCount()); }
+
 			void AddList(std::initializer_list<T> l)
 			{
 				EnsureElementIncrSize((int32)l.size());

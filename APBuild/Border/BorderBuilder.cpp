@@ -6,8 +6,6 @@
 #include "MeshBuild/MeshBuild.h"
 #include "Utils/MeshProcessing.h"
 
-using namespace std;
-
 namespace APBuild
 {
 	struct FaceEdge 
@@ -70,10 +68,8 @@ namespace APBuild
 
 		List<BorderData> borderData;
 
-		for (int i=0;i<data->Entities.getCount();i++)
+		for (MeshData* mesh : data->Entities)
 		{
-			MeshData* mesh = data->Entities[i];
-
 			if (mesh->VertexCount == 0 || mesh->Faces.getCount() == 0)
 				continue;
 
@@ -90,19 +86,18 @@ namespace APBuild
 			// =================== do the unique edge detection ============================== 
 			HashMap<FaceEdge, int, FaceEdgeEqualityComparer> edgeUsageCounter;
 
-			for (int j=0;j<mesh->Faces.getCount();j++)
+			for (const MeshFace& face : mesh->Faces)
 			{
-				const MeshFace& face = mesh->Faces[j];
 				FaceEdge edge1 = { face.IndexA, face.IndexB };
 				FaceEdge edge2 = { face.IndexB, face.IndexC };
 				FaceEdge edge3 = { face.IndexA, face.IndexC };
 
 				if (edge1.SmallerIDVertex > edge1.LargerIDVertex)
-					swap(edge1.SmallerIDVertex, edge1.LargerIDVertex);
+					std::swap(edge1.SmallerIDVertex, edge1.LargerIDVertex);
 				if (edge2.SmallerIDVertex > edge2.LargerIDVertex)
-					swap(edge2.SmallerIDVertex, edge2.LargerIDVertex);
+					std::swap(edge2.SmallerIDVertex, edge2.LargerIDVertex);
 				if (edge3.SmallerIDVertex > edge3.LargerIDVertex)
-					swap(edge3.SmallerIDVertex, edge3.LargerIDVertex);
+					std::swap(edge3.SmallerIDVertex, edge3.LargerIDVertex);
 
 				int count;
 				if (edgeUsageCounter.TryGetValue(edge1, count))
@@ -258,51 +253,50 @@ namespace APBuild
 		{
 			Configuration* xml = new Configuration(L"Root");
 
-			
-			for (int i=0;i<borderData.getCount();i++)
+			const uint64 idFmtFlags = StrFmt::a<4, '0'>::val;
+
+			for (int32 i = 0; i < borderData.getCount();i++)
 			{
+				const BorderData& bdrData = borderData[i];
 				ConfigurationSection* sect = new ConfigurationSection(L"Section" + StringUtils::IntToString(i));	
 				ConfigurationSection* sectV = new ConfigurationSection(L"Vertex");	
 				ConfigurationSection* sectB = new ConfigurationSection(L"Border");	
 				ConfigurationSection* sectFV = new ConfigurationSection(L"FlattenVertex");	
 
-				for (int j=0;j<borderData[i].vertexCount;j++)
+				for (int j=0;j<bdrData.vertexCount;j++)
 				{
-					String value = StringUtils::SingleToString(borderData[i].Vertices[j].X, 4, 10, ' ', ios::right | ios::fixed);
+					String value = StringUtils::SingleToString(bdrData.Vertices[j].X);
 					value.append(L",");
-					value.append(StringUtils::SingleToString(borderData[i].Vertices[j].Y, 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::SingleToString(bdrData.Vertices[j].Y));
 					value.append(L",");
-					value.append(StringUtils::SingleToString(borderData[i].Vertices[j].Z, 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::SingleToString(bdrData.Vertices[j].Z));
 
-					sectV->AddStringValue(L"Vertex" + StringUtils::IntToString(j, 4, '0', ios::right),
-						value);
+					sectV->AddStringValue(L"Vertex" + StringUtils::IntToString(j, idFmtFlags), value);
 				}
 					
-				for (int j=0;j<borderData[i].borderCount;j++)
+				for (int j=0;j<bdrData.borderCount;j++)
 				{
-					String value = StringUtils::IntToString(borderData[i].BorderDef[j].SmallerIDVertex, 3, ' ', ios::right);
+					String value = StringUtils::IntToString(bdrData.BorderDef[j].SmallerIDVertex, StrFmt::a<3>::val);
 					value.append(L",");
-					value.append(StringUtils::IntToString(borderData[i].BorderDef[j].LargerIDVertex, 3, ' ', ios::right));
+					value.append(StringUtils::IntToString(bdrData.BorderDef[j].LargerIDVertex, StrFmt::a<3>::val));
 					
-					sectB->AddStringValue(L"Border" + StringUtils::IntToString(j, 4, '0', ios::right),
-						value);
+					sectB->AddStringValue(L"Border" + StringUtils::IntToString(j, idFmtFlags), value);
 				}
 
-				for (int j=0;j<borderData[i].flattenVertexCount;j++)
+				for (int j=0;j<bdrData.flattenVertexCount;j++)
 				{
-					String value = StringUtils::SingleToString(borderData[i].FlattenVertices[j].X, 4, 10, ' ', ios::right | ios::fixed);
+					String value = StringUtils::SingleToString(bdrData.FlattenVertices[j].X);
 					value.append(L",");
-					value.append(StringUtils::SingleToString(borderData[i].FlattenVertices[j].Y, 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::SingleToString(bdrData.FlattenVertices[j].Y));
 					value.append(L",");
-					value.append(StringUtils::SingleToString(borderData[i].FlattenVertices[j].Z, 4, 10, ' ', ios::right | ios::fixed));
+					value.append(StringUtils::SingleToString(bdrData.FlattenVertices[j].Z));
 
-					sectFV->AddStringValue(L"Vertex" + StringUtils::IntToString(j, 4, '0', ios::right),
-						value);
+					sectFV->AddStringValue(L"Vertex" + StringUtils::IntToString(j, idFmtFlags), value);
 				}
 
-				delete[] borderData[i].Vertices;
-				delete[] borderData[i].BorderDef;
-				delete[] borderData[i].FlattenVertices;
+				delete[] bdrData.Vertices;
+				delete[] bdrData.BorderDef;
+				delete[] bdrData.FlattenVertices;
 
 				sect->AddSection(sectB);
 				sect->AddSection(sectV);

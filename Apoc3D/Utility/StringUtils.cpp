@@ -28,17 +28,20 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include <sstream>
 #include <algorithm>
 
-using namespace std;
 using namespace Apoc3D::Collections;
 
 namespace Apoc3D
 {
 	namespace Utility
 	{
+		using nstring = std::string;
+		using std::wstring;
+
 		const String StringUtils::Empty;
 
-		string StringUtils::toPlatformNarrowString(const String& str) { return toPlatformNarrowString(str.c_str()); }
-		string StringUtils::toPlatformNarrowString(const wchar_t* str)
+
+		nstring StringUtils::toPlatformNarrowString(const String& str) { return toPlatformNarrowString(str.c_str()); }
+		nstring StringUtils::toPlatformNarrowString(const wchar_t* str)
 		{
 			size_t bufSize = wcstombs(nullptr, str, 0);
 			if (bufSize != static_cast<size_t>(-1))
@@ -47,13 +50,13 @@ namespace Apoc3D
 				buffer[bufSize] = 0;
 				wcstombs(buffer, str, bufSize);
 
-				string result = buffer;
+				nstring result = buffer;
 				delete[] buffer;
 				return result;
 			}
-			return string();
+			return nstring();
 		}
-		String StringUtils::toPlatformWideString(const string& str) { return toPlatformWideString(str.c_str()); }
+		String StringUtils::toPlatformWideString(const nstring& str) { return toPlatformWideString(str.c_str()); }
 		String StringUtils::toPlatformWideString(const char* str)
 		{
 			size_t bufSize = mbstowcs(nullptr, str, 0);
@@ -70,12 +73,11 @@ namespace Apoc3D
 			return L"";
 		}
 
-		std::string StringUtils::toASCIINarrowString(const String& str) { return std::string(str.begin(), str.end()); }
-		String StringUtils::toASCIIWideString(const std::string& str) { return String(str.begin(), str.end()); }
+		nstring StringUtils::toASCIINarrowString(const String& str) { return nstring(str.begin(), str.end()); }
+		String StringUtils::toASCIIWideString(const nstring& str) { return String(str.begin(), str.end()); }
 
 
-
-		String StringUtils::UTF8toUTF16(const std::string& utf8)
+		String StringUtils::UTF8toUTF16(const nstring& utf8)
 		{
 			size_t utf16MaxLength = utf8.length()+1;
 			UTF16* resultBuffer = new UTF16[utf16MaxLength];
@@ -94,7 +96,7 @@ namespace Apoc3D
 
 			return result;
 		}
-		std::string StringUtils::UTF16toUTF8(const String& utf16)
+		nstring StringUtils::UTF16toUTF8(const String& utf16)
 		{
 			size_t utf8MaxLength = 4 * utf16.size()+1;
 			UTF8* byteBuffer = new UTF8[utf8MaxLength];
@@ -107,14 +109,14 @@ namespace Apoc3D
 
 			ConvertUTF16toUTF8(&sourcestart, sourceend, &targetstart, targetend, lenientConversion);
 			
-			std::string result((const char*)byteBuffer);
+			nstring result((const char*)byteBuffer);
 
 			delete[] byteBuffer;
 
 			return result;
 		}
 
-		String32 StringUtils::UTF8toUTF32(const std::string& utf8)
+		String32 StringUtils::UTF8toUTF32(const nstring& utf8)
 		{
 			size_t utf32MaxLength = utf8.length()+1;
 			UTF32* resultBuffer = new UTF32[utf32MaxLength];
@@ -133,7 +135,7 @@ namespace Apoc3D
 
 			return result;
 		}
-		std::string StringUtils::UTF32toUTF8(const String32& utf32)
+		nstring StringUtils::UTF32toUTF8(const String32& utf32)
 		{
 			size_t utf8MaxLength = 4 * utf32.size()+1;
 			UTF8* byteBuffer = new UTF8[utf8MaxLength];
@@ -146,7 +148,7 @@ namespace Apoc3D
 
 			ConvertUTF32toUTF8(&sourcestart, sourceend, &targetstart, targetend, lenientConversion);
 
-			std::string result((const char*)byteBuffer);
+			nstring result((const char*)byteBuffer);
 
 			delete[] byteBuffer;
 
@@ -194,35 +196,779 @@ namespace Apoc3D
 
 		//////////////////////////////////////////////////////////////////////////
 
-
-		int32 SimpleParseInt32(const String& v) { return StringUtils::ParseInt32(v); }
-		float SimpleParseFloat(const String& v) { return StringUtils::ParseSingle(v); }
-
-		int32 SimpleParseInt32(const std::string& v) { return StringUtils::ParseInt32(v); }
-		float SimpleParseFloat(const std::string& v) { return StringUtils::ParseSingle(v); }
-
-		template <typename StrType>
-		struct GenericFunctions
+		inline byte GetFP(uint64 flags)
 		{
-			static bool EqualsNoCase(const StrType& a, const StrType& b)
+			return (byte)(0xff & ((flags & StringUtils::SF_FPCustomPrecisionMask) >> 12));
+		}
+
+		inline uint16 GetWidth(uint64 flags)
+		{
+			return (uint16)(0xfff & ((flags & StringUtils::SF_WidthMask) >> 20));
+		}
+
+		inline char32_t GetFill(uint64 flags)
+		{
+			if (flags & StringUtils::SF_CustomFillChar)
+				return (char32_t)(0xffffff & ((flags & StringUtils::SF_FillChar) >> 32));
+			return ' ';
+		}
+		//////////////////////////////////////////////////////////////////////////
+
+		namespace Impl
+		{
+			const char digitCharTableU[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			const char digitCharTableL[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+			const double digitBase10Mult[618] =
 			{
-				for (size_t i=0;i<a.size();i++)
+				1e-308, 1e-307, 1e-306, 1e-305, 1e-304, 1e-303, 1e-302, 1e-301, 1e-300,
+				1e-299, 1e-298, 1e-297, 1e-296, 1e-295, 1e-294, 1e-293, 1e-292, 1e-291, 1e-290, 1e-289, 1e-288, 1e-287, 1e-286, 1e-285, 1e-284, 1e-283, 1e-282, 1e-281, 1e-280,
+				1e-279, 1e-278, 1e-277, 1e-276, 1e-275, 1e-274, 1e-273, 1e-272, 1e-271, 1e-270, 1e-269, 1e-268, 1e-267, 1e-266, 1e-265, 1e-264, 1e-263, 1e-262, 1e-261, 1e-260,
+				1e-259, 1e-258, 1e-257, 1e-256, 1e-255, 1e-254, 1e-253, 1e-252, 1e-251, 1e-250, 1e-249, 1e-248, 1e-247, 1e-246, 1e-245, 1e-244, 1e-243, 1e-242, 1e-241, 1e-240,
+				1e-239, 1e-238, 1e-237, 1e-236, 1e-235, 1e-234, 1e-233, 1e-232, 1e-231, 1e-230, 1e-229, 1e-228, 1e-227, 1e-226, 1e-225, 1e-224, 1e-223, 1e-222, 1e-221, 1e-220,
+				1e-219, 1e-218, 1e-217, 1e-216, 1e-215, 1e-214, 1e-213, 1e-212, 1e-211, 1e-210, 1e-209, 1e-208, 1e-207, 1e-206, 1e-205, 1e-204, 1e-203, 1e-202, 1e-201, 1e-200,
+				1e-199, 1e-198, 1e-197, 1e-196, 1e-195, 1e-194, 1e-193, 1e-192, 1e-191, 1e-190, 1e-189, 1e-188, 1e-187, 1e-186, 1e-185, 1e-184, 1e-183, 1e-182, 1e-181, 1e-180,
+				1e-179, 1e-178, 1e-177, 1e-176, 1e-175, 1e-174, 1e-173, 1e-172, 1e-171, 1e-170, 1e-169, 1e-168, 1e-167, 1e-166, 1e-165, 1e-164, 1e-163, 1e-162, 1e-161, 1e-160,
+				1e-159, 1e-158, 1e-157, 1e-156, 1e-155, 1e-154, 1e-153, 1e-152, 1e-151, 1e-150, 1e-149, 1e-148, 1e-147, 1e-146, 1e-145, 1e-144, 1e-143, 1e-142, 1e-141, 1e-140,
+				1e-139, 1e-138, 1e-137, 1e-136, 1e-135, 1e-134, 1e-133, 1e-132, 1e-131, 1e-130, 1e-129, 1e-128, 1e-127, 1e-126, 1e-125, 1e-124, 1e-123, 1e-122, 1e-121, 1e-120,
+				1e-119, 1e-118, 1e-117, 1e-116, 1e-115, 1e-114, 1e-113, 1e-112, 1e-111, 1e-110, 1e-109, 1e-108, 1e-107, 1e-106, 1e-105, 1e-104, 1e-103, 1e-102, 1e-101, 1e-100,
+				1e-99, 1e-98, 1e-97, 1e-96, 1e-95, 1e-94, 1e-93, 1e-92, 1e-91, 1e-90, 1e-89, 1e-88, 1e-87, 1e-86, 1e-85, 1e-84, 1e-83, 1e-82, 1e-81, 1e-80,
+				1e-79, 1e-78, 1e-77, 1e-76, 1e-75, 1e-74, 1e-73, 1e-72, 1e-71, 1e-70, 1e-69, 1e-68, 1e-67, 1e-66, 1e-65, 1e-64, 1e-63, 1e-62, 1e-61, 1e-60,
+				1e-59, 1e-58, 1e-57, 1e-56, 1e-55, 1e-54, 1e-53, 1e-52, 1e-51, 1e-50, 1e-49, 1e-48, 1e-47, 1e-46, 1e-45, 1e-44, 1e-43, 1e-42, 1e-41, 1e-40,
+				1e-39, 1e-38, 1e-37, 1e-36, 1e-35, 1e-34, 1e-33, 1e-32, 1e-31, 1e-30, 1e-29, 1e-28, 1e-27, 1e-26, 1e-25, 1e-24, 1e-23, 1e-22, 1e-21, 1e-20,
+				1e-19, 1e-18, 1e-17, 1e-16, 1e-15, 1e-14, 1e-13, 1e-12, 1e-11, 1e-10, 1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1e+0,
+				1e+1, 1e+2, 1e+3, 1e+4, 1e+5, 1e+6, 1e+7, 1e+8, 1e+9, 1e+10, 1e+11, 1e+12, 1e+13, 1e+14, 1e+15, 1e+16, 1e+17, 1e+18, 1e+19, 1e+20,
+				1e+21, 1e+22, 1e+23, 1e+24, 1e+25, 1e+26, 1e+27, 1e+28, 1e+29, 1e+30, 1e+31, 1e+32, 1e+33, 1e+34, 1e+35, 1e+36, 1e+37, 1e+38, 1e+39, 1e+40,
+				1e+41, 1e+42, 1e+43, 1e+44, 1e+45, 1e+46, 1e+47, 1e+48, 1e+49, 1e+50, 1e+51, 1e+52, 1e+53, 1e+54, 1e+55, 1e+56, 1e+57, 1e+58, 1e+59, 1e+60,
+				1e+61, 1e+62, 1e+63, 1e+64, 1e+65, 1e+66, 1e+67, 1e+68, 1e+69, 1e+70, 1e+71, 1e+72, 1e+73, 1e+74, 1e+75, 1e+76, 1e+77, 1e+78, 1e+79, 1e+80,
+				1e+81, 1e+82, 1e+83, 1e+84, 1e+85, 1e+86, 1e+87, 1e+88, 1e+89, 1e+90, 1e+91, 1e+92, 1e+93, 1e+94, 1e+95, 1e+96, 1e+97, 1e+98, 1e+99, 1e+100,
+				1e+101, 1e+102, 1e+103, 1e+104, 1e+105, 1e+106, 1e+107, 1e+108, 1e+109, 1e+110, 1e+111, 1e+112, 1e+113, 1e+114, 1e+115, 1e+116, 1e+117, 1e+118, 1e+119, 1e+120,
+				1e+121, 1e+122, 1e+123, 1e+124, 1e+125, 1e+126, 1e+127, 1e+128, 1e+129, 1e+130, 1e+131, 1e+132, 1e+133, 1e+134, 1e+135, 1e+136, 1e+137, 1e+138, 1e+139, 1e+140,
+				1e+141, 1e+142, 1e+143, 1e+144, 1e+145, 1e+146, 1e+147, 1e+148, 1e+149, 1e+150, 1e+151, 1e+152, 1e+153, 1e+154, 1e+155, 1e+156, 1e+157, 1e+158, 1e+159, 1e+160,
+				1e+161, 1e+162, 1e+163, 1e+164, 1e+165, 1e+166, 1e+167, 1e+168, 1e+169, 1e+170, 1e+171, 1e+172, 1e+173, 1e+174, 1e+175, 1e+176, 1e+177, 1e+178, 1e+179, 1e+180,
+				1e+181, 1e+182, 1e+183, 1e+184, 1e+185, 1e+186, 1e+187, 1e+188, 1e+189, 1e+190, 1e+191, 1e+192, 1e+193, 1e+194, 1e+195, 1e+196, 1e+197, 1e+198, 1e+199, 1e+200,
+				1e+201, 1e+202, 1e+203, 1e+204, 1e+205, 1e+206, 1e+207, 1e+208, 1e+209, 1e+210, 1e+211, 1e+212, 1e+213, 1e+214, 1e+215, 1e+216, 1e+217, 1e+218, 1e+219, 1e+220,
+				1e+221, 1e+222, 1e+223, 1e+224, 1e+225, 1e+226, 1e+227, 1e+228, 1e+229, 1e+230, 1e+231, 1e+232, 1e+233, 1e+234, 1e+235, 1e+236, 1e+237, 1e+238, 1e+239, 1e+240,
+				1e+241, 1e+242, 1e+243, 1e+244, 1e+245, 1e+246, 1e+247, 1e+248, 1e+249, 1e+250, 1e+251, 1e+252, 1e+253, 1e+254, 1e+255, 1e+256, 1e+257, 1e+258, 1e+259, 1e+260,
+				1e+261, 1e+262, 1e+263, 1e+264, 1e+265, 1e+266, 1e+267, 1e+268, 1e+269, 1e+270, 1e+271, 1e+272, 1e+273, 1e+274, 1e+275, 1e+276, 1e+277, 1e+278, 1e+279, 1e+280,
+				1e+281, 1e+282, 1e+283, 1e+284, 1e+285, 1e+286, 1e+287, 1e+288, 1e+289, 1e+290, 1e+291, 1e+292, 1e+293, 1e+294, 1e+295, 1e+296, 1e+297, 1e+298, 1e+299, 1e+300,
+				1e+301, 1e+302, 1e+303, 1e+304, 1e+305, 1e+306, 1e+307, 1e+308
+			};
+
+			FORCE_INLINE double GetDigitBase10Mult(int digits) 
+			{
+				assert(digits <= 308);
+				return digits < -308 ? 0.0 : digitBase10Mult[digits + 308]; 
+			}
+
+
+			FORCE_INLINE bool isBlank(char ch) { return ch == ' ' || ch == '\t'; }
+			FORCE_INLINE bool isBlank(wchar_t ch) { return ch == ' ' || ch == '\t'; }
+
+			FORCE_INLINE bool isDigit(int ch) { return ch >= '0' && ch <= '9'; }
+
+			template <typename CharType>
+			bool cstricmp(const CharType* a, const char* b);
+
+			uint32 flagCut(uint64 v) { return static_cast<uint32>(v & 0xffffffffU); }
+
+			template <typename CharType, typename IntType> FORCE_INLINE
+			void ParseDecimalIntegerDigits(const CharType* str, IntType& num, bool* isInvalid)
+			{
+				while (*str)
 				{
-					if (tolower(a[i]) != tolower(b[i]))
+					CharType ch = *str++;
+
+					if (isBlank(ch))
+						break;
+
+					if (isInvalid)
+					{
+						*isInvalid &= !isDigit(ch); // invalid char
+
+						IntType prevVal = num;
+						num *= 10;
+						num += ch - '0';
+
+						if (num < prevVal)
+							*isInvalid = false; // overflow
+					}
+					else
+					{
+						num *= 10;
+						num += ch - '0';
+					}
+				}
+			}
+
+			template <typename CharType, typename IntType> FORCE_INLINE
+			void ParseDecimalIntegerDigitsUntilNonDigit(const CharType*& str, IntType& num, int* digitCount, bool* isInvalid)
+			{
+				while (*str)
+				{
+					CharType ch = *str;
+
+					if (isBlank(ch) || !isDigit(ch))
+						break;
+
+					str++;
+
+					if (isInvalid)
+					{
+						IntType prevVal = num;
+						num *= 10;
+						num += ch - '0';
+
+						if (num < prevVal)
+							*isInvalid = false; // overflow
+					}
+					else
+					{
+						num *= 10;
+						num += ch - '0';
+					}
+
+					if (digitCount)
+						(*digitCount)++;
+				}
+			}
+
+			template <bool MustExist, typename CharType>
+			int ParseDecimalSign(const CharType*& str)
+			{
+				CharType ch = *str;
+				if (ch == '-')
+				{
+					str++;
+					return -1;
+				}
+				else if (ch == '+')
+				{
+					str++;
+					return 1;
+				}
+				else if (MustExist)
+				{
+					return 0;
+				}
+				return 1;
+			}
+
+
+			template <typename CharType, typename IntType> FORCE_INLINE
+			IntType ParseSignedInteger(const CharType* str, bool* isInvalid)
+			{
+				static_assert(std::is_signed<IntType>::value, "");
+
+				assert(str);
+				if (isInvalid) *isInvalid = false;
+
+				while (isBlank(*str))
+					str++;
+
+				int sign = ParseDecimalSign<false>(str);
+
+				IntType num = 0;
+				ParseDecimalIntegerDigits<CharType, IntType>(str, num, isInvalid);
+
+				return sign * num;
+			}
+
+			template <typename CharType, typename UIntType> FORCE_INLINE
+			UIntType ParseUnsignedInteger(const CharType* str, bool* isInvalid)
+			{
+				static_assert(std::is_unsigned<UIntType>::value, "");
+
+				assert(str);
+				if (isInvalid) *isInvalid = false;
+
+				while (isBlank(*str))
+					str++;
+
+				// just in case a sign in present, skip it and mark invalid
+				int sign = ParseDecimalSign<false>(str);
+				if (sign < 0 && isInvalid)
+					*isInvalid = true;
+
+				UIntType num = 0;
+				ParseDecimalIntegerDigits<CharType, UIntType>(str, num, isInvalid);
+				
+				return num;
+			}
+
+			template <typename CharType, typename UIntType> FORCE_INLINE
+			UIntType ParseUnsignedIntegerBin(const CharType* str, bool* isInvalid)
+			{
+				static_assert(std::is_unsigned<UIntType>::value, "");
+
+				assert(str);
+				if (isInvalid) *isInvalid = false;
+
+				UIntType result = 0;
+
+				// allow blanks in binary number text
+				while (*str)
+				{
+					CharType ch = *str++;
+					if (isBlank(ch))
+						continue;
+
+					if (isInvalid)
+					{
+						*isInvalid |= ch != '0' && ch != '1';
+
+						UIntType prevVal = result;
+						result <<= 1;
+						result |= (ch == '1') ? 1 : 0;
+
+						if (result < prevVal)
+							*isInvalid = false; // overflow
+					}
+					else
+					{
+						result <<= 1;
+						result |= (ch == '1') ? 1 : 0;
+					}
+				}
+
+				return result;
+			}
+
+			template <typename CharType, typename UIntType> FORCE_INLINE
+			UIntType ParseUnsignedIntegerHex(const CharType* str, bool* isInvalid)
+			{
+				static_assert(std::is_unsigned<UIntType>::value, "");
+				
+				assert(str);
+				if (isInvalid) *isInvalid = false;
+
+				while (isBlank(*str))
+					str++;
+
+				// allow prefix "0x"
+				if (*str && *str == '0' && (*(str + 1) == 'x' || *(str + 1) == 'X'))
+					str += 2;
+
+				UIntType result = 0;
+
+				// digits
+				while (*str)
+				{
+					CharType ch = *str++;
+
+					if (isBlank(ch))
+						break;
+
+					if (isInvalid)
+						*isInvalid &= (!isDigit(ch) && ToUpperCase(ch) > 'F');
+
+					byte digit = ch > '9' ? (ToUpperCase(ch) - 'A' + 10) : (ch - '0');
+
+					if (isInvalid)
+					{
+						UIntType prevVal = result;
+						result <<= 4;
+						result |= digit;
+
+						if (result < prevVal)
+							*isInvalid = false; // overflow
+					}
+					else
+					{
+						result <<= 4;
+						result |= digit;
+					}
+				}
+
+				return result;
+			}
+
+			template <typename CharType> FORCE_INLINE
+			double ParseFloatingPoint(const CharType* str, bool* isInvalid)
+			{
+				assert(str);
+				if (isInvalid) *isInvalid = false;
+
+				while (isBlank(*str))
+					str++;
+
+				uint64 digits = 0;
+				uint64 frac = 0;
+				int exp = 0;
+				int fracExp = 0;
+
+				int sign = ParseDecimalSign<false>(str);
+				
+				if (cstricmp(str, "inf"))
+					return sign * (double)INFINITY;
+
+				if (cstricmp(str, "nan"))
+					return sign * NAN;
+
+				ParseDecimalIntegerDigitsUntilNonDigit(str, digits, nullptr, isInvalid);
+
+				if (*str && *str == '.')
+				{
+					str++;
+					ParseDecimalIntegerDigitsUntilNonDigit(str, frac, &fracExp, isInvalid);
+					fracExp = -fracExp;
+				}
+
+				if (*str && *str == 'E' || *str == 'e')
+				{
+					str++;
+
+					int expSign = ParseDecimalSign<true>(str);
+
+					if (expSign == 0)
+					{
+						if (isInvalid)
+							*isInvalid = true;
+					}
+
+					ParseDecimalIntegerDigitsUntilNonDigit<CharType>(str, exp, nullptr, isInvalid);
+
+					exp *= expSign;
+				}
+
+				//double r = digits * GetDigitBase10Mult(exp) + frac * GetDigitBase10Mult(exp + fracExp);
+				double r = ((double)digits + frac * GetDigitBase10Mult(fracExp)) * GetDigitBase10Mult(exp);
+
+				if (sign == -1)
+					r = -r;
+
+				return r;
+			}
+
+			template <typename CharType, typename NumType, NumType (*Parser)(const CharType*, bool*)> FORCE_INLINE
+			NumType ParseChecked(const CharType* str)
+			{
+#if _DEBUG
+				bool hasError;
+				NumType r = Parser(str, &hasError);
+				assert(!hasError);
+				return r;
+#else
+				return Parser(str, nullptr);
+#endif
+			}
+
+
+			template <typename StrType, typename CharType, int32 N1>
+			StrType NumberBufferToString(FixedList<CharType, N1>& digits, uint16 width, CharType fill, uint32 flags)
+			{
+				int32 leftPadding = 0;
+				int32 rightPadding = 0;
+
+				int32 paddingWidth = digits.getCount() >= width ? 0 : (width - digits.getCount());
+
+				if (flags & StringUtils::SF_Left)
+				{
+					rightPadding = paddingWidth;
+				}
+				else
+				{
+					leftPadding = paddingWidth;
+				}
+
+				int32 totalLength = paddingWidth + digits.getCount();
+
+				StrType str;
+				str.reserve(totalLength);
+
+				int32 digitStart = 0;
+
+				if (leftPadding != 0)
+				{
+					if (fill == '0')
+					{
+						for (int i = 0; i < digits.getCount(); i++)
+						{
+							CharType ch = digits[i];
+
+							if (i < digits.getCount() - 1)
+							{
+								// check the next char in case of 0x
+								CharType chn = digits[i + 1];
+								
+								bool isHexPrefixEnd = chn == 'x' || chn == 'X';
+
+								if (ch == '0' && isHexPrefixEnd)
+								{
+									digitStart = i + 2;
+									break;
+								}
+							}
+							
+							if (ch != '+' && ch != '-')
+							{
+								digitStart = i;
+								break;
+							}
+						}
+
+						for (int i = 0; i < digitStart; i++)
+							str.append(1, digits[i]);
+					}
+
+					for (int32 i = 0; i < leftPadding; i++)
+						str.append(1, fill);
+				}
+				
+				for (int i = digitStart; i < digits.getCount(); i++)
+					str.append(1, digits[i]);
+				
+				for (int32 i = 0; i < rightPadding; i++)
+					str.append(1, fill);
+
+				return str;
+			}
+			
+			template <typename CharType, uint32 Base>
+			using IntegerDigitBuffer = FixedList < CharType, 4 + (Base == 16 ? 16 : (Base == 10 ? 20 : (Base == 8 ? 22 : 64))) > ;
+
+			// integer base to string: convert the digit to string
+			template <typename StrType, typename CharType, uint32 Base, typename UIntType>
+			void IntegerBaseToString(UIntType val, IntegerDigitBuffer<CharType, Base>& digits, bool useUpperCase)
+			{
+				static_assert(std::is_unsigned<UIntType>::value, "");
+				static_assert(Base >= 2, "");
+
+				const char* digitChars = useUpperCase ? digitCharTableU : digitCharTableL;
+
+				while (val >= Base)
+				{
+					digits.Add(digitChars[val % Base]);
+
+					val /= Base;
+				}
+				digits.Add(digitChars[val]);
+			}
+
+			
+			struct SignedBaseToStringHelper
+			{
+				template <typename StrType, typename CharType, uint32 Base, typename IntType>
+				static void Invoke(IntType val, uint16 width, CharType fill, uint32 flags, 
+					IntegerDigitBuffer<CharType, Base>& digits, char& sign)
+				{
+					static_assert(std::is_signed<IntType>::value, "");
+
+					std::make_unsigned<IntType>::type digitParts;
+
+					if (val > 0)
+					{
+						digitParts = val;
+						sign = 1;
+					}
+					else if (val == 0)
+					{
+						digitParts = val;
+						sign = 0;
+					}
+					else if (val < 0)
+					{
+						digitParts = -val;
+						sign = -1;
+					}
+
+					IntegerBaseToString<StrType, CharType, Base, std::make_unsigned<IntType>::type>(digitParts,
+						digits, (flags & StringUtils::SF_UpperCase) != 0);
+				}
+			};
+
+			struct UnsignedBaseToStringHelper
+			{
+				template <typename StrType, typename CharType, uint32 Base, typename IntType>
+				static void Invoke(IntType val, uint16 width, CharType fill, uint32 flags, 
+					IntegerDigitBuffer<CharType, Base>& digits, char& sign)
+				{
+					static_assert(std::is_unsigned<IntType>::value, "");
+
+					IntegerBaseToString<StrType, CharType, Base, IntType>(val, digits, (flags & StringUtils::SF_UpperCase) != 0);
+					sign = val > 0 ? 1 : 0;
+				}
+			};
+
+
+
+			template <typename StrType, typename CharType, uint32 Base, typename IntType>
+			StrType IntegerToString(IntType val, uint16 width, CharType fill, uint32 flags)
+			{
+				IntegerDigitBuffer<CharType, Base> digits;
+				char sign = 0;
+
+				std::conditional<std::is_signed<IntType>::value, SignedBaseToStringHelper, UnsignedBaseToStringHelper>::
+					type::Invoke<StrType, CharType, Base, IntType>(val, width, fill, flags, digits, sign);
+
+
+				if (sign > 0 && (flags & StringUtils::SF_ShowPositiveSign))
+					digits.Add('+');
+				else if (sign < 0)
+					digits.Add('-');
+
+				if (Base == 16 && (flags & StringUtils::SF_ShowHexBase))
+				{
+					digits.Add('x');
+					digits.Add('0');
+				}
+
+				digits.Reverse();
+
+				return NumberBufferToString<StrType, CharType>(digits, width, fill, flags);
+			}
+
+			template <uint32 Base, typename IntType> FORCE_INLINE
+			String IntegerToString16(IntType val, uint64 flags) 
+			{
+				return IntegerToString<String, char16_t, Base, IntType>(val, GetWidth(flags), GetFill(flags), flagCut(flags));
+			}
+
+			template <uint32 Base, typename IntType> FORCE_INLINE
+			nstring IntegerToString8(IntType val, uint64 flags) 
+			{
+				return IntegerToString<nstring, char, Base, IntType>(val, GetWidth(flags), GetFill(flags), flagCut(flags)); 
+			}
+
+
+			template <typename CharType>
+			using FloatDigitBuffer = FixedList < CharType, 310 > ;
+
+			double CalculateRounding(double threshold, uint64 flags)
+			{
+				bool hasCustomPrecision = (flags & StringUtils::SF_FPCustomPrecision) != 0;
+				if (hasCustomPrecision)
+				{
+					int16 precision = GetFP(flags);
+
+					double r = GetDigitBase10Mult(-precision) * 0.5;
+					return r;
+				}
+				return threshold * 0.5f;
+			}
+
+			template <typename StrType, typename CharType>
+			StrType DoubleToString(double val, double threshold, uint16 width, CharType fill, uint64 flags)
+			{
+				FloatDigitBuffer<CharType> digits;
+				
+				int sign = std::signbit(val) ? -1 : 1;
+
+				if (sign > 0 && (flags & StringUtils::SF_ShowPositiveSign))
+					digits.Add('+');
+				else if (sign < 0)
+					digits.Add('-');
+
+				const bool useUpperCase = (flags & StringUtils::SF_UpperCase) != 0;
+				const char* digitChars = useUpperCase ? digitCharTableU : digitCharTableL;
+
+				if (std::isnan(val))
+				{
+					digits.Clear();
+
+					const char* nanTxt = useUpperCase ? "NAN" : "nan";
+					while (*nanTxt)
+						digits.Add(*nanTxt++);
+				}
+				else if (std::isinf(val))
+				{
+					const char* infTxt = useUpperCase ? "INF" : "inf";
+					while (*infTxt)
+						digits.Add(*infTxt++);
+				}
+				else
+				{
+					bool useExp = false;
+
+					double n = abs(val);
+
+					int32 exp = (int32)log10(n);
+
+					if (exp < -65536)
+						exp = -65536;
+
+					if (flags & StringUtils::SF_FPScientific)
+						useExp = true;
+					else if ((flags & StringUtils::SF_FPDecimal) != 0)
+						useExp = exp >= 14 || (sign < 0 && exp >= 9) || exp <= -9;
+
+
+					int32 dig = 0;
+					if (useExp)
+					{
+						if (exp < 0)
+							exp--;
+
+						n /= GetDigitBase10Mult(exp);
+					}
+					else
+					{
+						dig = exp;
+					}
+
+					bool hasCustomPrecision = (flags & StringUtils::SF_FPCustomPrecision) != 0;
+					int16 precision = GetFP(flags);
+
+					n += CalculateRounding(threshold, flags);
+
+					while ((dig>=0 || n > threshold) && (!hasCustomPrecision || (hasCustomPrecision && precision>=0)))
+					{
+						double weight = GetDigitBase10Mult(dig);
+
+						if (weight > 0)
+						{
+							int32 d = (int32)floor(n / weight);
+							n -= d*weight;
+
+							if (d < 0) d = 0;
+							digits.Add(digitChars[d]);
+						}
+						
+						if (dig == 0 && (n > 0 || precision>0))
+							digits.Add('.');
+
+						dig--;
+						if (dig < 0)
+							precision--;
+					}
+
+					if (useExp)
+					{
+						digits.Add(useUpperCase ? 'E' : 'e');
+						digits.Add(exp < 0 ? '-' : '+');
+
+						FixedList<CharType, 6> expDigits;
+
+						exp = abs(exp);
+
+						while (exp >= 10)
+						{
+							expDigits.Add(digitChars[exp % 10]);
+							exp /= 10;
+						}
+						expDigits.Add(digitChars[exp]);
+						expDigits.Reverse();
+
+						digits.AddList(expDigits);
+					}
+				}
+
+				return NumberBufferToString<StrType, CharType>(digits, width, fill, flagCut(flags));
+			}
+
+
+
+
+
+			template <typename CharType>
+			CharType ToLowerCase(CharType ch) { return (ch >= 'A' && ch <= 'Z') ? (ch + 'a' - 'A') : ch; }
+
+			template <typename CharType>
+			CharType ToUpperCase(CharType ch) { return (ch >= 'a' && ch <= 'z') ? (ch + 'A' - 'a') : ch; }
+
+
+
+			template <bool caseInsensitive, typename CharType> 
+			bool CompareString(const CharType* a, const CharType* b, int32 len)
+			{
+				while (len > 0)
+				{
+					if (caseInsensitive)
+					{
+						if (ToLowerCase(*a) != ToLowerCase(*b))
+							return false;
+					}
+					else
+					{
+						if (*a != *b)
+							return false;
+					}
+
+					a++; b++;
+					len--;
+				}
+
+				return true;
+			}
+
+			template <typename CharType>
+			bool CompareString(const CharType* a, const CharType* b, int32 len, bool caseInsensitive)
+			{
+				return caseInsensitive ? CompareString<true>(a, b, len) : CompareString<false>(a, b, len);
+			}
+
+
+			template <bool caseInsensitive, typename StrType>
+			bool StartsWith(const StrType& str, const StrType& pattern)
+			{
+				size_t len = str.length();
+				size_t patternLen = pattern.length();
+				if (len < patternLen || patternLen == 0)
+					return false;
+
+				return Impl::CompareString<caseInsensitive>(str.c_str(), pattern.c_str(), patternLen);
+			}
+
+			template <bool caseInsensitive, typename StrType, typename CharType, int32 N>
+			bool StartsWith(const StrType& str, const CharType(&pattern)[N])
+			{
+				size_t len = str.length();
+				if (len < N - 1 || N <= 1)
+					return false;
+
+				return Impl::CompareString<caseInsensitive>(str.c_str(), pattern, N - 1);
+			}
+
+			template <bool caseInsensitive, typename StrType>
+			bool EndsWith(const StrType& str, const StrType& pattern)
+			{
+				size_t thisLen = str.length();
+				size_t patternLen = pattern.length();
+				if (thisLen < patternLen || patternLen == 0)
+					return false;
+
+				return Impl::CompareString<caseInsensitive>(str.c_str(), pattern.c_str(), patternLen);
+			}
+
+
+			template <typename StrType>
+			bool StartsWith(const StrType& str, const StrType& pattern, bool caseInsensitive)
+			{
+				return caseInsensitive ? StartsWith<true>(str, pattern) : StartsWith<false>(str, pattern);
+			}
+
+			template <typename StrType>
+			bool EndsWith(const StrType& str, const StrType& pattern, bool caseInsensitive)
+			{
+				return caseInsensitive ? EndsWith<true>(str, pattern) : EndsWith<false>(str, pattern);
+			}
+
+
+			template <typename StrType>
+			bool EqualsNoCase(const StrType& a, const StrType& b)
+			{
+				if (a.size() != b.size())
+					return false;
+
+				for (size_t i = 0; i < a.size(); i++)
+				{
+					if (ToLowerCase(a[i]) != ToLowerCase(b[i]))
 						return false;
 				}
 				return true;
 			}
 
-			template <typename DelimType = StrType>
-			static void Split(const StrType& str, List<StrType>& result, const DelimType& delims)
+
+
+			template <typename StrType, typename DelimType = StrType>
+			void Split(const StrType& str, List<StrType>& result, const DelimType& delims)
 			{
 				assert(result.getCount() == 0);
 
 				// Use STL methods 
 				size_t start, pos;
 				start = 0;
-				do 
+				do
 				{
 					pos = str.find_first_of(delims, start);
 					if (pos == start)
@@ -232,14 +978,14 @@ namespace Apoc3D
 					}
 					else if (pos == StrType::npos)
 					{
-						// Copy the rest of the string
-						result.Add( str.substr(start) );
+						// Copy the rest of the nstring
+						result.Add(str.substr(start));
 						break;
 					}
 					else
 					{
 						// Copy up to delimiter
-						result.Add( str.substr(start, pos - start) );
+						result.Add(str.substr(start, pos - start));
 						start = pos + 1;
 					}
 					// parse up to next real data
@@ -248,618 +994,175 @@ namespace Apoc3D
 				} while (pos != StrType::npos);
 			}
 
-			template <typename DelimType = StrType>
-			static List<StrType> Split(const StrType& str, const DelimType& delims)
+			template <typename StrType, typename DelimType = StrType>
+			List<StrType> Split(const StrType& str, const DelimType& delims)
 			{
 				List<StrType> result;
-				Split<DelimType>(str, result, delims);
+				Split<StrType, DelimType>(str, result, delims);
 				return result;
 			}
 
-
-			template <typename ListElementT, typename ElementT, ElementT (*TConverter)(const StrType&), typename DelimType = StrType>
-			static void SplitT(const StrType& str, ListElementT& result, const DelimType& delims)
+			template <typename CharType>
+			bool Match(const CharType* nstring, const CharType* wild)
 			{
-				assert(result.getCount() == 0);
+				const CharType* cp = nullptr;
+				const CharType* mp = nullptr;
 
-				// Use STL methods 
-				size_t start, pos;
-				start = 0;
-				do 
+				while ((*nstring) && (*wild != '*'))
 				{
-					pos = str.find_first_of(delims, start);
-					if (pos == start)
+					if ((*wild != *nstring) && (*wild != '?'))
+						return false;
+
+					wild++;
+					nstring++;
+				}
+
+				while (*nstring)
+				{
+					wchar_t wch = *wild;
+
+					if (wch == '*')
 					{
-						// Do nothing
-						start = pos + 1;
+						if (!*++wild)
+							return true;
+
+						mp = wild;
+						cp = nstring + 1;
 					}
-					else if (pos == StrType::npos)
+					else if ((wch == *nstring) || (wch == '?'))
 					{
-						// Copy the rest of the string
-						result.Add(TConverter(str.substr(start) ));
-						break;
+						wild++;
+						nstring++;
 					}
 					else
 					{
-						// Copy up to delimiter
-						result.Add(TConverter(str.substr(start, pos - start) ));
-						start = pos + 1;
+						wild = mp;
+						nstring = cp++;
 					}
-					// parse up to next real data
-					start = str.find_first_not_of(delims, start);
-
-				} while (pos != StrType::npos);
-			}
-
-			template <typename ListElementT, typename ElementT, ElementT (*TConverter)(const StrType&), typename DelimType = StrType >
-			static ListElementT SplitT(const StrType& str, const DelimType& delims)
-			{
-				ListElementT result;
-				SplitT<ListElementT, ElementT, TConverter, DelimType>(str, result, delims);
-				return result;
-			}
-
-
-			static bool StartsWith(const StrType& str, const StrType& v, bool caseInsensitive)
-			{
-				size_t len = str.length();
-				size_t vlen = v.length();
-				if (len<vlen || !vlen)
-				{
-					return false;
 				}
 
-				StrType startOfThis = str.substr(0, vlen);
-				if (caseInsensitive)
-				{
-					return EqualsNoCase(startOfThis, v);
-				}
-				return (startOfThis == v);
-			}
-
-			static bool EndsWith(const StrType& str, const StrType& v, bool caseInsensitive)
-			{
-				size_t thisLen = str.length();
-				size_t patternLen = v.length();
-				if (thisLen < patternLen || patternLen == 0)
-					return false;
-
-				StrType endOfThis = str.substr(thisLen - patternLen, patternLen);
-				if (caseInsensitive)
-				{
-					return EqualsNoCase(endOfThis, v);
-				}
-				return (endOfThis == v);
-			}
-
-		};
-
-		template <typename T>
-		class CappedBufferList
-		{
-		public:
-			CappedBufferList(T* dataBuf, int32 sizeCap)
-				: m_elements(dataBuf), m_sizeCap(sizeCap), m_internalPointer(0)
-			{ }
-
-			void Add(const T& item)
-			{
-				assert(m_internalPointer<m_sizeCap);
-				m_elements[m_internalPointer++] = item;
-			}
-
-			int32 getCount() const { return m_internalPointer; }
-		private:
-			T* m_elements;
-			int32 m_sizeCap;
-
-			int32 m_internalPointer;
-		};
-
-
-		//////////////////////////////////////////////////////////////////////////
-
-		bool StringUtils::ParseBool(const String& v)
-		{
-			return (StartsWith(v, L"true", true) || StartsWith(v, L"yes", true)
-				|| StartsWith(v, L"1", true));
-		}
-		uint16 StringUtils::ParseUInt16(const String& val)
-		{
-			wistringstream str(val);
-			str.imbue(locale::classic());
-			uint16 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		uint32 StringUtils::ParseUInt32(const String& val)
-		{
-			wistringstream str(val);
-			str.imbue(locale::classic());
-			uint32 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		uint32 StringUtils::ParseUInt32Hex(const String& val)
-		{
-			wistringstream str(val);
-			str.imbue(locale::classic());
-			str.setf ( ios::hex, ios::basefield );       // set hex as the basefield
-			str.setf ( ios::showbase ); 
-			uint32 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		uint64 StringUtils::ParseUInt64(const String& val)
-		{
-			wistringstream str(val);
-			str.imbue(locale::classic());
-			uint64 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		uint64 StringUtils::ParseUInt64Hex(const String& val)
-		{
-			wistringstream str(val);
-			str.imbue(locale::classic());
-			str.setf ( ios::hex, ios::basefield );       // set hex as the basefield
-			str.setf ( ios::showbase ); 
-			uint64 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		uint64 StringUtils::ParseUInt64Bin(const String& val)
-		{
-			uint64 result = 0;
-
-			for (size_t i=0;i<val.size();i++)
-			{
-				wchar_t ch = val[i];
-				if (ch == ' ')
-					continue;
-
-				result <<=1;
-				result |= (ch=='1') ? 1 : 0;
-			}
-
-			return result;
-		}
-		int16 StringUtils::ParseInt16(const String& val)
-		{
-			wistringstream str(val);
-			str.imbue(locale::classic());
-			int16 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		int32 StringUtils::ParseInt32(const String& val)
-		{
-			wistringstream str(val);
-			str.imbue(locale::classic());
-			int32 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		int64 StringUtils::ParseInt64(const String& val)
-		{
-			wistringstream str(val);
-			str.imbue(locale::classic());
-			int64 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		float StringUtils::ParseSingle(const String& val)
-		{
-			wistringstream str(val);
-			str.imbue(locale::classic());
-			
-			float ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		double StringUtils::ParseDouble(const String& val)
-		{
-			wistringstream str(val);
-			str.imbue(locale::classic());
-			double ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
-		bool StringUtils::ParseBool(const std::string& v)
-		{
-			return (StartsWith(v, "true", true) || StartsWith(v, "yes", true)
-				|| StartsWith(v, "1", true));
-		}
-		uint16 StringUtils::ParseUInt16(const std::string& val)
-		{
-			istringstream str(val);
-			str.imbue(locale::classic());
-			uint16 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		uint32 StringUtils::ParseUInt32(const std::string& val)
-		{
-			istringstream str(val);
-			str.imbue(locale::classic());
-			uint32 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		uint32 StringUtils::ParseUInt32Hex(const std::string& val)
-		{
-			istringstream str(val);
-			str.imbue(locale::classic());
-			str.setf ( ios::hex, ios::basefield );       // set hex as the basefield
-			str.setf ( ios::showbase ); 
-			uint32 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		uint64 StringUtils::ParseUInt64(const std::string& val)
-		{
-			istringstream str(val);
-			str.imbue(locale::classic());
-			uint64 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		uint64 StringUtils::ParseUInt64Hex(const std::string& val)
-		{
-			istringstream str(val);
-			str.imbue(locale::classic());
-			str.setf ( ios::hex, ios::basefield );       // set hex as the basefield
-			str.setf ( ios::showbase ); 
-			uint64 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		uint64 StringUtils::ParseUInt64Bin(const std::string& val)
-		{
-			uint64 result = 0;
-
-			for (size_t i=0;i<val.size();i++)
-			{
-				char ch = val[i];
-				if (ch == ' ')
-					continue;
-
-				result <<=1;
-				result |= (ch=='1') ? 1 : 0;
-			}
-
-			return result;
-		}
-		int16 StringUtils::ParseInt16(const std::string& val)
-		{
-			istringstream str(val);
-			str.imbue(locale::classic());
-			int16 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		int32 StringUtils::ParseInt32(const std::string& val)
-		{
-			istringstream str(val);
-			str.imbue(locale::classic());
-			int32 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		int64 StringUtils::ParseInt64(const std::string& val)
-		{
-			istringstream str(val);
-			str.imbue(locale::classic());
-			int64 ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		float StringUtils::ParseSingle(const std::string& val)
-		{
-			istringstream str(val);
-			str.imbue(locale::classic());
-
-			float ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-		double StringUtils::ParseDouble(const std::string& val)
-		{
-			istringstream str(val);
-			str.imbue(locale::classic());
-			double ret = 0;
-			str >> ret;
-			assert(!str.fail());
-			return ret;
-		}
-
-
-		//////////////////////////////////////////////////////////////////////////
-		
-		String StringUtils::BoolToString(bool val)
-		{
-			wostringstream stream;
-			stream.setf(ios::boolalpha);
-			stream << val;
-			return stream.str();
-		}
-
-		String StringUtils::IntToString(int64 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
-		{
-			wostringstream stream;
-			stream.width(width);
-			stream.fill(fill);
-			stream.imbue(locale::classic());
-			if (flags)
-				stream.setf(flags);
-			stream << val;
-			return stream.str();
-		}
-		String StringUtils::UIntToString(uint64 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
-		{
-			wostringstream stream;
-			stream.width(width);
-			stream.fill(fill);
-			stream.imbue(locale::classic());
-			if (flags)
-				stream.setf(flags);
-			stream << val;
-			return stream.str();
-		}
-		String StringUtils::SingleToString(float val, uint16 precision, uint16 width, wchar_t fill, std::ios::fmtflags flags)
-		{
-			wostringstream stream;
-			stream.precision(precision);
-			stream.width(width);
-			stream.fill(fill);
-			stream.imbue(locale::classic());
-
-			stream.setf(flags, ios::floatfield);
-			stream << val;
-			return stream.str();
-		}
-
-		String StringUtils::IntToString(int16 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
-		{
-			return IntToString((int64)val, width, fill, flags); 
-		}
-		String StringUtils::IntToString(int32 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
-		{
-			return IntToString((int64)val, width, fill, flags);
-		}
-		String StringUtils::UIntToString(uint16 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
-		{
-			return UIntToString((uint64)val, width, fill, flags);
-		}
-		String StringUtils::UIntToString(uint32 val, uint16 width, wchar_t fill, std::ios::fmtflags flags)
-		{
-			return UIntToString((uint64)val, width, fill, flags);
-		}
-
-		String StringUtils::UIntToStringHex(uint64 val, uint16 width/* =0 */)
-		{
-			wostringstream stream;
-			stream.width(width);
-			stream.fill('0');
-			stream.imbue(locale::classic());
-			stream.setf ( ios::hex, ios::basefield );       // set hex as the basefield
-			stream.setf ( ios::showbase ); 
-			stream << val;
-			return stream.str();
-		}
-		String StringUtils::UIntToStringHex(uint32 val, uint16 width/* =0 */)
-		{
-			wostringstream stream;
-			stream.width(width);
-			stream.fill('0');
-			stream.imbue(locale::classic());
-			stream.setf ( ios::hex, ios::basefield );       // set hex as the basefield
-			stream.setf ( ios::showbase ); 
-			stream << val;
-			return stream.str();
-		}
-
-		String StringUtils::UIntToStringBin(uint64 val)
-		{
-			//uint64 result = 0;
-			String result(64, '0');
-
-			for (size_t i=0;i<64;i++)
-			{
-				//if ((val & (1UL << i)))
-				//{
-				//	result[64 - i] = '1';
-				//}
-				val >>= 1;
-				if (val & 1)
-				{
-					result[63-i] = '1';
-				}
-			}
-
-			return result;
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
-
-		std::string StringUtils::BoolToNarrowString(bool val)
-		{
-			ostringstream stream;
-			stream.setf(ios::boolalpha);
-			stream << val;
-			return stream.str();
-		}
-		std::string StringUtils::IntToNarrowString(int64 val, uint16 width, char fill, std::ios::fmtflags flags)
-		{
-			ostringstream stream;
-			stream.width(width);
-			stream.fill(fill);
-			stream.imbue(locale::classic());
-			if (flags)
-				stream.setf(flags);
-			stream << val;
-			return stream.str();
-		}
-		std::string StringUtils::UIntToNarrowString(uint64 val, uint16 width, char fill, std::ios::fmtflags flags)
-		{
-			ostringstream stream;
-			stream.width(width);
-			stream.fill(fill);
-			stream.imbue(locale::classic());
-			if (flags)
-				stream.setf(flags);
-			stream << val;
-			return stream.str();
-		}
-		std::string StringUtils::SingleToNarrowString(float val, uint16 precision, uint16 width, char fill, std::ios::fmtflags flags)
-		{
-			ostringstream stream;
-			stream.precision(precision);
-			stream.width(width);
-			stream.fill(fill);
-			stream.imbue(locale::classic());
-
-			stream.setf(flags, ios::floatfield);
-			stream << val;
-			return stream.str();
-		}
-
-		std::string StringUtils::IntToNarrowString(int16 val, uint16 width, char fill, std::ios::fmtflags flags)
-		{
-			return IntToNarrowString((int64)val, width, fill, flags); 
-		}
-		std::string StringUtils::IntToNarrowString(int32 val, uint16 width, char fill, std::ios::fmtflags flags)
-		{
-			return IntToNarrowString((int64)val, width, fill, flags);
-		}
-		std::string StringUtils::UIntToNarrowString(uint16 val, uint16 width, char fill, std::ios::fmtflags flags)
-		{
-			return UIntToNarrowString((uint64)val, width, fill, flags);
-		}
-		std::string StringUtils::UIntToNarrowString(uint32 val, uint16 width, char fill, std::ios::fmtflags flags)
-		{
-			return UIntToNarrowString((uint64)val, width, fill, flags);
-		}
-
-		std::string StringUtils::UIntToNarrowStringHex(uint64 val, uint16 width/* =0 */)
-		{
-			ostringstream stream;
-			stream.width(width);
-			stream.fill('0');
-			stream.imbue(locale::classic());
-			stream.setf ( ios::hex, ios::basefield );       // set hex as the basefield
-			stream.setf ( ios::showbase ); 
-			stream << val;
-			return stream.str();
-		}
-		std::string StringUtils::UIntToNarrowStringHex(uint32 val, uint16 width/* =0 */)
-		{
-			ostringstream stream;
-			stream.width(width);
-			stream.fill('0');
-			stream.imbue(locale::classic());
-			stream.setf ( ios::hex, ios::basefield );       // set hex as the basefield
-			stream.setf ( ios::showbase ); 
-			stream << val;
-			return stream.str();
-		}
-
-		std::string StringUtils::UIntToNarrowStringBin(uint64 val)
-		{
-			//uint64 result = 0;
-			std::string result(64, '0');
-
-			for (size_t i=0;i<64;i++)
-			{
-				//if ((val & (1UL << i)))
-				//{
-				//	result[64 - i] = '1';
-				//}
-				val >>= 1;
-				if (val & 1)
-				{
-					result[63-i] = '1';
-				}
-			}
-
-			return result;
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
-
-		bool StringUtils::EqualsNoCase(const String& a, const String& b) { return GenericFunctions<String>::EqualsNoCase(a,b); }
-		bool StringUtils::EqualsNoCase(const std::string& a, const std::string& b) { return GenericFunctions<std::string>::EqualsNoCase(a,b); }
-
-		
-		bool StringUtils::Match(const String& str, const String& pattern)
-		{
-			const wchar_t* cp = nullptr;
-			const wchar_t* mp = nullptr;
-
-			const wchar_t* string = str.c_str();
-			const wchar_t* wild = pattern.c_str();
-
-			while ((*string) && (*wild != '*')) 
-			{
-				if ((*wild != *string) && (*wild != '?')) 
-					return 0;
-
-				wild++;
-				string++;
-			}
-
-			while (*string) 
-			{
-				wchar_t wch = *wild;
-
-				if (wch == '*') 
-				{
-					if (!*++wild) 
-						return 1;
-
-					mp = wild;
-					cp = string+1;
-				} 
-				else if ((wch == *string) || (wch == '?'))
-				{
+				while (*wild == '*')
 					wild++;
-					string++;
-				}
-				else
-				{
-					wild = mp;
-					string = cp++;
-				}
+				return !*wild;
 			}
 
-			while (*wild == '*')
-				wild++;
-			return !*wild;
+			template <typename CharType>
+			bool cstricmp(const CharType* a, const char* b)
+			{
+				for (; ToLowerCase(*a) == ToLowerCase(*b); a++, b++)
+					if (*a == 0)
+						return true;
+				return false;
+			}
 		}
+		
+
+		//////////////////////////////////////////////////////////////////////////
+
+		bool StringUtils::ParseBool(const String& v) { return Impl::StartsWith<true>(v, L"true") || Impl::StartsWith<true>(v, L"yes") || Impl::StartsWith<true>(v, L"1"); }
+
+		uint16 StringUtils::ParseUInt16(const String& val) { return Impl::ParseChecked<wchar_t, uint16, Impl::ParseUnsignedInteger>(val.c_str()); }
+		uint32 StringUtils::ParseUInt32(const String& val) { return Impl::ParseChecked<wchar_t, uint32, Impl::ParseUnsignedInteger>(val.c_str()); }
+		uint64 StringUtils::ParseUInt64(const String& val) { return Impl::ParseChecked<wchar_t, uint64, Impl::ParseUnsignedInteger>(val.c_str()); }
+
+		uint32 StringUtils::ParseUInt32Hex(const String& val) { return Impl::ParseChecked<wchar_t, uint32, Impl::ParseUnsignedIntegerHex>(val.c_str()); }
+		uint64 StringUtils::ParseUInt64Hex(const String& val) { return Impl::ParseChecked<wchar_t, uint64, Impl::ParseUnsignedIntegerHex>(val.c_str()); }
+
+		uint32 StringUtils::ParseUInt32Bin(const String& val) { return Impl::ParseChecked<wchar_t, uint32, Impl::ParseUnsignedIntegerBin>(val.c_str()); }
+		uint64 StringUtils::ParseUInt64Bin(const String& val) { return Impl::ParseChecked<wchar_t, uint64, Impl::ParseUnsignedIntegerBin>(val.c_str()); }
+
+		int16 StringUtils::ParseInt16(const String& val) { return Impl::ParseChecked<wchar_t, int16, Impl::ParseSignedInteger>(val.c_str()); }
+		int32 StringUtils::ParseInt32(const String& val) { return Impl::ParseChecked<wchar_t, int32, Impl::ParseSignedInteger>(val.c_str()); }
+		int64 StringUtils::ParseInt64(const String& val) { return Impl::ParseChecked<wchar_t, int64, Impl::ParseSignedInteger>(val.c_str()); }
+
+		float StringUtils::ParseSingle(const String& val) { return (float)Impl::ParseChecked<wchar_t, double, Impl::ParseFloatingPoint>(val.c_str()); }
+		double StringUtils::ParseDouble(const String& val) { return Impl::ParseChecked<wchar_t, double, Impl::ParseFloatingPoint>(val.c_str()); }
+
+		//////////////////////////////////////////////////////////////////////////
+
+		bool StringUtils::ParseBool(const nstring& v) { return Impl::StartsWith<true>(v, "true") || Impl::StartsWith<true>(v, "yes") || Impl::StartsWith<true>(v, "1"); }
+
+		uint16 StringUtils::ParseUInt16(const nstring& val) { return Impl::ParseChecked<char, uint16, Impl::ParseUnsignedInteger>(val.c_str()); }
+		uint32 StringUtils::ParseUInt32(const nstring& val) { return Impl::ParseChecked<char, uint32, Impl::ParseUnsignedInteger>(val.c_str()); }
+		uint64 StringUtils::ParseUInt64(const nstring& val) { return Impl::ParseChecked<char, uint64, Impl::ParseUnsignedInteger>(val.c_str()); }
+
+		uint32 StringUtils::ParseUInt32Hex(const nstring& val) { return Impl::ParseChecked<char, uint32, Impl::ParseUnsignedIntegerHex>(val.c_str()); }
+		uint64 StringUtils::ParseUInt64Hex(const nstring& val) { return Impl::ParseChecked<char, uint64, Impl::ParseUnsignedIntegerHex>(val.c_str()); }
+
+		uint32 StringUtils::ParseUInt32Bin(const nstring& val) { return Impl::ParseChecked<char, uint32, Impl::ParseUnsignedIntegerBin>(val.c_str()); }
+		uint64 StringUtils::ParseUInt64Bin(const nstring& val) { return Impl::ParseChecked<char, uint64, Impl::ParseUnsignedIntegerBin>(val.c_str()); }
+
+
+		int16 StringUtils::ParseInt16(const nstring& val) { return Impl::ParseChecked<char, int16, Impl::ParseSignedInteger>(val.c_str()); }
+		int32 StringUtils::ParseInt32(const nstring& val) { return Impl::ParseChecked<char, int32, Impl::ParseSignedInteger>(val.c_str()); }
+		int64 StringUtils::ParseInt64(const nstring& val) { return Impl::ParseChecked<char, int64, Impl::ParseSignedInteger>(val.c_str()); }
+
+		float StringUtils::ParseSingle(const nstring& val) { return (float)Impl::ParseChecked<char, double, Impl::ParseFloatingPoint>(val.c_str()); }
+		double StringUtils::ParseDouble(const nstring& val) { return Impl::ParseChecked<char, double, Impl::ParseFloatingPoint>(val.c_str()); }
+
+
+		//////////////////////////////////////////////////////////////////////////
+		
+		String StringUtils::BoolToString(bool val) { return val ? L"true" : L"false"; }
+
+		String StringUtils::IntToString(int64 val, uint64 flags) { return Impl::IntegerToString16<10>(val, flags); } 
+		String StringUtils::UIntToString(uint64 val, uint64 flags) { return Impl::IntegerToString16<10>(val, flags); } 
+
+		String StringUtils::SingleToString(float val, uint64 flags) 
+		{
+			return Impl::DoubleToString<String, char16_t>(val, 0.0001, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfffff)); 
+		}
+		String StringUtils::DoubleToString(double val, uint64 flags)
+		{
+			return Impl::DoubleToString<String, char16_t>(val, 0.000001, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfffff));
+		}
+
+		String StringUtils::IntToString(int16 val, uint64 flags) { return Impl::IntegerToString16<10>(val, flags); } 
+		String StringUtils::IntToString(int32 val, uint64 flags) { return Impl::IntegerToString16<10>(val, flags); } 
+		String StringUtils::UIntToString(uint16 val, uint64 flags) { return Impl::IntegerToString16<10>(val, flags); } 
+		String StringUtils::UIntToString(uint32 val, uint64 flags) { return Impl::IntegerToString16<10>(val, flags); } 
+
+		String StringUtils::UIntToStringHex(uint32 val, uint64 flags) { return Impl::IntegerToString16<16>(val, flags); }
+		String StringUtils::UIntToStringHex(uint64 val, uint64 flags) { return Impl::IntegerToString16<16>(val, flags); }
+		
+		String StringUtils::UIntToStringBin(uint32 val, uint64 flags) { return Impl::IntegerToString16<2>(val, flags); }
+		String StringUtils::UIntToStringBin(uint64 val, uint64 flags) { return Impl::IntegerToString16<2>(val, flags); }
+
+		//////////////////////////////////////////////////////////////////////////
+
+		nstring StringUtils::BoolToNarrowString(bool val) { return val ? "true" : "false"; }
+
+		nstring StringUtils::IntToNarrowString(int64 val, uint64 flags) { return Impl::IntegerToString8<10>(val, flags); }
+		nstring StringUtils::UIntToNarrowString(uint64 val, uint64 flags) { return Impl::IntegerToString8<10>(val, flags); }
+		nstring StringUtils::SingleToNarrowString(float val, uint64 flags)
+		{
+			return Impl::DoubleToString<nstring, char>(val, 0.0001, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfff)); 
+		}
+		nstring StringUtils::DoubleToNarrowString(double val, uint64 flags)
+		{
+			return Impl::DoubleToString<nstring, char>(val, 0.000001, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfff)); 
+		}
+
+		nstring StringUtils::IntToNarrowString(int16 val, uint64 flags) { return Impl::IntegerToString8<10>(val, flags);  }
+		nstring StringUtils::IntToNarrowString(int32 val, uint64 flags) { return Impl::IntegerToString8<10>(val, flags); }
+		nstring StringUtils::UIntToNarrowString(uint16 val, uint64 flags) { return Impl::IntegerToString8<10>(val, flags); }
+		nstring StringUtils::UIntToNarrowString(uint32 val, uint64 flags) { return Impl::IntegerToString8<10>(val, flags); }
+
+		nstring StringUtils::UIntToNarrowStringHex(uint32 val, uint64 flags) { return Impl::IntegerToString8<16>(val, flags); }
+		nstring StringUtils::UIntToNarrowStringHex(uint64 val, uint64 flags) { return Impl::IntegerToString8<16>(val, flags); }
+
+		nstring StringUtils::UIntToNarrowStringBin(uint32 val, uint64 flags) { return Impl::IntegerToString8<2>(val, flags); }
+		nstring StringUtils::UIntToNarrowStringBin(uint64 val, uint64 flags) { return Impl::IntegerToString8<2>(val, flags); }
+
+		//////////////////////////////////////////////////////////////////////////
+
+
+		bool StringUtils::EqualsNoCase(const String& a, const String& b) { return Impl::EqualsNoCase(a,b); }
+		bool StringUtils::EqualsNoCase(const nstring& a, const nstring& b) { return Impl::EqualsNoCase(a,b); }
+
+		
+		bool StringUtils::Match(const String& str, const String& pattern) { return Impl::Match(str.c_str(), pattern.c_str()); }
+		bool StringUtils::Match(const nstring& str, const nstring& pattern) { return Impl::Match(str.c_str(), pattern.c_str()); }
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -877,103 +1180,375 @@ namespace Apoc3D
 			str.erase(str.find_last_not_of(delims)+1);
 		}
 
-		void StringUtils::Split(const String& str, List<String>& result, const String& delims) { GenericFunctions<String>::Split(str, result, delims); }
-		void StringUtils::Split(const std::string& str, List<std::string>& result, const std::string& delims) { GenericFunctions<std::string>::Split(str, result, delims); }
+		void StringUtils::Split(const String& str, List<String>& result, const String& delims) { Impl::Split(str, result, delims); }
+		void StringUtils::Split(const nstring& str, List<nstring>& result, const nstring& delims) { Impl::Split(str, result, delims); }
 		
-		void StringUtils::Split(const String& str, List<String>& result, char16_t delims) { GenericFunctions<String>::Split(str, result, delims); }
-		void StringUtils::Split(const std::string& str, List<std::string>& result, char delims) { GenericFunctions<std::string>::Split(str, result, delims); }
+		void StringUtils::Split(const String& str, List<String>& result, char16_t delims) { Impl::Split(str, result, delims); }
+		void StringUtils::Split(const nstring& str, List<nstring>& result, char delims) { Impl::Split(str, result, delims); }
 
-		List<String> StringUtils::Split(const String& str, const String& delims) { return GenericFunctions<String>::Split(str, delims); }
-		List<std::string> StringUtils::Split(const std::string& str, const std::string& delims) { return GenericFunctions<std::string>::Split(str, delims); }
+		List<String> StringUtils::Split(const String& str, const String& delims) { return Impl::Split(str, delims); }
+		List<nstring> StringUtils::Split(const nstring& str, const nstring& delims) { return Impl::Split(str, delims); }
 
-		List<String> StringUtils::Split(const String& str, char16_t delims) { return GenericFunctions<String>::Split(str, delims); }
-		List<std::string> StringUtils::Split(const std::string& str, char delims) { return GenericFunctions<std::string>::Split(str, delims); }
+		List<String> StringUtils::Split(const String& str, char16_t delims) { return Impl::Split(str, delims); }
+		List<nstring> StringUtils::Split(const nstring& str, char delims) { return Impl::Split(str, delims); }
 
 
 		//////////////////////////////////////////////////////////////////////////
 
 		int32 StringUtils::SplitParseSingles(const String& str, float* flts, int32 maxCount, const String& delims)
 		{
-			CappedBufferList<float> lst(flts, maxCount);
-			GenericFunctions<String>::SplitT<CappedBufferList<float>, float, SimpleParseFloat>(str, lst, delims);
+			WrappedList<float> lst(flts, maxCount);
+			SplitParse<String, WrappedList<float>, float, StringUtils::ParseSingle>(str, lst, delims);
 			return lst.getCount();
 		}
 		List<float> StringUtils::SplitParseSingles(const String& str, const String& delims)
 		{
-			return GenericFunctions<String>::SplitT<List<float>, float, SimpleParseFloat>(str, delims);
+			List<float> lst;
+			SplitParse<String, List<float>, float, StringUtils::ParseSingle>(str, lst, delims);
+			return lst;
 		}
 		void StringUtils::SplitParseSingles(const String& str, Apoc3D::Collections::List<float>& results, const String& delims) 
 		{
-			GenericFunctions<String>::SplitT<List<float>, float, SimpleParseFloat>(str, results, delims); 
+			SplitParse<String, List<float>, float, StringUtils::ParseSingle>(str, results, delims); 
 		}
 
-		int32 StringUtils::SplitParseSingles(const std::string& str, float* flts, int32 maxCount, const std::string& delims)
+		int32 StringUtils::SplitParseSingles(const nstring& str, float* flts, int32 maxCount, const nstring& delims)
 		{
-			CappedBufferList<float> lst(flts, maxCount);
-			GenericFunctions<std::string>::SplitT<CappedBufferList<float>, float, SimpleParseFloat>(str, lst, delims);
+			WrappedList<float> lst(flts, maxCount);
+			SplitParse<nstring, WrappedList<float>, float, StringUtils::ParseSingle>(str, lst, delims);
 			return lst.getCount();
 		}
-		List<float> StringUtils::SplitParseSingles(const std::string& str, const std::string& delims)
+		List<float> StringUtils::SplitParseSingles(const nstring& str, const nstring& delims)
 		{
-			return GenericFunctions<std::string>::SplitT<List<float>, float, SimpleParseFloat>(str, delims); 
+			List<float> lst;
+			SplitParse<nstring, List<float>, float, StringUtils::ParseSingle>(str, lst, delims); 
+			return lst;
 		}
-		void StringUtils::SplitParseSingles(const std::string& str, Apoc3D::Collections::List<float>& results, const std::string& delims)
+		void StringUtils::SplitParseSingles(const nstring& str, Apoc3D::Collections::List<float>& results, const nstring& delims)
 		{
-			GenericFunctions<std::string>::SplitT<List<float>, float, SimpleParseFloat>(str, results, delims); 
+			SplitParse<nstring, List<float>, float, StringUtils::ParseSingle>(str, results, delims); 
 		}
 
 		//////////////////////////////////////////////////////////////////////////
 
 		int32 StringUtils::SplitParseInts(const String& str, int32* ints, int32 maxCount, const String& delims)
 		{
-			CappedBufferList<int32> lst(ints, maxCount);
-			GenericFunctions<String>::SplitT<CappedBufferList<int32>, int32, SimpleParseInt32>(str, lst, delims);
+			WrappedList<int32> lst(ints, maxCount);
+			SplitParse<String, WrappedList<int32>, int32, StringUtils::ParseInt32>(str, lst, delims);
 			return lst.getCount();
 		}
 		List<int32> StringUtils::SplitParseInts(const String& str, const String& delims)
 		{
-			return GenericFunctions<String>::SplitT<List<int32>, int32, SimpleParseInt32>(str, delims); 
+			List<int32> lst;
+			SplitParse<String, List<int32>, int32, StringUtils::ParseInt32>(str, lst, delims); 
+			return lst;
 		}
 		void StringUtils::SplitParseInts(const String& str, Apoc3D::Collections::List<int32>& results, const String& delims) 
 		{
-			GenericFunctions<String>::SplitT<List<int32>, int32, SimpleParseInt32>(str, results, delims); 
+			SplitParse<String, List<int32>, int32, StringUtils::ParseInt32>(str, results, delims); 
 		}
 		
 
-		int32 StringUtils::SplitParseInts(const std::string& str, int32* ints, int32 maxCount, const std::string& delims)
+		int32 StringUtils::SplitParseInts(const nstring& str, int32* ints, int32 maxCount, const nstring& delims)
 		{
-			CappedBufferList<int32> lst(ints, maxCount);
-			GenericFunctions<std::string>::SplitT<CappedBufferList<int32>, int32, SimpleParseInt32>(str, lst, delims);
+			WrappedList<int32> lst(ints, maxCount);
+			SplitParse<nstring, WrappedList<int32>, int32, StringUtils::ParseInt32>(str, lst, delims);
 			return lst.getCount();
 		}
-		List<int32> StringUtils::SplitParseInts(const std::string& str, const std::string& delims)
+		List<int32> StringUtils::SplitParseInts(const nstring& str, const nstring& delims)
 		{
-			return GenericFunctions<std::string>::SplitT<List<int32>, int32, SimpleParseInt32>(str, delims); 
+			List<int32> lst;
+			SplitParse<nstring, List<int32>, int32, StringUtils::ParseInt32>(str, lst, delims); 
+			return lst;
 		}
-		void StringUtils::SplitParseInts(const std::string& str, Apoc3D::Collections::List<int32>& results, const std::string& delims) 
+		void StringUtils::SplitParseInts(const nstring& str, Apoc3D::Collections::List<int32>& results, const nstring& delims) 
 		{
-			GenericFunctions<std::string>::SplitT<List<int32>, int32, SimpleParseInt32>(str, results, delims); 
+			SplitParse<nstring, List<int32>, int32, StringUtils::ParseInt32>(str, results, delims); 
 		}
 		
 		//////////////////////////////////////////////////////////////////////////
 
 
 
-		bool StringUtils::StartsWith(const String& str, const String& v, bool caseInsensitive) { return GenericFunctions<String>::StartsWith(str, v, caseInsensitive); }
-		bool StringUtils::EndsWith(const String& str, const String& v, bool caseInsensitive) { return GenericFunctions<String>::EndsWith(str, v, caseInsensitive); }
-		bool StringUtils::StartsWith(const std::string& str, const std::string& v, bool caseInsensitive) { return GenericFunctions<std::string>::StartsWith(str, v, caseInsensitive); }
-		bool StringUtils::EndsWith(const std::string& str, const std::string& v, bool caseInsensitive) { return GenericFunctions<std::string>::EndsWith(str, v, caseInsensitive); }
+		bool StringUtils::StartsWith(const String& str, const String& v, bool caseInsensitive) { return Impl::StartsWith(str, v, caseInsensitive); }
+		bool StringUtils::EndsWith(const String& str, const String& v, bool caseInsensitive) { return Impl::EndsWith(str, v, caseInsensitive); }
+		bool StringUtils::StartsWith(const nstring& str, const nstring& v, bool caseInsensitive) { return Impl::StartsWith(str, v, caseInsensitive); }
+		bool StringUtils::EndsWith(const nstring& str, const nstring& v, bool caseInsensitive) { return Impl::EndsWith(str, v, caseInsensitive); }
 
+		char StringUtils::ToLowerCase(char ch) { return Impl::ToLowerCase(ch); }
+		char StringUtils::ToUpperCase(char ch) { return Impl::ToUpperCase(ch); }
 
-
+		wchar_t StringUtils::ToUpperCase(wchar_t ch) { return Impl::ToUpperCase(ch); }
+		wchar_t StringUtils::ToLowerCase(wchar_t ch) { return Impl::ToLowerCase(ch); }
 
 		void StringUtils::ToLowerCase(String& str)
 		{
-			std::transform(str.begin(), str.end(), str.begin(), tolower);
+			for (size_t i = 0; i < str.size(); i++)
+				str[i] = ToLowerCase(str[i]);
 		}
 		void StringUtils::ToUpperCase(String& str)
 		{
+			for (size_t i = 0; i < str.size(); i++)
+				str[i] = ToUpperCase(str[i]);
+		}
+
+		/************************************************************************/
+		/*  StringUtilsLocalized                                                */
+		/************************************************************************/
+
+		void StringUtilsLocalized::ToLowerCase(String& str)
+		{
+			std::transform(str.begin(), str.end(), str.begin(), tolower);
+		}
+		void StringUtilsLocalized::ToUpperCase(String& str)
+		{
 			std::transform(str.begin(), str.end(), str.begin(), toupper);
 		}
+
+		using std::wistringstream;
+		using std::wostringstream;
+		using std::istringstream;
+		using std::ostringstream;
+
+		//////////////////////////////////////////////////////////////////////////
+
+		uint16 StringUtilsLocalized::ParseUInt16(const String& val)
+		{
+			wistringstream str(val);
+			uint16 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		uint32 StringUtilsLocalized::ParseUInt32(const String& val)
+		{
+			wistringstream str(val);
+			uint32 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		uint64 StringUtilsLocalized::ParseUInt64(const String& val)
+		{
+			wistringstream str(val);
+			uint64 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+
+		int16 StringUtilsLocalized::ParseInt16(const String& val)
+		{
+			wistringstream str(val);
+			int16 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		int32 StringUtilsLocalized::ParseInt32(const String& val)
+		{
+			wistringstream str(val);
+			int32 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		int64 StringUtilsLocalized::ParseInt64(const String& val)
+		{
+			wistringstream str(val);
+			int64 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		float StringUtilsLocalized::ParseSingle(const String& val)
+		{
+			wistringstream str(val);
+
+			float ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		double StringUtilsLocalized::ParseDouble(const String& val)
+		{
+			wistringstream str(val);
+			double ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+
+		String StringUtilsLocalized::IntToString(int64 val, uint16 width, char16_t fill, std::ios::fmtflags flags)
+		{
+			wostringstream stream;
+			stream.width(width);
+			stream.fill(fill);
+			if (flags)
+				stream.setf(flags);
+			stream << val;
+			return stream.str();
+		}
+		String StringUtilsLocalized::UIntToString(uint64 val, uint16 width, char16_t fill, std::ios::fmtflags flags)
+		{
+			wostringstream stream;
+			stream.width(width);
+			stream.fill(fill);
+			if (flags)
+				stream.setf(flags);
+			stream << val;
+			return stream.str();
+		}
+		String StringUtilsLocalized::SingleToString(float val, uint16 precision, uint16 width, char16_t fill, std::ios::fmtflags flags)
+		{
+			wostringstream stream;
+			stream.precision(precision);
+			stream.width(width);
+			stream.fill(fill);
+
+			stream.setf(flags, std::ios::floatfield);
+			stream << val;
+			return stream.str();
+		}
+
+		String StringUtilsLocalized::IntToString(int16 val, uint16 width, char16_t fill, std::ios::fmtflags flags)
+		{
+			return IntToString((int64)val, width, fill, flags);
+		}
+		String StringUtilsLocalized::IntToString(int32 val, uint16 width, char16_t fill, std::ios::fmtflags flags)
+		{
+			return IntToString((int64)val, width, fill, flags);
+		}
+		String StringUtilsLocalized::UIntToString(uint16 val, uint16 width, char16_t fill, std::ios::fmtflags flags)
+		{
+			return UIntToString((uint64)val, width, fill, flags);
+		}
+		String StringUtilsLocalized::UIntToString(uint32 val, uint16 width, char16_t fill, std::ios::fmtflags flags)
+		{
+			return UIntToString((uint64)val, width, fill, flags);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		uint16 StringUtilsLocalized::ParseUInt16(const nstring& val)
+		{
+			istringstream str(val);
+			uint16 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		uint32 StringUtilsLocalized::ParseUInt32(const nstring& val)
+		{
+			istringstream str(val);
+			uint32 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		uint64 StringUtilsLocalized::ParseUInt64(const nstring& val)
+		{
+			istringstream str(val);
+			uint64 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+
+		int16 StringUtilsLocalized::ParseInt16(const nstring& val)
+		{
+			istringstream str(val);
+			int16 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		int32 StringUtilsLocalized::ParseInt32(const nstring& val)
+		{
+			istringstream str(val);
+			int32 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		int64 StringUtilsLocalized::ParseInt64(const nstring& val)
+		{
+			istringstream str(val);
+			int64 ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		float StringUtilsLocalized::ParseSingle(const nstring& val)
+		{
+			istringstream str(val);
+
+			float ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+		double StringUtilsLocalized::ParseDouble(const nstring& val)
+		{
+			istringstream str(val);
+
+			double ret = 0;
+			str >> ret;
+			assert(!str.fail());
+			return ret;
+		}
+
+
+		nstring StringUtilsLocalized::IntToNarrowString(int64 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			ostringstream stream;
+			stream.width(width);
+			stream.fill(fill);
+			if (flags)
+				stream.setf(flags);
+			stream << val;
+			return stream.str();
+		}
+		nstring StringUtilsLocalized::UIntToNarrowString(uint64 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			ostringstream stream;
+			stream.width(width);
+			stream.fill(fill);
+			if (flags)
+				stream.setf(flags);
+			stream << val;
+			return stream.str();
+		}
+		nstring StringUtilsLocalized::SingleToNarrowString(float val, uint16 precision, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			ostringstream stream;
+			stream.precision(precision);
+			stream.width(width);
+			stream.fill(fill);
+
+			stream.setf(flags, std::ios::floatfield);
+			stream << val;
+			return stream.str();
+		}
+
+		nstring StringUtilsLocalized::IntToNarrowString(int16 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			return IntToNarrowString((int64)val, width, fill, flags);
+		}
+		nstring StringUtilsLocalized::IntToNarrowString(int32 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			return IntToNarrowString((int64)val, width, fill, flags);
+		}
+		nstring StringUtilsLocalized::UIntToNarrowString(uint16 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			return UIntToNarrowString((uint64)val, width, fill, flags);
+		}
+		nstring StringUtilsLocalized::UIntToNarrowString(uint32 val, uint16 width, char fill, std::ios::fmtflags flags)
+		{
+			return UIntToNarrowString((uint64)val, width, fill, flags);
+		}
+
+
 	}
+
 }

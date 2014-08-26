@@ -36,9 +36,17 @@ namespace Apoc3D
 	namespace Config
 	{
 		int32 ConfigurationSection::FloatPointStoringPrecision = 3;
+		bool ConfigurationSection::FloatPointCustomStoringPrecision = false;
 
-		/** Actual parsing/printing functions
-		*/
+		uint64 GetCurrentFPFlags()
+		{
+			uint64 flags = ConfigurationSection::FloatPointCustomStoringPrecision ?
+				StrFmt::FP(ConfigurationSection::FloatPointStoringPrecision) : StringUtils::SF_Default;
+			return flags;
+		}
+
+
+		/** Actual parsing/printing functions */
 		float ParsePercentage(const String& val);
 		String PercentageToString(const float& v);
 		
@@ -415,7 +423,7 @@ namespace Apoc3D
 		}
 		String PercentageToString(const float& v)
 		{
-			String result = StringUtils::SingleToString(v * 100.0f, ConfigurationSection::FloatPointStoringPrecision);
+			String result = StringUtils::SingleToString(v * 100.0f, GetCurrentFPFlags());
 			result.append(L"%");
 			return result;
 		}
@@ -647,7 +655,7 @@ namespace Apoc3D
 
 		String SimpleInt32ToString(const int32& v) { return StringUtils::IntToString(v); }
 		String SimpleUInt32ToString(const uint32& v) { return StringUtils::UIntToString(v); }
-		String SimpleFloatToString(const float& v) { return StringUtils::SingleToString(v, ConfigurationSection::FloatPointStoringPrecision); }
+		String SimpleFloatToString(const float& v) { return StringUtils::SingleToString(v, GetCurrentFPFlags()); }
 		
 
 		void IntsToString(const int32* v, int count, String& result) { GenericToString<int32, SimpleInt32ToString>(v, count, result); }

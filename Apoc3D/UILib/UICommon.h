@@ -87,7 +87,6 @@ namespace Apoc3D
 			void SetZero();
 		};
 
-
 		enum struct TextAlignment
 		{
 			Left,
@@ -95,36 +94,34 @@ namespace Apoc3D
 			Right
 		};
 
-
-
-
-
-		APAPI void guiGenerateRegion9Rects(const Apoc3D::Math::Rectangle& dstRect, Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* destRects);
-		APAPI void guiGenerateRegion3Rects(const Point& pos, int32 width, Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* destRects);
-		APAPI void guiGenerateRegion3VertRects(const Point& pos, int32 width, Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* destRects);
+		APAPI void guiGenerateRegion9Rects(const Apoc3D::Math::Rectangle& dstRect, Apoc3D::Math::Rectangle (&srcRects)[9], Apoc3D::Math::Rectangle (&destRects)[9]);
+		APAPI void guiGenerateRegion3Rects(const Point& pos, int32 width, Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle (&destRects)[3]);
+		APAPI void guiGenerateRegion3VertRects(const Point& pos, int32 width, Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle (&destRects)[3]);
 
 		
 		APAPI void guiDrawRegion9(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv,
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[9], Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
 
 		APAPI void guiDrawRegion3(Sprite* sprite, const Point& pt, int width, ColorValue cv,
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
 
 		APAPI void guiDrawRegion3Vert(Sprite* sprite, const Point& pos, int height, ColorValue cv,
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
 
-		APAPI void guiDrawRegion3Capped(Sprite* sprite, const Point& pos, int32 maxWidth, int32 capWidth,
-			ColorValue cv, Texture* texture, const Apoc3D::Math::Rectangle* srcRects);
+		// Draw horizontal region 3 with a clipping width
+		APAPI void guiDrawRegion3Clipped(Sprite* sprite, const Point& pos, int32 maxWidth, int32 clipWidth,
+			ColorValue cv, Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[3]);
 
+		// Assumed to include the border regions
 		// No clips do fewer calculations, but can not draw stuff that are smaller than the start/end regions
 		APAPI bool guiDrawRegion9Noclip(Sprite* sprite, const Apoc3D::Math::Rectangle& dstRect, ColorValue cv,
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[9], Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
 
 		APAPI bool guiDrawRegion3Noclip(Sprite* sprite, const Point& pt, int width, ColorValue cv,
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
 
 		APAPI bool guiDrawRegion3VertNoclip(Sprite* sprite, const Point& pos, int height, ColorValue cv,
-			Texture* texture, const Apoc3D::Math::Rectangle* srcRects, Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
+			Texture* texture, const Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Math::Rectangle* centerDstRegion = nullptr);
 
 	}
 }

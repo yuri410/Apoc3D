@@ -62,6 +62,7 @@ namespace Apoc3D
 		{
 		public:
 			static int32 FloatPointStoringPrecision;
+			static bool FloatPointCustomStoringPrecision;
 
 			typedef HashMap<String, String> AttributeTable;
 			typedef HashMap<String, ConfigurationSection*> SubSectionTable;

@@ -435,6 +435,7 @@ namespace Apoc3D
 		class MessageDialogBox;
 		class InputDialogBox;
 	}
+
 };
 
 #endif

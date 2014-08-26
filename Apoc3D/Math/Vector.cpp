@@ -61,18 +61,22 @@ namespace Apoc3D
 		}
 		String Vector2::ToTextString(int precision) const
 		{
+			uint64 flags = precision != -1 ? StrFmt::FP(precision) : StringUtils::SF_Default;
+			
 			String result = L"[";
-			result.append(StringUtils::SingleToString(X, precision));
+			result.append(StringUtils::SingleToString(X, flags));
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, flags));
 			result.append(L"]");
 			return result;
 		}
 		String Vector2::ToParsableString(int precision) const
 		{
-			String result = StringUtils::SingleToString(X, precision);
+			uint64 flags = precision != -1 ? StrFmt::FP(precision) : StringUtils::SF_Default;
+
+			String result = StringUtils::SingleToString(X, flags);
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, flags));
 			return result;
 		}
 
@@ -86,22 +90,26 @@ namespace Apoc3D
 		}
 		String Vector3::ToTextString(int precision) const
 		{
+			uint64 flags = precision != -1 ? StrFmt::FP(precision) : StringUtils::SF_Default;
+
 			String result = L"[";
-			result.append(StringUtils::SingleToString(X, precision));
+			result.append(StringUtils::SingleToString(X, flags));
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, flags));
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(Z, precision));
+			result.append(StringUtils::SingleToString(Z, flags));
 			result.append(L"]");
 			return result;
 		}
 		String Vector3::ToParsableString(int precision) const
 		{
-			String result = StringUtils::SingleToString(X, precision);
+			uint64 flags = precision != -1 ? StrFmt::FP(precision) : StringUtils::SF_Default;
+
+			String result = StringUtils::SingleToString(X, flags);
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, flags));
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(Z, precision));
+			result.append(StringUtils::SingleToString(Z, flags));
 			return result;
 		}
 
@@ -147,26 +155,30 @@ namespace Apoc3D
 		}
 		String Vector4::ToTextString(int precision) const
 		{
+			uint64 flags = precision != -1 ? StrFmt::FP(precision) : StringUtils::SF_Default;
+
 			String result = L"[";
-			result.append(StringUtils::SingleToString(X, precision));
+			result.append(StringUtils::SingleToString(X, flags));
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, flags));
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(Z, precision));
+			result.append(StringUtils::SingleToString(Z, flags));
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(W, precision));
+			result.append(StringUtils::SingleToString(W, flags));
 			result.append(L"]");
 			return result;
 		}
 		String Vector4::ToParsableString(int precision) const
 		{
-			String result = StringUtils::SingleToString(X, precision);
+			uint64 flags = precision != -1 ? StrFmt::FP(precision) : StringUtils::SF_Default;
+
+			String result = StringUtils::SingleToString(X, flags);
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(Y, precision));
+			result.append(StringUtils::SingleToString(Y, flags));
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(Z, precision));
+			result.append(StringUtils::SingleToString(Z, flags));
 			result.append(L", ");
-			result.append(StringUtils::SingleToString(W, precision));
+			result.append(StringUtils::SingleToString(W, flags));
 			return result;
 		}
 

@@ -268,9 +268,9 @@ namespace Apoc3D
 				ResourceManager* mgr = list[index];
 				String msg = mgr->getName();
 				msg.append(L"  |  [");
-				msg.append(StringUtils::SingleToString(mgr->getUsedCacheSize() / 1048576.0f, 1, 0, ' '));
+				msg.append(StringUtils::SingleToString(mgr->getUsedCacheSize() / 1048576.0f, StrFmt::fpdec<1>::val));
 				msg.append(L"MB / ");
-				msg.append(StringUtils::SingleToString(mgr->getTotalCacheSize() / 1048576.0f, 1, 0, ' '));
+				msg.append(StringUtils::SingleToString(mgr->getTotalCacheSize() / 1048576.0f, StrFmt::fpdec<1>::val));
 				msg.append(L"MB]");
 				if (mgr->usesAsync())
 				{

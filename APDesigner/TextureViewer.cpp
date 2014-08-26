@@ -371,7 +371,7 @@ namespace APDesigner
 
 		float scale = powf(2, (float)m_scale);
 
-		String scaleRatio = String(L" (") +StringUtils::SingleToString(scale*100,2,0,' ', std::ios::fixed);
+		String scaleRatio = String(L" (") + StringUtils::SingleToString(scale * 100, StrFmt::fpdec<2>::val);
 		scaleRatio.append(L"%)");
 
 		getDocumentForm()->setTitle(m_name + scaleRatio);
@@ -384,7 +384,7 @@ namespace APDesigner
 
 		float scale = powf(2, (float)m_scale);
 
-		String scaleRatio = String(L" (") +StringUtils::SingleToString(scale*100,2,0,' ', std::ios::fixed);
+		String scaleRatio = String(L" (") +StringUtils::SingleToString(scale*100, StrFmt::fpdec<2>::val);
 		scaleRatio.append(L"%)");
 
 		getDocumentForm()->setTitle(m_name + scaleRatio);

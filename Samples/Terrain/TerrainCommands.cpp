@@ -11,8 +11,8 @@ namespace SampleTerrain
 	void GenGetCommand(CommandArgsConstRef args)
 	{
 		PerlinNoise& pn = Terrain::GetNoiseGenerator();
-		LogManager::getSingleton().Write(LOG_CommandResponse, L"persistence = " + StringUtils::SingleToString((float)pn.Persistence(), 4), LOGLVL_Infomation);
-		LogManager::getSingleton().Write(LOG_CommandResponse, L"frequency = " + StringUtils::SingleToString((float)pn.Frequency(), 4), LOGLVL_Infomation);
+		LogManager::getSingleton().Write(LOG_CommandResponse, L"persistence = " + StringUtils::DoubleToString(pn.Persistence(), StrFmt::fp<4>::val), LOGLVL_Infomation);
+		LogManager::getSingleton().Write(LOG_CommandResponse, L"frequency = " + StringUtils::DoubleToString(pn.Frequency(), StrFmt::fp<4>::val), LOGLVL_Infomation);
 		LogManager::getSingleton().Write(LOG_CommandResponse, L"octaves = " + StringUtils::IntToString(pn.Octaves()), LOGLVL_Infomation);
 		LogManager::getSingleton().Write(LOG_CommandResponse, L"seed = " + StringUtils::IntToString(pn.RandomSeed()), LOGLVL_Infomation);
 	}

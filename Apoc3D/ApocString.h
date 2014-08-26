@@ -80,6 +80,12 @@ namespace Apoc3D
 		int m_capacity = LocalBufferLength;
 
 	};
+
+	template <typename CharType>
+	class StringView
+	{
+
+	};
 }
 
 #endif

@@ -165,12 +165,12 @@ namespace Apoc3D
 
 			void ParseMargin(Apoc3D::Config::ConfigurationSection* sect, ControlBounds& result);
 			void ParsePadding(Apoc3D::Config::ConfigurationSection* sect, ControlBounds& result);
-			void Parse9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9], Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
-			void Parse3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[3], Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
+			void Parse9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9], Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
+			void Parse3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[3], Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
 			void ParseRegion(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect, Apoc3D::Collections::HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions);
 
-			void Push9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9]);
-			void Push3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[3]);
+			void Push9Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9]);
+			void Push3Region(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[3]);
 			void PushRegion(Apoc3D::Config::ConfigurationSection* sect, Apoc3D::Math::Rectangle& srcRect);
 		};
 	}

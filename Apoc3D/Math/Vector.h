@@ -175,8 +175,8 @@ namespace Apoc3D
 			}
 
 			void Parse(const String& str, bool loosy = false);
-			String ToTextString(int precision = 3) const;
-			String ToParsableString(int precision = 11) const;
+			String ToTextString(int precision = -1) const;
+			String ToParsableString(int precision = -1) const;
 			
 
 
@@ -543,8 +543,8 @@ namespace Apoc3D
 
 
 			void Parse(const String& str, bool loosy = false);
-			String ToTextString(int precision = 3) const;
-			String ToParsableString(int precision = 11) const;
+			String ToTextString(int precision = -1) const;
+			String ToParsableString(int precision = -1) const;
 
 			
 			
@@ -759,17 +759,8 @@ namespace Apoc3D
 		class APAPI Vector3
 		{
 		public:
-			/**
-			 * the X component of the vector
-			 */
 			float X;
-			/**
-			 * the Y component of the vector
-			 */
 			float Y;
-			/**
-			 * the Z component of the vector
-			 */
 			float Z;
 
 
@@ -876,8 +867,8 @@ namespace Apoc3D
 			uint32 GetHashCode() const { return reinterpret_cast<const uint32&>(X) ^ reinterpret_cast<const uint32&>(Y) ^ reinterpret_cast<const uint32&>(Z); }
 
 			void Parse(const String& str, bool loosy = false);
-			String ToTextString(int precision = 3) const;
-			String ToParsableString(int precision = 11) const;
+			String ToTextString(int precision = -1) const;
+			String ToParsableString(int precision = -1) const;
 
 			
 			/**

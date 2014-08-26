@@ -7,11 +7,11 @@ struct DataPair
 
 const DataPair r16r32[] = 
 {
-#include "halfTestR16R32.txt"
+#include "data\halfTestR16R32.txt"
 };
 const DataPair r32r16[] =
 {
-#include "halfTestR32R16.txt"
+#include "data\halfTestR32R16.txt"
 };
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

@@ -122,7 +122,7 @@ namespace SampleFont
 
 
 		Font* english = FontManager::getSingleton().getFont(L"english");
-		english->DrawString(m_sprite, L"FPS: " + StringUtils::SingleToString(time->getFPS(),1), Point(0, m_window->getClientSize().Height-50), CV_White);
+		english->DrawString(m_sprite, L"FPS: " + StringUtils::SingleToString(time->getFPS(), StrFmt::fp<2>::val), Point(0, m_window->getClientSize().Height-50), CV_White);
 
 		static int32 disCurLen = 0;
 		disCurLen++;

@@ -458,7 +458,7 @@ namespace Apoc3D
 				result.SetZero();
 			}
 		}
-		void StyleSkin::Parse9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9], HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions)
+		void StyleSkin::Parse9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9], HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions)
 		{
 			String ref;
 			if (sect->tryGetAttribute(L"RegionRef", ref))
@@ -483,7 +483,7 @@ namespace Apoc3D
 
 			cachedRegions.Add(sect->getName(), srcRects);
 		}
-		void StyleSkin::Parse3Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[3], HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions)
+		void StyleSkin::Parse3Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[3], HashMap<String, const Apoc3D::Math::Rectangle*>& cachedRegions)
 		{
 			String ref;
 			if (sect->tryGetAttribute(L"RegionRef", ref))
@@ -530,7 +530,7 @@ namespace Apoc3D
 		}
 
 
-		void StyleSkin::Push9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[9])
+		void StyleSkin::Push9Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[9])
 		{
 			Point coord(0,0);
 			List<int32> coordArr;
@@ -547,7 +547,7 @@ namespace Apoc3D
 				}
 			}
 		}
-		void StyleSkin::Push3Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle srcRects[3])
+		void StyleSkin::Push3Region(ConfigurationSection* sect, Apoc3D::Math::Rectangle (&srcRects)[3])
 		{
 			Point coord(0,0);
 			List<int32> coordArr;

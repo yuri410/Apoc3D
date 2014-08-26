@@ -116,7 +116,7 @@ namespace APBuild
 				mtrl->TextureName.Add(0, StringUtils::toPlatformWideString(d3dmtrl.pTextureFilename));
 
 			MeshData* data = new MeshData();
-			data->Name = L"Part" + StringUtils::UIntToString(i,2,'0');
+			data->Name = L"Part" + StringUtils::UIntToString(i, StrFmt::a<2, '0'>::val);
 			data->Materials.Add(mtrl);
 			data->Faces = faces;
 			data->VertexCount = verticePointers.getCount();

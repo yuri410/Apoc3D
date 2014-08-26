@@ -813,7 +813,7 @@ namespace APDesigner
 			message.append(L"\n");
 			message.append(L"Skinned");
 		}
-		message.append(L"\nZ: " + StringUtils::SingleToString(m_distance,1));
+		message.append(L"\nZ: " + StringUtils::SingleToString(m_distance, StrFmt::fp<1>::val));
 
 		font->DrawString(sprite, message, Point(dstRect->X+11, dstRect->Y+11), CV_Black);
 		font->DrawString(sprite, message, Point(dstRect->X+10, dstRect->Y+10), CV_White);
@@ -877,7 +877,7 @@ namespace APDesigner
 
 			for (int32 i=0;i<mtrls->getMaterialCount();i++)
 			{
-				m_cbMeshPart->getItems().Add(L"Part(Material Set)" + StringUtils::IntToString(i, 4, '0'));
+				m_cbMeshPart->getItems().Add(L"Part(Material Set)" + StringUtils::IntToString(i, StrFmt::a<4, '0'>::val));
 			}
 		}
 	}
@@ -896,7 +896,7 @@ namespace APDesigner
 			{
 				for (int32 i=0;i<mtrls->getFrameCount(partIdx);i++)
 				{
-					m_cbSubMtrl->getItems().Add(L"Frame(Material)" + StringUtils::IntToString(i, 4, '0'));
+					m_cbSubMtrl->getItems().Add(L"Frame(Material)" + StringUtils::IntToString(i, StrFmt::a<4, '0'>::val));
 				}
 			}
 		}
