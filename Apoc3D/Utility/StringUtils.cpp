@@ -744,11 +744,11 @@ namespace Apoc3D
 					double r = GetDigitBase10Mult(-precision) * 0.5;
 					return r;
 				}
-				return threshold * 0.5f;
+				return threshold * 0.5;
 			}
 
 			template <typename StrType, typename CharType>
-			StrType DoubleToString(double val, double threshold, uint16 width, CharType fill, uint64 flags)
+			StrType DoubleToString(double val, byte meaningfulDigitCount, uint16 width, CharType fill, uint64 flags)
 			{
 				FloatDigitBuffer<CharType> digits;
 				
@@ -784,16 +784,20 @@ namespace Apoc3D
 
 					int32 exp = (int32)log10(n);
 
-					if (exp < -65536)
-						exp = -65536;
+					if (exp < DBL_MIN_10_EXP)
+					{
+						// too small, the number is treated as zero
+						exp = 0;
+						n = 0;
+					}
 
 					if (flags & StringUtils::SF_FPScientific)
 						useExp = true;
-					else if ((flags & StringUtils::SF_FPDecimal) != 0)
+					else if ((flags & StringUtils::SF_FPDecimal) == 0)		// if not using decimal notion, then auto determine
 						useExp = exp >= 14 || (sign < 0 && exp >= 9) || exp <= -9;
 
 
-					int32 dig = 0;
+					int32 dig = 0;  // digit to start go down. 0 based: 0 is the first digit on the left side of decimal
 					if (useExp)
 					{
 						if (exp < 0)
@@ -804,15 +808,24 @@ namespace Apoc3D
 					else
 					{
 						dig = exp;
+						if (dig < 0)
+							dig = 0;
 					}
 
+					int16 fracPrecision = GetFP(flags);
 					bool hasCustomPrecision = (flags & StringUtils::SF_FPCustomPrecision) != 0;
-					int16 precision = GetFP(flags);
+					
+					double threhold = GetDigitBase10Mult(dig - meaningfulDigitCount);
+					n += CalculateRounding(threhold, flags);
 
-					n += CalculateRounding(threshold, flags);
+					uint16 digitsProcessed = 0;
 
-					while ((dig>=0 || n > threshold) && (!hasCustomPrecision || (hasCustomPrecision && precision>=0)))
+					while ((dig >= 0 || n > threhold) &&
+						(!hasCustomPrecision || fracPrecision >= 0))
 					{
+						if (dig == -1)
+							digits.Add('.');
+
 						double weight = GetDigitBase10Mult(dig);
 
 						if (weight > 0)
@@ -821,15 +834,22 @@ namespace Apoc3D
 							n -= d*weight;
 
 							if (d < 0) d = 0;
-							digits.Add(digitChars[d]);
-						}
-						
-						if (dig == 0 && (n > 0 || precision>0))
-							digits.Add('.');
 
+							if (digitsProcessed < meaningfulDigitCount)
+								digits.Add(digitChars[d]);
+							else
+								digits.Add(digitChars[0]);	// out of precision digits, use 0 in digit place
+						}
+						else
+						{
+							n = 0;
+							digits.Add(digitChars[0]);
+						}
+
+						digitsProcessed++;
 						dig--;
 						if (dig < 0)
-							precision--;
+							fracPrecision--;
 					}
 
 					if (useExp)
@@ -927,7 +947,9 @@ namespace Apoc3D
 				if (thisLen < patternLen || patternLen == 0)
 					return false;
 
-				return Impl::CompareString<caseInsensitive>(str.c_str(), pattern.c_str(), patternLen);
+				size_t startOffset = thisLen - patternLen;
+
+				return Impl::CompareString<caseInsensitive>(str.c_str() + startOffset, pattern.c_str(), patternLen);
 			}
 
 
@@ -1110,11 +1132,11 @@ namespace Apoc3D
 
 		String StringUtils::SingleToString(float val, uint64 flags) 
 		{
-			return Impl::DoubleToString<String, char16_t>(val, 0.0001, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfffff)); 
+			return Impl::DoubleToString<String, char16_t>(val, FLT_DIG, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfffff)); 
 		}
 		String StringUtils::DoubleToString(double val, uint64 flags)
 		{
-			return Impl::DoubleToString<String, char16_t>(val, 0.000001, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfffff));
+			return Impl::DoubleToString<String, char16_t>(val, DBL_DIG, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfffff));
 		}
 
 		String StringUtils::IntToString(int16 val, uint64 flags) { return Impl::IntegerToString16<10>(val, flags); } 
@@ -1136,11 +1158,11 @@ namespace Apoc3D
 		nstring StringUtils::UIntToNarrowString(uint64 val, uint64 flags) { return Impl::IntegerToString8<10>(val, flags); }
 		nstring StringUtils::SingleToNarrowString(float val, uint64 flags)
 		{
-			return Impl::DoubleToString<nstring, char>(val, 0.0001, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfff)); 
+			return Impl::DoubleToString<nstring, char>(val, FLT_DIG, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfff)); 
 		}
 		nstring StringUtils::DoubleToNarrowString(double val, uint64 flags)
 		{
-			return Impl::DoubleToString<nstring, char>(val, 0.000001, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfff)); 
+			return Impl::DoubleToString<nstring, char>(val, DBL_DIG, GetWidth(flags), GetFill(flags), static_cast<uint32>(flags & 0xfff)); 
 		}
 
 		nstring StringUtils::IntToNarrowString(int16 val, uint64 flags) { return Impl::IntegerToString8<10>(val, flags);  }

@@ -274,6 +274,9 @@ namespace UnitTestVC
 			v = StringUtils::DoubleToString(+1.234e-10, StrFmt::fpa<12, '0', 3>::val | StringUtils::SF_FPScientific | StringUtils::SF_ShowPositiveSign | StringUtils::SF_UpperCase);
 			Assert::AreEqual(String(L"+001.234E-10"), v);
 
+			v = StringUtils::DoubleToString(-3.540e-9, StrFmt::fp<3>::val | StringUtils::SF_FPScientific);
+			Assert::AreEqual(String(L"-3.540e-9"), v);
+
 
 			v = StringUtils::DoubleToString(10.23, StringUtils::SF_FPDecimal);
 			Assert::AreEqual(String(L"10.23"), v);
@@ -281,15 +284,50 @@ namespace UnitTestVC
 			v = StringUtils::DoubleToString(00.123, StrFmt::fp<4>::val);
 			Assert::AreEqual(String(L"0.1230"), v);
 
+			v = StringUtils::DoubleToString(0.001, StringUtils::SF_FPDecimal);
+			Assert::AreEqual(String(L"0.001"), v);
+
+			v = StringUtils::DoubleToString(0.001, StrFmt::fp<4>::val);
+			Assert::AreEqual(String(L"0.0010"), v);
+
+			v = StringUtils::DoubleToString(0.0, StrFmt::fp<4>::val);
+			Assert::AreEqual(String(L"0.0000"), v);
+
+			v = StringUtils::DoubleToString(-0.0, StrFmt::fp<3>::val);
+			Assert::AreEqual(String(L"-0.000"), v);
+
+			v = StringUtils::DoubleToString(-0.0001, StrFmt::fp<4>::val);
+			Assert::AreEqual(String(L"-0.0001"), v);
+
+			
+			v = StringUtils::DoubleToString(123456789e+128, StringUtils::SF_FPScientific);
+			Assert::AreEqual(String(L"1.23456789e+136"), v);
+
+			v = StringUtils::DoubleToString(123456789e+128, StringUtils::SF_FPDecimal);
+			Assert::AreEqual(String(L"12345678900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"), v);
+
+
 			v = StringUtils::DoubleToString(54321.84964, StringUtils::SF_FPDecimal);
 			Assert::AreEqual(String(L"54321.84964"), v);
 
 
 			v = StringUtils::DoubleToString(98.7654327, StringUtils::SF_FPDecimal);
-			Assert::AreEqual(String(L"98.765433"), v);
+			Assert::AreEqual(String(L"98.7654327"), v);
+
+			v = StringUtils::DoubleToString(98.127, StrFmt::fp<0>::val | StringUtils::SF_FPDecimal);
+			Assert::AreEqual(String(L"98"), v);
+
+			v = StringUtils::DoubleToString(98.7654327, StrFmt::fp<0>::val | StringUtils::SF_FPDecimal);
+			Assert::AreEqual(String(L"99"), v);
+
+
 
 			v = StringUtils::DoubleToString(45645.003400, StringUtils::SF_FPDecimal);
 			Assert::AreEqual(String(L"45645.0034"), v);
+
+			v = StringUtils::DoubleToString(46589.000, StringUtils::SF_FPDecimal);
+			Assert::AreEqual(String(L"46589"), v);
+
 
 
 			v = StringUtils::DoubleToString(INFINITY);
@@ -307,7 +345,24 @@ namespace UnitTestVC
 		}
 
 
+		TEST_METHOD(StringUtils_StartEnd)
+		{
+			bool r = StringUtils::StartsWith(L"sd", L"", false);
+			Assert::IsFalse(r);
+			r = StringUtils::StartsWith(L"dsadfds", L"", false);
+			Assert::IsFalse(r);
 
+			r = StringUtils::StartsWith(L"12345", L"123", false);
+			Assert::IsTrue(r);
+			r = StringUtils::StartsWith(L"abcdef", L"ABC", true);
+			Assert::IsTrue(r);
+
+			r = StringUtils::EndsWith(L"abcdef", L"DEF", true);
+			Assert::IsTrue(r);
+			r = StringUtils::EndsWith(L"12345", L"45", false);
+			Assert::IsTrue(r);
+
+		}
 
 		TEST_METHOD(StringUtils_Case)
 		{
