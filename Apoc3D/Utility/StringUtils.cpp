@@ -24,6 +24,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "StringUtils.h"
 #include "apoc3d/Collections/List.h"
 #include "apoc3d/Library/ConvertUTF.h"
+#include "apoc3d/Math/MathCommon.h"
 #include <strstream>
 #include <sstream>
 #include <algorithm>
@@ -271,6 +272,9 @@ namespace Apoc3D
 					exp = 0;
 					n = 0;
 				}
+
+				if (exp < 0)
+					exp--;
 
 				return exp;
 			}
@@ -794,9 +798,7 @@ namespace Apoc3D
 
 						if (hasCustomPrecision)
 						{
-							int16 precision = GetFP(flags);
-
-							rounding = GetDigitBase10Mult(exp - precision - 1) * 0.5;
+							rounding = GetDigitBase10Mult(Math::Min(0, exp) - fracPrecision) * 0.5;
 						}
 						else
 						{
@@ -812,15 +814,12 @@ namespace Apoc3D
 					if (flags & StringUtils::SF_FPScientific)
 						useExp = true;
 					else if ((flags & StringUtils::SF_FPDecimal) == 0)		// if not using decimal notion, then auto determine
-						useExp = exp >= 14 || (sign < 0 && exp >= 9) || exp <= -9;
+						useExp = exp >= 14 || (sign < 0 && exp >= 9) || exp <= -10;
 
 
 					int32 dig = 0;  // digit to start go down. 0 based: 0 is the first digit on the left side of decimal
 					if (useExp)
 					{
-						if (exp < 0)
-							exp--;
-
 						// normalize to scientific form
 						double m = GetDigitBase10Mult(exp);
 

@@ -350,6 +350,9 @@ namespace UnitTestVC
 			v = StringUtils::DoubleToString(99.8374939, StrFmt::fp<0>::val);
 			Assert::AreEqual(String(L"100"), v);
 
+			v = StringUtils::SingleToString(100.0f, StrFmt::fp<0>::val);
+			Assert::AreEqual(String(L"100"), v);
+
 		}
 
 
