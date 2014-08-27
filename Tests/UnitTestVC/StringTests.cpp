@@ -277,6 +277,11 @@ namespace UnitTestVC
 			v = StringUtils::DoubleToString(-3.540e-9, StrFmt::fp<3>::val | StringUtils::SF_FPScientific);
 			Assert::AreEqual(String(L"-3.540e-9"), v);
 
+			v = StringUtils::DoubleToString(-3.5408e-9, StrFmt::fp<3>::val | StringUtils::SF_FPScientific);
+			Assert::AreEqual(String(L"-3.541e-9"), v);
+
+
+
 
 			v = StringUtils::DoubleToString(10.23, StringUtils::SF_FPDecimal);
 			Assert::AreEqual(String(L"10.23"), v);
@@ -341,6 +346,9 @@ namespace UnitTestVC
 
 			v = StringUtils::DoubleToString(NAN);
 			Assert::AreEqual(String(L"nan"), v);
+
+			v = StringUtils::DoubleToString(99.8374939, StrFmt::fp<0>::val);
+			Assert::AreEqual(String(L"100"), v);
 
 		}
 

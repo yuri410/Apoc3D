@@ -290,6 +290,8 @@ namespace Apoc3D
 					m_elements[m_count++] = *iter;
 			}
 
+			void Reserve(int32 newCount) { assert(newCount <= MaxSize); m_count = newCount; }
+
 			int32 getCapacity() const { return MaxSize; }
 
 			const T* getElements() const { return m_elements; }

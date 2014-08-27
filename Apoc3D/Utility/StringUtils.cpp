@@ -261,6 +261,20 @@ namespace Apoc3D
 				return digits < -308 ? 0.0 : digitBase10Mult[digits + 308]; 
 			}
 
+			FORCE_INLINE int32 GetDigitCount(double& n)
+			{
+				int32 exp = (int32)log10(n);
+
+				if (exp < DBL_MIN_10_EXP)
+				{
+					// too small, the number is treated as zero
+					exp = 0;
+					n = 0;
+				}
+
+				return exp;
+			}
+			
 
 			FORCE_INLINE bool isBlank(char ch) { return ch == ' ' || ch == '\t'; }
 			FORCE_INLINE bool isBlank(wchar_t ch) { return ch == ' ' || ch == '\t'; }
@@ -734,19 +748,6 @@ namespace Apoc3D
 			template <typename CharType>
 			using FloatDigitBuffer = FixedList < CharType, 310 > ;
 
-			double CalculateRounding(double threshold, uint64 flags)
-			{
-				bool hasCustomPrecision = (flags & StringUtils::SF_FPCustomPrecision) != 0;
-				if (hasCustomPrecision)
-				{
-					int16 precision = GetFP(flags);
-
-					double r = GetDigitBase10Mult(-precision) * 0.5;
-					return r;
-				}
-				return threshold * 0.5;
-			}
-
 			template <typename StrType, typename CharType>
 			StrType DoubleToString(double val, byte meaningfulDigitCount, uint16 width, CharType fill, uint64 flags)
 			{
@@ -779,17 +780,34 @@ namespace Apoc3D
 				else
 				{
 					bool useExp = false;
+					bool hasCustomPrecision = (flags & StringUtils::SF_FPCustomPrecision) != 0;
 
+					int16 fracPrecision = GetFP(flags);
+					
 					double n = abs(val);
 
-					int32 exp = (int32)log10(n);
+					int32 exp = GetDigitCount(n);
 
-					if (exp < DBL_MIN_10_EXP)
+					double threshold = GetDigitBase10Mult(exp - meaningfulDigitCount);
 					{
-						// too small, the number is treated as zero
-						exp = 0;
-						n = 0;
+						double rounding;
+
+						if (hasCustomPrecision)
+						{
+							int16 precision = GetFP(flags);
+
+							rounding = GetDigitBase10Mult(exp - precision - 1) * 0.5;
+						}
+						else
+						{
+							rounding = threshold * 0.5;
+						}
+						
+						n += rounding;
 					}
+
+					exp = GetDigitCount(n);
+
 
 					if (flags & StringUtils::SF_FPScientific)
 						useExp = true;
@@ -803,7 +821,11 @@ namespace Apoc3D
 						if (exp < 0)
 							exp--;
 
-						n /= GetDigitBase10Mult(exp);
+						// normalize to scientific form
+						double m = GetDigitBase10Mult(exp);
+
+						n /= m;
+						threshold /= m;
 					}
 					else
 					{
@@ -812,15 +834,9 @@ namespace Apoc3D
 							dig = 0;
 					}
 
-					int16 fracPrecision = GetFP(flags);
-					bool hasCustomPrecision = (flags & StringUtils::SF_FPCustomPrecision) != 0;
-					
-					double threhold = GetDigitBase10Mult(dig - meaningfulDigitCount);
-					n += CalculateRounding(threhold, flags);
-
 					uint16 digitsProcessed = 0;
 
-					while ((dig >= 0 || n > threhold) &&
+					while ((dig >= 0 || n > threshold) &&
 						(!hasCustomPrecision || fracPrecision >= 0))
 					{
 						if (dig == -1)
@@ -830,13 +846,14 @@ namespace Apoc3D
 
 						if (weight > 0)
 						{
-							int32 d = (int32)floor(n / weight);
+							double d = floor(n / weight);
 							n -= d*weight;
 
-							if (d < 0) d = 0;
+							int32 di = (int32)d;
+							if (di < 0) di = 0;
 
 							if (digitsProcessed < meaningfulDigitCount)
-								digits.Add(digitChars[d]);
+								digits.Add(digitChars[di]);
 							else
 								digits.Add(digitChars[0]);	// out of precision digits, use 0 in digit place
 						}
