@@ -45,7 +45,7 @@ namespace Apoc3D
 		const wchar_t PathUtils::DirectorySeparator = '/';
 #endif
 
-		const wchar_t AllDirectorySeparators[] = { PathUtils::DirectorySeparator, PathUtils::AltDirectorySeparator };
+		const wchar_t AllDirectorySeparators[] = { PathUtils::DirectorySeparator, PathUtils::AltDirectorySeparator, 0 };
 
 		bool isDirectorySeparatorChar(int ch)
 		{

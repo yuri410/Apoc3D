@@ -333,7 +333,7 @@ namespace Apoc3D
 				}
 			}
 
-			template <bool MustExist, typename CharType>
+			template <bool MustExist, typename CharType> FORCE_INLINE
 			int ParseDecimalSign(const CharType*& str)
 			{
 				CharType ch = *str;
@@ -355,7 +355,7 @@ namespace Apoc3D
 			}
 
 
-			template <typename CharType, typename IntType> FORCE_INLINE
+			template <typename CharType, typename IntType>
 			IntType ParseSignedInteger(const CharType* str, bool* isInvalid)
 			{
 				static_assert(std::is_signed<IntType>::value, "");
@@ -374,7 +374,7 @@ namespace Apoc3D
 				return sign * num;
 			}
 
-			template <typename CharType, typename UIntType> FORCE_INLINE
+			template <typename CharType, typename UIntType>
 			UIntType ParseUnsignedInteger(const CharType* str, bool* isInvalid)
 			{
 				static_assert(std::is_unsigned<UIntType>::value, "");
@@ -396,7 +396,7 @@ namespace Apoc3D
 				return num;
 			}
 
-			template <typename CharType, typename UIntType> FORCE_INLINE
+			template <typename CharType, typename UIntType>
 			UIntType ParseUnsignedIntegerBin(const CharType* str, bool* isInvalid)
 			{
 				static_assert(std::is_unsigned<UIntType>::value, "");
@@ -434,7 +434,7 @@ namespace Apoc3D
 				return result;
 			}
 
-			template <typename CharType, typename UIntType> FORCE_INLINE
+			template <typename CharType, typename UIntType>
 			UIntType ParseUnsignedIntegerHex(const CharType* str, bool* isInvalid)
 			{
 				static_assert(std::is_unsigned<UIntType>::value, "");
@@ -483,7 +483,7 @@ namespace Apoc3D
 				return result;
 			}
 
-			template <typename CharType> FORCE_INLINE
+			template <typename CharType>
 			double ParseFloatingPoint(const CharType* str, bool* isInvalid)
 			{
 				assert(str);
