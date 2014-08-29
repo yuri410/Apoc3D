@@ -293,6 +293,7 @@ namespace Apoc3D
 			void Reserve(int32 newCount) { assert(newCount <= MaxSize); m_count = newCount; }
 
 			int32 getCapacity() const { return MaxSize; }
+			bool isFull() const { return m_count >= MaxSize; }
 
 			const T* getElements() const { return m_elements; }
 			T* getElements() { return m_elements; }
