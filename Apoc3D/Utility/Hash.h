@@ -12,10 +12,7 @@ namespace Apoc3D
 		{
 		public:
 			FNVHash32()
-				: m_result(2166136261)
-			{
-
-			}
+				: m_result(2166136261) { }
 
 			void Accumulate(const void* buffer, int32 count)
 			{
@@ -43,9 +40,15 @@ namespace Apoc3D
 		};
 
 
-
 		inline int32 MurmurHash(const void * key, int len)
 		{
+			/**
+			 * MurmurHash derived from http://sites.google.com/site/murmurhash/
+			 * Code is released to the public domain. 
+			 * For business purposes, Murmurhash is under the MIT license.
+			 * Developed by Austin Appleby
+			 */
+
 			const int32 seed = 2166136261;
 
 			const unsigned int m = 0x5bd1e995;
