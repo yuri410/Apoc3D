@@ -125,7 +125,8 @@ namespace Apoc3DEx
 		if (m_player)
 		{
 			m_player->Update(time, m_correctedFrameTime);
+			return &m_correctedFrameTime;
 		}
-		return &m_correctedFrameTime;
+		return time;
 	}
 }
