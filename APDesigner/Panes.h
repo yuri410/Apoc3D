@@ -46,7 +46,7 @@ namespace APDesigner
 
 		void Initialize(RenderDevice* device);
 
-		void Update(const GameTime* const time);
+		void Update(const GameTime* time);
 	};
 
 	//class PropEditor
@@ -79,7 +79,7 @@ namespace APDesigner
 
 		void Initialize(RenderDevice* device);
 
-		void Update(const GameTime* const time);
+		void Update(const GameTime* time);
 
 		void UpdateToNewProject(Project* prj);
 
@@ -170,6 +170,6 @@ namespace APDesigner
 	//	PropertyPane(MainWindow* window);
 
 	//	void Initialize(RenderDevice* device);
-	//	void Update(const GameTime* const time);
+	//	void Update(const GameTime* time);
 	//};
 }

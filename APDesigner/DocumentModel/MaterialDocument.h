@@ -50,7 +50,7 @@ namespace APDesigner
 		virtual bool IsReadOnly() { return false; };
 
 		virtual void Initialize(RenderDevice* device);
-		virtual void Update(const GameTime* const time);
+		virtual void Update(const GameTime* time);
 		virtual void Render();
 	private:
 		class ModelWrapper : public Entity 
@@ -165,7 +165,7 @@ namespace APDesigner
 
 		virtual void Initialize(RenderDevice* device);
 		virtual void Draw(Sprite* sprite);
-		virtual void Update(const GameTime* const time);
+		virtual void Update(const GameTime* time);
 
 		UIEventHandler& eventColorSelected() { return m_selected; }
 

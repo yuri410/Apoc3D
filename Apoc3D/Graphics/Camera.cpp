@@ -172,7 +172,7 @@ namespace Apoc3D
 			m_desiredPosition = m_chasePosition + desiredPositionOfsT;
 			m_lootAt = m_chasePosition + lookAtOfsT;
 		}
-		void ChaseCamera::Update(const GameTime* const time)
+		void ChaseCamera::Update(const GameTime* time)
 		{
 			UpdateWorldPositions();
 

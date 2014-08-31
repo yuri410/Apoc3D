@@ -88,7 +88,7 @@ namespace APDesigner
 		/** Update on properties like the number of graph node the sub tree contains, the center of mass,
 		 *  and total mass.
 		 */
-		void Update(const GameTime* const time);
+		void Update(const GameTime* time);
 
 
 		/** Find the node intersected with the given point

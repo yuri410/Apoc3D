@@ -98,7 +98,7 @@ namespace Apoc3D
 				m_eFrameEnd.Invoke();
 			}
 
-			void Game::DrawFrame(const GameTime* const time)
+			void Game::DrawFrame(const GameTime* time)
 			{
 				//try
 				{

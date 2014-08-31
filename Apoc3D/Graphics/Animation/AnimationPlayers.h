@@ -89,7 +89,7 @@ namespace Apoc3D
 				/**
 				 *  Called during the update loop to move the animation forward
 				 */
-				virtual void Update(const GameTime* const time);
+				virtual void Update(const GameTime* time);
 
 				virtual void GetTransform(int boneID, Matrix& result) = 0;
 				
@@ -447,7 +447,7 @@ namespace Apoc3D
 				 */
 				void ResumeClip() { m_paused = false; }
 
-				virtual void Update(const GameTime* const gameTime);
+				virtual void Update(const GameTime* gameTime);
 
 				
 				int getCurrentMaterialFrame() const { return m_currentMaterialFrame; }

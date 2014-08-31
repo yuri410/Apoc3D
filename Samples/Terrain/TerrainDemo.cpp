@@ -181,7 +181,7 @@ namespace SampleTerrain
 		TerrainMeshManager::Finalize();
 		Game::Unload();
 	}
-	void TerrainDemo::Update(const GameTime* const time)
+	void TerrainDemo::Update(const GameTime* time)
 	{
 		Game::Update(time);
 
@@ -235,7 +235,7 @@ namespace SampleTerrain
 		UpdateCamera();
 		UpdateUI(time);
 	}
-	void TerrainDemo::Draw(const GameTime* const time)
+	void TerrainDemo::Draw(const GameTime* time)
 	{
 		m_device->BeginFrame();
 
@@ -306,7 +306,7 @@ namespace SampleTerrain
 		
 
 	}
-	void TerrainDemo::UpdateUI(const GameTime* const time)
+	void TerrainDemo::UpdateUI(const GameTime* time)
 	{
 		if (!m_isLoading)
 		{

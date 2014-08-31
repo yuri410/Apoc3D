@@ -50,7 +50,7 @@ namespace Apoc3D
 			return m_objects.Remove(obj);
 		}
 
-		void SceneManager::Update(const GameTime* const &time)
+		void SceneManager::Update(const GameTime* time)
 		{
 			for (int32 i = 0;i<m_objects.getCount();i++)
 			{

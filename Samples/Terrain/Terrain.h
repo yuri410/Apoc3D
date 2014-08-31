@@ -52,7 +52,7 @@ namespace SampleTerrain
 		~Terrain();
 
 		virtual RenderOperationBuffer* GetRenderOperation(int level);
-		virtual void Update(const GameTime* const time);
+		virtual void Update(const GameTime* time);
 
 		/** Notifies the terrain block that the camera is currently in side the chunk that tree pushing should be considered.
 		*/

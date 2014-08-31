@@ -63,7 +63,7 @@ namespace Apoc3D
 				 */
 				void LoadEffectFromList(RenderDevice* device, const ResourceLocation& rl);
 
-				void Update(const GameTime* const time);
+				void Update(const GameTime* time);
 
 			private:
 				typedef HashMap<String, Effect*> EffectTable;

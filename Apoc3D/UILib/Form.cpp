@@ -297,7 +297,7 @@ namespace Apoc3D
 			Restore();
 		}
 
-		void Form::Update(const GameTime* const time)
+		void Form::Update(const GameTime* time)
 		{
 			if (!Visible)
 				return;
@@ -587,7 +587,7 @@ namespace Apoc3D
 			// snapping?
 		}
 
-		void Form::CheckDoubleClick(const GameTime* const time)
+		void Form::CheckDoubleClick(const GameTime* time)
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			if (m_state != FWS_Normal)
@@ -1373,7 +1373,7 @@ namespace Apoc3D
 			// cursor
 			m_sprite->End();
 		}
-		void UIRoot::Update(const GameTime* const time)
+		void UIRoot::Update(const GameTime* time)
 		{
 			if (m_modalForm)
 			{

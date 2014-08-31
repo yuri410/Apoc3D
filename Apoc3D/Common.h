@@ -268,6 +268,9 @@ namespace Apoc3D
 
 		class Mouse;
 		class Keyboard;
+
+		class InputRecorder;
+		class InputPlayer;
 	}
 	namespace VFS
 	{
@@ -399,6 +402,7 @@ namespace Apoc3D
 	{
 		class Library;
 	}
+
 	namespace UI
 	{
 		class Font;

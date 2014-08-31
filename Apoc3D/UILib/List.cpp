@@ -139,7 +139,7 @@ namespace Apoc3D
 			m_vscrollbar->SetSkin(m_skin);
 			m_vscrollbar->Initialize(device);
 		}
-		void ListBox::Update(const GameTime* const time)
+		void ListBox::Update(const GameTime* time)
 		{
 			if (m_selectedIndex>=m_items.getCount())
 				m_selectedIndex=-1;
@@ -549,7 +549,7 @@ namespace Apoc3D
 			m_vscrollbar->SetSkin(m_skin);
 			m_vscrollbar->Initialize(device);
 		}
-		void TreeView::Update(const GameTime* const time)
+		void TreeView::Update(const GameTime* time)
 		{
 			m_visisbleItems = (int)ceilf((float)Size.Y / GetItemHeight());
 
@@ -951,7 +951,7 @@ namespace Apoc3D
 
 		}
 
-		void ListView::Update(const GameTime* const time)
+		void ListView::Update(const GameTime* time)
 		{
 			m_hScrollBar->Update(time);
 			m_vScrollBar->Update(time);

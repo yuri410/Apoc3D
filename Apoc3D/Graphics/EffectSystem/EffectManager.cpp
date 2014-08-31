@@ -121,7 +121,7 @@ namespace Apoc3D
 				}
 			}
 
-			void EffectManager::Update(const GameTime* const time)
+			void EffectManager::Update(const GameTime* time)
 			{
 				for (EffectTable::Enumerator e = m_fxTable.GetEnumerator(); e.MoveNext();)
 				{

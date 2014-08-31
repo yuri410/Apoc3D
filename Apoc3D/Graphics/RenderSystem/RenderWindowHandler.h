@@ -51,8 +51,8 @@ namespace Apoc3D
 
 				virtual void Load() = 0;
 				virtual void Unload() = 0;
-				virtual void Update(const GameTime* const time) = 0;
-				virtual void Draw(const GameTime* const time) = 0;
+				virtual void Update(const GameTime* time) = 0;
+				virtual void Draw(const GameTime* time) = 0;
 
 				virtual void OnFrameStart() = 0;
 				virtual void OnFrameEnd() = 0;

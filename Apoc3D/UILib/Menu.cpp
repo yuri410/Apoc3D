@@ -147,7 +147,7 @@ namespace Apoc3D
 			}
 			m_state = MENU_Closed;
 		}
-		void Menu::Update(const GameTime* const time)
+		void Menu::Update(const GameTime* time)
 		{
 			CheckSelection();
 			m_helper.Update(time);
@@ -541,7 +541,7 @@ namespace Apoc3D
 
 		}
 
-		void SubMenu::Update(const GameTime* const time)
+		void SubMenu::Update(const GameTime* time)
 		{
 			if (m_hoverIndex != -1)
 				CheckSelection();

@@ -110,7 +110,7 @@ namespace APDesigner
 		*/
 		void Reset();
 
-		void Update(const GameTime* const time);
+		void Update(const GameTime* time);
 		void Draw();
 
 		void ActivateLayout() { m_isProcessingLayout = true; }

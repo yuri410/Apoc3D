@@ -80,7 +80,7 @@ namespace Apoc3D
 			/**
 			 *  Update the camera's state. 
 			 */
-			virtual void Update(const GameTime* const time) 
+			virtual void Update(const GameTime* time) 
 			{
 				CalculateMatrices();
 			}
@@ -189,7 +189,7 @@ namespace Apoc3D
 					m_rotY = ToRadian(89);
 			}
 
-			void Update(const GameTime* const time);
+			void Update(const GameTime* time);
 			void UpdateTransform();
 
 			void setPosition(const Vector3& p)
@@ -231,7 +231,7 @@ namespace Apoc3D
 			/**
 			 *  Update the camera's motion simulation and the view
 			 */
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 
 			void ForceUpdateMatrix() { UpdateMatrices(); }
 

@@ -281,7 +281,7 @@ namespace APDesigner
 
 	}
 
-	void EffectDocument::Update(const GameTime* const time)
+	void EffectDocument::Update(const GameTime* time)
 	{
 		Document::Update(time);
 	}

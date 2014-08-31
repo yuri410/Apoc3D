@@ -296,7 +296,7 @@ namespace APDesigner
 		delete m_atomManager;
 		UIResources::Finalize();
 	}
-	void MainWindow::Update(const GameTime* const time)
+	void MainWindow::Update(const GameTime* time)
 	{
 		if (m_window->getIsActive())
 			InputAPIManager::getSingleton().Update(time);
@@ -335,7 +335,7 @@ namespace APDesigner
 			UpdateProjectEffect();
 		}
 	}
-	void MainWindow::Draw(const GameTime* const time)
+	void MainWindow::Draw(const GameTime* time)
 	{
 		m_device->Clear(CLEAR_ColorAndDepth, m_UIskin->MIDBackgroundColor, 1, 0);
 		

@@ -91,7 +91,7 @@ namespace Apoc3D
 
 			virtual void Initialize(RenderDevice* device);
 			
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			int32 GetTitleBarHeight() const;
@@ -136,7 +136,7 @@ namespace Apoc3D
 			void UpdateActive();
 			void UpdateState();
 			void CheckDragging();
-			void CheckDoubleClick(const GameTime* const time);
+			void CheckDoubleClick(const GameTime* time);
 			void CheckResize();
 			void ToggleWindowState();
 
@@ -263,7 +263,7 @@ namespace Apoc3D
 			static void RemoveContainer(const String& name);
 
 			static void Draw();
-			static void Update(const GameTime* const time);
+			static void Update(const GameTime* time);
 
 			static Point ClampFormMovementOffset(Form* frm, const Point& vec);
 

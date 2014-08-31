@@ -351,7 +351,7 @@ namespace APDesigner
 		m_currentVisisbleNodes.Clear();
 	}
 
-	void ShaderGraph::Update(const GameTime* const time)
+	void ShaderGraph::Update(const GameTime* time)
 	{
 		if (m_isProcessingLayout)
 		{
@@ -377,7 +377,7 @@ namespace APDesigner
 				GameTime time2(time->getElapsedTime()*3 *m_adaptiveTimeScale, 
 					time->getTotalTime(), 
 					time->getElapsedRealTime(), time->getTotalRealTime(), 
-					time->getFPS(), time->getIsRunningSlowly());
+					time->getFPS(), time->isRunningSlowly());
 
 				// TECH_Fuzzy first calculated the center of mass of the entire graph.
 				// Then only the repulsive forces from this point and neighbor graph nodes are taken into account.

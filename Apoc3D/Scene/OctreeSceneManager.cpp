@@ -370,7 +370,7 @@ namespace Apoc3D
 			return result;
 		}
 
-		void OctreeSceneManager::Update(const GameTime* const &time)
+		void OctreeSceneManager::Update(const GameTime* time)
 		{
 			const List<SceneObject*>& objects = getAllObjects();
 			for (int32 i = 0;i<objects.getCount();i++)

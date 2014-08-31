@@ -34,7 +34,7 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
-			void FPSCounter::Step(const GameTime* const time)
+			void FPSCounter::Step(const GameTime* time)
 			{
 				m_frameTimes.PushBack(time->getTotalRealTime());
 
@@ -65,7 +65,7 @@ namespace Apoc3D
 				}
 			}
 
-			void RenderView::Present(const GameTime* const time)
+			void RenderView::Present(const GameTime* time)
 			{
 				m_fpsCounter.Step(time); 
 			}
@@ -97,13 +97,13 @@ namespace Apoc3D
 					m_evtHandler->Unload();
 			}
 
-			void RenderWindow::OnDraw(const GameTime* const time)
+			void RenderWindow::OnDraw(const GameTime* time)
 			{
 				if (m_evtHandler)
 					m_evtHandler->Draw(time);
 				Present(time); 
 			}
-			void RenderWindow::OnUpdate(const GameTime* const time)		
+			void RenderWindow::OnUpdate(const GameTime* time)		
 			{
 				if (m_evtHandler)
 					m_evtHandler->Update(time);

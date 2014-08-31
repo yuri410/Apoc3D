@@ -55,7 +55,7 @@ namespace Apoc3D
 			}
 			Control::Initialize(device);
 		}
-		void PictureBox::Update(const GameTime* const time)
+		void PictureBox::Update(const GameTime* time)
 		{
 			UpdateEvents();
 		}

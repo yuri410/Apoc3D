@@ -128,7 +128,7 @@ namespace Apoc3D
 				m_menu->Draw(sprite);
 			}
 		}
-		void ControlContainer::Update(const GameTime* const time)
+		void ControlContainer::Update(const GameTime* time)
 		{
 			bool skip = false;
 			for (int i=0;i<m_controls.getCount();i++)

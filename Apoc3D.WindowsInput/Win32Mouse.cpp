@@ -46,7 +46,7 @@ namespace Apoc3D
 				m_instance = 0;
 			}
 
-			void OldSchoolMouse::Update(const GameTime* const time)
+			void OldSchoolMouse::Update(const GameTime* time)
 			{
 				if (m_hwnd)
 				{
@@ -107,7 +107,7 @@ namespace Apoc3D
 				m_inpMgr->destroyInputObject(m_mouse);
 			}
 
-			void Win32Mouse::Update(const GameTime* const time)
+			void Win32Mouse::Update(const GameTime* time)
 			{
 				memcpy(m_lastBtnState, m_btnState, sizeof(m_btnState));
 				m_lastPosition = m_currentPos;

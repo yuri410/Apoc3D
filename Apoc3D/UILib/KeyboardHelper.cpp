@@ -118,7 +118,7 @@ namespace Apoc3D
 
 		};
 
-		void KeyboardHelper::Update(const GameTime* const time)
+		void KeyboardHelper::Update(const GameTime* time)
 		{
 			bool& pasting = m_pasting;
 			Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();

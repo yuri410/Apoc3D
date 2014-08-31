@@ -39,7 +39,7 @@ namespace APDesigner
 
 		/** Do the physics work for the graph visualization algorithm
 		*/
-		void UpdatePhysicsSimulation(const GameTime* const time);
+		void UpdatePhysicsSimulation(const GameTime* time);
 
 		/** Adds a node to this one's neighbor
 		 */

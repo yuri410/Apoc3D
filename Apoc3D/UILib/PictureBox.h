@@ -48,7 +48,7 @@ namespace Apoc3D
 
 			virtual void Initialize(RenderDevice* device);
 
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			Texture* getImage() const { return m_texture; }

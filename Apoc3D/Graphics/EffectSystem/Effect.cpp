@@ -263,7 +263,7 @@ namespace Apoc3D
 			}
 
 
-			void AutomaticEffect::Update(const GameTime* const time)
+			void AutomaticEffect::Update(const GameTime* time)
 			{
 				float t = m_lastTime + time->getElapsedTime();//(float)( clock() / CLOCKS_PER_SEC);
 				m_unifiedTime += t - m_lastTime;

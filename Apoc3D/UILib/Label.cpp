@@ -102,7 +102,7 @@ namespace Apoc3D
 			}
 		}
 
-		void Label::Update(const GameTime* const time)
+		void Label::Update(const GameTime* time)
 		{
 			UpdateEvents();
 		}
@@ -402,7 +402,7 @@ namespace Apoc3D
 				m_hscrollBar->Initialize(device);
 			}
 		}
-		void TextBox::Update(const GameTime* const time)
+		void TextBox::Update(const GameTime* time)
 		{
 			Control::Update(time);
 
@@ -432,7 +432,7 @@ namespace Apoc3D
 				}
 			}
 		}
-		void TextBox::UpdateScrollbars(const GameTime* const time)
+		void TextBox::UpdateScrollbars(const GameTime* time)
 		{
  			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 			if (m_vscrollBar)

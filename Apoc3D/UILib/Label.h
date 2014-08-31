@@ -45,7 +45,7 @@ namespace Apoc3D
 
 			virtual void Initialize(RenderDevice* device);
 			virtual void Draw(Sprite* sprite);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 
 			void SetTextColorOverride(ColorValue cv);
 
@@ -86,7 +86,7 @@ namespace Apoc3D
 			TextBox(const Point& position, int width, int height, const String& text);
 			virtual ~TextBox();
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			void setText(const String& text);
@@ -144,7 +144,7 @@ namespace Apoc3D
 			void vScrollbar_OnChangeValue(Control* ctrl);
 			void hScrollbar_OnChangeValue(Control* ctrl);
 			//void UpdateScrollPosition();
-			void UpdateScrollbars(const GameTime* const time);
+			void UpdateScrollbars(const GameTime* time);
 
 			void CheckFocus();
 

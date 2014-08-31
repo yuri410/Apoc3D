@@ -45,7 +45,7 @@ namespace Apoc3D
 				m_inpMgr->destroyInputObject(m_keyboard);
 			}
 
-			void Win32Keyboard::Update(const GameTime* const time)
+			void Win32Keyboard::Update(const GameTime* time)
 			{
 				memcpy(m_lastKeyState, m_keyState, sizeof(m_keyState));
 

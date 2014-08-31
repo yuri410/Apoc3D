@@ -43,7 +43,7 @@ namespace Apoc3D
 
 				virtual void SetPosition(const Point& loc) override;
 
-				void Update(const GameTime* const time);
+				void Update(const GameTime* time);
 			private:
 				int m_accumlatedMouseWheel;
 
@@ -71,7 +71,7 @@ namespace Apoc3D
 
 				virtual void SetPosition(const Point& loc) override;
 
-				void Update(const GameTime* const time);
+				void Update(const GameTime* time);
 
 				bool mouseMoved( const OIS::MouseEvent &arg );
 				bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );

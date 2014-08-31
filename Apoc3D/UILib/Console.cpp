@@ -118,7 +118,7 @@ namespace Apoc3D
 			delete m_scrollBar;
 		}
 
-		void Console::Update(const GameTime* const time)
+		void Console::Update(const GameTime* time)
 		{
 			const Point& size = m_form->Size;
 			m_inputText->Position.Y = size.Y - 35;

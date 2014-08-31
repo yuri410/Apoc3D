@@ -67,7 +67,7 @@ namespace Apoc3D
 			{
 
 			}
-			void Update(const GameTime* const time);
+			void Update(const GameTime* time);
 
 		private:
 			KeyboardEventHandler m_eKeyPress;

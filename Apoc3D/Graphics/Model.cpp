@@ -402,7 +402,7 @@ namespace Apoc3D
 			m_renderOpEntPartID = nullptr;
 		}
 
-		void Model::Update(const GameTime* const time)
+		void Model::Update(const GameTime* time)
 		{
 			for (int i=0; i<m_animInstance.getCount(); i++)
 			{

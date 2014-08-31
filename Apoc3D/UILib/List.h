@@ -42,7 +42,7 @@ namespace Apoc3D
 			~ListBox();
 
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			bool getUseHorizontalScrollbar() const { return m_horizontalScrollbar; }
@@ -146,7 +146,7 @@ namespace Apoc3D
 			virtual ~TreeView();
 
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 			
 			virtual void Draw(Sprite* sprite);
 
@@ -240,7 +240,7 @@ namespace Apoc3D
 			virtual ~ListView();
 
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			List2D<String>& getItems() { return m_items; }

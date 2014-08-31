@@ -54,7 +54,7 @@ namespace SampleFont
 
 		Game::Unload();
 	}
-	void FontDemo::Update(const GameTime* const time)
+	void FontDemo::Update(const GameTime* time)
 	{
 		Game::Update(time);
 
@@ -73,7 +73,7 @@ namespace SampleFont
 				m_currentPressure = 1;
 		}
 	}
-	void FontDemo::Draw(const GameTime* const time)
+	void FontDemo::Draw(const GameTime* time)
 	{
 		m_device->BeginFrame();
 		m_device->Clear(CLEAR_ColorBuffer, 0, 1, 0);

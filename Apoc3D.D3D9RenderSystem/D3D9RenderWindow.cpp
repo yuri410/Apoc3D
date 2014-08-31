@@ -71,7 +71,7 @@ namespace Apoc3D
 
 				m_viewSet->ChangeDevice(settings, 0);
 			}
-			void D3D9RenderView::Present(const GameTime* const time)
+			void D3D9RenderView::Present(const GameTime* time)
 			{
 				m_swapChain->Present(NULL,NULL,NULL,NULL, NULL);
 			}

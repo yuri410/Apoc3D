@@ -43,7 +43,7 @@ namespace Apoc3D
 			virtual ~ComboBox();
 
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 			virtual void DrawOverlay(Sprite* sprite);
 			virtual bool IsOverriding();

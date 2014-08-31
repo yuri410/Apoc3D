@@ -323,6 +323,20 @@ namespace Apoc3D
 			int64 m_position;
 		};
 
+		class APAPI PipeOutStream : public MemoryOutStream
+		{
+			RTTI_DERIVED(PipeOutStream, MemoryOutStream);
+		public:
+			PipeOutStream(int64 preserved)
+				: MemoryOutStream(preserved)
+			{ }
+
+			virtual ~PipeOutStream();
+
+			void PopAll(char* dest);
+		};
+
+
 		/**
 		 *  This reader can read Stream with an internal buffer to 
 		 *  avoid frequent calls to Stream's read methods (which is expensive for various reasons)

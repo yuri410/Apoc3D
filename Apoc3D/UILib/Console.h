@@ -57,7 +57,7 @@ namespace Apoc3D
 			void Maximize();
 			void Close();
 
-			void Update(const GameTime* const time);
+			void Update(const GameTime* time);
 
 			void setPosition(const Point& pt);
 			const Point& getSize() const;

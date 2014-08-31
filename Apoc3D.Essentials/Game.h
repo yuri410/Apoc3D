@@ -27,8 +27,10 @@ http://www.gnu.org/copyleft/gpl.txt.
 
 #include "EssentialCommon.h"
 
+#include "apoc3d/Core/GameTime.h"
 #include "apoc3d/Graphics/RenderSystem/RenderWindowHandler.h"
 #include "apoc3d/Input/InputAPI.h"
+
 
 using namespace Apoc3D;
 using namespace Apoc3D::Graphics::RenderSystem;
@@ -70,11 +72,11 @@ namespace Apoc3DEx
 		/** Allows the game to run logic such as updating the world,
 		 *  checking for collisions, gathering input, playing audio and etc.
 		 */
-		virtual void Update(const GameTime* const time);
+		virtual void Update(const GameTime* time);
 
 		/** This is called when the game should draw a frame.
 		*/
-		virtual void Draw(const GameTime* const time);
+		virtual void Draw(const GameTime* time);
 
 		/** This is called before drawing a new frame.
 		*/
@@ -93,12 +95,19 @@ namespace Apoc3DEx
 		const StyleSkin* getSystemUISkin() const { return m_UIskin; }
 
 		Console* getConsole() const { return m_console; }
-	protected:
-		RenderWindow* m_window;
-		RenderDevice* m_device;
 
-		StyleSkin* m_UIskin;
-		Console* m_console;
+	protected:
+		const GameTime* GetRecordCorrectedTime(const GameTime* time);
+
+		RenderWindow* m_window;
+		RenderDevice* m_device = nullptr;
+
+		StyleSkin* m_UIskin = nullptr;
+		Console* m_console = nullptr;
+
+		Input::InputPlayer* m_player = nullptr;
+		Input::InputRecorder* m_recorder = nullptr;
+		GameTime m_correctedFrameTime;
 
 		InputCreationParameters m_inputCreationParam;
 	};

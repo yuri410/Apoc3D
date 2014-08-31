@@ -49,7 +49,7 @@ namespace Apoc3D
 
 			void Add(MenuItem* item, SubMenu* submenu);
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 
 			virtual void Draw(Sprite* sprite);
 
@@ -134,7 +134,7 @@ namespace Apoc3D
 			void Clear();
 
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			void Open(const Point& position);

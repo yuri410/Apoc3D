@@ -51,7 +51,7 @@ namespace Apoc3D
 
 				virtual void ChangeRenderParameters(const RenderParameters& params);
 
-				virtual void Present(const GameTime* const time);
+				virtual void Present(const GameTime* time);
 
 			private:
 				D3D9RenderViewSet* m_viewSet;
@@ -114,11 +114,11 @@ namespace Apoc3D
 					{
 						m_window->OnUnload();
 					}
-					virtual void Render(const GameTime* const time)
+					virtual void Render(const GameTime* time)
 					{
 						m_window->OnDraw(time);
 					}
-					virtual void Update(const GameTime* const time)
+					virtual void Update(const GameTime* time)
 					{
 						m_window->OnUpdate(time);
 					}

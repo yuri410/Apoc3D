@@ -45,7 +45,7 @@ namespace Apoc3D
 				Win32Keyboard(OIS::InputManager* mgr);
 				~Win32Keyboard();
 
-				virtual void Update(const GameTime* const time);
+				virtual void Update(const GameTime* time);
 
 
 				bool keyPressed( const OIS::KeyEvent &arg );

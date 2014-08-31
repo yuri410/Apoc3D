@@ -64,7 +64,7 @@ namespace APDesigner
 		virtual void SaveRes();
 		virtual bool IsReadOnly() { return true; };
 
-		virtual void Update(const GameTime* const time);
+		virtual void Update(const GameTime* time);
 	private:
 		String m_name;
 		String m_filePath;

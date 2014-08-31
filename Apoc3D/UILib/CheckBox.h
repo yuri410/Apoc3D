@@ -43,7 +43,7 @@ namespace Apoc3D
 			virtual ~CheckBox();
 
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			void Toggle();
@@ -76,7 +76,7 @@ namespace Apoc3D
 			virtual ~CheckboxGroup();
 
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 			virtual void Draw(Sprite* sprite);
 
 			int getSelectedIndex() const { return m_selectedIndex; }

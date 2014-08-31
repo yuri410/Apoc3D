@@ -53,7 +53,7 @@ namespace APDesigner
 		virtual bool IsReadOnly() { return false; };
 
 		virtual void Initialize(RenderDevice* device);
-		virtual void Update(const GameTime* const time);
+		virtual void Update(const GameTime* time);
 		virtual void Render();
 
 		void UpdateSelectedPart();

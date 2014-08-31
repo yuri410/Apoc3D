@@ -37,15 +37,6 @@ namespace Apoc3D
 		 */
 		class APAPI GameTime
 		{
-		private:
-			float m_totalTime;
-			float m_elapsedTime;
-
-			float m_totalRealTime;
-			float m_elapsedRealTime;
-			float m_fps;
-
-			bool m_slowly;
 		public:
 			/**
 			 *  Gets the amount of game time since the start of the game, in seconds.
@@ -76,24 +67,35 @@ namespace Apoc3D
 
 			float getFPS() const { return m_fps; }
 
-			bool getIsRunningSlowly() const { return m_slowly; }
+			bool isRunningSlowly() const { return m_slowly; }
 
-			GameTime(const float elapsedTime, const float totalTime,
-				const float elapsedRTime, const float totalRTime,
-				const float fps, const bool isRunningSlowly)
+			GameTime(float elapsedTime, float totalTime,
+				float elapsedRTime, float totalRTime,
+				float fps, bool isRunningSlow)
 			{
 				m_totalTime = totalTime;
 				m_elapsedTime = elapsedTime;
 				m_totalRealTime = totalRTime;
 				m_elapsedRealTime = elapsedRTime;
-		
+
 				m_fps = fps;
-				m_slowly = isRunningSlowly;
+				m_slowly = isRunningSlow;
 			}
 
 			~GameTime(void)
-			{
-			}
+			{ }
+
+
+
+		private:
+			float m_totalTime;
+			float m_elapsedTime;
+
+			float m_totalRealTime;
+			float m_elapsedRealTime;
+			float m_fps;
+
+			bool m_slowly;
 		};
 	};
 };

@@ -320,7 +320,21 @@ namespace Apoc3D
 				m_position = m_length;
 		}
 
+		/************************************************************************/
+		/* PipeStream                                                           */
+		/************************************************************************/
+		PipeOutStream::~PipeOutStream()
+		{ }
 
+		void PipeOutStream::PopAll(char* dest)
+		{
+			if (dest)
+			{
+				memcpy(dest, getDataPointer(), (size_t)getLength());
+			}
+
+			setPosition(0);
+		}
 		/************************************************************************/
 		/* BufferedStreamReader                                                 */
 		/************************************************************************/

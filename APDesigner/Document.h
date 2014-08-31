@@ -46,7 +46,7 @@ namespace APDesigner
 		virtual bool IsReadOnly() = 0;
 
 		virtual void Render() { }
-		virtual void Update(const GameTime* const time);
+		virtual void Update(const GameTime* time);
 
 		virtual ObjectPropertyEditor* getRootPropertyEditor() { return nullptr; }
 

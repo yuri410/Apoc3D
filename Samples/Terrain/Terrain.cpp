@@ -148,7 +148,7 @@ namespace SampleTerrain
 	}
 
 	
-	void Terrain::Update(const GameTime* const time)
+	void Terrain::Update(const GameTime* time)
 	{
 		if (m_isPushing)
 		{

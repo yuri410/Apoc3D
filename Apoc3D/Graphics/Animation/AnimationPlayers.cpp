@@ -64,7 +64,7 @@ namespace Apoc3D
 				}
 			}
 
-			void ModelAnimationPlayerBase::Update(const GameTime* const time)
+			void ModelAnimationPlayerBase::Update(const GameTime* time)
 			{
 				if (!m_currentClipValue)
 					return;
@@ -209,7 +209,7 @@ namespace Apoc3D
 			}
 
 
-			void MaterialAnimationPlayer::Update(const GameTime* const gameTime)
+			void MaterialAnimationPlayer::Update(const GameTime* gameTime)
 			{
 				if (!m_currentClipValue)
 					return;

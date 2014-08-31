@@ -60,7 +60,7 @@ namespace Apoc3D
 			m_listBox->eventPress.Bind(this, &ComboBox::ListBox_OnPress);
 			m_listBox->Initialize(device);
 		}
-		void ComboBox::Update(const GameTime* const time)
+		void ComboBox::Update(const GameTime* time)
 		{
 			m_textbox->Position = Position;
 			m_button->Position = Position + Point(Size.X-16,0);

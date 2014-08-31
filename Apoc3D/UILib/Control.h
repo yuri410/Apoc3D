@@ -73,7 +73,7 @@ namespace Apoc3D
 			virtual ~Control() { }
 
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time)
+			virtual void Update(const GameTime* time)
 			{
 				//m_area = Apoc3D::Math::Rectangle(Position.X, Position.Y, Size.X, Size.Y);
 			}
@@ -186,7 +186,7 @@ namespace Apoc3D
 			virtual ~ControlContainer();
 
 			virtual void Initialize(RenderDevice* device);
-			virtual void Update(const GameTime* const time);
+			virtual void Update(const GameTime* time);
 
 			virtual void Draw(Sprite* sprite);
 

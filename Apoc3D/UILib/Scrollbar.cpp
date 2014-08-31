@@ -117,7 +117,7 @@ namespace Apoc3D
 			}
 		}
 
-		void HScrollbar::Update(const GameTime* const time)
+		void HScrollbar::Update(const GameTime* time)
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
@@ -324,7 +324,7 @@ namespace Apoc3D
 			}
 		}
 
-		void VScrollBar::Update(const GameTime* const time)
+		void VScrollBar::Update(const GameTime* time)
 		{
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
@@ -490,7 +490,7 @@ namespace Apoc3D
 			}
 
 		}
-		void ScrollBar::Update(const GameTime* const time)
+		void ScrollBar::Update(const GameTime* time)
 		{
 			if (Visible)
 			{

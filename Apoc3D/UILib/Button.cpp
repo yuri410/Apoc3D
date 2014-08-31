@@ -374,7 +374,7 @@ namespace Apoc3D
 				DrawCustomButton(sprite);
 			}
 		}
-		void Button::Update(const GameTime* const time)
+		void Button::Update(const GameTime* time)
 		{
 			Control::Update(time);
 
@@ -466,7 +466,7 @@ namespace Apoc3D
 			}
 		}
 
-		void ButtonGroup::Update(const GameTime* const time)
+		void ButtonGroup::Update(const GameTime* time)
 		{
 			Control::Update(time);
 
@@ -691,7 +691,7 @@ namespace Apoc3D
 
 		}
 
-		void ButtonRow::Update(const GameTime* const time)
+		void ButtonRow::Update(const GameTime* time)
 		{
 			if (!Visible)
 			{
@@ -780,7 +780,7 @@ namespace Apoc3D
 		{
 
 		}
-		void RadioButton::Update(const GameTime* const time)
+		void RadioButton::Update(const GameTime* time)
 		{
 
 		}

@@ -73,12 +73,12 @@ namespace Apoc3D
 				/**
 				 * This should be overrided to draw a frame
 				 */
-				virtual void Render(const GameTime* const time) = 0;
+				virtual void Render(const GameTime* time) = 0;
 				/**
 				 * This should be overrided to allow the game to run logic such as updating the world,
 				 *  checking for collisions, gathering input, playing audio and etc.
 				 */
-				virtual void Update(const GameTime* const time) = 0;
+				virtual void Update(const GameTime* time) = 0;
 				/**
 				 * Enters the main loop. 
 				 */
@@ -96,7 +96,7 @@ namespace Apoc3D
 
 			private:
 
-				void DrawFrame(const GameTime* const time);
+				void DrawFrame(const GameTime* time);
 
 				void Window_ApplicationActivated();
 				void Window_ApplicationDeactivated();

@@ -51,7 +51,7 @@ namespace Apoc3D
 				}
 
 				float getFPS() const { return m_fps; }
-				void Step(const GameTime* const time);
+				void Step(const GameTime* time);
 
 			private:
 				LinkedList<float> m_frameTimes;
@@ -67,7 +67,7 @@ namespace Apoc3D
 			public:
 				virtual ~RenderView(){}
 
-				virtual void Present(const GameTime* const time);
+				virtual void Present(const GameTime* time);
 				/**
 				 *  Change the device settings. 
 				 *  This may cause the device to be reseted/recreated depending on how big the change is.
@@ -161,8 +161,8 @@ namespace Apoc3D
 				void OnFinalize();
 				void OnLoad();
 				void OnUnload();
-				void OnUpdate(const GameTime* const time);
-				void OnDraw(const GameTime* const time);
+				void OnUpdate(const GameTime* time);
+				void OnDraw(const GameTime* time);
 
 				bool m_visisble;
 			};

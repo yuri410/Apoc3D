@@ -53,7 +53,7 @@ namespace APDesigner
 
 	}
 
-	void GraphNode::UpdatePhysicsSimulation(const GameTime* const time)
+	void GraphNode::UpdatePhysicsSimulation(const GameTime* time)
 	{
 		float dt = time->getElapsedTime();
 

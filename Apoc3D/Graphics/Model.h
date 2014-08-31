@@ -141,7 +141,7 @@ namespace Apoc3D
 
 			/** The update will do the animation works if the model has animation.
 			*/
-			void Update(const GameTime* const time);
+			void Update(const GameTime* time);
 
 			void PlayAnimation(AnimationType type = (AnimationType)(ANIMTYPE_Material | ANIMTYPE_Rigid | ANIMTYPE_Skinned));
 			void PauseAnimation(AnimationType type = (AnimationType)(ANIMTYPE_Material | ANIMTYPE_Rigid | ANIMTYPE_Skinned));

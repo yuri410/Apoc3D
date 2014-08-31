@@ -117,7 +117,7 @@ namespace APDesigner
 		delete m_btnHide;
 	}
 
-	void ServWindow::Update(const GameTime* const time)
+	void ServWindow::Update(const GameTime* time)
 	{
 		if (m_window->getIsActive())
 			InputAPIManager::getSingleton().Update(time);
@@ -184,7 +184,7 @@ namespace APDesigner
 			//ReadDirectoryChangesW();
 		}
 	}
-	void ServWindow::Draw(const GameTime* const time)
+	void ServWindow::Draw(const GameTime* time)
 	{
 		m_device->Clear(CLEAR_ColorAndDepth, CV_DarkGray, 1, 0);
 

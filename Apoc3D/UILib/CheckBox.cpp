@@ -40,7 +40,7 @@ namespace Apoc3D
 			m_textOffset.X = m_skin->CheckBoxNormal.Width + m_skin->CheckBoxTextSpacing;
 			m_textOffset.Y = (m_skin->CheckBoxNormal.Height - m_fontRef->getLineHeightInt())/2 - vertMg;
 		}
-		void CheckBox::Update(const GameTime* const time)
+		void CheckBox::Update(const GameTime* time)
 		{
 			UpdateEvents();
 		}
@@ -166,7 +166,7 @@ namespace Apoc3D
 				Size.Y += m_checkbox[i]->Size.Y;
 			}
 		}
-		void CheckboxGroup::Update(const GameTime* const time)
+		void CheckboxGroup::Update(const GameTime* time)
 		{
 			for (int i=0;i<m_checkbox.getCount();i++)
 			{

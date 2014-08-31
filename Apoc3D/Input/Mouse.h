@@ -90,7 +90,7 @@ namespace Apoc3D
 			 */
 			bool IsRightReleasedState() const { return !m_btnState[2]; }
 
-			virtual void Update(const GameTime* const time) = 0;
+			virtual void Update(const GameTime* time) = 0;
 
 			void Serialize(Apoc3D::IO::BinaryWriter* bw);
 			void Deserialize(Apoc3D::IO::BinaryReader* br);

@@ -176,7 +176,7 @@ namespace Apoc3D
 			return m_selectedAPI->CreateKeyboard();
 		}
 
-		void InputAPIManager::Update(const GameTime* const time)
+		void InputAPIManager::Update(const GameTime* time)
 		{
 			if (m_mouse)
 				m_mouse->Update(time);
