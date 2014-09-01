@@ -79,10 +79,10 @@ namespace Apoc3D
 		}
 
 
-		inline byte UnifiedToByteRange(float f)
+		/*inline byte UnifiedToByteRange(float f)
 		{
 			return (byte)floor(f == 1.0f ? 255 : f * 256.0f);
-		}
+		}*/
 
 		inline float ToRadian(float x) { return x * (L_PIf / 180.0f); }		
 		inline float ToRadian(int32 x) { return x * (L_PIf / 180.0f); }

@@ -85,10 +85,10 @@ namespace Apoc3D
 			 */
 			ColorValue ToArgb() const
 			{
-				uint a = Math::UnifiedToByteRange(Alpha);
-				uint r = Math::UnifiedToByteRange(Red);
-				uint g = Math::UnifiedToByteRange(Green);
-				uint b = Math::UnifiedToByteRange(Blue);
+				uint a = static_cast<uint>(Alpha * 255.0f + 0.5f);// Math::UnifiedToByteRange(Alpha);
+				uint r = static_cast<uint>(Red * 255.0f + 0.5f);// Math::UnifiedToByteRange(Red);
+				uint g = static_cast<uint>(Green * 255.0f + 0.5f);// Math::UnifiedToByteRange(Green);
+				uint b = static_cast<uint>(Blue * 255.0f + 0.5f);// Math::UnifiedToByteRange(Blue);
 				uint result = b;
 				result += g << 8;
 				result += r << 16;
