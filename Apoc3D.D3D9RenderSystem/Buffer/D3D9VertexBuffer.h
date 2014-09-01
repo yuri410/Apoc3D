@@ -45,14 +45,14 @@ namespace Apoc3D
 				D3D9VertexBuffer(D3D9RenderDevice* device, int32 size, BufferUsageFlags usage);
 				~D3D9VertexBuffer();
 
-				void ReleaseVolatileResource();
-				void ReloadVolatileResource();
+				void ReleaseVolatileResource() override;
+				void ReloadVolatileResource() override;
 
 				D3DVertexBuffer* getD3DBuffer() const { return m_vertexBuffer; }
 
 			protected:
-				virtual void* lock(int offset, int size, LockMode mode);
-				virtual void unlock();
+				virtual void* lock(int offset, int size, LockMode mode) override;
+				virtual void unlock() override;
 			private:
 				D3D9RenderDevice* m_device;
 				D3DVertexBuffer* m_vertexBuffer;

@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/gpl.txt.
 #include "RenderDevice.h"
 #include "apoc3d/Core/Logging.h"
 #include "apoc3d/Utility/StringUtils.h"
+#include "apoc3d/Math/Rectangle.h"
 
 using namespace Apoc3D::Utility;
 
@@ -36,18 +37,16 @@ namespace Apoc3D
 		{
 			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, DepthFormat depthFormat, const String& multiSampleMode)
 				: m_device(renderDevice), m_width(width), m_height(height), 
-				m_pixelFormat(colorFormat), m_depthFormat(depthFormat), m_multisampleMode(multiSampleMode), 
-				m_hasPercentangeLock(false)
+				m_pixelFormat(colorFormat), m_depthFormat(depthFormat), m_multisampleMode(multiSampleMode)
 			{
-				m_isMultisampled = !CheckMultisampleModeStringNone(m_multisampleMode);
+				m_isMultisampled = !IsMultisampleModeStringNone(m_multisampleMode);
 			}
 
 			RenderTarget::RenderTarget(RenderDevice* renderDevice, int32 width, int32 height, PixelFormat colorFormat, const String& multiSampleMode)
 				: m_device(renderDevice), m_width(width), m_height(height), 
-				m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count), m_multisampleMode(multiSampleMode), 
-				m_hasPercentangeLock(false)
+				m_pixelFormat(colorFormat), m_depthFormat(DEPFMT_Count), m_multisampleMode(multiSampleMode)
 			{ 
-				m_isMultisampled = !CheckMultisampleModeStringNone(m_multisampleMode);
+				m_isMultisampled = !IsMultisampleModeStringNone(m_multisampleMode);
 			}
 
 			RenderTarget::~RenderTarget()
@@ -55,7 +54,7 @@ namespace Apoc3D
 
 			}
 
-			bool RenderTarget::CheckMultisampleModeStringNone(const String& aamode)
+			bool RenderTarget::IsMultisampleModeStringNone(const String& aamode)
 			{
 				if (aamode.empty())
 					return true;
@@ -69,8 +68,8 @@ namespace Apoc3D
 			{
 				Viewport vp = m_device->getViewport();
 
-				int estWidth = static_cast<uint>(vp.Width * wp + 0.5f);
-				int estHeight = static_cast<uint>(vp.Height * hp + 0.5f);
+				int estWidth = static_cast<int>(vp.Width * wp + 0.5f);
+				int estHeight = static_cast<int>(vp.Height * hp + 0.5f);
 				m_hasPercentangeLock = true;
 				m_widthPercentage = wp;
 				m_heightPercentage = hp;
@@ -78,6 +77,35 @@ namespace Apoc3D
 				if (estWidth != m_width || estHeight != m_height)
 				{
 					ApocLog(LOG_Graphics, L"[RT] Dimension percentage does not match current size.", LOGLVL_Warning);
+				}
+			}
+
+
+			DataRectangle RenderTarget::Lock(LockMode mode, const Apoc3D::Math::Rectangle& rect)
+			{
+				if (!m_isLocked)
+				{
+					DataRectangle res = lock(mode, rect);
+					m_isLocked = true;
+					return res;
+				}
+				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"RenderTarget is already locked.");
+			}
+			DataRectangle RenderTarget::Lock(LockMode mode)
+			{
+				return Lock(mode, Apoc3D::Math::Rectangle(0, 0, m_width, m_height));
+			}
+
+			void RenderTarget::Unlock()
+			{
+				if (m_isLocked)
+				{
+					unlock();
+					m_isLocked = false;
+				}
+				else
+				{
+					throw AP_EXCEPTION(ExceptID::InvalidOperation, L"RenderTarget is not locked.");
 				}
 			}
 

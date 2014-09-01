@@ -31,11 +31,12 @@ namespace Apoc3D
 		namespace RenderSystem
 		{
 			VertexDeclaration::VertexDeclaration(const List<VertexElement> &e)
+				: m_elements(e)
+			{ } 
+
+			VertexDeclaration::~VertexDeclaration()
 			{
-				for (int i=0;i<e.getCount();i++)
-				{
-					m_elements.Add(e[i]);
-				}
+
 			}
 			
 			bool VertexDeclaration::FindElementBySemantic(VertexElementUsage semantic, int index, VertexElement& result) const
@@ -54,6 +55,7 @@ namespace Apoc3D
 
 				return false;
 			}
+
 			int VertexDeclaration::GetVertexSize() const
 			{
 				int size = 0;

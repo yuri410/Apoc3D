@@ -113,8 +113,9 @@ namespace Apoc3D
 			//{
 
 			//}
+
 			D3D9IndexBuffer::D3D9IndexBuffer(D3D9RenderDevice* device, IndexBufferType type, int32 size, BufferUsageFlags usage)
-				: IndexBuffer(type, size, usage), VolatileResource(device), m_device(device), m_tempData(0)
+				: IndexBuffer(type, size, usage), VolatileResource(device), m_device(device)
 			{
 				D3DDevice* dev = device->getDevice();
 

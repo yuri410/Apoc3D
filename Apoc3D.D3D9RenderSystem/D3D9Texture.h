@@ -43,10 +43,40 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9Texture : public Apoc3D::Graphics::RenderSystem::Texture, public VolatileResource
+			class D3D9Texture final : public Apoc3D::Graphics::RenderSystem::Texture, public VolatileResource
 			{
 			public:
-				void setInternal2D(D3DTexture2D* tex) { m_tex2D = tex; }
+
+				D3D9Texture(D3D9RenderDevice* device, D3DTexture2D* tex2D);
+				D3D9Texture(D3D9RenderDevice* device, D3DTexture3D* tex3D);
+				D3D9Texture(D3D9RenderDevice* device, D3DTextureCube* texCube);
+
+				D3D9Texture(D3D9RenderDevice* device, const ResourceLocation& rl, TextureUsage usage, bool managed);
+				D3D9Texture(D3D9RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
+					PixelFormat format, TextureUsage usage);
+
+				D3D9Texture(D3D9RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage);
+
+				~D3D9Texture();
+
+				virtual void Save(Stream* strm) override;
+
+				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect) override;
+				virtual DataBox lock(int32 surface, LockMode mode, const Box& box) override;
+				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, 
+					const Apoc3D::Math::Rectangle& rect) override;
+
+				virtual void unlock(int32 surface) override;
+				virtual void unlock(CubeMapFace cubemapFace, int32 surface) override;
+
+				/** Loads the content of the texture from a ResourceLocation.
+				 *  This is called by the Resource class when the Resource need to load.
+				 *  See Resource for more information.
+				 */
+				virtual void load() override;
+				/** Release the hardware resources used: delete the d3d9 texture.
+				 */
+				virtual void unload() override;
 
 				D3DTexture2D* getInternal2D() const { return m_tex2D; }
 				D3DTexture3D* getInternal3D() const { return m_tex3D; }
@@ -63,40 +93,11 @@ namespace Apoc3D
 					return 0;
 				}
 
-				D3D9Texture(D3D9RenderDevice* device, D3DTexture2D* tex2D);
-				D3D9Texture(D3D9RenderDevice* device, D3DTexture3D* tex3D);
-				D3D9Texture(D3D9RenderDevice* device, D3DTextureCube* texCube);
+				void SetInternal2D(D3DTexture2D* tex, int32 newWidth, int32 newHeight, int32 newLevelCount, PixelFormat newFormat);
 
-				D3D9Texture(D3D9RenderDevice* device, const ResourceLocation& rl, TextureUsage usage, bool managed);
-				D3D9Texture(D3D9RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
-					PixelFormat format, TextureUsage usage);
-
-				D3D9Texture(D3D9RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage);
-
-				~D3D9Texture();
-				virtual void Save(Stream* strm);
-
-				virtual DataRectangle lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect);
-				virtual DataBox lock(int32 surface, LockMode mode, const Box& box);
-				virtual DataRectangle lock(int32 surface, CubeMapFace cubemapFace, LockMode mode, 
-					const Apoc3D::Math::Rectangle& rect);
-
-				virtual void unlock(int32 surface);
-				virtual void unlock(CubeMapFace cubemapFace, int32 surface);
-
-				/** Loads the content of the texture from a ResourceLocation.
-				 *  This is called by the Resource class when the Resource need to load.
-				 *  See Resource for more information.
-				 */
-				virtual void load();
-				/** Release the hardware resources used: delete the d3d9 texture.
-				 */
-				virtual void unload();
-
-				
 			private:
-				void ReleaseVolatileResource();
-				void ReloadVolatileResource();
+				void ReleaseVolatileResource() override;
+				void ReloadVolatileResource() override;
 
 
 				String getResourceLocationName();
@@ -111,9 +112,9 @@ namespace Apoc3D
 				 *  1, it will be treated as an 1D texture at the render system's texture level.
 				 *  Anyway the inner workings are still the same to make it work.
 				 */
-				D3DTexture2D* m_tex2D;
-				D3DTexture3D* m_tex3D;
-				D3DTextureCube* m_cube;
+				D3DTexture2D* m_tex2D = nullptr;
+				D3DTexture3D* m_tex3D = nullptr;
+				D3DTextureCube* m_cube = nullptr;
 				D3D9RenderDevice* m_renderDevice;
 
 				/** Keep this to specify the parameter for D3D's cube map unlock operation.
@@ -122,7 +123,7 @@ namespace Apoc3D
 				D3DCUBEMAP_FACES m_lockedCubeFace;
 
 
-				char* m_tempData;
+				char* m_tempData = nullptr;
 			};
 		}
 	}

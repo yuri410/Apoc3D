@@ -41,28 +41,25 @@ namespace Apoc3D
 		{
 			class D3D9IndexBuffer : public IndexBuffer, public VolatileResource
 			{
+			public:
+				D3D9IndexBuffer(D3D9RenderDevice* device, IndexBufferType type, int32 size, BufferUsageFlags usage);
+				~D3D9IndexBuffer();
+
+				void ReleaseVolatileResource() override;
+				void ReloadVolatileResource() override;
+
+				D3DIndexBuffer* getD3DBuffer() const { return m_indexBuffer; }
+
+			protected:
+				virtual void* lock(int offset, int size, LockMode mode) override;
+				virtual void unlock() override;
+
 			private:
 
 				D3D9RenderDevice* m_device;
 				D3DIndexBuffer* m_indexBuffer;
 
-				char* m_tempData;
-			protected:
-				virtual void* lock(int offset, int size, LockMode mode);
-				virtual void unlock();
-
-			public:
-				D3D9IndexBuffer(D3D9RenderDevice* device, IndexBufferType type, int32 size, BufferUsageFlags usage);
-				~D3D9IndexBuffer();
-
-				void ReleaseVolatileResource();
-				void ReloadVolatileResource();
-
-
-				D3DIndexBuffer* getD3DBuffer() const { return m_indexBuffer; }
-
-				//D3D9IndexBuffer(D3D9RenderDevice* device, D3DIndexBuffer* vb);
-				
+				char* m_tempData = nullptr;
 			};
 		}
 	}

@@ -42,7 +42,7 @@ namespace Apoc3D
 		{
 			class D3D9Capabilities;
 
-			class D3D9RenderDevice : public RenderDevice
+			class D3D9RenderDevice final : public RenderDevice
 			{
 			public:
 				D3DDevice* getDevice() const;
@@ -119,7 +119,7 @@ namespace Apoc3D
 				}
 			};
 
-			class D3D9Capabilities : public Capabilities
+			class D3D9Capabilities final : public Capabilities
 			{
 			public:
 				struct AAProfile

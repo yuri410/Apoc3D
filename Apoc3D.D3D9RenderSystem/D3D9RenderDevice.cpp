@@ -551,7 +551,7 @@ namespace Apoc3D
 
 			bool D3D9Capabilities::SupportsRenderTarget(const String& multisampleMode, PixelFormat pixFormat, DepthFormat depthFormat)
 			{
-				if (!RenderTarget::CheckMultisampleModeStringNone(multisampleMode))
+				if (!RenderTarget::IsMultisampleModeStringNone(multisampleMode))
 				{
 					return !!LookupAAProfile(multisampleMode, pixFormat, depthFormat);
 				}

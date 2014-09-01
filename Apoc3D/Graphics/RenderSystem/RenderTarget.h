@@ -71,23 +71,36 @@ namespace Apoc3D
 				virtual Texture* GetColorTexture() = 0;
 				virtual DepthBuffer* GetDepthBuffer() = 0;
 
-				static bool CheckMultisampleModeStringNone(const String& aamode);
+				virtual void PrecacheLockedData() = 0;
+
+				DataRectangle Lock(LockMode mode);
+				DataRectangle Lock(LockMode mode, const Apoc3D::Math::Rectangle& rect);
+				void Unlock();
+
+				static bool IsMultisampleModeStringNone(const String& aamode);
 
 				EventDelegate1<RenderTarget*> eventReseted;
+
 			protected:
+				virtual DataRectangle lock(LockMode mode, const Apoc3D::Math::Rectangle& rect) = 0;
+				virtual void unlock() = 0;
+
 				RenderDevice* m_device;
 
-				float m_widthPercentage;
-				float m_heightPercentage;
-				bool m_hasPercentangeLock;
+				float m_widthPercentage = 0;
+				float m_heightPercentage = 0;
+				bool m_hasPercentangeLock = false;
 
 				int32 m_width;
 				int32 m_height;
+
 			private:
 				DepthFormat m_depthFormat;
 				PixelFormat m_pixelFormat;
 				bool m_isMultisampled;
 				String m_multisampleMode;
+
+				bool m_isLocked = false;
 			};
 		}
 

@@ -36,17 +36,17 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9GraphicsAPIFactory : public GraphicsAPIFactory
+			class D3D9GraphicsAPIFactory final : public GraphicsAPIFactory
 			{
-			private:
-				static APIDescription GetDescription();
-
 			public:
 				D3D9GraphicsAPIFactory()
 					: GraphicsAPIFactory(GetDescription())
 				{ }
 
 				virtual DeviceContext* CreateDeviceContext();
+			private:
+				static APIDescription GetDescription();
+
 			};
 		}
 	}

@@ -62,7 +62,7 @@ namespace Apoc3D
 			};
 
 
-			class D3D9RenderWindow : public RenderWindow
+			class D3D9RenderWindow final : public RenderWindow
 			{
 			private:
 				/** This Game classes and its dependent classes were once used in labtd. 
@@ -142,10 +142,10 @@ namespace Apoc3D
 				};
 			public:
 
-				virtual void ChangeRenderParameters(const RenderParameters& params);
-
 				D3D9RenderWindow(D3D9RenderDevice* device, D3D9DeviceContext* dc, const RenderParameters& pm);
 				~D3D9RenderWindow();
+
+				virtual void ChangeRenderParameters(const RenderParameters& params);
 
 				virtual void Exit();
 				virtual void Run();
@@ -160,6 +160,7 @@ namespace Apoc3D
 				const String& getHardwareName() const { return m_hardwareName; }
 
 				virtual void SetVisible(bool v);
+
 			private:
 				D3D9Game* m_game;
 				D3D9DeviceContext* m_dc;

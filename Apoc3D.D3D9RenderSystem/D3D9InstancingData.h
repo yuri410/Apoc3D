@@ -46,7 +46,7 @@ namespace Apoc3D
 			 *  of the EPUSAGE_Trans_InstanceWorlds array to obtain the transformation,
 			 *  then use this as the world transform.
 			 */
-			class D3D9InstancingData : public InstancingData
+			class D3D9InstancingData final : public InstancingData
 			{
 			public:
 				D3D9InstancingData(D3D9RenderDevice* device);

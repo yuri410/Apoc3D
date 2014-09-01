@@ -39,8 +39,6 @@ namespace Apoc3D
 			class D3D9DeviceContext : public DeviceContext
 			{
 			public:
-				void NotifyWindowClosed(D3D9RenderWindow* wnd);
-
 				D3D9DeviceContext();
 				~D3D9DeviceContext();
 
@@ -49,6 +47,8 @@ namespace Apoc3D
 
 				virtual RenderDevice* getRenderDevice();
 				IDirect3D9* getD3D() const { return m_d3d9; }
+
+				void NotifyWindowClosed(D3D9RenderWindow* wnd);
 
 			protected:
 				virtual RenderView* create(const RenderParameters &pm);

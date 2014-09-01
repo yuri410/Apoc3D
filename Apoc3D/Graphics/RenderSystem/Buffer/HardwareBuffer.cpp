@@ -32,21 +32,23 @@ namespace Apoc3D
 	{
 		namespace RenderSystem
 		{
+
+			DepthBuffer::DepthBuffer(int width, int height, BufferUsageFlags usage, DepthFormat format)
+				: HardwareBuffer(usage, PixelFormatUtils::GetMemorySize(width, height, format)),
+				m_width(width), m_height(height), m_depthFormat(format)
+			{
+
+			}
+
 			void* HardwareBuffer::Lock(LockMode mode)
 			{
-				if (!m_isLocked)
-				{
-					void* ptr = lock(0, m_size, mode);
-					m_isLocked = true;
-					return ptr;
-				}
-				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Buffer already Locked.");
+				return Lock(0, m_size, mode);
 			}
 			void* HardwareBuffer::Lock(int offset, int size, LockMode mode)
 			{
 				if (!m_isLocked)
 				{
-					void* ptr = lock(offset,size, mode);
+					void* ptr = lock(offset, size, mode);
 					m_isLocked = true;
 					return ptr;
 				}
@@ -66,13 +68,6 @@ namespace Apoc3D
 				}
 			}
 
-			DepthBuffer::DepthBuffer(int width, int height, BufferUsageFlags usage, DepthFormat format)
-				: HardwareBuffer(usage, PixelFormatUtils::GetMemorySize(width, height, format))
-			{
-				m_width = width;
-				m_height = height;
-				m_depthFormat = format;
-			}
 		}
 	}
 }

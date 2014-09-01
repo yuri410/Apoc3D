@@ -38,14 +38,18 @@ namespace Apoc3D
 		{			
 			class APAPI HardwareBuffer
 			{
-			private:
-				BufferUsageFlags m_usage;
-				int m_size;
+			public:
 				
-				bool m_isLocked;
-				int m_lockOffset;
-				int m_lockSize;
+				void* Lock(LockMode mode);
+				void* Lock(int offset, int size, LockMode mode);
+				void Unlock();
 
+				BufferUsageFlags getUsage() const { return m_usage; }
+				int getSize() const { return m_size; }
+				int getLockOffset() const { return m_lockOffset; }
+				int getLockSize() const { return m_lockSize; }
+
+				bool isLocked() const { return m_isLocked; }
 
 			protected:
 				HardwareBuffer(BufferUsageFlags usage, int sizeInBytes)
@@ -57,17 +61,15 @@ namespace Apoc3D
 				virtual void* lock(int offset, int size, LockMode mode) = 0;
 				virtual void unlock() = 0;
 
-			public:
-				BufferUsageFlags getUsage() const { return m_usage; }
-				int getSize() const { return m_size; } 
-				int getLockOffset() const { return m_lockOffset; } 
-				int getLockSize() const { return m_lockSize; } 
+			private:
+				BufferUsageFlags m_usage;
+				int m_size;
 
-				bool IsLocked() const { return m_isLocked; } 
+				bool m_isLocked;
+				int m_lockOffset;
+				int m_lockSize;
 
-				void* Lock(LockMode mode);
-				void* Lock(int offset, int size, LockMode mode);
-				void Unlock();
+
 			};
 
 			class APAPI VertexBuffer : public HardwareBuffer
@@ -84,31 +86,26 @@ namespace Apoc3D
 
 			class APAPI IndexBuffer : public HardwareBuffer
 			{
-			private:
-				IndexBufferType m_type;
-
-				int m_indexCount;
+			public:
+				IndexBufferType getIndexType() const { return m_type; }
+				int getIndexElementSize() const { return m_type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint); }
 
 			protected:
 				IndexBuffer(IndexBufferType type, int size, BufferUsageFlags usage)
 					: HardwareBuffer(usage, size)
 				{
 					m_type = type;
-					m_indexCount = size / getIndexSize();
+					m_indexCount = size / getIndexElementSize();
 				}
+			private:
+				IndexBufferType m_type;
 
-			public:
-				IndexBufferType getIndexType() const { return m_type; }
-				int getIndexSize() const { return m_type == IBT_Bit16 ? sizeof(ushort) : sizeof(uint); }
+				int m_indexCount;
+
 			};
 
 			class APAPI DepthBuffer : public HardwareBuffer
 			{
-			private:
-				int m_width;
-				int m_height;
-				DepthFormat m_depthFormat;
-
 			public:
 				int getWidth() const { return m_width; }
 				int getHeight() const { return m_height; }
@@ -116,6 +113,11 @@ namespace Apoc3D
 
 			protected:
 				DepthBuffer(int width, int height, BufferUsageFlags usage, DepthFormat format);
+
+				int m_width;
+				int m_height;
+				DepthFormat m_depthFormat;
+
 			};
 		}		
 	}

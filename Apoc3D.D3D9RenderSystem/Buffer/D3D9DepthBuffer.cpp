@@ -69,6 +69,14 @@ namespace Apoc3D
 				m_buffer->Release();
 			}
 
+			void D3D9DepthBuffer::SetD3DBuffer(IDirect3DSurface9* surface, int32 width, int32 height, DepthFormat fmt)
+			{
+				m_buffer = surface;
+
+				m_width = width;
+				m_height = height;
+				m_depthFormat = fmt;
+			}
 
 			void* D3D9DepthBuffer::lock(int offset, int size, LockMode mode)
 			{

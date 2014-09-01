@@ -43,53 +43,65 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9RenderTarget : public RenderTarget, public VolatileResource
+			class D3D9RenderTarget final : public RenderTarget, public VolatileResource
 			{
 			public:
-
-				virtual void ReleaseVolatileResource();
-				virtual void ReloadVolatileResource();
-
-				IDirect3DSurface9* getColorSurface() const { return m_colorSurface; }
-				IDirect3DSurface9* getDepthSurface() const { return m_depthSurface; }
-
-				//D3D9RenderTarget(D3D9RenderDevice* device, IDirect3DSurface9* color, IDirect3DSurface9* depth);
-
 				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt);
 				D3D9RenderTarget(D3D9RenderDevice* device, D3DTexture2D* rt, IDirect3DSurface9* depth);
-				
+
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format);
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, PixelFormat format, DepthFormat depthFormat);
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, const String& multisampleMode, PixelFormat format);
 				D3D9RenderTarget(D3D9RenderDevice* device, int32 width, int32 height, const String& multisampleMode, PixelFormat format, DepthFormat depthFormat);
-				
 
 				~D3D9RenderTarget();
 
-				virtual Texture* GetColorTexture();
-				virtual DepthBuffer* GetDepthBuffer();
-				
-				void NotifyDirty() { m_rtDirty = true; }
+				virtual Texture* GetColorTexture() override;
+				virtual DepthBuffer* GetDepthBuffer() override;
+
+				virtual void PrecacheLockedData() override;
+
+				virtual void ReleaseVolatileResource() override;
+				virtual void ReloadVolatileResource() override;
+
+				void NotifyDirty()
+				{
+					m_isResolvedRTDirty = true; 
+					m_isLockSurfaceDirty = true;
+				}
+
+				IDirect3DSurface9* getColorSurface() const { return m_colorSurface; }
+				IDirect3DSurface9* getDepthSurface() const { return m_depthSurface; }
+
 			private:
-				
+
 				/** Resolve multisample RT
 				 */
 				void Resolve();
 
-				D3DTexture2D* m_color;
-				IDirect3DSurface9* m_colorSurface;
-				D3D9Texture* m_d3dTexture;
+				virtual DataRectangle lock(LockMode mode, const Apoc3D::Math::Rectangle& rect) override;
+				virtual void unlock() override;
 
-				IDirect3DSurface9* m_depthSurface;
-				D3D9DepthBuffer* m_depthBuffer;
+
+				void CreateLockingSurface();
+
 
 				D3D9RenderDevice* m_device;
-				
 
-				bool m_hasColor;
-				bool m_hasDepth;
+				IDirect3DTexture9* m_color = nullptr;			// This is either the render target itself or the resolved multisample render target
+				IDirect3DSurface9* m_colorSurface = nullptr;
+				D3D9Texture* m_colorWrapperTex = nullptr;
 
-				bool m_rtDirty;
+				IDirect3DSurface9* m_depthSurface = nullptr;
+				D3D9DepthBuffer* m_depthBufferWrapper = nullptr;
+
+				IDirect3DSurface9* m_offscreenPlainSurface = nullptr;
+
+				bool m_hasColor = false;
+				bool m_hasDepth = false;
+
+				bool m_isResolvedRTDirty = false;
+				bool m_isLockSurfaceDirty = true;
 			};
 		}
 	}

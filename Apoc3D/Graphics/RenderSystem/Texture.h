@@ -53,9 +53,33 @@ namespace Apoc3D
 				virtual ~Texture();
 				virtual uint32 getSize() { return static_cast<uint32>(m_contentSize); }
 
+				DataRectangle Lock(int32 surface, LockMode mode, CubeMapFace cubemapFace, const Apoc3D::Math::Rectangle& rect);
+				DataRectangle Lock(int32 surface, LockMode mode, CubeMapFace cubemapFace);
+				DataRectangle Lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect);
+				/**
+				 *  Locks the whole area on the 2D texture. 
+				 *  The assumption that this is 2D is made when calling this.
+				 */
+				DataRectangle Lock(int32 surface, LockMode mode);
+				DataBox Lock(int32 surface, LockMode mode, const Box& box);
+
+				/**
+				 *  Unlocks the lock part. Works for all types of textures.
+				 */
+				void Unlock(int32 surface);
+				/**
+				 *  Unlocks the cube map face.
+				 */
+				void Unlock(CubeMapFace cubemapFace, int32 surface);
+
+				/**
+				 *  Save the texture as a TextureData into a Stream.
+				 */
+				virtual void Save(Stream* strm) = 0;
+
+				
 				bool isLocked() const { return m_isLocked; }
-				RenderDevice* getRenderDevice() const { return m_renderDevice; }
-				const ResourceLocation* getResourceLocation() const { return m_resourceLocation; }
+				
 				TextureType getType() const { return m_type; }
 
 				/**
@@ -82,30 +106,10 @@ namespace Apoc3D
 				TextureUsage getUsage() const { return m_usage; }
 				PixelFormat getFormat() const { return m_format; }
 
-				
-				DataRectangle Lock(int32 surface, LockMode mode, CubeMapFace cubemapFace, const Apoc3D::Math::Rectangle& rect);
-				DataRectangle Lock(int32 surface, LockMode mode, CubeMapFace cubemapFace);
-				DataRectangle Lock(int32 surface, LockMode mode, const Apoc3D::Math::Rectangle& rect);
-				/**
-				 *  Locks the whole area on the 2D texture. 
-				 *  The assumption that this is 2D is made when calling this.
-				 */
-				DataRectangle Lock(int32 surface, LockMode mode);
-				DataBox Lock(int32 surface, LockMode mode, const Box& box);
 
-				/**
-				 *  Unlocks the lock part. Works for all types of textures.
-				 */
-				void Unlock(int32 surface);
-				/**
-				 *  Unlocks the cube map face.
-				 */
-				void Unlock(CubeMapFace cubemapFace, int32 surface);
+				RenderDevice* getRenderDevice() const { return m_renderDevice; }
+				const ResourceLocation* getResourceLocation() const { return m_resourceLocation; }
 
-				/**
-				 *  Save the texture as a TextureData into a Stream.
-				 */
-				virtual void Save(Stream* strm) = 0;
 			protected:
 				/**
 				 *  Fill the texture object's properties like width, format,

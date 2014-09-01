@@ -155,25 +155,10 @@ namespace Apoc3D
 				}
 				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
 			}
+
 			DataRectangle Texture::Lock(int surface, LockMode mode)
 			{
-				if (!m_isLocked)
-				{
-					if (m_type == TT_Texture1D || m_type == TT_Texture2D)
-					{
-						if (isManaged() && !isLoaded())
-						{
-							return DataRectangle::Empty;
-						}
-						else
-						{
-							DataRectangle res = lock(surface, mode, Apoc3D::Math::Rectangle(0,0, m_width, m_height));
-							m_isLocked = true;
-							return res;
-						}
-					}
-				}
-				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
+				return Lock(surface, mode, Apoc3D::Math::Rectangle(0, 0, m_width, m_height));
 			}
 			DataRectangle Texture::Lock(int surface, LockMode mode, const Apoc3D::Math::Rectangle& rect)
 			{
@@ -195,25 +180,10 @@ namespace Apoc3D
 				}
 				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
 			}
+
 			DataRectangle Texture::Lock(int surface, LockMode mode, CubeMapFace cubemapFace)
 			{
-				if (!m_isLocked)
-				{
-					if (m_type == TT_CubeTexture)
-					{
-						if (isManaged() && !isLoaded())
-						{
-							return DataRectangle::Empty;
-						}
-						else
-						{
-							DataRectangle res = lock(surface, cubemapFace, mode, Apoc3D::Math::Rectangle(0,0, m_width, m_height));
-							m_isLocked = true;
-							return res;
-						}
-					}
-				}
-				throw AP_EXCEPTION(ExceptID::InvalidOperation, L"Texture is already locked.");
+				return Lock(surface, mode, cubemapFace, Apoc3D::Math::Rectangle(0, 0, m_width, m_height));
 			}
 			DataRectangle Texture::Lock(int surface, LockMode mode, CubeMapFace cubemapFace, const Apoc3D::Math::Rectangle& rect)
 			{

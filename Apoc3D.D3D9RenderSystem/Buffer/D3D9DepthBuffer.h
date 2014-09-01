@@ -38,18 +38,19 @@ namespace Apoc3D
 		{
 			class D3D9DepthBuffer : public DepthBuffer
 			{
-			private:
-				IDirect3DSurface9* m_buffer;
-			protected:
-				virtual void* lock(int offset, int size, LockMode mode);
-				virtual void unlock();
 			public:
-				IDirect3DSurface9* getD3DBuffer() const { return m_buffer; }
-				void setD3DBuffer(IDirect3DSurface9* surface) { m_buffer = surface; }
-
 				D3D9DepthBuffer(D3D9RenderDevice* device, IDirect3DSurface9* buffer);
 				~D3D9DepthBuffer();
 
+				IDirect3DSurface9* getD3DBuffer() const { return m_buffer; }
+				void SetD3DBuffer(IDirect3DSurface9* surface, int32 width, int32 height, DepthFormat fmt);
+
+			protected:
+				virtual void* lock(int offset, int size, LockMode mode) override;
+				virtual void unlock() override;
+
+			private:
+				IDirect3DSurface9* m_buffer;
 			};
 		}
 	}

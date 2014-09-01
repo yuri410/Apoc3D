@@ -38,20 +38,20 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9VertexDeclaration : public VertexDeclaration
+			class D3D9VertexDeclaration final : public VertexDeclaration
 			{
-			private:
-				D3D9RenderDevice* m_device;
-
-				D3DVertexDeclaration* m_vtxDecl;
-
 			public:
-				D3DVertexDeclaration* getD3DDecl() const { return m_vtxDecl; }
-
 				D3D9VertexDeclaration(D3D9RenderDevice* device, const List<VertexElement>& elements);
 				D3D9VertexDeclaration(D3D9RenderDevice* device, D3DVertexDeclaration* vtxdecl);
 
 				~D3D9VertexDeclaration();
+
+				D3DVertexDeclaration* getD3DDecl() const { return m_vtxDecl; }
+
+			private:
+				D3D9RenderDevice* m_device;
+
+				D3DVertexDeclaration* m_vtxDecl;
 
 			};
 		}

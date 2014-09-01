@@ -221,8 +221,7 @@ namespace Apoc3D
 				D3D9Texture** m_textureSlots;
 			};
 
-
-			class D3D9RenderStateManager : public RenderStateManager
+			class D3D9RenderStateManager final : public RenderStateManager
 			{
 			public:
 				D3D9RenderStateManager(D3D9RenderDevice* device, NativeD3DStateManager* nsmgr);

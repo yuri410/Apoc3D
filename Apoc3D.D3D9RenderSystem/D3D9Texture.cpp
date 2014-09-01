@@ -57,8 +57,7 @@ namespace Apoc3D
 				D3D9Utils::GetD3DTextureFormat(tex2D), 
 				D3D9Utils::GetD3DTextureUsage(tex2D)), 
 				VolatileResource(device), 
-				m_renderDevice(device), m_tex2D(tex2D), m_tex3D(NULL), m_cube(NULL),
-				m_tempData(NULL)
+				m_renderDevice(device), m_tex2D(tex2D)
 			{
 
 			}
@@ -71,8 +70,7 @@ namespace Apoc3D
 				D3D9Utils::GetD3DTextureFormat(tex3D), 
 				D3D9Utils::GetD3DTextureUsage(tex3D)), 
 				VolatileResource(device), 
-				m_renderDevice(device), m_tex2D(NULL), m_tex3D(tex3D), m_cube(NULL),
-				m_tempData(NULL)
+				m_renderDevice(device), m_tex3D(tex3D)
 			{
 				
 			}
@@ -85,17 +83,14 @@ namespace Apoc3D
 				D3D9Utils::GetD3DTextureFormat(texCube), 
 				D3D9Utils::GetD3DTextureUsage(texCube)),  
 				VolatileResource(device), 
-				m_renderDevice(device), m_tex2D(NULL), m_tex3D(NULL), m_cube(texCube),
-				m_tempData(NULL)
+				m_renderDevice(device), m_cube(texCube)
 			{
 
 			}
 
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, const ResourceLocation& rl, TextureUsage usage, bool managed)
-				: Texture(device, rl, usage, managed),  
-				VolatileResource(device), 
-				m_renderDevice(device), m_tex2D(NULL), m_tex3D(NULL), m_cube(NULL),
-				m_tempData(NULL)
+				: Texture(device, rl, usage, managed), VolatileResource(device), 
+				m_renderDevice(device)
 			{
 				if (!managed)
 				{
@@ -104,10 +99,8 @@ namespace Apoc3D
 			}
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, int32 width, int32 height, int32 depth, int32 level, 
 				PixelFormat format, TextureUsage usage)
-				: Texture(device, width, height, depth, level, format, usage), 
-				VolatileResource(device), 
-				m_renderDevice(device), m_tex2D(NULL), m_tex3D(NULL), m_cube(NULL),
-				m_tempData(NULL)
+				: Texture(device, width, height, depth, level, format, usage), VolatileResource(device), 
+				m_renderDevice(device)
 			{
 				D3DDevice* dev = device->getDevice();
 
@@ -128,10 +121,8 @@ namespace Apoc3D
 			}
 
 			D3D9Texture::D3D9Texture(D3D9RenderDevice* device, int32 length, int32 level, PixelFormat format, TextureUsage usage)
-				: Texture(device, length, level, usage, format), 
-				VolatileResource(device), 
-				m_renderDevice(device), m_tex2D(NULL), m_tex3D(NULL),
-				m_tempData(NULL)
+				: Texture(device, length, level, usage, format), VolatileResource(device), 
+				m_renderDevice(device)
 			{
 				D3DDevice* dev = device->getDevice();
 
@@ -140,22 +131,23 @@ namespace Apoc3D
 					(usage & TU_Dynamic) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED, &m_cube, NULL);
 				assert(SUCCEEDED(hr));
 			}
+
 			D3D9Texture::~D3D9Texture()
 			{
 				if (m_tex2D)
 				{
 					m_tex2D->Release();
-					m_tex2D = 0;
+					m_tex2D = nullptr;
 				}
 				if (m_tex3D)
 				{
 					m_tex3D->Release();
-					m_tex3D = 0;
+					m_tex3D = nullptr;
 				}
 				if (m_cube)
 				{
 					m_cube->Release();
-					m_cube = 0;
+					m_cube = nullptr;
 				}
 
 
@@ -178,6 +170,7 @@ namespace Apoc3D
 
 				if (mode == LOCK_Discard)
 				{
+					// discard lock must be full region
 					assert(rect.X == 0 && rect.Y == 0 && rect.Width == getWidth() && rect.Height == getHeight());
 
 					HRESULT hr = m_tex2D->LockRect(surface, &rrect, NULL, D3D9Utils::ConvertLockMode(mode));
@@ -189,6 +182,7 @@ namespace Apoc3D
 
 					return result;
 				}
+
 				HRESULT hr = m_tex2D->LockRect(surface, &rrect, &rect0, D3D9Utils::ConvertLockMode(mode));
 				assert(SUCCEEDED(hr));
 				DataRectangle result(rrect.Pitch, rrect.pBits, rect.Width, rect.Height, getFormat());
@@ -713,6 +707,13 @@ namespace Apoc3D
 				}
 			}
 
+			void D3D9Texture::SetInternal2D(D3DTexture2D* tex, int32 newWidth, int32 newHeight, int32 newLevelCount, PixelFormat newFormat)
+			{
+				m_tex2D = tex;
+
+				UpdateProperties(TT_Texture2D, newWidth, newHeight, 1, 
+					newLevelCount, newFormat, D3D9Utils::GetD3DTextureUsage(tex));
+			}
 
 			String D3D9Texture::getResourceLocationName()
 			{

@@ -42,20 +42,20 @@ namespace Apoc3D
 	{
 		namespace D3D9RenderSystem
 		{
-			class D3D9Sprite : public Sprite
+			class D3D9Sprite final : public Sprite
 			{
 			public:
 				D3D9Sprite(D3D9RenderDevice* device);
 				~D3D9Sprite();
 
-				virtual void Begin(SpriteSettings settings);
-				virtual void End();
+				virtual void Begin(SpriteSettings settings) override;
+				virtual void End() override;
 
-				virtual void Draw(Texture* texture, Vector2 pos, uint color);
-				virtual void Draw(Texture* texture, const PointF& pos, uint color);
-				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color);
-				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color);
-				virtual void Draw(Texture* texture, const PointF& pos, float uBias, float vBias, float uScale, float vScale, uint color);
+				virtual void Draw(Texture* texture, Vector2 pos, uint color) override;
+				virtual void Draw(Texture* texture, const PointF& pos, uint color) override;
+				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, const Apoc3D::Math::RectangleF* srcRect, uint color) override;
+				virtual void Draw(Texture* texture, const Apoc3D::Math::RectangleF& dstRect, float uScale, float vScale, float uBias, float vBias, uint color) override;
+				virtual void Draw(Texture* texture, const PointF& pos, float uBias, float vBias, float uScale, float vScale, uint color) override;
 
 				virtual void Flush();
 
