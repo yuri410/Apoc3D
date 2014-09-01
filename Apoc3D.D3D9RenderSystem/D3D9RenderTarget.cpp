@@ -484,8 +484,20 @@ namespace Apoc3D
 				if (m_isLockSurfaceDirty)
 				{
 					D3DDevice* dev = m_device->getDevice();
-					HRESULT hr = dev->GetRenderTargetData(m_colorSurface, m_offscreenPlainSurface);
-					assert(SUCCEEDED(hr));
+
+					if (isMultiSampled())
+					{
+						IDirect3DSurface9* colorSuf;
+						m_color->GetSurfaceLevel(0, &colorSuf);
+						HRESULT hr = dev->GetRenderTargetData(colorSuf, m_offscreenPlainSurface);
+						assert(SUCCEEDED(hr));
+						colorSuf->Release();
+					}
+					else
+					{
+						HRESULT hr = dev->GetRenderTargetData(m_colorSurface, m_offscreenPlainSurface);
+						assert(SUCCEEDED(hr));
+					}
 
 					m_isLockSurfaceDirty = false;
 				}
