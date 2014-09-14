@@ -84,15 +84,25 @@ namespace Apoc3D
 
 		void KeyboardHelper::Update(const GameTime* time)
 		{
-			bool& pasting = m_pasting;
 			Keyboard* kb = InputAPIManager::getSingleton().getKeyboard();
 			if (kb)
 			{
+				bool isShiftDown = kb->IsPressing(KEY_LSHIFT) || kb->IsPressing(KEY_RSHIFT);
+				if (!m_shiftDown && isShiftDown)
+				{
+					eventKeyboardSelectionStart.Invoke();
+				}
+				else if (m_shiftDown && !isShiftDown)
+				{
+					eventKeyboardSelectionEnd.Invoke();
+				}
+				m_shiftDown = isShiftDown;
+
 				if (kb->IsPressing(KEY_LCONTROL) || kb->IsPressing(KEY_RCONTROL))
 				{
 					if (kb->IsKeyDown(KEY_V))
 					{
-						pasting = true;
+						m_pasting = true;
 						if (eventKeyPaste.getCount() > 0)
 						{
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
@@ -153,19 +163,18 @@ namespace Apoc3D
 								dataObj->Release();
 							}
 							
-							//m_ePaste();
 #endif
 						}
 						return;
 					}
 					else if (kb->IsKeyUp(KEY_V))
 					{
-						pasting = false;
+						m_pasting = false;
 					}
 				}
 				else
 				{
-					pasting = false;
+					m_pasting = false;
 				}
 
 				KeyboardEventsArgs eventArg;
@@ -181,14 +190,13 @@ namespace Apoc3D
 #if APOC3D_PLATFORM == APOC3D_PLATFORM_WINDOWS
 				eventArg.CapsLock =  (GetKeyState(VK_CAPITAL) & 0x8001) != 0;
 #endif
-				eventArg.ShiftDown |= kb->IsPressing(KEY_LSHIFT);
-				eventArg.ShiftDown |= kb->IsPressing(KEY_RSHIFT);
+				eventArg.ShiftDown |= m_shiftDown;
 
 				for (KeyboardKeyCode testKey : InputKeys)
 				{
 					if (kb->IsKeyDown(testKey))
 					{
-						if (pasting && testKey == KEY_V)
+						if (m_pasting && testKey == KEY_V)
 						{
 							return;
 						}
@@ -233,19 +241,33 @@ namespace Apoc3D
 
 
 			}
+			else
+			{
+				m_shiftDown = false;
+			}
 		}
 
+		/************************************************************************/
+		/* TextEditState                                                        */
+		/************************************************************************/
 
 		TextEditState::TextEditState(const Point& cursorPos, bool multiline)
 			: m_cursorLocation(cursorPos), m_multiline(multiline)
 		{
 			m_keyboard.eventKeyPress.Bind(this, &TextEditState::Keyboard_OnPress);
 			m_keyboard.eventKeyPaste.Bind(this, &TextEditState::Keyboard_OnPaste);
+
+			m_keyboard.eventKeyboardSelectionStart.Bind(this, &TextEditState::StartSelection);
+			m_keyboard.eventKeyboardSelectionEnd.Bind(this, &TextEditState::EndSelection);
+
 			m_lines.Add(L"");
 		}
 
 		TextEditState::~TextEditState()
 		{
+			m_keyboard.eventKeyboardSelectionStart.Unbind(this, &TextEditState::StartSelection);
+			m_keyboard.eventKeyboardSelectionEnd.Unbind(this, &TextEditState::EndSelection);
+
 			m_keyboard.eventKeyPress.Unbind(this, &TextEditState::Keyboard_OnPress);
 			m_keyboard.eventKeyPaste.Unbind(this, &TextEditState::Keyboard_OnPaste);
 		}
@@ -254,7 +276,7 @@ namespace Apoc3D
 		{
 			m_keyboard.Update(time);
 
-			if (m_multiline && m_cursorLocation.Y >=0 && m_cursorLocation.Y < m_lines.getCount() && 
+			if (m_multiline && m_lines.isIndexInRange(m_cursorLocation.Y) && 
 				m_cursorLocation.X > (int)m_lines[m_cursorLocation.Y].size())
 				m_cursorLocation.X = (int)m_lines[m_cursorLocation.Y].size();
 		}
@@ -406,6 +428,10 @@ namespace Apoc3D
 							}
 						}
 					}
+
+					if (isKeyboardSelecting())
+						SetSelectionEndFromCurrent();
+
 					break;
 				}
 				case KEY_RIGHT:
@@ -452,6 +478,10 @@ namespace Apoc3D
 							}
 						}
 					}
+
+					if (isKeyboardSelecting())
+						SetSelectionEndFromCurrent();
+
 					break;
 				}
 				case KEY_UP:
@@ -459,12 +489,20 @@ namespace Apoc3D
 						eventUpPressedSingleline.Invoke();
 
 					if (previousLine) m_cursorLocation.Y--;
+
+					if (isKeyboardSelecting())
+						SetSelectionEndFromCurrent();
+
 					break;
 				case KEY_DOWN:
 					if (!m_multiline)
 						eventDownPressedSingleline.Invoke();
 
 					if (nextLine) m_cursorLocation.Y++;
+
+					if (isKeyboardSelecting())
+						SetSelectionEndFromCurrent();
+
 					break;
 				case KEY_BACK:
 				{
@@ -890,6 +928,55 @@ namespace Apoc3D
 
 			if (m_cursorLocation.X < 0)
 				m_cursorLocation.X = 0;
+		}
+
+		void TextEditState::StartSelection()
+		{
+			m_selectionStart = m_selectionEnd = m_cursorLocation;
+			m_isSelecting = true;
+		}
+		void TextEditState::EndSelection()
+		{
+			m_isSelecting = false;
+		}
+		void TextEditState::SetSelectionEndFromCurrent()
+		{
+			m_selectionEnd = m_cursorLocation;
+		}
+
+		bool TextEditState::GetLineSelectionRegion(int32 line, int32& start, int32& end)
+		{
+			if (!m_isSelecting)
+				return false;
+
+			Point fixedStart = m_selectionStart.Y < m_selectionEnd.Y ? m_selectionStart : m_selectionEnd;
+			Point fixedEnd = m_selectionStart.Y < m_selectionEnd.Y ? m_selectionEnd : m_selectionStart;
+
+			if (fixedStart.Y == fixedEnd.Y)
+			{
+				start = Math::Min(fixedStart.X, fixedEnd.X);
+				end = Math::Max(fixedStart.X, fixedEnd.X);
+			}
+			else if (line > fixedStart.Y && line < fixedEnd.Y)
+			{
+				start = 0;
+				end = m_lines[line].size();
+			}
+			else if (line == fixedStart.Y)
+			{
+				start = m_selectionStart.X;
+				end = m_lines[line].size();
+			}
+			else if (line == fixedEnd.Y)
+			{
+				start = 0;
+				end = fixedEnd.X;
+			}
+			else
+			{
+				return false;
+			}
+			return true;
 		}
 
 		void TextEditState::SetText(const String& text)

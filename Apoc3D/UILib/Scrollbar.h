@@ -32,28 +32,6 @@ namespace Apoc3D
 {
 	namespace UI
 	{
-		struct ScrollBarVisualSettings
-		{
-			bool HasBackgroundGraphic = false;
-			bool HasHandleGraphic = false;
-			bool HasDisabledBackgroundGraphic = false;
-			bool HasDisabledHandleGraphic = false;
-			bool HasBorderPadding = false;
-			bool HasHandlePadding = false;
-
-			UIGraphic BackgroundGraphic;
-			UIGraphic HandleGraphic;
-			UIGraphic DisabledBackgroundGraphic;
-			UIGraphic DisabledHandleGraphic;
-
-			ButtonVisualSettings DecrButton;
-			ButtonVisualSettings IncrButton;
-
-			ControlBounds BorderPadding;
-			ControlBounds HandlePadding;
-
-		};
-
 		class APAPI ScrollBar : public Control
 		{
 			RTTI_DERIVED(ScrollBar, Control);
@@ -118,16 +96,12 @@ namespace Apoc3D
 			ScrollBarType m_type;
 
 			int32 m_value = 0;
-			//int32 m_length;
-
-			Button* m_decrButton;
-			Button* m_incrButton;
-
 			
+			Button* m_decrButton = nullptr;
+			Button* m_incrButton = nullptr;
+
 			Apoc3D::Math::Rectangle m_mouseHoverArea;
 
-
-			//int32 m_disabledAlpha;
 		};
 
 	

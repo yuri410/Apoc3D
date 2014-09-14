@@ -161,10 +161,17 @@ namespace Apoc3D
 
 			ControlBounds TextPadding;
 
-			Point GetTextOffset(const String& text, Font* font, const Point& size) const;
-
 			void Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, int32 alpha) const;
 			void Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, int32 alpha) const;
+
+			void DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Point& pos, const Point& size, ColorValue bgcv) const;
+			void DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Apoc3D::Math::Rectangle& area, ColorValue bgcv) const;
+
+			//void Draw(Sprite* sprite, Font* font, const List<String>& lines, const Point& pos, const Point& size, int32 alpha) const;
+			//void Draw(Sprite* sprite, Font* font, const List<String>& lines, const Apoc3D::Math::Rectangle& area, int32 alpha) const;
+		private:
+			Point GetTextOffset(const Point& textSize, const Point& areaSize) const;
+			Point GetTextOffset(Font* font, const String& text, const Point& size) const;
 		};
 
 		struct ButtonVisualSettings
@@ -185,6 +192,28 @@ namespace Apoc3D
 
 			UIGraphicSimple OverlayIcon;
 			ControlBounds ContentPadding;
+		};
+
+		struct ScrollBarVisualSettings
+		{
+			bool HasBackgroundGraphic = false;
+			bool HasHandleGraphic = false;
+			bool HasDisabledBackgroundGraphic = false;
+			bool HasDisabledHandleGraphic = false;
+			bool HasBorderPadding = false;
+			bool HasHandlePadding = false;
+
+			UIGraphic BackgroundGraphic;
+			UIGraphic HandleGraphic;
+			UIGraphic DisabledBackgroundGraphic;
+			UIGraphic DisabledHandleGraphic;
+
+			ButtonVisualSettings DecrButton;
+			ButtonVisualSettings IncrButton;
+
+			ControlBounds BorderPadding;
+			ControlBounds HandlePadding;
+
 		};
 
 

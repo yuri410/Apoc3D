@@ -174,6 +174,7 @@ namespace Apoc3D
 			if (m_value > Maximum)
 				m_value = Maximum;
 			
+			UpdateButtonPosition();
 
 			if (!Enabled || !Visible)
 				return;
@@ -242,15 +243,14 @@ namespace Apoc3D
 				m_decrButton->Enabled = false;
 				m_incrButton->Enabled = false;
 			}
-			UpdateButtonPosition();
 		}
 		void ScrollBar::UpdateButtonPosition()
 		{
 			Point decrButtonOffset(BorderPadding.Left, BorderPadding.Top);
 			Point incrButtonOffset(BorderPadding.Left, BorderPadding.Bottom);
 
-			m_decrButton->Position = Position + decrButtonOffset;// Point(1, 1);
-			m_incrButton->Position = Position + incrButtonOffset;// +Point(1, -1);
+			m_decrButton->Position = Position + decrButtonOffset;
+			m_incrButton->Position = Position + incrButtonOffset;
 
 			m_decrButton->BaseOffset = m_incrButton->BaseOffset = BaseOffset;
 
@@ -262,7 +262,6 @@ namespace Apoc3D
 			{
 				m_incrButton->Position.X += m_size.X - m_incrButton->getSize().X;
 			}
-			//m_incrButton->Position.Y += Height - m_incrButton->getSize().Y;
 		}
 
 		int32 ScrollBar::GetScrollableLength() const

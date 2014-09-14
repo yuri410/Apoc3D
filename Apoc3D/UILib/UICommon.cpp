@@ -253,39 +253,8 @@ namespace Apoc3D
 		/************************************************************************/
 		/* TextRenderSettings                                                   */
 		/************************************************************************/
-		Point TextRenderSettings::GetTextOffset(const String& text, Font* font, const Point& size) const
-		{
-			Point textSize = font->MeasureString(text);
+		
 
-			Point textPos;
-			if (HorizontalAlignment == TextHAlign::Left)
-			{
-				textPos.X = 0;
-			}
-			else if (HorizontalAlignment == TextHAlign::Right)
-			{
-				textPos.X = size.X - textSize.X;
-			}
-			else
-			{
-				textPos.X = (size.X - textSize.X) / 2;
-			}
-
-			if (VerticalAlignment == TextVAlign::Top)
-			{
-				textPos.Y = 0;
-			}
-			else if (VerticalAlignment == TextVAlign::Bottom)
-			{
-				textPos.Y = size.Y - textSize.Y;
-			}
-			else
-			{
-				textPos.Y = (size.Y - textSize.Y) / 2;
-			}
-
-			return textPos;
-		}
 
 		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Apoc3D::Math::Rectangle& area, int32 alpha) const
 		{
@@ -298,7 +267,7 @@ namespace Apoc3D
 			Point size = modArea.getSize();
 
 			// x dir alignment
-			Point textPos = pos + GetTextOffset(text, font, size);
+			Point textPos = pos + GetTextOffset(font, text, size);
 
 			if (HasTextShadow)
 			{
@@ -313,6 +282,68 @@ namespace Apoc3D
 		void TextRenderSettings::Draw(Sprite* sprite, Font* font, const String& text, const Point& pos, const Point& size, int32 alpha) const
 		{
 			Draw(sprite, font, text, Apoc3D::Math::Rectangle(pos, size), alpha);
+		}
+
+		void TextRenderSettings::DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Apoc3D::Math::Rectangle& area, ColorValue bgcv) const
+		{
+			Apoc3D::Math::Rectangle modArea = TextPadding.ShrinkRect(area);
+
+			Point pos = modArea.getTopLeft(); 
+			Point size = modArea.getSize();
+
+			Point textSize = font->MeasureString(text);
+			Point textPos = pos + GetTextOffset(textSize, size);
+
+			int32 preX = selStart > 0 ? font->MeasureString(text.substr(0, selStart)).X : 0;
+			int32 postX = selEnd < text.size() ? font->MeasureString(text.substr(0, selEnd)).X : textSize.X;
+
+			Point bgSize;
+			bgSize.X = postX - preX;
+			bgSize.Y = textSize.Y;
+
+			textPos.X += preX;
+
+			sprite->Draw(SystemUI::GetWhitePixel(), Apoc3D::Math::Rectangle(textPos, bgSize), bgcv);
+		}
+		void TextRenderSettings::DrawBG(Sprite* sprite, Font* font, const String& text, int32 selStart, int32 selEnd, const Point& pos, const Point& size, ColorValue bgcv) const
+		{
+			DrawBG(sprite, font, text, selStart, selEnd, Apoc3D::Math::Rectangle(pos, size), bgcv);
+		}
+
+		Point TextRenderSettings::GetTextOffset(Font* font, const String& text, const Point& areaSize) const
+		{
+			Point textSize = font->MeasureString(text);
+			return GetTextOffset(textSize, areaSize);
+		}
+		Point TextRenderSettings::GetTextOffset(const Point& textSize, const Point& areaSize) const
+		{
+			Point textOffset;
+			if (HorizontalAlignment == TextHAlign::Left)
+			{
+				textOffset.X = 0;
+			}
+			else if (HorizontalAlignment == TextHAlign::Right)
+			{
+				textOffset.X = areaSize.X - textSize.X;
+			}
+			else
+			{
+				textOffset.X = (areaSize.X - textSize.X) / 2;
+			}
+
+			if (VerticalAlignment == TextVAlign::Top)
+			{
+				textOffset.Y = 0;
+			}
+			else if (VerticalAlignment == TextVAlign::Bottom)
+			{
+				textOffset.Y = areaSize.Y - textSize.Y;
+			}
+			else
+			{
+				textOffset.Y = (areaSize.Y - textSize.Y) / 2;
+			}
+			return textOffset;
 		}
 
 		/************************************************************************/

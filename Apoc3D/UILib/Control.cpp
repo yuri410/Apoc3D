@@ -192,6 +192,19 @@ namespace Apoc3D
 			}*/
 		}
 
+		void ScrollableControl::InitScrollBars(const ScrollBarVisualSettings& hss, const ScrollBarVisualSettings& vss)
+		{
+			DELETE_AND_NULL(m_vscrollbar);
+			DELETE_AND_NULL(m_hscrollbar);
+
+			GUIUtils::ScrollBarPositioning hs = hss.BackgroundGraphic.getHeight();
+			GUIUtils::ScrollBarPositioning vs = vss.BackgroundGraphic.getWidth();
+
+			GUIUtils::CalculateScrollBarPositions(getArea(), &vs, &hs);
+			m_hscrollbar = new ScrollBar(hss, hs.Position, ScrollBar::SCRBAR_Horizontal, hs.Length);
+			m_vscrollbar = new ScrollBar(vss, vs.Position, ScrollBar::SCRBAR_Vertical, vs.Length);
+		}
+
 		void ScrollableControl::UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area)
 		{
 			if (m_hscrollbar)

@@ -141,6 +141,8 @@ namespace Apoc3D
 			virtual ~ScrollableControl();
 
 			void InitScrollbars(const StyleSkin* skin);
+			void InitScrollBars(const ScrollBarVisualSettings& hss, const ScrollBarVisualSettings& vss);
+
 			void UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area);
 			void UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const GameTime* time);
 			void DrawScrollBars(Sprite* sprite);

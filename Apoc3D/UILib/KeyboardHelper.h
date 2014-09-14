@@ -57,23 +57,26 @@ namespace Apoc3D
 		class APAPI KeyboardHelper
 		{
 		public:
-			KeyboardHelper()
-				: m_pasting(false), m_pressingTime(0), m_timerStarted(false), m_currentKey(KEY_UNASSIGNED), m_previousKey(KEY_UNASSIGNED)
-			{ }
+			KeyboardHelper() { }
 
 			void Update(const GameTime* time);
+
+			bool isShiftDown() const { return m_shiftDown; }
 
 			KeyboardEventHandler eventKeyPress;
 			KeyboardEventHandler eventKeyRelease;
 			PasteEventHandler eventKeyPaste;
 
+			EventDelegate0 eventKeyboardSelectionStart;
+			EventDelegate0 eventKeyboardSelectionEnd;
 		private:
-			KeyboardKeyCode m_currentKey;
-			KeyboardKeyCode m_previousKey;
-			bool m_pasting;
+			KeyboardKeyCode m_currentKey = KEY_UNASSIGNED;
+			KeyboardKeyCode m_previousKey = KEY_UNASSIGNED;
+			bool m_pasting = false;
+			bool m_shiftDown = false;
 
-			bool m_timerStarted;
-			float m_pressingTime;
+			bool m_timerStarted = false;
+			float m_pressingTime = 0;
 		};
 
 		class APAPI TextEditState
@@ -85,6 +88,7 @@ namespace Apoc3D
 			void Update(const GameTime* time);
 
 			void Add(const String& text);
+			bool GetLineSelectionRegion(int32 line, int32& start, int32& end);
 
 			void SetText(const String& text);
 			const String& getText() const { return m_text; }
@@ -97,6 +101,12 @@ namespace Apoc3D
 			void MoveCursorToEnd();
 			void MoveCursorTo(const Point& cp);
 
+			void StartSelection();
+			void EndSelection();
+			void SetSelectionEndFromCurrent();
+			bool isSelecting() const { return m_isSelecting; }
+			
+			
 			KeyboardEventHandler& eventKeyPress() { return m_keyboard.eventKeyPress; }
 			KeyboardEventHandler& eventKeyRelease() { return m_keyboard.eventKeyRelease; }
 			PasteEventHandler& eventKeyPaste() { return m_keyboard.eventKeyPaste; }
@@ -110,6 +120,8 @@ namespace Apoc3D
 			EventDelegate0 eventDownPressedSingleline;
 
 		private:
+			bool isKeyboardSelecting() const { return m_keyboard.isShiftDown(); }
+
 			void Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e);
 			void Keyboard_OnPaste(String value);
 
@@ -120,9 +132,8 @@ namespace Apoc3D
 
 			Point m_cursorLocation;
 			bool m_multiline = false;
-			bool m_isDraggingSelecting = false;
-
-			bool m_hasSelection = false;
+			
+			bool m_isSelecting = false;
 			Point m_selectionStart;
 			Point m_selectionEnd;
 

@@ -320,10 +320,8 @@ namespace Apoc3D
 			Apoc3D::Math::Rectangle textArea = GetTextArea();
 			if (textArea.Contains(mouse->GetPosition()))
 			{
-				if (mouse->IsLeftPressed())
+				if (mouse->IsLeftPressedState())
 				{
-					//m_isDraggingSelecting = true;
-
 					Point mp = mouse->GetPosition() + m_scrollOffset;
 
 					int32 lineIndex = (mp.Y - textArea.Y) / m_fontRef->getLineHeightInt();
@@ -335,12 +333,20 @@ namespace Apoc3D
 
 					m_cursorVisible = true;
 					m_timer = 0.5f;
-					//m_textSelectionStart = m_textEdit.getCursorPosition();
+
+					if (mouse->IsLeftPressed())// && !m_textEdit.isKeyboardSelecting())
+					{
+						m_textEdit.StartSelection();
+					}
+					else if (m_textEdit.isSelecting())
+					{
+						m_textEdit.SetSelectionEndFromCurrent();
+					}
 				}
-				/*else if (m_isDraggingSelecting && mouse->IsLeftUp())
+				else if (m_textEdit.isSelecting() && mouse->IsLeftUp())
 				{
-					m_isDraggingSelecting = false;
-				}*/
+					m_textEdit.EndSelection();
+				}
 			}
 
 			if (m_multiline)
@@ -465,6 +471,12 @@ namespace Apoc3D
 				//Point pos(m_textOffset.X - m_scrollOffset.X, m_textOffset.Y - m_scrollOffset.Y);
 				//m_fontRef->DrawString(sprite, text, m_textOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
 
+				int32 lss, lse;
+				if (m_textEdit.GetLineSelectionRegion(0, lss, lse))
+				{
+					TextSettings.DrawBG(sprite, m_fontRef, text, lss, lse, contentArea.getTopLeft() - m_scrollOffset, contentArea.getSize(), CV_LightBlue);
+				}
+				
 				TextSettings.Draw(sprite, m_fontRef, text, contentArea.getTopLeft() - m_scrollOffset, contentArea.getSize(), 0xff);
 
 				if (HasFocus && !ReadOnly && m_cursorVisible && ParentFocused)//getOwner() == UIRoot::getTopMostForm())
