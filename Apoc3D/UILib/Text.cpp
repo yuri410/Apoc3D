@@ -491,11 +491,19 @@ namespace Apoc3D
 
 				Point lineOffset = Point(0, 0);
 				int maxWidth = 0;
-				for (const String& line : lines)
+				for (int32 i = 0; i < lines.getCount(); i++)
 				{
+					const String& line = lines[i];
+
+					int32 lss, lse;
+					if (m_textEdit.GetLineSelectionRegion(i, lss, lse))
+					{
+						TextSettings.DrawBG(sprite, m_fontRef, line, lss, lse, lineOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), CV_LightBlue);
+					}
+
 					TextSettings.Draw(sprite, m_fontRef, line, lineOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), 0xff);
 					//m_fontRef->DrawString(sprite, line, m_textOffset + m_lineOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
-					
+
 					lineOffset.Y += m_fontRef->getLineHeightInt();
 				}
 

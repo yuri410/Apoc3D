@@ -949,10 +949,21 @@ namespace Apoc3D
 			if (!m_isSelecting)
 				return false;
 
-			Point fixedStart = m_selectionStart.Y < m_selectionEnd.Y ? m_selectionStart : m_selectionEnd;
-			Point fixedEnd = m_selectionStart.Y < m_selectionEnd.Y ? m_selectionEnd : m_selectionStart;
+			Point fixedStart;
+			Point fixedEnd;
 
-			if (fixedStart.Y == fixedEnd.Y)
+			if (m_selectionStart.Y < m_selectionEnd.Y)
+			{
+				fixedStart = m_selectionStart;
+				fixedEnd = m_selectionEnd;
+			}
+			else
+			{
+				fixedStart = m_selectionEnd;
+				fixedEnd = m_selectionStart;
+			}
+
+			if (fixedStart.Y == fixedEnd.Y && line == fixedStart.Y)
 			{
 				start = Math::Min(fixedStart.X, fixedEnd.X);
 				end = Math::Max(fixedStart.X, fixedEnd.X);
@@ -964,7 +975,7 @@ namespace Apoc3D
 			}
 			else if (line == fixedStart.Y)
 			{
-				start = m_selectionStart.X;
+				start = fixedStart.X;
 				end = m_lines[line].size();
 			}
 			else if (line == fixedEnd.Y)
