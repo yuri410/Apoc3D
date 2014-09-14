@@ -121,11 +121,14 @@ namespace Apoc3D
 			RTTI_DERIVED(ScrollableControl, Control);
 		public:
 
-			bool hasHorizontalScrollbar() const { return m_hscrollbar != nullptr; }
-			void UseHorizontalScrollbar(bool v);
-
 			Apoc3D::Math::Rectangle GetContentArea() const;
 
+			void EnableAllScrollBars() { EnableHScrollBar = EnableVScrollBar = true; }
+
+			bool EnableVScrollBar = false;
+			bool EnableHScrollBar = false;
+
+			
 		protected:
 			ScrollableControl();
 			ScrollableControl(const Point& position);
@@ -137,7 +140,7 @@ namespace Apoc3D
 
 			virtual ~ScrollableControl();
 
-			void InitScrollbars(const StyleSkin* skin, bool initBoth);
+			void InitScrollbars(const StyleSkin* skin);
 			void UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area);
 			void UpdateScrollBarsGeneric(const Apoc3D::Math::Rectangle& area, const GameTime* time);
 			void DrawScrollBars(Sprite* sprite);

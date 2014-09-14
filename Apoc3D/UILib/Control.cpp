@@ -167,7 +167,7 @@ namespace Apoc3D
 			DELETE_AND_NULL(m_hscrollbar);
 		}
 
-		void ScrollableControl::InitScrollbars(const StyleSkin* skin, bool initBoth)
+		void ScrollableControl::InitScrollbars(const StyleSkin* skin)
 		{
 			DELETE_AND_NULL(m_vscrollbar);
 			DELETE_AND_NULL(m_hscrollbar);
@@ -177,23 +177,29 @@ namespace Apoc3D
 
 			GUIUtils::CalculateScrollBarPositions(getArea(), &vs, &hs);
 			m_hscrollbar = new ScrollBar(skin, hs.Position, ScrollBar::SCRBAR_Horizontal, hs.Length);
+			m_vscrollbar = new ScrollBar(skin, vs.Position, ScrollBar::SCRBAR_Vertical, vs.Length);
 
-			if (initBoth)
+			/*m_hscrollbar->Visible = useHS;
+			m_vscrollbar->Visible = useVS;
+
+			if (useHS && !useVS)
 			{
-				m_vscrollbar = new ScrollBar(skin, vs.Position, ScrollBar::SCRBAR_Vertical, vs.Length);
+				m_hscrollbar->SetLength(hs.Length + vs.Width);
 			}
-			else
+			else if (useVS && !useHS)
 			{
-				m_hscrollbar->Visible = false;
-
-				GUIUtils::CalculateScrollBarPositions(getArea(), &vs, nullptr);
-
-				m_vscrollbar = new ScrollBar(skin, vs.Position, ScrollBar::SCRBAR_Vertical, vs.Length);
-			}
+				m_vscrollbar->SetLength(vs.Length + hs.Width);
+			}*/
 		}
 
 		void ScrollableControl::UpdateScrollBarsLength(const Apoc3D::Math::Rectangle& area)
 		{
+			if (m_hscrollbar)
+				m_hscrollbar->Visible = EnableHScrollBar && (m_alwaysShowHS || m_hscrollbar->Maximum > 0);
+
+			if (m_vscrollbar)
+				m_vscrollbar->Visible = EnableVScrollBar && (m_alwaysShowVS || m_vscrollbar->Maximum > 0);
+
 			bool hasVSB = m_vscrollbar && m_vscrollbar->Visible;
 			bool hasHSB = m_hscrollbar && m_hscrollbar->Visible;
 
@@ -236,33 +242,23 @@ namespace Apoc3D
 
 		void ScrollableControl::DrawScrollBars(Sprite* sprite)
 		{
-			if (m_alwaysShowHS || m_hscrollbar->Maximum > 0)
-			{
-				if (m_alwaysShowHS && !m_hscrollbar->Visible)
-					m_hscrollbar->Visible = true;
-
+			if (m_hscrollbar && m_hscrollbar->Visible)
 				m_hscrollbar->Draw(sprite);
-			}
 
-			if (m_alwaysShowVS || m_vscrollbar->Maximum > 0)
-			{
-				if (m_alwaysShowVS && !m_vscrollbar->Visible)
-					m_vscrollbar->Visible = true;
-
+			if (m_vscrollbar && m_vscrollbar->Visible)
 				m_vscrollbar->Draw(sprite);
-			}
 		}
 
 		Apoc3D::Math::Rectangle ScrollableControl::GetContentArea() const
 		{
 			Apoc3D::Math::Rectangle rect = getAbsoluteArea();
 
-			if (m_alwaysShowVS || (m_vscrollbar->Visible && m_vscrollbar->Maximum > 0))
+			if (m_vscrollbar && (m_alwaysShowVS || (m_vscrollbar->Visible && m_vscrollbar->Maximum > 0)))
 			{
 				rect.Width -= m_vscrollbar->getWidth();
 			}
 
-			if (m_alwaysShowHS || (m_hscrollbar->Visible && m_hscrollbar->Maximum > 0))
+			if (m_hscrollbar && (m_alwaysShowHS || (m_hscrollbar->Visible && m_hscrollbar->Maximum > 0)))
 			{
 				rect.Height -= m_hscrollbar->getHeight();
 			}
@@ -270,17 +266,7 @@ namespace Apoc3D
 			return rect;
 		}
 
-		void ScrollableControl::UseHorizontalScrollbar(bool v)
-		{
-			if (v)
-			{
-				m_hscrollbar->Visible = true;
-			}
-			else
-			{
-				m_hscrollbar->Visible = false;
-			}
-		}
+
 		/************************************************************************/
 		/* ControlCollection                                                    */
 		/************************************************************************/

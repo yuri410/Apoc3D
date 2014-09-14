@@ -64,19 +64,11 @@ namespace Apoc3D
 			
 		};
 
-		class APAPI TextBox : public Control
+		class APAPI TextBox : public ScrollableControl
 		{
-			RTTI_DERIVED(TextBox, Control);
+			RTTI_DERIVED(TextBox, ScrollableControl);
 		public:
 			typedef EventDelegate1<TextBox*> TextBoxEvent;
-
-			enum ScrollBarType
-			{
-				SBT_None,
-				SBT_Horizontal,
-				SBT_Vertical,
-				SBT_Both
-			};
 
 			TextBox(const StyleSkin* skin, const Point& position, int width);
 			TextBox(const StyleSkin* skin, const Point& position, int width, const String& text);
@@ -94,13 +86,8 @@ namespace Apoc3D
 			void setWidth(int w) { m_size.X = w; }
 			void setHeight(int h) { m_size.Y = h; }
 
-			bool getHasFocus() const { return m_hasFocus; }
-			void setHasFocus(bool value) { m_hasFocus = value; }
-			bool getLocked() const { return m_readOnly; }
-			void setLocked(bool value) { m_readOnly = value; }
-			ScrollBarType getScrollbarType() const { return m_scrollBar; }
-			void setScrollbarType(ScrollBarType barType) { m_scrollBar = barType; }
-
+			bool ReadOnly = false;
+			bool HasFocus = false;
 
 			TextRenderSettings TextSettings;
 
@@ -118,7 +105,7 @@ namespace Apoc3D
 		private:
 			void Initialize(const StyleSkin* skin);
 
-			void InitScrollbars(const StyleSkin* skin);
+			//void InitScrollbars(const StyleSkin* skin);
 
 			void Add(const String& text);
 			void Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e);
@@ -130,7 +117,7 @@ namespace Apoc3D
 
 			void CheckFocus();
 
-			void UpdateScrolling();
+			void CursorScrolling();
 			void _DrawText(Sprite* sprite);
 			void DrawMonoline(Sprite* sprite);
 			void DrawMultiline(Sprite* sprite);
@@ -145,29 +132,14 @@ namespace Apoc3D
 
 			Point m_cursorOffset;
 			Point m_scrollOffset;
-			Point m_textSelectionStart;
 
-			bool m_readOnly = false;
-			bool m_hasFocus = false;
-
-			bool m_isDraggingSelecting = false;
-
-			bool m_multiline = false;
 			int m_visibleLines = 0;
-
-
-			//Apoc3D::Math::Rectangle m_dstRect;
-			//Apoc3D::Math::Rectangle m_sRect;
-
-			ScrollBar* m_vscrollBar = nullptr;
-			ScrollBar* m_hscrollBar = nullptr;
-			ScrollBarType m_scrollBar = SBT_None;
+			bool m_multiline = false;
 
 			bool m_cursorVisible = false;
 			bool m_timerStarted = false;
 			float m_timer = 0.5f;
-			Apoc3D::Math::Rectangle m_focusArea;
-
+			
 		};
 	}
 }

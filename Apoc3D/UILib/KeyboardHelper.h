@@ -115,17 +115,18 @@ namespace Apoc3D
 
 			KeyboardHelper m_keyboard;
 
-
 			String m_text;
 			Collections::List<String> m_lines;	// used for multiline editing
 
 			Point m_cursorLocation;
 			bool m_multiline = false;
+			bool m_isDraggingSelecting = false;
 
 			bool m_hasSelection = false;
 			Point m_selectionStart;
 			Point m_selectionEnd;
 
+			Point m_textSelectionStart;
 		};
 	}
 }

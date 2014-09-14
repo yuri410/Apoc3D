@@ -594,7 +594,7 @@ namespace APDesigner
 	/************************************************************************/
 
 	ColorField::ColorField(const StyleSkin* skin, const Point& position, const String& text, ColorValue defaultColor)
-		: Control(skin, position),  m_color(defaultColor)
+		: Control(skin, position),  m_color(defaultColor), m_skin(skin)
 	{
 		Initialize(skin);
 

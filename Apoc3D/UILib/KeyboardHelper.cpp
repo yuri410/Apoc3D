@@ -291,8 +291,6 @@ namespace Apoc3D
 							}
 						}
 
-						//wchar_t tab = '\t';
-						//lines[i] = m_lines[i].replace()
 						if (i == 0)
 						{
 							if (m_lines.getCount() == 0)
@@ -301,11 +299,11 @@ namespace Apoc3D
 							if (m_cursorLocation.X > (int)m_lines[m_cursorLocation.Y].size())
 								m_cursorLocation.X = (int)m_lines[m_cursorLocation.Y].size();
 
-							m_lines[m_cursorLocation.Y] = m_lines[m_cursorLocation.Y].insert(m_cursorLocation.X, newText);
+							m_lines[m_cursorLocation.Y] = m_lines[m_cursorLocation.Y].insert(m_cursorLocation.X, line);
 						}
 						else
 						{
-							m_lines.Insert(m_cursorLocation.Y + i, lines[i]);
+							m_lines.Insert(m_cursorLocation.Y + i, line);
 						}
 					}
 				}

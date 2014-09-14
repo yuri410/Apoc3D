@@ -259,7 +259,7 @@ namespace APDesigner
 
 		{
 			TreeView* treeview = new TreeView(m_skin, Point(5, 25), 200, 300);
-			treeview->UseHorizontalScrollbar(true);
+			treeview->EnableHScrollBar = true;
 
 			TreeViewNode* node1 = new TreeViewNode(L"No project opened");
 			treeview->getNodes().Add(node1);
@@ -269,7 +269,7 @@ namespace APDesigner
 			m_resourceView->eventSelectionChanged.Bind(this, &ResourcePane::TreeView_SelectionChanged);
 		}
 
-		m_infoDisplay = new Label(m_skin, Point(5,355),L"",1);
+		m_infoDisplay = new Label(m_skin, Point(5, 355), L"");
 		m_form->getControls().Add(m_infoDisplay);
 
 		m_addItem = new Button(m_skin, Point(5,325),L"Add...");

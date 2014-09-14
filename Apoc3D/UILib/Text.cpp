@@ -70,6 +70,9 @@ namespace Apoc3D
 		{
 			if (skin)
 				TextSettings.TextColor = skin->TextColor;
+			
+			TextSettings.HorizontalAlignment = TextHAlign::Left;
+			TextSettings.VerticalAlignment = TextVAlign::Top;
 
 			UpdateText();
 		}
@@ -177,13 +180,13 @@ namespace Apoc3D
 		/************************************************************************/
 
 		TextBox::TextBox(const StyleSkin* skin, const Point& position, int width)
-			: Control(skin, position), m_textEdit(Point(0,0), false)
+			: ScrollableControl(skin, position), m_textEdit(Point(0,0), false)
 		{
 			m_size.X = width;
 			Initialize(skin);
 		}
 		TextBox::TextBox(const StyleSkin* skin, const Point& position, int width, const String& text)
-			: Control(skin, position), m_textEdit(Point(0,0), false)
+			: ScrollableControl(skin, position), m_textEdit(Point(0,0), false)
 		{
 			m_size.X = width;
 			Add(text);
@@ -191,7 +194,7 @@ namespace Apoc3D
 			Initialize(skin);
 		}
 		TextBox::TextBox(const StyleSkin* skin, const Point& position, int width, int height, const String& text)
-			: Control(skin, position, Point(width, height)), m_multiline(true), m_textEdit(Point(0,0), true)
+			: ScrollableControl(skin, position, Point(width, height)), m_multiline(true), m_textEdit(Point(0,0), true)
 		{
 			m_size.X = width;
 			Add(text);
@@ -200,18 +203,16 @@ namespace Apoc3D
 		}
 		TextBox::~TextBox()
 		{
-			DELETE_AND_NULL(m_vscrollBar);
-			DELETE_AND_NULL(m_hscrollBar);
 		}
 
 		void TextBox::Add(const String& text)
 		{
 			m_textEdit.Add(text);
 
-			UpdateScrolling();
+			CursorScrolling();
 		}
 
-		void TextBox::UpdateScrolling()
+		void TextBox::CursorScrolling()
 		{
 			Point cursorPos = m_textEdit.getCursorPosition();
 
@@ -227,13 +228,13 @@ namespace Apoc3D
 
 			if (m_multiline)
 			{
-				if (m_hscrollBar)
-					m_hscrollBar->SetValue(m_scrollOffset.X);
+				if (m_hscrollbar)
+					m_hscrollbar->SetValue(m_scrollOffset.X);
 
 				if (m_fontRef)
 				{
 					int offsetY = m_scrollOffset.Y / m_fontRef->getLineHeightInt();
-					if (m_hscrollBar && m_hscrollBar->Maximum > 0)
+					if (m_hscrollbar && m_hscrollbar->Maximum > 0)
 					{
 						if (cursorPos.Y > offsetY + m_visibleLines - 2)
 							m_scrollOffset.Y = (cursorPos.Y - (m_visibleLines - 2)) * m_fontRef->getLineHeightInt();
@@ -248,8 +249,8 @@ namespace Apoc3D
 							m_scrollOffset.Y = cursorPos.Y * m_fontRef->getLineHeightInt();
 					}
 
-					if (m_vscrollBar)
-						m_vscrollBar->SetValue(m_scrollOffset.Y / m_fontRef->getLineHeightInt());
+					if (m_vscrollbar)
+						m_vscrollbar->SetValue(m_scrollOffset.Y / m_fontRef->getLineHeightInt());
 				}
 
 			}
@@ -257,6 +258,8 @@ namespace Apoc3D
 
 		void TextBox::Initialize(const StyleSkin* skin)
 		{
+			m_alwaysShowVS = m_multiline;
+
 			Magin = m_multiline ? skin->TextBoxExMargin : skin->TextBoxMargin;
 
 			if (!m_multiline)
@@ -282,11 +285,10 @@ namespace Apoc3D
 			TextSettings.HorizontalAlignment = TextHAlign::Left;
 			TextSettings.TextColor = skin->TextColor;
 
+			TextSettings.VerticalAlignment = m_multiline ? TextVAlign::Top : TextVAlign::Middle;
+
 			ContentPadding = skin->TextBoxPadding;
-			//m_dstRect = Apoc3D::Math::Rectangle(Position, m_size);
-
-			//m_textOffset = Point(5, static_cast<int>((skin->TextBox[0].Height - m_fontRef->getLineBackgroundHeight()) / 2));
-
+			
 			m_textEdit.eventKeyPress().Bind(this, &TextBox::Keyboard_OnPress);
 			m_textEdit.eventKeyPaste().Bind(this, &TextBox::Keyboard_OnPaste);
 			m_textEdit.eventEnterPressed.Bind(this, &TextBox::TextEditState_EnterPressed);
@@ -294,68 +296,22 @@ namespace Apoc3D
 			m_textEdit.eventUpPressedSingleline.Bind(this, &TextBox::TextEditState_UpPressedSingleline);
 			m_textEdit.eventDownPressedSingleline.Bind(this, &TextBox::TextEditState_DownPressedSingleline);
 
-			if (m_multiline && m_scrollBar != SBT_None)
+			if (m_multiline)
 			{
 				InitScrollbars(skin);
 			}
 			m_timerStarted = true;
 		}
 
-		void TextBox::InitScrollbars(const StyleSkin* skin)
-		{
-			//Apoc3D::Math::Rectangle area = getAbsoluteArea();
-
-			if (m_scrollBar == SBT_Vertical)
-			{
-				Point pos = Position;
-				pos.X += m_size.X;
-				//pos.Y++;
-				m_vscrollBar = new ScrollBar(skin, pos, ScrollBar::SCRBAR_Vertical, m_size.Y);
-			}
-			else if (m_scrollBar == SBT_Horizontal)
-			{
-				Point pos = Position;
-				//pos.X++;
-				pos.Y += m_size.Y;// -2;
-				m_hscrollBar = new ScrollBar(skin, pos, ScrollBar::SCRBAR_Horizontal, m_size.X);
-			}
-			else if (m_scrollBar == SBT_Both)
-			{
-				Point pos = Position;
-				pos.X += m_size.X - skin->HScrollBarBG.Height;
-				//pos.Y++;
-
-				m_vscrollBar = new ScrollBar(skin, pos, ScrollBar::SCRBAR_Vertical, m_size.Y - skin->HScrollBarBG.Height);
-
-				pos = Position;
-				//pos.X++;
-				pos.Y += m_size.Y - skin->VScrollBarBG.Width;
-				m_hscrollBar = new ScrollBar(skin, pos, ScrollBar::SCRBAR_Horizontal, m_size.X - skin->VScrollBarBG.Width);
-			}
-
-			if (m_vscrollBar)
-			{
-				//m_vscrollBar->SetSkin(m_skin);
-				//m_vscrollBar->setOwner(getOwner());
-				m_vscrollBar->eventValueChanged.Bind(this, &TextBox::vScrollbar_OnChangeValue);
-				//m_vscrollBar->Initialize(device);
-			}
-			if (m_hscrollBar)
-			{
-				//m_hscrollBar->SetSkin(m_skin);
-				//m_hscrollBar->setOwner(getOwner());
-				m_hscrollBar->eventValueChanged.Bind(this, &TextBox::hScrollbar_OnChangeValue);
-				//m_hscrollBar->Initialize(device);
-			}
-		}
 		void TextBox::Update(const GameTime* time)
 		{
-			Control::Update(time);
+			Apoc3D::Math::Rectangle txtArea = GetTextArea();
+			m_visibleLines = (int)ceilf((float)txtArea.Height / m_fontRef->getLineHeightInt());
 
 			CheckFocus();
 			Point cursorPos = m_textEdit.getCursorPosition();
 
-			if (m_hasFocus && !m_readOnly)
+			if (HasFocus && !ReadOnly)
 			{
 				m_textEdit.Update(time);
 			}
@@ -366,24 +322,28 @@ namespace Apoc3D
 			{
 				if (mouse->IsLeftPressed())
 				{
-					m_isDraggingSelecting = true;
+					//m_isDraggingSelecting = true;
 
-					int32 lineIndex = (mouse->getY() - textArea.Y) / m_fontRef->getLineHeightInt();
-					int32 dx = mouse->getX() - textArea.X;
+					Point mp = mouse->GetPosition() + m_scrollOffset;
+
+					int32 lineIndex = (mp.Y - textArea.Y) / m_fontRef->getLineHeightInt();
+					int32 dx = mp.X - textArea.X;
 					m_textEdit.MoveCursorTo(Point(0, lineIndex));
 
 					int32 xpos = m_fontRef->FitSingleLineString(m_textEdit.getCurrentLine(), Math::Max(0, dx));
 					m_textEdit.MoveCursorTo(Point(xpos, lineIndex));
 
-					m_textSelectionStart = m_textEdit.getCursorPosition();
+					m_cursorVisible = true;
+					m_timer = 0.5f;
+					//m_textSelectionStart = m_textEdit.getCursorPosition();
 				}
-				else if (m_isDraggingSelecting && mouse->IsLeftUp())
+				/*else if (m_isDraggingSelecting && mouse->IsLeftUp())
 				{
 					m_isDraggingSelecting = false;
-				}
+				}*/
 			}
 
-			if (m_multiline && m_scrollBar != SBT_None)
+			if (m_multiline)
 			{
 				UpdateScrollbars(time);
 			}
@@ -400,45 +360,44 @@ namespace Apoc3D
 		}
 		void TextBox::UpdateScrollbars(const GameTime* time)
 		{
-			Apoc3D::Math::Rectangle area = getAbsoluteArea();
-
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-			if (m_vscrollBar)
+
+			if (m_vscrollbar)
 			{
-				if (m_hscrollBar && m_hscrollBar->Maximum>0)
-					m_vscrollBar->Maximum = Math::Max(0, m_textEdit.getLineCount() - (m_visibleLines - 1));
-				else
-					m_vscrollBar->Maximum = Math::Max(0, m_textEdit.getLineCount() - m_visibleLines);
-			}
+				m_vscrollbar->Maximum = Math::Max(0, m_textEdit.getLineCount() - m_visibleLines);
+				m_vscrollbar->Step = Math::Max(1, m_hscrollbar->Maximum / 15);
 
-			if (m_vscrollBar && m_vscrollBar->Maximum > 0)
-			{
-				if (m_hscrollBar && m_hscrollBar->Maximum > 0)
-					m_vscrollBar->SetLength(m_size.Y - m_hscrollBar->getHeight());
-				else
-					m_vscrollBar->SetLength(m_size.Y);
-
-				m_vscrollBar->Update(time);
-
-				if (mouse->getDZ() && area.Contains(mouse->GetPosition()))
+				if (m_vscrollbar->Maximum > 0 && mouse->getDZ() && getAbsoluteArea().Contains(mouse->GetPosition()))
 				{
-					m_vscrollBar->SetValue(m_vscrollBar->getValue() + mouse->getDZ() / 60);
+					m_vscrollbar->SetValue(m_vscrollbar->getValue() + mouse->getDZ() / 60);
 				}
+
+				m_scrollOffset.Y = m_vscrollbar->getValue() * m_fontRef->getLineHeightInt();
 			}
 
-			if (m_hscrollBar && m_hscrollBar->Maximum > 0)
+			int32 maxLineWidth = 0;
+			const List<String>& lines = m_textEdit.getLines();
+
+			for (const String& line : lines)
 			{
-				if (m_vscrollBar && m_vscrollBar->Maximum > 0)
-					m_hscrollBar->SetLength(m_size.X - m_vscrollBar->getWidth());
-				else
-					m_hscrollBar->SetLength(m_size.X);
-
-				m_hscrollBar->Update(time);
+				Point lineSize = m_fontRef->MeasureString(line);
+				if (lineSize.X > maxLineWidth)
+					maxLineWidth = lineSize.X;
 			}
+
+			if (m_hscrollbar)
+			{
+				Apoc3D::Math::Rectangle	area = GetContentArea();
+
+				m_hscrollbar->Maximum = Math::Max(0, maxLineWidth - area.Width);
+				m_hscrollbar->Step = Math::Max(1, m_hscrollbar->Maximum / 15);
+				m_scrollOffset.X = m_hscrollbar->getValue();
+			}
+
+			UpdateScrollBarsGeneric(getArea(), time);
 		}
 		void TextBox::CheckFocus()
 		{
-			//m_sRect = getArea();
 			Apoc3D::Math::Rectangle area = getAbsoluteArea();
 
 			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
@@ -446,11 +405,11 @@ namespace Apoc3D
 			{
 				if (area.Contains(mouse->GetPosition()))
 				{
-					m_hasFocus = true;
+					HasFocus = true;
 				}
 				else
 				{
-					m_hasFocus = false;
+					HasFocus = false;
 				}
 			}
 
@@ -460,7 +419,6 @@ namespace Apoc3D
 			const UIGraphic& g = Enabled ? NormalGraphic : DisabledGraphic;
 
 			g.Draw(sprite, Magin.InflateRect(getAbsoluteArea()));
-
 
 			Apoc3D::Math::Rectangle dstRect = getAbsoluteArea();
 
@@ -478,17 +436,8 @@ namespace Apoc3D
 			sprite->Flush();
 			stMgr->setScissorTest(oldScissorTest, &oldScissorRect);
 
-			if (m_vscrollBar && m_vscrollBar->Maximum > 0)
-			{
-				m_vscrollBar->Draw(sprite);
-			}
-			if (m_hscrollBar && m_hscrollBar->Maximum > 0)
-			{
-				m_hscrollBar->Draw(sprite);
-			}
+			DrawScrollBars(sprite);
 		}
-
-		//const ColorValue DisabledBG = 0xffe1e1e1;
 
 		void TextBox::_DrawText(Sprite* sprite)
 		{
@@ -496,7 +445,7 @@ namespace Apoc3D
 
 			Point cursorPos = m_textEdit.getCursorPosition();
 
-			int32 cursorLeft = 0;// m_fontRef->MeasureString(L"|").X / 2;
+			int32 cursorLeft = - m_fontRef->MeasureString(L"|").X / 4;
 			
 			if (!m_multiline)
 			{
@@ -518,7 +467,7 @@ namespace Apoc3D
 
 				TextSettings.Draw(sprite, m_fontRef, text, contentArea.getTopLeft() - m_scrollOffset, contentArea.getSize(), 0xff);
 
-				if (m_hasFocus && !m_readOnly && m_cursorVisible && ParentFocused)//getOwner() == UIRoot::getTopMostForm())
+				if (HasFocus && !ReadOnly && m_cursorVisible && ParentFocused)//getOwner() == UIRoot::getTopMostForm())
 				{
 					//m_fontRef->DrawString(sprite, L"|", m_cursorOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
 					TextSettings.Draw(sprite, m_fontRef, L"|", contentArea.getTopLeft() + m_cursorOffset - m_scrollOffset, contentArea.getSize(), 0xff);
@@ -532,37 +481,13 @@ namespace Apoc3D
 				int maxWidth = 0;
 				for (const String& line : lines)
 				{
-					Point lineSize = m_fontRef->MeasureString(line);
-
 					TextSettings.Draw(sprite, m_fontRef, line, lineOffset - m_scrollOffset + contentArea.getTopLeft(), contentArea.getSize(), 0xff);
 					//m_fontRef->DrawString(sprite, line, m_textOffset + m_lineOffset - m_scrollOffset + baseOffset, m_skin->TextColor);
-					
-					if (lineSize.X - m_size.X > maxWidth)
-					{
-						if (m_vscrollBar && m_vscrollBar->Maximum > 0)
-						{
-							maxWidth = lineSize.X - m_size.X;
-						}
-						else
-						{
-							maxWidth = lineSize.X - m_size.X + 12;
-						}
-					}
 					
 					lineOffset.Y += m_fontRef->getLineHeightInt();
 				}
 
-				if (m_hscrollBar)
-				{
-					m_hscrollBar->Maximum = maxWidth;
-
-					if (m_vscrollBar && m_vscrollBar->Maximum > 0 && m_hscrollBar->Maximum > 0)
-						m_hscrollBar->Maximum = m_hscrollBar->Maximum + 20;
-
-					m_hscrollBar->Step = Math::Max(1, m_hscrollBar->Maximum / 15);
-				}
-
-				if (m_hasFocus && !m_readOnly && m_cursorVisible && ParentFocused)// getOwner() == UIRoot::getTopMostForm())
+				if (HasFocus && !ReadOnly && m_cursorVisible && ParentFocused)// getOwner() == UIRoot::getTopMostForm())
 				{
 					if (cursorPos.X > (int)lines[cursorPos.Y].size())
 						cursorPos.X = (int)lines[cursorPos.Y].size();
@@ -579,23 +504,7 @@ namespace Apoc3D
 
 		Apoc3D::Math::Rectangle TextBox::GetTextArea() const
 		{
-			Point pos = GetAbsolutePosition();
-
-			Apoc3D::Math::Rectangle rect;
-			rect.X = pos.X;
-			rect.Y = pos.Y;
-
-			if (m_vscrollBar && m_vscrollBar->Maximum > 0)
-				rect.Width = m_size.X - m_vscrollBar->getWidth();
-			else
-				rect.Width = m_size.X;
-
-			if (m_hscrollBar && m_hscrollBar->Maximum > 0)
-				rect.Height = m_size.Y - m_hscrollBar->getHeight();
-			else
-				rect.Height = m_size.Y;
-
-			return ContentPadding.ShrinkRect(rect);
+			return ContentPadding.ShrinkRect(GetContentArea());
 		}
 
 		void TextBox::TextEditState_EnterPressed() { eventEnterPressed.Invoke(this); }
@@ -607,11 +516,12 @@ namespace Apoc3D
 		void TextBox::SetText(const String& text)
 		{
 			m_textEdit.SetText(text);
+			m_scrollOffset = Point(0, 0);
 		}
 
 		void TextBox::Keyboard_OnPress(KeyboardKeyCode code, KeyboardEventsArgs e)
 		{
-			UpdateScrolling();
+			CursorScrolling();
 			m_cursorVisible = true;
 			m_timerStarted = true;
 		}
@@ -622,22 +532,17 @@ namespace Apoc3D
 				Point textSize = m_fontRef->MeasureString(m_textEdit.getText());
 				m_cursorOffset.Y += (int)(textSize.Y / m_fontRef->getLineHeightInt()) - 1;
 
-				UpdateScrolling();
+				CursorScrolling();
 			}
 		}
 
 		void TextBox::vScrollbar_OnChangeValue(ScrollBar* ctrl)
 		{
-			m_scrollOffset.Y = m_vscrollBar->getValue() * m_fontRef->getLineHeightInt();
-			m_hasFocus = true;
+			HasFocus = true;
 		}
 		void TextBox::hScrollbar_OnChangeValue(ScrollBar* ctrl)
 		{
-			if (m_multiline)
-			{
-				m_scrollOffset.X = m_hscrollBar->getValue();
-				m_hasFocus = true;
-			}
+			HasFocus = true;
 		}
 
 	}

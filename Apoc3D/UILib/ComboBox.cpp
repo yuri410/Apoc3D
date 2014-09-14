@@ -43,7 +43,7 @@ namespace Apoc3D
 			m_textbox = new TextBox(skin, Position, m_size.X);
 			//m_textbox->SetSkin(m_skin);
 			//m_textbox->setOwner(getOwner());
-			m_textbox->setLocked(true);
+			m_textbox->ReadOnly = true;
 			//m_textbox->Initialize(device);
 
 			ButtonVisualSettings bvs;
@@ -124,8 +124,8 @@ namespace Apoc3D
 		List<String>& ComboBox::getItems() const { return m_listBox->getItems(); }
 
 		bool ComboBox::getOpened() const { return m_listBox->Visible; }
-		bool ComboBox::getLocked() const { return m_textbox->getLocked(); }
-		void ComboBox::setLocked(bool value) const { m_textbox->setLocked(value); }
+		bool ComboBox::getLocked() const { return m_textbox->ReadOnly; }
+		void ComboBox::setLocked(bool value) const { m_textbox->ReadOnly = value; }
 
 		int ComboBox::getSelectedIndex() const { return m_listBox->getSelectedIndex(); }
 		void ComboBox::setSelectedIndex(int v) const

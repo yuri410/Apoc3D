@@ -62,7 +62,7 @@ namespace Apoc3D
 			m_visisbleItems = (int)ceilf((float)m_size.Y / getItemHeight());
 			m_size.Y = m_visisbleItems * getItemHeight();
 
-			InitScrollbars(skin, false);
+			InitScrollbars(skin);
 		}
 
 		void ListBox::Update(const GameTime* time)
@@ -262,7 +262,7 @@ namespace Apoc3D
 			m_size.Y = m_visisbleItems * GetItemHeight();
 
 			UpdateHScrollbar();
-			InitScrollbars(skin, false);
+			InitScrollbars(skin);
 		}
 
 
@@ -571,8 +571,7 @@ namespace Apoc3D
 
 		void ListView::Initialize(const StyleSkin* skin)
 		{
-			// init scrollbars
-			InitScrollbars(skin, true);
+			InitScrollbars(skin);
 
 			m_headerHeight = m_rowHeight = m_fontRef->getLineHeightInt();
 		}
@@ -616,20 +615,10 @@ namespace Apoc3D
 
 		void ListView::UpdateSelection()
 		{
-			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
-
-			if (mouse->IsLeftPressed())
-			{
-				m_selectedRow = m_hoverRowIndex;
-				m_selectedColumn = m_hoverColumnIndex;
-
-				if (FullRowSelect)
-					eventSelected.Invoke(m_selectedRow, 0);
-				else
-					eventSelected.Invoke(m_selectedRow, m_selectedColumn);
-			}
 			m_hoverRowIndex = -1;
 			m_hoverColumnIndex = -1;
+
+			Mouse* mouse = InputAPIManager::getSingleton().getMouse();
 
 			if (!ParentFocused || !m_contentArea.Contains(mouse->GetPosition()))
 				return;
@@ -679,6 +668,17 @@ namespace Apoc3D
 					cellArea.X = baseX;
 					cellArea.Y += m_rowHeight;
 				}
+			}
+
+			if (mouse->IsLeftPressed())
+			{
+				m_selectedRow = m_hoverRowIndex;
+				m_selectedColumn = m_hoverColumnIndex;
+
+				if (FullRowSelect)
+					eventSelected.Invoke(m_selectedRow, 0);
+				else
+					eventSelected.Invoke(m_selectedRow, m_selectedColumn);
 			}
 
 		}

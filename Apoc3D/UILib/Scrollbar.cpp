@@ -144,8 +144,8 @@ namespace Apoc3D
 
 		void ScrollBar::Draw(Sprite* sprite)
 		{
-			//if (m_disabledAlpha == 0 && !Enabled)
-			//	return;
+			if (!Visible)
+				return;
 
 			{
 				UIGraphic* g = Enabled ? &BackgroundGraphic : &DisabledBackgroundGraphic;

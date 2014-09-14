@@ -52,10 +52,10 @@ namespace APDesigner
 
 
 			m_tbVertexCode = new TextBox(skin, Point(10, 45), 240, 600, L"");
-			m_tbVertexCode->setScrollbarType(TextBox::SBT_Both);
+			m_tbVertexCode->EnableAllScrollBars();
 
 			m_tbPixelCode = new TextBox(skin, Point(525, 45), 240, 600, L"");
-			m_tbPixelCode->setScrollbarType(TextBox::SBT_Both);
+			m_tbPixelCode->EnableAllScrollBars();
 		}
 
 		{
@@ -96,11 +96,7 @@ namespace APDesigner
 	EffectDocument::~EffectDocument()
 	{
 		
-
-		for (int i=0;i<m_labels.getCount();i++)
-		{
-			delete m_labels[i];
-		}
+		m_labels.DeleteAndClear();
 	}
 	void EffectDocument::Initialize(RenderDevice* device)
 	{
@@ -212,23 +208,16 @@ namespace APDesigner
 		delete plist;
 
 		{
-			std::ifstream strm(m_vsPath.c_str(), std::ios::in);
-			strm.exceptions(std::ios::failbit);
+			FileLocation fl(m_vsPath);
+			String code = Encoding::ReadAllText(fl, Encoding::TEC_Unknown);
 
-			std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(strm), std::istreambuf_iterator<char>( ) );
-			buffer.push_back('\0');
-
-			m_tbVertexCode->SetText(StringUtils::toPlatformWideString(&buffer[0]));
-
+			m_tbVertexCode->SetText(code);
 		}
 		{
-			std::ifstream strm(m_psPath.c_str(), std::ios::in);
-			strm.exceptions(std::ios::failbit);
-
-			std::vector<char> buffer = std::vector<char>( std::istreambuf_iterator<char>(strm), std::istreambuf_iterator<char>( ) );
-			buffer.push_back('\0');
-
-			m_tbPixelCode->SetText(StringUtils::toPlatformWideString(&buffer[0]));
+			FileLocation fl(m_psPath);
+			String code = Encoding::ReadAllText(fl, Encoding::TEC_Unknown);
+			
+			m_tbPixelCode->SetText(code);
 		}
 		
 		RefreshParameterList();

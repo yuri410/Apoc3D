@@ -342,18 +342,18 @@ namespace Apoc3D
 					blocked |= m_btClose->isMouseHover();
 				}
 
-				if (!blocked && m_btMaximize && ((m_hasMaximizeButton && !m_isMaximized)||(m_hasMinimizeButton && m_isMinimized)))
+				if (!blocked && m_btMaximize && ((m_hasMaximizeButton && !m_isMaximized) || (m_hasMinimizeButton && m_isMinimized)))
 				{
 					m_btMaximize->Update(time);
 					blocked |= m_btMaximize->isMouseHover();
 				}
-				if (!blocked && m_btMinimize && ((m_hasMinimizeButton && !m_isMinimized)||(m_hasMaximizeButton && m_isMaximized)))
+				if (!blocked && m_btMinimize && ((m_hasMinimizeButton && !m_isMinimized) || (m_hasMaximizeButton && m_isMaximized)))
 				{
 					m_btMinimize->Update(time);
 					blocked |= m_btMinimize->isMouseHover();
 				}
 
-				if (!blocked && m_btRestore && ((m_hasMinimizeButton && m_isMinimized)||(m_hasMaximizeButton && m_isMaximized)))
+				if (!blocked && m_btRestore && ((m_hasMinimizeButton && m_isMinimized) || (m_hasMaximizeButton && m_isMaximized)))
 				{
 					m_btRestore->Update(time);
 					blocked |= m_btRestore->isMouseHover();
